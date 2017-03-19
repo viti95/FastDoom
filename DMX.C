@@ -150,7 +150,7 @@ int MUS_PlaySong(int handle, int volume) {
         return 1;
     }
     status = MUSIC_PlaySong((unsigned char*)mus_data, mus_loop);
-    MUSIC_SetVolume(volume * 16);
+    MUSIC_SetVolume(volume * 2);
     return (status != MUSIC_Ok);
 }
 
