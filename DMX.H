@@ -34,7 +34,7 @@ int MUS_QrySongPlaying(int handle);
 int MUS_StopSong(int handle);
 int MUS_ChainSong(int handle, int next);
 int MUS_PlaySong(int handle, int volume);
-int SFX_PlayPatch(void *data, int pitch, int vol, int sep, int unk1, int unk2);
+int SFX_PlayPatch(void *vdata, int pitch, int sep, int vol, int unk1, int unk2);
 void SFX_StopPatch(int handle);
 int SFX_Playing(int handle);
 void SFX_SetOrigin(int handle, int  pitch, int sep, int vol);
