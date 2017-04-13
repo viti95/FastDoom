@@ -848,7 +848,7 @@ void D_DoomMain (void)
         sprintf(title,
                 "                         "
                 "The Ultimate DOOM Startup v%i.%i"
-                "                           ",
+                "                        ",
                 VERSION/100,VERSION%100);
     }
     else
