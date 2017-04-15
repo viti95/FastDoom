@@ -381,8 +381,8 @@ default_t	defaults[] =
     {"detaillevel",&detailLevel, 0},
 
     {"snd_channels",&numChannels, 3},
-    {"snd_sfxdevice",&snd_DesiredSfxDevice, 0},
     {"snd_musicdevice",&snd_DesiredMusicDevice, 0},
+    {"snd_sfxdevice",&snd_DesiredSfxDevice, 0},
     {"snd_sbport",&snd_SBport, 0x220},
     {"snd_sbirq",&snd_SBirq, 5},
     {"snd_sbdma",&snd_SBdma, 1},
