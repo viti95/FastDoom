@@ -107,7 +107,7 @@ char gammamsg[5][26] =
     GAMMALVL4
 };
 
-char endmsg1[NUM_QUITMESSAGES][80] =
+char endmsg[NUM_QUITMESSAGES][80] =
 {
     // DOOM1
     QUITMSG,
@@ -1105,7 +1105,7 @@ void M_QuitDOOM(int choice)
     else
     {
         sprintf(endstring, "%s\n\n"DOSY,
-                endmsg1[(gametic >> 2) % NUM_QUITMESSAGES]);
+                endmsg[(gametic >> 2) % NUM_QUITMESSAGES]);
     }
   
   M_StartMessage(endstring,M_QuitResponse,true);
