@@ -441,6 +441,7 @@ void G_DoLoadLevel (void)
 { 
     int             i; 
 
+#if (EXE_GAME_VERSION >= EXE_VERSION_FINAL2)
     // DOOM determines the sky texture to be used
     // depending on the current episode, and the game version.
     if ( commercial )
@@ -452,6 +453,7 @@ void G_DoLoadLevel (void)
 	    if (gamemap < 21)
 		skytexture = R_TextureNumForName ("SKY2");
     }
+#endif
 
     levelstarttic = gametic;        // for time calculation
     
@@ -1365,11 +1367,21 @@ G_InitNew
     if (skill > sk_nightmare) 
 	skill = sk_nightmare;
 
-
+#if (EXE_VERSION < EXE_VERSION_ULTIMATE)
+    if (episode < 1)
+    {
+        episode = 1;
+    }
+    if (episode > 3)
+    {
+        episode = 3;
+    }
+#else
     if (episode == 0)
     {
         episode = 4;
     }
+#endif
 
     if (episode > 1 && shareware)
     {

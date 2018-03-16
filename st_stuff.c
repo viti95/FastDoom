@@ -588,7 +588,14 @@ ST_Responder (event_t* ev)
 	
 	plyr->message = STSTR_MUS;
 	cht_GetParam(&cheat_mus, buf);
-	
+#if (EXE_VERSION < EXE_VERSION_ULTIMATE)
+	musnum = mus_runnin + (buf[0]-'0')*10 + buf[1]-'0' - 1;
+	  
+	if (((buf[0]-'0')*10 + buf[1]-'0') > 35)
+	  plyr->message = STSTR_NOMUS;
+	else
+	  S_ChangeMusic(musnum, 1);
+#else
 	if (commercial)
 	{
 	  musnum = mus_runnin + (buf[0]-'0')*10 + buf[1]-'0' - 1;
@@ -607,6 +614,7 @@ ST_Responder (event_t* ev)
 	  else
 	    S_ChangeMusic(musnum, 1);
 	}
+#endif
       }
       else if(!commercial && cht_CheckCheat(&cheat_noclip, ev->data1))
       {	
@@ -688,6 +696,15 @@ ST_Responder (event_t* ev)
       }
 
       // Catch invalid maps.
+#if (EXE_VERSION < EXE_VERSION_ULTIMATE)
+      if ((!commercial && epsd > 0 && epsd < 4 && map > 0 && map < 10)
+       || (commercial && map > 0 && map <= 40))
+      {
+          // So be it.
+          plyr->message = STSTR_CLEV;
+          G_DeferedInitNew(gameskill, epsd, map);
+      }
+#else
       if ((!commercial && epsd > 0 && epsd < 5 && map > 0 && map < 10)
        || (commercial && map > 0 && map <= 40))
       {
@@ -695,6 +712,7 @@ ST_Responder (event_t* ev)
           plyr->message = STSTR_CLEV;
           G_DeferedInitNew(gameskill, epsd, map);
       }
+#endif
     }    
   }
   return false;

@@ -49,7 +49,9 @@ int		finalecount;
 char*	e1text = E1TEXT;
 char*	e2text = E2TEXT;
 char*	e3text = E3TEXT;
+#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
 char*	e4text = E4TEXT;
+#endif
 
 char*	c1text = C1TEXT;
 char*	c2text = C2TEXT;
@@ -58,6 +60,7 @@ char*	c4text = C4TEXT;
 char*	c5text = C5TEXT;
 char*	c6text = C6TEXT;
 
+#if (EXE_VERSION >= EXE_VERSION_FINAL)
 char*	p1text = P1TEXT;
 char*	p2text = P2TEXT;
 char*	p3text = P3TEXT;
@@ -71,6 +74,7 @@ char*	t3text = T3TEXT;
 char*	t4text = T4TEXT;
 char*	t5text = T5TEXT;
 char*	t6text = T6TEXT;
+#endif
 
 char*	finaletext;
 char*	finaleflat;
@@ -94,6 +98,39 @@ void F_StartFinale (void)
 
     if(commercial)
     {
+#if (EXE_VERSION < EXE_VERSION_FINAL)
+        // DOOM II and missions packs with E1, M34
+	  switch (gamemap)
+	  {
+	    case 6:
+	      finaleflat = "SLIME16";
+	      finaletext = c1text;
+	      break;
+	    case 11:
+	      finaleflat = "RROCK14";
+	      finaletext = c2text;
+	      break;
+	    case 20:
+	      finaleflat = "RROCK07";
+	      finaletext = c3text;
+	      break;
+	    case 30:
+	      finaleflat = "RROCK17";
+	      finaletext = c4text;
+	      break;
+	    case 15:
+	      finaleflat = "RROCK13";
+	      finaletext = c5text;
+	      break;
+	    case 31:
+	      finaleflat = "RROCK19";
+	      finaletext = c6text;
+	      break;
+	    default:
+	      // Ouch.
+	      break;
+	  }
+#else
         if (plutonia)
         {
 	  switch (gamemap)
@@ -101,36 +138,29 @@ void F_StartFinale (void)
 	    case 6:
 	      finaleflat = "SLIME16";
 	      finaletext = p1text;
-	      finalemusic = mus_read_m;
 	      break;
 	    case 11:
 	      finaleflat = "RROCK14";
 	      finaletext = p2text;
-	      finalemusic = mus_read_m;
 	      break;
 	    case 20:
 	      finaleflat = "RROCK07";
 	      finaletext = p3text;
-	      finalemusic = mus_read_m;
 	      break;
 	    case 30:
 	      finaleflat = "RROCK17";
 	      finaletext = p4text;
-	      finalemusic = mus_read_m;
 	      break;
 	    case 15:
 	      finaleflat = "RROCK13";
 	      finaletext = p5text;
-	      finalemusic = mus_read_m;
 	      break;
 	    case 31:
 	      finaleflat = "RROCK19";
 	      finaletext = p6text;
-	      finalemusic = mus_read_m;
 	      break;
 	    default:
 	      // Ouch.
-	      finalemusic = mus_read_m;
 	      break;
 	  }
         }
@@ -141,36 +171,28 @@ void F_StartFinale (void)
 	    case 6:
 	      finaleflat = "SLIME16";
 	      finaletext = t1text;
-	      finalemusic = mus_read_m;
 	      break;
 	    case 11:
 	      finaleflat = "RROCK14";
 	      finaletext = t2text;
-	      finalemusic = mus_read_m;
 	      break;
 	    case 20:
 	      finaleflat = "RROCK07";
 	      finaletext = t3text;
-	      finalemusic = mus_read_m;
-	      break;
 	    case 30:
 	      finaleflat = "RROCK17";
 	      finaletext = t4text;
-	      finalemusic = mus_read_m;
 	      break;
 	    case 15:
 	      finaleflat = "RROCK13";
 	      finaletext = t5text;
-	      finalemusic = mus_read_m;
 	      break;
 	    case 31:
 	      finaleflat = "RROCK19";
 	      finaletext = t6text;
-	      finalemusic = mus_read_m;
 	      break;
 	    default:
 	      // Ouch.
-	      finalemusic = mus_read_m;
 	      break;
 	  }
         }
@@ -182,39 +204,34 @@ void F_StartFinale (void)
 	    case 6:
 	      finaleflat = "SLIME16";
 	      finaletext = c1text;
-	      finalemusic = mus_read_m;
 	      break;
 	    case 11:
 	      finaleflat = "RROCK14";
 	      finaletext = c2text;
-	      finalemusic = mus_read_m;
 	      break;
 	    case 20:
 	      finaleflat = "RROCK07";
 	      finaletext = c3text;
-	      finalemusic = mus_read_m;
 	      break;
 	    case 30:
 	      finaleflat = "RROCK17";
 	      finaletext = c4text;
-	      finalemusic = mus_read_m;
 	      break;
 	    case 15:
 	      finaleflat = "RROCK13";
 	      finaletext = c5text;
-	      finalemusic = mus_read_m;
 	      break;
 	    case 31:
 	      finaleflat = "RROCK19";
 	      finaletext = c6text;
-	      finalemusic = mus_read_m;
 	      break;
 	    default:
 	      // Ouch.
-	      finalemusic = mus_read_m;
 	      break;
 	  }
         }
+#endif
+	finalemusic = mus_read_m;
     }
     else
     {
@@ -233,10 +250,12 @@ void F_StartFinale (void)
 	    finaleflat = "MFLR8_4";
 	    finaletext = e3text;
 	    break;
+#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
 	  case 4:
 	    finaleflat = "MFLR8_3";
 	    finaletext = e4text;
 	    break;
+#endif
 	  default:
 	    // Ouch.
 	    break;
@@ -771,9 +790,15 @@ void F_Drawer (void)
 	switch (gameepisode)
 	{
 	  case 1:
+#if (EXE_VERSION < EXE_VERSION_ULTIMATE)
+	    V_DrawPatch(0,0,0,
+			W_CacheLumpName("HELP2",PU_CACHE));
+	    break;
+#else
 	    V_DrawPatch(0,0,0,
 			W_CacheLumpName("CREDIT",PU_CACHE));
 	    break;
+#endif
 	  case 2:
 	    V_DrawPatch(0,0,0,
 			W_CacheLumpName("VICTORY2",PU_CACHE));

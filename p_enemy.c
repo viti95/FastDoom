@@ -1616,6 +1616,13 @@ void A_BossDeath (mobj_t* mo)
     }
     else
     {
+#if (EXE_VERSION < EXE_VERSION_ULTIMATE)
+	if (gamemap != 8)
+	    return;
+
+	if (mo->type == MT_BRUISER && gameepisode != 1)
+	    return;
+#else
 	switch(gameepisode)
 	{
 	  case 1:
@@ -1667,6 +1674,7 @@ void A_BossDeath (mobj_t* mo)
 		return;
 	    break;
 	}
+#endif
 		
     }
 

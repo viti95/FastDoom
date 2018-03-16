@@ -30,6 +30,13 @@
 // DOOM version
 enum { VERSION =  109 };
 
+#define EXE_VERSION_1_9         0
+#define EXE_VERSION_ULTIMATE    1
+#define EXE_VERSION_FINAL       2
+#define EXE_VERSION_FINAL2      3
+
+#define EXE_VERSION EXE_VERSION_1_9
+
 // If rangecheck is undefined,
 // most parameter validation debugging code will not be compiled
 #define RANGECHECK

@@ -273,7 +273,11 @@ menuitem_t MainMenu[]=
     {1,"M_LOADG",M_LoadGame,'l'},
     {1,"M_SAVEG",M_SaveGame,'s'},
     // Another hickup with Special edition.
+#if (EXE_VERSION < EXE_VERSION_ULTIMATE)
+    {1,"M_RDTHIS",M_ReadThis,'r'},
+#else
     {1,"M_RDTHIS",M_ReadThis2,'r'},
+#endif
     {1,"M_QUITG",M_QuitDOOM,'q'}
 };
 
@@ -296,7 +300,9 @@ enum
     ep1,
     ep2,
     ep3,
+#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
     ep4,
+#endif
     ep_end
 } episodes_e;
 
@@ -305,7 +311,9 @@ menuitem_t EpisodeMenu[]=
     {1,"M_EPI1", M_Episode,'k'},
     {1,"M_EPI2", M_Episode,'t'},
     {1,"M_EPI3", M_Episode,'i'},
+#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
     {1,"M_EPI4", M_Episode,'t'}
+#endif
 };
 
 menu_t  EpiDef =
@@ -428,9 +436,17 @@ menuitem_t ReadMenu2[]=
 menu_t  ReadDef2 =
 {
     read2_end,
+#if (EXE_VERSION < EXE_VERSION_ULTIMATE)
+    &ReadDef1,
+#else
     NULL,
+#endif
     ReadMenu2,
+#if (EXE_VERSION < EXE_VERSION_FINAL)
+    M_DrawReadThis2,
+#else
     M_DrawReadThisRetail,
+#endif
     330,175,
     0
 };
@@ -779,7 +795,7 @@ void M_DrawReadThis1(void)
 //
 // Read This Menus - optional second page.
 //
-#if 0
+#if (EXE_VERSION < EXE_VERSION_FINAL)
 void M_DrawReadThis2(void)
 {
     inhelpscreens = true;
@@ -1535,7 +1551,11 @@ boolean M_Responder (event_t* ev)
 	  case KEY_F1:            // Help key
 	    M_StartControlPanel ();
 
+#if (EXE_VERSION < EXE_VERSION_ULTIMATE)
+        currentMenu = &ReadDef1;
+#else
 	    currentMenu = &ReadDef2;
+#endif
 	    
 	    itemOn = 0;
 	    S_StartSound(NULL,sfx_swtchn);

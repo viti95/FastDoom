@@ -54,7 +54,11 @@
 // This is supposedly ignored for commercial
 //  release (aka DOOM II), which had 34 maps
 //  in one episode. So there.
+#if (EXE_VERSION < EXE_VERSION_ULTIMATE)
+#define NUMEPISODES	3
+#else
 #define NUMEPISODES	4
+#endif
 #define NUMMAPS		9
 
 
@@ -499,8 +503,10 @@ void WI_initAnimatedBack(void)
     if (commercial)
 	return;
 
+#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
     if (wbs->epsd > 2)
 	return;
+#endif
 
     for (i=0;i<NUMANIMS[wbs->epsd];i++)
     {
@@ -528,8 +534,10 @@ void WI_updateAnimatedBack(void)
     if (commercial)
 	return;
 
+#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
     if (wbs->epsd > 2)
 	return;
+#endif
 
     for (i=0;i<NUMANIMS[wbs->epsd];i++)
     {
@@ -579,8 +587,10 @@ void WI_drawAnimatedBack(void)
     if (commercial)
 	return;
 
+#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
     if (wbs->epsd > 2)
 	return;
+#endif
 
     for (i=0 ; i<NUMANIMS[wbs->epsd] ; i++)
     {
@@ -772,11 +782,13 @@ void WI_drawShowNextLoc(void)
 
     if (!commercial)
     {
+#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
   	if (wbs->epsd > 2)
 	{
 	    WI_drawEL();
 	    return;
 	}
+#endif
 	
 	last = (wbs->last == 8) ? wbs->next - 1 : wbs->last;
 
@@ -1450,7 +1462,9 @@ void WI_drawStats(void)
     V_DrawPatch(SP_TIMEX, SP_TIMEY, FB, time);
     WI_drawTime(SCREENWIDTH/2 - SP_TIMEX, SP_TIMEY, cnt_time);
 
+#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
     if (wbs->epsd < 3)
+#endif
     {
 	V_DrawPatch(SCREENWIDTH/2 + SP_TIMEX, SP_TIMEY, FB, par);
 	WI_drawTime(SCREENWIDTH - SP_TIMEX, SP_TIMEY, cnt_par);
@@ -1538,8 +1552,10 @@ void WI_loadData(void)
     else 
 	sprintf(name, "WIMAP%d", wbs->epsd);
     
+#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
     if (wbs->epsd == 3)
 	strcpy(name,"INTERPIC");
+#endif
 
     // background
     bg = W_CacheLumpName(name, PU_CACHE);    
@@ -1587,7 +1603,9 @@ void WI_loadData(void)
 	// splat
 	splat = W_CacheLumpName("WISPLAT", PU_STATIC); 
 	
+#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
 	if (wbs->epsd < 3)
+#endif
 	{
 	    for (j=0;j<NUMANIMS[wbs->epsd];j++)
 	    {
@@ -1717,8 +1735,9 @@ void WI_unloadData(void)
 
 	for (i=0 ; i<NUMMAPS ; i++)
 	    Z_ChangeTag(lnames[i], PU_CACHE);
-	
+#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
 	if (wbs->epsd < 3)
+#endif
 	{
 	    for (j=0;j<NUMANIMS[wbs->epsd];j++)
 	    {
@@ -1796,7 +1815,11 @@ void WI_initVariables(wbstartstruct_t* wbstartstruct)
 #ifdef RANGECHECKING
     if (!commercial)
     {
+#if (EXE_VERSION < EXE_VERSION_ULTIMATE)
+        RNGCHECK(wbs->epsd, 0, 2);
+#else
         RNGCHECK(wbs->epsd, 0, 3);
+#endif
         RNGCHECK(wbs->last, 0, 8);
         RNGCHECK(wbs->next, 0, 8);
     }

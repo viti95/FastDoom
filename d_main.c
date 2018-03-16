@@ -19,9 +19,6 @@
 //  and call the startup functions.
 //
 
-#define	BGCOLOR		7
-#define	FGCOLOR		8
-
 #include <stdlib.h>
 #include <dos.h>
 //#include <graph.h>
@@ -61,6 +58,14 @@
 
 
 #include "d_main.h"
+
+#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
+#define	BGCOLOR		7
+#define	FGCOLOR		8
+#else
+#define	BGCOLOR		7
+#define	FGCOLOR		4
+#endif
 
 //
 // D-DoomLoop()
@@ -108,8 +113,10 @@ boolean	        modifiedgame;
 boolean         shareware;
 boolean         registered;
 boolean         commercial;
+#if (EXE_VERSION >= EXE_VERSION_FINAL)
 boolean         plutonia;
 boolean         tnt;
+#endif
 boolean         french;
 
 
@@ -451,7 +458,11 @@ void D_AdvanceDemo (void)
     paused = false;
     gameaction = ga_nothing;
 
+#if (EXE_VERSION == EXE_VERSION_ULTIMATE) || (EXE_VERSION == EXE_VERSION_FINAL)
+    demosequence = (demosequence+1)%7;
+#else
     demosequence = (demosequence+1)%6;
+#endif
     
     switch (demosequence)
     {
@@ -489,17 +500,22 @@ void D_AdvanceDemo (void)
 	else
 	{
 	    pagetic = 200;
-
+#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
 	    pagename = "CREDIT";
+#else
+	    pagename = "HELP2";
+#endif
 	}
 	break;
       case 5:
 	G_DeferedPlayDemo ("demo3");
 	break;
+#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
         // THE DEFINITIVE DOOM Special Edition demo
       case 6:
 	G_DeferedPlayDemo ("demo4");
 	break;
+#endif
     }
 }
 
@@ -678,12 +694,16 @@ void IdentifyVersion (void)
     {
 	commercial = true;
 	devparm = true;
+#if (EXE_VERSION >= EXE_VERSION_FINAL)
 	if(plutonia)
 	    D_AddFile (DEVDATA"plutonia.wad");
 	else if(tnt)
 	    D_AddFile (DEVDATA"tnt.wad");
 	else
 	    D_AddFile (DEVDATA"doom2.wad");
+#else
+	D_AddFile (DEVDATA"doom2.wad");
+#endif
 	    
 	D_AddFile (DEVMAPS"cdata/texture1.lmp");
 	D_AddFile (DEVMAPS"cdata/pnames.lmp");
@@ -709,6 +729,7 @@ void IdentifyVersion (void)
 	return;
     }
 
+#if (EXE_VERSION >= EXE_VERSION_FINAL)
     if ( !access ("plutonia.wad", R_OK ) )
     {
       commercial = true;
@@ -724,6 +745,7 @@ void IdentifyVersion (void)
       D_AddFile ("tnt.wad");
       return;
     }
+#endif
 
     if ( !access ("doom.wad",R_OK) )
     {
@@ -845,14 +867,23 @@ void D_DoomMain (void)
 
     if (!commercial)
     {
+#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
         sprintf(title,
                 "                         "
                 "The Ultimate DOOM Startup v%i.%i"
                 "                        ",
                 VERSION/100,VERSION%100);
+#else
+        sprintf(title,
+                "                          "
+                "DOOM System Startup v%i.%i"
+                "                          ",
+                VERSION/100,VERSION%100);
+#endif
     }
     else
     {
+#if (EXE_VERSION >= EXE_VERSION_FINAL)
         if (plutonia)
         {
             sprintf(title,
@@ -877,6 +908,13 @@ void D_DoomMain (void)
                     "                           ",
                     VERSION/100,VERSION%100);
         }
+#else
+        sprintf(title,
+                "                         "
+                "DOOM 2: Hell on Earth v%i.%i"
+                "                           ",
+                VERSION/100,VERSION%100);
+#endif
     }
     
     regs.w.ax = 3;

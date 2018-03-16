@@ -94,8 +94,9 @@ EV_Teleport
 				
 		if (!P_TeleportMove (thing, m->x, m->y))
 		    return 0;
-		
+#if (EXE_VERSION != EXE_VERSION_FINAL)
 		thing->z = thing->floorz;  //fixme: not needed?
+#endif
 		if (thing->player)
 		    thing->player->viewz = thing->z+thing->player->viewheight;
 				
