@@ -179,6 +179,7 @@ void F_StartFinale (void)
 	    case 20:
 	      finaleflat = "RROCK07";
 	      finaletext = t3text;
+	      break;
 	    case 30:
 	      finaleflat = "RROCK17";
 	      finaletext = t4text;

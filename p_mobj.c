@@ -277,6 +277,7 @@ void P_ZMovement (mobj_t* mo)
     {
 	// hit the floor
 
+#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
 	// Note (id):
 	//  somebody left this after the setting momz to 0,
 	//  kinda useless there.
@@ -285,6 +286,7 @@ void P_ZMovement (mobj_t* mo)
 	    // the skull slammed into something
 	    mo->momz = -mo->momz;
 	}
+#endif
 	
 	if (mo->momz < 0)
 	{
@@ -301,6 +303,14 @@ void P_ZMovement (mobj_t* mo)
 	    mo->momz = 0;
 	}
 	mo->z = mo->floorz;
+
+#if (EXE_VERSION < EXE_VERSION_ULTIMATE)
+	if (mo->flags & MF_SKULLFLY)
+	{
+	    // the skull slammed into something
+	    mo->momz = -mo->momz;
+	}
+#endif
 
 	if ( (mo->flags & MF_MISSILE)
 	     && !(mo->flags & MF_NOCLIP) )
