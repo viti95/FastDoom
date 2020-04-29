@@ -1628,13 +1628,16 @@ void G_TimeDemo (char* name)
  
 boolean G_CheckDemoStatus (void) 
 { 
-    int             endtime; 
+    int             endtime;
+    int             realtics;
+    float           fps;
 	 
     if (timingdemo) 
     { 
 	endtime = I_GetTime (); 
-	I_Error ("timed %i gametics in %i realtics",gametic 
-		 , endtime-starttime); 
+    realtics = endtime-starttime;
+    fps = (float)gametic*35.0f/(float)realtics;
+	I_Error ("Timed %i gametics in %i realtics. FPS: %f",gametic,realtics,fps);
     } 
 	 
     if (demoplayback) 
