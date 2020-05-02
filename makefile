@@ -79,7 +79,6 @@ GLOBOBJS = &
  sounds.obj &
  dutils.obj &
  f_wipe.obj &
-# info.obj
  info.obj &
  dmx.obj &
  usrhooks.obj &
