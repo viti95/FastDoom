@@ -26,48 +26,6 @@
 .CODE
 
 ;
-; I_DivException
-;
-
-PROC  	I_DivException_
-PUBLIC 	I_DivException_
-	mov	edx,03c9h
-	mov	al,63
-	out	dx,al
-
-	mov	ebx,0ffffffh
-	mov	eax,[ebx]
-	retf
-ENDP
-
-;
-; I_SetDivException
-;
-
-PROC  	I_SetDivException_
-PUBLIC 	I_SetDivException_
-	pusha
-
-	mov	eax,0212h
-	mov	ebx,0
-	mov	ecx,cs
-	mov	edx,OFFSET I_DivException_
-	int 31h
-	jnc	good
-
-	popa
-	mov	eax,0
-	ret
-
-good:
-	popa
-	mov	eax,1
-	ret
-
-ENDP
-
-
-;
 ; I_ReadJoystick
 ;
 ; Read the absolute joystick values

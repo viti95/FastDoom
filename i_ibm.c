@@ -954,9 +954,6 @@ dpmiregs_t dpmiregs;
 
 unsigned realstackseg;
 
-void I_DivException(void);
-int I_SetDivException(void);
-
 //
 // DPMIFarCall
 //
