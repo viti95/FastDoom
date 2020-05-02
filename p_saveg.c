@@ -225,8 +225,6 @@ void P_ArchiveThinkers(void)
 				mobj->player = (player_t *)((mobj->player - players) + 1);
 			continue;
 		}
-
-		// I_Error ("P_ArchiveThinkers: Unknown thinker function");
 	}
 
 	// add a terminating marker

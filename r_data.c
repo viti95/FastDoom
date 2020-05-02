@@ -320,7 +320,6 @@ void R_GenerateLookup(int texnum)
                    texture->name);
             return;
         }
-        // I_Error ("R_GenerateLookup: column without a patch");
 
         if (patchcount[x] > 1)
         {

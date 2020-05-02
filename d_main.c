@@ -733,7 +733,6 @@ void IdentifyVersion(void)
 
     printf("Game mode indeterminate.\n");
     exit(1);
-    //I_Error ("Game mode indeterminate\n");
 }
 
 //
