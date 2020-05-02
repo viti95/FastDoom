@@ -681,17 +681,6 @@ void IdentifyVersion(void)
         return;
     }
 
-    if (!access("doom2f.wad", R_OK))
-    {
-        commercial = true;
-        // C'est ridicule!
-        // Let's handle languages in config files, okay?
-        french = true;
-        printf("French version\n");
-        D_AddFile("doom2f.wad");
-        return;
-    }
-
     if (!access("doom2.wad", R_OK))
     {
         commercial = true;
