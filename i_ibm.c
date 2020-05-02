@@ -40,8 +40,6 @@
 //
 
 #define DPMI_INT 0x31
-//#define NOKBD
-//#define NOTIMER
 
 //
 // Code

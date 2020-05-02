@@ -32,11 +32,6 @@
 #include "doomstat.h"
 #include "r_state.h"
 
-// ?
-//#include "doomstat.h"
-//#include "r_local.h"
-//#include "f_finale.h"
-
 // Stage of animation:
 //  0 = text, 1 = art screen, 2 = character cast
 int finalestage;

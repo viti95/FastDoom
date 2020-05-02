@@ -21,7 +21,6 @@
 
 #include <stdlib.h>
 #include <dos.h>
-//#include <graph.h>
 #include <direct.h>
 #include <io.h>
 

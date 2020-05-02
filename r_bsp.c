@@ -30,8 +30,6 @@
 #include "doomstat.h"
 #include "r_state.h"
 
-//#include "r_local.h"
-
 seg_t *curline;
 side_t *sidedef;
 line_t *linedef;

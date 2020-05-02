@@ -274,7 +274,6 @@ static anim_t *anims[NUMEPISODES] =
 
 // in seconds
 #define SHOWNEXTLOCDELAY 4
-//#define SHOWLASTLOCDELAY	SHOWNEXTLOCDELAY
 
 // used to accelerate or skip a stage
 static int acceleratestage;
