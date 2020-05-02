@@ -84,13 +84,6 @@ int viewangletox[FINEANGLES / 2];
 // from clipangle to -clipangle.
 angle_t xtoviewangle[SCREENWIDTH + 1];
 
-// UNUSED.
-// The finetangentgent[angle+FINEANGLES/4] table
-// holds the fixed_t tangent values for view angles,
-// ranging from MININT to 0 to MAXINT.
-// fixed_t		finetangent[FINEANGLES/2];
-
-// fixed_t		finesine[5*FINEANGLES/4];
 fixed_t *finecosine = &finesine[FINEANGLES / 4];
 
 lighttable_t *scalelight[LIGHTLEVELS][MAXLIGHTSCALE];
@@ -390,14 +383,6 @@ R_PointToDist(fixed_t x,
 }
 
 //
-// R_InitPointToAngle
-//
-void R_InitPointToAngle(void)
-{
-    // UNUSED - now getting from tables.c
-}
-
-//
 // R_ScaleFromGlobalAngle
 // Returns the texture mapping scale
 //  for the current line (horizontal span)
@@ -436,14 +421,6 @@ fixed_t R_ScaleFromGlobalAngle(angle_t visangle)
         scale = 64 * FRACUNIT;
 
     return scale;
-}
-
-//
-// R_InitTables
-//
-void R_InitTables(void)
-{
-    // UNUSED: now getting from tables.c
 }
 
 //
@@ -669,10 +646,6 @@ extern int screenblocks;
 void R_Init(void)
 {
     R_InitData();
-    printf(".");
-    R_InitPointToAngle();
-    printf(".");
-    R_InitTables();
     // viewwidth / viewheight / detailLevel are set by the defaults
     printf(".");
 
