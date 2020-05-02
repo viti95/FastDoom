@@ -457,7 +457,7 @@ void R_InitTextures(void)
     printf("       ]");
     for (i = 0; i < temp3; i++)
         printf("\x8");
-    printf("\x8\x8\x8\x8\x8\x8\x8\x8\x8\x8");
+    printf("\x8\x8\x8\x8\x8\x8\x8\x8");
 
     for (i = 0; i < numtextures; i++, directory++)
     {
