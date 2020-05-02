@@ -398,21 +398,6 @@ void R_StoreWallRange(int start,
 	}
 	else
 	{
-		// UNUSED: try to fix the stretched line bug
-#if 0
-	if (rw_distance < FRACUNIT/2)
-	{
-	    fixed_t		trx,try;
-	    fixed_t		gxt,gyt;
-
-	    trx = curline->v1->x - viewx;
-	    try = curline->v1->y - viewy;
-			
-	    gxt = FixedMul(trx,viewcos); 
-	    gyt = -FixedMul(try,viewsin); 
-	    ds_p->scale1 = FixedDiv(projection, gxt-gyt)<<detailshift;
-	}
-#endif
 		ds_p->scale2 = ds_p->scale1;
 	}
 

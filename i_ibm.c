@@ -993,29 +993,6 @@ void I_StartupDPMI(void)
     //
 
     _dpmi_lockregion(&__begtext, &___Argc - &__begtext);
-
-//
-// catch divide by 0 exception
-//
-#if 0
-    segread(&segregs);
-    regs.w.ax = 0x0203; // DPMI set processor exception handler vector
-    regs.w.bx = 0;  // int 0
-    regs.w.cx = segregs.cs;
-    regs.x.edx = (int)&I_DivException;
-    printf("%x : %x\n", regs.w.cx, regs.x.edx);
-    int386(DPMI_INT, &regs, &regs);
-#endif
-
-#if 0
-    n = I_SetDivException();
-    printf("return: %i\n", n);
-    n = 100;
-    d = 0;
-    printf("100 / 0 = %i\n", n / d);
-
-    exit(1);
-#endif
 }
 
 //
@@ -1205,17 +1182,6 @@ byte *I_ZoneBase(int *size)
         printf("DOOM aborted.\n");
         exit(1);
     }
-#if 0
-    regs.w.ax = 0x501; // allocate linear block
-    regs.w.bx = heap >> 16;
-    regs.w.cx = heap & 0xffff;
-    int386(0x31, &regs, &regs);
-    if (regs.w.cflag)
-    {
-        I_Error("Couldn't allocate DPMI memory!");
-    }
-    block = (regs.w.si << 16) + regs.w.di;
-#endif
 
     *size = heap;
     return ptr;

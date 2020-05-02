@@ -499,13 +499,6 @@ boolean G_Responder(event_t *ev)
 
     if (gamestate == GS_LEVEL)
     {
-#if 0 
-	if (devparm && ev->type == ev_keydown && ev->data1 == ';') 
-	{ 
-	    G_DeathMatchSpawnPlayer (0); 
-	    return true; 
-	}
-#endif
         if (HU_Responder(ev))
             return true; // chat ate the event
         if (ST_Responder(ev))
@@ -987,24 +980,6 @@ void G_DoCompleted(void)
                 players[i].didsecret = true;
             break;
         }
-
-#if 0
-    if ( (gamemap == 8)
-	 && (!commercial) ) 
-    {
-	// victory 
-	gameaction = ga_victory; 
-	return; 
-    } 
-	 
-    if ( (gamemap == 9)
-	 && (!commercial) ) 
-    {
-	// exit secret level 
-	for (i=0 ; i<MAXPLAYERS ; i++) 
-	    players[i].didsecret = true; 
-    }
-#endif
 
     wminfo.didsecret = players[consoleplayer].didsecret;
     wminfo.epsd = gameepisode - 1;

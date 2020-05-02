@@ -641,18 +641,6 @@ P_TraverseIntercepts(traverser_t func,
         if (dist > maxfrac)
             return true; // checked everything in range
 
-#if 0 // UNUSED
-    {
-	// don't check these yet, there may be others inserted
-	in = scan = intercepts;
-	for ( scan = intercepts ; scan<intercept_p ; scan++)
-	    if (scan->frac > maxfrac)
-		*in++ = *scan;
-	intercept_p = in;
-	return false;
-    }
-#endif
-
         if (!func(in))
             return false; // don't bother going farther
 
