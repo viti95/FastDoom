@@ -417,11 +417,6 @@ void S_StartSoundAtVolume(void *origin_p,
 
     mobj_t *origin = (mobj_t *)origin_p;
 
-    // Debug.
-    /*fprintf( stderr,
-  	   "S_StartSoundAtVolume: playing sound %d (%s)\n",
-  	   sfx_id, S_sfx[sfx_id].name );*/
-
     // check for bogus sound #
     if (sfx_id < 1 || sfx_id > NUMSFX)
         I_Error("Bad sfx #: %d", sfx_id);
