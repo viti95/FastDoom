@@ -226,9 +226,6 @@
 #define ST_DETHY 191
 
 //Incoming messages window location
-//UNUSED
-// #define ST_MSGTEXTX	   (viewwindowx)
-// #define ST_MSGTEXTY	   (viewwindowy+viewheight-18)
 #define ST_MSGTEXTX 0
 #define ST_MSGTEXTY 0
 // Dimensions given in characters.

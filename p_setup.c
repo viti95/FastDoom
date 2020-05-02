@@ -634,14 +634,9 @@ void P_SetupLevel(int episode,
     // set up world state
     P_SpawnSpecials();
 
-    // build subsector connect matrix
-    //	UNUSED P_ConnectSubsectors ();
-
     // preload graphics
     if (precache)
         R_PrecacheLevel();
-
-    //printf ("free memory: 0x%x\n", Z_FreeMemory());
 }
 
 //

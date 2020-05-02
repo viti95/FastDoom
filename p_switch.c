@@ -293,11 +293,6 @@ P_UseSpecialLine(mobj_t *thing,
 		EV_VerticalDoor(line, thing);
 		break;
 
-		//UNUSED - Door Slide Open&Close
-		// case 124:
-		// EV_SlidingDoor (line, thing);
-		// break;
-
 		// SWITCHES
 	case 7:
 		// Build Stairs

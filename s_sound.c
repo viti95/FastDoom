@@ -218,10 +218,6 @@ void S_StopChannel(int cnum)
         // stop the sound playing
         if (I_SoundIsPlaying(c->handle))
         {
-#ifdef SAWDEBUG
-            if (c->sfxinfo == &S_sfx[sfx_sawful])
-                fprintf(stderr, "stopped\n");
-#endif
             I_StopSound(c->handle);
         }
 
@@ -541,64 +537,9 @@ void S_StartSoundAtVolume(void *origin_p,
 void S_StartSound(void *origin,
                   int sfx_id)
 {
-#ifdef SAWDEBUG
-    // if (sfx_id == sfx_sawful)
-    // sfx_id = sfx_itemup;
-#endif
-
     S_StartSoundAtVolume(origin, sfx_id, snd_SfxVolume);
-
-    // UNUSED. We had problems, had we not?
-#ifdef SAWDEBUG
-    {
-        int i;
-        int n;
-
-        static mobj_t *last_saw_origins[10] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
-        static int first_saw = 0;
-        static int next_saw = 0;
-
-        if (sfx_id == sfx_sawidl || sfx_id == sfx_sawful || sfx_id == sfx_sawhit)
-        {
-            for (i = first_saw; i != next_saw; i = (i + 1) % 10)
-                if (last_saw_origins[i] != origin)
-                    fprintf(stderr, "old origin 0x%lx != "
-                                    "origin 0x%lx for sfx %d\n",
-                            last_saw_origins[i],
-                            origin,
-                            sfx_id);
-
-            last_saw_origins[next_saw] = origin;
-            next_saw = (next_saw + 1) % 10;
-            if (next_saw == first_saw)
-                first_saw = (first_saw + 1) % 10;
-
-            for (n = i = 0; i < numChannels; i++)
-            {
-                if (channels[i].sfxinfo == &S_sfx[sfx_sawidl] || channels[i].sfxinfo == &S_sfx[sfx_sawful] || channels[i].sfxinfo == &S_sfx[sfx_sawhit])
-                    n++;
-            }
-
-            if (n > 1)
-            {
-                for (i = 0; i < numChannels; i++)
-                {
-                    if (channels[i].sfxinfo == &S_sfx[sfx_sawidl] || channels[i].sfxinfo == &S_sfx[sfx_sawful] || channels[i].sfxinfo == &S_sfx[sfx_sawhit])
-                    {
-                        fprintf(stderr,
-                                "chn: sfxinfo=0x%lx, origin=0x%lx, "
-                                "handle=%d\n",
-                                channels[i].sfxinfo,
-                                channels[i].origin,
-                                channels[i].handle);
-                    }
-                }
-                fprintf(stderr, "\n");
-            }
-        }
-    }
-#endif
 }
+
 //
 // Updates music & sounds
 //

@@ -270,7 +270,6 @@ static cheatseq_t cheat_amap = {cheat_amap_seq, 0};
 static boolean stopped = true;
 
 extern boolean viewactive;
-//extern byte screens[][SCREENWIDTH*SCREENHEIGHT];
 
 void V_MarkRect(int x,
 				int y,
@@ -746,11 +745,6 @@ void AM_doFollowPlayer(void)
 		m_y2 = m_y + m_h;
 		f_oldloc.x = plr->mo->x;
 		f_oldloc.y = plr->mo->y;
-
-		//  m_x = FTOM(MTOF(plr->mo->x - m_w/2));
-		//  m_y = FTOM(MTOF(plr->mo->y - m_h/2));
-		//  m_x = plr->mo->x - m_w/2;
-		//  m_y = plr->mo->y - m_h/2;
 	}
 }
 
@@ -760,7 +754,6 @@ void AM_doFollowPlayer(void)
 void AM_updateLightLev(void)
 {
 	static nexttic = 0;
-	//static int litelevels[] = { 0, 3, 5, 6, 6, 7, 7, 7 };
 	static int litelevels[] = {0, 4, 7, 10, 12, 14, 15, 15};
 	static int litelevelscnt = 0;
 
@@ -796,8 +789,6 @@ void AM_Ticker(void)
 	if (m_paninc.x || m_paninc.y)
 		AM_changeWindowLoc();
 
-	// Update light level
-	// AM_updateLightLev();
 }
 
 //

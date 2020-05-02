@@ -373,9 +373,6 @@ static patch_t **lnames;
 // CODE
 //
 
-// slam background
-// UNUSED static unsigned char *background=0;
-
 void WI_slamBackground(void)
 {
 	memcpy(screens[0], screens[1], SCREENWIDTH * SCREENHEIGHT);
@@ -785,8 +782,6 @@ int WI_fragSum(int playernum)
 
 	// JDC hack - negative frags.
 	frags -= plrs[playernum].frags[playernum];
-	// UNUSED if (frags < 0)
-	// 	frags = 0;
 
 	return frags;
 }
@@ -1493,17 +1488,6 @@ void WI_loadData(void)
 	// background
 	bg = W_CacheLumpName(name, PU_CACHE);
 	V_DrawPatch(0, 0, 1, bg);
-
-	// UNUSED unsigned char *pic = screens[1];
-	// if (commercial)
-	// {
-	// darken the background image
-	// while (pic != screens[1] + SCREENHEIGHT*SCREENWIDTH)
-	// {
-	//   *pic = colormaps[256*25 + *pic];
-	//   pic++;
-	// }
-	//}
 
 	if (commercial)
 	{

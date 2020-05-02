@@ -411,13 +411,11 @@ W_CacheLumpNum(int lump,
     {
         // read the lump in
 
-        //printf ("cache miss on lump %i\n",lump);
         ptr = Z_Malloc(W_LumpLength(lump), tag, &lumpcache[lump]);
         W_ReadLump(lump, lumpcache[lump]);
     }
     else
     {
-        //printf ("cache hit on lump %i\n",lump);
         Z_ChangeTag(lumpcache[lump], tag);
     }
 

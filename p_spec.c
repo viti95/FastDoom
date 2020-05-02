@@ -1271,7 +1271,4 @@ void P_SpawnSpecials(void)
 
 	for (i = 0; i < MAXBUTTONS; i++)
 		memset(&buttonlist[i], 0, sizeof(button_t));
-
-	// UNUSED: no horizonal sliders.
-	//	P_InitSlidingDoorFrames();
 }
