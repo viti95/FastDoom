@@ -16,45 +16,39 @@
 //	Refresh module, BSP traversal and handling.
 //
 
-
 #ifndef __R_BSP__
 #define __R_BSP__
 
+extern seg_t *curline;
+extern side_t *sidedef;
+extern line_t *linedef;
+extern sector_t *frontsector;
+extern sector_t *backsector;
 
-extern seg_t*		curline;
-extern side_t*		sidedef;
-extern line_t*		linedef;
-extern sector_t*	frontsector;
-extern sector_t*	backsector;
+extern int rw_x;
+extern int rw_stopx;
 
-extern int		rw_x;
-extern int		rw_stopx;
-
-extern boolean		segtextured;
+extern boolean segtextured;
 
 // false if the back side is the same plane
-extern boolean		markfloor;		
-extern boolean		markceiling;
+extern boolean markfloor;
+extern boolean markceiling;
 
-extern boolean		skymap;
+extern boolean skymap;
 
-extern drawseg_t	drawsegs[MAXDRAWSEGS];
-extern drawseg_t*	ds_p;
+extern drawseg_t drawsegs[MAXDRAWSEGS];
+extern drawseg_t *ds_p;
 
-extern lighttable_t**	hscalelight;
-extern lighttable_t**	vscalelight;
-extern lighttable_t**	dscalelight;
+extern lighttable_t **hscalelight;
+extern lighttable_t **vscalelight;
+extern lighttable_t **dscalelight;
 
-
-typedef void (*drawfunc_t) (int start, int stop);
-
+typedef void (*drawfunc_t)(int start, int stop);
 
 // BSP?
-void R_ClearClipSegs (void);
-void R_ClearDrawSegs (void);
+void R_ClearClipSegs(void);
+void R_ClearDrawSegs(void);
 
-
-void R_RenderBSPNode (int bspnum);
-
+void R_RenderBSPNode(int bspnum);
 
 #endif

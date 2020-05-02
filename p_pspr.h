@@ -24,7 +24,6 @@
 #include "doomdef.h"
 #include "tables.h"
 
-
 //
 // Needs to include the precompiled
 //  sprite animation tables.
@@ -34,15 +33,12 @@
 // and the Frame Sequence table.
 #include "info.h"
 
-
 //
 // Frame flags:
 // handles maximum brightness (torches, muzzle flare, light sources)
 //
-#define FF_FULLBRIGHT	0x8000	// flag in thing->frame
-#define FF_FRAMEMASK	0x7fff
-
-
+#define FF_FULLBRIGHT 0x8000 // flag in thing->frame
+#define FF_FRAMEMASK 0x7fff
 
 //
 // Overlay psprites are scaled shapes
@@ -59,25 +55,25 @@ typedef enum
 
 typedef struct
 {
-    state_t*	state;	// a NULL state means not active
-    int		tics;
-    fixed_t	sx;
-    fixed_t	sy;
+    state_t *state; // a NULL state means not active
+    int tics;
+    fixed_t sx;
+    fixed_t sy;
 
 } pspdef_t;
 
 // Weapon info: sprite frames, ammunition use.
 typedef struct
 {
-    ammotype_t	ammo;
-    int		upstate;
-    int		downstate;
-    int		readystate;
-    int		atkstate;
-    int		flashstate;
+    ammotype_t ammo;
+    int upstate;
+    int downstate;
+    int readystate;
+    int atkstate;
+    int flashstate;
 
 } weaponinfo_t;
 
-extern  weaponinfo_t    weaponinfo[NUMWEAPONS];
+extern weaponinfo_t weaponinfo[NUMWEAPONS];
 
 #endif

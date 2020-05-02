@@ -30,8 +30,8 @@ Prepared for public release: 03/21/2003 - Charlie Wiederhold, 3D Realms
 #define ASS_VERSION_STRING "1.1"
 
 typedef enum
-   {
-//   ASS_NoSound,
+{
+   //   ASS_NoSound,
    SoundBlaster,
    ProAudioSpectrum,
    SoundMan16,
@@ -46,6 +46,6 @@ typedef enum
    TandySoundSource,
    PC,
    NumSoundCards
-   } soundcardnames;
+} soundcardnames;
 
 #endif

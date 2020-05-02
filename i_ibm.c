@@ -53,8 +53,8 @@ void I_ReadExternDriver(void);
 
 typedef struct
 {
-    unsigned        edi, esi, ebp, reserved, ebx, edx, ecx, eax;
-    unsigned short  flags, es, ds, fs, gs, ip, cs, sp, ss;
+    unsigned edi, esi, ebp, reserved, ebx, edx, ecx, eax;
+    unsigned short flags, es, ds, fs, gs, ip, cs, sp, ss;
 } dpmiregs_t;
 
 extern dpmiregs_t dpmiregs;
@@ -68,65 +68,64 @@ extern int usemouse, usejoystick;
 // Constants
 //
 
-#define SC_INDEX                0x3C4
-#define SC_RESET                0
-#define SC_CLOCK                1
-#define SC_MAPMASK              2
-#define SC_CHARMAP              3
-#define SC_MEMMODE              4
+#define SC_INDEX 0x3C4
+#define SC_RESET 0
+#define SC_CLOCK 1
+#define SC_MAPMASK 2
+#define SC_CHARMAP 3
+#define SC_MEMMODE 4
 
-#define CRTC_INDEX              0x3D4
-#define CRTC_H_TOTAL            0
-#define CRTC_H_DISPEND          1
-#define CRTC_H_BLANK            2
-#define CRTC_H_ENDBLANK         3
-#define CRTC_H_RETRACE          4
-#define CRTC_H_ENDRETRACE       5
-#define CRTC_V_TOTAL            6
-#define CRTC_OVERFLOW           7
-#define CRTC_ROWSCAN            8
-#define CRTC_MAXSCANLINE        9
-#define CRTC_CURSORSTART        10
-#define CRTC_CURSOREND          11
-#define CRTC_STARTHIGH          12
-#define CRTC_STARTLOW           13
-#define CRTC_CURSORHIGH         14
-#define CRTC_CURSORLOW          15
-#define CRTC_V_RETRACE          16
-#define CRTC_V_ENDRETRACE       17
-#define CRTC_V_DISPEND          18
-#define CRTC_OFFSET             19
-#define CRTC_UNDERLINE          20
-#define CRTC_V_BLANK            21
-#define CRTC_V_ENDBLANK         22
-#define CRTC_MODE               23
-#define CRTC_LINECOMPARE        24
+#define CRTC_INDEX 0x3D4
+#define CRTC_H_TOTAL 0
+#define CRTC_H_DISPEND 1
+#define CRTC_H_BLANK 2
+#define CRTC_H_ENDBLANK 3
+#define CRTC_H_RETRACE 4
+#define CRTC_H_ENDRETRACE 5
+#define CRTC_V_TOTAL 6
+#define CRTC_OVERFLOW 7
+#define CRTC_ROWSCAN 8
+#define CRTC_MAXSCANLINE 9
+#define CRTC_CURSORSTART 10
+#define CRTC_CURSOREND 11
+#define CRTC_STARTHIGH 12
+#define CRTC_STARTLOW 13
+#define CRTC_CURSORHIGH 14
+#define CRTC_CURSORLOW 15
+#define CRTC_V_RETRACE 16
+#define CRTC_V_ENDRETRACE 17
+#define CRTC_V_DISPEND 18
+#define CRTC_OFFSET 19
+#define CRTC_UNDERLINE 20
+#define CRTC_V_BLANK 21
+#define CRTC_V_ENDBLANK 22
+#define CRTC_MODE 23
+#define CRTC_LINECOMPARE 24
 
+#define GC_INDEX 0x3CE
+#define GC_SETRESET 0
+#define GC_ENABLESETRESET 1
+#define GC_COLORCOMPARE 2
+#define GC_DATAROTATE 3
+#define GC_READMAP 4
+#define GC_MODE 5
+#define GC_MISCELLANEOUS 6
+#define GC_COLORDONTCARE 7
+#define GC_BITMASK 8
 
-#define GC_INDEX                0x3CE
-#define GC_SETRESET             0
-#define GC_ENABLESETRESET       1
-#define GC_COLORCOMPARE         2
-#define GC_DATAROTATE           3
-#define GC_READMAP              4
-#define GC_MODE                 5
-#define GC_MISCELLANEOUS        6
-#define GC_COLORDONTCARE        7
-#define GC_BITMASK              8
+#define ATR_INDEX 0x3c0
+#define ATR_MODE 16
+#define ATR_OVERSCAN 17
+#define ATR_COLORPLANEENABLE 18
+#define ATR_PELPAN 19
+#define ATR_COLORSELECT 20
 
-#define ATR_INDEX               0x3c0
-#define ATR_MODE                16
-#define ATR_OVERSCAN            17
-#define ATR_COLORPLANEENABLE    18
-#define ATR_PELPAN              19
-#define ATR_COLORSELECT         20
+#define STATUS_REGISTER_1 0x3da
 
-#define STATUS_REGISTER_1       0x3da
-
-#define PEL_WRITE_ADR           0x3c8
-#define PEL_READ_ADR            0x3c7
-#define PEL_DATA                0x3c9
-#define PEL_MASK                0x3c6
+#define PEL_WRITE_ADR 0x3c8
+#define PEL_READ_ADR 0x3c7
+#define PEL_DATA 0x3c9
+#define PEL_MASK 0x3c6
 
 boolean grmode;
 
@@ -140,16 +139,15 @@ boolean I_ReadJoystick(void); // returns false if not connected
 
 #define VBLCOUNTER 34000 // hardware tics to a frame
 
-
 #define TIMERINT 8
 #define KEYBOARDINT 9
 
-#define CRTCOFF (_inbyte(STATUS_REGISTER_1)&1)
-#define CLI     _disable()
-#define STI     _enable()
+#define CRTCOFF (_inbyte(STATUS_REGISTER_1) & 1)
+#define CLI _disable()
+#define STI _enable()
 
-#define _outbyte(x,y) (outp(x,y))
-#define _outhword(x,y) (outpw(x,y))
+#define _outbyte(x, y) (outp(x, y))
+#define _outhword(x, y) (outpw(x, y))
 
 #define _inbyte(x) (inp(x))
 #define _inhword(x) (inpw(x))
@@ -172,17 +170,17 @@ boolean novideo; // if true, stay in text mode for debugging
 byte keyboardque[KBDQUESIZE];
 int kbdtail, kbdhead;
 
-#define KEY_LSHIFT      0xfe
+#define KEY_LSHIFT 0xfe
 
-#define KEY_INS         (0x80+0x52)
-#define KEY_DEL         (0x80+0x53)
-#define KEY_PGUP        (0x80+0x49)
-#define KEY_PGDN        (0x80+0x51)
-#define KEY_HOME        (0x80+0x47)
-#define KEY_END         (0x80+0x4f)
+#define KEY_INS (0x80 + 0x52)
+#define KEY_DEL (0x80 + 0x53)
+#define KEY_PGUP (0x80 + 0x49)
+#define KEY_PGDN (0x80 + 0x51)
+#define KEY_HOME (0x80 + 0x47)
+#define KEY_END (0x80 + 0x4f)
 
-#define SC_RSHIFT       0x36
-#define SC_LSHIFT       0x2a
+#define SC_RSHIFT 0x36
+#define SC_LSHIFT 0x2a
 void DPMIInt(int i);
 void I_WaitVBL(int vbls);
 void I_StartupCyberMan(void);
@@ -191,25 +189,25 @@ void I_ShutdownSound(void);
 void I_ShutdownTimer(void);
 
 byte scantokey[128] =
-{
-//  0           1       2       3       4       5       6       7
-//  8           9       A       B       C       D       E       F
-	0  ,    27,     '1',    '2',    '3',    '4',    '5',    '6',
-	'7',    '8',    '9',    '0',    '-',    '=',    KEY_BACKSPACE, 9, // 0
-	'q',    'w',    'e',    'r',    't',    'y',    'u',    'i',
-	'o',    'p',    '[',    ']',    13 ,    KEY_RCTRL,'a',  's',      // 1
-	'd',    'f',    'g',    'h',    'j',    'k',    'l',    ';',
-	39 ,    '`',    KEY_LSHIFT,92,  'z',    'x',    'c',    'v',      // 2
-	'b',    'n',    'm',    ',',    '.',    '/',    KEY_RSHIFT,'*',
-	KEY_RALT,' ',   0  ,    KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5,   // 3
-	KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10,0  ,    0  , KEY_HOME,
-	KEY_UPARROW,KEY_PGUP,'-',KEY_LEFTARROW,'5',KEY_RIGHTARROW,'+',KEY_END, //4
-	KEY_DOWNARROW,KEY_PGDN,KEY_INS,KEY_DEL,0,0,             0,              KEY_F11,
-	KEY_F12,0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0,        // 5
-	0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0,
-	0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0,        // 6
-	0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0,
-	0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0         // 7
+    {
+        //  0           1       2       3       4       5       6       7
+        //  8           9       A       B       C       D       E       F
+        0, 27, '1', '2', '3', '4', '5', '6',
+        '7', '8', '9', '0', '-', '=', KEY_BACKSPACE, 9, // 0
+        'q', 'w', 'e', 'r', 't', 'y', 'u', 'i',
+        'o', 'p', '[', ']', 13, KEY_RCTRL, 'a', 's', // 1
+        'd', 'f', 'g', 'h', 'j', 'k', 'l', ';',
+        39, '`', KEY_LSHIFT, 92, 'z', 'x', 'c', 'v', // 2
+        'b', 'n', 'm', ',', '.', '/', KEY_RSHIFT, '*',
+        KEY_RALT, ' ', 0, KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, // 3
+        KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10, 0, 0, KEY_HOME,
+        KEY_UPARROW, KEY_PGUP, '-', KEY_LEFTARROW, '5', KEY_RIGHTARROW, '+', KEY_END, //4
+        KEY_DOWNARROW, KEY_PGDN, KEY_INS, KEY_DEL, 0, 0, 0, KEY_F11,
+        KEY_F12, 0, 0, 0, 0, 0, 0, 0, // 5
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, // 6
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0 // 7
 };
 
 typedef struct
@@ -222,7 +220,7 @@ extapi_t *extcontrol;
 
 ticcmd_t emptycmd;
 
-ticcmd_t* I_BaseTiccmd(void)
+ticcmd_t *I_BaseTiccmd(void)
 {
     if (!extcontrol)
     {
@@ -238,7 +236,7 @@ ticcmd_t* I_BaseTiccmd(void)
 //
 int I_GetTime(void)
 {
-	return ticcount;
+    return ticcount;
 }
 
 //
@@ -313,18 +311,18 @@ void I_WaitVBL(int vbls)
 //
 void I_SetPalette(byte *palette)
 {
-	int i;
+    int i;
 
-	if(novideo)
-	{
-		return;
-	}
-	I_WaitVBL(1);
-	_outbyte(PEL_WRITE_ADR, 0);
-	for(i = 0; i < 768; i++)
-	{
-		_outbyte(PEL_DATA, (gammatable[usegamma][*palette++])>>2);
-	}
+    if (novideo)
+    {
+        return;
+    }
+    I_WaitVBL(1);
+    _outbyte(PEL_WRITE_ADR, 0);
+    for (i = 0; i < 768; i++)
+    {
+        _outbyte(PEL_DATA, (gammatable[usegamma][*palette++]) >> 2);
+    }
 }
 
 //
@@ -332,7 +330,6 @@ void I_SetPalette(byte *palette)
 //
 
 byte *pcscreen, *currentscreen, *destscreen, *destview;
-
 
 //
 // I_UpdateBox
@@ -347,8 +344,7 @@ void I_UpdateBox(int x, int y, int w, int h)
     int step;
     byte *dest, *source;
 
-    if (x < 0 || y < 0 || w <= 0 || h <= 0
-     || x + w > SCREENWIDTH || y + h > SCREENHEIGHT)
+    if (x < 0 || y < 0 || w <= 0 || h <= 0 || x + w > SCREENWIDTH || y + h > SCREENHEIGHT)
     {
         I_Error("Bad I_UpdateBox (%i, %i, %i, %i)", x, y, w, h);
     }
@@ -467,24 +463,25 @@ void I_FinishUpdate(void)
         i = ticcount;
         tics = i - lasttic;
         lasttic = i;
-        if (tics > 20) tics = 20;
+        if (tics > 20)
+            tics = 20;
         outpw(SC_INDEX, 0x102);
         for (i = 0; i < tics; i++)
         {
-            destscreen[(SCREENHEIGHT - 1)*SCREENWIDTH / 4 + i] = 0xff;
+            destscreen[(SCREENHEIGHT - 1) * SCREENWIDTH / 4 + i] = 0xff;
         }
         for (; i < 20; i++)
         {
-            destscreen[(SCREENHEIGHT - 1)*SCREENWIDTH / 4 + i] = 0x0;
+            destscreen[(SCREENHEIGHT - 1) * SCREENWIDTH / 4 + i] = 0x0;
         }
     }
     outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
 
     //Next plane
     destscreen += 0x4000;
-    if (destscreen == (byte*)0xac000)
+    if (destscreen == (byte *)0xac000)
     {
-        destscreen = (byte*)0xa0000;
+        destscreen = (byte *)0xa0000;
     }
 }
 
@@ -504,15 +501,15 @@ void I_InitGraphics(void)
     destscreen = (byte *)0xa4000;
 
     outp(SC_INDEX, SC_MEMMODE);
-    outp(SC_INDEX + 1, (inp(SC_INDEX + 1)&~8) | 4);
+    outp(SC_INDEX + 1, (inp(SC_INDEX + 1) & ~8) | 4);
     outp(GC_INDEX, GC_MODE);
-    outp(GC_INDEX + 1, inp(GC_INDEX + 1)&~0x13);
+    outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~0x13);
     outp(GC_INDEX, GC_MISCELLANEOUS);
-    outp(GC_INDEX + 1, inp(GC_INDEX + 1)&~2);
+    outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~2);
     outpw(SC_INDEX, 0xf02);
     memset(pcscreen, 0, 0x10000);
     outp(CRTC_INDEX, CRTC_UNDERLINE);
-    outp(CRTC_INDEX + 1, inp(CRTC_INDEX + 1)&~0x40);
+    outp(CRTC_INDEX + 1, inp(CRTC_INDEX + 1) & ~0x40);
     outp(CRTC_INDEX, CRTC_MODE);
     outp(CRTC_INDEX + 1, inp(CRTC_INDEX + 1) | 0x40);
     outp(GC_INDEX, GC_READMAP);
@@ -539,21 +536,20 @@ void I_ShutdownGraphics(void)
 //
 void I_ReadScreen(byte *scr)
 {
-	int i;
-	int j;
+    int i;
+    int j;
 
-	outp(GC_INDEX, GC_READMAP);
+    outp(GC_INDEX, GC_READMAP);
 
-	for (i = 0; i < 4; i++)
-	{
-		outp(GC_INDEX+1, i);
-		for (j = 0; j < SCREENWIDTH*SCREENHEIGHT/4; j++)
-		{
-			scr[i+j*4] = currentscreen[j];
-		}
-	}
+    for (i = 0; i < 4; i++)
+    {
+        outp(GC_INDEX + 1, i);
+        for (j = 0; j < SCREENWIDTH * SCREENHEIGHT / 4; j++)
+        {
+            scr[i + j * 4] = currentscreen[j];
+        }
+    }
 }
-
 
 //
 // I_StartTic
@@ -565,11 +561,10 @@ void I_ReadScreen(byte *scr)
 // read by the syncronous functions to be converted into events
 //
 
-
-#define SC_UPARROW      0x48
-#define SC_DOWNARROW    0x50
-#define SC_LEFTARROW    0x4b
-#define SC_RIGHTARROW   0x4d
+#define SC_UPARROW 0x48
+#define SC_DOWNARROW 0x50
+#define SC_LEFTARROW 0x4b
+#define SC_RIGHTARROW 0x4d
 
 void I_StartTic(void)
 {
@@ -583,13 +578,13 @@ void I_StartTic(void)
     //
     while (kbdtail < kbdhead)
     {
-        k = keyboardque[kbdtail&(KBDQUESIZE - 1)];
+        k = keyboardque[kbdtail & (KBDQUESIZE - 1)];
         kbdtail++;
 
         // extended keyboard shift key bullshit
         if ((k & 0x7f) == SC_LSHIFT || (k & 0x7f) == SC_RSHIFT)
         {
-            if (keyboardque[(kbdtail - 2)&(KBDQUESIZE - 1)] == 0xe0)
+            if (keyboardque[(kbdtail - 2) & (KBDQUESIZE - 1)] == 0xe0)
             {
                 continue;
             }
@@ -599,13 +594,13 @@ void I_StartTic(void)
 
         if (k == 0xe0)
         {
-            continue;   // special / pause keys
+            continue; // special / pause keys
         }
-        if (keyboardque[(kbdtail - 2)&(KBDQUESIZE - 1)] == 0xe1)
+        if (keyboardque[(kbdtail - 2) & (KBDQUESIZE - 1)] == 0xe1)
         {
-            continue;   // pause key bullshit
+            continue; // pause key bullshit
         }
-        if (k == 0xc5 && keyboardque[(kbdtail - 2)&(KBDQUESIZE - 1)] == 0x9d)
+        if (k == 0xc5 && keyboardque[(kbdtail - 2) & (KBDQUESIZE - 1)] == 0x9d)
         {
             ev.type = ev_keydown;
             ev.data1 = KEY_PAUSE;
@@ -648,7 +643,7 @@ void I_ReadKeys(void)
     {
         while (kbdtail < kbdhead)
         {
-            k = keyboardque[kbdtail&(KBDQUESIZE - 1)];
+            k = keyboardque[kbdtail & (KBDQUESIZE - 1)];
             kbdtail++;
             printf("0x%x\n", k);
             if (k == 1)
@@ -669,7 +664,6 @@ void I_ColorBlack(int r, int g, int b)
 // Timer interrupt
 //
 
-
 //
 // I_TimerISR
 //
@@ -683,7 +677,7 @@ int I_TimerISR(void)
 // Keyboard
 //
 
-void (__interrupt __far *oldkeyboardisr) () = NULL;
+void(__interrupt __far *oldkeyboardisr)() = NULL;
 
 int lastpress;
 
@@ -693,36 +687,33 @@ int lastpress;
 
 void __interrupt I_KeyboardISR(void)
 {
-// Get the scan code
+    // Get the scan code
 
-    keyboardque[kbdhead&(KBDQUESIZE - 1)] = lastpress = _inbyte(0x60);
+    keyboardque[kbdhead & (KBDQUESIZE - 1)] = lastpress = _inbyte(0x60);
     kbdhead++;
 
-// acknowledge the interrupt
+    // acknowledge the interrupt
 
     _outbyte(0x20, 0x20);
 }
-
 
 //
 // I_StartupKeyboard
 //
 void I_StartupKeyboard(void)
 {
-	oldkeyboardisr = _dos_getvect(KEYBOARDINT);
-	_dos_setvect (0x8000 | KEYBOARDINT, I_KeyboardISR);
+    oldkeyboardisr = _dos_getvect(KEYBOARDINT);
+    _dos_setvect(0x8000 | KEYBOARDINT, I_KeyboardISR);
 
     //I_ReadKeys ();
 }
 
-
 void I_ShutdownKeyboard(void)
 {
-	if (oldkeyboardisr)
-		_dos_setvect (KEYBOARDINT, oldkeyboardisr);
-	*(short *)0x41c = *(short *)0x41a;      // clear bios key buffer
+    if (oldkeyboardisr)
+        _dos_setvect(KEYBOARDINT, oldkeyboardisr);
+    *(short *)0x41c = *(short *)0x41a; // clear bios key buffer
 }
-
 
 //
 // Mouse
@@ -730,11 +721,10 @@ void I_ShutdownKeyboard(void)
 
 int I_ResetMouse(void)
 {
-	regs.w.ax = 0; // reset
-	int386 (0x33, &regs, &regs);
-	return regs.w.ax;
+    regs.w.ax = 0; // reset
+    int386(0x33, &regs, &regs);
+    return regs.w.ax;
 }
-
 
 //
 // StartupMouse
@@ -776,7 +766,6 @@ void I_ShutdownMouse(void)
     I_ResetMouse();
 }
 
-
 //
 // I_ReadMouse
 //
@@ -795,11 +784,11 @@ void I_ReadMouse(void)
     ev.type = ev_mouse;
 
     memset(&dpmiregs, 0, sizeof(dpmiregs));
-    dpmiregs.eax = 3;   // read buttons / position
+    dpmiregs.eax = 3; // read buttons / position
     DPMIInt(0x33);
     ev.data1 = dpmiregs.ebx;
 
-    dpmiregs.eax = 11;  // read counters
+    dpmiregs.eax = 11; // read counters
     DPMIInt(0x33);
     ev.data2 = (short)dpmiregs.ecx;
     ev.data3 = -(short)dpmiregs.edx;
@@ -854,7 +843,6 @@ boolean WaitJoyButton(void)
 
     return true;
 }
-
 
 //
 // I_StartupJoystick
@@ -985,7 +973,6 @@ void DPMIFarCall(void)
     int386x(DPMI_INT, &regs, &regs, &segregs);
 }
 
-
 //
 // I_StartupDPMI
 //
@@ -996,17 +983,16 @@ void I_StartupDPMI(void)
     extern char __begtext;
     extern char ___Argc;
 
-//
-// allocate a decent stack for real mode ISRs
-//
-    realstackseg = (int)I_AllocLow (1024) >> 4;
+    //
+    // allocate a decent stack for real mode ISRs
+    //
+    realstackseg = (int)I_AllocLow(1024) >> 4;
 
-//
-// lock the entire program down
-//
+    //
+    // lock the entire program down
+    //
 
-    _dpmi_lockregion (&__begtext, &___Argc - &__begtext);
-
+    _dpmi_lockregion(&__begtext, &___Argc - &__begtext);
 
 //
 // catch divide by 0 exception
@@ -1036,7 +1022,7 @@ void I_StartupDPMI(void)
 // Timer interrupt
 //
 
-void (__interrupt __far *oldtimerisr) ();
+void(__interrupt __far *oldtimerisr)();
 
 //
 // IO_TimerISR
@@ -1047,7 +1033,7 @@ void (__interrupt __far *oldtimerisr) ();
 void __interrupt __far IO_TimerISR(void)
 {
     ticcount++;
-    _outbyte(0x20, 0x20);                            // Ack the interrupt
+    _outbyte(0x20, 0x20); // Ack the interrupt
 }
 
 //
@@ -1061,12 +1047,10 @@ void IO_SetTimer0(int speed)
         I_Error("INT_SetTimer0: %i is a bad value", speed);
     }
 
-    _outbyte(0x43, 0x36);                            // Change timer 0
+    _outbyte(0x43, 0x36); // Change timer 0
     _outbyte(0x40, speed);
     _outbyte(0x40, speed >> 8);
 }
-
-
 
 //
 // IO_StartupTimer
@@ -1083,7 +1067,7 @@ void IO_ShutdownTimer(void)
 {
     if (oldtimerisr)
     {
-        IO_SetTimer0(0);              // back to 18.4 ips
+        IO_SetTimer0(0); // back to 18.4 ips
         _dos_setvect(TIMERINT, oldtimerisr);
     }
 }
@@ -1099,7 +1083,7 @@ void I_Init(void)
     p = M_CheckParm("-control");
     if (p)
     {
-        extcontrol = (extapi_t*)atoi(myargv[p + 1]);
+        extcontrol = (extapi_t *)atoi(myargv[p + 1]);
         printf("Using external control API\n");
     }
     printf("I_StartupDPMI\n");
@@ -1130,7 +1114,7 @@ void I_Shutdown(void)
 //
 // I_Error
 //
-void I_Error (char *error, ...)
+void I_Error(char *error, ...)
 {
     va_list argptr;
 
@@ -1162,7 +1146,7 @@ void I_Quit(void)
         D_QuitNetGame();
     }
     M_SaveDefaults();
-    scr = (byte*)W_CacheLumpName("ENDOOM", PU_CACHE);
+    scr = (byte *)W_CacheLumpName("ENDOOM", PU_CACHE);
     I_ShutdownGraphics();
     I_ShutdownSound();
     I_ShutdownTimer();
@@ -1281,7 +1265,7 @@ void I_BeginRead(void)
     // copy to backup
     src = currentscreen + 184 * 80 + 304 / 4;
     dest = (byte *)0xac000 + 184 * 80 + 288 / 4;
-    for (y = 0; y<16; y++)
+    for (y = 0; y < 16; y++)
     {
         dest[0] = src[0];
         dest[1] = src[1];
@@ -1294,7 +1278,7 @@ void I_BeginRead(void)
     // copy disk over
     dest = currentscreen + 184 * 80 + 304 / 4;
     src = (byte *)0xac000 + 184 * 80 + 304 / 4;
-    for (y = 0; y<16; y++)
+    for (y = 0; y < 16; y++)
     {
         dest[0] = src[0];
         dest[1] = src[1];
@@ -1304,10 +1288,9 @@ void I_BeginRead(void)
         dest += 80;
     }
 
-
     // set write mode 0
     outp(GC_INDEX, GC_MODE);
-    outp(GC_INDEX + 1, inp(GC_INDEX + 1)&~1);
+    outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~1);
 }
 
 // erase disk icon
@@ -1328,11 +1311,10 @@ void I_EndRead(void)
     outp(GC_INDEX, GC_MODE);
     outp(GC_INDEX + 1, inp(GC_INDEX + 1) | 1);
 
-
     // copy disk over
     dest = currentscreen + 184 * 80 + 304 / 4;
     src = (byte *)0xac000 + 184 * 80 + 288 / 4;
-    for (y = 0; y<16; y++)
+    for (y = 0; y < 16; y++)
     {
         dest[0] = src[0];
         dest[1] = src[1];
@@ -1344,15 +1326,13 @@ void I_EndRead(void)
 
     // set write mode 0
     outp(GC_INDEX, GC_MODE);
-    outp(GC_INDEX + 1, inp(GC_INDEX + 1)&~1);
+    outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~1);
 }
-
-
 
 //
 // I_AllocLow
 //
-byte *I_AllocLow (int length)
+byte *I_AllocLow(int length)
 {
     byte *mem;
 
@@ -1384,7 +1364,8 @@ typedef struct
 {
 	char    priv[508];
 } doomdata_t;
-*/ // FUCKED LINES
+*/
+// FUCKED LINES
 
 #define DOOMCOM_ID 0x12345678l
 
@@ -1418,7 +1399,8 @@ typedef struct
 // packet data to be sent
 	doomdata_t      data;
 } doomcom_t;
-*/ // FUCKED LINES
+*/
+// FUCKED LINES
 
 extern doomcom_t *doomcom;
 
@@ -1427,9 +1409,9 @@ extern doomcom_t *doomcom;
 //
 void I_InitNetwork(void)
 {
-	int i;
+    int i;
 
-	i = M_CheckParm ("-net");
+    i = M_CheckParm("-net");
     if (!i)
     {
         //
@@ -1458,7 +1440,6 @@ void I_InitNetwork(void)
     doomcom->episode = startepisode;
     doomcom->map = startmap;
     doomcom->deathmatch = deathmatch;
-
 }
 
 void I_NetCmd(void)

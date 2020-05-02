@@ -16,14 +16,11 @@
 //	Teleportation.
 //
 
-
-
 #include "doomdef.h"
 
 #include "s_sound.h"
 
 #include "p_local.h"
-
 
 // Data.
 #include "sounds.h"
@@ -31,95 +28,88 @@
 // State.
 #include "r_state.h"
 
-
-
 //
 // TELEPORTATION
 //
-int
-EV_Teleport
-( line_t*	line,
-  int		side,
-  mobj_t*	thing )
+int EV_Teleport(line_t *line,
+				int side,
+				mobj_t *thing)
 {
-    int		i;
-    int		tag;
-    mobj_t*	m;
-    mobj_t*	fog;
-    unsigned	an;
-    thinker_t*	thinker;
-    sector_t*	sector;
-    fixed_t	oldx;
-    fixed_t	oldy;
-    fixed_t	oldz;
+	int i;
+	int tag;
+	mobj_t *m;
+	mobj_t *fog;
+	unsigned an;
+	thinker_t *thinker;
+	sector_t *sector;
+	fixed_t oldx;
+	fixed_t oldy;
+	fixed_t oldz;
 
-    // don't teleport missiles
-    if (thing->flags & MF_MISSILE)
-	return 0;		
+	// don't teleport missiles
+	if (thing->flags & MF_MISSILE)
+		return 0;
 
-    // Don't teleport if hit back of line,
-    //  so you can get out of teleporter.
-    if (side == 1)		
-	return 0;	
+	// Don't teleport if hit back of line,
+	//  so you can get out of teleporter.
+	if (side == 1)
+		return 0;
 
-    
-    tag = line->tag;
-    for (i = 0; i < numsectors; i++)
-    {
-	if (sectors[ i ].tag == tag )
+	tag = line->tag;
+	for (i = 0; i < numsectors; i++)
 	{
-	    thinker = thinkercap.next;
-	    for (thinker = thinkercap.next;
-		 thinker != &thinkercap;
-		 thinker = thinker->next)
-	    {
-		// not a mobj
-		if (thinker->function.acp1 != (actionf_p1)P_MobjThinker)
-		    continue;	
+		if (sectors[i].tag == tag)
+		{
+			thinker = thinkercap.next;
+			for (thinker = thinkercap.next;
+				 thinker != &thinkercap;
+				 thinker = thinker->next)
+			{
+				// not a mobj
+				if (thinker->function.acp1 != (actionf_p1)P_MobjThinker)
+					continue;
 
-		m = (mobj_t *)thinker;
-		
-		// not a teleportman
-		if (m->type != MT_TELEPORTMAN )
-		    continue;		
+				m = (mobj_t *)thinker;
 
-		sector = m->subsector->sector;
-		// wrong sector
-		if (sector-sectors != i )
-		    continue;	
+				// not a teleportman
+				if (m->type != MT_TELEPORTMAN)
+					continue;
 
-		oldx = thing->x;
-		oldy = thing->y;
-		oldz = thing->z;
-				
-		if (!P_TeleportMove (thing, m->x, m->y))
-		    return 0;
+				sector = m->subsector->sector;
+				// wrong sector
+				if (sector - sectors != i)
+					continue;
+
+				oldx = thing->x;
+				oldy = thing->y;
+				oldz = thing->z;
+
+				if (!P_TeleportMove(thing, m->x, m->y))
+					return 0;
 #if (EXE_VERSION != EXE_VERSION_FINAL)
-		thing->z = thing->floorz;  //fixme: not needed?
+				thing->z = thing->floorz; //fixme: not needed?
 #endif
-		if (thing->player)
-		    thing->player->viewz = thing->z+thing->player->viewheight;
-				
-		// spawn teleport fog at source and destination
-		fog = P_SpawnMobj (oldx, oldy, oldz, MT_TFOG);
-		S_StartSound (fog, sfx_telept);
-		an = m->angle >> ANGLETOFINESHIFT;
-		fog = P_SpawnMobj (m->x+20*finecosine[an], m->y+20*finesine[an]
-				   , thing->z, MT_TFOG);
+				if (thing->player)
+					thing->player->viewz = thing->z + thing->player->viewheight;
 
-		// emit sound, where?
-		S_StartSound (fog, sfx_telept);
-		
-		// don't move for a bit
-		if (thing->player)
-		    thing->reactiontime = 18;	
+				// spawn teleport fog at source and destination
+				fog = P_SpawnMobj(oldx, oldy, oldz, MT_TFOG);
+				S_StartSound(fog, sfx_telept);
+				an = m->angle >> ANGLETOFINESHIFT;
+				fog = P_SpawnMobj(m->x + 20 * finecosine[an], m->y + 20 * finesine[an], thing->z, MT_TFOG);
 
-		thing->angle = m->angle;
-		thing->momx = thing->momy = thing->momz = 0;
-		return 1;
-	    }	
+				// emit sound, where?
+				S_StartSound(fog, sfx_telept);
+
+				// don't move for a bit
+				if (thing->player)
+					thing->reactiontime = 18;
+
+				thing->angle = m->angle;
+				thing->momx = thing->momy = thing->momz = 0;
+				return 1;
+			}
+		}
 	}
-    }
-    return 0;
+	return 0;
 }
-

@@ -15,14 +15,13 @@
 #ifndef _DMX_H_
 #define _DMX_H_
 
-
 int AL_DetectFM(void);
 int MPU_Init(int addr);
 int GUS_Init(void);
 void GUS_Shutdown(void);
 
 void TSM_Install(int rate);
-int TSM_NewService(int(*function)(void), int rate, int unk1, int unk2);
+int TSM_NewService(int (*function)(void), int rate, int unk1, int unk2);
 void TSM_DelService(int unk1);
 void TSM_Remove(void);
 void MUS_PauseSong(int handle);
@@ -37,7 +36,7 @@ int MUS_PlaySong(int handle, int volume);
 int SFX_PlayPatch(void *vdata, int pitch, int sep, int vol, int unk1, int unk2);
 void SFX_StopPatch(int handle);
 int SFX_Playing(int handle);
-void SFX_SetOrigin(int handle, int  pitch, int sep, int vol);
+void SFX_SetOrigin(int handle, int pitch, int sep, int vol);
 int GF1_Detect(void);
 void GF1_SetMap(void *data, int len);
 int SB_Detect(int *port, int *irq, int *dma, int *unk);
@@ -51,7 +50,6 @@ void DMX_DeInit(void);
 void WAV_PlayMode(int channels, int samplerate);
 int CODEC_Detect(int *a, int *b);
 int ENS_Detect(void);
-
 
 #define AHW_PC_SPEAKER 1
 #define AHW_ADLIB 2

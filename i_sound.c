@@ -63,18 +63,17 @@ void I_ShutdownTimer(void)
 //
 // Sound header & data
 //
-const char snd_prefixen[]
-= { 'P', 'P', 'A', 'S', 'S', 'S', 'M', 'M', 'M', 'S', 'S', 'S' };
+const char snd_prefixen[] = {'P', 'P', 'A', 'S', 'S', 'S', 'M', 'M', 'M', 'S', 'S', 'S'};
 
 int dmxCodes[NUM_SCARDS]; // the dmx code for a given card
 
 int snd_SBport, snd_SBirq, snd_SBdma; // sound blaster variables
-int snd_Mport; // midi variables
+int snd_Mport;                        // midi variables
 
 int snd_MusicVolume; // maximum volume for music
-int snd_SfxVolume; // maximum volume for sound
+int snd_SfxVolume;   // maximum volume for sound
 
-int snd_SfxDevice; // current sfx card # (index to dmxCodes)
+int snd_SfxDevice;   // current sfx card # (index to dmxCodes)
 int snd_MusicDevice; // current music card # (index to dmxCodes)
 int snd_DesiredSfxDevice;
 int snd_DesiredMusicDevice;
@@ -108,7 +107,8 @@ int I_RegisterSong(void *data)
 {
     int rc = MUS_RegisterSong(data);
 #ifdef SNDDEBUG
-    if (rc<0) printf("MUS_Reg() returned %d\n", rc);
+    if (rc < 0)
+        printf("MUS_Reg() returned %d\n", rc);
 #endif
     return rc;
 }
@@ -117,7 +117,8 @@ void I_UnRegisterSong(int handle)
 {
     int rc = MUS_UnregisterSong(handle);
 #ifdef SNDDEBUG
-    if (rc < 0) printf("MUS_Unreg() returned %d\n", rc);
+    if (rc < 0)
+        printf("MUS_Unreg() returned %d\n", rc);
 #endif
 }
 
@@ -125,7 +126,8 @@ int I_QrySongPlaying(int handle)
 {
     int rc = MUS_QrySongPlaying(handle);
 #ifdef SNDDEBUG
-    if (rc < 0) printf("MUS_QrySP() returned %d\n", rc);
+    if (rc < 0)
+        printf("MUS_QrySP() returned %d\n", rc);
 #endif
     return rc;
 }
@@ -137,13 +139,15 @@ void I_StopSong(int handle)
     int rc;
     rc = MUS_StopSong(handle);
 #ifdef SNDDEBUG
-    if (rc < 0) printf("MUS_StopSong() returned %d\n", rc);
+    if (rc < 0)
+        printf("MUS_StopSong() returned %d\n", rc);
 #endif
     // Fucking kluge pause
     {
         int s;
         extern volatile int ticcount;
-        for (s = ticcount; ticcount - s < 10; );
+        for (s = ticcount; ticcount - s < 10;)
+            ;
     }
 }
 
@@ -152,11 +156,13 @@ void I_PlaySong(int handle, boolean looping)
     int rc;
     rc = MUS_ChainSong(handle, looping ? handle : -1);
 #ifdef SNDDEBUG
-    if (rc < 0) printf("MUS_ChainSong() returned %d\n", rc);
+    if (rc < 0)
+        printf("MUS_ChainSong() returned %d\n", rc);
 #endif
     rc = MUS_PlaySong(handle, snd_MusicVolume);
 #ifdef SNDDEBUG
-    if (rc < 0) printf("MUS_PlaySong() returned %d\n", rc);
+    if (rc < 0)
+        printf("MUS_PlaySong() returned %d\n", rc);
 #endif
 }
 
@@ -164,7 +170,7 @@ void I_PlaySong(int handle, boolean looping)
 // Retrieve the raw data lump index
 //  for a given SFX name.
 //
-int I_GetSfxLumpNum(sfxinfo_t* sfx)
+int I_GetSfxLumpNum(sfxinfo_t *sfx)
 {
     char namebuf[9];
 
@@ -179,13 +185,7 @@ int I_GetSfxLumpNum(sfxinfo_t* sfx)
 int I_StartSound(int id, void *data, int vol, int sep, int pitch, int priority)
 {
     // hacks out certain PC sounds
-    if (snd_SfxDevice == snd_PC
-    && (data == S_sfx[sfx_posact].data
-     || data == S_sfx[sfx_bgact].data
-     || data == S_sfx[sfx_dmact].data
-     || data == S_sfx[sfx_dmpain].data
-     || data == S_sfx[sfx_popain].data
-     || data == S_sfx[sfx_sawidl].data))
+    if (snd_SfxDevice == snd_PC && (data == S_sfx[sfx_posact].data || data == S_sfx[sfx_bgact].data || data == S_sfx[sfx_dmact].data || data == S_sfx[sfx_dmpain].data || data == S_sfx[sfx_popain].data || data == S_sfx[sfx_sawidl].data))
     {
         return -1;
     }
@@ -308,7 +308,6 @@ void I_sndArbitrateCards(void)
             }
             GF1_SetMap(W_CacheLumpNum(dmxlump, PU_CACHE), lumpinfo[dmxlump].size);
         }
-
     }
     if (sb)
     {
@@ -391,7 +390,7 @@ void I_StartupSound(void)
     dmxCodes[snd_AWE] = AHW_AWE32;
     dmxCodes[snd_ENSONIQ] = AHW_ENSONIQ;
     dmxCodes[snd_CODEC] = AHW_CODEC;
-    
+
     //
     // inits sound library timer stuff
     //
@@ -433,7 +432,8 @@ void I_ShutdownSound(void)
     extern volatile int ticcount;
     S_PauseSound();
     s = ticcount + 30;
-    while (s != ticcount);
+    while (s != ticcount)
+        ;
     DMX_DeInit();
 }
 

@@ -23,4 +23,3 @@
 int mus2mid(FILE *musinput, FILE *midioutput);
 
 #endif /* #ifndef MUS2MID_H */
-

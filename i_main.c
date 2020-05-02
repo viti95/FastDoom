@@ -22,15 +22,13 @@
 #include "m_misc.h"
 #include "d_main.h"
 
-int
-main
-( int		argc,
-  char**	argv ) 
-{ 
-    myargc = argc; 
-    myargv = argv; 
- 
-    D_DoomMain (); 
+int main(int argc,
+         char **argv)
+{
+    myargc = argc;
+    myargv = argv;
+
+    D_DoomMain();
 
     return 0;
-} 
+}

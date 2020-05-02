@@ -19,49 +19,44 @@
 #ifndef __DUTILS__
 #define __DUTILS__
 
-typedef struct lnode_s {
-    void* value;
-    struct lnode_s* prev;
-    struct lnode_s* next;
+typedef struct lnode_s
+{
+    void *value;
+    struct lnode_s *prev;
+    struct lnode_s *next;
 } lnode_t;
 
-typedef struct {
-    lnode_t* start;
-    lnode_t* end;
+typedef struct
+{
+    lnode_t *start;
+    lnode_t *end;
 } list_t;
 
-list_t* dll_NewList(void);
-lnode_t* dll_AddEndNode(list_t* list, void* value);
-lnode_t* dll_AddStartNode(list_t* list, void* value);
-void* dll_DelNode(list_t* list, lnode_t* node);
-void* dll_DelEndNode(list_t* list);
-void* dll_DelStartNode(list_t* list);
+list_t *dll_NewList(void);
+lnode_t *dll_AddEndNode(list_t *list, void *value);
+lnode_t *dll_AddStartNode(list_t *list, void *value);
+void *dll_DelNode(list_t *list, lnode_t *node);
+void *dll_DelEndNode(list_t *list);
+void *dll_DelStartNode(list_t *list);
 
 //
 // CHEAT SEQUENCE PACKAGE
 //
 
 #define SCRAMBLE(a) \
-((((a)&1)<<7) + (((a)&2)<<5) + ((a)&4) + (((a)&8)<<1) \
- + (((a)&16)>>1) + ((a)&32) + (((a)&64)>>5) + (((a)&128)>>7))
+    ((((a)&1) << 7) + (((a)&2) << 5) + ((a)&4) + (((a)&8) << 1) + (((a)&16) >> 1) + ((a)&32) + (((a)&64) >> 5) + (((a)&128) >> 7))
 
 typedef struct
 {
-    unsigned char*	sequence;
-    unsigned char*	p;
-    
+    unsigned char *sequence;
+    unsigned char *p;
+
 } cheatseq_t;
 
-int
-cht_CheckCheat
-( cheatseq_t*		cht,
-  char			key );
+int cht_CheckCheat(cheatseq_t *cht,
+                   char key);
 
-
-void
-cht_GetParam
-( cheatseq_t*		cht,
-  char*			buffer );
-
+void cht_GetParam(cheatseq_t *cht,
+                  char *buffer);
 
 #endif

@@ -22,8 +22,7 @@
 #include "d_englsh.h"
 
 // Misc. other strings.
-#define SAVEGAMENAME	"doomsav"
-
+#define SAVEGAMENAME "doomsav"
 
 //
 // File locations,
@@ -33,14 +32,12 @@
 #define DEVMAPS "f:/doom/data_se/"
 #define DEVDATA "c:/localid/"
 
-
 // Not done in french?
 
 // QuitDOOM messages
-#define NUM_QUITMESSAGES   8
+#define NUM_QUITMESSAGES 8
 
 extern char endmsg1[NUM_QUITMESSAGES][80];
 extern char endmsg2[NUM_QUITMESSAGES][80];
-
 
 #endif

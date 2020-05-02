@@ -17,7 +17,6 @@
 //	System specific interface stuff.
 //
 
-
 #ifndef __I_SYSTEM__
 #define __I_SYSTEM__
 
@@ -25,20 +24,17 @@
 #include "d_event.h"
 #include "sounds.h"
 
-
 // Called by DoomMain.
-void I_Init (void);
+void I_Init(void);
 
 // Called by startup code
 // to get the ammount of memory to malloc
 // for the zone management.
-byte*	I_ZoneBase (int *size);
-
+byte *I_ZoneBase(int *size);
 
 // Called by D_DoomLoop,
 // returns current time in tics.
-int I_GetTime (void);
-
+int I_GetTime(void);
 
 //
 // Called by D_DoomLoop,
@@ -48,15 +44,14 @@ int I_GetTime (void);
 // are performed here (joystick reading).
 // Can call D_PostEvent.
 //
-void I_StartFrame (void);
-
+void I_StartFrame(void);
 
 //
 // Called by D_DoomLoop,
 // called before processing each tic in a frame.
 // Quick syncronous operations are performed here.
 // Can call D_PostEvent.
-void I_StartTic (void);
+void I_StartTic(void);
 
 // Asynchronous interrupt functions should maintain private queues
 // that are read by the synchronous functions
@@ -66,22 +61,19 @@ void I_StartTic (void);
 // or calls a loadable driver to build it.
 // This ticcmd will then be modified by the gameloop
 // for normal input.
-ticcmd_t* I_BaseTiccmd (void);
-
+ticcmd_t *I_BaseTiccmd(void);
 
 // Called by M_Responder when quit is selected.
 // Clean exit, displays sell blurb.
-void I_Quit (void);
-
+void I_Quit(void);
 
 // Allocates from low memory under dos,
 // just mallocs under unix
-byte* I_AllocLow (int length);
+byte *I_AllocLow(int length);
 
-void I_Tactile (int on, int off, int total);
+void I_Tactile(int on, int off, int total);
 
-
-void I_Error (char *error, ...);
+void I_Error(char *error, ...);
 
 void I_BeginRead(void);
 void I_EndRead(void);
@@ -119,7 +111,7 @@ void I_ResumeSong(int handle);
 //  SFX I/O
 //
 
-int I_GetSfxLumpNum(sfxinfo_t* sfx);
+int I_GetSfxLumpNum(sfxinfo_t *sfx);
 // called by routines which wish to play a sound effect at some later
 // time.  Pass it the lump name of a sound effect WITHOUT the sfx
 // prefix.  This means the maximum name length is 7 letters/digits.
@@ -127,7 +119,7 @@ int I_GetSfxLumpNum(sfxinfo_t* sfx);
 // They refer to the card type.  The routine will cache in the
 // appropriate sound effect when it is played.
 
-int I_StartSound (int id, void *data, int vol, int sep, int pitch, int priority);
+int I_StartSound(int id, void *data, int vol, int sep, int pitch, int priority);
 // Starts a sound in a particular sound channel
 
 void I_UpdateSoundParams(int handle, int vol, int sep, int pitch);
@@ -146,11 +138,10 @@ void I_SetChannels(int channels);
 // and sets up the video mode
 void I_InitGraphics(void);
 
-
 void I_ShutdownGraphics(void);
 
 // Takes full 8 bit values.
-void I_SetPalette(byte* palette);
+void I_SetPalette(byte *palette);
 
 void I_UpdateNoBlit(void);
 void I_FinishUpdate(void);
@@ -158,11 +149,10 @@ void I_FinishUpdate(void);
 // Wait for vertical retrace or pause a bit.
 void I_WaitVBL(int count);
 
-void I_ReadScreen(byte* scr);
+void I_ReadScreen(byte *scr);
 
 void I_BeginRead(void);
 void I_EndRead(void);
-
 
 // Called by D_DoomMain.
 void I_InitNetwork(void);

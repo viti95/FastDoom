@@ -40,34 +40,34 @@
 // normal speed to help aiming.
 //
 
-#define BT_ATTACK       1
-#define BT_USE          2
-#define BT_CHANGE       4           // if true, the next 3 bits hold weapon num
-#define BT_WEAPONMASK   (8+16+32)
-#define BT_WEAPONSHIFT  3
-
-
+#define BT_ATTACK 1
+#define BT_USE 2
+#define BT_CHANGE 4 // if true, the next 3 bits hold weapon num
+#define BT_WEAPONMASK (8 + 16 + 32)
+#define BT_WEAPONSHIFT 3
 
 //
 // CyberMan detection and usage info
 //
-#define DPMI_INT        0x31
-#define MOUSE_INT       0x33
+#define DPMI_INT 0x31
+#define MOUSE_INT 0x33
 
-#define DOSMEMSIZE      64          // enough for any SWIFT structure
+#define DOSMEMSIZE 64 // enough for any SWIFT structure
 
-typedef struct {
-    short   x;
-    short   y;
-    short   z;
-    short   pitch;
-    short   roll;
-    short   yaw;
-    short   buttons;
+typedef struct
+{
+    short x;
+    short y;
+    short z;
+    short pitch;
+    short roll;
+    short yaw;
+    short buttons;
 } SWIFT_3DStatus;
 
 // DPMI real mode interrupt structure
-static struct rminfo {
+static struct rminfo
+{
     long EDI;
     long ESI;
     long EBP;
@@ -77,30 +77,29 @@ static struct rminfo {
     long ECX;
     long EAX;
     short flags;
-    short ES,DS,FS,GS,IP,CS,SP,SS;
+    short ES, DS, FS, GS, IP, CS, SP, SS;
 } RMI;
 
-typedef struct {
-    unsigned char   deviceType;
-    unsigned char   majorVersion;
-    unsigned char   minorVersion;
-    unsigned char   absRelFlags;
-    unsigned char   centeringFlags;
-    unsigned char   reserved[5];
+typedef struct
+{
+    unsigned char deviceType;
+    unsigned char majorVersion;
+    unsigned char minorVersion;
+    unsigned char absRelFlags;
+    unsigned char centeringFlags;
+    unsigned char reserved[5];
 } StaticDeviceData;
 
 // values for deviceType:
-#define DEVTYPE_CYBERMAN        1
+#define DEVTYPE_CYBERMAN 1
 
 short selector;
 unsigned short segment; // segment of DOS memory block
 SWIFT_3DStatus *cyberstat;
-int isCyberPresent;         // is CyberMan present?
-
+int isCyberPresent; // is CyberMan present?
 
 static union REGS regs;
 static struct SREGS sregs;
-
 
 extern int mousepresent;
 
@@ -123,11 +122,11 @@ void I_StartupCyberMan(void)
 
     // Use DPMI call 300h to issue mouse interrupt
     memset(&RMI, 0, sizeof(RMI));
-    RMI.EAX = 0x53C1;            // SWIFT: Get Static Device Data
+    RMI.EAX = 0x53C1; // SWIFT: Get Static Device Data
     RMI.ES = segment;
     RMI.EDX = 0;
     memset(&sregs, 0, sizeof(sregs));
-    regs.w.ax = 0x0300;          // DPMI: simulate interrupt
+    regs.w.ax = 0x0300; // DPMI: simulate interrupt
     regs.w.bx = MOUSE_INT;
     regs.w.cx = 0;
     regs.x.edi = FP_OFF(&RMI);
@@ -138,7 +137,7 @@ void I_StartupCyberMan(void)
     {
         // SWIFT functions not present
         printf("CyberMan: Wrong mouse driver - no SWIFT support (AX=%04x).\n",
-                (unsigned)(short)RMI.EAX);
+               (unsigned)(short)RMI.EAX);
     }
     else
     {
@@ -165,8 +164,6 @@ void I_StartupCyberMan(void)
     }
 }
 
-
-
 //
 // I_ReadCyberCmds
 //
@@ -179,11 +176,11 @@ void I_ReadCyberCmd(ticcmd_t *cmd)
 
     // Use DPMI call 300h to issue mouse interrupt
     memset(&RMI, 0, sizeof(RMI));
-    RMI.EAX = 0x5301;            // SWIFT: Get Position and Buttons
+    RMI.EAX = 0x5301; // SWIFT: Get Position and Buttons
     RMI.ES = segment;
     RMI.EDX = 0;
     memset(&sregs, 0, sizeof(sregs));
-    regs.w.ax = 0x0300;          // DPMI: simulate interrupt
+    regs.w.ax = 0x0300; // DPMI: simulate interrupt
     regs.w.bx = MOUSE_INT;
     regs.w.cx = 0;
     regs.x.edi = FP_OFF(&RMI);
@@ -243,7 +240,6 @@ void I_ReadCyberCmd(ticcmd_t *cmd)
     }
 }
 
-
 void I_Tactile(int on, int off, int total)
 {
     if (!isCyberPresent)
@@ -268,11 +264,11 @@ void I_Tactile(int on, int off, int total)
     }
 
     memset(&RMI, 0, sizeof(RMI));
-    RMI.EAX = 0x5330;            // SWIFT: Get Position and Buttons
+    RMI.EAX = 0x5330; // SWIFT: Get Position and Buttons
     RMI.EBX = on * 256 + off;
     RMI.ECX = total;
     memset(&sregs, 0, sizeof(sregs));
-    regs.w.ax = 0x0300;          // DPMI: simulate interrupt
+    regs.w.ax = 0x0300; // DPMI: simulate interrupt
     regs.w.bx = MOUSE_INT;
     regs.w.cx = 0;
     regs.x.edi = FP_OFF(&RMI);
