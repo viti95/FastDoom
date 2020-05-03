@@ -1515,14 +1515,16 @@ boolean G_CheckDemoStatus(void)
 {
     int endtime;
     int realtics;
-    float fps;
+    int fps;
 
     if (timingdemo)
     {
         endtime = I_GetTime();
         realtics = endtime - starttime;
-        fps = (float)gametic * 35.0f / (float)realtics;
-        I_Error("Timed %i gametics in %i realtics. FPS: %f", gametic, realtics, fps);
+
+        fps = FixedMul(FixedDiv(gametic << FRACBITS, realtics << FRACBITS), 35 << FRACBITS);
+        
+        I_Error("Timed %i gametics in %i realtics. FPS: %i.%i", gametic, realtics, fps >> FRACBITS, ((fps % 65536)*1000)/65536);
     }
 
     if (demoplayback)
