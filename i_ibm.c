@@ -285,7 +285,6 @@ void I_SetPalette(byte *palette)
     {
         return;
     }
-    I_WaitVBL(1);
     _outbyte(PEL_WRITE_ADR, 0);
     for (i = 0; i < 768; i++)
     {
