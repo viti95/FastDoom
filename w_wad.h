@@ -48,6 +48,8 @@ typedef struct
     int handle;
     int position;
     int size;
+    // Used for hash table lookups
+    int next;
 } lumpinfo_t;
 
 extern void **lumpcache;
@@ -65,5 +67,7 @@ void W_ReadLump(int lump, void *dest);
 
 void *W_CacheLumpNum(int lump, int tag);
 void *W_CacheLumpName(char *name, int tag);
+
+void W_GenerateHashTable(void);
 
 #endif

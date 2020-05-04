@@ -1126,6 +1126,11 @@ void D_DoomMain(void)
     D_RedrawTitle();
     ST_Init();
 
+    // Generate the WAD hash table.  Speed things up a bit.
+    printf("W_GenerateHashTable: Hashing lumps");
+    D_RedrawTitle();
+    W_GenerateHashTable();
+
     // check for a driver that wants intermission stats
     p = M_CheckParm("-statcopy");
     if (p && p < myargc - 1)

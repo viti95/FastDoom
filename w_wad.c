@@ -40,6 +40,9 @@
 lumpinfo_t *lumpinfo;
 int numlumps;
 
+// Hash table for fast lookups
+int *lumphash;
+
 void **lumpcache;
 
 void ExtractFileBase(char *path,
@@ -282,6 +285,22 @@ int W_NumLumps(void)
     return numlumps;
 }
 
+// Hash function used for lump names.
+unsigned int W_LumpNameHash(char *s)
+{
+  unsigned hash;
+  (void) ((hash =        toupper(s[0]), s[1]) &&
+          (hash = hash*3+toupper(s[1]), s[2]) &&
+          (hash = hash*2+toupper(s[2]), s[3]) &&
+          (hash = hash*2+toupper(s[3]), s[4]) &&
+          (hash = hash*2+toupper(s[4]), s[5]) &&
+          (hash = hash*2+toupper(s[5]), s[6]) &&
+          (hash = hash*2+toupper(s[6]),
+           hash = hash*2+toupper(s[7]))
+         );
+  return hash;
+}
+
 //
 // W_CheckNumForName
 // Returns -1 if name not found.
@@ -289,42 +308,46 @@ int W_NumLumps(void)
 
 int W_CheckNumForName(char *name)
 {
-    union {
-        char s[9];
-        int x[2];
+    int i;
 
-    } name8;
+    // Do we have a hash table yet?
 
-    int v1;
-    int v2;
-    lumpinfo_t *lump_p;
-
-    // make the name into two integers for easy compares
-    strncpy(name8.s, name, 8);
-
-    // in case the name was a fill 8 chars
-    name8.s[8] = 0;
-
-    // case insensitive
-    strupr(name8.s);
-
-    v1 = name8.x[0];
-    v2 = name8.x[1];
-
-    // scan backwards so patch lump files take precedence
-    lump_p = lumpinfo + numlumps;
-
-    while (lump_p-- != lumpinfo)
+    if (lumphash != NULL)
     {
-        if (*(int *)lump_p->name == v1 && *(int *)&lump_p->name[4] == v2)
+        int hash;
+
+        // We do! Excellent.
+
+        hash = W_LumpNameHash(name) % numlumps;
+
+        for (i = lumphash[hash]; i != -1; i = lumpinfo[i].next)
         {
-            return lump_p - lumpinfo;
+            if (!strncasecmp(lumpinfo[i].name, name, 8))
+            {
+                return i;
+            }
+        }
+    }
+    else
+    {
+        // We don't have a hash table generate yet. Linear search :-(
+        //
+        // scan backwards so patch lump files take precedence
+
+        for (i = numlumps - 1; i >= 0; --i)
+        {
+            if (!strncasecmp(lumpinfo[i].name, name, 8))
+            {
+                return i;
+            }
         }
     }
 
     // TFB. Not found.
+
     return -1;
 }
+
 
 //
 // W_GetNumForName
@@ -432,62 +455,40 @@ W_CacheLumpName(char *name,
     return W_CacheLumpNum(W_GetNumForName(name), tag);
 }
 
-//
-// W_Profile
-//
-int info[2500][10];
-int profilecount;
+// Generate a hash table for fast lookups
 
-void W_Profile(void)
+void W_GenerateHashTable(void)
 {
     int i;
-    memblock_t *block;
-    void *ptr;
-    char ch;
-    FILE *f;
-    int j;
-    char name[9];
 
-    for (i = 0; i < numlumps; i++)
+    // Free the old hash table, if there is one:
+    if (lumphash != NULL)
     {
-        ptr = lumpcache[i];
-        if (!ptr)
-        {
-            ch = ' ';
-            continue;
-        }
-        else
-        {
-            block = (memblock_t *)((byte *)ptr - sizeof(memblock_t));
-            if (block->tag < PU_PURGELEVEL)
-                ch = 'S';
-            else
-                ch = 'P';
-        }
-        info[i][profilecount] = ch;
+        Z_Free(lumphash);
     }
-    profilecount++;
 
-    f = fopen("waddump.txt", "w");
-    name[8] = 0;
-
-    for (i = 0; i < numlumps; i++)
+    // Generate hash table
+    if (numlumps > 0)
     {
-        memcpy(name, lumpinfo[i].name, 8);
+        lumphash = Z_Malloc(sizeof(int) * numlumps, PU_STATIC, NULL);
 
-        for (j = 0; j < 8; j++)
-            if (!name[j])
-                break;
+        for (i = 0; i < numlumps; ++i)
+        {
+            lumphash[i] = -1;
+        }
 
-        for (; j < 8; j++)
-            name[j] = ' ';
+        for (i = 0; i < numlumps; ++i)
+        {
+            unsigned int hash;
 
-        fprintf(f, "%s ", name);
+            hash = W_LumpNameHash(lumpinfo[i].name) % numlumps;
 
-        for (j = 0; j < profilecount; j++)
-            fprintf(f, "    %c", info[i][j]);
+            // Hook into the hash table
 
-        fprintf(f, "\n");
+            lumpinfo[i].next = lumphash[hash];
+            lumphash[hash] = i;
+        }
     }
-    fclose(f);
+
+    // All done!
 }
