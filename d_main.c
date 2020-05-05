@@ -109,7 +109,6 @@ boolean commercial;
 boolean plutonia;
 boolean tnt;
 #endif
-boolean french;
 
 char wadfile[1024];     // primary wad file
 char mapdir[1024];      // directory of development maps

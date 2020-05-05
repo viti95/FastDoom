@@ -1032,15 +1032,7 @@ void M_QuitDOOM(int choice)
     //  or one at random, between 1 and maximum number.
     if (commercial)
     {
-        if (french)
-        {
-            sprintf(endstring, "%s\n\n" DOSY, endmsg2[0]);
-        }
-        else
-        {
-            sprintf(endstring, "%s\n\n" DOSY,
-                    endmsg2[(gametic >> 2) % NUM_QUITMESSAGES]);
-        }
+        sprintf(endstring, "%s\n\n" DOSY, endmsg2[(gametic >> 2) % NUM_QUITMESSAGES]);
     }
     else
     {

@@ -265,48 +265,6 @@ char *mapnamest[] = // TNT WAD map names.
 
 const char *shiftxform;
 
-const char french_shiftxform[] =
-    {
-        0,
-        1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-        11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-        21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
-        31,
-        ' ', '!', '"', '#', '$', '%', '&',
-        '"', // shift-'
-        '(', ')', '*', '+',
-        '?', // shift-,
-        '_', // shift--
-        '>', // shift-.
-        '?', // shift-/
-        '0', // shift-0
-        '1', // shift-1
-        '2', // shift-2
-        '3', // shift-3
-        '4', // shift-4
-        '5', // shift-5
-        '6', // shift-6
-        '7', // shift-7
-        '8', // shift-8
-        '9', // shift-9
-        '/',
-        '.', // shift-;
-        '<',
-        '+', // shift-=
-        '>', '?', '@',
-        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
-        'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-        '[', // shift-[
-        '!', // shift-backslash - OH MY GOD DOES WATCOM SUCK
-        ']', // shift-]
-        '"', '_',
-        '\'', // shift-`
-        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
-        'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-        '{', '|', '}', '~', 127
-
-};
-
 const char english_shiftxform[] =
     {
 
@@ -348,25 +306,6 @@ const char english_shiftxform[] =
         'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
         '{', '|', '}', '~', 127};
 
-char frenchKeyMap[128] =
-    {
-        0,
-        1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-        11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-        21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
-        31,
-        ' ', '!', '"', '#', '$', '%', '&', '%', '(', ')', '*', '+', ';', '-', ':', '!',
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', 'M', '<', '=', '>', '?',
-        '@', 'Q', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', ',', 'N', 'O',
-        'P', 'A', 'R', 'S', 'T', 'U', 'V', 'Z', 'X', 'Y', 'W', '^', '\\', '$', '^', '_',
-        '@', 'Q', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', ',', 'N', 'O',
-        'P', 'A', 'R', 'S', 'T', 'U', 'V', 'Z', 'X', 'Y', 'W', '^', '\\', '$', '^', 127};
-
-char ForeignTranslation(unsigned char ch)
-{
-    return ch < 128 ? frenchKeyMap[ch] : ch;
-}
-
 void HU_Init(void)
 {
 
@@ -374,10 +313,7 @@ void HU_Init(void)
     int j;
     char buffer[9];
 
-    if (french)
-        shiftxform = french_shiftxform;
-    else
-        shiftxform = english_shiftxform;
+    shiftxform = english_shiftxform;
 
     // load the heads-up font
     j = HU_FONTSTART;
@@ -695,8 +631,6 @@ boolean HU_Responder(event_t *ev)
         }
         else
         {
-            if (french)
-                c = ForeignTranslation(c);
             if (shiftdown || (c >= 'a' && c <= 'z'))
                 c = shiftxform[c];
             eatkey = HUlib_keyInIText(&w_chat, c);

@@ -32,8 +32,6 @@
 #define DEVMAPS "f:/doom/data_se/"
 #define DEVDATA "c:/localid/"
 
-// Not done in french?
-
 // QuitDOOM messages
 #define NUM_QUITMESSAGES 8
 

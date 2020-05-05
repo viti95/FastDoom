@@ -65,7 +65,6 @@ extern boolean registered;
 extern boolean commercial;
 extern boolean plutonia;
 extern boolean tnt;
-extern boolean french;
 
 // Nightmare mode flag, single player.
 extern boolean respawnmonsters;
