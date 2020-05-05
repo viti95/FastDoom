@@ -452,13 +452,6 @@ void R_Subsector(int num)
     seg_t *line;
     subsector_t *sub;
 
-#ifdef RANGECHECK
-    if (num >= numsubsectors)
-        I_Error("R_Subsector: ss %i with numss = %i",
-                num,
-                numsubsectors);
-#endif
-
     sscount++;
     sub = &subsectors[num];
     frontsector = sub->sector;

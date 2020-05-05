@@ -136,13 +136,6 @@ boolean P_CrossSubsector(int num)
     fixed_t frac;
     fixed_t slope;
 
-#ifdef RANGECHECK
-    if (num >= numsubsectors)
-        I_Error("P_CrossSubsector: ss %i with numss = %i",
-                num,
-                numsubsectors);
-#endif
-
     sub = &subsectors[num];
 
     // check lines

@@ -165,12 +165,6 @@ void V_CopyRect(int srcx,
     byte *src;
     byte *dest;
 
-#ifdef RANGECHECK
-    if (srcx < 0 || srcx + width > SCREENWIDTH || srcy < 0 || srcy + height > SCREENHEIGHT || destx < 0 || destx + width > SCREENWIDTH || desty < 0 || desty + height > SCREENHEIGHT || (unsigned)srcscrn > 4 || (unsigned)destscrn > 4)
-    {
-        I_Error("Bad V_CopyRect");
-    }
-#endif
     V_MarkRect(destx, desty, width, height);
 
     src = screens[srcscrn] + SCREENWIDTH * srcy + srcx;
@@ -204,15 +198,6 @@ void V_DrawPatch(int x,
 
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
-#ifdef RANGECHECK
-    if (x < 0 || x + SHORT(patch->width) > SCREENWIDTH || y < 0 || y + SHORT(patch->height) > SCREENHEIGHT || (unsigned)scrn > 4)
-    {
-        fprintf(stderr, "Patch at %d,%d exceeds LFB\n", x, y);
-        // No I_Error abort - what is up with TNT.WAD?
-        fprintf(stderr, "V_DrawPatch: bad patch (ignored)\n");
-        return;
-    }
-#endif
 
     if (!scrn)
         V_MarkRect(x, y, SHORT(patch->width), SHORT(patch->height));
@@ -264,13 +249,6 @@ void V_DrawPatchFlipped(int x,
 
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
-#ifdef RANGECHECK
-    if (x < 0 || x + SHORT(patch->width) > SCREENWIDTH || y < 0 || y + SHORT(patch->height) > SCREENHEIGHT || (unsigned)scrn > 4)
-    {
-        fprintf(stderr, "Patch origin %d,%d exceeds LFB\n", x, y);
-        I_Error("Bad V_DrawPatch in V_DrawPatchFlipped");
-    }
-#endif
 
     if (!scrn)
         V_MarkRect(x, y, SHORT(patch->width), SHORT(patch->height));
@@ -321,13 +299,6 @@ void V_DrawPatchDirect(int x,
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
 
-#ifdef RANGECHECK
-    if (x < 0 || x + SHORT(patch->width) > SCREENWIDTH || y < 0 || y + SHORT(patch->height) > SCREENHEIGHT || (unsigned)scrn > 4)
-    {
-        I_Error("Bad V_DrawPatchDirect");
-    }
-#endif
-
     //	V_MarkRect (x, y, SHORT(patch->width), SHORT(patch->height));
     desttop = destscreen + y * SCREENWIDTH / 4 + (x >> 2);
 
@@ -370,13 +341,6 @@ void V_DrawBlock(int x,
 {
     byte *dest;
 
-#ifdef RANGECHECK
-    if (x < 0 || x + width > SCREENWIDTH || y < 0 || y + height > SCREENHEIGHT || (unsigned)scrn > 4)
-    {
-        I_Error("Bad V_DrawBlock");
-    }
-#endif
-
     V_MarkRect(x, y, width, height);
 
     dest = screens[scrn] + y * SCREENWIDTH + x;
@@ -401,13 +365,6 @@ void V_GetBlock(int x,
                 byte *dest)
 {
     byte *src;
-
-#ifdef RANGECHECK
-    if (x < 0 || x + width > SCREENWIDTH || y < 0 || y + height > SCREENHEIGHT || (unsigned)scrn > 4)
-    {
-        I_Error("Bad V_DrawBlock");
-    }
-#endif
 
     src = screens[scrn] + y * SCREENWIDTH + x;
 

@@ -40,10 +40,6 @@ enum
 
 #define EXE_VERSION EXE_VERSION_1_9
 
-// If rangecheck is undefined,
-// most parameter validation debugging code will not be compiled
-#define RANGECHECK
-
 //
 // For resize of screen, at start of game.
 // It will not work dynamically, see visplanes.

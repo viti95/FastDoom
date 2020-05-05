@@ -1705,35 +1705,10 @@ void WI_Drawer(void)
 		break;
 	}
 }
-#define RANGECHECKING
-#define RNGCHECK(v, l, h)                                           \
-	{                                                               \
-		if ((v) < (l) || (v) > (h))                                 \
-		{                                                           \
-			I_Error("%s=%d in %s:%d", #v, (v), __FILE__, __LINE__); \
-		}                                                           \
-	};
 
 void WI_initVariables(wbstartstruct_t *wbstartstruct)
 {
-
 	wbs = wbstartstruct;
-
-#ifdef RANGECHECKING
-	if (!commercial)
-	{
-#if (EXE_VERSION < EXE_VERSION_ULTIMATE)
-		RNGCHECK(wbs->epsd, 0, 2);
-#else
-		RNGCHECK(wbs->epsd, 0, 3);
-#endif
-		RNGCHECK(wbs->last, 0, 8);
-		RNGCHECK(wbs->next, 0, 8);
-	}
-	RNGCHECK(wbs->pnum, 0, MAXPLAYERS);
-	RNGCHECK(wbs->pnum, 0, MAXPLAYERS);
-#endif
-
 	acceleratestage = 0;
 	cnt = bcnt = 0;
 	firstrefresh = 1;
