@@ -262,6 +262,8 @@ void W_InitMultipleFiles(char **filenames)
         I_Error("Couldn't allocate lumpcache");
 
     memset(lumpcache, 0, size);
+
+    W_GenerateHashTable();
 }
 
 //
@@ -302,11 +304,11 @@ unsigned int W_LumpNameHash(char *s)
 }
 
 //
-// W_CheckNumForName
+// W_GetNumForName
 // Returns -1 if name not found.
 //
 
-int W_CheckNumForName(char *name)
+int W_GetNumForName(char *name)
 {
     int i;
 
@@ -346,23 +348,6 @@ int W_CheckNumForName(char *name)
     // TFB. Not found.
 
     return -1;
-}
-
-
-//
-// W_GetNumForName
-// Calls W_CheckNumForName, but bombs out if not found.
-//
-int W_GetNumForName(char *name)
-{
-    int i;
-
-    i = W_CheckNumForName(name);
-
-    if (i == -1)
-        I_Error("W_GetNumForName: %s not found!", name);
-
-    return i;
 }
 
 //

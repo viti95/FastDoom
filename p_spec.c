@@ -148,7 +148,7 @@ void P_InitPicAnims(void)
 		}
 		else
 		{
-			if (W_CheckNumForName(animdefs[i].startname) == -1)
+			if (W_GetNumForName(animdefs[i].startname) == -1)
 				continue;
 
 			lastanim->picnum = R_FlatNumForName(animdefs[i].endname);
@@ -1161,7 +1161,7 @@ void P_SpawnSpecials(void)
 	int episode;
 
 	episode = 1;
-	if (W_CheckNumForName("texture2") >= 0)
+	if (W_GetNumForName("texture2") >= 0)
 		episode = 2;
 
 	// See if -TIMER needs to be used.

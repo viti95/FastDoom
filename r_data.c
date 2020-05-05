@@ -410,7 +410,7 @@ void R_InitTextures(void)
     for (i = 0; i < nummappatches; i++)
     {
         strncpy(name, name_p + i * 8, 8);
-        patchlookup[i] = W_CheckNumForName(name);
+        patchlookup[i] = W_GetNumForName(name);
     }
     Z_Free(names);
 
@@ -422,7 +422,7 @@ void R_InitTextures(void)
     maxoff = W_LumpLength(W_GetNumForName("TEXTURE1"));
     directory = maptex + 1;
 
-    if (W_CheckNumForName("TEXTURE2") != -1)
+    if (W_GetNumForName("TEXTURE2") != -1)
     {
         maptex2 = W_CacheLumpName("TEXTURE2", PU_STATIC);
         numtextures2 = LONG(*maptex2);
@@ -620,7 +620,7 @@ int R_FlatNumForName(char *name)
     int i;
     char namet[9];
 
-    i = W_CheckNumForName(name);
+    i = W_GetNumForName(name);
 
     if (i == -1)
     {

@@ -149,7 +149,7 @@ void D_ProcessEvents(void)
     event_t *ev;
 
     // IF STORE DEMO, DO NOT ACCEPT INPUT
-    if ((commercial) && (W_CheckNumForName("map01") < 0))
+    if ((commercial) && (W_GetNumForName("map01") < 0))
         return;
 
     for (; eventtail != eventhead; eventtail = (++eventtail) & (MAXEVENTS - 1))
@@ -1047,7 +1047,7 @@ void D_DoomMain(void)
         // but w/o all the lumps of the registered version.
         if (registered)
             for (i = 0; i < 23; i++)
-                if (W_CheckNumForName(name[i]) < 0)
+                if (W_GetNumForName(name[i]) < 0)
                     I_Error("\nThis is not the registered version.");
     }
 
@@ -1125,11 +1125,6 @@ void D_DoomMain(void)
     printf("ST_Init: Init status bar.\n");
     D_RedrawTitle();
     ST_Init();
-
-    // Generate the WAD hash table.  Speed things up a bit.
-    printf("W_GenerateHashTable: Hashing lumps");
-    D_RedrawTitle();
-    W_GenerateHashTable();
 
     // check for a driver that wants intermission stats
     p = M_CheckParm("-statcopy");
