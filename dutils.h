@@ -32,13 +32,6 @@ typedef struct
     lnode_t *end;
 } list_t;
 
-list_t *dll_NewList(void);
-lnode_t *dll_AddEndNode(list_t *list, void *value);
-lnode_t *dll_AddStartNode(list_t *list, void *value);
-void *dll_DelNode(list_t *list, lnode_t *node);
-void *dll_DelEndNode(list_t *list);
-void *dll_DelStartNode(list_t *list);
-
 //
 // CHEAT SEQUENCE PACKAGE
 //
