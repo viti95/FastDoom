@@ -181,7 +181,6 @@ int kbdtail, kbdhead;
 #define SC_LSHIFT 0x2a
 void DPMIInt(int i);
 void I_WaitVBL(int vbls);
-void I_StartupCyberMan(void);
 void I_StartupSound(void);
 void I_ShutdownSound(void);
 void I_ShutdownTimer(void);
