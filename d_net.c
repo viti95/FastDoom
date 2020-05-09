@@ -682,9 +682,6 @@ void TryRunTics(void)
 			if (nodeingame[i] && nettics[i] < lowtic)
 				lowtic = nettics[i];
 
-		if (lowtic < gametic / ticdup)
-			I_Error("TryRunTics: lowtic < gametic");
-
 		// don't stay in here forever -- give the menu a chance to work
 		if (I_GetTime() / ticdup - entertic >= 20)
 		{
@@ -698,8 +695,6 @@ void TryRunTics(void)
 	{
 		for (i = 0; i < ticdup; i++)
 		{
-			if (gametic / ticdup > lowtic)
-				I_Error("gametic>lowtic");
 			if (advancedemo)
 				D_DoAdvanceDemo();
 			M_Ticker();

@@ -127,12 +127,6 @@ void S_StopChannel(int cnum);
 
 void S_SetMusicVolume(int volume)
 {
-    if (volume < 0 || volume > 127)
-    {
-        I_Error("Attempt to set music volume at %d",
-                volume);
-    }
-
     I_SetMusicVolume(127);
     I_SetMusicVolume(volume);
     snd_MusicVolume = volume;
@@ -168,12 +162,7 @@ void S_ChangeMusic(int musicnum,
         musicnum = mus_introa;
     }
 
-    if ((musicnum <= mus_None) || (musicnum >= NUMMUSIC))
-    {
-        I_Error("Bad music number %d", musicnum);
-    }
-    else
-        music = &S_music[musicnum];
+    music = &S_music[musicnum];
 
     if (mus_playing == music)
         return;
@@ -307,10 +296,6 @@ int S_AdjustSoundParams(mobj_t *listener,
 
 void S_SetSfxVolume(int volume)
 {
-
-    if (volume < 0 || volume > 127)
-        I_Error("Attempt to set sfx volume at %d", volume);
-
     snd_SfxVolume = volume;
 }
 
@@ -416,10 +401,6 @@ void S_StartSoundAtVolume(void *origin_p,
     int cnum;
 
     mobj_t *origin = (mobj_t *)origin_p;
-
-    // check for bogus sound #
-    if (sfx_id < 1 || sfx_id > NUMSFX)
-        I_Error("Bad sfx #: %d", sfx_id);
 
     sfx = &S_sfx[sfx_id];
 

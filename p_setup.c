@@ -518,8 +518,6 @@ void P_GroupLines(void)
                 M_AddToBox(bbox, li->v2->x, li->v2->y);
             }
         }
-        if (linebuffer - sector->lines != sector->linecount)
-            I_Error("P_GroupLines: miscounted");
 
         // set the degenmobj_t to the middle of the bounding box
         sector->soundorg.x = (bbox[BOXRIGHT] + bbox[BOXLEFT]) / 2;

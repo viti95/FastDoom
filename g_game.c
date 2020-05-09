@@ -627,11 +627,6 @@ void G_Ticker(void)
 
             if (netgame && !netdemo && !(gametic % ticdup))
             {
-                if (gametic > BACKUPTICS && consistancy[i][buf] != cmd->consistancy)
-                {
-                    I_Error("consistency failure (%i should be %i)",
-                            cmd->consistancy, consistancy[i][buf]);
-                }
                 if (players[i].mo)
                     consistancy[i][buf] = players[i].mo->x;
                 else

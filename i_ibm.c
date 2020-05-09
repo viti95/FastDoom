@@ -311,11 +311,6 @@ void I_UpdateBox(int x, int y, int w, int h)
     int step;
     byte *dest, *source;
 
-    if (x < 0 || y < 0 || w <= 0 || h <= 0 || x + w > SCREENWIDTH || y + h > SCREENHEIGHT)
-    {
-        I_Error("Bad I_UpdateBox (%i, %i, %i, %i)", x, y, w, h);
-    }
-
     sp_x1 = x / 8;
     sp_x2 = (x + w) / 8;
     count = sp_x2 - sp_x1 + 1;
@@ -602,31 +597,6 @@ void I_StartTic(void)
     }
 }
 
-void I_ReadKeys(void)
-{
-    int k;
-
-    while (1)
-    {
-        while (kbdtail < kbdhead)
-        {
-            k = keyboardque[kbdtail & (KBDQUESIZE - 1)];
-            kbdtail++;
-            printf("0x%x\n", k);
-            if (k == 1)
-                I_Quit();
-        }
-    }
-}
-
-void I_ColorBlack(int r, int g, int b)
-{
-    _outbyte(PEL_WRITE_ADR, 0);
-    _outbyte(PEL_DATA, r);
-    _outbyte(PEL_DATA, g);
-    _outbyte(PEL_DATA, b);
-}
-
 //
 // Timer interrupt
 //
@@ -671,8 +641,6 @@ void I_StartupKeyboard(void)
 {
     oldkeyboardisr = _dos_getvect(KEYBOARDINT);
     _dos_setvect(0x8000 | KEYBOARDINT, I_KeyboardISR);
-
-    //I_ReadKeys ();
 }
 
 void I_ShutdownKeyboard(void)
@@ -966,54 +934,6 @@ void I_StartupDPMI(void)
 void(__interrupt __far *oldtimerisr)();
 
 //
-// IO_TimerISR
-//
-
-//void __interrupt IO_TimerISR(void)
-
-void __interrupt __far IO_TimerISR(void)
-{
-    ticcount++;
-    _outbyte(0x20, 0x20); // Ack the interrupt
-}
-
-//
-// IO_SetTimer0
-// Sets system timer 0 to the specified speed
-//
-void IO_SetTimer0(int speed)
-{
-    if (speed > 0 && speed < 150)
-    {
-        I_Error("INT_SetTimer0: %i is a bad value", speed);
-    }
-
-    _outbyte(0x43, 0x36); // Change timer 0
-    _outbyte(0x40, speed);
-    _outbyte(0x40, speed >> 8);
-}
-
-//
-// IO_StartupTimer
-//
-void IO_StartupTimer(void)
-{
-    oldtimerisr = _dos_getvect(TIMERINT);
-
-    _dos_setvect(0x8000 | TIMERINT, IO_TimerISR);
-    IO_SetTimer0(VBLCOUNTER);
-}
-
-void IO_ShutdownTimer(void)
-{
-    if (oldtimerisr)
-    {
-        IO_SetTimer0(0); // back to 18.4 ips
-        _dos_setvect(TIMERINT, oldtimerisr);
-    }
-}
-
-//
 // I_Init
 // hook interrupts and set graphics mode
 //
@@ -1289,48 +1209,7 @@ byte *I_AllocLow(int length)
 // Networking
 //
 
-/* // FUCKED LINES
-typedef struct
-{
-	char    priv[508];
-} doomdata_t;
-*/
-// FUCKED LINES
-
 #define DOOMCOM_ID 0x12345678l
-
-/* // FUCKED LINES
-typedef struct
-{
-	long    id;
-	short   intnum;                 // DOOM executes an int to execute commands
-
-// communication between DOOM and the driver
-	short   command;                // CMD_SEND or CMD_GET
-	short   remotenode;             // dest for send, set by get (-1 = no packet)
-	short   datalength;             // bytes in doomdata to be sent
-
-// info common to all nodes
-	short   numnodes;               // console is allways node 0
-	short   ticdup;                 // 1 = no duplication, 2-5 = dup for slow nets
-	short   extratics;              // 1 = send a backup tic in every packet
-	short   deathmatch;             // 1 = deathmatch
-	short   savegame;               // -1 = new game, 0-5 = load savegame
-	short   episode;                // 1-3
-	short   map;                    // 1-9
-	short   skill;                  // 1-5
-
-// info specific to this node
-	short   consoleplayer;
-	short   numplayers;
-	short   angleoffset;    // 1 = left, 0 = center, -1 = right
-	short   drone;                  // 1 = drone
-
-// packet data to be sent
-	doomdata_t      data;
-} doomcom_t;
-*/
-// FUCKED LINES
 
 extern doomcom_t *doomcom;
 

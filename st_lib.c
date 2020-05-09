@@ -103,9 +103,6 @@ void STlib_drawNum(st_number_t *n,
     // clear the area
     x = n->x - numdigits * w;
 
-    if (n->y - ST_Y < 0)
-        I_Error("drawNum: n->y - ST_Y < 0");
-
     V_CopyRect(x, n->y - ST_Y, BG, w * numdigits, h, x, n->y, FG);
 
     // if non-number, do not draw it
@@ -193,9 +190,6 @@ void STlib_updateMultIcon(st_multicon_t *mi,
             w = SHORT(mi->p[mi->oldinum]->width);
             h = SHORT(mi->p[mi->oldinum]->height);
 
-            if (y - ST_Y < 0)
-                I_Error("updateMultIcon: y - ST_Y < 0");
-
             V_CopyRect(x, y - ST_Y, BG, w, h, x, y, FG);
         }
         V_DrawPatch(mi->x, mi->y, FG, mi->p[*mi->inum]);
@@ -232,9 +226,6 @@ void STlib_updateBinIcon(st_binicon_t *bi,
         y = bi->y - SHORT(bi->p->topoffset);
         w = SHORT(bi->p->width);
         h = SHORT(bi->p->height);
-
-        if (y - ST_Y < 0)
-            I_Error("updateBinIcon: y - ST_Y < 0");
 
         if (*bi->val)
             V_DrawPatch(bi->x, bi->y, FG, bi->p);
