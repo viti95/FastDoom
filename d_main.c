@@ -634,27 +634,6 @@ void IdentifyVersion(void)
 {
     strcpy(basedefault, "default.cfg");
 
-    if (M_CheckParm("-comdev"))
-    {
-        commercial = true;
-        devparm = true;
-#if (EXE_VERSION >= EXE_VERSION_FINAL)
-        if (plutonia)
-            D_AddFile(DEVDATA "plutonia.wad");
-        else if (tnt)
-            D_AddFile(DEVDATA "tnt.wad");
-        else
-            D_AddFile(DEVDATA "doom2.wad");
-#else
-        D_AddFile(DEVDATA "doom2.wad");
-#endif
-
-        D_AddFile(DEVMAPS "cdata/texture1.lmp");
-        D_AddFile(DEVMAPS "cdata/pnames.lmp");
-        strcpy(basedefault, DEVDATA "default.cfg");
-        return;
-    }
-
     if (!access("doom2.wad", R_OK))
     {
         commercial = true;
@@ -885,36 +864,6 @@ void D_DoomMain(void)
         forwardmove[1] = forwardmove[1] * scale / 100;
         sidemove[0] = sidemove[0] * scale / 100;
         sidemove[1] = sidemove[1] * scale / 100;
-    }
-
-    // add any files specified on the command line with -file wadfile
-    // to the wad list
-    //
-    // convenience hack to allow -wart e m to add a wad file
-    // prepend a tilde to the filename so wadfile will be reloadable
-    p = M_CheckParm("-wart");
-    if (p)
-    {
-        myargv[p][4] = 'p'; // big hack, change to -warp
-
-        // Map name handling.
-
-        if (commercial)
-        {
-            p = atoi(myargv[p + 1]);
-            if (p < 10)
-                sprintf(file, "~" DEVMAPS "cdata/map0%i.wad", p);
-            else
-                sprintf(file, "~" DEVMAPS "cdata/map%i.wad", p);
-        }
-        else
-        {
-            sprintf(file, "~" DEVMAPS "E%cM%c.wad",
-                    myargv[p + 1][0], myargv[p + 2][0]);
-            printf("Warping to Episode %s, Map %s.\n",
-                   myargv[p + 1], myargv[p + 2]);
-        }
-        D_AddFile(file);
     }
 
     p = M_CheckParm("-file");

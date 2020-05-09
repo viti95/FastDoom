@@ -207,9 +207,6 @@ R_FindPlane(fixed_t height,
     if (check < lastvisplane)
         return check;
 
-    if (lastvisplane - visplanes == MAXVISPLANES)
-        I_Error("R_FindPlane: no more visplanes");
-
     lastvisplane++;
 
     check->height = height;
