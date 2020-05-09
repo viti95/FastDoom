@@ -1401,12 +1401,6 @@ boolean M_Responder(event_t *ev)
         return true;
     }
 
-    if (devparm && ch == KEY_F1)
-    {
-        G_ScreenShot();
-        return true;
-    }
-
     // F-Keys
     if (!menuactive)
         switch (ch)

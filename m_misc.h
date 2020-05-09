@@ -64,8 +64,6 @@ void M_AddToBox(fixed_t *box,
                 fixed_t x,
                 fixed_t y);
 
-void M_ScreenShot(void);
-
 void M_LoadDefaults(void);
 
 void M_SaveDefaults(void);
