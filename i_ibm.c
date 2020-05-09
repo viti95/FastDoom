@@ -684,8 +684,6 @@ void I_StartupMouse(void)
     printf("Mouse: detected\n", 0);
 
     mousepresent = 1;
-
-    I_StartupCyberMan();
 }
 
 //

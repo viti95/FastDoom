@@ -29,7 +29,6 @@ GLOBOBJS = &
  i_main.obj &
  i_ibm.obj &
  i_sound.obj &
- i_cyber.obj &
  i_ibm_a.obj &
  planar.obj &
  tables.obj &
@@ -111,7 +110,6 @@ clean : .SYMBOLIC
  del g_game.obj
  del hu_lib.obj
  del hu_stuff.obj
- del i_cyber.obj
  del i_ibm_a.obj
  del i_ibm.obj
  del i_main.obj

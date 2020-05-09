@@ -194,9 +194,6 @@ int bodyqueslot;
 
 void *statcopy; // for statistics driver
 
-extern int isCyberPresent; // is CyberMan present?
-void I_ReadCyberCmd(ticcmd_t *cmd);
-
 int G_CmdChecksum(ticcmd_t *cmd)
 {
     int i;
@@ -231,11 +228,6 @@ void G_BuildTiccmd(ticcmd_t *cmd)
 
     cmd->consistancy =
         consistancy[consoleplayer][maketic % BACKUPTICS];
-
-    if (isCyberPresent)
-    {
-        I_ReadCyberCmd(cmd);
-    }
 
     strafe = gamekeydown[key_strafe] || mousebuttons[mousebstrafe] || joybuttons[joybstrafe];
     speed = gamekeydown[key_speed] || joybuttons[joybspeed];

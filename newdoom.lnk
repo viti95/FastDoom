@@ -17,7 +17,6 @@ name newdoom
 file i_main.obj
 file i_ibm.obj
 file i_sound.obj
-file i_cyber.obj
 file i_ibm_a.obj
 file planar.obj
 file tables.obj
