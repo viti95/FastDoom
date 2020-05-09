@@ -356,9 +356,6 @@ int W_GetNumForName(char *name)
 //
 int W_LumpLength(int lump)
 {
-    if (lump >= numlumps)
-        I_Error("W_LumpLength: %i >= numlumps", lump);
-
     return lumpinfo[lump].size;
 }
 
@@ -374,9 +371,6 @@ void W_ReadLump(int lump,
     lumpinfo_t *l;
     int handle;
 
-    if (lump >= numlumps)
-        I_Error("W_ReadLump: %i >= numlumps", lump);
-
     l = lumpinfo + lump;
 
     I_BeginRead();
@@ -384,18 +378,13 @@ void W_ReadLump(int lump,
     if (l->handle == -1)
     {
         // reloadable file, so use open / read / close
-        if ((handle = open(reloadname, O_RDONLY | O_BINARY)) == -1)
-            I_Error("W_ReadLump: couldn't open %s", reloadname);
+        handle = open(reloadname, O_RDONLY | O_BINARY);
     }
     else
         handle = l->handle;
 
     lseek(handle, l->position, SEEK_SET);
     c = read(handle, dest, l->size);
-
-    if (c < l->size)
-        I_Error("W_ReadLump: only read %i of %i on lump %i",
-                c, l->size, lump);
 
     if (l->handle == -1)
         close(handle);
@@ -411,9 +400,6 @@ W_CacheLumpNum(int lump,
                int tag)
 {
     byte *ptr;
-
-    if ((unsigned)lump >= numlumps)
-        I_Error("W_CacheLumpNum: %i >= numlumps", lump);
 
     if (!lumpcache[lump])
     {

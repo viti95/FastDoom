@@ -104,7 +104,6 @@ P_InterceptVector2(divline_t *v2,
 
     if (den == 0)
         return 0;
-    //	I_Error ("P_InterceptVector: parallel");
 
     num = FixedMul((v1->x - v2->x) >> 8, v1->dy) +
           FixedMul((v2->y - v1->y) >> 8, v1->dx);

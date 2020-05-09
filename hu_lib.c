@@ -259,25 +259,11 @@ void HUlib_delCharFromIText(hu_itext_t *it)
         HUlib_delCharFromTextLine(&it->l);
 }
 
-void HUlib_eraseLineFromIText(hu_itext_t *it)
-{
-    while (it->lm != it->l.len)
-        HUlib_delCharFromTextLine(&it->l);
-}
-
 // Resets left margin as well
 void HUlib_resetIText(hu_itext_t *it)
 {
     it->lm = 0;
     HUlib_clearTextLine(&it->l);
-}
-
-void HUlib_addPrefixToIText(hu_itext_t *it,
-                            char *str)
-{
-    while (*str)
-        HUlib_addCharToTextLine(&it->l, *(str++));
-    it->lm = it->l.len;
 }
 
 // wrapper function for handling general keyed input.

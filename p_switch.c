@@ -154,8 +154,6 @@ void P_StartButton(line_t *line,
 			return;
 		}
 	}
-
-	I_Error("P_StartButton: no button slots left!");
 }
 
 //
