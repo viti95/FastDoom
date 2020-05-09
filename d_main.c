@@ -634,31 +634,6 @@ void IdentifyVersion(void)
 {
     strcpy(basedefault, "default.cfg");
 
-    if (M_CheckParm("-shdev"))
-    {
-        registered = false;
-        shareware = true;
-        devparm = true;
-        D_AddFile(DEVDATA "doom1.wad");
-        D_AddFile(DEVMAPS "data_se/texture1.lmp");
-        D_AddFile(DEVMAPS "data_se/pnames.lmp");
-        strcpy(basedefault, DEVDATA "default.cfg");
-        return;
-    }
-
-    if (M_CheckParm("-regdev"))
-    {
-        registered = true;
-        shareware = false;
-        devparm = true;
-        D_AddFile(DEVDATA "doom.wad");
-        D_AddFile(DEVMAPS "data_se/texture1.lmp");
-        D_AddFile(DEVMAPS "data_se/texture2.lmp");
-        D_AddFile(DEVMAPS "data_se/pnames.lmp");
-        strcpy(basedefault, DEVDATA "default.cfg");
-        return;
-    }
-
     if (M_CheckParm("-comdev"))
     {
         commercial = true;
