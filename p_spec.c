@@ -140,7 +140,7 @@ void P_InitPicAnims(void)
 		if (animdefs[i].istexture)
 		{
 			// different episode ?
-			if (R_CheckTextureNumForName(animdefs[i].startname) == -1)
+			if (R_TextureNumForName(animdefs[i].startname) == -1)
 				continue;
 
 			lastanim->picnum = R_TextureNumForName(animdefs[i].endname);
