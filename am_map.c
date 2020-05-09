@@ -950,8 +950,6 @@ void AM_drawFline(fline_t *fl,
 	register int ay;
 	register int d;
 
-	static fuck = 0;
-
 #define PUTDOT(xx, yy, cc) fb[(yy)*f_w + (xx)] = (cc)
 
 	dx = fl->b.x - fl->a.x;
