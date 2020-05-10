@@ -77,7 +77,6 @@ void D_DoomLoop(void);
 
 char *wadfiles[MAXWADFILES];
 
-boolean devparm;     // started game with -devparm
 boolean nomonsters;  // checkparm of -nomonsters
 boolean respawnparm; // checkparm of -respawn
 boolean fastparm;    // checkparm of -fast
@@ -770,7 +769,6 @@ void D_DoomMain(void)
     nomonsters = M_CheckParm("-nomonsters");
     respawnparm = M_CheckParm("-respawn");
     fastparm = M_CheckParm("-fast");
-    devparm = M_CheckParm("-devparm");
     if (M_CheckParm("-altdeath"))
         deathmatch = 2;
     else if (M_CheckParm("-deathmatch"))
@@ -833,12 +831,6 @@ void D_DoomMain(void)
     D_DrawTitle(title, FGCOLOR, BGCOLOR);
 
     printf("\nP_Init: Checking cmd-line parameters...\n");
-
-    if (devparm)
-    {
-        printf(D_DEVSTR);
-        D_RedrawTitle();
-    }
 
     if (M_CheckParm("-cdrom"))
     {

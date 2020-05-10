@@ -419,23 +419,7 @@ void I_FinishUpdate(void)
     static int lasttic;
     int tics;
     int i;
-    if (devparm)
-    {
-        i = ticcount;
-        tics = i - lasttic;
-        lasttic = i;
-        if (tics > 20)
-            tics = 20;
-        outpw(SC_INDEX, 0x102);
-        for (i = 0; i < tics; i++)
-        {
-            destscreen[(SCREENHEIGHT - 1) * SCREENWIDTH / 4 + i] = 0xff;
-        }
-        for (; i < 20; i++)
-        {
-            destscreen[(SCREENHEIGHT - 1) * SCREENWIDTH / 4 + i] = 0x0;
-        }
-    }
+
     outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
 
     //Next plane
