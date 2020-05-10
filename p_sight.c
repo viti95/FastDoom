@@ -35,8 +35,6 @@ divline_t strace; // from t1 to t2
 fixed_t t2x;
 fixed_t t2y;
 
-int sightcounts[2];
-
 //
 // P_DivlineSide
 // Returns side 0 (front), 1 (back), or 2 (on).
@@ -292,15 +290,12 @@ P_CheckSight(mobj_t *t1,
     // Check in REJECT table.
     if (rejectmatrix[bytenum] & bitnum)
     {
-        sightcounts[0]++;
-
         // can't possibly be connected
         return false;
     }
 
     // An unobstructed LOS is possible.
     // Now look from eyes of t1 to any part of t2.
-    sightcounts[1]++;
 
     validcount++;
 

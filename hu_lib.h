@@ -87,9 +87,6 @@ typedef struct
 // Widget creation, access, and update routines
 //
 
-// initializes heads-up widget library
-void HUlib_init(void);
-
 //
 // textline code
 //
