@@ -194,17 +194,6 @@ int bodyqueslot;
 
 void *statcopy; // for statistics driver
 
-int G_CmdChecksum(ticcmd_t *cmd)
-{
-    int i;
-    int sum = 0;
-
-    for (i = 0; i < sizeof(*cmd) / 4 - 1; i++)
-        sum += ((int *)cmd)[i];
-
-    return sum;
-}
-
 //
 // G_BuildTiccmd
 // Builds a ticcmd from all of the available inputs
