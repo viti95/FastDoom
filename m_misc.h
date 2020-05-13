@@ -68,9 +68,4 @@ void M_LoadDefaults(void);
 
 void M_SaveDefaults(void);
 
-int M_DrawText(int x,
-               int y,
-               boolean direct,
-               char *string);
-
 #endif
