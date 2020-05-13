@@ -873,20 +873,6 @@ dpmiregs_t dpmiregs;
 unsigned realstackseg;
 
 //
-// DPMIFarCall
-//
-void DPMIFarCall(void)
-{
-    segread(&segregs);
-    regs.w.ax = 0x301;
-    regs.w.bx = 0;
-    regs.w.cx = 0;
-    regs.x.edi = (unsigned)&dpmiregs;
-    segregs.es = segregs.ds;
-    int386x(DPMI_INT, &regs, &regs, &segregs);
-}
-
-//
 // I_StartupDPMI
 //
 byte *I_AllocLow(int length);

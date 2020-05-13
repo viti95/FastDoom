@@ -117,10 +117,6 @@ subsector_t *
 R_PointInSubsector(fixed_t x,
                    fixed_t y);
 
-void R_AddPointToBox(int x,
-                     int y,
-                     fixed_t *box);
-
 //
 // REFRESH - the actual rendering functions.
 //

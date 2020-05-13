@@ -1183,11 +1183,6 @@ void ST_unloadGraphics(void)
 	//   of stminus yet. Dude.
 }
 
-void ST_unloadData(void)
-{
-	ST_unloadGraphics();
-}
-
 void ST_initData(void)
 {
 

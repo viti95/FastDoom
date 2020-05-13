@@ -90,8 +90,6 @@ static int message_counter;
 extern int showMessages;
 extern boolean automapactive;
 
-static boolean headsupactive = false;
-
 //
 // Builtin map names.
 // The actual names can be found in DStrings.h.
@@ -324,19 +322,11 @@ void HU_Init(void)
     }
 }
 
-void HU_Stop(void)
-{
-    headsupactive = false;
-}
-
 void HU_Start(void)
 {
 
     int i;
     char *s;
-
-    if (headsupactive)
-        HU_Stop();
 
     plr = &players[consoleplayer];
     message_on = false;
@@ -392,8 +382,6 @@ void HU_Start(void)
     // create the inputbuffer widgets
     for (i = 0; i < MAXPLAYERS; i++)
         HUlib_initIText(&w_inputbuffer[i], 0, 0, 0, 0, &always_off);
-
-    headsupactive = true;
 }
 
 void HU_Drawer(void)

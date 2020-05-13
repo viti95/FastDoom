@@ -276,27 +276,6 @@ void V_MarkRect(int x,
 				int width,
 				int height);
 
-// Calculates the slope and slope according to the x-axis of a line
-// segment in map coordinates (with the upright y-axis n' all) so
-// that it can be used with the brain-dead drawing stuff.
-
-void AM_getIslope(mline_t *ml,
-				  islope_t *is)
-{
-	int dx, dy;
-
-	dy = ml->a.y - ml->b.y;
-	dx = ml->b.x - ml->a.x;
-	if (!dy)
-		is->islp = (dx < 0 ? -MAXINT : MAXINT);
-	else
-		is->islp = FixedDiv(dx, dy);
-	if (!dx)
-		is->slp = (dy < 0 ? -MAXINT : MAXINT);
-	else
-		is->slp = FixedDiv(dy, dx);
-}
-
 //
 //
 //
@@ -745,25 +724,6 @@ void AM_doFollowPlayer(void)
 		m_y2 = m_y + m_h;
 		f_oldloc.x = plr->mo->x;
 		f_oldloc.y = plr->mo->y;
-	}
-}
-
-//
-//
-//
-void AM_updateLightLev(void)
-{
-	static nexttic = 0;
-	static int litelevels[] = {0, 4, 7, 10, 12, 14, 15, 15};
-	static int litelevelscnt = 0;
-
-	// Change light level
-	if (amclock > nexttic)
-	{
-		lightlev = litelevels[litelevelscnt++];
-		if (litelevelscnt == sizeof(litelevels) / sizeof(int))
-			litelevelscnt = 0;
-		nexttic = amclock + 6 - (amclock % 6);
 	}
 }
 

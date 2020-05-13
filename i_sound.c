@@ -94,11 +94,6 @@ void I_SetMusicVolume(int volume)
     snd_MusicVolume = volume;
 }
 
-void I_SetSfxVolume(int volume)
-{
-    snd_SfxVolume = volume;
-}
-
 //
 // Song API
 //
@@ -106,31 +101,14 @@ void I_SetSfxVolume(int volume)
 int I_RegisterSong(void *data)
 {
     int rc = MUS_RegisterSong(data);
-#ifdef SNDDEBUG
-    if (rc < 0)
-        printf("MUS_Reg() returned %d\n", rc);
-#endif
     return rc;
 }
 
 void I_UnRegisterSong(int handle)
 {
     int rc = MUS_UnregisterSong(handle);
-#ifdef SNDDEBUG
-    if (rc < 0)
-        printf("MUS_Unreg() returned %d\n", rc);
-#endif
 }
 
-int I_QrySongPlaying(int handle)
-{
-    int rc = MUS_QrySongPlaying(handle);
-#ifdef SNDDEBUG
-    if (rc < 0)
-        printf("MUS_QrySP() returned %d\n", rc);
-#endif
-    return rc;
-}
 //
 // Stops a song.  MUST be called before I_UnregisterSong().
 //
@@ -138,10 +116,7 @@ void I_StopSong(int handle)
 {
     int rc;
     rc = MUS_StopSong(handle);
-#ifdef SNDDEBUG
-    if (rc < 0)
-        printf("MUS_StopSong() returned %d\n", rc);
-#endif
+
     // Fucking kluge pause
     {
         int s;
@@ -155,15 +130,7 @@ void I_PlaySong(int handle, boolean looping)
 {
     int rc;
     rc = MUS_ChainSong(handle, looping ? handle : -1);
-#ifdef SNDDEBUG
-    if (rc < 0)
-        printf("MUS_ChainSong() returned %d\n", rc);
-#endif
     rc = MUS_PlaySong(handle, snd_MusicVolume);
-#ifdef SNDDEBUG
-    if (rc < 0)
-        printf("MUS_PlaySong() returned %d\n", rc);
-#endif
 }
 
 //

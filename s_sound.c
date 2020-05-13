@@ -491,9 +491,6 @@ void S_StartSoundAtVolume(void *origin_p,
         sfx->data = (void *)W_CacheLumpNum(sfx->lumpnum, PU_MUSIC);
 
         _dpmi_lockregion(sfx->data, lumpinfo[sfx->lumpnum].size);
-        // fprintf( stderr,
-        //	     "S_StartSoundAtVolume: loading %d (lump %d) : 0x%x\n",
-        //       sfx_id, sfx->lumpnum, (int)sfx->data );
     }
 
     // increase the usefulness
@@ -605,11 +602,6 @@ void S_UpdateSounds(void *listener_p)
             }
         }
     }
-    // kill music if it is a single-play && finished
-    // if (	mus_playing
-    //      && !I_QrySongPlaying(mus_playing->handle)
-    //      && !mus_paused )
-    // S_StopMusic();
 }
 
 //

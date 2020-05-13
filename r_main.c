@@ -98,25 +98,6 @@ void (*transcolfunc)(void);
 void (*spanfunc)(void);
 
 //
-// R_AddPointToBox
-// Expand a given bbox
-// so that it encloses a given point.
-//
-void R_AddPointToBox(int x,
-                     int y,
-                     fixed_t *box)
-{
-    if (x < box[BOXLEFT])
-        box[BOXLEFT] = x;
-    if (x > box[BOXRIGHT])
-        box[BOXRIGHT] = x;
-    if (y < box[BOXBOTTOM])
-        box[BOXBOTTOM] = y;
-    if (y > box[BOXTOP])
-        box[BOXTOP] = y;
-}
-
-//
 // R_PointOnSide
 // Traverse BSP (sub) tree,
 //  check point against partition plane.

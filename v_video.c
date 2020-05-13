@@ -354,29 +354,6 @@ void V_DrawBlock(int x,
 }
 
 //
-// V_GetBlock
-// Gets a linear block of pixels from the view buffer.
-//
-void V_GetBlock(int x,
-                int y,
-                int scrn,
-                int width,
-                int height,
-                byte *dest)
-{
-    byte *src;
-
-    src = screens[scrn] + y * SCREENWIDTH + x;
-
-    while (height--)
-    {
-        memcpy(dest, src, width);
-        src += SCREENWIDTH;
-        dest += width;
-    }
-}
-
-//
 // V_Init
 //
 void V_Init(void)
