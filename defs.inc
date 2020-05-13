@@ -43,7 +43,6 @@ EXTRN	_dc_iscale:DWORD
 EXTRN	_dc_texturemid:DWORD
 EXTRN	_dc_source:DWORD
 
-EXTRN	_ylookup:DWORD
 EXTRN	_columnofs:DWORD
 
 
