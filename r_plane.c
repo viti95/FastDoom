@@ -39,19 +39,15 @@ planefunction_t ceilingfunc;
 
 // Here comes the obnoxious "visplane".
 #define MAXVISPLANES 128
-visplane_t *visplanes[MAXVISPLANES];
+visplane_t visplanes[MAXVISPLANES];
+visplane_t *lastvisplane;
 visplane_t *floorplane;
 visplane_t *ceilingplane;
-visplane_t *freetail;              // killough
-visplane_t **freehead = &freetail; // killough
 
 // ?
 #define MAXOPENINGS SCREENWIDTH * 64
 short openings[MAXOPENINGS];
 short *lastopening;
-
-#define R_VisplaneHash(picnum, lightlevel, height) \
-    (((unsigned)(picnum)*3 + (unsigned)(lightlevel) + (unsigned)(height)*7) & (MAXVISPLANES - 1))
 
 //
 // Clip values are the solid pixel bounding the range.
@@ -93,20 +89,6 @@ void R_InitPlanes(void)
     // Doh!
 }
 
-// New function, by Lee Killough
-
-visplane_t *R_NewVisplane(unsigned hash)
-{
-    visplane_t *check = freetail;
-    if (!check)
-        check = calloc(1, sizeof *check);
-    else if (!(freetail = freetail->next))
-        freehead = &freetail;
-    check->next = visplanes[hash];
-    visplanes[hash] = check;
-    return check;
-}
-
 //
 // R_MapPlane
 //
@@ -120,11 +102,13 @@ visplane_t *R_NewVisplane(unsigned hash)
 //
 // BASIC PRIMITIVE
 //
-
-void R_MapPlane(int y, int x1, int x2)
+void R_MapPlane(int y,
+                int x1,
+                int x2)
 {
     angle_t angle;
-    fixed_t distance, length;
+    fixed_t distance;
+    fixed_t length;
     unsigned index;
 
     if (planeheight != cachedheight[y])
@@ -143,15 +127,18 @@ void R_MapPlane(int y, int x1, int x2)
 
     length = FixedMul(distance, distscale[x1]);
     angle = (viewangle + xtoviewangle[x1]) >> ANGLETOFINESHIFT;
-
     ds_xfrac = viewx + FixedMul(finecosine[angle], length);
     ds_yfrac = -viewy - FixedMul(finesine[angle], length);
 
-    if (!(ds_colormap = fixedcolormap))
+    if (fixedcolormap)
+        ds_colormap = fixedcolormap;
+    else
     {
         index = distance >> LIGHTZSHIFT;
+
         if (index >= MAXLIGHTZ)
             index = MAXLIGHTZ - 1;
+
         ds_colormap = planezlight[index];
     }
 
@@ -159,7 +146,8 @@ void R_MapPlane(int y, int x1, int x2)
     ds_x1 = x1;
     ds_x2 = x2;
 
-    R_DrawSpan();
+    // high or low detail
+    spanfunc();
 }
 
 //
@@ -173,12 +161,12 @@ void R_ClearPlanes(void)
 
     // opening / clipping determination
     for (i = 0; i < viewwidth; i++)
-        floorclip[i] = viewheight, ceilingclip[i] = -1;
+    {
+        floorclip[i] = viewheight;
+        ceilingclip[i] = -1;
+    }
 
-    for (i = 0; i < MAXVISPLANES; i++) // new code -- killough
-        for (*freehead = visplanes[i], visplanes[i] = NULL; *freehead;)
-            freehead = &(*freehead)->next;
-
+    lastvisplane = visplanes;
     lastopening = openings;
 
     // texture calculation
@@ -186,70 +174,111 @@ void R_ClearPlanes(void)
 
     // left to right mapping
     angle = (viewangle - ANG90) >> ANGLETOFINESHIFT;
+
     // scale will be unit scale at SCREENWIDTH/2 distance
     basexscale = FixedDiv(finecosine[angle], centerxfrac);
     baseyscale = -FixedDiv(finesine[angle], centerxfrac);
 }
 
-visplane_t *R_FindPlane(fixed_t height, int picnum, int lightlevel)
+//
+// R_FindPlane
+//
+visplane_t *
+R_FindPlane(fixed_t height,
+            int picnum,
+            int lightlevel)
 {
     visplane_t *check;
-    unsigned hash; // killough
 
-    // New visplane algorithm uses hash table -- killough
-    hash = R_VisplaneHash(picnum, lightlevel, height);
+    if (picnum == skyflatnum)
+    {
+        height = 0; // all skys map together
+        lightlevel = 0;
+    }
 
-    for (check = visplanes[hash]; check; check = check->next) // killough
-        if (height == check->height &&
-            picnum == check->picnum &&
-            lightlevel == check->lightlevel)
-            return check;
+    for (check = visplanes; check < lastvisplane; check++)
+    {
+        if (height == check->height && picnum == check->picnum && lightlevel == check->lightlevel)
+        {
+            break;
+        }
+    }
 
-    check = R_NewVisplane(hash); // killough
+    if (check < lastvisplane)
+        return check;
+
+    lastvisplane++;
 
     check->height = height;
     check->picnum = picnum;
     check->lightlevel = lightlevel;
-    check->minx = viewwidth; // Was SCREENWIDTH -- killough 11/98
+    check->minx = SCREENWIDTH;
     check->maxx = -1;
 
-    memset(check->top, 0xff, sizeof check->top);
+    memset(check->top, 0xff, sizeof(check->top));
 
     return check;
 }
 
-visplane_t *R_CheckPlane(visplane_t *pl, int start, int stop)
+//
+// R_CheckPlane
+//
+visplane_t *
+R_CheckPlane(visplane_t *pl,
+             int start,
+             int stop)
 {
-    int intrl, intrh, unionl, unionh, x;
+    int intrl;
+    int intrh;
+    int unionl;
+    int unionh;
+    int x;
 
     if (start < pl->minx)
-        intrl = pl->minx, unionl = start;
-    else
-        unionl = pl->minx, intrl = start;
-
-    if (stop > pl->maxx)
-        intrh = pl->maxx, unionh = stop;
-    else
-        unionh = pl->maxx, intrh = stop;
-
-    for (x = intrl; x <= intrh && pl->top[x] == 0xffff; x++)
-        ;
-
-    if (x > intrh)
-        pl->minx = unionl, pl->maxx = unionh;
+    {
+        intrl = pl->minx;
+        unionl = start;
+    }
     else
     {
-        unsigned hash = R_VisplaneHash(pl->picnum, pl->lightlevel, pl->height);
-        visplane_t *new_pl = R_NewVisplane(hash);
-
-        new_pl->height = pl->height;
-        new_pl->picnum = pl->picnum;
-        new_pl->lightlevel = pl->lightlevel;
-        pl = new_pl;
-        pl->minx = start;
-        pl->maxx = stop;
-        memset(pl->top, 0xff, sizeof pl->top);
+        unionl = pl->minx;
+        intrl = start;
     }
+
+    if (stop > pl->maxx)
+    {
+        intrh = pl->maxx;
+        unionh = stop;
+    }
+    else
+    {
+        unionh = pl->maxx;
+        intrh = stop;
+    }
+
+    for (x = intrl; x <= intrh; x++)
+        if (pl->top[x] != 0xff)
+            break;
+
+    if (x > intrh)
+    {
+        pl->minx = unionl;
+        pl->maxx = unionh;
+
+        // use the same one
+        return pl;
+    }
+
+    // make a new visplane
+    lastvisplane->height = pl->height;
+    lastvisplane->picnum = pl->picnum;
+    lastvisplane->lightlevel = pl->lightlevel;
+
+    pl = lastvisplane++;
+    pl->minx = start;
+    pl->maxx = stop;
+
+    memset(pl->top, 0xff, sizeof(pl->top));
 
     return pl;
 }
@@ -263,24 +292,76 @@ void R_MakeSpans(int x,
                  int t2,
                  int b2)
 {
-    for (; t1 < t2 && t1 <= b1; t1++)
+    while (t1 < t2 && t1 <= b1)
+    {
         R_MapPlane(t1, spanstart[t1], x - 1);
-    for (; b1 > b2 && b1 >= t1; b1--)
+        t1++;
+    }
+    while (b1 > b2 && b1 >= t1)
+    {
         R_MapPlane(b1, spanstart[b1], x - 1);
+        b1--;
+    }
+
     while (t2 < t1 && t2 <= b2)
-        spanstart[t2++] = x;
+    {
+        spanstart[t2] = x;
+        t2++;
+    }
     while (b2 > b1 && b2 >= t2)
-        spanstart[b2--] = x;
+    {
+        spanstart[b2] = x;
+        b2--;
+    }
 }
 
-void R_DrawPlane(visplane_t *pl)
+//
+// R_DrawPlanes
+// At the end of each frame.
+//
+void R_DrawPlanes(void)
 {
+    visplane_t *pl;
+    int light;
     int x;
-    if (pl->minx <= pl->maxx)
-    {
-        int stop, light;
+    int stop;
+    int angle;
 
-        ds_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum],
+    for (pl = visplanes; pl < lastvisplane; pl++)
+    {
+        if (pl->minx > pl->maxx)
+            continue;
+
+        // sky flat
+        if (pl->picnum == skyflatnum)
+        {
+            dc_iscale = pspriteiscale >> detailshift;
+
+            // Sky is allways drawn full bright,
+            //  i.e. colormaps[0] is used.
+            // Because of this hack, sky is not affected
+            //  by INVUL inverse mapping.
+            dc_colormap = colormaps;
+            dc_texturemid = skytexturemid;
+            for (x = pl->minx; x <= pl->maxx; x++)
+            {
+                dc_yl = pl->top[x];
+                dc_yh = pl->bottom[x];
+
+                if (dc_yl <= dc_yh)
+                {
+                    angle = (viewangle + xtoviewangle[x]) >> ANGLETOSKYSHIFT;
+                    dc_x = x;
+                    dc_source = R_GetColumn(skytexture, angle);
+                    colfunc();
+                }
+            }
+            continue;
+        }
+
+        // regular flat
+        ds_source = W_CacheLumpNum(firstflat +
+                                       flattranslation[pl->picnum],
                                    PU_STATIC);
 
         planeheight = abs(pl->height - viewz);
@@ -292,26 +373,21 @@ void R_DrawPlane(visplane_t *pl)
         if (light < 0)
             light = 0;
 
-        stop = pl->maxx + 1;
         planezlight = zlight[light];
-        pl->top[pl->minx - 1] = pl->top[stop] = 0xffff;
+
+        pl->top[pl->maxx + 1] = 0xff;
+        pl->top[pl->minx - 1] = 0xff;
+
+        stop = pl->maxx + 1;
 
         for (x = pl->minx; x <= stop; x++)
-            R_MakeSpans(x, pl->top[x - 1], pl->bottom[x - 1], pl->top[x], pl->bottom[x]);
+        {
+            R_MakeSpans(x, pl->top[x - 1],
+                        pl->bottom[x - 1],
+                        pl->top[x],
+                        pl->bottom[x]);
+        }
 
         Z_ChangeTag(ds_source, PU_CACHE);
     }
-}
-
-//
-// R_DrawPlanes
-// At the end of each frame.
-//
-void R_DrawPlanes(void)
-{
-    visplane_t *pl;
-    int i;
-    for (i = 0; i < MAXVISPLANES; i++)
-        for (pl = visplanes[i]; pl; pl = pl->next)
-            R_DrawPlane(pl);
 }
