@@ -452,7 +452,6 @@ void R_Subsector(int num)
     seg_t *line;
     subsector_t *sub;
 
-    sscount++;
     sub = &subsectors[num];
     frontsector = sub->sector;
     count = sub->numlines;

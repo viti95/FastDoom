@@ -895,12 +895,6 @@ void I_StartupDPMI(void)
 }
 
 //
-// Timer interrupt
-//
-
-void(__interrupt __far *oldtimerisr)();
-
-//
 // I_Init
 // hook interrupts and set graphics mode
 //

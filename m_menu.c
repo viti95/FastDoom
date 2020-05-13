@@ -83,8 +83,6 @@ int messageToPrint;
 char *messageString;
 
 // message x & y
-int messx;
-int messy;
 int messageLastMenuActive;
 
 // timed message = no input from user
