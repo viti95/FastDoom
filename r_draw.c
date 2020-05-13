@@ -34,8 +34,8 @@
 #include "doomstat.h"
 
 // ?
-#define MAXWIDTH 1120
-#define MAXHEIGHT 832
+#define MAXWIDTH 320
+#define MAXHEIGHT 200
 
 // status bar height at bottom of screen
 #define SBARHEIGHT 32
@@ -55,7 +55,6 @@ int scaledviewwidth;
 int viewheight;
 int viewwindowx;
 int viewwindowy;
-byte *ylookup[MAXHEIGHT];
 int columnofs[MAXWIDTH];
 
 // Color tables for different players,
@@ -337,10 +336,6 @@ void R_InitBuffer(int width,
         viewwindowy = 0;
     else
         viewwindowy = (SCREENHEIGHT - SBARHEIGHT - height) >> 1;
-
-    // Preclaculate all row offsets.
-    for (i = 0; i < height; i++)
-        ylookup[i] = screens[0] + (i + viewwindowy) * SCREENWIDTH;
 }
 
 //
