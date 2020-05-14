@@ -27,7 +27,6 @@
 #define NCMD_RETRANSMIT 0x40000000
 #define NCMD_SETUP 0x20000000
 #define NCMD_KILL 0x10000000 // kill game
-#define NCMD_CHECKSUM 0x0fffffff
 
 doomcom_t *doomcom;
 doomdata_t *netbuffer; // points inside doomcom
@@ -77,23 +76,6 @@ int NetbufferSize(void)
 }
 
 //
-// Checksum
-//
-unsigned NetbufferChecksum(void)
-{
-	unsigned c;
-	int i, l;
-
-	c = 0x1234567;
-
-	l = (NetbufferSize() - (int)&(((doomdata_t *)0)->retransmitfrom)) / 4;
-	for (i = 0; i < l; i++)
-		c += ((unsigned *)&netbuffer->retransmitfrom)[i] * (i + 1);
-
-	return c & NCMD_CHECKSUM;
-}
-
-//
 //
 //
 int ExpandTics(int low)
@@ -118,8 +100,6 @@ int ExpandTics(int low)
 void HSendPacket(int node,
 				 int flags)
 {
-	netbuffer->checksum = NetbufferChecksum() | flags;
-
 	if (!node)
 	{
 		reboundstore = *netbuffer;
@@ -135,25 +115,6 @@ void HSendPacket(int node,
 	doomcom->command = CMD_SEND;
 	doomcom->remotenode = node;
 	doomcom->datalength = NetbufferSize();
-
-	if (debugfile)
-	{
-		int i;
-		int realretrans;
-		if (netbuffer->checksum & NCMD_RETRANSMIT)
-			realretrans = ExpandTics(netbuffer->retransmitfrom);
-		else
-			realretrans = -1;
-
-		fprintf(debugfile, "send (%i + %i, R %i) [%i] ",
-				ExpandTics(netbuffer->starttic),
-				netbuffer->numtics, realretrans, doomcom->datalength);
-
-		for (i = 0; i < doomcom->datalength; i++)
-			fprintf(debugfile, "%i ", ((byte *)netbuffer)[i]);
-
-		fprintf(debugfile, "\n");
-	}
 
 	I_NetCmd();
 }
@@ -190,37 +151,6 @@ boolean HGetPacket(void)
 		return false;
 	}
 
-	if (NetbufferChecksum() != (netbuffer->checksum & NCMD_CHECKSUM))
-	{
-		if (debugfile)
-			fprintf(debugfile, "bad packet checksum\n");
-		return false;
-	}
-
-	if (debugfile)
-	{
-		int realretrans;
-		int i;
-
-		if (netbuffer->checksum & NCMD_SETUP)
-			fprintf(debugfile, "setup packet\n");
-		else
-		{
-			if (netbuffer->checksum & NCMD_RETRANSMIT)
-				realretrans = ExpandTics(netbuffer->retransmitfrom);
-			else
-				realretrans = -1;
-
-			fprintf(debugfile, "get %i = (%i + %i, R %i)[%i] ",
-					doomcom->remotenode,
-					ExpandTics(netbuffer->starttic),
-					netbuffer->numtics, realretrans, doomcom->datalength);
-
-			for (i = 0; i < doomcom->datalength; i++)
-				fprintf(debugfile, "%i ", ((byte *)netbuffer)[i]);
-			fprintf(debugfile, "\n");
-		}
-	}
 	return true;
 }
 
@@ -239,9 +169,6 @@ void GetPackets(void)
 
 	while (HGetPacket())
 	{
-		if (netbuffer->checksum & NCMD_SETUP)
-			continue; // extra setup packet
-
 		netconsole = netbuffer->player & ~PL_DRONE;
 		netnode = doomcom->remotenode;
 
@@ -250,37 +177,8 @@ void GetPackets(void)
 		realstart = ExpandTics(netbuffer->starttic);
 		realend = (realstart + netbuffer->numtics);
 
-		// check for exiting the game
-		if (netbuffer->checksum & NCMD_EXIT)
-		{
-			if (!nodeingame[netnode])
-				continue;
-			nodeingame[netnode] = false;
-			playeringame[netconsole] = false;
-			strcpy(exitmsg, "Player 1 left the game");
-			exitmsg[7] += netconsole;
-			players[consoleplayer].message = exitmsg;
-			if (demorecording)
-				G_CheckDemoStatus();
-			continue;
-		}
-
-		// check for a remote game kill
-		if (netbuffer->checksum & NCMD_KILL)
-			I_Error("Killed by network driver");
 
 		nodeforplayer[netconsole] = netnode;
-
-		// check for retransmit request
-		if (resendcount[netnode] <= 0 && (netbuffer->checksum & NCMD_RETRANSMIT))
-		{
-			resendto[netnode] = ExpandTics(netbuffer->retransmitfrom);
-			if (debugfile)
-				fprintf(debugfile, "retransmit from %i\n", resendto[netnode]);
-			resendcount[netnode] = RESENDCOUNT;
-		}
-		else
-			resendcount[netnode]--;
 
 		// check for out of order / duplicated packet
 		if (realend == nettics[netnode])
@@ -288,10 +186,6 @@ void GetPackets(void)
 
 		if (realend < nettics[netnode])
 		{
-			if (debugfile)
-				fprintf(debugfile,
-						"out of order packet (%i + %i)\n",
-						realstart, netbuffer->numtics);
 			continue;
 		}
 
@@ -299,10 +193,6 @@ void GetPackets(void)
 		if (realstart > nettics[netnode])
 		{
 			// stop processing until the other system resends the missed tics
-			if (debugfile)
-				fprintf(debugfile,
-						"missed tics from %i (%i - %i)\n",
-						netnode, realstart, nettics[netnode]);
 			remoteresend[netnode] = true;
 			continue;
 		}
