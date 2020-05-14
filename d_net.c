@@ -40,7 +40,6 @@ doomdata_t *netbuffer; // points inside doomcom
 //
 // a gametic cannot be run until nettics[] > gametic for all players
 //
-#define RESENDCOUNT 10
 #define PL_DRONE 0x80 // bit flag in doomdata->player
 
 ticcmd_t localcmds[BACKUPTICS];
@@ -50,7 +49,6 @@ int nettics[MAXNETNODES];
 boolean nodeingame[MAXNETNODES];   // set false as nodes leave game
 boolean remoteresend[MAXNETNODES]; // set when local needs tics
 int resendto[MAXNETNODES];		   // set when remote needs tics
-int resendcount[MAXNETNODES];
 
 int nodeforplayer[MAXPLAYERS];
 
@@ -213,32 +211,28 @@ void NetUpdate(void)
 	if (singletics)
 		return; // singletic update is syncronous
 
-	// send the packet to the other nodes
-	for (i = 0; i < doomcom->numnodes; i++)
-		if (nodeingame[i])
-		{
-			netbuffer->starttic = realstart = resendto[i];
-			netbuffer->numtics = maketic - realstart;
-			if (netbuffer->numtics > BACKUPTICS)
-				I_Error("NetUpdate: netbuffer->numtics > BACKUPTICS");
 
-			resendto[i] = maketic - doomcom->extratics;
+	netbuffer->starttic = realstart = resendto[0];
+	netbuffer->numtics = maketic - realstart;
+	if (netbuffer->numtics > BACKUPTICS)
+		I_Error("NetUpdate: netbuffer->numtics > BACKUPTICS");
 
-			for (j = 0; j < netbuffer->numtics; j++)
-				netbuffer->cmds[j] =
-					localcmds[(realstart + j) % BACKUPTICS];
+	resendto[0] = maketic - doomcom->extratics;
 
-			if (remoteresend[i])
-			{
-				netbuffer->retransmitfrom = nettics[i];
-				HSendPacket(i, NCMD_RETRANSMIT);
-			}
-			else
-			{
-				netbuffer->retransmitfrom = 0;
-				HSendPacket(i, 0);
-			}
-		}
+	for (j = 0; j < netbuffer->numtics; j++)
+		netbuffer->cmds[j] =
+			localcmds[(realstart + j) % BACKUPTICS];
+
+	if (remoteresend[0])
+	{
+		netbuffer->retransmitfrom = nettics[i];
+		HSendPacket(i, NCMD_RETRANSMIT);
+	}
+	else
+	{
+		netbuffer->retransmitfrom = 0;
+		HSendPacket(i, 0);
+	}
 
 	// listen for other packets
 listen:
@@ -280,35 +274,11 @@ void D_CheckNetGame(void)
 
 	for (i = 0; i < doomcom->numplayers; i++)
 		playeringame[i] = true;
-	for (i = 0; i < doomcom->numnodes; i++)
-		nodeingame[i] = true;
+
+	nodeingame[0] = true;
 
 	printf("player %i of %i (%i nodes)\n",
 		   consoleplayer + 1, doomcom->numplayers, doomcom->numnodes);
-}
-
-//
-// D_QuitNetGame
-// Called before quitting to leave a net game
-// without hanging the other players
-//
-void D_QuitNetGame(void)
-{
-	int i, j;
-
-	if (!netgame || !usergame || consoleplayer == -1 || demoplayback)
-		return;
-
-	// send a bunch of packets for security
-	netbuffer->player = consoleplayer;
-	netbuffer->numtics = 0;
-	for (i = 0; i < 4; i++)
-	{
-		for (j = 1; j < doomcom->numnodes; j++)
-			if (nodeingame[j])
-				HSendPacket(j, NCMD_EXIT);
-		I_WaitVBL(1);
-	}
 }
 
 //

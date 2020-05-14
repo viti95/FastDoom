@@ -940,7 +940,6 @@ void I_Error(char *error, ...)
 {
     va_list argptr;
 
-    D_QuitNetGame();
     I_Shutdown();
     va_start(argptr, error);
     vprintf(error, argptr);
@@ -963,10 +962,7 @@ void I_Quit(void)
     {
         G_CheckDemoStatus();
     }
-    else
-    {
-        D_QuitNetGame();
-    }
+    
     M_SaveDefaults();
     scr = (byte *)W_CacheLumpName("ENDOOM", PU_CACHE);
     I_ShutdownGraphics();
@@ -1188,7 +1184,6 @@ void I_InitNetwork(void)
         I_Error("malloc() in I_InitNetwork() failed");
     }
     memset(doomcom, 0, sizeof(*doomcom));
-    netgame = false;
     doomcom->id = DOOMCOM_ID;
     doomcom->numplayers = doomcom->numnodes = 1;
     doomcom->deathmatch = false;

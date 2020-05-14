@@ -354,48 +354,42 @@ void P_TouchSpecialThing(mobj_t *special,
 		if (!player->cards[it_bluecard])
 			player->message = GOTBLUECARD;
 		P_GiveCard(player, it_bluecard);
-		if (!netgame)
-			break;
+		break;
 		return;
 
 	case SPR_YKEY:
 		if (!player->cards[it_yellowcard])
 			player->message = GOTYELWCARD;
 		P_GiveCard(player, it_yellowcard);
-		if (!netgame)
-			break;
+		break;
 		return;
 
 	case SPR_RKEY:
 		if (!player->cards[it_redcard])
 			player->message = GOTREDCARD;
 		P_GiveCard(player, it_redcard);
-		if (!netgame)
-			break;
+		break;
 		return;
 
 	case SPR_BSKU:
 		if (!player->cards[it_blueskull])
 			player->message = GOTBLUESKUL;
 		P_GiveCard(player, it_blueskull);
-		if (!netgame)
-			break;
+		break;
 		return;
 
 	case SPR_YSKU:
 		if (!player->cards[it_yellowskull])
 			player->message = GOTYELWSKUL;
 		P_GiveCard(player, it_yellowskull);
-		if (!netgame)
-			break;
+		break;
 		return;
 
 	case SPR_RSKU:
 		if (!player->cards[it_redskull])
 			player->message = GOTREDSKULL;
 		P_GiveCard(player, it_redskull);
-		if (!netgame)
-			break;
+		break;
 		return;
 
 		// medikits, heals
@@ -617,7 +611,7 @@ void P_KillMobj(mobj_t *source,
 		if (target->player)
 			source->player->frags[target->player - players]++;
 	}
-	else if (!netgame && (target->flags & MF_COUNTKILL))
+	else if (target->flags & MF_COUNTKILL)
 	{
 		// count all monster deaths,
 		// even those caused by other monsters

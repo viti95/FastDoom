@@ -759,7 +759,7 @@ void D_DoomMain(void)
     nomonsters = M_CheckParm("-nomonsters");
     respawnparm = M_CheckParm("-respawn");
     fastparm = M_CheckParm("-fast");
-    if (M_CheckParm("-altdeath"))
+        if (M_CheckParm("-altdeath"))
         deathmatch = 2;
     else if (M_CheckParm("-deathmatch"))
         deathmatch = 1;
@@ -1065,7 +1065,7 @@ void D_DoomMain(void)
 
     if (gameaction != ga_loadgame)
     {
-        if (autostart || netgame)
+        if (autostart)
             G_InitNew(startskill, startepisode, startmap);
         else
             D_StartTitle(); // start up intro loop

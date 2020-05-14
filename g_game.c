@@ -98,7 +98,6 @@ int starttime;      // for comparative timing purposes
 boolean viewactive;
 
 boolean deathmatch; // only if started as net death
-boolean netgame;    // only true if packets are broadcast
 boolean playeringame[MAXPLAYERS];
 player_t players[MAXPLAYERS];
 
@@ -605,14 +604,6 @@ void G_Ticker(void)
                 sprintf(turbomessage, "%s is turbo!", player_names[i]);
                 players[consoleplayer].message = turbomessage;
             }
-
-            if (netgame && !netdemo && !(gametic % ticdup))
-            {
-                if (players[i].mo)
-                    consistancy[i][buf] = players[i].mo->x;
-                else
-                    consistancy[i][buf] = rndindex;
-            }
         }
     }
 
@@ -1089,8 +1080,6 @@ void G_DoNewGame(void)
 {
     demoplayback = false;
     netdemo = false;
-    netgame = false;
-    deathmatch = false;
     playeringame[1] = playeringame[2] = playeringame[3] = 0;
     respawnparm = false;
     fastparm = false;
@@ -1282,7 +1271,7 @@ void G_BeginRecording(void)
     *demo_p++ = gameskill;
     *demo_p++ = gameepisode;
     *demo_p++ = gamemap;
-    *demo_p++ = deathmatch;
+    *demo_p++ = false;
     *demo_p++ = respawnparm;
     *demo_p++ = fastparm;
     *demo_p++ = nomonsters;
@@ -1319,7 +1308,7 @@ void G_DoPlayDemo(void)
     skill = *demo_p++;
     episode = *demo_p++;
     map = *demo_p++;
-    deathmatch = *demo_p++;
+    *demo_p++;
     respawnparm = *demo_p++;
     fastparm = *demo_p++;
     nomonsters = *demo_p++;
@@ -1329,7 +1318,6 @@ void G_DoPlayDemo(void)
         playeringame[i] = *demo_p++;
     if (playeringame[1])
     {
-        netgame = true;
         netdemo = true;
     }
 
@@ -1390,7 +1378,6 @@ boolean G_CheckDemoStatus(void)
         Z_ChangeTag(demobuffer, PU_CACHE);
         demoplayback = false;
         netdemo = false;
-        netgame = false;
         deathmatch = false;
         playeringame[1] = playeringame[2] = playeringame[3] = 0;
         respawnparm = false;
