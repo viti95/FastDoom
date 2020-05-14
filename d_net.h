@@ -78,8 +78,6 @@ typedef struct
     short numnodes;
     // Flag: 1 = no duplication, 2-5 = dup for slow nets.
     short ticdup;
-    // Flag: 1 = send a backup tic in every packet.
-    short extratics;
     // Flag: 1 = deathmatch.
     short deathmatch;
     // Flag: -1 = new game, 0-5 = load savegame

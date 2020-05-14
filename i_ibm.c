@@ -962,7 +962,7 @@ void I_Quit(void)
     {
         G_CheckDemoStatus();
     }
-    
+
     M_SaveDefaults();
     scr = (byte *)W_CacheLumpName("ENDOOM", PU_CACHE);
     I_ShutdownGraphics();
@@ -1189,7 +1189,6 @@ void I_InitNetwork(void)
     doomcom->deathmatch = false;
     doomcom->consoleplayer = 0;
     doomcom->ticdup = 1;
-    doomcom->extratics = 0;
 }
 
 //
