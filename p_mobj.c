@@ -643,11 +643,6 @@ void P_SpawnPlayer(mapthing_t *mthing)
     // setup gun psprite
     P_SetupPsprites(p);
 
-    // give all cards in death match mode
-    if (deathmatch)
-        for (i = 0; i < NUMCARDS; i++)
-            p->cards[i] = true;
-
     if (mthing->type - 1 == consoleplayer)
     {
         // wake up the status bar
@@ -687,8 +682,7 @@ void P_SpawnMapThing(mapthing_t *mthing)
     {
         // save spots for respawning in network games
         playerstarts[mthing->type - 1] = *mthing;
-        if (!deathmatch)
-            P_SpawnPlayer(mthing);
+        P_SpawnPlayer(mthing);
 
         return;
     }

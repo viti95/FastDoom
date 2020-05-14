@@ -902,21 +902,6 @@ void D_DoomMain(void)
         autostart = true;
     }
 
-    p = M_CheckParm("-timer");
-    if (p && p < myargc - 1 && deathmatch)
-    {
-        int time;
-        time = atoi(myargv[p + 1]);
-        printf("Levels will end after %d minute", time);
-        if (time > 1)
-            printf("s");
-        printf(".\n");
-    }
-
-    p = M_CheckParm("-avg");
-    if (p && p < myargc - 1 && deathmatch)
-        printf("Austin Virtual Gaming: Levels will end after 20 minutes\n");
-
     p = M_CheckParm("-warp");
     if (p && p < myargc - 1)
     {

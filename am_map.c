@@ -653,7 +653,7 @@ AM_Responder(event_t *ev)
 			cheatstate = 0;
 			rc = false;
 		}
-		if (!deathmatch && cht_CheckCheat(&cheat_amap, ev->data1))
+		if (cht_CheckCheat(&cheat_amap, ev->data1))
 		{
 			rc = false;
 			cheating = (cheating + 1) % 3;
@@ -1145,16 +1145,13 @@ void AM_drawPlayers(void)
 	int their_color = -1;
 	int color;
 
-	if (!netgame)
-	{
-		if (cheating)
-			AM_drawLineCharacter(cheat_player_arrow, NUMCHEATPLYRLINES, 0,
-								 plr->mo->angle, WHITE, plr->mo->x, plr->mo->y);
-		else
-			AM_drawLineCharacter(player_arrow, NUMPLYRLINES, 0, plr->mo->angle,
-								 WHITE, plr->mo->x, plr->mo->y);
-		return;
-	}
+	if (cheating)
+		AM_drawLineCharacter(cheat_player_arrow, NUMCHEATPLYRLINES, 0,
+								plr->mo->angle, WHITE, plr->mo->x, plr->mo->y);
+	else
+		AM_drawLineCharacter(player_arrow, NUMPLYRLINES, 0, plr->mo->angle,
+								WHITE, plr->mo->x, plr->mo->y);
+	return;
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{

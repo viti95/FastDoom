@@ -25,8 +25,6 @@
 //
 // GAME
 //
-void G_DeathMatchSpawnPlayer(int playernum);
-
 void G_InitNew(skill_t skill, int episode, int map);
 
 // Can be called by the startup code or M_Responder.

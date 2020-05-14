@@ -735,125 +735,13 @@ void G_PlayerReborn(int player)
 //
 void P_SpawnPlayer(mapthing_t *mthing);
 
-boolean
-G_CheckSpot(int playernum,
-            mapthing_t *mthing)
-{
-    fixed_t x;
-    fixed_t y;
-    subsector_t *ss;
-    unsigned an;
-    mobj_t *mo;
-    int i;
-
-    if (!players[playernum].mo)
-    {
-        // first spawn of level, before corpses
-        for (i = 0; i < playernum; i++)
-            if (players[i].mo->x == mthing->x << FRACBITS && players[i].mo->y == mthing->y << FRACBITS)
-                return false;
-        return true;
-    }
-
-    x = mthing->x << FRACBITS;
-    y = mthing->y << FRACBITS;
-
-    if (!P_CheckPosition(players[playernum].mo, x, y))
-        return false;
-
-    // flush an old corpse if needed
-    if (bodyqueslot >= BODYQUESIZE)
-        P_RemoveMobj(bodyque[bodyqueslot % BODYQUESIZE]);
-    bodyque[bodyqueslot % BODYQUESIZE] = players[playernum].mo;
-    bodyqueslot++;
-
-    // spawn a teleport fog
-    ss = R_PointInSubsector(x, y);
-    an = (ANG45 * (mthing->angle / 45)) >> ANGLETOFINESHIFT;
-
-    mo = P_SpawnMobj(x + 20 * finecosine[an], y + 20 * finesine[an], ss->sector->floorheight, MT_TFOG);
-
-    if (players[consoleplayer].viewz != 1)
-        S_StartSound(mo, sfx_telept); // don't start sound on first frame
-
-    return true;
-}
-
-//
-// G_DeathMatchSpawnPlayer
-// Spawns a player at one of the random death match spots
-// called at level load and each death
-//
-void G_DeathMatchSpawnPlayer(int playernum)
-{
-    int i, j;
-    int selections;
-
-    selections = deathmatch_p - deathmatchstarts;
-    if (selections < 4)
-        I_Error("Only %i deathmatch spots, 4 required", selections);
-
-    for (j = 0; j < 20; j++)
-    {
-        i = P_Random() % selections;
-        if (G_CheckSpot(playernum, &deathmatchstarts[i]))
-        {
-            deathmatchstarts[i].type = playernum + 1;
-            P_SpawnPlayer(&deathmatchstarts[i]);
-            return;
-        }
-    }
-
-    // no good spot, so the player will probably get stuck
-    P_SpawnPlayer(&playerstarts[playernum]);
-}
-
 //
 // G_DoReborn
 //
 void G_DoReborn(int playernum)
 {
-    int i;
-
-    if (!netgame)
-    {
-        // reload the level from scratch
-        gameaction = ga_loadlevel;
-    }
-    else
-    {
-        // respawn at the start
-
-        // first dissasociate the corpse
-        players[playernum].mo->player = NULL;
-
-        // spawn at random spot if in death match
-        if (deathmatch)
-        {
-            G_DeathMatchSpawnPlayer(playernum);
-            return;
-        }
-
-        if (G_CheckSpot(playernum, &playerstarts[playernum]))
-        {
-            P_SpawnPlayer(&playerstarts[playernum]);
-            return;
-        }
-
-        // try to spawn at one of the other players spots
-        for (i = 0; i < MAXPLAYERS; i++)
-        {
-            if (G_CheckSpot(playernum, &playerstarts[i]))
-            {
-                playerstarts[i].type = playernum + 1; // fake as other player
-                P_SpawnPlayer(&playerstarts[i]);
-                playerstarts[i].type = i + 1; // restore
-                return;
-            }
-            // he's going to be inside something.  Too bad.
-        }
-        P_SpawnPlayer(&playerstarts[playernum]);
-    }
+    // reload the level from scratch
+    gameaction = ga_loadlevel;
 }
 
 // DOOM Par Times

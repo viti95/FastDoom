@@ -146,9 +146,6 @@ void HUlib_initIText(hu_itext_t *it,
 // enforces left margin
 void HUlib_delCharFromIText(hu_itext_t *it);
 
-// resets line and left margin
-void HUlib_resetIText(hu_itext_t *it);
-
 // whether eaten
 boolean
 HUlib_keyInIText(hu_itext_t *it,

@@ -1214,10 +1214,7 @@ void I_InitNetwork(void)
 
 void I_NetCmd(void)
 {
-    if (!netgame)
-    {
-        I_Error("I_NetCmd when not in netgame");
-    }
+    I_Error("I_NetCmd when not in netgame");
     DPMIInt(doomcom->intnum);
 }
 

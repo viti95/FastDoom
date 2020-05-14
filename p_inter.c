@@ -145,26 +145,6 @@ P_GiveWeapon(player_t *player,
 	boolean gaveammo;
 	boolean gaveweapon;
 
-	if (netgame && (deathmatch != 2) && !dropped)
-	{
-		// leave placed weapons forever on net games
-		if (player->weaponowned[weapon])
-			return false;
-
-		player->bonuscount += BONUSADD;
-		player->weaponowned[weapon] = true;
-
-		if (deathmatch)
-			P_GiveAmmo(player, weaponinfo[weapon].ammo, 5);
-		else
-			P_GiveAmmo(player, weaponinfo[weapon].ammo, 2);
-		player->pendingweapon = weapon;
-
-		if (player == &players[consoleplayer])
-			S_StartSound(NULL, sfx_wpnup);
-		return false;
-	}
-
 	if (weaponinfo[weapon].ammo != am_noammo)
 	{
 		// give one clip with a dropped weapon,
