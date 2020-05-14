@@ -46,7 +46,7 @@ ticcmd_t localcmds[BACKUPTICS];
 
 ticcmd_t netcmds[MAXPLAYERS][BACKUPTICS];
 int nettics[MAXNETNODES];
-int resendto[MAXNETNODES];		   // set when remote needs tics
+int resendto;
 
 int nodeforplayer[MAXPLAYERS];
 
@@ -187,12 +187,12 @@ void NetUpdate(void)
 		return; // singletic update is syncronous
 
 
-	netbuffer->starttic = realstart = resendto[0];
+	netbuffer->starttic = realstart = resendto;
 	netbuffer->numtics = maketic - realstart;
 	if (netbuffer->numtics > BACKUPTICS)
 		I_Error("NetUpdate: netbuffer->numtics > BACKUPTICS");
 
-	resendto[0] = maketic - doomcom->extratics;
+	resendto = maketic;
 
 	for (j = 0; j < netbuffer->numtics; j++)
 		netbuffer->cmds[j] =
@@ -211,10 +211,12 @@ void D_CheckNetGame(void)
 {
 	int i;
 
+	// which tic to start sending
+	resendto = 0;
+
 	for (i = 0; i < MAXNETNODES; i++)
 	{
 		nettics[i] = 0;
-		resendto[i] = 0;		 // which tic to start sending
 	}
 
 	// I_InitNetwork sets doomcom and netgame
