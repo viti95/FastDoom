@@ -46,10 +46,8 @@ int resendto;
 int nodeforplayer[MAXPLAYERS];
 
 int maketic;
-int lastnettic;
 int skiptics;
 int ticdup;
-int maxsend; // BACKUPTICS/(2*ticdup)-1
 
 void D_ProcessEvents(void);
 void G_BuildTiccmd(ticcmd_t *cmd);
@@ -226,9 +224,6 @@ void D_CheckNetGame(void)
 
 	// read values out of doomcom
 	ticdup = doomcom->ticdup;
-	maxsend = BACKUPTICS / (2 * ticdup) - 1;
-	if (maxsend < 1)
-		maxsend = 1;
 
 	for (i = 0; i < doomcom->numplayers; i++)
 		playeringame[i] = true;
