@@ -23,11 +23,6 @@
 #include "doomdef.h"
 #include "doomstat.h"
 
-#define NCMD_EXIT 0x80000000
-#define NCMD_RETRANSMIT 0x40000000
-#define NCMD_SETUP 0x20000000
-#define NCMD_KILL 0x10000000 // kill game
-
 doomcom_t *doomcom;
 doomdata_t *netbuffer; // points inside doomcom
 
@@ -185,7 +180,6 @@ void NetUpdate(void)
 
 	if (singletics)
 		return; // singletic update is syncronous
-
 
 	netbuffer->starttic = realstart = resendto;
 	netbuffer->numtics = maketic - realstart;
