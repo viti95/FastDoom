@@ -70,14 +70,6 @@ doomdata_t reboundstore;
 //
 //
 //
-int NetbufferSize(void)
-{
-	return (int)&(((doomdata_t *)0)->cmds[netbuffer->numtics]);
-}
-
-//
-//
-//
 int ExpandTics(int low)
 {
 	int delta;
@@ -112,26 +104,8 @@ void HSendPacket(int node,
 }
 
 //
-// HGetPacket
-// Returns false if no packet is waiting
-//
-boolean HGetPacket(void)
-{
-	if (reboundpacket)
-	{
-		*netbuffer = reboundstore;
-		doomcom->remotenode = 0;
-		reboundpacket = false;
-		return true;
-	}
-
-	return false;
-}
-
-//
 // GetPackets
 //
-char exitmsg[80];
 
 void GetPackets(void)
 {
@@ -141,52 +115,48 @@ void GetPackets(void)
 	int realend;
 	int realstart;
 
-	while (HGetPacket())
+	netconsole = netbuffer->player & ~PL_DRONE;
+	netnode = doomcom->remotenode;
+
+	// to save bytes, only the low byte of tic numbers are sent
+	// Figure out what the rest of the bytes are
+	realstart = ExpandTics(netbuffer->starttic);
+	realend = (realstart + netbuffer->numtics);
+
+	nodeforplayer[netconsole] = netnode;
+
+	// check for out of order / duplicated packet
+	if (realend == nettics[netnode])
+		return;
+
+	if (realend < nettics[netnode])
 	{
-		netconsole = netbuffer->player & ~PL_DRONE;
-		netnode = doomcom->remotenode;
+		return;
+	}
 
-		// to save bytes, only the low byte of tic numbers are sent
-		// Figure out what the rest of the bytes are
-		realstart = ExpandTics(netbuffer->starttic);
-		realend = (realstart + netbuffer->numtics);
+	// check for a missed packet
+	if (realstart > nettics[netnode])
+	{
+		// stop processing until the other system resends the missed tics
+		remoteresend[netnode] = true;
+		return;
+	}
 
+	// update command store from the packet
+	{
+		int start;
 
-		nodeforplayer[netconsole] = netnode;
+		remoteresend[netnode] = false;
 
-		// check for out of order / duplicated packet
-		if (realend == nettics[netnode])
-			continue;
+		start = nettics[netnode] - realstart;
+		src = &netbuffer->cmds[start];
 
-		if (realend < nettics[netnode])
+		while (nettics[netnode] < realend)
 		{
-			continue;
-		}
-
-		// check for a missed packet
-		if (realstart > nettics[netnode])
-		{
-			// stop processing until the other system resends the missed tics
-			remoteresend[netnode] = true;
-			continue;
-		}
-
-		// update command store from the packet
-		{
-			int start;
-
-			remoteresend[netnode] = false;
-
-			start = nettics[netnode] - realstart;
-			src = &netbuffer->cmds[start];
-
-			while (nettics[netnode] < realend)
-			{
-				dest = &netcmds[netconsole][nettics[netnode] % BACKUPTICS];
-				nettics[netnode]++;
-				*dest = *src;
-				src++;
-			}
+			dest = &netcmds[netconsole][nettics[netnode] % BACKUPTICS];
+			nettics[netnode]++;
+			*dest = *src;
+			src++;
 		}
 	}
 }
