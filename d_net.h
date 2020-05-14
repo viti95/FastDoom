@@ -60,9 +60,6 @@ typedef struct
     // Communication between DOOM and the driver.
     // Is CMD_SEND or CMD_GET.
     short command;
-    // Is dest for send, set by get (-1 = no packet).
-    short remotenode;
-
     // Number of bytes in doomdata to be sent
     short datalength;
 

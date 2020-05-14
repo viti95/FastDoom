@@ -219,7 +219,7 @@ extern ticcmd_t localcmds[BACKUPTICS];
 extern int rndindex;
 
 extern int maketic;
-extern int nettics[MAXNETNODES];
+extern int nettics;
 
 extern ticcmd_t netcmds[MAXPLAYERS][BACKUPTICS];
 extern int ticdup;

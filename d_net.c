@@ -40,7 +40,7 @@ doomdata_t *netbuffer; // points inside doomcom
 ticcmd_t localcmds[BACKUPTICS];
 
 ticcmd_t netcmds[MAXPLAYERS][BACKUPTICS];
-int nettics[MAXNETNODES];
+int nettics;
 int resendto;
 
 int nodeforplayer[MAXPLAYERS];
@@ -79,32 +79,30 @@ int ExpandTics(int low)
 void GetPackets(void)
 {
 	int netconsole;
-	int netnode;
 	ticcmd_t *src, *dest;
 	int realend;
 	int realstart;
 
 	netconsole = netbuffer->player & ~PL_DRONE;
-	netnode = doomcom->remotenode;
 
 	// to save bytes, only the low byte of tic numbers are sent
 	// Figure out what the rest of the bytes are
 	realstart = ExpandTics(netbuffer->starttic);
 	realend = (realstart + netbuffer->numtics);
 
-	nodeforplayer[netconsole] = netnode;
+	nodeforplayer[netconsole] = 0;
 
 	// check for out of order / duplicated packet
-	if (realend == nettics[netnode])
+	if (realend == nettics)
 		return;
 
-	if (realend < nettics[netnode])
+	if (realend < nettics)
 	{
 		return;
 	}
 
 	// check for a missed packet
-	if (realstart > nettics[netnode])
+	if (realstart > nettics)
 	{
 		// stop processing until the other system resends the missed tics
 		return;
@@ -114,13 +112,13 @@ void GetPackets(void)
 	{
 		int start;
 
-		start = nettics[netnode] - realstart;
+		start = nettics - realstart;
 		src = &netbuffer->cmds[start];
 
-		while (nettics[netnode] < realend)
+		while (nettics < realend)
 		{
-			dest = &netcmds[netconsole][nettics[netnode] % BACKUPTICS];
-			nettics[netnode]++;
+			dest = &netcmds[netconsole][nettics % BACKUPTICS];
+			nettics++;
 			*dest = *src;
 			src++;
 		}
@@ -205,11 +203,7 @@ void D_CheckNetGame(void)
 
 	// which tic to start sending
 	resendto = 0;
-
-	for (i = 0; i < MAXNETNODES; i++)
-	{
-		nettics[i] = 0;
-	}
+	nettics = 0;
 
 	// I_InitNetwork sets doomcom and netgame
 	I_InitNetwork();
@@ -264,8 +258,8 @@ void TryRunTics(void)
 	lowtic = MAXINT;
 	numplaying = 0;
 	numplaying++;
-	if (nettics[0] < lowtic)
-		lowtic = nettics[0];
+	if (nettics < lowtic)
+		lowtic = nettics;
 	availabletics = lowtic - gametic / ticdup;
 
 	// decide how many tics to run
@@ -294,13 +288,13 @@ void TryRunTics(void)
 		}
 		else
 		{
-			if (nettics[0] <= nettics[nodeforplayer[i]])
+			if (nettics <= nettics)
 			{
 				gametime--;
 				// printf ("-");
 			}
-			frameskip[frameon & 3] = (oldnettics > nettics[nodeforplayer[i]]);
-			oldnettics = nettics[0];
+			frameskip[frameon & 3] = (oldnettics > nettics);
+			oldnettics = nettics;
 			if (frameskip[0] && frameskip[1] && frameskip[2] && frameskip[3])
 			{
 				skiptics = 1;
@@ -315,8 +309,8 @@ void TryRunTics(void)
 		NetUpdate();
 		lowtic = MAXINT;
 
-		if (nettics[0] < lowtic)
-			lowtic = nettics[0];
+		if (nettics < lowtic)
+			lowtic = nettics;
 
 		// don't stay in here forever -- give the menu a chance to work
 		if (I_GetTime() / ticdup - entertic >= 20)
