@@ -46,7 +46,6 @@ ticcmd_t localcmds[BACKUPTICS];
 
 ticcmd_t netcmds[MAXPLAYERS][BACKUPTICS];
 int nettics[MAXNETNODES];
-boolean nodeingame[MAXNETNODES];   // set false as nodes leave game
 boolean remoteresend[MAXNETNODES]; // set when local needs tics
 int resendto[MAXNETNODES];		   // set when remote needs tics
 
@@ -61,9 +60,6 @@ int maxsend; // BACKUPTICS/(2*ticdup)-1
 void D_ProcessEvents(void);
 void G_BuildTiccmd(ticcmd_t *cmd);
 void D_DoAdvanceDemo(void);
-
-boolean reboundpacket;
-doomdata_t reboundstore;
 
 //
 //
@@ -82,23 +78,6 @@ int ExpandTics(int low)
 		return (maketic & ~0xff) + 256 + low;
 
 	return 0;
-}
-
-//
-// HSendPacket
-//
-void HSendPacket(int node,
-				 int flags)
-{
-	if (!node)
-	{
-		reboundstore = *netbuffer;
-		reboundpacket = true;
-		return;
-	}
-
-	if (demoplayback)
-		return;
 }
 
 //
@@ -223,17 +202,6 @@ void NetUpdate(void)
 		netbuffer->cmds[j] =
 			localcmds[(realstart + j) % BACKUPTICS];
 
-	if (remoteresend[0])
-	{
-		netbuffer->retransmitfrom = nettics[i];
-		HSendPacket(i, NCMD_RETRANSMIT);
-	}
-	else
-	{
-		netbuffer->retransmitfrom = 0;
-		HSendPacket(i, 0);
-	}
-
 	// listen for other packets
 listen:
 	GetPackets();
@@ -249,7 +217,6 @@ void D_CheckNetGame(void)
 
 	for (i = 0; i < MAXNETNODES; i++)
 	{
-		nodeingame[i] = false;
 		nettics[i] = 0;
 		remoteresend[i] = false; // set when local needs tics
 		resendto[i] = 0;		 // which tic to start sending
@@ -274,8 +241,6 @@ void D_CheckNetGame(void)
 
 	for (i = 0; i < doomcom->numplayers; i++)
 		playeringame[i] = true;
-
-	nodeingame[0] = true;
 
 	printf("player %i of %i (%i nodes)\n",
 		   consoleplayer + 1, doomcom->numplayers, doomcom->numnodes);
@@ -312,15 +277,9 @@ void TryRunTics(void)
 
 	lowtic = MAXINT;
 	numplaying = 0;
-	for (i = 0; i < doomcom->numnodes; i++)
-	{
-		if (nodeingame[i])
-		{
-			numplaying++;
-			if (nettics[i] < lowtic)
-				lowtic = nettics[i];
-		}
-	}
+	numplaying++;
+	if (nettics[0] < lowtic)
+		lowtic = nettics[0];
 	availabletics = lowtic - gametic / ticdup;
 
 	// decide how many tics to run
@@ -370,9 +329,8 @@ void TryRunTics(void)
 		NetUpdate();
 		lowtic = MAXINT;
 
-		for (i = 0; i < doomcom->numnodes; i++)
-			if (nodeingame[i] && nettics[i] < lowtic)
-				lowtic = nettics[i];
+		if (nettics[0] < lowtic)
+			lowtic = nettics[0];
 
 		// don't stay in here forever -- give the menu a chance to work
 		if (I_GetTime() / ticdup - entertic >= 20)

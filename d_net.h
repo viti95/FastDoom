@@ -50,8 +50,6 @@ typedef enum
 typedef struct
 {
     // Only valid if NCMD_RETRANSMIT.
-    byte retransmitfrom;
-
     byte starttic;
     byte player;
     byte numtics;
