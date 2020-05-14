@@ -109,14 +109,6 @@ void HSendPacket(int node,
 
 	if (demoplayback)
 		return;
-
-	I_Error("Tried to transmit to another node");
-
-	doomcom->command = CMD_SEND;
-	doomcom->remotenode = node;
-	doomcom->datalength = NetbufferSize();
-
-	I_NetCmd();
 }
 
 //
@@ -134,24 +126,6 @@ boolean HGetPacket(void)
 	}
 
 	return false;
-
-	if (demoplayback)
-		return false;
-
-	doomcom->command = CMD_GET;
-	I_NetCmd();
-
-	if (doomcom->remotenode == -1)
-		return false;
-
-	if (doomcom->datalength != NetbufferSize())
-	{
-		if (debugfile)
-			fprintf(debugfile, "bad packet length %i\n", doomcom->datalength);
-		return false;
-	}
-
-	return true;
 }
 
 //
@@ -352,9 +326,6 @@ void D_QuitNetGame(void)
 {
 	int i, j;
 
-	if (debugfile)
-		fclose(debugfile);
-
 	if (!netgame || !usergame || consoleplayer == -1 || demoplayback)
 		return;
 
@@ -424,11 +395,6 @@ void TryRunTics(void)
 		counts = 1;
 
 	frameon++;
-
-	if (debugfile)
-		fprintf(debugfile,
-				"=======real: %i  avail: %i  game: %i\n",
-				realtics, availabletics, counts);
 
 	if (!demoplayback)
 	{

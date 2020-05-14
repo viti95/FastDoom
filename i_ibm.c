@@ -1197,12 +1197,6 @@ void I_InitNetwork(void)
     doomcom->extratics = 0;
 }
 
-void I_NetCmd(void)
-{
-    I_Error("I_NetCmd when not in netgame");
-    DPMIInt(doomcom->intnum);
-}
-
 //
 // DPMIInt
 //

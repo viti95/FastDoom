@@ -95,8 +95,6 @@ int startepisode;
 int startmap;
 boolean autostart;
 
-FILE *debugfile;
-
 boolean advancedemo;
 
 boolean modifiedgame;
@@ -343,14 +341,6 @@ void D_DoomLoop(void)
 {
     if (demorecording)
         G_BeginRecording();
-
-    if (M_CheckParm("-debugfile"))
-    {
-        char filename[20];
-        sprintf(filename, "debug%i.txt", consoleplayer);
-        printf("debug output to: %s\n", filename);
-        debugfile = fopen(filename, "w");
-    }
 
     I_InitGraphics();
 
