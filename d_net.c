@@ -46,7 +46,6 @@ ticcmd_t localcmds[BACKUPTICS];
 
 ticcmd_t netcmds[MAXPLAYERS][BACKUPTICS];
 int nettics[MAXNETNODES];
-boolean remoteresend[MAXNETNODES]; // set when local needs tics
 int resendto[MAXNETNODES];		   // set when remote needs tics
 
 int nodeforplayer[MAXPLAYERS];
@@ -115,15 +114,12 @@ void GetPackets(void)
 	if (realstart > nettics[netnode])
 	{
 		// stop processing until the other system resends the missed tics
-		remoteresend[netnode] = true;
 		return;
 	}
 
 	// update command store from the packet
 	{
 		int start;
-
-		remoteresend[netnode] = false;
 
 		start = nettics[netnode] - realstart;
 		src = &netbuffer->cmds[start];
@@ -218,7 +214,6 @@ void D_CheckNetGame(void)
 	for (i = 0; i < MAXNETNODES; i++)
 	{
 		nettics[i] = 0;
-		remoteresend[i] = false; // set when local needs tics
 		resendto[i] = 0;		 // which tic to start sending
 	}
 
