@@ -395,7 +395,6 @@ extern gamestate_t wipegamestate;
 
 void G_DoLoadLevel(void)
 {
-    int i;
 
 #if (EXE_GAME_VERSION >= EXE_VERSION_FINAL2)
     // DOOM determines the sky texture to be used
@@ -417,12 +416,9 @@ void G_DoLoadLevel(void)
 
     gamestate = GS_LEVEL;
 
-    for (i = 0; i < MAXPLAYERS; i++)
-    {
-        if (playeringame[i] && players[i].playerstate == PST_DEAD)
-            players[i].playerstate = PST_REBORN;
-        memset(players[i].frags, 0, sizeof(players[i].frags));
-    }
+    if (players[0].playerstate == PST_DEAD)
+        players[0].playerstate = PST_REBORN;
+    memset(players[0].frags, 0, sizeof(players[0].frags));
 
     P_SetupLevel(gameepisode, gamemap, 0, gameskill);
     displayplayer = 0; // view the guy you are playing
