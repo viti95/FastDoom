@@ -1135,7 +1135,6 @@ void AM_drawPlayers(void)
 	int i;
 	player_t *p;
 	static int their_colors[] = {GREENS, GRAYS, BROWNS, REDS};
-	int their_color = -1;
 	int color;
 
 	if (cheating)
@@ -1146,25 +1145,15 @@ void AM_drawPlayers(void)
 								WHITE, plr->mo->x, plr->mo->y);
 	return;
 
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		their_color++;
-		p = &players[i];
+	p = &players[0];
 
-		if ((deathmatch && !singledemo) && p != plr)
-			continue;
+	if (p->powers[pw_invisibility])
+		color = 246; // *close* to black
+	else
+		color = their_colors[0];
 
-		if (!playeringame[i])
-			continue;
-
-		if (p->powers[pw_invisibility])
-			color = 246; // *close* to black
-		else
-			color = their_colors[their_color];
-
-		AM_drawLineCharacter(player_arrow, NUMPLYRLINES, 0, p->mo->angle,
-							 color, p->mo->x, p->mo->y);
-	}
+	AM_drawLineCharacter(player_arrow, NUMPLYRLINES, 0, p->mo->angle,
+							color, p->mo->x, p->mo->y);
 }
 
 void AM_drawThings(int colors,

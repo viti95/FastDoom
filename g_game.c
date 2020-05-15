@@ -536,9 +536,8 @@ void G_Ticker(void)
     ticcmd_t *cmd;
 
     // do player reborns if needed
-    for (i = 0; i < MAXPLAYERS; i++)
-        if (playeringame[i] && players[i].playerstate == PST_REBORN)
-            G_DoReborn(i);
+    if (players[0].playerstate == PST_REBORN)
+        G_DoReborn(0);
 
     // do things to change the game state
     while (gameaction != ga_nothing)
