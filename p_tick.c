@@ -110,9 +110,7 @@ void P_Ticker(void)
         return;
     }
 
-    for (i = 0; i < MAXPLAYERS; i++)
-        if (playeringame[i])
-            P_PlayerThink(&players[i]);
+    P_PlayerThink(&players[0]);
 
     P_RunThinkers();
     P_UpdateSpecials();

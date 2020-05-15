@@ -270,34 +270,6 @@ void TryRunTics(void)
 
 	frameon++;
 
-	if (!demoplayback)
-	{
-		// ideally nettics[0] should be 1 - 3 tics above lowtic
-		// if we are consistantly slower, speed up time
-		for (i = 0; i < MAXPLAYERS; i++)
-			if (playeringame[i])
-				break;
-		if (0 == i)
-		{
-			// the key player does not adapt
-		}
-		else
-		{
-			if (nettics <= nettics)
-			{
-				gametime--;
-				// printf ("-");
-			}
-			frameskip[frameon & 3] = (oldnettics > nettics);
-			oldnettics = nettics;
-			if (frameskip[0] && frameskip[1] && frameskip[2] && frameskip[3])
-			{
-				skiptics = 1;
-				// printf ("+");
-			}
-		}
-	} // demoplayback
-
 	// wait for new tics if needed
 	while (lowtic < gametic / ticdup + counts)
 	{
