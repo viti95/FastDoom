@@ -219,11 +219,10 @@ void D_CheckNetGame(void)
 	// read values out of doomcom
 	ticdup = doomcom->ticdup;
 
-	for (i = 0; i < doomcom->numplayers; i++)
-		playeringame[i] = true;
+	playeringame[0] = true;
 
 	printf("player %i of %i (%i nodes)\n",
-		   consoleplayer + 1, doomcom->numplayers, doomcom->numnodes);
+		   consoleplayer + 1, 1, 1);
 }
 
 //

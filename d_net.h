@@ -64,8 +64,6 @@ typedef struct
     short datalength;
 
     // Info common to all nodes.
-    // Console is allways node 0.
-    short numnodes;
     // Flag: 1 = no duplication, 2-5 = dup for slow nets.
     short ticdup;
     // Flag: 1 = deathmatch.
@@ -78,7 +76,6 @@ typedef struct
 
     // Info specific to this node.
     short consoleplayer;
-    short numplayers;
 
     // These are related to the 3-display mode,
     //  in which two drones looking left and right
