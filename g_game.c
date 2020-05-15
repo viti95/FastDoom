@@ -842,7 +842,6 @@ void G_DoCompleted(void)
         wminfo.partime = 35 * cpars[gamemap - 1];
     else
         wminfo.partime = 35 * pars[gameepisode][gamemap];
-    wminfo.pnum = 0;
 
     wminfo.plyr.in = true;
     wminfo.plyr.skills = players[0].killcount;

@@ -186,9 +186,6 @@ typedef struct
     // the par time
     int partime;
 
-    // index of this player in game
-    int pnum;
-
     wbplayerstruct_t plyr;
 
 } wbstartstruct_t;
