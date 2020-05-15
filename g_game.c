@@ -109,7 +109,6 @@ int totalkills, totalitems, totalsecret; // for intermission
 char demoname[32];
 boolean demorecording;
 boolean demoplayback;
-boolean netdemo;
 byte *demobuffer;
 byte *demo_p;
 byte *demoend;
@@ -941,8 +940,10 @@ void G_DoLoadGame(void)
     gameskill = *save_p++;
     gameepisode = *save_p++;
     gamemap = *save_p++;
-    for (i = 0; i < MAXPLAYERS; i++)
-        playeringame[i] = *save_p++;
+    playeringame[0] = *save_p++;
+    *save_p++;
+    *save_p++;
+    *save_p++;
 
     // load a base level
     G_InitNew(gameskill, gameepisode, gamemap);
@@ -1011,8 +1012,10 @@ void G_DoSaveGame(void)
     *save_p++ = gameskill;
     *save_p++ = gameepisode;
     *save_p++ = gamemap;
-    for (i = 0; i < MAXPLAYERS; i++)
-        *save_p++ = playeringame[i];
+    *save_p++ = true;
+    *save_p++ = false;
+    *save_p++ = false;
+    *save_p++ = false;
     *save_p++ = leveltime >> 16;
     *save_p++ = leveltime >> 8;
     *save_p++ = leveltime;
@@ -1059,7 +1062,6 @@ void G_DeferedInitNew(skill_t skill,
 void G_DoNewGame(void)
 {
     demoplayback = false;
-    netdemo = false;
     playeringame[1] = playeringame[2] = playeringame[3] = 0;
     respawnparm = false;
     fastparm = false;
@@ -1293,12 +1295,10 @@ void G_DoPlayDemo(void)
     nomonsters = *demo_p++;
     *demo_p++;
 
-    for (i = 0; i < MAXPLAYERS; i++)
-        playeringame[i] = *demo_p++;
-    if (playeringame[1])
-    {
-        netdemo = true;
-    }
+    playeringame[0] = *demo_p++;
+    *demo_p++;
+    *demo_p++;
+    *demo_p++;
 
     // don't spend a lot of time in loadlevel
     precache = false;
@@ -1356,7 +1356,6 @@ boolean G_CheckDemoStatus(void)
 
         Z_ChangeTag(demobuffer, PU_CACHE);
         demoplayback = false;
-        netdemo = false;
         deathmatch = false;
         playeringame[1] = playeringame[2] = playeringame[3] = 0;
         respawnparm = false;
