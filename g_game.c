@@ -577,56 +577,44 @@ void G_Ticker(void)
     // and build new consistancy check
     buf = (gametic / ticdup) % BACKUPTICS;
 
-    for (i = 0; i < MAXPLAYERS; i++)
+    cmd = &players[0].cmd;
+
+    memcpy(cmd, &netcmds[0][buf], sizeof(ticcmd_t));
+
+    if (demoplayback)
+        G_ReadDemoTiccmd(cmd);
+    if (demorecording)
+        G_WriteDemoTiccmd(cmd);
+
+    // check for turbo cheats
+    if (cmd->forwardmove > TURBOTHRESHOLD && !(gametic & 31) && ((gametic >> 5) & 3) == i)
     {
-        if (playeringame[i])
-        {
-            cmd = &players[i].cmd;
-
-            memcpy(cmd, &netcmds[i][buf], sizeof(ticcmd_t));
-
-            if (demoplayback)
-                G_ReadDemoTiccmd(cmd);
-            if (demorecording)
-                G_WriteDemoTiccmd(cmd);
-
-            // check for turbo cheats
-            if (cmd->forwardmove > TURBOTHRESHOLD && !(gametic & 31) && ((gametic >> 5) & 3) == i)
-            {
-                static char turbomessage[80];
-                extern char *player_names[4];
-                sprintf(turbomessage, "%s is turbo!", player_names[i]);
-                players[0].message = turbomessage;
-            }
-        }
+        static char turbomessage[80];
+        extern char *player_names[4];
+        sprintf(turbomessage, "%s is turbo!", player_names[0]);
+        players[0].message = turbomessage;
     }
 
     // check for special buttons
-    for (i = 0; i < MAXPLAYERS; i++)
+    if (players[0].cmd.buttons & BT_SPECIAL)
     {
-        if (playeringame[i])
+        switch (players[0].cmd.buttons & BT_SPECIALMASK)
         {
-            if (players[i].cmd.buttons & BT_SPECIAL)
-            {
-                switch (players[i].cmd.buttons & BT_SPECIALMASK)
-                {
-                case BTS_PAUSE:
-                    paused ^= 1;
-                    if (paused)
-                        S_PauseSound();
-                    else
-                        S_ResumeSound();
-                    break;
+        case BTS_PAUSE:
+            paused ^= 1;
+            if (paused)
+                S_PauseSound();
+            else
+                S_ResumeSound();
+            break;
 
-                case BTS_SAVEGAME:
-                    if (!savedescription[0])
-                        strcpy(savedescription, "NET GAME");
-                    savegameslot =
-                        (players[i].cmd.buttons & BTS_SAVEMASK) >> BTS_SAVESHIFT;
-                    gameaction = ga_savegame;
-                    break;
-                }
-            }
+        case BTS_SAVEGAME:
+            if (!savedescription[0])
+                strcpy(savedescription, "NET GAME");
+            savegameslot =
+                (players[0].cmd.buttons & BTS_SAVEMASK) >> BTS_SAVESHIFT;
+            gameaction = ga_savegame;
+            break;
         }
     }
 
@@ -775,9 +763,7 @@ void G_DoCompleted(void)
 
     gameaction = ga_nothing;
 
-    for (i = 0; i < MAXPLAYERS; i++)
-        if (playeringame[i])
-            G_PlayerFinishLevel(i); // take away cards and stuff
+    G_PlayerFinishLevel(0); // take away cards and stuff
 
     if (automapactive)
         AM_Stop();

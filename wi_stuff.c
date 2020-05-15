@@ -445,11 +445,6 @@ void WI_drawOnLnode(int n,
 		V_DrawPatch(lnodes[wbs->epsd][n].x, lnodes[wbs->epsd][n].y,
 					FB, c[i]);
 	}
-	else
-	{
-		// DEBUG
-		printf("Could not place patch on level %d", n + 1);
-	}
 }
 
 void WI_initAnimatedBack(void)
@@ -927,29 +922,24 @@ void WI_checkForAccelerate(void)
 	int i;
 	player_t *player;
 
-	// check for button presses to skip delays
-	for (i = 0, player = players; i < MAXPLAYERS; i++, player++)
+	player = players;
+
+	if (player->cmd.buttons & BT_ATTACK)
 	{
-		if (playeringame[i])
-		{
-			if (player->cmd.buttons & BT_ATTACK)
-			{
-				if (!player->attackdown)
-					acceleratestage = 1;
-				player->attackdown = true;
-			}
-			else
-				player->attackdown = false;
-			if (player->cmd.buttons & BT_USE)
-			{
-				if (!player->usedown)
-					acceleratestage = 1;
-				player->usedown = true;
-			}
-			else
-				player->usedown = false;
-		}
+		if (!player->attackdown)
+			acceleratestage = 1;
+		player->attackdown = true;
 	}
+	else
+		player->attackdown = false;
+	if (player->cmd.buttons & BT_USE)
+	{
+		if (!player->usedown)
+			acceleratestage = 1;
+		player->usedown = true;
+	}
+	else
+		player->usedown = false;
 }
 
 // Updates stuff each tick

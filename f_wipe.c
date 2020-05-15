@@ -248,7 +248,6 @@ int wipe_ScreenWipe(int wipeno,
     if (!go)
     {
         go = 1;
-        // wipe_scr = (byte *) Z_Malloc(width*height, PU_STATIC, 0); // DEBUG
         wipe_scr = screens[0];
         (*wipes[wipeno * 3])(width, height, ticks);
     }
@@ -256,7 +255,6 @@ int wipe_ScreenWipe(int wipeno,
     // do a piece of wipe-in
     V_MarkRect(0, 0, width, height);
     rc = (*wipes[wipeno * 3 + 1])(width, height, ticks);
-    //  V_DrawBlock(x, y, 0, width, height, wipe_scr); // DEBUG
 
     // final stuff
     if (rc)
