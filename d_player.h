@@ -189,7 +189,7 @@ typedef struct
     // index of this player in game
     int pnum;
 
-    wbplayerstruct_t plyr[MAXPLAYERS];
+    wbplayerstruct_t plyr;
 
 } wbstartstruct_t;
 

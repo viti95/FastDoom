@@ -278,16 +278,13 @@ static anim_t *anims[NUMEPISODES] =
 // used to accelerate or skip a stage
 static int acceleratestage;
 
-// wbs->pnum
-static int me;
-
 // specifies current state
 static stateenum_t state;
 
 // contains information passed into intermission
 static wbstartstruct_t *wbs;
 
-static wbplayerstruct_t *plrs; // wbs->plyr[]
+static wbplayerstruct_t plrs; // wbs->plyr[]
 
 // used for general timing
 static int cnt;
@@ -785,10 +782,10 @@ void WI_updateStats(void)
 	if (acceleratestage && sp_state != 10)
 	{
 		acceleratestage = 0;
-		cnt_kills[0] = (plrs[me].skills * 100) / wbs->maxkills;
-		cnt_items[0] = (plrs[me].sitems * 100) / wbs->maxitems;
-		cnt_secret[0] = (plrs[me].ssecret * 100) / wbs->maxsecret;
-		cnt_time = plrs[me].stime / TICRATE;
+		cnt_kills[0] = (plrs.skills * 100) / wbs->maxkills;
+		cnt_items[0] = (plrs.sitems * 100) / wbs->maxitems;
+		cnt_secret[0] = (plrs.ssecret * 100) / wbs->maxsecret;
+		cnt_time = plrs.stime / TICRATE;
 		cnt_par = wbs->partime / TICRATE;
 		S_StartSound(0, sfx_barexp);
 		sp_state = 10;
@@ -801,9 +798,9 @@ void WI_updateStats(void)
 		if (!(bcnt & 3))
 			S_StartSound(0, sfx_pistol);
 
-		if (cnt_kills[0] >= (plrs[me].skills * 100) / wbs->maxkills)
+		if (cnt_kills[0] >= (plrs.skills * 100) / wbs->maxkills)
 		{
-			cnt_kills[0] = (plrs[me].skills * 100) / wbs->maxkills;
+			cnt_kills[0] = (plrs.skills * 100) / wbs->maxkills;
 			S_StartSound(0, sfx_barexp);
 			sp_state++;
 		}
@@ -815,9 +812,9 @@ void WI_updateStats(void)
 		if (!(bcnt & 3))
 			S_StartSound(0, sfx_pistol);
 
-		if (cnt_items[0] >= (plrs[me].sitems * 100) / wbs->maxitems)
+		if (cnt_items[0] >= (plrs.sitems * 100) / wbs->maxitems)
 		{
-			cnt_items[0] = (plrs[me].sitems * 100) / wbs->maxitems;
+			cnt_items[0] = (plrs.sitems * 100) / wbs->maxitems;
 			S_StartSound(0, sfx_barexp);
 			sp_state++;
 		}
@@ -829,9 +826,9 @@ void WI_updateStats(void)
 		if (!(bcnt & 3))
 			S_StartSound(0, sfx_pistol);
 
-		if (cnt_secret[0] >= (plrs[me].ssecret * 100) / wbs->maxsecret)
+		if (cnt_secret[0] >= (plrs.ssecret * 100) / wbs->maxsecret)
 		{
-			cnt_secret[0] = (plrs[me].ssecret * 100) / wbs->maxsecret;
+			cnt_secret[0] = (plrs.ssecret * 100) / wbs->maxsecret;
 			S_StartSound(0, sfx_barexp);
 			sp_state++;
 		}
@@ -844,8 +841,8 @@ void WI_updateStats(void)
 
 		cnt_time += 3;
 
-		if (cnt_time >= plrs[me].stime / TICRATE)
-			cnt_time = plrs[me].stime / TICRATE;
+		if (cnt_time >= plrs.stime / TICRATE)
+			cnt_time = plrs.stime / TICRATE;
 
 		cnt_par += 3;
 
@@ -853,7 +850,7 @@ void WI_updateStats(void)
 		{
 			cnt_par = wbs->partime / TICRATE;
 
-			if (cnt_time >= plrs[me].stime / TICRATE)
+			if (cnt_time >= plrs.stime / TICRATE)
 			{
 				S_StartSound(0, sfx_barexp);
 				sp_state++;
@@ -1214,7 +1211,6 @@ void WI_initVariables(wbstartstruct_t *wbstartstruct)
 	acceleratestage = 0;
 	cnt = bcnt = 0;
 	firstrefresh = 1;
-	me = wbs->pnum;
 	plrs = wbs->plyr;
 
 	if (!wbs->maxkills)

@@ -844,15 +844,12 @@ void G_DoCompleted(void)
         wminfo.partime = 35 * pars[gameepisode][gamemap];
     wminfo.pnum = 0;
 
-    for (i = 0; i < MAXPLAYERS; i++)
-    {
-        wminfo.plyr[i].in = playeringame[i];
-        wminfo.plyr[i].skills = players[i].killcount;
-        wminfo.plyr[i].sitems = players[i].itemcount;
-        wminfo.plyr[i].ssecret = players[i].secretcount;
-        wminfo.plyr[i].stime = leveltime;
-        memcpy(wminfo.plyr[i].frags, players[i].frags, sizeof(wminfo.plyr[i].frags));
-    }
+    wminfo.plyr.in = true;
+    wminfo.plyr.skills = players[0].killcount;
+    wminfo.plyr.sitems = players[0].itemcount;
+    wminfo.plyr.ssecret = players[0].secretcount;
+    wminfo.plyr.stime = leveltime;
+    memcpy(wminfo.plyr.frags, players[0].frags, sizeof(wminfo.plyr.frags));
 
     gamestate = GS_INTERMISSION;
     viewactive = false;
