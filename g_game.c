@@ -1258,8 +1258,10 @@ void G_BeginRecording(void)
     *demo_p++ = nomonsters;
     *demo_p++ = 0;
 
-    for (i = 0; i < MAXPLAYERS; i++)
-        *demo_p++ = playeringame[i];
+    *demo_p++ = true;
+    *demo_p++ = false;
+    *demo_p++ = false;
+    *demo_p++ = false;
 }
 
 //

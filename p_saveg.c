@@ -35,26 +35,19 @@ byte *save_p;
 //
 void P_ArchivePlayers(void)
 {
-	int i;
 	int j;
 	player_t *dest;
 
-	for (i = 0; i < MAXPLAYERS; i++)
+	PADSAVEP();
+
+	dest = (player_t *)save_p;
+	memcpy(dest, &players[0], sizeof(player_t));
+	save_p += sizeof(player_t);
+	for (j = 0; j < NUMPSPRITES; j++)
 	{
-		if (!playeringame[i])
-			continue;
-
-		PADSAVEP();
-
-		dest = (player_t *)save_p;
-		memcpy(dest, &players[i], sizeof(player_t));
-		save_p += sizeof(player_t);
-		for (j = 0; j < NUMPSPRITES; j++)
+		if (dest->psprites[j].state)
 		{
-			if (dest->psprites[j].state)
-			{
-				dest->psprites[j].state = (state_t *)(dest->psprites[j].state - states);
-			}
+			dest->psprites[j].state = (state_t *)(dest->psprites[j].state - states);
 		}
 	}
 }
@@ -64,30 +57,23 @@ void P_ArchivePlayers(void)
 //
 void P_UnArchivePlayers(void)
 {
-	int i;
 	int j;
 
-	for (i = 0; i < MAXPLAYERS; i++)
+	PADSAVEP();
+
+	memcpy(&players[0], save_p, sizeof(player_t));
+	save_p += sizeof(player_t);
+
+	// will be set when unarc thinker
+	players[0].mo = NULL;
+	players[0].message = NULL;
+	players[0].attacker = NULL;
+
+	for (j = 0; j < NUMPSPRITES; j++)
 	{
-		if (!playeringame[i])
-			continue;
-
-		PADSAVEP();
-
-		memcpy(&players[i], save_p, sizeof(player_t));
-		save_p += sizeof(player_t);
-
-		// will be set when unarc thinker
-		players[i].mo = NULL;
-		players[i].message = NULL;
-		players[i].attacker = NULL;
-
-		for (j = 0; j < NUMPSPRITES; j++)
+		if (players[0].psprites[j].state)
 		{
-			if (players[i].psprites[j].state)
-			{
-				players[i].psprites[j].state = &states[(int)players[i].psprites[j].state];
-			}
+			players[0].psprites[j].state = &states[(int)players[0].psprites[j].state];
 		}
 	}
 }
