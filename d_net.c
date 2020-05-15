@@ -43,8 +43,6 @@ ticcmd_t netcmds[MAXPLAYERS][BACKUPTICS];
 int nettics;
 int resendto;
 
-int nodeforplayer[MAXPLAYERS];
-
 int maketic;
 int skiptics;
 int ticdup;
@@ -89,8 +87,6 @@ void GetPackets(void)
 	// Figure out what the rest of the bytes are
 	realstart = ExpandTics(netbuffer->starttic);
 	realend = (realstart + netbuffer->numtics);
-
-	nodeforplayer[netconsole] = 0;
 
 	// check for out of order / duplicated packet
 	if (realend == nettics)
