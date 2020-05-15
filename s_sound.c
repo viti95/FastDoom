@@ -425,15 +425,15 @@ void S_StartSoundAtVolume(void *origin_p,
 
     // Check to see if it is audible,
     //  and if not, modify the params
-    if (origin && origin != players[consoleplayer].mo)
+    if (origin && origin != players[0].mo)
     {
-        rc = S_AdjustSoundParams(players[consoleplayer].mo,
+        rc = S_AdjustSoundParams(players[0].mo,
                                  origin,
                                  &volume,
                                  &sep,
                                  &pitch);
 
-        if (origin->x == players[consoleplayer].mo->x && origin->y == players[consoleplayer].mo->y)
+        if (origin->x == players[0].mo->x && origin->y == players[0].mo->y)
         {
             sep = NORM_SEP;
         }

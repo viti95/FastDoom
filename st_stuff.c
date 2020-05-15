@@ -636,9 +636,9 @@ ST_Responder(event_t *ev)
 			{
 				static char buf[ST_MSGWIDTH];
 				sprintf(buf, "ang=0x%x;x,y=(0x%x,0x%x)",
-						players[consoleplayer].mo->angle,
-						players[consoleplayer].mo->x,
-						players[consoleplayer].mo->y);
+						players[0].mo->angle,
+						players[0].mo->x,
+						players[0].mo->y);
 				plyr->message = buf;
 			}
 		}
@@ -919,7 +919,7 @@ void ST_updateWidgets(void)
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (i != consoleplayer)
+		if (i != 0)
 			st_fragscount += plyr->frags[i];
 		else
 			st_fragscount -= plyr->frags[i];
@@ -1108,7 +1108,7 @@ void ST_loadGraphics(void)
 	}
 
 	// face backgrounds for different color players
-	sprintf(namebuf, "STFB%d", consoleplayer);
+	sprintf(namebuf, "STFB%d", 0);
 	faceback = (patch_t *)W_CacheLumpName(namebuf, PU_STATIC);
 
 	// status bar background bits
@@ -1185,7 +1185,7 @@ void ST_initData(void)
 	int i;
 
 	st_firsttime = true;
-	plyr = &players[consoleplayer];
+	plyr = &players[0];
 
 	st_clock = 0;
 	st_chatstate = StartChatState;

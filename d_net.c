@@ -159,7 +159,7 @@ void NetUpdate(void)
 		newtics = 0;
 	}
 
-	netbuffer->player = consoleplayer;
+	netbuffer->player = 0;
 
 	// build new ticcmds for console player
 	gameticdiv = gametic / ticdup;
@@ -211,7 +211,7 @@ void D_CheckNetGame(void)
 		I_Error("Doomcom buffer invalid!");
 
 	netbuffer = &doomcom->data;
-	consoleplayer = displayplayer = doomcom->consoleplayer;
+	displayplayer = 0;
 
 	printf("startskill %i  deathmatch: %i  startmap: %i  startepisode: %i\n",
 		   startskill, deathmatch, startmap, startepisode);
@@ -222,7 +222,7 @@ void D_CheckNetGame(void)
 	playeringame[0] = true;
 
 	printf("player %i of %i (%i nodes)\n",
-		   consoleplayer + 1, 1, 1);
+		   1, 1, 1);
 }
 
 //
@@ -281,7 +281,7 @@ void TryRunTics(void)
 		for (i = 0; i < MAXPLAYERS; i++)
 			if (playeringame[i])
 				break;
-		if (consoleplayer == i)
+		if (0 == i)
 		{
 			// the key player does not adapt
 		}

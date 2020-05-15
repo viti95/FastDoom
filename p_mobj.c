@@ -643,7 +643,7 @@ void P_SpawnPlayer(mapthing_t *mthing)
     // setup gun psprite
     P_SetupPsprites(p);
 
-    if (mthing->type - 1 == consoleplayer)
+    if (mthing->type - 1 == 0)
     {
         // wake up the status bar
         ST_Start();

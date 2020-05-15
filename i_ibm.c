@@ -1186,7 +1186,6 @@ void I_InitNetwork(void)
     memset(doomcom, 0, sizeof(*doomcom));
     doomcom->id = DOOMCOM_ID;
     doomcom->deathmatch = false;
-    doomcom->consoleplayer = 0;
     doomcom->ticdup = 1;
 }
 

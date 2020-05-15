@@ -74,9 +74,6 @@ typedef struct
     short map;     // 1-9
     short skill;   // 1-5
 
-    // Info specific to this node.
-    short consoleplayer;
-
     // These are related to the 3-display mode,
     //  in which two drones looking left and right
     //  were used to render two additional views

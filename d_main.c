@@ -354,7 +354,7 @@ void D_DoomLoop(void)
         {
             I_StartTic();
             D_ProcessEvents();
-            G_BuildTiccmd(&netcmds[consoleplayer][maketic % BACKUPTICS]);
+            G_BuildTiccmd(&netcmds[0][maketic % BACKUPTICS]);
             if (advancedemo)
                 D_DoAdvanceDemo();
             M_Ticker();
@@ -367,7 +367,7 @@ void D_DoomLoop(void)
             TryRunTics(); // will run at least one tic
         }
 
-        S_UpdateSounds(players[consoleplayer].mo); // move positional sounds
+        S_UpdateSounds(players[0].mo); // move positional sounds
 
         // Update display, next frame, with current state.
         D_Display();
@@ -414,7 +414,7 @@ void D_AdvanceDemo(void)
 //
 void D_DoAdvanceDemo(void)
 {
-    players[consoleplayer].playerstate = PST_LIVE; // not reborn
+    players[0].playerstate = PST_LIVE; // not reborn
     advancedemo = false;
     usergame = false; // no save / end game here
     paused = false;

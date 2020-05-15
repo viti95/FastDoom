@@ -581,7 +581,7 @@ void P_TouchSpecialThing(mobj_t *special,
 		player->itemcount++;
 	P_RemoveMobj(special);
 	player->bonuscount += BONUSADD;
-	if (player == &players[consoleplayer])
+	if (player == &players[0])
 		S_StartSound(NULL, sound);
 }
 
@@ -628,7 +628,7 @@ void P_KillMobj(mobj_t *source,
 		target->player->playerstate = PST_DEAD;
 		P_DropWeapon(target->player);
 
-		if (target->player == &players[consoleplayer] && automapactive)
+		if (target->player == &players[0] && automapactive)
 		{
 			// don't die in auto map,
 			// switch view prior to dying

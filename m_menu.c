@@ -904,9 +904,9 @@ void M_ChangeMessages(int choice)
     showMessages = 1 - showMessages;
 
     if (!showMessages)
-        players[consoleplayer].message = MSGOFF;
+        players[0].message = MSGOFF;
     else
-        players[consoleplayer].message = MSGON;
+        players[0].message = MSGON;
 
     message_dontfuckwithme = true;
 }
@@ -1036,9 +1036,9 @@ void M_ChangeDetail(int choice)
     R_SetViewSize(screenblocks, detailLevel);
 
     if (!detailLevel)
-        players[consoleplayer].message = DETAILHI;
+        players[0].message = DETAILHI;
     else
-        players[consoleplayer].message = DETAILLO;
+        players[0].message = DETAILLO;
 }
 
 void M_SizeDisplay(int choice)
@@ -1435,7 +1435,7 @@ boolean M_Responder(event_t *ev)
             usegamma++;
             if (usegamma > 4)
                 usegamma = 0;
-            players[consoleplayer].message = gammamsg[usegamma];
+            players[0].message = gammamsg[usegamma];
             I_SetPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
             return true;
         }

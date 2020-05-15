@@ -328,7 +328,7 @@ void HU_Start(void)
     int i;
     char *s;
 
-    plr = &players[consoleplayer];
+    plr = &players[0];
     message_on = false;
     message_dontfuckwithme = false;
     message_nottobefuckedwith = false;

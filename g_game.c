@@ -101,7 +101,6 @@ boolean deathmatch; // only if started as net death
 boolean playeringame[MAXPLAYERS];
 player_t players[MAXPLAYERS];
 
-int consoleplayer; // player taking events and displaying
 int displayplayer; // view being displayed
 int gametic;
 int levelstarttic;                       // gametic at level start
@@ -215,7 +214,7 @@ void G_BuildTiccmd(ticcmd_t *cmd)
     memcpy(cmd, base, sizeof(*cmd));
 
     cmd->consistancy =
-        consistancy[consoleplayer][maketic % BACKUPTICS];
+        consistancy[0][maketic % BACKUPTICS];
 
     strafe = gamekeydown[key_strafe] || mousebuttons[mousebstrafe] || joybuttons[joybstrafe];
     speed = gamekeydown[key_speed] || joybuttons[joybspeed];
@@ -426,7 +425,7 @@ void G_DoLoadLevel(void)
     }
 
     P_SetupLevel(gameepisode, gamemap, 0, gameskill);
-    displayplayer = consoleplayer; // view the guy you are playing
+    displayplayer = 0; // view the guy you are playing
     starttime = I_GetTime();
     gameaction = ga_nothing;
     Z_CheckHeap();
@@ -455,7 +454,7 @@ boolean G_Responder(event_t *ev)
             displayplayer++;
             if (displayplayer == MAXPLAYERS)
                 displayplayer = 0;
-        } while (!playeringame[displayplayer] && displayplayer != consoleplayer);
+        } while (!playeringame[displayplayer] && displayplayer != 0);
         return true;
     }
 
@@ -602,7 +601,7 @@ void G_Ticker(void)
                 static char turbomessage[80];
                 extern char *player_names[4];
                 sprintf(turbomessage, "%s is turbo!", player_names[i]);
-                players[consoleplayer].message = turbomessage;
+                players[0].message = turbomessage;
             }
         }
     }
@@ -800,7 +799,7 @@ void G_DoCompleted(void)
             break;
         }
 
-    wminfo.didsecret = players[consoleplayer].didsecret;
+    wminfo.didsecret = players[0].didsecret;
     wminfo.epsd = gameepisode - 1;
     wminfo.last = gamemap - 1;
 
@@ -863,7 +862,7 @@ void G_DoCompleted(void)
         wminfo.partime = 35 * cpars[gamemap - 1];
     else
         wminfo.partime = 35 * pars[gameepisode][gamemap];
-    wminfo.pnum = consoleplayer;
+    wminfo.pnum = 0;
 
     for (i = 0; i < MAXPLAYERS; i++)
     {
@@ -893,7 +892,7 @@ void G_WorldDone(void)
     gameaction = ga_worlddone;
 
     if (secretexit)
-        players[consoleplayer].didsecret = true;
+        players[0].didsecret = true;
 
     if (commercial)
     {
@@ -1051,7 +1050,7 @@ void G_DoSaveGame(void)
     gameaction = ga_nothing;
     savedescription[0] = 0;
 
-    players[consoleplayer].message = GGSAVED;
+    players[0].message = GGSAVED;
 
     // draw the pattern into the back screen
     R_FillBackScreen();
@@ -1084,7 +1083,6 @@ void G_DoNewGame(void)
     respawnparm = false;
     fastparm = false;
     nomonsters = false;
-    consoleplayer = 0;
     G_InitNew(d_skill, d_episode, d_map);
     gameaction = ga_nothing;
 }
@@ -1275,7 +1273,7 @@ void G_BeginRecording(void)
     *demo_p++ = respawnparm;
     *demo_p++ = fastparm;
     *demo_p++ = nomonsters;
-    *demo_p++ = consoleplayer;
+    *demo_p++ = 0;
 
     for (i = 0; i < MAXPLAYERS; i++)
         *demo_p++ = playeringame[i];
@@ -1312,7 +1310,7 @@ void G_DoPlayDemo(void)
     respawnparm = *demo_p++;
     fastparm = *demo_p++;
     nomonsters = *demo_p++;
-    consoleplayer = *demo_p++;
+    *demo_p++;
 
     for (i = 0; i < MAXPLAYERS; i++)
         playeringame[i] = *demo_p++;
@@ -1383,7 +1381,6 @@ boolean G_CheckDemoStatus(void)
         respawnparm = false;
         fastparm = false;
         nomonsters = false;
-        consoleplayer = 0;
         D_AdvanceDemo();
         return true;
     }

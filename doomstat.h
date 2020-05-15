@@ -120,7 +120,6 @@ extern int viewwidth;
 extern int scaledviewwidth;
 
 // Player taking events, and displaying.
-extern int consoleplayer;
 extern int displayplayer;
 
 // -------------------------------------

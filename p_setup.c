@@ -563,7 +563,7 @@ void P_SetupLevel(int episode,
 
     // Initial height of PointOfView
     // will be set by player think.
-    players[consoleplayer].viewz = 1;
+    players[0].viewz = 1;
 
     // Make sure all sounds are stopped before Z_FreeTags.
     S_Start();
