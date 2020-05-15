@@ -410,7 +410,6 @@ void AM_changeWindowLoc(void)
 //
 void AM_initVariables(void)
 {
-	int pnum;
 	static event_t st_notify = {ev_keyup, AM_MSGENTERED};
 
 	automapactive = true;
@@ -427,13 +426,7 @@ void AM_initVariables(void)
 	m_w = FTOM(f_w);
 	m_h = FTOM(f_h);
 
-	// find player to center on initially
-	if (!playeringame[pnum = 0])
-		for (pnum = 0; pnum < MAXPLAYERS; pnum++)
-			if (playeringame[pnum])
-				break;
-
-	plr = &players[pnum];
+	plr = &players[0];
 	m_x = plr->mo->x - m_w / 2;
 	m_y = plr->mo->y - m_h / 2;
 	AM_changeWindowLoc();
