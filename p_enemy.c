@@ -1562,11 +1562,7 @@ void A_BossDeath(mobj_t *mo)
     }
 
     // make sure there is a player alive for victory
-    for (i = 0; i < MAXPLAYERS; i++)
-        if (playeringame[i] && players[i].health > 0)
-            break;
-
-    if (i == MAXPLAYERS)
+    if(players[0].health <= 0)
         return; // no one left alive, so do not end game
 
     // scan the remaining thinkers to see
