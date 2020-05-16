@@ -119,9 +119,6 @@ extern int viewheight;
 extern int viewwidth;
 extern int scaledviewwidth;
 
-// Player taking events, and displaying.
-extern int displayplayer;
-
 // -------------------------------------
 // Scores, rating.
 // Statistics on a given map, for intermission.

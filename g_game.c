@@ -100,7 +100,6 @@ boolean viewactive;
 boolean playeringame[MAXPLAYERS];
 player_t players[MAXPLAYERS];
 
-int displayplayer; // view being displayed
 int gametic;
 int levelstarttic;                       // gametic at level start
 int totalkills, totalitems, totalsecret; // for intermission
@@ -415,7 +414,6 @@ void G_DoLoadLevel(void)
         players[0].playerstate = PST_REBORN;
 
     P_SetupLevel(gameepisode, gamemap, 0, gameskill);
-    displayplayer = 0; // view the guy you are playing
     starttime = I_GetTime();
     gameaction = ga_nothing;
     Z_CheckHeap();
@@ -1012,7 +1010,7 @@ void G_DoSaveGame(void)
 //
 // G_InitNew
 // Can be called by the startup code or the menu task,
-// consoleplayer, displayplayer, playeringame[] should be set.
+// consoleplayer, playeringame[] should be set.
 //
 skill_t d_skill;
 int d_episode;

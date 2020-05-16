@@ -204,7 +204,6 @@ void D_CheckNetGame(void)
 		I_Error("Doomcom buffer invalid!");
 
 	netbuffer = &doomcom->data;
-	displayplayer = 0;
 
 	printf("startskill %i  deathmatch: %i  startmap: %i  startepisode: %i\n",
 		   startskill, 0, startmap, startepisode);
