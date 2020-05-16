@@ -61,7 +61,6 @@ static player_t *plr;
 patch_t *hu_font[HU_FONTSIZE];
 static hu_textline_t w_title;
 static boolean always_off = false;
-static hu_itext_t w_inputbuffer[MAXPLAYERS];
 
 static boolean message_on;
 boolean message_dontfuckwithme;
@@ -354,10 +353,6 @@ void HU_Start(void)
 
     while (*s)
         HUlib_addCharToTextLine(&w_title, *(s++));
-
-    // create the inputbuffer widgets
-    for (i = 0; i < MAXPLAYERS; i++)
-        HUlib_initIText(&w_inputbuffer[i], 0, 0, 0, 0, &always_off);
 }
 
 void HU_Drawer(void)

@@ -68,21 +68,6 @@ typedef struct
 
 } hu_stext_t;
 
-// Input Text Line widget
-//  (child of Text Line widget)
-typedef struct
-{
-    hu_textline_t l; // text line to input on
-
-    // left margin past which I am not to delete characters
-    int lm;
-
-    // pointer to boolean stating whether to update window
-    boolean *on;
-    boolean laston; // last value of *->on;
-
-} hu_itext_t;
-
 //
 // Widget creation, access, and update routines
 //
@@ -134,26 +119,5 @@ void HUlib_drawSText(hu_stext_t *s);
 
 // erases all stext lines
 void HUlib_eraseSText(hu_stext_t *s);
-
-// Input Text Line widget routines
-void HUlib_initIText(hu_itext_t *it,
-                     int x,
-                     int y,
-                     patch_t **font,
-                     int startchar,
-                     boolean *on);
-
-// enforces left margin
-void HUlib_delCharFromIText(hu_itext_t *it);
-
-// whether eaten
-boolean
-HUlib_keyInIText(hu_itext_t *it,
-                 unsigned char ch);
-
-void HUlib_drawIText(hu_itext_t *it);
-
-// erases all itext lines
-void HUlib_eraseIText(hu_itext_t *it);
 
 #endif
