@@ -837,7 +837,6 @@ void G_DoCompleted(void)
     wminfo.maxkills = totalkills;
     wminfo.maxitems = totalitems;
     wminfo.maxsecret = totalsecret;
-    wminfo.maxfrags = 0;
     if (commercial)
         wminfo.partime = 35 * cpars[gamemap - 1];
     else

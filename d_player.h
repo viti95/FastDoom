@@ -181,7 +181,6 @@ typedef struct
     int maxkills;
     int maxitems;
     int maxsecret;
-    int maxfrags;
 
     // the par time
     int partime;
