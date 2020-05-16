@@ -753,8 +753,7 @@ void G_DoCompleted(void)
             gameaction = ga_victory;
             return;
         case 9:
-            for (i = 0; i < MAXPLAYERS; i++)
-                players[i].didsecret = true;
+            players[0].didsecret = true;
             break;
         }
 
@@ -1109,8 +1108,7 @@ void G_InitNew(skill_t skill,
     }
 
     // force players to be initialized upon first level load
-    for (i = 0; i < MAXPLAYERS; i++)
-        players[i].playerstate = PST_REBORN;
+    players[0].playerstate = PST_REBORN;
 
     usergame = true; // will be set false if a demo
     paused = false;
