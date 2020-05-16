@@ -416,13 +416,6 @@ boolean HU_Responder(event_t *ev)
     unsigned char c;
     int i;
 
-    static char destination_keys[MAXPLAYERS] =
-        {
-            HUSTR_KEYGREEN,
-            HUSTR_KEYINDIGO,
-            HUSTR_KEYBROWN,
-            HUSTR_KEYRED};
-
     static int num_nobrainers = 0;
 
     if (ev->data1 == KEY_RSHIFT)
