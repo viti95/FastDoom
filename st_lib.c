@@ -33,15 +33,8 @@
 // in AM_map.c
 extern boolean automapactive;
 
-//
-// Hack display negative frags.
-//  Loads and store the stminus lump.
-//
-patch_t *sttminus;
-
 void STlib_init(void)
 {
-    sttminus = (patch_t *)W_CacheLumpName("STTMINUS", PU_STATIC);
 }
 
 // ?
@@ -78,8 +71,6 @@ void STlib_drawNum(st_number_t *n,
     int h = SHORT(n->p[0]->height);
     int x = n->x;
 
-    int neg;
-
     // [crispy] redraw only if necessary
     if (n->oldnum == num && !refresh)
     {
@@ -87,18 +78,6 @@ void STlib_drawNum(st_number_t *n,
     }
 
     n->oldnum = *n->num;
-
-    neg = num < 0;
-
-    if (neg)
-    {
-        if (numdigits == 2 && num < -9)
-            num = -9;
-        else if (numdigits == 3 && num < -99)
-            num = -99;
-
-        num = -num;
-    }
 
     // clear the area
     x = n->x - numdigits * w;
@@ -122,10 +101,6 @@ void STlib_drawNum(st_number_t *n,
         V_DrawPatch(x, n->y, FG, n->p[num % 10]);
         num /= 10;
     }
-
-    // draw a minus sign if necessary
-    if (neg)
-        V_DrawPatch(x - 8, n->y, FG, sttminus);
 }
 
 //
