@@ -188,8 +188,6 @@ char savedescription[32];
 mobj_t *bodyque[BODYQUESIZE];
 int bodyqueslot;
 
-void *statcopy; // for statistics driver
-
 //
 // G_BuildTiccmd
 // Builds a ticcmd from all of the available inputs
@@ -846,9 +844,6 @@ void G_DoCompleted(void)
     gamestate = GS_INTERMISSION;
     viewactive = false;
     automapactive = false;
-
-    if (statcopy)
-        memcpy(statcopy, &wminfo, sizeof(wminfo));
 
     WI_Start(&wminfo);
 }
