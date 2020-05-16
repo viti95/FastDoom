@@ -90,11 +90,6 @@ mobj_t **blocklinks;
 //
 byte *rejectmatrix;
 
-// Maintain single and multi player starting spots.
-#define MAX_DEATHMATCH_STARTS 10
-
-mapthing_t deathmatchstarts[MAX_DEATHMATCH_STARTS];
-mapthing_t *deathmatch_p;
 mapthing_t playerstarts[MAXPLAYERS];
 
 //
@@ -611,7 +606,6 @@ void P_SetupLevel(int episode,
     P_GroupLines();
 
     bodyqueslot = 0;
-    deathmatch_p = deathmatchstarts;
     P_LoadThings(lumpnum + ML_THINGS);
 
     // clear special respawning que
