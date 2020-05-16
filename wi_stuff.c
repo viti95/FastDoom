@@ -275,9 +275,9 @@ static int bcnt;
 // signals to refresh everything for one frame
 static int firstrefresh;
 
-static int cnt_kills[MAXPLAYERS];
-static int cnt_items[MAXPLAYERS];
-static int cnt_secret[MAXPLAYERS];
+static int cnt_kills;
+static int cnt_items;
+static int cnt_secret;
 static int cnt_time;
 static int cnt_par;
 static int cnt_pause;
@@ -332,12 +332,6 @@ static patch_t *victims;
 static patch_t *total;
 static patch_t *star;
 static patch_t *bstar;
-
-// "red P[1..MAXPLAYERS]"
-static patch_t *p[MAXPLAYERS];
-
-// "gray P[1..MAXPLAYERS]"
-static patch_t *bp[MAXPLAYERS];
 
 // Name graphics of each level (centered)
 static patch_t **lnames;
@@ -728,7 +722,7 @@ void WI_initStats(void)
 	state = StatCount;
 	acceleratestage = 0;
 	sp_state = 1;
-	cnt_kills[0] = cnt_items[0] = cnt_secret[0] = -1;
+	cnt_kills = cnt_items = cnt_secret = -1;
 	cnt_time = cnt_par = -1;
 	cnt_pause = TICRATE;
 
@@ -743,9 +737,9 @@ void WI_updateStats(void)
 	if (acceleratestage && sp_state != 10)
 	{
 		acceleratestage = 0;
-		cnt_kills[0] = (plrs.skills * 100) / wbs->maxkills;
-		cnt_items[0] = (plrs.sitems * 100) / wbs->maxitems;
-		cnt_secret[0] = (plrs.ssecret * 100) / wbs->maxsecret;
+		cnt_kills = (plrs.skills * 100) / wbs->maxkills;
+		cnt_items = (plrs.sitems * 100) / wbs->maxitems;
+		cnt_secret = (plrs.ssecret * 100) / wbs->maxsecret;
 		cnt_time = plrs.stime / TICRATE;
 		cnt_par = wbs->partime / TICRATE;
 		S_StartSound(0, sfx_barexp);
@@ -754,42 +748,42 @@ void WI_updateStats(void)
 
 	if (sp_state == 2)
 	{
-		cnt_kills[0] += 2;
+		cnt_kills += 2;
 
 		if (!(bcnt & 3))
 			S_StartSound(0, sfx_pistol);
 
-		if (cnt_kills[0] >= (plrs.skills * 100) / wbs->maxkills)
+		if (cnt_kills >= (plrs.skills * 100) / wbs->maxkills)
 		{
-			cnt_kills[0] = (plrs.skills * 100) / wbs->maxkills;
+			cnt_kills = (plrs.skills * 100) / wbs->maxkills;
 			S_StartSound(0, sfx_barexp);
 			sp_state++;
 		}
 	}
 	else if (sp_state == 4)
 	{
-		cnt_items[0] += 2;
+		cnt_items += 2;
 
 		if (!(bcnt & 3))
 			S_StartSound(0, sfx_pistol);
 
-		if (cnt_items[0] >= (plrs.sitems * 100) / wbs->maxitems)
+		if (cnt_items >= (plrs.sitems * 100) / wbs->maxitems)
 		{
-			cnt_items[0] = (plrs.sitems * 100) / wbs->maxitems;
+			cnt_items = (plrs.sitems * 100) / wbs->maxitems;
 			S_StartSound(0, sfx_barexp);
 			sp_state++;
 		}
 	}
 	else if (sp_state == 6)
 	{
-		cnt_secret[0] += 2;
+		cnt_secret += 2;
 
 		if (!(bcnt & 3))
 			S_StartSound(0, sfx_pistol);
 
-		if (cnt_secret[0] >= (plrs.ssecret * 100) / wbs->maxsecret)
+		if (cnt_secret >= (plrs.ssecret * 100) / wbs->maxsecret)
 		{
-			cnt_secret[0] = (plrs.ssecret * 100) / wbs->maxsecret;
+			cnt_secret = (plrs.ssecret * 100) / wbs->maxsecret;
 			S_StartSound(0, sfx_barexp);
 			sp_state++;
 		}
@@ -855,13 +849,13 @@ void WI_drawStats(void)
 	WI_drawLF();
 
 	V_DrawPatch(SP_STATSX, SP_STATSY, FB, kills);
-	WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY, cnt_kills[0]);
+	WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY, cnt_kills);
 
 	V_DrawPatch(SP_STATSX, SP_STATSY + lh, FB, items);
-	WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY + lh, cnt_items[0]);
+	WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY + lh, cnt_items);
 
 	V_DrawPatch(SP_STATSX, SP_STATSY + 2 * lh, FB, sp_secret);
-	WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY + 2 * lh, cnt_secret[0]);
+	WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY + 2 * lh, cnt_secret);
 
 	V_DrawPatch(SP_TIMEX, SP_TIMEY, FB, time);
 	WI_drawTime(SCREENWIDTH / 2 - SP_TIMEX, SP_TIMEY, cnt_time);
@@ -1064,17 +1058,6 @@ void WI_loadData(void)
 
 	// dead face
 	bstar = W_CacheLumpName("STFDEAD0", PU_STATIC);
-
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		// "1,2,3,4"
-		sprintf(name, "STPB%d", i);
-		p[i] = W_CacheLumpName(name, PU_STATIC);
-
-		// "1,2,3,4"
-		sprintf(name, "WIBP%d", i + 1);
-		bp[i] = W_CacheLumpName(name, PU_STATIC);
-	}
 }
 
 void WI_unloadData(void)
@@ -1132,11 +1115,6 @@ void WI_unloadData(void)
 	//  Z_ChangeTag(star, PU_CACHE);
 	//  Z_ChangeTag(bstar, PU_CACHE);
 
-	for (i = 0; i < MAXPLAYERS; i++)
-		Z_ChangeTag(p[i], PU_CACHE);
-
-	for (i = 0; i < MAXPLAYERS; i++)
-		Z_ChangeTag(bp[i], PU_CACHE);
 }
 
 void WI_Drawer(void)
