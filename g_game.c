@@ -560,7 +560,7 @@ void G_Ticker(void)
 
     cmd = &players[0].cmd;
 
-    memcpy(cmd, &netcmds[0][buf], sizeof(ticcmd_t));
+    memcpy(cmd, &netcmds[buf], sizeof(ticcmd_t));
 
     if (demoplayback)
         G_ReadDemoTiccmd(cmd);

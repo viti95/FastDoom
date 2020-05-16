@@ -39,7 +39,7 @@ doomdata_t *netbuffer; // points inside doomcom
 
 ticcmd_t localcmds[BACKUPTICS];
 
-ticcmd_t netcmds[MAXPLAYERS][BACKUPTICS];
+ticcmd_t netcmds[BACKUPTICS];
 int nettics;
 int resendto;
 
@@ -76,12 +76,9 @@ int ExpandTics(int low)
 
 void GetPackets(void)
 {
-	int netconsole;
 	ticcmd_t *src, *dest;
 	int realend;
 	int realstart;
-
-	netconsole = netbuffer->player & ~PL_DRONE;
 
 	// to save bytes, only the low byte of tic numbers are sent
 	// Figure out what the rest of the bytes are
@@ -113,7 +110,7 @@ void GetPackets(void)
 
 		while (nettics < realend)
 		{
-			dest = &netcmds[netconsole][nettics % BACKUPTICS];
+			dest = &netcmds[nettics % BACKUPTICS];
 			nettics++;
 			*dest = *src;
 			src++;
@@ -306,12 +303,11 @@ void TryRunTics(void)
 				int j;
 
 				buf = (gametic / ticdup) % BACKUPTICS;
-				for (j = 0; j < MAXPLAYERS; j++)
-				{
-					cmd = &netcmds[j][buf];
-					if (cmd->buttons & BT_SPECIAL)
-						cmd->buttons = 0;
-				}
+			
+				cmd = &netcmds[buf];
+				if (cmd->buttons & BT_SPECIAL)
+					cmd->buttons = 0;
+			
 			}
 		}
 		NetUpdate(); // check for new console commands
