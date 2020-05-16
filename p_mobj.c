@@ -31,7 +31,7 @@
 
 #include "doomstat.h"
 
-void G_PlayerReborn(int player);
+void G_PlayerReborn();
 void P_SpawnMapThing(mapthing_t *mthing);
 
 //
@@ -548,16 +548,10 @@ void P_SpawnPlayer(mapthing_t *mthing)
 
     mobj_t *mobj;
 
-    int i;
-
-    // not playing?
-    if (!playeringame[mthing->type - 1])
-        return;
-
-    p = &players[mthing->type - 1];
+    p = &players[0];
 
     if (p->playerstate == PST_REBORN)
-        G_PlayerReborn(mthing->type - 1);
+        G_PlayerReborn();
 
     x = mthing->x << FRACBITS;
     y = mthing->y << FRACBITS;
@@ -609,13 +603,13 @@ void P_SpawnMapThing(mapthing_t *mthing)
     fixed_t z;
 
     // count deathmatch start positions
-    if (mthing->type == 11)
+    if (mthing->type == 11 || mthing->type == 2 || mthing->type == 3 || mthing->type == 4)
     {
         return;
     }
 
     // check for players specially
-    if (mthing->type <= 4)
+    if (mthing->type == 1)
     {
         // save spots for respawning in network games
         P_SpawnPlayer(mthing);

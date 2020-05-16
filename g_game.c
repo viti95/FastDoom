@@ -64,7 +64,7 @@
 boolean G_CheckDemoStatus(void);
 void G_ReadDemoTiccmd(ticcmd_t *cmd);
 void G_WriteDemoTiccmd(ticcmd_t *cmd);
-void G_PlayerReborn(int player);
+void G_PlayerReborn();
 void G_InitNew(skill_t skill, int episode, int map);
 
 void G_DoReborn(int playernum);
@@ -625,11 +625,11 @@ void G_Ticker(void)
 // G_PlayerFinishLevel
 // Can when a player completes a level.
 //
-void G_PlayerFinishLevel(int player)
+void G_PlayerFinishLevel()
 {
     player_t *p;
 
-    p = &players[player];
+    p = &players[0];
 
     memset(p->powers, 0, sizeof(p->powers));
     memset(p->cards, 0, sizeof(p->cards));
@@ -645,7 +645,7 @@ void G_PlayerFinishLevel(int player)
 // Called after a player dies
 // almost everything is cleared and initialized
 //
-void G_PlayerReborn(int player)
+void G_PlayerReborn()
 {
     player_t *p;
     int i;
@@ -653,16 +653,16 @@ void G_PlayerReborn(int player)
     int itemcount;
     int secretcount;
 
-    killcount = players[player].killcount;
-    itemcount = players[player].itemcount;
-    secretcount = players[player].secretcount;
+    killcount = players[0].killcount;
+    itemcount = players[0].itemcount;
+    secretcount = players[0].secretcount;
 
-    p = &players[player];
+    p = &players[0];
     memset(p, 0, sizeof(*p));
 
-    players[player].killcount = killcount;
-    players[player].itemcount = itemcount;
-    players[player].secretcount = secretcount;
+    players[0].killcount = killcount;
+    players[0].itemcount = itemcount;
+    players[0].secretcount = secretcount;
 
     p->usedown = p->attackdown = true; // don't do anything immediately
     p->playerstate = PST_LIVE;
@@ -739,7 +739,7 @@ void G_DoCompleted(void)
 
     gameaction = ga_nothing;
 
-    G_PlayerFinishLevel(0); // take away cards and stuff
+    G_PlayerFinishLevel(); // take away cards and stuff
 
     if (automapactive)
         AM_Stop();
