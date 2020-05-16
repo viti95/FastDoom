@@ -847,7 +847,6 @@ void G_DoCompleted(void)
     wminfo.plyr.sitems = players[0].itemcount;
     wminfo.plyr.ssecret = players[0].secretcount;
     wminfo.plyr.stime = leveltime;
-    memcpy(wminfo.plyr.frags, players[0].frags, sizeof(wminfo.plyr.frags));
 
     gamestate = GS_INTERMISSION;
     viewactive = false;
