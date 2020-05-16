@@ -85,19 +85,6 @@
 
 #define NG_SPACINGX 64
 
-// DEATHMATCH STUFF
-#define DM_MATRIXX 42
-#define DM_MATRIXY 68
-
-#define DM_SPACINGX 40
-
-#define DM_TOTALSX 269
-
-#define DM_KILLERSX 10
-#define DM_KILLERSY 100
-#define DM_VICTIMSX 5
-#define DM_VICTIMSY 50
-
 typedef enum
 {
 	ANIM_ALWAYS,
@@ -751,10 +738,6 @@ void WI_drawNoState(void)
 	snl_pointeron = true;
 	WI_drawShowNextLoc();
 }
-
-static int dm_state;
-static int dm_frags[MAXPLAYERS][MAXPLAYERS];
-static int dm_totals[MAXPLAYERS];
 
 static int cnt_frags[MAXPLAYERS];
 static int dofrags;
