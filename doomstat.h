@@ -164,9 +164,6 @@ extern player_t players[MAXPLAYERS];
 // Alive? Disconnected?
 extern boolean playeringame[MAXPLAYERS];
 
-// Player spawn spots.
-extern mapthing_t playerstarts[MAXPLAYERS];
-
 // Intermission stats.
 // Parameters for world map / intermission.
 extern wbstartstruct_t wminfo;

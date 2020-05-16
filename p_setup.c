@@ -90,8 +90,6 @@ mobj_t **blocklinks;
 //
 byte *rejectmatrix;
 
-mapthing_t playerstarts[MAXPLAYERS];
-
 //
 // P_LoadVertexes
 //
