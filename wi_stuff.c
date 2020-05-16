@@ -79,12 +79,6 @@
 #define SP_TIMEX 16
 #define SP_TIMEY (SCREENHEIGHT - 32)
 
-// NET GAME STUFF
-#define NG_STATSY 50
-#define NG_STATSX (32 + SHORT(star->width) / 2 + 32 * !dofrags)
-
-#define NG_SPACINGX 64
-
 typedef enum
 {
 	ANIM_ALWAYS,
@@ -253,7 +247,6 @@ static anim_t *anims[NUMEPISODES] =
 #define SP_KILLS 0
 #define SP_ITEMS 2
 #define SP_SECRET 4
-#define SP_FRAGS 6
 #define SP_TIME 8
 #define SP_PAR ST_TIME
 
@@ -312,9 +305,6 @@ static patch_t *colon;
 // 0-9 graphic
 static patch_t *num[10];
 
-// minus sign
-static patch_t *wiminus;
-
 // "Finished!" graphics
 static patch_t *finished;
 
@@ -324,11 +314,10 @@ static patch_t *entering;
 // "secret"
 static patch_t *sp_secret;
 
-// "Kills", "Scrt", "Items", "Frags"
+// "Kills", "Scrt", "Items"
 static patch_t *kills;
 static patch_t *secret;
 static patch_t *items;
-static patch_t *frags;
 
 // Time sucks.
 static patch_t *time;
@@ -730,8 +719,6 @@ void WI_drawNoState(void)
 	WI_drawShowNextLoc();
 }
 
-static int cnt_frags[MAXPLAYERS];
-static int dofrags;
 static int ng_state;
 
 static int sp_state;
@@ -1023,9 +1010,6 @@ void WI_loadData(void)
 		}
 	}
 
-	// More hacks on minus sign.
-	wiminus = W_CacheLumpName("WIMINUS", PU_STATIC);
-
 	for (i = 0; i < 10; i++)
 	{
 		// numbers 0-9
@@ -1053,9 +1037,6 @@ void WI_loadData(void)
 
 	// Yuck.
 	items = W_CacheLumpName("WIOSTI", PU_STATIC);
-
-	// "frgs"
-	frags = W_CacheLumpName("WIFRGS", PU_STATIC);
 
 	// ":"
 	colon = W_CacheLumpName("WICOLON", PU_STATIC);
@@ -1101,8 +1082,6 @@ void WI_unloadData(void)
 	int i;
 	int j;
 
-	Z_ChangeTag(wiminus, PU_CACHE);
-
 	for (i = 0; i < 10; i++)
 		Z_ChangeTag(num[i], PU_CACHE);
 
@@ -1143,7 +1122,6 @@ void WI_unloadData(void)
 	Z_ChangeTag(secret, PU_CACHE);
 	Z_ChangeTag(sp_secret, PU_CACHE);
 	Z_ChangeTag(items, PU_CACHE);
-	Z_ChangeTag(frags, PU_CACHE);
 	Z_ChangeTag(time, PU_CACHE);
 	Z_ChangeTag(sucks, PU_CACHE);
 	Z_ChangeTag(par, PU_CACHE);

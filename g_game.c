@@ -417,7 +417,6 @@ void G_DoLoadLevel(void)
 
     if (players[0].playerstate == PST_DEAD)
         players[0].playerstate = PST_REBORN;
-    memset(players[0].frags, 0, sizeof(players[0].frags));
 
     P_SetupLevel(gameepisode, gamemap, 0, gameskill);
     displayplayer = 0; // view the guy you are playing
@@ -669,12 +668,10 @@ void G_PlayerReborn(int player)
 {
     player_t *p;
     int i;
-    int frags[MAXPLAYERS];
     int killcount;
     int itemcount;
     int secretcount;
 
-    memcpy(frags, players[player].frags, sizeof(frags));
     killcount = players[player].killcount;
     itemcount = players[player].itemcount;
     secretcount = players[player].secretcount;
@@ -682,7 +679,6 @@ void G_PlayerReborn(int player)
     p = &players[player];
     memset(p, 0, sizeof(*p));
 
-    memcpy(players[player].frags, frags, sizeof(players[player].frags));
     players[player].killcount = killcount;
     players[player].itemcount = itemcount;
     players[player].secretcount = secretcount;
