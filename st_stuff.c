@@ -140,11 +140,6 @@
 #define ST_ARMSXSPACE 12
 #define ST_ARMSYSPACE 10
 
-// Frags pos.
-#define ST_FRAGSX 138
-#define ST_FRAGSY 171
-#define ST_FRAGSWIDTH 2
-
 // ARMOR number pos.
 #define ST_ARMORWIDTH 3
 #define ST_ARMORX 221
@@ -292,9 +287,6 @@ static boolean st_notdeathmatch;
 // !deathmatch && st_statusbaron
 static boolean st_armson;
 
-// !deathmatch
-static boolean st_fragson;
-
 // main bar left
 static patch_t *sbar;
 
@@ -325,9 +317,6 @@ static patch_t *arms[6][2];
 // ready-weapon widget
 static st_number_t w_ready;
 
-// in deathmatch only, summary of frags stats
-static st_number_t w_frags;
-
 // health widget
 static st_percent_t w_health;
 
@@ -351,9 +340,6 @@ static st_number_t w_ammo[4];
 
 // max ammo widgets
 static st_number_t w_maxammo[4];
-
-// number of frags so far in deathmatch
-static int st_fragscount;
 
 // used to use appopriately pained face
 static int st_oldhealth = -1;
@@ -908,22 +894,10 @@ void ST_updateWidgets(void)
 	ST_updateFaceWidget();
 
 	// used by the w_armsbg widget
-	st_notdeathmatch = !deathmatch;
+	st_notdeathmatch = true;
 
 	// used by w_arms[] widgets
-	st_armson = st_statusbaron && !deathmatch;
-
-	// used by w_frags widget
-	st_fragson = deathmatch && st_statusbaron;
-	st_fragscount = 0;
-
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		if (i != 0)
-			st_fragscount += plyr->frags[i];
-		else
-			st_fragscount -= plyr->frags[i];
-	}
+	st_armson = st_statusbaron;
 
 	// get rid of chat window if up because of message
 	if (!--st_msgcounter)
@@ -998,10 +972,7 @@ void ST_drawWidgets(boolean refresh)
 	int i;
 
 	// used by w_arms[] widgets
-	st_armson = st_statusbaron && !deathmatch;
-
-	// used by w_frags widget
-	st_fragson = deathmatch && st_statusbaron;
+	st_armson = st_statusbaron;
 
 	STlib_updateNum(&w_ready, refresh);
 
@@ -1023,8 +994,6 @@ void ST_drawWidgets(boolean refresh)
 
 	for (i = 0; i < 3; i++)
 		STlib_updateMultIcon(&w_keyboxes[i], refresh);
-
-	STlib_updateNum(&w_frags, refresh);
 }
 
 void ST_doRefresh(void)
@@ -1252,15 +1221,6 @@ void ST_createWidgets(void)
 						   arms[i], (int *)&plyr->weaponowned[i + 1],
 						   &st_armson);
 	}
-
-	// frags sum
-	STlib_initNum(&w_frags,
-				  ST_FRAGSX,
-				  ST_FRAGSY,
-				  tallnum,
-				  &st_fragscount,
-				  &st_fragson,
-				  ST_FRAGSWIDTH);
 
 	// faces
 	STlib_initMultIcon(&w_faces,
