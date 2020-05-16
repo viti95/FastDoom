@@ -436,19 +436,6 @@ void G_DoLoadLevel(void)
 //
 boolean G_Responder(event_t *ev)
 {
-    // allow spy mode changes even during the demo
-    if (gamestate == GS_LEVEL && ev->type == ev_keydown && ev->data1 == KEY_F12 && singledemo)
-    {
-        // spy mode
-        do
-        {
-            displayplayer++;
-            if (displayplayer == MAXPLAYERS)
-                displayplayer = 0;
-        } while (!playeringame[displayplayer] && displayplayer != 0);
-        return true;
-    }
-
     // any other key pops up menu if in demos
     if (gameaction == ga_nothing && !singledemo &&
         (demoplayback || gamestate == GS_DEMOSCREEN))
@@ -1046,7 +1033,6 @@ void G_DeferedInitNew(skill_t skill,
 void G_DoNewGame(void)
 {
     demoplayback = false;
-    playeringame[1] = playeringame[2] = playeringame[3] = 0;
     respawnparm = false;
     fastparm = false;
     nomonsters = false;
@@ -1342,7 +1328,6 @@ boolean G_CheckDemoStatus(void)
 
         Z_ChangeTag(demobuffer, PU_CACHE);
         demoplayback = false;
-        playeringame[1] = playeringame[2] = playeringame[3] = 0;
         respawnparm = false;
         fastparm = false;
         nomonsters = false;
