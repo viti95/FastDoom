@@ -22,12 +22,6 @@
 #ifndef __P_SPEC__
 #define __P_SPEC__
 
-//
-// End-level timer (-TIMER option)
-//
-extern boolean levelTimer;
-extern int levelTimeCount;
-
 //      Define values for map objects
 #define MO_TELEPORTMAN 14
 

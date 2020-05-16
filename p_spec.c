@@ -999,8 +999,6 @@ void P_PlayerInSpecialSector(player_t *player)
 // P_UpdateSpecials
 // Animate planes, scroll walls, etc.
 //
-boolean levelTimer;
-int levelTimeCount;
 
 void P_UpdateSpecials(void)
 {
@@ -1008,14 +1006,6 @@ void P_UpdateSpecials(void)
 	int pic;
 	int i;
 	line_t *line;
-
-	//	LEVEL TIMER
-	if (levelTimer == true)
-	{
-		levelTimeCount--;
-		if (!levelTimeCount)
-			G_ExitLevel();
-	}
 
 	//	ANIMATE FLATS AND TEXTURES GLOBALLY
 	for (anim = anims; anim < lastanim; anim++)
@@ -1158,9 +1148,6 @@ void P_SpawnSpecials(void)
 	episode = 1;
 	if (W_GetNumForName("texture2") >= 0)
 		episode = 2;
-
-	// See if -TIMER needs to be used.
-	levelTimer = false;
 
 	//	Init special SECTORs.
 	sector = sectors;
