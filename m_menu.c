@@ -54,8 +54,6 @@
 extern patch_t *hu_font[HU_FONTSIZE];
 extern boolean message_dontfuckwithme;
 
-extern boolean chat_on; // in heads-up code
-
 //
 // defaulted values
 //
@@ -1356,14 +1354,14 @@ boolean M_Responder(event_t *ev)
         switch (ch)
         {
         case KEY_MINUS: // Screen size down
-            if (automapactive || chat_on)
+            if (automapactive)
                 return false;
             M_SizeDisplay(0);
             S_StartSound(NULL, sfx_stnmov);
             return true;
 
         case KEY_EQUALS: // Screen size up
-            if (automapactive || chat_on)
+            if (automapactive)
                 return false;
             M_SizeDisplay(1);
             S_StartSound(NULL, sfx_stnmov);

@@ -68,9 +68,6 @@
 //  that the normal face state will change
 #define ST_FACEPROBABILITY 96
 
-// For Responder
-#define ST_TOGGLECHAT KEY_ENTER
-
 // Location of status bar
 #define ST_X 0
 #define ST_X2 104
@@ -263,23 +260,11 @@ static unsigned int st_clock;
 // used for making messages go away
 static int st_msgcounter = 0;
 
-// used when in chat
-static st_chatstateenum_t st_chatstate;
-
 // whether in automap or first-person
 static st_stateenum_t st_gamestate;
 
 // whether left-side main status bar is active
 static boolean st_statusbaron;
-
-// whether status bar chat is active
-static boolean st_chat;
-
-// value of st_chat before message popped up
-static boolean st_oldchat;
-
-// whether chat window has the cursor on
-static boolean st_cursoron;
 
 // !deathmatch
 static boolean st_notdeathmatch;
@@ -900,8 +885,7 @@ void ST_updateWidgets(void)
 	st_armson = st_statusbaron;
 
 	// get rid of chat window if up because of message
-	if (!--st_msgcounter)
-		st_chat = st_oldchat;
+	--st_msgcounter;
 }
 
 void ST_Ticker(void)
@@ -1157,12 +1141,9 @@ void ST_initData(void)
 	plyr = &players[0];
 
 	st_clock = 0;
-	st_chatstate = StartChatState;
 	st_gamestate = FirstPersonState;
 
 	st_statusbaron = true;
-	st_oldchat = st_chat = false;
-	st_cursoron = false;
 
 	st_faceindex = 0;
 	st_palette = -1;

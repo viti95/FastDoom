@@ -238,8 +238,6 @@ extern int musicVolume;
 extern int snd_SBport, snd_SBirq, snd_SBdma;
 extern int snd_Mport;
 
-extern char *chat_macros[];
-
 typedef struct
 {
     char *name;
@@ -336,18 +334,7 @@ default_t defaults[] =
         {"snd_sbdma", &snd_SBdma, 1},
         {"snd_mport", &snd_Mport, 0x330},
 
-        {"usegamma", &usegamma, 0},
-
-        {"chatmacro0", (int *)&chat_macros[0], (int)HUSTR_CHATMACRO0},
-        {"chatmacro1", (int *)&chat_macros[1], (int)HUSTR_CHATMACRO1},
-        {"chatmacro2", (int *)&chat_macros[2], (int)HUSTR_CHATMACRO2},
-        {"chatmacro3", (int *)&chat_macros[3], (int)HUSTR_CHATMACRO3},
-        {"chatmacro4", (int *)&chat_macros[4], (int)HUSTR_CHATMACRO4},
-        {"chatmacro5", (int *)&chat_macros[5], (int)HUSTR_CHATMACRO5},
-        {"chatmacro6", (int *)&chat_macros[6], (int)HUSTR_CHATMACRO6},
-        {"chatmacro7", (int *)&chat_macros[7], (int)HUSTR_CHATMACRO7},
-        {"chatmacro8", (int *)&chat_macros[8], (int)HUSTR_CHATMACRO8},
-        {"chatmacro9", (int *)&chat_macros[9], (int)HUSTR_CHATMACRO9}
+        {"usegamma", &usegamma, 0}
 
 };
 

@@ -309,7 +309,6 @@ void TryRunTics(void)
 				for (j = 0; j < MAXPLAYERS; j++)
 				{
 					cmd = &netcmds[j][buf];
-					cmd->chatchar = 0;
 					if (cmd->buttons & BT_SPECIAL)
 						cmd->buttons = 0;
 				}

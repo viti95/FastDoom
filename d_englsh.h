@@ -282,17 +282,6 @@
 #define THUSTR_31 "level 31: pharaoh"
 #define THUSTR_32 "level 32: caribbean"
 
-#define HUSTR_CHATMACRO1 "I'm ready to kick butt!"
-#define HUSTR_CHATMACRO2 "I'm OK."
-#define HUSTR_CHATMACRO3 "I'm not looking too good!"
-#define HUSTR_CHATMACRO4 "Help!"
-#define HUSTR_CHATMACRO5 "You suck!"
-#define HUSTR_CHATMACRO6 "Next time, scumbag..."
-#define HUSTR_CHATMACRO7 "Come here!"
-#define HUSTR_CHATMACRO8 "I'll take care of it."
-#define HUSTR_CHATMACRO9 "Yes"
-#define HUSTR_CHATMACRO0 "No"
-
 #define HUSTR_TALKTOSELF1 "You mumble to yourself"
 #define HUSTR_TALKTOSELF2 "Who's there?"
 #define HUSTR_TALKTOSELF3 "You scare yourself"
