@@ -550,7 +550,6 @@ int WI_drawNum(int x,
 {
 
 	int fontwidth = SHORT(num[0]->width);
-	int neg;
 	int temp;
 
 	if (digits < 0)
@@ -574,10 +573,6 @@ int WI_drawNum(int x,
 		}
 	}
 
-	neg = n < 0;
-	if (neg)
-		n = -n;
-
 	// if non-number, do not draw it
 	if (n == 1994)
 		return 0;
@@ -589,10 +584,6 @@ int WI_drawNum(int x,
 		V_DrawPatch(x, y, FB, num[n % 10]);
 		n /= 10;
 	}
-
-	// draw a minus sign if necessary
-	if (neg)
-		V_DrawPatch(x -= 8, y, FB, wiminus);
 
 	return x;
 }
