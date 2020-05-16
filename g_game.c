@@ -97,7 +97,6 @@ int starttime;      // for comparative timing purposes
 
 boolean viewactive;
 
-boolean deathmatch; // only if started as net death
 boolean playeringame[MAXPLAYERS];
 player_t players[MAXPLAYERS];
 
@@ -440,7 +439,7 @@ void G_DoLoadLevel(void)
 boolean G_Responder(event_t *ev)
 {
     // allow spy mode changes even during the demo
-    if (gamestate == GS_LEVEL && ev->type == ev_keydown && ev->data1 == KEY_F12 && (singledemo || !deathmatch))
+    if (gamestate == GS_LEVEL && ev->type == ev_keydown && ev->data1 == KEY_F12 && singledemo)
     {
         // spy mode
         do
@@ -1348,7 +1347,6 @@ boolean G_CheckDemoStatus(void)
 
         Z_ChangeTag(demobuffer, PU_CACHE);
         demoplayback = false;
-        deathmatch = false;
         playeringame[1] = playeringame[2] = playeringame[3] = 0;
         respawnparm = false;
         fastparm = false;

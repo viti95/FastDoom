@@ -210,7 +210,7 @@ void D_CheckNetGame(void)
 	displayplayer = 0;
 
 	printf("startskill %i  deathmatch: %i  startmap: %i  startepisode: %i\n",
-		   startskill, deathmatch, startmap, startepisode);
+		   startskill, 0, startmap, startepisode);
 
 	// read values out of doomcom
 	ticdup = doomcom->ticdup;

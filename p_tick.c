@@ -114,7 +114,6 @@ void P_Ticker(void)
 
     P_RunThinkers();
     P_UpdateSpecials();
-    P_RespawnSpecials();
 
     // for par times
     leveltime++;
