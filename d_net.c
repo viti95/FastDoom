@@ -218,9 +218,6 @@ void D_CheckNetGame(void)
 //
 // TryRunTics
 //
-int frametics[4];
-int frameon;
-int frameskip[4];
 int oldnettics;
 
 extern boolean advancedemo;
@@ -261,8 +258,6 @@ void TryRunTics(void)
 
 	if (counts < 1)
 		counts = 1;
-
-	frameon++;
 
 	// wait for new tics if needed
 	while (lowtic < gametic / ticdup + counts)

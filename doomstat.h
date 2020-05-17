@@ -128,7 +128,6 @@ extern int totalitems;
 extern int totalsecret;
 
 // Timer, for scores.
-extern int levelstarttic; // gametic at level start
 extern int leveltime;     // tics in game play for par
 
 // --------------------------------------
