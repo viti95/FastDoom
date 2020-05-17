@@ -400,9 +400,6 @@ void HU_Ticker(void)
 
 #define QUEUESIZE 128
 
-static int head = 0;
-static int tail = 0;
-
 boolean HU_Responder(event_t *ev)
 {
 
