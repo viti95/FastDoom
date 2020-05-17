@@ -52,10 +52,8 @@
 
 char *player_names[] =
     {
-        HUSTR_PLRGREEN,
-        HUSTR_PLRINDIGO,
-        HUSTR_PLRBROWN,
-        HUSTR_PLRRED};
+        HUSTR_PLRGREEN
+    };
 
 static player_t *plr;
 patch_t *hu_font[HU_FONTSIZE];

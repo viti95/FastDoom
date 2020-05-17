@@ -55,7 +55,6 @@
 
 #define MSGOFF "Messages OFF"
 #define MSGON "Messages ON"
-#define NETEND "you can't end a netgame!\n\n" PRESSKEY
 #define ENDGAME "are you sure you want to end the game?\n\n" PRESSYN
 
 #define DOSY "(press y to quit to dos.)"
@@ -282,26 +281,10 @@
 #define THUSTR_31 "level 31: pharaoh"
 #define THUSTR_32 "level 32: caribbean"
 
-#define HUSTR_TALKTOSELF1 "You mumble to yourself"
-#define HUSTR_TALKTOSELF2 "Who's there?"
-#define HUSTR_TALKTOSELF3 "You scare yourself"
-#define HUSTR_TALKTOSELF4 "You start to rave"
-#define HUSTR_TALKTOSELF5 "You've lost it..."
-
-#define HUSTR_MESSAGESENT "[Message Sent]"
-
 // The following should NOT be changed unless it seems
 // just AWFULLY necessary
 
 #define HUSTR_PLRGREEN "Green: "
-#define HUSTR_PLRINDIGO "Indigo: "
-#define HUSTR_PLRBROWN "Brown: "
-#define HUSTR_PLRRED "Red: "
-
-#define HUSTR_KEYGREEN 'g'
-#define HUSTR_KEYINDIGO 'i'
-#define HUSTR_KEYBROWN 'b'
-#define HUSTR_KEYRED 'r'
 
 //
 //	AM_map.C

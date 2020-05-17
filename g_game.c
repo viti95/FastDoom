@@ -566,7 +566,7 @@ void G_Ticker(void)
     if (cmd->forwardmove > TURBOTHRESHOLD && !(gametic & 31) && ((gametic >> 5) & 3) == i)
     {
         static char turbomessage[80];
-        extern char *player_names[4];
+        extern char *player_names[1];
         sprintf(turbomessage, "%s is turbo!", player_names[0]);
         players[0].message = turbomessage;
     }
