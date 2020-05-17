@@ -396,10 +396,6 @@ void I_UpdateNoBlit(void)
 //
 void I_FinishUpdate(void)
 {
-    static int lasttic;
-    int tics;
-    int i;
-
     outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
 
     //Next plane
