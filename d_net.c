@@ -198,8 +198,6 @@ void D_CheckNetGame(void)
 
 	// I_InitNetwork sets doomcom and netgame
 	I_InitNetwork();
-	if (doomcom->id != DOOMCOM_ID)
-		I_Error("Doomcom buffer invalid!");
 
 	netbuffer = &doomcom->data;
 
