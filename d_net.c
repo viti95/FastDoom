@@ -231,7 +231,6 @@ void TryRunTics(void)
 	int realtics;
 	int availabletics;
 	int counts;
-	int numplaying;
 
 	// get real tics
 	entertic = I_GetTime() / ticdup;
@@ -242,8 +241,6 @@ void TryRunTics(void)
 	NetUpdate();
 
 	lowtic = MAXINT;
-	numplaying = 0;
-	numplaying++;
 	if (nettics < lowtic)
 		lowtic = nettics;
 	availabletics = lowtic - gametic / ticdup;
