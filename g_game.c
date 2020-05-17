@@ -115,8 +115,6 @@ boolean precache = true; // if true, load all graphics at start
 
 wbstartstruct_t wminfo; // parms for world map / intermission
 
-short consistancy[MAXPLAYERS][BACKUPTICS];
-
 byte *savebuffer;
 
 //
@@ -206,9 +204,6 @@ void G_BuildTiccmd(ticcmd_t *cmd)
 
     base = I_BaseTiccmd(); // empty, or external driver
     memcpy(cmd, base, sizeof(*cmd));
-
-    cmd->consistancy =
-        consistancy[0][maketic % BACKUPTICS];
 
     strafe = gamekeydown[key_strafe] || mousebuttons[mousebstrafe] || joybuttons[joybstrafe];
     speed = gamekeydown[key_speed] || joybuttons[joybspeed];
