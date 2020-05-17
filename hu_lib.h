@@ -84,9 +84,6 @@ void HUlib_initTextLine(hu_textline_t *t, int x, int y, patch_t **f, int sc);
 // returns success
 boolean HUlib_addCharToTextLine(hu_textline_t *t, char ch);
 
-// returns success
-boolean HUlib_delCharFromTextLine(hu_textline_t *t);
-
 // draws tline
 void HUlib_drawTextLine(hu_textline_t *l, boolean drawcursor);
 

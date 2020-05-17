@@ -190,8 +190,6 @@ listen:
 //
 void D_CheckNetGame(void)
 {
-	int i;
-
 	// which tic to start sending
 	resendto = 0;
 	nettics = 0;
