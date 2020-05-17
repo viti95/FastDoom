@@ -172,8 +172,6 @@ void NetUpdate(void)
 
 	netbuffer->starttic = realstart = resendto;
 	netbuffer->numtics = maketic - realstart;
-	if (netbuffer->numtics > BACKUPTICS)
-		I_Error("NetUpdate: netbuffer->numtics > BACKUPTICS");
 
 	resendto = maketic;
 

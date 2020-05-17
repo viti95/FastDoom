@@ -101,7 +101,6 @@ boolean playeringame[MAXPLAYERS];
 player_t players[MAXPLAYERS];
 
 int gametic;
-int levelstarttic;                       // gametic at level start
 int totalkills, totalitems, totalsecret; // for intermission
 
 char demoname[32];
@@ -402,8 +401,6 @@ void G_DoLoadLevel(void)
             skytexture = R_TextureNumForName("SKY2");
     }
 #endif
-
-    levelstarttic = gametic; // for time calculation
 
     if (wipegamestate == GS_LEVEL)
         wipegamestate = -1; // force a wipe
