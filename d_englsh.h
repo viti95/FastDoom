@@ -41,10 +41,6 @@
 #define QSPROMPT "quicksave over your game named\n\n'%s'?\n\n" PRESSYN
 #define QLPROMPT "do you want to quickload the game named\n\n'%s'?\n\n" PRESSYN
 
-#define NEWGAME                    \
-    "you can't start a new game\n" \
-    "while in a network game.\n\n" PRESSKEY
-
 #define NIGHTMARE                      \
     "are you sure? this skill level\n" \
     "isn't even remotely fair.\n\n" PRESSYN
@@ -131,8 +127,6 @@
 //
 //	HU_stuff.C
 //
-#define HUSTR_MSGU "[Message unsent]"
-
 #define HUSTR_E1M1 "E1M1: Hangar"
 #define HUSTR_E1M2 "E1M2: Nuclear Plant"
 #define HUSTR_E1M3 "E1M3: Toxin Refinery"
