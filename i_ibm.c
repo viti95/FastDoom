@@ -207,26 +207,6 @@ byte scantokey[128] =
         0, 0, 0, 0, 0, 0, 0, 0 // 7
 };
 
-typedef struct
-{
-    int irq;
-    ticcmd_t cmd;
-} extapi_t;
-
-extapi_t *extcontrol;
-
-ticcmd_t emptycmd;
-
-ticcmd_t *I_BaseTiccmd(void)
-{
-    if (!extcontrol)
-    {
-        return &emptycmd;
-    }
-    DPMIInt(extcontrol->irq);
-    return &extcontrol->cmd;
-}
-
 //
 // I_GetTime
 // Returns time in 1/35th second tics.
@@ -902,12 +882,6 @@ void I_Init(void)
 {
     int p;
     novideo = M_CheckParm("novideo");
-    p = M_CheckParm("-control");
-    if (p)
-    {
-        extcontrol = (extapi_t *)atoi(myargv[p + 1]);
-        printf("Using external control API\n");
-    }
     printf("I_StartupDPMI\n");
     I_StartupDPMI();
     printf("I_StartupMouse\n");

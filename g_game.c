@@ -190,6 +190,7 @@ int bodyqueslot;
 // or reads it from the demo buffer.
 // If recording a demo, write it out
 //
+ticcmd_t emptycmd;
 void G_BuildTiccmd(ticcmd_t *cmd)
 {
     int i;
@@ -202,7 +203,7 @@ void G_BuildTiccmd(ticcmd_t *cmd)
 
     ticcmd_t *base;
 
-    base = I_BaseTiccmd(); // empty, or external driver
+    base = &emptycmd; // empty, or external driver
     memcpy(cmd, base, sizeof(*cmd));
 
     strafe = gamekeydown[key_strafe] || mousebuttons[mousebstrafe] || joybuttons[joybstrafe];
