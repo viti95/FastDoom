@@ -250,9 +250,9 @@ void R_AddLine(seg_t *line)
     angle2 -= viewangle;
 
     tspan = angle1 + clipangle;
-    if (tspan > 2 * clipangle)
+    if (tspan > fieldofview)
     {
-        tspan -= 2 * clipangle;
+        tspan -= fieldofview;
 
         // Totally off the left edge?
         if (tspan >= span)
@@ -261,9 +261,9 @@ void R_AddLine(seg_t *line)
         angle1 = clipangle;
     }
     tspan = clipangle - angle2;
-    if (tspan > 2 * clipangle)
+    if (tspan > fieldofview)
     {
-        tspan -= 2 * clipangle;
+        tspan -= fieldofview;
 
         // Totally off the left edge?
         if (tspan >= span)
@@ -392,9 +392,9 @@ boolean R_CheckBBox(fixed_t *bspcoord)
 
     tspan = angle1 + clipangle;
 
-    if (tspan > 2 * clipangle)
+    if (tspan > fieldofview)
     {
-        tspan -= 2 * clipangle;
+        tspan -= fieldofview;
 
         // Totally off the left edge?
         if (tspan >= span)
@@ -403,9 +403,9 @@ boolean R_CheckBBox(fixed_t *bspcoord)
         angle1 = clipangle;
     }
     tspan = clipangle - angle2;
-    if (tspan > 2 * clipangle)
+    if (tspan > fieldofview)
     {
-        tspan -= 2 * clipangle;
+        tspan -= fieldofview;
 
         // Totally off the left edge?
         if (tspan >= span)

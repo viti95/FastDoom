@@ -61,7 +61,6 @@ int columnofs[MAXWIDTH];
 //  translate a limited part to another
 //  (color ramps used for  suit colors).
 //
-byte translations[3][256];
 
 #define SC_INDEX 0x3C4
 #define SC_RESET 0
