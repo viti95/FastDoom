@@ -96,14 +96,11 @@ void R_ClipSolidWallSegment(int first,
             next = newend;
             newend++;
 
-            while (next != start)
-            {
-                *next = *(next - 1);
-                next--;
-            }
-            next->first = first;
-            next->last = last;
-            return;
+            // 1/11/98 killough: performance tuning using fast memmove
+			memmove (start+1, start, (++newend-start)*sizeof(*start));
+			start->first = first;
+			start->last = last;
+			return;
         }
 
         // There is a fragment above *start.
