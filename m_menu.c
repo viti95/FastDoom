@@ -1193,7 +1193,6 @@ boolean M_Responder(event_t *ev)
 {
     int ch;
     int i;
-    static int joywait = 0;
     static int mousewait = 0;
     static int mousey = 0;
     static int lasty = 0;
@@ -1202,90 +1201,53 @@ boolean M_Responder(event_t *ev)
 
     ch = -1;
 
-    if (ev->type == ev_joystick && joywait < I_GetTime())
+    if (ev->type == ev_mouse && mousewait < I_GetTime())
     {
-        if (ev->data3 == -1)
-        {
-            ch = KEY_UPARROW;
-            joywait = I_GetTime() + 5;
-        }
-        else if (ev->data3 == 1)
+        mousey += ev->data3;
+        if (mousey < lasty - 30)
         {
             ch = KEY_DOWNARROW;
-            joywait = I_GetTime() + 5;
+            mousewait = I_GetTime() + 5;
+            mousey = lasty -= 30;
+        }
+        else if (mousey > lasty + 30)
+        {
+            ch = KEY_UPARROW;
+            mousewait = I_GetTime() + 5;
+            mousey = lasty += 30;
         }
 
-        if (ev->data2 == -1)
+        mousex += ev->data2;
+        if (mousex < lastx - 30)
         {
             ch = KEY_LEFTARROW;
-            joywait = I_GetTime() + 2;
+            mousewait = I_GetTime() + 5;
+            mousex = lastx -= 30;
         }
-        else if (ev->data2 == 1)
+        else if (mousex > lastx + 30)
         {
             ch = KEY_RIGHTARROW;
-            joywait = I_GetTime() + 2;
+            mousewait = I_GetTime() + 5;
+            mousex = lastx += 30;
         }
 
         if (ev->data1 & 1)
         {
             ch = KEY_ENTER;
-            joywait = I_GetTime() + 5;
+            mousewait = I_GetTime() + 15;
         }
+
         if (ev->data1 & 2)
         {
             ch = KEY_BACKSPACE;
-            joywait = I_GetTime() + 5;
+            mousewait = I_GetTime() + 15;
         }
     }
-    else
+    else if (ev->type == ev_keydown)
     {
-        if (ev->type == ev_mouse && mousewait < I_GetTime())
-        {
-            mousey += ev->data3;
-            if (mousey < lasty - 30)
-            {
-                ch = KEY_DOWNARROW;
-                mousewait = I_GetTime() + 5;
-                mousey = lasty -= 30;
-            }
-            else if (mousey > lasty + 30)
-            {
-                ch = KEY_UPARROW;
-                mousewait = I_GetTime() + 5;
-                mousey = lasty += 30;
-            }
-
-            mousex += ev->data2;
-            if (mousex < lastx - 30)
-            {
-                ch = KEY_LEFTARROW;
-                mousewait = I_GetTime() + 5;
-                mousex = lastx -= 30;
-            }
-            else if (mousex > lastx + 30)
-            {
-                ch = KEY_RIGHTARROW;
-                mousewait = I_GetTime() + 5;
-                mousex = lastx += 30;
-            }
-
-            if (ev->data1 & 1)
-            {
-                ch = KEY_ENTER;
-                mousewait = I_GetTime() + 15;
-            }
-
-            if (ev->data1 & 2)
-            {
-                ch = KEY_BACKSPACE;
-                mousewait = I_GetTime() + 15;
-            }
-        }
-        else if (ev->type == ev_keydown)
-        {
-            ch = ev->data1;
-        }
+        ch = ev->data1;
     }
+
 
     if (ch == -1)
         return false;

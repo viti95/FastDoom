@@ -14,7 +14,7 @@
 // GNU General Public License for more details.
 //
 // DESCRIPTION:
-//  IBM DOS VGA graphics and key/mouse/joystick.
+//  IBM DOS VGA graphics and key/mouse.
 //
 
 #include <dos.h>
@@ -60,7 +60,7 @@ extern dpmiregs_t dpmiregs;
 void I_ReadMouse(void);
 void I_InitDiskFlash(void);
 
-extern int usemouse, usejoystick;
+extern int usemouse;
 
 //
 // Constants
@@ -126,14 +126,6 @@ extern int usemouse, usejoystick;
 #define PEL_MASK 0x3c6
 
 boolean grmode;
-
-//
-// joystick vars
-//
-
-boolean joystickpresent;
-extern unsigned joystickx, joysticky;
-boolean I_ReadJoystick(void); // returns false if not connected
 
 #define VBLCOUNTER 34000 // hardware tics to a frame
 
@@ -689,156 +681,6 @@ void I_ReadMouse(void)
 }
 
 //
-// Joystick
-//
-
-int joyxl, joyxh, joyyl, joyyh;
-
-boolean WaitJoyButton(void)
-{
-    int oldbuttons, buttons;
-
-    oldbuttons = 0;
-    do
-    {
-        I_WaitVBL(1);
-        buttons = ((inp(0x201) >> 4) & 1) ^ 1;
-        if (buttons != oldbuttons)
-        {
-            oldbuttons = buttons;
-            continue;
-        }
-
-        if ((lastpress & 0x7f) == 1)
-        {
-            joystickpresent = false;
-            return false;
-        }
-    } while (!buttons);
-
-    do
-    {
-        I_WaitVBL(1);
-        buttons = ((inp(0x201) >> 4) & 1) ^ 1;
-        if (buttons != oldbuttons)
-        {
-            oldbuttons = buttons;
-            continue;
-        }
-
-        if ((lastpress & 0x7f) == 1)
-        {
-            joystickpresent = false;
-            return false;
-        }
-    } while (buttons);
-
-    return true;
-}
-
-//
-// I_StartupJoystick
-//
-int basejoyx, basejoyy;
-
-void I_StartupJoystick(void)
-{
-    int buttons;
-    int count;
-    int centerx, centery;
-
-    joystickpresent = 0;
-    if (M_CheckParm("-nojoy") || !usejoystick)
-    {
-        return;
-    }
-
-    if (!I_ReadJoystick())
-    {
-        joystickpresent = false;
-        printf("joystick not found\n");
-        return;
-    }
-    printf("joystick found\n");
-    joystickpresent = true;
-
-    printf("CENTER the joystick and press button 1:");
-    if (!WaitJoyButton())
-    {
-        return;
-    }
-    I_ReadJoystick();
-    centerx = joystickx;
-    centery = joysticky;
-
-    printf("\nPush the joystick to the UPPER LEFT corner and press button 1:");
-    if (!WaitJoyButton())
-    {
-        return;
-    }
-    I_ReadJoystick();
-    joyxl = (centerx + joystickx) / 2;
-    joyyl = (centerx + joysticky) / 2;
-
-    printf("\nPush the joystick to the LOWER RIGHT corner and press button 1:");
-    if (!WaitJoyButton())
-    {
-        return;
-    }
-    I_ReadJoystick();
-    joyxh = (centerx + joystickx) / 2;
-    joyyh = (centery + joysticky) / 2;
-    printf("\n");
-}
-
-//
-// I_StartFrame
-//
-void I_StartFrame(void)
-{
-    event_t ev;
-
-    //
-    // joystick events
-    //
-    if (!joystickpresent)
-    {
-        return;
-    }
-
-    I_ReadJoystick();
-    ev.type = ev_joystick;
-    ev.data1 = ((inp(0x201) >> 4) & 15) ^ 15;
-
-    if (joystickx < joyxl)
-    {
-        ev.data2 = -1;
-    }
-    else if (joystickx > joyxh)
-    {
-        ev.data2 = 1;
-    }
-    else
-    {
-        ev.data2 = 0;
-    }
-    if (joysticky < joyyl)
-    {
-        ev.data3 = -1;
-    }
-    else if (joysticky > joyyh)
-    {
-        ev.data3 = 1;
-    }
-    else
-    {
-        ev.data3 = 0;
-    }
-
-    D_PostEvent(&ev);
-}
-
-//
 // DPMI stuff
 //
 
@@ -882,8 +724,6 @@ void I_Init(void)
     I_StartupDPMI();
     printf("I_StartupMouse\n");
     I_StartupMouse();
-    printf("I_StartupJoystick\n");
-    I_StartupJoystick();
     printf("I_StartupKeyboard\n");
     I_StartupKeyboard();
     printf("I_StartupSound\n");

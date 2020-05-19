@@ -194,7 +194,6 @@ int M_ReadFile(char const *name,
 // DEFAULTS
 //
 int usemouse;
-int usejoystick;
 
 extern int key_right;
 extern int key_left;
@@ -212,12 +211,6 @@ extern int key_speed;
 extern int mousebfire;
 extern int mousebstrafe;
 extern int mousebforward;
-
-extern int joybfire;
-extern int joybstrafe;
-extern int joybuse;
-extern int joybspeed;
-
 extern int viewwidth;
 extern int viewheight;
 
@@ -316,12 +309,6 @@ default_t defaults[] =
         {"mouseb_fire", &mousebfire, 0},
         {"mouseb_strafe", &mousebstrafe, 1},
         {"mouseb_forward", &mousebforward, 2},
-
-        {"use_joystick", &usejoystick, 0},
-        {"joyb_fire", &joybfire, 0},
-        {"joyb_strafe", &joybstrafe, 1},
-        {"joyb_use", &joybuse, 3},
-        {"joyb_speed", &joybspeed, 2},
 
         {"screenblocks", &screenblocks, 9},
         {"detaillevel", &detailLevel, 0},
