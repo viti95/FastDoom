@@ -324,10 +324,6 @@ static patch_t *time;
 static patch_t *par;
 static patch_t *sucks;
 
-// "killers", "victims"
-static patch_t *killers;
-static patch_t *victims;
-
 // "Total", your face, your dead face
 static patch_t *total;
 static patch_t *star;
@@ -1044,12 +1040,6 @@ void WI_loadData(void)
 	// "par"
 	par = W_CacheLumpName("WIPAR", PU_STATIC);
 
-	// "killers" (vertical)
-	killers = W_CacheLumpName("WIKILRS", PU_STATIC);
-
-	// "victims" (horiz)
-	victims = W_CacheLumpName("WIVCTMS", PU_STATIC);
-
 	// "total"
 	total = W_CacheLumpName("WIMSTT", PU_STATIC);
 
@@ -1109,8 +1099,6 @@ void WI_unloadData(void)
 	Z_ChangeTag(sucks, PU_CACHE);
 	Z_ChangeTag(par, PU_CACHE);
 
-	Z_ChangeTag(victims, PU_CACHE);
-	Z_ChangeTag(killers, PU_CACHE);
 	Z_ChangeTag(total, PU_CACHE);
 	//  Z_ChangeTag(star, PU_CACHE);
 	//  Z_ChangeTag(bstar, PU_CACHE);
