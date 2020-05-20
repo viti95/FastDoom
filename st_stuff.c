@@ -257,9 +257,6 @@ static int lu_palette;
 // used for timing
 static unsigned int st_clock;
 
-// used for making messages go away
-static int st_msgcounter = 0;
-
 // whether in automap or first-person
 static st_stateenum_t st_gamestate;
 
@@ -843,28 +840,11 @@ void ST_updateWidgets(void)
 	static int largeammo = 1994; // means "n/a"
 	int i;
 
-	// must redirect the pointer if the ready weapon has changed.
-	//  if (w_ready.data != plyr->readyweapon)
-	//  {
 	if (weaponinfo[plyr->readyweapon].ammo == am_noammo)
 		w_ready.num = &largeammo;
 	else
 		w_ready.num = &plyr->ammo[weaponinfo[plyr->readyweapon].ammo];
-	//{
-	// static int tic=0;
-	// static int dir=-1;
-	// if (!(tic&15))
-	//   plyr->ammo[weaponinfo[plyr->readyweapon].ammo]+=dir;
-	// if (plyr->ammo[weaponinfo[plyr->readyweapon].ammo] == -100)
-	//   dir = 1;
-	// tic++;
-	// }
 	w_ready.data = plyr->readyweapon;
-
-	// if (*w_ready.on)
-	//  STlib_updateNum(&w_ready, true);
-	// refresh weapon change
-	//  }
 
 	// update keycard multiple widgets
 	for (i = 0; i < 3; i++)
@@ -883,9 +863,6 @@ void ST_updateWidgets(void)
 
 	// used by w_arms[] widgets
 	st_armson = st_statusbaron;
-
-	// get rid of chat window if up because of message
-	--st_msgcounter;
 }
 
 void ST_Ticker(void)

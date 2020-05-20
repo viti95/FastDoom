@@ -522,15 +522,6 @@ void G_Ticker(void)
     if (demorecording)
         G_WriteDemoTiccmd(cmd);
 
-    // check for turbo cheats
-    if (cmd->forwardmove > TURBOTHRESHOLD && !(gametic & 31) && ((gametic >> 5) & 3) == i)
-    {
-        static char turbomessage[80];
-        extern char *player_names[1];
-        sprintf(turbomessage, "%s is turbo!", player_names[0]);
-        players[0].message = turbomessage;
-    }
-
     // check for special buttons
     if (players[0].cmd.buttons & BT_SPECIAL)
     {
@@ -545,10 +536,7 @@ void G_Ticker(void)
             break;
 
         case BTS_SAVEGAME:
-            if (!savedescription[0])
-                strcpy(savedescription, "NET GAME");
-            savegameslot =
-                (players[0].cmd.buttons & BTS_SAVEMASK) >> BTS_SAVESHIFT;
+            savegameslot = (players[0].cmd.buttons & BTS_SAVEMASK) >> BTS_SAVESHIFT;
             gameaction = ga_savegame;
             break;
         }

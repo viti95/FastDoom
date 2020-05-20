@@ -50,11 +50,6 @@
 #define HU_INPUTWIDTH 64
 #define HU_INPUTHEIGHT 1
 
-char *player_names[] =
-    {
-        HUSTR_PLRGREEN
-    };
-
 static player_t *plr;
 patch_t *hu_font[HU_FONTSIZE];
 static hu_textline_t w_title;
