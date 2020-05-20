@@ -316,7 +316,6 @@ static patch_t *sp_secret;
 
 // "Kills", "Scrt", "Items"
 static patch_t *kills;
-static patch_t *secret;
 static patch_t *items;
 
 // Time sucks.
@@ -1019,9 +1018,6 @@ void WI_loadData(void)
 	// "kills"
 	kills = W_CacheLumpName("WIOSTK", PU_STATIC);
 
-	// "scrt"
-	secret = W_CacheLumpName("WIOSTS", PU_STATIC);
-
 	// "secret"
 	sp_secret = W_CacheLumpName("WISCRT2", PU_STATIC);
 
@@ -1092,7 +1088,6 @@ void WI_unloadData(void)
 	Z_ChangeTag(finished, PU_CACHE);
 	Z_ChangeTag(entering, PU_CACHE);
 	Z_ChangeTag(kills, PU_CACHE);
-	Z_ChangeTag(secret, PU_CACHE);
 	Z_ChangeTag(sp_secret, PU_CACHE);
 	Z_ChangeTag(items, PU_CACHE);
 	Z_ChangeTag(time, PU_CACHE);
