@@ -488,28 +488,21 @@ void R_Subsector(int num)
 // Just call with BSP root.
 void R_RenderBSPNode(int bspnum)
 {
-    node_t *bsp;
-    int side;
+	while (!(bspnum & NF_SUBSECTOR))  // Found a subsector?
+	{
+		node_t *bsp = &nodes[bspnum];
 
-    // Found a subsector?
-    if (bspnum & NF_SUBSECTOR)
-    {
-        if (bspnum == -1)
-            R_Subsector(0);
-        else
-            R_Subsector(bspnum & (~NF_SUBSECTOR));
-        return;
-    }
+		// Decide which side the view point is on.
+		int side = R_PointOnSide(viewx, viewy, bsp);
 
-    bsp = &nodes[bspnum];
+		// Recursively divide front space.
+		R_RenderBSPNode(bsp->children[side]);
 
-    // Decide which side the view point is on.
-    side = R_PointOnSide(viewx, viewy, bsp);
+		// Possibly divide back space.
+		if (!R_CheckBBox(bsp->bbox[side^1]))
+			return;
 
-    // Recursively divide front space.
-    R_RenderBSPNode(bsp->children[side]);
-
-    // Possibly divide back space.
-    if (R_CheckBBox(bsp->bbox[side ^ 1]))
-        R_RenderBSPNode(bsp->children[side ^ 1]);
+		bspnum = bsp->children[side^1];
+	}
+	R_Subsector(bspnum == -1 ? 0 : bspnum & ~NF_SUBSECTOR);
 }
