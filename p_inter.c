@@ -402,11 +402,7 @@ void P_TouchSpecialThing(mobj_t *special,
 	case SPR_MEDI:
 		if (!P_GiveBody(player, 25))
 			return;
-
-		if (player->health < 25)
-			player->message = GOTMEDINEED;
-		else
-			player->message = GOTMEDIKIT;
+		player->message = GOTMEDIKIT;
 		break;
 
 		// power ups
