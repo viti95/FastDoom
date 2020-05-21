@@ -58,7 +58,6 @@ typedef struct
 extern dpmiregs_t dpmiregs;
 
 void I_ReadMouse(void);
-void I_InitDiskFlash(void);
 
 extern int usemouse;
 
@@ -428,7 +427,6 @@ void I_InitGraphics(void)
     outp(GC_INDEX, GC_READMAP);
 
     I_SetPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
-    I_InitDiskFlash();
 }
 
 //
@@ -836,114 +834,6 @@ byte *I_ZoneBase(int *size)
 
     *size = heap;
     return ptr;
-}
-
-//
-// Disk icon flashing
-//
-
-void I_InitDiskFlash(void)
-{
-    void *pic;
-    byte *temp;
-
-    if (M_CheckParm("-cdrom"))
-    {
-        pic = W_CacheLumpName("STCDDISK", PU_CACHE);
-    }
-    else
-    {
-        pic = W_CacheLumpName("STDISK", PU_CACHE);
-    }
-    temp = destscreen;
-    destscreen = (byte *)0xac000;
-    V_DrawPatchDirect(SCREENWIDTH - 16, SCREENHEIGHT - 16, 0, pic);
-    destscreen = temp;
-}
-
-// draw disk icon
-void I_BeginRead(void)
-{
-    byte *src, *dest;
-    int y;
-
-    if (!grmode)
-    {
-        return;
-    }
-
-    // write through all planes
-    outp(SC_INDEX, SC_MAPMASK);
-    outp(SC_INDEX + 1, 15);
-    // set write mode 1
-    outp(GC_INDEX, GC_MODE);
-    outp(GC_INDEX + 1, inp(GC_INDEX + 1) | 1);
-
-    // copy to backup
-    src = currentscreen + 184 * 80 + 304 / 4;
-    dest = (byte *)0xac000 + 184 * 80 + 288 / 4;
-    for (y = 0; y < 16; y++)
-    {
-        dest[0] = src[0];
-        dest[1] = src[1];
-        dest[2] = src[2];
-        dest[3] = src[3];
-        src += 80;
-        dest += 80;
-    }
-
-    // copy disk over
-    dest = currentscreen + 184 * 80 + 304 / 4;
-    src = (byte *)0xac000 + 184 * 80 + 304 / 4;
-    for (y = 0; y < 16; y++)
-    {
-        dest[0] = src[0];
-        dest[1] = src[1];
-        dest[2] = src[2];
-        dest[3] = src[3];
-        src += 80;
-        dest += 80;
-    }
-
-    // set write mode 0
-    outp(GC_INDEX, GC_MODE);
-    outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~1);
-}
-
-// erase disk icon
-void I_EndRead(void)
-{
-    byte *src, *dest;
-    int y;
-
-    if (!grmode)
-    {
-        return;
-    }
-
-    // write through all planes
-    outp(SC_INDEX, SC_MAPMASK);
-    outp(SC_INDEX + 1, 15);
-    // set write mode 1
-    outp(GC_INDEX, GC_MODE);
-    outp(GC_INDEX + 1, inp(GC_INDEX + 1) | 1);
-
-    // copy disk over
-    dest = currentscreen + 184 * 80 + 304 / 4;
-    src = (byte *)0xac000 + 184 * 80 + 288 / 4;
-    for (y = 0; y < 16; y++)
-    {
-        dest[0] = src[0];
-        dest[1] = src[1];
-        dest[2] = src[2];
-        dest[3] = src[3];
-        src += 80;
-        dest += 80;
-    }
-
-    // set write mode 0
-    outp(GC_INDEX, GC_MODE);
-    outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~1);
 }
 
 //

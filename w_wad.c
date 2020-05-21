@@ -352,8 +352,6 @@ void W_ReadLump(int lump,
 
     l = lumpinfo + lump;
 
-    I_BeginRead();
-
     if (l->handle == -1)
     {
         // reloadable file, so use open / read / close
@@ -368,7 +366,6 @@ void W_ReadLump(int lump,
     if (l->handle == -1)
         close(handle);
 
-    I_EndRead();
 }
 
 //
