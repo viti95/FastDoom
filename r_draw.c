@@ -335,13 +335,11 @@ void R_DrawSpanFlat(void)
     fixed_t xfrac;
     fixed_t yfrac;
     byte *dest;
-    int spot;
     int i;
-    int prt;
     int dsp_x1;
     int dsp_x2;
     int countp;
-    
+
     for (i = 0; i < 4; i++)
     {
         outp(SC_INDEX + 1, 1 << i);
@@ -355,8 +353,6 @@ void R_DrawSpanFlat(void)
         dsp_x2 = (ds_x2 - i) / 4;
 
         countp = dsp_x2 - dsp_x1;
-
-        prt = dsp_x1 * 4 - ds_x1 + i;
 
         if (countp < 0)
         {
