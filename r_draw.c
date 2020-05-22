@@ -306,9 +306,6 @@ fixed_t ds_ystep;
 // start of a 64*64 tile image
 byte *ds_source;
 
-// just for profiling
-int dscount;
-
 //
 // R_InitBuffer
 // Creats lookup tables that avoid
