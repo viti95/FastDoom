@@ -94,8 +94,33 @@ fixed_t dc_texturemid;
 // first pixel in a column (possibly virtual)
 byte *dc_source;
 
-// just for profiling
-int dccount;
+void R_DrawSkyFlat(void)
+{
+    int count;
+    byte *dest;
+
+    count = dc_yh - dc_yl;
+    if (count < 0)
+        return;
+
+    if (detailshift)
+    {
+        outp(SC_INDEX + 1, 3);
+        dest = destview + dc_yl * 80 + (dc_x >> 1);
+    }
+    else
+    {
+        outp(SC_INDEX + 1, 1 << (dc_x & 3));
+        dest = destview + dc_yl * 80 + (dc_x >> 2);
+    }
+
+    do
+    {
+        *dest = 0x0;
+        dest += SCREENWIDTH / 4;
+    } while (count--);
+}
+
 
 //
 // Spectre/Invisibility.

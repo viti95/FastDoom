@@ -33,6 +33,7 @@ extern byte *dc_source;
 // Hook in assembler or system specific BLT
 //  here.
 void R_DrawColumn(void);
+void R_DrawSkyFlat(void);
 void R_DrawColumnLow(void);
 
 // The Spectre/Invisibility effect.
