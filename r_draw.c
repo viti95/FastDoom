@@ -367,6 +367,46 @@ void R_DrawSpanFlat(void)
     }
 }
 
+void R_DrawSpanFlatLow(void)
+{
+    fixed_t xfrac;
+    fixed_t yfrac;
+    byte *dest;
+    int i;
+    int dsp_x1;
+    int dsp_x2;
+    int countp;
+
+    ds_x1 <<= 1;
+    ds_x2 <<= 1;
+
+    for (i = 0; i < 4; i++)
+    {
+        outp(SC_INDEX + 1, 1 << i);
+
+        dsp_x1 = (ds_x1 - i) / 4;
+
+        if (dsp_x1 * 4 + i < ds_x1)
+            dsp_x1++;
+
+        dest = destview + ds_y * 80 + dsp_x1;
+        dsp_x2 = (ds_x2 - i) / 4;
+
+        countp = dsp_x2 - dsp_x1;
+
+        if (countp < 0)
+        {
+            continue;
+        }
+        do
+        {
+            // Lookup pixel from flat texture tile,
+            //  re-index using light/colormap.
+            *dest++ = ds_colormap[0][ds_source];
+        } while (countp--);
+    }
+}
+
 //
 // R_InitBuffer
 // Creats lookup tables that avoid
