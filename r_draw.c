@@ -121,7 +121,6 @@ void R_DrawSkyFlat(void)
     } while (count--);
 }
 
-
 //
 // Spectre/Invisibility.
 //
@@ -331,25 +330,25 @@ fixed_t ds_ystep;
 // start of a 64*64 tile image
 byte *ds_source;
 
-void R_DrawSpanFlat (void) 
-{ 
-    fixed_t             xfrac;
-    fixed_t             yfrac;
-    byte*               dest;
-    int                 spot;
-    int                     i;
-    int                     prt;
-    int                     dsp_x1;
-    int                     dsp_x2;
-    int                     countp;
-
+void R_DrawSpanFlat(void)
+{
+    fixed_t xfrac;
+    fixed_t yfrac;
+    byte *dest;
+    int spot;
+    int i;
+    int prt;
+    int dsp_x1;
+    int dsp_x2;
+    int countp;
+    
     for (i = 0; i < 4; i++)
     {
         outp(SC_INDEX + 1, 1 << i);
 
         dsp_x1 = (ds_x1 - i) / 4;
 
-        if (dsp_x1 * 4 + i<ds_x1)
+        if (dsp_x1 * 4 + i < ds_x1)
             dsp_x1++;
 
         dest = destview + ds_y * 80 + dsp_x1;
@@ -359,14 +358,15 @@ void R_DrawSpanFlat (void)
 
         prt = dsp_x1 * 4 - ds_x1 + i;
 
-        if (countp < 0) {
+        if (countp < 0)
+        {
             continue;
         }
         do
         {
             // Lookup pixel from flat texture tile,
             //  re-index using light/colormap.
-            *dest++ = 0x0;
+            *dest++ = ds_colormap[0][ds_source];
         } while (countp--);
     }
 }
