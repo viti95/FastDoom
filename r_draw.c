@@ -390,7 +390,8 @@ void R_DrawSpanFlatLow(void)
             dsp_x1++;
 
         dest = destview + ds_y * 80 + dsp_x1;
-        dsp_x2 = (ds_x2 - i) / 4;
+
+        dsp_x2 = (ds_x2 - i + 1) / 4;
 
         countp = dsp_x2 - dsp_x1;
 
