@@ -39,6 +39,10 @@ extern boolean nomonsters;  // checkparm of -nomonsters
 extern boolean respawnparm; // checkparm of -respawn
 extern boolean fastparm;    // checkparm of -fast
 
+extern boolean flatSurfaces;
+extern boolean flatSky;
+extern boolean flatShadows;
+
 // Set if homebrew PWAD stuff has been added.
 extern boolean modifiedgame;
 

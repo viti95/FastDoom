@@ -81,6 +81,10 @@ boolean nomonsters;  // checkparm of -nomonsters
 boolean respawnparm; // checkparm of -respawn
 boolean fastparm;    // checkparm of -fast
 
+boolean flatSurfaces;
+boolean flatSky;
+boolean flatShadows;
+
 boolean drone;
 
 boolean singletics = false; // debug flag to cancel adaptiveness
@@ -756,6 +760,10 @@ void D_DoomMain(void)
     nomonsters = M_CheckParm("-nomonsters");
     respawnparm = M_CheckParm("-respawn");
     fastparm = M_CheckParm("-fast");
+
+    flatSurfaces = M_CheckParm("-flatsurfaces");
+    flatSky = M_CheckParm("-flatsky");
+    flatShadows = M_CheckParm("-flatshadows");
 
     if (!commercial)
     {

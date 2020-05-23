@@ -22,6 +22,7 @@
 #include <math.h>
 
 #include "doomdef.h"
+#include "doomstat.h"
 #include "d_net.h"
 
 #include "m_misc.h"
@@ -96,6 +97,7 @@ void (*basecolfunc)(void);
 void (*fuzzcolfunc)(void);
 void (*transcolfunc)(void);
 void (*spanfunc)(void);
+void (*skyfunc)(void);
 
 //
 // R_PointOnSide
@@ -559,16 +561,44 @@ void R_ExecuteSetViewSize(void)
     if (!detailshift)
     {
         colfunc = basecolfunc = R_DrawColumn;
-        fuzzcolfunc = R_DrawFuzzColumn;
+
+        if (flatShadows)
+            fuzzcolfunc = R_DrawFuzzColumnFast;
+        else
+            fuzzcolfunc = R_DrawFuzzColumn;
+        
         transcolfunc = R_DrawTranslatedColumn;
-        spanfunc = R_DrawSpan;
+        
+        if (flatSurfaces)
+            spanfunc = R_DrawSpanFlat;
+        else
+            spanfunc = R_DrawSpan;
+
+        if (flatSky)
+            skyfunc = R_DrawSkyFlat;
+        else
+            skyfunc = R_DrawColumn;
     }
     else
     {
         colfunc = basecolfunc = R_DrawColumnLow;
-        fuzzcolfunc = R_DrawFuzzColumn;
+
+        if (flatShadows)
+            fuzzcolfunc = R_DrawFuzzColumnFast;
+        else
+            fuzzcolfunc = R_DrawFuzzColumn;
+
         transcolfunc = R_DrawTranslatedColumn;
-        spanfunc = R_DrawSpanLow;
+        
+        if (flatSurfaces)
+            spanfunc = R_DrawSpanFlatLow;
+        else
+            spanfunc = R_DrawSpanLow;
+
+        if (flatSky)
+            skyfunc = R_DrawSkyFlatLow;
+        else
+            skyfunc = R_DrawColumnLow;
     }
 
     R_InitBuffer(scaledviewwidth, viewheight);

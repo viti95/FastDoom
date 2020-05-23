@@ -32,9 +32,6 @@
 #define MINZ (FRACUNIT * 4)
 #define BASEYCENTER 100
 
-//void R_DrawColumn (void);
-//void R_DrawFuzzColumn (void);
-
 typedef struct
 {
     int x1;
