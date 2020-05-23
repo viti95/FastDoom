@@ -607,16 +607,8 @@ void R_DrawPSprite(pspdef_t *psp)
     tx -= spriteoffset[lump];
     x1 = (centerxfrac + FixedMul(tx, pspritescale)) >> FRACBITS;
 
-    // off the right side
-    if (x1 > viewwidth)
-        return;
-
     tx += spritewidth[lump];
     x2 = ((centerxfrac + FixedMul(tx, pspritescale)) >> FRACBITS) - 1;
-
-    // off the left side
-    if (x2 < 0)
-        return;
 
     // store information in a vissprite
     vis = &avis;
