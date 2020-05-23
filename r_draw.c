@@ -169,8 +169,6 @@ void R_DrawFuzzColumn(void)
 {
     int count;
     byte *dest;
-    fixed_t frac;
-    fixed_t fracstep;
 
     // Adjust borders. Low...
     if (!dc_yl)
@@ -207,10 +205,6 @@ void R_DrawFuzzColumn(void)
         dest = destview + dc_yl * 80 + (dc_x >> 2);
     }
 
-    // Looks familiar.
-    fracstep = dc_iscale;
-    frac = dc_texturemid + (dc_yl - centery) * fracstep;
-
     // Looks like an attempt at dithering,
     //  using the colormap #6 (of 0-31, a bit
     //  brighter than average).
@@ -227,8 +221,6 @@ void R_DrawFuzzColumn(void)
             fuzzpos = 0;
 
         dest += SCREENWIDTH / 4;
-
-        frac += fracstep;
     } while (count--);
 }
 
