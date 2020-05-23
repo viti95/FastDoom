@@ -546,7 +546,6 @@ fhplane:
 	mov		edi,[dest]
 	test	[curpx],1
 	jz		fhfill
-	and		ecx,0fffh
 	mov		al,[esi]
 	mov		dl,[eax]
 	mov		[edi],dl
@@ -568,19 +567,13 @@ fhfillone:
 	mov		[edi],dl
 	jmp		fhdoneplane
 fhdoubleloop:
-	shld	ecx,ebp,22
 	mov		dh,[ebx]
-	shld	ecx,ebp,6
 fhpatch1:
 	add		ebp,12345678h
-	and		ecx,0fffh
 	mov		[edi],dx
-	shld	edx,ebp,22
 	add		edi,2
-	shld	edx,ebp,6
 fhpatch2:
 	add		ebp,12345678h
-	and		edx,0fffh
 	mov		al,[esi]
 	mov		bl,[esi]
 	dec		[loopcount]
