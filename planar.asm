@@ -491,4 +491,120 @@ ldone:
 	ret
 ENDP
 
+PROC   R_DrawSpanFlatASM_
+PUBLIC	R_DrawSpanFlatASM_
+	PUSHR
+	mov		eax,[_ds_x1]
+	mov		[curx],eax
+	mov 	ebx,eax
+	and		ebx,3
+	mov		[endplane],ebx
+	mov		[curplane],ebx
+	shr		eax,2
+	mov		ebp,[_ds_y]
+	lea		edi,[ebp+ebp*8]
+	add		edi,ebp
+	shl		edi,3
+	add		edi,eax
+	add		edi,[_destview]
+	mov		[dest],edi
+			
+	mov		eax,OFFSET hpatch1+2
+	mov		[eax],ebx
+	mov		eax,OFFSET hpatch2+2
+	mov		[eax],ebx
+	mov		ecx,[curplane]
+fhplane:
+	mov		eax,1
+	shl		eax,cl
+	mov		edx,SC_INDEX+1
+	out		dx,al
+	mov		eax,[_ds_x2]
+	cmp		eax,[curx]
+	jb		fhdone
+	sub		eax,[curplane]
+	js		fhdoneplane
+	shr		eax,2
+	mov		[endpx],eax
+	dec		eax
+	js		fhfillone
+	shr		eax,1
+	mov		ebx,[curx]
+	shr		ebx,2
+	cmp		ebx,[endpx]
+	jz		fhfillone
+	mov		[curpx],ebx
+	inc		ebx
+	shr		ebx,1
+	inc		eax
+	sub		eax,ebx
+	js		fhdoneplane
+	mov		[loopcount],eax
+	mov		eax,[_ds_colormap]
+	mov		ebx,eax
+	mov		esi,[_ds_source]
+	mov		edi,[dest]
+	test	[curpx],1
+	jz		fhfill
+	and		ecx,0fffh
+	mov		al,[esi]
+	mov		dl,[eax]
+	mov		[edi],dl
+	inc		edi
+	jz		fhdoneplane
+fhfill:
+	mov		al,[esi]
+	mov		bl,[esi]
+	mov		dl,[eax]
+	test	[loopcount],0ffffffffh
+	jnz		fhdoubleloop
+	jmp		fhchecklast
+fhfillone:
+	mov		eax,[_ds_colormap]
+	mov		esi,[_ds_source]
+	mov		edi,[dest]
+	mov		al,[esi]
+	mov		dl,[eax]
+	mov		[edi],dl
+	jmp		fhdoneplane
+fhdoubleloop:
+	shld	ecx,ebp,22
+	mov		dh,[ebx]
+	shld	ecx,ebp,6
+fhpatch1:
+	add		ebp,12345678h
+	and		ecx,0fffh
+	mov		[edi],dx
+	shld	edx,ebp,22
+	add		edi,2
+	shld	edx,ebp,6
+fhpatch2:
+	add		ebp,12345678h
+	and		edx,0fffh
+	mov		al,[esi]
+	mov		bl,[esi]
+	dec		[loopcount]
+	mov		dl,[eax]
+	jnz		fhdoubleloop
+fhchecklast:
+	test	[endpx],1
+	jnz		fhdoneplane
+	mov		[edi],dl
+fhdoneplane:
+	mov		ecx,[curplane]
+	inc		ecx
+	and		ecx,3
+	jnz		fhskip
+	inc		[dest]
+fhskip:
+	cmp		ecx,[endplane]
+	jz		fhdone
+	mov		[curplane],ecx
+	inc		[curx]
+	jmp		fhplane
+fhdone:
+	POPR
+	ret
+ENDP
+
 END
