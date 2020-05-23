@@ -100,23 +100,41 @@ void R_DrawSkyFlat(void)
     byte *dest;
 
     count = dc_yh - dc_yl;
+
     if (count < 0)
         return;
 
-    if (detailshift)
-    {
-        outp(SC_INDEX + 1, 3);
-        dest = destview + dc_yl * 80 + (dc_x >> 1);
-    }
-    else
-    {
-        outp(SC_INDEX + 1, 1 << (dc_x & 3));
-        dest = destview + dc_yl * 80 + (dc_x >> 2);
-    }
+    outp(SC_INDEX + 1, 1 << (dc_x & 3));
+
+    dest = destview + dc_yl * 80 + (dc_x >> 2);
 
     do
     {
-        *dest = 0x0;
+        *dest = 220;
+        dest += SCREENWIDTH / 4;
+    } while (count--);
+}
+
+void R_DrawSkyFlatLow(void)
+{
+    int count;
+    byte *dest;
+
+    count = dc_yh - dc_yl;
+
+    if (count < 0)
+        return;
+
+    if (dc_x & 1)
+        outp(SC_INDEX + 1, 12);
+    else
+        outp(SC_INDEX + 1, 3);
+
+    dest = destview + dc_yl * 80 + (dc_x >> 1);
+
+    do
+    {
+        *dest = 220;
         dest += SCREENWIDTH / 4;
     } while (count--);
 }
@@ -349,7 +367,8 @@ void R_DrawSpanFlat(void)
 
     countp = dsp_x2 - dsp_x1;
 
-    if (countp >= 0){
+    if (countp >= 0)
+    {
         dest = (byte *)origin_y + dsp_x1;
         outp(SC_INDEX + 1, 1 << 0);
         do
@@ -367,7 +386,8 @@ void R_DrawSpanFlat(void)
 
     countp = dsp_x2 - dsp_x1;
 
-    if (countp >= 0){
+    if (countp >= 0)
+    {
         dest = (byte *)origin_y + dsp_x1;
         outp(SC_INDEX + 1, 1 << 1);
         do
@@ -385,7 +405,8 @@ void R_DrawSpanFlat(void)
 
     countp = dsp_x2 - dsp_x1;
 
-    if (countp >= 0){
+    if (countp >= 0)
+    {
         dest = (byte *)origin_y + dsp_x1;
         outp(SC_INDEX + 1, 1 << 2);
         do
@@ -450,7 +471,7 @@ void R_DrawSpanFlatLow(void)
 
     if (dsp_x1 * 2 < ds_x1 - 1)
         dsp_x1++;
-    
+
     dsp_x2 = (ds_x2 - 1) / 2;
 
     countp = dsp_x2 - dsp_x1;

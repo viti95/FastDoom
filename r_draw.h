@@ -35,6 +35,7 @@ extern byte *dc_source;
 void R_DrawColumn(void);
 void R_DrawSkyFlat(void);
 void R_DrawColumnLow(void);
+void R_DrawSkyFlatLow(void);
 
 // The Spectre/Invisibility effect.
 void R_DrawFuzzColumn(void);
