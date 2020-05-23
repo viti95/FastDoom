@@ -332,78 +332,175 @@ byte *ds_source;
 
 void R_DrawSpanFlat(void)
 {
-    fixed_t xfrac;
-    fixed_t yfrac;
     byte *dest;
-    int i;
     int dsp_x1;
     int dsp_x2;
     int countp;
 
-    for (i = 0; i < 4; i++)
-    {
-        outp(SC_INDEX + 1, 1 << i);
+    lighttable_t color = ds_colormap[0][ds_source];
+    int origin_y = (int)destview + ds_y * 80;
 
-        dsp_x1 = (ds_x1 - i) / 4;
+    dsp_x1 = (ds_x1) / 4;
 
-        if (dsp_x1 * 4 + i < ds_x1)
-            dsp_x1++;
+    if (dsp_x1 * 4 < ds_x1)
+        dsp_x1++;
 
-        dest = destview + ds_y * 80 + dsp_x1;
-        dsp_x2 = (ds_x2 - i) / 4;
+    dest = (byte *)origin_y + dsp_x1;
+    dsp_x2 = (ds_x2) / 4;
 
-        countp = dsp_x2 - dsp_x1;
+    countp = dsp_x2 - dsp_x1;
 
-        if (countp < 0)
-        {
-            continue;
-        }
+    if (countp >= 0){
+        outp(SC_INDEX + 1, 1 << 0);
         do
         {
-            // Lookup pixel from flat texture tile,
-            //  re-index using light/colormap.
-            *dest++ = ds_colormap[0][ds_source];
+            *dest++ = color;
+        } while (countp--);
+    }
+
+    dsp_x1 = (ds_x1 - 1) / 4;
+
+    if (dsp_x1 * 4 + 1 < ds_x1)
+        dsp_x1++;
+
+    dest = (byte *)origin_y + dsp_x1;
+    dsp_x2 = (ds_x2 - 1) / 4;
+
+    countp = dsp_x2 - dsp_x1;
+
+    if (countp >= 0){
+        outp(SC_INDEX + 1, 1 << 1);
+        do
+        {
+            *dest++ = color;
+        } while (countp--);
+    }
+
+    dsp_x1 = (ds_x1 - 2) / 4;
+
+    if (dsp_x1 * 4 + 2 < ds_x1)
+        dsp_x1++;
+
+    dest = (byte *)origin_y + dsp_x1;
+    dsp_x2 = (ds_x2 - 2) / 4;
+
+    countp = dsp_x2 - dsp_x1;
+
+    if (countp >= 0){
+        outp(SC_INDEX + 1, 1 << 2);
+        do
+        {
+            *dest++ = color;
+        } while (countp--);
+    }
+
+    dsp_x1 = (ds_x1 - 3) / 4;
+
+    if (dsp_x1 * 4 + 3 < ds_x1)
+        dsp_x1++;
+
+    dest = (byte *)origin_y + dsp_x1;
+    dsp_x2 = (ds_x2 - 3) / 4;
+
+    countp = dsp_x2 - dsp_x1;
+
+    if (countp >= 0)
+    {
+        outp(SC_INDEX + 1, 1 << 3);
+        do
+        {
+            *dest++ = color;
         } while (countp--);
     }
 }
 
 void R_DrawSpanFlatLow(void)
 {
-    fixed_t xfrac;
-    fixed_t yfrac;
     byte *dest;
-    int i;
     int dsp_x1;
     int dsp_x2;
     int countp;
 
+    lighttable_t color = ds_colormap[0][ds_source];
+    int origin_y = (int)destview + ds_y * 80;
+
     ds_x1 <<= 1;
     ds_x2 <<= 1;
 
-    for (i = 0; i < 4; i++)
-    {
-        outp(SC_INDEX + 1, 1 << i);
+    dsp_x1 = (ds_x1) / 4;
 
-        dsp_x1 = (ds_x1 - i) / 4;
+    if (dsp_x1 * 4 < ds_x1)
+        dsp_x1++;
 
-        if (dsp_x1 * 4 + i < ds_x1)
-            dsp_x1++;
+    dest = (byte *)origin_y + dsp_x1;
 
-        dest = destview + ds_y * 80 + dsp_x1;
+    dsp_x2 = (ds_x2 + 1) / 4;
 
-        dsp_x2 = (ds_x2 - i + 1) / 4;
+    countp = dsp_x2 - dsp_x1;
 
-        countp = dsp_x2 - dsp_x1;
-
-        if (countp < 0)
-        {
-            continue;
-        }
+    if (countp >= 0){
+        outp(SC_INDEX + 1, 1 << 0);
         do
         {
-            // Lookup pixel from flat texture tile,
-            //  re-index using light/colormap.
-            *dest++ = ds_colormap[0][ds_source];
+            *dest++ = color;
+        } while (countp--);
+    }
+
+    dsp_x1 = (ds_x1 - 1) / 4;
+
+    if (dsp_x1 * 4 + 1 < ds_x1)
+        dsp_x1++;
+
+    dest = (byte *)origin_y + dsp_x1;
+
+    dsp_x2 = (ds_x2) / 4;
+
+    countp = dsp_x2 - dsp_x1;
+
+    if (countp >= 0)
+    {
+        outp(SC_INDEX + 1, 1 << 1);
+        do
+        {
+            *dest++ = color;
+        } while (countp--);
+    }
+
+    dsp_x1 = (ds_x1 - 2) / 4;
+
+    if (dsp_x1 * 4 + 2 < ds_x1)
+        dsp_x1++;
+
+    dest = (byte *)origin_y + dsp_x1;
+
+    dsp_x2 = (ds_x2 - 1) / 4;
+
+    countp = dsp_x2 - dsp_x1;
+
+    if (countp >= 0){
+        outp(SC_INDEX + 1, 1 << 2);
+        do
+        {
+            *dest++ = color;
+        } while (countp--);
+    }
+
+    dsp_x1 = (ds_x1 - 3) / 4;
+
+    if (dsp_x1 * 4 + 3 < ds_x1)
+        dsp_x1++;
+
+    dest = (byte *)origin_y + dsp_x1;
+
+    dsp_x2 = (ds_x2 - 2) / 4;
+
+    countp = dsp_x2 - dsp_x1;
+
+    if (countp >= 0){
+        outp(SC_INDEX + 1, 1 << 3);
+        do
+        {
+            *dest++ = color;
         } while (countp--);
     }
 }
