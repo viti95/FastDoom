@@ -424,80 +424,40 @@ void R_DrawSpanFlatLow(void)
     lighttable_t color = ds_colormap[0][ds_source];
     int origin_y = (int)destview + ds_y * 80;
 
-    ds_x1 <<= 1;
-    ds_x2 <<= 1;
+    outp(SC_INDEX + 1, 3 << 0);
 
-    dsp_x1 = (ds_x1) / 4;
+    dsp_x1 = (ds_x1) / 2;
 
-    if (dsp_x1 * 4 < ds_x1)
+    if (dsp_x1 * 2 < ds_x1)
         dsp_x1++;
 
-    dest = (byte *)origin_y + dsp_x1;
-
-    dsp_x2 = (ds_x2 + 1) / 4;
-
-    countp = dsp_x2 - dsp_x1;
-
-    if (countp >= 0){
-        outp(SC_INDEX + 1, 1 << 0);
-        do
-        {
-            *dest++ = color;
-        } while (countp--);
-    }
-
-    dsp_x1 = (ds_x1 - 1) / 4;
-
-    if (dsp_x1 * 4 + 1 < ds_x1)
-        dsp_x1++;
-
-    dest = (byte *)origin_y + dsp_x1;
-
-    dsp_x2 = (ds_x2) / 4;
+    dsp_x2 = (ds_x2) / 2;
 
     countp = dsp_x2 - dsp_x1;
 
     if (countp >= 0)
     {
-        outp(SC_INDEX + 1, 1 << 1);
+        dest = (byte *)origin_y + dsp_x1;
         do
         {
             *dest++ = color;
         } while (countp--);
     }
 
-    dsp_x1 = (ds_x1 - 2) / 4;
+    outp(SC_INDEX + 1, 3 << 2);
 
-    if (dsp_x1 * 4 + 2 < ds_x1)
+    dsp_x1 = (ds_x1 - 1) / 2;
+
+    if (dsp_x1 * 2 < ds_x1 - 1)
         dsp_x1++;
-
-    dest = (byte *)origin_y + dsp_x1;
-
-    dsp_x2 = (ds_x2 - 1) / 4;
+    
+    dsp_x2 = (ds_x2 - 1) / 2;
 
     countp = dsp_x2 - dsp_x1;
 
-    if (countp >= 0){
-        outp(SC_INDEX + 1, 1 << 2);
-        do
-        {
-            *dest++ = color;
-        } while (countp--);
-    }
-
-    dsp_x1 = (ds_x1 - 3) / 4;
-
-    if (dsp_x1 * 4 + 3 < ds_x1)
-        dsp_x1++;
-
-    dest = (byte *)origin_y + dsp_x1;
-
-    dsp_x2 = (ds_x2 - 2) / 4;
-
-    countp = dsp_x2 - dsp_x1;
-
-    if (countp >= 0){
-        outp(SC_INDEX + 1, 1 << 3);
+    if (countp >= 0)
+    {
+        dest = (byte *)origin_y + dsp_x1;
         do
         {
             *dest++ = color;
