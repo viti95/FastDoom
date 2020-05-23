@@ -345,12 +345,12 @@ void R_DrawSpanFlat(void)
     if (dsp_x1 * 4 < ds_x1)
         dsp_x1++;
 
-    dest = (byte *)origin_y + dsp_x1;
     dsp_x2 = (ds_x2) / 4;
 
     countp = dsp_x2 - dsp_x1;
 
     if (countp >= 0){
+        dest = (byte *)origin_y + dsp_x1;
         outp(SC_INDEX + 1, 1 << 0);
         do
         {
@@ -363,12 +363,12 @@ void R_DrawSpanFlat(void)
     if (dsp_x1 * 4 + 1 < ds_x1)
         dsp_x1++;
 
-    dest = (byte *)origin_y + dsp_x1;
     dsp_x2 = (ds_x2 - 1) / 4;
 
     countp = dsp_x2 - dsp_x1;
 
     if (countp >= 0){
+        dest = (byte *)origin_y + dsp_x1;
         outp(SC_INDEX + 1, 1 << 1);
         do
         {
@@ -381,12 +381,12 @@ void R_DrawSpanFlat(void)
     if (dsp_x1 * 4 + 2 < ds_x1)
         dsp_x1++;
 
-    dest = (byte *)origin_y + dsp_x1;
     dsp_x2 = (ds_x2 - 2) / 4;
 
     countp = dsp_x2 - dsp_x1;
 
     if (countp >= 0){
+        dest = (byte *)origin_y + dsp_x1;
         outp(SC_INDEX + 1, 1 << 2);
         do
         {
@@ -399,13 +399,13 @@ void R_DrawSpanFlat(void)
     if (dsp_x1 * 4 + 3 < ds_x1)
         dsp_x1++;
 
-    dest = (byte *)origin_y + dsp_x1;
     dsp_x2 = (ds_x2 - 3) / 4;
 
     countp = dsp_x2 - dsp_x1;
 
     if (countp >= 0)
     {
+        dest = (byte *)origin_y + dsp_x1;
         outp(SC_INDEX + 1, 1 << 3);
         do
         {
