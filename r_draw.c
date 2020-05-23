@@ -224,6 +224,61 @@ void R_DrawFuzzColumn(void)
     } while (count--);
 }
 
+void R_DrawFuzzColumnFast(void)
+{
+    int count;
+    byte *dest;
+
+    // Adjust borders. Low...
+    if (!dc_yl)
+        dc_yl = 1;
+
+    // .. and high.
+    if (dc_yh == viewheight - 1)
+        dc_yh = viewheight - 2;
+
+    count = dc_yh - dc_yl;
+
+    // Zero length.
+    if (count < 0)
+        return;
+
+    if (detailshift)
+    {
+        if (dc_x & 1)
+        {
+            outpw(GC_INDEX, GC_READMAP + (2 << 8));
+            outp(SC_INDEX + 1, 12);
+        }
+        else
+        {
+            outpw(GC_INDEX, GC_READMAP);
+            outp(SC_INDEX + 1, 3);
+        }
+        dest = destview + dc_yl * 80 + (dc_x >> 1);
+    }
+    else
+    {
+        outpw(GC_INDEX, GC_READMAP + ((dc_x & 3) << 8));
+        outp(SC_INDEX + 1, 1 << (dc_x & 3));
+        dest = destview + dc_yl * 80 + (dc_x >> 2);
+    }
+
+    // Looks like an attempt at dithering,
+    //  using the colormap #6 (of 0-31, a bit
+    //  brighter than average).
+    do
+    {
+        // Lookup framebuffer, and retrieve
+        //  a pixel that is either one column
+        //  left or right of the current one.
+        // Add index from colormap to index.
+        *dest = colormaps[6 * 256 + dest[FUZZOFF]];
+
+        dest += SCREENWIDTH / 4;
+    } while (count--);
+}
+
 //
 // R_DrawTranslatedColumn
 // Used to draw player sprites

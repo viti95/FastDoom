@@ -39,7 +39,7 @@ void R_DrawSkyFlatLow(void);
 
 // The Spectre/Invisibility effect.
 void R_DrawFuzzColumn(void);
-void R_DrawFuzzColumnLow(void);
+void R_DrawFuzzColumnFast(void);
 
 // Draw with color translation tables,
 //  for player sprite rendering,
