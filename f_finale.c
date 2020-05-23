@@ -343,11 +343,6 @@ void F_TextWrite(void)
 			memcpy(dest, src + ((y & 63) << 6), 64);
 			dest += 64;
 		}
-		if (SCREENWIDTH & 63)
-		{
-			memcpy(dest, src + ((y & 63) << 6), SCREENWIDTH & 63);
-			dest += (SCREENWIDTH & 63);
-		}
 	}
 
 	V_MarkRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
