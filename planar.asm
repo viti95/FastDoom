@@ -509,9 +509,9 @@ PUBLIC	R_DrawSpanFlatASM_
 	add		edi,[_destview]
 	mov		[dest],edi
 			
-	mov		eax,OFFSET hpatch1+2
+	mov		eax,OFFSET fhpatch1+2
 	mov		[eax],ebx
-	mov		eax,OFFSET hpatch2+2
+	mov		eax,OFFSET fhpatch2+2
 	mov		[eax],ebx
 	mov		ecx,[curplane]
 fhplane:
