@@ -139,7 +139,7 @@ void NetUpdate(void)
 	gametime = nowtime;
 
 	if (newtics <= 0) // nothing new to update
-		goto listen;
+		return;
 
 	if (skiptics <= newtics)
 	{
@@ -180,7 +180,6 @@ void NetUpdate(void)
 			localcmds[(realstart + j) % BACKUPTICS];
 
 	// listen for other packets
-listen:
 	GetPackets();
 }
 
