@@ -19,6 +19,8 @@
 #ifndef __D_NET__
 #define __D_NET__
 
+#include "i_ibm.h"
+
 #include "d_player.h"
 
 //

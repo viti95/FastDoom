@@ -383,7 +383,7 @@ void G_DoLoadLevel(void)
         players[0].playerstate = PST_REBORN;
 
     P_SetupLevel(gameepisode, gamemap, 0, gameskill);
-    starttime = I_GetTime();
+    starttime = ticcount;
     gameaction = ga_nothing;
     Z_CheckHeap();
 
@@ -1253,7 +1253,7 @@ boolean G_CheckDemoStatus(void)
 
     if (timingdemo)
     {
-        endtime = I_GetTime();
+        endtime = ticcount;
         realtics = endtime - starttime;
 
         fps = FixedMul(FixedDiv(gametic << FRACBITS, realtics << FRACBITS), 35 << FRACBITS);

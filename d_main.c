@@ -43,6 +43,7 @@
 
 #include "i_system.h"
 #include "i_sound.h"
+#include "i_ibm.h"
 
 #include "g_game.h"
 
@@ -319,13 +320,13 @@ void D_Display(void)
     // wipe update
     wipe_EndScreen(0, 0, SCREENWIDTH, SCREENHEIGHT);
 
-    wipestart = I_GetTime() - 1;
+    wipestart = ticcount - 1;
 
     do
     {
         do
         {
-            nowtime = I_GetTime();
+            nowtime = ticcount;
             tics = nowtime - wipestart;
         } while (!tics);
         wipestart = nowtime;

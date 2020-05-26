@@ -199,15 +199,6 @@ byte scantokey[128] =
 };
 
 //
-// I_GetTime
-// Returns time in 1/35th second tics.
-//
-int I_GetTime(void)
-{
-    return ticcount;
-}
-
-//
 // User input
 //
 

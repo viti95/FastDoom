@@ -134,7 +134,7 @@ void NetUpdate(void)
 	int gameticdiv;
 
 	// check time
-	nowtime = I_GetTime() / ticdup;
+	nowtime = ticcount / ticdup;
 	newtics = nowtime - gametime;
 	gametime = nowtime;
 
@@ -228,7 +228,7 @@ void TryRunTics(void)
 	int counts;
 
 	// get real tics
-	entertic = I_GetTime() / ticdup;
+	entertic = ticcount / ticdup;
 	realtics = entertic - oldentertics;
 	oldentertics = entertic;
 
@@ -261,7 +261,7 @@ void TryRunTics(void)
 			lowtic = nettics;
 
 		// don't stay in here forever -- give the menu a chance to work
-		if (I_GetTime() / ticdup - entertic >= 20)
+		if (ticcount / ticdup - entertic >= 20)
 		{
 			M_Ticker();
 			return;
