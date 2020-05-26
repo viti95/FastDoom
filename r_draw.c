@@ -96,8 +96,8 @@ byte *dc_source;
 
 void R_DrawSkyFlat(void)
 {
-    int count;
-    byte *dest;
+    register int count;
+    register byte *dest;
 
     count = dc_yh - dc_yl;
 
@@ -117,8 +117,8 @@ void R_DrawSkyFlat(void)
 
 void R_DrawSkyFlatLow(void)
 {
-    int count;
-    byte *dest;
+    register int count;
+    register byte *dest;
 
     count = dc_yh - dc_yl;
 
@@ -167,8 +167,8 @@ int fuzzpos = 0;
 //
 void R_DrawFuzzColumn(void)
 {
-    int count;
-    byte *dest;
+    register int count;
+    register byte *dest;
 
     // Adjust borders. Low...
     if (!dc_yl)
@@ -226,8 +226,8 @@ void R_DrawFuzzColumn(void)
 
 void R_DrawFuzzColumnFast(void)
 {
-    int count;
-    byte *dest;
+    register int count;
+    register byte *dest;
 
     // Adjust borders. Low...
     if (!dc_yl)
@@ -293,8 +293,8 @@ byte *translationtables;
 
 void R_DrawTranslatedColumn(void)
 {
-    int count;
-    byte *dest;
+    register int count;
+    register byte *dest;
     fixed_t frac;
     fixed_t fracstep;
 
@@ -397,10 +397,10 @@ byte *ds_source;
 
 void R_DrawSpanFlat(void)
 {
-    byte *dest;
+    register byte *dest;
     int dsp_x1;
     int dsp_x2;
-    int countp;
+    register int countp;
 
     lighttable_t color = ds_colormap[0][ds_source];
     int origin_y = (int)destview + ds_y * 80;
@@ -484,10 +484,10 @@ void R_DrawSpanFlat(void)
 
 void R_DrawSpanFlatLow(void)
 {
-    byte *dest;
+    register byte *dest;
     int dsp_x1;
     int dsp_x2;
-    int countp;
+    register int countp;
 
     lighttable_t color = ds_colormap[0][ds_source];
     int origin_y = (int)destview + ds_y * 80;
