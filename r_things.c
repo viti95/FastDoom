@@ -801,39 +801,15 @@ void R_DrawSprite(vissprite_t *spr)
         }
 
         // clip this piece of the sprite
-        silhouette = ds->silhouette;
-
-        if (spr->gz >= ds->bsilheight)
-            silhouette &= ~SIL_BOTTOM;
-
-        if (spr->gzt <= ds->tsilheight)
-            silhouette &= ~SIL_TOP;
-
-        if (silhouette == 1)
-        {
-            // bottom sil
+        if (ds->silhouette & SIL_BOTTOM && spr->gz < ds->bsilheight) //bottom sil
             for (x = r1; x <= r2; x++)
                 if (clipbot[x] == -2)
                     clipbot[x] = ds->sprbottomclip[x];
-        }
-        else if (silhouette == 2)
-        {
-            // top sil
+
+        if (ds->silhouette & SIL_TOP && spr->gzt > ds->tsilheight) // top sil
             for (x = r1; x <= r2; x++)
                 if (cliptop[x] == -2)
                     cliptop[x] = ds->sprtopclip[x];
-        }
-        else if (silhouette == 3)
-        {
-            // both
-            for (x = r1; x <= r2; x++)
-            {
-                if (clipbot[x] == -2)
-                    clipbot[x] = ds->sprbottomclip[x];
-                if (cliptop[x] == -2)
-                    cliptop[x] = ds->sprtopclip[x];
-            }
-        }
     }
 
     // all clipping has been performed, so draw the sprite
