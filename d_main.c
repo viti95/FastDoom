@@ -171,8 +171,8 @@ FixedDiv(fixed_t a,
          fixed_t b)
 {
     if ((abs(a) >> 14) >= abs(b))
-        return ((a^b)>>31) ^ MAXINT;
-        //return (a ^ b) < 0 ? MININT : MAXINT;
+        return ((a ^ b) >> 31) ^ MAXINT;
+    //return (a ^ b) < 0 ? MININT : MAXINT;
     return FixedDiv2(a, b);
 }
 
@@ -235,7 +235,11 @@ void D_Display(void)
         if (!gametic)
             break;
         if (automapactive)
+        {
+            // [crispy] update automap while playing
+            R_RenderPlayerView(&players[0]);
             AM_Drawer();
+        }
         if (wipe || (viewheight != 200 && fullscreen))
             redrawsbar = true;
         if (inhelpscreensstate && !inhelpscreens)
