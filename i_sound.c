@@ -21,6 +21,7 @@
 
 #include "dmx.h"
 
+#include "i_ibm.h"
 #include "i_system.h"
 #include "s_sound.h"
 #include "i_sound.h"
@@ -120,7 +121,6 @@ void I_StopSong(int handle)
     // Fucking kluge pause
     {
         int s;
-        extern volatile int ticcount;
         for (s = ticcount; ticcount - s < 10;)
             ;
     }
@@ -349,7 +349,6 @@ void I_StartupSound(void)
 void I_ShutdownSound(void)
 {
     int s;
-    extern volatile int ticcount;
     S_PauseSound();
     s = ticcount + 30;
     while (s != ticcount)
