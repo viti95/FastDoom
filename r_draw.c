@@ -273,7 +273,7 @@ void R_DrawFuzzColumnFast(void)
         //  a pixel that is either one column
         //  left or right of the current one.
         // Add index from colormap to index.
-        *dest = colormaps[6 * 256 + dest[FUZZOFF]];
+        *dest = colormaps[6 * 256 + dest[0]];
 
         dest += SCREENWIDTH / 4;
     } while (count--);
