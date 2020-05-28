@@ -957,27 +957,8 @@ void ST_drawWidgets(boolean refresh)
 		STlib_updateMultIcon(&w_keyboxes[i], refresh);
 }
 
-void ST_doRefresh(void)
-{
-
-	st_firsttime = false;
-
-	// draw status bar background to off-screen buff
-	ST_refreshBackground();
-
-	// and refresh all widgets
-	ST_drawWidgets(true);
-}
-
-void ST_diffDraw(void)
-{
-	// update all widgets
-	ST_drawWidgets(false);
-}
-
 void ST_Drawer(boolean fullscreen, boolean refresh)
 {
-
 	st_statusbaron = (!fullscreen) || automapactive;
 	st_firsttime = st_firsttime || refresh;
 
@@ -985,11 +966,19 @@ void ST_Drawer(boolean fullscreen, boolean refresh)
 	ST_doPaletteStuff();
 
 	// If just after ST_Start(), refresh all
-	if (st_firsttime)
-		ST_doRefresh();
+	if (st_firsttime){
+		st_firsttime = false;
+
+		// draw status bar background to off-screen buff
+		ST_refreshBackground();
+
+		// and refresh all widgets
+		ST_drawWidgets(true);
+	}
+
 	// Otherwise, update as little as possible
 	else
-		ST_diffDraw();
+		ST_drawWidgets(false);
 }
 
 void ST_loadGraphics(void)
