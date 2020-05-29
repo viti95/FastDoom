@@ -212,7 +212,6 @@ extern int rndindex;
 extern int maketic;
 extern int nettics;
 
-extern ticcmd_t netcmds[BACKUPTICS];
 extern int ticdup;
 
 #endif

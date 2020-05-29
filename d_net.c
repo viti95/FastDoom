@@ -39,7 +39,6 @@ doomdata_t *netbuffer; // points inside doomcom
 
 ticcmd_t localcmds[BACKUPTICS];
 
-ticcmd_t netcmds[BACKUPTICS];
 int nettics;
 int resendto;
 
@@ -76,7 +75,6 @@ int ExpandTics(int low)
 
 void GetPackets(void)
 {
-	ticcmd_t *src, *dest;
 	int realend;
 	int realstart;
 
@@ -100,22 +98,8 @@ void GetPackets(void)
 		// stop processing until the other system resends the missed tics
 		return;
 	}
-
-	// update command store from the packet
-	{
-		int start;
-
-		start = nettics - realstart;
-		src = &netbuffer->cmds[start];
-
-		while (nettics < realend)
-		{
-			dest = &netcmds[nettics % BACKUPTICS];
-			nettics++;
-			*dest = *src;
-			src++;
-		}
-	}
+	
+	nettics = realend;
 }
 
 //
