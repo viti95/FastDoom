@@ -291,15 +291,6 @@ void R_ClearSprites(void)
 //
 vissprite_t overflowsprite;
 
-vissprite_t *R_NewVisSprite(void)
-{
-    if (vissprite_p == &vissprites[MAXVISSPRITES])
-        return &overflowsprite;
-
-    vissprite_p++;
-    return vissprite_p - 1;
-}
-
 //
 // R_DrawMaskedColumn
 // Used for sprites and masked mid textures.
@@ -490,7 +481,11 @@ void R_ProjectSprite(mobj_t *thing)
         return;
 
     // store information in a vissprite
-    vis = R_NewVisSprite();
+    if (vissprite_p == &vissprites[MAXVISSPRITES]){
+        vis = &overflowsprite;
+    }
+    vissprite_p++;
+    vis = vissprite_p - 1;
     vis->mobjflags = thing->flags;
     vis->scale = xscale << detailshift;
     vis->gx = thing->x;
