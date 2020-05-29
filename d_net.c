@@ -161,7 +161,6 @@ extern boolean advancedemo;
 void TryRunTics(void)
 {
 	int i;
-	int lowtic;
 	int entertic;
 	static int oldentertics;
 	int realtics;
@@ -176,10 +175,7 @@ void TryRunTics(void)
 	// get available tics
 	NetUpdate();
 
-	lowtic = MAXINT;
-	if (nettics < lowtic)
-		lowtic = nettics;
-	availabletics = lowtic - gametic / ticdup;
+	availabletics = nettics - gametic / ticdup;
 
 	// decide how many tics to run
 	if (realtics < availabletics - 1)
@@ -193,13 +189,9 @@ void TryRunTics(void)
 		counts = 1;
 
 	// wait for new tics if needed
-	while (lowtic < gametic / ticdup + counts)
+	while (nettics < gametic / ticdup + counts)
 	{
 		NetUpdate();
-		lowtic = MAXINT;
-
-		if (nettics < lowtic)
-			lowtic = nettics;
 
 		// don't stay in here forever -- give the menu a chance to work
 		if (ticcount / ticdup - entertic >= 20)
