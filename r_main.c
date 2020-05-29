@@ -420,8 +420,7 @@ void R_InitTextureMapping(void)
     //
     // Calc focallength
     //  so FIELDOFVIEW angles covers SCREENWIDTH.
-    focallength = FixedDiv(centerxfrac,
-                           finetangent[FINEANGLES / 4 + FIELDOFVIEW / 2]);
+    focallength = FixedDiv(centerxfrac, finetangent[FINEANGLES / 4 + FIELDOFVIEW / 2]);
 
     for (i = 0; i < FINEANGLES / 2; i++)
     {

@@ -163,20 +163,6 @@ void D_ProcessEvents(void)
 }
 
 //
-// FixedDiv, C version.
-//
-
-fixed_t
-FixedDiv(fixed_t a,
-         fixed_t b)
-{
-    if ((abs(a) >> 14) >= abs(b))
-        return ((a ^ b) >> 31) ^ MAXINT;
-    //return (a ^ b) < 0 ? MININT : MAXINT;
-    return FixedDiv2(a, b);
-}
-
-//
 // D_Display
 //  draw current display, possibly wiping it from the previous
 //
