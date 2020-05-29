@@ -385,7 +385,6 @@ void G_DoLoadLevel(void)
     P_SetupLevel(gameepisode, gamemap, 0, gameskill);
     starttime = ticcount;
     gameaction = ga_nothing;
-    Z_CheckHeap();
 
     // clear cmd building stuff
     memset(gamekeydown, 0, sizeof(gamekeydown));

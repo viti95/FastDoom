@@ -256,23 +256,6 @@ void Z_FreeTags(int lowtag,
 }
 
 //
-// Z_CheckHeap
-//
-void Z_CheckHeap(void)
-{
-    memblock_t *block;
-
-    for (block = mainzone->blocklist.next;; block = block->next)
-    {
-        if (block->next == &mainzone->blocklist)
-        {
-            // all blocks have been hit
-            break;
-        }
-    }
-}
-
-//
 // Z_ChangeTag
 //
 void Z_ChangeTag(void *ptr,
