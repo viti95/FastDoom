@@ -163,7 +163,7 @@ void NetUpdate(void)
 		if (maketic - gameticdiv >= BACKUPTICS / 2 - 1)
 			break; // can't hold any more
 
-		G_BuildTiccmd(&localcmds[maketic % BACKUPTICS]);
+		G_BuildTiccmd(&localcmds[resendto % BACKUPTICS]);
 		maketic++;
 	}
 
@@ -174,10 +174,6 @@ void NetUpdate(void)
 	netbuffer->numtics = maketic - realstart;
 
 	resendto = maketic;
-
-	for (j = 0; j < netbuffer->numtics; j++)
-		netbuffer->cmds[j] =
-			localcmds[(realstart + j) % BACKUPTICS];
 
 	// listen for other packets
 	GetPackets();
@@ -278,21 +274,6 @@ void TryRunTics(void)
 			M_Ticker();
 			G_Ticker();
 			gametic++;
-
-			// modify command for duplicated tics
-			if (i != ticdup - 1)
-			{
-				ticcmd_t *cmd;
-				int buf;
-				int j;
-
-				buf = (gametic / ticdup) % BACKUPTICS;
-			
-				cmd = &netcmds[buf];
-				if (cmd->buttons & BT_SPECIAL)
-					cmd->buttons = 0;
-			
-			}
 		}
 		NetUpdate(); // check for new console commands
 	}
