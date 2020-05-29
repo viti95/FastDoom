@@ -215,18 +215,7 @@ int R_PointOnSegSide(fixed_t x,
     return 1;
 }
 
-int SlopeDiv(unsigned num,
-             unsigned den)
-{
-    unsigned ans;
-
-    if (den < 512)
-        return SLOPERANGE;
-
-    ans = (num << 3) / (den >> 8);
-
-    return ans <= SLOPERANGE ? ans : SLOPERANGE;
-}
+#define SlopeDiv(num, den) ((den < 512) ? SLOPERANGE : min((num << 3) / (den >> 8), SLOPERANGE))
 
 //
 // R_PointToAngle
