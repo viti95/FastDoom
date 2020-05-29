@@ -82,22 +82,6 @@ void GetPackets(void)
 	// Figure out what the rest of the bytes are
 	realstart = ExpandTics(netbuffer->starttic);
 	realend = (realstart + netbuffer->numtics);
-
-	// check for out of order / duplicated packet
-	if (realend == nettics)
-		return;
-
-	if (realend < nettics)
-	{
-		return;
-	}
-
-	// check for a missed packet
-	if (realstart > nettics)
-	{
-		// stop processing until the other system resends the missed tics
-		return;
-	}
 	
 	nettics = realend;
 }
