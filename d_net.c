@@ -70,23 +70,6 @@ int ExpandTics(int low)
 }
 
 //
-// GetPackets
-//
-
-void GetPackets(void)
-{
-	int realend;
-	int realstart;
-
-	// to save bytes, only the low byte of tic numbers are sent
-	// Figure out what the rest of the bytes are
-	realstart = ExpandTics(netbuffer->starttic);
-	realend = (realstart + netbuffer->numtics);
-	
-	nettics = realend;
-}
-
-//
 // NetUpdate
 // Builds ticcmds for console player,
 // sends out a packet
@@ -141,8 +124,7 @@ void NetUpdate(void)
 
 	resendto = maketic;
 
-	// listen for other packets
-	GetPackets();
+	nettics = ExpandTics(netbuffer->starttic) + netbuffer->numtics;
 }
 
 //
