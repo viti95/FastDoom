@@ -40,7 +40,6 @@ doomdata_t *netbuffer; // points inside doomcom
 ticcmd_t localcmds[BACKUPTICS];
 
 int nettics;
-int resendto;
 
 int maketic;
 int skiptics;
@@ -81,7 +80,6 @@ void NetUpdate(void)
 	int nowtime;
 	int newtics;
 	int i, j;
-	int realstart;
 	int gameticdiv;
 
 	// check time
@@ -112,18 +110,14 @@ void NetUpdate(void)
 		if (maketic - gameticdiv >= BACKUPTICS / 2 - 1)
 			break; // can't hold any more
 
-		G_BuildTiccmd(&localcmds[resendto % BACKUPTICS]);
+		G_BuildTiccmd(&localcmds[maketic % BACKUPTICS]);
 		maketic++;
 	}
 
 	if (singletics)
 		return; // singletic update is syncronous
 
-	realstart = resendto;
-
-	nettics = ExpandTics((byte)(realstart)) + (byte)(maketic - realstart);
-
-	resendto = maketic;
+	nettics = ExpandTics((byte)maketic);
 }
 
 //
@@ -133,7 +127,6 @@ void NetUpdate(void)
 void D_CheckNetGame(void)
 {
 	// which tic to start sending
-	resendto = 0;
 	nettics = 0;
 
 	// I_InitNetwork sets doomcom and netgame
