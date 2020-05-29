@@ -41,11 +41,8 @@
 //
 typedef struct
 {
-    // Only valid if NCMD_RETRANSMIT.
     byte starttic;
-    byte player;
     byte numtics;
-    ticcmd_t cmds[BACKUPTICS];
 
 } doomdata_t;
 

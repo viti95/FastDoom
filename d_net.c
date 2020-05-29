@@ -136,8 +136,6 @@ void NetUpdate(void)
 		newtics = 0;
 	}
 
-	netbuffer->player = 0;
-
 	// build new ticcmds for console player
 	gameticdiv = gametic / ticdup;
 	for (i = 0; i < newtics; i++)
