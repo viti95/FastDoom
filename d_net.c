@@ -119,12 +119,11 @@ void NetUpdate(void)
 	if (singletics)
 		return; // singletic update is syncronous
 
-	netbuffer->starttic = realstart = resendto;
-	netbuffer->numtics = maketic - realstart;
+	realstart = resendto;
+
+	nettics = ExpandTics((byte)(realstart)) + (byte)(maketic - realstart);
 
 	resendto = maketic;
-
-	nettics = ExpandTics(netbuffer->starttic) + netbuffer->numtics;
 }
 
 //
@@ -139,8 +138,6 @@ void D_CheckNetGame(void)
 
 	// I_InitNetwork sets doomcom and netgame
 	I_InitNetwork();
-
-	netbuffer = &doomcom->data;
 
 	printf("startskill %i  deathmatch: %i  startmap: %i  startepisode: %i\n",
 		   startskill, 0, startmap, startepisode);
