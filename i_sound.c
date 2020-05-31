@@ -151,11 +151,6 @@ int I_GetSfxLumpNum(sfxinfo_t *sfx)
 
 int I_StartSound(int id, void *data, int vol, int sep, int pitch, int priority)
 {
-    // hacks out certain PC sounds
-    if (snd_SfxDevice == snd_PC && (data == S_sfx[sfx_posact].data || data == S_sfx[sfx_bgact].data || data == S_sfx[sfx_dmact].data || data == S_sfx[sfx_dmpain].data || data == S_sfx[sfx_popain].data || data == S_sfx[sfx_sawidl].data))
-    {
-        return -1;
-    }
     return SFX_PlayPatch(data, sep, pitch, vol, 0, 100);
 }
 
