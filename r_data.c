@@ -730,6 +730,9 @@ void R_PrecacheLevel(void)
     thinker_t *th;
     spriteframe_t *sf;
 
+    if (demoplayback && !timingdemo)
+        return;
+
     // Precache flats.
     flatpresent = alloca(numflats);
     memset(flatpresent, 0, numflats);

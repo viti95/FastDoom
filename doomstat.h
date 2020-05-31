@@ -143,6 +143,7 @@ extern boolean usergame;
 //?
 extern boolean demoplayback;
 extern boolean demorecording;
+extern boolean timingdemo;
 
 // Quit after playing a demo from cmdline.
 extern boolean singledemo;
