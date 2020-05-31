@@ -20,6 +20,8 @@
 
 #include <stdlib.h>
 
+#include "i_random.h"
+
 #include "m_misc.h"
 #include "i_system.h"
 
@@ -216,7 +218,7 @@ boolean P_CheckMissileRange(mobj_t *actor)
     if (actor->type == MT_CYBORG && dist > 160)
         dist = 160;
 
-    if (P_Random() < dist)
+    if (P_Random < dist)
         return false;
 
     return true;
@@ -314,7 +316,7 @@ boolean P_TryWalk(mobj_t *actor)
         return false;
     }
 
-    actor->movecount = P_Random() & 15;
+    actor->movecount = P_Random & 15;
     return true;
 }
 
@@ -359,7 +361,7 @@ void P_NewChaseDir(mobj_t *actor)
     }
 
     // try other directions
-    if (P_Random() > 200 || abs(deltay) > abs(deltax))
+    if (P_Random > 200 || abs(deltay) > abs(deltax))
     {
         tdir = d[1];
         d[1] = d[2];
@@ -400,7 +402,7 @@ void P_NewChaseDir(mobj_t *actor)
     }
 
     // randomly determine direction of search
-    if (P_Random() & 1)
+    if (P_Random & 1)
     {
         for (tdir = DI_EAST;
              tdir <= DI_SOUTHEAST;
@@ -580,12 +582,12 @@ seeyou:
         case sfx_posit1:
         case sfx_posit2:
         case sfx_posit3:
-            sound = sfx_posit1 + P_Random() % 3;
+            sound = sfx_posit1 + P_Random % 3;
             break;
 
         case sfx_bgsit1:
         case sfx_bgsit2:
-            sound = sfx_bgsit1 + P_Random() % 2;
+            sound = sfx_bgsit1 + P_Random % 2;
             break;
 
         default:
@@ -695,7 +697,7 @@ nomissile:
     }
 
     // make active sound
-    if (actor->info->activesound && P_Random() < 3)
+    if (actor->info->activesound && P_Random < 3)
     {
         S_StartSound(actor, actor->info->activesound);
     }
@@ -717,7 +719,7 @@ void A_FaceTarget(mobj_t *actor)
                                    actor->target->y);
 
     if (actor->target->flags & MF_SHADOW)
-        actor->angle += (P_Random() - P_Random()) << 21;
+        actor->angle += (P_Random - P_Random) << 21;
 }
 
 //
@@ -737,8 +739,8 @@ void A_PosAttack(mobj_t *actor)
     slope = P_AimLineAttack(actor, angle, MISSILERANGE);
 
     S_StartSound(actor, sfx_pistol);
-    angle += (P_Random() - P_Random()) << 20;
-    damage = ((P_Random() % 5) + 1) * 3;
+    angle += (P_Random - P_Random) << 20;
+    damage = ((P_Random % 5) + 1) * 3;
     P_LineAttack(actor, angle, MISSILERANGE, slope, damage);
 }
 
@@ -760,8 +762,8 @@ void A_SPosAttack(mobj_t *actor)
 
     for (i = 0; i < 3; i++)
     {
-        angle = bangle + ((P_Random() - P_Random()) << 20);
-        damage = ((P_Random() % 5) + 1) * 3;
+        angle = bangle + ((P_Random - P_Random) << 20);
+        damage = ((P_Random % 5) + 1) * 3;
         P_LineAttack(actor, angle, MISSILERANGE, slope, damage);
     }
 }
@@ -781,8 +783,8 @@ void A_CPosAttack(mobj_t *actor)
     bangle = actor->angle;
     slope = P_AimLineAttack(actor, bangle, MISSILERANGE);
 
-    angle = bangle + ((P_Random() - P_Random()) << 20);
-    damage = ((P_Random() % 5) + 1) * 3;
+    angle = bangle + ((P_Random - P_Random) << 20);
+    damage = ((P_Random % 5) + 1) * 3;
     P_LineAttack(actor, angle, MISSILERANGE, slope, damage);
 }
 
@@ -791,7 +793,7 @@ void A_CPosRefire(mobj_t *actor)
     // keep firing unless target got out of sight
     A_FaceTarget(actor);
 
-    if (P_Random() < 40)
+    if (P_Random < 40)
         return;
 
     if (!actor->target || actor->target->health <= 0 || !P_CheckSight(actor, actor->target))
@@ -805,7 +807,7 @@ void A_SpidRefire(mobj_t *actor)
     // keep firing unless target got out of sight
     A_FaceTarget(actor);
 
-    if (P_Random() < 10)
+    if (P_Random < 10)
         return;
 
     if (!actor->target || actor->target->health <= 0 || !P_CheckSight(actor, actor->target))
@@ -839,7 +841,7 @@ void A_TroopAttack(mobj_t *actor)
     if (P_CheckMeleeRange(actor))
     {
         S_StartSound(actor, sfx_claw);
-        damage = (P_Random() % 8 + 1) * 3;
+        damage = (P_Random % 8 + 1) * 3;
         P_DamageMobj(actor->target, actor, actor, damage);
         return;
     }
@@ -858,7 +860,7 @@ void A_SargAttack(mobj_t *actor)
     A_FaceTarget(actor);
     if (P_CheckMeleeRange(actor))
     {
-        damage = ((P_Random() % 10) + 1) * 4;
+        damage = ((P_Random % 10) + 1) * 4;
         P_DamageMobj(actor->target, actor, actor, damage);
     }
 }
@@ -873,7 +875,7 @@ void A_HeadAttack(mobj_t *actor)
     A_FaceTarget(actor);
     if (P_CheckMeleeRange(actor))
     {
-        damage = (P_Random() % 6 + 1) * 10;
+        damage = (P_Random % 6 + 1) * 10;
         P_DamageMobj(actor->target, actor, actor, damage);
         return;
     }
@@ -901,7 +903,7 @@ void A_BruisAttack(mobj_t *actor)
     if (P_CheckMeleeRange(actor))
     {
         S_StartSound(actor, sfx_claw);
-        damage = (P_Random() % 8 + 1) * 10;
+        damage = (P_Random % 8 + 1) * 10;
         P_DamageMobj(actor->target, actor, actor, damage);
         return;
     }
@@ -951,7 +953,7 @@ void A_Tracer(mobj_t *actor)
                      actor->z, MT_SMOKE);
 
     th->momz = FRACUNIT;
-    th->tics -= P_Random() & 3;
+    th->tics -= P_Random & 3;
     if (th->tics < 1)
         th->tics = 1;
 
@@ -1022,7 +1024,7 @@ void A_SkelFist(mobj_t *actor)
 
     if (P_CheckMeleeRange(actor))
     {
-        damage = ((P_Random() % 10) + 1) * 6;
+        damage = ((P_Random % 10) + 1) * 6;
         S_StartSound(actor, sfx_skepch);
         P_DamageMobj(actor->target, actor, actor, damage);
     }
@@ -1427,12 +1429,12 @@ void A_Scream(mobj_t *actor)
     case sfx_podth1:
     case sfx_podth2:
     case sfx_podth3:
-        sound = sfx_podth1 + P_Random() % 3;
+        sound = sfx_podth1 + P_Random % 3;
         break;
 
     case sfx_bgdth1:
     case sfx_bgdth2:
-        sound = sfx_bgdth1 + P_Random() % 2;
+        sound = sfx_bgdth1 + P_Random % 2;
         break;
 
     default:
@@ -1719,13 +1721,13 @@ void A_BrainScream(mobj_t *mo)
     for (x = mo->x - 196 * FRACUNIT; x < mo->x + 320 * FRACUNIT; x += FRACUNIT * 8)
     {
         y = mo->y - 320 * FRACUNIT;
-        z = 128 + P_Random() * 2 * FRACUNIT;
+        z = 128 + P_Random * 2 * FRACUNIT;
         th = P_SpawnMobj(x, y, z, MT_ROCKET);
-        th->momz = P_Random() * 512;
+        th->momz = P_Random * 512;
 
         P_SetMobjState(th, S_BRAINEXPLODE1);
 
-        th->tics -= P_Random() & 7;
+        th->tics -= P_Random & 7;
         if (th->tics < 1)
             th->tics = 1;
     }
@@ -1740,15 +1742,15 @@ void A_BrainExplode(mobj_t *mo)
     int z;
     mobj_t *th;
 
-    x = mo->x + (P_Random() - P_Random()) * 2048;
+    x = mo->x + (P_Random - P_Random) * 2048;
     y = mo->y;
-    z = 128 + P_Random() * 2 * FRACUNIT;
+    z = 128 + P_Random * 2 * FRACUNIT;
     th = P_SpawnMobj(x, y, z, MT_ROCKET);
-    th->momz = P_Random() * 512;
+    th->momz = P_Random * 512;
 
     P_SetMobjState(th, S_BRAINEXPLODE1);
 
-    th->tics -= P_Random() & 7;
+    th->tics -= P_Random & 7;
     if (th->tics < 1)
         th->tics = 1;
 }
@@ -1809,7 +1811,7 @@ void A_SpawnFly(mobj_t *mo)
     S_StartSound(fog, sfx_telept);
 
     // Randomly select monster to spawn.
-    r = P_Random();
+    r = P_Random;
 
     // Probability distribution (kind of :),
     // decreasing likelihood.

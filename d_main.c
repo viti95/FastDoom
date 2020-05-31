@@ -38,6 +38,7 @@
 #include "f_finale.h"
 #include "f_wipe.h"
 
+#include "i_random.h"
 #include "m_misc.h"
 #include "m_menu.h"
 

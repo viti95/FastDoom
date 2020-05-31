@@ -111,8 +111,6 @@ byte *demo_p;
 byte *demoend;
 boolean singledemo; // quit after playing a demo from cmdline
 
-boolean precache = true; // if true, load all graphics at start
-
 wbstartstruct_t wminfo; // parms for world map / intermission
 
 byte *savebuffer;
@@ -1025,7 +1023,7 @@ void G_InitNew(skill_t skill,
     if ((map > 9) && (!commercial))
         map = 9;
 
-    M_ClearRandom();
+    I_ClearRandom();
 
     if (skill == sk_nightmare || respawnparm)
         respawnmonsters = true;
@@ -1212,9 +1210,7 @@ void G_DoPlayDemo(void)
     *demo_p++;
 
     // don't spend a lot of time in loadlevel
-    precache = false;
     G_InitNew(skill, episode, map);
-    precache = true;
 
     usergame = false;
     demoplayback = true;

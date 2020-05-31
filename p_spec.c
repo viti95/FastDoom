@@ -25,6 +25,8 @@
 #include "doomdef.h"
 #include "doomstat.h"
 
+#include "i_random.h"
+
 #include "i_system.h"
 #include "z_zone.h"
 #include "m_misc.h"
@@ -963,7 +965,7 @@ void P_PlayerInSpecialSector(player_t *player)
 		// SUPER HELLSLIME DAMAGE
 	case 4:
 		// STROBE HURT
-		if (!player->powers[pw_ironfeet] || (P_Random() < 5))
+		if (!player->powers[pw_ironfeet] || (P_Random < 5))
 		{
 			if (!(leveltime & 0x1f))
 				P_DamageMobj(player->mo, NULL, NULL, 20);

@@ -18,6 +18,8 @@
 
 #include <stdio.h>
 
+#include "i_random.h"
+
 #include "z_zone.h"
 
 #include "m_misc.h"
@@ -431,9 +433,9 @@ void WI_initAnimatedBack(void)
 
 		// specify the next time to draw it
 		if (a->type == ANIM_ALWAYS)
-			a->nexttic = bcnt + 1 + (M_Random() % a->period);
+			a->nexttic = bcnt + 1 + (M_Random % a->period);
 		else if (a->type == ANIM_RANDOM)
-			a->nexttic = bcnt + 1 + a->data2 + (M_Random() % a->data1);
+			a->nexttic = bcnt + 1 + a->data2 + (M_Random % a->data1);
 		else if (a->type == ANIM_LEVEL)
 			a->nexttic = bcnt + 1;
 	}
@@ -471,7 +473,7 @@ void WI_updateAnimatedBack(void)
 				if (a->ctr == a->nanims)
 				{
 					a->ctr = -1;
-					a->nexttic = bcnt + a->data2 + (M_Random() % a->data1);
+					a->nexttic = bcnt + a->data2 + (M_Random % a->data1);
 				}
 				else
 					a->nexttic = bcnt + a->period;

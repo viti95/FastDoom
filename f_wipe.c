@@ -16,6 +16,10 @@
 //	Mission begin melt/wipe screen special effect.
 //
 
+#include "doomstat.h"
+
+#include "i_random.h"
+
 #include "z_zone.h"
 #include "i_system.h"
 #include "v_video.h"
@@ -132,10 +136,10 @@ int wipe_initMelt(int width,
     // setup initial column positions
     // (y<0 => not ready to scroll yet)
     y = (int *)Z_Malloc(width * sizeof(int), PU_STATIC, 0);
-    y[0] = -(M_Random() % 16);
+    y[0] = -(M_Random % 16);
     for (i = 1; i < width; i++)
     {
-        r = (M_Random() % 3) - 1;
+        r = (M_Random % 3) - 1;
         y[i] = y[i - 1] + r;
         if (y[i] > 0)
             y[i] = 0;

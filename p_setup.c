@@ -612,8 +612,7 @@ void P_SetupLevel(int episode,
     P_SpawnSpecials();
 
     // preload graphics
-    if (precache)
-        R_PrecacheLevel();
+    R_PrecacheLevel();
 }
 
 //

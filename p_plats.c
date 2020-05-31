@@ -16,6 +16,8 @@
 //	Plats (i.e. elevator platforms) code, raising/lowering.
 //
 
+#include "i_random.h"
+
 #include "i_system.h"
 #include "z_zone.h"
 #include "m_misc.h"
@@ -225,7 +227,7 @@ int EV_DoPlat(line_t *line,
 				plat->high = sec->floorheight;
 
 			plat->wait = 35 * PLATWAIT;
-			plat->status = P_Random() & 1;
+			plat->status = P_Random & 1;
 
 			S_StartSound((mobj_t *)&sec->soundorg, sfx_pstart);
 			break;

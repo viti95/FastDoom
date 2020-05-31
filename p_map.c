@@ -19,6 +19,8 @@
 
 #include <stdlib.h>
 
+#include "i_random.h"
+
 #include "m_misc.h"
 #include "i_system.h"
 
@@ -252,7 +254,7 @@ boolean PIT_CheckThing(mobj_t *thing)
     // check for skulls slamming into things
     if (tmthing->flags & MF_SKULLFLY)
     {
-        damage = ((P_Random() % 8) + 1) * tmthing->info->damage;
+        damage = ((P_Random % 8) + 1) * tmthing->info->damage;
 
         P_DamageMobj(thing, tmthing, tmthing, damage);
 
@@ -296,7 +298,7 @@ boolean PIT_CheckThing(mobj_t *thing)
         }
 
         // damage / explode
-        damage = ((P_Random() % 8) + 1) * tmthing->info->damage;
+        damage = ((P_Random % 8) + 1) * tmthing->info->damage;
         P_DamageMobj(thing, tmthing, tmthing->target, damage);
 
         // don't traverse any more
@@ -1235,8 +1237,8 @@ boolean PIT_ChangeSector(mobj_t *thing)
                          thing->y,
                          thing->z + thing->height / 2, MT_BLOOD);
 
-        mo->momx = (P_Random() - P_Random()) << 12;
-        mo->momy = (P_Random() - P_Random()) << 12;
+        mo->momx = (P_Random - P_Random) << 12;
+        mo->momy = (P_Random - P_Random) << 12;
     }
 
     // keep checking (crush other things)

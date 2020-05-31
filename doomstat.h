@@ -179,9 +179,6 @@ extern int maxammo[NUMAMMO];
 // File handling stuff.
 extern char basedefault[1024];
 
-// if true, load all graphics at level load
-extern boolean precache;
-
 // wipegamestate can be set to -1
 //  to force a wipe on the next draw
 extern gamestate_t wipegamestate;
@@ -207,7 +204,6 @@ extern doomcom_t *doomcom;
 extern doomdata_t *netbuffer;
 
 extern ticcmd_t localcmds[BACKUPTICS];
-extern int rndindex;
 
 extern int maketic;
 extern int nettics;

@@ -16,6 +16,8 @@
 //	Moving object handling. Spawn functions.
 //
 
+#include "i_random.h"
+
 #include "i_system.h"
 #include "z_zone.h"
 #include "m_misc.h"
@@ -80,7 +82,7 @@ void P_ExplodeMissile(mobj_t *mo)
 
     P_SetMobjState(mo, mobjinfo[mo->type].deathstate);
 
-    mo->tics -= P_Random() & 3;
+    mo->tics -= P_Random & 3;
 
     if (mo->tics < 1)
         mo->tics = 1;
@@ -436,7 +438,7 @@ void P_MobjThinker(mobj_t *mobj)
         if (leveltime & 31)
             return;
 
-        if (P_Random() > 4)
+        if (P_Random > 4)
             return;
 
         P_NightmareRespawn(mobj);
@@ -472,7 +474,7 @@ P_SpawnMobj(fixed_t x,
     if (gameskill != sk_nightmare)
         mobj->reactiontime = info->reactiontime;
 
-    mobj->lastlook = P_Random() % MAXPLAYERS;
+    mobj->lastlook = P_Random % MAXPLAYERS;
     // do not set the state with P_SetMobjState,
     // because action routines can not be called yet
     st = &states[info->spawnstate];
@@ -655,7 +657,7 @@ void P_SpawnMapThing(mapthing_t *mthing)
     mobj->spawnpoint = *mthing;
 
     if (mobj->tics > 0)
-        mobj->tics = 1 + (P_Random() % mobj->tics);
+        mobj->tics = 1 + (P_Random % mobj->tics);
     if (mobj->flags & MF_COUNTKILL)
         totalkills++;
     if (mobj->flags & MF_COUNTITEM)
@@ -681,11 +683,11 @@ void P_SpawnPuff(fixed_t x,
 {
     mobj_t *th;
 
-    z += ((P_Random() - P_Random()) << 10);
+    z += ((P_Random - P_Random) << 10);
 
     th = P_SpawnMobj(x, y, z, MT_PUFF);
     th->momz = FRACUNIT;
-    th->tics -= P_Random() & 3;
+    th->tics -= P_Random & 3;
 
     if (th->tics < 1)
         th->tics = 1;
@@ -705,10 +707,10 @@ void P_SpawnBlood(fixed_t x,
 {
     mobj_t *th;
 
-    z += ((P_Random() - P_Random()) << 10);
+    z += ((P_Random - P_Random) << 10);
     th = P_SpawnMobj(x, y, z, MT_BLOOD);
     th->momz = FRACUNIT * 2;
-    th->tics -= P_Random() & 3;
+    th->tics -= P_Random & 3;
 
     if (th->tics < 1)
         th->tics = 1;
@@ -726,7 +728,7 @@ void P_SpawnBlood(fixed_t x,
 //
 void P_CheckMissileSpawn(mobj_t *th)
 {
-    th->tics -= P_Random() & 3;
+    th->tics -= P_Random & 3;
     if (th->tics < 1)
         th->tics = 1;
 
@@ -764,7 +766,7 @@ P_SpawnMissile(mobj_t *source,
 
     // fuzzy player
     if (dest->flags & MF_SHADOW)
-        an += (P_Random() - P_Random()) << 20;
+        an += (P_Random - P_Random) << 20;
 
     th->angle = an;
     an >>= ANGLETOFINESHIFT;

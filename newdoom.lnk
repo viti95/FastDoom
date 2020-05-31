@@ -14,6 +14,7 @@ lib audio_wf.lib
 format os2 le
 name newdoom
 
+file i_random.obj
 file i_main.obj
 file i_ibm.obj
 file i_sound.obj

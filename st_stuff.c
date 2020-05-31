@@ -20,6 +20,8 @@
 
 #include <stdio.h>
 
+#include "i_random.h"
+
 #include "i_system.h"
 #include "z_zone.h"
 #include "m_misc.h"
@@ -869,7 +871,7 @@ void ST_Ticker(void)
 {
 
 	st_clock++;
-	st_randomnumber = M_Random();
+	st_randomnumber = M_Random;
 	ST_updateWidgets();
 	st_oldhealth = plyr->health;
 }
