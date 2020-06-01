@@ -279,6 +279,49 @@ void R_DrawFuzzColumnFast(void)
     } while (count--);
 }
 
+void R_DrawFuzzColumnSaturn(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac;
+    fixed_t fracstep;
+    int drawcounter = 0;
+    int initialdrawpos = 0;
+
+    count = dc_yh - dc_yl;
+
+    // Zero length, column does not exceed a pixel.
+    if (count < 0)
+        return;
+
+    initialdrawpos = dc_yl + dc_x;
+
+    outp(SC_INDEX + 1, 1 << (dc_x & 3));
+
+    dest = destview + dc_yl * 80 + (dc_x >> 2);
+
+    // Determine scaling,
+    //  which is the only mapping to be done.
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    // Inner loop that does the actual texture mapping,
+    //  e.g. a DDA-lile scaling.
+    // This is as fast as it gets.
+    do
+    {
+        // Re-map color indices from wall texture column
+        //  using a lighting/special effects LUT.
+        if ((initialdrawpos + drawcounter) & 1)
+            *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]];
+        
+        dest += SCREENWIDTH / 4;
+        frac += fracstep;
+        drawcounter++;
+
+    } while (count--);
+}
+
 //
 // R_DrawTranslatedColumn
 // Used to draw player sprites
