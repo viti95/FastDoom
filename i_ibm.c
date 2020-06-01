@@ -810,19 +810,7 @@ byte *I_ZoneBase(int *size)
     } while (!ptr);
 
     printf(", 0x%x allocated for zone\n", heap);
-    if (heap < 0x180000)
-    {
-        printf("\n");
-        printf("Insufficient memory!  You need to have at least 3.7 megabytes of total\n");
-        printf("free memory available for DOOM to execute.  Reconfigure your CONFIG.SYS\n");
-        printf("or AUTOEXEC.BAT to load fewer device drivers or TSR's.  We recommend\n");
-        printf("creating a custom boot menu item in your CONFIG.SYS for optimum DOOMing.\n");
-        printf("Please consult your DOS manual (\"Making more memory available\") for\n");
-        printf("information on how to free up more memory for DOOM.\n\n");
-        printf("DOOM aborted.\n");
-        exit(1);
-    }
-
+    
     *size = heap;
     return ptr;
 }
