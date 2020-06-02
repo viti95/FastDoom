@@ -21,8 +21,6 @@
 
 #include "doomdef.h"
 
-#include "i_debug.h"
-
 #include "i_system.h"
 #include "z_zone.h"
 #include "w_wad.h"
@@ -364,7 +362,6 @@ void R_DrawVisSprite(vissprite_t *vis,
     if (!dc_colormap)
     {
         // NULL colormap = shadow draw
-        dc_colormap = spritelights[MAXLIGHTSCALE - 1];;
         colfunc = fuzzcolfunc;
     }
     else if (vis->mobjflags & MF_TRANSLATION)
