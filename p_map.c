@@ -901,7 +901,7 @@ boolean PTR_ShootTraverse(intercept_t *in)
         // hit line
     hitline:
         // position a bit closer
-        frac = in->frac - FixedDiv(4 * FRACUNIT, attackrange);
+        frac = in->frac - 128;
         x = trace.x + FixedMul(trace.dx, frac);
         y = trace.y + FixedMul(trace.dy, frac);
         z = shootz + FixedMul(aimslope, FixedMul(frac, attackrange));
