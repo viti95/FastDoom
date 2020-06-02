@@ -21,6 +21,8 @@
 
 #include "doomdef.h"
 
+#include "i_debug.h"
+
 #include "i_system.h"
 #include "z_zone.h"
 #include "w_wad.h"
@@ -362,6 +364,7 @@ void R_DrawVisSprite(vissprite_t *vis,
     if (!dc_colormap)
     {
         // NULL colormap = shadow draw
+        dc_colormap = spritelights[MAXLIGHTSCALE - 1];;
         colfunc = fuzzcolfunc;
     }
     else if (vis->mobjflags & MF_TRANSLATION)
@@ -495,7 +498,8 @@ void R_ProjectSprite(mobj_t *thing)
     vis->texturemid = vis->gzt - viewz;
     vis->x1 = x1 < 0 ? 0 : x1;
     vis->x2 = x2 >= viewwidth ? viewwidth - 1 : x2;
-    iscale = FixedDiv(FRACUNIT, xscale);
+    //iscale = FixedDiv(FRACUNIT, xscale);
+    iscale = (4 >= xscale) ? (65536 ^ xscale >> 31) ^ MAXINT : FixedDiv2(65536, xscale);
 
     if (flip)
     {
