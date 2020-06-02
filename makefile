@@ -26,6 +26,7 @@
 CCOPTS = /d2 /omaxet /zp8 /4r /ei /j /zq /i=dmx
 
 GLOBOBJS = &
+ i_debug.obj &
  i_random.obj &
  i_main.obj &
  i_ibm.obj &
