@@ -39,6 +39,7 @@ void R_DrawSkyFlatLow(void);
 
 // The Spectre/Invisibility effect.
 void R_DrawFuzzColumn(void);
+void R_DrawFuzzColumnSaturn(void);
 void R_DrawFuzzColumnFast(void);
 
 // Draw with color translation tables,
