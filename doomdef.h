@@ -218,7 +218,7 @@ typedef enum
 #define KEY_LALT KEY_RALT
 
 fixed_t FixedMul(fixed_t a, fixed_t b);
-#define FixedDiv(a,b) (((abs(a) >> 14) >= abs(b)) ? ((a ^ b) >> 31) ^ MAXINT : FixedDiv2(a, b))
+#define FixedDiv(a,b) (((abs(a) >> 14) >= abs(b)) ? (((a) ^ (b)) >> 31) ^ MAXINT : FixedDiv2(a, b))
 fixed_t FixedDiv2(fixed_t a, fixed_t b);
 
 
