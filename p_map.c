@@ -946,7 +946,13 @@ boolean PTR_ShootTraverse(intercept_t *in)
 
     // hit thing
     // position a bit closer
-    frac = in->frac - FixedDiv(10 * FRACUNIT, attackrange);
+
+    // Attackrange has two posible values, melee attack and long range attack
+    // Meleeattack (attackrange = 134217728), far attack (attackrange = 4194305)
+    if (attackrange == 134217728) 
+        frac = in->frac - 320; // FAR ATTACK
+    else
+        frac = in->frac - 10240; // MELEE ATTACK
 
     x = trace.x + FixedMul(trace.dx, frac);
     y = trace.y + FixedMul(trace.dy, frac);
