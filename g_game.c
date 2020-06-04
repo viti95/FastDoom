@@ -19,6 +19,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "i_random.h"
+
 #include "doomdef.h"
 #include "doomstat.h"
 
