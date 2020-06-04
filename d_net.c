@@ -43,7 +43,6 @@ int nettics;
 
 int maketic;
 int skiptics;
-int ticdup;
 
 void D_ProcessEvents(void);
 void G_BuildTiccmd(ticcmd_t *cmd);
@@ -80,10 +79,9 @@ void NetUpdate(void)
 	int nowtime;
 	int newtics;
 	int i, j;
-	int gameticdiv;
 
 	// check time
-	nowtime = ticcount / ticdup;
+	nowtime = ticcount;
 	newtics = nowtime - gametime;
 	gametime = nowtime;
 
@@ -102,12 +100,11 @@ void NetUpdate(void)
 	}
 
 	// build new ticcmds for console player
-	gameticdiv = gametic / ticdup;
 	for (i = 0; i < newtics; i++)
 	{
 		I_StartTic();
 		D_ProcessEvents();
-		if (maketic - gameticdiv >= BACKUPTICS / 2 - 1)
+		if (maketic - gametic >= BACKUPTICS / 2 - 1)
 			break; // can't hold any more
 
 		G_BuildTiccmd(&localcmds[maketic % BACKUPTICS]);
@@ -136,7 +133,6 @@ void D_CheckNetGame(void)
 		   startskill, 0, startmap, startepisode);
 
 	// read values out of doomcom
-	ticdup = doomcom->ticdup;
 
 	playeringame[0] = true;
 
@@ -161,14 +157,14 @@ void TryRunTics(void)
 	int counts;
 
 	// get real tics
-	entertic = ticcount / ticdup;
+	entertic = ticcount;
 	realtics = entertic - oldentertics;
 	oldentertics = entertic;
 
 	// get available tics
 	NetUpdate();
 
-	availabletics = nettics - gametic / ticdup;
+	availabletics = nettics - gametic;
 
 	// decide how many tics to run
 	if (realtics < availabletics - 1)
@@ -182,29 +178,26 @@ void TryRunTics(void)
 		counts = 1;
 
 	// wait for new tics if needed
-	while (nettics < gametic / ticdup + counts)
+	while (nettics < gametic + counts)
 	{
 		NetUpdate();
 
 		// don't stay in here forever -- give the menu a chance to work
-		if (ticcount / ticdup - entertic >= 20)
+		if (ticcount - entertic >= 20)
 		{
 			M_Ticker();
 			return;
 		}
 	}
 
-	// run the count * ticdup dics
+	// run the count dics
 	while (counts--)
 	{
-		for (i = 0; i < ticdup; i++)
-		{
-			if (advancedemo)
-				D_DoAdvanceDemo();
-			M_Ticker();
-			G_Ticker();
-			gametic++;
-		}
+		if (advancedemo)
+			D_DoAdvanceDemo();
+		M_Ticker();
+		G_Ticker();
+		gametic++;
 		NetUpdate(); // check for new console commands
 	}
 }
