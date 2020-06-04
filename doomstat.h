@@ -209,6 +209,4 @@ extern ticcmd_t localcmds[BACKUPTICS];
 extern int maketic;
 extern int nettics;
 
-extern int ticdup;
-
 #endif
