@@ -259,7 +259,7 @@ void P_RemoveActiveCeiling(ceiling_t *c)
 		if (activeceilings[i] == c)
 		{
 			activeceilings[i]->sector->specialdata = NULL;
-			P_RemoveThinker(&activeceilings[i]->thinker);
+			activeceilings[i]->thinker.function.acv = (actionf_v)(-1);
 			activeceilings[i] = NULL;
 			break;
 		}

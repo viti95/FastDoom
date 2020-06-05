@@ -223,7 +223,7 @@ void T_MoveFloor(floormove_t *floor)
 				break;
 			}
 		}
-		P_RemoveThinker(&floor->thinker);
+		floor->thinker.function.acv = (actionf_v)(-1);
 
 		S_StartSound((mobj_t *)&floor->sector->soundorg,
 					 sfx_pstop);

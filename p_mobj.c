@@ -532,7 +532,7 @@ void P_RemoveMobj(mobj_t *mobj)
     S_StopSound(mobj);
 
     // free block
-    P_RemoveThinker((thinker_t *)mobj);
+    mobj->thinker.function.acv = (actionf_v)(-1);
 }
 
 //

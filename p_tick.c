@@ -56,17 +56,6 @@ void P_AddThinker(thinker_t *thinker)
 }
 
 //
-// P_RemoveThinker
-// Deallocation is lazy -- it will not actually be freed
-// until its thinking turn comes up.
-//
-void P_RemoveThinker(thinker_t *thinker)
-{
-    // FIXME: NOP.
-    thinker->function.acv = (actionf_v)(-1);
-}
-
-//
 // P_RunThinkers
 //
 void P_RunThinkers(void)

@@ -281,7 +281,7 @@ void P_RemoveActivePlat(plat_t *plat)
 		if (plat == activeplats[i])
 		{
 			(activeplats[i])->sector->specialdata = NULL;
-			P_RemoveThinker(&(activeplats[i])->thinker);
+			(activeplats[i])->thinker.function.acv = (actionf_v)(-1);
 			activeplats[i] = NULL;
 
 			return;

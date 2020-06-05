@@ -104,7 +104,7 @@ void T_VerticalDoor(vldoor_t *door)
 			case blazeRaise:
 			case blazeClose:
 				door->sector->specialdata = NULL;
-				P_RemoveThinker(&door->thinker); // unlink and free
+				door->thinker.function.acv = (actionf_v)(-1); // unlink and free
 				S_StartSound((mobj_t *)&door->sector->soundorg,
 							 sfx_bdcls);
 				break;
@@ -112,7 +112,7 @@ void T_VerticalDoor(vldoor_t *door)
 			case normal:
 			case close:
 				door->sector->specialdata = NULL;
-				P_RemoveThinker(&door->thinker); // unlink and free
+				door->thinker.function.acv = (actionf_v)(-1); // unlink and free
 				break;
 
 			case close30ThenOpen:
@@ -162,7 +162,7 @@ void T_VerticalDoor(vldoor_t *door)
 			case blazeOpen:
 			case open:
 				door->sector->specialdata = NULL;
-				P_RemoveThinker(&door->thinker); // unlink and free
+				door->thinker.function.acv = (actionf_v)(-1); // unlink and free
 				break;
 
 			default:
