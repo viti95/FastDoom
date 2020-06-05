@@ -214,8 +214,6 @@ void V_DrawPatch(int x,
         // step through the posts in a column
         while (column->topdelta != 0xff)
         {
-            
-
             register const byte *source = (byte *)column + 3;
             register byte *dest = desttop + column->topdelta * SCREENWIDTH;
             register int count = column->length;
@@ -331,16 +329,33 @@ void V_DrawPatchDirect(int x,
 
         while (column->topdelta != 0xff)
         {
-            source = (byte *)column + 3;
-            dest = desttop + column->topdelta * SCREENWIDTH / 4;
-            count = column->length;
+            register const byte *source = (byte *)column + 3;
+            register byte *dest = desttop + column->topdelta * SCREENWIDTH / 4;
+            register int count = column->length;
 
-            while (count--)
-            {
-                *dest = *source++;
-                dest += SCREENWIDTH / 4;
-            }
-            column = (column_t *)((byte *)column + column->length + 4);
+            if ((count -= 4) >= 0)
+                do
+                {
+                    register byte s0, s1;
+                    s0 = source[0];
+                    s1 = source[1];
+                    dest[0] = s0;
+                    dest[SCREENWIDTH / 4] = s1;
+                    dest += SCREENWIDTH / 2;
+                    s0 = source[2];
+                    s1 = source[3];
+                    source += 4;
+                    dest[0] = s0;
+                    dest[SCREENWIDTH / 4] = s1;
+                    dest += SCREENWIDTH / 2;
+                } while ((count -= 4) >= 0);
+            if (count += 4)
+                do
+                {
+                    *dest = *source++;
+                    dest += SCREENWIDTH / 4;
+                } while (--count);
+            column = (column_t *)(source + 1);
         }
         if (((++x) & 3) == 0)
             desttop++; // go to next byte, not next plane
