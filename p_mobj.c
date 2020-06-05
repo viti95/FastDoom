@@ -499,7 +499,10 @@ P_SpawnMobj(fixed_t x,
 
     mobj->thinker.function.acp1 = (actionf_p1)P_MobjThinker;
 
-    P_AddThinker(&mobj->thinker);
+    thinkercap.prev->next = &mobj->thinker;
+    mobj->thinker.next = &thinkercap;
+    mobj->thinker.prev = thinkercap.prev;
+    thinkercap.prev = &mobj->thinker;
 
     return mobj;
 }

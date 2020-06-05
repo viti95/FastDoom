@@ -1099,7 +1099,12 @@ int EV_DoDonut(line_t *line)
 
 			//	Spawn rising slime
 			floor = Z_Malloc(sizeof(*floor), PU_LEVSPEC, 0);
-			P_AddThinker(&floor->thinker);
+
+			thinkercap.prev->next = &floor->thinker;
+    		floor->thinker.next = &thinkercap;
+    		floor->thinker.prev = thinkercap.prev;
+			thinkercap.prev = &floor->thinker;
+
 			s2->specialdata = floor;
 			floor->thinker.function.acp1 = (actionf_p1)T_MoveFloor;
 			floor->type = donutRaise;
@@ -1113,7 +1118,12 @@ int EV_DoDonut(line_t *line)
 
 			//	Spawn lowering donut-hole
 			floor = Z_Malloc(sizeof(*floor), PU_LEVSPEC, 0);
-			P_AddThinker(&floor->thinker);
+
+			thinkercap.prev->next = &floor->thinker;
+    		floor->thinker.next = &thinkercap;
+    		floor->thinker.prev = thinkercap.prev;
+			thinkercap.prev = &floor->thinker;
+
 			s1->specialdata = floor;
 			floor->thinker.function.acp1 = (actionf_p1)T_MoveFloor;
 			floor->type = lowerFloor;

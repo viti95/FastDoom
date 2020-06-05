@@ -44,18 +44,6 @@ void P_InitThinkers(void)
 }
 
 //
-// P_AddThinker
-// Adds a new thinker at the end of the list.
-//
-void P_AddThinker(thinker_t *thinker)
-{
-    thinkercap.prev->next = thinker;
-    thinker->next = &thinkercap;
-    thinker->prev = thinkercap.prev;
-    thinkercap.prev = thinker;
-}
-
-//
 // P_RunThinkers
 //
 void P_RunThinkers(void)

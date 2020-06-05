@@ -268,7 +268,12 @@ void P_UnArchiveThinkers(void)
 			mobj->floorz = mobj->subsector->sector->floorheight;
 			mobj->ceilingz = mobj->subsector->sector->ceilingheight;
 			mobj->thinker.function.acp1 = (actionf_p1)P_MobjThinker;
-			P_AddThinker(&mobj->thinker);
+
+			thinkercap.prev->next = &mobj->thinker;
+    		mobj->thinker.next = &thinkercap;
+    		mobj->thinker.prev = thinkercap.prev;
+			thinkercap.prev = &mobj->thinker;
+
 			break;
 
 		default:
@@ -453,7 +458,11 @@ void P_UnArchiveSpecials(void)
 			if (ceiling->thinker.function.acp1)
 				ceiling->thinker.function.acp1 = (actionf_p1)T_MoveCeiling;
 
-			P_AddThinker(&ceiling->thinker);
+			thinkercap.prev->next = &ceiling->thinker;
+    		ceiling->thinker.next = &thinkercap;
+    		ceiling->thinker.prev = thinkercap.prev;
+			thinkercap.prev = &ceiling->thinker;
+
 			P_AddActiveCeiling(ceiling);
 			break;
 
@@ -465,7 +474,12 @@ void P_UnArchiveSpecials(void)
 			door->sector = &sectors[(int)door->sector];
 			door->sector->specialdata = door;
 			door->thinker.function.acp1 = (actionf_p1)T_VerticalDoor;
-			P_AddThinker(&door->thinker);
+			
+			thinkercap.prev->next = &door->thinker;
+    		door->thinker.next = &thinkercap;
+    		door->thinker.prev = thinkercap.prev;
+			thinkercap.prev = &door->thinker;
+			
 			break;
 
 		case tc_floor:
@@ -476,7 +490,12 @@ void P_UnArchiveSpecials(void)
 			floor->sector = &sectors[(int)floor->sector];
 			floor->sector->specialdata = floor;
 			floor->thinker.function.acp1 = (actionf_p1)T_MoveFloor;
-			P_AddThinker(&floor->thinker);
+			
+			thinkercap.prev->next = &floor->thinker;
+    		floor->thinker.next = &thinkercap;
+    		floor->thinker.prev = thinkercap.prev;
+			thinkercap.prev = &floor->thinker;
+			
 			break;
 
 		case tc_plat:
@@ -490,7 +509,11 @@ void P_UnArchiveSpecials(void)
 			if (plat->thinker.function.acp1)
 				plat->thinker.function.acp1 = (actionf_p1)T_PlatRaise;
 
-			P_AddThinker(&plat->thinker);
+			thinkercap.prev->next = &plat->thinker;
+    		plat->thinker.next = &thinkercap;
+    		plat->thinker.prev = thinkercap.prev;
+			thinkercap.prev = &plat->thinker;
+			
 			P_AddActivePlat(plat);
 			break;
 
@@ -501,7 +524,12 @@ void P_UnArchiveSpecials(void)
 			save_p += sizeof(*flash);
 			flash->sector = &sectors[(int)flash->sector];
 			flash->thinker.function.acp1 = (actionf_p1)T_LightFlash;
-			P_AddThinker(&flash->thinker);
+
+			thinkercap.prev->next = &flash->thinker;
+    		flash->thinker.next = &thinkercap;
+    		flash->thinker.prev = thinkercap.prev;
+			thinkercap.prev = &flash->thinker;
+
 			break;
 
 		case tc_strobe:
@@ -511,7 +539,12 @@ void P_UnArchiveSpecials(void)
 			save_p += sizeof(*strobe);
 			strobe->sector = &sectors[(int)strobe->sector];
 			strobe->thinker.function.acp1 = (actionf_p1)T_StrobeFlash;
-			P_AddThinker(&strobe->thinker);
+
+			thinkercap.prev->next = &strobe->thinker;
+    		strobe->thinker.next = &thinkercap;
+    		strobe->thinker.prev = thinkercap.prev;
+			thinkercap.prev = &strobe->thinker;
+
 			break;
 
 		case tc_glow:
@@ -521,7 +554,12 @@ void P_UnArchiveSpecials(void)
 			save_p += sizeof(*glow);
 			glow->sector = &sectors[(int)glow->sector];
 			glow->thinker.function.acp1 = (actionf_p1)T_Glow;
-			P_AddThinker(&glow->thinker);
+
+			thinkercap.prev->next = &glow->thinker;
+    		glow->thinker.next = &thinkercap;
+    		glow->thinker.prev = thinkercap.prev;
+			thinkercap.prev = &glow->thinker;
+
 			break;
 
 		default:

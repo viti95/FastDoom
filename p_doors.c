@@ -251,7 +251,12 @@ int EV_DoDoor(line_t *line,
 		// new door thinker
 		rtn = 1;
 		door = Z_Malloc(sizeof(*door), PU_LEVSPEC, 0);
-		P_AddThinker(&door->thinker);
+
+		thinkercap.prev->next = &door->thinker;
+		door->thinker.next = &thinkercap;
+		door->thinker.prev = thinkercap.prev;
+    	thinkercap.prev = &door->thinker;
+
 		sec->specialdata = door;
 
 		door->thinker.function.acp1 = (actionf_p1)T_VerticalDoor;
@@ -421,7 +426,12 @@ void EV_VerticalDoor(line_t *line,
 
 	// new door thinker
 	door = Z_Malloc(sizeof(*door), PU_LEVSPEC, 0);
-	P_AddThinker(&door->thinker);
+
+	thinkercap.prev->next = &door->thinker;
+	door->thinker.next = &thinkercap;
+	door->thinker.prev = thinkercap.prev;
+	thinkercap.prev = &door->thinker;
+
 	sec->specialdata = door;
 	door->thinker.function.acp1 = (actionf_p1)T_VerticalDoor;
 	door->sector = sec;
@@ -470,8 +480,11 @@ void P_SpawnDoorCloseIn30(sector_t *sec)
 	vldoor_t *door;
 
 	door = Z_Malloc(sizeof(*door), PU_LEVSPEC, 0);
-
-	P_AddThinker(&door->thinker);
+		
+	thinkercap.prev->next = &door->thinker;
+	door->thinker.next = &thinkercap;
+	door->thinker.prev = thinkercap.prev;
+	thinkercap.prev = &door->thinker;
 
 	sec->specialdata = door;
 	sec->special = 0;
@@ -493,8 +506,11 @@ void P_SpawnDoorRaiseIn5Mins(sector_t *sec,
 	vldoor_t *door;
 
 	door = Z_Malloc(sizeof(*door), PU_LEVSPEC, 0);
-
-	P_AddThinker(&door->thinker);
+	
+	thinkercap.prev->next = &door->thinker;
+	door->thinker.next = &thinkercap;
+	door->thinker.prev = thinkercap.prev;
+	thinkercap.prev = &door->thinker;
 
 	sec->specialdata = door;
 	sec->special = 0;
