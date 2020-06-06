@@ -400,6 +400,7 @@ void R_ProjectSprite(mobj_t *thing)
 
     fixed_t gxt;
     fixed_t gyt;
+    fixed_t gzt; // killough 3/27/98
 
     fixed_t tx;
     fixed_t tz;
@@ -480,8 +481,19 @@ void R_ProjectSprite(mobj_t *thing)
     if (x2 < 0)
         return;
 
+    // killough 4/9/98: clip things which are out of view due to height
+    gzt = thing->z + spritetopoffset[lump];
+
+    if (thing->z > viewz + FixedDiv(viewheight << FRACBITS, xscale) || gzt < viewz - FixedDiv((viewheight << FRACBITS) - viewheight, xscale))
+        return;
+
+    // quickly reject sprites with bad x ranges
+    if (x1 >= x2)
+        return;
+
     // store information in a vissprite
-    if (vissprite_p == &vissprites[MAXVISSPRITES]){
+    if (vissprite_p == &vissprites[MAXVISSPRITES])
+    {
         vis = &overflowsprite;
     }
     vissprite_p++;
@@ -491,8 +503,8 @@ void R_ProjectSprite(mobj_t *thing)
     vis->gx = thing->x;
     vis->gy = thing->y;
     vis->gz = thing->z;
-    vis->gzt = thing->z + spritetopoffset[lump];
-    vis->texturemid = vis->gzt - viewz;
+    vis->gzt = gzt; // killough 3/27/98
+    vis->texturemid = gzt - viewz;
     vis->x1 = x1 < 0 ? 0 : x1;
     vis->x2 = x2 >= viewwidth ? viewwidth - 1 : x2;
     //iscale = FixedDiv(FRACUNIT, xscale);
