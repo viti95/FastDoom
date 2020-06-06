@@ -419,6 +419,8 @@ void R_ProjectSprite(mobj_t *thing)
 
     int index;
 
+    int calcopt;
+
     vissprite_t *vis;
 
     angle_t ang;
@@ -481,14 +483,21 @@ void R_ProjectSprite(mobj_t *thing)
     if (x2 < 0)
         return;
 
+    // quickly reject sprites with bad x ranges
+    if (x1 >= x2){
+        return;
+    }
+        
     // killough 4/9/98: clip things which are out of view due to height
-    gzt = thing->z + spritetopoffset[lump];
+    // viti95 6/6/20: optimize by removing divisions and using multiplications instead. Also discard first than calculate other things.
+    calcopt = viewheight << FRACBITS;
 
-    if (thing->z > viewz + FixedDiv(viewheight << FRACBITS, xscale) || gzt < viewz - FixedDiv((viewheight << FRACBITS) - viewheight, xscale))
+    if (FixedMul(thing->z - viewz, xscale) > calcopt)
         return;
 
-    // quickly reject sprites with bad x ranges
-    if (x1 >= x2)
+    gzt = thing->z + spritetopoffset[lump];
+    
+    if (calcopt - viewheight < FixedMul(viewz - gzt, xscale))
         return;
 
     // store information in a vissprite
