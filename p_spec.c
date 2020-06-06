@@ -1009,18 +1009,19 @@ void P_UpdateSpecials(void)
 	int i;
 	line_t *line;
 
-	//	ANIMATE FLATS AND TEXTURES GLOBALLY
-	for (anim = anims; anim < lastanim; anim++)
-	{
-		for (i = anim->basepic; i < anim->basepic + anim->numpics; i++)
+	if (!(gametic&7)) // Optimization from Jaguar Doom port 
+		//	ANIMATE FLATS AND TEXTURES GLOBALLY
+		for (anim = anims; anim < lastanim; anim++)
 		{
-			pic = anim->basepic + ((leveltime / anim->speed + i) % anim->numpics);
-			if (anim->istexture)
-				texturetranslation[i] = pic;
-			else
-				flattranslation[i] = pic;
+			for (i = anim->basepic; i < anim->basepic + anim->numpics; i++)
+			{
+				pic = anim->basepic + ((leveltime / anim->speed + i) % anim->numpics);
+				if (anim->istexture)
+					texturetranslation[i] = pic;
+				else
+					flattranslation[i] = pic;
+			}
 		}
-	}
 
 	//	ANIMATE LINE SPECIALS
 	for (i = 0; i < numlinespecials; i++)
