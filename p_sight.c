@@ -135,6 +135,8 @@ boolean P_CrossSubsector(int num)
     fixed_t frac;
     fixed_t slope;
 
+    fixed_t opt;
+
     sub = &subsectors[num];
 
     // check lines
@@ -205,14 +207,18 @@ boolean P_CrossSubsector(int num)
 
         if (front->floorheight != back->floorheight)
         {
-            slope = FixedDiv(openbottom - sightzstart, frac);
+            opt = openbottom - sightzstart;
+            //slope = FixedDiv(openbottom - sightzstart, frac);
+            slope = ((abs(opt) >> 14) >= abs(frac)) ? ((opt ^ frac) >> 31) ^ MAXINT : FixedDiv2(opt, frac);
             if (slope > bottomslope)
                 bottomslope = slope;
         }
 
         if (front->ceilingheight != back->ceilingheight)
         {
-            slope = FixedDiv(opentop - sightzstart, frac);
+            opt = opentop - sightzstart;
+            //slope = FixedDiv(opentop - sightzstart, frac);
+            slope = ((abs(opt) >> 14) >= abs(frac)) ? ((opt ^ frac) >> 31) ^ MAXINT : FixedDiv2(opt, frac);
             if (slope < topslope)
                 topslope = slope;
         }

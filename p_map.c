@@ -777,6 +777,8 @@ PTR_AimTraverse(intercept_t *in)
     fixed_t thingbottomslope;
     fixed_t dist;
 
+    fixed_t opt;
+
     if (in->isaline)
     {
         li = in->d.line;
@@ -796,14 +798,18 @@ PTR_AimTraverse(intercept_t *in)
 
         if (li->frontsector->floorheight != li->backsector->floorheight)
         {
-            slope = FixedDiv(openbottom - shootz, dist);
+            opt = openbottom - shootz;
+            //slope = FixedDiv(opt, dist);
+            slope = ((abs(opt) >> 14) >= dist) ? ((opt ^ dist) >> 31) ^ MAXINT : FixedDiv2(opt, dist);
             if (slope > bottomslope)
                 bottomslope = slope;
         }
 
         if (li->frontsector->ceilingheight != li->backsector->ceilingheight)
         {
-            slope = FixedDiv(opentop - shootz, dist);
+            opt = opentop - shootz;
+            //slope = FixedDiv(opt, dist);
+            slope = ((abs(opt) >> 14) >= dist) ? ((opt ^ dist) >> 31) ^ MAXINT : FixedDiv2(opt, dist);
             if (slope < topslope)
                 topslope = slope;
         }
@@ -824,12 +830,16 @@ PTR_AimTraverse(intercept_t *in)
 
     // check angles to see if the thing can be aimed at
     dist = FixedMul(attackrange, in->frac);
-    thingtopslope = FixedDiv(th->z + th->height - shootz, dist);
+    opt = th->z + th->height - shootz;
+    //thingtopslope = FixedDiv(th->z + th->height - shootz, dist);
+    thingtopslope = ((abs(opt) >> 14) >= dist) ? ((opt ^ dist) >> 31) ^ MAXINT : FixedDiv2(opt, dist);
 
     if (thingtopslope < bottomslope)
         return true; // shot over the thing
 
-    thingbottomslope = FixedDiv(th->z - shootz, dist);
+    opt = opt - th->height;
+    //thingbottomslope = FixedDiv(opt, dist);
+    thingbottomslope = ((abs(opt) >> 14) >= dist) ? ((opt ^ dist) >> 31) ^ MAXINT : FixedDiv2(opt, dist);
 
     if (thingbottomslope > topslope)
         return true; // shot under the thing
@@ -866,6 +876,8 @@ boolean PTR_ShootTraverse(intercept_t *in)
     fixed_t thingtopslope;
     fixed_t thingbottomslope;
 
+    fixed_t opt;
+
     if (in->isaline)
     {
         li = in->d.line;
@@ -883,14 +895,18 @@ boolean PTR_ShootTraverse(intercept_t *in)
 
         if (li->frontsector->floorheight != li->backsector->floorheight)
         {
-            slope = FixedDiv(openbottom - shootz, dist);
+            opt = openbottom - shootz;
+            //slope = FixedDiv(openbottom - shootz, dist);
+            slope = ((abs(opt) >> 14) >= dist) ? ((opt ^ dist) >> 31) ^ MAXINT : FixedDiv2(opt, dist);
             if (slope > aimslope)
                 goto hitline;
         }
 
         if (li->frontsector->ceilingheight != li->backsector->ceilingheight)
         {
-            slope = FixedDiv(opentop - shootz, dist);
+            opt = opentop - shootz;
+            //slope = FixedDiv(opentop - shootz, dist);
+            slope = ((abs(opt) >> 14) >= dist) ? ((opt ^ dist) >> 31) ^ MAXINT : FixedDiv2(opt, dist);
             if (slope < aimslope)
                 goto hitline;
         }

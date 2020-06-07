@@ -644,6 +644,8 @@ P_PathTraverse(fixed_t x1,
     fixed_t xintercept;
     fixed_t yintercept;
 
+    fixed_t opt1, opt2;
+
     int mapx;
     int mapy;
 
@@ -682,13 +684,19 @@ P_PathTraverse(fixed_t x1,
     {
         mapxstep = 1;
         partial = FRACUNIT - ((x1 >> MAPBTOFRAC) & (FRACUNIT - 1));
-        ystep = FixedDiv(y2 - y1, abs(x2 - x1));
+        opt1 = y2 - y1;
+        opt2 = abs(x2 - x1);
+        //ystep = FixedDiv(y2 - y1, abs(x2 - x1));
+        ystep = ((abs(opt1) >> 14) >= opt2) ? ((opt1 ^ opt2) >> 31) ^ MAXINT : FixedDiv2(opt1, opt2);
     }
     else if (xt2 < xt1)
     {
         mapxstep = -1;
         partial = (x1 >> MAPBTOFRAC) & (FRACUNIT - 1);
-        ystep = FixedDiv(y2 - y1, abs(x2 - x1));
+        opt1 = y2 - y1;
+        opt2 = abs(x2 -x1);
+        //ystep = FixedDiv(y2 - y1, abs(x2 - x1));
+        ystep = ((abs(opt1) >> 14) >= opt2) ? ((opt1 ^ opt2) >> 31) ^ MAXINT : FixedDiv2(opt1, opt2);
     }
     else
     {
@@ -703,13 +711,19 @@ P_PathTraverse(fixed_t x1,
     {
         mapystep = 1;
         partial = FRACUNIT - ((y1 >> MAPBTOFRAC) & (FRACUNIT - 1));
-        xstep = FixedDiv(x2 - x1, abs(y2 - y1));
+        opt1 = x2 - x1;
+        opt2 = abs(y2 - y1);
+        //xstep = FixedDiv(x2 - x1, abs(y2 - y1));
+        xstep = ((abs(opt1) >> 14) >= opt2) ? ((opt1 ^ opt2) >> 31) ^ MAXINT : FixedDiv2(opt1, opt2);    
     }
     else if (yt2 < yt1)
     {
         mapystep = -1;
         partial = (y1 >> MAPBTOFRAC) & (FRACUNIT - 1);
-        xstep = FixedDiv(x2 - x1, abs(y2 - y1));
+        opt1 = x2 - x1;
+        opt2 = abs(y2 - y1);
+        //xstep = FixedDiv(x2 - x1, abs(y2 - y1));
+        xstep = ((abs(opt1) >> 14) >= opt2) ? ((opt1 ^ opt2) >> 31) ^ MAXINT : FixedDiv2(opt1, opt2);
     }
     else
     {
