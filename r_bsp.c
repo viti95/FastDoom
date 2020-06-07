@@ -486,23 +486,51 @@ void R_Subsector(int num)
 // Renders all subsectors below a given node,
 //  traversing subtree recursively.
 // Just call with BSP root.
+
 void R_RenderBSPNode(int bspnum)
 {
-	while (!(bspnum & NF_SUBSECTOR))  // Found a subsector?
+	node_t *bsp;
+	fixed_t	dx, dy;
+	fixed_t	left, right;
+
+	if (bspnum & NF_SUBSECTOR) // reached a subsector leaf?
 	{
-		node_t *bsp = &nodes[bspnum];
-
-		// Decide which side the view point is on.
-		int side = R_PointOnSide(viewx, viewy, bsp);
-
-		// Recursively divide front space.
-		R_RenderBSPNode(bsp->children[side]);
-
-		// Possibly divide back space.
-		if (!R_CheckBBox(bsp->bbox[side^1]))
-			return;
-
-		bspnum = bsp->children[side^1];
+		if (bspnum == -1)
+        {
+			R_Subsector(0);
+        }
+		else
+        {
+			R_Subsector(bspnum & ~NF_SUBSECTOR);
+        }
 	}
-	R_Subsector(bspnum == -1 ? 0 : bspnum & ~NF_SUBSECTOR);
+    else
+    {
+        bsp = &nodes[bspnum];
+
+        //decide which side the view point is on
+        dx = (viewx - bsp->x);
+        dy = (viewy - bsp->y);
+
+        left = (bsp->dy >> 16) * (dx >> 16);
+        right = (dy >> 16) * (bsp->dx >> 16);
+
+        // Depending on which side of the halfspace we are on, reverse the traversal order:
+        if (right < left)
+        {
+            if (R_CheckBBox(bsp->bbox[0]))
+                R_RenderBSPNode(bsp->children[0]);
+
+            if (R_CheckBBox(bsp->bbox[1]))
+                R_RenderBSPNode(bsp->children[1]);
+        }
+        else
+        {
+            if (R_CheckBBox(bsp->bbox[1]))
+                R_RenderBSPNode(bsp->children[1]);
+
+            if (R_CheckBBox(bsp->bbox[0]))
+                R_RenderBSPNode(bsp->children[0]);
+        }
+    }
 }
