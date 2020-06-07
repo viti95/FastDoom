@@ -950,12 +950,17 @@ boolean PTR_ShootTraverse(intercept_t *in)
 
     // check angles to see if the thing can be aimed at
     dist = FixedMul(attackrange, in->frac);
-    thingtopslope = FixedDiv(th->z + th->height - shootz, dist);
+    opt = th->z + th->height - shootz;
+    //thingtopslope = FixedDiv(th->z + th->height - shootz, dist);
+    thingtopslope = ((abs(opt) >> 14) >= dist) ? ((opt ^ dist) >> 31) ^ MAXINT : FixedDiv2(opt, dist);
 
     if (thingtopslope < aimslope)
         return true; // shot over the thing
 
-    thingbottomslope = FixedDiv(th->z - shootz, dist);
+    opt = opt - th->height;
+    //thingbottomslope = FixedDiv(th->z - shootz, dist);
+    thingbottomslope = ((abs(opt) >> 14) >= dist) ? ((opt ^ dist) >> 31) ^ MAXINT : FixedDiv2(opt, dist);
+
 
     if (thingbottomslope > aimslope)
         return true; // shot under the thing
