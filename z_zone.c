@@ -254,16 +254,3 @@ void Z_FreeTags(int lowtag,
             Z_Free((byte *)block + sizeof(memblock_t));
     }
 }
-
-//
-// Z_ChangeTag
-//
-void Z_ChangeTag(void *ptr,
-                  int tag)
-{
-    memblock_t *block;
-
-    block = (memblock_t *)((byte *)ptr - sizeof(memblock_t));
-
-    block->tag = tag;
-}

@@ -230,7 +230,6 @@ int M_StringWidth(char *string);
 int M_StringHeight(char *string);
 void M_StartControlPanel(void);
 void M_StartMessage(char *string, void *routine, boolean input);
-void M_ClearMenus(void);
 
 //
 // DOOM MENU
@@ -576,7 +575,7 @@ void M_LoadSelect(int choice)
     else
         sprintf(name, SAVEGAMENAME "%d.dsg", choice);
     G_LoadGame(name);
-    M_ClearMenus();
+    menuactive = 0;
 }
 
 //
@@ -615,7 +614,7 @@ void M_DrawSave(void)
 void M_DoSave(int slot)
 {
     G_SaveGame(slot, savegamestrings[slot]);
-    M_ClearMenus();
+    menuactive = 0;
 
     // PICK QUICKSAVE SLOT YET?
     if (quickSaveSlot == -2)
@@ -836,7 +835,7 @@ void M_VerifyNightmare(int ch)
         return;
 
     G_DeferedInitNew(nightmare, epi + 1, 1);
-    M_ClearMenus();
+    menuactive = 0;
 }
 
 void M_ChooseSkill(int choice)
@@ -848,7 +847,7 @@ void M_ChooseSkill(int choice)
     }
 
     G_DeferedInitNew(choice, epi + 1, 1);
-    M_ClearMenus();
+    menuactive = 0;
 }
 
 void M_Episode(int choice)
@@ -918,7 +917,7 @@ void M_EndGameResponse(int ch)
         return;
 
     currentMenu->lastOn = itemOn;
-    M_ClearMenus();
+    menuactive = 0;
     D_StartTitle();
 }
 
@@ -1475,7 +1474,7 @@ boolean M_Responder(event_t *ev)
 
     case KEY_ESCAPE:
         currentMenu->lastOn = itemOn;
-        M_ClearMenus();
+        menuactive = 0;
         S_StartSound(NULL, sfx_swtchx);
         return true;
 
@@ -1596,14 +1595,6 @@ void M_Drawer(void)
     // DRAW SKULL
     V_DrawPatchDirect(x + SKULLXOFF, currentMenu->y - 5 + itemOn * LINEHEIGHT, 0,
                       W_CacheLumpName(skullName[whichSkull], PU_CACHE));
-}
-
-//
-// M_ClearMenus
-//
-void M_ClearMenus(void)
-{
-    menuactive = 0;
 }
 
 //

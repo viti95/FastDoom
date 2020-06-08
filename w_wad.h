@@ -61,7 +61,8 @@ void W_Reload(void);
 
 int W_GetNumForName(char *name);
 
-int W_LumpLength(int lump);
+#define W_LumpLength(lump) lumpinfo[lump].size
+
 void W_ReadLump(int lump, void *dest);
 
 void *W_CacheLumpNum(int lump, int tag);

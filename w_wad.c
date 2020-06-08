@@ -330,15 +330,6 @@ int W_GetNumForName(char *name)
 }
 
 //
-// W_LumpLength
-// Returns the buffer size needed to load the given lump.
-//
-int W_LumpLength(int lump)
-{
-    return lumpinfo[lump].size;
-}
-
-//
 // W_ReadLump
 // Loads the lump into the given buffer,
 //  which must be >= W_LumpLength().
@@ -386,7 +377,7 @@ W_CacheLumpNum(int lump,
     }
     else
     {
-        Z_ChangeTag(lumpcache[lump], tag);
+        Z_ChangeTag((byte *)lumpcache[lump], tag);
     }
 
     return lumpcache[lump];

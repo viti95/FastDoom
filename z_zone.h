@@ -42,7 +42,8 @@ void Z_Init(void);
 void *Z_Malloc(int size, int tag, void *ptr);
 void Z_Free(void *ptr);
 void Z_FreeTags(int lowtag, int hightag);
-void Z_ChangeTag(void *ptr, int tag);
+
+#define Z_ChangeTag(ptr, tagval) ((memblock_t *)(ptr - sizeof(memblock_t)))->tag = tagval
 
 typedef struct memblock_s
 {
