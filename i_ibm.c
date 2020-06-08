@@ -473,7 +473,8 @@ void I_StartTic(void)
     int k;
     event_t ev;
 
-    I_ReadMouse();
+    if (mousepresent)
+        I_ReadMouse();
 
     //
     // keyboard events
@@ -649,10 +650,6 @@ void I_ReadMouse(void)
     //
     // mouse events
     //
-    if (!mousepresent)
-    {
-        return;
-    }
 
     ev.type = ev_mouse;
 
