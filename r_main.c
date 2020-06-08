@@ -321,7 +321,84 @@ R_PointToAngle2(fixed_t x1,
     viewx = x1;
     viewy = y1;
 
-    return R_PointToAngle(x2, y2);
+    x2 -= viewx;
+    y2 -= viewy;
+
+    if ((!x2) && (!y2))
+        return 0;
+
+    if (x2 >= 0)
+    {
+        // x >=0
+        if (y2 >= 0)
+        {
+            // y>= 0
+
+            if (x2 > y2)
+            {
+                // octant 0
+                return tantoangle[SlopeDiv(y2, x2)];
+            }
+            else
+            {
+                // octant 1
+                return ANG90 - 1 - tantoangle[SlopeDiv(x2, y2)];
+            }
+        }
+        else
+        {
+            // y<0
+            y2 = -y2;
+
+            if (x2 > y2)
+            {
+                // octant 8
+                return -tantoangle[SlopeDiv(y2, x2)];
+            }
+            else
+            {
+                // octant 7
+                return ANG270 + tantoangle[SlopeDiv(x2, y2)];
+            }
+        }
+    }
+    else
+    {
+        // x<0
+        x2 = -x2;
+
+        if (y2 >= 0)
+        {
+            // y>= 0
+            if (x2 > y2)
+            {
+                // octant 3
+                return ANG180 - 1 - tantoangle[SlopeDiv(y2, x2)];
+            }
+            else
+            {
+                // octant 2
+                return ANG90 + tantoangle[SlopeDiv(x2, y2)];
+            }
+        }
+        else
+        {
+            // y<0
+            y2 = -y2;
+
+            if (x2 > y2)
+            {
+                // octant 4
+                return ANG180 + tantoangle[SlopeDiv(y2, x2)];
+            }
+            else
+            {
+                // octant 5
+                return ANG270 - 1 - tantoangle[SlopeDiv(x2, y2)];
+            }
+        }
+    }
+    return 0;
 }
 
 fixed_t
@@ -557,9 +634,9 @@ void R_ExecuteSetViewSize(void)
             fuzzcolfunc = R_DrawFuzzColumnFast;
         else
             fuzzcolfunc = R_DrawFuzzColumn;
-        
+
         transcolfunc = R_DrawTranslatedColumn;
-        
+
         if (flatSurfaces)
             spanfunc = R_DrawSpanFlat;
         else
@@ -580,7 +657,7 @@ void R_ExecuteSetViewSize(void)
             fuzzcolfunc = R_DrawFuzzColumn;
 
         transcolfunc = R_DrawTranslatedColumn;
-        
+
         if (flatSurfaces)
             spanfunc = R_DrawSpanFlatLow;
         else

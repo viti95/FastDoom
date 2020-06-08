@@ -349,7 +349,6 @@ void R_StoreWallRange(int start,
 					  int stop)
 {
 	fixed_t hyp;
-	fixed_t sineval;
 	angle_t distangle, offsetangle;
 	fixed_t vtop;
 	int lightnum;
@@ -373,8 +372,7 @@ void R_StoreWallRange(int start,
 
 	distangle = ANG90 - offsetangle;
 	hyp = R_PointToDist(curline->v1->x, curline->v1->y);
-	sineval = finesine[distangle >> ANGLETOFINESHIFT];
-	rw_distance = FixedMul(hyp, sineval);
+	rw_distance = FixedMul(hyp, finesine[distangle >> ANGLETOFINESHIFT]);
 
 	ds_p->x1 = rw_x = start;
 	ds_p->x2 = stop;
@@ -445,7 +443,6 @@ void R_StoreWallRange(int start,
 		{
 			ds_p->silhouette = SIL_BOTTOM;
 			ds_p->bsilheight = MAXINT;
-			// ds_p->sprbottomclip = negonearray;
 		}
 
 		if (frontsector->ceilingheight < backsector->ceilingheight)
@@ -457,7 +454,6 @@ void R_StoreWallRange(int start,
 		{
 			ds_p->silhouette |= SIL_TOP;
 			ds_p->tsilheight = MININT;
-			// ds_p->sprtopclip = screenheightarray;
 		}
 
 		if (backsector->ceilingheight <= frontsector->floorheight)
@@ -567,8 +563,7 @@ void R_StoreWallRange(int start,
 		if (offsetangle > ANG90)
 			offsetangle = ANG90;
 
-		sineval = finesine[offsetangle >> ANGLETOFINESHIFT];
-		rw_offset = FixedMul(hyp, sineval);
+		rw_offset = FixedMul(hyp, finesine[offsetangle >> ANGLETOFINESHIFT]);
 
 		if (rw_normalangle - rw_angle1 < ANG180)
 			rw_offset = -rw_offset;
