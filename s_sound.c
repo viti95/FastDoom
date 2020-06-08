@@ -156,6 +156,9 @@ void S_ChangeMusic(int musicnum,
     musicinfo_t *music;
     char namebuf[9];
 
+    if (snd_MusicDevice == snd_none)
+        return;
+
     if (snd_MusicDevice == snd_Adlib && musicnum == mus_intro)
     {
         musicnum = mus_introa;
@@ -400,6 +403,9 @@ void S_StartSoundAtVolume(void *origin_p,
     int cnum;
 
     mobj_t *origin = (mobj_t *)origin_p;
+
+    if (snd_SfxDevice == snd_none)
+        return;
 
     sfx = &S_sfx[sfx_id];
 
