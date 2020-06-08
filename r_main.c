@@ -344,10 +344,13 @@ R_PointToDist(fixed_t x,
         dy = temp;
     }
 
-    angle = (tantoangle[FixedDiv(dy, dx) >> DBITS] + ANG90) >> ANGLETOFINESHIFT;
+    //angle = (tantoangle[FixedDiv(dy, dx) >> DBITS] + ANG90) >> ANGLETOFINESHIFT;
+    angle = (tantoangle[((dy >> 14 >= dx) ? ((dy ^ dx) >> 31) ^ MAXINT : FixedDiv2(dy, dx)) >> DBITS] + ANG90) >> ANGLETOFINESHIFT;
 
     // use as cosine
-    dist = FixedDiv(dx, finesine[angle]);
+    //dist = FixedDiv(dx, finesine[angle]);
+    temp = finesine[angle];
+    dist = ((dx >> 14) >= abs(temp)) ? ((dx ^ temp) >> 31) ^ MAXINT : FixedDiv2(dx, temp);
 
     return dist;
 }
