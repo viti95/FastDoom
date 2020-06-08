@@ -150,10 +150,6 @@ void D_ProcessEvents(void)
 {
     event_t *ev;
 
-    // IF STORE DEMO, DO NOT ACCEPT INPUT
-    if ((commercial) && (W_GetNumForName("map01") < 0))
-        return;
-
     for (; eventtail != eventhead; eventtail = (++eventtail) & (MAXEVENTS - 1))
     {
         ev = &events[eventtail];
