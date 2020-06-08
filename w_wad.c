@@ -377,7 +377,7 @@ W_CacheLumpNum(int lump,
     }
     else
     {
-        Z_ChangeTag((byte *)lumpcache[lump], tag);
+        Z_ChangeTag(lumpcache[lump], tag);
     }
 
     return lumpcache[lump];
