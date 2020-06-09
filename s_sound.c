@@ -390,9 +390,7 @@ int S_getChannel(void *origin,
     return cnum;
 }
 
-void S_StartSoundAtVolume(void *origin_p,
-                          int sfx_id,
-                          int volume)
+void S_StartSound(void *origin_p, int sfx_id)
 {
 
     int rc;
@@ -401,6 +399,7 @@ void S_StartSoundAtVolume(void *origin_p,
     int priority;
     sfxinfo_t *sfx;
     int cnum;
+    int volume = snd_SfxVolume;
 
     mobj_t *origin = (mobj_t *)origin_p;
 
@@ -492,12 +491,6 @@ void S_StartSoundAtVolume(void *origin_p,
                                          priority);
 }
 
-void S_StartSound(void *origin,
-                  int sfx_id)
-{
-    S_StartSoundAtVolume(origin, sfx_id, snd_SfxVolume);
-}
-
 //
 // Updates music & sounds
 //
@@ -512,6 +505,9 @@ void S_UpdateSounds(void *listener_p)
     channel_t *c;
     int i;
     mobj_t *listener = (mobj_t *)listener_p;
+
+    if (snd_SfxDevice == snd_none)
+        return;
 
     // Clean up unused data.
     if (gametic > nextcleanup)
