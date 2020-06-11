@@ -277,10 +277,9 @@ void R_DrawFuzzColumnSaturn(void)
     byte *dest;
     fixed_t frac;
     fixed_t fracstep;
-    int drawcounter = 0;
     int initialdrawpos = 0;
 
-    count = dc_yh - dc_yl;
+    count = (dc_yh - dc_yl) / 2 - 1;
 
     // Zero length, column does not exceed a pixel.
     if (count < 0)
@@ -308,6 +307,13 @@ void R_DrawFuzzColumnSaturn(void)
     //  which is the only mapping to be done.
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
+    
+    if (initialdrawpos & 1){
+        dest += SCREENWIDTH / 4;
+        frac += fracstep;
+    }
+    
+    fracstep = 2*fracstep;
 
     // Inner loop that does the actual texture mapping,
     //  e.g. a DDA-lile scaling.
@@ -316,14 +322,21 @@ void R_DrawFuzzColumnSaturn(void)
     {
         // Re-map color indices from wall texture column
         //  using a lighting/special effects LUT.
-        if ((initialdrawpos + drawcounter) & 1)
-            *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]];
         
-        dest += SCREENWIDTH / 4;
+        *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]];
+        
+        dest += SCREENWIDTH / 2;
         frac += fracstep;
-        drawcounter++;
 
     } while (count--);
+
+    if ((dc_yh - dc_yl) & 1){
+        *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]];
+    }else{
+        if (!(initialdrawpos & 1)){
+            *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]];
+        }
+    }
 }
 
 //
