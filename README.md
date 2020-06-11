@@ -9,7 +9,7 @@ Doom port for DOS, based on PCDoom by @nukeykt. The goal of this port is to make
 * Added option to render visplanes (ceiling and floors) without textures. Enable with "-flatsurfaces"
 * Added option to render Spectres and invisible objects like real transparent objects (harder to see, faster to render). Enable with "-flatshadows"
 * Added option to render sky as a flat color. Enable with "-flatsky"
-* Added option (yet to be enabled) to render Spectre and invisible objects like the Sega Saturn port did
+* Added option to render Spectre and invisible objects like the Sega Saturn port did. Enable with "-saturn"
 * PC Speaker uses all sounds available (just for fun!)
 * Lot's of optimizations to make the game run faster / smoother
 * Added a basic debug interface, so you can write to a second screen in DOS (MDA, monochrome)
@@ -24,7 +24,7 @@ Doom port for DOS, based on PCDoom by @nukeykt. The goal of this port is to make
 - [ ] Add uncapped framerate support (up to 70 fps)
 - [ ] Add a realtime performance viewer (FPS, frametime, total R_DrawColumn and R_DrawSpan calls, ...)
 - [ ] Add more drawing modes (VESA?, linear VGA?, ...)
-- [ ] Optimize drawing engine (reduce number of "outp" calls, avoid redrawing, avoid drawing multiple times single pixels, ...)
+- [ ] Optimize drawing engine (front to back renderer?, ...)
 
 ## Build instructions
 
