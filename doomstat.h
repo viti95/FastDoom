@@ -42,6 +42,7 @@ extern boolean fastparm;    // checkparm of -fast
 extern boolean flatSurfaces;
 extern boolean flatSky;
 extern boolean flatShadows;
+extern boolean saturnShadows;
 
 // Set if homebrew PWAD stuff has been added.
 extern boolean modifiedgame;

@@ -362,6 +362,8 @@ void R_DrawVisSprite(vissprite_t *vis,
     if (!dc_colormap)
     {
         // NULL colormap = shadow draw
+        if (saturnShadows)
+            dc_colormap = colormaps;
         colfunc = fuzzcolfunc;
     }
     else if (vis->mobjflags & MF_TRANSLATION)

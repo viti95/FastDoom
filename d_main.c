@@ -86,6 +86,7 @@ boolean fastparm;    // checkparm of -fast
 boolean flatSurfaces;
 boolean flatSky;
 boolean flatShadows;
+boolean saturnShadows;
 
 boolean drone;
 
@@ -752,6 +753,7 @@ void D_DoomMain(void)
     flatSurfaces = M_CheckParm("-flatsurfaces");
     flatSky = M_CheckParm("-flatsky");
     flatShadows = M_CheckParm("-flatshadows");
+    saturnShadows = M_CheckParm("-saturn");
 
     if (!commercial)
     {
