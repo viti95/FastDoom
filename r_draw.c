@@ -288,9 +288,21 @@ void R_DrawFuzzColumnSaturn(void)
 
     initialdrawpos = dc_yl + dc_x;
 
-    outp(SC_INDEX + 1, 1 << (dc_x & 3));
+    if (detailshift)
+    {
+        if (dc_x & 1)
+            outp(SC_INDEX + 1, 12);
+        else
+            outp(SC_INDEX + 1, 3);
 
-    dest = destview + dc_yl * 80 + (dc_x >> 2);
+        dest = destview + dc_yl * 80 + (dc_x >> 1);
+    }
+    else
+    {
+        outp(SC_INDEX + 1, 1 << (dc_x & 3));
+
+        dest = destview + dc_yl * 80 + (dc_x >> 2);
+    }
 
     // Determine scaling,
     //  which is the only mapping to be done.
