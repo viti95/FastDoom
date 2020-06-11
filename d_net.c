@@ -57,14 +57,12 @@ int gametime;
 
 void NetUpdate(void)
 {
-	int nowtime;
 	int newtics;
 	int i, j;
 
 	// check time
-	nowtime = ticcount;
-	newtics = nowtime - gametime;
-	gametime = nowtime;
+	newtics = ticcount - gametime;
+	gametime = ticcount;
 
 	if (newtics <= 0) // nothing new to update
 		return;

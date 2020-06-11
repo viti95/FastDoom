@@ -179,7 +179,6 @@ void D_Display(void)
     static boolean fullscreen = false;
     static gamestate_t oldgamestate = -1;
     static int borderdrawcount;
-    int nowtime;
     int tics;
     int wipestart;
     int y;
@@ -314,10 +313,9 @@ void D_Display(void)
     {
         do
         {
-            nowtime = ticcount;
-            tics = nowtime - wipestart;
+            tics = ticcount - wipestart;
         } while (!tics);
-        wipestart = nowtime;
+        wipestart = ticcount;
         done = wipe_ScreenWipe(wipe_Melt, 0, 0, SCREENWIDTH, SCREENHEIGHT, tics);
         I_UpdateNoBlit();
         M_Drawer();       // menu is drawn even on top of wipes
