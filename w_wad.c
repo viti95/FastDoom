@@ -269,17 +269,16 @@ void W_InitMultipleFiles(char **filenames)
 // Hash function used for lump names.
 unsigned int W_LumpNameHash(char *s)
 {
-  unsigned hash;
-  (void) ((hash =        toupper(s[0]), s[1]) &&
-          (hash = hash*3+toupper(s[1]), s[2]) &&
-          (hash = hash*2+toupper(s[2]), s[3]) &&
-          (hash = hash*2+toupper(s[3]), s[4]) &&
-          (hash = hash*2+toupper(s[4]), s[5]) &&
-          (hash = hash*2+toupper(s[5]), s[6]) &&
-          (hash = hash*2+toupper(s[6]),
-           hash = hash*2+toupper(s[7]))
-         );
-  return hash;
+    unsigned hash;
+    (void)((hash = toupper(s[0]), s[1]) &&
+           (hash = hash * 3 + toupper(s[1]), s[2]) &&
+           (hash = hash * 2 + toupper(s[2]), s[3]) &&
+           (hash = hash * 2 + toupper(s[3]), s[4]) &&
+           (hash = hash * 2 + toupper(s[4]), s[5]) &&
+           (hash = hash * 2 + toupper(s[5]), s[6]) &&
+           (hash = hash * 2 + toupper(s[6]),
+            hash = hash * 2 + toupper(s[7])));
+    return hash;
 }
 
 //
@@ -290,37 +289,15 @@ unsigned int W_LumpNameHash(char *s)
 int W_GetNumForName(char *name)
 {
     int i;
+    int hash;
 
-    // Do we have a hash table yet?
+    hash = W_LumpNameHash(name) % numlumps;
 
-    if (lumphash != NULL)
+    for (i = lumphash[hash]; i != -1; i = lumpinfo[i].next)
     {
-        int hash;
-
-        // We do! Excellent.
-
-        hash = W_LumpNameHash(name) % numlumps;
-
-        for (i = lumphash[hash]; i != -1; i = lumpinfo[i].next)
+        if (!strncasecmp(lumpinfo[i].name, name, 8))
         {
-            if (!strncasecmp(lumpinfo[i].name, name, 8))
-            {
-                return i;
-            }
-        }
-    }
-    else
-    {
-        // We don't have a hash table generate yet. Linear search :-(
-        //
-        // scan backwards so patch lump files take precedence
-
-        for (i = numlumps - 1; i >= 0; --i)
-        {
-            if (!strncasecmp(lumpinfo[i].name, name, 8))
-            {
-                return i;
-            }
+            return i;
         }
     }
 
@@ -356,7 +333,6 @@ void W_ReadLump(int lump,
 
     if (l->handle == -1)
         close(handle);
-
 }
 
 //
