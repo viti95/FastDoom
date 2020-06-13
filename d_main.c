@@ -87,6 +87,7 @@ boolean flatSurfaces;
 boolean flatSky;
 boolean flatShadows;
 boolean saturnShadows;
+boolean showFPS;
 
 boolean drone;
 
@@ -752,6 +753,7 @@ void D_DoomMain(void)
     flatSky = M_CheckParm("-flatsky");
     flatShadows = M_CheckParm("-flatshadows");
     saturnShadows = M_CheckParm("-saturn");
+    showFPS = M_CheckParm("-fps");
 
     if (!commercial)
     {

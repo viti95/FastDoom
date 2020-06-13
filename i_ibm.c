@@ -148,6 +148,7 @@ boolean grmode;
 boolean mousepresent;
 
 int ticcount;
+fixed_t fps;
 
 // REGS stuff used for int calls
 union REGS regs;
@@ -378,6 +379,8 @@ void I_UpdateNoBlit(void)
 //
 void I_FinishUpdate(void)
 {
+    static int fps_counter, fps_starttime, fps_nextcalculation;
+
     outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
 
     //Next plane
@@ -386,6 +389,29 @@ void I_FinishUpdate(void)
     {
         destscreen = (byte *)0xa0000;
     }
+
+    if (showFPS)
+    {
+        if (fps_counter==0)
+        {    
+            fps_starttime = ticcount;
+        }
+
+        fps_counter++;
+
+        // store a value and/or draw when data is ok:
+        if (fps_counter>(TICRATE+10)) 
+        {
+            // in case of a very fast system, this will limit the sampling
+            if (fps_nextcalculation<ticcount)
+            {
+                // minus 1!, exactly 35 FPS when measeraring for a longer time.
+                fps = FixedDiv(((fps_counter-1)*TICRATE) << FRACBITS, (ticcount-fps_starttime) << FRACBITS);
+                fps_nextcalculation=ticcount+12; 
+                fps_counter=0; // flush old data
+            }
+	   }
+	}
 }
 
 //

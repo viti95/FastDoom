@@ -53,6 +53,7 @@
 static player_t *plr;
 patch_t *hu_font[HU_FONTSIZE];
 static hu_textline_t w_title;
+static hu_textline_t w_fps;
 static boolean always_off = false;
 
 static boolean message_on;
@@ -314,6 +315,15 @@ void HU_Start(void)
                     hu_font,
                     HU_FONTSTART, &message_on);
 
+    // [JN] Create the FPS widget
+    if (showFPS)
+    {
+        HUlib_initTextLine(&w_fps,
+                           SCREENWIDTH - 72, HU_MSGY + 2 * 8,
+                           hu_font,
+                           HU_FONTSTART);
+    }
+
     // create the map title widget
     HUlib_initTextLine(&w_title,
                        HU_TITLEX, HU_TITLEY,
@@ -350,8 +360,21 @@ void HU_Start(void)
 
 void HU_Drawer(void)
 {
+    static char str[32], *f;
 
     HUlib_drawSText(&w_message);
+
+    if (showFPS){
+        sprintf(str, "fps: %i.%01i", fps >> FRACBITS, ((fps % 65536)*10)/65536);
+        HUlib_clearTextLine(&w_fps);
+        f = str;
+        while (*f)
+        {
+            HUlib_addCharToTextLine(&w_fps, *(f++));
+        }
+        HUlib_drawTextLine(&w_fps, false);
+    }
+
     if (automapactive)
         HUlib_drawTextLine(&w_title, false);
 }
@@ -361,6 +384,10 @@ void HU_Erase(void)
 
     HUlib_eraseSText(&w_message);
     HUlib_eraseTextLine(&w_title);
+    if (showFPS){
+        HUlib_eraseTextLine(&w_fps);
+    }
+
 }
 
 void HU_Ticker(void)
