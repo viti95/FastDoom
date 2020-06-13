@@ -794,7 +794,7 @@ byte *I_ZoneBase(int *size)
     int386x(0x31, &regs, &regs, &segregs);
 
     heap = meminfo[0];
-    printf("DPMI memory: 0x%x", heap);
+    printf("DPMI memory: %d Kb", heap >> 10);
 
     do
     {
@@ -806,7 +806,7 @@ byte *I_ZoneBase(int *size)
         ptr = malloc(heap);
     } while (!ptr);
 
-    printf(", 0x%x allocated for zone\n", heap);
+    printf(", %d Kb allocated for zone\n", heap >> 10);
     
     *size = heap;
     return ptr;
