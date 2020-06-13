@@ -15,6 +15,10 @@ Doom port for DOS, based on PCDoom by @nukeykt. The goal of this port is to make
 * Added a basic debug interface, so you can write to a second screen in DOS (MDA, monochrome)
 * Removed low memory limit (may cause crashes with low RAM)
 
+## DEMO
+
+[<img src="https://img.youtube.com/vi/oCgHcSkspmI/maxresdefault.jpg" width="50%">](https://youtu.be/oCgHcSkspmI)
+
 ## TODO / Nice to have
 
 - [ ] Get more FPS! (assembly, optimizing loops, etc)
