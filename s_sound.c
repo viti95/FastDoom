@@ -119,8 +119,7 @@ int S_getChannel(void *origin,
 int S_AdjustSoundParams(mobj_t *listener,
                         mobj_t *source,
                         int *vol,
-                        int *sep,
-                        int *pitch);
+                        int *sep);
 
 void S_StopChannel(int cnum);
 
@@ -237,8 +236,7 @@ void S_StopChannel(int cnum)
 int S_AdjustSoundParams(mobj_t *listener,
                         mobj_t *source,
                         int *vol,
-                        int *sep,
-                        int *pitch)
+                        int *sep)
 {
     fixed_t approx_dist;
     fixed_t adx;
@@ -394,7 +392,6 @@ void S_StartSound(void *origin_p, int sfx_id)
 
     int rc;
     int sep;
-    int pitch;
     int priority;
     sfxinfo_t *sfx;
     int cnum;
@@ -410,7 +407,6 @@ void S_StartSound(void *origin_p, int sfx_id)
     // Initialize sound parameters
     if (sfx->link)
     {
-        pitch = sfx->pitch;
         priority = sfx->priority;
         volume += sfx->volume;
 
@@ -422,7 +418,6 @@ void S_StartSound(void *origin_p, int sfx_id)
     }
     else
     {
-        pitch = NORM_PITCH;
         priority = NORM_PRIORITY;
     }
 
@@ -433,8 +428,7 @@ void S_StartSound(void *origin_p, int sfx_id)
         rc = S_AdjustSoundParams(players[0].mo,
                                  origin,
                                  &volume,
-                                 &sep,
-                                 &pitch);
+                                 &sep);
 
         if (origin->x == players[0].mo->x && origin->y == players[0].mo->y)
         {
@@ -486,7 +480,6 @@ void S_StartSound(void *origin_p, int sfx_id)
                                          sfx->data,
                                          volume,
                                          sep,
-                                         pitch,
                                          priority);
 }
 
@@ -499,7 +492,6 @@ void S_UpdateSounds(void *listener_p)
     int cnum;
     int volume;
     int sep;
-    int pitch;
     sfxinfo_t *sfx;
     channel_t *c;
     int i;
@@ -537,12 +529,10 @@ void S_UpdateSounds(void *listener_p)
             {
                 // initialize parameters
                 volume = snd_SfxVolume;
-                pitch = NORM_PITCH;
                 sep = NORM_SEP;
 
                 if (sfx->link)
                 {
-                    pitch = sfx->pitch;
                     volume += sfx->volume;
                     if (volume < 1)
                     {
@@ -562,15 +552,14 @@ void S_UpdateSounds(void *listener_p)
                     audible = S_AdjustSoundParams(listener,
                                                   c->origin,
                                                   &volume,
-                                                  &sep,
-                                                  &pitch);
+                                                  &sep);
 
                     if (!audible)
                     {
                         S_StopChannel(cnum);
                     }
                     else
-                        I_UpdateSoundParams(c->handle, volume, sep, pitch);
+                        I_UpdateSoundParams(c->handle, volume, sep);
                 }
             }
             else

@@ -317,7 +317,7 @@ int MUS_PlaySong(int handle, int volume)
     return (status != MUSIC_Ok);
 }
 
-int SFX_PlayPatch(void *vdata, int pitch, int sep, int vol, int unk1, int unk2)
+int SFX_PlayPatch(void *vdata, int sep, int vol, int unk1, int unk2)
 {
     unsigned int rate;
     unsigned long len;
@@ -345,7 +345,8 @@ int SFX_PlayPatch(void *vdata, int pitch, int sep, int vol, int unk1, int unk2)
             return -1;
         }
         len -= 32;
-        return FX_PlayRaw(data + 24, len, rate, ((pitch - 128) * 2400) / 128, vol * 2, ((254 - sep) * vol) / 63, ((sep)*vol) / 63, 100, 0);
+
+        return FX_PlayRaw(data + 24, len, rate, 0, vol * 2, ((254 - sep) * vol) / 63, ((sep)*vol) / 63, 100, 0);
     }
 }
 void SFX_StopPatch(int handle)
@@ -365,14 +366,14 @@ int SFX_Playing(int handle)
     }
     return FX_SoundActive(handle);
 }
-void SFX_SetOrigin(int handle, int pitch, int sep, int vol)
+void SFX_SetOrigin(int handle, int sep, int vol)
 {
     if (handle & 0x8000)
     {
         return;
     }
     FX_SetPan(handle, vol * 2, ((254 - sep) * vol) / 63, ((sep)*vol) / 63);
-    FX_SetPitch(handle, ((pitch - 128) * 2400) / 128);
+    //FX_SetPitch(handle, 0);
 }
 int GF1_Detect(void)
 {

@@ -149,9 +149,9 @@ int I_GetSfxLumpNum(sfxinfo_t *sfx)
     return W_GetNumForName(namebuf);
 }
 
-int I_StartSound(int id, void *data, int vol, int sep, int pitch, int priority)
+int I_StartSound(int id, void *data, int vol, int sep, int priority)
 {
-    return SFX_PlayPatch(data, pitch, sep, vol, 0, 100);
+    return SFX_PlayPatch(data, sep, vol, 0, 100);
 }
 
 void I_StopSound(int handle)
@@ -164,9 +164,9 @@ int I_SoundIsPlaying(int handle)
     return SFX_Playing(handle);
 }
 
-void I_UpdateSoundParams(int handle, int vol, int sep, int pitch)
+void I_UpdateSoundParams(int handle, int vol, int sep)
 {
-    SFX_SetOrigin(handle, pitch, sep, vol);
+    SFX_SetOrigin(handle, sep, vol);
 }
 
 //
