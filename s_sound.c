@@ -126,7 +126,6 @@ void S_StopChannel(int cnum);
 
 void S_SetMusicVolume(int volume)
 {
-    I_SetMusicVolume(127);
     I_SetMusicVolume(volume);
     snd_MusicVolume = volume;
 }
