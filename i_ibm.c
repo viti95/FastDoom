@@ -380,6 +380,7 @@ void I_UpdateNoBlit(void)
 void I_FinishUpdate(void)
 {
     static int fps_counter, fps_starttime, fps_nextcalculation;
+    int opt1, opt2;
 
     outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
 
@@ -406,7 +407,9 @@ void I_FinishUpdate(void)
             if (fps_nextcalculation<ticcount)
             {
                 // minus 1!, exactly 35 FPS when measeraring for a longer time.
-                fps = FixedDiv(((fps_counter-1)*TICRATE) << FRACBITS, (ticcount-fps_starttime) << FRACBITS);
+                opt1 = ((fps_counter-1)*TICRATE) << FRACBITS;
+                opt2 = (ticcount-fps_starttime) << FRACBITS;
+                fps = (opt1 >> 14 >= opt2) ? ((opt1 ^ opt2) >> 31) ^ MAXINT : FixedDiv2(opt1, opt2);
                 fps_nextcalculation=ticcount+12; 
                 fps_counter=0; // flush old data
             }
