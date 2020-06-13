@@ -373,7 +373,7 @@ void SFX_SetOrigin(int handle, int sep, int vol)
         return;
     }
     FX_SetPan(handle, vol * 2, ((254 - sep) * vol) / 63, ((sep)*vol) / 63);
-    //FX_SetPitch(handle, 0);
+    FX_SetPitch(handle, 0);
 }
 int GF1_Detect(void)
 {
