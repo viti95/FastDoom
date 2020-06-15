@@ -44,6 +44,7 @@ extern boolean flatSky;
 extern boolean flatShadows;
 extern boolean saturnShadows;
 extern boolean showFPS;
+extern boolean unlimitedRAM;
 
 // Set if homebrew PWAD stuff has been added.
 extern boolean modifiedgame;
