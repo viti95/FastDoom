@@ -187,9 +187,6 @@ void D_Display(void)
     boolean wipe;
     boolean redrawsbar;
 
-    if (nodrawers)
-        return; // for comparative timing / profiling
-
     redrawsbar = false;
 
     // change the view size if needed

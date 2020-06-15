@@ -154,8 +154,6 @@ fixed_t fps;
 union REGS regs;
 struct SREGS segregs;
 
-boolean novideo; // if true, stay in text mode for debugging
-
 #define KBDQUESIZE 32
 byte keyboardque[KBDQUESIZE];
 int kbdtail, kbdhead;
@@ -210,10 +208,6 @@ void I_WaitVBL(int vbls)
 {
     int stat;
 
-    if (novideo)
-    {
-        return;
-    }
     while (vbls--)
     {
         do
@@ -243,10 +237,6 @@ void I_SetPalette(byte *palette)
 {
     int i;
 
-    if (novideo)
-    {
-        return;
-    }
     _outbyte(PEL_WRITE_ADR, 0);
     for (i = 0; i < 768; i++)
     {
@@ -422,10 +412,6 @@ void I_FinishUpdate(void)
 //
 void I_InitGraphics(void)
 {
-    if (novideo)
-    {
-        return;
-    }
     grmode = true;
     regs.w.ax = 0x13;
     int386(0x10, (union REGS *)&regs, &regs);
@@ -734,7 +720,6 @@ void I_StartupDPMI(void)
 void I_Init(void)
 {
     int p;
-    novideo = M_CheckParm("novideo");
     printf("I_StartupDPMI\n");
     I_StartupDPMI();
     printf("I_StartupMouse\n");

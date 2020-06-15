@@ -116,9 +116,6 @@ extern boolean paused;        // Game Pause?
 
 extern boolean viewactive;
 
-extern boolean nodrawers;
-extern boolean noblit;
-
 extern int viewwindowx;
 extern int viewwindowy;
 extern int viewheight;
