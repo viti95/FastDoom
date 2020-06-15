@@ -90,14 +90,6 @@ void (*messageRoutine)(int response);
 
 #define SAVESTRINGSIZE 24
 
-char gammamsg[5][26] =
-    {
-        GAMMALVL0,
-        GAMMALVL1,
-        GAMMALVL2,
-        GAMMALVL3,
-        GAMMALVL4};
-
 char endmsg[NUM_QUITMESSAGES][80] =
     {
         // DOOM1
@@ -1388,14 +1380,6 @@ boolean M_Responder(event_t *ev)
         case KEY_F10: // Quit DOOM
             S_StartSound(NULL, sfx_swtchn);
             M_QuitDOOM(0);
-            return true;
-
-        case KEY_F11: // gamma toggle
-            usegamma++;
-            if (usegamma > 4)
-                usegamma = 0;
-            players[0].message = gammamsg[usegamma];
-            I_SetPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
             return true;
         }
 
