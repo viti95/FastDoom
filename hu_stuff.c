@@ -319,7 +319,7 @@ void HU_Start(void)
     if (showFPS)
     {
         HUlib_initTextLine(&w_fps,
-                           SCREENWIDTH - 72, HU_MSGY + 2 * 8,
+                           SCREENWIDTH - 72, HU_MSGY,
                            hu_font,
                            HU_FONTSTART);
     }
