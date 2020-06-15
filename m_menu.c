@@ -1184,42 +1184,12 @@ boolean M_Responder(event_t *ev)
 {
     int ch;
     int i;
-    static int mousewait = 0;
     static int lasty = 0;
-    static int mousex = 0;
     static int lastx = 0;
 
     ch = -1;
 
-    if (ev->type == ev_mouse && mousewait < ticcount)
-    {
-        mousex += ev->data2;
-        if (mousex < lastx - 30)
-        {
-            ch = KEY_LEFTARROW;
-            mousewait = ticcount + 5;
-            mousex = lastx -= 30;
-        }
-        else if (mousex > lastx + 30)
-        {
-            ch = KEY_RIGHTARROW;
-            mousewait = ticcount + 5;
-            mousex = lastx += 30;
-        }
-
-        if (ev->data1 & 1)
-        {
-            ch = KEY_ENTER;
-            mousewait = ticcount + 15;
-        }
-
-        if (ev->data1 & 2)
-        {
-            ch = KEY_BACKSPACE;
-            mousewait = ticcount + 15;
-        }
-    }
-    else if (ev->type == ev_keydown)
+    if (ev->type == ev_keydown)
     {
         ch = ev->data1;
     }
