@@ -1185,7 +1185,6 @@ boolean M_Responder(event_t *ev)
     int ch;
     int i;
     static int mousewait = 0;
-    static int mousey = 0;
     static int lasty = 0;
     static int mousex = 0;
     static int lastx = 0;
@@ -1194,20 +1193,6 @@ boolean M_Responder(event_t *ev)
 
     if (ev->type == ev_mouse && mousewait < ticcount)
     {
-        mousey += ev->data3;
-        if (mousey < lasty - 30)
-        {
-            ch = KEY_DOWNARROW;
-            mousewait = ticcount + 5;
-            mousey = lasty -= 30;
-        }
-        else if (mousey > lasty + 30)
-        {
-            ch = KEY_UPARROW;
-            mousewait = ticcount + 5;
-            mousey = lasty += 30;
-        }
-
         mousex += ev->data2;
         if (mousex < lastx - 30)
         {

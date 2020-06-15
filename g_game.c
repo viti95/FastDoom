@@ -154,7 +154,6 @@ boolean *mousebuttons = &mousearray[1]; // allow [-1]
 
 // mouse values are used once
 int mousex;
-int mousey;
 
 int dclicktime;
 int dclickstate;
@@ -317,13 +316,12 @@ void G_BuildTiccmd(ticcmd_t *cmd)
         }
     }
 
-    forward += mousey;
     if (strafe)
         side += mousex * 2;
     else
         cmd->angleturn -= mousex * 0x8;
 
-    mousex = mousey = 0;
+    mousex = 0;
 
     if (forward > MAXPLMOVE)
         forward = MAXPLMOVE;
@@ -386,7 +384,7 @@ void G_DoLoadLevel(void)
 
     // clear cmd building stuff
     memset(gamekeydown, 0, sizeof(gamekeydown));
-    mousex = mousey = 0;
+    mousex = 0;
     sendpause = sendsave = paused = false;
     memset(mousebuttons, 0, sizeof(mousebuttons));
 }
@@ -448,7 +446,6 @@ boolean G_Responder(event_t *ev)
         mousebuttons[1] = ev->data1 & 2;
         mousebuttons[2] = ev->data1 & 4;
         mousex = ev->data2 * (mouseSensitivity + 5) / 10;
-        mousey = ev->data3 * (mouseSensitivity + 5) / 10;
         return true; // eat events
 
     default:

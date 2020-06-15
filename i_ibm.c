@@ -676,7 +676,6 @@ void I_ReadMouse(void)
     dpmiregs.eax = 11; // read counters
     DPMIInt(0x33);
     ev.data2 = (short)dpmiregs.ecx;
-    ev.data3 = -(short)dpmiregs.edx;
 
     D_PostEvent(&ev);
 }
