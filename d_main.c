@@ -89,6 +89,7 @@ boolean flatShadows;
 boolean saturnShadows;
 boolean showFPS;
 boolean unlimitedRAM;
+boolean nearSprites;
 
 boolean drone;
 
@@ -754,6 +755,7 @@ void D_DoomMain(void)
     showFPS = M_CheckParm("-fps");
 
     unlimitedRAM = M_CheckParm("-ram");
+    nearSprites = M_CheckParm("-near");
 
     if (!commercial)
     {

@@ -20,6 +20,7 @@
 #include <stdlib.h>
 
 #include "doomdef.h"
+#include "doomstat.h"
 
 #include "i_system.h"
 #include "z_zone.h"
@@ -400,8 +401,6 @@ void R_ProjectSprite(mobj_t *thing)
     fixed_t tr_x;
     fixed_t tr_y;
 
-    fixed_t gxt;
-    fixed_t gyt;
     fixed_t gzt; // killough 3/27/98
 
     fixed_t tx;
@@ -432,25 +431,23 @@ void R_ProjectSprite(mobj_t *thing)
     tr_x = thing->x - viewx;
     tr_y = thing->y - viewy;
 
-    gxt = FixedMul(tr_x, viewcos);
-    gyt = -FixedMul(tr_y, viewsin);
+    if (nearSprites && !(thing->flags & MF_SHOOTABLE) && (abs(tr_x) > 40000000 || abs(tr_y) > 40000000))
+        return;    
 
-    tz = gxt - gyt;
+    tz = FixedMul(tr_x, viewcos) + FixedMul(tr_y, viewsin);
 
     // thing is behind view plane?
     if (tz < MINZ)
         return;
 
-    gxt = -FixedMul(tr_x, viewsin);
-    gyt = FixedMul(tr_y, viewcos);
-    tx = -(gyt + gxt);
+    tx = FixedMul(tr_x, viewsin) - FixedMul(tr_y, viewcos);
 
     // too far off the side?
     if (abs(tx) > (tz << 2))
         return;
 
     xscale = FixedDiv(projection, tz);
-
+    
     // decide which patch to use for sprite relative to player
     sprdef = &sprites[thing->sprite];
     sprframe = &sprdef->spriteframes[thing->frame & FF_FRAMEMASK];
