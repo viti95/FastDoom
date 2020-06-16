@@ -139,6 +139,81 @@ void R_DrawSkyFlatLow(void)
     } while (count--);
 }
 
+void R_DrawColumnPotato(void)
+{
+    register int count;
+    register byte *dest;
+    fixed_t frac;
+    fixed_t fracstep;
+
+    count = dc_yh - dc_yl;
+    if (count < 0)
+        return;
+
+    outp(SC_INDEX + 1, 15);
+    dest = destview + dc_yl * 80 + (dc_x >> 1);
+
+    // Looks familiar.
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    do
+    {
+        *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]];
+        dest += SCREENWIDTH / 4;
+
+        frac += fracstep;
+    } while (count--);
+}
+void R_DrawSpanPotato(void)
+{
+    int spot;
+    int prt;
+    int dsp_x1;
+    int dsp_x2;
+    int countp;
+    fixed_t xfrac;
+    fixed_t yfrac;
+    byte *dest;
+
+    outp(SC_INDEX + 1, 15);
+    dsp_x1 = (ds_x1) / 2;
+
+    if (dsp_x1 * 2 < ds_x1)
+    {
+        dsp_x1++;
+    }
+
+    dest = destview + ds_y * 80 + dsp_x1;
+    dsp_x2 = (ds_x2) / 2;
+    countp = dsp_x2 - dsp_x1;
+
+    xfrac = ds_xfrac;
+    yfrac = ds_yfrac;
+
+    prt = dsp_x1 * 2 - ds_x1;
+
+    xfrac += ds_xstep * prt;
+    yfrac += ds_ystep * prt;
+
+    if (countp < 0)
+        return;
+
+    do
+    {
+        // Current texture index in u,v.
+        spot = ((yfrac >> (16 - 6)) & (63 * 64)) + ((xfrac >> 16) & 63);
+
+        // Lookup pixel from flat texture tile,
+        //  re-index using light/colormap.
+        *dest++ = ds_colormap[ds_source[spot]];
+
+        // Next step in u,v.
+        xfrac += ds_xstep * 2;
+        yfrac += ds_ystep * 2;
+    } while (countp--);
+}
+
 //
 // Spectre/Invisibility.
 //
@@ -307,13 +382,14 @@ void R_DrawFuzzColumnSaturn(void)
     //  which is the only mapping to be done.
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
-    
-    if (initialdrawpos & 1){
+
+    if (initialdrawpos & 1)
+    {
         dest += SCREENWIDTH / 4;
         frac += fracstep;
     }
-    
-    fracstep = 2*fracstep;
+
+    fracstep = 2 * fracstep;
 
     // Inner loop that does the actual texture mapping,
     //  e.g. a DDA-lile scaling.
@@ -322,18 +398,22 @@ void R_DrawFuzzColumnSaturn(void)
     {
         // Re-map color indices from wall texture column
         //  using a lighting/special effects LUT.
-        
+
         *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]];
-        
+
         dest += SCREENWIDTH / 2;
         frac += fracstep;
 
     } while (count--);
 
-    if ((dc_yh - dc_yl) & 1){
+    if ((dc_yh - dc_yl) & 1)
+    {
         *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]];
-    }else{
-        if (!(initialdrawpos & 1)){
+    }
+    else
+    {
+        if (!(initialdrawpos & 1))
+        {
             *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]];
         }
     }

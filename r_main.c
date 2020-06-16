@@ -595,7 +595,7 @@ void R_ExecuteSetViewSize(void)
     }
     else
     {
-        colfunc = basecolfunc = R_DrawColumnLow;
+        colfunc = basecolfunc = R_DrawColumnPotato;
 
         if (flatShadows)
             fuzzcolfunc = R_DrawFuzzColumnFast;
@@ -609,12 +609,12 @@ void R_ExecuteSetViewSize(void)
         if (flatSurfaces)
             spanfunc = R_DrawSpanFlatLow;
         else
-            spanfunc = R_DrawSpanLow;
+            spanfunc = R_DrawSpanPotato;
 
         if (flatSky)
             skyfunc = R_DrawSkyFlatLow;
         else
-            skyfunc = R_DrawColumnLow;
+            skyfunc = R_DrawColumnPotato;
     }
 
     R_InitBuffer(scaledviewwidth, viewheight);

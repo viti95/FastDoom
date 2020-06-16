@@ -48,6 +48,8 @@ void R_DrawFuzzColumnFast(void);
 void R_DrawTranslatedColumn(void);
 void R_DrawTranslatedColumnLow(void);
 
+void R_DrawColumnPotato(void);
+
 void R_VideoErase(unsigned ofs,
                   int count);
 
@@ -76,6 +78,8 @@ void R_DrawSpanFlat (void);
 // Low resolution mode, 160x200?
 void R_DrawSpanLow(void);
 void R_DrawSpanFlatLow(void);
+
+void R_DrawSpanPotato(void);
 
 void R_InitBuffer(int width,
                   int height);
