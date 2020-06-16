@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "doomtype.h"
+#include "doomdef.h"
 
 void I_DebugClearLine(){
     int i;
@@ -41,6 +42,12 @@ void I_DebugWriteString(int x, int y, char *message)
     }
 }
 
+void I_DebugWriteFixed(int x, int y, fixed_t value){
+    char message[32];
+    sprintf(message, "%i.%04i", value >> FRACBITS, ((value % 65536)*10000)/65536);
+    I_DebugWriteString(x, y, message);
+}
+
 void I_DebugWriteInteger(int x, int y, int value)
 {
     char message[11];
@@ -69,5 +76,11 @@ void I_DebugWriteLineInteger(int value)
 {
     char message[11];
     sprintf(message, "%ld", value);
+    I_DebugWriteLineString(message);
+}
+
+void I_DebugWriteLineFixed(fixed_t value){
+    char message[32];
+    sprintf(message, "%i.%04i", value >> FRACBITS, ((value % 65536)*10000)/65536);
     I_DebugWriteLineString(message);
 }
