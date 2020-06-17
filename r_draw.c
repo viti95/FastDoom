@@ -139,7 +139,7 @@ void R_DrawSkyFlatLow(void)
     } while (count--);
 }
 
-void R_DrawColumnPotato(void)
+void R_DrawColumnPotato_C(void)
 {
     register int count;
     register byte *dest;

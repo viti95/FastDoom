@@ -36,6 +36,28 @@ loopcount dd 0
 ;
 ; R_DrawColumn
 ;
+PROC  R_DrawColumnPotato_
+PUBLIC  R_DrawColumnPotato_
+	PUSHR
+	mov		ebp,[_dc_yl]
+	cmp 	ebp,[_dc_yh]
+	jg		done
+	lea		edi,[ebp+ebp*8]
+	add		edi,ebp
+	shl		edi,3
+	mov		ebx,[_dc_x]
+	shr		ebx,1
+	add		edi,ebx
+	add		edi,[_destview]
+	mov		eax,15
+	mov		edx,SC_INDEX+1
+	out		dx,al
+	jmp		cdraw
+ENDP
+
+;
+; R_DrawColumn
+;
 PROC  R_DrawColumnLow_
 PUBLIC  R_DrawColumnLow_
 	PUSHR
