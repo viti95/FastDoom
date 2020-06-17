@@ -165,7 +165,7 @@ void R_DrawColumnPotato_C(void)
         frac += fracstep;
     } while (count--);
 }
-void R_DrawSpanPotato(void)
+void R_DrawSpanPotato_C(void)
 {
     int spot;
     int prt;
