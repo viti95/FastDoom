@@ -513,4 +513,160 @@ ldone:
 	ret
 ENDP
 
+PROC   R_DrawSpanPotato_
+PUBLIC	R_DrawSpanPotato_
+	PUSHR
+	mov		eax,[_ds_x1]
+	mov		[curx],eax
+	mov 	ebx,eax
+	and		ebx,1
+	mov		[endplane],ebx
+	mov		[curplane],ebx
+	shr		eax,1
+	mov		ebp,[_ds_y]
+	lea		edi,[ebp+ebp*8]
+	add		edi,ebp
+	shl		edi,3
+	add		edi,eax
+	add		edi,[_destview]
+	mov		[dest],edi
+	
+	mov		ebx,[_ds_xfrac]
+	shl		ebx,10
+	and		ebx,0ffff0000h
+	mov		eax,[_ds_yfrac]
+	shr		eax,6
+	and		eax,0ffffh
+	or		ebx,eax
+	
+	mov		[frac],ebx
+	
+	mov		ebx,[_ds_xstep]
+	shl		ebx,10
+	and		ebx,0ffff0000h
+	mov		eax,[_ds_ystep]
+	shr		eax,6
+	and		eax,0ffffh
+	or		ebx,eax
+	
+	mov		[fracstep],ebx
+	
+	shl		ebx,1
+	mov		[fracpstep],ebx
+	mov		eax,OFFSET ppatch1+2
+	mov		[eax],ebx
+	mov		eax,OFFSET ppatch2+2
+	mov		[eax],ebx
+	mov		ecx,[curplane]
+pplane:
+	mov		eax,15
+	mov		edx,SC_INDEX+1
+	out		dx,al
+	mov		eax,[_ds_x2]
+	cmp		eax,[curx]
+	jb		pdone
+	sub		eax,[curplane]
+	js		pdoneplane
+	shr		eax,1
+	mov		[endpx],eax
+	dec		eax
+	js		pfillone
+	shr		eax,1
+	mov		ebx,[curx]
+	shr		ebx,1
+	cmp		ebx,[endpx]
+	jz		pfillone
+	mov		[curpx],ebx
+	inc		ebx
+	shr		ebx,1
+	inc		eax
+	sub		eax,ebx
+	js		pdoneplane
+	mov		[loopcount],eax
+	mov		eax,[_ds_colormap]
+	mov		ebx,eax
+	mov		esi,[_ds_source]
+	mov		edi,[dest]
+	mov		ebp,[frac]
+	test	[curpx],1
+	jz		pfill
+	shld	ecx,ebp,22
+	shld	ecx,ebp,6
+	add		ebp,[fracpstep]
+	and		ecx,0fffh
+	mov		al,[esi+ecx]
+	mov		dl,[eax]
+	mov		[edi],dl
+	inc		edi
+	jz		pdoneplane
+pfill:
+	shld	ecx,ebp,22
+	shld	ecx,ebp,6
+	add		ebp,[fracpstep]
+	and		ecx,0fffh
+	shld	edx,ebp,22
+	shld	edx,ebp,6
+	add		ebp,[fracpstep]
+	and		edx,0fffh
+	mov		al,[esi+ecx]
+	mov		bl,[esi+edx]
+	mov		dl,[eax]
+	test	[loopcount],0ffffffffh
+	jnz		pdoubleloop
+	jmp		pchecklast
+pfillone:
+	mov		eax,[_ds_colormap]
+	mov		esi,[_ds_source]
+	mov		edi,[dest]
+	mov		ebp,[frac]
+	shld	ecx,ebp,22
+	shld	ecx,ebp,6
+	and		ecx,0fffh
+	mov		al,[esi+ecx]
+	mov		dl,[eax]
+	mov		[edi],dl
+	jmp		pdoneplane
+pdoubleloop:
+	shld	ecx,ebp,22
+	mov		dh,[ebx]
+	shld	ecx,ebp,6
+ppatch1:
+	add		ebp,12345678h
+	and		ecx,0fffh
+	mov		[edi],dx
+	shld	edx,ebp,22
+	add		edi,2
+	shld	edx,ebp,6
+ppatch2:
+	add		ebp,12345678h
+	and		edx,0fffh
+	mov		al,[esi+ecx]
+	mov		bl,[esi+edx]
+	dec		[loopcount]
+	mov		dl,[eax]
+	jnz		pdoubleloop
+pchecklast:
+	test	[endpx],1
+	jnz		pdoneplane
+	mov		[edi],dl
+pdoneplane:
+	mov		ecx,[curplane]
+	inc		ecx
+	and		ecx,1
+	jnz		pskip
+	inc		[dest]
+pskip:
+	cmp		ecx,[endplane]
+	jz		pdone
+	mov		[curplane],ecx
+	mov		ebx,[frac]
+	add		ebx,[fracstep]
+	mov		[frac],ebx
+	inc		[curx]
+	jmp		pplane
+pdone:
+	POPR
+	ret
+ENDP
+
 END
