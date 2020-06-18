@@ -286,6 +286,9 @@ void R_DrawFuzzColumnFast(void)
     register int count;
     register byte *dest;
 
+    if (potatoDetail && (dc_x & 1))
+        return;
+
     count = dc_yh - dc_yl;
 
     // Zero length.
@@ -294,15 +297,20 @@ void R_DrawFuzzColumnFast(void)
 
     if (detailshift)
     {
-        if (dc_x & 1)
-        {
-            outpw(GC_INDEX, GC_READMAP + (2 << 8));
-            outp(SC_INDEX + 1, 12);
-        }
-        else
-        {
-            outpw(GC_INDEX, GC_READMAP);
-            outp(SC_INDEX + 1, 3);
+        if (potatoDetail){
+            outpw(GC_INDEX, GC_READMAP + (15 << 8));
+            outp(SC_INDEX + 1, 15);
+        }else{
+            if (dc_x & 1)
+            {
+                outpw(GC_INDEX, GC_READMAP + (2 << 8));
+                outp(SC_INDEX + 1, 12);
+            }
+            else
+            {
+                outpw(GC_INDEX, GC_READMAP);
+                outp(SC_INDEX + 1, 3);
+            }
         }
         dest = destview + dc_yl * 80 + (dc_x >> 1);
     }
