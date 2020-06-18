@@ -37,6 +37,7 @@ void R_DrawSkyFlat(void);
 void R_DrawColumnLow(void);
 void R_DrawSkyFlatLow(void);
 
+
 // The Spectre/Invisibility effect.
 void R_DrawFuzzColumn(void);
 void R_DrawFuzzColumnSaturn(void);
@@ -49,6 +50,7 @@ void R_DrawTranslatedColumn(void);
 void R_DrawTranslatedColumnLow(void);
 
 void R_DrawColumnPotato(void);
+void R_DrawSkyFlatPotato(void);
 
 void R_VideoErase(unsigned ofs,
                   int count);

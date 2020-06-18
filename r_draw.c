@@ -139,6 +139,30 @@ void R_DrawSkyFlatLow(void)
     } while (count--);
 }
 
+void R_DrawSkyFlatPotato(void)
+{
+    register int count;
+    register byte *dest;
+
+    if (dc_x & 1)
+        return;
+
+    count = dc_yh - dc_yl;
+
+    if (count < 0)
+        return;
+
+    outp(SC_INDEX + 1, 15);
+
+    dest = destview + dc_yl * 80 + (dc_x >> 1);
+
+    do
+    {
+        *dest = 220;
+        dest += SCREENWIDTH / 4;
+    } while (count--);
+}
+
 void R_DrawSpanPotato(void)
 {
     int spot;

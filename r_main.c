@@ -618,7 +618,11 @@ void R_ExecuteSetViewSize(void)
         }
 
         if (flatSky)
-            skyfunc = R_DrawSkyFlatLow;
+            if (potatoDetail){
+                skyfunc = R_DrawSkyFlatPotato;    
+            }else{
+                skyfunc = R_DrawSkyFlatLow;
+            }
         else if (potatoDetail){
             skyfunc = R_DrawColumnPotato;
         }else{
