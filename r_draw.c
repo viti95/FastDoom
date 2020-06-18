@@ -139,35 +139,6 @@ void R_DrawSkyFlatLow(void)
     } while (count--);
 }
 
-void R_DrawColumnPotato_C(void)
-{
-    register int count;
-    register byte *dest;
-    fixed_t frac;
-    fixed_t fracstep;
-
-    if (dc_x & 1)
-        return;
-
-    count = dc_yh - dc_yl;
-    if (count < 0)
-        return;
-
-    outp(SC_INDEX + 1, 15);
-    dest = destview + dc_yl * 80 + (dc_x >> 1);
-
-    // Looks familiar.
-    fracstep = dc_iscale;
-    frac = dc_texturemid + (dc_yl - centery) * fracstep;
-
-    do
-    {
-        *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]];
-        dest += SCREENWIDTH / 4;
-
-        frac += fracstep;
-    } while (count--);
-}
 void R_DrawSpanPotato(void)
 {
     int spot;
