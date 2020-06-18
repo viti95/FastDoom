@@ -146,6 +146,11 @@ void R_DrawColumnPotato_C(void)
     fixed_t frac;
     fixed_t fracstep;
 
+    if (dc_x & 1)
+    {
+        return;
+    }
+
     count = dc_yh - dc_yl;
     if (count < 0)
         return;
@@ -176,7 +181,6 @@ void R_DrawSpanPotato_C(void)
     fixed_t yfrac;
     byte *dest;
 
-    outp(SC_INDEX + 1, 15);
     dsp_x1 = (ds_x1) / 2;
 
     if (dsp_x1 * 2 < ds_x1)
@@ -184,9 +188,14 @@ void R_DrawSpanPotato_C(void)
         dsp_x1++;
     }
 
-    dest = destview + ds_y * 80 + dsp_x1;
     dsp_x2 = (ds_x2) / 2;
     countp = dsp_x2 - dsp_x1;
+
+    if (countp < 0)
+        return;
+
+    dest = destview + ds_y * 80 + dsp_x1;
+    outp(SC_INDEX + 1, 15);
 
     xfrac = ds_xfrac;
     yfrac = ds_yfrac;
@@ -195,9 +204,6 @@ void R_DrawSpanPotato_C(void)
 
     xfrac += ds_xstep * prt;
     yfrac += ds_ystep * prt;
-
-    if (countp < 0)
-        return;
 
     do
     {
