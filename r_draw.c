@@ -147,9 +147,7 @@ void R_DrawColumnPotato_C(void)
     fixed_t fracstep;
 
     if (dc_x & 1)
-    {
         return;
-    }
 
     count = dc_yh - dc_yl;
     if (count < 0)
@@ -170,7 +168,7 @@ void R_DrawColumnPotato_C(void)
         frac += fracstep;
     } while (count--);
 }
-void R_DrawSpanPotato_C(void)
+void R_DrawSpanPotato(void)
 {
     int spot;
     int prt;
@@ -181,14 +179,13 @@ void R_DrawSpanPotato_C(void)
     fixed_t yfrac;
     byte *dest;
 
-    dsp_x1 = (ds_x1) / 2;
+    dsp_x1 = ds_x1 >> 1;
 
-    if (dsp_x1 * 2 < ds_x1)
-    {
+    if (ds_x1 & 1)
         dsp_x1++;
-    }
 
-    dsp_x2 = (ds_x2) / 2;
+    dsp_x2 = ds_x2 >> 1;
+
     countp = dsp_x2 - dsp_x1;
 
     if (countp < 0)
@@ -200,7 +197,7 @@ void R_DrawSpanPotato_C(void)
     xfrac = ds_xfrac;
     yfrac = ds_yfrac;
 
-    prt = dsp_x1 * 2 - ds_x1;
+    prt = (dsp_x1 << 1) - ds_x1;
 
     xfrac += ds_xstep * prt;
     yfrac += ds_ystep * prt;
@@ -215,8 +212,8 @@ void R_DrawSpanPotato_C(void)
         *dest++ = ds_colormap[ds_source[spot]];
 
         // Next step in u,v.
-        xfrac += ds_xstep * 2;
-        yfrac += ds_ystep * 2;
+        xfrac += ds_xstep << 1;
+        yfrac += ds_ystep << 1;
     } while (countp--);
 }
 
