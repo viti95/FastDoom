@@ -87,6 +87,7 @@ boolean flatSurfaces;
 boolean flatSky;
 boolean flatShadows;
 boolean saturnShadows;
+boolean potatoDetail;
 boolean showFPS;
 boolean unlimitedRAM;
 boolean nearSprites;
@@ -752,6 +753,8 @@ void D_DoomMain(void)
     flatSky = M_CheckParm("-flatsky");
     flatShadows = M_CheckParm("-flatshadows");
     saturnShadows = M_CheckParm("-saturn");
+    potatoDetail = M_CheckParm("-potato");
+
     showFPS = M_CheckParm("-fps");
 
     unlimitedRAM = M_CheckParm("-ram");

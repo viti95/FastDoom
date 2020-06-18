@@ -357,6 +357,9 @@ void R_DrawFuzzColumnSaturn(void)
     fixed_t fracstep;
     int initialdrawpos = 0;
 
+    if (potatoDetail && (dc_x & 1))
+        return;
+
     count = (dc_yh - dc_yl) / 2 - 1;
 
     // Zero length, column does not exceed a pixel.
