@@ -262,10 +262,13 @@ void R_DrawFuzzColumn(void)
 
     if (detailshift)
     {
-        if (potatoDetail){
+        if (potatoDetail)
+        {
             outpw(GC_INDEX, GC_READMAP + (15 << 8));
             outp(SC_INDEX + 1, 15);
-        }else{
+        }
+        else
+        {
             if (dc_x & 1)
             {
                 outpw(GC_INDEX, GC_READMAP + (2 << 8));
@@ -321,10 +324,13 @@ void R_DrawFuzzColumnFast(void)
 
     if (detailshift)
     {
-        if (potatoDetail){
+        if (potatoDetail)
+        {
             outpw(GC_INDEX, GC_READMAP + (15 << 8));
             outp(SC_INDEX + 1, 15);
-        }else{
+        }
+        else
+        {
             if (dc_x & 1)
             {
                 outpw(GC_INDEX, GC_READMAP + (2 << 8));
@@ -688,6 +694,36 @@ void R_DrawSpanFlatLow(void)
             *dest++ = color;
         } while (countp--);
     }
+}
+
+void R_DrawSpanFlatPotato(void)
+{
+    int dsp_x1;
+    int dsp_x2;
+    int countp;
+    byte *dest;
+
+    lighttable_t color = ds_colormap[0][ds_source];
+
+    dsp_x1 = ds_x1 >> 1;
+
+    if (ds_x1 & 1)
+        dsp_x1++;
+
+    dsp_x2 = ds_x2 >> 1;
+
+    countp = dsp_x2 - dsp_x1;
+
+    if (countp < 0)
+        return;
+
+    dest = destview + ds_y * 80 + dsp_x1;
+    outp(SC_INDEX + 1, 15);
+
+    do
+    {
+        *dest++ = color;
+    } while (countp--);
 }
 
 //

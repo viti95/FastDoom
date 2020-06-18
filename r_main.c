@@ -609,9 +609,12 @@ void R_ExecuteSetViewSize(void)
 
         transcolfunc = R_DrawTranslatedColumn;
 
-        if (flatSurfaces)
-            spanfunc = R_DrawSpanFlatLow;
-        else if (potatoDetail){
+        if (flatSurfaces){
+            if (potatoDetail)
+                spanfunc = R_DrawSpanFlatPotato;
+            else
+                spanfunc = R_DrawSpanFlatLow;
+        } else if (potatoDetail){
             spanfunc = R_DrawSpanPotato;
         }else{
             spanfunc = R_DrawSpanLow;
