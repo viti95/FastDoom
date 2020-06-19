@@ -26,6 +26,10 @@ Doom port for DOS, based on PCDoom by @nukeykt. The goal of this port is to make
 | FPS    | 19.56          | 21.68             | 22.44              | 25.77                            | 25.86                                              | 26.02                                                     | 24.79                 | 29.05                                                        |
 | Gain | 100.00%        | 110.20%           | 114.70%            | 131.70%                          | 132.20%                                            | 133.00%                                                   | 126.74%               | 148.52%                                                      |
 
+FastDoom 0.3 Live Demo:
+[<img src="https://img.youtube.com/vi/vJWtdZHjjKY/maxresdefault.jpg" width="50%">](https://youtu.be/vJWtdZHjjKY)
+
+FastDoom 0.2 Benchmark Demo:
 [<img src="https://img.youtube.com/vi/oCgHcSkspmI/maxresdefault.jpg" width="50%">](https://youtu.be/oCgHcSkspmI)
 
 ## TODO / Nice to have
