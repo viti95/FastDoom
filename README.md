@@ -3,17 +3,21 @@ Doom port for DOS, based on PCDoom by @nukeykt. The goal of this port is to make
 
 ## FastDOOM vs Original
 
+* Added FPS ingame viewer. Enabled with "-fps"
 * Added FPS calculation after timedemo runs
-* Removed network gaming support
-* Removed joystick support
 * Added option to render visplanes (ceiling and floors) without textures. Enable with "-flatsurfaces"
-* Added option to render Spectres and invisible objects like real transparent objects (harder to see, faster to render). Enable with "-flatshadows"
-* Added option to render sky as a flat color. Enable with "-flatsky"
+* Added option to render Spectres and invisible objects like real transparent objects (harder to see, a little faster to render). Enable with "-flatshadows"
+* Added option to render sky as a flat fixed color. Enable with "-flatsky"
 * Added option to render Spectre and invisible objects like the Sega Saturn port did. Enable with "-saturn"
+* New option to show only objects that are not far away from the player. All the enemies are still rendered as they're important. Enabled with "-near"
 * PC Speaker uses all sounds available (just for fun!)
 * Lot's of optimizations to make the game run faster / smoother
-* Added a basic debug interface, so you can write to a second screen in DOS (MDA, monochrome)
 * Removed low memory limit (may cause crashes with low RAM)
+* NEW DETAIL LEVEL: POTATO. It renders the full scene with a quarter width resolution (max 80x200). 16-bit ISA video cards can play the game full screen much better!! My Western Digital Paradise PVGA1A ISA (1989) can render the game at a constant >25 fps with a 486DX-50. Enabled with "-potato" command parameter and low detail enabled.
+* New option to allow more than 8Mb of memory allocation. Enabled with "-ram"
+* Removed network gaming support
+* Removed joystick support
+* Removed Y mouse movement (move forward/backwards)
 
 ## DEMO
 
