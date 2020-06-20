@@ -211,4 +211,6 @@ extern ticcmd_t localcmds[BACKUPTICS];
 extern int maketic;
 extern int nettics;
 
+extern boolean autorun;
+
 #endif

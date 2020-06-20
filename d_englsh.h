@@ -58,6 +58,8 @@
 #define DETAILHI "High detail"
 #define DETAILLO "Low detail"
 #define EMPTYSTRING "empty slot"
+#define AUTORUNON "Autorun enabled"
+#define AUTORUNOFF "Autorun disabled"
 
 //
 //	P_inter.C

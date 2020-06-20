@@ -1336,6 +1336,13 @@ boolean M_Responder(event_t *ev)
             S_StartSound(NULL, sfx_swtchn);
             M_QuitDOOM(0);
             return true;
+        case KEY_F11: // Autorun
+            autorun = !autorun;
+            if (autorun)
+                players[0].message = AUTORUNON;
+            else
+                players[0].message = AUTORUNOFF;
+            return true;
         }
 
     // Pop-up menu?

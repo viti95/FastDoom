@@ -170,6 +170,8 @@ char savedescription[32];
 mobj_t *bodyque[BODYQUESIZE];
 int bodyqueslot;
 
+boolean autorun;
+
 //
 // G_BuildTiccmd
 // Builds a ticcmd from all of the available inputs
@@ -193,7 +195,7 @@ void G_BuildTiccmd(ticcmd_t *cmd)
     memcpy(cmd, base, sizeof(*cmd));
 
     strafe = gamekeydown[key_strafe] || mousebuttons[mousebstrafe];
-    speed = gamekeydown[key_speed];
+    speed = autorun || gamekeydown[key_speed];
 
     forward = side = 0;
 
