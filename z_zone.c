@@ -31,8 +31,6 @@
 //  because it will get overwritten automatically if needed.
 //
 
-#define ZONEID 0x1d4a11
-
 typedef struct
 {
     // total bytes malloced, including header
@@ -97,7 +95,6 @@ void Z_Free(void *ptr)
     // mark as free
     block->user = NULL;
     block->tag = 0;
-    block->id = 0;
 
     other = block->prev;
 
@@ -224,8 +221,6 @@ Z_Malloc(int size,
 
     // next allocation will start looking here
     mainzone->rover = base->next;
-
-    base->id = ZONEID;
 
     return (void *)((byte *)base + sizeof(memblock_t));
 }
