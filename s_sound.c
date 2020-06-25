@@ -28,6 +28,7 @@
 #include "w_wad.h"
 
 #include "doomdef.h"
+#include "doomstat.h"
 #include "p_local.h"
 
 #include "doomstat.h"
@@ -256,21 +257,28 @@ int S_AdjustSoundParams(mobj_t *listener,
         return 0;
     }
 
-    // angle of source to listener
-    angle = R_PointToAngle2(listener->x,
-                            listener->y,
-                            source->x,
-                            source->y);
-
-    if (angle > listener->angle)
-        angle = angle - listener->angle;
+    if (monoSound)
+    {
+        *sep = NORM_SEP;
+    }
     else
-        angle = angle + (0xffffffff - listener->angle);
+    {
+        // angle of source to listener
+        angle = R_PointToAngle2(listener->x,
+                                listener->y,
+                                source->x,
+                                source->y);
 
-    angle >>= ANGLETOFINESHIFT;
+        if (angle > listener->angle)
+            angle = angle - listener->angle;
+        else
+            angle = angle + (0xffffffff - listener->angle);
 
-    // stereo separation
-    *sep = 128 - (FixedMul(S_STEREO_SWING, finesine[angle]) >> FRACBITS);
+        angle >>= ANGLETOFINESHIFT;
+
+        // stereo separation
+        *sep = 128 - (FixedMul(S_STEREO_SWING, finesine[angle]) >> FRACBITS);
+    }
 
     // volume calculation
     if (approx_dist < S_CLOSE_DIST)
@@ -555,9 +563,7 @@ void S_UpdateSounds(void *listener_p)
                                                   &sep);
 
                     if (!audible)
-                    {
                         S_StopChannel(cnum);
-                    }
                     else
                         I_UpdateSoundParams(c->handle, volume, sep);
                 }

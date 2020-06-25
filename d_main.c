@@ -91,6 +91,7 @@ boolean potatoDetail;
 boolean showFPS;
 boolean unlimitedRAM;
 boolean nearSprites;
+boolean monoSound;
 
 boolean drone;
 
@@ -754,6 +755,8 @@ void D_DoomMain(void)
     flatShadows = M_CheckParm("-flatshadows");
     saturnShadows = M_CheckParm("-saturn");
     potatoDetail = M_CheckParm("-potato");
+
+    monoSound = M_CheckParm("-mono");
 
     showFPS = M_CheckParm("-fps");
 

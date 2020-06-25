@@ -47,6 +47,7 @@ extern boolean potatoDetail;
 extern boolean showFPS;
 extern boolean unlimitedRAM;
 extern boolean nearSprites;
+extern boolean monoSound;
 
 // Set if homebrew PWAD stuff has been added.
 extern boolean modifiedgame;
