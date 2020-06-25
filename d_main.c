@@ -92,6 +92,7 @@ boolean showFPS;
 boolean unlimitedRAM;
 boolean nearSprites;
 boolean monoSound;
+boolean lowSound;
 
 boolean drone;
 
@@ -757,6 +758,7 @@ void D_DoomMain(void)
     potatoDetail = M_CheckParm("-potato");
 
     monoSound = M_CheckParm("-mono");
+    lowSound = M_CheckParm("-lowsound");
 
     showFPS = M_CheckParm("-fps");
 

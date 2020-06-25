@@ -48,6 +48,7 @@ extern boolean showFPS;
 extern boolean unlimitedRAM;
 extern boolean nearSprites;
 extern boolean monoSound;
+extern boolean lowSound;
 
 // Set if homebrew PWAD stuff has been added.
 extern boolean modifiedgame;
