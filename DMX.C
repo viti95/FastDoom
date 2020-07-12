@@ -19,7 +19,7 @@
 #include "doomdef.h"
 #include "fx_man.h"
 #include "music.h"
-#include "task_man.h"
+#include "ns_task.h"
 #include "mus2mid.h"
 #include "ns_pcfx.h"
 

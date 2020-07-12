@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <conio.h>
 #include "ns_dpmi.h"
-#include "task_man.h"
+#include "ns_task.h"
 #include "ns_inter.h"
 #include "ns_pcfx.h"
 

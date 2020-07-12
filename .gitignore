@@ -63,3 +63,6 @@ i_random.obj
 i_debug.obj
 ns_dpmi.obj
 ns_pcfx.obj
+ns_task.obj
+ns_llm.obj
+ns_dma.obj

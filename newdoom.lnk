@@ -16,6 +16,10 @@ name newdoom
 
 file ns_dpmi.obj
 file ns_pcfx.obj
+file ns_task.obj
+file ns_llm.obj
+file ns_dma.obj
+
 file i_debug.obj
 file i_random.obj
 file i_main.obj
