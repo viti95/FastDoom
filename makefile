@@ -26,6 +26,8 @@
 CCOPTS = /d2 /omaxet /zp8 /4r /ei /j /zq /i=dmx
 
 GLOBOBJS = &
+ ns_dpmi.obj &
+ ns_pcfx.obj &
  i_debug.obj &
  i_random.obj &
  i_main.obj &
@@ -101,6 +103,9 @@ clean : .SYMBOLIC
  del *.exe
  del *.map
  del *.err
+ del ns_dpmi.obj
+ del ns_pcfx.obj
+ del i_debug.obj
  del i_random.obj
  del am_map.obj
  del d_main.obj

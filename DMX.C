@@ -21,7 +21,7 @@
 #include "music.h"
 #include "task_man.h"
 #include "mus2mid.h"
-#include "pcfx.h"
+#include "ns_pcfx.h"
 
 unsigned short divisors[] = {
     0,
@@ -171,10 +171,6 @@ typedef struct
 pcspkmuse_t pcspkmuse;
 int pcshandle = 0;
 
-void TSM_Install(int rate)
-{
-}
-
 fx_blaster_config dmx_blaster;
 int (*tsm_func)(void);
 task *tsm_task = NULL;
@@ -284,14 +280,6 @@ int MUS_RegisterSong(void *data)
         return 0;
     }
     mus_data = data;
-    return 0;
-}
-int MUS_UnregisterSong(int handle)
-{
-    return 0;
-}
-int MUS_QrySongPlaying(int handle)
-{
     return 0;
 }
 int MUS_StopSong(int handle)

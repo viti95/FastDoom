@@ -1,38 +1,5 @@
-/*
-Copyright (C) 1994-1995 Apogee Software, Ltd.
-
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-
-*/
-/**********************************************************************
-   module: DPMI.H
-
-   author: James R. Dose
-   date:   March 31, 1994
-
-   Inline functions for performing DPMI calls.
-
-   (c) Copyright 1994 James R. Dose.  All Rights Reserved.
-**********************************************************************/
-
 #ifndef __DPMI_H
 #define __DPMI_H
-
-#define _dpmi_lockregion DPMI_LockMemory
-#define _dpmi_unlockregion DPMI_UnlockMemory
 
 enum DPMI_Errors
 {
@@ -62,8 +29,6 @@ typedef struct
    unsigned short SS;
 } dpmi_regs;
 
-unsigned long DPMI_GetRealModeVector(int num);
-void DPMI_SetRealModeVector(int num, unsigned long vector);
 int DPMI_CallRealModeFunction(dpmi_regs *callregs);
 int DPMI_GetDOSMemory(void **ptr, int *descriptor, unsigned length);
 int DPMI_FreeDOSMemory(int descriptor);

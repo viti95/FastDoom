@@ -61,3 +61,5 @@ wi_stuff.obj
 z_zone.obj
 i_random.obj
 i_debug.obj
+ns_dpmi.obj
+ns_pcfx.obj

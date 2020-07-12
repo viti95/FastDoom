@@ -41,18 +41,15 @@ int tsm_ID = -1;
 
 void I_StartupTimer(void)
 {
-#ifndef NOTIMER
     extern int I_TimerISR(void);
 
     printf("I_StartupTimer()\n");
     // installs master timer.  Must be done before StartupTimer()!
-    TSM_Install(SND_TICRATE);
     tsm_ID = TSM_NewService(I_TimerISR, 35, 0, 0);
     if (tsm_ID == -1)
     {
         I_Error("Can't register 35 Hz timer w/ DMX library");
     }
-#endif
 }
 
 void I_ShutdownTimer(void)
@@ -103,11 +100,6 @@ int I_RegisterSong(void *data)
 {
     int rc = MUS_RegisterSong(data);
     return rc;
-}
-
-void I_UnRegisterSong(int handle)
-{
-    int rc = MUS_UnregisterSong(handle);
 }
 
 //

@@ -20,7 +20,6 @@ int MPU_Init(int addr);
 int GUS_Init(void);
 void GUS_Shutdown(void);
 
-void TSM_Install(int rate);
 int TSM_NewService(int (*function)(void), int rate, int unk1, int unk2);
 void TSM_DelService(int unk1);
 void TSM_Remove(void);
@@ -28,8 +27,6 @@ void MUS_PauseSong(int handle);
 void MUS_ResumeSong(int handle);
 void MUS_SetMasterVolume(int volume);
 int MUS_RegisterSong(void *data);
-int MUS_UnregisterSong(int handle);
-int MUS_QrySongPlaying(int handle);
 int MUS_StopSong(int handle);
 int MUS_ChainSong(int handle, int next);
 int MUS_PlaySong(int handle, int volume);

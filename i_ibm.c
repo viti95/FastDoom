@@ -34,7 +34,7 @@
 #include "v_video.h"
 #include "w_wad.h"
 #include "z_zone.h"
-#include "dpmiapi.h"
+#include "ns_dpmi.h"
 //
 // Macros
 //
@@ -709,7 +709,7 @@ void I_StartupDPMI(void)
     // lock the entire program down
     //
 
-    _dpmi_lockregion(&__begtext, &___Argc - &__begtext);
+    DPMI_LockMemory(&__begtext, &___Argc - &__begtext);
 }
 
 //
