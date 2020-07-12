@@ -128,7 +128,7 @@ void Z_Free(void *ptr)
 // Z_Malloc
 // You can pass a NULL user if the tag is < PU_PURGELEVEL.
 //
-#define MINFRAGMENT 64
+#define MINFRAGMENT sizeof(memblock_t)
 
 void *
 Z_Malloc(int size,
