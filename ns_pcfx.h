@@ -22,7 +22,6 @@ typedef struct
 } PCSound;
 
 int PCFX_Stop(int handle);
-void PCFX_UseLookup(int use, unsigned value);
 int PCFX_Play(PCSound *sound, int priority, unsigned long callbackval);
 int PCFX_SoundPlaying(int handle);
 int PCFX_SetTotalVolume(int volume);

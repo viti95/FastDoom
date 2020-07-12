@@ -15,7 +15,6 @@ static long PCFX_LengthLeft;
 static char *PCFX_Sound = NULL;
 static int PCFX_LastSample;
 static short PCFX_Lookup[256];
-static int PCFX_UseLookupFlag = FALSE;
 static int PCFX_Priority;
 static unsigned long PCFX_CallBackVal;
 static void (*PCFX_CallBackFunc)(unsigned long) = NULL;
@@ -67,16 +66,8 @@ static void PCFX_Service(task *Task)
 
     if (PCFX_Sound)
     {
-        if (PCFX_UseLookupFlag)
-        {
-            value = PCFX_Lookup[*PCFX_Sound];
-            PCFX_Sound++;
-        }
-        else
-        {
-            value = *(short int *)PCFX_Sound;
-            PCFX_Sound += sizeof(short int);
-        }
+        value = *(short int *)PCFX_Sound;
+        PCFX_Sound += sizeof(short int);
 
         if ((PCFX_TotalVolume > 0) && (value != PCFX_LastSample))
         {
@@ -122,10 +113,7 @@ int PCFX_Play(PCSound *sound, int priority, unsigned long callbackval)
 
     PCFX_LengthLeft = sound->length;
 
-    if (!PCFX_UseLookupFlag)
-    {
-        PCFX_LengthLeft >>= 1;
-    }
+    PCFX_LengthLeft >>= 1;
 
     PCFX_Priority = priority;
 
@@ -173,25 +161,6 @@ int PCFX_SetTotalVolume(int volume)
 
 static void PCFX_LockEnd(void){}
 
-void PCFX_UseLookup(int use, unsigned value)
-{
-    int pitch;
-    int index;
-
-    PCFX_Stop(PCFX_VoiceHandle);
-
-    PCFX_UseLookupFlag = use;
-    if (use)
-    {
-        pitch = 0;
-        for (index = 0; index < 256; index++)
-        {
-            PCFX_Lookup[index] = pitch;
-            pitch += value;
-        }
-    }
-}
-
 int PCFX_Init(void){
     int status;
 
@@ -207,7 +176,6 @@ int PCFX_Init(void){
         return (status);
     }
 
-    PCFX_UseLookup(TRUE, 60);
     PCFX_Stop(PCFX_VoiceHandle);
     PCFX_ServiceTask = TS_ScheduleTask(&PCFX_Service, 140, 2, NULL);
     TS_Dispatch();
@@ -240,7 +208,6 @@ void PCFX_UnlockMemory(void)
     DPMI_Unlock(PCFX_Sound);
     DPMI_Unlock(PCFX_LastSample);
     DPMI_Unlock(PCFX_Lookup);
-    DPMI_Unlock(PCFX_UseLookupFlag);
     DPMI_Unlock(PCFX_Priority);
     DPMI_Unlock(PCFX_CallBackVal);
     DPMI_Unlock(PCFX_CallBackFunc);
@@ -260,7 +227,6 @@ int PCFX_LockMemory(void)
     status |= DPMI_Lock(PCFX_Sound);
     status |= DPMI_Lock(PCFX_LastSample);
     status |= DPMI_Lock(PCFX_Lookup);
-    status |= DPMI_Lock(PCFX_UseLookupFlag);
     status |= DPMI_Lock(PCFX_Priority);
     status |= DPMI_Lock(PCFX_CallBackVal);
     status |= DPMI_Lock(PCFX_CallBackFunc);

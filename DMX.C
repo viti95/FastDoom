@@ -491,7 +491,6 @@ int DMX_Init(int rate, int maxsng, int mdev, int sdev)
     {
         PCFX_Init();
         PCFX_SetTotalVolume(255);
-        PCFX_UseLookup(0, 0);
     }
     return mdev | sdev;
 }
