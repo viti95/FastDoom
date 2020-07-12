@@ -19,6 +19,7 @@ file ns_pcfx.obj
 file ns_task.obj
 file ns_llm.obj
 file ns_dma.obj
+file ns_pitch.obj
 
 file i_debug.obj
 file i_random.obj

@@ -31,6 +31,7 @@ GLOBOBJS = &
  ns_task.obj &
  ns_llm.obj &
  ns_dma.obj &
+ ns_pitch.obj &
  i_debug.obj &
  i_random.obj &
  i_main.obj &
@@ -111,6 +112,7 @@ clean : .SYMBOLIC
  del ns_task.obj
  del ns_llm.obj
  del ns_dma.obj
+ del ns_pitch.obj
  del i_debug.obj
  del i_random.obj
  del am_map.obj

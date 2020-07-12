@@ -66,3 +66,4 @@ ns_pcfx.obj
 ns_task.obj
 ns_llm.obj
 ns_dma.obj
+ns_pitch.obj
