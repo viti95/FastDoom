@@ -44,6 +44,7 @@ GLOBOBJS = &
  ns_gmtbr.obj &
  ns_scape.obj &
  ns_awe32.obj &
+ ns_dsney.obj &
  i_debug.obj &
  i_random.obj &
  i_main.obj &
@@ -137,6 +138,7 @@ clean : .SYMBOLIC
  del ns_gmtbr.obj
  del ns_scape.obj
  del ns_awe32.obj
+ del ns_dsney.obj
  del i_debug.obj
  del i_random.obj
  del am_map.obj
