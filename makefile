@@ -45,6 +45,8 @@ GLOBOBJS = &
  ns_scape.obj &
  ns_awe32.obj &
  ns_dsney.obj &
+ ns_usrho.obj &
+ ns_gusmi.obj &
  i_debug.obj &
  i_random.obj &
  i_main.obj &
@@ -100,7 +102,6 @@ GLOBOBJS = &
  f_wipe.obj &
  info.obj &
  dmx.obj &
- usrhooks.obj &
  mus2mid.obj
 
 newdoom.exe : $(GLOBOBJS) i_ibm.obj
@@ -139,6 +140,8 @@ clean : .SYMBOLIC
  del ns_scape.obj
  del ns_awe32.obj
  del ns_dsney.obj
+ del ns_usrho.obj
+ del ns_gusmi.obj
  del i_debug.obj
  del i_random.obj
  del am_map.obj
@@ -191,7 +194,6 @@ clean : .SYMBOLIC
  del st_lib.obj
  del st_stuff.obj
  del tables.obj
- del usrhooks.obj
  del v_video.obj
  del w_wad.obj
  del wi_stuff.obj

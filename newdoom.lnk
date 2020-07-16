@@ -35,6 +35,8 @@ file ns_gmtbr.obj
 file ns_scape.obj
 file ns_awe32.obj
 file ns_dsney.obj
+file ns_usrho.obj
+file ns_gusmi.obj
 
 file i_debug.obj
 file i_random.obj
@@ -92,6 +94,5 @@ file f_wipe.obj
 file info.obj
 
 file dmx.obj
-file usrhooks.obj
+
 file mus2mid.obj
-file pcfx.obj

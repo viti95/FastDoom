@@ -21,7 +21,7 @@
 #endif
 
 #ifdef USE_USRHOOKS
-#include "usrhooks.h"
+#include "ns_usrho.h"
 #define FreeMem(ptr) USRHOOKS_FreeMem((ptr))
 #else
 #define FreeMem(ptr) free((ptr))
