@@ -41,6 +41,8 @@ GLOBOBJS = &
  ns_mix16.obj &
  ns_rever.obj &
  ns_mix.obj &
+ ns_gmtbr.obj &
+ ns_scape.obj &
  i_debug.obj &
  i_random.obj &
  i_main.obj &
@@ -131,6 +133,8 @@ clean : .SYMBOLIC
  del ns_mix16.obj
  del ns_rever.obj
  del ns_mix.obj
+ del ns_gmtbr.obj
+ del ns_scape.obj
  del i_debug.obj
  del i_random.obj
  del am_map.obj
