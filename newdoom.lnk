@@ -10,6 +10,8 @@ libpath %WATCOM%\lib386
 libpath %WATCOM%\lib386\dos
 lib noemu387.lib
 #lib dmx
+lib gf1_osf.lib
+lib pawe32.lib
 lib audio_wf.lib
 format os2 le
 name newdoom
