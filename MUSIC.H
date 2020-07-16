@@ -27,7 +27,7 @@ Prepared for public release: 03/21/2003 - Charlie Wiederhold, 3D Realms
 #ifndef __MUSIC_H
 #define __MUSIC_H
 
-#include "sndcards.h"
+#include "ns_cards.h"
 
 extern int MUSIC_ErrorCode;
 

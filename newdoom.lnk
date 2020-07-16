@@ -20,6 +20,11 @@ file ns_task.obj
 file ns_llm.obj
 file ns_dma.obj
 file ns_pitch.obj
+file ns_irq.obj
+file ns_user.obj
+file ns_mp401.obj
+file ns_sb.obj
+file ns_sbmus.obj
 
 file i_debug.obj
 file i_random.obj
