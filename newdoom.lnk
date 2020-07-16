@@ -33,6 +33,7 @@ file ns_rever.obj
 file ns_mix.obj
 file ns_gmtbr.obj
 file ns_scape.obj
+file ns_awe32.obj
 
 file i_debug.obj
 file i_random.obj
