@@ -38,6 +38,7 @@ file ns_dsney.obj
 file ns_usrho.obj
 file ns_gusmi.obj
 file ns_gusau.obj
+file ns_gus.obj
 
 file i_debug.obj
 file i_random.obj

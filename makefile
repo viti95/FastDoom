@@ -48,6 +48,7 @@ GLOBOBJS = &
  ns_usrho.obj &
  ns_gusmi.obj &
  ns_gusau.obj &
+ ns_gus.obj &
  i_debug.obj &
  i_random.obj &
  i_main.obj &
@@ -144,6 +145,7 @@ clean : .SYMBOLIC
  del ns_usrho.obj
  del ns_gusmi.obj
  del ns_gusau.obj
+ del ns_gus.obj
  del i_debug.obj
  del i_random.obj
  del am_map.obj
