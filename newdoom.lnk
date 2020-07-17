@@ -39,6 +39,8 @@ file ns_usrho.obj
 file ns_gusmi.obj
 file ns_gusau.obj
 file ns_gus.obj
+file ns_midi.obj
+file ns_music.obj
 
 file i_debug.obj
 file i_random.obj
