@@ -107,7 +107,7 @@ static void MV_Mix(
     int buffer)
 
 {
-    char *start;
+    unsigned char *start;
     int length;
     long voclength;
     unsigned long position;
@@ -574,7 +574,7 @@ playbackstatus MV_GetNextVOCBlock(
             }
             else
             {
-                voice->LoopEnd = (char *)blocklength;
+                voice->LoopEnd = (unsigned char *)blocklength;
             }
 
             voice->LoopStart = voice->sound + (unsigned long)voice->LoopStart;

@@ -68,11 +68,11 @@ typedef struct VoiceNode
     playbackstatus (*GetSound)(struct VoiceNode *voice);
 
     void (*mix)(unsigned long position, unsigned long rate,
-                char *start, unsigned long length);
+                unsigned char *start, unsigned long length);
 
-    char *NextBlock;
-    char *LoopStart;
-    char *LoopEnd;
+    unsigned char *NextBlock;
+    unsigned char *LoopStart;
+    unsigned char *LoopEnd;
     unsigned LoopCount;
     unsigned long LoopSize;
     unsigned long BlockLength;
@@ -80,7 +80,7 @@ typedef struct VoiceNode
     unsigned long PitchScale;
     unsigned long FixedPointBufferSize;
 
-    char *sound;
+    unsigned char *sound;
     unsigned long length;
     unsigned long SamplingRate;
     unsigned long RateScale;
