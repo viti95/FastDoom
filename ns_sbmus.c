@@ -853,48 +853,6 @@ void AL_Reset
       }
    }
 
-
-/*---------------------------------------------------------------------
-   Function: AL_ReserveVoice
-
-   Marks a voice as being not available for use.  This allows the
-   driver to use the rest of the card while another driver uses the
-   reserved voice.
----------------------------------------------------------------------*/
-
-int AL_ReserveVoice
-   (
-   int voice
-   )
-
-   {
-   unsigned flags;
-
-   if ( ( voice < 0 ) || ( voice >= NUM_VOICES ) )
-      {
-      return( AL_Error );
-      }
-
-   if ( VoiceReserved[ voice ] )
-      {
-      return( AL_Warning );
-      }
-
-   flags = DisableInterrupts();
-
-   if ( Voice[ voice ].status == NOTE_ON )
-      {
-      AL_NoteOff( Voice[ voice ].channel, Voice[ voice ].key, 0 );
-      }
-
-   VoiceReserved[ voice ] = TRUE;
-   LL_Remove( VOICE, &Voice_Pool, &Voice[ voice ] );
-
-   RestoreInterrupts( flags );
-   return( AL_Ok );
-   }
-
-
 /*---------------------------------------------------------------------
    Function: AL_ReleaseVoice
 
