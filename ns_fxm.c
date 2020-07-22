@@ -745,68 +745,6 @@ int FX_SetFrequency(
 }
 
 /*---------------------------------------------------------------------
-   Function: FX_PlayLoopedVOC
-
-   Begin playback of sound data with the given volume and priority.
----------------------------------------------------------------------*/
-
-int FX_PlayLoopedVOC(
-    char *ptr,
-    long loopstart,
-    long loopend,
-    int pitchoffset,
-    int vol,
-    int left,
-    int right,
-    int priority,
-    unsigned long callbackval)
-
-{
-    int handle;
-
-    handle = MV_PlayLoopedVOC(ptr, loopstart, loopend, pitchoffset,
-                              vol, left, right, priority, callbackval);
-    if (handle < MV_Ok)
-    {
-        FX_SetErrorCode(FX_MultiVocError);
-        handle = FX_Warning;
-    }
-
-    return (handle);
-}
-
-/*---------------------------------------------------------------------
-   Function: FX_PlayWAV
-
-   Begin playback of sound data with the given volume and priority.
----------------------------------------------------------------------*/
-
-int FX_PlayLoopedWAV(
-    char *ptr,
-    long loopstart,
-    long loopend,
-    int pitchoffset,
-    int vol,
-    int left,
-    int right,
-    int priority,
-    unsigned long callbackval)
-
-{
-    int handle;
-
-    handle = MV_PlayLoopedWAV(ptr, loopstart, loopend,
-                              pitchoffset, vol, left, right, priority, callbackval);
-    if (handle < MV_Ok)
-    {
-        FX_SetErrorCode(FX_MultiVocError);
-        handle = FX_Warning;
-    }
-
-    return (handle);
-}
-
-/*---------------------------------------------------------------------
    Function: FX_PlayRaw
 
    Begin playback of raw sound data with the given volume and priority.
