@@ -39,12 +39,7 @@ int MV_SetPitch(int handle, int pitchoffset);
 int MV_SetFrequency(int handle, int frequency);
 int MV_EndLooping(int handle);
 int MV_SetPan(int handle, int vol, int left, int right);
-int MV_Pan3D(int handle, int angle, int distance);
-void MV_SetReverb(int reverb);
-void MV_SetFastReverb(int reverb);
 int MV_GetMaxReverbDelay(void);
-int MV_GetReverbDelay(void);
-void MV_SetReverbDelay(int delay);
 int MV_SetMixMode(int numchannels, int samplebits);
 int MV_StartPlayback(void);
 void MV_StopPlayback(void);
@@ -60,13 +55,9 @@ int MV_PlayLoopedRaw(char *ptr, unsigned long length,
                      unsigned long callbackval);
 int MV_PlayWAV(char *ptr, int pitchoffset, int vol, int left,
                int right, int priority, unsigned long callbackval);
-int MV_PlayWAV3D(char *ptr, int pitchoffset, int angle, int distance,
-                 int priority, unsigned long callbackval);
 int MV_PlayLoopedWAV(char *ptr, long loopstart, long loopend,
                      int pitchoffset, int vol, int left, int right, int priority,
                      unsigned long callbackval);
-int MV_PlayVOC3D(char *ptr, int pitchoffset, int angle, int distance,
-                 int priority, unsigned long callbackval);
 int MV_PlayVOC(char *ptr, int pitchoffset, int vol, int left, int right,
                int priority, unsigned long callbackval);
 int MV_PlayLoopedVOC(char *ptr, long loopstart, long loopend,

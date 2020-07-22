@@ -427,66 +427,6 @@ void FX_SetVolume(
 }
 
 /*---------------------------------------------------------------------
-   Function: FX_GetVolume
-
-   Returns the volume of the current sound device.
----------------------------------------------------------------------*/
-
-int FX_GetVolume(
-    void)
-
-{
-    int volume;
-
-    switch (FX_SoundDevice)
-    {
-    case SoundBlaster:
-    case Awe32:
-        if (BLASTER_CardHasMixer())
-        {
-            volume = BLASTER_GetVoiceVolume();
-        }
-        else
-        {
-            volume = MV_GetVolume();
-        }
-        break;
-
-    case ProAudioSpectrum:
-    case SoundMan16:
-        volume = PAS_GetPCMVolume();
-        if (volume == PAS_Error)
-        {
-            volume = MV_GetVolume();
-        }
-        break;
-
-    case GenMidi:
-    case SoundCanvas:
-    case WaveBlaster:
-        volume = 255;
-        break;
-
-    case SoundScape:
-        volume = MV_GetVolume();
-        break;
-
-    case UltraSound:
-        volume = GUSWAVE_GetVolume();
-        break;
-
-    case SoundSource:
-    case TandySoundSource:
-        volume = MV_GetVolume();
-        break;
-
-    default:
-        volume = 0;
-    }
-    return (volume);
-}
-
-/*---------------------------------------------------------------------
    Function: FX_SetReverseStereo
 
    Set the orientation of the left and right channels.
@@ -510,71 +450,6 @@ int FX_GetReverseStereo(
 
 {
     return MV_GetReverseStereo();
-}
-
-/*---------------------------------------------------------------------
-   Function: FX_SetReverb
-
-   Sets the reverb level.
----------------------------------------------------------------------*/
-
-void FX_SetReverb(
-    int reverb)
-
-{
-    MV_SetReverb(reverb);
-}
-
-/*---------------------------------------------------------------------
-   Function: FX_SetFastReverb
-
-   Sets the reverb level.
----------------------------------------------------------------------*/
-
-void FX_SetFastReverb(
-    int reverb)
-
-{
-    MV_SetFastReverb(reverb);
-}
-
-/*---------------------------------------------------------------------
-   Function: FX_GetMaxReverbDelay
-
-   Returns the maximum delay time for reverb.
----------------------------------------------------------------------*/
-
-int FX_GetMaxReverbDelay(
-    void)
-
-{
-    return MV_GetMaxReverbDelay();
-}
-
-/*---------------------------------------------------------------------
-   Function: FX_GetReverbDelay
-
-   Returns the current delay time for reverb.
----------------------------------------------------------------------*/
-
-int FX_GetReverbDelay(
-    void)
-
-{
-    return MV_GetReverbDelay();
-}
-
-/*---------------------------------------------------------------------
-   Function: FX_SetReverbDelay
-
-   Sets the delay level of reverb to add to mix.
----------------------------------------------------------------------*/
-
-void FX_SetReverbDelay(
-    int delay)
-
-{
-    MV_SetReverbDelay(delay);
 }
 
 /*---------------------------------------------------------------------
@@ -691,31 +566,6 @@ int FX_PlayRaw(
     }
 
     return (handle);
-}
-
-/*---------------------------------------------------------------------
-   Function: FX_Pan3D
-
-   Set the angle and distance from the listener of the voice associated
-   with the specified handle.
----------------------------------------------------------------------*/
-
-int FX_Pan3D(
-    int handle,
-    int angle,
-    int distance)
-
-{
-    int status;
-
-    status = MV_Pan3D(handle, angle, distance);
-    if (status != MV_Ok)
-    {
-        FX_SetErrorCode(FX_MultiVocError);
-        status = FX_Warning;
-    }
-
-    return (status);
 }
 
 /*---------------------------------------------------------------------

@@ -1399,73 +1399,6 @@ int MV_SetPan(
 }
 
 /*---------------------------------------------------------------------
-   Function: MV_Pan3D
-
-   Set the angle and distance from the listener of the voice associated
-   with the specified handle.
----------------------------------------------------------------------*/
-
-int MV_Pan3D(
-    int handle,
-    int angle,
-    int distance)
-
-{
-    int left;
-    int right;
-    int mid;
-    int volume;
-    int status;
-
-    if (distance < 0)
-    {
-        distance = -distance;
-        angle += MV_NumPanPositions / 2;
-    }
-
-    volume = MIX_VOLUME(distance);
-
-    // Ensure angle is within 0 - 31
-    angle &= MV_MaxPanPosition;
-
-    left = MV_PanTable[angle][volume].left;
-    right = MV_PanTable[angle][volume].right;
-    mid = max(0, 255 - distance);
-
-    status = MV_SetPan(handle, mid, left, right);
-
-    return (status);
-}
-
-/*---------------------------------------------------------------------
-   Function: MV_SetReverb
-
-   Sets the level of reverb to add to mix.
----------------------------------------------------------------------*/
-
-void MV_SetReverb(
-    int reverb)
-
-{
-    MV_ReverbLevel = MIX_VOLUME(reverb);
-    MV_ReverbTable = &MV_VolumeTable[MV_ReverbLevel];
-}
-
-/*---------------------------------------------------------------------
-   Function: MV_SetFastReverb
-
-   Sets the level of reverb to add to mix.
----------------------------------------------------------------------*/
-
-void MV_SetFastReverb(
-    int reverb)
-
-{
-    MV_ReverbLevel = max(0, min(16, reverb));
-    MV_ReverbTable = NULL;
-}
-
-/*---------------------------------------------------------------------
    Function: MV_GetMaxReverbDelay
 
    Returns the maximum delay time for reverb.
@@ -1480,36 +1413,6 @@ int MV_GetMaxReverbDelay(
     maxdelay = MixBufferSize * MV_NumberOfBuffers;
 
     return maxdelay;
-}
-
-/*---------------------------------------------------------------------
-   Function: MV_GetReverbDelay
-
-   Returns the current delay time for reverb.
----------------------------------------------------------------------*/
-
-int MV_GetReverbDelay(
-    void)
-
-{
-    return MV_ReverbDelay / MV_SampleSize;
-}
-
-/*---------------------------------------------------------------------
-   Function: MV_SetReverbDelay
-
-   Sets the delay level of reverb to add to mix.
----------------------------------------------------------------------*/
-
-void MV_SetReverbDelay(
-    int delay)
-
-{
-    int maxdelay;
-
-    maxdelay = MV_GetMaxReverbDelay();
-    MV_ReverbDelay = max(MixBufferSize, min(delay, maxdelay));
-    MV_ReverbDelay *= MV_SampleSize;
 }
 
 /*---------------------------------------------------------------------
@@ -1963,55 +1866,6 @@ int MV_PlayWAV(
 }
 
 /*---------------------------------------------------------------------
-   Function: MV_PlayWAV3D
-
-   Begin playback of sound data at specified angle and distance
-   from listener.
----------------------------------------------------------------------*/
-
-int MV_PlayWAV3D(
-    char *ptr,
-    int pitchoffset,
-    int angle,
-    int distance,
-    int priority,
-    unsigned long callbackval)
-
-{
-    int left;
-    int right;
-    int mid;
-    int volume;
-    int status;
-
-    if (!MV_Installed)
-    {
-        MV_SetErrorCode(MV_NotInstalled);
-        return (MV_Error);
-    }
-
-    if (distance < 0)
-    {
-        distance = -distance;
-        angle += MV_NumPanPositions / 2;
-    }
-
-    volume = MIX_VOLUME(distance);
-
-    // Ensure angle is within 0 - 31
-    angle &= MV_MaxPanPosition;
-
-    left = MV_PanTable[angle][volume].left;
-    right = MV_PanTable[angle][volume].right;
-    mid = max(0, 255 - distance);
-
-    status = MV_PlayWAV(ptr, pitchoffset, mid, left, right, priority,
-                        callbackval);
-
-    return (status);
-}
-
-/*---------------------------------------------------------------------
    Function: MV_PlayLoopedWAV
 
    Begin playback of sound data with the given sound levels and
@@ -2137,55 +1991,6 @@ int MV_PlayLoopedWAV(
     MV_PlayVoice(voice);
 
     return (voice->handle);
-}
-
-/*---------------------------------------------------------------------
-   Function: MV_PlayVOC3D
-
-   Begin playback of sound data at specified angle and distance
-   from listener.
----------------------------------------------------------------------*/
-
-int MV_PlayVOC3D(
-    char *ptr,
-    int pitchoffset,
-    int angle,
-    int distance,
-    int priority,
-    unsigned long callbackval)
-
-{
-    int left;
-    int right;
-    int mid;
-    int volume;
-    int status;
-
-    if (!MV_Installed)
-    {
-        MV_SetErrorCode(MV_NotInstalled);
-        return (MV_Error);
-    }
-
-    if (distance < 0)
-    {
-        distance = -distance;
-        angle += MV_NumPanPositions / 2;
-    }
-
-    volume = MIX_VOLUME(distance);
-
-    // Ensure angle is within 0 - 31
-    angle &= MV_MaxPanPosition;
-
-    left = MV_PanTable[angle][volume].left;
-    right = MV_PanTable[angle][volume].right;
-    mid = max(0, 255 - distance);
-
-    status = MV_PlayVOC(ptr, pitchoffset, mid, left, right, priority,
-                        callbackval);
-
-    return (status);
 }
 
 /*---------------------------------------------------------------------
