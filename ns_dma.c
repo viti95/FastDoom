@@ -37,12 +37,9 @@ static const DMA_PORT DMA_PortInfo[DMA_MaxChannel + 1] =
 
 int DMA_ErrorCode = DMA_Ok;
 
-#define DMA_SetErrorCode(status) \
-    DMA_ErrorCode = (status);
+#define DMA_SetErrorCode(status) DMA_ErrorCode = (status);
 
-char *DMA_ErrorString(
-    int ErrorNumber)
-
+char *DMA_ErrorString(int ErrorNumber)
 {
     char *ErrorString;
 
@@ -72,9 +69,7 @@ char *DMA_ErrorString(
     return (ErrorString);
 }
 
-int DMA_VerifyChannel(
-    int channel)
-
+int DMA_VerifyChannel(int channel)
 {
     int status;
     int Error;
@@ -97,12 +92,7 @@ int DMA_VerifyChannel(
     return (status);
 }
 
-int DMA_SetupTransfer(
-    int channel,
-    char *address,
-    int length,
-    int mode)
-
+int DMA_SetupTransfer(int channel, char *address, int length, int mode)
 {
     DMA_PORT *Port;
     int addr;
@@ -190,9 +180,7 @@ int DMA_SetupTransfer(
     return (status);
 }
 
-int DMA_EndTransfer(
-    int channel)
-
+int DMA_EndTransfer(int channel)
 {
     DMA_PORT *Port;
     int ChannelSelect;
@@ -214,9 +202,7 @@ int DMA_EndTransfer(
     return (status);
 }
 
-char *DMA_GetCurrentPos(
-    int channel)
-
+char *DMA_GetCurrentPos(int channel)
 {
     DMA_PORT *Port;
     unsigned long addr;
@@ -250,44 +236,4 @@ char *DMA_GetCurrentPos(
     }
 
     return ((char *)addr);
-}
-
-int DMA_GetTransferCount(
-    int channel)
-
-{
-    DMA_PORT *Port;
-    int count;
-    int status;
-
-    status = DMA_Ok;
-
-    count = 0;
-
-    if ((channel < 0) || (DMA_MaxChannel < channel))
-    {
-        status = DMA_ChannelOutOfRange;
-    }
-    else if (DMA_PortInfo[channel].Valid == INVALID)
-    {
-        status = DMA_InvalidChannel;
-    }
-
-    if (status == DMA_Ok)
-    {
-        Port = &DMA_PortInfo[channel];
-
-        outp(Port->Clear, 0);
-        count = inp(Port->Length);
-        count += inp(Port->Length) << 8;
-
-        if (Port->Width == WORD)
-        {
-            count <<= 1;
-        }
-    }
-
-    DMA_SetErrorCode(status);
-
-    return (count);
 }
