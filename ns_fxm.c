@@ -625,33 +625,3 @@ int FX_StopAllSounds(
 
     return (FX_Ok);
 }
-
-/*---------------------------------------------------------------------
-   Function: FX_StartDemandFeedPlayback
-
-   Plays a digitized sound from a user controlled buffering system.
----------------------------------------------------------------------*/
-
-int FX_StartDemandFeedPlayback(
-    void (*function)(char **ptr, unsigned long *length),
-    int rate,
-    int pitchoffset,
-    int vol,
-    int left,
-    int right,
-    int priority,
-    unsigned long callbackval)
-
-{
-    int handle;
-
-    handle = MV_StartDemandFeedPlayback(function, rate,
-                                        pitchoffset, vol, left, right, priority, callbackval);
-    if (handle < MV_Ok)
-    {
-        FX_SetErrorCode(FX_MultiVocError);
-        handle = FX_Warning;
-    }
-
-    return (handle);
-}

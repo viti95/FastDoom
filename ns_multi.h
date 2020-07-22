@@ -42,9 +42,6 @@ int MV_SetPan(int handle, int vol, int left, int right);
 int MV_SetMixMode(int numchannels, int samplebits);
 int MV_StartPlayback(void);
 void MV_StopPlayback(void);
-int MV_StartDemandFeedPlayback(void (*function)(char **ptr, unsigned long *length),
-                               int rate, int pitchoffset, int vol, int left, int right,
-                               int priority, unsigned long callbackval);
 int MV_PlayRaw(char *ptr, unsigned long length,
                unsigned rate, int pitchoffset, int vol, int left,
                int right, int priority, unsigned long callbackval);
