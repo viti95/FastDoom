@@ -745,35 +745,6 @@ int FX_SetFrequency(
 }
 
 /*---------------------------------------------------------------------
-   Function: FX_PlayVOC
-
-   Begin playback of sound data with the given volume and priority.
----------------------------------------------------------------------*/
-
-int FX_PlayVOC(
-    char *ptr,
-    int pitchoffset,
-    int vol,
-    int left,
-    int right,
-    int priority,
-    unsigned long callbackval)
-
-{
-    int handle;
-
-    handle = MV_PlayVOC(ptr, pitchoffset, vol, left, right,
-                        priority, callbackval);
-    if (handle < MV_Ok)
-    {
-        FX_SetErrorCode(FX_MultiVocError);
-        handle = FX_Warning;
-    }
-
-    return (handle);
-}
-
-/*---------------------------------------------------------------------
    Function: FX_PlayLoopedVOC
 
    Begin playback of sound data with the given volume and priority.
@@ -810,35 +781,6 @@ int FX_PlayLoopedVOC(
    Begin playback of sound data with the given volume and priority.
 ---------------------------------------------------------------------*/
 
-int FX_PlayWAV(
-    char *ptr,
-    int pitchoffset,
-    int vol,
-    int left,
-    int right,
-    int priority,
-    unsigned long callbackval)
-
-{
-    int handle;
-
-    handle = MV_PlayWAV(ptr, pitchoffset, vol, left, right,
-                        priority, callbackval);
-    if (handle < MV_Ok)
-    {
-        FX_SetErrorCode(FX_MultiVocError);
-        handle = FX_Warning;
-    }
-
-    return (handle);
-}
-
-/*---------------------------------------------------------------------
-   Function: FX_PlayWAV
-
-   Begin playback of sound data with the given volume and priority.
----------------------------------------------------------------------*/
-
 int FX_PlayLoopedWAV(
     char *ptr,
     long loopstart,
@@ -855,64 +797,6 @@ int FX_PlayLoopedWAV(
 
     handle = MV_PlayLoopedWAV(ptr, loopstart, loopend,
                               pitchoffset, vol, left, right, priority, callbackval);
-    if (handle < MV_Ok)
-    {
-        FX_SetErrorCode(FX_MultiVocError);
-        handle = FX_Warning;
-    }
-
-    return (handle);
-}
-
-/*---------------------------------------------------------------------
-   Function: FX_PlayVOC3D
-
-   Begin playback of sound data at specified angle and distance
-   from listener.
----------------------------------------------------------------------*/
-
-int FX_PlayVOC3D(
-    char *ptr,
-    int pitchoffset,
-    int angle,
-    int distance,
-    int priority,
-    unsigned long callbackval)
-
-{
-    int handle;
-
-    handle = MV_PlayVOC3D(ptr, pitchoffset, angle, distance,
-                          priority, callbackval);
-    if (handle < MV_Ok)
-    {
-        FX_SetErrorCode(FX_MultiVocError);
-        handle = FX_Warning;
-    }
-
-    return (handle);
-}
-
-/*---------------------------------------------------------------------
-   Function: FX_PlayWAV3D
-
-   Begin playback of sound data at specified angle and distance
-   from listener.
----------------------------------------------------------------------*/
-
-int FX_PlayWAV3D(
-    char *ptr,
-    int pitchoffset,
-    int angle,
-    int distance,
-    int priority,
-    unsigned long callbackval)
-
-{
-    int handle;
-
-    handle = MV_PlayWAV3D(ptr, pitchoffset, angle, distance,
-                          priority, callbackval);
     if (handle < MV_Ok)
     {
         FX_SetErrorCode(FX_MultiVocError);
