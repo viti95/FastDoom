@@ -97,7 +97,5 @@ int FX_StopAllSounds(void);
 int FX_StartDemandFeedPlayback(void (*function)(char **ptr, unsigned long *length),
                                int rate, int pitchoffset, int vol, int left, int right,
                                int priority, unsigned long callbackval);
-int FX_StartRecording(int MixRate, void (*function)(char *ptr, int length));
-void FX_StopRecord(void);
 
 #endif

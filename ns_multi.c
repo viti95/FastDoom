@@ -40,7 +40,6 @@ static int MV_Installed = FALSE;
 static int MV_SoundCard = SoundBlaster;
 static int MV_TotalVolume = MV_MaxTotalVolume;
 static int MV_MaxVoices = 1;
-static int MV_Recording;
 
 static int MV_BufferSize = MixBufferSize;
 static int MV_BufferLength;
@@ -75,7 +74,6 @@ static int MV_MixPage = 0;
 static int MV_VoiceHandle = MV_MinVoiceHandle;
 
 static void (*MV_CallBackFunc)(unsigned long) = NULL;
-static void (*MV_RecordFunc)(char *ptr, int length) = NULL;
 static void (*MV_MixFunction)(VoiceNode *voice, int buffer);
 
 static int MV_MaxVolume = 63;
@@ -907,30 +905,6 @@ playbackstatus MV_GetNextWAVBlock(
 }
 
 /*---------------------------------------------------------------------
-   Function: MV_ServiceRecord
-
-   Starts recording of the waiting buffer.
----------------------------------------------------------------------*/
-
-static void MV_ServiceRecord(
-    void)
-
-{
-    if (MV_RecordFunc)
-    {
-        MV_RecordFunc(MV_MixBuffer[0] + MV_MixPage * MixBufferSize,
-                      MixBufferSize);
-    }
-
-    // Toggle which buffer we'll mix next
-    MV_MixPage++;
-    if (MV_MixPage >= NumberOfBuffers)
-    {
-        MV_MixPage = 0;
-    }
-}
-
-/*---------------------------------------------------------------------
    Function: MV_GetVoice
 
    Locates the voice with the specified handle.
@@ -1106,12 +1080,6 @@ VoiceNode *MV_AllocVoice(
     VoiceNode *voice;
     VoiceNode *node;
     unsigned flags;
-
-    //return( NULL );
-    if (MV_Recording)
-    {
-        return (NULL);
-    }
 
     flags = DisableInterrupts();
 
@@ -1929,111 +1897,6 @@ void MV_StopPlayback(
     }
 
     RestoreInterrupts(flags);
-}
-
-/*---------------------------------------------------------------------
-   Function: MV_StartRecording
-
-   Starts the sound recording engine.
----------------------------------------------------------------------*/
-
-int MV_StartRecording(
-    int MixRate,
-    void (*function)(char *ptr, int length))
-
-{
-    int status;
-
-    switch (MV_SoundCard)
-    {
-    case SoundBlaster:
-    case Awe32:
-    case ProAudioSpectrum:
-    case SoundMan16:
-        break;
-
-    default:
-        MV_SetErrorCode(MV_UnsupportedCard);
-        return (MV_Error);
-        break;
-    }
-
-    if (function == NULL)
-    {
-        MV_SetErrorCode(MV_NullRecordFunction);
-        return (MV_Error);
-    }
-
-    MV_StopPlayback();
-
-    // Initialize the buffers
-    ClearBuffer_DW(MV_MixBuffer[0], SILENCE_8BIT, TotalBufferSize >> 2);
-
-    // Set the mix buffer variables
-    MV_MixPage = 0;
-
-    MV_RecordFunc = function;
-
-    // Start playback
-    switch (MV_SoundCard)
-    {
-    case SoundBlaster:
-    case Awe32:
-        status = BLASTER_BeginBufferedRecord(MV_MixBuffer[0],
-                                             TotalBufferSize, NumberOfBuffers, MixRate, MONO_8BIT,
-                                             MV_ServiceRecord);
-
-        if (status != BLASTER_Ok)
-        {
-            MV_SetErrorCode(MV_BlasterError);
-            return (MV_Error);
-        }
-        break;
-
-    case ProAudioSpectrum:
-    case SoundMan16:
-        status = PAS_BeginBufferedRecord(MV_MixBuffer[0],
-                                         TotalBufferSize, NumberOfBuffers, MixRate, MONO_8BIT,
-                                         MV_ServiceRecord);
-
-        if (status != PAS_Ok)
-        {
-            MV_SetErrorCode(MV_PasError);
-            return (MV_Error);
-        }
-        break;
-    }
-
-    MV_Recording = TRUE;
-    return (MV_Ok);
-}
-
-/*---------------------------------------------------------------------
-   Function: MV_StopRecord
-
-   Stops the sound record engine.
----------------------------------------------------------------------*/
-
-void MV_StopRecord(
-    void)
-
-{
-    // Stop sound playback
-    switch (MV_SoundCard)
-    {
-    case SoundBlaster:
-    case Awe32:
-        BLASTER_StopPlayback();
-        break;
-
-    case ProAudioSpectrum:
-    case SoundMan16:
-        PAS_StopPlayback();
-        break;
-    }
-
-    MV_Recording = FALSE;
-    MV_StartPlayback();
 }
 
 /*---------------------------------------------------------------------
@@ -2980,8 +2843,6 @@ int MV_Init(
     MV_SoundCard = soundcard;
     MV_Installed = TRUE;
     MV_CallBackFunc = NULL;
-    MV_RecordFunc = NULL;
-    MV_Recording = FALSE;
     MV_ReverbLevel = 0;
     MV_ReverbTable = NULL;
 
@@ -3055,12 +2916,6 @@ int MV_Shutdown(
     MV_KillAllVoices();
 
     MV_Installed = FALSE;
-
-    // Stop the sound recording engine
-    if (MV_Recording)
-    {
-        MV_StopRecord();
-    }
 
     // Stop the sound playback engine
     MV_StopPlayback();
@@ -3156,8 +3011,6 @@ void MV_UnlockMemory(
     DPMI_Unlock(MV_MixPage);
     DPMI_Unlock(MV_VoiceHandle);
     DPMI_Unlock(MV_CallBackFunc);
-    DPMI_Unlock(MV_RecordFunc);
-    DPMI_Unlock(MV_Recording);
     DPMI_Unlock(MV_MixFunction);
     DPMI_Unlock(MV_HarshClipTable);
     DPMI_Unlock(MV_MixDestination);
@@ -3212,8 +3065,6 @@ int MV_LockMemory(
     status |= DPMI_Lock(MV_MixPage);
     status |= DPMI_Lock(MV_VoiceHandle);
     status |= DPMI_Lock(MV_CallBackFunc);
-    status |= DPMI_Lock(MV_RecordFunc);
-    status |= DPMI_Lock(MV_Recording);
     status |= DPMI_Lock(MV_MixFunction);
     status |= DPMI_Lock(MV_HarshClipTable);
     status |= DPMI_Lock(MV_MixDestination);

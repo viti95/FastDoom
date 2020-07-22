@@ -49,8 +49,6 @@ void MV_SetReverbDelay(int delay);
 int MV_SetMixMode(int numchannels, int samplebits);
 int MV_StartPlayback(void);
 void MV_StopPlayback(void);
-int MV_StartRecording(int MixRate, void (*function)(char *ptr, int length));
-void MV_StopRecord(void);
 int MV_StartDemandFeedPlayback(void (*function)(char **ptr, unsigned long *length),
                                int rate, int pitchoffset, int vol, int left, int right,
                                int priority, unsigned long callbackval);
