@@ -989,7 +989,7 @@ int MV_VoicePlaying(
         return (FALSE);
     }
 
-    return (TRUE);
+    return (FALSE); // WRONG! HACK TO MAKE SOUND WORK AGAIN! FIX THIS!
 }
 
 /*---------------------------------------------------------------------
