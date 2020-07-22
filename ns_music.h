@@ -32,7 +32,6 @@ typedef struct
 #define MUSIC_LoopSong (1 == 1)
 #define MUSIC_PlayOnce (!MUSIC_LoopSong)
 
-char *MUSIC_ErrorString(int ErrorNumber);
 int MUSIC_Init(int SoundCard, int Address);
 int MUSIC_Shutdown(void);
 void MUSIC_SetMaxFMMidiChannel(int channel);

@@ -17,7 +17,6 @@ enum DMA_Modes
     DMA_AutoInitWrite
 };
 
-char *DMA_ErrorString(int ErrorNumber);
 int DMA_VerifyChannel(int channel);
 int DMA_SetupTransfer(int channel, char *address, int length, int mode);
 int DMA_EndTransfer(int channel);

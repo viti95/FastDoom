@@ -24,7 +24,6 @@ enum SS_ERRORS
 #define SS_SampleRate 7000
 #define SS_DMAChannel -1
 
-char *SS_ErrorString(int ErrorNumber);
 void SS_StopPlayback(void);
 int SS_GetCurrentPos(void);
 int SS_BeginBufferedPlayback(char *BufferStart, int BufferSize, int NumDivisions, void (*CallBackFunc)(void));

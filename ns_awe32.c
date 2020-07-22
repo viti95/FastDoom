@@ -47,57 +47,6 @@ int AWE32_ErrorCode = AWE32_Ok;
 #define AWE32_SetErrorCode(status) \
     AWE32_ErrorCode = (status);
 
-/*---------------------------------------------------------------------
-   Function: AWE32_ErrorString
-
-   Returns a pointer to the error message associated with an error
-   number.  A -1 returns a pointer the current error.
----------------------------------------------------------------------*/
-
-char *AWE32_ErrorString(
-    int ErrorNumber)
-
-{
-    char *ErrorString;
-
-    switch (ErrorNumber)
-    {
-    case AWE32_Warning:
-    case AWE32_Error:
-        ErrorString = AWE32_ErrorString(AWE32_ErrorCode);
-        break;
-
-    case AWE32_Ok:
-        ErrorString = "AWE32 ok.";
-        break;
-
-    case AWE32_SoundBlasterError:
-        ErrorString = BLASTER_ErrorString(BLASTER_Error);
-        break;
-
-    case AWE32_NotDetected:
-        ErrorString = "Could not detect AWE32.";
-        break;
-
-    case AWE32_UnableToInitialize:
-        ErrorString = "Unable to initialize AWE32.";
-
-    case AWE32_MPU401Error:
-        ErrorString = "MPU-401 initialization failed in AWE32.";
-        break;
-
-    case AWE32_DPMI_Error:
-        ErrorString = "DPMI Error in AWE32.";
-        break;
-
-    default:
-        ErrorString = "Unknown AWE32 error code.";
-        break;
-    }
-
-    return (ErrorString);
-}
-
 /**********************************************************************
 
    Memory locked functions:

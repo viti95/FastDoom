@@ -34,67 +34,6 @@ int GUS_ErrorCode = GUS_Ok;
     GUS_ErrorCode = (status);
 
 /*---------------------------------------------------------------------
-   Function: GUS_ErrorString
-
-   Returns a pointer to the error message associated with an error
-   number.  A -1 returns a pointer the current error.
----------------------------------------------------------------------*/
-
-char *GUS_ErrorString(
-    int ErrorNumber)
-
-{
-    char *ErrorString;
-
-    switch (ErrorNumber)
-    {
-    case GUS_Warning:
-    case GUS_Error:
-        ErrorString = GUS_ErrorString(GUS_ErrorCode);
-        break;
-
-    case GUS_Ok:
-        ErrorString = "Ultrasound music ok.";
-        break;
-
-    case GUS_OutOfMemory:
-        ErrorString = "Out of memory in GusMidi.";
-        break;
-
-    case GUS_OutOfDosMemory:
-        ErrorString = "Out of conventional (640K) memory in GusMidi.";
-        break;
-
-    case GUS_GF1Error:
-        ErrorString = gf1_error_str(GUS_AuxError);
-        break;
-
-    case GUS_InvalidIrq:
-        ErrorString = "Ultrasound IRQ must be 7 or less.";
-        break;
-
-    case GUS_ULTRADIRNotSet:
-        ErrorString = "ULTRADIR environment variable not set.";
-        break;
-
-    case GUS_MissingConfig:
-        //         ErrorString = "Can't find GUSMIDI.INI file.";
-        ErrorString = "Can't find ULTRAMID.INI file.";
-        break;
-
-    case GUS_FileError:
-        ErrorString = strerror(GUS_AuxError);
-        break;
-
-    default:
-        ErrorString = "Unknown Ultrasound error code.";
-        break;
-    }
-
-    return (ErrorString);
-}
-
-/*---------------------------------------------------------------------
    Function: D32DosMemAlloc
 
    Allocate a block of Conventional memory.

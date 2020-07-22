@@ -18,7 +18,6 @@ enum GUSWAVE_Errors
     GUSWAVE_InvalidWAVFile
 };
 
-char *GUSWAVE_ErrorString(int ErrorNumber);
 int GUSWAVE_VoicePlaying(int handle);
 int GUSWAVE_VoicesPlaying(void);
 int GUSWAVE_Kill(int handle);

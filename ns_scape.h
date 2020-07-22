@@ -27,7 +27,6 @@ enum SOUNDSCAPE_ERRORS
     SOUNDSCAPE_OutOfMemory
 };
 
-char *SOUNDSCAPE_ErrorString(int ErrorNumber);
 void SOUNDSCAPE_SetPlaybackRate(unsigned rate);
 unsigned SOUNDSCAPE_GetPlaybackRate(void);
 int SOUNDSCAPE_SetMixMode(int mode);

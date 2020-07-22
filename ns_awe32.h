@@ -13,7 +13,6 @@ enum AWE32_ERRORS
     AWE32_DPMI_Error
 };
 
-char *AWE32_ErrorString(int ErrorNumber);
 int AWE32_Init(void);
 void AWE32_Shutdown(void);
 void AWE32_NoteOff(int channel, int key, int velocity);

@@ -44,49 +44,6 @@ int SS_ErrorCode = SS_Ok;
 #define SS_SetErrorCode(status) \
     SS_ErrorCode = (status);
 
-/*---------------------------------------------------------------------
-   Function: SS_ErrorString
-
-   Returns a pointer to the error message associated with an error
-   number.  A -1 returns a pointer the current error.
----------------------------------------------------------------------*/
-
-char *SS_ErrorString(
-    int ErrorNumber)
-
-{
-    char *ErrorString;
-
-    switch (ErrorNumber)
-    {
-    case SS_Error:
-        ErrorString = SS_ErrorString(SS_ErrorCode);
-        break;
-
-    case SS_Ok:
-        ErrorString = "Sound Source ok.";
-        break;
-
-    case SS_NotFound:
-        ErrorString = "Could not detect Sound Source.";
-        break;
-
-    case SS_NoSoundPlaying:
-        ErrorString = "No sound playing in SndSrc.";
-        break;
-
-    case SS_DPMI_Error:
-        ErrorString = "DPMI Error in SndSrc.";
-        break;
-
-    default:
-        ErrorString = "Unknown Sound Source error code.";
-        break;
-    }
-
-    return (ErrorString);
-}
-
 /**********************************************************************
 
    Memory locked functions:

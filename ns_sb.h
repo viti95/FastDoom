@@ -68,7 +68,6 @@ enum BLASTER_Types
 #define BLASTER_DefaultMixMode MONO_8BIT
 #define BLASTER_MaxIrq 15
 
-char *BLASTER_ErrorString(int ErrorNumber);
 void BLASTER_EnableInterrupt(void);
 void BLASTER_DisableInterrupt(void);
 int BLASTER_WriteDSP(unsigned data);

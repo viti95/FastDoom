@@ -39,36 +39,6 @@ int DMA_ErrorCode = DMA_Ok;
 
 #define DMA_SetErrorCode(status) DMA_ErrorCode = (status);
 
-char *DMA_ErrorString(int ErrorNumber)
-{
-    char *ErrorString;
-
-    switch (ErrorNumber)
-    {
-    case DMA_Error:
-        ErrorString = DMA_ErrorString(DMA_ErrorCode);
-        break;
-
-    case DMA_Ok:
-        ErrorString = "DMA channel ok.";
-        break;
-
-    case DMA_ChannelOutOfRange:
-        ErrorString = "DMA channel out of valid range.";
-        break;
-
-    case DMA_InvalidChannel:
-        ErrorString = "Unsupported DMA channel.";
-        break;
-
-    default:
-        ErrorString = "Unknown DMA error code.";
-        break;
-    }
-
-    return (ErrorString);
-}
-
 int DMA_VerifyChannel(int channel)
 {
     int status;

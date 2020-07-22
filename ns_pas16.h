@@ -27,7 +27,6 @@ enum PAS_ERRORS
 
 extern unsigned int PAS_DMAChannel;
 
-char *PAS_ErrorString(int ErrorNumber);
 void PAS_SetPlaybackRate(unsigned rate);
 unsigned PAS_GetPlaybackRate(void);
 int PAS_SetMixMode(int mode);

@@ -30,7 +30,6 @@ enum MV_Errors
     MV_NullRecordFunction
 };
 
-char *MV_ErrorString(int ErrorNumber);
 int MV_VoicePlaying(int handle);
 int MV_KillAllVoices(void);
 int MV_Kill(int handle);

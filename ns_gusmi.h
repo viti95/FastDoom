@@ -18,7 +18,6 @@ enum GUS_Errors
     GUS_FileError
 };
 
-char *GUS_ErrorString(int ErrorNumber);
 int GUS_GetPatchMap(char *name);
 int GUSMIDI_UnloadPatch(int prog);
 int GUSMIDI_LoadPatch(int prog);
