@@ -17,8 +17,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "doomdef.h"
-#include "fx_man.h"
-#include "music.h"
+#include "ns_fxm.h"
+#include "ns_music.h"
 #include "ns_task.h"
 #include "mus2mid.h"
 #include "ns_pcfx.h"

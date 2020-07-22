@@ -65,7 +65,6 @@ int FX_GetReverbDelay(void);
 void FX_SetReverbDelay(int delay);
 
 int FX_VoiceAvailable(int priority);
-int FX_EndLooping(int handle);
 int FX_SetPan(int handle, int vol, int left, int right);
 int FX_SetPitch(int handle, int pitchoffset);
 int FX_SetFrequency(int handle, int frequency);

@@ -12,7 +12,7 @@ lib noemu387.lib
 #lib dmx
 lib gf1_osf.lib
 lib pawe32.lib
-lib audio_wf.lib
+#lib audio_wf.lib
 format os2 le
 name newdoom
 
@@ -41,7 +41,8 @@ file ns_gusau.obj
 file ns_gus.obj
 file ns_midi.obj
 file ns_music.obj
-
+file ns_fxm.obj
+file ns_multi.obj
 file i_debug.obj
 file i_random.obj
 file i_main.obj

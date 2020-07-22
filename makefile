@@ -23,7 +23,7 @@
 #
 # --------------------------------------------------------------------------
 
-CCOPTS = /d2 /omaxet /zp8 /4r /ei /j /zq /i=dmx
+CCOPTS = /d2 /omaxet /zp8 /4r /ei /j /zq
 
 GLOBOBJS = &
  ns_dpmi.obj &
@@ -51,6 +51,8 @@ GLOBOBJS = &
  ns_gus.obj &
  ns_midi.obj &
  ns_music.obj &
+ ns_fxm.obj &
+ ns_multi.obj &
  i_debug.obj &
  i_random.obj &
  i_main.obj &
@@ -108,7 +110,7 @@ GLOBOBJS = &
  dmx.obj &
  mus2mid.obj
 
-newdoom.exe : $(GLOBOBJS) i_ibm.obj
+newdoom.exe : $(GLOBOBJS)
  wlink @newdoom.lnk
  copy newdoom.exe doom.exe
  wstrip doom.exe
@@ -150,6 +152,8 @@ clean : .SYMBOLIC
  del ns_gus.obj
  del ns_midi.obj
  del ns_music.obj
+ del ns_fxm.obj
+ del ns_multi.obj
  del i_debug.obj
  del i_random.obj
  del am_map.obj
