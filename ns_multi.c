@@ -26,10 +26,6 @@
 
 #define IS_QUIET(ptr) ((void *)(ptr) == (void *)&MV_VolumeTable[0])
 
-static int MV_ReverbLevel;
-static int MV_ReverbDelay;
-static VOLUME16 *MV_ReverbTable = NULL;
-
 //static signed short MV_VolumeTable[ MV_MaxVolume + 1 ][ 256 ];
 static signed short MV_VolumeTable[63 + 1][256];
 
@@ -260,97 +256,19 @@ void MV_ServiceVoc(
         MV_MixPage -= MV_NumberOfBuffers;
     }
 
-    if (MV_ReverbLevel == 0)
+    // Initialize buffer
+    //Commented out so that the buffer is always cleared.
+    //This is so the guys at Echo Speech can mix into the
+    //buffer even when no sounds are playing.
+    //if ( !MV_BufferEmpty[ MV_MixPage ] )
     {
-        // Initialize buffer
-        //Commented out so that the buffer is always cleared.
-        //This is so the guys at Echo Speech can mix into the
-        //buffer even when no sounds are playing.
-        //if ( !MV_BufferEmpty[ MV_MixPage ] )
+        ClearBuffer_DW(MV_MixBuffer[MV_MixPage], MV_Silence, MV_BufferSize >> 2);
+        if ((MV_SoundCard == UltraSound) && (MV_Channels == 2))
         {
-            ClearBuffer_DW(MV_MixBuffer[MV_MixPage], MV_Silence, MV_BufferSize >> 2);
-            if ((MV_SoundCard == UltraSound) && (MV_Channels == 2))
-            {
-                ClearBuffer_DW(MV_MixBuffer[MV_MixPage] + MV_RightChannelOffset,
-                               MV_Silence, MV_BufferSize >> 2);
-            }
-            MV_BufferEmpty[MV_MixPage] = TRUE;
+            ClearBuffer_DW(MV_MixBuffer[MV_MixPage] + MV_RightChannelOffset,
+                            MV_Silence, MV_BufferSize >> 2);
         }
-    }
-    else
-    {
-        char *end;
-        char *source;
-        char *dest;
-        int count;
-        int length;
-
-        end = MV_MixBuffer[0] + MV_BufferLength;
-        ;
-        dest = MV_MixBuffer[MV_MixPage];
-        source = MV_MixBuffer[MV_MixPage] - MV_ReverbDelay;
-        if (source < MV_MixBuffer[0])
-        {
-            source += MV_BufferLength;
-        }
-
-        length = MV_BufferSize;
-        while (length > 0)
-        {
-            count = length;
-            if (source + count > end)
-            {
-                count = end - source;
-            }
-
-            if (MV_Bits == 16)
-            {
-                if (MV_ReverbTable != NULL)
-                {
-                    MV_16BitReverb(source, dest, MV_ReverbTable, count / 2);
-                    if ((MV_SoundCard == UltraSound) && (MV_Channels == 2))
-                    {
-                        MV_16BitReverb(source + MV_RightChannelOffset,
-                                       dest + MV_RightChannelOffset, MV_ReverbTable, count / 2);
-                    }
-                }
-                else
-                {
-                    MV_16BitReverbFast(source, dest, count / 2, MV_ReverbLevel);
-                    if ((MV_SoundCard == UltraSound) && (MV_Channels == 2))
-                    {
-                        MV_16BitReverbFast(source + MV_RightChannelOffset,
-                                           dest + MV_RightChannelOffset, count / 2, MV_ReverbLevel);
-                    }
-                }
-            }
-            else
-            {
-                if (MV_ReverbTable != NULL)
-                {
-                    MV_8BitReverb(source, dest, MV_ReverbTable, count);
-                    if ((MV_SoundCard == UltraSound) && (MV_Channels == 2))
-                    {
-                        MV_8BitReverb(source + MV_RightChannelOffset,
-                                      dest + MV_RightChannelOffset, MV_ReverbTable, count);
-                    }
-                }
-                else
-                {
-                    MV_8BitReverbFast(source, dest, count, MV_ReverbLevel);
-                    if ((MV_SoundCard == UltraSound) && (MV_Channels == 2))
-                    {
-                        MV_8BitReverbFast(source + MV_RightChannelOffset,
-                                          dest + MV_RightChannelOffset, count, MV_ReverbLevel);
-                    }
-                }
-            }
-
-            // if we go through the loop again, it means that we've wrapped around the buffer
-            source = MV_MixBuffer[0];
-            dest += count;
-            length -= count;
-        }
+        MV_BufferEmpty[MV_MixPage] = TRUE;
     }
 
     // Play any waiting voices
@@ -2201,15 +2119,12 @@ int MV_Init(
     MV_SoundCard = soundcard;
     MV_Installed = TRUE;
     MV_CallBackFunc = NULL;
-    MV_ReverbLevel = 0;
-    MV_ReverbTable = NULL;
 
     // Set the sampling rate
     MV_RequestedMixRate = MixRate;
 
     // Set Mixer to play stereo digitized sound
     MV_SetMixMode(numchannels, samplebits);
-    MV_ReverbDelay = MV_BufferSize * 3;
 
     // Make sure we don't cross a physical page
     if (((unsigned long)ptr & 0xffff) + TotalBufferSize > 0x10000)
@@ -2378,9 +2293,6 @@ void MV_UnlockMemory(
     DPMI_Unlock(MV_ErrorCode);
     DPMI_Unlock(MV_DMAChannel);
     DPMI_Unlock(MV_BuffShift);
-    DPMI_Unlock(MV_ReverbLevel);
-    DPMI_Unlock(MV_ReverbDelay);
-    DPMI_Unlock(MV_ReverbTable);
 }
 
 /*---------------------------------------------------------------------
@@ -2432,9 +2344,6 @@ int MV_LockMemory(
     status |= DPMI_Lock(MV_ErrorCode);
     status |= DPMI_Lock(MV_DMAChannel);
     status |= DPMI_Lock(MV_BuffShift);
-    status |= DPMI_Lock(MV_ReverbLevel);
-    status |= DPMI_Lock(MV_ReverbDelay);
-    status |= DPMI_Lock(MV_ReverbTable);
 
     pitchstatus = PITCH_LockMemory();
     if ((pitchstatus != PITCH_Ok) || (status != DPMI_Ok))

@@ -39,7 +39,6 @@ GLOBOBJS = &
  ns_sbmus.obj &
  ns_pas16.obj &
  ns_mix16.obj &
- ns_rever.obj &
  ns_mix.obj &
  ns_gmtbr.obj &
  ns_scape.obj &
@@ -140,7 +139,6 @@ clean : .SYMBOLIC
  del ns_sbmus.obj
  del ns_pas16.obj
  del ns_mix16.obj
- del ns_rever.obj
  del ns_mix.obj
  del ns_gmtbr.obj
  del ns_scape.obj
