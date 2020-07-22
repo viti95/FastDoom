@@ -60,7 +60,6 @@ static unsigned BLASTER_SampleRate = BLASTER_DefaultSampleRate;
 static unsigned BLASTER_HaltTransferCommand = DSP_Halt8bitTransfer;
 
 volatile int BLASTER_SoundPlaying;
-volatile int BLASTER_SoundRecording;
 
 void (*BLASTER_CallBack)(void);
 
@@ -338,11 +337,6 @@ void __interrupt __far BLASTER_ServiceInterrupt(
         if (BLASTER_SoundPlaying)
         {
             BLASTER_DSP1xx_BeginPlayback(BLASTER_TransferLength);
-        }
-
-        if (BLASTER_SoundRecording)
-        {
-            BLASTER_DSP1xx_BeginRecord(BLASTER_TransferLength);
         }
     }
 
@@ -790,7 +784,6 @@ void BLASTER_StopPlayback(
     BLASTER_SpeakerOff();
 
     BLASTER_SoundPlaying = FALSE;
-    BLASTER_SoundRecording = FALSE;
 
     BLASTER_DMABuffer = NULL;
 }
@@ -1085,175 +1078,6 @@ int BLASTER_BeginBufferedPlayback(
     else
     {
         BLASTER_DSP4xx_BeginPlayback(TransferLength);
-    }
-
-    return (BLASTER_Ok);
-}
-
-/*---------------------------------------------------------------------
-   Function: BLASTER_DSP4xx_BeginRecord
-
-   Starts recording of digitized sound on cards compatible with DSP
-   version 4.xx, such as the Sound Blaster 16.
----------------------------------------------------------------------*/
-
-int BLASTER_DSP4xx_BeginRecord(
-    int length)
-
-{
-    int TransferCommand;
-    int TransferMode;
-    int SampleLength;
-    int LoByte;
-    int HiByte;
-
-    TransferCommand = DSP_8BitADC;
-    SampleLength = length - 1;
-    BLASTER_HaltTransferCommand = DSP_Halt8bitTransfer;
-
-    TransferMode = DSP_UnsignedMonoData;
-
-    HiByte = hibyte(SampleLength);
-    LoByte = lobyte(SampleLength);
-
-    // Program DSP to play sound
-    BLASTER_WriteDSP(TransferCommand);
-    BLASTER_WriteDSP(TransferMode);
-    BLASTER_WriteDSP(LoByte);
-    BLASTER_WriteDSP(HiByte);
-
-    BLASTER_SoundRecording = TRUE;
-
-    return (BLASTER_Ok);
-}
-
-/*---------------------------------------------------------------------
-   Function: BLASTER_DSP2xx_BeginRecord
-
-   Starts recording of digitized sound on cards compatible with DSP
-   version 2.xx.
----------------------------------------------------------------------*/
-
-int BLASTER_DSP2xx_BeginRecord(
-    int length)
-
-{
-    int SampleLength;
-    int LoByte;
-    int HiByte;
-
-    SampleLength = length - 1;
-    HiByte = hibyte(SampleLength);
-    LoByte = lobyte(SampleLength);
-
-    BLASTER_WriteDSP(DSP_SetBlockLength);
-    BLASTER_WriteDSP(LoByte);
-    BLASTER_WriteDSP(HiByte);
-
-    if ((BLASTER_Version >= DSP_Version201) && (DSP_MaxNormalRate <
-                                                (BLASTER_SampleRate * BLASTER_SamplePacketSize)))
-    {
-        BLASTER_WriteDSP(DSP_8BitHighSpeedAutoInitRecord);
-        BLASTER_HaltTransferCommand = DSP_Reset;
-    }
-    else
-    {
-        BLASTER_WriteDSP(DSP_8BitAutoInitRecord);
-        BLASTER_HaltTransferCommand = DSP_Halt8bitTransfer;
-    }
-
-    BLASTER_SoundRecording = TRUE;
-
-    return (BLASTER_Ok);
-}
-
-/*---------------------------------------------------------------------
-   Function: BLASTER_DSP1xx_BeginRecord
-
-   Starts recording of digitized sound on cards compatible with DSP
-   version 1.xx.
----------------------------------------------------------------------*/
-
-int BLASTER_DSP1xx_BeginRecord(
-    int length)
-
-{
-    int SampleLength;
-    int LoByte;
-    int HiByte;
-
-    SampleLength = length - 1;
-    HiByte = hibyte(SampleLength);
-    LoByte = lobyte(SampleLength);
-
-    // Program DSP to play sound
-    BLASTER_WriteDSP(DSP_Old8BitADC);
-    BLASTER_WriteDSP(LoByte);
-    BLASTER_WriteDSP(HiByte);
-
-    BLASTER_HaltTransferCommand = DSP_Halt8bitTransfer;
-
-    BLASTER_SoundRecording = TRUE;
-
-    return (BLASTER_Ok);
-}
-
-/*---------------------------------------------------------------------
-   Function: BLASTER_BeginBufferedRecord
-
-   Begins multibuffered recording of digitized sound on the sound card.
----------------------------------------------------------------------*/
-
-int BLASTER_BeginBufferedRecord(
-    char *BufferStart,
-    int BufferSize,
-    int NumDivisions,
-    unsigned SampleRate,
-    int MixMode,
-    void (*CallBackFunc)(void))
-
-{
-    int DmaStatus;
-    int TransferLength;
-
-    //JIM
-    //   if ( BLASTER_SoundPlaying || BLASTER_SoundRecording )
-    {
-        BLASTER_StopPlayback();
-    }
-
-    BLASTER_SetMixMode(MixMode);
-
-    DmaStatus = BLASTER_SetupDMABuffer(BufferStart, BufferSize, DMA_AutoInitWrite);
-    if (DmaStatus == BLASTER_Error)
-    {
-        return (BLASTER_Error);
-    }
-
-    BLASTER_SetPlaybackRate(SampleRate);
-
-    BLASTER_SetCallBack(CallBackFunc);
-
-    BLASTER_EnableInterrupt();
-
-    // Turn off speaker
-    BLASTER_SpeakerOff();
-
-    TransferLength = BufferSize / NumDivisions;
-    BLASTER_TransferLength = TransferLength;
-
-    //  Program the sound card to start the transfer.
-    if (BLASTER_Version < DSP_Version2xx)
-    {
-        BLASTER_DSP1xx_BeginRecord(TransferLength);
-    }
-    else if (BLASTER_Version < DSP_Version4xx)
-    {
-        BLASTER_DSP2xx_BeginRecord(TransferLength);
-    }
-    else
-    {
-        BLASTER_DSP4xx_BeginRecord(TransferLength);
     }
 
     return (BLASTER_Ok);
@@ -1801,7 +1625,6 @@ void BLASTER_UnlockMemory(
     DPMI_Unlock(BLASTER_SampleRate);
     DPMI_Unlock(BLASTER_HaltTransferCommand);
     DPMI_Unlock(BLASTER_SoundPlaying);
-    DPMI_Unlock(BLASTER_SoundRecording);
     DPMI_Unlock(BLASTER_CallBack);
     DPMI_Unlock(BLASTER_IntController1Mask);
     DPMI_Unlock(BLASTER_IntController2Mask);
@@ -1846,7 +1669,6 @@ int BLASTER_LockMemory(
     status |= DPMI_Lock(BLASTER_SampleRate);
     status |= DPMI_Lock(BLASTER_HaltTransferCommand);
     status |= DPMI_Lock(BLASTER_SoundPlaying);
-    status |= DPMI_Lock(BLASTER_SoundRecording);
     status |= DPMI_Lock(BLASTER_CallBack);
     status |= DPMI_Lock(BLASTER_IntController1Mask);
     status |= DPMI_Lock(BLASTER_IntController2Mask);

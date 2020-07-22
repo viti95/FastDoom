@@ -1030,46 +1030,6 @@ int PAS_BeginBufferedPlayback
    return( PAS_Ok );
    }
 
-
-/*---------------------------------------------------------------------
-   Function: PAS_BeginBufferedRecord
-
-   Begins multibuffered recording of digitized sound on the sound card.
----------------------------------------------------------------------*/
-
-int PAS_BeginBufferedRecord
-   (
-   char *BufferStart,
-   int   BufferSize,
-   int   NumDivisions,
-   unsigned SampleRate,
-   int   MixMode,
-   void ( *CallBackFunc )( void )
-   )
-
-   {
-   int DmaStatus;
-
-   PAS_StopPlayback();
-
-   PAS_SetMixMode( MixMode );
-   PAS_SetPlaybackRate( SampleRate );
-
-   PAS_TransferLength = BufferSize / NumDivisions;
-   PAS_SetCallBack( CallBackFunc );
-
-   DmaStatus = PAS_SetupDMABuffer( BufferStart, BufferSize, DMA_AutoInitWrite );
-   if ( DmaStatus == PAS_Error )
-      {
-      return( PAS_Error );
-      }
-
-   PAS_BeginTransfer( RECORD );
-
-   return( PAS_Ok );
-   }
-
-
 /*---------------------------------------------------------------------
    Function: PAS_CallInt
 

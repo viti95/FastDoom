@@ -86,9 +86,6 @@ int BLASTER_GetCurrentPos(void);
 int BLASTER_DSP1xx_BeginPlayback(int length);
 int BLASTER_DSP2xx_BeginPlayback(int length);
 int BLASTER_DSP4xx_BeginPlayback(int length);
-int BLASTER_BeginBufferedRecord(char *BufferStart, int BufferSize,
-                                int NumDivisions, unsigned SampleRate, int MixMode,
-                                void (*CallBackFunc)(void));
 int BLASTER_BeginBufferedPlayback(char *BufferStart,
                                   int BufferSize, int NumDivisions, unsigned SampleRate,
                                   int MixMode, void (*CallBackFunc)(void));
