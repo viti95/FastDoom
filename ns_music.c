@@ -56,12 +56,6 @@ int MUSIC_Init(
     int i;
     int status;
 
-    if (USER_CheckParameter("ASSVER"))
-    {
-        MUSIC_SetErrorCode(MUSIC_ASSVersion);
-        return (MUSIC_Error);
-    }
-
     status = LL_LockMemory();
     if (status != LL_Ok)
     {

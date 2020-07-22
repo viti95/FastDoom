@@ -42,12 +42,6 @@ int FX_SetupCard(
     int status;
     int DeviceStatus;
 
-    if (USER_CheckParameter("ASSVER"))
-    {
-        FX_SetErrorCode(FX_ASSVersion);
-        return (FX_Error);
-    }
-
     FX_SoundDevice = SoundCard;
 
     status = FX_Ok;
@@ -234,12 +228,6 @@ int FX_Init(
     if (FX_Installed)
     {
         FX_Shutdown();
-    }
-
-    if (USER_CheckParameter("ASSVER"))
-    {
-        FX_SetErrorCode(FX_ASSVersion);
-        return (FX_Error);
     }
 
     status = LL_LockMemory();
