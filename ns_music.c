@@ -176,19 +176,6 @@ int MUSIC_Shutdown(
 }
 
 /*---------------------------------------------------------------------
-   Function: MUSIC_SetMaxFMMidiChannel
-
-   Sets the maximum MIDI channel that FM cards respond to.
----------------------------------------------------------------------*/
-
-void MUSIC_SetMaxFMMidiChannel(
-    int channel)
-
-{
-    AL_SetMaxMidiChannel(channel);
-}
-
-/*---------------------------------------------------------------------
    Function: MUSIC_SetVolume
 
    Sets the volume of music playback.

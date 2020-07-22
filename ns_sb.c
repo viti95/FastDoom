@@ -376,21 +376,6 @@ int BLASTER_ResetDSP(
 
     outp(port, 1);
 
-    /* What the hell am I doing here?
-   count = 100;
-
-   do
-      {
-      if ( inp( port ) == 255 )
-         {
-         break;
-         }
-
-      count--;
-      }
-   while( count > 0 );
-*/
-
     count = 0x100;
     do
     {

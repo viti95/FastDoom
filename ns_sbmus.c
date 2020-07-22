@@ -1299,22 +1299,6 @@ void AL_Shutdown
    DPMI_Unlock( AL_MaxMidiChannel );
    }
 
-
-/*---------------------------------------------------------------------
-   Function: AL_SetMaxMidiChannel
-
-   Sets the maximum MIDI channel that FM cards respond to.
----------------------------------------------------------------------*/
-
-void AL_SetMaxMidiChannel
-   (
-   int channel
-   )
-
-   {
-   AL_MaxMidiChannel = channel - 1;
-   }
-
 /*---------------------------------------------------------------------
    Function: AL_Init
 

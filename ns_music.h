@@ -34,7 +34,6 @@ typedef struct
 
 int MUSIC_Init(int SoundCard, int Address);
 int MUSIC_Shutdown(void);
-void MUSIC_SetMaxFMMidiChannel(int channel);
 void MUSIC_SetVolume(int volume);
 void MUSIC_SetMidiChannelVolume(int channel, int volume);
 void MUSIC_ResetMidiChannelVolumes(void);

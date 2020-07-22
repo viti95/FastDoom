@@ -23,7 +23,6 @@ int AL_ReserveVoice(int voice);
 int AL_ReleaseVoice(int voice);
 void AL_Shutdown(void);
 int AL_Init(int soundcard);
-void AL_SetMaxMidiChannel(int channel);
 void AL_Reset(void);
 void AL_NoteOff(int channel, int key, int velocity);
 void AL_NoteOn(int channel, int key, int vel);
