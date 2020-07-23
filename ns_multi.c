@@ -2155,14 +2155,6 @@ int MV_Init(
         return (MV_Error);
     }
 
-    if (MV_TestPlayback() != MV_Ok)
-    {
-        status = MV_ErrorCode;
-        MV_Shutdown();
-        MV_SetErrorCode(status);
-        return (MV_Error);
-    }
-
     return (MV_Ok);
 }
 
