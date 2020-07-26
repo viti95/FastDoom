@@ -63,8 +63,8 @@ char *MV_MixBuffer[NumberOfBuffers + 1];
 
 static VoiceNode *MV_Voices = NULL;
 
-static volatile VoiceNode VoiceList;
-static volatile VoiceNode VoicePool;
+static VoiceNode VoiceList;
+static VoiceNode VoicePool;
 
 static int MV_MixPage = 0;
 static int MV_VoiceHandle = MV_MinVoiceHandle;
@@ -721,9 +721,7 @@ playbackstatus MV_GetNextWAVBlock(
    Locates the voice with the specified handle.
 ---------------------------------------------------------------------*/
 
-VoiceNode *MV_GetVoice(
-    int handle)
-
+VoiceNode *MV_GetVoice(int handle)
 {
     VoiceNode *voice;
     unsigned flags;
@@ -742,7 +740,7 @@ VoiceNode *MV_GetVoice(
 
     if (voice == &VoiceList)
     {
-        MV_SetErrorCode(MV_VoiceNotFound);
+        return NULL;
     }
 
     return (voice);
@@ -755,9 +753,7 @@ VoiceNode *MV_GetVoice(
    playing.
 ---------------------------------------------------------------------*/
 
-int MV_VoicePlaying(
-    int handle)
-
+int MV_VoicePlaying(int handle)
 {
     VoiceNode *voice;
 
@@ -774,7 +770,7 @@ int MV_VoicePlaying(
         return (FALSE);
     }
 
-    return (FALSE); // WRONG! HACK TO MAKE SOUND WORK AGAIN! FIX THIS!
+    return (TRUE);
 }
 
 /*---------------------------------------------------------------------
