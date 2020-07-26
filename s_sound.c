@@ -412,21 +412,7 @@ void S_StartSound(void *origin_p, int sfx_id)
     sfx = &S_sfx[sfx_id];
 
     // Initialize sound parameters
-    if (sfx->link)
-    {
-        priority = sfx->priority;
-        volume += sfx->volume;
-
-        if (volume < 1)
-            return;
-
-        if (volume > snd_SfxVolume)
-            volume = snd_SfxVolume;
-    }
-    else
-    {
-        priority = NORM_PRIORITY;
-    }
+    priority = NORM_PRIORITY;
 
     // Check to see if it is audible,
     //  and if not, modify the params
@@ -537,20 +523,6 @@ void S_UpdateSounds(void *listener_p)
                 // initialize parameters
                 volume = snd_SfxVolume;
                 sep = NORM_SEP;
-
-                if (sfx->link)
-                {
-                    volume += sfx->volume;
-                    if (volume < 1)
-                    {
-                        S_StopChannel(cnum);
-                        continue;
-                    }
-                    else if (volume > snd_SfxVolume)
-                    {
-                        volume = snd_SfxVolume;
-                    }
-                }
 
                 // check non-local sounds for distance clipping
                 //  or modify their params

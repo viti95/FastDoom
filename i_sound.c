@@ -132,11 +132,6 @@ void I_PlaySong(int handle, boolean looping)
 int I_GetSfxLumpNum(sfxinfo_t *sfx)
 {
     char namebuf[9];
-
-    if (sfx->link)
-    {
-        sfx = sfx->link;
-    }
     sprintf(namebuf, "d%c%s", snd_prefixen[snd_SfxDevice], sfx->name);
     return W_GetNumForName(namebuf);
 }
