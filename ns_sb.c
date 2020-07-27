@@ -10,8 +10,6 @@
 #include "ns_sb.h"
 #include "ns_sbdef.h"
 
-#define USESTACK
-
 const int BLASTER_Interrupts[BLASTER_MaxIrq + 1] =
     {
         INVALID, INVALID, 0xa, 0xb,
