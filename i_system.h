@@ -89,7 +89,7 @@ int I_GetSfxLumpNum(sfxinfo_t *sfx);
 // They refer to the card type.  The routine will cache in the
 // appropriate sound effect when it is played.
 
-int I_StartSound(int id, void *data, int vol, int sep, int priority);
+int I_StartSound(int id, void *data, int vol, int sep);
 // Starts a sound in a particular sound channel
 
 void I_UpdateSoundParams(int handle, int vol, int sep);

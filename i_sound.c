@@ -136,7 +136,7 @@ int I_GetSfxLumpNum(sfxinfo_t *sfx)
     return W_GetNumForName(namebuf);
 }
 
-int I_StartSound(int id, void *data, int vol, int sep, int priority)
+int I_StartSound(int id, void *data, int vol, int sep)
 {
     return SFX_PlayPatch(data, sep, vol);
 }

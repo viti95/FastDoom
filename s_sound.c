@@ -399,7 +399,6 @@ void S_StartSound(void *origin_p, int sfx_id)
 
     int rc;
     int sep;
-    int priority;
     sfxinfo_t *sfx;
     int cnum;
     int volume = snd_SfxVolume;
@@ -410,9 +409,6 @@ void S_StartSound(void *origin_p, int sfx_id)
         return;
 
     sfx = &S_sfx[sfx_id];
-
-    // Initialize sound parameters
-    priority = NORM_PRIORITY;
 
     // Check to see if it is audible,
     //  and if not, modify the params
@@ -469,11 +465,7 @@ void S_StartSound(void *origin_p, int sfx_id)
 
     // Assigns the handle to one of the channels in the
     //  mix/output buffer.
-    channels[cnum].handle = I_StartSound(sfx_id,
-                                         sfx->data,
-                                         volume,
-                                         sep,
-                                         priority);
+    channels[cnum].handle = I_StartSound(sfx_id, sfx->data, volume, sep);
 }
 
 //
