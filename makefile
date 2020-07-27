@@ -117,8 +117,6 @@ newdoom.exe : $(GLOBOBJS)
  wlink @newdoom.lnk
  copy newdoom.exe doom.exe
  wstrip doom.exe
-# 4gwbind 4gwpro.exe striptic.exe heretic.exe -V
-# prsucc
 
 .c.obj :
  wcc386 $(CCOPTS) $[*
