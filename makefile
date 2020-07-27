@@ -23,7 +23,11 @@
 #
 # --------------------------------------------------------------------------
 
-CCOPTS = /d2 /omaxet /zp8 /4r /ei /j /zq
+# Build options for 486DX/SX
+CCOPTS = /d2 /omaxet /zp4 /4r /ei /j /zq
+
+# Build options for 386DX/SX
+#CCOPTS = /d2 /omaxet /zp4 /3r /ei /j /zq
 
 GLOBOBJS = &
  ns_dpmi.obj &
