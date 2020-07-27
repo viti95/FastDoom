@@ -36,15 +36,6 @@ struct sfxinfo_struct
     // Sfx priority
     int priority;
 
-    // referenced sound if a link
-    sfxinfo_t *link;
-
-    // pitch if a link
-    int pitch;
-
-    // volume if a link
-    int volume;
-
     // sound data
     void *data;
 
