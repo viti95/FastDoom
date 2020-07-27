@@ -757,12 +757,6 @@ int MV_VoicePlaying(int handle)
 {
     VoiceNode *voice;
 
-    if (!MV_Installed)
-    {
-        MV_SetErrorCode(MV_NotInstalled);
-        return (FALSE);
-    }
-
     voice = MV_GetVoice(handle);
 
     if (voice == NULL)
@@ -783,12 +777,6 @@ int MV_KillAllVoices(
     void)
 
 {
-    if (!MV_Installed)
-    {
-        MV_SetErrorCode(MV_NotInstalled);
-        return (MV_Error);
-    }
-
     // Remove all the voices from the list
     while (VoiceList.next != &VoiceList)
     {
@@ -811,12 +799,6 @@ int MV_Kill(
     VoiceNode *voice;
     unsigned flags;
     unsigned long callbackval;
-
-    if (!MV_Installed)
-    {
-        MV_SetErrorCode(MV_NotInstalled);
-        return (MV_Error);
-    }
 
     flags = DisableInterrupts();
 
@@ -855,12 +837,6 @@ int MV_VoicesPlaying(
     VoiceNode *voice;
     int NumVoices = 0;
     unsigned flags;
-
-    if (!MV_Installed)
-    {
-        MV_SetErrorCode(MV_NotInstalled);
-        return (0);
-    }
 
     flags = DisableInterrupts();
 
@@ -994,12 +970,6 @@ int MV_SetPitch(
 {
     VoiceNode *voice;
 
-    if (!MV_Installed)
-    {
-        MV_SetErrorCode(MV_NotInstalled);
-        return (MV_Error);
-    }
-
     voice = MV_GetVoice(handle);
     if (voice == NULL)
     {
@@ -1024,12 +994,6 @@ int MV_SetFrequency(
 
 {
     VoiceNode *voice;
-
-    if (!MV_Installed)
-    {
-        MV_SetErrorCode(MV_NotInstalled);
-        return (MV_Error);
-    }
 
     voice = MV_GetVoice(handle);
     if (voice == NULL)
@@ -1235,12 +1199,6 @@ int MV_EndLooping(
     VoiceNode *voice;
     unsigned flags;
 
-    if (!MV_Installed)
-    {
-        MV_SetErrorCode(MV_NotInstalled);
-        return (MV_Error);
-    }
-
     flags = DisableInterrupts();
 
     voice = MV_GetVoice(handle);
@@ -1276,12 +1234,6 @@ int MV_SetPan(
 {
     VoiceNode *voice;
 
-    if (!MV_Installed)
-    {
-        MV_SetErrorCode(MV_NotInstalled);
-        return (MV_Error);
-    }
-
     voice = MV_GetVoice(handle);
     if (voice == NULL)
     {
@@ -1306,12 +1258,6 @@ int MV_SetMixMode(
 
 {
     int mode;
-
-    if (!MV_Installed)
-    {
-        MV_SetErrorCode(MV_NotInstalled);
-        return (MV_Error);
-    }
 
     mode = 0;
     if (numchannels == 2)
@@ -1596,12 +1542,6 @@ int MV_PlayLoopedRaw(
 
 {
     VoiceNode *voice;
-
-    if (!MV_Installed)
-    {
-        MV_SetErrorCode(MV_NotInstalled);
-        return (MV_Error);
-    }
 
     // Request a voice from the voice pool
     voice = MV_AllocVoice(priority);
