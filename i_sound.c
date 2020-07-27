@@ -138,7 +138,7 @@ int I_GetSfxLumpNum(sfxinfo_t *sfx)
 
 int I_StartSound(int id, void *data, int vol, int sep, int priority)
 {
-    return SFX_PlayPatch(data, sep, vol, 0, 100);
+    return SFX_PlayPatch(data, sep, vol);
 }
 
 void I_StopSound(int handle)

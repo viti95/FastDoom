@@ -305,7 +305,7 @@ int MUS_PlaySong(int handle, int volume)
     return (status != MUSIC_Ok);
 }
 
-int SFX_PlayPatch(void *vdata, int sep, int vol, int unk1, int unk2)
+int SFX_PlayPatch(void *vdata, int sep, int vol)
 {
     unsigned int rate;
     unsigned long len;
