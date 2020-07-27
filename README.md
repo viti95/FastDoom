@@ -18,6 +18,10 @@ Doom port for DOS, based on PCDoom by @nukeykt. The goal of this port is to make
 * Removed network gaming support
 * Removed joystick support
 * Removed Y mouse movement (move forward/backwards)
+* Added autorun support (F11 key).
+* Added mono sound support. Enabled with "-mono" parameter.
+* Added low quality sound support (8000Hz instead of 11025Hz). Enabled with "-lowsound" parameter.
+* Replaced DOS/4GW with DOS/32A providing a good speedup!
 
 ## DEMO
 
