@@ -16,6 +16,8 @@ enum AL_Errors
 #define ADLIB_PORT 0x388
 
 void AL_SendOutputToPort(int port, int reg, int data);
+void AL_SendOutputToPort_OPL2LPT(int port, int reg, int data);
+void AL_SendOutputToPort_OPL3LPT(int port, int reg, int data);
 void AL_SendOutput(int voice, int reg, int data);
 void AL_StereoOn(void);
 void AL_StereoOff(void);

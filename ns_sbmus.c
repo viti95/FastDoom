@@ -156,6 +156,83 @@ void AL_SendOutputToPort(
    }
 }
 
+void AL_SendOutputToPort_OPL2LPT(int port, int reg, int data)
+{
+   int i;
+   int lpt_data;
+   int lpt_ctrl;
+
+   lpt_data = port;
+   lpt_ctrl = port + 2;
+
+   /* Select OPL2 register */
+   outp(lpt_data, reg);
+   outp(lpt_ctrl, 13);
+   outp(lpt_ctrl, 9);
+   outp(lpt_ctrl, 13);
+
+   /* Wait at least 3.3 microseconds */
+   for (i = 0; i < 6; i++)
+   {
+      inp(lpt_ctrl);
+   }
+
+   /* Set value */
+   outp(lpt_data, data);
+   outp(lpt_ctrl, 12);
+   outp(lpt_ctrl, 8);
+   outp(lpt_ctrl, 12);
+
+   /* Wait at least 23 microseconds */
+   for (i = 0; i < 35; i++)
+   {
+      inp(lpt_ctrl);
+   }
+}
+
+void AL_SendOutputToPort_OPL3LPT(int port, int reg, int data)
+{
+   int i;
+   int lpt_data;
+   int lpt_ctrl;
+
+   lpt_data = port;
+   lpt_ctrl = port + 2;
+   
+   /* Select OPL3 register */
+   outp(lpt_data, reg & 0xFF);
+   if (reg < 0x100)
+   {
+      outp(lpt_ctrl, 13);
+      outp(lpt_ctrl, 9);
+      outp(lpt_ctrl, 13);
+   }
+   else
+   {
+      outp(lpt_ctrl, 5);
+      outp(lpt_ctrl, 1);
+      outp(lpt_ctrl, 5);
+   }
+
+   /* Wait at least 3.3 microseconds */
+   for (i = 0; i < 6; i++)
+   {
+      inp(lpt_ctrl);
+   }
+
+   /* Set value */
+   outp(lpt_data, data);
+   outp(lpt_ctrl, 12);
+   outp(lpt_ctrl, 8);
+   outp(lpt_ctrl, 12);
+
+   /* 3.3 microseconds is sufficient here as well for OPL3 */
+   for (i = 0; i < 6; i++)
+   {
+      inp(lpt_ctrl);
+   }
+}
+
 /*---------------------------------------------------------------------
    Function: AL_SendOutput
 
