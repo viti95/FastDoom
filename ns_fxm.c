@@ -219,7 +219,7 @@ int FX_Init(
     int numvoices,
     int numchannels,
     int samplebits,
-    unsigned mixrate)
+    unsigned int mixrate)
 
 {
     int status;

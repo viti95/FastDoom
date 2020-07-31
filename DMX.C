@@ -22,6 +22,7 @@
 #include "ns_task.h"
 #include "mus2mid.h"
 #include "ns_pcfx.h"
+#include "doomstat.h"
 
 unsigned short divisors[] = {
     0,
@@ -535,7 +536,12 @@ void WAV_PlayMode(int channels, int samplerate)
 
         FX_SetupSoundBlaster(dmx_blaster, (int *)&MaxVoices, (int *)&MaxBits, (int *)&MaxChannels);
     }
-    status = FX_Init(device, channels, 2, 8, samplerate);
+
+    if (monoSound)
+        status = FX_Init(device, channels, 1, 8, samplerate);
+    else
+        status = FX_Init(device, channels, 2, 8, samplerate);
+    
     FX_SetVolume(255);
 }
 
