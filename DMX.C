@@ -479,6 +479,9 @@ int DMX_Init(int rate, int maxsng, int mdev, int sdev)
     case AHW_ULTRA_SOUND:
         device = UltraSound;
         break;
+    case AHW_AWE32:
+        device = Awe32;
+        break;
     default:
         return -1;
         break;
