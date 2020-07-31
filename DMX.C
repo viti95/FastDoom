@@ -535,7 +535,7 @@ void WAV_PlayMode(int channels, int samplerate)
 
         FX_SetupSoundBlaster(dmx_blaster, (int *)&MaxVoices, (int *)&MaxBits, (int *)&MaxChannels);
     }
-    status = FX_Init(device, channels, 2, 16, samplerate);
+    status = FX_Init(device, channels, 2, 8, samplerate);
     FX_SetVolume(255);
 }
 
