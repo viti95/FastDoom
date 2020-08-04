@@ -111,21 +111,22 @@ void R_MapPlane(int y,
     fixed_t length;
     unsigned index;
 
-    if (planeheight != cachedheight[y])
+    if (!flatSurfaces)
     {
-        cachedheight[y] = planeheight;
-        distance = cacheddistance[y] = FixedMul(planeheight, yslope[y]);
-        ds_xstep = cachedxstep[y] = FixedMul(distance, basexscale);
-        ds_ystep = cachedystep[y] = FixedMul(distance, baseyscale);
-    }
-    else
-    {
-        distance = cacheddistance[y];
-        ds_xstep = cachedxstep[y];
-        ds_ystep = cachedystep[y];
-    }
+        if (planeheight != cachedheight[y])
+        {
+            cachedheight[y] = planeheight;
+            distance = cacheddistance[y] = FixedMul(planeheight, yslope[y]);
+            ds_xstep = cachedxstep[y] = FixedMul(distance, basexscale);
+            ds_ystep = cachedystep[y] = FixedMul(distance, baseyscale);
+        }
+        else
+        {
+            distance = cacheddistance[y];
+            ds_xstep = cachedxstep[y];
+            ds_ystep = cachedystep[y];
+        }
 
-    if (!flatSurfaces){
         length = FixedMul(distance, distscale[x1]);
         angle = (viewangle + xtoviewangle[x1]) >> ANGLETOFINESHIFT;
         ds_xfrac = viewx + FixedMul(finecosine[angle], length);
@@ -301,7 +302,7 @@ void R_DrawPlanes(void)
     int stop;
     int angle;
 
-    byte t1,b1,t2,b2;
+    byte t1, b1, t2, b2;
 
     for (pl = visplanes; pl < lastvisplane; pl++)
     {
