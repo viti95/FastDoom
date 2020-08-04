@@ -240,7 +240,7 @@ void I_SetPalette(byte *palette)
     _outbyte(PEL_WRITE_ADR, 0);
     for (i = 0; i < 768; i++)
     {
-        _outbyte(PEL_DATA, (gammatable[*palette++]) >> 2);
+        _outbyte(PEL_DATA, (gammatable[usegamma][*palette++]) >> 2);
     }
 }
 

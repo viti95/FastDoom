@@ -57,6 +57,11 @@
 
 #define DETAILHI "High detail"
 #define DETAILLO "Low detail"
+#define GAMMALVL0 "Gamma correction OFF"
+#define GAMMALVL1 "Gamma correction level 1"
+#define GAMMALVL2 "Gamma correction level 2"
+#define GAMMALVL3 "Gamma correction level 3"
+#define GAMMALVL4 "Gamma correction level 4"
 #define EMPTYSTRING "empty slot"
 #define AUTORUNON "Autorun enabled"
 #define AUTORUNOFF "Autorun disabled"
