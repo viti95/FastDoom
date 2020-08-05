@@ -551,5 +551,5 @@ int CODEC_Detect(int *a, int *b)
 }
 int ENS_Detect(void)
 {
-    return 1;
+    return SOUNDSCAPE_FindCard() != 0;
 }
