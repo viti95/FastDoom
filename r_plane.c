@@ -327,9 +327,14 @@ void R_DrawPlanes(void)
 
                 if (dc_yl <= dc_yh)
                 {
-                    angle = (viewangle + xtoviewangle[x]) >> ANGLETOSKYSHIFT;
                     dc_x = x;
-                    dc_source = R_GetColumn(skytexture, angle);
+
+                    if (!flatSky)
+                    {
+                        angle = (viewangle + xtoviewangle[x]) >> ANGLETOSKYSHIFT;
+                        dc_source = R_GetColumn(skytexture, angle);
+                    }
+
                     skyfunc();
                 }
             }
