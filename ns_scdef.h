@@ -100,7 +100,6 @@ static int SOUNDSCAPE_LockMemory(void);
 static unsigned short allocateTimerStack(unsigned short size);
 static void deallocateTimerStack(unsigned short selector);
 static int parse(char *val, char *str, FILE *p1);
-static int SOUNDSCAPE_FindCard(void);
 static int SOUNDSCAPE_Setup(void);
 
 #endif

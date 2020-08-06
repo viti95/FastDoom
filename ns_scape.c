@@ -873,9 +873,7 @@ static int parse(
    Determines if a SoundScape is present and where it is located.
 ---------------------------------------------------------------------*/
 
-static int SOUNDSCAPE_FindCard(
-    void)
-
+int SOUNDSCAPE_FindCard(void)
 {
     int found;
     int status;

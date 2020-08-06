@@ -38,5 +38,6 @@ void SOUNDSCAPE_SetCallBack(void (*func)(void));
 int SOUNDSCAPE_GetMIDIPort(void);
 int SOUNDSCAPE_Init(void);
 void SOUNDSCAPE_Shutdown(void);
+int SOUNDSCAPE_FindCard(void);
 
 #endif

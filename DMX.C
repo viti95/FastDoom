@@ -23,6 +23,7 @@
 #include "mus2mid.h"
 #include "ns_pcfx.h"
 #include "doomstat.h"
+#include "ns_scape.h"
 
 unsigned short divisors[] = {
     0,
