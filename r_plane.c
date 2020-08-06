@@ -342,21 +342,23 @@ void R_DrawPlanes(void)
         }
 
         // regular flat
+
         ds_source = W_CacheLumpNum(firstflat +
                                        flattranslation[pl->picnum],
                                    PU_STATIC);
+        if (!flatSurfaces)
+        {
+            planeheight = abs(pl->height - viewz);
+            light = (pl->lightlevel >> LIGHTSEGSHIFT) + extralight;
 
-        planeheight = abs(pl->height - viewz);
-        light = (pl->lightlevel >> LIGHTSEGSHIFT) + extralight;
+            if (light >= LIGHTLEVELS)
+                light = LIGHTLEVELS - 1;
 
-        if (light >= LIGHTLEVELS)
-            light = LIGHTLEVELS - 1;
+            if (light < 0)
+                light = 0;
 
-        if (light < 0)
-            light = 0;
-
-        planezlight = zlight[light];
-
+            planezlight = zlight[light];
+        }
         pl->top[pl->maxx + 1] = 0xff;
         pl->top[pl->minx - 1] = 0xff;
 
