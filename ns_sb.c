@@ -1138,17 +1138,13 @@ int BLASTER_GetMidiVolume(
    Blaster's mixer chip.
 ---------------------------------------------------------------------*/
 
-int BLASTER_SetMidiVolume(
-    int volume)
-
+void BLASTER_SetMidiVolume(int volume)
 {
     int data;
-    int status;
 
     volume = min(255, volume);
     volume = max(0, volume);
 
-    status = BLASTER_Ok;
     switch (BLASTER_MixerType)
     {
     case SBPro:
@@ -1164,10 +1160,7 @@ int BLASTER_SetMidiVolume(
 
     default:
         BLASTER_SetErrorCode(BLASTER_NoMixer);
-        status = BLASTER_Error;
     }
-
-    return (status);
 }
 
 /*---------------------------------------------------------------------
