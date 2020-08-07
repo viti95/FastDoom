@@ -972,7 +972,7 @@ void G_DoNewGame(void)
     demoplayback = false;
     respawnparm = false;
     fastparm = false;
-    nomonsters = false;
+    //nomonsters = false;
     G_InitNew(d_skill, d_episode, d_map);
     gameaction = ga_nothing;
 }
