@@ -23,7 +23,7 @@ typedef struct
     int Length;
 } DMA_PORT;
 
-static const DMA_PORT DMA_PortInfo[DMA_MaxChannel + 1] =
+DMA_PORT DMA_PortInfo[DMA_MaxChannel + 1] =
     {
         {VALID, BYTE, 0xA, 0xB, 0xC, 0x87, 0x0, 0x1},
         {VALID, BYTE, 0xA, 0xB, 0xC, 0x83, 0x2, 0x3},
@@ -178,7 +178,7 @@ char *DMA_GetCurrentPos(int channel)
     unsigned long addr;
     int status;
 
-    addr = NULL;
+    addr = 0;
     status = DMA_VerifyChannel(channel);
 
     if (status == DMA_Ok)
