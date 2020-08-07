@@ -45,39 +45,8 @@ int P_DivlineSide(fixed_t x,
                   fixed_t y,
                   divline_t *node)
 {
-  fixed_t left, right;
-  return
-    !node->dx ? x == node->x ? 2 : x <= node->x ? node->dy > 0 : node->dy < 0 :
-    !node->dy ? x == node->y ? 2 : y <= node->y ? node->dx < 0 : node->dx > 0 :
-    (right = ((y - node->y) >> FRACBITS) * (node->dx >> FRACBITS)) <
-    (left  = ((x - node->x) >> FRACBITS) * (node->dy >> FRACBITS)) ? 0 :
-    right == left ? 2 : 1;
-}
-
-//
-// P_InterceptVector2
-// Returns the fractional intercept point
-// along the first divline.
-// This is only called by the addthings and addlines traversers.
-//
-fixed_t
-P_InterceptVector2(divline_t *v2,
-                   divline_t *v1)
-{
-    fixed_t frac;
-    fixed_t num;
-    fixed_t den;
-
-    den = FixedMul(v1->dy >> 8, v2->dx) - FixedMul(v1->dx >> 8, v2->dy);
-
-    if (den == 0)
-        return 0;
-
-    num = FixedMul((v1->x - v2->x) >> 8, v1->dy) +
-          FixedMul((v2->y - v1->y) >> 8, v1->dx);
-    frac = FixedDiv(num, den);
-
-    return frac;
+    fixed_t left, right;
+    return !node->dx ? x == node->x ? 2 : x <= node->x ? node->dy > 0 : node->dy < 0 : !node->dy ? x == node->y ? 2 : y <= node->y ? node->dx < 0 : node->dx > 0 : (right = ((y - node->y) >> FRACBITS) * (node->dx >> FRACBITS)) < (left = ((x - node->x) >> FRACBITS) * (node->dy >> FRACBITS)) ? 0 : right == left ? 2 : 1;
 }
 
 //
@@ -104,6 +73,9 @@ boolean P_CrossSubsector(int num)
     fixed_t slope;
 
     fixed_t opt;
+
+    fixed_t numIV;
+    fixed_t denIV;
 
     sub = &subsectors[num];
 
@@ -171,7 +143,19 @@ boolean P_CrossSubsector(int num)
         if (openbottom >= opentop)
             return false; // stop
 
-        frac = P_InterceptVector2(&strace, &divl);
+        // P_InterceptVector2
+        denIV = FixedMul(divl.dy >> 8, strace.dx) - FixedMul(divl.dx >> 8, strace.dy);
+
+        if (denIV == 0)
+        {
+            frac = 0;
+        }
+        else
+        {
+            numIV = FixedMul((divl.x - strace.x) >> 8, divl.dy) +
+                  FixedMul((strace.y - divl.y) >> 8, divl.dx);
+            frac = FixedDiv(numIV, denIV);
+        }
 
         if (front->floorheight != back->floorheight)
         {
