@@ -163,7 +163,7 @@ void GUSWAVE_Shutdown(
             if (GUSWAVE_Voices[i].mem != 0) // Compare to NULL
             {
                 gf1_free(GUSWAVE_Voices[i].mem);
-                GUSWAVE_Voices[i].mem = NULL;
+                GUSWAVE_Voices[i].mem = 0;
             }
         }
 
