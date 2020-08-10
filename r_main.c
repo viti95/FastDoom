@@ -581,8 +581,6 @@ void R_ExecuteSetViewSize(void)
         else
             fuzzcolfunc = R_DrawFuzzColumn;
 
-        transcolfunc = R_DrawTranslatedColumn;
-
         if (flatSurfaces)
             spanfunc = R_DrawSpanFlat;
         else
@@ -606,8 +604,6 @@ void R_ExecuteSetViewSize(void)
             fuzzcolfunc = R_DrawFuzzColumnSaturn;
         else
             fuzzcolfunc = R_DrawFuzzColumn;
-
-        transcolfunc = R_DrawTranslatedColumn;
 
         if (flatSurfaces){
             if (potatoDetail)
@@ -699,7 +695,6 @@ void R_Init(void)
     printf(".");
     R_InitSkyMap();
     printf(".");
-    R_InitTranslationTables();
 
     framecount = 0;
 }

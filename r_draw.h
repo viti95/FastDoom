@@ -43,12 +43,6 @@ void R_DrawFuzzColumn(void);
 void R_DrawFuzzColumnSaturn(void);
 void R_DrawFuzzColumnFast(void);
 
-// Draw with color translation tables,
-//  for player sprite rendering,
-//  Green/Red/Blue/Indigo shirts.
-void R_DrawTranslatedColumn(void);
-void R_DrawTranslatedColumnLow(void);
-
 void R_DrawColumnPotato(void);
 void R_DrawSkyFlatPotato(void);
 
@@ -69,9 +63,6 @@ extern fixed_t ds_ystep;
 // start of a 64*64 tile image
 extern byte *ds_source;
 
-extern byte *translationtables;
-extern byte *dc_translation;
-
 // Span blitting for rows, floor/ceiling.
 // No Sepctre effect needed.
 void R_DrawSpan(void);
@@ -86,10 +77,6 @@ void R_DrawSpanFlatPotato(void);
 
 void R_InitBuffer(int width,
                   int height);
-
-// Initialize color translation tables,
-//  for player rendering etc.
-void R_InitTranslationTables(void);
 
 // Rendering function.
 void R_FillBackScreen(void);

@@ -365,12 +365,6 @@ void R_DrawVisSprite(vissprite_t *vis)
             dc_colormap = colormaps;
         colfunc = fuzzcolfunc;
     }
-    else if (vis->mobjflags & MF_TRANSLATION)
-    {
-        colfunc = R_DrawTranslatedColumn;
-        dc_translation = translationtables - 256 +
-                         ((vis->mobjflags & MF_TRANSLATION) >> (MF_TRANSSHIFT - 8));
-    }
 
     dc_iscale = abs(vis->xiscale) >> detailshift;
     dc_texturemid = vis->texturemid;
