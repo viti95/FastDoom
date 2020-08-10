@@ -347,9 +347,7 @@ void R_DrawMaskedColumn(column_t *column)
 // R_DrawVisSprite
 //  mfloorclip and mceilingclip should also be set.
 //
-void R_DrawVisSprite(vissprite_t *vis,
-                     int x1,
-                     int x2)
+void R_DrawVisSprite(vissprite_t *vis)
 {
     column_t *column;
     int texturecolumn;
@@ -671,7 +669,7 @@ void R_DrawPSprite(pspdef_t *psp)
         vis->colormap = spritelights[MAXLIGHTSCALE - 1];
     }
 
-    R_DrawVisSprite(vis, vis->x1, vis->x2);
+    R_DrawVisSprite(vis);
 }
 
 //
@@ -842,7 +840,7 @@ void R_DrawSprite(vissprite_t *spr)
 
     mfloorclip = clipbot;
     mceilingclip = cliptop;
-    R_DrawVisSprite(spr, spr->x1, spr->x2);
+    R_DrawVisSprite(spr);
 }
 
 //
