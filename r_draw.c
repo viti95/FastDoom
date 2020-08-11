@@ -422,7 +422,7 @@ void R_DrawFuzzColumnSaturn(void)
         // Re-map color indices from wall texture column
         //  using a lighting/special effects LUT.
 
-        *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]];
+        *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
 
         dest += SCREENWIDTH / 2;
         frac += fracstep;
@@ -431,13 +431,13 @@ void R_DrawFuzzColumnSaturn(void)
 
     if ((dc_yh - dc_yl) & 1)
     {
-        *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]];
+        *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
     }
     else
     {
         if (!(initialdrawpos & 1))
         {
-            *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]];
+            *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
         }
     }
 }
