@@ -93,6 +93,7 @@ boolean unlimitedRAM;
 boolean nearSprites;
 boolean monoSound;
 boolean lowSound;
+boolean waitInit;
 
 boolean drone;
 
@@ -756,6 +757,7 @@ void D_DoomMain(void)
     flatShadows = M_CheckParm("-flatshadows");
     saturnShadows = M_CheckParm("-saturn");
     potatoDetail = M_CheckParm("-potato");
+    waitInit = M_CheckParm("-init");
 
     monoSound = M_CheckParm("-mono");
     lowSound = M_CheckParm("-lowsound");
@@ -1016,6 +1018,11 @@ void D_DoomMain(void)
     printf("ST_Init: Init status bar.\n");
     D_RedrawTitle();
     ST_Init();
+
+    if (waitInit){
+        printf("PRESS ANY KEY TO CONTINUE");
+        while(lastpress == 0){};
+    }
 
     // start the apropriate game based on parms
     p = M_CheckParm("-record");
