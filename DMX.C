@@ -24,6 +24,7 @@
 #include "ns_pcfx.h"
 #include "doomstat.h"
 #include "ns_scape.h"
+#include "ns_sb.h"
 
 unsigned short divisors[] = {
     0,
@@ -539,6 +540,7 @@ void WAV_PlayMode(int channels, int samplerate)
         int MaxChannels;
 
         FX_SetupSoundBlaster(dmx_blaster, (int *)&MaxVoices, (int *)&MaxBits, (int *)&MaxChannels);
+        printf("Sound Blaster DSP %01X.%02X\n", BLASTER_Version >> 8, BLASTER_Version && 7);
     }
 
     status = FX_Init(device, channels, 2, 16, samplerate);

@@ -14,6 +14,7 @@ typedef struct
 
 extern BLASTER_CONFIG BLASTER_Config;
 extern int BLASTER_DMAChannel;
+extern int BLASTER_Version;
 
 #define UNDEFINED -1
 
