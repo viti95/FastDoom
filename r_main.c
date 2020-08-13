@@ -562,6 +562,9 @@ void R_ExecuteSetViewSize(void)
     }
 
     detailshift = setdetail;
+    if (setdetail == 1 && potatoDetail)
+        detailshift = 2;
+
     viewwidth = scaledviewwidth >> detailshift;
 
     centery = viewheight / 2;

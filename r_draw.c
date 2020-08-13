@@ -144,9 +144,6 @@ void R_DrawSkyFlatPotato(void)
     register int count;
     register byte *dest;
 
-    if (dc_x & 1)
-        return;
-
     count = dc_yh - dc_yl;
 
     if (count < 0)
@@ -154,7 +151,7 @@ void R_DrawSkyFlatPotato(void)
 
     outp(SC_INDEX + 1, 15);
 
-    dest = destview + dc_yl * 80 + (dc_x >> 1);
+    dest = destview + dc_yl * 80 + dc_x;
 
     do
     {
@@ -167,35 +164,21 @@ void R_DrawSpanPotato(void)
 {
     int spot;
     int prt;
-    int dsp_x1;
-    int dsp_x2;
     int countp;
     fixed_t xfrac;
     fixed_t yfrac;
     byte *dest;
 
-    dsp_x1 = ds_x1 >> 1;
-
-    if (ds_x1 & 1)
-        dsp_x1++;
-
-    dsp_x2 = ds_x2 >> 1;
-
-    countp = dsp_x2 - dsp_x1;
+    countp = ds_x2 - ds_x1;
 
     if (countp < 0)
         return;
 
-    dest = destview + ds_y * 80 + dsp_x1;
+    dest = destview + ds_y * 80 + ds_x1;
     outp(SC_INDEX + 1, 15);
 
     xfrac = ds_xfrac;
     yfrac = ds_yfrac;
-
-    prt = (dsp_x1 << 1) - ds_x1;
-
-    xfrac += ds_xstep * prt;
-    yfrac += ds_ystep * prt;
 
     do
     {
@@ -207,8 +190,8 @@ void R_DrawSpanPotato(void)
         *dest++ = ds_colormap[ds_source[spot]];
 
         // Next step in u,v.
-        xfrac += ds_xstep << 1;
-        yfrac += ds_ystep << 1;
+        xfrac += ds_xstep;
+        yfrac += ds_ystep;
     } while (countp--);
 }
 
@@ -243,9 +226,6 @@ void R_DrawFuzzColumn(void)
     register int count;
     register byte *dest;
 
-    if (potatoDetail && (dc_x & 1))
-        return;
-
     // Adjust borders. Low...
     if (!dc_yl)
         dc_yl = 1;
@@ -260,12 +240,15 @@ void R_DrawFuzzColumn(void)
     if (count < 0)
         return;
 
+    dest = destview + dc_yl * 80;
+
     if (detailshift)
     {
         if (potatoDetail)
         {
             outpw(GC_INDEX, GC_READMAP + (15 << 8));
             outp(SC_INDEX + 1, 15);
+            dest += dc_x;
         }
         else
         {
@@ -279,14 +262,14 @@ void R_DrawFuzzColumn(void)
                 outpw(GC_INDEX, GC_READMAP);
                 outp(SC_INDEX + 1, 3);
             }
+            dest += (dc_x >> 1);
         }
-        dest = destview + dc_yl * 80 + (dc_x >> 1);
     }
     else
     {
         outpw(GC_INDEX, GC_READMAP + ((dc_x & 3) << 8));
         outp(SC_INDEX + 1, 1 << (dc_x & 3));
-        dest = destview + dc_yl * 80 + (dc_x >> 2);
+        dest += (dc_x >> 2);
     }
 
     // Looks like an attempt at dithering,
@@ -313,14 +296,13 @@ void R_DrawFuzzColumnFast(void)
     register int count;
     register byte *dest;
 
-    if (potatoDetail && (dc_x & 1))
-        return;
-
     count = dc_yh - dc_yl;
 
     // Zero length.
     if (count < 0)
         return;
+
+    dest = destview + dc_yl * 80;
 
     if (detailshift)
     {
@@ -328,6 +310,7 @@ void R_DrawFuzzColumnFast(void)
         {
             outpw(GC_INDEX, GC_READMAP + (15 << 8));
             outp(SC_INDEX + 1, 15);
+            dest += dc_x;
         }
         else
         {
@@ -341,14 +324,14 @@ void R_DrawFuzzColumnFast(void)
                 outpw(GC_INDEX, GC_READMAP);
                 outp(SC_INDEX + 1, 3);
             }
+            dest += (dc_x >> 1);
         }
-        dest = destview + dc_yl * 80 + (dc_x >> 1);
     }
     else
     {
         outpw(GC_INDEX, GC_READMAP + ((dc_x & 3) << 8));
         outp(SC_INDEX + 1, 1 << (dc_x & 3));
-        dest = destview + dc_yl * 80 + (dc_x >> 2);
+        dest += (dc_x >> 2);
     }
 
     // Looks like an attempt at dithering,
@@ -374,9 +357,6 @@ void R_DrawFuzzColumnSaturn(void)
     fixed_t fracstep;
     int initialdrawpos = 0;
 
-    if (potatoDetail && (dc_x & 1))
-        return;
-
     count = (dc_yh - dc_yl) / 2 - 1;
 
     // Zero length, column does not exceed a pixel.
@@ -385,20 +365,29 @@ void R_DrawFuzzColumnSaturn(void)
 
     initialdrawpos = dc_yl + dc_x;
 
+    dest = destview + dc_yl * 80;
+
     if (detailshift)
     {
-        if (dc_x & 1)
-            outp(SC_INDEX + 1, 12);
+        if (potatoDetail)
+        {
+            outp(SC_INDEX + 1, 15);
+            dest += dc_x;
+        }
         else
-            outp(SC_INDEX + 1, 3);
+        {
+            if (dc_x & 1)
+                outp(SC_INDEX + 1, 12);
+            else
+                outp(SC_INDEX + 1, 3);
 
-        dest = destview + dc_yl * 80 + (dc_x >> 1);
+            dest += (dc_x >> 1);
+        }
     }
     else
     {
         outp(SC_INDEX + 1, 1 << (dc_x & 3));
-
-        dest = destview + dc_yl * 80 + (dc_x >> 2);
+        dest += (dc_x >> 2);
     }
 
     // Determine scaling,
@@ -608,26 +597,17 @@ void R_DrawSpanFlatLow(void)
 
 void R_DrawSpanFlatPotato(void)
 {
-    int dsp_x1;
-    int dsp_x2;
     int countp;
     byte *dest;
 
     lighttable_t color = ds_colormap[0][ds_source];
 
-    dsp_x1 = ds_x1 >> 1;
-
-    if (ds_x1 & 1)
-        dsp_x1++;
-
-    dsp_x2 = ds_x2 >> 1;
-
-    countp = dsp_x2 - dsp_x1;
+    countp = ds_x2 - ds_x1;
 
     if (countp < 0)
         return;
 
-    dest = destview + ds_y * 80 + dsp_x1;
+    dest = destview + ds_y * 80 + ds_x1;
     outp(SC_INDEX + 1, 15);
 
     do
@@ -834,3 +814,30 @@ void R_DrawViewBorder(void)
     // ?
     //V_MarkRect (0,0,SCREENWIDTH, SCREENHEIGHT-SBARHEIGHT);
 }
+
+/*void R_DrawColumnPotato_C(void)
+{
+    register int count;
+    register byte *dest;
+    fixed_t frac;
+    fixed_t fracstep;
+
+    count = dc_yh - dc_yl;
+    if (count < 0)
+        return;
+
+    outp(SC_INDEX + 1, 15);
+    dest = destview + dc_yl * 80 + dc_x;
+
+    // Looks familiar.
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    do
+    {
+        *dest = dc_colormap[dc_source[frac >> FRACBITS]];
+        dest += SCREENWIDTH / 4;
+
+        frac += fracstep;
+    } while (count--);
+}*/

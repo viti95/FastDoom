@@ -39,8 +39,6 @@ loopcount dd 0
 PROC  R_DrawColumnPotato_
 PUBLIC  R_DrawColumnPotato_
 	PUSHR
-	test	[_dc_x], 1
-	jnz		done
 	mov		ebp,[_dc_yl]
 	cmp 	ebp,[_dc_yh]
 	jg		done
@@ -48,7 +46,6 @@ PUBLIC  R_DrawColumnPotato_
 	add		edi,ebp
 	shl		edi,3
 	mov		ebx,[_dc_x]
-	shr		ebx,1
 	add		edi,ebx
 	add		edi,[_destview]
 	mov		eax,15
