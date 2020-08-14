@@ -102,9 +102,7 @@ void R_InitPlanes(void)
 //
 // BASIC PRIMITIVE
 //
-void R_MapPlane(int y,
-                int x1,
-                int x2)
+void R_MapPlane(int y, int x1)
 {
     angle_t angle;
     fixed_t distance;
@@ -147,7 +145,6 @@ void R_MapPlane(int y,
 
     ds_y = y;
     ds_x1 = x1;
-    ds_x2 = x2;
 
     // high or low detail
     spanfunc();
@@ -371,14 +368,16 @@ void R_DrawPlanes(void)
             t2 = pl->top[x];
             b2 = pl->bottom[x];
 
+            ds_x2 = x - 1;
+
             while (t1 < t2 && t1 <= b1)
             {
-                R_MapPlane(t1, spanstart[t1], x - 1);
+                R_MapPlane(t1, spanstart[t1]);
                 t1++;
             }
             while (b1 > b2 && b1 >= t1)
             {
-                R_MapPlane(b1, spanstart[b1], x - 1);
+                R_MapPlane(b1, spanstart[b1]);
                 b1--;
             }
 

@@ -39,8 +39,7 @@ void R_InitPlanes(void);
 void R_ClearPlanes(void);
 
 void R_MapPlane(int y,
-                int x1,
-                int x2);
+                int x1);
 
 void R_DrawPlanes(void);
 
