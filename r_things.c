@@ -770,8 +770,11 @@ void R_DrawSprite(vissprite_t *spr)
     fixed_t lowscale;
     int silhouette;
 
-    for (x = spr->x1; x <= spr->x2; x++)
-        clipbot[x] = cliptop[x] = -2;
+    for (x = spr->x1 ; x<=spr->x2 ; x++)
+    {
+        clipbot[x] = viewheight;
+        cliptop[x] = -1;
+    }
 
     // Scan drawsegs from end to start for obscuring segs.
     // The first drawseg that has a greater scale
@@ -810,27 +813,20 @@ void R_DrawSprite(vissprite_t *spr)
 
         // clip this piece of the sprite
         if (ds->silhouette & SIL_BOTTOM && spr->gz < ds->bsilheight) //bottom sil
-            for (x = r1; x <= r2; x++)
-                if (clipbot[x] == -2)
+        for (x = r1; x <= r2; x++)
+            {
+                if (clipbot[x] == viewheight)
                     clipbot[x] = ds->sprbottomclip[x];
+            }
 
         if (ds->silhouette & SIL_TOP && spr->gzt > ds->tsilheight) // top sil
             for (x = r1; x <= r2; x++)
-                if (cliptop[x] == -2)
+                if (cliptop[x] == -1)
                     cliptop[x] = ds->sprtopclip[x];
     }
 
     // all clipping has been performed, so draw the sprite
 
-    // check for unclipped columns
-    for (x = spr->x1; x <= spr->x2; x++)
-    {
-        if (clipbot[x] == -2)
-            clipbot[x] = viewheight;
-
-        if (cliptop[x] == -2)
-            cliptop[x] = -1;
-    }
 
     mfloorclip = clipbot;
     mceilingclip = cliptop;
