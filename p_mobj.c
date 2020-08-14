@@ -445,6 +445,25 @@ void P_MobjThinker(mobj_t *mobj)
     }
 }
 
+//Thinker function for stuff that doesn't need to do anything
+//interesting.
+//Just cycles through the states. Allows sprite animation to work.
+void P_MobjBrainlessThinker(mobj_t* mobj)
+{
+    // cycle through states,
+    // calling action functions at transitions
+
+    if (mobj->tics != -1)
+    {
+        mobj->tics--;
+
+        // you can cycle through multiple states in a tic
+
+        if (!mobj->tics)
+            P_SetMobjState (mobj, mobj->state->nextstate);
+    }
+}
+
 //
 // P_SpawnMobj
 //
@@ -497,8 +516,13 @@ P_SpawnMobj(fixed_t x,
     else
         mobj->z = z;
 
-    mobj->thinker.function.acp1 = (actionf_p1)P_MobjThinker;
-
+    if(mobj->type < MT_MISC0){
+        mobj->thinker.function.acp1 = (actionf_p1)P_MobjThinker;
+    }else{
+        if(mobj->tics != -1)
+            mobj->thinker.function.acp1 = (actionf_p1)P_MobjBrainlessThinker;
+    }
+    
     thinkercap.prev->next = &mobj->thinker;
     mobj->thinker.next = &thinkercap;
     mobj->thinker.prev = thinkercap.prev;
