@@ -29,10 +29,6 @@
 
 #include "f_wipe.h"
 
-#include "r_main.h"
-#include "hu_stuff.h"
-#include "st_stuff.h"
-
 //
 //                       SCREEN WIPE PACKAGE
 //
@@ -216,12 +212,6 @@ int wipe_exitMelt(int width,
                   int ticks)
 {
     Z_Free(y);
-    if (noMelt && screenblocks <= 10 && gamestate == GS_LEVEL)
-    {
-        ST_refreshBackground();
-        ST_drawWidgets(true);
-        HU_Drawer();
-    }
     return 0;
 }
 
