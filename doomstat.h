@@ -50,6 +50,7 @@ extern boolean nearSprites;
 extern boolean monoSound;
 extern boolean lowSound;
 extern boolean waitInit;
+extern boolean noMelt;
 
 // Set if homebrew PWAD stuff has been added.
 extern boolean modifiedgame;

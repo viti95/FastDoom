@@ -94,6 +94,7 @@ boolean nearSprites;
 boolean monoSound;
 boolean lowSound;
 boolean waitInit;
+boolean noMelt;
 
 boolean drone;
 
@@ -766,6 +767,8 @@ void D_DoomMain(void)
 
     unlimitedRAM = M_CheckParm("-ram");
     nearSprites = M_CheckParm("-near");
+
+    noMelt = M_CheckParm("-nomelt");
 
     if (!commercial)
     {

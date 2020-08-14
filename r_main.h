@@ -76,6 +76,7 @@ extern lighttable_t *fixedcolormap;
 //B remove this?
 //  0 = high, 1 = low
 extern int detailshift;
+extern int screenblocks;
 
 //
 // Function pointers to switch refresh/drawing functions.
