@@ -191,47 +191,55 @@ void R_RenderSegLoop(void)
 	int top;
 	int bottom;
 
+	int cc_rwx;
+	int fc_rwx;
+
 	//texturecolumn = 0;				// shut up compiler warning
 
 	for (; rw_x < rw_stopx; rw_x++)
 	{
+		cc_rwx = ceilingclip[rw_x];
+		fc_rwx = floorclip[rw_x];
+
 		// mark floor / ceiling areas
 		yl = (topfrac + HEIGHTUNIT - 1) >> HEIGHTBITS;
 
 		// no space above wall?
-		if (yl < ceilingclip[rw_x] + 1)
-			yl = ceilingclip[rw_x] + 1;
+		if (yl < cc_rwx + 1)
+			yl = cc_rwx + 1;
 
 		if (markceiling)
 		{
-			top = ceilingclip[rw_x] + 1;
+			top = cc_rwx + 1;
 			bottom = yl - 1;
 
-			if (bottom >= floorclip[rw_x])
-				bottom = floorclip[rw_x] - 1;
+			if (bottom >= fc_rwx)
+				bottom = fc_rwx - 1;
 
 			if (top <= bottom)
 			{
 				ceilingplane->top[rw_x] = top;
 				ceilingplane->bottom[rw_x] = bottom;
+				ceilingplane->modified = 1;
 			}
 		}
 
 		yh = bottomfrac >> HEIGHTBITS;
 
-		if (yh >= floorclip[rw_x])
-			yh = floorclip[rw_x] - 1;
+		if (yh >= fc_rwx)
+			yh = fc_rwx - 1;
 
 		if (markfloor)
 		{
 			top = yh + 1;
-			bottom = floorclip[rw_x] - 1;
-			if (top <= ceilingclip[rw_x])
-				top = ceilingclip[rw_x] + 1;
+			bottom = fc_rwx - 1;
+			if (top <= cc_rwx)
+				top = cc_rwx + 1;
 			if (top <= bottom)
 			{
 				floorplane->top[rw_x] = top;
 				floorplane->bottom[rw_x] = bottom;
+				floorplane->modified = 1;
 			}
 		}
 
@@ -262,8 +270,8 @@ void R_RenderSegLoop(void)
 			dc_texturemid = rw_midtexturemid;
 			dc_source = R_GetColumn(midtexture, texturecolumn);
 			colfunc();
-			ceilingclip[rw_x] = viewheight;
-			floorclip[rw_x] = -1;
+			cc_rwx = viewheight;
+			fc_rwx = -1;
 		}
 		else
 		{
@@ -274,8 +282,8 @@ void R_RenderSegLoop(void)
 				mid = pixhigh >> HEIGHTBITS;
 				pixhigh += pixhighstep;
 
-				if (mid >= floorclip[rw_x])
-					mid = floorclip[rw_x] - 1;
+				if (mid >= fc_rwx)
+					mid = fc_rwx - 1;
 
 				if (mid >= yl)
 				{
@@ -284,16 +292,16 @@ void R_RenderSegLoop(void)
 					dc_texturemid = rw_toptexturemid;
 					dc_source = R_GetColumn(toptexture, texturecolumn);
 					colfunc();
-					ceilingclip[rw_x] = mid;
+					cc_rwx = mid;
 				}
 				else
-					ceilingclip[rw_x] = yl - 1;
+					cc_rwx = yl - 1;
 			}
 			else
 			{
 				// no top wall
 				if (markceiling)
-					ceilingclip[rw_x] = yl - 1;
+					cc_rwx = yl - 1;
 			}
 
 			if (bottomtexture)
@@ -303,8 +311,8 @@ void R_RenderSegLoop(void)
 				pixlow += pixlowstep;
 
 				// no space above wall?
-				if (mid <= ceilingclip[rw_x])
-					mid = ceilingclip[rw_x] + 1;
+				if (mid <= cc_rwx)
+					mid = cc_rwx + 1;
 
 				if (mid <= yh)
 				{
@@ -314,16 +322,16 @@ void R_RenderSegLoop(void)
 					dc_source = R_GetColumn(bottomtexture,
 											texturecolumn);
 					colfunc();
-					floorclip[rw_x] = mid;
+					fc_rwx = mid;
 				}
 				else
-					floorclip[rw_x] = yh + 1;
+					fc_rwx = yh + 1;
 			}
 			else
 			{
 				// no bottom wall
 				if (markfloor)
-					floorclip[rw_x] = yh + 1;
+					fc_rwx = yh + 1;
 			}
 
 			if (maskedtexture)
@@ -337,6 +345,9 @@ void R_RenderSegLoop(void)
 		rw_scale += rw_scalestep;
 		topfrac += topstep;
 		bottomfrac += bottomstep;
+		
+		ceilingclip[rw_x] = cc_rwx;
+		floorclip[rw_x] = fc_rwx;
 	}
 }
 

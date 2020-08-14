@@ -402,6 +402,7 @@ typedef struct
     int lightlevel;
     int minx;
     int maxx;
+    byte modified;
 
     // leave pads for [minx-1]/[maxx+1]
 

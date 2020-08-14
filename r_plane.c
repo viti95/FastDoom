@@ -221,6 +221,8 @@ R_FindPlane(fixed_t height,
 
     memset(check->top, 0xff, sizeof(check->top));
 
+    check->modified = 0;
+
     return check;
 }
 
@@ -284,6 +286,8 @@ R_CheckPlane(visplane_t *pl,
 
     memset(pl->top, 0xff, sizeof(pl->top));
 
+    pl->modified = 0;
+
     return pl;
 }
 
@@ -303,6 +307,9 @@ void R_DrawPlanes(void)
 
     for (pl = visplanes; pl < lastvisplane; pl++)
     {
+        if (!pl->modified)
+            continue;
+        
         if (pl->minx > pl->maxx)
             continue;
 
