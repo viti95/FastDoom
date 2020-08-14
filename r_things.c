@@ -310,7 +310,12 @@ void R_DrawMaskedColumn(column_t *column)
     int bottomscreen;
     fixed_t basetexturemid;
 
+    int yl, yh;
+    short mfc_x, mcc_x;
+
     basetexturemid = dc_texturemid;
+    mfc_x = mfloorclip[dc_x];
+    mcc_x = mceilingclip[dc_x];
 
     for (; column->topdelta != 0xff;)
     {
@@ -319,19 +324,22 @@ void R_DrawMaskedColumn(column_t *column)
         topscreen = sprtopscreen + spryscale * column->topdelta;
         bottomscreen = topscreen + spryscale * column->length;
 
-        dc_yl = (topscreen + FRACUNIT - 1) >> FRACBITS;
-        dc_yh = (bottomscreen - 1) >> FRACBITS;
+        yl = (topscreen + FRACUNIT - 1) >> FRACBITS;
+        yh = (bottomscreen - 1) >> FRACBITS;
 
-        if (dc_yh >= mfloorclip[dc_x])
-            dc_yh = mfloorclip[dc_x] - 1;
-        if (dc_yl <= mceilingclip[dc_x])
-            dc_yl = mceilingclip[dc_x] + 1;
+        if (yh >= mfc_x)
+            yh = mfc_x - 1;
+        if (yl <= mcc_x)
+            yl = mcc_x + 1;
 
-        if (dc_yl <= dc_yh)
+        if (yh < viewheight && yl <= yh)
         {
             dc_source = (byte *)column + 3;
             dc_texturemid = basetexturemid - (column->topdelta << FRACBITS);
             // dc_source = (byte *)column + 3 - column->topdelta;
+
+            dc_yh = yh;
+            dc_yl = yl;
 
             // Drawn by either R_DrawColumn
             //  or (SHADOW) R_DrawFuzzColumn.
