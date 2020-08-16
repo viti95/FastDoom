@@ -1207,7 +1207,7 @@ void AM_Drawer(void)
 	AM_drawPlayers();
 	if (cheating == 2)
 		AM_drawThings(THINGCOLORS, THINGRANGE);
-	AM_drawCrosshair(XHAIRCOLORS);
+	//AM_drawCrosshair(XHAIRCOLORS);
 
 	AM_drawMarks();
 
