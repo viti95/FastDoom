@@ -770,6 +770,8 @@ void D_DoomMain(void)
 
     noMelt = M_CheckParm("-nomelt");
 
+    singletics = M_CheckParm("-singletics");
+
     if (!commercial)
     {
 #if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
