@@ -457,7 +457,7 @@ fixed_t ds_ystep;
 // start of a 64*64 tile image
 byte *ds_source;
 
-void R_DrawSpanFlat(void)
+/*void R_DrawSpanFlat(void)
 {
     register byte *dest;
     int dsp_x1;
@@ -542,7 +542,7 @@ void R_DrawSpanFlat(void)
             *dest++ = color;
         } while (countp--);
     }
-}
+}*/
 
 void R_DrawSpanFlatLow(void)
 {
