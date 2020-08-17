@@ -509,8 +509,6 @@ void R_DrawSpanFlat(void)
         } while (countp--);
     }
 
-    last_plane = ds_x2 % 4;
-
     // Single pixel mode
 
     dsp_x1 = (ds_x1) / 4;
