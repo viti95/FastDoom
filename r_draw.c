@@ -604,93 +604,6 @@ void R_DrawSpanFlat(void)
     }
 }
 
-/*void R_DrawSpanFlat(void)
-{
-    register byte *dest;
-    int dsp_x1;
-    int dsp_x2;
-    register int countp;
-
-    lighttable_t color = ds_colormap[0][ds_source];
-    int origin_y = (int)destview + ds_y * 80;
-
-    dsp_x1 = (ds_x1) / 4;
-
-    if (dsp_x1 * 4 < ds_x1)
-        dsp_x1++;
-
-    dsp_x2 = (ds_x2) / 4;
-
-    countp = dsp_x2 - dsp_x1;
-
-    if (countp >= 0)
-    {
-        dest = (byte *)origin_y + dsp_x1;
-        outp(SC_INDEX + 1, 1 << 0);
-        do
-        {
-            *dest++ = color;
-        } while (countp--);
-    }
-
-    dsp_x1 = (ds_x1 - 1) / 4;
-
-    if (dsp_x1 * 4 + 1 < ds_x1)
-        dsp_x1++;
-
-    dsp_x2 = (ds_x2 - 1) / 4;
-
-    countp = dsp_x2 - dsp_x1;
-
-    if (countp >= 0)
-    {
-        dest = (byte *)origin_y + dsp_x1;
-        outp(SC_INDEX + 1, 1 << 1);
-        do
-        {
-            *dest++ = color;
-        } while (countp--);
-    }
-
-    dsp_x1 = (ds_x1 - 2) / 4;
-
-    if (dsp_x1 * 4 + 2 < ds_x1)
-        dsp_x1++;
-
-    dsp_x2 = (ds_x2 - 2) / 4;
-
-    countp = dsp_x2 - dsp_x1;
-
-    if (countp >= 0)
-    {
-        dest = (byte *)origin_y + dsp_x1;
-        outp(SC_INDEX + 1, 1 << 2);
-        do
-        {
-            *dest++ = color;
-        } while (countp--);
-    }
-
-    dsp_x1 = (ds_x1 - 3) / 4;
-
-    if (dsp_x1 * 4 + 3 < ds_x1)
-        dsp_x1++;
-
-    dsp_x2 = (ds_x2 - 3) / 4;
-
-    countp = dsp_x2 - dsp_x1;
-
-    if (countp >= 0)
-    {
-        dest = (byte *)origin_y + dsp_x1;
-        outp(SC_INDEX + 1, 1 << 3);
-        do
-        {
-            *dest++ = color;
-        } while (countp--);
-    }
-}*/
-
 void R_DrawSpanFlatLow(void)
 {
     register byte *dest;
@@ -698,10 +611,50 @@ void R_DrawSpanFlatLow(void)
     int dsp_x2;
     register int countp;
 
-    lighttable_t color = ds_colormap[0][ds_source];
-    int origin_y = (int)destview + ds_y * 80;
+    int dsm_x1;
+    int dsm_x2;
 
-    outp(SC_INDEX + 1, 3 << 0);
+    int first_plane, last_plane;
+    int medium_planes;
+    int total_pixels;
+
+    lighttable_t color;
+    int origin_y;
+
+    total_pixels = ds_x2 - ds_x1;
+
+    if (total_pixels < 0)
+        return;
+
+    color = ds_colormap[0][ds_source];
+    origin_y = (int)destview + ds_y * 80;
+
+    first_plane = ds_x1 % 2;
+    last_plane = (ds_x2 + 1) % 2;
+    medium_planes = (total_pixels - first_plane - last_plane) / 2;
+
+    if (medium_planes > 0)
+    {
+        // Quad pixel mode
+        dsm_x1 = ds_x1 / 2;
+
+        if (first_plane != 0)
+            dsm_x1++;
+
+        dsm_x2 = ds_x2 / 2;
+        if (last_plane != 0)
+            dsm_x2--;
+
+        countp = dsm_x2 - dsm_x1;
+        dest = (byte *)origin_y + dsm_x1;
+
+        outp(SC_INDEX + 1, 15);
+
+        do
+        {
+            *dest++ = color;
+        } while (countp--);
+    }
 
     dsp_x1 = (ds_x1) / 2;
 
@@ -710,18 +663,20 @@ void R_DrawSpanFlatLow(void)
 
     dsp_x2 = (ds_x2) / 2;
 
-    countp = dsp_x2 - dsp_x1;
-
-    if (countp >= 0)
+    if (dsp_x2 > dsp_x1)
     {
         dest = (byte *)origin_y + dsp_x1;
-        do
-        {
-            *dest++ = color;
-        } while (countp--);
+        outp(SC_INDEX + 1, 3 << 0);
+        *dest = color;
+        dest = (byte *)origin_y + dsp_x2;
+        *dest = color;
     }
 
-    outp(SC_INDEX + 1, 3 << 2);
+    if (dsp_x2 == dsp_x1){
+        dest = (byte *)origin_y + dsp_x1;
+        outp(SC_INDEX + 1, 3 << 0);
+        *dest = color;
+    }
 
     dsp_x1 = (ds_x1 - 1) / 2;
 
@@ -730,15 +685,18 @@ void R_DrawSpanFlatLow(void)
 
     dsp_x2 = (ds_x2 - 1) / 2;
 
-    countp = dsp_x2 - dsp_x1;
-
-    if (countp >= 0)
-    {
+    if (dsp_x2 > dsp_x1){
         dest = (byte *)origin_y + dsp_x1;
-        do
-        {
-            *dest++ = color;
-        } while (countp--);
+        outp(SC_INDEX + 1, 3 << 2);
+        *dest = color;
+        dest = (byte *)origin_y + dsp_x2;
+        *dest = color;
+    }
+
+    if (dsp_x2 == dsp_x1){
+        dest = (byte *)origin_y + dsp_x1;
+        outp(SC_INDEX + 1, 3 << 2);
+        *dest = color;
     }
 }
 
