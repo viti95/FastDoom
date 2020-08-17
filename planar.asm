@@ -513,8 +513,8 @@ ldone:
 	ret
 ENDP
 
-PROC   R_DrawSpanFlat_
-PUBLIC	R_DrawSpanFlat_
+PROC   R_DrawSpanFlat_ASM_
+PUBLIC	R_DrawSpanFlat_ASM_
 	PUSHR
 	mov		eax,[_ds_x1]
 	mov		[curx],eax
