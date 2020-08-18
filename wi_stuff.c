@@ -871,7 +871,7 @@ void WI_checkForAccelerate(void)
 	int i;
 	player_t *player;
 
-	player = players;
+	player = &players;
 
 	if (player->cmd.buttons & BT_ATTACK)
 	{
