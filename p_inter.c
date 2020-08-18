@@ -579,7 +579,7 @@ void P_TouchSpecialThing(mobj_t *special,
 		player->itemcount++;
 	P_RemoveMobj(special);
 	player->bonuscount += BONUSADD;
-	if (player == &players[0])
+	if (player == &players)
 		S_StartSound(NULL, sound);
 }
 
@@ -610,7 +610,7 @@ void P_KillMobj(mobj_t *source,
 	{
 		// count all monster deaths,
 		// even those caused by other monsters
-		players[0].killcount++;
+		players.killcount++;
 	}
 
 	if (target->player)
@@ -619,7 +619,7 @@ void P_KillMobj(mobj_t *source,
 		target->player->playerstate = PST_DEAD;
 		P_DropWeapon(target->player);
 
-		if (target->player == &players[0] && automapactive)
+		if (target->player == &players && automapactive)
 		{
 			// don't die in auto map,
 			// switch view prior to dying

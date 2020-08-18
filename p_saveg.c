@@ -41,7 +41,7 @@ void P_ArchivePlayers(void)
 	PADSAVEP();
 
 	dest = (player_t *)save_p;
-	memcpy(dest, &players[0], sizeof(player_t));
+	memcpy(dest, &players, sizeof(player_t));
 	save_p += sizeof(player_t);
 	for (j = 0; j < NUMPSPRITES; j++)
 	{
@@ -61,19 +61,19 @@ void P_UnArchivePlayers(void)
 
 	PADSAVEP();
 
-	memcpy(&players[0], save_p, sizeof(player_t));
+	memcpy(&players, save_p, sizeof(player_t));
 	save_p += sizeof(player_t);
 
 	// will be set when unarc thinker
-	players[0].mo = NULL;
-	players[0].message = NULL;
-	players[0].attacker = NULL;
+	players.mo = NULL;
+	players.message = NULL;
+	players.attacker = NULL;
 
 	for (j = 0; j < NUMPSPRITES; j++)
 	{
-		if (players[0].psprites[j].state)
+		if (players.psprites[j].state)
 		{
-			players[0].psprites[j].state = &states[(int)players[0].psprites[j].state];
+			players.psprites[j].state = &states[(int)players.psprites[j].state];
 		}
 	}
 }
@@ -207,8 +207,8 @@ void P_ArchiveThinkers(void)
 			save_p += sizeof(*mobj);
 			mobj->state = (state_t *)(mobj->state - states);
 
-			if (mobj->player)
-				mobj->player = (player_t *)((mobj->player - players) + 1);
+			if (mobj->player == 1)
+				mobj->player = (player_t *)(mobj->player);
 			continue;
 		}
 	}
@@ -258,9 +258,9 @@ void P_UnArchiveThinkers(void)
 			save_p += sizeof(*mobj);
 			mobj->state = &states[(int)mobj->state];
 			mobj->target = NULL;
-			if (mobj->player)
+			if (mobj->player == 1)
 			{
-				mobj->player = &players[(int)mobj->player - 1];
+				mobj->player = &players;
 				mobj->player->mo = mobj;
 			}
 			P_SetThingPosition(mobj);

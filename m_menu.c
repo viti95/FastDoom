@@ -901,9 +901,9 @@ void M_ChangeMessages(int choice)
     showMessages = 1 - showMessages;
 
     if (!showMessages)
-        players[0].message = MSGOFF;
+        players.message = MSGOFF;
     else
-        players[0].message = MSGON;
+        players.message = MSGON;
 
     message_dontfuckwithme = true;
 }
@@ -1033,9 +1033,9 @@ void M_ChangeDetail(int choice)
     R_SetViewSize(screenblocks, detailLevel);
 
     if (!detailLevel)
-        players[0].message = DETAILHI;
+        players.message = DETAILHI;
     else
-        players[0].message = DETAILLO;
+        players.message = DETAILLO;
 }
 
 void M_SizeDisplay(int choice)
@@ -1347,15 +1347,15 @@ boolean M_Responder(event_t *ev)
             usegamma++;
             if (usegamma > 4)
                 usegamma = 0;
-            players[0].message = gammamsg[usegamma];
+            players.message = gammamsg[usegamma];
             I_SetPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
             return true;
         case KEY_F12: // Autorun
             autorun = !autorun;
             if (autorun)
-                players[0].message = AUTORUNON;
+                players.message = AUTORUNON;
             else
-                players[0].message = AUTORUNOFF;
+                players.message = AUTORUNOFF;
             return true;
         }
 

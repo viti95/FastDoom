@@ -113,7 +113,7 @@ void D_CheckNetGame(void)
 
 	// read values out of doomcom
 
-	playeringame[0] = true;
+	playeringame = true;
 
 	printf("player %i of %i (%i nodes)\n",
 		   1, 1, 1);

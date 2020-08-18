@@ -225,7 +225,7 @@ void D_Display(void)
         if (automapactive)
         {
             // [crispy] update automap while playing
-            R_RenderPlayerView(&players[0]);
+            R_RenderPlayerView(&players);
             AM_Drawer();
         }
         if (wipe || (viewheight != 200 && fullscreen))
@@ -254,7 +254,7 @@ void D_Display(void)
 
     // draw the view directly
     if (gamestate == GS_LEVEL && !automapactive && gametic)
-        R_RenderPlayerView(&players[0]);
+        R_RenderPlayerView(&players);
 
     if (gamestate == GS_LEVEL && gametic)
         HU_Drawer();
@@ -360,7 +360,7 @@ void D_DoomLoop(void)
             TryRunTics(); // will run at least one tic
         }
 
-        S_UpdateSounds(players[0].mo); // move positional sounds
+        S_UpdateSounds(players.mo); // move positional sounds
 
         // Update display, next frame, with current state.
         D_Display();
@@ -407,7 +407,7 @@ void D_AdvanceDemo(void)
 //
 void D_DoAdvanceDemo(void)
 {
-    players[0].playerstate = PST_LIVE; // not reborn
+    players.playerstate = PST_LIVE; // not reborn
     advancedemo = false;
     usergame = false; // no save / end game here
     paused = false;

@@ -606,9 +606,9 @@ ST_Responder(event_t *ev)
 			{
 				static char buf[ST_MSGWIDTH];
 				sprintf(buf, "ang=0x%x;x,y=(0x%x,0x%x)",
-						players[0].mo->angle,
-						players[0].mo->x,
-						players[0].mo->y);
+						players.mo->angle,
+						players.mo->x,
+						players.mo->y);
 				plyr->message = buf;
 			}
 		}
@@ -1106,7 +1106,7 @@ void ST_initData(void)
 	int i;
 
 	st_firsttime = true;
-	plyr = &players[0];
+	plyr = &players;
 
 	st_clock = 0;
 	st_gamestate = FirstPersonState;

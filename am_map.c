@@ -422,7 +422,7 @@ void AM_initVariables(void)
 	m_w = FTOM(f_w);
 	m_h = FTOM(f_h);
 
-	plr = &players[0];
+	plr = &players;
 	m_x = plr->mo->x - m_w / 2;
 	m_y = plr->mo->y - m_h / 2;
 	AM_changeWindowLoc();
@@ -1141,7 +1141,7 @@ void AM_drawPlayers(void)
 								WHITE, plr->mo->x, plr->mo->y);
 	return;
 
-	p = &players[0];
+	p = &players;
 
 	if (p->powers[pw_invisibility])
 		color = 246; // *close* to black

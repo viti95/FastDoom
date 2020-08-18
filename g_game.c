@@ -98,7 +98,7 @@ int starttime;      // for comparative timing purposes
 boolean viewactive;
 
 boolean playeringame;
-player_t players[MAXPLAYERS];
+player_t players;
 
 int gametic;
 int totalkills, totalitems, totalsecret; // for intermission
@@ -377,8 +377,8 @@ void G_DoLoadLevel(void)
 
     gamestate = GS_LEVEL;
 
-    if (players[0].playerstate == PST_DEAD)
-        players[0].playerstate = PST_REBORN;
+    if (players.playerstate == PST_DEAD)
+        players.playerstate = PST_REBORN;
 
     P_SetupLevel(gameepisode, gamemap, 0, gameskill);
     starttime = ticcount;
@@ -468,7 +468,7 @@ void G_Ticker(void)
     ticcmd_t *cmd;
 
     // do player reborns if needed
-    if (players[0].playerstate == PST_REBORN)
+    if (players.playerstate == PST_REBORN)
         G_DoReborn(0);
 
     // do things to change the game state
@@ -509,7 +509,7 @@ void G_Ticker(void)
     // and build new consistancy check
     buf = (gametic) % BACKUPTICS;
 
-    cmd = &players[0].cmd;
+    cmd = &players.cmd;
 
     memcpy(cmd, &localcmds[buf], sizeof(ticcmd_t));
 
@@ -519,9 +519,9 @@ void G_Ticker(void)
         G_WriteDemoTiccmd(cmd);
 
     // check for special buttons
-    if (players[0].cmd.buttons & BT_SPECIAL)
+    if (players.cmd.buttons & BT_SPECIAL)
     {
-        switch (players[0].cmd.buttons & BT_SPECIALMASK)
+        switch (players.cmd.buttons & BT_SPECIALMASK)
         {
         case BTS_PAUSE:
             paused ^= 1;
@@ -532,7 +532,7 @@ void G_Ticker(void)
             break;
 
         case BTS_SAVEGAME:
-            savegameslot = (players[0].cmd.buttons & BTS_SAVEMASK) >> BTS_SAVESHIFT;
+            savegameslot = (players.cmd.buttons & BTS_SAVEMASK) >> BTS_SAVESHIFT;
             gameaction = ga_savegame;
             break;
         }
@@ -570,7 +570,7 @@ void G_PlayerFinishLevel()
 {
     player_t *p;
 
-    p = &players[0];
+    p = &players;
 
     memset(p->powers, 0, sizeof(p->powers));
     memset(p->cards, 0, sizeof(p->cards));
@@ -594,16 +594,16 @@ void G_PlayerReborn()
     int itemcount;
     int secretcount;
 
-    killcount = players[0].killcount;
-    itemcount = players[0].itemcount;
-    secretcount = players[0].secretcount;
+    killcount = players.killcount;
+    itemcount = players.itemcount;
+    secretcount = players.secretcount;
 
-    p = &players[0];
+    p = &players;
     memset(p, 0, sizeof(*p));
 
-    players[0].killcount = killcount;
-    players[0].itemcount = itemcount;
-    players[0].secretcount = secretcount;
+    players.killcount = killcount;
+    players.itemcount = itemcount;
+    players.secretcount = secretcount;
 
     p->usedown = p->attackdown = true; // don't do anything immediately
     p->playerstate = PST_LIVE;
@@ -692,11 +692,11 @@ void G_DoCompleted(void)
             gameaction = ga_victory;
             return;
         case 9:
-            players[0].didsecret = true;
+            players.didsecret = true;
             break;
         }
 
-    wminfo.didsecret = players[0].didsecret;
+    wminfo.didsecret = players.didsecret;
     wminfo.epsd = gameepisode - 1;
     wminfo.last = gamemap - 1;
 
@@ -760,9 +760,9 @@ void G_DoCompleted(void)
         wminfo.partime = 35 * pars[gameepisode][gamemap];
 
     wminfo.plyr.in = true;
-    wminfo.plyr.skills = players[0].killcount;
-    wminfo.plyr.sitems = players[0].itemcount;
-    wminfo.plyr.ssecret = players[0].secretcount;
+    wminfo.plyr.skills = players.killcount;
+    wminfo.plyr.sitems = players.itemcount;
+    wminfo.plyr.ssecret = players.secretcount;
     wminfo.plyr.stime = leveltime;
 
     gamestate = GS_INTERMISSION;
@@ -780,7 +780,7 @@ void G_WorldDone(void)
     gameaction = ga_worlddone;
 
     if (secretexit)
-        players[0].didsecret = true;
+        players.didsecret = true;
 
     if (commercial)
     {
@@ -942,7 +942,7 @@ void G_DoSaveGame(void)
     gameaction = ga_nothing;
     savedescription[0] = 0;
 
-    players[0].message = GGSAVED;
+    players.message = GGSAVED;
 
     // draw the pattern into the back screen
     R_FillBackScreen();
@@ -1047,7 +1047,7 @@ void G_InitNew(skill_t skill,
     }
 
     // force players to be initialized upon first level load
-    players[0].playerstate = PST_REBORN;
+    players.playerstate = PST_REBORN;
 
     usergame = true; // will be set false if a demo
     paused = false;

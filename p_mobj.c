@@ -577,7 +577,7 @@ void P_SpawnPlayer(mapthing_t *mthing)
 
     mobj_t *mobj;
 
-    p = &players[0];
+    p = &players;
 
     if (p->playerstate == PST_REBORN)
         G_PlayerReborn();

@@ -304,7 +304,7 @@ void HU_Start(void)
     int i;
     char *s;
 
-    plr = &players[0];
+    plr = &players;
     message_on = false;
     message_dontfuckwithme = false;
     message_nottobefuckedwith = false;

@@ -463,7 +463,7 @@ P_LookForPlayers(mobj_t *actor,
 
     if (playeringame)
     {
-        player = &players[0];
+        player = &players;
 
         if (player->health <= 0)
             return false; // dead
@@ -1552,7 +1552,7 @@ void A_BossDeath(mobj_t *mo)
     }
 
     // make sure there is a player alive for victory
-    if (players[0].health <= 0)
+    if (players.health <= 0)
         return; // no one left alive, so do not end game
 
     // scan the remaining thinkers to see

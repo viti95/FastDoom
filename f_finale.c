@@ -283,7 +283,7 @@ void F_Ticker(void)
 	if ((commercial) && (finalecount > 50))
 	{
 		// go on to the next level
-		if (players[0].cmd.buttons){
+		if (players.cmd.buttons){
 			if (gamemap == 30)
 				F_StartCast();
 			else

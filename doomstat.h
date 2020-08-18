@@ -166,10 +166,10 @@ extern gamestate_t gamestate;
 extern int gametic;
 
 // Bookkeeping on players - state.
-extern player_t players[MAXPLAYERS];
+extern player_t players;
 
 // Alive? Disconnected?
-extern boolean playeringame[MAXPLAYERS];
+extern boolean playeringame;
 
 // Intermission stats.
 // Parameters for world map / intermission.

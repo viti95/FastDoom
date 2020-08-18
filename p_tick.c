@@ -82,12 +82,12 @@ void P_Ticker(void)
         return;
 
     // pause if in menu and at least one tic has been run
-    if (menuactive && !demoplayback && players[0].viewz != 1)
+    if (menuactive && !demoplayback && players.viewz != 1)
     {
         return;
     }
 
-    P_PlayerThink(&players[0]);
+    P_PlayerThink(&players);
 
     P_RunThinkers();
     P_UpdateSpecials();
