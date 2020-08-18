@@ -482,8 +482,8 @@ void R_DrawSpanFlat(void)
     color = ds_colormap[0][ds_source];
     origin_y = (int)destview + ds_y * 80;
 
-    first_plane = ds_x1 % 4;
-    last_plane = (ds_x2 + 1) % 4;
+    first_plane = ds_x1 & 3;
+    last_plane = (ds_x2 + 1) & 3;
     medium_planes = (total_pixels - first_plane - last_plane) / 4;
 
     if (medium_planes > 0)
@@ -629,8 +629,8 @@ void R_DrawSpanFlatLow(void)
     color = ds_colormap[0][ds_source];
     origin_y = (int)destview + ds_y * 80;
 
-    first_plane = ds_x1 % 2;
-    last_plane = (ds_x2 + 1) % 2;
+    first_plane = ds_x1 & 1;
+    last_plane = (ds_x2 + 1) & 1;
     medium_planes = (total_pixels - first_plane - last_plane) / 2;
 
     if (medium_planes > 0)
