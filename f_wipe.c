@@ -136,7 +136,7 @@ int wipe_initMelt(int width,
     // setup initial column positions
     // (y<0 => not ready to scroll yet)
     y = (int *)Z_Malloc(width * sizeof(int), PU_STATIC, 0);
-    y[0] = -(M_Random % 16);
+    y[0] = -(M_Random & 15);
     for (i = 1; i < width; i++)
     {
         r = (M_Random % 3) - 1;

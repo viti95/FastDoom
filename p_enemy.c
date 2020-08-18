@@ -587,7 +587,7 @@ seeyou:
 
         case sfx_bgsit1:
         case sfx_bgsit2:
-            sound = sfx_bgsit1 + P_Random % 2;
+            sound = sfx_bgsit1 + (P_Random & 1);
             break;
 
         default:
@@ -841,7 +841,7 @@ void A_TroopAttack(mobj_t *actor)
     if (P_CheckMeleeRange(actor))
     {
         S_StartSound(actor, sfx_claw);
-        damage = (P_Random % 8 + 1) * 3;
+        damage = ((P_Random & 7) + 1) * 3;
         P_DamageMobj(actor->target, actor, actor, damage);
         return;
     }
@@ -903,7 +903,7 @@ void A_BruisAttack(mobj_t *actor)
     if (P_CheckMeleeRange(actor))
     {
         S_StartSound(actor, sfx_claw);
-        damage = (P_Random % 8 + 1) * 10;
+        damage = ((P_Random & 7) + 1) * 10;
         P_DamageMobj(actor->target, actor, actor, damage);
         return;
     }
@@ -1434,7 +1434,7 @@ void A_Scream(mobj_t *actor)
 
     case sfx_bgdth1:
     case sfx_bgdth2:
-        sound = sfx_bgdth1 + P_Random % 2;
+        sound = sfx_bgdth1 + (P_Random & 1);
         break;
 
     default:
