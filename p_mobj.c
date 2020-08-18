@@ -493,7 +493,7 @@ P_SpawnMobj(fixed_t x,
     if (gameskill != sk_nightmare)
         mobj->reactiontime = info->reactiontime;
 
-    mobj->lastlook = P_Random & (MAXPLAYERS - 1);
+    mobj->lastlook = P_Random & 0;
     // do not set the state with P_SetMobjState,
     // because action routines can not be called yet
     st = &states[info->spawnstate];

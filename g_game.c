@@ -97,7 +97,7 @@ int starttime;      // for comparative timing purposes
 
 boolean viewactive;
 
-boolean playeringame[MAXPLAYERS];
+boolean playeringame;
 player_t players[MAXPLAYERS];
 
 int gametic;
@@ -848,7 +848,7 @@ void G_DoLoadGame(void)
     gameskill = *save_p++;
     gameepisode = *save_p++;
     gamemap = *save_p++;
-    playeringame[0] = *save_p++;
+    playeringame = *save_p++;
     *save_p++;
     *save_p++;
     *save_p++;
@@ -1203,7 +1203,7 @@ void G_DoPlayDemo(void)
     nomonsters = *demo_p++;
     *demo_p++;
 
-    playeringame[0] = *demo_p++;
+    playeringame = *demo_p++;
     *demo_p++;
     *demo_p++;
     *demo_p++;

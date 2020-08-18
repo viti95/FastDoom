@@ -461,27 +461,15 @@ P_LookForPlayers(mobj_t *actor,
 
     sector = actor->subsector->sector;
 
-    c = 0;
-    stop = (actor->lastlook - 1) & 3;
-
-    for (;; actor->lastlook = (actor->lastlook + 1) & 3)
+    if (playeringame)
     {
-        if (!playeringame[actor->lastlook])
-            continue;
-
-        if (c++ == 2 || actor->lastlook == stop)
-        {
-            // done looking
-            return false;
-        }
-
-        player = &players[actor->lastlook];
+        player = &players[0];
 
         if (player->health <= 0)
-            continue; // dead
+            return false; // dead
 
         if (!P_CheckSight(actor, player->mo))
-            continue; // out of sight
+            return false; // out of sight
 
         if (!allaround)
         {
@@ -497,7 +485,7 @@ P_LookForPlayers(mobj_t *actor,
                                        player->mo->y - actor->y);
                 // if real close, react anyway
                 if (dist > MELEERANGE)
-                    continue; // behind back
+                    return false; // behind back
             }
         }
 
@@ -1564,7 +1552,7 @@ void A_BossDeath(mobj_t *mo)
     }
 
     // make sure there is a player alive for victory
-    if(players[0].health <= 0)
+    if (players[0].health <= 0)
         return; // no one left alive, so do not end game
 
     // scan the remaining thinkers to see
