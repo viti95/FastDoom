@@ -94,7 +94,6 @@ typedef struct player_s
     boolean backpack;
 
     // Frags, kills of other players.
-    int frags[MAXPLAYERS];
     weapontype_t readyweapon;
 
     // Is wp_nochange if not changing.
