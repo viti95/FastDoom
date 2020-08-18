@@ -44,7 +44,7 @@ void I_DebugWriteString(int x, int y, char *message)
 
 void I_DebugWriteFixed(int x, int y, fixed_t value){
     char message[32];
-    sprintf(message, "%i.%04i", value >> FRACBITS, ((value % 65536)*10000)/65536);
+    sprintf(message, "%i.%04i", value >> FRACBITS, ((value & 65535)*10000) >> FRACBITS);
     I_DebugWriteString(x, y, message);
 }
 
@@ -81,6 +81,6 @@ void I_DebugWriteLineInteger(int value)
 
 void I_DebugWriteLineFixed(fixed_t value){
     char message[32];
-    sprintf(message, "%i.%04i", value >> FRACBITS, ((value % 65536)*10000)/65536);
+    sprintf(message, "%i.%04i", value >> FRACBITS, ((value & 65535)*10000) >> FRACBITS);
     I_DebugWriteLineString(message);
 }

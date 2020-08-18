@@ -1250,7 +1250,7 @@ boolean G_CheckDemoStatus(void)
 
         resultfps = FixedMul(FixedDiv(gametic << FRACBITS, realtics << FRACBITS), 35 << FRACBITS);
         
-        I_Error("Timed %i gametics in %i realtics. FPS: %i.%03i", gametic, realtics, resultfps >> FRACBITS, ((resultfps % 65536)*1000)/65536);
+        I_Error("Timed %i gametics in %i realtics. FPS: %i.%03i", gametic, realtics, resultfps >> FRACBITS, ((resultfps & 65535)*1000) >> FRACBITS);
     }
 
     if (demoplayback)

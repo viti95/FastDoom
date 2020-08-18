@@ -365,7 +365,7 @@ void HU_Drawer(void)
     HUlib_drawSText(&w_message);
 
     if (showFPS){
-        sprintf(str, "fps: %i.%01i", fps >> FRACBITS, ((fps % 65536)*10)/65536);
+        sprintf(str, "fps: %i.%01i", fps >> FRACBITS, ((fps & 65535)*10) >> FRACBITS);
         HUlib_clearTextLine(&w_fps);
         f = str;
         while (*f)
