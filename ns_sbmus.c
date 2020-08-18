@@ -1158,7 +1158,7 @@ void AL_SetPitchBend(
    Channel[channel].KeyOffset = (int)(TotalBend / FINETUNE_RANGE);
    Channel[channel].KeyOffset -= Channel[channel].PitchBendSemiTones;
 
-   Channel[channel].KeyDetune = (unsigned)(TotalBend % FINETUNE_RANGE);
+   Channel[channel].KeyDetune = (unsigned)(TotalBend & (FINETUNE_RANGE - 1));
 
    voice = Channel[channel].Voices.start;
    while (voice != NULL)
