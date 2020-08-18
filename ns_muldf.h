@@ -171,10 +171,8 @@ static void MV_PlayVoice(VoiceNode *voice);
 static void MV_StopVoice(VoiceNode *voice);
 static void MV_ServiceVoc(void);
 
-static playbackstatus MV_GetNextVOCBlock(VoiceNode *voice);
 static playbackstatus MV_GetNextDemandFeedBlock(VoiceNode *voice);
 static playbackstatus MV_GetNextRawBlock(VoiceNode *voice);
-static playbackstatus MV_GetNextWAVBlock(VoiceNode *voice);
 
 static VoiceNode *MV_GetVoice(int handle);
 static VoiceNode *MV_AllocVoice(int priority);
