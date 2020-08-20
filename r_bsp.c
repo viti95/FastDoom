@@ -317,7 +317,7 @@ clipsolid:
 // Returns true
 //  if some part of the bbox might be visible.
 //
-int checkcoord[12][4] =
+byte checkcoord[12][4] =
     {
         {3, 0, 2, 1},
         {3, 0, 2, 0},
@@ -333,9 +333,9 @@ int checkcoord[12][4] =
 
 boolean R_CheckBBox(fixed_t *bspcoord)
 {
-    int boxx;
-    int boxy;
-    int boxpos;
+    byte boxx;
+    byte boxy;
+    byte boxpos;
 
     fixed_t x1;
     fixed_t y1;
