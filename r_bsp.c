@@ -97,10 +97,10 @@ void R_ClipSolidWallSegment(int first,
             newend++;
 
             // 1/11/98 killough: performance tuning using fast memmove
-			memmove (start+1, start, (++newend-start)*sizeof(*start));
-			start->first = first;
-			start->last = last;
-			return;
+            memmove(start + 1, start, (++newend - start) * sizeof(*start));
+            start->first = first;
+            start->last = last;
+            return;
         }
 
         // There is a fragment above *start.
@@ -487,50 +487,96 @@ void R_Subsector(int num)
 //  traversing subtree recursively.
 // Just call with BSP root.
 
+boolean R_RenderBspSubsector(int bspnum)
+{
+    // Found a subsector?
+    if (bspnum & NF_SUBSECTOR)
+    {
+        if (bspnum == -1)
+            R_Subsector(0);
+        else
+            R_Subsector(bspnum & (~NF_SUBSECTOR));
+
+        return true;
+    }
+
+    return false;
+}
+
+#define MAX_BSP_DEPTH 64
+
 void R_RenderBSPNode(int bspnum)
 {
-	node_t *bsp;
-	fixed_t	dx, dy;
-	fixed_t	left, right;
+    node_t *bsp;
+    fixed_t dx, dy;
+    fixed_t left, right;
+    int stack_bsp[MAX_BSP_DEPTH];
+    byte stack_side[MAX_BSP_DEPTH];
+    int sp = 0;
+    byte side = 0;
 
-	if (bspnum & NF_SUBSECTOR) // reached a subsector leaf?
-	{
-		if (bspnum == -1)
-        {
-			R_Subsector(0);
-        }
-		else
-        {
-			R_Subsector(bspnum & ~NF_SUBSECTOR);
-        }
-	}
-    else
+    while (true)
     {
+        //Front sides.
+        while (!R_RenderBspSubsector(bspnum))
+        {
+            if (sp == MAX_BSP_DEPTH)
+                break;
+
+            bsp = &nodes[bspnum];
+
+            //decide which side the view point is on
+            dx = (viewx - bsp->x);
+            dy = (viewy - bsp->y);
+
+            left = (bsp->dy >> FRACBITS) * (dx >> FRACBITS);
+            right = (dy >> FRACBITS) * (bsp->dx >> FRACBITS);
+
+            side = right >= left;
+
+            stack_bsp[sp] = bspnum;
+            stack_side[sp] = side;
+
+            sp++;
+
+            bspnum = bsp->children[side];
+        }
+
+        if (sp == 0)
+        {
+            //back at root node and not visible. All done!
+            return;
+        }
+
+        //Back sides.
+
+        sp--;
+
+        bspnum = stack_bsp[sp];
+        side = stack_side[sp];
         bsp = &nodes[bspnum];
 
-        //decide which side the view point is on
-        dx = (viewx - bsp->x);
-        dy = (viewy - bsp->y);
-
-        left = (bsp->dy >> 16) * (dx >> 16);
-        right = (dy >> 16) * (bsp->dx >> 16);
-
-        // Depending on which side of the halfspace we are on, reverse the traversal order:
-        if (right < left)
+        // Possibly divide back space.
+        //Walk back up the tree until we find
+        //a node that has a visible backspace.
+        while (!R_CheckBBox(bsp->bbox[side ^ 1]))
         {
-            if (R_CheckBBox(bsp->bbox[0]))
-                R_RenderBSPNode(bsp->children[0]);
+            if (sp == 0)
+            {
+                //back at root node and not visible. All done!
+                return;
+            }
 
-            if (R_CheckBBox(bsp->bbox[1]))
-                R_RenderBSPNode(bsp->children[1]);
-        }
-        else
-        {
-            if (R_CheckBBox(bsp->bbox[1]))
-                R_RenderBSPNode(bsp->children[1]);
+            //Back side next.
 
-            if (R_CheckBBox(bsp->bbox[0]))
-                R_RenderBSPNode(bsp->children[0]);
+            sp--;
+
+            bspnum = stack_bsp[sp];
+            side = stack_side[sp];
+
+            bsp = &nodes[bspnum];
         }
+
+        bspnum = bsp->children[side ^ 1];
     }
 }
