@@ -40,6 +40,7 @@ extern boolean respawnparm; // checkparm of -respawn
 extern boolean fastparm;    // checkparm of -fast
 
 extern boolean flatSurfaces;
+extern boolean untexturedSurfaces;
 extern boolean flatSky;
 extern boolean flatShadows;
 extern boolean saturnShadows;

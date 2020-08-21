@@ -207,7 +207,7 @@ void R_DrawColumnFlat(void)
     if (count < 0)
         return;
 
-    color = ds_colormap[0][dc_source];
+    color = dc_colormap[dc_source[0]];
 
     outp(SC_INDEX + 1, 1 << (dc_x & 3));
 
@@ -233,7 +233,7 @@ void R_DrawColumnFlatLow(void)
     if (count < 0)
         return;
 
-    color = ds_colormap[0][dc_source];
+    color = dc_colormap[dc_source[0]];
 
     if (dc_x & 1)
         outp(SC_INDEX + 1, 12);
@@ -261,7 +261,7 @@ void R_DrawColumnFlatPotato(void)
     if (count < 0)
         return;
 
-    color = ds_colormap[0][dc_source];
+    color = dc_colormap[dc_source[0]];
 
     outp(SC_INDEX + 1, 15);
 
@@ -558,7 +558,7 @@ void R_DrawSpanFlat(void)
     if (total_pixels < 0)
         return;
 
-    color = ds_colormap[0][ds_source];
+    color = ds_colormap[ds_source[0]];
     origin_y = (int)destview + ds_y * 80;
 
     first_plane = ds_x1 & 3;
@@ -705,7 +705,7 @@ void R_DrawSpanFlatLow(void)
     if (total_pixels < 0)
         return;
 
-    color = ds_colormap[0][ds_source];
+    color = ds_colormap[ds_source[0]];
     origin_y = (int)destview + ds_y * 80;
 
     first_plane = ds_x1 & 1;
@@ -787,7 +787,7 @@ void R_DrawSpanFlatPotato(void)
     int countp;
     byte *dest;
 
-    lighttable_t color = ds_colormap[0][ds_source];
+    lighttable_t color = ds_colormap[ds_source[0]];
 
     countp = ds_x2 - ds_x1;
 

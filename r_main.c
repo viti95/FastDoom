@@ -584,7 +584,7 @@ void R_ExecuteSetViewSize(void)
         else
             fuzzcolfunc = R_DrawFuzzColumn;
 
-        if (flatSurfaces)
+        if (untexturedSurfaces)
             spanfunc = R_DrawSpanFlat;
         else
             spanfunc = R_DrawSpan;
@@ -608,7 +608,7 @@ void R_ExecuteSetViewSize(void)
         else
             fuzzcolfunc = R_DrawFuzzColumn;
 
-        if (flatSurfaces){
+        if (untexturedSurfaces){
             if (potatoDetail)
                 spanfunc = R_DrawSpanFlatPotato;
             else

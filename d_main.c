@@ -84,6 +84,7 @@ boolean respawnparm; // checkparm of -respawn
 boolean fastparm;    // checkparm of -fast
 
 boolean flatSurfaces;
+boolean untexturedSurfaces;
 boolean flatSky;
 boolean flatShadows;
 boolean saturnShadows;
@@ -753,7 +754,8 @@ void D_DoomMain(void)
     respawnparm = M_CheckParm("-respawn");
     fastparm = M_CheckParm("-fast");
 
-    flatSurfaces = M_CheckParm("-flatsurfaces");
+    flatSurfaces = M_CheckParm("-flattersurfaces");
+    untexturedSurfaces = M_CheckParm("-flatsurfaces");
     flatSky = M_CheckParm("-flatsky");
     flatShadows = M_CheckParm("-flatshadows");
     saturnShadows = M_CheckParm("-saturn");
