@@ -195,6 +195,85 @@ void R_DrawSpanPotato(void)
     } while (countp--);
 }
 
+void R_DrawColumnFlat(void)
+{
+    int count;
+    byte *dest;
+    lighttable_t color;
+
+    count = dc_yh - dc_yl;
+
+    // Zero length, column does not exceed a pixel.
+    if (count < 0)
+        return;
+
+    color = ds_colormap[0][dc_source];
+
+    outp(SC_INDEX + 1, 1 << (dc_x & 3));
+
+    dest = destview + dc_yl * 80 + (dc_x >> 2);
+
+    do
+    {
+        *dest = color;
+        dest += SCREENWIDTH / 4;
+
+    } while (count--);
+}
+
+void R_DrawColumnFlatLow(void)
+{
+    int count;
+    byte *dest;
+    lighttable_t color;
+
+    count = dc_yh - dc_yl;
+
+    // Zero length.
+    if (count < 0)
+        return;
+
+    color = ds_colormap[0][dc_source];
+
+    if (dc_x & 1)
+        outp(SC_INDEX + 1, 12);
+    else
+        outp(SC_INDEX + 1, 3);
+
+    dest = destview + dc_yl * 80 + (dc_x >> 1);
+
+    do
+    {
+        *dest = color;
+        dest += SCREENWIDTH / 4;
+    } while (count--);
+}
+
+void R_DrawColumnFlatPotato(void)
+{
+    int count;
+    byte *dest;
+    lighttable_t color;
+
+    count = dc_yh - dc_yl;
+
+    // Zero length, column does not exceed a pixel.
+    if (count < 0)
+        return;
+
+    color = ds_colormap[0][dc_source];
+
+    outp(SC_INDEX + 1, 15);
+
+    dest = destview + dc_yl * 80 + dc_x;
+
+    do
+    {
+        *dest = color;
+        dest += SCREENWIDTH / 4;
+    } while (count--);
+}
+
 //
 // Spectre/Invisibility.
 //
@@ -672,7 +751,8 @@ void R_DrawSpanFlatLow(void)
         *dest = color;
     }
 
-    if (dsp_x2 == dsp_x1){
+    if (dsp_x2 == dsp_x1)
+    {
         dest = (byte *)origin_y + dsp_x1;
         outp(SC_INDEX + 1, 3 << 0);
         *dest = color;
@@ -685,7 +765,8 @@ void R_DrawSpanFlatLow(void)
 
     dsp_x2 = (ds_x2 - 1) / 2;
 
-    if (dsp_x2 > dsp_x1){
+    if (dsp_x2 > dsp_x1)
+    {
         dest = (byte *)origin_y + dsp_x1;
         outp(SC_INDEX + 1, 3 << 2);
         *dest = color;
@@ -693,7 +774,8 @@ void R_DrawSpanFlatLow(void)
         *dest = color;
     }
 
-    if (dsp_x2 == dsp_x1){
+    if (dsp_x2 == dsp_x1)
+    {
         dest = (byte *)origin_y + dsp_x1;
         outp(SC_INDEX + 1, 3 << 2);
         *dest = color;

@@ -109,27 +109,24 @@ void R_MapPlane(int y, int x1)
     fixed_t length;
     unsigned index;
 
-    if (!flatSurfaces)
+    if (planeheight != cachedheight[y])
     {
-        if (planeheight != cachedheight[y])
-        {
-            cachedheight[y] = planeheight;
-            distance = cacheddistance[y] = FixedMul(planeheight, yslope[y]);
-            ds_xstep = cachedxstep[y] = FixedMul(distance, basexscale);
-            ds_ystep = cachedystep[y] = FixedMul(distance, baseyscale);
-        }
-        else
-        {
-            distance = cacheddistance[y];
-            ds_xstep = cachedxstep[y];
-            ds_ystep = cachedystep[y];
-        }
-
-        length = FixedMul(distance, distscale[x1]);
-        angle = (viewangle + xtoviewangle[x1]) >> ANGLETOFINESHIFT;
-        ds_xfrac = viewx + FixedMul(finecosine[angle], length);
-        ds_yfrac = -viewy - FixedMul(finesine[angle], length);
+        cachedheight[y] = planeheight;
+        distance = cacheddistance[y] = FixedMul(planeheight, yslope[y]);
+        ds_xstep = cachedxstep[y] = FixedMul(distance, basexscale);
+        ds_ystep = cachedystep[y] = FixedMul(distance, baseyscale);
     }
+    else
+    {
+        distance = cacheddistance[y];
+        ds_xstep = cachedxstep[y];
+        ds_ystep = cachedystep[y];
+    }
+
+    length = FixedMul(distance, distscale[x1]);
+    angle = (viewangle + xtoviewangle[x1]) >> ANGLETOFINESHIFT;
+    ds_xfrac = viewx + FixedMul(finecosine[angle], length);
+    ds_yfrac = -viewy - FixedMul(finesine[angle], length);
 
     if (fixedcolormap)
         ds_colormap = fixedcolormap;
@@ -309,7 +306,7 @@ void R_DrawPlanes(void)
     {
         if (!pl->modified)
             continue;
-        
+
         if (pl->minx > pl->maxx)
             continue;
 
@@ -345,13 +342,48 @@ void R_DrawPlanes(void)
             continue;
         }
 
-        // regular flat
-
-        ds_source = W_CacheLumpNum(firstflat +
-                                       flattranslation[pl->picnum],
-                                   PU_STATIC);
-        if (!flatSurfaces)
+        if (flatSurfaces)
         {
+            //dc_iscale = pspriteiscale >> detailshift;
+            dc_colormap = colormaps;
+
+            dc_source = W_CacheLumpNum(firstflat +
+                                           flattranslation[pl->picnum],
+                                       PU_STATIC);
+
+            for (x = pl->minx; x <= pl->maxx; x++)
+            {
+                dc_yl = pl->top[x];
+                dc_yh = pl->bottom[x];
+
+                if (dc_yl <= dc_yh)
+                {
+                    dc_x = x;
+
+                    switch (detailshift)
+                    {
+                    case 0:
+                        R_DrawColumnFlat();
+                        break;
+                    case 1:
+                        R_DrawColumnFlatLow();
+                        break;
+                    case 2:
+                        R_DrawColumnFlatPotato();
+                        break;
+                    }
+                }
+            }
+
+            Z_ChangeTag(dc_source, PU_CACHE);
+        }
+        else
+        {
+            // regular flat
+
+            ds_source = W_CacheLumpNum(firstflat +
+                                           flattranslation[pl->picnum],
+                                       PU_STATIC);
             planeheight = abs(pl->height - viewz);
             light = (pl->lightlevel >> LIGHTSEGSHIFT) + extralight;
 
@@ -362,44 +394,44 @@ void R_DrawPlanes(void)
                 light = 0;
 
             planezlight = zlight[light];
+            pl->top[pl->maxx + 1] = 0xff;
+            pl->top[pl->minx - 1] = 0xff;
+
+            stop = pl->maxx + 1;
+
+            for (x = pl->minx; x <= stop; x++)
+            {
+                t1 = pl->top[x - 1];
+                b1 = pl->bottom[x - 1];
+                t2 = pl->top[x];
+                b2 = pl->bottom[x];
+
+                ds_x2 = x - 1;
+
+                while (t1 < t2 && t1 <= b1)
+                {
+                    R_MapPlane(t1, spanstart[t1]);
+                    t1++;
+                }
+                while (b1 > b2 && b1 >= t1)
+                {
+                    R_MapPlane(b1, spanstart[b1]);
+                    b1--;
+                }
+
+                while (t2 < t1 && t2 <= b2)
+                {
+                    spanstart[t2] = x;
+                    t2++;
+                }
+                while (b2 > b1 && b2 >= t2)
+                {
+                    spanstart[b2] = x;
+                    b2--;
+                }
+            }
+
+            Z_ChangeTag(ds_source, PU_CACHE);
         }
-        pl->top[pl->maxx + 1] = 0xff;
-        pl->top[pl->minx - 1] = 0xff;
-
-        stop = pl->maxx + 1;
-
-        for (x = pl->minx; x <= stop; x++)
-        {
-            t1 = pl->top[x - 1];
-            b1 = pl->bottom[x - 1];
-            t2 = pl->top[x];
-            b2 = pl->bottom[x];
-
-            ds_x2 = x - 1;
-
-            while (t1 < t2 && t1 <= b1)
-            {
-                R_MapPlane(t1, spanstart[t1]);
-                t1++;
-            }
-            while (b1 > b2 && b1 >= t1)
-            {
-                R_MapPlane(b1, spanstart[b1]);
-                b1--;
-            }
-
-            while (t2 < t1 && t2 <= b2)
-            {
-                spanstart[t2] = x;
-                t2++;
-            }
-            while (b2 > b1 && b2 >= t2)
-            {
-                spanstart[b2] = x;
-                b2--;
-            }
-        }
-
-        Z_ChangeTag(ds_source, PU_CACHE);
     }
 }
