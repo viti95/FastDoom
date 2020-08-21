@@ -317,19 +317,6 @@ clipsolid:
 // Returns true
 //  if some part of the bbox might be visible.
 //
-byte checkcoord[12][4] =
-    {
-        {3, 0, 2, 1},
-        {3, 0, 2, 0},
-        {3, 1, 2, 0},
-        {0},
-        {2, 0, 2, 1},
-        {0, 0, 0, 0},
-        {3, 1, 3, 0},
-        {0},
-        {2, 0, 3, 1},
-        {2, 1, 3, 1},
-        {2, 1, 3, 0}};
 
 boolean R_CheckBBox(fixed_t *bspcoord)
 {
@@ -354,28 +341,64 @@ boolean R_CheckBBox(fixed_t *bspcoord)
 
     // Find the corners of the box
     // that define the edges from current viewpoint.
-    if (viewx <= bspcoord[BOXLEFT])
-        boxx = 0;
-    else if (viewx < bspcoord[BOXRIGHT])
-        boxx = 1;
-    else
-        boxx = 2;
-
-    if (viewy >= bspcoord[BOXTOP])
-        boxy = 0;
-    else if (viewy > bspcoord[BOXBOTTOM])
-        boxy = 1;
-    else
-        boxy = 2;
+    boxx = viewx <= bspcoord[BOXLEFT] ? 0 : viewx < bspcoord[BOXRIGHT] ? 1 : 2;
+    boxy = viewy >= bspcoord[BOXTOP] ? 0 : viewy > bspcoord[BOXBOTTOM] ? 1 : 2;
 
     boxpos = (boxy << 2) + boxx;
     if (boxpos == 5)
         return true;
 
-    x1 = bspcoord[checkcoord[boxpos][0]];
-    y1 = bspcoord[checkcoord[boxpos][1]];
-    x2 = bspcoord[checkcoord[boxpos][2]];
-    y2 = bspcoord[checkcoord[boxpos][3]];
+    switch (boxpos)
+    {
+    case 0:
+        x1 = bspcoord[BOXRIGHT];
+        y1 = bspcoord[BOXTOP];
+        x2 = bspcoord[BOXLEFT];
+        y2 = bspcoord[BOXBOTTOM];
+        break;
+    case 1:
+        x1 = bspcoord[BOXRIGHT];
+        y1 = y2 = bspcoord[BOXTOP];
+        x2 = bspcoord[BOXLEFT];
+        break;
+    case 2:
+        x1 = bspcoord[BOXRIGHT];
+        y1 = bspcoord[BOXBOTTOM];
+        x2 = bspcoord[BOXLEFT];
+        y2 = bspcoord[BOXTOP];
+        break;
+    case 3:
+    case 7:
+        x1 = x2 = y1 = y2 = bspcoord[BOXTOP];
+        break;
+    case 4:
+        x1 = x2 = bspcoord[BOXLEFT];
+        y1 = bspcoord[BOXTOP];
+        y2 = bspcoord[BOXBOTTOM];
+        break;
+    case 6:
+        x1 = x2 = bspcoord[BOXRIGHT];
+        y1 = bspcoord[BOXBOTTOM];
+        y2 = bspcoord[BOXTOP];
+        break;
+    case 8:
+        x1 = bspcoord[BOXLEFT];
+        y1 = bspcoord[BOXTOP];
+        x2 = bspcoord[BOXRIGHT];
+        y2 = bspcoord[BOXBOTTOM];
+        break;
+    case 9:
+        x1 = bspcoord[BOXLEFT];
+        y1 = y2 = bspcoord[BOXBOTTOM];
+        x2 = bspcoord[BOXRIGHT];
+        break;
+    case 10:
+        x1 = bspcoord[BOXLEFT];
+        y1 = bspcoord[BOXBOTTOM];
+        x2 = bspcoord[BOXRIGHT];
+        y2 = bspcoord[BOXTOP];
+        break;
+    }
 
     // check clip list for an open space
     angle1 = R_PointToAngle(x1, y1) - viewangle;
@@ -487,22 +510,6 @@ void R_Subsector(int num)
 //  traversing subtree recursively.
 // Just call with BSP root.
 
-boolean R_RenderBspSubsector(int bspnum)
-{
-    // Found a subsector?
-    if (bspnum & NF_SUBSECTOR)
-    {
-        if (bspnum == -1)
-            R_Subsector(0);
-        else
-            R_Subsector(bspnum & (~NF_SUBSECTOR));
-
-        return true;
-    }
-
-    return false;
-}
-
 #define MAX_BSP_DEPTH 64
 
 void R_RenderBSPNode(int bspnum)
@@ -518,7 +525,7 @@ void R_RenderBSPNode(int bspnum)
     while (true)
     {
         //Front sides.
-        while (!R_RenderBspSubsector(bspnum))
+        while ((bspnum & NF_SUBSECTOR) == 0)
         {
             if (sp == MAX_BSP_DEPTH)
                 break;
@@ -541,6 +548,11 @@ void R_RenderBSPNode(int bspnum)
 
             bspnum = bsp->children[side];
         }
+
+        if (bspnum == -1)
+            R_Subsector(0);
+        else
+            R_Subsector(bspnum & (~NF_SUBSECTOR));
 
         if (sp == 0)
         {
