@@ -38,18 +38,6 @@ fixed_t t2x;
 fixed_t t2y;
 
 //
-// P_DivlineSide
-// Returns side 0 (front), 1 (back), or 2 (on).
-//
-int P_DivlineSide(fixed_t x,
-                  fixed_t y,
-                  divline_t *node)
-{
-    fixed_t left, right;
-    return !node->dx ? x == node->x ? 2 : x <= node->x ? node->dy > 0 : node->dy < 0 : !node->dy ? x == node->y ? 2 : y <= node->y ? node->dx < 0 : node->dx > 0 : (right = ((y - node->y) >> FRACBITS) * (node->dx >> FRACBITS)) < (left = ((x - node->x) >> FRACBITS) * (node->dy >> FRACBITS)) ? 0 : right == left ? 2 : 1;
-}
-
-//
 // P_CrossSubsector
 // Returns true
 //  if strace crosses the given subsector successfully.
@@ -77,6 +65,8 @@ boolean P_CrossSubsector(int num)
     fixed_t numIV;
     fixed_t denIV;
 
+    fixed_t left, right;
+
     sub = &subsectors[num];
 
     // check lines
@@ -95,8 +85,9 @@ boolean P_CrossSubsector(int num)
 
         v1 = line->v1;
         v2 = line->v2;
-        s1 = P_DivlineSide(v1->x, v1->y, &strace);
-        s2 = P_DivlineSide(v2->x, v2->y, &strace);
+
+        s1 = !strace.dx ? v1->x == strace.x ? 2 : v1->x <= strace.x ? strace.dy > 0 : strace.dy < 0 : !strace.dy ? v1->x == strace.y ? 2 : v1->y <= strace.y ? strace.dx < 0 : strace.dx > 0 : (right = ((v1->y - strace.y) >> FRACBITS) * (strace.dx >> FRACBITS)) < (left = ((v1->x - strace.x) >> FRACBITS) * (strace.dy >> FRACBITS)) ? 0 : right == left ? 2 : 1;
+        s2 = !strace.dx ? v2->x == strace.x ? 2 : v2->x <= strace.x ? strace.dy > 0 : strace.dy < 0 : !strace.dy ? v2->x == strace.y ? 2 : v2->y <= strace.y ? strace.dx < 0 : strace.dx > 0 : (right = ((v2->y - strace.y) >> FRACBITS) * (strace.dx >> FRACBITS)) < (left = ((v2->x - strace.x) >> FRACBITS) * (strace.dy >> FRACBITS)) ? 0 : right == left ? 2 : 1;
 
         // line isn't crossed?
         if (s1 == s2)
@@ -106,8 +97,9 @@ boolean P_CrossSubsector(int num)
         divl.y = v1->y;
         divl.dx = v2->x - v1->x;
         divl.dy = v2->y - v1->y;
-        s1 = P_DivlineSide(strace.x, strace.y, &divl);
-        s2 = P_DivlineSide(t2x, t2y, &divl);
+        
+        s1 = !divl.dx ? strace.x == divl.x ? 2 : strace.x <= divl.x ? divl.dy > 0 : divl.dy < 0 : !divl.dy ? strace.x == divl.y ? 2 : strace.y <= divl.y ? divl.dx < 0 : divl.dx > 0 : (right = ((strace.y - divl.y) >> FRACBITS) * (divl.dx >> FRACBITS)) < (left = ((strace.x - divl.x) >> FRACBITS) * (divl.dy >> FRACBITS)) ? 0 : right == left ? 2 : 1;
+        s2 = !divl.dx ? t2x == divl.x ? 2 : t2x <= divl.x ? divl.dy > 0 : divl.dy < 0 : !divl.dy ? t2x == divl.y ? 2 : t2y <= divl.y ? divl.dx < 0 : divl.dx > 0 : (right = ((t2y - divl.y) >> FRACBITS) * (divl.dx >> FRACBITS)) < (left = ((t2x - divl.x) >> FRACBITS) * (divl.dy >> FRACBITS)) ? 0 : right == left ? 2 : 1;
 
         // line isn't crossed?
         if (s1 == s2)
@@ -191,6 +183,8 @@ boolean P_CrossBSPNode(int bspnum)
 {
     node_t *bsp;
     int side;
+    fixed_t left, right;
+    int calc_side;
 
     if (bspnum & NF_SUBSECTOR)
     {
@@ -203,16 +197,16 @@ boolean P_CrossBSPNode(int bspnum)
     bsp = &nodes[bspnum];
 
     // decide which side the start point is on
-    side = P_DivlineSide(strace.x, strace.y, (divline_t *)bsp);
-    if (side == 2)
-        side = 0; // an "on" should cross both sides
+    side = !bsp->dx ? strace.x == bsp->x ? 0 : strace.x <= bsp->x ? bsp->dy > 0 : bsp->dy < 0 : !bsp->dy ? strace.x == bsp->y ? 0 : strace.y <= bsp->y ? bsp->dx < 0 : bsp->dx > 0 : (right = ((strace.y - bsp->y) >> FRACBITS) * (bsp->dx >> FRACBITS)) < (left = ((strace.x - bsp->x) >> FRACBITS) * (bsp->dy >> FRACBITS)) ? 0 : right == left ? 0 : 1;
 
     // cross the starting side
     if (!P_CrossBSPNode(bsp->children[side]))
         return false;
 
+    calc_side = !bsp->dx ? t2x == bsp->x ? 2 : t2x <= bsp->x ? bsp->dy > 0 : bsp->dy < 0 : !bsp->dy ? t2x == bsp->y ? 2 : t2y <= bsp->y ? bsp->dx < 0 : bsp->dx > 0 : (right = ((t2y - bsp->y) >> FRACBITS) * (bsp->dx >> FRACBITS)) < (left = ((t2x - bsp->x) >> FRACBITS) * (bsp->dy >> FRACBITS)) ? 0 : right == left ? 2 : 1;
+
     // the partition plane is crossed here
-    if (side == P_DivlineSide(t2x, t2y, (divline_t *)bsp))
+    if (side == calc_side)
     {
         // the line doesn't touch the other side
         return true;
