@@ -328,8 +328,10 @@ void S_ResumeSound(void)
 
 void S_StopSound(void *origin)
 {
-
     int cnum;
+
+    if (snd_SfxDevice == snd_none)
+        return;
 
     for (cnum = 0; cnum < numChannels; cnum++)
     {
@@ -401,12 +403,14 @@ void S_StartSound(void *origin_p, int sfx_id)
     int sep;
     sfxinfo_t *sfx;
     int cnum;
-    int volume = snd_SfxVolume;
-
-    mobj_t *origin = (mobj_t *)origin_p;
+    int volume;
+    mobj_t *origin;
 
     if (snd_SfxDevice == snd_none)
         return;
+
+    volume = snd_SfxVolume;
+    origin = (mobj_t *)origin_p;
 
     sfx = &S_sfx[sfx_id];
 
