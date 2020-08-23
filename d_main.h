@@ -45,4 +45,6 @@ void D_PageDrawer(void);
 void D_AdvanceDemo(void);
 void D_StartTitle(void);
 
+void D_Display(void);
+
 #endif

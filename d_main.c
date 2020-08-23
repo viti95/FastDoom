@@ -97,6 +97,8 @@ boolean lowSound;
 boolean waitInit;
 boolean noMelt;
 
+boolean uncappedFPS;
+
 boolean drone;
 
 boolean singletics = false; // debug flag to cancel adaptiveness
@@ -773,6 +775,8 @@ void D_DoomMain(void)
     noMelt = M_CheckParm("-nomelt");
 
     singletics = M_CheckParm("-singletics");
+
+    uncappedFPS = M_CheckParm("-uncapped");
 
     if (!commercial)
     {

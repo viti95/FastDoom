@@ -22,6 +22,7 @@
 #include "g_game.h"
 #include "doomdef.h"
 #include "doomstat.h"
+#include "d_main.h"
 
 doomcom_t *doomcom;
 doomdata_t *netbuffer; // points inside doomcom
@@ -188,6 +189,10 @@ void TryRunTics(void)
 			M_Ticker();
 			return;
 		}
+
+		// Render interpolated frames
+		if (uncappedFPS)
+			D_Display();
 	}
 
 	// run the count dics

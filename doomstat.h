@@ -53,6 +53,8 @@ extern boolean lowSound;
 extern boolean waitInit;
 extern boolean noMelt;
 
+extern boolean uncappedFPS;
+
 // Set if homebrew PWAD stuff has been added.
 extern boolean modifiedgame;
 
