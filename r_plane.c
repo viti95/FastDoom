@@ -268,9 +268,8 @@ R_CheckPlane(visplane_t *pl,
         intrh = stop;
     }
 
-    for (x = intrl; x <= intrh; x++)
-        if (pl->top[x] != 0xff)
-            break;
+    for (x=intrl ; x <= intrh && pl->top[x] == 0xff; x++) // dropoff overflow
+        ;
 
     if (x > intrh)
     {
