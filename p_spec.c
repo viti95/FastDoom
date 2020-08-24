@@ -372,16 +372,16 @@ fixed_t P_FindHighestCeilingSurrounding(sector_t *sec)
 //
 // RETURN NEXT SECTOR # THAT LINE TAG REFERS TO
 //
-int P_FindSectorFromLineTag(line_t *line,
-							int start)
+
+// Find the next sector with the same tag as a linedef.
+// Rewritten by Lee Killough to use chained hashing to improve speed
+
+int P_FindSectorFromLineTag(line_t *line, int start)
 {
-	int i;
-
-	for (i = start + 1; i < numsectors; i++)
-		if (sectors[i].tag == line->tag)
-			return i;
-
-	return -1;
+	start = start >= 0 ? sectors[start].nexttag : sectors[(unsigned)line->tag % (unsigned)numsectors].firsttag;
+	while (start >= 0 && sectors[start].tag != line->tag)
+		start = sectors[start].nexttag;
+	return start;
 }
 
 //
@@ -926,6 +926,21 @@ void P_ShootSpecialLine(mobj_t *thing,
 	}
 }
 
+void P_InitTagLists(void)
+{
+	register int i;
+
+	for (i = numsectors; --i >= 0;) // Initially make all slots empty.
+		sectors[i].firsttag = -1;
+
+	for (i = numsectors; --i >= 0;)								 // Proceed from last to first sector
+	{															 // so that lower sectors appear first
+		int j = (unsigned)sectors[i].tag % (unsigned)numsectors; // Hash func
+		sectors[i].nexttag = sectors[j].firsttag;				 // Prepend sector to chain
+		sectors[j].firsttag = i;
+	}
+}
+
 //
 // P_PlayerInSpecialSector
 // Called every tic frame
@@ -1006,7 +1021,7 @@ void P_UpdateSpecials(void)
 	int i;
 	line_t *line;
 
-	if (!(gametic&7)) // Optimization from Jaguar Doom port 
+	if (!(gametic & 7)) // Optimization from Jaguar Doom port
 		//	ANIMATE FLATS AND TEXTURES GLOBALLY
 		for (anim = anims; anim < lastanim; anim++)
 		{
@@ -1099,8 +1114,8 @@ int EV_DoDonut(line_t *line)
 			floor = Z_Malloc(sizeof(*floor), PU_LEVSPEC, 0);
 
 			thinkercap.prev->next = &floor->thinker;
-    		floor->thinker.next = &thinkercap;
-    		floor->thinker.prev = thinkercap.prev;
+			floor->thinker.next = &thinkercap;
+			floor->thinker.prev = thinkercap.prev;
 			thinkercap.prev = &floor->thinker;
 
 			s2->specialdata = floor;
@@ -1118,8 +1133,8 @@ int EV_DoDonut(line_t *line)
 			floor = Z_Malloc(sizeof(*floor), PU_LEVSPEC, 0);
 
 			thinkercap.prev->next = &floor->thinker;
-    		floor->thinker.next = &thinkercap;
-    		floor->thinker.prev = thinkercap.prev;
+			floor->thinker.next = &thinkercap;
+			floor->thinker.prev = thinkercap.prev;
 			thinkercap.prev = &floor->thinker;
 
 			s1->specialdata = floor;
@@ -1247,4 +1262,6 @@ void P_SpawnSpecials(void)
 
 	for (i = 0; i < MAXBUTTONS; i++)
 		memset(&buttonlist[i], 0, sizeof(button_t));
+
+	P_InitTagLists();
 }
