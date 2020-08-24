@@ -151,7 +151,7 @@ void R_MapPlane(int y, int x1)
         ds_xfrac = viewx + FixedMul(finecosine[angle], length);
         ds_yfrac = -viewy - FixedMul(finesine[angle], length);
     }
-    
+
     if (fixedcolormap)
         ds_colormap = fixedcolormap;
     else
@@ -222,7 +222,7 @@ visplane_t *R_FindPlane(fixed_t height, int picnum, int lightlevel)
         if (height == check->height &&
             picnum == check->picnum &&
             lightlevel == check->lightlevel)
-        return check;
+            return check;
 
     check = R_NewVisplane(hash); // killough
 
@@ -268,8 +268,8 @@ visplane_t *R_CheckPlane(visplane_t *pl, int start, int stop)
         new_pl->picnum = pl->picnum;
         new_pl->lightlevel = pl->lightlevel;
         pl = new_pl;
-    pl->minx = start;
-    pl->maxx = stop;
+        pl->minx = start;
+        pl->maxx = stop;
         memset(pl->top, 0xff, sizeof pl->top);
     }
 
@@ -292,135 +292,135 @@ void R_DrawPlanes(void)
     byte t1, b1, t2, b2;
     for (i = 0; i < MAXVISPLANES; i++)
         for (pl = visplanes[i]; pl; pl = pl->next)
-    {
-        if (!pl->modified)
-            continue;
-
-        if (pl->minx > pl->maxx)
-            continue;
-
-        // sky flat
-        if (pl->picnum == skyflatnum)
         {
-            dc_iscale = pspriteiscale >> detailshift;
+            if (!pl->modified)
+                continue;
 
-            // Sky is allways drawn full bright,
-            //  i.e. colormaps[0] is used.
-            // Because of this hack, sky is not affected
-            //  by INVUL inverse mapping.
-            dc_colormap = colormaps;
-            dc_texturemid = skytexturemid;
-            for (x = pl->minx; x <= pl->maxx; x++)
+            if (pl->minx > pl->maxx)
+                continue;
+
+            // sky flat
+            if (pl->picnum == skyflatnum)
             {
-                dc_yl = pl->top[x];
-                dc_yh = pl->bottom[x];
+                dc_iscale = pspriteiscale >> detailshift;
 
-                if (dc_yl <= dc_yh)
+                // Sky is allways drawn full bright,
+                //  i.e. colormaps[0] is used.
+                // Because of this hack, sky is not affected
+                //  by INVUL inverse mapping.
+                dc_colormap = colormaps;
+                dc_texturemid = skytexturemid;
+                for (x = pl->minx; x <= pl->maxx; x++)
                 {
-                    dc_x = x;
+                    dc_yl = pl->top[x];
+                    dc_yh = pl->bottom[x];
 
-                    if (!flatSky)
+                    if (dc_yl <= dc_yh)
                     {
-                        angle = (viewangle + xtoviewangle[x]) >> ANGLETOSKYSHIFT;
-                        dc_source = R_GetColumn(skytexture, angle);
-                    }
+                        dc_x = x;
 
-                    skyfunc();
-                }
-            }
-            continue;
-        }
+                        if (!flatSky)
+                        {
+                            angle = (viewangle + xtoviewangle[x]) >> ANGLETOSKYSHIFT;
+                            dc_source = R_GetColumn(skytexture, angle);
+                        }
 
-        if (flatSurfaces)
-        {
-            //dc_iscale = pspriteiscale >> detailshift;
-            dc_colormap = colormaps;
-
-            dc_source = W_CacheLumpNum(firstflat +
-                                           flattranslation[pl->picnum],
-                                       PU_STATIC);
-
-            for (x = pl->minx; x <= pl->maxx; x++)
-            {
-                dc_yl = pl->top[x];
-                dc_yh = pl->bottom[x];
-
-                if (dc_yl <= dc_yh)
-                {
-                    dc_x = x;
-
-                    switch (detailshift)
-                    {
-                    case 0:
-                        R_DrawColumnFlat();
-                        break;
-                    case 1:
-                        R_DrawColumnFlatLow();
-                        break;
-                    case 2:
-                        R_DrawColumnFlatPotato();
-                        break;
+                        skyfunc();
                     }
                 }
+                continue;
             }
 
-            Z_ChangeTag(dc_source, PU_CACHE);
-        }
-        else
-        {
-            // regular flat
-
-            ds_source = W_CacheLumpNum(firstflat +
-                                           flattranslation[pl->picnum],
-                                       PU_STATIC);
-            planeheight = abs(pl->height - viewz);
-            light = (pl->lightlevel >> LIGHTSEGSHIFT) + extralight;
-
-            if (light >= LIGHTLEVELS)
-                light = LIGHTLEVELS - 1;
-
-            if (light < 0)
-                light = 0;
-
-            planezlight = zlight[light];
-            pl->top[pl->maxx + 1] = 0xff;
-            pl->top[pl->minx - 1] = 0xff;
-
-            stop = pl->maxx + 1;
-
-            for (x = pl->minx; x <= stop; x++)
+            if (flatSurfaces)
             {
-                t1 = pl->top[x - 1];
-                b1 = pl->bottom[x - 1];
-                t2 = pl->top[x];
-                b2 = pl->bottom[x];
+                //dc_iscale = pspriteiscale >> detailshift;
+                dc_colormap = colormaps;
 
-                ds_x2 = x - 1;
+                dc_source = W_CacheLumpNum(firstflat +
+                                               flattranslation[pl->picnum],
+                                           PU_STATIC);
 
-                while (t1 < t2 && t1 <= b1)
+                for (x = pl->minx; x <= pl->maxx; x++)
                 {
-                    R_MapPlane(t1, spanstart[t1]);
-                    t1++;
-                }
-                while (b1 > b2 && b1 >= t1)
-                {
-                    R_MapPlane(b1, spanstart[b1]);
-                    b1--;
+                    dc_yl = pl->top[x];
+                    dc_yh = pl->bottom[x];
+
+                    if (dc_yl <= dc_yh)
+                    {
+                        dc_x = x;
+
+                        switch (detailshift)
+                        {
+                        case 0:
+                            R_DrawColumnFlat();
+                            break;
+                        case 1:
+                            R_DrawColumnFlatLow();
+                            break;
+                        case 2:
+                            R_DrawColumnFlatPotato();
+                            break;
+                        }
+                    }
                 }
 
-                while (t2 < t1 && t2 <= b2)
-                {
-                    spanstart[t2] = x;
-                    t2++;
-                }
-                while (b2 > b1 && b2 >= t2)
-                {
-                    spanstart[b2] = x;
-                    b2--;
-                }
+                Z_ChangeTag(dc_source, PU_CACHE);
             }
+            else
+            {
+                // regular flat
 
-            Z_ChangeTag(ds_source, PU_CACHE);
+                ds_source = W_CacheLumpNum(firstflat +
+                                               flattranslation[pl->picnum],
+                                           PU_STATIC);
+                planeheight = abs(pl->height - viewz);
+                light = (pl->lightlevel >> LIGHTSEGSHIFT) + extralight;
+
+                if (light >= LIGHTLEVELS)
+                    light = LIGHTLEVELS - 1;
+
+                if (light < 0)
+                    light = 0;
+
+                planezlight = zlight[light];
+                pl->top[pl->maxx + 1] = 0xff;
+                pl->top[pl->minx - 1] = 0xff;
+
+                stop = pl->maxx + 1;
+
+                for (x = pl->minx; x <= stop; x++)
+                {
+                    t1 = pl->top[x - 1];
+                    b1 = pl->bottom[x - 1];
+                    t2 = pl->top[x];
+                    b2 = pl->bottom[x];
+
+                    ds_x2 = x - 1;
+
+                    while (t1 < t2 && t1 <= b1)
+                    {
+                        R_MapPlane(t1, spanstart[t1]);
+                        t1++;
+                    }
+                    while (b1 > b2 && b1 >= t1)
+                    {
+                        R_MapPlane(b1, spanstart[b1]);
+                        b1--;
+                    }
+
+                    while (t2 < t1 && t2 <= b2)
+                    {
+                        spanstart[t2] = x;
+                        t2++;
+                    }
+                    while (b2 > b1 && b2 >= t2)
+                    {
+                        spanstart[b2] = x;
+                        b2--;
+                    }
+                }
+
+                Z_ChangeTag(ds_source, PU_CACHE);
+            }
         }
-    }
 }
