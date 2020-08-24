@@ -38,8 +38,8 @@ planefunction_t ceilingfunc;
 //
 
 // Here comes the obnoxious "visplane".
-#define MAXVISPLANES 128
-visplane_t *visplanes[MAXVISPLANES]; // killough
+#define MAXSLOTS 32
+visplane_t *visplanes[MAXSLOTS]; // killough
 visplane_t *freetail;                // killough
 visplane_t **freehead = &freetail;   // killough
 visplane_t *floorplane, *ceilingplane;
@@ -81,19 +81,7 @@ fixed_t cachedxstep[SCREENHEIGHT];
 fixed_t cachedystep[SCREENHEIGHT];
 
 #define R_VisplaneHash(picnum, lightlevel, height) \
-    (((unsigned)(picnum)*3 + (unsigned)(lightlevel) + (unsigned)(height)*7) & (MAXVISPLANES - 1))
-
-visplane_t *R_NewVisplane(unsigned hash)
-{
-    visplane_t *check = freetail;
-    if (!check)
-        check = calloc(1, sizeof *check);
-    else if (!(freetail = freetail->next))
-        freehead = &freetail;
-    check->next = visplanes[hash];
-    visplanes[hash] = check;
-    return check;
-}
+    (((unsigned)(picnum)*2 + (unsigned)(lightlevel) + (unsigned)(height)*4) & (MAXSLOTS - 1))
 
 //
 // R_InitPlanes
@@ -185,7 +173,7 @@ void R_ClearPlanes(void)
     for (i = 0; i < viewwidth; i++)
         floorclip[i] = viewheight, ceilingclip[i] = -1;
 
-    for (i = 0; i < MAXVISPLANES; i++) // new code -- killough
+    for (i = 0; i < MAXSLOTS; i++) // new code -- killough
         for (*freehead = visplanes[i], visplanes[i] = NULL; *freehead;)
             freehead = &(*freehead)->next;
 
@@ -224,7 +212,13 @@ visplane_t *R_FindPlane(fixed_t height, int picnum, int lightlevel)
             lightlevel == check->lightlevel)
             return check;
 
-    check = R_NewVisplane(hash); // killough
+    check = freetail;
+    if (!check)
+        check = calloc(1, sizeof *check);
+    else if (!(freetail = freetail->next))
+        freehead = &freetail;
+    check->next = visplanes[hash];
+    visplanes[hash] = check;
 
     check->height = height;
     check->picnum = picnum;
@@ -262,7 +256,14 @@ visplane_t *R_CheckPlane(visplane_t *pl, int start, int stop)
     else
     {
         unsigned hash = R_VisplaneHash(pl->picnum, pl->lightlevel, pl->height);
-        visplane_t *new_pl = R_NewVisplane(hash);
+        
+        visplane_t *new_pl = freetail;
+        if (!new_pl)
+            new_pl = calloc(1, sizeof *new_pl);
+        else if (!(freetail = freetail->next))
+            freehead = &freetail;
+        new_pl->next = visplanes[hash];
+        visplanes[hash] = new_pl;
 
         new_pl->height = pl->height;
         new_pl->picnum = pl->picnum;
@@ -290,7 +291,7 @@ void R_DrawPlanes(void)
     unsigned short i;
 
     byte t1, b1, t2, b2;
-    for (i = 0; i < MAXVISPLANES; i++)
+    for (i = 0; i < MAXSLOTS; i++)
         for (pl = visplanes[i]; pl; pl = pl->next)
         {
             if (!pl->modified)
