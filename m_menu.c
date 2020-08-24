@@ -866,7 +866,7 @@ void M_Episode(int choice)
 //
 // M_Options
 //
-char detailNames[2][9] = {"M_GDHIGH", "M_GDLOW"};
+char detailNames[3][9] = {"M_GDHIGH", "M_GDLOW", "M_MSGOFF"};
 char msgNames[2][9] = {"M_MSGOFF", "M_MSGON"};
 
 void M_DrawOptions(void)
@@ -1025,17 +1025,26 @@ void M_ChangeSensitivity(int choice)
     }
 }
 
-void M_ChangeDetail(int choice)
+void M_ChangeDetail()
 {
-    choice = 0;
-    detailLevel = 1 - detailLevel;
+    detailLevel++;
+    
+    if (detailLevel == 3)
+        detailLevel = 0;
 
     R_SetViewSize(screenblocks, detailLevel);
 
-    if (!detailLevel)
-        players.message = DETAILHI;
-    else
-        players.message = DETAILLO;
+    switch(detailLevel){
+        case 0:
+            players.message = DETAILHI;
+            break;
+        case 1:
+            players.message = DETAILLO;
+            break;
+        case 2:
+            players.message = DETAILPO;
+            break;
+    }
 }
 
 void M_SizeDisplay(int choice)
@@ -1315,7 +1324,7 @@ boolean M_Responder(event_t *ev)
             return true;
 
         case KEY_F5: // Detail toggle
-            M_ChangeDetail(0);
+            M_ChangeDetail();
             S_StartSound(NULL, sfx_swtchn);
             return true;
 

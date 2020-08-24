@@ -321,34 +321,31 @@ void R_DrawFuzzColumn(void)
 
     dest = destview + dc_yl * 80;
 
-    if (detailshift)
+    switch (detailshift)
     {
-        if (potatoDetail)
-        {
-            outpw(GC_INDEX, GC_READMAP + (15 << 8));
-            outp(SC_INDEX + 1, 15);
-            dest += dc_x;
-        }
-        else
-        {
-            if (dc_x & 1)
-            {
-                outpw(GC_INDEX, GC_READMAP + (2 << 8));
-                outp(SC_INDEX + 1, 12);
-            }
-            else
-            {
-                outpw(GC_INDEX, GC_READMAP);
-                outp(SC_INDEX + 1, 3);
-            }
-            dest += (dc_x >> 1);
-        }
-    }
-    else
-    {
+    case 0:
         outpw(GC_INDEX, GC_READMAP + ((dc_x & 3) << 8));
         outp(SC_INDEX + 1, 1 << (dc_x & 3));
         dest += (dc_x >> 2);
+        break;
+    case 1:
+        if (dc_x & 1)
+        {
+            outpw(GC_INDEX, GC_READMAP + (2 << 8));
+            outp(SC_INDEX + 1, 12);
+        }
+        else
+        {
+            outpw(GC_INDEX, GC_READMAP);
+            outp(SC_INDEX + 1, 3);
+        }
+        dest += (dc_x >> 1);
+        break;
+    case 2:
+        outpw(GC_INDEX, GC_READMAP + (15 << 8));
+        outp(SC_INDEX + 1, 15);
+        dest += dc_x;
+        break;
     }
 
     // Looks like an attempt at dithering,
@@ -383,34 +380,31 @@ void R_DrawFuzzColumnFast(void)
 
     dest = destview + dc_yl * 80;
 
-    if (detailshift)
+    switch (detailshift)
     {
-        if (potatoDetail)
-        {
-            outpw(GC_INDEX, GC_READMAP + (15 << 8));
-            outp(SC_INDEX + 1, 15);
-            dest += dc_x;
-        }
-        else
-        {
-            if (dc_x & 1)
-            {
-                outpw(GC_INDEX, GC_READMAP + (2 << 8));
-                outp(SC_INDEX + 1, 12);
-            }
-            else
-            {
-                outpw(GC_INDEX, GC_READMAP);
-                outp(SC_INDEX + 1, 3);
-            }
-            dest += (dc_x >> 1);
-        }
-    }
-    else
-    {
+    case 0:
         outpw(GC_INDEX, GC_READMAP + ((dc_x & 3) << 8));
         outp(SC_INDEX + 1, 1 << (dc_x & 3));
         dest += (dc_x >> 2);
+        break;
+    case 1:
+        if (dc_x & 1)
+        {
+            outpw(GC_INDEX, GC_READMAP + (2 << 8));
+            outp(SC_INDEX + 1, 12);
+        }
+        else
+        {
+            outpw(GC_INDEX, GC_READMAP);
+            outp(SC_INDEX + 1, 3);
+        }
+        dest += (dc_x >> 1);
+        break;
+    case 2:
+        outpw(GC_INDEX, GC_READMAP + (15 << 8));
+        outp(SC_INDEX + 1, 15);
+        dest += dc_x;
+        break;
     }
 
     // Looks like an attempt at dithering,
@@ -446,27 +440,24 @@ void R_DrawFuzzColumnSaturn(void)
 
     dest = destview + dc_yl * 80;
 
-    if (detailshift)
+    switch (detailshift)
     {
-        if (potatoDetail)
-        {
-            outp(SC_INDEX + 1, 15);
-            dest += dc_x;
-        }
-        else
-        {
-            if (dc_x & 1)
-                outp(SC_INDEX + 1, 12);
-            else
-                outp(SC_INDEX + 1, 3);
-
-            dest += (dc_x >> 1);
-        }
-    }
-    else
-    {
+    case 0:
         outp(SC_INDEX + 1, 1 << (dc_x & 3));
         dest += (dc_x >> 2);
+        break;
+    case 1:
+        if (dc_x & 1)
+            outp(SC_INDEX + 1, 12);
+        else
+            outp(SC_INDEX + 1, 3);
+
+        dest += (dc_x >> 1);
+        break;
+    case 2:
+        outp(SC_INDEX + 1, 15);
+        dest += dc_x;
+        break;
     }
 
     // Determine scaling,

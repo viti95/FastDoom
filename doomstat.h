@@ -44,7 +44,6 @@ extern boolean untexturedSurfaces;
 extern boolean flatSky;
 extern boolean flatShadows;
 extern boolean saturnShadows;
-extern boolean potatoDetail;
 extern boolean showFPS;
 extern boolean unlimitedRAM;
 extern boolean nearSprites;
