@@ -203,6 +203,7 @@ void M_ChangeDetail(int choice);
 void M_SizeDisplay(int choice);
 void M_StartGame(int choice);
 void M_Sound(int choice);
+void M_Display(int choice);
 
 void M_FinishReadThis(int choice);
 void M_LoadSelect(int choice);
@@ -219,6 +220,7 @@ void M_DrawNewGame(void);
 void M_DrawEpisode(void);
 void M_DrawOptions(void);
 void M_DrawSound(void);
+void M_DrawDisplay(void);
 void M_DrawLoad(void);
 void M_DrawSave(void);
 
@@ -336,11 +338,18 @@ menu_t NewDef =
 //
 // OPTIONS MENU
 //
+
+enum
+{
+    detail,
+    display_end
+} display_e;
+
 enum
 {
     endgame,
     messages,
-    detail,
+    display,
     scrnsize,
     option_empty1,
     mousesens,
@@ -353,7 +362,7 @@ menuitem_t OptionsMenu[] =
     {
         {1, "M_ENDGAM", M_EndGame, 'e'},
         {1, "M_MESSG", M_ChangeMessages, 'm'},
-        {1, "M_DETAIL", M_ChangeDetail, 'g'},
+        {1, "M_DISP", M_Display, 'd'},
         {2, "M_SCRNSZ", M_SizeDisplay, 's'},
         {-1, "", 0},
         {2, "M_MSENS", M_ChangeSensitivity, 'm'},
@@ -366,6 +375,19 @@ menu_t OptionsDef =
         &MainDef,
         OptionsMenu,
         M_DrawOptions,
+        60, 37,
+        0};
+
+menuitem_t DisplayMenu[] =
+    {
+        {1, "M_DETAIL", M_ChangeDetail, 'g'}};
+
+menu_t DisplayDef =
+    {
+        display_end,
+        &OptionsDef,
+        DisplayMenu,
+        M_DrawDisplay,
         60, 37,
         0};
 
@@ -873,9 +895,6 @@ void M_DrawOptions(void)
 {
     V_DrawPatchDirect(108, 15, 0, W_CacheLumpName("M_OPTTTL", PU_CACHE));
 
-    V_DrawPatchDirect(OptionsDef.x + 175, OptionsDef.y + LINEHEIGHT * detail, 0,
-                      W_CacheLumpName(detailNames[detailLevel], PU_CACHE));
-
     V_DrawPatchDirect(OptionsDef.x + 120, OptionsDef.y + LINEHEIGHT * messages, 0,
                       W_CacheLumpName(msgNames[showMessages], PU_CACHE));
 
@@ -886,9 +905,22 @@ void M_DrawOptions(void)
                  9, screenSize);
 }
 
+void M_DrawDisplay(void)
+{
+    V_DrawPatchDirect(54, 15, 0, W_CacheLumpName("M_DISOPT", PU_CACHE));
+
+    V_DrawPatchDirect(OptionsDef.x + 175, OptionsDef.y + LINEHEIGHT * detail, 0,
+                      W_CacheLumpName(detailNames[detailLevel], PU_CACHE));
+}
+
 void M_Options(int choice)
 {
     M_SetupNextMenu(&OptionsDef);
+}
+
+void M_Display(int choice)
+{
+    M_SetupNextMenu(&DisplayDef);
 }
 
 //
@@ -1028,22 +1060,23 @@ void M_ChangeSensitivity(int choice)
 void M_ChangeDetail()
 {
     detailLevel++;
-    
+
     if (detailLevel == 3)
         detailLevel = 0;
 
     R_SetViewSize(screenblocks, detailLevel);
 
-    switch(detailLevel){
-        case 0:
-            players.message = DETAILHI;
-            break;
-        case 1:
-            players.message = DETAILLO;
-            break;
-        case 2:
-            players.message = DETAILPO;
-            break;
+    switch (detailLevel)
+    {
+    case 0:
+        players.message = DETAILHI;
+        break;
+    case 1:
+        players.message = DETAILLO;
+        break;
+    case 2:
+        players.message = DETAILPO;
+        break;
     }
 }
 
