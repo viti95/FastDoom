@@ -25,6 +25,7 @@
 #include "doomstat.h"
 #include "ns_scape.h"
 #include "ns_sb.h"
+#include "ns_sbmus.h"
 
 unsigned short divisors[] = {
     0,
