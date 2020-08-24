@@ -680,6 +680,8 @@ void G_DoCompleted(void)
 
     gameaction = ga_nothing;
 
+    S_ClearSounds(); // clear sound cache
+
     G_PlayerFinishLevel(); // take away cards and stuff
 
     if (automapactive)

@@ -39,11 +39,6 @@ struct sfxinfo_struct
     // sound data
     void *data;
 
-    // this is checked every second to see if sound
-    // can be thrown out (if 0, then decrement, if -1,
-    // then throw out, if > 0, then it is in use)
-    int usefulness;
-
     // lump number of sfx
     int lumpnum;
 };

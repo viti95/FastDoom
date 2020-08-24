@@ -109,8 +109,6 @@ static musicinfo_t *mus_playing = 0;
 // number of channels available
 int numChannels;
 
-static int nextcleanup;
-
 //
 // Internals.
 //
@@ -219,9 +217,6 @@ void S_StopChannel(int cnum)
                 break;
             }
         }
-
-        // degrade usefulness of sound data
-        c->sfxinfo->usefulness--;
 
         c->sfxinfo = 0;
     }
@@ -458,14 +453,9 @@ void S_StartSound(void *origin_p, int sfx_id)
     // cache data if necessary
     if (!sfx->data)
     {
-        sfx->data = (void *)W_CacheLumpNum(sfx->lumpnum, PU_MUSIC);
-
+        sfx->data = (void *)W_CacheLumpNum(sfx->lumpnum, PU_SOUND);
         DPMI_LockMemory(sfx->data, lumpinfo[sfx->lumpnum].size);
     }
-
-    // increase the usefulness
-    if (sfx->usefulness++ < 0)
-        sfx->usefulness = 1;
 
     // Assigns the handle to one of the channels in the
     //  mix/output buffer.
@@ -488,24 +478,6 @@ void S_UpdateSounds(void *listener_p)
 
     if (snd_SfxDevice == snd_none)
         return;
-
-    // Clean up unused data.
-    if (gametic > nextcleanup)
-    {
-        for (i = 1; i < NUMSFX; i++)
-        {
-            if (S_sfx[i].usefulness < 1 && S_sfx[i].usefulness > -1)
-            {
-                if (--S_sfx[i].usefulness == -1)
-                {
-                    Z_ChangeTag(S_sfx[i].data, PU_CACHE);
-                    DPMI_UnlockMemory(S_sfx[i].data, lumpinfo[S_sfx[i].lumpnum].size);
-                    S_sfx[i].data = 0;
-                }
-            }
-        }
-        nextcleanup = gametic + 15;
-    }
 
     for (cnum = 0; cnum < numChannels; cnum++)
     {
@@ -579,7 +551,7 @@ void S_Init(int sfxVolume,
 
     // Note that sounds have not been cached (yet).
     for (i = 1; i < NUMSFX; i++)
-        S_sfx[i].lumpnum = S_sfx[i].usefulness = -1;
+        S_sfx[i].lumpnum = -1;
 }
 
 //
@@ -631,6 +603,16 @@ void S_Start(void)
     //      mnum -= mus_e3m9;
 
     S_ChangeMusic(mnum, true);
+}
 
-    nextcleanup = 15;
+void S_ClearSounds(void)
+{
+    unsigned short i;
+    // Clean up unused data.
+    for (i = 1; i < NUMSFX; i++)
+    {
+        Z_ChangeTag(S_sfx[i].data, PU_CACHE);
+        DPMI_UnlockMemory(S_sfx[i].data, lumpinfo[S_sfx[i].lumpnum].size);
+        S_sfx[i].data = 0;
+    }
 }
