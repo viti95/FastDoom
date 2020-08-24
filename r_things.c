@@ -258,9 +258,12 @@ void R_InitSpriteDefs(char **namelist)
 //
 // GAME FUNCTIONS
 //
-vissprite_t vissprites[MAXVISSPRITES];
+vissprite_t *vissprites;
 vissprite_t *vissprite_p;
 int newvissprite;
+
+vissprite_t **vissprite_ptrs; // killough
+size_t num_vissprite, num_vissprite_alloc, num_vissprite_ptrs;
 
 //
 // R_InitSprites
@@ -284,13 +287,8 @@ void R_InitSprites(char **namelist)
 //
 void R_ClearSprites(void)
 {
-    vissprite_p = vissprites;
+    num_vissprite = 0; // killough
 }
-
-//
-// R_NewVisSprite
-//
-vissprite_t overflowsprite;
 
 //
 // R_DrawMaskedColumn
@@ -432,7 +430,7 @@ void R_ProjectSprite(mobj_t *thing)
     tr_y = thing->y - viewy;
 
     if (nearSprites && !(thing->flags & MF_SHOOTABLE) && (abs(tr_x) > 40000000 || abs(tr_y) > 40000000))
-        return;    
+        return;
 
     tz = FixedMul(tr_x, viewcos) + FixedMul(tr_y, viewsin);
 
@@ -447,7 +445,7 @@ void R_ProjectSprite(mobj_t *thing)
         return;
 
     xscale = FixedDiv(projection, tz);
-    
+
     // decide which patch to use for sprite relative to player
     sprdef = &sprites[thing->sprite];
     sprframe = &sprdef->spriteframes[thing->frame & FF_FRAMEMASK];
@@ -483,10 +481,11 @@ void R_ProjectSprite(mobj_t *thing)
         return;
 
     // quickly reject sprites with bad x ranges
-    if (x1 >= x2){
+    if (x1 >= x2)
+    {
         return;
     }
-        
+
     // killough 4/9/98: clip things which are out of view due to height
     // viti95 6/6/20: optimize by removing divisions and using multiplications instead. Also discard first than calculate other things.
     calcopt = viewheight << FRACBITS;
@@ -495,17 +494,16 @@ void R_ProjectSprite(mobj_t *thing)
         return;
 
     gzt = thing->z + spritetopoffset[lump];
-    
+
     if (calcopt - viewheight < FixedMul(viewz - gzt, xscale))
         return;
 
-    // store information in a vissprite
-    if (vissprite_p == &vissprites[MAXVISSPRITES])
+    if (num_vissprite >= num_vissprite_alloc) // killough
     {
-        vis = &overflowsprite;
+        num_vissprite_alloc = num_vissprite_alloc ? num_vissprite_alloc * 2 : 128;
+        vissprites = realloc(vissprites, num_vissprite_alloc * sizeof(*vissprites));
     }
-    vissprite_p++;
-    vis = vissprite_p - 1;
+    vis = vissprites + num_vissprite++;
     vis->mobjflags = thing->flags;
     vis->scale = xscale << detailshift;
     vis->gx = thing->x;
@@ -713,53 +711,68 @@ void R_DrawPlayerSprites(void)
 //
 vissprite_t vsprsortedhead;
 
-void R_SortVisSprites(void)
+#define bcopyp(d, s, n) memcpy(d, s, (n) * sizeof(void *))
+
+static void msort(vissprite_t **s, vissprite_t **t, int n)
 {
-    int i;
-    int count;
-    vissprite_t *ds;
-    vissprite_t *best;
-    vissprite_t unsorted;
-    fixed_t bestscale;
-
-    count = vissprite_p - vissprites;
-
-    if (!count)
-        return;
-
-    unsorted.next = unsorted.prev = &unsorted;
-
-    for (ds = vissprites; ds < vissprite_p; ds++)
+    if (n >= 16)
     {
-        ds->next = ds + 1;
-        ds->prev = ds - 1;
+        int n1 = n / 2, n2 = n - n1;
+        vissprite_t **s1 = s, **s2 = s + n1, **d = t;
+
+        msort(s1, t, n1);
+        msort(s2, t, n2);
+
+        while ((*s1)->scale > (*s2)->scale ? (*d++ = *s1++, --n1) : (*d++ = *s2++, --n2))
+            ;
+
+        if (n2)
+            bcopyp(d, s2, n2);
+        else
+            bcopyp(d, s1, n1);
+
+        bcopyp(s, t, n);
     }
-
-    vissprites[0].prev = &unsorted;
-    unsorted.next = &vissprites[0];
-    (vissprite_p - 1)->next = &unsorted;
-    unsorted.prev = vissprite_p - 1;
-
-    // pull the vissprites out by scale
-    //best = 0;		// shut up the compiler warning
-    vsprsortedhead.next = vsprsortedhead.prev = &vsprsortedhead;
-    for (i = 0; i < count; i++)
+    else
     {
-        bestscale = MAXINT;
-        for (ds = unsorted.next; ds != &unsorted; ds = ds->next)
+        int i;
+        for (i = 1; i < n; i++)
         {
-            if (ds->scale < bestscale)
+            vissprite_t *temp = s[i];
+            if (s[i - 1]->scale < temp->scale)
             {
-                bestscale = ds->scale;
-                best = ds;
+                int j = i;
+                while ((s[j] = s[j - 1])->scale < temp->scale && --j)
+                    ;
+                s[j] = temp;
             }
         }
-        best->next->prev = best->prev;
-        best->prev->next = best->next;
-        best->next = &vsprsortedhead;
-        best->prev = vsprsortedhead.prev;
-        vsprsortedhead.prev->next = best;
-        vsprsortedhead.prev = best;
+    }
+}
+
+void R_SortVisSprites(void)
+{
+    if (num_vissprite)
+    {
+        int i = num_vissprite;
+
+        // If we need to allocate more pointers for the vissprites,
+        // allocate as many as were allocated for sprites -- killough
+        // killough 9/22/98: allocate twice as many
+
+        if (num_vissprite_ptrs < num_vissprite * 2)
+        {
+            free(vissprite_ptrs); // better than realloc -- no preserving needed
+            vissprite_ptrs = malloc((num_vissprite_ptrs = num_vissprite_alloc * 2) * sizeof *vissprite_ptrs);
+        }
+
+        while (--i >= 0)
+            vissprite_ptrs[i] = vissprites + i;
+
+        // killough 9/22/98: replace qsort with merge sort, since the keys
+        // are roughly in order to begin with, due to BSP rendering.
+
+        msort(vissprite_ptrs, vissprite_ptrs + num_vissprite, num_vissprite);
     }
 }
 
@@ -778,7 +791,7 @@ void R_DrawSprite(vissprite_t *spr)
     fixed_t lowscale;
     int silhouette;
 
-    for (x = spr->x1 ; x<=spr->x2 ; x++)
+    for (x = spr->x1; x <= spr->x2; x++)
     {
         clipbot[x] = viewheight;
         cliptop[x] = -1;
@@ -821,7 +834,7 @@ void R_DrawSprite(vissprite_t *spr)
 
         // clip this piece of the sprite
         if (ds->silhouette & SIL_BOTTOM && spr->gz < ds->bsilheight) //bottom sil
-        for (x = r1; x <= r2; x++)
+            for (x = r1; x <= r2; x++)
             {
                 if (clipbot[x] == viewheight)
                     clipbot[x] = ds->sprbottomclip[x];
@@ -835,7 +848,6 @@ void R_DrawSprite(vissprite_t *spr)
 
     // all clipping has been performed, so draw the sprite
 
-
     mfloorclip = clipbot;
     mceilingclip = cliptop;
     R_DrawVisSprite(spr);
@@ -848,19 +860,12 @@ void R_DrawMasked(void)
 {
     vissprite_t *spr;
     drawseg_t *ds;
+    int i;
 
     R_SortVisSprites();
 
-    if (vissprite_p > vissprites)
-    {
-        // draw all vissprites back to front
-        for (spr = vsprsortedhead.next;
-             spr != &vsprsortedhead;
-             spr = spr->next)
-        {
-            R_DrawSprite(spr);
-        }
-    }
+    for (i = num_vissprite; --i >= 0;)
+        R_DrawSprite(vissprite_ptrs[i]); // killough
 
     // render any remaining masked mid textures
     for (ds = ds_p - 1; ds >= drawsegs; ds--)
