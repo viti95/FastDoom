@@ -207,7 +207,7 @@ void P_ArchiveThinkers(void)
 			save_p += sizeof(*mobj);
 			mobj->state = (state_t *)(mobj->state - states);
 
-			if (mobj->player == 1)
+			if (mobj->player)
 				mobj->player = (player_t *)(mobj->player);
 			continue;
 		}
@@ -258,7 +258,7 @@ void P_UnArchiveThinkers(void)
 			save_p += sizeof(*mobj);
 			mobj->state = &states[(int)mobj->state];
 			mobj->target = NULL;
-			if (mobj->player == 1)
+			if (mobj->player)
 			{
 				mobj->player = &players;
 				mobj->player->mo = mobj;
