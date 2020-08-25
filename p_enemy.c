@@ -1166,7 +1166,7 @@ void A_Fire(mobj_t *actor)
     an = dest->angle >> ANGLETOFINESHIFT;
 
     P_UnsetThingPosition(actor);
-    actor->x = dest->x + FixedMul(24 * FRACUNIT, finecosine[an]);
+    actor->x = dest->x + FixedMul(24 * FRACUNIT, finecosine[an]); // ((2^20) + (2^19)) or (2^19 * 3)
     actor->y = dest->y + FixedMul(24 * FRACUNIT, finesine[an]);
     actor->z = dest->z;
     P_SetThingPosition(actor);
@@ -1300,7 +1300,7 @@ void A_FatAttack3(mobj_t *actor)
 // SkullAttack
 // Fly at the player like a missile.
 //
-#define SKULLSPEED (20 * FRACUNIT)
+#define SKULLSPEED (20 * FRACUNIT) // ((2^20) + (2^18)) or (2^18 * 5)
 
 void A_SkullAttack(mobj_t *actor)
 {

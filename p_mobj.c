@@ -97,7 +97,7 @@ void P_ExplodeMissile(mobj_t *mo)
 // P_XYMovement
 //
 #define STOPSPEED 0x1000
-#define FRICTION 0xe800
+#define FRICTION 0xe800 // (2^15 + 2^14 + 2^13 + 2^11) or (29/2^5)
 
 void P_XYMovement(mobj_t *mo)
 {
@@ -214,8 +214,14 @@ void P_XYMovement(mobj_t *mo)
     }
     else
     {
-        mo->momx = FixedMul(mo->momx, FRICTION);
-        mo->momy = FixedMul(mo->momy, FRICTION);
+        //mo->momx = FixedMul(mo->momx, FRICTION);
+        //mo->momy = FixedMul(mo->momy, FRICTION);
+        
+        mo->momx = (mo->momx * 29) >> 5;
+        mo->momy = (mo->momy * 29) >> 5;
+
+        //mo->momx = FixedFriction(mo->momx);
+        //mo->momy = FixedFriction(mo->momy);
     }
 }
 
@@ -448,7 +454,7 @@ void P_MobjThinker(mobj_t *mobj)
 //Thinker function for stuff that doesn't need to do anything
 //interesting.
 //Just cycles through the states. Allows sprite animation to work.
-void P_MobjBrainlessThinker(mobj_t* mobj)
+void P_MobjBrainlessThinker(mobj_t *mobj)
 {
     // cycle through states,
     // calling action functions at transitions
@@ -460,7 +466,7 @@ void P_MobjBrainlessThinker(mobj_t* mobj)
         // you can cycle through multiple states in a tic
 
         if (!mobj->tics)
-            P_SetMobjState (mobj, mobj->state->nextstate);
+            P_SetMobjState(mobj, mobj->state->nextstate);
     }
 }
 
@@ -516,13 +522,16 @@ P_SpawnMobj(fixed_t x,
     else
         mobj->z = z;
 
-    if(mobj->type < MT_MISC0){
+    if (mobj->type < MT_MISC0)
+    {
         mobj->thinker.function.acp1 = (actionf_p1)P_MobjThinker;
-    }else{
-        if(mobj->tics != -1)
+    }
+    else
+    {
+        if (mobj->tics != -1)
             mobj->thinker.function.acp1 = (actionf_p1)P_MobjBrainlessThinker;
     }
-    
+
     thinkercap.prev->next = &mobj->thinker;
     mobj->thinker.next = &thinkercap;
     mobj->thinker.prev = thinkercap.prev;
