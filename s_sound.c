@@ -608,11 +608,18 @@ void S_Start(void)
 void S_ClearSounds(void)
 {
     unsigned short i;
+
+    if (snd_SfxDevice == snd_none)
+        return;
+
     // Clean up unused data.
     for (i = 1; i < NUMSFX; i++)
     {
-        Z_ChangeTag(S_sfx[i].data, PU_CACHE);
-        DPMI_UnlockMemory(S_sfx[i].data, lumpinfo[S_sfx[i].lumpnum].size);
-        S_sfx[i].data = 0;
+        if (S_sfx[i].data != 0)
+        {
+            Z_ChangeTag(S_sfx[i].data, PU_CACHE);
+            DPMI_UnlockMemory(S_sfx[i].data, lumpinfo[S_sfx[i].lumpnum].size);
+            S_sfx[i].data = 0;
+        }
     }
 }
