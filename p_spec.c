@@ -275,49 +275,25 @@ fixed_t P_FindHighestFloorSurrounding(sector_t *sec)
 
 //
 // P_FindNextHighestFloor
-// FIND NEXT HIGHEST FLOOR IN SURROUNDING SECTORS
-// Note: this should be doable w/o a fixed array.
-
-// 20 adjoining sectors max!
-#define MAX_ADJOINING_SECTORS 20
-
-fixed_t
-P_FindNextHighestFloor(sector_t *sec,
-					   int currentheight)
+//
+fixed_t P_FindNextHighestFloor(sector_t *sec, int currentheight)
 {
-	int i;
-	int h;
-	int min;
-	line_t *check;
-	sector_t *other;
-	fixed_t height = currentheight;
+  sector_t *other;
+  int i;
 
-	fixed_t heightlist[MAX_ADJOINING_SECTORS];
-
-	for (i = 0, h = 0; i < sec->linecount; i++)
-	{
-		check = sec->lines[i];
-		other = getNextSector(check, sec);
-
-		if (!other)
-			continue;
-
-		if (other->floorheight > height)
-			heightlist[h++] = other->floorheight;
-	}
-
-	// Find lowest height in list
-	if (!h)
-		return currentheight;
-
-	min = heightlist[0];
-
-	// Range checking?
-	for (i = 1; i < h; i++)
-		if (heightlist[i] < min)
-			min = heightlist[i];
-
-	return min;
+  for (i=0 ;i < sec->linecount ; i++)
+    if ((other = getNextSector(sec->lines[i],sec)) &&
+        other->floorheight > currentheight)
+      {
+        int height = other->floorheight;
+        while (++i < sec->linecount)
+          if ((other = getNextSector(sec->lines[i],sec)) &&
+              other->floorheight < height &&
+              other->floorheight > currentheight)
+            height = other->floorheight;
+        return height;
+      }
+  return currentheight;
 }
 
 //

@@ -169,7 +169,7 @@ void P_SpawnStrobeFlash(sector_t *sector,
     strobe_t *flash;
 
     flash = Z_Malloc(sizeof(*flash), PU_LEVSPEC, 0);
-    
+
     thinkercap.prev->next = &flash->thinker;
     flash->thinker.next = &thinkercap;
     flash->thinker.prev = thinkercap.prev;
@@ -218,71 +218,48 @@ void EV_StartLightStrobing(line_t *line)
 //
 void EV_TurnTagLightsOff(line_t *line)
 {
-    int i;
     int j;
-    int min;
-    sector_t *sector;
-    sector_t *tsec;
-    line_t *templine;
 
-    sector = sectors;
+    // search sectors for those with same tag as activating line
 
-    for (j = 0; j < numsectors; j++, sector++)
+    // killough 10/98: replaced inefficient search with fast search
+    for (j = -1; (j = P_FindSectorFromLineTag(line, j)) >= 0;)
     {
-        if (sector->tag == line->tag)
-        {
-            min = sector->lightlevel;
-            for (i = 0; i < sector->linecount; i++)
-            {
-                templine = sector->lines[i];
-                tsec = getNextSector(templine, sector);
-                if (!tsec)
-                    continue;
-                if (tsec->lightlevel < min)
-                    min = tsec->lightlevel;
-            }
-            sector->lightlevel = min;
-        }
+        sector_t *sector = sectors + j, *tsec;
+        int i, min = sector->lightlevel;
+        // find min neighbor light level
+        for (i = 0; i < sector->linecount; i++)
+            if ((tsec = getNextSector(sector->lines[i], sector)) &&
+                tsec->lightlevel < min)
+                min = tsec->lightlevel;
+        sector->lightlevel = min;
     }
 }
-
 //
 // TURN LINE'S TAG LIGHTS ON
 //
-void EV_LightTurnOn(line_t *line,
-                    int bright)
+void EV_LightTurnOn(line_t *line, int bright)
 {
     int i;
-    int j;
-    sector_t *sector;
-    sector_t *temp;
-    line_t *templine;
 
-    sector = sectors;
+    // search all sectors for ones with same tag as activating line
 
-    for (i = 0; i < numsectors; i++, sector++)
+    // killough 10/98: replace inefficient search with fast search
+    for (i = -1; (i = P_FindSectorFromLineTag(line, i)) >= 0;)
     {
-        if (sector->tag == line->tag)
-        {
-            // bright = 0 means to search
-            // for highest light level
-            // surrounding sector
-            if (!bright)
-            {
-                for (j = 0; j < sector->linecount; j++)
-                {
-                    templine = sector->lines[j];
-                    temp = getNextSector(templine, sector);
+        sector_t *temp, *sector = sectors + i;
+        int j, tbright = bright; //jff 5/17/98 search for maximum PER sector
 
-                    if (!temp)
-                        continue;
+        // bright = 0 means to search for highest light level surrounding sector
 
-                    if (temp->lightlevel > bright)
-                        bright = temp->lightlevel;
-                }
-            }
-            sector->lightlevel = bright;
-        }
+        if (!bright)
+            for (j = 0; j < sector->linecount; j++)
+                if ((temp = getNextSector(sector->lines[j], sector)) &&
+                    temp->lightlevel > tbright)
+                    tbright = temp->lightlevel;
+
+        sector->lightlevel = tbright;
+        bright = tbright;
     }
 }
 
