@@ -164,7 +164,6 @@ void R_ClearPlanes(void)
 {
     int i;
     angle_t angle;
-    fixed_t optCosine, optSine;
 
     // opening / clipping determination
     for (i = 0; i < viewwidth; i++)
@@ -183,11 +182,8 @@ void R_ClearPlanes(void)
     angle = (viewangle - ANG90) >> ANGLETOFINESHIFT;
 
     // scale will be unit scale at SCREENWIDTH/2 distance
-    optCosine = finecosine[angle];
-    optSine = finesine[angle];
-
-    basexscale = ((abs(optCosine) >> 14) >= centerxfrac) ? ((optCosine ^ centerxfrac) >> 31) ^ MAXINT : FixedDiv2(optCosine, centerxfrac);
-    baseyscale = -(((abs(optSine) >> 14) >= centerxfrac) ? ((optSine ^ centerxfrac) >> 31) ^ MAXINT : FixedDiv2(optSine, centerxfrac));
+    basexscale = FixedMul(finecosine[angle], iprojection);
+    baseyscale = -FixedMul(finesine[angle], iprojection);
 }
 
 //
