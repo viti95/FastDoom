@@ -28,8 +28,6 @@ int PCFX_ErrorCode = PCFX_Ok;
 
 #define PCFX_SetErrorCode(status) PCFX_ErrorCode = (status);
 
-#define PCFX_LockStart PCFX_Stop
-
 int PCFX_Stop(int handle)
 {
     unsigned flags;
@@ -159,21 +157,12 @@ int PCFX_SetTotalVolume(int volume)
     return (PCFX_Ok);
 }
 
-static void PCFX_LockEnd(void){}
-
 int PCFX_Init(void){
     int status;
 
     if (PCFX_Installed)
     {
         PCFX_Shutdown();
-    }
-
-    status = PCFX_LockMemory();
-    if (status != PCFX_Ok)
-    {
-        PCFX_UnlockMemory();
-        return (status);
     }
 
     PCFX_Stop(PCFX_VoiceHandle);
@@ -193,55 +182,9 @@ int PCFX_Shutdown(void)
     {
         PCFX_Stop(PCFX_VoiceHandle);
         TS_Terminate(PCFX_ServiceTask);
-        PCFX_UnlockMemory();
         PCFX_Installed = FALSE;
     }
 
     PCFX_SetErrorCode(PCFX_Ok);
-    return (PCFX_Ok);
-}
-
-void PCFX_UnlockMemory(void)
-{
-    DPMI_UnlockMemoryRegion(PCFX_LockStart, PCFX_LockEnd);
-    DPMI_Unlock(PCFX_LengthLeft);
-    DPMI_Unlock(PCFX_Sound);
-    DPMI_Unlock(PCFX_LastSample);
-    DPMI_Unlock(PCFX_Lookup);
-    DPMI_Unlock(PCFX_Priority);
-    DPMI_Unlock(PCFX_CallBackVal);
-    DPMI_Unlock(PCFX_CallBackFunc);
-    DPMI_Unlock(PCFX_TotalVolume);
-    DPMI_Unlock(PCFX_ServiceTask);
-    DPMI_Unlock(PCFX_VoiceHandle);
-    DPMI_Unlock(PCFX_Installed);
-    DPMI_Unlock(PCFX_ErrorCode);
-}
-
-int PCFX_LockMemory(void)
-{
-    int status;
-
-    status = DPMI_LockMemoryRegion(PCFX_LockStart, PCFX_LockEnd);
-    status |= DPMI_Lock(PCFX_LengthLeft);
-    status |= DPMI_Lock(PCFX_Sound);
-    status |= DPMI_Lock(PCFX_LastSample);
-    status |= DPMI_Lock(PCFX_Lookup);
-    status |= DPMI_Lock(PCFX_Priority);
-    status |= DPMI_Lock(PCFX_CallBackVal);
-    status |= DPMI_Lock(PCFX_CallBackFunc);
-    status |= DPMI_Lock(PCFX_TotalVolume);
-    status |= DPMI_Lock(PCFX_ServiceTask);
-    status |= DPMI_Lock(PCFX_VoiceHandle);
-    status |= DPMI_Lock(PCFX_Installed);
-    status |= DPMI_Lock(PCFX_ErrorCode);
-
-    if (status != DPMI_Ok)
-    {
-        PCFX_UnlockMemory();
-        PCFX_SetErrorCode(PCFX_DPMI_Error);
-        return (PCFX_Error);
-    }
-
     return (PCFX_Ok);
 }

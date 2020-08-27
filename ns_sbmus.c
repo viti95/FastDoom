@@ -2,7 +2,6 @@
 #include <dos.h>
 #include <stddef.h>
 #include <stdlib.h>
-#include "ns_dpmi.h"
 #include "ns_inter.h"
 #include "ns_cards.h"
 #include "ns_sb.h"
@@ -115,14 +114,6 @@ static int AL_Stereo = FALSE;
 static int AL_SendStereo = FALSE;
 static int AL_OPL3 = FALSE;
 static int AL_MaxMidiChannel = 16;
-
-/**********************************************************************
-
-   Memory locked functions:
-
-**********************************************************************/
-
-#define AL_LockStart AL_SendOutputToPort
 
 /*---------------------------------------------------------------------
    Function: AL_SendOutputToPort
@@ -1209,18 +1200,6 @@ int AL_DetectFM(
 }
 
 /*---------------------------------------------------------------------
-   Function: AL_LockEnd
-
-   Used for determining the length of the functions to lock in memory.
----------------------------------------------------------------------*/
-
-static void AL_LockEnd(
-    void)
-
-{
-}
-
-/*---------------------------------------------------------------------
    Function: AL_Shutdown
 
    Ends use of the sound card and resets it to a quiet state.
@@ -1235,26 +1214,6 @@ void AL_Shutdown(
    AL_OPL3 = FALSE;
    AL_ResetVoices();
    AL_Reset();
-
-   DPMI_UnlockMemoryRegion(AL_LockStart, AL_LockEnd);
-   DPMI_Unlock(slotVoice);
-   DPMI_Unlock(VoiceLevel);
-   DPMI_Unlock(VoiceKsl);
-   DPMI_Unlock(offsetSlot);
-   DPMI_Unlock(NotePitch);
-   DPMI_Unlock(OctavePitch);
-   DPMI_Unlock(NoteMod12);
-   DPMI_Unlock(NoteDiv12);
-   DPMI_Unlock(VoiceReserved);
-   DPMI_Unlock(Voice);
-   DPMI_Unlock(Voice_Pool);
-   DPMI_Unlock(Channel);
-   DPMI_Unlock(AL_LeftPort);
-   DPMI_Unlock(AL_RightPort);
-   DPMI_Unlock(AL_Stereo);
-   DPMI_Unlock(AL_SendStereo);
-   DPMI_Unlock(AL_OPL3);
-   DPMI_Unlock(AL_MaxMidiChannel);
 }
 
 /*---------------------------------------------------------------------
@@ -1267,32 +1226,7 @@ int AL_Init(int soundcard)
 
 {
    BLASTER_CONFIG Blaster;
-   int status;
-
-   status = DPMI_LockMemoryRegion(AL_LockStart, AL_LockEnd);
-   status |= DPMI_Lock(slotVoice);
-   status |= DPMI_Lock(VoiceLevel);
-   status |= DPMI_Lock(VoiceKsl);
-   status |= DPMI_Lock(offsetSlot);
-   status |= DPMI_Lock(NotePitch);
-   status |= DPMI_Lock(OctavePitch);
-   status |= DPMI_Lock(NoteMod12);
-   status |= DPMI_Lock(NoteDiv12);
-   status |= DPMI_Lock(VoiceReserved);
-   status |= DPMI_Lock(Voice);
-   status |= DPMI_Lock(Voice_Pool);
-   status |= DPMI_Lock(Channel);
-   status |= DPMI_Lock(AL_LeftPort);
-   status |= DPMI_Lock(AL_RightPort);
-   status |= DPMI_Lock(AL_Stereo);
-   status |= DPMI_Lock(AL_SendStereo);
-   status |= DPMI_Lock(AL_OPL3);
-   status |= DPMI_Lock(AL_MaxMidiChannel);
-
-   if (status != DPMI_Ok)
-   {
-      return (AL_Error);
-   }
+   int status = BLASTER_Ok;
 
    AL_Stereo = FALSE;
    AL_OPL3 = FALSE;

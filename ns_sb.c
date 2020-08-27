@@ -111,14 +111,6 @@ int BLASTER_ErrorCode = BLASTER_Ok;
 #define BLASTER_SetErrorCode(status) \
     BLASTER_ErrorCode = (status);
 
-/**********************************************************************
-
-   Memory locked functions:
-
-**********************************************************************/
-
-#define BLASTER_LockStart BLASTER_EnableInterrupt
-
 /*---------------------------------------------------------------------
    Function: BLASTER_EnableInterrupt
 
@@ -1476,113 +1468,6 @@ void BLASTER_SetCallBack(
 }
 
 /*---------------------------------------------------------------------
-   Function: BLASTER_LockEnd
-
-   Used for determining the length of the functions to lock in memory.
----------------------------------------------------------------------*/
-
-static void BLASTER_LockEnd(
-    void)
-
-{
-}
-
-/*---------------------------------------------------------------------
-   Function: BLASTER_UnlockMemory
-
-   Unlocks all neccessary data.
----------------------------------------------------------------------*/
-
-void BLASTER_UnlockMemory(
-    void)
-
-{
-    DPMI_UnlockMemoryRegion(BLASTER_LockStart, BLASTER_LockEnd);
-    DPMI_UnlockMemory((void *)&BLASTER_Interrupts[0],
-                      sizeof(BLASTER_Interrupts));
-    DPMI_UnlockMemory((void *)&BLASTER_SampleSize[0],
-                      sizeof(BLASTER_SampleSize));
-    DPMI_Unlock(BLASTER_Card);
-    DPMI_Unlock(BLASTER_OldInt);
-    DPMI_Unlock(BLASTER_Config);
-    DPMI_Unlock(BLASTER_Installed);
-    DPMI_Unlock(BLASTER_Version);
-    DPMI_Unlock(BLASTER_DMABuffer);
-    DPMI_Unlock(BLASTER_DMABufferEnd);
-    DPMI_Unlock(BLASTER_CurrentDMABuffer);
-    DPMI_Unlock(BLASTER_TotalDMABufferSize);
-    DPMI_Unlock(BLASTER_TransferLength);
-    DPMI_Unlock(BLASTER_MixMode);
-    DPMI_Unlock(BLASTER_SamplePacketSize);
-    DPMI_Unlock(BLASTER_SampleRate);
-    DPMI_Unlock(BLASTER_HaltTransferCommand);
-    DPMI_Unlock(BLASTER_SoundPlaying);
-    DPMI_Unlock(BLASTER_CallBack);
-    DPMI_Unlock(BLASTER_IntController1Mask);
-    DPMI_Unlock(BLASTER_IntController2Mask);
-    DPMI_Unlock(BLASTER_MixerAddress);
-    DPMI_Unlock(BLASTER_MixerType);
-    DPMI_Unlock(BLASTER_OriginalMidiVolumeLeft);
-    DPMI_Unlock(BLASTER_OriginalMidiVolumeRight);
-    DPMI_Unlock(BLASTER_OriginalVoiceVolumeLeft);
-    DPMI_Unlock(BLASTER_OriginalVoiceVolumeRight);
-    DPMI_Unlock(GlobalStatus);
-}
-
-/*---------------------------------------------------------------------
-   Function: BLASTER_LockMemory
-
-   Locks all neccessary data.
----------------------------------------------------------------------*/
-
-int BLASTER_LockMemory(
-    void)
-
-{
-    int status;
-
-    status = DPMI_LockMemoryRegion(BLASTER_LockStart, BLASTER_LockEnd);
-    status |= DPMI_LockMemory((void *)&BLASTER_Interrupts[0],
-                              sizeof(BLASTER_Interrupts));
-    status |= DPMI_LockMemory((void *)&BLASTER_SampleSize[0],
-                              sizeof(BLASTER_SampleSize));
-    status |= DPMI_Lock(BLASTER_Card);
-    status |= DPMI_Lock(BLASTER_OldInt);
-    status |= DPMI_Lock(BLASTER_Config);
-    status |= DPMI_Lock(BLASTER_Installed);
-    status |= DPMI_Lock(BLASTER_Version);
-    status |= DPMI_Lock(BLASTER_DMABuffer);
-    status |= DPMI_Lock(BLASTER_DMABufferEnd);
-    status |= DPMI_Lock(BLASTER_CurrentDMABuffer);
-    status |= DPMI_Lock(BLASTER_TotalDMABufferSize);
-    status |= DPMI_Lock(BLASTER_TransferLength);
-    status |= DPMI_Lock(BLASTER_MixMode);
-    status |= DPMI_Lock(BLASTER_SamplePacketSize);
-    status |= DPMI_Lock(BLASTER_SampleRate);
-    status |= DPMI_Lock(BLASTER_HaltTransferCommand);
-    status |= DPMI_Lock(BLASTER_SoundPlaying);
-    status |= DPMI_Lock(BLASTER_CallBack);
-    status |= DPMI_Lock(BLASTER_IntController1Mask);
-    status |= DPMI_Lock(BLASTER_IntController2Mask);
-    status |= DPMI_Lock(BLASTER_MixerAddress);
-    status |= DPMI_Lock(BLASTER_MixerType);
-    status |= DPMI_Lock(BLASTER_OriginalMidiVolumeLeft);
-    status |= DPMI_Lock(BLASTER_OriginalMidiVolumeRight);
-    status |= DPMI_Lock(BLASTER_OriginalVoiceVolumeLeft);
-    status |= DPMI_Lock(BLASTER_OriginalVoiceVolumeRight);
-    status |= DPMI_Lock(GlobalStatus);
-
-    if (status != DPMI_Ok)
-    {
-        BLASTER_UnlockMemory();
-        BLASTER_SetErrorCode(BLASTER_DPMI_Error);
-        return (BLASTER_Error);
-    }
-
-    return (BLASTER_Ok);
-}
-
-/*---------------------------------------------------------------------
    Function: allocateTimerStack
 
    Allocate a block of memory from conventional (low) memory and return
@@ -1763,17 +1648,9 @@ int BLASTER_Init(
             return (BLASTER_Error);
         }
 
-        status = BLASTER_LockMemory();
-        if (status != BLASTER_Ok)
-        {
-            BLASTER_UnlockMemory();
-            return (status);
-        }
-
         StackSelector = allocateTimerStack(kStackSize);
         if (StackSelector == NULL)
         {
-            BLASTER_UnlockMemory();
             BLASTER_SetErrorCode(BLASTER_OutOfMemory);
             return (BLASTER_Error);
         }
@@ -1791,7 +1668,6 @@ int BLASTER_Init(
             status = IRQ_SetVector(Interrupt, BLASTER_ServiceInterrupt);
             if (status != IRQ_Ok)
             {
-                BLASTER_UnlockMemory();
                 deallocateTimerStack(StackSelector);
                 StackSelector = NULL;
                 BLASTER_SetErrorCode(BLASTER_UnableToSetIrq);
@@ -1843,8 +1719,6 @@ void BLASTER_Shutdown(
     BLASTER_DMABuffer = NULL;
 
     BLASTER_SetCallBack(NULL);
-
-    BLASTER_UnlockMemory();
 
     deallocateTimerStack(StackSelector);
     StackSelector = NULL;

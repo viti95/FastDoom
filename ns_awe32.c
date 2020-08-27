@@ -283,23 +283,6 @@ int AWE32_Init(
         AWE32_SetErrorCode(AWE32_MPU401Error) return (AWE32_Error);
     }
 
-    status = DPMI_LockMemoryRegion(AWE32_LockStart, AWE32_LockEnd);
-    status |= DPMI_Lock(wSBCBaseAddx);
-    status |= DPMI_Lock(wEMUBaseAddx);
-    status |= DPMI_Lock(wMpuBaseAddx);
-    status |= DPMI_Lock(spSound);
-    status |= DPMI_Lock(lBankSizes);
-    status |= DPMI_LockMemory(NoteFlags, sizeof(NoteFlags));
-
-    // Lock awe32 library
-    status = DPMI_LockMemoryRegion(__midieng_code, __midieng_ecode);
-    status = DPMI_LockMemoryRegion(__midieng_code(), __midieng_ecode());
-    status = DPMI_LockMemoryRegion(__nrpn_code, __nrpn_ecode);
-    status = DPMI_LockMemoryRegion(__nrpn_code(), __nrpn_ecode());
-    status = DPMI_LockMemoryRegion(&__midivar_data, &__midivar_edata);
-    status = DPMI_LockMemoryRegion(&__nrpnvar_data, &__nrpnvar_edata);
-    status = DPMI_LockMemoryRegion(&__embed_data, &__embed_edata);
-
     if (status != DPMI_Ok)
     {
         ShutdownMPU();
@@ -328,21 +311,4 @@ void AWE32_Shutdown(
 {
     ShutdownMPU();
     awe32Terminate();
-
-    DPMI_UnlockMemoryRegion(AWE32_LockStart, AWE32_LockEnd);
-    DPMI_Unlock(wSBCBaseAddx);
-    DPMI_Unlock(wEMUBaseAddx);
-    DPMI_Unlock(wMpuBaseAddx);
-    DPMI_Unlock(spSound);
-    DPMI_Unlock(lBankSizes);
-    DPMI_UnlockMemory(NoteFlags, sizeof(NoteFlags));
-
-    // Unlock awe32 library
-    DPMI_UnlockMemoryRegion(__midieng_code, __midieng_ecode);
-    DPMI_UnlockMemoryRegion(__midieng_code(), __midieng_ecode());
-    DPMI_UnlockMemoryRegion(__nrpn_code, __nrpn_ecode);
-    DPMI_UnlockMemoryRegion(__nrpn_code(), __nrpn_ecode());
-    DPMI_UnlockMemoryRegion(&__midivar_data, &__midivar_edata);
-    DPMI_UnlockMemoryRegion(&__nrpnvar_data, &__nrpnvar_edata);
-    DPMI_UnlockMemoryRegion(&__embed_data, &__embed_edata);
 }

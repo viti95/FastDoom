@@ -95,8 +95,6 @@ static void pcm_format(void);
 static int SOUNDSCAPE_SetupDMABuffer(char *BufferPtr, int BufferSize, int mode);
 static int SOUNDSCAPE_BeginPlayback(int length);
 static void SOUNDSCAPE_LockEnd(void);
-static void SOUNDSCAPE_UnlockMemory(void);
-static int SOUNDSCAPE_LockMemory(void);
 static unsigned short allocateTimerStack(unsigned short size);
 static void deallocateTimerStack(unsigned short selector);
 static int parse(char *val, char *str, FILE *p1);

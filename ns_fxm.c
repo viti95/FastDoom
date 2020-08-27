@@ -230,13 +230,6 @@ int FX_Init(
         FX_Shutdown();
     }
 
-    status = LL_LockMemory();
-    if (status != LL_Ok)
-    {
-        FX_SetErrorCode(FX_DPMI_Error);
-        return (FX_Error);
-    }
-
     FX_MixRate = mixrate;
 
     status = FX_Ok;
@@ -267,7 +260,7 @@ int FX_Init(
 
     if (status != FX_Ok)
     {
-        LL_UnlockMemory();
+
     }
     else
     {
@@ -319,7 +312,6 @@ int FX_Shutdown(
     }
 
     FX_Installed = FALSE;
-    LL_UnlockMemory();
 
     return (status);
 }

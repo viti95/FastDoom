@@ -43,7 +43,5 @@ int PAS_SaveMusicVolume(void);
 void PAS_RestoreMusicVolume(void);
 int PAS_Init(void);
 void PAS_Shutdown(void);
-void PAS_UnlockMemory(void);
-int PAS_LockMemory(void);
 
 #endif

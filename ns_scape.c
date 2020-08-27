@@ -95,14 +95,6 @@ int SOUNDSCAPE_ErrorCode = SOUNDSCAPE_Ok;
 #define SOUNDSCAPE_SetErrorCode(status) \
     SOUNDSCAPE_ErrorCode = (status);
 
-/**********************************************************************
-
-   Memory locked functions:
-
-**********************************************************************/
-
-#define SOUNDSCAPE_LockStart SOUNDSCAPE_EnableInterrupt
-
 /*---------------------------------------------------------------------
    Function: SOUNDSCAPE_EnableInterrupt
 
@@ -656,85 +648,6 @@ void SOUNDSCAPE_SetCallBack(
 
 {
     SOUNDSCAPE_CallBack = func;
-}
-
-/*---------------------------------------------------------------------
-   Function: SOUNDSCAPE_LockEnd
-
-   Used for determining the length of the functions to lock in memory.
----------------------------------------------------------------------*/
-
-static void SOUNDSCAPE_LockEnd(
-    void)
-
-{
-}
-
-/*---------------------------------------------------------------------
-   Function: SOUNDSCAPE_UnlockMemory
-
-   Unlocks all neccessary data.
----------------------------------------------------------------------*/
-
-static void SOUNDSCAPE_UnlockMemory(
-    void)
-
-{
-    DPMI_UnlockMemoryRegion(SOUNDSCAPE_LockStart, SOUNDSCAPE_LockEnd);
-    DPMI_Unlock(SOUNDSCAPE_Config);
-    DPMI_Unlock(SOUNDSCAPE_OldInt);
-    DPMI_Unlock(SOUNDSCAPE_Installed);
-    DPMI_Unlock(SOUNDSCAPE_DMABuffer);
-    DPMI_Unlock(SOUNDSCAPE_DMABufferEnd);
-    DPMI_Unlock(SOUNDSCAPE_CurrentDMABuffer);
-    DPMI_Unlock(SOUNDSCAPE_TotalDMABufferSize);
-    DPMI_Unlock(SOUNDSCAPE_TransferLength);
-    DPMI_Unlock(SOUNDSCAPE_MixMode);
-    DPMI_Unlock(SOUNDSCAPE_SamplePacketSize);
-    DPMI_Unlock(SOUNDSCAPE_SampleRate);
-    DPMI_Unlock(SOUNDSCAPE_SoundPlaying);
-    DPMI_Unlock(SOUNDSCAPE_CallBack);
-    DPMI_Unlock(SOUNDSCAPE_IntController1Mask);
-    DPMI_Unlock(SOUNDSCAPE_IntController2Mask);
-}
-
-/*---------------------------------------------------------------------
-   Function: SOUNDSCAPE_LockMemory
-
-   Locks all neccessary data.
----------------------------------------------------------------------*/
-
-static int SOUNDSCAPE_LockMemory(
-    void)
-
-{
-    int status;
-
-    status = DPMI_LockMemoryRegion(SOUNDSCAPE_LockStart, SOUNDSCAPE_LockEnd);
-    status |= DPMI_Lock(SOUNDSCAPE_Config);
-    status |= DPMI_Lock(SOUNDSCAPE_OldInt);
-    status |= DPMI_Lock(SOUNDSCAPE_Installed);
-    status |= DPMI_Lock(SOUNDSCAPE_DMABuffer);
-    status |= DPMI_Lock(SOUNDSCAPE_DMABufferEnd);
-    status |= DPMI_Lock(SOUNDSCAPE_CurrentDMABuffer);
-    status |= DPMI_Lock(SOUNDSCAPE_TotalDMABufferSize);
-    status |= DPMI_Lock(SOUNDSCAPE_TransferLength);
-    status |= DPMI_Lock(SOUNDSCAPE_MixMode);
-    status |= DPMI_Lock(SOUNDSCAPE_SamplePacketSize);
-    status |= DPMI_Lock(SOUNDSCAPE_SampleRate);
-    status |= DPMI_Lock(SOUNDSCAPE_SoundPlaying);
-    status |= DPMI_Lock(SOUNDSCAPE_CallBack);
-    status |= DPMI_Lock(SOUNDSCAPE_IntController1Mask);
-    status |= DPMI_Lock(SOUNDSCAPE_IntController2Mask);
-
-    if (status != DPMI_Ok)
-    {
-        SOUNDSCAPE_UnlockMemory();
-        SOUNDSCAPE_SetErrorCode(SOUNDSCAPE_DPMI_Error);
-        return (SOUNDSCAPE_Error);
-    }
-
-    return (SOUNDSCAPE_Ok);
 }
 
 /*---------------------------------------------------------------------
@@ -1315,17 +1228,9 @@ int SOUNDSCAPE_Init(
         return (status);
     }
 
-    status = SOUNDSCAPE_LockMemory();
-    if (status != SOUNDSCAPE_Ok)
-    {
-        SOUNDSCAPE_UnlockMemory();
-        return (status);
-    }
-
     StackSelector = allocateTimerStack(kStackSize);
     if (StackSelector == NULL)
     {
-        SOUNDSCAPE_UnlockMemory();
         SOUNDSCAPE_SetErrorCode(SOUNDSCAPE_OutOfMemory);
         return (SOUNDSCAPE_Error);
     }
@@ -1414,8 +1319,6 @@ void SOUNDSCAPE_Shutdown(
     SOUNDSCAPE_DMABuffer = NULL;
 
     SOUNDSCAPE_SetCallBack(NULL);
-
-    SOUNDSCAPE_UnlockMemory();
 
     if (StackSelector != NULL)
     {

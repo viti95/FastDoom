@@ -98,14 +98,6 @@ extern void SetStack(unsigned short selector, unsigned long stackptr);
     "mov  ss,ax"       \
     "mov  esp,edx" parm[ax][edx] modify[eax edx];
 
-/**********************************************************************
-
-   Memory locked functions:
-
-**********************************************************************/
-
-#define TS_LockStart TS_FreeTaskList
-
 static void TS_FreeTaskList(void)
 {
     task *node;
@@ -387,30 +379,12 @@ static int TS_Startup(
 {
     if (!TS_Installed)
     {
-#ifdef LOCKMEMORY
-
-        int status;
-
-        status = TS_LockMemory();
-        if (status != TASK_Ok)
-        {
-            TS_UnlockMemory();
-            return (status);
-        }
-
-#endif
 
 #ifdef USESTACK
 
         StackSelector = allocateTimerStack(kStackSize);
         if (StackSelector == NULL)
         {
-
-#ifdef LOCKMEMORY
-
-            TS_UnlockMemory();
-
-#endif
             return (TASK_Error);
         }
 
@@ -471,11 +445,6 @@ void TS_Shutdown(
         // Set Date and Time from CMOS
         //      RestoreRealTimeClock();
 
-#ifdef LOCKMEMORY
-
-        TS_UnlockMemory();
-
-#endif
         TS_Installed = FALSE;
     }
 }
@@ -631,87 +600,3 @@ void TS_SetTaskRate(
 
     RestoreInterrupts(flags);
 }
-
-#ifdef LOCKMEMORY
-
-/*---------------------------------------------------------------------
-   Function: TS_LockEnd
-
-   Used for determining the length of the functions to lock in memory.
----------------------------------------------------------------------*/
-
-static void TS_LockEnd(
-    void)
-
-{
-}
-
-/*---------------------------------------------------------------------
-   Function: TS_UnlockMemory
-
-   Unlocks all neccessary data.
----------------------------------------------------------------------*/
-
-void TS_UnlockMemory(
-    void)
-
-{
-    DPMI_UnlockMemoryRegion(TS_LockStart, TS_LockEnd);
-    DPMI_Unlock(TaskList);
-    DPMI_Unlock(OldInt8);
-    DPMI_Unlock(TaskServiceRate);
-    DPMI_Unlock(TaskServiceCount);
-    DPMI_Unlock(TS_Installed);
-
-#ifndef NOINTS
-    DPMI_Unlock(TS_TimesInInterrupt);
-#endif
-
-#ifdef USESTACK
-    DPMI_Unlock(StackSelector);
-    DPMI_Unlock(StackPointer);
-    DPMI_Unlock(oldStackSelector);
-    DPMI_Unlock(oldStackPointer);
-#endif
-}
-
-/*---------------------------------------------------------------------
-   Function: TS_LockMemory
-
-   Locks all neccessary data.
----------------------------------------------------------------------*/
-
-int TS_LockMemory(
-    void)
-
-{
-    int status;
-
-    status = DPMI_LockMemoryRegion(TS_LockStart, TS_LockEnd);
-    status |= DPMI_Lock(TaskList);
-    status |= DPMI_Lock(OldInt8);
-    status |= DPMI_Lock(TaskServiceRate);
-    status |= DPMI_Lock(TaskServiceCount);
-    status |= DPMI_Lock(TS_Installed);
-
-#ifndef NOINTS
-    status |= DPMI_Lock(TS_TimesInInterrupt);
-#endif
-
-#ifdef USESTACK
-    status |= DPMI_Lock(StackSelector);
-    status |= DPMI_Lock(StackPointer);
-    status |= DPMI_Lock(oldStackSelector);
-    status |= DPMI_Lock(oldStackPointer);
-#endif
-
-    if (status != DPMI_Ok)
-    {
-        TS_UnlockMemory();
-        return (TASK_Error);
-    }
-
-    return (TASK_Ok);
-}
-
-#endif

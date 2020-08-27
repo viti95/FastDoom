@@ -61,7 +61,5 @@ void MIDI_SetSongPosition(int measure, int beat, int tick);
 void MIDI_GetSongPosition(songposition *pos);
 void MIDI_GetSongLength(songposition *pos);
 void MIDI_LoadTimbres(void);
-void MIDI_UnlockMemory(void);
-int MIDI_LockMemory(void);
 
 #endif

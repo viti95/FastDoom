@@ -56,14 +56,6 @@ static unsigned long PitchTable[12][MAXDETUNE] =
          0x1f576, 0x1f69f, 0x1f7c9, 0x1f8f3, 0x1fa1e, 0x1fb4a, 0x1fc76, 0x1fda3,
          0x1fed1}};
 
-/**********************************************************************
-
-   Memory locked functions:
-
-**********************************************************************/
-
-#define PITCH_LockStart PITCH_GetScale
-
 unsigned long PITCH_GetScale(int pitchoffset)
 {
     unsigned long scale;
@@ -110,28 +102,4 @@ unsigned long PITCH_GetScale(int pitchoffset)
     }
 
     return (scale);
-}
-
-static void PITCH_LockEnd(void) {}
-
-void PITCH_UnlockMemory(void)
-{
-    DPMI_UnlockMemoryRegion(PITCH_LockStart, PITCH_LockEnd);
-    DPMI_Unlock(PitchTable);
-}
-
-int PITCH_LockMemory(void)
-{
-    int status;
-
-    status = DPMI_LockMemoryRegion(PITCH_LockStart, PITCH_LockEnd);
-    status |= DPMI_Lock(PitchTable);
-
-    if (status != DPMI_Ok)
-    {
-        PITCH_UnlockMemory();
-        return (PITCH_Error);
-    }
-
-    return (PITCH_Ok);
 }

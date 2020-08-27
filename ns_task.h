@@ -32,7 +32,5 @@ task *TS_ScheduleTask(void (*Function)(task *), int rate,
 int TS_Terminate(task *ptr);
 void TS_Dispatch(void);
 void TS_SetTaskRate(task *Task, int rate);
-void TS_UnlockMemory(void);
-int TS_LockMemory(void);
 
 #endif

@@ -57,7 +57,5 @@ int MV_GetReverseStereo(void);
 int MV_Init(int soundcard, int MixRate, int Voices, int numchannels,
             int samplebits);
 int MV_Shutdown(void);
-void MV_UnlockMemory(void);
-int MV_LockMemory(void);
 
 #endif

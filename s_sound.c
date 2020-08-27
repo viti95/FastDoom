@@ -33,7 +33,6 @@
 
 #include "doomstat.h"
 #include "dmx.h"
-#include "ns_dpmi.h"
 
 #define S_MAX_VOLUME 127
 
@@ -139,8 +138,6 @@ void S_StopMusic(void)
         //I_UnRegisterSong(mus_playing->handle);
         Z_ChangeTag(mus_playing->data, PU_CACHE);
 
-        DPMI_UnlockMemory(mus_playing->data, lumpinfo[mus_playing->lumpnum].size);
-
         mus_playing->data = 0;
         mus_playing = 0;
     }
@@ -178,8 +175,7 @@ void S_ChangeMusic(int musicnum,
     // load & register it
     music->data = (void *)W_CacheLumpNum(music->lumpnum, PU_MUSIC);
     music->handle = I_RegisterSong(music->data);
-    DPMI_LockMemory(music->data, lumpinfo[music->lumpnum].size);
-
+   
     // play it
     I_PlaySong(music->handle, looping);
 
@@ -454,7 +450,6 @@ void S_StartSound(void *origin_p, int sfx_id)
     if (!sfx->data)
     {
         sfx->data = (void *)W_CacheLumpNum(sfx->lumpnum, PU_SOUND);
-        DPMI_LockMemory(sfx->data, lumpinfo[sfx->lumpnum].size);
     }
 
     // Assigns the handle to one of the channels in the
@@ -618,7 +613,6 @@ void S_ClearSounds(void)
         if (S_sfx[i].data != 0)
         {
             Z_ChangeTag(S_sfx[i].data, PU_CACHE);
-            DPMI_UnlockMemory(S_sfx[i].data, lumpinfo[S_sfx[i].lumpnum].size);
             S_sfx[i].data = 0;
         }
     }
