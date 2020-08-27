@@ -33,7 +33,5 @@ int SS_SetPort(int port);
 void SS_SetCallBack(void (*func)(void));
 int SS_Init(int soundcard);
 void SS_Shutdown(void);
-void SS_UnlockMemory(void);
-int SS_LockMemory(void);
 
 #endif

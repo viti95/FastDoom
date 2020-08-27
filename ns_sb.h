@@ -109,7 +109,5 @@ void BLASTER_SetupWaveBlaster(void);
 void BLASTER_ShutdownWaveBlaster(void);
 int BLASTER_Init(void);
 void BLASTER_Shutdown(void);
-void BLASTER_UnlockMemory(void);
-int BLASTER_LockMemory(void);
 
 #endif

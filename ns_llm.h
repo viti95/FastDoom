@@ -16,8 +16,6 @@ typedef struct list
 
 void LL_AddNode(char *node, char **head, char **tail, int next, int prev);
 void LL_RemoveNode(char *node, char **head, char **tail, int next, int prev);
-void LL_UnlockMemory(void);
-int LL_LockMemory(void);
 
 #define LL_AddToHead(type, listhead, node)    \
     LL_AddNode((char *)(node),                \

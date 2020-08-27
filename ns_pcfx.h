@@ -28,7 +28,5 @@ int PCFX_SetTotalVolume(int volume);
 int PCFX_Init(void);
 int PCFX_Shutdown(void);
 #pragma aux PCFX_Shutdown frame;
-void PCFX_UnlockMemory(void);
-int PCFX_LockMemory(void);
 
 #endif
