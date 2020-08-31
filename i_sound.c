@@ -333,8 +333,7 @@ void I_ShutdownSound(void)
     int s;
     S_PauseSound();
     s = ticcount + 30;
-    while (s != ticcount)
-        ;
+    while (s != ticcount) {}
     DMX_DeInit();
 }
 
