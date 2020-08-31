@@ -175,6 +175,10 @@ void R_ClearPlanes(void)
     lastvisplane = visplanes;
     lastopening = openings;
 
+    if (flatSurfaces || untexturedSurfaces){
+        return;
+    }
+
     // texture calculation
     memset(cachedheight, 0, sizeof(cachedheight));
 
