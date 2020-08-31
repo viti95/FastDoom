@@ -19,8 +19,6 @@
 #ifndef __R_THINGS__
 #define __R_THINGS__
 
-#define MAXVISSPRITES 128
-
 extern vissprite_t *vissprites;
 extern vissprite_t *vissprite_p;
 extern vissprite_t vsprsortedhead;

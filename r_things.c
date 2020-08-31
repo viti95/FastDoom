@@ -33,6 +33,8 @@
 #define MINZ (FRACUNIT * 4)
 #define BASEYCENTER 100
 
+#define INITIAL_SPRITES 128
+
 typedef struct
 {
     int x1;
@@ -500,8 +502,24 @@ void R_ProjectSprite(mobj_t *thing)
 
     if (num_vissprite >= num_vissprite_alloc) // killough
     {
-        num_vissprite_alloc = num_vissprite_alloc ? num_vissprite_alloc * 2 : 128;
-        vissprites = realloc(vissprites, num_vissprite_alloc * sizeof(*vissprites));
+        if (num_vissprite_alloc == 0)
+        {
+            num_vissprite_alloc = INITIAL_SPRITES; // Initial num sprites -> 128
+            vissprites = Z_Malloc(num_vissprite_alloc * sizeof(*vissprites), PU_STATIC, 0);
+        }
+        else
+        {
+            vissprite_t *vissprites_old;
+            size_t num_vissprite_alloc_old;
+
+            vissprites_old = vissprites;
+            num_vissprite_alloc_old = num_vissprite_alloc;
+
+            num_vissprite_alloc = num_vissprite_alloc * 2;
+            vissprites = Z_Malloc(num_vissprite_alloc * sizeof(*vissprites), PU_STATIC, 0);
+            memcpy(vissprites, vissprites_old, num_vissprite_alloc_old * sizeof(*vissprites));
+            Z_Free(vissprites_old);
+        }
     }
     vis = vissprites + num_vissprite++;
     vis->mobjflags = thing->flags;
@@ -761,8 +779,10 @@ void R_SortVisSprites(void)
 
         if (num_vissprite_ptrs < num_vissprite * 2)
         {
-            free(vissprite_ptrs); // better than realloc -- no preserving needed
-            vissprite_ptrs = malloc((num_vissprite_ptrs = num_vissprite_alloc * 2) * sizeof *vissprite_ptrs);
+            if (num_vissprite_ptrs > 0)
+                Z_Free(vissprite_ptrs);
+            num_vissprite_ptrs = num_vissprite_alloc * 2;
+            vissprite_ptrs = Z_Malloc(num_vissprite_ptrs * sizeof *vissprite_ptrs, PU_STATIC, 0);
         }
 
         while (--i >= 0)
