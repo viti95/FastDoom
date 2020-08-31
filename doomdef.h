@@ -226,6 +226,7 @@ fixed_t FixedMul(fixed_t a, fixed_t b);
 #define FixedDiv(a,b) (((abs(a) >> 14) >= abs(b)) ? (((a) ^ (b)) >> 31) ^ MAXINT : FixedDiv2(a, b))
 fixed_t FixedDiv2(fixed_t a, fixed_t b);
 
+//fixed_t FixedFriction(fixed_t a);
 
 #pragma aux FixedMul = \
     "imul ebx",        \
@@ -236,6 +237,16 @@ fixed_t FixedDiv2(fixed_t a, fixed_t b);
             "shld edx,eax,16", \
             "sal eax,16",      \
             "idiv ebx" parm[eax][ebx] value[eax] modify exact[eax edx]
+
+/*
+#pragma aux FixedFriction = \
+    "lea eax, [edx + edx]", \
+    "add eax, edx", \
+    "add eax, eax", \
+    "add eax, edx", \
+    "lea eax, [edx+eax*4]", \
+    "sar eax, 5" parm[edx] value[eax] modify exact[eax edx]
+*/
 
 #define SHORT(x) (x)
 #define LONG(x) (x)
