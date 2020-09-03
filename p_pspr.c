@@ -579,16 +579,16 @@ void P_BulletSlope(mobj_t *mo)
 
     // see which target is to be aimed at
     an = mo->angle;
-    bulletslope = P_AimLineAttack(mo, an, 16 * 64 * FRACUNIT);
+    bulletslope = P_AimLineAttack(mo, an, HALFMISSILERANGE);
 
     if (!linetarget)
     {
         an += 1 << 26;
-        bulletslope = P_AimLineAttack(mo, an, 16 * 64 * FRACUNIT);
+        bulletslope = P_AimLineAttack(mo, an, HALFMISSILERANGE);
         if (!linetarget)
         {
             an -= 2 << 26;
-            bulletslope = P_AimLineAttack(mo, an, 16 * 64 * FRACUNIT);
+            bulletslope = P_AimLineAttack(mo, an, HALFMISSILERANGE);
         }
     }
 }
@@ -745,7 +745,7 @@ void A_BFGSpray(mobj_t *mo)
 
         // mo->target is the originator (player)
         //  of the missile
-        P_AimLineAttack(mo->target, an, 16 * 64 * FRACUNIT);
+        P_AimLineAttack(mo->target, an, HALFMISSILERANGE);
 
         if (!linetarget)
             continue;
