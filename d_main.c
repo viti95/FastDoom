@@ -96,6 +96,10 @@ boolean lowSound;
 boolean waitInit;
 boolean noMelt;
 
+boolean forceHighDetail;
+boolean forceLowDetail;
+boolean forcePotatoDetail;
+
 boolean uncappedFPS;
 
 boolean drone;
@@ -761,6 +765,10 @@ void D_DoomMain(void)
     flatShadows = M_CheckParm("-flatshadows");
     saturnShadows = M_CheckParm("-saturn");
     waitInit = M_CheckParm("-init");
+
+    forceHighDetail = M_CheckParm("-forceHQ");
+    forceLowDetail = M_CheckParm("-forceLQ");
+    forcePotatoDetail = M_CheckParm("-forcePQ");
 
     monoSound = M_CheckParm("-mono");
     lowSound = M_CheckParm("-lowsound");

@@ -562,7 +562,17 @@ void R_ExecuteSetViewSize(void)
         viewheight = (setblocks * 168 / 10) & ~7;
     }
 
-    detailshift = setdetail;
+    if (forcePotatoDetail || forceLowDetail || forceHighDetail)
+    {
+        if (forceHighDetail)
+            detailshift = 0;
+        else if (forceLowDetail)
+            detailshift = 1;
+        else
+            detailshift = 2;
+    }
+    else
+        detailshift = setdetail;
 
     viewwidth = scaledviewwidth >> detailshift;
 
