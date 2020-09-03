@@ -371,7 +371,8 @@ R_PointToDist(fixed_t x,
 
     // use as cosine
     //dist = FixedDiv(dx, finesine[angle]);
-    dist = FixedMul(dx, finecosecant[angle - 2048]);
+    temp = finesine[angle];
+    dist = ((dx >> 14) >= abs(temp)) ? ((dx ^ temp) >> 31) ^ MAXINT : FixedDiv2(dx, temp);
 
     return dist;
 }

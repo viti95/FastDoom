@@ -49,8 +49,6 @@ extern fixed_t finesine[5 * FINEANGLES / 4];
 // Re-use data, is just PI/2 pahse shift.
 extern fixed_t *finecosine;
 
-extern fixed_t finecosecant[FINEANGLES / 8];
-
 // Effective size is 4096.
 extern fixed_t finetangent[FINEANGLES / 2];
 
