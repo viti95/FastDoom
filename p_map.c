@@ -794,7 +794,21 @@ PTR_AimTraverse(intercept_t *in)
         if (openbottom >= opentop)
             return false; // stop
 
-        dist = FixedMul(attackrange, in->frac);
+        switch (attackrange)
+        {
+        case MISSILERANGE:
+            dist = in->frac << 11;
+            break;
+        case HALFMISSILERANGE:
+            dist = in->frac << 10;
+            break;
+        case MELEERANGE:
+            dist = in->frac << 6;
+            break;
+        case MELEERANGE + 1:
+            dist = in->frac << 6 + in->frac;
+            break;
+        }
 
         if (li->frontsector->floorheight != li->backsector->floorheight)
         {
@@ -829,7 +843,23 @@ PTR_AimTraverse(intercept_t *in)
         return true; // corpse or something
 
     // check angles to see if the thing can be aimed at
-    dist = FixedMul(attackrange, in->frac);
+
+    switch (attackrange)
+    {
+    case MISSILERANGE:
+        dist = in->frac << 11;
+        break;
+    case HALFMISSILERANGE:
+        dist = in->frac << 10;
+        break;
+    case MELEERANGE:
+        dist = in->frac << 6;
+        break;
+    case MELEERANGE + 1:
+        dist = in->frac << 6 + in->frac;
+        break;
+    }
+
     opt = th->z + th->height - shootz;
     //thingtopslope = FixedDiv(th->z + th->height - shootz, dist);
     thingtopslope = ((abs(opt) >> 14) >= dist) ? ((opt ^ dist) >> 31) ^ MAXINT : FixedDiv2(opt, dist);
@@ -891,7 +921,18 @@ boolean PTR_ShootTraverse(intercept_t *in)
         // crosses a two sided line
         P_LineOpening(li);
 
-        dist = FixedMul(attackrange, in->frac);
+        switch (attackrange)
+        {
+        case MISSILERANGE:
+            dist = in->frac << 11;
+            break;
+        case MELEERANGE:
+            dist = in->frac << 6;
+            break;
+        case MELEERANGE + 1:
+            dist = in->frac << 6 + in->frac;
+            break;
+        }
 
         if (li->frontsector->floorheight != li->backsector->floorheight)
         {
@@ -920,7 +961,21 @@ boolean PTR_ShootTraverse(intercept_t *in)
         frac = in->frac - 128;
         x = trace.x + FixedMul(trace.dx, frac);
         y = trace.y + FixedMul(trace.dy, frac);
-        z = shootz + FixedMul(aimslope, FixedMul(frac, attackrange));
+
+        z = shootz;
+
+        switch (attackrange)
+        {
+        case MISSILERANGE:
+            z += FixedMul(aimslope, frac << 11);
+            break;
+        case MELEERANGE:
+            z += FixedMul(aimslope, frac << 6);
+            break;
+        case MELEERANGE + 1:
+            z += FixedMul(aimslope, (frac << 6) + frac);
+            break;
+        }
 
         if (li->frontsector->ceilingpic == skyflatnum)
         {
@@ -949,7 +1004,19 @@ boolean PTR_ShootTraverse(intercept_t *in)
         return true; // corpse or something
 
     // check angles to see if the thing can be aimed at
-    dist = FixedMul(attackrange, in->frac);
+    switch (attackrange)
+    {
+    case MISSILERANGE:
+        dist = in->frac << 11;
+        break;
+    case MELEERANGE:
+        dist = in->frac << 6;
+        break;
+    case MELEERANGE + 1:
+        dist = in->frac << 6 + in->frac;
+        break;
+    }
+
     opt = th->z + th->height - shootz;
     //thingtopslope = FixedDiv(th->z + th->height - shootz, dist);
     thingtopslope = ((abs(opt) >> 14) >= dist) ? ((opt ^ dist) >> 31) ^ MAXINT : FixedDiv2(opt, dist);
@@ -961,23 +1028,36 @@ boolean PTR_ShootTraverse(intercept_t *in)
     //thingbottomslope = FixedDiv(th->z - shootz, dist);
     thingbottomslope = ((abs(opt) >> 14) >= dist) ? ((opt ^ dist) >> 31) ^ MAXINT : FixedDiv2(opt, dist);
 
-
     if (thingbottomslope > aimslope)
         return true; // shot under the thing
 
     // hit thing
     // position a bit closer
 
-    // Attackrange has two posible values, melee attack and long range attack
-    // Meleeattack (attackrange = 134217728), far attack (attackrange = 4194305)
-    if (attackrange == 134217728) 
-        frac = in->frac - 320; // FAR ATTACK
-    else
-        frac = in->frac - 10240; // MELEE ATTACK
+    // MISSILERANGE (attackrange = 134217728 = 2^27)
+    // MELEERANGE+1 (attackrange = 4194305 = 2^22 + 1)
+    // MELEERANGE (attackrange = 4194304 = 2^22)
+
+    z = shootz;
+
+    switch (attackrange)
+    {
+    case MISSILERANGE:
+        frac = in->frac - 320;
+        z += FixedMul(aimslope, frac << 11);
+        break;
+    case MELEERANGE:
+        frac = in->frac - 10240;
+        z += FixedMul(aimslope, frac << 6);
+        break;
+    case MELEERANGE + 1:
+        frac = in->frac - 10239;
+        z += FixedMul(aimslope, (frac << 6) + frac);
+        break;
+    }
 
     x = trace.x + FixedMul(trace.dx, frac);
     y = trace.y + FixedMul(trace.dy, frac);
-    z = shootz + FixedMul(aimslope, FixedMul(frac, attackrange));
 
     // Spawn bullet puffs or blod spots,
     // depending on target type.
