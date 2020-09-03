@@ -1155,6 +1155,8 @@ void A_Fire(mobj_t *actor)
     mobj_t *dest;
     unsigned an;
 
+    fixed_t optCosine, optSine;
+
     dest = actor->tracer;
     if (!dest)
         return;
@@ -1166,8 +1168,12 @@ void A_Fire(mobj_t *actor)
     an = dest->angle >> ANGLETOFINESHIFT;
 
     P_UnsetThingPosition(actor);
-    actor->x = dest->x + FixedMul(24 * FRACUNIT, finecosine[an]); // ((2^20) + (2^19)) or (2^19 * 3)
-    actor->y = dest->y + FixedMul(24 * FRACUNIT, finesine[an]);
+    
+    optCosine = finecosine[an];
+    actor->x = dest->x + (optCosine << 4) + (optCosine << 3);
+    optSine = finesine[an];
+    actor->y = dest->y + (optSine << 4) + (optSine << 3);
+
     actor->z = dest->z;
     P_SetThingPosition(actor);
 }
@@ -1203,6 +1209,8 @@ void A_VileAttack(mobj_t *actor)
     mobj_t *fire;
     int an;
 
+    fixed_t optCosine, optSine;
+
     if (!actor->target)
         return;
 
@@ -1223,8 +1231,11 @@ void A_VileAttack(mobj_t *actor)
         return;
 
     // move the fire between the vile and the player
-    fire->x = actor->target->x - FixedMul(24 * FRACUNIT, finecosine[an]);
-    fire->y = actor->target->y - FixedMul(24 * FRACUNIT, finesine[an]);
+    optCosine = finecosine[an];
+    fire->x = actor->target->x - (optCosine << 4) - (optCosine << 3);
+    optSine = finesine[an];
+    fire->y = actor->target->y - (optSine << 4) - (optSine << 3);
+    
     P_RadiusAttack(fire, actor, 70);
 }
 
@@ -1308,6 +1319,8 @@ void A_SkullAttack(mobj_t *actor)
     angle_t an;
     int dist;
 
+    fixed_t optCosine, optSine;
+
     if (!actor->target)
         return;
 
@@ -1317,8 +1330,12 @@ void A_SkullAttack(mobj_t *actor)
     S_StartSound(actor, actor->info->attacksound);
     A_FaceTarget(actor);
     an = actor->angle >> ANGLETOFINESHIFT;
-    actor->momx = FixedMul(SKULLSPEED, finecosine[an]);
-    actor->momy = FixedMul(SKULLSPEED, finesine[an]);
+
+    optCosine = finecosine[an];
+    actor->momx = (optCosine << 4) + (optCosine << 2);
+    optSine = finesine[an];
+    actor->momy = (optSine << 4) + (optSine << 2);
+
     dist = P_AproxDistance(dest->x - actor->x, dest->y - actor->y);
     dist = dist / SKULLSPEED;
 

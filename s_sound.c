@@ -234,6 +234,8 @@ int S_AdjustSoundParams(mobj_t *listener,
     fixed_t ady;
     angle_t angle;
 
+    fixed_t optSine;
+
     // calculate the distance to sound origin
     //  and clip it if necessary
     adx = abs(listener->x - source->x);
@@ -266,8 +268,9 @@ int S_AdjustSoundParams(mobj_t *listener,
 
         angle >>= ANGLETOFINESHIFT;
 
-        // stereo separation
-        *sep = 128 - (FixedMul(S_STEREO_SWING, finesine[angle]) >> FRACBITS);
+        // stereo separation (S_STEREO_SWING == 2^21 + 2^22)
+        optSine = finesine[angle];
+        *sep = 128 - (((optSine << 6) + (optSine << 5)) >> FRACBITS); 
     }
 
     // volume calculation
