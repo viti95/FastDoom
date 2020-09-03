@@ -68,7 +68,7 @@ typedef int fixed_t;
 #define PI_F 3.14159265f
 #define FIXED_TO_FLOAT(inp)       ((float)inp) / (1 << FRACBITS)
 #define FLOAT_TO_FIXED(inp)       (fixed_t)(inp * (1 << FRACBITS))
-#define ANGLE_TO_FLOAT(x)       (angle * ((float)(PI_F / 4096.0f)))
+#define ANGLE_TO_FLOAT(x)       (x * ((float)(PI_F / 4096.0f)))
 
 // The maximum number of players, multiplayer/networking.
 #define MAXPLAYERS 4
