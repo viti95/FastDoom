@@ -191,20 +191,33 @@ R_PointToAngle(fixed_t x,
         if (y >= 0)
         {
             // y>= 0
-
             if (x > y)
             {
                 // octant 0
-                tempDivision = (y << 3) / (x >> 8);
-                slopeDiv = ((x < 512) ? SLOPERANGE : tempDivision < SLOPERANGE ? tempDivision : SLOPERANGE);
-                return tantoangle[slopeDiv];
+                if (x < 512)
+                    return 536870912;
+                else
+                {
+                    tempDivision = (y << 3) / (x >> 8);
+                    if (tempDivision < SLOPERANGE)
+                        return tantoangle[tempDivision];
+                    else
+                        return 536870912;
+                }
             }
             else
             {
                 // octant 1
-                tempDivision = (x << 3) / (y >> 8);
-                slopeDiv = ((y < 512) ? SLOPERANGE : tempDivision < SLOPERANGE ? tempDivision : SLOPERANGE);
-                return ANG90 - 1 - tantoangle[slopeDiv];
+                if (y < 512)
+                    return ANG90 - 1 - 536870912;
+                else
+                {
+                    tempDivision = (x << 3) / (y >> 8);
+                    if (tempDivision < SLOPERANGE)
+                        return ANG90 - 1 - tantoangle[tempDivision];
+                    else
+                        return ANG90 - 1 - 536870912;
+                }
             }
         }
         else
@@ -215,16 +228,30 @@ R_PointToAngle(fixed_t x,
             if (x > y)
             {
                 // octant 8
-                tempDivision = (y << 3) / (x >> 8);
-                slopeDiv = ((x < 512) ? SLOPERANGE : tempDivision < SLOPERANGE ? tempDivision : SLOPERANGE);
-                return -tantoangle[slopeDiv];
+                if (x < 512)
+                    return -536870912;
+                else
+                {
+                    tempDivision = (y << 3) / (x >> 8);
+                    if (tempDivision < SLOPERANGE)
+                        return -tantoangle[tempDivision];
+                    else
+                        return -536870912;
+                }
             }
             else
             {
                 // octant 7
-                tempDivision = (x << 3) / (y >> 8);
-                slopeDiv = ((y < 512) ? SLOPERANGE : tempDivision < SLOPERANGE ? tempDivision : SLOPERANGE);
-                return ANG270 + tantoangle[slopeDiv];
+                if (y < 512)
+                    return ANG270 + 536870912;
+                else
+                {
+                    tempDivision = (x << 3) / (y >> 8);
+                    if (tempDivision < SLOPERANGE)
+                        return ANG270 + tantoangle[tempDivision];
+                    else
+                        return ANG270 + 536870912;
+                }
             }
         }
     }
@@ -239,16 +266,30 @@ R_PointToAngle(fixed_t x,
             if (x > y)
             {
                 // octant 3
-                tempDivision = (y << 3) / (x >> 8);
-                slopeDiv = ((x < 512) ? SLOPERANGE : tempDivision < SLOPERANGE ? tempDivision : SLOPERANGE);
-                return ANG180 - 1 - tantoangle[slopeDiv];
+                if (x < 512)
+                    return ANG180 - 1 - 536870912;
+                else
+                {
+                    tempDivision = (y << 3) / (x >> 8);
+                    if (tempDivision < SLOPERANGE)
+                        return ANG180 - 1 - tantoangle[tempDivision];
+                    else
+                        return ANG180 - 1 - 536870912;
+                }
             }
             else
             {
                 // octant 2
-                tempDivision = (x << 3) / (y >> 8);
-                slopeDiv = ((y < 512) ? SLOPERANGE : tempDivision < SLOPERANGE ? tempDivision : SLOPERANGE);
-                return ANG90 + tantoangle[slopeDiv];
+                if (y < 512)
+                    return ANG90 + 536870912;
+                else
+                {
+                    tempDivision = (x << 3) / (y >> 8);
+                    if (tempDivision < SLOPERANGE)
+                        return ANG90 + tantoangle[tempDivision];
+                    else
+                        return ANG90 + 536870912;
+                };
             }
         }
         else
@@ -259,16 +300,30 @@ R_PointToAngle(fixed_t x,
             if (x > y)
             {
                 // octant 4
-                tempDivision = (y << 3) / (x >> 8);
-                slopeDiv = ((x < 512) ? SLOPERANGE : tempDivision < SLOPERANGE ? tempDivision : SLOPERANGE);
-                return ANG180 + tantoangle[slopeDiv];
+                if (x < 512)
+                    return ANG180 + 536870912;
+                else
+                {
+                    tempDivision = (y << 3) / (x >> 8);
+                    if (tempDivision < SLOPERANGE)
+                        return ANG180 + tantoangle[tempDivision];
+                    else
+                        return ANG180 + 536870912;
+                }
             }
             else
             {
                 // octant 5
-                tempDivision = (x << 3) / (y >> 8);
-                slopeDiv = ((y < 512) ? SLOPERANGE : tempDivision < SLOPERANGE ? tempDivision : SLOPERANGE);
-                return ANG270 - 1 - tantoangle[slopeDiv];
+                if (y < 512)
+                    return ANG270 - 1 - 536870912;
+                else
+                {
+                    tempDivision = (x << 3) / (y >> 8);
+                    if (tempDivision < SLOPERANGE)
+                        return ANG270 - 1 - tantoangle[tempDivision];
+                    else
+                        return ANG270 - 1 - 536870912;
+                }
             }
         }
     }
@@ -298,20 +353,33 @@ R_PointToAngle2(fixed_t x1,
         if (y2 >= 0)
         {
             // y>= 0
-
             if (x2 > y2)
             {
                 // octant 0
-                tempDivision = (y2 << 3) / (x2 >> 8);
-                slopeDiv = ((x2 < 512) ? SLOPERANGE : tempDivision < SLOPERANGE ? tempDivision : SLOPERANGE);
-                return tantoangle[slopeDiv];
+                if (x2 < 512)
+                    return 536870912;
+                else
+                {
+                    tempDivision = (y2 << 3) / (x2 >> 8);
+                    if (tempDivision < SLOPERANGE)
+                        return tantoangle[tempDivision];
+                    else
+                        return 536870912;
+                }
             }
             else
             {
                 // octant 1
-                tempDivision = (x2 << 3) / (y2 >> 8);
-                slopeDiv = ((y2 < 512) ? SLOPERANGE : tempDivision < SLOPERANGE ? tempDivision : SLOPERANGE);
-                return ANG90 - 1 - tantoangle[slopeDiv];
+                if (y2 < 512)
+                    return ANG90 - 1 - 536870912;
+                else
+                {
+                    tempDivision = (x2 << 3) / (y2 >> 8);
+                    if (tempDivision < SLOPERANGE)
+                        return ANG90 - 1 - tantoangle[tempDivision];
+                    else
+                        return ANG90 - 1 - 536870912;
+                }
             }
         }
         else
@@ -322,16 +390,31 @@ R_PointToAngle2(fixed_t x1,
             if (x2 > y2)
             {
                 // octant 8
-                tempDivision = (y2 << 3) / (x2 >> 8);
-                slopeDiv = ((x2 < 512) ? SLOPERANGE : tempDivision < SLOPERANGE ? tempDivision : SLOPERANGE);
-                return -tantoangle[slopeDiv];
+                if (x2 < 512)
+                    return -536870912;
+                else
+                {
+                    tempDivision = (y2 << 3) / (x2 >> 8);
+                    if (tempDivision < SLOPERANGE)
+                        return -tantoangle[tempDivision];
+                    else
+                        return -536870912;
+                }
             }
             else
             {
                 // octant 7
-                tempDivision = (x2 << 3) / (y2 >> 8);
-                slopeDiv = ((y2 < 512) ? SLOPERANGE : tempDivision < SLOPERANGE ? tempDivision : SLOPERANGE);
-                return ANG270 + tantoangle[slopeDiv];
+
+                if (y2 < 512)
+                    return ANG270 + 536870912;
+                else
+                {
+                    tempDivision = (x2 << 3) / (y2 >> 8);
+                    if (tempDivision < SLOPERANGE)
+                        return ANG270 + tantoangle[tempDivision];
+                    else
+                        return ANG270 + 536870912;
+                }
             }
         }
     }
@@ -346,16 +429,31 @@ R_PointToAngle2(fixed_t x1,
             if (x2 > y2)
             {
                 // octant 3
-                tempDivision = (y2 << 3) / (x2 >> 8);
-                slopeDiv = ((x2 < 512) ? SLOPERANGE : tempDivision < SLOPERANGE ? tempDivision : SLOPERANGE);
-                return ANG180 - 1 - tantoangle[slopeDiv];
+                if (x2 < 512)
+                    return ANG180 - 1 - 536870912;
+                else
+                {
+                    tempDivision = (y2 << 3) / (x2 >> 8);
+                    if (tempDivision < SLOPERANGE)
+                        return ANG180 - 1 - tantoangle[tempDivision];
+                    else
+                        return ANG180 - 1 - 536870912;
+                }
             }
             else
             {
                 // octant 2
-                tempDivision = (x2 << 3) / (y2 >> 8);
-                slopeDiv = ((y2 < 512) ? SLOPERANGE : tempDivision < SLOPERANGE ? tempDivision : SLOPERANGE);
-                return ANG90 + tantoangle[slopeDiv];
+
+                if (y2 < 512)
+                    return ANG90 + 536870912;
+                else
+                {
+                    tempDivision = (x2 << 3) / (y2 >> 8);
+                    if (tempDivision < SLOPERANGE)
+                        return ANG90 + tantoangle[tempDivision];
+                    else
+                        return ANG90 + 536870912;
+                }
             }
         }
         else
@@ -366,16 +464,31 @@ R_PointToAngle2(fixed_t x1,
             if (x2 > y2)
             {
                 // octant 4
-                tempDivision = (y2 << 3) / (x2 >> 8);
-                slopeDiv = ((x2 < 512) ? SLOPERANGE : tempDivision < SLOPERANGE ? tempDivision : SLOPERANGE);
-                return ANG180 + tantoangle[slopeDiv];
+                if (x2 < 512)
+                    return ANG180 + 536870912;
+                else
+                {
+                    tempDivision = (y2 << 3) / (x2 >> 8);
+                    if (tempDivision < SLOPERANGE)
+                        return ANG180 + tantoangle[tempDivision];
+                    else
+                        return ANG180 + 536870912;
+                }
             }
             else
             {
                 // octant 5
-                tempDivision = (x2 << 3) / (y2 >> 8);
-                slopeDiv = ((y2 < 512) ? SLOPERANGE : tempDivision < SLOPERANGE ? tempDivision : SLOPERANGE);
-                return ANG270 - 1 - tantoangle[slopeDiv];
+
+                if (y2 < 512)
+                    return ANG270 - 1 - 536870912;
+                else
+                {
+                    tempDivision = (x2 << 3) / (y2 >> 8);
+                    if (tempDivision < SLOPERANGE)
+                        return ANG270 - 1 - tantoangle[tempDivision];
+                    else
+                        return ANG270 - 1 - 536870912;
+                }
             }
         }
     }
