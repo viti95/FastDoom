@@ -177,7 +177,7 @@ angle_t
 R_PointToAngle(fixed_t x,
                fixed_t y)
 {
-    fixed_t minValue, tempDivision, slopeDiv;
+    fixed_t minValue, tempDivision, slopeDiv, tempSub;
 
     x -= viewx;
     y -= viewy;
@@ -196,14 +196,16 @@ R_PointToAngle(fixed_t x,
             {
                 // octant 0
                 tempDivision = (y << 3) / (x >> 8);
-                slopeDiv = ((x < 512) ? SLOPERANGE : SLOPERANGE ^ ((tempDivision ^ SLOPERANGE) & -(tempDivision < SLOPERANGE)));
+                tempSub = tempDivision - SLOPERANGE;
+                slopeDiv = ((x < 512) ? SLOPERANGE : SLOPERANGE + (tempSub & (tempSub >> (sizeof(fixed_t) * 8 - 1))));
                 return tantoangle[slopeDiv];
             }
             else
             {
                 // octant 1
                 tempDivision = (x << 3) / (y >> 8);
-                slopeDiv = ((y < 512) ? SLOPERANGE : SLOPERANGE ^ ((tempDivision ^ SLOPERANGE) & -(tempDivision < SLOPERANGE)));
+                tempSub = tempDivision - SLOPERANGE;
+                slopeDiv = ((y < 512) ? SLOPERANGE : SLOPERANGE + (tempSub & (tempSub >> (sizeof(fixed_t) * 8 - 1))));
                 return ANG90 - 1 - tantoangle[slopeDiv];
             }
         }
@@ -216,14 +218,16 @@ R_PointToAngle(fixed_t x,
             {
                 // octant 8
                 tempDivision = (y << 3) / (x >> 8);
-                slopeDiv = ((x < 512) ? SLOPERANGE : SLOPERANGE ^ ((tempDivision ^ SLOPERANGE) & -(tempDivision < SLOPERANGE)));
+                tempSub = tempDivision - SLOPERANGE;
+                slopeDiv = ((x < 512) ? SLOPERANGE : SLOPERANGE + (tempSub & (tempSub >> (sizeof(fixed_t) * 8 - 1))));
                 return -tantoangle[slopeDiv];
             }
             else
             {
                 // octant 7
                 tempDivision = (x << 3) / (y >> 8);
-                slopeDiv = ((y < 512) ? SLOPERANGE : SLOPERANGE ^ ((tempDivision ^ SLOPERANGE) & -(tempDivision < SLOPERANGE)));
+                tempSub = tempDivision - SLOPERANGE;
+                slopeDiv = ((y < 512) ? SLOPERANGE : SLOPERANGE + (tempSub & (tempSub >> (sizeof(fixed_t) * 8 - 1))));
                 return ANG270 + tantoangle[slopeDiv];
             }
         }
@@ -240,14 +244,16 @@ R_PointToAngle(fixed_t x,
             {
                 // octant 3
                 tempDivision = (y << 3) / (x >> 8);
-                slopeDiv = ((x < 512) ? SLOPERANGE : SLOPERANGE ^ ((tempDivision ^ SLOPERANGE) & -(tempDivision < SLOPERANGE)));
+                tempSub = tempDivision - SLOPERANGE;
+                slopeDiv = ((x < 512) ? SLOPERANGE : SLOPERANGE + (tempSub & (tempSub >> (sizeof(fixed_t) * 8 - 1))));
                 return ANG180 - 1 - tantoangle[slopeDiv];
             }
             else
             {
                 // octant 2
                 tempDivision = (x << 3) / (y >> 8);
-                slopeDiv = ((y < 512) ? SLOPERANGE : SLOPERANGE ^ ((tempDivision ^ SLOPERANGE) & -(tempDivision < SLOPERANGE)));
+                tempSub = tempDivision - SLOPERANGE;
+                slopeDiv = ((y < 512) ? SLOPERANGE : SLOPERANGE + (tempSub & (tempSub >> (sizeof(fixed_t) * 8 - 1))));
                 return ANG90 + tantoangle[slopeDiv];
             }
         }
@@ -260,14 +266,16 @@ R_PointToAngle(fixed_t x,
             {
                 // octant 4
                 tempDivision = (y << 3) / (x >> 8);
-                slopeDiv = ((x < 512) ? SLOPERANGE : SLOPERANGE ^ ((tempDivision ^ SLOPERANGE) & -(tempDivision < SLOPERANGE)));
+                tempSub = tempDivision - SLOPERANGE;
+                slopeDiv = ((x < 512) ? SLOPERANGE : SLOPERANGE + (tempSub & (tempSub >> (sizeof(fixed_t) * 8 - 1))));
                 return ANG180 + tantoangle[slopeDiv];
             }
             else
             {
                 // octant 5
                 tempDivision = (x << 3) / (y >> 8);
-                slopeDiv = ((y < 512) ? SLOPERANGE : SLOPERANGE ^ ((tempDivision ^ SLOPERANGE) & -(tempDivision < SLOPERANGE)));
+                tempSub = tempDivision - SLOPERANGE;
+                slopeDiv = ((y < 512) ? SLOPERANGE : SLOPERANGE + (tempSub & (tempSub >> (sizeof(fixed_t) * 8 - 1))));
                 return ANG270 - 1 - tantoangle[slopeDiv];
             }
         }
@@ -281,7 +289,7 @@ R_PointToAngle2(fixed_t x1,
                 fixed_t x2,
                 fixed_t y2)
 {
-    fixed_t minValue, tempDivision, slopeDiv;
+    fixed_t minValue, tempDivision, slopeDiv, tempSub;
 
     viewx = x1;
     viewy = y1;
@@ -303,14 +311,16 @@ R_PointToAngle2(fixed_t x1,
             {
                 // octant 0
                 tempDivision = (y2 << 3) / (x2 >> 8);
-                slopeDiv = ((x2 < 512) ? SLOPERANGE : SLOPERANGE ^ ((tempDivision ^ SLOPERANGE) & -(tempDivision < SLOPERANGE)));
+                tempSub = tempDivision - SLOPERANGE;
+                slopeDiv = ((x2 < 512) ? SLOPERANGE : SLOPERANGE + (tempSub & (tempSub >> (sizeof(fixed_t) * 8 - 1))));
                 return tantoangle[slopeDiv];
             }
             else
             {
                 // octant 1
                 tempDivision = (x2 << 3) / (y2 >> 8);
-                slopeDiv = ((y2 < 512) ? SLOPERANGE : SLOPERANGE ^ ((tempDivision ^ SLOPERANGE) & -(tempDivision < SLOPERANGE)));
+                tempSub = tempDivision - SLOPERANGE;
+                slopeDiv = ((y2 < 512) ? SLOPERANGE : SLOPERANGE + (tempSub & (tempSub >> (sizeof(fixed_t) * 8 - 1))));
                 return ANG90 - 1 - tantoangle[slopeDiv];
             }
         }
@@ -323,14 +333,16 @@ R_PointToAngle2(fixed_t x1,
             {
                 // octant 8
                 tempDivision = (y2 << 3) / (x2 >> 8);
-                slopeDiv = ((x2 < 512) ? SLOPERANGE : SLOPERANGE ^ ((tempDivision ^ SLOPERANGE) & -(tempDivision < SLOPERANGE)));
+                tempSub = tempDivision - SLOPERANGE;
+                slopeDiv = ((x2 < 512) ? SLOPERANGE : SLOPERANGE + (tempSub & (tempSub >> (sizeof(fixed_t) * 8 - 1))));
                 return -tantoangle[slopeDiv];
             }
             else
             {
                 // octant 7
                 tempDivision = (x2 << 3) / (y2 >> 8);
-                slopeDiv = ((y2 < 512) ? SLOPERANGE : SLOPERANGE ^ ((tempDivision ^ SLOPERANGE) & -(tempDivision < SLOPERANGE)));
+                tempSub = tempDivision - SLOPERANGE;
+                slopeDiv = ((y2 < 512) ? SLOPERANGE : SLOPERANGE + (tempSub & (tempSub >> (sizeof(fixed_t) * 8 - 1))));
                 return ANG270 + tantoangle[slopeDiv];
             }
         }
@@ -347,14 +359,16 @@ R_PointToAngle2(fixed_t x1,
             {
                 // octant 3
                 tempDivision = (y2 << 3) / (x2 >> 8);
-                slopeDiv = ((x2 < 512) ? SLOPERANGE : SLOPERANGE ^ ((tempDivision ^ SLOPERANGE) & -(tempDivision < SLOPERANGE)));
+                tempSub = tempDivision - SLOPERANGE;
+                slopeDiv = ((x2 < 512) ? SLOPERANGE : SLOPERANGE + (tempSub & (tempSub >> (sizeof(fixed_t) * 8 - 1))));
                 return ANG180 - 1 - tantoangle[slopeDiv];
             }
             else
             {
                 // octant 2
                 tempDivision = (x2 << 3) / (y2 >> 8);
-                slopeDiv = ((y2 < 512) ? SLOPERANGE : SLOPERANGE ^ ((tempDivision ^ SLOPERANGE) & -(tempDivision < SLOPERANGE)));
+                tempSub = tempDivision - SLOPERANGE;
+                slopeDiv = ((y2 < 512) ? SLOPERANGE : SLOPERANGE + (tempSub & (tempSub >> (sizeof(fixed_t) * 8 - 1))));
                 return ANG90 + tantoangle[slopeDiv];
             }
         }
@@ -367,14 +381,16 @@ R_PointToAngle2(fixed_t x1,
             {
                 // octant 4
                 tempDivision = (y2 << 3) / (x2 >> 8);
-                slopeDiv = ((x2 < 512) ? SLOPERANGE : SLOPERANGE ^ ((tempDivision ^ SLOPERANGE) & -(tempDivision < SLOPERANGE)));
+                tempSub = tempDivision - SLOPERANGE;
+                slopeDiv = ((x2 < 512) ? SLOPERANGE : SLOPERANGE + (tempSub & (tempSub >> (sizeof(fixed_t) * 8 - 1))));
                 return ANG180 + tantoangle[slopeDiv];
             }
             else
             {
                 // octant 5
                 tempDivision = (x2 << 3) / (y2 >> 8);
-                slopeDiv = ((y2 < 512) ? SLOPERANGE : SLOPERANGE ^ ((tempDivision ^ SLOPERANGE) & -(tempDivision < SLOPERANGE)));
+                tempSub = tempDivision - SLOPERANGE;
+                slopeDiv = ((y2 < 512) ? SLOPERANGE : SLOPERANGE + (tempSub & (tempSub >> (sizeof(fixed_t) * 8 - 1))));
                 return ANG270 - 1 - tantoangle[slopeDiv];
             }
         }
