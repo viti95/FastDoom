@@ -99,9 +99,9 @@ struct texture_t
     short width;
     short height;
     // Index in textures list
-    int         index;
+    int index;
     // Next in hash table chain
-    texture_t  *next;
+    texture_t *next;
     // All the patches[patchcount]
     //  are drawn back to front into the cached texture.
     short patchcount;
@@ -378,7 +378,7 @@ void GenerateTextureHashTable(void)
 
     // Add all textures to hash table
 
-    for (i=0; i<numtextures; ++i)
+    for (i = 0; i < numtextures; ++i)
     {
         // Store index
 
@@ -689,21 +689,21 @@ int R_TextureNumForName(char *name)
     int key;
 
     // "NoTexture" marker.
-    if (name[0] == '-')		
-	return 0;
-		
+    if (name[0] == '-')
+        return 0;
+
     key = W_LumpNameHash(name) % numtextures;
 
-    texture=textures_hashtable[key]; 
-    
+    texture = textures_hashtable[key];
+
     while (texture != NULL)
     {
-	if (!strncasecmp (texture->name, name, 8) )
-	    return texture->index;
+        if (!strncasecmp(texture->name, name, 8))
+            return texture->index;
 
         texture = texture->next;
     }
-    
+
     return -1;
 }
 
@@ -781,7 +781,7 @@ void R_PrecacheLevel(void)
         R_GenerateComposite(i);
 
         texture = textures[i];
-        
+
         for (j = 0; j < texture->patchcount; j++)
         {
             lump = texture->patches[j].patch;
