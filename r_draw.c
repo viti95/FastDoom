@@ -871,19 +871,19 @@ void R_FillBackScreen(void)
         }
     }
 
-    patch = W_CacheLumpName("brdr_t", PU_CACHE);
+    patch = W_CacheLumpName("BRDR_T", PU_CACHE);
 
     for (x = 0; x < scaledviewwidth; x += 8)
         V_DrawPatch(viewwindowx + x, viewwindowy - 8, 1, patch);
-    patch = W_CacheLumpName("brdr_b", PU_CACHE);
+    patch = W_CacheLumpName("BRDR_B", PU_CACHE);
 
     for (x = 0; x < scaledviewwidth; x += 8)
         V_DrawPatch(viewwindowx + x, viewwindowy + viewheight, 1, patch);
-    patch = W_CacheLumpName("brdr_l", PU_CACHE);
+    patch = W_CacheLumpName("BRDR_L", PU_CACHE);
 
     for (y = 0; y < viewheight; y += 8)
         V_DrawPatch(viewwindowx - 8, viewwindowy + y, 1, patch);
-    patch = W_CacheLumpName("brdr_r", PU_CACHE);
+    patch = W_CacheLumpName("BRDR_R", PU_CACHE);
 
     for (y = 0; y < viewheight; y += 8)
         V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + y, 1, patch);
@@ -892,22 +892,22 @@ void R_FillBackScreen(void)
     V_DrawPatch(viewwindowx - 8,
                 viewwindowy - 8,
                 1,
-                W_CacheLumpName("brdr_tl", PU_CACHE));
+                W_CacheLumpName("BRDR_TL", PU_CACHE));
 
     V_DrawPatch(viewwindowx + scaledviewwidth,
                 viewwindowy - 8,
                 1,
-                W_CacheLumpName("brdr_tr", PU_CACHE));
+                W_CacheLumpName("BRDR_TR", PU_CACHE));
 
     V_DrawPatch(viewwindowx - 8,
                 viewwindowy + viewheight,
                 1,
-                W_CacheLumpName("brdr_bl", PU_CACHE));
+                W_CacheLumpName("BRDR_BL", PU_CACHE));
 
     V_DrawPatch(viewwindowx + scaledviewwidth,
                 viewwindowy + viewheight,
                 1,
-                W_CacheLumpName("brdr_br", PU_CACHE));
+                W_CacheLumpName("BRDR_BR", PU_CACHE));
 
     for (i = 0; i < 4; i++)
     {

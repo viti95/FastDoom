@@ -1147,7 +1147,7 @@ void P_SpawnSpecials(void)
 	int episode;
 
 	episode = 1;
-	if (W_GetNumForName("texture2") >= 0)
+	if (W_GetNumForName("TEXTURE2") >= 0)
 		episode = 2;
 
 	//	Init special SECTORs.

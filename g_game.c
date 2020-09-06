@@ -667,7 +667,7 @@ void G_ExitLevel(void)
 void G_SecretExitLevel(void)
 {
     // IF NO WOLF3D LEVELS, NO SECRET EXIT!
-    if ((commercial) && (W_GetNumForName("map31") < 0))
+    if ((commercial) && (W_GetNumForName("MAP31") < 0))
         secretexit = false;
     else
         secretexit = true;

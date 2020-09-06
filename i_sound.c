@@ -132,7 +132,7 @@ void I_PlaySong(int handle, boolean looping)
 int I_GetSfxLumpNum(sfxinfo_t *sfx)
 {
     char namebuf[9];
-    sprintf(namebuf, "d%c%s", snd_prefixen[snd_SfxDevice], sfx->name);
+    sprintf(namebuf, "D%c%s", snd_prefixen[snd_SfxDevice], sfx->name);
     return W_GetNumForName(namebuf);
 }
 
@@ -237,11 +237,11 @@ void I_sndArbitrateCards(void)
             fprintf(stderr, "GUS2\n");
             if (commercial)
             {
-                dmxlump = W_GetNumForName("dmxgusc");
+                dmxlump = W_GetNumForName("DMXGUSC");
             }
             else
             {
-                dmxlump = W_GetNumForName("dmxgus");
+                dmxlump = W_GetNumForName("DMXGUS");
             }
             GF1_SetMap(W_CacheLumpNum(dmxlump, PU_CACHE), lumpinfo[dmxlump].size);
         }
@@ -267,7 +267,7 @@ void I_sndArbitrateCards(void)
         }
         else
         {
-            AL_SetCard(wait, W_CacheLumpName("genmidi", PU_STATIC));
+            AL_SetCard(wait, W_CacheLumpName("GENMIDI", PU_STATIC));
         }
     }
 
