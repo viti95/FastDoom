@@ -32,6 +32,8 @@
 
 #include "w_wad.h"
 
+#define HASHTABLESIZE 4096
+
 //
 // GLOBALS
 //
@@ -41,7 +43,7 @@ lumpinfo_t *lumpinfo;
 int numlumps;
 
 // Hash table for fast lookups
-int *lumphash;
+int lumphash[HASHTABLESIZE];
 
 void **lumpcache;
 
@@ -271,13 +273,13 @@ unsigned int W_LumpNameHash(char *s)
 {
     unsigned hash;
     (void)((hash = toupper(s[0]), s[1]) &&
-           (hash = hash * 3 + toupper(s[1]), s[2]) &&
+           (hash = hash * 2 + toupper(s[1]), s[2]) &&
            (hash = hash * 2 + toupper(s[2]), s[3]) &&
            (hash = hash * 2 + toupper(s[3]), s[4]) &&
            (hash = hash * 2 + toupper(s[4]), s[5]) &&
            (hash = hash * 2 + toupper(s[5]), s[6]) &&
            (hash = hash * 2 + toupper(s[6]),
-            hash = hash * 2 + toupper(s[7])));
+            hash = hash + toupper(s[7])));
     return hash;
 }
 
@@ -291,7 +293,7 @@ int W_GetNumForName(char *name)
     int i;
     int hash;
 
-    hash = W_LumpNameHash(name) % numlumps;
+    hash = W_LumpNameHash(name) & (int)(HASHTABLESIZE - 1);
 
     for (i = lumphash[hash]; i != -1; i = lumpinfo[i].next)
     {
@@ -375,18 +377,10 @@ void W_GenerateHashTable(void)
 {
     int i;
 
-    // Free the old hash table, if there is one:
-    if (lumphash != NULL)
-    {
-        Z_Free(lumphash);
-    }
-
     // Generate hash table
     if (numlumps > 0)
     {
-        lumphash = Z_Malloc(sizeof(int) * numlumps, PU_STATIC, NULL);
-
-        for (i = 0; i < numlumps; ++i)
+        for (i = 0; i < HASHTABLESIZE; ++i)
         {
             lumphash[i] = -1;
         }
@@ -395,7 +389,7 @@ void W_GenerateHashTable(void)
         {
             unsigned int hash;
 
-            hash = W_LumpNameHash(lumpinfo[i].name) % numlumps;
+            hash = W_LumpNameHash(lumpinfo[i].name) & (int)(HASHTABLESIZE - 1);
 
             // Hook into the hash table
 
