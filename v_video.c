@@ -167,8 +167,8 @@ void V_CopyRect(int srcx,
 
     V_MarkRect(destx, desty, width, height);
 
-    src = screens[srcscrn] + SCREENWIDTH * srcy + srcx;
-    dest = screens[destscrn] + SCREENWIDTH * desty + destx;
+    src = screens[srcscrn] + Mul320(srcy) + srcx;
+    dest = screens[destscrn] + Mul320(desty) + destx;
 
     for (; height > 0; height--)
     {
@@ -203,7 +203,7 @@ void V_DrawPatch(int x,
         V_MarkRect(x, y, SHORT(patch->width), SHORT(patch->height));
 
     col = 0;
-    desttop = screens[scrn] + y * SCREENWIDTH + x;
+    desttop = screens[scrn] + Mul320(y) + x;
 
     w = SHORT(patch->width);
 
@@ -215,7 +215,7 @@ void V_DrawPatch(int x,
         while (column->topdelta != 0xff)
         {
             register const byte *source = (byte *)column + 3;
-            register byte *dest = desttop + column->topdelta * SCREENWIDTH;
+            register byte *dest = desttop + Mul320(column->topdelta);
             register int count = column->length;
 
             if ((count -= 4) >= 0)
@@ -271,7 +271,7 @@ void V_DrawPatchFlipped(int x,
         V_MarkRect(x, y, SHORT(patch->width), SHORT(patch->height));
 
     col = 0;
-    desttop = screens[scrn] + y * SCREENWIDTH + x;
+    desttop = screens[scrn] + Mul320(y) + x;
 
     w = SHORT(patch->width);
 
@@ -283,7 +283,7 @@ void V_DrawPatchFlipped(int x,
         while (column->topdelta != 0xff)
         {
             source = (byte *)column + 3;
-            dest = desttop + column->topdelta * SCREENWIDTH;
+            dest = desttop + Mul320(column->topdelta);
             count = column->length;
 
             while (count--)
@@ -317,7 +317,7 @@ void V_DrawPatchDirect(int x,
     x -= SHORT(patch->leftoffset);
 
     //	V_MarkRect (x, y, SHORT(patch->width), SHORT(patch->height));
-    desttop = destscreen + y * SCREENWIDTH / 4 + (x >> 2);
+    desttop = destscreen + Mul320(y) / 4 + (x >> 2);
 
     w = SHORT(patch->width);
     for (col = 0; col < w; col++)
@@ -330,7 +330,7 @@ void V_DrawPatchDirect(int x,
         while (column->topdelta != 0xff)
         {
             register const byte *source = (byte *)column + 3;
-            register byte *dest = desttop + column->topdelta * SCREENWIDTH / 4;
+            register byte *dest = desttop + Mul320(column->topdelta) / 4;
             register int count = column->length;
 
             if ((count -= 4) >= 0)
@@ -377,7 +377,7 @@ void V_DrawBlock(int x,
 
     V_MarkRect(x, y, width, height);
 
-    dest = screens[scrn] + y * SCREENWIDTH + x;
+    dest = screens[scrn] + Mul320(y) + x;
 
     while (height--)
     {

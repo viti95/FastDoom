@@ -38,7 +38,7 @@ enum
 #define EXE_VERSION_FINAL 2
 #define EXE_VERSION_FINAL2 3
 
-#define EXE_VERSION EXE_VERSION_1_9
+#define EXE_VERSION EXE_VERSION_ULTIMATE
 
 //
 // For resize of screen, at start of game.
@@ -225,6 +225,8 @@ typedef enum
 fixed_t FixedMul(fixed_t a, fixed_t b);
 #define FixedDiv(a,b) (((abs(a) >> 14) >= abs(b)) ? (((a) ^ (b)) >> 31) ^ MAXINT : FixedDiv2(a, b))
 fixed_t FixedDiv2(fixed_t a, fixed_t b);
+int Mul80(int value);
+int Mul320(int value);
 
 //fixed_t FixedFriction(fixed_t a);
 
@@ -247,6 +249,14 @@ fixed_t FixedDiv2(fixed_t a, fixed_t b);
     "lea eax, [edx+eax*4]", \
     "sar eax, 5" parm[edx] value[eax] modify exact[eax edx]
 */
+
+#pragma aux Mul80 = \
+    "lea edx, [edx+edx*4]", \
+    "shl edx, 4" parm[edx] value[edx] modify exact[edx]
+
+#pragma aux Mul320 = \
+    "lea edx, [edx+edx*4]", \
+    "sal edx, 6" parm[edx] value[edx] modify exact[edx]
 
 #define SHORT(x) (x)
 #define LONG(x) (x)

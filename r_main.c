@@ -817,7 +817,7 @@ void R_ExecuteSetViewSize(void)
         startmap = ((LIGHTLEVELS - 1 - i) * 2) * NUMCOLORMAPS / LIGHTLEVELS;
         for (j = 0; j < MAXLIGHTSCALE; j++)
         {
-            level = startmap - j * SCREENWIDTH / (viewwidth << detailshift) / DISTMAP;
+            level = startmap - Mul320(j) / (viewwidth << detailshift) / DISTMAP;
 
             if (level < 0)
                 level = 0;
@@ -978,7 +978,7 @@ void R_SetupFrame(player_t *player)
 
     framecount++;
     validcount++;
-    destview = destscreen + (viewwindowy * SCREENWIDTH / 4) + (viewwindowx >> 2);
+    destview = destscreen + (Mul320(viewwindowy) / 4) + (viewwindowx >> 2);
 }
 
 //

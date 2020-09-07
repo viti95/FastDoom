@@ -705,7 +705,7 @@ void F_DrawPatchCol(int x,
 	while (column->topdelta != 0xff)
 	{
 		source = (byte *)column + 3;
-		dest = desttop + column->topdelta * SCREENWIDTH;
+		dest = desttop + Mul320(column->topdelta);
 		count = column->length;
 
 		while (count--)

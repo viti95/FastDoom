@@ -106,7 +106,7 @@ void R_DrawSkyFlat(void)
 
     outp(SC_INDEX + 1, 1 << (dc_x & 3));
 
-    dest = destview + dc_yl * 80 + (dc_x >> 2);
+    dest = destview + Mul80(dc_yl) + (dc_x >> 2);
 
     do
     {
@@ -130,7 +130,7 @@ void R_DrawSkyFlatLow(void)
     else
         outp(SC_INDEX + 1, 3);
 
-    dest = destview + dc_yl * 80 + (dc_x >> 1);
+    dest = destview + Mul80(dc_yl) + (dc_x >> 1);
 
     do
     {
@@ -151,7 +151,7 @@ void R_DrawSkyFlatPotato(void)
 
     outp(SC_INDEX + 1, 15);
 
-    dest = destview + dc_yl * 80 + dc_x;
+    dest = destview + Mul80(dc_yl) + dc_x;
 
     do
     {
@@ -174,7 +174,7 @@ void R_DrawSpanPotato(void)
     if (countp < 0)
         return;
 
-    dest = destview + ds_y * 80 + ds_x1;
+    dest = destview + Mul80(ds_y) + ds_x1;
     outp(SC_INDEX + 1, 15);
 
     xfrac = ds_xfrac;
@@ -211,7 +211,7 @@ void R_DrawColumnFlat(void)
 
     outp(SC_INDEX + 1, 1 << (dc_x & 3));
 
-    dest = destview + dc_yl * 80 + (dc_x >> 2);
+    dest = destview + Mul80(dc_yl) + (dc_x >> 2);
 
     do
     {
@@ -240,7 +240,7 @@ void R_DrawColumnFlatLow(void)
     else
         outp(SC_INDEX + 1, 3);
 
-    dest = destview + dc_yl * 80 + (dc_x >> 1);
+    dest = destview + Mul80(dc_yl) + (dc_x >> 1);
 
     do
     {
@@ -265,7 +265,7 @@ void R_DrawColumnFlatPotato(void)
 
     outp(SC_INDEX + 1, 15);
 
-    dest = destview + dc_yl * 80 + dc_x;
+    dest = destview + Mul80(dc_yl) + dc_x;
 
     do
     {
@@ -319,7 +319,7 @@ void R_DrawFuzzColumn(void)
     if (count < 0)
         return;
 
-    dest = destview + dc_yl * 80;
+    dest = destview + Mul80(dc_yl);
 
     switch (detailshift)
     {
@@ -378,7 +378,7 @@ void R_DrawFuzzColumnFast(void)
     if (count < 0)
         return;
 
-    dest = destview + dc_yl * 80;
+    dest = destview + Mul80(dc_yl);
 
     switch (detailshift)
     {
@@ -438,7 +438,7 @@ void R_DrawFuzzColumnSaturn(void)
 
     initialdrawpos = dc_yl + dc_x;
 
-    dest = destview + dc_yl * 80;
+    dest = destview + Mul80(dc_yl);
 
     switch (detailshift)
     {
@@ -550,7 +550,7 @@ void R_DrawSpanFlat(void)
         return;
 
     color = ds_colormap[ds_source[0]];
-    origin_y = (int)destview + ds_y * 80;
+    origin_y = (int)destview + Mul80(ds_y);
 
     first_plane = ds_x1 & 3;
     last_plane = (ds_x2 + 1) & 3;
@@ -697,7 +697,7 @@ void R_DrawSpanFlatLow(void)
         return;
 
     color = ds_colormap[ds_source[0]];
-    origin_y = (int)destview + ds_y * 80;
+    origin_y = (int)destview + Mul80(ds_y);
 
     first_plane = ds_x1 & 1;
     last_plane = (ds_x2 + 1) & 1;
@@ -785,7 +785,7 @@ void R_DrawSpanFlatPotato(void)
     if (countp < 0)
         return;
 
-    dest = destview + ds_y * 80 + ds_x1;
+    dest = destview + Mul80(ds_y) + ds_x1;
     outp(SC_INDEX + 1, 15);
 
     do
@@ -973,14 +973,14 @@ void R_DrawViewBorder(void)
     side = (SCREENWIDTH - scaledviewwidth) / 2;
 
     // copy top and one line of left side
-    R_VideoErase(0, top * SCREENWIDTH + side);
+    R_VideoErase(0, Mul320(top) + side);
 
     // copy one line of right side and bottom
-    ofs = (viewheight + top) * SCREENWIDTH - side;
-    R_VideoErase(ofs, top * SCREENWIDTH + side);
+    ofs = Mul320(viewheight + top) - side;
+    R_VideoErase(ofs, Mul320(top) + side);
 
     // copy sides using wraparound
-    ofs = top * SCREENWIDTH + SCREENWIDTH - side;
+    ofs = Mul320(top) + SCREENWIDTH - side;
     side <<= 1;
 
     for (i = 1; i < viewheight; i++)

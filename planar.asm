@@ -42,9 +42,8 @@ PUBLIC  R_DrawColumnPotato_
 	mov		ebp,[_dc_yl]
 	cmp 	ebp,[_dc_yh]
 	jg		done
-	lea		edi,[ebp+ebp*8]
-	add		edi,ebp
-	shl		edi,3
+	lea		edi,[ebp+ebp*4]
+	sal		edi,4
 	mov		ebx,[_dc_x]
 	add		edi,ebx
 	add		edi,[_destview]
@@ -63,9 +62,8 @@ PUBLIC  R_DrawColumnLow_
 	mov		ebp,[_dc_yl]
 	cmp 	ebp,[_dc_yh]
 	jg		done
-	lea		edi,[ebp+ebp*8]
-	add		edi,ebp
-	shl		edi,3
+	lea		edi,[ebp+ebp*4]
+	shl		edi,4
 	mov		ebx,[_dc_x]
 	mov		ecx,ebx
 	shr		ebx,1
@@ -86,9 +84,8 @@ PUBLIC  R_DrawColumn_
 	mov		ebp,[_dc_yl]
 	cmp		ebp,[_dc_yh]
 	jg		done
-	lea		edi,[ebp+ebp*8]
-	add		edi,ebp
-	shl		edi,3
+	lea		edi,[ebp+ebp*4]
+	shl		edi,4
 	mov		ebx,[_dc_x]
 	mov		ecx,ebx
 	shr		ebx,2
@@ -207,9 +204,8 @@ PUBLIC	R_DrawSpan_
 	mov		[curplane],ebx
 	shr		eax,2
 	mov		ebp,[_ds_y]
-	lea		edi,[ebp+ebp*8]
-	add		edi,ebp
-	shl		edi,3
+	lea		edi,[ebp+ebp*4]
+	shl		edi,4
 	add		edi,eax
 	add		edi,[_destview]
 	mov		[dest],edi
@@ -364,9 +360,8 @@ PUBLIC	R_DrawSpanLow_
 	mov		[curplane],ebx
 	shr		eax,1
 	mov		ebp,[_ds_y]
-	lea		edi,[ebp+ebp*8]
-	add		edi,ebp
-	shl		edi,3
+	lea		edi,[ebp+ebp*4]
+	shl		edi,4
 	add		edi,eax
 	add		edi,[_destview]
 	mov		[dest],edi
