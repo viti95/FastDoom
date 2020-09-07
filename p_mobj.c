@@ -813,9 +813,10 @@ P_SpawnMissile(mobj_t *source,
     dist = dist / th->info->speed;
 
     if (dist < 1)
-        dist = 1;
-
-    th->momz = (dest->z - source->z) / dist;
+        th->momz = dest->z - source->z;
+    else
+        th->momz = (dest->z - source->z) / dist;
+    
     P_CheckMissileSpawn(th);
 
     return th;

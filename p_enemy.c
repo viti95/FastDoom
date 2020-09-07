@@ -984,8 +984,9 @@ void A_Tracer(mobj_t *actor)
     dist = dist / actor->info->speed;
 
     if (dist < 1)
-        dist = 1;
-    slope = (dest->z + 40 * FRACUNIT - actor->z) / dist;
+        slope = dest->z + 40 * FRACUNIT - actor->z;
+    else
+        slope = (dest->z + 40 * FRACUNIT - actor->z) / dist;
 
     if (slope < actor->momz)
         actor->momz -= FRACUNIT / 8;
@@ -1340,8 +1341,9 @@ void A_SkullAttack(mobj_t *actor)
     dist = dist / SKULLSPEED;
 
     if (dist < 1)
-        dist = 1;
-    actor->momz = (dest->z + (dest->height >> 1) - actor->z) / dist;
+        actor->momz = dest->z + (dest->height >> 1) - actor->z;
+    else
+        actor->momz = (dest->z + (dest->height >> 1) - actor->z) / dist;    
 }
 
 //
