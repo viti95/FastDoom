@@ -317,7 +317,7 @@ void V_DrawPatchDirect(int x,
     x -= SHORT(patch->leftoffset);
 
     //	V_MarkRect (x, y, SHORT(patch->width), SHORT(patch->height));
-    desttop = destscreen + Mul320(y) / 4 + (x >> 2);
+    desttop = destscreen + Mul80(y) + (x >> 2);
 
     w = SHORT(patch->width);
     for (col = 0; col < w; col++)
@@ -330,7 +330,7 @@ void V_DrawPatchDirect(int x,
         while (column->topdelta != 0xff)
         {
             register const byte *source = (byte *)column + 3;
-            register byte *dest = desttop + Mul320(column->topdelta) / 4;
+            register byte *dest = desttop + Mul80(column->topdelta);
             register int count = column->length;
 
             if ((count -= 4) >= 0)
