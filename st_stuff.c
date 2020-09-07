@@ -528,18 +528,18 @@ ST_Responder(event_t *ev)
 				plyr->message = STSTR_MUS;
 				cht_GetParam(&cheat_mus, buf);
 #if (EXE_VERSION < EXE_VERSION_ULTIMATE)
-				musnum = mus_runnin + (buf[0] - '0') * 10 + buf[1] - '0' - 1;
+				musnum = mus_runnin + Mul10(buf[0] - '0') + buf[1] - '0' - 1;
 
-				if (((buf[0] - '0') * 10 + buf[1] - '0') > 35)
+				if ((Mul10(buf[0] - '0') + buf[1] - '0') > 35)
 					plyr->message = STSTR_NOMUS;
 				else
 					S_ChangeMusic(musnum, 1);
 #else
 				if (commercial)
 				{
-					musnum = mus_runnin + (buf[0] - '0') * 10 + buf[1] - '0' - 1;
+					musnum = mus_runnin + Mul10(buf[0] - '0') + buf[1] - '0' - 1;
 
-					if (((buf[0] - '0') * 10 + buf[1] - '0') > 35)
+					if ((Mul10(buf[0] - '0') + buf[1] - '0') > 35)
 						plyr->message = STSTR_NOMUS;
 					else
 						S_ChangeMusic(musnum, 1);
@@ -625,7 +625,7 @@ ST_Responder(event_t *ev)
 			if (commercial)
 			{
 				epsd = 0;
-				map = (buf[0] - '0') * 10 + buf[1] - '0';
+				map = Mul10(buf[0] - '0') + buf[1] - '0';
 			}
 			else
 			{
@@ -1166,7 +1166,7 @@ void ST_createWidgets(void)
 	{
 		STlib_initMultIcon(&w_arms[i],
 						   ST_ARMSX + (i % 3) * ST_ARMSXSPACE,
-						   ST_ARMSY + (i / 3) * ST_ARMSYSPACE,
+						   ST_ARMSY + Mul10(i / 3),
 						   arms[i], (int *)&plyr->weaponowned[i + 1],
 						   &st_armson);
 	}

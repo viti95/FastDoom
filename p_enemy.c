@@ -863,7 +863,7 @@ void A_HeadAttack(mobj_t *actor)
     A_FaceTarget(actor);
     if (P_CheckMeleeRange(actor))
     {
-        damage = (P_Random % 6 + 1) * 10;
+        damage = Mul10(P_Random % 6 + 1);
         P_DamageMobj(actor->target, actor, actor, damage);
         return;
     }
@@ -891,7 +891,7 @@ void A_BruisAttack(mobj_t *actor)
     if (P_CheckMeleeRange(actor))
     {
         S_StartSound(actor, sfx_claw);
-        damage = ((P_Random & 7) + 1) * 10;
+        damage = Mul10((P_Random & 7) + 1);
         P_DamageMobj(actor->target, actor, actor, damage);
         return;
     }

@@ -227,6 +227,7 @@ fixed_t FixedMul(fixed_t a, fixed_t b);
 fixed_t FixedDiv2(fixed_t a, fixed_t b);
 int Mul80(int value);
 int Mul320(int value);
+int Mul10(int value);
 
 //fixed_t FixedFriction(fixed_t a);
 
@@ -257,6 +258,10 @@ int Mul320(int value);
 #pragma aux Mul320 = \
     "lea edx, [edx+edx*4]", \
     "sal edx, 6" parm[edx] value[edx] modify exact[edx]
+
+#pragma aux Mul10 = \
+    "lea edx, [edx+edx*4]", \
+    "add edx, edx" parm[edx] value[edx] modify exact[edx]
 
 #define SHORT(x) (x)
 #define LONG(x) (x)
