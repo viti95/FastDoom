@@ -45,7 +45,6 @@ int centery;
 fixed_t centerxfrac;
 fixed_t centeryfrac;
 fixed_t projection;
-fixed_t iprojection;
 
 // just for profiling purposes
 int framecount;
@@ -730,8 +729,7 @@ void R_ExecuteSetViewSize(void)
     centerxfrac = centerx << FRACBITS;
     centeryfrac = centery << FRACBITS;
     projection = centerxfrac;
-    iprojection = FixedDiv(FRACUNIT, projection);
-
+    
     switch (detailshift)
     {
     case 0:

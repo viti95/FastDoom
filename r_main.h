@@ -39,7 +39,6 @@ extern int centery;
 extern fixed_t centerxfrac;
 extern fixed_t centeryfrac;
 extern fixed_t projection;
-extern fixed_t iprojection;
 
 extern int validcount;
 
