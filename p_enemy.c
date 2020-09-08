@@ -229,9 +229,6 @@ boolean P_CheckMissileRange(mobj_t *actor)
 // Move in the current direction,
 // returns false if the move is blocked.
 //
-fixed_t xspeed[8] = {FRACUNIT, 47000, 0, -47000, -FRACUNIT, -47000, 0, 47000};
-fixed_t yspeed[8] = {0, 47000, FRACUNIT, 47000, 0, -47000, -FRACUNIT, -47000};
-
 #define MAXSPECIALCROSS 8
 
 extern line_t *spechit[MAXSPECIALCROSS];
@@ -249,11 +246,50 @@ boolean P_Move(mobj_t *actor)
     boolean try_ok;
     boolean good;
 
+    fixed_t optSpeed;
+
     if (actor->movedir == DI_NODIR)
         return false;
 
-    tryx = actor->x + actor->info->speed * xspeed[actor->movedir];
-    tryy = actor->y + actor->info->speed * yspeed[actor->movedir];
+    switch (actor->movedir)
+    {
+    case 0:
+        tryx = actor->x + actor->info->speed * FRACUNIT;
+        tryy = actor->y;
+        break;
+    case 1:
+        optSpeed = 47000 * actor->info->speed;
+        tryx = actor->x + optSpeed;
+        tryy = actor->y + optSpeed;
+        break;
+    case 2:
+        tryx = actor->x;
+        tryy = actor->y + actor->info->speed * FRACUNIT;
+        break;
+    case 3:
+        optSpeed = 47000 * actor->info->speed;
+        tryx = actor->x - optSpeed;
+        tryy = actor->y + optSpeed;
+        break;
+    case 4:
+        tryx = actor->x - actor->info->speed * FRACUNIT;
+        tryy = actor->y;
+        break;
+    case 5:
+        optSpeed = 47000 * actor->info->speed;
+        tryx = actor->x - optSpeed;
+        tryy = actor->y - optSpeed;
+        break;
+    case 6:
+        tryx = actor->x;
+        tryy = actor->y - actor->info->speed * FRACUNIT;
+        break;
+    case 7:
+        optSpeed = 47000 * actor->info->speed;
+        tryx = actor->x + optSpeed;
+        tryy = actor->y - optSpeed;
+        break;
+    }
 
     try_ok = P_TryMove(actor, tryx, tryy);
 
@@ -1076,13 +1112,50 @@ void A_VileChase(mobj_t *actor)
     mobjinfo_t *info;
     mobj_t *temp;
 
+    fixed_t optSpeed;
+
     if (actor->movedir != DI_NODIR)
     {
         // check for corpses to raise
-        viletryx =
-            actor->x + actor->info->speed * xspeed[actor->movedir];
-        viletryy =
-            actor->y + actor->info->speed * yspeed[actor->movedir];
+        switch (actor->movedir)
+        {
+        case 0:
+            viletryx = actor->x + actor->info->speed * FRACUNIT;
+            viletryy = actor->y;
+            break;
+        case 1:
+            optSpeed = 47000 * actor->info->speed;
+            viletryx = actor->x + optSpeed;
+            viletryy = actor->y + optSpeed;
+            break;
+        case 2:
+            viletryx = actor->x;
+            viletryy = actor->y + actor->info->speed * FRACUNIT;
+            break;
+        case 3:
+            optSpeed = 47000 * actor->info->speed;
+            viletryx = actor->x - optSpeed;
+            viletryy = actor->y + optSpeed;
+            break;
+        case 4:
+            viletryx = actor->x - actor->info->speed * FRACUNIT;
+            viletryy = actor->y;
+            break;
+        case 5:
+            optSpeed = 47000 * actor->info->speed;
+            viletryx = actor->x - optSpeed;
+            viletryy = actor->y - optSpeed;
+            break;
+        case 6:
+            viletryx = actor->x;
+            viletryy = actor->y - actor->info->speed * FRACUNIT;
+            break;
+        case 7:
+            optSpeed = 47000 * actor->info->speed;
+            viletryx = actor->x + optSpeed;
+            viletryy = actor->y - optSpeed;
+            break;
+        }
 
         xl = (viletryx - bmaporgx - MAXRADIUS * 2) >> MAPBLOCKSHIFT;
         xh = (viletryx - bmaporgx + MAXRADIUS * 2) >> MAPBLOCKSHIFT;
@@ -1169,7 +1242,7 @@ void A_Fire(mobj_t *actor)
     an = dest->angle >> ANGLETOFINESHIFT;
 
     P_UnsetThingPosition(actor);
-    
+
     optCosine = finecosine[an];
     actor->x = dest->x + (optCosine << 4) + (optCosine << 3);
     optSine = finesine[an];
@@ -1236,7 +1309,7 @@ void A_VileAttack(mobj_t *actor)
     fire->x = actor->target->x - (optCosine << 4) - (optCosine << 3);
     optSine = finesine[an];
     fire->y = actor->target->y - (optSine << 4) - (optSine << 3);
-    
+
     P_RadiusAttack(fire, actor, 70);
 }
 
@@ -1343,7 +1416,7 @@ void A_SkullAttack(mobj_t *actor)
     if (dist < 1)
         actor->momz = dest->z + (dest->height >> 1) - actor->z;
     else
-        actor->momz = (dest->z + (dest->height >> 1) - actor->z) / dist;    
+        actor->momz = (dest->z + (dest->height >> 1) - actor->z) / dist;
 }
 
 //
