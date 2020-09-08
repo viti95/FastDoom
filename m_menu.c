@@ -924,22 +924,22 @@ void M_DrawDisplay(void)
 {
     V_DrawPatchDirect(54, 15, 0, W_CacheLumpName("M_DISOPT", PU_CACHE));
 
-    M_WriteText(54, 40, "DETAIL LEVEL:");
-    M_WriteText(164, 40, detailLevel == 2 ? "POTATO" : detailLevel == 1 ? "LOW" : "HIGH");
+    M_WriteText(58, 40, "DETAIL LEVEL:");
+    M_WriteText(204, 40, detailLevel == 2 ? "POTATO" : detailLevel == 1 ? "LOW" : "HIGH");
 
-    M_WriteText(54, 56, "VISPLANE RENDERING:");
+    M_WriteText(58, 56, "VISPLANE RENDERING:");
     M_WriteText(204, 56, (!untexturedSurfaces && !flatSurfaces) ? "FULL" : untexturedSurfaces ? "FLAT" : "FLATTER");
 
-    M_WriteText(54, 72, "SKY RENDERING:");
-    M_WriteText(184, 72, flatSky ? "FLAT" : "FULL");
+    M_WriteText(58, 72, "SKY RENDERING:");
+    M_WriteText(204, 72, flatSky ? "FLAT" : "FULL");
 
-    M_WriteText(54, 86, "INVISIBLE RENDERING:");
-    M_WriteText(224, 86, (!saturnShadows && !flatShadows) ? "FUZZY" : flatShadows ? "FLAT" : "SEGA SATURN");
+    M_WriteText(58, 86, "INVISIBLE RENDERING:");
+    M_WriteText(204, 86, (!saturnShadows && !flatShadows) ? "FUZZY" : flatShadows ? "FLAT" : "SEGA SATURN");
 
-    M_WriteText(54, 102, "SHOW FPS:");
-    M_WriteText(144, 102, showFPS ? "ON" : "OFF");
+    M_WriteText(58, 102, "SHOW FPS:");
+    M_WriteText(204, 102, showFPS ? "ON" : "OFF");
 
-    M_WriteText(54, 118, "SPRITES CULLING:"),
+    M_WriteText(58, 118, "SPRITE CULLING:");
     M_WriteText(204, 118, nearSprites ? "ON" : "OFF");
 }
 
@@ -1199,12 +1199,16 @@ void M_ChangeShowFPS()
     showFPS = !showFPS;
 }
 
-void M_ChangeSpriteCulling(){
+void M_ChangeSpriteCulling()
+{
     nearSprites = !nearSprites;
 
-    if (nearSprites){
+    if (nearSprites)
+    {
         players.message = "SPRITE CULLING ON";
-    }else{
+    }
+    else
+    {
         players.message = "SPRITE CULLING OFF";
     }
 }
