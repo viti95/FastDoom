@@ -206,6 +206,7 @@ void M_ChangeInvisibleDetail();
 void M_ChangeShowFPS();
 void M_ChangeSpriteCulling();
 void M_ChangeMelting();
+void M_ChangeUncappedFPS();
 void M_SizeDisplay(int choice);
 void M_StartGame(int choice);
 void M_Sound(int choice);
@@ -352,8 +353,9 @@ enum
     sky,
     invisible,
     showfps,
-    spriteCulling,
+    spriteculling,
     melting,
+    uncappedfps,
     display_end
 } display_e;
 
@@ -398,7 +400,8 @@ menuitem_t DisplayMenu[] =
         {1, "", M_ChangeInvisibleDetail, 'i'},
         {1, "", M_ChangeShowFPS, 'f'},
         {1, "", M_ChangeSpriteCulling, 'c'},
-        {1, "", M_ChangeMelting, 'm'}};
+        {1, "", M_ChangeMelting, 'm'},
+        {1, "", M_ChangeUncappedFPS, 'u'}};
 
 menu_t DisplayDef =
     {
@@ -947,6 +950,9 @@ void M_DrawDisplay(void)
 
     M_WriteText(58, 136, "MELTING LOAD EFFECT:");
     M_WriteText(214, 136, noMelt ? "OFF" : "ON");
+
+    M_WriteText(58, 152, "UNCAPPED FRAMERATE:");
+    M_WriteText(214, 152, uncappedFPS ? "ON" : "OFF");
 }
 
 void M_Options(int choice)
@@ -1219,14 +1225,31 @@ void M_ChangeSpriteCulling()
     }
 }
 
-void M_ChangeMelting(){
+void M_ChangeMelting()
+{
     noMelt = !noMelt;
 
-    if (noMelt){
+    if (noMelt)
+    {
         players.message = "MELTING SCREEN LOAD EFFECT OFF";
-    }else
+    }
+    else
     {
         players.message = "MELTING SCREEN LOAD EFFECT ON";
+    }
+}
+
+void M_ChangeUncappedFPS()
+{
+    uncappedFPS = !uncappedFPS;
+
+    if (uncappedFPS)
+    {
+        players.message = "UNCAPPED FRAMERATE ON";
+    }
+    else
+    {
+        players.message = "35 FPS LIMIT ON";
     }
 }
 
