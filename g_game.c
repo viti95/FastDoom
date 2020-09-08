@@ -447,7 +447,7 @@ boolean G_Responder(event_t *ev)
         mousebuttons[0] = ev->data1 & 1;
         mousebuttons[1] = ev->data1 & 2;
         mousebuttons[2] = ev->data1 & 4;
-        mousex = ev->data2 * (mouseSensitivity + 5) / 10;
+        mousex = Div10(ev->data2 * (mouseSensitivity + 5));
         return true; // eat events
 
     default:

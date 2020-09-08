@@ -45,7 +45,8 @@
 // (see BLOCKMAP handling).
 #define S_CLOSE_DIST (200 * 0x10000)
 
-#define S_ATTENUATOR ((S_CLIPPING_DIST - S_CLOSE_DIST) >> FRACBITS)
+//#define S_ATTENUATOR ((S_CLIPPING_DIST - S_CLOSE_DIST) >> FRACBITS)
+#define S_ATTENUATOR 1000
 
 // Adjustable by menu.
 #define NORM_VOLUME snd_MaxVolume
@@ -283,12 +284,12 @@ int S_AdjustSoundParams(mobj_t *listener,
         if (approx_dist > S_CLIPPING_DIST)
             approx_dist = S_CLIPPING_DIST;
 
-        *vol = 15 + ((snd_SfxVolume - 15) * ((S_CLIPPING_DIST - approx_dist) >> FRACBITS)) / S_ATTENUATOR;
+        *vol = 15 + Div1000((snd_SfxVolume - 15) * ((S_CLIPPING_DIST - approx_dist) >> FRACBITS));
     }
     else
     {
         // distance effect
-        *vol = (snd_SfxVolume * ((S_CLIPPING_DIST - approx_dist) >> FRACBITS)) / S_ATTENUATOR;
+        *vol = Div1000(snd_SfxVolume * ((S_CLIPPING_DIST - approx_dist) >> FRACBITS));
     }
 
     return (*vol > 0);
