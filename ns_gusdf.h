@@ -63,8 +63,6 @@ typedef volatile struct VoiceNode
     unsigned long LoopSize;
     unsigned long BlockLength;
 
-    unsigned long PitchScale;
-
     unsigned char *sound;
     unsigned long length;
     unsigned long SamplingRate;

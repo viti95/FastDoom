@@ -1,5 +1,5 @@
 
-# NEWDOOM.EXE and DOOM.EXE makefile
+# FDOOM.EXE makefile
 
 # --------------------------------------------------------------------------
 #
@@ -24,10 +24,10 @@
 # --------------------------------------------------------------------------
 
 # Build options for 486DX/SX
-CCOPTS = /d2 /omaxet /zp4 /4r /ei /j /zq
+#CCOPTS = /d2 /omaxet /zp4 /4r /ei /j /zq
 
 # Build options for 386DX/SX
-#CCOPTS = /d2 /omaxet /zp4 /3r /ei /j /zq
+CCOPTS = /d2 /omaxet /zp4 /3r /ei /j /zq
 
 GLOBOBJS = &
  ns_dpmi.obj &
@@ -35,7 +35,6 @@ GLOBOBJS = &
  ns_task.obj &
  ns_llm.obj &
  ns_dma.obj &
- ns_pitch.obj &
  ns_irq.obj &
  ns_user.obj &
  ns_mp401.obj &
@@ -113,10 +112,9 @@ GLOBOBJS = &
  dmx.obj &
  mus2mid.obj
 
-newdoom.exe : $(GLOBOBJS)
- wlink @newdoom.lnk
- copy newdoom.exe doom.exe
- wstrip doom.exe
+fdoom.exe : $(GLOBOBJS)
+ wlink @fdoom.lnk
+ wstrip fdoom.exe
 
 .c.obj :
  wcc386 $(CCOPTS) $[*
@@ -133,7 +131,6 @@ clean : .SYMBOLIC
  del ns_task.obj
  del ns_llm.obj
  del ns_dma.obj
- del ns_pitch.obj
  del ns_irq.obj
  del ns_user.obj
  del ns_mp401.obj

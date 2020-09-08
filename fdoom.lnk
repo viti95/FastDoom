@@ -1,5 +1,5 @@
 
-# newdoom.EXE Linker directive file
+# fdoom.EXE Linker directive file
 
 option quiet
 option map
@@ -9,19 +9,16 @@ debug all
 libpath %WATCOM%\lib386
 libpath %WATCOM%\lib386\dos
 lib noemu387.lib
-#lib dmx
 lib gf1_osf.lib
 lib pawe32.lib
-#lib audio_wf.lib
 format os2 le
-name newdoom
+name fdoom
 
 file ns_dpmi.obj
 file ns_pcfx.obj
 file ns_task.obj
 file ns_llm.obj
 file ns_dma.obj
-file ns_pitch.obj
 file ns_irq.obj
 file ns_user.obj
 file ns_mp401.obj
@@ -96,7 +93,5 @@ file sounds.obj
 file dutils.obj
 file f_wipe.obj
 file info.obj
-
 file dmx.obj
-
 file mus2mid.obj

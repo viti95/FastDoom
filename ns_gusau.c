@@ -6,7 +6,6 @@
 #include <string.h>
 #include "ns_inter.h"
 #include "ns_llm.h"
-#include "ns_pitch.h"
 #include "ns_user.h"
 #include "ns_multi.h"
 #include "ns_gusdf.h"
@@ -473,8 +472,7 @@ int GUSWAVE_SetPitch(
 
     if (voice->Active)
     {
-        voice->PitchScale = PITCH_GetScale(pitchoffset);
-        voice->RateScale = (voice->SamplingRate * voice->PitchScale) >> 16;
+        voice->RateScale = (voice->SamplingRate * 0x10000) >> 16;
         gf1_dig_set_freq(voice->GF1voice, voice->RateScale);
     }
 
@@ -883,7 +881,7 @@ playbackstatus GUSWAVE_GetNextVOCBlock(
         voice->sound = ptr;
 
         voice->SamplingRate = samplespeed;
-        voice->RateScale = (voice->SamplingRate * voice->PitchScale) >> 16;
+        voice->RateScale = (voice->SamplingRate * 0x10000) >> 16;
 
         voice->length = min(blocklength, MAX_BLOCK_LENGTH);
         voice->BlockLength = blocklength - voice->length;
@@ -1081,9 +1079,8 @@ int GUSWAVE_StartDemandFeedPlayback(
     voice->prev = NULL;
     voice->priority = priority;
     voice->callbackval = callbackval;
-    voice->PitchScale = PITCH_GetScale(pitchoffset);
     voice->SamplingRate = rate;
-    voice->RateScale = (voice->SamplingRate * voice->PitchScale) >> 16;
+    voice->RateScale = (voice->SamplingRate * 0x10000) >> 16;
 
     handle = GUSWAVE_Play(voice, angle, volume, channels);
 

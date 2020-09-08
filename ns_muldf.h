@@ -77,7 +77,6 @@ typedef struct VoiceNode
     unsigned long LoopSize;
     unsigned long BlockLength;
 
-    unsigned long PitchScale;
     unsigned long FixedPointBufferSize;
 
     unsigned char *sound;
@@ -181,7 +180,7 @@ static short *MV_GetVolumeTable(int vol);
 
 static void MV_SetVoiceMixMode(VoiceNode *voice);
 
-static void MV_SetVoicePitch(VoiceNode *voice, unsigned long rate, int pitchoffset);
+static void MV_SetVoicePitch(VoiceNode *voice, unsigned long rate);
 static void MV_CalcVolume(int MaxLevel);
 static void MV_CalcPanTable(void);
 

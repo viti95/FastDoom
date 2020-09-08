@@ -35,7 +35,7 @@ int MV_KillAllVoices(void);
 int MV_Kill(int handle);
 int MV_VoicesPlaying(void);
 int MV_VoiceAvailable(int priority);
-int MV_SetPitch(int handle, int pitchoffset);
+int MV_SetPitch(int handle);
 int MV_SetFrequency(int handle, int frequency);
 int MV_EndLooping(int handle);
 int MV_SetPan(int handle, int vol, int left, int right);
@@ -43,10 +43,10 @@ int MV_SetMixMode(int numchannels, int samplebits);
 int MV_StartPlayback(void);
 void MV_StopPlayback(void);
 int MV_PlayRaw(char *ptr, unsigned long length,
-               unsigned rate, int pitchoffset, int vol, int left,
+               unsigned rate, int vol, int left,
                int right, int priority, unsigned long callbackval);
 int MV_PlayLoopedRaw(char *ptr, unsigned long length,
-                     char *loopstart, char *loopend, unsigned rate, int pitchoffset,
+                     char *loopstart, char *loopend, unsigned rate,
                      int vol, int left, int right, int priority,
                      unsigned long callbackval);
 void MV_CreateVolumeTable(int index, int volume, int MaxVolume);

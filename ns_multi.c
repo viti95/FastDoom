@@ -14,7 +14,6 @@
 #include "ns_dsney.h"
 #include "ns_pas16.h"
 #include "ns_gusau.h"
-#include "ns_pitch.h"
 #include "ns_multi.h"
 #include "ns_muldf.h"
 
@@ -626,13 +625,11 @@ int MV_VoiceAvailable(
 
 void MV_SetVoicePitch(
     VoiceNode *voice,
-    unsigned long rate,
-    int pitchoffset)
+    unsigned long rate)
 
 {
     voice->SamplingRate = rate;
-    voice->PitchScale = PITCH_GetScale(pitchoffset);
-    voice->RateScale = (rate * voice->PitchScale) / MV_MixRate;
+    voice->RateScale = (rate * 0x10000) / MV_MixRate;
 
     // Multiply by MixBufferSize - 1
     voice->FixedPointBufferSize = (voice->RateScale * MixBufferSize) -
@@ -646,8 +643,7 @@ void MV_SetVoicePitch(
 ---------------------------------------------------------------------*/
 
 int MV_SetPitch(
-    int handle,
-    int pitchoffset)
+    int handle)
 
 {
     VoiceNode *voice;
@@ -659,7 +655,7 @@ int MV_SetPitch(
         return (MV_Error);
     }
 
-    MV_SetVoicePitch(voice, voice->SamplingRate, pitchoffset);
+    MV_SetVoicePitch(voice, voice->SamplingRate);
 
     return (MV_Ok);
 }
@@ -684,7 +680,7 @@ int MV_SetFrequency(
         return (MV_Error);
     }
 
-    MV_SetVoicePitch(voice, frequency, 0);
+    MV_SetVoicePitch(voice, frequency);
 
     return (MV_Ok);
 }
@@ -1215,7 +1211,6 @@ int MV_PlayLoopedRaw(
     char *loopstart,
     char *loopend,
     unsigned rate,
-    int pitchoffset,
     int vol,
     int left,
     int right,
@@ -1249,7 +1244,7 @@ int MV_PlayLoopedRaw(
     voice->LoopEnd = loopend;
     voice->LoopSize = (voice->LoopEnd - voice->LoopStart) + 1;
 
-    MV_SetVoicePitch(voice, rate, pitchoffset);
+    MV_SetVoicePitch(voice, rate);
     MV_SetVoiceVolume(voice, vol, left, right);
     MV_PlayVoice(voice);
 
@@ -1267,7 +1262,6 @@ int MV_PlayRaw(
     char *ptr,
     unsigned long length,
     unsigned rate,
-    int pitchoffset,
     int vol,
     int left,
     int right,
@@ -1277,8 +1271,7 @@ int MV_PlayRaw(
 {
     int status;
 
-    status = MV_PlayLoopedRaw(ptr, length, NULL, NULL, rate, pitchoffset,
-                              vol, left, right, priority, callbackval);
+    status = MV_PlayLoopedRaw(ptr, length, NULL, NULL, rate, vol, left, right, priority, callbackval);
 
     return (status);
 }

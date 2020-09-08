@@ -478,13 +478,12 @@ int FX_SetPan(
 ---------------------------------------------------------------------*/
 
 int FX_SetPitch(
-    int handle,
-    int pitchoffset)
+    int handle)
 
 {
     int status;
 
-    status = MV_SetPitch(handle, pitchoffset);
+    status = MV_SetPitch(handle);
     if (status == MV_Error)
     {
         FX_SetErrorCode(FX_MultiVocError);
@@ -527,7 +526,6 @@ int FX_PlayRaw(
     char *ptr,
     unsigned long length,
     unsigned rate,
-    int pitchoffset,
     int vol,
     int left,
     int right,
@@ -537,8 +535,7 @@ int FX_PlayRaw(
 {
     int handle;
 
-    handle = MV_PlayRaw(ptr, length, rate, pitchoffset,
-                        vol, left, right, priority, callbackval);
+    handle = MV_PlayRaw(ptr, length, rate, vol, left, right, priority, callbackval);
     if (handle < MV_Ok)
     {
         FX_SetErrorCode(FX_MultiVocError);
