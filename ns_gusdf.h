@@ -117,7 +117,6 @@ typedef struct
     unsigned long size;
 } data_header;
 
-playbackstatus GUSWAVE_GetNextVOCBlock(VoiceNode *voice);
 VoiceNode *GUSWAVE_GetVoice(int handle);
 
 int GUSWAVE_Play(VoiceNode *voice, int angle, int volume, int channels);
