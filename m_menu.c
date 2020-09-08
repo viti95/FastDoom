@@ -205,6 +205,7 @@ void M_ChangeSkyDetail();
 void M_ChangeInvisibleDetail();
 void M_ChangeShowFPS();
 void M_ChangeSpriteCulling();
+void M_ChangeMelting();
 void M_SizeDisplay(int choice);
 void M_StartGame(int choice);
 void M_Sound(int choice);
@@ -352,6 +353,7 @@ enum
     invisible,
     showfps,
     spriteCulling,
+    melting,
     display_end
 } display_e;
 
@@ -395,7 +397,8 @@ menuitem_t DisplayMenu[] =
         {1, "", M_ChangeSkyDetail, 's'},
         {1, "", M_ChangeInvisibleDetail, 'i'},
         {1, "", M_ChangeShowFPS, 'f'},
-        {1, "", M_ChangeSpriteCulling, 'c'}};
+        {1, "", M_ChangeSpriteCulling, 'c'},
+        {1, "", M_ChangeMelting, 'm'}};
 
 menu_t DisplayDef =
     {
@@ -925,22 +928,25 @@ void M_DrawDisplay(void)
     V_DrawPatchDirect(54, 15, 0, W_CacheLumpName("M_DISOPT", PU_CACHE));
 
     M_WriteText(58, 40, "DETAIL LEVEL:");
-    M_WriteText(204, 40, detailLevel == 2 ? "POTATO" : detailLevel == 1 ? "LOW" : "HIGH");
+    M_WriteText(214, 40, detailLevel == 2 ? "POTATO" : detailLevel == 1 ? "LOW" : "HIGH");
 
     M_WriteText(58, 56, "VISPLANE RENDERING:");
-    M_WriteText(204, 56, (!untexturedSurfaces && !flatSurfaces) ? "FULL" : untexturedSurfaces ? "FLAT" : "FLATTER");
+    M_WriteText(214, 56, (!untexturedSurfaces && !flatSurfaces) ? "FULL" : untexturedSurfaces ? "FLAT" : "FLATTER");
 
     M_WriteText(58, 72, "SKY RENDERING:");
-    M_WriteText(204, 72, flatSky ? "FLAT" : "FULL");
+    M_WriteText(214, 72, flatSky ? "FLAT" : "FULL");
 
-    M_WriteText(58, 86, "INVISIBLE RENDERING:");
-    M_WriteText(204, 86, (!saturnShadows && !flatShadows) ? "FUZZY" : flatShadows ? "FLAT" : "SEGA SATURN");
+    M_WriteText(58, 88, "INVISIBLE RENDERING:");
+    M_WriteText(214, 88, (!saturnShadows && !flatShadows) ? "FUZZY" : flatShadows ? "FLAT" : "SEGA SATURN");
 
-    M_WriteText(58, 102, "SHOW FPS:");
-    M_WriteText(204, 102, showFPS ? "ON" : "OFF");
+    M_WriteText(58, 104, "SHOW FPS:");
+    M_WriteText(214, 104, showFPS ? "ON" : "OFF");
 
-    M_WriteText(58, 118, "SPRITE CULLING:");
-    M_WriteText(204, 118, nearSprites ? "ON" : "OFF");
+    M_WriteText(58, 120, "SPRITE CULLING:");
+    M_WriteText(214, 120, nearSprites ? "ON" : "OFF");
+
+    M_WriteText(58, 136, "MELTING LOAD EFFECT:");
+    M_WriteText(214, 136, noMelt ? "OFF" : "ON");
 }
 
 void M_Options(int choice)
@@ -1210,6 +1216,17 @@ void M_ChangeSpriteCulling()
     else
     {
         players.message = "SPRITE CULLING OFF";
+    }
+}
+
+void M_ChangeMelting(){
+    noMelt = !noMelt;
+
+    if (noMelt){
+        players.message = "MELTING SCREEN LOAD EFFECT OFF";
+    }else
+    {
+        players.message = "MELTING SCREEN LOAD EFFECT ON";
     }
 }
 
