@@ -316,13 +316,10 @@ void HU_Start(void)
                     HU_FONTSTART, &message_on);
 
     // [JN] Create the FPS widget
-    if (showFPS)
-    {
-        HUlib_initTextLine(&w_fps,
-                           SCREENWIDTH - 72, HU_MSGY,
-                           hu_font,
-                           HU_FONTSTART);
-    }
+    HUlib_initTextLine(&w_fps,
+                        SCREENWIDTH - 72, HU_MSGY,
+                        hu_font,
+                        HU_FONTSTART);
 
     // create the map title widget
     HUlib_initTextLine(&w_title,
@@ -384,10 +381,7 @@ void HU_Erase(void)
 
     HUlib_eraseSText(&w_message);
     HUlib_eraseTextLine(&w_title);
-    if (showFPS){
-        HUlib_eraseTextLine(&w_fps);
-    }
-
+    HUlib_eraseTextLine(&w_fps);
 }
 
 void HU_Ticker(void)
