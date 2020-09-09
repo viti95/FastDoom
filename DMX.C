@@ -548,6 +548,9 @@ void WAV_PlayMode(int channels, int samplerate)
     status = FX_Init(device, channels, 2, 16, samplerate);
     
     FX_SetVolume(255);
+
+    if (reverseStereo)
+        FX_SetReverseStereo(true);
 }
 
 int CODEC_Detect(int *a, int *b)

@@ -52,6 +52,8 @@ extern boolean lowSound;
 extern boolean waitInit;
 extern boolean noMelt;
 
+extern boolean reverseStereo;
+
 extern boolean forceHighDetail;
 extern boolean forceLowDetail;
 extern boolean forcePotatoDetail;

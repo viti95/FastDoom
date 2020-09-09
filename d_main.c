@@ -96,6 +96,8 @@ boolean lowSound;
 boolean waitInit;
 boolean noMelt;
 
+boolean reverseStereo;
+
 boolean forceHighDetail;
 boolean forceLowDetail;
 boolean forcePotatoDetail;
@@ -783,6 +785,8 @@ void D_DoomMain(void)
     singletics = M_CheckParm("-singletics");
 
     uncappedFPS = M_CheckParm("-uncapped");
+
+    reverseStereo = M_CheckParm("-reverseStereo");
 
     if (!commercial)
     {
