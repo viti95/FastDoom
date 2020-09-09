@@ -207,6 +207,7 @@ void M_ChangeShowFPS();
 void M_ChangeSpriteCulling();
 void M_ChangeMelting();
 void M_ChangeUncappedFPS();
+void M_ChangeMono();
 void M_SizeDisplay(int choice);
 void M_StartGame(int choice);
 void M_Sound(int choice);
@@ -470,6 +471,7 @@ enum
     sfx_empty1,
     music_vol,
     sfx_empty2,
+    monosound,
     sound_end
 } sound_e;
 
@@ -478,7 +480,8 @@ menuitem_t SoundMenu[] =
         {2, "M_SFXVOL", M_SfxVol, 's'},
         {-1, "", 0},
         {2, "M_MUSVOL", M_MusicVol, 'm'},
-        {-1, "", 0}};
+        {-1, "", 0},
+        {1, "", M_ChangeMono, 'c'}};
 
 menu_t SoundDef =
     {
@@ -796,6 +799,9 @@ void M_DrawSound(void)
 
     M_DrawThermo(SoundDef.x, SoundDef.y + LINEHEIGHT * (music_vol + 1),
                  16, musicVolume);
+
+    M_WriteText(82, 130, "MONO SOUND:");
+    M_WriteText(164, 130, monoSound ? "ON" : "OFF");
 }
 
 void M_Sound(int choice)
@@ -1250,6 +1256,20 @@ void M_ChangeUncappedFPS()
     else
     {
         players.message = "35 FPS LIMIT ON";
+    }
+}
+
+void M_ChangeMono()
+{
+    monoSound = !monoSound;
+
+    if (monoSound)
+    {
+        players.message = "MONO SOUND";
+    }
+    else
+    {
+        players.message = "STEREO SOUND";
     }
 }
 
