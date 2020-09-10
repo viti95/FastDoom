@@ -230,6 +230,7 @@ int Mul320(int value);
 int Mul10(int value);
 int Div1000(int value);
 int Div10(int value);
+int Div63(int value);
 
 //fixed_t FixedFriction(fixed_t a);
 
@@ -280,6 +281,15 @@ int Div10(int value);
     "sar eax, 2", \
     "sar ecx, 31", \
     "sub eax, ecx" parm[ecx] value[eax] modify exact[eax ecx edx]
+
+#pragma aux Div63 = \
+    "mov edx, -2113396605", \
+    "mov eax, ecx", \
+    "imul edx", \
+    "add edx, ecx", \
+    "sar edx, 5", \
+    "sar ecx, 31", \
+    "sub edx, ecx" parm[ecx] value[edx] modify exact[eax ecx edx]
 
 #define SHORT(x) (x)
 #define LONG(x) (x)
