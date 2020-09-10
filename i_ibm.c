@@ -273,18 +273,19 @@ void I_UpdateBox(int x, int y, int w, int h)
 
     outp(SC_INDEX, SC_MAPMASK);
 
-    for (i = 0; i < 4; i++)
+    if (!(count & 1))
     {
-        outp(SC_INDEX + 1, 1 << i);
-        source = &screens[0][offset + i];
-        dest = destscreen + poffset;
+        // 32-bit copy
 
-        for (j = 0; j < h; j++)
+        for (i = 0; i < 4; i++)
         {
+            outp(SC_INDEX + 1, 1 << i);
+            source = &screens[0][offset + i];
+            dest = destscreen + poffset;
 
-            if (!(count & 1))
+            for (j = 0; j < h; j++)
             {
-                k = count / 2; // 32-bit writes
+                k = count / 2;
 
                 while (k--)
                 {
@@ -292,10 +293,25 @@ void I_UpdateBox(int x, int y, int w, int h)
                     dest += 4;
                     source += 16;
                 }
+
+                source += step;
+                dest += pstep;
             }
-            else
+        }
+    }
+    else
+    {
+        // 16-bit copy
+
+        for (i = 0; i < 4; i++)
+        {
+            outp(SC_INDEX + 1, 1 << i);
+            source = &screens[0][offset + i];
+            dest = destscreen + poffset;
+
+            for (j = 0; j < h; j++)
             {
-                k = count; // 16-bit writes
+                k = count;
 
                 while (k--)
                 {
@@ -303,10 +319,10 @@ void I_UpdateBox(int x, int y, int w, int h)
                     dest += 2;
                     source += 8;
                 }
-            }
 
-            source += step;
-            dest += pstep;
+                source += step;
+                dest += pstep;
+            }
         }
     }
 }
