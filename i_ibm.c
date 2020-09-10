@@ -281,12 +281,28 @@ void I_UpdateBox(int x, int y, int w, int h)
 
         for (j = 0; j < h; j++)
         {
-            k = count;
-            while (k--)
+
+            if (!(count & 1))
             {
-                *(unsigned short *)dest = (unsigned short)(((*(source + 4)) << 8) + (*source));
-                dest += 2;
-                source += 8;
+                k = count / 2; // 32-bit writes
+
+                while (k--)
+                {
+                    *(unsigned int *)dest = (unsigned int)(((*(source + 12)) << 24) + ((*(source + 8)) << 16) + ((*(source + 4)) << 8) + (*source));
+                    dest += 4;
+                    source += 16;
+                }
+            }
+            else
+            {
+                k = count; // 16-bit writes
+
+                while (k--)
+                {
+                    *(unsigned short *)dest = (unsigned short)(((*(source + 4)) << 8) + (*source));
+                    dest += 2;
+                    source += 8;
+                }
             }
 
             source += step;
@@ -383,28 +399,28 @@ void I_FinishUpdate(void)
 
     if (showFPS)
     {
-        if (fps_counter==0)
-        {    
+        if (fps_counter == 0)
+        {
             fps_starttime = ticcount;
         }
 
         fps_counter++;
 
         // store a value and/or draw when data is ok:
-        if (fps_counter>(TICRATE+10)) 
+        if (fps_counter > (TICRATE + 10))
         {
             // in case of a very fast system, this will limit the sampling
-            if (fps_nextcalculation<ticcount)
+            if (fps_nextcalculation < ticcount)
             {
                 // minus 1!, exactly 35 FPS when measeraring for a longer time.
-                opt1 = ((fps_counter-1)*TICRATE) << FRACBITS;
-                opt2 = (ticcount-fps_starttime) << FRACBITS;
+                opt1 = ((fps_counter - 1) * TICRATE) << FRACBITS;
+                opt2 = (ticcount - fps_starttime) << FRACBITS;
                 fps = (opt1 >> 14 >= opt2) ? ((opt1 ^ opt2) >> 31) ^ MAXINT : FixedDiv2(opt1, opt2);
-                fps_nextcalculation=ticcount+12; 
-                fps_counter=0; // flush old data
+                fps_nextcalculation = ticcount + 12;
+                fps_counter = 0; // flush old data
             }
-	   }
-	}
+        }
+    }
 }
 
 //
@@ -820,7 +836,7 @@ byte *I_ZoneBase(int *size)
     } while (!ptr);
 
     printf(", %d Kb allocated for zone\n", heap >> 10);
-    
+
     *size = heap;
     return ptr;
 }
