@@ -664,7 +664,7 @@ int ST_calcPainOffset(void)
 
 	if (health != oldhealth)
 	{
-		lastcalc = ST_FACESTRIDE * (((100 - health) * ST_NUMPAINFACES) / 101);
+		lastcalc = ST_FACESTRIDE * (Div101((100 - health) * ST_NUMPAINFACES));
 		oldhealth = health;
 	}
 	return lastcalc;

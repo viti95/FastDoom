@@ -258,7 +258,7 @@ boolean P_Move(mobj_t *actor)
         tryy = actor->y;
         break;
     case 1:
-        optSpeed = 47000 * actor->info->speed;
+        optSpeed = Mul47000(actor->info->speed);
         tryx = actor->x + optSpeed;
         tryy = actor->y + optSpeed;
         break;
@@ -267,7 +267,7 @@ boolean P_Move(mobj_t *actor)
         tryy = actor->y + actor->info->speed * FRACUNIT;
         break;
     case 3:
-        optSpeed = 47000 * actor->info->speed;
+        optSpeed = Mul47000(actor->info->speed);
         tryx = actor->x - optSpeed;
         tryy = actor->y + optSpeed;
         break;
@@ -276,7 +276,7 @@ boolean P_Move(mobj_t *actor)
         tryy = actor->y;
         break;
     case 5:
-        optSpeed = 47000 * actor->info->speed;
+        optSpeed = Mul47000(actor->info->speed);
         tryx = actor->x - optSpeed;
         tryy = actor->y - optSpeed;
         break;
@@ -285,7 +285,7 @@ boolean P_Move(mobj_t *actor)
         tryy = actor->y - actor->info->speed * FRACUNIT;
         break;
     case 7:
-        optSpeed = 47000 * actor->info->speed;
+        optSpeed = Mul47000(actor->info->speed);
         tryx = actor->x + optSpeed;
         tryy = actor->y - optSpeed;
         break;
