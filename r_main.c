@@ -699,15 +699,28 @@ void R_ExecuteSetViewSize(void)
 
     setsizeneeded = false;
 
-    if (setblocks == 11)
-    {
-        scaledviewwidth = SCREENWIDTH;
-        viewheight = SCREENHEIGHT;
-    }
-    else
-    {
-        scaledviewwidth = setblocks * 32;
-        viewheight = (setblocks * 168 / 10) & ~7;
+    if (forceScreenSize){
+        if (forceScreenSize == 11)
+        {
+            scaledviewwidth = SCREENWIDTH;
+            viewheight = SCREENHEIGHT;
+        }
+        else
+        {
+            scaledviewwidth = forceScreenSize * 32;
+            viewheight = (forceScreenSize * 168 / 10) & ~7;
+        }
+    }else{
+        if (setblocks == 11)
+        {
+            scaledviewwidth = SCREENWIDTH;
+            viewheight = SCREENHEIGHT;
+        }
+        else
+        {
+            scaledviewwidth = setblocks * 32;
+            viewheight = (setblocks * 168 / 10) & ~7;
+        }
     }
 
     if (forcePotatoDetail || forceLowDetail || forceHighDetail)

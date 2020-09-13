@@ -57,6 +57,7 @@ extern boolean reverseStereo;
 extern boolean forceHighDetail;
 extern boolean forceLowDetail;
 extern boolean forcePotatoDetail;
+extern int forceScreenSize;
 
 extern boolean uncappedFPS;
 

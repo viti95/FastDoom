@@ -101,6 +101,8 @@ boolean reverseStereo;
 boolean forceHighDetail;
 boolean forceLowDetail;
 boolean forcePotatoDetail;
+int forceScreenSize;
+
 
 boolean uncappedFPS;
 
@@ -787,6 +789,16 @@ void D_DoomMain(void)
     uncappedFPS = M_CheckParm("-uncapped");
 
     reverseStereo = M_CheckParm("-reverseStereo");
+
+    if ((p = M_CheckParm("-size")))
+    {
+        if (p < myargc - 1)
+            forceScreenSize = atoi(myargv[p + 1]);
+        if (forceScreenSize < 3)
+            forceScreenSize = 3;
+        if (forceScreenSize > 11)
+            forceScreenSize = 11;
+    }
 
     if (!commercial)
     {
