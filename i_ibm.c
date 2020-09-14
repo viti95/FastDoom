@@ -237,10 +237,22 @@ void I_SetPalette(byte *palette)
 {
     int i;
 
+    byte *gammatableptr;
+
+    gammatableptr = gammatable[usegamma];
+
     _outbyte(PEL_WRITE_ADR, 0);
-    for (i = 0; i < 768; i++)
+    for (i = 0; i < 768 / 8; i++)
     {
-        _outbyte(PEL_DATA, (gammatable[usegamma][*palette++]) >> 2);
+        _outbyte(PEL_DATA, (gammatableptr[*(palette)]) >> 2);
+        _outbyte(PEL_DATA, (gammatableptr[*(palette+1)]) >> 2);
+        _outbyte(PEL_DATA, (gammatableptr[*(palette+2)]) >> 2);
+        _outbyte(PEL_DATA, (gammatableptr[*(palette+3)]) >> 2);
+        _outbyte(PEL_DATA, (gammatableptr[*(palette+4)]) >> 2);
+        _outbyte(PEL_DATA, (gammatableptr[*(palette+5)]) >> 2);
+        _outbyte(PEL_DATA, (gammatableptr[*(palette+6)]) >> 2);
+        _outbyte(PEL_DATA, (gammatableptr[*(palette+7)]) >> 2);
+        palette += 8;
     }
 }
 
