@@ -700,28 +700,18 @@ void R_ExecuteSetViewSize(void)
 
     setsizeneeded = false;
 
-    if (forceScreenSize){
-        if (forceScreenSize == 11)
-        {
-            scaledviewwidth = SCREENWIDTH;
-            viewheight = SCREENHEIGHT;
-        }
-        else
-        {
-            scaledviewwidth = forceScreenSize * 32;
-            viewheight = (forceScreenSize * 168 / 10) & ~7;
-        }
-    }else{
-        if (setblocks == 11)
-        {
-            scaledviewwidth = SCREENWIDTH;
-            viewheight = SCREENHEIGHT;
-        }
-        else
-        {
-            scaledviewwidth = setblocks * 32;
-            viewheight = (setblocks * 168 / 10) & ~7;
-        }
+    if (forceScreenSize)
+        setblocks = forceScreenSize;
+
+    if (setblocks == 11)
+    {
+        scaledviewwidth = SCREENWIDTH;
+        viewheight = SCREENHEIGHT;
+    }
+    else
+    {
+        scaledviewwidth = setblocks * 32;
+        viewheight = (setblocks * 168 / 10) & ~7;
     }
 
     if (forcePotatoDetail || forceLowDetail || forceHighDetail)
@@ -743,8 +733,8 @@ void R_ExecuteSetViewSize(void)
     centerxfrac = centerx << FRACBITS;
     centeryfrac = centery << FRACBITS;
     projection = centerxfrac;
-    iprojection = FixedDiv(FRACUNIT << 8, projection); 
-    
+    iprojection = FixedDiv(FRACUNIT << 8, projection);
+
     switch (detailshift)
     {
     case 0:
