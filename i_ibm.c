@@ -485,18 +485,44 @@ void I_ShutdownGraphics(void)
 //
 void I_ReadScreen(byte *scr)
 {
-    int i;
     int j;
 
     outp(GC_INDEX, GC_READMAP);
 
-    for (i = 0; i < 4; i++)
+    outp(GC_INDEX + 1, 0);
+    for (j = 0; j < SCREENWIDTH * SCREENHEIGHT / 4; j += 4)
     {
-        outp(GC_INDEX + 1, i);
-        for (j = 0; j < SCREENWIDTH * SCREENHEIGHT / 4; j++)
-        {
-            scr[i + j * 4] = currentscreen[j];
-        }
+        scr[j * 4] = currentscreen[j];
+        scr[4 + j * 4] = currentscreen[j + 1];
+        scr[8 + j * 4] = currentscreen[j + 2];
+        scr[12 + j * 4] = currentscreen[j + 3];
+    }
+
+    outp(GC_INDEX + 1, 1);
+    for (j = 0; j < SCREENWIDTH * SCREENHEIGHT / 4; j += 4)
+    {
+        scr[1 + j * 4] = currentscreen[j];
+        scr[5 + j * 4] = currentscreen[j + 1];
+        scr[9 + j * 4] = currentscreen[j + 2];
+        scr[13 + j * 4] = currentscreen[j + 3];
+    }
+
+    outp(GC_INDEX + 1, 2);
+    for (j = 0; j < SCREENWIDTH * SCREENHEIGHT / 4; j += 4)
+    {
+        scr[2 + j * 4] = currentscreen[j];
+        scr[6 + j * 4] = currentscreen[j + 1];
+        scr[10 + j * 4] = currentscreen[j + 2];
+        scr[14 + j * 4] = currentscreen[j + 3];
+    }
+
+    outp(GC_INDEX + 1, 3);
+    for (j = 0; j < SCREENWIDTH * SCREENHEIGHT / 4; j += 4)
+    {
+        scr[3 + j * 4] = currentscreen[j];
+        scr[7 + j * 4] = currentscreen[j + 1];
+        scr[11 + j * 4] = currentscreen[j + 2];
+        scr[15 + j * 4] = currentscreen[j + 3];
     }
 }
 
