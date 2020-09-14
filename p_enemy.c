@@ -1124,7 +1124,7 @@ void A_VileChase(mobj_t *actor)
             viletryy = actor->y;
             break;
         case 1:
-            optSpeed = 47000 * actor->info->speed;
+            optSpeed = Mul47000(actor->info->speed);
             viletryx = actor->x + optSpeed;
             viletryy = actor->y + optSpeed;
             break;
@@ -1133,7 +1133,7 @@ void A_VileChase(mobj_t *actor)
             viletryy = actor->y + actor->info->speed * FRACUNIT;
             break;
         case 3:
-            optSpeed = 47000 * actor->info->speed;
+            optSpeed = Mul47000(actor->info->speed);
             viletryx = actor->x - optSpeed;
             viletryy = actor->y + optSpeed;
             break;
@@ -1142,7 +1142,7 @@ void A_VileChase(mobj_t *actor)
             viletryy = actor->y;
             break;
         case 5:
-            optSpeed = 47000 * actor->info->speed;
+            optSpeed = Mul47000(actor->info->speed);
             viletryx = actor->x - optSpeed;
             viletryy = actor->y - optSpeed;
             break;
@@ -1151,7 +1151,7 @@ void A_VileChase(mobj_t *actor)
             viletryy = actor->y - actor->info->speed * FRACUNIT;
             break;
         case 7:
-            optSpeed = 47000 * actor->info->speed;
+            optSpeed = Mul47000(actor->info->speed);
             viletryx = actor->x + optSpeed;
             viletryy = actor->y - optSpeed;
             break;
