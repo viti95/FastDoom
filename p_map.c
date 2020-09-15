@@ -1087,8 +1087,26 @@ P_AimLineAttack(mobj_t *t1,
     angle >>= ANGLETOFINESHIFT;
     shootthing = t1;
 
-    x2 = t1->x + (distance >> FRACBITS) * finecosine[angle];
-    y2 = t1->y + (distance >> FRACBITS) * finesine[angle];
+    switch (distance)
+    {
+    case MISSILERANGE:
+        x2 = t1->x + (MISSILERANGE >> FRACBITS) * finecosine[angle];
+        y2 = t1->y + (MISSILERANGE >> FRACBITS) * finesine[angle];
+        break;
+    case HALFMISSILERANGE:
+        x2 = t1->x + (HALFMISSILERANGE >> FRACBITS) * finecosine[angle];
+        y2 = t1->y + (HALFMISSILERANGE >> FRACBITS) * finesine[angle];
+        break;
+    case MELEERANGE:
+        x2 = t1->x + (MELEERANGE >> FRACBITS) * finecosine[angle];
+        y2 = t1->y + (MELEERANGE >> FRACBITS) * finesine[angle];
+        break;
+    case MELEERANGE + 1:
+        x2 = t1->x + ((MELEERANGE + 1) >> FRACBITS) * finecosine[angle];
+        y2 = t1->y + ((MELEERANGE + 1) >> FRACBITS) * finesine[angle];
+        break;
+    }
+
     shootz = t1->z + (t1->height >> 1) + 8 * FRACUNIT;
 
     // can't shoot outside view angles
@@ -1126,8 +1144,23 @@ void P_LineAttack(mobj_t *t1,
     angle >>= ANGLETOFINESHIFT;
     shootthing = t1;
     la_damage = damage;
-    x2 = t1->x + (distance >> FRACBITS) * finecosine[angle];
-    y2 = t1->y + (distance >> FRACBITS) * finesine[angle];
+
+    switch (distance)
+    {
+    case MISSILERANGE:
+        x2 = t1->x + (MISSILERANGE >> FRACBITS) * finecosine[angle];
+        y2 = t1->y + (MISSILERANGE >> FRACBITS) * finesine[angle];
+        break;
+    case MELEERANGE:
+        x2 = t1->x + (MELEERANGE >> FRACBITS) * finecosine[angle];
+        y2 = t1->y + (MELEERANGE >> FRACBITS) * finesine[angle];
+        break;
+    case MELEERANGE + 1:
+        x2 = t1->x + ((MELEERANGE + 1) >> FRACBITS) * finecosine[angle];
+        y2 = t1->y + ((MELEERANGE + 1) >> FRACBITS) * finesine[angle];
+        break;
+    }
+
     shootz = t1->z + (t1->height >> 1) + 8 * FRACUNIT;
     attackrange = distance;
     aimslope = slope;

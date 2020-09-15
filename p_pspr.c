@@ -679,10 +679,7 @@ void A_FireShotgun2(player_t *player,
         damage = 5 * (P_Random % 3 + 1);
         angle = player->mo->angle;
         angle += (P_Random - P_Random) << 19;
-        P_LineAttack(player->mo,
-                     angle,
-                     MISSILERANGE,
-                     bulletslope + ((P_Random - P_Random) << 5), damage);
+        P_LineAttack(player->mo, angle, MISSILERANGE, bulletslope + ((P_Random - P_Random) << 5), damage);
     }
 }
 
