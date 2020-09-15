@@ -229,8 +229,7 @@ void EV_TurnTagLightsOff(line_t *line)
         int i, min = sector->lightlevel;
         // find min neighbor light level
         for (i = 0; i < sector->linecount; i++)
-            if ((tsec = getNextSector(sector->lines[i], sector)) &&
-                tsec->lightlevel < min)
+            if ((tsec = getNextSector(sector->lines[i], sector)) && tsec->lightlevel < min)
                 min = tsec->lightlevel;
         sector->lightlevel = min;
     }
@@ -254,8 +253,7 @@ void EV_LightTurnOn(line_t *line, int bright)
 
         if (!bright)
             for (j = 0; j < sector->linecount; j++)
-                if ((temp = getNextSector(sector->lines[j], sector)) &&
-                    temp->lightlevel > tbright)
+                if ((temp = getNextSector(sector->lines[j], sector)) && temp->lightlevel > tbright)
                     tbright = temp->lightlevel;
 
         sector->lightlevel = tbright;

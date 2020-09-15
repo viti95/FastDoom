@@ -440,9 +440,7 @@ void P_NewChaseDir(mobj_t *actor)
     // randomly determine direction of search
     if (P_Random & 1)
     {
-        for (tdir = DI_EAST;
-             tdir <= DI_SOUTHEAST;
-             tdir++)
+        for (tdir = DI_EAST; tdir <= DI_SOUTHEAST; tdir++)
         {
             if (tdir != turnaround)
             {
@@ -455,9 +453,7 @@ void P_NewChaseDir(mobj_t *actor)
     }
     else
     {
-        for (tdir = DI_SOUTHEAST;
-             tdir != (DI_EAST - 1);
-             tdir--)
+        for (tdir = DI_SOUTHEAST; tdir != (DI_EAST - 1); tdir--)
         {
             if (tdir != turnaround)
             {
