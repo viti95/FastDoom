@@ -1277,18 +1277,6 @@ int MV_PlayRaw(
 }
 
 /*---------------------------------------------------------------------
-   Function: MV_LockEnd
-
-   Used for determining the length of the functions to lock in memory.
----------------------------------------------------------------------*/
-
-static void MV_LockEnd(
-    void)
-
-{
-}
-
-/*---------------------------------------------------------------------
    Function: MV_CreateVolumeTable
 
    Create the table used to convert sound data to a specific volume
