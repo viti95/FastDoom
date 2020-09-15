@@ -858,13 +858,6 @@ void D_DoomMain(void)
 
     printf("\nP_Init: Checking cmd-line parameters...\n");
 
-    if (M_CheckParm("-cdrom"))
-    {
-        printf(D_CDROM);
-        mkdir("c:\\doomdata");
-        strcpy(basedefault, "c:/doomdata/default.cfg");
-    }
-
     // turbo option
     if ((p = M_CheckParm("-turbo")))
     {
@@ -1084,10 +1077,7 @@ void D_DoomMain(void)
     p = M_CheckParm("-loadgame");
     if (p && p < myargc - 1)
     {
-        if (M_CheckParm("-cdrom"))
-            sprintf(file, "c:\\doomdata\\" SAVEGAMENAME "%c.dsg", myargv[p + 1][0]);
-        else
-            sprintf(file, SAVEGAMENAME "%c.dsg", myargv[p + 1][0]);
+        sprintf(file, SAVEGAMENAME "%c.dsg", myargv[p + 1][0]);
         G_LoadGame(file);
     }
 
