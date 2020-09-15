@@ -103,6 +103,7 @@ boolean forceLowDetail;
 boolean forcePotatoDetail;
 int forceScreenSize;
 
+boolean logTimedemo;
 
 boolean uncappedFPS;
 
@@ -789,6 +790,8 @@ void D_DoomMain(void)
     uncappedFPS = M_CheckParm("-uncapped");
 
     reverseStereo = M_CheckParm("-reverseStereo");
+
+    logTimedemo = M_CheckParm("-logTimedemo");
 
     if ((p = M_CheckParm("-size")))
     {

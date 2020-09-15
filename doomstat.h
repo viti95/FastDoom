@@ -59,6 +59,8 @@ extern boolean forceLowDetail;
 extern boolean forcePotatoDetail;
 extern int forceScreenSize;
 
+extern boolean logTimedemo;
+
 extern boolean uncappedFPS;
 
 // Set if homebrew PWAD stuff has been added.
