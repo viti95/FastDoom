@@ -191,7 +191,7 @@ int EV_DoCeiling(line_t *line,
 		thinkercap.prev->next = &ceiling->thinker;
 		ceiling->thinker.next = &thinkercap;
 		ceiling->thinker.prev = thinkercap.prev;
-    	thinkercap.prev = &ceiling->thinker;
+		thinkercap.prev = &ceiling->thinker;
 
 		sec->specialdata = ceiling;
 		ceiling->thinker.function.acp1 = (actionf_p1)T_MoveCeiling;
@@ -278,12 +278,32 @@ void P_ActivateInStasisCeiling(line_t *line)
 {
 	int i;
 
-	for (i = 0; i < MAXCEILINGS; i++)
+	for (i = 0; i < MAXCEILINGS; i += 5)
 	{
 		if (activeceilings[i] && (activeceilings[i]->tag == line->tag) && (activeceilings[i]->direction == 0))
 		{
 			activeceilings[i]->direction = activeceilings[i]->olddirection;
 			activeceilings[i]->thinker.function.acp1 = (actionf_p1)T_MoveCeiling;
+		}
+		if (activeceilings[i + 1] && (activeceilings[i + 1]->tag == line->tag) && (activeceilings[i + 1]->direction == 0))
+		{
+			activeceilings[i + 1]->direction = activeceilings[i + 1]->olddirection;
+			activeceilings[i + 1]->thinker.function.acp1 = (actionf_p1)T_MoveCeiling;
+		}
+		if (activeceilings[i + 2] && (activeceilings[i + 2]->tag == line->tag) && (activeceilings[i + 2]->direction == 0))
+		{
+			activeceilings[i + 2]->direction = activeceilings[i + 2]->olddirection;
+			activeceilings[i + 2]->thinker.function.acp1 = (actionf_p1)T_MoveCeiling;
+		}
+		if (activeceilings[i + 3] && (activeceilings[i + 3]->tag == line->tag) && (activeceilings[i + 3]->direction == 0))
+		{
+			activeceilings[i + 3]->direction = activeceilings[i + 3]->olddirection;
+			activeceilings[i + 3]->thinker.function.acp1 = (actionf_p1)T_MoveCeiling;
+		}
+		if (activeceilings[i + 4] && (activeceilings[i + 4]->tag == line->tag) && (activeceilings[i + 4]->direction == 0))
+		{
+			activeceilings[i + 4]->direction = activeceilings[i + 4]->olddirection;
+			activeceilings[i + 4]->thinker.function.acp1 = (actionf_p1)T_MoveCeiling;
 		}
 	}
 }
@@ -298,13 +318,41 @@ int EV_CeilingCrushStop(line_t *line)
 	int rtn;
 
 	rtn = 0;
-	for (i = 0; i < MAXCEILINGS; i++)
+	for (i = 0; i < MAXCEILINGS; i += 5)
 	{
 		if (activeceilings[i] && (activeceilings[i]->tag == line->tag) && (activeceilings[i]->direction != 0))
 		{
 			activeceilings[i]->olddirection = activeceilings[i]->direction;
 			activeceilings[i]->thinker.function.acv = (actionf_v)NULL;
 			activeceilings[i]->direction = 0; // in-stasis
+			rtn = 1;
+		}
+		if (activeceilings[i + 1] && (activeceilings[i + 1]->tag == line->tag) && (activeceilings[i + 1]->direction != 0))
+		{
+			activeceilings[i + 1]->olddirection = activeceilings[i + 1]->direction;
+			activeceilings[i + 1]->thinker.function.acv = (actionf_v)NULL;
+			activeceilings[i + 1]->direction = 0; // in-stasis
+			rtn = 1;
+		}
+		if (activeceilings[i + 2] && (activeceilings[i + 2]->tag == line->tag) && (activeceilings[i + 2]->direction != 0))
+		{
+			activeceilings[i + 2]->olddirection = activeceilings[i + 2]->direction;
+			activeceilings[i + 2]->thinker.function.acv = (actionf_v)NULL;
+			activeceilings[i + 2]->direction = 0; // in-stasis
+			rtn = 1;
+		}
+		if (activeceilings[i + 3] && (activeceilings[i + 3]->tag == line->tag) && (activeceilings[i + 3]->direction != 0))
+		{
+			activeceilings[i + 3]->olddirection = activeceilings[i + 3]->direction;
+			activeceilings[i + 3]->thinker.function.acv = (actionf_v)NULL;
+			activeceilings[i + 3]->direction = 0; // in-stasis
+			rtn = 1;
+		}
+		if (activeceilings[i + 4] && (activeceilings[i + 4]->tag == line->tag) && (activeceilings[i + 4]->direction != 0))
+		{
+			activeceilings[i + 4]->olddirection = activeceilings[i + 4]->direction;
+			activeceilings[i + 4]->thinker.function.acv = (actionf_v)NULL;
+			activeceilings[i + 4]->direction = 0; // in-stasis
 			rtn = 1;
 		}
 	}

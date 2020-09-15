@@ -849,14 +849,18 @@ void ST_updateWidgets(void)
 	w_ready.data = plyr->readyweapon;
 
 	// update keycard multiple widgets
-	for (i = 0; i < 3; i++)
-	{
-		keyboxes[i] = plyr->cards[i] ? i : -1;
+	keyboxes[0] = plyr->cards[0] ? 0 : -1;
+	if (plyr->cards[3])
+		keyboxes[0] = 3;
 
-		if (plyr->cards[i + 3])
-			keyboxes[i] = i + 3;
-	}
+	keyboxes[1] = plyr->cards[1] ? 1 : -1;
+	if (plyr->cards[4])
+		keyboxes[1] = 4;
 
+	keyboxes[2] = plyr->cards[2] ? 2 : -1;
+	if (plyr->cards[5])
+		keyboxes[2] = 5;
+	
 	// refresh everything if this is him coming back to life
 	ST_updateFaceWidget();
 
@@ -939,24 +943,35 @@ void ST_drawWidgets(boolean refresh)
 
 	STlib_updateNum(&w_ready, refresh);
 
-	for (i = 0; i < 4; i++)
-	{
-		STlib_updateNum(&w_ammo[i], refresh);
-		STlib_updateNum(&w_maxammo[i], refresh);
-	}
+	STlib_updateNum(&w_ammo[0], refresh);
+	STlib_updateNum(&w_maxammo[0], refresh);
+
+	STlib_updateNum(&w_ammo[1], refresh);
+	STlib_updateNum(&w_maxammo[1], refresh);
+
+	STlib_updateNum(&w_ammo[2], refresh);
+	STlib_updateNum(&w_maxammo[2], refresh);
+
+	STlib_updateNum(&w_ammo[3], refresh);
+	STlib_updateNum(&w_maxammo[3], refresh);
 
 	STlib_updatePercent(&w_health, refresh);
 	STlib_updatePercent(&w_armor, refresh);
 
 	STlib_updateBinIcon(&w_armsbg, refresh);
 
-	for (i = 0; i < 6; i++)
-		STlib_updateMultIcon(&w_arms[i], refresh);
+	STlib_updateMultIcon(&w_arms[0], refresh);
+	STlib_updateMultIcon(&w_arms[1], refresh);
+	STlib_updateMultIcon(&w_arms[2], refresh);
+	STlib_updateMultIcon(&w_arms[3], refresh);
+	STlib_updateMultIcon(&w_arms[4], refresh);
+	STlib_updateMultIcon(&w_arms[5], refresh);
 
 	STlib_updateMultIcon(&w_faces, refresh);
 
-	for (i = 0; i < 3; i++)
-		STlib_updateMultIcon(&w_keyboxes[i], refresh);
+	STlib_updateMultIcon(&w_keyboxes[0], refresh);
+	STlib_updateMultIcon(&w_keyboxes[1], refresh);
+	STlib_updateMultIcon(&w_keyboxes[2], refresh);
 }
 
 void ST_Drawer(boolean fullscreen, boolean refresh)

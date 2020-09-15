@@ -636,8 +636,6 @@ void A_FirePistol(player_t *player,
 void A_FireShotgun(player_t *player,
                    pspdef_t *psp)
 {
-    int i;
-
     S_StartSound(player->mo, sfx_shotgn);
     P_SetMobjState(player->mo, S_PLAY_ATK2);
 
@@ -649,8 +647,13 @@ void A_FireShotgun(player_t *player,
 
     P_BulletSlope(player->mo);
 
-    for (i = 0; i < 7; i++)
-        P_GunShot(player->mo, false);
+    P_GunShot(player->mo, false);
+    P_GunShot(player->mo, false);
+    P_GunShot(player->mo, false);
+    P_GunShot(player->mo, false);
+    P_GunShot(player->mo, false);
+    P_GunShot(player->mo, false);
+    P_GunShot(player->mo, false);
 }
 
 //
@@ -753,8 +756,7 @@ void A_BFGSpray(mobj_t *mo)
                     MT_EXTRABFG);
 
         damage = 15;
-        for (j = 0; j < 15; j++)
-            damage += (P_Random & 7);
+        damage += (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7);
 
         P_DamageMobj(linetarget, mo->target, mo->target, damage);
     }
@@ -778,8 +780,8 @@ void P_SetupPsprites(player_t *player)
     int i;
 
     // remove all psprites
-    for (i = 0; i < NUMPSPRITES; i++)
-        player->psprites[i].state = NULL;
+    player->psprites[0].state = NULL;
+    player->psprites[1].state = NULL;
 
     // spawn the gun
     player->pendingweapon = player->readyweapon;
@@ -797,20 +799,33 @@ void P_MovePsprites(player_t *player)
     state_t *state;
 
     psp = &player->psprites[0];
-    for (i = 0; i < NUMPSPRITES; i++, psp++)
-    {
-        // a null state means not active
-        if ((state = psp->state))
-        {
-            // drop tic count and possibly change state
 
-            // a -1 tic count never changes
-            if (psp->tics != -1)
-            {
-                psp->tics--;
-                if (!psp->tics)
-                    P_SetPsprite(player, i, psp->state->nextstate);
-            }
+    // a null state means not active
+    if ((state = psp->state))
+    {
+        // drop tic count and possibly change state
+
+        // a -1 tic count never changes
+        if (psp->tics != -1)
+        {
+            psp->tics--;
+            if (!psp->tics)
+                P_SetPsprite(player, 0, psp->state->nextstate);
+        }
+    }
+
+    psp++;
+
+    if ((state = psp->state))
+    {
+        // drop tic count and possibly change state
+
+        // a -1 tic count never changes
+        if (psp->tics != -1)
+        {
+            psp->tics--;
+            if (!psp->tics)
+                P_SetPsprite(player, 1, psp->state->nextstate);
         }
     }
 

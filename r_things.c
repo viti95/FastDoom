@@ -715,13 +715,15 @@ void R_DrawPlayerSprites(void)
     mceilingclip = negonearray;
 
     // add all active psprites
-    for (i = 0, psp = viewplayer->psprites;
-         i < NUMPSPRITES;
-         i++, psp++)
-    {
-        if (psp->state)
-            R_DrawPSprite(psp);
-    }
+    psp = viewplayer->psprites;
+
+    if (psp->state)
+        R_DrawPSprite(psp);
+
+    psp++;
+
+    if (psp->state)
+        R_DrawPSprite(psp);
 }
 
 //
