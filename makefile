@@ -29,6 +29,12 @@
 # Build options for 386DX/SX
 CCOPTS = /d2 /omaxet /zp4 /3r /ei /j /zq
 
+# Build options for Pentium
+#CCOPTS = /d2 /omaxet /zp4 /5r /ei /j /zq
+
+# Build options for profiling (Pentium required)
+#CCOPTS = /d2 /omaxet /zp4 /5r /ei /j /zq /et
+
 GLOBOBJS = &
  ns_dpmi.obj &
  ns_pcfx.obj &
@@ -114,7 +120,7 @@ GLOBOBJS = &
 
 fdoom.exe : $(GLOBOBJS)
  wlink @fdoom.lnk
- wstrip fdoom.exe
+ #wstrip fdoom.exe
 
 .c.obj :
  wcc386 $(CCOPTS) $[*
