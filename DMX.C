@@ -20,6 +20,7 @@
 #include "ns_fxm.h"
 #include "ns_music.h"
 #include "ns_task.h"
+#include "ns_multi.h"
 #include "mus2mid.h"
 #include "ns_pcfx.h"
 #include "doomstat.h"
@@ -348,7 +349,7 @@ void SFX_StopPatch(int handle)
         PCFX_Stop(handle & 0x7fff);
         return;
     }
-    FX_StopSound(handle);
+    MV_Kill(handle);
 }
 int SFX_Playing(int handle)
 {
@@ -356,7 +357,7 @@ int SFX_Playing(int handle)
     {
         return PCFX_SoundPlaying(handle & 0x7fff);
     }
-    return FX_SoundActive(handle);
+    return MV_VoicePlaying(handle);
 }
 void SFX_SetOrigin(int handle, int sep, int vol)
 {
@@ -364,8 +365,8 @@ void SFX_SetOrigin(int handle, int sep, int vol)
     {
         return;
     }
-    FX_SetPan(handle, vol * 2, Div63((254 - sep) * vol), Div63((sep)*vol));
-    FX_SetPitch(handle);
+    MV_SetPan(handle, vol * 2, Div63((254 - sep) * vol), Div63((sep)*vol));
+    MV_SetPitch(handle);
 }
 int GF1_Detect(void)
 {
@@ -550,7 +551,7 @@ void WAV_PlayMode(int channels, int samplerate)
     FX_SetVolume(255);
 
     if (reverseStereo)
-        FX_SetReverseStereo(true);
+        MV_SetReverseStereo(true);
 }
 
 int CODEC_Detect(int *a, int *b)

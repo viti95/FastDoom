@@ -200,9 +200,9 @@ void S_StopChannel(int cnum)
     if (c->sfxinfo)
     {
         // stop the sound playing
-        if (I_SoundIsPlaying(c->handle))
+        if (SFX_Playing(c->handle))
         {
-            I_StopSound(c->handle);
+            SFX_StopPatch(c->handle);
         }
 
         // check to see
@@ -458,7 +458,7 @@ void S_StartSound(void *origin_p, int sfx_id)
 
     // Assigns the handle to one of the channels in the
     //  mix/output buffer.
-    channels[cnum].handle = I_StartSound(sfx_id, sfx->data, volume, sep);
+    channels[cnum].handle = SFX_PlayPatch(sfx->data, volume, sep);
 }
 
 //
@@ -485,7 +485,7 @@ void S_UpdateSounds(void *listener_p)
 
         if (c->sfxinfo)
         {
-            if (I_SoundIsPlaying(c->handle))
+            if (SFX_Playing(c->handle))
             {
                 // initialize parameters
                 volume = snd_SfxVolume;
@@ -503,7 +503,7 @@ void S_UpdateSounds(void *listener_p)
                     if (!audible)
                         S_StopChannel(cnum);
                     else
-                        I_UpdateSoundParams(c->handle, volume, sep);
+                        SFX_SetOrigin(c->handle, volume, sep);
                 }
             }
             else
