@@ -27,6 +27,7 @@
 #include "ns_scape.h"
 #include "ns_sb.h"
 #include "ns_sbmus.h"
+#include "ns_muldf.h"
 
 unsigned short divisors[] = {
     0,
@@ -361,12 +362,17 @@ int SFX_Playing(int handle)
 }
 void SFX_SetOrigin(int handle, int sep, int vol)
 {
+    VoiceNode *voice;
+
     if (handle & 0x8000)
-    {
         return;
-    }
-    MV_SetPan(handle, vol * 2, Div63((254 - sep) * vol), Div63((sep)*vol));
-    MV_SetPitch(handle);
+
+    voice = MV_GetVoice(handle);
+    if (voice == NULL)
+        return;
+
+    MV_SetVoiceVolume(voice, vol * 2, Div63((254 - sep) * vol), Div63((sep)*vol));
+    MV_SetVoicePitch(voice, voice->SamplingRate);
 }
 int GF1_Detect(void)
 {

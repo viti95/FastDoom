@@ -33,8 +33,6 @@
 #ifndef __TABLES__
 #define __TABLES__
 
-#define PI 3.141592657
-
 #include "doomdef.h"
 
 #define FINEANGLES 8192

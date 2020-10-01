@@ -458,7 +458,7 @@ void S_StartSound(void *origin_p, int sfx_id)
 
     // Assigns the handle to one of the channels in the
     //  mix/output buffer.
-    channels[cnum].handle = SFX_PlayPatch(sfx->data, volume, sep);
+    channels[cnum].handle = SFX_PlayPatch(sfx->data, sep, volume);
 }
 
 //

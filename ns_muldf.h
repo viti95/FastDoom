@@ -171,14 +171,15 @@ static void MV_ServiceVoc(void);
 static playbackstatus MV_GetNextDemandFeedBlock(VoiceNode *voice);
 static playbackstatus MV_GetNextRawBlock(VoiceNode *voice);
 
-static VoiceNode *MV_GetVoice(int handle);
+VoiceNode *MV_GetVoice(int handle);
 static VoiceNode *MV_AllocVoice(int priority);
 
 static short *MV_GetVolumeTable(int vol);
 
 static void MV_SetVoiceMixMode(VoiceNode *voice);
 
-static void MV_SetVoicePitch(VoiceNode *voice, unsigned long rate);
+void MV_SetVoicePitch(VoiceNode *voice, unsigned long rate);
+void MV_SetVoiceVolume(VoiceNode *voice, int vol, int left, int right);
 static void MV_CalcVolume(int MaxLevel);
 static void MV_CalcPanTable(void);
 
