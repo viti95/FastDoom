@@ -233,7 +233,6 @@ void M_DrawLoad(void);
 void M_DrawSave(void);
 
 void M_DrawSaveLoadBorder(int x, int y);
-void M_SetupNextMenu(menu_t *menudef);
 void M_DrawThermo(int x, int y, int thermWidth, int thermDot);
 void M_WriteText(int x, int y, char *string);
 int M_StringWidth(char *string);
@@ -616,6 +615,15 @@ void M_LoadSelect(int choice)
     sprintf(name, SAVEGAMENAME "%d.dsg", choice);
     G_LoadGame(name);
     menuactive = 0;
+}
+
+//
+// M_SetupNextMenu
+//
+void M_SetupNextMenu(menu_t *menudef)
+{
+    currentMenu = menudef;
+    itemOn = currentMenu->lastOn;
 }
 
 //
@@ -1779,15 +1787,6 @@ void M_Drawer(void)
     // DRAW SKULL
     V_DrawPatchDirect(x + SKULLXOFF, currentMenu->y - 5 + itemOn * LINEHEIGHT, 0,
                       W_CacheLumpName(skullName[whichSkull], PU_CACHE));
-}
-
-//
-// M_SetupNextMenu
-//
-void M_SetupNextMenu(menu_t *menudef)
-{
-    currentMenu = menudef;
-    itemOn = currentMenu->lastOn;
 }
 
 //

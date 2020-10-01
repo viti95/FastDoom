@@ -69,8 +69,6 @@ void G_WriteDemoTiccmd(ticcmd_t *cmd);
 void G_PlayerReborn();
 void G_InitNew(skill_t skill, int episode, int map);
 
-void G_DoReborn(int playernum);
-
 void G_DoLoadLevel(void);
 void G_DoNewGame(void);
 void G_DoLoadGame(void);
@@ -458,6 +456,15 @@ boolean G_Responder(event_t *ev)
 }
 
 //
+// G_DoReborn
+//
+void G_DoReborn(int playernum)
+{
+    // reload the level from scratch
+    gameaction = ga_loadlevel;
+}
+
+//
 // G_Ticker
 // Make ticcmd_ts for the players.
 //
@@ -624,15 +631,6 @@ void G_PlayerReborn()
 // because something is occupying it
 //
 void P_SpawnPlayer(mapthing_t *mthing);
-
-//
-// G_DoReborn
-//
-void G_DoReborn(int playernum)
-{
-    // reload the level from scratch
-    gameaction = ga_loadlevel;
-}
 
 // DOOM Par Times
 int pars[4][10] =
