@@ -47,13 +47,8 @@ extern int           GUS_MemConfig;
 static int GUSMIDI_Volume = 255;
 
 extern int GUS_AuxError;
-extern int GUS_ErrorCode;
 
 int GUSMIDI_Installed = FALSE;
-
-#define GUS_SetErrorCode( status ) \
-   GUS_ErrorCode   = ( status );
-
 
 /*---------------------------------------------------------------------
    Function: GUS_GetPatchMap
@@ -85,7 +80,6 @@ int GUS_GetPatchMap
    ud = getenv( "ULTRADIR" );
    if ( ud == NULL )
       {
-      GUS_SetErrorCode( GUS_ULTRADIRNotSet );
       return( GUS_Error );
       }
 
@@ -104,7 +98,6 @@ int GUS_GetPatchMap
       fp = fopen( text, "r" );
       if ( fp == NULL )
          {
-         GUS_SetErrorCode( GUS_MissingConfig );
          return( GUS_Error );
          }
       }
@@ -218,7 +211,6 @@ int GUSMIDI_LoadPatch
    if ( ret != OK )
       {
       GUS_AuxError = ret;
-      GUS_SetErrorCode( GUS_GF1Error );
       return( GUS_Error );
       }
 
@@ -226,7 +218,6 @@ int GUSMIDI_LoadPatch
       sizeof( struct wave_struct ) );
    if ( status != USRHOOKS_Ok )
       {
-      GUS_SetErrorCode( GUS_OutOfMemory );
       return( GUS_Error );
       }
 
@@ -237,7 +228,6 @@ int GUSMIDI_LoadPatch
       {
       USRHOOKS_FreeMem( wave_buff );
       GUS_AuxError = ret;
-      GUS_SetErrorCode( GUS_GF1Error );
       return( GUS_Error );
       }
 

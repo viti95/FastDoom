@@ -42,11 +42,6 @@ void RestoreES(unsigned num);
 #pragma aux RestoreES = \
     "mov  es, ax" parm[eax];
 
-int AWE32_ErrorCode = AWE32_Ok;
-
-#define AWE32_SetErrorCode(status) \
-    AWE32_ErrorCode = (status);
-
 /**********************************************************************
 
    Memory locked functions:
@@ -239,7 +234,6 @@ int AWE32_Init(
         status = BLASTER_GetEnv(&Blaster);
         if (status != BLASTER_Ok)
         {
-            AWE32_SetErrorCode(AWE32_SoundBlasterError);
             return (AWE32_Error);
         }
     }
@@ -265,14 +259,12 @@ int AWE32_Init(
     status = awe32Detect(wEMUBaseAddx);
     if (status)
     {
-        AWE32_SetErrorCode(AWE32_NotDetected);
         return (AWE32_Error);
     }
 
     status = awe32InitHardware();
     if (status)
     {
-        AWE32_SetErrorCode(AWE32_UnableToInitialize);
         return (AWE32_Error);
     }
 
@@ -280,14 +272,13 @@ int AWE32_Init(
     if (status)
     {
         AWE32_Shutdown();
-        AWE32_SetErrorCode(AWE32_MPU401Error) return (AWE32_Error);
+        return (AWE32_Error);
     }
 
     if (status != DPMI_Ok)
     {
         ShutdownMPU();
         awe32Terminate();
-        AWE32_SetErrorCode(AWE32_DPMI_Error);
         return (AWE32_Error);
     }
 

@@ -3,8 +3,6 @@
 
 #include "ns_cards.h"
 
-extern int MUSIC_ErrorCode;
-
 enum MUSIC_ERRORS
 {
     MUSIC_Warning = -2,

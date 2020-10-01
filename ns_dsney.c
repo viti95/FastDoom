@@ -39,11 +39,6 @@ static task *SS_Timer;
 
 void (*SS_CallBack)(void);
 
-int SS_ErrorCode = SS_Ok;
-
-#define SS_SetErrorCode(status) \
-    SS_ErrorCode = (status);
-
 /*---------------------------------------------------------------------
    Function: SS_ServiceInterrupt
 
@@ -134,7 +129,6 @@ int SS_GetCurrentPos(
 
     if (!SS_SoundPlaying)
     {
-        SS_SetErrorCode(SS_NoSoundPlaying);
         return (SS_Warning);
     }
 
@@ -390,7 +384,6 @@ int SS_Init(
     status = SS_DetectSoundSource();
     if (!status)
     {
-        SS_SetErrorCode(SS_NotFound);
         return (SS_Warning);
     }
 
@@ -406,7 +399,6 @@ int SS_Init(
 
     SS_Installed = TRUE;
 
-    SS_SetErrorCode(status);
     return (status);
 }
 

@@ -28,11 +28,6 @@ int GUS_MemConfig;
 
 int GUS_AuxError = 0;
 
-int GUS_ErrorCode = GUS_Ok;
-
-#define GUS_SetErrorCode(status) \
-    GUS_ErrorCode = (status);
-
 /*---------------------------------------------------------------------
    Function: D32DosMemAlloc
 
@@ -79,15 +74,12 @@ int GUS_Init(
         return (GUS_Ok);
     }
 
-    GUS_SetErrorCode(GUS_Ok);
-
     GUS_Installed = 0;
 
     GetUltraCfg(&os);
 
     if (os.forced_gf1_irq > 7)
     {
-        GUS_SetErrorCode(GUS_InvalidIrq);
         return (GUS_Error);
     }
 
@@ -96,7 +88,6 @@ int GUS_Init(
         GUS_HoldBuffer.vptr = D32DosMemAlloc(DMABUFFSIZE);
         if (GUS_HoldBuffer.vptr == NULL)
         {
-            GUS_SetErrorCode(GUS_OutOfDosMemory);
             return (GUS_Error);
         }
         GUS_HoldBuffer.paddr = (unsigned long)GUS_HoldBuffer.vptr;
@@ -109,7 +100,6 @@ int GUS_Init(
     if (ret)
     {
         GUS_AuxError = ret;
-        GUS_SetErrorCode(GUS_GF1Error);
         return (GUS_Error);
     }
 

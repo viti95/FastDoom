@@ -17,16 +17,12 @@
 static unsigned FX_MixRate;
 
 int FX_SoundDevice = -1;
-int FX_ErrorCode = FX_Ok;
 int FX_Installed = FALSE;
 
 void TextMode(void);
 #pragma aux TextMode =  \
     "mov    ax, 0003h", \
             "int    10h" modify[ax];
-
-#define FX_SetErrorCode(status) \
-    FX_ErrorCode = (status);
 
 /*---------------------------------------------------------------------
    Function: FX_SetupCard
@@ -45,7 +41,6 @@ int FX_SetupCard(
     FX_SoundDevice = SoundCard;
 
     status = FX_Ok;
-    FX_SetErrorCode(FX_Ok);
 
     switch (SoundCard)
     {
@@ -54,7 +49,6 @@ int FX_SetupCard(
         DeviceStatus = BLASTER_Init();
         if (DeviceStatus != BLASTER_Ok)
         {
-            FX_SetErrorCode(FX_SoundCardError);
             status = FX_Error;
             break;
         }
@@ -68,7 +62,6 @@ int FX_SetupCard(
         DeviceStatus = PAS_Init();
         if (DeviceStatus != PAS_Ok)
         {
-            FX_SetErrorCode(FX_SoundCardError);
             status = FX_Error;
             break;
         }
@@ -91,7 +84,6 @@ int FX_SetupCard(
                                               &device->MaxChannels);
         if (DeviceStatus != SOUNDSCAPE_Ok)
         {
-            FX_SetErrorCode(FX_SoundCardError);
             status = FX_Error;
         }
         break;
@@ -99,7 +91,6 @@ int FX_SetupCard(
     case UltraSound:
         if (GUSWAVE_Init(8) != GUSWAVE_Ok)
         {
-            FX_SetErrorCode(FX_SoundCardError);
             status = FX_Error;
             break;
         }
@@ -114,7 +105,6 @@ int FX_SetupCard(
         DeviceStatus = SS_Init(SoundCard);
         if (DeviceStatus != SS_Ok)
         {
-            FX_SetErrorCode(FX_SoundCardError);
             status = FX_Error;
             break;
         }
@@ -125,7 +115,6 @@ int FX_SetupCard(
         break;
 
     default:
-        FX_SetErrorCode(FX_InvalidCard);
         status = FX_Error;
     }
 
@@ -145,12 +134,9 @@ int FX_GetBlasterSettings(
     int status;
     BLASTER_CONFIG Blaster;
 
-    FX_SetErrorCode(FX_Ok);
-
     status = BLASTER_GetEnv(&Blaster);
     if (status != BLASTER_Ok)
     {
-        FX_SetErrorCode(FX_BlasterError);
         return (FX_Error);
     }
 
@@ -181,8 +167,6 @@ int FX_SetupSoundBlaster(
     int DeviceStatus;
     BLASTER_CONFIG Blaster;
 
-    FX_SetErrorCode(FX_Ok);
-
     FX_SoundDevice = SoundBlaster;
 
     Blaster.Type = blaster.Type;
@@ -198,7 +182,6 @@ int FX_SetupSoundBlaster(
     DeviceStatus = BLASTER_Init();
     if (DeviceStatus != BLASTER_Ok)
     {
-        FX_SetErrorCode(FX_SoundCardError);
         return (FX_Error);
     }
 
@@ -248,13 +231,11 @@ int FX_Init(
                                numchannels, samplebits);
         if (devicestatus != MV_Ok)
         {
-            FX_SetErrorCode(FX_MultiVocError);
             status = FX_Error;
         }
         break;
 
     default:
-        FX_SetErrorCode(FX_InvalidCard);
         status = FX_Error;
     }
 
@@ -301,13 +282,11 @@ int FX_Shutdown(
         status = MV_Shutdown();
         if (status != MV_Ok)
         {
-            FX_SetErrorCode(FX_MultiVocError);
             status = FX_Error;
         }
         break;
 
     default:
-        FX_SetErrorCode(FX_InvalidCard);
         status = FX_Error;
     }
 
@@ -344,7 +323,6 @@ int FX_SetCallBack(
         break;
 
     default:
-        FX_SetErrorCode(FX_InvalidCard);
         status = FX_Error;
     }
 
@@ -464,7 +442,6 @@ int FX_SetPan(
     status = MV_SetPan(handle, vol, left, right);
     if (status == MV_Error)
     {
-        FX_SetErrorCode(FX_MultiVocError);
         status = FX_Warning;
     }
 
@@ -486,7 +463,6 @@ int FX_SetPitch(
     status = MV_SetPitch(handle);
     if (status == MV_Error)
     {
-        FX_SetErrorCode(FX_MultiVocError);
         status = FX_Warning;
     }
 
@@ -509,7 +485,6 @@ int FX_SetFrequency(
     status = MV_SetFrequency(handle, frequency);
     if (status == MV_Error)
     {
-        FX_SetErrorCode(FX_MultiVocError);
         status = FX_Warning;
     }
 
@@ -538,7 +513,6 @@ int FX_PlayRaw(
     handle = MV_PlayRaw(ptr, length, rate, vol, left, right, priority, callbackval);
     if (handle < MV_Ok)
     {
-        FX_SetErrorCode(FX_MultiVocError);
         handle = FX_Warning;
     }
 
@@ -586,7 +560,6 @@ int FX_StopSound(
     status = MV_Kill(handle);
     if (status != MV_Ok)
     {
-        FX_SetErrorCode(FX_MultiVocError);
         return (FX_Warning);
     }
 
@@ -608,7 +581,6 @@ int FX_StopAllSounds(
     status = MV_KillAllVoices();
     if (status != MV_Ok)
     {
-        FX_SetErrorCode(FX_MultiVocError);
         return (FX_Warning);
     }
 

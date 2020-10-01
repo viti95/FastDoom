@@ -24,17 +24,12 @@ static int PCFX_VoiceHandle = PCFX_MinVoiceHandle;
 
 int PCFX_Installed = FALSE;
 
-int PCFX_ErrorCode = PCFX_Ok;
-
-#define PCFX_SetErrorCode(status) PCFX_ErrorCode = (status);
-
 int PCFX_Stop(int handle)
 {
     unsigned flags;
 
     if ((handle != PCFX_VoiceHandle) || (PCFX_Sound == NULL))
     {
-        PCFX_SetErrorCode(PCFX_VoiceNotFound);
         return (PCFX_Warning);
     }
 
@@ -95,7 +90,6 @@ int PCFX_Play(PCSound *sound, int priority, unsigned long callbackval)
 
     if (priority < PCFX_Priority)
     {
-        PCFX_SetErrorCode(PCFX_NoVoices);
         return (PCFX_Warning);
     }
 
@@ -172,7 +166,6 @@ int PCFX_Init(void){
     PCFX_CallBackFunc = NULL;
     PCFX_Installed = TRUE;
 
-    PCFX_SetErrorCode(PCFX_Ok);
     return (PCFX_Ok);
 }
 
@@ -185,6 +178,5 @@ int PCFX_Shutdown(void)
         PCFX_Installed = FALSE;
     }
 
-    PCFX_SetErrorCode(PCFX_Ok);
     return (PCFX_Ok);
 }

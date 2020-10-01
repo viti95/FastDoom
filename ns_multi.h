@@ -3,8 +3,6 @@
 
 #define MV_MinVoiceHandle 1
 
-extern int MV_ErrorCode;
-
 enum MV_Errors
 {
     MV_Warning = -2,

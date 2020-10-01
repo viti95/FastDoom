@@ -23,7 +23,6 @@ void TextMode(void);
             "int    10h" modify[ax];
 
 int MUSIC_SoundDevice = -1;
-int MUSIC_ErrorCode = MUSIC_Ok;
 
 static midifuncs MUSIC_MidiFunctions;
 
@@ -38,9 +37,6 @@ int MUSIC_InitAWE32(midifuncs *Funcs);
 int MUSIC_InitFM(int card, midifuncs *Funcs);
 int MUSIC_InitMidi(int card, midifuncs *Funcs, int Address);
 int MUSIC_InitGUS(midifuncs *Funcs);
-
-#define MUSIC_SetErrorCode(status) \
-    MUSIC_ErrorCode = (status);
 
 /*---------------------------------------------------------------------
    Function: MUSIC_Init
@@ -91,7 +87,6 @@ int MUSIC_Init(
     case SoundSource:
     case PC:
     default:
-        MUSIC_SetErrorCode(MUSIC_InvalidCard);
         status = MUSIC_Error;
     }
 
@@ -289,7 +284,6 @@ int MUSIC_StopSong(
 {
     MUSIC_StopFade();
     MIDI_StopSong();
-    MUSIC_SetErrorCode(MUSIC_Ok);
     return (MUSIC_Ok);
 }
 
@@ -322,7 +316,6 @@ int MUSIC_PlaySong(
         status = MIDI_PlaySong(song, loopflag);
         if (status != MIDI_Ok)
         {
-            MUSIC_SetErrorCode(MUSIC_MidiError);
             return (MUSIC_Warning);
         }
         break;
@@ -330,7 +323,6 @@ int MUSIC_PlaySong(
     case SoundSource:
     case PC:
     default:
-        MUSIC_SetErrorCode(MUSIC_InvalidCard);
         return (MUSIC_Warning);
         break;
     }
@@ -440,7 +432,6 @@ int MUSIC_InitAWE32(
     status = AWE32_Init();
     if (status != AWE32_Ok)
     {
-        MUSIC_SetErrorCode(MUSIC_SoundCardError);
         return (MUSIC_Error);
     }
 
@@ -481,7 +472,6 @@ int MUSIC_InitFM(
 
     if (!AL_DetectFM())
     {
-        MUSIC_SetErrorCode(MUSIC_FMNotDetected);
         return (MUSIC_Error);
     }
 
@@ -563,14 +553,12 @@ int MUSIC_InitMidi(
         Address = SOUNDSCAPE_GetMIDIPort();
         if (Address < SOUNDSCAPE_Ok)
         {
-            MUSIC_SetErrorCode(MUSIC_SoundCardError);
             return (MUSIC_Error);
         }
     }
 
     if (MPU_Init(Address) != MPU_Ok)
     {
-        MUSIC_SetErrorCode(MUSIC_MPU401Error);
         return (MUSIC_Error);
     }
 
@@ -611,7 +599,6 @@ int MUSIC_InitGUS(
 
     if (GUSMIDI_Init() != GUS_Ok)
     {
-        MUSIC_SetErrorCode(MUSIC_SoundCardError);
         return (MUSIC_Error);
     }
 
@@ -712,7 +699,6 @@ int MUSIC_FadeVolume(
     MUSIC_FadeTask = TS_ScheduleTask(MUSIC_FadeRoutine, 40, 1, NULL);
     if (MUSIC_FadeTask == NULL)
     {
-        MUSIC_SetErrorCode(MUSIC_TaskManError);
         return (MUSIC_Warning);
     }
 

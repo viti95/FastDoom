@@ -90,11 +90,6 @@ extern void SetStack(unsigned short selector, unsigned long stackptr);
 
 int SOUNDSCAPE_DMAChannel = -1;
 
-int SOUNDSCAPE_ErrorCode = SOUNDSCAPE_Ok;
-
-#define SOUNDSCAPE_SetErrorCode(status) \
-    SOUNDSCAPE_ErrorCode = (status);
-
 /*---------------------------------------------------------------------
    Function: SOUNDSCAPE_EnableInterrupt
 
@@ -464,7 +459,6 @@ static int SOUNDSCAPE_SetupDMABuffer(
     DmaStatus = DMA_SetupTransfer(SOUNDSCAPE_Config.DMAChan, BufferPtr, BufferSize, mode);
     if (DmaStatus == DMA_Error)
     {
-        SOUNDSCAPE_SetErrorCode(SOUNDSCAPE_DmaError);
         return (SOUNDSCAPE_Error);
     }
 
@@ -492,7 +486,6 @@ int SOUNDSCAPE_GetCurrentPos(
 
     if (!SOUNDSCAPE_SoundPlaying)
     {
-        SOUNDSCAPE_SetErrorCode(SOUNDSCAPE_NoSoundPlaying);
         return (SOUNDSCAPE_Error);
     }
 
@@ -817,11 +810,9 @@ int SOUNDSCAPE_FindCard(void)
     {
         if (cp == NULL)
         {
-            SOUNDSCAPE_SetErrorCode(SOUNDSCAPE_EnvNotFound);
             return (SOUNDSCAPE_Error);
         }
 
-        SOUNDSCAPE_SetErrorCode(SOUNDSCAPE_InitFileNotFound);
         return (SOUNDSCAPE_Error);
     }
 
@@ -829,7 +820,6 @@ int SOUNDSCAPE_FindCard(void)
     if (!found)
     {
         fclose(fp);
-        SOUNDSCAPE_SetErrorCode(SOUNDSCAPE_MissingProductInfo);
         return (SOUNDSCAPE_Error);
     }
 
@@ -846,7 +836,6 @@ int SOUNDSCAPE_FindCard(void)
     if (!found)
     {
         fclose(fp);
-        SOUNDSCAPE_SetErrorCode(SOUNDSCAPE_MissingPortInfo);
         return (SOUNDSCAPE_Error);
     }
 
@@ -856,7 +845,6 @@ int SOUNDSCAPE_FindCard(void)
     if (!found)
     {
         fclose(fp);
-        SOUNDSCAPE_SetErrorCode(SOUNDSCAPE_MissingDMAInfo);
         return (SOUNDSCAPE_Error);
     }
 
@@ -865,7 +853,6 @@ int SOUNDSCAPE_FindCard(void)
     if (status == DMA_Error)
     {
         fclose(fp);
-        SOUNDSCAPE_SetErrorCode(SOUNDSCAPE_DmaError);
         return (SOUNDSCAPE_Error);
     }
 
@@ -873,7 +860,6 @@ int SOUNDSCAPE_FindCard(void)
     if (!found)
     {
         fclose(fp);
-        SOUNDSCAPE_SetErrorCode(SOUNDSCAPE_MissingIRQInfo);
         return (SOUNDSCAPE_Error);
     }
 
@@ -887,7 +873,6 @@ int SOUNDSCAPE_FindCard(void)
     if (!found)
     {
         fclose(fp);
-        SOUNDSCAPE_SetErrorCode(SOUNDSCAPE_MissingSBIRQInfo);
         return (SOUNDSCAPE_Error);
     }
 
@@ -900,14 +885,12 @@ int SOUNDSCAPE_FindCard(void)
     if (!VALID_IRQ(SOUNDSCAPE_Config.WaveIRQ))
     {
         fclose(fp);
-        SOUNDSCAPE_SetErrorCode(SOUNDSCAPE_InvalidSBIrq);
         return (SOUNDSCAPE_Error);
     }
 
     if (SOUNDSCAPE_Interrupts[SOUNDSCAPE_Config.WaveIRQ] == INVALID)
     {
         fclose(fp);
-        SOUNDSCAPE_SetErrorCode(SOUNDSCAPE_InvalidSBIrq);
         return (SOUNDSCAPE_Error);
     }
 
@@ -915,7 +898,6 @@ int SOUNDSCAPE_FindCard(void)
     if (!found)
     {
         fclose(fp);
-        SOUNDSCAPE_SetErrorCode(SOUNDSCAPE_MissingSBENABLEInfo);
         return (SOUNDSCAPE_Error);
     }
 
@@ -934,14 +916,12 @@ int SOUNDSCAPE_FindCard(void)
     if ((tmp & 0x000f) != 0x0005)
     {
         fclose(fp);
-        SOUNDSCAPE_SetErrorCode(SOUNDSCAPE_HardwareError);
         return (SOUNDSCAPE_Error);
     }
 
     if ((tmp & 0x00f0) == 0x00f0)
     {
         fclose(fp);
-        SOUNDSCAPE_SetErrorCode(SOUNDSCAPE_HardwareError);
         return (SOUNDSCAPE_Error);
     }
 
@@ -967,7 +947,6 @@ int SOUNDSCAPE_FindCard(void)
         if (!found)
         {
             fclose(fp);
-            SOUNDSCAPE_SetErrorCode(SOUNDSCAPE_MissingWavePortInfo);
             return (SOUNDSCAPE_Error);
         }
 
@@ -1033,7 +1012,6 @@ int SOUNDSCAPE_FindCard(void)
     }
 
     SOUNDSCAPE_FoundCard = TRUE;
-    SOUNDSCAPE_SetErrorCode(SOUNDSCAPE_Ok);
     return (SOUNDSCAPE_Ok);
 }
 
@@ -1154,7 +1132,6 @@ static int SOUNDSCAPE_Setup(
         status = IRQ_SetVector(Interrupt, SOUNDSCAPE_ServiceInterrupt);
         if (status != IRQ_Ok)
         {
-            SOUNDSCAPE_SetErrorCode(SOUNDSCAPE_UnableToSetIrq);
             return (SOUNDSCAPE_Error);
         }
     }
@@ -1171,7 +1148,6 @@ static int SOUNDSCAPE_Setup(
 
     SOUNDSCAPE_EnableInterrupt();
 
-    SOUNDSCAPE_SetErrorCode(SOUNDSCAPE_Ok);
     return (SOUNDSCAPE_Ok);
 }
 
@@ -1231,7 +1207,6 @@ int SOUNDSCAPE_Init(
     StackSelector = allocateTimerStack(kStackSize);
     if (StackSelector == NULL)
     {
-        SOUNDSCAPE_SetErrorCode(SOUNDSCAPE_OutOfMemory);
         return (SOUNDSCAPE_Error);
     }
 
@@ -1258,7 +1233,6 @@ int SOUNDSCAPE_Init(
     SOUNDSCAPE_SetPlaybackRate(SOUNDSCAPE_DefaultSampleRate);
     SOUNDSCAPE_SetMixMode(SOUNDSCAPE_DefaultMixMode);
 
-    SOUNDSCAPE_SetErrorCode(SOUNDSCAPE_Ok);
     return (SOUNDSCAPE_Ok);
 }
 

@@ -2,7 +2,6 @@
 #define __SNDSCAPE_H
 
 extern int SOUNDSCAPE_DMAChannel;
-extern int SOUNDSCAPE_ErrorCode;
 
 enum SOUNDSCAPE_ERRORS
 {

@@ -51,11 +51,6 @@ static int GUSWAVE_SwapLeftRight = FALSE;
 
 extern int GUSMIDI_Installed;
 
-int GUSWAVE_ErrorCode = GUSWAVE_Ok;
-
-#define GUSWAVE_SetErrorCode(status) \
-    GUSWAVE_ErrorCode = (status);
-
 /*---------------------------------------------------------------------
    Function: GUSWAVE_CallBack
 
@@ -292,11 +287,6 @@ static VoiceNode *GUSWAVE_GetVoice(
 
     RestoreInterrupts(flags);
 
-    if (voice == NULL)
-    {
-        GUSWAVE_SetErrorCode(GUSWAVE_VoiceNotFound);
-    }
-
     return (voice);
 }
 
@@ -371,7 +361,6 @@ int GUSWAVE_Kill(
     if (voice == NULL)
     {
         RestoreInterrupts(flags);
-        GUSWAVE_SetErrorCode(GUSWAVE_VoiceNotFound);
 
         return (GUSWAVE_Warning);
     }
@@ -466,7 +455,6 @@ int GUSWAVE_SetPitch(
     {
         RestoreInterrupts(flags);
 
-        GUSWAVE_SetErrorCode(GUSWAVE_VoiceNotFound);
         return (GUSWAVE_Warning);
     }
 
@@ -505,7 +493,6 @@ int GUSWAVE_SetPan3D(
     {
         RestoreInterrupts(flags);
 
-        GUSWAVE_SetErrorCode(GUSWAVE_VoiceNotFound);
         return (GUSWAVE_Warning);
     }
 
@@ -780,7 +767,6 @@ int GUSWAVE_Play(
         LL_AddToTail(VoiceNode, &VoicePool, voice);
         RestoreInterrupts(flags);
 
-        GUSWAVE_SetErrorCode(GUSWAVE_NoVoices);
         return (GUSWAVE_Warning);
     }
 
@@ -821,7 +807,6 @@ int GUSWAVE_StartDemandFeedPlayback(
     voice = GUSWAVE_AllocVoice(priority);
     if (voice == NULL)
     {
-        GUSWAVE_SetErrorCode(GUSWAVE_NoVoices);
         return (GUSWAVE_Warning);
     }
 
@@ -917,14 +902,6 @@ static int GUSWAVE_InitVoices(
             GUSWAVE_MaxVoices = i;
             if (i < 1)
             {
-                if (GUSMIDI_Installed)
-                {
-                    GUSWAVE_SetErrorCode(GUSWAVE_UltraNoMemMIDI);
-                }
-                else
-                {
-                    GUSWAVE_SetErrorCode(GUSWAVE_UltraNoMem);
-                }
                 return (GUSWAVE_Error);
             }
 
@@ -967,12 +944,9 @@ int GUSWAVE_Init(
         GUSWAVE_Shutdown();
     }
 
-    GUSWAVE_SetErrorCode(GUSWAVE_Ok);
-
     status = GUS_Init();
     if (status != GUS_Ok)
     {
-        GUSWAVE_SetErrorCode(GUSWAVE_GUSError);
         return (GUSWAVE_Error);
     }
 

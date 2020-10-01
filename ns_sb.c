@@ -106,11 +106,6 @@ extern void SetStack(unsigned short selector, unsigned long stackptr);
 
 int BLASTER_DMAChannel;
 
-int BLASTER_ErrorCode = BLASTER_Ok;
-
-#define BLASTER_SetErrorCode(status) \
-    BLASTER_ErrorCode = (status);
-
 /*---------------------------------------------------------------------
    Function: BLASTER_EnableInterrupt
 
@@ -298,11 +293,6 @@ int BLASTER_WriteDSP(
         count--;
     } while (count > 0);
 
-    if (status != BLASTER_Ok)
-    {
-        BLASTER_SetErrorCode(BLASTER_CardNotReady);
-    }
-
     return (status);
 }
 
@@ -336,11 +326,6 @@ int BLASTER_ReadDSP(
 
         count--;
     } while (count > 0);
-
-    if (status == BLASTER_Error)
-    {
-        BLASTER_SetErrorCode(BLASTER_CardNotReady);
-    }
 
     return (status);
 }
@@ -412,7 +397,6 @@ int BLASTER_GetDSPVersion(
     if ((MajorVersion == BLASTER_Error) ||
         (MinorVersion == BLASTER_Error))
     {
-        BLASTER_SetErrorCode(BLASTER_CardNotReady);
         return (BLASTER_Error);
     }
 
@@ -708,14 +692,12 @@ int BLASTER_SetupDMABuffer(
 
     if (DmaChannel == UNDEFINED)
     {
-        BLASTER_SetErrorCode(errorcode);
         return (BLASTER_Error);
     }
 
     DmaStatus = DMA_SetupTransfer(DmaChannel, BufferPtr, BufferSize, mode);
     if (DmaStatus == DMA_Error)
     {
-        BLASTER_SetErrorCode(BLASTER_DmaError);
         return (BLASTER_Error);
     }
 
@@ -745,7 +727,6 @@ int BLASTER_GetCurrentPos(
 
     if (!BLASTER_SoundPlaying)
     {
-        BLASTER_SetErrorCode(BLASTER_NoSoundPlaying);
         return (BLASTER_Error);
     }
 
@@ -760,7 +741,6 @@ int BLASTER_GetCurrentPos(
 
     if (DmaChannel == UNDEFINED)
     {
-        BLASTER_SetErrorCode(BLASTER_DMANotSet);
         return (BLASTER_Error);
     }
 
@@ -1038,7 +1018,6 @@ int BLASTER_GetVoiceVolume(
         break;
 
     default:
-        BLASTER_SetErrorCode(BLASTER_NoMixer);
         volume = BLASTER_Error;
     }
 
@@ -1077,7 +1056,6 @@ int BLASTER_SetVoiceVolume(
         break;
 
     default:
-        BLASTER_SetErrorCode(BLASTER_NoMixer);
         status = BLASTER_Error;
     }
 
@@ -1116,7 +1094,6 @@ int BLASTER_GetMidiVolume(
         break;
 
     default:
-        BLASTER_SetErrorCode(BLASTER_NoMixer);
         volume = BLASTER_Error;
     }
 
@@ -1149,9 +1126,6 @@ void BLASTER_SetMidiVolume(int volume)
         BLASTER_WriteMixer(MIXER_SB16MidiLeft, volume & 0xf8);
         BLASTER_WriteMixer(MIXER_SB16MidiRight, volume & 0xf8);
         break;
-
-    default:
-        BLASTER_SetErrorCode(BLASTER_NoMixer);
     }
 }
 
@@ -1301,7 +1275,6 @@ int BLASTER_GetEnv(
     Blaster = getenv("BLASTER");
     if (Blaster == NULL)
     {
-        BLASTER_SetErrorCode(BLASTER_EnvNotFound);
         return (BLASTER_Error);
     }
 
@@ -1318,7 +1291,6 @@ int BLASTER_GetEnv(
 
         if (!isxdigit(*Blaster))
         {
-            BLASTER_SetErrorCode(BLASTER_InvalidParameter);
             return (BLASTER_Error);
         }
 
@@ -1589,7 +1561,6 @@ int BLASTER_Init(
 
     if (BLASTER_Config.Address == UNDEFINED)
     {
-        BLASTER_SetErrorCode(BLASTER_AddrNotSet);
         return (BLASTER_Error);
     }
 
@@ -1618,7 +1589,6 @@ int BLASTER_Init(
             status = DMA_VerifyChannel(BLASTER_Config.Dma16);
             if (status == DMA_Error)
             {
-                BLASTER_SetErrorCode(BLASTER_DmaError);
                 return (BLASTER_Error);
             }
         }
@@ -1628,7 +1598,6 @@ int BLASTER_Init(
             status = DMA_VerifyChannel(BLASTER_Config.Dma8);
             if (status == DMA_Error)
             {
-                BLASTER_SetErrorCode(BLASTER_DmaError);
                 return (BLASTER_Error);
             }
         }
@@ -1637,21 +1606,18 @@ int BLASTER_Init(
         Irq = BLASTER_Config.Interrupt;
         if (!VALID_IRQ(Irq))
         {
-            BLASTER_SetErrorCode(BLASTER_InvalidIrq);
             return (BLASTER_Error);
         }
 
         Interrupt = BLASTER_Interrupts[Irq];
         if (Interrupt == INVALID)
         {
-            BLASTER_SetErrorCode(BLASTER_InvalidIrq);
             return (BLASTER_Error);
         }
 
         StackSelector = allocateTimerStack(kStackSize);
         if (StackSelector == NULL)
         {
-            BLASTER_SetErrorCode(BLASTER_OutOfMemory);
             return (BLASTER_Error);
         }
 
@@ -1670,7 +1636,6 @@ int BLASTER_Init(
             {
                 deallocateTimerStack(StackSelector);
                 StackSelector = NULL;
-                BLASTER_SetErrorCode(BLASTER_UnableToSetIrq);
                 return (BLASTER_Error);
             }
         }
@@ -1679,7 +1644,6 @@ int BLASTER_Init(
         status = BLASTER_Ok;
     }
 
-    BLASTER_SetErrorCode(status);
     return (status);
 }
 

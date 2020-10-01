@@ -78,11 +78,6 @@ int MV_RightChannelOffset;
 
 unsigned long MV_MixPosition;
 
-int MV_ErrorCode = MV_Ok;
-
-#define MV_SetErrorCode(status) \
-    MV_ErrorCode = (status);
-
 /*---------------------------------------------------------------------
    Function: MV_Mix
 
@@ -483,7 +478,6 @@ int MV_Kill(
     if (voice == NULL)
     {
         RestoreInterrupts(flags);
-        MV_SetErrorCode(MV_VoiceNotFound);
         return (MV_Error);
     }
 
@@ -671,7 +665,6 @@ int MV_SetPitch(
     voice = MV_GetVoice(handle);
     if (voice == NULL)
     {
-        MV_SetErrorCode(MV_VoiceNotFound);
         return (MV_Error);
     }
 
@@ -696,7 +689,6 @@ int MV_SetFrequency(
     voice = MV_GetVoice(handle);
     if (voice == NULL)
     {
-        MV_SetErrorCode(MV_VoiceNotFound);
         return (MV_Error);
     }
 
@@ -904,7 +896,6 @@ int MV_EndLooping(
     if (voice == NULL)
     {
         RestoreInterrupts(flags);
-        MV_SetErrorCode(MV_VoiceNotFound);
         return (MV_Warning);
     }
 
@@ -936,7 +927,6 @@ int MV_SetPan(
     voice = MV_GetVoice(handle);
     if (voice == NULL)
     {
-        MV_SetErrorCode(MV_VoiceNotFound);
         return (MV_Warning);
     }
 
@@ -1078,7 +1068,6 @@ int MV_StartPlayback(
 
         if (status != BLASTER_Ok)
         {
-            MV_SetErrorCode(MV_BlasterError);
             return (MV_Error);
         }
 
@@ -1092,7 +1081,6 @@ int MV_StartPlayback(
                                                  MV_Bits, MV_RequestedMixRate, 0, (MV_Channels == 1) ? 0 : 24, 255, 0xffff, 0);
         if (status < GUSWAVE_Ok)
         {
-            MV_SetErrorCode(MV_BlasterError);
             return (MV_Error);
         }
 
@@ -1103,7 +1091,6 @@ int MV_StartPlayback(
             if (status < GUSWAVE_Ok)
             {
                 GUSWAVE_KillAllVoices();
-                MV_SetErrorCode(MV_BlasterError);
                 return (MV_Error);
             }
         }
@@ -1120,7 +1107,6 @@ int MV_StartPlayback(
 
         if (status != PAS_Ok)
         {
-            MV_SetErrorCode(MV_PasError);
             return (MV_Error);
         }
 
@@ -1135,7 +1121,6 @@ int MV_StartPlayback(
 
         if (status != SOUNDSCAPE_Ok)
         {
-            MV_SetErrorCode(MV_SoundScapeError);
             return (MV_Error);
         }
 
@@ -1245,7 +1230,6 @@ int MV_PlayLoopedRaw(
     voice = MV_AllocVoice(priority);
     if (voice == NULL)
     {
-        MV_SetErrorCode(MV_NoVoices);
         return (MV_Error);
     }
 
@@ -1507,7 +1491,6 @@ int MV_TestPlayback(
     if (status != MV_Ok)
     {
         // Just in case an error doesn't get reported
-        MV_SetErrorCode(MV_DMAFailure);
 
         switch (MV_SoundCard)
         {
@@ -1528,31 +1511,13 @@ int MV_TestPlayback(
 #ifndef SOUNDSOURCE_OFF
         case SoundSource:
         case TandySoundSource:
-            MV_SetErrorCode(MV_SoundSourceFailure);
             pos = -1;
             break;
 #endif
 
         default:
-            MV_SetErrorCode(MV_UnsupportedCard);
             pos = -2;
             break;
-        }
-
-        if (pos > 0)
-        {
-            MV_SetErrorCode(MV_IrqFailure);
-        }
-        else if (pos == 0)
-        {
-            if (MV_Bits == 16)
-            {
-                MV_SetErrorCode(MV_DMA16Failure);
-            }
-            else
-            {
-                MV_SetErrorCode(MV_DMAFailure);
-            }
         }
     }
 
@@ -1584,13 +1549,10 @@ int MV_Init(
         MV_Shutdown();
     }
 
-    MV_SetErrorCode(MV_Ok);
-
     MV_TotalMemory = Voices * sizeof(VoiceNode) + sizeof(HARSH_CLIP_TABLE_8);
     status = USRHOOKS_GetMem((void **)&ptr, MV_TotalMemory);
     if (status != USRHOOKS_Ok)
     {
-        MV_SetErrorCode(MV_NoMem);
         return (MV_Error);
     }
 
@@ -1618,7 +1580,6 @@ int MV_Init(
         MV_Voices = NULL;
         MV_TotalMemory = 0;
 
-        MV_SetErrorCode(MV_NoMem);
         return (MV_Error);
     }
 
@@ -1629,20 +1590,11 @@ int MV_Init(
     {
     case UltraSound:
         status = GUSWAVE_Init(2);
-        if (status != GUSWAVE_Ok)
-        {
-            //JIM
-            MV_SetErrorCode(MV_BlasterError);
-        }
         break;
 
     case SoundBlaster:
     case Awe32:
         status = BLASTER_Init();
-        if (status != BLASTER_Ok)
-        {
-            MV_SetErrorCode(MV_BlasterError);
-        }
 
         if ((BLASTER_Config.Type == SBPro) ||
             (BLASTER_Config.Type == SBPro2))
@@ -1654,47 +1606,34 @@ int MV_Init(
     case ProAudioSpectrum:
     case SoundMan16:
         status = PAS_Init();
-        if (status != PAS_Ok)
-        {
-            MV_SetErrorCode(MV_PasError);
-        }
+
         break;
 
     case SoundScape:
         status = SOUNDSCAPE_Init();
-        if (status != SOUNDSCAPE_Ok)
-        {
-            MV_SetErrorCode(MV_SoundScapeError);
-        }
+
         break;
 
 #ifndef SOUNDSOURCE_OFF
     case SoundSource:
     case TandySoundSource:
         status = SS_Init(soundcard);
-        if (status != SS_Ok)
-        {
-            MV_SetErrorCode(MV_SoundSourceError);
-        }
+
         break;
 #endif
 
     default:
-        MV_SetErrorCode(MV_UnsupportedCard);
         break;
     }
 
-    if (MV_ErrorCode != MV_Ok)
+    if (status != MV_Ok)
     {
-        status = MV_ErrorCode;
-
         USRHOOKS_FreeMem(MV_Voices);
         MV_Voices = NULL;
         MV_TotalMemory = 0;
 
         DPMI_FreeDOSMemory(MV_BufferDescriptor);
 
-        MV_SetErrorCode(status);
         return (MV_Error);
     }
 
@@ -1731,9 +1670,7 @@ int MV_Init(
     if (status != MV_Ok)
     {
         // Preserve error code while we shutdown.
-        status = MV_ErrorCode;
         MV_Shutdown();
-        MV_SetErrorCode(status);
         return (MV_Error);
     }
 

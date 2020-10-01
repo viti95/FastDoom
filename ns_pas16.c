@@ -85,11 +85,6 @@ extern void SetStack(unsigned short selector, unsigned long stackptr);
     "mov  ss,ax"       \
     "mov  esp,edx" parm[ax][edx] modify[eax edx];
 
-int PAS_ErrorCode = PAS_Ok;
-
-#define PAS_SetErrorCode(status) \
-   PAS_ErrorCode = (status);
-
 /*---------------------------------------------------------------------
    Function: PAS_CheckForDriver
 
@@ -114,14 +109,12 @@ int PAS_CheckForDriver(
 
    if (regs.w.ax != MV_CheckForDriver)
    {
-      PAS_SetErrorCode(PAS_DriverNotFound);
       return (PAS_Error);
    }
 
    result = regs.w.bx ^ regs.w.cx ^ regs.w.dx;
    if (result != MV_Signature)
    {
-      PAS_SetErrorCode(PAS_DriverNotFound);
       return (PAS_Error);
    }
 
@@ -153,7 +146,6 @@ MVState *PAS_GetStateTable(
 
    if (regs.w.ax != MV_Signature)
    {
-      PAS_SetErrorCode(PAS_DriverNotFound);
       return (NULL);
    }
 
@@ -191,7 +183,6 @@ MVFunc *PAS_GetFunctionTable(
 
    if (regs.w.ax != MV_Signature)
    {
-      PAS_SetErrorCode(PAS_DriverNotFound);
       return (NULL);
    }
 
@@ -228,7 +219,6 @@ int PAS_GetCardSettings(
 
    if (regs.w.ax != MV_Signature)
    {
-      PAS_SetErrorCode(PAS_DriverNotFound);
       return (PAS_Error);
    }
 
@@ -237,26 +227,22 @@ int PAS_GetCardSettings(
 
    if (PAS_Irq > PAS_MaxIrq)
    {
-      PAS_SetErrorCode(PAS_Dos4gwIrqError);
       return (PAS_Error);
    }
 
    if (!VALID_IRQ(PAS_Irq))
    {
-      PAS_SetErrorCode(PAS_InvalidIrq);
       return (PAS_Error);
    }
 
    if (PAS_Interrupts[PAS_Irq] == INVALID)
    {
-      PAS_SetErrorCode(PAS_InvalidIrq);
       return (PAS_Error);
    }
 
    status = DMA_VerifyChannel(PAS_DMAChannel);
    if (status == DMA_Error)
    {
-      PAS_SetErrorCode(PAS_DmaError);
       return (PAS_Error);
    }
 
@@ -663,7 +649,6 @@ int PAS_SetupDMABuffer(
    DmaStatus = DMA_SetupTransfer(PAS_DMAChannel, BufferPtr, BufferSize, mode);
    if (DmaStatus == DMA_Error)
    {
-      PAS_SetErrorCode(PAS_DmaError);
       return (PAS_Error);
    }
 
@@ -690,14 +675,12 @@ int PAS_GetCurrentPos(
 
    if (!PAS_SoundPlaying)
    {
-      PAS_SetErrorCode(PAS_NoSoundPlaying);
       return (PAS_Error);
    }
 
    CurrentAddr = DMA_GetCurrentPos(PAS_DMAChannel);
    if (CurrentAddr == NULL)
    {
-      PAS_SetErrorCode(PAS_DmaError);
       return (PAS_Error);
    }
 
@@ -1159,7 +1142,6 @@ int PAS_FindCard(
       return (PAS_Ok);
    }
 
-   PAS_SetErrorCode(PAS_CardNotFound);
    return (PAS_Error);
 }
 
@@ -1460,7 +1442,6 @@ int PAS_Init(
    StackSelector = allocateTimerStack(kStackSize);
    if (StackSelector == NULL)
    {
-      PAS_SetErrorCode(PAS_OutOfMemory);
       return (PAS_Error);
    }
 
@@ -1481,7 +1462,6 @@ int PAS_Init(
       {
          deallocateTimerStack(StackSelector);
          StackSelector = NULL;
-         PAS_SetErrorCode(PAS_UnableToSetIrq);
          return (PAS_Error);
       }
    }
@@ -1498,7 +1478,6 @@ int PAS_Init(
 
    PAS_Installed = TRUE;
 
-   PAS_SetErrorCode(PAS_Ok);
    return (PAS_Ok);
 }
 

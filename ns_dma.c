@@ -35,30 +35,22 @@ DMA_PORT DMA_PortInfo[DMA_MaxChannel + 1] =
         {VALID, WORD, 0xD4, 0xD6, 0xD8, 0x8A, 0xCC, 0xCE},
 };
 
-int DMA_ErrorCode = DMA_Ok;
-
-#define DMA_SetErrorCode(status) DMA_ErrorCode = (status);
-
 int DMA_VerifyChannel(int channel)
 {
     int status;
     int Error;
 
     status = DMA_Ok;
-    Error = DMA_Ok;
 
     if ((channel < 0) || (DMA_MaxChannel < channel))
     {
-        Error = DMA_ChannelOutOfRange;
         status = DMA_Error;
     }
     else if (DMA_PortInfo[channel].Valid == INVALID)
     {
-        Error = DMA_InvalidChannel;
         status = DMA_Error;
     }
 
-    DMA_SetErrorCode(Error);
     return (status);
 }
 
