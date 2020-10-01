@@ -25,11 +25,9 @@
 
 #define IS_QUIET(ptr) ((void *)(ptr) == (void *)&MV_VolumeTable[0])
 
-//static signed short MV_VolumeTable[ MV_MaxVolume + 1 ][ 256 ];
-static signed short MV_VolumeTable[63 + 1][256];
+static signed short MV_VolumeTable[ MV_MaxVolume + 1 ][ 256 ];
 
-//static Pan MV_PanTable[ MV_NumPanPositions ][ MV_MaxVolume + 1 ];
-static Pan MV_PanTable[MV_NumPanPositions][63 + 1];
+static Pan MV_PanTable[ MV_NumPanPositions ][ MV_MaxVolume + 1 ];
 
 static int MV_Installed = FALSE;
 static int MV_SoundCard = SoundBlaster;
@@ -70,8 +68,6 @@ static int MV_VoiceHandle = MV_MinVoiceHandle;
 
 static void (*MV_CallBackFunc)(unsigned long) = NULL;
 static void (*MV_MixFunction)(VoiceNode *voice, int buffer);
-
-static int MV_MaxVolume = 63;
 
 char *MV_HarshClipTable;
 char *MV_MixDestination;
@@ -692,18 +688,18 @@ int MV_SetFrequency(
    volume.
 ---------------------------------------------------------------------*/
 
-static short *MV_GetVolumeTable(
-    int vol)
-
+static short *MV_GetVolumeTable(int vol)
 {
-    int volume;
-    short *table;
+    if (vol > 255){
+        
+        return &MV_VolumeTable[255 >> 2];
+    }
 
-    volume = MIX_VOLUME(vol);
+    if (vol < 0){
+        return &MV_VolumeTable[0 >> 2];
+    }
 
-    table = &MV_VolumeTable[volume];
-
-    return (table);
+    return &MV_VolumeTable[vol >> 2];
 }
 
 /*---------------------------------------------------------------------

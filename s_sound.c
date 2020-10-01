@@ -176,7 +176,7 @@ void S_ChangeMusic(int musicnum,
     // load & register it
     music->data = (void *)W_CacheLumpNum(music->lumpnum, PU_MUSIC);
     music->handle = I_RegisterSong(music->data);
-   
+
     // play it
     I_PlaySong(music->handle, looping);
 
@@ -271,7 +271,7 @@ int S_AdjustSoundParams(mobj_t *listener,
 
         // stereo separation (S_STEREO_SWING == 2^21 + 2^22)
         optSine = finesine[angle];
-        *sep = 128 - (((optSine << 6) + (optSine << 5)) >> FRACBITS); 
+        *sep = 128 - (((optSine << 6) + (optSine << 5)) >> FRACBITS);
     }
 
     // volume calculation
@@ -503,7 +503,7 @@ void S_UpdateSounds(void *listener_p)
                     if (!audible)
                         S_StopChannel(cnum);
                     else
-                        SFX_SetOrigin(c->handle, volume, sep);
+                        SFX_SetOrigin(c->handle, sep, volume);
                 }
             }
             else
