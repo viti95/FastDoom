@@ -25,9 +25,9 @@
 
 #define IS_QUIET(ptr) ((void *)(ptr) == (void *)&MV_VolumeTable[0])
 
-static signed short MV_VolumeTable[ MV_MaxVolume + 1 ][ 256 ];
+static signed short MV_VolumeTable[MV_MaxVolume + 1][256];
 
-static Pan MV_PanTable[ MV_NumPanPositions ][ MV_MaxVolume + 1 ];
+static Pan MV_PanTable[MV_NumPanPositions][MV_MaxVolume + 1];
 
 static int MV_Installed = FALSE;
 static int MV_SoundCard = SoundBlaster;
@@ -247,13 +247,13 @@ void MV_ServiceVoc(
     //Commented out so that the buffer is always cleared.
     //This is so the guys at Echo Speech can mix into the
     //buffer even when no sounds are playing.
-    if ( !MV_BufferEmpty[ MV_MixPage ] )
+    if (!MV_BufferEmpty[MV_MixPage])
     {
         ClearBuffer_DW(MV_MixBuffer[MV_MixPage], MV_Silence, MV_BufferSize >> 2);
         if ((MV_SoundCard == UltraSound) && (MV_Channels == 2))
         {
             ClearBuffer_DW(MV_MixBuffer[MV_MixPage] + MV_RightChannelOffset,
-                            MV_Silence, MV_BufferSize >> 2);
+                           MV_Silence, MV_BufferSize >> 2);
         }
         MV_BufferEmpty[MV_MixPage] = TRUE;
     }
@@ -622,14 +622,38 @@ int MV_VoiceAvailable(
 void MV_SetVoicePitch(
     VoiceNode *voice,
     unsigned long rate)
-
 {
     voice->SamplingRate = rate;
-    voice->RateScale = (rate * 0x10000) / MV_MixRate;
 
-    // Multiply by MixBufferSize - 1
-    voice->FixedPointBufferSize = (voice->RateScale * MixBufferSize) -
-                                  voice->RateScale;
+    if (rate == 11025)
+    {
+        // ALL DOOM SOUNDS
+        if (MV_MixRate == 11025)
+        {
+            voice->RateScale = (11025 * 0x10000) / 11025;
+            voice->FixedPointBufferSize = (((11025 * 0x10000) / 11025) * MixBufferSize) - ((11025 * 0x10000) / 11025);
+        }
+        if (MV_MixRate == 8000)
+        {
+            voice->RateScale = (11025 * 0x10000) / 8000;
+            voice->FixedPointBufferSize = (((11025 * 0x10000) / 8000) * MixBufferSize) - ((11025 * 0x10000) / 8000);
+        }
+    }
+
+    if (rate == 22050)
+    {
+        // SUPER SHOTGUN DOOM2
+        if (MV_MixRate == 11025)
+        {
+            voice->RateScale = (22050 * 0x10000) / 11025;
+            voice->FixedPointBufferSize = (((22050 * 0x10000) / 11025) * MixBufferSize) - ((22050 * 0x10000) / 11025);
+        }
+        if (MV_MixRate == 8000)
+        {
+            voice->RateScale = (22050 * 0x10000) / 8000;
+            voice->FixedPointBufferSize = (((22050 * 0x10000) / 8000) * MixBufferSize) - ((22050 * 0x10000) / 8000);
+        }
+    }
 }
 
 /*---------------------------------------------------------------------
@@ -690,12 +714,13 @@ int MV_SetFrequency(
 
 static short *MV_GetVolumeTable(int vol)
 {
-    if (vol > 255){
-        
+    if (vol > 255)
+    {
         return &MV_VolumeTable[255 >> 2];
     }
 
-    if (vol < 0){
+    if (vol < 0)
+    {
         return &MV_VolumeTable[0 >> 2];
     }
 
