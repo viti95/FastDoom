@@ -76,6 +76,11 @@ short *MV_RightVolume;
 int MV_SampleSize = 1;
 int MV_RightChannelOffset;
 
+unsigned long RateScale11025 = 0;
+unsigned long RateScale22050 = 0;
+unsigned long FixedPointBufferSize11025 = 0;
+unsigned long FixedPointBufferSize22050 = 0;
+
 unsigned long MV_MixPosition;
 
 /*---------------------------------------------------------------------
@@ -616,11 +621,28 @@ int MV_VoiceAvailable(
 void MV_SetVoicePitch(VoiceNode *voice, unsigned long rate)
 {
     voice->SamplingRate = rate;
-    voice->RateScale = (rate * 0x10000) / MV_MixRate;
 
-    // Multiply by MixBufferSize - 1
-    voice->FixedPointBufferSize = (voice->RateScale * MixBufferSize) -
-                                  voice->RateScale;
+    switch (rate)
+    {
+    case 11025:
+        if (RateScale11025 == 0)
+        {
+            RateScale11025 = (11025 * 0x10000) / MV_MixRate;
+            FixedPointBufferSize11025 = (RateScale11025 * MixBufferSize) - RateScale11025;
+        }
+        voice->RateScale = RateScale11025;
+        voice->FixedPointBufferSize = FixedPointBufferSize11025;
+        break;
+    case 22050:
+        if (RateScale22050 == 0)
+        {
+            RateScale22050 = (22050 * 0x10000) / MV_MixRate;
+            FixedPointBufferSize22050 = (RateScale22050 * MixBufferSize) - RateScale22050;
+        }
+        voice->RateScale = RateScale22050;
+        voice->FixedPointBufferSize = FixedPointBufferSize22050;
+        break;
+    }
 }
 
 /*---------------------------------------------------------------------
