@@ -206,9 +206,7 @@ static void _MIDI_AdvanceTick(
    Interpret SysEx Event.
 ---------------------------------------------------------------------*/
 
-static void _MIDI_SysEx(
-    track *Track)
-
+static void _MIDI_SysEx(track *Track)
 {
     int length;
 
@@ -514,7 +512,8 @@ static void _MIDI_ServiceRoutine(task *Task)
                 {
                 case MIDI_SYSEX:
                 case MIDI_SYSEX_CONTINUE:
-                    _MIDI_SysEx(Track);
+                    //_MIDI_SysEx(Track);
+                    Track->pos += _MIDI_ReadDelta(Track);
                     break;
 
                 case MIDI_META_EVENT:
@@ -1282,7 +1281,8 @@ static int _MIDI_ProcessNextTick(
                 {
                 case MIDI_SYSEX:
                 case MIDI_SYSEX_CONTINUE:
-                    _MIDI_SysEx(Track);
+                    //_MIDI_SysEx(Track);
+                    Track->pos += _MIDI_ReadDelta(Track);
                     break;
 
                 case MIDI_META_EVENT:
@@ -1700,7 +1700,8 @@ static void _MIDI_InitEMIDI(
                 {
                 case MIDI_SYSEX:
                 case MIDI_SYSEX_CONTINUE:
-                    _MIDI_SysEx(Track);
+                    //_MIDI_SysEx(Track);
+                    Track->pos += _MIDI_ReadDelta(Track);
                     break;
 
                 case MIDI_META_EVENT:
