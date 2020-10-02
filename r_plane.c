@@ -29,6 +29,7 @@
 
 #include "r_local.h"
 #include "r_sky.h"
+#include "r_data.h"
 
 planefunction_t floorfunc;
 planefunction_t ceilingfunc;
@@ -136,7 +137,7 @@ void R_MapPlane(int y, int x1)
         ds_xfrac = viewx + FixedMul(finecosine[angle], length);
         ds_yfrac = -viewy - FixedMul(finesine[angle], length);
     }
-    
+
     if (fixedcolormap)
         ds_colormap = fixedcolormap;
     else
@@ -164,32 +165,33 @@ void R_ClearPlanes(void)
 {
     int i;
     angle_t angle;
-    
+
     // opening / clipping determination
-    for (i = 0; i < viewwidth; i+=8)
+    for (i = 0; i < viewwidth; i += 8)
     {
         floorclip[i] = viewheight;
         ceilingclip[i] = -1;
-        floorclip[i+1] = viewheight;
-        ceilingclip[i+1] = -1;
-        floorclip[i+2] = viewheight;
-        ceilingclip[i+2] = -1;
-        floorclip[i+3] = viewheight;
-        ceilingclip[i+3] = -1;
-        floorclip[i+4] = viewheight;
-        ceilingclip[i+4] = -1;
-        floorclip[i+5] = viewheight;
-        ceilingclip[i+5] = -1;
-        floorclip[i+6] = viewheight;
-        ceilingclip[i+6] = -1;
-        floorclip[i+7] = viewheight;
-        ceilingclip[i+7] = -1;
+        floorclip[i + 1] = viewheight;
+        ceilingclip[i + 1] = -1;
+        floorclip[i + 2] = viewheight;
+        ceilingclip[i + 2] = -1;
+        floorclip[i + 3] = viewheight;
+        ceilingclip[i + 3] = -1;
+        floorclip[i + 4] = viewheight;
+        ceilingclip[i + 4] = -1;
+        floorclip[i + 5] = viewheight;
+        ceilingclip[i + 5] = -1;
+        floorclip[i + 6] = viewheight;
+        ceilingclip[i + 6] = -1;
+        floorclip[i + 7] = viewheight;
+        ceilingclip[i + 7] = -1;
     }
 
     lastvisplane = visplanes;
     lastopening = openings;
 
-    if (flatSurfaces || untexturedSurfaces){
+    if (flatSurfaces || untexturedSurfaces)
+    {
         return;
     }
 
@@ -282,7 +284,7 @@ R_CheckPlane(visplane_t *pl,
         intrh = stop;
     }
 
-    for (x=intrl ; x <= intrh && pl->top[x] == 0xff; x++) // dropoff overflow
+    for (x = intrl; x <= intrh && pl->top[x] == 0xff; x++) // dropoff overflow
         ;
 
     if (x > intrh)
@@ -322,6 +324,11 @@ void R_DrawPlanes(void)
     int stop;
     int angle;
 
+    int lump;
+    int ofs;
+    int tex;
+    int col;
+
     byte t1, b1, t2, b2;
 
     for (pl = visplanes; pl < lastvisplane; pl++)
@@ -355,7 +362,25 @@ void R_DrawPlanes(void)
                     if (!flatSky)
                     {
                         angle = (viewangle + xtoviewangle[x]) >> ANGLETOSKYSHIFT;
-                        dc_source = R_GetColumn(skytexture, angle);
+                        //dc_source = R_GetColumn(skytexture, angle);
+
+                        tex = skytexture;
+                        col = angle;
+                        col &= texturewidthmask[tex];
+                        lump = texturecolumnlump[tex][col];
+                        ofs = texturecolumnofs[tex][col];
+
+                        if (lump > 0)
+                        {
+                            dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
+                        }
+                        else
+                        {
+                            if (!texturecomposite[tex])
+                                R_GenerateComposite(tex);
+
+                            dc_source = texturecomposite[tex] + ofs;
+                        }
                     }
 
                     skyfunc();

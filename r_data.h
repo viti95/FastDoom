@@ -24,9 +24,8 @@
 #include "r_state.h"
 
 // Retrieve column data for span blitting.
-byte *
-R_GetColumn(int tex,
-            int col);
+byte *R_GetColumn(int tex, int col);
+void R_GenerateComposite(int texnum);
 
 // I/O, setting up the stuff.
 void R_InitData(void);
@@ -41,5 +40,10 @@ int R_FlatNumForName(char *name);
 // returns the texture number for the texture name.
 int R_TextureNumForName(char *name);
 int R_CheckTextureNumForName(char *name);
+
+extern int *texturewidthmask;
+extern short **texturecolumnlump;
+extern unsigned short **texturecolumnofs;
+extern byte **texturecomposite;
 
 #endif

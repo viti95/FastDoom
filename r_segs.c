@@ -25,6 +25,9 @@
 
 #include "r_local.h"
 #include "r_sky.h"
+#include "r_data.h"
+#include "w_wad.h"
+#include "z_zone.h"
 
 // OPTIMIZE: closed two sided lines as single sided
 
@@ -89,6 +92,11 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 	column_t *col;
 	int lightnum;
 	int texnum;
+
+	int lump;
+	int ofs;
+	int tex;
+	int column;
 
 	// Calculate light table.
 	// Use different light tables
@@ -160,7 +168,25 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 			dc_iscale = 0xffffffffu / (unsigned)spryscale;
 
 			// draw the texture
-			col = (column_t *)((byte *)R_GetColumn(texnum, maskedtexturecol[dc_x]) - 3);
+			//col = (column_t *)(R_GetColumn(texnum, maskedtexturecol[dc_x]) - 3);
+
+			tex = texnum;
+			column = maskedtexturecol[dc_x];
+			column &= texturewidthmask[tex];
+			lump = texturecolumnlump[tex][column];
+			ofs = texturecolumnofs[tex][column];
+
+			if (lump > 0)
+			{
+				col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs - 3);
+			}
+			else
+			{
+				if (!texturecomposite[tex])
+					R_GenerateComposite(tex);
+
+				col = (column_t *)(texturecomposite[tex] + ofs - 3);
+			}
 
 			R_DrawMaskedColumn(col);
 			maskedtexturecol[dc_x] = MAXSHORT;
@@ -190,6 +216,11 @@ void R_RenderSegLoop(void)
 	fixed_t texturecolumn;
 	int top;
 	int bottom;
+
+	int lump;
+	int ofs;
+	int tex;
+	int col;
 
 	int cc_rwx;
 	int fc_rwx;
@@ -268,7 +299,26 @@ void R_RenderSegLoop(void)
 			dc_yl = yl;
 			dc_yh = yh;
 			dc_texturemid = rw_midtexturemid;
-			dc_source = R_GetColumn(midtexture, texturecolumn);
+			//dc_source = R_GetColumn(midtexture, texturecolumn);
+
+			tex = midtexture;
+			col = texturecolumn;
+			col &= texturewidthmask[tex];
+			lump = texturecolumnlump[tex][col];
+			ofs = texturecolumnofs[tex][col];
+
+			if (lump > 0)
+			{
+				dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
+			}
+			else
+			{
+				if (!texturecomposite[tex])
+					R_GenerateComposite(tex);
+
+				dc_source = texturecomposite[tex] + ofs;
+			}
+
 			colfunc();
 			cc_rwx = viewheight;
 			fc_rwx = -1;
@@ -290,7 +340,26 @@ void R_RenderSegLoop(void)
 					dc_yl = yl;
 					dc_yh = mid;
 					dc_texturemid = rw_toptexturemid;
-					dc_source = R_GetColumn(toptexture, texturecolumn);
+					//dc_source = R_GetColumn(toptexture, texturecolumn);
+
+					tex = toptexture;
+					col = texturecolumn;
+					col &= texturewidthmask[tex];
+					lump = texturecolumnlump[tex][col];
+					ofs = texturecolumnofs[tex][col];
+
+					if (lump > 0)
+					{
+						dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
+					}
+					else
+					{
+						if (!texturecomposite[tex])
+							R_GenerateComposite(tex);
+
+						dc_source = texturecomposite[tex] + ofs;
+					}
+
 					colfunc();
 					cc_rwx = mid;
 				}
@@ -319,8 +388,26 @@ void R_RenderSegLoop(void)
 					dc_yl = mid;
 					dc_yh = yh;
 					dc_texturemid = rw_bottomtexturemid;
-					dc_source = R_GetColumn(bottomtexture,
-											texturecolumn);
+					//dc_source = R_GetColumn(bottomtexture, texturecolumn);
+
+					tex = bottomtexture;
+					col = texturecolumn;
+					col &= texturewidthmask[tex];
+					lump = texturecolumnlump[tex][col];
+					ofs = texturecolumnofs[tex][col];
+
+					if (lump > 0)
+					{
+						dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
+					}
+					else
+					{
+						if (!texturecomposite[tex])
+							R_GenerateComposite(tex);
+
+						dc_source = texturecomposite[tex] + ofs;
+					}
+
 					colfunc();
 					fc_rwx = mid;
 				}
@@ -345,7 +432,7 @@ void R_RenderSegLoop(void)
 		rw_scale += rw_scalestep;
 		topfrac += topstep;
 		bottomfrac += bottomstep;
-		
+
 		ceilingclip[rw_x] = cc_rwx;
 		floorclip[rw_x] = fc_rwx;
 	}
