@@ -93,6 +93,7 @@ boolean unlimitedRAM;
 boolean nearSprites;
 boolean monoSound;
 boolean lowSound;
+boolean eightBitSound;
 boolean waitInit;
 boolean noMelt;
 
@@ -777,6 +778,7 @@ void D_DoomMain(void)
 
     monoSound = M_CheckParm("-mono");
     lowSound = M_CheckParm("-lowsound");
+    eightBitSound = M_CheckParm("-8bitsound");
 
     showFPS = M_CheckParm("-fps");
 

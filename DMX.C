@@ -552,7 +552,12 @@ void WAV_PlayMode(int channels, int samplerate)
         printf("ADDR: %03X, IRQ: %u, DMA LOW: %u, DMA HIGH: %u\n", BLASTER_Config.Address, BLASTER_Config.Interrupt, BLASTER_Config.Dma8, BLASTER_Config.Dma16);
     }
 
-    status = FX_Init(device, channels, 2, 16, samplerate);
+    if (eightBitSound){
+        status = FX_Init(device, channels, 2, 8, samplerate);
+    }else{
+        status = FX_Init(device, channels, 2, 16, samplerate);
+    }
+    
     
     FX_SetVolume(255);
 
