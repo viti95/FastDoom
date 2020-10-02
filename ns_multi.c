@@ -613,41 +613,14 @@ int MV_VoiceAvailable(
    Sets the pitch for the specified voice.
 ---------------------------------------------------------------------*/
 
-void MV_SetVoicePitch(
-    VoiceNode *voice,
-    unsigned long rate)
+void MV_SetVoicePitch(VoiceNode *voice, unsigned long rate)
 {
     voice->SamplingRate = rate;
+    voice->RateScale = (rate * 0x10000) / MV_MixRate;
 
-    if (rate == 11025)
-    {
-        // ALL DOOM SOUNDS
-        if (MV_MixRate == 11025)
-        {
-            voice->RateScale = (11025 * 0x10000) / 11025;
-            voice->FixedPointBufferSize = (((11025 * 0x10000) / 11025) * MixBufferSize) - ((11025 * 0x10000) / 11025);
-        }
-        if (MV_MixRate == 8000)
-        {
-            voice->RateScale = (11025 * 0x10000) / 8000;
-            voice->FixedPointBufferSize = (((11025 * 0x10000) / 8000) * MixBufferSize) - ((11025 * 0x10000) / 8000);
-        }
-    }
-
-    if (rate == 22050)
-    {
-        // SUPER SHOTGUN DOOM2
-        if (MV_MixRate == 11025)
-        {
-            voice->RateScale = (22050 * 0x10000) / 11025;
-            voice->FixedPointBufferSize = (((22050 * 0x10000) / 11025) * MixBufferSize) - ((22050 * 0x10000) / 11025);
-        }
-        if (MV_MixRate == 8000)
-        {
-            voice->RateScale = (22050 * 0x10000) / 8000;
-            voice->FixedPointBufferSize = (((22050 * 0x10000) / 8000) * MixBufferSize) - ((22050 * 0x10000) / 8000);
-        }
-    }
+    // Multiply by MixBufferSize - 1
+    voice->FixedPointBufferSize = (voice->RateScale * MixBufferSize) -
+                                  voice->RateScale;
 }
 
 /*---------------------------------------------------------------------
