@@ -540,9 +540,8 @@ void WAV_PlayMode(int channels, int samplerate)
         return;
         break;
     }
-    if (device == SoundBlaster)
+    if (device == SoundBlaster || device == Awe32)
     {
-
         int MaxVoices;
         int MaxBits;
         int MaxChannels;
@@ -550,6 +549,10 @@ void WAV_PlayMode(int channels, int samplerate)
         FX_SetupSoundBlaster(dmx_blaster, (int *)&MaxVoices, (int *)&MaxBits, (int *)&MaxChannels);
         printf("Sound Blaster DSP %01X.%02X\n", BLASTER_Version >> 8, BLASTER_Version && 7);
         printf("ADDR: %03X, IRQ: %u, DMA LOW: %u, DMA HIGH: %u\n", BLASTER_Config.Address, BLASTER_Config.Interrupt, BLASTER_Config.Dma8, BLASTER_Config.Dma16);
+    }else{
+        fx_device fx_device;
+
+        FX_SetupCard(device, &fx_device);
     }
 
     if (eightBitSound){
