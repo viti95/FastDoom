@@ -344,31 +344,20 @@ void *
 W_CacheLumpNum(int lump,
                int tag)
 {
-    byte *ptr;
+    byte *ptr = lumpcache[lump];
 
-    if (!lumpcache[lump])
+    if (!ptr)
     {
         // read the lump in
-
         ptr = Z_Malloc(W_LumpLength(lump), tag, &lumpcache[lump]);
-        W_ReadLump(lump, lumpcache[lump]);
+        W_ReadLump(lump, ptr);
     }
     else
     {
-        Z_ChangeTag(lumpcache[lump], tag);
+        Z_ChangeTag(ptr, tag);
     }
 
-    return lumpcache[lump];
-}
-
-//
-// W_CacheLumpName
-//
-void *
-W_CacheLumpName(char *name,
-                int tag)
-{
-    return W_CacheLumpNum(W_GetNumForName(name), tag);
+    return ptr;
 }
 
 // Generate a hash table for fast lookups

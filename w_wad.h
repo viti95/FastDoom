@@ -66,7 +66,8 @@ int W_GetNumForName(char *name);
 void W_ReadLump(int lump, void *dest);
 
 void *W_CacheLumpNum(int lump, int tag);
-void *W_CacheLumpName(char *name, int tag);
+
+#define W_CacheLumpName(name, tag) W_CacheLumpNum(W_GetNumForName((name)), (tag))
 
 void W_GenerateHashTable(void);
 
