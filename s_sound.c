@@ -133,9 +133,9 @@ void S_StopMusic(void)
     if (mus_playing)
     {
         if (mus_paused)
-            I_ResumeSong(mus_playing->handle);
+            MUS_ResumeSong(mus_playing->handle);
 
-        I_StopSong(mus_playing->handle);
+        MUS_StopSong(mus_playing->handle);
         //I_UnRegisterSong(mus_playing->handle);
         Z_ChangeTag(mus_playing->data, PU_CACHE);
 
@@ -175,10 +175,11 @@ void S_ChangeMusic(int musicnum,
 
     // load & register it
     music->data = (void *)W_CacheLumpNum(music->lumpnum, PU_MUSIC);
-    music->handle = I_RegisterSong(music->data);
+    music->handle = MUS_RegisterSong(music->data);
 
     // play it
-    I_PlaySong(music->handle, looping);
+    MUS_ChainSong(music->handle, looping ? music->handle : -1);
+    MUS_PlaySong(music->handle, snd_MusicVolume);
 
     mus_playing = music;
 }
@@ -307,7 +308,7 @@ void S_PauseSound(void)
 {
     if (mus_playing && !mus_paused)
     {
-        I_PauseSong(mus_playing->handle);
+        MUS_PauseSong(mus_playing->handle);
         mus_paused = true;
     }
 }
@@ -316,7 +317,7 @@ void S_ResumeSound(void)
 {
     if (mus_playing && mus_paused)
     {
-        I_ResumeSong(mus_playing->handle);
+        MUS_ResumeSong(mus_playing->handle);
         mus_paused = false;
     }
 }
@@ -529,7 +530,7 @@ void S_Init(int sfxVolume,
     //fprintf( stderr, "S_Init: default sfx volume %d\n", sfxVolume);
 
     // Whatever these did with DMX, these are rather dummies now.
-    I_SetChannels(numChannels);
+    WAV_PlayMode(numChannels, lowSound ? 8000 : 11025);
 
     S_SetSfxVolume(sfxVolume);
     // No music with Linux - another dummy.
@@ -538,8 +539,7 @@ void S_Init(int sfxVolume,
     // Allocating the internal channels for mixing
     // (the maximum numer of sounds rendered
     // simultaneously) within zone memory.
-    channels =
-        (channel_t *)Z_Malloc(numChannels * sizeof(channel_t), PU_STATIC, 0);
+    channels = (channel_t *)Z_Malloc(numChannels * sizeof(channel_t), PU_STATIC, 0);
 
     // Free all channels for use
     for (i = 0; i < numChannels; i++)

@@ -109,13 +109,6 @@ void I_StopSong(int handle)
 {
     int rc;
     rc = MUS_StopSong(handle);
-
-    // Fucking kluge pause
-    {
-        int s;
-        for (s = ticcount; ticcount - s < 10;)
-            ;
-    }
 }
 
 void I_PlaySong(int handle, boolean looping)
@@ -332,8 +325,6 @@ void I_ShutdownSound(void)
 {
     int s;
     S_PauseSound();
-    s = ticcount + 30;
-    while (s != ticcount) {}
     DMX_DeInit();
 }
 

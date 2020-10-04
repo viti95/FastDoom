@@ -441,9 +441,9 @@ void D_DoAdvanceDemo(void)
         gamestate = GS_DEMOSCREEN;
         pagename = "TITLEPIC";
         if (commercial)
-            S_StartMusic(mus_dm2ttl);
+            S_ChangeMusic(mus_dm2ttl, false);
         else
-            S_StartMusic(mus_intro);
+            S_ChangeMusic(mus_intro, false);
         break;
     case 1:
         G_DeferedPlayDemo("demo1");
@@ -462,7 +462,7 @@ void D_DoAdvanceDemo(void)
         {
             pagetic = 35 * 11;
             pagename = "TITLEPIC";
-            S_StartMusic(mus_dm2ttl);
+            S_ChangeMusic(mus_dm2ttl, false);
         }
         else
         {
