@@ -501,6 +501,7 @@ int DMX_Init(int rate, int maxsng, int mdev, int sdev)
     {
         MUSIC_SetVolume(0);
     }
+
     if (sdev & AHW_PC_SPEAKER)
     {
         PCFX_Init();
@@ -523,8 +524,7 @@ void DMX_DeInit(void)
 
 void WAV_PlayMode(int channels, int samplerate)
 {
-    long device, status;
-    char tmp[300];
+    int device, status;
     switch (dmx_sdev)
     {
     case 0:
@@ -536,9 +536,14 @@ void WAV_PlayMode(int channels, int samplerate)
     case AHW_ULTRA_SOUND:
         device = UltraSound;
         break;
+    case AHW_DISNEY:
+        device = SoundSource;
+        break;
+    case AHW_TANDY:
+        device = TandySoundSource;
+        break;
     default:
         return;
-        break;
     }
     if (device == SoundBlaster || device == Awe32)
     {
@@ -560,7 +565,6 @@ void WAV_PlayMode(int channels, int samplerate)
     }else{
         status = FX_Init(device, channels, 2, 16, samplerate);
     }
-    
     
     FX_SetVolume(255);
 

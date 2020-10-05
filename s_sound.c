@@ -522,8 +522,7 @@ void S_UpdateSounds(void *listener_p)
 // Sets channels, SFX and music volume,
 //  allocates channel buffer, sets S_sfx lookup.
 //
-void S_Init(int sfxVolume,
-            int musicVolume)
+void S_Init(int sfxVolume, int musicVolume)
 {
     int i;
 

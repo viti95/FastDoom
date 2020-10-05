@@ -33,6 +33,8 @@
 #include "doomdef.h"
 #include "doomstat.h"
 
+#include "ns_task.h"
+
 //
 // I_StartupTimer
 //
@@ -41,15 +43,13 @@ int tsm_ID = -1;
 
 void I_StartupTimer(void)
 {
-    extern int I_TimerISR(void);
-
     printf("I_StartupTimer()\n");
     // installs master timer.  Must be done before StartupTimer()!
-    tsm_ID = TSM_NewService(I_TimerISR, 35, 0, 0);
-    if (tsm_ID == -1)
-    {
+    tsm_ID = TS_ScheduleTask(I_TimerISR, 35, 1, NULL);
+    TS_Dispatch();
+
+    if (tsm_ID == NULL)
         I_Error("Can't register 35 Hz timer w/ DMX library");
-    }
 }
 
 void I_ShutdownTimer(void)
@@ -61,7 +61,7 @@ void I_ShutdownTimer(void)
 //
 // Sound header & data
 //
-const char snd_prefixen[] = {'P', 'P', 'A', 'S', 'S', 'S', 'M', 'M', 'M', 'S', 'S', 'S'};
+const char snd_prefixen[] = {'P', 'P', 'A', 'S', 'S', 'S', 'M', 'M', 'M', 'S', 'S', 'S', 'S', 'S'};
 
 int dmxCodes[NUM_SCARDS]; // the dmx code for a given card
 
@@ -288,7 +288,7 @@ void I_StartupSound(void)
     //
     // initialize dmxCodes[]
     //
-    dmxCodes[0] = 0;
+    dmxCodes[snd_none] = 0;
     dmxCodes[snd_PC] = AHW_PC_SPEAKER;
     dmxCodes[snd_Adlib] = AHW_ADLIB;
     dmxCodes[snd_SB] = AHW_SOUND_BLASTER;
@@ -298,6 +298,8 @@ void I_StartupSound(void)
     dmxCodes[snd_AWE] = AHW_AWE32;
     dmxCodes[snd_ENSONIQ] = AHW_ENSONIQ;
     dmxCodes[snd_CODEC] = AHW_CODEC;
+    dmxCodes[snd_DISNEY] = AHW_DISNEY;
+    dmxCodes[snd_TANDY] = AHW_TANDY;
 
     //
     // inits sound library timer stuff
@@ -314,8 +316,7 @@ void I_StartupSound(void)
     //
     printf("  calling DMX_Init\n");
 
-    rc = DMX_Init(SND_TICRATE, SND_MAXSONGS, dmxCodes[snd_MusicDevice],
-                  dmxCodes[snd_SfxDevice]);
+    rc = DMX_Init(SND_TICRATE, SND_MAXSONGS, dmxCodes[snd_MusicDevice], dmxCodes[snd_SfxDevice]);
 }
 //
 // I_ShutdownSound

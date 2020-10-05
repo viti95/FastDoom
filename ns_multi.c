@@ -963,12 +963,11 @@ int MV_SetMixMode(
         MV_MixMode = SOUNDSCAPE_SetMixMode(mode);
         break;
 
-#ifndef SOUNDSOURCE_OFF
     case SoundSource:
     case TandySoundSource:
         MV_MixMode = SS_SetMixMode(mode);
         break;
-#endif
+
     }
 
     MV_Channels = 1;
@@ -1113,7 +1112,6 @@ int MV_StartPlayback(
         MV_DMAChannel = SOUNDSCAPE_DMAChannel;
         break;
 
-#ifndef SOUNDSOURCE_OFF
     case SoundSource:
     case TandySoundSource:
         SS_BeginBufferedPlayback(MV_MixBuffer[0],
@@ -1122,7 +1120,7 @@ int MV_StartPlayback(
         MV_MixRate = SS_SampleRate;
         MV_DMAChannel = -1;
         break;
-#endif
+
     }
 
     RateScale11025 = (11025 * 0x10000) / MV_MixRate;
@@ -1169,12 +1167,11 @@ void MV_StopPlayback(
         SOUNDSCAPE_StopPlayback();
         break;
 
-#ifndef SOUNDSOURCE_OFF
     case SoundSource:
     case TandySoundSource:
         SS_StopPlayback();
         break;
-#endif
+
     }
 
     // Make sure all callbacks are done.
@@ -1499,12 +1496,11 @@ int MV_TestPlayback(
             pos = SOUNDSCAPE_GetCurrentPos();
             break;
 
-#ifndef SOUNDSOURCE_OFF
         case SoundSource:
         case TandySoundSource:
             pos = -1;
             break;
-#endif
+
 
         default:
             pos = -2;
@@ -1605,13 +1601,11 @@ int MV_Init(
 
         break;
 
-#ifndef SOUNDSOURCE_OFF
     case SoundSource:
     case TandySoundSource:
         status = SS_Init(soundcard);
 
         break;
-#endif
 
     default:
         break;
@@ -1716,12 +1710,11 @@ int MV_Shutdown(
         SOUNDSCAPE_Shutdown();
         break;
 
-#ifndef SOUNDSOURCE_OFF
     case SoundSource:
     case TandySoundSource:
         SS_Shutdown();
         break;
-#endif
+
     }
 
     RestoreInterrupts(flags);

@@ -180,9 +180,7 @@ static void _MIDI_ResetTracks(
    Increment tick counters.
 ---------------------------------------------------------------------*/
 
-static void _MIDI_AdvanceTick(
-    void)
-
+static void _MIDI_AdvanceTick(void)
 {
     _MIDI_PositionInTicks++;
     _MIDI_Time += _MIDI_FPSecondsPerTick;

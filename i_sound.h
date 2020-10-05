@@ -37,6 +37,8 @@ typedef enum
     snd_AWE,
     snd_ENSONIQ,
     snd_CODEC,
+    snd_DISNEY,
+    snd_TANDY,
     NUM_SCARDS
 } cardenum_t;
 

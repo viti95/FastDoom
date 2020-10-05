@@ -35,6 +35,8 @@
 #include "w_wad.h"
 #include "z_zone.h"
 #include "ns_dpmi.h"
+#include "ns_task.h"
+
 //
 // Macros
 //
@@ -630,10 +632,9 @@ void I_StartTic(void)
 //
 // I_TimerISR
 //
-int I_TimerISR(void)
+void I_TimerISR(void)
 {
     ticcount++;
-    return 0;
 }
 
 //

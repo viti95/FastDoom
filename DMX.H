@@ -57,5 +57,7 @@ int ENS_Detect(void);
 #define AHW_MEDIA_VISION 64
 #define AHW_ENSONIQ 256
 #define AHW_CODEC 512
+#define AHW_DISNEY 1024
+#define AHW_TANDY 2048
 
 #endif
