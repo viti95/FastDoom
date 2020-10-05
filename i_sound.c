@@ -182,14 +182,6 @@ void I_sndArbitrateCards(void)
     {
         snd_MusicDevice = snd_MPU;
     }
-    /*if (snd_MusicDevice == snd_SB)
-    {
-        snd_MusicDevice = snd_Adlib;
-    }
-    if (snd_MusicDevice == snd_PAS)
-    {
-        snd_MusicDevice = snd_Adlib;
-    }*/
 
     //
     // figure out what i've got to initialize
