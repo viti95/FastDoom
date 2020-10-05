@@ -182,23 +182,23 @@ void I_sndArbitrateCards(void)
     {
         snd_MusicDevice = snd_MPU;
     }
-    if (snd_MusicDevice == snd_SB)
+    /*if (snd_MusicDevice == snd_SB)
     {
         snd_MusicDevice = snd_Adlib;
     }
     if (snd_MusicDevice == snd_PAS)
     {
         snd_MusicDevice = snd_Adlib;
-    }
+    }*/
 
     //
     // figure out what i've got to initialize
     //
     gus = snd_MusicDevice == snd_GUS || snd_SfxDevice == snd_GUS;
-    sb = snd_SfxDevice == snd_SB || snd_MusicDevice == snd_SB;
+    sb = snd_SfxDevice == snd_SB;
     ensoniq = snd_SfxDevice == snd_ENSONIQ;
     codec = snd_SfxDevice == snd_CODEC;
-    adlib = snd_MusicDevice == snd_Adlib;
+    adlib = snd_MusicDevice == snd_Adlib || snd_MusicDevice == snd_SB || snd_MusicDevice == snd_PAS;
     midi = snd_MusicDevice == snd_MPU;
 
     //
