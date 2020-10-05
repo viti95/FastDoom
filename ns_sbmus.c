@@ -1173,11 +1173,6 @@ int AL_DetectFM(
    int status2;
    int i;
 
-   if (USER_CheckParameter(NO_ADLIB_DETECTION))
-   {
-      return (FALSE);
-   }
-
    AL_SendOutputToPort(ADLIB_PORT, 4, 0x60); // Reset T1 & T2
    AL_SendOutputToPort(ADLIB_PORT, 4, 0x80); // Reset IRQ
 
