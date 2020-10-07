@@ -104,11 +104,6 @@ static boolean mus_paused;
 // music currently being played
 static musicinfo_t *mus_playing = 0;
 
-// following is set
-//  by the defaults code in M_misc:
-// number of channels available
-int numChannels;
-
 //
 // Internals.
 //
@@ -525,11 +520,6 @@ void S_UpdateSounds(void *listener_p)
 void S_Init(int sfxVolume, int musicVolume)
 {
     int i;
-
-    //fprintf( stderr, "S_Init: default sfx volume %d\n", sfxVolume);
-
-    // Whatever these did with DMX, these are rather dummies now.
-    WAV_PlayMode(numChannels, lowSound ? 8000 : 11025);
 
     S_SetSfxVolume(sfxVolume);
     // No music with Linux - another dummy.

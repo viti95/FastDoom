@@ -28,6 +28,8 @@
 #include "ns_sb.h"
 #include "ns_sbmus.h"
 #include "ns_muldf.h"
+#include "i_sound.h"
+#include "m_misc.h"
 
 unsigned short divisors[] = {
     0,
@@ -191,7 +193,6 @@ char *mid_data = NULL;
 
 int mus_loop = 0;
 int dmx_mus_port = 0;
-int dmx_sdev = NumSoundCards;
 
 int TSM_NewService(int (*function)(void), int rate, int unk1, int unk2)
 {
@@ -466,51 +467,95 @@ void MPU_SetCard(int port)
 {
     dmx_mus_port = port;
 }
-int DMX_Init(int rate, int maxsng, int mdev, int sdev)
-{
-    long status, device;
-    dmx_sdev = sdev;
-    status = 0;
 
-    switch (mdev)
+int ASS_GetSoundCardCode(int sndDevice)
+{
+    switch (sndDevice)
     {
-    case 0:
-        device = NumSoundCards;
-        break;
-    case AHW_ADLIB:
-        device = Adlib;
-        break;
-    case AHW_SOUND_BLASTER:
-        device = SoundBlaster;
-        break;
-    case AHW_MPU_401:
-        device = GenMidi;
-        break;
-    case AHW_ULTRA_SOUND:
-        device = UltraSound;
-        break;
-    case AHW_AWE32:
-        device = Awe32;
-        break;
+    case snd_PC:
+        return PC;
+    case snd_Adlib:
+        return Adlib;
+    case snd_SB:
+        return SoundBlaster;
+    case snd_PAS:
+        return ProAudioSpectrum;
+    case snd_GUS:
+        return UltraSound;
+    case snd_MPU:
+        return GenMidi;
+    case snd_AWE:
+        return Awe32;
+    case snd_ENSONIQ:
+        return SoundScape;
+    case snd_CODEC:
+        return -1;
+    case snd_DISNEY:
+        return SoundSource;
+    case snd_TANDY:
+        return TandySoundSource;
     default:
         return -1;
-        break;
     }
-    status = MUSIC_Init(device, dmx_mus_port);
+}
+
+void ASS_Init(int rate, int maxsng, int mdev, int sdev)
+{
+    int status, music_device, sound_device;
+    int sample_rate;
+
+    int SbMaxVoices;
+    int SbMaxBits;
+    int SbMaxChannels;
+
+    fx_device fx_device;
+
+    status = 0;
+
+    music_device = ASS_GetSoundCardCode(mdev);
+    sound_device = ASS_GetSoundCardCode(sdev);
+
+    status = MUSIC_Init(music_device, dmx_mus_port);
     if (status == MUSIC_Ok)
     {
         MUSIC_SetVolume(0);
     }
 
-    if (sdev & AHW_PC_SPEAKER)
+    switch (sound_device)
     {
+    case PC:
         PCFX_Init();
         PCFX_SetTotalVolume(255);
+        return;
+    case SoundBlaster:
+    case Awe32:
+        FX_SetupSoundBlaster(dmx_blaster, (int *)&SbMaxVoices, (int *)&SbMaxBits, (int *)&SbMaxChannels);
+        printf("Sound Blaster DSP %01X.%02X\n", BLASTER_Version >> 8, BLASTER_Version && 7);
+        printf("ADDR: %03X, IRQ: %u, DMA LOW: %u, DMA HIGH: %u\n", BLASTER_Config.Address, BLASTER_Config.Interrupt, BLASTER_Config.Dma8, BLASTER_Config.Dma16);
+        break;
+    default:
+        FX_SetupCard(sound_device, &fx_device);
+        break;
     }
-    return mdev | sdev;
+
+    sample_rate = lowSound ? 8000 : 11025;
+
+    if (eightBitSound)
+    {
+        status = FX_Init(sound_device, numChannels, 2, 8, sample_rate);
+    }
+    else
+    {
+        status = FX_Init(sound_device, numChannels, 2, 16, sample_rate);
+    }
+
+    FX_SetVolume(255);
+
+    if (reverseStereo)
+        MV_SetReverseStereo(true);
 }
 
-void DMX_DeInit(void)
+void ASS_DeInit(void)
 {
     MUSIC_Shutdown();
     FX_Shutdown();
@@ -522,60 +567,6 @@ void DMX_DeInit(void)
     }
 }
 
-void WAV_PlayMode(int channels, int samplerate)
-{
-    int device, status;
-    switch (dmx_sdev)
-    {
-    case 0:
-        device = NumSoundCards;
-        break;
-    case AHW_SOUND_BLASTER:
-        device = SoundBlaster;
-        break;
-    case AHW_ULTRA_SOUND:
-        device = UltraSound;
-        break;
-    case AHW_DISNEY:
-        device = SoundSource;
-        break;
-    case AHW_TANDY:
-        device = TandySoundSource;
-        break;
-    default:
-        return;
-    }
-    if (device == SoundBlaster || device == Awe32)
-    {
-        int MaxVoices;
-        int MaxBits;
-        int MaxChannels;
-
-        FX_SetupSoundBlaster(dmx_blaster, (int *)&MaxVoices, (int *)&MaxBits, (int *)&MaxChannels);
-        printf("Sound Blaster DSP %01X.%02X\n", BLASTER_Version >> 8, BLASTER_Version && 7);
-        printf("ADDR: %03X, IRQ: %u, DMA LOW: %u, DMA HIGH: %u\n", BLASTER_Config.Address, BLASTER_Config.Interrupt, BLASTER_Config.Dma8, BLASTER_Config.Dma16);
-    }else{
-        fx_device fx_device;
-
-        FX_SetupCard(device, &fx_device);
-    }
-
-    if (eightBitSound){
-        status = FX_Init(device, channels, 2, 8, samplerate);
-    }else{
-        status = FX_Init(device, channels, 2, 16, samplerate);
-    }
-    
-    FX_SetVolume(255);
-
-    if (reverseStereo)
-        MV_SetReverseStereo(true);
-}
-
-int CODEC_Detect(int *a, int *b)
-{
-    return 1;
-}
 int ENS_Detect(void)
 {
     return SOUNDSCAPE_FindCard() != 0;

@@ -63,8 +63,6 @@ void I_ShutdownTimer(void)
 //
 const char snd_prefixen[] = {'P', 'P', 'A', 'S', 'S', 'S', 'M', 'M', 'M', 'S', 'S', 'S', 'S', 'S'};
 
-int dmxCodes[NUM_SCARDS]; // the dmx code for a given card
-
 int snd_SBport, snd_SBirq, snd_SBdma; // sound blaster variables
 int snd_Mport;                        // midi variables
 
@@ -155,7 +153,7 @@ void I_UpdateSoundParams(int handle, int vol, int sep)
 
 void I_sndArbitrateCards(void)
 {
-    boolean gus, adlib, sb, midi, codec, ensoniq;
+    boolean gus, adlib, sb, midi, ensoniq;
     int i, wait, dmxlump;
 
     snd_SfxVolume = 127;
@@ -189,7 +187,6 @@ void I_sndArbitrateCards(void)
     gus = snd_MusicDevice == snd_GUS || snd_SfxDevice == snd_GUS;
     sb = snd_SfxDevice == snd_SB;
     ensoniq = snd_SfxDevice == snd_ENSONIQ;
-    codec = snd_SfxDevice == snd_CODEC;
     adlib = snd_MusicDevice == snd_Adlib || snd_MusicDevice == snd_SB || snd_MusicDevice == snd_PAS;
     midi = snd_MusicDevice == snd_MPU;
 
@@ -201,13 +198,6 @@ void I_sndArbitrateCards(void)
         if (ENS_Detect())
         {
             printf("Dude.  The ENSONIQ ain't responding.\n");
-        }
-    }
-    if (codec)
-    {
-        if (CODEC_Detect(&snd_SBport, &snd_SBdma))
-        {
-            printf("CODEC.  The CODEC ain't responding.\n");
         }
     }
     if (gus)
@@ -275,24 +265,6 @@ void I_sndArbitrateCards(void)
 //
 void I_StartupSound(void)
 {
-    int rc;
-
-    //
-    // initialize dmxCodes[]
-    //
-    dmxCodes[snd_none] = 0;
-    dmxCodes[snd_PC] = AHW_PC_SPEAKER;
-    dmxCodes[snd_Adlib] = AHW_ADLIB;
-    dmxCodes[snd_SB] = AHW_SOUND_BLASTER;
-    dmxCodes[snd_PAS] = AHW_MEDIA_VISION;
-    dmxCodes[snd_GUS] = AHW_ULTRA_SOUND;
-    dmxCodes[snd_MPU] = AHW_MPU_401;
-    dmxCodes[snd_AWE] = AHW_AWE32;
-    dmxCodes[snd_ENSONIQ] = AHW_ENSONIQ;
-    dmxCodes[snd_CODEC] = AHW_CODEC;
-    dmxCodes[snd_DISNEY] = AHW_DISNEY;
-    dmxCodes[snd_TANDY] = AHW_TANDY;
-
     //
     // inits sound library timer stuff
     //
@@ -304,11 +276,11 @@ void I_StartupSound(void)
     I_sndArbitrateCards();
 
     //
-    // inits DMX sound library
+    // inits ASS sound library
     //
-    printf("  calling DMX_Init\n");
+    printf("  calling ASS_Init\n");
 
-    rc = DMX_Init(SND_TICRATE, SND_MAXSONGS, dmxCodes[snd_MusicDevice], dmxCodes[snd_SfxDevice]);
+    ASS_Init(SND_TICRATE, SND_MAXSONGS, snd_MusicDevice, snd_SfxDevice);
 }
 //
 // I_ShutdownSound
@@ -318,14 +290,5 @@ void I_ShutdownSound(void)
 {
     int s;
     S_PauseSound();
-    DMX_DeInit();
-}
-
-void I_SetChannels(int channels)
-{
-    int samplerate;
-
-    samplerate = lowSound ? 8000 : 11025;
-
-    WAV_PlayMode(channels, samplerate);
+    ASS_DeInit();
 }

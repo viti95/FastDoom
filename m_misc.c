@@ -178,7 +178,7 @@ extern int screenblocks;
 extern int showMessages;
 
 // machine-independent sound params
-extern int numChannels;
+int numChannels;
 
 extern int sfxVolume;
 extern int musicVolume;

@@ -101,7 +101,6 @@ void I_StopSound(int handle);
 int I_SoundIsPlaying(int handle);
 // called by S_*()'s to see if a channel is still playing.  Returns 0
 // if no longer playing, 1 if playing.
-void I_SetChannels(int channels);
 
 // Called by D_DoomMain,
 // determines the hardware configuration
