@@ -359,7 +359,7 @@ void D_DoomLoop(void)
         {
             I_StartTic();
             D_ProcessEvents();
-            G_BuildTiccmd(&localcmds[maketic % BACKUPTICS]);
+            G_BuildTiccmd(&localcmds[maketic & (BACKUPTICS-1)]);
             if (advancedemo)
                 D_DoAdvanceDemo();
             M_Ticker();

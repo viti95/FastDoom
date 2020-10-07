@@ -108,7 +108,7 @@ void NetUpdate(void)
 		if (maketic - gametic >= BACKUPTICS / 2 - 1)
 			break; // can't hold any more
 
-		G_BuildTiccmd(&localcmds[maketic % BACKUPTICS]);
+		G_BuildTiccmd(&localcmds[maketic & (BACKUPTICS-1)]);
 		maketic++;
 	}
 

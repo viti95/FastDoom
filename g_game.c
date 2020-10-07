@@ -514,7 +514,7 @@ void G_Ticker(void)
 
     // get commands, check consistancy,
     // and build new consistancy check
-    buf = (gametic) % BACKUPTICS;
+    buf = (gametic) & (BACKUPTICS-1);
 
     cmd = &players.cmd;
 

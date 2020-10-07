@@ -34,7 +34,7 @@
 #define DOOMCOM_ID 0x12345678l
 
 // Networking and tick handling related.
-#define BACKUPTICS 12
+#define BACKUPTICS 16
 
 //
 // Network packet data.
