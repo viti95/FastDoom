@@ -26,8 +26,6 @@ extern int GUSWAVE_Installed;
 unsigned long GUS_TotalMemory;
 int GUS_MemConfig;
 
-int GUS_AuxError = 0;
-
 /*---------------------------------------------------------------------
    Function: D32DosMemAlloc
 
@@ -99,7 +97,6 @@ int GUS_Init(
     ret = gf1_load_os(&os);
     if (ret)
     {
-        GUS_AuxError = ret;
         return (GUS_Error);
     }
 

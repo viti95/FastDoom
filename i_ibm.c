@@ -882,7 +882,7 @@ byte *I_ZoneBase(int *size)
 
     do
     {
-        heap -= 0x20000; // leave 128k alone
+        heap -= 0x60000; // leave 384kb alone
         if (heap > 0x800000 && !unlimitedRAM)
         {
             heap = 0x800000;
