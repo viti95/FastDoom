@@ -26,12 +26,6 @@ int MUSIC_SoundDevice = -1;
 
 static midifuncs MUSIC_MidiFunctions;
 
-static int MUSIC_FadeLength;
-static int MUSIC_FadeRate;
-static unsigned MUSIC_CurrentFadeVolume;
-static unsigned MUSIC_LastFadeVolume;
-static int MUSIC_EndingFadeVolume;
-static task *MUSIC_FadeTask = NULL;
 
 int MUSIC_InitAWE32(midifuncs *Funcs);
 int MUSIC_InitFM(int card, midifuncs *Funcs);
@@ -109,11 +103,6 @@ int MUSIC_Shutdown(
     status = MUSIC_Ok;
 
     MIDI_StopSong();
-
-    if (MUSIC_FadeTask != NULL)
-    {
-        MUSIC_StopFade();
-    }
 
     switch (MUSIC_SoundDevice)
     {
@@ -283,7 +272,6 @@ int MUSIC_StopSong(
     void)
 
 {
-    MUSIC_StopFade();
     MIDI_StopSong();
     return (MUSIC_Ok);
 }
@@ -329,99 +317,6 @@ int MUSIC_PlaySong(
     }
 
     return (MUSIC_Ok);
-}
-
-/*---------------------------------------------------------------------
-   Function: MUSIC_SetContext
-
-   Sets the song context.
----------------------------------------------------------------------*/
-
-void MUSIC_SetContext(
-    int context)
-
-{
-    MIDI_SetContext(context);
-}
-
-/*---------------------------------------------------------------------
-   Function: MUSIC_GetContext
-
-   Returns the current song context.
----------------------------------------------------------------------*/
-
-int MUSIC_GetContext(
-    void)
-
-{
-    return MIDI_GetContext();
-}
-
-/*---------------------------------------------------------------------
-   Function: MUSIC_SetSongTick
-
-   Sets the position of the song pointer.
----------------------------------------------------------------------*/
-
-void MUSIC_SetSongTick(
-    unsigned long PositionInTicks)
-
-{
-    MIDI_SetSongTick(PositionInTicks);
-}
-
-/*---------------------------------------------------------------------
-   Function: MUSIC_SetSongTime
-
-   Sets the position of the song pointer.
----------------------------------------------------------------------*/
-
-void MUSIC_SetSongTime(
-    unsigned long milliseconds)
-
-{
-    MIDI_SetSongTime(milliseconds);
-}
-
-/*---------------------------------------------------------------------
-   Function: MUSIC_SetSongPosition
-
-   Sets the position of the song pointer.
----------------------------------------------------------------------*/
-
-void MUSIC_SetSongPosition(
-    int measure,
-    int beat,
-    int tick)
-
-{
-    MIDI_SetSongPosition(measure, beat, tick);
-}
-
-/*---------------------------------------------------------------------
-   Function: MUSIC_GetSongPosition
-
-   Returns the position of the song pointer.
----------------------------------------------------------------------*/
-
-void MUSIC_GetSongPosition(
-    songposition *pos)
-
-{
-    MIDI_GetSongPosition(pos);
-}
-
-/*---------------------------------------------------------------------
-   Function: MUSIC_GetSongLength
-
-   Returns the length of the song.
----------------------------------------------------------------------*/
-
-void MUSIC_GetSongLength(
-    songposition *pos)
-
-{
-    MIDI_GetSongLength(pos);
 }
 
 int MUSIC_InitAWE32(
@@ -620,147 +515,3 @@ int MUSIC_InitGUS(
     return (status);
 }
 
-/*---------------------------------------------------------------------
-   Function: MUSIC_FadeRoutine
-
-   Fades music volume from current level to another over a specified
-   period of time.
----------------------------------------------------------------------*/
-
-static void MUSIC_FadeRoutine(
-    task *Task)
-
-{
-    int volume;
-
-    MUSIC_CurrentFadeVolume += MUSIC_FadeRate;
-    if (MUSIC_FadeLength == 0)
-    {
-        MIDI_SetVolume(MUSIC_EndingFadeVolume);
-        TS_Terminate(Task);
-        MUSIC_FadeTask = NULL;
-    }
-    else
-    {
-        MUSIC_FadeLength--;
-        //      if ( ( MUSIC_SoundDevice == GenMidi ) &&
-        //         ( ( MUSIC_FadeLength % 12 ) != 0 ) )
-        //         {
-        //         return;
-        //         }
-
-        volume = MUSIC_CurrentFadeVolume >> 7;
-        if (MUSIC_LastFadeVolume != volume)
-        {
-            MUSIC_LastFadeVolume = volume;
-            MIDI_SetVolume(volume);
-        }
-    }
-}
-
-/*---------------------------------------------------------------------
-   Function: MUSIC_FadeVolume
-
-   Fades music volume from current level to another over a specified
-   period of time.
----------------------------------------------------------------------*/
-
-int MUSIC_FadeVolume(
-    int tovolume,
-    int milliseconds)
-
-{
-    int fromvolume;
-
-    if ((MUSIC_SoundDevice == ProAudioSpectrum) ||
-        (MUSIC_SoundDevice == SoundMan16) ||
-        (MUSIC_SoundDevice == GenMidi) ||
-        (MUSIC_SoundDevice == SoundScape) ||
-        (MUSIC_SoundDevice == SoundCanvas))
-    {
-        MIDI_SetVolume(tovolume);
-        return (MUSIC_Ok);
-    }
-
-    if (MUSIC_FadeTask != NULL)
-    {
-        MUSIC_StopFade();
-    }
-
-    tovolume = max(0, tovolume);
-    tovolume = min(255, tovolume);
-    fromvolume = MUSIC_GetVolume();
-
-    MUSIC_FadeLength = milliseconds / 25;
-    MUSIC_FadeRate = ((tovolume - fromvolume) << 7) / MUSIC_FadeLength;
-    MUSIC_LastFadeVolume = fromvolume;
-    MUSIC_CurrentFadeVolume = fromvolume << 7;
-    MUSIC_EndingFadeVolume = tovolume;
-
-    MUSIC_FadeTask = TS_ScheduleTask(MUSIC_FadeRoutine, 40, 1, NULL);
-    if (MUSIC_FadeTask == NULL)
-    {
-        return (MUSIC_Warning);
-    }
-
-    TS_Dispatch();
-    return (MUSIC_Ok);
-}
-
-/*---------------------------------------------------------------------
-   Function: MUSIC_FadeActive
-
-   Returns whether the fade routine is active.
----------------------------------------------------------------------*/
-
-int MUSIC_FadeActive(
-    void)
-
-{
-    return (MUSIC_FadeTask != NULL);
-}
-
-/*---------------------------------------------------------------------
-   Function: MUSIC_StopFade
-
-   Stops fading the music.
----------------------------------------------------------------------*/
-
-void MUSIC_StopFade(
-    void)
-
-{
-    if (MUSIC_FadeTask != NULL)
-    {
-        TS_Terminate(MUSIC_FadeTask);
-        MUSIC_FadeTask = NULL;
-    }
-}
-
-/*---------------------------------------------------------------------
-   Function: MUSIC_RerouteMidiChannel
-
-   Sets callback function to reroute MIDI commands from specified
-   function.
----------------------------------------------------------------------*/
-
-void MUSIC_RerouteMidiChannel(
-    int channel,
-    int cdecl (*function)(int event, int c1, int c2))
-
-{
-    MIDI_RerouteMidiChannel(channel, function);
-}
-
-/*---------------------------------------------------------------------
-   Function: MUSIC_RegisterTimbreBank
-
-   Halts playback of all sounds.
----------------------------------------------------------------------*/
-
-void MUSIC_RegisterTimbreBank(
-    unsigned char *timbres)
-
-{
-    AL_RegisterTimbreBank(timbres);
-}

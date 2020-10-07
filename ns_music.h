@@ -42,17 +42,5 @@ void MUSIC_Continue(void);
 void MUSIC_Pause(void);
 int MUSIC_StopSong(void);
 int MUSIC_PlaySong(unsigned char *song, int loopflag);
-void MUSIC_SetContext(int context);
-int MUSIC_GetContext(void);
-void MUSIC_SetSongTick(unsigned long PositionInTicks);
-void MUSIC_SetSongTime(unsigned long milliseconds);
-void MUSIC_SetSongPosition(int measure, int beat, int tick);
-void MUSIC_GetSongPosition(songposition *pos);
-void MUSIC_GetSongLength(songposition *pos);
-int MUSIC_FadeVolume(int tovolume, int milliseconds);
-int MUSIC_FadeActive(void);
-void MUSIC_StopFade(void);
-void MUSIC_RerouteMidiChannel(int channel, int cdecl (*function)(int event, int c1, int c2));
-void MUSIC_RegisterTimbreBank(unsigned char *timbres);
 
 #endif
