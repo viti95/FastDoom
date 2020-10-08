@@ -57,25 +57,12 @@ void I_Error(char *error, ...);
 //  MUSIC I/O
 //
 
-int I_RegisterSong(void *data);
-// called by anything that wants to register a song lump with the sound lib
-// calls Paul's function of the similar name to register music only.
-// note that the song data is the same for any sound card and is paul's
-// MUS format.  Returns a handle which will be passed to all other music
-// functions.
-
 void I_LoopSong(int handle);
 // called by anything that wishes to start music.
 // plays a song, and when the song is done, starts playing it again in
 // an endless loop.  the start is faded in over three seconds.
 
-void I_StopSong(int handle);
-// called by anything that wishes to stop music.
-// stops a song abruptly.
 void I_SetMusicVolume(int volume);
-void I_ResumeSong(int handle);
-void I_PlaySong(int handle, boolean looping);
-void I_PauseSong(int handle);
 void I_ResumeSong(int handle);
 
 //  SFX I/O
@@ -88,19 +75,6 @@ int I_GetSfxLumpNum(sfxinfo_t *sfx);
 // The prefixes for different sound cards are 'S','M','A', and 'P'.
 // They refer to the card type.  The routine will cache in the
 // appropriate sound effect when it is played.
-
-int I_StartSound(int id, void *data, int vol, int sep);
-// Starts a sound in a particular sound channel
-
-void I_UpdateSoundParams(int handle, int vol, int sep);
-// Updates the volume, separation, and pitch of a sound channel
-
-void I_StopSound(int handle);
-// Stops a sound channel
-
-int I_SoundIsPlaying(int handle);
-// called by S_*()'s to see if a channel is still playing.  Returns 0
-// if no longer playing, 1 if playing.
 
 // Called by D_DoomMain,
 // determines the hardware configuration

@@ -8,35 +8,6 @@
 extern int _argc;
 extern char **_argv;
 
-int USER_CheckParameter(const char *parameter)
-{
-    int i;
-    int found;
-    char *ptr;
-
-    found = FALSE;
-    i = 1;
-    while (i < _argc)
-    {
-        ptr = _argv[i];
-
-        // Only check parameters preceded by - or /
-        if ((*ptr == '-') || (*ptr == '/'))
-        {
-            ptr++;
-            if (stricmp(parameter, ptr) == 0)
-            {
-                found = TRUE;
-                break;
-            }
-        }
-
-        i++;
-    }
-
-    return (found);
-}
-
 char *USER_GetText(const char *parameter)
 {
     int i;

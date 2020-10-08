@@ -502,32 +502,6 @@ int MV_Kill(
 }
 
 /*---------------------------------------------------------------------
-   Function: MV_VoicesPlaying
-
-   Determines the number of currently active voices.
----------------------------------------------------------------------*/
-
-int MV_VoicesPlaying(
-    void)
-
-{
-    VoiceNode *voice;
-    int NumVoices = 0;
-    unsigned flags;
-
-    flags = DisableInterrupts();
-
-    for (voice = VoiceList.next; voice != &VoiceList; voice = voice->next)
-    {
-        NumVoices++;
-    }
-
-    RestoreInterrupts(flags);
-
-    return (NumVoices);
-}
-
-/*---------------------------------------------------------------------
    Function: MV_AllocVoice
 
    Retrieve an inactive or lower priority voice for output.
@@ -579,41 +553,6 @@ VoiceNode *MV_AllocVoice(
 }
 
 /*---------------------------------------------------------------------
-   Function: MV_VoiceAvailable
-
-   Checks if a voice can be play at the specified priority.
----------------------------------------------------------------------*/
-
-int MV_VoiceAvailable(
-    int priority)
-
-{
-    VoiceNode *voice;
-    VoiceNode *node;
-    unsigned flags;
-
-    // Check if we have any free voices
-    if (!LL_Empty(&VoicePool, next, prev))
-    {
-        return (TRUE);
-    }
-
-    flags = DisableInterrupts();
-
-    // check if we have a higher priority than a voice that is playing.
-    voice = VoiceList.next;
-
-    RestoreInterrupts(flags);
-
-    if (voice != &VoiceList)
-    {
-        return (TRUE);
-    }
-
-    return (FALSE);
-}
-
-/*---------------------------------------------------------------------
    Function: MV_SetVoicePitch
 
    Sets the pitch for the specified voice.
@@ -634,53 +573,6 @@ void MV_SetVoicePitch(VoiceNode *voice, unsigned long rate)
         voice->FixedPointBufferSize = FixedPointBufferSize22050;
         break;
     }
-}
-
-/*---------------------------------------------------------------------
-   Function: MV_SetPitch
-
-   Sets the pitch for the voice associated with the specified handle.
----------------------------------------------------------------------*/
-
-int MV_SetPitch(
-    int handle)
-
-{
-    VoiceNode *voice;
-
-    voice = MV_GetVoice(handle);
-    if (voice == NULL)
-    {
-        return (MV_Error);
-    }
-
-    MV_SetVoicePitch(voice, voice->SamplingRate);
-
-    return (MV_Ok);
-}
-
-/*---------------------------------------------------------------------
-   Function: MV_SetFrequency
-
-   Sets the frequency for the voice associated with the specified handle.
----------------------------------------------------------------------*/
-
-int MV_SetFrequency(
-    int handle,
-    int frequency)
-
-{
-    VoiceNode *voice;
-
-    voice = MV_GetVoice(handle);
-    if (voice == NULL)
-    {
-        return (MV_Error);
-    }
-
-    MV_SetVoicePitch(voice, frequency);
-
-    return (MV_Ok);
 }
 
 /*---------------------------------------------------------------------
@@ -860,65 +752,6 @@ void MV_SetVoiceVolume(
     }
 
     MV_SetVoiceMixMode(voice);
-}
-
-/*---------------------------------------------------------------------
-   Function: MV_EndLooping
-
-   Stops the voice associated with the specified handle from looping
-   without stoping the sound.
----------------------------------------------------------------------*/
-
-int MV_EndLooping(
-    int handle)
-
-{
-    VoiceNode *voice;
-    unsigned flags;
-
-    flags = DisableInterrupts();
-
-    voice = MV_GetVoice(handle);
-    if (voice == NULL)
-    {
-        RestoreInterrupts(flags);
-        return (MV_Warning);
-    }
-
-    voice->LoopCount = 0;
-    voice->LoopStart = NULL;
-    voice->LoopEnd = NULL;
-
-    RestoreInterrupts(flags);
-
-    return (MV_Ok);
-}
-
-/*---------------------------------------------------------------------
-   Function: MV_SetPan
-
-   Sets the stereo and mono volume level of the voice associated
-   with the specified handle.
----------------------------------------------------------------------*/
-
-int MV_SetPan(
-    int handle,
-    int vol,
-    int left,
-    int right)
-
-{
-    VoiceNode *voice;
-
-    voice = MV_GetVoice(handle);
-    if (voice == NULL)
-    {
-        return (MV_Warning);
-    }
-
-    MV_SetVoiceVolume(voice, vol, left, right);
-
-    return (MV_Ok);
 }
 
 /*---------------------------------------------------------------------
@@ -1437,79 +1270,6 @@ int MV_GetReverseStereo(
 
 {
     return (MV_SwapLeftRight);
-}
-
-/*---------------------------------------------------------------------
-   Function: MV_TestPlayback
-
-   Checks if playback has started.
----------------------------------------------------------------------*/
-
-int MV_TestPlayback(
-    void)
-
-{
-    unsigned flags;
-    long time;
-    int start;
-    int status;
-    int pos;
-
-    if (MV_SoundCard == UltraSound)
-    {
-        return (MV_Ok);
-    }
-
-    flags = DisableInterrupts();
-    _enable();
-
-    status = MV_Error;
-    start = MV_MixPage;
-    time = clock() + CLOCKS_PER_SEC * 2;
-
-    while (clock() < time)
-    {
-        if (MV_MixPage != start)
-        {
-            status = MV_Ok;
-        }
-    }
-
-    RestoreInterrupts(flags);
-
-    if (status != MV_Ok)
-    {
-        // Just in case an error doesn't get reported
-
-        switch (MV_SoundCard)
-        {
-        case SoundBlaster:
-        case Awe32:
-            pos = BLASTER_GetCurrentPos();
-            break;
-
-        case ProAudioSpectrum:
-        case SoundMan16:
-            pos = PAS_GetCurrentPos();
-            break;
-
-        case SoundScape:
-            pos = SOUNDSCAPE_GetCurrentPos();
-            break;
-
-        case SoundSource:
-        case TandySoundSource:
-            pos = -1;
-            break;
-
-
-        default:
-            pos = -2;
-            break;
-        }
-    }
-
-    return (status);
 }
 
 /*---------------------------------------------------------------------

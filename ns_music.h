@@ -33,11 +33,6 @@ typedef struct
 int MUSIC_Init(int SoundCard, int Address);
 int MUSIC_Shutdown(void);
 void MUSIC_SetVolume(int volume);
-void MUSIC_SetMidiChannelVolume(int channel, int volume);
-void MUSIC_ResetMidiChannelVolumes(void);
-int MUSIC_GetVolume(void);
-void MUSIC_SetLoopFlag(int loopflag);
-int MUSIC_SongPlaying(void);
 void MUSIC_Continue(void);
 void MUSIC_Pause(void);
 int MUSIC_StopSong(void);

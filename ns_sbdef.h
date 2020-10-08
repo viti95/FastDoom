@@ -85,9 +85,11 @@
 #define BlasterEnv_Midi 'P'
 #define BlasterEnv_EmuAddress 'E'
 
+// VITI95: OPTIMIZE
 #define CalcTimeConstant(rate, samplesize) \
     ((65536L - (256000000L / ((samplesize) * (rate)))) >> 8)
 
+// VITI95: OPTIMIZE
 #define CalcSamplingRate(tc) \
     (256000000L / (65536L - (tc << 8)))
 

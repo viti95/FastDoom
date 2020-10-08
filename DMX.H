@@ -20,7 +20,6 @@ int MPU_Init(int addr);
 int GUS_Init(void);
 void GUS_Shutdown(void);
 
-int TSM_NewService(int (*function)(void), int rate, int unk1, int unk2);
 void TSM_DelService(int unk1);
 void TSM_Remove(void);
 void MUS_PauseSong(int handle);

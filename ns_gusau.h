@@ -22,11 +22,7 @@ int GUSWAVE_VoicePlaying(int handle);
 int GUSWAVE_VoicesPlaying(void);
 int GUSWAVE_Kill(int handle);
 int GUSWAVE_KillAllVoices(void);
-int GUSWAVE_SetPitch(int handle, int pitchoffset);
-int GUSWAVE_SetPan3D(int handle, int angle, int distance);
 void GUSWAVE_SetVolume(int volume);
-int GUSWAVE_GetVolume(void);
-int GUSWAVE_VoiceAvailable(int priority);
 int GUSWAVE_StartDemandFeedPlayback(void (*function)(char **ptr, unsigned long *length),
                                     int channels, int bits, int rate, int pitchoffset, int angle,
                                     int volume, int priority, unsigned long callbackval);

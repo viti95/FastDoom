@@ -34,14 +34,9 @@ int DPMI_GetDOSMemory(void **ptr, int *descriptor, unsigned length);
 int DPMI_FreeDOSMemory(int descriptor);
 int DPMI_LockMemory(void *address, unsigned length);
 int DPMI_LockMemoryRegion(void *start, void *end);
-int DPMI_UnlockMemory(void *address, unsigned length);
-int DPMI_UnlockMemoryRegion(void *start, void *end);
 
 #define DPMI_Lock(variable) \
    (DPMI_LockMemory(&(variable), sizeof(variable)))
-
-#define DPMI_Unlock(variable) \
-   (DPMI_UnlockMemory(&(variable), sizeof(variable)))
 
 #pragma aux DPMI_GetDOSMemory =    \
     "mov    eax, 0100h",           \

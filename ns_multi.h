@@ -31,12 +31,6 @@ enum MV_Errors
 int MV_VoicePlaying(int handle);
 int MV_KillAllVoices(void);
 int MV_Kill(int handle);
-int MV_VoicesPlaying(void);
-int MV_VoiceAvailable(int priority);
-int MV_SetPitch(int handle);
-int MV_SetFrequency(int handle, int frequency);
-int MV_EndLooping(int handle);
-int MV_SetPan(int handle, int vol, int left, int right);
 int MV_SetMixMode(int numchannels, int samplebits);
 int MV_StartPlayback(void);
 void MV_StopPlayback(void);

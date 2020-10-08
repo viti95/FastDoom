@@ -472,42 +472,6 @@ static int SOUNDSCAPE_SetupDMABuffer(
 }
 
 /*---------------------------------------------------------------------
-   Function: SOUNDSCAPE_GetCurrentPos
-
-   Returns the offset within the current sound being played.
----------------------------------------------------------------------*/
-
-int SOUNDSCAPE_GetCurrentPos(
-    void)
-
-{
-    char *CurrentAddr;
-    int offset;
-
-    if (!SOUNDSCAPE_SoundPlaying)
-    {
-        return (SOUNDSCAPE_Error);
-    }
-
-    CurrentAddr = DMA_GetCurrentPos(SOUNDSCAPE_Config.DMAChan);
-
-    offset = (int)(((unsigned long)CurrentAddr) -
-                   ((unsigned long)SOUNDSCAPE_CurrentDMABuffer));
-
-    if (SOUNDSCAPE_MixMode & SIXTEEN_BIT)
-    {
-        offset >>= 1;
-    }
-
-    if (SOUNDSCAPE_MixMode & STEREO)
-    {
-        offset >>= 1;
-    }
-
-    return (offset);
-}
-
-/*---------------------------------------------------------------------
    Function: SOUNDSCAPE_BeginPlayback
 
    Starts playback of digitized sound.

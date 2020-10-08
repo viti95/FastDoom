@@ -21,7 +21,6 @@ void AL_SendOutputToPort_OPL3LPT(int port, int reg, int data);
 void AL_SendOutput(int voice, int reg, int data);
 void AL_StereoOn(void);
 void AL_StereoOff(void);
-int AL_ReleaseVoice(int voice);
 void AL_Shutdown(void);
 int AL_Init(int soundcard);
 void AL_Reset(void);

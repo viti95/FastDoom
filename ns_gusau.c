@@ -434,94 +434,6 @@ int GUSWAVE_KillAllVoices(
 }
 
 /*---------------------------------------------------------------------
-   Function: GUSWAVE_SetPitch
-
-   Sets the pitch for the voice associated with the specified handle.
----------------------------------------------------------------------*/
-
-int GUSWAVE_SetPitch(
-    int handle,
-    int pitchoffset)
-
-{
-    VoiceNode *voice;
-    unsigned flags;
-
-    flags = DisableInterrupts();
-
-    voice = GUSWAVE_GetVoice(handle);
-
-    if (voice == NULL)
-    {
-        RestoreInterrupts(flags);
-
-        return (GUSWAVE_Warning);
-    }
-
-    if (voice->Active)
-    {
-        voice->RateScale = (voice->SamplingRate * 0x10000) >> 16;
-        gf1_dig_set_freq(voice->GF1voice, voice->RateScale);
-    }
-
-    RestoreInterrupts(flags);
-
-    return (GUSWAVE_Ok);
-}
-
-/*---------------------------------------------------------------------
-   Function: GUSWAVE_SetPan3D
-
-   Sets the pan position of the voice with the specified handle.
----------------------------------------------------------------------*/
-
-int GUSWAVE_SetPan3D(
-    int handle,
-    int angle,
-    int distance)
-
-{
-    VoiceNode *voice;
-    int pan;
-    unsigned flags;
-
-    flags = DisableInterrupts();
-
-    voice = GUSWAVE_GetVoice(handle);
-
-    if (voice == NULL)
-    {
-        RestoreInterrupts(flags);
-
-        return (GUSWAVE_Warning);
-    }
-
-    if (voice->Active)
-    {
-        angle &= 31;
-
-        pan = GUSWAVE_PanTable[angle];
-        if (GUSWAVE_SwapLeftRight)
-        {
-            pan = 15 - pan;
-        }
-
-        distance = max(0, distance);
-        distance = min(255, distance);
-
-        voice->Volume = 255 - distance;
-        voice->Pan = pan;
-
-        gf1_dig_set_pan(voice->GF1voice, pan);
-        gf1_dig_set_vol(voice->GF1voice, GUSWAVE_Volume - distance * 4);
-    }
-
-    RestoreInterrupts(flags);
-
-    return (GUSWAVE_Ok);
-}
-
-/*---------------------------------------------------------------------
    Function: GUSWAVE_SetVolume
 
    Sets the total volume of the digitized sounds.
@@ -545,19 +457,6 @@ void GUSWAVE_SetVolume(
                             GUSWAVE_Volume - (255 - GUSWAVE_Voices[i].Volume) * 4);
         }
     }
-}
-
-/*---------------------------------------------------------------------
-   Function: GUSWAVE_GetVolume
-
-   Returns the total volume of the digitized sounds.
----------------------------------------------------------------------*/
-
-int GUSWAVE_GetVolume(
-    void)
-
-{
-    return (255 - ((MAX_VOLUME - GUSWAVE_Volume) / 4));
 }
 
 /*---------------------------------------------------------------------
@@ -626,49 +525,6 @@ static VoiceNode *GUSWAVE_AllocVoice(
     }
 
     return (voice);
-}
-
-/*---------------------------------------------------------------------
-   Function: GUSWAVE_VoiceAvailable
-
-   Checks if a voice can be play at the specified priority.
----------------------------------------------------------------------*/
-
-int GUSWAVE_VoiceAvailable(
-    int priority)
-
-{
-    VoiceNode *voice;
-    VoiceNode *node;
-    unsigned flags;
-
-    if (GUSWAVE_VoicesPlaying() < GUSWAVE_MaxVoices)
-    {
-        return (TRUE);
-    }
-
-    flags = DisableInterrupts();
-
-    node = VoiceList.start;
-    voice = node;
-    while (node != NULL)
-    {
-        if (node->priority < voice->priority)
-        {
-            voice = node;
-        }
-
-        node = node->next;
-    }
-
-    RestoreInterrupts(flags);
-
-    if (priority >= voice->priority)
-    {
-        return (TRUE);
-    }
-
-    return (FALSE);
 }
 
 /*---------------------------------------------------------------------

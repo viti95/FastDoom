@@ -180,13 +180,6 @@ pcspkmuse_t pcspkmuse;
 int pcshandle = 0;
 
 fx_blaster_config dmx_blaster;
-int (*tsm_func)(void);
-task *tsm_task = NULL;
-
-void tsm_funch()
-{
-    tsm_func();
-}
 
 void *mus_data = NULL;
 char *mid_data = NULL;
@@ -194,25 +187,6 @@ char *mid_data = NULL;
 int mus_loop = 0;
 int dmx_mus_port = 0;
 
-int TSM_NewService(int (*function)(void), int rate, int unk1, int unk2)
-{
-    tsm_func = function;
-    tsm_task = TS_ScheduleTask(tsm_funch, rate, 1, NULL);
-    TS_Dispatch();
-    return 0;
-}
-void TSM_DelService(int unk1)
-{
-    if (tsm_task)
-    {
-        TS_Terminate(tsm_task);
-    }
-    tsm_task = NULL;
-}
-void TSM_Remove(void)
-{
-    TS_Shutdown();
-}
 void MUS_PauseSong(int handle)
 {
     MUSIC_Pause();

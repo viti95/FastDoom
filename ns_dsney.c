@@ -116,29 +116,6 @@ void SS_StopPlayback(
 }
 
 /*---------------------------------------------------------------------
-   Function: SS_GetCurrentPos
-
-   Returns the offset within the current sound being played.
----------------------------------------------------------------------*/
-
-int SS_GetCurrentPos(
-    void)
-
-{
-    int offset;
-
-    if (!SS_SoundPlaying)
-    {
-        return (SS_Warning);
-    }
-
-    offset = (int)(((unsigned long)SS_SoundPtr) -
-                   ((unsigned long)SS_CurrentBuffer));
-
-    return (offset);
-}
-
-/*---------------------------------------------------------------------
    Function: SS_BeginBufferedPlayback
 
    Begins multibuffered playback of digitized sound on the Sound Source.
@@ -179,20 +156,6 @@ int SS_BeginBufferedPlayback(
 }
 
 /*---------------------------------------------------------------------
-   Function: SS_GetPlaybackRate
-
-   Returns the rate at which the digitized sound will be played in
-   hertz.
----------------------------------------------------------------------*/
-
-int SS_GetPlaybackRate(
-    void)
-
-{
-    return (SS_SampleRate);
-}
-
-/*---------------------------------------------------------------------
    Function: SS_SetMixMode
 
    Sets the sound card to play samples in mono or stereo.
@@ -204,26 +167,6 @@ int SS_SetMixMode(
 {
     mode = MONO_8BIT;
     return (mode);
-}
-
-/*---------------------------------------------------------------------
-   Function: SS_SetPort
-
-   Selects which port to use to write to the Sound Source.
----------------------------------------------------------------------*/
-
-int SS_SetPort(
-    int port)
-
-{
-    if (SS_Installed)
-    {
-        SS_Shutdown();
-    }
-
-    SS_Port = port;
-
-    return (SS_Ok);
 }
 
 /*---------------------------------------------------------------------

@@ -874,37 +874,6 @@ void AL_Reset(
 }
 
 /*---------------------------------------------------------------------
-   Function: AL_ReleaseVoice
-
-   Marks a previously reserved voice as being free to use.
----------------------------------------------------------------------*/
-
-int AL_ReleaseVoice(
-    int voice)
-
-{
-   unsigned flags;
-
-   if ((voice < 0) || (voice >= NUM_VOICES))
-   {
-      return (AL_Error);
-   }
-
-   if (!VoiceReserved[voice])
-   {
-      return (AL_Warning);
-   }
-
-   flags = DisableInterrupts();
-
-   VoiceReserved[voice] = FALSE;
-   LL_AddToTail(VOICE, &Voice_Pool, &Voice[voice]);
-
-   RestoreInterrupts(flags);
-   return (AL_Ok);
-}
-
-/*---------------------------------------------------------------------
    Function: AL_NoteOff
 
    Turns off a note on the specified MIDI channel.

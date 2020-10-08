@@ -39,23 +39,27 @@
 // I_StartupTimer
 //
 
-int tsm_ID = -1;
+task *tsm_task;
 
 void I_StartupTimer(void)
 {
     printf("I_StartupTimer()\n");
     // installs master timer.  Must be done before StartupTimer()!
-    tsm_ID = TS_ScheduleTask(I_TimerISR, 35, 1, NULL);
+    tsm_task = TS_ScheduleTask(I_TimerISR, 35, 1, NULL);
     TS_Dispatch();
 
-    if (tsm_ID == NULL)
-        I_Error("Can't register 35 Hz timer w/ DMX library");
+    if (tsm_task == NULL)
+        I_Error("Can't register 35 Hz timer w/ ASS library");
 }
 
 void I_ShutdownTimer(void)
 {
-    TSM_DelService(tsm_ID);
-    TSM_Remove();
+    if (tsm_task)
+    {
+        TS_Terminate(tsm_task);
+    }
+    tsm_task = NULL;
+    TS_Shutdown();
 }
 
 //
@@ -74,46 +78,10 @@ int snd_MusicDevice; // current music card # (index to dmxCodes)
 int snd_DesiredSfxDevice;
 int snd_DesiredMusicDevice;
 
-void I_PauseSong(int handle)
-{
-    MUS_PauseSong(handle);
-}
-
-void I_ResumeSong(int handle)
-{
-    MUS_ResumeSong(handle);
-}
-
 void I_SetMusicVolume(int volume)
 {
     MUS_SetMasterVolume(volume);
     snd_MusicVolume = volume;
-}
-
-//
-// Song API
-//
-
-int I_RegisterSong(void *data)
-{
-    int rc = MUS_RegisterSong(data);
-    return rc;
-}
-
-//
-// Stops a song.  MUST be called before I_UnregisterSong().
-//
-void I_StopSong(int handle)
-{
-    int rc;
-    rc = MUS_StopSong(handle);
-}
-
-void I_PlaySong(int handle, boolean looping)
-{
-    int rc;
-    rc = MUS_ChainSong(handle, looping ? handle : -1);
-    rc = MUS_PlaySong(handle, snd_MusicVolume);
 }
 
 //
@@ -125,26 +93,6 @@ int I_GetSfxLumpNum(sfxinfo_t *sfx)
     char namebuf[9];
     sprintf(namebuf, "D%c%s", snd_prefixen[snd_SfxDevice], sfx->name);
     return W_GetNumForName(namebuf);
-}
-
-int I_StartSound(int id, void *data, int vol, int sep)
-{
-    return SFX_PlayPatch(data, sep, vol);
-}
-
-void I_StopSound(int handle)
-{
-    SFX_StopPatch(handle);
-}
-
-int I_SoundIsPlaying(int handle)
-{
-    return SFX_Playing(handle);
-}
-
-void I_UpdateSoundParams(int handle, int vol, int sep)
-{
-    SFX_SetOrigin(handle, sep, vol);
 }
 
 //

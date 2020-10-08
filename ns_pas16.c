@@ -661,46 +661,6 @@ int PAS_SetupDMABuffer(
 }
 
 /*---------------------------------------------------------------------
-   Function: PAS_GetCurrentPos
-
-   Returns the offset within the current sound being played.
----------------------------------------------------------------------*/
-
-int PAS_GetCurrentPos(
-    void)
-
-{
-   char *CurrentAddr;
-   int offset;
-
-   if (!PAS_SoundPlaying)
-   {
-      return (PAS_Error);
-   }
-
-   CurrentAddr = DMA_GetCurrentPos(PAS_DMAChannel);
-   if (CurrentAddr == NULL)
-   {
-      return (PAS_Error);
-   }
-
-   offset = (int)(((unsigned long)CurrentAddr) -
-                  ((unsigned long)PAS_CurrentDMABuffer));
-
-   if (PAS_MixMode & SIXTEEN_BIT)
-   {
-      offset >>= 1;
-   }
-
-   if (PAS_MixMode & STEREO)
-   {
-      offset >>= 1;
-   }
-
-   return (offset);
-}
-
-/*---------------------------------------------------------------------
    Function: PAS_GetFilterSetting
 
    Returns the bit settings for the appropriate filter level.
@@ -950,44 +910,6 @@ int PAS_SetPCMVolume(
    }
 
    return (PAS_Ok);
-}
-
-/*---------------------------------------------------------------------
-   Function: PAS_GetPCMVolume
-
-   Returns the current volume of digitized sound playback.
----------------------------------------------------------------------*/
-
-int PAS_GetPCMVolume(
-    void)
-
-{
-   int leftvolume;
-   int rightvolume;
-   int totalvolume;
-
-   if (PAS_Func == NULL)
-   {
-      return (PAS_Error);
-   }
-
-   leftvolume = PAS_CallMVFunction(PAS_Func->GetMixer, 0,
-                                   OUTPUTMIXER, L_PCM);
-   rightvolume = PAS_CallMVFunction(PAS_Func->GetMixer, 0,
-                                    OUTPUTMIXER, R_PCM);
-
-   if ((leftvolume == PAS_Error) || (rightvolume == PAS_Error))
-   {
-      return (PAS_Error);
-   }
-
-   leftvolume &= 0xff;
-   rightvolume &= 0xff;
-
-   totalvolume = (rightvolume + leftvolume) / 2;
-   totalvolume *= 255;
-   totalvolume /= 100;
-   return (totalvolume);
 }
 
 /*---------------------------------------------------------------------

@@ -53,23 +53,12 @@ int FX_Init(int SoundCard, int numvoices, int numchannels, int samplebits, unsig
 int FX_Shutdown(void);
 int FX_SetCallBack(void (*function)(unsigned long));
 void FX_SetVolume(int volume);
-
-void FX_SetReverseStereo(int setting);
 int FX_GetReverseStereo(void);
-
-int FX_VoiceAvailable(int priority);
-int FX_SetPan(int handle, int vol, int left, int right);
-int FX_SetPitch(int handle);
-int FX_SetFrequency(int handle, int frequency);
 int FX_PlayRaw(char *ptr, unsigned long length, unsigned rate,
                int vol, int left, int right, int priority,
                unsigned long callbackval);
 int FX_PlayLoopedRaw(char *ptr, unsigned long length, char *loopstart,
                      char *loopend, unsigned rate, int pitchoffset, int vol, int left,
                      int right, int priority, unsigned long callbackval);
-int FX_SoundActive(int handle);
-int FX_SoundsPlaying(void);
-int FX_StopSound(int handle);
-int FX_StopAllSounds(void);
 
 #endif

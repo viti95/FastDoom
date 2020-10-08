@@ -385,19 +385,6 @@ void FX_SetVolume(
 }
 
 /*---------------------------------------------------------------------
-   Function: FX_SetReverseStereo
-
-   Set the orientation of the left and right channels.
----------------------------------------------------------------------*/
-
-void FX_SetReverseStereo(
-    int setting)
-
-{
-    MV_SetReverseStereo(setting);
-}
-
-/*---------------------------------------------------------------------
    Function: FX_GetReverseStereo
 
    Returns the orientation of the left and right channels.
@@ -408,87 +395,6 @@ int FX_GetReverseStereo(
 
 {
     return MV_GetReverseStereo();
-}
-
-/*---------------------------------------------------------------------
-   Function: FX_VoiceAvailable
-
-   Checks if a voice can be play at the specified priority.
----------------------------------------------------------------------*/
-
-int FX_VoiceAvailable(
-    int priority)
-
-{
-    return MV_VoiceAvailable(priority);
-}
-
-/*---------------------------------------------------------------------
-   Function: FX_SetPan
-
-   Sets the stereo and mono volume level of the voice associated
-   with the specified handle.
----------------------------------------------------------------------*/
-
-int FX_SetPan(
-    int handle,
-    int vol,
-    int left,
-    int right)
-
-{
-    int status;
-
-    status = MV_SetPan(handle, vol, left, right);
-    if (status == MV_Error)
-    {
-        status = FX_Warning;
-    }
-
-    return (status);
-}
-
-/*---------------------------------------------------------------------
-   Function: FX_SetPitch
-
-   Sets the pitch of the voice associated with the specified handle.
----------------------------------------------------------------------*/
-
-int FX_SetPitch(
-    int handle)
-
-{
-    int status;
-
-    status = MV_SetPitch(handle);
-    if (status == MV_Error)
-    {
-        status = FX_Warning;
-    }
-
-    return (status);
-}
-
-/*---------------------------------------------------------------------
-   Function: FX_SetFrequency
-
-   Sets the frequency of the voice associated with the specified handle.
----------------------------------------------------------------------*/
-
-int FX_SetFrequency(
-    int handle,
-    int frequency)
-
-{
-    int status;
-
-    status = MV_SetFrequency(handle, frequency);
-    if (status == MV_Error)
-    {
-        status = FX_Warning;
-    }
-
-    return (status);
 }
 
 /*---------------------------------------------------------------------
@@ -517,72 +423,4 @@ int FX_PlayRaw(
     }
 
     return (handle);
-}
-
-/*---------------------------------------------------------------------
-   Function: FX_SoundActive
-
-   Tests if the specified sound is currently playing.
----------------------------------------------------------------------*/
-
-int FX_SoundActive(
-    int handle)
-
-{
-    return (MV_VoicePlaying(handle));
-}
-
-/*---------------------------------------------------------------------
-   Function: FX_SoundsPlaying
-
-   Reports the number of voices playing.
----------------------------------------------------------------------*/
-
-int FX_SoundsPlaying(
-    void)
-
-{
-    return (MV_VoicesPlaying());
-}
-
-/*---------------------------------------------------------------------
-   Function: FX_StopSound
-
-   Halts playback of a specific voice
----------------------------------------------------------------------*/
-
-int FX_StopSound(
-    int handle)
-
-{
-    int status;
-
-    status = MV_Kill(handle);
-    if (status != MV_Ok)
-    {
-        return (FX_Warning);
-    }
-
-    return (FX_Ok);
-}
-
-/*---------------------------------------------------------------------
-   Function: FX_StopAllSounds
-
-   Halts playback of all sounds.
----------------------------------------------------------------------*/
-
-int FX_StopAllSounds(
-    void)
-
-{
-    int status;
-
-    status = MV_KillAllVoices();
-    if (status != MV_Ok)
-    {
-        return (FX_Warning);
-    }
-
-    return (FX_Ok);
 }

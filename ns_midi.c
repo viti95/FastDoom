@@ -682,24 +682,6 @@ static int _MIDI_SendControlChange(
 }
 
 /*---------------------------------------------------------------------
-   Function: MIDI_RerouteMidiChannel
-
-   Sets callback function to reroute MIDI commands from specified
-   function.
----------------------------------------------------------------------*/
-
-void MIDI_RerouteMidiChannel(
-    int channel,
-    int cdecl (*function)(int event, int c1, int c2))
-
-{
-    if ((channel >= 1) && (channel <= 16))
-    {
-        _MIDI_RerouteFunctions[channel - 1] = function;
-    }
-}
-
-/*---------------------------------------------------------------------
    Function: MIDI_AllNotesOff
 
    Sends all notes off commands on all midi channels.
@@ -775,50 +757,6 @@ static void _MIDI_SetChannelVolume(
     volume >>= 8;
 
     _MIDI_Funcs->ControlChange(channel, MIDI_VOLUME, volume);
-}
-
-/*---------------------------------------------------------------------
-   Function: MIDI_SetUserChannelVolume
-
-   Sets the volume of the specified midi channel.
----------------------------------------------------------------------*/
-
-void MIDI_SetUserChannelVolume(
-    int channel,
-    int volume)
-
-{
-    // Convert channel from 1-16 to 0-15
-    channel--;
-
-    volume = max(0, volume);
-    volume = min(volume, 256);
-
-    if ((channel >= 0) && (channel < NUM_MIDI_CHANNELS))
-    {
-        _MIDI_UserChannelVolume[channel] = volume;
-        _MIDI_SetChannelVolume(channel, _MIDI_ChannelVolume[channel]);
-    }
-}
-
-/*---------------------------------------------------------------------
-   Function: MIDI_ResetUserChannelVolume
-
-   Sets the volume of the specified midi channel.
----------------------------------------------------------------------*/
-
-void MIDI_ResetUserChannelVolume(
-    void)
-
-{
-    int channel;
-
-    for (channel = 0; channel < NUM_MIDI_CHANNELS; channel++)
-    {
-        _MIDI_UserChannelVolume[channel] = 256;
-    }
-
-    _MIDI_SendChannelVolumes();
 }
 
 /*---------------------------------------------------------------------
@@ -923,77 +861,6 @@ int MIDI_SetVolume(
 }
 
 /*---------------------------------------------------------------------
-   Function: MIDI_GetVolume
-
-   Returns the total volume of the music.
----------------------------------------------------------------------*/
-
-int MIDI_GetVolume(
-    void)
-
-{
-    int volume;
-
-    if (_MIDI_Funcs == NULL)
-    {
-        return (MIDI_NullMidiModule);
-    }
-
-    if (_MIDI_Funcs->GetVolume)
-    {
-        volume = _MIDI_Funcs->GetVolume();
-    }
-    else
-    {
-        volume = _MIDI_TotalVolume;
-    }
-
-    return (volume);
-}
-
-/*---------------------------------------------------------------------
-   Function: MIDI_SetContext
-
-   Sets the song context.
----------------------------------------------------------------------*/
-
-void MIDI_SetContext(
-    int context)
-
-{
-    if ((context > 0) && (context < EMIDI_NUM_CONTEXTS))
-    {
-        _MIDI_Context = context;
-    }
-}
-
-/*---------------------------------------------------------------------
-   Function: MIDI_GetContext
-
-   Returns the current song context.
----------------------------------------------------------------------*/
-
-int MIDI_GetContext(
-    void)
-
-{
-    return _MIDI_Context;
-}
-
-/*---------------------------------------------------------------------
-   Function: MIDI_SetLoopFlag
-
-   Sets whether the song should loop when finished or not.
----------------------------------------------------------------------*/
-
-void MIDI_SetLoopFlag(
-    int loopflag)
-
-{
-    _MIDI_Loop = loopflag;
-}
-
-/*---------------------------------------------------------------------
    Function: MIDI_ContinueSong
 
    Continues playback of a paused song.
@@ -1024,19 +891,6 @@ void MIDI_PauseSong(
         _MIDI_SongActive = FALSE;
         MIDI_AllNotesOff();
     }
-}
-
-/*---------------------------------------------------------------------
-   Function: MIDI_SongPlaying
-
-   Returns whether a song is playing or not.
----------------------------------------------------------------------*/
-
-int MIDI_SongPlaying(
-    void)
-
-{
-    return (_MIDI_SongActive);
 }
 
 /*---------------------------------------------------------------------
@@ -1225,6 +1079,7 @@ void MIDI_SetTempo(
     long tickspersecond;
 
     MIDI_Tempo = tempo;
+    // VITI95: OPTIMIZE
     tickspersecond = (tempo * _MIDI_Division) / 60;
     if (_MIDI_PlayRoutine != NULL)
     {
@@ -1233,19 +1088,6 @@ void MIDI_SetTempo(
     }
     // VITI95: OPTIMIZE
     _MIDI_FPSecondsPerTick = (1 << TIME_PRECISION) / tickspersecond;
-}
-
-/*---------------------------------------------------------------------
-   Function: MIDI_GetTempo
-
-   Returns the song tempo.
----------------------------------------------------------------------*/
-
-int MIDI_GetTempo(
-    void)
-
-{
-    return (MIDI_Tempo);
 }
 
 /*---------------------------------------------------------------------
@@ -1394,197 +1236,6 @@ static int _MIDI_ProcessNextTick(
     _MIDI_AdvanceTick();
 
     return (TimeSet);
-}
-
-/*---------------------------------------------------------------------
-   Function: MIDI_SetSongTick
-
-   Sets the position of the song pointer.
----------------------------------------------------------------------*/
-
-void MIDI_SetSongTick(
-    unsigned long PositionInTicks)
-
-{
-    if (!_MIDI_SongLoaded)
-    {
-        return;
-    }
-
-    MIDI_PauseSong();
-
-    if (PositionInTicks < _MIDI_PositionInTicks)
-    {
-        _MIDI_ResetTracks();
-        MIDI_Reset();
-    }
-
-    while (_MIDI_PositionInTicks < PositionInTicks)
-    {
-        if (_MIDI_ProcessNextTick())
-        {
-            break;
-        }
-        if (_MIDI_ActiveTracks == 0)
-        {
-            _MIDI_ResetTracks();
-            if (!_MIDI_Loop)
-            {
-                return;
-            }
-            break;
-        }
-    }
-
-    MIDI_SetVolume(_MIDI_TotalVolume);
-    MIDI_ContinueSong();
-}
-
-/*---------------------------------------------------------------------
-   Function: MIDI_SetSongTime
-
-   Sets the position of the song pointer.
----------------------------------------------------------------------*/
-
-void MIDI_SetSongTime(
-    unsigned long milliseconds)
-
-{
-    unsigned long mil;
-    unsigned long sec;
-    unsigned long newtime;
-
-    if (!_MIDI_SongLoaded)
-    {
-        return;
-    }
-
-    MIDI_PauseSong();
-
-    mil = ((milliseconds % 1000) << TIME_PRECISION) / 1000;
-    sec = (milliseconds / 1000) << TIME_PRECISION;
-    newtime = sec + mil;
-
-    if (newtime < _MIDI_Time)
-    {
-        _MIDI_ResetTracks();
-        MIDI_Reset();
-    }
-
-    while (_MIDI_Time < newtime)
-    {
-        if (_MIDI_ProcessNextTick())
-        {
-            break;
-        }
-        if (_MIDI_ActiveTracks == 0)
-        {
-            _MIDI_ResetTracks();
-            if (!_MIDI_Loop)
-            {
-                return;
-            }
-            break;
-        }
-    }
-
-    MIDI_SetVolume(_MIDI_TotalVolume);
-    MIDI_ContinueSong();
-}
-
-/*---------------------------------------------------------------------
-   Function: MIDI_SetSongPosition
-
-   Sets the position of the song pointer.
----------------------------------------------------------------------*/
-
-void MIDI_SetSongPosition(
-    int measure,
-    int beat,
-    int tick)
-
-{
-    unsigned long pos;
-
-    if (!_MIDI_SongLoaded)
-    {
-        return;
-    }
-
-    MIDI_PauseSong();
-
-    pos = RELATIVE_BEAT(measure, beat, tick);
-
-    if (pos < RELATIVE_BEAT(_MIDI_Measure, _MIDI_Beat, _MIDI_Tick))
-    {
-        _MIDI_ResetTracks();
-        MIDI_Reset();
-    }
-
-    while (RELATIVE_BEAT(_MIDI_Measure, _MIDI_Beat, _MIDI_Tick) < pos)
-    {
-        if (_MIDI_ProcessNextTick())
-        {
-            break;
-        }
-        if (_MIDI_ActiveTracks == 0)
-        {
-            _MIDI_ResetTracks();
-            if (!_MIDI_Loop)
-            {
-                return;
-            }
-            break;
-        }
-    }
-
-    MIDI_SetVolume(_MIDI_TotalVolume);
-    MIDI_ContinueSong();
-}
-
-/*---------------------------------------------------------------------
-   Function: MIDI_GetSongPosition
-
-   Returns the position of the song pointer in Measures, beats, ticks.
----------------------------------------------------------------------*/
-
-void MIDI_GetSongPosition(
-    songposition *pos)
-
-{
-    unsigned long mil;
-    unsigned long sec;
-
-    mil = (_MIDI_Time & ((1 << TIME_PRECISION) - 1)) * 1000;
-    sec = _MIDI_Time >> TIME_PRECISION;
-    pos->milliseconds = (mil >> TIME_PRECISION) + (sec * 1000);
-    pos->tickposition = _MIDI_PositionInTicks;
-    pos->measure = _MIDI_Measure;
-    pos->beat = _MIDI_Beat;
-    pos->tick = _MIDI_Tick;
-}
-
-/*---------------------------------------------------------------------
-   Function: MIDI_GetSongLength
-
-   Returns the length of the song.
----------------------------------------------------------------------*/
-
-void MIDI_GetSongLength(
-    songposition *pos)
-
-{
-    unsigned long mil;
-    unsigned long sec;
-
-    mil = (_MIDI_TotalTime & ((1 << TIME_PRECISION) - 1)) * 1000;
-    sec = _MIDI_TotalTime >> TIME_PRECISION;
-
-    pos->milliseconds = (mil >> TIME_PRECISION) + (sec * 1000);
-    pos->measure = _MIDI_TotalMeasures;
-    pos->beat = _MIDI_TotalBeats;
-    pos->tick = _MIDI_TotalTicks;
-    pos->tickposition = 0;
 }
 
 /*---------------------------------------------------------------------

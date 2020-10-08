@@ -91,7 +91,6 @@ int BLASTER_BeginBufferedPlayback(char *BufferStart,
                                   int MixMode, void (*CallBackFunc)(void));
 void BLASTER_WriteMixer(int reg, int data);
 int BLASTER_ReadMixer(int reg);
-int BLASTER_GetVoiceVolume(void);
 int BLASTER_SetVoiceVolume(int volume);
 int BLASTER_GetMidiVolume(void);
 void BLASTER_SetMidiVolume(int volume);

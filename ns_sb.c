@@ -990,44 +990,6 @@ int BLASTER_ReadMixer(
 }
 
 /*---------------------------------------------------------------------
-   Function: BLASTER_GetVoiceVolume
-
-   Reads the average volume of the digitized sound channel from the
-   Sound Blaster's mixer chip.
----------------------------------------------------------------------*/
-
-int BLASTER_GetVoiceVolume(
-    void)
-
-{
-    int volume;
-    int left;
-    int right;
-
-    switch (BLASTER_MixerType)
-    {
-    case SBPro:
-    case SBPro2:
-        left = BLASTER_ReadMixer(MIXER_SBProVoice);
-        right = (left & 0x0f) << 4;
-        left &= 0xf0;
-        volume = (left + right) / 2;
-        break;
-
-    case SB16:
-        left = BLASTER_ReadMixer(MIXER_SB16VoiceLeft);
-        right = BLASTER_ReadMixer(MIXER_SB16VoiceRight);
-        volume = (left + right) / 2;
-        break;
-
-    default:
-        volume = BLASTER_Error;
-    }
-
-    return (volume);
-}
-
-/*---------------------------------------------------------------------
    Function: BLASTER_SetVoiceVolume
 
    Sets the volume of the digitized sound channel on the Sound
