@@ -766,7 +766,6 @@ void A_PosAttack(mobj_t *actor)
 
 void A_SPosAttack(mobj_t *actor)
 {
-    int i;
     int angle;
     int bangle;
     int damage;
@@ -780,12 +779,15 @@ void A_SPosAttack(mobj_t *actor)
     bangle = actor->angle;
     slope = P_AimLineAttack(actor, bangle, MISSILERANGE);
 
-    for (i = 0; i < 3; i++)
-    {
-        angle = bangle + ((P_Random - P_Random) << 20);
-        damage = ((P_Random % 5) + 1) * 3;
-        P_LineAttack(actor, angle, MISSILERANGE, slope, damage);
-    }
+    angle = bangle + ((P_Random - P_Random) << 20);
+    damage = ((P_Random % 5) + 1) * 3;
+    P_LineAttack(actor, angle, MISSILERANGE, slope, damage);
+    angle = bangle + ((P_Random - P_Random) << 20);
+    damage = ((P_Random % 5) + 1) * 3;
+    P_LineAttack(actor, angle, MISSILERANGE, slope, damage);
+    angle = bangle + ((P_Random - P_Random) << 20);
+    damage = ((P_Random % 5) + 1) * 3;
+    P_LineAttack(actor, angle, MISSILERANGE, slope, damage);
 }
 
 void A_CPosAttack(mobj_t *actor)
@@ -1015,11 +1017,11 @@ void A_Tracer(mobj_t *actor)
 
     dist = dist / actor->info->speed;
 
-    if (dist < 1)
-        slope = dest->z + 40 * FRACUNIT - actor->z;
-    else
-        slope = (dest->z + 40 * FRACUNIT - actor->z) / dist;
+    slope = dest->z + 40 * FRACUNIT - actor->z;
 
+    if (dist >= 1)
+        slope /= dist;
+    
     if (slope < actor->momz)
         actor->momz -= FRACUNIT / 8;
     else
@@ -1389,6 +1391,8 @@ void A_SkullAttack(mobj_t *actor)
     angle_t an;
     int dist;
 
+    fixed_t optMomz;
+
     fixed_t optCosine, optSine;
 
     if (!actor->target)
@@ -1407,12 +1411,12 @@ void A_SkullAttack(mobj_t *actor)
     actor->momy = (optSine << 4) + (optSine << 2);
 
     dist = P_AproxDistance(dest->x - actor->x, dest->y - actor->y);
-    dist = dist / SKULLSPEED;
+    optMomz = dest->z + (dest->height >> 1) - actor->z;
 
-    if (dist < 1)
-        actor->momz = dest->z + (dest->height >> 1) - actor->z;
-    else
-        actor->momz = (dest->z + (dest->height >> 1) - actor->z) / dist;
+    if (dist >= 1)
+        optMomz /= dist;
+
+    actor->momz = optMomz;
 }
 
 //
