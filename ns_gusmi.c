@@ -46,8 +46,6 @@ extern int GUS_MemConfig;
 
 static int GUSMIDI_Volume = 255;
 
-extern int GUS_AuxError;
-
 int GUSMIDI_Installed = FALSE;
 
 /*---------------------------------------------------------------------
