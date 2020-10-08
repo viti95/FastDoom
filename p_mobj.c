@@ -382,6 +382,8 @@ void P_NightmareRespawn(mobj_t *mobj)
     // inherit attributes from deceased one
     mo = P_SpawnMobj(x, y, z, mobj->type);
     mo->spawnpoint = mobj->spawnpoint;
+
+    // VITI95: OPTIMIZE
     mo->angle = ANG45 * (mthing->angle / 45);
 
     if (mthing->options & MTF_AMBUSH)
@@ -600,6 +602,7 @@ void P_SpawnPlayer(mapthing_t *mthing)
     if (mthing->type > 1)
         mobj->flags |= (mthing->type - 1) << MF_TRANSSHIFT;
 
+    // VITI95: OPTIMIZE
     mobj->angle = ANG45 * (mthing->angle / 45);
     mobj->player = p;
     mobj->health = p->health;
@@ -699,6 +702,7 @@ void P_SpawnMapThing(mapthing_t *mthing)
     if (mobj->flags & MF_COUNTITEM)
         totalitems++;
 
+    // VITI95: OPTIMIZE
     mobj->angle = ANG45 * (mthing->angle / 45);
     if (mthing->options & MTF_AMBUSH)
         mobj->flags |= MF_AMBUSH;
@@ -810,6 +814,8 @@ P_SpawnMissile(mobj_t *source,
     th->momy = FixedMul(th->info->speed, finesine[an]);
 
     dist = P_AproxDistance(dest->x - source->x, dest->y - source->y);
+
+    // VITI95: OPTIMIZE
     dist = dist / th->info->speed;
 
     if (dist < 1)

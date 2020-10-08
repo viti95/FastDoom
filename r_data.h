@@ -24,7 +24,6 @@
 #include "r_state.h"
 
 // Retrieve column data for span blitting.
-byte *R_GetColumn(int tex, int col);
 void R_GenerateComposite(int texnum);
 
 // I/O, setting up the stuff.

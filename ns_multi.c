@@ -132,6 +132,7 @@ static void MV_Mix(
         {
             if (position < voice->length)
             {
+                // VITI95: OPTIMIZE
                 voclength = (voice->length - position + rate - 1) / rate;
             }
             else

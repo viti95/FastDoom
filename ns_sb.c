@@ -494,11 +494,13 @@ void BLASTER_SetPlaybackRate(
         ActualRate = rate * BLASTER_SamplePacketSize;
         if (ActualRate < BLASTER_Card.MinSamplingRate)
         {
+            // VITI95: OPTIMIZE
             rate = BLASTER_Card.MinSamplingRate / BLASTER_SamplePacketSize;
         }
 
         if (ActualRate > BLASTER_Card.MaxSamplingRate)
         {
+            // VITI95: OPTIMIZE
             rate = BLASTER_Card.MaxSamplingRate / BLASTER_SamplePacketSize;
         }
 
@@ -934,6 +936,7 @@ int BLASTER_BeginBufferedPlayback(
     // Turn on speaker
     BLASTER_SpeakerOn();
 
+    // VITI95: OPTIMIZE
     TransferLength = BufferSize / NumDivisions;
     BLASTER_TransferLength = TransferLength;
 

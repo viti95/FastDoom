@@ -600,6 +600,7 @@ void WI_drawTime(int x,
 
 		do
 		{
+			// VITI95: OPTIMIZE
 			n = (t / div) % 60;
 			x = WI_drawNum(x, y, n, 2) - SHORT(colon->width);
 			div *= 60;
@@ -734,6 +735,8 @@ void WI_updateStats(void)
 	if (acceleratestage && sp_state != 10)
 	{
 		acceleratestage = 0;
+
+		// VITI95: OPTIMIZE
 		cnt_kills = (plrs.skills * 100) / wbs->maxkills;
 		cnt_items = (plrs.sitems * 100) / wbs->maxitems;
 		cnt_secret = (plrs.ssecret * 100) / wbs->maxsecret;
@@ -793,6 +796,7 @@ void WI_updateStats(void)
 
 		cnt_time += 3;
 
+		// VITI95: OPTIMIZE
 		if (cnt_time >= plrs.stime / TICRATE)
 			cnt_time = plrs.stime / TICRATE;
 

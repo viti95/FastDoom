@@ -638,8 +638,6 @@ void P_KillMobj(mobj_t *source,
 	if (target->tics < 1)
 		target->tics = 1;
 
-	//	I_StartSound (&actor->r, actor->info->deathsound);
-
 	// Drop stuff.
 	// This determines the kind of object spawned
 	// during the death frame of a thing.
@@ -713,6 +711,7 @@ void P_DamageMobj(mobj_t *target,
 							  target->x,
 							  target->y);
 
+		// VITI95: OPTIMIZE
 		thrust = damage * (FRACUNIT >> 3) * 100 / target->info->mass;
 
 		// make fall forwards sometimes

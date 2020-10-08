@@ -1015,6 +1015,7 @@ void A_Tracer(mobj_t *actor)
     dist = P_AproxDistance(dest->x - actor->x,
                            dest->y - actor->y);
 
+    // VITI95: OPTIMIZE
     dist = dist / actor->info->speed;
 
     slope = dest->z + 40 * FRACUNIT - actor->z;
@@ -1293,6 +1294,8 @@ void A_VileAttack(mobj_t *actor)
 
     S_StartSound(actor, sfx_barexp);
     P_DamageMobj(actor->target, actor, actor, 20);
+
+    // VITI95: OPTIMIZE
     actor->target->momz = 1000 * FRACUNIT / actor->target->info->mass;
 
     an = actor->angle >> ANGLETOFINESHIFT;
@@ -1411,6 +1414,10 @@ void A_SkullAttack(mobj_t *actor)
     actor->momy = (optSine << 4) + (optSine << 2);
 
     dist = P_AproxDistance(dest->x - actor->x, dest->y - actor->y);
+
+    // VITI95: OPTIMIZE
+    dist /= SKULLSPEED;
+
     optMomz = dest->z + (dest->height >> 1) - actor->z;
 
     if (dist >= 1)
@@ -1858,8 +1865,8 @@ void A_BrainSpit(mobj_t *mo)
     // spawn brain missile
     newmobj = P_SpawnMissile(mo, targ, MT_SPAWNSHOT);
     newmobj->target = targ;
-    newmobj->reactiontime =
-        ((targ->y - mo->y) / newmobj->momy) / newmobj->state->tics;
+    // VITI95: OPTIMIZE
+    newmobj->reactiontime = ((targ->y - mo->y) / newmobj->momy) / newmobj->state->tics;
 
     S_StartSound(NULL, sfx_bospit);
 }

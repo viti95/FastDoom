@@ -851,6 +851,7 @@ int PAS_BeginBufferedPlayback(
    PAS_SetMixMode(MixMode);
    PAS_SetPlaybackRate(SampleRate);
 
+   // VITI95: OPTIMIZE
    PAS_TransferLength = BufferSize / NumDivisions;
    PAS_SetCallBack(CallBackFunc);
 

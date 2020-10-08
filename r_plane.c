@@ -362,7 +362,6 @@ void R_DrawPlanes(void)
                     if (!flatSky)
                     {
                         angle = (viewangle + xtoviewangle[x]) >> ANGLETOSKYSHIFT;
-                        //dc_source = R_GetColumn(skytexture, angle);
 
                         tex = skytexture;
                         col = angle;

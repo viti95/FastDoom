@@ -165,10 +165,11 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 			}
 
 			sprtopscreen = centeryfrac - FixedMul(dc_texturemid, spryscale);
+
+			// VITI95: OPTIMIZE
 			dc_iscale = 0xffffffffu / (unsigned)spryscale;
 
 			// draw the texture
-			//col = (column_t *)(R_GetColumn(texnum, maskedtexturecol[dc_x]) - 3);
 
 			tex = texnum;
 			column = maskedtexturecol[dc_x];
@@ -289,6 +290,8 @@ void R_RenderSegLoop(void)
 
 			dc_colormap = walllights[index];
 			dc_x = rw_x;
+
+			// VITI95: OPTIMIZE
 			dc_iscale = 0xffffffffu / (unsigned)rw_scale;
 		}
 
@@ -299,7 +302,6 @@ void R_RenderSegLoop(void)
 			dc_yl = yl;
 			dc_yh = yh;
 			dc_texturemid = rw_midtexturemid;
-			//dc_source = R_GetColumn(midtexture, texturecolumn);
 
 			tex = midtexture;
 			col = texturecolumn;
@@ -340,7 +342,6 @@ void R_RenderSegLoop(void)
 					dc_yl = yl;
 					dc_yh = mid;
 					dc_texturemid = rw_toptexturemid;
-					//dc_source = R_GetColumn(toptexture, texturecolumn);
 
 					tex = toptexture;
 					col = texturecolumn;
@@ -388,7 +389,6 @@ void R_RenderSegLoop(void)
 					dc_yl = mid;
 					dc_yh = yh;
 					dc_texturemid = rw_bottomtexturemid;
-					//dc_source = R_GetColumn(bottomtexture, texturecolumn);
 
 					tex = bottomtexture;
 					col = texturecolumn;
@@ -478,14 +478,13 @@ void R_StoreWallRange(int start,
 	rw_stopx = stop + 1;
 
 	// calculate scale at both ends and step
-	ds_p->scale1 = rw_scale =
-		R_ScaleFromGlobalAngle(viewangle + xtoviewangle[start]);
+	ds_p->scale1 = rw_scale = R_ScaleFromGlobalAngle(viewangle + xtoviewangle[start]);
 
 	if (stop > start)
 	{
+		// VITI95: OPTIMIZE
 		ds_p->scale2 = R_ScaleFromGlobalAngle(viewangle + xtoviewangle[stop]);
-		ds_p->scalestep = rw_scalestep =
-			(ds_p->scale2 - rw_scale) / (stop - start);
+		ds_p->scalestep = rw_scalestep = (ds_p->scale2 - rw_scale) / (stop - start);
 	}
 	else
 	{

@@ -1003,6 +1003,7 @@ void P_UpdateSpecials(void)
 		{
 			for (i = anim->basepic; i < anim->basepic + anim->numpics; i++)
 			{
+				// VITI95: OPTIMIZE
 				pic = anim->basepic + ((leveltime / 8 + i) % anim->numpics);
 				if (anim->istexture)
 					texturetranslation[i] = pic;

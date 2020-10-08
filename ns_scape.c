@@ -597,6 +597,7 @@ int SOUNDSCAPE_BeginBufferedPlayback(
 
     SOUNDSCAPE_EnableInterrupt();
 
+    // VITI95: OPTIMIZE
     TransferLength = BufferSize / NumDivisions;
     SOUNDSCAPE_TransferLength = TransferLength;
 

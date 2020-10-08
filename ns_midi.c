@@ -239,6 +239,7 @@ static void _MIDI_MetaEvent(
         break;
 
     case MIDI_TEMPO_CHANGE:
+        // VITI95: OPTIMIZE
         tempo = 60000000L / _MIDI_ReadNumber(Track->pos, 3);
         MIDI_SetTempo(tempo);
         break;
@@ -260,6 +261,7 @@ static void _MIDI_MetaEvent(
             _MIDI_TimeBase += _MIDI_TimeBase;
             denominator--;
         }
+        // VITI95: OPTIMIZE
         _MIDI_TicksPerBeat = (_MIDI_Division * 4) / _MIDI_TimeBase;
         break;
     }
@@ -1229,6 +1231,7 @@ void MIDI_SetTempo(
         TS_SetTaskRate(_MIDI_PlayRoutine, tickspersecond);
         //      TS_SetTaskRate( _MIDI_PlayRoutine, tickspersecond / 4 );
     }
+    // VITI95: OPTIMIZE
     _MIDI_FPSecondsPerTick = (1 << TIME_PRECISION) / tickspersecond;
 }
 

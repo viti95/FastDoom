@@ -163,6 +163,7 @@ int SS_BeginBufferedPlayback(
     SS_SoundPtr = BufferStart;
     SS_TotalBufferSize = BufferSize;
     SS_BufferEnd = BufferStart + BufferSize;
+    // VITI95: OPTIMIZE
     SS_TransferLength = BufferSize / NumDivisions;
     SS_CurrentLength = SS_TransferLength;
     SS_BufferNum = 0;

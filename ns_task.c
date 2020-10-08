@@ -146,6 +146,7 @@ static long TS_SetTimer(long TickBase)
 {
     long speed;
 
+    // VITI95: OPTIMIZE
     speed = 1192030L / TickBase;
     if (speed < TaskServiceRate)
     {
