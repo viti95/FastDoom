@@ -13,6 +13,8 @@
 #include "ns_midi.h"
 #include "ns_midif.h"
 
+#include "doomdef.h"
+
 extern int MUSIC_SoundDevice;
 
 static const int _MIDI_CommandLengths[NUM_MIDI_CHANNELS] =
@@ -723,7 +725,7 @@ static void _MIDI_SetChannelVolume(
     {
         remotevolume = volume * _MIDI_TotalVolume;
         remotevolume *= _MIDI_UserChannelVolume[channel];
-        remotevolume /= MIDI_MaxVolume;
+        remotevolume = Div255(remotevolume);
         remotevolume >>= 8;
 
         status = _MIDI_RerouteFunctions[channel](0xB0 + channel,
@@ -750,7 +752,7 @@ static void _MIDI_SetChannelVolume(
     if (_MIDI_Funcs->SetVolume == NULL)
     {
         volume *= _MIDI_TotalVolume;
-        volume /= MIDI_MaxVolume;
+        volume = Div255(volume);
     }
 
     // For user volume

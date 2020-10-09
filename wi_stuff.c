@@ -547,7 +547,7 @@ int WI_drawNum(int x,
 
 			while (temp)
 			{
-				temp /= 10;
+				temp = Div10(temp);
 				digits++;
 			}
 		}
@@ -561,8 +561,8 @@ int WI_drawNum(int x,
 	while (digits--)
 	{
 		x -= fontwidth;
-		V_DrawPatch(x, y, FB, num[n % 10]);
-		n /= 10;
+		V_DrawPatch(x, y, FB, num[Mod10(n)]);
+		n = Div10(n);
 	}
 
 	return x;
@@ -737,11 +737,11 @@ void WI_updateStats(void)
 		acceleratestage = 0;
 
 		// VITI95: OPTIMIZE
-		cnt_kills = (plrs.skills * 100) / wbs->maxkills;
-		cnt_items = (plrs.sitems * 100) / wbs->maxitems;
-		cnt_secret = (plrs.ssecret * 100) / wbs->maxsecret;
-		cnt_time = plrs.stime / TICRATE;
-		cnt_par = wbs->partime / TICRATE;
+		cnt_kills = Mul100(plrs.skills) / wbs->maxkills;
+		cnt_items = Mul100(plrs.sitems) / wbs->maxitems;
+		cnt_secret = Mul100(plrs.ssecret) / wbs->maxsecret;
+		cnt_time = Div35(plrs.stime);
+		cnt_par = Div35(wbs->partime);
 		S_StartSound(0, sfx_barexp);
 		sp_state = 10;
 	}
@@ -753,9 +753,9 @@ void WI_updateStats(void)
 		if (!(bcnt & 3))
 			S_StartSound(0, sfx_pistol);
 
-		if (cnt_kills >= (plrs.skills * 100) / wbs->maxkills)
+		if (cnt_kills >= Mul100(plrs.skills) / wbs->maxkills)
 		{
-			cnt_kills = (plrs.skills * 100) / wbs->maxkills;
+			cnt_kills = Mul100(plrs.skills) / wbs->maxkills;
 			S_StartSound(0, sfx_barexp);
 			sp_state++;
 		}
@@ -767,9 +767,9 @@ void WI_updateStats(void)
 		if (!(bcnt & 3))
 			S_StartSound(0, sfx_pistol);
 
-		if (cnt_items >= (plrs.sitems * 100) / wbs->maxitems)
+		if (cnt_items >= Mul100(plrs.sitems) / wbs->maxitems)
 		{
-			cnt_items = (plrs.sitems * 100) / wbs->maxitems;
+			cnt_items = Mul100(plrs.sitems) / wbs->maxitems;
 			S_StartSound(0, sfx_barexp);
 			sp_state++;
 		}
@@ -781,9 +781,9 @@ void WI_updateStats(void)
 		if (!(bcnt & 3))
 			S_StartSound(0, sfx_pistol);
 
-		if (cnt_secret >= (plrs.ssecret * 100) / wbs->maxsecret)
+		if (cnt_secret >= Mul100(plrs.ssecret) / wbs->maxsecret)
 		{
-			cnt_secret = (plrs.ssecret * 100) / wbs->maxsecret;
+			cnt_secret = Mul100(plrs.ssecret) / wbs->maxsecret;
 			S_StartSound(0, sfx_barexp);
 			sp_state++;
 		}
@@ -797,16 +797,16 @@ void WI_updateStats(void)
 		cnt_time += 3;
 
 		// VITI95: OPTIMIZE
-		if (cnt_time >= plrs.stime / TICRATE)
-			cnt_time = plrs.stime / TICRATE;
+		if (cnt_time >= Div35(plrs.stime))
+			cnt_time = Div35(plrs.stime);
 
 		cnt_par += 3;
 
-		if (cnt_par >= wbs->partime / TICRATE)
+		if (cnt_par >= Div35(wbs->partime))
 		{
-			cnt_par = wbs->partime / TICRATE;
+			cnt_par = Div35(wbs->partime);
 
-			if (cnt_time >= plrs.stime / TICRATE)
+			if (cnt_time >= Div35(plrs.stime))
 			{
 				S_StartSound(0, sfx_barexp);
 				sp_state++;

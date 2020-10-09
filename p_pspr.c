@@ -465,10 +465,10 @@ void A_Punch(player_t *player,
     int damage;
     int slope;
 
-    damage = (P_Random % 10 + 1) << 1;
+    damage = (Mod10(P_Random) + 1) << 1;
 
     if (player->powers[pw_strength])
-        damage *= 10;
+        damage = Mul10(damage);
 
     angle = player->mo->angle;
     angle += (P_Random - P_Random) << 18;
@@ -496,7 +496,7 @@ void A_Saw(player_t *player,
     int damage;
     int slope;
 
-    damage = 2 * (P_Random % 10 + 1);
+    damage = 2 * (Mod10(P_Random) + 1);
     angle = player->mo->angle;
     angle += (P_Random - P_Random) << 18;
 
@@ -602,7 +602,7 @@ void P_GunShot(mobj_t *mo,
     angle_t angle;
     int damage;
 
-    damage = 5 * (P_Random % 3 + 1);
+    damage = 5 * (Mod3(P_Random) + 1);
     angle = mo->angle;
 
     if (!accurate)
@@ -679,7 +679,7 @@ void A_FireShotgun2(player_t *player,
 
     for (i = 0; i < 20; i++)
     {
-        damage = 5 * (P_Random % 3 + 1);
+        damage = 5 * (Mod3(P_Random) + 1);
         angle = player->mo->angle;
         angle += (P_Random - P_Random) << 19;
         P_LineAttack(player->mo, angle, MISSILERANGE, bulletslope + ((P_Random - P_Random) << 5), damage);
@@ -741,6 +741,7 @@ void A_BFGSpray(mobj_t *mo)
     // offset angles from its attack angle
     for (i = 0; i < 40; i++)
     {
+        // VITI95: OPTIMIZE
         an = mo->angle - ANG90 / 2 + ANG90 / 40 * i;
 
         // mo->target is the originator (player)

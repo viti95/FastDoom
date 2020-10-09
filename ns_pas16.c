@@ -10,6 +10,8 @@
 #include "ns_pas16.h"
 #include "ns_p16df.h"
 
+#include "doomdef.h"
+
 static const int PAS_Interrupts[PAS_MaxIrq + 1] =
     {
         INVALID, INVALID, 0xa, 0xb,
@@ -892,8 +894,8 @@ int PAS_SetPCMVolume(
    volume = max(0, volume);
    volume = min(volume, 255);
 
-   volume *= 100;
-   volume /= 255;
+   volume = Mul100(volume);
+   volume = Div255(volume);
 
    status = PAS_CallMVFunction(PAS_Func->SetMixer, volume,
                                OUTPUTMIXER, L_PCM);
@@ -925,8 +927,8 @@ void PAS_SetFMVolume(
    volume = max(0, volume);
    volume = min(volume, 255);
 
-   volume *= 100;
-   volume /= 255;
+   volume = Mul100(volume);
+   volume = Div255(volume);
    if (PAS_Func)
    {
       PAS_CallMVFunction(PAS_Func->SetMixer, volume, OUTPUTMIXER, L_FM);
@@ -961,8 +963,8 @@ int PAS_GetFMVolume(
                  0xff;
 
    totalvolume = (rightvolume + leftvolume) / 2;
-   totalvolume *= 255;
-   totalvolume /= 100;
+   totalvolume = (totalvolume << 8) - totalvolume;;
+   totalvolume = Div100(totalvolume);
    totalvolume = min(255, totalvolume);
 
    return (totalvolume);

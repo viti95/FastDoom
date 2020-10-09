@@ -98,8 +98,8 @@ void STlib_drawNum(st_number_t *n,
     while (num && numdigits--)
     {
         x -= w;
-        V_DrawPatch(x, n->y, FG, n->p[num % 10]);
-        num /= 10;
+        V_DrawPatch(x, n->y, FG, n->p[Mod10(num)]);
+        num = Div10(num);
     }
 }
 

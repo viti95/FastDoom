@@ -10,6 +10,8 @@
 #include "ns_sbmdf.h"
 #include "ns_llm.h"
 
+#include "doomdef.h"
+
 #define TRUE (1 == 1)
 #define FALSE (!TRUE)
 
@@ -1113,7 +1115,8 @@ void AL_SetPitchBend(
    Channel[channel].Pitchbend = pitchbend;
 
    TotalBend = pitchbend * Channel[channel].PitchBendRange;
-   TotalBend /= (PITCHBEND_CENTER / FINETUNE_RANGE);
+   //TotalBend /= (PITCHBEND_CENTER / FINETUNE_RANGE);
+   TotalBend = Div51200(TotalBend);
 
    Channel[channel].KeyOffset = (int)(TotalBend / FINETUNE_RANGE);
    Channel[channel].KeyOffset -= Channel[channel].PitchBendSemiTones;

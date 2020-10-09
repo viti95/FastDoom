@@ -793,6 +793,8 @@ P_SpawnMissile(mobj_t *source,
     mobj_t *th;
     angle_t an;
     int dist;
+    
+    fixed_t optMomz;
 
     th = P_SpawnMobj(source->x,
                      source->y,
@@ -816,12 +818,14 @@ P_SpawnMissile(mobj_t *source,
     dist = P_AproxDistance(dest->x - source->x, dest->y - source->y);
 
     // VITI95: OPTIMIZE
-    dist = dist / th->info->speed;
+    dist /= th->info->speed;
 
-    if (dist < 1)
-        th->momz = dest->z - source->z;
-    else
-        th->momz = (dest->z - source->z) / dist;
+    optMomz = dest->z - source->z;
+
+    if (dist >= 1)
+        optMomz /= dist;
+
+    th->momz = optMomz;
     
     P_CheckMissileSpawn(th);
 

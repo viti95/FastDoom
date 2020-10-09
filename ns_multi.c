@@ -17,6 +17,8 @@
 #include "ns_multi.h"
 #include "ns_muldf.h"
 
+#include "doomdef.h"
+
 #define RoundFixed(fixedval, bits)             \
     (                                          \
         (                                      \
@@ -1127,7 +1129,7 @@ void MV_CreateVolumeTable(
         {
             val = i - 0x8000;
             val *= level;
-            val /= MV_MaxVolume;
+            val = Div63(val);
             MV_VolumeTable[index][i / 256] = val;
         }
     }
@@ -1137,7 +1139,7 @@ void MV_CreateVolumeTable(
         {
             val = i - 0x80;
             val *= level;
-            val /= MV_MaxVolume;
+            val = Div63(val);
             MV_VolumeTable[volume][i] = val;
         }
     }

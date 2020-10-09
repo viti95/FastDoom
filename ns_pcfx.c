@@ -14,7 +14,6 @@ static void PCFX_Service(task *Task);
 static long PCFX_LengthLeft;
 static char *PCFX_Sound = NULL;
 static int PCFX_LastSample;
-static short PCFX_Lookup[256];
 static int PCFX_Priority;
 static unsigned long PCFX_CallBackVal;
 static void (*PCFX_CallBackFunc)(unsigned long) = NULL;

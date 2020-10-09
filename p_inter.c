@@ -201,7 +201,7 @@ P_GiveArmor(player_t *player,
 {
 	int hits;
 
-	hits = armortype * 100;
+	hits = Mul100(armortype);
 	if (player->armorpoints >= hits)
 		return false; // don't pick up
 

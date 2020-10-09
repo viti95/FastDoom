@@ -829,7 +829,7 @@ void ST_updateFaceWidget(void)
 	// look left or look right if the facecount has timed out
 	if (!st_facecount)
 	{
-		st_faceindex = ST_calcPainOffset() + (st_randomnumber % 3);
+		st_faceindex = ST_calcPainOffset() + Mod3(st_randomnumber);
 		st_facecount = ST_STRAIGHTFACECOUNT;
 		priority = 0;
 	}
@@ -1180,7 +1180,7 @@ void ST_createWidgets(void)
 	for (i = 0; i < 6; i++)
 	{
 		STlib_initMultIcon(&w_arms[i],
-						   ST_ARMSX + (i % 3) * ST_ARMSXSPACE,
+						   ST_ARMSX + Mod3(i) * ST_ARMSXSPACE,
 						   ST_ARMSY + Mul10(i / 3),
 						   arms[i], (int *)&plyr->weaponowned[i + 1],
 						   &st_armson);

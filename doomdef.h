@@ -233,6 +233,16 @@ int Div10(int value);
 int Div63(int value);
 int Div101(int value);
 int Mul47000(int value);
+int Mul100(int value);
+int Mul1000(int value);
+int Div35(int value);
+int DivSKULLSPEED(int value);
+int Mod3(int value);
+int Mod10(int value);
+int Mod5(int value);
+int Div100(int value);
+int Div255(int value);
+unsigned long Div51200(unsigned long value);
 
 //fixed_t FixedFriction(fixed_t a);
 
@@ -257,16 +267,27 @@ int Mul47000(int value);
 */
 
 #pragma aux Mul80 = \
-    "lea edx, [edx+edx*4]", \
-    "shl edx, 4" parm[edx] value[edx] modify exact[edx]
+    "lea eax, [eax+eax*4]", \
+    "shl eax, 4" parm[eax] value[eax] modify exact[eax]
 
 #pragma aux Mul320 = \
-    "lea edx, [edx+edx*4]", \
-    "sal edx, 6" parm[edx] value[edx] modify exact[edx]
+    "lea eax, [eax+eax*4]", \
+    "sal eax, 6" parm[eax] value[eax] modify exact[eax]
 
 #pragma aux Mul10 = \
-    "lea edx, [edx+edx*4]", \
-    "add edx, edx" parm[edx] value[edx] modify exact[edx]
+    "lea eax, [eax+eax*4]", \
+    "add eax, eax" parm[eax] value[eax] modify exact[eax]
+
+#pragma aux Mul100 = \
+    "lea eax, [eax+eax*4]", \
+    "lea eax, [eax+eax*4]", \
+    "sal eax, 2" parm[eax] value[eax] modify exact[eax]
+
+#pragma aux Mul1000 = \
+    "lea eax, [eax+eax*4]", \
+    "lea eax, [eax+eax*4]", \
+    "lea eax, [eax+eax*4]", \
+    "sal eax, 2" parm[eax] value[eax] modify exact[eax]
 
 #pragma aux Div1000 = \
     "mov eax, 274877907", \
@@ -311,6 +332,80 @@ int Mul47000(int value);
     "lea eax, [eax+eax*4]", \
     "lea eax, [eax+eax*4]", \
     "sal eax, 3" parm[edx] value[eax] modify exact[eax edx]
+
+#pragma aux Div35 = \
+    "mov edx, -368140053", \
+    "mov eax, ecx", \
+    "imul edx", \
+    "add edx, ecx", \
+    "sar edx, 5", \
+    "sar ecx, 31", \
+    "sub edx, ecx" parm[ecx] value[edx] modify exact[eax ecx edx]
+
+#pragma aux DivSKULLSPEED = \
+    "mov edx, 1717986919", \
+    "mov eax, ecx", \
+    "imul edx", \
+    "sar edx, 19", \
+    "sar ecx, 31", \
+    "sub edx, ecx" parm[ecx] value[edx] modify exact[eax ecx edx]
+
+#pragma aux Mod3 = \
+    "mov edx, 1431655766", \
+    "mov eax, ecx", \
+    "imul edx", \
+    "mov eax, ecx", \
+    "sar eax, 31", \
+    "sub edx, eax", \
+    "lea eax, [edx+edx]", \
+    "add edx, eax", \
+    "sub ecx, edx" parm[ecx] value[ecx] modify exact[eax ecx edx]
+
+#pragma aux Mod10 = \
+    "mov eax, 1717986919", \
+    "imul ecx", \
+    "mov eax, edx", \
+    "sar eax, 2", \
+    "mov edx, ecx", \
+    "sar edx, 31", \
+    "sub eax, edx", \
+    "lea eax, [eax+eax*4]", \
+    "add eax, eax", \
+    "sub ecx, eax" parm[ecx] value[ecx] modify exact[eax ecx edx]
+
+#pragma aux Mod5 = \
+    "mov eax, 1717986919", \
+    "imul ecx", \
+    "mov eax, edx", \
+    "sar eax, 1", \
+    "mov edx, ecx", \
+    "sar edx, 31", \
+    "sub eax, edx", \
+    "lea eax, [eax+eax*4]", \
+    "sub ecx, eax" parm[ecx] value[ecx] modify exact[eax ecx edx]
+
+#pragma aux Div100 = \
+    "mov edx, 1374389535", \
+    "mov eax, ecx", \
+    "imul edx", \
+    "sar edx, 5", \
+    "sar ecx, 31", \
+    "sub edx, ecx" parm[ecx] value[edx] modify exact[eax ecx edx]
+
+#pragma aux Div255 = \
+    "mov edx, -2139062143", \
+    "mov eax, ecx", \
+    "imul edx", \
+    "add edx, ecx", \
+    "sar edx, 7", \
+    "sar ecx, 31", \
+    "sub edx, ecx" parm[ecx] value[edx] modify exact[eax ecx edx]
+
+#pragma aux Div51200 = \
+    "mov ecx, 1374389535", \
+    "mov eax, edx", \
+    "mul ecx", \
+    "shr edx, 14" parm[edx] value[edx] modify exact[eax ecx edx]
 
 #define SHORT(x) (x)
 #define LONG(x) (x)
