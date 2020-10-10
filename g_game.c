@@ -755,9 +755,9 @@ void G_DoCompleted(void)
     wminfo.maxitems = totalitems;
     wminfo.maxsecret = totalsecret;
     if (commercial)
-        wminfo.partime = 35 * cpars[gamemap - 1];
+        wminfo.partime = Mul35(cpars[gamemap - 1]);
     else
-        wminfo.partime = 35 * pars[gameepisode][gamemap];
+        wminfo.partime = Mul35(pars[gameepisode][gamemap]);
 
     wminfo.plyr.in = true;
     wminfo.plyr.skills = players.killcount;
