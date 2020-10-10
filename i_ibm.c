@@ -24,7 +24,6 @@
 #include <graph.h>
 #include "d_main.h"
 #include "doomstat.h"
-#include "doomdef.h"
 #include "r_local.h"
 #include "sounds.h"
 #include "i_system.h"
@@ -36,6 +35,7 @@
 #include "z_zone.h"
 #include "ns_dpmi.h"
 #include "ns_task.h"
+#include "doomdef.h"
 
 //
 // Macros
@@ -443,7 +443,7 @@ void I_FinishUpdate(void)
             if (fps_nextcalculation < ticcount)
             {
                 // minus 1!, exactly 35 FPS when measeraring for a longer time.
-                opt1 = ((fps_counter - 1) * TICRATE) << FRACBITS;
+                opt1 = Mul35(fps_counter - 1) << FRACBITS;
                 opt2 = (ticcount - fps_starttime) << FRACBITS;
                 fps = (opt1 >> 14 >= opt2) ? ((opt1 ^ opt2) >> 31) ^ MAXINT : FixedDiv2(opt1, opt2);
                 fps_nextcalculation = ticcount + 12;

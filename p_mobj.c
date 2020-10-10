@@ -219,9 +219,6 @@ void P_XYMovement(mobj_t *mo)
         
         mo->momx = (mo->momx * 29) >> 5;
         mo->momy = (mo->momy * 29) >> 5;
-
-        //mo->momx = FixedFriction(mo->momx);
-        //mo->momy = FixedFriction(mo->momy);
     }
 }
 

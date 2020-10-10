@@ -1074,9 +1074,7 @@ int MIDI_PlaySong(
    Sets the song tempo.
 ---------------------------------------------------------------------*/
 
-void MIDI_SetTempo(
-    int tempo)
-
+void MIDI_SetTempo(int tempo)
 {
     long tickspersecond;
 

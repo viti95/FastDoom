@@ -929,7 +929,7 @@ void ST_doPaletteStuff(void)
 	if (palette != st_palette)
 	{
 		st_palette = palette;
-		pal = (byte *)W_CacheLumpNum(lu_palette, PU_CACHE) + palette * 768;
+		pal = (byte *)W_CacheLumpNum(lu_palette, PU_CACHE) + Mul768(palette);
 		I_SetPalette(pal);
 	}
 }

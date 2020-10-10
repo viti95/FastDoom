@@ -712,7 +712,7 @@ void P_DamageMobj(mobj_t *target,
 							  target->y);
 
 		// VITI95: OPTIMIZE
-		thrust = damage * (FRACUNIT >> 3) * 100 / target->info->mass;
+		thrust = Mul819200(damage) / target->info->mass;
 
 		// make fall forwards sometimes
 		if (damage < 40 && damage > target->health && target->z - inflictor->z > 64 * FRACUNIT && (P_Random & 1))

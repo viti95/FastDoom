@@ -897,7 +897,7 @@ void A_HeadAttack(mobj_t *actor)
     A_FaceTarget(actor);
     if (P_CheckMeleeRange(actor))
     {
-        damage = Mul10(P_Random % 6 + 1);
+        damage = Mul10(Mod6(P_Random) + 1);
         P_DamageMobj(actor->target, actor, actor, damage);
         return;
     }
