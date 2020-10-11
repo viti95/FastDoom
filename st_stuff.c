@@ -398,12 +398,6 @@ unsigned char cheat_clev_seq[] =
 		0xb2, 0x26, 0xe2, 0x36, 0xa6, 0x6e, 1, 0, 0, 0xff // idclev
 };
 
-// my position cheat
-unsigned char cheat_mypos_seq[] =
-	{
-		0xb2, 0x26, 0xb6, 0xba, 0x2a, 0xf6, 0xea, 0xff // idmypos
-};
-
 // Now what?
 cheatseq_t cheat_mus = {cheat_mus_seq, 0};
 cheatseq_t cheat_god = {cheat_god_seq, 0};
@@ -424,7 +418,6 @@ cheatseq_t cheat_powerup[7] =
 
 cheatseq_t cheat_choppers = {cheat_choppers_seq, 0};
 cheatseq_t cheat_clev = {cheat_clev_seq, 0};
-cheatseq_t cheat_mypos = {cheat_mypos_seq, 0};
 
 //
 extern char *mapnames[];
@@ -600,16 +593,6 @@ ST_Responder(event_t *ev)
 				plyr->weaponowned[wp_chainsaw] = true;
 				plyr->powers[pw_invulnerability] = true;
 				plyr->message = STSTR_CHOPPERS;
-			}
-			// 'mypos' for player position
-			else if (cht_CheckCheat(&cheat_mypos, ev->data1))
-			{
-				static char buf[ST_MSGWIDTH];
-				sprintf(buf, "ang=0x%x;x,y=(0x%x,0x%x)",
-						players.mo->angle,
-						players.mo->x,
-						players.mo->y);
-				plyr->message = buf;
 			}
 		}
 
