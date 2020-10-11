@@ -24,9 +24,6 @@
 // CHEAT SEQUENCE PACKAGE
 //
 
-static int firsttime = 1;
-static unsigned char cheat_xlate_table[256];
-
 //
 // Called in st_stuff module, which handles the input.
 // Returns a 1 if the cheat was successful, 0 if failed.
@@ -34,22 +31,14 @@ static unsigned char cheat_xlate_table[256];
 int cht_CheckCheat(cheatseq_t *cht,
                    char key)
 {
-    int i;
     int rc = 0;
-
-    if (firsttime)
-    {
-        firsttime = 0;
-        for (i = 0; i < 256; i++)
-            cheat_xlate_table[i] = SCRAMBLE(i);
-    }
 
     if (!cht->p)
         cht->p = cht->sequence; // initialize if first time
 
     if (*cht->p == 0)
         *(cht->p++) = key;
-    else if (cheat_xlate_table[(unsigned char)key] == *cht->p)
+    else if (key == *cht->p)
         cht->p++;
     else
         cht->p = cht->sequence;

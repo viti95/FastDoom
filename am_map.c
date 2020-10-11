@@ -263,7 +263,7 @@ static int markpointnum = 0;				  // next point to be assigned
 
 static int followplayer = 1; // specifies whether to follow the player around
 
-static unsigned char cheat_amap_seq[] = {0xb2, 0x26, 0x26, 0x2e, 0xff};
+static unsigned char cheat_amap_seq[] = {'i', 'd', 'd', 't', 0xff};
 static cheatseq_t cheat_amap = {cheat_amap_seq, 0};
 
 static boolean stopped = true;
