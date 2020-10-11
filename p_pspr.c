@@ -742,7 +742,8 @@ void A_BFGSpray(mobj_t *mo)
     for (i = 0; i < 40; i++)
     {
         // VITI95: OPTIMIZE
-        an = mo->angle - ANG90 / 2 + ANG90 / 40 * i;
+        //an = mo->angle - ANG90 / 2 + ANG90 / 40 * i;
+        an = mo->angle - ANG90 / 2 + Mul26843545(i);
 
         // mo->target is the originator (player)
         //  of the missile
