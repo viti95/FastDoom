@@ -806,7 +806,7 @@ PTR_AimTraverse(intercept_t *in)
             dist = in->frac << 6;
             break;
         case MELEERANGE + 1:
-            dist = in->frac << 6 + in->frac;
+            dist = FixedMul(MELEERANGE + 1, in->frac);
             break;
         }
 
@@ -856,7 +856,7 @@ PTR_AimTraverse(intercept_t *in)
         dist = in->frac << 6;
         break;
     case MELEERANGE + 1:
-        dist = in->frac << 6 + in->frac;
+        dist = FixedMul(MELEERANGE + 1, in->frac);
         break;
     }
 
@@ -930,7 +930,7 @@ boolean PTR_ShootTraverse(intercept_t *in)
             dist = in->frac << 6;
             break;
         case MELEERANGE + 1:
-            dist = in->frac << 6 + in->frac;
+            dist = FixedMul(MELEERANGE + 1, in->frac);
             break;
         }
 
@@ -973,7 +973,7 @@ boolean PTR_ShootTraverse(intercept_t *in)
             z += FixedMul(aimslope, frac << 6);
             break;
         case MELEERANGE + 1:
-            z += FixedMul(aimslope, (frac << 6) + frac);
+            z += FixedMul(aimslope, FixedMul(frac, MELEERANGE + 1));
             break;
         }
 
@@ -1013,7 +1013,7 @@ boolean PTR_ShootTraverse(intercept_t *in)
         dist = in->frac << 6;
         break;
     case MELEERANGE + 1:
-        dist = in->frac << 6 + in->frac;
+        dist = FixedMul(MELEERANGE + 1, in->frac);
         break;
     }
 
@@ -1052,7 +1052,7 @@ boolean PTR_ShootTraverse(intercept_t *in)
         break;
     case MELEERANGE + 1:
         frac = in->frac - 10239;
-        z += FixedMul(aimslope, (frac << 6) + frac);
+        z += FixedMul(aimslope, FixedMul(frac, MELEERANGE + 1));
         break;
     }
 
