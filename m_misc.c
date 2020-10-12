@@ -270,6 +270,9 @@ default_t defaults[] =
         {"uncapped", &uncappedFPS, 0},
         {"flatsky", &flatSky, 0},
         {"near", &nearSprites, 0},
+        {"nomelt", &noMelt, 0},
+
+        {"monosound", &monoSound, 0},
 
         {"snd_channels", &numChannels, 3},
         {"snd_musicdevice", &snd_DesiredMusicDevice, 0},
