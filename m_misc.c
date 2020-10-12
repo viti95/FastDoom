@@ -271,6 +271,10 @@ default_t defaults[] =
         {"flatsky", &flatSky, 0},
         {"near", &nearSprites, 0},
         {"nomelt", &noMelt, 0},
+        {"flatShadows", &flatShadows, 0},
+        {"saturnShadows", &saturnShadows, 0},
+        {"untexturedSurfaces", &untexturedSurfaces, 0},
+        {"flatSurfaces", &flatSurfaces, 0},
 
         {"monosound", &monoSound, 0},
 
