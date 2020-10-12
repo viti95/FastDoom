@@ -266,6 +266,10 @@ default_t defaults[] =
 
         {"screenblocks", &screenblocks, 9},
         {"detaillevel", &detailLevel, 0},
+        {"showfps", &showFPS, 0},
+        {"uncapped", &uncappedFPS, 0},
+        {"flatsky", &flatSky, 0},
+        {"near", &nearSprites, 0},
 
         {"snd_channels", &numChannels, 3},
         {"snd_musicdevice", &snd_DesiredMusicDevice, 0},
