@@ -645,7 +645,9 @@ AM_Responder(event_t *ev)
 		if (cht_CheckCheat(&cheat_amap, ev->data1))
 		{
 			rc = false;
-			cheating = Mod3(cheating + 1);
+
+			cheating++;
+			if (cheating == 3) cheating = 0;
 		}
 	}
 

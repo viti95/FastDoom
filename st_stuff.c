@@ -667,6 +667,7 @@ void ST_updateFaceWidget(void)
 	static int lastattackdown = -1;
 	static int priority = 0;
 	boolean doevilgrin;
+	int pos;
 
 	if (priority < 10)
 	{
@@ -812,7 +813,9 @@ void ST_updateFaceWidget(void)
 	// look left or look right if the facecount has timed out
 	if (!st_facecount)
 	{
-		st_faceindex = ST_calcPainOffset() + Mod3(st_randomnumber);
+		pos = st_randomnumber & 3;
+		if (pos == 3) pos = 0;
+		st_faceindex = ST_calcPainOffset() + pos;
 		st_facecount = ST_STRAIGHTFACECOUNT;
 		priority = 0;
 	}

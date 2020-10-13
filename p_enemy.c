@@ -596,13 +596,17 @@ seeyou:
     if (actor->info->seesound)
     {
         int sound;
+        int pos;
 
         switch (actor->info->seesound)
         {
         case sfx_posit1:
         case sfx_posit2:
         case sfx_posit3:
-            sound = sfx_posit1 + Mod3(P_Random);
+            //sound = sfx_posit1 + Mod3(P_Random);
+            pos = P_Random & 3;
+            if (pos == 3) pos = 0;
+            sound = sfx_posit1 + pos;
             break;
 
         case sfx_bgsit1:
@@ -1507,6 +1511,7 @@ void A_PainDie(mobj_t *actor)
 void A_Scream(mobj_t *actor)
 {
     int sound;
+    int pos;
 
     switch (actor->info->deathsound)
     {
@@ -1516,7 +1521,10 @@ void A_Scream(mobj_t *actor)
     case sfx_podth1:
     case sfx_podth2:
     case sfx_podth3:
-        sound = sfx_podth1 + Mod3(P_Random);
+        //sound = sfx_podth1 + Mod3(P_Random);
+        pos = P_Random & 3;
+        if (pos == 3) pos = 0;
+        sound = sfx_podth1 + pos;
         break;
 
     case sfx_bgdth1:
