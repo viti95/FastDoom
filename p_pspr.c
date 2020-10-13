@@ -465,13 +465,14 @@ void A_Punch(player_t *player,
     int damage;
     int slope;
 
-    damage = (Mod10(P_Random) + 1) << 1;
+    damage = (Mod10(rndtable[prndindex + 1]) + 1) << 1;
 
     if (player->powers[pw_strength])
         damage = Mul10(damage);
 
     angle = player->mo->angle;
-    angle += (P_Random - P_Random) << 18;
+    angle += (rndtable[prndindex + 2] - rndtable[prndindex + 3]) << 18;
+    prndindex += 3;
     slope = P_AimLineAttack(player->mo, angle, MELEERANGE);
     P_LineAttack(player->mo, angle, MELEERANGE, slope, damage);
 
@@ -496,9 +497,11 @@ void A_Saw(player_t *player,
     int damage;
     int slope;
 
-    damage = 2 * (Mod10(P_Random) + 1);
+    damage = 2 * (Mod10(rndtable[prndindex + 1]) + 1);
     angle = player->mo->angle;
-    angle += (P_Random - P_Random) << 18;
+    angle += (rndtable[prndindex + 2] - rndtable[prndindex + 3]) << 18;
+
+    prndindex += 3;
 
     // use meleerange + 1 se the puff doesn't skip the flash
     slope = P_AimLineAttack(player->mo, angle, MELEERANGE + 1);
@@ -605,8 +608,11 @@ void P_GunShot(mobj_t *mo,
     damage = 5 * (Mod3(P_Random) + 1);
     angle = mo->angle;
 
-    if (!accurate)
-        angle += (P_Random - P_Random) << 18;
+    if (!accurate){
+        angle += (rndtable[prndindex + 1] - rndtable[prndindex + 2]) << 18;
+        prndindex += 2;
+    }
+        
 
     P_LineAttack(mo, angle, MISSILERANGE, bulletslope, damage);
 }
@@ -679,9 +685,10 @@ void A_FireShotgun2(player_t *player,
 
     for (i = 0; i < 20; i++)
     {
-        damage = 5 * (Mod3(P_Random) + 1);
+        damage = 5 * (Mod3(rndtable[prndindex + 1]) + 1);
         angle = player->mo->angle;
-        angle += (P_Random - P_Random) << 19;
+        angle += (rndtable[prndindex + 2] - rndtable[prndindex + 3]) << 19;
+        prndindex += 3;
         P_LineAttack(player->mo, angle, MISSILERANGE, bulletslope + ((P_Random - P_Random) << 5), damage);
     }
 }
@@ -758,7 +765,8 @@ void A_BFGSpray(mobj_t *mo)
                     MT_EXTRABFG);
 
         damage = 15;
-        damage += (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7);
+        damage += (rndtable[prndindex + 1] & 7) + (rndtable[prndindex + 2] & 7) + (rndtable[prndindex + 3] & 7) + (rndtable[prndindex + 4] & 7) + (rndtable[prndindex + 5] & 7) + (rndtable[prndindex + 6] & 7) + (rndtable[prndindex + 7] & 7) + (rndtable[prndindex + 8] & 7) + (rndtable[prndindex + 9] & 7) + (rndtable[prndindex + 10] & 7) + (rndtable[prndindex + 11] & 7) + (rndtable[prndindex + 12] & 7) + (rndtable[prndindex + 13] & 7) + (rndtable[prndindex + 14] & 7) + (rndtable[prndindex + 15] & 7);
+        prndindex += 15;
 
         P_DamageMobj(linetarget, mo->target, mo->target, damage);
     }

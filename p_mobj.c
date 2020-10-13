@@ -498,7 +498,8 @@ P_SpawnMobj(fixed_t x,
     if (gameskill != sk_nightmare)
         mobj->reactiontime = info->reactiontime;
 
-    mobj->lastlook = P_Random & 0;
+    mobj->lastlook = 0;
+    prndindex++;
     // do not set the state with P_SetMobjState,
     // because action routines can not be called yet
     st = &states[info->spawnstate];
@@ -804,8 +805,11 @@ P_SpawnMissile(mobj_t *source,
     an = R_PointToAngle2(source->x, source->y, dest->x, dest->y);
 
     // fuzzy player
-    if (dest->flags & MF_SHADOW)
-        an += (P_Random - P_Random) << 20;
+    if (dest->flags & MF_SHADOW){
+         an += (rndtable[prndindex + 1] - rndtable[prndindex + 2]) << 20;
+         prndindex += 2;
+    }
+       
 
     th->angle = an;
     an >>= ANGLETOFINESHIFT;
