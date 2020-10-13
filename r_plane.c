@@ -348,7 +348,8 @@ void R_DrawPlanes(void)
             //  i.e. colormaps[0] is used.
             // Because of this hack, sky is not affected
             //  by INVUL inverse mapping.
-            dc_colormap = colormaps;
+            //dc_colormap = colormaps;
+            dc_colormap = fixedcolormap ? fixedcolormap : colormaps;
             dc_texturemid = skytexturemid;
             for (x = pl->minx; x <= pl->maxx; x++)
             {
