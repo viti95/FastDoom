@@ -16,6 +16,3 @@ extern byte prndindex;
 
 // As M_Random, but used only by the play simulation.
 #define P_Random rndtable[++prndindex]
-
-// Fix randoms for demos.
-void I_ClearRandom(void);

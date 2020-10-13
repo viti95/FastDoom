@@ -1019,7 +1019,7 @@ void G_InitNew(skill_t skill,
     if ((map > 9) && (!commercial))
         map = 9;
 
-    I_ClearRandom();
+    prndindex = 0;
 
     if (skill == sk_nightmare || respawnparm)
         respawnmonsters = true;

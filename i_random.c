@@ -23,8 +23,3 @@ byte rndtable[256] = {
 
 byte rndindex = 0;
 byte prndindex = 0;
-
-void I_ClearRandom(void)
-{
-    rndindex = prndindex = 0;
-}
