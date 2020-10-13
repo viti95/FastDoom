@@ -179,8 +179,8 @@ void P_ChangeSwitchTexture(line_t *line,
 	sound = sfx_swtchn;
 
 	// EXIT SWITCH?
-	if (line->special == 11)
-		sound = sfx_swtchx;
+	//if (line->special == 11)
+	//	sound = sfx_swtchx;
 
 	for (i = 0; i < numswitches * 2; i++)
 	{
