@@ -31,6 +31,7 @@ extern int numChannels;
 // Returns the position of the given parameter
 // in the arg list (0 if not found).
 int M_CheckParm(char *check);
+void M_CheckParmOptional(char *check, int *variable);
 
 boolean
 M_WriteFile(char const *name,

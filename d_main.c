@@ -765,31 +765,18 @@ void D_DoomMain(void)
     respawnparm = M_CheckParm("-respawn");
     fastparm = M_CheckParm("-fast");
 
-    flatSurfaces = M_CheckParm("-flattersurfaces");
-    untexturedSurfaces = M_CheckParm("-flatsurfaces");
-    flatSky = M_CheckParm("-flatsky");
-    flatShadows = M_CheckParm("-flatshadows");
-    saturnShadows = M_CheckParm("-saturn");
     waitInit = M_CheckParm("-init");
 
     forceHighDetail = M_CheckParm("-forceHQ");
     forceLowDetail = M_CheckParm("-forceLQ");
     forcePotatoDetail = M_CheckParm("-forcePQ");
 
-    monoSound = M_CheckParm("-mono");
     lowSound = M_CheckParm("-lowsound");
     eightBitSound = M_CheckParm("-8bitsound");
 
-    showFPS = M_CheckParm("-fps");
-
     unlimitedRAM = M_CheckParm("-ram");
-    nearSprites = M_CheckParm("-near");
-
-    noMelt = M_CheckParm("-nomelt");
 
     singletics = M_CheckParm("-singletics");
-
-    uncappedFPS = M_CheckParm("-uncapped");
 
     reverseStereo = M_CheckParm("-reverseStereo");
 
@@ -945,6 +932,17 @@ void D_DoomMain(void)
 
     printf("M_LoadDefaults: Load system defaults.\n");
     M_LoadDefaults(); // load before initing other systems
+
+    M_CheckParmOptional("-fps", &showFPS);
+    M_CheckParmOptional("-flattersurfaces", &flatSurfaces);
+    M_CheckParmOptional("-flatsurfaces", &untexturedSurfaces);
+    M_CheckParmOptional("-flatsky", &flatSky);
+    M_CheckParmOptional("-flatshadows", &flatShadows);
+    M_CheckParmOptional("-saturn", &saturnShadows);
+    M_CheckParmOptional("-mono", &monoSound);
+    M_CheckParmOptional("-near", &nearSprites);
+    M_CheckParmOptional("-nomelt", &noMelt);
+    M_CheckParmOptional("-uncapped", &uncappedFPS);
 
     printf("Z_Init: Init zone memory allocation daemon. \n");
     Z_Init();

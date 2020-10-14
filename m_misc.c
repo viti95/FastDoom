@@ -68,6 +68,17 @@ int M_CheckParm(char *check)
     return 0;
 }
 
+void M_CheckParmOptional(char *check, int *variable)
+{
+    int i;
+
+    for (i = 1; i < myargc; i++)
+    {
+        if (!strcasecmp(check, myargv[i]))
+            *variable = i;
+    }
+}
+
 void M_ClearBox(fixed_t *box)
 {
     box[BOXTOP] = box[BOXRIGHT] = MININT;
@@ -385,8 +396,7 @@ void M_LoadDefaults(void)
                         if (!isstring)
                             *defaults[i].location = parm;
                         else
-                            *defaults[i].location =
-                                (int)newstring;
+                            *defaults[i].location = (int)newstring;
                         break;
                     }
             }
