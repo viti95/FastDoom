@@ -1063,6 +1063,8 @@ int quitsounds2[8] =
 
 void M_QuitResponse(int ch)
 {
+    int i = 105;
+    
     if (ch != 'y')
         return;
 
@@ -1070,7 +1072,10 @@ void M_QuitResponse(int ch)
         S_StartSound(NULL, quitsounds2[(gametic >> 2) & 7]);
     else
         S_StartSound(NULL, quitsounds[(gametic >> 2) & 7]);
-    I_WaitVBL(105);
+    
+    do{
+        I_WaitSingleVBL();
+    }while(i--);
 
     I_Quit();
 }

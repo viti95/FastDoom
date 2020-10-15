@@ -191,8 +191,12 @@ void TryRunTics(void)
 		}
 
 		// Render interpolated frames
-		if (uncappedFPS)
+		if (uncappedFPS){
+			if (waitVsync){
+				I_WaitSingleVBL();
+			}
 			D_Display();
+		}
 	}
 
 	// run the count dics

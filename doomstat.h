@@ -63,6 +63,7 @@ extern int forceScreenSize;
 extern boolean logTimedemo;
 
 extern boolean uncappedFPS;
+extern boolean waitVsync;
 
 // Set if homebrew PWAD stuff has been added.
 extern boolean modifiedgame;

@@ -172,7 +172,7 @@ int kbdtail, kbdhead;
 #define SC_RSHIFT 0x36
 #define SC_LSHIFT 0x2a
 void DPMIInt(int i);
-void I_WaitVBL(int vbls);
+void I_WaitSingleVBL();
 void I_StartupSound(void);
 void I_ShutdownSound(void);
 void I_ShutdownTimer(void);
@@ -204,32 +204,26 @@ byte scantokey[128] =
 //
 
 //
-// I_WaitVBL
+// I_WaitSingleVBL
 //
-void I_WaitVBL(int vbls)
+void I_WaitSingleVBL()
 {
     int stat;
 
-    while (vbls--)
+    do
     {
-        do
-        {
-            stat = inp(STATUS_REGISTER_1);
-            if (stat & 8)
-            {
-                break;
-            }
-        } while (1);
-        do
-        {
-            stat = inp(STATUS_REGISTER_1);
-            if ((stat & 8) == 0)
-            {
-                break;
-            }
-        } while (1);
-    }
+        stat = inp(STATUS_REGISTER_1);
+        if (stat & 8)
+            break;
+    } while (1);
+    do
+    {
+        stat = inp(STATUS_REGISTER_1);
+        if ((stat & 8) == 0)
+            break;
+    } while (1);
 }
+
 
 //
 // I_SetPalette
@@ -437,7 +431,7 @@ void I_FinishUpdate(void)
         fps_counter++;
 
         // store a value and/or draw when data is ok:
-        if (fps_counter > (TICRATE + 10))
+        if (fps_counter > (TICRATE * 2))
         {
             // in case of a very fast system, this will limit the sampling
             if (fps_nextcalculation < ticcount)

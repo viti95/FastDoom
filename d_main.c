@@ -107,6 +107,7 @@ int forceScreenSize;
 boolean logTimedemo;
 
 boolean uncappedFPS;
+boolean waitVsync;
 
 boolean drone;
 
@@ -375,6 +376,9 @@ void D_DoomLoop(void)
         S_UpdateSounds(players.mo); // move positional sounds
 
         // Update display, next frame, with current state.
+        if (waitVsync){
+            I_WaitSingleVBL();
+        }
         D_Display();
     }
 }
@@ -943,6 +947,7 @@ void D_DoomMain(void)
     M_CheckParmOptional("-near", &nearSprites);
     M_CheckParmOptional("-nomelt", &noMelt);
     M_CheckParmOptional("-uncapped", &uncappedFPS);
+    M_CheckParmOptional("-vsync", &waitVsync);
 
     printf("Z_Init: Init zone memory allocation daemon. \n");
     Z_Init();
