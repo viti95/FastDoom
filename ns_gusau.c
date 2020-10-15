@@ -13,16 +13,6 @@
 #include "ns_gusmi.h"
 #include "ns_gusau.h"
 
-#define ATR_INDEX 0x3c0
-#define STATUS_REGISTER_1 0x3da
-
-#define SetBorderColor(color)   \
-    {                           \
-        inp(STATUS_REGISTER_1); \
-        outp(ATR_INDEX, 0x31);  \
-        outp(ATR_INDEX, color); \
-    }
-
 static const int GUSWAVE_PanTable[32] =
     {
         8, 9, 10, 11, 11, 12, 13, 14,
@@ -187,19 +177,9 @@ static int LOADDS GUSWAVE_CallBack(
 
     if (reason == DIG_MORE_DATA)
     {
-        //      SetBorderColor(16);
         Voice = VoiceStatus[voice].Voice;
 
         if ((Voice != NULL) && (Voice->Playing))
-        /*
-         {
-         *buf = ( unsigned char * )GUS_Silence16;
-         *size = 1024;
-
-         SetBorderColor(0);
-         return( DIG_MORE_DATA );
-         }
- */
         {
             status = Voice->GetSound(Voice);
             if (status != SoundDone)
@@ -224,7 +204,7 @@ static int LOADDS GUSWAVE_CallBack(
                 return (DIG_MORE_DATA);
             }
         }
-        //      SetBorderColor(16);
+
         return (DIG_DONE);
     }
 

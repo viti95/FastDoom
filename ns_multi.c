@@ -264,12 +264,6 @@ void MV_ServiceVoc(
     // Play any waiting voices
     for (voice = VoiceList.next; voice != &VoiceList; voice = next)
     {
-        //      if ( ( voice < &MV_Voices[ 0 ] ) || ( voice > &MV_Voices[ 8 ] ) )
-        //         {
-        //         SetBorderColor(backcolor++);
-        //         break;
-        //         }
-
         MV_BufferEmpty[MV_MixPage] = FALSE;
 
         MV_MixFunction(voice, MV_MixPage);
