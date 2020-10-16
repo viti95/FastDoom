@@ -339,7 +339,8 @@ static patch_t **lnames;
 
 void WI_slamBackground(void)
 {
-	memcpy(screens[0], screens[1], SCREENWIDTH * SCREENHEIGHT);
+	CopyDWords(screens[1], screens[0], (SCREENWIDTH * SCREENHEIGHT) / 4);
+	//memcpy(screens[0], screens[1], SCREENWIDTH * SCREENHEIGHT);
 	V_MarkRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
 }
 

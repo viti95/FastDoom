@@ -388,8 +388,10 @@ void I_UpdateNoBlit(void)
     }
 
     // Leave current box for next update
-    memcpy(olddb[0], olddb[1], 16);
-    memcpy(olddb[1], dirtybox, 16);
+    CopyDWords(olddb[1], olddb[0], 4);
+    CopyDWords(dirtybox, olddb[1], 4);
+    //memcpy(olddb[0], olddb[1], 16);
+    //memcpy(olddb[1], dirtybox, 16);
 
     // Update screen
     if (realdr[BOXBOTTOM] <= realdr[BOXTOP])

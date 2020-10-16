@@ -52,7 +52,8 @@ void wipe_shittyColMajorXform(short *array)
         for (x = 0; x < SCREENWIDTH / 2; x++)
             dest[x * SCREENHEIGHT + y] = array[y * SCREENWIDTH / 2 + x];
 
-    memcpy(array, dest, SCREENWIDTH * SCREENHEIGHT);
+    CopyDWords(dest, array, (SCREENWIDTH * SCREENHEIGHT) / 4);
+    //memcpy(array, dest, SCREENWIDTH * SCREENHEIGHT);
 
     Z_Free(dest);
 }
@@ -64,7 +65,8 @@ int wipe_initMelt()
     int i, r;
 
     // copy start screen to main screen
-    memcpy(wipe_scr, wipe_scr_start, SCREENWIDTH * SCREENHEIGHT);
+    CopyDWords(wipe_scr_start, wipe_scr, (SCREENWIDTH * SCREENHEIGHT) / 4);
+    //memcpy(wipe_scr, wipe_scr_start, SCREENWIDTH * SCREENHEIGHT);
 
     // makes this wipe faster (in theory)
     // to have stuff in column-major format

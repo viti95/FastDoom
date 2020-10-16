@@ -471,4 +471,20 @@ int Mul26843545(int value);
 #define SHORT(x) (x)
 #define LONG(x) (x)
 
+void CopyBytes(void *src, void *dest, int num_bytes);
+#pragma aux CopyBytes = \
+    "rep movsb" \
+    parm [esi] [edi] [ecx] modify[edi esi ecx];
+
+void CopyWords(void *src, void *dest, int num_words);
+#pragma aux CopyWords =     \
+    "rep    movsw"          \
+    parm [esi] [edi] [ecx] modify[edi esi ecx];
+
+void CopyDWords(void *src, void *dest, int num_dwords);
+#pragma aux CopyDWords =     \
+    "rep movsd"             \
+    parm [esi] [edi] [ecx]  \
+    modify [esi edi ecx];
+
 #endif // __DOOMDEF__

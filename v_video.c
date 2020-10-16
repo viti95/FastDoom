@@ -172,7 +172,8 @@ void V_CopyRect(int srcx,
 
     for (; height > 0; height--)
     {
-        memcpy(dest, src, width);
+        CopyBytes(src, dest, width);
+        //memcpy(dest, src, width);
         src += SCREENWIDTH;
         dest += SCREENWIDTH;
     }
@@ -329,25 +330,25 @@ void V_DrawPatchDirect(int x,
 
         while (column->topdelta != 0xff)
         {
-            register const byte *source = (byte *)column + 3;
-            register byte *dest = desttop + Mul80(column->topdelta);
-            register int count = column->length;
+            const byte *source = (byte *)column + 3;
+            byte *dest = desttop + Mul80(column->topdelta);
+            int count = column->length;
 
             if ((count -= 4) >= 0)
                 do
                 {
-                    register byte s0, s1;
+                    byte s0, s1, s2, s3;
                     s0 = source[0];
+                    dest[0] = s0;
                     s1 = source[1];
-                    dest[0] = s0;
                     dest[SCREENWIDTH / 4] = s1;
-                    dest += SCREENWIDTH / 2;
-                    s0 = source[2];
-                    s1 = source[3];
+                    s2 = source[2];
+                    dest[SCREENWIDTH / 2] = s2;
+                    s3 = source[3];
+                    dest[(3 * SCREENWIDTH) / 4] = s3;
+                    
+                    dest += SCREENWIDTH;
                     source += 4;
-                    dest[0] = s0;
-                    dest[SCREENWIDTH / 4] = s1;
-                    dest += SCREENWIDTH / 2;
                 } while ((count -= 4) >= 0);
             if (count += 4)
                 do
@@ -381,7 +382,8 @@ void V_DrawBlock(int x,
 
     while (height--)
     {
-        memcpy(dest, src, width);
+        CopyBytes(src, dest, width);
+        //memcpy(dest, src, width);
         src += width;
         dest += SCREENWIDTH;
     }

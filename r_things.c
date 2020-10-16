@@ -251,9 +251,9 @@ void R_InitSpriteDefs(char **namelist)
 
         // allocate space for the frames present and copy sprtemp to it
         sprites[i].numframes = maxframe;
-        sprites[i].spriteframes =
-            Z_Malloc(maxframe * sizeof(spriteframe_t), PU_STATIC, NULL);
-        memcpy(sprites[i].spriteframes, sprtemp, maxframe * sizeof(spriteframe_t));
+        sprites[i].spriteframes = Z_Malloc(maxframe * sizeof(spriteframe_t), PU_STATIC, NULL);
+        CopyBytes(sprtemp, sprites[i].spriteframes, maxframe * sizeof(spriteframe_t));
+        //memcpy(sprites[i].spriteframes, sprtemp, maxframe * sizeof(spriteframe_t));
     }
 }
 
@@ -517,7 +517,8 @@ void R_ProjectSprite(mobj_t *thing)
 
             num_vissprite_alloc = num_vissprite_alloc * 2;
             vissprites = Z_Malloc(num_vissprite_alloc * sizeof(*vissprites), PU_STATIC, 0);
-            memcpy(vissprites, vissprites_old, num_vissprite_alloc_old * sizeof(*vissprites));
+            CopyBytes(vissprites_old, vissprites, num_vissprite_alloc_old * sizeof(*vissprites));
+            //memcpy(vissprites, vissprites_old, num_vissprite_alloc_old * sizeof(*vissprites));
             Z_Free(vissprites_old);
         }
     }
@@ -731,7 +732,8 @@ void R_DrawPlayerSprites(void)
 //
 vissprite_t vsprsortedhead;
 
-#define bcopyp(d, s, n) memcpy(d, s, (n) * sizeof(void *))
+//#define bcopyp(d, s, n) memcpy(d, s, (n) * sizeof(void *))
+#define bcopyp(d, s, n) CopyDWords(s, d, (n))
 
 static void msort(vissprite_t **s, vissprite_t **t, int n)
 {

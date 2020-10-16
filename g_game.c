@@ -190,7 +190,9 @@ void G_BuildTiccmd(ticcmd_t *cmd)
     ticcmd_t *base;
 
     base = &emptycmd; // empty, or external driver
-    memcpy(cmd, base, sizeof(*cmd));
+
+    CopyBytes(base, cmd, sizeof(*cmd));
+    //memcpy(cmd, base, sizeof(*cmd));
 
     strafe = gamekeydown[key_strafe] || mousebuttons[mousebstrafe];
     speed = autorun || gamekeydown[key_speed];
@@ -514,11 +516,12 @@ void G_Ticker(void)
 
     // get commands, check consistancy,
     // and build new consistancy check
-    buf = (gametic) & (BACKUPTICS-1);
+    buf = (gametic) & (BACKUPTICS - 1);
 
     cmd = &players.cmd;
 
-    memcpy(cmd, &localcmds[buf], sizeof(ticcmd_t));
+    CopyBytes(&localcmds[buf], cmd, sizeof(ticcmd_t));
+    //memcpy(cmd, &localcmds[buf], sizeof(ticcmd_t));
 
     if (demoplayback)
         G_ReadDemoTiccmd(cmd);
