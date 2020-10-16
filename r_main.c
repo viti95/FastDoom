@@ -99,6 +99,7 @@ void (*fuzzcolfunc)(void);
 void (*transcolfunc)(void);
 void (*spanfunc)(void);
 void (*skyfunc)(void);
+void (*flatcolfunc)(void);
 
 int R_PointOnSegSide(fixed_t x,
                      fixed_t y,
@@ -739,6 +740,7 @@ void R_ExecuteSetViewSize(void)
     {
     case 0:
         colfunc = basecolfunc = R_DrawColumn;
+        flatcolfunc = R_DrawColumnFlat;
 
         if (untexturedSurfaces)
             spanfunc = R_DrawSpanFlat;
@@ -752,6 +754,7 @@ void R_ExecuteSetViewSize(void)
         break;
     case 1:
         colfunc = basecolfunc = R_DrawColumnLow;
+        flatcolfunc = R_DrawColumnFlatLow;
 
         if (untexturedSurfaces)
             spanfunc = R_DrawSpanFlatLow;
@@ -766,6 +769,7 @@ void R_ExecuteSetViewSize(void)
         break;
     case 2:
         colfunc = basecolfunc = R_DrawColumnPotato;
+        flatcolfunc = R_DrawColumnFlatPotato;
 
         if (untexturedSurfaces)
             spanfunc = R_DrawSpanFlatPotato;

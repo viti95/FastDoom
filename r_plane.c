@@ -407,18 +407,7 @@ void R_DrawPlanes(void)
                 {
                     dc_x = x;
 
-                    switch (detailshift)
-                    {
-                    case 0:
-                        R_DrawColumnFlat();
-                        break;
-                    case 1:
-                        R_DrawColumnFlatLow();
-                        break;
-                    case 2:
-                        R_DrawColumnFlatPotato();
-                        break;
-                    }
+                    flatcolfunc();
                 }
             }
 

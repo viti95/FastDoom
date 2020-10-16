@@ -88,6 +88,7 @@ extern void (*fuzzcolfunc)(void);
 // No shadow effects on floors.
 extern void (*spanfunc)(void);
 extern void (*skyfunc)(void);
+extern void (*flatcolfunc)(void);
 
 //
 // Utility functions.
