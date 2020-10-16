@@ -487,4 +487,22 @@ void CopyDWords(void *src, void *dest, int num_dwords);
     parm [esi] [edi] [ecx]  \
     modify [esi edi ecx];
 
+void SetBytes(void *dest, unsigned char value, int num_bytes);
+#pragma aux SetBytes = \
+    "rep stosb" \
+    parm [edi] [al] [ecx] \
+    modify [edi ecx];
+
+void SetWords(void *dest, short value, int num_words);
+#pragma aux SetWords = \
+    "rep stosw" \
+    parm [edi] [ax] [ecx] \
+    modify [edi ecx];
+
+void SetDWords(void *dest, int value, int num_dwords);
+#pragma aux SetDWords = \
+    "rep stosd" \
+    parm [edi] [eax] [ecx] \
+    modify [edi ecx];
+
 #endif // __DOOMDEF__
