@@ -500,7 +500,9 @@ void P_GroupLines(void)
     sector = sectors;
     for (i = 0; i < numsectors; i++, sector++)
     {
-        M_ClearBox(bbox);
+        bbox[BOXTOP] = bbox[BOXRIGHT] = MININT;
+        bbox[BOXBOTTOM] = bbox[BOXLEFT] = MAXINT;
+        
         sector->lines = linebuffer;
         li = lines;
         for (j = 0; j < numlines; j++, li++)

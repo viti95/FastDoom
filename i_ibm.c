@@ -388,10 +388,19 @@ void I_UpdateNoBlit(void)
     }
 
     // Leave current box for next update
-    CopyDWords(olddb[1], olddb[0], 4);
-    CopyDWords(dirtybox, olddb[1], 4);
+    //CopyDWords(olddb[1], olddb[0], 4);
+    //CopyDWords(dirtybox, olddb[1], 4);
     //memcpy(olddb[0], olddb[1], 16);
     //memcpy(olddb[1], dirtybox, 16);
+
+    olddb[0][0] = olddb[1][0];
+    olddb[0][1] = olddb[1][1];
+    olddb[0][2] = olddb[1][2];
+    olddb[0][3] = olddb[1][3];
+    olddb[1][0] = dirtybox[0];
+    olddb[1][1] = dirtybox[1];
+    olddb[1][2] = dirtybox[2];
+    olddb[1][3] = dirtybox[3];
 
     // Update screen
     if (realdr[BOXBOTTOM] <= realdr[BOXTOP])
@@ -403,7 +412,8 @@ void I_UpdateNoBlit(void)
         I_UpdateBox(x, y, w, h);
     }
     // Clear box
-    M_ClearBox(dirtybox);
+    dirtybox[BOXTOP] = dirtybox[BOXRIGHT] = MININT;
+    dirtybox[BOXBOTTOM] = dirtybox[BOXLEFT] = MAXINT;
 }
 
 //
