@@ -342,7 +342,6 @@ void R_DrawFuzzColumn(void)
         dest += (dc_x >> 1);
         break;
     case 2:
-        outpw(GC_INDEX, GC_READMAP);
         outp(SC_INDEX + 1, 15);
         dest += dc_x;
         break;
@@ -401,7 +400,6 @@ void R_DrawFuzzColumnFast(void)
         dest += (dc_x >> 1);
         break;
     case 2:
-        outpw(GC_INDEX, GC_READMAP);
         outp(SC_INDEX + 1, 15);
         dest += dc_x;
         break;
