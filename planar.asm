@@ -47,9 +47,6 @@ PUBLIC  R_DrawColumnPotato_
 	mov		ebx,[_dc_x]
 	add		edi,ebx
 	add		edi,[_destview]
-	mov		eax,15
-	mov		edx,SC_INDEX+1
-	out		dx,al
 	jmp		cdraw
 ENDP
 

@@ -20,6 +20,7 @@
 
 #include <stdlib.h>
 #include <math.h>
+#include <conio.h>
 
 #include "doomdef.h"
 #include "doomstat.h"
@@ -32,6 +33,8 @@
 
 // Fineangles in the SCREENWIDTH wide window.
 #define FIELDOFVIEW 2048
+
+#define SC_INDEX 0x3C4
 
 // increment every time a check is made
 int validcount = 1;
@@ -1003,6 +1006,11 @@ void R_RenderPlayerView(player_t *player)
 
     // check for new console commands.
     NetUpdate();
+
+    // Set potato mode VGA plane
+    if (detailshift == 2){
+        outp(SC_INDEX + 1, 15);
+    }
 
     // The head node is the last node output.
     R_RenderBSPNode(numnodes - 1);

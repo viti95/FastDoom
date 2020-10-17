@@ -149,8 +149,6 @@ void R_DrawSkyFlatPotato(void)
     if (count < 0)
         return;
 
-    outp(SC_INDEX + 1, 15);
-
     dest = destview + Mul80(dc_yl) + dc_x;
 
     do
@@ -175,7 +173,6 @@ void R_DrawSpanPotato(void)
         return;
 
     dest = destview + Mul80(ds_y) + ds_x1;
-    outp(SC_INDEX + 1, 15);
 
     xfrac = ds_xfrac;
     yfrac = ds_yfrac;
@@ -263,8 +260,6 @@ void R_DrawColumnFlatPotato(void)
 
     color = dc_colormap[dc_source[0]];
 
-    outp(SC_INDEX + 1, 15);
-
     dest = destview + Mul80(dc_yl) + dc_x;
 
     do
@@ -342,7 +337,6 @@ void R_DrawFuzzColumn(void)
         dest += (dc_x >> 1);
         break;
     case 2:
-        outp(SC_INDEX + 1, 15);
         dest += dc_x;
         break;
     }
@@ -400,7 +394,6 @@ void R_DrawFuzzColumnFast(void)
         dest += (dc_x >> 1);
         break;
     case 2:
-        outp(SC_INDEX + 1, 15);
         dest += dc_x;
         break;
     }
@@ -453,7 +446,6 @@ void R_DrawFuzzColumnSaturn(void)
         dest += (dc_x >> 1);
         break;
     case 2:
-        outp(SC_INDEX + 1, 15);
         dest += dc_x;
         break;
     }
@@ -784,7 +776,6 @@ void R_DrawSpanFlatPotato(void)
         return;
 
     dest = destview + Mul80(ds_y) + ds_x1;
-    outp(SC_INDEX + 1, 15);
 
     do
     {
