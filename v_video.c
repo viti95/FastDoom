@@ -330,25 +330,25 @@ void V_DrawPatchDirect(int x,
 
         while (column->topdelta != 0xff)
         {
-            const byte *source = (byte *)column + 3;
-            byte *dest = desttop + Mul80(column->topdelta);
-            int count = column->length;
+            register const byte *source = (byte *)column + 3;
+            register byte *dest = desttop + Mul80(column->topdelta);
+            register int count = column->length;
 
             if ((count -= 4) >= 0)
                 do
                 {
-                    byte s0, s1, s2, s3;
+                    register byte s0, s1;
                     s0 = source[0];
-                    dest[0] = s0;
                     s1 = source[1];
+                    dest[0] = s0;
                     dest[SCREENWIDTH / 4] = s1;
-                    s2 = source[2];
-                    dest[SCREENWIDTH / 2] = s2;
-                    s3 = source[3];
-                    dest[(3 * SCREENWIDTH) / 4] = s3;
-                    
-                    dest += SCREENWIDTH;
+                    dest += SCREENWIDTH / 2;
+                    s0 = source[2];
+                    s1 = source[3];
                     source += 4;
+                    dest[0] = s0;
+                    dest[SCREENWIDTH / 4] = s1;
+                    dest += SCREENWIDTH / 2;
                 } while ((count -= 4) >= 0);
             if (count += 4)
                 do
