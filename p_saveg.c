@@ -198,7 +198,7 @@ void P_ArchiveThinkers(void)
 	// save off the current thinkers
 	for (th = thinkercap.next; th != &thinkercap; th = th->next)
 	{
-		if (th->function.acp1 == (actionf_p1)P_MobjThinker || th->function.acp1 == (actionf_p1)P_MobjBrainlessThinker)
+		if (th->function.acp1 == (actionf_p1)P_MobjThinker || th->function.acp1 == (actionf_p1)P_MobjBrainlessThinker || th->function.acp1 == (actionf_p1)P_MobjTicklessThinker)
 		{
 			*save_p++ = tc_mobj;
 			PADSAVEP();
@@ -233,7 +233,7 @@ void P_UnArchiveThinkers(void)
 	{
 		next = currentthinker->next;
 
-		if (currentthinker->function.acp1 == (actionf_p1)P_MobjThinker || currentthinker->function.acp1 == (actionf_p1)P_MobjBrainlessThinker)
+		if (currentthinker->function.acp1 == (actionf_p1)P_MobjThinker || currentthinker->function.acp1 == (actionf_p1)P_MobjBrainlessThinker || currentthinker->function.acp1 == (actionf_p1)P_MobjTicklessThinker)
 			P_RemoveMobj((mobj_t *)currentthinker);
 		else
 			Z_Free(currentthinker);

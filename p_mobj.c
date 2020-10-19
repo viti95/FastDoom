@@ -469,6 +469,11 @@ void P_MobjBrainlessThinker(mobj_t *mobj)
     }
 }
 
+void P_MobjTicklessThinker(mobj_t *mobj)
+{
+    // DO NOTHING
+}
+
 //
 // P_SpawnMobj
 //
@@ -528,7 +533,10 @@ P_SpawnMobj(fixed_t x,
     }
     else
     {
-        mobj->thinker.function.acp1 = (actionf_p1)P_MobjBrainlessThinker;
+        if (mobj->tics != -1)
+            mobj->thinker.function.acp1 = (actionf_p1)P_MobjBrainlessThinker;
+        else
+            mobj->thinker.function.acp1 = (actionf_p1)P_MobjTicklessThinker;
     }
 
     thinkercap.prev->next = &mobj->thinker;
