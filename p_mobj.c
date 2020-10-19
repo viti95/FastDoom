@@ -528,8 +528,7 @@ P_SpawnMobj(fixed_t x,
     }
     else
     {
-        if (mobj->tics != -1)
-            mobj->thinker.function.acp1 = (actionf_p1)P_MobjBrainlessThinker;
+        mobj->thinker.function.acp1 = (actionf_p1)P_MobjBrainlessThinker;
     }
 
     thinkercap.prev->next = &mobj->thinker;
