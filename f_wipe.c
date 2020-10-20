@@ -50,7 +50,7 @@ void wipe_shittyColMajorXform(short *array)
 
     for (y = 0; y < SCREENHEIGHT; y++)
         for (x = 0; x < SCREENWIDTH / 2; x++)
-            dest[x * SCREENHEIGHT + y] = array[y * SCREENWIDTH / 2 + x];
+            dest[Mul200(x) + y] = array[Mul160(y) + x];
 
     CopyDWords(dest, array, (SCREENWIDTH * SCREENHEIGHT) / 4);
     //memcpy(array, dest, SCREENWIDTH * SCREENHEIGHT);
