@@ -1377,9 +1377,8 @@ boolean PIT_ChangeSector(mobj_t *thing)
                          thing->y,
                          thing->z + thing->height / 2, MT_BLOOD);
 
-        mo->momx = (rndtable[prndindex + 1] - rndtable[prndindex + 2]) << 12;
-        mo->momy = (rndtable[prndindex + 3] - rndtable[prndindex + 4]) << 12;
-        prndindex += 4;
+        mo->momx = (P_Random - P_Random) << 12;
+        mo->momy = (P_Random - P_Random) << 12;
     }
 
     // keep checking (crush other things)

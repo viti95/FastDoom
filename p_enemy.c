@@ -742,11 +742,8 @@ void A_FaceTarget(mobj_t *actor)
                                    actor->target->x,
                                    actor->target->y);
 
-    if (actor->target->flags & MF_SHADOW){
-        actor->angle += (rndtable[prndindex + 1] - rndtable[prndindex + 2]) << 21;
-        prndindex += 2;
-    }
-        
+    if (actor->target->flags & MF_SHADOW)
+        actor->angle += (P_Random - P_Random) << 21;
 }
 
 //
@@ -766,9 +763,8 @@ void A_PosAttack(mobj_t *actor)
     slope = P_AimLineAttack(actor, angle, MISSILERANGE);
 
     S_StartSound(actor, sfx_pistol);
-    angle += (rndtable[prndindex + 1] - rndtable[prndindex + 2]) << 20;
-    damage = (Mod5(rndtable[prndindex + 3]) + 1) * 3;
-    prndindex += 3;
+    angle += (P_Random - P_Random) << 20;
+    damage = (Mod5(P_Random) + 1) * 3;
     P_LineAttack(actor, angle, MISSILERANGE, slope, damage);
 }
 
@@ -787,19 +783,15 @@ void A_SPosAttack(mobj_t *actor)
     bangle = actor->angle;
     slope = P_AimLineAttack(actor, bangle, MISSILERANGE);
 
-    angle = bangle + ((rndtable[prndindex + 1] - rndtable[prndindex + 2]) << 20);
-    damage = (Mod5(rndtable[prndindex + 3]) + 1) * 3;
-    prndindex += 3;
+    angle = bangle + ((P_Random - P_Random) << 20);
+    damage = (Mod5(P_Random) + 1) * 3;
     P_LineAttack(actor, angle, MISSILERANGE, slope, damage);
-    angle = bangle + ((rndtable[prndindex + 1] - rndtable[prndindex + 2]) << 20);
-    damage = (Mod5(rndtable[prndindex + 3]) + 1) * 3;
-    prndindex += 3;
+    angle = bangle + ((P_Random - P_Random) << 20);
+    damage = (Mod5(P_Random) + 1) * 3;
     P_LineAttack(actor, angle, MISSILERANGE, slope, damage);
-    angle = bangle + ((rndtable[prndindex + 1] - rndtable[prndindex + 2]) << 20);
-    damage = (Mod5(rndtable[prndindex + 3]) + 1) * 3;
-    prndindex += 3;
+    angle = bangle + ((P_Random - P_Random) << 20);
+    damage = (Mod5(P_Random) + 1) * 3;
     P_LineAttack(actor, angle, MISSILERANGE, slope, damage);
-    
 }
 
 void A_CPosAttack(mobj_t *actor)
@@ -817,9 +809,8 @@ void A_CPosAttack(mobj_t *actor)
     bangle = actor->angle;
     slope = P_AimLineAttack(actor, bangle, MISSILERANGE);
 
-    angle = bangle + ((rndtable[prndindex + 1] - rndtable[prndindex + 2]) << 20);
-    damage = (Mod5(rndtable[prndindex + 3]) + 1) * 3;
-    prndindex += 3;
+    angle = bangle + ((P_Random - P_Random) << 20);
+    damage = (Mod5(P_Random) + 1) * 3;
     P_LineAttack(actor, angle, MISSILERANGE, slope, damage);
 }
 
