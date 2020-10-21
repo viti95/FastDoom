@@ -203,7 +203,7 @@ int GUSMIDI_LoadPatch(
       return (GUS_Error);
    }
 
-   status = USRHOOKS_GetMem(&wave_buff, 512); // 512 bytes
+   status = USRHOOKS_GetMem(&wave_buff, 1024); // 1024 bytes
    if (status != USRHOOKS_Ok)
    {
       return (GUS_Error);
