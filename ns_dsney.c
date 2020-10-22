@@ -15,6 +15,8 @@
 #include "ns_user.h"
 #include "ns_dsney.h"
 
+#include "m_misc.h"
+
 #define TRUE (1 == 1)
 #define FALSE (!TRUE)
 
@@ -252,10 +254,26 @@ int SS_TestSoundSource(
    Detects which port the Sound Source is located.
 ---------------------------------------------------------------------*/
 
-int SS_DetectSoundSource(
-    void)
-
+int SS_DetectSoundSource(void)
 {
+    if (M_CheckParm("-LPT1"))
+    {
+        SS_Port = SS_Port1;
+        return (TRUE);
+    }
+
+    if (M_CheckParm("-LPT2"))
+    {
+        SS_Port = SS_Port2;
+        return (TRUE);
+    }
+
+    if (M_CheckParm("-LPT3"))
+    {
+        SS_Port = SS_Port3;
+        return (TRUE);
+    }
+
     if (SS_TestSoundSource(SS_Port1))
     {
         SS_Port = SS_Port1;
