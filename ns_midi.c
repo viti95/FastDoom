@@ -184,19 +184,40 @@ static void _MIDI_ResetTracks(
 
 static void _MIDI_AdvanceTick(void)
 {
+    int tickDivision;
+    int beatDivision;
+
     _MIDI_PositionInTicks++;
     _MIDI_Time += _MIDI_FPSecondsPerTick;
 
     _MIDI_Tick++;
-    while (_MIDI_Tick > _MIDI_TicksPerBeat)
+
+    if (_MIDI_TicksPerBeat != 70)
     {
-        _MIDI_Tick -= _MIDI_TicksPerBeat;
-        _MIDI_Beat++;
+        tickDivision = (_MIDI_Tick / _MIDI_TicksPerBeat) + 1;
+        _MIDI_Tick -= tickDivision * _MIDI_TicksPerBeat;
+        _MIDI_Beat += tickDivision;
     }
-    while (_MIDI_Beat > _MIDI_BeatsPerMeasure)
+    else
     {
-        _MIDI_Beat -= _MIDI_BeatsPerMeasure;
-        _MIDI_Measure++;
+        tickDivision = Div70(_MIDI_Tick) + 1;
+        _MIDI_Tick -= Mul70(tickDivision);
+        _MIDI_Beat += tickDivision;
+    }
+
+    if (_MIDI_BeatsPerMeasure != 4)
+    {
+        while (_MIDI_Beat > _MIDI_BeatsPerMeasure)
+        {
+            _MIDI_Beat -= _MIDI_BeatsPerMeasure;
+            _MIDI_Measure++;
+        }
+    }
+    else
+    {
+        tickDivision = (_MIDI_Tick >> 2) + 1;
+        _MIDI_Tick -= tickDivision << 2;
+        _MIDI_Beat += tickDivision;
     }
 }
 

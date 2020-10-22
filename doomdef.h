@@ -252,6 +252,8 @@ int Mul160(int value);
 int Mul200(int value);
 int Mul409(int value);
 int Mul26843545(int value);
+int Mul70(int value);
+int Div70(int value);
 
 #pragma aux FixedMul = \
     "imul ebx",        \
@@ -467,6 +469,21 @@ int Mul26843545(int value);
     "sal ecx, 12", \
     "add eax, ecx", \
     "lea eax, [edx+eax*8]" parm[edx] value[eax] modify exact[eax ecx edx]
+
+#pragma aux Mul70 = \
+    "lea eax, [edx+edx*8]", \
+    "sal eax, 2", \
+    "sub eax, edx", \
+    "add eax, eax" parm[edx] value[eax] modify exact[eax edx]
+
+#pragma aux Div70 = \
+    "mov edx, -368140053", \
+    "mov eax, ecx", \
+    "imul edx", \
+    "add edx, ecx", \
+    "sar edx, 6", \
+    "sar ecx, 31", \
+    "sub edx, ecx" parm[ecx] value[edx] modify exact[eax ecx edx]
 
 #define SHORT(x) (x)
 #define LONG(x) (x)
