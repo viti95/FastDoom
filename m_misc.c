@@ -79,6 +79,17 @@ void M_CheckParmOptional(char *check, int *variable)
     }
 }
 
+void M_CheckParmDisable(char *check, int *variable)
+{
+    int i;
+
+    for (i = 1; i < myargc; i++)
+    {
+        if (!strcasecmp(check, myargv[i]))
+            *variable = 0;
+    }
+}
+
 void M_AddToBox(fixed_t *box,
                 fixed_t x,
                 fixed_t y)

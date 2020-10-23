@@ -948,6 +948,18 @@ void D_DoomMain(void)
     M_CheckParmOptional("-nomelt", &noMelt);
     M_CheckParmOptional("-uncapped", &uncappedFPS);
     M_CheckParmOptional("-vsync", &waitVsync);
+    M_CheckParmDisable("-normalsurfaces", &flatSurfaces);
+    M_CheckParmDisable("-normalsurfaces", &untexturedSurfaces);
+    M_CheckParmDisable("-normalsky", &flatSky);
+    M_CheckParmDisable("-normalshadows", &flatShadows);
+    M_CheckParmDisable("-normalshadows", &saturnShadows);
+    M_CheckParmDisable("-normalsprites", &nearSprites);
+    M_CheckParmDisable("-stereo", &monoSound);
+    M_CheckParmDisable("-normalsprites", &nearSprites);
+    M_CheckParmDisable("-melt", &noMelt);
+    M_CheckParmDisable("-capped", &uncappedFPS);
+    M_CheckParmDisable("-novsync", &waitVsync);
+    M_CheckParmDisable("-nofps", &showFPS);
 
     printf("Z_Init: Init zone memory allocation daemon. \n");
     Z_Init();

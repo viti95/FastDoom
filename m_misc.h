@@ -32,6 +32,7 @@ extern int numChannels;
 // in the arg list (0 if not found).
 int M_CheckParm(char *check);
 void M_CheckParmOptional(char *check, int *variable);
+void M_CheckParmDisable(char *check, int *variable);
 
 boolean
 M_WriteFile(char const *name,
