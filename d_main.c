@@ -955,7 +955,6 @@ void D_DoomMain(void)
     M_CheckParmDisable("-normalshadows", &saturnShadows);
     M_CheckParmDisable("-normalsprites", &nearSprites);
     M_CheckParmDisable("-stereo", &monoSound);
-    M_CheckParmDisable("-normalsprites", &nearSprites);
     M_CheckParmDisable("-melt", &noMelt);
     M_CheckParmDisable("-capped", &uncappedFPS);
     M_CheckParmDisable("-novsync", &waitVsync);
