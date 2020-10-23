@@ -738,16 +738,16 @@ void A_BFGSpray(mobj_t *mo)
     int damage;
     angle_t an;
 
+    an = mo->angle - ANG90 / 2;
+
     // offset angles from its attack angle
     for (i = 0; i < 40; i++)
     {
-        // VITI95: OPTIMIZE
-        //an = mo->angle - ANG90 / 2 + ANG90 / 40 * i;
-        an = mo->angle - ANG90 / 2 + Mul26843545(i);
-
         // mo->target is the originator (player)
         //  of the missile
         P_AimLineAttack(mo->target, an, HALFMISSILERANGE);
+
+        an += ANG90 / 40;
 
         if (!linetarget)
             continue;
