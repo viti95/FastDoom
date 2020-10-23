@@ -201,6 +201,7 @@ void M_SfxVol(int choice);
 void M_MusicVol(int choice);
 void M_ChangeDetail();
 void M_ChangeVisplaneDetail();
+void M_ChangeVsync();
 void M_ChangeSkyDetail();
 void M_ChangeInvisibleDetail();
 void M_ChangeShowFPS();
@@ -348,6 +349,7 @@ menu_t NewDef =
 
 enum
 {
+    vsync,
     detail,
     visplanes,
     sky,
@@ -394,6 +396,7 @@ menu_t OptionsDef =
 
 menuitem_t DisplayMenu[] =
     {
+        {1, "", M_ChangeVsync, 's'},
         {1, "", M_ChangeDetail, 'g'},
         {1, "", M_ChangeVisplaneDetail, 'v'},
         {1, "", M_ChangeSkyDetail, 's'},
@@ -409,7 +412,7 @@ menu_t DisplayDef =
         &OptionsDef,
         DisplayMenu,
         M_DrawDisplay,
-        60, 37,
+        60, 21,
         0};
 
 //
@@ -936,7 +939,10 @@ void M_DrawOptions(void)
 
 void M_DrawDisplay(void)
 {
-    V_DrawPatchDirect(54, 15, 0, W_CacheLumpName("M_DISOPT", PU_CACHE));
+    //V_DrawPatchDirect(54, 15, 0, W_CacheLumpName("M_DISOPT", PU_CACHE));
+
+    M_WriteText(58, 24, "VSYNC:");
+    M_WriteText(214, 24, waitVsync ? "ON" : "OFF");
 
     M_WriteText(58, 40, "DETAIL LEVEL:");
     M_WriteText(214, 40, detailLevel == 2 ? "POTATO" : detailLevel == 1 ? "LOW" : "HIGH");
@@ -1166,6 +1172,20 @@ void M_ChangeVisplaneDetail()
     else
     {
         players.message = "FLATTER VISPLANES";
+    }
+}
+
+void M_ChangeVsync()
+{
+    waitVsync = !waitVsync;
+
+    if (waitVsync)
+    {
+        players.message = "VSYNC ENABLED";
+    }
+    else
+    {
+        players.message = "VSYNC DISABLED";
     }
 }
 
