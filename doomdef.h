@@ -416,7 +416,7 @@ int Div70(int value);
     "lea eax, [edx+edx]", \
     "add edx, eax", \
     "add edx, edx", \
-    "sub ecx, eax" parm[ecx] value[ecx] modify exact[eax ecx edx]
+    "sub ecx, edx" parm[ecx] value[ecx] modify exact[eax ecx edx]
 
 #pragma aux Div45 = \
     "mov edx, -1240768329", \
