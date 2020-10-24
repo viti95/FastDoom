@@ -55,6 +55,8 @@ typedef struct
 	int picnum;
 	int basepic;
 	int numpics;
+	int lastpic;	// basepics + numpics
+	int currentpic; // store last animation pic
 } anim_t;
 
 //
@@ -157,6 +159,9 @@ void P_InitPicAnims(void)
 
 		lastanim->istexture = animdefs[i].istexture;
 		lastanim->numpics = lastanim->picnum - lastanim->basepic + 1;
+
+		lastanim->lastpic = lastanim->numpics + lastanim->basepic;
+		lastanim->currentpic = lastanim->basepic;
 
 		lastanim++;
 	}
@@ -278,22 +283,22 @@ fixed_t P_FindHighestFloorSurrounding(sector_t *sec)
 //
 fixed_t P_FindNextHighestFloor(sector_t *sec, int currentheight)
 {
-  sector_t *other;
-  int i;
+	sector_t *other;
+	int i;
 
-  for (i=0 ;i < sec->linecount ; i++)
-    if ((other = getNextSector(sec->lines[i],sec)) &&
-        other->floorheight > currentheight)
-      {
-        int height = other->floorheight;
-        while (++i < sec->linecount)
-          if ((other = getNextSector(sec->lines[i],sec)) &&
-              other->floorheight < height &&
-              other->floorheight > currentheight)
-            height = other->floorheight;
-        return height;
-      }
-  return currentheight;
+	for (i = 0; i < sec->linecount; i++)
+		if ((other = getNextSector(sec->lines[i], sec)) &&
+			other->floorheight > currentheight)
+		{
+			int height = other->floorheight;
+			while (++i < sec->linecount)
+				if ((other = getNextSector(sec->lines[i], sec)) &&
+					other->floorheight < height &&
+					other->floorheight > currentheight)
+					height = other->floorheight;
+			return height;
+		}
+	return currentheight;
 }
 
 //
@@ -1001,14 +1006,17 @@ void P_UpdateSpecials(void)
 		//	ANIMATE FLATS AND TEXTURES GLOBALLY
 		for (anim = anims; anim < lastanim; anim++)
 		{
-			for (i = anim->basepic; i < anim->basepic + anim->numpics; i++)
+			++anim->currentpic;
+
+			if (anim->currentpic >= anim->lastpic)
+				anim->currentpic = anim->basepic;
+
+			for (i = anim->basepic; i < anim->lastpic; i++)
 			{
-				// VITI95: OPTIMIZE
-				pic = anim->basepic + ((leveltime / 8 + i) % anim->numpics);
 				if (anim->istexture)
-					texturetranslation[i] = pic;
+					texturetranslation[i] = anim->currentpic;
 				else
-					flattranslation[i] = pic;
+					flattranslation[i] = anim->currentpic;
 			}
 		}
 
