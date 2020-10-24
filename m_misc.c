@@ -291,6 +291,7 @@ default_t defaults[] =
         {"saturnShadows", &saturnShadows, 0},
         {"untexturedSurfaces", &untexturedSurfaces, 0},
         {"flatSurfaces", &flatSurfaces, 0},
+        {"vsync", &waitVsync, 0},
 
         {"monosound", &monoSound, 0},
 
