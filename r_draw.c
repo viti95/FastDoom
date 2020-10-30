@@ -91,6 +91,8 @@ int dc_yh;
 fixed_t dc_iscale;
 fixed_t dc_texturemid;
 
+lighttable_t dc_flatcolor;
+
 // first pixel in a column (possibly virtual)
 byte *dc_source;
 
@@ -100,9 +102,6 @@ void R_DrawSkyFlat(void)
     register byte *dest;
 
     count = dc_yh - dc_yl;
-
-    if (count < 0)
-        return;
 
     outp(SC_INDEX + 1, 1 << (dc_x & 3));
 
@@ -122,13 +121,7 @@ void R_DrawSkyFlatLow(void)
 
     count = dc_yh - dc_yl;
 
-    if (count < 0)
-        return;
-
-    if (dc_x & 1)
-        outp(SC_INDEX + 1, 12);
-    else
-        outp(SC_INDEX + 1, 3);
+    outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
 
     dest = destview + Mul80(dc_yl) + (dc_x >> 1);
 
@@ -145,9 +138,6 @@ void R_DrawSkyFlatPotato(void)
     register byte *dest;
 
     count = dc_yh - dc_yl;
-
-    if (count < 0)
-        return;
 
     dest = destview + Mul80(dc_yl) + dc_x;
 
@@ -168,9 +158,6 @@ void R_DrawSpanPotato(void)
     byte *dest;
 
     countp = ds_x2 - ds_x1;
-
-    if (countp < 0)
-        return;
 
     dest = destview + Mul80(ds_y) + ds_x1;
 
@@ -200,15 +187,9 @@ void R_DrawColumnFlat(void)
 
     count = dc_yh - dc_yl;
 
-    // Zero length, column does not exceed a pixel.
-    if (count < 0)
-        return;
-
-    color = dc_colormap[dc_source[0]];
-
-    outp(SC_INDEX + 1, 1 << (dc_x & 3));
-
     dest = destview + Mul80(dc_yl) + (dc_x >> 2);
+
+    color = dc_flatcolor;
 
     do
     {
@@ -226,18 +207,9 @@ void R_DrawColumnFlatLow(void)
 
     count = dc_yh - dc_yl;
 
-    // Zero length.
-    if (count < 0)
-        return;
-
-    color = dc_colormap[dc_source[0]];
-
-    if (dc_x & 1)
-        outp(SC_INDEX + 1, 12);
-    else
-        outp(SC_INDEX + 1, 3);
-
     dest = destview + Mul80(dc_yl) + (dc_x >> 1);
+
+    color = dc_flatcolor;
 
     do
     {
@@ -254,13 +226,9 @@ void R_DrawColumnFlatPotato(void)
 
     count = dc_yh - dc_yl;
 
-    // Zero length, column does not exceed a pixel.
-    if (count < 0)
-        return;
-
-    color = dc_colormap[dc_source[0]];
-
     dest = destview + Mul80(dc_yl) + dc_x;
+
+    color = dc_flatcolor;
 
     do
     {
@@ -324,16 +292,8 @@ void R_DrawFuzzColumn(void)
         dest += (dc_x >> 2);
         break;
     case 1:
-        if (dc_x & 1)
-        {
-            outpw(GC_INDEX, GC_READMAP + (2 << 8));
-            outp(SC_INDEX + 1, 12);
-        }
-        else
-        {
-            outpw(GC_INDEX, GC_READMAP);
-            outp(SC_INDEX + 1, 3);
-        }
+        outpw(GC_INDEX, GC_READMAP + ((dc_x & 1) << 9));
+        outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
         dest += (dc_x >> 1);
         break;
     case 2:
@@ -367,10 +327,6 @@ void R_DrawFuzzColumnFast(void)
 
     count = dc_yh - dc_yl;
 
-    // Zero length.
-    if (count < 0)
-        return;
-
     dest = destview + Mul80(dc_yl);
 
     switch (detailshift)
@@ -381,16 +337,8 @@ void R_DrawFuzzColumnFast(void)
         dest += (dc_x >> 2);
         break;
     case 1:
-        if (dc_x & 1)
-        {
-            outpw(GC_INDEX, GC_READMAP + (2 << 8));
-            outp(SC_INDEX + 1, 12);
-        }
-        else
-        {
-            outpw(GC_INDEX, GC_READMAP);
-            outp(SC_INDEX + 1, 3);
-        }
+        outpw(GC_INDEX, GC_READMAP + ((dc_x & 1) << 9));
+        outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
         dest += (dc_x >> 1);
         break;
     case 2:
@@ -438,11 +386,7 @@ void R_DrawFuzzColumnSaturn(void)
         dest += (dc_x >> 2);
         break;
     case 1:
-        if (dc_x & 1)
-            outp(SC_INDEX + 1, 12);
-        else
-            outp(SC_INDEX + 1, 3);
-
+        outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
         dest += (dc_x >> 1);
         break;
     case 2:
@@ -535,9 +479,6 @@ void R_DrawSpanFlat(void)
     int origin_y;
 
     total_pixels = ds_x2 - ds_x1;
-
-    if (total_pixels < 0)
-        return;
 
     color = ds_colormap[ds_source[0]];
     origin_y = (int)destview + Mul80(ds_y);
@@ -683,9 +624,6 @@ void R_DrawSpanFlatLow(void)
 
     total_pixels = ds_x2 - ds_x1;
 
-    if (total_pixels < 0)
-        return;
-
     color = ds_colormap[ds_source[0]];
     origin_y = (int)destview + Mul80(ds_y);
 
@@ -771,9 +709,6 @@ void R_DrawSpanFlatPotato(void)
     lighttable_t color = ds_colormap[ds_source[0]];
 
     countp = ds_x2 - ds_x1;
-
-    if (countp < 0)
-        return;
 
     dest = destview + Mul80(ds_y) + ds_x1;
 

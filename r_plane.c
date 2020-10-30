@@ -31,6 +31,10 @@
 #include "r_sky.h"
 #include "r_data.h"
 
+#include <conio.h>
+
+#define SC_INDEX 0x3C4
+
 planefunction_t floorfunc;
 planefunction_t ceilingfunc;
 
@@ -356,35 +360,35 @@ void R_DrawPlanes(void)
                 dc_yl = pl->top[x];
                 dc_yh = pl->bottom[x];
 
-                if (dc_yl <= dc_yh)
+                if (dc_yl > dc_yh)
+                    continue;
+
+                dc_x = x;
+
+                if (!flatSky)
                 {
-                    dc_x = x;
+                    angle = (viewangle + xtoviewangle[x]) >> ANGLETOSKYSHIFT;
 
-                    if (!flatSky)
+                    tex = skytexture;
+                    col = angle;
+                    col &= texturewidthmask[tex];
+                    lump = texturecolumnlump[tex][col];
+                    ofs = texturecolumnofs[tex][col];
+
+                    if (lump > 0)
                     {
-                        angle = (viewangle + xtoviewangle[x]) >> ANGLETOSKYSHIFT;
-
-                        tex = skytexture;
-                        col = angle;
-                        col &= texturewidthmask[tex];
-                        lump = texturecolumnlump[tex][col];
-                        ofs = texturecolumnofs[tex][col];
-
-                        if (lump > 0)
-                        {
-                            dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
-                        }
-                        else
-                        {
-                            if (!texturecomposite[tex])
-                                R_GenerateComposite(tex);
-
-                            dc_source = texturecomposite[tex] + ofs;
-                        }
+                        dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
                     }
+                    else
+                    {
+                        if (!texturecomposite[tex])
+                            R_GenerateComposite(tex);
 
-                    skyfunc();
+                        dc_source = texturecomposite[tex] + ofs;
+                    }
                 }
+
+                skyfunc();
             }
             continue;
         }
@@ -398,18 +402,170 @@ void R_DrawPlanes(void)
                                            flattranslation[pl->picnum],
                                        PU_STATIC);
 
-            for (x = pl->minx; x <= pl->maxx; x++)
+            dc_flatcolor = dc_colormap[dc_source[0]];
+
+            switch (detailshift)
             {
-                dc_yl = pl->top[x];
-                dc_yh = pl->bottom[x];
+            case 0:
+                // Plane 0
+                x = pl->minx;
+                outp(SC_INDEX + 1, 1 << (x & 3));
 
-                if (dc_yl <= dc_yh)
+                do
                 {
-                    dc_x = x;
+                    dc_yl = pl->top[x];
+                    dc_yh = pl->bottom[x];
 
-                    flatcolfunc();
+                    if (dc_yl > dc_yh)
+                    {
+                        x += 4;
+                        continue;
+                    }
+
+                    dc_x = x;
+                    x += 4;
+
+                    R_DrawColumnFlat();
+                } while (x <= pl->maxx);
+
+                // Plane 1
+                x = pl->minx + 1;
+
+                if (x > pl->maxx)
+                    continue;
+
+                outp(SC_INDEX + 1, 1 << (x & 3));
+
+                do
+                {
+                    dc_yl = pl->top[x];
+                    dc_yh = pl->bottom[x];
+
+                    if (dc_yl > dc_yh)
+                    {
+                        x += 4;
+                        continue;
+                    }
+
+                    dc_x = x;
+                    x += 4;
+
+                    R_DrawColumnFlat();
+                } while (x <= pl->maxx);
+
+                // Plane 2
+                x = pl->minx + 2;
+
+                if (x > pl->maxx)
+                    continue;
+
+                outp(SC_INDEX + 1, 1 << (x & 3));
+
+                do
+                {
+                    dc_yl = pl->top[x];
+                    dc_yh = pl->bottom[x];
+
+                    if (dc_yl > dc_yh)
+                    {
+                        x += 4;
+                        continue;
+                    }
+
+                    dc_x = x;
+                    x += 4;
+
+                    R_DrawColumnFlat();
+                } while (x <= pl->maxx);
+
+                // Plane 3
+                x = pl->minx + 3;
+
+                if (x > pl->maxx)
+                    continue;
+
+                outp(SC_INDEX + 1, 1 << (x & 3));
+
+                do
+                {
+                    dc_yl = pl->top[x];
+                    dc_yh = pl->bottom[x];
+
+                    if (dc_yl > dc_yh)
+                    {
+                        x += 4;
+                        continue;
+                    }
+
+                    dc_x = x;
+                    x += 4;
+
+                    R_DrawColumnFlat();
+                } while (x <= pl->maxx);
+
+                break;
+            case 1:
+                // Plane 0
+                x = pl->minx;
+                outp(SC_INDEX + 1, 3 << ((x & 1) << 1));
+
+                do
+                {
+                    dc_yl = pl->top[x];
+                    dc_yh = pl->bottom[x];
+
+                    if (dc_yl > dc_yh)
+                    {
+                        x += 2;
+                        continue;
+                    }
+
+                    dc_x = x;
+                    x += 2;
+
+                    R_DrawColumnFlatLow();
+                } while (x <= pl->maxx);
+
+                // Plane 1
+                x = pl->minx + 1;
+
+                if (x > pl->maxx)
+                    continue;
+
+                outp(SC_INDEX + 1, 3 << ((x & 1) << 1));
+
+                do
+                {
+                    dc_yl = pl->top[x];
+                    dc_yh = pl->bottom[x];
+
+                    if (dc_yl > dc_yh)
+                    {
+                        x += 2;
+                        continue;
+                    }
+
+                    dc_x = x;
+                    x += 2;
+
+                    R_DrawColumnFlatLow();
+                } while (x <= pl->maxx);
+
+                break;
+            case 2:
+                for (x = pl->minx; x <= pl->maxx; x++)
+                {
+                    dc_yl = pl->top[x];
+                    dc_yh = pl->bottom[x];
+
+                    if (dc_yl > dc_yh)
+                        continue;
+
+                    dc_x = x;
+                    R_DrawColumnFlatPotato();
                 }
-            }
+                break;
+            };
 
             Z_ChangeTag(dc_source, PU_CACHE);
         }
