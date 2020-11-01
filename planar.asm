@@ -34,8 +34,56 @@ loopcount dd 0
 .CODE
 
 ;
+; R_DrawFastColumn
+;
+
+
+PROC  R_DrawFastColumnPotato_
+PUBLIC  R_DrawFastColumnPotato_
+	PUSHR
+	mov		ebp,[_dc_yl]
+	lea		edi,[ebp+ebp*4]
+	sal		edi,4
+	mov		ebx,[_dc_x]
+	add		edi,ebx
+	add		edi,[_destview]
+	jmp		cdraw
+ENDP
+
+PROC  R_DrawFastColumnLow_
+PUBLIC  R_DrawFastColumnLow_
+	PUSHR
+	mov		ebp,[_dc_yl]
+	lea		edi,[ebp+ebp*4]
+	shl		edi,4
+	mov		ebx,[_dc_x]
+	mov		ecx,ebx
+	shr		ebx,1
+	add		edi,ebx
+	add		edi,[_destview]
+	jmp		cdraw
+ENDP
+	
+PROC  R_DrawFastColumn_
+PUBLIC  R_DrawFastColumn_
+	PUSHR
+	mov		ebp,[_dc_yl]
+	lea		edi,[ebp+ebp*4]
+	shl		edi,4
+	mov		ebx,[_dc_x]
+	mov		ecx,ebx
+	shr		ebx,2
+	add		edi,ebx
+	add		edi,[_destview]
+	jmp		cdraw
+ENDP
+
+;
 ; R_DrawColumn
 ;
+
+
+
 PROC  R_DrawColumnPotato_
 PUBLIC  R_DrawColumnPotato_
 	PUSHR
@@ -50,9 +98,6 @@ PUBLIC  R_DrawColumnPotato_
 	jmp		cdraw
 ENDP
 
-;
-; R_DrawColumn
-;
 PROC  R_DrawColumnLow_
 PUBLIC  R_DrawColumnLow_
 	PUSHR

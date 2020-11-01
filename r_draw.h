@@ -34,6 +34,11 @@ extern byte *dc_source;
 // The span blitting interface.
 // Hook in assembler or system specific BLT
 //  here.
+
+void R_DrawFastColumn(void);
+void R_DrawFastColumnLow(void);
+void R_DrawFastColumnPotato(void);
+
 void R_DrawColumn(void);
 void R_DrawSkyFlat(void);
 void R_DrawColumnLow(void);

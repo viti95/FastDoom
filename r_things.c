@@ -30,6 +30,10 @@
 
 #include "doomstat.h"
 
+#include <conio.h>
+
+#define SC_INDEX 0x3C4
+
 #define MINZ (FRACUNIT * 4)
 #define BASEYCENTER 100
 
@@ -324,27 +328,36 @@ void R_DrawMaskedColumn(column_t *column)
         topscreen = sprtopscreen + spryscale * column->topdelta;
         bottomscreen = topscreen + spryscale * column->length;
 
-        yl = (topscreen + FRACUNIT - 1) >> FRACBITS;
         yh = (bottomscreen - 1) >> FRACBITS;
 
         if (yh >= mfc_x)
             yh = mfc_x - 1;
+
+        if (yh >= viewheight)
+        {
+            column = (column_t *)((byte *)column + column->length + 4);
+            continue;
+        }
+
+        yl = (topscreen + FRACUNIT - 1) >> FRACBITS;
+
         if (yl <= mcc_x)
             yl = mcc_x + 1;
 
-        if (yh < viewheight && yl <= yh)
+        if (yl > yh)
         {
-            dc_source = (byte *)column + 3;
-            dc_texturemid = basetexturemid - (column->topdelta << FRACBITS);
-            // dc_source = (byte *)column + 3 - column->topdelta;
-
-            dc_yh = yh;
-            dc_yl = yl;
-
-            // Drawn by either R_DrawColumn
-            //  or (SHADOW) R_DrawFuzzColumn.
-            colfunc();
+            column = (column_t *)((byte *)column + column->length + 4);
+            continue;
         }
+
+        dc_source = (byte *)column + 3;
+        dc_texturemid = basetexturemid - (column->topdelta << FRACBITS);
+
+        dc_yh = yh;
+        dc_yl = yl;
+
+        spritefunc();
+
         column = (column_t *)((byte *)column + column->length + 4);
     }
 
@@ -361,6 +374,8 @@ void R_DrawVisSprite(vissprite_t *vis)
     int texturecolumn;
     fixed_t frac;
     patch_t *patch;
+    fixed_t fracstep;
+    fixed_t nextfrac;
 
     patch = W_CacheLumpNum(vis->patch + firstspritelump, PU_CACHE);
 
@@ -371,7 +386,7 @@ void R_DrawVisSprite(vissprite_t *vis)
         // NULL colormap = shadow draw
         if (saturnShadows)
             dc_colormap = colormaps;
-        colfunc = fuzzcolfunc;
+        spritefunc = fuzzcolfunc;
     }
 
     dc_iscale = abs(vis->xiscale) >> detailshift;
@@ -380,15 +395,114 @@ void R_DrawVisSprite(vissprite_t *vis)
     spryscale = vis->scale;
     sprtopscreen = centeryfrac - FixedMul(dc_texturemid, spryscale);
 
-    for (dc_x = vis->x1; dc_x <= vis->x2; dc_x++, frac += vis->xiscale)
+    switch (detailshift)
     {
-        texturecolumn = frac >> FRACBITS;
-        column = (column_t *)((byte *)patch +
-                              LONG(patch->columnofs[texturecolumn]));
-        R_DrawMaskedColumn(column);
+    case 0:
+        fracstep = 4 * vis->xiscale;
+        dc_x = vis->x1;
+        outp(SC_INDEX + 1, 1 << (dc_x & 3));
+        // Plane 0
+        do
+        {
+            texturecolumn = frac >> FRACBITS;
+            column = (column_t *)((byte *)patch + LONG(patch->columnofs[texturecolumn]));
+            R_DrawMaskedColumn(column);
+            dc_x += 4;
+            frac += fracstep;
+        } while (dc_x <= vis->x2);
+
+        // Plane 1
+        dc_x = vis->x1 + 1;
+        if (dc_x > vis->x2)
+            break;
+        outp(SC_INDEX + 1, 1 << (dc_x & 3));
+        frac = vis->startfrac;
+        frac += vis->xiscale;
+        nextfrac = frac;
+        do
+        {
+            texturecolumn = frac >> FRACBITS;
+            column = (column_t *)((byte *)patch + LONG(patch->columnofs[texturecolumn]));
+            R_DrawMaskedColumn(column);
+            dc_x += 4;
+            frac += fracstep;
+        } while (dc_x <= vis->x2);
+
+        // Plane 2
+        dc_x = vis->x1 + 2;
+        if (dc_x > vis->x2)
+            break;
+        outp(SC_INDEX + 1, 1 << (dc_x & 3));
+        frac = vis->startfrac;
+        frac = nextfrac + vis->xiscale;
+        nextfrac = frac;
+        do
+        {
+            texturecolumn = frac >> FRACBITS;
+            column = (column_t *)((byte *)patch + LONG(patch->columnofs[texturecolumn]));
+            R_DrawMaskedColumn(column);
+            dc_x += 4;
+            frac += fracstep;
+        } while (dc_x <= vis->x2);
+        // Plane 3
+        dc_x = vis->x1 + 3;
+        if (dc_x > vis->x2)
+            break;
+        outp(SC_INDEX + 1, 1 << (dc_x & 3));
+        frac = vis->startfrac;
+        frac = nextfrac + vis->xiscale;
+        do
+        {
+            texturecolumn = frac >> FRACBITS;
+            column = (column_t *)((byte *)patch + LONG(patch->columnofs[texturecolumn]));
+            R_DrawMaskedColumn(column);
+            dc_x += 4;
+            frac += fracstep;
+        } while (dc_x <= vis->x2);
+        break;
+    case 1:
+        fracstep = 2 * vis->xiscale;
+        dc_x = vis->x1;
+        outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
+        // Plane 0
+        do
+        {
+            texturecolumn = frac >> FRACBITS;
+            column = (column_t *)((byte *)patch + LONG(patch->columnofs[texturecolumn]));
+            R_DrawMaskedColumn(column);
+            dc_x += 2;
+            frac += fracstep;
+        } while (dc_x <= vis->x2);
+        // Plane 1
+        dc_x = vis->x1 + 1;
+        if (vis->x1 + 1 > vis->x2)
+            break;
+        outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
+        frac = vis->startfrac;
+        frac += vis->xiscale;
+        do
+        {
+            texturecolumn = frac >> FRACBITS;
+            column = (column_t *)((byte *)patch + LONG(patch->columnofs[texturecolumn]));
+            R_DrawMaskedColumn(column);
+            dc_x += 2;
+            frac += fracstep;
+        } while (dc_x <= vis->x2);
+        break;
+    case 2:
+        dc_x = vis->x1;
+        do
+        {
+            texturecolumn = frac >> FRACBITS;
+            column = (column_t *)((byte *)patch + LONG(patch->columnofs[texturecolumn]));
+            R_DrawMaskedColumn(column);
+            dc_x += 1;
+            frac += vis->xiscale;
+        } while (dc_x <= vis->x2);
+        break;
     }
 
-    colfunc = basecolfunc;
+    spritefunc = basecolfunc;
 }
 
 //
