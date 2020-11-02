@@ -29,6 +29,10 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
+#include <conio.h>
+
+#define SC_INDEX 0x3C4
+
 // OPTIMIZE: closed two sided lines as single sided
 
 // True if any of the segs textures might be visible.
@@ -98,6 +102,8 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 	int tex;
 	int column;
 
+	fixed_t basespryscale;
+
 	// Calculate light table.
 	// Use different light tables
 	//   for horizontal / vertical / diagonal. Diagonal?
@@ -124,7 +130,7 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 	maskedtexturecol = ds->maskedtexturecol;
 
 	rw_scalestep = ds->scalestep;
-	spryscale = ds->scale1 + (x1 - ds->x1) * rw_scalestep;
+	spryscale = basespryscale = ds->scale1 + (x1 - ds->x1) * rw_scalestep;
 	mfloorclip = ds->sprbottomclip;
 	mceilingclip = ds->sprtopclip;
 
@@ -148,51 +154,370 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 	if (fixedcolormap)
 		dc_colormap = fixedcolormap;
 
-	// draw the columns
-	for (dc_x = x1; dc_x <= x2; dc_x++)
+	switch (detailshift)
 	{
-		// calculate lighting
-		if (maskedtexturecol[dc_x] != MAXSHORT)
+	case 0:
+		rw_scalestep = 4 * rw_scalestep;
+		//Plane 0
+		dc_x = x1;
+		outp(SC_INDEX + 1, 1 << (dc_x & 3));
+		do
 		{
-			if (!fixedcolormap)
+			// calculate lighting
+			if (maskedtexturecol[dc_x] != MAXSHORT)
 			{
-				index = spryscale >> LIGHTSCALESHIFT;
+				if (!fixedcolormap)
+				{
+					index = spryscale >> LIGHTSCALESHIFT;
 
-				if (index >= MAXLIGHTSCALE)
-					index = MAXLIGHTSCALE - 1;
+					if (index >= MAXLIGHTSCALE)
+						index = MAXLIGHTSCALE - 1;
 
-				dc_colormap = walllights[index];
+					dc_colormap = walllights[index];
+				}
+
+				sprtopscreen = centeryfrac - FixedMul(dc_texturemid, spryscale);
+
+				// VITI95: OPTIMIZE
+				dc_iscale = 0xffffffffu / (unsigned)spryscale;
+
+				// draw the texture
+
+				tex = texnum;
+				column = maskedtexturecol[dc_x];
+				column &= texturewidthmask[tex];
+				lump = texturecolumnlump[tex][column];
+				ofs = texturecolumnofs[tex][column];
+
+				if (lump > 0)
+				{
+					col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs - 3);
+				}
+				else
+				{
+					if (!texturecomposite[tex])
+						R_GenerateComposite(tex);
+
+					col = (column_t *)(texturecomposite[tex] + ofs - 3);
+				}
+
+				R_DrawMaskedColumn(col);
+				maskedtexturecol[dc_x] = MAXSHORT;
 			}
-
-			sprtopscreen = centeryfrac - FixedMul(dc_texturemid, spryscale);
-
-			// VITI95: OPTIMIZE
-			dc_iscale = 0xffffffffu / (unsigned)spryscale;
-
-			// draw the texture
-
-			tex = texnum;
-			column = maskedtexturecol[dc_x];
-			column &= texturewidthmask[tex];
-			lump = texturecolumnlump[tex][column];
-			ofs = texturecolumnofs[tex][column];
-
-			if (lump > 0)
+			spryscale += rw_scalestep;
+			dc_x += 4;
+		} while (dc_x <= x2);
+		//Plane 1
+		dc_x = x1 + 1;
+		if (dc_x > x2)
+			break;
+		spryscale = basespryscale;
+		outp(SC_INDEX + 1, 1 << (dc_x & 3));
+		do
+		{
+			// calculate lighting
+			if (maskedtexturecol[dc_x] != MAXSHORT)
 			{
-				col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs - 3);
+				if (!fixedcolormap)
+				{
+					index = spryscale >> LIGHTSCALESHIFT;
+
+					if (index >= MAXLIGHTSCALE)
+						index = MAXLIGHTSCALE - 1;
+
+					dc_colormap = walllights[index];
+				}
+
+				sprtopscreen = centeryfrac - FixedMul(dc_texturemid, spryscale);
+
+				// VITI95: OPTIMIZE
+				dc_iscale = 0xffffffffu / (unsigned)spryscale;
+
+				// draw the texture
+
+				tex = texnum;
+				column = maskedtexturecol[dc_x];
+				column &= texturewidthmask[tex];
+				lump = texturecolumnlump[tex][column];
+				ofs = texturecolumnofs[tex][column];
+
+				if (lump > 0)
+				{
+					col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs - 3);
+				}
+				else
+				{
+					if (!texturecomposite[tex])
+						R_GenerateComposite(tex);
+
+					col = (column_t *)(texturecomposite[tex] + ofs - 3);
+				}
+
+				R_DrawMaskedColumn(col);
+				maskedtexturecol[dc_x] = MAXSHORT;
 			}
-			else
+			spryscale += rw_scalestep;
+			dc_x += 4;
+		} while (dc_x <= x2);
+		//Plane 2
+		dc_x = x1 + 2;
+		if (dc_x > x2)
+			break;
+		spryscale = basespryscale;
+		outp(SC_INDEX + 1, 1 << (dc_x & 3));
+		do
+		{
+			// calculate lighting
+			if (maskedtexturecol[dc_x] != MAXSHORT)
 			{
-				if (!texturecomposite[tex])
-					R_GenerateComposite(tex);
+				if (!fixedcolormap)
+				{
+					index = spryscale >> LIGHTSCALESHIFT;
 
-				col = (column_t *)(texturecomposite[tex] + ofs - 3);
+					if (index >= MAXLIGHTSCALE)
+						index = MAXLIGHTSCALE - 1;
+
+					dc_colormap = walllights[index];
+				}
+
+				sprtopscreen = centeryfrac - FixedMul(dc_texturemid, spryscale);
+
+				// VITI95: OPTIMIZE
+				dc_iscale = 0xffffffffu / (unsigned)spryscale;
+
+				// draw the texture
+
+				tex = texnum;
+				column = maskedtexturecol[dc_x];
+				column &= texturewidthmask[tex];
+				lump = texturecolumnlump[tex][column];
+				ofs = texturecolumnofs[tex][column];
+
+				if (lump > 0)
+				{
+					col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs - 3);
+				}
+				else
+				{
+					if (!texturecomposite[tex])
+						R_GenerateComposite(tex);
+
+					col = (column_t *)(texturecomposite[tex] + ofs - 3);
+				}
+
+				R_DrawMaskedColumn(col);
+				maskedtexturecol[dc_x] = MAXSHORT;
 			}
+			spryscale += rw_scalestep;
+			dc_x += 4;
+		} while (dc_x <= x2);
+		//Plane 3
+		dc_x = x1 + 3;
+		if (dc_x > x2)
+			break;
+		spryscale = basespryscale;
+		outp(SC_INDEX + 1, 1 << (dc_x & 3));
+		do
+		{
+			// calculate lighting
+			if (maskedtexturecol[dc_x] != MAXSHORT)
+			{
+				if (!fixedcolormap)
+				{
+					index = spryscale >> LIGHTSCALESHIFT;
 
-			R_DrawMaskedColumn(col);
-			maskedtexturecol[dc_x] = MAXSHORT;
-		}
-		spryscale += rw_scalestep;
+					if (index >= MAXLIGHTSCALE)
+						index = MAXLIGHTSCALE - 1;
+
+					dc_colormap = walllights[index];
+				}
+
+				sprtopscreen = centeryfrac - FixedMul(dc_texturemid, spryscale);
+
+				// VITI95: OPTIMIZE
+				dc_iscale = 0xffffffffu / (unsigned)spryscale;
+
+				// draw the texture
+
+				tex = texnum;
+				column = maskedtexturecol[dc_x];
+				column &= texturewidthmask[tex];
+				lump = texturecolumnlump[tex][column];
+				ofs = texturecolumnofs[tex][column];
+
+				if (lump > 0)
+				{
+					col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs - 3);
+				}
+				else
+				{
+					if (!texturecomposite[tex])
+						R_GenerateComposite(tex);
+
+					col = (column_t *)(texturecomposite[tex] + ofs - 3);
+				}
+
+				R_DrawMaskedColumn(col);
+				maskedtexturecol[dc_x] = MAXSHORT;
+			}
+			spryscale += rw_scalestep;
+			dc_x += 4;
+		} while (dc_x <= x2);
+		break;
+	case 1:
+		rw_scalestep = 2 * rw_scalestep;
+		//Plane 0
+		dc_x = x1;
+		outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
+		do
+		{
+			// calculate lighting
+			if (maskedtexturecol[dc_x] != MAXSHORT)
+			{
+				if (!fixedcolormap)
+				{
+					index = spryscale >> LIGHTSCALESHIFT;
+
+					if (index >= MAXLIGHTSCALE)
+						index = MAXLIGHTSCALE - 1;
+
+					dc_colormap = walllights[index];
+				}
+
+				sprtopscreen = centeryfrac - FixedMul(dc_texturemid, spryscale);
+
+				// VITI95: OPTIMIZE
+				dc_iscale = 0xffffffffu / (unsigned)spryscale;
+
+				// draw the texture
+
+				tex = texnum;
+				column = maskedtexturecol[dc_x];
+				column &= texturewidthmask[tex];
+				lump = texturecolumnlump[tex][column];
+				ofs = texturecolumnofs[tex][column];
+
+				if (lump > 0)
+				{
+					col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs - 3);
+				}
+				else
+				{
+					if (!texturecomposite[tex])
+						R_GenerateComposite(tex);
+
+					col = (column_t *)(texturecomposite[tex] + ofs - 3);
+				}
+
+				R_DrawMaskedColumn(col);
+				maskedtexturecol[dc_x] = MAXSHORT;
+			}
+			spryscale += rw_scalestep;
+			dc_x += 2;
+		} while (dc_x <= x2);
+		//Plane 1
+		dc_x = x1 + 1;
+		if (dc_x > x2)
+			break;
+		spryscale = basespryscale;
+		outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
+		do
+		{
+			// calculate lighting
+			if (maskedtexturecol[dc_x] != MAXSHORT)
+			{
+				if (!fixedcolormap)
+				{
+					index = spryscale >> LIGHTSCALESHIFT;
+
+					if (index >= MAXLIGHTSCALE)
+						index = MAXLIGHTSCALE - 1;
+
+					dc_colormap = walllights[index];
+				}
+
+				sprtopscreen = centeryfrac - FixedMul(dc_texturemid, spryscale);
+
+				// VITI95: OPTIMIZE
+				dc_iscale = 0xffffffffu / (unsigned)spryscale;
+
+				// draw the texture
+
+				tex = texnum;
+				column = maskedtexturecol[dc_x];
+				column &= texturewidthmask[tex];
+				lump = texturecolumnlump[tex][column];
+				ofs = texturecolumnofs[tex][column];
+
+				if (lump > 0)
+				{
+					col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs - 3);
+				}
+				else
+				{
+					if (!texturecomposite[tex])
+						R_GenerateComposite(tex);
+
+					col = (column_t *)(texturecomposite[tex] + ofs - 3);
+				}
+
+				R_DrawMaskedColumn(col);
+				maskedtexturecol[dc_x] = MAXSHORT;
+			}
+			spryscale += rw_scalestep;
+			dc_x += 2;
+		} while (dc_x <= x2);
+		break;
+	case 2:
+		// draw the columns
+		dc_x = x1;
+		do
+		{
+			// calculate lighting
+			if (maskedtexturecol[dc_x] != MAXSHORT)
+			{
+				if (!fixedcolormap)
+				{
+					index = spryscale >> LIGHTSCALESHIFT;
+
+					if (index >= MAXLIGHTSCALE)
+						index = MAXLIGHTSCALE - 1;
+
+					dc_colormap = walllights[index];
+				}
+
+				sprtopscreen = centeryfrac - FixedMul(dc_texturemid, spryscale);
+
+				// VITI95: OPTIMIZE
+				dc_iscale = 0xffffffffu / (unsigned)spryscale;
+
+				// draw the texture
+
+				tex = texnum;
+				column = maskedtexturecol[dc_x];
+				column &= texturewidthmask[tex];
+				lump = texturecolumnlump[tex][column];
+				ofs = texturecolumnofs[tex][column];
+
+				if (lump > 0)
+				{
+					col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs - 3);
+				}
+				else
+				{
+					if (!texturecomposite[tex])
+						R_GenerateComposite(tex);
+
+					col = (column_t *)(texturecomposite[tex] + ofs - 3);
+				}
+
+				R_DrawMaskedColumn(col);
+				maskedtexturecol[dc_x] = MAXSHORT;
+			}
+			spryscale += rw_scalestep;
+			dc_x++;
+		} while (dc_x <= x2);
+		break;
 	}
 }
 

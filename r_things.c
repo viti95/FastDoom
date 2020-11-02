@@ -502,7 +502,7 @@ void R_DrawVisSprite(vissprite_t *vis)
         break;
     }
 
-    spritefunc = basecolfunc;
+    spritefunc = basespritefunc;
 }
 
 //
