@@ -966,53 +966,11 @@ void D_DoomMain(void)
     printf("W_Init: Init WADfiles.\n");
     W_InitMultipleFiles(wadfiles);
 
-    // Check for -file in shareware
-    if (modifiedgame)
-    {
-        // These are the lumps that will be checked in IWAD,
-        // if any one is not present, execution will be aborted.
-        char name[23][8] =
-            {
-                "e2m1", "e2m2", "e2m3", "e2m4", "e2m5", "e2m6", "e2m7", "e2m8", "e2m9",
-                "e3m1", "e3m3", "e3m3", "e3m4", "e3m5", "e3m6", "e3m7", "e3m8", "e3m9",
-                "dphoof", "bfgga0", "heada1", "cybra1", "spida1d1"};
-        int i;
-
-        if (shareware)
-            I_Error("\nYou cannot -file with the shareware "
-                    "version. Register!");
-
-        // Check for fake IWAD with right name,
-        // but w/o all the lumps of the registered version.
-        if (registered)
-            for (i = 0; i < 23; i++)
-                if (W_GetNumForName(name[i]) < 0)
-                    I_Error("\nThis is not the registered version.");
-    }
-
-    // Iff additonal PWAD files are used, print modified banner
-    if (modifiedgame)
-    {
-        printf(
-            "===========================================================================\n"
-            "ATTENTION:  This version of DOOM has been modified.  If you would like to\n"
-            "get a copy of the original game, call 1-800-IDGAMES or see the readme file.\n"
-            "        You will not receive technical support for modified games.\n"
-            "                      press enter to continue\n"
-            "===========================================================================\n");
-    }
-
     // Check and print which version is executed.
 
     if (registered)
     {
         printf("\tregistered version.\n");
-        D_RedrawTitle();
-        printf(
-            "===========================================================================\n"
-            "              This version is NOT SHAREWARE, do not distribute!\n"
-            "         Please report software piracy to the SPA: 1-800-388-PIR8\n"
-            "===========================================================================\n");
         D_RedrawTitle();
     }
     if (shareware)
@@ -1023,12 +981,6 @@ void D_DoomMain(void)
     if (commercial)
     {
         printf("\tcommercial version.\n");
-        D_RedrawTitle();
-        printf(
-            "===========================================================================\n"
-            "                            Do not distribute!\n"
-            "         Please report software piracy to the SPA: 1-800-388-PIR8\n"
-            "===========================================================================\n");
         D_RedrawTitle();
     }
 
