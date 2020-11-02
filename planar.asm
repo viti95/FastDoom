@@ -88,8 +88,6 @@ PROC  R_DrawColumnPotato_
 PUBLIC  R_DrawColumnPotato_
 	PUSHR
 	mov		ebp,[_dc_yl]
-	cmp 	ebp,[_dc_yh]
-	jg		done
 	lea		edi,[ebp+ebp*4]
 	sal		edi,4
 	mov		ebx,[_dc_x]
@@ -102,8 +100,6 @@ PROC  R_DrawColumnLow_
 PUBLIC  R_DrawColumnLow_
 	PUSHR
 	mov		ebp,[_dc_yl]
-	cmp 	ebp,[_dc_yh]
-	jg		done
 	lea		edi,[ebp+ebp*4]
 	shl		edi,4
 	mov		ebx,[_dc_x]
@@ -124,8 +120,6 @@ PROC  R_DrawColumn_
 PUBLIC  R_DrawColumn_
 	PUSHR
 	mov		ebp,[_dc_yl]
-	cmp		ebp,[_dc_yh]
-	jg		done
 	lea		edi,[ebp+ebp*4]
 	shl		edi,4
 	mov		ebx,[_dc_x]

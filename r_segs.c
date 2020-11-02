@@ -623,32 +623,40 @@ void R_RenderSegLoop(void)
 		// draw the wall tiers
 		if (midtexture)
 		{
-			// single sided line
-			dc_yl = yl;
-			dc_yh = yh;
-			dc_texturemid = rw_midtexturemid;
-
-			tex = midtexture;
-			col = texturecolumn;
-			col &= texturewidthmask[tex];
-			lump = texturecolumnlump[tex][col];
-			ofs = texturecolumnofs[tex][col];
-
-			if (lump > 0)
+			if (yl > yh)
 			{
-				dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
+				cc_rwx = viewheight;
+				fc_rwx = -1;
 			}
 			else
 			{
-				if (!texturecomposite[tex])
-					R_GenerateComposite(tex);
+				// single sided line
+				dc_yl = yl;
+				dc_yh = yh;
+				dc_texturemid = rw_midtexturemid;
 
-				dc_source = texturecomposite[tex] + ofs;
+				tex = midtexture;
+				col = texturecolumn;
+				col &= texturewidthmask[tex];
+				lump = texturecolumnlump[tex][col];
+				ofs = texturecolumnofs[tex][col];
+
+				if (lump > 0)
+				{
+					dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
+				}
+				else
+				{
+					if (!texturecomposite[tex])
+						R_GenerateComposite(tex);
+
+					dc_source = texturecomposite[tex] + ofs;
+				}
+
+				colfunc();
+				cc_rwx = viewheight;
+				fc_rwx = -1;
 			}
-
-			colfunc();
-			cc_rwx = viewheight;
-			fc_rwx = -1;
 		}
 		else
 		{
@@ -662,7 +670,11 @@ void R_RenderSegLoop(void)
 				if (mid >= fc_rwx)
 					mid = fc_rwx - 1;
 
-				if (mid >= yl)
+				if (mid < yl)
+				{
+					cc_rwx = yl - 1;
+				}
+				else
 				{
 					dc_yl = yl;
 					dc_yh = mid;
@@ -689,8 +701,6 @@ void R_RenderSegLoop(void)
 					colfunc();
 					cc_rwx = mid;
 				}
-				else
-					cc_rwx = yl - 1;
 			}
 			else
 			{
@@ -709,7 +719,11 @@ void R_RenderSegLoop(void)
 				if (mid <= cc_rwx)
 					mid = cc_rwx + 1;
 
-				if (mid <= yh)
+				if (mid > yh)
+				{
+					fc_rwx = yh + 1;
+				}
+				else
 				{
 					dc_yl = mid;
 					dc_yh = yh;
@@ -736,8 +750,6 @@ void R_RenderSegLoop(void)
 					colfunc();
 					fc_rwx = mid;
 				}
-				else
-					fc_rwx = yh + 1;
 			}
 			else
 			{
