@@ -59,12 +59,17 @@ void P_RunThinkers(void)
             currentthinker->next->prev = currentthinker->prev;
             currentthinker->prev->next = currentthinker->next;
             Z_Free(currentthinker);
+            currentthinker = currentthinker->next;
+            continue;
         }
-        else
-        {
-            if (currentthinker->function.acp1)
-                currentthinker->function.acp1(currentthinker);
+        
+        if (currentthinker->function.acp1 == 0 || currentthinker->function.acp1 == (actionf_p1)P_MobjTicklessThinker){
+            currentthinker = currentthinker->next;
+            continue;
         }
+
+        currentthinker->function.acp1(currentthinker);
+        
         currentthinker = currentthinker->next;
     }
 }
