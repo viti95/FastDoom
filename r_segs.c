@@ -187,18 +187,18 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 				column = maskedtexturecol[dc_x];
 				column &= texturewidthmask[tex];
 				lump = texturecolumnlump[tex][column];
-				ofs = texturecolumnofs[tex][column];
+				ofs = texturecolumnofs[tex][column] - 3;
 
 				if (lump > 0)
 				{
-					col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs - 3);
+					col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
 				}
 				else
 				{
 					if (!texturecomposite[tex])
 						R_GenerateComposite(tex);
 
-					col = (column_t *)(texturecomposite[tex] + ofs - 3);
+					col = (column_t *)(texturecomposite[tex] + ofs);
 				}
 
 				R_DrawMaskedColumn(col);
@@ -239,18 +239,18 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 				column = maskedtexturecol[dc_x];
 				column &= texturewidthmask[tex];
 				lump = texturecolumnlump[tex][column];
-				ofs = texturecolumnofs[tex][column];
+				ofs = texturecolumnofs[tex][column] - 3;
 
 				if (lump > 0)
 				{
-					col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs - 3);
+					col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
 				}
 				else
 				{
 					if (!texturecomposite[tex])
 						R_GenerateComposite(tex);
 
-					col = (column_t *)(texturecomposite[tex] + ofs - 3);
+					col = (column_t *)(texturecomposite[tex] + ofs);
 				}
 
 				R_DrawMaskedColumn(col);
@@ -291,18 +291,18 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 				column = maskedtexturecol[dc_x];
 				column &= texturewidthmask[tex];
 				lump = texturecolumnlump[tex][column];
-				ofs = texturecolumnofs[tex][column];
+				ofs = texturecolumnofs[tex][column] - 3;
 
 				if (lump > 0)
 				{
-					col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs - 3);
+					col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
 				}
 				else
 				{
 					if (!texturecomposite[tex])
 						R_GenerateComposite(tex);
 
-					col = (column_t *)(texturecomposite[tex] + ofs - 3);
+					col = (column_t *)(texturecomposite[tex] + ofs);
 				}
 
 				R_DrawMaskedColumn(col);
@@ -343,18 +343,18 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 				column = maskedtexturecol[dc_x];
 				column &= texturewidthmask[tex];
 				lump = texturecolumnlump[tex][column];
-				ofs = texturecolumnofs[tex][column];
+				ofs = texturecolumnofs[tex][column] - 3;
 
 				if (lump > 0)
 				{
-					col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs - 3);
+					col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
 				}
 				else
 				{
 					if (!texturecomposite[tex])
 						R_GenerateComposite(tex);
 
-					col = (column_t *)(texturecomposite[tex] + ofs - 3);
+					col = (column_t *)(texturecomposite[tex] + ofs);
 				}
 
 				R_DrawMaskedColumn(col);
@@ -395,18 +395,18 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 				column = maskedtexturecol[dc_x];
 				column &= texturewidthmask[tex];
 				lump = texturecolumnlump[tex][column];
-				ofs = texturecolumnofs[tex][column];
+				ofs = texturecolumnofs[tex][column] - 3;
 
 				if (lump > 0)
 				{
-					col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs - 3);
+					col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
 				}
 				else
 				{
 					if (!texturecomposite[tex])
 						R_GenerateComposite(tex);
 
-					col = (column_t *)(texturecomposite[tex] + ofs - 3);
+					col = (column_t *)(texturecomposite[tex] + ofs);
 				}
 
 				R_DrawMaskedColumn(col);
@@ -451,14 +451,14 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 
 				if (lump > 0)
 				{
-					col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs - 3);
+					col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
 				}
 				else
 				{
 					if (!texturecomposite[tex])
 						R_GenerateComposite(tex);
 
-					col = (column_t *)(texturecomposite[tex] + ofs - 3);
+					col = (column_t *)(texturecomposite[tex] + ofs);
 				}
 
 				R_DrawMaskedColumn(col);
@@ -497,18 +497,18 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 				column = maskedtexturecol[dc_x];
 				column &= texturewidthmask[tex];
 				lump = texturecolumnlump[tex][column];
-				ofs = texturecolumnofs[tex][column];
+				ofs = texturecolumnofs[tex][column] - 3;
 
 				if (lump > 0)
 				{
-					col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs - 3);
+					col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
 				}
 				else
 				{
 					if (!texturecomposite[tex])
 						R_GenerateComposite(tex);
 
-					col = (column_t *)(texturecomposite[tex] + ofs - 3);
+					col = (column_t *)(texturecomposite[tex] + ofs);
 				}
 
 				R_DrawMaskedColumn(col);
