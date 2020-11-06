@@ -317,6 +317,8 @@ int SFX_PlayPatch(void *vdata, int sep, int vol)
 
         return FX_PlayRaw(data + 24, len, rate, vol * 2, Div63((254 - sep) * vol), Div63((sep)*vol), 100, 0);
     }
+
+    return -1;
 }
 void SFX_StopPatch(int handle)
 {
