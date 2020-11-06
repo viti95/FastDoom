@@ -390,7 +390,7 @@ unsigned char cheat_powerup_seq[7][10] =
 		{'i', 'd', 'b', 'e', 'h', 'o', 'l', 'd', 'r', 0xff}, // beholdr
 		{'i', 'd', 'b', 'e', 'h', 'o', 'l', 'd', 'a', 0xff}, // beholda
 		{'i', 'd', 'b', 'e', 'h', 'o', 'l', 'd', 'l', 0xff}, // beholdl
-		{'i', 'd', 'b', 'e', 'h', 'o', 'l', 'd', 'd', 0xff}  // beholdd
+		{'i', 'd', 'b', 'e', 'h', 'o', 'l', 'd', 'd', 0xff}	 // beholdd
 };
 
 unsigned char cheat_clev_seq[] =
@@ -814,7 +814,8 @@ void ST_updateFaceWidget(void)
 	if (!st_facecount)
 	{
 		pos = st_randomnumber & 3;
-		if (pos == 3) pos = 0;
+		if (pos == 3)
+			pos = 0;
 		st_faceindex = ST_calcPainOffset() + pos;
 		st_facecount = ST_STRAIGHTFACECOUNT;
 		priority = 0;
@@ -846,7 +847,7 @@ void ST_updateWidgets(void)
 	keyboxes[2] = plyr->cards[2] ? 2 : -1;
 	if (plyr->cards[5])
 		keyboxes[2] = 5;
-	
+
 	// refresh everything if this is him coming back to life
 	ST_updateFaceWidget();
 
@@ -969,7 +970,8 @@ void ST_Drawer(boolean fullscreen, boolean refresh)
 	ST_doPaletteStuff();
 
 	// If just after ST_Start(), refresh all
-	if (st_firsttime){
+	if (st_firsttime)
+	{
 		st_firsttime = false;
 
 		// draw status bar background to off-screen buff
@@ -1131,8 +1133,6 @@ void ST_initData(void)
 void ST_createWidgets(void)
 {
 
-	int i;
-
 	// ready weapon ammo
 	STlib_initNum(&w_ready,
 				  ST_AMMOX,
@@ -1163,14 +1163,41 @@ void ST_createWidgets(void)
 					  &st_statusbaron);
 
 	// weapons owned
-	for (i = 0; i < 6; i++)
-	{
-		STlib_initMultIcon(&w_arms[i],
-						   ST_ARMSX + Mod3(i) * ST_ARMSXSPACE,
-						   ST_ARMSY + Mul10(i / 3),
-						   arms[i], (int *)&plyr->weaponowned[i + 1],
-						   &st_armson);
-	}
+	STlib_initMultIcon(&w_arms[0],
+					   ST_ARMSX,
+					   ST_ARMSY,
+					   arms[0], (int *)&plyr->weaponowned[1],
+					   &st_armson);
+
+	STlib_initMultIcon(&w_arms[1],
+					   ST_ARMSX + ST_ARMSXSPACE,
+					   ST_ARMSY,
+					   arms[1], (int *)&plyr->weaponowned[2],
+					   &st_armson);
+
+	STlib_initMultIcon(&w_arms[2],
+					   ST_ARMSX + 2 * ST_ARMSXSPACE,
+					   ST_ARMSY,
+					   arms[2], (int *)&plyr->weaponowned[3],
+					   &st_armson);
+
+	STlib_initMultIcon(&w_arms[3],
+					   ST_ARMSX,
+					   ST_ARMSY + 10,
+					   arms[3], (int *)&plyr->weaponowned[4],
+					   &st_armson);
+
+	STlib_initMultIcon(&w_arms[4],
+					   ST_ARMSX + ST_ARMSXSPACE,
+					   ST_ARMSY + 10,
+					   arms[4], (int *)&plyr->weaponowned[5],
+					   &st_armson);
+
+	STlib_initMultIcon(&w_arms[5],
+					   ST_ARMSX + 2 * ST_ARMSXSPACE,
+					   ST_ARMSY + 10,
+					   arms[5], (int *)&plyr->weaponowned[6],
+					   &st_armson);
 
 	// faces
 	STlib_initMultIcon(&w_faces,

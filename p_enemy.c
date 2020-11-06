@@ -603,9 +603,9 @@ seeyou:
         case sfx_posit1:
         case sfx_posit2:
         case sfx_posit3:
-            //sound = sfx_posit1 + Mod3(P_Random);
             pos = P_Random & 3;
-            if (pos == 3) pos = 0;
+            if (pos == 3)
+                pos = 0;
             sound = sfx_posit1 + pos;
             break;
 
@@ -764,7 +764,7 @@ void A_PosAttack(mobj_t *actor)
 
     S_StartSound(actor, sfx_pistol);
     angle += (P_Random - P_Random) << 20;
-    damage = (Mod5(P_Random) + 1) * 3;
+    damage = P_Random_Mul3_Mod5_Plus1;
     P_LineAttack(actor, angle, MISSILERANGE, slope, damage);
 }
 
@@ -784,13 +784,13 @@ void A_SPosAttack(mobj_t *actor)
     slope = P_AimLineAttack(actor, bangle, MISSILERANGE);
 
     angle = bangle + ((P_Random - P_Random) << 20);
-    damage = (Mod5(P_Random) + 1) * 3;
+    damage = P_Random_Mul3_Mod5_Plus1;
     P_LineAttack(actor, angle, MISSILERANGE, slope, damage);
     angle = bangle + ((P_Random - P_Random) << 20);
-    damage = (Mod5(P_Random) + 1) * 3;
+    damage = P_Random_Mul3_Mod5_Plus1;
     P_LineAttack(actor, angle, MISSILERANGE, slope, damage);
     angle = bangle + ((P_Random - P_Random) << 20);
-    damage = (Mod5(P_Random) + 1) * 3;
+    damage = P_Random_Mul3_Mod5_Plus1;
     P_LineAttack(actor, angle, MISSILERANGE, slope, damage);
 }
 
@@ -810,7 +810,7 @@ void A_CPosAttack(mobj_t *actor)
     slope = P_AimLineAttack(actor, bangle, MISSILERANGE);
 
     angle = bangle + ((P_Random - P_Random) << 20);
-    damage = (Mod5(P_Random) + 1) * 3;
+    damage = P_Random_Mul3_Mod5_Plus1;
     P_LineAttack(actor, angle, MISSILERANGE, slope, damage);
 }
 
@@ -886,7 +886,7 @@ void A_SargAttack(mobj_t *actor)
     A_FaceTarget(actor);
     if (P_CheckMeleeRange(actor))
     {
-        damage = (Mod10(P_Random) + 1) * 4;
+        damage = P_Random_Mul2_Mod10_Plus1 * 2;
         P_DamageMobj(actor->target, actor, actor, damage);
     }
 }
@@ -901,7 +901,7 @@ void A_HeadAttack(mobj_t *actor)
     A_FaceTarget(actor);
     if (P_CheckMeleeRange(actor))
     {
-        damage = Mul10(Mod6(P_Random) + 1);
+        damage = P_Random_Mul10_Mod6_Plus1;
         P_DamageMobj(actor->target, actor, actor, damage);
         return;
     }
@@ -1022,11 +1022,15 @@ void A_Tracer(mobj_t *actor)
     // VITI95: OPTIMIZE
     dist /= actor->info->speed;
 
-    slope = dest->z + 40 * FRACUNIT - actor->z;
+    if (dist < 1)
+    {
+        slope = dest->z + 40 * FRACUNIT - actor->z;
+    }
+    else
+    {
+        slope = (dest->z + 40 * FRACUNIT - actor->z) / dist;
+    }
 
-    if (dist >= 1)
-        slope /= dist;
-    
     if (slope < actor->momz)
         actor->momz -= FRACUNIT / 8;
     else
@@ -1052,7 +1056,7 @@ void A_SkelFist(mobj_t *actor)
 
     if (P_CheckMeleeRange(actor))
     {
-        damage = (Mod10(P_Random) + 1) * 6;
+        damage = P_Random_Mul2_Mod10_Plus1 * 3;
         S_StartSound(actor, sfx_skepch);
         P_DamageMobj(actor->target, actor, actor, damage);
     }
@@ -1398,8 +1402,6 @@ void A_SkullAttack(mobj_t *actor)
     angle_t an;
     int dist;
 
-    fixed_t optMomz;
-
     fixed_t optCosine, optSine;
 
     if (!actor->target)
@@ -1422,12 +1424,14 @@ void A_SkullAttack(mobj_t *actor)
     // VITI95: OPTIMIZE
     dist = DivSKULLSPEED(dist);
 
-    optMomz = dest->z + (dest->height >> 1) - actor->z;
-
-    if (dist >= 1)
-        optMomz /= dist;
-
-    actor->momz = optMomz;
+    if (dist < 1)
+    {
+        actor->momz = dest->z + (dest->height >> 1) - actor->z;
+    }
+    else
+    {
+        actor->momz = (dest->z + (dest->height >> 1) - actor->z) / dist;
+    }
 }
 
 //
@@ -1521,9 +1525,9 @@ void A_Scream(mobj_t *actor)
     case sfx_podth1:
     case sfx_podth2:
     case sfx_podth3:
-        //sound = sfx_podth1 + Mod3(P_Random);
         pos = P_Random & 3;
-        if (pos == 3) pos = 0;
+        if (pos == 3)
+            pos = 0;
         sound = sfx_podth1 + pos;
         break;
 

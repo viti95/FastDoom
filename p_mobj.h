@@ -21,7 +21,7 @@
 
 // Basics.
 #include "tables.h"
-#include "doomdef.h"
+#include "fastmath.h"
 
 // We need the thinker_t stuff.
 #include "d_think.h"

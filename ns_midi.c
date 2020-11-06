@@ -13,7 +13,7 @@
 #include "ns_midi.h"
 #include "ns_midif.h"
 
-#include "doomdef.h"
+#include "fastmath.h"
 
 extern int MUSIC_SoundDevice;
 

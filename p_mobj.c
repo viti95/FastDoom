@@ -216,7 +216,7 @@ void P_XYMovement(mobj_t *mo)
     {
         //mo->momx = FixedMul(mo->momx, FRICTION);
         //mo->momy = FixedMul(mo->momy, FRICTION);
-        
+
         mo->momx = (mo->momx * 29) >> 5;
         mo->momy = (mo->momy * 29) >> 5;
     }
@@ -797,8 +797,6 @@ P_SpawnMissile(mobj_t *source,
     mobj_t *th;
     angle_t an;
     int dist;
-    
-    fixed_t optMomz;
 
     th = P_SpawnMobj(source->x,
                      source->y,
@@ -824,13 +822,15 @@ P_SpawnMissile(mobj_t *source,
     // VITI95: OPTIMIZE
     dist /= th->info->speed;
 
-    optMomz = dest->z - source->z;
+    if (dist < 1)
+    {
+        th->momz = dest->z - source->z;
+    }
+    else
+    {
+        th->momz = (dest->z - source->z) / dist;
+    }
 
-    if (dist >= 1)
-        optMomz /= dist;
-
-    th->momz = optMomz;
-    
     P_CheckMissileSpawn(th);
 
     return th;

@@ -21,7 +21,7 @@
 
 // Basic data types.
 // Needs fixed point, and BAM angles.
-#include "doomdef.h"
+#include "fastmath.h"
 #include "tables.h"
 
 //

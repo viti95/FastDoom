@@ -1,4 +1,4 @@
-#include "doomdef.h"
+#include "fastmath.h"
 
 extern int ticcount;
 extern fixed_t fps;

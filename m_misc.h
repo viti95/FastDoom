@@ -20,6 +20,8 @@
 
 #include "doomdef.h"
 #include "doomtype.h"
+#include "fastmath.h"
+
 //
 // MISC
 //

@@ -465,7 +465,7 @@ void A_Punch(player_t *player,
     int damage;
     int slope;
 
-    damage = (Mod10(P_Random) + 1) << 1;
+    damage = P_Random_Mul2_Mod10_Plus1;
 
     if (player->powers[pw_strength])
         damage = Mul10(damage);
@@ -496,7 +496,7 @@ void A_Saw(player_t *player,
     int damage;
     int slope;
 
-    damage = 2 * (Mod10(P_Random) + 1);
+    damage = P_Random_Mul2_Mod10_Plus1;
     angle = player->mo->angle;
     angle += (P_Random - P_Random) << 18;
 
@@ -602,7 +602,7 @@ void P_GunShot(mobj_t *mo,
     angle_t angle;
     int damage;
 
-    damage = 5 * (Mod3(P_Random) + 1);
+    damage = P_Random_Mul5_Mod3_Plus1;
     angle = mo->angle;
 
     if (!accurate)
@@ -679,7 +679,7 @@ void A_FireShotgun2(player_t *player,
 
     for (i = 0; i < 20; i++)
     {
-        damage = 5 * (Mod3(P_Random) + 1);
+        damage = P_Random_Mul5_Mod3_Plus1;
         angle = player->mo->angle;
         angle += (P_Random - P_Random) << 19;
         P_LineAttack(player->mo, angle, MISSILERANGE, bulletslope + ((P_Random - P_Random) << 5), damage);

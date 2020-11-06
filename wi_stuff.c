@@ -792,22 +792,26 @@ void WI_updateStats(void)
 
 	else if (sp_state == 8)
 	{
+		int optStime, optPartime;
+
 		if (!(bcnt & 3))
 			S_StartSound(0, sfx_pistol);
 
 		cnt_time += 3;
 
 		// VITI95: OPTIMIZE
-		if (cnt_time >= Div35(plrs.stime))
-			cnt_time = Div35(plrs.stime);
+		optStime = Div35(plrs.stime);
+		if (cnt_time >= optStime)
+			cnt_time = optStime;
 
 		cnt_par += 3;
 
-		if (cnt_par >= Div35(wbs->partime))
+		optPartime = Div35(wbs->partime);
+		if (cnt_par >= optPartime)
 		{
-			cnt_par = Div35(wbs->partime);
+			cnt_par = optPartime;
 
-			if (cnt_time >= Div35(plrs.stime))
+			if (cnt_time >= optStime)
 			{
 				S_StartSound(0, sfx_barexp);
 				sp_state++;

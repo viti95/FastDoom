@@ -33,7 +33,7 @@
 #ifndef __TABLES__
 #define __TABLES__
 
-#include "doomdef.h"
+#include "fastmath.h"
 
 #define FINEANGLES 8192
 #define FINEMASK (FINEANGLES - 1)

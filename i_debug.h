@@ -1,4 +1,4 @@
-#include "doomdef.h"
+#include "fastmath.h"
 
 void I_DebugWriteString(int x, int y, char *message);
 void I_DebugWriteInteger(int x, int y, int value);

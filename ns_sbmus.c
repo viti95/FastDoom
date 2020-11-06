@@ -10,7 +10,7 @@
 #include "ns_sbmdf.h"
 #include "ns_llm.h"
 
-#include "doomdef.h"
+#include "fastmath.h"
 
 #define TRUE (1 == 1)
 #define FALSE (!TRUE)

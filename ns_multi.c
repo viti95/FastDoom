@@ -17,7 +17,7 @@
 #include "ns_multi.h"
 #include "ns_muldf.h"
 
-#include "doomdef.h"
+#include "fastmath.h"
 
 #define RoundFixed(fixedval, bits)             \
     (                                          \
