@@ -303,7 +303,6 @@ void V_DrawPatchFlipped(int x,
 //
 void V_DrawPatchDirect(int x,
                        int y,
-                       int scrn,
                        patch_t *patch)
 {
     int count;
