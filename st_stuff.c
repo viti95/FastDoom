@@ -1139,8 +1139,7 @@ void ST_createWidgets(void)
 				  ST_AMMOY,
 				  tallnum,
 				  &plyr->ammo[weaponinfo[plyr->readyweapon].ammo],
-				  &st_statusbaron,
-				  ST_AMMOWIDTH);
+				  &st_statusbaron);
 
 	// the last weapon type
 	w_ready.data = plyr->readyweapon;
@@ -1243,32 +1242,28 @@ void ST_createWidgets(void)
 				  ST_AMMO0Y,
 				  shortnum,
 				  &plyr->ammo[0],
-				  &st_statusbaron,
-				  ST_AMMO0WIDTH);
+				  &st_statusbaron);
 
 	STlib_initNum(&w_ammo[1],
 				  ST_AMMO1X,
 				  ST_AMMO1Y,
 				  shortnum,
 				  &plyr->ammo[1],
-				  &st_statusbaron,
-				  ST_AMMO1WIDTH);
+				  &st_statusbaron);
 
 	STlib_initNum(&w_ammo[2],
 				  ST_AMMO2X,
 				  ST_AMMO2Y,
 				  shortnum,
 				  &plyr->ammo[2],
-				  &st_statusbaron,
-				  ST_AMMO2WIDTH);
+				  &st_statusbaron);
 
 	STlib_initNum(&w_ammo[3],
 				  ST_AMMO3X,
 				  ST_AMMO3Y,
 				  shortnum,
 				  &plyr->ammo[3],
-				  &st_statusbaron,
-				  ST_AMMO3WIDTH);
+				  &st_statusbaron);
 
 	// max ammo count (all four kinds)
 	STlib_initNum(&w_maxammo[0],
@@ -1276,32 +1271,28 @@ void ST_createWidgets(void)
 				  ST_MAXAMMO0Y,
 				  shortnum,
 				  &plyr->maxammo[0],
-				  &st_statusbaron,
-				  ST_MAXAMMO0WIDTH);
+				  &st_statusbaron);
 
 	STlib_initNum(&w_maxammo[1],
 				  ST_MAXAMMO1X,
 				  ST_MAXAMMO1Y,
 				  shortnum,
 				  &plyr->maxammo[1],
-				  &st_statusbaron,
-				  ST_MAXAMMO1WIDTH);
+				  &st_statusbaron);
 
 	STlib_initNum(&w_maxammo[2],
 				  ST_MAXAMMO2X,
 				  ST_MAXAMMO2Y,
 				  shortnum,
 				  &plyr->maxammo[2],
-				  &st_statusbaron,
-				  ST_MAXAMMO2WIDTH);
+				  &st_statusbaron);
 
 	STlib_initNum(&w_maxammo[3],
 				  ST_MAXAMMO3X,
 				  ST_MAXAMMO3Y,
 				  shortnum,
 				  &plyr->maxammo[3],
-				  &st_statusbaron,
-				  ST_MAXAMMO3WIDTH);
+				  &st_statusbaron);
 }
 
 static boolean st_stopped = true;
