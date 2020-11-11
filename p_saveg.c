@@ -253,7 +253,7 @@ void P_UnArchiveThinkers(void)
 
 		case tc_mobj:
 			PADSAVEP();
-			mobj = Z_Malloc(sizeof(*mobj), PU_LEVEL, NULL);
+			mobj = Z_MallocUnowned(sizeof(*mobj), PU_LEVEL);
 			memcpy(mobj, save_p, sizeof(*mobj));
 			save_p += sizeof(*mobj);
 			mobj->state = &states[(int)mobj->state];
@@ -449,7 +449,7 @@ void P_UnArchiveSpecials(void)
 
 		case tc_ceiling:
 			PADSAVEP();
-			ceiling = Z_Malloc(sizeof(*ceiling), PU_LEVEL, NULL);
+			ceiling = Z_MallocUnowned(sizeof(*ceiling), PU_LEVEL);
 			memcpy(ceiling, save_p, sizeof(*ceiling));
 			save_p += sizeof(*ceiling);
 			ceiling->sector = &sectors[(int)ceiling->sector];
@@ -468,7 +468,7 @@ void P_UnArchiveSpecials(void)
 
 		case tc_door:
 			PADSAVEP();
-			door = Z_Malloc(sizeof(*door), PU_LEVEL, NULL);
+			door = Z_MallocUnowned(sizeof(*door), PU_LEVEL);
 			memcpy(door, save_p, sizeof(*door));
 			save_p += sizeof(*door);
 			door->sector = &sectors[(int)door->sector];
@@ -484,7 +484,7 @@ void P_UnArchiveSpecials(void)
 
 		case tc_floor:
 			PADSAVEP();
-			floor = Z_Malloc(sizeof(*floor), PU_LEVEL, NULL);
+			floor = Z_MallocUnowned(sizeof(*floor), PU_LEVEL);
 			memcpy(floor, save_p, sizeof(*floor));
 			save_p += sizeof(*floor);
 			floor->sector = &sectors[(int)floor->sector];
@@ -500,7 +500,7 @@ void P_UnArchiveSpecials(void)
 
 		case tc_plat:
 			PADSAVEP();
-			plat = Z_Malloc(sizeof(*plat), PU_LEVEL, NULL);
+			plat = Z_MallocUnowned(sizeof(*plat), PU_LEVEL);
 			memcpy(plat, save_p, sizeof(*plat));
 			save_p += sizeof(*plat);
 			plat->sector = &sectors[(int)plat->sector];
@@ -519,7 +519,7 @@ void P_UnArchiveSpecials(void)
 
 		case tc_flash:
 			PADSAVEP();
-			flash = Z_Malloc(sizeof(*flash), PU_LEVEL, NULL);
+			flash = Z_MallocUnowned(sizeof(*flash), PU_LEVEL);
 			memcpy(flash, save_p, sizeof(*flash));
 			save_p += sizeof(*flash);
 			flash->sector = &sectors[(int)flash->sector];
@@ -534,7 +534,7 @@ void P_UnArchiveSpecials(void)
 
 		case tc_strobe:
 			PADSAVEP();
-			strobe = Z_Malloc(sizeof(*strobe), PU_LEVEL, NULL);
+			strobe = Z_MallocUnowned(sizeof(*strobe), PU_LEVEL);
 			memcpy(strobe, save_p, sizeof(*strobe));
 			save_p += sizeof(*strobe);
 			strobe->sector = &sectors[(int)strobe->sector];
@@ -549,7 +549,7 @@ void P_UnArchiveSpecials(void)
 
 		case tc_glow:
 			PADSAVEP();
-			glow = Z_Malloc(sizeof(*glow), PU_LEVEL, NULL);
+			glow = Z_MallocUnowned(sizeof(*glow), PU_LEVEL);
 			memcpy(glow, save_p, sizeof(*glow));
 			save_p += sizeof(*glow);
 			glow->sector = &sectors[(int)glow->sector];

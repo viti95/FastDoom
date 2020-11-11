@@ -130,10 +130,7 @@ void Z_Free(void *ptr)
 //
 #define MINFRAGMENT sizeof(memblock_t)
 
-void *
-Z_Malloc(int size,
-         int tag,
-         void *user)
+void *Z_Malloc(int size, int tag, void *user)
 {
     int extra;
     memblock_t *start;
@@ -206,17 +203,91 @@ Z_Malloc(int size,
         base->size = size;
     }
 
-    if (user)
+    // mark as an in use block
+    base->user = user;
+    *(void **)user = (void *)((byte *)base + sizeof(memblock_t));
+    base->tag = tag;
+
+    // next allocation will start looking here
+    mainzone->rover = base->next;
+
+    return (void *)((byte *)base + sizeof(memblock_t));
+}
+
+void *Z_MallocUnowned(int size, int tag)
+{
+    int extra;
+    memblock_t *start;
+    memblock_t *rover;
+    memblock_t *newblock;
+    memblock_t *base;
+
+    size = (size + 3) & ~3;
+
+    // scan through the block list,
+    // looking for the first free block
+    // of sufficient size,
+    // throwing out any purgable blocks along the way.
+
+    // account for size of block header
+    size += sizeof(memblock_t);
+
+    // if there is a free block behind the rover,
+    //  back up over them
+    base = mainzone->rover;
+
+    if (!base->prev->user)
+        base = base->prev;
+
+    rover = base;
+    start = base->prev;
+
+    do
     {
-        // mark as an in use block
-        base->user = user;
-        *(void **)user = (void *)((byte *)base + sizeof(memblock_t));
-    }
-    else
+        if (rover->user)
+        {
+            if (rover->tag < PU_PURGELEVEL)
+            {
+                // hit a block that can't be purged,
+                //  so move base past it
+                base = rover = rover->next;
+            }
+            else
+            {
+                // free the rover block (adding the size to base)
+
+                // the rover can be the base block
+                base = base->prev;
+                Z_Free((byte *)rover + sizeof(memblock_t));
+                base = base->next;
+                rover = base->next;
+            }
+        }
+        else
+            rover = rover->next;
+    } while (base->user || base->size < size);
+
+    // found a block big enough
+    extra = base->size - size;
+
+    if (extra > MINFRAGMENT)
     {
-        // mark as in use, but unowned
-        base->user = (void *)2;
+        // there will be a free fragment after the allocated block
+        newblock = (memblock_t *)((byte *)base + size);
+        newblock->size = extra;
+
+        // NULL indicates free block.
+        newblock->user = NULL;
+        newblock->tag = 0;
+        newblock->prev = base;
+        newblock->next = base->next;
+        newblock->next->prev = newblock;
+
+        base->next = newblock;
+        base->size = size;
     }
+
+    base->user = (void *)2;
     base->tag = tag;
 
     // next allocation will start looking here

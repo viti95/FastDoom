@@ -42,15 +42,32 @@ static byte *wipe_scr;
 
 void wipe_shittyColMajorXform(short *array)
 {
-    int x;
     int y;
+    int base_y = 0;
     short *dest;
 
-    dest = (short *)Z_Malloc(SCREENWIDTH * SCREENHEIGHT, PU_STATIC, 0);
+    dest = (short *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
 
-    for (y = 0; y < SCREENHEIGHT; y++)
-        for (x = 0; x < SCREENWIDTH / 2; x++)
-            dest[Mul200(x) + y] = array[Mul160(y) + x];
+    for (y = 0; y < SCREENHEIGHT; y++){
+
+        int base_x = y;
+        int x;
+
+        for (x = 0; x < SCREENWIDTH / 16; x++){
+            dest[base_x] = array[base_y];
+            dest[base_x + 200] = array[base_y + 1];
+            dest[base_x + 400] = array[base_y + 2];
+            dest[base_x + 600] = array[base_y + 3];
+            dest[base_x + 800] = array[base_y + 4];
+            dest[base_x + 1000] = array[base_y + 5];
+            dest[base_x + 1200] = array[base_y + 6];
+            dest[base_x + 1400] = array[base_y + 7];
+            base_x += 1600;
+            base_y += 8;
+        }
+    }
+        
+            
 
     CopyDWords(dest, array, (SCREENWIDTH * SCREENHEIGHT) / 4);
     //memcpy(array, dest, SCREENWIDTH * SCREENHEIGHT);
@@ -75,7 +92,7 @@ int wipe_initMelt()
 
     // setup initial column positions
     // (y<0 => not ready to scroll yet)
-    y = (int *)Z_Malloc(SCREENWIDTH * sizeof(int), PU_STATIC, 0);
+    y = (int *)Z_MallocUnowned(SCREENWIDTH * sizeof(int), PU_STATIC);
     y[0] = -(M_Random & 15);
     for (i = 1; i < SCREENWIDTH; i++)
     {

@@ -40,6 +40,7 @@
 
 void Z_Init(void);
 void *Z_Malloc(int size, int tag, void *ptr);
+void *Z_MallocUnowned(int size, int tag);
 void Z_Free(void *ptr);
 void Z_FreeTags(int lowtag, int hightag);
 

@@ -487,7 +487,7 @@ P_SpawnMobj(fixed_t x,
     state_t *st;
     mobjinfo_t *info;
 
-    mobj = Z_Malloc(sizeof(*mobj), PU_LEVEL, NULL);
+    mobj = Z_MallocUnowned(sizeof(*mobj), PU_LEVEL);
     memset(mobj, 0, sizeof(*mobj));
     info = &mobjinfo[type];
 

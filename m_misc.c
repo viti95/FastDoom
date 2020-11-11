@@ -149,7 +149,7 @@ int M_ReadFile(char const *name,
     if (fstat(handle, &fileinfo) == -1)
         I_Error("Couldn't read file %s", name);
     length = fileinfo.st_size;
-    buf = Z_Malloc(length, PU_STATIC, NULL);
+    buf = Z_MallocUnowned(length, PU_STATIC);
     count = read(handle, buf, length);
     close(handle);
 

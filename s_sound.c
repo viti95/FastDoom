@@ -528,7 +528,7 @@ void S_Init(int sfxVolume, int musicVolume)
     // Allocating the internal channels for mixing
     // (the maximum numer of sounds rendered
     // simultaneously) within zone memory.
-    channels = (channel_t *)Z_Malloc(numChannels * sizeof(channel_t), PU_STATIC, 0);
+    channels = (channel_t *)Z_MallocUnowned(numChannels * sizeof(channel_t), PU_STATIC);
 
     // Free all channels for use
     for (i = 0; i < numChannels; i++)

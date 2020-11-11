@@ -971,8 +971,7 @@ void WI_loadData(void)
 	if (commercial)
 	{
 		NUMCMAPS = 32;
-		lnames = (patch_t **)Z_Malloc(sizeof(patch_t *) * NUMCMAPS,
-									  PU_STATIC, 0);
+		lnames = (patch_t **)Z_MallocUnowned(sizeof(patch_t *) * NUMCMAPS, PU_STATIC);
 		for (i = 0; i < NUMCMAPS; i++)
 		{
 			sprintf(name, "CWILV%2.2d", i);
@@ -981,8 +980,7 @@ void WI_loadData(void)
 	}
 	else
 	{
-		lnames = (patch_t **)Z_Malloc(sizeof(patch_t *) * NUMMAPS,
-									  PU_STATIC, 0);
+		lnames = (patch_t **)Z_MallocUnowned(sizeof(patch_t *) * NUMMAPS, PU_STATIC);
 		for (i = 0; i < NUMMAPS; i++)
 		{
 			sprintf(name, "WILV%d%d", wbs->epsd, i);

@@ -1096,7 +1096,7 @@ int EV_DoDonut(line_t *line)
 			s3 = s2->lines[i]->backsector;
 
 			//	Spawn rising slime
-			floor = Z_Malloc(sizeof(*floor), PU_LEVSPEC, 0);
+			floor = Z_MallocUnowned(sizeof(*floor), PU_LEVSPEC);
 
 			thinkercap.prev->next = &floor->thinker;
 			floor->thinker.next = &thinkercap;
@@ -1115,7 +1115,7 @@ int EV_DoDonut(line_t *line)
 			floor->floordestheight = s3->floorheight;
 
 			//	Spawn lowering donut-hole
-			floor = Z_Malloc(sizeof(*floor), PU_LEVSPEC, 0);
+			floor = Z_MallocUnowned(sizeof(*floor), PU_LEVSPEC);
 
 			thinkercap.prev->next = &floor->thinker;
 			floor->thinker.next = &thinkercap;
