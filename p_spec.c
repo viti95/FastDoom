@@ -981,12 +981,6 @@ void P_PlayerInSpecialSector(player_t *player)
 		if (player->health <= 10)
 			G_ExitLevel();
 		break;
-
-	default:
-		I_Error("P_PlayerInSpecialSector: "
-				"unknown special %i",
-				sector->special);
-		break;
 	};
 }
 

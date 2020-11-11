@@ -570,9 +570,6 @@ void P_TouchSpecialThing(mobj_t *special,
 		player->message = GOTSHOTGUN2;
 		sound = sfx_wpnup;
 		break;
-
-	default:
-		I_Error("P_SpecialThing: Unknown gettable thing");
 	}
 
 	if (special->flags & MF_COUNTITEM)
