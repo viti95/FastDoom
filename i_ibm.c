@@ -529,39 +529,56 @@ void I_ReadScreen(byte *scr)
     outp(GC_INDEX, GC_READMAP);
 
     outp(GC_INDEX + 1, 0);
-    for (j = 0; j < SCREENWIDTH * SCREENHEIGHT / 4; j += 4)
+    
+    for (j = 0; j < SCREENWIDTH * SCREENHEIGHT / 4; j += 8)
     {
         scr[j * 4] = currentscreen[j];
         scr[4 + j * 4] = currentscreen[j + 1];
         scr[8 + j * 4] = currentscreen[j + 2];
         scr[12 + j * 4] = currentscreen[j + 3];
+        scr[16 + j * 4] = currentscreen[j + 4];
+        scr[20 + j * 4] = currentscreen[j + 5];
+        scr[24 + j * 4] = currentscreen[j + 6];
+        scr[28 + j * 4] = currentscreen[j + 7];
     }
 
     outp(GC_INDEX + 1, 1);
-    for (j = 0; j < SCREENWIDTH * SCREENHEIGHT / 4; j += 4)
+    for (j = 0; j < SCREENWIDTH * SCREENHEIGHT / 4; j += 8)
     {
         scr[1 + j * 4] = currentscreen[j];
         scr[5 + j * 4] = currentscreen[j + 1];
         scr[9 + j * 4] = currentscreen[j + 2];
         scr[13 + j * 4] = currentscreen[j + 3];
+        scr[17 + j * 4] = currentscreen[j + 4];
+        scr[21 + j * 4] = currentscreen[j + 5];
+        scr[25 + j * 4] = currentscreen[j + 6];
+        scr[29 + j * 4] = currentscreen[j + 7];
     }
 
     outp(GC_INDEX + 1, 2);
-    for (j = 0; j < SCREENWIDTH * SCREENHEIGHT / 4; j += 4)
+    for (j = 0; j < SCREENWIDTH * SCREENHEIGHT / 4; j += 8)
     {
         scr[2 + j * 4] = currentscreen[j];
         scr[6 + j * 4] = currentscreen[j + 1];
         scr[10 + j * 4] = currentscreen[j + 2];
         scr[14 + j * 4] = currentscreen[j + 3];
+        scr[18 + j * 4] = currentscreen[j + 4];
+        scr[22 + j * 4] = currentscreen[j + 5];
+        scr[26 + j * 4] = currentscreen[j + 6];
+        scr[30 + j * 4] = currentscreen[j + 7];
     }
 
     outp(GC_INDEX + 1, 3);
-    for (j = 0; j < SCREENWIDTH * SCREENHEIGHT / 4; j += 4)
+    for (j = 0; j < SCREENWIDTH * SCREENHEIGHT / 4; j += 8)
     {
         scr[3 + j * 4] = currentscreen[j];
         scr[7 + j * 4] = currentscreen[j + 1];
         scr[11 + j * 4] = currentscreen[j + 2];
         scr[15 + j * 4] = currentscreen[j + 3];
+        scr[19 + j * 4] = currentscreen[j + 4];
+        scr[23 + j * 4] = currentscreen[j + 5];
+        scr[27 + j * 4] = currentscreen[j + 6];
+        scr[31 + j * 4] = currentscreen[j + 7];
     }
 }
 
