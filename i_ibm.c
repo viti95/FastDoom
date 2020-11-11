@@ -929,33 +929,6 @@ byte *I_AllocLow(int length)
 }
 
 //
-// Networking
-//
-
-#define DOOMCOM_ID 0x12345678l
-
-extern doomcom_t *doomcom;
-
-//
-// I_InitNetwork
-//
-void I_InitNetwork(void)
-{
-    //
-    // single player game
-    //
-    doomcom = malloc(sizeof(*doomcom));
-    if (!doomcom)
-    {
-        I_Error("malloc() in I_InitNetwork() failed");
-    }
-    memset(doomcom, 0, sizeof(*doomcom));
-    doomcom->id = DOOMCOM_ID;
-    doomcom->deathmatch = false;
-    doomcom->ticdup = 1;
-}
-
-//
 // DPMIInt
 //
 void DPMIInt(int i)

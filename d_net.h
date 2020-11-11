@@ -31,8 +31,6 @@
 //  be transmitted.
 //
 
-#define DOOMCOM_ID 0x12345678l
-
 // Networking and tick handling related.
 #define BACKUPTICS 16
 
@@ -45,45 +43,6 @@ typedef struct
     byte numtics;
 
 } doomdata_t;
-
-typedef struct
-{
-    // Supposed to be DOOMCOM_ID?
-    long id;
-
-    // DOOM executes an int to execute commands.
-    short intnum;
-    // Communication between DOOM and the driver.
-    // Is CMD_SEND or CMD_GET.
-    short command;
-    // Number of bytes in doomdata to be sent
-    short datalength;
-
-    // Info common to all nodes.
-    // Flag: 1 = no duplication, 2-5 = dup for slow nets.
-    short ticdup;
-    // Flag: 1 = deathmatch.
-    short deathmatch;
-    // Flag: -1 = new game, 0-5 = load savegame
-    short savegame;
-    short episode; // 1-3
-    short map;     // 1-9
-    short skill;   // 1-5
-
-    // These are related to the 3-display mode,
-    //  in which two drones looking left and right
-    //  were used to render two additional views
-    //  on two additional computers.
-    // Probably not operational anymore.
-    // 1 = left, 0 = center, -1 = right
-    short angleoffset;
-    // 1 = drone
-    short drone;
-
-    // The packet data to be sent.
-    doomdata_t data;
-
-} doomcom_t;
 
 // Create any new ticcmds and broadcast to other players.
 void NetUpdate(void);

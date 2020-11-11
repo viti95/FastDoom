@@ -24,9 +24,6 @@
 #include "doomstat.h"
 #include "d_main.h"
 
-doomcom_t *doomcom;
-doomdata_t *netbuffer; // points inside doomcom
-
 //
 // NETWORKING
 //
@@ -126,9 +123,6 @@ void D_CheckNetGame(void)
 {
 	// which tic to start sending
 	nettics = 0;
-
-	// I_InitNetwork sets doomcom and netgame
-	I_InitNetwork();
 
 	printf("startskill %i  deathmatch: %i  startmap: %i  startepisode: %i\n",
 		   startskill, 0, startmap, startepisode);
