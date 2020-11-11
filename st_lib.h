@@ -138,8 +138,7 @@ void STlib_initNum(st_number_t *n,
                    int y,
                    patch_t **pl,
                    int *num,
-                   boolean *on,
-                   int width);
+                   boolean *on);
 
 void STlib_updateNum(st_number_t *n,
                      boolean refresh);

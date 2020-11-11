@@ -43,13 +43,11 @@ void STlib_initNum(st_number_t *n,
                    int y,
                    patch_t **pl,
                    int *num,
-                   boolean *on,
-                   int width)
+                   boolean *on)
 {
     n->x = x;
     n->y = y;
     n->oldnum = 0;
-    n->width = width;
     n->num = num;
     n->on = on;
     n->p = pl;
@@ -63,8 +61,6 @@ void STlib_initNum(st_number_t *n,
 void STlib_drawNum(st_number_t *n,
                    boolean refresh)
 {
-
-    int numdigits = n->width;
     int num = *n->num;
 
     int w = SHORT(n->p[0]->width);
@@ -80,9 +76,9 @@ void STlib_drawNum(st_number_t *n,
     n->oldnum = *n->num;
 
     // clear the area
-    x = n->x - numdigits * w;
+    x = n->x - 3 * w;
 
-    V_CopyRect(x, n->y - ST_Y, BG, w * numdigits, h, x, n->y, FG);
+    V_CopyRect(x, n->y - ST_Y, BG, w * 3, h, x, n->y, FG);
 
     // if non-number, do not draw it
     if (num == 1994)
@@ -91,16 +87,20 @@ void STlib_drawNum(st_number_t *n,
     x = n->x;
 
     // in the special case of 0, you draw 0
-    if (!num)
+    if (!num){
         V_DrawPatch(x - w, n->y, FG, n->p[0]);
+        return;
+    }
 
     // draw the new number
-    while (num && numdigits--)
+    do
     {
-        x -= w;
-        V_DrawPatch(x, n->y, FG, n->p[Mod10(num)]);
+        int original = num;
+        
         num = Div10(num);
-    }
+        x -= w;
+        V_DrawPatch(x, n->y, FG, n->p[original - Mul10(num)]);   
+    }while(num);
 }
 
 //
@@ -120,7 +120,7 @@ void STlib_initPercent(st_percent_t *p,
                        boolean *on,
                        patch_t *percent)
 {
-    STlib_initNum(&p->n, x, y, pl, num, on, 3);
+    STlib_initNum(&p->n, x, y, pl, num, on);
     p->p = percent;
 }
 

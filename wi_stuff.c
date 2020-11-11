@@ -524,47 +524,50 @@ void WI_drawAnimatedBack(void)
 // Returns new x position.
 //
 
+int WI_drawNumTwoDigits(int x,
+			   int y,
+			   int n)
+{
+	int original;
+	int fontwidth = SHORT(num[0]->width);
+	
+	// if non-number, do not draw it
+	if (n == 1994)
+		return 0;
+
+	original = n;
+	n = Div10(n);
+	x -= fontwidth;
+	V_DrawPatch(x, y, FB, num[original - Mul10(n)]);
+
+	original = n;
+	n = Div10(n);
+	x -= fontwidth;
+	V_DrawPatch(x, y, FB, num[original - Mul10(n)]);
+
+	return x;
+}
+
 int WI_drawNum(int x,
 			   int y,
-			   int n,
-			   int digits)
+			   int n)
 {
 
 	int fontwidth = SHORT(num[0]->width);
-	int temp;
-
-	if (digits < 0)
-	{
-		if (!n)
-		{
-			// make variable-length zeros 1 digit long
-			digits = 1;
-		}
-		else
-		{
-			// figure out # of digits in #
-			digits = 0;
-			temp = n;
-
-			while (temp)
-			{
-				temp = Div10(temp);
-				digits++;
-			}
-		}
-	}
 
 	// if non-number, do not draw it
 	if (n == 1994)
 		return 0;
 
 	// draw the new number
-	while (digits--)
+	do
 	{
-		x -= fontwidth;
-		V_DrawPatch(x, y, FB, num[Mod10(n)]);
+		int original = n;
+
 		n = Div10(n);
-	}
+		x -= fontwidth;
+		V_DrawPatch(x, y, FB, num[original - Mul10(n)]);
+	}while(n);
 
 	return x;
 }
@@ -577,7 +580,7 @@ void WI_drawPercent(int x,
 		return;
 
 	V_DrawPatch(x, y, FB, percent);
-	WI_drawNum(x, y, p, -1);
+	WI_drawNum(x, y, p);
 }
 
 //
@@ -603,7 +606,7 @@ void WI_drawTime(int x,
 		{
 			// VITI95: OPTIMIZE
 			n = (t / div) % 60;
-			x = WI_drawNum(x, y, n, 2) - SHORT(colon->width);
+			x = WI_drawNumTwoDigits(x, y, n) - SHORT(colon->width);
 			div *= 60;
 
 			// draw
@@ -749,42 +752,54 @@ void WI_updateStats(void)
 
 	if (sp_state == 2)
 	{
+		int optSkills;
+
 		cnt_kills += 2;
 
 		if (!(bcnt & 3))
 			S_StartSound(0, sfx_pistol);
 
-		if (cnt_kills >= Mul100(plrs.skills) / wbs->maxkills)
+		optSkills = Mul100(plrs.skills) / wbs->maxkills;
+
+		if (cnt_kills >= optSkills)
 		{
-			cnt_kills = Mul100(plrs.skills) / wbs->maxkills;
+			cnt_kills = optSkills;
 			S_StartSound(0, sfx_barexp);
 			sp_state++;
 		}
 	}
 	else if (sp_state == 4)
 	{
+		int optSitems;
+
 		cnt_items += 2;
 
 		if (!(bcnt & 3))
 			S_StartSound(0, sfx_pistol);
 
-		if (cnt_items >= Mul100(plrs.sitems) / wbs->maxitems)
+		optSitems = Mul100(plrs.sitems) / wbs->maxitems;
+
+		if (cnt_items >= optSitems)
 		{
-			cnt_items = Mul100(plrs.sitems) / wbs->maxitems;
+			cnt_items = optSitems;
 			S_StartSound(0, sfx_barexp);
 			sp_state++;
 		}
 	}
 	else if (sp_state == 6)
 	{
+		int optSsecret;
+
 		cnt_secret += 2;
 
 		if (!(bcnt & 3))
 			S_StartSound(0, sfx_pistol);
 
-		if (cnt_secret >= Mul100(plrs.ssecret) / wbs->maxsecret)
+		optSsecret = Mul100(plrs.ssecret) / wbs->maxsecret;
+
+		if (cnt_secret >= optSsecret)
 		{
-			cnt_secret = Mul100(plrs.ssecret) / wbs->maxsecret;
+			cnt_secret = optSsecret;
 			S_StartSound(0, sfx_barexp);
 			sp_state++;
 		}
@@ -799,7 +814,6 @@ void WI_updateStats(void)
 
 		cnt_time += 3;
 
-		// VITI95: OPTIMIZE
 		optStime = Div35(plrs.stime);
 		if (cnt_time >= optStime)
 			cnt_time = optStime;

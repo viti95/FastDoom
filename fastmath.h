@@ -251,19 +251,6 @@ int Mod3(int value);
     "add edx, eax", \
     "sub ecx, edx" parm[ecx] value[ecx] modify exact[eax ecx edx]
 
-int Mod10(int value);
-#pragma aux Mod10 = \
-    "mov eax, 1717986919", \
-    "imul ecx", \
-    "mov eax, edx", \
-    "sar eax, 2", \
-    "mov edx, ecx", \
-    "sar edx, 31", \
-    "sub eax, edx", \
-    "lea eax, [eax+eax*4]", \
-    "add eax, eax", \
-    "sub ecx, eax" parm[ecx] value[ecx] modify exact[eax ecx edx]
-
 void CopyBytes(void *src, void *dest, int num_bytes);
 #pragma aux CopyBytes = \
     "rep movsb" \
