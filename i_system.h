@@ -94,7 +94,4 @@ void I_WaitSingleVBL();
 
 void I_ReadScreen(byte *scr);
 
-// Called by D_DoomMain.
-void I_InitNetwork(void);
-
 #endif
