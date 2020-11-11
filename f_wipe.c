@@ -62,7 +62,7 @@ static int *y;
 
 int wipe_initMelt()
 {
-    int i, r;
+    int i;
 
     // copy start screen to main screen
     CopyDWords(wipe_scr_start, wipe_scr, (SCREENWIDTH * SCREENHEIGHT) / 4);
@@ -79,8 +79,7 @@ int wipe_initMelt()
     y[0] = -(M_Random & 15);
     for (i = 1; i < SCREENWIDTH; i++)
     {
-        r = Mod3(M_Random) - 1;
-        y[i] = y[i - 1] + r;
+        y[i] = y[i - 1] + M_Random_Mod3_Minus1;
         if (y[i] > 0)
             y[i] = 0;
         else if (y[i] == -16)

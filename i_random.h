@@ -9,6 +9,7 @@ extern byte rndtableMul5Mod3Plus1[256];
 extern byte rndtableMul2Mod10Plus1[256];
 extern byte rndtableMul3Mod5Plus1[256];
 extern byte rndtableMul10Mod6Plus1[256];
+extern char rndtableMod3Minus1[256];
 extern byte rndindex;
 extern byte prndindex;
 
@@ -17,6 +18,7 @@ extern byte prndindex;
 // Returns a number from 0 to 255,
 // from a lookup table.
 #define M_Random rndtable[++rndindex]
+#define M_Random_Mod3_Minus1 rndtableMod3Minus1[++rndindex]
 
 // As M_Random, but used only by the play simulation.
 #define P_Random rndtable[++prndindex]
