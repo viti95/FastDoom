@@ -356,7 +356,7 @@ void R_DrawMaskedColumn(column_t *column)
         dc_yh = yh;
         dc_yl = yl;
 
-        spritefunc();
+        colfunc();
 
         column = (column_t *)((byte *)column + column->length + 4);
     }
@@ -386,7 +386,7 @@ void R_DrawVisSprite(vissprite_t *vis)
         // NULL colormap = shadow draw
         if (saturnShadows)
             dc_colormap = colormaps;
-        spritefunc = fuzzcolfunc;
+        colfunc = fuzzcolfunc;
     }
 
     dc_iscale = abs(vis->xiscale) >> detailshift;
@@ -395,114 +395,17 @@ void R_DrawVisSprite(vissprite_t *vis)
     spryscale = vis->scale;
     sprtopscreen = centeryfrac - FixedMul(dc_texturemid, spryscale);
 
-    switch (detailshift)
+    dc_x = vis->x1;
+    do
     {
-    case 0:
-        fracstep = 4 * vis->xiscale;
-        dc_x = vis->x1;
-        outp(SC_INDEX + 1, 1 << (dc_x & 3));
-        // Plane 0
-        do
-        {
-            texturecolumn = frac >> FRACBITS;
-            column = (column_t *)((byte *)patch + LONG(patch->columnofs[texturecolumn]));
-            R_DrawMaskedColumn(column);
-            dc_x += 4;
-            frac += fracstep;
-        } while (dc_x <= vis->x2);
-
-        // Plane 1
-        dc_x = vis->x1 + 1;
-        if (dc_x > vis->x2)
-            break;
-        outp(SC_INDEX + 1, 1 << (dc_x & 3));
-        frac = vis->startfrac;
+        texturecolumn = frac >> FRACBITS;
+        column = (column_t *)((byte *)patch + LONG(patch->columnofs[texturecolumn]));
+        R_DrawMaskedColumn(column);
+        dc_x += 1;
         frac += vis->xiscale;
-        nextfrac = frac;
-        do
-        {
-            texturecolumn = frac >> FRACBITS;
-            column = (column_t *)((byte *)patch + LONG(patch->columnofs[texturecolumn]));
-            R_DrawMaskedColumn(column);
-            dc_x += 4;
-            frac += fracstep;
-        } while (dc_x <= vis->x2);
+    } while (dc_x <= vis->x2);
 
-        // Plane 2
-        dc_x = vis->x1 + 2;
-        if (dc_x > vis->x2)
-            break;
-        outp(SC_INDEX + 1, 1 << (dc_x & 3));
-        frac = vis->startfrac;
-        frac = nextfrac + vis->xiscale;
-        nextfrac = frac;
-        do
-        {
-            texturecolumn = frac >> FRACBITS;
-            column = (column_t *)((byte *)patch + LONG(patch->columnofs[texturecolumn]));
-            R_DrawMaskedColumn(column);
-            dc_x += 4;
-            frac += fracstep;
-        } while (dc_x <= vis->x2);
-        // Plane 3
-        dc_x = vis->x1 + 3;
-        if (dc_x > vis->x2)
-            break;
-        outp(SC_INDEX + 1, 1 << (dc_x & 3));
-        frac = vis->startfrac;
-        frac = nextfrac + vis->xiscale;
-        do
-        {
-            texturecolumn = frac >> FRACBITS;
-            column = (column_t *)((byte *)patch + LONG(patch->columnofs[texturecolumn]));
-            R_DrawMaskedColumn(column);
-            dc_x += 4;
-            frac += fracstep;
-        } while (dc_x <= vis->x2);
-        break;
-    case 1:
-        fracstep = 2 * vis->xiscale;
-        dc_x = vis->x1;
-        outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
-        // Plane 0
-        do
-        {
-            texturecolumn = frac >> FRACBITS;
-            column = (column_t *)((byte *)patch + LONG(patch->columnofs[texturecolumn]));
-            R_DrawMaskedColumn(column);
-            dc_x += 2;
-            frac += fracstep;
-        } while (dc_x <= vis->x2);
-        // Plane 1
-        dc_x = vis->x1 + 1;
-        if (vis->x1 + 1 > vis->x2)
-            break;
-        outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
-        frac = vis->startfrac;
-        frac += vis->xiscale;
-        do
-        {
-            texturecolumn = frac >> FRACBITS;
-            column = (column_t *)((byte *)patch + LONG(patch->columnofs[texturecolumn]));
-            R_DrawMaskedColumn(column);
-            dc_x += 2;
-            frac += fracstep;
-        } while (dc_x <= vis->x2);
-        break;
-    case 2:
-        dc_x = vis->x1;
-        do
-        {
-            texturecolumn = frac >> FRACBITS;
-            column = (column_t *)((byte *)patch + LONG(patch->columnofs[texturecolumn]));
-            R_DrawMaskedColumn(column);
-            dc_x += 1;
-            frac += vis->xiscale;
-        } while (dc_x <= vis->x2);
-        break;
-    }
-
-    spritefunc = basespritefunc;
+    colfunc = basecolfunc;
 }
 
 //

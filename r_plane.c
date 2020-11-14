@@ -404,168 +404,28 @@ void R_DrawPlanes(void)
 
             dc_flatcolor = dc_colormap[dc_source[0]];
 
-            switch (detailshift)
+            for (x = pl->minx; x <= pl->maxx; x++)
             {
-            case 0:
-                // Plane 0
-                x = pl->minx;
-                outp(SC_INDEX + 1, 1 << (x & 3));
+                dc_yl = pl->top[x];
+                dc_yh = pl->bottom[x];
 
-                do
-                {
-                    dc_yl = pl->top[x];
-                    dc_yh = pl->bottom[x];
-
-                    if (dc_yl > dc_yh)
-                    {
-                        x += 4;
-                        continue;
-                    }
-
-                    dc_x = x;
-                    x += 4;
-
-                    R_DrawColumnFlat();
-                } while (x <= pl->maxx);
-
-                // Plane 1
-                x = pl->minx + 1;
-
-                if (x > pl->maxx)
+                if (dc_yl > dc_yh)
                     continue;
 
-                outp(SC_INDEX + 1, 1 << (x & 3));
-
-                do
+                dc_x = x;
+                switch (detailshift)
                 {
-                    dc_yl = pl->top[x];
-                    dc_yh = pl->bottom[x];
-
-                    if (dc_yl > dc_yh)
-                    {
-                        x += 4;
-                        continue;
-                    }
-
-                    dc_x = x;
-                    x += 4;
-
+                case 0:
                     R_DrawColumnFlat();
-                } while (x <= pl->maxx);
-
-                // Plane 2
-                x = pl->minx + 2;
-
-                if (x > pl->maxx)
-                    continue;
-
-                outp(SC_INDEX + 1, 1 << (x & 3));
-
-                do
-                {
-                    dc_yl = pl->top[x];
-                    dc_yh = pl->bottom[x];
-
-                    if (dc_yl > dc_yh)
-                    {
-                        x += 4;
-                        continue;
-                    }
-
-                    dc_x = x;
-                    x += 4;
-
-                    R_DrawColumnFlat();
-                } while (x <= pl->maxx);
-
-                // Plane 3
-                x = pl->minx + 3;
-
-                if (x > pl->maxx)
-                    continue;
-
-                outp(SC_INDEX + 1, 1 << (x & 3));
-
-                do
-                {
-                    dc_yl = pl->top[x];
-                    dc_yh = pl->bottom[x];
-
-                    if (dc_yl > dc_yh)
-                    {
-                        x += 4;
-                        continue;
-                    }
-
-                    dc_x = x;
-                    x += 4;
-
-                    R_DrawColumnFlat();
-                } while (x <= pl->maxx);
-
-                break;
-            case 1:
-                // Plane 0
-                x = pl->minx;
-                outp(SC_INDEX + 1, 3 << ((x & 1) << 1));
-
-                do
-                {
-                    dc_yl = pl->top[x];
-                    dc_yh = pl->bottom[x];
-
-                    if (dc_yl > dc_yh)
-                    {
-                        x += 2;
-                        continue;
-                    }
-
-                    dc_x = x;
-                    x += 2;
-
+                    break;
+                case 1:
                     R_DrawColumnFlatLow();
-                } while (x <= pl->maxx);
-
-                // Plane 1
-                x = pl->minx + 1;
-
-                if (x > pl->maxx)
-                    continue;
-
-                outp(SC_INDEX + 1, 3 << ((x & 1) << 1));
-
-                do
-                {
-                    dc_yl = pl->top[x];
-                    dc_yh = pl->bottom[x];
-
-                    if (dc_yl > dc_yh)
-                    {
-                        x += 2;
-                        continue;
-                    }
-
-                    dc_x = x;
-                    x += 2;
-
-                    R_DrawColumnFlatLow();
-                } while (x <= pl->maxx);
-
-                break;
-            case 2:
-                for (x = pl->minx; x <= pl->maxx; x++)
-                {
-                    dc_yl = pl->top[x];
-                    dc_yh = pl->bottom[x];
-
-                    if (dc_yl > dc_yh)
-                        continue;
-
-                    dc_x = x;
+                    break;
+                case 2:
                     R_DrawColumnFlatPotato();
+                    break;
                 }
-                break;
-            };
+            }
 
             Z_ChangeTag(dc_source, PU_CACHE);
         }

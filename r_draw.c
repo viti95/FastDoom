@@ -107,11 +107,22 @@ void R_DrawSkyFlat(void)
 
     dest = destview + Mul80(dc_yl) + (dc_x >> 2);
 
-    do
+    while (count >= 3)
+    {
+        *(dest) = 220;
+        *(dest + SCREENWIDTH / 4) = 220;
+        *(dest + SCREENWIDTH / 2) = 220;
+        *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = 220;
+        dest += SCREENWIDTH;
+        count -= 4;
+    }
+
+    while (count >= 0)
     {
         *dest = 220;
         dest += SCREENWIDTH / 4;
-    } while (count--);
+        count--;
+    };
 }
 
 void R_DrawSkyFlatLow(void)
@@ -125,11 +136,22 @@ void R_DrawSkyFlatLow(void)
 
     dest = destview + Mul80(dc_yl) + (dc_x >> 1);
 
-    do
+    while (count >= 3)
+    {
+        *(dest) = 220;
+        *(dest + SCREENWIDTH / 4) = 220;
+        *(dest + SCREENWIDTH / 2) = 220;
+        *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = 220;
+        dest += SCREENWIDTH;
+        count -= 4;
+    }
+
+    while (count >= 0)
     {
         *dest = 220;
         dest += SCREENWIDTH / 4;
-    } while (count--);
+        count--;
+    };
 }
 
 void R_DrawSkyFlatPotato(void)
@@ -141,11 +163,22 @@ void R_DrawSkyFlatPotato(void)
 
     dest = destview + Mul80(dc_yl) + dc_x;
 
-    do
+    while (count >= 3)
+    {
+        *(dest) = 220;
+        *(dest + SCREENWIDTH / 4) = 220;
+        *(dest + SCREENWIDTH / 2) = 220;
+        *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = 220;
+        dest += SCREENWIDTH;
+        count -= 4;
+    }
+
+    while (count >= 0)
     {
         *dest = 220;
         dest += SCREENWIDTH / 4;
-    } while (count--);
+        count--;
+    };
 }
 
 void R_DrawSpanPotato(void)
@@ -189,14 +222,26 @@ void R_DrawColumnFlat(void)
 
     dest = destview + Mul80(dc_yl) + (dc_x >> 2);
 
+    outp(SC_INDEX + 1, 1 << (dc_x & 3));
+
     color = dc_flatcolor;
 
-    do
+    while (count >= 3)
+    {
+        *(dest) = color;
+        *(dest + SCREENWIDTH / 4) = color;
+        *(dest + SCREENWIDTH / 2) = color;
+        *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
+        dest += SCREENWIDTH;
+        count -= 4;
+    }
+
+    while (count >= 0)
     {
         *dest = color;
         dest += SCREENWIDTH / 4;
-
-    } while (count--);
+        count--;
+    };
 }
 
 void R_DrawColumnFlatLow(void)
@@ -209,13 +254,26 @@ void R_DrawColumnFlatLow(void)
 
     dest = destview + Mul80(dc_yl) + (dc_x >> 1);
 
+    outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
+
     color = dc_flatcolor;
 
-    do
+    while (count >= 3)
+    {
+        *(dest) = color;
+        *(dest + SCREENWIDTH / 4) = color;
+        *(dest + SCREENWIDTH / 2) = color;
+        *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
+        dest += SCREENWIDTH;
+        count -= 4;
+    }
+
+    while (count >= 0)
     {
         *dest = color;
         dest += SCREENWIDTH / 4;
-    } while (count--);
+        count--;
+    };
 }
 
 void R_DrawColumnFlatPotato(void)
@@ -230,11 +288,22 @@ void R_DrawColumnFlatPotato(void)
 
     color = dc_flatcolor;
 
-    do
+    while (count >= 3)
+    {
+        *(dest) = color;
+        *(dest + SCREENWIDTH / 4) = color;
+        *(dest + SCREENWIDTH / 2) = color;
+        *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
+        dest += SCREENWIDTH;
+        count -= 4;
+    }
+
+    while (count >= 0)
     {
         *dest = color;
         dest += SCREENWIDTH / 4;
-    } while (count--);
+        count--;
+    };
 }
 
 //
@@ -255,67 +324,89 @@ int fuzzoffset[FUZZTABLE] =
 
 int fuzzpos = 0;
 
-//
-// Framebuffer postprocessing.
-// Creates a fuzzy image by copying pixels
-//  from adjacent ones to left and right.
-// Used with an all black colormap, this
-//  could create the SHADOW effect,
-//  i.e. spectres and invisible players.
-//
 void R_DrawFuzzColumn(void)
 {
     register int count;
     register byte *dest;
 
-    // Adjust borders. Low...
     if (!dc_yl)
         dc_yl = 1;
 
-    // .. and high.
     if (dc_yh == viewheight - 1)
         dc_yh = viewheight - 2;
 
     count = dc_yh - dc_yl;
 
-    // Zero length.
     if (count < 0)
         return;
 
-    dest = destview + Mul80(dc_yl);
+    dest = destview + Mul80(dc_yl) + (dc_x >> 2);
 
-    switch (detailshift)
-    {
-    case 0:
-        outpw(GC_INDEX, GC_READMAP + ((dc_x & 3) << 8));
-        outp(SC_INDEX + 1, 1 << (dc_x & 3));
-        dest += (dc_x >> 2);
-        break;
-    case 1:
-        outpw(GC_INDEX, GC_READMAP + ((dc_x & 1) << 9));
-        outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
-        dest += (dc_x >> 1);
-        break;
-    case 2:
-        dest += dc_x;
-        break;
-    }
+    outpw(GC_INDEX, GC_READMAP + ((dc_x & 3) << 8));
+    outp(SC_INDEX + 1, 1 << (dc_x & 3));
 
-    // Looks like an attempt at dithering,
-    //  using the colormap #6 (of 0-31, a bit
-    //  brighter than average).
     do
     {
-        // Lookup framebuffer, and retrieve
-        //  a pixel that is either one column
-        //  left or right of the current one.
-        // Add index from colormap to index.
         *dest = colormaps[6 * 256 + dest[fuzzoffset[fuzzpos]]];
-
-        // Clamp table lookup index.
         if (++fuzzpos == FUZZTABLE)
             fuzzpos = 0;
+        dest += SCREENWIDTH / 4;
+    } while (count--);
+}
 
+void R_DrawFuzzColumnLow(void)
+{
+    register int count;
+    register byte *dest;
+
+    if (!dc_yl)
+        dc_yl = 1;
+
+    if (dc_yh == viewheight - 1)
+        dc_yh = viewheight - 2;
+
+    count = dc_yh - dc_yl;
+
+    if (count < 0)
+        return;
+
+    dest = destview + Mul80(dc_yl) + (dc_x >> 1);
+
+    outpw(GC_INDEX, GC_READMAP + ((dc_x & 1) << 9));
+    outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
+
+    do
+    {
+        *dest = colormaps[6 * 256 + dest[fuzzoffset[fuzzpos]]];
+        if (++fuzzpos == FUZZTABLE)
+            fuzzpos = 0;
+        dest += SCREENWIDTH / 4;
+    } while (count--);
+}
+
+void R_DrawFuzzColumnPotato(void)
+{
+    register int count;
+    register byte *dest;
+
+    if (!dc_yl)
+        dc_yl = 1;
+
+    if (dc_yh == viewheight - 1)
+        dc_yh = viewheight - 2;
+
+    count = dc_yh - dc_yl;
+
+    if (count < 0)
+        return;
+
+    dest = destview + Mul80(dc_yl) + dc_x;
+
+    do
+    {
+        *dest = colormaps[6 * 256 + dest[fuzzoffset[fuzzpos]]];
+        if (++fuzzpos == FUZZTABLE)
+            fuzzpos = 0;
         dest += SCREENWIDTH / 4;
     } while (count--);
 }
@@ -327,38 +418,84 @@ void R_DrawFuzzColumnFast(void)
 
     count = dc_yh - dc_yl;
 
-    dest = destview + Mul80(dc_yl);
+    dest = destview + Mul80(dc_yl) + (dc_x >> 2);
 
-    switch (detailshift)
+    outpw(GC_INDEX, GC_READMAP + ((dc_x & 3) << 8));
+    outp(SC_INDEX + 1, 1 << (dc_x & 3));
+
+    while (count >= 3)
     {
-    case 0:
-        outpw(GC_INDEX, GC_READMAP + ((dc_x & 3) << 8));
-        outp(SC_INDEX + 1, 1 << (dc_x & 3));
-        dest += (dc_x >> 2);
-        break;
-    case 1:
-        outpw(GC_INDEX, GC_READMAP + ((dc_x & 1) << 9));
-        outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
-        dest += (dc_x >> 1);
-        break;
-    case 2:
-        dest += dc_x;
-        break;
+        *(dest) = colormaps[6 * 256 + dest[0]];
+        *(dest + SCREENWIDTH / 4) = colormaps[6 * 256 + dest[SCREENWIDTH / 4]];
+        *(dest + SCREENWIDTH / 2) = colormaps[6 * 256 + dest[SCREENWIDTH / 2]];
+        *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = colormaps[6 * 256 + dest[SCREENWIDTH / 4 + SCREENWIDTH / 2]];
+        dest += SCREENWIDTH;
+        count -= 4;
     }
 
-    // Looks like an attempt at dithering,
-    //  using the colormap #6 (of 0-31, a bit
-    //  brighter than average).
-    do
+    while (count >= 0)
     {
-        // Lookup framebuffer, and retrieve
-        //  a pixel that is either one column
-        //  left or right of the current one.
-        // Add index from colormap to index.
-        *dest = colormaps[6 * 256 + dest[0]];
-
+        *(dest) = colormaps[6 * 256 + dest[0]];
         dest += SCREENWIDTH / 4;
-    } while (count--);
+        count--;
+    }
+}
+
+void R_DrawFuzzColumnFastLow(void)
+{
+    register int count;
+    register byte *dest;
+
+    count = dc_yh - dc_yl;
+
+    dest = destview + Mul80(dc_yl) + (dc_x >> 1);
+
+    outpw(GC_INDEX, GC_READMAP + ((dc_x & 1) << 9));
+    outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
+
+    while (count >= 3)
+    {
+        *(dest) = colormaps[6 * 256 + dest[0]];
+        *(dest + SCREENWIDTH / 4) = colormaps[6 * 256 + dest[SCREENWIDTH / 4]];
+        *(dest + SCREENWIDTH / 2) = colormaps[6 * 256 + dest[SCREENWIDTH / 2]];
+        *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = colormaps[6 * 256 + dest[SCREENWIDTH / 4 + SCREENWIDTH / 2]];
+        dest += SCREENWIDTH;
+        count -= 4;
+    }
+
+    while (count >= 0)
+    {
+        *(dest) = colormaps[6 * 256 + dest[0]];
+        dest += SCREENWIDTH / 4;
+        count--;
+    }
+}
+
+void R_DrawFuzzColumnFastPotato(void)
+{
+    register int count;
+    register byte *dest;
+
+    count = dc_yh - dc_yl;
+
+    dest = destview + Mul80(dc_yl) + dc_x;
+
+    while (count >= 3)
+    {
+        *(dest) = colormaps[6 * 256 + dest[0]];
+        *(dest + SCREENWIDTH / 4) = colormaps[6 * 256 + dest[SCREENWIDTH / 4]];
+        *(dest + SCREENWIDTH / 2) = colormaps[6 * 256 + dest[SCREENWIDTH / 2]];
+        *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = colormaps[6 * 256 + dest[SCREENWIDTH / 4 + SCREENWIDTH / 2]];
+        dest += SCREENWIDTH;
+        count -= 4;
+    }
+
+    while (count >= 0)
+    {
+        *(dest) = colormaps[6 * 256 + dest[0]];
+        dest += SCREENWIDTH / 4;
+        count--;
+    }
 }
 
 void R_DrawFuzzColumnSaturn(void)
@@ -371,31 +508,15 @@ void R_DrawFuzzColumnSaturn(void)
 
     count = (dc_yh - dc_yl) / 2 - 1;
 
-    // Zero length, column does not exceed a pixel.
     if (count < 0)
         return;
 
     initialdrawpos = dc_yl + dc_x;
 
-    dest = destview + Mul80(dc_yl);
+    dest = destview + Mul80(dc_yl) + (dc_x >> 2);
 
-    switch (detailshift)
-    {
-    case 0:
-        outp(SC_INDEX + 1, 1 << (dc_x & 3));
-        dest += (dc_x >> 2);
-        break;
-    case 1:
-        outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
-        dest += (dc_x >> 1);
-        break;
-    case 2:
-        dest += dc_x;
-        break;
-    }
+    outp(SC_INDEX + 1, 1 << (dc_x & 3));
 
-    // Determine scaling,
-    //  which is the only mapping to be done.
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
 
@@ -407,19 +528,112 @@ void R_DrawFuzzColumnSaturn(void)
 
     fracstep = 2 * fracstep;
 
-    // Inner loop that does the actual texture mapping,
-    //  e.g. a DDA-lile scaling.
-    // This is as fast as it gets.
     do
     {
-        // Re-map color indices from wall texture column
-        //  using a lighting/special effects LUT.
+        *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
+        dest += SCREENWIDTH / 2;
+        frac += fracstep;
+    } while (count--);
 
+    if ((dc_yh - dc_yl) & 1)
+    {
+        *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
+    }
+    else
+    {
+        if (!(initialdrawpos & 1))
+        {
+            *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
+        }
+    }
+}
+
+void R_DrawFuzzColumnSaturnLow(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac;
+    fixed_t fracstep;
+    int initialdrawpos = 0;
+
+    count = (dc_yh - dc_yl) / 2 - 1;
+
+    if (count < 0)
+        return;
+
+    initialdrawpos = dc_yl + dc_x;
+
+    dest = destview + Mul80(dc_yl) + (dc_x >> 1);
+
+    outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    if (initialdrawpos & 1)
+    {
+        dest += SCREENWIDTH / 4;
+        frac += fracstep;
+    }
+
+    fracstep = 2 * fracstep;
+
+    do
+    {
         *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
 
         dest += SCREENWIDTH / 2;
         frac += fracstep;
 
+    } while (count--);
+
+    if ((dc_yh - dc_yl) & 1)
+    {
+        *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
+    }
+    else
+    {
+        if (!(initialdrawpos & 1))
+        {
+            *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
+        }
+    }
+}
+
+void R_DrawFuzzColumnSaturnPotato(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac;
+    fixed_t fracstep;
+    int initialdrawpos = 0;
+
+    count = (dc_yh - dc_yl) / 2 - 1;
+
+    if (count < 0)
+        return;
+
+    initialdrawpos = dc_yl + dc_x;
+
+    dest = destview + Mul80(dc_yl) + dc_x;
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    if (initialdrawpos & 1)
+    {
+        dest += SCREENWIDTH / 4;
+        frac += fracstep;
+    }
+
+    fracstep = 2 * fracstep;
+
+    do
+    {
+        *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
+
+        dest += SCREENWIDTH / 2;
+        frac += fracstep;
     } while (count--);
 
     if ((dc_yh - dc_yl) & 1)
@@ -712,10 +926,19 @@ void R_DrawSpanFlatPotato(void)
 
     dest = destview + Mul80(ds_y) + ds_x1;
 
-    do
-    {
-        *dest++ = color;
-    } while (countp--);
+    while(countp >= 3){
+        *(dest) = color;
+        *(dest + 1) = color;
+        *(dest + 2) = color;
+        *(dest + 3) = color;
+        dest += 4;
+        countp -= 4;
+    }
+
+    while(countp >= 0){
+        *(dest++) = color;
+        countp--;
+    }
 }
 
 //

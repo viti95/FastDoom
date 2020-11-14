@@ -35,20 +35,23 @@ extern byte *dc_source;
 // Hook in assembler or system specific BLT
 //  here.
 
-void R_DrawFastColumn(void);
-void R_DrawFastColumnLow(void);
-void R_DrawFastColumnPotato(void);
-
 void R_DrawColumn(void);
 void R_DrawSkyFlat(void);
 void R_DrawColumnLow(void);
 void R_DrawSkyFlatLow(void);
 
-
 // The Spectre/Invisibility effect.
 void R_DrawFuzzColumn(void);
 void R_DrawFuzzColumnSaturn(void);
 void R_DrawFuzzColumnFast(void);
+
+void R_DrawFuzzColumnLow(void);
+void R_DrawFuzzColumnSaturnLow(void);
+void R_DrawFuzzColumnFastLow(void);
+
+void R_DrawFuzzColumnPotato(void);
+void R_DrawFuzzColumnSaturnPotato(void);
+void R_DrawFuzzColumnFastPotato(void);
 
 void R_DrawColumnPotato(void);
 void R_DrawSkyFlatPotato(void);

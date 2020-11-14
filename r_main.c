@@ -101,8 +101,6 @@ void (*basecolfunc)(void);
 void (*fuzzcolfunc)(void);
 void (*spanfunc)(void);
 void (*skyfunc)(void);
-void (*spritefunc)(void);
-void (*basespritefunc)(void);
 
 int R_PointOnSegSide(fixed_t x,
                      fixed_t y,
@@ -743,7 +741,6 @@ void R_ExecuteSetViewSize(void)
     {
     case 0:
         colfunc = basecolfunc = R_DrawColumn;
-        spritefunc = basespritefunc = R_DrawFastColumn;
 
         if (untexturedSurfaces)
             spanfunc = R_DrawSpanFlat;
@@ -754,10 +751,16 @@ void R_ExecuteSetViewSize(void)
             skyfunc = R_DrawSkyFlat;
         else
             skyfunc = R_DrawColumn;
+
+        if (flatShadows)
+            fuzzcolfunc = R_DrawFuzzColumnFast;
+        else if (saturnShadows)
+            fuzzcolfunc = R_DrawFuzzColumnSaturn;
+        else
+            fuzzcolfunc = R_DrawFuzzColumn;
         break;
     case 1:
         colfunc = basecolfunc = R_DrawColumnLow;
-        spritefunc = basespritefunc = R_DrawFastColumnLow;
 
         if (untexturedSurfaces)
             spanfunc = R_DrawSpanFlatLow;
@@ -769,10 +772,15 @@ void R_ExecuteSetViewSize(void)
         else
             skyfunc = R_DrawColumnLow;
 
+        if (flatShadows)
+            fuzzcolfunc = R_DrawFuzzColumnFastLow;
+        else if (saturnShadows)
+            fuzzcolfunc = R_DrawFuzzColumnSaturnLow;
+        else
+            fuzzcolfunc = R_DrawFuzzColumnLow;
         break;
     case 2:
         colfunc = basecolfunc = R_DrawColumnPotato;
-        spritefunc = basespritefunc = R_DrawFastColumnPotato;
 
         if (untexturedSurfaces)
             spanfunc = R_DrawSpanFlatPotato;
@@ -784,15 +792,14 @@ void R_ExecuteSetViewSize(void)
         else
             skyfunc = R_DrawColumnPotato;
 
+        if (flatShadows)
+            fuzzcolfunc = R_DrawFuzzColumnFastPotato;
+        else if (saturnShadows)
+            fuzzcolfunc = R_DrawFuzzColumnSaturnPotato;
+        else
+            fuzzcolfunc = R_DrawFuzzColumnPotato;
         break;
     }
-
-    if (flatShadows)
-        fuzzcolfunc = R_DrawFuzzColumnFast;
-    else if (saturnShadows)
-        fuzzcolfunc = R_DrawFuzzColumnSaturn;
-    else
-        fuzzcolfunc = R_DrawFuzzColumn;
 
     R_InitBuffer(scaledviewwidth, viewheight);
 
@@ -1008,7 +1015,8 @@ void R_RenderPlayerView(player_t *player)
     NetUpdate();
 
     // Set potato mode VGA plane
-    if (detailshift == 2){
+    if (detailshift == 2)
+    {
         outp(SC_INDEX + 1, 15);
     }
 
