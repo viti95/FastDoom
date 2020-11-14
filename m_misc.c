@@ -68,26 +68,35 @@ int M_CheckParm(char *check)
     return 0;
 }
 
-void M_CheckParmOptional(char *check, int *variable)
+int M_CheckParmOptional(char *check, int *variable)
 {
     int i;
 
     for (i = 1; i < myargc; i++)
     {
-        if (!strcasecmp(check, myargv[i]))
+        if (!strcasecmp(check, myargv[i])){
             *variable = i;
+            return 1;
+        }            
     }
+    
+    return 0;
 }
 
-void M_CheckParmDisable(char *check, int *variable)
+int M_CheckParmDisable(char *check, int *variable)
 {
     int i;
 
     for (i = 1; i < myargc; i++)
     {
-        if (!strcasecmp(check, myargv[i]))
+        if (!strcasecmp(check, myargv[i])){
             *variable = 0;
+            return 1;
+        }
+            
     }
+
+    return 0;
 }
 
 void M_AddToBox(fixed_t *box,

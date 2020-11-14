@@ -359,7 +359,7 @@ void D_DoomLoop(void)
         {
             I_StartTic();
             D_ProcessEvents();
-            G_BuildTiccmd(&localcmds[maketic & (BACKUPTICS-1)]);
+            G_BuildTiccmd(&localcmds[maketic & (BACKUPTICS - 1)]);
             if (advancedemo)
                 D_DoAdvanceDemo();
             M_Ticker();
@@ -375,7 +375,8 @@ void D_DoomLoop(void)
         S_UpdateSounds(players.mo); // move positional sounds
 
         // Update display, next frame, with current state.
-        if (waitVsync){
+        if (waitVsync)
+        {
             I_WaitSingleVBL();
         }
         D_Display();
@@ -937,11 +938,27 @@ void D_DoomMain(void)
     M_LoadDefaults(); // load before initing other systems
 
     M_CheckParmOptional("-fps", &showFPS);
-    M_CheckParmOptional("-flattersurfaces", &flatSurfaces);
-    M_CheckParmOptional("-flatsurfaces", &untexturedSurfaces);
+
+    if (M_CheckParmOptional("-flattersurfaces", &flatSurfaces) && untexturedSurfaces)
+    {
+        untexturedSurfaces = 0;
+    }
+    if (M_CheckParmOptional("-flatsurfaces", &untexturedSurfaces) && flatSurfaces)
+    {
+        flatSurfaces = 0;
+    }
+
     M_CheckParmOptional("-flatsky", &flatSky);
-    M_CheckParmOptional("-flatshadows", &flatShadows);
-    M_CheckParmOptional("-saturn", &saturnShadows);
+
+    if (M_CheckParmOptional("-flatshadows", &flatShadows) && saturnShadows)
+    {
+        saturnShadows = 0;
+    }
+
+    if (M_CheckParmOptional("-saturn", &saturnShadows) && flatShadows)
+    {
+        flatShadows = 0;
+    }
     M_CheckParmOptional("-mono", &monoSound);
     M_CheckParmOptional("-near", &nearSprites);
     M_CheckParmOptional("-nomelt", &noMelt);
@@ -1015,9 +1032,12 @@ void D_DoomMain(void)
     D_RedrawTitle();
     ST_Init();
 
-    if (waitInit){
+    if (waitInit)
+    {
         printf("PRESS ANY KEY TO CONTINUE");
-        while(lastpress == 0){};
+        while (lastpress == 0)
+        {
+        };
     }
 
     // start the apropriate game based on parms
