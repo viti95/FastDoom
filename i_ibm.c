@@ -172,7 +172,6 @@ int kbdtail, kbdhead;
 #define SC_RSHIFT 0x36
 #define SC_LSHIFT 0x2a
 void DPMIInt(int i);
-void I_WaitSingleVBL();
 void I_StartupSound(void);
 void I_ShutdownSound(void);
 void I_ShutdownTimer(void);
@@ -207,32 +206,6 @@ byte scantokey[128] =
         0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0 // 7
 };
-
-//
-// User input
-//
-
-//
-// I_WaitSingleVBL
-//
-void I_WaitSingleVBL()
-{
-    int stat;
-
-    do
-    {
-        stat = inp(STATUS_REGISTER_1);
-        if (stat & 8)
-            break;
-    } while (1);
-    do
-    {
-        stat = inp(STATUS_REGISTER_1);
-        if ((stat & 8) == 0)
-            break;
-    } while (1);
-}
-
 
 //
 // I_SetPalette

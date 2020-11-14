@@ -90,7 +90,15 @@ void I_UpdateNoBlit(void);
 void I_FinishUpdate(void);
 
 // Wait for vertical retrace or pause a bit.
-void I_WaitSingleVBL();
+void I_WaitSingleVBL(void);
+#pragma aux I_WaitSingleVBL = \
+    "mov dx, 0x3DA", \
+    "l1: in al, dx", \
+    "and al, 0x08", \
+    "jnz l1", \
+    "l2: in al, dx", \
+    "and al, 0x08", \
+    "jz l2" modify [al dx]
 
 void I_ReadScreen(byte *scr);
 
