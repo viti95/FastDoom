@@ -718,10 +718,19 @@ void R_DrawSpanFlat(void)
 
         outp(SC_INDEX + 1, 15);
 
-        do
-        {
+        while(countp >= 3){
+            *(dest) = color;
+            *(dest+1) = color;
+            *(dest+2) = color;
+            *(dest+3) = color;
+            dest += 4;
+            countp -= 4;
+        }
+
+        while(countp >= 0){
             *dest++ = color;
-        } while (countp--);
+            countp--;
+        }
     }
 
     // Single pixel mode
@@ -862,10 +871,19 @@ void R_DrawSpanFlatLow(void)
 
         outp(SC_INDEX + 1, 15);
 
-        do
-        {
+        while(countp >= 3){
+            *(dest) = color;
+            *(dest+1) = color;
+            *(dest+2) = color;
+            *(dest+3) = color;
+            dest += 4;
+            countp -= 4;
+        }
+
+        while(countp >= 0){
             *dest++ = color;
-        } while (countp--);
+            countp--;
+        }
     }
 
     dsp_x1 = (ds_x1) / 2;
