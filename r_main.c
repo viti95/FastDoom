@@ -889,7 +889,7 @@ R_PointInSubsector(fixed_t x,
     if (!numnodes)
         return subsectors;
 
-    nodenum = numnodes - 1;
+    nodenum = firstnode;
 
     while (!(nodenum & NF_SUBSECTOR))
     {
@@ -1021,7 +1021,7 @@ void R_RenderPlayerView(player_t *player)
     }
 
     // The head node is the last node output.
-    R_RenderBSPNode(numnodes - 1);
+    R_RenderBSPNode(firstnode);
 
     // Check for new console commands.
     NetUpdate();

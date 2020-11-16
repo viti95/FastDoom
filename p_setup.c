@@ -55,6 +55,7 @@ int numsubsectors;
 subsector_t *subsectors;
 
 int numnodes;
+int firstnode;
 node_t *nodes;
 
 int numlines;
@@ -240,6 +241,7 @@ void P_LoadNodes(int lump)
     node_t *no;
 
     numnodes = W_LumpLength(lump) / sizeof(mapnode_t);
+    firstnode = numnodes - 1;
     nodes = Z_MallocUnowned(numnodes * sizeof(node_t), PU_LEVEL);
     data = W_CacheLumpNum(lump, PU_STATIC);
 

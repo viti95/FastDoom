@@ -265,5 +265,5 @@ P_CheckSight(mobj_t *t1,
     strace.dy = t2y - t1->y;
 
     // the head node is the last node output
-    return P_CrossBSPNode(numnodes - 1);
+    return P_CrossBSPNode(firstnode);
 }
