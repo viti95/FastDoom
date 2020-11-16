@@ -258,11 +258,11 @@ P_CheckSight(mobj_t *t1,
     bottomslope = (t2->z) - sightzstart;
 
     strace.x = t1->x;
-    strace.y = t1->y;
     t2x = t2->x;
+    strace.dx = t2x - t1->x;
+    strace.y = t1->y;
     t2y = t2->y;
-    strace.dx = t2->x - t1->x;
-    strace.dy = t2->y - t1->y;
+    strace.dy = t2y - t1->y;
 
     // the head node is the last node output
     return P_CrossBSPNode(numnodes - 1);
