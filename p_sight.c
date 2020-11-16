@@ -223,8 +223,7 @@ boolean P_CrossBSPNode(int bspnum)
 // Uses REJECT.
 //
 boolean
-P_CheckSight(mobj_t *t1,
-             mobj_t *t2)
+P_CheckSight(mobj_t *t1, mobj_t *t2)
 {
     int s1;
     int s2;
@@ -235,9 +234,9 @@ P_CheckSight(mobj_t *t1,
     // First check for trivial rejection.
 
     // Determine subsector entries in REJECT table.
-    s1 = (t1->subsector->sector - sectors);
-    s2 = (t2->subsector->sector - sectors);
-    pnum = s1 * numsectors + s2;
+    pnum = Div96((int)t1->subsector->sector - (int)sectors);
+    pnum *= numsectors;
+    pnum += Div96((int)t2->subsector->sector - (int)sectors);
     bytenum = pnum >> 3;
     bitnum = 1 << (pnum & 7);
 
