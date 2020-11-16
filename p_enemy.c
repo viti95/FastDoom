@@ -493,39 +493,34 @@ P_LookForPlayers(mobj_t *actor,
 
     sector = actor->subsector->sector;
 
-    if (playeringame)
+    player = &players;
+
+    if (player->health <= 0)
+        return false; // dead
+
+    if (!P_CheckSight(actor, player->mo))
+        return false; // out of sight
+
+    if (!allaround)
     {
-        player = &players;
+        an = R_PointToAngle2(actor->x,
+                             actor->y,
+                             player->mo->x,
+                             player->mo->y) -
+             actor->angle;
 
-        if (player->health <= 0)
-            return false; // dead
-
-        if (!P_CheckSight(actor, player->mo))
-            return false; // out of sight
-
-        if (!allaround)
+        if (an > ANG90 && an < ANG270)
         {
-            an = R_PointToAngle2(actor->x,
-                                 actor->y,
-                                 player->mo->x,
-                                 player->mo->y) -
-                 actor->angle;
-
-            if (an > ANG90 && an < ANG270)
-            {
-                dist = P_AproxDistance(player->mo->x - actor->x,
-                                       player->mo->y - actor->y);
-                // if real close, react anyway
-                if (dist > MELEERANGE)
-                    return false; // behind back
-            }
+            dist = P_AproxDistance(player->mo->x - actor->x,
+                                   player->mo->y - actor->y);
+            // if real close, react anyway
+            if (dist > MELEERANGE)
+                return false; // behind back
         }
-
-        actor->target = player->mo;
-        return true;
     }
 
-    return false;
+    actor->target = player->mo;
+    return true;
 }
 
 //
