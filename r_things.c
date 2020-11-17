@@ -308,62 +308,6 @@ short *mceilingclip;
 fixed_t spryscale;
 fixed_t sprtopscreen;
 
-void R_DrawMaskedColumn(column_t *column)
-{
-    int topscreen;
-    int bottomscreen;
-    fixed_t basetexturemid;
-
-    int yl, yh;
-    short mfc_x, mcc_x;
-
-    basetexturemid = dc_texturemid;
-    mfc_x = mfloorclip[dc_x];
-    mcc_x = mceilingclip[dc_x];
-
-    for (; column->topdelta != 0xff;)
-    {
-        // calculate unclipped screen coordinates
-        //  for post
-        topscreen = sprtopscreen + spryscale * column->topdelta;
-        bottomscreen = topscreen + spryscale * column->length;
-
-        yh = (bottomscreen - 1) >> FRACBITS;
-
-        if (yh >= mfc_x)
-            yh = mfc_x - 1;
-
-        if (yh >= viewheight)
-        {
-            column = (column_t *)((byte *)column + column->length + 4);
-            continue;
-        }
-
-        yl = (topscreen + FRACUNIT - 1) >> FRACBITS;
-
-        if (yl <= mcc_x)
-            yl = mcc_x + 1;
-
-        if (yl > yh)
-        {
-            column = (column_t *)((byte *)column + column->length + 4);
-            continue;
-        }
-
-        dc_source = (byte *)column + 3;
-        dc_texturemid = basetexturemid - (column->topdelta << FRACBITS);
-
-        dc_yh = yh;
-        dc_yl = yl;
-
-        colfunc();
-
-        column = (column_t *)((byte *)column + column->length + 4);
-    }
-
-    dc_texturemid = basetexturemid;
-}
-
 //
 // R_DrawVisSprite
 //  mfloorclip and mceilingclip should also be set.
@@ -398,9 +342,62 @@ void R_DrawVisSprite(vissprite_t *vis)
     dc_x = vis->x1;
     do
     {
+        int topscreen;
+        int bottomscreen;
+        fixed_t basetexturemid;
+
+        int yl, yh;
+        short mfc_x, mcc_x;
+
+        basetexturemid = dc_texturemid;
+        mfc_x = mfloorclip[dc_x];
+        mcc_x = mceilingclip[dc_x];
+
         texturecolumn = frac >> FRACBITS;
         column = (column_t *)((byte *)patch + LONG(patch->columnofs[texturecolumn]));
-        R_DrawMaskedColumn(column);
+
+        for (; column->topdelta != 0xff;)
+        {
+            // calculate unclipped screen coordinates
+            //  for post
+            topscreen = sprtopscreen + spryscale * column->topdelta;
+            bottomscreen = topscreen + spryscale * column->length;
+
+            yh = (bottomscreen - 1) >> FRACBITS;
+
+            if (yh >= mfc_x)
+                yh = mfc_x - 1;
+
+            if (yh >= viewheight)
+            {
+                column = (column_t *)((byte *)column + column->length + 4);
+                continue;
+            }
+
+            yl = (topscreen + FRACUNIT - 1) >> FRACBITS;
+
+            if (yl <= mcc_x)
+                yl = mcc_x + 1;
+
+            if (yl > yh)
+            {
+                column = (column_t *)((byte *)column + column->length + 4);
+                continue;
+            }
+
+            dc_source = (byte *)column + 3;
+            dc_texturemid = basetexturemid - (column->topdelta << FRACBITS);
+
+            dc_yh = yh;
+            dc_yl = yl;
+
+            colfunc();
+
+            column = (column_t *)((byte *)column + column->length + 4);
+        }
+
+        dc_texturemid = basetexturemid;
+
         dc_x += 1;
         frac += vis->xiscale;
     } while (dc_x <= vis->x2);

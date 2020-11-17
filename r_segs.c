@@ -160,6 +160,13 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 		// calculate lighting
 		if (maskedtexturecol[dc_x] != MAXSHORT)
 		{
+			int topscreen;
+			int bottomscreen;
+			fixed_t basetexturemid;
+
+			int yl, yh;
+			short mfc_x, mcc_x;
+
 			if (!fixedcolormap)
 			{
 				index = spryscale >> LIGHTSCALESHIFT;
@@ -195,7 +202,52 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 				col = (column_t *)(texturecomposite[tex] + ofs);
 			}
 
-			R_DrawMaskedColumn(col);
+			basetexturemid = dc_texturemid;
+			mfc_x = mfloorclip[dc_x];
+			mcc_x = mceilingclip[dc_x];
+
+			for (; col->topdelta != 0xff;)
+			{
+				// calculate unclipped screen coordinates
+				//  for post
+				topscreen = sprtopscreen + spryscale * col->topdelta;
+				bottomscreen = topscreen + spryscale * col->length;
+
+				yh = (bottomscreen - 1) >> FRACBITS;
+
+				if (yh >= mfc_x)
+					yh = mfc_x - 1;
+
+				if (yh >= viewheight)
+				{
+					col = (column_t *)((byte *)col + col->length + 4);
+					continue;
+				}
+
+				yl = (topscreen + FRACUNIT - 1) >> FRACBITS;
+
+				if (yl <= mcc_x)
+					yl = mcc_x + 1;
+
+				if (yl > yh)
+				{
+					col = (column_t *)((byte *)col + col->length + 4);
+					continue;
+				}
+
+				dc_source = (byte *)col + 3;
+				dc_texturemid = basetexturemid - (col->topdelta << FRACBITS);
+
+				dc_yh = yh;
+				dc_yl = yl;
+
+				colfunc();
+
+				col = (column_t *)((byte *)col + col->length + 4);
+			}
+			
+			dc_texturemid = basetexturemid;
+
 			maskedtexturecol[dc_x] = MAXSHORT;
 		}
 		spryscale += rw_scalestep;
