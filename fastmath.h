@@ -239,17 +239,14 @@ int Div70(int value);
     "sar ecx, 31", \
     "sub edx, ecx" parm[ecx] value[edx] modify exact[eax ecx edx]
 
-int Mod3(int value);
-#pragma aux Mod3 = \
-    "mov edx, 1431655766", \
+int Div96(int value);
+#pragma aux Div96 = \
+    "mov edx, 715827883", \
     "mov eax, ecx", \
     "imul edx", \
-    "mov eax, ecx", \
-    "sar eax, 31", \
-    "sub edx, eax", \
-    "lea eax, [edx+edx]", \
-    "add edx, eax", \
-    "sub ecx, edx" parm[ecx] value[ecx] modify exact[eax ecx edx]
+    "sar edx, 4", \
+    "sar ecx, 31", \
+    "sub edx, ecx" parm[ecx] value[edx] modify exact[eax ecx edx]
 
 void CopyBytes(void *src, void *dest, int num_bytes);
 #pragma aux CopyBytes = \
