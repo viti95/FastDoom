@@ -339,9 +339,7 @@ void R_DrawVisSprite(vissprite_t *vis)
     spryscale = vis->scale;
     sprtopscreen = centeryfrac - FixedMul(dc_texturemid, spryscale);
 
-    dc_x = vis->x1;
-    do
-    {
+    for (dc_x = vis->x1; dc_x <= vis->x2; dc_x++, frac += vis->xiscale){
         int topscreen;
         int bottomscreen;
         fixed_t basetexturemid;
@@ -397,10 +395,7 @@ void R_DrawVisSprite(vissprite_t *vis)
         }
 
         dc_texturemid = basetexturemid;
-
-        dc_x += 1;
-        frac += vis->xiscale;
-    } while (dc_x <= vis->x2);
+    };
 
     colfunc = basecolfunc;
 }
