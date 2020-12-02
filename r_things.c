@@ -339,7 +339,9 @@ void R_DrawVisSprite(vissprite_t *vis)
     spryscale = vis->scale;
     sprtopscreen = centeryfrac - FixedMul(dc_texturemid, spryscale);
 
-    for (dc_x = vis->x1; dc_x <= vis->x2; dc_x++, frac += vis->xiscale){
+    dc_x = vis->x1;
+    do
+    {
         int topscreen;
         int bottomscreen;
         fixed_t basetexturemid;
@@ -395,7 +397,9 @@ void R_DrawVisSprite(vissprite_t *vis)
         }
 
         dc_texturemid = basetexturemid;
-    }
+        dc_x += 1;
+        frac += vis->xiscale;
+    } while (dc_x <= vis->x2);
 
     colfunc = basecolfunc;
 }
@@ -824,6 +828,9 @@ void R_DrawSprite(vissprite_t *spr)
     fixed_t lowscale;
     int silhouette;
 
+    if (spr->x1 > spr->x2)
+        return;
+
     for (x = spr->x1; x <= spr->x2; x++)
     {
         clipbot[x] = viewheight;
@@ -883,6 +890,7 @@ void R_DrawSprite(vissprite_t *spr)
 
     mfloorclip = clipbot;
     mceilingclip = cliptop;
+
     R_DrawVisSprite(spr);
 }
 
