@@ -395,7 +395,7 @@ void R_DrawVisSprite(vissprite_t *vis)
         }
 
         dc_texturemid = basetexturemid;
-    };
+    }
 
     colfunc = basecolfunc;
 }
