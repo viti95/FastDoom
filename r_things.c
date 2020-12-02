@@ -734,10 +734,8 @@ void R_DrawPlayerSprites(void)
     if (psp->state)
         R_DrawPSprite(psp);
 
-    psp++;
-
-    if (psp->state)
-        R_DrawPSprite(psp);
+    if ((psp + 1)->state)
+        R_DrawPSprite((psp + 1));
 }
 
 //
