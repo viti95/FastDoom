@@ -270,11 +270,6 @@ static boolean stopped = true;
 
 extern boolean viewactive;
 
-void V_MarkRect(int x,
-				int y,
-				int width,
-				int height);
-
 //
 //
 //
