@@ -3,84 +3,135 @@
 #include "doomtype.h"
 #include "fastmath.h"
 
-void I_DebugClearLine(){
-    int i;
+#define COLOURS 0xFF
+#define COLS 80
+#define ROWS 25
 
-    byte *bwscreen = (byte *)0xB0000;
+unsigned short *Scrn = (unsigned short *)0xB0000;
+int Curx, Cury = 0;
+unsigned short EmptySpace = COLOURS << 8 | 0x20;
 
-    for (i = 0; i < 80; i++)
-    {
-        bwscreen[i * 2] = ' ';
-        bwscreen[i * 2 + 1] = 7;
-    }
-}
+void I_Putchar(byte c);
 
-void I_DebugClear()
+void I_Clear()
 {
     int i;
 
-    byte *bwscreen = (byte *)0xB0000;
+    Curx = Cury = 0;
 
-    for (i = 0; i < 80 * 25; i++)
+    for (i = 0; i < ROWS * COLS; i++)
+        I_Putchar(' ');
+}
+
+void I_Scroll(void)
+{
+    if (Cury >= ROWS)
     {
-        bwscreen[i * 2] = ' ';
-        bwscreen[i * 2 + 1] = 7;
+        int tmp;
+        for (tmp = 0; tmp < (ROWS - 1) * COLS; tmp++)
+        {
+            Scrn[tmp] = Scrn[tmp + COLS];
+        }
+        for (tmp = (ROWS - 1) * COLS; tmp < ROWS * COLS; tmp++)
+        {
+            Scrn[tmp] = '\0';
+        }
+
+        Cury = ROWS - 1;
+    }
+}
+void I_Putchar(byte c)
+{
+    unsigned short *addr;
+    if (c == '\t')
+        Curx = ((Curx + 4) / 4) * 4;
+    if (c == '\r')
+        Curx = 0;
+    if (c == '\n')
+    {
+        Curx = 0;
+        Cury++;
+    }
+    I_Scroll();
+    if (c == 0x08 && Curx != 0)
+        Curx--;
+    else if (c >= ' ')
+    {
+        addr = Scrn + (Cury * COLS + Curx);
+        *addr = (COLOURS << 8) | c;
+        Curx++;
+    }
+    if (Curx >= COLS)
+    {
+        Curx = 0;
+        Cury++;
+    }
+    I_Scroll();
+}
+
+void I_Puts(char *str)
+{
+    while (*str)
+    {
+        I_Putchar(*str);
+        str++;
     }
 }
 
-void I_DebugWriteString(int x, int y, char *message)
+void I_Printf(const char *format, ...)
 {
-    int i = 0;
-    byte *bwscreen = (byte *)0xB0000;
-
-    while (*message)
+    char **arg = (char **)&format;
+    int c;
+    arg++;
+    while ((c = *format++) != 0)
     {
-        bwscreen[y * 160 + x * 2 + i * 2] = *(message);
-        bwscreen[y * 160 + x * 2 + i * 2 + 1] = 7;
-        message++;
-        i++;
+        char buf[80];
+
+        if (c != '%')
+            I_Putchar(c);
+        else
+        {
+            char *p;
+            fixed_t value;
+            c = *format++;
+            switch (c)
+            {
+            case 'd':
+                sprintf(buf, "%d", *((int *)arg++));
+                p = buf;
+                I_Puts(p);
+                break;
+            case 'u':
+                sprintf(buf, "%u", *((int *)arg++));
+                p = buf;
+                I_Puts(p);
+                break;
+            case 'x':
+                sprintf(buf, "%x", *((int *)arg++));
+                p = buf;
+                I_Puts(p);
+                break;
+            case 'f':
+                value = *((fixed_t *)arg++);
+                sprintf(buf, "%i.%04i", value >> FRACBITS, ((value & 65535) * 10000) >> FRACBITS);
+                p = buf;
+                I_Puts(p);
+                break;
+            case 's':
+                p = *arg++;
+                if (p == NULL)
+                    p = "(null)\0";
+                I_Puts(p);
+                break;
+            default:
+                I_Putchar(*((int *)arg++));
+                break;
+            }
+        }
     }
 }
 
-void I_DebugWriteFixed(int x, int y, fixed_t value){
-    char message[32];
-    sprintf(message, "%i.%04i", value >> FRACBITS, ((value & 65535)*10000) >> FRACBITS);
-    I_DebugWriteString(x, y, message);
-}
-
-void I_DebugWriteInteger(int x, int y, int value)
-{
-    char message[11];
-    sprintf(message, "%ld", value);
-    I_DebugWriteString(x, y, message);
-}
-
-void I_DebugWriteLineString(char *message)
-{
-    int i = 0;
-    byte *bwscreen = (byte *)0xB0000;
-
-    _fmemcpy(bwscreen + 2 * 80, bwscreen, 2 * 80 * 24);
-    I_DebugClearLine();
-
-    while (*message)
-    {
-        bwscreen[i * 2] = *(message);
-        bwscreen[i * 2 + 1] = 7;
-        message++;
-        i++;
-    }
-}
-
-void I_DebugWriteLineInteger(int value)
-{
-    char message[11];
-    sprintf(message, "%ld", value);
-    I_DebugWriteLineString(message);
-}
-
-void I_DebugWriteLineFixed(fixed_t value){
-    char message[32];
-    sprintf(message, "%i.%04i", value >> FRACBITS, ((value & 65535)*10000) >> FRACBITS);
-    I_DebugWriteLineString(message);
+void I_SetCursor(int x, int y){
+    Curx = x;
+    Cury = y;
 }
