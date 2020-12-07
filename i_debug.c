@@ -98,30 +98,33 @@ void I_Printf(const char *format, ...)
             {
             case 'd':
                 sprintf(buf, "%d", *((int *)arg++));
-                p = buf;
-                I_Puts(p);
+                I_Puts(buf);
                 break;
             case 'u':
                 sprintf(buf, "%u", *((int *)arg++));
-                p = buf;
-                I_Puts(p);
+                I_Puts(buf);
                 break;
             case 'x':
                 sprintf(buf, "%x", *((int *)arg++));
-                p = buf;
-                I_Puts(p);
+                I_Puts(buf);
                 break;
             case 'f':
+                sprintf(buf, "%f", *((int *)arg++));
+                I_Puts(buf);
+                break;
+            case 'p':
                 value = *((fixed_t *)arg++);
                 sprintf(buf, "%i.%04i", value >> FRACBITS, ((value & 65535) * 10000) >> FRACBITS);
-                p = buf;
-                I_Puts(p);
+                I_Puts(buf);
                 break;
             case 's':
                 p = *arg++;
                 if (p == NULL)
                     p = "(null)\0";
                 I_Puts(p);
+                break;
+            case 'c':
+                I_Putchar(*((byte *)arg++));
                 break;
             default:
                 I_Putchar(*((int *)arg++));
