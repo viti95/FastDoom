@@ -95,26 +95,24 @@ int P_BoxOnLineSide(fixed_t *tmbox,
     int p1;
     int p2;
 
+    int optCmp;
+
     switch (ld->slopetype)
     {
     case ST_HORIZONTAL:
         p1 = tmbox[BOXTOP] > ld->v1->y;
         p2 = tmbox[BOXBOTTOM] > ld->v1->y;
-        if (ld->dx < 0)
-        {
-            p1 ^= 1;
-            p2 ^= 1;
-        }
+        optCmp = ld->dx < 0;
+        p1 ^= optCmp;
+        p2 ^= optCmp;
         break;
 
     case ST_VERTICAL:
         p1 = tmbox[BOXRIGHT] < ld->v1->x;
         p2 = tmbox[BOXLEFT] < ld->v1->x;
-        if (ld->dy < 0)
-        {
-            p1 ^= 1;
-            p2 ^= 1;
-        }
+        optCmp = ld->dx < 0;
+        p1 ^= optCmp;
+        p2 ^= optCmp;
         break;
 
     case ST_POSITIVE:

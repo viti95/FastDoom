@@ -207,10 +207,7 @@ boolean P_CheckMissileRange(mobj_t *actor)
         dist >>= 1;
     }
 
-    if (actor->type == MT_CYBORG || actor->type == MT_SPIDER || actor->type == MT_SKULL)
-    {
-        dist >>= 1;
-    }
+    dist >>= actor->type == MT_CYBORG || actor->type == MT_SPIDER || actor->type == MT_SKULL; 
 
     if (dist > 200)
         dist = 200;
