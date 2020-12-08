@@ -101,11 +101,11 @@ void R_DrawSkyFlat(void)
     register int count;
     register byte *dest;
 
-    count = dc_yh - dc_yl;
-
     outp(SC_INDEX + 1, 1 << (dc_x & 3));
 
     dest = destview + Mul80(dc_yl) + (dc_x >> 2);
+
+    count = dc_yh - dc_yl;
 
     while (count >= 3)
     {
@@ -130,11 +130,11 @@ void R_DrawSkyFlatLow(void)
     register int count;
     register byte *dest;
 
-    count = dc_yh - dc_yl;
-
     outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
 
     dest = destview + Mul80(dc_yl) + (dc_x >> 1);
+
+    count = dc_yh - dc_yl;
 
     while (count >= 3)
     {
@@ -159,9 +159,9 @@ void R_DrawSkyFlatPotato(void)
     register int count;
     register byte *dest;
 
-    count = dc_yh - dc_yl;
-
     dest = destview + Mul80(dc_yl) + dc_x;
+
+    count = dc_yh - dc_yl;
 
     while (count >= 3)
     {
@@ -218,13 +218,13 @@ void R_DrawColumnFlat(void)
     byte *dest;
     lighttable_t color;
 
-    count = dc_yh - dc_yl;
-
-    dest = destview + Mul80(dc_yl) + (dc_x >> 2);
-
     outp(SC_INDEX + 1, 1 << (dc_x & 3));
 
     color = dc_flatcolor;
+
+    dest = destview + Mul80(dc_yl) + (dc_x >> 2);
+
+    count = dc_yh - dc_yl;
 
     while (count >= 3)
     {
@@ -250,13 +250,13 @@ void R_DrawColumnFlatLow(void)
     byte *dest;
     lighttable_t color;
 
-    count = dc_yh - dc_yl;
-
-    dest = destview + Mul80(dc_yl) + (dc_x >> 1);
-
     outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
 
     color = dc_flatcolor;
+
+    dest = destview + Mul80(dc_yl) + (dc_x >> 1);
+
+    count = dc_yh - dc_yl;
 
     while (count >= 3)
     {
@@ -282,11 +282,11 @@ void R_DrawColumnFlatPotato(void)
     byte *dest;
     lighttable_t color;
 
-    count = dc_yh - dc_yl;
+    color = dc_flatcolor;
 
     dest = destview + Mul80(dc_yl) + dc_x;
 
-    color = dc_flatcolor;
+    count = dc_yh - dc_yl;
 
     while (count >= 3)
     {
@@ -340,10 +340,10 @@ void R_DrawFuzzColumn(void)
     if (count < 0)
         return;
 
-    dest = destview + Mul80(dc_yl) + (dc_x >> 2);
-
     outpw(GC_INDEX, GC_READMAP + ((dc_x & 3) << 8));
     outp(SC_INDEX + 1, 1 << (dc_x & 3));
+
+    dest = destview + Mul80(dc_yl) + (dc_x >> 2);
 
     do
     {
@@ -370,10 +370,10 @@ void R_DrawFuzzColumnLow(void)
     if (count < 0)
         return;
 
-    dest = destview + Mul80(dc_yl) + (dc_x >> 1);
-
     outpw(GC_INDEX, GC_READMAP + ((dc_x & 1) << 9));
     outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
+
+    dest = destview + Mul80(dc_yl) + (dc_x >> 1);
 
     do
     {
@@ -416,12 +416,12 @@ void R_DrawFuzzColumnFast(void)
     register int count;
     register byte *dest;
 
-    count = dc_yh - dc_yl;
+    outpw(GC_INDEX, GC_READMAP + ((dc_x & 3) << 8));
+    outp(SC_INDEX + 1, 1 << (dc_x & 3));
 
     dest = destview + Mul80(dc_yl) + (dc_x >> 2);
 
-    outpw(GC_INDEX, GC_READMAP + ((dc_x & 3) << 8));
-    outp(SC_INDEX + 1, 1 << (dc_x & 3));
+    count = dc_yh - dc_yl;
 
     while (count >= 3)
     {
@@ -446,12 +446,12 @@ void R_DrawFuzzColumnFastLow(void)
     register int count;
     register byte *dest;
 
-    count = dc_yh - dc_yl;
+    outpw(GC_INDEX, GC_READMAP + ((dc_x & 1) << 9));
+    outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
 
     dest = destview + Mul80(dc_yl) + (dc_x >> 1);
 
-    outpw(GC_INDEX, GC_READMAP + ((dc_x & 1) << 9));
-    outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
+    count = dc_yh - dc_yl;
 
     while (count >= 3)
     {
@@ -476,9 +476,9 @@ void R_DrawFuzzColumnFastPotato(void)
     register int count;
     register byte *dest;
 
-    count = dc_yh - dc_yl;
-
     dest = destview + Mul80(dc_yl) + dc_x;
+
+    count = dc_yh - dc_yl;
 
     while (count >= 3)
     {
@@ -511,11 +511,11 @@ void R_DrawFuzzColumnSaturn(void)
     if (count < 0)
         return;
 
+    outp(SC_INDEX + 1, 1 << (dc_x & 3));
+
     initialdrawpos = dc_yl + dc_x;
 
     dest = destview + Mul80(dc_yl) + (dc_x >> 2);
-
-    outp(SC_INDEX + 1, 1 << (dc_x & 3));
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
@@ -561,11 +561,11 @@ void R_DrawFuzzColumnSaturnLow(void)
     if (count < 0)
         return;
 
+    outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
+
     initialdrawpos = dc_yl + dc_x;
 
     dest = destview + Mul80(dc_yl) + (dc_x >> 1);
-
-    outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
@@ -682,9 +682,6 @@ void R_DrawSpanFlat(void)
     int dsp_x2;
     register int countp;
 
-    int dsm_x1;
-    int dsm_x2;
-
     int first_plane, last_plane;
     int medium_planes;
     int total_pixels;
@@ -703,49 +700,34 @@ void R_DrawSpanFlat(void)
 
     if (medium_planes > 0)
     {
-        // Quad pixel mode
-        dsm_x1 = ds_x1 / 4;
-
-        if (first_plane != 0)
-            dsm_x1++;
-
-        dsm_x2 = ds_x2 / 4;
-        if (last_plane != 0)
-            dsm_x2--;
-
-        countp = dsm_x2 - dsm_x1;
-        dest = (byte *)origin_y + dsm_x1;
+        int dsm_x1;
+        int dsm_x2;
 
         outp(SC_INDEX + 1, 15);
 
-        while(countp >= 3){
-            *(dest) = color;
-            *(dest+1) = color;
-            *(dest+2) = color;
-            *(dest+3) = color;
-            dest += 4;
-            countp -= 4;
-        }
+        // Quad pixel mode
+        dsm_x1 = ds_x1 / 4;
+        dsm_x1 += first_plane != 0;
 
-        while(countp >= 0){
-            *dest++ = color;
-            countp--;
-        }
+        dsm_x2 = ds_x2 / 4;
+        dsm_x2 -= last_plane != 0;
+
+        dest = (byte *)origin_y + dsm_x1;
+        countp = dsm_x2 - dsm_x1 + 1;
+        SetBytes(dest, color, countp);
     }
 
     // Single pixel mode
 
     dsp_x1 = (ds_x1) / 4;
-
-    if (dsp_x1 * 4 < ds_x1)
-        dsp_x1++;
+    dsp_x1 += dsp_x1 * 4 < ds_x1;
 
     dsp_x2 = (ds_x2) / 4;
 
     if (dsp_x2 > dsp_x1)
     {
-        dest = (byte *)origin_y + dsp_x1;
         outp(SC_INDEX + 1, 1 << 0);
+        dest = (byte *)origin_y + dsp_x1;
         *dest = color;
         dest = (byte *)origin_y + dsp_x2;
         *dest = color;
@@ -753,22 +735,20 @@ void R_DrawSpanFlat(void)
 
     if (dsp_x2 == dsp_x1)
     {
-        dest = (byte *)origin_y + dsp_x1;
         outp(SC_INDEX + 1, 1 << 0);
+        dest = (byte *)origin_y + dsp_x1;
         *dest = color;
     }
 
     dsp_x1 = (ds_x1 - 1) / 4;
-
-    if (dsp_x1 * 4 + 1 < ds_x1)
-        dsp_x1++;
+    dsp_x1 += dsp_x1 * 4 + 1 < ds_x1;
 
     dsp_x2 = (ds_x2 - 1) / 4;
 
     if (dsp_x2 > dsp_x1)
     {
-        dest = (byte *)origin_y + dsp_x1;
         outp(SC_INDEX + 1, 1 << 1);
+        dest = (byte *)origin_y + dsp_x1;
         *dest = color;
         dest = (byte *)origin_y + dsp_x2;
         *dest = color;
@@ -776,22 +756,20 @@ void R_DrawSpanFlat(void)
 
     if (dsp_x2 == dsp_x1)
     {
-        dest = (byte *)origin_y + dsp_x1;
         outp(SC_INDEX + 1, 1 << 1);
+        dest = (byte *)origin_y + dsp_x1;
         *dest = color;
     }
 
     dsp_x1 = (ds_x1 - 2) / 4;
-
-    if (dsp_x1 * 4 + 2 < ds_x1)
-        dsp_x1++;
+    dsp_x1 += dsp_x1 * 4 + 2 < ds_x1;
 
     dsp_x2 = (ds_x2 - 2) / 4;
 
     if (dsp_x2 > dsp_x1)
     {
-        dest = (byte *)origin_y + dsp_x1;
         outp(SC_INDEX + 1, 1 << 2);
+        dest = (byte *)origin_y + dsp_x1;
         *dest = color;
         dest = (byte *)origin_y + dsp_x2;
         *dest = color;
@@ -799,22 +777,20 @@ void R_DrawSpanFlat(void)
 
     if (dsp_x2 == dsp_x1)
     {
-        dest = (byte *)origin_y + dsp_x1;
         outp(SC_INDEX + 1, 1 << 2);
+        dest = (byte *)origin_y + dsp_x1;
         *dest = color;
     }
 
     dsp_x1 = (ds_x1 - 3) / 4;
-
-    if (dsp_x1 * 4 + 3 < ds_x1)
-        dsp_x1++;
+    dsp_x1 += dsp_x1 * 4 + 3 < ds_x1;
 
     dsp_x2 = (ds_x2 - 3) / 4;
 
     if (dsp_x2 > dsp_x1)
     {
-        dest = (byte *)origin_y + dsp_x1;
         outp(SC_INDEX + 1, 1 << 3);
+        dest = (byte *)origin_y + dsp_x1;
         *dest = color;
         dest = (byte *)origin_y + dsp_x2;
         *dest = color;
@@ -822,8 +798,8 @@ void R_DrawSpanFlat(void)
 
     if (dsp_x2 == dsp_x1)
     {
-        dest = (byte *)origin_y + dsp_x1;
         outp(SC_INDEX + 1, 1 << 3);
+        dest = (byte *)origin_y + dsp_x1;
         *dest = color;
     }
 }
@@ -834,9 +810,6 @@ void R_DrawSpanFlatLow(void)
     int dsp_x1;
     int dsp_x2;
     register int countp;
-
-    int dsm_x1;
-    int dsm_x2;
 
     int first_plane, last_plane;
     int medium_planes;
@@ -856,47 +829,32 @@ void R_DrawSpanFlatLow(void)
 
     if (medium_planes > 0)
     {
-        // Quad pixel mode
-        dsm_x1 = ds_x1 / 2;
-
-        if (first_plane != 0)
-            dsm_x1++;
-
-        dsm_x2 = ds_x2 / 2;
-        if (last_plane != 0)
-            dsm_x2--;
-
-        countp = dsm_x2 - dsm_x1;
-        dest = (byte *)origin_y + dsm_x1;
+        int dsm_x1;
+        int dsm_x2;
 
         outp(SC_INDEX + 1, 15);
 
-        while(countp >= 3){
-            *(dest) = color;
-            *(dest+1) = color;
-            *(dest+2) = color;
-            *(dest+3) = color;
-            dest += 4;
-            countp -= 4;
-        }
+        // Quad pixel mode
+        dsm_x1 = ds_x1 / 2;
+        dsm_x1 += first_plane != 0;
 
-        while(countp >= 0){
-            *dest++ = color;
-            countp--;
-        }
+        dsm_x2 = ds_x2 / 2;
+        dsm_x2 -= last_plane != 0;
+
+        dest = (byte *)origin_y + dsm_x1;
+        countp = dsm_x2 - dsm_x1 + 1;
+        SetBytes(dest, color, countp);
     }
 
     dsp_x1 = (ds_x1) / 2;
-
-    if (dsp_x1 * 2 < ds_x1)
-        dsp_x1++;
+    dsp_x1 += dsp_x1 * 2 < ds_x1; 
 
     dsp_x2 = (ds_x2) / 2;
 
     if (dsp_x2 > dsp_x1)
     {
-        dest = (byte *)origin_y + dsp_x1;
         outp(SC_INDEX + 1, 3 << 0);
+        dest = (byte *)origin_y + dsp_x1;
         *dest = color;
         dest = (byte *)origin_y + dsp_x2;
         *dest = color;
@@ -904,22 +862,20 @@ void R_DrawSpanFlatLow(void)
 
     if (dsp_x2 == dsp_x1)
     {
-        dest = (byte *)origin_y + dsp_x1;
         outp(SC_INDEX + 1, 3 << 0);
+        dest = (byte *)origin_y + dsp_x1;
         *dest = color;
     }
 
     dsp_x1 = (ds_x1 - 1) / 2;
-
-    if (dsp_x1 * 2 < ds_x1 - 1)
-        dsp_x1++;
+    dsp_x1 += dsp_x1 * 2 < ds_x1 - 1;
 
     dsp_x2 = (ds_x2 - 1) / 2;
 
     if (dsp_x2 > dsp_x1)
     {
-        dest = (byte *)origin_y + dsp_x1;
         outp(SC_INDEX + 1, 3 << 2);
+        dest = (byte *)origin_y + dsp_x1;
         *dest = color;
         dest = (byte *)origin_y + dsp_x2;
         *dest = color;
@@ -927,8 +883,8 @@ void R_DrawSpanFlatLow(void)
 
     if (dsp_x2 == dsp_x1)
     {
-        dest = (byte *)origin_y + dsp_x1;
         outp(SC_INDEX + 1, 3 << 2);
+        dest = (byte *)origin_y + dsp_x1;
         *dest = color;
     }
 }
@@ -940,23 +896,11 @@ void R_DrawSpanFlatPotato(void)
 
     lighttable_t color = ds_colormap[ds_source[0]];
 
-    countp = ds_x2 - ds_x1;
-
     dest = destview + Mul80(ds_y) + ds_x1;
 
-    while(countp >= 3){
-        *(dest) = color;
-        *(dest + 1) = color;
-        *(dest + 2) = color;
-        *(dest + 3) = color;
-        dest += 4;
-        countp -= 4;
-    }
+    countp = ds_x2 - ds_x1 + 1;
 
-    while(countp >= 0){
-        *(dest++) = color;
-        countp--;
-    }
+    SetBytes(dest, color, countp);
 }
 
 //
@@ -1143,34 +1087,4 @@ void R_DrawViewBorder(void)
         R_VideoErase(ofs, side);
         ofs += SCREENWIDTH;
     }
-
-    // ?
-    //V_MarkRect (0,0,SCREENWIDTH, SCREENHEIGHT-SBARHEIGHT);
 }
-
-/*void R_DrawColumnPotato_C(void)
-{
-    register int count;
-    register byte *dest;
-    fixed_t frac;
-    fixed_t fracstep;
-
-    count = dc_yh - dc_yl;
-    if (count < 0)
-        return;
-
-    outp(SC_INDEX + 1, 15);
-    dest = destview + dc_yl * 80 + dc_x;
-
-    // Looks familiar.
-    fracstep = dc_iscale;
-    frac = dc_texturemid + (dc_yl - centery) * fracstep;
-
-    do
-    {
-        *dest = dc_colormap[dc_source[frac >> FRACBITS]];
-        dest += SCREENWIDTH / 4;
-
-        frac += fracstep;
-    } while (count--);
-}*/
