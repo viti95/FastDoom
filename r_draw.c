@@ -217,9 +217,7 @@ void R_DrawColumnFlat(void)
     int count;
     byte *dest;
     lighttable_t color;
-
-    outp(SC_INDEX + 1, 1 << (dc_x & 3));
-
+    
     color = dc_flatcolor;
 
     dest = destview + Mul80(dc_yl) + (dc_x >> 2);
@@ -249,8 +247,6 @@ void R_DrawColumnFlatLow(void)
     int count;
     byte *dest;
     lighttable_t color;
-
-    outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
 
     color = dc_flatcolor;
 

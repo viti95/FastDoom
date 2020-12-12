@@ -395,36 +395,173 @@ void R_DrawPlanes(void)
 
         if (flatSurfaces)
         {
-            //dc_iscale = pspriteiscale >> detailshift;
             dc_colormap = colormaps;
 
-            dc_source = W_CacheLumpNum(firstflat +
-                                           flattranslation[pl->picnum],
-                                       PU_STATIC);
+            dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
 
             dc_flatcolor = dc_colormap[dc_source[0]];
 
-            for (x = pl->minx; x <= pl->maxx; x++)
+            switch (detailshift)
             {
-                dc_yl = pl->top[x];
-                dc_yh = pl->bottom[x];
+            case 0:
+                // Plane 0
+                x = pl->minx;
+                outp(SC_INDEX + 1, 1 << (x & 3));
 
-                if (dc_yl > dc_yh)
+                do
+                {
+                    if (pl->top[x] > pl->bottom[x])
+                    {
+                        x += 4;
+                        continue;
+                    }
+
+                    dc_yl = pl->top[x];
+                    dc_yh = pl->bottom[x];
+                    dc_x = x;
+
+                    R_DrawColumnFlat();
+
+                    x += 4;
+                } while (x <= pl->maxx);
+
+                // Plane 1
+                x = pl->minx + 1;
+
+                if (x > pl->maxx)
                     continue;
 
-                dc_x = x;
-                switch (detailshift)
+                outp(SC_INDEX + 1, 1 << (x & 3));
+
+                do
                 {
-                case 0:
+                    if (pl->top[x] > pl->bottom[x])
+                    {
+                        x += 4;
+                        continue;
+                    }
+
+                    dc_yl = pl->top[x];
+                    dc_yh = pl->bottom[x];
+                    dc_x = x;
+
                     R_DrawColumnFlat();
-                    break;
-                case 1:
+
+                    x += 4;
+                } while (x <= pl->maxx);
+
+                // Plane 2
+                x = pl->minx + 2;
+
+                if (x > pl->maxx)
+                    continue;
+
+                outp(SC_INDEX + 1, 1 << (x & 3));
+
+                do
+                {
+                    if (pl->top[x] > pl->bottom[x])
+                    {
+                        x += 4;
+                        continue;
+                    }
+
+                    dc_yl = pl->top[x];
+                    dc_yh = pl->bottom[x];
+                    dc_x = x;
+
+                    R_DrawColumnFlat();
+
+                    x += 4;
+                } while (x <= pl->maxx);
+
+                // Plane 3
+                x = pl->minx + 3;
+
+                if (x > pl->maxx)
+                    continue;
+
+                outp(SC_INDEX + 1, 1 << (x & 3));
+
+                do
+                {
+                    if (pl->top[x] > pl->bottom[x])
+                    {
+                        x += 4;
+                        continue;
+                    }
+
+                    dc_yl = pl->top[x];
+                    dc_yh = pl->bottom[x];
+                    dc_x = x;
+
+                    R_DrawColumnFlat();
+
+                    x += 4;
+                } while (x <= pl->maxx);
+
+                break;
+            case 1:
+                // Plane 0
+                x = pl->minx;
+                outp(SC_INDEX + 1, 3 << ((x & 1) << 1));
+
+                do
+                {
+                    if (pl->top[x] > pl->bottom[x])
+                    {
+                        x += 2;
+                        continue;
+                    }
+
+                    dc_yl = pl->top[x];
+                    dc_yh = pl->bottom[x];
+                    dc_x = x;
+
                     R_DrawColumnFlatLow();
-                    break;
-                case 2:
+
+                    x += 2;
+                } while (x <= pl->maxx);
+
+                // Plane 1
+                x = pl->minx + 1;
+
+                if (x > pl->maxx)
+                    continue;
+
+                outp(SC_INDEX + 1, 3 << ((x & 1) << 1));
+
+                do
+                {
+                    if (pl->top[x] > pl->bottom[x])
+                    {
+                        x += 2;
+                        continue;
+                    }
+
+                    dc_yl = pl->top[x];
+                    dc_yh = pl->bottom[x];
+                    dc_x = x;
+
+                    R_DrawColumnFlatLow();
+
+                    x += 2;
+                } while (x <= pl->maxx);
+
+                break;
+            case 2:
+                for (x = pl->minx; x <= pl->maxx; x++)
+                {
+                    if (pl->top[x] > pl->bottom[x])
+                        continue;
+
+                    dc_yl = pl->top[x];
+                    dc_yh = pl->bottom[x];
+                    dc_x = x;
+
                     R_DrawColumnFlatPotato();
-                    break;
                 }
+                break;
             }
 
             Z_ChangeTag(dc_source, PU_CACHE);
