@@ -317,9 +317,9 @@ void HU_Start(void)
 
     // [JN] Create the FPS widget
     HUlib_initTextLine(&w_fps,
-                        SCREENWIDTH - 72, HU_MSGY,
-                        hu_font,
-                        HU_FONTSTART);
+                       SCREENWIDTH - 48, HU_MSGY,
+                       hu_font,
+                       HU_FONTSTART);
 
     // create the map title widget
     HUlib_initTextLine(&w_title,
@@ -361,8 +361,9 @@ void HU_Drawer(void)
 
     HUlib_drawSText(&w_message);
 
-    if (showFPS){
-        sprintf(str, "fps: %i.%01i", fps >> FRACBITS, ((fps & 65535)*10) >> FRACBITS);
+    if (showFPS)
+    {
+        sprintf(str, "%i.%01i", fps >> FRACBITS, Mul10(fps & 65535) >> FRACBITS);
         HUlib_clearTextLine(&w_fps);
         f = str;
         while (*f)
