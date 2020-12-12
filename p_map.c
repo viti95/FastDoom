@@ -1261,9 +1261,7 @@ boolean PIT_RadiusAttack(mobj_t *thing)
 
     dist = dx > dy ? dx : dy;
     dist = (dist - thing->radius) >> FRACBITS;
-
-    if (dist < 0)
-        dist = 0;
+    dist -= dist & (dist >> 31);
 
     if (dist >= bombdamage)
         return true; // out of range

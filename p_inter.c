@@ -752,8 +752,7 @@ void P_DamageMobj(mobj_t *target,
 			damage -= saved;
 		}
 		player->health -= damage; // mirror mobj health here for Dave
-		if (player->health < 0)
-			player->health = 0;
+		player->health -= (player->health & (player->health >> 31));
 
 		player->attacker = source;
 		player->damagecount += damage; // add damage after armor / invuln
