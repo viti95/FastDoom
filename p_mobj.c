@@ -701,11 +701,10 @@ void P_SpawnMapThing(mapthing_t *mthing)
 
     if (mobj->tics > 0)
         mobj->tics = 1 + (P_Random % mobj->tics);
-    if (mobj->flags & MF_COUNTKILL)
-        totalkills++;
-    if (mobj->flags & MF_COUNTITEM)
-        totalitems++;
 
+    totalkills += (mobj->flags & MF_COUNTKILL) != 0;
+    totalitems += (mobj->flags & MF_COUNTITEM) != 0;
+    
     // VITI95: OPTIMIZE
     mobj->angle = ANG45 * (mthing->angle / 45);
     if (mthing->options & MTF_AMBUSH)

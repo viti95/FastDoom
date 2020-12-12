@@ -485,8 +485,7 @@ void WI_updateAnimatedBack(void)
 				if (!(state == StatCount && i == 7) && wbs->next == a->data1)
 				{
 					a->ctr++;
-					if (a->ctr == a->nanims)
-						a->ctr--;
+					a->ctr -= a->ctr == a->nanims;
 					a->nexttic = bcnt + a->period;
 				}
 				break;

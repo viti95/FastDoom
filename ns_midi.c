@@ -167,10 +167,7 @@ static void _MIDI_ResetTracks(
         ptr->context[0].loopstart = ptr->start;
         ptr->context[0].loopcount = 0;
 
-        if (ptr->active)
-        {
-            _MIDI_ActiveTracks++;
-        }
+        _MIDI_ActiveTracks += ptr->active != 0;
 
         ptr++;
     }
@@ -450,10 +447,8 @@ static int _MIDI_InterpretControllerInfo(
             trackptr->RunningStatus = trackptr->context[0].RunningStatus;
             trackptr->delay = trackptr->context[0].delay;
             trackptr->active = trackptr->context[0].active;
-            if (trackptr->active)
-            {
-                _MIDI_ActiveTracks++;
-            }
+
+            _MIDI_ActiveTracks += trackptr->active != 0;
 
             if (!TimeSet)
             {
@@ -1411,10 +1406,7 @@ static void _MIDI_InitEMIDI(
 
             if (command == MIDI_CONTROL_CHANGE)
             {
-                if (*Track->pos == MIDI_MONO_MODE_ON)
-                {
-                    length++;
-                }
+                length += *Track->pos == MIDI_MONO_MODE_ON;
                 GET_NEXT_EVENT(Track, c1);
                 GET_NEXT_EVENT(Track, c2);
                 length -= 2;
@@ -1613,10 +1605,7 @@ void MIDI_LoadTimbres(
 
             if (command == MIDI_CONTROL_CHANGE)
             {
-                if (*Track->pos == MIDI_MONO_MODE_ON)
-                {
-                    length++;
-                }
+                length += *Track->pos == MIDI_MONO_MODE_ON;
 
                 if (*Track->pos == EMIDI_PROGRAM_CHANGE)
                 {

@@ -185,17 +185,15 @@ void P_DeathThink(player_t *player)
 			// Looking at killer,
 			//  so fade damage flash down.
 			player->mo->angle = angle;
-
-			if (player->damagecount)
-				player->damagecount--;
+			player->damagecount -= player->damagecount != 0;
 		}
 		else if (delta < ANG180)
 			player->mo->angle += ANG5;
 		else
 			player->mo->angle -= ANG5;
 	}
-	else if (player->damagecount)
-		player->damagecount--;
+	else 
+		player->damagecount -= player->damagecount != 0;
 
 	if (player->cmd.buttons & BT_USE)
 		player->playerstate = PST_REBORN;
@@ -296,27 +294,18 @@ void P_PlayerThink(player_t *player)
 	// Counters, time dependend power ups.
 
 	// Strength counts up to diminish fade.
-	if (player->powers[pw_strength])
-		player->powers[pw_strength]++;
 
-	if (player->powers[pw_invulnerability])
-		player->powers[pw_invulnerability]--;
+	player->powers[pw_strength] += player->powers[pw_strength] != 0;
+	player->powers[pw_invulnerability] -= player->powers[pw_invulnerability] != 0;
 
 	if (player->powers[pw_invisibility])
 		if (!--player->powers[pw_invisibility])
 			player->mo->flags &= ~MF_SHADOW;
 
-	if (player->powers[pw_infrared])
-		player->powers[pw_infrared]--;
-
-	if (player->powers[pw_ironfeet])
-		player->powers[pw_ironfeet]--;
-
-	if (player->damagecount)
-		player->damagecount--;
-
-	if (player->bonuscount)
-		player->bonuscount--;
+	player->powers[pw_infrared] -= player->powers[pw_infrared] != 0;
+	player->powers[pw_ironfeet] -= player->powers[pw_ironfeet] != 0;
+	player->damagecount -= player->damagecount != 0;
+	player->bonuscount -= player->bonuscount != 0;
 
 	// Handling colormaps.
 	if (player->powers[pw_invulnerability])
