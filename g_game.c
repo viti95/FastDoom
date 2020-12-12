@@ -249,8 +249,6 @@ void G_BuildTiccmd(ticcmd_t *cmd)
     if (gamekeydown[key_use])
     {
         cmd->buttons |= BT_USE;
-        // clear double clicks if hit use button
-        dclicks = 0;
     }
 
     // chainsaw overrides
