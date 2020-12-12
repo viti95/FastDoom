@@ -395,11 +395,16 @@ void R_DrawPlanes(void)
 
         if (flatSurfaces)
         {
+            int count;
+            byte *dest;
+            byte *basedest;
+            lighttable_t color;
+
             dc_colormap = colormaps;
 
             dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
 
-            dc_flatcolor = dc_colormap[dc_source[0]];
+            color = dc_colormap[dc_source[0]];
 
             switch (detailshift)
             {
@@ -416,11 +421,26 @@ void R_DrawPlanes(void)
                         continue;
                     }
 
-                    dc_yl = pl->top[x];
-                    dc_yh = pl->bottom[x];
-                    dc_x = x;
+                    count = pl->bottom[x] - pl->top[x];
 
-                    R_DrawColumnFlat();
+                    dest = destview + Mul80(pl->top[x]) + (x >> 2);
+
+                    while (count >= 3)
+                    {
+                        *(dest) = color;
+                        *(dest + SCREENWIDTH / 4) = color;
+                        *(dest + SCREENWIDTH / 2) = color;
+                        *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
+                        dest += SCREENWIDTH;
+                        count -= 4;
+                    }
+
+                    while (count >= 0)
+                    {
+                        *dest = color;
+                        dest += SCREENWIDTH / 4;
+                        count--;
+                    };
 
                     x += 4;
                 } while (x <= pl->maxx);
@@ -441,11 +461,26 @@ void R_DrawPlanes(void)
                         continue;
                     }
 
-                    dc_yl = pl->top[x];
-                    dc_yh = pl->bottom[x];
-                    dc_x = x;
+                    count = pl->bottom[x] - pl->top[x];
 
-                    R_DrawColumnFlat();
+                    dest = destview + Mul80(pl->top[x]) + (x >> 2);
+
+                    while (count >= 3)
+                    {
+                        *(dest) = color;
+                        *(dest + SCREENWIDTH / 4) = color;
+                        *(dest + SCREENWIDTH / 2) = color;
+                        *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
+                        dest += SCREENWIDTH;
+                        count -= 4;
+                    }
+
+                    while (count >= 0)
+                    {
+                        *dest = color;
+                        dest += SCREENWIDTH / 4;
+                        count--;
+                    };
 
                     x += 4;
                 } while (x <= pl->maxx);
@@ -466,11 +501,26 @@ void R_DrawPlanes(void)
                         continue;
                     }
 
-                    dc_yl = pl->top[x];
-                    dc_yh = pl->bottom[x];
-                    dc_x = x;
+                    count = pl->bottom[x] - pl->top[x];
 
-                    R_DrawColumnFlat();
+                    dest = destview + Mul80(pl->top[x]) + (x >> 2);
+
+                    while (count >= 3)
+                    {
+                        *(dest) = color;
+                        *(dest + SCREENWIDTH / 4) = color;
+                        *(dest + SCREENWIDTH / 2) = color;
+                        *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
+                        dest += SCREENWIDTH;
+                        count -= 4;
+                    }
+
+                    while (count >= 0)
+                    {
+                        *dest = color;
+                        dest += SCREENWIDTH / 4;
+                        count--;
+                    };
 
                     x += 4;
                 } while (x <= pl->maxx);
@@ -491,11 +541,26 @@ void R_DrawPlanes(void)
                         continue;
                     }
 
-                    dc_yl = pl->top[x];
-                    dc_yh = pl->bottom[x];
-                    dc_x = x;
+                    count = pl->bottom[x] - pl->top[x];
 
-                    R_DrawColumnFlat();
+                    dest = destview + Mul80(pl->top[x]) + (x >> 2);
+
+                    while (count >= 3)
+                    {
+                        *(dest) = color;
+                        *(dest + SCREENWIDTH / 4) = color;
+                        *(dest + SCREENWIDTH / 2) = color;
+                        *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
+                        dest += SCREENWIDTH;
+                        count -= 4;
+                    }
+
+                    while (count >= 0)
+                    {
+                        *dest = color;
+                        dest += SCREENWIDTH / 4;
+                        count--;
+                    };
 
                     x += 4;
                 } while (x <= pl->maxx);
@@ -514,11 +579,26 @@ void R_DrawPlanes(void)
                         continue;
                     }
 
-                    dc_yl = pl->top[x];
-                    dc_yh = pl->bottom[x];
-                    dc_x = x;
+                    count = pl->bottom[x] - pl->top[x];
 
-                    R_DrawColumnFlatLow();
+                    dest = destview + Mul80(pl->top[x]) + (x >> 1);
+
+                    while (count >= 3)
+                    {
+                        *(dest) = color;
+                        *(dest + SCREENWIDTH / 4) = color;
+                        *(dest + SCREENWIDTH / 2) = color;
+                        *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
+                        dest += SCREENWIDTH;
+                        count -= 4;
+                    }
+
+                    while (count >= 0)
+                    {
+                        *dest = color;
+                        dest += SCREENWIDTH / 4;
+                        count--;
+                    };
 
                     x += 2;
                 } while (x <= pl->maxx);
@@ -539,27 +619,58 @@ void R_DrawPlanes(void)
                         continue;
                     }
 
-                    dc_yl = pl->top[x];
-                    dc_yh = pl->bottom[x];
-                    dc_x = x;
+                    count = pl->bottom[x] - pl->top[x];
 
-                    R_DrawColumnFlatLow();
+                    dest = destview + Mul80(pl->top[x]) + (x >> 1);
+
+                    while (count >= 3)
+                    {
+                        *(dest) = color;
+                        *(dest + SCREENWIDTH / 4) = color;
+                        *(dest + SCREENWIDTH / 2) = color;
+                        *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
+                        dest += SCREENWIDTH;
+                        count -= 4;
+                    }
+
+                    while (count >= 0)
+                    {
+                        *dest = color;
+                        dest += SCREENWIDTH / 4;
+                        count--;
+                    };
 
                     x += 2;
                 } while (x <= pl->maxx);
 
                 break;
             case 2:
+
                 for (x = pl->minx; x <= pl->maxx; x++)
                 {
                     if (pl->top[x] > pl->bottom[x])
                         continue;
 
-                    dc_yl = pl->top[x];
-                    dc_yh = pl->bottom[x];
-                    dc_x = x;
+                    count = pl->bottom[x] - pl->top[x];
 
-                    R_DrawColumnFlatPotato();
+                    dest = destview + Mul80(pl->top[x]) + x;
+
+                    while (count >= 3)
+                    {
+                        *(dest) = color;
+                        *(dest + SCREENWIDTH / 4) = color;
+                        *(dest + SCREENWIDTH / 2) = color;
+                        *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
+                        dest += SCREENWIDTH;
+                        count -= 4;
+                    }
+
+                    while (count >= 0)
+                    {
+                        *dest = color;
+                        dest += SCREENWIDTH / 4;
+                        count--;
+                    };
                 }
                 break;
             }
@@ -570,17 +681,14 @@ void R_DrawPlanes(void)
         {
             // regular flat
 
-            ds_source = W_CacheLumpNum(firstflat +
-                                           flattranslation[pl->picnum],
-                                       PU_STATIC);
+            ds_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
             planeheight = abs(pl->height - viewz);
             light = (pl->lightlevel >> LIGHTSEGSHIFT) + extralight;
-
-            if (light >= LIGHTLEVELS)
+            
+            if (light > LIGHTLEVELS - 1)
                 light = LIGHTLEVELS - 1;
 
-            if (light < 0)
-                light = 0;
+            light -= light & (light >> 31);
 
             planezlight = zlight[light];
             pl->top[pl->maxx + 1] = 0xff;
