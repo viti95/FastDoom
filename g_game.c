@@ -153,9 +153,6 @@ boolean *mousebuttons = &mousearray[1]; // allow [-1]
 // mouse values are used once
 int mousex;
 
-int dclicktime;
-int dclickstate;
-int dclicks;
 int dclicktime2;
 int dclickstate2;
 int dclicks2;
@@ -265,41 +262,13 @@ void G_BuildTiccmd(ticcmd_t *cmd)
             break;
         }
 
-    // mouse
-    if (mousebuttons[mousebforward])
-        forward += forwardmove[speed];
-
-    // forward double click
-    if (mousebuttons[mousebforward] != dclickstate && dclicktime > 1)
-    {
-        dclickstate = mousebuttons[mousebforward];
-        if (dclickstate)
-            dclicks++;
-        if (dclicks == 2)
-        {
-            cmd->buttons |= BT_USE;
-            dclicks = 0;
-        }
-        else
-            dclicktime = 0;
-    }
-    else
-    {
-        dclicktime += 1;
-        if (dclicktime > 20)
-        {
-            dclicks = 0;
-            dclickstate = 0;
-        }
-    }
-
     // strafe double click
     bstrafe = mousebuttons[mousebstrafe];
     if (bstrafe != dclickstate2 && dclicktime2 > 1)
     {
         dclickstate2 = bstrafe;
-        if (dclickstate2)
-            dclicks2++;
+        dclicks2 += dclickstate2 != 0;
+
         if (dclicks2 == 2)
         {
             cmd->buttons |= BT_USE;
