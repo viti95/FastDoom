@@ -314,11 +314,8 @@ void P_ZMovement(mobj_t *mo)
     if (mo->z + mo->height > mo->ceilingz)
     {
         // hit the ceiling
-        if (mo->momz > 0)
-            mo->momz = 0;
-        {
-            mo->z = mo->ceilingz - mo->height;
-        }
+        mo->momz += (-mo->momz) & ((-mo->momz) >> 31);
+        mo->z = mo->ceilingz - mo->height;
 
         if (mo->flags & MF_SKULLFLY)
         { // the skull slammed into something

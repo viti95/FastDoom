@@ -724,8 +724,7 @@ retry:
     // First calculate remainder.
     bestslidefrac = FRACUNIT - (bestslidefrac + 0x800);
 
-    if (bestslidefrac > FRACUNIT)
-        bestslidefrac = FRACUNIT;
+    bestslidefrac += (FRACUNIT - bestslidefrac) & ((FRACUNIT - bestslidefrac) >> 31);
 
     if (bestslidefrac <= 0)
         return;

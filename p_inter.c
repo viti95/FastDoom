@@ -180,8 +180,7 @@ P_GiveBody(player_t *player,
 		return false;
 
 	player->health += num;
-	if (player->health > MAXHEALTH)
-		player->health = MAXHEALTH;
+	player->health += (MAXHEALTH - player->health) & ((MAXHEALTH - player->health) >> 31);
 	player->mo->health = player->health;
 
 	return true;
@@ -313,16 +312,14 @@ void P_TouchSpecialThing(mobj_t *special,
 		// bonus items
 	case SPR_BON1:
 		player->health++; // can go over 100%
-		if (player->health > 200)
-			player->health = 200;
+		player->health += (200 - player->health) & ((200 - player->health) >> 31);
 		player->mo->health = player->health;
 		player->message = GOTHTHBONUS;
 		break;
 
 	case SPR_BON2:
 		player->armorpoints++; // can go over 100%
-		if (player->armorpoints > 200)
-			player->armorpoints = 200;
+		player->armorpoints += (200 - player->armorpoints) & ((200 - player->armorpoints) >> 31);
 		if (!player->armortype)
 			player->armortype = 1;
 		player->message = GOTARMBONUS;
@@ -330,8 +327,7 @@ void P_TouchSpecialThing(mobj_t *special,
 
 	case SPR_SOUL:
 		player->health += 100;
-		if (player->health > 200)
-			player->health = 200;
+		player->health += (200 - player->health) & ((200 - player->health) >> 31);
 		player->mo->health = player->health;
 		player->message = GOTSUPER;
 		sound = sfx_getpow;

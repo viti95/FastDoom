@@ -132,8 +132,7 @@ int wipe_doMelt(int ticks)
             else if (y[i] < SCREENHEIGHT)
             {
                 dy = (y[i] < 16) ? y[i] + 1 : 8;
-                if (y[i] + dy >= SCREENHEIGHT)
-                    dy = SCREENHEIGHT - y[i];
+                dy += (SCREENHEIGHT - y[i] - dy) & ((SCREENHEIGHT - y[i] - dy) >> 31);
                 s = &((short *)wipe_scr_end)[Mul200(i) + y[i]];
                 d = &((short *)wipe_scr)[Mul160(y[i]) + i];
                 idx = 0;

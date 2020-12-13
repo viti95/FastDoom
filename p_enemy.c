@@ -208,9 +208,7 @@ boolean P_CheckMissileRange(mobj_t *actor)
     }
 
     dist >>= actor->type == MT_CYBORG || actor->type == MT_SPIDER || actor->type == MT_SKULL; 
-
-    if (dist > 200)
-        dist = 200;
+    dist += (200 - dist) & ((200 - dist) >> 31);
 
     if (actor->type == MT_CYBORG && dist > 160)
         dist = 160;
@@ -972,8 +970,7 @@ void A_Tracer(mobj_t *actor)
 
     th->momz = FRACUNIT;
     th->tics -= P_Random & 3;
-    if (th->tics < 1)
-        th->tics = 1;
+    th->tics -= (th->tics - 1) & ((th->tics - 1) >> 31);
 
     // adjust direction
     dest = actor->tracer;

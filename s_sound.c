@@ -258,10 +258,9 @@ int S_AdjustSoundParams(mobj_t *listener,
                                 source->x,
                                 source->y);
 
-        if (angle > listener->angle)
-            angle = angle - listener->angle;
-        else
-            angle = angle + (0xffffffff - listener->angle);
+        angle -= listener->angle;
+        if (angle <= listener->angle)
+            angle += 0xffffffff;
 
         angle >>= ANGLETOFINESHIFT;
 
@@ -277,8 +276,8 @@ int S_AdjustSoundParams(mobj_t *listener,
     }
     else if (gamemap == 8)
     {
-        if (approx_dist > S_CLIPPING_DIST)
-            approx_dist = S_CLIPPING_DIST;
+
+        approx_dist += (S_CLIPPING_DIST - approx_dist) & ((S_CLIPPING_DIST - approx_dist) >> 31);
 
         *vol = 15 + Div1000((snd_SfxVolume - 15) * ((S_CLIPPING_DIST - approx_dist) >> FRACBITS));
     }

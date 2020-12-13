@@ -883,28 +883,20 @@ void ST_doPaletteStuff(void)
 	{
 		// slowly fade the berzerk out
 		bzc = 12 - (plyr->powers[pw_strength] >> 6);
-
-		if (bzc > cnt)
-			cnt = bzc;
+		cnt -= (cnt - bzc) & ((cnt - bzc) >> 31);
 	}
 
 	if (cnt)
 	{
 		palette = (cnt + 7) >> 3;
-
-		if (palette >= NUMREDPALS)
-			palette = NUMREDPALS - 1;
-
+		palette += (NUMREDPALS - 1 - palette) & ((NUMREDPALS - 1 - palette) >> 31);
 		palette += STARTREDPALS;
 	}
 
 	else if (plyr->bonuscount)
 	{
 		palette = (plyr->bonuscount + 7) >> 3;
-
-		if (palette >= NUMBONUSPALS)
-			palette = NUMBONUSPALS - 1;
-
+		palette += (NUMBONUSPALS - 1 - palette) & ((NUMBONUSPALS - 1 - palette) >> 31);
 		palette += STARTBONUSPALS;
 	}
 

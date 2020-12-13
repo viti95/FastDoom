@@ -144,8 +144,7 @@ boolean P_CrossSubsector(int num)
         }
         else
         {
-            numIV = FixedMul((divl.x - strace.x) >> 8, divl.dy) +
-                  FixedMul((strace.y - divl.y) >> 8, divl.dx);
+            numIV = FixedMul((divl.x - strace.x) >> 8, divl.dy) + FixedMul((strace.y - divl.y) >> 8, divl.dx);
             frac = FixedDiv(numIV, denIV);
         }
 
@@ -154,7 +153,7 @@ boolean P_CrossSubsector(int num)
             opt = openbottom - sightzstart;
             //slope = FixedDiv(openbottom - sightzstart, frac);
             slope = ((abs(opt) >> 14) >= abs(frac)) ? ((opt ^ frac) >> 31) ^ MAXINT : FixedDiv2(opt, frac);
-            if (slope > bottomslope)
+            if (bottomslope < slope)
                 bottomslope = slope;
         }
 
@@ -163,7 +162,7 @@ boolean P_CrossSubsector(int num)
             opt = opentop - sightzstart;
             //slope = FixedDiv(opentop - sightzstart, frac);
             slope = ((abs(opt) >> 14) >= abs(frac)) ? ((opt ^ frac) >> 31) ^ MAXINT : FixedDiv2(opt, frac);
-            if (slope < topslope)
+            if (topslope > slope)
                 topslope = slope;
         }
 
