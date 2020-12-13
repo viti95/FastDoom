@@ -623,9 +623,8 @@ void P_KillMobj(mobj_t *source,
 		P_SetMobjState(target, target->info->deathstate);
 	target->tics -= P_Random & 3;
 
-	if (target->tics < 1)
-		target->tics = 1;
-
+	target->tics -= (target->tics - 1) & ((target->tics - 1) >> 31);
+	
 	// Drop stuff.
 	// This determines the kind of object spawned
 	// during the death frame of a thing.
