@@ -211,11 +211,8 @@ boolean PIT_CheckLine(line_t *ld)
         ceilingline = ld;
     }
 
-    if (openbottom > tmfloorz)
-        tmfloorz = openbottom;
-
-    if (lowfloor < tmdropoffz)
-        tmdropoffz = lowfloor;
+    tmfloorz -= (tmfloorz - openbottom) & ((tmfloorz - openbottom) >> 31);
+    tmdropoffz += (lowfloor - tmdropoffz) & ((lowfloor - tmdropoffz) >> 31);
 
     // if contacted a special line, add it to the list
     if (ld->special)
@@ -517,8 +514,7 @@ boolean P_ThingHeightClip(mobj_t *thing)
     else
     {
         // don't adjust a floating monster unless forced to
-        if (thing->z + thing->height > thing->ceilingz)
-            thing->z = thing->ceilingz - thing->height;
+        thing->z += (thing->ceilingz - thing->height - thing->z) & ((thing->ceilingz - thing->height - thing->z) >> 31);
     }
 
     if (thing->ceilingz - thing->floorz < thing->height)

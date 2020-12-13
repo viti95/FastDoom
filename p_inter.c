@@ -78,9 +78,7 @@ P_GiveAmmo(player_t *player,
 
 	oldammo = player->ammo[ammo];
 	player->ammo[ammo] += num;
-
-	if (player->ammo[ammo] > player->maxammo[ammo])
-		player->ammo[ammo] = player->maxammo[ammo];
+	player->ammo[ammo] += (player->maxammo[ammo] - player->ammo[ammo]) & ((player->maxammo[ammo] - player->ammo[ammo]) >> 31);
 
 	// If non zero ammo,
 	// don't change up weapons,
