@@ -229,10 +229,8 @@ void I_SetPalette(int numpalette)
     int pos = Mul768(numpalette);
 
     _outbyte(PEL_WRITE_ADR, 0);
-	for(i = 0; i < 768; i++)
-	{
-		_outbyte(PEL_DATA, processedpalette[pos++]);
-	}
+
+    OutString(PEL_DATA, ((byte *)processedpalette) + pos, 768);
 }
 
 //

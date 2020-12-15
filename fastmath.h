@@ -282,8 +282,8 @@ void SetDWords(void *dest, int value, int num_dwords);
     parm [edi] [eax] [ecx] \
     modify [edi ecx];
 
-void ASMOutStrU8(unsigned short Port, byte *addr, int c);
-#pragma aux ASMOutStrU8 = \
+void OutString(unsigned short Port, byte *addr, int c);
+#pragma aux OutString = \
     "rep outsb" \
     parm [dx] [si] [cx] nomemory \
     modify exact [si cx] nomemory;
