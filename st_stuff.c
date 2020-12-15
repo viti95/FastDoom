@@ -253,9 +253,6 @@ static boolean st_firsttime;
 // used to execute ST_Init() only once
 static int veryfirsttime = 1;
 
-// lump number for PLAYPAL
-static int lu_palette;
-
 // used for timing
 static unsigned int st_clock;
 
@@ -1055,7 +1052,6 @@ void ST_loadGraphics(void)
 
 void ST_loadData(void)
 {
-	lu_palette = W_GetNumForName("PLAYPAL");
 	ST_loadGraphics();
 }
 
