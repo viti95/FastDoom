@@ -289,7 +289,7 @@ void I_UpdateBox(int x, int y, int w, int h)
 
                 while (k--)
                 {
-                    *(unsigned int *)dest = (unsigned int)(((*(source + 12)) << 24) + ((*(source + 8)) << 16) + ((*(source + 4)) << 8) + (*source));
+                    *(unsigned int *)dest = (unsigned int)((*source) + ((*(source + 4)) << 8) + ((*(source + 8)) << 16) + ((*(source + 12)) << 24));
                     dest += 4;
                     source += 16;
                 }
@@ -315,7 +315,7 @@ void I_UpdateBox(int x, int y, int w, int h)
 
                 while (k--)
                 {
-                    *(unsigned short *)dest = (unsigned short)(((*(source + 4)) << 8) + (*source));
+                    *(unsigned short *)dest = (unsigned short)((*source) + ((*(source + 4)) << 8));
                     dest += 2;
                     source += 8;
                 }
