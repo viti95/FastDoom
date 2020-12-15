@@ -255,7 +255,7 @@ void CopyBytes(void *src, void *dest, int num_bytes);
 
 void CopyWords(void *src, void *dest, int num_words);
 #pragma aux CopyWords =     \
-    "rep    movsw"          \
+    "rep movsw"          \
     parm [esi] [edi] [ecx] modify[edi esi ecx];
 
 void CopyDWords(void *src, void *dest, int num_dwords);
@@ -281,5 +281,11 @@ void SetDWords(void *dest, int value, int num_dwords);
     "rep stosd" \
     parm [edi] [eax] [ecx] \
     modify [edi ecx];
+
+void ASMOutStrU8(unsigned short Port, byte *addr, int c);
+#pragma aux ASMOutStrU8 = \
+    "rep outsb" \
+    parm [dx] [si] [cx] nomemory \
+    modify exact [si cx] nomemory;
 
 #endif // __DOOMMATH__
