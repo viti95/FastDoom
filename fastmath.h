@@ -282,7 +282,7 @@ void SetDWords(void *dest, int value, int num_dwords);
     parm [edi] [eax] [ecx] \
     modify [edi ecx];
 
-void OutString(unsigned short Port, byte *addr, int c);
+void OutString(unsigned short Port, unsigned char *addr, int c);
 #pragma aux OutString = \
     "rep outsb" \
     parm [dx] [si] [cx] nomemory \

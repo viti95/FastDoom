@@ -230,7 +230,7 @@ void I_SetPalette(int numpalette)
 
     _outbyte(PEL_WRITE_ADR, 0);
 
-    OutString(PEL_DATA, ((byte *)processedpalette) + pos, 768);
+    OutString(PEL_DATA, ((unsigned char *)processedpalette) + pos, 768);
 }
 
 //
