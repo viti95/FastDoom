@@ -647,7 +647,7 @@ void R_DrawSpanFlat(void)
     }
 
     dsp_x1 = (ds_x1 - 1) / 4;
-    dsp_x1 += dsp_x1 * 4 + 1 < ds_x1;
+    dsp_x1 += dsp_x1 * 4 < ds_x1 - 1;
 
     dsp_x2 = (ds_x2 - 1) / 4;
 
@@ -668,7 +668,7 @@ void R_DrawSpanFlat(void)
     }
 
     dsp_x1 = (ds_x1 - 2) / 4;
-    dsp_x1 += dsp_x1 * 4 + 2 < ds_x1;
+    dsp_x1 += dsp_x1 * 4 < ds_x1 - 2;
 
     dsp_x2 = (ds_x2 - 2) / 4;
 
@@ -689,7 +689,7 @@ void R_DrawSpanFlat(void)
     }
 
     dsp_x1 = (ds_x1 - 3) / 4;
-    dsp_x1 += dsp_x1 * 4 + 3 < ds_x1;
+    dsp_x1 += dsp_x1 * 4 < ds_x1 - 3;
 
     dsp_x2 = (ds_x2 - 3) / 4;
 
