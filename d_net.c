@@ -121,18 +121,8 @@ void NetUpdate(void)
 //
 void D_CheckNetGame(void)
 {
-	// which tic to start sending
 	nettics = 0;
-
-	printf("startskill %i  deathmatch: %i  startmap: %i  startepisode: %i\n",
-		   startskill, 0, startmap, startepisode);
-
-	// read values out of doomcom
-
 	playeringame = true;
-
-	printf("player %i of %i (%i nodes)\n",
-		   1, 1, 1);
 }
 
 //
