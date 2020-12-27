@@ -470,7 +470,7 @@ task *TS_ScheduleTask(
 
     ptr = NULL;
 
-    status = USRHOOKS_GetMem(&ptr, sizeof(task));
+    status = USRHOOKS_GetMem((void **)&ptr, sizeof(task));
     if (status == USRHOOKS_Ok)
 #else
     ptr = malloc(sizeof(task));

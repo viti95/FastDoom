@@ -210,7 +210,6 @@ byte scantokey[128] =
 
 void I_ProcessPalette(byte *palette)
 {
-
     int i;
 
     for (i = 0; i < 14 * 768; i++)
@@ -637,7 +636,7 @@ void I_StartTic(void)
 //
 // I_TimerISR
 //
-void I_TimerISR(void)
+void I_TimerISR(task *task)
 {
     ticcount++;
 }

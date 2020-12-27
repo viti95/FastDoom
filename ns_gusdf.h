@@ -48,7 +48,7 @@ typedef volatile struct VoiceNode
 
     wavedata wavetype;
     int bits;
-    playbackstatus (*GetSound)(struct VoiceNode *voice);
+    playbackstatus (*GetSound)(volatile struct VoiceNode *voice);
 
     int num;
 
