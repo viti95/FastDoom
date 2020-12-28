@@ -119,11 +119,6 @@
 #define DIG_BUFFER_DONE 2
 #define DIG_PAUSE 3
 
-/* log table used for vibrato and pitch bend.  log table made public for
-** developers use */
-#define LOG_TAB_SIZE 12
-extern long gf1_log_table[LOG_TAB_SIZE];
-
 #if defined(__BORLANDC__)
 #undef RFAR
 #define RFAR far
