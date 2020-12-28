@@ -27,7 +27,4 @@
 // QuitDOOM messages
 #define NUM_QUITMESSAGES 8
 
-extern char endmsg1[NUM_QUITMESSAGES][80];
-extern char endmsg2[NUM_QUITMESSAGES][80];
-
 #endif

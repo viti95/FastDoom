@@ -61,6 +61,7 @@
 #define NUMEPISODES 4
 #endif
 #define NUMMAPS 9
+#define NUMCMAPS 32
 
 // in tics
 //U #define PAUSELEN		(TICRATE*2)
@@ -283,9 +284,6 @@ static int cnt_secret;
 static int cnt_time;
 static int cnt_par;
 static int cnt_pause;
-
-// # of commercial levels
-static int NUMCMAPS;
 
 //
 //	GRAPHICS
@@ -969,7 +967,6 @@ void WI_loadData(void)
 
 	if (commercial)
 	{
-		NUMCMAPS = 32;
 		lnames = (patch_t **)Z_MallocUnowned(sizeof(patch_t *) * NUMCMAPS, PU_STATIC);
 		for (i = 0; i < NUMCMAPS; i++)
 		{
