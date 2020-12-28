@@ -105,7 +105,7 @@
 
 #define GOTBFG9000 "You got the BFG9000!  Oh, yes."
 #define GOTCHAINGUN "You got the chaingun!"
-#define GOTCHAINSAW "A chainsaw!  Find some meat!"
+#define GOTCHAINSAW "A chainsaw! Find some meat!"
 #define GOTLAUNCHER "You got the rocket launcher!"
 #define GOTPLASMA "You got the plasma gun!"
 #define GOTSHOTGUN "You got the shotgun!"
