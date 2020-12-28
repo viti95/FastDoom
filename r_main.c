@@ -47,6 +47,7 @@ int centery;
 
 fixed_t centerxfrac;
 fixed_t centeryfrac;
+fixed_t centeryfracshifted;
 fixed_t projection;
 fixed_t iprojection;
 
@@ -558,6 +559,7 @@ fixed_t R_ScaleFromGlobalAngle(angle_t visangle)
     {
         scale = FixedDiv(num, den);
 
+        // SCALE BETWEEN 256 AND 64 * FRACUNIT ???
         if (scale > 64 * FRACUNIT)
             scale = 64 * FRACUNIT;
         else if (scale < 256)
@@ -729,11 +731,13 @@ void R_ExecuteSetViewSize(void)
         detailshift = setdetail;
 
     viewwidth = scaledviewwidth >> detailshift;
+    viewwidthlimit = viewwidth - 1;
 
     centery = viewheight / 2;
     centerx = viewwidth / 2;
     centerxfrac = centerx << FRACBITS;
     centeryfrac = centery << FRACBITS;
+    centeryfracshifted = centeryfrac >> 4;
     projection = centerxfrac;
     iprojection = FixedDiv(FRACUNIT << 8, projection);
 
@@ -808,6 +812,7 @@ void R_ExecuteSetViewSize(void)
     // psprite scales
     pspritescale = FRACUNIT * viewwidth / SCREENWIDTH;
     pspriteiscale = FRACUNIT * SCREENWIDTH / viewwidth;
+    pspriteiscaleshifted = pspriteiscale >> detailshift;
 
     // thing clipping
     for (i = 0; i < viewwidth; i++)
@@ -839,7 +844,7 @@ void R_ExecuteSetViewSize(void)
             if (level < 0)
                 level = 0;
 
-            if (level >= NUMCOLORMAPS)
+            if (level > NUMCOLORMAPS - 1)
                 level = NUMCOLORMAPS - 1;
 
             scalelight[i][j] = colormaps + level * 256;
@@ -982,8 +987,7 @@ void R_SetupFrame(player_t *player)
 
     if (player->fixedcolormap)
     {
-        fixedcolormap =
-            colormaps + player->fixedcolormap * 256 * sizeof(lighttable_t);
+        fixedcolormap = colormaps + player->fixedcolormap * 256 * sizeof(lighttable_t);
 
         walllights = scalelightfixed;
 

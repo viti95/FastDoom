@@ -276,8 +276,8 @@ int S_AdjustSoundParams(mobj_t *listener,
     }
     else if (gamemap == 8)
     {
-
-        approx_dist += (S_CLIPPING_DIST - approx_dist) & ((S_CLIPPING_DIST - approx_dist) >> 31);
+        if (approx_dist > S_CLIPPING_DIST)
+            approx_dist = S_CLIPPING_DIST;
 
         *vol = 15 + Div1000((snd_SfxVolume - 15) * ((S_CLIPPING_DIST - approx_dist) >> FRACBITS));
     }

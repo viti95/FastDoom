@@ -59,6 +59,7 @@ typedef struct
 //
 fixed_t pspritescale;
 fixed_t pspriteiscale;
+fixed_t pspriteiscaleshifted;
 
 lighttable_t **spritelights;
 
@@ -543,8 +544,8 @@ void R_ProjectSprite(mobj_t *thing)
     vis->gz = thing->z;
     vis->gzt = gzt; // killough 3/27/98
     vis->texturemid = gzt - viewz;
-    vis->x1 = x1 - (x1 & (x1 >> 31));
-    vis->x2 = x2 >= viewwidth ? viewwidth - 1 : x2;
+    vis->x1 = x1 < 0 ? 0 : x1;
+    vis->x2 = x2 > viewwidthlimit ? viewwidthlimit : x2;
     //iscale = FixedDiv(FRACUNIT, xscale);
     iscale = FixedMul(tz, iprojection) >> 8;
 
@@ -613,10 +614,12 @@ void R_AddSprites(sector_t *sec)
 
     lightnum = (sec->lightlevel >> LIGHTSEGSHIFT) + extralight;
 
-	// Lightnum between 0 and 15
-	lightnum -= lightnum & (lightnum >> 31);
-	lightnum += (15 - lightnum) & ((15 - lightnum) >> 31);
-	spritelights = scalelight[lightnum];
+    if (lightnum < 0)
+        spritelights = scalelight[0];
+    else if (lightnum >= LIGHTLEVELS)
+        spritelights = scalelight[LIGHTLEVELS - 1];
+    else
+        spritelights = scalelight[lightnum];
 
     // Handle all things in sector.
     for (thing = sec->thinglist; thing; thing = thing->snext)
@@ -658,8 +661,8 @@ void R_DrawPSprite(pspdef_t *psp)
     vis = &avis;
     vis->mobjflags = 0;
     vis->texturemid = (BASEYCENTER << FRACBITS) + FRACUNIT / 2 - (psp->sy - spritetopoffset[lump]);
-    vis->x1 = x1 - (x1 & (x1 >> 31));
-    vis->x2 = x2 >= viewwidth ? viewwidth - 1 : x2;
+    vis->x1 = x1 < 0 ? 0 : x1;
+    vis->x2 = x2 > viewwidthlimit ? viewwidthlimit : x2;
     vis->scale = pspritescale << detailshift;
 
     if (flip)
@@ -714,9 +717,12 @@ void R_DrawPlayerSprites(void)
     // get light level
     lightnum = (viewplayer->mo->subsector->sector->lightlevel >> LIGHTSEGSHIFT) + extralight;
 
-    lightnum -= lightnum & (lightnum >> 31);
-    lightnum += (15 - lightnum) & ((15 - lightnum) >> 31);
-    spritelights = scalelight[lightnum];
+	if (lightnum < 0)
+        spritelights = scalelight[0];
+    else if (lightnum > LIGHTLEVELS - 1)
+        spritelights = scalelight[LIGHTLEVELS - 1];
+    else
+        spritelights = scalelight[lightnum];
 
     // clip to screen bounds
     mfloorclip = screenheightarray;

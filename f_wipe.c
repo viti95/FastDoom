@@ -48,12 +48,14 @@ void wipe_shittyColMajorXform(short *array)
 
     dest = (short *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
 
-    for (y = 0; y < SCREENHEIGHT; y++){
+    for (y = 0; y < SCREENHEIGHT; y++)
+    {
 
         int base_x = y;
         int x;
 
-        for (x = 0; x < SCREENWIDTH / 16; x++){
+        for (x = 0; x < SCREENWIDTH / 16; x++)
+        {
             dest[base_x] = array[base_y];
             dest[base_x + 200] = array[base_y + 1];
             dest[base_x + 400] = array[base_y + 2];
@@ -66,8 +68,6 @@ void wipe_shittyColMajorXform(short *array)
             base_y += 8;
         }
     }
-        
-            
 
     CopyDWords(dest, array, (SCREENWIDTH * SCREENHEIGHT) / 4);
     //memcpy(array, dest, SCREENWIDTH * SCREENHEIGHT);
@@ -109,12 +109,6 @@ int wipe_initMelt()
 int wipe_doMelt(int ticks)
 {
     int i;
-    int j;
-    int dy;
-    int idx;
-
-    short *s;
-    short *d;
     boolean done = true;
 
     if (noMelt)
@@ -124,32 +118,38 @@ int wipe_doMelt(int ticks)
     {
         for (i = 0; i < SCREENWIDTH / 2; i++)
         {
-            if (y[i] < 0)
+            int y_val = y[i];
+            if (y_val < 0)
             {
                 y[i]++;
                 done = false;
             }
-            else if (y[i] < SCREENHEIGHT)
+            else if (y_val < SCREENHEIGHT)
             {
-                dy = (y[i] < 16) ? y[i] + 1 : 8;
-                dy += (SCREENHEIGHT - y[i] - dy) & ((SCREENHEIGHT - y[i] - dy) >> 31);
-                s = &((short *)wipe_scr_end)[Mul200(i) + y[i]];
-                d = &((short *)wipe_scr)[Mul160(y[i]) + i];
-                idx = 0;
+                short *s, *d;
+                int j, dy;
+                int idx = 0;
+
+                dy = (y_val < 16) ? y_val + 1 : 8;
+                if (dy >= SCREENHEIGHT - y_val)
+                    dy = SCREENHEIGHT - y_val;
+                s = &((short *)wipe_scr_end)[Mul200(i) + y_val];
+                d = &((short *)wipe_scr)[Mul160(y_val) + i];
                 for (j = dy; j; j--)
                 {
                     d[idx] = *(s++);
                     idx += SCREENWIDTH / 2;
                 }
-                y[i] += dy;
+                y_val += dy;
                 s = &((short *)wipe_scr_start)[Mul200(i)];
-                d = &((short *)wipe_scr)[Mul160(y[i]) + i];
+                d = &((short *)wipe_scr)[Mul160(y_val) + i];
                 idx = 0;
-                for (j = SCREENHEIGHT - y[i]; j; j--)
+                for (j = SCREENHEIGHT - y_val; j; j--)
                 {
                     d[idx] = *(s++);
                     idx += (SCREENWIDTH / 2);
                 }
+                y[i] = y_val;
                 done = false;
             }
         }

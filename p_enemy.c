@@ -185,9 +185,7 @@ boolean P_CheckMissileRange(mobj_t *actor)
         return false; // do not attack yet
 
     // OPTIMIZE: get this from a global checksight
-    dist = P_AproxDistance(actor->x - actor->target->x,
-                           actor->y - actor->target->y) -
-           64 * FRACUNIT;
+    dist = P_AproxDistance(actor->x - actor->target->x, actor->y - actor->target->y) - 64 * FRACUNIT;
 
     if (!actor->info->meleestate)
         dist -= 128 * FRACUNIT; // no melee attack, so fire more
@@ -208,7 +206,9 @@ boolean P_CheckMissileRange(mobj_t *actor)
     }
 
     dist >>= actor->type == MT_CYBORG || actor->type == MT_SPIDER || actor->type == MT_SKULL; 
-    dist += (200 - dist) & ((200 - dist) >> 31);
+
+    if (dist > 200)
+        dist = 200;
 
     if (actor->type == MT_CYBORG && dist > 160)
         dist = 160;
@@ -970,7 +970,8 @@ void A_Tracer(mobj_t *actor)
 
     th->momz = FRACUNIT;
     th->tics -= P_Random & 3;
-    th->tics -= (th->tics - 1) & ((th->tics - 1) >> 31);
+    if (th->tics < 1)
+		th->tics = 1;
 
     // adjust direction
     dest = actor->tracer;

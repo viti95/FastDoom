@@ -211,8 +211,11 @@ boolean PIT_CheckLine(line_t *ld)
         ceilingline = ld;
     }
 
-    tmfloorz -= (tmfloorz - openbottom) & ((tmfloorz - openbottom) >> 31);
-    tmdropoffz += (lowfloor - tmdropoffz) & ((lowfloor - tmdropoffz) >> 31);
+    if (openbottom > tmfloorz)
+        tmfloorz = openbottom;
+
+    if (lowfloor < tmdropoffz)
+        tmdropoffz = lowfloor;
 
     // if contacted a special line, add it to the list
     if (ld->special)
@@ -514,10 +517,11 @@ boolean P_ThingHeightClip(mobj_t *thing)
     else
     {
         // don't adjust a floating monster unless forced to
-        thing->z += (thing->ceilingz - thing->height - thing->z) & ((thing->ceilingz - thing->height - thing->z) >> 31);
+        if (thing->z > thing->ceilingz - thing->height)
+            thing->z = thing->ceilingz - thing->height;
     }
 
-    if (thing->ceilingz - thing->floorz < thing->height)
+    if (thing->ceilingz - thing->height < thing->floorz)
         return false;
 
     return true;
@@ -720,7 +724,8 @@ retry:
     // First calculate remainder.
     bestslidefrac = FRACUNIT - (bestslidefrac + 0x800);
 
-    bestslidefrac += (FRACUNIT - bestslidefrac) & ((FRACUNIT - bestslidefrac) >> 31);
+    if (bestslidefrac > FRACUNIT)
+        bestslidefrac = FRACUNIT;
 
     if (bestslidefrac <= 0)
         return;
@@ -1256,7 +1261,9 @@ boolean PIT_RadiusAttack(mobj_t *thing)
 
     dist = dx > dy ? dx : dy;
     dist = (dist - thing->radius) >> FRACBITS;
-    dist -= dist & (dist >> 31);
+
+    if (dist < 0)
+        dist = 0;
 
     if (dist >= bombdamage)
         return true; // out of range

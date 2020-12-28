@@ -152,7 +152,7 @@ void TryRunTics(void)
 	availabletics = nettics - gametic;
 
 	// decide how many tics to run
-	if (realtics < availabletics - 1)
+	if (realtics + 1 < availabletics)
 		counts = realtics + 1;
 	else if (realtics < availabletics)
 		counts = realtics;

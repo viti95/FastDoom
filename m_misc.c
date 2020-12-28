@@ -103,14 +103,17 @@ void M_AddToBox(fixed_t *box,
                 fixed_t x,
                 fixed_t y)
 {
-    if (x < box[BOXLEFT])
+    if (box[BOXLEFT] > x)
         box[BOXLEFT] = x;
-    else if (x > box[BOXRIGHT])
-        box[BOXRIGHT] = x;
-    if (y < box[BOXBOTTOM])
+    else
+        if (box[BOXRIGHT] < x)
+            box[BOXRIGHT] = x;
+
+    if (box[BOXBOTTOM] > y)
         box[BOXBOTTOM] = y;
-    else if (y > box[BOXTOP])
-        box[BOXTOP] = y;
+    else 
+        if (box[BOXTOP] < y)
+            box[BOXTOP] = y;
 }
 
 //
@@ -191,6 +194,7 @@ extern int mousebfire;
 extern int mousebstrafe;
 extern int mousebforward;
 extern int viewwidth;
+extern int viewwidthlimit;
 extern int viewheight;
 
 extern int mouseSensitivity;

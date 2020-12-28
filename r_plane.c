@@ -114,6 +114,9 @@ void R_MapPlane(int y, int x1)
     fixed_t length;
     unsigned index;
 
+    ds_x1 = x1;
+    ds_y = y;
+    
     if (planeheight != cachedheight[y])
     {
         cachedheight[y] = planeheight;
@@ -153,9 +156,6 @@ void R_MapPlane(int y, int x1)
 
         ds_colormap = planezlight[index];
     }
-
-    ds_y = y;
-    ds_x1 = x1;
 
     // high or low detail
     spanfunc();
@@ -346,7 +346,7 @@ void R_DrawPlanes(void)
         // sky flat
         if (pl->picnum == skyflatnum)
         {
-            dc_iscale = pspriteiscale >> detailshift;
+            dc_iscale = pspriteiscaleshifted;
 
             // Sky is allways drawn full bright,
             //  i.e. colormaps[0] is used.
@@ -686,11 +686,12 @@ void R_DrawPlanes(void)
             light = (pl->lightlevel >> LIGHTSEGSHIFT) + extralight;
             
             if (light > LIGHTLEVELS - 1)
-                light = LIGHTLEVELS - 1;
-
-            light -= light & (light >> 31);
-
-            planezlight = zlight[light];
+                planezlight = zlight[LIGHTLEVELS - 1];
+            else if (light < 0)
+                planezlight = zlight[0];
+            else
+                planezlight = zlight[light];
+            
             pl->top[pl->maxx + 1] = 0xff;
             pl->top[pl->minx - 1] = 0xff;
 

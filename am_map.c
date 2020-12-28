@@ -347,14 +347,14 @@ void AM_findMinMaxBoundaries(void)
 
 	for (i = 0; i < numvertexes; i++)
 	{
-		if (vertexes[i].x < min_x)
+		if (min_x > vertexes[i].x)
 			min_x = vertexes[i].x;
-		else if (vertexes[i].x > max_x)
+		else if (max_x < vertexes[i].x)
 			max_x = vertexes[i].x;
 
-		if (vertexes[i].y < min_y)
+		if (min_y > vertexes[i].y)
 			min_y = vertexes[i].y;
-		else if (vertexes[i].y > max_y)
+		else if (max_y < vertexes[i].y)
 			max_y = vertexes[i].y;
 	}
 
@@ -364,6 +364,7 @@ void AM_findMinMaxBoundaries(void)
 	a = FixedDiv(f_w << FRACBITS, max_w);
 	b = FixedDiv(f_h << FRACBITS, max_h);
 
+	// OPTIMIZE MIN/MAX
 	min_scale_mtof = a < b ? a : b;
 	max_scale_mtof = FixedDiv(f_h << FRACBITS, 2 * PLAYERRADIUS);
 }
@@ -899,10 +900,12 @@ void AM_drawFline(fline_t *fl,
 #define PUTDOT(xx, yy, cc) fb[(yy)*f_w + (xx)] = (cc)
 
 	dx = fl->b.x - fl->a.x;
+	// OPTIMIZE NEGATE
 	ax = 2 * (dx < 0 ? -dx : dx);
 	sx = dx < 0 ? -1 : 1;
 
 	dy = fl->b.y - fl->a.y;
+	// OPTIMIZE NEGATE
 	ay = 2 * (dy < 0 ? -dy : dy);
 	sy = dy < 0 ? -1 : 1;
 
@@ -1067,11 +1070,9 @@ void AM_rotate(fixed_t *x,
 {
 	fixed_t tmpx;
 
-	tmpx =
-		FixedMul(*x, finecosine[a >> ANGLETOFINESHIFT]) - FixedMul(*y, finesine[a >> ANGLETOFINESHIFT]);
+	tmpx = FixedMul(*x, finecosine[a >> ANGLETOFINESHIFT]) - FixedMul(*y, finesine[a >> ANGLETOFINESHIFT]);
 
-	*y =
-		FixedMul(*x, finesine[a >> ANGLETOFINESHIFT]) + FixedMul(*y, finecosine[a >> ANGLETOFINESHIFT]);
+	*y = FixedMul(*x, finesine[a >> ANGLETOFINESHIFT]) + FixedMul(*y, finecosine[a >> ANGLETOFINESHIFT]);
 
 	*x = tmpx;
 }

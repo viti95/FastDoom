@@ -36,6 +36,7 @@ extern fixed_t sprtopscreen;
 
 extern fixed_t pspritescale;
 extern fixed_t pspriteiscale;
+extern fixed_t pspriteiscaleshifted;
 
 void R_SortVisSprites(void);
 

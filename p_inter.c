@@ -78,7 +78,8 @@ P_GiveAmmo(player_t *player,
 
 	oldammo = player->ammo[ammo];
 	player->ammo[ammo] += num;
-	player->ammo[ammo] += (player->maxammo[ammo] - player->ammo[ammo]) & ((player->maxammo[ammo] - player->ammo[ammo]) >> 31);
+	if (player->ammo[ammo] > player->maxammo[ammo])
+		player->ammo[ammo] = player->maxammo[ammo];
 
 	// If non zero ammo,
 	// don't change up weapons,
@@ -171,14 +172,14 @@ P_GiveWeapon(player_t *player,
 // Returns false if the body isn't needed at all
 //
 boolean
-P_GiveBody(player_t *player,
-		   int num)
+P_GiveBody(player_t *player, int num)
 {
 	if (player->health >= MAXHEALTH)
 		return false;
 
 	player->health += num;
-	player->health += (MAXHEALTH - player->health) & ((MAXHEALTH - player->health) >> 31);
+	if (player->health > MAXHEALTH)
+		player->health = MAXHEALTH;
 	player->mo->health = player->health;
 
 	return true;
@@ -190,8 +191,7 @@ P_GiveBody(player_t *player,
 // than the current armor.
 //
 boolean
-P_GiveArmor(player_t *player,
-			int armortype)
+P_GiveArmor(player_t *player, int armortype)
 {
 	int hits;
 
@@ -208,8 +208,7 @@ P_GiveArmor(player_t *player,
 //
 // P_GiveCard
 //
-void P_GiveCard(player_t *player,
-				card_t card)
+void P_GiveCard(player_t *player, card_t card)
 {
 	if (player->cards[card])
 		return;
@@ -310,14 +309,16 @@ void P_TouchSpecialThing(mobj_t *special,
 		// bonus items
 	case SPR_BON1:
 		player->health++; // can go over 100%
-		player->health += (200 - player->health) & ((200 - player->health) >> 31);
+		if (player->health > 200)
+			player->health = 200;
 		player->mo->health = player->health;
 		player->message = GOTHTHBONUS;
 		break;
 
 	case SPR_BON2:
 		player->armorpoints++; // can go over 100%
-		player->armorpoints += (200 - player->armorpoints) & ((200 - player->armorpoints) >> 31);
+		if (player->armorpoints > 200)
+			player->armorpoints = 200;
 		if (!player->armortype)
 			player->armortype = 1;
 		player->message = GOTARMBONUS;
@@ -325,7 +326,8 @@ void P_TouchSpecialThing(mobj_t *special,
 
 	case SPR_SOUL:
 		player->health += 100;
-		player->health += (200 - player->health) & ((200 - player->health) >> 31);
+		if (player->health > 200)
+			player->health = 200;
 		player->mo->health = player->health;
 		player->message = GOTSUPER;
 		sound = sfx_getpow;
@@ -621,9 +623,11 @@ void P_KillMobj(mobj_t *source,
 	}
 	else
 		P_SetMobjState(target, target->info->deathstate);
+	
 	target->tics -= P_Random & 3;
 
-	target->tics -= (target->tics - 1) & ((target->tics - 1) >> 31);
+	if (target->tics < 1)
+		target->tics = 1;
 	
 	// Drop stuff.
 	// This determines the kind of object spawned
@@ -745,7 +749,8 @@ void P_DamageMobj(mobj_t *target,
 			damage -= saved;
 		}
 		player->health -= damage; // mirror mobj health here for Dave
-		player->health -= (player->health & (player->health >> 31));
+		if (player->health < 0)
+			player->health = 0;
 
 		player->attacker = source;
 		player->damagecount += damage; // add damage after armor / invuln

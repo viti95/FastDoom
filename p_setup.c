@@ -523,7 +523,7 @@ void P_GroupLines(void)
 
         // adjust bounding box to map blocks
         block = (bbox[BOXTOP] - bmaporgy + MAXRADIUS) >> MAPBLOCKSHIFT;
-        block = block >= bmapheight ? bmapheight - 1 : block;
+        block = block > bmapheight - 1 ? bmapheight - 1 : block;
         sector->blockbox[BOXTOP] = block;
 
         block = (bbox[BOXBOTTOM] - bmaporgy - MAXRADIUS) >> MAPBLOCKSHIFT;
@@ -531,7 +531,7 @@ void P_GroupLines(void)
         sector->blockbox[BOXBOTTOM] = block;
 
         block = (bbox[BOXRIGHT] - bmaporgx + MAXRADIUS) >> MAPBLOCKSHIFT;
-        block = block >= bmapwidth ? bmapwidth - 1 : block;
+        block = block > bmapwidth - 1 ? bmapwidth - 1 : block;
         sector->blockbox[BOXRIGHT] = block;
 
         block = (bbox[BOXLEFT] - bmaporgx - MAXRADIUS) >> MAPBLOCKSHIFT;

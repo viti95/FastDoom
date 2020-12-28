@@ -117,13 +117,16 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 
 	if (curline->v1->y == curline->v2->y)
 		lightnum--;
-	else
-		lightnum += curline->v1->x == curline->v2->x;
+	else if (curline->v1->x == curline->v2->x)
+		lightnum++;
 
 	// Lightnum between 0 and 15
-	lightnum -= lightnum & (lightnum >> 31);
-	lightnum += (15 - lightnum) & ((15 - lightnum) >> 31);
-	walllights = scalelight[lightnum];
+	if (lightnum < 0)
+		walllights = scalelight[0];
+	else if (lightnum > LIGHTLEVELS - 1)
+		walllights = scalelight[LIGHTLEVELS - 1];
+	else
+		walllights = scalelight[lightnum];
 
 	maskedtexturecol = ds->maskedtexturecol;
 
@@ -747,13 +750,16 @@ void R_StoreWallRange(int start,
 
 			if (curline->v1->y == curline->v2->y)
 				lightnum--;
-			else
-				lightnum += curline->v1->x == curline->v2->x;
+			else if (curline->v1->x == curline->v2->x)
+				lightnum++;
 
 			// Lightnum between 0 and 15
-			lightnum -= lightnum & (lightnum >> 31);
-			lightnum += (15 - lightnum) & ((15 - lightnum) >> 31);
-			walllights = scalelight[lightnum];
+			if (lightnum < 0)
+				walllights = scalelight[0];
+			else if (lightnum > LIGHTLEVELS - 1)
+				walllights = scalelight[LIGHTLEVELS - 1];
+			else
+				walllights = scalelight[lightnum];
 		}
 	}
 
@@ -778,10 +784,10 @@ void R_StoreWallRange(int start,
 	worldbottom >>= 4;
 
 	topstep = -FixedMul(rw_scalestep, worldtop);
-	topfrac = (centeryfrac >> 4) - FixedMul(worldtop, rw_scale);
+	topfrac = centeryfracshifted - FixedMul(worldtop, rw_scale);
 
 	bottomstep = -FixedMul(rw_scalestep, worldbottom);
-	bottomfrac = (centeryfrac >> 4) - FixedMul(worldbottom, rw_scale);
+	bottomfrac = centeryfracshifted - FixedMul(worldbottom, rw_scale);
 
 	if (backsector)
 	{
@@ -790,13 +796,13 @@ void R_StoreWallRange(int start,
 
 		if (worldhigh < worldtop)
 		{
-			pixhigh = (centeryfrac >> 4) - FixedMul(worldhigh, rw_scale);
+			pixhigh = centeryfracshifted - FixedMul(worldhigh, rw_scale);
 			pixhighstep = -FixedMul(rw_scalestep, worldhigh);
 		}
 
 		if (worldlow > worldbottom)
 		{
-			pixlow = (centeryfrac >> 4) - FixedMul(worldlow, rw_scale);
+			pixlow = centeryfracshifted - FixedMul(worldlow, rw_scale);
 			pixlowstep = -FixedMul(rw_scalestep, worldlow);
 		}
 	}

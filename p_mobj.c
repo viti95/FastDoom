@@ -122,11 +122,13 @@ void P_XYMovement(mobj_t *mo)
 
     player = mo->player;
 
+    // BETWEEN -MAXMOVE AND MAXMOVE
     if (mo->momx > MAXMOVE)
         mo->momx = MAXMOVE;
     else if (mo->momx < -MAXMOVE)
         mo->momx = -MAXMOVE;
 
+    // BETWEEN -MAXMOVE AND MAXMOVE
     if (mo->momy > MAXMOVE)
         mo->momy = MAXMOVE;
     else if (mo->momy < -MAXMOVE)
@@ -267,6 +269,7 @@ void P_ZMovement(mobj_t *mo)
         // Note (id):
         //  somebody left this after the setting momz to 0,
         //  kinda useless there.
+        // OPTIMIZE NEGATE
         if (mo->flags & MF_SKULLFLY)
         {
             // the skull slammed into something
@@ -290,6 +293,7 @@ void P_ZMovement(mobj_t *mo)
         mo->z = mo->floorz;
 
 #if (EXE_VERSION < EXE_VERSION_ULTIMATE)
+        // OPTIMIZE NEGATE
         if (mo->flags & MF_SKULLFLY)
         {
             // the skull slammed into something
@@ -311,12 +315,15 @@ void P_ZMovement(mobj_t *mo)
             mo->momz -= GRAVITY;
     }
 
-    if (mo->z + mo->height > mo->ceilingz)
+    if (mo->z > mo->ceilingz - mo->height)
     {
         // hit the ceiling
-        mo->momz += (-mo->momz) & ((-mo->momz) >> 31);
         mo->z = mo->ceilingz - mo->height;
-
+        
+        if (mo->momz > 0)
+            mo->momz = 0;
+        
+        // OPTIMIZE NEGATE
         if (mo->flags & MF_SKULLFLY)
         { // the skull slammed into something
             mo->momz = -mo->momz;

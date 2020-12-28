@@ -29,6 +29,7 @@ extern fixed_t viewcos;
 extern fixed_t viewsin;
 
 extern int viewwidth;
+extern int viewwidthlimit;
 extern int viewheight;
 extern int viewwindowx;
 extern int viewwindowy;
@@ -38,6 +39,7 @@ extern int centery;
 
 extern fixed_t centerxfrac;
 extern fixed_t centeryfrac;
+extern fixed_t centeryfracshifted;
 extern fixed_t projection;
 extern fixed_t iprojection;
 

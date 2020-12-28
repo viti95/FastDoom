@@ -184,7 +184,7 @@ void R_DrawColumnInCache(column_t *patch,
             position = 0;
         }
 
-        if (position + count > cacheheight)
+        if (count > cacheheight - position)
             count = cacheheight - position;
 
         if (count > 0){
@@ -226,9 +226,7 @@ void R_GenerateComposite(int texnum)
     // Composite the columns together.
     patch = texture->patches;
 
-    for (i = 0, patch = texture->patches;
-         i < texture->patchcount;
-         i++, patch++)
+    for (i = 0, patch = texture->patches; i < texture->patchcount; i++, patch++)
     {
         realpatch = W_CacheLumpNum(patch->patch, PU_CACHE);
         x1 = patch->originx;
@@ -249,10 +247,7 @@ void R_GenerateComposite(int texnum)
                 continue;
 
             patchcol = (column_t *)((byte *)realpatch + LONG(realpatch->columnofs[x - x1]));
-            R_DrawColumnInCache(patchcol,
-                                block + colofs[x],
-                                patch->originy,
-                                texture->height);
+            R_DrawColumnInCache(patchcol, block + colofs[x], patch->originy, texture->height);
         }
     }
 

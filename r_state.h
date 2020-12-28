@@ -40,6 +40,7 @@ extern fixed_t *spritetopoffset;
 extern lighttable_t *colormaps;
 
 extern int viewwidth;
+extern int viewwidthlimit;
 extern int scaledviewwidth;
 extern int viewheight;
 

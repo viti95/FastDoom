@@ -880,20 +880,28 @@ void ST_doPaletteStuff(void)
 	{
 		// slowly fade the berzerk out
 		bzc = 12 - (plyr->powers[pw_strength] >> 6);
-		cnt -= (cnt - bzc) & ((cnt - bzc) >> 31);
+
+		if (bzc > cnt)
+			cnt = bzc;
 	}
 
 	if (cnt)
 	{
 		palette = (cnt + 7) >> 3;
-		palette += (NUMREDPALS - 1 - palette) & ((NUMREDPALS - 1 - palette) >> 31);
+
+		if (palette > NUMREDPALS - 1)
+			palette = NUMREDPALS - 1;
+
 		palette += STARTREDPALS;
 	}
 
 	else if (plyr->bonuscount)
 	{
 		palette = (plyr->bonuscount + 7) >> 3;
-		palette += (NUMBONUSPALS - 1 - palette) & ((NUMBONUSPALS - 1 - palette) >> 31);
+
+		if (palette > NUMBONUSPALS - 1)
+			palette = NUMBONUSPALS - 1;
+
 		palette += STARTBONUSPALS;
 	}
 

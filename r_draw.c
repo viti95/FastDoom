@@ -51,6 +51,7 @@
 
 byte *viewimage;
 int viewwidth;
+int viewwidthlimit;
 int scaledviewwidth;
 int viewheight;
 int viewwindowx;

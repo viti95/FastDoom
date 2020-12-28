@@ -59,7 +59,6 @@ void P_CalcHeight(player_t *player)
 {
 	int angle;
 	fixed_t bob;
-	fixed_t optCeilingz;
 
 	// Regular movement bobbing
 	// (needs to be calculated for gun swing
@@ -67,17 +66,18 @@ void P_CalcHeight(player_t *player)
 	// OPTIMIZE: tablify angle
 	// Note: a LUT allows for effects
 	//  like a ramp with low health.
-	optCeilingz = player->mo->ceilingz - 4 * FRACUNIT;
 
 	player->bob = FixedMul(player->mo->momx, player->mo->momx) + FixedMul(player->mo->momy, player->mo->momy);
 	player->bob >>= 2;
-	player->bob += (MAXBOB - player->bob) & ((MAXBOB - player->bob) >> 31);
+	if (player->bob > MAXBOB)
+		player->bob = MAXBOB;
 
 	if ((player->cheats & CF_NOMOMENTUM) || !onground)
 	{
 		player->viewz = player->mo->z + VIEWHEIGHT;
 
-		player->viewz += (optCeilingz - player->viewz) & ((optCeilingz - player->viewz) >> 31);
+		if (player->viewz > player->mo->ceilingz - 4 * FRACUNIT)
+			player->viewz = player->mo->ceilingz - 4 * FRACUNIT;
 
 		player->viewz = player->mo->z + player->viewheight;
 		return;
@@ -113,7 +113,8 @@ void P_CalcHeight(player_t *player)
 	}
 	player->viewz = player->mo->z + player->viewheight + bob;
 
-	player->viewz += (optCeilingz - player->viewz) & ((optCeilingz - player->viewz) >> 31);
+	if (player->viewz > player->mo->ceilingz - 4 * FRACUNIT)
+		player->viewz = player->mo->ceilingz - 4 * FRACUNIT;
 }
 
 //
