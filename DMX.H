@@ -22,13 +22,9 @@ void GUS_Shutdown(void);
 
 void TSM_DelService(int unk1);
 void TSM_Remove(void);
-void MUS_PauseSong(int handle);
-void MUS_ResumeSong(int handle);
-void MUS_SetMasterVolume(int volume);
 int MUS_RegisterSong(void *data);
-int MUS_StopSong(int handle);
 int MUS_ChainSong(int handle, int next);
-int MUS_PlaySong(int handle, int volume);
+void MUS_PlaySong(int handle, int volume);
 int SFX_PlayPatch(void *vdata, int sep, int vol);
 void SFX_StopPatch(int handle);
 int SFX_Playing(int handle);

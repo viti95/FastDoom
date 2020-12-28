@@ -187,18 +187,6 @@ char *mid_data = NULL;
 int mus_loop = 0;
 int dmx_mus_port = 0;
 
-void MUS_PauseSong(int handle)
-{
-    MUSIC_Pause();
-}
-void MUS_ResumeSong(int handle)
-{
-    MUSIC_Continue();
-}
-void MUS_SetMasterVolume(int volume)
-{
-    MUSIC_SetVolume(volume * 2);
-}
 int MUS_RegisterSong(void *data)
 {
     FILE *mus;
@@ -263,27 +251,21 @@ int MUS_RegisterSong(void *data)
     mus_data = data;
     return 0;
 }
-int MUS_StopSong(int handle)
-{
-    long status = MUSIC_StopSong();
-    return (status != MUSIC_Ok);
-}
 int MUS_ChainSong(int handle, int next)
 {
     mus_loop = (next == handle);
     return 0;
 }
 
-int MUS_PlaySong(int handle, int volume)
+void MUS_PlaySong(int handle, int volume)
 {
     long status;
     if (mus_data == NULL)
     {
-        return 1;
+        return;
     }
-    status = MUSIC_PlaySong((unsigned char *)mus_data, mus_loop);
+    MUSIC_PlaySong((unsigned char *)mus_data, mus_loop);
     MUSIC_SetVolume(volume * 2);
-    return (status != MUSIC_Ok);
 }
 
 int SFX_PlayPatch(void *vdata, int sep, int vol)

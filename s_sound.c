@@ -33,6 +33,7 @@
 
 #include "doomstat.h"
 #include "dmx.h"
+#include "ns_music.h"
 
 #define S_MAX_VOLUME 127
 
@@ -128,9 +129,9 @@ void S_StopMusic(void)
     if (mus_playing)
     {
         if (mus_paused)
-            MUS_ResumeSong(mus_playing->handle);
+            MUSIC_Continue();
 
-        MUS_StopSong(mus_playing->handle);
+        MUSIC_StopSong();
         //I_UnRegisterSong(mus_playing->handle);
         Z_ChangeTag(mus_playing->data, PU_CACHE);
 
@@ -177,14 +178,6 @@ void S_ChangeMusic(int musicnum,
     MUS_PlaySong(music->handle, snd_MusicVolume);
 
     mus_playing = music;
-}
-
-//
-// Starts some music with the music id found in sounds.h.
-//
-void S_StartMusic(int m_id)
-{
-    S_ChangeMusic(m_id, false);
 }
 
 void S_StopChannel(int cnum)
@@ -302,7 +295,7 @@ void S_PauseSound(void)
 {
     if (mus_playing && !mus_paused)
     {
-        MUS_PauseSong(mus_playing->handle);
+        MUSIC_Pause();
         mus_paused = true;
     }
 }
@@ -311,7 +304,7 @@ void S_ResumeSound(void)
 {
     if (mus_playing && mus_paused)
     {
-        MUS_ResumeSong(mus_playing->handle);
+        MUSIC_Continue();
         mus_paused = false;
     }
 }

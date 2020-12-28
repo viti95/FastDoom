@@ -34,6 +34,7 @@
 #include "doomstat.h"
 
 #include "ns_task.h"
+#include "ns_music.h"
 
 //
 // I_StartupTimer
@@ -80,7 +81,7 @@ int snd_DesiredMusicDevice;
 
 void I_SetMusicVolume(int volume)
 {
-    MUS_SetMasterVolume(volume);
+    MUSIC_SetVolume(volume * 2);
     snd_MusicVolume = volume;
 }
 
