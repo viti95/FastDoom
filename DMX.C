@@ -166,7 +166,7 @@ typedef struct
 {
     unsigned int length;
     unsigned short priority;
-    unsigned short data[0x10000];
+    unsigned short data[256];
 } pcspkmuse_t;
 
 typedef struct
@@ -291,7 +291,7 @@ int SFX_PlayPatch(void *vdata, int sep, int vol)
     unsigned int rate;
     unsigned long len;
     unsigned char *data = (unsigned char *)vdata;
-    unsigned int type = (data[1] << 8) | data[0];
+    unsigned int type = data[0] | (data[1] << 8);
     dmxpcs_t *dmxpcs = (dmxpcs_t *)vdata;
     unsigned short i;
     if (type == 0)
