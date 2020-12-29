@@ -156,16 +156,20 @@ int wipe_doMelt(int ticks)
 int wipe_exitMelt()
 {
     Z_Free(y);
+    Z_Free(screen2);
+    Z_Free(screen3);
     return 0;
 }
 
 void wipe_StartScreen()
 {
+    screen2 = (int *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
     I_ReadScreen(screen2);
 }
 
 void wipe_EndScreen()
 {
+    screen3 = (int *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
     I_ReadScreen(screen3);
 }
 

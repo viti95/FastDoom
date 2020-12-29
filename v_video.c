@@ -31,8 +31,8 @@
 
 byte screen0[SCREENWIDTH * SCREENHEIGHT];
 byte screen1[SCREENWIDTH * SCREENHEIGHT];
-byte screen2[SCREENWIDTH * SCREENHEIGHT];
-byte screen3[SCREENWIDTH * SCREENHEIGHT];
+byte *screen2;
+byte *screen3;
 byte screen4[SCREENWIDTH * 32];
 
 int dirtybox[4];
