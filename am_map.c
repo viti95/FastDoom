@@ -229,8 +229,8 @@ static fixed_t max_h; // max_y-min_y
 
 // based on player size
 
-static fixed_t min_scale_mtof; // used to tell when to stop zooming out
-static fixed_t max_scale_mtof; // used to tell when to stop zooming in
+static fixed_t min_scale_mtof; // used to tell when to stop zooming out 
+#define MAXSCALEMTOF 344064 // used to tell when to stop zooming in
 
 // old stuff for recovery later
 static fixed_t old_m_w, old_m_h;
@@ -354,9 +354,6 @@ void AM_findMinMaxBoundaries(void)
 	b = FixedDiv((SCREENHEIGHT - 32) << FRACBITS, max_h);
 
 	min_scale_mtof = a < b ? a : b;
-
-	// OPTIMIZE MAX STATIC VALUE
-	max_scale_mtof = FixedDiv((SCREENHEIGHT - 32) << FRACBITS, 2 * PLAYERRADIUS);
 }
 
 //
@@ -373,14 +370,14 @@ void AM_changeWindowLoc(void)
 	m_x += m_paninc.x;
 	m_y += m_paninc.y;
 
-	if (m_x + m_w / 2 > max_x)
+	if (m_x > max_x - m_w / 2)
 		m_x = max_x - m_w / 2;
-	else if (m_x + m_w / 2 < min_x)
+	else if (m_x < min_x - m_w / 2)
 		m_x = min_x - m_w / 2;
 
-	if (m_y + m_h / 2 > max_y)
+	if (m_y > max_y - m_h / 2)
 		m_y = max_y - m_h / 2;
-	else if (m_y + m_h / 2 < min_y)
+	else if (m_y < min_y - m_h / 2)
 		m_y = min_y - m_h / 2;
 
 	m_x2 = m_x + m_w;
@@ -466,7 +463,7 @@ void AM_LevelInit(void)
 
 	AM_findMinMaxBoundaries();
 	scale_mtof = FixedDiv(min_scale_mtof, (int)(0.7 * FRACUNIT));
-	if (scale_mtof > max_scale_mtof)
+	if (scale_mtof > MAXSCALEMTOF)
 		scale_mtof = min_scale_mtof;
 	scale_ftom = FixedDiv(FRACUNIT, scale_mtof);
 }
@@ -519,8 +516,8 @@ void AM_minOutWindowScale(void)
 //
 void AM_maxOutWindowScale(void)
 {
-	scale_mtof = max_scale_mtof;
-	scale_ftom = FixedDiv(FRACUNIT, scale_mtof);
+	scale_mtof = MAXSCALEMTOF;
+	scale_ftom = FixedDiv(FRACUNIT, MAXSCALEMTOF);
 	AM_activateNewScale();
 }
 
@@ -676,7 +673,7 @@ void AM_changeWindowScale(void)
 
 	if (scale_mtof < min_scale_mtof)
 		AM_minOutWindowScale();
-	else if (scale_mtof > max_scale_mtof)
+	else if (scale_mtof > MAXSCALEMTOF)
 		AM_maxOutWindowScale();
 	else
 		AM_activateNewScale();
