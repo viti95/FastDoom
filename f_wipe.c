@@ -36,10 +36,6 @@
 // when zero, stop the wipe
 static boolean go = 0;
 
-static byte *wipe_scr_start;
-static byte *wipe_scr_end;
-static byte *wipe_scr;
-
 void wipe_shittyColMajorXform(short *array)
 {
     int y;
@@ -82,13 +78,12 @@ int wipe_initMelt()
     int i;
 
     // copy start screen to main screen
-    CopyDWords(wipe_scr_start, wipe_scr, (SCREENWIDTH * SCREENHEIGHT) / 4);
-    //memcpy(wipe_scr, wipe_scr_start, SCREENWIDTH * SCREENHEIGHT);
+    CopyDWords(screen2, screen0, (SCREENWIDTH * SCREENHEIGHT) / 4);
 
     // makes this wipe faster (in theory)
     // to have stuff in column-major format
-    wipe_shittyColMajorXform((short *)wipe_scr_start);
-    wipe_shittyColMajorXform((short *)wipe_scr_end);
+    wipe_shittyColMajorXform((short *)screen2);
+    wipe_shittyColMajorXform((short *)screen3);
 
     // setup initial column positions
     // (y<0 => not ready to scroll yet)
@@ -133,16 +128,16 @@ int wipe_doMelt(int ticks)
                 dy = (y_val < 16) ? y_val + 1 : 8;
                 if (dy >= SCREENHEIGHT - y_val)
                     dy = SCREENHEIGHT - y_val;
-                s = &((short *)wipe_scr_end)[Mul200(i) + y_val];
-                d = &((short *)wipe_scr)[Mul160(y_val) + i];
+                s = &((short *)screen3)[Mul200(i) + y_val];
+                d = &((short *)screen0)[Mul160(y_val) + i];
                 for (j = dy; j; j--)
                 {
                     d[idx] = *(s++);
                     idx += SCREENWIDTH / 2;
                 }
                 y_val += dy;
-                s = &((short *)wipe_scr_start)[Mul200(i)];
-                d = &((short *)wipe_scr)[Mul160(y_val) + i];
+                s = &((short *)screen2)[Mul200(i)];
+                d = &((short *)screen0)[Mul160(y_val) + i];
                 idx = 0;
                 for (j = SCREENHEIGHT - y_val; j; j--)
                 {
@@ -164,19 +159,14 @@ int wipe_exitMelt()
     return 0;
 }
 
-int wipe_StartScreen()
+void wipe_StartScreen()
 {
-    wipe_scr_start = screen2;
-    I_ReadScreen(wipe_scr_start);
-    return 0;
+    I_ReadScreen(screen2);
 }
 
-int wipe_EndScreen()
+void wipe_EndScreen()
 {
-    wipe_scr_end = screen3;
-    I_ReadScreen(wipe_scr_end);
-    V_DrawBlock(0, 0, screen0, SCREENWIDTH, SCREENHEIGHT, wipe_scr_start); // restore start scr.
-    return 0;
+    I_ReadScreen(screen3);
 }
 
 int wipe_ScreenWipe(int ticks)
@@ -187,7 +177,6 @@ int wipe_ScreenWipe(int ticks)
     if (!go)
     {
         go = 1;
-        wipe_scr = screen0;
         wipe_initMelt();
     }
 

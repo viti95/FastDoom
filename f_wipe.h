@@ -34,8 +34,8 @@ enum
     wipe_NUMWIPES
 };
 
-int wipe_StartScreen();
-int wipe_EndScreen();
+void wipe_StartScreen();
+void wipe_EndScreen();
 int wipe_ScreenWipe(int ticks);
 
 #endif
