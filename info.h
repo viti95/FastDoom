@@ -1147,7 +1147,6 @@ typedef struct
     long tics;
     actionf_t action;
     statenum_t nextstate;
-    long misc1, misc2;
 } state_t;
 
 extern state_t states[NUMSTATES];
