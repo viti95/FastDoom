@@ -406,7 +406,7 @@ void D_PageTicker(void)
 //
 void D_PageDrawer(void)
 {
-    V_DrawPatch(0, 0, 0, W_CacheLumpName(pagename, PU_CACHE));
+    V_DrawPatch(0, 0, screen0, W_CacheLumpName(pagename, PU_CACHE));
 }
 
 //
@@ -930,10 +930,6 @@ void D_DoomMain(void)
         }
         autostart = true;
     }
-
-    // init subsystems
-    printf("V_Init: allocate screens.\n");
-    V_Init();
 
     printf("M_LoadDefaults: Load system defaults.\n");
     M_LoadDefaults(); // load before initing other systems

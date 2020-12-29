@@ -37,7 +37,11 @@
 // Screen 0 is the screen updated by I_Update screen.
 // Screen 1 is an extra buffer.
 
-extern byte *screens[5];
+extern byte screen0[SCREENWIDTH * SCREENHEIGHT];
+extern byte screen1[SCREENWIDTH * SCREENHEIGHT];
+extern byte screen2[SCREENWIDTH * SCREENHEIGHT];
+extern byte screen3[SCREENWIDTH * SCREENHEIGHT];
+extern byte screen4[SCREENWIDTH * 32];
 
 extern int dirtybox[4];
 
@@ -48,16 +52,16 @@ void V_Init(void);
 
 void V_CopyRect(int srcx,
                 int srcy,
-                int srcscrn,
+                byte *srcscrn,
                 int width,
                 int height,
                 int destx,
                 int desty,
-                int destscrn);
+                byte *destscrn);
 
 void V_DrawPatch(int x,
                  int y,
-                 int scrn,
+                 byte *scrn,
                  patch_t *patch);
 
 void V_DrawPatchDirect(int x,
@@ -67,7 +71,7 @@ void V_DrawPatchDirect(int x,
 // Draw a linear block of pixels into the view buffer.
 void V_DrawBlock(int x,
                  int y,
-                 int scrn,
+                 byte *scrn,
                  int width,
                  int height,
                  byte *src);

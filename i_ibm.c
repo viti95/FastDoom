@@ -251,15 +251,15 @@ void I_UpdateBox(int x, int y, int w, int h)
     int step;
     byte *dest, *source;
 
+    outp(SC_INDEX, SC_MAPMASK);
+
     sp_x1 = x / 8;
     sp_x2 = (x + w) / 8;
     count = sp_x2 - sp_x1 + 1;
-    offset = Mul320(y) + sp_x1 * 8;
     step = SCREENWIDTH - count * 8;
+    offset = Mul320(y) + sp_x1 * 8;
     poffset = offset / 4;
     pstep = step / 4;
-
-    outp(SC_INDEX, SC_MAPMASK);
 
     if (!(count & 1))
     {
@@ -268,7 +268,7 @@ void I_UpdateBox(int x, int y, int w, int h)
         for (i = 0; i < 4; i++)
         {
             outp(SC_INDEX + 1, 1 << i);
-            source = &screens[0][offset + i];
+            source = &screen0[offset + i];
             dest = destscreen + poffset;
 
             for (j = 0; j < h; j++)
@@ -294,7 +294,7 @@ void I_UpdateBox(int x, int y, int w, int h)
         for (i = 0; i < 4; i++)
         {
             outp(SC_INDEX + 1, 1 << i);
-            source = &screens[0][offset + i];
+            source = &screen0[offset + i];
             dest = destscreen + poffset;
 
             for (j = 0; j < h; j++)
@@ -322,7 +322,7 @@ int olddb[2][4];
 void I_UpdateNoBlit(void)
 {
     int realdr[4];
-    int x, y, w, h;
+    
     // Set current screen
     currentscreen = destscreen;
 
@@ -385,10 +385,14 @@ void I_UpdateNoBlit(void)
     // Update screen
     if (realdr[BOXBOTTOM] <= realdr[BOXTOP])
     {
+        int x, y, w, h;
+
         x = realdr[BOXLEFT];
+        w = realdr[BOXRIGHT] - x + 1;
+
         y = realdr[BOXBOTTOM];
-        w = realdr[BOXRIGHT] - realdr[BOXLEFT] + 1;
-        h = realdr[BOXTOP] - realdr[BOXBOTTOM] + 1;
+        h = realdr[BOXTOP] - y + 1;
+        
         I_UpdateBox(x, y, w, h);
     }
     // Clear box

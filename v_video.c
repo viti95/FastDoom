@@ -29,8 +29,11 @@
 
 #include "v_video.h"
 
-// Each screen is [SCREENWIDTH*SCREENHEIGHT];
-byte *screens[5];
+byte screen0[SCREENWIDTH * SCREENHEIGHT];
+byte screen1[SCREENWIDTH * SCREENHEIGHT];
+byte screen2[SCREENWIDTH * SCREENHEIGHT];
+byte screen3[SCREENWIDTH * SCREENHEIGHT];
+byte screen4[SCREENWIDTH * 32];
 
 int dirtybox[4];
 
@@ -71,20 +74,20 @@ void V_MarkRect(int x,
 //
 void V_CopyRect(int srcx,
                 int srcy,
-                int srcscrn,
+                byte *srcscrn,
                 int width,
                 int height,
                 int destx,
                 int desty,
-                int destscrn)
+                byte *destscrn)
 {
     byte *src;
     byte *dest;
 
     V_MarkRect(destx, desty, width, height);
 
-    src = screens[srcscrn] + Mul320(srcy) + srcx;
-    dest = screens[destscrn] + Mul320(desty) + destx;
+    src = srcscrn + Mul320(srcy) + srcx;
+    dest = destscrn + Mul320(desty) + destx;
 
     for (; height > 0; height--)
     {
@@ -101,12 +104,12 @@ void V_CopyRect(int srcx,
 //
 void V_DrawPatch(int x,
                  int y,
-                 int scrn,
+                 byte *scrn,
                  patch_t *patch)
 {
 
     int count;
-    int col;
+    int col = 0;
     column_t *column;
     byte *desttop;
     byte *dest;
@@ -116,11 +119,10 @@ void V_DrawPatch(int x,
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
 
-    if (!scrn)
+    if (scrn == screen0)
         V_MarkRect(x, y, SHORT(patch->width), SHORT(patch->height));
 
-    col = 0;
-    desttop = screens[scrn] + Mul320(y) + x;
+    desttop = scrn + Mul320(y) + x;
 
     w = SHORT(patch->width);
 
@@ -169,7 +171,7 @@ void V_DrawPatch(int x,
 //
 void V_DrawPatchFlipped(int x,
                         int y,
-                        int scrn,
+                        byte *scrn,
                         patch_t *patch)
 {
 
@@ -188,7 +190,7 @@ void V_DrawPatchFlipped(int x,
         V_MarkRect(x, y, SHORT(patch->width), SHORT(patch->height));
 
     col = 0;
-    desttop = screens[scrn] + Mul320(y) + x;
+    desttop = scrn + Mul320(y) + x;
 
     w = SHORT(patch->width);
 
@@ -284,7 +286,7 @@ void V_DrawPatchDirect(int x,
 //
 void V_DrawBlock(int x,
                  int y,
-                 int scrn,
+                 byte *scrn,
                  int width,
                  int height,
                  byte *src)
@@ -293,7 +295,7 @@ void V_DrawBlock(int x,
 
     V_MarkRect(x, y, width, height);
 
-    dest = screens[scrn] + Mul320(y) + x;
+    dest = scrn + Mul320(y) + x;
 
     while (height--)
     {
@@ -302,20 +304,4 @@ void V_DrawBlock(int x,
         src += width;
         dest += SCREENWIDTH;
     }
-}
-
-//
-// V_Init
-//
-void V_Init(void)
-{
-    int i;
-    byte *base;
-
-    // stick these in low dos memory on PCs
-
-    base = I_AllocLow(SCREENWIDTH * SCREENHEIGHT * 4);
-
-    for (i = 0; i < 4; i++)
-        screens[i] = base + i * SCREENWIDTH * SCREENHEIGHT;
 }

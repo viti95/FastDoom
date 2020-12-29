@@ -1095,8 +1095,7 @@ void M_QuitDOOM(int choice)
     }
     else
     {
-        sprintf(endstring, "%s\n\n" DOSY,
-                endmsg[(gametic >> 2) % NUM_QUITMESSAGES]);
+        sprintf(endstring, "%s\n\n" DOSY, endmsg[(gametic >> 2) % NUM_QUITMESSAGES]);
     }
 
     M_StartMessage(endstring, M_QuitResponse, true);
