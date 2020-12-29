@@ -42,6 +42,9 @@
 // when zero, stop the wipe
 static boolean go = 0;
 
+byte *screen2;
+byte *screen3;
+
 void wipe_shittyColMajorXform(short *array)
 {
     int y;

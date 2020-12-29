@@ -111,8 +111,6 @@ boolean singledemo; // quit after playing a demo from cmdline
 
 wbstartstruct_t wminfo; // parms for world map / intermission
 
-byte *savebuffer;
-
 //
 // controls (have defaults)
 //
@@ -802,6 +800,7 @@ void G_DoLoadGame(void)
     int i;
     int a, b, c;
     char vcheck[VERSIONSIZE];
+    byte *savebuffer;
 
     gameaction = ga_nothing;
 
@@ -871,11 +870,14 @@ void G_DoSaveGame(void)
     char *description;
     int length;
     int i;
+    byte *savebuffer;
 
     sprintf(name, SAVEGAMENAME "%d.dsg", savegameslot);
     description = savedescription;
 
-    save_p = savebuffer = screen1 + 0x4000;
+    savebuffer = (byte *)Z_MallocUnowned(SAVEGAMESIZE, PU_STATIC);
+
+    save_p = savebuffer;
 
     memcpy(save_p, description, SAVESTRINGSIZE);
     save_p += SAVESTRINGSIZE;
@@ -910,6 +912,8 @@ void G_DoSaveGame(void)
     savedescription[0] = 0;
 
     players.message = GGSAVED;
+
+    Z_Free(savebuffer);
 
     // draw the pattern into the back screen
     R_FillBackScreen();

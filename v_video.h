@@ -38,9 +38,6 @@
 // Screen 1 is an extra buffer.
 
 extern byte screen0[SCREENWIDTH * SCREENHEIGHT];
-extern byte screen1[SCREENWIDTH * SCREENHEIGHT];
-extern byte *screen2;
-extern byte *screen3;
 extern byte screen4[SCREENWIDTH * 32];
 
 extern int dirtybox[4];

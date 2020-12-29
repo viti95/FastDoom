@@ -30,9 +30,6 @@
 #include "v_video.h"
 
 byte screen0[SCREENWIDTH * SCREENHEIGHT];
-byte screen1[SCREENWIDTH * SCREENHEIGHT];
-byte *screen2;
-byte *screen3;
 byte screen4[SCREENWIDTH * 32];
 
 int dirtybox[4];

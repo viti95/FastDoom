@@ -335,6 +335,8 @@ static patch_t **lnames;
 // CODE
 //
 
+byte *screen1;
+
 void WI_slamBackground(void)
 {
 	CopyDWords(screen1, screen0, (SCREENWIDTH * SCREENHEIGHT) / 4);
@@ -521,12 +523,12 @@ void WI_drawAnimatedBack(void)
 //
 
 int WI_drawNumTwoDigits(int x,
-			   int y,
-			   int n)
+						int y,
+						int n)
 {
 	int original;
 	int fontwidth = SHORT(num[0]->width);
-	
+
 	// if non-number, do not draw it
 	if (n == 1994)
 		return 0;
@@ -563,7 +565,7 @@ int WI_drawNum(int x,
 		n = Div10(n);
 		x -= fontwidth;
 		V_DrawPatch(x, y, screen0, num[original - Mul10(n)]);
-	}while(n);
+	} while (n);
 
 	return x;
 }
@@ -618,17 +620,63 @@ void WI_drawTime(int x,
 	}
 }
 
-void WI_End(void)
-{
-	void WI_unloadData(void);
-	WI_unloadData();
-}
-
 void WI_initNoState(void)
 {
 	state = NoState;
 	acceleratestage = 0;
 	cnt = 10;
+}
+
+void WI_unloadData(void)
+{
+	int i;
+	int j;
+
+	for (i = 0; i < 10; i++)
+		Z_ChangeTag(num[i], PU_CACHE);
+
+	if (commercial)
+	{
+		for (i = 0; i < NUMCMAPS; i++)
+			Z_ChangeTag(lnames[i], PU_CACHE);
+	}
+	else
+	{
+		Z_ChangeTag(yah[0], PU_CACHE);
+		Z_ChangeTag(yah[1], PU_CACHE);
+
+		Z_ChangeTag(splat, PU_CACHE);
+
+		for (i = 0; i < NUMMAPS; i++)
+			Z_ChangeTag(lnames[i], PU_CACHE);
+#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
+		if (wbs->epsd < 3)
+#endif
+		{
+			for (j = 0; j < NUMANIMS[wbs->epsd]; j++)
+			{
+				if (wbs->epsd != 1 || j != 8)
+					for (i = 0; i < anims[wbs->epsd][j].nanims; i++)
+						Z_ChangeTag(anims[wbs->epsd][j].p[i], PU_CACHE);
+			}
+		}
+	}
+
+	Z_Free(lnames);
+	Z_Free(screen1);
+
+	Z_ChangeTag(percent, PU_CACHE);
+	Z_ChangeTag(colon, PU_CACHE);
+	Z_ChangeTag(finished, PU_CACHE);
+	Z_ChangeTag(entering, PU_CACHE);
+	Z_ChangeTag(kills, PU_CACHE);
+	Z_ChangeTag(sp_secret, PU_CACHE);
+	Z_ChangeTag(items, PU_CACHE);
+	Z_ChangeTag(time, PU_CACHE);
+	Z_ChangeTag(sucks, PU_CACHE);
+	Z_ChangeTag(par, PU_CACHE);
+
+	Z_ChangeTag(total, PU_CACHE);
 }
 
 void WI_updateNoState(void)
@@ -638,7 +686,7 @@ void WI_updateNoState(void)
 
 	if (!--cnt)
 	{
-		WI_End();
+		WI_unloadData();
 		G_WorldDone();
 	}
 }
@@ -960,6 +1008,8 @@ void WI_loadData(void)
 		strcpy(name, "INTERPIC");
 #endif
 
+	screen1 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
+
 	// background
 	bg = W_CacheLumpName(name, PU_CACHE);
 	V_DrawPatch(0, 0, screen1, bg);
@@ -1062,60 +1112,6 @@ void WI_loadData(void)
 
 	// dead face
 	bstar = W_CacheLumpName("STFDEAD0", PU_STATIC);
-}
-
-void WI_unloadData(void)
-{
-	int i;
-	int j;
-
-	for (i = 0; i < 10; i++)
-		Z_ChangeTag(num[i], PU_CACHE);
-
-	if (commercial)
-	{
-		for (i = 0; i < NUMCMAPS; i++)
-			Z_ChangeTag(lnames[i], PU_CACHE);
-	}
-	else
-	{
-		Z_ChangeTag(yah[0], PU_CACHE);
-		Z_ChangeTag(yah[1], PU_CACHE);
-
-		Z_ChangeTag(splat, PU_CACHE);
-
-		for (i = 0; i < NUMMAPS; i++)
-			Z_ChangeTag(lnames[i], PU_CACHE);
-#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
-		if (wbs->epsd < 3)
-#endif
-		{
-			for (j = 0; j < NUMANIMS[wbs->epsd]; j++)
-			{
-				if (wbs->epsd != 1 || j != 8)
-					for (i = 0; i < anims[wbs->epsd][j].nanims; i++)
-						Z_ChangeTag(anims[wbs->epsd][j].p[i], PU_CACHE);
-			}
-		}
-	}
-
-	Z_Free(lnames);
-
-	Z_ChangeTag(percent, PU_CACHE);
-	Z_ChangeTag(colon, PU_CACHE);
-	Z_ChangeTag(finished, PU_CACHE);
-	Z_ChangeTag(entering, PU_CACHE);
-	Z_ChangeTag(kills, PU_CACHE);
-	Z_ChangeTag(sp_secret, PU_CACHE);
-	Z_ChangeTag(items, PU_CACHE);
-	Z_ChangeTag(time, PU_CACHE);
-	Z_ChangeTag(sucks, PU_CACHE);
-	Z_ChangeTag(par, PU_CACHE);
-
-	Z_ChangeTag(total, PU_CACHE);
-	//  Z_ChangeTag(star, PU_CACHE);
-	//  Z_ChangeTag(bstar, PU_CACHE);
-
 }
 
 void WI_Drawer(void)

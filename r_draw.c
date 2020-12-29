@@ -852,6 +852,7 @@ void R_FillBackScreen(void)
     int y;
     patch_t *patch;
     int i, count;
+    byte *screen1;
 
     // DOOM border patch.
     char name1[] = "FLOOR7_2";
@@ -870,6 +871,8 @@ void R_FillBackScreen(void)
         name = name1;
 
     src = W_CacheLumpName(name, PU_CACHE);
+    
+    screen1 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
     dest = screen1;
 
     for (y = 0; y < SCREENHEIGHT - SBARHEIGHT; y++)
@@ -877,7 +880,6 @@ void R_FillBackScreen(void)
         for (x = 0; x < SCREENWIDTH / 64; x++)
         {
             CopyDWords(src + ((y & 63) << 6), dest, 16);
-            //memcpy(dest, src + ((y & 63) << 6), 64);
             dest += 64;
         }
     }
@@ -933,6 +935,8 @@ void R_FillBackScreen(void)
             src += 4;
         } while (dest != (byte *)(0xac000 + (SCREENHEIGHT - SBARHEIGHT) * SCREENWIDTH / 4));
     }
+
+    Z_Free(screen1);
 }
 
 //
