@@ -101,6 +101,4 @@ void I_WaitSingleVBL(void);
     "and al, 0x08", \
     "jz l2" modify [al dx]
 
-void I_ReadScreen(byte *scr);
-
 #endif

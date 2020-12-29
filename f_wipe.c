@@ -19,6 +19,7 @@
 #include "doomstat.h"
 
 #include "i_random.h"
+#include "i_ibm.h"
 
 #include "z_zone.h"
 #include "i_system.h"
@@ -28,6 +29,11 @@
 #include "doomdef.h"
 
 #include "f_wipe.h"
+
+#include <conio.h>
+
+#define GC_INDEX 0x3CE
+#define GC_READMAP 4
 
 //
 //                       SCREEN WIPE PACKAGE
@@ -161,16 +167,83 @@ int wipe_exitMelt()
     return 0;
 }
 
+//
+// wipe_ReadScreen
+// Reads the screen currently displayed into a linear buffer.
+//
+void wipe_ReadScreen(byte *scr)
+{
+    int j;
+
+    outp(GC_INDEX, GC_READMAP);
+
+    outp(GC_INDEX + 1, 0);
+    for (j = 0; j < SCREENWIDTH * SCREENHEIGHT / 4; j += 8)
+    {
+        int i = j * 4;
+        scr[i] = currentscreen[j];
+        scr[i + 4] = currentscreen[j + 1];
+        scr[i + 8] = currentscreen[j + 2];
+        scr[i + 12] = currentscreen[j + 3];
+        scr[i + 16] = currentscreen[j + 4];
+        scr[i + 20] = currentscreen[j + 5];
+        scr[i + 24] = currentscreen[j + 6];
+        scr[i + 28] = currentscreen[j + 7];
+    }
+
+    outp(GC_INDEX + 1, 1);
+    for (j = 0; j < SCREENWIDTH * SCREENHEIGHT / 4; j += 8)
+    {
+        int i = j * 4;
+        scr[i + 1] = currentscreen[j];
+        scr[i + 5] = currentscreen[j + 1];
+        scr[i + 9] = currentscreen[j + 2];
+        scr[i + 13] = currentscreen[j + 3];
+        scr[i + 17] = currentscreen[j + 4];
+        scr[i + 21] = currentscreen[j + 5];
+        scr[i + 25] = currentscreen[j + 6];
+        scr[i + 29] = currentscreen[j + 7];
+    }
+
+    outp(GC_INDEX + 1, 2);
+    for (j = 0; j < SCREENWIDTH * SCREENHEIGHT / 4; j += 8)
+    {
+        int i = j * 4;
+        scr[i + 2] = currentscreen[j];
+        scr[i + 6] = currentscreen[j + 1];
+        scr[i + 10] = currentscreen[j + 2];
+        scr[i + 14] = currentscreen[j + 3];
+        scr[i + 18] = currentscreen[j + 4];
+        scr[i + 22] = currentscreen[j + 5];
+        scr[i + 26] = currentscreen[j + 6];
+        scr[i + 30] = currentscreen[j + 7];
+    }
+
+    outp(GC_INDEX + 1, 3);
+    for (j = 0; j < SCREENWIDTH * SCREENHEIGHT / 4; j += 8)
+    {
+        int i = j * 4;
+        scr[i + 3] = currentscreen[j];
+        scr[i + 7] = currentscreen[j + 1];
+        scr[i + 11] = currentscreen[j + 2];
+        scr[i + 15] = currentscreen[j + 3];
+        scr[i + 19] = currentscreen[j + 4];
+        scr[i + 23] = currentscreen[j + 5];
+        scr[i + 27] = currentscreen[j + 6];
+        scr[i + 31] = currentscreen[j + 7];
+    }
+}
+
 void wipe_StartScreen()
 {
-    screen2 = (int *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
-    I_ReadScreen(screen2);
+    screen2 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
+    wipe_ReadScreen(screen2);
 }
 
 void wipe_EndScreen()
 {
-    screen3 = (int *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
-    I_ReadScreen(screen3);
+    screen3 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
+    wipe_ReadScreen(screen3);
 }
 
 int wipe_ScreenWipe(int ticks)
