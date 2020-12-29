@@ -1,5 +1,6 @@
 #include "fastmath.h"
 #include "ns_task.h"
+#include "doomtype.h"
 
 extern int ticcount;
 extern fixed_t fps;
