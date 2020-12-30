@@ -86,15 +86,6 @@ fixed_t cachedxstep[SCREENHEIGHT];
 fixed_t cachedystep[SCREENHEIGHT];
 
 //
-// R_InitPlanes
-// Only at game startup.
-//
-void R_InitPlanes(void)
-{
-    // Doh!
-}
-
-//
 // R_MapPlane
 //
 // Uses global vars:
