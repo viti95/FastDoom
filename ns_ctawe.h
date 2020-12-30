@@ -4,7 +4,7 @@
 #define MAXBANKS 64 /* maximum number of banks */
 #define MAXNRPN 32  /* maximum number of NRPN */
 
-#if defined(__FLAT__) || defined(__HIGHC__) || defined(DOS386)
+#if defined(__FLAT__) || defined(DOS386)
 #define PACKETSIZE 8192 /* packet size for 32bit libraries */
 #else
 #define PACKETSIZE 512 /* packet size for real mode libraries */
@@ -25,15 +25,6 @@
 
 #if defined(__WATCOMC__)
 #pragma pack(1)
-#endif
-
-#if defined(__HIGHC__)
-#define NEAR
-#define FAR
-#define PASCAL _DCC((_DEFAULT_CALLING_CONVENTION | _CALLEE_POPS_STACK) & \
-                    ~(_REVERSE_PARMS | _OVERLOADED))
-#pragma Push_align_members(1)
-#pragma Global_aliasing_convention("_%r")
 #endif
 
 typedef int BOOL;
@@ -218,41 +209,6 @@ extern "C"
 
 #if defined(__SC__)
 #pragma pack()
-#endif
-
-#if defined(__HIGHC__)
-#pragma Pop_align_members
-#pragma Global_aliasing_convention()
-#pragma Alias(awe32RegW, "AWE32REGW")
-#pragma Alias(awe32RegRW, "AWE32REGRW")
-#pragma Alias(awe32RegDW, "AWE32REGDW")
-#pragma Alias(awe32RegRDW, "AWE32REGRDW")
-#pragma Alias(awe32InitMIDI, "AWE32INITMIDI")
-#pragma Alias(awe32NoteOn, "AWE32NOTEON")
-#pragma Alias(awe32NoteOff, "AWE32NOTEOFF")
-#pragma Alias(awe32ProgramChange, "AWE32PROGRAMCHANGE")
-#pragma Alias(awe32Controller, "AWE32CONTROLLER")
-#pragma Alias(awe32PolyKeyPressure, "AWE32POLYKEYPRESSURE")
-#pragma Alias(awe32ChannelPressure, "AWE32CHANNELPRESSURE")
-#pragma Alias(awe32PitchBend, "AWE32PITCHBEND")
-#pragma Alias(awe32Sysex, "AWE32SYSEX")
-#pragma Alias(__awe32NoteOff, "__AWE32NOTEOFF")
-#pragma Alias(__awe32IsPlaying, "__AWE32ISPLAYING")
-#pragma Alias(awe32InitNRPN, "AWE32INITNRPN")
-#pragma Alias(awe32Detect, "AWE32DETECT")
-#pragma Alias(awe32InitHardware, "AWE32INITHARDWARE")
-#pragma Alias(awe32Terminate, "AWE32TERMINATE")
-#pragma Alias(awe32TotalPatchRam, "AWE32TOTALPATCHRAM")
-#pragma Alias(awe32DefineBankSizes, "AWE32DEFINEBANKSIZES")
-#pragma Alias(awe32SFontLoadRequest, "AWE32SFONTLOADREQUEST")
-#pragma Alias(awe32StreamSample, "AWE32STREAMSAMPLE")
-#pragma Alias(awe32SetPresets, "AWE32SETPRESETS")
-#pragma Alias(awe32ReleaseBank, "AWE32RELEASEBANK")
-#pragma Alias(awe32ReleaseAllBanks, "AWE32RELEASEALLBANKS")
-#pragma Alias(awe32WPLoadRequest, "AWE32WPLOADREQUEST")
-#pragma Alias(awe32WPLoadWave, "AWE32WPLOADWAVE")
-#pragma Alias(awe32WPStreamWave, "AWE32WPSTREAMWAVE")
-#pragma Alias(awe32WPBuildSFont, "AWE32WPBUILDSFONT")
 #endif
 
 #if defined(__WATCOMC__)
