@@ -51,7 +51,6 @@ void ExtractFileBase(char *path,
                      char *dest)
 {
     char *src;
-    int length;
 
     src = path + strlen(path) - 1;
 
@@ -63,13 +62,9 @@ void ExtractFileBase(char *path,
 
     // copy up to eight characters
     memset(dest, 0, 8);
-    length = 0;
 
     while (*src && *src != '.')
     {
-        if (++length == 9)
-            I_Error("Filename base of %s >8 chars", path);
-
         *dest++ = toupper((int)*src++);
     }
 }
@@ -140,14 +135,6 @@ void W_AddFile(char *filename)
         read(handle, &header, sizeof(header));
         if (strncmp(header.identification, "IWAD", 4))
         {
-            // Homebrew levels?
-            if (strncmp(header.identification, "PWAD", 4))
-            {
-                I_Error("Wad file %s doesn't have IWAD "
-                        "or PWAD id\n",
-                        filename);
-            }
-
             modifiedgame = true;
         }
         header.numlumps = LONG(header.numlumps);
@@ -161,9 +148,6 @@ void W_AddFile(char *filename)
 
     // Fill in lumpinfo
     lumpinfo = realloc(lumpinfo, numlumps * sizeof(lumpinfo_t));
-
-    if (!lumpinfo)
-        I_Error("Couldn't realloc lumpinfo");
 
     lump_p = &lumpinfo[startlump];
 
@@ -207,15 +191,9 @@ void W_InitMultipleFiles(char **filenames)
     for (; *filenames; filenames++)
         W_AddFile(*filenames);
 
-    if (!numlumps)
-        I_Error("W_InitFiles: no files found");
-
     // set up caching
     size = numlumps * sizeof(*lumpcache);
     lumpcache = malloc(size);
-
-    if (!lumpcache)
-        I_Error("Couldn't allocate lumpcache");
 
     memset(lumpcache, 0, size);
 

@@ -48,9 +48,6 @@ void I_StartupTimer(void)
     // installs master timer.  Must be done before StartupTimer()!
     tsm_task = TS_ScheduleTask(I_TimerISR, 35, 1, NULL);
     TS_Dispatch();
-
-    if (tsm_task == NULL)
-        I_Error("Can't register 35 Hz timer w/ ASS library");
 }
 
 void I_ShutdownTimer(void)

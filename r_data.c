@@ -316,8 +316,6 @@ void R_GenerateLookup(int texnum)
     {
         if (!patchcount[x])
         {
-            printf("R_GenerateLookup: column without a patch (%s)\n",
-                   texture->name);
             return;
         }
 
@@ -326,13 +324,6 @@ void R_GenerateLookup(int texnum)
             // Use the cached block.
             collump[x] = -1;
             colofs[x] = texturecompositesize[texnum];
-
-            if (texturecompositesize[texnum] > 0x10000 - texture->height)
-            {
-                I_Error("R_GenerateLookup: texture %i is >64k",
-                        texnum);
-            }
-
             texturecompositesize[texnum] += texture->height;
         }
     }
@@ -490,9 +481,6 @@ void R_InitTextures(void)
 
         offset = LONG(*directory);
 
-        if (offset > maxoff)
-            I_Error("R_InitTextures: bad texture directory");
-
         mtexture = (maptexture_t *)((byte *)maptex + offset);
 
         texture = textures[i] =
@@ -512,11 +500,6 @@ void R_InitTextures(void)
             patch->originx = SHORT(mpatch->originx);
             patch->originy = SHORT(mpatch->originy);
             patch->patch = patchlookup[SHORT(mpatch->patch)];
-            if (patch->patch == -1)
-            {
-                I_Error("R_InitTextures: Missing patch in texture %s",
-                        texture->name);
-            }
         }
         texturecolumnlump[i] = Z_MallocUnowned(texture->width * 2, PU_STATIC);
         texturecolumnofs[i] = Z_MallocUnowned(texture->width * 2, PU_STATIC);

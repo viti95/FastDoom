@@ -854,11 +854,6 @@ byte *I_AllocLow(int length)
     int386(DPMI_INT, &regs, &regs);
     //segment = regs.w.ax;
     //selector = regs.w.dx;
-    if (regs.w.cflag != 0)
-    {
-        I_Error("I_AllocLow: DOS alloc of %i failed, %i free",
-                length, regs.w.bx * 16);
-    }
 
     mem = (void *)((regs.x.eax & 0xFFFF) << 4);
 
