@@ -276,29 +276,3 @@ void V_DrawPatchDirect(int x,
             desttop++; // go to next byte, not next plane
     }
 }
-
-//
-// V_DrawBlock
-// Draw a linear block of pixels into the view buffer.
-//
-void V_DrawBlock(int x,
-                 int y,
-                 byte *scrn,
-                 int width,
-                 int height,
-                 byte *src)
-{
-    byte *dest;
-
-    V_MarkRect(x, y, width, height);
-
-    dest = scrn + Mul320(y) + x;
-
-    while (height--)
-    {
-        CopyBytes(src, dest, width);
-        //memcpy(dest, src, width);
-        src += width;
-        dest += SCREENWIDTH;
-    }
-}
