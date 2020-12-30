@@ -1111,8 +1111,8 @@ void AM_drawMarks(void)
 			int fx, fy;
 			fx = CXMTOF(markpoints[i].x);
 			fy = CYMTOF(markpoints[i].y);
-			if (fx >= 0 && fy >= 0 && fy <= (SCREENHEIGHT - 32) - 6)
-				V_DrawPatch(0, 0, screen0, marknums[i]);
+            if (fx >= 0 && fx <= SCREENWIDTH - 5 && fy >= 0 && fy <= SCREENHEIGHT - 32 - 6)
+                V_DrawPatch(fx, fy, screen0, marknums[i]);
 		}
 	}
 }
