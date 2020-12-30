@@ -17,11 +17,6 @@
 #define TRUE (1 == 1)
 #define FALSE (!TRUE)
 
-void TextMode(void);
-#pragma aux TextMode =  \
-    "mov    ax, 0003h", \
-            "int    10h" modify[ax];
-
 int MUSIC_SoundDevice = -1;
 
 static midifuncs MUSIC_MidiFunctions;
