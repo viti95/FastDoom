@@ -708,6 +708,7 @@ void M_SaveGame(int choice)
 //
 //      M_QuickSave
 //
+char tempstring[80];
 
 void M_QuickSaveResponse(int ch)
 {
@@ -720,8 +721,6 @@ void M_QuickSaveResponse(int ch)
 
 void M_QuickSave(void)
 {
-    char tempstring[80];
-
     if (!usergame)
     {
         S_StartSound(NULL, sfx_oof);
@@ -757,8 +756,6 @@ void M_QuickLoadResponse(int ch)
 
 void M_QuickLoad(void)
 {
-    char tempstring[80];
-    
     if (quickSaveSlot < 0)
     {
         M_StartMessage(QSAVESPOT, NULL, false);
