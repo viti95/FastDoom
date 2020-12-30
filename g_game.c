@@ -601,7 +601,7 @@ void G_PlayerReborn()
 void P_SpawnPlayer(mapthing_t *mthing);
 
 // DOOM Par Times
-int pars[4][10] =
+short pars[4][10] =
     {
         {0},
         {0, 30, 75, 120, 90, 165, 180, 180, 30, 165},
@@ -609,7 +609,7 @@ int pars[4][10] =
         {0, 90, 45, 90, 150, 90, 90, 165, 30, 135}};
 
 // DOOM II Par Times
-int cpars[32] =
+short cpars[32] =
     {
         30, 90, 120, 120, 90, 150, 120, 120, 270, 90,     //  1-10
         210, 150, 150, 150, 210, 150, 420, 150, 210, 150, // 11-20
