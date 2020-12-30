@@ -182,52 +182,6 @@ void W_AddFile(char *filename)
 }
 
 //
-// W_Reload
-// Flushes any of the reloadable lumps in memory
-//  and reloads the directory.
-//
-void W_Reload(void)
-{
-    wadinfo_t header;
-    int lumpcount;
-    lumpinfo_t *lump_p;
-    unsigned i;
-    int handle;
-    int length;
-    filelump_t *fileinfo;
-
-    if (!reloadname)
-        return;
-
-    if ((handle = open(reloadname, O_RDONLY | O_BINARY)) == -1)
-        I_Error("W_Reload: couldn't open %s", reloadname);
-
-    read(handle, &header, sizeof(header));
-    lumpcount = LONG(header.numlumps);
-    header.infotableofs = LONG(header.infotableofs);
-    length = lumpcount * sizeof(filelump_t);
-    fileinfo = alloca(length);
-    lseek(handle, header.infotableofs, SEEK_SET);
-    read(handle, fileinfo, length);
-
-    // Fill in lumpinfo
-    lump_p = &lumpinfo[reloadlump];
-
-    for (i = reloadlump;
-         i < reloadlump + lumpcount;
-         i++, lump_p++, fileinfo++)
-    {
-        if (lumpcache[i])
-            Z_Free(lumpcache[i]);
-
-        lump_p->position = LONG(fileinfo->filepos);
-        lump_p->size = LONG(fileinfo->size);
-    }
-
-    close(handle);
-}
-
-//
 // W_InitMultipleFiles
 // Pass a null terminated list of files to use.
 // All files are optional, but at least one file
