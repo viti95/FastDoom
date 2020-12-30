@@ -74,8 +74,7 @@ short screenheightarray[SCREENWIDTH];
 
 // variables used to look up
 //  and range check thing_t sprites patches
-spritedef_t *sprites;
-int numsprites;
+spritedef_t sprites[NUMSPRITES];
 
 spriteframe_t sprtemp[29];
 int maxframe;
@@ -158,7 +157,6 @@ void R_InstallSpriteLump(int lump,
 //
 void R_InitSpriteDefs(char **namelist)
 {
-    char **check;
     int i;
     int l;
     int intname;
@@ -168,25 +166,13 @@ void R_InitSpriteDefs(char **namelist)
     int end;
     int patched;
 
-    // count the number of sprite names
-    check = namelist;
-    while (*check != NULL)
-        check++;
-
-    numsprites = check - namelist;
-
-    if (!numsprites)
-        return;
-
-    sprites = Z_MallocUnowned(numsprites * sizeof(*sprites), PU_STATIC);
-
     start = firstspritelump - 1;
     end = lastspritelump + 1;
 
     // scan all the lump names for each of the names,
     //  noting the highest frame letter.
     // Just compare 4 characters as ints
-    for (i = 0; i < numsprites; i++)
+    for (i = 0; i < NUMSPRITES; i++)
     {
         spritename = namelist[i];
         memset(sprtemp, -1, sizeof(sprtemp));

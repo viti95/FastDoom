@@ -681,7 +681,7 @@ void R_PrecacheLevel(void)
 {
     char *flatpresent;
     char *texturepresent;
-    char *spritepresent;
+    char spritepresent[NUMSPRITES];
 
     int i;
     int j;
@@ -754,8 +754,7 @@ void R_PrecacheLevel(void)
     }
 
     // Precache sprites.
-    spritepresent = alloca(numsprites);
-    memset(spritepresent, 0, numsprites);
+    memset(spritepresent, 0, NUMSPRITES);
 
     for (th = thinkercap.next; th != &thinkercap; th = th->next)
     {
@@ -763,7 +762,7 @@ void R_PrecacheLevel(void)
             spritepresent[((mobj_t *)th)->sprite] = 1;
     }
 
-    for (i = 0; i < numsprites; i++)
+    for (i = 0; i < NUMSPRITES; i++)
     {
         if (!spritepresent[i])
             continue;
