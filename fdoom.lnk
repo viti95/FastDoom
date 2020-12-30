@@ -6,6 +6,7 @@ option stack=65536
 option stub=wstub
 option statics
 option symfile
+option verbose
 debug all
 libpath %WATCOM%\lib386
 libpath %WATCOM%\lib386\dos
