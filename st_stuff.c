@@ -545,7 +545,7 @@ ST_Responder(event_t *ev)
 				}
 #endif
 			}
-			else if (!commercial && cht_CheckCheat(&cheat_noclip, ev->data1))
+			else if (cht_CheckCheat(&cheat_noclip, ev->data1) || cht_CheckCheat(&cheat_commercial_noclip, ev->data1))
 			{
 				plyr->cheats ^= CF_NOCLIP;
 
@@ -554,15 +554,7 @@ ST_Responder(event_t *ev)
 				else
 					plyr->message = STSTR_NCOFF;
 			}
-			else if (commercial && cht_CheckCheat(&cheat_commercial_noclip, ev->data1))
-			{
-				plyr->cheats ^= CF_NOCLIP;
-
-				if (plyr->cheats & CF_NOCLIP)
-					plyr->message = STSTR_NCON;
-				else
-					plyr->message = STSTR_NCOFF;
-			}
+			
 			// 'behold?' power-up cheats
 			for (i = 0; i < 6; i++)
 			{
