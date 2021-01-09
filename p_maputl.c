@@ -49,9 +49,9 @@ P_AproxDistance(fixed_t dx,
 // P_PointOnLineSide
 // Returns 0 or 1
 //
-int P_PointOnLineSide(fixed_t x,
-                      fixed_t y,
-                      line_t *line)
+byte P_PointOnLineSide(fixed_t x,
+                       fixed_t y,
+                       line_t *line)
 {
     fixed_t dx;
     fixed_t dy;
@@ -87,15 +87,14 @@ int P_PointOnLineSide(fixed_t x,
 //
 // P_BoxOnLineSide
 // Considers the line to be infinite
-// Returns side 0 or 1, -1 if box crosses the line.
+// Returns side 0 or 1, 2 if box crosses the line.
 //
-int P_BoxOnLineSide(fixed_t *tmbox,
+byte P_BoxOnLineSide(fixed_t *tmbox,
                     line_t *ld)
 {
-    int p1;
-    int p2;
-
-    int optCmp;
+    byte p1;
+    byte p2;
+    byte optCmp;
 
     switch (ld->slopetype)
     {
@@ -128,14 +127,15 @@ int P_BoxOnLineSide(fixed_t *tmbox,
 
     if (p1 == p2)
         return p1;
-    return -1;
+
+    return 2;
 }
 
 //
 // P_PointOnDivlineSide
 // Returns 0 or 1.
 //
-int P_PointOnDivlineSide(fixed_t x,
+byte P_PointOnDivlineSide(fixed_t x,
                          fixed_t y,
                          divline_t *line)
 {
@@ -456,8 +456,8 @@ int ptflags;
 boolean
 PIT_AddLineIntercepts(line_t *ld)
 {
-    int s1;
-    int s2;
+    byte s1;
+    byte s2;
     fixed_t frac;
     divline_t dl;
 
@@ -511,8 +511,8 @@ boolean PIT_AddThingIntercepts(mobj_t *thing)
     fixed_t x2;
     fixed_t y2;
 
-    int s1;
-    int s2;
+    byte s1;
+    byte s2;
 
     boolean tracepositive;
 
@@ -684,7 +684,7 @@ P_PathTraverse(fixed_t x1,
         mapxstep = -1;
         partial = (x1 >> MAPBTOFRAC) & (FRACUNIT - 1);
         opt1 = y2 - y1;
-        opt2 = abs(x2 -x1);
+        opt2 = abs(x2 - x1);
         //ystep = FixedDiv(y2 - y1, abs(x2 - x1));
         ystep = ((abs(opt1) >> 14) >= opt2) ? ((opt1 ^ opt2) >> 31) ^ MAXINT : FixedDiv2(opt1, opt2);
     }
@@ -704,7 +704,7 @@ P_PathTraverse(fixed_t x1,
         opt1 = x2 - x1;
         opt2 = abs(y2 - y1);
         //xstep = FixedDiv(x2 - x1, abs(y2 - y1));
-        xstep = ((abs(opt1) >> 14) >= opt2) ? ((opt1 ^ opt2) >> 31) ^ MAXINT : FixedDiv2(opt1, opt2);    
+        xstep = ((abs(opt1) >> 14) >= opt2) ? ((opt1 ^ opt2) >> 31) ^ MAXINT : FixedDiv2(opt1, opt2);
     }
     else if (yt2 < yt1)
     {

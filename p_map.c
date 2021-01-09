@@ -175,7 +175,7 @@ boolean PIT_CheckLine(line_t *ld)
     if (tmbbox[BOXRIGHT] <= ld->bbox[BOXLEFT] || tmbbox[BOXLEFT] >= ld->bbox[BOXRIGHT] || tmbbox[BOXTOP] <= ld->bbox[BOXBOTTOM] || tmbbox[BOXBOTTOM] >= ld->bbox[BOXTOP])
         return true;
 
-    if (P_BoxOnLineSide(tmbbox, ld) != -1)
+    if (P_BoxOnLineSide(tmbbox, ld) != (byte)2)
         return true;
 
     // A line has been hit
@@ -429,8 +429,8 @@ P_TryMove(mobj_t *thing,
 {
     fixed_t oldx;
     fixed_t oldy;
-    int side;
-    int oldside;
+    byte side;
+    byte oldside;
     line_t *ld;
 
     floatok = false;
@@ -549,7 +549,7 @@ fixed_t tmymove;
 //
 void P_HitSlideLine(line_t *ld)
 {
-    int side;
+    byte side;
 
     angle_t lineangle;
     angle_t moveangle;
@@ -574,7 +574,7 @@ void P_HitSlideLine(line_t *ld)
 
     lineangle = R_PointToAngle2(0, 0, ld->dx, ld->dy);
 
-    if (side == 1)
+    if (side == (byte)1)
         lineangle += ANG180;
 
     moveangle = R_PointToAngle2(0, 0, tmxmove, tmymove);
