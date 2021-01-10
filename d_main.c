@@ -21,7 +21,6 @@
 
 #include <stdlib.h>
 #include <dos.h>
-#include <direct.h>
 #include <io.h>
 
 #include "doomdef.h"

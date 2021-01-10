@@ -17,14 +17,11 @@
 //
 
 #include <ctype.h>
-#include <sys/types.h>
 #include <string.h>
 #include <unistd.h>
 #include <malloc.h>
 #include <fcntl.h>
-#include <sys/stat.h>
 #include <alloca.h>
-
 #include "doomtype.h"
 #include "doomstat.h"
 #include "i_system.h"

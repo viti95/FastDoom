@@ -2,7 +2,6 @@
 #include <conio.h>
 #include <dos.h>
 #include <stdio.h>
-#include <io.h>
 #include <string.h>
 #include "ns_inter.h"
 #include "ns_llm.h"

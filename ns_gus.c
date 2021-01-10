@@ -1,7 +1,6 @@
 #include <conio.h>
 #include <dos.h>
 #include <stdio.h>
-#include <io.h>
 #include <fcntl.h>
 #include <string.h>
 #include <stdlib.h>

@@ -21,7 +21,6 @@
 #include <conio.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#include <graph.h>
 #include "d_main.h"
 #include "doomstat.h"
 #include "r_local.h"
