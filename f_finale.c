@@ -16,7 +16,7 @@
 //	Game completion, final screen animation.
 //
 
-#include <ctype.h>
+#include "std_func.h"
 
 // Functions.
 #include "i_system.h"
@@ -375,7 +375,7 @@ void F_TextWrite(void)
 			continue;
 		}
 
-		w = SHORT(hu_font[c]->width);
+		w = hu_font[c]->width;
 		if (cx + w > SCREENWIDTH)
 			break;
 		V_DrawPatch(cx, cy, screen0, hu_font[c]);
@@ -630,7 +630,7 @@ void F_CastPrint(char *text)
 			continue;
 		}
 
-		w = SHORT(hu_font[c]->width);
+		w = hu_font[c]->width;
 		width += w;
 	}
 
@@ -649,7 +649,7 @@ void F_CastPrint(char *text)
 			continue;
 		}
 
-		w = SHORT(hu_font[c]->width);
+		w = hu_font[c]->width;
 		V_DrawPatch(cx, 180, screen0, hu_font[c]);
 		cx += w;
 	}
@@ -699,7 +699,7 @@ void F_DrawPatchCol(int x,
 	byte *desttop;
 	int count;
 
-	column = (column_t *)((byte *)patch + LONG(patch->columnofs[col]));
+	column = (column_t *)((byte *)patch + patch->columnofs[col]);
 	desttop = screen0 + x;
 
 	// step through the posts in a column

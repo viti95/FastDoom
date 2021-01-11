@@ -291,7 +291,7 @@ void R_DrawVisSprite(vissprite_t *vis)
         mcc_x = mceilingclip[dc_x];
 
         texturecolumn = frac >> FRACBITS;
-        column = (column_t *)((byte *)patch + LONG(patch->columnofs[texturecolumn]));
+        column = (column_t *)((byte *)patch + patch->columnofs[texturecolumn]);
 
         for (; column->topdelta != 0xff;)
         {

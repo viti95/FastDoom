@@ -15,7 +15,7 @@
 // DESCRIPTION:
 //	The status bar widget code.
 //
-#include <ctype.h>
+#include "std_func.h"
 
 #include "doomdef.h"
 
@@ -63,8 +63,8 @@ void STlib_drawNum(st_number_t *n,
 {
     int num = *n->num;
 
-    int w = SHORT(n->p[0]->width);
-    int h = SHORT(n->p[0]->height);
+    int w = n->p[0]->width;
+    int h = n->p[0]->height;
     int x = n->x;
 
     // [crispy] redraw only if necessary
@@ -160,10 +160,10 @@ void STlib_updateMultIcon(st_multicon_t *mi,
     {
         if (mi->oldinum != -1)
         {
-            x = mi->x - SHORT(mi->p[mi->oldinum]->leftoffset);
-            y = mi->y - SHORT(mi->p[mi->oldinum]->topoffset);
-            w = SHORT(mi->p[mi->oldinum]->width);
-            h = SHORT(mi->p[mi->oldinum]->height);
+            x = mi->x - mi->p[mi->oldinum]->leftoffset;
+            y = mi->y - mi->p[mi->oldinum]->topoffset;
+            w = mi->p[mi->oldinum]->width;
+            h = mi->p[mi->oldinum]->height;
 
             V_CopyRect(x, y - ST_Y, screen4, w, h, x, y, screen0);
         }
@@ -197,10 +197,10 @@ void STlib_updateBinIcon(st_binicon_t *bi,
 
     if (*bi->on && (bi->oldval != *bi->val || refresh))
     {
-        x = bi->x - SHORT(bi->p->leftoffset);
-        y = bi->y - SHORT(bi->p->topoffset);
-        w = SHORT(bi->p->width);
-        h = SHORT(bi->p->height);
+        x = bi->x - bi->p->leftoffset;
+        y = bi->y - bi->p->topoffset;
+        w = bi->p->width;
+        h = bi->p->height;
 
         if (*bi->val)
             V_DrawPatch(bi->x, bi->y, screen0, bi->p);

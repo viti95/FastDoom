@@ -413,15 +413,6 @@ static boolean ReadMusHeader(FILE *file, musheader *header)
 
     result = fread(&header->id, sizeof(byte), 4, file) == 4 && fread(&header->scorelength, sizeof(short), 1, file) == 1 && fread(&header->scorestart, sizeof(short), 1, file) == 1 && fread(&header->primarychannels, sizeof(short), 1, file) == 1 && fread(&header->secondarychannels, sizeof(short), 1, file) == 1 && fread(&header->instrumentcount, sizeof(short), 1, file) == 1;
 
-    /*if (result)
-    {
-        header->scorelength = SHORT(header->scorelength);
-        header->scorestart = SHORT(header->scorestart);
-        header->primarychannels = SHORT(header->primarychannels);
-        header->secondarychannels = SHORT(header->secondarychannels);
-        header->instrumentcount = SHORT(header->instrumentcount);
-    }*/
-
     return result;
 }
 

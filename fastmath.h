@@ -34,9 +34,6 @@ typedef int fixed_t;
 #define FLOAT_TO_FIXED(inp)       (fixed_t)(inp * (1 << FRACBITS))
 #define ANGLE_TO_FLOAT(x)       (x * ((float)(PI_F / 4096.0f)))
 
-#define SHORT(x) (x)
-#define LONG(x) (x)
-
 fixed_t FixedMul(fixed_t a, fixed_t b);
 #pragma aux FixedMul = \
     "imul ebx",        \

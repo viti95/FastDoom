@@ -21,7 +21,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include <ctype.h>
+#include "std_func.h"
 
 #include "doomdef.h"
 

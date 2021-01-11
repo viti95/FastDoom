@@ -231,7 +231,7 @@ void R_GenerateComposite(int texnum)
     {
         realpatch = W_CacheLumpNum(patch->patch, PU_CACHE);
         x1 = patch->originx;
-        x2 = x1 + SHORT(realpatch->width);
+        x2 = x1 + realpatch->width;
 
         if (x1 < 0)
             x = 0;
@@ -247,7 +247,7 @@ void R_GenerateComposite(int texnum)
             if (collump[x] >= 0)
                 continue;
 
-            patchcol = (column_t *)((byte *)realpatch + LONG(realpatch->columnofs[x - x1]));
+            patchcol = (column_t *)((byte *)realpatch + realpatch->columnofs[x - x1]);
             R_DrawColumnInCache(patchcol, block + colofs[x], patch->originy, texture->height);
         }
     }
@@ -296,7 +296,7 @@ void R_GenerateLookup(int texnum)
     {
         realpatch = W_CacheLumpNum(patch->patch, PU_CACHE);
         x1 = patch->originx;
-        x2 = x1 + SHORT(realpatch->width);
+        x2 = x1 + realpatch->width;
 
         if (x1 < 0)
             x = 0;
@@ -309,7 +309,7 @@ void R_GenerateLookup(int texnum)
         {
             patchcount[x]++;
             collump[x] = patch->patch;
-            colofs[x] = LONG(realpatch->columnofs[x - x1]) + 3;
+            colofs[x] = realpatch->columnofs[x - x1] + 3;
         }
     }
 
@@ -412,7 +412,7 @@ void R_InitTextures(void)
     // Load the patch names from pnames.lmp.
     name[8] = 0;
     names = W_CacheLumpName("PNAMES", PU_STATIC);
-    nummappatches = LONG(*((int *)names));
+    nummappatches = *((int *)names);
     name_p = names + 4;
     patchlookup = alloca(nummappatches * sizeof(*patchlookup));
 
@@ -427,14 +427,14 @@ void R_InitTextures(void)
     // The data is contained in one or two lumps,
     //  TEXTURE1 for shareware, plus TEXTURE2 for commercial.
     maptex = maptex1 = W_CacheLumpName("TEXTURE1", PU_STATIC);
-    numtextures1 = LONG(*maptex);
+    numtextures1 = *maptex;
     maxoff = W_LumpLength(W_GetNumForName("TEXTURE1"));
     directory = maptex + 1;
 
     if (W_GetNumForName("TEXTURE2") != -1)
     {
         maptex2 = W_CacheLumpName("TEXTURE2", PU_STATIC);
-        numtextures2 = LONG(*maptex2);
+        numtextures2 = *maptex2;
         maxoff2 = W_LumpLength(W_GetNumForName("TEXTURE2"));
     }
     else
@@ -480,16 +480,16 @@ void R_InitTextures(void)
             directory = maptex + 1;
         }
 
-        offset = LONG(*directory);
+        offset = *directory;
 
         mtexture = (maptexture_t *)((byte *)maptex + offset);
 
         texture = textures[i] =
-            Z_MallocUnowned(sizeof(texture_t) + sizeof(texpatch_t) * (SHORT(mtexture->patchcount) - 1), PU_STATIC);
+            Z_MallocUnowned(sizeof(texture_t) + sizeof(texpatch_t) * (mtexture->patchcount - 1), PU_STATIC);
 
-        texture->width = SHORT(mtexture->width);
-        texture->height = SHORT(mtexture->height);
-        texture->patchcount = SHORT(mtexture->patchcount);
+        texture->width = mtexture->width;
+        texture->height = mtexture->height;
+        texture->patchcount = mtexture->patchcount;
 
         CopyBytes(mtexture->name, texture->name, sizeof(texture->name));
         //memcpy(texture->name, mtexture->name, sizeof(texture->name));
@@ -498,9 +498,9 @@ void R_InitTextures(void)
 
         for (j = 0; j < texture->patchcount; j++, mpatch++, patch++)
         {
-            patch->originx = SHORT(mpatch->originx);
-            patch->originy = SHORT(mpatch->originy);
-            patch->patch = patchlookup[SHORT(mpatch->patch)];
+            patch->originx = mpatch->originx;
+            patch->originy = mpatch->originy;
+            patch->patch = patchlookup[mpatch->patch];
         }
         texturecolumnlump[i] = Z_MallocUnowned(texture->width * 2, PU_STATIC);
         texturecolumnofs[i] = Z_MallocUnowned(texture->width * 2, PU_STATIC);
@@ -575,9 +575,9 @@ void R_InitSpriteLumps(void)
             printf(".");
 
         patch = W_CacheLumpNum(firstspritelump + i, PU_CACHE);
-        spritewidth[i] = SHORT(patch->width) << FRACBITS;
-        spriteoffset[i] = SHORT(patch->leftoffset) << FRACBITS;
-        spritetopoffset[i] = SHORT(patch->topoffset) << FRACBITS;
+        spritewidth[i] = patch->width << FRACBITS;
+        spriteoffset[i] = patch->leftoffset << FRACBITS;
+        spritetopoffset[i] = patch->topoffset << FRACBITS;
     }
 }
 

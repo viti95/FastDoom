@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>
+#include "std_func.h"
 #include "ns_dpmi.h"
 #include "ns_dma.h"
 #include "ns_irq.h"

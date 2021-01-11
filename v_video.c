@@ -113,19 +113,19 @@ void V_DrawPatch(int x,
     byte *source;
     int w;
 
-    y -= SHORT(patch->topoffset);
-    x -= SHORT(patch->leftoffset);
+    y -= patch->topoffset;
+    x -= patch->leftoffset;
 
     if (scrn == screen0)
-        V_MarkRect(x, y, SHORT(patch->width), SHORT(patch->height));
+        V_MarkRect(x, y, patch->width, patch->height);
 
     desttop = scrn + Mul320(y) + x;
 
-    w = SHORT(patch->width);
+    w = patch->width;
 
     for (; col < w; x++, col++, desttop++)
     {
-        column = (column_t *)((byte *)patch + LONG(patch->columnofs[col]));
+        column = (column_t *)((byte *)patch + patch->columnofs[col]);
 
         // step through the posts in a column
         while (column->topdelta != 0xff)
@@ -180,20 +180,20 @@ void V_DrawPatchFlipped(int x,
     byte *source;
     int w;
 
-    y -= SHORT(patch->topoffset);
-    x -= SHORT(patch->leftoffset);
+    y -= patch->topoffset;
+    x -= patch->leftoffset;
 
     if (!scrn)
-        V_MarkRect(x, y, SHORT(patch->width), SHORT(patch->height));
+        V_MarkRect(x, y, patch->width, patch->height);
 
     col = 0;
     desttop = scrn + Mul320(y) + x;
 
-    w = SHORT(patch->width);
+    w = patch->width;
 
     for (; col < w; x++, col++, desttop++)
     {
-        column = (column_t *)((byte *)patch + LONG(patch->columnofs[w - 1 - col]));
+        column = (column_t *)((byte *)patch + patch->columnofs[w - 1 - col]);
 
         // step through the posts in a column
         while (column->topdelta != 0xff)
@@ -228,17 +228,16 @@ void V_DrawPatchDirect(int x,
     byte *source;
     int w;
 
-    y -= SHORT(patch->topoffset);
-    x -= SHORT(patch->leftoffset);
+    y -= patch->topoffset;
+    x -= patch->leftoffset;
 
-    //	V_MarkRect (x, y, SHORT(patch->width), SHORT(patch->height));
     desttop = destscreen + Mul80(y) + (x >> 2);
 
-    w = SHORT(patch->width);
+    w = patch->width;
     for (col = 0; col < w; col++)
     {
         outp(SC_INDEX + 1, 1 << (x & 3));
-        column = (column_t *)((byte *)patch + LONG(patch->columnofs[col]));
+        column = (column_t *)((byte *)patch + patch->columnofs[col]);
 
         // step through the posts in a column
 

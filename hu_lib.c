@@ -15,7 +15,7 @@
 // DESCRIPTION:  heads-up text and input code
 //
 
-#include <ctype.h>
+#include "std_func.h"
 
 #include "doomdef.h"
 
@@ -82,7 +82,7 @@ void HUlib_drawTextLine(hu_textline_t *l,
         c = toupper(l->l[i]);
         if (c != ' ' && c >= l->sc && c <= '_')
         {
-            w = SHORT(l->f[c - l->sc]->width);
+            w = l->f[c - l->sc]->width;
             if (x + w > SCREENWIDTH)
                 break;
             V_DrawPatchDirect(x, l->y, l->f[c - l->sc]);
@@ -97,7 +97,7 @@ void HUlib_drawTextLine(hu_textline_t *l,
     }
 
     // draw the cursor if requested
-    if (drawcursor && x + SHORT(l->f['_' - l->sc]->width) <= SCREENWIDTH)
+    if (drawcursor && x + l->f['_' - l->sc]->width <= SCREENWIDTH)
     {
         V_DrawPatchDirect(x, l->y, l->f['_' - l->sc]);
     }
@@ -118,7 +118,7 @@ void HUlib_eraseTextLine(hu_textline_t *l)
     if (!automapactive &&
         viewwindowx && l->needsupdate)
     {
-        lh = SHORT(l->f[0]->height) + 1;
+        lh = l->f[0]->height + 1;
         for (y = l->y, yoffset = Mul320(y); y < l->y + lh; y++, yoffset += SCREENWIDTH)
         {
             if (y < viewwindowy || y >= viewwindowy + viewheight)
@@ -154,7 +154,7 @@ void HUlib_initSText(hu_stext_t *s,
     s->cl = 0;
     for (i = 0; i < h; i++)
         HUlib_initTextLine(&s->l[i],
-                           x, y - i * (SHORT(font[0]->height) + 1),
+                           x, y - i * (font[0]->height + 1),
                            font, startchar);
 }
 

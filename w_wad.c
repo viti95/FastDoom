@@ -16,7 +16,7 @@
 //	Handles WAD file header, directory, lump I/O.
 //
 
-#include <ctype.h>
+#include "std_func.h"
 #include <string.h>
 #include <unistd.h>
 #include <malloc.h>
@@ -122,7 +122,7 @@ void W_AddFile(char *filename)
         // single lump file
         fileinfo = &singleinfo;
         singleinfo.filepos = 0;
-        singleinfo.size = LONG(filelength(handle));
+        singleinfo.size = filelength(handle);
         ExtractFileBase(filename, singleinfo.name);
         numlumps++;
     }
@@ -134,8 +134,6 @@ void W_AddFile(char *filename)
         {
             modifiedgame = true;
         }
-        header.numlumps = LONG(header.numlumps);
-        header.infotableofs = LONG(header.infotableofs);
         length = header.numlumps * sizeof(filelump_t);
         fileinfo = alloca(length);
         lseek(handle, header.infotableofs, SEEK_SET);
@@ -153,8 +151,8 @@ void W_AddFile(char *filename)
     for (i = startlump; i < numlumps; i++, lump_p++, fileinfo++)
     {
         lump_p->handle = storehandle;
-        lump_p->position = LONG(fileinfo->filepos);
-        lump_p->size = LONG(fileinfo->size);
+        lump_p->position = fileinfo->filepos;
+        lump_p->size = fileinfo->size;
         strncpy(lump_p->name, fileinfo->name, 8);
     }
 

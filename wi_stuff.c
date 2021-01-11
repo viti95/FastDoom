@@ -349,13 +349,13 @@ void WI_drawLF(void)
 	int y = WI_TITLEY;
 
 	// draw <LevelName>
-	V_DrawPatch((SCREENWIDTH - SHORT(lnames[wbs->last]->width)) / 2,
+	V_DrawPatch((SCREENWIDTH - lnames[wbs->last]->width) / 2,
 				y, screen0, lnames[wbs->last]);
 
 	// draw "Finished!"
-	y += (5 * SHORT(lnames[wbs->last]->height)) / 4;
+	y += (5 * lnames[wbs->last]->height) / 4;
 
-	V_DrawPatch((SCREENWIDTH - SHORT(finished->width)) / 2,
+	V_DrawPatch((SCREENWIDTH - finished->width) / 2,
 				y, screen0, finished);
 }
 
@@ -365,13 +365,13 @@ void WI_drawEL(void)
 	int y = WI_TITLEY;
 
 	// draw "Entering"
-	V_DrawPatch((SCREENWIDTH - SHORT(entering->width)) / 2,
+	V_DrawPatch((SCREENWIDTH - entering->width) / 2,
 				y, screen0, entering);
 
 	// draw level
-	y += (5 * SHORT(lnames[wbs->next]->height)) / 4;
+	y += (5 * lnames[wbs->next]->height) / 4;
 
-	V_DrawPatch((SCREENWIDTH - SHORT(lnames[wbs->next]->width)) / 2,
+	V_DrawPatch((SCREENWIDTH - lnames[wbs->next]->width) / 2,
 				y, screen0, lnames[wbs->next]);
 }
 
@@ -389,10 +389,10 @@ void WI_drawOnLnode(int n,
 	i = 0;
 	do
 	{
-		left = lnodes[wbs->epsd][n].x - SHORT(c[i]->leftoffset);
-		top = lnodes[wbs->epsd][n].y - SHORT(c[i]->topoffset);
-		right = left + SHORT(c[i]->width);
-		bottom = top + SHORT(c[i]->height);
+		left = lnodes[wbs->epsd][n].x - c[i]->leftoffset;
+		top = lnodes[wbs->epsd][n].y - c[i]->topoffset;
+		right = left + c[i]->width;
+		bottom = top + c[i]->height;
 
 		if (left >= 0 && right < SCREENWIDTH && top >= 0 && bottom < SCREENHEIGHT)
 		{
@@ -527,7 +527,7 @@ int WI_drawNumTwoDigits(int x,
 						int n)
 {
 	int original;
-	int fontwidth = SHORT(num[0]->width);
+	int fontwidth = num[0]->width;
 
 	// if non-number, do not draw it
 	if (n == 1994)
@@ -551,7 +551,7 @@ int WI_drawNum(int x,
 			   int n)
 {
 
-	int fontwidth = SHORT(num[0]->width);
+	int fontwidth = num[0]->width;
 
 	// if non-number, do not draw it
 	if (n == 1994)
@@ -604,7 +604,7 @@ void WI_drawTime(int x,
 		{
 			// VITI95: OPTIMIZE
 			n = (t / div) % 60;
-			x = WI_drawNumTwoDigits(x, y, n) - SHORT(colon->width);
+			x = WI_drawNumTwoDigits(x, y, n) - colon->width;
 			div *= 60;
 
 			// draw
@@ -616,7 +616,7 @@ void WI_drawTime(int x,
 	else
 	{
 		// "sucks"
-		V_DrawPatch(x - SHORT(sucks->width), y, screen0, sucks);
+		V_DrawPatch(x - sucks->width, y, screen0, sucks);
 	}
 }
 
@@ -903,7 +903,7 @@ void WI_drawStats(void)
 	// line height
 	int lh;
 
-	lh = (3 * SHORT(num[0]->height)) / 2;
+	lh = (3 * num[0]->height) / 2;
 
 	WI_slamBackground();
 
