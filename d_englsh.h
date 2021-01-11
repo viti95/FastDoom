@@ -103,7 +103,7 @@
 #define GOTSHELLBOX "Picked up a box of shotgun shells."
 #define GOTBACKPACK "Picked up a backpack full of ammo!"
 
-#define GOTBFG9000 "You got the BFG9000!  Oh, yes."
+#define GOTBFG9000 "You got the BFG9000! Oh, yes."
 #define GOTCHAINGUN "You got the chaingun!"
 #define GOTCHAINSAW "A chainsaw! Find some meat!"
 #define GOTLAUNCHER "You got the rocket launcher!"
