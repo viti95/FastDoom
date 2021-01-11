@@ -1,7 +1,6 @@
 #include <dos.h>
 #include <conio.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 #include "std_func.h"
 #include "ns_dpmi.h"

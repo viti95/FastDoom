@@ -16,7 +16,6 @@
 //	Refresh of things, i.e. objects represented by sprites.
 //
 
-#include <stdio.h>
 #include <stdlib.h>
 
 #include "doomdef.h"

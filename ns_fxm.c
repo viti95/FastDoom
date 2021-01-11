@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include "ns_cards.h"
 #include "ns_multi.h"

@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <string.h>
 #include "doomtype.h"
 #include "fastmath.h"

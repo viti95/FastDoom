@@ -14,8 +14,6 @@
 //
 
 #include "dmx.h"
-#include <stdio.h>
-#include <stdlib.h>
 #include "doomdef.h"
 #include "ns_fxm.h"
 #include "ns_music.h"

@@ -1,7 +1,6 @@
 #include <dos.h>
 #include <conio.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 #include "ns_dpmi.h"
 #include "ns_dma.h"

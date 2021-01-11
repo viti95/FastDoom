@@ -20,6 +20,8 @@
 #ifndef MUS2MID_H
 #define MUS2MID_H
 
+#include <stdio.h>
+
 int mus2mid(FILE *musinput, FILE *midioutput);
 
 #endif /* #ifndef MUS2MID_H */

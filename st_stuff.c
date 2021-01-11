@@ -18,8 +18,6 @@
 //	Does palette indicators as well (red pain/berserk, bright pickup)
 //
 
-#include <stdio.h>
-
 #include "i_random.h"
 
 #include "i_system.h"

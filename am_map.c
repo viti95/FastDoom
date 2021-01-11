@@ -15,7 +15,6 @@
 // DESCRIPTION:  the automap code
 //
 
-#include <stdio.h>
 #include <stdlib.h>
 
 #include "z_zone.h"

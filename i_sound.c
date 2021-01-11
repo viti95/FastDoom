@@ -17,8 +17,6 @@
 //  System interface for sound.
 //
 
-#include <stdio.h>
-
 #include "dmx.h"
 
 #include "i_ibm.h"
