@@ -436,7 +436,6 @@ void P_LoadBlockMap(int lump)
 
     blockmaplump = W_CacheLumpNum(lump, PU_LEVEL);
     blockmap = blockmaplump + 4;
-    count = W_LumpLength(lump) / 2;
 
     bmaporgx = blockmaplump[0] << FRACBITS;
     bmaporgy = blockmaplump[1] << FRACBITS;
