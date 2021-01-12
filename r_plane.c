@@ -18,6 +18,7 @@
 //	Moreover, the sky areas have to be determined.
 //
 
+#include <string.h>
 #include <stdlib.h>
 
 #include "i_system.h"

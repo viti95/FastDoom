@@ -16,6 +16,7 @@
 //	Game completion, final screen animation.
 //
 
+#include <string.h>
 #include <stdio.h>
 
 #include "std_func.h"

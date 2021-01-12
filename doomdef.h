@@ -21,8 +21,6 @@
 #ifndef __DOOMDEF__
 #define __DOOMDEF__
 
-#include <string.h>
-
 //
 // Global parameters/defines.
 //

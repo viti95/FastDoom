@@ -17,6 +17,8 @@
 //	Action functions for weapons.
 //
 
+#include <string.h>
+
 #include "i_random.h"
 
 #include "doomdef.h"

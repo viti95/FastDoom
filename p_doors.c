@@ -15,6 +15,8 @@
 // DESCRIPTION: Door animation code (opening/closing)
 //
 
+#include <string.h>
+
 #include "z_zone.h"
 #include "doomdef.h"
 #include "p_local.h"

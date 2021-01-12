@@ -15,6 +15,8 @@
 // DESCRIPTION:  Ceiling aninmation (lowering, crushing, raising)
 //
 
+#include <string.h>
+
 #include "z_zone.h"
 #include "doomdef.h"
 #include "p_local.h"

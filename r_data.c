@@ -17,6 +17,7 @@
 //	generation of lookups, caching, retrieval by name.
 //
 
+#include <string.h>
 #include <stdio.h>
 
 #include "i_system.h"

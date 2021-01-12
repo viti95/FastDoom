@@ -16,6 +16,8 @@
 //	Moving object handling. Spawn functions.
 //
 
+#include <string.h>
+
 #include "i_random.h"
 
 #include "i_system.h"

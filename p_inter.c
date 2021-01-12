@@ -16,6 +16,8 @@
 //	Handling interactions (i.e., collisions).
 //
 
+#include <string.h>
+
 // Data.
 #include "doomdef.h"
 #include "dstrings.h"

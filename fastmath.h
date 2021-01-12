@@ -21,8 +21,6 @@
 #ifndef __DOOMMATH__
 #define __DOOMMATH__
 
-#include <string.h>
-
 typedef int fixed_t;
 
 #define FRACBITS 16

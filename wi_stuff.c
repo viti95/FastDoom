@@ -16,6 +16,7 @@
 //	Intermission screens.
 //
 
+#include <string.h>
 #include <stdio.h>
 
 #include "i_random.h"

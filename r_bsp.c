@@ -16,6 +16,8 @@
 //	BSP traversal, handling of LineSegs for rendering.
 //
 
+#include <string.h>
+
 #include "doomdef.h"
 
 #include "m_misc.h"

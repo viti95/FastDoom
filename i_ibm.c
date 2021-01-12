@@ -17,11 +17,13 @@
 //  IBM DOS VGA graphics and key/mouse.
 //
 
+#include <string.h>
 #include <dos.h>
 #include <conio.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
+
 #include "d_main.h"
 #include "doomstat.h"
 #include "r_local.h"
