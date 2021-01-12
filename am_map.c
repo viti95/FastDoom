@@ -16,6 +16,7 @@
 //
 
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "z_zone.h"
 #include "doomdef.h"

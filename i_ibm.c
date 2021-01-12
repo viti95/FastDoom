@@ -20,6 +20,7 @@
 #include <dos.h>
 #include <conio.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <stdarg.h>
 #include "d_main.h"
 #include "doomstat.h"

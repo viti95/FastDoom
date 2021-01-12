@@ -16,6 +16,8 @@
 //	Game completion, final screen animation.
 //
 
+#include <stdio.h>
+
 #include "std_func.h"
 
 // Functions.

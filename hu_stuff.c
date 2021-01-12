@@ -15,6 +15,8 @@
 // DESCRIPTION:  Heads-up displays
 //
 
+#include <stdio.h>
+
 #include "std_func.h"
 
 #include "doomdef.h"

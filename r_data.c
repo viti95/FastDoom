@@ -17,6 +17,8 @@
 //	generation of lookups, caching, retrieval by name.
 //
 
+#include <stdio.h>
+
 #include "i_system.h"
 #include "z_zone.h"
 

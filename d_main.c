@@ -20,6 +20,7 @@
 //
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <dos.h>
 #include <io.h>
 

@@ -20,6 +20,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
+#include <stdio.h>
+
 #include "std_func.h"
 
 #include "doomdef.h"

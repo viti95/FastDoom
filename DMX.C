@@ -13,6 +13,9 @@
 // GNU General Public License for more details.
 //
 
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "dmx.h"
 #include "doomdef.h"
 #include "ns_fxm.h"

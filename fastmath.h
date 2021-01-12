@@ -21,7 +21,6 @@
 #ifndef __DOOMMATH__
 #define __DOOMMATH__
 
-#include <stdio.h>
 #include <string.h>
 
 typedef int fixed_t;

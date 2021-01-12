@@ -17,6 +17,8 @@
 //  System interface for sound.
 //
 
+#include <stdio.h>
+
 #include "dmx.h"
 
 #include "i_ibm.h"
@@ -146,14 +148,12 @@ void I_sndArbitrateCards(void)
     }
     if (gus)
     {
-        fprintf(stderr, "GUS1\n");
         if (GF1_Detect())
         {
             printf("Dude.  The GUS ain't responding.\n");
         }
         else
         {
-            fprintf(stderr, "GUS2\n");
             if (commercial)
             {
                 dmxlump = W_GetNumForName("DMXGUSC");
