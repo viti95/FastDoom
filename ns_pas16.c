@@ -1223,18 +1223,6 @@ void PAS_RestoreState(
 }
 
 /*---------------------------------------------------------------------
-   Function: PAS_LockEnd
-
-   Used for determining the length of the functions to lock in memory.
----------------------------------------------------------------------*/
-
-static void PAS_LockEnd(
-    void)
-
-{
-}
-
-/*---------------------------------------------------------------------
    Function: allocateTimerStack
 
    Allocate a block of memory from conventional (low) memory and return

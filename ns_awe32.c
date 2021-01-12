@@ -48,8 +48,6 @@ void RestoreES(unsigned num);
 
 **********************************************************************/
 
-#define AWE32_LockStart AWE32_NoteOff
-
 void AWE32_NoteOff(
     int channel,
     int key,
@@ -157,18 +155,6 @@ void AWE32_PitchBend(
     temp = SetES();
     awe32PitchBend(channel, lsb, msb);
     RestoreES(temp);
-}
-
-/*---------------------------------------------------------------------
-   Function: AWE32_LockEnd
-
-   Used for determining the length of the functions to lock in memory.
----------------------------------------------------------------------*/
-
-static void AWE32_LockEnd(
-    void)
-
-{
 }
 
 static void ShutdownMPU(
