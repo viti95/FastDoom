@@ -476,10 +476,9 @@ void P_GroupLines(void)
 
     // count number of lines in each sector
     li = lines;
-    total = 0;
+    total = numlines;
     for (i = 0; i < numlines; i++, li++)
     {
-        total++;
         li->frontsector->linecount++;
 
         if (li->backsector && li->backsector != li->frontsector)
