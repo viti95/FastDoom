@@ -375,11 +375,11 @@ void AL_SetCard(int port, void *data)
     int i;
     cdata = (unsigned char *)data;
     tmb = malloc(13 * 256);
-    memset(tmb, 0, 13 * 256);
     if (!tmb)
     {
         return;
     }
+    SetDWords(tmb, 0, 13 * 64);
     for (i = 0; i < 128; i++)
     {
         tmb[i * 13 + 0] = cdata[8 + i * 36 + 4 + 0];
