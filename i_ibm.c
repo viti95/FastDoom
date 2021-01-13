@@ -796,8 +796,7 @@ void I_Quit(void)
     I_ShutdownTimer();
     I_ShutdownMouse();
     I_ShutdownKeyboard();
-    CopyBytes(scr, (void *)0xb8000, 80 * 25 * 2);
-    //memcpy((void *)0xb8000, scr, 80 * 25 * 2);
+    CopyDWords(scr, (void *)0xb8000, (80 * 25 * 2) / 4);
     regs.w.ax = 0x0200;
     regs.h.bh = 0;
     regs.h.dl = 0;
