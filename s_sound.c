@@ -193,17 +193,6 @@ void S_StopChannel(int cnum)
         {
             SFX_StopPatch(c->handle);
         }
-
-        // check to see
-        //  if other channels are playing the sound
-        for (i = 0; i < numChannels; i++)
-        {
-            if (cnum != i && c->sfxinfo == channels[i].sfxinfo)
-            {
-                break;
-            }
-        }
-
         c->sfxinfo = 0;
     }
 }
