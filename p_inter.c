@@ -507,12 +507,16 @@ void P_TouchSpecialThing(mobj_t *special,
 	case SPR_BPAK:
 		if (!player->backpack)
 		{
-			for (i = 0; i < NUMAMMO; i++)
-				player->maxammo[i] *= 2;
+			player->maxammo[0] *= 2;
+			player->maxammo[1] *= 2;
+			player->maxammo[2] *= 2;
+			player->maxammo[3] *= 2;
 			player->backpack = true;
 		}
-		for (i = 0; i < NUMAMMO; i++)
-			P_GiveAmmo(player, i, 1);
+		P_GiveAmmo(player, 0, 1);
+		P_GiveAmmo(player, 1, 1);
+		P_GiveAmmo(player, 2, 1);
+		P_GiveAmmo(player, 3, 1);
 		player->message = GOTBACKPACK;
 		break;
 
