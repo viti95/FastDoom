@@ -136,7 +136,7 @@ boolean plutonia;
 boolean tnt;
 #endif
 
-char basedefault[1024]; // default file
+char basedefault[12]; // default file
 
 void D_CheckNetGame(void);
 void D_ProcessEvents(void);
