@@ -28,7 +28,6 @@ int GUSWAVE_StartDemandFeedPlayback(void (*function)(char **ptr, unsigned long *
                                     int volume, int priority, unsigned long callbackval);
 void GUSWAVE_SetCallBack(void (*function)(unsigned long));
 void GUSWAVE_SetReverseStereo(int setting);
-int GUSWAVE_GetReverseStereo(void);
 int GUSWAVE_Init(int numvoices);
 void GUSWAVE_Shutdown(void);
 #pragma aux GUSWAVE_Shutdown frame;

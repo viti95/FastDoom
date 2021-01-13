@@ -92,30 +92,6 @@ typedef volatile struct voicestatus
     int playing;
 } voicestatus;
 
-typedef struct
-{
-    char RIFF[4];
-    unsigned long file_size;
-    char WAVE[4];
-    char fmt[4];
-    unsigned long format_size;
-} riff_header;
-
-typedef struct
-{
-    unsigned short wFormatTag;
-    unsigned short nChannels;
-    unsigned long nSamplesPerSec;
-    unsigned long nAvgBytesPerSec;
-    unsigned short nBlockAlign;
-    unsigned short nBitsPerSample;
-} format_header;
-
-typedef struct
-{
-    unsigned char DATA[4];
-    unsigned long size;
-} data_header;
 
 VoiceNode *GUSWAVE_GetVoice(int handle);
 

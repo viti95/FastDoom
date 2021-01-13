@@ -681,19 +681,6 @@ void GUSWAVE_SetReverseStereo(
 }
 
 /*---------------------------------------------------------------------
-   Function: GUSWAVE_GetReverseStereo
-
-   Returns the orientation of the left and right channels.
----------------------------------------------------------------------*/
-
-int GUSWAVE_GetReverseStereo(
-    void)
-
-{
-    return (GUSWAVE_SwapLeftRight);
-}
-
-/*---------------------------------------------------------------------
    Function: GUSWAVE_InitVoices
 
    Begins playback of digitized sound.

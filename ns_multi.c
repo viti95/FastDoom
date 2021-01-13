@@ -255,8 +255,7 @@ void MV_ServiceVoc(
         ClearBuffer_DW(MV_MixBuffer[MV_MixPage], MV_Silence, MV_BufferSize >> 2);
         if ((MV_SoundCard == UltraSound) && (MV_Channels == 2))
         {
-            ClearBuffer_DW(MV_MixBuffer[MV_MixPage] + MV_RightChannelOffset,
-                           MV_Silence, MV_BufferSize >> 2);
+            ClearBuffer_DW(MV_MixBuffer[MV_MixPage] + MV_RightChannelOffset, MV_Silence, MV_BufferSize >> 2);
         }
         MV_BufferEmpty[MV_MixPage] = TRUE;
     }
@@ -857,10 +856,7 @@ int MV_StartPlayback(
 
     // Initialize the buffers
     ClearBuffer_DW(MV_MixBuffer[0], MV_Silence, TotalBufferSize >> 2);
-    for (buffer = 0; buffer < MV_NumberOfBuffers; buffer++)
-    {
-        MV_BufferEmpty[buffer] = TRUE;
-    }
+    SetDWords(MV_BufferEmpty, TRUE, MV_NumberOfBuffers);
 
     // Set the mix buffer variables
     MV_MixPage = 1;
@@ -1256,19 +1252,6 @@ void MV_SetReverseStereo(
 }
 
 /*---------------------------------------------------------------------
-   Function: MV_GetReverseStereo
-
-   Returns the orientation of the left and right channels.
----------------------------------------------------------------------*/
-
-int MV_GetReverseStereo(
-    void)
-
-{
-    return (MV_SwapLeftRight);
-}
-
-/*---------------------------------------------------------------------
    Function: MV_Init
 
    Perform the initialization of variables and memory used by
@@ -1488,10 +1471,7 @@ int MV_Shutdown(
 
     // Release the descriptor from our mix buffer
     DPMI_FreeDOSMemory(MV_BufferDescriptor);
-    for (buffer = 0; buffer < NumberOfBuffers; buffer++)
-    {
-        MV_MixBuffer[buffer] = NULL;
-    }
+    SetBytes(MV_MixBuffer, NULL, NumberOfBuffers);
 
     return (MV_Ok);
 }

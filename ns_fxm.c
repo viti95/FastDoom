@@ -379,19 +379,6 @@ void FX_SetVolume(
 }
 
 /*---------------------------------------------------------------------
-   Function: FX_GetReverseStereo
-
-   Returns the orientation of the left and right channels.
----------------------------------------------------------------------*/
-
-int FX_GetReverseStereo(
-    void)
-
-{
-    return MV_GetReverseStereo();
-}
-
-/*---------------------------------------------------------------------
    Function: FX_PlayRaw
 
    Begin playback of raw sound data with the given volume and priority.
