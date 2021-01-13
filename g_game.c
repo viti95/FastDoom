@@ -171,7 +171,6 @@ boolean autorun;
 // or reads it from the demo buffer.
 // If recording a demo, write it out
 //
-ticcmd_t emptycmd;
 void G_BuildTiccmd(ticcmd_t *cmd)
 {
     int i;
@@ -182,13 +181,8 @@ void G_BuildTiccmd(ticcmd_t *cmd)
     int forward;
     int side;
 
-    ticcmd_t *base;
-
-    base = &emptycmd; // empty, or external driver
-
-    CopyBytes(base, cmd, sizeof(*cmd));
-    //memcpy(cmd, base, sizeof(*cmd));
-
+    SetBytes(cmd, 0, sizeof(*cmd));
+    
     strafe = gamekeydown[key_strafe] || mousebuttons[mousebstrafe];
     speed = autorun || gamekeydown[key_speed];
 
@@ -588,8 +582,10 @@ void G_PlayerReborn()
     p->weaponowned[wp_pistol] = true;
     p->ammo[am_clip] = 50;
 
-    for (i = 0; i < NUMAMMO; i++)
-        p->maxammo[i] = maxammo[i];
+    p->maxammo[0] = maxammo[0];
+    p->maxammo[1] = maxammo[1];
+    p->maxammo[2] = maxammo[2];
+    p->maxammo[3] = maxammo[3];
 }
 
 //
