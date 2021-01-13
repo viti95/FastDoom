@@ -463,7 +463,7 @@ void I_InitGraphics(void)
     outp(GC_INDEX, GC_MISCELLANEOUS);
     outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~2);
     outpw(SC_INDEX, 0xf02);
-    memset(pcscreen, 0, 0x10000);
+    SetDWords(pcscreen, 0, 0x4000);
     outp(CRTC_INDEX, CRTC_UNDERLINE);
     outp(CRTC_INDEX + 1, inp(CRTC_INDEX + 1) & ~0x40);
     outp(CRTC_INDEX, CRTC_MODE);
@@ -685,7 +685,7 @@ void I_ReadMouse(void)
 
     ev.type = ev_mouse;
 
-    memset(&dpmiregs, 0, sizeof(dpmiregs));
+    SetBytes(&dpmiregs, 0, sizeof(dpmiregs));
     dpmiregs.eax = 3; // read buttons / position
     DPMIInt(0x33);
     ev.data1 = dpmiregs.ebx;
@@ -796,7 +796,8 @@ void I_Quit(void)
     I_ShutdownTimer();
     I_ShutdownMouse();
     I_ShutdownKeyboard();
-    memcpy((void *)0xb8000, scr, 80 * 25 * 2);
+    CopyBytes(scr, (void *)0xb8000, 80 * 25 * 2);
+    //memcpy((void *)0xb8000, scr, 80 * 25 * 2);
     regs.w.ax = 0x0200;
     regs.h.bh = 0;
     regs.h.dl = 0;
@@ -816,7 +817,7 @@ byte *I_ZoneBase(int *size)
     int heap;
     byte *ptr;
 
-    memset(meminfo, 0, sizeof(meminfo));
+    SetDWords(meminfo, 0, sizeof(meminfo) / 4);
     segread(&segregs);
     segregs.es = segregs.ds;
     regs.w.ax = 0x500; // get memory info
