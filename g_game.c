@@ -162,7 +162,6 @@ char savedescription[32];
 #define BODYQUESIZE 32
 
 mobj_t *bodyque[BODYQUESIZE];
-int bodyqueslot;
 
 boolean autorun;
 

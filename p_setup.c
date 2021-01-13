@@ -594,7 +594,6 @@ void P_SetupLevel(int episode,
     rejectmatrix = W_CacheLumpNum(lumpnum + ML_REJECT, PU_LEVEL);
     P_GroupLines();
 
-    bodyqueslot = 0;
     P_LoadThings(lumpnum + ML_THINGS);
 
     // clear special respawning que
