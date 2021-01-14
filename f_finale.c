@@ -44,36 +44,6 @@ int finalecount;
 #define TEXTSPEED 3
 #define TEXTWAIT 250
 
-char *e1text = E1TEXT;
-char *e2text = E2TEXT;
-char *e3text = E3TEXT;
-#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
-char *e4text = E4TEXT;
-#endif
-
-char *c1text = C1TEXT;
-char *c2text = C2TEXT;
-char *c3text = C3TEXT;
-char *c4text = C4TEXT;
-char *c5text = C5TEXT;
-char *c6text = C6TEXT;
-
-#if (EXE_VERSION >= EXE_VERSION_FINAL)
-char *p1text = P1TEXT;
-char *p2text = P2TEXT;
-char *p3text = P3TEXT;
-char *p4text = P4TEXT;
-char *p5text = P5TEXT;
-char *p6text = P6TEXT;
-
-char *t1text = T1TEXT;
-char *t2text = T2TEXT;
-char *t3text = T3TEXT;
-char *t4text = T4TEXT;
-char *t5text = T5TEXT;
-char *t6text = T6TEXT;
-#endif
-
 char *finaletext;
 char *finaleflat;
 
@@ -81,6 +51,48 @@ void F_StartCast(void);
 void F_CastTicker(void);
 boolean F_CastResponder(event_t *ev);
 void F_CastDrawer(void);
+
+int F_GetFileSize(char *filename)
+{
+	int result;
+	FILE *fp;
+
+	fp = fopen(filename, "r");
+
+	if (fp == NULL)
+		return -1;
+
+	fseek(fp, 0L, SEEK_END);
+	result = ftell(fp);
+	fclose(fp);
+
+	return result;
+}
+
+int F_ReadTextFile(char *dest, char *filename, int size)
+{
+	FILE *fp;
+
+	fp = fopen(filename, "r");
+	if (fp == NULL)
+		return -1;
+
+	fread(dest, size, 1, fp);
+	fclose(fp);
+	dest[size] = '\0';
+
+	return 0;
+}
+
+void F_LoadFinaleText(char *filename)
+{
+	int size;
+
+	size = F_GetFileSize(filename);
+
+	finaletext = (char *)Z_MallocUnowned(size + 1, PU_STATIC);
+	F_ReadTextFile(finaletext, filename, size);
+}
 
 //
 // F_StartFinale
@@ -102,27 +114,27 @@ void F_StartFinale(void)
 		{
 		case 6:
 			finaleflat = "SLIME16";
-			finaletext = c1text;
+			F_LoadFinaleText("INTER\\C1.TXT");
 			break;
 		case 11:
 			finaleflat = "RROCK14";
-			finaletext = c2text;
+			F_LoadFinaleText("INTER\\C2.TXT");
 			break;
 		case 20:
 			finaleflat = "RROCK07";
-			finaletext = c3text;
+			F_LoadFinaleText("INTER\\C3.TXT");
 			break;
 		case 30:
 			finaleflat = "RROCK17";
-			finaletext = c4text;
+			F_LoadFinaleText("INTER\\C4.TXT");
 			break;
 		case 15:
 			finaleflat = "RROCK13";
-			finaletext = c5text;
+			F_LoadFinaleText("INTER\\C5.TXT");
 			break;
 		case 31:
 			finaleflat = "RROCK19";
-			finaletext = c6text;
+			F_LoadFinaleText("INTER\\C6.TXT");
 			break;
 		default:
 			// Ouch.
@@ -135,27 +147,27 @@ void F_StartFinale(void)
 			{
 			case 6:
 				finaleflat = "SLIME16";
-				finaletext = p1text;
+				F_LoadFinaleText("INTER\\P1.TXT");
 				break;
 			case 11:
 				finaleflat = "RROCK14";
-				finaletext = p2text;
+				F_LoadFinaleText("INTER\\P2.TXT");
 				break;
 			case 20:
 				finaleflat = "RROCK07";
-				finaletext = p3text;
+				F_LoadFinaleText("INTER\\P3.TXT");
 				break;
 			case 30:
 				finaleflat = "RROCK17";
-				finaletext = p4text;
+				F_LoadFinaleText("INTER\\P4.TXT");
 				break;
 			case 15:
 				finaleflat = "RROCK13";
-				finaletext = p5text;
+				F_LoadFinaleText("INTER\\P5.TXT");
 				break;
 			case 31:
 				finaleflat = "RROCK19";
-				finaletext = p6text;
+				F_LoadFinaleText("INTER\\P6.TXT");
 				break;
 			default:
 				// Ouch.
@@ -168,27 +180,27 @@ void F_StartFinale(void)
 			{
 			case 6:
 				finaleflat = "SLIME16";
-				finaletext = t1text;
+				F_LoadFinaleText("INTER\\T1.TXT");
 				break;
 			case 11:
 				finaleflat = "RROCK14";
-				finaletext = t2text;
+				F_LoadFinaleText("INTER\\T2.TXT");
 				break;
 			case 20:
 				finaleflat = "RROCK07";
-				finaletext = t3text;
+				F_LoadFinaleText("INTER\\T3.TXT");
 				break;
 			case 30:
 				finaleflat = "RROCK17";
-				finaletext = t4text;
+				F_LoadFinaleText("INTER\\T4.TXT");
 				break;
 			case 15:
 				finaleflat = "RROCK13";
-				finaletext = t5text;
+				F_LoadFinaleText("INTER\\T5.TXT");
 				break;
 			case 31:
 				finaleflat = "RROCK19";
-				finaletext = t6text;
+				F_LoadFinaleText("INTER\\T6.TXT");
 				break;
 			default:
 				// Ouch.
@@ -202,27 +214,27 @@ void F_StartFinale(void)
 			{
 			case 6:
 				finaleflat = "SLIME16";
-				finaletext = c1text;
+				F_LoadFinaleText("INTER\\C1.TXT");
 				break;
 			case 11:
 				finaleflat = "RROCK14";
-				finaletext = c2text;
+				F_LoadFinaleText("INTER\\C2.TXT");
 				break;
 			case 20:
 				finaleflat = "RROCK07";
-				finaletext = c3text;
+				F_LoadFinaleText("INTER\\C3.TXT");
 				break;
 			case 30:
 				finaleflat = "RROCK17";
-				finaletext = c4text;
+				F_LoadFinaleText("INTER\\C4.TXT");
 				break;
 			case 15:
 				finaleflat = "RROCK13";
-				finaletext = c5text;
+				F_LoadFinaleText("INTER\\C5.TXT");
 				break;
 			case 31:
 				finaleflat = "RROCK19";
-				finaletext = c6text;
+				F_LoadFinaleText("INTER\\C6.TXT");
 				break;
 			default:
 				// Ouch.
@@ -239,20 +251,20 @@ void F_StartFinale(void)
 		{
 		case 1:
 			finaleflat = "FLOOR4_8";
-			finaletext = e1text;
+			F_LoadFinaleText("INTER\\E1.TXT");
 			break;
 		case 2:
 			finaleflat = "SFLR6_1";
-			finaletext = e2text;
+			F_LoadFinaleText("INTER\\E2.TXT");
 			break;
 		case 3:
 			finaleflat = "MFLR8_4";
-			finaletext = e3text;
+			F_LoadFinaleText("INTER\\E3.TXT");
 			break;
 #if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
 		case 4:
 			finaleflat = "MFLR8_3";
-			finaletext = e4text;
+			F_LoadFinaleText("INTER\\E4.TXT");
 			break;
 #endif
 		default:
@@ -286,7 +298,8 @@ void F_Ticker(void)
 	if ((commercial) && (finalecount > 50))
 	{
 		// go on to the next level
-		if (players.cmd.buttons){
+		if (players.cmd.buttons)
+		{
 			if (gamemap == 30)
 				F_StartCast();
 			else
@@ -384,6 +397,8 @@ void F_TextWrite(void)
 		V_DrawPatch(cx, cy, screen0, hu_font[c]);
 		cx += w;
 	}
+
+	Z_Free(finaletext);
 }
 
 //
@@ -415,7 +430,6 @@ castinfo_t castorder[] = {
 	{CC_SPIDER, MT_SPIDER},
 	{CC_CYBER, MT_CYBORG},
 	{CC_HERO, MT_PLAYER},
-
 	{NULL, 0}};
 
 int castnum;
