@@ -739,7 +739,7 @@ void R_PrecacheLevel(void)
     }
 
     // Precache sprites.
-    memset(spritepresent, 0, NUMSPRITES);
+    SetDWords(spritepresent, 0, NUMSPRITES / 4);
 
     for (th = thinkercap.next; th != &thinkercap; th = th->next)
     {
