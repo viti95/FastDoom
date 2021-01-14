@@ -18,6 +18,7 @@
 
 #include <stdio.h>
 
+#include "fastmath.h"
 #include "doomtype.h"
 
 #include "mus2mid.h"
@@ -448,11 +449,7 @@ boolean mus2mid(FILE *musinput, FILE *midioutput)
     unsigned int timedelay;
 
     // Initialise channel map to mark all channels as unused.
-
-    for (channel = 0; channel < NUM_CHANNELS; ++channel)
-    {
-        channel_map[channel] = -1;
-    }
+    SetDWords(channel_map, -1, NUM_CHANNELS);
 
     // Grab the header
 
