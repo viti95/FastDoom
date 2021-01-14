@@ -816,8 +816,7 @@ void R_ExecuteSetViewSize(void)
     pspriteiscaleshifted = pspriteiscale >> detailshift;
 
     // thing clipping
-    for (i = 0; i < viewwidth; i++)
-        screenheightarray[i] = viewheight;
+    SetWords(screenheightarray, viewheight, viewwidth);
 
     // planes
     for (i = 0; i < viewheight; i++)
@@ -844,9 +843,9 @@ void R_ExecuteSetViewSize(void)
 
             if (level < 0)
                 level = 0;
-
-            if (level > NUMCOLORMAPS - 1)
-                level = NUMCOLORMAPS - 1;
+            else
+                if (level > NUMCOLORMAPS - 1)
+                    level = NUMCOLORMAPS - 1;
 
             scalelight[i][j] = colormaps + level * 256;
         }
