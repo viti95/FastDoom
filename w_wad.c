@@ -297,10 +297,7 @@ void W_GenerateHashTable(void)
     // Generate hash table
     if (numlumps > 0)
     {
-        for (i = 0; i < HASHTABLESIZE; ++i)
-        {
-            lumphash[i] = -1;
-        }
+        SetDWords(lumphash, -1, HASHTABLESIZE);
 
         for (i = 0; i < numlumps; ++i)
         {
