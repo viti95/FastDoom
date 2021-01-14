@@ -90,7 +90,7 @@ void F_LoadFinaleText(char *filename)
 
 	size = F_GetFileSize(filename);
 
-	finaletext = (char *)Z_MallocUnowned(size + 1, PU_STATIC);
+	finaletext = (char *)Z_MallocUnowned(size + 1, PU_CACHE);
 	F_ReadTextFile(finaletext, filename, size);
 }
 
@@ -397,8 +397,6 @@ void F_TextWrite(void)
 		V_DrawPatch(cx, cy, screen0, hu_font[c]);
 		cx += w;
 	}
-
-	Z_Free(finaletext);
 }
 
 //
