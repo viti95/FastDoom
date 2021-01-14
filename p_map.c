@@ -1264,9 +1264,9 @@ boolean PIT_RadiusAttack(mobj_t *thing)
 
     if (dist < 0)
         dist = 0;
-
-    if (dist >= bombdamage)
-        return true; // out of range
+    else
+        if (dist >= bombdamage)
+            return true; // out of range
 
     if (P_CheckSight(thing, bombspot))
     {
