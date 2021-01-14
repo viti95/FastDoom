@@ -192,7 +192,7 @@ void R_ClearPlanes(void)
     }
 
     // texture calculation
-    memset(cachedheight, 0, sizeof(cachedheight));
+    SetDWords(cachedheight, 0, sizeof(cachedheight) / 4);
 
     // left to right mapping
     angle = (viewangle - ANG90) >> ANGLETOFINESHIFT;
@@ -237,7 +237,7 @@ R_FindPlane(fixed_t height,
     check->minx = SCREENWIDTH;
     check->maxx = -1;
 
-    memset(check->top, 0xff, sizeof(check->top));
+    SetDWords(check->top, 0xffffffff, sizeof(check->top) / 4);
 
     check->modified = 0;
 
@@ -301,7 +301,7 @@ R_CheckPlane(visplane_t *pl,
     pl->minx = start;
     pl->maxx = stop;
 
-    memset(pl->top, 0xff, sizeof(pl->top));
+    SetDWords(pl->top, 0xffffffff, sizeof(pl->top) / 4);
 
     pl->modified = 0;
 
@@ -676,14 +676,14 @@ void R_DrawPlanes(void)
             ds_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
             planeheight = abs(pl->height - viewz);
             light = (pl->lightlevel >> LIGHTSEGSHIFT) + extralight;
-            
+
             if (light > LIGHTLEVELS - 1)
                 planezlight = zlight[LIGHTLEVELS - 1];
             else if (light < 0)
                 planezlight = zlight[0];
             else
                 planezlight = zlight[light];
-            
+
             pl->top[pl->maxx + 1] = 0xff;
             pl->top[pl->minx - 1] = 0xff;
 
