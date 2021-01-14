@@ -664,9 +664,9 @@ void R_InitLightTables(void)
 
             if (level < 0)
                 level = 0;
-
-            if (level >= NUMCOLORMAPS)
-                level = NUMCOLORMAPS - 1;
+            else
+                if (level >= NUMCOLORMAPS)
+                    level = NUMCOLORMAPS - 1;
 
             zlight[i][j] = colormaps + level * 256;
         }
