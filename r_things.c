@@ -151,7 +151,7 @@ void R_InitSpriteDefs(char **namelist)
     for (i = 0; i < NUMSPRITES; i++)
     {
         spritename = namelist[i];
-        memset(sprtemp, -1, sizeof(sprtemp));
+        SetBytes(sprtemp, -1, sizeof(sprtemp));
 
         maxframe = -1;
         intname = *(int *)namelist[i];
@@ -214,13 +214,7 @@ size_t num_vissprite, num_vissprite_alloc, num_vissprite_ptrs;
 //
 void R_InitSprites(char **namelist)
 {
-    int i;
-
-    for (i = 0; i < SCREENWIDTH; i++)
-    {
-        negonearray[i] = -1;
-    }
-
+    SetWords(negonearray, -1, SCREENWIDTH);
     R_InitSpriteDefs(namelist);
 }
 
