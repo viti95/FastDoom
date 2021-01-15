@@ -272,7 +272,8 @@ void D_Display(void)
         HU_Drawer();
 
     // clean up border stuff
-    if (gamestate != oldgamestate && gamestate != GS_LEVEL){
+    if (gamestate != oldgamestate && gamestate != GS_LEVEL)
+    {
         I_SetPalette(0);
     }
 
@@ -717,7 +718,7 @@ void D_DoomMain(void)
             forceScreenSize = atoi(myargv[p + 1]);
         if (forceScreenSize < 3)
             forceScreenSize = 3;
-        if (forceScreenSize > 11)
+        else if (forceScreenSize > 11)
             forceScreenSize = 11;
     }
 
@@ -790,7 +791,7 @@ void D_DoomMain(void)
             scale = atoi(myargv[p + 1]);
         if (scale < 10)
             scale = 10;
-        if (scale > 400)
+        else if (scale > 400)
             scale = 400;
         printf("turbo scale: %i%%\n", scale);
         forwardmove[0] = forwardmove[0] * scale / 100;
