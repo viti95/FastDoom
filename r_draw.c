@@ -955,10 +955,7 @@ void R_VideoErase(unsigned ofs,
     dest = destscreen + (ofs >> 2);
     source = (byte *)0xac000 + (ofs >> 2);
     countp = count / 4;
-    while (--countp >= 0)
-    {
-        dest[countp] = source[countp];
-    }
+    CopyBytes(source, dest, countp);
 
     outp(GC_INDEX, GC_MODE);
     outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~1);
