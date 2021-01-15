@@ -724,11 +724,10 @@ retry:
     // First calculate remainder.
     bestslidefrac = FRACUNIT - (bestslidefrac + 0x800);
 
-    if (bestslidefrac > FRACUNIT)
-        bestslidefrac = FRACUNIT;
-
     if (bestslidefrac <= 0)
         return;
+    else if (bestslidefrac > FRACUNIT)
+        bestslidefrac = FRACUNIT;
 
     tmxmove = FixedMul(mo->momx, bestslidefrac);
     tmymove = FixedMul(mo->momy, bestslidefrac);
@@ -1264,9 +1263,8 @@ boolean PIT_RadiusAttack(mobj_t *thing)
 
     if (dist < 0)
         dist = 0;
-    else
-        if (dist >= bombdamage)
-            return true; // out of range
+    else if (dist >= bombdamage)
+        return true; // out of range
 
     if (P_CheckSight(thing, bombspot))
     {
