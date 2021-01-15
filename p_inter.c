@@ -268,29 +268,23 @@ P_GivePower(player_t *player,
 //
 // P_TouchSpecialThing
 //
-void P_TouchSpecialThing(mobj_t *special,
-						 mobj_t *toucher)
+void P_TouchSpecialThing(mobj_t *special, mobj_t *toucher)
 {
 	player_t *player;
 	int i;
 	fixed_t delta;
 	int sound;
 
+	if (toucher->health <= 0)
+		return;
+
 	delta = special->z - toucher->z;
 
 	if (delta > toucher->height || delta < -8 * FRACUNIT)
-	{
-		// out of reach
 		return;
-	}
 
 	sound = sfx_itemup;
 	player = toucher->player;
-
-	// Dead thing touching.
-	// Can happen with a sliding player corpse.
-	if (toucher->health <= 0)
-		return;
 
 	// Identify by sprite.
 	switch (special->sprite)
@@ -629,12 +623,12 @@ void P_KillMobj(mobj_t *source,
 	}
 	else
 		P_SetMobjState(target, target->info->deathstate);
-	
+
 	target->tics -= P_Random & 3;
 
 	if (target->tics < 1)
 		target->tics = 1;
-	
+
 	// Drop stuff.
 	// This determines the kind of object spawned
 	// during the death frame of a thing.
