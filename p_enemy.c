@@ -482,11 +482,8 @@ P_LookForPlayers(mobj_t *actor,
     int c;
     int stop;
     player_t *player;
-    sector_t *sector;
     angle_t an;
     fixed_t dist;
-
-    sector = actor->subsector->sector;
 
     player = &players;
 
