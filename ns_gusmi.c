@@ -405,8 +405,7 @@ int GUSMIDI_Init(
    {
       GUS_MemConfig = 0;
    }
-
-   if (GUS_MemConfig > MAX_MEM_CONFIG)
+   else if (GUS_MemConfig > MAX_MEM_CONFIG)
    {
       GUS_MemConfig = MAX_MEM_CONFIG;
    }

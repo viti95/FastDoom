@@ -191,7 +191,7 @@ void AL_SendOutputToPort_OPL3LPT(int port, int reg, int data)
 
    lpt_data = port;
    lpt_ctrl = port + 2;
-   
+
    /* Select OPL3 register */
    outp(lpt_data, reg & 0xFF);
    if (reg < 0x100)
@@ -561,7 +561,7 @@ static void AL_SetVoicePitch(
    {
       note = MAX_NOTE;
    }
-   if (note < 0)
+   else if (note < 0)
    {
       note = 0;
    }
