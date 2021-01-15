@@ -79,9 +79,7 @@ byte P_PointOnLineSide(fixed_t x,
     left = FixedMul(line->dy >> FRACBITS, dx);
     right = FixedMul(dy, line->dx >> FRACBITS);
 
-    if (right < left)
-        return 0; // front side
-    return 1;     // back side
+    return right >= left;
 }
 
 //
@@ -164,18 +162,12 @@ byte P_PointOnDivlineSide(fixed_t x,
 
     // try to quickly decide by looking at sign bits
     if ((line->dy ^ line->dx ^ dx ^ dy) & 0x80000000)
-    {
-        if ((line->dy ^ dx) & 0x80000000)
-            return 1; // (left is negative)
-        return 0;
-    }
+        return ((line->dy ^ dx) & 0x80000000) != 0;
 
     left = FixedMul(line->dy >> 8, dx >> 8);
     right = FixedMul(dy >> 8, line->dx >> 8);
 
-    if (right < left)
-        return 0; // front side
-    return 1;     // back side
+    return right >= left;
 }
 
 //
@@ -514,7 +506,7 @@ boolean PIT_AddThingIntercepts(mobj_t *thing)
     byte s1;
     byte s2;
 
-    boolean tracepositive;
+    byte tracepositive;
 
     divline_t dl;
 
@@ -526,17 +518,17 @@ boolean PIT_AddThingIntercepts(mobj_t *thing)
     if (tracepositive)
     {
         x1 = thing->x - thing->radius;
-        y1 = thing->y + thing->radius;
-
         x2 = thing->x + thing->radius;
+
+        y1 = thing->y + thing->radius;
         y2 = thing->y - thing->radius;
     }
     else
     {
         x1 = thing->x - thing->radius;
-        y1 = thing->y - thing->radius;
-
         x2 = thing->x + thing->radius;
+
+        y1 = thing->y - thing->radius;
         y2 = thing->y + thing->radius;
     }
 
