@@ -93,7 +93,7 @@ extern void (*skyfunc)(void);
 
 //
 // Utility functions.
-int R_PointOnSegSide(fixed_t x,
+byte R_PointOnSegSide(fixed_t x,
                      fixed_t y,
                      seg_t *line);
 

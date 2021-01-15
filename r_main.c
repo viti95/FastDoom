@@ -104,7 +104,7 @@ void (*fuzzcolfunc)(void);
 void (*spanfunc)(void);
 void (*skyfunc)(void);
 
-int R_PointOnSegSide(fixed_t x,
+byte R_PointOnSegSide(fixed_t x,
                      fixed_t y,
                      seg_t *line)
 {
@@ -143,25 +143,12 @@ int R_PointOnSegSide(fixed_t x,
 
     // Try to quickly decide by looking at sign bits.
     if ((ldy ^ ldx ^ dx ^ dy) & 0x80000000)
-    {
-        if ((ldy ^ dx) & 0x80000000)
-        {
-            // (left is negative)
-            return 1;
-        }
-        return 0;
-    }
+        return ((ldy ^ dx) & 0x80000000) != 0;
 
     left = FixedMul(ldy >> FRACBITS, dx);
     right = FixedMul(dy, ldx >> FRACBITS);
 
-    if (right < left)
-    {
-        // front side
-        return 0;
-    }
-    // back side
-    return 1;
+    return right >= left;
 }
 
 #define SlopeDiv(num, den) ((den < 512) ? SLOPERANGE : min((num << 3) / (den >> 8), SLOPERANGE))
@@ -882,7 +869,7 @@ R_PointInSubsector(fixed_t x,
                    fixed_t y)
 {
     node_t *node;
-    int side;
+    byte side;
     int nodenum;
     fixed_t dx;
     fixed_t dy;
@@ -931,31 +918,14 @@ R_PointInSubsector(fixed_t x,
                 // Try to quickly decide by looking at sign bits.
                 if ((node->dy ^ node->dx ^ dx ^ dy) & 0x80000000)
                 {
-                    if ((node->dy ^ dx) & 0x80000000)
-                    {
-                        // (left is negative)
-                        side = 1;
-                    }
-                    else
-                    {
-                        side = 0;
-                    }
+                    side = ((node->dy ^ dx) & 0x80000000) != 0;
                 }
                 else
                 {
                     left = FixedMul(node->dy >> FRACBITS, dx);
                     right = FixedMul(dy, node->dx >> FRACBITS);
 
-                    if (right < left)
-                    {
-                        // front side
-                        side = 0;
-                    }
-                    else
-                    {
-                        // back side
-                        side = 1;
-                    }
+                    side = right >= left;
                 }
             }
         }
