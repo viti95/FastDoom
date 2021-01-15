@@ -182,7 +182,7 @@ void G_BuildTiccmd(ticcmd_t *cmd)
     int side;
 
     SetBytes(cmd, 0, sizeof(*cmd));
-    
+
     strafe = gamekeydown[key_strafe] || mousebuttons[mousebstrafe];
     speed = autorun || gamekeydown[key_speed];
 
@@ -191,14 +191,19 @@ void G_BuildTiccmd(ticcmd_t *cmd)
     // use two stage accelerative turning
     // on the keyboard
     if (gamekeydown[key_right] || gamekeydown[key_left])
+    {
         turnheld += 1;
-    else
-        turnheld = 0;
 
-    if (turnheld < SLOWTURNTICS)
-        tspeed = 2; // slow turn
+        if (turnheld < SLOWTURNTICS)
+            tspeed = 2; // slow turn
+        else
+            tspeed = speed;
+    }
     else
-        tspeed = speed;
+    {
+        turnheld = 0;
+        tspeed = 2; // slow turn
+    }
 
     // let movement keys cancel each other out
     if (strafe)
