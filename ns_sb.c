@@ -497,8 +497,7 @@ void BLASTER_SetPlaybackRate(
             // VITI95: OPTIMIZE
             rate = BLASTER_Card.MinSamplingRate / BLASTER_SamplePacketSize;
         }
-
-        if (ActualRate > BLASTER_Card.MaxSamplingRate)
+        else if (ActualRate > BLASTER_Card.MaxSamplingRate)
         {
             // VITI95: OPTIMIZE
             rate = BLASTER_Card.MaxSamplingRate / BLASTER_SamplePacketSize;
@@ -524,8 +523,7 @@ void BLASTER_SetPlaybackRate(
         {
             BLASTER_SampleRate = BLASTER_Card.MinSamplingRate;
         }
-
-        if (BLASTER_SampleRate > BLASTER_Card.MaxSamplingRate)
+        else if (BLASTER_SampleRate > BLASTER_Card.MaxSamplingRate)
         {
             BLASTER_SampleRate = BLASTER_Card.MaxSamplingRate;
         }
