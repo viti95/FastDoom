@@ -532,8 +532,7 @@ void PAS_SetPlaybackRate(
    {
       rate = PAS_MinSamplingRate;
    }
-
-   if (rate > PAS_MaxSamplingRate)
+   else if (rate > PAS_MaxSamplingRate)
    {
       rate = PAS_MaxSamplingRate;
    }
@@ -962,7 +961,7 @@ int PAS_GetFMVolume(
                  0xff;
 
    totalvolume = (rightvolume + leftvolume) / 2;
-   totalvolume = (totalvolume << 8) - totalvolume;;
+   totalvolume = (totalvolume << 8) - totalvolume;
    totalvolume = Div100(totalvolume);
    totalvolume = min(255, totalvolume);
 
