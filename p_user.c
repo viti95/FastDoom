@@ -96,8 +96,7 @@ void P_CalcHeight(player_t *player)
 			player->viewheight = VIEWHEIGHT;
 			player->deltaviewheight = 0;
 		}
-
-		if (player->viewheight < VIEWHEIGHT / 2)
+		else if (player->viewheight < VIEWHEIGHT / 2)
 		{
 			player->viewheight = VIEWHEIGHT / 2;
 			if (player->deltaviewheight <= 0)
@@ -161,8 +160,7 @@ void P_DeathThink(player_t *player)
 	// fall to the ground
 	if (player->viewheight > 6 * FRACUNIT)
 		player->viewheight -= FRACUNIT;
-
-	if (player->viewheight < 6 * FRACUNIT)
+	else if (player->viewheight < 6 * FRACUNIT)
 		player->viewheight = 6 * FRACUNIT;
 
 	player->deltaviewheight = 0;
@@ -190,7 +188,7 @@ void P_DeathThink(player_t *player)
 		else
 			player->mo->angle -= ANG5;
 	}
-	else 
+	else
 		player->damagecount -= player->damagecount != 0;
 
 	if (player->cmd.buttons & BT_USE)
