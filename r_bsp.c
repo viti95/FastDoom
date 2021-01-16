@@ -320,7 +320,7 @@ clipsolid:
 //  if some part of the bbox might be visible.
 //
 
-boolean R_CheckBBox(fixed_t *bspcoord)
+byte R_CheckBBox(fixed_t *bspcoord)
 {
     byte boxx;
     byte boxy;
@@ -348,7 +348,7 @@ boolean R_CheckBBox(fixed_t *bspcoord)
 
     boxpos = (boxy << 2) + boxx;
     if (boxpos == 5)
-        return true;
+        return 1;
 
     switch (boxpos)
     {
@@ -410,7 +410,7 @@ boolean R_CheckBBox(fixed_t *bspcoord)
 
     // Sitting on a line?
     if (span >= ANG180)
-        return true;
+        return 1;
 
     tspan = angle1 + clipangle;
 
@@ -420,7 +420,7 @@ boolean R_CheckBBox(fixed_t *bspcoord)
 
         // Totally off the left edge?
         if (tspan >= span)
-            return false;
+            return 0;
 
         angle1 = clipangle;
     }
@@ -431,7 +431,7 @@ boolean R_CheckBBox(fixed_t *bspcoord)
 
         // Totally off the left edge?
         if (tspan >= span)
-            return false;
+            return 0;
 
         angle2 = -clipangle;
     }
@@ -446,20 +446,14 @@ boolean R_CheckBBox(fixed_t *bspcoord)
 
     // Does not cross a pixel.
     if (sx1 == sx2)
-        return false;
+        return 0;
     sx2--;
 
     start = solidsegs;
     while (start->last < sx2)
         start++;
 
-    if (sx1 >= start->first && sx2 <= start->last)
-    {
-        // The clippost contains the new span.
-        return false;
-    }
-
-    return true;
+    return (sx1 < start->first || sx2 > start->last);
 }
 
 //

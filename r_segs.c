@@ -39,8 +39,8 @@
 boolean segtextured;
 
 // False if the back side is the same plane.
-boolean markfloor;
-boolean markceiling;
+byte markfloor;
+byte markceiling;
 
 boolean maskedtexture;
 int toptexture;
@@ -573,7 +573,7 @@ void R_StoreWallRange(int start,
 		// single sided line
 		midtexture = texturetranslation[sidedef->midtexture];
 		// a single sided line is terminal, so it must mark ends
-		markfloor = markceiling = true;
+		markfloor = markceiling = 1;
 		if (linedef->flags & ML_DONTPEGBOTTOM)
 		{
 			vtop = frontsector->floorheight +
@@ -645,30 +645,13 @@ void R_StoreWallRange(int start,
 			worldtop = worldhigh;
 		}
 
-		if (worldlow != worldbottom || backsector->floorpic != frontsector->floorpic || backsector->lightlevel != frontsector->lightlevel)
-		{
-			markfloor = true;
-		}
-		else
-		{
-			// same plane on both sides
-			markfloor = false;
-		}
-
-		if (worldhigh != worldtop || backsector->ceilingpic != frontsector->ceilingpic || backsector->lightlevel != frontsector->lightlevel)
-		{
-			markceiling = true;
-		}
-		else
-		{
-			// same plane on both sides
-			markceiling = false;
-		}
+		markfloor = worldlow != worldbottom || backsector->floorpic != frontsector->floorpic || backsector->lightlevel != frontsector->lightlevel;
+		markceiling = worldhigh != worldtop || backsector->ceilingpic != frontsector->ceilingpic || backsector->lightlevel != frontsector->lightlevel;
 
 		if (backsector->ceilingheight <= frontsector->floorheight || backsector->floorheight >= frontsector->ceilingheight)
 		{
 			// closed door
-			markceiling = markfloor = true;
+			markceiling = markfloor = 1;
 		}
 
 		if (worldhigh < worldtop)
@@ -682,8 +665,7 @@ void R_StoreWallRange(int start,
 			}
 			else
 			{
-				vtop =
-					backsector->ceilingheight + textureheight[sidedef->toptexture];
+				vtop = backsector->ceilingheight + textureheight[sidedef->toptexture];
 
 				// bottom of texture
 				rw_toptexturemid = vtop - viewz;
@@ -764,13 +746,13 @@ void R_StoreWallRange(int start,
 	if (frontsector->floorheight >= viewz)
 	{
 		// above view plane
-		markfloor = false;
+		markfloor = 0;
 	}
 
 	if (frontsector->ceilingheight <= viewz && frontsector->ceilingpic != skyflatnum)
 	{
 		// below view plane
-		markceiling = false;
+		markceiling = 0;
 	}
 
 	// calculate incremental stepping values for texture edges
