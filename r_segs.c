@@ -537,9 +537,6 @@ void R_StoreWallRange(int start,
 	rw_normalangle = curline->angle + ANG90;
 	offsetangle = abs(rw_normalangle - rw_angle1);
 
-	if (offsetangle > ANG90)
-		offsetangle = ANG90;
-
 	distangle = ANG90 - offsetangle;
 	hyp = R_PointToDist(curline->v1->x, curline->v1->y);
 	rw_distance = FixedMul(hyp, finesine[distangle >> ANGLETOFINESHIFT]);
@@ -728,9 +725,6 @@ void R_StoreWallRange(int start,
 
 		if (offsetangle > ANG180)
 			offsetangle = -offsetangle;
-
-		if (offsetangle > ANG90)
-			offsetangle = ANG90;
 
 		rw_offset = FixedMul(hyp, finesine[offsetangle >> ANGLETOFINESHIFT]);
 
