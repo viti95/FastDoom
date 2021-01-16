@@ -74,6 +74,10 @@ boolean PIT_StompThing(mobj_t *thing)
     if (!(thing->flags & MF_SHOOTABLE))
         return true;
 
+    // don't clip against self
+    if (thing == tmthing)
+        return true;
+
     blockdist = thing->radius + tmthing->radius;
 
     if (abs(thing->x - tmx) >= blockdist || abs(thing->y - tmy) >= blockdist)
@@ -81,10 +85,6 @@ boolean PIT_StompThing(mobj_t *thing)
         // didn't hit it
         return true;
     }
-
-    // don't clip against self
-    if (thing == tmthing)
-        return true;
 
     // monsters don't stomp things except on boss level
     if (!tmthing->player && gamemap != 30)
