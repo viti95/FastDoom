@@ -128,8 +128,6 @@ extern int usemouse;
 #define PEL_DATA 0x3c9
 #define PEL_MASK 0x3c6
 
-boolean grmode;
-
 #define VBLCOUNTER 34000 // hardware tics to a frame
 
 #define TIMERINT 8
@@ -149,7 +147,7 @@ boolean grmode;
 #define MOUSEB2 2
 #define MOUSEB3 4
 
-boolean mousepresent;
+byte mousepresent;
 
 int ticcount;
 fixed_t fps;
@@ -450,7 +448,6 @@ void I_FinishUpdate(void)
 //
 void I_InitGraphics(void)
 {
-    grmode = true;
     regs.w.ax = 0x13;
     int386(0x10, (union REGS *)&regs, &regs);
     pcscreen = currentscreen = (byte *)0xa0000;

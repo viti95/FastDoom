@@ -360,7 +360,7 @@ void R_ProjectSprite(mobj_t *thing)
     int lump;
 
     unsigned rot;
-    boolean flip;
+    byte flip;
 
     int index;
 
@@ -402,13 +402,13 @@ void R_ProjectSprite(mobj_t *thing)
         ang = R_PointToAngle(thing->x, thing->y);
         rot = (ang - thing->angle + (unsigned)(ANG45 / 2) * 9) >> 29;
         lump = sprframe->lump[rot];
-        flip = (boolean)sprframe->flip[rot];
+        flip = sprframe->flip[rot];
     }
     else
     {
         // use single rotation for all views
         lump = sprframe->lump[0];
-        flip = (boolean)sprframe->flip[0];
+        flip = sprframe->flip[0];
     }
 
     // calculate edges of the shape
