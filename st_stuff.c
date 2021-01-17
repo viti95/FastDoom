@@ -433,8 +433,7 @@ void ST_refreshBackground(void)
 
 // Respond to keyboard input events,
 //  intercept cheats.
-boolean
-ST_Responder(event_t *ev)
+void ST_Responder(event_t *ev)
 {
 	int i;
 
@@ -620,7 +619,6 @@ ST_Responder(event_t *ev)
 #endif
 		}
 	}
-	return false;
 }
 
 int ST_calcPainOffset(void)

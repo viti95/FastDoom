@@ -378,8 +378,7 @@ boolean G_Responder(event_t *ev)
     {
         if (HU_Responder(ev))
             return true; // chat ate the event
-        if (ST_Responder(ev))
-            return true; // status window ate it
+        ST_Responder(ev); // status window ate it
         if (AM_Responder(ev))
             return true; // automap ate it
     }

@@ -419,38 +419,27 @@ void HU_Ticker(void)
 
 #define QUEUESIZE 128
 
-boolean HU_Responder(event_t *ev)
+byte HU_Responder(event_t *ev)
 {
-
-    static char lastmessage[HU_MAXLINELENGTH + 1];
-    char *macromessage;
-    boolean eatkey = false;
-    static boolean shiftdown = false;
-    static boolean altdown = false;
-    unsigned char c;
-    int i;
-
-    static int num_nobrainers = 0;
+    byte eatkey = 0;
 
     if (ev->data1 == KEY_RSHIFT)
     {
-        shiftdown = ev->type == ev_keydown;
-        return false;
+        return 0;
     }
     else if (ev->data1 == KEY_RALT || ev->data1 == KEY_LALT)
     {
-        altdown = ev->type == ev_keydown;
-        return false;
+        return 0;
     }
 
     if (ev->type != ev_keydown)
-        return false;
+        return 0;
 
     if (ev->data1 == HU_MSGREFRESH)
     {
         message_on = true;
         message_counter = HU_MSGTIMEOUT;
-        eatkey = true;
+        eatkey = 1;
     }
 
     return eatkey;

@@ -35,7 +35,7 @@
 //
 
 // Called by main loop.
-boolean ST_Responder(event_t *ev);
+void ST_Responder(event_t *ev);
 
 // Called by main loop.
 void ST_Ticker(void);
@@ -56,7 +56,5 @@ typedef enum
     FirstPersonState
 
 } st_stateenum_t;
-
-boolean ST_Responder(event_t *ev);
 
 #endif
