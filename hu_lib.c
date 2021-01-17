@@ -66,8 +66,7 @@ HUlib_addCharToTextLine(hu_textline_t *t,
     }
 }
 
-void HUlib_drawTextLine(hu_textline_t *l,
-                        boolean drawcursor)
+void HUlib_drawTextLine(hu_textline_t *l)
 {
 
     int i;
@@ -95,12 +94,6 @@ void HUlib_drawTextLine(hu_textline_t *l,
                 break;
         }
     }
-
-    // draw the cursor if requested
-    if (drawcursor && x + l->f['_' - l->sc]->width <= SCREENWIDTH)
-    {
-        V_DrawPatchDirect(x, l->y, l->f['_' - l->sc]);
-    }
 }
 
 // sorta called by HU_Erase and just better darn get things straight
@@ -126,8 +119,7 @@ void HUlib_eraseTextLine(hu_textline_t *l)
             else
             {
                 R_VideoErase(yoffset, viewwindowx); // erase left border
-                R_VideoErase(yoffset + viewwindowx + viewwidth, viewwindowx);
-                // erase right border
+                R_VideoErase(yoffset + viewwindowx + viewwidth, viewwindowx); // erase right border
             }
         }
     }
@@ -204,7 +196,7 @@ void HUlib_drawSText(hu_stext_t *s)
         l = &s->l[idx];
 
         // need a decision made here on whether to skip the draw
-        HUlib_drawTextLine(l, false); // no cursor, please
+        HUlib_drawTextLine(l); // no cursor, please
     }
 }
 

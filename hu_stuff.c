@@ -372,11 +372,11 @@ void HU_Drawer(void)
         {
             HUlib_addCharToTextLine(&w_fps, *(f++));
         }
-        HUlib_drawTextLine(&w_fps, false);
+        HUlib_drawTextLine(&w_fps);
     }
 
     if (automapactive)
-        HUlib_drawTextLine(&w_title, false);
+        HUlib_drawTextLine(&w_title);
 }
 
 void HU_Erase(void)
