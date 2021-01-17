@@ -650,7 +650,7 @@ void ST_updateFaceWidget(void)
 	angle_t diffang;
 	static int lastattackdown = -1;
 	static int priority = 0;
-	boolean doevilgrin;
+	byte doevilgrin;
 	int pos;
 
 	if (priority < 10)
@@ -669,13 +669,13 @@ void ST_updateFaceWidget(void)
 		if (plyr->bonuscount)
 		{
 			// picking up bonus
-			doevilgrin = false;
+			doevilgrin = 0;
 
 			for (i = 0; i < NUMWEAPONS; i++)
 			{
 				if (oldweaponsowned[i] != plyr->weaponowned[i])
 				{
-					doevilgrin = true;
+					doevilgrin = 1;
 					oldweaponsowned[i] = plyr->weaponowned[i];
 				}
 			}

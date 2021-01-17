@@ -40,7 +40,7 @@
 //
 
 // when zero, stop the wipe
-static boolean go = 0;
+static byte go = 0;
 
 byte *screen2;
 byte *screen3;
@@ -110,13 +110,13 @@ int wipe_initMelt()
     return 0;
 }
 
-int wipe_doMelt(int ticks)
+byte wipe_doMelt(int ticks)
 {
     int i;
-    boolean done = true;
+    byte done = 1;
 
     if (noMelt)
-        return true;
+        return 1;
 
     while (ticks--)
     {
@@ -126,7 +126,7 @@ int wipe_doMelt(int ticks)
             if (y_val < 0)
             {
                 y[i]++;
-                done = false;
+                done = 0;
             }
             else if (y_val < SCREENHEIGHT)
             {
@@ -154,7 +154,7 @@ int wipe_doMelt(int ticks)
                     idx += (SCREENWIDTH / 2);
                 }
                 y[i] = y_val;
-                done = false;
+                done = 0;
             }
         }
     }

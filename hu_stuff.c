@@ -56,7 +56,6 @@ static player_t *plr;
 patch_t *hu_font[HU_FONTSIZE];
 static hu_textline_t w_title;
 static hu_textline_t w_fps;
-static boolean always_off = false;
 
 static boolean message_on;
 boolean message_dontfuckwithme;
