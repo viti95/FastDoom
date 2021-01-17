@@ -359,34 +359,32 @@ void G_DoLoadLevel(void)
 // G_Responder
 // Get info needed to make ticcmd_ts for the players.
 //
-boolean G_Responder(event_t *ev)
+void G_Responder(event_t *ev)
 {
     // any other key pops up menu if in demos
-    if (gameaction == ga_nothing && !singledemo &&
-        (demoplayback || gamestate == GS_DEMOSCREEN))
+    if (gameaction == ga_nothing && !singledemo && (demoplayback || gamestate == GS_DEMOSCREEN))
     {
-        if (ev->type == ev_keydown ||
-            (ev->type == ev_mouse && ev->data1))
+        if (ev->type == ev_keydown || (ev->type == ev_mouse && ev->data1))
         {
             M_StartControlPanel();
-            return true;
+            return;
         }
-        return false;
+        return;
     }
 
     if (gamestate == GS_LEVEL)
     {
         if (HU_Responder(ev))
-            return true; // chat ate the event
+            return;       // chat ate the event
         ST_Responder(ev); // status window ate it
         if (AM_Responder(ev))
-            return true; // automap ate it
+            return; // automap ate it
     }
 
     if (gamestate == GS_FINALE)
     {
         if (F_Responder(ev))
-            return true; // finale ate the event
+            return; // finale ate the event
     }
 
     switch (ev->type)
@@ -395,29 +393,29 @@ boolean G_Responder(event_t *ev)
         if (ev->data1 == KEY_PAUSE)
         {
             sendpause = true;
-            return true;
+            return;
         }
         if (ev->data1 < NUMKEYS)
             gamekeydown[ev->data1] = true;
-        return true; // eat key down events
+        return; // eat key down events
 
     case ev_keyup:
         if (ev->data1 < NUMKEYS)
             gamekeydown[ev->data1] = false;
-        return false; // always let key up events filter down
+        return; // always let key up events filter down
 
     case ev_mouse:
         mousebuttons[0] = ev->data1 & 1;
         mousebuttons[1] = ev->data1 & 2;
         mousebuttons[2] = ev->data1 & 4;
         mousex = Div10(ev->data2 * (mouseSensitivity + 5));
-        return true; // eat events
+        return; // eat events
 
     default:
         break;
     }
 
-    return false;
+    return;
 }
 
 //

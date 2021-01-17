@@ -279,12 +279,12 @@ void F_StartFinale(void)
 	finalecount = 0;
 }
 
-boolean F_Responder(event_t *event)
+byte F_Responder(event_t *event)
 {
 	if (finalestage == 2)
 		return F_CastResponder(event);
 
-	return false;
+	return 0;
 }
 
 //
@@ -433,10 +433,10 @@ castinfo_t castorder[] = {
 int castnum;
 int casttics;
 state_t *caststate;
-boolean castdeath;
+byte castdeath;
 int castframes;
 int castonmelee;
-boolean castattacking;
+byte castattacking;
 
 //
 // F_StartCast
@@ -449,11 +449,11 @@ void F_StartCast(void)
 	castnum = 0;
 	caststate = &states[mobjinfo[castorder[castnum].type].seestate];
 	casttics = caststate->tics;
-	castdeath = false;
+	castdeath = 0;
 	finalestage = 2;
 	castframes = 0;
 	castonmelee = 0;
-	castattacking = false;
+	castattacking = 0;
 	S_ChangeMusic(mus_evil, true);
 }
 
@@ -472,7 +472,7 @@ void F_CastTicker(void)
 	{
 		// switch from deathstate to next monster
 		castnum++;
-		castdeath = false;
+		castdeath = 0;
 		if (castorder[castnum].name == NULL)
 			castnum = 0;
 		if (mobjinfo[castorder[castnum].type].seesound)
@@ -564,7 +564,7 @@ void F_CastTicker(void)
 	if (castframes == 12)
 	{
 		// go into attack frame
-		castattacking = true;
+		castattacking = 1;
 		if (castonmelee)
 			caststate = &states[mobjinfo[castorder[castnum].type].meleestate];
 		else
@@ -586,7 +586,7 @@ void F_CastTicker(void)
 		if (castframes == 24 || caststate == &states[mobjinfo[castorder[castnum].type].seestate])
 		{
 		stopattack:
-			castattacking = false;
+			castattacking = 0;
 			castframes = 0;
 			caststate = &states[mobjinfo[castorder[castnum].type].seestate];
 		}
@@ -601,24 +601,24 @@ void F_CastTicker(void)
 // F_CastResponder
 //
 
-boolean F_CastResponder(event_t *ev)
+byte F_CastResponder(event_t *ev)
 {
 	if (ev->type != ev_keydown)
-		return false;
+		return 0;
 
 	if (castdeath)
-		return true; // already in dying frames
+		return 1; // already in dying frames
 
 	// go into death frame
-	castdeath = true;
+	castdeath = 1;
 	caststate = &states[mobjinfo[castorder[castnum].type].deathstate];
 	casttics = caststate->tics;
 	castframes = 0;
-	castattacking = false;
+	castattacking = 0;
 	if (mobjinfo[castorder[castnum].type].deathsound)
 		S_StartSound(NULL, mobjinfo[castorder[castnum].type].deathsound);
 
-	return true;
+	return 1;
 }
 
 void F_CastPrint(char *text)

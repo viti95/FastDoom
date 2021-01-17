@@ -503,16 +503,13 @@ void AM_maxOutWindowScale(void)
 //
 // Handle events (user inputs) in automap mode
 //
-boolean
-AM_Responder(event_t *ev)
+byte AM_Responder(event_t *ev)
 {
 
-	int rc;
-	static int cheatstate = 0;
-	static int bigstate = 0;
+	byte rc = 0;
+	static byte bigstate = 0;
 	static char buffer[20];
 
-	rc = false;
 
 	if (!automapactive)
 	{
@@ -520,39 +517,39 @@ AM_Responder(event_t *ev)
 		{
 			AM_Start();
 			viewactive = false;
-			rc = true;
+			rc = 1;
 		}
 	}
 
 	else if (ev->type == ev_keydown)
 	{
 
-		rc = true;
+		rc = 1;
 		switch (ev->data1)
 		{
 		case AM_PANRIGHTKEY: // pan right
 			if (!followplayer)
 				m_paninc.x = FTOM(F_PANINC);
 			else
-				rc = false;
+				rc = 0;
 			break;
 		case AM_PANLEFTKEY: // pan left
 			if (!followplayer)
 				m_paninc.x = -FTOM(F_PANINC);
 			else
-				rc = false;
+				rc = 0;
 			break;
 		case AM_PANUPKEY: // pan up
 			if (!followplayer)
 				m_paninc.y = FTOM(F_PANINC);
 			else
-				rc = false;
+				rc = 0;
 			break;
 		case AM_PANDOWNKEY: // pan down
 			if (!followplayer)
 				m_paninc.y = -FTOM(F_PANINC);
 			else
-				rc = false;
+				rc = 0;
 			break;
 		case AM_ZOOMOUTKEY: // zoom out
 			mtof_zoommul = M_ZOOMOUT;
@@ -596,12 +593,11 @@ AM_Responder(event_t *ev)
 			plr->message = AMSTR_MARKSCLEARED;
 			break;
 		default:
-			cheatstate = 0;
-			rc = false;
+			rc = 0;
 		}
 		if (cht_CheckCheat(&cheat_amap, ev->data1))
 		{
-			rc = false;
+			rc = 0;
 
 			cheating++;
 			if (cheating == 3) cheating = 0;
@@ -610,7 +606,7 @@ AM_Responder(event_t *ev)
 
 	else if (ev->type == ev_keyup)
 	{
-		rc = false;
+		rc = 0;
 		switch (ev->data1)
 		{
 		case AM_PANRIGHTKEY:
