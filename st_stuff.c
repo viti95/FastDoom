@@ -1282,7 +1282,7 @@ void ST_createWidgets(void)
 				  &st_statusbaron);
 }
 
-static boolean st_stopped = true;
+static byte st_stopped = 1;
 
 void ST_Start(void)
 {
@@ -1292,7 +1292,7 @@ void ST_Start(void)
 
 	ST_initData();
 	ST_createWidgets();
-	st_stopped = false;
+	st_stopped = 0;
 }
 
 void ST_Stop(void)
@@ -1302,7 +1302,7 @@ void ST_Stop(void)
 
 	I_SetPalette(0);
 
-	st_stopped = true;
+	st_stopped = 1;
 }
 
 void ST_Init(void)

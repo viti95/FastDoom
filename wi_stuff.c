@@ -385,7 +385,7 @@ void WI_drawOnLnode(int n,
 	int top;
 	int right;
 	int bottom;
-	boolean fits = false;
+	byte fits = 0;
 
 	i = 0;
 	do
@@ -397,7 +397,7 @@ void WI_drawOnLnode(int n,
 
 		if (left >= 0 && right < SCREENWIDTH && top >= 0 && bottom < SCREENHEIGHT)
 		{
-			fits = true;
+			fits = 1;
 		}
 		else
 		{
@@ -407,8 +407,7 @@ void WI_drawOnLnode(int n,
 
 	if (fits && i < 2)
 	{
-		V_DrawPatch(lnodes[wbs->epsd][n].x, lnodes[wbs->epsd][n].y,
-					screen0, c[i]);
+		V_DrawPatch(lnodes[wbs->epsd][n].x, lnodes[wbs->epsd][n].y, screen0, c[i]);
 	}
 }
 
@@ -692,7 +691,7 @@ void WI_updateNoState(void)
 	}
 }
 
-static boolean snl_pointeron = false;
+static byte snl_pointeron = 0;
 
 void WI_initShowNextLoc(void)
 {
@@ -756,7 +755,7 @@ void WI_drawShowNextLoc(void)
 
 void WI_drawNoState(void)
 {
-	snl_pointeron = true;
+	snl_pointeron = 1;
 	WI_drawShowNextLoc();
 }
 
