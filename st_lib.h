@@ -107,12 +107,6 @@ typedef struct
     int x;
     int y;
 
-    // last icon value
-    int oldval;
-
-    // pointer to current icon status
-    boolean *val;
-
     // pointer to boolean
     //  stating whether to update icon
     boolean *on;
@@ -172,7 +166,6 @@ void STlib_initBinIcon(st_binicon_t *b,
                        int x,
                        int y,
                        patch_t *i,
-                       boolean *val,
                        boolean *on);
 
 void STlib_updateBinIcon(st_binicon_t *bi,

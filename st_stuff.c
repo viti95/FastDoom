@@ -262,9 +262,6 @@ static st_stateenum_t st_gamestate;
 // whether left-side main status bar is active
 static boolean st_statusbaron;
 
-// !deathmatch
-static boolean st_notdeathmatch;
-
 // !deathmatch && st_statusbaron
 static boolean st_armson;
 
@@ -840,9 +837,6 @@ void ST_updateWidgets(void)
 	// refresh everything if this is him coming back to life
 	ST_updateFaceWidget();
 
-	// used by the w_armsbg widget
-	st_notdeathmatch = true;
-
 	// used by w_arms[] widgets
 	st_armson = st_statusbaron;
 }
@@ -1145,7 +1139,6 @@ void ST_createWidgets(void)
 					  ST_ARMSBGX,
 					  ST_ARMSBGY,
 					  armsbg,
-					  &st_notdeathmatch,
 					  &st_statusbaron);
 
 	// weapons owned

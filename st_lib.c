@@ -70,7 +70,7 @@ void STlib_drawNum(st_number_t *n,
     // [crispy] redraw only if necessary
     if (n->oldnum == num && !refresh)
     {
-	    return;
+        return;
     }
 
     n->oldnum = *n->num;
@@ -87,7 +87,8 @@ void STlib_drawNum(st_number_t *n,
     x = n->x;
 
     // in the special case of 0, you draw 0
-    if (!num){
+    if (!num)
+    {
         V_DrawPatch(x - w, n->y, screen0, n->p[0]);
         return;
     }
@@ -96,11 +97,11 @@ void STlib_drawNum(st_number_t *n,
     do
     {
         int original = num;
-        
+
         num = Div10(num);
         x -= w;
-        V_DrawPatch(x, n->y, screen0, n->p[original - Mul10(num)]);   
-    }while(num);
+        V_DrawPatch(x, n->y, screen0, n->p[original - Mul10(num)]);
+    } while (num);
 }
 
 //
@@ -176,13 +177,10 @@ void STlib_initBinIcon(st_binicon_t *b,
                        int x,
                        int y,
                        patch_t *i,
-                       boolean *val,
                        boolean *on)
 {
     b->x = x;
     b->y = y;
-    b->oldval = 0;
-    b->val = val;
     b->on = on;
     b->p = i;
 }
@@ -190,23 +188,6 @@ void STlib_initBinIcon(st_binicon_t *b,
 void STlib_updateBinIcon(st_binicon_t *bi,
                          boolean refresh)
 {
-    int x;
-    int y;
-    int w;
-    int h;
-
-    if (*bi->on && (bi->oldval != *bi->val || refresh))
-    {
-        x = bi->x - bi->p->leftoffset;
-        y = bi->y - bi->p->topoffset;
-        w = bi->p->width;
-        h = bi->p->height;
-
-        if (*bi->val)
-            V_DrawPatch(bi->x, bi->y, screen0, bi->p);
-        else
-            V_CopyRect(x, y - ST_Y, screen4, w, h, x, y, screen0);
-
-        bi->oldval = *bi->val;
-    }
+    if (*bi->on && refresh)
+        V_DrawPatch(bi->x, bi->y, screen0, bi->p);
 }
