@@ -85,7 +85,7 @@ char *messageString;
 int messageLastMenuActive;
 
 // timed message = no input from user
-boolean messageNeedsInput;
+byte messageNeedsInput;
 
 void (*messageRoutine)(int response);
 
@@ -240,7 +240,7 @@ void M_WriteText(int x, int y, char *string);
 int M_StringWidth(char *string);
 int M_StringHeight(char *string);
 void M_StartControlPanel(void);
-void M_StartMessage(char *string, void *routine, boolean input);
+void M_StartMessage(char *string, void *routine, byte input);
 
 //
 // DOOM MENU
@@ -695,7 +695,7 @@ void M_SaveGame(int choice)
 {
     if (!usergame)
     {
-        M_StartMessage(SAVEDEAD, NULL, false);
+        M_StartMessage(SAVEDEAD, NULL, 0);
         return;
     }
 
@@ -740,7 +740,7 @@ void M_QuickSave(void)
         return;
     }
     sprintf(tempstring, QSPROMPT, savegamestrings[quickSaveSlot]);
-    M_StartMessage(tempstring, M_QuickSaveResponse, true);
+    M_StartMessage(tempstring, M_QuickSaveResponse, 1);
 }
 
 //
@@ -759,11 +759,11 @@ void M_QuickLoad(void)
 {
     if (quickSaveSlot < 0)
     {
-        M_StartMessage(QSAVESPOT, NULL, false);
+        M_StartMessage(QSAVESPOT, NULL, 0);
         return;
     }
     sprintf(tempstring, QLPROMPT, savegamestrings[quickSaveSlot]);
-    M_StartMessage(tempstring, M_QuickLoadResponse, true);
+    M_StartMessage(tempstring, M_QuickLoadResponse, 1);
 }
 
 //
@@ -897,7 +897,7 @@ void M_ChooseSkill(int choice)
 {
     if (choice == nightmare)
     {
-        M_StartMessage(NIGHTMARE, M_VerifyNightmare, true);
+        M_StartMessage(NIGHTMARE, M_VerifyNightmare, 1);
         return;
     }
 
@@ -909,7 +909,7 @@ void M_Episode(int choice)
 {
     if (shareware && choice)
     {
-        M_StartMessage(SWSTRING, NULL, false);
+        M_StartMessage(SWSTRING, NULL, 0);
         M_SetupNextMenu(&ReadDef1);
         return;
     }
@@ -1018,7 +1018,7 @@ void M_EndGame(int choice)
         return;
     }
 
-    M_StartMessage(ENDGAME, M_EndGameResponse, true);
+    M_StartMessage(ENDGAME, M_EndGameResponse, 1);
 }
 
 //
@@ -1070,7 +1070,7 @@ int quitsounds2[8] =
 void M_QuitResponse(int ch)
 {
     int i = 105;
-    
+
     if (ch != 'y')
         return;
 
@@ -1078,10 +1078,11 @@ void M_QuitResponse(int ch)
         S_StartSound(NULL, quitsounds2[(gametic >> 2) & 7]);
     else
         S_StartSound(NULL, quitsounds[(gametic >> 2) & 7]);
-    
-    do{
+
+    do
+    {
         I_WaitSingleVBL();
-    }while(i--);
+    } while (i--);
 
     I_Quit();
 }
@@ -1099,7 +1100,7 @@ void M_QuitDOOM(int choice)
         sprintf(endstring, "%s\n\n" DOSY, endmsg[(gametic >> 2) % NUM_QUITMESSAGES]);
     }
 
-    M_StartMessage(endstring, M_QuitResponse, true);
+    M_StartMessage(endstring, M_QuitResponse, 1);
 }
 
 void M_ChangeSensitivity(int choice)
@@ -1346,9 +1347,7 @@ void M_DrawThermo(int x,
     V_DrawPatchDirect((x + 8) + thermDot * 8, y, W_CacheLumpName("M_THERMO", PU_CACHE));
 }
 
-void M_StartMessage(char *string,
-                    void *routine,
-                    boolean input)
+void M_StartMessage(char *string, void *routine, byte input)
 {
     messageLastMenuActive = menuactive;
     messageToPrint = 1;
@@ -1448,7 +1447,7 @@ void M_WriteText(int x,
 //
 // M_Responder
 //
-boolean M_Responder(event_t *ev)
+byte M_Responder(event_t *ev)
 {
     int ch;
     int i;
@@ -1463,7 +1462,7 @@ boolean M_Responder(event_t *ev)
     }
 
     if (ch == -1)
-        return false;
+        return 0;
 
     // Save Game string input
     if (saveStringEnter)
@@ -1504,15 +1503,14 @@ boolean M_Responder(event_t *ev)
             }
             break;
         }
-        return true;
+        return 1;
     }
 
     // Take care of any messages that need input
     if (messageToPrint)
     {
-        if (messageNeedsInput == true &&
-            !(ch == ' ' || ch == 'n' || ch == 'y' || ch == KEY_ESCAPE))
-            return false;
+        if (messageNeedsInput == 1 && !(ch == ' ' || ch == 'n' || ch == 'y' || ch == KEY_ESCAPE))
+            return 0;
 
         menuactive = messageLastMenuActive;
         messageToPrint = 0;
@@ -1521,7 +1519,7 @@ boolean M_Responder(event_t *ev)
 
         menuactive = false;
         S_StartSound(NULL, sfx_swtchx);
-        return true;
+        return 1;
     }
 
     // F-Keys
@@ -1530,17 +1528,17 @@ boolean M_Responder(event_t *ev)
         {
         case KEY_MINUS: // Screen size down
             if (automapactive)
-                return false;
+                return 0;
             M_SizeDisplay(0);
             S_StartSound(NULL, sfx_stnmov);
-            return true;
+            return 1;
 
         case KEY_EQUALS: // Screen size up
             if (automapactive)
-                return false;
+                return 0;
             M_SizeDisplay(1);
             S_StartSound(NULL, sfx_stnmov);
-            return true;
+            return 1;
 
         case KEY_F1: // Help key
             M_StartControlPanel();
@@ -1553,56 +1551,56 @@ boolean M_Responder(event_t *ev)
 
             itemOn = 0;
             S_StartSound(NULL, sfx_swtchn);
-            return true;
+            return 1;
 
         case KEY_F2: // Save
             M_StartControlPanel();
             S_StartSound(NULL, sfx_swtchn);
             M_SaveGame(0);
-            return true;
+            return 1;
 
         case KEY_F3: // Load
             M_StartControlPanel();
             S_StartSound(NULL, sfx_swtchn);
             M_LoadGame(0);
-            return true;
+            return 1;
 
         case KEY_F4: // Sound Volume
             M_StartControlPanel();
             currentMenu = &SoundDef;
             itemOn = sfx_vol;
             S_StartSound(NULL, sfx_swtchn);
-            return true;
+            return 1;
 
         case KEY_F5: // Detail toggle
             M_ChangeDetail();
             S_StartSound(NULL, sfx_swtchn);
-            return true;
+            return 1;
 
         case KEY_F6: // Quicksave
             S_StartSound(NULL, sfx_swtchn);
             M_QuickSave();
-            return true;
+            return 1;
 
         case KEY_F7: // End game
             S_StartSound(NULL, sfx_swtchn);
             M_EndGame(0);
-            return true;
+            return 1;
 
         case KEY_F8: // Toggle messages
             M_ChangeMessages(0);
             S_StartSound(NULL, sfx_swtchn);
-            return true;
+            return 1;
 
         case KEY_F9: // Quickload
             S_StartSound(NULL, sfx_swtchn);
             M_QuickLoad();
-            return true;
+            return 1;
 
         case KEY_F10: // Quit DOOM
             S_StartSound(NULL, sfx_swtchn);
             M_QuitDOOM(0);
-            return true;
+            return 1;
         case KEY_F11: // gamma toggle
             usegamma++;
             if (usegamma > 4)
@@ -1610,14 +1608,14 @@ boolean M_Responder(event_t *ev)
             players.message = gammamsg[usegamma];
             I_ProcessPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
             I_SetPalette(0);
-            return true;
+            return 1;
         case KEY_F12: // Autorun
             autorun = !autorun;
             if (autorun)
                 players.message = AUTORUNON;
             else
                 players.message = AUTORUNOFF;
-            return true;
+            return 1;
         }
 
     // Pop-up menu?
@@ -1627,9 +1625,9 @@ boolean M_Responder(event_t *ev)
         {
             M_StartControlPanel();
             S_StartSound(NULL, sfx_swtchn);
-            return true;
+            return 1;
         }
-        return false;
+        return 0;
     }
 
     // Keys usable within menu
@@ -1644,7 +1642,7 @@ boolean M_Responder(event_t *ev)
                 itemOn++;
             S_StartSound(NULL, sfx_pstop);
         } while (currentMenu->menuitems[itemOn].status == -1);
-        return true;
+        return 1;
 
     case KEY_UPARROW:
         do
@@ -1655,7 +1653,7 @@ boolean M_Responder(event_t *ev)
                 itemOn--;
             S_StartSound(NULL, sfx_pstop);
         } while (currentMenu->menuitems[itemOn].status == -1);
-        return true;
+        return 1;
 
     case KEY_LEFTARROW:
         if (currentMenu->menuitems[itemOn].routine &&
@@ -1664,7 +1662,7 @@ boolean M_Responder(event_t *ev)
             S_StartSound(NULL, sfx_stnmov);
             currentMenu->menuitems[itemOn].routine(0);
         }
-        return true;
+        return 1;
 
     case KEY_RIGHTARROW:
         if (currentMenu->menuitems[itemOn].routine &&
@@ -1673,7 +1671,7 @@ boolean M_Responder(event_t *ev)
             S_StartSound(NULL, sfx_stnmov);
             currentMenu->menuitems[itemOn].routine(1);
         }
-        return true;
+        return 1;
 
     case KEY_ENTER:
         if (currentMenu->menuitems[itemOn].routine &&
@@ -1691,13 +1689,13 @@ boolean M_Responder(event_t *ev)
                 S_StartSound(NULL, sfx_pistol);
             }
         }
-        return true;
+        return 1;
 
     case KEY_ESCAPE:
         currentMenu->lastOn = itemOn;
         menuactive = 0;
         S_StartSound(NULL, sfx_swtchx);
-        return true;
+        return 1;
 
     case KEY_BACKSPACE:
         currentMenu->lastOn = itemOn;
@@ -1707,7 +1705,7 @@ boolean M_Responder(event_t *ev)
             itemOn = currentMenu->lastOn;
             S_StartSound(NULL, sfx_swtchn);
         }
-        return true;
+        return 1;
 
     default:
         for (i = itemOn + 1; i < currentMenu->numitems; i++)
@@ -1715,19 +1713,19 @@ boolean M_Responder(event_t *ev)
             {
                 itemOn = i;
                 S_StartSound(NULL, sfx_pstop);
-                return true;
+                return 1;
             }
         for (i = 0; i <= itemOn; i++)
             if (currentMenu->menuitems[i].alphaKey == ch)
             {
                 itemOn = i;
                 S_StartSound(NULL, sfx_pstop);
-                return true;
+                return 1;
             }
         break;
     }
 
-    return false;
+    return 0;
 }
 
 //
