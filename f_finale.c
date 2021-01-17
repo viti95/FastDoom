@@ -49,7 +49,7 @@ char *finaleflat;
 
 void F_StartCast(void);
 void F_CastTicker(void);
-boolean F_CastResponder(event_t *ev);
+byte F_CastResponder(event_t *ev);
 void F_CastDrawer(void);
 
 int F_GetFileSize(char *filename)
