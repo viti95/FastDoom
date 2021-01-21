@@ -53,7 +53,7 @@
 //
 typedef struct
 {
-	boolean istexture;
+	byte istexture;
 	int picnum;
 	int basepic;
 	int numpics;
