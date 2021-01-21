@@ -53,14 +53,23 @@ result_e T_MovePlane(sector_t *sector, fixed_t speed, fixed_t dest, byte crush, 
 			{
 				lastpos = sector->floorheight;
 				sector->floorheight = dest;
-				P_ChangeSector(sector, crush);
+				if (P_ChangeSector(sector, crush))
+				{
+					sector->floorheight = lastpos;
+					P_ChangeSector(sector, crush);
+				}
 				return pastdest;
 			}
 			else
 			{
 				lastpos = sector->floorheight;
 				sector->floorheight -= speed;
-				P_ChangeSector(sector, crush);
+				if (P_ChangeSector(sector, crush))
+				{
+					sector->floorheight = lastpos;
+					P_ChangeSector(sector, crush);
+					return crushed;
+				}
 			}
 			break;
 
@@ -70,7 +79,11 @@ result_e T_MovePlane(sector_t *sector, fixed_t speed, fixed_t dest, byte crush, 
 			{
 				lastpos = sector->floorheight;
 				sector->floorheight = dest;
-				P_ChangeSector(sector, crush);
+				if (P_ChangeSector(sector, crush))
+				{
+					sector->floorheight = lastpos;
+					P_ChangeSector(sector, crush);
+				}
 				return pastdest;
 			}
 			else
@@ -78,7 +91,14 @@ result_e T_MovePlane(sector_t *sector, fixed_t speed, fixed_t dest, byte crush, 
 				// COULD GET CRUSHED
 				lastpos = sector->floorheight;
 				sector->floorheight += speed;
-				P_ChangeSector(sector, crush);
+				if (P_ChangeSector(sector, crush))
+				{
+					if (crush == true)
+						return crushed;
+					sector->floorheight = lastpos;
+					P_ChangeSector(sector, crush);
+					return crushed;
+				}
 			}
 			break;
 		}
@@ -94,7 +114,11 @@ result_e T_MovePlane(sector_t *sector, fixed_t speed, fixed_t dest, byte crush, 
 			{
 				lastpos = sector->ceilingheight;
 				sector->ceilingheight = dest;
-				P_ChangeSector(sector, crush);
+				if (P_ChangeSector(sector, crush))
+				{
+					sector->ceilingheight = lastpos;
+					P_ChangeSector(sector, crush);
+				}
 				return pastdest;
 			}
 			else
@@ -102,7 +126,14 @@ result_e T_MovePlane(sector_t *sector, fixed_t speed, fixed_t dest, byte crush, 
 				// COULD GET CRUSHED
 				lastpos = sector->ceilingheight;
 				sector->ceilingheight -= speed;
-				P_ChangeSector(sector, crush);
+				if (P_ChangeSector(sector, crush))
+				{
+					if (crush == true)
+						return crushed;
+					sector->ceilingheight = lastpos;
+					P_ChangeSector(sector, crush);
+					return crushed;
+				}
 			}
 			break;
 
@@ -112,7 +143,11 @@ result_e T_MovePlane(sector_t *sector, fixed_t speed, fixed_t dest, byte crush, 
 			{
 				lastpos = sector->ceilingheight;
 				sector->ceilingheight = dest;
-				P_ChangeSector(sector, crush);
+				if (P_ChangeSector(sector, crush))
+				{
+					sector->ceilingheight = lastpos;
+					P_ChangeSector(sector, crush);
+				}
 				return pastdest;
 			}
 			else

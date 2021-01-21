@@ -101,7 +101,7 @@ void R_InstallSpriteLump(int lump,
         for (r = 0; r < 8; r++)
         {
             sprtemp[frame].lump[r] = lump - firstspritelump;
-            sprtemp[frame].flip[r] = (byte)flipped;
+            sprtemp[frame].flip[r] = flipped;
         }
         return;
     }

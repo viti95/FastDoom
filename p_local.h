@@ -174,7 +174,7 @@ void P_SetThingPosition(mobj_t *thing);
 
 // If "floatok" true, move would be ok
 // if within "tmfloorz - tmceilingz".
-extern boolean floatok;
+extern byte floatok;
 extern fixed_t tmfloorz;
 extern fixed_t tmceilingz;
 
@@ -187,7 +187,7 @@ void P_SlideMove(mobj_t *mo);
 byte P_CheckSight(mobj_t *t1, mobj_t *t2);
 void P_UseLines(player_t *player);
 
-void P_ChangeSector(sector_t *sector, byte crunch);
+byte P_ChangeSector(sector_t *sector, byte crunch);
 
 extern mobj_t *linetarget; // who got hit (or NULL)
 

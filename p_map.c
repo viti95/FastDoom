@@ -43,7 +43,7 @@ fixed_t tmy;
 
 // If "floatok" true, move would be ok
 // if within "tmfloorz - tmceilingz".
-boolean floatok;
+byte floatok;
 
 fixed_t tmfloorz;
 fixed_t tmceilingz;
@@ -424,7 +424,7 @@ byte P_TryMove(mobj_t *thing, fixed_t x, fixed_t y)
     byte oldside;
     line_t *ld;
 
-    floatok = false;
+    floatok = 0;
     if (!P_CheckPosition(thing, x, y))
         return 0; // solid wall or thing
 
@@ -433,7 +433,7 @@ byte P_TryMove(mobj_t *thing, fixed_t x, fixed_t y)
         if (tmceilingz - tmfloorz < thing->height)
             return 0; // doesn't fit
 
-        floatok = true;
+        floatok = 1;
 
         if (!(thing->flags & MF_TELEPORT) && tmceilingz - thing->z < thing->height)
             return 0; // mobj must lower itself to fit
@@ -1308,6 +1308,7 @@ void P_RadiusAttack(mobj_t *spot,
 //  to undo the changes.
 //
 byte crushchange;
+byte nofit;
 
 //
 // PIT_ChangeSector
@@ -1350,6 +1351,8 @@ boolean PIT_ChangeSector(mobj_t *thing)
         return true;
     }
 
+    nofit = 1;
+
     if (crushchange && !(leveltime & 3))
     {
         P_DamageMobj(thing, NULL, NULL, 10);
@@ -1370,11 +1373,12 @@ boolean PIT_ChangeSector(mobj_t *thing)
 //
 // P_ChangeSector
 //
-void P_ChangeSector(sector_t *sector, byte crunch)
+byte P_ChangeSector(sector_t *sector, byte crunch)
 {
     int x;
     int y;
 
+    nofit = 0;
     crushchange = crunch;
 
     // re-check heights for all things near the moving sector
@@ -1382,4 +1386,5 @@ void P_ChangeSector(sector_t *sector, byte crunch)
         for (y = sector->blockbox[BOXBOTTOM]; y <= sector->blockbox[BOXTOP]; y++)
             P_BlockThingsIterator(x, y, PIT_ChangeSector);
 
+    return nofit;
 }
