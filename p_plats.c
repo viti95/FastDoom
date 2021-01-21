@@ -96,7 +96,7 @@ void T_PlatRaise(plat_t *plat)
 		break;
 
 	case down:
-		res = T_MovePlane(plat->sector, plat->speed, plat->low, false, 0, -1);
+		res = T_MovePlane(plat->sector, plat->speed, plat->low, 0, 0, -1);
 
 		if (res == pastdest)
 		{

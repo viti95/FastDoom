@@ -127,7 +127,7 @@ typedef struct
 typedef struct
 {
     fixed_t frac; // along trace line
-    boolean isaline;
+    byte isaline;
     union {
         mobj_t *thing;
         line_t *line;

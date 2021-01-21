@@ -426,7 +426,7 @@ void D_DoAdvanceDemo(void)
 {
     players.playerstate = PST_LIVE; // not reborn
     advancedemo = false;
-    usergame = false; // no save / end game here
+    usergame = 0; // no save / end game here
     paused = false;
     gameaction = ga_nothing;
 
@@ -974,7 +974,7 @@ void D_DoomMain(void)
     p = M_CheckParm("-playdemo");
     if (p && p < myargc - 1)
     {
-        singledemo = true; // quit after one demo
+        singledemo = 1; // quit after one demo
         G_DeferedPlayDemo(myargv[p + 1]);
         D_DoomLoop(); // never returns
     }

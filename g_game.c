@@ -86,10 +86,10 @@ boolean respawnmonsters;
 int gameepisode;
 int gamemap;
 
-boolean paused;
-boolean sendpause; // send a pause event next tic
-boolean sendsave;  // send a save event next tic
-boolean usergame;  // ok to save / end game
+byte paused;
+byte sendpause; // send a pause event next tic
+byte sendsave;  // send a save event next tic
+byte usergame;  // ok to save / end game
 
 boolean timingdemo; // if true, exit with report on completion
 int starttime;      // for comparative timing purposes
@@ -108,7 +108,7 @@ boolean demoplayback;
 byte *demobuffer;
 byte *demo_p;
 byte *demoend;
-boolean singledemo; // quit after playing a demo from cmdline
+byte singledemo; // quit after playing a demo from cmdline
 
 wbstartstruct_t wminfo; // parms for world map / intermission
 
@@ -143,11 +143,11 @@ fixed_t angleturn[3] = {640, 1280, 320}; // + slow turn
 
 #define NUMKEYS 256
 
-boolean gamekeydown[NUMKEYS];
+byte gamekeydown[NUMKEYS];
 int turnheld; // for accelerative turning
 
-boolean mousearray[4];
-boolean *mousebuttons = &mousearray[1]; // allow [-1]
+byte mousearray[4];
+byte *mousebuttons = &mousearray[1]; // allow [-1]
 
 // mouse values are used once
 int mousex;
@@ -163,7 +163,7 @@ char savedescription[32];
 
 mobj_t *bodyque[BODYQUESIZE];
 
-boolean autorun;
+byte autorun;
 
 //
 // G_BuildTiccmd
@@ -174,8 +174,8 @@ boolean autorun;
 void G_BuildTiccmd(ticcmd_t *cmd)
 {
     int i;
-    boolean strafe;
-    boolean bstrafe;
+    byte strafe;
+    byte bstrafe;
     int speed;
     int tspeed;
     int forward;
@@ -304,13 +304,13 @@ void G_BuildTiccmd(ticcmd_t *cmd)
     // special buttons
     if (sendpause)
     {
-        sendpause = false;
+        sendpause = 0;
         cmd->buttons = BT_SPECIAL | BTS_PAUSE;
     }
 
     if (sendsave)
     {
-        sendsave = false;
+        sendsave = 0;
         cmd->buttons = BT_SPECIAL | BTS_SAVEGAME | (savegameslot << BTS_SAVESHIFT);
     }
 }
@@ -351,7 +351,7 @@ void G_DoLoadLevel(void)
     // clear cmd building stuff
     memset(gamekeydown, 0, sizeof(gamekeydown));
     mousex = 0;
-    sendpause = sendsave = paused = false;
+    sendpause = sendsave = paused = 0;
     memset(mousebuttons, 0, sizeof(mousebuttons));
 }
 
@@ -392,16 +392,16 @@ void G_Responder(event_t *ev)
     case ev_keydown:
         if (ev->data1 == KEY_PAUSE)
         {
-            sendpause = true;
+            sendpause = 1;
             return;
         }
         if (ev->data1 < NUMKEYS)
-            gamekeydown[ev->data1] = true;
+            gamekeydown[ev->data1] = 1;
         return; // eat key down events
 
     case ev_keyup:
         if (ev->data1 < NUMKEYS)
-            gamekeydown[ev->data1] = false;
+            gamekeydown[ev->data1] = 0;
         return; // always let key up events filter down
 
     case ev_mouse:
@@ -858,7 +858,7 @@ void G_SaveGame(int slot,
 {
     savegameslot = slot;
     strcpy(savedescription, description);
-    sendsave = true;
+    sendsave = 1;
 }
 
 void G_DoSaveGame(void)
@@ -959,7 +959,7 @@ void G_InitNew(skill_t skill,
 
     if (paused)
     {
-        paused = false;
+        paused = 0;
         S_ResumeSound();
     }
 
@@ -1020,8 +1020,8 @@ void G_InitNew(skill_t skill,
     // force players to be initialized upon first level load
     players.playerstate = PST_REBORN;
 
-    usergame = true; // will be set false if a demo
-    paused = false;
+    usergame = 1; // will be set false if a demo
+    paused = 0;
     demoplayback = false;
     automapactive = 0;
     viewactive = 1;
@@ -1106,7 +1106,7 @@ void G_RecordDemo(char *name)
     int i;
     int maxsize;
 
-    usergame = false;
+    usergame = 0;
     strcpy(demoname, name);
     strcat(demoname, ".lmp");
     maxsize = 0x20000;
@@ -1182,7 +1182,7 @@ void G_DoPlayDemo(void)
     // don't spend a lot of time in loadlevel
     G_InitNew(skill, episode, map);
 
-    usergame = false;
+    usergame = 0;
     demoplayback = true;
 }
 

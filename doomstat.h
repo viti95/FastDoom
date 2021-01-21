@@ -132,7 +132,7 @@ extern boolean statusbaractive;
 
 extern byte automapactive; // In AutoMap mode?
 extern byte menuactive;    // Menu overlayed?
-extern boolean paused;        // Game Pause?
+extern byte paused;        // Game Pause?
 
 extern byte viewactive;
 
@@ -158,7 +158,7 @@ extern int leveltime;     // tics in game play for par
 // DEMO playback/recording related stuff.
 // No demo, there is a human player in charge?
 // Disable save/end game?
-extern boolean usergame;
+extern byte usergame;
 
 //?
 extern boolean demoplayback;
@@ -166,7 +166,7 @@ extern boolean demorecording;
 extern boolean timingdemo;
 
 // Quit after playing a demo from cmdline.
-extern boolean singledemo;
+extern byte singledemo;
 
 //?
 extern gamestate_t gamestate;
@@ -219,6 +219,6 @@ extern ticcmd_t localcmds[BACKUPTICS];
 extern int maketic;
 extern int nettics;
 
-extern boolean autorun;
+extern byte autorun;
 
 #endif

@@ -495,7 +495,7 @@ void P_TouchSpecialThing(mobj_t *special, mobj_t *toucher)
 			player->maxammo[1] *= 2;
 			player->maxammo[2] *= 2;
 			player->maxammo[3] *= 2;
-			player->backpack = true;
+			player->backpack = 1;
 		}
 		P_GiveAmmo(player, 0, 1);
 		P_GiveAmmo(player, 1, 1);

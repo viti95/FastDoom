@@ -54,7 +54,7 @@ void T_MoveCeiling(ceiling_t *ceiling)
 		res = T_MovePlane(ceiling->sector,
 						  ceiling->speed,
 						  ceiling->topheight,
-						  false, 1, ceiling->direction);
+						  0, 1, ceiling->direction);
 
 		if (!(leveltime & 7))
 		{
