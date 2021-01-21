@@ -42,7 +42,7 @@ fixed_t t2y;
 // Returns true
 //  if strace crosses the given subsector successfully.
 //
-boolean P_CrossSubsector(int num)
+byte P_CrossSubsector(int num)
 {
     seg_t *seg;
     line_t *line;
@@ -108,7 +108,7 @@ boolean P_CrossSubsector(int num)
         // stop because it is not two sided anyway
         // might do this after updating validcount?
         if (!(line->flags & ML_TWOSIDED))
-            return false;
+            return 0;
 
         // crosses a two sided line
         front = seg->frontsector;
@@ -133,7 +133,7 @@ boolean P_CrossSubsector(int num)
 
         // quick test for totally closed doors
         if (openbottom >= opentop)
-            return false; // stop
+            return 0; // stop
 
         // P_InterceptVector2
         denIV = FixedMul(divl.dy >> 8, strace.dx) - FixedMul(divl.dx >> 8, strace.dy);
@@ -167,10 +167,10 @@ boolean P_CrossSubsector(int num)
         }
 
         if (topslope <= bottomslope)
-            return false; // stop
+            return 0; // stop
     }
     // passed the subsector ok
-    return true;
+    return 1;
 }
 
 //
@@ -178,7 +178,7 @@ boolean P_CrossSubsector(int num)
 // Returns true
 //  if strace crosses the given node successfully.
 //
-boolean P_CrossBSPNode(int bspnum)
+byte P_CrossBSPNode(int bspnum)
 {
     node_t *bsp;
     int side;
@@ -200,7 +200,7 @@ boolean P_CrossBSPNode(int bspnum)
 
     // cross the starting side
     if (!P_CrossBSPNode(bsp->children[side]))
-        return false;
+        return 0;
 
     calc_side = !bsp->dx ? t2x == bsp->x ? 2 : t2x <= bsp->x ? bsp->dy > 0 : bsp->dy < 0 : !bsp->dy ? t2x == bsp->y ? 2 : t2y <= bsp->y ? bsp->dx < 0 : bsp->dx > 0 : (right = ((t2y - bsp->y) >> FRACBITS) * (bsp->dx >> FRACBITS)) < (left = ((t2x - bsp->x) >> FRACBITS) * (bsp->dy >> FRACBITS)) ? 0 : right == left ? 2 : 1;
 
@@ -208,7 +208,7 @@ boolean P_CrossBSPNode(int bspnum)
     if (side == calc_side)
     {
         // the line doesn't touch the other side
-        return true;
+        return 1;
     }
 
     // cross the ending side
@@ -221,8 +221,7 @@ boolean P_CrossBSPNode(int bspnum)
 //  if a straight line between t1 and t2 is unobstructed.
 // Uses REJECT.
 //
-boolean
-P_CheckSight(mobj_t *t1, mobj_t *t2)
+byte P_CheckSight(mobj_t *t1, mobj_t *t2)
 {
     int s1;
     int s2;
@@ -243,7 +242,7 @@ P_CheckSight(mobj_t *t1, mobj_t *t2)
     if (rejectmatrix[bytenum] & bitnum)
     {
         // can't possibly be connected
-        return false;
+        return 0;
     }
 
     // An unobstructed LOS is possible.

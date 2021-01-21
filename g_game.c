@@ -64,7 +64,7 @@
 #define SAVEGAMESIZE 0x2c000
 #define SAVESTRINGSIZE 24
 
-boolean G_CheckDemoStatus(void);
+void G_CheckDemoStatus(void);
 void G_ReadDemoTiccmd(ticcmd_t *cmd);
 void G_WriteDemoTiccmd(ticcmd_t *cmd);
 void G_PlayerReborn();
@@ -94,7 +94,7 @@ boolean usergame;  // ok to save / end game
 boolean timingdemo; // if true, exit with report on completion
 int starttime;      // for comparative timing purposes
 
-boolean viewactive;
+byte viewactive;
 
 boolean playeringame;
 player_t players;
@@ -732,8 +732,8 @@ void G_DoCompleted(void)
     wminfo.plyr.stime = leveltime;
 
     gamestate = GS_INTERMISSION;
-    viewactive = false;
-    automapactive = false;
+    viewactive = 0;
+    automapactive = 0;
 
     WI_Start(&wminfo);
 }
@@ -772,14 +772,14 @@ void G_DoWorldDone(void)
     gamemap = wminfo.next + 1;
     G_DoLoadLevel();
     gameaction = ga_nothing;
-    viewactive = true;
+    viewactive = 1;
 }
 
 //
 // G_InitFromSavegame
 // Can be called by the startup code or the menu task.
 //
-extern boolean setsizeneeded;
+extern byte setsizeneeded;
 void R_ExecuteSetViewSize(void);
 
 char savename[256];
@@ -877,11 +877,13 @@ void G_DoSaveGame(void)
 
     save_p = savebuffer;
 
-    memcpy(save_p, description, SAVESTRINGSIZE);
+    CopyBytes(description, save_p, SAVESTRINGSIZE);
+    //memcpy(save_p, description, SAVESTRINGSIZE);
     save_p += SAVESTRINGSIZE;
-    memset(name2, 0, sizeof(name2));
+    SetBytes(name2, 0, sizeof(name2));
     sprintf(name2, "version %i", VERSION);
-    memcpy(save_p, name2, VERSIONSIZE);
+    CopyBytes(name2, save_p, VERSIONSIZE);
+    //memcpy(save_p, name2, VERSIONSIZE);
     save_p += VERSIONSIZE;
 
     *save_p++ = gameskill;
@@ -1021,13 +1023,13 @@ void G_InitNew(skill_t skill,
     usergame = true; // will be set false if a demo
     paused = false;
     demoplayback = false;
-    automapactive = false;
-    viewactive = true;
+    automapactive = 0;
+    viewactive = 1;
     gameepisode = episode;
     gamemap = map;
     gameskill = skill;
 
-    viewactive = true;
+    viewactive = 1;
 
     // set the sky map for the episode
     if (commercial)
@@ -1206,7 +1208,7 @@ void G_TimeDemo(char *name)
 =================== 
 */
 
-boolean G_CheckDemoStatus(void)
+void G_CheckDemoStatus(void)
 {
     int endtime;
     int realtics;
@@ -1243,7 +1245,7 @@ boolean G_CheckDemoStatus(void)
         fastparm = false;
         nomonsters = false;
         D_AdvanceDemo();
-        return true;
+        return;
     }
 
     if (demorecording)
@@ -1255,5 +1257,5 @@ boolean G_CheckDemoStatus(void)
         I_Error("Demo %s recorded", demoname);
     }
 
-    return false;
+    return;
 }

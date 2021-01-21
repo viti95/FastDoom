@@ -143,46 +143,43 @@ void P_NoiseAlert(mobj_t *target,
 //
 // P_CheckMeleeRange
 //
-boolean P_CheckMeleeRange(mobj_t *actor)
+byte P_CheckMeleeRange(mobj_t *actor)
 {
     mobj_t *pl;
     fixed_t dist;
 
     if (!actor->target)
-        return false;
+        return 0;
 
     pl = actor->target;
     dist = P_AproxDistance(pl->x - actor->x, pl->y - actor->y);
 
     if (dist >= MELEERANGE - 20 * FRACUNIT + pl->info->radius)
-        return false;
+        return 0;
 
-    if (!P_CheckSight(actor, actor->target))
-        return false;
-
-    return true;
+    return P_CheckSight(actor, actor->target);
 }
 
 //
 // P_CheckMissileRange
 //
-boolean P_CheckMissileRange(mobj_t *actor)
+byte P_CheckMissileRange(mobj_t *actor)
 {
     fixed_t dist;
 
     if (!P_CheckSight(actor, actor->target))
-        return false;
+        return 0;
 
     if (actor->flags & MF_JUSTHIT)
     {
         // the target just hit the enemy,
         // so fight back!
         actor->flags &= ~MF_JUSTHIT;
-        return true;
+        return 1;
     }
 
     if (actor->reactiontime)
-        return false; // do not attack yet
+        return 0; // do not attack yet
 
     // OPTIMIZE: get this from a global checksight
     dist = P_AproxDistance(actor->x - actor->target->x, actor->y - actor->target->y) - 64 * FRACUNIT;
@@ -195,13 +192,13 @@ boolean P_CheckMissileRange(mobj_t *actor)
     if (actor->type == MT_VILE)
     {
         if (dist > 14 * 64)
-            return false; // too far away
+            return 0; // too far away
     }
 
     if (actor->type == MT_UNDEAD)
     {
         if (dist < 196)
-            return false; // close for fist attack
+            return 0; // close for fist attack
         dist >>= 1;
     }
 
@@ -213,10 +210,7 @@ boolean P_CheckMissileRange(mobj_t *actor)
     if (actor->type == MT_CYBORG && dist > 160)
         dist = 160;
 
-    if (P_Random < dist)
-        return false;
-
-    return true;
+    return P_Random >= dist;
 }
 
 //
@@ -229,7 +223,7 @@ boolean P_CheckMissileRange(mobj_t *actor)
 extern line_t *spechit[MAXSPECIALCROSS];
 extern int numspechit;
 
-boolean P_Move(mobj_t *actor)
+byte P_Move(mobj_t *actor)
 {
     fixed_t tryx;
     fixed_t tryy;
@@ -238,13 +232,13 @@ boolean P_Move(mobj_t *actor)
 
     // warning: 'catch', 'throw', and 'try'
     // are all C++ reserved words
-    boolean try_ok;
-    boolean good;
+    byte try_ok;
+    byte good;
 
     fixed_t optSpeed;
 
     if (actor->movedir == DI_NODIR)
-        return false;
+        return 0;
 
     switch (actor->movedir)
     {
@@ -300,14 +294,14 @@ boolean P_Move(mobj_t *actor)
                 actor->z -= FLOATSPEED;
 
             actor->flags |= MF_INFLOAT;
-            return true;
+            return 1;
         }
 
         if (!numspechit)
-            return false;
+            return 0;
 
         actor->movedir = DI_NODIR;
-        good = false;
+        good = 0;
         while (numspechit--)
         {
             ld = spechit[numspechit];
@@ -315,7 +309,7 @@ boolean P_Move(mobj_t *actor)
             // that can be opened,
             // return false
             if (P_UseSpecialLine(actor, ld, 0))
-                good = true;
+                good = 1;
         }
         return good;
     }
@@ -326,7 +320,8 @@ boolean P_Move(mobj_t *actor)
 
     if (!(actor->flags & MF_FLOAT))
         actor->z = actor->floorz;
-    return true;
+
+    return 1;
 }
 
 //
@@ -340,15 +335,15 @@ boolean P_Move(mobj_t *actor)
 // If a door is in the way,
 // an OpenDoor call is made to start it opening.
 //
-boolean P_TryWalk(mobj_t *actor)
+byte P_TryWalk(mobj_t *actor)
 {
     if (!P_Move(actor))
     {
-        return false;
+        return 0;
     }
 
     actor->movecount = P_Random & 15;
-    return true;
+    return 1;
 }
 
 void P_NewChaseDir(mobj_t *actor)
@@ -475,9 +470,7 @@ void P_NewChaseDir(mobj_t *actor)
 // If allaround is false, only look 180 degrees in front.
 // Returns true if a player is targeted.
 //
-boolean
-P_LookForPlayers(mobj_t *actor,
-                 boolean allaround)
+byte P_LookForPlayers(mobj_t *actor, byte allaround)
 {
     int c;
     int stop;
@@ -488,10 +481,10 @@ P_LookForPlayers(mobj_t *actor,
     player = &players;
 
     if (player->health <= 0)
-        return false; // dead
+        return 0; // dead
 
     if (!P_CheckSight(actor, player->mo))
-        return false; // out of sight
+        return 0; // out of sight
 
     if (!allaround)
     {
@@ -507,12 +500,12 @@ P_LookForPlayers(mobj_t *actor,
                                    player->mo->y - actor->y);
             // if real close, react anyway
             if (dist > MELEERANGE)
-                return false; // behind back
+                return 0; // behind back
         }
     }
 
     actor->target = player->mo;
-    return true;
+    return 1;
 }
 
 //
@@ -575,7 +568,7 @@ void A_Look(mobj_t *actor)
             goto seeyou;
     }
 
-    if (!P_LookForPlayers(actor, false))
+    if (!P_LookForPlayers(actor, 0))
         return;
 
     // go into chase state
@@ -656,7 +649,7 @@ void A_Chase(mobj_t *actor)
     if (!actor->target || !(actor->target->flags & MF_SHOOTABLE))
     {
         // look for a new target
-        if (P_LookForPlayers(actor, true))
+        if (P_LookForPlayers(actor, 1))
             return; // got a new target
 
         P_SetMobjState(actor, actor->info->spawnstate);
@@ -1061,7 +1054,7 @@ fixed_t viletryy;
 boolean PIT_VileCheck(mobj_t *thing)
 {
     int maxdist;
-    boolean check;
+    byte check;
 
     if (!(thing->flags & MF_CORPSE))
         return true; // not a monster
@@ -1925,7 +1918,7 @@ void A_SpawnFly(mobj_t *mo)
         type = MT_BRUISER;
 
     newmobj = P_SpawnMobj(targ->x, targ->y, targ->z, type);
-    if (P_LookForPlayers(newmobj, true))
+    if (P_LookForPlayers(newmobj, 1))
         P_SetMobjState(newmobj, newmobj->info->seestate);
 
     // telefrag anything in this spot

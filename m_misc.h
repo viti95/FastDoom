@@ -36,10 +36,7 @@ int M_CheckParm(char *check);
 int M_CheckParmOptional(char *check, int *variable);
 int M_CheckParmDisable(char *check, int *variable);
 
-boolean
-M_WriteFile(char const *name,
-            void *source,
-            int length);
+byte M_WriteFile(char const *name, void *source, int length);
 
 int M_ReadFile(char const *name,
                byte **buffer);

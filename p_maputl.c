@@ -49,9 +49,7 @@ P_AproxDistance(fixed_t dx,
 // P_PointOnLineSide
 // Returns 0 or 1
 //
-byte P_PointOnLineSide(fixed_t x,
-                       fixed_t y,
-                       line_t *line)
+byte P_PointOnLineSide(fixed_t x, fixed_t y, line_t *line)
 {
     fixed_t dx;
     fixed_t dy;
@@ -367,19 +365,14 @@ void P_SetThingPosition(mobj_t *thing)
 // to P_BlockLinesIterator, then make one or more calls
 // to it.
 //
-boolean
-P_BlockLinesIterator(int x,
-                     int y,
-                     boolean (*func)(line_t *))
+byte P_BlockLinesIterator(int x, int y, boolean (*func)(line_t *))
 {
     int offset;
     short *list;
     line_t *ld;
 
     if (x < 0 || y < 0 || x >= bmapwidth || y >= bmapheight)
-    {
-        return true;
-    }
+        return 1;
 
     offset = y * bmapwidth + x;
 
@@ -395,34 +388,27 @@ P_BlockLinesIterator(int x,
         ld->validcount = validcount;
 
         if (!func(ld))
-            return false;
+            return 0;
     }
-    return true; // everything was checked
+    return 1; // everything was checked
 }
 
 //
 // P_BlockThingsIterator
 //
-boolean
-P_BlockThingsIterator(int x,
-                      int y,
-                      boolean (*func)(mobj_t *))
+byte P_BlockThingsIterator(int x, int y, boolean (*func)(mobj_t *))
 {
     mobj_t *mobj;
 
     if (x < 0 || y < 0 || x >= bmapwidth || y >= bmapheight)
-    {
-        return true;
-    }
+        return 1;
 
-    for (mobj = blocklinks[y * bmapwidth + x];
-         mobj;
-         mobj = mobj->bnext)
+    for (mobj = blocklinks[y * bmapwidth + x]; mobj; mobj = mobj->bnext)
     {
         if (!func(mobj))
-            return false;
+            return 0;
     }
-    return true;
+    return 1;
 }
 
 //
@@ -445,8 +431,7 @@ int ptflags;
 // are on opposite sides of the trace.
 // Returns true if earlyout and a solid line hit.
 //
-boolean
-PIT_AddLineIntercepts(line_t *ld)
+boolean PIT_AddLineIntercepts(line_t *ld)
 {
     byte s1;
     byte s2;
@@ -561,9 +546,7 @@ boolean PIT_AddThingIntercepts(mobj_t *thing)
 // Returns true if the traverser function returns true
 // for all lines.
 //
-boolean
-P_TraverseIntercepts(traverser_t func,
-                     fixed_t maxfrac)
+void P_TraverseIntercepts(traverser_t func, fixed_t maxfrac)
 {
     int count;
     fixed_t dist;
@@ -587,15 +570,15 @@ P_TraverseIntercepts(traverser_t func,
         }
 
         if (dist > maxfrac)
-            return true; // checked everything in range
+            return; // checked everything in range
 
         if (!func(in))
-            return false; // don't bother going farther
+            return; // don't bother going farther
 
         in->frac = MAXINT;
     }
 
-    return true; // everything was traversed
+    return; // everything was traversed
 }
 
 //
@@ -605,13 +588,7 @@ P_TraverseIntercepts(traverser_t func,
 // Returns true if the traverser function returns true
 // for all lines.
 //
-boolean
-P_PathTraverse(fixed_t x1,
-               fixed_t y1,
-               fixed_t x2,
-               fixed_t y2,
-               int flags,
-               boolean (*trav)(intercept_t *))
+void P_PathTraverse(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2, int flags, boolean (*trav)(intercept_t *))
 {
     fixed_t xt1;
     fixed_t yt1;
@@ -726,13 +703,13 @@ P_PathTraverse(fixed_t x1,
         if (flags & PT_ADDLINES)
         {
             if (!P_BlockLinesIterator(mapx, mapy, PIT_AddLineIntercepts))
-                return false; // early out
+                return; // early out
         }
 
         if (flags & PT_ADDTHINGS)
         {
             if (!P_BlockThingsIterator(mapx, mapy, PIT_AddThingIntercepts))
-                return false; // early out
+                return; // early out
         }
 
         if (mapx == xt2 && mapy == yt2)
@@ -752,5 +729,6 @@ P_PathTraverse(fixed_t x1,
         }
     }
     // go through the sorted list
-    return P_TraverseIntercepts(trav, FRACUNIT);
+    P_TraverseIntercepts(trav, FRACUNIT);
+    return;
 }

@@ -179,7 +179,7 @@ static int grid = 0;
 
 static int leveljuststarted = 1; // kluge until AM_LevelInit() is called
 
-boolean automapactive = false;
+byte automapactive = 0;
 
 static mpoint_t m_paninc;	 // how far the window pans each tic (map coords)
 static fixed_t mtof_zoommul; // how far the window zooms in each tic (map coords)
@@ -233,7 +233,7 @@ static cheatseq_t cheat_amap = {cheat_amap_seq, 0};
 
 static byte stopped = true;
 
-extern boolean viewactive;
+extern byte viewactive;
 
 //
 //
@@ -367,7 +367,7 @@ void AM_initVariables(void)
 {
 	static event_t st_notify = {ev_keyup, AM_MSGENTERED};
 
-	automapactive = true;
+	automapactive = 1;
 
 	f_oldloc.x = MAXINT;
 
@@ -450,7 +450,7 @@ void AM_Stop(void)
 	static event_t st_notify = {0, ev_keyup, AM_MSGEXITED};
 
 	AM_unloadPics();
-	automapactive = false;
+	automapactive = 0;
 	ST_Responder(&st_notify);
 	stopped = 1;
 }
@@ -511,7 +511,7 @@ byte AM_Responder(event_t *ev)
 		if (ev->type == ev_keydown && ev->data1 == AM_STARTKEY)
 		{
 			AM_Start();
-			viewactive = false;
+			viewactive = 0;
 			rc = 1;
 		}
 	}
@@ -556,7 +556,7 @@ byte AM_Responder(event_t *ev)
 			break;
 		case AM_ENDKEY:
 			bigstate = 0;
-			viewactive = true;
+			viewactive = 1;
 			AM_Stop();
 			break;
 		case AM_GOBIGKEY:
@@ -695,9 +695,7 @@ void AM_Ticker(void)
 // faster reject and precalculated slopes.  If the speed is needed,
 // use a hash algorithm to handle  the common cases.
 //
-boolean
-AM_clipMline(mline_t *ml,
-			 fline_t *fl)
+byte AM_clipMline(mline_t *ml, fline_t *fl)
 {
 	enum
 	{
@@ -738,7 +736,7 @@ AM_clipMline(mline_t *ml,
 		outcode2 = BOTTOM;
 
 	if (outcode1 & outcode2)
-		return false; // trivially outside
+		return 0; // trivially outside
 
 	if (ml->a.x < m_x)
 		outcode1 |= LEFT;
@@ -751,7 +749,7 @@ AM_clipMline(mline_t *ml,
 		outcode2 |= RIGHT;
 
 	if (outcode1 & outcode2)
-		return false; // trivially outside
+		return 0; // trivially outside
 
 	// transform to frame-buffer coordinates.
 	fl->a.x = CXMTOF(ml->a.x);
@@ -763,7 +761,7 @@ AM_clipMline(mline_t *ml,
 	DOOUTCODE(outcode2, fl->b.x, fl->b.y);
 
 	if (outcode1 & outcode2)
-		return false;
+		return 0;
 
 	while (outcode1 | outcode2)
 	{
@@ -816,10 +814,10 @@ AM_clipMline(mline_t *ml,
 		}
 
 		if (outcode1 & outcode2)
-			return false; // trivially outside
+			return 0; // trivially outside
 	}
 
-	return true;
+	return 1;
 }
 #undef DOOUTCODE
 

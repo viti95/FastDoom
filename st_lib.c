@@ -31,7 +31,7 @@
 #include "r_local.h"
 
 // in AM_map.c
-extern boolean automapactive;
+extern byte automapactive;
 
 void STlib_init(void)
 {

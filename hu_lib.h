@@ -82,7 +82,7 @@ void HUlib_clearTextLine(hu_textline_t *t);
 void HUlib_initTextLine(hu_textline_t *t, int x, int y, patch_t **f, int sc);
 
 // returns success
-boolean HUlib_addCharToTextLine(hu_textline_t *t, char ch);
+void HUlib_addCharToTextLine(hu_textline_t *t, char ch);
 
 // draws tline
 void HUlib_drawTextLine(hu_textline_t *l);

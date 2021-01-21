@@ -57,7 +57,7 @@
 // atkstate, i.e. attack/fire/hit frame
 // flashstate, muzzle flash
 //
-weaponinfo_t weaponinfo[NUMWEAPONS] =
+const weaponinfo_t weaponinfo[NUMWEAPONS] =
     {
         {// fist
          am_noammo,
@@ -193,7 +193,7 @@ void P_BringUpWeapon(player_t *player)
 // Returns true if there is enough ammo to shoot.
 // If not, selects the next weapon to use.
 //
-boolean P_CheckAmmo(player_t *player)
+byte P_CheckAmmo(player_t *player)
 {
     ammotype_t ammo;
     int count;
@@ -211,7 +211,7 @@ boolean P_CheckAmmo(player_t *player)
     // Some do not need ammunition anyway.
     // Return if current ammunition sufficient.
     if (ammo == am_noammo || player->ammo[ammo] >= count)
-        return true;
+        return 1;
 
     // Out of ammo, pick a weapon to change to.
     // Preferences are set here.
@@ -262,7 +262,7 @@ boolean P_CheckAmmo(player_t *player)
                  ps_weapon,
                  weaponinfo[player->readyweapon].downstate);
 
-    return false;
+    return 0;
 }
 
 //
@@ -591,8 +591,7 @@ void P_BulletSlope(mobj_t *mo)
 //
 // P_GunShot
 //
-void P_GunShot(mobj_t *mo,
-               boolean accurate)
+void P_GunShot(mobj_t *mo, boolean accurate)
 {
     angle_t angle;
     int damage;

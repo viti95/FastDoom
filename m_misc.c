@@ -124,10 +124,7 @@ void M_AddToBox(fixed_t *box,
 #define O_BINARY 0
 #endif
 
-boolean
-M_WriteFile(char const *name,
-            void *source,
-            int length)
+byte M_WriteFile(char const *name, void *source, int length)
 {
     int handle;
     int count;
@@ -135,15 +132,12 @@ M_WriteFile(char const *name,
     handle = open(name, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, 0666);
 
     if (handle == -1)
-        return false;
+        return 0;
 
     count = write(handle, source, length);
     close(handle);
 
-    if (count < length)
-        return false;
-
-    return true;
+    return count >= length;
 }
 
 //
@@ -365,7 +359,7 @@ void M_LoadDefaults(void)
     char strparm[100];
     char *newstring;
     int parm;
-    boolean isstring;
+    byte isstring;
 
     // set everything to base values
     numdefaults = sizeof(defaults) / sizeof(defaults[0]);
@@ -388,13 +382,13 @@ void M_LoadDefaults(void)
     {
         while (!feof(f))
         {
-            isstring = false;
+            isstring = 0;
             if (fscanf(f, "%79s %99[^\n]\n", def, strparm) == 2)
             {
                 if (strparm[0] == '"')
                 {
                     // get a string default
-                    isstring = true;
+                    isstring = 1;
                     len = strlen(strparm);
                     newstring = (char *)malloc(len);
                     strparm[len - 1] = 0;

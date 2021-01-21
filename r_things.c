@@ -87,7 +87,7 @@ char *spritename;
 void R_InstallSpriteLump(int lump,
                          unsigned frame,
                          unsigned rotation,
-                         boolean flipped)
+                         byte flipped)
 {
     int r;
 
@@ -170,13 +170,13 @@ void R_InitSpriteDefs(char **namelist)
                 else
                     patched = l;
 
-                R_InstallSpriteLump(patched, frame, rotation, false);
+                R_InstallSpriteLump(patched, frame, rotation, 0);
 
                 if (lumpinfo[l].name[6])
                 {
                     frame = lumpinfo[l].name[6] - 'A';
                     rotation = lumpinfo[l].name[7] - '0';
-                    R_InstallSpriteLump(l, frame, rotation, true);
+                    R_InstallSpriteLump(l, frame, rotation, 1);
                 }
             }
         }
@@ -567,7 +567,7 @@ void R_DrawPSprite(pspdef_t *psp)
     spritedef_t *sprdef;
     spriteframe_t *sprframe;
     int lump;
-    boolean flip;
+    byte flip;
     vissprite_t *vis;
     vissprite_t avis;
 
@@ -576,7 +576,7 @@ void R_DrawPSprite(pspdef_t *psp)
     sprframe = &sprdef->spriteframes[psp->state->frame & FF_FRAMEMASK];
 
     lump = sprframe->lump[0];
-    flip = (boolean)sprframe->flip[0];
+    flip = sprframe->flip[0];
 
     // calculate edges of the shape
     tx = psp->sx - 160 * FRACUNIT;

@@ -56,18 +56,15 @@ int clipammo[NUMAMMO] = {10, 4, 20, 1};
 // Returns false if the ammo can't be picked up at all
 //
 
-boolean
-P_GiveAmmo(player_t *player,
-		   ammotype_t ammo,
-		   int num)
+byte P_GiveAmmo(player_t *player, ammotype_t ammo, int num)
 {
 	int oldammo;
 
 	if (ammo == am_noammo)
-		return false;
+		return 0;
 
 	if (player->ammo[ammo] == player->maxammo[ammo])
-		return false;
+		return 0;
 
 	if (num)
 		num *= clipammo[ammo];
@@ -87,7 +84,7 @@ P_GiveAmmo(player_t *player,
 	// don't change up weapons,
 	// player was lower on purpose.
 	if (oldammo)
-		return true;
+		return 1;
 
 	// We were down to zero,
 	// so select a new weapon.
@@ -130,20 +127,17 @@ P_GiveAmmo(player_t *player,
 		break;
 	}
 
-	return true;
+	return 1;
 }
 
 //
 // P_GiveWeapon
 // The weapon name may have a MF_DROPPED flag ored in.
 //
-boolean
-P_GiveWeapon(player_t *player,
-			 weapontype_t weapon,
-			 boolean dropped)
+byte P_GiveWeapon(player_t *player, weapontype_t weapon, boolean dropped)
 {
-	boolean gaveammo;
-	boolean gaveweapon;
+	byte gaveammo;
+	byte gaveweapon;
 
 	if (weaponinfo[weapon].ammo != am_noammo)
 	{
@@ -155,13 +149,13 @@ P_GiveWeapon(player_t *player,
 			gaveammo = P_GiveAmmo(player, weaponinfo[weapon].ammo, 2);
 	}
 	else
-		gaveammo = false;
+		gaveammo = 0;
 
 	if (player->weaponowned[weapon])
-		gaveweapon = false;
+		gaveweapon = 0;
 	else
 	{
-		gaveweapon = true;
+		gaveweapon = 1;
 		player->weaponowned[weapon] = true;
 		player->pendingweapon = weapon;
 	}
@@ -173,18 +167,17 @@ P_GiveWeapon(player_t *player,
 // P_GiveBody
 // Returns false if the body isn't needed at all
 //
-boolean
-P_GiveBody(player_t *player, int num)
+byte P_GiveBody(player_t *player, int num)
 {
 	if (player->health >= MAXHEALTH)
-		return false;
+		return 0;
 
 	player->health += num;
 	if (player->health > MAXHEALTH)
 		player->health = MAXHEALTH;
 	player->mo->health = player->health;
 
-	return true;
+	return 1;
 }
 
 //
@@ -192,19 +185,18 @@ P_GiveBody(player_t *player, int num)
 // Returns false if the armor is worse
 // than the current armor.
 //
-boolean
-P_GiveArmor(player_t *player, int armortype)
+byte P_GiveArmor(player_t *player, int armortype)
 {
 	int hits;
 
 	hits = Mul100(armortype);
 	if (player->armorpoints >= hits)
-		return false; // don't pick up
+		return 0; // don't pick up
 
 	player->armortype = armortype;
 	player->armorpoints = hits;
 
-	return true;
+	return 1;
 }
 
 //
@@ -222,47 +214,45 @@ void P_GiveCard(player_t *player, card_t card)
 //
 // P_GivePower
 //
-boolean
-P_GivePower(player_t *player,
-			int /*powertype_t*/ power)
+byte P_GivePower(player_t *player, int power)
 {
 	if (power == pw_invulnerability)
 	{
 		player->powers[power] = INVULNTICS;
-		return true;
+		return 1;
 	}
 
 	if (power == pw_invisibility)
 	{
 		player->powers[power] = INVISTICS;
 		player->mo->flags |= MF_SHADOW;
-		return true;
+		return 1;
 	}
 
 	if (power == pw_infrared)
 	{
 		player->powers[power] = INFRATICS;
-		return true;
+		return 1;
 	}
 
 	if (power == pw_ironfeet)
 	{
 		player->powers[power] = IRONTICS;
-		return true;
+		return 1;
 	}
 
 	if (power == pw_strength)
 	{
 		P_GiveBody(player, 100);
 		player->powers[power] = 1;
-		return true;
+		return 1;
 	}
 
 	if (player->powers[power])
-		return false; // already got it
+		return 0; // already got it
 
 	player->powers[power] = 1;
-	return true;
+	return 1;
 }
 
 //

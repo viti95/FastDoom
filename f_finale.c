@@ -103,8 +103,8 @@ void F_StartFinale(void)
 
 	gameaction = ga_nothing;
 	gamestate = GS_FINALE;
-	viewactive = false;
-	automapactive = false;
+	viewactive = 0;
+	automapactive = 0;
 
 	if (commercial)
 	{

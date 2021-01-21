@@ -35,17 +35,12 @@ void P_SpawnSpecials(void);
 void P_UpdateSpecials(void);
 
 // when needed
-boolean
-P_UseSpecialLine(mobj_t *thing,
-                 line_t *line,
-                 int side);
+byte P_UseSpecialLine(mobj_t *thing, line_t *line, int side);
 
 void P_ShootSpecialLine(mobj_t *thing,
                         line_t *line);
 
-void P_CrossSpecialLine(int linenum,
-                        int side,
-                        mobj_t *thing);
+void P_CrossSpecialLine(int linenum, byte side, mobj_t *thing);
 
 void P_PlayerInSpecialSector(player_t *player);
 
@@ -164,7 +159,7 @@ typedef struct
 {
     char name1[9];
     char name2[9];
-    short episode;
+    byte episode;
 
 } switchlist_t;
 
@@ -434,7 +429,7 @@ T_MovePlane(sector_t *sector,
             fixed_t speed,
             fixed_t dest,
             boolean crush,
-            int floorOrCeiling,
+            byte floorOrCeiling,
             int direction);
 
 int EV_BuildStairs(line_t *line,
@@ -448,8 +443,6 @@ void T_MoveFloor(floormove_t *floor);
 //
 // P_TELEPT
 //
-int EV_Teleport(line_t *line,
-                int side,
-                mobj_t *thing);
+int EV_Teleport(line_t *line, byte side, mobj_t *thing);
 
 #endif

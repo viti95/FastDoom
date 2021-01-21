@@ -130,8 +130,8 @@ int saveCharIndex; // which char we're editing
 // old save description before edit
 char saveOldString[SAVESTRINGSIZE];
 
-boolean inhelpscreens;
-boolean menuactive;
+byte inhelpscreens;
+byte menuactive;
 
 #define SKULLXOFF -32
 #define LINEHEIGHT 16
@@ -772,7 +772,7 @@ void M_QuickLoad(void)
 //
 void M_DrawReadThis1(void)
 {
-    inhelpscreens = true;
+    inhelpscreens = 1;
     V_DrawPatchDirect(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 }
 
@@ -782,14 +782,14 @@ void M_DrawReadThis1(void)
 #if (EXE_VERSION < EXE_VERSION_FINAL)
 void M_DrawReadThis2(void)
 {
-    inhelpscreens = true;
+    inhelpscreens = 1;
     V_DrawPatchDirect(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
 }
 #endif
 
 void M_DrawReadThisRetail(void)
 {
-    inhelpscreens = true;
+    inhelpscreens = 1;
     V_DrawPatchDirect(0, 0, W_CacheLumpName("HELP", PU_CACHE));
 }
 
@@ -1354,7 +1354,7 @@ void M_StartMessage(char *string, void *routine, byte input)
     messageString = string;
     messageRoutine = routine;
     messageNeedsInput = input;
-    menuactive = true;
+    menuactive = 1;
     return;
 }
 
@@ -1517,7 +1517,7 @@ byte M_Responder(event_t *ev)
         if (messageRoutine)
             messageRoutine(ch);
 
-        menuactive = false;
+        menuactive = 0;
         S_StartSound(NULL, sfx_swtchx);
         return 1;
     }
@@ -1756,7 +1756,7 @@ void M_Drawer(void)
     char string[40];
     int start;
 
-    inhelpscreens = false;
+    inhelpscreens = 0;
 
     // Horiz. & Vertically center string and print it.
     if (messageToPrint)

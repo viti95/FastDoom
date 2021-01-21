@@ -97,7 +97,7 @@ P_SpawnMobj(fixed_t x,
             mobjtype_t type);
 
 void P_RemoveMobj(mobj_t *th);
-boolean P_SetMobjState(mobj_t *mobj, statenum_t state);
+byte P_SetMobjState(mobj_t *mobj, statenum_t state);
 void P_MobjThinker(mobj_t *mobj);
 void P_MobjBrainlessThinker(mobj_t *mobj);
 void P_MobjTicklessThinker(mobj_t *mobj);
@@ -154,8 +154,8 @@ extern fixed_t lowfloor;
 
 void P_LineOpening(line_t *linedef);
 
-boolean P_BlockLinesIterator(int x, int y, boolean (*func)(line_t *));
-boolean P_BlockThingsIterator(int x, int y, boolean (*func)(mobj_t *));
+byte P_BlockLinesIterator(int x, int y, boolean (*func)(line_t *));
+byte P_BlockThingsIterator(int x, int y, boolean (*func)(mobj_t *));
 
 #define PT_ADDLINES 1
 #define PT_ADDTHINGS 2
@@ -163,13 +163,7 @@ boolean P_BlockThingsIterator(int x, int y, boolean (*func)(mobj_t *));
 
 extern divline_t trace;
 
-boolean
-P_PathTraverse(fixed_t x1,
-               fixed_t y1,
-               fixed_t x2,
-               fixed_t y2,
-               int flags,
-               boolean (*trav)(intercept_t *));
+void P_PathTraverse(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2, int flags, boolean (*trav)(intercept_t *));
 
 void P_UnsetThingPosition(mobj_t *thing);
 void P_SetThingPosition(mobj_t *thing);
@@ -186,14 +180,14 @@ extern fixed_t tmceilingz;
 
 extern line_t *ceilingline;
 
-boolean P_CheckPosition(mobj_t *thing, fixed_t x, fixed_t y);
-boolean P_TryMove(mobj_t *thing, fixed_t x, fixed_t y);
-boolean P_TeleportMove(mobj_t *thing, fixed_t x, fixed_t y);
+byte P_CheckPosition(mobj_t *thing, fixed_t x, fixed_t y);
+byte P_TryMove(mobj_t *thing, fixed_t x, fixed_t y);
+byte P_TeleportMove(mobj_t *thing, fixed_t x, fixed_t y);
 void P_SlideMove(mobj_t *mo);
-boolean P_CheckSight(mobj_t *t1, mobj_t *t2);
+byte P_CheckSight(mobj_t *t1, mobj_t *t2);
 void P_UseLines(player_t *player);
 
-boolean P_ChangeSector(sector_t *sector, boolean crunch);
+void P_ChangeSector(sector_t *sector, boolean crunch);
 
 extern mobj_t *linetarget; // who got hit (or NULL)
 

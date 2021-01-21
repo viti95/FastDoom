@@ -99,7 +99,7 @@ int I_GetSfxLumpNum(sfxinfo_t *sfx)
 
 void I_sndArbitrateCards(void)
 {
-    boolean gus, adlib, sb, midi, ensoniq;
+    byte gus, adlib, sb, midi, ensoniq;
     int i, wait, dmxlump;
 
     snd_SfxVolume = 127;
@@ -143,14 +143,14 @@ void I_sndArbitrateCards(void)
     {
         if (ENS_Detect())
         {
-            printf("Dude.  The ENSONIQ ain't responding.\n");
+            printf("ENSONIQ isn't responding.\n");
         }
     }
     if (gus)
     {
         if (GF1_Detect())
         {
-            printf("Dude.  The GUS ain't responding.\n");
+            printf("GUS isn't responding.\n");
         }
         else
         {
@@ -169,8 +169,7 @@ void I_sndArbitrateCards(void)
     {
         if (SB_Detect(&snd_SBport, &snd_SBirq, &snd_SBdma, 0))
         {
-            printf("SB isn't responding at p=0x%x, i=%d, d=%d\n",
-                   snd_SBport, snd_SBirq, snd_SBdma);
+            printf("SB isn't responding at p=0x%x, i=%d, d=%d\n", snd_SBport, snd_SBirq, snd_SBdma);
         }
         else
         {
@@ -182,7 +181,7 @@ void I_sndArbitrateCards(void)
     {
         if (AL_Detect(&wait, 0))
         {
-            printf("Dude.  The Adlib isn't responding.\n");
+            printf("Adlib isn't responding.\n");
         }
         else
         {
@@ -194,7 +193,7 @@ void I_sndArbitrateCards(void)
     {
         if (MPU_Detect(&snd_Mport, &i))
         {
-            printf("The MPU-401 isn't reponding @ p=0x%x.\n", snd_Mport);
+            printf("MPU-401 isn't reponding @ p=0x%x.\n", snd_Mport);
         }
         else
         {

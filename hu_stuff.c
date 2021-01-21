@@ -65,14 +65,14 @@ static hu_stext_t w_message;
 static int message_counter;
 
 extern int showMessages;
-extern boolean automapactive;
+extern byte automapactive;
 
 //
 // Builtin map names.
 // The actual names can be found in DStrings.h.
 //
 
-char *mapnames[] = // DOOM shareware/registered/retail (Ultimate) names.
+static const char *mapnames[] = // DOOM shareware/registered/retail (Ultimate) names.
     {
 
         HUSTR_E1M1,
@@ -125,7 +125,7 @@ char *mapnames[] = // DOOM shareware/registered/retail (Ultimate) names.
         "NEWLEVEL",
         "NEWLEVEL"};
 
-char *mapnames2[] = // DOOM 2 map names.
+static const char *mapnames2[] = // DOOM 2 map names.
     {
         HUSTR_1,
         HUSTR_2,
@@ -163,7 +163,7 @@ char *mapnames2[] = // DOOM 2 map names.
         HUSTR_32};
 
 #if (EXE_VERSION >= EXE_VERSION_FINAL)
-char *mapnamesp[] = // Plutonia WAD map names.
+static const char *mapnamesp[] = // Plutonia WAD map names.
     {
         PHUSTR_1,
         PHUSTR_2,
@@ -200,7 +200,7 @@ char *mapnamesp[] = // Plutonia WAD map names.
         PHUSTR_31,
         PHUSTR_32};
 
-char *mapnamest[] = // TNT WAD map names.
+static const char *mapnamest[] = // TNT WAD map names.
     {
         THUSTR_1,
         THUSTR_2,

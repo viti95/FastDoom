@@ -34,7 +34,7 @@
 //
 // CHANGE THE TEXTURE OF A WALL SWITCH TO ITS OPPOSITE
 //
-switchlist_t alphSwitchList[] =
+static const switchlist_t alphSwitchList[] =
 	{
 		// Doom shareware episode 1 switches
 		{"SW1BRCOM", "SW2BRCOM", 1},
@@ -96,7 +96,7 @@ void P_InitSwitchList(void)
 {
 	int i;
 	int index;
-	int episode;
+	byte episode;
 
 	episode = 1;
 
@@ -137,7 +137,6 @@ void P_StartButton(line_t *line,
 	{
 		if (buttonlist[i].btimer && buttonlist[i].line == line)
 		{
-
 			return;
 		}
 	}
@@ -228,10 +227,7 @@ void P_ChangeSwitchTexture(line_t *line,
 // Called when a thing uses a special line.
 // Only the front sides of lines are usable.
 //
-boolean
-P_UseSpecialLine(mobj_t *thing,
-				 line_t *line,
-				 int side)
+byte P_UseSpecialLine(mobj_t *thing, line_t *line, int side)
 {
 
 	// Err...
@@ -246,7 +242,7 @@ P_UseSpecialLine(mobj_t *thing,
 			break;
 
 		default:
-			return false;
+			return 0;
 			break;
 		}
 	}
@@ -256,7 +252,7 @@ P_UseSpecialLine(mobj_t *thing,
 	{
 		// never open secret doors
 		if (line->flags & ML_SECRET)
-			return false;
+			return 0;
 
 		switch (line->special)
 		{
@@ -267,7 +263,7 @@ P_UseSpecialLine(mobj_t *thing,
 			break;
 
 		default:
-			return false;
+			return 0;
 			break;
 		}
 	}
@@ -596,5 +592,5 @@ P_UseSpecialLine(mobj_t *thing,
 		break;
 	}
 
-	return true;
+	return 1;
 }

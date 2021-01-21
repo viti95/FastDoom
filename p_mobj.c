@@ -43,9 +43,7 @@ void P_SpawnMapThing(mapthing_t *mthing);
 // Returns true if the mobj is still present.
 //
 
-boolean
-P_SetMobjState(mobj_t *mobj,
-               statenum_t state)
+byte P_SetMobjState(mobj_t *mobj, statenum_t state)
 {
     state_t *st;
 
@@ -55,7 +53,7 @@ P_SetMobjState(mobj_t *mobj,
         {
             mobj->state = (state_t *)S_NULL;
             P_RemoveMobj(mobj);
-            return false;
+            return 0;
         }
 
         st = &states[state];
@@ -72,7 +70,7 @@ P_SetMobjState(mobj_t *mobj,
         state = st->nextstate;
     } while (!mobj->tics);
 
-    return true;
+    return 1;
 }
 
 //

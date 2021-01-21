@@ -117,7 +117,7 @@ boolean singletics = false; // debug flag to cancel adaptiveness
 extern int sfxVolume;
 extern int musicVolume;
 
-extern boolean inhelpscreens;
+extern byte inhelpscreens;
 
 skill_t startskill;
 int startepisode;
@@ -187,15 +187,15 @@ void D_ProcessEvents(void)
 
 // wipegamestate can be set to -1 to force a wipe on the next draw
 gamestate_t wipegamestate = GS_DEMOSCREEN;
-extern boolean setsizeneeded;
+extern byte setsizeneeded;
 extern int showMessages;
 void R_ExecuteSetViewSize(void);
 
 void D_Display(void)
 {
-    static boolean viewactivestate = false;
-    static boolean menuactivestate = false;
-    static boolean inhelpscreensstate = false;
+    static byte viewactivestate = 0;
+    static byte menuactivestate = 0;
+    static byte inhelpscreensstate = 0;
     static boolean fullscreen = false;
     static gamestate_t oldgamestate = -1;
     static int borderdrawcount;
@@ -280,7 +280,7 @@ void D_Display(void)
     // see if the border needs to be initially drawn
     if (gamestate == GS_LEVEL && oldgamestate != GS_LEVEL)
     {
-        viewactivestate = false; // view was not active
+        viewactivestate = 0; // view was not active
         R_FillBackScreen();      // draw the pattern into the back screen
     }
 

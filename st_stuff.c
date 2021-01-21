@@ -414,7 +414,7 @@ cheatseq_t cheat_choppers = {cheat_choppers_seq, 0};
 cheatseq_t cheat_clev = {cheat_clev_seq, 0};
 
 //
-extern char *mapnames[];
+extern const char *mapnames[];
 
 //
 // STATUS BAR CODE

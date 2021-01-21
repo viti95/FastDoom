@@ -28,7 +28,7 @@
 // boolean : whether the screen is always erased
 #define noterased viewwindowx
 
-extern boolean automapactive; // in AM_map.c
+extern byte automapactive; // in AM_map.c
 
 void HUlib_clearTextLine(hu_textline_t *t)
 {
@@ -50,19 +50,17 @@ void HUlib_initTextLine(hu_textline_t *t,
     HUlib_clearTextLine(t);
 }
 
-boolean
-HUlib_addCharToTextLine(hu_textline_t *t,
-                        char ch)
+void HUlib_addCharToTextLine(hu_textline_t *t, char ch)
 {
 
     if (t->len == HU_MAXLINELENGTH)
-        return false;
+        return;
     else
     {
         t->l[t->len++] = ch;
         t->l[t->len] = 0;
         t->needsupdate = 4;
-        return true;
+        return;
     }
 }
 
@@ -102,7 +100,7 @@ void HUlib_eraseTextLine(hu_textline_t *l)
     int lh;
     int y;
     int yoffset;
-    static boolean lastautomapactive = true;
+    static byte lastautomapactive = 1;
 
     // Only erases when NOT in automap and the screen is reduced,
     // and the text must either need updating or refreshing

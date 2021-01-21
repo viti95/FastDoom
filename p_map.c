@@ -98,10 +98,7 @@ boolean PIT_StompThing(mobj_t *thing)
 //
 // P_TeleportMove
 //
-boolean
-P_TeleportMove(mobj_t *thing,
-               fixed_t x,
-               fixed_t y)
+byte P_TeleportMove(mobj_t *thing, fixed_t x, fixed_t y)
 {
     int xl;
     int xh;
@@ -146,7 +143,7 @@ P_TeleportMove(mobj_t *thing,
     for (bx = xl; bx <= xh; bx++)
         for (by = yl; by <= yh; by++)
             if (!P_BlockThingsIterator(bx, by, PIT_StompThing))
-                return false;
+                return 0;
 
     // the move is ok,
     // so link the thing into its new position
@@ -159,7 +156,7 @@ P_TeleportMove(mobj_t *thing,
 
     P_SetThingPosition(thing);
 
-    return true;
+    return 1;
 }
 
 //
@@ -348,10 +345,7 @@ boolean PIT_CheckThing(mobj_t *thing)
 //  speciallines[]
 //  numspeciallines
 //
-boolean
-P_CheckPosition(mobj_t *thing,
-                fixed_t x,
-                fixed_t y)
+byte P_CheckPosition(mobj_t *thing, fixed_t x, fixed_t y)
 {
     int xl;
     int xh;
@@ -386,7 +380,7 @@ P_CheckPosition(mobj_t *thing,
     numspechit = 0;
 
     if (tmflags & MF_NOCLIP)
-        return true;
+        return 1;
 
     // Check things first, possibly picking things up.
     // The bounding box is extended by MAXRADIUS
@@ -401,7 +395,7 @@ P_CheckPosition(mobj_t *thing,
     for (bx = xl; bx <= xh; bx++)
         for (by = yl; by <= yh; by++)
             if (!P_BlockThingsIterator(bx, by, PIT_CheckThing))
-                return false;
+                return 0;
 
     // check lines
     xl = (tmbbox[BOXLEFT] - bmaporgx) >> MAPBLOCKSHIFT;
@@ -412,9 +406,9 @@ P_CheckPosition(mobj_t *thing,
     for (bx = xl; bx <= xh; bx++)
         for (by = yl; by <= yh; by++)
             if (!P_BlockLinesIterator(bx, by, PIT_CheckLine))
-                return false;
+                return 0;
 
-    return true;
+    return 1;
 }
 
 //
@@ -422,10 +416,7 @@ P_CheckPosition(mobj_t *thing,
 // Attempt to move to a new position,
 // crossing special lines unless MF_TELEPORT is set.
 //
-boolean
-P_TryMove(mobj_t *thing,
-          fixed_t x,
-          fixed_t y)
+byte P_TryMove(mobj_t *thing, fixed_t x, fixed_t y)
 {
     fixed_t oldx;
     fixed_t oldy;
@@ -435,23 +426,23 @@ P_TryMove(mobj_t *thing,
 
     floatok = false;
     if (!P_CheckPosition(thing, x, y))
-        return false; // solid wall or thing
+        return 0; // solid wall or thing
 
     if (!(thing->flags & MF_NOCLIP))
     {
         if (tmceilingz - tmfloorz < thing->height)
-            return false; // doesn't fit
+            return 0; // doesn't fit
 
         floatok = true;
 
         if (!(thing->flags & MF_TELEPORT) && tmceilingz - thing->z < thing->height)
-            return false; // mobj must lower itself to fit
+            return 0; // mobj must lower itself to fit
 
         if (!(thing->flags & MF_TELEPORT) && tmfloorz - thing->z > 24 * FRACUNIT)
-            return false; // too big a step up
+            return 0; // too big a step up
 
         if (!(thing->flags & (MF_DROPOFF | MF_FLOAT)) && tmfloorz - tmdropoffz > 24 * FRACUNIT)
-            return false; // don't stand over a dropoff
+            return 0; // don't stand over a dropoff
     }
 
     // the move is ok,
@@ -484,7 +475,7 @@ P_TryMove(mobj_t *thing,
         }
     }
 
-    return true;
+    return 1;
 }
 
 //
@@ -497,9 +488,9 @@ P_TryMove(mobj_t *thing,
 // the z will be set to the lowest value
 // and false will be returned.
 //
-boolean P_ThingHeightClip(mobj_t *thing)
+byte P_ThingHeightClip(mobj_t *thing)
 {
-    boolean onfloor;
+    byte onfloor;
 
     onfloor = (thing->z == thing->floorz);
 
@@ -521,10 +512,7 @@ boolean P_ThingHeightClip(mobj_t *thing)
             thing->z = thing->ceilingz - thing->height;
     }
 
-    if (thing->ceilingz - thing->height < thing->floorz)
-        return false;
-
-    return true;
+    return (thing->ceilingz - thing->height >= thing->floorz);
 }
 
 //
@@ -766,8 +754,7 @@ extern fixed_t bottomslope;
 // PTR_AimTraverse
 // Sets linetaget and aimslope when a target is aimed at.
 //
-boolean
-PTR_AimTraverse(intercept_t *in)
+boolean PTR_AimTraverse(intercept_t *in)
 {
     line_t *li;
     mobj_t *th;
@@ -1321,7 +1308,6 @@ void P_RadiusAttack(mobj_t *spot,
 //  to undo the changes.
 //
 boolean crushchange;
-boolean nofit;
 
 //
 // PIT_ChangeSector
@@ -1364,8 +1350,6 @@ boolean PIT_ChangeSector(mobj_t *thing)
         return true;
     }
 
-    nofit = true;
-
     if (crushchange && !(leveltime & 3))
     {
         P_DamageMobj(thing, NULL, NULL, 10);
@@ -1386,14 +1370,11 @@ boolean PIT_ChangeSector(mobj_t *thing)
 //
 // P_ChangeSector
 //
-boolean
-P_ChangeSector(sector_t *sector,
-               boolean crunch)
+void P_ChangeSector(sector_t *sector, boolean crunch)
 {
     int x;
     int y;
 
-    nofit = false;
     crushchange = crunch;
 
     // re-check heights for all things near the moving sector
@@ -1401,5 +1382,4 @@ P_ChangeSector(sector_t *sector,
         for (y = sector->blockbox[BOXBOTTOM]; y <= sector->blockbox[BOXTOP]; y++)
             P_BlockThingsIterator(x, y, PIT_ChangeSector);
 
-    return nofit;
 }

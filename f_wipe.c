@@ -82,7 +82,7 @@ void wipe_shittyColMajorXform(short *array)
 
 static int *y;
 
-int wipe_initMelt()
+void wipe_initMelt()
 {
     int i;
 
@@ -106,8 +106,6 @@ int wipe_initMelt()
         else if (y[i] == -16)
             y[i] = -15;
     }
-
-    return 0;
 }
 
 byte wipe_doMelt(int ticks)
@@ -162,12 +160,11 @@ byte wipe_doMelt(int ticks)
     return done;
 }
 
-int wipe_exitMelt()
+void wipe_exitMelt()
 {
     Z_Free(y);
     Z_Free(screen2);
     Z_Free(screen3);
-    return 0;
 }
 
 //
