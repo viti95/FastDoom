@@ -52,7 +52,7 @@ typedef struct
 
     // pointer to boolean stating
     //  whether to update number
-    boolean *on;
+    byte *on;
 
     // list of patches for 0-9
     patch_t **p;
@@ -89,7 +89,7 @@ typedef struct
 
     // pointer to boolean stating
     //  whether to update icon
-    boolean *on;
+    byte *on;
 
     // list of icons
     patch_t **p;
@@ -109,7 +109,7 @@ typedef struct
 
     // pointer to boolean
     //  stating whether to update icon
-    boolean *on;
+    byte *on;
 
     patch_t *p; // icon
     int data;   // user data
@@ -132,10 +132,10 @@ void STlib_initNum(st_number_t *n,
                    int y,
                    patch_t **pl,
                    int *num,
-                   boolean *on);
+                   byte *on);
 
 void STlib_updateNum(st_number_t *n,
-                     boolean refresh);
+                     byte refresh);
 
 // Percent widget routines
 void STlib_initPercent(st_percent_t *p,
@@ -143,7 +143,7 @@ void STlib_initPercent(st_percent_t *p,
                        int y,
                        patch_t **pl,
                        int *num,
-                       boolean *on,
+                       byte *on,
                        patch_t *percent);
 
 void STlib_updatePercent(st_percent_t *per,
@@ -155,10 +155,10 @@ void STlib_initMultIcon(st_multicon_t *mi,
                         int y,
                         patch_t **il,
                         int *inum,
-                        boolean *on);
+                        byte *on);
 
 void STlib_updateMultIcon(st_multicon_t *mi,
-                          boolean refresh);
+                          byte refresh);
 
 // Binary Icon widget routines
 
@@ -166,9 +166,9 @@ void STlib_initBinIcon(st_binicon_t *b,
                        int x,
                        int y,
                        patch_t *i,
-                       boolean *on);
+                       byte *on);
 
 void STlib_updateBinIcon(st_binicon_t *bi,
-                         boolean refresh);
+                         byte refresh);
 
 #endif

@@ -43,7 +43,7 @@ void STlib_initNum(st_number_t *n,
                    int y,
                    patch_t **pl,
                    int *num,
-                   boolean *on)
+                   byte *on)
 {
     n->x = x;
     n->y = y;
@@ -59,7 +59,7 @@ void STlib_initNum(st_number_t *n,
 // Note: worth the trouble?
 //
 void STlib_drawNum(st_number_t *n,
-                   boolean refresh)
+                   byte refresh)
 {
     int num = *n->num;
 
@@ -106,7 +106,7 @@ void STlib_drawNum(st_number_t *n,
 
 //
 void STlib_updateNum(st_number_t *n,
-                     boolean refresh)
+                     byte refresh)
 {
     if (*n->on)
         STlib_drawNum(n, refresh);
@@ -118,7 +118,7 @@ void STlib_initPercent(st_percent_t *p,
                        int y,
                        patch_t **pl,
                        int *num,
-                       boolean *on,
+                       byte *on,
                        patch_t *percent)
 {
     STlib_initNum(&p->n, x, y, pl, num, on);
@@ -139,7 +139,7 @@ void STlib_initMultIcon(st_multicon_t *i,
                         int y,
                         patch_t **il,
                         int *inum,
-                        boolean *on)
+                        byte *on)
 {
     i->x = x;
     i->y = y;
@@ -150,7 +150,7 @@ void STlib_initMultIcon(st_multicon_t *i,
 }
 
 void STlib_updateMultIcon(st_multicon_t *mi,
-                          boolean refresh)
+                          byte refresh)
 {
     int w;
     int h;
@@ -177,7 +177,7 @@ void STlib_initBinIcon(st_binicon_t *b,
                        int x,
                        int y,
                        patch_t *i,
-                       boolean *on)
+                       byte *on)
 {
     b->x = x;
     b->y = y;
@@ -186,7 +186,7 @@ void STlib_initBinIcon(st_binicon_t *b,
 }
 
 void STlib_updateBinIcon(st_binicon_t *bi,
-                         boolean refresh)
+                         byte refresh)
 {
     if (*bi->on && refresh)
         V_DrawPatch(bi->x, bi->y, screen0, bi->p);

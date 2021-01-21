@@ -248,7 +248,7 @@
 static player_t *plyr;
 
 // ST_Start() has just been called
-static boolean st_firsttime;
+static byte st_firsttime;
 
 // used to execute ST_Init() only once
 static int veryfirsttime = 1;
@@ -260,10 +260,10 @@ static unsigned int st_clock;
 static st_stateenum_t st_gamestate;
 
 // whether left-side main status bar is active
-static boolean st_statusbaron;
+static byte st_statusbaron;
 
 // !deathmatch && st_statusbaron
-static boolean st_armson;
+static byte st_armson;
 
 // main bar left
 static patch_t *sbar;
@@ -444,7 +444,7 @@ void ST_Responder(event_t *ev)
 		{
 		case AM_MSGENTERED:
 			st_gamestate = AutomapState;
-			st_firsttime = true;
+			st_firsttime = 1;
 			break;
 
 		case AM_MSGEXITED:
@@ -901,7 +901,7 @@ void ST_doPaletteStuff(void)
 	}
 }
 
-void ST_drawWidgets(boolean refresh)
+void ST_drawWidgets(byte refresh)
 {
 	int i;
 
@@ -941,7 +941,7 @@ void ST_drawWidgets(boolean refresh)
 	STlib_updateMultIcon(&w_keyboxes[2], refresh);
 }
 
-void ST_Drawer(boolean fullscreen, boolean refresh)
+void ST_Drawer(byte fullscreen, byte refresh)
 {
 	st_statusbaron = (!fullscreen) || automapactive;
 	st_firsttime = st_firsttime || refresh;
@@ -952,18 +952,18 @@ void ST_Drawer(boolean fullscreen, boolean refresh)
 	// If just after ST_Start(), refresh all
 	if (st_firsttime)
 	{
-		st_firsttime = false;
+		st_firsttime = 0;
 
 		// draw status bar background to off-screen buff
 		ST_refreshBackground();
 
 		// and refresh all widgets
-		ST_drawWidgets(true);
+		ST_drawWidgets(1);
 	}
 
 	// Otherwise, update as little as possible
 	else
-		ST_drawWidgets(false);
+		ST_drawWidgets(0);
 }
 
 void ST_loadGraphics(void)
@@ -1087,13 +1087,13 @@ void ST_initData(void)
 
 	int i;
 
-	st_firsttime = true;
+	st_firsttime = 1;
 	plyr = &players;
 
 	st_clock = 0;
 	st_gamestate = FirstPersonState;
 
-	st_statusbaron = true;
+	st_statusbaron = 1;
 
 	st_faceindex = 0;
 	st_palette = -1;
