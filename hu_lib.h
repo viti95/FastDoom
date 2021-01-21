@@ -63,8 +63,8 @@ typedef struct
     int cl;                       // current line number
 
     // pointer to boolean stating whether to update window
-    boolean *on;
-    boolean laston; // last value of *->on.
+    byte *on;
+    byte laston; // last value of *->on.
 
 } hu_stext_t;
 
@@ -101,7 +101,7 @@ void HUlib_initSText(hu_stext_t *s,
                      int h,
                      patch_t **font,
                      int startchar,
-                     boolean *on);
+                     byte *on);
 
 // add a new line
 void HUlib_addLineToSText(hu_stext_t *s);

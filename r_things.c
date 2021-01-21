@@ -78,7 +78,6 @@ spritedef_t sprites[NUMSPRITES];
 
 spriteframe_t sprtemp[29];
 int maxframe;
-char *spritename;
 
 //
 // R_InstallSpriteLump
@@ -131,7 +130,7 @@ void R_InstallSpriteLump(int lump,
 //  letter/number appended.
 // The rotation character can be 0 to signify no rotations.
 //
-void R_InitSpriteDefs(char **namelist)
+void R_InitSpriteDefs(char const **namelist)
 {
     int i;
     int l;
@@ -150,7 +149,7 @@ void R_InitSpriteDefs(char **namelist)
     // Just compare 4 characters as ints
     for (i = 0; i < NUMSPRITES; i++)
     {
-        spritename = namelist[i];
+        char const *spritename = namelist[i];
         SetBytes(sprtemp, -1, sizeof(sprtemp));
 
         maxframe = -1;
@@ -212,7 +211,7 @@ size_t num_vissprite, num_vissprite_alloc, num_vissprite_ptrs;
 // R_InitSprites
 // Called at program start.
 //
-void R_InitSprites(char **namelist)
+void R_InitSprites(char const **namelist)
 {
     SetWords(negonearray, -1, SCREENWIDTH);
     R_InitSpriteDefs(namelist);

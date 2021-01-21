@@ -993,7 +993,7 @@ void M_ChangeMessages(int choice)
     else
         players.message = MSGON;
 
-    message_dontfuckwithme = true;
+    message_dontfuckwithme = 1;
 }
 
 //

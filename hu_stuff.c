@@ -57,9 +57,9 @@ patch_t *hu_font[HU_FONTSIZE];
 static hu_textline_t w_title;
 static hu_textline_t w_fps;
 
-static boolean message_on;
-boolean message_dontfuckwithme;
-static boolean message_nottobefuckedwith;
+static byte message_on;
+byte message_dontfuckwithme;
+static byte message_nottobefuckedwith;
 
 static hu_stext_t w_message;
 static int message_counter;
@@ -303,12 +303,12 @@ void HU_Start(void)
 {
 
     int i;
-    char *s;
+    char const *s;
 
     plr = &players;
-    message_on = false;
-    message_dontfuckwithme = false;
-    message_nottobefuckedwith = false;
+    message_on = 0;
+    message_dontfuckwithme = 0;
+    message_nottobefuckedwith = 0;
 
     // create the message widget
     HUlib_initSText(&w_message,
@@ -395,8 +395,8 @@ void HU_Ticker(void)
     // tick down message counter if message is up
     if (message_counter && !--message_counter)
     {
-        message_on = false;
-        message_nottobefuckedwith = false;
+        message_on = 0;
+        message_nottobefuckedwith = 0;
     }
 
     if (showMessages || message_dontfuckwithme)
@@ -407,7 +407,7 @@ void HU_Ticker(void)
         {
             HUlib_addMessageToSText(&w_message, 0, plr->message);
             plr->message = 0;
-            message_on = true;
+            message_on = 1;
             message_counter = HU_MSGTIMEOUT;
             message_nottobefuckedwith = message_dontfuckwithme;
             message_dontfuckwithme = 0;
@@ -436,7 +436,7 @@ byte HU_Responder(event_t *ev)
 
     if (ev->data1 == HU_MSGREFRESH)
     {
-        message_on = true;
+        message_on = 1;
         message_counter = HU_MSGTIMEOUT;
         eatkey = 1;
     }

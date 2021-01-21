@@ -133,7 +133,7 @@ void HUlib_initSText(hu_stext_t *s,
                      int h,
                      patch_t **font,
                      int startchar,
-                     boolean *on)
+                     byte *on)
 {
 
     int i;
