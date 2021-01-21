@@ -365,7 +365,7 @@ void P_SetThingPosition(mobj_t *thing)
 // to P_BlockLinesIterator, then make one or more calls
 // to it.
 //
-byte P_BlockLinesIterator(int x, int y, boolean (*func)(line_t *))
+byte P_BlockLinesIterator(int x, int y, byte (*func)(line_t *))
 {
     int offset;
     short *list;
@@ -396,7 +396,7 @@ byte P_BlockLinesIterator(int x, int y, boolean (*func)(line_t *))
 //
 // P_BlockThingsIterator
 //
-byte P_BlockThingsIterator(int x, int y, boolean (*func)(mobj_t *))
+byte P_BlockThingsIterator(int x, int y, byte (*func)(mobj_t *))
 {
     mobj_t *mobj;
 
@@ -431,7 +431,7 @@ int ptflags;
 // are on opposite sides of the trace.
 // Returns true if earlyout and a solid line hit.
 //
-boolean PIT_AddLineIntercepts(line_t *ld)
+byte PIT_AddLineIntercepts(line_t *ld)
 {
     byte s1;
     byte s2;
@@ -451,7 +451,7 @@ boolean PIT_AddLineIntercepts(line_t *ld)
     }
 
     if (s1 == s2)
-        return true; // line isn't crossed
+        return 1; // line isn't crossed
 
     // hit the line
     // P_MakeDivline
@@ -462,12 +462,12 @@ boolean PIT_AddLineIntercepts(line_t *ld)
     frac = P_InterceptVector(&trace, &dl);
 
     if (frac < 0)
-        return true; // behind source
+        return 1; // behind source
 
     // try to early out the check
     if (earlyout && frac < FRACUNIT && !ld->backsector)
     {
-        return false; // stop checking
+        return 0; // stop checking
     }
 
     intercept_p->frac = frac;
@@ -475,13 +475,13 @@ boolean PIT_AddLineIntercepts(line_t *ld)
     intercept_p->d.line = ld;
     intercept_p++;
 
-    return true; // continue
+    return 1; // continue
 }
 
 //
 // PIT_AddThingIntercepts
 //
-boolean PIT_AddThingIntercepts(mobj_t *thing)
+byte PIT_AddThingIntercepts(mobj_t *thing)
 {
     fixed_t x1;
     fixed_t y1;
@@ -521,7 +521,7 @@ boolean PIT_AddThingIntercepts(mobj_t *thing)
     s2 = P_PointOnDivlineSide(x2, y2, &trace);
 
     if (s1 == s2)
-        return true; // line isn't crossed
+        return 1; // line isn't crossed
 
     dl.x = x1;
     dl.y = y1;
@@ -531,14 +531,14 @@ boolean PIT_AddThingIntercepts(mobj_t *thing)
     frac = P_InterceptVector(&trace, &dl);
 
     if (frac < 0)
-        return true; // behind source
+        return 1; // behind source
 
     intercept_p->frac = frac;
     intercept_p->isaline = 0;
     intercept_p->d.thing = thing;
     intercept_p++;
 
-    return true; // keep going
+    return 1; // keep going
 }
 
 //
@@ -588,7 +588,7 @@ void P_TraverseIntercepts(traverser_t func, fixed_t maxfrac)
 // Returns true if the traverser function returns true
 // for all lines.
 //
-void P_PathTraverse(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2, int flags, boolean (*trav)(intercept_t *))
+void P_PathTraverse(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2, int flags, byte (*trav)(intercept_t *))
 {
     fixed_t xt1;
     fixed_t yt1;

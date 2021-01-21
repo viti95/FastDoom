@@ -139,7 +139,7 @@ typedef struct
 extern intercept_t intercepts[MAXINTERCEPTS];
 extern intercept_t *intercept_p;
 
-typedef boolean (*traverser_t)(intercept_t *in);
+typedef byte (*traverser_t)(intercept_t *in);
 
 fixed_t P_AproxDistance(fixed_t dx, fixed_t dy);
 byte P_PointOnLineSide(fixed_t x, fixed_t y, line_t *line);
@@ -154,8 +154,8 @@ extern fixed_t lowfloor;
 
 void P_LineOpening(line_t *linedef);
 
-byte P_BlockLinesIterator(int x, int y, boolean (*func)(line_t *));
-byte P_BlockThingsIterator(int x, int y, boolean (*func)(mobj_t *));
+byte P_BlockLinesIterator(int x, int y, byte (*func)(line_t *));
+byte P_BlockThingsIterator(int x, int y, byte (*func)(mobj_t *));
 
 #define PT_ADDLINES 1
 #define PT_ADDTHINGS 2
@@ -163,7 +163,7 @@ byte P_BlockThingsIterator(int x, int y, boolean (*func)(mobj_t *));
 
 extern divline_t trace;
 
-void P_PathTraverse(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2, int flags, boolean (*trav)(intercept_t *));
+void P_PathTraverse(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2, int flags, byte (*trav)(intercept_t *));
 
 void P_UnsetThingPosition(mobj_t *thing);
 void P_SetThingPosition(mobj_t *thing);

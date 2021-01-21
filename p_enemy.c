@@ -1051,24 +1051,24 @@ mobj_t *vileobj;
 fixed_t viletryx;
 fixed_t viletryy;
 
-boolean PIT_VileCheck(mobj_t *thing)
+byte PIT_VileCheck(mobj_t *thing)
 {
     int maxdist;
     byte check;
 
     if (!(thing->flags & MF_CORPSE))
-        return true; // not a monster
+        return 1; // not a monster
 
     if (thing->tics != -1)
-        return true; // not lying still yet
+        return 1; // not lying still yet
 
     if (thing->info->raisestate == S_NULL)
-        return true; // monster doesn't have a raise state
+        return 1; // monster doesn't have a raise state
 
     maxdist = thing->info->radius + mobjinfo[MT_VILE].radius;
 
     if (abs(thing->x - viletryx) > maxdist || abs(thing->y - viletryy) > maxdist)
-        return true; // not actually touching
+        return 1; // not actually touching
 
     corpsehit = thing;
     corpsehit->momx = corpsehit->momy = 0;
@@ -1076,10 +1076,7 @@ boolean PIT_VileCheck(mobj_t *thing)
     check = P_CheckPosition(corpsehit, corpsehit->x, corpsehit->y);
     corpsehit->height >>= 2;
 
-    if (!check)
-        return true; // doesn't fit here
-
-    return false; // got one, so stop checking
+    return !check;
 }
 
 //
