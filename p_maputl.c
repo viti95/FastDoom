@@ -418,7 +418,7 @@ intercept_t intercepts[MAXINTERCEPTS];
 intercept_t *intercept_p;
 
 divline_t trace;
-boolean earlyout;
+int earlyout;
 int ptflags;
 
 //

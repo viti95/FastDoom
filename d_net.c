@@ -130,7 +130,7 @@ void D_CheckNetGame(void)
 //
 int oldnettics;
 
-extern boolean advancedemo;
+extern byte advancedemo;
 
 void TryRunTics(void)
 {

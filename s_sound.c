@@ -100,7 +100,7 @@ extern int sfxVolume;
 extern int musicVolume;
 
 // whether songs are mus_paused
-static boolean mus_paused;
+static byte mus_paused;
 
 // music currently being played
 static musicinfo_t *mus_playing = 0;
@@ -285,7 +285,7 @@ void S_PauseSound(void)
     if (mus_playing && !mus_paused)
     {
         MUSIC_Pause();
-        mus_paused = true;
+        mus_paused = 1;
     }
 }
 
@@ -294,7 +294,7 @@ void S_ResumeSound(void)
     if (mus_playing && mus_paused)
     {
         MUSIC_Continue();
-        mus_paused = false;
+        mus_paused = 0;
     }
 }
 

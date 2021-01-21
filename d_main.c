@@ -124,7 +124,7 @@ int startepisode;
 int startmap;
 boolean autostart;
 
-boolean advancedemo;
+byte advancedemo;
 
 boolean modifiedgame;
 
@@ -344,7 +344,7 @@ void D_Display(void)
 //
 //  D_DoomLoop
 //
-extern boolean demorecording;
+extern byte demorecording;
 
 void D_DoomLoop(void)
 {
@@ -415,7 +415,7 @@ void D_PageDrawer(void)
 //
 void D_AdvanceDemo(void)
 {
-    advancedemo = true;
+    advancedemo = 1;
 }
 
 //
@@ -425,9 +425,9 @@ void D_AdvanceDemo(void)
 void D_DoAdvanceDemo(void)
 {
     players.playerstate = PST_LIVE; // not reborn
-    advancedemo = false;
+    advancedemo = 0;
     usergame = 0; // no save / end game here
-    paused = false;
+    paused = 0;
     gameaction = ga_nothing;
 
 #if (EXE_VERSION == EXE_VERSION_ULTIMATE) || (EXE_VERSION == EXE_VERSION_FINAL)

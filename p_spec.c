@@ -66,7 +66,7 @@ typedef struct
 //
 typedef struct
 {
-	boolean istexture; // if false, it is a flat
+	byte istexture; // if false, it is a flat
 	char endname[9];
 	char startname[9];
 	int speed;
@@ -90,37 +90,37 @@ extern anim_t *lastanim;
 //  and end entry, in the order found in
 //  the WAD file.
 //
-animdef_t animdefs[] =
+static const animdef_t animdefs[] =
 	{
-		{false, "NUKAGE3", "NUKAGE1"},
-		{false, "FWATER4", "FWATER1"},
-		{false, "SWATER4", "SWATER1"},
-		{false, "LAVA4", "LAVA1"},
-		{false, "BLOOD3", "BLOOD1"},
+		{0, "NUKAGE3", "NUKAGE1"},
+		{0, "FWATER4", "FWATER1"},
+		{0, "SWATER4", "SWATER1"},
+		{0, "LAVA4", "LAVA1"},
+		{0, "BLOOD3", "BLOOD1"},
 
 		// DOOM II flat animations.
-		{false, "RROCK08", "RROCK05"},
-		{false, "SLIME04", "SLIME01"},
-		{false, "SLIME08", "SLIME05"},
-		{false, "SLIME12", "SLIME09"},
+		{0, "RROCK08", "RROCK05"},
+		{0, "SLIME04", "SLIME01"},
+		{0, "SLIME08", "SLIME05"},
+		{0, "SLIME12", "SLIME09"},
 
-		{true, "BLODGR4", "BLODGR1"},
-		{true, "SLADRIP3", "SLADRIP1"},
+		{1, "BLODGR4", "BLODGR1"},
+		{1, "SLADRIP3", "SLADRIP1"},
 
-		{true, "BLODRIP4", "BLODRIP1"},
-		{true, "FIREWALL", "FIREWALA"},
-		{true, "GSTFONT3", "GSTFONT1"},
-		{true, "FIRELAVA", "FIRELAV3"},
-		{true, "FIREMAG3", "FIREMAG1"},
-		{true, "FIREBLU2", "FIREBLU1"},
-		{true, "ROCKRED3", "ROCKRED1"},
+		{1, "BLODRIP4", "BLODRIP1"},
+		{1, "FIREWALL", "FIREWALA"},
+		{1, "GSTFONT3", "GSTFONT1"},
+		{1, "FIRELAVA", "FIRELAV3"},
+		{1, "FIREMAG3", "FIREMAG1"},
+		{1, "FIREBLU2", "FIREBLU1"},
+		{1, "ROCKRED3", "ROCKRED1"},
 
-		{true, "BFALL4", "BFALL1"},
-		{true, "SFALL4", "SFALL1"},
-		{true, "WFALL4", "WFALL1"},
-		{true, "DBRAIN4", "DBRAIN1"},
+		{1, "BFALL4", "BFALL1"},
+		{1, "SFALL4", "SFALL1"},
+		{1, "WFALL4", "WFALL1"},
+		{1, "DBRAIN4", "DBRAIN1"},
 
-		{-1}};
+		{2}};
 
 anim_t anims[MAXANIMS];
 anim_t *lastanim;
@@ -139,24 +139,24 @@ void P_InitPicAnims(void)
 
 	//	Init animation
 	lastanim = anims;
-	for (i = 0; animdefs[i].istexture != -1; i++)
+	for (i = 0; animdefs[i].istexture != 2; i++)
 	{
 		if (animdefs[i].istexture)
 		{
 			// different episode ?
-			if (R_TextureNumForName(animdefs[i].startname) == -1)
+			if (R_TextureNumForName((char *)animdefs[i].startname) == -1)
 				continue;
 
-			lastanim->picnum = R_TextureNumForName(animdefs[i].endname);
-			lastanim->basepic = R_TextureNumForName(animdefs[i].startname);
+			lastanim->picnum = R_TextureNumForName((char *)animdefs[i].endname);
+			lastanim->basepic = R_TextureNumForName((char *)animdefs[i].startname);
 		}
 		else
 		{
-			if (W_GetNumForName(animdefs[i].startname) == -1)
+			if (W_GetNumForName((char *)animdefs[i].startname) == -1)
 				continue;
 
-			lastanim->picnum = R_FlatNumForName(animdefs[i].endname);
-			lastanim->basepic = R_FlatNumForName(animdefs[i].startname);
+			lastanim->picnum = R_FlatNumForName((char *)animdefs[i].endname);
+			lastanim->basepic = R_FlatNumForName((char *)animdefs[i].startname);
 		}
 
 		lastanim->istexture = animdefs[i].istexture;

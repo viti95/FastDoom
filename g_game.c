@@ -91,7 +91,7 @@ byte sendpause; // send a pause event next tic
 byte sendsave;  // send a save event next tic
 byte usergame;  // ok to save / end game
 
-boolean timingdemo; // if true, exit with report on completion
+byte timingdemo; // if true, exit with report on completion
 int starttime;      // for comparative timing purposes
 
 byte viewactive;
@@ -103,8 +103,8 @@ int gametic;
 int totalkills, totalitems, totalsecret; // for intermission
 
 char demoname[32];
-boolean demorecording;
-boolean demoplayback;
+byte demorecording;
+byte demoplayback;
 byte *demobuffer;
 byte *demo_p;
 byte *demoend;
@@ -618,12 +618,12 @@ short cpars[32] =
 //
 // G_DoCompleted
 //
-boolean secretexit;
+byte secretexit;
 extern char *pagename;
 
 void G_ExitLevel(void)
 {
-    secretexit = false;
+    secretexit = 0;
     gameaction = ga_completed;
 }
 
@@ -632,9 +632,9 @@ void G_SecretExitLevel(void)
 {
     // IF NO WOLF3D LEVELS, NO SECRET EXIT!
     if ((commercial) && (W_GetNumForName("MAP31") < 0))
-        secretexit = false;
+        secretexit = 0;
     else
-        secretexit = true;
+        secretexit = 1;
     gameaction = ga_completed;
 }
 
@@ -940,7 +940,7 @@ void G_DeferedInitNew(skill_t skill,
 
 void G_DoNewGame(void)
 {
-    demoplayback = false;
+    demoplayback = 0;
     respawnparm = false;
     fastparm = false;
     //nomonsters = false;
@@ -1022,7 +1022,7 @@ void G_InitNew(skill_t skill,
 
     usergame = 1; // will be set false if a demo
     paused = 0;
-    demoplayback = false;
+    demoplayback = 0;
     automapactive = 0;
     viewactive = 1;
     gameepisode = episode;
@@ -1116,7 +1116,7 @@ void G_RecordDemo(char *name)
     demobuffer = Z_MallocUnowned(maxsize, PU_STATIC);
     demoend = demobuffer + maxsize;
 
-    demorecording = true;
+    demorecording = 1;
 }
 
 void G_BeginRecording(void)
@@ -1183,7 +1183,7 @@ void G_DoPlayDemo(void)
     G_InitNew(skill, episode, map);
 
     usergame = 0;
-    demoplayback = true;
+    demoplayback = 1;
 }
 
 //
@@ -1191,7 +1191,7 @@ void G_DoPlayDemo(void)
 //
 void G_TimeDemo(char *name)
 {
-    timingdemo = true;
+    timingdemo = 1;
     singletics = true;
 
     defdemoname = name;
@@ -1240,7 +1240,7 @@ void G_CheckDemoStatus(void)
             I_Quit();
 
         Z_ChangeTag(demobuffer, PU_CACHE);
-        demoplayback = false;
+        demoplayback = 0;
         respawnparm = false;
         fastparm = false;
         nomonsters = false;
@@ -1253,7 +1253,7 @@ void G_CheckDemoStatus(void)
         *demo_p++ = DEMOMARKER;
         M_WriteFile(demoname, demobuffer, demo_p - demobuffer);
         Z_Free(demobuffer);
-        demorecording = false;
+        demorecording = 0;
         I_Error("Demo %s recorded", demoname);
     }
 

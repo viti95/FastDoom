@@ -161,9 +161,9 @@ extern int leveltime;     // tics in game play for par
 extern byte usergame;
 
 //?
-extern boolean demoplayback;
-extern boolean demorecording;
-extern boolean timingdemo;
+extern byte demoplayback;
+extern byte demorecording;
+extern byte timingdemo;
 
 // Quit after playing a demo from cmdline.
 extern byte singledemo;
