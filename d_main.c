@@ -196,7 +196,7 @@ void D_Display(void)
     static byte viewactivestate = 0;
     static byte menuactivestate = 0;
     static byte inhelpscreensstate = 0;
-    static boolean fullscreen = false;
+    static byte fullscreen = 0;
     static gamestate_t oldgamestate = -1;
     static int borderdrawcount;
     int tics;

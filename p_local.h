@@ -187,7 +187,7 @@ void P_SlideMove(mobj_t *mo);
 byte P_CheckSight(mobj_t *t1, mobj_t *t2);
 void P_UseLines(player_t *player);
 
-void P_ChangeSector(sector_t *sector, boolean crunch);
+void P_ChangeSector(sector_t *sector, byte crunch);
 
 extern mobj_t *linetarget; // who got hit (or NULL)
 

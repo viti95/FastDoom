@@ -37,7 +37,7 @@
 //
 // Move a plane (floor or ceiling) and check for crushing
 //
-result_e T_MovePlane(sector_t *sector, fixed_t speed, fixed_t dest, boolean crush, byte floorOrCeiling, int direction)
+result_e T_MovePlane(sector_t *sector, fixed_t speed, fixed_t dest, byte crush, byte floorOrCeiling, int direction)
 {
 	fixed_t lastpos;
 
@@ -211,7 +211,7 @@ int EV_DoFloor(line_t *line,
 		sec->specialdata = floor;
 		floor->thinker.function.acp1 = (actionf_p1)T_MoveFloor;
 		floor->type = floortype;
-		floor->crush = false;
+		floor->crush = 0;
 
 		switch (floortype)
 		{
@@ -242,7 +242,7 @@ int EV_DoFloor(line_t *line,
 			break;
 
 		case raiseFloorCrush:
-			floor->crush = true;
+			floor->crush = 1;
 		case raiseFloor:
 			floor->direction = 1;
 			floor->sector = sec;

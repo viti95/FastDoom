@@ -167,7 +167,7 @@ int EV_DoPlat(line_t *line,
 		plat->sector = sec;
 		plat->sector->specialdata = plat;
 		plat->thinker.function.acp1 = (actionf_p1)T_PlatRaise;
-		plat->crush = false;
+		plat->crush = 0;
 		plat->tag = line->tag;
 
 		switch (type)

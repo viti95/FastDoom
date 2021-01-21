@@ -230,7 +230,7 @@ typedef struct
     int count;
     plat_e status;
     plat_e oldstatus;
-    boolean crush;
+    byte crush;
     int tag;
     plattype_e type;
 
@@ -329,7 +329,7 @@ typedef struct
     fixed_t bottomheight;
     fixed_t topheight;
     fixed_t speed;
-    boolean crush;
+    byte crush;
 
     // 1 = up, 0 = waiting, -1 = down
     int direction;
@@ -404,7 +404,7 @@ typedef struct
 {
     thinker_t thinker;
     floor_e type;
-    boolean crush;
+    byte crush;
     sector_t *sector;
     int direction;
     int newspecial;
@@ -424,13 +424,7 @@ typedef enum
 
 } result_e;
 
-result_e
-T_MovePlane(sector_t *sector,
-            fixed_t speed,
-            fixed_t dest,
-            boolean crush,
-            byte floorOrCeiling,
-            int direction);
+result_e T_MovePlane(sector_t *sector, fixed_t speed, fixed_t dest, byte crush, byte floorOrCeiling, int direction);
 
 int EV_BuildStairs(line_t *line,
                    stair_e type);

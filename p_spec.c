@@ -1099,7 +1099,7 @@ int EV_DoDonut(line_t *line)
 			s2->specialdata = floor;
 			floor->thinker.function.acp1 = (actionf_p1)T_MoveFloor;
 			floor->type = donutRaise;
-			floor->crush = false;
+			floor->crush = 0;
 			floor->direction = 1;
 			floor->sector = s2;
 			floor->speed = FLOORSPEED / 2;
@@ -1118,7 +1118,7 @@ int EV_DoDonut(line_t *line)
 			s1->specialdata = floor;
 			floor->thinker.function.acp1 = (actionf_p1)T_MoveFloor;
 			floor->type = lowerFloor;
-			floor->crush = false;
+			floor->crush = 0;
 			floor->direction = -1;
 			floor->sector = s1;
 			floor->speed = FLOORSPEED / 2;

@@ -1307,7 +1307,7 @@ void P_RadiusAttack(mobj_t *spot,
 //  the way it was and call P_ChangeSector again
 //  to undo the changes.
 //
-boolean crushchange;
+byte crushchange;
 
 //
 // PIT_ChangeSector
@@ -1370,7 +1370,7 @@ boolean PIT_ChangeSector(mobj_t *thing)
 //
 // P_ChangeSector
 //
-void P_ChangeSector(sector_t *sector, boolean crunch)
+void P_ChangeSector(sector_t *sector, byte crunch)
 {
     int x;
     int y;

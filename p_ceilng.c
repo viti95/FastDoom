@@ -198,12 +198,12 @@ int EV_DoCeiling(line_t *line,
 		sec->specialdata = ceiling;
 		ceiling->thinker.function.acp1 = (actionf_p1)T_MoveCeiling;
 		ceiling->sector = sec;
-		ceiling->crush = false;
+		ceiling->crush = 0;
 
 		switch (type)
 		{
 		case fastCrushAndRaise:
-			ceiling->crush = true;
+			ceiling->crush = 1;
 			ceiling->topheight = sec->ceilingheight;
 			ceiling->bottomheight = sec->floorheight + (8 * FRACUNIT);
 			ceiling->direction = -1;
@@ -212,7 +212,7 @@ int EV_DoCeiling(line_t *line,
 
 		case silentCrushAndRaise:
 		case crushAndRaise:
-			ceiling->crush = true;
+			ceiling->crush = 1;
 			ceiling->topheight = sec->ceilingheight;
 		case lowerAndCrush:
 		case lowerToFloor:
