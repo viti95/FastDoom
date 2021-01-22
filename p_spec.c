@@ -90,37 +90,6 @@ extern anim_t *lastanim;
 //  and end entry, in the order found in
 //  the WAD file.
 //
-static const animdef_t animdefs[] =
-	{
-		{0, "NUKAGE3", "NUKAGE1"},
-		{0, "FWATER4", "FWATER1"},
-		{0, "SWATER4", "SWATER1"},
-		{0, "LAVA4", "LAVA1"},
-		{0, "BLOOD3", "BLOOD1"},
-
-		// DOOM II flat animations.
-		{0, "RROCK08", "RROCK05"},
-		{0, "SLIME04", "SLIME01"},
-		{0, "SLIME08", "SLIME05"},
-		{0, "SLIME12", "SLIME09"},
-
-		{1, "BLODGR4", "BLODGR1"},
-		{1, "SLADRIP3", "SLADRIP1"},
-
-		{1, "BLODRIP4", "BLODRIP1"},
-		{1, "FIREWALL", "FIREWALA"},
-		{1, "GSTFONT3", "GSTFONT1"},
-		{1, "FIRELAVA", "FIRELAV3"},
-		{1, "FIREMAG3", "FIREMAG1"},
-		{1, "FIREBLU2", "FIREBLU1"},
-		{1, "ROCKRED3", "ROCKRED1"},
-
-		{1, "BFALL4", "BFALL1"},
-		{1, "SFALL4", "SFALL1"},
-		{1, "WFALL4", "WFALL1"},
-		{1, "DBRAIN4", "DBRAIN1"},
-
-		{2}};
 
 anim_t anims[MAXANIMS];
 anim_t *lastanim;
@@ -135,6 +104,38 @@ extern line_t *linespeciallist[MAXLINEANIMS];
 
 void P_InitPicAnims(void)
 {
+	const animdef_t animdefs[] =
+		{
+			{0, "NUKAGE3", "NUKAGE1"},
+			{0, "FWATER4", "FWATER1"},
+			{0, "SWATER4", "SWATER1"},
+			{0, "LAVA4", "LAVA1"},
+			{0, "BLOOD3", "BLOOD1"},
+
+			// DOOM II flat animations.
+			{0, "RROCK08", "RROCK05"},
+			{0, "SLIME04", "SLIME01"},
+			{0, "SLIME08", "SLIME05"},
+			{0, "SLIME12", "SLIME09"},
+
+			{1, "BLODGR4", "BLODGR1"},
+			{1, "SLADRIP3", "SLADRIP1"},
+
+			{1, "BLODRIP4", "BLODRIP1"},
+			{1, "FIREWALL", "FIREWALA"},
+			{1, "GSTFONT3", "GSTFONT1"},
+			{1, "FIRELAVA", "FIRELAV3"},
+			{1, "FIREMAG3", "FIREMAG1"},
+			{1, "FIREBLU2", "FIREBLU1"},
+			{1, "ROCKRED3", "ROCKRED1"},
+
+			{1, "BFALL4", "BFALL1"},
+			{1, "SFALL4", "SFALL1"},
+			{1, "WFALL4", "WFALL1"},
+			{1, "DBRAIN4", "DBRAIN1"},
+
+			{2}};
+
 	int i;
 
 	//	Init animation
