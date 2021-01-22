@@ -250,9 +250,6 @@ static player_t *plyr;
 // ST_Start() has just been called
 static byte st_firsttime;
 
-// used to execute ST_Init() only once
-static int veryfirsttime = 1;
-
 // used for timing
 static unsigned int st_clock;
 
@@ -1298,6 +1295,5 @@ void ST_Stop(void)
 
 void ST_Init(void)
 {
-	veryfirsttime = 0;
 	ST_loadData();
 }
