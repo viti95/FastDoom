@@ -156,6 +156,12 @@ int Div10(int value);
     "mul edx", \
     "shr edx, 3" parm[eax] value[edx] modify exact[eax edx]
 
+int Div3(int value);
+#pragma aux Div3 = \
+    "mov edx, 0xAAAAAAAB", \
+    "mul edx", \
+    "shr edx, 1" parm[eax] value[edx] modify exact[eax edx]
+
 int Div63(int value);
 #pragma aux Div63 = \
     "mov edx, -2113396605", \
