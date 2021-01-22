@@ -57,14 +57,6 @@ typedef enum
 //
 // P_NewChaseDir related LUT.
 //
-dirtype_t opposite[] =
-    {
-        DI_WEST, DI_SOUTHWEST, DI_SOUTH, DI_SOUTHEAST,
-        DI_EAST, DI_NORTHEAST, DI_NORTH, DI_NORTHWEST, DI_NODIR};
-
-dirtype_t diags[] =
-    {
-        DI_NORTHWEST, DI_NORTHEAST, DI_SOUTHWEST, DI_SOUTHEAST};
 
 void A_Fall(mobj_t *actor);
 
@@ -202,7 +194,7 @@ byte P_CheckMissileRange(mobj_t *actor)
         dist >>= 1;
     }
 
-    dist >>= actor->type == MT_CYBORG || actor->type == MT_SPIDER || actor->type == MT_SKULL; 
+    dist >>= actor->type == MT_CYBORG || actor->type == MT_SPIDER || actor->type == MT_SKULL;
 
     if (dist > 200)
         dist = 200;
@@ -348,6 +340,11 @@ byte P_TryWalk(mobj_t *actor)
 
 void P_NewChaseDir(mobj_t *actor)
 {
+    const dirtype_t opposite[] =
+        {
+            DI_WEST, DI_SOUTHWEST, DI_SOUTH, DI_SOUTHEAST,
+            DI_EAST, DI_NORTHEAST, DI_NORTH, DI_NORTHWEST, DI_NODIR};
+
     fixed_t deltax;
     fixed_t deltay;
 
@@ -381,6 +378,10 @@ void P_NewChaseDir(mobj_t *actor)
     // try direct route
     if (d[1] != DI_NODIR && d[2] != DI_NODIR)
     {
+        const dirtype_t diags[] =
+            {
+                DI_NORTHWEST, DI_NORTHEAST, DI_SOUTHWEST, DI_SOUTHEAST};
+
         actor->movedir = diags[((deltay < 0) << 1) + (deltax > 0)];
         if (actor->movedir != turnaround && P_TryWalk(actor))
             return;
@@ -961,7 +962,7 @@ void A_Tracer(mobj_t *actor)
     th->momz = FRACUNIT;
     th->tics -= P_Random & 3;
     if (th->tics < 1)
-		th->tics = 1;
+        th->tics = 1;
 
     // adjust direction
     dest = actor->tracer;
