@@ -32,7 +32,6 @@ static int PatchMap[NUM_PATCHES][MAX_MEM_CONFIG + 1];
 static char ProgramName[NUM_PATCHES][BIGGEST_NAME];
 static char PatchLoaded[NUM_PATCHES];
 
-static char ConfigFileName[] = "ULTRAMID.INI";
 static char ConfigDirectory[80] = {'\0'};
 
 // The name of the configuration directory
@@ -421,7 +420,7 @@ int GUSMIDI_Init(
 
    GUSMIDI_Installed = TRUE;
 
-   ret = GUS_GetPatchMap(ConfigFileName);
+   ret = GUS_GetPatchMap("ULTRAMID.INI");
    if (ret != GUS_Ok)
    {
       GUSMIDI_Shutdown();
