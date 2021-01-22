@@ -34,10 +34,10 @@ int MV_Kill(int handle);
 int MV_SetMixMode(int numchannels, int samplebits);
 int MV_StartPlayback(void);
 void MV_StopPlayback(void);
-int MV_PlayRaw(char *ptr, unsigned long length,
+int MV_PlayRaw(unsigned char *ptr, unsigned long length,
                unsigned rate, int vol, int left,
                int right, int priority, unsigned long callbackval);
-int MV_PlayLoopedRaw(char *ptr, unsigned long length,
+int MV_PlayLoopedRaw(unsigned char *ptr, unsigned long length,
                      char *loopstart, char *loopend, unsigned rate,
                      int vol, int left, int right, int priority,
                      unsigned long callbackval);

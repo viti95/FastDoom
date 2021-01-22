@@ -385,7 +385,7 @@ void FX_SetVolume(
 ---------------------------------------------------------------------*/
 
 int FX_PlayRaw(
-    char *ptr,
+    unsigned char *ptr,
     unsigned long length,
     unsigned rate,
     int vol,

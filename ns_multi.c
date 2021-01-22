@@ -1026,7 +1026,7 @@ void MV_StopPlayback(
 ---------------------------------------------------------------------*/
 
 int MV_PlayLoopedRaw(
-    char *ptr,
+    unsigned char *ptr,
     unsigned long length,
     char *loopstart,
     char *loopend,
@@ -1078,7 +1078,7 @@ int MV_PlayLoopedRaw(
 ---------------------------------------------------------------------*/
 
 int MV_PlayRaw(
-    char *ptr,
+    unsigned char *ptr,
     unsigned long length,
     unsigned rate,
     int vol,

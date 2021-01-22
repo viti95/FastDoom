@@ -53,7 +53,7 @@ int FX_Init(int SoundCard, int numvoices, int numchannels, int samplebits, unsig
 int FX_Shutdown(void);
 int FX_SetCallBack(void (*function)(unsigned long));
 void FX_SetVolume(int volume);
-int FX_PlayRaw(char *ptr, unsigned long length, unsigned rate,
+int FX_PlayRaw(unsigned char *ptr, unsigned long length, unsigned rate,
                int vol, int left, int right, int priority,
                unsigned long callbackval);
 int FX_PlayLoopedRaw(char *ptr, unsigned long length, char *loopstart,
