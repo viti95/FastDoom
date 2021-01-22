@@ -97,7 +97,7 @@ void R_InstallSpriteLump(int lump,
     {
         // the lump should be used for all rotations
 
-        sprtemp[frame].rotate = false;
+        sprtemp[frame].rotate = 0;
         for (r = 0; r < 8; r++)
         {
             sprtemp[frame].lump[r] = lump - firstspritelump;
@@ -107,7 +107,7 @@ void R_InstallSpriteLump(int lump,
     }
 
     // the lump is only used for one rotation
-    sprtemp[frame].rotate = true;
+    sprtemp[frame].rotate = 1;
 
     // make 0 based
     rotation--;
