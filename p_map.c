@@ -172,7 +172,7 @@ byte PIT_CheckLine(line_t *ld)
     if (tmbbox[BOXRIGHT] <= ld->bbox[BOXLEFT] || tmbbox[BOXLEFT] >= ld->bbox[BOXRIGHT] || tmbbox[BOXTOP] <= ld->bbox[BOXBOTTOM] || tmbbox[BOXBOTTOM] >= ld->bbox[BOXTOP])
         return 1;
 
-    if (P_BoxOnLineSide(tmbbox, ld) != (byte)2)
+    if (P_BoxOnLineSide(tmbbox, ld) != 2)
         return 1;
 
     // A line has been hit
