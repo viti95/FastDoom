@@ -725,7 +725,7 @@ void P_DamageMobj(mobj_t *target,
 		if (player->armortype)
 		{
 			if (player->armortype == 1)
-				saved = damage / 3;
+				saved = Div3(damage);
 			else
 				saved = damage / 2;
 
