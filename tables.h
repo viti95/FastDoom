@@ -48,7 +48,7 @@ extern fixed_t finesine[5 * FINEANGLES / 4];
 extern fixed_t *finecosine;
 
 // Effective size is 4096.
-extern fixed_t finetangent[FINEANGLES / 2];
+extern const fixed_t finetangent[FINEANGLES / 2];
 
 // Binary Angle Measument, BAM.
 #define ANG45 0x20000000
@@ -65,7 +65,7 @@ typedef unsigned angle_t;
 // Effective size is 2049;
 // The +1 size is to handle the case when x==y
 //  without additional checking.
-extern angle_t tantoangle[SLOPERANGE + 1];
+extern const angle_t tantoangle[SLOPERANGE + 1];
 
 // Utility function,
 //  called by R_PointToAngle.

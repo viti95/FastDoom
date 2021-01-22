@@ -28,10 +28,9 @@
 // Called in st_stuff module, which handles the input.
 // Returns a 1 if the cheat was successful, 0 if failed.
 //
-int cht_CheckCheat(cheatseq_t *cht,
-                   char key)
+byte cht_CheckCheat(cheatseq_t *cht, char key)
 {
-    int rc = 0;
+    byte rc = 0;
 
     if (!cht->p)
         cht->p = cht->sequence; // initialize if first time
@@ -54,8 +53,7 @@ int cht_CheckCheat(cheatseq_t *cht,
     return rc;
 }
 
-void cht_GetParam(cheatseq_t *cht,
-                  char *buffer)
+void cht_GetParam(cheatseq_t *cht, char *buffer)
 {
 
     unsigned char *p, c;
