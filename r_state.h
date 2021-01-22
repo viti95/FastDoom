@@ -70,7 +70,6 @@ extern seg_t *segs;
 extern int numsectors;
 extern sector_t *sectors;
 
-extern int numsubsectors;
 extern subsector_t *subsectors;
 
 extern int numnodes;

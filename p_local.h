@@ -85,8 +85,6 @@ void P_PlayerThink(player_t *player);
 // Time interval for item respawning.
 #define ITEMQUESIZE 128
 
-extern mapthing_t itemrespawnque[ITEMQUESIZE];
-extern int itemrespawntime[ITEMQUESIZE];
 extern int iquehead;
 extern int iquetail;
 
@@ -222,7 +220,6 @@ extern mobj_t **blocklinks; // for thing chains
 // P_INTER
 //
 extern int maxammo[NUMAMMO];
-extern int clipammo[NUMAMMO];
 
 void P_TouchSpecialThing(mobj_t *special,
                          mobj_t *toucher);

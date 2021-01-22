@@ -52,12 +52,6 @@ fixed_t centeryfracshifted;
 fixed_t projection;
 fixed_t iprojection;
 
-// just for profiling purposes
-int framecount;
-
-int linecount;
-int loopcount;
-
 fixed_t viewx;
 fixed_t viewy;
 fixed_t viewz;
@@ -857,8 +851,6 @@ void R_Init(void)
     printf(".");
     R_InitSkyMap();
     printf(".");
-
-    framecount = 0;
 }
 
 //
@@ -965,8 +957,7 @@ void R_SetupFrame(player_t *player)
     }
     else
         fixedcolormap = 0;
-
-    framecount++;
+        
     validcount++;
     destview = destscreen + Mul80(viewwindowy) + (viewwindowx >> 2);
 }

@@ -670,7 +670,6 @@ void R_DrawPlayerSprites(void)
 //
 // R_SortVisSprites
 //
-vissprite_t vsprsortedhead;
 
 //#define bcopyp(d, s, n) memcpy(d, s, (n) * sizeof(void *))
 #define bcopyp(d, s, n) CopyDWords(s, d, (n))

@@ -91,14 +91,6 @@ void (*messageRoutine)(int response);
 
 #define SAVESTRINGSIZE 24
 
-char gammamsg[5][26] =
-    {
-        GAMMALVL0,
-        GAMMALVL1,
-        GAMMALVL2,
-        GAMMALVL3,
-        GAMMALVL4};
-
 char endmsg[NUM_QUITMESSAGES][80] =
     {
         // DOOM1
@@ -136,7 +128,6 @@ byte menuactive;
 #define SKULLXOFF -32
 #define LINEHEIGHT 16
 
-extern byte sendpause;
 char savegamestrings[10][SAVESTRINGSIZE];
 
 char endstring[160];
@@ -1449,6 +1440,14 @@ void M_WriteText(int x,
 //
 byte M_Responder(event_t *ev)
 {
+    const char gammamsg[5][26] =
+        {
+            GAMMALVL0,
+            GAMMALVL1,
+            GAMMALVL2,
+            GAMMALVL3,
+            GAMMALVL4};
+
     int ch;
     int i;
     static int lasty = 0;
@@ -1605,7 +1604,7 @@ byte M_Responder(event_t *ev)
             usegamma++;
             if (usegamma > 4)
                 usegamma = 0;
-            players.message = gammamsg[usegamma];
+            players.message = (char *)gammamsg[usegamma];
             I_ProcessPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
             I_SetPalette(0);
             return 1;

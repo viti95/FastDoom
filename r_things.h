@@ -21,7 +21,6 @@
 
 extern vissprite_t *vissprites;
 extern vissprite_t *vissprite_p;
-extern vissprite_t vsprsortedhead;
 
 // Constant arrays used for psprite clipping
 //  and initializing clipping.
