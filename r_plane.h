@@ -41,6 +41,7 @@ void R_MapPlane(int y,
                 int x1);
 
 void R_DrawPlanes(void);
+void R_DrawPlanesFlatSurfaces(void);
 
 visplane_t *
 R_FindPlane(fixed_t height,

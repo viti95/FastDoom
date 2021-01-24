@@ -99,8 +99,8 @@ void (*spanfunc)(void);
 void (*skyfunc)(void);
 
 byte R_PointOnSegSide(fixed_t x,
-                     fixed_t y,
-                     seg_t *line)
+                      fixed_t y,
+                      seg_t *line)
 {
     fixed_t lx;
     fixed_t ly;
@@ -645,9 +645,8 @@ void R_InitLightTables(void)
 
             if (level < 0)
                 level = 0;
-            else
-                if (level >= NUMCOLORMAPS)
-                    level = NUMCOLORMAPS - 1;
+            else if (level >= NUMCOLORMAPS)
+                level = NUMCOLORMAPS - 1;
 
             zlight[i][j] = colormaps + level * 256;
         }
@@ -824,9 +823,8 @@ void R_ExecuteSetViewSize(void)
 
             if (level < 0)
                 level = 0;
-            else
-                if (level > NUMCOLORMAPS - 1)
-                    level = NUMCOLORMAPS - 1;
+            else if (level > NUMCOLORMAPS - 1)
+                level = NUMCOLORMAPS - 1;
 
             scalelight[i][j] = colormaps + level * 256;
         }
@@ -957,7 +955,7 @@ void R_SetupFrame(player_t *player)
     }
     else
         fixedcolormap = 0;
-        
+
     validcount++;
     destview = destscreen + Mul80(viewwindowy) + (viewwindowx >> 2);
 }
@@ -990,7 +988,10 @@ void R_RenderPlayerView(player_t *player)
     // Check for new console commands.
     NetUpdate();
 
-    R_DrawPlanes();
+    if (flatSurfaces)
+        R_DrawPlanesFlatSurfaces();
+    else
+        R_DrawPlanes();
 
     // Check for new console commands.
     NetUpdate();
