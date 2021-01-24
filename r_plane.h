@@ -42,15 +42,11 @@ void R_MapPlane(int y,
 
 void R_DrawPlanes(void);
 void R_DrawPlanesFlatSurfaces(void);
+void R_DrawPlanesFlatSurfacesLow(void);
+void R_DrawPlanesFlatSurfacesPotato(void);
+void R_DrawSky(visplane_t *pl);
 
-visplane_t *
-R_FindPlane(fixed_t height,
-            int picnum,
-            int lightlevel);
-
-visplane_t *
-R_CheckPlane(visplane_t *pl,
-             int start,
-             int stop);
+visplane_t * R_FindPlane(fixed_t height, int picnum, int lightlevel);
+visplane_t * R_CheckPlane(visplane_t *pl, int start, int stop);
 
 #endif

@@ -989,7 +989,18 @@ void R_RenderPlayerView(player_t *player)
     NetUpdate();
 
     if (flatSurfaces)
-        R_DrawPlanesFlatSurfaces();
+        switch (detailshift)
+        {
+        case 0:
+            R_DrawPlanesFlatSurfaces();
+            break;
+        case 1:
+            R_DrawPlanesFlatSurfacesLow();
+            break;
+        case 2:
+            R_DrawPlanesFlatSurfacesPotato();
+            break;
+        }
     else
         R_DrawPlanes();
 

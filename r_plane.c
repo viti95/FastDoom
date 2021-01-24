@@ -205,7 +205,7 @@ void R_ClearPlanes(void)
 //
 // R_FindPlane
 //
-visplane_t * R_FindPlane(fixed_t height, int picnum, int lightlevel)
+visplane_t *R_FindPlane(fixed_t height, int picnum, int lightlevel)
 {
     visplane_t *check;
 
@@ -244,7 +244,7 @@ visplane_t * R_FindPlane(fixed_t height, int picnum, int lightlevel)
 //
 // R_CheckPlane
 //
-visplane_t * R_CheckPlane(visplane_t *pl, int start, int stop)
+visplane_t *R_CheckPlane(visplane_t *pl, int start, int stop)
 {
     int intrl;
     int intrh;
@@ -332,50 +332,7 @@ void R_DrawPlanes(void)
         // sky flat
         if (pl->picnum == skyflatnum)
         {
-            dc_iscale = pspriteiscaleshifted;
-
-            // Sky is allways drawn full bright,
-            //  i.e. colormaps[0] is used.
-            // Because of this hack, sky is not affected
-            //  by INVUL inverse mapping.
-            //dc_colormap = colormaps;
-            dc_colormap = fixedcolormap ? fixedcolormap : colormaps;
-            dc_texturemid = 100 * FRACUNIT;
-            for (x = pl->minx; x <= pl->maxx; x++)
-            {
-                dc_yl = pl->top[x];
-                dc_yh = pl->bottom[x];
-
-                if (dc_yl > dc_yh)
-                    continue;
-
-                dc_x = x;
-
-                if (!flatSky)
-                {
-                    angle = (viewangle + xtoviewangle[x]) >> ANGLETOSKYSHIFT;
-
-                    tex = skytexture;
-                    col = angle;
-                    col &= texturewidthmask[tex];
-                    lump = texturecolumnlump[tex][col];
-                    ofs = texturecolumnofs[tex][col];
-
-                    if (lump > 0)
-                    {
-                        dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
-                    }
-                    else
-                    {
-                        if (!texturecomposite[tex])
-                            R_GenerateComposite(tex);
-
-                        dc_source = texturecomposite[tex] + ofs;
-                    }
-                }
-
-                skyfunc();
-            }
+            R_DrawSky(pl);
             continue;
         }
 
@@ -468,50 +425,7 @@ void R_DrawPlanesFlatSurfaces(void)
         // sky flat
         if (pl->picnum == skyflatnum)
         {
-            dc_iscale = pspriteiscaleshifted;
-
-            // Sky is allways drawn full bright,
-            //  i.e. colormaps[0] is used.
-            // Because of this hack, sky is not affected
-            //  by INVUL inverse mapping.
-            //dc_colormap = colormaps;
-            dc_colormap = fixedcolormap ? fixedcolormap : colormaps;
-            dc_texturemid = 100 * FRACUNIT;
-            for (x = pl->minx; x <= pl->maxx; x++)
-            {
-                dc_yl = pl->top[x];
-                dc_yh = pl->bottom[x];
-
-                if (dc_yl > dc_yh)
-                    continue;
-
-                dc_x = x;
-
-                if (!flatSky)
-                {
-                    angle = (viewangle + xtoviewangle[x]) >> ANGLETOSKYSHIFT;
-
-                    tex = skytexture;
-                    col = angle;
-                    col &= texturewidthmask[tex];
-                    lump = texturecolumnlump[tex][col];
-                    ofs = texturecolumnofs[tex][col];
-
-                    if (lump > 0)
-                    {
-                        dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
-                    }
-                    else
-                    {
-                        if (!texturecomposite[tex])
-                            R_GenerateComposite(tex);
-
-                        dc_source = texturecomposite[tex] + ofs;
-                    }
-                }
-
-                skyfunc();
-            }
+            R_DrawSky(pl);
             continue;
         }
 
@@ -521,275 +435,415 @@ void R_DrawPlanesFlatSurfaces(void)
 
         color = dc_colormap[dc_source[0]];
 
-        switch (detailshift)
+        x = pl->minx;
+        outp(SC_INDEX + 1, 1 << (x & 3));
+
+        do
         {
-        case 0:
-            // Plane 0
-            x = pl->minx;
-            outp(SC_INDEX + 1, 1 << (x & 3));
-
-            do
+            if (pl->top[x] > pl->bottom[x])
             {
-                if (pl->top[x] > pl->bottom[x])
-                {
-                    x += 4;
-                    continue;
-                }
-
-                count = pl->bottom[x] - pl->top[x];
-
-                dest = destview + Mul80(pl->top[x]) + (x >> 2);
-
-                while (count >= 3)
-                {
-                    *(dest) = color;
-                    *(dest + SCREENWIDTH / 4) = color;
-                    *(dest + SCREENWIDTH / 2) = color;
-                    *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
-                    dest += SCREENWIDTH;
-                    count -= 4;
-                }
-
-                while (count >= 0)
-                {
-                    *dest = color;
-                    dest += SCREENWIDTH / 4;
-                    count--;
-                };
-
                 x += 4;
-            } while (x <= pl->maxx);
-
-            // Plane 1
-            x = pl->minx + 1;
-
-            if (x > pl->maxx)
                 continue;
-
-            outp(SC_INDEX + 1, 1 << (x & 3));
-
-            do
-            {
-                if (pl->top[x] > pl->bottom[x])
-                {
-                    x += 4;
-                    continue;
-                }
-
-                count = pl->bottom[x] - pl->top[x];
-
-                dest = destview + Mul80(pl->top[x]) + (x >> 2);
-
-                while (count >= 3)
-                {
-                    *(dest) = color;
-                    *(dest + SCREENWIDTH / 4) = color;
-                    *(dest + SCREENWIDTH / 2) = color;
-                    *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
-                    dest += SCREENWIDTH;
-                    count -= 4;
-                }
-
-                while (count >= 0)
-                {
-                    *dest = color;
-                    dest += SCREENWIDTH / 4;
-                    count--;
-                };
-
-                x += 4;
-            } while (x <= pl->maxx);
-
-            // Plane 2
-            x = pl->minx + 2;
-
-            if (x > pl->maxx)
-                continue;
-
-            outp(SC_INDEX + 1, 1 << (x & 3));
-
-            do
-            {
-                if (pl->top[x] > pl->bottom[x])
-                {
-                    x += 4;
-                    continue;
-                }
-
-                count = pl->bottom[x] - pl->top[x];
-
-                dest = destview + Mul80(pl->top[x]) + (x >> 2);
-
-                while (count >= 3)
-                {
-                    *(dest) = color;
-                    *(dest + SCREENWIDTH / 4) = color;
-                    *(dest + SCREENWIDTH / 2) = color;
-                    *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
-                    dest += SCREENWIDTH;
-                    count -= 4;
-                }
-
-                while (count >= 0)
-                {
-                    *dest = color;
-                    dest += SCREENWIDTH / 4;
-                    count--;
-                };
-
-                x += 4;
-            } while (x <= pl->maxx);
-
-            // Plane 3
-            x = pl->minx + 3;
-
-            if (x > pl->maxx)
-                continue;
-
-            outp(SC_INDEX + 1, 1 << (x & 3));
-
-            do
-            {
-                if (pl->top[x] > pl->bottom[x])
-                {
-                    x += 4;
-                    continue;
-                }
-
-                count = pl->bottom[x] - pl->top[x];
-
-                dest = destview + Mul80(pl->top[x]) + (x >> 2);
-
-                while (count >= 3)
-                {
-                    *(dest) = color;
-                    *(dest + SCREENWIDTH / 4) = color;
-                    *(dest + SCREENWIDTH / 2) = color;
-                    *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
-                    dest += SCREENWIDTH;
-                    count -= 4;
-                }
-
-                while (count >= 0)
-                {
-                    *dest = color;
-                    dest += SCREENWIDTH / 4;
-                    count--;
-                };
-
-                x += 4;
-            } while (x <= pl->maxx);
-
-            break;
-        case 1:
-            // Plane 0
-            x = pl->minx;
-            outp(SC_INDEX + 1, 3 << ((x & 1) << 1));
-
-            do
-            {
-                if (pl->top[x] > pl->bottom[x])
-                {
-                    x += 2;
-                    continue;
-                }
-
-                count = pl->bottom[x] - pl->top[x];
-
-                dest = destview + Mul80(pl->top[x]) + (x >> 1);
-
-                while (count >= 3)
-                {
-                    *(dest) = color;
-                    *(dest + SCREENWIDTH / 4) = color;
-                    *(dest + SCREENWIDTH / 2) = color;
-                    *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
-                    dest += SCREENWIDTH;
-                    count -= 4;
-                }
-
-                while (count >= 0)
-                {
-                    *dest = color;
-                    dest += SCREENWIDTH / 4;
-                    count--;
-                };
-
-                x += 2;
-            } while (x <= pl->maxx);
-
-            // Plane 1
-            x = pl->minx + 1;
-
-            if (x > pl->maxx)
-                continue;
-
-            outp(SC_INDEX + 1, 3 << ((x & 1) << 1));
-
-            do
-            {
-                if (pl->top[x] > pl->bottom[x])
-                {
-                    x += 2;
-                    continue;
-                }
-
-                count = pl->bottom[x] - pl->top[x];
-
-                dest = destview + Mul80(pl->top[x]) + (x >> 1);
-
-                while (count >= 3)
-                {
-                    *(dest) = color;
-                    *(dest + SCREENWIDTH / 4) = color;
-                    *(dest + SCREENWIDTH / 2) = color;
-                    *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
-                    dest += SCREENWIDTH;
-                    count -= 4;
-                }
-
-                while (count >= 0)
-                {
-                    *dest = color;
-                    dest += SCREENWIDTH / 4;
-                    count--;
-                };
-
-                x += 2;
-            } while (x <= pl->maxx);
-
-            break;
-        case 2:
-
-            for (x = pl->minx; x <= pl->maxx; x++)
-            {
-                if (pl->top[x] > pl->bottom[x])
-                    continue;
-
-                count = pl->bottom[x] - pl->top[x];
-
-                dest = destview + Mul80(pl->top[x]) + x;
-
-                while (count >= 3)
-                {
-                    *(dest) = color;
-                    *(dest + SCREENWIDTH / 4) = color;
-                    *(dest + SCREENWIDTH / 2) = color;
-                    *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
-                    dest += SCREENWIDTH;
-                    count -= 4;
-                }
-
-                while (count >= 0)
-                {
-                    *dest = color;
-                    dest += SCREENWIDTH / 4;
-                    count--;
-                };
             }
-            break;
+
+            count = pl->bottom[x] - pl->top[x];
+
+            dest = destview + Mul80(pl->top[x]) + (x >> 2);
+
+            while (count >= 3)
+            {
+                *(dest) = color;
+                *(dest + SCREENWIDTH / 4) = color;
+                *(dest + SCREENWIDTH / 2) = color;
+                *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
+                dest += SCREENWIDTH;
+                count -= 4;
+            }
+
+            while (count >= 0)
+            {
+                *dest = color;
+                dest += SCREENWIDTH / 4;
+                count--;
+            };
+
+            x += 4;
+        } while (x <= pl->maxx);
+
+        // Plane 1
+        x = pl->minx + 1;
+
+        if (x > pl->maxx)
+            continue;
+
+        outp(SC_INDEX + 1, 1 << (x & 3));
+
+        do
+        {
+            if (pl->top[x] > pl->bottom[x])
+            {
+                x += 4;
+                continue;
+            }
+
+            count = pl->bottom[x] - pl->top[x];
+
+            dest = destview + Mul80(pl->top[x]) + (x >> 2);
+
+            while (count >= 3)
+            {
+                *(dest) = color;
+                *(dest + SCREENWIDTH / 4) = color;
+                *(dest + SCREENWIDTH / 2) = color;
+                *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
+                dest += SCREENWIDTH;
+                count -= 4;
+            }
+
+            while (count >= 0)
+            {
+                *dest = color;
+                dest += SCREENWIDTH / 4;
+                count--;
+            };
+
+            x += 4;
+        } while (x <= pl->maxx);
+
+        // Plane 2
+        x = pl->minx + 2;
+
+        if (x > pl->maxx)
+            continue;
+
+        outp(SC_INDEX + 1, 1 << (x & 3));
+
+        do
+        {
+            if (pl->top[x] > pl->bottom[x])
+            {
+                x += 4;
+                continue;
+            }
+
+            count = pl->bottom[x] - pl->top[x];
+
+            dest = destview + Mul80(pl->top[x]) + (x >> 2);
+
+            while (count >= 3)
+            {
+                *(dest) = color;
+                *(dest + SCREENWIDTH / 4) = color;
+                *(dest + SCREENWIDTH / 2) = color;
+                *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
+                dest += SCREENWIDTH;
+                count -= 4;
+            }
+
+            while (count >= 0)
+            {
+                *dest = color;
+                dest += SCREENWIDTH / 4;
+                count--;
+            };
+
+            x += 4;
+        } while (x <= pl->maxx);
+
+        // Plane 3
+        x = pl->minx + 3;
+
+        if (x > pl->maxx)
+            continue;
+
+        outp(SC_INDEX + 1, 1 << (x & 3));
+
+        do
+        {
+            if (pl->top[x] > pl->bottom[x])
+            {
+                x += 4;
+                continue;
+            }
+
+            count = pl->bottom[x] - pl->top[x];
+
+            dest = destview + Mul80(pl->top[x]) + (x >> 2);
+
+            while (count >= 3)
+            {
+                *(dest) = color;
+                *(dest + SCREENWIDTH / 4) = color;
+                *(dest + SCREENWIDTH / 2) = color;
+                *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
+                dest += SCREENWIDTH;
+                count -= 4;
+            }
+
+            while (count >= 0)
+            {
+                *dest = color;
+                dest += SCREENWIDTH / 4;
+                count--;
+            };
+
+            x += 4;
+        } while (x <= pl->maxx);
+
+        Z_ChangeTag(dc_source, PU_CACHE);
+    }
+}
+
+void R_DrawPlanesFlatSurfacesLow(void)
+{
+    visplane_t *pl;
+    int light;
+    int x;
+    int stop;
+    int angle;
+
+    int lump;
+    int ofs;
+    int tex;
+    int col;
+
+    int count;
+    byte *dest;
+    byte *basedest;
+    lighttable_t color;
+
+    byte t1, b1, t2, b2;
+
+    for (pl = visplanes; pl < lastvisplane; pl++)
+    {
+        if (!pl->modified)
+            continue;
+
+        if (pl->minx > pl->maxx)
+            continue;
+
+        // sky flat
+        if (pl->picnum == skyflatnum)
+        {
+            R_DrawSky(pl);
+            continue;
+        }
+
+        dc_colormap = colormaps;
+
+        dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
+
+        color = dc_colormap[dc_source[0]];
+        // Plane 0
+        x = pl->minx;
+        outp(SC_INDEX + 1, 3 << ((x & 1) << 1));
+
+        do
+        {
+            if (pl->top[x] > pl->bottom[x])
+            {
+                x += 2;
+                continue;
+            }
+
+            count = pl->bottom[x] - pl->top[x];
+
+            dest = destview + Mul80(pl->top[x]) + (x >> 1);
+
+            while (count >= 3)
+            {
+                *(dest) = color;
+                *(dest + SCREENWIDTH / 4) = color;
+                *(dest + SCREENWIDTH / 2) = color;
+                *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
+                dest += SCREENWIDTH;
+                count -= 4;
+            }
+
+            while (count >= 0)
+            {
+                *dest = color;
+                dest += SCREENWIDTH / 4;
+                count--;
+            };
+
+            x += 2;
+        } while (x <= pl->maxx);
+
+        // Plane 1
+        x = pl->minx + 1;
+
+        if (x > pl->maxx)
+            continue;
+
+        outp(SC_INDEX + 1, 3 << ((x & 1) << 1));
+
+        do
+        {
+            if (pl->top[x] > pl->bottom[x])
+            {
+                x += 2;
+                continue;
+            }
+
+            count = pl->bottom[x] - pl->top[x];
+
+            dest = destview + Mul80(pl->top[x]) + (x >> 1);
+
+            while (count >= 3)
+            {
+                *(dest) = color;
+                *(dest + SCREENWIDTH / 4) = color;
+                *(dest + SCREENWIDTH / 2) = color;
+                *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
+                dest += SCREENWIDTH;
+                count -= 4;
+            }
+
+            while (count >= 0)
+            {
+                *dest = color;
+                dest += SCREENWIDTH / 4;
+                count--;
+            };
+
+            x += 2;
+        } while (x <= pl->maxx);
+
+        Z_ChangeTag(dc_source, PU_CACHE);
+    }
+}
+
+void R_DrawPlanesFlatSurfacesPotato(void)
+{
+    visplane_t *pl;
+    int light;
+    int x;
+    int stop;
+
+    int count;
+    byte *dest;
+    byte *basedest;
+    lighttable_t color;
+
+    byte t1, b1, t2, b2;
+
+    for (pl = visplanes; pl < lastvisplane; pl++)
+    {
+        if (!pl->modified)
+            continue;
+
+        if (pl->minx > pl->maxx)
+            continue;
+
+        // sky flat
+        if (pl->picnum == skyflatnum)
+        {
+            R_DrawSky(pl);
+            continue;
+        }
+
+        dc_colormap = colormaps;
+
+        dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
+
+        color = dc_colormap[dc_source[0]];
+
+        for (x = pl->minx; x <= pl->maxx; x++)
+        {
+            if (pl->top[x] > pl->bottom[x])
+                continue;
+
+            count = pl->bottom[x] - pl->top[x];
+
+            dest = destview + Mul80(pl->top[x]) + x;
+
+            while (count >= 3)
+            {
+                *(dest) = color;
+                *(dest + SCREENWIDTH / 4) = color;
+                *(dest + SCREENWIDTH / 2) = color;
+                *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
+                dest += SCREENWIDTH;
+                count -= 4;
+            }
+
+            while (count >= 0)
+            {
+                *dest = color;
+                dest += SCREENWIDTH / 4;
+                count--;
+            };
         }
 
         Z_ChangeTag(dc_source, PU_CACHE);
+    }
+}
+
+void R_DrawSky(visplane_t *pl)
+{
+    int angle;
+
+    int lump;
+    int ofs;
+    int tex;
+    int col;
+
+    int x;
+
+    if (!flatSky)
+    {
+        dc_iscale = pspriteiscaleshifted;
+
+        dc_colormap = fixedcolormap ? fixedcolormap : colormaps;
+        dc_texturemid = 100 * FRACUNIT;
+
+        for (x = pl->minx; x <= pl->maxx; x++)
+        {
+            dc_yl = pl->top[x];
+            dc_yh = pl->bottom[x];
+
+            if (dc_yl > dc_yh)
+                continue;
+
+            dc_x = x;
+
+            angle = (viewangle + xtoviewangle[x]) >> ANGLETOSKYSHIFT;
+
+            tex = skytexture;
+            col = angle;
+            col &= texturewidthmask[tex];
+            lump = texturecolumnlump[tex][col];
+            ofs = texturecolumnofs[tex][col];
+
+            if (lump > 0)
+            {
+                dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
+            }
+            else
+            {
+                if (!texturecomposite[tex])
+                    R_GenerateComposite(tex);
+
+                dc_source = texturecomposite[tex] + ofs;
+            }
+
+            skyfunc();
+        }
+    }
+    else
+    {
+        for (x = pl->minx; x <= pl->maxx; x++)
+        {
+            dc_yl = pl->top[x];
+            dc_yh = pl->bottom[x];
+
+            if (dc_yl > dc_yh)
+                continue;
+
+            dc_x = x;
+
+            skyfunc();
+        }
     }
 }

@@ -474,22 +474,10 @@ void R_Subsector(int num)
     line = &segs[sub->firstline];
 
     if (frontsector->floorheight < viewz)
-    {
-        floorplane = R_FindPlane(frontsector->floorheight,
-                                 frontsector->floorpic,
-                                 frontsector->lightlevel);
-    }
-    else
-        floorplane = NULL;
+        floorplane = R_FindPlane(frontsector->floorheight, frontsector->floorpic, frontsector->lightlevel);
 
     if (frontsector->ceilingheight > viewz || frontsector->ceilingpic == skyflatnum)
-    {
-        ceilingplane = R_FindPlane(frontsector->ceilingheight,
-                                   frontsector->ceilingpic,
-                                   frontsector->lightlevel);
-    }
-    else
-        ceilingplane = NULL;
+        ceilingplane = R_FindPlane(frontsector->ceilingheight, frontsector->ceilingpic, frontsector->lightlevel);
 
     R_AddSprites(frontsector);
 
