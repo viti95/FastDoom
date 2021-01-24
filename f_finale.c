@@ -369,7 +369,7 @@ void F_TextWrite(void)
 	cy = 10;
 	ch = finaletext;
 
-	count = (finalecount - 10) / TEXTSPEED;
+	count = Div3(finalecount - 10);
 	if (count < 0)
 		count = 0;
 	for (; count; count--)
