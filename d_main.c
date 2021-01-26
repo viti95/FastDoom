@@ -131,6 +131,7 @@ boolean modifiedgame;
 boolean shareware;
 boolean registered;
 boolean commercial;
+boolean bfgedition;
 #if (EXE_VERSION >= EXE_VERSION_FINAL)
 boolean plutonia;
 boolean tnt;
@@ -281,7 +282,7 @@ void D_Display(void)
     if (gamestate == GS_LEVEL && oldgamestate != GS_LEVEL)
     {
         viewactivestate = 0; // view was not active
-        R_FillBackScreen();      // draw the pattern into the back screen
+        R_FillBackScreen();  // draw the pattern into the back screen
     }
 
     // see if the border needs to be updated to the screen
@@ -444,7 +445,16 @@ void D_DoAdvanceDemo(void)
         else
             pagetic = 170;
         gamestate = GS_DEMOSCREEN;
-        pagename = "TITLEPIC";
+
+        if (bfgedition)
+        {
+            pagename = "DMENUPIC";
+        }
+        else
+        {
+            pagename = "TITLEPIC";
+        }
+
         if (commercial)
             S_ChangeMusic(mus_dm2ttl, false);
         else
@@ -466,7 +476,16 @@ void D_DoAdvanceDemo(void)
         if (commercial)
         {
             pagetic = 35 * 11;
-            pagename = "TITLEPIC";
+
+            if (bfgedition)
+            {
+                pagename = "DMENUPIC";
+            }
+            else
+            {
+                pagename = "TITLEPIC";
+            }
+
             S_ChangeMusic(mus_dm2ttl, false);
         }
         else
@@ -711,6 +730,8 @@ void D_DoomMain(void)
     reverseStereo = M_CheckParm("-reverseStereo");
 
     logTimedemo = M_CheckParm("-logTimedemo");
+
+    bfgedition = M_CheckParm("-bfg");
 
     if ((p = M_CheckParm("-size")))
     {
