@@ -112,7 +112,7 @@ void R_InstallSpriteLump(int lump,
     // make 0 based
     rotation--;
     sprtemp[frame].lump[rotation] = lump - firstspritelump;
-    sprtemp[frame].flip[rotation] = (byte)flipped;
+    sprtemp[frame].flip[rotation] = flipped;
 }
 
 //

@@ -69,14 +69,7 @@ void V_MarkRect(int x,
 //
 // V_CopyRect
 //
-void V_CopyRect(int srcx,
-                int srcy,
-                byte *srcscrn,
-                int width,
-                int height,
-                int destx,
-                int desty,
-                byte *destscrn)
+void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int destx, int desty, byte *destscrn)
 {
     byte *src;
     byte *dest;
@@ -91,6 +84,21 @@ void V_CopyRect(int srcx,
         CopyBytes(src, dest, width);
         //memcpy(dest, src, width);
         src += SCREENWIDTH;
+        dest += SCREENWIDTH;
+    }
+}
+
+void V_SetRect(byte color, int width, int height, int destx, int desty, byte *destscrn)
+{
+    byte *dest;
+
+    V_MarkRect(destx, desty, width, height);
+
+    dest = destscrn + Mul320(desty) + destx;
+
+    for (; height > 0; height--)
+    {
+        SetBytes(dest, color, width);
         dest += SCREENWIDTH;
     }
 }

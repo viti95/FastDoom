@@ -113,6 +113,8 @@
 
 #define ST_MUCHPAIN 20
 
+#define ST_BACKGROUND_COLOR 100
+
 // Location and size of statistics,
 //  justified according to widget type.
 // Problem is, within which space? STbar? Screen?
@@ -423,8 +425,15 @@ void ST_refreshBackground(void)
 
 	if (st_statusbaron)
 	{
-		V_DrawPatch(ST_X, 0, screen4, sbar);
-		V_CopyRect(ST_X, 0, screen4, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y, screen0);
+		if (simpleStatusBar)
+		{
+			V_SetRect(ST_BACKGROUND_COLOR, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y, screen0);
+		}
+		else
+		{
+			V_DrawPatch(ST_X, 0, screen4, sbar);
+			V_CopyRect(ST_X, 0, screen4, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y, screen0);
+		}
 	}
 }
 
@@ -547,7 +556,7 @@ void ST_Responder(event_t *ev)
 				else
 					plyr->message = STSTR_NCOFF;
 			}
-			
+
 			// 'behold?' power-up cheats
 			for (i = 0; i < 6; i++)
 			{

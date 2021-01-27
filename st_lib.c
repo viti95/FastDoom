@@ -30,6 +30,8 @@
 #include "st_lib.h"
 #include "r_local.h"
 
+#include "doomstat.h"
+
 // in AM_map.c
 extern byte automapactive;
 
@@ -78,7 +80,14 @@ void STlib_drawNum(st_number_t *n,
     // clear the area
     x = n->x - 3 * w;
 
-    V_CopyRect(x, n->y - ST_Y, screen4, w * 3, h, x, n->y, screen0);
+    if (simpleStatusBar)
+    {
+        V_SetRect(ST_BACKGROUND_COLOR, w * 3, h, x, n->y, screen0);
+    }
+    else
+    {
+        V_CopyRect(x, n->y - ST_Y, screen4, w * 3, h, x, n->y, screen0);
+    }
 
     // if non-number, do not draw it
     if (num == 1994)
@@ -166,7 +175,14 @@ void STlib_updateMultIcon(st_multicon_t *mi,
             w = mi->p[mi->oldinum]->width;
             h = mi->p[mi->oldinum]->height;
 
-            V_CopyRect(x, y - ST_Y, screen4, w, h, x, y, screen0);
+            if (simpleStatusBar)
+            {
+                V_SetRect(ST_BACKGROUND_COLOR, w, h, x, y, screen0);
+            }
+            else
+            {
+                V_CopyRect(x, y - ST_Y, screen4, w, h, x, y, screen0);
+            }
         }
         V_DrawPatch(mi->x, mi->y, screen0, mi->p[*mi->inum]);
         mi->oldinum = *mi->inum;
@@ -189,5 +205,14 @@ void STlib_updateBinIcon(st_binicon_t *bi,
                          byte refresh)
 {
     if (*bi->on && refresh)
-        V_DrawPatch(bi->x, bi->y, screen0, bi->p);
+    {
+        if (simpleStatusBar)
+        {
+            V_SetRect(ST_BACKGROUND_COLOR, 40, 30, bi->x, bi->y, screen0);
+        }
+        else
+        {
+            V_DrawPatch(bi->x, bi->y, screen0, bi->p);
+        }
+    }
 }

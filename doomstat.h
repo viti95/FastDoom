@@ -64,6 +64,7 @@ extern boolean logTimedemo;
 
 extern boolean uncappedFPS;
 extern boolean waitVsync;
+extern boolean simpleStatusBar;
 
 // Set if homebrew PWAD stuff has been added.
 extern boolean modifiedgame;
