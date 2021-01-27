@@ -468,10 +468,39 @@ void P_NewChaseDir(mobj_t *actor)
 
 //
 // P_LookForPlayers
-// If allaround is false, only look 180 degrees in front.
-// Returns true if a player is targeted.
 //
-byte P_LookForPlayers(mobj_t *actor, byte allaround)
+
+byte P_LookForPlayers(mobj_t *actor)
+{
+    int c;
+    int stop;
+    player_t *player;
+    angle_t an;
+    fixed_t dist;
+
+    player = &players;
+
+    if (player->health <= 0)
+        return 1; // dead
+
+    if (!P_CheckSight(actor, player->mo))
+        return 1; // out of sight
+
+    an = R_PointToAngle2(actor->x, actor->y, player->mo->x, player->mo->y) - actor->angle;
+
+    if (an > ANG90 && an < ANG270)
+    {
+        dist = P_AproxDistance(player->mo->x - actor->x, player->mo->y - actor->y);
+        // if real close, react anyway
+        if (dist > MELEERANGE)
+            return 1; // behind back
+    }
+
+    actor->target = player->mo;
+    return 0;
+}
+
+byte P_LookForPlayersAllAround(mobj_t *actor)
 {
     int c;
     int stop;
@@ -486,24 +515,6 @@ byte P_LookForPlayers(mobj_t *actor, byte allaround)
 
     if (!P_CheckSight(actor, player->mo))
         return 0; // out of sight
-
-    if (!allaround)
-    {
-        an = R_PointToAngle2(actor->x,
-                             actor->y,
-                             player->mo->x,
-                             player->mo->y) -
-             actor->angle;
-
-        if (an > ANG90 && an < ANG270)
-        {
-            dist = P_AproxDistance(player->mo->x - actor->x,
-                                   player->mo->y - actor->y);
-            // if real close, react anyway
-            if (dist > MELEERANGE)
-                return 0; // behind back
-        }
-    }
 
     actor->target = player->mo;
     return 1;
@@ -569,7 +580,7 @@ void A_Look(mobj_t *actor)
             goto seeyou;
     }
 
-    if (!P_LookForPlayers(actor, 0))
+    if (P_LookForPlayers(actor))
         return;
 
     // go into chase state
@@ -650,7 +661,7 @@ void A_Chase(mobj_t *actor)
     if (!actor->target || !(actor->target->flags & MF_SHOOTABLE))
     {
         // look for a new target
-        if (P_LookForPlayers(actor, 1))
+        if (P_LookForPlayersAllAround(actor))
             return; // got a new target
 
         P_SetMobjState(actor, actor->info->spawnstate);
@@ -1916,7 +1927,7 @@ void A_SpawnFly(mobj_t *mo)
         type = MT_BRUISER;
 
     newmobj = P_SpawnMobj(targ->x, targ->y, targ->z, type);
-    if (P_LookForPlayers(newmobj, 1))
+    if (P_LookForPlayersAllAround(newmobj))
         P_SetMobjState(newmobj, newmobj->info->seestate);
 
     // telefrag anything in this spot
