@@ -222,10 +222,6 @@ static fixed_t scale_ftom;
 
 static player_t *plr; // the player represented by an arrow
 
-static patch_t *marknums[AM_NUMMARKPOINTS];	  // numbers used for marking by the automap
-static mpoint_t markpoints[AM_NUMMARKPOINTS]; // where the points are
-static int markpointnum = 0;				  // next point to be assigned
-
 static int followplayer = 1; // specifies whether to follow the player around
 
 static unsigned char cheat_amap_seq[] = {'i', 'd', 'd', 't', 0xff};
@@ -285,16 +281,6 @@ void AM_restoreScaleAndLoc(void)
 	// Change the scaling multipliers
 	scale_mtof = FixedDiv(SCREENWIDTH << FRACBITS, m_w);
 	scale_ftom = FixedDiv(FRACUNIT, scale_mtof);
-}
-
-//
-// adds a marker at the current location
-//
-void AM_addMark(void)
-{
-	markpoints[markpointnum].x = m_x + m_w / 2;
-	markpoints[markpointnum].y = m_y + m_h / 2;
-	markpointnum = (markpointnum + 1) % AM_NUMMARKPOINTS;
 }
 
 //
@@ -394,46 +380,12 @@ void AM_initVariables(void)
 }
 
 //
-//
-//
-void AM_loadPics(void)
-{
-	int i;
-	char namebuf[9];
-
-	for (i = 0; i < 10; i++)
-	{
-		sprintf(namebuf, "AMMNUM%d", i);
-		marknums[i] = W_CacheLumpName(namebuf, PU_STATIC);
-	}
-}
-
-void AM_unloadPics(void)
-{
-	int i;
-
-	for (i = 0; i < 10; i++)
-		Z_ChangeTag(marknums[i], PU_CACHE);
-}
-
-void AM_clearMarks(void)
-{
-	int i;
-
-	for (i = 0; i < AM_NUMMARKPOINTS; i++)
-		markpoints[i].x = -1; // means empty
-	markpointnum = 0;
-}
-
-//
 // should be called at the start of every level
 // right now, i figure it out myself
 //
 void AM_LevelInit(void)
 {
 	leveljuststarted = 0;
-
-	AM_clearMarks();
 
 	AM_findMinMaxBoundaries();
 	scale_mtof = FixedDiv(min_scale_mtof, (int)(0.7 * FRACUNIT));
@@ -449,7 +401,6 @@ void AM_Stop(void)
 {
 	static event_t st_notify = {0, ev_keyup, AM_MSGEXITED};
 
-	AM_unloadPics();
 	automapactive = 0;
 	ST_Responder(&st_notify);
 	stopped = 1;
@@ -472,7 +423,6 @@ void AM_Start(void)
 		lastepisode = gameepisode;
 	}
 	AM_initVariables();
-	AM_loadPics();
 }
 
 //
@@ -577,15 +527,6 @@ byte AM_Responder(event_t *ev)
 		case AM_GRIDKEY:
 			grid = !grid;
 			plr->message = grid ? AMSTR_GRIDON : AMSTR_GRIDOFF;
-			break;
-		case AM_MARKKEY:
-			sprintf(buffer, "%s %d", AMSTR_MARKEDSPOT, markpointnum);
-			plr->message = buffer;
-			AM_addMark();
-			break;
-		case AM_CLEARMARKKEY:
-			AM_clearMarks();
-			plr->message = AMSTR_MARKSCLEARED;
 			break;
 		default:
 			rc = 0;
@@ -1087,23 +1028,6 @@ void AM_drawThings(int colors,
 	}
 }
 
-void AM_drawMarks(void)
-{
-	int i;
-
-	for (i = 0; i < AM_NUMMARKPOINTS; i++)
-	{
-		if (markpoints[i].x != -1)
-		{
-			int fx, fy;
-			fx = CXMTOF(markpoints[i].x);
-			fy = CYMTOF(markpoints[i].y);
-            if (fx >= 0 && fx <= SCREENWIDTH - 5 && fy >= 0 && fy <= SCREENHEIGHT - 32 - 6)
-                V_DrawPatch(fx, fy, screen0, marknums[i]);
-		}
-	}
-}
-
 void AM_Drawer(void)
 {
 	if (!automapactive)
@@ -1116,8 +1040,6 @@ void AM_Drawer(void)
 	AM_drawPlayers();
 	if (cheating == 2)
 		AM_drawThings(THINGCOLORS, THINGRANGE);
-
-	AM_drawMarks();
 
 	V_MarkRect(0, 0, SCREENWIDTH, SCREENHEIGHT - 32);
 }
