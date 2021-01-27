@@ -142,6 +142,7 @@ extern int viewwindowy;
 extern int viewheight;
 extern int viewwidth;
 extern int viewwidthlimit;
+extern int automapheight;
 extern int scaledviewwidth;
 
 // -------------------------------------

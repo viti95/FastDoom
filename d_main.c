@@ -242,11 +242,11 @@ void D_Display(void)
             R_RenderPlayerView(&players);
             AM_Drawer();
         }
-        if (wipe || (viewheight != 200 && fullscreen))
-            redrawsbar = true;
-        if (inhelpscreensstate && !inhelpscreens)
+        if (wipe || (viewheight != 200 && fullscreen) || (inhelpscreensstate && !inhelpscreens))
             redrawsbar = true; // just put away the help screen
-        ST_Drawer(viewheight == 200, redrawsbar);
+        if (!automapactive || (automapactive && !fullscreen))
+            ST_Drawer(viewheight == 200, redrawsbar);
+            
         fullscreen = viewheight == 200;
         break;
 

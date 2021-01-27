@@ -58,6 +58,8 @@ int viewwindowx;
 int viewwindowy;
 int columnofs[MAXWIDTH];
 
+int automapheight;
+
 // Color tables for different players,
 //  translate a limited part to another
 //  (color ramps used for  suit colors).

@@ -692,11 +692,13 @@ void R_ExecuteSetViewSize(void)
     {
         scaledviewwidth = SCREENWIDTH;
         viewheight = SCREENHEIGHT;
+        automapheight = SCREENHEIGHT;
     }
     else
     {
         scaledviewwidth = setblocks * 32;
         viewheight = (setblocks * 168 / 10) & ~7;
+        automapheight = SCREENHEIGHT - 32;
     }
 
     if (forcePotatoDetail || forceLowDetail || forceHighDetail)

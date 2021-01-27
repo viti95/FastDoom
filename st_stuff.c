@@ -113,8 +113,6 @@
 
 #define ST_MUCHPAIN 20
 
-#define ST_BACKGROUND_COLOR 100
-
 // Location and size of statistics,
 //  justified according to widget type.
 // Problem is, within which space? STbar? Screen?

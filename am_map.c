@@ -39,6 +39,8 @@
 
 #include "am_map.h"
 
+#include "doomstat.h"
+
 // For use if I do walls with outsides/insides
 #define REDS (256 - 5 * 16)
 #define REDRANGE 16
@@ -111,7 +113,7 @@
 #define MTOF(x) (FixedMul((x), scale_mtof) >> 16)
 // translates between frame-buffer and map coordinates
 #define CXMTOF(x) (MTOF((x)-m_x))
-#define CYMTOF(y) ((SCREENHEIGHT - 32 - MTOF((y)-m_y)))
+#define CYMTOF(y) ((automapheight - MTOF((y)-m_y)))
 
 // the following is crap
 #define LINE_NEVERSEE ML_DONTDRAW
@@ -239,7 +241,7 @@ void AM_activateNewScale(void)
 	m_x += m_w / 2;
 	m_y += m_h / 2;
 	m_w = FTOM(SCREENWIDTH);
-	m_h = FTOM(SCREENHEIGHT - 32);
+	m_h = FTOM(automapheight);
 	m_x -= m_w / 2;
 	m_y -= m_h / 2;
 	m_x2 = m_x + m_w;
@@ -313,7 +315,7 @@ void AM_findMinMaxBoundaries(void)
 	max_h = max_y - min_y;
 
 	a = FixedDiv(SCREENWIDTH << FRACBITS, max_w);
-	b = FixedDiv((SCREENHEIGHT - 32) << FRACBITS, max_h);
+	b = FixedDiv((automapheight) << FRACBITS, max_h);
 
 	min_scale_mtof = a < b ? a : b;
 }
@@ -362,7 +364,7 @@ void AM_initVariables(void)
 	mtof_zoommul = FRACUNIT;
 
 	m_w = FTOM(SCREENWIDTH);
-	m_h = FTOM(SCREENHEIGHT - 32);
+	m_h = FTOM(automapheight);
 
 	plr = &players;
 	m_x = plr->mo->x - m_w / 2;
@@ -658,7 +660,7 @@ byte AM_clipMline(mline_t *ml, fline_t *fl)
 	(oc) = 0;                 \
 	if ((my) < 0)             \
 		(oc) |= TOP;          \
-	else if ((my) >= (SCREENHEIGHT - 32))     \
+	else if ((my) >= (automapheight))     \
 		(oc) |= BOTTOM;       \
 	if ((mx) < 0)             \
 		(oc) |= LEFT;         \
@@ -725,8 +727,8 @@ byte AM_clipMline(mline_t *ml, fline_t *fl)
 		{
 			dy = fl->a.y - fl->b.y;
 			dx = fl->b.x - fl->a.x;
-			tmp.x = fl->a.x + (dx * (fl->a.y - (SCREENHEIGHT - 32))) / dy;
-			tmp.y = SCREENHEIGHT - 32 - 1;
+			tmp.x = fl->a.x + (dx * (fl->a.y - (automapheight))) / dy;
+			tmp.y = automapheight - 1;
 		}
 		else if (outside & RIGHT)
 		{
@@ -1033,7 +1035,7 @@ void AM_Drawer(void)
 	if (!automapactive)
 		return;
 
-	SetDWords(screen0, BACKGROUND, (SCREENWIDTH * (SCREENHEIGHT - 32)) / 4); // Clear automap frame buffer
+	SetDWords(screen0, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
 	if (grid)
 		AM_drawGrid(GRIDCOLORS);
 	AM_drawWalls();
@@ -1041,5 +1043,5 @@ void AM_Drawer(void)
 	if (cheating == 2)
 		AM_drawThings(THINGCOLORS, THINGRANGE);
 
-	V_MarkRect(0, 0, SCREENWIDTH, SCREENHEIGHT - 32);
+	V_MarkRect(0, 0, SCREENWIDTH, automapheight);
 }
