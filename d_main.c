@@ -208,8 +208,6 @@ void D_Display(void)
     boolean wipe;
     boolean redrawsbar;
 
-    redrawsbar = false;
-
     // change the view size if needed
     if (setsizeneeded)
     {
@@ -242,11 +240,12 @@ void D_Display(void)
             R_RenderPlayerView(&players);
             AM_Drawer();
         }
-        if (wipe || (viewheight != 200 && fullscreen) || (inhelpscreensstate && !inhelpscreens))
-            redrawsbar = true; // just put away the help screen
+
+        redrawsbar = wipe || (viewheight != 200 && fullscreen) || (inhelpscreensstate && !inhelpscreens); // just put away the help screen
+
         if (!automapactive || (automapactive && !fullscreen))
             ST_Drawer(viewheight == 200, redrawsbar);
-            
+
         fullscreen = viewheight == 200;
         break;
 
