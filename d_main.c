@@ -241,10 +241,10 @@ void D_Display(void)
             AM_Drawer();
         }
 
-        redrawsbar = wipe || (viewheight != 200 && fullscreen) || (inhelpscreensstate && !inhelpscreens); // just put away the help screen
-
-        if (!automapactive || (automapactive && !fullscreen))
+        if (!automapactive || (automapactive && !fullscreen)){
+            redrawsbar = wipe || (viewheight != 200 && fullscreen) || (inhelpscreensstate && !inhelpscreens); // just put away the help screen
             ST_Drawer(viewheight == 200, redrawsbar);
+        }
 
         fullscreen = viewheight == 200;
         break;
@@ -266,11 +266,13 @@ void D_Display(void)
     I_UpdateNoBlit();
 
     // draw the view directly
-    if (gamestate == GS_LEVEL && !automapactive && gametic)
-        R_RenderPlayerView(&players);
 
-    if (gamestate == GS_LEVEL && gametic)
+    if (gamestate == GS_LEVEL && gametic){
+        if (!automapactive)
+            R_RenderPlayerView(&players);
+
         HU_Drawer();
+    }
 
     // clean up border stuff
     if (gamestate != oldgamestate && gamestate != GS_LEVEL)
