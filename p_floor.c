@@ -344,21 +344,14 @@ int EV_DoFloor(line_t *line,
 				if (twoSided(secnum, i))
 				{
 					side = getSide(secnum, i, 0);
-					if (side->bottomtexture >= 0)
-						if (textureheight[side->bottomtexture] <
-							minsize)
-							minsize =
-								textureheight[side->bottomtexture];
+					if (side->bottomtexture >= 0 && textureheight[side->bottomtexture] < minsize)
+						minsize = textureheight[side->bottomtexture];
 					side = getSide(secnum, i, 1);
-					if (side->bottomtexture >= 0)
-						if (textureheight[side->bottomtexture] <
-							minsize)
-							minsize =
-								textureheight[side->bottomtexture];
+					if (side->bottomtexture >= 0 && textureheight[side->bottomtexture] < minsize)
+						minsize = textureheight[side->bottomtexture];
 				}
 			}
-			floor->floordestheight =
-				floor->sector->floorheight + minsize;
+			floor->floordestheight = floor->sector->floorheight + minsize;
 		}
 		break;
 

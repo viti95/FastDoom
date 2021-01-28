@@ -207,8 +207,8 @@ static fixed_t max_h; // max_y-min_y
 
 // based on player size
 
-static fixed_t min_scale_mtof; // used to tell when to stop zooming out 
-#define MAXSCALEMTOF 344064 // used to tell when to stop zooming in
+static fixed_t min_scale_mtof; // used to tell when to stop zooming out
+#define MAXSCALEMTOF 344064	   // used to tell when to stop zooming in
 
 // old stuff for recovery later
 static fixed_t old_m_w, old_m_h;
@@ -457,17 +457,12 @@ byte AM_Responder(event_t *ev)
 	static byte bigstate = 0;
 	static char buffer[20];
 
-
-	if (!automapactive)
+	if (!automapactive && ev->type == ev_keydown && ev->data1 == AM_STARTKEY)
 	{
-		if (ev->type == ev_keydown && ev->data1 == AM_STARTKEY)
-		{
-			AM_Start();
-			viewactive = 0;
-			rc = 1;
-		}
+		AM_Start();
+		viewactive = 0;
+		rc = 1;
 	}
-
 	else if (ev->type == ev_keydown)
 	{
 
@@ -538,10 +533,10 @@ byte AM_Responder(event_t *ev)
 			rc = 0;
 
 			cheating++;
-			if (cheating == 3) cheating = 0;
+			if (cheating == 3)
+				cheating = 0;
 		}
 	}
-
 	else if (ev->type == ev_keyup)
 	{
 		rc = 0;
@@ -628,7 +623,6 @@ void AM_Ticker(void)
 	// Change x,y location
 	if (m_paninc.x || m_paninc.y)
 		AM_changeWindowLoc();
-
 }
 
 //
@@ -656,14 +650,14 @@ byte AM_clipMline(mline_t *ml, fline_t *fl)
 	int dx;
 	int dy;
 
-#define DOOUTCODE(oc, mx, my) \
-	(oc) = 0;                 \
-	if ((my) < 0)             \
-		(oc) |= TOP;          \
-	else if ((my) >= (automapheight))     \
-		(oc) |= BOTTOM;       \
-	if ((mx) < 0)             \
-		(oc) |= LEFT;         \
+#define DOOUTCODE(oc, mx, my)         \
+	(oc) = 0;                         \
+	if ((my) < 0)                     \
+		(oc) |= TOP;                  \
+	else if ((my) >= (automapheight)) \
+		(oc) |= BOTTOM;               \
+	if ((mx) < 0)                     \
+		(oc) |= LEFT;                 \
 	else if ((mx) >= SCREENWIDTH)     \
 		(oc) |= RIGHT;
 
@@ -1009,7 +1003,7 @@ void AM_drawLineCharacter(mline_t *lineguy,
 
 void AM_drawPlayers(void)
 {
-	AM_drawLineCharacter(player_arrow, NUMPLYRLINES, 0, plr->mo->angle,	WHITE, plr->mo->x, plr->mo->y);
+	AM_drawLineCharacter(player_arrow, NUMPLYRLINES, 0, plr->mo->angle, WHITE, plr->mo->x, plr->mo->y);
 }
 
 void AM_drawThings(int colors,

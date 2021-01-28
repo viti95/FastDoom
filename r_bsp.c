@@ -347,8 +347,6 @@ byte R_CheckBBox(fixed_t *bspcoord)
     boxy = viewy >= bspcoord[BOXTOP] ? 0 : viewy > bspcoord[BOXBOTTOM] ? 1 : 2;
 
     boxpos = (boxy << 2) + boxx;
-    if (boxpos == 5)
-        return 1;
 
     switch (boxpos)
     {
@@ -378,6 +376,8 @@ byte R_CheckBBox(fixed_t *bspcoord)
         y1 = bspcoord[BOXTOP];
         y2 = bspcoord[BOXBOTTOM];
         break;
+    case 5:
+        return 1;
     case 6:
         x1 = x2 = bspcoord[BOXRIGHT];
         y1 = bspcoord[BOXBOTTOM];

@@ -109,30 +109,36 @@ void R_MapPlane(int y, int x1)
     ds_x1 = x1;
     ds_y = y;
 
-    if (planeheight != cachedheight[y])
+    if (untexturedSurfaces)
     {
-        cachedheight[y] = planeheight;
-        distance = cacheddistance[y] = FixedMul(planeheight, yslope[y]);
-        if (!untexturedSurfaces)
+        if (planeheight != cachedheight[y])
         {
-            ds_xstep = cachedxstep[y] = FixedMul(distance, basexscale);
-            ds_ystep = cachedystep[y] = FixedMul(distance, baseyscale);
+            cachedheight[y] = planeheight;
+            distance = cacheddistance[y] = FixedMul(planeheight, yslope[y]);
+        }
+        else
+        {
+            distance = cacheddistance[y];
         }
     }
     else
     {
-        distance = cacheddistance[y];
-        if (!untexturedSurfaces)
+        if (planeheight != cachedheight[y])
         {
+            cachedheight[y] = planeheight;
+            distance = cacheddistance[y] = FixedMul(planeheight, yslope[y]);
+            ds_xstep = cachedxstep[y] = FixedMul(distance, basexscale);
+            ds_ystep = cachedystep[y] = FixedMul(distance, baseyscale);
+        }
+        else
+        {
+            distance = cacheddistance[y];
             ds_xstep = cachedxstep[y];
             ds_ystep = cachedystep[y];
         }
-    }
 
-    if (!untexturedSurfaces)
-    {
-        length = FixedMul(distance, distscale[x1]);
         angle = (viewangle + xtoviewangle[x1]) >> ANGLETOFINESHIFT;
+        length = FixedMul(distance, distscale[x1]);
         ds_xfrac = viewx + FixedMul(finecosine[angle], length);
         ds_yfrac = -viewy - FixedMul(finesine[angle], length);
     }
@@ -323,10 +329,7 @@ void R_DrawPlanes(void)
 
     for (pl = visplanes; pl < lastvisplane; pl++)
     {
-        if (!pl->modified)
-            continue;
-
-        if (pl->minx > pl->maxx)
+        if (!pl->modified || pl->minx > pl->maxx)
             continue;
 
         // sky flat
@@ -416,10 +419,7 @@ void R_DrawPlanesFlatSurfaces(void)
 
     for (pl = visplanes; pl < lastvisplane; pl++)
     {
-        if (!pl->modified)
-            continue;
-
-        if (pl->minx > pl->maxx)
+        if (!pl->modified || pl->minx > pl->maxx)
             continue;
 
         // sky flat
@@ -616,10 +616,7 @@ void R_DrawPlanesFlatSurfacesLow(void)
 
     for (pl = visplanes; pl < lastvisplane; pl++)
     {
-        if (!pl->modified)
-            continue;
-
-        if (pl->minx > pl->maxx)
+        if (!pl->modified || pl->minx > pl->maxx)
             continue;
 
         // sky flat
@@ -730,10 +727,7 @@ void R_DrawPlanesFlatSurfacesPotato(void)
 
     for (pl = visplanes; pl < lastvisplane; pl++)
     {
-        if (!pl->modified)
-            continue;
-
-        if (pl->minx > pl->maxx)
+        if (!pl->modified || pl->minx > pl->maxx)
             continue;
 
         // sky flat

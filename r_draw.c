@@ -640,9 +640,7 @@ void R_DrawSpanFlat(void)
         *dest = color;
         dest = (byte *)origin_y + dsp_x2;
         *dest = color;
-    }
-
-    if (dsp_x2 == dsp_x1)
+    }else if (dsp_x2 == dsp_x1)
     {
         outp(SC_INDEX + 1, 1 << 0);
         dest = (byte *)origin_y + dsp_x1;
@@ -661,9 +659,7 @@ void R_DrawSpanFlat(void)
         *dest = color;
         dest = (byte *)origin_y + dsp_x2;
         *dest = color;
-    }
-
-    if (dsp_x2 == dsp_x1)
+    } else if (dsp_x2 == dsp_x1)
     {
         outp(SC_INDEX + 1, 1 << 1);
         dest = (byte *)origin_y + dsp_x1;
@@ -682,9 +678,7 @@ void R_DrawSpanFlat(void)
         *dest = color;
         dest = (byte *)origin_y + dsp_x2;
         *dest = color;
-    }
-
-    if (dsp_x2 == dsp_x1)
+    } else if (dsp_x2 == dsp_x1)
     {
         outp(SC_INDEX + 1, 1 << 2);
         dest = (byte *)origin_y + dsp_x1;
@@ -703,9 +697,7 @@ void R_DrawSpanFlat(void)
         *dest = color;
         dest = (byte *)origin_y + dsp_x2;
         *dest = color;
-    }
-
-    if (dsp_x2 == dsp_x1)
+    } else if (dsp_x2 == dsp_x1)
     {
         outp(SC_INDEX + 1, 1 << 3);
         dest = (byte *)origin_y + dsp_x1;
@@ -756,7 +748,7 @@ void R_DrawSpanFlatLow(void)
     }
 
     dsp_x1 = (ds_x1) / 2;
-    dsp_x1 += dsp_x1 * 2 < ds_x1; 
+    dsp_x1 += dsp_x1 * 2 < ds_x1;
 
     dsp_x2 = (ds_x2) / 2;
 
@@ -767,9 +759,7 @@ void R_DrawSpanFlatLow(void)
         *dest = color;
         dest = (byte *)origin_y + dsp_x2;
         *dest = color;
-    }
-
-    if (dsp_x2 == dsp_x1)
+    }else if (dsp_x2 == dsp_x1)
     {
         outp(SC_INDEX + 1, 3 << 0);
         dest = (byte *)origin_y + dsp_x1;
@@ -789,8 +779,7 @@ void R_DrawSpanFlatLow(void)
         dest = (byte *)origin_y + dsp_x2;
         *dest = color;
     }
-
-    if (dsp_x2 == dsp_x1)
+    else if (dsp_x2 == dsp_x1)
     {
         outp(SC_INDEX + 1, 3 << 2);
         dest = (byte *)origin_y + dsp_x1;
@@ -873,7 +862,7 @@ void R_FillBackScreen(void)
         name = name1;
 
     src = W_CacheLumpName(name, PU_CACHE);
-    
+
     screen1 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
     dest = screen1;
 

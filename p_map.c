@@ -71,11 +71,7 @@ byte PIT_StompThing(mobj_t *thing)
 {
     fixed_t blockdist;
 
-    if (!(thing->flags & MF_SHOOTABLE))
-        return 1;
-
-    // don't clip against self
-    if (thing == tmthing)
+    if (!(thing->flags & MF_SHOOTABLE) || thing == tmthing)
         return 1;
 
     blockdist = thing->radius + tmthing->radius;
@@ -169,10 +165,7 @@ byte P_TeleportMove(mobj_t *thing, fixed_t x, fixed_t y)
 //
 byte PIT_CheckLine(line_t *ld)
 {
-    if (tmbbox[BOXRIGHT] <= ld->bbox[BOXLEFT] || tmbbox[BOXLEFT] >= ld->bbox[BOXRIGHT] || tmbbox[BOXTOP] <= ld->bbox[BOXBOTTOM] || tmbbox[BOXBOTTOM] >= ld->bbox[BOXTOP])
-        return 1;
-
-    if (P_BoxOnLineSide(tmbbox, ld) != 2)
+    if (tmbbox[BOXRIGHT] <= ld->bbox[BOXLEFT] || tmbbox[BOXLEFT] >= ld->bbox[BOXRIGHT] || tmbbox[BOXTOP] <= ld->bbox[BOXBOTTOM] || tmbbox[BOXBOTTOM] >= ld->bbox[BOXTOP] || P_BoxOnLineSide(tmbbox, ld) != 2)
         return 1;
 
     // A line has been hit
@@ -186,17 +179,8 @@ byte PIT_CheckLine(line_t *ld)
     // so two special lines that are only 8 pixels apart
     // could be crossed in either order.
 
-    if (!ld->backsector)
-        return 0; // one sided line
-
-    if (!(tmthing->flags & MF_MISSILE))
-    {
-        if (ld->flags & ML_BLOCKING)
-            return 0; // explicitly blocking everything
-
-        if (!tmthing->player && ld->flags & ML_BLOCKMONSTERS)
-            return 0; // block monsters only
-    }
+    if (!ld->backsector || (!(tmthing->flags & MF_MISSILE) && (ld->flags & ML_BLOCKING || (!tmthing->player && ld->flags & ML_BLOCKMONSTERS))))
+        return 0; // one sided line, explicitly blocking everything, block monsters only
 
     // set openrange, opentop, openbottom
     P_LineOpening(ld);
@@ -238,15 +222,11 @@ byte PIT_CheckThing(mobj_t *thing)
 
     blockdist = thing->radius + tmthing->radius;
 
-    if (abs(thing->x - tmx) >= blockdist || abs(thing->y - tmy) >= blockdist)
+    if (abs(thing->x - tmx) >= blockdist || abs(thing->y - tmy) >= blockdist || thing == tmthing)
     {
-        // didn't hit it
+        // didn't hit it, don't clip against self
         return 1;
     }
-
-    // don't clip against self
-    if (thing == tmthing)
-        return 1;
 
     // check for skulls slamming into things
     if (tmthing->flags & MF_SKULLFLY)
@@ -267,10 +247,8 @@ byte PIT_CheckThing(mobj_t *thing)
     if (tmthing->flags & MF_MISSILE)
     {
         // see if it went over / under
-        if (tmthing->z > thing->z + thing->height)
-            return 1; // overhead
-        if (tmthing->z + tmthing->height < thing->z)
-            return 1; // underneath
+        if (tmthing->z > thing->z + thing->height || tmthing->z + tmthing->height < thing->z)
+            return 1; // overhead, underneath
 
         if (tmthing->target && (tmthing->target->type == thing->type ||
                                 (tmthing->target->type == MT_KNIGHT && thing->type == MT_BRUISER) ||
@@ -603,14 +581,8 @@ byte PTR_SlideTraverse(intercept_t *in)
     // set openrange, opentop, openbottom
     P_LineOpening(li);
 
-    if (openrange < slidemo->height)
-        goto isblocking; // doesn't fit
-
-    if (opentop - slidemo->z < slidemo->height)
-        goto isblocking; // mobj is too high
-
-    if (openbottom - slidemo->z > 24 * FRACUNIT)
-        goto isblocking; // too big a step up
+    if (openrange < slidemo->height || opentop - slidemo->z < slidemo->height || openbottom - slidemo->z > 24 * FRACUNIT)
+        goto isblocking; // doesn't fit, mobj is too high, too big a step up
 
     // this line doesn't block movement
     return 1;

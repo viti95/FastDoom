@@ -180,22 +180,8 @@ void P_XYMovement(mobj_t *mo)
         }
     } while (xmove || ymove);
 
-    if (mo->flags & (MF_MISSILE | MF_SKULLFLY))
-        return; // no friction for missiles ever
-
-    if (mo->z > mo->floorz)
-        return; // no friction when airborne
-
-    if (mo->flags & MF_CORPSE)
-    {
-        // do not stop sliding
-        //  if halfway off a step with some momentum
-        if (mo->momx > FRACUNIT / 4 || mo->momx < -FRACUNIT / 4 || mo->momy > FRACUNIT / 4 || mo->momy < -FRACUNIT / 4)
-        {
-            if (mo->floorz != mo->subsector->sector->floorheight)
-                return;
-        }
-    }
+    if (((mo->flags & (MF_MISSILE | MF_SKULLFLY)) || mo->z > mo->floorz) || ((mo->flags & MF_CORPSE) && ((mo->momx > FRACUNIT / 4 || mo->momx < -FRACUNIT / 4 || mo->momy > FRACUNIT / 4 || mo->momy < -FRACUNIT / 4) && mo->floorz != mo->subsector->sector->floorheight)))
+        return; // no friction for missiles ever, no friction when airborne, do not stop sliding if halfway off a step with some momentum
 
     if (mo->momx > -STOPSPEED && mo->momx < STOPSPEED && mo->momy > -STOPSPEED && mo->momy < STOPSPEED && (!player || (player->cmd.forwardmove == 0 && player->cmd.sidemove == 0)))
     {
@@ -228,7 +214,6 @@ void P_ZMovement(mobj_t *mo)
     if (mo->player && mo->z < mo->floorz)
     {
         mo->player->viewheight -= mo->floorz - mo->z;
-
         mo->player->deltaviewheight = (VIEWHEIGHT - mo->player->viewheight) >> 3;
     }
 
@@ -418,28 +403,18 @@ void P_MobjThinker(mobj_t *mobj)
         mobj->tics--;
 
         // you can cycle through multiple states in a tic
-        if (!mobj->tics)
-            if (!P_SetMobjState(mobj, mobj->state->nextstate))
-                return; // freed itself
+        if (!mobj->tics && !P_SetMobjState(mobj, mobj->state->nextstate))
+            return; // freed itself
     }
     else
     {
         // check for nightmare respawn
-        if (!(mobj->flags & MF_COUNTKILL))
-            return;
-
-        if (!respawnmonsters)
+        if (!(mobj->flags & MF_COUNTKILL) || !respawnmonsters)
             return;
 
         mobj->movecount++;
 
-        if (mobj->movecount < 12 * 35)
-            return;
-
-        if (leveltime & 31)
-            return;
-
-        if (P_Random > 4)
+        if (mobj->movecount < 12 * 35 || (leveltime & 31) || P_Random > 4)
             return;
 
         P_NightmareRespawn(mobj);

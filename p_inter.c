@@ -60,10 +60,7 @@ byte P_GiveAmmo(player_t *player, ammotype_t ammo, int num)
 	const int clipammo[NUMAMMO] = {10, 4, 20, 1};
 	int oldammo;
 
-	if (ammo == am_noammo)
-		return 0;
-
-	if (player->ammo[ammo] == player->maxammo[ammo])
+	if (ammo == am_noammo || player->ammo[ammo] == player->maxammo[ammo])
 		return 0;
 
 	if (num)
@@ -102,26 +99,23 @@ byte P_GiveAmmo(player_t *player, ammotype_t ammo, int num)
 		break;
 
 	case am_shell:
-		if (player->readyweapon == wp_fist || player->readyweapon == wp_pistol)
+		if ((player->readyweapon == wp_fist || player->readyweapon == wp_pistol) && player->weaponowned[wp_shotgun])
 		{
-			if (player->weaponowned[wp_shotgun])
-				player->pendingweapon = wp_shotgun;
+			player->pendingweapon = wp_shotgun;
 		}
 		break;
 
 	case am_cell:
-		if (player->readyweapon == wp_fist || player->readyweapon == wp_pistol)
+		if ((player->readyweapon == wp_fist || player->readyweapon == wp_pistol) && player->weaponowned[wp_plasma])
 		{
-			if (player->weaponowned[wp_plasma])
-				player->pendingweapon = wp_plasma;
+			player->pendingweapon = wp_plasma;
 		}
 		break;
 
 	case am_misl:
-		if (player->readyweapon == wp_fist)
+		if (player->readyweapon == wp_fist && player->weaponowned[wp_missile])
 		{
-			if (player->weaponowned[wp_missile])
-				player->pendingweapon = wp_missile;
+			player->pendingweapon = wp_missile;
 		}
 	default:
 		break;
@@ -216,33 +210,22 @@ void P_GiveCard(player_t *player, card_t card)
 //
 byte P_GivePower(player_t *player, int power)
 {
-	if (power == pw_invulnerability)
+	switch (power)
 	{
+	case pw_invulnerability:
 		player->powers[power] = INVULNTICS;
 		return 1;
-	}
-
-	if (power == pw_invisibility)
-	{
+	case pw_invisibility:
 		player->powers[power] = INVISTICS;
 		player->mo->flags |= MF_SHADOW;
 		return 1;
-	}
-
-	if (power == pw_infrared)
-	{
+	case pw_infrared:
 		player->powers[power] = INFRATICS;
 		return 1;
-	}
-
-	if (power == pw_ironfeet)
-	{
+	case pw_ironfeet:
 		player->powers[power] = IRONTICS;
 		return 1;
-	}
-
-	if (power == pw_strength)
-	{
+	case pw_strength:
 		P_GiveBody(player, 100);
 		player->powers[power] = 1;
 		return 1;
@@ -667,11 +650,8 @@ void P_DamageMobj(mobj_t *target,
 	fixed_t thrust;
 	int temp;
 
-	if (!(target->flags & MF_SHOOTABLE))
+	if (!(target->flags & MF_SHOOTABLE) || target->health <= 0)
 		return; // shouldn't happen...
-
-	if (target->health <= 0)
-		return;
 
 	if (target->flags & MF_SKULLFLY)
 	{

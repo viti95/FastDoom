@@ -181,10 +181,9 @@ byte P_CheckMissileRange(mobj_t *actor)
 
     dist >>= 16;
 
-    if (actor->type == MT_VILE)
+    if (actor->type == MT_VILE && dist > 14 * 64)
     {
-        if (dist > 14 * 64)
-            return 0; // too far away
+        return 0; // too far away
     }
 
     if (actor->type == MT_UNDEAD)
@@ -229,47 +228,46 @@ byte P_Move(mobj_t *actor)
 
     fixed_t optSpeed;
 
-    if (actor->movedir == DI_NODIR)
-        return 0;
-
     switch (actor->movedir)
     {
-    case 0:
+    case DI_EAST:
         tryx = actor->x + actor->info->speed * FRACUNIT;
         tryy = actor->y;
         break;
-    case 1:
+    case DI_NORTHEAST:
         optSpeed = Mul47000(actor->info->speed);
         tryx = actor->x + optSpeed;
         tryy = actor->y + optSpeed;
         break;
-    case 2:
+    case DI_NORTH:
         tryx = actor->x;
         tryy = actor->y + actor->info->speed * FRACUNIT;
         break;
-    case 3:
+    case DI_NORTHWEST:
         optSpeed = Mul47000(actor->info->speed);
         tryx = actor->x - optSpeed;
         tryy = actor->y + optSpeed;
         break;
-    case 4:
+    case DI_WEST:
         tryx = actor->x - actor->info->speed * FRACUNIT;
         tryy = actor->y;
         break;
-    case 5:
+    case DI_SOUTHWEST:
         optSpeed = Mul47000(actor->info->speed);
         tryx = actor->x - optSpeed;
         tryy = actor->y - optSpeed;
         break;
-    case 6:
+    case DI_SOUTH:
         tryx = actor->x;
         tryy = actor->y - actor->info->speed * FRACUNIT;
         break;
-    case 7:
+    case DI_SOUTHEAST:
         optSpeed = Mul47000(actor->info->speed);
         tryx = actor->x + optSpeed;
         tryy = actor->y - optSpeed;
         break;
+    case DI_NODIR:
+        return 0;
     }
 
     try_ok = P_TryMove(actor, tryx, tryy);
@@ -397,8 +395,6 @@ void P_NewChaseDir(mobj_t *actor)
 
     if (d[1] == turnaround)
         d[1] = DI_NODIR;
-    if (d[2] == turnaround)
-        d[2] = DI_NODIR;
 
     if (d[1] != DI_NODIR)
     {
@@ -410,6 +406,9 @@ void P_NewChaseDir(mobj_t *actor)
         }
     }
 
+    if (d[2] == turnaround)
+        d[2] = DI_NODIR;
+        
     if (d[2] != DI_NODIR)
     {
         actor->movedir = d[2];
@@ -480,11 +479,8 @@ byte P_LookForPlayers(mobj_t *actor)
 
     player = &players;
 
-    if (player->health <= 0)
-        return 1; // dead
-
-    if (!P_CheckSight(actor, player->mo))
-        return 1; // out of sight
+    if (player->health <= 0 || !P_CheckSight(actor, player->mo))
+        return 1; // dead, out of sight
 
     an = R_PointToAngle2(actor->x, actor->y, player->mo->x, player->mo->y) - actor->angle;
 
@@ -510,11 +506,8 @@ byte P_LookForPlayersAllAround(mobj_t *actor)
 
     player = &players;
 
-    if (player->health <= 0)
-        return 0; // dead
-
-    if (!P_CheckSight(actor, player->mo))
-        return 0; // out of sight
+    if (player->health <= 0 || !P_CheckSight(actor, player->mo))
+        return 0; // dead, out of sight
 
     actor->target = player->mo;
     return 1;
@@ -691,9 +684,7 @@ void A_Chase(mobj_t *actor)
     if (actor->info->missilestate)
     {
         if (gameskill < sk_nightmare && !fastparm && actor->movecount)
-        {
             goto nomissile;
-        }
 
         if (!P_CheckMissileRange(actor))
             goto nomissile;
@@ -815,9 +806,7 @@ void A_CPosRefire(mobj_t *actor)
         return;
 
     if (!actor->target || actor->target->health <= 0 || !P_CheckSight(actor, actor->target))
-    {
         P_SetMobjState(actor, actor->info->seestate);
-    }
 }
 
 void A_SpidRefire(mobj_t *actor)
@@ -1068,14 +1057,8 @@ byte PIT_VileCheck(mobj_t *thing)
     int maxdist;
     byte check;
 
-    if (!(thing->flags & MF_CORPSE))
-        return 1; // not a monster
-
-    if (thing->tics != -1)
-        return 1; // not lying still yet
-
-    if (thing->info->raisestate == S_NULL)
-        return 1; // monster doesn't have a raise state
+    if (!(thing->flags & MF_CORPSE) || thing->tics != -1 || thing->info->raisestate == S_NULL)
+        return 1; // not a monster, not lying still yet, monster doesn't have a raise state
 
     maxdist = thing->info->radius + mobjinfo[MT_VILE].radius;
 

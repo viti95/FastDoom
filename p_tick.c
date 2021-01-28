@@ -62,14 +62,14 @@ void P_RunThinkers(void)
             currentthinker = currentthinker->next;
             continue;
         }
-        
-        if (currentthinker->function.acp1 == 0 || currentthinker->function.acp1 == (actionf_p1)P_MobjTicklessThinker){
+        else if (currentthinker->function.acp1 == 0 || currentthinker->function.acp1 == (actionf_p1)P_MobjTicklessThinker)
+        {
             currentthinker = currentthinker->next;
             continue;
         }
 
         currentthinker->function.acp1(currentthinker);
-        
+
         currentthinker = currentthinker->next;
     }
 }
@@ -82,15 +82,9 @@ void P_Ticker(void)
 {
     int i;
 
-    // run the tic
-    if (paused)
+    // run the tic, pause if in menu and at least one tic has been run
+    if (paused || (menuactive && !demoplayback && players.viewz != 1))
         return;
-
-    // pause if in menu and at least one tic has been run
-    if (menuactive && !demoplayback && players.viewz != 1)
-    {
-        return;
-    }
 
     P_PlayerThink(&players);
 

@@ -509,7 +509,6 @@ void R_ProjectSprite(mobj_t *thing)
         // full bright
         vis->colormap = colormaps;
     }
-
     else
     {
         // diminished light

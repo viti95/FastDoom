@@ -86,7 +86,7 @@ byte P_PointOnLineSide(fixed_t x, fixed_t y, line_t *line)
 // Returns side 0 or 1, 2 if box crosses the line.
 //
 byte P_BoxOnLineSide(fixed_t *tmbox,
-                    line_t *ld)
+                     line_t *ld)
 {
     byte p1;
     byte p2;
@@ -132,8 +132,8 @@ byte P_BoxOnLineSide(fixed_t *tmbox,
 // Returns 0 or 1.
 //
 byte P_PointOnDivlineSide(fixed_t x,
-                         fixed_t y,
-                         divline_t *line)
+                          fixed_t y,
+                          divline_t *line)
 {
     fixed_t dx;
     fixed_t dy;
@@ -569,11 +569,8 @@ void P_TraverseIntercepts(traverser_t func, fixed_t maxfrac)
             }
         }
 
-        if (dist > maxfrac)
-            return; // checked everything in range
-
-        if (!func(in))
-            return; // don't bother going farther
+        if (dist > maxfrac || !func(in))
+            return; // checked everything in range, don't bother going farther
 
         in->frac = MAXINT;
     }
@@ -700,16 +697,9 @@ void P_PathTraverse(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2, int flags, b
 
     for (count = 0; count < 64; count++)
     {
-        if (flags & PT_ADDLINES)
+        if (((flags & PT_ADDLINES) && !P_BlockLinesIterator(mapx, mapy, PIT_AddLineIntercepts)) || (flags & PT_ADDTHINGS) && !P_BlockThingsIterator(mapx, mapy, PIT_AddThingIntercepts))
         {
-            if (!P_BlockLinesIterator(mapx, mapy, PIT_AddLineIntercepts))
-                return; // early out
-        }
-
-        if (flags & PT_ADDTHINGS)
-        {
-            if (!P_BlockThingsIterator(mapx, mapy, PIT_AddThingIntercepts))
-                return; // early out
+            return; // early out
         }
 
         if (mapx == xt2 && mapy == yt2)
