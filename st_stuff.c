@@ -280,9 +280,6 @@ static patch_t *keys[NUMCARDS];
 // face status patches
 static patch_t *faces[ST_NUMFACES];
 
-// face background
-static patch_t *faceback;
-
 // main bar right
 static patch_t *armsbg;
 
@@ -1015,10 +1012,6 @@ void ST_loadGraphics(void)
 		arms[i][1] = shortnum[i + 2];
 	}
 
-	// face backgrounds for different color players
-	sprintf(namebuf, "STFB%d", 0);
-	faceback = (patch_t *)W_CacheLumpName(namebuf, PU_STATIC);
-
 	// status bar background bits
 	sbar = (patch_t *)W_CacheLumpName("STBAR", PU_STATIC);
 
@@ -1077,7 +1070,6 @@ void ST_unloadGraphics(void)
 		Z_ChangeTag(keys[i], PU_CACHE);
 
 	Z_ChangeTag(sbar, PU_CACHE);
-	Z_ChangeTag(faceback, PU_CACHE);
 
 	for (i = 0; i < ST_NUMFACES; i++)
 		Z_ChangeTag(faces[i], PU_CACHE);
