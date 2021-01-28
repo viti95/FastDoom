@@ -1437,16 +1437,17 @@ void M_WriteText(int x,
 //
 // M_Responder
 //
+const char gammamsg[5][26] =
+    {
+        GAMMALVL0,
+        GAMMALVL1,
+        GAMMALVL2,
+        GAMMALVL3,
+        GAMMALVL4
+    };
+
 byte M_Responder(event_t *ev)
 {
-    const char gammamsg[5][26] =
-        {
-            GAMMALVL0,
-            GAMMALVL1,
-            GAMMALVL2,
-            GAMMALVL3,
-            GAMMALVL4};
-
     int ch;
     int i;
     static int lasty = 0;
