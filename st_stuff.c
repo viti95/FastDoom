@@ -641,8 +641,8 @@ void ST_updateFaceWidget(void)
 	byte doevilgrin;
 	int pos;
 
-	if (priority < 10)
-	{
+	//if (priority < 10)
+	//{
 		// dead
 		if (!plyr->health)
 		{
@@ -650,7 +650,7 @@ void ST_updateFaceWidget(void)
 			st_faceindex = ST_DEADFACE;
 			st_facecount = 1;
 		}
-	}
+	//}
 
 	if (priority < 9)
 	{

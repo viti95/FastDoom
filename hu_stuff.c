@@ -375,8 +375,6 @@ void HU_Ticker(void)
 
 byte HU_Responder(event_t *ev)
 {
-    byte eatkey = 0;
-
     if (ev->data1 == KEY_RSHIFT)
     {
         return 0;
@@ -393,8 +391,8 @@ byte HU_Responder(event_t *ev)
     {
         message_on = 1;
         message_counter = HU_MSGTIMEOUT;
-        eatkey = 1;
+        return 1;
     }
 
-    return eatkey;
+    return 0;
 }

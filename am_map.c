@@ -224,7 +224,7 @@ static fixed_t scale_ftom;
 
 static player_t *plr; // the player represented by an arrow
 
-static int followplayer = 1; // specifies whether to follow the player around
+static byte followplayer = 1; // specifies whether to follow the player around
 
 static unsigned char cheat_amap_seq[] = {'i', 'd', 'd', 't', 0xff};
 static cheatseq_t cheat_amap = {cheat_amap_seq, 0};
