@@ -912,14 +912,13 @@ void M_Episode(int choice)
 //
 // M_Options
 //
-char detailNames[3][9] = {"M_GDHIGH", "M_GDLOW", "M_MSGOFF"};
-char msgNames[2][9] = {"M_MSGOFF", "M_MSGON"};
+const char msgNames[2][9] = {"M_MSGOFF", "M_MSGON"};
 
 void M_DrawOptions(void)
 {
     V_DrawPatchDirect(108, 15, W_CacheLumpName("M_OPTTTL", PU_CACHE));
 
-    V_DrawPatchDirect(OptionsDef.x + 120, OptionsDef.y + LINEHEIGHT * messages, W_CacheLumpName(msgNames[showMessages], PU_CACHE));
+    V_DrawPatchDirect(OptionsDef.x + 120, OptionsDef.y + LINEHEIGHT * messages, W_CacheLumpName((char *)msgNames[showMessages], PU_CACHE));
 
     M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (mousesens + 1),
                  10, mouseSensitivity);
