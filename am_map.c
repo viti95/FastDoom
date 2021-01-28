@@ -457,13 +457,16 @@ byte AM_Responder(event_t *ev)
 	static byte bigstate = 0;
 	static char buffer[20];
 
-	if (!automapactive && ev->type == ev_keydown && ev->data1 == AM_STARTKEY)
+
+	if (!automapactive)
 	{
-		AM_Start();
-		viewactive = 0;
-		rc = 1;
-	}
-	else if (ev->type == ev_keydown)
+		if (ev->type == ev_keydown && ev->data1 == AM_STARTKEY)
+		{
+			AM_Start();
+			viewactive = 0;
+			rc = 1;
+		}
+	} else if (ev->type == ev_keydown)
 	{
 
 		rc = 1;
