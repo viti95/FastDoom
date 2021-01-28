@@ -247,7 +247,7 @@ int AL_Detect(int *port, int *unk)
 {
     return !AL_DetectFM();
 }
-void AL_SetCard(int port, void *data)
+void AL_SetCard(void *data)
 {
     unsigned char *cdata;
     unsigned char *tmb;

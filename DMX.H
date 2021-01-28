@@ -34,7 +34,7 @@ void GF1_SetMap(void *data, int len);
 int SB_Detect(int *port, int *irq, int *dma, int *unk);
 void SB_SetCard(int port, int irq, int dma);
 int AL_Detect(int *port, int *unk);
-void AL_SetCard(int port, void *data);
+void AL_SetCard(void *data);
 int MPU_Detect(int *port, int *unk);
 void MPU_SetCard(int port);
 void ASS_Init(int rate, int maxsng, int mdev, int sdev);

@@ -184,7 +184,9 @@ void I_sndArbitrateCards(void)
         }
         else
         {
-            AL_SetCard(wait, W_CacheLumpName("GENMIDI", PU_STATIC));
+            void *genmidi = W_CacheLumpName("GENMIDI", PU_STATIC);
+            AL_SetCard(genmidi);
+            Z_ChangeTag(genmidi, PU_CACHE);
         }
     }
 
