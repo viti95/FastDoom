@@ -95,7 +95,6 @@ boolean nearSprites;
 boolean monoSound;
 boolean lowSound;
 boolean eightBitSound;
-boolean waitInit;
 boolean noMelt;
 
 boolean reverseStereo;
@@ -716,8 +715,6 @@ void D_DoomMain(void)
     respawnparm = M_CheckParm("-respawn");
     fastparm = M_CheckParm("-fast");
 
-    waitInit = M_CheckParm("-init");
-
     forceHighDetail = M_CheckParm("-forceHQ");
     forceLowDetail = M_CheckParm("-forceLQ");
     forcePotatoDetail = M_CheckParm("-forcePQ");
@@ -978,14 +975,6 @@ void D_DoomMain(void)
     printf("ST_Init: Init status bar.\n");
     D_RedrawTitle();
     ST_Init();
-
-    if (waitInit)
-    {
-        printf("PRESS ANY KEY TO CONTINUE");
-        while (lastpress == 0)
-        {
-        };
-    }
 
     // start the apropriate game based on parms
     p = M_CheckParm("-record");

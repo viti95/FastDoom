@@ -50,7 +50,6 @@ extern boolean nearSprites;
 extern boolean monoSound;
 extern boolean lowSound;
 extern boolean eightBitSound;
-extern boolean waitInit;
 extern boolean noMelt;
 
 extern boolean reverseStereo;

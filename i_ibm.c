@@ -586,8 +586,6 @@ void I_TimerISR(task *task)
 
 void(__interrupt __far *oldkeyboardisr)() = NULL;
 
-int lastpress;
-
 //
 // I_KeyboardISR
 //
@@ -596,7 +594,7 @@ void __interrupt I_KeyboardISR(void)
 {
     // Get the scan code
 
-    keyboardque[kbdhead & (KBDQUESIZE - 1)] = lastpress = _inbyte(0x60);
+    keyboardque[kbdhead & (KBDQUESIZE - 1)] = _inbyte(0x60);
     kbdhead++;
 
     // acknowledge the interrupt
