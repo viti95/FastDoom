@@ -250,9 +250,6 @@ static player_t *plyr;
 // ST_Start() has just been called
 static byte st_firsttime;
 
-// used for timing
-static unsigned int st_clock;
-
 // whether left-side main status bar is active
 static byte st_statusbaron;
 
@@ -829,8 +826,6 @@ void ST_updateWidgets(void)
 
 void ST_Ticker(void)
 {
-
-	st_clock++;
 	st_randomnumber = M_Random;
 	ST_updateWidgets();
 	st_oldhealth = plyr->health;
@@ -1072,8 +1067,6 @@ void ST_initData(void)
 
 	st_firsttime = 1;
 	plyr = &players;
-
-	st_clock = 0;
 
 	st_statusbaron = 1;
 
