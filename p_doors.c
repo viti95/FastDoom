@@ -358,8 +358,7 @@ void EV_VerticalDoor(line_t *line,
 		if (!player)
 			return;
 
-		if (!player->cards[it_yellowcard] &&
-			!player->cards[it_yellowskull])
+		if (!player->cards[it_yellowcard] && !player->cards[it_yellowskull])
 		{
 			player->message = PD_YELLOWK;
 			S_StartSound(NULL, sfx_oof);

@@ -334,8 +334,7 @@ int EV_DoFloor(line_t *line,
 		case raiseToTexture:
 		{
 			int minsize = MAXINT;
-			side_t *side;
-
+			
 			floor->direction = 1;
 			floor->sector = sec;
 			floor->speed = FLOORSPEED;
@@ -343,6 +342,7 @@ int EV_DoFloor(line_t *line,
 			{
 				if (twoSided(secnum, i))
 				{
+					side_t *side;
 					side = getSide(secnum, i, 0);
 					if (side->bottomtexture >= 0 && textureheight[side->bottomtexture] < minsize)
 						minsize = textureheight[side->bottomtexture];

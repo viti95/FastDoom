@@ -149,15 +149,20 @@ int Div1000(int value);
 
 int Div10(int value);
 #pragma aux Div10 = \
-    "mov edx, 0xCCCCCCCD", \
-    "mul edx", \
-    "shr edx, 3" parm[eax] value[edx] modify exact[eax edx]
+    "mov eax, 1717986919", \
+    "imul ecx", \
+    "mov eax, edx", \
+    "sar eax, 2", \
+    "sar ecx, 31", \
+    "sub eax, ecx" parm[ecx] value[eax] modify exact[eax ecx edx]
 
 int Div3(int value);
 #pragma aux Div3 = \
-    "mov edx, 0xAAAAAAAB", \
-    "mul edx", \
-    "shr edx, 1" parm[eax] value[edx] modify exact[eax edx]
+    "mov eax, 0x55555556", \
+    "imul ecx", \
+    "mov eax, ecx", \
+    "shr eax, 31", \
+    "add edx, eax" parm[ecx] value[edx] modify exact[eax ecx edx]
 
 int Div63(int value);
 #pragma aux Div63 = \

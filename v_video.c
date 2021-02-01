@@ -107,10 +107,7 @@ void V_SetRect(byte color, int width, int height, int destx, int desty, byte *de
 // V_DrawPatch
 // Masks a column based masked pic to the screen.
 //
-void V_DrawPatch(int x,
-                 int y,
-                 byte *scrn,
-                 patch_t *patch)
+void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
 {
 
     int count;
@@ -124,10 +121,65 @@ void V_DrawPatch(int x,
     y -= patch->topoffset;
     x -= patch->leftoffset;
 
-    if (scrn == screen0)
-        V_MarkRect(x, y, patch->width, patch->height);
-
     desttop = scrn + Mul320(y) + x;
+
+    w = patch->width;
+
+    for (; col < w; x++, col++, desttop++)
+    {
+        column = (column_t *)((byte *)patch + patch->columnofs[col]);
+
+        // step through the posts in a column
+        while (column->topdelta != 0xff)
+        {
+            register const byte *source = (byte *)column + 3;
+            register byte *dest = desttop + Mul320(column->topdelta);
+            register int count = column->length;
+
+            if ((count -= 4) >= 0)
+                do
+                {
+                    register byte s0, s1;
+                    s0 = source[0];
+                    s1 = source[1];
+                    dest[0] = s0;
+                    dest[SCREENWIDTH] = s1;
+                    dest += SCREENWIDTH * 2;
+                    s0 = source[2];
+                    s1 = source[3];
+                    source += 4;
+                    dest[0] = s0;
+                    dest[SCREENWIDTH] = s1;
+                    dest += SCREENWIDTH * 2;
+                } while ((count -= 4) >= 0);
+            if (count += 4)
+                do
+                {
+                    *dest = *source++;
+                    dest += SCREENWIDTH;
+                } while (--count);
+            column = (column_t *)(source + 1);
+        }
+    }
+}
+
+void V_DrawPatchScreen0(int x, int y, patch_t *patch)
+{
+
+    int count;
+    int col = 0;
+    column_t *column;
+    byte *desttop;
+    byte *dest;
+    byte *source;
+    int w;
+
+    y -= patch->topoffset;
+    x -= patch->leftoffset;
+
+    V_MarkRect(x, y, patch->width, patch->height);
+
+    desttop = screen0 + Mul320(y) + x;
 
     w = patch->width;
 
@@ -174,10 +226,7 @@ void V_DrawPatch(int x,
 // Masks a column based masked pic to the screen.
 // Flips horizontally, e.g. to mirror face.
 //
-void V_DrawPatchFlipped(int x,
-                        int y,
-                        byte *scrn,
-                        patch_t *patch)
+void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
 {
 
     int count;
@@ -191,11 +240,10 @@ void V_DrawPatchFlipped(int x,
     y -= patch->topoffset;
     x -= patch->leftoffset;
 
-    if (!scrn)
-        V_MarkRect(x, y, patch->width, patch->height);
+    V_MarkRect(x, y, patch->width, patch->height);
 
     col = 0;
-    desttop = scrn + Mul320(y) + x;
+    desttop = screen0 + Mul320(y) + x;
 
     w = patch->width;
 
@@ -227,8 +275,8 @@ void V_Blit(unsigned int dest_page, int source_x, int source_y, int dest_x, int 
     unsigned int source_offset;
     unsigned int dest_offset;
 
-    outpw(SC_INDEX, (((unsigned short)0xff << 8) + 0x02)); //select all planes
-    outpw(GC_INDEX, 0x08);                         //set to or mode
+    outpw(SC_INDEX, (0xff00 + 0x02)); //select all planes
+    outpw(GC_INDEX, 0x08);            //set OR mode
 
     source_offset = (((unsigned int)source_y * (unsigned int)SCREENWIDTH + source_x) >> 2) + src_page;
     dest_offset = (((unsigned int)dest_y * (unsigned int)SCREENWIDTH + dest_x) >> 2) + dest_page;
@@ -245,7 +293,7 @@ void V_Blit(unsigned int dest_page, int source_x, int source_y, int dest_x, int 
         dest_offset += SCREENWIDTH >> 2;
     }
 
-    outpw(GC_INDEX + 1, 0x0ff);
+    outpw(GC_INDEX + 1, 0x00ff);
 }
 
 //

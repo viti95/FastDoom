@@ -369,7 +369,7 @@ void F_TextWrite(void)
 	cy = 10;
 	ch = finaletext;
 
-	count = (finalecount - 10) / 3;
+	count = Div3(finalecount - 10);
 	if (count < 0)
 		count = 0;
 	for (; count; count--)
@@ -394,7 +394,7 @@ void F_TextWrite(void)
 		w = hu_font[c]->width;
 		if (cx + w > SCREENWIDTH)
 			break;
-		V_DrawPatch(cx, cy, screen0, hu_font[c]);
+		V_DrawPatchScreen0(cx, cy, hu_font[c]);
 		cx += w;
 	}
 }
@@ -665,7 +665,7 @@ void F_CastPrint(char *text)
 		}
 
 		w = hu_font[c]->width;
-		V_DrawPatch(cx, 180, screen0, hu_font[c]);
+		V_DrawPatchScreen0(cx, 180, hu_font[c]);
 		cx += w;
 	}
 }
@@ -673,8 +673,6 @@ void F_CastPrint(char *text)
 //
 // F_CastDrawer
 //
-void V_DrawPatchFlipped(int x, int y, byte *scrn, patch_t *patch);
-
 void F_CastDrawer(void)
 {
 	spritedef_t *sprdef;
@@ -684,7 +682,7 @@ void F_CastDrawer(void)
 	patch_t *patch;
 
 	// erase the entire screen to a background
-	V_DrawPatch(0, 0, screen0, W_CacheLumpName("BOSSBACK", PU_CACHE));
+	V_DrawPatchScreen0(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
 
 	F_CastPrint(castorder[castnum].name);
 
@@ -696,9 +694,9 @@ void F_CastDrawer(void)
 
 	patch = W_CacheLumpNum(lump + firstspritelump, PU_CACHE);
 	if (flip)
-		V_DrawPatchFlipped(160, 170, screen0, patch);
+		V_DrawPatchFlippedScreen0(160, 170, patch);
 	else
-		V_DrawPatch(160, 170, screen0, patch);
+		V_DrawPatchScreen0(160, 170, patch);
 }
 
 //
@@ -770,8 +768,7 @@ void F_BunnyScroll(void)
 		return;
 	if (finalecount < 1180)
 	{
-		V_DrawPatch((SCREENWIDTH - 13 * 8) / 2,
-					(SCREENHEIGHT - 8 * 8) / 2, screen0, W_CacheLumpName("END0", PU_CACHE));
+		V_DrawPatchScreen0((SCREENWIDTH - 13 * 8) / 2, (SCREENHEIGHT - 8 * 8) / 2, W_CacheLumpName("END0", PU_CACHE));
 		laststage = 0;
 		return;
 	}
@@ -786,7 +783,7 @@ void F_BunnyScroll(void)
 	}
 
 	sprintf(name, "END%i", stage);
-	V_DrawPatch((SCREENWIDTH - 13 * 8) / 2, (SCREENHEIGHT - 8 * 8) / 2, screen0, W_CacheLumpName(name, PU_CACHE));
+	V_DrawPatchScreen0((SCREENWIDTH - 13 * 8) / 2, (SCREENHEIGHT - 8 * 8) / 2, W_CacheLumpName(name, PU_CACHE));
 }
 
 //
@@ -808,24 +805,20 @@ void F_Drawer(void)
 		{
 		case 1:
 #if (EXE_VERSION < EXE_VERSION_ULTIMATE)
-			V_DrawPatch(0, 0, screen0,
-						W_CacheLumpName("HELP2", PU_CACHE));
+			V_DrawPatchScreen0(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 			break;
 #else
-			V_DrawPatch(0, 0, screen0,
-						W_CacheLumpName("CREDIT", PU_CACHE));
+			V_DrawPatchScreen0(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
 			break;
 #endif
 		case 2:
-			V_DrawPatch(0, 0, screen0,
-						W_CacheLumpName("VICTORY2", PU_CACHE));
+			V_DrawPatchScreen0(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
 			break;
 		case 3:
 			F_BunnyScroll();
 			break;
 		case 4:
-			V_DrawPatch(0, 0, screen0,
-						W_CacheLumpName("ENDPIC", PU_CACHE));
+			V_DrawPatchScreen0(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
 			break;
 		}
 	}

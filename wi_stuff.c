@@ -350,14 +350,12 @@ void WI_drawLF(void)
 	int y = WI_TITLEY;
 
 	// draw <LevelName>
-	V_DrawPatch((SCREENWIDTH - lnames[wbs->last]->width) / 2,
-				y, screen0, lnames[wbs->last]);
+	V_DrawPatchScreen0((SCREENWIDTH - lnames[wbs->last]->width) / 2, y, lnames[wbs->last]);
 
 	// draw "Finished!"
 	y += (5 * lnames[wbs->last]->height) / 4;
 
-	V_DrawPatch((SCREENWIDTH - finished->width) / 2,
-				y, screen0, finished);
+	V_DrawPatchScreen0((SCREENWIDTH - finished->width) / 2, y, finished);
 }
 
 // Draws "Entering <LevelName>"
@@ -366,14 +364,12 @@ void WI_drawEL(void)
 	int y = WI_TITLEY;
 
 	// draw "Entering"
-	V_DrawPatch((SCREENWIDTH - entering->width) / 2,
-				y, screen0, entering);
+	V_DrawPatchScreen0((SCREENWIDTH - entering->width) / 2, y, entering);
 
 	// draw level
 	y += (5 * lnames[wbs->next]->height) / 4;
 
-	V_DrawPatch((SCREENWIDTH - lnames[wbs->next]->width) / 2,
-				y, screen0, lnames[wbs->next]);
+	V_DrawPatchScreen0((SCREENWIDTH - lnames[wbs->next]->width) / 2, y, lnames[wbs->next]);
 }
 
 void WI_drawOnLnode(int n,
@@ -407,7 +403,7 @@ void WI_drawOnLnode(int n,
 
 	if (fits && i < 2)
 	{
-		V_DrawPatch(lnodes[wbs->epsd][n].x, lnodes[wbs->epsd][n].y, screen0, c[i]);
+		V_DrawPatchScreen0(lnodes[wbs->epsd][n].x, lnodes[wbs->epsd][n].y, c[i]);
 	}
 }
 
@@ -498,7 +494,7 @@ void WI_drawAnimatedBack(void)
 		a = &anims[wbs->epsd][i];
 
 		if (a->ctr >= 0)
-			V_DrawPatch(a->loc.x, a->loc.y, screen0, a->p[a->ctr]);
+			V_DrawPatchScreen0(a->loc.x, a->loc.y, a->p[a->ctr]);
 	}
 }
 
@@ -523,12 +519,12 @@ int WI_drawNumTwoDigits(int x,
 	original = n;
 	n = Div10(n);
 	x -= fontwidth;
-	V_DrawPatch(x, y, screen0, num[original - Mul10(n)]);
+	V_DrawPatchScreen0(x, y, num[original - Mul10(n)]);
 
 	original = n;
 	n = Div10(n);
 	x -= fontwidth;
-	V_DrawPatch(x, y, screen0, num[original - Mul10(n)]);
+	V_DrawPatchScreen0(x, y, num[original - Mul10(n)]);
 
 	return x;
 }
@@ -551,7 +547,7 @@ int WI_drawNum(int x,
 
 		n = Div10(n);
 		x -= fontwidth;
-		V_DrawPatch(x, y, screen0, num[original - Mul10(n)]);
+		V_DrawPatchScreen0(x, y, num[original - Mul10(n)]);
 	} while (n);
 
 	return x;
@@ -564,7 +560,7 @@ void WI_drawPercent(int x,
 	if (p < 0)
 		return;
 
-	V_DrawPatch(x, y, screen0, percent);
+	V_DrawPatchScreen0(x, y, percent);
 	WI_drawNum(x, y, p);
 }
 
@@ -596,14 +592,14 @@ void WI_drawTime(int x,
 
 			// draw
 			if (div == 60 || t / div)
-				V_DrawPatch(x, y, screen0, colon);
+				V_DrawPatchScreen0(x, y, colon);
 
 		} while (t / div);
 	}
 	else
 	{
 		// "sucks"
-		V_DrawPatch(x - sucks->width, y, screen0, sucks);
+		V_DrawPatchScreen0(x - sucks->width, y, sucks);
 	}
 }
 
@@ -899,23 +895,23 @@ void WI_drawStats(void)
 
 	WI_drawLF();
 
-	V_DrawPatch(SP_STATSX, SP_STATSY, screen0, kills);
+	V_DrawPatchScreen0(SP_STATSX, SP_STATSY, kills);
 	WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY, cnt_kills);
 
-	V_DrawPatch(SP_STATSX, SP_STATSY + lh, screen0, items);
+	V_DrawPatchScreen0(SP_STATSX, SP_STATSY + lh, items);
 	WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY + lh, cnt_items);
 
-	V_DrawPatch(SP_STATSX, SP_STATSY + 2 * lh, screen0, sp_secret);
+	V_DrawPatchScreen0(SP_STATSX, SP_STATSY + 2 * lh, sp_secret);
 	WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY + 2 * lh, cnt_secret);
 
-	V_DrawPatch(SP_TIMEX, SP_TIMEY, screen0, time);
+	V_DrawPatchScreen0(SP_TIMEX, SP_TIMEY,  time);
 	WI_drawTime(SCREENWIDTH / 2 - SP_TIMEX, SP_TIMEY, cnt_time);
 
 #if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
 	if (wbs->epsd < 3)
 #endif
 	{
-		V_DrawPatch(SCREENWIDTH / 2 + SP_TIMEX, SP_TIMEY, screen0, par);
+		V_DrawPatchScreen0(SCREENWIDTH / 2 + SP_TIMEX, SP_TIMEY, par);
 		WI_drawTime(SCREENWIDTH - SP_TIMEX, SP_TIMEY, cnt_par);
 	}
 }
@@ -935,6 +931,7 @@ void WI_checkForAccelerate(void)
 	}
 	else
 		player->attackdown = false;
+		
 	if (player->cmd.buttons & BT_USE)
 	{
 		if (!player->usedown)

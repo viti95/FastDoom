@@ -322,7 +322,7 @@ int olddb[2][4];
 void I_UpdateNoBlit(void)
 {
     int realdr[4];
-    
+
     // Set current screen
     currentscreen = destscreen;
 
@@ -392,7 +392,7 @@ void I_UpdateNoBlit(void)
 
         y = realdr[BOXBOTTOM];
         h = realdr[BOXTOP] - y + 1;
-        
+
         I_UpdateBox(x, y, w, h);
     }
     // Clear box
@@ -427,18 +427,15 @@ void I_FinishUpdate(void)
         fps_counter++;
 
         // store a value and/or draw when data is ok:
-        if (fps_counter > (TICRATE * 2))
+        if (fps_counter > (TICRATE * 2) && fps_nextcalculation < ticcount)
         {
             // in case of a very fast system, this will limit the sampling
-            if (fps_nextcalculation < ticcount)
-            {
-                // minus 1!, exactly 35 FPS when measeraring for a longer time.
-                opt1 = Mul35(fps_counter - 1) << FRACBITS;
-                opt2 = (ticcount - fps_starttime) << FRACBITS;
-                fps = (opt1 >> 14 >= opt2) ? ((opt1 ^ opt2) >> 31) ^ MAXINT : FixedDiv2(opt1, opt2);
-                fps_nextcalculation = ticcount + 12;
-                fps_counter = 0; // flush old data
-            }
+            // minus 1!, exactly 35 FPS when measeraring for a longer time.
+            opt1 = Mul35(fps_counter - 1) << FRACBITS;
+            opt2 = (ticcount - fps_starttime) << FRACBITS;
+            fps = (opt1 >> 14 >= opt2) ? ((opt1 ^ opt2) >> 31) ^ MAXINT : FixedDiv2(opt1, opt2);
+            fps_nextcalculation = ticcount + 12;
+            fps_counter = 0; // flush old data
         }
     }
 }
@@ -525,14 +522,11 @@ void I_StartTic(void)
             k |= SC_RSHIFT;
         }
 
-        if (k == 0xe0)
+        if (k == 0xe0 || keyboardque[(kbdtail - 2) & (KBDQUESIZE - 1)] == 0xe1)
         {
-            continue; // special / pause keys
+            continue; // special / pause keys, pause key bullshit
         }
-        if (keyboardque[(kbdtail - 2) & (KBDQUESIZE - 1)] == 0xe1)
-        {
-            continue; // pause key bullshit
-        }
+        
         if (k == 0xc5 && keyboardque[(kbdtail - 2) & (KBDQUESIZE - 1)] == 0x9d)
         {
             ev.type = ev_keydown;

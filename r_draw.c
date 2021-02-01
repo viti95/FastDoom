@@ -640,7 +640,8 @@ void R_DrawSpanFlat(void)
         *dest = color;
         dest = (byte *)origin_y + dsp_x2;
         *dest = color;
-    }else if (dsp_x2 == dsp_x1)
+    }
+    else if (dsp_x2 == dsp_x1)
     {
         outp(SC_INDEX + 1, 1 << 0);
         dest = (byte *)origin_y + dsp_x1;
@@ -659,7 +660,8 @@ void R_DrawSpanFlat(void)
         *dest = color;
         dest = (byte *)origin_y + dsp_x2;
         *dest = color;
-    } else if (dsp_x2 == dsp_x1)
+    }
+    else if (dsp_x2 == dsp_x1)
     {
         outp(SC_INDEX + 1, 1 << 1);
         dest = (byte *)origin_y + dsp_x1;
@@ -678,7 +680,8 @@ void R_DrawSpanFlat(void)
         *dest = color;
         dest = (byte *)origin_y + dsp_x2;
         *dest = color;
-    } else if (dsp_x2 == dsp_x1)
+    }
+    else if (dsp_x2 == dsp_x1)
     {
         outp(SC_INDEX + 1, 1 << 2);
         dest = (byte *)origin_y + dsp_x1;
@@ -697,7 +700,8 @@ void R_DrawSpanFlat(void)
         *dest = color;
         dest = (byte *)origin_y + dsp_x2;
         *dest = color;
-    } else if (dsp_x2 == dsp_x1)
+    }
+    else if (dsp_x2 == dsp_x1)
     {
         outp(SC_INDEX + 1, 1 << 3);
         dest = (byte *)origin_y + dsp_x1;
@@ -759,7 +763,8 @@ void R_DrawSpanFlatLow(void)
         *dest = color;
         dest = (byte *)origin_y + dsp_x2;
         *dest = color;
-    }else if (dsp_x2 == dsp_x1)
+    }
+    else if (dsp_x2 == dsp_x1)
     {
         outp(SC_INDEX + 1, 3 << 0);
         dest = (byte *)origin_y + dsp_x1;
@@ -893,25 +898,13 @@ void R_FillBackScreen(void)
         V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + y, screen1, patch);
 
     // Draw beveled edge.
-    V_DrawPatch(viewwindowx - 8,
-                viewwindowy - 8,
-                screen1,
-                W_CacheLumpName("BRDR_TL", PU_CACHE));
+    V_DrawPatch(viewwindowx - 8, viewwindowy - 8, screen1, W_CacheLumpName("BRDR_TL", PU_CACHE));
 
-    V_DrawPatch(viewwindowx + scaledviewwidth,
-                viewwindowy - 8,
-                screen1,
-                W_CacheLumpName("BRDR_TR", PU_CACHE));
+    V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy - 8, screen1, W_CacheLumpName("BRDR_TR", PU_CACHE));
 
-    V_DrawPatch(viewwindowx - 8,
-                viewwindowy + viewheight,
-                screen1,
-                W_CacheLumpName("BRDR_BL", PU_CACHE));
+    V_DrawPatch(viewwindowx - 8, viewwindowy + viewheight, screen1, W_CacheLumpName("BRDR_BL", PU_CACHE));
 
-    V_DrawPatch(viewwindowx + scaledviewwidth,
-                viewwindowy + viewheight,
-                screen1,
-                W_CacheLumpName("BRDR_BR", PU_CACHE));
+    V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + viewheight, screen1, W_CacheLumpName("BRDR_BR", PU_CACHE));
 
     for (i = 0; i < 4; i++)
     {

@@ -117,8 +117,7 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 
 	if (curline->v1->y == curline->v2->y)
 		lightnum--;
-	else if (curline->v1->x == curline->v2->x)
-		lightnum++;
+	else lightnum += curline->v1->x == curline->v2->x;
 
 	// Lightnum between 0 and 15
 	if (lightnum < 0)
@@ -726,8 +725,7 @@ void R_StoreWallRange(int start,
 
 			if (curline->v1->y == curline->v2->y)
 				lightnum--;
-			else if (curline->v1->x == curline->v2->x)
-				lightnum++;
+			else lightnum += curline->v1->x == curline->v2->x;
 
 			// Lightnum between 0 and 15
 			if (lightnum < 0)
@@ -809,15 +807,19 @@ void R_StoreWallRange(int start,
 		lastopening += rw_stopx - start;
 	}
 
-	if (maskedtexture && !(ds_p->silhouette & SIL_TOP))
+	if (maskedtexture)
 	{
-		ds_p->silhouette |= SIL_TOP;
-		ds_p->tsilheight = MININT;
+		if (!(ds_p->silhouette & SIL_TOP))
+		{
+			ds_p->silhouette |= SIL_TOP;
+			ds_p->tsilheight = MININT;
+		}
+		if (!(ds_p->silhouette & SIL_BOTTOM))
+		{
+			ds_p->silhouette |= SIL_BOTTOM;
+			ds_p->bsilheight = MAXINT;
+		}
 	}
-	if (maskedtexture && !(ds_p->silhouette & SIL_BOTTOM))
-	{
-		ds_p->silhouette |= SIL_BOTTOM;
-		ds_p->bsilheight = MAXINT;
-	}
+
 	ds_p++;
 }

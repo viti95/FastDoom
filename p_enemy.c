@@ -223,7 +223,6 @@ byte P_Move(mobj_t *actor)
 
     // warning: 'catch', 'throw', and 'try'
     // are all C++ reserved words
-    byte try_ok;
     byte good;
 
     fixed_t optSpeed;
@@ -270,9 +269,7 @@ byte P_Move(mobj_t *actor)
         return 0;
     }
 
-    try_ok = P_TryMove(actor, tryx, tryy);
-
-    if (!try_ok)
+    if (P_TryMove(actor, tryx, tryy))
     {
         // open any specials
         if (actor->flags & MF_FLOAT && floatok)
@@ -394,27 +391,35 @@ void P_NewChaseDir(mobj_t *actor)
     }
 
     if (d[1] == turnaround)
-        d[1] = DI_NODIR;
-
-    if (d[1] != DI_NODIR)
     {
-        actor->movedir = d[1];
-        if (P_TryWalk(actor))
+        d[1] = DI_NODIR;
+    }
+    else
+    {
+        if (d[1] != DI_NODIR)
         {
-            // either moved forward or attacked
-            return;
+            actor->movedir = d[1];
+            if (P_TryWalk(actor))
+            {
+                // either moved forward or attacked
+                return;
+            }
         }
     }
 
     if (d[2] == turnaround)
-        d[2] = DI_NODIR;
-        
-    if (d[2] != DI_NODIR)
     {
-        actor->movedir = d[2];
+        d[2] = DI_NODIR;
+    }
+    else
+    {
+        if (d[2] != DI_NODIR)
+        {
+            actor->movedir = d[2];
 
-        if (P_TryWalk(actor))
-            return;
+            if (P_TryWalk(actor))
+                return;
+        }
     }
 
     // there is no direct path to the player,
@@ -625,8 +630,7 @@ void A_Chase(mobj_t *actor)
 {
     int delta;
 
-    if (actor->reactiontime)
-        actor->reactiontime--;
+    actor->reactiontime -= actor->reactiontime != 0;
 
     // modify target threshold
     if (actor->threshold)
@@ -1452,7 +1456,7 @@ void A_PainShootSkull(mobj_t *actor,
     newmobj = P_SpawnMobj(x, y, z, MT_SKULL);
 
     // Check for movements.
-    if (!P_TryMove(newmobj, newmobj->x, newmobj->y))
+    if (P_TryMove(newmobj, newmobj->x, newmobj->y))
     {
         // kill it immediately
         P_DamageMobj(newmobj, actor, actor, 10000);

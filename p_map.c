@@ -404,23 +404,23 @@ byte P_TryMove(mobj_t *thing, fixed_t x, fixed_t y)
 
     floatok = 0;
     if (!P_CheckPosition(thing, x, y))
-        return 0; // solid wall or thing
+        return 1; // solid wall or thing
 
     if (!(thing->flags & MF_NOCLIP))
     {
         if (tmceilingz - tmfloorz < thing->height)
-            return 0; // doesn't fit
+            return 1; // doesn't fit
 
         floatok = 1;
 
         if (!(thing->flags & MF_TELEPORT) && tmceilingz - thing->z < thing->height)
-            return 0; // mobj must lower itself to fit
+            return 1; // mobj must lower itself to fit
 
         if (!(thing->flags & MF_TELEPORT) && tmfloorz - thing->z > 24 * FRACUNIT)
-            return 0; // too big a step up
+            return 1; // too big a step up
 
         if (!(thing->flags & (MF_DROPOFF | MF_FLOAT)) && tmfloorz - tmdropoffz > 24 * FRACUNIT)
-            return 0; // don't stand over a dropoff
+            return 1; // don't stand over a dropoff
     }
 
     // the move is ok,
@@ -453,7 +453,7 @@ byte P_TryMove(mobj_t *thing, fixed_t x, fixed_t y)
         }
     }
 
-    return 1;
+    return 0;
 }
 
 //
@@ -537,10 +537,9 @@ void P_HitSlideLine(line_t *ld)
     }
 
     side = P_PointOnLineSide(slidemo->x, slidemo->y, ld);
-
     lineangle = R_PointToAngle2(0, 0, ld->dx, ld->dy);
 
-    if (side == (byte)1)
+    if (side)
         lineangle += ANG180;
 
     moveangle = R_PointToAngle2(0, 0, tmxmove, tmymove);
@@ -664,7 +663,7 @@ retry:
     {
         // the move most have hit the middle, so stairstep
     stairstep:
-        if (!P_TryMove(mo, mo->x, mo->y + mo->momy))
+        if (P_TryMove(mo, mo->x, mo->y + mo->momy))
             P_TryMove(mo, mo->x + mo->momx, mo->y);
         return;
     }
@@ -676,7 +675,7 @@ retry:
         newx = FixedMul(mo->momx, bestslidefrac);
         newy = FixedMul(mo->momy, bestslidefrac);
 
-        if (!P_TryMove(mo, mo->x + newx, mo->y + newy))
+        if (P_TryMove(mo, mo->x + newx, mo->y + newy))
             goto stairstep;
     }
 
@@ -697,7 +696,7 @@ retry:
     mo->momx = tmxmove;
     mo->momy = tmymove;
 
-    if (!P_TryMove(mo, mo->x + tmxmove, mo->y + tmymove))
+    if (P_TryMove(mo, mo->x + tmxmove, mo->y + tmymove))
     {
         goto retry;
     }
@@ -791,11 +790,8 @@ byte PTR_AimTraverse(intercept_t *in)
 
     // shoot a thing
     th = in->d.thing;
-    if (th == shootthing)
-        return 1; // can't shoot self
-
-    if (!(th->flags & MF_SHOOTABLE))
-        return 1; // corpse or something
+    if (th == shootthing || !(th->flags & MF_SHOOTABLE))
+        return 1; // can't shoot self, corpse or something
 
     // check angles to see if the thing can be aimed at
 
@@ -932,15 +928,10 @@ byte PTR_ShootTraverse(intercept_t *in)
             break;
         }
 
-        if (li->frontsector->ceilingpic == skyflatnum)
+        if (li->frontsector->ceilingpic == skyflatnum && (z > li->frontsector->ceilingheight || (li->backsector && li->backsector->ceilingpic == skyflatnum)))
         {
-            // don't shoot the sky!
-            if (z > li->frontsector->ceilingheight)
-                return 0;
-
-            // it's a sky hack wall
-            if (li->backsector && li->backsector->ceilingpic == skyflatnum)
-                return 0;
+            // don't shoot the sky! it's a sky hack wall
+            return 0;
         }
 
         // Spawn bullet puffs.
@@ -952,11 +943,8 @@ byte PTR_ShootTraverse(intercept_t *in)
 
     // shoot a thing
     th = in->d.thing;
-    if (th == shootthing)
-        return 1; // can't shoot self
-
-    if (!(th->flags & MF_SHOOTABLE))
-        return 1; // corpse or something
+    if (th == shootthing || !(th->flags & MF_SHOOTABLE))
+        return 1; // can't shoot self, corpse or something
 
     // check angles to see if the thing can be aimed at
     switch (attackrange)
@@ -1133,7 +1121,7 @@ mobj_t *usething;
 
 byte PTR_UseTraverse(intercept_t *in)
 {
-    int side;
+    byte side;
 
     if (!in->d.line->special)
     {
@@ -1149,12 +1137,8 @@ byte PTR_UseTraverse(intercept_t *in)
         return 1;
     }
 
-    side = 0;
-    if (P_PointOnLineSide(usething->x, usething->y, in->d.line) == 1)
-        side = 1;
-
-    //	return false;		// don't use back side
-
+    side = P_PointOnLineSide(usething->x, usething->y, in->d.line);
+    
     P_UseSpecialLine(usething, in->d.line, side);
 
     // can't use for than one special line in a row

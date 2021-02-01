@@ -123,8 +123,8 @@ void HUlib_eraseTextLine(hu_textline_t *l)
     }
 
     lastautomapactive = automapactive;
-    if (l->needsupdate)
-        l->needsupdate--;
+
+    l->needsupdate -= l->needsupdate != 0;
 }
 
 void HUlib_initSText(hu_stext_t *s,

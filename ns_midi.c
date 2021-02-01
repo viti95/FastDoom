@@ -438,10 +438,7 @@ static int _MIDI_InterpretControllerInfo(
 
         while (tracknum > 0)
         {
-            if (trackptr->context[0].loopcount != EMIDI_INFINITE)
-            {
-                trackptr->context[0].loopcount--;
-            }
+            trackptr->context[0].loopcount -= trackptr->context[0].loopcount != EMIDI_INFINITE;
 
             trackptr->pos = trackptr->context[0].loopstart;
             trackptr->RunningStatus = trackptr->context[0].RunningStatus;

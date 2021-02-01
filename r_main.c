@@ -480,9 +480,7 @@ R_PointToAngle2(fixed_t x1,
     return 0;
 }
 
-fixed_t
-R_PointToDist(fixed_t x,
-              fixed_t y)
+fixed_t R_PointToDist(fixed_t x, fixed_t y)
 {
     int angle;
     fixed_t dx;
@@ -495,9 +493,9 @@ R_PointToDist(fixed_t x,
 
     if (dy > dx)
     {
-        temp = dx;
+        fixed_t temp_var = dx;
         dx = dy;
-        dy = temp;
+        dy = temp_var;
     }
 
     //angle = (tantoangle[FixedDiv(dy, dx) >> DBITS] + ANG90) >> ANGLETOFINESHIFT;

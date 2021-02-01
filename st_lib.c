@@ -98,7 +98,7 @@ void STlib_drawNum(st_number_t *n,
     // in the special case of 0, you draw 0
     if (!num)
     {
-        V_DrawPatch(x - w, n->y, screen0, n->p[0]);
+        V_DrawPatchScreen0(x - w, n->y, n->p[0]);
         return;
     }
 
@@ -109,7 +109,7 @@ void STlib_drawNum(st_number_t *n,
 
         num = Div10(num);
         x -= w;
-        V_DrawPatch(x, n->y, screen0, n->p[original - Mul10(num)]);
+        V_DrawPatchScreen0(x, n->y, n->p[original - Mul10(num)]);
     } while (num);
 }
 
@@ -138,7 +138,7 @@ void STlib_updatePercent(st_percent_t *per,
                          int refresh)
 {
     if (refresh && *per->n.on)
-        V_DrawPatch(per->n.x, per->n.y, screen0, per->p);
+        V_DrawPatchScreen0(per->n.x, per->n.y, per->p);
 
     STlib_updateNum(&per->n, refresh);
 }
@@ -184,7 +184,7 @@ void STlib_updateMultIcon(st_multicon_t *mi,
                 V_CopyRect(x, y - ST_Y, screen4, w, h, x, y, screen0);
             }
         }
-        V_DrawPatch(mi->x, mi->y, screen0, mi->p[*mi->inum]);
+        V_DrawPatchScreen0(mi->x, mi->y, mi->p[*mi->inum]);
         mi->oldinum = *mi->inum;
     }
 }
@@ -212,7 +212,7 @@ void STlib_updateBinIcon(st_binicon_t *bi,
         }
         else
         {
-            V_DrawPatch(bi->x, bi->y, screen0, bi->p);
+            V_DrawPatchScreen0(bi->x, bi->y, bi->p);
         }
     }
 }

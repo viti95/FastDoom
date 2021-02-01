@@ -181,9 +181,9 @@ byte P_CrossSubsector(int num)
 byte P_CrossBSPNode(int bspnum)
 {
     node_t *bsp;
-    int side;
+    byte side;
     fixed_t left, right;
-    int calc_side;
+    byte calc_side;
 
     if (bspnum & NF_SUBSECTOR)
     {
@@ -196,13 +196,41 @@ byte P_CrossBSPNode(int bspnum)
     bsp = &nodes[bspnum];
 
     // decide which side the start point is on
-    side = !bsp->dx ? strace.x == bsp->x ? 0 : strace.x <= bsp->x ? bsp->dy > 0 : bsp->dy < 0 : !bsp->dy ? strace.x == bsp->y ? 0 : strace.y <= bsp->y ? bsp->dx < 0 : bsp->dx > 0 : (right = ((strace.y - bsp->y) >> FRACBITS) * (bsp->dx >> FRACBITS)) < (left = ((strace.x - bsp->x) >> FRACBITS) * (bsp->dy >> FRACBITS)) ? 0 : right == left ? 0 : 1;
+    side = !bsp->dx ? 
+        strace.x == bsp->x ? 
+            0 : 
+            strace.x <= bsp->x ? 
+                bsp->dy > 0 : 
+                bsp->dy < 0 : 
+            !bsp->dy ? 
+                strace.x == bsp->y ? 
+                    0 : 
+                    strace.y <= bsp->y ? 
+                        bsp->dx < 0 : 
+                        bsp->dx > 0 : 
+                    (right = ((strace.y - bsp->y) >> FRACBITS) * (bsp->dx >> FRACBITS)) < (left = ((strace.x - bsp->x) >> FRACBITS) * (bsp->dy >> FRACBITS)) ? 
+                        0 : 
+                        right != left;
 
     // cross the starting side
     if (!P_CrossBSPNode(bsp->children[side]))
         return 0;
 
-    calc_side = !bsp->dx ? t2x == bsp->x ? 2 : t2x <= bsp->x ? bsp->dy > 0 : bsp->dy < 0 : !bsp->dy ? t2x == bsp->y ? 2 : t2y <= bsp->y ? bsp->dx < 0 : bsp->dx > 0 : (right = ((t2y - bsp->y) >> FRACBITS) * (bsp->dx >> FRACBITS)) < (left = ((t2x - bsp->x) >> FRACBITS) * (bsp->dy >> FRACBITS)) ? 0 : right == left ? 2 : 1;
+    calc_side = !bsp->dx ? 
+        t2x == bsp->x ? 
+            2 : 
+            t2x <= bsp->x ? 
+                bsp->dy > 0 : 
+                bsp->dy < 0 : 
+                !bsp->dy ? 
+                    t2x == bsp->y ? 
+                        2 : 
+                        t2y <= bsp->y ? 
+                            bsp->dx < 0 : 
+                            bsp->dx > 0 : 
+                            (right = ((t2y - bsp->y) >> FRACBITS) * (bsp->dx >> FRACBITS)) < (left = ((t2x - bsp->x) >> FRACBITS) * (bsp->dy >> FRACBITS)) ? 
+                                0 :
+                                (right == left) + 1;
 
     // the partition plane is crossed here
     if (side == calc_side)

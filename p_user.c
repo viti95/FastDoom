@@ -131,11 +131,14 @@ void P_MovePlayer(player_t *player)
 	//  if not onground.
 	onground = (player->mo->z <= player->mo->floorz);
 
-	if (cmd->forwardmove && onground)
-		P_Thrust(player, player->mo->angle, cmd->forwardmove * 2048);
+	if (onground)
+	{
+		if (cmd->forwardmove)
+			P_Thrust(player, player->mo->angle, cmd->forwardmove * 2048);
 
-	if (cmd->sidemove && onground)
-		P_Thrust(player, player->mo->angle - ANG90, cmd->sidemove * 2048);
+		if (cmd->sidemove)
+			P_Thrust(player, player->mo->angle - ANG90, cmd->sidemove * 2048);
+	}
 
 	if ((cmd->forwardmove || cmd->sidemove) && player->mo->state == &states[S_PLAY])
 	{
