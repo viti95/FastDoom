@@ -1433,8 +1433,7 @@ void A_PainShootSkull(mobj_t *actor,
     currentthinker = thinkercap.next;
     while (currentthinker != &thinkercap)
     {
-        if ((currentthinker->function.acp1 == (actionf_p1)P_MobjThinker) && ((mobj_t *)currentthinker)->type == MT_SKULL)
-            count++;
+        count += ((currentthinker->function.acp1 == (actionf_p1)P_MobjThinker) && ((mobj_t *)currentthinker)->type == MT_SKULL);
         currentthinker = currentthinker->next;
     }
 

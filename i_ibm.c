@@ -526,7 +526,7 @@ void I_StartTic(void)
         {
             continue; // special / pause keys, pause key bullshit
         }
-        
+
         if (k == 0xc5 && keyboardque[(kbdtail - 2) & (KBDQUESIZE - 1)] == 0x9d)
         {
             ev.type = ev_keydown;
@@ -535,11 +535,9 @@ void I_StartTic(void)
             continue;
         }
 
-        if (k & 0x80)
-            ev.type = ev_keyup;
-        else
-            ev.type = ev_keydown;
+        ev.type = (k & 0x80) != 0;
         k &= 0x7f;
+        
         switch (k)
         {
         case SC_UPARROW:

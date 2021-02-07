@@ -355,7 +355,7 @@ void V_DrawPatchDirect(int x,
                 } while (--count);
             column = (column_t *)(source + 1);
         }
-        if (((++x) & 3) == 0)
-            desttop++; // go to next byte, not next plane
+
+        desttop += ((++x) & 3) == 0; // go to next byte, not next plane
     }
 }

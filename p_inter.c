@@ -538,8 +538,8 @@ void P_TouchSpecialThing(mobj_t *special, mobj_t *toucher)
 		break;
 	}
 
-	if (special->flags & MF_COUNTITEM)
-		player->itemcount++;
+	player->itemcount += (special->flags & MF_COUNTITEM) != 0;
+
 	P_RemoveMobj(special);
 	player->bonuscount += BONUSADD;
 	if (player == &players)
@@ -566,14 +566,11 @@ void P_KillMobj(mobj_t *source,
 	if (source && source->player)
 	{
 		// count for intermission
-		if (target->flags & MF_COUNTKILL)
-			source->player->killcount++;
+		source->player->killcount += (target->flags & MF_COUNTKILL) != 0;
 	}
-	else if (target->flags & MF_COUNTKILL)
+	else
 	{
-		// count all monster deaths,
-		// even those caused by other monsters
-		players.killcount++;
+		players.killcount += (target->flags & MF_COUNTKILL) != 0;
 	}
 
 	if (target->player)
