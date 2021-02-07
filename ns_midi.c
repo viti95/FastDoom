@@ -193,14 +193,14 @@ static void _MIDI_AdvanceTick(void)
     {
         tickDivision = (_MIDI_Tick / _MIDI_TicksPerBeat) + 1;
         _MIDI_Tick -= tickDivision * _MIDI_TicksPerBeat;
-        _MIDI_Beat += tickDivision;
     }
     else
     {
         tickDivision = Div70(_MIDI_Tick) + 1;
         _MIDI_Tick -= Mul70(tickDivision);
-        _MIDI_Beat += tickDivision;
     }
+
+    _MIDI_Beat += tickDivision;
 
     if (_MIDI_BeatsPerMeasure != 4)
     {

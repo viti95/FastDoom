@@ -1157,11 +1157,10 @@ void P_SpawnSpecials(void)
 	sector = sectors;
 	for (i = 0; i < numsectors; i++, sector++)
 	{
-		if (!sector->special)
-			continue;
-
 		switch (sector->special)
 		{
+		case 0:
+			continue;
 		case 1:
 			// FLICKERING LIGHTS
 			P_SpawnLightFlash(sector);
