@@ -324,11 +324,6 @@ static patch_t *time;
 static patch_t *par;
 static patch_t *sucks;
 
-// "Total", your face, your dead face
-static patch_t *total;
-static patch_t *star;
-static patch_t *bstar;
-
 // Name graphics of each level (centered)
 static patch_t **lnames;
 
@@ -658,8 +653,6 @@ void WI_unloadData(void)
 	Z_ChangeTag(time, PU_CACHE);
 	Z_ChangeTag(sucks, PU_CACHE);
 	Z_ChangeTag(par, PU_CACHE);
-
-	Z_ChangeTag(total, PU_CACHE);
 }
 
 void WI_updateNoState(void)
@@ -1087,15 +1080,6 @@ void WI_loadData(void)
 
 	// "par"
 	par = W_CacheLumpName("WIPAR", PU_STATIC);
-
-	// "total"
-	total = W_CacheLumpName("WIMSTT", PU_STATIC);
-
-	// your face
-	star = W_CacheLumpName("STFST01", PU_STATIC);
-
-	// dead face
-	bstar = W_CacheLumpName("STFDEAD0", PU_STATIC);
 }
 
 void WI_Drawer(void)
