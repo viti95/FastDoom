@@ -53,10 +53,6 @@ static int _MIDI_ActiveTracks;
 static int _MIDI_TotalVolume = MIDI_MaxVolume;
 
 static int _MIDI_ChannelVolume[NUM_MIDI_CHANNELS];
-static int _MIDI_UserChannelVolume[NUM_MIDI_CHANNELS] =
-    {
-        256, 256, 256, 256, 256, 256, 256, 256,
-        256, 256, 256, 256, 256, 256, 256, 256};
 
 static midifuncs *_MIDI_Funcs = NULL;
 
@@ -685,7 +681,7 @@ static void _MIDI_SetChannelVolume(
     _MIDI_ChannelVolume[channel] = volume;
 
     // For user volume
-    volume *= _MIDI_UserChannelVolume[channel];
+    volume *= 256;
 
     if (_MIDI_Funcs->SetVolume == NULL)
     {
