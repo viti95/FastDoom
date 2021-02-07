@@ -21,12 +21,6 @@ static const int _MIDI_CommandLengths[NUM_MIDI_CHANNELS] =
     {
         0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 1, 1, 2, 0};
 
-static int cdecl (*_MIDI_RerouteFunctions[NUM_MIDI_CHANNELS])(
-    int event,
-    int c1,
-    int c2) = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-               NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
-
 static track *_MIDI_TrackPtr = NULL;
 static int _MIDI_TrackMemSize;
 static int _MIDI_NumTracks;
@@ -563,17 +557,6 @@ static void _MIDI_ServiceRoutine(task *Task)
                 }
             }
 
-            if (_MIDI_RerouteFunctions[channel] != NULL)
-            {
-                status = _MIDI_RerouteFunctions[channel](event, c1, c2);
-
-                if (status == MIDI_DONT_PLAY)
-                {
-                    Track->delay = _MIDI_ReadDelta(Track);
-                    continue;
-                }
-            }
-
             switch (command)
             {
             case MIDI_NOTE_OFF:
@@ -658,16 +641,6 @@ static int _MIDI_SendControlChange(
 {
     int status;
 
-    if (_MIDI_RerouteFunctions[channel] != NULL)
-    {
-        status = _MIDI_RerouteFunctions[channel](0xB0 + channel,
-                                                 c1, c2);
-        if (status == MIDI_DONT_PLAY)
-        {
-            return (MIDI_Ok);
-        }
-    }
-
     _MIDI_Funcs->ControlChange(channel, c1, c2);
 
     return (MIDI_Ok);
@@ -710,21 +683,6 @@ static void _MIDI_SetChannelVolume(
     int remotevolume;
 
     _MIDI_ChannelVolume[channel] = volume;
-
-    if (_MIDI_RerouteFunctions[channel] != NULL)
-    {
-        remotevolume = volume * _MIDI_TotalVolume;
-        remotevolume *= _MIDI_UserChannelVolume[channel];
-        remotevolume = Div255(remotevolume);
-        remotevolume >>= 8;
-
-        status = _MIDI_RerouteFunctions[channel](0xB0 + channel,
-                                                 MIDI_VOLUME, remotevolume);
-        if (status == MIDI_DONT_PLAY)
-        {
-            return;
-        }
-    }
 
     // For user volume
     volume *= _MIDI_UserChannelVolume[channel];
@@ -825,14 +783,6 @@ int MIDI_SetVolume(
     if (_MIDI_Funcs->SetVolume)
     {
         _MIDI_Funcs->SetVolume(volume);
-
-        for (i = 0; i < NUM_MIDI_CHANNELS; i++)
-        {
-            if (_MIDI_RerouteFunctions[i] != NULL)
-            {
-                _MIDI_SetChannelVolume(i, _MIDI_ChannelVolume[i]);
-            }
-        }
     }
     else
     {
