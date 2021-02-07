@@ -131,7 +131,6 @@ static void _MIDI_ServiceRoutine(task *Task);
 static int _MIDI_SendControlChange(int channel, int c1, int c2);
 static void _MIDI_SetChannelVolume(int channel, int volume);
 static void _MIDI_SendChannelVolumes(void);
-static int _MIDI_ProcessNextTick(void);
 static void _MIDI_InitEMIDI(void);
 
 #endif

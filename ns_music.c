@@ -262,8 +262,6 @@ int MUSIC_InitAWE32(
     Funcs->ProgramChange = AWE32_ProgramChange;
     Funcs->ChannelAftertouch = AWE32_ChannelAftertouch;
     Funcs->PitchBend = AWE32_PitchBend;
-    Funcs->ReleasePatches = NULL;
-    Funcs->LoadPatch = NULL;
     Funcs->SetVolume = NULL;
     Funcs->GetVolume = NULL;
 
@@ -305,8 +303,6 @@ int MUSIC_InitFM(
     Funcs->ProgramChange = AL_ProgramChange;
     Funcs->ChannelAftertouch = NULL;
     Funcs->PitchBend = AL_SetPitchBend;
-    Funcs->ReleasePatches = NULL;
-    Funcs->LoadPatch = NULL;
     Funcs->SetVolume = NULL;
     Funcs->GetVolume = NULL;
 
@@ -389,8 +385,6 @@ int MUSIC_InitMidi(
     Funcs->ProgramChange = MPU_ProgramChange;
     Funcs->ChannelAftertouch = MPU_ChannelAftertouch;
     Funcs->PitchBend = MPU_PitchBend;
-    Funcs->ReleasePatches = NULL;
-    Funcs->LoadPatch = NULL;
     Funcs->SetVolume = NULL;
     Funcs->GetVolume = NULL;
 
@@ -429,8 +423,6 @@ int MUSIC_InitGUS(
     Funcs->ProgramChange = GUSMIDI_ProgramChange;
     Funcs->ChannelAftertouch = NULL;
     Funcs->PitchBend = GUSMIDI_PitchBend;
-    Funcs->ReleasePatches = NULL; //GUSMIDI_ReleasePatches;
-    Funcs->LoadPatch = NULL; //GUSMIDI_LoadPatch;
     Funcs->SetVolume = GUSMIDI_SetVolume;
     Funcs->GetVolume = GUSMIDI_GetVolume;
 

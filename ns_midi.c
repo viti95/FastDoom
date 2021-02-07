@@ -466,10 +466,7 @@ static int _MIDI_InterpretControllerInfo(
         break;
 
     default:
-        if (_MIDI_Funcs->ControlChange)
-        {
-            _MIDI_Funcs->ControlChange(channel, c1, c2);
-        }
+        _MIDI_Funcs->ControlChange(channel, c1, c2);
     }
 
     return TimeSet;
@@ -580,17 +577,11 @@ static void _MIDI_ServiceRoutine(task *Task)
             switch (command)
             {
             case MIDI_NOTE_OFF:
-                if (_MIDI_Funcs->NoteOff)
-                {
-                    _MIDI_Funcs->NoteOff(channel, c1, c2);
-                }
+                _MIDI_Funcs->NoteOff(channel, c1, c2);
                 break;
 
             case MIDI_NOTE_ON:
-                if (_MIDI_Funcs->NoteOn)
-                {
-                    _MIDI_Funcs->NoteOn(channel, c1, c2);
-                }
+                _MIDI_Funcs->NoteOn(channel, c1, c2);
                 break;
 
             case MIDI_POLY_AFTER_TCH:
@@ -606,8 +597,7 @@ static void _MIDI_ServiceRoutine(task *Task)
                 break;
 
             case MIDI_PROGRAM_CHANGE:
-                if ((_MIDI_Funcs->ProgramChange) &&
-                    (!Track->EMIDI_ProgramChange))
+                if (!Track->EMIDI_ProgramChange)
                 {
                     _MIDI_Funcs->ProgramChange(channel, MIDI_PatchMap[c1 & 0x7f]);
                 }
@@ -621,10 +611,7 @@ static void _MIDI_ServiceRoutine(task *Task)
                 break;
 
             case MIDI_PITCH_BEND:
-                if (_MIDI_Funcs->PitchBend)
-                {
-                    _MIDI_Funcs->PitchBend(channel, c1, c2);
-                }
+                _MIDI_Funcs->PitchBend(channel, c1, c2);
                 break;
 
             default:
@@ -679,16 +666,6 @@ static int _MIDI_SendControlChange(
         {
             return (MIDI_Ok);
         }
-    }
-
-    if (_MIDI_Funcs == NULL)
-    {
-        return (MIDI_Error);
-    }
-
-    if (_MIDI_Funcs->ControlChange == NULL)
-    {
-        return (MIDI_Error);
     }
 
     _MIDI_Funcs->ControlChange(channel, c1, c2);
@@ -747,16 +724,6 @@ static void _MIDI_SetChannelVolume(
         {
             return;
         }
-    }
-
-    if (_MIDI_Funcs == NULL)
-    {
-        return;
-    }
-
-    if (_MIDI_Funcs->ControlChange == NULL)
-    {
-        return;
     }
 
     // For user volume
@@ -942,11 +909,6 @@ void MIDI_StopSong(
         MIDI_Reset();
         _MIDI_ResetTracks();
 
-        if (_MIDI_Funcs->ReleasePatches)
-        {
-            _MIDI_Funcs->ReleasePatches();
-        }
-
         USRHOOKS_FreeMem(_MIDI_TrackPtr);
 
         _MIDI_TrackPtr = NULL;
@@ -1056,11 +1018,6 @@ int MIDI_PlaySong(
 
     _MIDI_InitEMIDI();
 
-    if (_MIDI_Funcs->LoadPatch)
-    {
-        MIDI_LoadTimbres();
-    }
-
     _MIDI_ResetTracks();
 
     if (!Reset)
@@ -1101,154 +1058,6 @@ void MIDI_SetTempo(int tempo)
     }
     // VITI95: OPTIMIZE
     _MIDI_FPSecondsPerTick = (1 << TIME_PRECISION) / tickspersecond;
-}
-
-/*---------------------------------------------------------------------
-   Function: _MIDI_ProcessNextTick
-
-   Sets the position of the song pointer.
----------------------------------------------------------------------*/
-
-static int _MIDI_ProcessNextTick(
-    void)
-
-{
-    int event;
-    int channel;
-    int command;
-    track *Track;
-    int tracknum;
-    int status;
-    int c1;
-    int c2;
-    int TimeSet = FALSE;
-
-    Track = _MIDI_TrackPtr;
-    tracknum = 0;
-    while ((tracknum < _MIDI_NumTracks) && (Track != NULL))
-    {
-        while ((Track->active) && (Track->delay == 0))
-        {
-            GET_NEXT_EVENT(Track, event);
-
-            if (GET_MIDI_COMMAND(event) == MIDI_SPECIAL)
-            {
-                switch (event)
-                {
-                case MIDI_SYSEX:
-                case MIDI_SYSEX_CONTINUE:
-                    //_MIDI_SysEx(Track);
-                    Track->pos += _MIDI_ReadDelta(Track);
-                    break;
-
-                case MIDI_META_EVENT:
-                    _MIDI_MetaEvent(Track);
-                    break;
-                }
-
-                if (Track->active)
-                {
-                    Track->delay = _MIDI_ReadDelta(Track);
-                }
-
-                continue;
-            }
-
-            if (event & MIDI_RUNNING_STATUS)
-            {
-                Track->RunningStatus = event;
-            }
-            else
-            {
-                event = Track->RunningStatus;
-                Track->pos--;
-            }
-
-            channel = GET_MIDI_CHANNEL(event);
-            command = GET_MIDI_COMMAND(event);
-
-            if (_MIDI_CommandLengths[command] > 0)
-            {
-                GET_NEXT_EVENT(Track, c1);
-                if (_MIDI_CommandLengths[command] > 1)
-                {
-                    GET_NEXT_EVENT(Track, c2);
-                }
-            }
-
-            if (_MIDI_RerouteFunctions[channel] != NULL)
-            {
-                status = _MIDI_RerouteFunctions[channel](event, c1, c2);
-
-                if (status == MIDI_DONT_PLAY)
-                {
-                    Track->delay = _MIDI_ReadDelta(Track);
-                    continue;
-                }
-            }
-
-            switch (command)
-            {
-            case MIDI_NOTE_OFF:
-                break;
-
-            case MIDI_NOTE_ON:
-                break;
-
-            case MIDI_POLY_AFTER_TCH:
-                if (_MIDI_Funcs->PolyAftertouch)
-                {
-                    _MIDI_Funcs->PolyAftertouch(channel, c1, c2);
-                }
-                break;
-
-            case MIDI_CONTROL_CHANGE:
-                TimeSet = _MIDI_InterpretControllerInfo(Track, TimeSet,
-                                                        channel, c1, c2);
-                break;
-
-            case MIDI_PROGRAM_CHANGE:
-                if ((_MIDI_Funcs->ProgramChange) &&
-                    (!Track->EMIDI_ProgramChange))
-                {
-                    _MIDI_Funcs->ProgramChange(channel, c1);
-                }
-                break;
-
-            case MIDI_AFTER_TOUCH:
-                if (_MIDI_Funcs->ChannelAftertouch)
-                {
-                    _MIDI_Funcs->ChannelAftertouch(channel, c1);
-                }
-                break;
-
-            case MIDI_PITCH_BEND:
-                if (_MIDI_Funcs->PitchBend)
-                {
-                    _MIDI_Funcs->PitchBend(channel, c1, c2);
-                }
-                break;
-
-            default:
-                break;
-            }
-
-            Track->delay = _MIDI_ReadDelta(Track);
-        }
-
-        Track->delay--;
-        Track++;
-        tracknum++;
-
-        if (_MIDI_ActiveTracks == 0)
-        {
-            break;
-        }
-    }
-
-    _MIDI_AdvanceTick();
-
-    return (TimeSet);
 }
 
 /*---------------------------------------------------------------------
@@ -1603,27 +1412,8 @@ void MIDI_LoadTimbres(
             if (command == MIDI_CONTROL_CHANGE)
             {
                 length += *Track->pos == MIDI_MONO_MODE_ON;
-
-                if (*Track->pos == EMIDI_PROGRAM_CHANGE)
-                {
-                    _MIDI_Funcs->LoadPatch(*(Track->pos + 1));
-                }
             }
 
-            if (channel == MIDI_RHYTHM_CHANNEL)
-            {
-                if (command == MIDI_NOTE_ON)
-                {
-                    _MIDI_Funcs->LoadPatch(128 + *Track->pos);
-                }
-            }
-            else
-            {
-                if (command == MIDI_PROGRAM_CHANGE)
-                {
-                    _MIDI_Funcs->LoadPatch(*Track->pos);
-                }
-            }
             Track->pos += length;
             _MIDI_ReadDelta(Track);
         }
