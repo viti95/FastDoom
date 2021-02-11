@@ -180,9 +180,7 @@ void T_VerticalDoor(vldoor_t *door)
 // Move a locked door up/down
 //
 
-int EV_DoLockedDoor(line_t *line,
-					vldoor_e type,
-					mobj_t *thing)
+int EV_DoLockedDoor(line_t *line, vldoor_e type, mobj_t *thing)
 {
 	player_t *p;
 
@@ -195,8 +193,6 @@ int EV_DoLockedDoor(line_t *line,
 	{
 	case 99: // Blue Lock
 	case 133:
-		if (!p)
-			return 0;
 		if (!p->cards[it_bluecard] && !p->cards[it_blueskull])
 		{
 			p->message = PD_BLUEO;
@@ -207,8 +203,6 @@ int EV_DoLockedDoor(line_t *line,
 
 	case 134: // Red Lock
 	case 135:
-		if (!p)
-			return 0;
 		if (!p->cards[it_redcard] && !p->cards[it_redskull])
 		{
 			p->message = PD_REDO;
@@ -219,10 +213,7 @@ int EV_DoLockedDoor(line_t *line,
 
 	case 136: // Yellow Lock
 	case 137:
-		if (!p)
-			return 0;
-		if (!p->cards[it_yellowcard] &&
-			!p->cards[it_yellowskull])
+		if (!p->cards[it_yellowcard] && !p->cards[it_yellowskull])
 		{
 			p->message = PD_YELLOWO;
 			S_StartSound(NULL, sfx_oof);
@@ -234,8 +225,7 @@ int EV_DoLockedDoor(line_t *line,
 	return EV_DoDoor(line, type);
 }
 
-int EV_DoDoor(line_t *line,
-			  vldoor_e type)
+int EV_DoDoor(line_t *line, vldoor_e type)
 {
 	int secnum, rtn;
 	sector_t *sec;
@@ -257,7 +247,7 @@ int EV_DoDoor(line_t *line,
 		thinkercap.prev->next = &door->thinker;
 		door->thinker.next = &thinkercap;
 		door->thinker.prev = thinkercap.prev;
-    	thinkercap.prev = &door->thinker;
+		thinkercap.prev = &door->thinker;
 
 		sec->specialdata = door;
 
@@ -481,7 +471,7 @@ void P_SpawnDoorCloseIn30(sector_t *sec)
 	vldoor_t *door;
 
 	door = Z_MallocUnowned(sizeof(*door), PU_LEVSPEC);
-		
+
 	thinkercap.prev->next = &door->thinker;
 	door->thinker.next = &thinkercap;
 	door->thinker.prev = thinkercap.prev;
@@ -507,7 +497,7 @@ void P_SpawnDoorRaiseIn5Mins(sector_t *sec,
 	vldoor_t *door;
 
 	door = Z_MallocUnowned(sizeof(*door), PU_LEVSPEC);
-	
+
 	thinkercap.prev->next = &door->thinker;
 	door->thinker.next = &thinkercap;
 	door->thinker.prev = thinkercap.prev;
