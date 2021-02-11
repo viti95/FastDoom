@@ -60,20 +60,23 @@ void STlib_initNum(st_number_t *n,
 //  based on differences from the old number.
 // Note: worth the trouble?
 //
-void STlib_drawNum(st_number_t *n,
-                   byte refresh)
+void STlib_drawNum(st_number_t *n, byte refresh)
 {
-    int num = *n->num;
-
-    int w = n->p[0]->width;
-    int h = n->p[0]->height;
-    int x = n->x;
+    int num;
+    int w;
+    int h;
+    int x;
 
     // [crispy] redraw only if necessary
     if (n->oldnum == num && !refresh)
     {
         return;
     }
+
+    num = *n->num;
+    w = n->p[0]->width;
+    h = n->p[0]->height;
+    x = n->x;
 
     n->oldnum = *n->num;
 

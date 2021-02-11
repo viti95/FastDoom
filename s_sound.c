@@ -450,10 +450,12 @@ void S_UpdateSounds(void *listener_p)
     sfxinfo_t *sfx;
     channel_t *c;
     int i;
-    mobj_t *listener = (mobj_t *)listener_p;
+    mobj_t *listener;
 
     if (snd_SfxDevice == snd_none)
         return;
+
+    listener = (mobj_t *)listener_p;
 
     for (cnum = 0; cnum < numChannels; cnum++)
     {

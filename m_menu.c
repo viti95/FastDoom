@@ -1059,10 +1059,12 @@ int quitsounds2[8] =
 
 void M_QuitResponse(int ch)
 {
-    int i = 105;
+    int i;
 
     if (ch != 'y')
         return;
+
+    i = 105;
 
     if (commercial)
         S_StartSound(NULL, quitsounds2[(gametic >> 2) & 7]);

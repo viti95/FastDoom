@@ -493,13 +493,14 @@ static void _MIDI_ServiceRoutine(task *Task)
     int status;
     int c1;
     int c2;
-    int TimeSet = FALSE;
+    int TimeSet;
 
     if (!_MIDI_SongActive)
     {
         return;
     }
 
+    TimeSet = FALSE;
     Track = _MIDI_TrackPtr;
     tracknum = 0;
     while (tracknum < _MIDI_NumTracks)
