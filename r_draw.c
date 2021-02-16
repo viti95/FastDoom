@@ -184,6 +184,187 @@ void R_DrawSkyFlatPotato(void)
     };
 }
 
+byte palcolour[256];
+
+byte textcolors[48] = {
+    0x00, 0x00, 0x00,
+    0x00, 0x00, 0xAA,
+    0x00, 0xAA, 0x00,
+    0x00, 0xAA, 0xAA,
+    0xAA, 0x00, 0x00,
+    0xAA, 0x00, 0xAA,
+    0xAA, 0x55, 0x00,
+    0xAA, 0xAA, 0xAA,
+    0x55, 0x55, 0x55,
+    0x55, 0x55, 0xFF,
+    0x55, 0xFF, 0x55,
+    0x55, 0xFF, 0xFF,
+    0xFF, 0x55, 0x55,
+    0xFF, 0x55, 0xFF,
+    0xFF, 0xFF, 0x55,
+    0xFF, 0xFF, 0xFF
+};
+
+void SetTextPalette(int numpalette)
+{
+    byte *pos;
+    short i, j;
+
+    pos = processedpalette + Mul768(numpalette);
+
+    for (i = 0; i < 256; i++)
+    {
+        int distance;
+
+        int r1 = (int)pos[i * 3];
+        int g1 = (int)pos[i * 3 + 1];
+        int b1 = (int)pos[i * 3 + 2];
+
+        int best_difference = MAXINT;
+        int best_color;
+
+        r1 *= r1;
+        g1 *= g1;
+        b1 *= b1;
+
+        for (j = 0; j < 16; j++)
+        {
+            int r2 = (int)textcolors[j * 3];
+            int g2 = (int)textcolors[j * 3 + 1];
+            int b2 = (int)textcolors[j * 3 + 2];
+
+            int cR = r2 - r1;
+            int cG = g2 - g1;
+            int cB = b2 - b1;
+
+            r2 *= r2;
+            g2 *= g2;
+            b2 *= b2;
+
+            cR *= cR;
+            cG *= cG;
+            cB *= cB;
+
+            distance = cR + cG + cB;
+
+            //float uR = r1 + r2;
+            //float distance = sqrt(cR * cR * (2.0f + uR / 256.0f) + cG * cG * 4.0f + cB * cB * (2.0f + (255.0f - uR) / 256.0f));
+
+            if (best_difference > distance)
+            {
+                best_difference = distance;
+                best_color = j;
+            }
+        }
+
+        palcolour[i] = best_color;
+    }
+}
+
+void R_DrawColumn8025(void)
+{
+    fixed_t frac;
+    fixed_t fracstep;
+    unsigned int count;
+    unsigned short *dest = (unsigned short *)0xB8000;
+
+    dest = dest + Mul80(dc_yl) + dc_x;
+    count = dc_yh - dc_yl;
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    do
+    {
+        *dest = palcolour[dc_colormap[dc_source[(frac >> FRACBITS)]]] << 8 | 219;
+        dest += 80;
+        frac += fracstep;
+    } while (count--);
+}
+
+void R_DrawColumn8050(void)
+{
+    fixed_t frac;
+    fixed_t fracstep;
+    unsigned int count;
+    unsigned short *dest = (unsigned short *)0xB8000;
+
+    dest = dest + Mul80(dc_yl) + dc_x;
+    count = dc_yh - dc_yl;
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    do
+    {
+        *dest = palcolour[dc_colormap[dc_source[(frac >> FRACBITS)]]] << 8 | 219;
+        dest += 80;
+        frac += fracstep;
+    } while (count--);
+}
+
+void R_DrawSpan8025(void)
+{
+    int spot;
+    int prt;
+    int countp;
+    fixed_t xfrac;
+    fixed_t yfrac;
+    unsigned short *dest = (unsigned short *)0xB8000;
+
+    countp = ds_x2 - ds_x1;
+
+    dest = dest + Mul80(ds_y) + ds_x1;
+
+    xfrac = ds_xfrac;
+    yfrac = ds_yfrac;
+
+    do
+    {
+        // Current texture index in u,v.
+        spot = ((yfrac >> (16 - 6)) & (63 * 64)) + ((xfrac >> 16) & 63);
+
+        // Lookup pixel from flat texture tile,
+        //  re-index using light/colormap.
+        *dest++ = palcolour[ds_colormap[ds_source[spot]]] << 8 | 219;
+
+        // Next step in u,v.
+        xfrac += ds_xstep;
+        yfrac += ds_ystep;
+    } while (countp--);
+}
+
+void R_DrawSpan8050(void)
+{
+    int spot;
+    int prt;
+    int countp;
+    fixed_t xfrac;
+    fixed_t yfrac;
+    unsigned short *dest = (unsigned short *)0xB8000;
+
+    countp = ds_x2 - ds_x1;
+
+    dest = dest + Mul80(ds_y) + ds_x1;
+
+    xfrac = ds_xfrac;
+    yfrac = ds_yfrac;
+
+    do
+    {
+        // Current texture index in u,v.
+        spot = ((yfrac >> (16 - 6)) & (63 * 64)) + ((xfrac >> 16) & 63);
+
+        // Lookup pixel from flat texture tile,
+        //  re-index using light/colormap.
+        *dest++ = palcolour[ds_colormap[ds_source[spot]]] << 8 | 219;
+
+        // Next step in u,v.
+        xfrac += ds_xstep;
+        yfrac += ds_ystep;
+    } while (countp--);
+}
+
 void R_DrawSpanPotato(void)
 {
     int spot;
@@ -813,25 +994,27 @@ void R_DrawSpanFlatPotato(void)
 //  for getting the framebuffer address
 //  of a pixel to draw.
 //
-void R_InitBuffer(int width,
-                  int height)
+void R_InitBuffer(int width, int height)
 {
     int i;
 
     // Handle resize,
     //  e.g. smaller view windows
     //  with border and/or status bar.
-    viewwindowx = (SCREENWIDTH - width) >> 1;
+    //viewwindowx = (SCREENWIDTH - width) >> 1;
+    viewwindowx = 0;
 
     // Column offset. For windows.
     for (i = 0; i < width; i++)
         columnofs[i] = viewwindowx + i;
 
     // Samw with base row offset.
-    if (width == SCREENWIDTH)
+    /*if (width == SCREENWIDTH)
         viewwindowy = 0;
     else
-        viewwindowy = (SCREENHEIGHT - SBARHEIGHT - height) >> 1;
+        viewwindowy = (SCREENHEIGHT - SBARHEIGHT - height) >> 1;*/
+
+    viewwindowy = 0;
 }
 
 //
@@ -906,7 +1089,7 @@ void R_FillBackScreen(void)
 
     V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + viewheight, screen1, W_CacheLumpName("BRDR_BR", PU_CACHE));
 
-    for (i = 0; i < 4; i++)
+    /*for (i = 0; i < 4; i++)
     {
         outp(SC_INDEX, SC_MAPMASK);
         outp(SC_INDEX + 1, 1 << i);
@@ -918,7 +1101,7 @@ void R_FillBackScreen(void)
             *dest++ = *src;
             src += 4;
         } while (dest != (byte *)(0xac000 + (SCREENHEIGHT - SBARHEIGHT) * SCREENWIDTH / 4));
-    }
+    }*/
 
     Z_Free(screen1);
 }
@@ -929,7 +1112,7 @@ void R_FillBackScreen(void)
 void R_VideoErase(unsigned ofs,
                   int count)
 {
-    byte *dest;
+    /*byte *dest;
     byte *source;
     int countp;
     outp(SC_INDEX, SC_MAPMASK);
@@ -942,7 +1125,7 @@ void R_VideoErase(unsigned ofs,
     CopyBytes(source, dest, countp);
 
     outp(GC_INDEX, GC_MODE);
-    outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~1);
+    outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~1);*/
 }
 
 //
@@ -952,7 +1135,7 @@ void R_VideoErase(unsigned ofs,
 //
 void R_DrawViewBorder(void)
 {
-    int top;
+    /*int top;
     int side;
     int ofs;
     int i;
@@ -978,5 +1161,5 @@ void R_DrawViewBorder(void)
     {
         R_VideoErase(ofs, side);
         ofs += SCREENWIDTH;
-    }
+    }*/
 }

@@ -6,5 +6,6 @@ extern int ticcount;
 extern fixed_t fps;
 
 extern byte *currentscreen;
+extern byte processedpalette[14 * 768];
 
 extern void I_TimerISR(task *task);

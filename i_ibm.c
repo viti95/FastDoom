@@ -39,6 +39,8 @@
 #include "ns_task.h"
 #include "doomdef.h"
 
+#include <graph.h>
+
 //
 // Macros
 //
@@ -224,12 +226,12 @@ void I_ProcessPalette(byte *palette)
 //
 void I_SetPalette(int numpalette)
 {
-    int i;
+    /*int i;
     int pos = Mul768(numpalette);
 
     _outbyte(PEL_WRITE_ADR, 0);
 
-    OutString(PEL_DATA, ((unsigned char *)processedpalette) + pos, 768);
+    OutString(PEL_DATA, ((unsigned char *)processedpalette) + pos, 768);*/
 }
 
 //
@@ -243,7 +245,7 @@ byte *pcscreen, *currentscreen, *destscreen, *destview;
 //
 void I_UpdateBox(int x, int y, int w, int h)
 {
-    int i, j, k, count;
+    /*int i, j, k, count;
     int sp_x1, sp_x2;
     int poffset;
     int offset;
@@ -312,7 +314,7 @@ void I_UpdateBox(int x, int y, int w, int h)
                 dest += pstep;
             }
         }
-    }
+    }*/
 }
 
 //
@@ -324,7 +326,7 @@ void I_UpdateNoBlit(void)
     int realdr[4];
 
     // Set current screen
-    currentscreen = destscreen;
+    //currentscreen = destscreen;
 
     // Update dirtybox size
     realdr[BOXTOP] = dirtybox[BOXTOP];
@@ -393,7 +395,7 @@ void I_UpdateNoBlit(void)
         y = realdr[BOXBOTTOM];
         h = realdr[BOXTOP] - y + 1;
 
-        I_UpdateBox(x, y, w, h);
+        //I_UpdateBox(x, y, w, h);
     }
     // Clear box
     dirtybox[BOXTOP] = dirtybox[BOXRIGHT] = MININT;
@@ -408,14 +410,14 @@ void I_FinishUpdate(void)
     static int fps_counter, fps_starttime, fps_nextcalculation;
     int opt1, opt2;
 
-    outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
+    /*outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
 
     //Next plane
     destscreen += 0x4000;
     if (destscreen == (byte *)0xac000)
     {
         destscreen = (byte *)0xa0000;
-    }
+    }*/
 
     if (showFPS)
     {
@@ -445,12 +447,12 @@ void I_FinishUpdate(void)
 //
 void I_InitGraphics(void)
 {
-    regs.w.ax = 0x13;
-    int386(0x10, (union REGS *)&regs, &regs);
-    pcscreen = currentscreen = (byte *)0xa0000;
-    destscreen = (byte *)0xa4000;
+    //regs.w.ax = 0x13;
+    //int386(0x10, (union REGS *)&regs, &regs);
+    //pcscreen = currentscreen = (byte *)0xa0000;
+    //destscreen = (byte *)0xa4000;
 
-    outp(SC_INDEX, SC_MEMMODE);
+    /*outp(SC_INDEX, SC_MEMMODE);
     outp(SC_INDEX + 1, (inp(SC_INDEX + 1) & ~8) | 4);
     outp(GC_INDEX, GC_MODE);
     outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~0x13);
@@ -462,9 +464,48 @@ void I_InitGraphics(void)
     outp(CRTC_INDEX + 1, inp(CRTC_INDEX + 1) & ~0x40);
     outp(CRTC_INDEX, CRTC_MODE);
     outp(CRTC_INDEX + 1, inp(CRTC_INDEX + 1) | 0x40);
-    outp(GC_INDEX, GC_READMAP);
+    outp(GC_INDEX, GC_READMAP);*/
+
+    if (textmode8025)
+    {
+        // Set 80x25 color mode
+        regs.h.ah = 0x00;
+        regs.h.al = 0x03;
+        int386(0x10, &regs, &regs);
+
+        // Disable cursor
+        regs.h.ah = 0x01;
+        regs.h.ch = 0x3F;
+        int386(0x10, &regs, &regs);
+
+        // TEST change page
+        /*regs.h.ah = 0x05;
+        regs.h.al = 0x01;
+        int386(0x10, &regs, &regs);*/
+    }
+
+    if (textmode8050)
+    {
+        // Set 80x25 color mode
+        regs.h.ah = 0x00;
+        regs.h.al = 0x03;
+        int386(0x10, &regs, &regs);
+
+        // Change font size to 8x8 (only VGA cards)
+        regs.h.ah = 0x11;
+        regs.h.al = 0x12;
+        regs.h.bh = 0;
+        regs.h.bl = 0;
+        int386(0x10, &regs, &regs);
+
+        // Disable cursor
+        regs.h.ah = 0x01;
+        regs.h.ch = 0x3F;
+        int386(0x10, &regs, &regs);        
+    }
 
     I_ProcessPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
+    SetTextPalette(0);
     I_SetPalette(0);
 }
 
@@ -473,11 +514,11 @@ void I_InitGraphics(void)
 //
 void I_ShutdownGraphics(void)
 {
-    if (*(byte *)0x449 == 0x13) // don't reset mode if it didn't get set
-    {
-        regs.w.ax = 3;
-        int386(0x10, &regs, &regs); // back to text mode
-    }
+    //if (*(byte *)0x449 == 0x13) // don't reset mode if it didn't get set
+    //{
+    regs.w.ax = 3;
+    int386(0x10, &regs, &regs); // back to text mode
+    //}
 }
 
 //
@@ -537,7 +578,7 @@ void I_StartTic(void)
 
         ev.type = (k & 0x80) != 0;
         k &= 0x7f;
-        
+
         switch (k)
         {
         case SC_UPARROW:

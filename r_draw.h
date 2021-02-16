@@ -56,8 +56,15 @@ void R_DrawFuzzColumnFastPotato(void);
 void R_DrawColumnPotato(void);
 void R_DrawSkyFlatPotato(void);
 
-void R_VideoErase(unsigned ofs,
-                  int count);
+void R_DrawColumn8025(void);
+void R_DrawSpan8025(void);
+
+void R_DrawColumn8050(void);
+void R_DrawSpan8050(void);
+
+void R_VideoErase(unsigned ofs,int count);
+
+void SetTextPalette(int numpalette);
 
 extern int ds_y;
 extern int ds_x1;

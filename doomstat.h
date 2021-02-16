@@ -59,6 +59,9 @@ extern boolean forceLowDetail;
 extern boolean forcePotatoDetail;
 extern int forceScreenSize;
 
+extern boolean textmode8025;
+extern boolean textmode8050;
+
 extern boolean logTimedemo;
 
 extern boolean uncappedFPS;

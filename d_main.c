@@ -104,6 +104,9 @@ boolean forceLowDetail;
 boolean forcePotatoDetail;
 int forceScreenSize;
 
+boolean textmode8025;
+boolean textmode8050;
+
 boolean logTimedemo;
 
 boolean uncappedFPS;
@@ -718,6 +721,9 @@ void D_DoomMain(void)
     forceHighDetail = M_CheckParm("-forceHQ");
     forceLowDetail = M_CheckParm("-forceLQ");
     forcePotatoDetail = M_CheckParm("-forcePQ");
+
+    textmode8025 = M_CheckParm("-80x25");
+    textmode8050 = M_CheckParm("-80x50");
 
     lowSound = M_CheckParm("-lowsound");
     eightBitSound = M_CheckParm("-8bitsound");
