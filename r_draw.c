@@ -276,7 +276,7 @@ void R_DrawColumn8025(void)
 
     do
     {
-        *dest = palcolour[dc_colormap[dc_source[(frac >> FRACBITS)]]] << 8 | 219;
+        *dest = palcolour[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 219;
         dest += 80;
         frac += fracstep;
     } while (count--);
@@ -297,7 +297,7 @@ void R_DrawColumn8050(void)
 
     do
     {
-        *dest = palcolour[dc_colormap[dc_source[(frac >> FRACBITS)]]] << 8 | 219;
+        *dest = palcolour[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 219;
         dest += 80;
         frac += fracstep;
     } while (count--);
