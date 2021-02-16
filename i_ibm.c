@@ -220,18 +220,92 @@ void I_ProcessPalette(byte *palette)
     }
 }
 
+const byte textcolors[48] = {
+    0x00, 0x00, 0x00,
+    0x00, 0x00, 0xAA,
+    0x00, 0xAA, 0x00,
+    0x00, 0xAA, 0xAA,
+    0xAA, 0x00, 0x00,
+    0xAA, 0x00, 0xAA,
+    0xAA, 0x55, 0x00,
+    0xAA, 0xAA, 0xAA,
+    0x55, 0x55, 0x55,
+    0x55, 0x55, 0xFF,
+    0x55, 0xFF, 0x55,
+    0x55, 0xFF, 0xFF,
+    0xFF, 0x55, 0x55,
+    0xFF, 0x55, 0xFF,
+    0xFF, 0xFF, 0x55,
+    0xFF, 0xFF, 0xFF
+};
+
 //
 // I_SetPalette
 // Palette source must use 8 bit RGB elements.
 //
 void I_SetPalette(int numpalette)
 {
-    /*int i;
-    int pos = Mul768(numpalette);
+    if (textmode8025 || textmode8050)
+    {
+        byte *pos;
+        short i, j;
 
-    _outbyte(PEL_WRITE_ADR, 0);
+        pos = processedpalette + Mul768(numpalette);
 
-    OutString(PEL_DATA, ((unsigned char *)processedpalette) + pos, 768);*/
+        for (i = 0; i < 256; i++)
+        {
+            int distance;
+
+            int r1 = (int)pos[i * 3];
+            int g1 = (int)pos[i * 3 + 1];
+            int b1 = (int)pos[i * 3 + 2];
+
+            int best_difference = MAXINT;
+            int best_color;
+
+            r1 *= r1;
+            g1 *= g1;
+            b1 *= b1;
+
+            for (j = 0; j < 16; j++)
+            {
+                int r2 = (int)textcolors[j * 3];
+                int g2 = (int)textcolors[j * 3 + 1];
+                int b2 = (int)textcolors[j * 3 + 2];
+
+                int cR = r2 - r1;
+                int cG = g2 - g1;
+                int cB = b2 - b1;
+
+                r2 *= r2;
+                g2 *= g2;
+                b2 *= b2;
+
+                cR *= cR;
+                cG *= cG;
+                cB *= cB;
+
+                distance = cR + cG + cB;
+
+                if (best_difference > distance)
+                {
+                    best_difference = distance;
+                    best_color = j;
+                }
+            }
+
+            lut16colors[i] = best_color;
+        }
+    }
+    else
+    {
+        int i;
+        int pos = Mul768(numpalette);
+
+        _outbyte(PEL_WRITE_ADR, 0);
+
+        OutString(PEL_DATA, ((unsigned char *)processedpalette) + pos, 768);
+    }
 }
 
 //
@@ -501,11 +575,10 @@ void I_InitGraphics(void)
         // Disable cursor
         regs.h.ah = 0x01;
         regs.h.ch = 0x3F;
-        int386(0x10, &regs, &regs);        
+        int386(0x10, &regs, &regs);
     }
 
     I_ProcessPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
-    SetTextPalette(0);
     I_SetPalette(0);
 }
 

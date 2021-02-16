@@ -61,8 +61,6 @@ void R_DrawSpanText80(void);
 
 void R_VideoErase(unsigned ofs,int count);
 
-void SetTextPalette(int numpalette);
-
 extern int ds_y;
 extern int ds_x1;
 extern int ds_x2;
@@ -76,6 +74,8 @@ extern fixed_t ds_ystep;
 
 // start of a 64*64 tile image
 extern byte *ds_source;
+
+extern byte lut16colors[256];
 
 // Span blitting for rows, floor/ceiling.
 // No Sepctre effect needed.

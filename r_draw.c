@@ -184,82 +184,7 @@ void R_DrawSkyFlatPotato(void)
     };
 }
 
-byte palcolour[256];
-
-byte textcolors[48] = {
-    0x00, 0x00, 0x00,
-    0x00, 0x00, 0xAA,
-    0x00, 0xAA, 0x00,
-    0x00, 0xAA, 0xAA,
-    0xAA, 0x00, 0x00,
-    0xAA, 0x00, 0xAA,
-    0xAA, 0x55, 0x00,
-    0xAA, 0xAA, 0xAA,
-    0x55, 0x55, 0x55,
-    0x55, 0x55, 0xFF,
-    0x55, 0xFF, 0x55,
-    0x55, 0xFF, 0xFF,
-    0xFF, 0x55, 0x55,
-    0xFF, 0x55, 0xFF,
-    0xFF, 0xFF, 0x55,
-    0xFF, 0xFF, 0xFF
-};
-
-void SetTextPalette(int numpalette)
-{
-    byte *pos;
-    short i, j;
-
-    pos = processedpalette + Mul768(numpalette);
-
-    for (i = 0; i < 256; i++)
-    {
-        int distance;
-
-        int r1 = (int)pos[i * 3];
-        int g1 = (int)pos[i * 3 + 1];
-        int b1 = (int)pos[i * 3 + 2];
-
-        int best_difference = MAXINT;
-        int best_color;
-
-        r1 *= r1;
-        g1 *= g1;
-        b1 *= b1;
-
-        for (j = 0; j < 16; j++)
-        {
-            int r2 = (int)textcolors[j * 3];
-            int g2 = (int)textcolors[j * 3 + 1];
-            int b2 = (int)textcolors[j * 3 + 2];
-
-            int cR = r2 - r1;
-            int cG = g2 - g1;
-            int cB = b2 - b1;
-
-            r2 *= r2;
-            g2 *= g2;
-            b2 *= b2;
-
-            cR *= cR;
-            cG *= cG;
-            cB *= cB;
-
-            distance = cR + cG + cB;
-
-            //float uR = r1 + r2;
-            //float distance = sqrt(cR * cR * (2.0f + uR / 256.0f) + cG * cG * 4.0f + cB * cB * (2.0f + (255.0f - uR) / 256.0f));
-
-            if (best_difference > distance)
-            {
-                best_difference = distance;
-                best_color = j;
-            }
-        }
-
-        palcolour[i] = best_color;
-    }
-}
+byte lut16colors[256];
 
 void R_DrawColumnText80(void)
 {
@@ -276,7 +201,7 @@ void R_DrawColumnText80(void)
 
     do
     {
-        *dest = palcolour[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 219;
+        *dest = lut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 219;
         dest += 80;
         frac += fracstep;
     } while (count--);
@@ -305,7 +230,7 @@ void R_DrawSpanText80(void)
 
         // Lookup pixel from flat texture tile,
         //  re-index using light/colormap.
-        *dest++ = palcolour[ds_colormap[ds_source[spot]]] << 8 | 219;
+        *dest++ = lut16colors[ds_colormap[ds_source[spot]]] << 8 | 219;
 
         // Next step in u,v.
         xfrac += ds_xstep;
