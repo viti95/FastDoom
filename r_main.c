@@ -737,19 +737,12 @@ void R_ExecuteSetViewSize(void)
     projection = centerxfrac;
     iprojection = FixedDiv(FRACUNIT << 8, projection);
 
-    if (textmode8025)
+    if (textmode8025 || textmode8050)
     {
-        colfunc = basecolfunc = R_DrawColumn8025;
-        spanfunc = R_DrawSpan8025;
-        skyfunc = R_DrawColumn8025;
-        fuzzcolfunc = R_DrawColumn8025;
-    }
-    else if (textmode8050)
-    {
-        colfunc = basecolfunc = R_DrawColumn8050;
-        spanfunc = R_DrawSpan8050;
-        skyfunc = R_DrawColumn8050;
-        fuzzcolfunc = R_DrawColumn8050;
+        colfunc = basecolfunc = R_DrawColumnText80;
+        spanfunc = R_DrawSpanText80;
+        skyfunc = R_DrawColumnText80;
+        fuzzcolfunc = R_DrawColumnText80;
     }
     else
     {

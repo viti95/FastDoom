@@ -56,11 +56,8 @@ void R_DrawFuzzColumnFastPotato(void);
 void R_DrawColumnPotato(void);
 void R_DrawSkyFlatPotato(void);
 
-void R_DrawColumn8025(void);
-void R_DrawSpan8025(void);
-
-void R_DrawColumn8050(void);
-void R_DrawSpan8050(void);
+void R_DrawColumnText80(void);
+void R_DrawSpanText80(void);
 
 void R_VideoErase(unsigned ofs,int count);
 

@@ -261,7 +261,7 @@ void SetTextPalette(int numpalette)
     }
 }
 
-void R_DrawColumn8025(void)
+void R_DrawColumnText80(void)
 {
     fixed_t frac;
     fixed_t fracstep;
@@ -282,59 +282,7 @@ void R_DrawColumn8025(void)
     } while (count--);
 }
 
-void R_DrawColumn8050(void)
-{
-    fixed_t frac;
-    fixed_t fracstep;
-    unsigned int count;
-    unsigned short *dest = (unsigned short *)0xB8000;
-
-    dest = dest + Mul80(dc_yl) + dc_x;
-    count = dc_yh - dc_yl;
-
-    fracstep = dc_iscale;
-    frac = dc_texturemid + (dc_yl - centery) * fracstep;
-
-    do
-    {
-        *dest = palcolour[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 219;
-        dest += 80;
-        frac += fracstep;
-    } while (count--);
-}
-
-void R_DrawSpan8025(void)
-{
-    int spot;
-    int prt;
-    int countp;
-    fixed_t xfrac;
-    fixed_t yfrac;
-    unsigned short *dest = (unsigned short *)0xB8000;
-
-    countp = ds_x2 - ds_x1;
-
-    dest = dest + Mul80(ds_y) + ds_x1;
-
-    xfrac = ds_xfrac;
-    yfrac = ds_yfrac;
-
-    do
-    {
-        // Current texture index in u,v.
-        spot = ((yfrac >> (16 - 6)) & (63 * 64)) + ((xfrac >> 16) & 63);
-
-        // Lookup pixel from flat texture tile,
-        //  re-index using light/colormap.
-        *dest++ = palcolour[ds_colormap[ds_source[spot]]] << 8 | 219;
-
-        // Next step in u,v.
-        xfrac += ds_xstep;
-        yfrac += ds_ystep;
-    } while (countp--);
-}
-
-void R_DrawSpan8050(void)
+void R_DrawSpanText80(void)
 {
     int spot;
     int prt;
