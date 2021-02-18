@@ -321,6 +321,13 @@ void V_Blit(unsigned int dest_page, int source_x, int source_y, int dest_x, int 
     outpw(GC_INDEX + 1, 0x00ff);
 }
 
+void V_WriteTextDirect(int x, int y, unsigned char c){
+    unsigned short *dest = (unsigned short *)0xB8000;
+
+    dest += 80 * y + x;
+    *dest = 12 << 8 | c;
+}
+
 //
 // V_DrawPatchDirect
 // Draws directly to the screen on the pc.

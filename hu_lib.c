@@ -25,6 +25,8 @@
 #include "r_local.h"
 #include "r_draw.h"
 
+#include "doomstat.h"
+
 // boolean : whether the screen is always erased
 #define noterased viewwindowx
 
@@ -72,24 +74,39 @@ void HUlib_drawTextLine(hu_textline_t *l)
     int x;
     unsigned char c;
 
-    // draw the new stuff
-    x = l->x;
-    for (i = 0; i < l->len; i++)
+    if (textmode8025 || textmode8050)
     {
-        c = toupper(l->l[i]);
-        if (c != ' ' && c >= l->sc && c <= '_')
+        x = l->x / 4;
+        for (i = 0; i < l->len; i++)
         {
-            w = l->f[c - l->sc]->width;
-            if (x + w > SCREENWIDTH)
-                break;
-            V_DrawPatchDirect(x, l->y, l->f[c - l->sc]);
-            x += w;
+            c = toupper(l->l[i]);
+            V_WriteTextDirect(x, l->y / 4, c);
+            x++;            
         }
-        else
+    }
+    else
+    {
+        // draw the new stuff
+        x = l->x;
+        for (i = 0; i < l->len; i++)
         {
-            x += 4;
-            if (x >= SCREENWIDTH)
-                break;
+            c = toupper(l->l[i]);
+            if (c != ' ' && c >= l->sc && c <= '_')
+            {
+                w = l->f[c - l->sc]->width;
+                if (x + w > SCREENWIDTH)
+                    break;
+
+                V_DrawPatchDirect(x, l->y, l->f[c - l->sc]);
+
+                x += w;
+            }
+            else
+            {
+                x += 4;
+                if (x >= SCREENWIDTH)
+                    break;
+            }
         }
     }
 }
@@ -116,7 +133,7 @@ void HUlib_eraseTextLine(hu_textline_t *l)
                 R_VideoErase(yoffset, SCREENWIDTH); // erase entire line
             else
             {
-                R_VideoErase(yoffset, viewwindowx); // erase left border
+                R_VideoErase(yoffset, viewwindowx);                           // erase left border
                 R_VideoErase(yoffset + viewwindowx + viewwidth, viewwindowx); // erase right border
             }
         }

@@ -57,9 +57,8 @@ void V_DrawPatchScreen0(int x, int y, patch_t *patch);
 void V_DrawPatchDirect(int x, int y, patch_t *patch);
 void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch);
 
-void V_MarkRect(int x,
-                int y,
-                int width,
-                int height);
+void V_WriteTextDirect(int x, int y, unsigned char c);
+
+void V_MarkRect(int x, int y, int width, int height);
 
 #endif
