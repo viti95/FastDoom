@@ -874,20 +874,22 @@ void R_InitBuffer(int width, int height)
     // Handle resize,
     //  e.g. smaller view windows
     //  with border and/or status bar.
-    //viewwindowx = (SCREENWIDTH - width) >> 1;
-    viewwindowx = 0;
 
+    if (textmode8025 || textmode8050){
+        viewwindowx = 0;
+    }else{
+        viewwindowx = (SCREENWIDTH - width) >> 1;
+    }
+        
     // Column offset. For windows.
     for (i = 0; i < width; i++)
         columnofs[i] = viewwindowx + i;
 
     // Samw with base row offset.
-    /*if (width == SCREENWIDTH)
+    if (width == SCREENWIDTH || textmode8025 || textmode8050)
         viewwindowy = 0;
     else
-        viewwindowy = (SCREENHEIGHT - SBARHEIGHT - height) >> 1;*/
-
-    viewwindowy = 0;
+        viewwindowy = (SCREENHEIGHT - SBARHEIGHT - height) >> 1;
 }
 
 //
@@ -914,7 +916,7 @@ void R_FillBackScreen(void)
 
     char *name;
 
-    if (scaledviewwidth == 320)
+    if (scaledviewwidth == 320 || textmode8025 || textmode8050)
         return;
 
     if (commercial)
@@ -962,7 +964,7 @@ void R_FillBackScreen(void)
 
     V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + viewheight, screen1, W_CacheLumpName("BRDR_BR", PU_CACHE));
 
-    /*for (i = 0; i < 4; i++)
+    for (i = 0; i < 4; i++)
     {
         outp(SC_INDEX, SC_MAPMASK);
         outp(SC_INDEX + 1, 1 << i);
@@ -974,7 +976,7 @@ void R_FillBackScreen(void)
             *dest++ = *src;
             src += 4;
         } while (dest != (byte *)(0xac000 + (SCREENHEIGHT - SBARHEIGHT) * SCREENWIDTH / 4));
-    }*/
+    }
 
     Z_Free(screen1);
 }
@@ -982,12 +984,16 @@ void R_FillBackScreen(void)
 //
 // Copy a screen buffer.
 //
-void R_VideoErase(unsigned ofs,
-                  int count)
+void R_VideoErase(unsigned ofs, int count)
 {
-    /*byte *dest;
+    byte *dest;
     byte *source;
     int countp;
+
+    if (textmode8025 || textmode8050){
+        return;
+    }
+    
     outp(SC_INDEX, SC_MAPMASK);
     outp(SC_INDEX + 1, 15);
     outp(GC_INDEX, GC_MODE);
@@ -998,7 +1004,7 @@ void R_VideoErase(unsigned ofs,
     CopyBytes(source, dest, countp);
 
     outp(GC_INDEX, GC_MODE);
-    outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~1);*/
+    outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~1);
 }
 
 //
@@ -1008,12 +1014,12 @@ void R_VideoErase(unsigned ofs,
 //
 void R_DrawViewBorder(void)
 {
-    /*int top;
+    int top;
     int side;
     int ofs;
     int i;
 
-    if (scaledviewwidth == SCREENWIDTH)
+    if (scaledviewwidth == SCREENWIDTH || textmode8025 || textmode8050)
         return;
 
     top = ((SCREENHEIGHT - SBARHEIGHT) - viewheight) / 2;
@@ -1034,5 +1040,5 @@ void R_DrawViewBorder(void)
     {
         R_VideoErase(ofs, side);
         ofs += SCREENWIDTH;
-    }*/
+    }
 }

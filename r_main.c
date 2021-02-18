@@ -1002,10 +1002,10 @@ void R_RenderPlayerView(player_t *player)
     NetUpdate();
 
     // Set potato mode VGA plane
-    /*if (detailshift == 2)
+    if (detailshift == 2 && !textmode8025 && !textmode8050)
     {
         outp(SC_INDEX + 1, 15);
-    }*/
+    }
 
     // The head node is the last node output.
     R_RenderBSPNode(firstnode);
@@ -1013,7 +1013,7 @@ void R_RenderPlayerView(player_t *player)
     // Check for new console commands.
     NetUpdate();
 
-    /*if (flatSurfaces)
+    if (flatSurfaces)
         switch (detailshift)
         {
         case 0:
@@ -1026,8 +1026,8 @@ void R_RenderPlayerView(player_t *player)
             R_DrawPlanesFlatSurfacesPotato();
             break;
         }
-    else*/
-    R_DrawPlanes();
+    else
+        R_DrawPlanes();
 
     // Check for new console commands.
     NetUpdate();

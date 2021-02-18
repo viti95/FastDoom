@@ -236,8 +236,7 @@ const byte textcolors[48] = {
     0xFF, 0x55, 0x55,
     0xFF, 0x55, 0xFF,
     0xFF, 0xFF, 0x55,
-    0xFF, 0xFF, 0xFF
-};
+    0xFF, 0xFF, 0xFF};
 
 //
 // I_SetPalette
@@ -319,7 +318,7 @@ byte *pcscreen, *currentscreen, *destscreen, *destview;
 //
 void I_UpdateBox(int x, int y, int w, int h)
 {
-    /*int i, j, k, count;
+    int i, j, k, count;
     int sp_x1, sp_x2;
     int poffset;
     int offset;
@@ -388,7 +387,7 @@ void I_UpdateBox(int x, int y, int w, int h)
                 dest += pstep;
             }
         }
-    }*/
+    }
 }
 
 //
@@ -469,7 +468,10 @@ void I_UpdateNoBlit(void)
         y = realdr[BOXBOTTOM];
         h = realdr[BOXTOP] - y + 1;
 
-        //I_UpdateBox(x, y, w, h);
+        if (!textmode8025 && !textmode8050)
+        {
+            I_UpdateBox(x, y, w, h);
+        }
     }
     // Clear box
     dirtybox[BOXTOP] = dirtybox[BOXRIGHT] = MININT;
@@ -484,14 +486,17 @@ void I_FinishUpdate(void)
     static int fps_counter, fps_starttime, fps_nextcalculation;
     int opt1, opt2;
 
-    /*outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
-
-    //Next plane
-    destscreen += 0x4000;
-    if (destscreen == (byte *)0xac000)
+    if (!textmode8025 && !textmode8050)
     {
-        destscreen = (byte *)0xa0000;
-    }*/
+        outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
+
+        //Next plane
+        destscreen += 0x4000;
+        if (destscreen == (byte *)0xac000)
+        {
+            destscreen = (byte *)0xa0000;
+        }
+    }
 
     if (showFPS)
     {
@@ -521,24 +526,27 @@ void I_FinishUpdate(void)
 //
 void I_InitGraphics(void)
 {
-    //regs.w.ax = 0x13;
-    //int386(0x10, (union REGS *)&regs, &regs);
-    //pcscreen = currentscreen = (byte *)0xa0000;
-    //destscreen = (byte *)0xa4000;
+    if (!textmode8025 && !textmode8050)
+    {
+        regs.w.ax = 0x13;
+        int386(0x10, (union REGS *)&regs, &regs);
+        pcscreen = currentscreen = (byte *)0xa0000;
+        destscreen = (byte *)0xa4000;
 
-    /*outp(SC_INDEX, SC_MEMMODE);
-    outp(SC_INDEX + 1, (inp(SC_INDEX + 1) & ~8) | 4);
-    outp(GC_INDEX, GC_MODE);
-    outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~0x13);
-    outp(GC_INDEX, GC_MISCELLANEOUS);
-    outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~2);
-    outpw(SC_INDEX, 0xf02);
-    SetDWords(pcscreen, 0, 0x4000);
-    outp(CRTC_INDEX, CRTC_UNDERLINE);
-    outp(CRTC_INDEX + 1, inp(CRTC_INDEX + 1) & ~0x40);
-    outp(CRTC_INDEX, CRTC_MODE);
-    outp(CRTC_INDEX + 1, inp(CRTC_INDEX + 1) | 0x40);
-    outp(GC_INDEX, GC_READMAP);*/
+        outp(SC_INDEX, SC_MEMMODE);
+        outp(SC_INDEX + 1, (inp(SC_INDEX + 1) & ~8) | 4);
+        outp(GC_INDEX, GC_MODE);
+        outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~0x13);
+        outp(GC_INDEX, GC_MISCELLANEOUS);
+        outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~2);
+        outpw(SC_INDEX, 0xf02);
+        SetDWords(pcscreen, 0, 0x4000);
+        outp(CRTC_INDEX, CRTC_UNDERLINE);
+        outp(CRTC_INDEX + 1, inp(CRTC_INDEX + 1) & ~0x40);
+        outp(CRTC_INDEX, CRTC_MODE);
+        outp(CRTC_INDEX + 1, inp(CRTC_INDEX + 1) | 0x40);
+        outp(GC_INDEX, GC_READMAP);
+    }
 
     if (textmode8025)
     {

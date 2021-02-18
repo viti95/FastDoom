@@ -175,7 +175,11 @@ void wipe_ReadScreen(byte *scr)
 {
     int j;
 
-    /*outp(GC_INDEX, GC_READMAP);
+    if (textmode8025 || textmode8050){
+        return;
+    }
+
+    outp(GC_INDEX, GC_READMAP);
 
     outp(GC_INDEX + 1, 0);
     for (j = 0; j < SCREENWIDTH * SCREENHEIGHT / 4; j += 8)
@@ -231,7 +235,7 @@ void wipe_ReadScreen(byte *scr)
         scr[i + 23] = currentscreen[j + 5];
         scr[i + 27] = currentscreen[j + 6];
         scr[i + 31] = currentscreen[j + 7];
-    }*/
+    }
 }
 
 void wipe_StartScreen()

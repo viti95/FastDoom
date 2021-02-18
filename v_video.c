@@ -24,6 +24,7 @@
 
 #include "doomdef.h"
 #include "doomdata.h"
+#include "doomstat.h"
 
 #include "m_misc.h"
 
@@ -71,8 +72,12 @@ void V_MarkRect(int x,
 //
 void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int destx, int desty, byte *destscrn)
 {
-    /*byte *src;
+    byte *src;
     byte *dest;
+
+    if (textmode8025 || textmode8050){
+        return;
+    }
 
     V_MarkRect(destx, desty, width, height);
 
@@ -85,12 +90,16 @@ void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int de
         //memcpy(dest, src, width);
         src += SCREENWIDTH;
         dest += SCREENWIDTH;
-    }*/
+    }
 }
 
 void V_SetRect(byte color, int width, int height, int destx, int desty, byte *destscrn)
 {
-    /*byte *dest;
+    byte *dest;
+
+    if (textmode8025 || textmode8050){
+        return;
+    }
 
     V_MarkRect(destx, desty, width, height);
 
@@ -100,7 +109,7 @@ void V_SetRect(byte color, int width, int height, int destx, int desty, byte *de
     {
         SetBytes(dest, color, width);
         dest += SCREENWIDTH;
-    }*/
+    }
 }
 
 //
@@ -110,13 +119,17 @@ void V_SetRect(byte color, int width, int height, int destx, int desty, byte *de
 void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
 {
 
-    /*int count;
+    int count;
     int col = 0;
     column_t *column;
     byte *desttop;
     byte *dest;
     byte *source;
     int w;
+
+    if (textmode8025 || textmode8050){
+        return;
+    }
 
     y -= patch->topoffset;
     x -= patch->leftoffset;
@@ -160,19 +173,23 @@ void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
                 } while (--count);
             column = (column_t *)(source + 1);
         }
-    }*/
+    }
 }
 
 void V_DrawPatchScreen0(int x, int y, patch_t *patch)
 {
 
-    /*int count;
+    int count;
     int col = 0;
     column_t *column;
     byte *desttop;
     byte *dest;
     byte *source;
     int w;
+
+    if (textmode8025 || textmode8050){
+        return;
+    }
 
     y -= patch->topoffset;
     x -= patch->leftoffset;
@@ -218,7 +235,7 @@ void V_DrawPatchScreen0(int x, int y, patch_t *patch)
                 } while (--count);
             column = (column_t *)(source + 1);
         }
-    }*/
+    }
 }
 
 //
@@ -229,13 +246,17 @@ void V_DrawPatchScreen0(int x, int y, patch_t *patch)
 void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
 {
 
-    /*int count;
+    int count;
     int col;
     column_t *column;
     byte *desttop;
     byte *dest;
     byte *source;
     int w;
+
+    if (textmode8025 || textmode8050){
+        return;
+    }
 
     y -= patch->topoffset;
     x -= patch->leftoffset;
@@ -265,15 +286,19 @@ void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
             }
             column = (column_t *)((byte *)column + column->length + 4);
         }
-    }*/
+    }
 }
 
 void V_Blit(unsigned int dest_page, int source_x, int source_y, int dest_x, int dest_y, unsigned int width, unsigned int height, unsigned int src_page)
 {
-    /*int line;
+    int line;
     int x;
     unsigned int source_offset;
     unsigned int dest_offset;
+
+    if (textmode8025 || textmode8050){
+        return;
+    }
 
     outpw(SC_INDEX, (0xff00 + 0x02)); //select all planes
     outpw(GC_INDEX, 0x08);            //set OR mode
@@ -293,7 +318,7 @@ void V_Blit(unsigned int dest_page, int source_x, int source_y, int dest_x, int 
         dest_offset += SCREENWIDTH >> 2;
     }
 
-    outpw(GC_INDEX + 1, 0x00ff);*/
+    outpw(GC_INDEX + 1, 0x00ff);
 }
 
 //
@@ -304,13 +329,17 @@ void V_DrawPatchDirect(int x,
                        int y,
                        patch_t *patch)
 {
-    /*int count;
+    int count;
     int col;
     column_t *column;
     byte *desttop;
     byte *dest;
     byte *source;
     int w;
+
+    if (textmode8025 || textmode8050){
+        return;
+    }
 
     y -= patch->topoffset;
     x -= patch->leftoffset;
@@ -357,5 +386,5 @@ void V_DrawPatchDirect(int x,
         }
 
         desttop += ((++x) & 3) == 0; // go to next byte, not next plane
-    }*/
+    }
 }
