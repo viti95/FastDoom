@@ -59,6 +59,9 @@ void R_DrawSkyFlatPotato(void);
 void R_DrawColumnText80(void);
 void R_DrawSpanText80(void);
 
+void R_DrawColumnText80Double(void);
+void R_DrawSpanText80Double(void);
+
 void R_VideoErase(unsigned ofs,int count);
 
 extern int ds_y;

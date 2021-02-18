@@ -702,7 +702,7 @@ void R_ExecuteSetViewSize(void)
     if (textmode8025)
     {
         scaledviewwidth = 80;
-        viewheight = 25;
+        viewheight = 50;
         detailshift = 0;
     }
     else if (textmode8050)
@@ -737,8 +737,13 @@ void R_ExecuteSetViewSize(void)
     projection = centerxfrac;
     iprojection = FixedDiv(FRACUNIT << 8, projection);
 
-    if (textmode8025 || textmode8050)
+    if (textmode8025)
     {
+        colfunc = basecolfunc = R_DrawColumnText80Double;
+        spanfunc = R_DrawSpanText80Double;
+        skyfunc = R_DrawColumnText80Double;
+        fuzzcolfunc = R_DrawColumnText80Double;
+    }else if (textmode8050){
         colfunc = basecolfunc = R_DrawColumnText80;
         spanfunc = R_DrawSpanText80;
         skyfunc = R_DrawColumnText80;

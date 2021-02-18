@@ -186,6 +186,91 @@ void R_DrawSkyFlatPotato(void)
 
 byte lut16colors[256];
 
+void R_DrawColumnText80Double(void)
+{
+    fixed_t frac;
+    fixed_t fracstep;
+    unsigned int count;
+    unsigned short *dest = (unsigned short *)0xB8000;
+    byte odd;
+    unsigned short vmem;
+
+    odd = dc_yl % 2;
+    dest = dest + Mul80(dc_yl / 2) + dc_x;
+    count = dc_yh - dc_yl;
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    do
+    {
+        vmem = *dest;
+
+        if (odd)
+        {
+            vmem = vmem & 0x0F00;
+            *dest = vmem | lut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 12 | 223;
+
+            odd = 0;
+            dest += 80;
+        }
+        else
+        {
+            vmem = vmem & 0xF000;
+            *dest = vmem | lut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 223;
+
+            odd = 1;            
+        }
+
+        frac += fracstep;
+    } while (count--);
+}
+
+void R_DrawSpanText80Double(void)
+{
+    int spot;
+    int prt;
+    int countp;
+    fixed_t xfrac;
+    fixed_t yfrac;
+    byte odd;
+    unsigned short *dest = (unsigned short *)0xB8000;
+    unsigned short vmem;
+
+    countp = ds_x2 - ds_x1;
+
+    odd = ds_y % 2;
+    dest = dest + Mul80(ds_y / 2) + ds_x1;
+
+    xfrac = ds_xfrac;
+    yfrac = ds_yfrac;
+
+    do
+    {
+        // Current texture index in u,v.
+        spot = ((yfrac >> (16 - 6)) & (63 * 64)) + ((xfrac >> 16) & 63);
+
+        // Lookup pixel from flat texture tile,
+        //  re-index using light/colormap.
+        vmem = *dest;
+
+        if (odd)
+        {
+            vmem = vmem & 0x0F00;
+            *dest++ = vmem | lut16colors[ds_colormap[ds_source[spot]]] << 12 | 223;
+        }
+        else
+        {
+            vmem = vmem & 0xF000;
+            *dest++ = vmem | lut16colors[ds_colormap[ds_source[spot]]] << 8 | 223;
+        }
+
+        // Next step in u,v.
+        xfrac += ds_xstep;
+        yfrac += ds_ystep;
+    } while (countp--);
+}
+
 void R_DrawColumnText80(void)
 {
     fixed_t frac;
@@ -875,12 +960,15 @@ void R_InitBuffer(int width, int height)
     //  e.g. smaller view windows
     //  with border and/or status bar.
 
-    if (textmode8025 || textmode8050){
+    if (textmode8025 || textmode8050)
+    {
         viewwindowx = 0;
-    }else{
+    }
+    else
+    {
         viewwindowx = (SCREENWIDTH - width) >> 1;
     }
-        
+
     // Column offset. For windows.
     for (i = 0; i < width; i++)
         columnofs[i] = viewwindowx + i;
@@ -990,10 +1078,11 @@ void R_VideoErase(unsigned ofs, int count)
     byte *source;
     int countp;
 
-    if (textmode8025 || textmode8050){
+    if (textmode8025 || textmode8050)
+    {
         return;
     }
-    
+
     outp(SC_INDEX, SC_MAPMASK);
     outp(SC_INDEX + 1, 15);
     outp(GC_INDEX, GC_MODE);
