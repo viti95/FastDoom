@@ -141,6 +141,7 @@ typedef struct
     short status;
 
     char name[10];
+    char text[20];
 
     // choice = menu item #.
     // if status = 2,
@@ -249,17 +250,17 @@ enum
 
 menuitem_t MainMenu[] =
     {
-        {1, "M_NGAME", M_NewGame, 'n'},
-        {1, "M_OPTION", M_Options, 'o'},
-        {1, "M_LOADG", M_LoadGame, 'l'},
-        {1, "M_SAVEG", M_SaveGame, 's'},
+        {1, "M_NGAME", "New game", M_NewGame, 'n'},
+        {1, "M_OPTION", "Options", M_Options, 'o'},
+        {1, "M_LOADG", "Load game", M_LoadGame, 'l'},
+        {1, "M_SAVEG", "Save game", M_SaveGame, 's'},
 // Another hickup with Special edition.
 #if (EXE_VERSION < EXE_VERSION_ULTIMATE)
-        {1, "M_RDTHIS", M_ReadThis, 'r'},
+        {1, "M_RDTHIS", "Read this!", M_ReadThis, 'r'},
 #else
-        {1, "M_RDTHIS", M_ReadThis2, 'r'},
+        {1, "M_RDTHIS", "Read this!", M_ReadThis2, 'r'},
 #endif
-        {1, "M_QUITG", M_QuitDOOM, 'q'}};
+        {1, "M_QUITG", "Quit game", M_QuitDOOM, 'q'}};
 
 menu_t MainDef =
     {
@@ -286,11 +287,11 @@ enum
 
 menuitem_t EpisodeMenu[] =
     {
-        {1, "M_EPI1", M_Episode, 'k'},
-        {1, "M_EPI2", M_Episode, 't'},
-        {1, "M_EPI3", M_Episode, 'i'},
+        {1, "M_EPI1", "Episode 1", M_Episode, 'k'},
+        {1, "M_EPI2", "Episode 2", M_Episode, 't'},
+        {1, "M_EPI3", "Episode 3", M_Episode, 'i'},
 #if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
-        {1, "M_EPI4", M_Episode, 't'}
+        {1, "M_EPI4", "Episode 4", M_Episode, 't'}
 #endif
 };
 
@@ -319,11 +320,11 @@ enum
 
 menuitem_t NewGameMenu[] =
     {
-        {1, "M_JKILL", M_ChooseSkill, 'i'},
-        {1, "M_ROUGH", M_ChooseSkill, 'h'},
-        {1, "M_HURT", M_ChooseSkill, 'h'},
-        {1, "M_ULTRA", M_ChooseSkill, 'u'},
-        {1, "M_NMARE", M_ChooseSkill, 'n'}};
+        {1, "M_JKILL", "I'm too young to die", M_ChooseSkill, 'i'},
+        {1, "M_ROUGH", "Hey, not too rough", M_ChooseSkill, 'h'},
+        {1, "M_HURT", "Hurt me plenty", M_ChooseSkill, 'h'},
+        {1, "M_ULTRA", "Ultra-violence", M_ChooseSkill, 'u'},
+        {1, "M_NMARE", "NIGHTMARE!", M_ChooseSkill, 'n'}};
 
 menu_t NewDef =
     {
@@ -368,14 +369,14 @@ enum
 
 menuitem_t OptionsMenu[] =
     {
-        {1, "M_ENDGAM", M_EndGame, 'e'},
-        {1, "M_MESSG", M_ChangeMessages, 'm'},
-        {1, "M_DISP", M_Display, 'd'},
-        {2, "M_SCRNSZ", M_SizeDisplay, 's'},
-        {-1, "", 0},
-        {2, "M_MSENS", M_ChangeSensitivity, 'm'},
-        {-1, "", 0},
-        {1, "M_SVOL", M_Sound, 's'}};
+        {1, "M_ENDGAM", "End game", M_EndGame, 'e'},
+        {1, "M_MESSG", "Messages:", M_ChangeMessages, 'm'},
+        {1, "M_DISP", "Display", M_Display, 'd'},
+        {2, "M_SCRNSZ", "Screen size", M_SizeDisplay, 's'},
+        {-1, "", "", 0},
+        {2, "M_MSENS", "Mouse sensitivity", M_ChangeSensitivity, 'm'},
+        {-1, "", "", 0},
+        {1, "M_SVOL", "Sound volume", M_Sound, 's'}};
 
 menu_t OptionsDef =
     {
@@ -388,15 +389,15 @@ menu_t OptionsDef =
 
 menuitem_t DisplayMenu[] =
     {
-        {1, "", M_ChangeVsync, 's'},
-        {1, "", M_ChangeDetail, 'g'},
-        {1, "", M_ChangeVisplaneDetail, 'v'},
-        {1, "", M_ChangeSkyDetail, 's'},
-        {1, "", M_ChangeInvisibleDetail, 'i'},
-        {1, "", M_ChangeShowFPS, 'f'},
-        {1, "", M_ChangeSpriteCulling, 'c'},
-        {1, "", M_ChangeMelting, 'm'},
-        {1, "", M_ChangeUncappedFPS, 'u'}};
+        {1, "", "", M_ChangeVsync, 's'},
+        {1, "", "", M_ChangeDetail, 'g'},
+        {1, "", "", M_ChangeVisplaneDetail, 'v'},
+        {1, "", "", M_ChangeSkyDetail, 's'},
+        {1, "", "", M_ChangeInvisibleDetail, 'i'},
+        {1, "", "", M_ChangeShowFPS, 'f'},
+        {1, "", "", M_ChangeSpriteCulling, 'c'},
+        {1, "", "", M_ChangeMelting, 'm'},
+        {1, "", "", M_ChangeUncappedFPS, 'u'}};
 
 menu_t DisplayDef =
     {
@@ -418,7 +419,7 @@ enum
 
 menuitem_t ReadMenu1[] =
     {
-        {1, "", M_ReadThis2, 0}};
+        {1, "", "", M_ReadThis2, 0}};
 
 menu_t ReadDef1 =
     {
@@ -437,7 +438,7 @@ enum
 
 menuitem_t ReadMenu2[] =
     {
-        {1, "", M_FinishReadThis, 0}};
+        {1, "", "", M_FinishReadThis, 0}};
 
 menu_t ReadDef2 =
     {
@@ -471,11 +472,11 @@ enum
 
 menuitem_t SoundMenu[] =
     {
-        {2, "M_SFXVOL", M_SfxVol, 's'},
-        {-1, "", 0},
-        {2, "M_MUSVOL", M_MusicVol, 'm'},
-        {-1, "", 0},
-        {1, "", M_ChangeMono, 'c'}};
+        {2, "M_SFXVOL", "SFX volume", M_SfxVol, 's'},
+        {-1, "", "", 0},
+        {2, "M_MUSVOL", "Music volume", M_MusicVol, 'm'},
+        {-1, "", "", 0},
+        {1, "", "", M_ChangeMono, 'c'}};
 
 menu_t SoundDef =
     {
@@ -502,12 +503,12 @@ enum
 
 menuitem_t LoadMenu[] =
     {
-        {1, "", M_LoadSelect, '1'},
-        {1, "", M_LoadSelect, '2'},
-        {1, "", M_LoadSelect, '3'},
-        {1, "", M_LoadSelect, '4'},
-        {1, "", M_LoadSelect, '5'},
-        {1, "", M_LoadSelect, '6'}};
+        {1, "", "", M_LoadSelect, '1'},
+        {1, "", "", M_LoadSelect, '2'},
+        {1, "", "", M_LoadSelect, '3'},
+        {1, "", "", M_LoadSelect, '4'},
+        {1, "", "", M_LoadSelect, '5'},
+        {1, "", "", M_LoadSelect, '6'}};
 
 menu_t LoadDef =
     {
@@ -523,12 +524,12 @@ menu_t LoadDef =
 //
 menuitem_t SaveMenu[] =
     {
-        {1, "", M_SaveSelect, '1'},
-        {1, "", M_SaveSelect, '2'},
-        {1, "", M_SaveSelect, '3'},
-        {1, "", M_SaveSelect, '4'},
-        {1, "", M_SaveSelect, '5'},
-        {1, "", M_SaveSelect, '6'}};
+        {1, "", "", M_SaveSelect, '1'},
+        {1, "", "", M_SaveSelect, '2'},
+        {1, "", "", M_SaveSelect, '3'},
+        {1, "", "", M_SaveSelect, '4'},
+        {1, "", "", M_SaveSelect, '5'},
+        {1, "", "", M_SaveSelect, '6'}};
 
 menu_t SaveDef =
     {
@@ -872,7 +873,11 @@ int epi;
 
 void M_DrawEpisode(void)
 {
-    V_DrawPatchDirect(54, 38, W_CacheLumpName("M_EPISOD", PU_CACHE));
+    if (textmode8025 || textmode8050){
+        V_WriteTextDirect(13, 9, "Which episode?");
+    }else{
+        V_DrawPatchDirect(54, 38, W_CacheLumpName("M_EPISOD", PU_CACHE));
+    }
 }
 
 void M_VerifyNightmare(int ch)
@@ -1801,13 +1806,24 @@ void M_Drawer(void)
 
     for (i = 0; i < max; i++)
     {
-        if (currentMenu->menuitems[i].name[0])
-            V_DrawPatchDirect(x, y, W_CacheLumpName(currentMenu->menuitems[i].name, PU_CACHE));
+        if (currentMenu->menuitems[i].name[0]){
+            if (textmode8025 || textmode8050){
+                V_WriteTextDirect(x / 4, y / 4, currentMenu->menuitems[i].text);
+            }else{
+                V_DrawPatchDirect(x, y, W_CacheLumpName(currentMenu->menuitems[i].name, PU_CACHE));
+            }
+        }
+            
         y += LINEHEIGHT;
     }
 
     // DRAW SKULL
-    V_DrawPatchDirect(x + SKULLXOFF, currentMenu->y - 5 + itemOn * LINEHEIGHT, W_CacheLumpName(skullName[whichSkull], PU_CACHE));
+    if (textmode8025 || textmode8050){
+        V_WriteTextDirect(currentMenu->x / 4 - 3, currentMenu->y / 4 + itemOn * 4, "\2");
+    }else{
+        V_DrawPatchDirect(x + SKULLXOFF, currentMenu->y - 5 + itemOn * LINEHEIGHT, W_CacheLumpName(skullName[whichSkull], PU_CACHE));
+    }
+    
 }
 
 //
