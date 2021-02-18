@@ -595,11 +595,8 @@ void I_InitGraphics(void)
 //
 void I_ShutdownGraphics(void)
 {
-    //if (*(byte *)0x449 == 0x13) // don't reset mode if it didn't get set
-    //{
     regs.w.ax = 3;
     int386(0x10, &regs, &regs); // back to text mode
-    //}
 }
 
 //

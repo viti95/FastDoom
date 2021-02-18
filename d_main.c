@@ -193,6 +193,7 @@ void D_ProcessEvents(void)
 gamestate_t wipegamestate = GS_DEMOSCREEN;
 extern byte setsizeneeded;
 extern int showMessages;
+
 void R_ExecuteSetViewSize(void);
 
 void D_Display(void)
@@ -313,7 +314,12 @@ void D_Display(void)
             y = 4;
         else
             y = viewwindowy + 4;
-        V_DrawPatchDirect(viewwindowx + (scaledviewwidth - 68) / 2, y, W_CacheLumpName("M_PAUSE", PU_CACHE));
+
+        if (textmode8025 || textmode8050){
+            V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 2, "PAUSE");
+        }else{
+            V_DrawPatchDirect(viewwindowx + (scaledviewwidth - 68) / 2, y, W_CacheLumpName("M_PAUSE", PU_CACHE));
+        }
     }
 
     // menus go directly to the screen

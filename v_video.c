@@ -321,7 +321,18 @@ void V_Blit(unsigned int dest_page, int source_x, int source_y, int dest_x, int 
     outpw(GC_INDEX + 1, 0x00ff);
 }
 
-void V_WriteTextDirect(int x, int y, unsigned char c){
+void V_WriteTextDirect(int x, int y, char *string){
+    unsigned short *dest = (unsigned short *)0xB8000;
+    
+    dest += 80 * y + x;
+
+    while(*string){        
+        *dest++ = 12 << 8 | *string;
+        string++;
+    }
+}
+
+void V_WriteCharDirect(int x, int y, unsigned char c){
     unsigned short *dest = (unsigned short *)0xB8000;
 
     dest += 80 * y + x;

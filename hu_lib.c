@@ -80,7 +80,7 @@ void HUlib_drawTextLine(hu_textline_t *l)
         for (i = 0; i < l->len; i++)
         {
             c = toupper(l->l[i]);
-            V_WriteTextDirect(x, l->y / 4, c);
+            V_WriteCharDirect(x, l->y / 4, c);
             x++;            
         }
     }
