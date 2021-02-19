@@ -244,7 +244,8 @@ void D_Display(void)
             AM_Drawer();
         }
 
-        if (!automapactive || (automapactive && !fullscreen)){
+        if (!automapactive || (automapactive && !fullscreen))
+        {
             redrawsbar = wipe || (viewheight != 200 && fullscreen) || (inhelpscreensstate && !inhelpscreens); // just put away the help screen
             ST_Drawer(viewheight == 200, redrawsbar);
         }
@@ -270,7 +271,8 @@ void D_Display(void)
 
     // draw the view directly
 
-    if (gamestate == GS_LEVEL && gametic){
+    if (gamestate == GS_LEVEL && gametic)
+    {
         if (!automapactive)
             R_RenderPlayerView(&players);
 
@@ -315,9 +317,16 @@ void D_Display(void)
         else
             y = viewwindowy + 4;
 
-        if (textmode8025 || textmode8050){
+        if (textmode8025)
+        {
+            V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 4, "PAUSE");
+        }
+        else if (textmode8050)
+        {
             V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 2, "PAUSE");
-        }else{
+        }
+        else
+        {
             V_DrawPatchDirect(viewwindowx + (scaledviewwidth - 68) / 2, y, W_CacheLumpName("M_PAUSE", PU_CACHE));
         }
     }

@@ -74,14 +74,24 @@ void HUlib_drawTextLine(hu_textline_t *l)
     int x;
     unsigned char c;
 
-    if (textmode8025 || textmode8050)
+    if (textmode8025)
+    {
+        x = l->x / 4;
+        for (i = 0; i < l->len; i++)
+        {
+            c = toupper(l->l[i]);
+            V_WriteCharDirect(x, l->y / 8, c);
+            x++;
+        }
+    }
+    else if (textmode8050)
     {
         x = l->x / 4;
         for (i = 0; i < l->len; i++)
         {
             c = toupper(l->l[i]);
             V_WriteCharDirect(x, l->y / 4, c);
-            x++;            
+            x++;
         }
     }
     else

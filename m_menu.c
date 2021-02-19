@@ -873,9 +873,16 @@ int epi;
 
 void M_DrawEpisode(void)
 {
-    if (textmode8025 || textmode8050){
+    if (textmode8025)
+    {
+        V_WriteTextDirect(13, 4, "Which episode?");
+    }
+    else if (textmode8050)
+    {
         V_WriteTextDirect(13, 9, "Which episode?");
-    }else{
+    }
+    else
+    {
         V_DrawPatchDirect(54, 38, W_CacheLumpName("M_EPISOD", PU_CACHE));
     }
 }
@@ -940,16 +947,19 @@ void M_DrawDisplay(void)
     M_WriteText(214, 24, waitVsync ? "ON" : "OFF");
 
     M_WriteText(58, 40, "DETAIL LEVEL:");
-    M_WriteText(214, 40, detailLevel == 2 ? "POTATO" : detailLevel == 1 ? "LOW" : "HIGH");
+    M_WriteText(214, 40, detailLevel == 2 ? "POTATO" : detailLevel == 1 ? "LOW"
+                                                                        : "HIGH");
 
     M_WriteText(58, 56, "VISPLANE RENDERING:");
-    M_WriteText(214, 56, (!untexturedSurfaces && !flatSurfaces) ? "FULL" : untexturedSurfaces ? "FLAT" : "FLATTER");
+    M_WriteText(214, 56, (!untexturedSurfaces && !flatSurfaces) ? "FULL" : untexturedSurfaces ? "FLAT"
+                                                                                              : "FLATTER");
 
     M_WriteText(58, 72, "SKY RENDERING:");
     M_WriteText(214, 72, flatSky ? "FLAT" : "FULL");
 
     M_WriteText(58, 88, "INVISIBLE RENDERING:");
-    M_WriteText(214, 88, (!saturnShadows && !flatShadows) ? "FUZZY" : flatShadows ? "FLAT" : "SEGA SATURN");
+    M_WriteText(214, 88, (!saturnShadows && !flatShadows) ? "FUZZY" : flatShadows ? "FLAT"
+                                                                                  : "SEGA SATURN");
 
     M_WriteText(58, 104, "SHOW FPS:");
     M_WriteText(214, 104, showFPS ? "ON" : "OFF");
@@ -1450,8 +1460,7 @@ const char gammamsg[5][26] =
         GAMMALVL1,
         GAMMALVL2,
         GAMMALVL3,
-        GAMMALVL4
-    };
+        GAMMALVL4};
 
 byte M_Responder(event_t *ev)
 {
@@ -1806,24 +1815,34 @@ void M_Drawer(void)
 
     for (i = 0; i < max; i++)
     {
-        if (currentMenu->menuitems[i].name[0]){
-            if (textmode8025 || textmode8050){
+        if (currentMenu->menuitems[i].name[0])
+        {
+            if (textmode8025)
+            {
+                V_WriteTextDirect(x / 4, y / 8, currentMenu->menuitems[i].text);
+            }else if (textmode8050){
                 V_WriteTextDirect(x / 4, y / 4, currentMenu->menuitems[i].text);
-            }else{
+            }
+            else
+            {
                 V_DrawPatchDirect(x, y, W_CacheLumpName(currentMenu->menuitems[i].name, PU_CACHE));
             }
         }
-            
+
         y += LINEHEIGHT;
     }
 
     // DRAW SKULL
-    if (textmode8025 || textmode8050){
+    if (textmode8025)
+    {
+        V_WriteTextDirect(currentMenu->x / 4 - 3, currentMenu->y / 8 + itemOn * 2, "\2");
+    }else if (textmode8050){
         V_WriteTextDirect(currentMenu->x / 4 - 3, currentMenu->y / 4 + itemOn * 4, "\2");
-    }else{
+    }
+    else
+    {
         V_DrawPatchDirect(x + SKULLXOFF, currentMenu->y - 5 + itemOn * LINEHEIGHT, W_CacheLumpName(skullName[whichSkull], PU_CACHE));
     }
-    
 }
 
 //
