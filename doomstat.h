@@ -61,6 +61,7 @@ extern int forceScreenSize;
 
 extern boolean textmode8025;
 extern boolean textmode8050;
+extern boolean CGAcard;
 
 extern boolean logTimedemo;
 

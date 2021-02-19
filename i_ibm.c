@@ -560,15 +560,20 @@ void I_InitGraphics(void)
         regs.h.ch = 0x3F;
         int386(0x10, &regs, &regs);
 
-        // Disable blinking
-        regs.h.ah = 0x10;
-        regs.h.al = 0x03;
-        regs.h.bl = 0x00;
-        regs.h.bh = 0x00;
-        int386(0x10, &regs, &regs);
-
         // CGA Disable blink
-        I_DisableCGABlink();
+        if (CGAcard)
+        {
+            I_DisableCGABlink();
+        }
+        else
+        {
+            // Disable blinking
+            regs.h.ah = 0x10;
+            regs.h.al = 0x03;
+            regs.h.bl = 0x00;
+            regs.h.bh = 0x00;
+            int386(0x10, &regs, &regs);
+        }
 
         // TEST change page
         /*regs.h.ah = 0x05;

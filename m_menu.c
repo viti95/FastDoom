@@ -875,11 +875,11 @@ void M_DrawEpisode(void)
 {
     if (textmode8025)
     {
-        V_WriteTextDirect(13, 4, "Which episode?");
+        V_WriteTextDirect(27, 4, "Which episode?");
     }
     else if (textmode8050)
     {
-        V_WriteTextDirect(13, 9, "Which episode?");
+        V_WriteTextDirect(27, 9, "Which episode?");
     }
     else
     {
