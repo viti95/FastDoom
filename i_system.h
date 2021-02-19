@@ -101,4 +101,10 @@ void I_WaitSingleVBL(void);
     "and al, 0x08", \
     "jz l2" modify [al dx]
 
+void I_DisableCGABlink(void);
+#pragma aux I_DisableCGABlink = \   
+    "mov dx, 0x3D8", \
+    "mov al, 0x9", \   
+    "out dx, al" modify [al dx]
+
 #endif

@@ -567,6 +567,9 @@ void I_InitGraphics(void)
         regs.h.bh = 0x00;
         int386(0x10, &regs, &regs);
 
+        // CGA Disable blink
+        I_DisableCGABlink();
+
         // TEST change page
         /*regs.h.ah = 0x05;
         regs.h.al = 0x01;
