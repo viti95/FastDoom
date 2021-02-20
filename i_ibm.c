@@ -39,8 +39,6 @@
 #include "ns_task.h"
 #include "doomdef.h"
 
-#include <graph.h>
-
 //
 // Macros
 //
@@ -312,6 +310,8 @@ void I_SetPalette(int numpalette)
 //
 
 byte *pcscreen, *currentscreen, *destscreen, *destview;
+unsigned short *textdestscreen;
+byte textpage;
 
 //
 // I_UpdateBox
@@ -498,6 +498,43 @@ void I_FinishUpdate(void)
         }
     }
 
+    if (textmode8025)
+    {
+
+        // Change video page
+        regs.h.ah = 0x05;
+        regs.h.al = textpage;
+        regs.h.bh = 0x00;
+        regs.h.bl = 0x00;
+        int386(0x10, &regs, &regs);
+
+        textdestscreen += 2048;
+        textpage++;
+        if (textpage == 3)
+        {
+            textdestscreen = (unsigned short *)0xB8000;
+            textpage = 0;
+        }
+    }
+
+    if (textmode8050)
+    {
+        // Change video page
+        regs.h.ah = 0x05;
+        regs.h.al = textpage;
+        regs.h.bh = 0x00;
+        regs.h.bl = 0x00;
+        int386(0x10, &regs, &regs);
+
+        textdestscreen += 4128;
+        textpage++;
+        if (textpage == 3)
+        {
+            textdestscreen = (unsigned short *)0xB8000;
+            textpage = 0;
+        }
+    }
+
     if (showFPS)
     {
         if (fps_counter == 0)
@@ -530,8 +567,10 @@ void I_InitGraphics(void)
     {
         regs.w.ax = 0x13;
         int386(0x10, (union REGS *)&regs, &regs);
-        pcscreen = currentscreen = (byte *)0xa0000;
-        destscreen = (byte *)0xa4000;
+        pcscreen = currentscreen = (byte *)0xA0000;
+        destscreen = (byte *)0xA4000;
+        textdestscreen = (unsigned short *)0xB8000;
+        textpage = 0;
 
         outp(SC_INDEX, SC_MEMMODE);
         outp(SC_INDEX + 1, (inp(SC_INDEX + 1) & ~8) | 4);

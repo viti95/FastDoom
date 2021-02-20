@@ -259,6 +259,9 @@ extern byte *destview;
 extern byte *destscreen;
 extern byte *pcscreen;
 
+extern unsigned short *textdestscreen;
+extern byte textpage;
+
 //
 // OTHER TYPES
 //

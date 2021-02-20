@@ -191,12 +191,12 @@ void R_DrawColumnText80Double(void)
     fixed_t frac;
     fixed_t fracstep;
     unsigned int count;
-    unsigned short *dest = (unsigned short *)0xB8000;
+    unsigned short *dest;
     byte odd;
     unsigned short vmem;
 
     odd = dc_yl % 2;
-    dest = dest + Mul80(dc_yl / 2) + dc_x;
+    dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
     count = dc_yh - dc_yl;
 
     fracstep = dc_iscale;
@@ -234,13 +234,13 @@ void R_DrawSpanText80Double(void)
     fixed_t xfrac;
     fixed_t yfrac;
     byte odd;
-    unsigned short *dest = (unsigned short *)0xB8000;
+    unsigned short *dest;
     unsigned short vmem;
 
     countp = ds_x2 - ds_x1;
 
     odd = ds_y % 2;
-    dest = dest + Mul80(ds_y / 2) + ds_x1;
+    dest = textdestscreen + Mul80(ds_y / 2) + ds_x1;
 
     xfrac = ds_xfrac;
     yfrac = ds_yfrac;
@@ -276,9 +276,9 @@ void R_DrawColumnText80(void)
     fixed_t frac;
     fixed_t fracstep;
     unsigned int count;
-    unsigned short *dest = (unsigned short *)0xB8000;
+    unsigned short *dest;
 
-    dest = dest + Mul80(dc_yl) + dc_x;
+    dest = textdestscreen + Mul80(dc_yl) + dc_x;
     count = dc_yh - dc_yl;
 
     fracstep = dc_iscale;
@@ -299,11 +299,11 @@ void R_DrawSpanText80(void)
     int countp;
     fixed_t xfrac;
     fixed_t yfrac;
-    unsigned short *dest = (unsigned short *)0xB8000;
+    unsigned short *dest;
 
     countp = ds_x2 - ds_x1;
 
-    dest = dest + Mul80(ds_y) + ds_x1;
+    dest = textdestscreen + Mul80(ds_y) + ds_x1;
 
     xfrac = ds_xfrac;
     yfrac = ds_yfrac;
