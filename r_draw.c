@@ -292,6 +292,23 @@ void R_DrawColumnText80(void)
     } while (count--);
 }
 
+void R_DrawFuzzColumnText80(void)
+{
+    fixed_t frac;
+    fixed_t fracstep;
+    unsigned int count;
+    unsigned short *dest;
+
+    dest = textdestscreen + Mul80(dc_yl) + dc_x;
+    count = dc_yh - dc_yl;
+
+    do
+    {
+        *dest = 7 << 8 | 219;
+        dest += 80;
+    } while (count--);
+}
+
 void R_DrawSpanText80(void)
 {
     int spot;

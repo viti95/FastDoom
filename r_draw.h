@@ -57,6 +57,7 @@ void R_DrawColumnPotato(void);
 void R_DrawSkyFlatPotato(void);
 
 void R_DrawColumnText80(void);
+void R_DrawFuzzColumnText80(void);
 void R_DrawSpanText80(void);
 
 void R_DrawColumnText80Double(void);

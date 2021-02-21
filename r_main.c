@@ -747,7 +747,7 @@ void R_ExecuteSetViewSize(void)
         colfunc = basecolfunc = R_DrawColumnText80;
         spanfunc = R_DrawSpanText80;
         skyfunc = R_DrawColumnText80;
-        fuzzcolfunc = R_DrawColumnText80;
+        fuzzcolfunc = R_DrawFuzzColumnText80;
     }
     else
     {
