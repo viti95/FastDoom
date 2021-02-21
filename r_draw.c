@@ -219,7 +219,7 @@ void R_DrawColumnText80Double(void)
             vmem = vmem & 0xF000;
             *dest = vmem | lut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 223;
 
-            odd = 1;            
+            odd = 1;
         }
 
         frac += fracstep;
@@ -290,6 +290,72 @@ void R_DrawColumnText80(void)
         dest += 80;
         frac += fracstep;
     } while (count--);
+}
+
+void R_DrawSkyFlatText80(void)
+{
+    fixed_t frac;
+    fixed_t fracstep;
+    unsigned int count;
+    unsigned short *dest;
+
+    dest = textdestscreen + Mul80(dc_yl) + dc_x;
+    count = dc_yh - dc_yl;
+
+    do
+    {
+        *dest = 6 << 8 | 219;
+        dest += 80;
+    } while (count--);
+}
+
+void R_DrawFuzzColumnSaturnText80(void)
+{
+    int count;
+    unsigned short *dest;
+    fixed_t frac;
+    fixed_t fracstep;
+    int initialdrawpos = 0;
+
+    count = (dc_yh - dc_yl) / 2 - 1;
+
+    if (count < 0)
+        return;
+
+    initialdrawpos = dc_yl + dc_x;
+
+    dest = textdestscreen + Mul80(dc_yl) + dc_x;
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    if (initialdrawpos & 1)
+    {
+        dest += 80;
+        frac += fracstep;
+    }
+
+    fracstep = 2 * fracstep;
+
+    do
+    {
+        *dest = lut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 219;
+
+        dest += 160;
+        frac += fracstep;
+    } while (count--);
+
+    if ((dc_yh - dc_yl) & 1)
+    {
+        *dest = lut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 219;
+    }
+    else
+    {
+        if (!(initialdrawpos & 1))
+        {
+            *dest = lut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 219;
+        }
+    }
 }
 
 void R_DrawFuzzColumnText80(void)

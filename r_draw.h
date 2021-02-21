@@ -58,6 +58,8 @@ void R_DrawSkyFlatPotato(void);
 
 void R_DrawColumnText80(void);
 void R_DrawFuzzColumnText80(void);
+void R_DrawFuzzColumnSaturnText80(void);
+void R_DrawSkyFlatText80(void);
 void R_DrawSpanText80(void);
 
 void R_DrawColumnText80Double(void);
