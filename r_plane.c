@@ -415,7 +415,7 @@ void R_DrawPlanesFlatSurfaces(void)
     byte *basedest;
     lighttable_t color;
 
-    byte t1, b1, t2, b2;
+    dc_colormap = colormaps;
 
     for (pl = visplanes; pl < lastvisplane; pl++)
     {
@@ -428,8 +428,6 @@ void R_DrawPlanesFlatSurfaces(void)
             R_DrawSky(pl);
             continue;
         }
-
-        dc_colormap = colormaps;
 
         dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
 
@@ -612,7 +610,7 @@ void R_DrawPlanesFlatSurfacesLow(void)
     byte *basedest;
     lighttable_t color;
 
-    byte t1, b1, t2, b2;
+    dc_colormap = colormaps;
 
     for (pl = visplanes; pl < lastvisplane; pl++)
     {
@@ -625,8 +623,6 @@ void R_DrawPlanesFlatSurfacesLow(void)
             R_DrawSky(pl);
             continue;
         }
-
-        dc_colormap = colormaps;
 
         dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
 
@@ -723,7 +719,7 @@ void R_DrawPlanesFlatSurfacesPotato(void)
     byte *basedest;
     lighttable_t color;
 
-    byte t1, b1, t2, b2;
+    dc_colormap = colormaps;
 
     for (pl = visplanes; pl < lastvisplane; pl++)
     {
@@ -736,8 +732,6 @@ void R_DrawPlanesFlatSurfacesPotato(void)
             R_DrawSky(pl);
             continue;
         }
-
-        dc_colormap = colormaps;
 
         dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
 
