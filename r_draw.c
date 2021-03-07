@@ -94,8 +94,6 @@ int dc_yh;
 fixed_t dc_iscale;
 fixed_t dc_texturemid;
 
-lighttable_t dc_flatcolor;
-
 // first pixel in a column (possibly virtual)
 byte *dc_source;
 
@@ -822,7 +820,7 @@ void R_DrawSpanFlat(void)
 
     total_pixels = ds_x2 - ds_x1;
 
-    color = ds_colormap[ds_source[0]];
+    color = ds_colormap[ds_source[1850]];
     origin_y = (int)destview + Mul80(ds_y);
 
     first_plane = ds_x1 & 3;
@@ -947,7 +945,7 @@ void R_DrawSpanFlatLow(void)
 
     total_pixels = ds_x2 - ds_x1;
 
-    color = ds_colormap[ds_source[0]];
+    color = ds_colormap[ds_source[1850]];
     origin_y = (int)destview + Mul80(ds_y);
 
     first_plane = ds_x1 & 1;
@@ -1019,7 +1017,7 @@ void R_DrawSpanFlatPotato(void)
     int countp;
     byte *dest;
 
-    lighttable_t color = ds_colormap[ds_source[0]];
+    lighttable_t color = ds_colormap[ds_source[1850]];
 
     dest = destview + Mul80(ds_y) + ds_x1;
 

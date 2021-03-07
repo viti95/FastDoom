@@ -26,8 +26,6 @@ extern int dc_yh;
 extern fixed_t dc_iscale;
 extern fixed_t dc_texturemid;
 
-extern lighttable_t dc_flatcolor;
-
 // first pixel in a column
 extern byte *dc_source;
 

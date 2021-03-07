@@ -433,7 +433,7 @@ void R_DrawPlanesFlatSurfaces(void)
 
         dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
 
-        color = dc_colormap[dc_source[0]];
+        color = dc_colormap[dc_source[1850]];
 
         x = pl->minx;
         outp(SC_INDEX + 1, 1 << (x & 3));
@@ -630,7 +630,7 @@ void R_DrawPlanesFlatSurfacesLow(void)
 
         dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
 
-        color = dc_colormap[dc_source[0]];
+        color = dc_colormap[dc_source[1850]];
         // Plane 0
         x = pl->minx;
         outp(SC_INDEX + 1, 3 << ((x & 1) << 1));
@@ -741,7 +741,7 @@ void R_DrawPlanesFlatSurfacesPotato(void)
 
         dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
 
-        color = dc_colormap[dc_source[0]];
+        color = dc_colormap[dc_source[1850]];
 
         for (x = pl->minx; x <= pl->maxx; x++)
         {
