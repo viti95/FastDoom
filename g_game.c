@@ -184,7 +184,7 @@ void G_BuildTiccmd(ticcmd_t *cmd)
     SetBytes(cmd, 0, sizeof(*cmd));
 
     strafe = gamekeydown[key_strafe] || mousebuttons[mousebstrafe];
-    speed = autorun || gamekeydown[key_speed];
+    speed = !autorun ^ !gamekeydown[key_speed];
 
     forward = side = 0;
 
