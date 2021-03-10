@@ -92,8 +92,9 @@ void R_DrawSpanFlatLow(void);
 void R_DrawSpanPotato(void);
 void R_DrawSpanFlatPotato(void);
 
-void R_InitBuffer(int width,
-                  int height);
+void R_DrawSpanFlatText80(void);
+
+void R_InitBuffer(int width, int height);
 
 // Rendering function.
 void R_FillBackScreen(void);

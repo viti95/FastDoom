@@ -752,8 +752,13 @@ void R_ExecuteSetViewSize(void)
     else if (textmode8050)
     {
         colfunc = basecolfunc = R_DrawColumnText80;
-        spanfunc = R_DrawSpanText80;
 
+        if (untexturedSurfaces){
+            spanfunc = R_DrawSpanFlatText80;
+        }else{
+            spanfunc = R_DrawSpanText80;
+        }
+        
         if (flatSky)
             skyfunc = R_DrawSkyFlatText80;
         else

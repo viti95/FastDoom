@@ -1055,6 +1055,34 @@ void R_DrawSpanFlatPotato(void)
     SetBytes(dest, color, countp);
 }
 
+void R_DrawSpanFlatText80(void)
+{
+    int countp;
+    unsigned short *dest;
+
+    unsigned short color = lut16colors[ds_colormap[ds_source[1850]]] << 8 | 219;
+
+    dest = textdestscreen + Mul80(ds_y) + ds_x1;
+
+    countp = ds_x2 - ds_x1 + 1;
+
+    SetWords((byte *)dest, color, countp);
+}
+
+/*void R_DrawSpanFlatText80Double(void)
+{
+    int countp;
+    byte *dest;
+
+    lighttable_t color = ds_colormap[ds_source[1850]];
+
+    dest = destview + Mul80(ds_y) + ds_x1;
+
+    countp = ds_x2 - ds_x1 + 1;
+
+    SetBytes(dest, color, countp);
+}*/
+
 //
 // R_InitBuffer
 // Creats lookup tables that avoid
