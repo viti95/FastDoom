@@ -22,6 +22,7 @@
 #include "doomdef.h"
 
 #include "i_system.h"
+#include "i_ibm.h"
 #include "z_zone.h"
 #include "w_wad.h"
 
@@ -182,8 +183,6 @@ void R_DrawSkyFlatPotato(void)
     };
 }
 
-byte lut16colors[256];
-
 void R_DrawColumnText80Double(void)
 {
     fixed_t frac;
@@ -292,8 +291,6 @@ void R_DrawColumnText80(void)
 
 void R_DrawSkyFlatText80(void)
 {
-    fixed_t frac;
-    fixed_t fracstep;
     unsigned int count;
     unsigned short *dest;
 
@@ -304,6 +301,40 @@ void R_DrawSkyFlatText80(void)
     {
         *dest = 6 << 8 | 219;
         dest += 80;
+    } while (count--);
+}
+
+void R_DrawSkyFlatText80Double(void)
+{
+    register int count;
+    unsigned short *dest;
+    byte odd;
+    unsigned short vmem;
+
+    odd = dc_yl % 2;
+    dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
+    count = dc_yh - dc_yl;
+
+    do
+    {
+        vmem = *dest;
+
+        if (odd)
+        {
+            vmem = vmem & 0x0F00;
+            *dest = vmem | 6 << 12 | 223;
+
+            odd = 0;
+            dest += 80;
+        }
+        else
+        {
+            vmem = vmem & 0xF000;
+            *dest = vmem | 6 << 8 | 223;
+
+            odd = 1;
+        }
+
     } while (count--);
 }
 
@@ -358,8 +389,6 @@ void R_DrawFuzzColumnSaturnText80(void)
 
 void R_DrawFuzzColumnText80(void)
 {
-    fixed_t frac;
-    fixed_t fracstep;
     unsigned int count;
     unsigned short *dest;
 

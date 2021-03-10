@@ -7,5 +7,6 @@ extern fixed_t fps;
 
 extern byte *currentscreen;
 extern byte processedpalette[14 * 768];
+extern byte lut16colors[256];
 
 extern void I_TimerISR(task *task);

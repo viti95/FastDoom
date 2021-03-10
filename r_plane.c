@@ -22,6 +22,7 @@
 #include <stdlib.h>
 
 #include "i_system.h"
+#include "i_ibm.h"
 #include "z_zone.h"
 #include "w_wad.h"
 
@@ -400,20 +401,11 @@ void R_DrawPlanes(void)
 void R_DrawPlanesFlatSurfaces(void)
 {
     visplane_t *pl;
-    int light;
-    int x;
-    int stop;
-    int angle;
-
-    int lump;
-    int ofs;
-    int tex;
-    int col;
 
     int count;
     byte *dest;
-    byte *basedest;
     lighttable_t color;
+    int x;
 
     dc_colormap = colormaps;
 
@@ -595,20 +587,11 @@ void R_DrawPlanesFlatSurfaces(void)
 void R_DrawPlanesFlatSurfacesLow(void)
 {
     visplane_t *pl;
-    int light;
-    int x;
-    int stop;
-    int angle;
-
-    int lump;
-    int ofs;
-    int tex;
-    int col;
 
     int count;
     byte *dest;
-    byte *basedest;
     lighttable_t color;
+    int x;
 
     dc_colormap = colormaps;
 
@@ -710,14 +693,11 @@ void R_DrawPlanesFlatSurfacesLow(void)
 void R_DrawPlanesFlatSurfacesPotato(void)
 {
     visplane_t *pl;
-    int light;
-    int x;
-    int stop;
 
     int count;
     byte *dest;
-    byte *basedest;
     lighttable_t color;
+    int x;
 
     dc_colormap = colormaps;
 
@@ -762,6 +742,116 @@ void R_DrawPlanesFlatSurfacesPotato(void)
                 dest += SCREENWIDTH / 4;
                 count--;
             };
+        }
+
+        Z_ChangeTag(dc_source, PU_CACHE);
+    }
+}
+
+void R_DrawPlanesFlatSurfacesText80(void)
+{
+    visplane_t *pl;
+
+    int count;
+    unsigned short *dest;
+    unsigned short color;
+    int x;
+
+    dc_colormap = colormaps;
+
+    for (pl = visplanes; pl < lastvisplane; pl++)
+    {
+        if (!pl->modified || pl->minx > pl->maxx)
+            continue;
+
+        // sky flat
+        if (pl->picnum == skyflatnum)
+        {
+            R_DrawSky(pl);
+            continue;
+        }
+
+        dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
+        color = lut16colors[dc_colormap[dc_source[1850]]] << 8 | 219;
+
+        for (x = pl->minx; x <= pl->maxx; x++)
+        {
+            if (pl->top[x] > pl->bottom[x])
+                continue;
+
+            count = pl->bottom[x] - pl->top[x];
+            dest = textdestscreen + Mul80(pl->top[x]) + x;
+
+            do
+            {
+                *dest = color;
+                dest += 80;
+            } while (count--);
+        }
+
+        Z_ChangeTag(dc_source, PU_CACHE);
+    }
+}
+
+void R_DrawPlanesFlatSurfacesText80Double(void)
+{
+    visplane_t *pl;
+
+    int count;
+    unsigned short *dest;
+    unsigned short vmem;
+    unsigned short color;
+    int x;
+    byte odd;
+
+    dc_colormap = colormaps;
+
+    for (pl = visplanes; pl < lastvisplane; pl++)
+    {
+        if (!pl->modified || pl->minx > pl->maxx)
+            continue;
+
+        // sky flat
+        if (pl->picnum == skyflatnum)
+        {
+            R_DrawSky(pl);
+            continue;
+        }
+
+        dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
+
+        color = lut16colors[dc_colormap[dc_source[1850]]];
+
+        for (x = pl->minx; x <= pl->maxx; x++)
+        {
+            if (pl->top[x] > pl->bottom[x])
+                continue;
+
+            odd = pl->top[x] % 2;
+            count = pl->bottom[x] - pl->top[x];
+            dest = textdestscreen + Mul80(pl->top[x] / 2) + x;
+
+            do
+            {
+                vmem = *dest;
+
+                if (odd)
+                {
+                    vmem = vmem & 0x0F00;
+                    *dest = vmem | color << 12 | 223;
+
+                    odd = 0;
+                    dest += 80;
+                }
+                else
+                {
+                    vmem = vmem & 0xF000;
+                    *dest = vmem | color << 8 | 223;
+
+                    odd = 1;
+                }
+
+            } while (count--);
         }
 
         Z_ChangeTag(dc_source, PU_CACHE);

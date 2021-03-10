@@ -741,14 +741,18 @@ void R_ExecuteSetViewSize(void)
     {
         colfunc = basecolfunc = R_DrawColumnText80Double;
         spanfunc = R_DrawSpanText80Double;
-        skyfunc = R_DrawColumnText80Double;
+
+        if (flatSky)
+            skyfunc = R_DrawSkyFlatText80Double;
+        else
+            skyfunc = R_DrawColumnText80Double;
+
         fuzzcolfunc = R_DrawColumnText80Double;
     }
     else if (textmode8050)
     {
         colfunc = basecolfunc = R_DrawColumnText80;
         spanfunc = R_DrawSpanText80;
-        skyfunc = R_DrawColumnText80;
 
         if (flatSky)
             skyfunc = R_DrawSkyFlatText80;
@@ -1029,21 +1033,36 @@ void R_RenderPlayerView(player_t *player)
     // Check for new console commands.
     NetUpdate();
 
-    if (flatSurfaces)
-        switch (detailshift)
-        {
-        case 0:
-            R_DrawPlanesFlatSurfaces();
-            break;
-        case 1:
-            R_DrawPlanesFlatSurfacesLow();
-            break;
-        case 2:
-            R_DrawPlanesFlatSurfacesPotato();
-            break;
-        }
+    if (textmode8025)
+    {
+        if (flatSurfaces)
+            R_DrawPlanesFlatSurfacesText80Double();
+        else
+            R_DrawPlanes();
+    }else if (textmode8050){
+        if (flatSurfaces)
+            R_DrawPlanesFlatSurfacesText80();
+        else
+            R_DrawPlanes();
+    }
     else
-        R_DrawPlanes();
+    {
+        if (flatSurfaces)
+            switch (detailshift)
+            {
+            case 0:
+                R_DrawPlanesFlatSurfaces();
+                break;
+            case 1:
+                R_DrawPlanesFlatSurfacesLow();
+                break;
+            case 2:
+                R_DrawPlanesFlatSurfacesPotato();
+                break;
+            }
+        else
+            R_DrawPlanes();
+    }
 
     // Check for new console commands.
     NetUpdate();
