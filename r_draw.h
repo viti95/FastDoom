@@ -93,6 +93,7 @@ void R_DrawSpanPotato(void);
 void R_DrawSpanFlatPotato(void);
 
 void R_DrawSpanFlatText80(void);
+void R_DrawSpanFlatText80Double(void);
 
 void R_InitBuffer(int width, int height);
 

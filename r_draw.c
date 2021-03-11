@@ -1069,19 +1069,37 @@ void R_DrawSpanFlatText80(void)
     SetWords((byte *)dest, color, countp);
 }
 
-/*void R_DrawSpanFlatText80Double(void)
+void R_DrawSpanFlatText80Double(void)
 {
     int countp;
-    byte *dest;
+    byte odd;
+    unsigned short *dest;
+    unsigned short vmem;
 
-    lighttable_t color = ds_colormap[ds_source[1850]];
+    unsigned short color = lut16colors[ds_colormap[ds_source[1850]]];
 
-    dest = destview + Mul80(ds_y) + ds_x1;
+    dest = textdestscreen + Mul80(ds_y / 2) + ds_x1;
 
-    countp = ds_x2 - ds_x1 + 1;
+    countp = ds_x2 - ds_x1;
 
-    SetBytes(dest, color, countp);
-}*/
+    odd = ds_y % 2;
+    
+    do
+    {
+        vmem = *dest;
+
+        if (odd)
+        {
+            vmem = vmem & 0x0F00;
+            *dest++ = vmem | color << 12 | 223;
+        }
+        else
+        {
+            vmem = vmem & 0xF000;
+            *dest++ = vmem | color << 8 | 223;
+        }
+    } while (countp--);
+}
 
 //
 // R_InitBuffer

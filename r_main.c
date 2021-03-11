@@ -740,7 +740,15 @@ void R_ExecuteSetViewSize(void)
     if (textmode8025)
     {
         colfunc = basecolfunc = R_DrawColumnText80Double;
-        spanfunc = R_DrawSpanText80Double;
+
+        if (untexturedSurfaces)
+        {
+            spanfunc = R_DrawSpanFlatText80Double;
+        }
+        else
+        {
+            spanfunc = R_DrawSpanText80Double;
+        }
 
         if (flatSky)
             skyfunc = R_DrawSkyFlatText80Double;
@@ -753,12 +761,15 @@ void R_ExecuteSetViewSize(void)
     {
         colfunc = basecolfunc = R_DrawColumnText80;
 
-        if (untexturedSurfaces){
+        if (untexturedSurfaces)
+        {
             spanfunc = R_DrawSpanFlatText80;
-        }else{
+        }
+        else
+        {
             spanfunc = R_DrawSpanText80;
         }
-        
+
         if (flatSky)
             skyfunc = R_DrawSkyFlatText80;
         else
@@ -1044,7 +1055,9 @@ void R_RenderPlayerView(player_t *player)
             R_DrawPlanesFlatSurfacesText80Double();
         else
             R_DrawPlanes();
-    }else if (textmode8050){
+    }
+    else if (textmode8050)
+    {
         if (flatSurfaces)
             R_DrawPlanesFlatSurfacesText80();
         else
