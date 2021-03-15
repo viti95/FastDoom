@@ -739,46 +739,46 @@ void R_ExecuteSetViewSize(void)
 
     if (textmode8025)
     {
-        colfunc = basecolfunc = R_DrawColumnText80Double;
+        colfunc = basecolfunc = R_DrawColumnText8025;
 
         if (untexturedSurfaces)
         {
-            spanfunc = R_DrawSpanFlatText80Double;
+            spanfunc = R_DrawSpanFlatText8025;
         }
         else
         {
-            spanfunc = R_DrawSpanText80Double;
+            spanfunc = R_DrawSpanText8025;
         }
 
         if (flatSky)
-            skyfunc = R_DrawSkyFlatText80Double;
+            skyfunc = R_DrawSkyFlatText8025;
         else
-            skyfunc = R_DrawColumnText80Double;
+            skyfunc = R_DrawColumnText8025;
 
-        fuzzcolfunc = R_DrawColumnText80Double;
+        fuzzcolfunc = R_DrawColumnText8025;
     }
     else if (textmode8050)
     {
-        colfunc = basecolfunc = R_DrawColumnText80;
+        colfunc = basecolfunc = R_DrawColumnText8050;
 
         if (untexturedSurfaces)
         {
-            spanfunc = R_DrawSpanFlatText80;
+            spanfunc = R_DrawSpanFlatText8050;
         }
         else
         {
-            spanfunc = R_DrawSpanText80;
+            spanfunc = R_DrawSpanText8050;
         }
 
         if (flatSky)
-            skyfunc = R_DrawSkyFlatText80;
+            skyfunc = R_DrawSkyFlatText8050;
         else
-            skyfunc = R_DrawColumnText80;
+            skyfunc = R_DrawColumnText8050;
 
         if (saturnShadows)
-            fuzzcolfunc = R_DrawFuzzColumnSaturnText80;
+            fuzzcolfunc = R_DrawFuzzColumnSaturnText8050;
         else
-            fuzzcolfunc = R_DrawFuzzColumnText80;
+            fuzzcolfunc = R_DrawFuzzColumnText8050;
     }
     else
     {
@@ -1052,14 +1052,14 @@ void R_RenderPlayerView(player_t *player)
     if (textmode8025)
     {
         if (flatSurfaces)
-            R_DrawPlanesFlatSurfacesText80Double();
+            R_DrawPlanesFlatSurfacesText8025();
         else
             R_DrawPlanes();
     }
     else if (textmode8050)
     {
         if (flatSurfaces)
-            R_DrawPlanesFlatSurfacesText80();
+            R_DrawPlanesFlatSurfacesText8050();
         else
             R_DrawPlanes();
     }

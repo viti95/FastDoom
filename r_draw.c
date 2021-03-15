@@ -183,7 +183,7 @@ void R_DrawSkyFlatPotato(void)
     };
 }
 
-void R_DrawColumnText80Double(void)
+void R_DrawColumnText8025(void)
 {
     fixed_t frac;
     fixed_t fracstep;
@@ -223,7 +223,7 @@ void R_DrawColumnText80Double(void)
     } while (count--);
 }
 
-void R_DrawSpanText80Double(void)
+void R_DrawSpanText8025(void)
 {
     int spot;
     int prt;
@@ -282,7 +282,7 @@ void R_DrawSpanText80Double(void)
     }
 }
 
-void R_DrawColumnText80(void)
+void R_DrawColumnText8050(void)
 {
     fixed_t frac;
     fixed_t fracstep;
@@ -303,7 +303,7 @@ void R_DrawColumnText80(void)
     } while (count--);
 }
 
-void R_DrawSkyFlatText80(void)
+void R_DrawSkyFlatText8050(void)
 {
     unsigned int count;
     unsigned short *dest;
@@ -318,7 +318,7 @@ void R_DrawSkyFlatText80(void)
     } while (count--);
 }
 
-void R_DrawSkyFlatText80Double(void)
+void R_DrawSkyFlatText8025(void)
 {
     register int count;
     unsigned short *dest;
@@ -352,7 +352,7 @@ void R_DrawSkyFlatText80Double(void)
     } while (count--);
 }
 
-void R_DrawFuzzColumnSaturnText80(void)
+void R_DrawFuzzColumnSaturnText8050(void)
 {
     int count;
     unsigned short *dest;
@@ -401,7 +401,7 @@ void R_DrawFuzzColumnSaturnText80(void)
     }
 }
 
-void R_DrawFuzzColumnText80(void)
+void R_DrawFuzzColumnText8050(void)
 {
     unsigned int count;
     unsigned short *dest;
@@ -416,7 +416,7 @@ void R_DrawFuzzColumnText80(void)
     } while (count--);
 }
 
-void R_DrawSpanText80(void)
+void R_DrawSpanText8050(void)
 {
     int spot;
     int prt;
@@ -863,7 +863,7 @@ void R_DrawSpanFlat(void)
 
     total_pixels = ds_x2 - ds_x1;
 
-    color = ds_colormap[ds_source[1850]];
+    color = ds_colormap[ds_source[FLATPIXELCOLOR]];
     origin_y = (int)destview + Mul80(ds_y);
 
     first_plane = ds_x1 & 3;
@@ -988,7 +988,7 @@ void R_DrawSpanFlatLow(void)
 
     total_pixels = ds_x2 - ds_x1;
 
-    color = ds_colormap[ds_source[1850]];
+    color = ds_colormap[ds_source[FLATPIXELCOLOR]];
     origin_y = (int)destview + Mul80(ds_y);
 
     first_plane = ds_x1 & 1;
@@ -1060,7 +1060,7 @@ void R_DrawSpanFlatPotato(void)
     int countp;
     byte *dest;
 
-    lighttable_t color = ds_colormap[ds_source[1850]];
+    lighttable_t color = ds_colormap[ds_source[FLATPIXELCOLOR]];
 
     dest = destview + Mul80(ds_y) + ds_x1;
 
@@ -1069,12 +1069,12 @@ void R_DrawSpanFlatPotato(void)
     SetBytes(dest, color, countp);
 }
 
-void R_DrawSpanFlatText80(void)
+void R_DrawSpanFlatText8050(void)
 {
     int countp;
     unsigned short *dest;
 
-    unsigned short color = lut16colors[ds_colormap[ds_source[1850]]] << 8 | 219;
+    unsigned short color = lut16colors[ds_colormap[ds_source[FLATPIXELCOLOR]]] << 8 | 219;
 
     dest = textdestscreen + Mul80(ds_y) + ds_x1;
 
@@ -1083,14 +1083,14 @@ void R_DrawSpanFlatText80(void)
     SetWords((byte *)dest, color, countp);
 }
 
-void R_DrawSpanFlatText80Double(void)
+void R_DrawSpanFlatText8025(void)
 {
     int countp;
     byte odd;
     unsigned short *dest;
     unsigned short vmem;
 
-    unsigned short color = lut16colors[ds_colormap[ds_source[1850]]];
+    unsigned short color = lut16colors[ds_colormap[ds_source[FLATPIXELCOLOR]]];
 
     dest = textdestscreen + Mul80(ds_y / 2) + ds_x1;
 

@@ -19,6 +19,8 @@
 #ifndef __R_DRAW__
 #define __R_DRAW__
 
+#define FLATPIXELCOLOR 1850
+
 extern lighttable_t *dc_colormap;
 extern int dc_x;
 extern int dc_yl;
@@ -54,15 +56,15 @@ void R_DrawFuzzColumnFastPotato(void);
 void R_DrawColumnPotato(void);
 void R_DrawSkyFlatPotato(void);
 
-void R_DrawColumnText80(void);
-void R_DrawFuzzColumnText80(void);
-void R_DrawFuzzColumnSaturnText80(void);
-void R_DrawSkyFlatText80(void);
-void R_DrawSpanText80(void);
+void R_DrawColumnText8050(void);
+void R_DrawFuzzColumnText8050(void);
+void R_DrawFuzzColumnSaturnText8050(void);
+void R_DrawSkyFlatText8050(void);
+void R_DrawSpanText8050(void);
 
-void R_DrawColumnText80Double(void);
-void R_DrawSpanText80Double(void);
-void R_DrawSkyFlatText80Double(void);
+void R_DrawColumnText8025(void);
+void R_DrawSpanText8025(void);
+void R_DrawSkyFlatText8025(void);
 
 void R_VideoErase(unsigned ofs,int count);
 
@@ -92,8 +94,8 @@ void R_DrawSpanFlatLow(void);
 void R_DrawSpanPotato(void);
 void R_DrawSpanFlatPotato(void);
 
-void R_DrawSpanFlatText80(void);
-void R_DrawSpanFlatText80Double(void);
+void R_DrawSpanFlatText8050(void);
+void R_DrawSpanFlatText8025(void);
 
 void R_InitBuffer(int width, int height);
 
