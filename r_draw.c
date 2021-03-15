@@ -435,17 +435,25 @@ void R_DrawFuzzColumnText8025(void)
     } while (count--);
 }
 
-void R_DrawFuzzColumnText8050(void)
+void R_DrawFuzzColumnFastText8050(void)
 {
     unsigned int count;
     unsigned short *dest;
+    unsigned short vmem;
 
     dest = textdestscreen + Mul80(dc_yl) + dc_x;
     count = dc_yh - dc_yl;
 
     do
     {
-        *dest = 8 << 8 | 219;
+        vmem = *dest & 0x0F00;
+
+        if (vmem >= 0x800)
+        {
+            vmem -= 0x800;
+            *dest = vmem | 219;
+        }
+
         dest += 80;
     } while (count--);
 }
@@ -702,6 +710,39 @@ void R_DrawFuzzColumnFastPotato(void)
         dest += SCREENWIDTH / 4;
         count--;
     }
+}
+
+void R_DrawFuzzColumnText8050(void)
+{
+    unsigned int count;
+    unsigned short *dest;
+    unsigned short vmem;
+
+    dest = textdestscreen + Mul80(dc_yl) + dc_x;
+    count = dc_yh - dc_yl;
+
+    do
+    {
+        vmem = *dest & 0x0F00;
+
+        if (fuzzoffset[fuzzpos] > 0)
+        {
+            if (vmem >= 0x800)
+                vmem -= 0x800;
+        }
+        else
+        {
+            if (vmem <= 0x800)
+                vmem += 0x800;
+        }
+
+        *dest = vmem | 219;
+
+        if (++fuzzpos == FUZZTABLE)
+            fuzzpos = 0;
+
+        dest += 80;
+    } while (count--);
 }
 
 void R_DrawFuzzColumnSaturn(void)
