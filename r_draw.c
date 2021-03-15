@@ -401,6 +401,40 @@ void R_DrawFuzzColumnSaturnText8050(void)
     }
 }
 
+void R_DrawFuzzColumnText8025(void)
+{
+    register int count;
+    unsigned short *dest;
+    byte odd;
+    unsigned short vmem;
+
+    odd = dc_yl % 2;
+    dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
+    count = dc_yh - dc_yl;
+
+    do
+    {
+        vmem = *dest;
+
+        if (odd)
+        {
+            vmem = vmem & 0x0F00;
+            *dest = vmem | 8 << 12 | 223;
+
+            odd = 0;
+            dest += 80;
+        }
+        else
+        {
+            vmem = vmem & 0xF000;
+            *dest = vmem | 8 << 8 | 223;
+
+            odd = 1;
+        }
+
+    } while (count--);
+}
+
 void R_DrawFuzzColumnText8050(void)
 {
     unsigned int count;
@@ -411,7 +445,7 @@ void R_DrawFuzzColumnText8050(void)
 
     do
     {
-        *dest = 7 << 8 | 219;
+        *dest = 8 << 8 | 219;
         dest += 80;
     } while (count--);
 }
