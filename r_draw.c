@@ -242,30 +242,44 @@ void R_DrawSpanText80Double(void)
     xfrac = ds_xfrac;
     yfrac = ds_yfrac;
 
-    do
+    if (odd)
     {
-        // Current texture index in u,v.
-        spot = ((yfrac >> (16 - 6)) & (63 * 64)) + ((xfrac >> 16) & 63);
-
-        // Lookup pixel from flat texture tile,
-        //  re-index using light/colormap.
-        vmem = *dest;
-
-        if (odd)
+        do
         {
+            // Current texture index in u,v.
+            spot = ((yfrac >> (16 - 6)) & (63 * 64)) + ((xfrac >> 16) & 63);
+
+            // Lookup pixel from flat texture tile,
+            //  re-index using light/colormap.
+            vmem = *dest;
+
             vmem = vmem & 0x0F00;
             *dest++ = vmem | lut16colors[ds_colormap[ds_source[spot]]] << 12 | 223;
-        }
-        else
+
+            // Next step in u,v.
+            xfrac += ds_xstep;
+            yfrac += ds_ystep;
+        } while (countp--);
+    }
+    else
+    {
+        do
         {
+            // Current texture index in u,v.
+            spot = ((yfrac >> (16 - 6)) & (63 * 64)) + ((xfrac >> 16) & 63);
+
+            // Lookup pixel from flat texture tile,
+            //  re-index using light/colormap.
+            vmem = *dest;
+
             vmem = vmem & 0xF000;
             *dest++ = vmem | lut16colors[ds_colormap[ds_source[spot]]] << 8 | 223;
-        }
 
-        // Next step in u,v.
-        xfrac += ds_xstep;
-        yfrac += ds_ystep;
-    } while (countp--);
+            // Next step in u,v.
+            xfrac += ds_xstep;
+            yfrac += ds_ystep;
+        } while (countp--);
+    }
 }
 
 void R_DrawColumnText80(void)
@@ -1083,22 +1097,27 @@ void R_DrawSpanFlatText80Double(void)
     countp = ds_x2 - ds_x1;
 
     odd = ds_y % 2;
-    
-    do
-    {
-        vmem = *dest;
 
-        if (odd)
+    if (odd)
+    {
+        color = color << 12 | 223;
+        do
         {
+            vmem = *dest;
             vmem = vmem & 0x0F00;
-            *dest++ = vmem | color << 12 | 223;
-        }
-        else
+            *dest++ = vmem | color;
+        } while (countp--);
+    }
+    else
+    {
+        color = color << 8 | 223;
+        do
         {
+            vmem = *dest;
             vmem = vmem & 0xF000;
-            *dest++ = vmem | color << 8 | 223;
-        }
-    } while (countp--);
+            *dest++ = vmem | color;
+        } while (countp--);
+    }
 }
 
 //
