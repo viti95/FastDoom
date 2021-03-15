@@ -732,7 +732,7 @@ void R_DrawFuzzColumnText8050(void)
         }
         else
         {
-            if (vmem <= 0x800)
+            if (vmem < 0x800)
                 vmem += 0x800;
         }
 
