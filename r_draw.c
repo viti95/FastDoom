@@ -401,12 +401,13 @@ void R_DrawFuzzColumnSaturnText8050(void)
     }
 }
 
-void R_DrawFuzzColumnText8025(void)
+void R_DrawFuzzColumnFastText8025(void)
 {
     register int count;
     unsigned short *dest;
     byte odd;
     unsigned short vmem;
+    unsigned short local_color;
 
     odd = dc_yl % 2;
     dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
@@ -415,23 +416,33 @@ void R_DrawFuzzColumnText8025(void)
     do
     {
         vmem = *dest;
+        vmem = vmem & 0xFF00;
 
         if (odd)
         {
-            vmem = vmem & 0x0F00;
-            *dest = vmem | 8 << 12 | 223;
+            local_color = vmem & 0xF000;
+
+            if (local_color >= 0x8000)
+            {
+                vmem -= 0x8000;
+                *dest = vmem | 223;
+            }
 
             odd = 0;
             dest += 80;
         }
         else
         {
-            vmem = vmem & 0xF000;
-            *dest = vmem | 8 << 8 | 223;
+            local_color = vmem & 0x0F00;
+
+            if (local_color >= 0x800)
+            {
+                vmem -= 0x800;
+                *dest = vmem | 223;
+            }
 
             odd = 1;
         }
-
     } while (count--);
 }
 
@@ -710,6 +721,77 @@ void R_DrawFuzzColumnFastPotato(void)
         dest += SCREENWIDTH / 4;
         count--;
     }
+}
+
+void R_DrawFuzzColumnText8025(void)
+{
+    register int count;
+    unsigned short *dest;
+    byte odd;
+    unsigned short vmem;
+    unsigned short local_color;
+
+    odd = dc_yl % 2;
+    dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
+    count = dc_yh - dc_yl;
+
+    do
+    {
+        vmem = *dest;
+        vmem = vmem & 0xFF00;
+
+        if (odd)
+        {
+            local_color = vmem & 0xF000;
+
+            if (fuzzoffset[fuzzpos] > 0)
+            {
+                if (local_color >= 0x8000)
+                {
+                    vmem -= 0x8000;
+                    *dest = vmem | 223;
+                }
+            }
+            else
+            {
+                if (local_color < 0x8000)
+                {
+                    vmem += 0x8000;
+                    *dest = vmem | 223;
+                }
+            }
+
+            odd = 0;
+            dest += 80;
+        }
+        else
+        {
+            local_color = vmem & 0x0F00;
+
+            if (fuzzoffset[fuzzpos] > 0)
+            {
+                if (local_color >= 0x800)
+                {
+                    vmem -= 0x800;
+                    *dest = vmem | 223;
+                }
+            }
+            else
+            {
+                if (local_color < 0x800)
+                {
+                    vmem += 0x800;
+                    *dest = vmem | 223;
+                }
+            }
+
+            odd = 1;
+        }
+
+        if (++fuzzpos == FUZZTABLE)
+            fuzzpos = 0;
+
+    } while (count--);
 }
 
 void R_DrawFuzzColumnText8050(void)

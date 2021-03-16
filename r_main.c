@@ -755,7 +755,12 @@ void R_ExecuteSetViewSize(void)
         else
             skyfunc = R_DrawColumnText8025;
 
-        fuzzcolfunc = R_DrawFuzzColumnText8025;
+        if (flatShadows)
+            fuzzcolfunc = R_DrawFuzzColumnFastText8025;
+        else if (saturnShadows)
+            fuzzcolfunc = R_DrawFuzzColumnText8025;
+        else
+            fuzzcolfunc = R_DrawFuzzColumnText8025;
     }
     else if (textmode8050)
     {
