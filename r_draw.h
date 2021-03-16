@@ -68,6 +68,7 @@ void R_DrawSpanText8025(void);
 void R_DrawSkyFlatText8025(void);
 void R_DrawFuzzColumnText8025(void);
 void R_DrawFuzzColumnFastText8025(void);
+void R_DrawFuzzColumnSaturnText8025(void);
 
 void R_VideoErase(unsigned ofs,int count);
 

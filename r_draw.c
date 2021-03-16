@@ -352,6 +352,106 @@ void R_DrawSkyFlatText8025(void)
     } while (count--);
 }
 
+void R_DrawFuzzColumnSaturnText8025(void)
+{
+    fixed_t frac;
+    fixed_t fracstep;
+    int count;
+    unsigned short *dest;
+    byte odd;
+    unsigned short vmem;
+    int initialdrawpos = 0;
+
+    count = (dc_yh - dc_yl) / 2 - 1;
+
+    if (count < 0)
+        return;
+
+    initialdrawpos = dc_yl + dc_x;
+    odd = dc_yl % 2;
+    dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    if (initialdrawpos & 1)
+    {
+        if (odd)
+        {
+            dest += 80;
+            odd = 0;
+        }
+        else
+        {
+            odd = 1;
+        }
+        frac += fracstep;
+    }
+
+    fracstep = 2 * fracstep;
+
+    if (odd)
+    {
+        do
+        {
+            vmem = *dest;
+
+            vmem = vmem & 0x0F00;
+            *dest = vmem | lut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 12 | 223;
+
+            dest += 80;
+
+            frac += fracstep;
+        } while (count--);
+
+        if ((dc_yh - dc_yl) & 1)
+        {
+            vmem = *dest;
+            vmem = vmem & 0x0F00;
+            *dest = vmem | lut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 12 | 223;
+        }
+        else
+        {
+            if (!(initialdrawpos & 1))
+            {
+                vmem = *dest;
+                vmem = vmem & 0x0F00;
+                *dest = vmem | lut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 12 | 223;
+            }
+        }
+    }
+    else
+    {
+        do
+        {
+            vmem = *dest;
+
+            vmem = vmem & 0xF000;
+            *dest = vmem | lut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 223;
+
+            dest += 80;
+
+            frac += fracstep;
+        } while (count--);
+
+        if ((dc_yh - dc_yl) & 1)
+        {
+            vmem = *dest;
+            vmem = vmem & 0xF000;
+            *dest = vmem | lut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 223;
+        }
+        else
+        {
+            if (!(initialdrawpos & 1))
+            {
+                vmem = *dest;
+                vmem = vmem & 0xF000;
+                *dest = vmem | lut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 223;
+            }
+        }
+    }
+}
+
 void R_DrawFuzzColumnSaturnText8050(void)
 {
     int count;
