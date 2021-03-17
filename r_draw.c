@@ -187,7 +187,8 @@ void R_DrawColumnText8025(void)
 {
     fixed_t frac;
     fixed_t fracstep;
-    unsigned int count;
+    int count;
+    int countblock;
     unsigned short *dest;
     byte odd;
     unsigned short vmem;
@@ -199,7 +200,7 @@ void R_DrawColumnText8025(void)
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
 
-    do
+    if (count >= 1 && odd || count == 0)
     {
         vmem = *dest;
 
@@ -210,17 +211,42 @@ void R_DrawColumnText8025(void)
 
             odd = 0;
             dest += 80;
+            frac += fracstep;
         }
         else
         {
             vmem = vmem & 0xF000;
             *dest = vmem | lut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 223;
-
-            odd = 1;
+            return;
         }
 
+        count--;
+    }
+
+    countblock = (count + 1) / 2;
+    count -= countblock * 2;
+
+    while (countblock)
+    {
+        unsigned short firstcolor, secondcolor;
+
+        firstcolor = lut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8;
         frac += fracstep;
-    } while (count--);
+        secondcolor = lut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 12;
+
+        *dest = firstcolor | secondcolor | 223;
+        dest += 80;
+
+        frac += fracstep;
+        countblock--;
+    }
+
+    if (count >= 0 && !odd)
+    {
+        vmem = *dest;
+        vmem = vmem & 0xF000;
+        *dest = vmem | lut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 223;
+    }
 }
 
 void R_DrawSpanText8025(void)
