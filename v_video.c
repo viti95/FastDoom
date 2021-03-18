@@ -75,9 +75,8 @@ void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int de
     byte *src;
     byte *dest;
 
-    if (textmode8025 || textmode8050){
+    if (textmode)
         return;
-    }
 
     V_MarkRect(destx, desty, width, height);
 
@@ -97,9 +96,8 @@ void V_SetRect(byte color, int width, int height, int destx, int desty, byte *de
 {
     byte *dest;
 
-    if (textmode8025 || textmode8050){
+    if (textmode)
         return;
-    }
 
     V_MarkRect(destx, desty, width, height);
 
@@ -127,9 +125,8 @@ void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
     byte *source;
     int w;
 
-    if (textmode8025 || textmode8050){
+    if (textmode)
         return;
-    }
 
     y -= patch->topoffset;
     x -= patch->leftoffset;
@@ -187,9 +184,8 @@ void V_DrawPatchScreen0(int x, int y, patch_t *patch)
     byte *source;
     int w;
 
-    if (textmode8025 || textmode8050){
+    if (textmode8025)
         return;
-    }
 
     y -= patch->topoffset;
     x -= patch->leftoffset;
@@ -254,9 +250,8 @@ void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
     byte *source;
     int w;
 
-    if (textmode8025 || textmode8050){
+    if (textmode)
         return;
-    }
 
     y -= patch->topoffset;
     x -= patch->leftoffset;
@@ -296,9 +291,8 @@ void V_Blit(unsigned int dest_page, int source_x, int source_y, int dest_x, int 
     unsigned int source_offset;
     unsigned int dest_offset;
 
-    if (textmode8025 || textmode8050){
+    if (textmode)
         return;
-    }
 
     outpw(SC_INDEX, (0xff00 + 0x02)); //select all planes
     outpw(GC_INDEX, 0x08);            //set OR mode
@@ -355,9 +349,8 @@ void V_DrawPatchDirect(int x,
     byte *source;
     int w;
 
-    if (textmode8025 || textmode8050){
+    if (textmode)
         return;
-    }
 
     y -= patch->topoffset;
     x -= patch->leftoffset;

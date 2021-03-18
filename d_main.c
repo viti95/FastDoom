@@ -106,6 +106,7 @@ int forceScreenSize;
 
 boolean textmode8025;
 boolean textmode8050;
+boolean textmode;
 
 boolean CGAcard;
 
@@ -741,6 +742,7 @@ void D_DoomMain(void)
 
     textmode8025 = M_CheckParm("-80x25");
     textmode8050 = M_CheckParm("-80x50");
+    textmode = textmode8025 || textmode8050;
 
     CGAcard = M_CheckParm("-cga");
 

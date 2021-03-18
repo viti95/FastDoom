@@ -1436,7 +1436,7 @@ void R_InitBuffer(int width, int height)
     //  e.g. smaller view windows
     //  with border and/or status bar.
 
-    if (textmode8025 || textmode8050)
+    if (textmode)
     {
         viewwindowx = 0;
     }
@@ -1450,7 +1450,7 @@ void R_InitBuffer(int width, int height)
         columnofs[i] = viewwindowx + i;
 
     // Samw with base row offset.
-    if (width == SCREENWIDTH || textmode8025 || textmode8050)
+    if (width == SCREENWIDTH || textmode)
         viewwindowy = 0;
     else
         viewwindowy = (SCREENHEIGHT - SBARHEIGHT - height) >> 1;
@@ -1480,7 +1480,7 @@ void R_FillBackScreen(void)
 
     char *name;
 
-    if (scaledviewwidth == 320 || textmode8025 || textmode8050)
+    if (scaledviewwidth == 320 || textmode)
         return;
 
     if (commercial)
@@ -1554,10 +1554,8 @@ void R_VideoErase(unsigned ofs, int count)
     byte *source;
     int countp;
 
-    if (textmode8025 || textmode8050)
-    {
+    if (textmode)
         return;
-    }
 
     outp(SC_INDEX, SC_MAPMASK);
     outp(SC_INDEX + 1, 15);
@@ -1584,7 +1582,7 @@ void R_DrawViewBorder(void)
     int ofs;
     int i;
 
-    if (scaledviewwidth == SCREENWIDTH || textmode8025 || textmode8050)
+    if (scaledviewwidth == SCREENWIDTH || textmode)
         return;
 
     top = ((SCREENHEIGHT - SBARHEIGHT) - viewheight) / 2;

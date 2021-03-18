@@ -244,7 +244,7 @@ const byte textcolors[48] = {
 //
 void I_SetPalette(int numpalette)
 {
-    if (textmode8025 || textmode8050)
+    if (textmode)
     {
         byte *pos;
         short i, j;
@@ -466,7 +466,7 @@ void I_UpdateNoBlit(void)
         y = realdr[BOXBOTTOM];
         h = realdr[BOXTOP] - y + 1;
 
-        if (!textmode8025 && !textmode8050)
+        if (!textmode)
         {
             I_UpdateBox(x, y, w, h);
         }
@@ -484,7 +484,7 @@ void I_FinishUpdate(void)
     static int fps_counter, fps_starttime, fps_nextcalculation;
     int opt1, opt2;
 
-    if (!textmode8025 && !textmode8050)
+    if (!textmode)
     {
         outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
 
@@ -494,9 +494,7 @@ void I_FinishUpdate(void)
         {
             destscreen = (byte *)0xa0000;
         }
-    }
-
-    if (textmode8025)
+    }else if (textmode8025)
     {
 
         // Change video page
@@ -513,9 +511,7 @@ void I_FinishUpdate(void)
             textdestscreen = (unsigned short *)0xB8000;
             textpage = 0;
         }
-    }
-
-    if (textmode8050)
+    }else if (textmode8050)
     {
         // Change video page
         regs.h.ah = 0x05;
@@ -561,7 +557,7 @@ void I_FinishUpdate(void)
 //
 void I_InitGraphics(void)
 {
-    if (!textmode8025 && !textmode8050)
+    if (!textmode)
     {
         regs.w.ax = 0x13;
         int386(0x10, (union REGS *)&regs, &regs);
@@ -583,9 +579,7 @@ void I_InitGraphics(void)
         outp(CRTC_INDEX, CRTC_MODE);
         outp(CRTC_INDEX + 1, inp(CRTC_INDEX + 1) | 0x40);
         outp(GC_INDEX, GC_READMAP);
-    }
-
-    if (textmode8025)
+    }else if (textmode8025)
     {
         // Set 80x25 color mode
         regs.h.ah = 0x00;
@@ -616,9 +610,7 @@ void I_InitGraphics(void)
         /*regs.h.ah = 0x05;
         regs.h.al = 0x01;
         int386(0x10, &regs, &regs);*/
-    }
-
-    if (textmode8050)
+    }else if (textmode8050)
     {
         // Set 80x25 color mode
         regs.h.ah = 0x00;

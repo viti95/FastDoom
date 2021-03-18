@@ -175,9 +175,8 @@ void wipe_ReadScreen(byte *scr)
 {
     int j;
 
-    if (textmode8025 || textmode8050){
+    if (textmode)
         return;
-    }
 
     outp(GC_INDEX, GC_READMAP);
 

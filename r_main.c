@@ -1045,7 +1045,7 @@ void R_RenderPlayerView(player_t *player)
     NetUpdate();
 
     // Set potato mode VGA plane
-    if (detailshift == 2 && !textmode8025 && !textmode8050)
+    if (detailshift == 2 && !textmode)
     {
         outp(SC_INDEX + 1, 15);
     }
