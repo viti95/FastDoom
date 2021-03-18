@@ -943,35 +943,91 @@ void M_DrawDisplay(void)
 {
     //V_DrawPatchDirect(54, 15, 0, W_CacheLumpName("M_DISOPT", PU_CACHE));
 
-    M_WriteText(58, 24, "VSYNC:");
-    M_WriteText(214, 24, waitVsync ? "ON" : "OFF");
+    if (textmode8025)
+    {
+        V_WriteTextDirect(15, 2, "VSYNC:");
+        V_WriteTextDirect(45, 2, waitVsync ? "ON" : "OFF");
 
-    M_WriteText(58, 40, "DETAIL LEVEL:");
-    M_WriteText(214, 40, detailLevel == 2 ? "POTATO" : detailLevel == 1 ? "LOW"
-                                                                        : "HIGH");
+        V_WriteTextDirect(15, 4, "DETAIL LEVEL:");
+        V_WriteTextDirect(45, 4, detailLevel == 2 ? "POTATO" : detailLevel == 1 ? "LOW" : "HIGH");
 
-    M_WriteText(58, 56, "VISPLANE RENDERING:");
-    M_WriteText(214, 56, (!untexturedSurfaces && !flatSurfaces) ? "FULL" : untexturedSurfaces ? "FLAT"
-                                                                                              : "FLATTER");
+        V_WriteTextDirect(15, 6, "VISPLANE RENDERING:");
+        V_WriteTextDirect(45, 6, (!untexturedSurfaces && !flatSurfaces) ? "FULL" : untexturedSurfaces ? "FLAT" : "FLATTER");
 
-    M_WriteText(58, 72, "SKY RENDERING:");
-    M_WriteText(214, 72, flatSky ? "FLAT" : "FULL");
+        V_WriteTextDirect(15, 8, "SKY RENDERING:");
+        V_WriteTextDirect(45, 8, flatSky ? "FLAT" : "FULL");
 
-    M_WriteText(58, 88, "INVISIBLE RENDERING:");
-    M_WriteText(214, 88, (!saturnShadows && !flatShadows) ? "FUZZY" : flatShadows ? "FLAT"
-                                                                                  : "SEGA SATURN");
+        V_WriteTextDirect(15, 10, "INVISIBLE RENDERING:");
+        V_WriteTextDirect(45, 10, (!saturnShadows && !flatShadows) ? "FUZZY" : flatShadows ? "FLAT" : "SEGA SATURN");
 
-    M_WriteText(58, 104, "SHOW FPS:");
-    M_WriteText(214, 104, showFPS ? "ON" : "OFF");
+        V_WriteTextDirect(15, 12, "SHOW FPS:");
+        V_WriteTextDirect(45, 12, showFPS ? "ON" : "OFF");
 
-    M_WriteText(58, 120, "SPRITE CULLING:");
-    M_WriteText(214, 120, nearSprites ? "ON" : "OFF");
+        V_WriteTextDirect(15, 14, "SPRITE CULLING:");
+        V_WriteTextDirect(45, 14, nearSprites ? "ON" : "OFF");
 
-    M_WriteText(58, 136, "MELTING LOAD EFFECT:");
-    M_WriteText(214, 136, noMelt ? "OFF" : "ON");
+        V_WriteTextDirect(15, 16, "MELTING LOAD EFFECT:");
+        V_WriteTextDirect(45, 16, noMelt ? "OFF" : "ON");
 
-    M_WriteText(58, 152, "UNCAPPED FRAMERATE:");
-    M_WriteText(214, 152, uncappedFPS ? "ON" : "OFF");
+        V_WriteTextDirect(15, 18, "UNCAPPED FRAMERATE:");
+        V_WriteTextDirect(45, 18, uncappedFPS ? "ON" : "OFF");
+    }else if (textmode8050){
+        V_WriteTextDirect(15, 5, "VSYNC:");
+        V_WriteTextDirect(45, 5, waitVsync ? "ON" : "OFF");
+
+        V_WriteTextDirect(15, 9, "DETAIL LEVEL:");
+        V_WriteTextDirect(45, 9, detailLevel == 2 ? "POTATO" : detailLevel == 1 ? "LOW" : "HIGH");
+
+        V_WriteTextDirect(15, 13, "VISPLANE RENDERING:");
+        V_WriteTextDirect(45, 13, (!untexturedSurfaces && !flatSurfaces) ? "FULL" : untexturedSurfaces ? "FLAT" : "FLATTER");
+
+        V_WriteTextDirect(15, 17, "SKY RENDERING:");
+        V_WriteTextDirect(45, 17, flatSky ? "FLAT" : "FULL");
+
+        V_WriteTextDirect(15, 21, "INVISIBLE RENDERING:");
+        V_WriteTextDirect(45, 21, (!saturnShadows && !flatShadows) ? "FUZZY" : flatShadows ? "FLAT" : "SEGA SATURN");
+
+        V_WriteTextDirect(15, 25, "SHOW FPS:");
+        V_WriteTextDirect(45, 25, showFPS ? "ON" : "OFF");
+
+        V_WriteTextDirect(15, 29, "SPRITE CULLING:");
+        V_WriteTextDirect(45, 29, nearSprites ? "ON" : "OFF");
+
+        V_WriteTextDirect(15, 33, "MELTING LOAD EFFECT:");
+        V_WriteTextDirect(45, 33, noMelt ? "OFF" : "ON");
+
+        V_WriteTextDirect(15, 37, "UNCAPPED FRAMERATE:");
+        V_WriteTextDirect(45, 37, uncappedFPS ? "ON" : "OFF");
+    }
+    else
+    {
+        M_WriteText(58, 24, "VSYNC:");
+        M_WriteText(214, 24, waitVsync ? "ON" : "OFF");
+
+        M_WriteText(58, 40, "DETAIL LEVEL:");
+        M_WriteText(214, 40, detailLevel == 2 ? "POTATO" : detailLevel == 1 ? "LOW" : "HIGH");
+
+        M_WriteText(58, 56, "VISPLANE RENDERING:");
+        M_WriteText(214, 56, (!untexturedSurfaces && !flatSurfaces) ? "FULL" : untexturedSurfaces ? "FLAT" : "FLATTER");
+
+        M_WriteText(58, 72, "SKY RENDERING:");
+        M_WriteText(214, 72, flatSky ? "FLAT" : "FULL");
+
+        M_WriteText(58, 88, "INVISIBLE RENDERING:");
+        M_WriteText(214, 88, (!saturnShadows && !flatShadows) ? "FUZZY" : flatShadows ? "FLAT" : "SEGA SATURN");
+
+        M_WriteText(58, 104, "SHOW FPS:");
+        M_WriteText(214, 104, showFPS ? "ON" : "OFF");
+
+        M_WriteText(58, 120, "SPRITE CULLING:");
+        M_WriteText(214, 120, nearSprites ? "ON" : "OFF");
+
+        M_WriteText(58, 136, "MELTING LOAD EFFECT:");
+        M_WriteText(214, 136, noMelt ? "OFF" : "ON");
+
+        M_WriteText(58, 152, "UNCAPPED FRAMERATE:");
+        M_WriteText(214, 152, uncappedFPS ? "ON" : "OFF");
+    }
 }
 
 void M_Options(int choice)
@@ -1820,7 +1876,9 @@ void M_Drawer(void)
             if (textmode8025)
             {
                 V_WriteTextDirect(x / 4, y / 8, currentMenu->menuitems[i].text);
-            }else if (textmode8050){
+            }
+            else if (textmode8050)
+            {
                 V_WriteTextDirect(x / 4, y / 4, currentMenu->menuitems[i].text);
             }
             else
@@ -1836,7 +1894,9 @@ void M_Drawer(void)
     if (textmode8025)
     {
         V_WriteTextDirect(currentMenu->x / 4 - 3, currentMenu->y / 8 + itemOn * 2, "\2");
-    }else if (textmode8050){
+    }
+    else if (textmode8050)
+    {
         V_WriteTextDirect(currentMenu->x / 4 - 3, currentMenu->y / 4 + itemOn * 4, "\2");
     }
     else
