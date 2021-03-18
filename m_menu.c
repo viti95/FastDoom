@@ -1852,7 +1852,15 @@ void M_Drawer(void)
             }
 
             x = 160 - M_StringWidth(string) / 2;
-            M_WriteText(x, y, string);
+
+            if (textmode8025){
+                V_WriteTextDirect(x / 4, y / 8, string);
+            }else if (textmode8050){
+                V_WriteTextDirect(x / 4, y / 4, string);
+            }else{
+                M_WriteText(x, y, string);
+            }
+            
             y += hu_font[0]->height;
         }
         return;
