@@ -184,7 +184,7 @@ void V_DrawPatchScreen0(int x, int y, patch_t *patch)
     byte *source;
     int w;
 
-    if (textmode8025)
+    if (textmode)
         return;
 
     y -= patch->topoffset;
