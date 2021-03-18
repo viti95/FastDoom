@@ -284,37 +284,6 @@ void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
     }
 }
 
-void V_Blit(unsigned int dest_page, int source_x, int source_y, int dest_x, int dest_y, unsigned int width, unsigned int height, unsigned int src_page)
-{
-    int line;
-    int x;
-    unsigned int source_offset;
-    unsigned int dest_offset;
-
-    if (textmode)
-        return;
-
-    outpw(SC_INDEX, (0xff00 + 0x02)); //select all planes
-    outpw(GC_INDEX, 0x08);            //set OR mode
-
-    source_offset = (((unsigned int)source_y * (unsigned int)SCREENWIDTH + source_x) >> 2) + src_page;
-    dest_offset = (((unsigned int)dest_y * (unsigned int)SCREENWIDTH + dest_x) >> 2) + dest_page;
-
-    for (line = 0; line < height; line++) //for each scan line
-    {
-        for (x = 0; x < width >> 2; x++) //for each scan pixel
-        {
-            volatile char pixel = pcscreen[source_offset + x]; //read pixel to load the latches
-            pcscreen[dest_offset + x] = 0;                     //write four pixels
-        }
-
-        source_offset += SCREENWIDTH >> 2;
-        dest_offset += SCREENWIDTH >> 2;
-    }
-
-    outpw(GC_INDEX + 1, 0x00ff);
-}
-
 void V_WriteTextDirect(int x, int y, char *string){
     unsigned short *dest;
     
