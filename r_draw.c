@@ -346,7 +346,8 @@ void R_DrawSkyFlatText8050(void)
 
 void R_DrawSkyFlatText8025(void)
 {
-    register int count;
+    int count;
+    int countblock;
     unsigned short *dest;
     byte odd;
     unsigned short vmem;
@@ -355,7 +356,7 @@ void R_DrawSkyFlatText8025(void)
     dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
     count = dc_yh - dc_yl;
 
-    do
+    if (count >= 1 && odd || count == 0)
     {
         vmem = *dest;
 
@@ -371,11 +372,28 @@ void R_DrawSkyFlatText8025(void)
         {
             vmem = vmem & 0xF000;
             *dest = vmem | 6 << 8 | 223;
-
-            odd = 1;
+            return;
         }
 
-    } while (count--);
+        count--;
+    }
+
+    countblock = (count + 1) / 2;
+    count -= countblock * 2;
+
+    while (countblock)
+    {
+        *dest = 6 << 8 | 219;
+        dest += 80;
+        countblock--;
+    }
+
+    if (count >= 0 && !odd)
+    {
+        vmem = *dest;
+        vmem = vmem & 0xF000;
+        *dest = vmem | 6 << 8 | 223;
+    }
 }
 
 void R_DrawFuzzColumnSaturnText8025(void)
