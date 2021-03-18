@@ -408,8 +408,6 @@ void R_DrawPlanesFlatSurfaces(void)
     lighttable_t color;
     int x;
 
-    dc_colormap = colormaps;
-
     for (pl = visplanes; pl < lastvisplane; pl++)
     {
         if (!pl->modified || pl->minx > pl->maxx)
@@ -424,7 +422,7 @@ void R_DrawPlanesFlatSurfaces(void)
 
         dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
 
-        color = dc_colormap[dc_source[FLATPIXELCOLOR]];
+        color = colormaps[dc_source[FLATPIXELCOLOR]];
 
         x = pl->minx;
         outp(SC_INDEX + 1, 1 << (x & 3));
@@ -594,8 +592,6 @@ void R_DrawPlanesFlatSurfacesLow(void)
     lighttable_t color;
     int x;
 
-    dc_colormap = colormaps;
-
     for (pl = visplanes; pl < lastvisplane; pl++)
     {
         if (!pl->modified || pl->minx > pl->maxx)
@@ -610,7 +606,7 @@ void R_DrawPlanesFlatSurfacesLow(void)
 
         dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
 
-        color = dc_colormap[dc_source[FLATPIXELCOLOR]];
+        color = colormaps[dc_source[FLATPIXELCOLOR]];
         // Plane 0
         x = pl->minx;
         outp(SC_INDEX + 1, 3 << ((x & 1) << 1));
@@ -700,8 +696,6 @@ void R_DrawPlanesFlatSurfacesPotato(void)
     lighttable_t color;
     int x;
 
-    dc_colormap = colormaps;
-
     for (pl = visplanes; pl < lastvisplane; pl++)
     {
         if (!pl->modified || pl->minx > pl->maxx)
@@ -716,7 +710,7 @@ void R_DrawPlanesFlatSurfacesPotato(void)
 
         dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
 
-        color = dc_colormap[dc_source[FLATPIXELCOLOR]];
+        color = colormaps[dc_source[FLATPIXELCOLOR]];
 
         for (x = pl->minx; x <= pl->maxx; x++)
         {
@@ -758,8 +752,6 @@ void R_DrawPlanesFlatSurfacesText8050(void)
     unsigned short color;
     int x;
 
-    dc_colormap = colormaps;
-
     for (pl = visplanes; pl < lastvisplane; pl++)
     {
         if (!pl->modified || pl->minx > pl->maxx)
@@ -773,7 +765,7 @@ void R_DrawPlanesFlatSurfacesText8050(void)
         }
 
         dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
-        color = lut16colors[dc_colormap[dc_source[FLATPIXELCOLOR]]] << 8 | 219;
+        color = lut16colors[colormaps[dc_source[FLATPIXELCOLOR]]] << 8 | 219;
 
         for (x = pl->minx; x <= pl->maxx; x++)
         {
@@ -807,8 +799,6 @@ void R_DrawPlanesFlatSurfacesText8025(void)
     int x;
     byte odd;
 
-    dc_colormap = colormaps;
-
     for (pl = visplanes; pl < lastvisplane; pl++)
     {
         if (!pl->modified || pl->minx > pl->maxx)
@@ -823,7 +813,7 @@ void R_DrawPlanesFlatSurfacesText8025(void)
 
         dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
 
-        color = lut16colors[dc_colormap[dc_source[FLATPIXELCOLOR]]];
+        color = lut16colors[colormaps[dc_source[FLATPIXELCOLOR]]];
         colorblock = color << 8 | 219;
 
         for (x = pl->minx; x <= pl->maxx; x++)
