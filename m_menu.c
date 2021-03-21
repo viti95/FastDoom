@@ -654,13 +654,36 @@ void M_DrawSave(void)
     for (i = 0; i < load_end; i++)
     {
         M_DrawSaveLoadBorder(LoadDef.x, LoadDef.y + LINEHEIGHT * i);
-        M_WriteText(LoadDef.x, LoadDef.y + LINEHEIGHT * i, savegamestrings[i]);
+
+        if (textmode8025)
+        {
+            V_WriteTextDirect(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 8, savegamestrings[i]);
+        }
+        else if (textmode8050)
+        {
+            V_WriteTextDirect(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 4, savegamestrings[i]);
+        }
+        else
+        {
+            M_WriteText(LoadDef.x, LoadDef.y + LINEHEIGHT * i, savegamestrings[i]);
+        }
     }
 
     if (saveStringEnter)
     {
-        i = M_StringWidth(savegamestrings[saveSlot]);
-        M_WriteText(LoadDef.x + i, LoadDef.y + LINEHEIGHT * saveSlot, "_");
+        if (textmode8025)
+        {
+            V_WriteTextDirect((LoadDef.x / 4) + strlen(savegamestrings[saveSlot]), (LoadDef.y + LINEHEIGHT * saveSlot) / 8, "_");
+        }
+        else if (textmode8050)
+        {
+            V_WriteTextDirect((LoadDef.x / 4) + strlen(savegamestrings[saveSlot]), (LoadDef.y + LINEHEIGHT * saveSlot) / 4, "_");
+        }
+        else
+        {
+            i = M_StringWidth(savegamestrings[saveSlot]);
+            M_WriteText(LoadDef.x + i, LoadDef.y + LINEHEIGHT * saveSlot, "_");
+        }
     }
 }
 
@@ -1636,8 +1659,7 @@ byte M_Responder(event_t *ev)
                     break;
             if (ch >= 32 && ch <= 127 &&
                 saveCharIndex < SAVESTRINGSIZE - 1 &&
-                M_StringWidth(savegamestrings[saveSlot]) <
-                    (SAVESTRINGSIZE - 2) * 8)
+                M_StringWidth(savegamestrings[saveSlot]) < (SAVESTRINGSIZE - 2) * 8)
             {
                 savegamestrings[saveSlot][saveCharIndex++] = ch;
                 savegamestrings[saveSlot][saveCharIndex] = 0;
