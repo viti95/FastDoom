@@ -433,6 +433,12 @@ void F_TextWriteText(void)
 			continue;
 		}
 
+		if (c < 32)
+		{
+			cx += 1;
+			continue;
+		}
+
 		if (cx + 1 > 80)
 			break;
 
