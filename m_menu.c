@@ -165,7 +165,7 @@ typedef struct menu_s
 
 short itemOn;           // menu item skull is on
 short skullAnimCounter; // skull animation counter
-short whichSkull;       // which skull to draw
+byte whichSkull;       // which skull to draw
 
 // graphic name of skulls
 // warning: initializer-string for array of chars is too long
@@ -1998,11 +1998,11 @@ void M_Drawer(void)
     // DRAW SKULL
     if (textmode8025)
     {
-        V_WriteTextDirect(currentMenu->x / 4 - 3, currentMenu->y / 8 + itemOn * 2, "\2");
+        V_WriteCharDirect(currentMenu->x / 4 - 3, currentMenu->y / 8 + itemOn * 2, whichSkull + 1);
     }
     else if (textmode8050)
     {
-        V_WriteTextDirect(currentMenu->x / 4 - 3, currentMenu->y / 4 + itemOn * 4, "\2");
+        V_WriteCharDirect(currentMenu->x / 4 - 3, currentMenu->y / 4 + itemOn * 4, whichSkull + 1);
     }
     else
     {
