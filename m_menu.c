@@ -228,6 +228,7 @@ void M_DrawSave(void);
 
 void M_DrawSaveLoadBorder(int x, int y);
 void M_DrawThermo(int x, int y, int thermWidth, int thermDot);
+void M_DrawThermoText(int x, int y, int thermWidth, int thermDot);
 void M_WriteText(int x, int y, char *string);
 int M_StringWidth(char *string);
 int M_StringHeight(char *string);
@@ -790,16 +791,36 @@ void M_DrawReadThisRetail(void)
 //
 void M_DrawSound(void)
 {
-    V_DrawPatchDirect(60, 38, W_CacheLumpName("M_SVOL", PU_CACHE));
+    if (textmode8025)
+    {
+        V_WriteTextDirect(30, 4, "SOUND VOLUME");
 
-    M_DrawThermo(SoundDef.x, SoundDef.y + LINEHEIGHT * (sfx_vol + 1),
-                 16, sfxVolume);
+        M_DrawThermoText(SoundDef.x / 4, (SoundDef.y + LINEHEIGHT * (sfx_vol + 1)) / 8, 16, sfxVolume);
+        M_DrawThermoText(SoundDef.x / 4, (SoundDef.y + LINEHEIGHT * (music_vol + 1)) / 8, 16, musicVolume);
 
-    M_DrawThermo(SoundDef.x, SoundDef.y + LINEHEIGHT * (music_vol + 1),
-                 16, musicVolume);
+        V_WriteTextDirect(20, 16, "MONO SOUND:");
+        V_WriteTextDirect(40, 16, monoSound ? "ON" : "OFF");
+    }
+    else if (textmode8050)
+    {
+        V_WriteTextDirect(30, 8, "SOUND VOLUME");
 
-    M_WriteText(82, 130, "MONO SOUND:");
-    M_WriteText(164, 130, monoSound ? "ON" : "OFF");
+        M_DrawThermoText(SoundDef.x / 4, (SoundDef.y + LINEHEIGHT * (sfx_vol + 1)) / 4, 16, sfxVolume);
+        M_DrawThermoText(SoundDef.x / 4, (SoundDef.y + LINEHEIGHT * (music_vol + 1)) / 4, 16, musicVolume);
+
+        V_WriteTextDirect(20, 32, "MONO SOUND:");
+        V_WriteTextDirect(40, 32, monoSound ? "ON" : "OFF");
+    }
+    else
+    {
+        V_DrawPatchDirect(60, 38, W_CacheLumpName("M_SVOL", PU_CACHE));
+
+        M_DrawThermo(SoundDef.x, SoundDef.y + LINEHEIGHT * (sfx_vol + 1), 16, sfxVolume);
+        M_DrawThermo(SoundDef.x, SoundDef.y + LINEHEIGHT * (music_vol + 1), 16, musicVolume);
+
+        M_WriteText(82, 130, "MONO SOUND:");
+        M_WriteText(164, 130, monoSound ? "ON" : "OFF");
+    }
 }
 
 void M_Sound(int choice)
@@ -932,11 +953,15 @@ void M_DrawOptions(void)
     {
         V_WriteTextDirect(27, 2, "OPTIONS");
         V_WriteTextDirect((OptionsDef.x + 120) / 6, (OptionsDef.y + LINEHEIGHT * messages) / 8, showMessages == 0 ? "OFF" : "ON");
+        M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (mousesens + 1)) / 8, 10, mouseSensitivity);
+        M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (scrnsize + 1)) / 8, 9, screenSize);
     }
     else if (textmode8050)
     {
         V_WriteTextDirect(27, 6, "OPTIONS");
         V_WriteTextDirect((OptionsDef.x + 120) / 6, (OptionsDef.y + LINEHEIGHT * messages) / 4, showMessages == 0 ? "OFF" : "ON");
+        M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (mousesens + 1)) / 4, 10, mouseSensitivity);
+        M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (scrnsize + 1)) / 4, 9, screenSize);
     }
     else
     {
@@ -1408,10 +1433,7 @@ void M_SizeDisplay(int choice)
 //
 //      Menu Functions
 //
-void M_DrawThermo(int x,
-                  int y,
-                  int thermWidth,
-                  int thermDot)
+void M_DrawThermo(int x, int y, int thermWidth, int thermDot)
 {
     int xx;
     int i;
@@ -1427,6 +1449,24 @@ void M_DrawThermo(int x,
     V_DrawPatchDirect(xx, y, W_CacheLumpName("M_THERMR", PU_CACHE));
 
     V_DrawPatchDirect((x + 8) + thermDot * 8, y, W_CacheLumpName("M_THERMO", PU_CACHE));
+}
+
+void M_DrawThermoText(int x, int y, int thermWidth, int thermDot)
+{
+    int xx;
+    int i;
+
+    xx = x;
+    V_WriteTextDirect(xx, y, "[");
+    xx += 1;
+    for (i = 0; i < thermWidth; i++)
+    {
+        V_WriteTextDirect(xx, y, "-");
+        xx += 1;
+    }
+    V_WriteTextDirect(xx, y, "]");
+
+    V_WriteTextDirect((x + 1) + thermDot, y, "|");
 }
 
 void M_StartMessage(char *string, void *routine, byte input)
