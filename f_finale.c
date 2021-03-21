@@ -399,6 +399,48 @@ void F_TextWrite(void)
 	}
 }
 
+void F_TextWriteText(void)
+{
+	byte *src;
+	byte *dest;
+
+	int x, y, w;
+	int count;
+	char *ch;
+	int c;
+	int cx;
+	int cy;
+
+	V_MarkRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
+
+	// draw some of the text onto the screen
+	cx = 1;
+	cy = 1;
+	ch = finaletext;
+
+	count = Div3(finalecount - 10);
+	if (count < 0)
+		count = 0;
+	for (; count; count--)
+	{
+		c = *ch++;
+		if (!c)
+			break;
+		if (c == '\n')
+		{
+			cx = 1;
+			cy += 1;
+			continue;
+		}
+
+		if (cx + 1 > 80)
+			break;
+
+		V_WriteCharDirect(cx, cy, (unsigned char)c);
+		cx += 1;
+	}
+}
+
 //
 // Final DOOM 2 animation
 // Casting by id Software.
@@ -798,7 +840,11 @@ void F_Drawer(void)
 	}
 
 	if (!finalestage)
-		F_TextWrite();
+		if(textmode){
+			F_TextWriteText();
+		}else{
+			F_TextWrite();
+		}
 	else
 	{
 		switch (gameepisode)
