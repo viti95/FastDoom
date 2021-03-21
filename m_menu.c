@@ -580,7 +580,18 @@ void M_DrawLoad(void)
     for (i = 0; i < load_end; i++)
     {
         M_DrawSaveLoadBorder(LoadDef.x, LoadDef.y + LINEHEIGHT * i);
-        M_WriteText(LoadDef.x, LoadDef.y + LINEHEIGHT * i, savegamestrings[i]);
+        if (textmode8025)
+        {
+            V_WriteTextDirect(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 8, savegamestrings[i]);
+        }
+        else if (textmode8050)
+        {
+            V_WriteTextDirect(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 4, savegamestrings[i]);
+        }
+        else
+        {
+            M_WriteText(LoadDef.x, LoadDef.y + LINEHEIGHT * i, savegamestrings[i]);
+        }
     }
 }
 
