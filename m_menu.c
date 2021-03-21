@@ -928,15 +928,23 @@ const char msgNames[2][9] = {"M_MSGOFF", "M_MSGON"};
 
 void M_DrawOptions(void)
 {
-    V_DrawPatchDirect(108, 15, W_CacheLumpName("M_OPTTTL", PU_CACHE));
-
-    V_DrawPatchDirect(OptionsDef.x + 120, OptionsDef.y + LINEHEIGHT * messages, W_CacheLumpName((char *)msgNames[showMessages], PU_CACHE));
-
-    M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (mousesens + 1),
-                 10, mouseSensitivity);
-
-    M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (scrnsize + 1),
-                 9, screenSize);
+    if (textmode8025)
+    {
+        V_WriteTextDirect(27, 2, "OPTIONS");
+        V_WriteTextDirect((OptionsDef.x + 120) / 6, (OptionsDef.y + LINEHEIGHT * messages) / 8, showMessages == 0 ? "OFF" : "ON");
+    }
+    else if (textmode8050)
+    {
+        V_WriteTextDirect(27, 6, "OPTIONS");
+        V_WriteTextDirect((OptionsDef.x + 120) / 6, (OptionsDef.y + LINEHEIGHT * messages) / 4, showMessages == 0 ? "OFF" : "ON");
+    }
+    else
+    {
+        V_DrawPatchDirect(108, 15, W_CacheLumpName("M_OPTTTL", PU_CACHE));
+        V_DrawPatchDirect(OptionsDef.x + 120, OptionsDef.y + LINEHEIGHT * messages, W_CacheLumpName((char *)msgNames[showMessages], PU_CACHE));
+        M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (mousesens + 1), 10, mouseSensitivity);
+        M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (scrnsize + 1), 9, screenSize);
+    }
 }
 
 void M_DrawDisplay(void)
@@ -949,16 +957,19 @@ void M_DrawDisplay(void)
         V_WriteTextDirect(45, 2, waitVsync ? "ON" : "OFF");
 
         V_WriteTextDirect(15, 4, "DETAIL LEVEL:");
-        V_WriteTextDirect(45, 4, detailLevel == 2 ? "POTATO" : detailLevel == 1 ? "LOW" : "HIGH");
+        V_WriteTextDirect(45, 4, detailLevel == 2 ? "POTATO" : detailLevel == 1 ? "LOW"
+                                                                                : "HIGH");
 
         V_WriteTextDirect(15, 6, "VISPLANE RENDERING:");
-        V_WriteTextDirect(45, 6, (!untexturedSurfaces && !flatSurfaces) ? "FULL" : untexturedSurfaces ? "FLAT" : "FLATTER");
+        V_WriteTextDirect(45, 6, (!untexturedSurfaces && !flatSurfaces) ? "FULL" : untexturedSurfaces ? "FLAT"
+                                                                                                      : "FLATTER");
 
         V_WriteTextDirect(15, 8, "SKY RENDERING:");
         V_WriteTextDirect(45, 8, flatSky ? "FLAT" : "FULL");
 
         V_WriteTextDirect(15, 10, "INVISIBLE RENDERING:");
-        V_WriteTextDirect(45, 10, (!saturnShadows && !flatShadows) ? "FUZZY" : flatShadows ? "FLAT" : "SEGA SATURN");
+        V_WriteTextDirect(45, 10, (!saturnShadows && !flatShadows) ? "FUZZY" : flatShadows ? "FLAT"
+                                                                                           : "SEGA SATURN");
 
         V_WriteTextDirect(15, 12, "SHOW FPS:");
         V_WriteTextDirect(45, 12, showFPS ? "ON" : "OFF");
@@ -971,21 +982,26 @@ void M_DrawDisplay(void)
 
         V_WriteTextDirect(15, 18, "UNCAPPED FRAMERATE:");
         V_WriteTextDirect(45, 18, uncappedFPS ? "ON" : "OFF");
-    }else if (textmode8050){
+    }
+    else if (textmode8050)
+    {
         V_WriteTextDirect(15, 5, "VSYNC:");
         V_WriteTextDirect(45, 5, waitVsync ? "ON" : "OFF");
 
         V_WriteTextDirect(15, 9, "DETAIL LEVEL:");
-        V_WriteTextDirect(45, 9, detailLevel == 2 ? "POTATO" : detailLevel == 1 ? "LOW" : "HIGH");
+        V_WriteTextDirect(45, 9, detailLevel == 2 ? "POTATO" : detailLevel == 1 ? "LOW"
+                                                                                : "HIGH");
 
         V_WriteTextDirect(15, 13, "VISPLANE RENDERING:");
-        V_WriteTextDirect(45, 13, (!untexturedSurfaces && !flatSurfaces) ? "FULL" : untexturedSurfaces ? "FLAT" : "FLATTER");
+        V_WriteTextDirect(45, 13, (!untexturedSurfaces && !flatSurfaces) ? "FULL" : untexturedSurfaces ? "FLAT"
+                                                                                                       : "FLATTER");
 
         V_WriteTextDirect(15, 17, "SKY RENDERING:");
         V_WriteTextDirect(45, 17, flatSky ? "FLAT" : "FULL");
 
         V_WriteTextDirect(15, 21, "INVISIBLE RENDERING:");
-        V_WriteTextDirect(45, 21, (!saturnShadows && !flatShadows) ? "FUZZY" : flatShadows ? "FLAT" : "SEGA SATURN");
+        V_WriteTextDirect(45, 21, (!saturnShadows && !flatShadows) ? "FUZZY" : flatShadows ? "FLAT"
+                                                                                           : "SEGA SATURN");
 
         V_WriteTextDirect(15, 25, "SHOW FPS:");
         V_WriteTextDirect(45, 25, showFPS ? "ON" : "OFF");
@@ -1005,16 +1021,19 @@ void M_DrawDisplay(void)
         M_WriteText(214, 24, waitVsync ? "ON" : "OFF");
 
         M_WriteText(58, 40, "DETAIL LEVEL:");
-        M_WriteText(214, 40, detailLevel == 2 ? "POTATO" : detailLevel == 1 ? "LOW" : "HIGH");
+        M_WriteText(214, 40, detailLevel == 2 ? "POTATO" : detailLevel == 1 ? "LOW"
+                                                                            : "HIGH");
 
         M_WriteText(58, 56, "VISPLANE RENDERING:");
-        M_WriteText(214, 56, (!untexturedSurfaces && !flatSurfaces) ? "FULL" : untexturedSurfaces ? "FLAT" : "FLATTER");
+        M_WriteText(214, 56, (!untexturedSurfaces && !flatSurfaces) ? "FULL" : untexturedSurfaces ? "FLAT"
+                                                                                                  : "FLATTER");
 
         M_WriteText(58, 72, "SKY RENDERING:");
         M_WriteText(214, 72, flatSky ? "FLAT" : "FULL");
 
         M_WriteText(58, 88, "INVISIBLE RENDERING:");
-        M_WriteText(214, 88, (!saturnShadows && !flatShadows) ? "FUZZY" : flatShadows ? "FLAT" : "SEGA SATURN");
+        M_WriteText(214, 88, (!saturnShadows && !flatShadows) ? "FUZZY" : flatShadows ? "FLAT"
+                                                                                      : "SEGA SATURN");
 
         M_WriteText(58, 104, "SHOW FPS:");
         M_WriteText(214, 104, showFPS ? "ON" : "OFF");
@@ -1853,14 +1872,19 @@ void M_Drawer(void)
 
             x = 160 - M_StringWidth(string) / 2;
 
-            if (textmode8025){
+            if (textmode8025)
+            {
                 V_WriteTextDirect(x / 4, y / 8, string);
-            }else if (textmode8050){
+            }
+            else if (textmode8050)
+            {
                 V_WriteTextDirect(x / 4, y / 4, string);
-            }else{
+            }
+            else
+            {
                 M_WriteText(x, y, string);
             }
-            
+
             y += hu_font[0]->height;
         }
         return;
