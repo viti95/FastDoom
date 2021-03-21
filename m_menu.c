@@ -141,7 +141,7 @@ typedef struct
     short status;
 
     char name[10];
-    char text[20];
+    char text[21];
 
     // choice = menu item #.
     // if status = 2,
