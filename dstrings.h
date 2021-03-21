@@ -22,7 +22,7 @@
 #include "d_englsh.h"
 
 // Misc. other strings.
-#define SAVEGAMENAME "doomsav"
+#define SAVEGAMENAME "fdoomsv"
 
 // QuitDOOM messages
 #define NUM_QUITMESSAGES 8
