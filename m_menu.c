@@ -165,7 +165,7 @@ typedef struct menu_s
 
 short itemOn;           // menu item skull is on
 short skullAnimCounter; // skull animation counter
-byte whichSkull;       // which skull to draw
+byte whichSkull;        // which skull to draw
 
 // graphic name of skulls
 // warning: initializer-string for array of chars is too long
@@ -576,7 +576,19 @@ void M_DrawLoad(void)
 {
     int i;
 
-    V_DrawPatchDirect(72, 28, W_CacheLumpName("M_LOADG", PU_CACHE));
+    if (textmode8025)
+    {
+        V_WriteTextDirect(18, 3, "LOAD GAME");
+    }
+    else if (textmode8050)
+    {
+        V_WriteTextDirect(18, 7, "LOAD GAME");
+    }
+    else
+    {
+        V_DrawPatchDirect(72, 28, W_CacheLumpName("M_LOADG", PU_CACHE));
+    }
+
     for (i = 0; i < load_end; i++)
     {
         M_DrawSaveLoadBorder(LoadDef.x, LoadDef.y + LINEHEIGHT * i);
@@ -650,7 +662,19 @@ void M_DrawSave(void)
 {
     int i;
 
-    V_DrawPatchDirect(72, 28, W_CacheLumpName("M_SAVEG", PU_CACHE));
+    if (textmode8025)
+    {
+        V_WriteTextDirect(18, 3, "SAVE GAME");
+    }
+    else if (textmode8050)
+    {
+        V_WriteTextDirect(18, 7, "SAVE GAME");
+    }
+    else
+    {
+        V_DrawPatchDirect(72, 28, W_CacheLumpName("M_SAVEG", PU_CACHE));
+    }
+
     for (i = 0; i < load_end; i++)
     {
         M_DrawSaveLoadBorder(LoadDef.x, LoadDef.y + LINEHEIGHT * i);
@@ -832,7 +856,7 @@ void M_DrawSound(void)
         M_DrawThermoText(SoundDef.x / 4, (SoundDef.y + LINEHEIGHT * (sfx_vol + 1)) / 8, 16, sfxVolume);
         M_DrawThermoText(SoundDef.x / 4, (SoundDef.y + LINEHEIGHT * (music_vol + 1)) / 8, 16, musicVolume);
 
-        V_WriteTextDirect(20, 16, "MONO SOUND:");
+        V_WriteTextDirect(20, 16, "Mono Sound:");
         V_WriteTextDirect(40, 16, monoSound ? "ON" : "OFF");
     }
     else if (textmode8050)
@@ -842,7 +866,7 @@ void M_DrawSound(void)
         M_DrawThermoText(SoundDef.x / 4, (SoundDef.y + LINEHEIGHT * (sfx_vol + 1)) / 4, 16, sfxVolume);
         M_DrawThermoText(SoundDef.x / 4, (SoundDef.y + LINEHEIGHT * (music_vol + 1)) / 4, 16, musicVolume);
 
-        V_WriteTextDirect(20, 32, "MONO SOUND:");
+        V_WriteTextDirect(20, 32, "Mono Sound:");
         V_WriteTextDirect(40, 32, monoSound ? "ON" : "OFF");
     }
     else
@@ -901,7 +925,18 @@ void M_MusicVol(int choice)
 //
 void M_DrawMainMenu(void)
 {
-    V_DrawPatchDirect(94, 2, W_CacheLumpName("M_DOOM", PU_CACHE));
+    if (textmode8025)
+    {
+        V_WriteTextDirect(23, 5, "DOOM");
+    }
+    else if (textmode8050)
+    {
+        V_WriteTextDirect(23, 10, "DOOM");
+    }
+    else
+    {
+        V_DrawPatchDirect(94, 2, W_CacheLumpName("M_DOOM", PU_CACHE));
+    }
 }
 
 //
@@ -909,8 +944,21 @@ void M_DrawMainMenu(void)
 //
 void M_DrawNewGame(void)
 {
-    V_DrawPatchDirect(96, 14, W_CacheLumpName("M_NEWG", PU_CACHE));
-    V_DrawPatchDirect(54, 38, W_CacheLumpName("M_SKILL", PU_CACHE));
+    if (textmode8025)
+    {
+        V_WriteTextDirect(24, 2, "NEW GAME");
+        V_WriteTextDirect(13, 4, "Choose skill level:");
+    }
+    else if (textmode8050)
+    {
+        V_WriteTextDirect(24, 2, "NEW GAME");
+        V_WriteTextDirect(13, 9, "Choose skill level:");
+    }
+    else
+    {
+        V_DrawPatchDirect(96, 14, W_CacheLumpName("M_NEWG", PU_CACHE));
+        V_DrawPatchDirect(54, 38, W_CacheLumpName("M_SKILL", PU_CACHE));
+    }
 }
 
 void M_NewGame(int choice)
@@ -930,11 +978,11 @@ void M_DrawEpisode(void)
 {
     if (textmode8025)
     {
-        V_WriteTextDirect(27, 4, "Which episode?");
+        V_WriteTextDirect(27, 4, "WHICH EPISODE?");
     }
     else if (textmode8050)
     {
-        V_WriteTextDirect(27, 9, "Which episode?");
+        V_WriteTextDirect(27, 9, "WHICH EPISODE?");
     }
     else
     {
@@ -1012,66 +1060,66 @@ void M_DrawDisplay(void)
 
     if (textmode8025)
     {
-        V_WriteTextDirect(15, 2, "VSYNC:");
+        V_WriteTextDirect(15, 2, "VSync:");
         V_WriteTextDirect(45, 2, waitVsync ? "ON" : "OFF");
 
-        V_WriteTextDirect(15, 4, "DETAIL LEVEL:");
+        V_WriteTextDirect(15, 4, "Detail level:");
         V_WriteTextDirect(45, 4, detailLevel == 2 ? "POTATO" : detailLevel == 1 ? "LOW"
                                                                                 : "HIGH");
 
-        V_WriteTextDirect(15, 6, "VISPLANE RENDERING:");
+        V_WriteTextDirect(15, 6, "Visplane rendering:");
         V_WriteTextDirect(45, 6, (!untexturedSurfaces && !flatSurfaces) ? "FULL" : untexturedSurfaces ? "FLAT"
                                                                                                       : "FLATTER");
 
-        V_WriteTextDirect(15, 8, "SKY RENDERING:");
+        V_WriteTextDirect(15, 8, "Sky rendering:");
         V_WriteTextDirect(45, 8, flatSky ? "FLAT" : "FULL");
 
-        V_WriteTextDirect(15, 10, "INVISIBLE RENDERING:");
+        V_WriteTextDirect(15, 10, "Invisible rendering:");
         V_WriteTextDirect(45, 10, (!saturnShadows && !flatShadows) ? "FUZZY" : flatShadows ? "FLAT"
                                                                                            : "SEGA SATURN");
 
-        V_WriteTextDirect(15, 12, "SHOW FPS:");
+        V_WriteTextDirect(15, 12, "Show FPS:");
         V_WriteTextDirect(45, 12, showFPS ? "ON" : "OFF");
 
-        V_WriteTextDirect(15, 14, "SPRITE CULLING:");
+        V_WriteTextDirect(15, 14, "Sprite culling:");
         V_WriteTextDirect(45, 14, nearSprites ? "ON" : "OFF");
 
-        V_WriteTextDirect(15, 16, "MELTING LOAD EFFECT:");
+        V_WriteTextDirect(15, 16, "Melting load effect:");
         V_WriteTextDirect(45, 16, noMelt ? "OFF" : "ON");
 
-        V_WriteTextDirect(15, 18, "UNCAPPED FRAMERATE:");
+        V_WriteTextDirect(15, 18, "Uncapped framerate:");
         V_WriteTextDirect(45, 18, uncappedFPS ? "ON" : "OFF");
     }
     else if (textmode8050)
     {
-        V_WriteTextDirect(15, 5, "VSYNC:");
+        V_WriteTextDirect(15, 5, "VSync:");
         V_WriteTextDirect(45, 5, waitVsync ? "ON" : "OFF");
 
-        V_WriteTextDirect(15, 9, "DETAIL LEVEL:");
+        V_WriteTextDirect(15, 9, "Detail level:");
         V_WriteTextDirect(45, 9, detailLevel == 2 ? "POTATO" : detailLevel == 1 ? "LOW"
                                                                                 : "HIGH");
 
-        V_WriteTextDirect(15, 13, "VISPLANE RENDERING:");
+        V_WriteTextDirect(15, 13, "Visplane rendering:");
         V_WriteTextDirect(45, 13, (!untexturedSurfaces && !flatSurfaces) ? "FULL" : untexturedSurfaces ? "FLAT"
                                                                                                        : "FLATTER");
 
-        V_WriteTextDirect(15, 17, "SKY RENDERING:");
+        V_WriteTextDirect(15, 17, "Sky rendering:");
         V_WriteTextDirect(45, 17, flatSky ? "FLAT" : "FULL");
 
-        V_WriteTextDirect(15, 21, "INVISIBLE RENDERING:");
+        V_WriteTextDirect(15, 21, "Invisible rendering:");
         V_WriteTextDirect(45, 21, (!saturnShadows && !flatShadows) ? "FUZZY" : flatShadows ? "FLAT"
                                                                                            : "SEGA SATURN");
 
-        V_WriteTextDirect(15, 25, "SHOW FPS:");
+        V_WriteTextDirect(15, 25, "Show FPS:");
         V_WriteTextDirect(45, 25, showFPS ? "ON" : "OFF");
 
-        V_WriteTextDirect(15, 29, "SPRITE CULLING:");
+        V_WriteTextDirect(15, 29, "Sprite culling:");
         V_WriteTextDirect(45, 29, nearSprites ? "ON" : "OFF");
 
-        V_WriteTextDirect(15, 33, "MELTING LOAD EFFECT:");
+        V_WriteTextDirect(15, 33, "Melting load effect:");
         V_WriteTextDirect(45, 33, noMelt ? "OFF" : "ON");
 
-        V_WriteTextDirect(15, 37, "UNCAPPED FRAMERATE:");
+        V_WriteTextDirect(15, 37, "Uncapped framerate:");
         V_WriteTextDirect(45, 37, uncappedFPS ? "ON" : "OFF");
     }
     else
