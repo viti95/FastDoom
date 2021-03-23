@@ -308,8 +308,8 @@ void I_SetPalette(int numpalette)
 //
 
 byte *pcscreen, *currentscreen, *destscreen, *destview;
-unsigned short *textdestscreen;
-byte textpage;
+unsigned short *textdestscreen = (unsigned short *)0xB8000;
+byte textpage = 0;
 
 //
 // I_UpdateBox
