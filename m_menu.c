@@ -858,6 +858,7 @@ void M_DrawReadThis1(void)
 
     if (textmode8025)
     {
+        V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
     }
     else if (textmode8050)
     {
@@ -879,6 +880,7 @@ void M_DrawReadThis2(void)
 
     if (textmode8025)
     {
+        V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
     }
     else if (textmode8050)
     {
@@ -897,6 +899,7 @@ void M_DrawReadThisRetail(void)
 
     if (textmode8025)
     {
+        V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("HELP", PU_CACHE));
     }
     else if (textmode8050)
     {

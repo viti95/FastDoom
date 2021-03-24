@@ -412,3 +412,65 @@ void V_DrawPatchDirectText8050(int x, int y, patch_t *patch)
         desttop += 1;
     }
 }
+
+void V_DrawPatchDirectText8025(int x, int y, patch_t *patch)
+{
+    int count;
+    int col;
+    column_t *column;
+    unsigned short *desttop;
+    unsigned short *dest;
+    byte *source;
+    int w;
+    byte odd;
+    unsigned short vmem;
+
+    y -= patch->topoffset;
+    x -= patch->leftoffset;
+
+    x /= 4; // 320 --> 80
+    y /= 4; // 200 --> 50
+
+    desttop = textdestscreen + Mul80(y / 2) + x;
+
+    w = patch->width;
+    for (col = 0; col < w; col += 4)
+    {
+        column = (column_t *)((byte *)patch + patch->columnofs[col]);
+
+        // step through the posts in a column
+        while (column->topdelta != 0xff)
+        {
+            source = (byte *)column + 3;
+            odd = (column->topdelta / 4 + y) % 2;
+            dest = desttop + Mul80(column->topdelta / 8);
+            count = column->length / 4;
+
+            while (count--)
+            {
+                vmem = *dest;
+
+                if (odd)
+                {
+                    vmem = vmem & 0x0F00;
+                    *dest = vmem | lut16colors[*source] << 12 | 223;
+
+                    odd = 0;
+                    dest += 80;
+                }
+                else
+                {
+                    vmem = vmem & 0xF000;
+                    *dest = vmem | lut16colors[*source] << 8 | 223;
+
+                    odd = 1;
+                }
+
+                source += 4;
+            }
+            column = (column_t *)((byte *)column + column->length + 4);
+        }
+
+        desttop += 1;
+    }
+}

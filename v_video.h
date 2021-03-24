@@ -55,6 +55,7 @@ void V_DrawPatchScreen0(int x, int y, patch_t *patch);
 void V_DrawPatchDirect(int x, int y, patch_t *patch);
 void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch);
 
+void V_DrawPatchDirectText8025(int x, int y, patch_t *patch);
 void V_DrawPatchDirectText8050(int x, int y, patch_t *patch);
 
 void V_WriteTextDirect(int x, int y, char *string);
