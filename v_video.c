@@ -284,18 +284,21 @@ void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
     }
 }
 
-void V_WriteTextDirect(int x, int y, char *string){
+void V_WriteTextDirect(int x, int y, char *string)
+{
     unsigned short *dest;
-    
+
     dest = textdestscreen + Mul80(y) + x;
 
-    while(*string){        
+    while (*string)
+    {
         *dest++ = 12 << 8 | *string;
         string++;
     }
 }
 
-void V_WriteCharDirect(int x, int y, unsigned char c){
+void V_WriteCharDirect(int x, int y, unsigned char c)
+{
     unsigned short *dest;
 
     dest = textdestscreen + Mul80(y) + x;
@@ -306,9 +309,7 @@ void V_WriteCharDirect(int x, int y, unsigned char c){
 // V_DrawPatchDirect
 // Draws directly to the screen on the pc.
 //
-void V_DrawPatchDirect(int x,
-                       int y,
-                       patch_t *patch)
+void V_DrawPatchDirect(int x, int y, patch_t *patch)
 {
     int count;
     int col;
@@ -366,5 +367,48 @@ void V_DrawPatchDirect(int x,
         }
 
         desttop += ((++x) & 3) == 0; // go to next byte, not next plane
+    }
+}
+
+void V_DrawPatchDirectText8050(int x, int y, patch_t *patch)
+{
+    int count;
+    int col;
+    column_t *column;
+    unsigned short *desttop;
+    unsigned short *dest;
+    byte *source;
+    int w;
+
+    y -= patch->topoffset;
+    x -= patch->leftoffset;
+
+    x /= 4; // 320 --> 80
+    y /= 4; // 200 --> 50
+
+    desttop = textdestscreen + Mul80(y) + x;
+
+    w = patch->width;
+    for (col = 0; col < w; col += 4)
+    {
+        column = (column_t *)((byte *)patch + patch->columnofs[col]);
+
+        // step through the posts in a column
+        while (column->topdelta != 0xff)
+        {
+            source = (byte *)column + 3;
+            dest = desttop + Mul80(column->topdelta / 4);
+            count = column->length / 4;
+
+            while (count--)
+            {
+                *dest = lut16colors[*source] << 8 | 219;
+                source += 4;
+                dest += 80;
+            }
+            column = (column_t *)((byte *)column + column->length + 4);
+        }
+
+        desttop += 1;
     }
 }

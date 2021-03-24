@@ -591,7 +591,7 @@ void M_DrawLoad(void)
     }
 
     for (i = 0; i < load_end; i++)
-    {   
+    {
         if (textmode8025)
         {
             M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 8 - 2);
@@ -602,7 +602,7 @@ void M_DrawLoad(void)
         }
         else if (textmode8050)
         {
-            M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + (LINEHEIGHT) * i) / 4 - 2);
+            M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + (LINEHEIGHT)*i) / 4 - 2);
             V_WriteCharDirect(LoadDef.x / 4 - 1, (LoadDef.y + LINEHEIGHT * i) / 4, '|');
             V_WriteTextDirect(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 4, savegamestrings[i]);
             V_WriteCharDirect(LoadDef.x / 4 + 24, (LoadDef.y + LINEHEIGHT * i) / 4, '|');
@@ -711,7 +711,7 @@ void M_DrawSave(void)
         }
         else if (textmode8050)
         {
-            M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + (LINEHEIGHT) * i) / 4 - 2);
+            M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + (LINEHEIGHT)*i) / 4 - 2);
             V_WriteCharDirect(LoadDef.x / 4 - 1, (LoadDef.y + LINEHEIGHT * i) / 4, '|');
             V_WriteTextDirect(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 4, savegamestrings[i]);
             V_WriteCharDirect(LoadDef.x / 4 + 24, (LoadDef.y + LINEHEIGHT * i) / 4, '|');
@@ -855,7 +855,18 @@ void M_QuickLoad(void)
 void M_DrawReadThis1(void)
 {
     inhelpscreens = 1;
-    V_DrawPatchDirect(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+
+    if (textmode8025)
+    {
+    }
+    else if (textmode8050)
+    {
+        V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+    }
+    else
+    {
+        V_DrawPatchDirect(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+    }
 }
 
 //
@@ -865,14 +876,36 @@ void M_DrawReadThis1(void)
 void M_DrawReadThis2(void)
 {
     inhelpscreens = 1;
-    V_DrawPatchDirect(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
+
+    if (textmode8025)
+    {
+    }
+    else if (textmode8050)
+    {
+        V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
+    }
+    else
+    {
+        V_DrawPatchDirect(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
+    }
 }
 #endif
 
 void M_DrawReadThisRetail(void)
 {
     inhelpscreens = 1;
-    V_DrawPatchDirect(0, 0, W_CacheLumpName("HELP", PU_CACHE));
+
+    if (textmode8025)
+    {
+    }
+    else if (textmode8050)
+    {
+        V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("HELP", PU_CACHE));
+    }
+    else
+    {
+        V_DrawPatchDirect(0, 0, W_CacheLumpName("HELP", PU_CACHE));
+    }
 }
 
 //
