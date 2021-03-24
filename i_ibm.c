@@ -262,9 +262,9 @@ void I_SetPalette(int numpalette)
             int best_difference = MAXINT;
             int best_color;
 
-            r1 *= r1 * 9 / 10;
-            g1 *= g1 * 9 / 10;
-            b1 *= b1 * 9 / 10;
+            r1 *= Div10(r1 * 9);
+            g1 *= Div10(g1 * 9);
+            b1 *= Div10(b1 * 9);
 
             for (j = 0; j < 16; j++)
             {
