@@ -857,20 +857,47 @@ void F_Drawer(void)
 		{
 		case 1:
 #if (EXE_VERSION < EXE_VERSION_ULTIMATE)
-			V_DrawPatchScreen0(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+			if (textmode8025){
+				V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+			}else if (textmode8050){
+				V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+			}else{
+				V_DrawPatchScreen0(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+			}
+			
 			break;
 #else
-			V_DrawPatchScreen0(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
+			if (textmode8025){
+				V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
+			}else if (textmode8050){
+				V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
+			}else{
+				V_DrawPatchScreen0(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
+			}
+			
 			break;
 #endif
 		case 2:
-			V_DrawPatchScreen0(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
+			if (textmode8025){
+				V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
+			}else if (textmode8050) {
+				V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
+			}else{
+				V_DrawPatchScreen0(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
+			}
+			
 			break;
 		case 3:
 			F_BunnyScroll();
 			break;
 		case 4:
-			V_DrawPatchScreen0(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
+			if (textmode8025){
+				V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
+			}else if (textmode8050){
+				V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
+			}else{
+				V_DrawPatchScreen0(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
+			}
 			break;
 		}
 	}

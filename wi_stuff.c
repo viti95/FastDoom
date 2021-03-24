@@ -331,12 +331,24 @@ static patch_t **lnames;
 // CODE
 //
 
+char bgname[9];
 byte *screen1;
 
 void WI_slamBackground(void)
 {
-	CopyDWords(screen1, screen0, (SCREENWIDTH * SCREENHEIGHT) / 4);
-	V_MarkRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
+	if (textmode8025)
+	{
+		V_DrawPatchDirectText8025(0, 0, W_CacheLumpName(bgname, PU_CACHE));
+	}
+	else if (textmode8050)
+	{
+		V_DrawPatchDirectText8050(0, 0, W_CacheLumpName(bgname, PU_CACHE));
+	}
+	else
+	{
+		CopyDWords(screen1, screen0, (SCREENWIDTH * SCREENHEIGHT) / 4);
+		V_MarkRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
+	}
 }
 
 // Draws "<Levelname> Finished!"
@@ -897,7 +909,7 @@ void WI_drawStats(void)
 	V_DrawPatchScreen0(SP_STATSX, SP_STATSY + 2 * lh, sp_secret);
 	WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY + 2 * lh, cnt_secret);
 
-	V_DrawPatchScreen0(SP_TIMEX, SP_TIMEY,  time);
+	V_DrawPatchScreen0(SP_TIMEX, SP_TIMEY, time);
 	WI_drawTime(SCREENWIDTH / 2 - SP_TIMEX, SP_TIMEY, cnt_time);
 
 #if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
@@ -924,7 +936,7 @@ void WI_checkForAccelerate(void)
 	}
 	else
 		player->attackdown = false;
-		
+
 	if (player->cmd.buttons & BT_USE)
 	{
 		if (!player->usedown)
@@ -972,18 +984,23 @@ void WI_loadData(void)
 {
 	int i;
 	int j;
-	char name[9];
 	anim_t *a;
+	char name[9];
 
-	if (commercial)
+	if (commercial){
 		strcpy(name, "INTERPIC");
-	else
+	}else{
 		sprintf(name, "WIMAP%d", wbs->epsd);
-
+	}
+		
 #if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
-	if (wbs->epsd == 3)
+	if (wbs->epsd == 3){
 		strcpy(name, "INTERPIC");
+	}
 #endif
+
+	if (textmode)
+		strcpy(bgname, name);
 
 	screen1 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
 
