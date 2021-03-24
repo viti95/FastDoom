@@ -429,7 +429,18 @@ void D_PageTicker(void)
 //
 void D_PageDrawer(void)
 {
-    V_DrawPatchScreen0(0, 0, W_CacheLumpName(pagename, PU_CACHE));
+    if (textmode8025)
+    {
+        V_DrawPatchDirectText8025(0, 0, W_CacheLumpName(pagename, PU_CACHE));
+    }
+    else if (textmode8050)
+    {
+        V_DrawPatchDirectText8050(0, 0, W_CacheLumpName(pagename, PU_CACHE));
+    }
+    else
+    {
+        V_DrawPatchScreen0(0, 0, W_CacheLumpName(pagename, PU_CACHE));
+    }
 }
 
 //
