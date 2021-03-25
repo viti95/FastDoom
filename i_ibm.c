@@ -251,59 +251,101 @@ void I_SetPalette(int numpalette)
 
         pos = processedpalette + Mul768(numpalette);
 
-        for (i = 0; i < 256; i++)
+        if (colorCorrection)
         {
-            int distance;
-
-            int r1 = (int)pos[i * 3];
-            int g1 = (int)pos[i * 3 + 1];
-            int b1 = (int)pos[i * 3 + 2];
-
-            int best_difference = MAXINT;
-            int best_color;
-
-            // VGA 6bit to 8bit conversion
-            //r1 = (r1 << 2) | (r1 >> 4);
-            //g1 = (g1 << 2) | (g1 >> 4);
-            //b1 = (b1 << 2) | (b1 >> 4);
-
-            r1 *= r1;
-            g1 *= g1;
-            b1 *= b1;
-
-            r1 = r1 * 4 + r1 * 2 + r1;
-            r1 = r1 / 8;
-
-            g1 = g1 * 4 + g1 * 2 + g1;
-            g1 = g1 / 8;
-
-            b1 = b1 * 4 + b1 * 2 + b1;
-            b1 = b1 / 8;
-
-            for (j = 0; j < 16; j++)
+            for (i = 0; i < 256; i++)
             {
-                int r2 = (int)textcolors[j * 3];
-                int g2 = (int)textcolors[j * 3 + 1];
-                int b2 = (int)textcolors[j * 3 + 2];
+                int distance;
 
-                int cR = r2 - r1;
-                int cG = g2 - g1;
-                int cB = b2 - b1;
+                int r1 = (int)pos[i * 3];
+                int g1 = (int)pos[i * 3 + 1];
+                int b1 = (int)pos[i * 3 + 2];
 
-                cR *= cR;
-                cG *= cG;
-                cB *= cB;
+                int best_difference = MAXINT;
+                int best_color;
 
-                distance = cR + cG + cB;
+                r1 *= r1;
+                g1 *= g1;
+                b1 *= b1;
 
-                if (best_difference > distance)
+                r1 = r1 * 4 + r1 * 2 + r1;
+                r1 = r1 / 8;
+
+                g1 = g1 * 4 + g1 * 2 + g1;
+                g1 = g1 / 8;
+
+                b1 = b1 * 4 + b1 * 2 + b1;
+                b1 = b1 / 8;
+
+                for (j = 0; j < 16; j++)
                 {
-                    best_difference = distance;
-                    best_color = j;
-                }
-            }
+                    int r2 = (int)textcolors[j * 3];
+                    int g2 = (int)textcolors[j * 3 + 1];
+                    int b2 = (int)textcolors[j * 3 + 2];
 
-            lut16colors[i] = best_color;
+                    int cR = r2 - r1;
+                    int cG = g2 - g1;
+                    int cB = b2 - b1;
+
+                    cR *= cR;
+                    cG *= cG;
+                    cB *= cB;
+
+                    distance = cR + cG + cB;
+
+                    if (best_difference > distance)
+                    {
+                        best_difference = distance;
+                        best_color = j;
+                    }
+                }
+
+                lut16colors[i] = best_color;
+            }
+        }
+        else
+        {
+            for (i = 0; i < 256; i++)
+            {
+                int distance;
+
+                int r1 = (int)pos[i * 3];
+                int g1 = (int)pos[i * 3 + 1];
+                int b1 = (int)pos[i * 3 + 2];
+
+                int best_difference = MAXINT;
+                int best_color;
+
+                // VGA 6bit to 8bit conversion
+                r1 = (r1 << 2) | (r1 >> 4);
+                g1 = (g1 << 2) | (g1 >> 4);
+                b1 = (b1 << 2) | (b1 >> 4);
+
+                for (j = 0; j < 16; j++)
+                {
+                    int r2 = (int)textcolors[j * 3];
+                    int g2 = (int)textcolors[j * 3 + 1];
+                    int b2 = (int)textcolors[j * 3 + 2];
+
+                    int cR = r2 - r1;
+                    int cG = g2 - g1;
+                    int cB = b2 - b1;
+
+                    cR *= cR;
+                    cG *= cG;
+                    cB *= cB;
+
+                    distance = cR + cG + cB;
+
+                    if (best_difference > distance)
+                    {
+                        best_difference = distance;
+                        best_color = j;
+                    }
+                }
+
+                lut16colors[i] = best_color;
+            }
         }
     }
     else
@@ -508,7 +550,8 @@ void I_FinishUpdate(void)
         {
             destscreen = (byte *)0xa0000;
         }
-    }else if (textmode8025)
+    }
+    else if (textmode8025)
     {
 
         // Change video page
@@ -525,7 +568,8 @@ void I_FinishUpdate(void)
             textdestscreen = (unsigned short *)0xB8000;
             textpage = 0;
         }
-    }else if (textmode8050)
+    }
+    else if (textmode8050)
     {
         // Change video page
         regs.h.ah = 0x05;
@@ -593,7 +637,8 @@ void I_InitGraphics(void)
         outp(CRTC_INDEX, CRTC_MODE);
         outp(CRTC_INDEX + 1, inp(CRTC_INDEX + 1) | 0x40);
         outp(GC_INDEX, GC_READMAP);
-    }else if (textmode8025)
+    }
+    else if (textmode8025)
     {
         // Set 80x25 color mode
         regs.h.ah = 0x00;
@@ -624,7 +669,8 @@ void I_InitGraphics(void)
         /*regs.h.ah = 0x05;
         regs.h.al = 0x01;
         int386(0x10, &regs, &regs);*/
-    }else if (textmode8050)
+    }
+    else if (textmode8050)
     {
         // Set 80x25 color mode
         regs.h.ah = 0x00;

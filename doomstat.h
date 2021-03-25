@@ -63,6 +63,7 @@ extern boolean textmode8025;
 extern boolean textmode8050;
 extern boolean textmode;
 extern boolean CGAcard;
+extern boolean colorCorrection;
 
 extern boolean logTimedemo;
 

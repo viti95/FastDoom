@@ -109,6 +109,7 @@ boolean textmode8050;
 boolean textmode;
 
 boolean CGAcard;
+boolean colorCorrection;
 
 boolean logTimedemo;
 
@@ -756,6 +757,7 @@ void D_DoomMain(void)
     textmode = textmode8025 || textmode8050;
 
     CGAcard = M_CheckParm("-cga");
+    colorCorrection = M_CheckParm("-fixcolors");
 
     lowSound = M_CheckParm("-lowsound");
     eightBitSound = M_CheckParm("-8bitsound");
