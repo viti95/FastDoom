@@ -228,4 +228,12 @@ extern int nettics;
 
 extern byte autorun;
 
+extern char *mapnames[];
+extern char *mapnames2[];
+
+#if (EXE_VERSION >= EXE_VERSION_FINAL)
+extern char *mapnamesp[];
+extern char *mapnamest[];
+#endif
+
 #endif

@@ -355,28 +355,141 @@ void WI_slamBackground(void)
 void WI_drawLF(void)
 {
 	int y = WI_TITLEY;
+	char *titlecurrent;
+	char *titlenext;
+
+	if (textmode)
+	{
+		if (commercial)
+		{
+#if (EXE_VERSION < EXE_VERSION_FINAL)
+			titlecurrent = mapnames2[gamemap - 1];
+			titlenext = mapnames2[gamemap];
+#else
+			if (plutonia)
+			{
+				titlecurrent = mapnamesp[gamemap - 1];
+				titlenext = mapnamesp[gamemap];
+			}
+			else if (tnt)
+			{
+				titlecurrent = mapnamest[gamemap - 1];
+				titlenext = mapnamest[gamemap];
+			}
+			else
+			{
+				titlecurrent = mapnames2[gamemap - 1];
+				titlenext = mapnames2[gamemap];
+			}
+#endif
+		}
+		else
+		{
+			titlecurrent = mapnames[(gameepisode - 1) * 9 + gamemap - 1];
+			titlenext = mapnames[(gameepisode - 1) * 9 + gamemap];
+		}
+	}
 
 	// draw <LevelName>
-	V_DrawPatchScreen0((SCREENWIDTH - lnames[wbs->last]->width) / 2, y, lnames[wbs->last]);
+
+	if (textmode8025)
+	{
+		V_WriteTextDirect((SCREENWIDTH - lnames[wbs->last]->width) / 8, y / 8, titlecurrent);
+	}
+	else if (textmode8050)
+	{
+		V_WriteTextDirect((SCREENWIDTH - lnames[wbs->last]->width) / 8, y / 4, titlecurrent);
+	}
+	else
+	{
+		V_DrawPatchScreen0((SCREENWIDTH - lnames[wbs->last]->width) / 2, y, lnames[wbs->last]);
+	}
 
 	// draw "Finished!"
 	y += (5 * lnames[wbs->last]->height) / 4;
 
-	V_DrawPatchScreen0((SCREENWIDTH - finished->width) / 2, y, finished);
+	if (textmode8025)
+	{
+		V_WriteTextDirect((SCREENWIDTH - finished->width) / 8, y / 8, "FINISHED");
+	}
+	else if (textmode8050)
+	{
+		V_WriteTextDirect((SCREENWIDTH - finished->width) / 8, y / 4, "FINISHED");
+	}
+	else
+	{
+		V_DrawPatchScreen0((SCREENWIDTH - finished->width) / 2, y, finished);
+	}
 }
 
 // Draws "Entering <LevelName>"
 void WI_drawEL(void)
 {
 	int y = WI_TITLEY;
+	char *titlecurrent;
+	char *titlenext;
+
+	if (textmode)
+	{
+		if (commercial)
+		{
+#if (EXE_VERSION < EXE_VERSION_FINAL)
+			titlecurrent = mapnames2[gamemap - 1];
+			titlenext = mapnames2[gamemap];
+#else
+			if (plutonia)
+			{
+				titlecurrent = mapnamesp[gamemap - 1];
+				titlenext = mapnamesp[gamemap];
+			}
+			else if (tnt)
+			{
+				titlecurrent = mapnamest[gamemap - 1];
+				titlenext = mapnamest[gamemap];
+			}
+			else
+			{
+				titlecurrent = mapnames2[gamemap - 1];
+				titlenext = mapnames2[gamemap];
+			}
+#endif
+		}
+		else
+		{
+			titlecurrent = mapnames[(gameepisode - 1) * 9 + gamemap - 1];
+			titlenext = mapnames[(gameepisode - 1) * 9 + gamemap];
+		}
+	}
 
 	// draw "Entering"
-	V_DrawPatchScreen0((SCREENWIDTH - entering->width) / 2, y, entering);
+	if (textmode8025)
+	{
+		V_WriteTextDirect((SCREENWIDTH - entering->width) / 8, y / 8, "ENTERING");
+	}
+	else if (textmode8050)
+	{
+		V_WriteTextDirect((SCREENWIDTH - entering->width) / 8, y / 4, "ENTERING");
+	}
+	else
+	{
+		V_DrawPatchScreen0((SCREENWIDTH - entering->width) / 2, y, entering);
+	}
 
 	// draw level
 	y += (5 * lnames[wbs->next]->height) / 4;
 
-	V_DrawPatchScreen0((SCREENWIDTH - lnames[wbs->next]->width) / 2, y, lnames[wbs->next]);
+	if (textmode8025)
+	{
+		V_WriteTextDirect((SCREENWIDTH - lnames[wbs->next]->width) / 8, y / 8, titlenext);
+	}
+	else if (textmode8050)
+	{
+		V_WriteTextDirect((SCREENWIDTH - lnames[wbs->next]->width) / 8, y / 4, titlenext);
+	}
+	else
+	{
+		V_DrawPatchScreen0((SCREENWIDTH - lnames[wbs->next]->width) / 2, y, lnames[wbs->next]);
+	}
 }
 
 void WI_drawOnLnode(int n,
@@ -512,33 +625,55 @@ void WI_drawAnimatedBack(void)
 // Returns new x position.
 //
 
-int WI_drawNumTwoDigits(int x,
-						int y,
-						int n)
+int WI_drawNumTwoDigits(int x, int y, int n)
 {
-	int original;
-	int fontwidth = num[0]->width;
 
-	// if non-number, do not draw it
-	if (n == 1994)
-		return 0;
+	if (textmode8025)
+	{
+		int fontwidth = num[0]->width;
+		char strnum[4];
 
-	original = n;
-	n = Div10(n);
-	x -= fontwidth;
-	V_DrawPatchScreen0(x, y, num[original - Mul10(n)]);
+		sprintf(strnum, "%i", n);
+		V_WriteTextDirect(x / 4, y / 8, strnum);
 
-	original = n;
-	n = Div10(n);
-	x -= fontwidth;
-	V_DrawPatchScreen0(x, y, num[original - Mul10(n)]);
+		x -= 2 * fontwidth;
+		return x;
+	}
+	else if (textmode8050)
+	{
+		int fontwidth = num[0]->width;
+		char strnum[4];
 
-	return x;
+		sprintf(strnum, "%i", n);
+		V_WriteTextDirect(x / 4, y / 4, strnum);
+
+		x -= 2 * fontwidth;
+		return x;
+	}
+	else
+	{
+		int original;
+		int fontwidth = num[0]->width;
+
+		// if non-number, do not draw it
+		if (n == 1994)
+			return 0;
+
+		original = n;
+		n = Div10(n);
+		x -= fontwidth;
+		V_DrawPatchScreen0(x, y, num[original - Mul10(n)]);
+
+		original = n;
+		n = Div10(n);
+		x -= fontwidth;
+		V_DrawPatchScreen0(x, y, num[original - Mul10(n)]);
+
+		return x;
+	}
 }
 
-int WI_drawNum(int x,
-			   int y,
-			   int n)
+int WI_drawNum(int x, int y, int n)
 {
 
 	int fontwidth = num[0]->width;
@@ -560,15 +695,28 @@ int WI_drawNum(int x,
 	return x;
 }
 
-void WI_drawPercent(int x,
-					int y,
-					int p)
+void WI_drawPercent(int x, int y, int p)
 {
 	if (p < 0)
 		return;
 
-	V_DrawPatchScreen0(x, y, percent);
-	WI_drawNum(x, y, p);
+	if (textmode8025)
+	{
+		char strnum[4];
+		sprintf(strnum, "%i%%", p);
+		V_WriteTextDirect(x / 2, y / 8 - 1, strnum);
+	}
+	else if (textmode8050)
+	{
+		char strnum[4];
+		sprintf(strnum, "%i%%", p);
+		V_WriteTextDirect(x / 2, y / 4 - 1, strnum);
+	}
+	else
+	{
+		V_DrawPatchScreen0(x, y, percent);
+		WI_drawNum(x, y, p);
+	}
 }
 
 //
@@ -598,9 +746,15 @@ void WI_drawTime(int x,
 			div *= 60;
 
 			// draw
-			if (div == 60 || t / div)
-				V_DrawPatchScreen0(x, y, colon);
-
+			if (div == 60 || t / div){
+				if (textmode8025){
+					V_WriteTextDirect(x / 4, y / 8, ":");
+				}else if (textmode8050){
+					V_WriteTextDirect(x / 4, y / 4, ":");
+				}else{
+					V_DrawPatchScreen0(x, y, colon);
+				}
+			}
 		} while (t / div);
 	}
 	else
@@ -900,23 +1054,80 @@ void WI_drawStats(void)
 
 	WI_drawLF();
 
-	V_DrawPatchScreen0(SP_STATSX, SP_STATSY, kills);
+	if (textmode8025)
+	{
+		V_WriteTextDirect(SP_STATSX / 2, SP_STATSY / 8, "KILLS:");
+	}
+	else if (textmode8050)
+	{
+		V_WriteTextDirect(SP_STATSX / 2, SP_STATSY / 4, "KILLS:");
+	}
+	else
+	{
+		V_DrawPatchScreen0(SP_STATSX, SP_STATSY, kills);
+	}
+
 	WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY, cnt_kills);
 
-	V_DrawPatchScreen0(SP_STATSX, SP_STATSY + lh, items);
+	if (textmode8025)
+	{
+		V_WriteTextDirect(SP_STATSX / 2, (SP_STATSY + lh) / 8, "ITEMS:");
+	}
+	else if (textmode8050)
+	{
+		V_WriteTextDirect(SP_STATSX / 2, (SP_STATSY + lh) / 4, "ITEMS:");
+	}
+	else
+	{
+		V_DrawPatchScreen0(SP_STATSX, SP_STATSY + lh, items);
+	}
 	WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY + lh, cnt_items);
 
-	V_DrawPatchScreen0(SP_STATSX, SP_STATSY + 2 * lh, sp_secret);
+	if (textmode8025)
+	{
+		V_WriteTextDirect(SP_STATSX / 2, (SP_STATSY + 2 * lh) / 8, "SECRET:");
+	}
+	else if (textmode8050)
+	{
+		V_WriteTextDirect(SP_STATSX / 2, (SP_STATSY + 2 * lh) / 4, "SECRET:");
+	}
+	else
+	{
+		V_DrawPatchScreen0(SP_STATSX, SP_STATSY + 2 * lh, sp_secret);
+	}
 	WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY + 2 * lh, cnt_secret);
 
-	V_DrawPatchScreen0(SP_TIMEX, SP_TIMEY, time);
+	if (textmode8025)
+	{
+		V_WriteTextDirect(SP_TIMEX / 2, SP_TIMEY / 8, "TIME:");
+	}
+	else if (textmode8050)
+	{
+		V_WriteTextDirect(SP_TIMEX / 2, SP_TIMEY / 4, "TIME:");
+	}
+	else
+	{
+		V_DrawPatchScreen0(SP_TIMEX, SP_TIMEY, time);
+	}
 	WI_drawTime(SCREENWIDTH / 2 - SP_TIMEX, SP_TIMEY, cnt_time);
 
 #if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
 	if (wbs->epsd < 3)
 #endif
 	{
-		V_DrawPatchScreen0(SCREENWIDTH / 2 + SP_TIMEX, SP_TIMEY, par);
+		if (textmode8025)
+		{
+			V_WriteTextDirect((SCREENWIDTH / 2 + SP_TIMEX) / 4, SP_TIMEY / 8, "PAR:");
+		}
+		else if (textmode8050)
+		{
+			V_WriteTextDirect((SCREENWIDTH / 2 + SP_TIMEX) / 4, SP_TIMEY / 4, "PAR:");
+		}
+		else
+		{
+			V_DrawPatchScreen0(SCREENWIDTH / 2 + SP_TIMEX, SP_TIMEY, par);
+		}
+
 		WI_drawTime(SCREENWIDTH - SP_TIMEX, SP_TIMEY, cnt_par);
 	}
 }
@@ -987,14 +1198,18 @@ void WI_loadData(void)
 	anim_t *a;
 	char name[9];
 
-	if (commercial){
+	if (commercial)
+	{
 		strcpy(name, "INTERPIC");
-	}else{
+	}
+	else
+	{
 		sprintf(name, "WIMAP%d", wbs->epsd);
 	}
-		
+
 #if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
-	if (wbs->epsd == 3){
+	if (wbs->epsd == 3)
+	{
 		strcpy(name, "INTERPIC");
 	}
 #endif

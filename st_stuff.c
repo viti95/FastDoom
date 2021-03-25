@@ -235,12 +235,6 @@
 // Height, in lines.
 #define ST_OUTHEIGHT 1
 
-#define ST_MAPWIDTH \
-	(strlen(mapnames[(gameepisode - 1) * 9 + (gamemap - 1)]))
-
-#define ST_MAPTITLEX \
-	(SCREENWIDTH - ST_MAPWIDTH * ST_CHATFONTWIDTH)
-
 #define ST_MAPTITLEY 0
 #define ST_MAPHEIGHT 1
 
@@ -400,9 +394,6 @@ cheatseq_t cheat_powerup[7] =
 
 cheatseq_t cheat_choppers = {cheat_choppers_seq, 0};
 cheatseq_t cheat_clev = {cheat_clev_seq, 0};
-
-//
-extern const char *mapnames[];
 
 //
 // STATUS BAR CODE
