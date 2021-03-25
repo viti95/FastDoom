@@ -141,7 +141,7 @@ typedef struct
     short status;
 
     char name[10];
-    char text[21];
+    char text[22];
 
     // choice = menu item #.
     // if status = 2,
@@ -289,11 +289,11 @@ enum
 
 menuitem_t EpisodeMenu[] =
     {
-        {1, "M_EPI1", "Episode 1", M_Episode, 'k'},
-        {1, "M_EPI2", "Episode 2", M_Episode, 't'},
-        {1, "M_EPI3", "Episode 3", M_Episode, 'i'},
+        {1, "M_EPI1", "Knee-Deep in the Dead", M_Episode, 'k'},
+        {1, "M_EPI2", "The Shores of Hell", M_Episode, 't'},
+        {1, "M_EPI3", "Inferno", M_Episode, 'i'},
 #if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
-        {1, "M_EPI4", "Episode 4", M_Episode, 't'}
+        {1, "M_EPI4", "Thy Flesh Consumed", M_Episode, 't'}
 #endif
 };
 
