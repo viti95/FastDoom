@@ -262,9 +262,23 @@ void I_SetPalette(int numpalette)
             int best_difference = MAXINT;
             int best_color;
 
-            r1 *= r1 * 7 / 8;
-            g1 *= g1 * 7 / 8;
-            b1 *= b1 * 7 / 8;
+            // VGA 6bit to 8bit conversion
+            //r1 = (r1 << 2) | (r1 >> 4);
+            //g1 = (g1 << 2) | (g1 >> 4);
+            //b1 = (b1 << 2) | (b1 >> 4);
+
+            r1 *= r1;
+            g1 *= g1;
+            b1 *= b1;
+
+            r1 = r1 * 4 + r1 * 2 + r1;
+            r1 = r1 / 8;
+
+            g1 = g1 * 4 + g1 * 2 + g1;
+            g1 = g1 / 8;
+
+            b1 = b1 * 4 + b1 * 2 + b1;
+            b1 = b1 / 8;
 
             for (j = 0; j < 16; j++)
             {
