@@ -257,39 +257,45 @@ void I_SetPalette(int numpalette)
             {
                 int distance;
 
-                int r1 = (int)pos[i * 3];
-                int g1 = (int)pos[i * 3 + 1];
-                int b1 = (int)pos[i * 3 + 2];
+                int r1, g1, b1;
 
                 int best_difference = MAXINT;
                 int best_color;
 
+                r1 = (int)pos[i * 3];
                 r1 *= r1;
-                g1 *= g1;
-                b1 *= b1;
-
                 r1 = r1 * 4 + r1 * 2 + r1;
                 r1 = r1 / 8;
 
+                g1 = (int)pos[i * 3 + 1];
+                g1 *= g1;
                 g1 = g1 * 4 + g1 * 2 + g1;
                 g1 = g1 / 8;
 
+                b1 = (int)pos[i * 3 + 2];
+                b1 *= b1;
                 b1 = b1 * 4 + b1 * 2 + b1;
                 b1 = b1 / 8;
 
                 for (j = 0; j < 16; j++)
                 {
-                    int r2 = (int)textcolors[j * 3];
-                    int g2 = (int)textcolors[j * 3 + 1];
-                    int b2 = (int)textcolors[j * 3 + 2];
+                    int r2, g2, b2;
+                    int cR, cG, cB;
 
-                    int cR = r2 - r1;
-                    int cG = g2 - g1;
-                    int cB = b2 - b1;
+                    r2 = (int)textcolors[j * 3];
+                    cR = r2 - r1;
+                    if (cR < 0)
+                        cR = -cR;
 
-                    cR *= cR;
-                    cG *= cG;
-                    cB *= cB;
+                    g2 = (int)textcolors[j * 3 + 1];
+                    cG = g2 - g1;
+                    if (cG < 0)
+                        cG = -cG;
+
+                    b2 = (int)textcolors[j * 3 + 2];
+                    cB = b2 - b1;
+                    if (cB < 0)
+                        cB = -cB;
 
                     distance = cR + cG + cB;
 
@@ -309,31 +315,39 @@ void I_SetPalette(int numpalette)
             {
                 int distance;
 
-                int r1 = (int)pos[i * 3];
-                int g1 = (int)pos[i * 3 + 1];
-                int b1 = (int)pos[i * 3 + 2];
+                int r1, g1, b1;
 
                 int best_difference = MAXINT;
                 int best_color;
 
-                // VGA 6bit to 8bit conversion
+                r1 = (int)pos[i * 3];
                 r1 = (r1 << 2) | (r1 >> 4);
+
+                g1 = (int)pos[i * 3 + 1];
                 g1 = (g1 << 2) | (g1 >> 4);
+
+                b1 = (int)pos[i * 3 + 2];
                 b1 = (b1 << 2) | (b1 >> 4);
 
                 for (j = 0; j < 16; j++)
                 {
-                    int r2 = (int)textcolors[j * 3];
-                    int g2 = (int)textcolors[j * 3 + 1];
-                    int b2 = (int)textcolors[j * 3 + 2];
+                    int r2, g2, b2;
+                    int cR, cG, cB;
 
-                    int cR = r2 - r1;
-                    int cG = g2 - g1;
-                    int cB = b2 - b1;
+                    r2 = (int)textcolors[j * 3];
+                    cR = r2 - r1;
+                    if (cR < 0)
+                        cR = -cR;
 
-                    cR *= cR;
-                    cG *= cG;
-                    cB *= cB;
+                    g2 = (int)textcolors[j * 3 + 1];
+                    cG = g2 - g1;
+                    if (cG < 0)
+                        cG = -cG;
+
+                    b2 = (int)textcolors[j * 3 + 2];
+                    cB = b2 - b1;
+                    if (cB < 0)
+                        cB = -cB;
 
                     distance = cR + cG + cB;
 
