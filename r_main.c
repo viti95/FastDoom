@@ -32,6 +32,8 @@
 #include "r_local.h"
 #include "r_sky.h"
 
+#include "vmode.h"
+
 // Fineangles in the SCREENWIDTH wide window.
 #define FIELDOFVIEW 2048
 
@@ -699,20 +701,12 @@ void R_ExecuteSetViewSize(void)
         automapheight = SCREENHEIGHT - 32;
     }
 
-    if (textmode8025)
-    {
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
         scaledviewwidth = 80;
         viewheight = 50;
         detailshift = 0;
-    }
-    else if (textmode8050)
-    {
-        scaledviewwidth = 80;
-        viewheight = 50;
-        detailshift = 0;
-    }
-    else
-    {
+    #endif
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         if (forcePotatoDetail || forceLowDetail || forceHighDetail)
         {
             if (forceHighDetail)
@@ -724,7 +718,7 @@ void R_ExecuteSetViewSize(void)
         }
         else
             detailshift = setdetail;
-    }
+    #endif
 
     viewwidth = scaledviewwidth >> detailshift;
     viewwidthlimit = viewwidth - 1;
@@ -737,8 +731,7 @@ void R_ExecuteSetViewSize(void)
     projection = centerxfrac;
     iprojection = FixedDiv(FRACUNIT << 8, projection);
 
-    if (textmode8025)
-    {
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
         colfunc = basecolfunc = R_DrawColumnText8025;
 
         if (untexturedSurfaces)
@@ -761,9 +754,8 @@ void R_ExecuteSetViewSize(void)
             fuzzcolfunc = R_DrawFuzzColumnSaturnText8025;
         else
             fuzzcolfunc = R_DrawFuzzColumnText8025;
-    }
-    else if (textmode8050)
-    {
+    #endif
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
         colfunc = basecolfunc = R_DrawColumnText8050;
 
         if (untexturedSurfaces)
@@ -786,9 +778,8 @@ void R_ExecuteSetViewSize(void)
             fuzzcolfunc = R_DrawFuzzColumnSaturnText8050;
         else
             fuzzcolfunc = R_DrawFuzzColumnText8050;
-    }
-    else
-    {
+    #endif
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         switch (detailshift)
         {
         case 0:
@@ -852,7 +843,7 @@ void R_ExecuteSetViewSize(void)
                 fuzzcolfunc = R_DrawFuzzColumnPotato;
             break;
         }
-    }
+    #endif
 
     R_InitBuffer(scaledviewwidth, viewheight);
 
@@ -1045,10 +1036,12 @@ void R_RenderPlayerView(player_t *player)
     NetUpdate();
 
     // Set potato mode VGA plane
-    if (detailshift == 2 && !textmode)
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+    if (detailshift == 2)
     {
         outp(SC_INDEX + 1, 15);
     }
+    #endif
 
     // The head node is the last node output.
     R_RenderBSPNode(firstnode);
@@ -1056,22 +1049,19 @@ void R_RenderPlayerView(player_t *player)
     // Check for new console commands.
     NetUpdate();
 
-    if (textmode8025)
-    {
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
         if (flatSurfaces)
             R_DrawPlanesFlatSurfacesText8025();
         else
             R_DrawPlanes();
-    }
-    else if (textmode8050)
-    {
+    #endif
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
         if (flatSurfaces)
             R_DrawPlanesFlatSurfacesText8050();
         else
             R_DrawPlanes();
-    }
-    else
-    {
+    #endif
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         if (flatSurfaces)
             switch (detailshift)
             {
@@ -1087,7 +1077,7 @@ void R_RenderPlayerView(player_t *player)
             }
         else
             R_DrawPlanes();
-    }
+    #endif
 
     // Check for new console commands.
     NetUpdate();

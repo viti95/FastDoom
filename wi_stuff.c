@@ -44,6 +44,8 @@
 
 #include "wi_stuff.h"
 
+#include "vmode.h"
+
 //
 // Data needed to add patches to full screen intermission pics.
 // Patches are statistics messages, and animations.
@@ -331,35 +333,37 @@ static patch_t **lnames;
 // CODE
 //
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 char bgname[9];
+#endif
+
 byte *screen1;
 
 void WI_slamBackground(void)
 {
-	if (textmode8025)
-	{
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 		V_DrawPatchDirectText8025(0, 0, W_CacheLumpName(bgname, PU_CACHE));
-	}
-	else if (textmode8050)
-	{
+	#endif
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 		V_DrawPatchDirectText8050(0, 0, W_CacheLumpName(bgname, PU_CACHE));
-	}
-	else
-	{
+	#endif
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 		CopyDWords(screen1, screen0, (SCREENWIDTH * SCREENHEIGHT) / 4);
 		V_MarkRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
-	}
+	#endif
 }
 
 // Draws "<Levelname> Finished!"
 void WI_drawLF(void)
 {
 	int y = WI_TITLEY;
+
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 	char *titlecurrent;
 	char *titlenext;
+	#endif
 
-	if (textmode)
-	{
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 		if (commercial)
 		{
 #if (EXE_VERSION < EXE_VERSION_FINAL)
@@ -388,49 +392,44 @@ void WI_drawLF(void)
 			titlecurrent = mapnames[(gameepisode - 1) * 9 + gamemap - 1];
 			titlenext = mapnames[(gameepisode - 1) * 9 + gamemap];
 		}
-	}
+	#endif
 
 	// draw <LevelName>
 
-	if (textmode8025)
-	{
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 		V_WriteTextDirect((SCREENWIDTH - lnames[wbs->last]->width) / 8, y / 8, titlecurrent);
-	}
-	else if (textmode8050)
-	{
+	#endif
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 		V_WriteTextDirect((SCREENWIDTH - lnames[wbs->last]->width) / 8, y / 4, titlecurrent);
-	}
-	else
-	{
+	#endif
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 		V_DrawPatchScreen0((SCREENWIDTH - lnames[wbs->last]->width) / 2, y, lnames[wbs->last]);
-	}
+	#endif
 
 	// draw "Finished!"
 	y += (5 * lnames[wbs->last]->height) / 4;
 
-	if (textmode8025)
-	{
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 		V_WriteTextDirect((SCREENWIDTH - finished->width) / 8, y / 8, "FINISHED");
-	}
-	else if (textmode8050)
-	{
+	#endif
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 		V_WriteTextDirect((SCREENWIDTH - finished->width) / 8, y / 4, "FINISHED");
-	}
-	else
-	{
+	#endif
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 		V_DrawPatchScreen0((SCREENWIDTH - finished->width) / 2, y, finished);
-	}
+	#endif
 }
 
 // Draws "Entering <LevelName>"
 void WI_drawEL(void)
 {
 	int y = WI_TITLEY;
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 	char *titlecurrent;
 	char *titlenext;
+	#endif
 
-	if (textmode)
-	{
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 		if (commercial)
 		{
 #if (EXE_VERSION < EXE_VERSION_FINAL)
@@ -459,37 +458,31 @@ void WI_drawEL(void)
 			titlecurrent = mapnames[(gameepisode - 1) * 9 + gamemap - 1];
 			titlenext = mapnames[(gameepisode - 1) * 9 + gamemap];
 		}
-	}
+	#endif
 
 	// draw "Entering"
-	if (textmode8025)
-	{
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 		V_WriteTextDirect((SCREENWIDTH - entering->width) / 8, y / 8, "ENTERING");
-	}
-	else if (textmode8050)
-	{
+	#endif
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 		V_WriteTextDirect((SCREENWIDTH - entering->width) / 8, y / 4, "ENTERING");
-	}
-	else
-	{
+	#endif
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 		V_DrawPatchScreen0((SCREENWIDTH - entering->width) / 2, y, entering);
-	}
+	#endif
 
 	// draw level
 	y += (5 * lnames[wbs->next]->height) / 4;
 
-	if (textmode8025)
-	{
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 		V_WriteTextDirect((SCREENWIDTH - lnames[wbs->next]->width) / 8, y / 8, titlenext);
-	}
-	else if (textmode8050)
-	{
+	#endif
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 		V_WriteTextDirect((SCREENWIDTH - lnames[wbs->next]->width) / 8, y / 4, titlenext);
-	}
-	else
-	{
+	#endif
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 		V_DrawPatchScreen0((SCREENWIDTH - lnames[wbs->next]->width) / 2, y, lnames[wbs->next]);
-	}
+	#endif
 }
 
 void WI_drawOnLnode(int n,
@@ -628,8 +621,7 @@ void WI_drawAnimatedBack(void)
 int WI_drawNumTwoDigits(int x, int y, int n)
 {
 
-	if (textmode8025)
-	{
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 		int fontwidth = num[0]->width;
 		char strnum[4];
 
@@ -638,9 +630,8 @@ int WI_drawNumTwoDigits(int x, int y, int n)
 
 		x -= 2 * fontwidth;
 		return x;
-	}
-	else if (textmode8050)
-	{
+	#endif
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 		int fontwidth = num[0]->width;
 		char strnum[4];
 
@@ -649,9 +640,8 @@ int WI_drawNumTwoDigits(int x, int y, int n)
 
 		x -= 2 * fontwidth;
 		return x;
-	}
-	else
-	{
+	#endif
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 		int original;
 		int fontwidth = num[0]->width;
 
@@ -670,7 +660,7 @@ int WI_drawNumTwoDigits(int x, int y, int n)
 		V_DrawPatchScreen0(x, y, num[original - Mul10(n)]);
 
 		return x;
-	}
+	#endif
 }
 
 int WI_drawNum(int x, int y, int n)
@@ -697,26 +687,25 @@ int WI_drawNum(int x, int y, int n)
 
 void WI_drawPercent(int x, int y, int p)
 {
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+	char strnum[4];
+	#endif
+
 	if (p < 0)
 		return;
 
-	if (textmode8025)
-	{
-		char strnum[4];
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 		sprintf(strnum, "%i%%", p);
 		V_WriteTextDirect(x / 2, y / 8 - 1, strnum);
-	}
-	else if (textmode8050)
-	{
-		char strnum[4];
+	#endif
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 		sprintf(strnum, "%i%%", p);
 		V_WriteTextDirect(x / 2, y / 4 - 1, strnum);
-	}
-	else
-	{
+	#endif
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 		V_DrawPatchScreen0(x, y, percent);
 		WI_drawNum(x, y, p);
-	}
+	#endif
 }
 
 //
@@ -747,13 +736,15 @@ void WI_drawTime(int x,
 
 			// draw
 			if (div == 60 || t / div){
-				if (textmode8025){
+				#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 					V_WriteTextDirect(x / 4, y / 8, ":");
-				}else if (textmode8050){
+				#endif
+				#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 					V_WriteTextDirect(x / 4, y / 4, ":");
-				}else{
+				#endif
+				#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 					V_DrawPatchScreen0(x, y, colon);
-				}
+				#endif
 			}
 		} while (t / div);
 	}
@@ -1054,79 +1045,67 @@ void WI_drawStats(void)
 
 	WI_drawLF();
 
-	if (textmode8025)
-	{
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 		V_WriteTextDirect(SP_STATSX / 2, SP_STATSY / 8, "KILLS:");
-	}
-	else if (textmode8050)
-	{
+	#endif
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 		V_WriteTextDirect(SP_STATSX / 2, SP_STATSY / 4, "KILLS:");
-	}
-	else
-	{
+	#endif
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 		V_DrawPatchScreen0(SP_STATSX, SP_STATSY, kills);
-	}
+	#endif
 
 	WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY, cnt_kills);
 
-	if (textmode8025)
-	{
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 		V_WriteTextDirect(SP_STATSX / 2, (SP_STATSY + lh) / 8, "ITEMS:");
-	}
-	else if (textmode8050)
-	{
+	#endif
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 		V_WriteTextDirect(SP_STATSX / 2, (SP_STATSY + lh) / 4, "ITEMS:");
-	}
-	else
-	{
+	#endif
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 		V_DrawPatchScreen0(SP_STATSX, SP_STATSY + lh, items);
-	}
+	#endif
+
 	WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY + lh, cnt_items);
 
-	if (textmode8025)
-	{
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 		V_WriteTextDirect(SP_STATSX / 2, (SP_STATSY + 2 * lh) / 8, "SECRET:");
-	}
-	else if (textmode8050)
-	{
+	#endif
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 		V_WriteTextDirect(SP_STATSX / 2, (SP_STATSY + 2 * lh) / 4, "SECRET:");
-	}
-	else
-	{
+	#endif
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 		V_DrawPatchScreen0(SP_STATSX, SP_STATSY + 2 * lh, sp_secret);
-	}
+	#endif
 	WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY + 2 * lh, cnt_secret);
 
-	if (textmode8025)
-	{
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 		V_WriteTextDirect(SP_TIMEX / 2, SP_TIMEY / 8, "TIME:");
-	}
-	else if (textmode8050)
-	{
+	#endif
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 		V_WriteTextDirect(SP_TIMEX / 2, SP_TIMEY / 4, "TIME:");
-	}
-	else
-	{
+	#endif
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 		V_DrawPatchScreen0(SP_TIMEX, SP_TIMEY, time);
-	}
+	#endif
 	WI_drawTime(SCREENWIDTH / 2 - SP_TIMEX, SP_TIMEY, cnt_time);
 
 #if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
 	if (wbs->epsd < 3)
 #endif
 	{
-		if (textmode8025)
-		{
+		#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 			V_WriteTextDirect((SCREENWIDTH / 2 + SP_TIMEX) / 4, SP_TIMEY / 8, "PAR:");
-		}
-		else if (textmode8050)
-		{
+		#endif
+
+		#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 			V_WriteTextDirect((SCREENWIDTH / 2 + SP_TIMEX) / 4, SP_TIMEY / 4, "PAR:");
-		}
-		else
-		{
+		#endif
+
+		#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 			V_DrawPatchScreen0(SCREENWIDTH / 2 + SP_TIMEX, SP_TIMEY, par);
-		}
+		#endif
 
 		WI_drawTime(SCREENWIDTH - SP_TIMEX, SP_TIMEY, cnt_par);
 	}
@@ -1214,8 +1193,9 @@ void WI_loadData(void)
 	}
 #endif
 
-	if (textmode)
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 		strcpy(bgname, name);
+	#endif
 
 	screen1 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
 

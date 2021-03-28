@@ -32,6 +32,8 @@
 
 #include <conio.h>
 
+#include "vmode.h"
+
 #define GC_INDEX 0x3CE
 #define GC_READMAP 4
 
@@ -175,8 +177,9 @@ void wipe_ReadScreen(byte *scr)
 {
     int j;
 
-    if (textmode)
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
         return;
+    #endif
 
     outp(GC_INDEX, GC_READMAP);
 

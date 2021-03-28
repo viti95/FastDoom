@@ -35,6 +35,8 @@
 #include "doomstat.h"
 #include "r_state.h"
 
+#include "vmode.h"
+
 // Stage of animation:
 //  0 = text, 1 = art screen, 2 = character cast
 int finalestage;
@@ -846,58 +848,70 @@ void F_Drawer(void)
 	}
 
 	if (!finalestage)
-		if(textmode){
+	{
+		#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 			F_TextWriteText();
-		}else{
+		#endif
+		#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 			F_TextWrite();
-		}
+		#endif
+	}
 	else
 	{
 		switch (gameepisode)
 		{
 		case 1:
 #if (EXE_VERSION < EXE_VERSION_ULTIMATE)
-			if (textmode8025){
+			#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 				V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
-			}else if (textmode8050){
+			#endif
+			#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 				V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
-			}else{
+			#endif
+			#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 				V_DrawPatchScreen0(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
-			}
+			#endif
 			
 			break;
 #else
-			if (textmode8025){
+			#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 				V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
-			}else if (textmode8050){
+			#endif
+			#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 				V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
-			}else{
+			#endif
+			#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 				V_DrawPatchScreen0(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
-			}
+			#endif
 			
 			break;
 #endif
 		case 2:
-			if (textmode8025){
+			#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 				V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
-			}else if (textmode8050) {
+			#endif
+			#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 				V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
-			}else{
+			#endif
+			#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 				V_DrawPatchScreen0(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
-			}
+			#endif
 			
 			break;
 		case 3:
 			F_BunnyScroll();
 			break;
 		case 4:
-			if (textmode8025){
+			#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 				V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
-			}else if (textmode8050){
+			#endif
+			#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 				V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
-			}else{
+			#endif
+			#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 				V_DrawPatchScreen0(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
-			}
+			#endif
+			
 			break;
 		}
 	}

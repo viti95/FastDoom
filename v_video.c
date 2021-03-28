@@ -30,6 +30,8 @@
 
 #include "v_video.h"
 
+#include "vmode.h"
+
 byte screen0[SCREENWIDTH * SCREENHEIGHT];
 byte screen4[SCREENWIDTH * 32];
 
@@ -75,8 +77,9 @@ void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int de
     byte *src;
     byte *dest;
 
-    if (textmode)
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
         return;
+    #endif
 
     V_MarkRect(destx, desty, width, height);
 
@@ -96,8 +99,9 @@ void V_SetRect(byte color, int width, int height, int destx, int desty, byte *de
 {
     byte *dest;
 
-    if (textmode)
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
         return;
+    #endif
 
     V_MarkRect(destx, desty, width, height);
 
@@ -125,8 +129,9 @@ void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
     byte *source;
     int w;
 
-    if (textmode)
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
         return;
+    #endif
 
     y -= patch->topoffset;
     x -= patch->leftoffset;
@@ -184,8 +189,9 @@ void V_DrawPatchScreen0(int x, int y, patch_t *patch)
     byte *source;
     int w;
 
-    if (textmode)
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
         return;
+    #endif
 
     y -= patch->topoffset;
     x -= patch->leftoffset;
@@ -250,8 +256,9 @@ void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
     byte *source;
     int w;
 
-    if (textmode)
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
         return;
+    #endif
 
     y -= patch->topoffset;
     x -= patch->leftoffset;
@@ -319,8 +326,9 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
     byte *source;
     int w;
 
-    if (textmode)
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
         return;
+    #endif
 
     y -= patch->topoffset;
     x -= patch->leftoffset;
@@ -370,6 +378,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
     }
 }
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void V_DrawPatchDirectText8050(int x, int y, patch_t *patch)
 {
     int count;
@@ -412,7 +421,9 @@ void V_DrawPatchDirectText8050(int x, int y, patch_t *patch)
         desttop += 1;
     }
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void V_DrawPatchDirectText8025(int x, int y, patch_t *patch)
 {
     int count;
@@ -474,3 +485,4 @@ void V_DrawPatchDirectText8025(int x, int y, patch_t *patch)
         desttop += 1;
     }
 }
+#endif

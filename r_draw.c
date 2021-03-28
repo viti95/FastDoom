@@ -34,6 +34,8 @@
 // State.
 #include "doomstat.h"
 
+#include "vmode.h"
+
 // ?
 #define MAXWIDTH 320
 #define MAXHEIGHT 200
@@ -183,6 +185,7 @@ void R_DrawSkyFlatPotato(void)
     };
 }
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void R_DrawColumnText8025(void)
 {
     fixed_t frac;
@@ -248,7 +251,9 @@ void R_DrawColumnText8025(void)
         *dest = vmem | lut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 223;
     }
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void R_DrawSpanText8025(void)
 {
     int spot;
@@ -307,7 +312,9 @@ void R_DrawSpanText8025(void)
         } while (countp--);
     }
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void R_DrawColumnText8050(void)
 {
     fixed_t frac;
@@ -328,7 +335,9 @@ void R_DrawColumnText8050(void)
         frac += fracstep;
     } while (count--);
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void R_DrawSkyFlatText8050(void)
 {
     unsigned int count;
@@ -343,7 +352,9 @@ void R_DrawSkyFlatText8050(void)
         dest += 80;
     } while (count--);
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void R_DrawSkyFlatText8025(void)
 {
     int count;
@@ -395,7 +406,9 @@ void R_DrawSkyFlatText8025(void)
         *dest = vmem | 6 << 8 | 223;
     }
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void R_DrawFuzzColumnSaturnText8025(void)
 {
     fixed_t frac;
@@ -495,7 +508,9 @@ void R_DrawFuzzColumnSaturnText8025(void)
         }
     }
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void R_DrawFuzzColumnSaturnText8050(void)
 {
     int count;
@@ -544,7 +559,9 @@ void R_DrawFuzzColumnSaturnText8050(void)
         }
     }
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void R_DrawFuzzColumnFastText8025(void)
 {
     register int count;
@@ -589,7 +606,9 @@ void R_DrawFuzzColumnFastText8025(void)
         }
     } while (count--);
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void R_DrawFuzzColumnFastText8050(void)
 {
     unsigned int count;
@@ -612,7 +631,9 @@ void R_DrawFuzzColumnFastText8050(void)
         dest += 80;
     } while (count--);
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void R_DrawSpanText8050(void)
 {
     int spot;
@@ -643,6 +664,7 @@ void R_DrawSpanText8050(void)
         yfrac += ds_ystep;
     } while (countp--);
 }
+#endif
 
 void R_DrawSpanPotato(void)
 {
@@ -1370,6 +1392,7 @@ void R_DrawSpanFlatPotato(void)
     SetBytes(dest, color, countp);
 }
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void R_DrawSpanFlatText8050(void)
 {
     int countp;
@@ -1383,7 +1406,9 @@ void R_DrawSpanFlatText8050(void)
 
     SetWords((byte *)dest, color, countp);
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void R_DrawSpanFlatText8025(void)
 {
     int countp;
@@ -1420,6 +1445,7 @@ void R_DrawSpanFlatText8025(void)
         } while (countp--);
     }
 }
+#endif
 
 //
 // R_InitBuffer
@@ -1436,24 +1462,27 @@ void R_InitBuffer(int width, int height)
     //  e.g. smaller view windows
     //  with border and/or status bar.
 
-    if (textmode)
-    {
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
         viewwindowx = 0;
-    }
-    else
-    {
+    #endif
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         viewwindowx = (SCREENWIDTH - width) >> 1;
-    }
+    #endif
 
     // Column offset. For windows.
     for (i = 0; i < width; i++)
         columnofs[i] = viewwindowx + i;
 
     // Samw with base row offset.
-    if (width == SCREENWIDTH || textmode)
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+        viewwindowy = 0;
+    #endif
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+    if (width == SCREENWIDTH)
         viewwindowy = 0;
     else
         viewwindowy = (SCREENHEIGHT - SBARHEIGHT - height) >> 1;
+    #endif
 }
 
 //
@@ -1480,7 +1509,11 @@ void R_FillBackScreen(void)
 
     char *name;
 
-    if (scaledviewwidth == 320 || textmode)
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+        return;
+    #endif
+
+    if (scaledviewwidth == 320)
         return;
 
     if (commercial)
@@ -1554,8 +1587,9 @@ void R_VideoErase(unsigned ofs, int count)
     byte *source;
     int countp;
 
-    if (textmode)
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
         return;
+    #endif
 
     outp(SC_INDEX, SC_MAPMASK);
     outp(SC_INDEX + 1, 15);
@@ -1582,7 +1616,11 @@ void R_DrawViewBorder(void)
     int ofs;
     int i;
 
-    if (scaledviewwidth == SCREENWIDTH || textmode)
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+        return;
+    #endif
+
+    if (scaledviewwidth == SCREENWIDTH)
         return;
 
     top = ((SCREENHEIGHT - SBARHEIGHT) - viewheight) / 2;

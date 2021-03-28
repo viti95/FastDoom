@@ -27,6 +27,8 @@
 
 #include "doomstat.h"
 
+#include "vmode.h"
+
 // boolean : whether the screen is always erased
 #define noterased viewwindowx
 
@@ -74,8 +76,7 @@ void HUlib_drawTextLine(hu_textline_t *l)
     int x;
     unsigned char c;
 
-    if (textmode8025)
-    {
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
         x = l->x / 4;
         for (i = 0; i < l->len; i++)
         {
@@ -83,9 +84,8 @@ void HUlib_drawTextLine(hu_textline_t *l)
             V_WriteCharDirect(x, l->y / 8, c);
             x++;
         }
-    }
-    else if (textmode8050)
-    {
+    #endif
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
         x = l->x / 4;
         for (i = 0; i < l->len; i++)
         {
@@ -93,9 +93,8 @@ void HUlib_drawTextLine(hu_textline_t *l)
             V_WriteCharDirect(x, l->y / 4, c);
             x++;
         }
-    }
-    else
-    {
+    #endif
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         // draw the new stuff
         x = l->x;
         for (i = 0; i < l->len; i++)
@@ -118,7 +117,7 @@ void HUlib_drawTextLine(hu_textline_t *l)
                     break;
             }
         }
-    }
+    #endif
 }
 
 // sorta called by HU_Erase and just better darn get things straight

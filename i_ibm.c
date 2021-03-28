@@ -39,6 +39,8 @@
 #include "ns_task.h"
 #include "doomdef.h"
 
+#include "vmode.h"
+
 //
 // Macros
 //
@@ -176,7 +178,9 @@ void I_StartupSound(void);
 void I_ShutdownSound(void);
 void I_ShutdownTimer(void);
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 byte lut16colors[256];
+#endif
 
 byte gammatable[5][256] =
     {
@@ -220,6 +224,7 @@ void I_ProcessPalette(byte *palette)
     }
 }
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 const byte textcolors[48] = {
     0x00, 0x00, 0x00,
     0x00, 0x00, 0xAA,
@@ -237,6 +242,7 @@ const byte textcolors[48] = {
     0xFF, 0x55, 0xFF,
     0xFF, 0xFF, 0x55,
     0xFF, 0xFF, 0xFF};
+#endif
 
 //
 // I_SetPalette
@@ -244,8 +250,8 @@ const byte textcolors[48] = {
 //
 void I_SetPalette(int numpalette)
 {
-    if (textmode)
-    {
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+        {
         byte *pos;
         short i, j;
 
@@ -361,16 +367,18 @@ void I_SetPalette(int numpalette)
                 lut16colors[i] = best_color;
             }
         }
-    }
-    else
-    {
+        }
+    #endif
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+        {
         int i;
         int pos = Mul768(numpalette);
 
         _outbyte(PEL_WRITE_ADR, 0);
 
         OutString(PEL_DATA, ((unsigned char *)processedpalette) + pos, 768);
-    }
+        }
+    #endif
 }
 
 //
@@ -467,7 +475,9 @@ void I_UpdateNoBlit(void)
     int realdr[4];
 
     // Set current screen
-    //currentscreen = destscreen;
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+    currentscreen = destscreen;
+    #endif
 
     // Update dirtybox size
     realdr[BOXTOP] = dirtybox[BOXTOP];
@@ -536,10 +546,9 @@ void I_UpdateNoBlit(void)
         y = realdr[BOXBOTTOM];
         h = realdr[BOXTOP] - y + 1;
 
-        if (!textmode)
-        {
+        #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
             I_UpdateBox(x, y, w, h);
-        }
+        #endif
     }
     // Clear box
     dirtybox[BOXTOP] = dirtybox[BOXRIGHT] = MININT;
@@ -554,20 +563,7 @@ void I_FinishUpdate(void)
     static int fps_counter, fps_starttime, fps_nextcalculation;
     int opt1, opt2;
 
-    if (!textmode)
-    {
-        outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
-
-        //Next plane
-        destscreen += 0x4000;
-        if (destscreen == (byte *)0xac000)
-        {
-            destscreen = (byte *)0xa0000;
-        }
-    }
-    else if (textmode8025)
-    {
-
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
         // Change video page
         regs.h.ah = 0x05;
         regs.h.al = textpage;
@@ -582,9 +578,8 @@ void I_FinishUpdate(void)
             textdestscreen = (unsigned short *)0xB8000;
             textpage = 0;
         }
-    }
-    else if (textmode8050)
-    {
+    #endif
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
         // Change video page
         regs.h.ah = 0x05;
         regs.h.al = textpage;
@@ -599,7 +594,17 @@ void I_FinishUpdate(void)
             textdestscreen = (unsigned short *)0xB8000;
             textpage = 0;
         }
-    }
+    #endif
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+        outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
+
+        //Next plane
+        destscreen += 0x4000;
+        if (destscreen == (byte *)0xac000)
+        {
+            destscreen = (byte *)0xa0000;
+        }
+    #endif
 
     if (showFPS)
     {
@@ -629,31 +634,8 @@ void I_FinishUpdate(void)
 //
 void I_InitGraphics(void)
 {
-    if (!textmode)
-    {
-        regs.w.ax = 0x13;
-        int386(0x10, (union REGS *)&regs, &regs);
-        pcscreen = currentscreen = (byte *)0xA0000;
-        destscreen = (byte *)0xA4000;
-        textdestscreen = (unsigned short *)0xB8000;
-        textpage = 0;
 
-        outp(SC_INDEX, SC_MEMMODE);
-        outp(SC_INDEX + 1, (inp(SC_INDEX + 1) & ~8) | 4);
-        outp(GC_INDEX, GC_MODE);
-        outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~0x13);
-        outp(GC_INDEX, GC_MISCELLANEOUS);
-        outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~2);
-        outpw(SC_INDEX, 0xf02);
-        SetDWords(pcscreen, 0, 0x4000);
-        outp(CRTC_INDEX, CRTC_UNDERLINE);
-        outp(CRTC_INDEX + 1, inp(CRTC_INDEX + 1) & ~0x40);
-        outp(CRTC_INDEX, CRTC_MODE);
-        outp(CRTC_INDEX + 1, inp(CRTC_INDEX + 1) | 0x40);
-        outp(GC_INDEX, GC_READMAP);
-    }
-    else if (textmode8025)
-    {
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
         // Set 80x25 color mode
         regs.h.ah = 0x00;
         regs.h.al = 0x03;
@@ -678,14 +660,8 @@ void I_InitGraphics(void)
             regs.h.bh = 0x00;
             int386(0x10, &regs, &regs);
         }
-
-        // TEST change page
-        /*regs.h.ah = 0x05;
-        regs.h.al = 0x01;
-        int386(0x10, &regs, &regs);*/
-    }
-    else if (textmode8050)
-    {
+    #endif
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
         // Set 80x25 color mode
         regs.h.ah = 0x00;
         regs.h.al = 0x03;
@@ -709,7 +685,29 @@ void I_InitGraphics(void)
         regs.h.bl = 0x00;
         regs.h.bh = 0x00;
         int386(0x10, &regs, &regs);
-    }
+    #endif
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+        regs.w.ax = 0x13;
+        int386(0x10, (union REGS *)&regs, &regs);
+        pcscreen = currentscreen = (byte *)0xA0000;
+        destscreen = (byte *)0xA4000;
+        textdestscreen = (unsigned short *)0xB8000;
+        textpage = 0;
+
+        outp(SC_INDEX, SC_MEMMODE);
+        outp(SC_INDEX + 1, (inp(SC_INDEX + 1) & ~8) | 4);
+        outp(GC_INDEX, GC_MODE);
+        outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~0x13);
+        outp(GC_INDEX, GC_MISCELLANEOUS);
+        outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~2);
+        outpw(SC_INDEX, 0xf02);
+        SetDWords(pcscreen, 0, 0x4000);
+        outp(CRTC_INDEX, CRTC_UNDERLINE);
+        outp(CRTC_INDEX + 1, inp(CRTC_INDEX + 1) & ~0x40);
+        outp(CRTC_INDEX, CRTC_MODE);
+        outp(CRTC_INDEX + 1, inp(CRTC_INDEX + 1) | 0x40);
+        outp(GC_INDEX, GC_READMAP);
+    #endif
 
     I_ProcessPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
     I_SetPalette(0);

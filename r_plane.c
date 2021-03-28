@@ -743,6 +743,7 @@ void R_DrawPlanesFlatSurfacesPotato(void)
     }
 }
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void R_DrawPlanesFlatSurfacesText8050(void)
 {
     visplane_t *pl;
@@ -785,7 +786,9 @@ void R_DrawPlanesFlatSurfacesText8050(void)
         Z_ChangeTag(dc_source, PU_CACHE);
     }
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void R_DrawPlanesFlatSurfacesText8025(void)
 {
     visplane_t *pl;
@@ -870,6 +873,7 @@ void R_DrawPlanesFlatSurfacesText8025(void)
         Z_ChangeTag(dc_source, PU_CACHE);
     }
 }
+#endif
 
 void R_DrawSky(visplane_t *pl)
 {

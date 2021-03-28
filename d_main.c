@@ -59,6 +59,8 @@
 
 #include "d_main.h"
 
+#include "vmode.h"
+
 #if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
 #define BGCOLOR 7
 #define FGCOLOR 8
@@ -104,12 +106,12 @@ boolean forceLowDetail;
 boolean forcePotatoDetail;
 int forceScreenSize;
 
-boolean textmode8025;
-boolean textmode8050;
-boolean textmode;
-
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 boolean CGAcard;
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 boolean colorCorrection;
+#endif
 
 boolean logTimedemo;
 
@@ -321,18 +323,17 @@ void D_Display(void)
         else
             y = viewwindowy + 4;
 
-        if (textmode8025)
-        {
+        #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
             V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 4, "PAUSE");
-        }
-        else if (textmode8050)
-        {
+        #endif
+
+        #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
             V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 2, "PAUSE");
-        }
-        else
-        {
+        #endif
+
+        #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
             V_DrawPatchDirect(viewwindowx + (scaledviewwidth - 68) / 2, y, W_CacheLumpName("M_PAUSE", PU_CACHE));
-        }
+        #endif
     }
 
     // menus go directly to the screen
@@ -430,18 +431,15 @@ void D_PageTicker(void)
 //
 void D_PageDrawer(void)
 {
-    if (textmode8025)
-    {
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
         V_DrawPatchDirectText8025(0, 0, W_CacheLumpName(pagename, PU_CACHE));
-    }
-    else if (textmode8050)
-    {
+    #endif
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
         V_DrawPatchDirectText8050(0, 0, W_CacheLumpName(pagename, PU_CACHE));
-    }
-    else
-    {
+    #endif
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         V_DrawPatchScreen0(0, 0, W_CacheLumpName(pagename, PU_CACHE));
-    }
+    #endif
 }
 
 //
@@ -752,12 +750,12 @@ void D_DoomMain(void)
     forceLowDetail = M_CheckParm("-forceLQ");
     forcePotatoDetail = M_CheckParm("-forcePQ");
 
-    textmode8025 = M_CheckParm("-80x25");
-    textmode8050 = M_CheckParm("-80x50");
-    textmode = textmode8025 || textmode8050;
-
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
     CGAcard = M_CheckParm("-cga");
+    #endif
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
     colorCorrection = M_CheckParm("-fixcolors");
+    #endif
 
     lowSound = M_CheckParm("-lowsound");
     eightBitSound = M_CheckParm("-8bitsound");
