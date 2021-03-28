@@ -378,7 +378,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
     }
 }
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void V_DrawPatchDirectText8050(int x, int y, patch_t *patch)
 {
     int count;
@@ -423,7 +423,7 @@ void V_DrawPatchDirectText8050(int x, int y, patch_t *patch)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 void V_DrawPatchDirectText8025(int x, int y, patch_t *patch)
 {
     int count;

@@ -185,7 +185,7 @@ void R_DrawSkyFlatPotato(void)
     };
 }
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 void R_DrawColumnText8025(void)
 {
     fixed_t frac;
@@ -253,7 +253,7 @@ void R_DrawColumnText8025(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 void R_DrawSpanText8025(void)
 {
     int spot;
@@ -314,7 +314,7 @@ void R_DrawSpanText8025(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void R_DrawColumnText8050(void)
 {
     fixed_t frac;
@@ -337,7 +337,7 @@ void R_DrawColumnText8050(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void R_DrawSkyFlatText8050(void)
 {
     unsigned int count;
@@ -354,7 +354,7 @@ void R_DrawSkyFlatText8050(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 void R_DrawSkyFlatText8025(void)
 {
     int count;
@@ -408,7 +408,7 @@ void R_DrawSkyFlatText8025(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 void R_DrawFuzzColumnSaturnText8025(void)
 {
     fixed_t frac;
@@ -510,7 +510,7 @@ void R_DrawFuzzColumnSaturnText8025(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void R_DrawFuzzColumnSaturnText8050(void)
 {
     int count;
@@ -561,7 +561,7 @@ void R_DrawFuzzColumnSaturnText8050(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 void R_DrawFuzzColumnFastText8025(void)
 {
     register int count;
@@ -608,7 +608,7 @@ void R_DrawFuzzColumnFastText8025(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void R_DrawFuzzColumnFastText8050(void)
 {
     unsigned int count;
@@ -633,7 +633,7 @@ void R_DrawFuzzColumnFastText8050(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void R_DrawSpanText8050(void)
 {
     int spot;
@@ -1392,7 +1392,7 @@ void R_DrawSpanFlatPotato(void)
     SetBytes(dest, color, countp);
 }
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void R_DrawSpanFlatText8050(void)
 {
     int countp;
@@ -1408,7 +1408,7 @@ void R_DrawSpanFlatText8050(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 void R_DrawSpanFlatText8025(void)
 {
     int countp;
