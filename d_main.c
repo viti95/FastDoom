@@ -346,6 +346,9 @@ void D_Display(void)
     #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
         ST_DrawerText8025();
     #endif
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+        ST_DrawerText8050();
+    #endif
     NetUpdate(); // send out any new accumulation
 
     // normal update

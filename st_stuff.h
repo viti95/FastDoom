@@ -44,6 +44,7 @@ void ST_Ticker(void);
 // Called by main loop.
 void ST_Drawer(byte fullscreen, byte refresh);
 void ST_DrawerText8025();
+void ST_DrawerText8050();
 
 // Called when the console player is spawned on each level.
 void ST_Start(void);

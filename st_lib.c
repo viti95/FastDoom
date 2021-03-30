@@ -64,8 +64,8 @@ void STlib_initNum(st_number_t *n,
 // Note: worth the trouble?
 //
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-void STlib_drawNumText8025(st_number_t *n, int x, int y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+void STlib_drawNumText(st_number_t *n, int x, int y)
 {
     int num = *n->num;
     char strnum[4];
