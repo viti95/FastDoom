@@ -62,7 +62,7 @@ void STlib_initNum(st_number_t *n,
 //
 void STlib_drawNum(st_number_t *n, byte refresh)
 {
-    int num;
+    int num = *n->num;
     int w;
     int h;
     int x;
@@ -73,7 +73,6 @@ void STlib_drawNum(st_number_t *n, byte refresh)
         return;
     }
 
-    num = *n->num;
     w = n->p[0]->width;
     h = n->p[0]->height;
     x = n->x;
