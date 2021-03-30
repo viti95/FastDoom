@@ -32,6 +32,9 @@
 
 #include "doomstat.h"
 
+#include "vmode.h"
+#include <stdio.h>
+
 // in AM_map.c
 extern byte automapactive;
 
@@ -60,6 +63,24 @@ void STlib_initNum(st_number_t *n,
 //  based on differences from the old number.
 // Note: worth the trouble?
 //
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+void STlib_drawNumText8025(st_number_t *n, int x, int y)
+{
+    int num = *n->num;
+    char strnum[4];
+
+    // if non-number, do not draw it
+    if (num == 1994 || num < 0)
+        return;
+
+    n->oldnum = *n->num;
+
+    sprintf(strnum, "%03i", num);
+    V_WriteTextDirect(x, y, strnum);
+}
+#endif
+
 void STlib_drawNum(st_number_t *n, byte refresh)
 {
     int num = *n->num;

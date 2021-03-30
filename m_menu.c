@@ -630,6 +630,7 @@ void M_DrawSaveLoadBorder(int x, int y)
     V_DrawPatchDirect(x, y + 7, W_CacheLumpName("M_LSRGHT", PU_CACHE));
 }
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void M_DrawSaveLoadBorderText(int x, int y)
 {
     int i;
@@ -644,6 +645,7 @@ void M_DrawSaveLoadBorderText(int x, int y)
 
     V_WriteCharDirect(x, y + 1, 7);
 }
+#endif
 
 //
 // User wants to load this game
@@ -1560,6 +1562,8 @@ void M_DrawThermo(int x, int y, int thermWidth, int thermDot)
     V_DrawPatchDirect((x + 8) + thermDot * 8, y, W_CacheLumpName("M_THERMO", PU_CACHE));
 }
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+
 void M_DrawThermoText(int x, int y, int thermWidth, int thermDot)
 {
     int xx;
@@ -1577,6 +1581,7 @@ void M_DrawThermoText(int x, int y, int thermWidth, int thermDot)
 
     V_WriteTextDirect((x + 1) + thermDot, y, "|");
 }
+#endif
 
 void M_StartMessage(char *string, void *routine, byte input)
 {

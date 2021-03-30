@@ -291,6 +291,20 @@ void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
     }
 }
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+void V_WriteTextColorDirect(int x, int y, char *string, unsigned short color)
+{
+    unsigned short *dest;
+
+    dest = textdestscreen + Mul80(y) + x;
+
+    while (*string)
+    {
+        *dest++ = color | *string;
+        string++;
+    }
+}
+
 void V_WriteTextDirect(int x, int y, char *string)
 {
     unsigned short *dest;
@@ -304,6 +318,14 @@ void V_WriteTextDirect(int x, int y, char *string)
     }
 }
 
+void V_WriteCharColorDirect(int x, int y, unsigned char c, unsigned short color)
+{
+    unsigned short *dest;
+
+    dest = textdestscreen + Mul80(y) + x;
+    *dest = color | c;
+}
+
 void V_WriteCharDirect(int x, int y, unsigned char c)
 {
     unsigned short *dest;
@@ -311,6 +333,7 @@ void V_WriteCharDirect(int x, int y, unsigned char c)
     dest = textdestscreen + Mul80(y) + x;
     *dest = 12 << 8 | c;
 }
+#endif
 
 //
 // V_DrawPatchDirect

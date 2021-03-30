@@ -61,6 +61,9 @@ void V_DrawPatchDirectText8050(int x, int y, patch_t *patch);
 void V_WriteTextDirect(int x, int y, char *string);
 void V_WriteCharDirect(int x, int y, unsigned char c);
 
+void V_WriteTextColorDirect(int x, int y, char *string, unsigned short color);
+void V_WriteCharColorDirect(int x, int y, unsigned char c, unsigned short color);
+
 void V_MarkRect(int x, int y, int width, int height);
 
 #endif

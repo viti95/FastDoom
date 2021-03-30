@@ -43,12 +43,15 @@ void ST_Ticker(void);
 
 // Called by main loop.
 void ST_Drawer(byte fullscreen, byte refresh);
+void ST_DrawerText8025();
 
 // Called when the console player is spawned on each level.
 void ST_Start(void);
 
 // Called by startup code.
 void ST_Init(void);
+
+void ST_doPaletteStuff(void);
 
 // States for status bar code.
 typedef enum

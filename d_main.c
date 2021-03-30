@@ -250,11 +250,16 @@ void D_Display(void)
             AM_Drawer();
         }
 
-        if (!automapactive || (automapactive && !fullscreen))
-        {
-            redrawsbar = wipe || (viewheight != 200 && fullscreen) || (inhelpscreensstate && !inhelpscreens); // just put away the help screen
-            ST_Drawer(viewheight == 200, redrawsbar);
-        }
+        #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+        ST_doPaletteStuff();
+        #endif
+        #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+            if (!automapactive || (automapactive && !fullscreen))
+            {
+                redrawsbar = wipe || (viewheight != 200 && fullscreen) || (inhelpscreensstate && !inhelpscreens); // just put away the help screen
+                ST_Drawer(viewheight == 200, redrawsbar);
+            }
+        #endif
 
         fullscreen = viewheight == 200;
         break;
@@ -338,6 +343,9 @@ void D_Display(void)
 
     // menus go directly to the screen
     M_Drawer();  // menu is drawn even on top of everything
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+        ST_DrawerText8025();
+    #endif
     NetUpdate(); // send out any new accumulation
 
     // normal update

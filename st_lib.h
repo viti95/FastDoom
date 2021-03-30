@@ -171,4 +171,6 @@ void STlib_initBinIcon(st_binicon_t *b,
 void STlib_updateBinIcon(st_binicon_t *bi,
                          byte refresh);
 
+void STlib_drawNumText8025(st_number_t *n, int x, int y);
+
 #endif

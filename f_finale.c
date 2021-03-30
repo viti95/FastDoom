@@ -401,6 +401,7 @@ void F_TextWrite(void)
 	}
 }
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void F_TextWriteText(void)
 {
 	byte *src;
@@ -448,6 +449,7 @@ void F_TextWriteText(void)
 		cx += 1;
 	}
 }
+#endif
 
 //
 // Final DOOM 2 animation
