@@ -966,6 +966,10 @@ void D_DoomMain(void)
     M_CheckParmDisable("-novsync", &waitVsync);
     M_CheckParmDisable("-nofps", &showFPS);
 
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+        noMelt = 1;
+    #endif
+
     printf("Z_Init: Init zone memory allocation daemon. \n");
     Z_Init();
 
