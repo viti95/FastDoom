@@ -1491,6 +1491,7 @@ void R_InitBuffer(int width, int height)
 //  for variable screen sizes
 // Also draws a beveled edge.
 //
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void R_FillBackScreen(void)
 {
     byte *src;
@@ -1577,6 +1578,7 @@ void R_FillBackScreen(void)
 
     Z_Free(screen1);
 }
+#endif
 
 //
 // Copy a screen buffer.

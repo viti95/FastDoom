@@ -306,7 +306,9 @@ void D_Display(void)
     if (gamestate == GS_LEVEL && oldgamestate != GS_LEVEL)
     {
         viewactivestate = 0; // view was not active
+        #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         R_FillBackScreen();  // draw the pattern into the back screen
+        #endif
     }
 
     // see if the border needs to be updated to the screen

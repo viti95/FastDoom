@@ -615,6 +615,7 @@ void M_DrawLoad(void)
 //
 // Draw border for the savegame description
 //
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void M_DrawSaveLoadBorder(int x, int y)
 {
     int i;
@@ -629,6 +630,7 @@ void M_DrawSaveLoadBorder(int x, int y)
 
     V_DrawPatchDirect(x, y + 7, W_CacheLumpName("M_LSRGHT", PU_CACHE));
 }
+#endif
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void M_DrawSaveLoadBorderText(int x, int y)
