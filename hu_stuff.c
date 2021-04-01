@@ -238,6 +238,7 @@ char *mapnamest[] = // TNT WAD map names.
         THUSTR_32};
 #endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void HU_Init(void)
 {
 
@@ -253,6 +254,7 @@ void HU_Init(void)
         hu_font[i] = (patch_t *)W_CacheLumpName(buffer, PU_STATIC);
     }
 }
+#endif
 
 void HU_Start(void)
 {

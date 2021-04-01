@@ -338,6 +338,7 @@ void F_Ticker(void)
 #include "hu_stuff.h"
 extern patch_t *hu_font[HU_FONTSIZE];
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void F_TextWrite(void)
 {
 	byte *src;
@@ -400,6 +401,7 @@ void F_TextWrite(void)
 		cx += w;
 	}
 }
+#endif
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void F_TextWriteText(void)

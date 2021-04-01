@@ -229,13 +229,17 @@ void D_Display(void)
     if (gamestate != wipegamestate && !noMelt)
     {
         wipe = true;
+        #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         wipe_StartScreen();
+        #endif
     }
     else
         wipe = false;
 
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     if (gamestate == GS_LEVEL && gametic)
         HU_Erase();
+    #endif
 
     // do buffered drawing
     switch (gamestate)
@@ -247,7 +251,9 @@ void D_Display(void)
         {
             // [crispy] update automap while playing
             R_RenderPlayerView(&players);
+            #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
             AM_Drawer();
+            #endif
         }
 
         #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
@@ -310,7 +316,9 @@ void D_Display(void)
             borderdrawcount = 3;
         if (borderdrawcount)
         {
+            #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
             R_DrawViewBorder(); // erase old menu stuff
+            #endif
             borderdrawcount--;
         }
     }
@@ -359,10 +367,13 @@ void D_Display(void)
     }
 
     // wipe update
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     wipe_EndScreen();
+    #endif
 
     wipestart = ticcount - 1;
 
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     do
     {
         do
@@ -375,6 +386,7 @@ void D_Display(void)
         M_Drawer();       // menu is drawn even on top of wipes
         I_FinishUpdate(); // page flip or blit buffer
     } while (!done);
+    #endif
 }
 
 //
@@ -1021,9 +1033,11 @@ void D_DoomMain(void)
     D_RedrawTitle();
     S_Init(sfxVolume * 8, musicVolume * 8);
 
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     printf("HU_Init: Setting up heads up display.\n");
     D_RedrawTitle();
     HU_Init();
+    #endif
 
     #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     printf("ST_Init: Init status bar.\n");

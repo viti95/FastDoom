@@ -798,7 +798,9 @@ void WI_unloadData(void)
 	}
 
 	Z_Free(lnames);
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 	Z_Free(screen1);
+	#endif
 
 	Z_ChangeTag(percent, PU_CACHE);
 	Z_ChangeTag(colon, PU_CACHE);
@@ -1197,11 +1199,13 @@ void WI_loadData(void)
 		strcpy(bgname, name);
 	#endif
 
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 	screen1 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
 
 	// background
 	bg = W_CacheLumpName(name, PU_CACHE);
 	V_DrawPatch(0, 0, screen1, bg);
+	#endif
 
 	if (commercial)
 	{
