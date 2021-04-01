@@ -76,7 +76,7 @@ void STlib_drawNumText(st_number_t *n, int x, int y)
 
     n->oldnum = *n->num;
 
-    sprintf(strnum, "%03i", num);
+    sprintf(strnum, "%3i", num);
     V_WriteTextDirect(x, y, strnum);
 }
 #endif

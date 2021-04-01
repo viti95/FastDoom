@@ -870,22 +870,26 @@ void ST_DrawerText8025()
 {
 	st_armson = 1;
 
-	if (w_health.n.on){
+	if (w_health.n.on)
+	{
 		V_WriteTextColorDirect(1, 21, "HEALTH   %%", 7 << 8);
 		STlib_drawNumText(&(w_health.n), 8, 21);
 	}
 
-	if (w_armor.n.on){
+	if (w_armor.n.on)
+	{
 		V_WriteTextColorDirect(1, 22, "ARMOR    %%", 7 << 8);
 		STlib_drawNumText(&(w_armor.n), 8, 22);
 	}
 
-	if (w_ready.on){
+	if (w_ready.on)
+	{
 		V_WriteTextColorDirect(1, 23, "AMMO   ", 7 << 8);
 		STlib_drawNumText(&(w_ready), 8, 23);
 	}
 
-	if (w_ammo[0].on){
+	if (w_ammo[0].on)
+	{
 		V_WriteTextColorDirect(67, 20, "BULL    /", 7 << 8);
 		STlib_drawNumText(&(w_ammo[0]), 72, 20);
 		STlib_drawNumText(&(w_maxammo[0]), 76, 20);
@@ -903,41 +907,65 @@ void ST_DrawerText8025()
 		STlib_drawNumText(&(w_maxammo[3]), 76, 23);
 	}
 
-	if (w_keyboxes[0].on){
+	if ((st_faceindex - 3) % 8 == 0)
+	{
+		// LOOK RIGHT
+		V_WriteCharDirect(65, 20, 16);
+		V_WriteCharDirect(65, 21, 16);
+		V_WriteCharDirect(65, 22, 16);
+		V_WriteCharDirect(65, 23, 16);
+	}
+	else
+	{
+		if ((st_faceindex - 4) % 8 == 0)
+		{
+			// LOOK LEFT
+			V_WriteCharDirect(13, 20, 17);
+			V_WriteCharDirect(13, 21, 17);
+			V_WriteCharDirect(13, 22, 17);
+			V_WriteCharDirect(13, 23, 17);
+		}
+	}
+
+	if (w_keyboxes[0].on)
+	{
 		V_WriteTextColorDirect(1, 20, "KEYS   ", 7 << 8);
 
-		switch(keyboxes[0]){
-			case -1:
+		switch (keyboxes[0])
+		{
+		case -1:
 			V_WriteCharColorDirect(8, 20, 249, 7 << 8);
 			break;
-			case 0:
+		case 0:
 			V_WriteCharColorDirect(8, 20, 20, 1 << 8);
 			break;
-			case 3:
+		case 3:
 			V_WriteCharColorDirect(8, 20, 2, 1 << 8);
 			break;
 		}
 
-		switch(keyboxes[1]){
-			case -1:
+		switch (keyboxes[1])
+		{
+		case -1:
 			V_WriteCharColorDirect(9, 20, 249, 7 << 8);
 			break;
-			case 1:
+		case 1:
 			V_WriteCharColorDirect(9, 20, 20, 14 << 8);
 			break;
-			case 4:
+		case 4:
 			V_WriteCharColorDirect(9, 20, 2, 14 << 8);
 			break;
 		}
 
-		switch(keyboxes[2]){
-			case -1:
+		switch (keyboxes[2])
+		{
+		case -1:
 			V_WriteCharColorDirect(10, 20, 249, 7 << 8);
 			break;
-			case 2:
+		case 2:
 			V_WriteCharColorDirect(10, 20, 20, 4 << 8);
 			break;
-			case 5:
+		case 5:
 			V_WriteCharColorDirect(10, 20, 2, 4 << 8);
 			break;
 		}
@@ -950,81 +978,110 @@ void ST_DrawerText8050()
 {
 	st_armson = 1;
 
-	if (w_health.n.on){
-		V_WriteTextColorDirect(1, 42, "HEALTH   %%", 7 << 8);
-		STlib_drawNumText(&(w_health.n), 8, 42);
+	if (w_health.n.on)
+	{
+		V_WriteTextColorDirect(1, 46, "HEALTH   %%", 7 << 8);
+		STlib_drawNumText(&(w_health.n), 8, 46);
 	}
 
-	if (w_armor.n.on){
-		V_WriteTextColorDirect(1, 44, "ARMOR    %%", 7 << 8);
-		STlib_drawNumText(&(w_armor.n), 8, 44);
+	if (w_armor.n.on)
+	{
+		V_WriteTextColorDirect(1, 47, "ARMOR    %%", 7 << 8);
+		STlib_drawNumText(&(w_armor.n), 8, 47);
 	}
 
-	if (w_ready.on){
-		V_WriteTextColorDirect(1, 46, "AMMO   ", 7 << 8);
-		STlib_drawNumText(&(w_ready), 8, 46);
+	if (w_ready.on)
+	{
+		V_WriteTextColorDirect(1, 48, "AMMO   ", 7 << 8);
+		STlib_drawNumText(&(w_ready), 8, 48);
 	}
 
-	if (w_ammo[0].on){
-		V_WriteTextColorDirect(67, 40, "BULL    /", 7 << 8);
-		STlib_drawNumText(&(w_ammo[0]), 72, 40);
-		STlib_drawNumText(&(w_maxammo[0]), 76, 40);
+	if (w_ammo[0].on)
+	{
+		V_WriteTextColorDirect(67, 45, "BULL    /", 7 << 8);
+		STlib_drawNumText(&(w_ammo[0]), 72, 45);
+		STlib_drawNumText(&(w_maxammo[0]), 76, 45);
 
-		V_WriteTextColorDirect(67, 42, "SHEL    /", 7 << 8);
-		STlib_drawNumText(&(w_ammo[1]), 72, 42);
-		STlib_drawNumText(&(w_maxammo[1]), 76, 42);
+		V_WriteTextColorDirect(67, 46, "SHEL    /", 7 << 8);
+		STlib_drawNumText(&(w_ammo[1]), 72, 46);
+		STlib_drawNumText(&(w_maxammo[1]), 76, 46);
 
-		V_WriteTextColorDirect(67, 44, "RCKT    /", 7 << 8);
-		STlib_drawNumText(&(w_ammo[2]), 72, 44);
-		STlib_drawNumText(&(w_maxammo[2]), 76, 44);
+		V_WriteTextColorDirect(67, 47, "RCKT    /", 7 << 8);
+		STlib_drawNumText(&(w_ammo[2]), 72, 47);
+		STlib_drawNumText(&(w_maxammo[2]), 76, 47);
 
-		V_WriteTextColorDirect(67, 46, "CELL    /", 7 << 8);
-		STlib_drawNumText(&(w_ammo[3]), 72, 46);
-		STlib_drawNumText(&(w_maxammo[3]), 76, 46);
+		V_WriteTextColorDirect(67, 48, "CELL    /", 7 << 8);
+		STlib_drawNumText(&(w_ammo[3]), 72, 48);
+		STlib_drawNumText(&(w_maxammo[3]), 76, 48);
 	}
 
-	if (w_keyboxes[0].on){
-		V_WriteTextColorDirect(1, 40, "KEYS   ", 7 << 8);
+	if ((st_faceindex - 3) % 8 == 0)
+	{
+		// LOOK RIGHT
+		V_WriteCharDirect(65, 45, 16);
+		V_WriteCharDirect(65, 46, 16);
+		V_WriteCharDirect(65, 47, 16);
+		V_WriteCharDirect(65, 48, 16);
+	}
+	else
+	{
+		if ((st_faceindex - 4) % 8 == 0)
+		{
+			// LOOK LEFT
+			V_WriteCharDirect(13, 45, 17);
+			V_WriteCharDirect(13, 46, 17);
+			V_WriteCharDirect(13, 47, 17);
+			V_WriteCharDirect(13, 48, 17);
+		}
+	}
 
-		switch(keyboxes[0]){
-			case -1:
-			V_WriteCharColorDirect(8, 40, 249, 7 << 8);
+	if (w_keyboxes[0].on)
+	{
+		V_WriteTextColorDirect(1, 45, "KEYS   ", 7 << 8);
+
+		switch (keyboxes[0])
+		{
+		case -1:
+			V_WriteCharColorDirect(8, 45, 249, 7 << 8);
 			break;
-			case 0:
-			V_WriteCharColorDirect(8, 40, 20, 1 << 8);
+		case 0:
+			V_WriteCharColorDirect(8, 45, 20, 1 << 8);
 			break;
-			case 3:
-			V_WriteCharColorDirect(8, 40, 2, 1 << 8);
+		case 3:
+			V_WriteCharColorDirect(8, 45, 2, 1 << 8);
 			break;
 		}
 
-		switch(keyboxes[1]){
-			case -1:
-			V_WriteCharColorDirect(9, 40, 249, 7 << 8);
+		switch (keyboxes[1])
+		{
+		case -1:
+			V_WriteCharColorDirect(9, 45, 249, 7 << 8);
 			break;
-			case 1:
-			V_WriteCharColorDirect(9, 40, 20, 14 << 8);
+		case 1:
+			V_WriteCharColorDirect(9, 45, 20, 14 << 8);
 			break;
-			case 4:
-			V_WriteCharColorDirect(9, 40, 2, 14 << 8);
+		case 4:
+			V_WriteCharColorDirect(9, 45, 2, 14 << 8);
 			break;
 		}
 
-		switch(keyboxes[2]){
-			case -1:
-			V_WriteCharColorDirect(10, 40, 249, 7 << 8);
+		switch (keyboxes[2])
+		{
+		case -1:
+			V_WriteCharColorDirect(10, 45, 249, 7 << 8);
 			break;
-			case 2:
-			V_WriteCharColorDirect(10, 40, 20, 4 << 8);
+		case 2:
+			V_WriteCharColorDirect(10, 45, 20, 4 << 8);
 			break;
-			case 5:
-			V_WriteCharColorDirect(10, 40, 2, 4 << 8);
+		case 5:
+			V_WriteCharColorDirect(10, 45, 2, 4 << 8);
 			break;
 		}
 	}
 }
 #endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void ST_drawWidgets(byte refresh)
 {
 	int i;
@@ -1064,7 +1121,9 @@ void ST_drawWidgets(byte refresh)
 	STlib_updateMultIcon(&w_keyboxes[1], refresh);
 	STlib_updateMultIcon(&w_keyboxes[2], refresh);
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void ST_Drawer(byte fullscreen, byte refresh)
 {
 	st_statusbaron = (!fullscreen) || automapactive;
@@ -1089,6 +1148,7 @@ void ST_Drawer(byte fullscreen, byte refresh)
 	else
 		ST_drawWidgets(0);
 }
+#endif
 
 void ST_loadGraphics(void)
 {
