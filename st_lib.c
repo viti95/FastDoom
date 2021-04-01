@@ -81,6 +81,7 @@ void STlib_drawNumText(st_number_t *n, int x, int y)
 }
 #endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void STlib_drawNum(st_number_t *n, byte refresh)
 {
     int num = *n->num;
@@ -135,14 +136,16 @@ void STlib_drawNum(st_number_t *n, byte refresh)
         V_DrawPatchScreen0(x, n->y, n->p[original - Mul10(num)]);
     } while (num);
 }
+#endif
 
-//
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void STlib_updateNum(st_number_t *n,
                      byte refresh)
 {
     if (*n->on)
         STlib_drawNum(n, refresh);
 }
+#endif
 
 //
 void STlib_initPercent(st_percent_t *p,
@@ -157,6 +160,7 @@ void STlib_initPercent(st_percent_t *p,
     p->p = percent;
 }
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void STlib_updatePercent(st_percent_t *per,
                          int refresh)
 {
@@ -165,6 +169,7 @@ void STlib_updatePercent(st_percent_t *per,
 
     STlib_updateNum(&per->n, refresh);
 }
+#endif
 
 void STlib_initMultIcon(st_multicon_t *i,
                         int x,
@@ -181,6 +186,7 @@ void STlib_initMultIcon(st_multicon_t *i,
     i->p = il;
 }
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void STlib_updateMultIcon(st_multicon_t *mi,
                           byte refresh)
 {
@@ -211,6 +217,7 @@ void STlib_updateMultIcon(st_multicon_t *mi,
         mi->oldinum = *mi->inum;
     }
 }
+#endif
 
 void STlib_initBinIcon(st_binicon_t *b,
                        int x,
@@ -224,6 +231,7 @@ void STlib_initBinIcon(st_binicon_t *b,
     b->p = i;
 }
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void STlib_updateBinIcon(st_binicon_t *bi,
                          byte refresh)
 {
@@ -239,3 +247,4 @@ void STlib_updateBinIcon(st_binicon_t *bi,
         }
     }
 }
+#endif

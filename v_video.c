@@ -33,7 +33,10 @@
 #include "vmode.h"
 
 byte screen0[SCREENWIDTH * SCREENHEIGHT];
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 byte screen4[SCREENWIDTH * 32];
+#endif
 
 int dirtybox[4];
 

@@ -1025,9 +1025,11 @@ void D_DoomMain(void)
     D_RedrawTitle();
     HU_Init();
 
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     printf("ST_Init: Init status bar.\n");
     D_RedrawTitle();
     ST_Init();
+    #endif
 
     // start the apropriate game based on parms
     p = M_CheckParm("-record");

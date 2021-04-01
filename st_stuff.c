@@ -252,8 +252,10 @@ static byte st_statusbaron;
 // !deathmatch && st_statusbaron
 static byte st_armson;
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 // main bar left
 static patch_t *sbar;
+#endif
 
 // 0-9, tall numbers
 static patch_t *tallnum[10];
@@ -402,9 +404,9 @@ cheatseq_t cheat_clev = {cheat_clev_seq, 0};
 //
 void ST_Stop(void);
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void ST_refreshBackground(void)
 {
-
 	if (st_statusbaron)
 	{
 		if (simpleStatusBar)
@@ -418,6 +420,7 @@ void ST_refreshBackground(void)
 		}
 	}
 }
+#endif
 
 // Respond to keyboard input events,
 //  intercept cheats.
@@ -1150,6 +1153,7 @@ void ST_Drawer(byte fullscreen, byte refresh)
 }
 #endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void ST_loadGraphics(void)
 {
 
@@ -1221,11 +1225,14 @@ void ST_loadGraphics(void)
 	faces[facenum++] = W_CacheLumpName("STFGOD0", PU_STATIC);
 	faces[facenum++] = W_CacheLumpName("STFDEAD0", PU_STATIC);
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void ST_loadData(void)
 {
 	ST_loadGraphics();
 }
+#endif
 
 void ST_unloadGraphics(void)
 {
@@ -1252,7 +1259,9 @@ void ST_unloadGraphics(void)
 	for (i = 0; i < NUMCARDS; i++)
 		Z_ChangeTag(keys[i], PU_CACHE);
 
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 	Z_ChangeTag(sbar, PU_CACHE);
+	#endif
 
 	for (i = 0; i < ST_NUMFACES; i++)
 		Z_ChangeTag(faces[i], PU_CACHE);
@@ -1472,7 +1481,9 @@ void ST_Stop(void)
 	st_stopped = 1;
 }
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void ST_Init(void)
 {
 	ST_loadData();
 }
+#endif

@@ -38,7 +38,10 @@
 // Screen 1 is an extra buffer.
 
 extern byte screen0[SCREENWIDTH * SCREENHEIGHT];
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 extern byte screen4[SCREENWIDTH * 32];
+#endif
 
 extern int dirtybox[4];
 
