@@ -7,6 +7,10 @@
 #define COLS 80
 #define ROWS 25
 
+#define EXE_DEBUG_ENABLED 0
+
+
+#if (EXE_DEBUG_ENABLED == 1)
 unsigned short *Scrn = (unsigned short *)0xB0000;
 int Curx, Cury = 0;
 unsigned short EmptySpace = COLOURS << 8 | 0x20;
@@ -138,3 +142,4 @@ void I_SetCursor(int x, int y){
     Curx = x;
     Cury = y;
 }
+#endif
