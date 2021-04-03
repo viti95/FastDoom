@@ -80,10 +80,6 @@ void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int de
     byte *src;
     byte *dest;
 
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        return;
-    #endif
-
     V_MarkRect(destx, desty, width, height);
 
     src = srcscrn + Mul320(srcy) + srcx;
@@ -101,10 +97,6 @@ void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int de
 void V_SetRect(byte color, int width, int height, int destx, int desty, byte *destscrn)
 {
     byte *dest;
-
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        return;
-    #endif
 
     V_MarkRect(destx, desty, width, height);
 

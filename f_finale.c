@@ -406,9 +406,6 @@ void F_TextWrite(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void F_TextWriteText(void)
 {
-	byte *src;
-	byte *dest;
-
 	int x, y, w;
 	int count;
 	char *ch;
@@ -416,7 +413,15 @@ void F_TextWriteText(void)
 	int cx;
 	int cy;
 
-	V_MarkRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
+	// erase the entire screen to a tiled background
+
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+	SetWords(textdestscreen, 0, 80 * 25);
+	#endif
+
+	#if (EXE_VIDEOMMODE == EXE_VIDEOMODE_80X50)
+	SetWords(textdestscreen, 0, 80 * 50);
+	#endif
 
 	// draw some of the text onto the screen
 	cx = 1;

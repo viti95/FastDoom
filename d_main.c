@@ -353,12 +353,19 @@ void D_Display(void)
 
     // menus go directly to the screen
     M_Drawer();  // menu is drawn even on top of everything
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-        ST_DrawerText8025();
+
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+        if (gamestate == GS_LEVEL){
+            #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+            ST_DrawerText8025();
+        #endif
+        #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+            ST_DrawerText8050();
+        #endif
+        }
     #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        ST_DrawerText8050();
-    #endif
+
+    
     NetUpdate(); // send out any new accumulation
 
     // normal update
