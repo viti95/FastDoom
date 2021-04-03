@@ -53,6 +53,7 @@ void F_StartCast(void);
 void F_CastTicker(void);
 byte F_CastResponder(event_t *ev);
 void F_CastDrawer(void);
+void F_CastDrawerText(void);
 
 int F_GetFileSize(char *filename)
 {
@@ -732,6 +733,7 @@ void F_CastPrint(char *text)
 //
 // F_CastDrawer
 //
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void F_CastDrawer(void)
 {
 	spritedef_t *sprdef;
@@ -757,6 +759,45 @@ void F_CastDrawer(void)
 	else
 		V_DrawPatchScreen0(160, 170, patch);
 }
+#endif
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+void F_CastDrawerText(void)
+{
+	spritedef_t *sprdef;
+	spriteframe_t *sprframe;
+	int lump;
+	patch_t *patch;
+
+	// erase the entire screen to a background
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+	V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
+	#endif
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+	V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
+	#endif
+
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+	V_WriteTextDirect(40 - strlen(castorder[castnum].name) / 2, 23, castorder[castnum].name);
+	#endif
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+	V_WriteTextDirect(40 - strlen(castorder[castnum].name) / 2, 48, castorder[castnum].name);
+	#endif
+
+	// draw the current frame in the middle of the screen
+	sprdef = &sprites[caststate->sprite];
+	sprframe = &sprdef->spriteframes[caststate->frame & FF_FRAMEMASK];
+	lump = sprframe->lump[0];
+
+	patch = W_CacheLumpNum(lump + firstspritelump, PU_CACHE);
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+	V_DrawPatchDirectText8025(160, 170, patch);
+	#endif
+	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+	V_DrawPatchDirectText8050(160, 170, patch);
+	#endif
+}
+#endif
 
 //
 // F_DrawPatchCol
@@ -852,7 +893,12 @@ void F_Drawer(void)
 {
 	if (finalestage == 2)
 	{
+		#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 		F_CastDrawer();
+		#endif
+		#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+		F_CastDrawerText();
+		#endif
 		return;
 	}
 
