@@ -416,13 +416,13 @@ void F_TextWriteText(void)
 
 	// erase the entire screen to a tiled background
 
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 	SetWords(textdestscreen, 0, 80 * 25);
-	#endif
+#endif
 
-	#if (EXE_VIDEOMMODE == EXE_VIDEOMODE_80X50)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 	SetWords(textdestscreen, 0, 80 * 50);
-	#endif
+#endif
 
 	// draw some of the text onto the screen
 	cx = 1;
@@ -769,20 +769,20 @@ void F_CastDrawerText(void)
 	int lump;
 	patch_t *patch;
 
-	// erase the entire screen to a background
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+// erase the entire screen to a background
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 	V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
-	#endif
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 	V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
-	#endif
+#endif
 
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 	V_WriteTextDirect(40 - strlen(castorder[castnum].name) / 2, 23, castorder[castnum].name);
-	#endif
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 	V_WriteTextDirect(40 - strlen(castorder[castnum].name) / 2, 48, castorder[castnum].name);
-	#endif
+#endif
 
 	// draw the current frame in the middle of the screen
 	sprdef = &sprites[caststate->sprite];
@@ -790,21 +790,17 @@ void F_CastDrawerText(void)
 	lump = sprframe->lump[0];
 
 	patch = W_CacheLumpNum(lump + firstspritelump, PU_CACHE);
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 	V_DrawPatchDirectText8025(160, 170, patch);
-	#endif
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 	V_DrawPatchDirectText8050(160, 170, patch);
-	#endif
+#endif
 }
 #endif
 
-//
-// F_DrawPatchCol
-//
-void F_DrawPatchCol(int x,
-					patch_t *patch,
-					int col)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+void F_DrawPatchCol(int x, patch_t *patch, int col)
 {
 	column_t *column;
 	byte *source;
@@ -830,10 +826,171 @@ void F_DrawPatchCol(int x,
 		column = (column_t *)((byte *)column + column->length + 4);
 	}
 }
+#endif
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+void F_DrawPatchColText8025(int x, patch_t *patch, int col)
+{
+	column_t *column;
+	byte *source;
+	unsigned short *desttop;
+	unsigned short *dest;
+	int count;
+	byte odd;
+	unsigned short vmem;
+
+	column = (column_t *)((byte *)patch + patch->columnofs[col]);
+	desttop = textdestscreen + x / 4;
+
+	// step through the posts in a column
+	while (column->topdelta != 0xff)
+	{
+		source = (byte *)column + 3;
+		odd = (column->topdelta / 4) % 2;
+		dest = desttop + Mul80(column->topdelta / 8);
+		count = column->length / 4;
+
+		while (count--)
+		{
+			vmem = *dest;
+
+			if (odd)
+			{
+				vmem = vmem & 0x0F00;
+				*dest = vmem | lut16colors[*source] << 12 | 223;
+
+				odd = 0;
+				dest += 80;
+			}
+			else
+			{
+				vmem = vmem & 0xF000;
+				*dest = vmem | lut16colors[*source] << 8 | 223;
+
+				odd = 1;
+			}
+
+			source += 4;
+		}
+		column = (column_t *)((byte *)column + column->length + 4);
+	}
+
+	desttop += 1;
+}
+#endif
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+void F_DrawPatchColText8050(int x, patch_t *patch, int col)
+{
+	column_t *column;
+	byte *source;
+	unsigned short *desttop;
+	unsigned short *dest;
+	int count;
+	unsigned short vmem;
+
+	column = (column_t *)((byte *)patch + patch->columnofs[col]);
+	desttop = textdestscreen + x / 4;
+
+	// step through the posts in a column
+	while (column->topdelta != 0xff)
+	{
+		source = (byte *)column + 3;
+		dest = desttop + Mul80(column->topdelta / 4);
+		count = column->length / 4;
+
+		while (count--)
+		{
+			*dest = lut16colors[*source] << 8 | 219;
+			source += 4;
+			dest += 80;
+		}
+		column = (column_t *)((byte *)column + column->length + 4);
+	}
+
+	desttop += 1;
+}
+#endif
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+void F_BunnyScrollText(void)
+{
+	int scrolled;
+	int x;
+	patch_t *p1;
+	patch_t *p2;
+	char name[10];
+	int stage;
+	static int laststage;
+
+	p1 = W_CacheLumpName("PFUB2", PU_LEVEL);
+	p2 = W_CacheLumpName("PFUB1", PU_LEVEL);
+
+	scrolled = 320 - (finalecount - 230) / 2;
+
+	if (scrolled > 320)
+		scrolled = 320;
+	else if (scrolled < 0)
+		scrolled = 0;
+
+	for (x = 0; x < SCREENWIDTH; x++)
+	{
+		if (x + scrolled < 320)
+		{
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+			F_DrawPatchColText8025(x, p1, x + scrolled);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+			F_DrawPatchColText8050(x, p1, x + scrolled);
+#endif
+		}
+		else
+		{
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+			F_DrawPatchColText8025(x, p2, x + scrolled - 320);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+			F_DrawPatchColText8050(x, p2, x + scrolled - 320);
+#endif
+		}
+	}
+
+	if (finalecount < 1130)
+		return;
+	if (finalecount < 1180)
+	{
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+		V_WriteTextDirect(37, 12, "THE END");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+		V_WriteTextDirect(37, 25, "THE END");
+#endif
+		laststage = 0;
+		return;
+	}
+
+	stage = (finalecount - 1180) / 5;
+	if (stage > 6)
+		stage = 6;
+	if (stage > laststage)
+	{
+		S_StartSound(NULL, sfx_pistol);
+		laststage = stage;
+	}
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+	V_WriteTextDirect(37, 12, "THE END");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+	V_WriteTextDirect(37, 25, "THE END");
+#endif
+}
+#endif
 
 //
 // F_BunnyScroll
 //
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void F_BunnyScroll(void)
 {
 	int scrolled;
@@ -885,6 +1042,7 @@ void F_BunnyScroll(void)
 	sprintf(name, "END%i", stage);
 	V_DrawPatchScreen0((SCREENWIDTH - 13 * 8) / 2, (SCREENHEIGHT - 8 * 8) / 2, W_CacheLumpName(name, PU_CACHE));
 }
+#endif
 
 //
 // F_Drawer
@@ -893,23 +1051,23 @@ void F_Drawer(void)
 {
 	if (finalestage == 2)
 	{
-		#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 		F_CastDrawer();
-		#endif
-		#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 		F_CastDrawerText();
-		#endif
+#endif
 		return;
 	}
 
 	if (!finalestage)
 	{
-		#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-			F_TextWriteText();
-		#endif
-		#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-			F_TextWrite();
-		#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+		F_TextWriteText();
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+		F_TextWrite();
+#endif
 	}
 	else
 	{
@@ -917,56 +1075,61 @@ void F_Drawer(void)
 		{
 		case 1:
 #if (EXE_VERSION < EXE_VERSION_ULTIMATE)
-			#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-				V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
-			#endif
-			#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-				V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
-			#endif
-			#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-				V_DrawPatchScreen0(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
-			#endif
-			
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+			V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+			V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+			V_DrawPatchScreen0(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+#endif
+
 			break;
 #else
-			#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-				V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
-			#endif
-			#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-				V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
-			#endif
-			#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-				V_DrawPatchScreen0(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
-			#endif
-			
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+			V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+			V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+			V_DrawPatchScreen0(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
+#endif
+
 			break;
 #endif
 		case 2:
-			#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-				V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
-			#endif
-			#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-				V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
-			#endif
-			#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-				V_DrawPatchScreen0(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
-			#endif
-			
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+			V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+			V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+			V_DrawPatchScreen0(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
+#endif
+
 			break;
 		case 3:
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 			F_BunnyScroll();
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+			F_BunnyScrollText();
+#endif
 			break;
 		case 4:
-			#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-				V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
-			#endif
-			#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-				V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
-			#endif
-			#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-				V_DrawPatchScreen0(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
-			#endif
-			
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+			V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+			V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+			V_DrawPatchScreen0(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
+#endif
+
 			break;
 		}
 	}
