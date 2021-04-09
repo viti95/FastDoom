@@ -1860,7 +1860,7 @@ byte M_Responder(event_t *ev)
     case KEY_DOWNARROW:
         do
         {
-            if ((gamemode == shareware || gamemode == retail) && currentMenu == &EpiDef)
+            if ((gamemode == shareware || gamemode == registered) && currentMenu == &EpiDef)
             {
                 if (itemOn + 1 > currentMenu->numitems - 2)
                     itemOn = 0;
@@ -1882,7 +1882,7 @@ byte M_Responder(event_t *ev)
     case KEY_UPARROW:
         do
         {
-            if ((gamemode == shareware || gamemode == retail) && currentMenu == &EpiDef)
+            if ((gamemode == shareware || gamemode == registered) && currentMenu == &EpiDef)
             {
                 if (!itemOn)
                     itemOn = currentMenu->numitems - 2;
