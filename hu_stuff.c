@@ -162,7 +162,6 @@ char *mapnames2[] = // DOOM 2 map names.
         HUSTR_31,
         HUSTR_32};
 
-#if (EXE_VERSION >= EXE_VERSION_FINAL)
 char *mapnamesp[] = // Plutonia WAD map names.
     {
         PHUSTR_1,
@@ -236,7 +235,6 @@ char *mapnamest[] = // TNT WAD map names.
         THUSTR_30,
         THUSTR_31,
         THUSTR_32};
-#endif
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void HU_Init(void)
@@ -285,16 +283,13 @@ void HU_Start(void)
                        hu_font,
                        HU_FONTSTART);
 
-    if (commercial)
+    if (gamemode == commercial)
     {
-#if (EXE_VERSION < EXE_VERSION_FINAL)
-        s = HU_TITLE2;
-#else
-        if (plutonia)
+        if (gamemission == pack_plut)
         {
             s = HU_TITLEP;
         }
-        else if (tnt)
+        else if (gamemission == pack_tnt)
         {
             s = HU_TITLET;
         }
@@ -302,7 +297,6 @@ void HU_Start(void)
         {
             s = HU_TITLE2;
         }
-#endif
     }
     else
     {

@@ -92,7 +92,7 @@ byte sendsave;  // send a save event next tic
 byte usergame;  // ok to save / end game
 
 byte timingdemo; // if true, exit with report on completion
-int starttime;      // for comparative timing purposes
+int starttime;   // for comparative timing purposes
 
 byte viewactive;
 
@@ -323,10 +323,9 @@ extern gamestate_t wipegamestate;
 void G_DoLoadLevel(void)
 {
 
-#if (EXE_GAME_VERSION >= EXE_VERSION_FINAL2)
     // DOOM determines the sky texture to be used
     // depending on the current episode, and the game version.
-    if (commercial)
+    if (gamemode == commercial)
     {
         skytexture = R_TextureNumForName("SKY3");
         if (gamemap < 12)
@@ -334,7 +333,6 @@ void G_DoLoadLevel(void)
         else if (gamemap < 21)
             skytexture = R_TextureNumForName("SKY2");
     }
-#endif
 
     if (wipegamestate == GS_LEVEL)
         wipegamestate = -1; // force a wipe
@@ -631,7 +629,7 @@ void G_ExitLevel(void)
 void G_SecretExitLevel(void)
 {
     // IF NO WOLF3D LEVELS, NO SECRET EXIT!
-    if ((commercial) && (W_GetNumForName("MAP31") < 0))
+    if ((gamemode == commercial) && (W_GetNumForName("MAP31") < 0))
         secretexit = 0;
     else
         secretexit = 1;
@@ -651,7 +649,7 @@ void G_DoCompleted(void)
     if (automapactive)
         AM_Stop();
 
-    if (!commercial)
+    if (!gamemode == commercial)
         switch (gamemap)
         {
         case 8:
@@ -667,7 +665,7 @@ void G_DoCompleted(void)
     wminfo.last = gamemap - 1;
 
     // wminfo.next is 0 biased, unlike gamemap
-    if (commercial)
+    if (gamemode == commercial)
     {
         if (secretexit)
             switch (gamemap)
@@ -720,7 +718,7 @@ void G_DoCompleted(void)
     wminfo.maxkills = totalkills;
     wminfo.maxitems = totalitems;
     wminfo.maxsecret = totalsecret;
-    if (commercial)
+    if (gamemode == commercial)
         wminfo.partime = Mul35(cpars[gamemap - 1]);
     else
         wminfo.partime = Mul35(pars[gameepisode][gamemap]);
@@ -748,7 +746,7 @@ void G_WorldDone(void)
     if (secretexit)
         players.didsecret = true;
 
-    if (commercial)
+    if (gamemode == commercial)
     {
         switch (gamemap)
         {
@@ -844,10 +842,10 @@ void G_DoLoadGame(void)
     if (setsizeneeded)
         R_ExecuteSetViewSize();
 
-    // draw the pattern into the back screen
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+// draw the pattern into the back screen
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     R_FillBackScreen();
-    #endif
+#endif
 }
 
 //
@@ -917,10 +915,10 @@ void G_DoSaveGame(void)
 
     Z_Free(savebuffer);
 
-    // draw the pattern into the back screen
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+// draw the pattern into the back screen
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     R_FillBackScreen();
-    #endif
+#endif
 }
 
 //
@@ -970,31 +968,29 @@ void G_InitNew(skill_t skill,
     if (skill > sk_nightmare)
         skill = sk_nightmare;
 
-#if (EXE_VERSION < EXE_VERSION_ULTIMATE)
     if (episode < 1)
-    {
         episode = 1;
-    }
-    if (episode > 3)
-    {
-        episode = 3;
-    }
-#else
-    if (episode == 0)
-    {
-        episode = 4;
-    }
-#endif
 
-    if (episode > 1 && shareware)
+    if (gamemode == retail)
     {
-        episode = 1;
+        if (episode > 4)
+            episode = 4;
+    }
+    else if (gamemode == shareware)
+    {
+        if (episode > 1)
+            episode = 1; // only start episode 1 on shareware
+    }
+    else
+    {
+        if (episode > 3)
+            episode = 3;
     }
 
     if (map < 1)
         map = 1;
 
-    if ((map > 9) && (!commercial))
+    if ((map > 9) && (gamemode != commercial))
         map = 9;
 
     prndindex = 0;
@@ -1036,7 +1032,7 @@ void G_InitNew(skill_t skill,
     viewactive = 1;
 
     // set the sky map for the episode
-    if (commercial)
+    if (gamemode == commercial)
     {
         skytexture = R_TextureNumForName("SKY3");
         if (gamemap < 12)

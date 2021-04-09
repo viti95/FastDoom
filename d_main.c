@@ -61,13 +61,8 @@
 
 #include "vmode.h"
 
-#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
 #define BGCOLOR 7
 #define FGCOLOR 8
-#else
-#define BGCOLOR 7
-#define FGCOLOR 4
-#endif
 
 //
 // D-DoomLoop()
@@ -137,14 +132,9 @@ byte advancedemo;
 
 boolean modifiedgame;
 
-boolean shareware;
-boolean registered;
-boolean commercial;
 boolean bfgedition;
-#if (EXE_VERSION >= EXE_VERSION_FINAL)
-boolean plutonia;
-boolean tnt;
-#endif
+gamemode_t gamemode = indetermined;
+gamemission_t gamemission = doom;
 
 char basedefault[12]; // default file
 
@@ -229,17 +219,17 @@ void D_Display(void)
     if (gamestate != wipegamestate && !noMelt)
     {
         wipe = true;
-        #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         wipe_StartScreen();
-        #endif
+#endif
     }
     else
         wipe = false;
 
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     if (gamestate == GS_LEVEL && gametic)
         HU_Erase();
-    #endif
+#endif
 
     // do buffered drawing
     switch (gamestate)
@@ -251,21 +241,21 @@ void D_Display(void)
         {
             // [crispy] update automap while playing
             R_RenderPlayerView(&players);
-            #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
             AM_Drawer();
-            #endif
+#endif
         }
 
-        #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
         ST_doPaletteStuff();
-        #endif
-        #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-            if (!automapactive || (automapactive && !fullscreen))
-            {
-                redrawsbar = wipe || (viewheight != 200 && fullscreen) || (inhelpscreensstate && !inhelpscreens); // just put away the help screen
-                ST_Drawer(viewheight == 200, redrawsbar);
-            }
-        #endif
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+        if (!automapactive || (automapactive && !fullscreen))
+        {
+            redrawsbar = wipe || (viewheight != 200 && fullscreen) || (inhelpscreensstate && !inhelpscreens); // just put away the help screen
+            ST_Drawer(viewheight == 200, redrawsbar);
+        }
+#endif
 
         fullscreen = viewheight == 200;
         break;
@@ -306,9 +296,9 @@ void D_Display(void)
     if (gamestate == GS_LEVEL && oldgamestate != GS_LEVEL)
     {
         viewactivestate = 0; // view was not active
-        #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-        R_FillBackScreen();  // draw the pattern into the back screen
-        #endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+        R_FillBackScreen(); // draw the pattern into the back screen
+#endif
     }
 
     // see if the border needs to be updated to the screen
@@ -318,9 +308,9 @@ void D_Display(void)
             borderdrawcount = 3;
         if (borderdrawcount)
         {
-            #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
             R_DrawViewBorder(); // erase old menu stuff
-            #endif
+#endif
             borderdrawcount--;
         }
     }
@@ -338,34 +328,34 @@ void D_Display(void)
         else
             y = viewwindowy + 4;
 
-        #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-            V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 4, "PAUSE");
-        #endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+        V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 4, "PAUSE");
+#endif
 
-        #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-            V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 2, "PAUSE");
-        #endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+        V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 2, "PAUSE");
+#endif
 
-        #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-            V_DrawPatchDirect(viewwindowx + (scaledviewwidth - 68) / 2, y, W_CacheLumpName("M_PAUSE", PU_CACHE));
-        #endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+        V_DrawPatchDirect(viewwindowx + (scaledviewwidth - 68) / 2, y, W_CacheLumpName("M_PAUSE", PU_CACHE));
+#endif
     }
 
     // menus go directly to the screen
-    M_Drawer();  // menu is drawn even on top of everything
+    M_Drawer(); // menu is drawn even on top of everything
 
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        if (gamestate == GS_LEVEL){
-            #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-            ST_DrawerText8025();
-        #endif
-        #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-            ST_DrawerText8050();
-        #endif
-        }
-    #endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    if (gamestate == GS_LEVEL)
+    {
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+        ST_DrawerText8025();
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+        ST_DrawerText8050();
+#endif
+    }
+#endif
 
-    
     NetUpdate(); // send out any new accumulation
 
     // normal update
@@ -375,14 +365,14 @@ void D_Display(void)
         return;
     }
 
-    // wipe update
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+// wipe update
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     wipe_EndScreen();
-    #endif
+#endif
 
     wipestart = ticcount - 1;
 
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     do
     {
         do
@@ -395,7 +385,7 @@ void D_Display(void)
         M_Drawer();       // menu is drawn even on top of wipes
         I_FinishUpdate(); // page flip or blit buffer
     } while (!done);
-    #endif
+#endif
 }
 
 //
@@ -463,15 +453,15 @@ void D_PageTicker(void)
 //
 void D_PageDrawer(void)
 {
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-        V_DrawPatchDirectText8025(0, 0, W_CacheLumpName(pagename, PU_CACHE));
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        V_DrawPatchDirectText8050(0, 0, W_CacheLumpName(pagename, PU_CACHE));
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-        V_DrawPatchScreen0(0, 0, W_CacheLumpName(pagename, PU_CACHE));
-    #endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+    V_DrawPatchDirectText8025(0, 0, W_CacheLumpName(pagename, PU_CACHE));
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    V_DrawPatchDirectText8050(0, 0, W_CacheLumpName(pagename, PU_CACHE));
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+    V_DrawPatchScreen0(0, 0, W_CacheLumpName(pagename, PU_CACHE));
+#endif
 }
 
 //
@@ -495,16 +485,19 @@ void D_DoAdvanceDemo(void)
     paused = 0;
     gameaction = ga_nothing;
 
-#if (EXE_VERSION == EXE_VERSION_ULTIMATE) || (EXE_VERSION == EXE_VERSION_FINAL)
-    demosequence = (demosequence + 1) % 7;
-#else
-    demosequence = (demosequence + 1) % 6;
-#endif
+    if (gamemode == retail)
+    {
+        demosequence = (demosequence + 1) % 7;
+    }
+    else
+    {
+        demosequence = (demosequence + 1) % 6;
+    }
 
     switch (demosequence)
     {
     case 0:
-        if (commercial)
+        if (gamemode == commercial)
             pagetic = 35 * 11;
         else
             pagetic = 170;
@@ -519,7 +512,7 @@ void D_DoAdvanceDemo(void)
             pagename = "TITLEPIC";
         }
 
-        if (commercial)
+        if (gamemode == commercial)
             S_ChangeMusic(mus_dm2ttl, false);
         else
             S_ChangeMusic(mus_intro, false);
@@ -537,7 +530,7 @@ void D_DoAdvanceDemo(void)
         break;
     case 4:
         gamestate = GS_DEMOSCREEN;
-        if (commercial)
+        if (gamemode == commercial)
         {
             pagetic = 35 * 11;
 
@@ -555,22 +548,23 @@ void D_DoAdvanceDemo(void)
         else
         {
             pagetic = 200;
-#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
-            pagename = "CREDIT";
-#else
-            pagename = "HELP2";
-#endif
+
+            if (gamemode == retail)
+            {
+                pagename = "CREDIT";
+            }
+            else
+            {
+                pagename = "HELP2";
+            }
         }
         break;
     case 5:
         G_DeferedPlayDemo("demo3");
         break;
-#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
-        // THE DEFINITIVE DOOM Special Edition demo
     case 6:
         G_DeferedPlayDemo("demo4");
         break;
-#endif
     }
 }
 
@@ -719,39 +713,48 @@ void IdentifyVersion(void)
 
     if (!access("doom2.wad", R_OK))
     {
-        commercial = true;
+        gamemode = commercial;
+        gamemission = doom2;
         D_AddFile("doom2.wad");
         return;
     }
 
-#if (EXE_VERSION >= EXE_VERSION_FINAL)
     if (!access("plutonia.wad", R_OK))
     {
-        commercial = true;
-        plutonia = true;
+        gamemode = commercial;
+        gamemission = pack_plut;
         D_AddFile("plutonia.wad");
         return;
     }
 
     if (!access("tnt.wad", R_OK))
     {
-        commercial = true;
-        tnt = true;
+        gamemode = commercial;
+        gamemission = pack_tnt;
         D_AddFile("tnt.wad");
         return;
     }
-#endif
 
     if (!access("doom.wad", R_OK))
     {
-        registered = true;
+        gamemode = registered;
+        gamemission = doom;
         D_AddFile("doom.wad");
+        return;
+    }
+
+    if (!access("doomu.wad", R_OK))
+    {
+        gamemode = retail;
+        gamemission = doom;
+        D_AddFile("doomu.wad");
         return;
     }
 
     if (!access("doom1.wad", R_OK))
     {
-        shareware = true;
+        gamemode = shareware;
+        gamemission = doom;
         D_AddFile("doom1.wad");
         return;
     }
@@ -782,12 +785,12 @@ void D_DoomMain(void)
     forceLowDetail = M_CheckParm("-forceLQ");
     forcePotatoDetail = M_CheckParm("-forcePQ");
 
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
     CGAcard = M_CheckParm("-cga");
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
     colorCorrection = M_CheckParm("-fixcolors");
-    #endif
+#endif
 
     lowSound = M_CheckParm("-lowsound");
     eightBitSound = M_CheckParm("-8bitsound");
@@ -812,56 +815,55 @@ void D_DoomMain(void)
             forceScreenSize = 11;
     }
 
-    if (!commercial)
+    switch (gamemode)
     {
-#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
+    case retail:
         sprintf(title,
                 "                         "
                 "The Ultimate DOOM Startup v%i.%i"
                 "                        ",
                 VERSION / 100, VERSION % 100);
-#else
+        break;
+    case shareware:
+        sprintf(title,
+                "                            "
+                "DOOM Shareware Startup v%i.%i"
+                "                           ",
+                VERSION / 100, VERSION % 100);
+        break;
+    case registered:
         sprintf(title,
                 "                          "
                 "DOOM System Startup v%i.%i"
                 "                          ",
                 VERSION / 100, VERSION % 100);
-#endif
-    }
-    else
-    {
-#if (EXE_VERSION >= EXE_VERSION_FINAL)
-        if (plutonia)
+        break;
+    case commercial:
+        switch (gamemission)
         {
-            sprintf(title,
-                    "                   "
-                    "DOOM 2: Plutonia Experiment v%i.%i"
-                    "                           ",
-                    VERSION / 100, VERSION % 100);
-        }
-        else if (tnt)
-        {
-            sprintf(title,
-                    "                     "
-                    "DOOM 2: TNT - Evilution v%i.%i"
-                    "                           ",
-                    VERSION / 100, VERSION % 100);
-        }
-        else
-        {
+        case doom2:
             sprintf(title,
                     "                         "
                     "DOOM 2: Hell on Earth v%i.%i"
                     "                           ",
                     VERSION / 100, VERSION % 100);
+            break;
+        case pack_plut:
+            sprintf(title,
+                    "                   "
+                    "DOOM 2: Plutonia Experiment v%i.%i"
+                    "                           ",
+                    VERSION / 100, VERSION % 100);
+            break;
+        case pack_tnt:
+            sprintf(title,
+                    "                     "
+                    "DOOM 2: TNT - Evilution v%i.%i"
+                    "                           ",
+                    VERSION / 100, VERSION % 100);
+            break;
         }
-#else
-        sprintf(title,
-                "                         "
-                "DOOM 2: Hell on Earth v%i.%i"
-                "                           ",
-                VERSION / 100, VERSION % 100);
-#endif
+        break;
     }
 
     regs.w.ax = 3;
@@ -936,7 +938,7 @@ void D_DoomMain(void)
     p = M_CheckParm("-warp");
     if (p && p < myargc - 1)
     {
-        if (commercial)
+        if (gamemode == commercial)
             startmap = atoi(myargv[p + 1]);
         else
         {
@@ -990,9 +992,9 @@ void D_DoomMain(void)
     M_CheckParmDisable("-novsync", &waitVsync);
     M_CheckParmDisable("-nofps", &showFPS);
 
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        noMelt = 1;
-    #endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    noMelt = 1;
+#endif
 
     printf("Z_Init: Init zone memory allocation daemon. \n");
     Z_Init();
@@ -1002,17 +1004,17 @@ void D_DoomMain(void)
 
     // Check and print which version is executed.
 
-    if (registered)
+    if (gamemode == registered)
     {
         printf("\tregistered version.\n");
         D_RedrawTitle();
     }
-    if (shareware)
+    if (gamemode == shareware)
     {
         printf("\tshareware version.\n");
         D_RedrawTitle();
     }
-    if (commercial)
+    if (gamemode == commercial)
     {
         printf("\tcommercial version.\n");
         D_RedrawTitle();
@@ -1042,17 +1044,17 @@ void D_DoomMain(void)
     D_RedrawTitle();
     S_Init(sfxVolume * 8, musicVolume * 8);
 
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     printf("HU_Init: Setting up heads up display.\n");
     D_RedrawTitle();
     HU_Init();
-    #endif
+#endif
 
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     printf("ST_Init: Init status bar.\n");
     D_RedrawTitle();
     ST_Init();
-    #endif
+#endif
 
     // start the apropriate game based on parms
     p = M_CheckParm("-record");

@@ -93,11 +93,9 @@ extern skill_t gameskill;
 extern int gameepisode;
 extern int gamemap;
 
-extern boolean shareware;
-extern boolean registered;
-extern boolean commercial;
-extern boolean plutonia;
-extern boolean tnt;
+extern boolean bfgedition;
+extern gamemode_t gamemode;
+extern gamemission_t gamemission;
 
 // Nightmare mode flag, single player.
 extern boolean respawnmonsters;
@@ -233,10 +231,7 @@ extern byte autorun;
 
 extern char *mapnames[];
 extern char *mapnames2[];
-
-#if (EXE_VERSION >= EXE_VERSION_FINAL)
 extern char *mapnamesp[];
 extern char *mapnamest[];
-#endif
 
 #endif

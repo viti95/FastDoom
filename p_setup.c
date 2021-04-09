@@ -287,7 +287,7 @@ void P_LoadThings(int lump)
         spawn = 1;
 
         // Do not spawn cool, new monsters if !commercial
-        if (!commercial)
+        if (gamemode != commercial)
         {
             switch (mt->type)
             {
@@ -560,7 +560,7 @@ void P_SetupLevel(int episode,
     P_InitThinkers();
 
     // find map name
-    if (commercial)
+    if (gamemode == commercial)
     {
         if (map < 10)
             sprintf(lumpname, "map0%i", map);

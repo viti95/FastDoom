@@ -217,11 +217,11 @@ byte P_CheckAmmo(player_t *player)
     // Preferences are set here.
     do
     {
-        if (player->weaponowned[wp_plasma] && player->ammo[am_cell] && (!shareware))
+        if (player->weaponowned[wp_plasma] && player->ammo[am_cell] && (gamemode != shareware))
         {
             player->pendingweapon = wp_plasma;
         }
-        else if (player->weaponowned[wp_supershotgun] && player->ammo[am_shell] > 2 && (commercial))
+        else if (player->weaponowned[wp_supershotgun] && player->ammo[am_shell] > 2 && (gamemode == commercial))
         {
             player->pendingweapon = wp_supershotgun;
         }
@@ -245,7 +245,7 @@ byte P_CheckAmmo(player_t *player)
         {
             player->pendingweapon = wp_missile;
         }
-        else if (player->weaponowned[wp_bfg] && player->ammo[am_cell] > 40 && (!shareware))
+        else if (player->weaponowned[wp_bfg] && player->ammo[am_cell] > 40 && (gamemode != shareware))
         {
             player->pendingweapon = wp_bfg;
         }

@@ -58,11 +58,7 @@
 // This is supposedly ignored for commercial
 //  release (aka DOOM II), which had 34 maps
 //  in one episode. So there.
-#if (EXE_VERSION < EXE_VERSION_ULTIMATE)
-#define NUMEPISODES 3
-#else
 #define NUMEPISODES 4
-#endif
 #define NUMMAPS 9
 #define NUMCMAPS 32
 
@@ -341,16 +337,16 @@ byte *screen1;
 
 void WI_slamBackground(void)
 {
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-		V_DrawPatchDirectText8025(0, 0, W_CacheLumpName(bgname, PU_CACHE));
-	#endif
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-		V_DrawPatchDirectText8050(0, 0, W_CacheLumpName(bgname, PU_CACHE));
-	#endif
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-		CopyDWords(screen1, screen0, (SCREENWIDTH * SCREENHEIGHT) / 4);
-		V_MarkRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
-	#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+	V_DrawPatchDirectText8025(0, 0, W_CacheLumpName(bgname, PU_CACHE));
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+	V_DrawPatchDirectText8050(0, 0, W_CacheLumpName(bgname, PU_CACHE));
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+	CopyDWords(screen1, screen0, (SCREENWIDTH * SCREENHEIGHT) / 4);
+	V_MarkRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
+#endif
 }
 
 // Draws "<Levelname> Finished!"
@@ -358,131 +354,121 @@ void WI_drawLF(void)
 {
 	int y = WI_TITLEY;
 
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 	char *titlecurrent;
 	char *titlenext;
-	#endif
-
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-		if (commercial)
-		{
-#if (EXE_VERSION < EXE_VERSION_FINAL)
-			titlecurrent = mapnames2[gamemap - 1];
-			titlenext = mapnames2[gamemap];
-#else
-			if (plutonia)
-			{
-				titlecurrent = mapnamesp[gamemap - 1];
-				titlenext = mapnamesp[gamemap];
-			}
-			else if (tnt)
-			{
-				titlecurrent = mapnamest[gamemap - 1];
-				titlenext = mapnamest[gamemap];
-			}
-			else
-			{
-				titlecurrent = mapnames2[gamemap - 1];
-				titlenext = mapnames2[gamemap];
-			}
 #endif
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+	if (gamemode == commercial)
+	{
+		if (gamemission == pack_plut)
+		{
+			titlecurrent = mapnamesp[gamemap - 1];
+			titlenext = mapnamesp[gamemap];
+		}
+		else if (gamemission == pack_tnt)
+		{
+			titlecurrent = mapnamest[gamemap - 1];
+			titlenext = mapnamest[gamemap];
 		}
 		else
 		{
-			titlecurrent = mapnames[(gameepisode - 1) * 9 + gamemap - 1];
-			titlenext = mapnames[(gameepisode - 1) * 9 + gamemap];
+			titlecurrent = mapnames2[gamemap - 1];
+			titlenext = mapnames2[gamemap];
 		}
-	#endif
+	}
+	else
+	{
+		titlecurrent = mapnames[(gameepisode - 1) * 9 + gamemap - 1];
+		titlenext = mapnames[(gameepisode - 1) * 9 + gamemap];
+	}
+#endif
 
 	// draw <LevelName>
 
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-		V_WriteTextDirect((SCREENWIDTH - lnames[wbs->last]->width) / 8, y / 8, titlecurrent);
-	#endif
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-		V_WriteTextDirect((SCREENWIDTH - lnames[wbs->last]->width) / 8, y / 4, titlecurrent);
-	#endif
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-		V_DrawPatchScreen0((SCREENWIDTH - lnames[wbs->last]->width) / 2, y, lnames[wbs->last]);
-	#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+	V_WriteTextDirect((SCREENWIDTH - lnames[wbs->last]->width) / 8, y / 8, titlecurrent);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+	V_WriteTextDirect((SCREENWIDTH - lnames[wbs->last]->width) / 8, y / 4, titlecurrent);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+	V_DrawPatchScreen0((SCREENWIDTH - lnames[wbs->last]->width) / 2, y, lnames[wbs->last]);
+#endif
 
 	// draw "Finished!"
 	y += (5 * lnames[wbs->last]->height) / 4;
 
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-		V_WriteTextDirect((SCREENWIDTH - finished->width) / 8, y / 8, "FINISHED");
-	#endif
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-		V_WriteTextDirect((SCREENWIDTH - finished->width) / 8, y / 4, "FINISHED");
-	#endif
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-		V_DrawPatchScreen0((SCREENWIDTH - finished->width) / 2, y, finished);
-	#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+	V_WriteTextDirect((SCREENWIDTH - finished->width) / 8, y / 8, "FINISHED");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+	V_WriteTextDirect((SCREENWIDTH - finished->width) / 8, y / 4, "FINISHED");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+	V_DrawPatchScreen0((SCREENWIDTH - finished->width) / 2, y, finished);
+#endif
 }
 
 // Draws "Entering <LevelName>"
 void WI_drawEL(void)
 {
 	int y = WI_TITLEY;
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 	char *titlecurrent;
 	char *titlenext;
-	#endif
-
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-		if (commercial)
-		{
-#if (EXE_VERSION < EXE_VERSION_FINAL)
-			titlecurrent = mapnames2[gamemap - 1];
-			titlenext = mapnames2[gamemap];
-#else
-			if (plutonia)
-			{
-				titlecurrent = mapnamesp[gamemap - 1];
-				titlenext = mapnamesp[gamemap];
-			}
-			else if (tnt)
-			{
-				titlecurrent = mapnamest[gamemap - 1];
-				titlenext = mapnamest[gamemap];
-			}
-			else
-			{
-				titlecurrent = mapnames2[gamemap - 1];
-				titlenext = mapnames2[gamemap];
-			}
 #endif
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+	if (gamemode == commercial)
+	{
+		if (gamemission == pack_plut)
+		{
+			titlecurrent = mapnamesp[gamemap - 1];
+			titlenext = mapnamesp[gamemap];
+		}
+		else if (gamemission == pack_tnt)
+		{
+			titlecurrent = mapnamest[gamemap - 1];
+			titlenext = mapnamest[gamemap];
 		}
 		else
 		{
-			titlecurrent = mapnames[(gameepisode - 1) * 9 + gamemap - 1];
-			titlenext = mapnames[(gameepisode - 1) * 9 + gamemap];
+			titlecurrent = mapnames2[gamemap - 1];
+			titlenext = mapnames2[gamemap];
 		}
-	#endif
+	}
+	else
+	{
+		titlecurrent = mapnames[(gameepisode - 1) * 9 + gamemap - 1];
+		titlenext = mapnames[(gameepisode - 1) * 9 + gamemap];
+	}
+#endif
 
-	// draw "Entering"
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-		V_WriteTextDirect((SCREENWIDTH - entering->width) / 8, y / 8, "ENTERING");
-	#endif
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-		V_WriteTextDirect((SCREENWIDTH - entering->width) / 8, y / 4, "ENTERING");
-	#endif
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-		V_DrawPatchScreen0((SCREENWIDTH - entering->width) / 2, y, entering);
-	#endif
+// draw "Entering"
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+	V_WriteTextDirect((SCREENWIDTH - entering->width) / 8, y / 8, "ENTERING");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+	V_WriteTextDirect((SCREENWIDTH - entering->width) / 8, y / 4, "ENTERING");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+	V_DrawPatchScreen0((SCREENWIDTH - entering->width) / 2, y, entering);
+#endif
 
 	// draw level
 	y += (5 * lnames[wbs->next]->height) / 4;
 
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-		V_WriteTextDirect((SCREENWIDTH - lnames[wbs->next]->width) / 8, y / 8, titlenext);
-	#endif
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-		V_WriteTextDirect((SCREENWIDTH - lnames[wbs->next]->width) / 8, y / 4, titlenext);
-	#endif
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-		V_DrawPatchScreen0((SCREENWIDTH - lnames[wbs->next]->width) / 2, y, lnames[wbs->next]);
-	#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+	V_WriteTextDirect((SCREENWIDTH - lnames[wbs->next]->width) / 8, y / 8, titlenext);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+	V_WriteTextDirect((SCREENWIDTH - lnames[wbs->next]->width) / 8, y / 4, titlenext);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+	V_DrawPatchScreen0((SCREENWIDTH - lnames[wbs->next]->width) / 2, y, lnames[wbs->next]);
+#endif
 }
 
 void WI_drawOnLnode(int n,
@@ -525,13 +511,11 @@ void WI_initAnimatedBack(void)
 	int i;
 	anim_t *a;
 
-	if (commercial)
+	if (gamemode == commercial)
 		return;
 
-#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
 	if (wbs->epsd > 2)
 		return;
-#endif
 
 	for (i = 0; i < NUMANIMS[wbs->epsd]; i++)
 	{
@@ -553,13 +537,11 @@ void WI_updateAnimatedBack(void)
 	int i;
 	anim_t *a;
 
-	if (commercial)
+	if (gamemode == commercial)
 		return;
 
-#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
 	if (wbs->epsd > 2)
 		return;
-#endif
 
 	for (i = 0; i < NUMANIMS[wbs->epsd]; i++)
 	{
@@ -594,13 +576,11 @@ void WI_drawAnimatedBack(void)
 	int i;
 	anim_t *a;
 
-	if (commercial)
+	if (gamemode == commercial)
 		return;
 
-#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
 	if (wbs->epsd > 2)
 		return;
-#endif
 
 	for (i = 0; i < NUMANIMS[wbs->epsd]; i++)
 	{
@@ -621,46 +601,46 @@ void WI_drawAnimatedBack(void)
 int WI_drawNumTwoDigits(int x, int y, int n)
 {
 
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-		int fontwidth = num[0]->width;
-		char strnum[4];
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+	int fontwidth = num[0]->width;
+	char strnum[4];
 
-		sprintf(strnum, "%i", n);
-		V_WriteTextDirect(x / 4, y / 8, strnum);
+	sprintf(strnum, "%i", n);
+	V_WriteTextDirect(x / 4, y / 8, strnum);
 
-		x -= 2 * fontwidth;
-		return x;
-	#endif
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-		int fontwidth = num[0]->width;
-		char strnum[4];
+	x -= 2 * fontwidth;
+	return x;
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+	int fontwidth = num[0]->width;
+	char strnum[4];
 
-		sprintf(strnum, "%i", n);
-		V_WriteTextDirect(x / 4, y / 4, strnum);
+	sprintf(strnum, "%i", n);
+	V_WriteTextDirect(x / 4, y / 4, strnum);
 
-		x -= 2 * fontwidth;
-		return x;
-	#endif
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-		int original;
-		int fontwidth = num[0]->width;
+	x -= 2 * fontwidth;
+	return x;
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+	int original;
+	int fontwidth = num[0]->width;
 
-		// if non-number, do not draw it
-		if (n == 1994)
-			return 0;
+	// if non-number, do not draw it
+	if (n == 1994)
+		return 0;
 
-		original = n;
-		n = Div10(n);
-		x -= fontwidth;
-		V_DrawPatchScreen0(x, y, num[original - Mul10(n)]);
+	original = n;
+	n = Div10(n);
+	x -= fontwidth;
+	V_DrawPatchScreen0(x, y, num[original - Mul10(n)]);
 
-		original = n;
-		n = Div10(n);
-		x -= fontwidth;
-		V_DrawPatchScreen0(x, y, num[original - Mul10(n)]);
+	original = n;
+	n = Div10(n);
+	x -= fontwidth;
+	V_DrawPatchScreen0(x, y, num[original - Mul10(n)]);
 
-		return x;
-	#endif
+	return x;
+#endif
 }
 
 int WI_drawNum(int x, int y, int n)
@@ -687,25 +667,25 @@ int WI_drawNum(int x, int y, int n)
 
 void WI_drawPercent(int x, int y, int p)
 {
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 	char strnum[4];
-	#endif
+#endif
 
 	if (p < 0)
 		return;
 
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-		sprintf(strnum, "%i%%", p);
-		V_WriteTextDirect(x / 2, y / 8 - 1, strnum);
-	#endif
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-		sprintf(strnum, "%i%%", p);
-		V_WriteTextDirect(x / 2, y / 4 - 1, strnum);
-	#endif
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-		V_DrawPatchScreen0(x, y, percent);
-		WI_drawNum(x, y, p);
-	#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+	sprintf(strnum, "%i%%", p);
+	V_WriteTextDirect(x / 2, y / 8 - 1, strnum);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+	sprintf(strnum, "%i%%", p);
+	V_WriteTextDirect(x / 2, y / 4 - 1, strnum);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+	V_DrawPatchScreen0(x, y, percent);
+	WI_drawNum(x, y, p);
+#endif
 }
 
 //
@@ -735,16 +715,17 @@ void WI_drawTime(int x,
 			div *= 60;
 
 			// draw
-			if (div == 60 || t / div){
-				#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-					V_WriteTextDirect(x / 4, y / 8, ":");
-				#endif
-				#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-					V_WriteTextDirect(x / 4, y / 4, ":");
-				#endif
-				#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-					V_DrawPatchScreen0(x, y, colon);
-				#endif
+			if (div == 60 || t / div)
+			{
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+				V_WriteTextDirect(x / 4, y / 8, ":");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+				V_WriteTextDirect(x / 4, y / 4, ":");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+				V_DrawPatchScreen0(x, y, colon);
+#endif
 			}
 		} while (t / div);
 	}
@@ -770,7 +751,7 @@ void WI_unloadData(void)
 	for (i = 0; i < 10; i++)
 		Z_ChangeTag(num[i], PU_CACHE);
 
-	if (commercial)
+	if (gamemode == commercial)
 	{
 		for (i = 0; i < NUMCMAPS; i++)
 			Z_ChangeTag(lnames[i], PU_CACHE);
@@ -784,9 +765,8 @@ void WI_unloadData(void)
 
 		for (i = 0; i < NUMMAPS; i++)
 			Z_ChangeTag(lnames[i], PU_CACHE);
-#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
+
 		if (wbs->epsd < 3)
-#endif
 		{
 			for (j = 0; j < NUMANIMS[wbs->epsd]; j++)
 			{
@@ -798,9 +778,9 @@ void WI_unloadData(void)
 	}
 
 	Z_Free(lnames);
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 	Z_Free(screen1);
-	#endif
+#endif
 
 	Z_ChangeTag(percent, PU_CACHE);
 	Z_ChangeTag(colon, PU_CACHE);
@@ -858,15 +838,13 @@ void WI_drawShowNextLoc(void)
 	// draw animated background
 	WI_drawAnimatedBack();
 
-	if (!commercial)
+	if (gamemode != commercial)
 	{
-#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
 		if (wbs->epsd > 2)
 		{
 			WI_drawEL();
 			return;
 		}
-#endif
 
 		last = (wbs->last == 8) ? wbs->next - 1 : wbs->last;
 
@@ -884,7 +862,7 @@ void WI_drawShowNextLoc(void)
 	}
 
 	// draws which level you are entering..
-	if ((!commercial) || wbs->next != 30)
+	if ((gamemode != commercial) || wbs->next != 30)
 		WI_drawEL();
 }
 
@@ -1017,7 +995,7 @@ void WI_updateStats(void)
 		{
 			S_StartSound(0, sfx_sgcock);
 
-			if (commercial)
+			if (gamemode == commercial)
 				WI_initNoState();
 			else
 				WI_initShowNextLoc();
@@ -1047,67 +1025,65 @@ void WI_drawStats(void)
 
 	WI_drawLF();
 
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-		V_WriteTextDirect(SP_STATSX / 2, SP_STATSY / 8, "KILLS:");
-	#endif
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-		V_WriteTextDirect(SP_STATSX / 2, SP_STATSY / 4, "KILLS:");
-	#endif
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-		V_DrawPatchScreen0(SP_STATSX, SP_STATSY, kills);
-	#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+	V_WriteTextDirect(SP_STATSX / 2, SP_STATSY / 8, "KILLS:");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+	V_WriteTextDirect(SP_STATSX / 2, SP_STATSY / 4, "KILLS:");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+	V_DrawPatchScreen0(SP_STATSX, SP_STATSY, kills);
+#endif
 
 	WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY, cnt_kills);
 
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-		V_WriteTextDirect(SP_STATSX / 2, (SP_STATSY + lh) / 8, "ITEMS:");
-	#endif
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-		V_WriteTextDirect(SP_STATSX / 2, (SP_STATSY + lh) / 4, "ITEMS:");
-	#endif
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-		V_DrawPatchScreen0(SP_STATSX, SP_STATSY + lh, items);
-	#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+	V_WriteTextDirect(SP_STATSX / 2, (SP_STATSY + lh) / 8, "ITEMS:");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+	V_WriteTextDirect(SP_STATSX / 2, (SP_STATSY + lh) / 4, "ITEMS:");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+	V_DrawPatchScreen0(SP_STATSX, SP_STATSY + lh, items);
+#endif
 
 	WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY + lh, cnt_items);
 
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-		V_WriteTextDirect(SP_STATSX / 2, (SP_STATSY + 2 * lh) / 8, "SECRET:");
-	#endif
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-		V_WriteTextDirect(SP_STATSX / 2, (SP_STATSY + 2 * lh) / 4, "SECRET:");
-	#endif
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-		V_DrawPatchScreen0(SP_STATSX, SP_STATSY + 2 * lh, sp_secret);
-	#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+	V_WriteTextDirect(SP_STATSX / 2, (SP_STATSY + 2 * lh) / 8, "SECRET:");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+	V_WriteTextDirect(SP_STATSX / 2, (SP_STATSY + 2 * lh) / 4, "SECRET:");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+	V_DrawPatchScreen0(SP_STATSX, SP_STATSY + 2 * lh, sp_secret);
+#endif
 	WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY + 2 * lh, cnt_secret);
 
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-		V_WriteTextDirect(SP_TIMEX / 2, SP_TIMEY / 8, "TIME:");
-	#endif
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-		V_WriteTextDirect(SP_TIMEX / 2, SP_TIMEY / 4, "TIME:");
-	#endif
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-		V_DrawPatchScreen0(SP_TIMEX, SP_TIMEY, time);
-	#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+	V_WriteTextDirect(SP_TIMEX / 2, SP_TIMEY / 8, "TIME:");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+	V_WriteTextDirect(SP_TIMEX / 2, SP_TIMEY / 4, "TIME:");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+	V_DrawPatchScreen0(SP_TIMEX, SP_TIMEY, time);
+#endif
 	WI_drawTime(SCREENWIDTH / 2 - SP_TIMEX, SP_TIMEY, cnt_time);
 
-#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
 	if (wbs->epsd < 3)
-#endif
 	{
-		#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-			V_WriteTextDirect((SCREENWIDTH / 2 + SP_TIMEX) / 4, SP_TIMEY / 8, "PAR:");
-		#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+		V_WriteTextDirect((SCREENWIDTH / 2 + SP_TIMEX) / 4, SP_TIMEY / 8, "PAR:");
+#endif
 
-		#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-			V_WriteTextDirect((SCREENWIDTH / 2 + SP_TIMEX) / 4, SP_TIMEY / 4, "PAR:");
-		#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+		V_WriteTextDirect((SCREENWIDTH / 2 + SP_TIMEX) / 4, SP_TIMEY / 4, "PAR:");
+#endif
 
-		#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-			V_DrawPatchScreen0(SCREENWIDTH / 2 + SP_TIMEX, SP_TIMEY, par);
-		#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+		V_DrawPatchScreen0(SCREENWIDTH / 2 + SP_TIMEX, SP_TIMEY, par);
+#endif
 
 		WI_drawTime(SCREENWIDTH - SP_TIMEX, SP_TIMEY, cnt_par);
 	}
@@ -1148,7 +1124,7 @@ void WI_Ticker(void)
 	if (bcnt == 1)
 	{
 		// intermission music
-		if (commercial)
+		if (gamemode == commercial)
 			S_ChangeMusic(mus_dm2int, true);
 		else
 			S_ChangeMusic(mus_inter, true);
@@ -1179,7 +1155,7 @@ void WI_loadData(void)
 	anim_t *a;
 	char name[9];
 
-	if (commercial)
+	if (gamemode == commercial)
 	{
 		strcpy(name, "INTERPIC");
 	}
@@ -1188,26 +1164,27 @@ void WI_loadData(void)
 		sprintf(name, "WIMAP%d", wbs->epsd);
 	}
 
-#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
-	if (wbs->epsd == 3)
+	if (gamemode == retail)
 	{
-		strcpy(name, "INTERPIC");
+		if (wbs->epsd == 3)
+		{
+			strcpy(name, "INTERPIC");
+		}
 	}
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+	strcpy(bgname, name);
 #endif
 
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-		strcpy(bgname, name);
-	#endif
-
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 	screen1 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
 
 	// background
 	bg = W_CacheLumpName(name, PU_CACHE);
 	V_DrawPatch(0, 0, screen1, bg);
-	#endif
+#endif
 
-	if (commercial)
+	if (gamemode == commercial)
 	{
 		lnames = (patch_t **)Z_MallocUnowned(sizeof(patch_t *) * NUMCMAPS, PU_STATIC);
 		for (i = 0; i < NUMCMAPS; i++)
@@ -1234,9 +1211,7 @@ void WI_loadData(void)
 		// splat
 		splat = W_CacheLumpName("WISPLAT", PU_STATIC);
 
-#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
 		if (wbs->epsd < 3)
-#endif
 		{
 			for (j = 0; j < NUMANIMS[wbs->epsd]; j++)
 			{

@@ -100,9 +100,9 @@ void P_InitSwitchList(void)
 
 	episode = 1;
 
-	if (registered)
+	if (gamemode == registered)
 		episode = 2;
-	else if (commercial)
+	else if (gamemode == commercial)
 		episode = 3;
 
 	for (index = 0, i = 0; i < MAXSWITCHES; i++)

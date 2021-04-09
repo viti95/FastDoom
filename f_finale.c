@@ -109,42 +109,9 @@ void F_StartFinale(void)
 	viewactive = 0;
 	automapactive = 0;
 
-	if (commercial)
+	if (gamemode == commercial)
 	{
-#if (EXE_VERSION < EXE_VERSION_FINAL)
-		// DOOM II and missions packs with E1, M34
-		switch (gamemap)
-		{
-		case 6:
-			finaleflat = "SLIME16";
-			F_LoadFinaleText("INTER\\C1.TXT");
-			break;
-		case 11:
-			finaleflat = "RROCK14";
-			F_LoadFinaleText("INTER\\C2.TXT");
-			break;
-		case 20:
-			finaleflat = "RROCK07";
-			F_LoadFinaleText("INTER\\C3.TXT");
-			break;
-		case 30:
-			finaleflat = "RROCK17";
-			F_LoadFinaleText("INTER\\C4.TXT");
-			break;
-		case 15:
-			finaleflat = "RROCK13";
-			F_LoadFinaleText("INTER\\C5.TXT");
-			break;
-		case 31:
-			finaleflat = "RROCK19";
-			F_LoadFinaleText("INTER\\C6.TXT");
-			break;
-		default:
-			// Ouch.
-			break;
-		}
-#else
-		if (plutonia)
+		if (gamemission == pack_plut)
 		{
 			switch (gamemap)
 			{
@@ -177,7 +144,7 @@ void F_StartFinale(void)
 				break;
 			}
 		}
-		else if (tnt)
+		else if (gamemission == pack_tnt)
 		{
 			switch (gamemap)
 			{
@@ -244,7 +211,6 @@ void F_StartFinale(void)
 				break;
 			}
 		}
-#endif
 		finalemusic = mus_read_m;
 	}
 	else
@@ -264,12 +230,10 @@ void F_StartFinale(void)
 			finaleflat = "MFLR8_4";
 			F_LoadFinaleText("INTER\\E3.TXT");
 			break;
-#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
 		case 4:
 			finaleflat = "MFLR8_3";
 			F_LoadFinaleText("INTER\\E4.TXT");
 			break;
-#endif
 		default:
 			// Ouch.
 			break;
@@ -298,7 +262,7 @@ void F_Ticker(void)
 	int i;
 
 	// check for skipping
-	if ((commercial) && (finalecount > 50))
+	if ((gamemode == commercial) && (finalecount > 50))
 	{
 		// go on to the next level
 		if (players.cmd.buttons)
@@ -319,7 +283,7 @@ void F_Ticker(void)
 		return;
 	}
 
-	if (commercial)
+	if (gamemode == commercial)
 		return;
 
 	if (!finalestage && finalecount > strlen(finaletext) * TEXTSPEED + TEXTWAIT)
@@ -1074,31 +1038,32 @@ void F_Drawer(void)
 		switch (gameepisode)
 		{
 		case 1:
-#if (EXE_VERSION < EXE_VERSION_ULTIMATE)
+			if (gamemode == shareware)
+			{
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-			V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+				V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 #endif
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-			V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+				V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 #endif
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-			V_DrawPatchScreen0(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+				V_DrawPatchScreen0(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 #endif
-
-			break;
-#else
+			}
+			else
+			{
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-			V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
+				V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
 #endif
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-			V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
+				V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
 #endif
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-			V_DrawPatchScreen0(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
+				V_DrawPatchScreen0(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
 #endif
+			}
 
 			break;
-#endif
 		case 2:
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 			V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));

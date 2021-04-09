@@ -153,7 +153,7 @@ void I_sndArbitrateCards(void)
         }
         else
         {
-            if (commercial)
+            if (gamemode == commercial)
             {
                 dmxlump = W_GetNumForName("DMXGUSC");
             }

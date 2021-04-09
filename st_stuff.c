@@ -494,15 +494,8 @@ void ST_Responder(event_t *ev)
 
 				plyr->message = STSTR_MUS;
 				cht_GetParam(&cheat_mus, buf);
-#if (EXE_VERSION < EXE_VERSION_ULTIMATE)
-				musnum = mus_runnin + Mul10(buf[0] - '0') + buf[1] - '0' - 1;
 
-				if ((Mul10(buf[0] - '0') + buf[1] - '0') > 35)
-					plyr->message = STSTR_NOMUS;
-				else
-					S_ChangeMusic(musnum, 1);
-#else
-				if (commercial)
+				if (gamemode == commercial)
 				{
 					musnum = mus_runnin + Mul10(buf[0] - '0') + buf[1] - '0' - 1;
 
@@ -520,7 +513,6 @@ void ST_Responder(event_t *ev)
 					else
 						S_ChangeMusic(musnum, 1);
 				}
-#endif
 			}
 			else if (cht_CheckCheat(&cheat_noclip, ev->data1) || cht_CheckCheat(&cheat_commercial_noclip, ev->data1))
 			{
@@ -571,7 +563,7 @@ void ST_Responder(event_t *ev)
 
 			cht_GetParam(&cheat_clev, buf);
 
-			if (commercial)
+			if (gamemode == commercial)
 			{
 				epsd = 0;
 				map = Mul10(buf[0] - '0') + buf[1] - '0';
@@ -583,21 +575,28 @@ void ST_Responder(event_t *ev)
 			}
 
 			// Catch invalid maps.
-#if (EXE_VERSION < EXE_VERSION_ULTIMATE)
-			if ((!commercial && epsd > 0 && epsd < 4 && map > 0 && map < 10) || (commercial && map > 0 && map <= 40))
-			{
-				// So be it.
-				plyr->message = STSTR_CLEV;
-				G_DeferedInitNew(gameskill, epsd, map);
-			}
-#else
-			if ((!commercial && epsd > 0 && epsd < 5 && map > 0 && map < 10) || (commercial && map > 0 && map <= 40))
-			{
-				// So be it.
-				plyr->message = STSTR_CLEV;
-				G_DeferedInitNew(gameskill, epsd, map);
-			}
-#endif
+			if (epsd < 1)
+				return;
+
+			if (map < 1)
+				return;
+
+			// Ohmygod - this is not going to work.
+			if ((gamemode == retail) && ((epsd > 4) || (map > 9)))
+				return;
+
+			if ((gamemode == registered) && ((epsd > 3) || (map > 9)))
+				return;
+
+			if ((gamemode == shareware) && ((epsd > 1) || (map > 9)))
+				return;
+
+			if ((gamemode == commercial) && ((epsd > 1) || (map > 34)))
+				return;
+
+			// So be it.
+			plyr->message = STSTR_CLEV;
+			G_DeferedInitNew(gameskill, epsd, map);
 		}
 	}
 }
@@ -1259,9 +1258,9 @@ void ST_unloadGraphics(void)
 	for (i = 0; i < NUMCARDS; i++)
 		Z_ChangeTag(keys[i], PU_CACHE);
 
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 	Z_ChangeTag(sbar, PU_CACHE);
-	#endif
+#endif
 
 	for (i = 0; i < ST_NUMFACES; i++)
 		Z_ChangeTag(faces[i], PU_CACHE);

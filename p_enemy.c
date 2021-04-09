@@ -1566,7 +1566,7 @@ void A_BossDeath(mobj_t *mo)
     line_t junk;
     int i;
 
-    if (commercial)
+    if (gamemode == commercial)
     {
         if (gamemap != 7)
             return;
@@ -1576,65 +1576,64 @@ void A_BossDeath(mobj_t *mo)
     }
     else
     {
-#if (EXE_VERSION < EXE_VERSION_ULTIMATE)
-        if (gamemap != 8)
-            return;
-
-        if (mo->type == MT_BRUISER && gameepisode != 1)
-            return;
-#else
-        switch (gameepisode)
+        if (gamemode == commercial)
         {
-        case 1:
             if (gamemap != 8)
                 return;
 
-            if (mo->type != MT_BRUISER)
+            if (mo->type == MT_BRUISER && gameepisode != 1)
                 return;
-            break;
-
-        case 2:
-            if (gamemap != 8)
-                return;
-
-            if (mo->type != MT_CYBORG)
-                return;
-            break;
-
-        case 3:
-            if (gamemap != 8)
-                return;
-
-            if (mo->type != MT_SPIDER)
-                return;
-
-            break;
-
-        case 4:
-            switch (gamemap)
+        }
+        else
+        {
+            switch (gameepisode)
             {
-            case 6:
+            case 1:
+                if (gamemap != 8)
+                    return;
+
+                if (mo->type != MT_BRUISER)
+                    return;
+                break;
+            case 2:
+                if (gamemap != 8)
+                    return;
+
                 if (mo->type != MT_CYBORG)
                     return;
                 break;
+            case 3:
+                if (gamemap != 8)
+                    return;
 
-            case 8:
                 if (mo->type != MT_SPIDER)
                     return;
-                break;
 
+                break;
+            case 4:
+                switch (gamemap)
+                {
+                case 6:
+                    if (mo->type != MT_CYBORG)
+                        return;
+                    break;
+
+                case 8:
+                    if (mo->type != MT_SPIDER)
+                        return;
+                    break;
+
+                default:
+                    return;
+                    break;
+                }
+                break;
             default:
-                return;
+                if (gamemap != 8)
+                    return;
                 break;
             }
-            break;
-
-        default:
-            if (gamemap != 8)
-                return;
-            break;
         }
-#endif
     }
 
     // make sure there is a player alive for victory
@@ -1657,7 +1656,7 @@ void A_BossDeath(mobj_t *mo)
     }
 
     // victory!
-    if (commercial)
+    if (gamemode == commercial)
     {
         if (gamemap == 7)
         {

@@ -258,12 +258,7 @@ menuitem_t MainMenu[] =
         {1, "M_OPTION", "Options", M_Options, 'o'},
         {1, "M_LOADG", "Load game", M_LoadGame, 'l'},
         {1, "M_SAVEG", "Save game", M_SaveGame, 's'},
-// Another hickup with Special edition.
-#if (EXE_VERSION < EXE_VERSION_ULTIMATE)
         {1, "M_RDTHIS", "Read this!", M_ReadThis, 'r'},
-#else
-        {1, "M_RDTHIS", "Read this!", M_ReadThis2, 'r'},
-#endif
         {1, "M_QUITG", "Quit game", M_QuitDOOM, 'q'}};
 
 menu_t MainDef =
@@ -283,9 +278,7 @@ enum
     ep1,
     ep2,
     ep3,
-#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
     ep4,
-#endif
     ep_end
 } episodes_e;
 
@@ -294,10 +287,7 @@ menuitem_t EpisodeMenu[] =
         {1, "M_EPI1", "Knee-Deep in the Dead", M_Episode, 'k'},
         {1, "M_EPI2", "The Shores of Hell", M_Episode, 't'},
         {1, "M_EPI3", "Inferno", M_Episode, 'i'},
-#if (EXE_VERSION >= EXE_VERSION_ULTIMATE)
-        {1, "M_EPI4", "Thy Flesh Consumed", M_Episode, 't'}
-#endif
-};
+        {1, "M_EPI4", "Thy Flesh Consumed", M_Episode, 't'}};
 
 menu_t EpiDef =
     {
@@ -447,17 +437,9 @@ menuitem_t ReadMenu2[] =
 menu_t ReadDef2 =
     {
         read2_end,
-#if (EXE_VERSION < EXE_VERSION_ULTIMATE)
         &ReadDef1,
-#else
-        NULL,
-#endif
         ReadMenu2,
-#if (EXE_VERSION < EXE_VERSION_FINAL)
         M_DrawReadThis2,
-#else
-        M_DrawReadThisRetail,
-#endif
         330, 175,
         0};
 
@@ -579,36 +561,36 @@ void M_DrawLoad(void)
 {
     int i;
 
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-        V_WriteTextDirect(18, 3, "LOAD GAME");
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        V_WriteTextDirect(18, 7, "LOAD GAME");
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-        V_DrawPatchDirect(72, 28, W_CacheLumpName("M_LOADG", PU_CACHE));
-    #endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+    V_WriteTextDirect(18, 3, "LOAD GAME");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    V_WriteTextDirect(18, 7, "LOAD GAME");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+    V_DrawPatchDirect(72, 28, W_CacheLumpName("M_LOADG", PU_CACHE));
+#endif
 
     for (i = 0; i < load_end; i++)
     {
-        #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-            M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 8 - 2);
-            V_WriteCharDirect(LoadDef.x / 4 - 1, (LoadDef.y + LINEHEIGHT * i) / 8, '|');
-            V_WriteTextDirect(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 8, savegamestrings[i]);
-            V_WriteCharDirect(LoadDef.x / 4 + 24, (LoadDef.y + LINEHEIGHT * i) / 8, '|');
-            M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 8);
-        #endif
-        #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-            M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + (LINEHEIGHT)*i) / 4 - 2);
-            V_WriteCharDirect(LoadDef.x / 4 - 1, (LoadDef.y + LINEHEIGHT * i) / 4, '|');
-            V_WriteTextDirect(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 4, savegamestrings[i]);
-            V_WriteCharDirect(LoadDef.x / 4 + 24, (LoadDef.y + LINEHEIGHT * i) / 4, '|');
-            M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 4);
-        #endif
-        #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-            M_DrawSaveLoadBorder(LoadDef.x, LoadDef.y + LINEHEIGHT * i);
-            M_WriteText(LoadDef.x, LoadDef.y + LINEHEIGHT * i, savegamestrings[i]);
-        #endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+        M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 8 - 2);
+        V_WriteCharDirect(LoadDef.x / 4 - 1, (LoadDef.y + LINEHEIGHT * i) / 8, '|');
+        V_WriteTextDirect(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 8, savegamestrings[i]);
+        V_WriteCharDirect(LoadDef.x / 4 + 24, (LoadDef.y + LINEHEIGHT * i) / 8, '|');
+        M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 8);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+        M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + (LINEHEIGHT)*i) / 4 - 2);
+        V_WriteCharDirect(LoadDef.x / 4 - 1, (LoadDef.y + LINEHEIGHT * i) / 4, '|');
+        V_WriteTextDirect(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 4, savegamestrings[i]);
+        V_WriteCharDirect(LoadDef.x / 4 + 24, (LoadDef.y + LINEHEIGHT * i) / 4, '|');
+        M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 4);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+        M_DrawSaveLoadBorder(LoadDef.x, LoadDef.y + LINEHEIGHT * i);
+        M_WriteText(LoadDef.x, LoadDef.y + LINEHEIGHT * i, savegamestrings[i]);
+#endif
     }
 }
 
@@ -686,50 +668,50 @@ void M_DrawSave(void)
 {
     int i;
 
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-        V_WriteTextDirect(18, 3, "SAVE GAME");
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        V_WriteTextDirect(18, 7, "SAVE GAME");
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-        V_DrawPatchDirect(72, 28, W_CacheLumpName("M_SAVEG", PU_CACHE));
-    #endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+    V_WriteTextDirect(18, 3, "SAVE GAME");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    V_WriteTextDirect(18, 7, "SAVE GAME");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+    V_DrawPatchDirect(72, 28, W_CacheLumpName("M_SAVEG", PU_CACHE));
+#endif
 
     for (i = 0; i < load_end; i++)
     {
-	    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-            M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 8 - 2);
-            V_WriteCharDirect(LoadDef.x / 4 - 1, (LoadDef.y + LINEHEIGHT * i) / 8, '|');
-            V_WriteTextDirect(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 8, savegamestrings[i]);
-            V_WriteCharDirect(LoadDef.x / 4 + 24, (LoadDef.y + LINEHEIGHT * i) / 8, '|');
-            M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 8);
-        #endif
-        #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-            M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + (LINEHEIGHT)*i) / 4 - 2);
-            V_WriteCharDirect(LoadDef.x / 4 - 1, (LoadDef.y + LINEHEIGHT * i) / 4, '|');
-            V_WriteTextDirect(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 4, savegamestrings[i]);
-            V_WriteCharDirect(LoadDef.x / 4 + 24, (LoadDef.y + LINEHEIGHT * i) / 4, '|');
-            M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 4);
-        #endif
-        #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-            M_DrawSaveLoadBorder(LoadDef.x, LoadDef.y + LINEHEIGHT * i);
-            M_WriteText(LoadDef.x, LoadDef.y + LINEHEIGHT * i, savegamestrings[i]);
-        #endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+        M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 8 - 2);
+        V_WriteCharDirect(LoadDef.x / 4 - 1, (LoadDef.y + LINEHEIGHT * i) / 8, '|');
+        V_WriteTextDirect(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 8, savegamestrings[i]);
+        V_WriteCharDirect(LoadDef.x / 4 + 24, (LoadDef.y + LINEHEIGHT * i) / 8, '|');
+        M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 8);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+        M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + (LINEHEIGHT)*i) / 4 - 2);
+        V_WriteCharDirect(LoadDef.x / 4 - 1, (LoadDef.y + LINEHEIGHT * i) / 4, '|');
+        V_WriteTextDirect(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 4, savegamestrings[i]);
+        V_WriteCharDirect(LoadDef.x / 4 + 24, (LoadDef.y + LINEHEIGHT * i) / 4, '|');
+        M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 4);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+        M_DrawSaveLoadBorder(LoadDef.x, LoadDef.y + LINEHEIGHT * i);
+        M_WriteText(LoadDef.x, LoadDef.y + LINEHEIGHT * i, savegamestrings[i]);
+#endif
     }
 
     if (saveStringEnter)
     {
-	    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-            V_WriteTextDirect((LoadDef.x / 4) + strlen(savegamestrings[saveSlot]), (LoadDef.y + LINEHEIGHT * saveSlot) / 8, "_");
-        #endif
-        #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-            V_WriteTextDirect((LoadDef.x / 4) + strlen(savegamestrings[saveSlot]), (LoadDef.y + LINEHEIGHT * saveSlot) / 4, "_");
-        #endif
-        #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-            i = M_StringWidth(savegamestrings[saveSlot]);
-            M_WriteText(LoadDef.x + i, LoadDef.y + LINEHEIGHT * saveSlot, "_");
-        #endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+        V_WriteTextDirect((LoadDef.x / 4) + strlen(savegamestrings[saveSlot]), (LoadDef.y + LINEHEIGHT * saveSlot) / 8, "_");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+        V_WriteTextDirect((LoadDef.x / 4) + strlen(savegamestrings[saveSlot]), (LoadDef.y + LINEHEIGHT * saveSlot) / 4, "_");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+        i = M_StringWidth(savegamestrings[saveSlot]);
+        M_WriteText(LoadDef.x + i, LoadDef.y + LINEHEIGHT * saveSlot, "_");
+#endif
     }
 }
 
@@ -847,50 +829,48 @@ void M_DrawReadThis1(void)
 {
     inhelpscreens = 1;
 
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-        V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-        V_DrawPatchDirect(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
-    #endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+    V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+    V_DrawPatchDirect(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+#endif
 }
 
 //
 // Read This Menus - optional second page.
 //
-#if (EXE_VERSION < EXE_VERSION_FINAL)
 void M_DrawReadThis2(void)
 {
     inhelpscreens = 1;
 
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-        V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-        V_DrawPatchDirect(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
-    #endif
-}
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+    V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
 #endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+    V_DrawPatchDirect(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
+#endif
+}
 
 void M_DrawReadThisRetail(void)
 {
     inhelpscreens = 1;
 
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-        V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("HELP", PU_CACHE));
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("HELP", PU_CACHE));
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-        V_DrawPatchDirect(0, 0, W_CacheLumpName("HELP", PU_CACHE));
-    #endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+    V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("HELP", PU_CACHE));
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("HELP", PU_CACHE));
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+    V_DrawPatchDirect(0, 0, W_CacheLumpName("HELP", PU_CACHE));
+#endif
 }
 
 //
@@ -898,33 +878,33 @@ void M_DrawReadThisRetail(void)
 //
 void M_DrawSound(void)
 {
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-        V_WriteTextDirect(30, 4, "SOUND VOLUME");
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+    V_WriteTextDirect(30, 4, "SOUND VOLUME");
 
-        M_DrawThermoText(SoundDef.x / 4, (SoundDef.y + LINEHEIGHT * (sfx_vol + 1)) / 8, 16, sfxVolume);
-        M_DrawThermoText(SoundDef.x / 4, (SoundDef.y + LINEHEIGHT * (music_vol + 1)) / 8, 16, musicVolume);
+    M_DrawThermoText(SoundDef.x / 4, (SoundDef.y + LINEHEIGHT * (sfx_vol + 1)) / 8, 16, sfxVolume);
+    M_DrawThermoText(SoundDef.x / 4, (SoundDef.y + LINEHEIGHT * (music_vol + 1)) / 8, 16, musicVolume);
 
-        V_WriteTextDirect(20, 16, "Mono Sound:");
-        V_WriteTextDirect(40, 16, monoSound ? "ON" : "OFF");
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        V_WriteTextDirect(30, 8, "SOUND VOLUME");
+    V_WriteTextDirect(20, 16, "Mono Sound:");
+    V_WriteTextDirect(40, 16, monoSound ? "ON" : "OFF");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    V_WriteTextDirect(30, 8, "SOUND VOLUME");
 
-        M_DrawThermoText(SoundDef.x / 4, (SoundDef.y + LINEHEIGHT * (sfx_vol + 1)) / 4, 16, sfxVolume);
-        M_DrawThermoText(SoundDef.x / 4, (SoundDef.y + LINEHEIGHT * (music_vol + 1)) / 4, 16, musicVolume);
+    M_DrawThermoText(SoundDef.x / 4, (SoundDef.y + LINEHEIGHT * (sfx_vol + 1)) / 4, 16, sfxVolume);
+    M_DrawThermoText(SoundDef.x / 4, (SoundDef.y + LINEHEIGHT * (music_vol + 1)) / 4, 16, musicVolume);
 
-        V_WriteTextDirect(20, 32, "Mono Sound:");
-        V_WriteTextDirect(40, 32, monoSound ? "ON" : "OFF");
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-        V_DrawPatchDirect(60, 38, W_CacheLumpName("M_SVOL", PU_CACHE));
+    V_WriteTextDirect(20, 32, "Mono Sound:");
+    V_WriteTextDirect(40, 32, monoSound ? "ON" : "OFF");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+    V_DrawPatchDirect(60, 38, W_CacheLumpName("M_SVOL", PU_CACHE));
 
-        M_DrawThermo(SoundDef.x, SoundDef.y + LINEHEIGHT * (sfx_vol + 1), 16, sfxVolume);
-        M_DrawThermo(SoundDef.x, SoundDef.y + LINEHEIGHT * (music_vol + 1), 16, musicVolume);
+    M_DrawThermo(SoundDef.x, SoundDef.y + LINEHEIGHT * (sfx_vol + 1), 16, sfxVolume);
+    M_DrawThermo(SoundDef.x, SoundDef.y + LINEHEIGHT * (music_vol + 1), 16, musicVolume);
 
-        M_WriteText(82, 130, "MONO SOUND:");
-        M_WriteText(164, 130, monoSound ? "ON" : "OFF");
-    #endif
+    M_WriteText(82, 130, "MONO SOUND:");
+    M_WriteText(164, 130, monoSound ? "ON" : "OFF");
+#endif
 }
 
 void M_Sound(int choice)
@@ -971,15 +951,15 @@ void M_MusicVol(int choice)
 //
 void M_DrawMainMenu(void)
 {
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-        V_WriteTextDirect(23, 5, "DOOM");
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        V_WriteTextDirect(23, 10, "DOOM");
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-        V_DrawPatchDirect(94, 2, W_CacheLumpName("M_DOOM", PU_CACHE));
-    #endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+    V_WriteTextDirect(23, 5, "DOOM");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    V_WriteTextDirect(23, 10, "DOOM");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+    V_DrawPatchDirect(94, 2, W_CacheLumpName("M_DOOM", PU_CACHE));
+#endif
 }
 
 //
@@ -987,23 +967,23 @@ void M_DrawMainMenu(void)
 //
 void M_DrawNewGame(void)
 {
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-        V_WriteTextDirect(24, 2, "NEW GAME");
-        V_WriteTextDirect(13, 4, "Choose skill level:");
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        V_WriteTextDirect(24, 2, "NEW GAME");
-        V_WriteTextDirect(13, 9, "Choose skill level:");
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-        V_DrawPatchDirect(96, 14, W_CacheLumpName("M_NEWG", PU_CACHE));
-        V_DrawPatchDirect(54, 38, W_CacheLumpName("M_SKILL", PU_CACHE));
-    #endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+    V_WriteTextDirect(24, 2, "NEW GAME");
+    V_WriteTextDirect(13, 4, "Choose skill level:");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    V_WriteTextDirect(24, 2, "NEW GAME");
+    V_WriteTextDirect(13, 9, "Choose skill level:");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+    V_DrawPatchDirect(96, 14, W_CacheLumpName("M_NEWG", PU_CACHE));
+    V_DrawPatchDirect(54, 38, W_CacheLumpName("M_SKILL", PU_CACHE));
+#endif
 }
 
 void M_NewGame(int choice)
 {
-    if (commercial)
+    if (gamemode == commercial)
         M_SetupNextMenu(&NewDef);
     else
         M_SetupNextMenu(&EpiDef);
@@ -1016,15 +996,15 @@ int epi;
 
 void M_DrawEpisode(void)
 {
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-        V_WriteTextDirect(27, 4, "WHICH EPISODE?");
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        V_WriteTextDirect(27, 9, "WHICH EPISODE?");
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-        V_DrawPatchDirect(54, 38, W_CacheLumpName("M_EPISOD", PU_CACHE));
-    #endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+    V_WriteTextDirect(27, 4, "WHICH EPISODE?");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    V_WriteTextDirect(27, 9, "WHICH EPISODE?");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+    V_DrawPatchDirect(54, 38, W_CacheLumpName("M_EPISOD", PU_CACHE));
+#endif
 }
 
 void M_VerifyNightmare(int ch)
@@ -1050,7 +1030,7 @@ void M_ChooseSkill(int choice)
 
 void M_Episode(int choice)
 {
-    if (shareware && choice)
+    if (gamemode == shareware && choice)
     {
         M_StartMessage(SWSTRING, NULL, 0);
         M_SetupNextMenu(&ReadDef1);
@@ -1068,123 +1048,123 @@ const char msgNames[2][9] = {"M_MSGOFF", "M_MSGON"};
 
 void M_DrawOptions(void)
 {
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-        V_WriteTextDirect(27, 2, "OPTIONS");
-        V_WriteTextDirect((OptionsDef.x + 120) / 6, (OptionsDef.y + LINEHEIGHT * messages) / 8, showMessages == 0 ? "OFF" : "ON");
-        M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (mousesens + 1)) / 8, 10, mouseSensitivity);
-        M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (scrnsize + 1)) / 8, 9, screenSize);
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        V_WriteTextDirect(27, 6, "OPTIONS");
-        V_WriteTextDirect((OptionsDef.x + 120) / 6, (OptionsDef.y + LINEHEIGHT * messages) / 4, showMessages == 0 ? "OFF" : "ON");
-        M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (mousesens + 1)) / 4, 10, mouseSensitivity);
-        M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (scrnsize + 1)) / 4, 9, screenSize);
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-        V_DrawPatchDirect(108, 15, W_CacheLumpName("M_OPTTTL", PU_CACHE));
-        V_DrawPatchDirect(OptionsDef.x + 120, OptionsDef.y + LINEHEIGHT * messages, W_CacheLumpName((char *)msgNames[showMessages], PU_CACHE));
-        M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (mousesens + 1), 10, mouseSensitivity);
-        M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (scrnsize + 1), 9, screenSize);
-    #endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+    V_WriteTextDirect(27, 2, "OPTIONS");
+    V_WriteTextDirect((OptionsDef.x + 120) / 6, (OptionsDef.y + LINEHEIGHT * messages) / 8, showMessages == 0 ? "OFF" : "ON");
+    M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (mousesens + 1)) / 8, 10, mouseSensitivity);
+    M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (scrnsize + 1)) / 8, 9, screenSize);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    V_WriteTextDirect(27, 6, "OPTIONS");
+    V_WriteTextDirect((OptionsDef.x + 120) / 6, (OptionsDef.y + LINEHEIGHT * messages) / 4, showMessages == 0 ? "OFF" : "ON");
+    M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (mousesens + 1)) / 4, 10, mouseSensitivity);
+    M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (scrnsize + 1)) / 4, 9, screenSize);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+    V_DrawPatchDirect(108, 15, W_CacheLumpName("M_OPTTTL", PU_CACHE));
+    V_DrawPatchDirect(OptionsDef.x + 120, OptionsDef.y + LINEHEIGHT * messages, W_CacheLumpName((char *)msgNames[showMessages], PU_CACHE));
+    M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (mousesens + 1), 10, mouseSensitivity);
+    M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (scrnsize + 1), 9, screenSize);
+#endif
 }
 
 void M_DrawDisplay(void)
 {
     //V_DrawPatchDirect(54, 15, 0, W_CacheLumpName("M_DISOPT", PU_CACHE));
 
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-        V_WriteTextDirect(15, 2, "VSync:");
-        V_WriteTextDirect(45, 2, waitVsync ? "ON" : "OFF");
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+    V_WriteTextDirect(15, 2, "VSync:");
+    V_WriteTextDirect(45, 2, waitVsync ? "ON" : "OFF");
 
-        V_WriteTextDirect(15, 4, "Detail level:");
-        V_WriteTextDirect(45, 4, detailLevel == 2 ? "POTATO" : detailLevel == 1 ? "LOW"
-                                                                                : "HIGH");
-
-        V_WriteTextDirect(15, 6, "Visplane rendering:");
-        V_WriteTextDirect(45, 6, (!untexturedSurfaces && !flatSurfaces) ? "FULL" : untexturedSurfaces ? "FLAT"
-                                                                                                      : "FLATTER");
-
-        V_WriteTextDirect(15, 8, "Sky rendering:");
-        V_WriteTextDirect(45, 8, flatSky ? "FLAT" : "FULL");
-
-        V_WriteTextDirect(15, 10, "Invisible rendering:");
-        V_WriteTextDirect(45, 10, (!saturnShadows && !flatShadows) ? "FUZZY" : flatShadows ? "FLAT"
-                                                                                           : "SEGA SATURN");
-
-        V_WriteTextDirect(15, 12, "Show FPS:");
-        V_WriteTextDirect(45, 12, showFPS ? "ON" : "OFF");
-
-        V_WriteTextDirect(15, 14, "Sprite culling:");
-        V_WriteTextDirect(45, 14, nearSprites ? "ON" : "OFF");
-
-        V_WriteTextDirect(15, 16, "Melting load effect:");
-        V_WriteTextDirect(45, 16, noMelt ? "OFF" : "ON");
-
-        V_WriteTextDirect(15, 18, "Uncapped framerate:");
-        V_WriteTextDirect(45, 18, uncappedFPS ? "ON" : "OFF");
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        V_WriteTextDirect(15, 5, "VSync:");
-        V_WriteTextDirect(45, 5, waitVsync ? "ON" : "OFF");
-
-        V_WriteTextDirect(15, 9, "Detail level:");
-        V_WriteTextDirect(45, 9, detailLevel == 2 ? "POTATO" : detailLevel == 1 ? "LOW"
-                                                                                : "HIGH");
-
-        V_WriteTextDirect(15, 13, "Visplane rendering:");
-        V_WriteTextDirect(45, 13, (!untexturedSurfaces && !flatSurfaces) ? "FULL" : untexturedSurfaces ? "FLAT"
-                                                                                                       : "FLATTER");
-
-        V_WriteTextDirect(15, 17, "Sky rendering:");
-        V_WriteTextDirect(45, 17, flatSky ? "FLAT" : "FULL");
-
-        V_WriteTextDirect(15, 21, "Invisible rendering:");
-        V_WriteTextDirect(45, 21, (!saturnShadows && !flatShadows) ? "FUZZY" : flatShadows ? "FLAT"
-                                                                                           : "SEGA SATURN");
-
-        V_WriteTextDirect(15, 25, "Show FPS:");
-        V_WriteTextDirect(45, 25, showFPS ? "ON" : "OFF");
-
-        V_WriteTextDirect(15, 29, "Sprite culling:");
-        V_WriteTextDirect(45, 29, nearSprites ? "ON" : "OFF");
-
-        V_WriteTextDirect(15, 33, "Melting load effect:");
-        V_WriteTextDirect(45, 33, noMelt ? "OFF" : "ON");
-
-        V_WriteTextDirect(15, 37, "Uncapped framerate:");
-        V_WriteTextDirect(45, 37, uncappedFPS ? "ON" : "OFF");
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-        M_WriteText(58, 24, "VSYNC:");
-        M_WriteText(214, 24, waitVsync ? "ON" : "OFF");
-
-        M_WriteText(58, 40, "DETAIL LEVEL:");
-        M_WriteText(214, 40, detailLevel == 2 ? "POTATO" : detailLevel == 1 ? "LOW"
+    V_WriteTextDirect(15, 4, "Detail level:");
+    V_WriteTextDirect(45, 4, detailLevel == 2 ? "POTATO" : detailLevel == 1 ? "LOW"
                                                                             : "HIGH");
 
-        M_WriteText(58, 56, "VISPLANE RENDERING:");
-        M_WriteText(214, 56, (!untexturedSurfaces && !flatSurfaces) ? "FULL" : untexturedSurfaces ? "FLAT"
+    V_WriteTextDirect(15, 6, "Visplane rendering:");
+    V_WriteTextDirect(45, 6, (!untexturedSurfaces && !flatSurfaces) ? "FULL" : untexturedSurfaces ? "FLAT"
                                                                                                   : "FLATTER");
 
-        M_WriteText(58, 72, "SKY RENDERING:");
-        M_WriteText(214, 72, flatSky ? "FLAT" : "FULL");
+    V_WriteTextDirect(15, 8, "Sky rendering:");
+    V_WriteTextDirect(45, 8, flatSky ? "FLAT" : "FULL");
 
-        M_WriteText(58, 88, "INVISIBLE RENDERING:");
-        M_WriteText(214, 88, (!saturnShadows && !flatShadows) ? "FUZZY" : flatShadows ? "FLAT"
-                                                                                      : "SEGA SATURN");
+    V_WriteTextDirect(15, 10, "Invisible rendering:");
+    V_WriteTextDirect(45, 10, (!saturnShadows && !flatShadows) ? "FUZZY" : flatShadows ? "FLAT"
+                                                                                       : "SEGA SATURN");
 
-        M_WriteText(58, 104, "SHOW FPS:");
-        M_WriteText(214, 104, showFPS ? "ON" : "OFF");
+    V_WriteTextDirect(15, 12, "Show FPS:");
+    V_WriteTextDirect(45, 12, showFPS ? "ON" : "OFF");
 
-        M_WriteText(58, 120, "SPRITE CULLING:");
-        M_WriteText(214, 120, nearSprites ? "ON" : "OFF");
+    V_WriteTextDirect(15, 14, "Sprite culling:");
+    V_WriteTextDirect(45, 14, nearSprites ? "ON" : "OFF");
 
-        M_WriteText(58, 136, "MELTING LOAD EFFECT:");
-        M_WriteText(214, 136, noMelt ? "OFF" : "ON");
+    V_WriteTextDirect(15, 16, "Melting load effect:");
+    V_WriteTextDirect(45, 16, noMelt ? "OFF" : "ON");
 
-        M_WriteText(58, 152, "UNCAPPED FRAMERATE:");
-        M_WriteText(214, 152, uncappedFPS ? "ON" : "OFF");
-    #endif
+    V_WriteTextDirect(15, 18, "Uncapped framerate:");
+    V_WriteTextDirect(45, 18, uncappedFPS ? "ON" : "OFF");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    V_WriteTextDirect(15, 5, "VSync:");
+    V_WriteTextDirect(45, 5, waitVsync ? "ON" : "OFF");
+
+    V_WriteTextDirect(15, 9, "Detail level:");
+    V_WriteTextDirect(45, 9, detailLevel == 2 ? "POTATO" : detailLevel == 1 ? "LOW"
+                                                                            : "HIGH");
+
+    V_WriteTextDirect(15, 13, "Visplane rendering:");
+    V_WriteTextDirect(45, 13, (!untexturedSurfaces && !flatSurfaces) ? "FULL" : untexturedSurfaces ? "FLAT"
+                                                                                                   : "FLATTER");
+
+    V_WriteTextDirect(15, 17, "Sky rendering:");
+    V_WriteTextDirect(45, 17, flatSky ? "FLAT" : "FULL");
+
+    V_WriteTextDirect(15, 21, "Invisible rendering:");
+    V_WriteTextDirect(45, 21, (!saturnShadows && !flatShadows) ? "FUZZY" : flatShadows ? "FLAT"
+                                                                                       : "SEGA SATURN");
+
+    V_WriteTextDirect(15, 25, "Show FPS:");
+    V_WriteTextDirect(45, 25, showFPS ? "ON" : "OFF");
+
+    V_WriteTextDirect(15, 29, "Sprite culling:");
+    V_WriteTextDirect(45, 29, nearSprites ? "ON" : "OFF");
+
+    V_WriteTextDirect(15, 33, "Melting load effect:");
+    V_WriteTextDirect(45, 33, noMelt ? "OFF" : "ON");
+
+    V_WriteTextDirect(15, 37, "Uncapped framerate:");
+    V_WriteTextDirect(45, 37, uncappedFPS ? "ON" : "OFF");
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+    M_WriteText(58, 24, "VSYNC:");
+    M_WriteText(214, 24, waitVsync ? "ON" : "OFF");
+
+    M_WriteText(58, 40, "DETAIL LEVEL:");
+    M_WriteText(214, 40, detailLevel == 2 ? "POTATO" : detailLevel == 1 ? "LOW"
+                                                                        : "HIGH");
+
+    M_WriteText(58, 56, "VISPLANE RENDERING:");
+    M_WriteText(214, 56, (!untexturedSurfaces && !flatSurfaces) ? "FULL" : untexturedSurfaces ? "FLAT"
+                                                                                              : "FLATTER");
+
+    M_WriteText(58, 72, "SKY RENDERING:");
+    M_WriteText(214, 72, flatSky ? "FLAT" : "FULL");
+
+    M_WriteText(58, 88, "INVISIBLE RENDERING:");
+    M_WriteText(214, 88, (!saturnShadows && !flatShadows) ? "FUZZY" : flatShadows ? "FLAT"
+                                                                                  : "SEGA SATURN");
+
+    M_WriteText(58, 104, "SHOW FPS:");
+    M_WriteText(214, 104, showFPS ? "ON" : "OFF");
+
+    M_WriteText(58, 120, "SPRITE CULLING:");
+    M_WriteText(214, 120, nearSprites ? "ON" : "OFF");
+
+    M_WriteText(58, 136, "MELTING LOAD EFFECT:");
+    M_WriteText(214, 136, noMelt ? "OFF" : "ON");
+
+    M_WriteText(58, 152, "UNCAPPED FRAMERATE:");
+    M_WriteText(214, 152, uncappedFPS ? "ON" : "OFF");
+#endif
 }
 
 void M_Options(int choice)
@@ -1294,7 +1274,7 @@ void M_QuitResponse(int ch)
 
     i = 105;
 
-    if (commercial)
+    if (gamemode == commercial)
         S_StartSound(NULL, quitsounds2[(gametic >> 2) & 7]);
     else
         S_StartSound(NULL, quitsounds[(gametic >> 2) & 7]);
@@ -1311,7 +1291,7 @@ void M_QuitDOOM(int choice)
 {
     // We pick index 0 which is language sensitive,
     //  or one at random, between 1 and maximum number.
-    if (commercial)
+    if (gamemode == commercial)
     {
         sprintf(endstring, "%s\n\n" DOSY, endmsg2[(gametic >> 2) % NUM_QUITMESSAGES]);
     }
@@ -1788,11 +1768,10 @@ byte M_Responder(event_t *ev)
         case KEY_F1: // Help key
             M_StartControlPanel();
 
-#if (EXE_VERSION < EXE_VERSION_ULTIMATE)
-            currentMenu = &ReadDef1;
-#else
-            currentMenu = &ReadDef2;
-#endif
+            if (gamemode == retail)
+                currentMenu = &ReadDef2;
+            else
+                currentMenu = &ReadDef1;
 
             itemOn = 0;
             S_StartSound(NULL, sfx_swtchn);
@@ -1881,10 +1860,21 @@ byte M_Responder(event_t *ev)
     case KEY_DOWNARROW:
         do
         {
-            if (itemOn + 1 > currentMenu->numitems - 1)
-                itemOn = 0;
+            if ((gamemode == shareware || gamemode == retail) && currentMenu == &EpiDef)
+            {
+                if (itemOn + 1 > currentMenu->numitems - 2)
+                    itemOn = 0;
+                else
+                    itemOn++;
+            }
             else
-                itemOn++;
+            {
+                if (itemOn + 1 > currentMenu->numitems - 1)
+                    itemOn = 0;
+                else
+                    itemOn++;
+            }
+
             S_StartSound(NULL, sfx_pstop);
         } while (currentMenu->menuitems[itemOn].status == -1);
         return 1;
@@ -1892,10 +1882,21 @@ byte M_Responder(event_t *ev)
     case KEY_UPARROW:
         do
         {
-            if (!itemOn)
-                itemOn = currentMenu->numitems - 1;
+            if ((gamemode == shareware || gamemode == retail) && currentMenu == &EpiDef)
+            {
+                if (!itemOn)
+                    itemOn = currentMenu->numitems - 2;
+                else
+                    itemOn--;
+            }
             else
-                itemOn--;
+            {
+                if (!itemOn)
+                    itemOn = currentMenu->numitems - 1;
+                else
+                    itemOn--;
+            }
+
             S_StartSound(NULL, sfx_pstop);
         } while (currentMenu->menuitems[itemOn].status == -1);
         return 1;
@@ -2027,15 +2028,15 @@ void M_Drawer(void)
 
             x = 160 - M_StringWidth(string) / 2;
 
-            #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-                V_WriteTextDirect(x / 4, y / 8, string);
-            #endif
-            #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-                V_WriteTextDirect(x / 4, y / 4, string);
-            #endif
-            #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-                M_WriteText(x, y, string);
-            #endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+            V_WriteTextDirect(x / 4, y / 8, string);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+            V_WriteTextDirect(x / 4, y / 4, string);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+            M_WriteText(x, y, string);
+#endif
 
             y += hu_font[0]->height;
         }
@@ -2057,30 +2058,30 @@ void M_Drawer(void)
     {
         if (currentMenu->menuitems[i].name[0])
         {
-            #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-                V_WriteTextDirect(x / 4, y / 8, currentMenu->menuitems[i].text);
-            #endif
-            #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-                V_WriteTextDirect(x / 4, y / 4, currentMenu->menuitems[i].text);
-            #endif
-            #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-                V_DrawPatchDirect(x, y, W_CacheLumpName(currentMenu->menuitems[i].name, PU_CACHE));
-            #endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+            V_WriteTextDirect(x / 4, y / 8, currentMenu->menuitems[i].text);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+            V_WriteTextDirect(x / 4, y / 4, currentMenu->menuitems[i].text);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+            V_DrawPatchDirect(x, y, W_CacheLumpName(currentMenu->menuitems[i].name, PU_CACHE));
+#endif
         }
 
         y += LINEHEIGHT;
     }
 
-    // DRAW SKULL
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-        V_WriteCharDirect(currentMenu->x / 4 - 3, currentMenu->y / 8 + itemOn * 2, whichSkull + 1);
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        V_WriteCharDirect(currentMenu->x / 4 - 3, currentMenu->y / 4 + itemOn * 4, whichSkull + 1);
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-        V_DrawPatchDirect(x + SKULLXOFF, currentMenu->y - 5 + itemOn * LINEHEIGHT, W_CacheLumpName(skullName[whichSkull], PU_CACHE));
-    #endif
+// DRAW SKULL
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+    V_WriteCharDirect(currentMenu->x / 4 - 3, currentMenu->y / 8 + itemOn * 2, whichSkull + 1);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    V_WriteCharDirect(currentMenu->x / 4 - 3, currentMenu->y / 4 + itemOn * 4, whichSkull + 1);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+    V_DrawPatchDirect(x + SKULLXOFF, currentMenu->y - 5 + itemOn * LINEHEIGHT, W_CacheLumpName(skullName[whichSkull], PU_CACHE));
+#endif
 }
 
 //
@@ -2111,7 +2112,7 @@ void M_Init(void)
     messageLastMenuActive = menuactive;
     quickSaveSlot = -1;
 
-    if (commercial)
+    if (gamemode == commercial)
     {
         MainMenu[readthis] = MainMenu[quitdoom];
         MainDef.numitems--;
