@@ -1002,24 +1002,6 @@ void D_DoomMain(void)
     printf("W_Init: Init WADfiles.\n");
     W_InitMultipleFiles(wadfiles);
 
-    // Check and print which version is executed.
-
-    if (gamemode == registered)
-    {
-        printf("\tregistered version.\n");
-        D_RedrawTitle();
-    }
-    if (gamemode == shareware)
-    {
-        printf("\tshareware version.\n");
-        D_RedrawTitle();
-    }
-    if (gamemode == commercial)
-    {
-        printf("\tcommercial version.\n");
-        D_RedrawTitle();
-    }
-
     printf("M_Init: Init miscellaneous info.\n");
     D_RedrawTitle();
     M_Init();
