@@ -566,20 +566,13 @@ void ST_Responder(event_t *ev)
 			if (gamemode == commercial)
 			{
 				epsd = 0;
-				map = Mul10(buf[0] - '0') + buf[1] - '0';
+				map = 10 * (buf[0] - '0') + buf[1] - '0';
 			}
 			else
 			{
 				epsd = buf[0] - '0';
 				map = buf[1] - '0';
 			}
-
-			// Catch invalid maps.
-			if (epsd < 1)
-				return;
-
-			if (map < 1)
-				return;
 
 			// Ohmygod - this is not going to work.
 			if ((gamemode == retail) && ((epsd > 4) || (map > 9)))
@@ -591,7 +584,7 @@ void ST_Responder(event_t *ev)
 			if ((gamemode == shareware) && ((epsd > 1) || (map > 9)))
 				return;
 
-			if ((gamemode == commercial) && ((epsd > 1) || (map > 34)))
+			if ((gamemode == commercial) && ((epsd > 1) || (map > 32)))
 				return;
 
 			// So be it.
