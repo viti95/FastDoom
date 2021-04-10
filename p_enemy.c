@@ -1927,7 +1927,7 @@ void A_PlayerScream(mobj_t *mo)
     // Default death sound.
     int sound = sfx_pldeth;
 
-    if (commercial && (mo->health < -50))
+    if (gamemode == commercial && (mo->health < -50))
     {
         // IF THE PLAYER DIES
         // LESS THAN -50% WITHOUT GIBBING
