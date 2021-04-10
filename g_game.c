@@ -649,7 +649,7 @@ void G_DoCompleted(void)
     if (automapactive)
         AM_Stop();
 
-    if (!gamemode == commercial)
+    if (gamemode != commercial)
         switch (gamemap)
         {
         case 8:
