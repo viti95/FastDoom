@@ -393,7 +393,7 @@ void F_TextWriteText(void)
 	cy = 1;
 	ch = finaletext;
 
-	count = Div3(finalecount - 10);
+	count = (finalecount - 10) / 3;
 	if (count < 0)
 		count = 0;
 	for (; count; count--)
