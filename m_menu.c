@@ -1590,8 +1590,15 @@ int M_StringWidth(char *string)
         c = toupper(string[i]) - HU_FONTSTART;
         if (c < 0 || c >= HU_FONTSIZE)
             w += 4;
-        else
+        else{
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
             w += hu_font[c]->width;
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+            w += 8;
+#endif
+        }
+            
     }
 
     return w;
@@ -1604,7 +1611,12 @@ int M_StringHeight(char *string)
 {
     int i;
     int h;
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     int height = hu_font[0]->height;
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    int height = 8;
+#endif
 
     h = height;
     for (i = 0; i < strlen(string); i++)
@@ -2028,7 +2040,7 @@ void M_Drawer(void)
 
             x = 160 - M_StringWidth(string) / 2;
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)  
             V_WriteTextDirect(x / 4, y / 8, string);
 #endif
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
@@ -2038,7 +2050,12 @@ void M_Drawer(void)
             M_WriteText(x, y, string);
 #endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
             y += hu_font[0]->height;
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+            y += 8;
+#endif
         }
         return;
     }
