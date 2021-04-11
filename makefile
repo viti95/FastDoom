@@ -24,10 +24,10 @@
 # --------------------------------------------------------------------------
 
 # Build options for 486DX/SX
-CCOPTS = /omaxet /zp4 /4r /ei /j /zq
+#CCOPTS = /omaxet /zp4 /4r /ei /j /zq
 
 # Build options for 386DX/SX
-#CCOPTS = /omaxet /zp4 /3r /ei /j /zq
+CCOPTS = /omaxet /zp4 /3r /ei /j /zq
 
 # Build options for Pentium
 #CCOPTS = /omaxet /zp4 /5r /ei /j /zq
