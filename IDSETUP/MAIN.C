@@ -76,9 +76,6 @@ enum
 	MAIN_TYPE,
 	MAIN_CONFIG,
 	MAIN_SAVE,
-
-	MAIN_NET,
-	MAIN_NETSG,
 	MAIN_MAX
 };
 
@@ -88,9 +85,7 @@ item_t mainitems[] =
 		{MAIN_CSFX, 21, 13, 39, -1, -1},
 		{MAIN_TYPE, 21, 14, 39, -1, -1},
 		{MAIN_CONFIG, 21, 15, 39, -1, -1},
-		{MAIN_SAVE, 21, 16, 39, -1, -1},
-		{MAIN_NET, 21, 18, 39, -1, -1},
-		{MAIN_NETSG, 21, 19, 39, -1, -1}};
+		{MAIN_SAVE, 21, 16, 39, -1, -1},};
 
 menu_t mainmenu =
 	{
