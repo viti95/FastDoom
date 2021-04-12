@@ -1,0 +1,250 @@
+Boca 14.4 v32 fax
+AT \N0 \G0 &K0 %C0 N0 S37=9
+AT Z H0
+9600
+
+USRobotics 14.4 v32 fax
+AT &F &M0 &I0 &K0 B0 &N6
+AT Z H0
+9600
+
+Intel 14.4 ext
+AT\N0/Q0
+AT Z H0
+9600
+
+Telebit Worldblazer 14.4
+AT S51=4 S180=0 S183=8 S190=0 L1
+ATH
+14400
+
+SupraFax 14.4 v32-
+AT S37=9 &F S46=136 M1 Q0 D2
+AT Z H0
+9600
+
+Gateway Telepath 550
+ATZS27=32S15=16S13=64&B0&H2&I1&N6&K0&M0
+AT Z H0
+9600
+
+GVC 14.4 MNP2-5 v42
+AT %C0 \N0 B8
+AT Z H0
+9600
+
+ZOOM 14.4 v32 v42 fax
+AT &F S37=9 N0 &D2 &C1 &Q6 &K0 S0=1
+AT Z H0
+9600
+
+Intel 14.4 fax
+AT &F S37=9 N0 &D2 &C1 &Q6 &K0 S0=1
+AT Z H0
+9600
+
+Boca 14.4 fax
+AT Z S46=0 S37=9 N0 &Q0 &D2 &K0
+AT Z H0
+9600
+
+GVC 14.4 fax
+AT Z S46=0 S37=9 N0 &Q0 &D2 &K0
+AT Z H0
+9600
+
+ZOOM VFX v32
+AT &K0 &Q0 &D2 E1 V1 X4 N0 &Q0 S37=9
+AT Z H0
+9600
+
+GENERIC 14.4
+AT &Q6&R1&K0N0 S37=9 \J1 %E1
+AT Z H0
+9600
+
+MegaHertz C596FM
+AT &F \N1 \J0 &Q0 %C0
+AT Z H0
+9600
+
+Smart One 1442F
+AT Z %C0 &Q0 &K0 &D2 S37=9 S95=44 S46=0
+AT Z H0
+9600
+
+Viva 14.4i fax
+AT\N0\Q0\J1\VI
+AT Z H0
+9600
+
+SupraFax 14.4 v32
+AT &F0 S46=136 %C0
+AT Z H0
+9600
+
+Infotel 14.4
+AT &Q6 %C0 S37=9 N0 &K0
+AT Z H0
+9600
+
+Zoomfax VFP v32
+AT &Q0 S48=128 S36=1 S37=9 N0 S46=136 &D2
+AT Z H0
+9600
+
+ZyXEL U-1496 14.4
+AT Z S46=0 &D2 &K0
+AT Z H0
+9600
+
+Identity Internal
+AT &F0 B8 %C0 \Q0 \N1
+AT Z H0
+9600
+
+GENERIC 9600
+AT &F1 &K0 &M0 &Q0 &D2 S46=0
+AT Z H0
+9600
+
+SupraFax 14.4
+AT &Q6 &K %C0 \N1 S37=6 S0=1
+AT Z H0
+9600
+
+VivaFax 14.4
+AT\Q0 &M0 %C0 B8 \N1
+AT Z H0
+9600
+
+VivaFax 14.4
+AT &F &C1 &D2 N0 \N1 %C0 &K0 S37=9
+AT Z H0
+9600
+
+Intel 14.4
+AT &F \N0 \Q0 \J1 \V0
+AT Z H0
+9600
+
+GENERIC
+AT &B0 &K0 &Q0 &D0 &C0
+AT Z H0
+9600
+
+USRobotics 14.4 fax
+AT S0=1 S7=60 E1 Q0 V1 &C1 &D2 &K0 &N6 &A3
+AT Z H0
+9600
+
+ZOOM VFP 14.4
+AT &K0&Q0&D2E1V1X4S37=9N0
+AT Z H0
+9600
+
+Telepath 550
+AT Z &N6 &M0 &K0 S0=1
+AT Z H0
+9600
+
+Intel 14.4i
+AT B8 %C0 "H0 \N0 \Q0
+AT Z H0
+9600
+
+ZOOM 14.4
+AT S37=9 N0 S46=136 %C0 &Q0 \G0
+AT Z H0
+9600
+
+Intel 14.4i fax
+AT&F\N0\Q0
+AT Z H0
+9600
+
+Practical Perip 14.4FX v32
+AT Z S46=0 &Q0 &D2
+AT Z H0
+9600
+
+Hayes Optima 14.4
+AT &F S37=9 S46=0 N0 &Q0 &K0
+AT Z H0
+9600
+
+Cardinal 9600fax
+ATZ&Q6&K0%C0\N0N0S37=9
+AT Z H0
+9600
+
+USRobotics Sportster 14.4
+AT Z &K0 &M0 &D2 E1 V1 X4
+AT Z H0
+9600
+
+Hayes Optima 14.4
+AT Z\N0
+AT Z H0
+9600
+
+Viva 14.4
+AT Z\N0
+AT Z H0
+9600
+
+ZyXel 14.4
+AT Z\N0
+AT Z H0
+9600
+
+Hayes Ultra 14.4
+AT &F &C1 &D2 &Q &K
+AT Z H0
+9600
+
+Cardinal 14.4 v32
+AT&F&Q0N0S37=9
+AT Z H0
+9600
+
+Acubit 14.4 fax v32
+AT Z S37=9 %C0 \N1
+AT Z H0
+9600
+
+No Name (Rockwell) 14.4
+AT S37=9 N0 S46=0 &Q0 &K0 %C0
+AT Z H0
+9600
+
+ZOOM VXP 14.4 v42
+AT&F&K0&M0&Q0&D0&C0\G0%C0
+AT Z H0
+9600
+
+AT&T Data Port 14.4 FaxM.
+ATZ S41=3 %B9600 \N0 %C0
+AT Z H0
+9600
+
+Redicard v.32 bis 14.4
+AT %C & \N
+AT Z H0
+9600
+
+Digicom Scout Plus 14.4 Fax
+AT Z *m0 *e0
+AT Z H0
+9600
+
+Gateway Telepath 14.4 fax
+ATB0N0\N0 %C0 &K0 S37=9
+AT Z H0
+9600
+
+USR Sportster 14.4 v32 fax
+AT &F &M0 &I0 &K0 B0 &N6
+AT Z H0
+9600
+
