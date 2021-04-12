@@ -124,8 +124,6 @@ typedef struct
 #define MAXPHNLIST 40
 
 extern char keydesc[256][10];
-extern int respawn;
-extern int nomonsters;
 extern int mousepresent;
 extern DMXINFO lastc;
 extern DMXINFO newc;
@@ -161,12 +159,6 @@ int SetupMusic(void);
 int ChooseSbPort(DMXCARD *card);
 int ChooseMidiPort(DMXCARD *card);
 
-// WARP.C
-extern int respawn;
-extern int nomonsters;
-extern int deathmatch2;
-unsigned WarpTime(void);
-
 // SFX.C
 int SetupFX(void);
 
@@ -177,6 +169,3 @@ int ChooseController(void);
 void ConfigControl(void);
 void Pos(item_t *item);
 void Clear(item_t *item);
-
-// MACROS.C
-int EditLine(item_t *item, char *string, int maxlen);

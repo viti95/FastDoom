@@ -365,7 +365,6 @@ void StartUp(void)
 	//
 	// GLOBALS
 	//
-	respawn = nomonsters = 0;
 
 	MainMenu();
 	clrscr();
