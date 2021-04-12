@@ -6,9 +6,9 @@
 #include "keys.h"
 
 #define EXENAME "FDOOM.EXE"
-#define DEFAULTNAME "DEFAULT.CFG"
+#define DEFAULTNAME "FDOOM.CFG"
 #define DEFAULTPATH "C:\\DOOMDATA"
-#define SAVENAME "DOOMSAV%d.DSG"
+#define SAVENAME "FDOOMSV%d.DSG"
 
 #define S_NONE "None"
 #define S_PCSP "PC Speaker"

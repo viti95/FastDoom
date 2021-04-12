@@ -709,7 +709,7 @@ void D_AddFile(char *file)
 //
 void IdentifyVersion(void)
 {
-    strcpy(basedefault, "default.cfg");
+    strcpy(basedefault, "fdoom.cfg");
 
     if (!access("doom2.wad", R_OK))
     {
