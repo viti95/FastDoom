@@ -88,33 +88,6 @@ default_t	defaults[] =
 	{"usegamma", &usegamma, 0 },
 };
 
-
-/*default_t defaults[] =
-    {
-        {"showfps", &showFPS, 0},
-        {"uncapped", &uncappedFPS, 0},
-        {"flatsky", &flatSky, 0},
-        {"near", &nearSprites, 0},
-        {"nomelt", &noMelt, 0},
-        {"flatShadows", &flatShadows, 0},
-        {"saturnShadows", &saturnShadows, 0},
-        {"untexturedSurfaces", &untexturedSurfaces, 0},
-        {"flatSurfaces", &flatSurfaces, 0},
-        {"vsync", &waitVsync, 0},
-
-        {"monosound", &monoSound, 0},
-
-        {"snd_channels", &numChannels, 3},
-        {"snd_musicdevice", &snd_DesiredMusicDevice, 0},
-        {"snd_sfxdevice", &snd_DesiredSfxDevice, 0},
-        {"snd_sbport", &snd_SBport, 0x220},
-        {"snd_sbirq", &snd_SBirq, 5},
-        {"snd_sbdma", &snd_SBdma, 1},
-        {"snd_mport", &snd_Mport, 0x330},
-
-        {"usegamma", &usegamma, 0}
-};*/
-
 int		numdefaults;
 char	*  defaultfile;
 
@@ -189,10 +162,7 @@ int M_LoadDefaults (void)
 //
 	numdefaults = sizeof(defaults)/sizeof(defaults[0]);
 	for (i=0 ; i<numdefaults ; i++)
-		if (!strncmp(defaults[i].name,"chatmacro",9))
-			strcpy((char *)defaults[i].location,"no macro");
-		else
-			*defaults[i].location = defaults[i].defaultvalue;
+		*defaults[i].location = defaults[i].defaultvalue;
 
 	defaultfile = DEFAULTNAME;                 // hard-coded path GONE!
 
@@ -212,9 +182,6 @@ int M_LoadDefaults (void)
 		fscanf ( f, "%79s %[^\n]", def, strparm );
 		
       macro[0] = 0;
-      if (!strncmp(def,"chatmacro",9))
-         sscanf(strparm+1,"%[^\"]",macro);
-      else
       if (strparm[0] == '0' && strparm[1] == 'x')
 		  sscanf(strparm+2, "%x", &parm);
       else
@@ -223,10 +190,7 @@ int M_LoadDefaults (void)
       for (i=0 ; i<numdefaults ; i++)
 			if (!strcmp(def, defaults[i].name) )
 			{
-            if (!strncmp(def,"chatmacro",9))
-               strcpy((char *)defaults[i].location,macro);
-            else
-				   *defaults[i].location = parm;
+				*defaults[i].location = parm;
 				break;
 			}
 	}
