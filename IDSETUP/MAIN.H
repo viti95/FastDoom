@@ -76,7 +76,6 @@ typedef struct
 	int skillLevel;
 	int deathMatch;
 	int episode;
-	int comport;
 	int comtype; // 0 = connected,1 = answer,2 = call
 	char phonenum[16];
 } serial_t;
@@ -94,7 +93,6 @@ typedef struct
 	int key3; // ID = STRAFE LEFT
 	int key4; // ID = STRAFE RIGHT
 	int mouse[3];
-	int joy[4];
 } CONTS;
 
 typedef enum
@@ -106,7 +104,6 @@ typedef enum
 } IDCONTS;
 
 extern int usemouse;
-extern int comport;
 
 typedef struct
 {
@@ -127,7 +124,6 @@ typedef struct
 #define MAXPHNLIST 40
 
 extern char keydesc[256][10];
-extern int cdrom;
 extern int respawn;
 extern int nomonsters;
 extern int mousepresent;
@@ -140,7 +136,6 @@ extern CONTS curk;
 //
 // Network macros
 //
-extern char chatmacros[10][40];
 
 extern net_t netinfo;
 extern net_t info; // in case ESC is pressed
@@ -184,5 +179,4 @@ void Pos(item_t *item);
 void Clear(item_t *item);
 
 // MACROS.C
-void MacroConfig(void);
 int EditLine(item_t *item, char *string, int maxlen);

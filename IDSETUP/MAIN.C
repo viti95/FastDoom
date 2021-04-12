@@ -15,8 +15,6 @@
 #include "default.h"
 #include "scguess.h"
 
-int cdrom; // cmd-line param flag
-
 char keydesc[256][10];
 unsigned char ASCIINames[] = // Unshifted ASCII for scan codes
 	{
@@ -297,10 +295,6 @@ void StartUp(void)
 	curk.mouse[0] = 0;
 	curk.mouse[1] = 1;
 	curk.mouse[2] = 2;
-	curk.joy[0] = 0;
-	curk.joy[1] = 1;
-	curk.joy[2] = 2;
-	curk.joy[3] = 3;
 
 	newc.m.card = M_NONE;
 	newc.m.port = -1;
@@ -436,9 +430,6 @@ void MainMenu(void)
 
 			for (i = 1; i < myargc; i++)
 				args[argcount++] = myargv[i];
-
-			if (cdrom)
-				args[argcount++] = "-cdrom";
 
 			args[0] = "fdoom.exe ";
 			args[argcount] = NULL;

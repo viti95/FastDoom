@@ -24,10 +24,19 @@ int	sfxVolume         = 15;
 int	musicVolume       = 15;
 int	detailLevel       = 1;
 int	screenblocks      = 10;
-int   usegamma          = 0;
-int	comport				= 1;
+int usegamma          = 0;
 
-char  chatmacros[10][40];
+int showFPS = 0;
+int uncappedFPS = 0;
+int flatSky = 0;
+int nearSprites = 0;
+int noMelt = 0;
+int flatShadows = 0;
+int saturnShadows = 0;
+int untexturedSurfaces = 0;
+int flatSurfaces = 0;
+int waitVsync = 0;
+int monoSound = 0;
 
 default_t	defaults[] =
 {
@@ -52,18 +61,23 @@ default_t	defaults[] =
 	{"mouseb_strafe",&curk.mouse[ID_STRAFE],ID_STRAFE },
 	{"mouseb_forward",&curk.mouse[ID_FORWARD],ID_FORWARD },
 
-	{"joyb_fire",&curk.joy[ID_FIRE],ID_FIRE},
-	{"joyb_strafe",&curk.joy[ID_STRAFE],ID_STRAFE},
-	{"joyb_use",&curk.joy[ID_USE],ID_USE},
-	{"joyb_speed",&curk.joy[ID_FORWARD],ID_FORWARD},
-
 	{"screenblocks",&screenblocks, 9},
 	{"detaillevel",&detailLevel, 0},
-	{"showmessages",&showMessages, 1 },
-	{"comport",&comport, 1 },
+
+	{"showfps", &showFPS, 0},
+	{"uncapped", &uncappedFPS, 0},
+	{"flatsky", &flatSky, 0},
+	{"near", &nearSprites, 0},
+	{"nomelt", &noMelt, 0},
+	{"flatShadows", &flatShadows, 0},
+	{"saturnShadows", &saturnShadows, 0},
+	{"untexturedSurfaces", &untexturedSurfaces, 0},
+	{"flatSurfaces", &flatSurfaces, 0},
+	{"vsync", &waitVsync, 0},
+
+	{"monosound", &monoSound, 0},
 
 	{"snd_channels", (int *)&newc.numdig, 3 },
-
 	{"snd_musicdevice", (int *)&newc.m.card, 0 },
 	{"snd_sfxdevice", (int *)&newc.d.card, 0 },
 	{"snd_sbport", (int *)&newc.m.port, 0x220 },
@@ -72,21 +86,34 @@ default_t	defaults[] =
 	{"snd_mport", (int *)&newc.m.midiport, 0x330 },
 
 	{"usegamma", &usegamma, 0 },
-
-	{"chatmacro0",(int *)chatmacros[0],0},
-	{"chatmacro1",(int *)chatmacros[1],0},
-	{"chatmacro2",(int *)chatmacros[2],0},
-	{"chatmacro3",(int *)chatmacros[3],0},
-	{"chatmacro4",(int *)chatmacros[4],0},
-	{"chatmacro5",(int *)chatmacros[5],0},
-	{"chatmacro6",(int *)chatmacros[6],0},
-	{"chatmacro7",(int *)chatmacros[7],0},
-	{"chatmacro8",(int *)chatmacros[8],0},
-	{"chatmacro9",(int *)chatmacros[9],0},
-
-	{"",NULL,0},
-
 };
+
+
+/*default_t defaults[] =
+    {
+        {"showfps", &showFPS, 0},
+        {"uncapped", &uncappedFPS, 0},
+        {"flatsky", &flatSky, 0},
+        {"near", &nearSprites, 0},
+        {"nomelt", &noMelt, 0},
+        {"flatShadows", &flatShadows, 0},
+        {"saturnShadows", &saturnShadows, 0},
+        {"untexturedSurfaces", &untexturedSurfaces, 0},
+        {"flatSurfaces", &flatSurfaces, 0},
+        {"vsync", &waitVsync, 0},
+
+        {"monosound", &monoSound, 0},
+
+        {"snd_channels", &numChannels, 3},
+        {"snd_musicdevice", &snd_DesiredMusicDevice, 0},
+        {"snd_sfxdevice", &snd_DesiredSfxDevice, 0},
+        {"snd_sbport", &snd_SBport, 0x220},
+        {"snd_sbirq", &snd_SBirq, 5},
+        {"snd_sbdma", &snd_SBdma, 1},
+        {"snd_mport", &snd_Mport, 0x330},
+
+        {"usegamma", &usegamma, 0}
+};*/
 
 int		numdefaults;
 char	*  defaultfile;
@@ -125,13 +152,7 @@ void M_SaveDefaults (void)
       return;			// can't write the file, but don't complain
 
    for (i=0 ; i<numdefaults ; i++)
-      if (!strncmp(defaults[i].name,"chatmacro",9))
-      {
-         int v = defaults[i].name[9] - '0';
-         fprintf (f,"%s\t\t\"%s\"\n",defaults[i].name, chatmacros[v]);
-      }
-      else
-         fprintf (f,"%s\t\t%i\n",defaults[i].name, *defaults[i].location);
+      fprintf (f,"%s\t\t%i\n",defaults[i].name, *defaults[i].location);
 
 	fclose (f);
 }
@@ -173,15 +194,7 @@ int M_LoadDefaults (void)
 		else
 			*defaults[i].location = defaults[i].defaultvalue;
 
-	cdrom = 0;
-	if (CheckParm("-cdrom"))
-	{
-		mkdir(DEFAULTPATH);
-		defaultfile = DEFAULTPATH"\\"DEFAULTNAME;
-		cdrom = 1;
-	}
-	else
-		defaultfile = DEFAULTNAME;                 // hard-coded path GONE!
+	defaultfile = DEFAULTNAME;                 // hard-coded path GONE!
 
 	i = CheckParm("-config");
 	if (i)
