@@ -35,6 +35,10 @@ typedef enum
 	M_CANVAS,
 	M_GMIDI,
 	M_SBAWE32,
+	M_UNUSED1,
+	M_UNUSED2,
+	M_DISNEYSS,
+	M_TANDYSS,
 	M_LAST
 } SCARD;
 

@@ -39,7 +39,11 @@ char cards[M_LAST][20] = {
 	"WaveBlaster",
 	"Roland Sound Canvas",
 	"General Midi",
-	"Sound Blaster AWE32"};
+	"Sound Blaster AWE32",
+	"Unused",
+	"Unused",
+	"Disney Sound Source",
+	"Tandy Sound Source"};
 
 char controls[C_LAST][20] = {
 	S_CON1,

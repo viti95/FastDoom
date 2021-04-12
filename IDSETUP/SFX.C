@@ -9,17 +9,21 @@ enum
 	DCARD_PAS,
 	DCARD_SB,
 	DCARD_PC,
+	DCARD_DISNEY,
+	DCARD_TANDY,
 	DCARD_NONE,
 	DCARD_MAX
 };
 
 item_t idcarditems[]=
 {
-	{DCARD_GUS,	27,10,25,	-1,-1},
-	{DCARD_PAS,	27,11,25,	-1,-1},
-	{DCARD_SB,	27,12,25,	-1,-1},
-	{DCARD_PC,	27,13,25,	-1,-1},
-	{DCARD_NONE,27,14,25,	-1,-1}
+	{DCARD_GUS,	27,9,25,	-1,-1},
+	{DCARD_PAS,	27,10,25,	-1,-1},
+	{DCARD_SB,	27,11,25,	-1,-1},
+	{DCARD_PC,	27,12,25,	-1,-1},
+	{DCARD_DISNEY,	27,13,25,	-1,-1},
+	{DCARD_TANDY,	27,14,25,	-1,-1},
+	{DCARD_NONE,27,15,25,	-1,-1}
 };
 
 menu_t idcardmenu=
@@ -62,6 +66,14 @@ int ChooseFxCard (void)
 		case M_WAVE:
 			field = DCARD_SB;
 			break;
+		
+		case M_DISNEYSS:
+			field = DCARD_DISNEY;
+			break;
+		
+		case M_TANDYSS:
+			field = DCARD_TANDY;
+			break;
 	}
 
 	SaveScreen();
@@ -98,6 +110,22 @@ int ChooseFxCard (void)
 
 				case DCARD_PC:
 					newc.d.card       = M_PC;
+					newc.d.port       = -1;
+					newc.d.midiport   = -1;
+					newc.d.irq        = -1;
+					newc.d.dma        = -1;
+					goto func_exit;
+
+				case DCARD_DISNEY:
+					newc.d.card = M_DISNEYSS;
+					newc.d.port       = -1;
+					newc.d.midiport   = -1;
+					newc.d.irq        = -1;
+					newc.d.dma        = -1;
+					goto func_exit;
+
+				case DCARD_TANDY:
+					newc.d.card = M_TANDYSS;
 					newc.d.port       = -1;
 					newc.d.midiport   = -1;
 					newc.d.irq        = -1;
