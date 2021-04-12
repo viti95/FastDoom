@@ -7,7 +7,7 @@ enum {CON_MOUSE,CON_KEY,CON_MAX};
 item_t controlitems[]=
 {
 	{CON_MOUSE,		26,11,28,	-1,-1},
-	{CON_KEY,		26,13,28,	-1,-1}
+	{CON_KEY,		26,12,28,	-1,-1}
 };
 menu_t controlmenu=
 {
