@@ -749,12 +749,11 @@ void IDConfigMouse (void)
 //
 // Choose which controller to configure!
 //
-enum {CFG_KEY,CFG_MOUSE,CFG_JOY,CFG_MAX};
+enum {CFG_KEY,CFG_MOUSE,CFG_MAX};
 item_t conselitems[]=
 {
 	{CFG_KEY,	31,11,14,	-1,-1},
 	{CFG_MOUSE,	31,12,14,	-1,-1},
-	{CFG_JOY,	31,13,14,	-1,-1}
 };
 menu_t conselmenu=
 {
@@ -797,10 +796,6 @@ void ConfigControl (void)
 					break;
 				}
 				IDConfigMouse();
-				goto func_exit;
-
-			case CFG_JOY:
-				IDConfigJoy();
 				goto func_exit;
 		}
 	}

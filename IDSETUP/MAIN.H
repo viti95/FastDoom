@@ -14,7 +14,6 @@
 #define S_PCSP "PC Speaker"
 #define S_CON1 "Keyboard only"
 #define S_CON2 "Keyboard + Mouse"
-#define S_CON3 "Keyboard + Joystick"
 
 #define MAXARGS 12
 
@@ -43,7 +42,6 @@ typedef enum
 {
 	C_KEY,
 	C_MOUSE,
-	C_JOYSTICK,
 	C_LAST
 } CONTROL;
 
@@ -108,7 +106,6 @@ typedef enum
 } IDCONTS;
 
 extern int usemouse;
-extern int usejoystick;
 extern int comport;
 
 typedef struct
@@ -186,33 +183,6 @@ void ConfigControl(void);
 void Pos(item_t *item);
 void Clear(item_t *item);
 
-// NETPLAY.C
-void ChooseNetplay(void);
-void AttriBar(int x, int y, int length, char attr);
-
 // MACROS.C
 void MacroConfig(void);
 int EditLine(item_t *item, char *string, int maxlen);
-
-// MODEM.C
-int ModemConfig(void);
-int ChooseOpponentInList(void);
-extern char chosenPhoneNum[16];
-
-// SERIAL.C
-int SerialConfig(void);
-
-// NET.C
-int NetworkConfig(void);
-
-// NETREST.C
-extern char savenames[6][24];
-extern int saveslot;
-int RestoreNetwork(void);
-void ChooseNetrestore(void);
-
-// MODREST.C
-int RestoreModem(void);
-
-// SERREST.C
-int RestoreSerial(void);

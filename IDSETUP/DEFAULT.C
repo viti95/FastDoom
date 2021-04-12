@@ -13,7 +13,6 @@
 #include "main.h"
 
 int		usemouse;
-int		usejoystick;
 
 extern   net_t   netinfo;
 extern   DMXINFO newc;
@@ -53,7 +52,6 @@ default_t	defaults[] =
 	{"mouseb_strafe",&curk.mouse[ID_STRAFE],ID_STRAFE },
 	{"mouseb_forward",&curk.mouse[ID_FORWARD],ID_FORWARD },
 
-	{"use_joystick",&usejoystick, 0},
 	{"joyb_fire",&curk.joy[ID_FIRE],ID_FIRE},
 	{"joyb_strafe",&curk.joy[ID_STRAFE],ID_STRAFE},
 	{"joyb_use",&curk.joy[ID_USE],ID_USE},
@@ -118,9 +116,6 @@ void M_SaveDefaults (void)
 	{
 		if ( newc.control == C_MOUSE )
 			usemouse = 1;
-
-		if ( newc.control == C_JOYSTICK )
-         usejoystick = 1;
    }
 
    numdefaults = sizeof(defaults)/sizeof(default_t);
@@ -229,8 +224,6 @@ int M_LoadDefaults (void)
 
    if ( usemouse )
       newc.control = C_MOUSE;
-   else if ( usejoystick )
-      newc.control = C_JOYSTICK;
    else
       newc.control = C_KEY;
 

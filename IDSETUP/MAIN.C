@@ -45,8 +45,7 @@ char cards[M_LAST][20] = {
 
 char controls[C_LAST][20] = {
 	S_CON1,
-	S_CON2,
-	S_CON3};
+	S_CON2};
 
 CONTS curk;
 
@@ -454,14 +453,6 @@ void MainMenu(void)
 			exit(0);
 
 			goto func_exit;
-
-		//case MAIN_NET:
-		//	ChooseNetplay();
-		//	break;
-
-		//case MAIN_NETSG:
-		//	ChooseNetrestore();
-		//	break;
 
 		default:
 			break;
