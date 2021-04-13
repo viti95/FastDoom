@@ -51,9 +51,6 @@ void RestoreScreen(void);
 void DrawRadios(radiogroup_t *rg);
 
 void DrawPup(pup_t far *pup);
-#ifdef DEBUG
-void ShowAllPups(void);
-#endif
 extern char errorstring[80];
 void Error(char *string);
 

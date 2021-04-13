@@ -206,10 +206,6 @@ void main(int argc, char *argv[])
 	myargv = argv;
 	myargc = argc;
 
-	#ifdef DEBUG
-	ShowAllPups();
-	#endif
-
 	StartUp();
 }
 
