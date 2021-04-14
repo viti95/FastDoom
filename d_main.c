@@ -22,6 +22,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <conio.h>
 #include <dos.h>
 #include <io.h>
 
@@ -709,58 +710,161 @@ void D_AddFile(char *file)
 //
 void IdentifyVersion(void)
 {
+    int selection = -1;
+    int num_wads = 0;
+
     strcpy(basedefault, "fdoom.cfg");
 
     if (!access("doom2.wad", R_OK))
-    {
-        gamemode = commercial;
-        gamemission = doom2;
-        D_AddFile("doom2.wad");
-        return;
-    }
+        num_wads++;
 
     if (!access("plutonia.wad", R_OK))
-    {
-        gamemode = commercial;
-        gamemission = pack_plut;
-        D_AddFile("plutonia.wad");
-        return;
-    }
+        num_wads++;
 
     if (!access("tnt.wad", R_OK))
-    {
-        gamemode = commercial;
-        gamemission = pack_tnt;
-        D_AddFile("tnt.wad");
-        return;
-    }
+        num_wads++;
 
     if (!access("doom.wad", R_OK))
-    {
-        gamemode = registered;
-        gamemission = doom;
-        D_AddFile("doom.wad");
-        return;
-    }
+        num_wads++;
 
     if (!access("doomu.wad", R_OK))
-    {
-        gamemode = retail;
-        gamemission = doom;
-        D_AddFile("doomu.wad");
-        return;
-    }
+        num_wads++;
 
     if (!access("doom1.wad", R_OK))
+        num_wads++;
+
+    if (num_wads > 1)
     {
-        gamemode = shareware;
-        gamemission = doom;
-        D_AddFile("doom1.wad");
+        printf("\nFound more than one IWAD. Please select the IWAD you want to play:\n\n");
+        printf("     1. DOOM Shareware                 (doom1.wad)\n");
+        printf("     2. DOOM                           (doom.wad)\n");
+        printf("     3. The Ultimate DOOM              (doomu.wad)\n");
+        printf("     4. DOOM II                        (doom2.wad)\n");
+        printf("     5. DOOM II: Plutonia Experiment   (plutonia.wad)\n");
+        printf("     6. DOOM II: TNT - Evilution       (tnt.wad)\n\n");
+        printf("Please enter the selection: ");
+        fflush(stdout);
+        selection = getch() - 48;
+        printf("%d\n", selection);
+
+        switch (selection)
+        {
+        case 1:
+            if (!access("doom1.wad", R_OK))
+            {
+                gamemode = shareware;
+                gamemission = doom;
+                D_AddFile("doom1.wad");
+                return;
+            }
+            break;
+        case 2:
+            if (!access("doom.wad", R_OK))
+            {
+                gamemode = registered;
+                gamemission = doom;
+                D_AddFile("doom.wad");
+                return;
+            }
+            break;
+        case 3:
+            if (!access("doomu.wad", R_OK))
+            {
+                gamemode = retail;
+                gamemission = doom;
+                D_AddFile("doomu.wad");
+                return;
+            }
+            break;
+        case 4:
+            if (!access("doom2.wad", R_OK))
+            {
+                gamemode = commercial;
+                gamemission = doom2;
+                D_AddFile("doom2.wad");
+                return;
+            }
+            break;
+        case 5:
+            if (!access("plutonia.wad", R_OK))
+            {
+                gamemode = commercial;
+                gamemission = pack_plut;
+                D_AddFile("plutonia.wad");
+                return;
+            }
+            break;
+        case 6:
+            if (!access("tnt.wad", R_OK))
+            {
+                gamemode = commercial;
+                gamemission = pack_tnt;
+                D_AddFile("tnt.wad");
+                return;
+            }
+            break;
+        }
+
+        printf("The selected IWAD was not found.\n");
+        exit(1);
+    }
+    else if (num_wads == 1)
+    {
+        if (!access("doom2.wad", R_OK))
+        {
+            gamemode = commercial;
+            gamemission = doom2;
+            D_AddFile("doom2.wad");
+            return;
+        }
+
+        if (!access("plutonia.wad", R_OK))
+        {
+            gamemode = commercial;
+            gamemission = pack_plut;
+            D_AddFile("plutonia.wad");
+            return;
+        }
+
+        if (!access("tnt.wad", R_OK))
+        {
+            gamemode = commercial;
+            gamemission = pack_tnt;
+            D_AddFile("tnt.wad");
+            return;
+        }
+
+        if (!access("doom.wad", R_OK))
+        {
+            gamemode = registered;
+            gamemission = doom;
+            D_AddFile("doom.wad");
+            return;
+        }
+
+        if (!access("doomu.wad", R_OK))
+        {
+            gamemode = retail;
+            gamemission = doom;
+            D_AddFile("doomu.wad");
+            return;
+        }
+
+        if (!access("doom1.wad", R_OK))
+        {
+            gamemode = shareware;
+            gamemission = doom;
+            D_AddFile("doom1.wad");
+            return;
+        }
+
         return;
     }
-
-    printf("Game mode indeterminate.\n");
-    exit(1);
+    else
+    {
+        printf("No IWAD was found.\n");
+        exit(1);
+    }
 }
 
 //
