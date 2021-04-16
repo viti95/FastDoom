@@ -233,18 +233,8 @@ byte P_UseSpecialLine(mobj_t *thing, line_t *line, int side)
 	// Err...
 	// Use the back sides of VERY SPECIAL lines...
 	if (side)
-	{
-		switch (line->special)
-		{
-		case 124:
-			// Sliding door open&close
-			// UNUSED?
-			break;
-
-		default:
-			return 0;
-			break;
-		}
+	{	
+		return 0;
 	}
 
 	// Switches that other things can activate.
