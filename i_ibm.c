@@ -660,6 +660,9 @@ void I_InitGraphics(void)
             regs.h.bh = 0x00;
             int386(0x10, &regs, &regs);
         }
+
+        textdestscreen = (unsigned short *)0xB8000;
+        textpage = 0;
     #endif
     #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
         // Set 80x25 color mode
@@ -685,14 +688,15 @@ void I_InitGraphics(void)
         regs.h.bl = 0x00;
         regs.h.bh = 0x00;
         int386(0x10, &regs, &regs);
+
+        textdestscreen = (unsigned short *)0xB8000;
+        textpage = 0;
     #endif
     #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         regs.w.ax = 0x13;
         int386(0x10, (union REGS *)&regs, &regs);
         pcscreen = currentscreen = (byte *)0xA0000;
         destscreen = (byte *)0xA4000;
-        textdestscreen = (unsigned short *)0xB8000;
-        textpage = 0;
 
         outp(SC_INDEX, SC_MEMMODE);
         outp(SC_INDEX + 1, (inp(SC_INDEX + 1) & ~8) | 4);
