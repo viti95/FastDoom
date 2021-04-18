@@ -295,6 +295,8 @@ default_t defaults[] =
         {"flatSurfaces", &flatSurfaces, 0},
         {"vsync", &waitVsync, 0},
 
+        {"autorun", &autorun, 0},
+
         {"monosound", &monoSound, 0},
 
         {"snd_channels", &numChannels, 3},
@@ -306,7 +308,6 @@ default_t defaults[] =
         {"snd_mport", &snd_Mport, 0x330},
 
         {"usegamma", &usegamma, 0}
-
 };
 
 int numdefaults;

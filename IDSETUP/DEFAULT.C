@@ -37,6 +37,7 @@ int untexturedSurfaces = 0;
 int flatSurfaces = 0;
 int waitVsync = 0;
 int monoSound = 0;
+int autorun = 0;
 
 default_t	defaults[] =
 {
@@ -74,6 +75,8 @@ default_t	defaults[] =
 	{"untexturedSurfaces", &untexturedSurfaces, 0},
 	{"flatSurfaces", &flatSurfaces, 0},
 	{"vsync", &waitVsync, 0},
+
+	{"autorun", &autorun, 0},
 
 	{"monosound", &monoSound, 0},
 
