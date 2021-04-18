@@ -61,6 +61,10 @@ int viewwindowx;
 int viewwindowy;
 int columnofs[MAXWIDTH];
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+byte *ylookup[MAXHEIGHT];
+#endif
+
 int automapheight;
 
 // Color tables for different players,
@@ -712,6 +716,16 @@ int fuzzoffset[FUZZTABLE] =
         FUZZOFF, -FUZZOFF, FUZZOFF, FUZZOFF, -FUZZOFF, -FUZZOFF, FUZZOFF,
         FUZZOFF, -FUZZOFF, -FUZZOFF, -FUZZOFF, -FUZZOFF, FUZZOFF, FUZZOFF,
         FUZZOFF, FUZZOFF, -FUZZOFF, FUZZOFF, FUZZOFF, -FUZZOFF, FUZZOFF};
+
+int fuzzoffset_13h[FUZZTABLE] =
+    {
+        1, -1, 1, -1, 1, 1, -1,
+        1, 1, -1, 1, 1, 1, -1,
+        1, 1, 1, -1, -1, -1, -1,
+        1, -1, -1, 1, 1, 1, 1, -1,
+        1, -1, 1, 1, -1, -1, 1,
+        1, -1, -1, -1, -1, 1, 1,
+        1, 1, -1, 1, 1, -1, 1};
 
 int fuzzpos = 0;
 
@@ -1462,27 +1476,32 @@ void R_InitBuffer(int width, int height)
     //  e.g. smaller view windows
     //  with border and/or status bar.
 
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        viewwindowx = 0;
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-        viewwindowx = (SCREENWIDTH - width) >> 1;
-    #endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    viewwindowx = 0;
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+    viewwindowx = (SCREENWIDTH - width) >> 1;
+#endif
 
     // Column offset. For windows.
     for (i = 0; i < width; i++)
         columnofs[i] = viewwindowx + i;
 
-    // Samw with base row offset.
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        viewwindowy = 0;
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+// Samw with base row offset.
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    viewwindowy = 0;
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
     if (width == SCREENWIDTH)
         viewwindowy = 0;
     else
         viewwindowy = (SCREENHEIGHT - SBARHEIGHT - height) >> 1;
-    #endif
+#endif
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+    for (i = 0; i < height; i++)
+        ylookup[i] = backbuffer + (i + viewwindowy) * SCREENWIDTH;
+#endif
 }
 
 //
@@ -1636,5 +1655,75 @@ void R_DrawViewBorder(void)
         R_VideoErase(ofs, side);
         ofs += SCREENWIDTH;
     }
+}
+#endif
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+void R_DrawColumn_13h(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac, fracstep;
+
+    count = dc_yh - dc_yl;
+    if (count < 0)
+        return;
+
+    dest = ylookup[dc_yl] + columnofs[dc_x];
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    do
+    {
+        *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]];
+        dest += SCREENWIDTH;
+        frac += fracstep;
+    } while (count--);
+}
+
+void R_DrawFuzzColumn_13h(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac, fracstep;
+
+    if (!dc_yl)
+        dc_yl = 1;
+    if (dc_yh == viewheight - 1)
+        dc_yh = viewheight - 2;
+
+    count = dc_yh - dc_yl;
+    if (count < 0)
+        return;
+
+    dest = ylookup[dc_yl] + columnofs[dc_x];
+
+    do{
+        *dest = colormaps[6 * 256 + dest[fuzzoffset_13h[fuzzpos]]];
+        if (++fuzzpos == FUZZTABLE)
+            fuzzpos = 0;
+        dest += SCREENWIDTH;
+    } while (count--);
+}
+
+void R_DrawSpan_13h(void)
+{
+    fixed_t xfrac, yfrac;
+    byte *dest;
+    int count, spot;
+
+    xfrac = ds_xfrac;
+    yfrac = ds_yfrac;
+
+    dest = ylookup[ds_y] + columnofs[ds_x1];
+    count = ds_x2 - ds_x1;
+    do
+    {
+        spot = ((yfrac >> (16 - 6)) & (63 * 64)) + ((xfrac >> 16) & 63);
+        *dest++ = ds_colormap[ds_source[spot]];
+        xfrac += ds_xstep;
+        yfrac += ds_ystep;
+    } while (count--);
 }
 #endif

@@ -70,6 +70,10 @@ void R_DrawFuzzColumnText8025(void);
 void R_DrawFuzzColumnFastText8025(void);
 void R_DrawFuzzColumnSaturnText8025(void);
 
+void R_DrawColumn_13h(void);
+void R_DrawSpan_13h(void);
+void R_DrawFuzzColumn_13h(void);
+
 void R_VideoErase(unsigned ofs,int count);
 
 extern int ds_y;

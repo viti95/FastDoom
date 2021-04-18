@@ -38,6 +38,10 @@ byte screen0[SCREENWIDTH * SCREENHEIGHT];
 byte screen4[SCREENWIDTH * 32];
 #endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+byte backbuffer[SCREENWIDTH * SCREENHEIGHT];
+#endif
+
 int dirtybox[4];
 
 #define SC_INDEX 0x3C4
