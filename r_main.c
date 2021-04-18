@@ -706,7 +706,7 @@ void R_ExecuteSetViewSize(void)
     viewheight = 50;
     detailshift = 0;
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
     if (forcePotatoDetail || forceLowDetail || forceHighDetail)
     {
         if (forceHighDetail)
