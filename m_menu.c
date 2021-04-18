@@ -1526,6 +1526,7 @@ void M_SizeDisplay(int choice)
 //
 //      Menu Functions
 //
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void M_DrawThermo(int x, int y, int thermWidth, int thermDot)
 {
     int xx;
@@ -1543,9 +1544,9 @@ void M_DrawThermo(int x, int y, int thermWidth, int thermDot)
 
     V_DrawPatchDirect((x + 8) + thermDot * 8, y, W_CacheLumpName("M_THERMO", PU_CACHE));
 }
+#endif
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-
 void M_DrawThermoText(int x, int y, int thermWidth, int thermDot)
 {
     int xx;
@@ -1629,9 +1630,8 @@ int M_StringHeight(char *string)
 //
 //      Write a string using the hu_font
 //
-void M_WriteText(int x,
-                 int y,
-                 char *string)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+void M_WriteText(int x, int y, char *string)
 {
     int w;
     char *ch;
@@ -1669,6 +1669,7 @@ void M_WriteText(int x,
         cx += w;
     }
 }
+#endif
 
 //
 // CONTROL PANEL

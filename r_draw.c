@@ -1510,10 +1510,6 @@ void R_FillBackScreen(void)
 
     char *name;
 
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        return;
-    #endif
-
     if (scaledviewwidth == 320)
         return;
 
@@ -1583,15 +1579,13 @@ void R_FillBackScreen(void)
 //
 // Copy a screen buffer.
 //
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void R_VideoErase(unsigned ofs, int count)
 {
     byte *dest;
     byte *source;
     int countp;
 
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        return;
-    #endif
 
     outp(SC_INDEX, SC_MAPMASK);
     outp(SC_INDEX + 1, 15);
@@ -1605,22 +1599,20 @@ void R_VideoErase(unsigned ofs, int count)
     outp(GC_INDEX, GC_MODE);
     outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~1);
 }
+#endif
 
 //
 // R_DrawViewBorder
 // Draws the border around the view
 //  for different size windows?
 //
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void R_DrawViewBorder(void)
 {
     int top;
     int side;
     int ofs;
     int i;
-
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        return;
-    #endif
 
     if (scaledviewwidth == SCREENWIDTH)
         return;
@@ -1645,3 +1637,4 @@ void R_DrawViewBorder(void)
         ofs += SCREENWIDTH;
     }
 }
+#endif

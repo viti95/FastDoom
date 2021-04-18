@@ -132,8 +132,8 @@ void HUlib_eraseTextLine(hu_textline_t *l)
     // and the text must either need updating or refreshing
     // (because of a recent change back from the automap)
 
-    if (!automapactive &&
-        viewwindowx && l->needsupdate)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+    if (!automapactive && viewwindowx && l->needsupdate)
     {
         lh = l->f[0]->height + 1;
         for (y = l->y, yoffset = Mul320(y); y < l->y + lh; y++, yoffset += SCREENWIDTH)
@@ -147,6 +147,7 @@ void HUlib_eraseTextLine(hu_textline_t *l)
             }
         }
     }
+#endif
 
     lastautomapactive = automapactive;
 

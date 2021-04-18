@@ -173,13 +173,10 @@ void wipe_exitMelt()
 // wipe_ReadScreen
 // Reads the screen currently displayed into a linear buffer.
 //
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void wipe_ReadScreen(byte *scr)
 {
     int j;
-
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        return;
-    #endif
 
     outp(GC_INDEX, GC_READMAP);
 
@@ -239,19 +236,25 @@ void wipe_ReadScreen(byte *scr)
         scr[i + 31] = currentscreen[j + 7];
     }
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void wipe_StartScreen()
 {
     screen2 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
     wipe_ReadScreen(screen2);
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void wipe_EndScreen()
 {
     screen3 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
     wipe_ReadScreen(screen3);
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 int wipe_ScreenWipe(int ticks)
 {
     int rc;
@@ -276,3 +279,4 @@ int wipe_ScreenWipe(int ticks)
 
     return !go;
 }
+#endif

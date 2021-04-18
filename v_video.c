@@ -113,6 +113,7 @@ void V_SetRect(byte color, int width, int height, int destx, int desty, byte *de
 // V_DrawPatch
 // Masks a column based masked pic to the screen.
 //
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
 {
 
@@ -123,10 +124,6 @@ void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
     byte *dest;
     byte *source;
     int w;
-
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        return;
-    #endif
 
     y -= patch->topoffset;
     x -= patch->leftoffset;
@@ -172,7 +169,9 @@ void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
         }
     }
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void V_DrawPatchScreen0(int x, int y, patch_t *patch)
 {
 
@@ -183,10 +182,6 @@ void V_DrawPatchScreen0(int x, int y, patch_t *patch)
     byte *dest;
     byte *source;
     int w;
-
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        return;
-    #endif
 
     y -= patch->topoffset;
     x -= patch->leftoffset;
@@ -234,12 +229,14 @@ void V_DrawPatchScreen0(int x, int y, patch_t *patch)
         }
     }
 }
+#endif
 
 //
 // V_DrawPatchFlipped
 // Masks a column based masked pic to the screen.
 // Flips horizontally, e.g. to mirror face.
 //
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
 {
 
@@ -250,10 +247,6 @@ void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
     byte *dest;
     byte *source;
     int w;
-
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        return;
-    #endif
 
     y -= patch->topoffset;
     x -= patch->leftoffset;
@@ -285,6 +278,7 @@ void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
         }
     }
 }
+#endif
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void V_WriteTextColorDirect(int x, int y, char *string, unsigned short color)
@@ -334,6 +328,7 @@ void V_WriteCharDirect(int x, int y, unsigned char c)
 // V_DrawPatchDirect
 // Draws directly to the screen on the pc.
 //
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void V_DrawPatchDirect(int x, int y, patch_t *patch)
 {
     int count;
@@ -343,10 +338,6 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
     byte *dest;
     byte *source;
     int w;
-
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        return;
-    #endif
 
     y -= patch->topoffset;
     x -= patch->leftoffset;
@@ -395,6 +386,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
         desttop += ((++x) & 3) == 0; // go to next byte, not next plane
     }
 }
+#endif
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void V_DrawPatchDirectText8050(int x, int y, patch_t *patch)

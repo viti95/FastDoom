@@ -471,8 +471,8 @@ void WI_drawEL(void)
 #endif
 }
 
-void WI_drawOnLnode(int n,
-					patch_t *c[])
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+void WI_drawOnLnode(int n, patch_t *c[])
 {
 
 	int i;
@@ -505,6 +505,7 @@ void WI_drawOnLnode(int n,
 		V_DrawPatchScreen0(lnodes[wbs->epsd][n].x, lnodes[wbs->epsd][n].y, c[i]);
 	}
 }
+#endif
 
 void WI_initAnimatedBack(void)
 {
@@ -571,6 +572,7 @@ void WI_updateAnimatedBack(void)
 	}
 }
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void WI_drawAnimatedBack(void)
 {
 	int i;
@@ -590,6 +592,7 @@ void WI_drawAnimatedBack(void)
 			V_DrawPatchScreen0(a->loc.x, a->loc.y, a->p[a->ctr]);
 	}
 }
+#endif
 
 //
 // Draws a number.
@@ -643,6 +646,7 @@ int WI_drawNumTwoDigits(int x, int y, int n)
 #endif
 }
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 int WI_drawNum(int x, int y, int n)
 {
 
@@ -664,6 +668,7 @@ int WI_drawNum(int x, int y, int n)
 
 	return x;
 }
+#endif
 
 void WI_drawPercent(int x, int y, int p)
 {
@@ -732,7 +737,9 @@ void WI_drawTime(int x,
 	else
 	{
 		// "sucks"
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 		V_DrawPatchScreen0(x - sucks->width, y, sucks);
+#endif
 	}
 }
 
@@ -827,6 +834,7 @@ void WI_updateShowNextLoc(void)
 		snl_pointeron = (cnt & 31) < 20;
 }
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void WI_drawShowNextLoc(void)
 {
 
@@ -865,11 +873,14 @@ void WI_drawShowNextLoc(void)
 	if ((gamemode != commercial) || wbs->next != 30)
 		WI_drawEL();
 }
+#endif
 
 void WI_drawNoState(void)
 {
 	snl_pointeron = 1;
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 	WI_drawShowNextLoc();
+#endif
 }
 
 static int ng_state;
@@ -1021,7 +1032,9 @@ void WI_drawStats(void)
 	WI_slamBackground();
 
 	// draw animated background
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 	WI_drawAnimatedBack();
+#endif
 
 	WI_drawLF();
 
@@ -1280,10 +1293,11 @@ void WI_Drawer(void)
 	case StatCount:
 		WI_drawStats();
 		break;
-
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 	case ShowNextLoc:
 		WI_drawShowNextLoc();
 		break;
+#endif
 
 	case NoState:
 		WI_drawNoState();

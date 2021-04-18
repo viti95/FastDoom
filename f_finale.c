@@ -645,6 +645,7 @@ byte F_CastResponder(event_t *ev)
 	return 1;
 }
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void F_CastPrint(char *text)
 {
 	char *ch;
@@ -693,6 +694,7 @@ void F_CastPrint(char *text)
 		cx += w;
 	}
 }
+#endif
 
 //
 // F_CastDrawer
