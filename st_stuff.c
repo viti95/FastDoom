@@ -252,7 +252,7 @@ static byte st_statusbaron;
 // !deathmatch && st_statusbaron
 static byte st_armson;
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 // main bar left
 static patch_t *sbar;
 #endif
@@ -404,7 +404,7 @@ cheatseq_t cheat_clev = {cheat_clev_seq, 0};
 //
 void ST_Stop(void);
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 void ST_refreshBackground(void)
 {
 	if (st_statusbaron)
@@ -1076,7 +1076,7 @@ void ST_DrawerText8050()
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 void ST_drawWidgets(byte refresh)
 {
 	int i;
@@ -1118,7 +1118,7 @@ void ST_drawWidgets(byte refresh)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 void ST_Drawer(byte fullscreen, byte refresh)
 {
 	st_statusbaron = (!fullscreen) || automapactive;
@@ -1145,7 +1145,7 @@ void ST_Drawer(byte fullscreen, byte refresh)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 void ST_loadGraphics(void)
 {
 
@@ -1219,7 +1219,7 @@ void ST_loadGraphics(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 void ST_loadData(void)
 {
 	ST_loadGraphics();
@@ -1251,7 +1251,7 @@ void ST_unloadGraphics(void)
 	for (i = 0; i < NUMCARDS; i++)
 		Z_ChangeTag(keys[i], PU_CACHE);
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 	Z_ChangeTag(sbar, PU_CACHE);
 #endif
 
@@ -1473,7 +1473,7 @@ void ST_Stop(void)
 	st_stopped = 1;
 }
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 void ST_Init(void)
 {
 	ST_loadData();

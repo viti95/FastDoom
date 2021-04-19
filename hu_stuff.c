@@ -236,7 +236,7 @@ char *mapnamest[] = // TNT WAD map names.
         THUSTR_31,
         THUSTR_32};
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 void HU_Init(void)
 {
 

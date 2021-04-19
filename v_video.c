@@ -34,7 +34,7 @@
 
 byte screen0[SCREENWIDTH * SCREENHEIGHT];
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 byte screen4[SCREENWIDTH * 32];
 #endif
 
@@ -117,7 +117,7 @@ void V_SetRect(byte color, int width, int height, int destx, int desty, byte *de
 // V_DrawPatch
 // Masks a column based masked pic to the screen.
 //
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
 {
 
@@ -175,7 +175,7 @@ void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 void V_DrawPatchScreen0(int x, int y, patch_t *patch)
 {
 
@@ -388,6 +388,43 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
         }
 
         desttop += ((++x) & 3) == 0; // go to next byte, not next plane
+    }
+}
+#endif
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+void V_DrawPatchDirect(int x, int y, patch_t *patch)
+{
+    int count;
+    int col;
+    column_t *column;
+    byte *desttop;
+    byte *dest;
+    byte *source;
+    int w;
+
+    y -= patch->topoffset;
+    x -= patch->leftoffset;
+
+    col = 0;
+    desttop = backbuffer + y * SCREENWIDTH + x;
+    w = patch->width;
+    for (; col < w; x++, col++, desttop++)
+    {
+        column = (column_t *)((byte *)patch + patch->columnofs[col]);
+        // Step through the posts in a column
+        while (column->topdelta != 0xff)
+        {
+            source = (byte *)column + 3;
+            dest = desttop + column->topdelta * SCREENWIDTH;
+            count = column->length;
+            while (count--)
+            {
+                *dest = *source++;
+                dest += SCREENWIDTH;
+            }
+            column = (column_t *)((byte *)column + column->length + 4);
+        }
     }
 }
 #endif

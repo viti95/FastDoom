@@ -94,7 +94,7 @@ void HUlib_drawTextLine(hu_textline_t *l)
             x++;
         }
     #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
         // draw the new stuff
         x = l->x;
         for (i = 0; i < l->len; i++)
