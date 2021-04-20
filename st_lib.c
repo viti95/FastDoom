@@ -106,11 +106,21 @@ void STlib_drawNum(st_number_t *n, byte refresh)
 
     if (simpleStatusBar)
     {
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         V_SetRect(ST_BACKGROUND_COLOR, w * 3, h, x, n->y, screen0);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+        V_SetRect(ST_BACKGROUND_COLOR, w * 3, h, x, n->y, backbuffer);
+#endif
     }
     else
     {
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         V_CopyRect(x, n->y - ST_Y, screen4, w * 3, h, x, n->y, screen0);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+        V_CopyRect(x, n->y - ST_Y, screen4, w * 3, h, x, n->y, backbuffer);
+#endif
     }
 
     // if non-number, do not draw it
@@ -122,7 +132,12 @@ void STlib_drawNum(st_number_t *n, byte refresh)
     // in the special case of 0, you draw 0
     if (!num)
     {
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         V_DrawPatchScreen0(x - w, n->y, n->p[0]);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+        V_DrawPatchDirect(x - w, n->y, n->p[0]);
+#endif
         return;
     }
 
@@ -133,7 +148,12 @@ void STlib_drawNum(st_number_t *n, byte refresh)
 
         num = Div10(num);
         x -= w;
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         V_DrawPatchScreen0(x, n->y, n->p[original - Mul10(num)]);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+        V_DrawPatchDirect(x, n->y, n->p[original - Mul10(num)]);
+#endif
     } while (num);
 }
 #endif
@@ -163,7 +183,14 @@ void STlib_initPercent(st_percent_t *p,
 void STlib_updatePercent(st_percent_t *per, int refresh)
 {
     if (refresh && *per->n.on)
+    {
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         V_DrawPatchScreen0(per->n.x, per->n.y, per->p);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+        V_DrawPatchDirect(per->n.x, per->n.y, per->p);
+#endif
+    }
 
     STlib_updateNum(&per->n, refresh);
 }
@@ -203,14 +230,29 @@ void STlib_updateMultIcon(st_multicon_t *mi, byte refresh)
 
             if (simpleStatusBar)
             {
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
                 V_SetRect(ST_BACKGROUND_COLOR, w, h, x, y, screen0);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+                V_SetRect(ST_BACKGROUND_COLOR, w, h, x, y, backbuffer);
+#endif
             }
             else
             {
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
                 V_CopyRect(x, y - ST_Y, screen4, w, h, x, y, screen0);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+                V_CopyRect(x, y - ST_Y, screen4, w, h, x, y, backbuffer);
+#endif
             }
         }
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         V_DrawPatchScreen0(mi->x, mi->y, mi->p[*mi->inum]);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+        V_DrawPatchDirect(mi->x, mi->y, mi->p[*mi->inum]);
+#endif
         mi->oldinum = *mi->inum;
     }
 }
@@ -239,7 +281,12 @@ void STlib_updateBinIcon(st_binicon_t *bi, byte refresh)
         }
         else
         {
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
             V_DrawPatchScreen0(bi->x, bi->y, bi->p);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+            V_DrawPatchDirect(bi->x, bi->y, bi->p);
+#endif
         }
     }
 }

@@ -411,12 +411,23 @@ void ST_refreshBackground(void)
 	{
 		if (simpleStatusBar)
 		{
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 			V_SetRect(ST_BACKGROUND_COLOR, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y, screen0);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+			V_SetRect(ST_BACKGROUND_COLOR, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y, backbuffer);
+#endif
 		}
 		else
 		{
 			V_DrawPatch(ST_X, 0, screen4, sbar);
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 			V_CopyRect(ST_X, 0, screen4, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y, screen0);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+			V_CopyRect(ST_X, 0, screen4, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y, backbuffer);
+#endif
 		}
 	}
 }
