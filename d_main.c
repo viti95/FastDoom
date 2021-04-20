@@ -460,7 +460,7 @@ void D_PageDrawer(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
     V_DrawPatchDirectText8050(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
     V_DrawPatchScreen0(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
 }

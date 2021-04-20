@@ -393,7 +393,7 @@ void WI_drawLF(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 	V_WriteTextDirect((SCREENWIDTH - lnames[wbs->last]->width) / 8, y / 4, titlecurrent);
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 	V_DrawPatchScreen0((SCREENWIDTH - lnames[wbs->last]->width) / 2, y, lnames[wbs->last]);
 #endif
 
@@ -406,7 +406,7 @@ void WI_drawLF(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 	V_WriteTextDirect((SCREENWIDTH - finished->width) / 8, y / 4, "FINISHED");
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 	V_DrawPatchScreen0((SCREENWIDTH - finished->width) / 2, y, finished);
 #endif
 }
@@ -453,7 +453,7 @@ void WI_drawEL(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 	V_WriteTextDirect((SCREENWIDTH - entering->width) / 8, y / 4, "ENTERING");
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 	V_DrawPatchScreen0((SCREENWIDTH - entering->width) / 2, y, entering);
 #endif
 
@@ -466,12 +466,12 @@ void WI_drawEL(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 	V_WriteTextDirect((SCREENWIDTH - lnames[wbs->next]->width) / 8, y / 4, titlenext);
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 	V_DrawPatchScreen0((SCREENWIDTH - lnames[wbs->next]->width) / 2, y, lnames[wbs->next]);
 #endif
 }
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 void WI_drawOnLnode(int n, patch_t *c[])
 {
 
@@ -572,7 +572,7 @@ void WI_updateAnimatedBack(void)
 	}
 }
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 void WI_drawAnimatedBack(void)
 {
 	int i;
@@ -624,7 +624,7 @@ int WI_drawNumTwoDigits(int x, int y, int n)
 	x -= 2 * fontwidth;
 	return x;
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 	int original;
 	int fontwidth = num[0]->width;
 
@@ -646,7 +646,7 @@ int WI_drawNumTwoDigits(int x, int y, int n)
 #endif
 }
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 int WI_drawNum(int x, int y, int n)
 {
 
@@ -687,7 +687,7 @@ void WI_drawPercent(int x, int y, int p)
 	sprintf(strnum, "%i%%", p);
 	V_WriteTextDirect(x / 2, y / 4 - 1, strnum);
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 	V_DrawPatchScreen0(x, y, percent);
 	WI_drawNum(x, y, p);
 #endif
@@ -728,7 +728,7 @@ void WI_drawTime(int x,
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 				V_WriteTextDirect(x / 4, y / 4, ":");
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 				V_DrawPatchScreen0(x, y, colon);
 #endif
 			}
@@ -737,7 +737,7 @@ void WI_drawTime(int x,
 	else
 	{
 		// "sucks"
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 		V_DrawPatchScreen0(x - sucks->width, y, sucks);
 #endif
 	}
@@ -1044,7 +1044,7 @@ void WI_drawStats(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 	V_WriteTextDirect(SP_STATSX / 2, SP_STATSY / 4, "KILLS:");
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 	V_DrawPatchScreen0(SP_STATSX, SP_STATSY, kills);
 #endif
 
@@ -1056,7 +1056,7 @@ void WI_drawStats(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 	V_WriteTextDirect(SP_STATSX / 2, (SP_STATSY + lh) / 4, "ITEMS:");
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 	V_DrawPatchScreen0(SP_STATSX, SP_STATSY + lh, items);
 #endif
 
@@ -1068,7 +1068,7 @@ void WI_drawStats(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 	V_WriteTextDirect(SP_STATSX / 2, (SP_STATSY + 2 * lh) / 4, "SECRET:");
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 	V_DrawPatchScreen0(SP_STATSX, SP_STATSY + 2 * lh, sp_secret);
 #endif
 	WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY + 2 * lh, cnt_secret);
@@ -1079,7 +1079,7 @@ void WI_drawStats(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 	V_WriteTextDirect(SP_TIMEX / 2, SP_TIMEY / 4, "TIME:");
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 	V_DrawPatchScreen0(SP_TIMEX, SP_TIMEY, time);
 #endif
 	WI_drawTime(SCREENWIDTH / 2 - SP_TIMEX, SP_TIMEY, cnt_time);
@@ -1094,7 +1094,7 @@ void WI_drawStats(void)
 		V_WriteTextDirect((SCREENWIDTH / 2 + SP_TIMEX) / 4, SP_TIMEY / 4, "PAR:");
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 		V_DrawPatchScreen0(SCREENWIDTH / 2 + SP_TIMEX, SP_TIMEY, par);
 #endif
 

@@ -407,7 +407,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
     x -= patch->leftoffset;
 
     col = 0;
-    desttop = backbuffer + y * SCREENWIDTH + x;
+    desttop = backbuffer + Mul320(y) + x;
     w = patch->width;
     for (; col < w; x++, col++, desttop++)
     {
@@ -416,7 +416,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
         while (column->topdelta != 0xff)
         {
             source = (byte *)column + 3;
-            dest = desttop + column->topdelta * SCREENWIDTH;
+            dest = desttop + Mul320(column->topdelta);
             count = column->length;
             while (count--)
             {
