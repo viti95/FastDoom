@@ -347,6 +347,9 @@ void WI_slamBackground(void)
 	CopyDWords(screen1, screen0, (SCREENWIDTH * SCREENHEIGHT) / 4);
 	V_MarkRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
 #endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+	CopyDWords(screen1, backbuffer, (SCREENWIDTH * SCREENHEIGHT) / 4);
+#endif
 }
 
 // Draws "<Levelname> Finished!"
@@ -393,8 +396,11 @@ void WI_drawLF(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 	V_WriteTextDirect((SCREENWIDTH - lnames[wbs->last]->width) / 8, y / 4, titlecurrent);
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 	V_DrawPatchScreen0((SCREENWIDTH - lnames[wbs->last]->width) / 2, y, lnames[wbs->last]);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+	V_DrawPatchDirect((SCREENWIDTH - lnames[wbs->last]->width) / 2, y, lnames[wbs->last]);
 #endif
 
 	// draw "Finished!"
@@ -406,8 +412,11 @@ void WI_drawLF(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 	V_WriteTextDirect((SCREENWIDTH - finished->width) / 8, y / 4, "FINISHED");
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 	V_DrawPatchScreen0((SCREENWIDTH - finished->width) / 2, y, finished);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+	V_DrawPatchDirect((SCREENWIDTH - finished->width) / 2, y, finished);
 #endif
 }
 
@@ -453,8 +462,11 @@ void WI_drawEL(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 	V_WriteTextDirect((SCREENWIDTH - entering->width) / 8, y / 4, "ENTERING");
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 	V_DrawPatchScreen0((SCREENWIDTH - entering->width) / 2, y, entering);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+	V_DrawPatchDirect((SCREENWIDTH - entering->width) / 2, y, entering);
 #endif
 
 	// draw level
@@ -466,8 +478,11 @@ void WI_drawEL(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 	V_WriteTextDirect((SCREENWIDTH - lnames[wbs->next]->width) / 8, y / 4, titlenext);
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 	V_DrawPatchScreen0((SCREENWIDTH - lnames[wbs->next]->width) / 2, y, lnames[wbs->next]);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+	V_DrawPatchDirect((SCREENWIDTH - lnames[wbs->next]->width) / 2, y, lnames[wbs->next]);
 #endif
 }
 
@@ -502,7 +517,12 @@ void WI_drawOnLnode(int n, patch_t *c[])
 
 	if (fits && i < 2)
 	{
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 		V_DrawPatchScreen0(lnodes[wbs->epsd][n].x, lnodes[wbs->epsd][n].y, c[i]);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+		V_DrawPatchDirect(lnodes[wbs->epsd][n].x, lnodes[wbs->epsd][n].y, c[i]);
+#endif
 	}
 }
 #endif
@@ -589,7 +609,14 @@ void WI_drawAnimatedBack(void)
 		a = &anims[wbs->epsd][i];
 
 		if (a->ctr >= 0)
+		{
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 			V_DrawPatchScreen0(a->loc.x, a->loc.y, a->p[a->ctr]);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+			V_DrawPatchDirect(a->loc.x, a->loc.y, a->p[a->ctr]);
+#endif
+		}
 	}
 }
 #endif
@@ -635,12 +662,22 @@ int WI_drawNumTwoDigits(int x, int y, int n)
 	original = n;
 	n = Div10(n);
 	x -= fontwidth;
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 	V_DrawPatchScreen0(x, y, num[original - Mul10(n)]);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+	V_DrawPatchDirect(x, y, num[original - Mul10(n)]);
+#endif
 
 	original = n;
 	n = Div10(n);
 	x -= fontwidth;
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 	V_DrawPatchScreen0(x, y, num[original - Mul10(n)]);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+	V_DrawPatchDirect(x, y, num[original - Mul10(n)]);
+#endif
 
 	return x;
 #endif
@@ -663,7 +700,12 @@ int WI_drawNum(int x, int y, int n)
 
 		n = Div10(n);
 		x -= fontwidth;
-		V_DrawPatchScreen0(x, y, num[original - Mul10(n)]);
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+	V_DrawPatchScreen0(x, y, num[original - Mul10(n)]);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+	V_DrawPatchDirect(x, y, num[original - Mul10(n)]);
+#endif
 	} while (n);
 
 	return x;
@@ -687,8 +729,12 @@ void WI_drawPercent(int x, int y, int p)
 	sprintf(strnum, "%i%%", p);
 	V_WriteTextDirect(x / 2, y / 4 - 1, strnum);
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 	V_DrawPatchScreen0(x, y, percent);
+	WI_drawNum(x, y, p);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+	V_DrawPatchDirect(x, y, percent);
 	WI_drawNum(x, y, p);
 #endif
 }
@@ -728,8 +774,11 @@ void WI_drawTime(int x,
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 				V_WriteTextDirect(x / 4, y / 4, ":");
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 				V_DrawPatchScreen0(x, y, colon);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+				V_DrawPatchDirect(x, y, colon);
 #endif
 			}
 		} while (t / div);
@@ -737,8 +786,11 @@ void WI_drawTime(int x,
 	else
 	{
 		// "sucks"
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 		V_DrawPatchScreen0(x - sucks->width, y, sucks);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+		V_DrawPatchDirect(x - sucks->width, y, sucks);
 #endif
 	}
 }
@@ -785,7 +837,7 @@ void WI_unloadData(void)
 	}
 
 	Z_Free(lnames);
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 	Z_Free(screen1);
 #endif
 
@@ -834,7 +886,7 @@ void WI_updateShowNextLoc(void)
 		snl_pointeron = (cnt & 31) < 20;
 }
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE_13H)
 void WI_drawShowNextLoc(void)
 {
 
@@ -878,7 +930,7 @@ void WI_drawShowNextLoc(void)
 void WI_drawNoState(void)
 {
 	snl_pointeron = 1;
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 	WI_drawShowNextLoc();
 #endif
 }
@@ -1032,7 +1084,7 @@ void WI_drawStats(void)
 	WI_slamBackground();
 
 	// draw animated background
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 	WI_drawAnimatedBack();
 #endif
 
@@ -1044,8 +1096,11 @@ void WI_drawStats(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 	V_WriteTextDirect(SP_STATSX / 2, SP_STATSY / 4, "KILLS:");
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 	V_DrawPatchScreen0(SP_STATSX, SP_STATSY, kills);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+	V_DrawPatchDirect(SP_STATSX, SP_STATSY, kills);
 #endif
 
 	WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY, cnt_kills);
@@ -1056,8 +1111,11 @@ void WI_drawStats(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 	V_WriteTextDirect(SP_STATSX / 2, (SP_STATSY + lh) / 4, "ITEMS:");
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 	V_DrawPatchScreen0(SP_STATSX, SP_STATSY + lh, items);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+	V_DrawPatchDirect(SP_STATSX, SP_STATSY + lh, items);
 #endif
 
 	WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY + lh, cnt_items);
@@ -1068,8 +1126,11 @@ void WI_drawStats(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 	V_WriteTextDirect(SP_STATSX / 2, (SP_STATSY + 2 * lh) / 4, "SECRET:");
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 	V_DrawPatchScreen0(SP_STATSX, SP_STATSY + 2 * lh, sp_secret);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+	V_DrawPatchDirect(SP_STATSX, SP_STATSY + 2 * lh, sp_secret);
 #endif
 	WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY + 2 * lh, cnt_secret);
 
@@ -1079,8 +1140,11 @@ void WI_drawStats(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 	V_WriteTextDirect(SP_TIMEX / 2, SP_TIMEY / 4, "TIME:");
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 	V_DrawPatchScreen0(SP_TIMEX, SP_TIMEY, time);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+	V_DrawPatchDirect(SP_TIMEX, SP_TIMEY, time);
 #endif
 	WI_drawTime(SCREENWIDTH / 2 - SP_TIMEX, SP_TIMEY, cnt_time);
 
@@ -1089,13 +1153,14 @@ void WI_drawStats(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 		V_WriteTextDirect((SCREENWIDTH / 2 + SP_TIMEX) / 4, SP_TIMEY / 8, "PAR:");
 #endif
-
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 		V_WriteTextDirect((SCREENWIDTH / 2 + SP_TIMEX) / 4, SP_TIMEY / 4, "PAR:");
 #endif
-
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 		V_DrawPatchScreen0(SCREENWIDTH / 2 + SP_TIMEX, SP_TIMEY, par);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+		V_DrawPatchDirect(SCREENWIDTH / 2 + SP_TIMEX, SP_TIMEY, par);
 #endif
 
 		WI_drawTime(SCREENWIDTH - SP_TIMEX, SP_TIMEY, cnt_par);
@@ -1189,7 +1254,7 @@ void WI_loadData(void)
 	strcpy(bgname, name);
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 	screen1 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
 
 	// background
@@ -1293,7 +1358,7 @@ void WI_Drawer(void)
 	case StatCount:
 		WI_drawStats();
 		break;
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 	case ShowNextLoc:
 		WI_drawShowNextLoc();
 		break;
