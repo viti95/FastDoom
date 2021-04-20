@@ -1510,7 +1510,7 @@ void R_InitBuffer(int width, int height)
 //  for variable screen sizes
 // Also draws a beveled edge.
 //
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 void R_FillBackScreen(void)
 {
     byte *src;
@@ -1539,8 +1539,13 @@ void R_FillBackScreen(void)
 
     src = W_CacheLumpName(name, PU_CACHE);
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     screen1 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
     dest = screen1;
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+    dest = backbuffer;
+#endif
 
     for (y = 0; y < SCREENHEIGHT - SBARHEIGHT; y++)
     {
@@ -1554,29 +1559,64 @@ void R_FillBackScreen(void)
     patch = W_CacheLumpName("BRDR_T", PU_CACHE);
 
     for (x = 0; x < scaledviewwidth; x += 8)
+    {
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         V_DrawPatch(viewwindowx + x, viewwindowy - 8, screen1, patch);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+        V_DrawPatchDirect(viewwindowx + x, viewwindowy - 8, patch);
+#endif
+    }
+
     patch = W_CacheLumpName("BRDR_B", PU_CACHE);
 
     for (x = 0; x < scaledviewwidth; x += 8)
+    {
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         V_DrawPatch(viewwindowx + x, viewwindowy + viewheight, screen1, patch);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+        V_DrawPatchDirect(viewwindowx + x, viewwindowy + viewheight, patch);
+#endif
+    }
     patch = W_CacheLumpName("BRDR_L", PU_CACHE);
 
     for (y = 0; y < viewheight; y += 8)
+    {
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         V_DrawPatch(viewwindowx - 8, viewwindowy + y, screen1, patch);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+        V_DrawPatchDirect(viewwindowx - 8, viewwindowy + y, patch);
+#endif
+    }
     patch = W_CacheLumpName("BRDR_R", PU_CACHE);
 
     for (y = 0; y < viewheight; y += 8)
+    {
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + y, screen1, patch);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+        V_DrawPatchDirect(viewwindowx + scaledviewwidth, viewwindowy + y, patch);
+#endif
+    }
 
     // Draw beveled edge.
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     V_DrawPatch(viewwindowx - 8, viewwindowy - 8, screen1, W_CacheLumpName("BRDR_TL", PU_CACHE));
-
     V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy - 8, screen1, W_CacheLumpName("BRDR_TR", PU_CACHE));
-
     V_DrawPatch(viewwindowx - 8, viewwindowy + viewheight, screen1, W_CacheLumpName("BRDR_BL", PU_CACHE));
-
     V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + viewheight, screen1, W_CacheLumpName("BRDR_BR", PU_CACHE));
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+    V_DrawPatchDirect(viewwindowx - 8, viewwindowy - 8, W_CacheLumpName("BRDR_TL", PU_CACHE));
+    V_DrawPatchDirect(viewwindowx + scaledviewwidth, viewwindowy - 8, W_CacheLumpName("BRDR_TR", PU_CACHE));
+    V_DrawPatchDirect(viewwindowx - 8, viewwindowy + viewheight, W_CacheLumpName("BRDR_BL", PU_CACHE));
+    V_DrawPatchDirect(viewwindowx + scaledviewwidth, viewwindowy + viewheight, W_CacheLumpName("BRDR_BR", PU_CACHE));
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     for (i = 0; i < 4; i++)
     {
         outp(SC_INDEX, SC_MAPMASK);
@@ -1590,8 +1630,11 @@ void R_FillBackScreen(void)
             src += 4;
         } while (dest != (byte *)(0xac000 + (SCREENHEIGHT - SBARHEIGHT) * SCREENWIDTH / 4));
     }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     Z_Free(screen1);
+#endif
 }
 #endif
 
@@ -1604,7 +1647,6 @@ void R_VideoErase(unsigned ofs, int count)
     byte *dest;
     byte *source;
     int countp;
-
 
     outp(SC_INDEX, SC_MAPMASK);
     outp(SC_INDEX + 1, 15);
@@ -1699,7 +1741,8 @@ void R_DrawFuzzColumn_13h(void)
 
     dest = ylookup[dc_yl] + columnofs[dc_x];
 
-    do{
+    do
+    {
         *dest = colormaps[6 * 256 + dest[fuzzoffset_13h[fuzzpos]]];
         if (++fuzzpos == FUZZTABLE)
             fuzzpos = 0;
