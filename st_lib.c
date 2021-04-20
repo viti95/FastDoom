@@ -277,7 +277,12 @@ void STlib_updateBinIcon(st_binicon_t *bi, byte refresh)
     {
         if (simpleStatusBar)
         {
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
             V_SetRect(ST_BACKGROUND_COLOR, 40, 30, bi->x, bi->y, screen0);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+            V_SetRect(ST_BACKGROUND_COLOR, 40, 30, bi->x, bi->y, backbuffer);
+#endif
         }
         else
         {
