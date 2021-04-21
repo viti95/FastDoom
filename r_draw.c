@@ -1788,6 +1788,23 @@ void R_DrawFuzzColumn_13h(void)
     } while (count--);
 }
 
+void R_DrawFuzzColumnFast_13h(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac, fracstep;
+
+    dest = ylookup[dc_yl] + columnofs[dc_x];
+
+    count = dc_yh - dc_yl;
+
+    do
+    {
+        *dest = colormaps[6 * 256 + dest[0]];
+        dest += SCREENWIDTH;
+    } while (count--);
+}
+
 void R_DrawSpan_13h(void)
 {
     fixed_t xfrac, yfrac;

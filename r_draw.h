@@ -73,6 +73,7 @@ void R_DrawFuzzColumnSaturnText8025(void);
 void R_DrawColumn_13h(void);
 void R_DrawSpan_13h(void);
 void R_DrawFuzzColumn_13h(void);
+void R_DrawFuzzColumnFast_13h(void);
 
 void R_VideoErase(unsigned ofs,int count);
 
