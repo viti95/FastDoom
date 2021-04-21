@@ -309,7 +309,7 @@ void D_Display(void)
             borderdrawcount = 3;
         if (borderdrawcount)
         {
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
             R_DrawViewBorder(); // erase old menu stuff
 #endif
             borderdrawcount--;

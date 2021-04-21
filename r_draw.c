@@ -67,6 +67,8 @@ byte *ylookup[MAXHEIGHT];
 
 int automapheight;
 
+byte *background_buffer = 0;
+
 // Color tables for different players,
 //  translate a limited part to another
 //  (color ramps used for  suit colors).
@@ -1529,8 +1531,28 @@ void R_FillBackScreen(void)
 
     char *name;
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     if (scaledviewwidth == 320)
         return;
+#endif
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+    if (scaledviewwidth == SCREENWIDTH)
+    {
+        if (background_buffer)
+        {
+            Z_Free(background_buffer);
+            background_buffer = 0;
+        }
+
+        return;
+    }
+
+    if (!background_buffer)
+    {
+        background_buffer = Z_MallocUnowned(SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), PU_STATIC);
+    }
+#endif
 
     if (gamemode == commercial)
         name = name2;
@@ -1544,7 +1566,7 @@ void R_FillBackScreen(void)
     dest = screen1;
 #endif
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
-    dest = backbuffer;
+    dest = background_buffer;
 #endif
 
     for (y = 0; y < SCREENHEIGHT - SBARHEIGHT; y++)
@@ -1564,7 +1586,7 @@ void R_FillBackScreen(void)
         V_DrawPatch(viewwindowx + x, viewwindowy - 8, screen1, patch);
 #endif
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
-        V_DrawPatchDirect(viewwindowx + x, viewwindowy - 8, patch);
+        V_DrawPatch(viewwindowx + x, viewwindowy - 8, background_buffer, patch);
 #endif
     }
 
@@ -1576,7 +1598,7 @@ void R_FillBackScreen(void)
         V_DrawPatch(viewwindowx + x, viewwindowy + viewheight, screen1, patch);
 #endif
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
-        V_DrawPatchDirect(viewwindowx + x, viewwindowy + viewheight, patch);
+        V_DrawPatch(viewwindowx + x, viewwindowy + viewheight, background_buffer, patch);
 #endif
     }
     patch = W_CacheLumpName("BRDR_L", PU_CACHE);
@@ -1587,7 +1609,7 @@ void R_FillBackScreen(void)
         V_DrawPatch(viewwindowx - 8, viewwindowy + y, screen1, patch);
 #endif
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
-        V_DrawPatchDirect(viewwindowx - 8, viewwindowy + y, patch);
+        V_DrawPatch(viewwindowx - 8, viewwindowy + y, background_buffer, patch);
 #endif
     }
     patch = W_CacheLumpName("BRDR_R", PU_CACHE);
@@ -1598,7 +1620,7 @@ void R_FillBackScreen(void)
         V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + y, screen1, patch);
 #endif
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
-        V_DrawPatchDirect(viewwindowx + scaledviewwidth, viewwindowy + y, patch);
+        V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + y, background_buffer, patch);
 #endif
     }
 
@@ -1610,10 +1632,10 @@ void R_FillBackScreen(void)
     V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + viewheight, screen1, W_CacheLumpName("BRDR_BR", PU_CACHE));
 #endif
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
-    V_DrawPatchDirect(viewwindowx - 8, viewwindowy - 8, W_CacheLumpName("BRDR_TL", PU_CACHE));
-    V_DrawPatchDirect(viewwindowx + scaledviewwidth, viewwindowy - 8, W_CacheLumpName("BRDR_TR", PU_CACHE));
-    V_DrawPatchDirect(viewwindowx - 8, viewwindowy + viewheight, W_CacheLumpName("BRDR_BL", PU_CACHE));
-    V_DrawPatchDirect(viewwindowx + scaledviewwidth, viewwindowy + viewheight, W_CacheLumpName("BRDR_BR", PU_CACHE));
+    V_DrawPatch(viewwindowx - 8, viewwindowy - 8, background_buffer, W_CacheLumpName("BRDR_TL", PU_CACHE));
+    V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy - 8, background_buffer, W_CacheLumpName("BRDR_TR", PU_CACHE));
+    V_DrawPatch(viewwindowx - 8, viewwindowy + viewheight, background_buffer, W_CacheLumpName("BRDR_BL", PU_CACHE));
+    V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + viewheight, background_buffer, W_CacheLumpName("BRDR_BR", PU_CACHE));
 #endif
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
@@ -1662,12 +1684,28 @@ void R_VideoErase(unsigned ofs, int count)
 }
 #endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+void R_VideoErase(unsigned ofs, int count)
+{
+    // LFB copy.
+    // This might not be a good idea if memcpy
+    //  is not optiomal, e.g. byte by byte on
+    //  a 32bit CPU, as GNU GCC/Linux libc did
+    //  at one point.
+
+    if (background_buffer)
+    {
+        CopyBytes(background_buffer + ofs, backbuffer + ofs, count);
+    }
+}
+#endif
+
 //
 // R_DrawViewBorder
 // Draws the border around the view
 //  for different size windows?
 //
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 void R_DrawViewBorder(void)
 {
     int top;
