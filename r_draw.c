@@ -1746,8 +1746,6 @@ void R_DrawColumn_13h(void)
     fixed_t frac, fracstep;
 
     count = dc_yh - dc_yl;
-    if (count < 0)
-        return;
 
     dest = ylookup[dc_yl] + columnofs[dc_x];
 
@@ -1759,6 +1757,21 @@ void R_DrawColumn_13h(void)
         *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]];
         dest += SCREENWIDTH;
         frac += fracstep;
+    } while (count--);
+}
+
+void R_DrawSkyFlat_13h(void)
+{
+    register int count;
+    register byte *dest;
+
+    dest = ylookup[dc_yl] + columnofs[dc_x];
+    count = dc_yh - dc_yl;
+
+    do
+    {
+        *dest = 220;
+        dest += SCREENWIDTH;
     } while (count--);
 }
 
