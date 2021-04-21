@@ -75,8 +75,9 @@ void R_DrawSpan_13h(void);
 void R_DrawFuzzColumn_13h(void);
 void R_DrawFuzzColumnFast_13h(void);
 void R_DrawSkyFlat_13h(void);
+void R_DrawSpanFlat_13h(void);
 
-void R_VideoErase(unsigned ofs,int count);
+void R_VideoErase(unsigned ofs, int count);
 
 extern int ds_y;
 extern int ds_x1;
@@ -95,7 +96,7 @@ extern byte *ds_source;
 // Span blitting for rows, floor/ceiling.
 // No Sepctre effect needed.
 void R_DrawSpan(void);
-void R_DrawSpanFlat (void);
+void R_DrawSpanFlat(void);
 
 // Low resolution mode, 160x200?
 void R_DrawSpanLow(void);

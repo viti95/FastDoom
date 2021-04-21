@@ -1837,4 +1837,18 @@ void R_DrawSpan_13h(void)
         yfrac += ds_ystep;
     } while (count--);
 }
+
+void R_DrawSpanFlat_13h(void)
+{
+    byte *dest;
+    int countp;
+
+    lighttable_t color = ds_colormap[ds_source[FLATPIXELCOLOR]];
+
+    dest = ylookup[ds_y] + columnofs[ds_x1];
+    
+    countp = ds_x2 - ds_x1 + 1;
+
+    SetBytes(dest, color, countp);
+}
 #endif
