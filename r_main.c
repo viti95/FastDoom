@@ -534,7 +534,12 @@ fixed_t R_ScaleFromGlobalAngle(angle_t visangle)
     // both sines are allways positive
     sinea = finesine[anglea >> ANGLETOFINESHIFT];
     sineb = finesine[angleb >> ANGLETOFINESHIFT];
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     num = FixedMul(projection, sineb) << detailshift;
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    num = FixedMul(projection, sineb);
+#endif
     den = FixedMul(rw_distance, sinea);
 
     if (den > num >> 16)
@@ -704,7 +709,6 @@ void R_ExecuteSetViewSize(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
     scaledviewwidth = 80;
     viewheight = 50;
-    detailshift = 0;
 #endif
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
     if (forcePotatoDetail || forceLowDetail || forceHighDetail)
@@ -720,7 +724,13 @@ void R_ExecuteSetViewSize(void)
         detailshift = setdetail;
 #endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     viewwidth = scaledviewwidth >> detailshift;
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    viewwidth = scaledviewwidth;
+#endif
+
     viewwidthlimit = viewwidth - 1;
 
     centery = viewheight / 2;
@@ -872,7 +882,13 @@ void R_ExecuteSetViewSize(void)
     // psprite scales
     pspritescale = FRACUNIT * viewwidth / SCREENWIDTH;
     pspriteiscale = FRACUNIT * SCREENWIDTH / viewwidth;
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     pspriteiscaleshifted = pspriteiscale >> detailshift;
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    pspriteiscaleshifted = pspriteiscale;
+#endif
 
     // thing clipping
     SetWords(screenheightarray, viewheight, viewwidth);
@@ -882,7 +898,13 @@ void R_ExecuteSetViewSize(void)
     {
         dy = ((i - viewheight / 2) << FRACBITS) + FRACUNIT / 2;
         dy = abs(dy);
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         yslope[i] = FixedDiv((viewwidth << detailshift) / 2 * FRACUNIT, dy);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+        yslope[i] = FixedDiv((viewwidth) / 2 * FRACUNIT, dy);
+#endif
     }
 
     for (i = 0; i < viewwidth; i++)
@@ -898,8 +920,12 @@ void R_ExecuteSetViewSize(void)
         startmap = ((LIGHTLEVELS - 1 - i) * 2) * NUMCOLORMAPS / LIGHTLEVELS;
         for (j = 0; j < MAXLIGHTSCALE; j++)
         {
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
             level = startmap - Mul320(j) / (viewwidth << detailshift) / DISTMAP;
-
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+            level = startmap - Mul320(j) / (viewwidth) / DISTMAP;
+#endif
             if (level < 0)
                 level = 0;
             else if (level > NUMCOLORMAPS - 1)

@@ -263,7 +263,13 @@ void R_DrawVisSprite(vissprite_t *vis)
         colfunc = fuzzcolfunc;
     }
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     dc_iscale = abs(vis->xiscale) >> detailshift;
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    dc_iscale = abs(vis->xiscale);
+#endif
+
     dc_texturemid = vis->texturemid;
     frac = vis->startfrac;
     spryscale = vis->scale;
@@ -467,7 +473,14 @@ void R_ProjectSprite(mobj_t *thing)
     }
     vis = vissprites + num_vissprite++;
     vis->mobjflags = thing->flags;
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     vis->scale = xscale << detailshift;
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    vis->scale = xscale;
+#endif
+
     vis->gx = thing->x;
     vis->gy = thing->y;
     vis->gz = thing->z;
@@ -512,7 +525,13 @@ void R_ProjectSprite(mobj_t *thing)
     else
     {
         // diminished light
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         index = xscale >> (LIGHTSCALESHIFT - detailshift);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+        index = xscale >> LIGHTSCALESHIFT;
+#endif
 
         if (index >= MAXLIGHTSCALE)
             index = MAXLIGHTSCALE - 1;
@@ -591,7 +610,13 @@ void R_DrawPSprite(pspdef_t *psp)
     vis->texturemid = (BASEYCENTER << FRACBITS) + FRACUNIT / 2 - (psp->sy - spritetopoffset[lump]);
     vis->x1 = x1 < 0 ? 0 : x1;
     vis->x2 = x2 > viewwidthlimit ? viewwidthlimit : x2;
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     vis->scale = pspritescale << detailshift;
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    vis->scale = pspritescale;
+#endif
 
     if (flip)
     {
@@ -645,7 +670,7 @@ void R_DrawPlayerSprites(void)
     // get light level
     lightnum = (viewplayer->mo->subsector->sector->lightlevel >> LIGHTSEGSHIFT) + extralight;
 
-	if (lightnum < 0)
+    if (lightnum < 0)
         spritelights = scalelight[0];
     else if (lightnum > LIGHTLEVELS - 1)
         spritelights = scalelight[LIGHTLEVELS - 1];
