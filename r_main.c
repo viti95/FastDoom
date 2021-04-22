@@ -846,9 +846,23 @@ void R_ExecuteSetViewSize(void)
 #endif
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
     colfunc = basecolfunc = R_DrawColumn_13h;
-    spanfunc = R_DrawSpan_13h;
-    skyfunc = R_DrawColumn_13h;
-    fuzzcolfunc = R_DrawFuzzColumn_13h;
+
+    if (untexturedSurfaces)
+        spanfunc = R_DrawSpanFlat_13h;
+    else
+        spanfunc = R_DrawSpan_13h;
+
+    if (flatSky)
+        skyfunc = R_DrawSkyFlat_13h;
+    else
+        skyfunc = R_DrawColumn_13h;
+
+    if (flatShadows)
+        fuzzcolfunc = R_DrawFuzzColumnFast_13h;
+    else if (saturnShadows)
+        fuzzcolfunc = R_DrawFuzzColumn_13h;
+    else
+        fuzzcolfunc = R_DrawFuzzColumn_13h;
 #endif
 
     R_InitBuffer(scaledviewwidth, viewheight);
@@ -1067,7 +1081,7 @@ void R_RenderPlayerView(player_t *player)
     else
         R_DrawPlanes();
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     if (flatSurfaces)
         switch (detailshift)
         {
@@ -1081,6 +1095,12 @@ void R_RenderPlayerView(player_t *player)
             R_DrawPlanesFlatSurfacesPotato();
             break;
         }
+    else
+        R_DrawPlanes();
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+    if (flatSurfaces)
+        R_DrawPlanesFlatSurfaces_13h();
     else
         R_DrawPlanes();
 #endif

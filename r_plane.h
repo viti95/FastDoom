@@ -46,6 +46,7 @@ void R_DrawPlanesFlatSurfacesLow(void);
 void R_DrawPlanesFlatSurfacesPotato(void);
 void R_DrawPlanesFlatSurfacesText8050(void);
 void R_DrawPlanesFlatSurfacesText8025(void);
+void R_DrawPlanesFlatSurfaces_13h(void);
 void R_DrawSky(visplane_t *pl);
 
 visplane_t * R_FindPlane(fixed_t height, int picnum, int lightlevel);

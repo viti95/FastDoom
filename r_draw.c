@@ -36,10 +36,6 @@
 
 #include "vmode.h"
 
-// ?
-#define MAXWIDTH 320
-#define MAXHEIGHT 200
-
 // status bar height at bottom of screen
 #define SBARHEIGHT 32
 
@@ -59,10 +55,10 @@ int scaledviewwidth;
 int viewheight;
 int viewwindowx;
 int viewwindowy;
-int columnofs[MAXWIDTH];
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
-byte *ylookup[MAXHEIGHT];
+int columnofs[SCREENWIDTH];
+byte *ylookup[SCREENHEIGHT];
 #endif
 
 int automapheight;

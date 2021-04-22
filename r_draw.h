@@ -31,6 +31,11 @@ extern fixed_t dc_texturemid;
 // first pixel in a column
 extern byte *dc_source;
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+extern int columnofs[SCREENWIDTH];
+extern byte *ylookup[SCREENHEIGHT];
+#endif
+
 // The span blitting interface.
 // Hook in assembler or system specific BLT
 //  here.
