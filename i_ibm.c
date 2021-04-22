@@ -392,6 +392,7 @@ byte textpage = 0;
 //
 // I_UpdateBox
 //
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void I_UpdateBox(int x, int y, int w, int h)
 {
     int i, j, k, count;
@@ -465,6 +466,7 @@ void I_UpdateBox(int x, int y, int w, int h)
         }
     }
 }
+#endif
 
 //
 // I_UpdateNoBlit
