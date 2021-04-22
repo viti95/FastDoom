@@ -1842,9 +1842,58 @@ void R_DrawSpanFlat_13h(void)
     lighttable_t color = ds_colormap[ds_source[FLATPIXELCOLOR]];
 
     dest = ylookup[ds_y] + columnofs[ds_x1];
-    
+
     countp = ds_x2 - ds_x1 + 1;
 
     SetBytes(dest, color, countp);
+}
+
+void R_DrawFuzzColumnSaturn_13h(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac;
+    fixed_t fracstep;
+    int initialdrawpos = 0;
+
+    count = (dc_yh - dc_yl) / 2 - 1;
+
+    if (count < 0)
+        return;
+
+    initialdrawpos = dc_yl + dc_x;
+
+    dest = ylookup[dc_yl] + columnofs[dc_x];
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    if (initialdrawpos & 1)
+    {
+        dest += SCREENWIDTH;
+        frac += fracstep;
+    }
+
+    fracstep = 2 * fracstep;
+
+    do
+    {
+        *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
+
+        dest += 2 * SCREENWIDTH;
+        frac += fracstep;
+    } while (count--);
+
+    if ((dc_yh - dc_yl) & 1)
+    {
+        *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
+    }
+    else
+    {
+        if (!(initialdrawpos & 1))
+        {
+            *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
+        }
+    }
 }
 #endif
