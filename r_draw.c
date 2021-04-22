@@ -1495,7 +1495,7 @@ void R_InitBuffer(int width, int height)
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
     for (i = 0; i < height; i++)
-        ylookup[i] = backbuffer + (i + viewwindowy) * SCREENWIDTH;
+        ylookup[i] = backbuffer + Mul320(i + viewwindowy);
 #endif
 }
 
