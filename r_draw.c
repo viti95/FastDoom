@@ -703,7 +703,14 @@ void R_DrawSpanPotato(void)
 // Spectre/Invisibility.
 //
 #define FUZZTABLE 50
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 #define FUZZOFF (SCREENWIDTH / 4)
+#endif
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#define FUZZOFF (SCREENWIDTH)
+#endif
 
 int fuzzoffset[FUZZTABLE] =
     {
@@ -714,16 +721,6 @@ int fuzzoffset[FUZZTABLE] =
         FUZZOFF, -FUZZOFF, FUZZOFF, FUZZOFF, -FUZZOFF, -FUZZOFF, FUZZOFF,
         FUZZOFF, -FUZZOFF, -FUZZOFF, -FUZZOFF, -FUZZOFF, FUZZOFF, FUZZOFF,
         FUZZOFF, FUZZOFF, -FUZZOFF, FUZZOFF, FUZZOFF, -FUZZOFF, FUZZOFF};
-
-int fuzzoffset_13h[FUZZTABLE] =
-    {
-        1, -1, 1, -1, 1, 1, -1,
-        1, 1, -1, 1, 1, 1, -1,
-        1, 1, 1, -1, -1, -1, -1,
-        1, -1, -1, 1, 1, 1, 1, -1,
-        1, -1, 1, 1, -1, -1, 1,
-        1, -1, -1, -1, -1, 1, 1,
-        1, 1, -1, 1, 1, -1, 1};
 
 int fuzzpos = 0;
 
@@ -1790,7 +1787,7 @@ void R_DrawFuzzColumn_13h(void)
 
     do
     {
-        *dest = colormaps[6 * 256 + dest[fuzzoffset_13h[fuzzpos]]];
+        *dest = colormaps[6 * 256 + dest[fuzzoffset[fuzzpos]]];
         if (++fuzzpos == FUZZTABLE)
             fuzzpos = 0;
         dest += SCREENWIDTH;
