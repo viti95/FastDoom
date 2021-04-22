@@ -369,7 +369,7 @@ void I_SetPalette(int numpalette)
         }
         }
     #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
         {
         int i;
         int pos = Mul768(numpalette);
@@ -605,6 +605,10 @@ void I_FinishUpdate(void)
             destscreen = (byte *)0xa0000;
         }
     #endif
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+        //memcpy(pcscreen, backbuffer, SCREENHEIGHT*SCREENWIDTH);
+        CopyDWords(backbuffer, pcscreen, SCREENHEIGHT*SCREENWIDTH/4);
+    #endif
 
     if (showFPS)
     {
@@ -711,6 +715,11 @@ void I_InitGraphics(void)
         outp(CRTC_INDEX, CRTC_MODE);
         outp(CRTC_INDEX + 1, inp(CRTC_INDEX + 1) | 0x40);
         outp(GC_INDEX, GC_READMAP);
+    #endif
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+        regs.w.ax = 0x13;
+        int386(0x10, (union REGS *)&regs, &regs);
+        pcscreen = destscreen = (byte *)0xA0000;
     #endif
 
     I_ProcessPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));

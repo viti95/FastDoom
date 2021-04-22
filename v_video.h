@@ -39,8 +39,12 @@
 
 extern byte screen0[SCREENWIDTH * SCREENHEIGHT];
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 extern byte screen4[SCREENWIDTH * 32];
+#endif
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+extern byte backbuffer[SCREENWIDTH * SCREENHEIGHT];
 #endif
 
 extern int dirtybox[4];

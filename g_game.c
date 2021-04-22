@@ -843,7 +843,7 @@ void G_DoLoadGame(void)
         R_ExecuteSetViewSize();
 
 // draw the pattern into the back screen
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
     R_FillBackScreen();
 #endif
 }
@@ -916,7 +916,7 @@ void G_DoSaveGame(void)
     Z_Free(savebuffer);
 
 // draw the pattern into the back screen
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
     R_FillBackScreen();
 #endif
 }

@@ -31,6 +31,11 @@ extern fixed_t dc_texturemid;
 // first pixel in a column
 extern byte *dc_source;
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+extern int columnofs[SCREENWIDTH];
+extern byte *ylookup[SCREENHEIGHT];
+#endif
+
 // The span blitting interface.
 // Hook in assembler or system specific BLT
 //  here.
@@ -70,7 +75,15 @@ void R_DrawFuzzColumnText8025(void);
 void R_DrawFuzzColumnFastText8025(void);
 void R_DrawFuzzColumnSaturnText8025(void);
 
-void R_VideoErase(unsigned ofs,int count);
+void R_DrawColumn_13h(void);
+void R_DrawSpan_13h(void);
+void R_DrawFuzzColumn_13h(void);
+void R_DrawFuzzColumnFast_13h(void);
+void R_DrawSkyFlat_13h(void);
+void R_DrawSpanFlat_13h(void);
+void R_DrawFuzzColumnSaturn_13h(void);
+
+void R_VideoErase(unsigned ofs, int count);
 
 extern int ds_y;
 extern int ds_x1;
@@ -89,7 +102,7 @@ extern byte *ds_source;
 // Span blitting for rows, floor/ceiling.
 // No Sepctre effect needed.
 void R_DrawSpan(void);
-void R_DrawSpanFlat (void);
+void R_DrawSpanFlat(void);
 
 // Low resolution mode, 160x200?
 void R_DrawSpanLow(void);

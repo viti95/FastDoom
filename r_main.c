@@ -701,24 +701,24 @@ void R_ExecuteSetViewSize(void)
         automapheight = SCREENHEIGHT - 32;
     }
 
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        scaledviewwidth = 80;
-        viewheight = 50;
-        detailshift = 0;
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-        if (forcePotatoDetail || forceLowDetail || forceHighDetail)
-        {
-            if (forceHighDetail)
-                detailshift = 0;
-            else if (forceLowDetail)
-                detailshift = 1;
-            else
-                detailshift = 2;
-        }
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    scaledviewwidth = 80;
+    viewheight = 50;
+    detailshift = 0;
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+    if (forcePotatoDetail || forceLowDetail || forceHighDetail)
+    {
+        if (forceHighDetail)
+            detailshift = 0;
+        else if (forceLowDetail)
+            detailshift = 1;
         else
-            detailshift = setdetail;
-    #endif
+            detailshift = 2;
+    }
+    else
+        detailshift = setdetail;
+#endif
 
     viewwidth = scaledviewwidth >> detailshift;
     viewwidthlimit = viewwidth - 1;
@@ -731,119 +731,139 @@ void R_ExecuteSetViewSize(void)
     projection = centerxfrac;
     iprojection = FixedDiv(FRACUNIT << 8, projection);
 
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-        colfunc = basecolfunc = R_DrawColumnText8025;
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+    colfunc = basecolfunc = R_DrawColumnText8025;
+
+    if (untexturedSurfaces)
+    {
+        spanfunc = R_DrawSpanFlatText8025;
+    }
+    else
+    {
+        spanfunc = R_DrawSpanText8025;
+    }
+
+    if (flatSky)
+        skyfunc = R_DrawSkyFlatText8025;
+    else
+        skyfunc = R_DrawColumnText8025;
+
+    if (flatShadows)
+        fuzzcolfunc = R_DrawFuzzColumnFastText8025;
+    else if (saturnShadows)
+        fuzzcolfunc = R_DrawFuzzColumnSaturnText8025;
+    else
+        fuzzcolfunc = R_DrawFuzzColumnText8025;
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    colfunc = basecolfunc = R_DrawColumnText8050;
+
+    if (untexturedSurfaces)
+    {
+        spanfunc = R_DrawSpanFlatText8050;
+    }
+    else
+    {
+        spanfunc = R_DrawSpanText8050;
+    }
+
+    if (flatSky)
+        skyfunc = R_DrawSkyFlatText8050;
+    else
+        skyfunc = R_DrawColumnText8050;
+
+    if (flatShadows)
+        fuzzcolfunc = R_DrawFuzzColumnFastText8050;
+    else if (saturnShadows)
+        fuzzcolfunc = R_DrawFuzzColumnSaturnText8050;
+    else
+        fuzzcolfunc = R_DrawFuzzColumnText8050;
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+    switch (detailshift)
+    {
+    case 0:
+        colfunc = basecolfunc = R_DrawColumn;
 
         if (untexturedSurfaces)
-        {
-            spanfunc = R_DrawSpanFlatText8025;
-        }
+            spanfunc = R_DrawSpanFlat;
         else
-        {
-            spanfunc = R_DrawSpanText8025;
-        }
+            spanfunc = R_DrawSpan;
 
         if (flatSky)
-            skyfunc = R_DrawSkyFlatText8025;
+            skyfunc = R_DrawSkyFlat;
         else
-            skyfunc = R_DrawColumnText8025;
+            skyfunc = R_DrawColumn;
 
         if (flatShadows)
-            fuzzcolfunc = R_DrawFuzzColumnFastText8025;
+            fuzzcolfunc = R_DrawFuzzColumnFast;
         else if (saturnShadows)
-            fuzzcolfunc = R_DrawFuzzColumnSaturnText8025;
+            fuzzcolfunc = R_DrawFuzzColumnSaturn;
         else
-            fuzzcolfunc = R_DrawFuzzColumnText8025;
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        colfunc = basecolfunc = R_DrawColumnText8050;
+            fuzzcolfunc = R_DrawFuzzColumn;
+        break;
+    case 1:
+        colfunc = basecolfunc = R_DrawColumnLow;
 
         if (untexturedSurfaces)
-        {
-            spanfunc = R_DrawSpanFlatText8050;
-        }
+            spanfunc = R_DrawSpanFlatLow;
         else
-        {
-            spanfunc = R_DrawSpanText8050;
-        }
+            spanfunc = R_DrawSpanLow;
 
         if (flatSky)
-            skyfunc = R_DrawSkyFlatText8050;
+            skyfunc = R_DrawSkyFlatLow;
         else
-            skyfunc = R_DrawColumnText8050;
+            skyfunc = R_DrawColumnLow;
 
         if (flatShadows)
-            fuzzcolfunc = R_DrawFuzzColumnFastText8050;
+            fuzzcolfunc = R_DrawFuzzColumnFastLow;
         else if (saturnShadows)
-            fuzzcolfunc = R_DrawFuzzColumnSaturnText8050;
+            fuzzcolfunc = R_DrawFuzzColumnSaturnLow;
         else
-            fuzzcolfunc = R_DrawFuzzColumnText8050;
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-        switch (detailshift)
-        {
-        case 0:
-            colfunc = basecolfunc = R_DrawColumn;
+            fuzzcolfunc = R_DrawFuzzColumnLow;
+        break;
+    case 2:
+        colfunc = basecolfunc = R_DrawColumnPotato;
 
-            if (untexturedSurfaces)
-                spanfunc = R_DrawSpanFlat;
-            else
-                spanfunc = R_DrawSpan;
+        if (untexturedSurfaces)
+            spanfunc = R_DrawSpanFlatPotato;
+        else
+            spanfunc = R_DrawSpanPotato;
 
-            if (flatSky)
-                skyfunc = R_DrawSkyFlat;
-            else
-                skyfunc = R_DrawColumn;
+        if (flatSky)
+            skyfunc = R_DrawSkyFlatPotato;
+        else
+            skyfunc = R_DrawColumnPotato;
 
-            if (flatShadows)
-                fuzzcolfunc = R_DrawFuzzColumnFast;
-            else if (saturnShadows)
-                fuzzcolfunc = R_DrawFuzzColumnSaturn;
-            else
-                fuzzcolfunc = R_DrawFuzzColumn;
-            break;
-        case 1:
-            colfunc = basecolfunc = R_DrawColumnLow;
+        if (flatShadows)
+            fuzzcolfunc = R_DrawFuzzColumnFastPotato;
+        else if (saturnShadows)
+            fuzzcolfunc = R_DrawFuzzColumnSaturnPotato;
+        else
+            fuzzcolfunc = R_DrawFuzzColumnPotato;
+        break;
+    }
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+    colfunc = basecolfunc = R_DrawColumn_13h;
 
-            if (untexturedSurfaces)
-                spanfunc = R_DrawSpanFlatLow;
-            else
-                spanfunc = R_DrawSpanLow;
+    if (untexturedSurfaces)
+        spanfunc = R_DrawSpanFlat_13h;
+    else
+        spanfunc = R_DrawSpan_13h;
 
-            if (flatSky)
-                skyfunc = R_DrawSkyFlatLow;
-            else
-                skyfunc = R_DrawColumnLow;
+    if (flatSky)
+        skyfunc = R_DrawSkyFlat_13h;
+    else
+        skyfunc = R_DrawColumn_13h;
 
-            if (flatShadows)
-                fuzzcolfunc = R_DrawFuzzColumnFastLow;
-            else if (saturnShadows)
-                fuzzcolfunc = R_DrawFuzzColumnSaturnLow;
-            else
-                fuzzcolfunc = R_DrawFuzzColumnLow;
-            break;
-        case 2:
-            colfunc = basecolfunc = R_DrawColumnPotato;
-
-            if (untexturedSurfaces)
-                spanfunc = R_DrawSpanFlatPotato;
-            else
-                spanfunc = R_DrawSpanPotato;
-
-            if (flatSky)
-                skyfunc = R_DrawSkyFlatPotato;
-            else
-                skyfunc = R_DrawColumnPotato;
-
-            if (flatShadows)
-                fuzzcolfunc = R_DrawFuzzColumnFastPotato;
-            else if (saturnShadows)
-                fuzzcolfunc = R_DrawFuzzColumnSaturnPotato;
-            else
-                fuzzcolfunc = R_DrawFuzzColumnPotato;
-            break;
-        }
-    #endif
+    if (flatShadows)
+        fuzzcolfunc = R_DrawFuzzColumnFast_13h;
+    else if (saturnShadows)
+        fuzzcolfunc = R_DrawFuzzColumnSaturn_13h;
+    else
+        fuzzcolfunc = R_DrawFuzzColumn_13h;
+#endif
 
     R_InitBuffer(scaledviewwidth, viewheight);
 
@@ -1035,13 +1055,13 @@ void R_RenderPlayerView(player_t *player)
     // check for new console commands.
     NetUpdate();
 
-    // Set potato mode VGA plane
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+// Set potato mode VGA plane
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     if (detailshift == 2)
     {
         outp(SC_INDEX + 1, 15);
     }
-    #endif
+#endif
 
     // The head node is the last node output.
     R_RenderBSPNode(firstnode);
@@ -1049,35 +1069,41 @@ void R_RenderPlayerView(player_t *player)
     // Check for new console commands.
     NetUpdate();
 
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-        if (flatSurfaces)
-            R_DrawPlanesFlatSurfacesText8025();
-        else
-            R_DrawPlanes();
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        if (flatSurfaces)
-            R_DrawPlanesFlatSurfacesText8050();
-        else
-            R_DrawPlanes();
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-        if (flatSurfaces)
-            switch (detailshift)
-            {
-            case 0:
-                R_DrawPlanesFlatSurfaces();
-                break;
-            case 1:
-                R_DrawPlanesFlatSurfacesLow();
-                break;
-            case 2:
-                R_DrawPlanesFlatSurfacesPotato();
-                break;
-            }
-        else
-            R_DrawPlanes();
-    #endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+    if (flatSurfaces)
+        R_DrawPlanesFlatSurfacesText8025();
+    else
+        R_DrawPlanes();
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    if (flatSurfaces)
+        R_DrawPlanesFlatSurfacesText8050();
+    else
+        R_DrawPlanes();
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+    if (flatSurfaces)
+        switch (detailshift)
+        {
+        case 0:
+            R_DrawPlanesFlatSurfaces();
+            break;
+        case 1:
+            R_DrawPlanesFlatSurfacesLow();
+            break;
+        case 2:
+            R_DrawPlanesFlatSurfacesPotato();
+            break;
+        }
+    else
+        R_DrawPlanes();
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+    if (flatSurfaces)
+        R_DrawPlanesFlatSurfaces_13h();
+    else
+        R_DrawPlanes();
+#endif
 
     // Check for new console commands.
     NetUpdate();

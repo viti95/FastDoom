@@ -36,10 +36,6 @@
 
 #include "vmode.h"
 
-// ?
-#define MAXWIDTH 320
-#define MAXHEIGHT 200
-
 // status bar height at bottom of screen
 #define SBARHEIGHT 32
 
@@ -59,9 +55,15 @@ int scaledviewwidth;
 int viewheight;
 int viewwindowx;
 int viewwindowy;
-int columnofs[MAXWIDTH];
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+int columnofs[SCREENWIDTH];
+byte *ylookup[SCREENHEIGHT];
+#endif
 
 int automapheight;
+
+byte *background_buffer = 0;
 
 // Color tables for different players,
 //  translate a limited part to another
@@ -712,6 +714,16 @@ int fuzzoffset[FUZZTABLE] =
         FUZZOFF, -FUZZOFF, FUZZOFF, FUZZOFF, -FUZZOFF, -FUZZOFF, FUZZOFF,
         FUZZOFF, -FUZZOFF, -FUZZOFF, -FUZZOFF, -FUZZOFF, FUZZOFF, FUZZOFF,
         FUZZOFF, FUZZOFF, -FUZZOFF, FUZZOFF, FUZZOFF, -FUZZOFF, FUZZOFF};
+
+int fuzzoffset_13h[FUZZTABLE] =
+    {
+        1, -1, 1, -1, 1, 1, -1,
+        1, 1, -1, 1, 1, 1, -1,
+        1, 1, 1, -1, -1, -1, -1,
+        1, -1, -1, 1, 1, 1, 1, -1,
+        1, -1, 1, 1, -1, -1, 1,
+        1, -1, -1, -1, -1, 1, 1,
+        1, 1, -1, 1, 1, -1, 1};
 
 int fuzzpos = 0;
 
@@ -1462,27 +1474,32 @@ void R_InitBuffer(int width, int height)
     //  e.g. smaller view windows
     //  with border and/or status bar.
 
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        viewwindowx = 0;
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-        viewwindowx = (SCREENWIDTH - width) >> 1;
-    #endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    viewwindowx = 0;
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+    viewwindowx = (SCREENWIDTH - width) >> 1;
+#endif
 
     // Column offset. For windows.
     for (i = 0; i < width; i++)
         columnofs[i] = viewwindowx + i;
 
-    // Samw with base row offset.
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        viewwindowy = 0;
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+// Samw with base row offset.
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    viewwindowy = 0;
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
     if (width == SCREENWIDTH)
         viewwindowy = 0;
     else
         viewwindowy = (SCREENHEIGHT - SBARHEIGHT - height) >> 1;
-    #endif
+#endif
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+    for (i = 0; i < height; i++)
+        ylookup[i] = backbuffer + (i + viewwindowy) * SCREENWIDTH;
+#endif
 }
 
 //
@@ -1491,7 +1508,7 @@ void R_InitBuffer(int width, int height)
 //  for variable screen sizes
 // Also draws a beveled edge.
 //
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 void R_FillBackScreen(void)
 {
     byte *src;
@@ -1510,8 +1527,28 @@ void R_FillBackScreen(void)
 
     char *name;
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     if (scaledviewwidth == 320)
         return;
+#endif
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+    if (scaledviewwidth == SCREENWIDTH)
+    {
+        if (background_buffer)
+        {
+            Z_Free(background_buffer);
+            background_buffer = 0;
+        }
+
+        return;
+    }
+
+    if (!background_buffer)
+    {
+        background_buffer = Z_MallocUnowned(SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), PU_STATIC);
+    }
+#endif
 
     if (gamemode == commercial)
         name = name2;
@@ -1520,8 +1557,13 @@ void R_FillBackScreen(void)
 
     src = W_CacheLumpName(name, PU_CACHE);
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     screen1 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
     dest = screen1;
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+    dest = background_buffer;
+#endif
 
     for (y = 0; y < SCREENHEIGHT - SBARHEIGHT; y++)
     {
@@ -1535,29 +1577,64 @@ void R_FillBackScreen(void)
     patch = W_CacheLumpName("BRDR_T", PU_CACHE);
 
     for (x = 0; x < scaledviewwidth; x += 8)
+    {
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         V_DrawPatch(viewwindowx + x, viewwindowy - 8, screen1, patch);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+        V_DrawPatch(viewwindowx + x, viewwindowy - 8, background_buffer, patch);
+#endif
+    }
+
     patch = W_CacheLumpName("BRDR_B", PU_CACHE);
 
     for (x = 0; x < scaledviewwidth; x += 8)
+    {
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         V_DrawPatch(viewwindowx + x, viewwindowy + viewheight, screen1, patch);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+        V_DrawPatch(viewwindowx + x, viewwindowy + viewheight, background_buffer, patch);
+#endif
+    }
     patch = W_CacheLumpName("BRDR_L", PU_CACHE);
 
     for (y = 0; y < viewheight; y += 8)
+    {
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         V_DrawPatch(viewwindowx - 8, viewwindowy + y, screen1, patch);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+        V_DrawPatch(viewwindowx - 8, viewwindowy + y, background_buffer, patch);
+#endif
+    }
     patch = W_CacheLumpName("BRDR_R", PU_CACHE);
 
     for (y = 0; y < viewheight; y += 8)
+    {
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + y, screen1, patch);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+        V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + y, background_buffer, patch);
+#endif
+    }
 
     // Draw beveled edge.
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     V_DrawPatch(viewwindowx - 8, viewwindowy - 8, screen1, W_CacheLumpName("BRDR_TL", PU_CACHE));
-
     V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy - 8, screen1, W_CacheLumpName("BRDR_TR", PU_CACHE));
-
     V_DrawPatch(viewwindowx - 8, viewwindowy + viewheight, screen1, W_CacheLumpName("BRDR_BL", PU_CACHE));
-
     V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + viewheight, screen1, W_CacheLumpName("BRDR_BR", PU_CACHE));
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+    V_DrawPatch(viewwindowx - 8, viewwindowy - 8, background_buffer, W_CacheLumpName("BRDR_TL", PU_CACHE));
+    V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy - 8, background_buffer, W_CacheLumpName("BRDR_TR", PU_CACHE));
+    V_DrawPatch(viewwindowx - 8, viewwindowy + viewheight, background_buffer, W_CacheLumpName("BRDR_BL", PU_CACHE));
+    V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + viewheight, background_buffer, W_CacheLumpName("BRDR_BR", PU_CACHE));
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     for (i = 0; i < 4; i++)
     {
         outp(SC_INDEX, SC_MAPMASK);
@@ -1571,8 +1648,11 @@ void R_FillBackScreen(void)
             src += 4;
         } while (dest != (byte *)(0xac000 + (SCREENHEIGHT - SBARHEIGHT) * SCREENWIDTH / 4));
     }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     Z_Free(screen1);
+#endif
 }
 #endif
 
@@ -1585,7 +1665,6 @@ void R_VideoErase(unsigned ofs, int count)
     byte *dest;
     byte *source;
     int countp;
-
 
     outp(SC_INDEX, SC_MAPMASK);
     outp(SC_INDEX + 1, 15);
@@ -1601,12 +1680,28 @@ void R_VideoErase(unsigned ofs, int count)
 }
 #endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+void R_VideoErase(unsigned ofs, int count)
+{
+    // LFB copy.
+    // This might not be a good idea if memcpy
+    //  is not optiomal, e.g. byte by byte on
+    //  a 32bit CPU, as GNU GCC/Linux libc did
+    //  at one point.
+
+    if (background_buffer)
+    {
+        CopyBytes(background_buffer + ofs, backbuffer + ofs, count);
+    }
+}
+#endif
+
 //
 // R_DrawViewBorder
 // Draws the border around the view
 //  for different size windows?
 //
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 void R_DrawViewBorder(void)
 {
     int top;
@@ -1635,6 +1730,170 @@ void R_DrawViewBorder(void)
     {
         R_VideoErase(ofs, side);
         ofs += SCREENWIDTH;
+    }
+}
+#endif
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+void R_DrawColumn_13h(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac, fracstep;
+
+    count = dc_yh - dc_yl;
+
+    dest = ylookup[dc_yl] + columnofs[dc_x];
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    do
+    {
+        *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]];
+        dest += SCREENWIDTH;
+        frac += fracstep;
+    } while (count--);
+}
+
+void R_DrawSkyFlat_13h(void)
+{
+    register int count;
+    register byte *dest;
+
+    dest = ylookup[dc_yl] + columnofs[dc_x];
+    count = dc_yh - dc_yl;
+
+    do
+    {
+        *dest = 220;
+        dest += SCREENWIDTH;
+    } while (count--);
+}
+
+void R_DrawFuzzColumn_13h(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac, fracstep;
+
+    if (!dc_yl)
+        dc_yl = 1;
+    if (dc_yh == viewheight - 1)
+        dc_yh = viewheight - 2;
+
+    count = dc_yh - dc_yl;
+    if (count < 0)
+        return;
+
+    dest = ylookup[dc_yl] + columnofs[dc_x];
+
+    do
+    {
+        *dest = colormaps[6 * 256 + dest[fuzzoffset_13h[fuzzpos]]];
+        if (++fuzzpos == FUZZTABLE)
+            fuzzpos = 0;
+        dest += SCREENWIDTH;
+    } while (count--);
+}
+
+void R_DrawFuzzColumnFast_13h(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac, fracstep;
+
+    dest = ylookup[dc_yl] + columnofs[dc_x];
+
+    count = dc_yh - dc_yl;
+
+    do
+    {
+        *dest = colormaps[6 * 256 + dest[0]];
+        dest += SCREENWIDTH;
+    } while (count--);
+}
+
+void R_DrawSpan_13h(void)
+{
+    fixed_t xfrac, yfrac;
+    byte *dest;
+    int count, spot;
+
+    xfrac = ds_xfrac;
+    yfrac = ds_yfrac;
+
+    dest = ylookup[ds_y] + columnofs[ds_x1];
+    count = ds_x2 - ds_x1;
+    do
+    {
+        spot = ((yfrac >> (16 - 6)) & (63 * 64)) + ((xfrac >> 16) & 63);
+        *dest++ = ds_colormap[ds_source[spot]];
+        xfrac += ds_xstep;
+        yfrac += ds_ystep;
+    } while (count--);
+}
+
+void R_DrawSpanFlat_13h(void)
+{
+    byte *dest;
+    int countp;
+
+    lighttable_t color = ds_colormap[ds_source[FLATPIXELCOLOR]];
+
+    dest = ylookup[ds_y] + columnofs[ds_x1];
+
+    countp = ds_x2 - ds_x1 + 1;
+
+    SetBytes(dest, color, countp);
+}
+
+void R_DrawFuzzColumnSaturn_13h(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac;
+    fixed_t fracstep;
+    int initialdrawpos = 0;
+
+    count = (dc_yh - dc_yl) / 2 - 1;
+
+    if (count < 0)
+        return;
+
+    initialdrawpos = dc_yl + dc_x;
+
+    dest = ylookup[dc_yl] + columnofs[dc_x];
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    if (initialdrawpos & 1)
+    {
+        dest += SCREENWIDTH;
+        frac += fracstep;
+    }
+
+    fracstep = 2 * fracstep;
+
+    do
+    {
+        *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
+
+        dest += 2 * SCREENWIDTH;
+        frac += fracstep;
+    } while (count--);
+
+    if ((dc_yh - dc_yl) & 1)
+    {
+        *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
+    }
+    else
+    {
+        if (!(initialdrawpos & 1))
+        {
+            *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
+        }
     }
 }
 #endif

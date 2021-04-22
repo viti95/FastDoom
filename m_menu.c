@@ -567,7 +567,7 @@ void M_DrawLoad(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
     V_WriteTextDirect(18, 7, "LOAD GAME");
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
     V_DrawPatchDirect(72, 28, W_CacheLumpName("M_LOADG", PU_CACHE));
 #endif
 
@@ -587,7 +587,7 @@ void M_DrawLoad(void)
         V_WriteCharDirect(LoadDef.x / 4 + 24, (LoadDef.y + LINEHEIGHT * i) / 4, '|');
         M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 4);
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
         M_DrawSaveLoadBorder(LoadDef.x, LoadDef.y + LINEHEIGHT * i);
         M_WriteText(LoadDef.x, LoadDef.y + LINEHEIGHT * i, savegamestrings[i]);
 #endif
@@ -597,7 +597,7 @@ void M_DrawLoad(void)
 //
 // Draw border for the savegame description
 //
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 void M_DrawSaveLoadBorder(int x, int y)
 {
     int i;
@@ -674,7 +674,7 @@ void M_DrawSave(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
     V_WriteTextDirect(18, 7, "SAVE GAME");
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
     V_DrawPatchDirect(72, 28, W_CacheLumpName("M_SAVEG", PU_CACHE));
 #endif
 
@@ -694,7 +694,7 @@ void M_DrawSave(void)
         V_WriteCharDirect(LoadDef.x / 4 + 24, (LoadDef.y + LINEHEIGHT * i) / 4, '|');
         M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 4);
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
         M_DrawSaveLoadBorder(LoadDef.x, LoadDef.y + LINEHEIGHT * i);
         M_WriteText(LoadDef.x, LoadDef.y + LINEHEIGHT * i, savegamestrings[i]);
 #endif
@@ -708,7 +708,7 @@ void M_DrawSave(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
         V_WriteTextDirect((LoadDef.x / 4) + strlen(savegamestrings[saveSlot]), (LoadDef.y + LINEHEIGHT * saveSlot) / 4, "_");
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
         i = M_StringWidth(savegamestrings[saveSlot]);
         M_WriteText(LoadDef.x + i, LoadDef.y + LINEHEIGHT * saveSlot, "_");
 #endif
@@ -835,7 +835,7 @@ void M_DrawReadThis1(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
     V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
     V_DrawPatchDirect(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 #endif
 }
@@ -853,7 +853,7 @@ void M_DrawReadThis2(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
     V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
     V_DrawPatchDirect(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
 #endif
 }
@@ -868,7 +868,7 @@ void M_DrawReadThisRetail(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
     V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("HELP", PU_CACHE));
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
     V_DrawPatchDirect(0, 0, W_CacheLumpName("HELP", PU_CACHE));
 #endif
 }
@@ -896,7 +896,7 @@ void M_DrawSound(void)
     V_WriteTextDirect(20, 32, "Mono Sound:");
     V_WriteTextDirect(40, 32, monoSound ? "ON" : "OFF");
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
     V_DrawPatchDirect(60, 38, W_CacheLumpName("M_SVOL", PU_CACHE));
 
     M_DrawThermo(SoundDef.x, SoundDef.y + LINEHEIGHT * (sfx_vol + 1), 16, sfxVolume);
@@ -957,7 +957,7 @@ void M_DrawMainMenu(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
     V_WriteTextDirect(23, 10, "DOOM");
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
     V_DrawPatchDirect(94, 2, W_CacheLumpName("M_DOOM", PU_CACHE));
 #endif
 }
@@ -975,7 +975,7 @@ void M_DrawNewGame(void)
     V_WriteTextDirect(24, 2, "NEW GAME");
     V_WriteTextDirect(13, 9, "Choose skill level:");
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
     V_DrawPatchDirect(96, 14, W_CacheLumpName("M_NEWG", PU_CACHE));
     V_DrawPatchDirect(54, 38, W_CacheLumpName("M_SKILL", PU_CACHE));
 #endif
@@ -1002,7 +1002,7 @@ void M_DrawEpisode(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
     V_WriteTextDirect(27, 9, "WHICH EPISODE?");
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
     V_DrawPatchDirect(54, 38, W_CacheLumpName("M_EPISOD", PU_CACHE));
 #endif
 }
@@ -1060,7 +1060,7 @@ void M_DrawOptions(void)
     M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (mousesens + 1)) / 4, 10, mouseSensitivity);
     M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (scrnsize + 1)) / 4, 9, screenSize);
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
     V_DrawPatchDirect(108, 15, W_CacheLumpName("M_OPTTTL", PU_CACHE));
     V_DrawPatchDirect(OptionsDef.x + 120, OptionsDef.y + LINEHEIGHT * messages, W_CacheLumpName((char *)msgNames[showMessages], PU_CACHE));
     M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (mousesens + 1), 10, mouseSensitivity);
@@ -1134,7 +1134,7 @@ void M_DrawDisplay(void)
     V_WriteTextDirect(15, 37, "Uncapped framerate:");
     V_WriteTextDirect(45, 37, uncappedFPS ? "ON" : "OFF");
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
     M_WriteText(58, 24, "VSYNC:");
     M_WriteText(214, 24, waitVsync ? "ON" : "OFF");
 
@@ -1526,7 +1526,7 @@ void M_SizeDisplay(int choice)
 //
 //      Menu Functions
 //
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 void M_DrawThermo(int x, int y, int thermWidth, int thermDot)
 {
     int xx;
@@ -1592,7 +1592,7 @@ int M_StringWidth(char *string)
         if (c < 0 || c >= HU_FONTSIZE)
             w += 4;
         else{
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
             w += hu_font[c]->width;
 #endif
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
@@ -1612,7 +1612,7 @@ int M_StringHeight(char *string)
 {
     int i;
     int h;
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
     int height = hu_font[0]->height;
 #endif
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
@@ -1630,7 +1630,7 @@ int M_StringHeight(char *string)
 //
 //      Write a string using the hu_font
 //
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 void M_WriteText(int x, int y, char *string)
 {
     int w;
@@ -2047,11 +2047,11 @@ void M_Drawer(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
             V_WriteTextDirect(x / 4, y / 4, string);
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
             M_WriteText(x, y, string);
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
             y += hu_font[0]->height;
 #endif
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
@@ -2082,7 +2082,7 @@ void M_Drawer(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
             V_WriteTextDirect(x / 4, y / 4, currentMenu->menuitems[i].text);
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
             V_DrawPatchDirect(x, y, W_CacheLumpName(currentMenu->menuitems[i].name, PU_CACHE));
 #endif
         }
@@ -2097,7 +2097,7 @@ void M_Drawer(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
     V_WriteCharDirect(currentMenu->x / 4 - 3, currentMenu->y / 4 + itemOn * 4, whichSkull + 1);
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
     V_DrawPatchDirect(x + SKULLXOFF, currentMenu->y - 5 + itemOn * LINEHEIGHT, W_CacheLumpName(skullName[whichSkull], PU_CACHE));
 #endif
 }

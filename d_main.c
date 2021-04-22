@@ -227,7 +227,7 @@ void D_Display(void)
     else
         wipe = false;
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
     if (gamestate == GS_LEVEL && gametic)
         HU_Erase();
 #endif
@@ -242,7 +242,7 @@ void D_Display(void)
         {
             // [crispy] update automap while playing
             R_RenderPlayerView(&players);
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
             AM_Drawer();
 #endif
         }
@@ -250,7 +250,7 @@ void D_Display(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
         ST_doPaletteStuff();
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
         if (!automapactive || (automapactive && !fullscreen))
         {
             redrawsbar = wipe || (viewheight != 200 && fullscreen) || (inhelpscreensstate && !inhelpscreens); // just put away the help screen
@@ -297,7 +297,7 @@ void D_Display(void)
     if (gamestate == GS_LEVEL && oldgamestate != GS_LEVEL)
     {
         viewactivestate = 0; // view was not active
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
         R_FillBackScreen(); // draw the pattern into the back screen
 #endif
     }
@@ -309,7 +309,7 @@ void D_Display(void)
             borderdrawcount = 3;
         if (borderdrawcount)
         {
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
             R_DrawViewBorder(); // erase old menu stuff
 #endif
             borderdrawcount--;
@@ -337,7 +337,7 @@ void D_Display(void)
         V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 2, "PAUSE");
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
         V_DrawPatchDirect(viewwindowx + (scaledviewwidth - 68) / 2, y, W_CacheLumpName("M_PAUSE", PU_CACHE));
 #endif
     }
@@ -462,6 +462,9 @@ void D_PageDrawer(void)
 #endif
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     V_DrawPatchScreen0(0, 0, W_CacheLumpName(pagename, PU_CACHE));
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+    V_DrawPatchDirect(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
 }
 
@@ -1130,13 +1133,13 @@ void D_DoomMain(void)
     D_RedrawTitle();
     S_Init(sfxVolume * 8, musicVolume * 8);
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
     printf("HU_Init: Setting up heads up display.\n");
     D_RedrawTitle();
     HU_Init();
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
     printf("ST_Init: Init status bar.\n");
     D_RedrawTitle();
     ST_Init();

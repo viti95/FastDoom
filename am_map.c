@@ -777,7 +777,13 @@ void AM_drawFline(fline_t *fl,
 	register int ay;
 	register int d;
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 #define PUTDOT(xx, yy, cc) screen0[Mul320(yy) + (xx)] = (cc)
+#endif
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#define PUTDOT(xx, yy, cc) backbuffer[Mul320(yy) + (xx)] = (cc)
+#endif
 
 	dx = fl->b.x - fl->a.x;
 	// OPTIMIZE NEGATE
@@ -1032,7 +1038,13 @@ void AM_Drawer(void)
 	if (!automapactive)
 		return;
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 	SetDWords(screen0, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+	SetDWords(backbuffer, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
+#endif
+
 	if (grid)
 		AM_drawGrid(GRIDCOLORS);
 	AM_drawWalls();
