@@ -47,6 +47,7 @@ file i_main.obj
 file i_ibm.obj
 file i_sound.obj
 file planar.obj
+file linear.obj
 file tables.obj
 file f_finale.obj
 file d_main.obj
