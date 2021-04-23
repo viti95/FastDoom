@@ -56,9 +56,13 @@ int viewheight;
 int viewwindowx;
 int viewwindowy;
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 int columnofs[SCREENWIDTH];
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 byte *ylookup[SCREENHEIGHT];
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+byte **ylookup;
 #endif
 
 int automapheight;

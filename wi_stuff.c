@@ -886,7 +886,7 @@ void WI_updateShowNextLoc(void)
 		snl_pointeron = (cnt & 31) < 20;
 }
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 void WI_drawShowNextLoc(void)
 {
 

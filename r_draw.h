@@ -16,6 +16,8 @@
 //	System specific interface stuff.
 //
 
+#include "vmode.h"
+
 #ifndef __R_DRAW__
 #define __R_DRAW__
 
@@ -31,9 +33,13 @@ extern fixed_t dc_texturemid;
 // first pixel in a column
 extern byte *dc_source;
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 extern int columnofs[SCREENWIDTH];
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 extern byte *ylookup[SCREENHEIGHT];
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+extern byte **ylookup;
 #endif
 
 // The span blitting interface.
