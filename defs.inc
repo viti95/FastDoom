@@ -44,7 +44,7 @@ EXTRN	_dc_texturemid:DWORD
 EXTRN	_dc_source:DWORD
 
 EXTRN	_columnofs:DWORD
-
+EXTRN	_ylookup:DWORD
 
 EXTRN	_ds_y:DWORD
 EXTRN	_ds_x1:DWORD

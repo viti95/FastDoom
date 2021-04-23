@@ -1732,27 +1732,6 @@ void R_DrawViewBorder(void)
 #endif
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
-void R_DrawColumn_13h(void)
-{
-    int count;
-    byte *dest;
-    fixed_t frac, fracstep;
-
-    count = dc_yh - dc_yl;
-
-    dest = ylookup[dc_yl] + columnofs[dc_x];
-
-    fracstep = dc_iscale;
-    frac = dc_texturemid + (dc_yl - centery) * fracstep;
-
-    do
-    {
-        *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]];
-        dest += SCREENWIDTH;
-        frac += fracstep;
-    } while (count--);
-}
-
 void R_DrawSkyFlat_13h(void)
 {
     register int count;
@@ -1808,26 +1787,6 @@ void R_DrawFuzzColumnFast_13h(void)
     {
         *dest = colormaps[6 * 256 + dest[0]];
         dest += SCREENWIDTH;
-    } while (count--);
-}
-
-void R_DrawSpan_13h(void)
-{
-    fixed_t xfrac, yfrac;
-    byte *dest;
-    int count, spot;
-
-    xfrac = ds_xfrac;
-    yfrac = ds_yfrac;
-
-    dest = ylookup[ds_y] + columnofs[ds_x1];
-    count = ds_x2 - ds_x1;
-    do
-    {
-        spot = ((yfrac >> (16 - 6)) & (63 * 64)) + ((xfrac >> 16) & 63);
-        *dest++ = ds_colormap[ds_source[spot]];
-        xfrac += ds_xstep;
-        yfrac += ds_ystep;
     } while (count--);
 }
 
