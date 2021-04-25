@@ -76,48 +76,48 @@ void HUlib_drawTextLine(hu_textline_t *l)
     int x;
     unsigned char c;
 
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-        x = l->x / 4;
-        for (i = 0; i < l->len; i++)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+    x = l->x / 4;
+    for (i = 0; i < l->len; i++)
+    {
+        c = toupper(l->l[i]);
+        V_WriteCharDirect(x, l->y / 8, c);
+        x++;
+    }
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    x = l->x / 4;
+    for (i = 0; i < l->len; i++)
+    {
+        c = toupper(l->l[i]);
+        V_WriteCharDirect(x, l->y / 4, c);
+        x++;
+    }
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+    // draw the new stuff
+    x = l->x;
+    for (i = 0; i < l->len; i++)
+    {
+        c = toupper(l->l[i]);
+        if (c != ' ' && c >= l->sc && c <= '_')
         {
-            c = toupper(l->l[i]);
-            V_WriteCharDirect(x, l->y / 8, c);
-            x++;
-        }
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        x = l->x / 4;
-        for (i = 0; i < l->len; i++)
-        {
-            c = toupper(l->l[i]);
-            V_WriteCharDirect(x, l->y / 4, c);
-            x++;
-        }
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
-        // draw the new stuff
-        x = l->x;
-        for (i = 0; i < l->len; i++)
-        {
-            c = toupper(l->l[i]);
-            if (c != ' ' && c >= l->sc && c <= '_')
-            {
-                w = l->f[c - l->sc]->width;
-                if (x + w > SCREENWIDTH)
-                    break;
+            w = l->f[c - l->sc]->width;
+            if (x + w > SCREENWIDTH)
+                break;
 
-                V_DrawPatchDirect(x, l->y, l->f[c - l->sc]);
+            V_DrawPatchDirect(x, l->y, l->f[c - l->sc]);
 
-                x += w;
-            }
-            else
-            {
-                x += 4;
-                if (x >= SCREENWIDTH)
-                    break;
-            }
+            x += w;
         }
-    #endif
+        else
+        {
+            x += 4;
+            if (x >= SCREENWIDTH)
+                break;
+        }
+    }
+#endif
 }
 
 // sorta called by HU_Erase and just better darn get things straight
@@ -146,6 +146,10 @@ void HUlib_eraseTextLine(hu_textline_t *l)
                 R_VideoErase(yoffset + viewwindowx + viewwidth, viewwindowx); // erase right border
             }
         }
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+        updatestate |= I_MESSAGES;
+#endif
     }
 #endif
 
@@ -223,6 +227,10 @@ void HUlib_drawSText(hu_stext_t *s)
         // need a decision made here on whether to skip the draw
         HUlib_drawTextLine(l); // no cursor, please
     }
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+    updatestate |= I_MESSAGES;
+#endif
 }
 
 void HUlib_eraseSText(hu_stext_t *s)

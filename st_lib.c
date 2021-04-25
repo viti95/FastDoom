@@ -95,6 +95,10 @@ void STlib_drawNum(st_number_t *n, byte refresh)
         return;
     }
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+    updatestate |= I_STATBAR;
+#endif
+
     w = n->p[0]->width;
     h = n->p[0]->height;
     x = n->x;
@@ -254,6 +258,10 @@ void STlib_updateMultIcon(st_multicon_t *mi, byte refresh)
         V_DrawPatchDirect(mi->x, mi->y, mi->p[*mi->inum]);
 #endif
         mi->oldinum = *mi->inum;
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+        updatestate |= I_STATBAR;
+#endif
     }
 }
 #endif
@@ -293,6 +301,10 @@ void STlib_updateBinIcon(st_binicon_t *bi, byte refresh)
             V_DrawPatchDirect(bi->x, bi->y, bi->p);
 #endif
         }
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+        updatestate |= I_STATBAR;
+#endif
     }
 }
 #endif

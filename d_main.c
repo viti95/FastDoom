@@ -244,6 +244,9 @@ void D_Display(void)
             R_RenderPlayerView(&players);
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
             AM_Drawer();
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+            updatestate |= I_FULLVIEW;
+#endif
 #endif
         }
 
@@ -263,14 +266,23 @@ void D_Display(void)
 
     case GS_INTERMISSION:
         WI_Drawer();
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+        updatestate |= I_FULLSCRN;
+#endif
         break;
 
     case GS_FINALE:
         F_Drawer();
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+        updatestate |= I_FULLSCRN;
+#endif
         break;
 
     case GS_DEMOSCREEN:
         D_PageDrawer();
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+        updatestate |= I_FULLSCRN;
+#endif
         break;
     }
 
@@ -285,6 +297,9 @@ void D_Display(void)
             R_RenderPlayerView(&players);
 
         HU_Drawer();
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+        updatestate |= I_FULLVIEW;
+#endif
     }
 
     // clean up border stuff
@@ -311,6 +326,9 @@ void D_Display(void)
         {
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
             R_DrawViewBorder(); // erase old menu stuff
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+            updatestate |= I_FULLSCRN;
 #endif
             borderdrawcount--;
         }

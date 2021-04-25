@@ -46,6 +46,7 @@
 //
 
 #define DPMI_INT 0x31
+#define SBARHEIGHT 32
 
 //
 // Code
@@ -250,8 +251,8 @@ const byte textcolors[48] = {
 //
 void I_SetPalette(int numpalette)
 {
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        {
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    {
         byte *pos;
         short i, j;
 
@@ -367,24 +368,27 @@ void I_SetPalette(int numpalette)
                 lut16colors[i] = best_color;
             }
         }
-        }
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
-        {
+    }
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+    {
         int i;
         int pos = Mul768(numpalette);
 
         _outbyte(PEL_WRITE_ADR, 0);
 
         OutString(PEL_DATA, ((unsigned char *)processedpalette) + pos, 768);
-        }
-    #endif
+    }
+#endif
 }
 
 //
 // Graphics mode
 //
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+int updatestate;
+#endif
 byte *pcscreen, *currentscreen, *destscreen, *destview;
 unsigned short *textdestscreen = (unsigned short *)0xB8000;
 byte textpage = 0;
@@ -476,10 +480,10 @@ void I_UpdateNoBlit(void)
 {
     int realdr[4];
 
-    // Set current screen
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+// Set current screen
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     currentscreen = destscreen;
-    #endif
+#endif
 
     // Update dirtybox size
     realdr[BOXTOP] = dirtybox[BOXTOP];
@@ -548,9 +552,9 @@ void I_UpdateNoBlit(void)
         y = realdr[BOXBOTTOM];
         h = realdr[BOXTOP] - y + 1;
 
-        #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-            I_UpdateBox(x, y, w, h);
-        #endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+        I_UpdateBox(x, y, w, h);
+#endif
     }
     // Clear box
     dirtybox[BOXTOP] = dirtybox[BOXRIGHT] = MININT;
@@ -560,57 +564,98 @@ void I_UpdateNoBlit(void)
 //
 // I_FinishUpdate
 //
+
+extern int screenblocks;
+
 void I_FinishUpdate(void)
 {
     static int fps_counter, fps_starttime, fps_nextcalculation;
     int opt1, opt2;
 
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-        // Change video page
-        regs.h.ah = 0x05;
-        regs.h.al = textpage;
-        regs.h.bh = 0x00;
-        regs.h.bl = 0x00;
-        int386(0x10, &regs, &regs);
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+    // Change video page
+    regs.h.ah = 0x05;
+    regs.h.al = textpage;
+    regs.h.bh = 0x00;
+    regs.h.bl = 0x00;
+    int386(0x10, &regs, &regs);
 
-        textdestscreen += 2048;
-        textpage++;
-        if (textpage == 3)
-        {
-            textdestscreen = (unsigned short *)0xB8000;
-            textpage = 0;
-        }
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        // Change video page
-        regs.h.ah = 0x05;
-        regs.h.al = textpage;
-        regs.h.bh = 0x00;
-        regs.h.bl = 0x00;
-        int386(0x10, &regs, &regs);
+    textdestscreen += 2048;
+    textpage++;
+    if (textpage == 3)
+    {
+        textdestscreen = (unsigned short *)0xB8000;
+        textpage = 0;
+    }
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    // Change video page
+    regs.h.ah = 0x05;
+    regs.h.al = textpage;
+    regs.h.bh = 0x00;
+    regs.h.bl = 0x00;
+    int386(0x10, &regs, &regs);
 
-        textdestscreen += 4128;
-        textpage++;
-        if (textpage == 3)
-        {
-            textdestscreen = (unsigned short *)0xB8000;
-            textpage = 0;
-        }
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-        outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
+    textdestscreen += 4128;
+    textpage++;
+    if (textpage == 3)
+    {
+        textdestscreen = (unsigned short *)0xB8000;
+        textpage = 0;
+    }
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+    outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
 
-        //Next plane
-        destscreen += 0x4000;
-        if (destscreen == (byte *)0xac000)
+    //Next plane
+    destscreen += 0x4000;
+    if (destscreen == (byte *)0xac000)
+    {
+        destscreen = (byte *)0xa0000;
+    }
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+
+    if (updatestate & I_FULLSCRN)
+    {
+        CopyDWords(backbuffer, pcscreen, SCREENHEIGHT * SCREENWIDTH / 4);
+        updatestate = I_NOUPDATE; // clear out all draw types
+    }
+    if (updatestate & I_FULLVIEW)
+    {
+        if (updatestate & I_MESSAGES && screenblocks > 7)
         {
-            destscreen = (byte *)0xa0000;
+            int i;
+            for (i = 0; i < Mul320(viewwindowy + viewheight); i += SCREENWIDTH)
+            {
+                CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
+            }
+            updatestate &= ~(I_FULLVIEW | I_MESSAGES);
         }
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
-        //memcpy(pcscreen, backbuffer, SCREENHEIGHT*SCREENWIDTH);
-        CopyDWords(backbuffer, pcscreen, SCREENHEIGHT*SCREENWIDTH/4);
-    #endif
+        else
+        {
+            int i;
+            for (i = Mul320(viewwindowy) + viewwindowx; i < Mul320(viewwindowy + viewheight); i += SCREENWIDTH)
+            {
+                CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
+            }
+            updatestate &= ~I_FULLVIEW;
+        }
+    }
+    if (updatestate & I_STATBAR)
+    {
+        CopyDWords(backbuffer + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), pcscreen + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), SCREENWIDTH * SBARHEIGHT / 4);
+        updatestate &= ~I_STATBAR;
+    }
+    if (updatestate & I_MESSAGES)
+    {
+        CopyDWords(backbuffer, pcscreen, (SCREENWIDTH * 28) / 4);
+        updatestate &= ~I_MESSAGES;
+    }
+
+    //memcpy(pcscreen, backbuffer, SCREENHEIGHT*SCREENWIDTH);
+    //CopyDWords(backbuffer, pcscreen, SCREENHEIGHT * SCREENWIDTH / 4);
+#endif
 
     if (showFPS)
     {
@@ -641,88 +686,88 @@ void I_FinishUpdate(void)
 void I_InitGraphics(void)
 {
 
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
-        // Set 80x25 color mode
-        regs.h.ah = 0x00;
-        regs.h.al = 0x03;
-        int386(0x10, &regs, &regs);
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+    // Set 80x25 color mode
+    regs.h.ah = 0x00;
+    regs.h.al = 0x03;
+    int386(0x10, &regs, &regs);
 
-        // Disable cursor
-        regs.h.ah = 0x01;
-        regs.h.ch = 0x3F;
-        int386(0x10, &regs, &regs);
+    // Disable cursor
+    regs.h.ah = 0x01;
+    regs.h.ch = 0x3F;
+    int386(0x10, &regs, &regs);
 
-        // CGA Disable blink
-        if (CGAcard)
-        {
-            I_DisableCGABlink();
-        }
-        else
-        {
-            // Disable blinking
-            regs.h.ah = 0x10;
-            regs.h.al = 0x03;
-            regs.h.bl = 0x00;
-            regs.h.bh = 0x00;
-            int386(0x10, &regs, &regs);
-        }
-
-        textdestscreen = (unsigned short *)0xB8000;
-        textpage = 0;
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-        // Set 80x25 color mode
-        regs.h.ah = 0x00;
-        regs.h.al = 0x03;
-        int386(0x10, &regs, &regs);
-
-        // Change font size to 8x8 (only VGA cards)
-        regs.h.ah = 0x11;
-        regs.h.al = 0x12;
-        regs.h.bh = 0;
-        regs.h.bl = 0;
-        int386(0x10, &regs, &regs);
-
-        // Disable cursor
-        regs.h.ah = 0x01;
-        regs.h.ch = 0x3F;
-        int386(0x10, &regs, &regs);
-
+    // CGA Disable blink
+    if (CGAcard)
+    {
+        I_DisableCGABlink();
+    }
+    else
+    {
         // Disable blinking
         regs.h.ah = 0x10;
         regs.h.al = 0x03;
         regs.h.bl = 0x00;
         regs.h.bh = 0x00;
         int386(0x10, &regs, &regs);
+    }
 
-        textdestscreen = (unsigned short *)0xB8000;
-        textpage = 0;
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
-        regs.w.ax = 0x13;
-        int386(0x10, (union REGS *)&regs, &regs);
-        pcscreen = currentscreen = (byte *)0xA0000;
-        destscreen = (byte *)0xA4000;
+    textdestscreen = (unsigned short *)0xB8000;
+    textpage = 0;
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+    // Set 80x25 color mode
+    regs.h.ah = 0x00;
+    regs.h.al = 0x03;
+    int386(0x10, &regs, &regs);
 
-        outp(SC_INDEX, SC_MEMMODE);
-        outp(SC_INDEX + 1, (inp(SC_INDEX + 1) & ~8) | 4);
-        outp(GC_INDEX, GC_MODE);
-        outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~0x13);
-        outp(GC_INDEX, GC_MISCELLANEOUS);
-        outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~2);
-        outpw(SC_INDEX, 0xf02);
-        SetDWords(pcscreen, 0, 0x4000);
-        outp(CRTC_INDEX, CRTC_UNDERLINE);
-        outp(CRTC_INDEX + 1, inp(CRTC_INDEX + 1) & ~0x40);
-        outp(CRTC_INDEX, CRTC_MODE);
-        outp(CRTC_INDEX + 1, inp(CRTC_INDEX + 1) | 0x40);
-        outp(GC_INDEX, GC_READMAP);
-    #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
-        regs.w.ax = 0x13;
-        int386(0x10, (union REGS *)&regs, &regs);
-        pcscreen = destscreen = (byte *)0xA0000;
-    #endif
+    // Change font size to 8x8 (only VGA cards)
+    regs.h.ah = 0x11;
+    regs.h.al = 0x12;
+    regs.h.bh = 0;
+    regs.h.bl = 0;
+    int386(0x10, &regs, &regs);
+
+    // Disable cursor
+    regs.h.ah = 0x01;
+    regs.h.ch = 0x3F;
+    int386(0x10, &regs, &regs);
+
+    // Disable blinking
+    regs.h.ah = 0x10;
+    regs.h.al = 0x03;
+    regs.h.bl = 0x00;
+    regs.h.bh = 0x00;
+    int386(0x10, &regs, &regs);
+
+    textdestscreen = (unsigned short *)0xB8000;
+    textpage = 0;
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+    regs.w.ax = 0x13;
+    int386(0x10, (union REGS *)&regs, &regs);
+    pcscreen = currentscreen = (byte *)0xA0000;
+    destscreen = (byte *)0xA4000;
+
+    outp(SC_INDEX, SC_MEMMODE);
+    outp(SC_INDEX + 1, (inp(SC_INDEX + 1) & ~8) | 4);
+    outp(GC_INDEX, GC_MODE);
+    outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~0x13);
+    outp(GC_INDEX, GC_MISCELLANEOUS);
+    outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~2);
+    outpw(SC_INDEX, 0xf02);
+    SetDWords(pcscreen, 0, 0x4000);
+    outp(CRTC_INDEX, CRTC_UNDERLINE);
+    outp(CRTC_INDEX + 1, inp(CRTC_INDEX + 1) & ~0x40);
+    outp(CRTC_INDEX, CRTC_MODE);
+    outp(CRTC_INDEX + 1, inp(CRTC_INDEX + 1) | 0x40);
+    outp(GC_INDEX, GC_READMAP);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+    regs.w.ax = 0x13;
+    int386(0x10, (union REGS *)&regs, &regs);
+    pcscreen = destscreen = (byte *)0xA0000;
+#endif
 
     I_ProcessPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
     I_SetPalette(0);

@@ -11,5 +11,14 @@ extern byte processedpalette[14 * 768];
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 extern byte lut16colors[256];
 #endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+extern int updatestate;
+#endif
+
+#define I_NOUPDATE	0
+#define I_FULLVIEW	1
+#define I_STATBAR	2
+#define I_MESSAGES	4
+#define I_FULLSCRN	8
 
 extern void I_TimerISR(task *task);

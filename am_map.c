@@ -457,7 +457,6 @@ byte AM_Responder(event_t *ev)
 	static byte bigstate = 0;
 	static char buffer[20];
 
-
 	if (!automapactive)
 	{
 		if (ev->type == ev_keydown && ev->data1 == AM_STARTKEY)
@@ -466,7 +465,8 @@ byte AM_Responder(event_t *ev)
 			viewactive = 0;
 			rc = 1;
 		}
-	} else if (ev->type == ev_keydown)
+	}
+	else if (ev->type == ev_keydown)
 	{
 
 		rc = 1;
@@ -1037,6 +1037,10 @@ void AM_Drawer(void)
 {
 	if (!automapactive)
 		return;
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+	updatestate |= I_FULLSCRN;
+#endif
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 	SetDWords(screen0, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer

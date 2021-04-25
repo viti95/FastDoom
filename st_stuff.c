@@ -429,6 +429,10 @@ void ST_refreshBackground(void)
 			V_CopyRect(ST_X, 0, screen4, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y, backbuffer);
 #endif
 		}
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+		updatestate |= I_STATBAR;
+#endif
 	}
 }
 #endif

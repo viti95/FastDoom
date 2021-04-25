@@ -323,6 +323,9 @@ void HU_Drawer(void)
             HUlib_addCharToTextLine(&w_fps, *(f++));
         }
         HUlib_drawTextLine(&w_fps);
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+        updatestate |= I_MESSAGES;
+#endif
     }
 
     if (automapactive)
