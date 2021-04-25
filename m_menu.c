@@ -1225,7 +1225,20 @@ void M_EndGame(int choice)
 void M_ReadThis(int choice)
 {
     choice = 0;
-    M_SetupNextMenu(&ReadDef1);
+
+    switch (gamemode)
+    {
+    case shareware:
+    case registered:
+        M_SetupNextMenu(&ReadDef1);
+        break;
+    case retail:
+        M_SetupNextMenu(&ReadDef2);
+        break;
+    case commercial:
+        M_SetupNextMenu(&ReadDef2);
+        break;
+    }
 }
 
 void M_ReadThis2(int choice)
@@ -1591,7 +1604,8 @@ int M_StringWidth(char *string)
         c = toupper(string[i]) - HU_FONTSTART;
         if (c < 0 || c >= HU_FONTSIZE)
             w += 4;
-        else{
+        else
+        {
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
             w += hu_font[c]->width;
 #endif
@@ -1599,7 +1613,6 @@ int M_StringWidth(char *string)
             w += 8;
 #endif
         }
-            
     }
 
     return w;
@@ -2041,7 +2054,7 @@ void M_Drawer(void)
 
             x = 160 - M_StringWidth(string) / 2;
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)  
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
             V_WriteTextDirect(x / 4, y / 8, string);
 #endif
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
