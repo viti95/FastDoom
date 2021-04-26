@@ -89,7 +89,12 @@ void wipe_initMelt()
     int i;
 
     // copy start screen to main screen
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     CopyDWords(screen2, screen0, (SCREENWIDTH * SCREENHEIGHT) / 4);
+    #endif
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+    CopyDWords(screen2, backbuffer, (SCREENWIDTH * SCREENHEIGHT) / 4);
+    #endif
 
     // makes this wipe faster (in theory)
     // to have stuff in column-major format
@@ -138,7 +143,12 @@ byte wipe_doMelt(int ticks)
                 if (dy >= SCREENHEIGHT - y_val)
                     dy = SCREENHEIGHT - y_val;
                 s = &((short *)screen3)[Mul200(i) + y_val];
+                #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
                 d = &((short *)screen0)[Mul160(y_val) + i];
+                #endif
+                #if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+                d = &((short *)backbuffer)[Mul160(y_val) + i];
+                #endif
                 for (j = dy; j; j--)
                 {
                     d[idx] = *(s++);
@@ -146,7 +156,12 @@ byte wipe_doMelt(int ticks)
                 }
                 y_val += dy;
                 s = &((short *)screen2)[Mul200(i)];
+                #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
                 d = &((short *)screen0)[Mul160(y_val) + i];
+                #endif
+                #if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+                d = &((short *)backbuffer)[Mul160(y_val) + i];
+                #endif
                 idx = 0;
                 for (j = SCREENHEIGHT - y_val; j; j--)
                 {
@@ -238,7 +253,14 @@ void wipe_ReadScreen(byte *scr)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+void wipe_ReadScreen(byte *scr)
+{
+    CopyDWords(backbuffer, scr, SCREENWIDTH * SCREENHEIGHT / 4);
+}
+#endif
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 void wipe_StartScreen()
 {
     screen2 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
@@ -246,7 +268,7 @@ void wipe_StartScreen()
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 void wipe_EndScreen()
 {
     screen3 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
@@ -254,7 +276,7 @@ void wipe_EndScreen()
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 int wipe_ScreenWipe(int ticks)
 {
     int rc;

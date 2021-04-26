@@ -220,7 +220,7 @@ void D_Display(void)
     if (gamestate != wipegamestate && !noMelt)
     {
         wipe = true;
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
         wipe_StartScreen();
 #endif
     }
@@ -385,13 +385,13 @@ void D_Display(void)
     }
 
 // wipe update
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
     wipe_EndScreen();
 #endif
 
     wipestart = ticcount - 1;
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
     do
     {
         do
@@ -401,7 +401,10 @@ void D_Display(void)
         wipestart = ticcount;
         done = wipe_ScreenWipe(tics);
         I_UpdateNoBlit();
-        M_Drawer();       // menu is drawn even on top of wipes
+        M_Drawer(); // menu is drawn even on top of wipes
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+        updatestate = I_FULLSCRN;
+#endif
         I_FinishUpdate(); // page flip or blit buffer
     } while (!done);
 #endif
