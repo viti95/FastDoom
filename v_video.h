@@ -37,7 +37,9 @@
 // Screen 0 is the screen updated by I_Update screen.
 // Screen 1 is an extra buffer.
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 extern byte screen0[SCREENWIDTH * SCREENHEIGHT];
+#endif
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 extern byte screen4[SCREENWIDTH * 32];

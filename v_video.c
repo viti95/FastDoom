@@ -32,7 +32,9 @@
 
 #include "vmode.h"
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 byte screen0[SCREENWIDTH * SCREENHEIGHT];
+#endif
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 byte screen4[SCREENWIDTH * 32];
@@ -189,7 +191,7 @@ void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void V_DrawPatchScreen0(int x, int y, patch_t *patch)
 {
 
