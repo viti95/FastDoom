@@ -106,10 +106,24 @@ void V_SetRect(byte color, int width, int height, int destx, int desty, byte *de
 
     dest = destscrn + Mul320(desty) + destx;
 
-    for (; height > 0; height--)
+    if (width % 2)
     {
-        SetBytes(dest, color, width);
-        dest += SCREENWIDTH;
+        for (; height > 0; height--)
+        {
+            SetBytes(dest, color, width);
+            dest += SCREENWIDTH;
+        }
+    }
+    else
+    {
+        unsigned short colorcomp = color << 8 | color;
+        int widthcomp = width / 2;
+
+        for (; height > 0; height--)
+        {    
+            SetWords(dest, colorcomp, widthcomp);
+            dest += SCREENWIDTH;
+        }
     }
 }
 

@@ -1222,7 +1222,16 @@ void R_DrawSpanFlat(void)
 
         dest = (byte *)origin_y + dsm_x1;
         countp = dsm_x2 - dsm_x1 + 1;
-        SetBytes(dest, color, countp);
+
+        if (countp % 2)
+        {
+            SetBytes(dest, color, countp);
+        }
+        else
+        {
+            unsigned short colorcomp = color << 8 | color;
+            SetWords(dest, colorcomp, countp / 2);
+        }
     }
 
     // Single pixel mode
@@ -1347,7 +1356,16 @@ void R_DrawSpanFlatLow(void)
 
         dest = (byte *)origin_y + dsm_x1;
         countp = dsm_x2 - dsm_x1 + 1;
-        SetBytes(dest, color, countp);
+
+        if (countp % 2)
+        {
+            SetBytes(dest, color, countp);
+        }
+        else
+        {
+            unsigned short colorcomp = color << 8 | color;
+            SetWords(dest, colorcomp, countp / 2);
+        }
     }
 
     dsp_x1 = (ds_x1) / 2;
@@ -1402,7 +1420,15 @@ void R_DrawSpanFlatPotato(void)
 
     countp = ds_x2 - ds_x1 + 1;
 
-    SetBytes(dest, color, countp);
+    if (countp % 2)
+    {
+        SetBytes(dest, color, countp);
+    }
+    else
+    {
+        unsigned short colorcomp = color << 8 | color;
+        SetWords(dest, colorcomp, countp / 2);
+    }
 }
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
@@ -1744,11 +1770,22 @@ void R_DrawSkyFlat_13h(void)
     dest = ylookup[dc_yl] + columnofs[dc_x];
     count = dc_yh - dc_yl;
 
-    do
+    while (count >= 3)
+    {
+        *(dest) = 220;
+        *(dest + SCREENWIDTH) = 220;
+        *(dest + 2 * SCREENWIDTH) = 220;
+        *(dest + 3 * SCREENWIDTH) = 220;
+        dest += 4 * SCREENWIDTH;
+        count -= 4;
+    }
+
+    while (count >= 0)
     {
         *dest = 220;
         dest += SCREENWIDTH;
-    } while (count--);
+        count--;
+    };
 }
 
 void R_DrawFuzzColumn_13h(void)
@@ -1787,11 +1824,22 @@ void R_DrawFuzzColumnFast_13h(void)
 
     count = dc_yh - dc_yl;
 
-    do
+    while (count >= 3)
+    {
+        *(dest) = colormaps[6 * 256 + dest[0]];
+        *(dest + SCREENWIDTH) = colormaps[6 * 256 + dest[SCREENWIDTH]];
+        *(dest + 2 * SCREENWIDTH) = colormaps[6 * 256 + dest[2 * SCREENWIDTH]];
+        *(dest + 3 * SCREENWIDTH) = colormaps[6 * 256 + dest[3 * SCREENWIDTH]];
+        dest += 4 * SCREENWIDTH;
+        count -= 4;
+    }
+
+    while (count >= 0)
     {
         *dest = colormaps[6 * 256 + dest[0]];
         dest += SCREENWIDTH;
-    } while (count--);
+        count--;
+    };
 }
 
 void R_DrawSpanFlat_13h(void)
@@ -1805,7 +1853,15 @@ void R_DrawSpanFlat_13h(void)
 
     countp = ds_x2 - ds_x1 + 1;
 
-    SetBytes(dest, color, countp);
+    if (countp % 2)
+    {
+        SetBytes(dest, color, countp);
+    }
+    else
+    {
+        unsigned short colorcomp = color << 8 | color;
+        SetWords(dest, colorcomp, countp / 2);
+    }
 }
 
 void R_DrawFuzzColumnSaturn_13h(void)
