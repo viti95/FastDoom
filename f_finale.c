@@ -80,7 +80,7 @@ int F_ReadTextFile(char *dest, char *filename, int size)
 	if (fp == NULL)
 		return -1;
 
-	fread(dest, size, 1, fp);
+	fread(dest, 1, size, fp);
 	fclose(fp);
 	dest[size] = '\0';
 
@@ -94,6 +94,7 @@ void F_LoadFinaleText(char *filename)
 	size = F_GetFileSize(filename);
 
 	finaletext = (char *)Z_MallocUnowned(size + 1, PU_CACHE);
+	SetBytes(finaletext, '\0', size + 1);
 	F_ReadTextFile(finaletext, filename, size);
 }
 
@@ -810,12 +811,12 @@ void F_DrawPatchCol(int x, patch_t *patch, int col)
 
 	column = (column_t *)((byte *)patch + patch->columnofs[col]);
 
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 	desttop = screen0 + x;
-	#endif
-	#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
 	desttop = backbuffer + x;
-	#endif
+#endif
 
 	// step through the posts in a column
 	while (column->topdelta != 0xff)
