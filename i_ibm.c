@@ -768,6 +768,21 @@ void I_InitGraphics(void)
     int386(0x10, (union REGS *)&regs, &regs);
     pcscreen = destscreen = (byte *)0xA0000;
 #endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA)
+    regs.w.ax = 0x04;
+    int386(0x10, (union REGS *)&regs, &regs);
+    regs.w.ax = 0x0B00;
+    regs.w.bx = 0x0100;
+    int386(0x10, (union REGS *)&regs, &regs);
+    regs.w.bx = 0x0000;
+    int386(0x10, (union REGS *)&regs, &regs);
+    pcscreen = destscreen = (byte *)0xB8000;
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
+    regs.w.ax = 0x0D;
+    int386(0x10, (union REGS *)&regs, &regs);
+    pcscreen = destscreen = (byte *)0xA0000;
+#endif
 
     I_ProcessPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
     I_SetPalette(0);
