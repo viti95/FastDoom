@@ -570,14 +570,10 @@ extern int screenblocks;
 void CGA_DrawBackbuffer(void)
 {
     int x, y;
-    unsigned char *vram;
-    unsigned int basey = 0;
+    unsigned char *vram = 0xB8000;
+    unsigned int base = 0;
 
-    vram = 0xB8000;
-
-    for (y = 0; y < SCREENHEIGHT; y += 2)
-    {
-        unsigned int base = basey;
+    for (y = 0; y < SCREENHEIGHT / 2; y++){
 
         for (x = 0; x < SCREENWIDTH / 4; x++)
         {
@@ -586,16 +582,7 @@ void CGA_DrawBackbuffer(void)
             base += 4;
         }
 
-        basey += 640;
-        vram += 80;
-    }
-
-    vram = 0xBA000;
-    basey = 320;
-
-    for (y = 1; y < SCREENHEIGHT; y += 2)
-    {
-        unsigned int base = basey;
+        vram += 0x2000;
 
         for (x = 0; x < SCREENWIDTH / 4; x++)
         {
@@ -604,7 +591,7 @@ void CGA_DrawBackbuffer(void)
             base += 4;
         }
 
-        basey += 640;
+        vram -= 0x2000;
         vram += 80;
     }
 }
