@@ -567,6 +567,40 @@ void I_UpdateNoBlit(void)
 
 extern int screenblocks;
 
+void CGA_DrawBackbuffer(void)
+{
+    int x, y;
+    unsigned char *vram;
+
+    vram = 0xB8000;
+
+    for (y = 0; y < SCREENHEIGHT; y += 2)
+    {
+        for (x = 0; x < SCREENWIDTH / 4; x++)
+        {
+            unsigned int base = y * 320 + x * 4;
+            unsigned char color = (backbuffer[base] / 64) << 6 | (backbuffer[base + 1] / 64) << 4 | (backbuffer[base + 2] / 64) << 2 | (backbuffer[base + 3] / 64);
+            *(vram + x) = color;
+        }
+
+        vram += 80;
+    }
+
+    vram = 0xBA000;
+
+    for (y = 1; y < SCREENHEIGHT; y += 2)
+    {
+        for (x = 0; x < SCREENWIDTH / 4; x++)
+        {
+            unsigned int base = y * 320 + x * 4;
+            unsigned char color = (backbuffer[base] / 64) << 6 | (backbuffer[base + 1] / 64) << 4 | (backbuffer[base + 2] / 64) << 2 | (backbuffer[base + 3] / 64);
+            *(vram + x) = color;
+        }
+
+        vram += 80;
+    }
+}
+
 void I_FinishUpdate(void)
 {
     static int fps_counter, fps_starttime, fps_nextcalculation;
