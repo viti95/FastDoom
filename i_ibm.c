@@ -579,19 +579,11 @@ void CGA_DrawBackbuffer(void)
         {
             unsigned char color = (backbuffer[base] / 64) << 6 | (backbuffer[base + 1] / 64) << 4 | (backbuffer[base + 2] / 64) << 2 | (backbuffer[base + 3] / 64);
             *(vram + x) = color;
+            color = (backbuffer[base + 320] / 64) << 6 | (backbuffer[base + 321] / 64) << 4 | (backbuffer[base + 322] / 64) << 2 | (backbuffer[base + 323] / 64);
+            *(vram + 0x2000 + x) = color;
             base += 4;
         }
-
-        vram += 0x2000;
-
-        for (x = 0; x < SCREENWIDTH / 4; x++)
-        {
-            unsigned char color = (backbuffer[base] / 64) << 6 | (backbuffer[base + 1] / 64) << 4 | (backbuffer[base + 2] / 64) << 2 | (backbuffer[base + 3] / 64);
-            *(vram + x) = color;
-            base += 4;
-        }
-
-        vram -= 0x2000;
+        base += 320;
         vram += 80;
     }
 }
