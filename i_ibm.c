@@ -567,6 +567,61 @@ void I_UpdateNoBlit(void)
 
 extern int screenblocks;
 
+#ifdef (EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
+void EGA_DrawBackbuffer(void)
+{
+    byte plane_red[SCREENWIDTH * SCREENHEIGHT / 8];
+    byte plane_green[SCREENWIDTH * SCREENHEIGHT / 8];
+    byte plane_blue[SCREENWIDTH * SCREENHEIGHT / 8];
+    byte plane_intensity[SCREENWIDTH * SCREENHEIGHT / 8];
+
+    int x, y;
+    unsigned int base = 0;
+    unsigned int plane_position = 0;
+
+    // Chunky 2 planar conversion (hi Amiga fans!)
+
+    for (y = 0; y < SCREENHEIGHT; y++){
+        for (x = 0; x < SCREENWIDTH / 8; x++){
+            unsigned char color0 = lut16colors[backbuffer[base]];
+            unsigned char color1 = lut16colors[backbuffer[base + 1]];
+            unsigned char color2 = lut16colors[backbuffer[base + 2]];
+            unsigned char color3 = lut16colors[backbuffer[base + 3]];
+            unsigned char color4 = lut16colors[backbuffer[base + 4]];
+            unsigned char color5 = lut16colors[backbuffer[base + 5]];
+            unsigned char color6 = lut16colors[backbuffer[base + 6]];
+            unsigned char color7 = lut16colors[backbuffer[base + 7]];
+
+            plane_red[plane_position] = ((color0 >> 3) & 1) << 7 | ((color1 >> 3) & 1) << 6 | ((color2 >> 3) & 1) << 5 | ((color3 >> 3) & 1) << 4 | ((color4 >> 3) & 1) << 3 | ((color5 >> 3) & 1) << 2 | ((color6 >> 3) & 1) << 1 | ((color7 >> 3) & 1);
+            plane_green[plane_position] = ((color0 >> 2) & 1) << 7 | ((color1 >> 2) & 1) << 6 | ((color2 >> 2) & 1) << 5 | ((color3 >> 2) & 1) << 4 | ((color4 >> 2) & 1) << 3 | ((color5 >> 2) & 1) << 2 | ((color6 >> 2) & 1) << 1 | ((color7 >> 2) & 1);
+            plane_blue[plane_position] = ((color0 >> 1) & 1) << 7 | ((color1 >> 1) & 1) << 6 | ((color2 >> 1) & 1) << 5 | ((color3 >> 1) & 1) << 4 | ((color4 >> 1) & 1) << 3 | ((color5 >> 1) & 1) << 2 | ((color6 >> 1) & 1) << 1 | ((color7 >> 1) & 1);
+            plane_intensity[plane_position] = ((color0) & 1) << 7 | ((color1) & 1) << 6 | ((color2) & 1) << 5 | ((color3) & 1) << 4 | ((color4) & 1) << 3 | ((color5) & 1) << 2 | ((color6) & 1) << 1 | ((color7) & 1);
+
+            plane_position++;
+            base += 8;
+        }
+    }
+
+    // Copy each bitplane
+    outp(0x3C4, 0x2);
+    outp(0x3C5, 1 << (3 & 0x03));
+    CopyDWords(plane_red, pcscreen, SCREENWIDTH * SCREENHEIGHT / 8);
+
+    outp(0x3C4, 0x2);
+    outp(0x3C5, 1 << (2 & 0x03));
+    CopyDWords(plane_green, pcscreen, SCREENWIDTH * SCREENHEIGHT / 8);
+
+    outp(0x3C4, 0x2);
+    outp(0x3C5, 1 << (1 & 0x03));
+    CopyDWords(plane_blue, pcscreen, SCREENWIDTH * SCREENHEIGHT / 8);
+
+    outp(0x3C4, 0x2);
+    outp(0x3C5, 1 << (0 & 0x03));
+    CopyDWords(plane_intensity, pcscreen, SCREENWIDTH * SCREENHEIGHT / 8);
+}
+#endif
+
+#ifdef (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA)
 void CGA_DrawBackbuffer(void)
 {
     int x, y;
@@ -577,16 +632,19 @@ void CGA_DrawBackbuffer(void)
 
         for (x = 0; x < SCREENWIDTH / 4; x++)
         {
-            unsigned char color = (backbuffer[base] / 64) << 6 | (backbuffer[base + 1] / 64) << 4 | (backbuffer[base + 2] / 64) << 2 | (backbuffer[base + 3] / 64);
+            unsigned char color;
+            unsigned char color2;
+            color = (backbuffer[base] / 64) << 6 | (backbuffer[base + 1] / 64) << 4 | (backbuffer[base + 2] / 64) << 2 | (backbuffer[base + 3] / 64);
             *(vram + x) = color;
-            color = (backbuffer[base + 320] / 64) << 6 | (backbuffer[base + 321] / 64) << 4 | (backbuffer[base + 322] / 64) << 2 | (backbuffer[base + 323] / 64);
-            *(vram + 0x2000 + x) = color;
+            color2 = (backbuffer[base + 320] / 64) << 6 | (backbuffer[base + 321] / 64) << 4 | (backbuffer[base + 322] / 64) << 2 | (backbuffer[base + 323] / 64);
+            *(vram + 0x2000 + x) = color2;
             base += 4;
         }
         base += 320;
         vram += 80;
     }
 }
+#endif
 
 void I_FinishUpdate(void)
 {
