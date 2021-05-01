@@ -567,7 +567,7 @@ void I_UpdateNoBlit(void)
 
 extern int screenblocks;
 
-#ifdef (EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
 void EGA_DrawBackbuffer(void)
 {
     byte plane_red[SCREENWIDTH * SCREENHEIGHT / 8];
@@ -603,25 +603,21 @@ void EGA_DrawBackbuffer(void)
     }
 
     // Copy each bitplane
-    outp(0x3C4, 0x2);
     outp(0x3C5, 1 << (3 & 0x03));
-    CopyDWords(plane_red, pcscreen, SCREENWIDTH * SCREENHEIGHT / 8);
+    CopyDWords(plane_red, pcscreen, SCREENWIDTH * SCREENHEIGHT / 32);
 
-    outp(0x3C4, 0x2);
     outp(0x3C5, 1 << (2 & 0x03));
-    CopyDWords(plane_green, pcscreen, SCREENWIDTH * SCREENHEIGHT / 8);
+    CopyDWords(plane_green, pcscreen, SCREENWIDTH * SCREENHEIGHT / 32);
 
-    outp(0x3C4, 0x2);
     outp(0x3C5, 1 << (1 & 0x03));
-    CopyDWords(plane_blue, pcscreen, SCREENWIDTH * SCREENHEIGHT / 8);
+    CopyDWords(plane_blue, pcscreen, SCREENWIDTH * SCREENHEIGHT / 32);
 
-    outp(0x3C4, 0x2);
     outp(0x3C5, 1 << (0 & 0x03));
-    CopyDWords(plane_intensity, pcscreen, SCREENWIDTH * SCREENHEIGHT / 8);
+    CopyDWords(plane_intensity, pcscreen, SCREENWIDTH * SCREENHEIGHT / 32);
 }
 #endif
 
-#ifdef (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA)
 void CGA_DrawBackbuffer(void)
 {
     int x, y;
@@ -860,6 +856,7 @@ void I_InitGraphics(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
     regs.w.ax = 0x0D;
     int386(0x10, (union REGS *)&regs, &regs);
+    outp(0x3C4, 0x2);
     pcscreen = destscreen = (byte *)0xA0000;
 #endif
 
