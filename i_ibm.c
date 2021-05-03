@@ -567,6 +567,37 @@ void I_UpdateNoBlit(void)
 
 extern int screenblocks;
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
+void HERC_DrawBackbuffer(void)
+{
+    int x, y;
+    unsigned char *vram = 0xB0000;
+    unsigned int base = 0;
+
+    for (y = 0; y < 400 / 4; y++)
+    {
+        for (x = 0; x < 640 / 8; x++)
+        {
+            unsigned char color;
+
+            color = (backbuffer[base] > 128) << 7 | (backbuffer[base] > 128) << 6 | (backbuffer[base + 1] > 128) << 5 | (backbuffer[base + 1] > 128) << 4 | (backbuffer[base + 2] > 128) << 3 | (backbuffer[base + 2] > 128) << 2 | (backbuffer[base + 3] > 128) << 1 | (backbuffer[base + 3] > 128);
+            *(vram + 0x0000 + x) = color;
+            color = (backbuffer[base] > 128) << 7 | (backbuffer[base] > 128) << 6 | (backbuffer[base + 1] > 128) << 5 | (backbuffer[base + 1] > 128) << 4 | (backbuffer[base + 2] > 128) << 3 | (backbuffer[base + 2] > 128) << 2 | (backbuffer[base + 3] > 128) << 1 | (backbuffer[base + 3] > 128);
+            *(vram + 0x2000 + x) = color;
+            color = (backbuffer[base + 320] > 128) << 7 | (backbuffer[base + 320] > 128) << 6 | (backbuffer[base + 321] > 128) << 5 | (backbuffer[base + 321] > 128) << 4 | (backbuffer[base + 322] > 128) << 3 | (backbuffer[base + 322] > 128) << 2 | (backbuffer[base + 323] > 128) << 1 | (backbuffer[base + 323] > 128);
+            *(vram + 0x4000 + x) = color;
+            color = (backbuffer[base + 320] > 128) << 7 | (backbuffer[base + 320] > 128) << 6 | (backbuffer[base + 321] > 128) << 5 | (backbuffer[base + 321] > 128) << 4 | (backbuffer[base + 322] > 128) << 3 | (backbuffer[base + 322] > 128) << 2 | (backbuffer[base + 323] > 128) << 1 | (backbuffer[base + 323] > 128);
+            *(vram + 0x6000 + x) = color;
+
+            base += 4;
+        }
+
+        base += 320;
+        vram += 80;
+    }
+}
+#endif
+
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
 #define NUM_SCANLINES 1
 
@@ -871,6 +902,21 @@ void I_InitGraphics(void)
     int386(0x10, (union REGS *)&regs, &regs);
     outp(0x3C4, 0x2);
     pcscreen = destscreen = (byte *)0xA0000;
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
+    //byte Graph_720x348[12] = {0x03, 0x36, 0x2D, 0x2E, 0x07, 0x5B, 0x02, 0x57, 0x57, 0x02, 0x03, 0x0A};
+    byte Graph_640x400[12] = {0x03, 0x34, 0x28, 0x2A, 0x47, 0x69, 0x00, 0x64, 0x65, 0x02, 0x03, 0x0A};
+    //byte Graph_640x200[12] = {0x03, 0x6E, 0x28, 0x2E, 0x07, 0x67, 0x0A, 0x64, 0x65, 0x02, 0x01, 0x0A};
+    int i;
+
+    outp(0x03BF, Graph_640x400[0]);
+    for (i = 0; i < 10; i++)
+    {
+        outp(0x03B4, i);
+        outp(0x03B5, Graph_640x400[i + 1]);
+    }
+    outp(0x03B8, Graph_640x400[11]);
+    pcscreen = destscreen = (byte *)0xB0000;
 #endif
 
     I_ProcessPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
