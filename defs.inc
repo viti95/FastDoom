@@ -13,8 +13,6 @@
 ; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ; GNU General Public License for more details.
 ;
-SKIPPRIMITIVES	=  0			; set to 1 to skip unwound drawing
-
 
 SCREEN  =       0a0000h
 SCREENWIDTH     =   320

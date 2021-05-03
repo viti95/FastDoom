@@ -166,8 +166,6 @@ PROC   R_DrawSpan_13h_
 PUBLIC	R_DrawSpan_13h_
 	PUSHR
 
-IFE SKIPPRIMITIVES
-
 	mov	eax,[_ds_x1]
 	mov	ebx,[_ds_x2]
 	mov	eax,[mapcalls+eax*4]
@@ -218,7 +216,6 @@ IFE SKIPPRIMITIVES
 	mov	ebx,[returnpoint]
 	mov	BYTE PTR [ebx],OP_MOVAL		; remove the ret patched in
 
-ENDIF
 	POPR
 	ret
 
