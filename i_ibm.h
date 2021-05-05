@@ -6,6 +6,8 @@
 extern int ticcount;
 extern fixed_t fps;
 
+extern int currentpalette;
+
 extern byte *currentscreen;
 extern byte processedpalette[14 * 768];
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)

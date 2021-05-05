@@ -49,6 +49,10 @@ extern byte screen4[SCREENWIDTH * 32];
 extern byte backbuffer[SCREENWIDTH * SCREENHEIGHT];
 #endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
+extern byte ditherbuffer[640 * 400];
+#endif
+
 extern int dirtybox[4];
 
 extern int usegamma;

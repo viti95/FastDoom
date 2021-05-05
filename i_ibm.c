@@ -163,6 +163,8 @@ struct SREGS segregs;
 byte keyboardque[KBDQUESIZE];
 int kbdtail, kbdhead;
 
+int currentpalette;
+
 #define KEY_LSHIFT 0xfe
 
 #define KEY_INS (0x80 + 0x52)
@@ -251,6 +253,8 @@ const byte textcolors[48] = {
 //
 void I_SetPalette(int numpalette)
 {
+    currentpalette = numpalette;
+
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
     {
         byte *pos;
@@ -568,31 +572,99 @@ void I_UpdateNoBlit(void)
 extern int screenblocks;
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
+const int BAYER_PATTERN_4X4[4][4] = { //	4x4 Bayer Dithering Matrix. Color levels: 17
+    {15, 195, 60, 240},
+    {135, 75, 180, 120},
+    {45, 225, 30, 210},
+    {165, 105, 150, 90}
+
+};
+
+void HERC_Dither4x4()
+{
+    int col = 0;
+    int row = 0;
+    byte *palette;
+    int indexedval;
+    int red, green, blue;
+    int x, y;
+    int base = 0;
+
+    palette = processedpalette + Mul768(currentpalette);
+
+    for (y = 0; y < 400; y++)
+    {
+        row = y & 3; //	% 4
+
+        for (x = 0; x < 640; x++)
+        {
+            col = x & 3; //	% 4
+
+            indexedval = ditherbuffer[base + x];
+
+            red = (int)palette[indexedval * 3];
+            red = (red << 2) | (red >> 4);
+
+            green = (int)palette[indexedval * 3 + 1];
+            green = (green << 2) | (green >> 4);
+
+            blue = (int)palette[indexedval * 3 + 2];
+            blue = (blue << 2) | (blue >> 4);
+
+            ditherbuffer[base + x] = ((red + green + blue) / 3 < BAYER_PATTERN_4X4[col][row] ? 0 : 1);
+        }
+
+        base += 640;
+    }
+}
+
 void HERC_DrawBackbuffer(void)
 {
     int x, y;
-    unsigned char *vram = 0xB0000;
-    unsigned int base = 0;
+    unsigned char *vram = (unsigned char *)0xB0000;
+
+    unsigned int scale_y = 0;
+    unsigned int base_y = 0;
+
+    byte color;
+    unsigned int scale_x;
+
+    for (y = 0; y < 200; y++)
+    {
+        for (x = 0; x < 320; x++)
+        {
+            color = backbuffer[base_y + x];
+            scale_x = 2 * x;
+            ditherbuffer[scale_y + scale_x] = color;
+            ditherbuffer[scale_y + scale_x + 1] = color;
+            ditherbuffer[scale_y + 640 + scale_x] = color;
+            ditherbuffer[scale_y + 640 + scale_x + 1] = color;
+        }
+        base_y += 320;
+        scale_y += 1280;
+    }
+
+    HERC_Dither4x4();
+
+    base_y = 0;
 
     for (y = 0; y < 400 / 4; y++)
     {
         for (x = 0; x < 640 / 8; x++)
         {
-            unsigned char color;
-
-            color = (backbuffer[base] > 128) << 7 | (backbuffer[base] > 128) << 6 | (backbuffer[base + 1] > 128) << 5 | (backbuffer[base + 1] > 128) << 4 | (backbuffer[base + 2] > 128) << 3 | (backbuffer[base + 2] > 128) << 2 | (backbuffer[base + 3] > 128) << 1 | (backbuffer[base + 3] > 128);
+            color = (ditherbuffer[base_y]) << 7 | (ditherbuffer[base_y + 1]) << 6 | (ditherbuffer[base_y + 2]) << 5 | (ditherbuffer[base_y + 3]) << 4 | (ditherbuffer[base_y + 4]) << 3 | (ditherbuffer[base_y + 5]) << 2 | (ditherbuffer[base_y + 6]) << 1 | (ditherbuffer[base_y + 7]);
             *(vram + 0x0000 + x) = color;
-            color = (backbuffer[base] > 128) << 7 | (backbuffer[base] > 128) << 6 | (backbuffer[base + 1] > 128) << 5 | (backbuffer[base + 1] > 128) << 4 | (backbuffer[base + 2] > 128) << 3 | (backbuffer[base + 2] > 128) << 2 | (backbuffer[base + 3] > 128) << 1 | (backbuffer[base + 3] > 128);
+            color = (ditherbuffer[base_y + 640]) << 7 | (ditherbuffer[base_y + 641]) << 6 | (ditherbuffer[base_y + 642]) << 5 | (ditherbuffer[base_y + 643]) << 4 | (ditherbuffer[base_y + 644]) << 3 | (ditherbuffer[base_y + 645]) << 2 | (ditherbuffer[base_y + 646]) << 1 | (ditherbuffer[base_y + 647]);
             *(vram + 0x2000 + x) = color;
-            color = (backbuffer[base + 320] > 128) << 7 | (backbuffer[base + 320] > 128) << 6 | (backbuffer[base + 321] > 128) << 5 | (backbuffer[base + 321] > 128) << 4 | (backbuffer[base + 322] > 128) << 3 | (backbuffer[base + 322] > 128) << 2 | (backbuffer[base + 323] > 128) << 1 | (backbuffer[base + 323] > 128);
+            color = (ditherbuffer[base_y + 1280]) << 7 | (ditherbuffer[base_y + 1281]) << 6 | (ditherbuffer[base_y + 1282]) << 5 | (ditherbuffer[base_y + 1283]) << 4 | (ditherbuffer[base_y + 1284]) << 3 | (ditherbuffer[base_y + 1285]) << 2 | (ditherbuffer[base_y + 1286]) << 1 | (ditherbuffer[base_y + 1287]);
             *(vram + 0x4000 + x) = color;
-            color = (backbuffer[base + 320] > 128) << 7 | (backbuffer[base + 320] > 128) << 6 | (backbuffer[base + 321] > 128) << 5 | (backbuffer[base + 321] > 128) << 4 | (backbuffer[base + 322] > 128) << 3 | (backbuffer[base + 322] > 128) << 2 | (backbuffer[base + 323] > 128) << 1 | (backbuffer[base + 323] > 128);
+            color = (ditherbuffer[base_y + 1920]) << 7 | (ditherbuffer[base_y + 1921]) << 6 | (ditherbuffer[base_y + 1922]) << 5 | (ditherbuffer[base_y + 1923]) << 4 | (ditherbuffer[base_y + 1924]) << 3 | (ditherbuffer[base_y + 1925]) << 2 | (ditherbuffer[base_y + 1926]) << 1 | (ditherbuffer[base_y + 1927]);
             *(vram + 0x6000 + x) = color;
 
-            base += 4;
+            base_y += 8;
         }
 
-        base += 320;
+        base_y += 1920;
         vram += 80;
     }
 }
