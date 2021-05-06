@@ -994,7 +994,7 @@ void I_InitGraphics(void)
 //
 void I_ShutdownGraphics(void)
 {
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC) ´
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
     byte Text_80x25[12] = {0x00, 0x61, 0x50, 0x52, 0x0F, 0x19, 0x06, 0x19, 0x19, 0x02, 0x0D, 0x08};
     int i;
 
