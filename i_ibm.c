@@ -994,8 +994,21 @@ void I_InitGraphics(void)
 //
 void I_ShutdownGraphics(void)
 {
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC) ´
+    byte Text_80x25[12] = {0x00, 0x61, 0x50, 0x52, 0x0F, 0x19, 0x06, 0x19, 0x19, 0x02, 0x0D, 0x08};
+    int i;
+
+    outp(0x03BF, Text_80x25[0]);
+    for (i = 0; i < 10; i++)
+    {
+        outp(0x03B4, i);
+        outp(0x03B5, Text_80x25[i + 1]);
+    }
+    outp(0x03B8, Text_80x25[11]);
+#else
     regs.w.ax = 3;
     int386(0x10, &regs, &regs); // back to text mode
+#endif
 }
 
 //
@@ -1296,12 +1309,12 @@ void I_Quit(void)
 
     M_SaveDefaults();
     scr = (byte *)W_CacheLumpName("ENDOOM", PU_CACHE);
-    I_ShutdownGraphics();
-    I_ShutdownSound();
-    I_ShutdownTimer();
-    I_ShutdownMouse();
-    I_ShutdownKeyboard();
+    I_Shutdown();
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
+    CopyDWords(scr, (void *)0xb0000, (80 * 25 * 2) / 4);
+#else
     CopyDWords(scr, (void *)0xb8000, (80 * 25 * 2) / 4);
+#endif
     regs.w.ax = 0x0200;
     regs.h.bh = 0;
     regs.h.dl = 0;
