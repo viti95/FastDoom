@@ -571,12 +571,11 @@ void I_UpdateNoBlit(void)
 
 extern int screenblocks;
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
-const int BAYER_PATTERN_4X4[4][4] = { //	4x4 Bayer Dithering Matrix. Color levels: 17
-    {4, 49, 15, 60},
-    {34, 19, 45, 30},
-    {11, 56, 8, 52},
-    {41, 26, 38, 23}
+const byte BAYER_PATTERN_4X4[4][4] = { //	4x4 Bayer Dithering Matrix. Color levels: 17
+    {11, 146, 45, 180},
+    {101, 56, 135, 90},
+    {34, 169, 23, 158},
+    {124, 79, 113, 68}
 };
 
 void HERC_Dither4x4()
@@ -585,7 +584,7 @@ void HERC_Dither4x4()
     int row = 0;
     byte *palette;
     int indexedval;
-    int red, green, blue;
+    byte red, green, blue;
     int x, y;
     int base = 0;
 
@@ -601,11 +600,11 @@ void HERC_Dither4x4()
 
             indexedval = ditherbuffer[base + x] * 3;
 
-            red = (int)palette[indexedval];
-            green = (int)palette[indexedval + 1];
-            blue = (int)palette[indexedval + 2];
+            red = palette[indexedval];
+            green = palette[indexedval + 1];
+            blue = palette[indexedval + 2];
 
-            ditherbuffer[base + x] = ((Mul85(red + green + blue) >> 8) < BAYER_PATTERN_4X4[col][row] ? 0 : 1);
+            ditherbuffer[base + x] = (red + green + blue) < BAYER_PATTERN_4X4[col][row] ? 0 : 1;
         }
 
         base += 640;
