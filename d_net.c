@@ -176,7 +176,7 @@ void TryRunTics(void)
 
 		// Render interpolated frames
 		if (uncappedFPS){
-			#if (EXE_VIDEOMODE != EXE_VIDEOMODE_HERC)
+			#if (EXE_VIDEOMODE != EXE_VIDEOMODE_HERC && EXE_VIDEOMODE != EXE_VIDEOMODE_HERC_LOW)
 			if (waitVsync){
 				I_WaitSingleVBL();
 			}

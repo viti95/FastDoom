@@ -571,6 +571,82 @@ void I_UpdateNoBlit(void)
 
 extern int screenblocks;
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW)
+const int BAYER_PATTERN_2X2[2][2] = { //	2x2 Bayer Dithering Matrix. Color levels: 5
+    {38, 155},
+    {115, 77}};
+
+void BW_Dither2x2()
+{
+    int col = 0;
+    int row = 0;
+    byte *palette;
+    int indexedval;
+    byte red, green, blue;
+    int x, y;
+    int base = 0;
+
+    palette = processedpalette + Mul768(currentpalette);
+
+    for (y = 0; y < 200; y++, base += 640)
+    {
+        row = y & 1; //	% 2
+
+        for (x = 0; x < 640; x++)
+        {
+            col = x & 1; //	% 2
+
+            indexedval = ditherbuffer[base + x] * 3;
+
+            red = palette[indexedval];
+            green = palette[indexedval + 1];
+            blue = palette[indexedval + 2];
+
+            ditherbuffer[base + x] = (red + green + blue) > BAYER_PATTERN_2X2[col][row];
+        }
+    }
+}
+
+void HERC_LOW_DrawBackbuffer(void)
+{
+    int x, y = 0;
+    unsigned char *vram = (unsigned char *)0xB0000;
+
+    unsigned int scale_y = 0;
+    unsigned int base_y = 0;
+    unsigned int base_buffer = 0;
+
+    byte color;
+    unsigned int scale_x;
+
+    /* 320x200 -> 640x200 */
+    for (x = 0; x < 200 * 320; x++, y += 2)
+    {
+        color = backbuffer[x];
+        ditherbuffer[y] = color;
+        ditherbuffer[y + 1] = color;
+    }
+
+    BW_Dither2x2();
+
+    /* 640x200 -> Hercules */
+    for (y = 0, base_y = 0; y < 200 / 2; y++, base_y += 640, vram += 80)
+    {
+        for (x = 0; x < 640 / 8; x++, base_y += 8)
+        {
+            color = (ditherbuffer[base_y]) << 7 | (ditherbuffer[base_y + 1]) << 6 | (ditherbuffer[base_y + 2]) << 5 | (ditherbuffer[base_y + 3]) << 4 | (ditherbuffer[base_y + 4]) << 3 | (ditherbuffer[base_y + 5]) << 2 | (ditherbuffer[base_y + 6]) << 1 | (ditherbuffer[base_y + 7]);
+            *(vram + 0x0000 + x) = color;
+            color = (ditherbuffer[base_y + 640]) << 7 | (ditherbuffer[base_y + 641]) << 6 | (ditherbuffer[base_y + 642]) << 5 | (ditherbuffer[base_y + 643]) << 4 | (ditherbuffer[base_y + 644]) << 3 | (ditherbuffer[base_y + 645]) << 2 | (ditherbuffer[base_y + 646]) << 1 | (ditherbuffer[base_y + 647]);
+            *(vram + 0x2000 + x) = color;
+            /*color = (ditherbuffer[base_y + 1280]) << 7 | (ditherbuffer[base_y + 1281]) << 6 | (ditherbuffer[base_y + 1282]) << 5 | (ditherbuffer[base_y + 1283]) << 4 | (ditherbuffer[base_y + 1284]) << 3 | (ditherbuffer[base_y + 1285]) << 2 | (ditherbuffer[base_y + 1286]) << 1 | (ditherbuffer[base_y + 1287]);
+            *(vram + 0x4000 + x) = color;
+            color = (ditherbuffer[base_y + 1920]) << 7 | (ditherbuffer[base_y + 1921]) << 6 | (ditherbuffer[base_y + 1922]) << 5 | (ditherbuffer[base_y + 1923]) << 4 | (ditherbuffer[base_y + 1924]) << 3 | (ditherbuffer[base_y + 1925]) << 2 | (ditherbuffer[base_y + 1926]) << 1 | (ditherbuffer[base_y + 1927]);
+            *(vram + 0x6000 + x) = color;*/
+        }
+    }
+}
+#endif
+
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
 const byte BAYER_PATTERN_4X4[4][4] = { //	4x4 Bayer Dithering Matrix. Color levels: 17
     {11, 146, 45, 180},
@@ -578,7 +654,7 @@ const byte BAYER_PATTERN_4X4[4][4] = { //	4x4 Bayer Dithering Matrix. Color leve
     {34, 169, 23, 158},
     {124, 79, 113, 68}};
 
-void HERC_Dither4x4()
+void BW_Dither4x4()
 {
     int col = 0;
     int row = 0;
@@ -621,13 +697,6 @@ void HERC_DrawBackbuffer(void)
     byte color;
     unsigned int scale_x;
 
-    /* 320x200 -> 640x200 */
-    /*for (x = 0; x < 200 * 320; x++, y+=2){
-        color = backbuffer[x];
-        ditherbuffer[y] = color;
-        ditherbuffer[y+1] = color;
-    }*/
-
     /* 320x200 -> 640x400 */
     for (scale_y = 0; scale_y < 1280 * 200; scale_y += 1280)
     {
@@ -641,7 +710,7 @@ void HERC_DrawBackbuffer(void)
         }
     }
 
-    HERC_Dither4x4();
+    BW_Dither4x4();
 
     /* 640x400 -> Hercules */
     for (y = 0, base_y = 0; y < 400 / 4; y++, base_y += 1920, vram += 80)
@@ -838,8 +907,14 @@ void I_FinishUpdate(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
     HERC_DrawBackbuffer();
 #endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW)
+    HERC_LOW_DrawBackbuffer();
+#endif
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA)
     CGA_DrawBackbuffer();
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+    CGA_BW_DrawBackbuffer();
 #endif
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
     EGA_DrawBackbuffer();
@@ -966,6 +1041,11 @@ void I_InitGraphics(void)
     int386(0x10, (union REGS *)&regs, &regs);
     pcscreen = destscreen = (byte *)0xB8000;
 #endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+    regs.w.ax = 0x06;
+    int386(0x10, (union REGS *)&regs, &regs);
+    pcscreen = destscreen = (byte *)0xB8000;
+#endif
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
     regs.w.ax = 0x0D;
     int386(0x10, (union REGS *)&regs, &regs);
@@ -975,7 +1055,6 @@ void I_InitGraphics(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
     //byte Graph_720x348[12] = {0x03, 0x36, 0x2D, 0x2E, 0x07, 0x5B, 0x02, 0x57, 0x57, 0x02, 0x03, 0x0A};
     byte Graph_640x400[12] = {0x03, 0x34, 0x28, 0x2A, 0x47, 0x69, 0x00, 0x64, 0x65, 0x02, 0x03, 0x0A};
-    //byte Graph_640x200[12] = {0x03, 0x6E, 0x28, 0x2E, 0x07, 0x67, 0x0A, 0x64, 0x65, 0x02, 0x01, 0x0A};
     int i;
 
     outp(0x03BF, Graph_640x400[0]);
@@ -985,6 +1064,20 @@ void I_InitGraphics(void)
         outp(0x03B5, Graph_640x400[i + 1]);
     }
     outp(0x03B8, Graph_640x400[11]);
+    pcscreen = destscreen = (byte *)0xB0000;
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW)
+    //byte Graph_720x348[12] = {0x03, 0x36, 0x2D, 0x2E, 0x07, 0x5B, 0x02, 0x57, 0x57, 0x02, 0x03, 0x0A};
+    byte Graph_640x200[12] = {0x03, 0x6E, 0x28, 0x2E, 0x07, 0x67, 0x0A, 0x64, 0x65, 0x02, 0x01, 0x0A};
+    int i;
+
+    outp(0x03BF, Graph_640x200[0]);
+    for (i = 0; i < 10; i++)
+    {
+        outp(0x03B4, i);
+        outp(0x03B5, Graph_640x200[i + 1]);
+    }
+    outp(0x03B8, Graph_640x200[11]);
     pcscreen = destscreen = (byte *)0xB0000;
 #endif
 
@@ -997,7 +1090,7 @@ void I_InitGraphics(void)
 //
 void I_ShutdownGraphics(void)
 {
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW)
     byte Text_80x25[12] = {0x00, 0x61, 0x50, 0x52, 0x0F, 0x19, 0x06, 0x19, 0x19, 0x02, 0x0D, 0x08};
     int i;
 
@@ -1313,7 +1406,7 @@ void I_Quit(void)
     M_SaveDefaults();
     scr = (byte *)W_CacheLumpName("ENDOOM", PU_CACHE);
     I_Shutdown();
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW)
     CopyDWords(scr, (void *)0xb0000, (80 * 25 * 2) / 4);
 #else
     CopyDWords(scr, (void *)0xb8000, (80 * 25 * 2) / 4);

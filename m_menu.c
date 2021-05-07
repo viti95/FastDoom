@@ -1292,7 +1292,7 @@ void M_QuitResponse(int ch)
     else
         S_StartSound(NULL, quitsounds[(gametic >> 2) & 7]);
 
-    #if (EXE_VIDEOMODE != EXE_VIDEOMODE_HERC)
+    #if (EXE_VIDEOMODE != EXE_VIDEOMODE_HERC && EXE_VIDEOMODE != EXE_VIDEOMODE_HERC_LOW)
     do
     {
         I_WaitSingleVBL();

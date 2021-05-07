@@ -445,10 +445,12 @@ void D_DoomLoop(void)
         S_UpdateSounds(players.mo); // move positional sounds
 
         // Update display, next frame, with current state.
+        #if (EXE_VIDEOMODE != EXE_VIDEOMODE_HERC && EXE_VIDEOMODE != EXE_VIDEOMODE_HERC_LOW)
         if (waitVsync)
         {
             I_WaitSingleVBL();
         }
+        #endif
         D_Display();
     }
 }
