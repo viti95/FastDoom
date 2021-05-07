@@ -575,8 +575,7 @@ const byte BAYER_PATTERN_4X4[4][4] = { //	4x4 Bayer Dithering Matrix. Color leve
     {11, 146, 45, 180},
     {101, 56, 135, 90},
     {34, 169, 23, 158},
-    {124, 79, 113, 68}
-};
+    {124, 79, 113, 68}};
 
 void HERC_Dither4x4()
 {
@@ -590,7 +589,7 @@ void HERC_Dither4x4()
 
     palette = processedpalette + Mul768(currentpalette);
 
-    for (y = 0; y < 400; y++)
+    for (y = 0; y < 400; y++, base += 640)
     {
         row = y & 3; //	% 4
 
@@ -604,46 +603,49 @@ void HERC_Dither4x4()
             green = palette[indexedval + 1];
             blue = palette[indexedval + 2];
 
-            ditherbuffer[base + x] = (red + green + blue) < BAYER_PATTERN_4X4[col][row] ? 0 : 1;
+            ditherbuffer[base + x] = (red + green + blue) > BAYER_PATTERN_4X4[col][row];
         }
-
-        base += 640;
     }
 }
 
 void HERC_DrawBackbuffer(void)
 {
-    int x, y;
+    int x, y = 0;
     unsigned char *vram = (unsigned char *)0xB0000;
 
     unsigned int scale_y = 0;
     unsigned int base_y = 0;
+    unsigned int base_buffer = 0;
 
     byte color;
     unsigned int scale_x;
 
-    for (y = 0; y < 200; y++)
+    /* 320x200 -> 640x200 */
+    /*for (x = 0; x < 200 * 320; x++, y+=2){
+        color = backbuffer[x];
+        ditherbuffer[y] = color;
+        ditherbuffer[y+1] = color;
+    }*/
+
+    /* 320x200 -> 640x400 */
+    for (scale_y = 0; scale_y < 1280 * 200; scale_y += 1280)
     {
-        for (x = 0; x < 320; x++)
+        for (scale_x = 0; scale_x < 640; scale_x += 2, base_buffer++)
         {
-            color = backbuffer[base_y + x];
-            scale_x = 2 * x;
+            color = backbuffer[base_buffer];
             ditherbuffer[scale_y + scale_x] = color;
             ditherbuffer[scale_y + scale_x + 1] = color;
             ditherbuffer[scale_y + 640 + scale_x] = color;
             ditherbuffer[scale_y + 640 + scale_x + 1] = color;
         }
-        base_y += 320;
-        scale_y += 1280;
     }
 
     HERC_Dither4x4();
 
-    base_y = 0;
-
-    for (y = 0; y < 400 / 4; y++)
+    /* 640x400 -> Hercules */
+    for (y = 0, base_y = 0; y < 400 / 4; y++, base_y += 1920, vram += 80)
     {
-        for (x = 0; x < 640 / 8; x++)
+        for (x = 0; x < 640 / 8; x++, base_y += 8)
         {
             color = (ditherbuffer[base_y]) << 7 | (ditherbuffer[base_y + 1]) << 6 | (ditherbuffer[base_y + 2]) << 5 | (ditherbuffer[base_y + 3]) << 4 | (ditherbuffer[base_y + 4]) << 3 | (ditherbuffer[base_y + 5]) << 2 | (ditherbuffer[base_y + 6]) << 1 | (ditherbuffer[base_y + 7]);
             *(vram + 0x0000 + x) = color;
@@ -653,12 +655,7 @@ void HERC_DrawBackbuffer(void)
             *(vram + 0x4000 + x) = color;
             color = (ditherbuffer[base_y + 1920]) << 7 | (ditherbuffer[base_y + 1921]) << 6 | (ditherbuffer[base_y + 1922]) << 5 | (ditherbuffer[base_y + 1923]) << 4 | (ditherbuffer[base_y + 1924]) << 3 | (ditherbuffer[base_y + 1925]) << 2 | (ditherbuffer[base_y + 1926]) << 1 | (ditherbuffer[base_y + 1927]);
             *(vram + 0x6000 + x) = color;
-
-            base_y += 8;
         }
-
-        base_y += 1920;
-        vram += 80;
     }
 }
 #endif
