@@ -105,7 +105,7 @@ int forceScreenSize;
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 boolean CGAcard;
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50 || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
 boolean colorCorrection;
 #endif
 
@@ -220,14 +220,14 @@ void D_Display(void)
     if (gamestate != wipegamestate && !noMelt)
     {
         wipe = true;
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
         wipe_StartScreen();
 #endif
     }
     else
         wipe = false;
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
     if (gamestate == GS_LEVEL && gametic)
         HU_Erase();
 #endif
@@ -242,18 +242,18 @@ void D_Display(void)
         {
             // [crispy] update automap while playing
             R_RenderPlayerView(&players);
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
             AM_Drawer();
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
             updatestate |= I_FULLVIEW;
 #endif
 #endif
         }
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
         ST_doPaletteStuff();
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
         if (!automapactive || (automapactive && !fullscreen))
         {
             redrawsbar = wipe || (viewheight != 200 && fullscreen) || (inhelpscreensstate && !inhelpscreens); // just put away the help screen
@@ -266,21 +266,21 @@ void D_Display(void)
 
     case GS_INTERMISSION:
         WI_Drawer();
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
         updatestate |= I_FULLSCRN;
 #endif
         break;
 
     case GS_FINALE:
         F_Drawer();
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
         updatestate |= I_FULLSCRN;
 #endif
         break;
 
     case GS_DEMOSCREEN:
         D_PageDrawer();
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
         updatestate |= I_FULLSCRN;
 #endif
         break;
@@ -297,7 +297,7 @@ void D_Display(void)
             R_RenderPlayerView(&players);
 
         HU_Drawer();
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
         updatestate |= I_FULLVIEW;
 #endif
     }
@@ -312,7 +312,7 @@ void D_Display(void)
     if (gamestate == GS_LEVEL && oldgamestate != GS_LEVEL)
     {
         viewactivestate = 0; // view was not active
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
         R_FillBackScreen(); // draw the pattern into the back screen
 #endif
     }
@@ -324,10 +324,10 @@ void D_Display(void)
             borderdrawcount = 3;
         if (borderdrawcount)
         {
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
             R_DrawViewBorder(); // erase old menu stuff
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
             updatestate |= I_FULLSCRN;
 #endif
             borderdrawcount--;
@@ -355,7 +355,7 @@ void D_Display(void)
         V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 2, "PAUSE");
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
         V_DrawPatchDirect(viewwindowx + (scaledviewwidth - 68) / 2, y, W_CacheLumpName("M_PAUSE", PU_CACHE));
 #endif
     }
@@ -363,7 +363,7 @@ void D_Display(void)
     // menus go directly to the screen
     M_Drawer(); // menu is drawn even on top of everything
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
     if (gamestate == GS_LEVEL)
     {
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
@@ -385,13 +385,13 @@ void D_Display(void)
     }
 
 // wipe update
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
     wipe_EndScreen();
 #endif
 
     wipestart = ticcount - 1;
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
     do
     {
         do
@@ -402,7 +402,7 @@ void D_Display(void)
         done = wipe_ScreenWipe(tics);
         I_UpdateNoBlit();
         M_Drawer(); // menu is drawn even on top of wipes
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
         updatestate = I_FULLSCRN;
 #endif
         I_FinishUpdate(); // page flip or blit buffer
@@ -445,12 +445,10 @@ void D_DoomLoop(void)
         S_UpdateSounds(players.mo); // move positional sounds
 
         // Update display, next frame, with current state.
-        #if (EXE_VIDEOMODE != EXE_VIDEOMODE_HERC)
         if (waitVsync)
         {
             I_WaitSingleVBL();
         }
-        #endif
         D_Display();
     }
 }
@@ -486,7 +484,7 @@ void D_PageDrawer(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     V_DrawPatchScreen0(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
     V_DrawPatchDirect(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
 }
@@ -919,7 +917,7 @@ void D_DoomMain(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
     CGAcard = M_CheckParm("-cga");
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50 || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
     colorCorrection = M_CheckParm("-fixcolors");
 #endif
 
@@ -1124,7 +1122,7 @@ void D_DoomMain(void)
     M_CheckParmDisable("-novsync", &waitVsync);
     M_CheckParmDisable("-nofps", &showFPS);
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
     noMelt = 1;
 #endif
 
@@ -1158,13 +1156,13 @@ void D_DoomMain(void)
     D_RedrawTitle();
     S_Init(sfxVolume * 8, musicVolume * 8);
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
     printf("HU_Init: Setting up heads up display.\n");
     D_RedrawTitle();
     HU_Init();
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
     printf("ST_Init: Init status bar.\n");
     D_RedrawTitle();
     ST_Init();

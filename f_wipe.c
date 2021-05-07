@@ -92,7 +92,7 @@ void wipe_initMelt()
     #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     CopyDWords(screen2, screen0, (SCREENWIDTH * SCREENHEIGHT) / 4);
     #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
     CopyDWords(screen2, backbuffer, (SCREENWIDTH * SCREENHEIGHT) / 4);
     #endif
 
@@ -146,7 +146,7 @@ byte wipe_doMelt(int ticks)
                 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
                 d = &((short *)screen0)[Mul160(y_val) + i];
                 #endif
-                #if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+                #if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
                 d = &((short *)backbuffer)[Mul160(y_val) + i];
                 #endif
                 for (j = dy; j; j--)
@@ -159,7 +159,7 @@ byte wipe_doMelt(int ticks)
                 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
                 d = &((short *)screen0)[Mul160(y_val) + i];
                 #endif
-                #if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+                #if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
                 d = &((short *)backbuffer)[Mul160(y_val) + i];
                 #endif
                 idx = 0;
@@ -253,14 +253,14 @@ void wipe_ReadScreen(byte *scr)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
 void wipe_ReadScreen(byte *scr)
 {
     CopyDWords(backbuffer, scr, SCREENWIDTH * SCREENHEIGHT / 4);
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
 void wipe_StartScreen()
 {
     screen2 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
@@ -268,7 +268,7 @@ void wipe_StartScreen()
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
 void wipe_EndScreen()
 {
     screen3 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
@@ -276,7 +276,7 @@ void wipe_EndScreen()
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
 int wipe_ScreenWipe(int ticks)
 {
     int rc;

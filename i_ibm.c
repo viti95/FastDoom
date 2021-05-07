@@ -181,7 +181,7 @@ void I_StartupSound(void);
 void I_ShutdownSound(void);
 void I_ShutdownTimer(void);
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50 || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
 byte lut16colors[256];
 #endif
 
@@ -227,7 +227,7 @@ void I_ProcessPalette(byte *palette)
     }
 }
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50 || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
 const byte textcolors[48] = {
     0x00, 0x00, 0x00,
     0x00, 0x00, 0xAA,
@@ -255,7 +255,7 @@ void I_SetPalette(int numpalette)
 {
     currentpalette = numpalette;
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50 || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
     {
         byte *pos;
         short i, j;
@@ -390,7 +390,7 @@ void I_SetPalette(int numpalette)
 // Graphics mode
 //
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
 int updatestate;
 #endif
 byte *pcscreen, *currentscreen, *destscreen, *destview;
@@ -571,6 +571,7 @@ void I_UpdateNoBlit(void)
 
 extern int screenblocks;
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
 const byte BAYER_PATTERN_4X4[4][4] = { //	4x4 Bayer Dithering Matrix. Color levels: 17
     {11, 146, 45, 180},
     {101, 56, 135, 90},
@@ -833,9 +834,15 @@ void I_FinishUpdate(void)
         CopyDWords(backbuffer, pcscreen, (SCREENWIDTH * 28) / 4);
         updatestate &= ~I_MESSAGES;
     }
-
-    //memcpy(pcscreen, backbuffer, SCREENHEIGHT*SCREENWIDTH);
-    //CopyDWords(backbuffer, pcscreen, SCREENHEIGHT * SCREENWIDTH / 4);
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
+    HERC_DrawBackbuffer();
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA)
+    CGA_DrawBackbuffer();
+#endif
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
+    EGA_DrawBackbuffer();
 #endif
 
     if (showFPS)

@@ -36,16 +36,20 @@
 byte screen0[SCREENWIDTH * SCREENHEIGHT];
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
 byte screen4[SCREENWIDTH * 32];
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
 byte backbuffer[SCREENWIDTH * SCREENHEIGHT];
 #endif
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
 byte ditherbuffer[640 * 400];
+#endif
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+byte ditherbuffer[640 * 200];
 #endif
 
 int dirtybox[4];
@@ -137,7 +141,7 @@ void V_SetRect(byte color, int width, int height, int destx, int desty, byte *de
 // V_DrawPatch
 // Masks a column based masked pic to the screen.
 //
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
 void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
 {
 
@@ -304,7 +308,7 @@ void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void V_WriteTextColorDirect(int x, int y, char *string, unsigned short color)
 {
     unsigned short *dest;
@@ -412,7 +416,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
 void V_DrawPatchDirect(int x, int y, patch_t *patch)
 {
     int count;

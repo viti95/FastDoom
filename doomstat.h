@@ -64,7 +64,7 @@ extern int forceScreenSize;
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 extern boolean CGAcard;
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50 || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
 extern boolean colorCorrection;
 #endif
 

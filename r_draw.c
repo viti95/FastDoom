@@ -58,7 +58,7 @@ int viewwindowy;
 
 int columnofs[SCREENWIDTH];
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
 byte *ylookup[SCREENHEIGHT];
 #endif
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
@@ -712,7 +712,7 @@ void R_DrawSpanPotato(void)
 #define FUZZOFF (SCREENWIDTH / 4)
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
 #define FUZZOFF (SCREENWIDTH)
 #endif
 
@@ -1501,10 +1501,10 @@ void R_InitBuffer(int width, int height)
     //  e.g. smaller view windows
     //  with border and/or status bar.
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
     viewwindowx = 0;
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
     viewwindowx = (SCREENWIDTH - width) >> 1;
 #endif
 
@@ -1513,17 +1513,17 @@ void R_InitBuffer(int width, int height)
         columnofs[i] = viewwindowx + i;
 
 // Samw with base row offset.
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25) || (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
     viewwindowy = 0;
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
     if (width == SCREENWIDTH)
         viewwindowy = 0;
     else
         viewwindowy = (SCREENHEIGHT - SBARHEIGHT - height) >> 1;
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
     for (i = 0; i < height; i++)
         ylookup[i] = backbuffer + Mul320(i + viewwindowy);
 #endif
@@ -1535,7 +1535,7 @@ void R_InitBuffer(int width, int height)
 //  for variable screen sizes
 // Also draws a beveled edge.
 //
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
 void R_FillBackScreen(void)
 {
     byte *src;
@@ -1559,7 +1559,7 @@ void R_FillBackScreen(void)
         return;
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
     if (scaledviewwidth == SCREENWIDTH)
     {
         if (background_buffer)
@@ -1588,7 +1588,7 @@ void R_FillBackScreen(void)
     screen1 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
     dest = screen1;
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
     dest = background_buffer;
 #endif
 
@@ -1608,7 +1608,7 @@ void R_FillBackScreen(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         V_DrawPatch(viewwindowx + x, viewwindowy - 8, screen1, patch);
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
         V_DrawPatch(viewwindowx + x, viewwindowy - 8, background_buffer, patch);
 #endif
     }
@@ -1620,7 +1620,7 @@ void R_FillBackScreen(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         V_DrawPatch(viewwindowx + x, viewwindowy + viewheight, screen1, patch);
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
         V_DrawPatch(viewwindowx + x, viewwindowy + viewheight, background_buffer, patch);
 #endif
     }
@@ -1631,7 +1631,7 @@ void R_FillBackScreen(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         V_DrawPatch(viewwindowx - 8, viewwindowy + y, screen1, patch);
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
         V_DrawPatch(viewwindowx - 8, viewwindowy + y, background_buffer, patch);
 #endif
     }
@@ -1642,7 +1642,7 @@ void R_FillBackScreen(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + y, screen1, patch);
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
         V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + y, background_buffer, patch);
 #endif
     }
@@ -1654,7 +1654,7 @@ void R_FillBackScreen(void)
     V_DrawPatch(viewwindowx - 8, viewwindowy + viewheight, screen1, W_CacheLumpName("BRDR_BL", PU_CACHE));
     V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + viewheight, screen1, W_CacheLumpName("BRDR_BR", PU_CACHE));
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
     V_DrawPatch(viewwindowx - 8, viewwindowy - 8, background_buffer, W_CacheLumpName("BRDR_TL", PU_CACHE));
     V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy - 8, background_buffer, W_CacheLumpName("BRDR_TR", PU_CACHE));
     V_DrawPatch(viewwindowx - 8, viewwindowy + viewheight, background_buffer, W_CacheLumpName("BRDR_BL", PU_CACHE));
@@ -1707,7 +1707,7 @@ void R_VideoErase(unsigned ofs, int count)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
 void R_VideoErase(unsigned ofs, int count)
 {
     // LFB copy.
@@ -1728,7 +1728,7 @@ void R_VideoErase(unsigned ofs, int count)
 // Draws the border around the view
 //  for different size windows?
 //
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
 void R_DrawViewBorder(void)
 {
     int top;
@@ -1761,7 +1761,7 @@ void R_DrawViewBorder(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
 void R_DrawSkyFlat_13h(void)
 {
     register int count;
