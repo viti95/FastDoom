@@ -571,7 +571,7 @@ void I_UpdateNoBlit(void)
 
 extern int screenblocks;
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW)
 const int BAYER_PATTERN_2X2[2][2] = { //	2x2 Bayer Dithering Matrix. Color levels: 5
     {38, 155},
     {115, 77}};
@@ -606,7 +606,46 @@ void BW_Dither2x2()
         }
     }
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+void CGA_BW_DrawBackbuffer(void)
+{
+    int x, y = 0;
+    unsigned char *vram = (unsigned char *)0xB8000;
+
+    unsigned int scale_y = 0;
+    unsigned int base_y = 0;
+    unsigned int base_buffer = 0;
+
+    byte color;
+    unsigned int scale_x;
+
+    /* 320x200 -> 640x200 */
+    for (x = 0; x < 200 * 320; x++, y += 2)
+    {
+        color = backbuffer[x];
+        ditherbuffer[y] = color;
+        ditherbuffer[y + 1] = color;
+    }
+
+    BW_Dither2x2();
+
+    /* 640x200 -> CGA */
+    for (y = 0, base_y = 0; y < 200 / 2; y++, base_y += 640, vram += 80)
+    {
+        for (x = 0; x < 640 / 8; x++, base_y += 8)
+        {
+            color = (ditherbuffer[base_y]) << 7 | (ditherbuffer[base_y + 1]) << 6 | (ditherbuffer[base_y + 2]) << 5 | (ditherbuffer[base_y + 3]) << 4 | (ditherbuffer[base_y + 4]) << 3 | (ditherbuffer[base_y + 5]) << 2 | (ditherbuffer[base_y + 6]) << 1 | (ditherbuffer[base_y + 7]);
+            *(vram + 0x0000 + x) = color;
+            color = (ditherbuffer[base_y + 640]) << 7 | (ditherbuffer[base_y + 641]) << 6 | (ditherbuffer[base_y + 642]) << 5 | (ditherbuffer[base_y + 643]) << 4 | (ditherbuffer[base_y + 644]) << 3 | (ditherbuffer[base_y + 645]) << 2 | (ditherbuffer[base_y + 646]) << 1 | (ditherbuffer[base_y + 647]);
+            *(vram + 0x2000 + x) = color;
+        }
+    }
+}
+#endif
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC_LOW)
 void HERC_LOW_DrawBackbuffer(void)
 {
     int x, y = 0;
@@ -638,10 +677,6 @@ void HERC_LOW_DrawBackbuffer(void)
             *(vram + 0x0000 + x) = color;
             color = (ditherbuffer[base_y + 640]) << 7 | (ditherbuffer[base_y + 641]) << 6 | (ditherbuffer[base_y + 642]) << 5 | (ditherbuffer[base_y + 643]) << 4 | (ditherbuffer[base_y + 644]) << 3 | (ditherbuffer[base_y + 645]) << 2 | (ditherbuffer[base_y + 646]) << 1 | (ditherbuffer[base_y + 647]);
             *(vram + 0x2000 + x) = color;
-            /*color = (ditherbuffer[base_y + 1280]) << 7 | (ditherbuffer[base_y + 1281]) << 6 | (ditherbuffer[base_y + 1282]) << 5 | (ditherbuffer[base_y + 1283]) << 4 | (ditherbuffer[base_y + 1284]) << 3 | (ditherbuffer[base_y + 1285]) << 2 | (ditherbuffer[base_y + 1286]) << 1 | (ditherbuffer[base_y + 1287]);
-            *(vram + 0x4000 + x) = color;
-            color = (ditherbuffer[base_y + 1920]) << 7 | (ditherbuffer[base_y + 1921]) << 6 | (ditherbuffer[base_y + 1922]) << 5 | (ditherbuffer[base_y + 1923]) << 4 | (ditherbuffer[base_y + 1924]) << 3 | (ditherbuffer[base_y + 1925]) << 2 | (ditherbuffer[base_y + 1926]) << 1 | (ditherbuffer[base_y + 1927]);
-            *(vram + 0x6000 + x) = color;*/
         }
     }
 }
