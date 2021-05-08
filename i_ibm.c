@@ -221,9 +221,14 @@ void I_ProcessPalette(byte *palette)
 {
     int i;
 
-    for (i = 0; i < 14 * 768; i++)
+    byte *ptr = gammatable[usegamma];
+
+    for (i = 0; i < 14 * 768; i += 4, palette += 4)
     {
-        processedpalette[i] = gammatable[usegamma][*palette++];
+        processedpalette[i] = ptr[*palette];
+        processedpalette[i+1] = ptr[*(palette+1)];
+        processedpalette[i+2] = ptr[*(palette+2)];
+        processedpalette[i+3] = ptr[*(palette+3)];
     }
 }
 
