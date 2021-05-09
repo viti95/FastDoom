@@ -22,17 +22,6 @@ const int BLASTER_SampleSize[BLASTER_MaxMixMode + 1] =
         MONO_8BIT_SAMPLE_SIZE, STEREO_8BIT_SAMPLE_SIZE,
         MONO_16BIT_SAMPLE_SIZE, STEREO_16BIT_SAMPLE_SIZE};
 
-const CARD_CAPABILITY BLASTER_CardConfig[BLASTER_MaxCardType + 1] =
-    {
-        {FALSE, INVALID, INVALID, INVALID, INVALID}, // Unsupported
-        {TRUE, NO, MONO_8BIT, 4000, 23000},          // SB 1.0
-        {TRUE, YES, STEREO_8BIT, 4000, 44100},       // SBPro
-        {TRUE, NO, MONO_8BIT, 4000, 23000},          // SB 2.xx
-        {TRUE, YES, STEREO_8BIT, 4000, 44100},       // SBPro 2
-        {FALSE, INVALID, INVALID, INVALID, INVALID}, // Unsupported
-        {TRUE, YES, STEREO_16BIT, 5000, 44100},      // SB16
-};
-
 CARD_CAPABILITY BLASTER_Card;
 
 static void(__interrupt __far *BLASTER_OldInt)(void);
