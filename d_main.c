@@ -105,9 +105,6 @@ int forceScreenSize;
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 boolean CGAcard;
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50 || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
-boolean colorCorrection;
-#endif
 
 boolean logTimedemo;
 
@@ -916,9 +913,6 @@ void D_DoomMain(void)
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
     CGAcard = M_CheckParm("-cga");
-#endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50 || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
-    colorCorrection = M_CheckParm("-fixcolors");
 #endif
 
     lowSound = M_CheckParm("-lowsound");

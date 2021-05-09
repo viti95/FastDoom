@@ -6,7 +6,9 @@
 extern int ticcount;
 extern fixed_t fps;
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
 extern int currentpalette;
+#endif
 
 extern byte *currentscreen;
 extern byte processedpalette[14 * 768];

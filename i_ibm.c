@@ -163,7 +163,9 @@ struct SREGS segregs;
 byte keyboardque[KBDQUESIZE];
 int kbdtail, kbdhead;
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
 int currentpalette;
+#endif
 
 #define KEY_LSHIFT 0xfe
 
@@ -226,30 +228,30 @@ void I_ProcessPalette(byte *palette)
     for (i = 0; i < 14 * 768; i += 4, palette += 4)
     {
         processedpalette[i] = ptr[*palette];
-        processedpalette[i+1] = ptr[*(palette+1)];
-        processedpalette[i+2] = ptr[*(palette+2)];
-        processedpalette[i+3] = ptr[*(palette+3)];
+        processedpalette[i + 1] = ptr[*(palette + 1)];
+        processedpalette[i + 2] = ptr[*(palette + 2)];
+        processedpalette[i + 3] = ptr[*(palette + 3)];
     }
 }
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50 || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
 const byte textcolors[48] = {
     0x00, 0x00, 0x00,
-    0x00, 0x00, 0xAA,
-    0x00, 0xAA, 0x00,
-    0x00, 0xAA, 0xAA,
-    0xAA, 0x00, 0x00,
-    0xAA, 0x00, 0xAA,
-    0xAA, 0x55, 0x00,
-    0xAA, 0xAA, 0xAA,
-    0x55, 0x55, 0x55,
-    0x55, 0x55, 0xFF,
-    0x55, 0xFF, 0x55,
-    0x55, 0xFF, 0xFF,
-    0xFF, 0x55, 0x55,
-    0xFF, 0x55, 0xFF,
-    0xFF, 0xFF, 0x55,
-    0xFF, 0xFF, 0xFF};
+    0x00, 0x00, 0x2A,
+    0x00, 0x2A, 0x00,
+    0x00, 0x2A, 0x2A,
+    0x2A, 0x00, 0x00,
+    0x2A, 0x00, 0x2A,
+    0x2A, 0x15, 0x00,
+    0x2A, 0x2A, 0x2A,
+    0x15, 0x15, 0x15,
+    0x15, 0x15, 0x3F,
+    0x15, 0x3F, 0x15,
+    0x15, 0x3F, 0x3F,
+    0x3F, 0x15, 0x15,
+    0x3F, 0x15, 0x3F,
+    0x3F, 0x3F, 0x15,
+    0x3F, 0x3F, 0x3F};
 #endif
 
 //
@@ -258,123 +260,58 @@ const byte textcolors[48] = {
 //
 void I_SetPalette(int numpalette)
 {
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
     currentpalette = numpalette;
+#endif
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50 || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
     {
         byte *pos;
-        short i, j;
+        short i, j = 0;
 
         pos = processedpalette + Mul768(numpalette);
 
-        if (colorCorrection)
+        for (i = 0; i < 256; i++)
         {
-            for (i = 0; i < 256; i++)
+            int distance;
+
+            int r1, g1, b1;
+
+            int best_difference = MAXINT;
+            int best_color;
+
+            r1 = (int)pos[i * 3];
+            g1 = (int)pos[i * 3 + 1];
+            b1 = (int)pos[i * 3 + 2];
+
+            for (j = 0; j < 16; j++)
             {
-                int distance;
+                int r2, g2, b2;
+                int cR, cG, cB;
 
-                int r1, g1, b1;
+                r2 = (int)textcolors[j * 3];
+                cR = r2 - r1;
+                if (cR < 0)
+                    cR = -cR;
 
-                int best_difference = MAXINT;
-                int best_color;
+                g2 = (int)textcolors[j * 3 + 1];
+                cG = g2 - g1;
+                if (cG < 0)
+                    cG = -cG;
 
-                r1 = (int)pos[i * 3];
-                r1 *= r1;
-                r1 = r1 * 4 + r1 * 2 + r1;
-                r1 = r1 / 8;
+                b2 = (int)textcolors[j * 3 + 2];
+                cB = b2 - b1;
+                if (cB < 0)
+                    cB = -cB;
 
-                g1 = (int)pos[i * 3 + 1];
-                g1 *= g1;
-                g1 = g1 * 4 + g1 * 2 + g1;
-                g1 = g1 / 8;
+                distance = cR + cG + cB;
 
-                b1 = (int)pos[i * 3 + 2];
-                b1 *= b1;
-                b1 = b1 * 4 + b1 * 2 + b1;
-                b1 = b1 / 8;
-
-                for (j = 0; j < 16; j++)
+                if (best_difference > distance)
                 {
-                    int r2, g2, b2;
-                    int cR, cG, cB;
-
-                    r2 = (int)textcolors[j * 3];
-                    cR = r2 - r1;
-                    if (cR < 0)
-                        cR = -cR;
-
-                    g2 = (int)textcolors[j * 3 + 1];
-                    cG = g2 - g1;
-                    if (cG < 0)
-                        cG = -cG;
-
-                    b2 = (int)textcolors[j * 3 + 2];
-                    cB = b2 - b1;
-                    if (cB < 0)
-                        cB = -cB;
-
-                    distance = cR + cG + cB;
-
-                    if (best_difference > distance)
-                    {
-                        best_difference = distance;
-                        best_color = j;
-                    }
+                    best_difference = distance;
+                    lut16colors[i] = j;
                 }
-
-                lut16colors[i] = best_color;
-            }
-        }
-        else
-        {
-            for (i = 0; i < 256; i++)
-            {
-                int distance;
-
-                int r1, g1, b1;
-
-                int best_difference = MAXINT;
-                int best_color;
-
-                r1 = (int)pos[i * 3];
-                r1 = (r1 << 2) | (r1 >> 4);
-
-                g1 = (int)pos[i * 3 + 1];
-                g1 = (g1 << 2) | (g1 >> 4);
-
-                b1 = (int)pos[i * 3 + 2];
-                b1 = (b1 << 2) | (b1 >> 4);
-
-                for (j = 0; j < 16; j++)
-                {
-                    int r2, g2, b2;
-                    int cR, cG, cB;
-
-                    r2 = (int)textcolors[j * 3];
-                    cR = r2 - r1;
-                    if (cR < 0)
-                        cR = -cR;
-
-                    g2 = (int)textcolors[j * 3 + 1];
-                    cG = g2 - g1;
-                    if (cG < 0)
-                        cG = -cG;
-
-                    b2 = (int)textcolors[j * 3 + 2];
-                    cB = b2 - b1;
-                    if (cB < 0)
-                        cB = -cB;
-
-                    distance = cR + cG + cB;
-
-                    if (best_difference > distance)
-                    {
-                        best_difference = distance;
-                        best_color = j;
-                    }
-                }
-
-                lut16colors[i] = best_color;
             }
         }
     }
