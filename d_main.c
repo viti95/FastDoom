@@ -115,8 +115,6 @@ boolean uncappedFPS;
 boolean waitVsync;
 boolean simpleStatusBar;
 
-boolean drone;
-
 boolean singletics = false; // debug flag to cancel adaptiveness
 
 extern int sfxVolume;

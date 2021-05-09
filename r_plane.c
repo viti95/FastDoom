@@ -38,9 +38,6 @@
 
 #define SC_INDEX 0x3C4
 
-planefunction_t floorfunc;
-planefunction_t ceilingfunc;
-
 //
 // opening
 //
@@ -70,7 +67,6 @@ short ceilingclip[SCREENWIDTH];
 // initialized to 0 at start
 //
 int spanstart[SCREENHEIGHT];
-int spanstop[SCREENHEIGHT];
 
 //
 // texture mapping

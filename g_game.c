@@ -159,10 +159,6 @@ int dclicks2;
 int savegameslot;
 char savedescription[32];
 
-#define BODYQUESIZE 32
-
-mobj_t *bodyque[BODYQUESIZE];
-
 byte autorun;
 
 //

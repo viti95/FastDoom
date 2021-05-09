@@ -161,14 +161,6 @@ mline_t player_arrow[] = {
 #define NUMPLYRLINES (sizeof(player_arrow) / sizeof(mline_t))
 
 #define R (FRACUNIT)
-mline_t triangle_guy[] = {
-	{{-.867 * R, -.5 * R}, {.867 * R, -.5 * R}},
-	{{.867 * R, -.5 * R}, {0, R}},
-	{{0, R}, {-.867 * R, -.5 * R}}};
-#undef R
-#define NUMTRIANGLEGUYLINES (sizeof(triangle_guy) / sizeof(mline_t))
-
-#define R (FRACUNIT)
 mline_t thintriangle_guy[] = {
 	{{-.5 * R, -.7 * R}, {R, 0}},
 	{{R, 0}, {-.5 * R, .7 * R}},
@@ -455,7 +447,6 @@ byte AM_Responder(event_t *ev)
 
 	byte rc = 0;
 	static byte bigstate = 0;
-	static char buffer[20];
 
 	if (!automapactive)
 	{

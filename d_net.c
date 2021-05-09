@@ -128,7 +128,6 @@ void D_CheckNetGame(void)
 //
 // TryRunTics
 //
-int oldnettics;
 
 extern byte advancedemo;
 

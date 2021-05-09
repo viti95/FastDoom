@@ -48,7 +48,6 @@
 //  and the total size == width*height*depth/8.,
 //
 
-byte *viewimage;
 int viewwidth;
 int viewwidthlimit;
 int scaledviewwidth;
@@ -67,7 +66,9 @@ byte **ylookup;
 
 int automapheight;
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
 byte *background_buffer = 0;
+#endif
 
 // Color tables for different players,
 //  translate a limited part to another
