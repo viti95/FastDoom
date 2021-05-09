@@ -486,7 +486,7 @@ void V_DrawPatchDirectText8050(int x, int y, patch_t *patch)
 
             while (count--)
             {
-                *dest = lut16colors[*source] << 8 | 219;
+                *dest = ptrlut16colors[*source] << 8 | 219;
                 source += 4;
                 dest += 80;
             }
@@ -539,7 +539,7 @@ void V_DrawPatchDirectText8025(int x, int y, patch_t *patch)
                 if (odd)
                 {
                     vmem = vmem & 0x0F00;
-                    *dest = vmem | lut16colors[*source] << 12 | 223;
+                    *dest = vmem | ptrlut16colors[*source] << 12 | 223;
 
                     odd = 0;
                     dest += 80;
@@ -547,7 +547,7 @@ void V_DrawPatchDirectText8025(int x, int y, patch_t *patch)
                 else
                 {
                     vmem = vmem & 0xF000;
-                    *dest = vmem | lut16colors[*source] << 8 | 223;
+                    *dest = vmem | ptrlut16colors[*source] << 8 | 223;
 
                     odd = 1;
                 }

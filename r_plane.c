@@ -762,7 +762,7 @@ void R_DrawPlanesFlatSurfacesText8050(void)
         }
 
         dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
-        color = lut16colors[colormaps[dc_source[FLATPIXELCOLOR]]] << 8 | 219;
+        color = ptrlut16colors[colormaps[dc_source[FLATPIXELCOLOR]]] << 8 | 219;
 
         for (x = pl->minx; x <= pl->maxx; x++)
         {
@@ -812,7 +812,7 @@ void R_DrawPlanesFlatSurfacesText8025(void)
 
         dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
 
-        color = lut16colors[colormaps[dc_source[FLATPIXELCOLOR]]];
+        color = ptrlut16colors[colormaps[dc_source[FLATPIXELCOLOR]]];
         colorblock = color << 8 | 219;
 
         for (x = pl->minx; x <= pl->maxx; x++)

@@ -900,6 +900,10 @@ void D_DoomMain(void)
 
     IdentifyVersion();
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50 || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
+    D_AddFile("16colors.wad");
+#endif
+
     setbuf(stdout, NULL);
     modifiedgame = false;
 

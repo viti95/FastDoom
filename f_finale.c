@@ -864,7 +864,7 @@ void F_DrawPatchColText8025(int x, patch_t *patch, int col)
 			if (odd)
 			{
 				vmem = vmem & 0x0F00;
-				*dest = vmem | lut16colors[*source] << 12 | 223;
+				*dest = vmem | ptrlut16colors[*source] << 12 | 223;
 
 				odd = 0;
 				dest += 80;
@@ -872,7 +872,7 @@ void F_DrawPatchColText8025(int x, patch_t *patch, int col)
 			else
 			{
 				vmem = vmem & 0xF000;
-				*dest = vmem | lut16colors[*source] << 8 | 223;
+				*dest = vmem | ptrlut16colors[*source] << 8 | 223;
 
 				odd = 1;
 			}
@@ -908,7 +908,7 @@ void F_DrawPatchColText8050(int x, patch_t *patch, int col)
 
 		while (count--)
 		{
-			*dest = lut16colors[*source] << 8 | 219;
+			*dest = ptrlut16colors[*source] << 8 | 219;
 			source += 4;
 			dest += 80;
 		}

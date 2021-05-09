@@ -184,7 +184,8 @@ void I_ShutdownSound(void);
 void I_ShutdownTimer(void);
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50 || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
-byte lut16colors[256];
+byte lut16colors[14 * 256];
+byte *ptrlut16colors;
 #endif
 
 byte gammatable[5][256] =
@@ -195,7 +196,9 @@ byte gammatable[5][256] =
         {2, 3, 4, 4, 5, 6, 6, 7, 7, 8, 9, 9, 10, 10, 10, 11, 11, 12, 12, 13, 13, 13, 14, 14, 15, 15, 15, 16, 16, 16, 17, 17, 17, 18, 18, 18, 19, 19, 19, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 26, 27, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 30, 31, 31, 31, 31, 32, 32, 32, 32, 33, 33, 33, 33, 33, 34, 34, 34, 34, 35, 35, 35, 35, 35, 36, 36, 36, 36, 37, 37, 37, 37, 37, 38, 38, 38, 38, 38, 39, 39, 39, 39, 40, 40, 40, 40, 40, 41, 41, 41, 41, 41, 42, 42, 42, 42, 42, 43, 43, 43, 43, 43, 44, 44, 44, 44, 44, 45, 45, 45, 45, 45, 45, 46, 46, 46, 46, 46, 47, 47, 47, 47, 47, 48, 48, 48, 48, 48, 48, 49, 49, 49, 49, 49, 50, 50, 50, 50, 50, 50, 51, 51, 51, 51, 51, 51, 52, 52, 52, 52, 52, 53, 53, 53, 53, 53, 53, 54, 54, 54, 54, 54, 54, 55, 55, 55, 55, 55, 55, 56, 56, 56, 56, 56, 56, 57, 57, 57, 57, 57, 57, 58, 58, 58, 58, 58, 58, 59, 59, 59, 59, 59, 59, 60, 60, 60, 60, 60, 60, 61, 61, 61, 61, 61, 61, 61, 62, 62, 62, 62, 62, 62, 63, 63, 63, 63, 63, 63},
         {4, 5, 7, 8, 9, 9, 10, 11, 12, 12, 13, 13, 14, 15, 15, 16, 16, 17, 17, 17, 18, 18, 19, 19, 20, 20, 20, 21, 21, 21, 22, 22, 23, 23, 23, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 30, 31, 31, 31, 32, 32, 32, 32, 32, 33, 33, 33, 33, 34, 34, 34, 34, 35, 35, 35, 35, 35, 36, 36, 36, 36, 37, 37, 37, 37, 37, 38, 38, 38, 38, 38, 39, 39, 39, 39, 39, 40, 40, 40, 40, 40, 41, 41, 41, 41, 41, 42, 42, 42, 42, 42, 43, 43, 43, 43, 43, 43, 44, 44, 44, 44, 44, 45, 45, 45, 45, 45, 45, 46, 46, 46, 46, 46, 46, 47, 47, 47, 47, 47, 47, 48, 48, 48, 48, 48, 48, 49, 49, 49, 49, 49, 49, 50, 50, 50, 50, 50, 50, 50, 51, 51, 51, 51, 51, 51, 52, 52, 52, 52, 52, 52, 52, 53, 53, 53, 53, 53, 53, 54, 54, 54, 54, 54, 54, 54, 55, 55, 55, 55, 55, 55, 55, 56, 56, 56, 56, 56, 56, 56, 57, 57, 57, 57, 57, 57, 57, 58, 58, 58, 58, 58, 58, 58, 58, 59, 59, 59, 59, 59, 59, 59, 60, 60, 60, 60, 60, 60, 60, 60, 61, 61, 61, 61, 61, 61, 61, 61, 62, 62, 62, 62, 62, 62, 62, 62, 63, 63, 63, 63, 63, 63, 63}};
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
 byte processedpalette[14 * 768];
+#endif
 
 byte scantokey[128] =
     {
@@ -219,6 +222,7 @@ byte scantokey[128] =
         0, 0, 0, 0, 0, 0, 0, 0 // 7
 };
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
 void I_ProcessPalette(byte *palette)
 {
     int i;
@@ -233,6 +237,7 @@ void I_ProcessPalette(byte *palette)
         processedpalette[i + 3] = ptr[*(palette + 3)];
     }
 }
+#endif
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50 || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
 const byte textcolors[48] = {
@@ -254,6 +259,58 @@ const byte textcolors[48] = {
     0x3F, 0x3F, 0x3F};
 #endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50 || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
+void I_ProcessPalette(byte *palette)
+{
+    int i, j;
+    byte *pos;
+    byte *ptr = gammatable[usegamma];
+
+    for (i = 0; i < 14 * 256; i++)
+    {
+        int distance;
+
+        int r1, g1, b1;
+
+        int best_difference = MAXINT;
+        int best_color;
+
+        r1 = (int)ptr[*palette++];
+        g1 = (int)ptr[*palette++];
+        b1 = (int)ptr[*palette++];
+
+        for (j = 0; j < 16; j++)
+        {
+            int r2, g2, b2;
+            int cR, cG, cB;
+
+            r2 = (int)textcolors[j * 3];
+            cR = r2 - r1;
+            if (cR < 0)
+                cR = -cR;
+
+            g2 = (int)textcolors[j * 3 + 1];
+            cG = g2 - g1;
+            if (cG < 0)
+                cG = -cG;
+
+            b2 = (int)textcolors[j * 3 + 2];
+            cB = b2 - b1;
+            if (cB < 0)
+                cB = -cB;
+
+            distance = cR + cG + cB;
+
+            if (best_difference > distance)
+            {
+                best_difference = distance;
+                lut16colors[i] = j;
+            }
+        }
+    }
+}
+#endif
+
 //
 // I_SetPalette
 // Palette source must use 8 bit RGB elements.
@@ -266,56 +323,9 @@ void I_SetPalette(int numpalette)
 #endif
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50 || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
-    {
-        byte *pos;
-        short i, j = 0;
-
-        pos = processedpalette + Mul768(numpalette);
-
-        for (i = 0; i < 256; i++)
-        {
-            int distance;
-
-            int r1, g1, b1;
-
-            int best_difference = MAXINT;
-            int best_color;
-
-            r1 = (int)pos[i * 3];
-            g1 = (int)pos[i * 3 + 1];
-            b1 = (int)pos[i * 3 + 2];
-
-            for (j = 0; j < 16; j++)
-            {
-                int r2, g2, b2;
-                int cR, cG, cB;
-
-                r2 = (int)textcolors[j * 3];
-                cR = r2 - r1;
-                if (cR < 0)
-                    cR = -cR;
-
-                g2 = (int)textcolors[j * 3 + 1];
-                cG = g2 - g1;
-                if (cG < 0)
-                    cG = -cG;
-
-                b2 = (int)textcolors[j * 3 + 2];
-                cB = b2 - b1;
-                if (cB < 0)
-                    cB = -cB;
-
-                distance = cR + cG + cB;
-
-                if (best_difference > distance)
-                {
-                    best_difference = distance;
-                    lut16colors[i] = j;
-                }
-            }
-        }
-    }
+    ptrlut16colors = lut16colors + numpalette * 256;
 #endif
+
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
     {
         int i;
@@ -691,14 +701,14 @@ void EGA_DrawBackbuffer(void)
     {
         for (x = 0; x < SCREENWIDTH / 8; x++)
         {
-            unsigned char color0 = lut16colors[backbuffer[base]];
-            unsigned char color1 = lut16colors[backbuffer[base + 1]];
-            unsigned char color2 = lut16colors[backbuffer[base + 2]];
-            unsigned char color3 = lut16colors[backbuffer[base + 3]];
-            unsigned char color4 = lut16colors[backbuffer[base + 4]];
-            unsigned char color5 = lut16colors[backbuffer[base + 5]];
-            unsigned char color6 = lut16colors[backbuffer[base + 6]];
-            unsigned char color7 = lut16colors[backbuffer[base + 7]];
+            unsigned char color0 = ptrlut16colors[backbuffer[base]];
+            unsigned char color1 = ptrlut16colors[backbuffer[base + 1]];
+            unsigned char color2 = ptrlut16colors[backbuffer[base + 2]];
+            unsigned char color3 = ptrlut16colors[backbuffer[base + 3]];
+            unsigned char color4 = ptrlut16colors[backbuffer[base + 4]];
+            unsigned char color5 = ptrlut16colors[backbuffer[base + 5]];
+            unsigned char color6 = ptrlut16colors[backbuffer[base + 6]];
+            unsigned char color7 = ptrlut16colors[backbuffer[base + 7]];
 
             plane_red[plane_position] = ((color0 >> 3) & 1) << 7 | ((color1 >> 3) & 1) << 6 | ((color2 >> 3) & 1) << 5 | ((color3 >> 3) & 1) << 4 | ((color4 >> 3) & 1) << 3 | ((color5 >> 3) & 1) << 2 | ((color6 >> 3) & 1) << 1 | ((color7 >> 3) & 1);
             plane_green[plane_position] = ((color0 >> 2) & 1) << 7 | ((color1 >> 2) & 1) << 6 | ((color2 >> 2) & 1) << 5 | ((color3 >> 2) & 1) << 4 | ((color4 >> 2) & 1) << 3 | ((color5 >> 2) & 1) << 2 | ((color6 >> 2) & 1) << 1 | ((color7 >> 2) & 1);
