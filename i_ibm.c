@@ -579,15 +579,19 @@ void CGA_BW_DrawBackbuffer(void)
     unsigned int base_y = 0;
     unsigned int base_buffer = 0;
 
-    byte color;
     unsigned int scale_x;
 
     /* 320x200 -> 640x200 */
-    for (x = 0; x < 200 * 320; x++, y += 2)
+    for (x = 0; x < 200 * 320; x += 2, y += 4)
     {
+        byte color;
+        byte color2;
         color = backbuffer[x];
+        color2 = backbuffer[x + 1];
         ditherbuffer[y] = color;
         ditherbuffer[y + 1] = color;
+        ditherbuffer[y + 2] = color2;
+        ditherbuffer[y + 3] = color2;
     }
 
     BW_Dither2x2();
@@ -597,10 +601,12 @@ void CGA_BW_DrawBackbuffer(void)
     {
         for (x = 0; x < 640 / 8; x++, base_y += 8)
         {
+            byte color;
+            byte color2;
             color = (ditherbuffer[base_y]) << 7 | (ditherbuffer[base_y + 1]) << 6 | (ditherbuffer[base_y + 2]) << 5 | (ditherbuffer[base_y + 3]) << 4 | (ditherbuffer[base_y + 4]) << 3 | (ditherbuffer[base_y + 5]) << 2 | (ditherbuffer[base_y + 6]) << 1 | (ditherbuffer[base_y + 7]);
+            color2 = (ditherbuffer[base_y + 640]) << 7 | (ditherbuffer[base_y + 641]) << 6 | (ditherbuffer[base_y + 642]) << 5 | (ditherbuffer[base_y + 643]) << 4 | (ditherbuffer[base_y + 644]) << 3 | (ditherbuffer[base_y + 645]) << 2 | (ditherbuffer[base_y + 646]) << 1 | (ditherbuffer[base_y + 647]);
             *(vram + 0x0000 + x) = color;
-            color = (ditherbuffer[base_y + 640]) << 7 | (ditherbuffer[base_y + 641]) << 6 | (ditherbuffer[base_y + 642]) << 5 | (ditherbuffer[base_y + 643]) << 4 | (ditherbuffer[base_y + 644]) << 3 | (ditherbuffer[base_y + 645]) << 2 | (ditherbuffer[base_y + 646]) << 1 | (ditherbuffer[base_y + 647]);
-            *(vram + 0x2000 + x) = color;
+            *(vram + 0x2000 + x) = color2;
         }
     }
 }
