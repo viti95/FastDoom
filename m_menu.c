@@ -241,16 +241,13 @@ void M_StartMessage(char *string, void *routine, byte input);
 //
 // DOOM MENU
 //
-enum
-{
-    newgame = 0,
-    options,
-    loadgame,
-    savegame,
-    readthis,
-    quitdoom,
-    main_end
-} main_e;
+#define newgame 0
+#define options 1
+#define loadgame 2
+#define savegame 3
+#define readthis 4
+#define quitdoom 5
+#define main_end 6
 
 menuitem_t MainMenu[] =
     {
@@ -273,14 +270,11 @@ menu_t MainDef =
 //
 // EPISODE SELECT
 //
-enum
-{
-    ep1,
-    ep2,
-    ep3,
-    ep4,
-    ep_end
-} episodes_e;
+#define ep1 0
+#define ep2 1
+#define ep3 2
+#define ep4 3
+#define ep_end 4
 
 menuitem_t EpisodeMenu[] =
     {
@@ -302,15 +296,12 @@ menu_t EpiDef =
 //
 // NEW GAME
 //
-enum
-{
-    killthings,
-    toorough,
-    hurtme,
-    violence,
-    nightmare,
-    newg_end
-} newgame_e;
+#define killthings 0
+#define toorough 1
+#define hurtme 2
+#define violence 3
+#define nightmare 4
+#define newg_end 5
 
 menuitem_t NewGameMenu[] =
     {
@@ -333,33 +324,26 @@ menu_t NewDef =
 //
 // OPTIONS MENU
 //
+#define vsync 0
+#define detail 1
+#define visplanes 2
+#define sky 3
+#define invisible 4
+#define showfps 5
+#define spriteculling 6
+#define melting 7
+#define uncappedfps 8
+#define display_end 9
 
-enum
-{
-    vsync,
-    detail,
-    visplanes,
-    sky,
-    invisible,
-    showfps,
-    spriteculling,
-    melting,
-    uncappedfps,
-    display_end
-} display_e;
-
-enum
-{
-    endgame,
-    messages,
-    display,
-    scrnsize,
-    option_empty1,
-    mousesens,
-    option_empty2,
-    soundvol,
-    opt_end
-} options_e;
+#define endgame 0
+#define messages 1
+#define display 2
+#define scrnsize 3
+#define option_empty1 4
+#define mousesens 5
+#define option_empty2 6
+#define soundvol 7
+#define opt_end 8
 
 menuitem_t OptionsMenu[] =
     {
@@ -405,11 +389,8 @@ menu_t DisplayDef =
 //
 // Read This! MENU 1 & 2
 //
-enum
-{
-    rdthsempty1,
-    read1_end
-} read_e;
+#define rdthsempty1 0
+#define read1_end 1
 
 menuitem_t ReadMenu1[] =
     {
@@ -424,11 +405,8 @@ menu_t ReadDef1 =
         280, 185,
         0};
 
-enum
-{
-    rdthsempty2,
-    read2_end
-} read_e2;
+#define rdthsempty2 0
+#define read2_end 1
 
 menuitem_t ReadMenu2[] =
     {
@@ -446,15 +424,12 @@ menu_t ReadDef2 =
 //
 // SOUND VOLUME MENU
 //
-enum
-{
-    sfx_vol,
-    sfx_empty1,
-    music_vol,
-    sfx_empty2,
-    monosound,
-    sound_end
-} sound_e;
+#define sfx_vol 0
+#define sfx_empty1 1
+#define music_vol 2
+#define sfx_empty2 3
+#define monosound 4
+#define sound_end 5
 
 menuitem_t SoundMenu[] =
     {
@@ -476,16 +451,13 @@ menu_t SoundDef =
 //
 // LOAD GAME MENU
 //
-enum
-{
-    load1,
-    load2,
-    load3,
-    load4,
-    load5,
-    load6,
-    load_end
-} load_e;
+#define load1 0
+#define load2 1
+#define load3 2
+#define load4 3
+#define load5 4
+#define load6 5
+#define load_end 6
 
 menuitem_t LoadMenu[] =
     {

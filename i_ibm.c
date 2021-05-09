@@ -400,7 +400,10 @@ int updatestate;
 #endif
 byte *pcscreen, *currentscreen, *destscreen, *destview;
 unsigned short *textdestscreen = (unsigned short *)0xB8000;
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 byte textpage = 0;
+#endif
 
 //
 // I_UpdateBox

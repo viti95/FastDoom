@@ -201,8 +201,6 @@ void R_InitSpriteDefs(char const **namelist)
 // GAME FUNCTIONS
 //
 vissprite_t *vissprites;
-vissprite_t *vissprite_p;
-int newvissprite;
 
 vissprite_t **vissprite_ptrs; // killough
 size_t num_vissprite, num_vissprite_alloc, num_vissprite_ptrs;

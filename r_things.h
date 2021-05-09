@@ -20,7 +20,6 @@
 #define __R_THINGS__
 
 extern vissprite_t *vissprites;
-extern vissprite_t *vissprite_p;
 
 // Constant arrays used for psprite clipping
 //  and initializing clipping.

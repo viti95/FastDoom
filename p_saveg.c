@@ -291,18 +291,14 @@ void P_UnArchiveThinkers(void)
 //
 // P_ArchiveSpecials
 //
-enum
-{
-	tc_ceiling,
-	tc_door,
-	tc_floor,
-	tc_plat,
-	tc_flash,
-	tc_strobe,
-	tc_glow,
-	tc_endspecials
-
-} specials_e;
+#define tc_ceiling 0
+#define tc_door 1
+#define tc_floor 2
+#define tc_plat 3
+#define tc_flash 4
+#define tc_strobe 5
+#define tc_glow 6
+#define tc_endspecials 7
 
 //
 // Things to handle:

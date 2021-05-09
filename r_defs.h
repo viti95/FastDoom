@@ -260,7 +260,10 @@ extern byte *destscreen;
 extern byte *pcscreen;
 
 extern unsigned short *textdestscreen;
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 extern byte textpage;
+#endif
 
 //
 // OTHER TYPES
