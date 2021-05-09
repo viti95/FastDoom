@@ -2087,6 +2087,10 @@ void M_Drawer(void)
     y = currentMenu->y;
     max = currentMenu->numitems;
 
+    if ((gamemode == shareware || gamemode == registered) && currentMenu == &EpiDef){
+        max -= 1;
+    }
+
     for (i = 0; i < max; i++)
     {
         if (currentMenu->menuitems[i].name[0])
