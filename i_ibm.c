@@ -163,10 +163,6 @@ struct SREGS segregs;
 byte keyboardque[KBDQUESIZE];
 int kbdtail, kbdhead;
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
-int currentpalette;
-#endif
-
 #define KEY_LSHIFT 0xfe
 
 #define KEY_INS (0x80 + 0x52)
@@ -188,6 +184,11 @@ byte lut16colors[14 * 256];
 byte *ptrlut16colors;
 #endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
+byte sumcolors[14 * 256];
+byte *ptrsumcolors;
+#endif
+
 byte gammatable[5][256] =
     {
         {0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 10, 11, 11, 11, 11, 12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15, 16, 16, 16, 16, 17, 17, 17, 17, 18, 18, 18, 18, 19, 19, 19, 19, 20, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 26, 27, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 30, 31, 31, 31, 31, 32, 32, 32, 32, 32, 33, 33, 33, 33, 34, 34, 34, 34, 35, 35, 35, 35, 36, 36, 36, 36, 37, 37, 37, 37, 38, 38, 38, 38, 39, 39, 39, 39, 40, 40, 40, 40, 41, 41, 41, 41, 42, 42, 42, 42, 43, 43, 43, 43, 44, 44, 44, 44, 45, 45, 45, 45, 46, 46, 46, 46, 47, 47, 47, 47, 48, 48, 48, 48, 49, 49, 49, 49, 50, 50, 50, 50, 51, 51, 51, 51, 52, 52, 52, 52, 53, 53, 53, 53, 54, 54, 54, 54, 55, 55, 55, 55, 56, 56, 56, 56, 57, 57, 57, 57, 58, 58, 58, 58, 59, 59, 59, 59, 60, 60, 60, 60, 61, 61, 61, 61, 62, 62, 62, 62, 63, 63, 63, 63},
@@ -196,7 +197,7 @@ byte gammatable[5][256] =
         {2, 3, 4, 4, 5, 6, 6, 7, 7, 8, 9, 9, 10, 10, 10, 11, 11, 12, 12, 13, 13, 13, 14, 14, 15, 15, 15, 16, 16, 16, 17, 17, 17, 18, 18, 18, 19, 19, 19, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 26, 27, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 30, 31, 31, 31, 31, 32, 32, 32, 32, 33, 33, 33, 33, 33, 34, 34, 34, 34, 35, 35, 35, 35, 35, 36, 36, 36, 36, 37, 37, 37, 37, 37, 38, 38, 38, 38, 38, 39, 39, 39, 39, 40, 40, 40, 40, 40, 41, 41, 41, 41, 41, 42, 42, 42, 42, 42, 43, 43, 43, 43, 43, 44, 44, 44, 44, 44, 45, 45, 45, 45, 45, 45, 46, 46, 46, 46, 46, 47, 47, 47, 47, 47, 48, 48, 48, 48, 48, 48, 49, 49, 49, 49, 49, 50, 50, 50, 50, 50, 50, 51, 51, 51, 51, 51, 51, 52, 52, 52, 52, 52, 53, 53, 53, 53, 53, 53, 54, 54, 54, 54, 54, 54, 55, 55, 55, 55, 55, 55, 56, 56, 56, 56, 56, 56, 57, 57, 57, 57, 57, 57, 58, 58, 58, 58, 58, 58, 59, 59, 59, 59, 59, 59, 60, 60, 60, 60, 60, 60, 61, 61, 61, 61, 61, 61, 61, 62, 62, 62, 62, 62, 62, 63, 63, 63, 63, 63, 63},
         {4, 5, 7, 8, 9, 9, 10, 11, 12, 12, 13, 13, 14, 15, 15, 16, 16, 17, 17, 17, 18, 18, 19, 19, 20, 20, 20, 21, 21, 21, 22, 22, 23, 23, 23, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 30, 31, 31, 31, 32, 32, 32, 32, 32, 33, 33, 33, 33, 34, 34, 34, 34, 35, 35, 35, 35, 35, 36, 36, 36, 36, 37, 37, 37, 37, 37, 38, 38, 38, 38, 38, 39, 39, 39, 39, 39, 40, 40, 40, 40, 40, 41, 41, 41, 41, 41, 42, 42, 42, 42, 42, 43, 43, 43, 43, 43, 43, 44, 44, 44, 44, 44, 45, 45, 45, 45, 45, 45, 46, 46, 46, 46, 46, 46, 47, 47, 47, 47, 47, 47, 48, 48, 48, 48, 48, 48, 49, 49, 49, 49, 49, 49, 50, 50, 50, 50, 50, 50, 50, 51, 51, 51, 51, 51, 51, 52, 52, 52, 52, 52, 52, 52, 53, 53, 53, 53, 53, 53, 54, 54, 54, 54, 54, 54, 54, 55, 55, 55, 55, 55, 55, 55, 56, 56, 56, 56, 56, 56, 56, 57, 57, 57, 57, 57, 57, 57, 58, 58, 58, 58, 58, 58, 58, 58, 59, 59, 59, 59, 59, 59, 59, 60, 60, 60, 60, 60, 60, 60, 60, 61, 61, 61, 61, 61, 61, 61, 61, 62, 62, 62, 62, 62, 62, 62, 62, 63, 63, 63, 63, 63, 63, 63}};
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA)
 byte processedpalette[14 * 768];
 #endif
 
@@ -222,7 +223,7 @@ byte scantokey[128] =
         0, 0, 0, 0, 0, 0, 0, 0 // 7
 };
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA)
 void I_ProcessPalette(byte *palette)
 {
     int i;
@@ -235,6 +236,26 @@ void I_ProcessPalette(byte *palette)
         processedpalette[i + 1] = ptr[*(palette + 1)];
         processedpalette[i + 2] = ptr[*(palette + 2)];
         processedpalette[i + 3] = ptr[*(palette + 3)];
+    }
+}
+#endif
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
+void I_ProcessPalette(byte *palette)
+{
+    int i;
+
+    byte *ptr = gammatable[usegamma];
+
+    for (i = 0; i < 14 * 256; i++, palette += 3)
+    {
+        byte r, g, b;
+
+        r = ptr[*palette];
+        g = ptr[*(palette + 1)];
+        b = ptr[*(palette + 2)];
+
+        sumcolors[i] = r + g + b;
     }
 }
 #endif
@@ -263,7 +284,6 @@ const byte textcolors[48] = {
 void I_ProcessPalette(byte *palette)
 {
     int i, j;
-    byte *pos;
     byte *ptr = gammatable[usegamma];
 
     for (i = 0; i < 14 * 256; i++)
@@ -319,7 +339,7 @@ void I_SetPalette(int numpalette)
 {
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
-    currentpalette = numpalette;
+    ptrsumcolors = sumcolors + numpalette * 256;
 #endif
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50 || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
@@ -535,13 +555,8 @@ void BW_Dither2x2()
 {
     int col = 0;
     int row = 0;
-    byte *palette;
-    int indexedval;
-    byte red, green, blue;
     int x, y;
     int base = 0;
-
-    palette = processedpalette + Mul768(currentpalette);
 
     for (y = 0; y < 200; y++, base += 640)
     {
@@ -550,14 +565,7 @@ void BW_Dither2x2()
         for (x = 0; x < 640; x++)
         {
             col = x & 1; //	% 2
-
-            indexedval = ditherbuffer[base + x] * 3;
-
-            red = palette[indexedval];
-            green = palette[indexedval + 1];
-            blue = palette[indexedval + 2];
-
-            ditherbuffer[base + x] = (red + green + blue) > BAYER_PATTERN_2X2[col][row];
+            ditherbuffer[base + x] = ptrsumcolors[ditherbuffer[base + x]] > BAYER_PATTERN_2X2[col][row];
         }
     }
 }
@@ -609,13 +617,8 @@ void BW_Dither4x4()
 {
     int col = 0;
     int row = 0;
-    byte *palette;
-    int indexedval;
-    byte red, green, blue;
     int x, y;
     int base = 0;
-
-    palette = processedpalette + Mul768(currentpalette);
 
     for (y = 0; y < 400; y++, base += 640)
     {
@@ -624,14 +627,7 @@ void BW_Dither4x4()
         for (x = 0; x < 640; x++)
         {
             col = x & 3; //	% 4
-
-            indexedval = ditherbuffer[base + x] * 3;
-
-            red = palette[indexedval];
-            green = palette[indexedval + 1];
-            blue = palette[indexedval + 2];
-
-            ditherbuffer[base + x] = (red + green + blue) > BAYER_PATTERN_4X4[col][row];
+            ditherbuffer[base + x] = ptrsumcolors[ditherbuffer[base + x]] > BAYER_PATTERN_4X4[col][row];
         }
     }
 }
