@@ -371,27 +371,3 @@ void HU_Ticker(void)
 }
 
 #define QUEUESIZE 128
-
-byte HU_Responder(event_t *ev)
-{
-    if (ev->data1 == KEY_RSHIFT)
-    {
-        return 0;
-    }
-    else if (ev->data1 == KEY_RALT || ev->data1 == KEY_LALT)
-    {
-        return 0;
-    }
-
-    if (ev->type != ev_keydown)
-        return 0;
-
-    if (ev->data1 == HU_MSGREFRESH)
-    {
-        message_on = 1;
-        message_counter = HU_MSGTIMEOUT;
-        return 1;
-    }
-
-    return 0;
-}

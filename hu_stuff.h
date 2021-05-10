@@ -45,9 +45,6 @@
 
 void HU_Init(void);
 void HU_Start(void);
-
-byte HU_Responder(event_t *ev);
-
 void HU_Ticker(void);
 void HU_Drawer(void);
 void HU_Erase(void);

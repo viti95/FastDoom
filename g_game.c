@@ -368,8 +368,6 @@ void G_Responder(event_t *ev)
 
     if (gamestate == GS_LEVEL)
     {
-        if (HU_Responder(ev))
-            return;       // chat ate the event
         ST_Responder(ev); // status window ate it
         if (AM_Responder(ev))
             return; // automap ate it
