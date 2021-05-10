@@ -182,7 +182,23 @@ void G_BuildTiccmd(ticcmd_t *cmd)
     strafe = gamekeydown[key_strafe] || mousebuttons[mousebstrafe];
     speed = !autorun ^ !gamekeydown[key_speed];
 
-    forward = side = 0;
+    forward = 0;
+
+    if (gamekeydown[key_up])
+    {
+        forward += forwardmove[speed];
+    }
+    if (gamekeydown[key_down])
+    {
+        forward -= forwardmove[speed];
+    }
+
+    if (forward > MAXPLMOVE)
+        forward = MAXPLMOVE;
+    else if (forward < -MAXPLMOVE)
+        forward = -MAXPLMOVE;
+
+    cmd->forwardmove += forward;
 
     // use two stage accelerative turning
     // on the keyboard
@@ -200,6 +216,10 @@ void G_BuildTiccmd(ticcmd_t *cmd)
         turnheld = 0;
         tspeed = 2; // slow turn
     }
+
+
+
+    side = 0;
 
     // let movement keys cancel each other out
     if (strafe)
@@ -221,37 +241,10 @@ void G_BuildTiccmd(ticcmd_t *cmd)
             cmd->angleturn += angleturn[tspeed];
     }
 
-    if (gamekeydown[key_up])
-    {
-        forward += forwardmove[speed];
-    }
-    if (gamekeydown[key_down])
-    {
-        forward -= forwardmove[speed];
-    }
     if (gamekeydown[key_straferight])
         side += sidemove[speed];
     if (gamekeydown[key_strafeleft])
         side -= sidemove[speed];
-
-    // buttons
-
-    if (gamekeydown[key_fire] || mousebuttons[mousebfire])
-        cmd->buttons |= BT_ATTACK;
-
-    if (gamekeydown[key_use])
-    {
-        cmd->buttons |= BT_USE;
-    }
-
-    // chainsaw overrides
-    for (i = 0; i < NUMWEAPONS - 1; i++)
-        if (gamekeydown['1' + i])
-        {
-            cmd->buttons |= BT_CHANGE;
-            cmd->buttons |= i << BT_WEAPONSHIFT;
-            break;
-        }
 
     // strafe double click
     bstrafe = mousebuttons[mousebstrafe];
@@ -285,17 +278,31 @@ void G_BuildTiccmd(ticcmd_t *cmd)
 
     mousex = 0;
 
-    if (forward > MAXPLMOVE)
-        forward = MAXPLMOVE;
-    else if (forward < -MAXPLMOVE)
-        forward = -MAXPLMOVE;
     if (side > MAXPLMOVE)
         side = MAXPLMOVE;
     else if (side < -MAXPLMOVE)
         side = -MAXPLMOVE;
 
-    cmd->forwardmove += forward;
     cmd->sidemove += side;
+
+    // buttons
+
+    if (gamekeydown[key_fire] || mousebuttons[mousebfire])
+        cmd->buttons |= BT_ATTACK;
+
+    if (gamekeydown[key_use])
+    {
+        cmd->buttons |= BT_USE;
+    }
+
+    // chainsaw overrides
+    for (i = 0; i < NUMWEAPONS - 1; i++)
+        if (gamekeydown['1' + i])
+        {
+            cmd->buttons |= BT_CHANGE;
+            cmd->buttons |= i << BT_WEAPONSHIFT;
+            break;
+        }
 
     // special buttons
     if (sendpause)
