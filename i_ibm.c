@@ -185,8 +185,14 @@ byte *ptrlut16colors;
 #endif
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
-byte sumcolors[14 * 256];
-byte *ptrsumcolors;
+byte sumcolors00[14 * 256];
+byte sumcolors01[14 * 256];
+byte sumcolors10[14 * 256];
+byte sumcolors11[14 * 256];
+byte *ptrsumcolors00;
+byte *ptrsumcolors01;
+byte *ptrsumcolors10;
+byte *ptrsumcolors11;
 #endif
 
 byte gammatable[5][256] =
@@ -255,7 +261,10 @@ void I_ProcessPalette(byte *palette)
         g = ptr[*(palette + 1)];
         b = ptr[*(palette + 2)];
 
-        sumcolors[i] = r + g + b;
+        sumcolors00[i] = (r + g + b) > 38;
+        sumcolors01[i] = (r + g + b) > 115;
+        sumcolors10[i] = (r + g + b) > 155;
+        sumcolors11[i] = (r + g + b) > 77;
     }
 }
 #endif
@@ -339,7 +348,10 @@ void I_SetPalette(int numpalette)
 {
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
-    ptrsumcolors = sumcolors + numpalette * 256;
+    ptrsumcolors00 = sumcolors00 + numpalette * 256;
+    ptrsumcolors01 = sumcolors01 + numpalette * 256;
+    ptrsumcolors10 = sumcolors10 + numpalette * 256;
+    ptrsumcolors11 = sumcolors11 + numpalette * 256;
 #endif
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50 || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
@@ -547,10 +559,6 @@ void I_UpdateNoBlit(void)
 extern int screenblocks;
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
-const int BAYER_PATTERN_2X2[2][2] = { //	2x2 Bayer Dithering Matrix. Color levels: 5
-    {38, 155},
-    {115, 77}};
-
 void BW_Dither2x2()
 {
     int col = 0;
@@ -558,14 +566,18 @@ void BW_Dither2x2()
     int x, y;
     int base = 0;
 
-    for (y = 0; y < 200; y++, base += 640)
+    for (y = 0; y < 200 / 2; y++, base += 1280)
     {
-        row = y & 1; //	% 2
-
-        for (x = 0; x < 640; x++)
+        for (x = 0; x < 640; x += 4)
         {
-            col = x & 1; //	% 2
-            ditherbuffer[base + x] = ptrsumcolors[ditherbuffer[base + x]] > BAYER_PATTERN_2X2[col][row];
+            ditherbuffer[base + x] = ptrsumcolors00[ditherbuffer[base + x]];
+            ditherbuffer[base + x + 1] = ptrsumcolors10[ditherbuffer[base + x + 1]];
+            ditherbuffer[base + x + 2] = ptrsumcolors00[ditherbuffer[base + x + 2]];
+            ditherbuffer[base + x + 3] = ptrsumcolors10[ditherbuffer[base + x + 3]];
+            ditherbuffer[base + x + 640] = ptrsumcolors01[ditherbuffer[base + x + 640]];
+            ditherbuffer[base + x + 641] = ptrsumcolors11[ditherbuffer[base + x + 641]];
+            ditherbuffer[base + x + 642] = ptrsumcolors01[ditherbuffer[base + x + 642]];
+            ditherbuffer[base + x + 643] = ptrsumcolors11[ditherbuffer[base + x + 643]];
         }
     }
 }
@@ -582,16 +594,24 @@ void CGA_BW_DrawBackbuffer(void)
     unsigned int scale_x;
 
     /* 320x200 -> 640x200 */
-    for (x = 0; x < 200 * 320; x += 2, y += 4)
+    for (x = 0; x < 200 * 320; x += 4, y += 8)
     {
         byte color;
         byte color2;
+        byte color3;
+        byte color4;
         color = backbuffer[x];
         color2 = backbuffer[x + 1];
+        color3 = backbuffer[x + 2];
+        color4 = backbuffer[x + 3];
         ditherbuffer[y] = color;
         ditherbuffer[y + 1] = color;
         ditherbuffer[y + 2] = color2;
         ditherbuffer[y + 3] = color2;
+        ditherbuffer[y + 4] = color3;
+        ditherbuffer[y + 5] = color3;
+        ditherbuffer[y + 6] = color4;
+        ditherbuffer[y + 7] = color4;
     }
 
     BW_Dither2x2();
@@ -613,12 +633,6 @@ void CGA_BW_DrawBackbuffer(void)
 #endif
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
-const byte BAYER_PATTERN_4X4[4][4] = { //	4x4 Bayer Dithering Matrix. Color levels: 17
-    {11, 146, 45, 180},
-    {101, 56, 135, 90},
-    {34, 169, 23, 158},
-    {124, 79, 113, 68}};
-
 void BW_Dither4x4()
 {
     int col = 0;
@@ -626,14 +640,18 @@ void BW_Dither4x4()
     int x, y;
     int base = 0;
 
-    for (y = 0; y < 400; y++, base += 640)
+    for (y = 0; y < 400 / 2; y++, base += 1280)
     {
-        row = y & 3; //	% 4
-
-        for (x = 0; x < 640; x++)
+        for (x = 0; x < 640; x += 4)
         {
-            col = x & 3; //	% 4
-            ditherbuffer[base + x] = ptrsumcolors[ditherbuffer[base + x]] > BAYER_PATTERN_4X4[col][row];
+            ditherbuffer[base + x] = ptrsumcolors00[ditherbuffer[base + x]];
+            ditherbuffer[base + x + 1] = ptrsumcolors10[ditherbuffer[base + x + 1]];
+            ditherbuffer[base + x + 2] = ptrsumcolors00[ditherbuffer[base + x + 2]];
+            ditherbuffer[base + x + 3] = ptrsumcolors10[ditherbuffer[base + x + 3]];
+            ditherbuffer[base + x + 640] = ptrsumcolors01[ditherbuffer[base + x + 640]];
+            ditherbuffer[base + x + 641] = ptrsumcolors11[ditherbuffer[base + x + 641]];
+            ditherbuffer[base + x + 642] = ptrsumcolors01[ditherbuffer[base + x + 642]];
+            ditherbuffer[base + x + 643] = ptrsumcolors11[ditherbuffer[base + x + 643]];
         }
     }
 }
@@ -647,7 +665,6 @@ void HERC_DrawBackbuffer(void)
     unsigned int base_y = 0;
     unsigned int base_buffer = 0;
 
-    byte color;
     unsigned int scale_x;
 
     /* 320x200 -> 640x400 */
@@ -655,6 +672,7 @@ void HERC_DrawBackbuffer(void)
     {
         for (scale_x = 0; scale_x < 640; scale_x += 2, base_buffer++)
         {
+            byte color;
             color = backbuffer[base_buffer];
             ditherbuffer[scale_y + scale_x] = color;
             ditherbuffer[scale_y + scale_x + 1] = color;
@@ -670,14 +688,18 @@ void HERC_DrawBackbuffer(void)
     {
         for (x = 0; x < 640 / 8; x++, base_y += 8)
         {
+            byte color;
+            byte color2;
+            byte color3;
+            byte color4;
             color = (ditherbuffer[base_y]) << 7 | (ditherbuffer[base_y + 1]) << 6 | (ditherbuffer[base_y + 2]) << 5 | (ditherbuffer[base_y + 3]) << 4 | (ditherbuffer[base_y + 4]) << 3 | (ditherbuffer[base_y + 5]) << 2 | (ditherbuffer[base_y + 6]) << 1 | (ditherbuffer[base_y + 7]);
             *(vram + 0x0000 + x) = color;
-            color = (ditherbuffer[base_y + 640]) << 7 | (ditherbuffer[base_y + 641]) << 6 | (ditherbuffer[base_y + 642]) << 5 | (ditherbuffer[base_y + 643]) << 4 | (ditherbuffer[base_y + 644]) << 3 | (ditherbuffer[base_y + 645]) << 2 | (ditherbuffer[base_y + 646]) << 1 | (ditherbuffer[base_y + 647]);
-            *(vram + 0x2000 + x) = color;
-            color = (ditherbuffer[base_y + 1280]) << 7 | (ditherbuffer[base_y + 1281]) << 6 | (ditherbuffer[base_y + 1282]) << 5 | (ditherbuffer[base_y + 1283]) << 4 | (ditherbuffer[base_y + 1284]) << 3 | (ditherbuffer[base_y + 1285]) << 2 | (ditherbuffer[base_y + 1286]) << 1 | (ditherbuffer[base_y + 1287]);
-            *(vram + 0x4000 + x) = color;
-            color = (ditherbuffer[base_y + 1920]) << 7 | (ditherbuffer[base_y + 1921]) << 6 | (ditherbuffer[base_y + 1922]) << 5 | (ditherbuffer[base_y + 1923]) << 4 | (ditherbuffer[base_y + 1924]) << 3 | (ditherbuffer[base_y + 1925]) << 2 | (ditherbuffer[base_y + 1926]) << 1 | (ditherbuffer[base_y + 1927]);
-            *(vram + 0x6000 + x) = color;
+            color2 = (ditherbuffer[base_y + 640]) << 7 | (ditherbuffer[base_y + 641]) << 6 | (ditherbuffer[base_y + 642]) << 5 | (ditherbuffer[base_y + 643]) << 4 | (ditherbuffer[base_y + 644]) << 3 | (ditherbuffer[base_y + 645]) << 2 | (ditherbuffer[base_y + 646]) << 1 | (ditherbuffer[base_y + 647]);
+            *(vram + 0x2000 + x) = color2;
+            color3 = (ditherbuffer[base_y + 1280]) << 7 | (ditherbuffer[base_y + 1281]) << 6 | (ditherbuffer[base_y + 1282]) << 5 | (ditherbuffer[base_y + 1283]) << 4 | (ditherbuffer[base_y + 1284]) << 3 | (ditherbuffer[base_y + 1285]) << 2 | (ditherbuffer[base_y + 1286]) << 1 | (ditherbuffer[base_y + 1287]);
+            *(vram + 0x4000 + x) = color3;
+            color4 = (ditherbuffer[base_y + 1920]) << 7 | (ditherbuffer[base_y + 1921]) << 6 | (ditherbuffer[base_y + 1922]) << 5 | (ditherbuffer[base_y + 1923]) << 4 | (ditherbuffer[base_y + 1924]) << 3 | (ditherbuffer[base_y + 1925]) << 2 | (ditherbuffer[base_y + 1926]) << 1 | (ditherbuffer[base_y + 1927]);
+            *(vram + 0x6000 + x) = color4;
         }
     }
 }

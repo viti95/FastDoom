@@ -18,8 +18,14 @@ extern byte *ptrlut16colors;
 #endif
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
-extern byte sumcolors[14 * 256];
-extern byte *ptrsumcolors;
+extern byte sumcolors00[14 * 256];
+extern byte sumcolors01[14 * 256];
+extern byte sumcolors10[14 * 256];
+extern byte sumcolors11[14 * 256];
+extern byte *ptrsumcolors00;
+extern byte *ptrsumcolors01;
+extern byte *ptrsumcolors10;
+extern byte *ptrsumcolors11;
 #endif
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
