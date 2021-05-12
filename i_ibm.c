@@ -737,13 +737,12 @@ void EGA_DrawBackbuffer(void)
 void CGA_DrawBackbuffer(void)
 {
     int x, y;
-    unsigned char *vram = 0xB8000;
+    unsigned char *vram = (unsigned char *)0xB8000;
     unsigned int base = 0;
 
-    for (y = 0; y < SCREENHEIGHT / 2; y++)
+    for (base = 0; base < SCREENHEIGHT * 320; base += 320, vram += 80)
     {
-
-        for (x = 0; x < SCREENWIDTH / 4; x++)
+        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4)
         {
             unsigned char color;
             unsigned char color2;
@@ -751,10 +750,7 @@ void CGA_DrawBackbuffer(void)
             *(vram + x) = color;
             color2 = (backbuffer[base + 320] / 64) << 6 | (backbuffer[base + 321] / 64) << 4 | (backbuffer[base + 322] / 64) << 2 | (backbuffer[base + 323] / 64);
             *(vram + 0x2000 + x) = color2;
-            base += 4;
         }
-        base += 320;
-        vram += 80;
     }
 }
 #endif
