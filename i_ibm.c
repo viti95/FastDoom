@@ -633,29 +633,6 @@ void CGA_BW_DrawBackbuffer(void)
 #endif
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
-void BW_Dither4x4()
-{
-    int col = 0;
-    int row = 0;
-    int x, y;
-    int base = 0;
-
-    for (y = 0; y < 400 / 2; y++, base += 1280)
-    {
-        for (x = 0; x < 640; x += 4)
-        {
-            ditherbuffer[base + x] = ptrsumcolors00[ditherbuffer[base + x]];
-            ditherbuffer[base + x + 1] = ptrsumcolors10[ditherbuffer[base + x + 1]];
-            ditherbuffer[base + x + 2] = ptrsumcolors00[ditherbuffer[base + x + 2]];
-            ditherbuffer[base + x + 3] = ptrsumcolors10[ditherbuffer[base + x + 3]];
-            ditherbuffer[base + x + 640] = ptrsumcolors01[ditherbuffer[base + x + 640]];
-            ditherbuffer[base + x + 641] = ptrsumcolors11[ditherbuffer[base + x + 641]];
-            ditherbuffer[base + x + 642] = ptrsumcolors01[ditherbuffer[base + x + 642]];
-            ditherbuffer[base + x + 643] = ptrsumcolors11[ditherbuffer[base + x + 643]];
-        }
-    }
-}
-
 void HERC_DrawBackbuffer(void)
 {
     int x, y = 0;
@@ -667,21 +644,37 @@ void HERC_DrawBackbuffer(void)
 
     unsigned int scale_x;
 
-    /* 320x200 -> 640x400 */
+    /* 320x200 -> Dithered 640x400 */
     for (scale_y = 0; scale_y < 1280 * 200; scale_y += 1280)
     {
-        for (scale_x = 0; scale_x < 640; scale_x += 2, base_buffer++)
+        for (scale_x = 0; scale_x < 640; scale_x += 8, base_buffer += 4)
         {
             byte color;
+            byte color2;
+            byte color3;
+            byte color4;
             color = backbuffer[base_buffer];
-            ditherbuffer[scale_y + scale_x] = color;
-            ditherbuffer[scale_y + scale_x + 1] = color;
-            ditherbuffer[scale_y + 640 + scale_x] = color;
-            ditherbuffer[scale_y + 640 + scale_x + 1] = color;
+            ditherbuffer[scale_y + scale_x] = ptrsumcolors00[color];
+            ditherbuffer[scale_y + scale_x + 1] = ptrsumcolors10[color];
+            ditherbuffer[scale_y + 640 + scale_x] = ptrsumcolors01[color];
+            ditherbuffer[scale_y + 640 + scale_x + 1] = ptrsumcolors11[color];
+            color2 = backbuffer[base_buffer + 1];
+            ditherbuffer[scale_y + scale_x + 2] = ptrsumcolors00[color2];
+            ditherbuffer[scale_y + scale_x + 3] = ptrsumcolors10[color2];
+            ditherbuffer[scale_y + 640 + scale_x + 2] = ptrsumcolors01[color2];
+            ditherbuffer[scale_y + 640 + scale_x + 3] = ptrsumcolors11[color2];
+            color3 = backbuffer[base_buffer + 2];
+            ditherbuffer[scale_y + scale_x + 4] = ptrsumcolors00[color3];
+            ditherbuffer[scale_y + scale_x + 5] = ptrsumcolors10[color3];
+            ditherbuffer[scale_y + 640 + scale_x + 4] = ptrsumcolors01[color3];
+            ditherbuffer[scale_y + 640 + scale_x + 5] = ptrsumcolors11[color3];
+            color4 = backbuffer[base_buffer + 3];
+            ditherbuffer[scale_y + scale_x + 6] = ptrsumcolors00[color4];
+            ditherbuffer[scale_y + scale_x + 7] = ptrsumcolors10[color4];
+            ditherbuffer[scale_y + 640 + scale_x + 6] = ptrsumcolors01[color4];
+            ditherbuffer[scale_y + 640 + scale_x + 7] = ptrsumcolors11[color4];
         }
     }
-
-    BW_Dither4x4();
 
     /* 640x400 -> Hercules */
     for (y = 0, base_y = 0; y < 400 / 4; y++, base_y += 1920, vram += 80)
