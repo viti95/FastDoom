@@ -3,25 +3,28 @@ Doom port for DOS, based on PCDoom by @nukeykt. The goal of this port is to make
 
 ## FastDOOM vs Original
 
-* Added FPS ingame viewer. Enabled with "-fps"
+* Added FPS ingame viewer
 * Added FPS calculation after timedemo runs
-* Added option to render visplanes (ceiling and floors) without textures. Enable with "-flatsurfaces"
-* Added option to render Spectres and invisible objects like real transparent objects (harder to see, a little faster to render). Enable with "-flatshadows"
-* Added option to render sky as a flat fixed color. Enable with "-flatsky"
-* Added option to render Spectre and invisible objects like the Sega Saturn port did. Enable with "-saturn"
-* New option to show only objects that are not far away from the player. All the enemies are still rendered as they're important. Enabled with "-near"
+* Added option to render visplanes (ceiling and floors) without textures
+* Added option to render Spectres and invisible objects like real transparent objects (harder to see, a little faster to render)
+* Added option to render sky as a flat fixed color
+* Added option to render Spectre and invisible objects like the Sega Saturn port did
+* New option to show only objects that are not far away from the player. All the enemies are still rendered as they're important
 * PC Speaker uses all sounds available (just for fun!)
+* Disney Sound Source support
 * Lot's of optimizations to make the game run faster / smoother
 * Removed low memory limit (may cause crashes with low RAM)
-* NEW DETAIL LEVEL: POTATO. It renders the full scene with a quarter width resolution (max 80x200). 16-bit ISA video cards can play the game full screen much better!! My Western Digital Paradise PVGA1A ISA (1989) can render the game at a constant >25 fps with a 486DX-50. Enabled with "-potato" command parameter and low detail enabled.
+* NEW DETAIL LEVEL: POTATO. It renders the full scene with a quarter width resolution (max 80x200). 8-bit and 16-bit ISA video cards can play the game full screen much better!! My Western Digital Paradise PVGA1A ISA (1989) can render the game at a constant >25 fps with a 486DX-50
 * New option to allow more than 8Mb of memory allocation. Enabled with "-ram"
 * Removed network gaming support
 * Removed joystick support
 * Removed Y mouse movement (move forward/backwards)
-* Added autorun support (F11 key).
-* Added mono sound support. Enabled with "-mono" parameter.
+* Added autorun support (F12 key)
+* Added mono sound support
 * Added low quality sound support (8000Hz instead of 11025Hz). Enabled with "-lowsound" parameter.
 * Replaced DOS/4GW with DOS/32A providing a good speedup!
+* New setup program
+* New video modes (Mode 13h, CGA, EGA, Hercules, Text modes)
 
 ## DEMO
 
@@ -38,20 +41,9 @@ FastDoom 0.2 Benchmark Demo:
 
 [<img src="https://img.youtube.com/vi/oCgHcSkspmI/maxresdefault.jpg" width="50%">](https://youtu.be/oCgHcSkspmI)
 
-## TODO / Nice to have
-
-- [ ] Get more FPS! (assembly, optimizing loops, etc)
-- [ ] Add option to remove long dead monsters, as lesser sprites are faster to render
-- [ ] Add option to render up to X distance
-- [ ] Rewrite sound library (lump cache is not working right, all sounds are being uncached after 0.4 seconds of not being used, which causes major stutters)
-- [ ] Add uncapped framerate support (up to 70 fps)
-- [ ] Add a realtime performance viewer (FPS, frametime, total R_DrawColumn and R_DrawSpan calls, ...)
-- [ ] Add more drawing modes (VESA?, linear VGA?, ...)
-- [ ] Optimize drawing engine (front to back renderer?, ...)
-
 ## Build instructions
 
-1) Install Open Watcom C version 1.9.
+1) Install Open Watcom C version 2.0.
 2) Install Turbo Assembler 3.1, which is distributed with Borland C++ 3.1 (1992, not compatible with x64, use DOSBox or a real DOS environment).
 3) Add Watcom's bin folder (binnt on Windows, binw on DOS) to the PATH.
 4) Run make.bat.
