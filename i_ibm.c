@@ -740,16 +740,16 @@ void CGA_DrawBackbuffer(void)
     unsigned char *vram = (unsigned char *)0xB8000;
     unsigned int base = 0;
 
-    for (base = 0; base < SCREENHEIGHT * 320; base += 320, vram += 80)
+    for (base = 0; base < SCREENHEIGHT * 320; base += 320)
     {
-        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4)
+        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++)
         {
             unsigned char color;
             unsigned char color2;
-            color = (backbuffer[base] / 64) << 6 | (backbuffer[base + 1] / 64) << 4 | (backbuffer[base + 2] / 64) << 2 | (backbuffer[base + 3] / 64);
-            *(vram + x) = color;
-            color2 = (backbuffer[base + 320] / 64) << 6 | (backbuffer[base + 321] / 64) << 4 | (backbuffer[base + 322] / 64) << 2 | (backbuffer[base + 323] / 64);
-            *(vram + 0x2000 + x) = color2;
+            color = (backbuffer[base] >> 6) << 6 | (backbuffer[base + 1] >> 6) << 4 | (backbuffer[base + 2] >> 6) << 2 | (backbuffer[base + 3] >> 6);
+            *(vram) = color;
+            color2 = (backbuffer[base + 320] >> 6) << 6 | (backbuffer[base + 321] >> 6) << 4 | (backbuffer[base + 322] >> 6) << 2 | (backbuffer[base + 323] >> 6);
+            *(vram + 0x2000) = color2;
         }
     }
 }
