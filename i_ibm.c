@@ -559,74 +559,65 @@ void I_UpdateNoBlit(void)
 extern int screenblocks;
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
-void BW_Dither2x2()
-{
-    int col = 0;
-    int row = 0;
-    int x, y;
-    int base = 0;
-
-    for (y = 0; y < 200 / 2; y++, base += 1280)
-    {
-        for (x = 0; x < 640; x += 4)
-        {
-            ditherbuffer[base + x] = ptrsumcolors00[ditherbuffer[base + x]];
-            ditherbuffer[base + x + 1] = ptrsumcolors10[ditherbuffer[base + x + 1]];
-            ditherbuffer[base + x + 2] = ptrsumcolors00[ditherbuffer[base + x + 2]];
-            ditherbuffer[base + x + 3] = ptrsumcolors10[ditherbuffer[base + x + 3]];
-            ditherbuffer[base + x + 640] = ptrsumcolors01[ditherbuffer[base + x + 640]];
-            ditherbuffer[base + x + 641] = ptrsumcolors11[ditherbuffer[base + x + 641]];
-            ditherbuffer[base + x + 642] = ptrsumcolors01[ditherbuffer[base + x + 642]];
-            ditherbuffer[base + x + 643] = ptrsumcolors11[ditherbuffer[base + x + 643]];
-        }
-    }
-}
-
 void CGA_BW_DrawBackbuffer(void)
 {
-    int x, y = 0;
+    int x;
     unsigned char *vram = (unsigned char *)0xB8000;
+    byte *ptrbackbuffer;
 
-    unsigned int scale_y = 0;
-    unsigned int base_y = 0;
-    unsigned int base_buffer = 0;
-
-    unsigned int scale_x;
-
-    /* 320x200 -> 640x200 */
-    for (x = 0; x < 200 * 320; x += 4, y += 8)
+    for (ptrbackbuffer = backbuffer; ptrbackbuffer < backbuffer + 200 * 640 / 2; ptrbackbuffer += 640, vram += 80)
     {
-        byte color;
-        byte color2;
-        byte color3;
-        byte color4;
-        color = backbuffer[x];
-        color2 = backbuffer[x + 1];
-        color3 = backbuffer[x + 2];
-        color4 = backbuffer[x + 3];
-        ditherbuffer[y] = color;
-        ditherbuffer[y + 1] = color;
-        ditherbuffer[y + 2] = color2;
-        ditherbuffer[y + 3] = color2;
-        ditherbuffer[y + 4] = color3;
-        ditherbuffer[y + 5] = color3;
-        ditherbuffer[y + 6] = color4;
-        ditherbuffer[y + 7] = color4;
-    }
-
-    BW_Dither2x2();
-
-    /* 640x200 -> CGA */
-    for (y = 0, base_y = 0; y < 200 / 2; y++, base_y += 640, vram += 80)
-    {
-        for (x = 0; x < 640 / 8; x++, base_y += 8)
+        for (x = 0; x < 320; x += 4)
         {
-            byte color;
+            byte color0;
+            byte color1;
             byte color2;
-            color = (ditherbuffer[base_y]) << 7 | (ditherbuffer[base_y + 1]) << 6 | (ditherbuffer[base_y + 2]) << 5 | (ditherbuffer[base_y + 3]) << 4 | (ditherbuffer[base_y + 4]) << 3 | (ditherbuffer[base_y + 5]) << 2 | (ditherbuffer[base_y + 6]) << 1 | (ditherbuffer[base_y + 7]);
-            color2 = (ditherbuffer[base_y + 640]) << 7 | (ditherbuffer[base_y + 641]) << 6 | (ditherbuffer[base_y + 642]) << 5 | (ditherbuffer[base_y + 643]) << 4 | (ditherbuffer[base_y + 644]) << 3 | (ditherbuffer[base_y + 645]) << 2 | (ditherbuffer[base_y + 646]) << 1 | (ditherbuffer[base_y + 647]);
-            *(vram + 0x0000 + x) = color;
-            *(vram + 0x2000 + x) = color2;
+            byte color3;
+
+            byte color4;
+            byte color5;
+            byte color6;
+            byte color7;
+
+            byte finalcolor0;
+            byte finalcolor1;
+
+            color0 = ptrbackbuffer[x];
+            finalcolor0 = (ptrsumcolors00[color0]) << 7 | (ptrsumcolors10[color0]) << 6;
+            color1 = ptrbackbuffer[x + 1];
+            finalcolor0 |= (ptrsumcolors00[color1]) << 5 | (ptrsumcolors10[color1]) << 4;
+            color2 = ptrbackbuffer[x + 2];
+            finalcolor0 |= (ptrsumcolors00[color2]) << 3 | (ptrsumcolors10[color2]) << 2;
+            color3 = ptrbackbuffer[x + 3];
+            finalcolor0 |= (ptrsumcolors00[color3]) << 1 | (ptrsumcolors10[color3]);
+
+            *(vram + (x / 4)) = finalcolor0;
+
+            color4 = ptrbackbuffer[x + 320];
+            finalcolor1 = (ptrsumcolors01[color4]) << 7 | (ptrsumcolors11[color4]) << 6;
+            color5 = ptrbackbuffer[x + 321];
+            finalcolor1 |= (ptrsumcolors01[color5]) << 5 | (ptrsumcolors11[color5]) << 4;
+            color6 = ptrbackbuffer[x + 322];
+            finalcolor1 |= (ptrsumcolors01[color6]) << 3 | (ptrsumcolors11[color6]) << 2;
+            color7 = ptrbackbuffer[x + 323];
+            finalcolor1 |= (ptrsumcolors01[color7]) << 1 | (ptrsumcolors11[color7]);
+
+            *(vram + 0x2000 + (x / 4)) = finalcolor1;
+
+            /*color0 = ptrbackbuffer[x];
+            color1 = ptrbackbuffer[x + 1];
+            color2 = ptrbackbuffer[x + 2];
+            color3 = ptrbackbuffer[x + 3];
+
+            *(vram + (x / 4)) = (ptrsumcolors00[color0]) << 7 | (ptrsumcolors10[color0]) << 6 | (ptrsumcolors00[color1]) << 5 | (ptrsumcolors10[color1]) << 4 | (ptrsumcolors00[color2]) << 3 | (ptrsumcolors10[color2]) << 2 | (ptrsumcolors00[color3]) << 1 | (ptrsumcolors10[color3]);
+
+            color4 = ptrbackbuffer[x + 320];
+            color5 = ptrbackbuffer[x + 321];
+            color6 = ptrbackbuffer[x + 322];
+            color7 = ptrbackbuffer[x + 323];
+
+            *(vram + 0x2000 + (x / 4)) = (ptrsumcolors01[color4]) << 7 | (ptrsumcolors11[color4]) << 6 | (ptrsumcolors11[color5]) << 5 | (ptrsumcolors11[color5]) << 4 | (ptrsumcolors11[color6]) << 3 | (ptrsumcolors11[color6]) << 2 | (ptrsumcolors01[color7]) << 1 | (ptrsumcolors11[color7]);
+            */
         }
     }
 }
