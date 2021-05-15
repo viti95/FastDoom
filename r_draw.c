@@ -650,9 +650,9 @@ void R_DrawSpanText8050(void)
     fixed_t yfrac;
     unsigned short *dest;
 
-    countp = ds_x2 - ds_x1;
-
-    dest = textdestscreen + Mul80(ds_y) + ds_x1;
+    dest = textdestscreen + Mul80(ds_y);
+    countp = dest + ds_x2;
+    dest += ds_x1;
 
     xfrac = ds_xfrac;
     yfrac = ds_yfrac;
@@ -669,7 +669,7 @@ void R_DrawSpanText8050(void)
         // Next step in u,v.
         xfrac += ds_xstep;
         yfrac += ds_ystep;
-    } while (countp--);
+    } while (dest <= countp);
 }
 #endif
 
