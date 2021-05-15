@@ -682,9 +682,8 @@ void R_DrawSpanPotato(void)
     fixed_t yfrac;
     byte *dest;
 
-    countp = ds_x2 - ds_x1;
-
     dest = destview + Mul80(ds_y) + ds_x1;
+    countp = dest + ds_x2 - ds_x1;
 
     xfrac = ds_xfrac;
     yfrac = ds_yfrac;
@@ -701,7 +700,7 @@ void R_DrawSpanPotato(void)
         // Next step in u,v.
         xfrac += ds_xstep;
         yfrac += ds_ystep;
-    } while (countp--);
+    } while (dest <= countp);
 }
 
 //
