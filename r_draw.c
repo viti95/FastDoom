@@ -269,55 +269,43 @@ void R_DrawSpanText8025(void)
     fixed_t xfrac;
     fixed_t yfrac;
     byte odd;
+    byte shift;
     unsigned short *dest;
     unsigned short vmem;
 
-    countp = ds_x2 - ds_x1;
+    byte even;
+    unsigned short vmem_filter;
+
+    dest = textdestscreen + Mul80(ds_y / 2);
+    countp = dest + ds_x2;
+    dest += ds_x1;
 
     odd = ds_y % 2;
-    dest = textdestscreen + Mul80(ds_y / 2) + ds_x1;
+    shift = 8 | (odd << 2);
 
+    even = (ds_y + 1) % 2;
+    vmem_filter = 0xF00 << (even * 4);
+    
     xfrac = ds_xfrac;
     yfrac = ds_yfrac;
 
-    if (odd)
+    do
     {
-        do
-        {
-            // Current texture index in u,v.
-            spot = ((yfrac >> (16 - 6)) & (63 * 64)) + ((xfrac >> 16) & 63);
+        // Current texture index in u,v.
+        spot = ((yfrac >> (16 - 6)) & (63 * 64)) + ((xfrac >> 16) & 63);
 
-            // Lookup pixel from flat texture tile,
-            //  re-index using light/colormap.
-            vmem = *dest;
+        // Lookup pixel from flat texture tile,
+        //  re-index using light/colormap.
+        vmem = *dest;
 
-            vmem = vmem & 0x0F00;
-            *dest++ = vmem | ptrlut16colors[ds_colormap[ds_source[spot]]] << 12 | 223;
+        vmem = vmem & vmem_filter;
+        *dest++ = vmem | ptrlut16colors[ds_colormap[ds_source[spot]]] << shift | 223;
 
-            // Next step in u,v.
-            xfrac += ds_xstep;
-            yfrac += ds_ystep;
-        } while (countp--);
-    }
-    else
-    {
-        do
-        {
-            // Current texture index in u,v.
-            spot = ((yfrac >> (16 - 6)) & (63 * 64)) + ((xfrac >> 16) & 63);
-
-            // Lookup pixel from flat texture tile,
-            //  re-index using light/colormap.
-            vmem = *dest;
-
-            vmem = vmem & 0xF000;
-            *dest++ = vmem | ptrlut16colors[ds_colormap[ds_source[spot]]] << 8 | 223;
-
-            // Next step in u,v.
-            xfrac += ds_xstep;
-            yfrac += ds_ystep;
-        } while (countp--);
-    }
+        // Next step in u,v.
+        xfrac += ds_xstep;
+        yfrac += ds_ystep;
+    } while (dest <= countp);
+    
 }
 #endif
 
