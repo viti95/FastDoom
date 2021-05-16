@@ -1452,37 +1452,31 @@ void R_DrawSpanFlatText8025(void)
 {
     int countp;
     byte odd;
+    byte even;
+    byte shift;
     unsigned short *dest;
     unsigned short vmem;
+    unsigned short vmem_filter;
+    unsigned short color;
 
-    unsigned short color = ptrlut16colors[ds_colormap[ds_source[FLATPIXELCOLOR]]];
-
-    dest = textdestscreen + Mul80(ds_y / 2) + ds_x1;
-
-    countp = ds_x2 - ds_x1;
+    dest = textdestscreen + Mul80(ds_y / 2);
+    countp = dest + ds_x2;
+    dest += ds_x1;
 
     odd = ds_y % 2;
+    shift = 8 | (odd << 2);
+    color = ptrlut16colors[ds_colormap[ds_source[FLATPIXELCOLOR]]];
+    color = color << shift | 223;
 
-    if (odd)
+    even = (ds_y + 1) % 2;
+    vmem_filter = 0xF00 << (even * 4);
+
+    do
     {
-        color = color << 12 | 223;
-        do
-        {
-            vmem = *dest;
-            vmem = vmem & 0x0F00;
-            *dest++ = vmem | color;
-        } while (countp--);
-    }
-    else
-    {
-        color = color << 8 | 223;
-        do
-        {
-            vmem = *dest;
-            vmem = vmem & 0xF000;
-            *dest++ = vmem | color;
-        } while (countp--);
-    }
+        vmem = *dest;
+        vmem = vmem & vmem_filter;
+        *dest++ = vmem | color;
+    } while (dest <= countp);
 }
 #endif
 
