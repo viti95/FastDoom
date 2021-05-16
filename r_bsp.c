@@ -470,7 +470,6 @@ void R_Subsector(int num)
 
     sub = &subsectors[num];
     frontsector = sub->sector;
-    count = sub->numlines;
     line = &segs[sub->firstline];
 
     if (frontsector->floorheight < viewz)
@@ -481,7 +480,9 @@ void R_Subsector(int num)
 
     R_AddSprites(frontsector);
 
-    while (count--)
+    count = line + sub->numlines;
+
+    while (line < count)
     {
         R_AddLine(line);
         line++;
