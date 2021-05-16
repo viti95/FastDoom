@@ -107,6 +107,7 @@ fixed_t dc_texturemid;
 // first pixel in a column (possibly virtual)
 byte *dc_source;
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void R_DrawSkyFlat(void)
 {
     register int count;
@@ -135,7 +136,9 @@ void R_DrawSkyFlat(void)
         count--;
     };
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void R_DrawSkyFlatLow(void)
 {
     register int count;
@@ -164,7 +167,9 @@ void R_DrawSkyFlatLow(void)
         count--;
     };
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void R_DrawSkyFlatPotato(void)
 {
     register int count;
@@ -191,6 +196,7 @@ void R_DrawSkyFlatPotato(void)
         count--;
     };
 }
+#endif
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 void R_DrawColumnText8025(void)
@@ -305,7 +311,7 @@ void R_DrawSpanText8025(void)
         xfrac += ds_xstep;
         yfrac += ds_ystep;
     } while (dest <= countp);
-    
+
 }
 #endif
 
@@ -314,11 +320,11 @@ void R_DrawColumnText8050(void)
 {
     fixed_t frac;
     fixed_t fracstep;
-    unsigned int count;
+    int count;
     unsigned short *dest;
 
     dest = textdestscreen + Mul80(dc_yl) + dc_x;
-    count = dc_yh - dc_yl;
+    count = dest + Mul80(dc_yh - dc_yl);
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
@@ -328,24 +334,24 @@ void R_DrawColumnText8050(void)
         *dest = ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 219;
         dest += 80;
         frac += fracstep;
-    } while (count--);
+    } while (dest <= count);
 }
 #endif
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void R_DrawSkyFlatText8050(void)
 {
-    unsigned int count;
+    int count;
     unsigned short *dest;
 
     dest = textdestscreen + Mul80(dc_yl) + dc_x;
-    count = dc_yh - dc_yl;
+    count = dest + Mul80(dc_yh - dc_yl);
 
     do
     {
         *dest = 6 << 8 | 219;
         dest += 80;
-    } while (count--);
+    } while (dest <= count);
 }
 #endif
 
@@ -606,12 +612,12 @@ void R_DrawFuzzColumnFastText8025(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void R_DrawFuzzColumnFastText8050(void)
 {
-    unsigned int count;
+    int count;
     unsigned short *dest;
     unsigned short vmem;
 
     dest = textdestscreen + Mul80(dc_yl) + dc_x;
-    count = dc_yh - dc_yl;
+    count = dest + Mul80(dc_yh - dc_yl);
 
     do
     {
@@ -624,7 +630,7 @@ void R_DrawFuzzColumnFastText8050(void)
         }
 
         dest += 80;
-    } while (count--);
+    } while (dest <= count);
 }
 #endif
 
@@ -661,6 +667,7 @@ void R_DrawSpanText8050(void)
 }
 #endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void R_DrawSpanPotato(void)
 {
     int spot;
@@ -690,6 +697,7 @@ void R_DrawSpanPotato(void)
         yfrac += ds_ystep;
     } while (dest <= countp);
 }
+#endif
 
 //
 // Spectre/Invisibility.
@@ -716,6 +724,7 @@ int fuzzoffset[FUZZTABLE] =
 
 int fuzzpos = 0;
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void R_DrawFuzzColumn(void)
 {
     register int count;
@@ -745,7 +754,9 @@ void R_DrawFuzzColumn(void)
         dest += SCREENWIDTH / 4;
     } while (count--);
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void R_DrawFuzzColumnLow(void)
 {
     register int count;
@@ -775,7 +786,9 @@ void R_DrawFuzzColumnLow(void)
         dest += SCREENWIDTH / 4;
     } while (count--);
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void R_DrawFuzzColumnPotato(void)
 {
     register int count;
@@ -802,7 +815,9 @@ void R_DrawFuzzColumnPotato(void)
         dest += SCREENWIDTH / 4;
     } while (count--);
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void R_DrawFuzzColumnFast(void)
 {
     register int count;
@@ -832,7 +847,9 @@ void R_DrawFuzzColumnFast(void)
         count--;
     }
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void R_DrawFuzzColumnFastLow(void)
 {
     register int count;
@@ -862,7 +879,9 @@ void R_DrawFuzzColumnFastLow(void)
         count--;
     }
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void R_DrawFuzzColumnFastPotato(void)
 {
     register int count;
@@ -889,7 +908,9 @@ void R_DrawFuzzColumnFastPotato(void)
         count--;
     }
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
 void R_DrawFuzzColumnText8025(void)
 {
     register int count;
@@ -960,15 +981,17 @@ void R_DrawFuzzColumnText8025(void)
 
     } while (count--);
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void R_DrawFuzzColumnText8050(void)
 {
-    unsigned int count;
+    int count;
     unsigned short *dest;
     unsigned short vmem;
 
     dest = textdestscreen + Mul80(dc_yl) + dc_x;
-    count = dc_yh - dc_yl;
+    count = dest + Mul80(dc_yh - dc_yl);
 
     do
     {
@@ -991,9 +1014,11 @@ void R_DrawFuzzColumnText8050(void)
             fuzzpos = 0;
 
         dest += 80;
-    } while (count--);
+    } while (dest <= count);
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void R_DrawFuzzColumnSaturn(void)
 {
     int count;
@@ -1043,7 +1068,9 @@ void R_DrawFuzzColumnSaturn(void)
         }
     }
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void R_DrawFuzzColumnSaturnLow(void)
 {
     int count;
@@ -1095,7 +1122,9 @@ void R_DrawFuzzColumnSaturnLow(void)
         }
     }
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void R_DrawFuzzColumnSaturnPotato(void)
 {
     int count;
@@ -1144,6 +1173,7 @@ void R_DrawFuzzColumnSaturnPotato(void)
         }
     }
 }
+#endif
 
 //
 // R_DrawSpan
@@ -1171,6 +1201,7 @@ fixed_t ds_ystep;
 // start of a 64*64 tile image
 byte *ds_source;
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void R_DrawSpanFlat(void)
 {
     register byte *dest;
@@ -1304,7 +1335,9 @@ void R_DrawSpanFlat(void)
         *dest = color;
     }
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void R_DrawSpanFlatLow(void)
 {
     register byte *dest;
@@ -1396,7 +1429,9 @@ void R_DrawSpanFlatLow(void)
         *dest = color;
     }
 }
+#endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void R_DrawSpanFlatPotato(void)
 {
     int countp;
@@ -1418,6 +1453,7 @@ void R_DrawSpanFlatPotato(void)
         SetWords(dest, colorcomp, countp / 2);
     }
 }
+#endif
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void R_DrawSpanFlatText8050(void)
