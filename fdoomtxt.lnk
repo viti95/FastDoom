@@ -7,14 +7,13 @@ option stub=wstub
 option statics
 option symfile
 option verbose
-debug all
 libpath %WATCOM%\lib386
 libpath %WATCOM%\lib386\dos
 lib noemu387.lib
 lib gf1_osf.lib
 lib pawe32.lib
 format os2 le
-name fdoom
+name fdoomtxt
 
 file ns_dpmi.obj
 file ns_pcfx.obj
@@ -46,8 +45,6 @@ file i_random.obj
 file i_main.obj
 file i_ibm.obj
 file i_sound.obj
-file planar.obj
-file linear.obj
 file tables.obj
 file f_finale.obj
 file d_main.obj
