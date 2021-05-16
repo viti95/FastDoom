@@ -772,11 +772,22 @@ void R_DrawPlanesFlatSurfacesText8050(void)
             count = pl->bottom[x] - pl->top[x];
             dest = textdestscreen + Mul80(pl->top[x]) + x;
 
-            do
+            while (count >= 3)
+            {
+                *(dest) = color;
+                *(dest + SCREENWIDTH / 4) = color;
+                *(dest + SCREENWIDTH / 2) = color;
+                *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
+                dest += SCREENWIDTH;
+                count -= 4;
+            }
+
+            while (count >= 0)
             {
                 *dest = color;
-                dest += 80;
-            } while (count--);
+                dest += SCREENWIDTH / 4;
+                count--;
+            };
         }
 
         Z_ChangeTag(dc_source, PU_CACHE);
