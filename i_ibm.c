@@ -408,9 +408,11 @@ void I_UpdateBox(int x, int y, int w, int h)
     poffset = offset / 4;
     pstep = step / 4;
 
-    if (!(count & 1))
+    if (count & 1)
     {
-        // 32-bit copy
+        // 16-bit copy
+
+        count = 2 * count;
 
         for (i = 0; i < 4; i++)
         {
@@ -420,13 +422,13 @@ void I_UpdateBox(int x, int y, int w, int h)
 
             for (j = 0; j < h; j++)
             {
-                k = count / 2;
+                k = dest + count;
 
-                while (k--)
+                while (dest < k) 
                 {
-                    *(unsigned int *)dest = (unsigned int)((*source) + ((*(source + 4)) << 8) + ((*(source + 8)) << 16) + ((*(source + 12)) << 24));
-                    dest += 4;
-                    source += 16;
+                    *(unsigned short *)dest = (unsigned short)((*source) + ((*(source + 4)) << 8));
+                    dest += 2;
+                    source += 8;
                 }
 
                 source += step;
@@ -436,7 +438,9 @@ void I_UpdateBox(int x, int y, int w, int h)
     }
     else
     {
-        // 16-bit copy
+        // 32-bit copy
+
+        count = 2 * count;
 
         for (i = 0; i < 4; i++)
         {
@@ -446,13 +450,13 @@ void I_UpdateBox(int x, int y, int w, int h)
 
             for (j = 0; j < h; j++)
             {
-                k = count;
+                k = dest + count;
 
-                while (k--)
+                while (dest < k)
                 {
-                    *(unsigned short *)dest = (unsigned short)((*source) + ((*(source + 4)) << 8));
-                    dest += 2;
-                    source += 8;
+                    *(unsigned int *)dest = (unsigned int)((*source) + ((*(source + 4)) << 8) + ((*(source + 8)) << 16) + ((*(source + 12)) << 24));
+                    dest += 4;
+                    source += 16;
                 }
 
                 source += step;
