@@ -470,8 +470,7 @@ void R_Subsector(int num)
 
     sub = &subsectors[num];
     frontsector = sub->sector;
-    line = &segs[sub->firstline];
-
+    
     if (frontsector->floorheight < viewz)
         floorplane = R_FindPlane(frontsector->floorheight, frontsector->floorpic, frontsector->lightlevel);
 
@@ -480,6 +479,7 @@ void R_Subsector(int num)
 
     R_AddSprites(frontsector);
 
+    line = &segs[sub->firstline];
     count = line + sub->numlines;
 
     while (line < count)
