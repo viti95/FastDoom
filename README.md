@@ -33,15 +33,11 @@ Doom port for DOS, based on PCDoom by @nukeykt. The goal of this port is to make
 | FPS    | 19.56          | 21.68             | 22.44              | 25.77                            | 25.86                                              | 26.02                                                     | 24.79                 | 29.05                                                        |
 | Gain | 100.00%        | 110.20%           | 114.70%            | 131.70%                          | 132.20%                                            | 133.00%                                                   | 126.74%               | 148.52%                                                      |
 
-FastDoom 0.3 Live Demo:
+FastDoom 0.6 Live Demo:
 
-[<img src="https://img.youtube.com/vi/vJWtdZHjjKY/maxresdefault.jpg" width="50%">](https://youtu.be/vJWtdZHjjKY)
+[<img src="http://i3.ytimg.com/vi/Oi20FDX8V9w/hqdefault.jpg" width="100%">](https://youtu.be/Oi20FDX8V9w)
 
-FastDoom 0.2 Benchmark Demo:
-
-[<img src="https://img.youtube.com/vi/oCgHcSkspmI/maxresdefault.jpg" width="50%">](https://youtu.be/oCgHcSkspmI)
-
-## Build instructions
+## Build instructions (FastDOOM)
 
 1) Install Open Watcom C version 2.0.
 2) Install Turbo Assembler 3.1, which is distributed with Borland C++ 3.1 (1992, not compatible with x64, use DOSBox or a real DOS environment).
@@ -49,6 +45,13 @@ FastDoom 0.2 Benchmark Demo:
 4) Run make.bat.
 5) (Optional) Install DOS/32A
 6) (Optional) Execute "sb -r doom.exe" to replace DOS/4GW
+
+## Build instructions (FDSETUP)
+
+1) Install Borland C++ 4.52 (Windows 3.1, Windows 9x)
+2) Install Laughing Dog Screen Maker 1.14 (MS-DOS)
+3) Open setup.ide project in Borland C++ IDE
+4) Build the project
 
 ## Contributing
 
