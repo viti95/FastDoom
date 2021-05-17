@@ -1,5 +1,9 @@
+#FASTDOOM
 *.err
 *.exe
 *.map
 *.obj
 *.sym
+
+#VSCODE
+.vscode/*
