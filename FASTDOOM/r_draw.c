@@ -270,15 +270,13 @@ void R_DrawColumnText8025(void)
 void R_DrawSpanText8025(void)
 {
     int spot;
-    int prt;
     int countp;
-    fixed_t xfrac;
-    fixed_t yfrac;
+    unsigned position;
+    unsigned step;
     byte odd;
     byte shift;
     unsigned short *dest;
     unsigned short vmem;
-
     byte even;
     unsigned short vmem_filter;
 
@@ -286,30 +284,31 @@ void R_DrawSpanText8025(void)
     countp = dest + ds_x2;
     dest += ds_x1;
 
+    position = ((ds_xfrac << 10) & 0xffff0000) | ((ds_yfrac >> 6) & 0xffff);
+    step = ((ds_xstep << 10) & 0xffff0000) | ((ds_ystep >> 6) & 0xffff);
+
     odd = ds_y % 2;
     shift = 8 | (odd << 2);
 
     even = (ds_y + 1) % 2;
     vmem_filter = 0xF00 << (even * 4);
 
-    xfrac = ds_xfrac;
-    yfrac = ds_yfrac;
-
     do
     {
-        // Current texture index in u,v.
-        spot = ((yfrac >> (16 - 6)) & (63 * 64)) + ((xfrac >> 16) & 63);
+        unsigned xtemp;
+        unsigned ytemp;
+        unsigned spot;
 
-        // Lookup pixel from flat texture tile,
-        //  re-index using light/colormap.
+        ytemp = position >> 4;
+        ytemp = ytemp & 4032;
+        xtemp = position >> 26;
+        spot = xtemp | ytemp;
+
         vmem = *dest;
-
         vmem = vmem & vmem_filter;
         *dest++ = vmem | ptrlut16colors[ds_colormap[ds_source[spot]]] << shift | 223;
 
-        // Next step in u,v.
-        xfrac += ds_xstep;
-        yfrac += ds_ystep;
+        position += step;
     } while (dest <= countp);
 }
 #endif
