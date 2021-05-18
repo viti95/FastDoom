@@ -676,63 +676,31 @@ void R_DrawSpanPotato(void)
     byte *colormap;
     byte *dest;
 
-    unsigned count;
-    unsigned spot;
-    unsigned xtemp;
-    unsigned ytemp;
+    int count;
 
     position = ((ds_xfrac << 10) & 0xffff0000) | ((ds_yfrac >> 6) & 0xffff);
     step = ((ds_xstep << 10) & 0xffff0000) | ((ds_ystep >> 6) & 0xffff);
 
     source = ds_source;
     colormap = ds_colormap;
-    dest = destview + Mul80(ds_y) + ds_x1;
-    count = ds_x2 - ds_x1 + 1;
 
-    while (count >= 4)
+    dest = destview + Mul80(ds_y);
+    count = dest + ds_x2;
+    dest += ds_x1;
+
+    do
     {
-        ytemp = position >> 4;
-        ytemp = ytemp & 4032;
-        xtemp = position >> 26;
-        spot = xtemp | ytemp;
-        position += step;
-        dest[0] = colormap[source[spot]];
+        unsigned xtemp;
+        unsigned ytemp;
+        unsigned spot;
 
         ytemp = position >> 4;
         ytemp = ytemp & 4032;
         xtemp = position >> 26;
         spot = xtemp | ytemp;
-        position += step;
-        dest[1] = colormap[source[spot]];
-
-        ytemp = position >> 4;
-        ytemp = ytemp & 4032;
-        xtemp = position >> 26;
-        spot = xtemp | ytemp;
-        position += step;
-        dest[2] = colormap[source[spot]];
-
-        ytemp = position >> 4;
-        ytemp = ytemp & 4032;
-        xtemp = position >> 26;
-        spot = xtemp | ytemp;
-        position += step;
-        dest[3] = colormap[source[spot]];
-
-        dest += 4;
-        count -= 4;
-    }
-
-    while (count)
-    {
-        ytemp = position >> 4;
-        ytemp = ytemp & 4032;
-        xtemp = position >> 26;
-        spot = xtemp | ytemp;
-        position += step;
         *dest++ = colormap[source[spot]];
-        count--;
-    }
+        position += step;
+    } while (dest <= count);
 }
 #endif
 
