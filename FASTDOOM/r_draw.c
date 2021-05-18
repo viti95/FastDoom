@@ -291,7 +291,7 @@ void R_DrawSpanText8025(void)
 
     even = (ds_y + 1) % 2;
     vmem_filter = 0xF00 << (even * 4);
-    
+
     xfrac = ds_xfrac;
     yfrac = ds_yfrac;
 
@@ -311,7 +311,6 @@ void R_DrawSpanText8025(void)
         xfrac += ds_xstep;
         yfrac += ds_ystep;
     } while (dest <= countp);
-
 }
 #endif
 
@@ -670,32 +669,70 @@ void R_DrawSpanText8050(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void R_DrawSpanPotato(void)
 {
-    int spot;
-    int prt;
-    int countp;
-    fixed_t xfrac;
-    fixed_t yfrac;
+    unsigned position;
+    unsigned step;
+
+    byte *source;
+    byte *colormap;
     byte *dest;
 
+    unsigned count;
+    unsigned spot;
+    unsigned xtemp;
+    unsigned ytemp;
+
+    position = ((ds_xfrac << 10) & 0xffff0000) | ((ds_yfrac >> 6) & 0xffff);
+    step = ((ds_xstep << 10) & 0xffff0000) | ((ds_ystep >> 6) & 0xffff);
+
+    source = ds_source;
+    colormap = ds_colormap;
     dest = destview + Mul80(ds_y) + ds_x1;
-    countp = dest + ds_x2 - ds_x1;
+    count = ds_x2 - ds_x1 + 1;
 
-    xfrac = ds_xfrac;
-    yfrac = ds_yfrac;
-
-    do
+    while (count >= 4)
     {
-        // Current texture index in u,v.
-        spot = ((yfrac >> (16 - 6)) & (63 * 64)) + ((xfrac >> 16) & 63);
+        ytemp = position >> 4;
+        ytemp = ytemp & 4032;
+        xtemp = position >> 26;
+        spot = xtemp | ytemp;
+        position += step;
+        dest[0] = colormap[source[spot]];
 
-        // Lookup pixel from flat texture tile,
-        //  re-index using light/colormap.
-        *dest++ = ds_colormap[ds_source[spot]];
+        ytemp = position >> 4;
+        ytemp = ytemp & 4032;
+        xtemp = position >> 26;
+        spot = xtemp | ytemp;
+        position += step;
+        dest[1] = colormap[source[spot]];
 
-        // Next step in u,v.
-        xfrac += ds_xstep;
-        yfrac += ds_ystep;
-    } while (dest <= countp);
+        ytemp = position >> 4;
+        ytemp = ytemp & 4032;
+        xtemp = position >> 26;
+        spot = xtemp | ytemp;
+        position += step;
+        dest[2] = colormap[source[spot]];
+
+        ytemp = position >> 4;
+        ytemp = ytemp & 4032;
+        xtemp = position >> 26;
+        spot = xtemp | ytemp;
+        position += step;
+        dest[3] = colormap[source[spot]];
+
+        dest += 4;
+        count -= 4;
+    }
+
+    while (count)
+    {
+        ytemp = position >> 4;
+        ytemp = ytemp & 4032;
+        xtemp = position >> 26;
+        spot = xtemp | ytemp;
+        position += step;
+        *dest++ = colormap[source[spot]];
+        count--;
+    }
 }
 #endif
 
