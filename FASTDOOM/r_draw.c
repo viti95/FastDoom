@@ -636,32 +636,37 @@ void R_DrawFuzzColumnFastText8050(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
 void R_DrawSpanText8050(void)
 {
-    int spot;
-    int prt;
     int countp;
-    fixed_t xfrac;
-    fixed_t yfrac;
+    unsigned position;
+    unsigned step;
     unsigned short *dest;
+    byte *source;
+    byte *colormap;
+    byte *ptrcolors;
 
     dest = textdestscreen + Mul80(ds_y);
     countp = dest + ds_x2;
     dest += ds_x1;
 
-    xfrac = ds_xfrac;
-    yfrac = ds_yfrac;
+    position = ((ds_xfrac << 10) & 0xffff0000) | ((ds_yfrac >> 6) & 0xffff);
+    step = ((ds_xstep << 10) & 0xffff0000) | ((ds_ystep >> 6) & 0xffff);
+
+    source = ds_source;
+    colormap = ds_colormap;
+    ptrcolors = ptrlut16colors;
 
     do
     {
-        // Current texture index in u,v.
-        spot = ((yfrac >> (16 - 6)) & (63 * 64)) + ((xfrac >> 16) & 63);
+        unsigned xtemp;
+        unsigned ytemp;
+        unsigned spot;
 
-        // Lookup pixel from flat texture tile,
-        //  re-index using light/colormap.
-        *dest++ = ptrlut16colors[ds_colormap[ds_source[spot]]] << 8 | 219;
-
-        // Next step in u,v.
-        xfrac += ds_xstep;
-        yfrac += ds_ystep;
+        ytemp = position >> 4;
+        ytemp = ytemp & 4032;
+        xtemp = position >> 26;
+        spot = xtemp | ytemp;
+        *dest++ = ptrcolors[colormap[source[spot]]] << 8 | 219;
+        position += step;
     } while (dest <= countp);
 }
 #endif
