@@ -35,7 +35,7 @@ Doom port for DOS, based on PCDoom by @nukeykt. The goal of this port is to make
 
 FastDoom 0.6 Live Demo:
 
-[<img src="http://i3.ytimg.com/vi/Oi20FDX8V9w/hqdefault.jpg" width="100%">](https://youtu.be/Oi20FDX8V9w)
+[<img src="http://i3.ytimg.com/vi/Oi20FDX8V9w/hqdefault.jpg" width="50%">](https://youtu.be/Oi20FDX8V9w)
 
 ## Build instructions (FastDOOM)
 
