@@ -378,9 +378,13 @@ void I_SetPalette(int numpalette)
 int updatestate;
 #endif
 byte *pcscreen, *currentscreen, *destscreen, *destview;
-unsigned short *textdestscreen = (unsigned short *)0xB8000;
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
+byte page = 0;
+#endif
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+unsigned short *textdestscreen = (unsigned short *)0xB8000;
 byte textpage = 0;
 #endif
 
@@ -424,7 +428,7 @@ void I_UpdateBox(int x, int y, int w, int h)
             {
                 k = dest + count;
 
-                while (dest < k) 
+                while (dest < k)
                 {
                     *(unsigned short *)dest = (unsigned short)((*source) + ((*(source + 4)) << 8));
                     dest += 2;
@@ -676,7 +680,6 @@ void HERC_DrawBackbuffer(void)
 #endif
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
-#define NUM_SCANLINES 1
 
 void EGA_DrawBackbuffer(void)
 {
@@ -710,21 +713,34 @@ void EGA_DrawBackbuffer(void)
         plane_position++;
     }
 
-    // Draw screen in groups of scanlines
-    for (plane_position = 0; plane_position < SCREENHEIGHT * 40; plane_position += 40 * NUM_SCANLINES)
+    // Copy each bitplane
+    outp(0x3C5, 1 << (3 & 0x03));
+    CopyDWords(plane_red, destscreen, SCREENWIDTH * SCREENHEIGHT / 32);
+
+    outp(0x3C5, 1 << (2 & 0x03));
+    CopyDWords(plane_green, destscreen, SCREENWIDTH * SCREENHEIGHT / 32);
+
+    outp(0x3C5, 1 << (1 & 0x03));
+    CopyDWords(plane_blue, destscreen, SCREENWIDTH * SCREENHEIGHT / 32);
+
+    outp(0x3C5, 1 << (0 & 0x03));
+    CopyDWords(plane_intensity, destscreen, SCREENWIDTH * SCREENHEIGHT / 32);
+
+    // Change video page
+    regs.h.ah = 0x05;
+    regs.h.al = page;
+    regs.h.bh = 0x00;
+    regs.h.bl = 0x00;
+    int386(0x10, &regs, &regs);
+
+    //Next plane
+    destscreen += 0x2000;
+
+    page++;
+    if (page == 3)
     {
-        // Copy each bitplane for each scanline group
-        outp(0x3C5, 1 << (3 & 0x03));
-        CopyDWords(plane_red + plane_position, pcscreen + plane_position, 40 * NUM_SCANLINES / 4);
-
-        outp(0x3C5, 1 << (2 & 0x03));
-        CopyDWords(plane_green + plane_position, pcscreen + plane_position, 40 * NUM_SCANLINES / 4);
-
-        outp(0x3C5, 1 << (1 & 0x03));
-        CopyDWords(plane_blue + plane_position, pcscreen + plane_position, 40 * NUM_SCANLINES / 4);
-
-        outp(0x3C5, 1 << (0 & 0x03));
-        CopyDWords(plane_intensity + plane_position, pcscreen + plane_position, 40 * NUM_SCANLINES / 4);
+        destscreen = (byte *)0xa0000;
+        page = 0;
     }
 }
 #endif
