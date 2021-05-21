@@ -907,6 +907,15 @@ void D_DoomMain(void)
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
     D_AddFile("txtcolor.wad");
 #endif
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
+    D_AddFile("bwcolor.wad");
+#endif
+
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA)
+    D_AddFile("4color.wad");
+#endif
+
     setbuf(stdout, NULL);
     modifiedgame = false;
 
