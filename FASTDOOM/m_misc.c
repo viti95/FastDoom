@@ -100,6 +100,7 @@ int M_CheckParmDisable(char *check, int *variable)
     return 0;
 }
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void M_AddToBox(fixed_t *box,
                 fixed_t x,
                 fixed_t y)
@@ -116,6 +117,7 @@ void M_AddToBox(fixed_t *box,
         if (box[BOXTOP] < y)
             box[BOXTOP] = y;
 }
+#endif
 
 //
 // M_WriteFile

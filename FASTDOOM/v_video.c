@@ -44,7 +44,9 @@ byte screen4[SCREENWIDTH * 32];
 byte backbuffer[SCREENWIDTH * SCREENHEIGHT];
 #endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 int dirtybox[4];
+#endif
 
 #define SC_INDEX 0x3C4
 #define SC_RESET 0
@@ -69,6 +71,7 @@ int usegamma;
 //
 // V_MarkRect
 //
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void V_MarkRect(int x,
                 int y,
                 int width,
@@ -77,6 +80,7 @@ void V_MarkRect(int x,
     M_AddToBox(dirtybox, x, y);
     M_AddToBox(dirtybox, x + width - 1, y + height - 1);
 }
+#endif
 
 //
 // V_CopyRect
@@ -86,7 +90,9 @@ void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int de
     byte *src;
     byte *dest;
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     V_MarkRect(destx, desty, width, height);
+#endif
 
     src = srcscrn + Mul320(srcy) + srcx;
     dest = destscrn + Mul320(desty) + destx;
@@ -104,7 +110,9 @@ void V_SetRect(byte color, int width, int height, int destx, int desty, byte *de
 {
     byte *dest;
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     V_MarkRect(destx, desty, width, height);
+#endif
 
     dest = destscrn + Mul320(desty) + destx;
 

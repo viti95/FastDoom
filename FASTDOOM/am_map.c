@@ -1051,5 +1051,7 @@ void AM_Drawer(void)
 	if (cheating == 2)
 		AM_drawThings(THINGCOLORS, THINGRANGE);
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 	V_MarkRect(0, 0, SCREENWIDTH, automapheight);
+#endif
 }

@@ -282,7 +282,9 @@ void D_Display(void)
     }
 
     // draw buffered stuff to screen
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     I_UpdateNoBlit();
+#endif
 
     // draw the view directly
 
@@ -395,7 +397,9 @@ void D_Display(void)
         } while (!tics);
         wipestart = ticcount;
         done = wipe_ScreenWipe(tics);
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         I_UpdateNoBlit();
+#endif
         M_Drawer(); // menu is drawn even on top of wipes
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
         updatestate = I_FULLSCRN;

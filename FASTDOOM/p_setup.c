@@ -503,8 +503,10 @@ void P_GroupLines(void)
             if (li->frontsector == sector || li->backsector == sector)
             {
                 *linebuffer++ = li;
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
                 M_AddToBox(bbox, li->v1->x, li->v1->y);
                 M_AddToBox(bbox, li->v2->x, li->v2->y);
+#endif
             }
         }
 

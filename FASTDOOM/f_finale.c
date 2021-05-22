@@ -336,7 +336,9 @@ void F_TextWrite(void)
 		}
 	}
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 	V_MarkRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
+#endif
 
 	// draw some of the text onto the screen
 	cx = 10;
@@ -1011,7 +1013,9 @@ void F_BunnyScroll(void)
 	p1 = W_CacheLumpName("PFUB2", PU_LEVEL);
 	p2 = W_CacheLumpName("PFUB1", PU_LEVEL);
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 	V_MarkRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
+#endif
 
 	scrolled = 320 - (finalecount - 230) / 2;
 

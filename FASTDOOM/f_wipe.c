@@ -289,7 +289,10 @@ int wipe_ScreenWipe(int ticks)
     }
 
     // do a piece of wipe-in
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
     V_MarkRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
+#endif
+
     rc = wipe_doMelt(ticks);
 
     // final stuff

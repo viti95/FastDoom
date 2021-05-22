@@ -87,7 +87,9 @@ void I_ShutdownGraphics(void);
 void I_ProcessPalette(byte *palette);
 void I_SetPalette(int numpalette);
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void I_UpdateNoBlit(void);
+#endif
 void I_FinishUpdate(void);
 
 // Wait for vertical retrace or pause a bit.

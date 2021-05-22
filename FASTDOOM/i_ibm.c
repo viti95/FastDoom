@@ -474,15 +474,14 @@ void I_UpdateBox(int x, int y, int w, int h)
 //
 // I_UpdateNoBlit
 //
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 int olddb[2][4];
 void I_UpdateNoBlit(void)
 {
     int realdr[4];
 
-// Set current screen
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+    // Set current screen
     currentscreen = destscreen;
-#endif
 
     // Update dirtybox size
     realdr[BOXTOP] = dirtybox[BOXTOP];
@@ -551,14 +550,13 @@ void I_UpdateNoBlit(void)
         y = realdr[BOXBOTTOM];
         h = realdr[BOXTOP] - y + 1;
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
         I_UpdateBox(x, y, w, h);
-#endif
     }
     // Clear box
     dirtybox[BOXTOP] = dirtybox[BOXRIGHT] = MININT;
     dirtybox[BOXBOTTOM] = dirtybox[BOXLEFT] = MAXINT;
 }
+#endif
 
 //
 // I_FinishUpdate

@@ -51,7 +51,9 @@ extern byte screen4[SCREENWIDTH * 32];
 extern byte backbuffer[SCREENWIDTH * SCREENHEIGHT];
 #endif
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 extern int dirtybox[4];
+#endif
 
 extern int usegamma;
 
@@ -75,6 +77,8 @@ void V_WriteCharDirect(int x, int y, unsigned char c);
 void V_WriteTextColorDirect(int x, int y, char *string, unsigned short color);
 void V_WriteCharColorDirect(int x, int y, unsigned char c, unsigned short color);
 
+#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
 void V_MarkRect(int x, int y, int width, int height);
+#endif
 
 #endif
