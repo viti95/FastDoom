@@ -905,19 +905,19 @@ void D_DoomMain(void)
     IdentifyVersion();
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
-    D_AddFile("16color.wad");
+    D_AddFile("mode16.wad");
 #endif
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
-    D_AddFile("txtcolor.wad");
+    D_AddFile("modetxt.wad");
 #endif
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
-    D_AddFile("bwcolor.wad");
+    D_AddFile("modebw.wad");
 #endif
 
 #if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA)
-    D_AddFile("4color.wad");
+    D_AddFile("mode4.wad");
 #endif
 
     setbuf(stdout, NULL);
