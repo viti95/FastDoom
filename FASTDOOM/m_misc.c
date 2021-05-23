@@ -100,10 +100,7 @@ int M_CheckParmDisable(char *check, int *variable)
     return 0;
 }
 
-#ifdef MODE_Y
-void M_AddToBox(fixed_t *box,
-                fixed_t x,
-                fixed_t y)
+void M_AddToBox(fixed_t *box, fixed_t x, fixed_t y)
 {
     if (box[BOXLEFT] > x)
         box[BOXLEFT] = x;
@@ -117,7 +114,6 @@ void M_AddToBox(fixed_t *box,
         if (box[BOXTOP] < y)
             box[BOXTOP] = y;
 }
-#endif
 
 //
 // M_WriteFile

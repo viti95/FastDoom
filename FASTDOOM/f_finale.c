@@ -1039,7 +1039,7 @@ void F_BunnyScroll(void)
 #ifdef MODE_Y
 		V_DrawPatchScreen0((SCREENWIDTH - 13 * 8) / 2, (SCREENHEIGHT - 8 * 8) / 2, W_CacheLumpName("END0", PU_CACHE));
 #endif
-#ifdef MODE_Y
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC)
 		V_DrawPatchDirect((SCREENWIDTH - 13 * 8) / 2, (SCREENHEIGHT - 8 * 8) / 2, W_CacheLumpName("END0", PU_CACHE));
 #endif
 		laststage = 0;
