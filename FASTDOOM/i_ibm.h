@@ -8,7 +8,7 @@ extern fixed_t fps;
 
 extern byte *currentscreen;
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA)
+#if defined(MODE_Y) || defined(MODE_13H)
 extern byte processedpalette[14 * 768];
 #endif
 
