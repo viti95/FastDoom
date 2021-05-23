@@ -909,12 +909,12 @@ void ST_DrawerText8025()
 		STlib_drawNumText(&(w_maxammo[1]), 76, 21);
 
 		V_WriteTextColorDirect(67, 22, "RCKT    /", 7 << 8);
-		STlib_drawNumText(&(w_ammo[2]), 72, 22);
-		STlib_drawNumText(&(w_maxammo[2]), 76, 22);
+		STlib_drawNumText(&(w_ammo[3]), 72, 22);
+		STlib_drawNumText(&(w_maxammo[3]), 76, 22);
 
 		V_WriteTextColorDirect(67, 23, "CELL    /", 7 << 8);
-		STlib_drawNumText(&(w_ammo[3]), 72, 23);
-		STlib_drawNumText(&(w_maxammo[3]), 76, 23);
+		STlib_drawNumText(&(w_ammo[2]), 72, 23);
+		STlib_drawNumText(&(w_maxammo[2]), 76, 23);
 	}
 
 	if ((st_faceindex - 3) % 8 == 0)
@@ -1017,12 +1017,12 @@ void ST_DrawerText8050()
 		STlib_drawNumText(&(w_maxammo[1]), 76, 46);
 
 		V_WriteTextColorDirect(67, 47, "RCKT    /", 7 << 8);
-		STlib_drawNumText(&(w_ammo[2]), 72, 47);
-		STlib_drawNumText(&(w_maxammo[2]), 76, 47);
+		STlib_drawNumText(&(w_ammo[3]), 72, 47);
+		STlib_drawNumText(&(w_maxammo[3]), 76, 47);
 
 		V_WriteTextColorDirect(67, 48, "CELL    /", 7 << 8);
-		STlib_drawNumText(&(w_ammo[3]), 72, 48);
-		STlib_drawNumText(&(w_maxammo[3]), 76, 48);
+		STlib_drawNumText(&(w_ammo[2]), 72, 48);
+		STlib_drawNumText(&(w_maxammo[2]), 76, 48);
 	}
 
 	if ((st_faceindex - 3) % 8 == 0)
