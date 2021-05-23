@@ -739,7 +739,7 @@ void R_DrawPlanesFlatSurfacesPotato(void)
     }
 }
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#ifdef MODE_T50
 void R_DrawPlanesFlatSurfacesText8050(void)
 {
     visplane_t *pl;
@@ -795,7 +795,7 @@ void R_DrawPlanesFlatSurfacesText8050(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+#ifdef MODE_T25
 void R_DrawPlanesFlatSurfacesText8025(void)
 {
     visplane_t *pl;
@@ -881,7 +881,7 @@ void R_DrawPlanesFlatSurfacesText8025(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
 void R_DrawPlanesFlatSurfaces_13h(void)
 {
     visplane_t *pl;

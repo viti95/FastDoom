@@ -1,23 +1,23 @@
 #include "fastmath.h"
 #include "ns_task.h"
 #include "doomtype.h"
-#include "vmode.h"
+
 
 extern int ticcount;
 extern fixed_t fps;
 
 extern byte *currentscreen;
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA)
 extern byte processedpalette[14 * 768];
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50 || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
+#if defined(MODE_T25) || defined(MODE_T50) || defined(MODE_EGA)
 extern byte lut16colors[14 * 256];
 extern byte *ptrlut16colors;
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
+#if defined(MODE_CGA_BW) || defined(MODE_HERC)
 extern byte sumcolors00[14 * 256];
 extern byte sumcolors01[14 * 256];
 extern byte sumcolors10[14 * 256];
@@ -28,7 +28,7 @@ extern byte *ptrsumcolors10;
 extern byte *ptrsumcolors11;
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC)
 extern int updatestate;
 #endif
 

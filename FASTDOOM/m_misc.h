@@ -50,7 +50,7 @@ enum
     BOXRIGHT
 }; // bbox coordinates
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 // Bounding box functions.
 void M_AddToBox(fixed_t *box, fixed_t x, fixed_t y);
 #endif

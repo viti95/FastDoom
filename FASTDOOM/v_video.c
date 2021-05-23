@@ -30,21 +30,21 @@
 
 #include "v_video.h"
 
-#include "vmode.h"
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+
+#ifdef MODE_Y
 byte screen0[SCREENWIDTH * SCREENHEIGHT];
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW)
 byte screen4[SCREENWIDTH * 32];
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
 byte backbuffer[SCREENWIDTH * SCREENHEIGHT];
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 int dirtybox[4];
 #endif
 
@@ -71,7 +71,7 @@ int usegamma;
 //
 // V_MarkRect
 //
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 void V_MarkRect(int x,
                 int y,
                 int width,
@@ -90,7 +90,7 @@ void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int de
     byte *src;
     byte *dest;
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
     V_MarkRect(destx, desty, width, height);
 #endif
 
@@ -110,7 +110,7 @@ void V_SetRect(byte color, int width, int height, int destx, int desty, byte *de
 {
     byte *dest;
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
     V_MarkRect(destx, desty, width, height);
 #endif
 
@@ -141,7 +141,7 @@ void V_SetRect(byte color, int width, int height, int destx, int desty, byte *de
 // V_DrawPatch
 // Masks a column based masked pic to the screen.
 //
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW)
 void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
 {
 
@@ -199,7 +199,7 @@ void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 void V_DrawPatchScreen0(int x, int y, patch_t *patch)
 {
 
@@ -264,7 +264,7 @@ void V_DrawPatchScreen0(int x, int y, patch_t *patch)
 // Masks a column based masked pic to the screen.
 // Flips horizontally, e.g. to mirror face.
 //
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
 {
 
@@ -308,7 +308,7 @@ void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if defined(MODE_T25) || defined(MODE_T50)
 void V_WriteTextColorDirect(int x, int y, char *string, unsigned short color)
 {
     unsigned short *dest;
@@ -356,7 +356,7 @@ void V_WriteCharDirect(int x, int y, unsigned char c)
 // V_DrawPatchDirect
 // Draws directly to the screen on the pc.
 //
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 void V_DrawPatchDirect(int x, int y, patch_t *patch)
 {
     int count;
@@ -416,7 +416,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
 void V_DrawPatchDirect(int x, int y, patch_t *patch)
 {
     int count;
@@ -453,7 +453,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#ifdef MODE_T50
 void V_DrawPatchDirectText8050(int x, int y, patch_t *patch)
 {
     int count;
@@ -498,7 +498,7 @@ void V_DrawPatchDirectText8050(int x, int y, patch_t *patch)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+#ifdef MODE_T25
 void V_DrawPatchDirectText8025(int x, int y, patch_t *patch)
 {
     int count;

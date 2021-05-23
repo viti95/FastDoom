@@ -28,7 +28,7 @@
 // Needed because we are refering to patches.
 #include "r_data.h"
 
-#include "vmode.h"
+
 
 //
 // VIDEO
@@ -39,19 +39,19 @@
 // Screen 0 is the screen updated by I_Update screen.
 // Screen 1 is an extra buffer.
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 extern byte screen0[SCREENWIDTH * SCREENHEIGHT];
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW)
 extern byte screen4[SCREENWIDTH * 32];
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
 extern byte backbuffer[SCREENWIDTH * SCREENHEIGHT];
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 extern int dirtybox[4];
 #endif
 
@@ -77,7 +77,7 @@ void V_WriteCharDirect(int x, int y, unsigned char c);
 void V_WriteTextColorDirect(int x, int y, char *string, unsigned short color);
 void V_WriteCharColorDirect(int x, int y, unsigned char c, unsigned short color);
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 void V_MarkRect(int x, int y, int width, int height);
 #endif
 

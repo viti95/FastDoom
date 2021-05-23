@@ -261,10 +261,10 @@ void R_DrawVisSprite(vissprite_t *vis)
         colfunc = fuzzcolfunc;
     }
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
     dc_iscale = abs(vis->xiscale) >> detailshift;
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50 || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_T25) || defined(MODE_T50) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC)
     dc_iscale = abs(vis->xiscale);
 #endif
 
@@ -472,10 +472,10 @@ void R_ProjectSprite(mobj_t *thing)
     vis = vissprites + num_vissprite++;
     vis->mobjflags = thing->flags;
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
     vis->scale = xscale << detailshift;
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50 || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_T25) || defined(MODE_T50) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC)
     vis->scale = xscale;
 #endif
 
@@ -524,10 +524,10 @@ void R_ProjectSprite(mobj_t *thing)
     {
         // diminished light
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
         index = xscale >> (LIGHTSCALESHIFT - detailshift);
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50 || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_T25) || defined(MODE_T50) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC)
         index = xscale >> LIGHTSCALESHIFT;
 #endif
 
@@ -609,10 +609,10 @@ void R_DrawPSprite(pspdef_t *psp)
     vis->x1 = x1 < 0 ? 0 : x1;
     vis->x2 = x2 > viewwidthlimit ? viewwidthlimit : x2;
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
     vis->scale = pspritescale << detailshift;
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50 || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_T25) || defined(MODE_T50) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC)
     vis->scale = pspritescale;
 #endif
 

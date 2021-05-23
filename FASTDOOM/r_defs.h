@@ -259,7 +259,7 @@ extern byte *destview;
 extern byte *destscreen;
 extern byte *pcscreen;
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if defined(MODE_T25) || defined(MODE_T50)
 extern unsigned short *textdestscreen;
 extern byte textpage;
 #endif

@@ -768,15 +768,15 @@ void AM_drawFline(fline_t *fl,
 	register int ay;
 	register int d;
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 #define PUTDOT(xx, yy, cc) screen0[Mul320(yy) + (xx)] = (cc)
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
 #define PUTDOT(xx, yy, cc) backbuffer[Mul320(yy) + (xx)] = (cc)
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if defined(MODE_T25) || defined(MODE_T50)
 #define PUTDOT(xx, yy, cc)
 #endif
 
@@ -1033,14 +1033,14 @@ void AM_Drawer(void)
 	if (!automapactive)
 		return;
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
 	updatestate |= I_FULLSCRN;
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 	SetDWords(screen0, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
 	SetDWords(backbuffer, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
 #endif
 
@@ -1051,7 +1051,7 @@ void AM_Drawer(void)
 	if (cheating == 2)
 		AM_drawThings(THINGCOLORS, THINGRANGE);
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 	V_MarkRect(0, 0, SCREENWIDTH, automapheight);
 #endif
 }

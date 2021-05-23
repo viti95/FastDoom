@@ -39,7 +39,7 @@
 #include "ns_task.h"
 #include "doomdef.h"
 
-#include "vmode.h"
+
 
 //
 // Macros
@@ -179,12 +179,12 @@ void I_StartupSound(void);
 void I_ShutdownSound(void);
 void I_ShutdownTimer(void);
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50 || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
+#if defined(MODE_EGA) || defined(MODE_T25) || defined(MODE_T50)
 byte lut16colors[14 * 256];
 byte *ptrlut16colors;
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
+#if defined(MODE_CGA_BW) || defined(MODE_HERC)
 byte sumcolors00[14 * 256];
 byte sumcolors01[14 * 256];
 byte sumcolors10[14 * 256];
@@ -203,7 +203,7 @@ byte gammatable[5][256] =
         {2, 3, 4, 4, 5, 6, 6, 7, 7, 8, 9, 9, 10, 10, 10, 11, 11, 12, 12, 13, 13, 13, 14, 14, 15, 15, 15, 16, 16, 16, 17, 17, 17, 18, 18, 18, 19, 19, 19, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 26, 27, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 30, 31, 31, 31, 31, 32, 32, 32, 32, 33, 33, 33, 33, 33, 34, 34, 34, 34, 35, 35, 35, 35, 35, 36, 36, 36, 36, 37, 37, 37, 37, 37, 38, 38, 38, 38, 38, 39, 39, 39, 39, 40, 40, 40, 40, 40, 41, 41, 41, 41, 41, 42, 42, 42, 42, 42, 43, 43, 43, 43, 43, 44, 44, 44, 44, 44, 45, 45, 45, 45, 45, 45, 46, 46, 46, 46, 46, 47, 47, 47, 47, 47, 48, 48, 48, 48, 48, 48, 49, 49, 49, 49, 49, 50, 50, 50, 50, 50, 50, 51, 51, 51, 51, 51, 51, 52, 52, 52, 52, 52, 53, 53, 53, 53, 53, 53, 54, 54, 54, 54, 54, 54, 55, 55, 55, 55, 55, 55, 56, 56, 56, 56, 56, 56, 57, 57, 57, 57, 57, 57, 58, 58, 58, 58, 58, 58, 59, 59, 59, 59, 59, 59, 60, 60, 60, 60, 60, 60, 61, 61, 61, 61, 61, 61, 61, 62, 62, 62, 62, 62, 62, 63, 63, 63, 63, 63, 63},
         {4, 5, 7, 8, 9, 9, 10, 11, 12, 12, 13, 13, 14, 15, 15, 16, 16, 17, 17, 17, 18, 18, 19, 19, 20, 20, 20, 21, 21, 21, 22, 22, 23, 23, 23, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 30, 31, 31, 31, 32, 32, 32, 32, 32, 33, 33, 33, 33, 34, 34, 34, 34, 35, 35, 35, 35, 35, 36, 36, 36, 36, 37, 37, 37, 37, 37, 38, 38, 38, 38, 38, 39, 39, 39, 39, 39, 40, 40, 40, 40, 40, 41, 41, 41, 41, 41, 42, 42, 42, 42, 42, 43, 43, 43, 43, 43, 43, 44, 44, 44, 44, 44, 45, 45, 45, 45, 45, 45, 46, 46, 46, 46, 46, 46, 47, 47, 47, 47, 47, 47, 48, 48, 48, 48, 48, 48, 49, 49, 49, 49, 49, 49, 50, 50, 50, 50, 50, 50, 50, 51, 51, 51, 51, 51, 51, 52, 52, 52, 52, 52, 52, 52, 53, 53, 53, 53, 53, 53, 54, 54, 54, 54, 54, 54, 54, 55, 55, 55, 55, 55, 55, 55, 56, 56, 56, 56, 56, 56, 56, 57, 57, 57, 57, 57, 57, 57, 58, 58, 58, 58, 58, 58, 58, 58, 59, 59, 59, 59, 59, 59, 59, 60, 60, 60, 60, 60, 60, 60, 60, 61, 61, 61, 61, 61, 61, 61, 61, 62, 62, 62, 62, 62, 62, 62, 62, 63, 63, 63, 63, 63, 63, 63}};
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA)
 byte processedpalette[14 * 768];
 #endif
 
@@ -229,7 +229,7 @@ byte scantokey[128] =
         0, 0, 0, 0, 0, 0, 0, 0 // 7
 };
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA)
 void I_ProcessPalette(byte *palette)
 {
     int i;
@@ -246,7 +246,7 @@ void I_ProcessPalette(byte *palette)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
+#if defined(MODE_CGA_BW) || defined(MODE_HERC)
 void I_ProcessPalette(byte *palette)
 {
     int i;
@@ -269,7 +269,7 @@ void I_ProcessPalette(byte *palette)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50 || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
+#if defined(MODE_EGA) || defined(MODE_T25) || defined(MODE_T50)
 const byte textcolors[48] = {
     0x00, 0x00, 0x00,
     0x00, 0x00, 0x2A,
@@ -289,7 +289,7 @@ const byte textcolors[48] = {
     0x3F, 0x3F, 0x3F};
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50 || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
+#if defined(MODE_EGA) || defined(MODE_T25) || defined(MODE_T50)
 void I_ProcessPalette(byte *palette)
 {
     int i, j;
@@ -347,18 +347,18 @@ void I_ProcessPalette(byte *palette)
 void I_SetPalette(int numpalette)
 {
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
+#if defined(MODE_CGA_BW) || defined(MODE_HERC)
     ptrsumcolors00 = sumcolors00 + numpalette * 256;
     ptrsumcolors01 = sumcolors01 + numpalette * 256;
     ptrsumcolors10 = sumcolors10 + numpalette * 256;
     ptrsumcolors11 = sumcolors11 + numpalette * 256;
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50 || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
+#if defined(MODE_T25) || defined(MODE_T50) || defined(MODE_EGA)
     ptrlut16colors = lut16colors + numpalette * 256;
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#if defined(MODE_Y) || defined(MODE_13H)
     {
         int i;
         int pos = Mul768(numpalette);
@@ -374,16 +374,16 @@ void I_SetPalette(int numpalette)
 // Graphics mode
 //
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC)
 int updatestate;
 #endif
 byte *pcscreen, *currentscreen, *destscreen, *destview;
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
+#ifdef MODE_EGA
 byte page = 0;
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if defined(MODE_T25) || defined(MODE_T50)
 unsigned short *textdestscreen = (unsigned short *)0xB8000;
 byte textpage = 0;
 #endif
@@ -391,7 +391,7 @@ byte textpage = 0;
 //
 // I_UpdateBox
 //
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 void I_UpdateBox(int x, int y, int w, int h)
 {
     int i, j, k, count;
@@ -474,7 +474,7 @@ void I_UpdateBox(int x, int y, int w, int h)
 //
 // I_UpdateNoBlit
 //
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 int olddb[2][4];
 void I_UpdateNoBlit(void)
 {
@@ -564,7 +564,7 @@ void I_UpdateNoBlit(void)
 
 extern int screenblocks;
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#ifdef MODE_CGA_BW
 void CGA_BW_DrawBackbuffer(void)
 {
     int x;
@@ -614,7 +614,7 @@ void CGA_BW_DrawBackbuffer(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
+#ifdef MODE_HERC
 void HERC_DrawBackbuffer(void)
 {
 
@@ -677,7 +677,7 @@ void HERC_DrawBackbuffer(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
+#ifdef MODE_EGA
 
 void EGA_DrawBackbuffer(void)
 {
@@ -743,7 +743,7 @@ void EGA_DrawBackbuffer(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA)
+#ifdef MODE_CGA
 void CGA_DrawBackbuffer(void)
 {
     int x, y;
@@ -770,7 +770,7 @@ void I_FinishUpdate(void)
     static int fps_counter, fps_starttime, fps_nextcalculation;
     int opt1, opt2;
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+#ifdef MODE_T25
     // Change video page
     regs.h.ah = 0x05;
     regs.h.al = textpage;
@@ -786,7 +786,7 @@ void I_FinishUpdate(void)
         textpage = 0;
     }
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#ifdef MODE_T50
     // Change video page
     regs.h.ah = 0x05;
     regs.h.al = textpage;
@@ -802,7 +802,7 @@ void I_FinishUpdate(void)
         textpage = 0;
     }
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
     outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
 
     //Next plane
@@ -812,7 +812,7 @@ void I_FinishUpdate(void)
         destscreen = (byte *)0xa0000;
     }
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#ifdef MODE_13H
 
     if (updatestate & I_FULLSCRN)
     {
@@ -851,16 +851,16 @@ void I_FinishUpdate(void)
         updatestate &= ~I_MESSAGES;
     }
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
+#ifdef MODE_HERC
     HERC_DrawBackbuffer();
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA)
+#ifdef MODE_CGA
     CGA_DrawBackbuffer();
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#ifdef MODE_CGA_BW
     CGA_BW_DrawBackbuffer();
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
+#ifdef MODE_EGA
     EGA_DrawBackbuffer();
 #endif
 
@@ -893,7 +893,7 @@ void I_FinishUpdate(void)
 void I_InitGraphics(void)
 {
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+#ifdef MODE_T25
     // Set 80x25 color mode
     regs.h.ah = 0x00;
     regs.h.al = 0x03;
@@ -922,7 +922,7 @@ void I_InitGraphics(void)
     textdestscreen = (unsigned short *)0xB8000;
     textpage = 0;
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#ifdef MODE_T50
     // Set 80x25 color mode
     regs.h.ah = 0x00;
     regs.h.al = 0x03;
@@ -950,7 +950,7 @@ void I_InitGraphics(void)
     textdestscreen = (unsigned short *)0xB8000;
     textpage = 0;
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
     regs.w.ax = 0x13;
     int386(0x10, (union REGS *)&regs, &regs);
     pcscreen = currentscreen = (byte *)0xA0000;
@@ -970,12 +970,12 @@ void I_InitGraphics(void)
     outp(CRTC_INDEX + 1, inp(CRTC_INDEX + 1) | 0x40);
     outp(GC_INDEX, GC_READMAP);
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H)
+#ifdef MODE_13H
     regs.w.ax = 0x13;
     int386(0x10, (union REGS *)&regs, &regs);
     pcscreen = destscreen = (byte *)0xA0000;
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA)
+#ifdef MODE_CGA
     // Set video mode 4
     regs.w.ax = 0x04;
     int386(0x10, (union REGS *)&regs, &regs);
@@ -1007,18 +1007,18 @@ void I_InitGraphics(void)
 
     pcscreen = destscreen = (byte *)0xB8000;
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#ifdef MODE_CGA_BW
     regs.w.ax = 0x06;
     int386(0x10, (union REGS *)&regs, &regs);
     pcscreen = destscreen = (byte *)0xB8000;
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_EGA)
+#ifdef MODE_EGA
     regs.w.ax = 0x0D;
     int386(0x10, (union REGS *)&regs, &regs);
     outp(0x3C4, 0x2);
     pcscreen = destscreen = (byte *)0xA0000;
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
+#ifdef MODE_HERC
     //byte Graph_720x348[12] = {0x03, 0x36, 0x2D, 0x2E, 0x07, 0x5B, 0x02, 0x57, 0x57, 0x02, 0x03, 0x0A};
     byte Graph_640x400[12] = {0x03, 0x34, 0x28, 0x2A, 0x47, 0x69, 0x00, 0x64, 0x65, 0x02, 0x03, 0x0A};
     //byte Graph_640x200[12] = {0x03, 0x6E, 0x28, 0x2E, 0x07, 0x67, 0x0A, 0x64, 0x65, 0x02, 0x01, 0x0A}; --> NOT WORKING ON REAL HARDWARE
@@ -1043,7 +1043,7 @@ void I_InitGraphics(void)
 //
 void I_ShutdownGraphics(void)
 {
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
+#ifdef MODE_HERC
     byte Text_80x25[12] = {0x00, 0x61, 0x50, 0x52, 0x0F, 0x19, 0x06, 0x19, 0x19, 0x02, 0x0D, 0x08};
     int i;
 
@@ -1359,7 +1359,7 @@ void I_Quit(void)
     M_SaveDefaults();
     scr = (byte *)W_CacheLumpName("ENDOOM", PU_CACHE);
     I_Shutdown();
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_HERC)
+#ifdef MODE_HERC
     CopyDWords(scr, (void *)0xb0000, (80 * 25 * 2) / 4);
 #else
     CopyDWords(scr, (void *)0xb8000, (80 * 25 * 2) / 4);

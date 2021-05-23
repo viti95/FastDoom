@@ -34,7 +34,7 @@
 // State.
 #include "doomstat.h"
 
-#include "vmode.h"
+
 
 // status bar height at bottom of screen
 #define SBARHEIGHT 32
@@ -57,16 +57,16 @@ int viewwindowy;
 
 int columnofs[SCREENWIDTH];
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
 byte *ylookup[SCREENHEIGHT];
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if defined(MODE_Y) || defined(MODE_T25) || defined(MODE_T50)
 byte **ylookup;
 #endif
 
 int automapheight;
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
 byte *background_buffer = 0;
 #endif
 
@@ -107,7 +107,7 @@ fixed_t dc_texturemid;
 // first pixel in a column (possibly virtual)
 byte *dc_source;
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 void R_DrawSkyFlat(void)
 {
     register int count;
@@ -138,7 +138,7 @@ void R_DrawSkyFlat(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 void R_DrawSkyFlatLow(void)
 {
     register int count;
@@ -169,7 +169,7 @@ void R_DrawSkyFlatLow(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 void R_DrawSkyFlatPotato(void)
 {
     register int count;
@@ -198,7 +198,7 @@ void R_DrawSkyFlatPotato(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+#ifdef MODE_T25
 void R_DrawColumnText8025(void)
 {
     fixed_t frac;
@@ -266,7 +266,7 @@ void R_DrawColumnText8025(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+#ifdef MODE_T25
 void R_DrawSpanText8025(void)
 {
     int spot;
@@ -313,7 +313,7 @@ void R_DrawSpanText8025(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#ifdef MODE_T50
 void R_DrawColumnText8050(void)
 {
     fixed_t frac;
@@ -336,7 +336,7 @@ void R_DrawColumnText8050(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#ifdef MODE_T50
 void R_DrawSkyFlatText8050(void)
 {
     int count;
@@ -353,7 +353,7 @@ void R_DrawSkyFlatText8050(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+#ifdef MODE_T25
 void R_DrawSkyFlatText8025(void)
 {
     int count;
@@ -407,7 +407,7 @@ void R_DrawSkyFlatText8025(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+#ifdef MODE_T25
 void R_DrawFuzzColumnSaturnText8025(void)
 {
     fixed_t frac;
@@ -509,7 +509,7 @@ void R_DrawFuzzColumnSaturnText8025(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#ifdef MODE_T50
 void R_DrawFuzzColumnSaturnText8050(void)
 {
     int count;
@@ -560,7 +560,7 @@ void R_DrawFuzzColumnSaturnText8050(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+#ifdef MODE_T25
 void R_DrawFuzzColumnFastText8025(void)
 {
     register int count;
@@ -607,7 +607,7 @@ void R_DrawFuzzColumnFastText8025(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#ifdef MODE_T50
 void R_DrawFuzzColumnFastText8050(void)
 {
     int count;
@@ -632,7 +632,7 @@ void R_DrawFuzzColumnFastText8050(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#ifdef MODE_T50
 void R_DrawSpanText8050(void)
 {
     int countp;
@@ -668,7 +668,7 @@ void R_DrawSpanText8050(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 void R_DrawSpanPotato(void)
 {
     unsigned position;
@@ -711,11 +711,11 @@ void R_DrawSpanPotato(void)
 //
 #define FUZZTABLE 50
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if defined(MODE_Y) || defined(MODE_T25) || defined(MODE_T50)
 #define FUZZOFF (SCREENWIDTH / 4)
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
 #define FUZZOFF (SCREENWIDTH)
 #endif
 
@@ -731,7 +731,7 @@ int fuzzoffset[FUZZTABLE] =
 
 int fuzzpos = 0;
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 void R_DrawFuzzColumn(void)
 {
     register int count;
@@ -763,7 +763,7 @@ void R_DrawFuzzColumn(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 void R_DrawFuzzColumnLow(void)
 {
     register int count;
@@ -795,7 +795,7 @@ void R_DrawFuzzColumnLow(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 void R_DrawFuzzColumnPotato(void)
 {
     register int count;
@@ -824,7 +824,7 @@ void R_DrawFuzzColumnPotato(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 void R_DrawFuzzColumnFast(void)
 {
     register int count;
@@ -856,7 +856,7 @@ void R_DrawFuzzColumnFast(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 void R_DrawFuzzColumnFastLow(void)
 {
     register int count;
@@ -888,7 +888,7 @@ void R_DrawFuzzColumnFastLow(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 void R_DrawFuzzColumnFastPotato(void)
 {
     register int count;
@@ -917,7 +917,7 @@ void R_DrawFuzzColumnFastPotato(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+#ifdef MODE_T25
 void R_DrawFuzzColumnText8025(void)
 {
     register int count;
@@ -990,7 +990,7 @@ void R_DrawFuzzColumnText8025(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#ifdef MODE_T50
 void R_DrawFuzzColumnText8050(void)
 {
     int count;
@@ -1025,7 +1025,7 @@ void R_DrawFuzzColumnText8050(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 void R_DrawFuzzColumnSaturn(void)
 {
     int count;
@@ -1077,7 +1077,7 @@ void R_DrawFuzzColumnSaturn(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 void R_DrawFuzzColumnSaturnLow(void)
 {
     int count;
@@ -1131,7 +1131,7 @@ void R_DrawFuzzColumnSaturnLow(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 void R_DrawFuzzColumnSaturnPotato(void)
 {
     int count;
@@ -1208,7 +1208,7 @@ fixed_t ds_ystep;
 // start of a 64*64 tile image
 byte *ds_source;
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 void R_DrawSpanFlat(void)
 {
     register byte *dest;
@@ -1344,7 +1344,7 @@ void R_DrawSpanFlat(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 void R_DrawSpanFlatLow(void)
 {
     register byte *dest;
@@ -1438,7 +1438,7 @@ void R_DrawSpanFlatLow(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 void R_DrawSpanFlatPotato(void)
 {
     int countp;
@@ -1462,7 +1462,7 @@ void R_DrawSpanFlatPotato(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#ifdef MODE_T50
 void R_DrawSpanFlatText8050(void)
 {
     int countp;
@@ -1478,7 +1478,7 @@ void R_DrawSpanFlatText8050(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+#ifdef MODE_T25
 void R_DrawSpanFlatText8025(void)
 {
     int countp;
@@ -1526,10 +1526,10 @@ void R_InitBuffer(int width, int height)
     //  e.g. smaller view windows
     //  with border and/or status bar.
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if defined(MODE_T25) || defined(MODE_T50)
     viewwindowx = 0;
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW)
     viewwindowx = (SCREENWIDTH - width) >> 1;
 #endif
 
@@ -1538,17 +1538,17 @@ void R_InitBuffer(int width, int height)
         columnofs[i] = viewwindowx + i;
 
 // Samw with base row offset.
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if defined(MODE_T25) || defined(MODE_T50)
     viewwindowy = 0;
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW)
     if (width == SCREENWIDTH)
         viewwindowy = 0;
     else
         viewwindowy = (SCREENHEIGHT - SBARHEIGHT - height) >> 1;
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
     for (i = 0; i < height; i++)
         ylookup[i] = backbuffer + Mul320(i + viewwindowy);
 #endif
@@ -1560,7 +1560,7 @@ void R_InitBuffer(int width, int height)
 //  for variable screen sizes
 // Also draws a beveled edge.
 //
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW)
 void R_FillBackScreen(void)
 {
     byte *src;
@@ -1579,12 +1579,12 @@ void R_FillBackScreen(void)
 
     char *name;
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
     if (scaledviewwidth == 320)
         return;
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
     if (scaledviewwidth == SCREENWIDTH)
     {
         if (background_buffer)
@@ -1609,11 +1609,11 @@ void R_FillBackScreen(void)
 
     src = W_CacheLumpName(name, PU_CACHE);
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
     screen1 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
     dest = screen1;
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
     dest = background_buffer;
 #endif
 
@@ -1630,10 +1630,10 @@ void R_FillBackScreen(void)
 
     for (x = 0; x < scaledviewwidth; x += 8)
     {
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
         V_DrawPatch(viewwindowx + x, viewwindowy - 8, screen1, patch);
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
         V_DrawPatch(viewwindowx + x, viewwindowy - 8, background_buffer, patch);
 #endif
     }
@@ -1642,10 +1642,10 @@ void R_FillBackScreen(void)
 
     for (x = 0; x < scaledviewwidth; x += 8)
     {
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
         V_DrawPatch(viewwindowx + x, viewwindowy + viewheight, screen1, patch);
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
         V_DrawPatch(viewwindowx + x, viewwindowy + viewheight, background_buffer, patch);
 #endif
     }
@@ -1653,10 +1653,10 @@ void R_FillBackScreen(void)
 
     for (y = 0; y < viewheight; y += 8)
     {
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
         V_DrawPatch(viewwindowx - 8, viewwindowy + y, screen1, patch);
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
         V_DrawPatch(viewwindowx - 8, viewwindowy + y, background_buffer, patch);
 #endif
     }
@@ -1664,29 +1664,29 @@ void R_FillBackScreen(void)
 
     for (y = 0; y < viewheight; y += 8)
     {
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
         V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + y, screen1, patch);
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
         V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + y, background_buffer, patch);
 #endif
     }
 
     // Draw beveled edge.
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
     V_DrawPatch(viewwindowx - 8, viewwindowy - 8, screen1, W_CacheLumpName("BRDR_TL", PU_CACHE));
     V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy - 8, screen1, W_CacheLumpName("BRDR_TR", PU_CACHE));
     V_DrawPatch(viewwindowx - 8, viewwindowy + viewheight, screen1, W_CacheLumpName("BRDR_BL", PU_CACHE));
     V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + viewheight, screen1, W_CacheLumpName("BRDR_BR", PU_CACHE));
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
     V_DrawPatch(viewwindowx - 8, viewwindowy - 8, background_buffer, W_CacheLumpName("BRDR_TL", PU_CACHE));
     V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy - 8, background_buffer, W_CacheLumpName("BRDR_TR", PU_CACHE));
     V_DrawPatch(viewwindowx - 8, viewwindowy + viewheight, background_buffer, W_CacheLumpName("BRDR_BL", PU_CACHE));
     V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + viewheight, background_buffer, W_CacheLumpName("BRDR_BR", PU_CACHE));
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
     for (i = 0; i < 4; i++)
     {
         outp(SC_INDEX, SC_MAPMASK);
@@ -1702,7 +1702,7 @@ void R_FillBackScreen(void)
     }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
     Z_Free(screen1);
 #endif
 }
@@ -1711,7 +1711,7 @@ void R_FillBackScreen(void)
 //
 // Copy a screen buffer.
 //
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 void R_VideoErase(unsigned ofs, int count)
 {
     byte *dest;
@@ -1732,7 +1732,7 @@ void R_VideoErase(unsigned ofs, int count)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
 void R_VideoErase(unsigned ofs, int count)
 {
     // LFB copy.
@@ -1753,7 +1753,7 @@ void R_VideoErase(unsigned ofs, int count)
 // Draws the border around the view
 //  for different size windows?
 //
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW)
 void R_DrawViewBorder(void)
 {
     int top;
@@ -1786,7 +1786,7 @@ void R_DrawViewBorder(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
 void R_DrawSkyFlat_13h(void)
 {
     register int count;

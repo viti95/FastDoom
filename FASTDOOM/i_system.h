@@ -87,7 +87,7 @@ void I_ShutdownGraphics(void);
 void I_ProcessPalette(byte *palette);
 void I_SetPalette(int numpalette);
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 void I_UpdateNoBlit(void);
 #endif
 void I_FinishUpdate(void);

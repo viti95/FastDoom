@@ -35,7 +35,7 @@
 #include "doomstat.h"
 #include "r_state.h"
 
-#include "vmode.h"
+
 
 // Stage of animation:
 //  0 = text, 1 = art screen, 2 = character cast
@@ -304,7 +304,7 @@ void F_Ticker(void)
 #include "hu_stuff.h"
 extern patch_t *hu_font[HU_FONTSIZE];
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW)
 void F_TextWrite(void)
 {
 	byte *src;
@@ -319,10 +319,10 @@ void F_TextWrite(void)
 
 	// erase the entire screen to a tiled background
 	src = W_CacheLumpName(finaleflat, PU_CACHE);
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 	dest = screen0;
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
 	dest = backbuffer;
 #endif
 
@@ -336,7 +336,7 @@ void F_TextWrite(void)
 		}
 	}
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 	V_MarkRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
 #endif
 
@@ -370,10 +370,10 @@ void F_TextWrite(void)
 		w = hu_font[c]->width;
 		if (cx + w > SCREENWIDTH)
 			break;
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 		V_DrawPatchScreen0(cx, cy, hu_font[c]);
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
 		V_DrawPatchDirect(cx, cy, hu_font[c]);
 #endif
 		cx += w;
@@ -381,7 +381,7 @@ void F_TextWrite(void)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if defined(MODE_T25) || defined(MODE_T50)
 void F_TextWriteText(void)
 {
 	int x, y, w;
@@ -393,11 +393,11 @@ void F_TextWriteText(void)
 
 	// erase the entire screen to a tiled background
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+#ifdef MODE_T25
 	SetWords(textdestscreen, 0, 80 * 25);
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#ifdef MODE_T50
 	SetWords(textdestscreen, 0, 80 * 50);
 #endif
 
@@ -658,7 +658,7 @@ byte F_CastResponder(event_t *ev)
 	return 1;
 }
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW)
 void F_CastPrint(char *text)
 {
 	char *ch;
@@ -703,10 +703,10 @@ void F_CastPrint(char *text)
 		}
 
 		w = hu_font[c]->width;
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 		V_DrawPatchScreen0(cx, 180, hu_font[c]);
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
 		V_DrawPatchDirect(cx, 180, hu_font[c]);
 #endif
 		cx += w;
@@ -717,7 +717,7 @@ void F_CastPrint(char *text)
 //
 // F_CastDrawer
 //
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW)
 void F_CastDrawer(void)
 {
 	spritedef_t *sprdef;
@@ -727,10 +727,10 @@ void F_CastDrawer(void)
 	patch_t *patch;
 
 // erase the entire screen to a background
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 	V_DrawPatchScreen0(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
 	V_DrawPatchDirect(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
 #endif
 
@@ -745,26 +745,26 @@ void F_CastDrawer(void)
 	patch = W_CacheLumpNum(lump + firstspritelump, PU_CACHE);
 	if (flip)
 	{
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 		V_DrawPatchFlippedScreen0(160, 170, patch);
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
 		V_DrawPatchDirect(160, 170, patch);
 #endif
 	}
 	else
 	{
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 		V_DrawPatchScreen0(160, 170, patch);
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
 		V_DrawPatchDirect(160, 170, patch);
 #endif
 	}
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if defined(MODE_T25) || defined(MODE_T50)
 void F_CastDrawerText(void)
 {
 	spritedef_t *sprdef;
@@ -773,17 +773,17 @@ void F_CastDrawerText(void)
 	patch_t *patch;
 
 // erase the entire screen to a background
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+#ifdef MODE_T25
 	V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#ifdef MODE_T50
 	V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+#ifdef MODE_T25
 	V_WriteTextDirect(40 - strlen(castorder[castnum].name) / 2, 23, castorder[castnum].name);
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#ifdef MODE_T50
 	V_WriteTextDirect(40 - strlen(castorder[castnum].name) / 2, 48, castorder[castnum].name);
 #endif
 
@@ -793,16 +793,16 @@ void F_CastDrawerText(void)
 	lump = sprframe->lump[0];
 
 	patch = W_CacheLumpNum(lump + firstspritelump, PU_CACHE);
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+#ifdef MODE_T25
 	V_DrawPatchDirectText8025(160, 170, patch);
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#ifdef MODE_T50
 	V_DrawPatchDirectText8050(160, 170, patch);
 #endif
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW)
 void F_DrawPatchCol(int x, patch_t *patch, int col)
 {
 	column_t *column;
@@ -813,10 +813,10 @@ void F_DrawPatchCol(int x, patch_t *patch, int col)
 
 	column = (column_t *)((byte *)patch + patch->columnofs[col]);
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 	desttop = screen0 + x;
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
 	desttop = backbuffer + x;
 #endif
 
@@ -837,7 +837,7 @@ void F_DrawPatchCol(int x, patch_t *patch, int col)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+#ifdef MODE_T25
 void F_DrawPatchColText8025(int x, patch_t *patch, int col)
 {
 	column_t *column;
@@ -888,7 +888,7 @@ void F_DrawPatchColText8025(int x, patch_t *patch, int col)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#ifdef MODE_T50
 void F_DrawPatchColText8050(int x, patch_t *patch, int col)
 {
 	column_t *column;
@@ -921,7 +921,7 @@ void F_DrawPatchColText8050(int x, patch_t *patch, int col)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if defined(MODE_T25) || defined(MODE_T50)
 void F_BunnyScrollText(void)
 {
 	int scrolled;
@@ -946,19 +946,19 @@ void F_BunnyScrollText(void)
 	{
 		if (x + scrolled < 320)
 		{
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+#ifdef MODE_T25
 			F_DrawPatchColText8025(x, p1, x + scrolled);
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#ifdef MODE_T50
 			F_DrawPatchColText8050(x, p1, x + scrolled);
 #endif
 		}
 		else
 		{
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+#ifdef MODE_T25
 			F_DrawPatchColText8025(x, p2, x + scrolled - 320);
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#ifdef MODE_T50
 			F_DrawPatchColText8050(x, p2, x + scrolled - 320);
 #endif
 		}
@@ -968,10 +968,10 @@ void F_BunnyScrollText(void)
 		return;
 	if (finalecount < 1180)
 	{
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+#ifdef MODE_T25
 		V_WriteTextDirect(37, 12, "THE END");
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#ifdef MODE_T50
 		V_WriteTextDirect(37, 25, "THE END");
 #endif
 		laststage = 0;
@@ -987,10 +987,10 @@ void F_BunnyScrollText(void)
 		laststage = stage;
 	}
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+#ifdef MODE_T25
 	V_WriteTextDirect(37, 12, "THE END");
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#ifdef MODE_T50
 	V_WriteTextDirect(37, 25, "THE END");
 #endif
 }
@@ -999,7 +999,7 @@ void F_BunnyScrollText(void)
 //
 // F_BunnyScroll
 //
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW)
 void F_BunnyScroll(void)
 {
 	int scrolled;
@@ -1013,7 +1013,7 @@ void F_BunnyScroll(void)
 	p1 = W_CacheLumpName("PFUB2", PU_LEVEL);
 	p2 = W_CacheLumpName("PFUB1", PU_LEVEL);
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 	V_MarkRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
 #endif
 
@@ -1036,10 +1036,10 @@ void F_BunnyScroll(void)
 		return;
 	if (finalecount < 1180)
 	{
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 		V_DrawPatchScreen0((SCREENWIDTH - 13 * 8) / 2, (SCREENHEIGHT - 8 * 8) / 2, W_CacheLumpName("END0", PU_CACHE));
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 		V_DrawPatchDirect((SCREENWIDTH - 13 * 8) / 2, (SCREENHEIGHT - 8 * 8) / 2, W_CacheLumpName("END0", PU_CACHE));
 #endif
 		laststage = 0;
@@ -1056,10 +1056,10 @@ void F_BunnyScroll(void)
 	}
 
 	sprintf(name, "END%i", stage);
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 	V_DrawPatchScreen0((SCREENWIDTH - 13 * 8) / 2, (SCREENHEIGHT - 8 * 8) / 2, W_CacheLumpName(name, PU_CACHE));
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
 	V_DrawPatchDirect((SCREENWIDTH - 13 * 8) / 2, (SCREENHEIGHT - 8 * 8) / 2, W_CacheLumpName(name, PU_CACHE));
 #endif
 }
@@ -1072,10 +1072,10 @@ void F_Drawer(void)
 {
 	if (finalestage == 2)
 	{
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW)
 		F_CastDrawer();
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if defined(MODE_T25) || defined(MODE_T50)
 		F_CastDrawerText();
 #endif
 		return;
@@ -1083,10 +1083,10 @@ void F_Drawer(void)
 
 	if (!finalestage)
 	{
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if defined(MODE_T25) || defined(MODE_T50)
 		F_TextWriteText();
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW)
 		F_TextWrite();
 #endif
 	}
@@ -1097,69 +1097,69 @@ void F_Drawer(void)
 		case 1:
 			if (gamemode == shareware)
 			{
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+#ifdef MODE_T25
 				V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#ifdef MODE_T50
 				V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 				V_DrawPatchScreen0(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
 				V_DrawPatchDirect(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 #endif
 			}
 			else
 			{
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+#ifdef MODE_T25
 				V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#ifdef MODE_T50
 				V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 				V_DrawPatchScreen0(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
 				V_DrawPatchDirect(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
 #endif
 			}
 
 			break;
 		case 2:
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+#ifdef MODE_T25
 			V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#ifdef MODE_T50
 			V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 			V_DrawPatchScreen0(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
 			V_DrawPatchDirect(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
 #endif
 			break;
 		case 3:
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW)
 			F_BunnyScroll();
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if defined(MODE_T25) || defined(MODE_T50)
 			F_BunnyScrollText();
 #endif
 			break;
 		case 4:
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+#ifdef MODE_T25
 			V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#ifdef MODE_T50
 			V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 			V_DrawPatchScreen0(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
 			V_DrawPatchDirect(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
 #endif
 			break;

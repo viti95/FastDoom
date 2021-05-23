@@ -32,7 +32,7 @@
 // We need the playr data structure as well.
 #include "d_player.h"
 
-#include "vmode.h"
+
 
 // ------------------------
 // Command line parameters.
@@ -61,7 +61,7 @@ extern boolean forceLowDetail;
 extern boolean forcePotatoDetail;
 extern int forceScreenSize;
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_80X25)
+#ifdef MODE_T25
 extern boolean CGAcard;
 #endif
 

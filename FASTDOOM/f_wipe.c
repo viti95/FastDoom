@@ -32,7 +32,7 @@
 
 #include <conio.h>
 
-#include "vmode.h"
+
 
 #define GC_INDEX 0x3CE
 #define GC_READMAP 4
@@ -89,10 +89,10 @@ void wipe_initMelt()
     int i;
 
     // copy start screen to main screen
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+    #ifdef MODE_Y
     CopyDWords(screen2, screen0, (SCREENWIDTH * SCREENHEIGHT) / 4);
     #endif
-    #if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+    #if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
     CopyDWords(screen2, backbuffer, (SCREENWIDTH * SCREENHEIGHT) / 4);
     #endif
 
@@ -143,10 +143,10 @@ byte wipe_doMelt(int ticks)
                 if (dy >= SCREENHEIGHT - y_val)
                     dy = SCREENHEIGHT - y_val;
                 s = &((short *)screen3)[Mul200(i) + y_val];
-                #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+                #ifdef MODE_Y
                 d = &((short *)screen0)[Mul160(y_val) + i];
                 #endif
-                #if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+                #if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
                 d = &((short *)backbuffer)[Mul160(y_val) + i];
                 #endif
                 for (j = dy; j; j--)
@@ -156,10 +156,10 @@ byte wipe_doMelt(int ticks)
                 }
                 y_val += dy;
                 s = &((short *)screen2)[Mul200(i)];
-                #if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+                #ifdef MODE_Y
                 d = &((short *)screen0)[Mul160(y_val) + i];
                 #endif
-                #if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+                #if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
                 d = &((short *)backbuffer)[Mul160(y_val) + i];
                 #endif
                 idx = 0;
@@ -188,7 +188,7 @@ void wipe_exitMelt()
 // wipe_ReadScreen
 // Reads the screen currently displayed into a linear buffer.
 //
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
 void wipe_ReadScreen(byte *scr)
 {
     int j;
@@ -253,14 +253,14 @@ void wipe_ReadScreen(byte *scr)
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
 void wipe_ReadScreen(byte *scr)
 {
     CopyDWords(backbuffer, scr, SCREENWIDTH * SCREENHEIGHT / 4);
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW)
 void wipe_StartScreen()
 {
     screen2 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
@@ -268,7 +268,7 @@ void wipe_StartScreen()
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW)
 void wipe_EndScreen()
 {
     screen3 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
@@ -276,7 +276,7 @@ void wipe_EndScreen()
 }
 #endif
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW)
 int wipe_ScreenWipe(int ticks)
 {
     int rc;
@@ -289,7 +289,7 @@ int wipe_ScreenWipe(int ticks)
     }
 
     // do a piece of wipe-in
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y)
+#ifdef MODE_Y
     V_MarkRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
 #endif
 

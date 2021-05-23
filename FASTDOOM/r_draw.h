@@ -16,7 +16,7 @@
 //	System specific interface stuff.
 //
 
-#include "vmode.h"
+
 
 #ifndef __R_DRAW__
 #define __R_DRAW__
@@ -35,10 +35,10 @@ extern byte *dc_source;
 
 extern int columnofs[SCREENWIDTH];
 
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_13H || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA || EXE_VIDEOMODE == EXE_VIDEOMODE_EGA || EXE_VIDEOMODE == EXE_VIDEOMODE_HERC || EXE_VIDEOMODE == EXE_VIDEOMODE_CGA_BW)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC)
 extern byte *ylookup[SCREENHEIGHT];
 #endif
-#if (EXE_VIDEOMODE == EXE_VIDEOMODE_Y || EXE_VIDEOMODE == EXE_VIDEOMODE_80X25 || EXE_VIDEOMODE == EXE_VIDEOMODE_80X50)
+#if defined(MODE_Y) || defined(MODE_T25) || defined(MODE_T50)
 extern byte **ylookup;
 #endif
 
