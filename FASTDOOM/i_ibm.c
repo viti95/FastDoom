@@ -314,25 +314,20 @@ void I_ProcessPalette(byte *palette)
         g1 = (int)ptr[*palette++];
         b1 = (int)ptr[*palette++];
 
-        for (j = 0; j < 48; j += 3)
+        for (j = 0; j < 16; j++)
         {
             int r2, g2, b2;
             int cR, cG, cB;
+            int pos = j * 3;
 
-            r2 = (int)textcolors[j];
-            cR = r2 - r1;
-            if (cR < 0)
-                cR = -cR;
+            r2 = (int)textcolors[pos];
+            cR = abs(r2 - r1);
 
-            g2 = (int)textcolors[j + 1];
-            cG = g2 - g1;
-            if (cG < 0)
-                cG = -cG;
+            g2 = (int)textcolors[pos + 1];
+            cG = abs(g2 - g1);
 
-            b2 = (int)textcolors[j + 2];
-            cB = b2 - b1;
-            if (cB < 0)
-                cB = -cB;
+            b2 = (int)textcolors[pos + 2];
+            cB = abs(b2 - b1);
 
             distance = cR + cG + cB;
 
