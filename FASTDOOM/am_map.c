@@ -781,14 +781,24 @@ void AM_drawFline(fline_t *fl,
 #endif
 
 	dx = fl->b.x - fl->a.x;
-	// OPTIMIZE NEGATE
-	ax = 2 * (dx < 0 ? -dx : dx);
-	sx = dx < 0 ? -1 : 1;
+
+	if (dx < 0){
+		ax = 2 * -dx;
+		sx = -1;
+	}else{
+		ax = 2 * dx;
+		sx = 1;
+	}
 
 	dy = fl->b.y - fl->a.y;
-	// OPTIMIZE NEGATE
-	ay = 2 * (dy < 0 ? -dy : dy);
-	sy = dy < 0 ? -1 : 1;
+
+	if (dy < 0){
+		ay = 2 * -dy;
+		sy = -1;
+	}else{
+		ay = 2 * dy;
+		sy = 1;
+	}
 
 	x = fl->a.x;
 	y = fl->a.y;
