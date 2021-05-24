@@ -314,22 +314,22 @@ void I_ProcessPalette(byte *palette)
         g1 = (int)ptr[*palette++];
         b1 = (int)ptr[*palette++];
 
-        for (j = 0; j < 16; j++)
+        for (j = 0; j < 48; j += 3)
         {
             int r2, g2, b2;
             int cR, cG, cB;
 
-            r2 = (int)textcolors[j * 3];
+            r2 = (int)textcolors[j];
             cR = r2 - r1;
             if (cR < 0)
                 cR = -cR;
 
-            g2 = (int)textcolors[j * 3 + 1];
+            g2 = (int)textcolors[j + 1];
             cG = g2 - g1;
             if (cG < 0)
                 cG = -cG;
 
-            b2 = (int)textcolors[j * 3 + 2];
+            b2 = (int)textcolors[j + 2];
             cB = b2 - b1;
             if (cB < 0)
                 cB = -cB;
