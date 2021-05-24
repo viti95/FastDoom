@@ -331,6 +331,11 @@ void I_ProcessPalette(byte *palette)
 
             distance = cR + cG + cB;
 
+            if (distance == 0){
+                lut16colors[i] = j;
+                break;
+            }
+
             if (best_difference > distance)
             {
                 best_difference = distance;
