@@ -8,7 +8,7 @@ extern fixed_t fps;
 
 extern byte *currentscreen;
 
-#if defined(MODE_Y) || defined(MODE_13H)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2)
 extern byte processedpalette[14 * 768];
 #endif
 
@@ -28,7 +28,7 @@ extern byte *ptrsumcolors10;
 extern byte *ptrsumcolors11;
 #endif
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2)
 extern int updatestate;
 #endif
 

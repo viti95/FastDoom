@@ -13,7 +13,7 @@ lib noemu387.lib
 lib gf1_osf.lib
 lib pawe32.lib
 format os2 le
-name fdoom13h
+name fdoomvbe
 
 file ns_dpmi.obj
 file ns_pcfx.obj
