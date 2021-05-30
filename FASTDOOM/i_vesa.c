@@ -83,6 +83,7 @@ static unsigned char BitsPerPixel;
 void *pmcode;
 void *pm_setwindowcall;
 void *pm_setdisplaystartcall;
+void *pm_setpalette;
 void VBE_InitPM(void);
 
 /*
@@ -93,6 +94,7 @@ void VBE_InitPM(void);
 
 tagSetDisplayStartType VBE_SetDisplayStart;
 tagSetBankType VBE_SetBank;
+tagSetPaletteType VBE_SetPalette;
 
 #ifdef DEBUG_VESA
 
@@ -333,6 +335,18 @@ static void PM_SetBank(short bnk)
     return;
   vbelastbank = bnk;
   asmSB(bnk);
+}
+
+void asmSP(unsigned char *palptr);
+#pragma aux asmSP = "mov ax, 0x4f09" \
+                    "mov bl, 0"      \
+                    "mov ecx, 256"   \
+                    "mov edx, 0"     \
+                    "call [pm_setpalette]" parm[edi] modify[eax ebx ecx edx esi edi];
+
+static void PM_SetPalette(unsigned char *palptr)
+{
+  asmSP(palptr);
 }
 #endif
 
@@ -579,8 +593,10 @@ void VBE_InitPM(void)
     pm_pointer = (unsigned short *)pmcode;
     pm_setwindowcall = (void *)(((unsigned long)RMI.ES << 4) | (RMI.EDI + pm_pointer[0]));
     pm_setdisplaystartcall = (void *)(((unsigned long)RMI.ES << 4) | (RMI.EDI + pm_pointer[1]));
+    pm_setpalette = (void *)(((unsigned long)RMI.ES << 4) | (RMI.EDI + pm_pointer[2]));
     VBE_SetDisplayStart = PM_SetDisplayStart;
     VBE_SetBank = PM_SetBank;
+    VBE_SetPalette = PM_SetPalette;
   }
 #endif
   leavesection("VBE_InitPM");

@@ -83,6 +83,7 @@
 
 typedef void (*tagSetDisplayStartType)(short x, short y);
 typedef void (*tagSetBankType)(short bnk);
+typedef void (*tagSetPaletteType)(unsigned char *palptr);
 
 struct bcd16
 {
@@ -241,6 +242,17 @@ extern tagSetBankType VBE_SetBank;
   * Sets the A-Window to the specified bank. 0xa0000 points to another
   * location of the video memory. Be aware, that the bank is dependent
   * of the granularity field in the modeinfoblock.
+  *
+  */
+
+extern tagSetPaletteType VBE_SetPalette;
+
+/*
+  * void VBE_SetPalette (unsigned char *palptr);
+  *
+  * Sets the video card palette.
+  * 4 bytes per palette entry, BGRx format. The x isn't used at all.
+  * WTF were they thinking!
   *
   */
 
