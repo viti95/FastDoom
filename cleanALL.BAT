@@ -6,3 +6,5 @@ call cleancga.bat
 call cleanega.bat
 call cleanbwc.bat
 call cleanhgc.bat
+call cleanvbr.bat
+call cleanvbp.bat

@@ -28,7 +28,9 @@
 //#define S3FIX
 
 /* Disables the Proteted Mode Extensions (buggy on some cards (e.g. matrox)) */
-//#define DISABLE_PM_EXTENSIONS
+#ifndef MODE_PM
+#define DISABLE_PM_EXTENSIONS
+#endif
 
 /* Disables the Linar Frame Buffer */
 // #define DISABLE_LFB
