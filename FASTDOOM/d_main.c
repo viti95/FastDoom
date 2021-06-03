@@ -443,13 +443,7 @@ void D_DoomLoop(void)
 
         S_UpdateSounds(players.mo); // move positional sounds
 
-// Update display, next frame, with current state.
-#ifndef MODE_HERC
-        if (waitVsync)
-        {
-            I_WaitSingleVBL();
-        }
-#endif
+        // Update display, next frame, with current state.
         D_Display();
     }
 }

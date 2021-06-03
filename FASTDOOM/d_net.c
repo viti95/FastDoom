@@ -175,11 +175,6 @@ void TryRunTics(void)
 
 		// Render interpolated frames
 		if (uncappedFPS){
-			#ifndef MODE_HERC
-			if (waitVsync){
-				I_WaitSingleVBL();
-			}
-			#endif
 			D_Display();
 		}
 	}

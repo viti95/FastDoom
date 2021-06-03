@@ -38,6 +38,7 @@
 #include "ns_dpmi.h"
 #include "ns_task.h"
 #include "doomdef.h"
+#include "doomstat.h"
 
 #ifdef MODE_VBE2
 #include "i_vesa.h"
@@ -815,6 +816,13 @@ void I_FinishUpdate(void)
 {
     static int fps_counter, fps_starttime, fps_nextcalculation;
     int opt1, opt2;
+
+#ifndef MODE_HERC
+    if (waitVsync)
+    {
+        I_WaitSingleVBL();
+    }
+#endif
 
 #ifdef MODE_T25
     // Change video page
