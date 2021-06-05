@@ -45,7 +45,6 @@ file i_random.obj
 file i_main.obj
 file i_ibm.obj
 file i_sound.obj
-file i_vesa.obj
 file linear.obj
 file tables.obj
 file f_finale.obj
