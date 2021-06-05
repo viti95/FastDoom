@@ -38,8 +38,11 @@
 #include "ns_dpmi.h"
 #include "ns_task.h"
 #include "doomdef.h"
+#include "doomstat.h"
 
-
+#ifdef MODE_VBE2
+#include "i_vesa.h"
+#endif
 
 //
 // Macros
@@ -203,8 +206,11 @@ byte gammatable[5][256] =
         {2, 3, 4, 4, 5, 6, 6, 7, 7, 8, 9, 9, 10, 10, 10, 11, 11, 12, 12, 13, 13, 13, 14, 14, 15, 15, 15, 16, 16, 16, 17, 17, 17, 18, 18, 18, 19, 19, 19, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 26, 27, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 30, 31, 31, 31, 31, 32, 32, 32, 32, 33, 33, 33, 33, 33, 34, 34, 34, 34, 35, 35, 35, 35, 35, 36, 36, 36, 36, 37, 37, 37, 37, 37, 38, 38, 38, 38, 38, 39, 39, 39, 39, 40, 40, 40, 40, 40, 41, 41, 41, 41, 41, 42, 42, 42, 42, 42, 43, 43, 43, 43, 43, 44, 44, 44, 44, 44, 45, 45, 45, 45, 45, 45, 46, 46, 46, 46, 46, 47, 47, 47, 47, 47, 48, 48, 48, 48, 48, 48, 49, 49, 49, 49, 49, 50, 50, 50, 50, 50, 50, 51, 51, 51, 51, 51, 51, 52, 52, 52, 52, 52, 53, 53, 53, 53, 53, 53, 54, 54, 54, 54, 54, 54, 55, 55, 55, 55, 55, 55, 56, 56, 56, 56, 56, 56, 57, 57, 57, 57, 57, 57, 58, 58, 58, 58, 58, 58, 59, 59, 59, 59, 59, 59, 60, 60, 60, 60, 60, 60, 61, 61, 61, 61, 61, 61, 61, 62, 62, 62, 62, 62, 62, 63, 63, 63, 63, 63, 63},
         {4, 5, 7, 8, 9, 9, 10, 11, 12, 12, 13, 13, 14, 15, 15, 16, 16, 17, 17, 17, 18, 18, 19, 19, 20, 20, 20, 21, 21, 21, 22, 22, 23, 23, 23, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 30, 31, 31, 31, 32, 32, 32, 32, 32, 33, 33, 33, 33, 34, 34, 34, 34, 35, 35, 35, 35, 35, 36, 36, 36, 36, 37, 37, 37, 37, 37, 38, 38, 38, 38, 38, 39, 39, 39, 39, 39, 40, 40, 40, 40, 40, 41, 41, 41, 41, 41, 42, 42, 42, 42, 42, 43, 43, 43, 43, 43, 43, 44, 44, 44, 44, 44, 45, 45, 45, 45, 45, 45, 46, 46, 46, 46, 46, 46, 47, 47, 47, 47, 47, 47, 48, 48, 48, 48, 48, 48, 49, 49, 49, 49, 49, 49, 50, 50, 50, 50, 50, 50, 50, 51, 51, 51, 51, 51, 51, 52, 52, 52, 52, 52, 52, 52, 53, 53, 53, 53, 53, 53, 54, 54, 54, 54, 54, 54, 54, 55, 55, 55, 55, 55, 55, 55, 56, 56, 56, 56, 56, 56, 56, 57, 57, 57, 57, 57, 57, 57, 58, 58, 58, 58, 58, 58, 58, 58, 59, 59, 59, 59, 59, 59, 59, 60, 60, 60, 60, 60, 60, 60, 60, 61, 61, 61, 61, 61, 61, 61, 61, 62, 62, 62, 62, 62, 62, 62, 62, 63, 63, 63, 63, 63, 63, 63}};
 
-#if defined(MODE_Y) || defined(MODE_13H)
+#if defined(MODE_Y) || defined(MODE_13H) || (defined(MODE_VBE2) && !defined(MODE_PM))
 byte processedpalette[14 * 768];
+#endif
+#if defined(MODE_VBE2) && defined(MODE_PM)
+byte processedpalette[14 * 1024];
 #endif
 
 byte scantokey[128] =
@@ -230,12 +236,12 @@ byte scantokey[128] =
 };
 
 #if defined(MODE_CGA)
-void I_ProcessPalette(byte *palette){
-
+void I_ProcessPalette(byte *palette)
+{
 }
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H)
+#if defined(MODE_Y) || defined(MODE_13H) || (defined(MODE_VBE2) && !defined(MODE_PM))
 void I_ProcessPalette(byte *palette)
 {
     int i;
@@ -248,6 +254,23 @@ void I_ProcessPalette(byte *palette)
         processedpalette[i + 1] = ptr[*(palette + 1)];
         processedpalette[i + 2] = ptr[*(palette + 2)];
         processedpalette[i + 3] = ptr[*(palette + 3)];
+    }
+}
+#endif
+
+#if defined(MODE_VBE2) && defined(MODE_PM)
+void I_ProcessPalette(byte *palette)
+{
+    int i;
+
+    byte *ptr = gammatable[usegamma];
+
+    for (i = 0; i < 14 * 1024; i += 4, palette += 3)
+    {
+        processedpalette[i] = ptr[*(palette + 2)];     // B
+        processedpalette[i + 1] = ptr[*(palette + 1)]; // G
+        processedpalette[i + 2] = ptr[*palette];       // R
+        //processedpalette[i + 3] = 0x00;                 // Unused
     }
 }
 #endif
@@ -331,7 +354,8 @@ void I_ProcessPalette(byte *palette)
 
             distance = cR + cG + cB;
 
-            if (distance == 0){
+            if (distance == 0)
+            {
                 lut16colors[i] = j;
                 break;
             }
@@ -364,7 +388,7 @@ void I_SetPalette(int numpalette)
     ptrlut16colors = lut16colors + numpalette * 256;
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H)
+#if defined(MODE_Y) || defined(MODE_13H) || (defined(MODE_VBE2) && !defined(MODE_PM))
     {
         int i;
         int pos = Mul768(numpalette);
@@ -374,13 +398,20 @@ void I_SetPalette(int numpalette)
         OutString(PEL_DATA, ((unsigned char *)processedpalette) + pos, 768);
     }
 #endif
+
+#if defined(MODE_VBE2) && defined(MODE_PM)
+    {
+        int pos = numpalette * 1024;
+        VBE_SetPalette(((unsigned char *)processedpalette) + pos);
+    }
+#endif
 }
 
 //
 // Graphics mode
 //
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2)
 int updatestate;
 #endif
 byte *pcscreen, *currentscreen, *destscreen, *destview;
@@ -771,10 +802,27 @@ void CGA_DrawBackbuffer(void)
 }
 #endif
 
+#ifdef MODE_VBE2
+static struct VBE_VbeInfoBlock vbeinfo;
+static struct VBE_ModeInfoBlock vbemode;
+char *Types[8] = {"Text", "CGA", "Hercules", "Planar", "Packed Pixel", "Unchained", "Directcolor", "YUV"};
+char *MemoryType[2] = {"Banked", "Linear"};
+unsigned short vesavideomode = 0xFFFF;
+int vesalinear = -1;
+char *vesavideoptr;
+#endif
+
 void I_FinishUpdate(void)
 {
     static int fps_counter, fps_starttime, fps_nextcalculation;
     int opt1, opt2;
+
+#ifndef MODE_HERC
+    if (waitVsync)
+    {
+        I_WaitSingleVBL();
+    }
+#endif
 
 #ifdef MODE_T25
     // Change video page
@@ -818,7 +866,7 @@ void I_FinishUpdate(void)
         destscreen = (byte *)0xa0000;
     }
 #endif
-#ifdef MODE_13H
+#if defined(MODE_13H) || defined(MODE_VBE2)
 
     if (updatestate & I_FULLSCRN)
     {
@@ -1040,6 +1088,65 @@ void I_InitGraphics(void)
     pcscreen = destscreen = (byte *)0xB0000;
 #endif
 
+#ifdef MODE_VBE2
+
+    int mode;
+
+    VBE_Init();
+
+    // Get VBE info
+    VBE_Controller_Information(&vbeinfo);
+    printf("%s %hi.%hi\n", vbeinfo.vbeSignature, vbeinfo.vbeVersion.hi, vbeinfo.vbeVersion.lo);
+    printf("%s\n", vbeinfo.OemStringPtr);
+    printf("%s\n", vbeinfo.OemVendorNamePtr);
+    printf("%s\n", vbeinfo.OemProductNamePtr);
+    printf("%hi kb\n", vbeinfo.TotalMemory * 64);
+
+    // Get VBE modes
+    for (mode = 0; vbeinfo.VideoModePtr[mode] != 0xffff; mode++)
+    {
+        VBE_Mode_Information(vbeinfo.VideoModePtr[mode], &vbemode);
+        if (vbemode.XResolution == 320 && vbemode.YResolution == 200 && vbemode.BitsPerPixel == 8)
+        {
+            vesavideomode = vbeinfo.VideoModePtr[mode];
+            vesalinear = VBE_IsModeLinear(vesavideomode);
+
+            printf("Mode 0x%3x: %3ix%3i %1i bpp (%-12s, %s) %2hi pages\n",
+                   vesavideomode,
+                   vbemode.XResolution,
+                   vbemode.YResolution,
+                   vbemode.BitsPerPixel,
+                   Types[vbemode.MemoryModel],
+                   MemoryType[vesalinear],
+                   vbemode.NumberOfImagePages);
+
+            break;
+        }
+    }
+
+    // If a VESA compatible 320x200 8bpp mode is found, use it!
+    if (vesavideomode != 0xFFFF)
+    {
+        VBE_SetMode(vesavideomode, vesalinear, 1);
+
+        if (vesalinear == 1)
+        {
+            pcscreen = destscreen = VBE_GetVideoPtr(vesavideomode);
+        }
+        else
+        {
+            pcscreen = destscreen = (char *)0xA0000;
+        }
+
+        // Force 6 bits resolution per color
+        VBE_SetDACWidth(6);
+    }
+    else
+    {
+        I_Error("Compatible VESA 2.0 video mode not found! (320x200 8bpp required)");
+    }
+#endif
+
     I_ProcessPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
     I_SetPalette(0);
 }
@@ -1060,6 +1167,10 @@ void I_ShutdownGraphics(void)
         outp(0x03B5, Text_80x25[i + 1]);
     }
     outp(0x03B8, Text_80x25[11]);
+#endif
+
+#ifdef MODE_VBE2
+    VBE_Done();
 #endif
 
     regs.w.ax = 3;
