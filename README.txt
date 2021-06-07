@@ -68,6 +68,11 @@
  * FDOOMT25.EXE => FastDoom 80x25 16 colors text mode (virtual resolution of
                    80x50)
  * FDOOMT50.EXE => FastDoom 80x50 16 colors text mode
+ * FDOOMVBR.EXE => FastDoom for VBE 2.0 cards. Uses real mode (default, and
+                   more compatible). If you use UniVBE use this version
+ * FDOOMVBP.EXE => FastDoom for VBE 2.0 cards. Uses protected mode
+                   extensions. Some video cards crash with this mode, it
+                   should be a little bit faster than the real mode version
  * FDSETUP.EXE  => Utility to setup controls and sound cards
 
  Command line parameters
