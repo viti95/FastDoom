@@ -268,9 +268,7 @@ void W_ReadLump(int lump,
 //
 // W_CacheLumpNum
 //
-void *
-W_CacheLumpNum(int lump,
-               int tag)
+void * W_CacheLumpNum(int lump, byte tag)
 {
     byte *ptr = lumpcache[lump];
 

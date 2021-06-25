@@ -64,7 +64,7 @@ int W_GetNumForName(char *name);
 
 void W_ReadLump(int lump, void *dest);
 
-void *W_CacheLumpNum(int lump, int tag);
+void *W_CacheLumpNum(int lump, byte tag);
 
 #define W_CacheLumpName(name, tag) W_CacheLumpNum(W_GetNumForName((name)), (tag))
 

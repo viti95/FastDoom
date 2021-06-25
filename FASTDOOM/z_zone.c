@@ -132,7 +132,7 @@ void Z_Free(void *ptr)
 //
 #define MINFRAGMENT sizeof(memblock_t)
 
-void *Z_Malloc(int size, int tag, void *user)
+void *Z_Malloc(int size, byte tag, void *user)
 {
     int extra;
     memblock_t *start;
@@ -216,7 +216,7 @@ void *Z_Malloc(int size, int tag, void *user)
     return (void *)((byte *)base + sizeof(memblock_t));
 }
 
-void *Z_MallocUnowned(int size, int tag)
+void *Z_MallocUnowned(int size, byte tag)
 {
     int extra;
     memblock_t *start;
@@ -301,8 +301,7 @@ void *Z_MallocUnowned(int size, int tag)
 //
 // Z_FreeTags
 //
-void Z_FreeTags(int lowtag,
-                int hightag)
+void Z_FreeTags(byte lowtag, byte hightag)
 {
     memblock_t *block;
     memblock_t *next;

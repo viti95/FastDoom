@@ -22,6 +22,8 @@
 #ifndef __Z_ZONE__
 #define __Z_ZONE__
 
+#include "doomtype.h"
+
 //
 // ZONE MEMORY
 // PU - purge tags.
@@ -37,10 +39,10 @@
 #define PU_CACHE 101
 
 void Z_Init(void);
-void *Z_Malloc(int size, int tag, void *ptr);
-void *Z_MallocUnowned(int size, int tag);
+void *Z_Malloc(int size, byte tag, void *ptr);
+void *Z_MallocUnowned(int size, byte tag);
 void Z_Free(void *ptr);
-void Z_FreeTags(int lowtag, int hightag);
+void Z_FreeTags(byte lowtag, byte hightag);
 
 #define Z_ChangeTag(ptr, tagval) ((memblock_t *)((byte *)ptr - sizeof(memblock_t)))->tag = tagval
 
@@ -48,7 +50,7 @@ typedef struct memblock_s
 {
     int size;    // including the header and possibly tiny fragments
     void **user; // NULL if a free block
-    int tag;     // purgelevel
+    byte tag;     // purgelevel
     struct memblock_s *next;
     struct memblock_s *prev;
 } memblock_t;
