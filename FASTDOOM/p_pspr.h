@@ -66,11 +66,11 @@ typedef struct
 typedef struct
 {
     ammotype_t ammo;
-    int upstate;
-    int downstate;
-    int readystate;
-    int atkstate;
-    int flashstate;
+    unsigned short upstate;
+    unsigned short downstate;
+    unsigned short readystate;
+    unsigned short atkstate;
+    unsigned short flashstate;
 
 } weaponinfo_t;
 

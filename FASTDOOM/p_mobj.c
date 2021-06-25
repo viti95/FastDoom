@@ -43,7 +43,7 @@ void P_SpawnMapThing(mapthing_t *mthing);
 // Returns true if the mobj is still present.
 //
 
-byte P_SetMobjState(mobj_t *mobj, statenum_t state)
+byte P_SetMobjState(mobj_t *mobj, unsigned short state)
 {
     state_t *st;
 
@@ -441,10 +441,7 @@ void P_MobjTicklessThinker(mobj_t *mobj)
 // P_SpawnMobj
 //
 mobj_t *
-P_SpawnMobj(fixed_t x,
-            fixed_t y,
-            fixed_t z,
-            mobjtype_t type)
+P_SpawnMobj(fixed_t x, fixed_t y, fixed_t z, byte type)
 {
     mobj_t *mobj;
     state_t *st;
@@ -466,7 +463,8 @@ P_SpawnMobj(fixed_t x,
     if (gameskill != sk_nightmare)
         mobj->reactiontime = info->reactiontime;
 
-    mobj->lastlook = P_Random & 0;
+    //mobj->lastlook = P_Random & 0;
+    P_Random;
     // do not set the state with P_SetMobjState,
     // because action routines can not be called yet
     st = &states[info->spawnstate];
@@ -752,9 +750,7 @@ void P_CheckMissileSpawn(mobj_t *th)
 // P_SpawnMissile
 //
 mobj_t *
-P_SpawnMissile(mobj_t *source,
-               mobj_t *dest,
-               mobjtype_t type)
+P_SpawnMissile(mobj_t *source, mobj_t *dest, byte type)
 {
     mobj_t *th;
     angle_t an;
@@ -802,8 +798,7 @@ P_SpawnMissile(mobj_t *source,
 // P_SpawnPlayerMissile
 // Tries to aim at a nearby monster
 //
-void P_SpawnPlayerMissile(mobj_t *source,
-                          mobjtype_t type)
+void P_SpawnPlayerMissile(mobj_t *source, byte type)
 {
     mobj_t *th;
     angle_t an;

@@ -444,7 +444,7 @@ void F_TextWriteText(void)
 typedef struct
 {
 	char *name;
-	mobjtype_t type;
+	byte type;
 } castinfo_t;
 
 castinfo_t castorder[] = {
@@ -499,7 +499,7 @@ void F_StartCast(void)
 //
 void F_CastTicker(void)
 {
-	int st;
+	unsigned short st;
 	byte sfx;
 
 	if (--casttics > 0)

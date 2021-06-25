@@ -233,7 +233,7 @@ typedef struct mobj_s
     // If == validcount, already checked.
     int validcount;
 
-    mobjtype_t type;
+    byte type;
     mobjinfo_t *info; // &mobjinfo[mobj->type]
 
     int tics; // state tic counter
@@ -260,9 +260,6 @@ typedef struct mobj_s
     // Additional info record for player avatars only.
     // Only valid if type == MT_PLAYER
     struct player_s *player;
-
-    // Player number last looked for.
-    int lastlook;
 
     // For nightmare respawn.
     mapthing_t spawnpoint;

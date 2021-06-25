@@ -1147,7 +1147,7 @@ typedef struct
     long frame;
     long tics;
     actionf_t action;
-    statenum_t nextstate;
+    unsigned short nextstate;
 } state_t;
 
 extern state_t states[NUMSTATES];
@@ -1298,19 +1298,19 @@ typedef enum
 typedef struct
 {
     int doomednum;
-    int spawnstate;
+    unsigned short spawnstate;
     int spawnhealth;
-    int seestate;
+    unsigned short seestate;
     byte seesound;
     int reactiontime;
     byte attacksound;
-    int painstate;
+    unsigned short painstate;
     int painchance;
     byte painsound;
-    int meleestate;
-    int missilestate;
-    int deathstate;
-    int xdeathstate;
+    unsigned short meleestate;
+    unsigned short missilestate;
+    unsigned short deathstate;
+    unsigned short xdeathstate;
     byte deathsound;
     int speed;
     int radius;
@@ -1319,7 +1319,7 @@ typedef struct
     int damage;
     byte activesound;
     int flags;
-    int raisestate;
+    unsigned short raisestate;
 
 } mobjinfo_t;
 

@@ -1872,7 +1872,7 @@ void A_SpawnFly(mobj_t *mo)
     mobj_t *fog;
     mobj_t *targ;
     int r;
-    mobjtype_t type;
+    byte type;
 
     if (--mo->reactiontime)
         return; // still flying

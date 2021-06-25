@@ -88,22 +88,18 @@ void P_PlayerThink(player_t *player);
 extern int iquehead;
 extern int iquetail;
 
-mobj_t *
-P_SpawnMobj(fixed_t x,
-            fixed_t y,
-            fixed_t z,
-            mobjtype_t type);
+mobj_t * P_SpawnMobj(fixed_t x, fixed_t y, fixed_t z, byte type);
 
 void P_RemoveMobj(mobj_t *th);
-byte P_SetMobjState(mobj_t *mobj, statenum_t state);
+byte P_SetMobjState(mobj_t *mobj, unsigned short state);
 void P_MobjThinker(mobj_t *mobj);
 void P_MobjBrainlessThinker(mobj_t *mobj);
 void P_MobjTicklessThinker(mobj_t *mobj);
 
 void P_SpawnPuff(fixed_t x, fixed_t y, fixed_t z);
 void P_SpawnBlood(fixed_t x, fixed_t y, fixed_t z, int damage);
-mobj_t *P_SpawnMissile(mobj_t *source, mobj_t *dest, mobjtype_t type);
-void P_SpawnPlayerMissile(mobj_t *source, mobjtype_t type);
+mobj_t *P_SpawnMissile(mobj_t *source, mobj_t *dest, byte type);
+void P_SpawnPlayerMissile(mobj_t *source, byte type);
 
 //
 // P_ENEMY

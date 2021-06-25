@@ -127,9 +127,7 @@ const weaponinfo_t weaponinfo[NUMWEAPONS] =
 //
 // P_SetPsprite
 //
-void P_SetPsprite(player_t *player,
-                  int position,
-                  statenum_t stnum)
+void P_SetPsprite(player_t *player, int position, unsigned short stnum)
 {
     pspdef_t *psp;
     state_t *state;
@@ -172,7 +170,7 @@ void P_SetPsprite(player_t *player,
 //
 void P_BringUpWeapon(player_t *player)
 {
-    statenum_t newstate;
+    unsigned short newstate;
 
     if (player->pendingweapon == wp_nochange)
         player->pendingweapon = player->readyweapon;
@@ -270,7 +268,7 @@ byte P_CheckAmmo(player_t *player)
 //
 void P_FireWeapon(player_t *player)
 {
-    statenum_t newstate;
+    unsigned short newstate;
 
     if (!P_CheckAmmo(player))
         return;
@@ -302,7 +300,7 @@ void P_DropWeapon(player_t *player)
 void A_WeaponReady(player_t *player,
                    pspdef_t *psp)
 {
-    statenum_t newstate;
+    unsigned short newstate;
     int angle;
 
     // get out of attack state
@@ -420,7 +418,7 @@ void A_Lower(player_t *player,
 void A_Raise(player_t *player,
              pspdef_t *psp)
 {
-    statenum_t newstate;
+    unsigned short newstate;
 
     psp->sy -= RAISESPEED;
 
