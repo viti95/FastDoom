@@ -1053,6 +1053,7 @@ void P_UpdateSpecials(void)
 					break;
 				}
 				S_StartSound((mobj_t *)&buttonlist[i].soundorg, sfx_swtchn);
+				memset(&buttonlist[i], 0, sizeof(button_t));
 			}
 		}
 }
@@ -1237,6 +1238,9 @@ void P_SpawnSpecials(void)
 
 	for (i = 0; i < MAXPLATS; i++)
 		activeplats[i] = NULL;
+
+	for (i = 0; i < MAXBUTTONS; i++)
+		memset(&buttonlist[i], 0, sizeof(button_t));
 
 	P_InitTagLists();
 }
