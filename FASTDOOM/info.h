@@ -1143,7 +1143,7 @@ typedef enum
 
 typedef struct
 {
-    spritenum_t sprite;
+    byte sprite;
     long frame;
     long tics;
     actionf_t action;

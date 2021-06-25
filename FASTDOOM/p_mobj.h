@@ -207,7 +207,7 @@ typedef struct mobj_s
 
     //More drawing info: to determine current sprite.
     angle_t angle;      // orientation
-    spritenum_t sprite; // used to find patch_t and flip value
+    byte sprite; // used to find patch_t and flip value
     int frame;          // might be ORed with FF_FULLBRIGHT
 
     // Interaction info, by BLOCKMAP.
