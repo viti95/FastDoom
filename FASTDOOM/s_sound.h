@@ -19,6 +19,8 @@
 #ifndef __S_SOUND__
 #define __S_SOUND__
 
+#include "doomtype.h"
+
 //
 // Initializes sound stuff, including volume
 // Sets channels, SFX and music volume,
@@ -38,8 +40,7 @@ void S_Start(void);
 // Start sound for thing at <origin>
 //  using <sound_id> from sounds.h
 //
-void S_StartSound(void *origin,
-                  int sound_id);
+void S_StartSound(void *origin, byte sound_id);
 
 // Stop sound for thing at <origin>
 void S_StopSound(void *origin);

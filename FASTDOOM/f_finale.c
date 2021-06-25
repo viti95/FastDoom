@@ -500,7 +500,7 @@ void F_StartCast(void)
 void F_CastTicker(void)
 {
 	int st;
-	int sfx;
+	byte sfx;
 
 	if (--casttics > 0)
 		return; // not time to change state yet

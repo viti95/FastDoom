@@ -23,6 +23,7 @@
 
 // Needed for action function pointer handling.
 #include "d_think.h"
+#include "doomtype.h"
 
 typedef enum
 {
@@ -1300,23 +1301,23 @@ typedef struct
     int spawnstate;
     int spawnhealth;
     int seestate;
-    int seesound;
+    byte seesound;
     int reactiontime;
-    int attacksound;
+    byte attacksound;
     int painstate;
     int painchance;
-    int painsound;
+    byte painsound;
     int meleestate;
     int missilestate;
     int deathstate;
     int xdeathstate;
-    int deathsound;
+    byte deathsound;
     int speed;
     int radius;
     int height;
     int mass;
     int damage;
-    int activesound;
+    byte activesound;
     int flags;
     int raisestate;
 

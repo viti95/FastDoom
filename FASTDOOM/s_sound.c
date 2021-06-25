@@ -368,7 +368,7 @@ int S_getChannel(void *origin,
     return cnum;
 }
 
-void S_StartSound(void *origin_p, int sfx_id)
+void S_StartSound(void *origin_p, byte sfx_id)
 {
 
     int rc;
