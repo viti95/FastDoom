@@ -91,7 +91,7 @@ extern int iquetail;
 mobj_t * P_SpawnMobj(fixed_t x, fixed_t y, fixed_t z, byte type);
 
 void P_RemoveMobj(mobj_t *th);
-byte P_SetMobjState(mobj_t *mobj, unsigned short state);
+byte P_NotSetMobjState(mobj_t *mobj, unsigned short state);
 void P_MobjThinker(mobj_t *mobj);
 void P_MobjBrainlessThinker(mobj_t *mobj);
 void P_MobjTicklessThinker(mobj_t *mobj);
@@ -148,8 +148,8 @@ extern fixed_t lowfloor;
 
 void P_LineOpening(line_t *linedef);
 
-byte P_BlockLinesIterator(int x, int y, byte (*func)(line_t *));
-byte P_BlockThingsIterator(int x, int y, byte (*func)(mobj_t *));
+byte P_NotBlockLinesIterator(int x, int y, byte (*func)(line_t *));
+byte P_NotBlockThingsIterator(int x, int y, byte (*func)(mobj_t *));
 
 #define PT_ADDLINES 1
 #define PT_ADDTHINGS 2
@@ -174,7 +174,7 @@ extern fixed_t tmceilingz;
 
 extern line_t *ceilingline;
 
-byte P_CheckPosition(mobj_t *thing, fixed_t x, fixed_t y);
+byte P_NotCheckPosition(mobj_t *thing, fixed_t x, fixed_t y);
 byte P_TryMove(mobj_t *thing, fixed_t x, fixed_t y);
 byte P_TeleportMove(mobj_t *thing, fixed_t x, fixed_t y);
 void P_SlideMove(mobj_t *mo);

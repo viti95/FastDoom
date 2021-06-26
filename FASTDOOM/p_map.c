@@ -138,7 +138,7 @@ byte P_TeleportMove(mobj_t *thing, fixed_t x, fixed_t y)
 
     for (bx = xl; bx <= xh; bx++)
         for (by = yl; by <= yh; by++)
-            if (!P_BlockThingsIterator(bx, by, PIT_StompThing))
+            if (P_NotBlockThingsIterator(bx, by, PIT_StompThing))
                 return 0;
 
     // the move is ok,
@@ -238,7 +238,7 @@ byte PIT_CheckThing(mobj_t *thing)
         tmthing->flags &= ~MF_SKULLFLY;
         tmthing->momx = tmthing->momy = tmthing->momz = 0;
 
-        P_SetMobjState(tmthing, tmthing->info->spawnstate);
+        P_NotSetMobjState(tmthing, tmthing->info->spawnstate);
 
         return 0; // stop moving
     }
@@ -323,7 +323,7 @@ byte PIT_CheckThing(mobj_t *thing)
 //  speciallines[]
 //  numspeciallines
 //
-byte P_CheckPosition(mobj_t *thing, fixed_t x, fixed_t y)
+byte P_NotCheckPosition(mobj_t *thing, fixed_t x, fixed_t y)
 {
     int xl;
     int xh;
@@ -358,7 +358,7 @@ byte P_CheckPosition(mobj_t *thing, fixed_t x, fixed_t y)
     numspechit = 0;
 
     if (tmflags & MF_NOCLIP)
-        return 1;
+        return 0;
 
     // Check things first, possibly picking things up.
     // The bounding box is extended by MAXRADIUS
@@ -372,8 +372,8 @@ byte P_CheckPosition(mobj_t *thing, fixed_t x, fixed_t y)
 
     for (bx = xl; bx <= xh; bx++)
         for (by = yl; by <= yh; by++)
-            if (!P_BlockThingsIterator(bx, by, PIT_CheckThing))
-                return 0;
+            if (P_NotBlockThingsIterator(bx, by, PIT_CheckThing))
+                return 1;
 
     // check lines
     xl = (tmbbox[BOXLEFT] - bmaporgx) >> MAPBLOCKSHIFT;
@@ -383,10 +383,10 @@ byte P_CheckPosition(mobj_t *thing, fixed_t x, fixed_t y)
 
     for (bx = xl; bx <= xh; bx++)
         for (by = yl; by <= yh; by++)
-            if (!P_BlockLinesIterator(bx, by, PIT_CheckLine))
-                return 0;
+            if (P_NotBlockLinesIterator(bx, by, PIT_CheckLine))
+                return 1;
 
-    return 1;
+    return 0;
 }
 
 //
@@ -403,7 +403,7 @@ byte P_TryMove(mobj_t *thing, fixed_t x, fixed_t y)
     line_t *ld;
 
     floatok = 0;
-    if (!P_CheckPosition(thing, x, y))
+    if (P_NotCheckPosition(thing, x, y))
         return 1; // solid wall or thing
 
     if (!(thing->flags & MF_NOCLIP))
@@ -472,7 +472,7 @@ byte P_ThingHeightClip(mobj_t *thing)
 
     onfloor = (thing->z == thing->floorz);
 
-    P_CheckPosition(thing, thing->x, thing->y);
+    P_NotCheckPosition(thing, thing->x, thing->y);
     // what about stranding a monster partially off an edge?
 
     thing->floorz = tmfloorz;
@@ -1244,7 +1244,7 @@ void P_RadiusAttack(mobj_t *spot,
 
     for (y = yl; y <= yh; y++)
         for (x = xl; x <= xh; x++)
-            P_BlockThingsIterator(x, y, PIT_RadiusAttack);
+            P_NotBlockThingsIterator(x, y, PIT_RadiusAttack);
 }
 
 //
@@ -1279,7 +1279,7 @@ byte PIT_ChangeSector(mobj_t *thing)
     // crunch bodies to giblets
     if (thing->health <= 0)
     {
-        P_SetMobjState(thing, S_GIBS);
+        P_NotSetMobjState(thing, S_GIBS);
 
         thing->flags &= ~MF_SOLID;
         thing->height = 0;
@@ -1337,7 +1337,7 @@ byte P_ChangeSector(sector_t *sector, byte crunch)
     // re-check heights for all things near the moving sector
     for (x = sector->blockbox[BOXLEFT]; x <= sector->blockbox[BOXRIGHT]; x++)
         for (y = sector->blockbox[BOXBOTTOM]; y <= sector->blockbox[BOXTOP]; y++)
-            P_BlockThingsIterator(x, y, PIT_ChangeSector);
+            P_NotBlockThingsIterator(x, y, PIT_ChangeSector);
 
     return nofit;
 }

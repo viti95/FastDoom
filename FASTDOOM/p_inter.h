@@ -19,6 +19,6 @@
 #ifndef __P_INTER__
 #define __P_INTER__
 
-byte P_GivePower(player_t *, int);
+byte P_NotGivePower(player_t * player, int power);
 
 #endif

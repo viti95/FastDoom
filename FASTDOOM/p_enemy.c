@@ -155,23 +155,23 @@ byte P_CheckMeleeRange(mobj_t *actor)
 //
 // P_CheckMissileRange
 //
-byte P_CheckMissileRange(mobj_t *actor)
+byte P_NotCheckMissileRange(mobj_t *actor)
 {
     fixed_t dist;
 
     if (!P_CheckSight(actor, actor->target))
-        return 0;
+        return 1;
 
     if (actor->flags & MF_JUSTHIT)
     {
         // the target just hit the enemy,
         // so fight back!
         actor->flags &= ~MF_JUSTHIT;
-        return 1;
+        return 0;
     }
 
     if (actor->reactiontime)
-        return 0; // do not attack yet
+        return 1; // do not attack yet
 
     // OPTIMIZE: get this from a global checksight
     dist = P_AproxDistance(actor->x - actor->target->x, actor->y - actor->target->y) - 64 * FRACUNIT;
@@ -183,13 +183,13 @@ byte P_CheckMissileRange(mobj_t *actor)
 
     if (actor->type == MT_VILE && dist > 14 * 64)
     {
-        return 0; // too far away
+        return 1; // too far away
     }
 
     if (actor->type == MT_UNDEAD)
     {
         if (dist < 196)
-            return 0; // close for fist attack
+            return 1; // close for fist attack
         dist >>= 1;
     }
 
@@ -201,7 +201,7 @@ byte P_CheckMissileRange(mobj_t *actor)
     if (actor->type == MT_CYBORG && dist > 160)
         dist = 160;
 
-    return P_Random >= dist;
+    return P_Random < dist;
 }
 
 //
@@ -214,7 +214,7 @@ byte P_CheckMissileRange(mobj_t *actor)
 extern line_t *spechit[MAXSPECIALCROSS];
 extern int numspechit;
 
-byte P_Move(mobj_t *actor)
+byte P_NotMove(mobj_t *actor)
 {
     fixed_t tryx;
     fixed_t tryy;
@@ -223,8 +223,7 @@ byte P_Move(mobj_t *actor)
 
     // warning: 'catch', 'throw', and 'try'
     // are all C++ reserved words
-    byte good;
-
+    
     fixed_t optSpeed;
 
     switch (actor->movedir)
@@ -266,11 +265,13 @@ byte P_Move(mobj_t *actor)
         tryy = actor->y - optSpeed;
         break;
     case DI_NODIR:
-        return 0;
+        return 1;
     }
 
     if (P_TryMove(actor, tryx, tryy))
     {
+        byte good;
+
         // open any specials
         if (actor->flags & MF_FLOAT && floatok)
         {
@@ -281,14 +282,14 @@ byte P_Move(mobj_t *actor)
                 actor->z -= FLOATSPEED;
 
             actor->flags |= MF_INFLOAT;
-            return 1;
+            return 0;
         }
 
         if (!numspechit)
-            return 0;
+            return 1;
 
         actor->movedir = DI_NODIR;
-        good = 0;
+        good = 1;
         while (numspechit--)
         {
             ld = spechit[numspechit];
@@ -296,7 +297,7 @@ byte P_Move(mobj_t *actor)
             // that can be opened,
             // return false
             if (P_UseSpecialLine(actor, ld, 0))
-                good = 1;
+                good = 0;
         }
         return good;
     }
@@ -308,7 +309,7 @@ byte P_Move(mobj_t *actor)
     if (!(actor->flags & MF_FLOAT))
         actor->z = actor->floorz;
 
-    return 1;
+    return 0;
 }
 
 //
@@ -324,7 +325,7 @@ byte P_Move(mobj_t *actor)
 //
 byte P_TryWalk(mobj_t *actor)
 {
-    if (!P_Move(actor))
+    if (P_NotMove(actor))
     {
         return 0;
     }
@@ -618,7 +619,7 @@ seeyou:
             S_StartSound(actor, sound);
     }
 
-    P_SetMobjState(actor, actor->info->seestate);
+    P_NotSetMobjState(actor, actor->info->seestate);
 }
 
 //
@@ -661,7 +662,7 @@ void A_Chase(mobj_t *actor)
         if (P_LookForPlayersAllAround(actor))
             return; // got a new target
 
-        P_SetMobjState(actor, actor->info->spawnstate);
+        P_NotSetMobjState(actor, actor->info->spawnstate);
         return;
     }
 
@@ -680,7 +681,7 @@ void A_Chase(mobj_t *actor)
         if (actor->info->attacksound)
             S_StartSound(actor, actor->info->attacksound);
 
-        P_SetMobjState(actor, actor->info->meleestate);
+        P_NotSetMobjState(actor, actor->info->meleestate);
         return;
     }
 
@@ -690,10 +691,10 @@ void A_Chase(mobj_t *actor)
         if (gameskill < sk_nightmare && !fastparm && actor->movecount)
             goto nomissile;
 
-        if (!P_CheckMissileRange(actor))
+        if (P_NotCheckMissileRange(actor))
             goto nomissile;
 
-        P_SetMobjState(actor, actor->info->missilestate);
+        P_NotSetMobjState(actor, actor->info->missilestate);
         actor->flags |= MF_JUSTATTACKED;
         return;
     }
@@ -702,7 +703,7 @@ void A_Chase(mobj_t *actor)
 nomissile:
 
     // chase towards player
-    if (--actor->movecount < 0 || !P_Move(actor))
+    if (--actor->movecount < 0 || P_NotMove(actor))
     {
         P_NewChaseDir(actor);
     }
@@ -810,7 +811,7 @@ void A_CPosRefire(mobj_t *actor)
         return;
 
     if (!actor->target || actor->target->health <= 0 || !P_CheckSight(actor, actor->target))
-        P_SetMobjState(actor, actor->info->seestate);
+        P_NotSetMobjState(actor, actor->info->seestate);
 }
 
 void A_SpidRefire(mobj_t *actor)
@@ -823,7 +824,7 @@ void A_SpidRefire(mobj_t *actor)
 
     if (!actor->target || actor->target->health <= 0 || !P_CheckSight(actor, actor->target))
     {
-        P_SetMobjState(actor, actor->info->seestate);
+        P_NotSetMobjState(actor, actor->info->seestate);
     }
 }
 
@@ -1072,10 +1073,10 @@ byte PIT_VileCheck(mobj_t *thing)
     corpsehit = thing;
     corpsehit->momx = corpsehit->momy = 0;
     corpsehit->height <<= 2;
-    check = P_CheckPosition(corpsehit, corpsehit->x, corpsehit->y);
+    check = P_NotCheckPosition(corpsehit, corpsehit->x, corpsehit->y);
     corpsehit->height >>= 2;
 
-    return !check;
+    return check;
 }
 
 //
@@ -1153,7 +1154,7 @@ void A_VileChase(mobj_t *actor)
                 // Call PIT_VileCheck to check
                 // whether object is a corpse
                 // that canbe raised.
-                if (!P_BlockThingsIterator(bx, by, PIT_VileCheck))
+                if (P_NotBlockThingsIterator(bx, by, PIT_VileCheck))
                 {
                     // got one!
                     temp = actor->target;
@@ -1161,11 +1162,11 @@ void A_VileChase(mobj_t *actor)
                     A_FaceTarget(actor);
                     actor->target = temp;
 
-                    P_SetMobjState(actor, S_VILE_HEAL1);
+                    P_NotSetMobjState(actor, S_VILE_HEAL1);
                     S_StartSound(corpsehit, sfx_slop);
                     info = corpsehit->info;
 
-                    P_SetMobjState(corpsehit, info->raisestate);
+                    P_NotSetMobjState(corpsehit, info->raisestate);
                     corpsehit->height <<= 2;
                     corpsehit->flags = info->flags;
                     corpsehit->health = info->spawnhealth;
@@ -1798,7 +1799,7 @@ void A_BrainScream(mobj_t *mo)
         th = P_SpawnMobj(x, y, z, MT_ROCKET);
         th->momz = P_Random * 512;
 
-        P_SetMobjState(th, S_BRAINEXPLODE1);
+        P_NotSetMobjState(th, S_BRAINEXPLODE1);
 
         th->tics -= P_Random & 7;
         if (th->tics < 1)
@@ -1821,7 +1822,7 @@ void A_BrainExplode(mobj_t *mo)
     th = P_SpawnMobj(x, y, z, MT_ROCKET);
     th->momz = P_Random * 512;
 
-    P_SetMobjState(th, S_BRAINEXPLODE1);
+    P_NotSetMobjState(th, S_BRAINEXPLODE1);
 
     th->tics -= P_Random & 7;
     if (th->tics < 1)
@@ -1913,7 +1914,7 @@ void A_SpawnFly(mobj_t *mo)
 
     newmobj = P_SpawnMobj(targ->x, targ->y, targ->z, type);
     if (P_LookForPlayersAllAround(newmobj))
-        P_SetMobjState(newmobj, newmobj->info->seestate);
+        P_NotSetMobjState(newmobj, newmobj->info->seestate);
 
     // telefrag anything in this spot
     P_TeleportMove(newmobj, newmobj->x, newmobj->y);

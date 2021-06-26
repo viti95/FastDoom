@@ -161,17 +161,17 @@ byte P_GiveWeapon(player_t *player, weapontype_t weapon, boolean dropped)
 // P_GiveBody
 // Returns false if the body isn't needed at all
 //
-byte P_GiveBody(player_t *player, int num)
+byte P_NotGiveBody(player_t *player, int num)
 {
 	if (player->health >= MAXHEALTH)
-		return 0;
+		return 1;
 
 	player->health += num;
 	if (player->health > MAXHEALTH)
 		player->health = MAXHEALTH;
 	player->mo->health = player->health;
 
-	return 1;
+	return 0;
 }
 
 //
@@ -179,18 +179,18 @@ byte P_GiveBody(player_t *player, int num)
 // Returns false if the armor is worse
 // than the current armor.
 //
-byte P_GiveArmor(player_t *player, int armortype)
+byte P_NotGiveArmor(player_t *player, int armortype)
 {
 	int hits;
 
 	hits = Mul100(armortype);
 	if (player->armorpoints >= hits)
-		return 0; // don't pick up
+		return 1; // don't pick up
 
 	player->armortype = armortype;
 	player->armorpoints = hits;
 
-	return 1;
+	return 0;
 }
 
 //
@@ -208,34 +208,34 @@ void P_GiveCard(player_t *player, card_t card)
 //
 // P_GivePower
 //
-byte P_GivePower(player_t *player, int power)
+byte P_NotGivePower(player_t *player, int power)
 {
 	switch (power)
 	{
 	case pw_invulnerability:
 		player->powers[power] = INVULNTICS;
-		return 1;
+		return 0;
 	case pw_invisibility:
 		player->powers[power] = INVISTICS;
 		player->mo->flags |= MF_SHADOW;
-		return 1;
+		return 0;
 	case pw_infrared:
 		player->powers[power] = INFRATICS;
-		return 1;
+		return 0;
 	case pw_ironfeet:
 		player->powers[power] = IRONTICS;
-		return 1;
+		return 0;
 	case pw_strength:
-		P_GiveBody(player, 100);
+		P_NotGiveBody(player, 100);
 		player->powers[power] = 1;
-		return 1;
+		return 0;
 	}
 
 	if (player->powers[power])
-		return 0; // already got it
+		return 1; // already got it
 
 	player->powers[power] = 1;
-	return 1;
+	return 0;
 }
 
 //
@@ -264,13 +264,13 @@ void P_TouchSpecialThing(mobj_t *special, mobj_t *toucher)
 	{
 		// armor
 	case SPR_ARM1:
-		if (!P_GiveArmor(player, 1))
+		if (P_NotGiveArmor(player, 1))
 			return;
 		player->message = GOTARMOR;
 		break;
 
 	case SPR_ARM2:
-		if (!P_GiveArmor(player, 2))
+		if (P_NotGiveArmor(player, 2))
 			return;
 		player->message = GOTMEGA;
 		break;
@@ -307,7 +307,7 @@ void P_TouchSpecialThing(mobj_t *special, mobj_t *toucher)
 			return;
 		player->health = 200;
 		player->mo->health = player->health;
-		P_GiveArmor(player, 2);
+		P_NotGiveArmor(player, 2);
 		player->message = GOTMSPHERE;
 		sound = sfx_getpow;
 		break;
@@ -358,27 +358,27 @@ void P_TouchSpecialThing(mobj_t *special, mobj_t *toucher)
 
 		// medikits, heals
 	case SPR_STIM:
-		if (!P_GiveBody(player, 10))
+		if (P_NotGiveBody(player, 10))
 			return;
 		player->message = GOTSTIM;
 		break;
 
 	case SPR_MEDI:
-		if (!P_GiveBody(player, 25))
+		if (P_NotGiveBody(player, 25))
 			return;
 		player->message = GOTMEDIKIT;
 		break;
 
 		// power ups
 	case SPR_PINV:
-		if (!P_GivePower(player, pw_invulnerability))
+		if (P_NotGivePower(player, pw_invulnerability))
 			return;
 		player->message = GOTINVUL;
 		sound = sfx_getpow;
 		break;
 
 	case SPR_PSTR:
-		if (!P_GivePower(player, pw_strength))
+		if (P_NotGivePower(player, pw_strength))
 			return;
 		player->message = GOTBERSERK;
 		if (player->readyweapon != wp_fist)
@@ -387,28 +387,28 @@ void P_TouchSpecialThing(mobj_t *special, mobj_t *toucher)
 		break;
 
 	case SPR_PINS:
-		if (!P_GivePower(player, pw_invisibility))
+		if (P_NotGivePower(player, pw_invisibility))
 			return;
 		player->message = GOTINVIS;
 		sound = sfx_getpow;
 		break;
 
 	case SPR_SUIT:
-		if (!P_GivePower(player, pw_ironfeet))
+		if (P_NotGivePower(player, pw_ironfeet))
 			return;
 		player->message = GOTSUIT;
 		sound = sfx_getpow;
 		break;
 
 	case SPR_PMAP:
-		if (!P_GivePower(player, pw_allmap))
+		if (P_NotGivePower(player, pw_allmap))
 			return;
 		player->message = GOTMAP;
 		sound = sfx_getpow;
 		break;
 
 	case SPR_PVIS:
-		if (!P_GivePower(player, pw_infrared))
+		if (P_NotGivePower(player, pw_infrared))
 			return;
 		player->message = GOTVISOR;
 		sound = sfx_getpow;
@@ -588,10 +588,10 @@ void P_KillMobj(mobj_t *source, mobj_t *target)
 
 	if (target->health < -target->info->spawnhealth && target->info->xdeathstate)
 	{
-		P_SetMobjState(target, target->info->xdeathstate);
+		P_NotSetMobjState(target, target->info->xdeathstate);
 	}
 	else
-		P_SetMobjState(target, target->info->deathstate);
+		P_NotSetMobjState(target, target->info->deathstate);
 
 	target->tics -= P_Random & 3;
 
@@ -736,7 +736,7 @@ void P_DamageMobj(mobj_t *target,
 	if ((P_Random < target->info->painchance) && !(target->flags & MF_SKULLFLY))
 	{
 		target->flags |= MF_JUSTHIT; // fight back!
-		P_SetMobjState(target, target->info->painstate);
+		P_NotSetMobjState(target, target->info->painstate);
 	}
 
 	target->reactiontime = 0; // we're awake now...
@@ -748,6 +748,6 @@ void P_DamageMobj(mobj_t *target,
 		target->target = source;
 		target->threshold = BASETHRESHOLD;
 		if (target->state == &states[target->info->spawnstate] && target->info->seestate != S_NULL)
-			P_SetMobjState(target, target->info->seestate);
+			P_NotSetMobjState(target, target->info->seestate);
 	}
 }

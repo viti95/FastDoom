@@ -43,7 +43,7 @@ void P_SpawnMapThing(mapthing_t *mthing);
 // Returns true if the mobj is still present.
 //
 
-byte P_SetMobjState(mobj_t *mobj, unsigned short state)
+byte P_NotSetMobjState(mobj_t *mobj, unsigned short state)
 {
     state_t *st;
 
@@ -53,7 +53,7 @@ byte P_SetMobjState(mobj_t *mobj, unsigned short state)
         {
             mobj->state = (state_t *)S_NULL;
             P_RemoveMobj(mobj);
-            return 0;
+            return 1;
         }
 
         st = &states[state];
@@ -70,7 +70,7 @@ byte P_SetMobjState(mobj_t *mobj, unsigned short state)
         state = st->nextstate;
     } while (!mobj->tics);
 
-    return 1;
+    return 0;
 }
 
 //
@@ -80,7 +80,7 @@ void P_ExplodeMissile(mobj_t *mo)
 {
     mo->momx = mo->momy = mo->momz = 0;
 
-    P_SetMobjState(mo, mobjinfo[mo->type].deathstate);
+    P_NotSetMobjState(mo, mobjinfo[mo->type].deathstate);
 
     mo->tics -= P_Random & 3;
 
@@ -115,7 +115,7 @@ void P_XYMovement(mobj_t *mo)
             mo->flags &= ~MF_SKULLFLY;
             mo->momx = mo->momy = mo->momz = 0;
 
-            P_SetMobjState(mo, mo->info->spawnstate);
+            P_NotSetMobjState(mo, mo->info->spawnstate);
         }
         return;
     }
@@ -187,7 +187,7 @@ void P_XYMovement(mobj_t *mo)
     {
         // if in a walking frame, stop moving
         if (player && (unsigned)((player->mo->state - states) - S_PLAY_RUN1) < 4)
-            P_SetMobjState(player->mo, S_PLAY);
+            P_NotSetMobjState(player->mo, S_PLAY);
 
         mo->momx = 0;
         mo->momy = 0;
@@ -322,7 +322,7 @@ void P_NightmareRespawn(mobj_t *mobj)
     y = mobj->spawnpoint.y << FRACBITS;
 
     // somthing is occupying it's position?
-    if (!P_CheckPosition(mobj, x, y))
+    if (P_NotCheckPosition(mobj, x, y))
         return; // no respwan
 
     // spawn a teleport fog at old spot
@@ -395,7 +395,7 @@ void P_MobjThinker(mobj_t *mobj)
         mobj->tics--;
 
         // you can cycle through multiple states in a tic
-        if (!mobj->tics && !P_SetMobjState(mobj, mobj->state->nextstate))
+        if (!mobj->tics && P_NotSetMobjState(mobj, mobj->state->nextstate))
             return; // freed itself
     }
     else
@@ -428,7 +428,7 @@ void P_MobjBrainlessThinker(mobj_t *mobj)
         // you can cycle through multiple states in a tic
 
         if (!mobj->tics)
-            P_SetMobjState(mobj, mobj->state->nextstate);
+            P_NotSetMobjState(mobj, mobj->state->nextstate);
     }
 }
 
@@ -698,7 +698,7 @@ void P_SpawnPuff(fixed_t x,
 
     // don't make punches spark on the wall
     if (attackrange == MELEERANGE)
-        P_SetMobjState(th, S_PUFF3);
+        P_NotSetMobjState(th, S_PUFF3);
 }
 
 //
@@ -720,9 +720,9 @@ void P_SpawnBlood(fixed_t x,
         th->tics = 1;
 
     if (damage <= 12 && damage >= 9)
-        P_SetMobjState(th, S_BLOOD2);
+        P_NotSetMobjState(th, S_BLOOD2);
     else if (damage < 9)
-        P_SetMobjState(th, S_BLOOD3);
+        P_NotSetMobjState(th, S_BLOOD3);
 }
 
 //

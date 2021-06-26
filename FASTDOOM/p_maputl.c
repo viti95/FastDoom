@@ -365,14 +365,14 @@ void P_SetThingPosition(mobj_t *thing)
 // to P_BlockLinesIterator, then make one or more calls
 // to it.
 //
-byte P_BlockLinesIterator(int x, int y, byte (*func)(line_t *))
+byte P_NotBlockLinesIterator(int x, int y, byte (*func)(line_t *))
 {
     int offset;
     short *list;
     line_t *ld;
 
     if (x < 0 || y < 0 || x >= bmapwidth || y >= bmapheight)
-        return 1;
+        return 0;
 
     offset = y * bmapwidth + x;
 
@@ -388,27 +388,27 @@ byte P_BlockLinesIterator(int x, int y, byte (*func)(line_t *))
         ld->validcount = validcount;
 
         if (!func(ld))
-            return 0;
+            return 1;
     }
-    return 1; // everything was checked
+    return 0; // everything was checked
 }
 
 //
 // P_BlockThingsIterator
 //
-byte P_BlockThingsIterator(int x, int y, byte (*func)(mobj_t *))
+byte P_NotBlockThingsIterator(int x, int y, byte (*func)(mobj_t *))
 {
     mobj_t *mobj;
 
     if (x < 0 || y < 0 || x >= bmapwidth || y >= bmapheight)
-        return 1;
+        return 0;
 
     for (mobj = blocklinks[y * bmapwidth + x]; mobj; mobj = mobj->bnext)
     {
         if (!func(mobj))
-            return 0;
+            return 1;
     }
-    return 1;
+    return 0;
 }
 
 //
@@ -696,7 +696,7 @@ void P_PathTraverse(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2, int flags, b
 
     for (count = 0; count < 64; count++)
     {
-        if (((flags & PT_ADDLINES) && !P_BlockLinesIterator(mapx, mapy, PIT_AddLineIntercepts)) || (flags & PT_ADDTHINGS) && !P_BlockThingsIterator(mapx, mapy, PIT_AddThingIntercepts))
+        if (((flags & PT_ADDLINES) && P_NotBlockLinesIterator(mapx, mapy, PIT_AddLineIntercepts)) || (flags & PT_ADDTHINGS) && P_NotBlockThingsIterator(mapx, mapy, PIT_AddThingIntercepts))
         {
             return; // early out
         }

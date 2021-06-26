@@ -545,7 +545,7 @@ void ST_Responder(event_t *ev)
 				if (cht_CheckCheat(&cheat_powerup[i], ev->data1))
 				{
 					if (!plyr->powers[i])
-						P_GivePower(plyr, i);
+						P_NotGivePower(plyr, i);
 					else if (i != pw_strength)
 						plyr->powers[i] = 1;
 					else
