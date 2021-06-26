@@ -242,7 +242,7 @@ typedef struct mobj_s
     int health;
 
     // Movement direction, movement generation (zig-zagging).
-    int movedir;   // 0-7
+    char movedir;   // 0-7
     int movecount; // when 0, select a new dir
 
     // Thing being chased/attacked (or NULL),

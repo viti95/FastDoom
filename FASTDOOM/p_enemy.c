@@ -335,7 +335,7 @@ byte P_TryWalk(mobj_t *actor)
 
 void P_NewChaseDir(mobj_t *actor)
 {
-    const dirtype_t opposite[] =
+    const char opposite[] =
         {
             DI_WEST, DI_SOUTHWEST, DI_SOUTH, DI_SOUTHEAST,
             DI_EAST, DI_NORTHEAST, DI_NORTH, DI_NORTHWEST, DI_NODIR};
@@ -343,12 +343,12 @@ void P_NewChaseDir(mobj_t *actor)
     fixed_t deltax;
     fixed_t deltay;
 
-    dirtype_t d[3];
+    char d[3];
 
-    int tdir;
-    dirtype_t olddir;
+    char tdir;
+    char olddir;
 
-    dirtype_t turnaround;
+    char turnaround;
 
     olddir = actor->movedir;
     turnaround = opposite[olddir];
@@ -647,7 +647,7 @@ void A_Chase(mobj_t *actor)
     if (actor->movedir < 8)
     {
         actor->angle &= (7 << 29);
-        delta = actor->angle - (actor->movedir << 29);
+        delta = actor->angle - (((int)actor->movedir) << 29);
 
         if (delta > 0)
             actor->angle -= ANG90 / 2;
