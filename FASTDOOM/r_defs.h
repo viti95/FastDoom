@@ -289,7 +289,7 @@ typedef struct drawseg_s
     fixed_t scalestep;
 
     // 0=none, 1=bottom, 2=top, 3=both
-    int silhouette;
+    byte silhouette;
 
     // do not clip sprites above this
     fixed_t bsilheight;

@@ -597,7 +597,7 @@ void R_StoreWallRange(int start,
 	{
 		// two sided line
 		ds_p->sprtopclip = ds_p->sprbottomclip = NULL;
-		ds_p->silhouette = 0;
+		ds_p->silhouette = SIL_NONE;
 
 		if (frontsector->floorheight > backsector->floorheight)
 		{

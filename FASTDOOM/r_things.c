@@ -774,7 +774,6 @@ void R_DrawSprite(vissprite_t *spr)
     int r2;
     fixed_t scale;
     fixed_t lowscale;
-    int silhouette;
 
     if (spr->x1 > spr->x2)
         return;
