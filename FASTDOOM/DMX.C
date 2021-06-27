@@ -333,6 +333,8 @@ int ASS_GetSoundCardCode(int sndDevice)
         return SoundSource;
     case snd_TANDY:
         return TandySoundSource;
+    case snd_PC1BIT:
+        return PC1bit;
     default:
         return -1;
     }

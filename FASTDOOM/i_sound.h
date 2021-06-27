@@ -39,6 +39,7 @@ typedef enum
     snd_CODEC,
     snd_DISNEY,
     snd_TANDY,
+    snd_PC1BIT,
     NUM_SCARDS
 } cardenum_t;
 

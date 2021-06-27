@@ -16,6 +16,7 @@
 #include "ns_gusau.h"
 #include "ns_multi.h"
 #include "ns_muldf.h"
+#include "ns_speak.h"
 
 #include "fastmath.h"
 
@@ -796,7 +797,9 @@ int MV_SetMixMode(
     case TandySoundSource:
         MV_MixMode = SS_SetMixMode(mode);
         break;
-
+    case PC1bit:
+        MV_MixMode = PCSpeaker_SetMixMode(mode);
+        break;
     }
 
     MV_Channels = 1;
@@ -946,7 +949,12 @@ int MV_StartPlayback(
         MV_MixRate = SS_SampleRate;
         MV_DMAChannel = -1;
         break;
-
+    case PC1bit:
+        PCSpeaker_BeginBufferedPlayback(MV_MixBuffer[0],
+                                 TotalBufferSize, MV_NumberOfBuffers,
+                                 MV_ServiceVoc);
+        MV_MixRate = PCSpeaker_SampleRate;
+        MV_DMAChannel = -1;
     }
 
     RateScale11025 = (11025 * 0x10000) / MV_MixRate;
@@ -997,7 +1005,9 @@ void MV_StopPlayback(
     case TandySoundSource:
         SS_StopPlayback();
         break;
-
+    case PC1bit:
+        PCSpeaker_StopPlayback();
+        break;
     }
 
     // Make sure all callbacks are done.
@@ -1333,18 +1343,19 @@ int MV_Init(
     case ProAudioSpectrum:
     case SoundMan16:
         status = PAS_Init();
-
         break;
 
     case SoundScape:
         status = SOUNDSCAPE_Init();
-
         break;
 
     case SoundSource:
     case TandySoundSource:
         status = SS_Init(soundcard);
-
+        break;
+    
+    case PC1bit:
+        status = PCSpeaker_Init(soundcard);
         break;
 
     default:
@@ -1454,7 +1465,9 @@ int MV_Shutdown(
     case TandySoundSource:
         SS_Shutdown();
         break;
-
+    case PC1bit:
+        PCSpeaker_Shutdown();
+        break;
     }
 
     RestoreInterrupts(flags);

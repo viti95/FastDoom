@@ -6,6 +6,7 @@
 #include "ns_scape.h"
 #include "ns_gusau.h"
 #include "ns_dsney.h"
+#include "ns_speak.h"
 #include "ns_llm.h"
 #include "ns_user.h"
 #include "ns_fxm.h"
@@ -24,10 +25,7 @@ int FX_Installed = FALSE;
    Sets the configuration of a sound device.
 ---------------------------------------------------------------------*/
 
-int FX_SetupCard(
-    int SoundCard,
-    fx_device *device)
-
+int FX_SetupCard(int SoundCard, fx_device *device)
 {
     int status;
     int DeviceStatus;
@@ -107,7 +105,16 @@ int FX_SetupCard(
         device->MaxSampleBits = 8;
         device->MaxChannels = 1;
         break;
-
+    case PC1bit:
+        DeviceStatus = PCSpeaker_Init(SoundCard);
+        if (DeviceStatus != SS_Ok)
+        {
+            status = FX_Error;
+            break;
+        }
+        device->MaxVoices = 32;
+        device->MaxSampleBits = 8;
+        device->MaxChannels = 1;
     default:
         status = FX_Error;
     }
@@ -221,8 +228,8 @@ int FX_Init(
     case SoundSource:
     case TandySoundSource:
     case UltraSound:
-        devicestatus = MV_Init(SoundCard, FX_MixRate, numvoices,
-                               numchannels, samplebits);
+    case PC1bit:
+        devicestatus = MV_Init(SoundCard, FX_MixRate, numvoices, numchannels, samplebits);
         if (devicestatus != MV_Ok)
         {
             status = FX_Error;
@@ -273,6 +280,7 @@ int FX_Shutdown(
     case SoundSource:
     case TandySoundSource:
     case UltraSound:
+    case PC1bit:
         status = MV_Shutdown();
         if (status != MV_Ok)
         {
@@ -313,6 +321,7 @@ int FX_SetCallBack(
     case SoundSource:
     case TandySoundSource:
     case UltraSound:
+    case PC1bit:
         MV_SetCallBack(function);
         break;
 

@@ -18,6 +18,7 @@ typedef enum
    SoundSource,
    TandySoundSource,
    PC,
+   PC1bit,
    NumSoundCards
 } soundcardnames;
 

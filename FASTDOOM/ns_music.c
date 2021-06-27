@@ -76,6 +76,7 @@ int MUSIC_Init(
     case SoundSource:
     case TandySoundSource:
     case PC:
+    case PC1bit:
     default:
         status = MUSIC_Error;
     }
