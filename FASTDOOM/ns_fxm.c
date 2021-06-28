@@ -7,6 +7,7 @@
 #include "ns_gusau.h"
 #include "ns_dsney.h"
 #include "ns_speak.h"
+#include "ns_lpt.h"
 #include "ns_llm.h"
 #include "ns_user.h"
 #include "ns_fxm.h"
@@ -107,7 +108,17 @@ int FX_SetupCard(int SoundCard, fx_device *device)
         break;
     case PC1bit:
         DeviceStatus = PCSpeaker_Init(SoundCard);
-        if (DeviceStatus != SS_Ok)
+        if (DeviceStatus != PCSpeaker_Ok)
+        {
+            status = FX_Error;
+            break;
+        }
+        device->MaxVoices = 32;
+        device->MaxSampleBits = 8;
+        device->MaxChannels = 1;
+    case LPTDAC:
+        DeviceStatus = LPT_Init(SoundCard);
+        if (DeviceStatus != LPT_Ok)
         {
             status = FX_Error;
             break;
@@ -229,6 +240,7 @@ int FX_Init(
     case TandySoundSource:
     case UltraSound:
     case PC1bit:
+    case LPTDAC:
         devicestatus = MV_Init(SoundCard, FX_MixRate, numvoices, numchannels, samplebits);
         if (devicestatus != MV_Ok)
         {
@@ -242,7 +254,6 @@ int FX_Init(
 
     if (status != FX_Ok)
     {
-
     }
     else
     {
@@ -281,6 +292,7 @@ int FX_Shutdown(
     case TandySoundSource:
     case UltraSound:
     case PC1bit:
+    case LPTDAC:
         status = MV_Shutdown();
         if (status != MV_Ok)
         {
@@ -322,6 +334,7 @@ int FX_SetCallBack(
     case TandySoundSource:
     case UltraSound:
     case PC1bit:
+    case LPTDAC:
         MV_SetCallBack(function);
         break;
 

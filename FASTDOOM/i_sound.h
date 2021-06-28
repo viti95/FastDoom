@@ -40,6 +40,7 @@ typedef enum
     snd_DISNEY,
     snd_TANDY,
     snd_PC1BIT,
+    snd_LPTDAC,
     NUM_SCARDS
 } cardenum_t;
 

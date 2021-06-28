@@ -77,6 +77,7 @@ int MUSIC_Init(
     case TandySoundSource:
     case PC:
     case PC1bit:
+    case LPTDAC:
     default:
         status = MUSIC_Error;
     }
