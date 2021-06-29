@@ -46,7 +46,7 @@ int FX_SetupCard(int SoundCard, fx_device *device)
             break;
         }
 
-        device->MaxVoices = 32;
+        device->MaxVoices = 8;
         BLASTER_GetCardInfo(&device->MaxSampleBits, &device->MaxChannels);
         break;
 
@@ -59,7 +59,7 @@ int FX_SetupCard(int SoundCard, fx_device *device)
             break;
         }
 
-        device->MaxVoices = 32;
+        device->MaxVoices = 8;
         PAS_GetCardInfo(&device->MaxSampleBits, &device->MaxChannels);
         break;
 
@@ -72,7 +72,7 @@ int FX_SetupCard(int SoundCard, fx_device *device)
         break;
 
     case SoundScape:
-        device->MaxVoices = 32;
+        device->MaxVoices = 8;
         DeviceStatus = SOUNDSCAPE_GetCardInfo(&device->MaxSampleBits,
                                               &device->MaxChannels);
         if (DeviceStatus != SOUNDSCAPE_Ok)
@@ -102,7 +102,7 @@ int FX_SetupCard(int SoundCard, fx_device *device)
             break;
         }
         SS_Shutdown();
-        device->MaxVoices = 32;
+        device->MaxVoices = 8;
         device->MaxSampleBits = 8;
         device->MaxChannels = 1;
         break;
@@ -113,7 +113,7 @@ int FX_SetupCard(int SoundCard, fx_device *device)
             status = FX_Error;
             break;
         }
-        device->MaxVoices = 32;
+        device->MaxVoices = 8;
         device->MaxSampleBits = 8;
         device->MaxChannels = 1;
     case LPTDAC:
@@ -123,7 +123,7 @@ int FX_SetupCard(int SoundCard, fx_device *device)
             status = FX_Error;
             break;
         }
-        device->MaxVoices = 32;
+        device->MaxVoices = 8;
         device->MaxSampleBits = 8;
         device->MaxChannels = 1;
     default:
