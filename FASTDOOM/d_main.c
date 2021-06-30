@@ -122,7 +122,7 @@ extern byte inhelpscreens;
 skill_t startskill;
 int startepisode;
 int startmap;
-boolean autostart;
+byte autostart;
 
 byte advancedemo;
 
@@ -1056,13 +1056,13 @@ void D_DoomMain(void)
     startskill = sk_medium;
     startepisode = 1;
     startmap = 1;
-    autostart = false;
+    autostart = 0;
 
     p = M_CheckParm("-skill");
     if (p && p < myargc - 1)
     {
         startskill = myargv[p + 1][0] - '1';
-        autostart = true;
+        autostart = 1;
     }
 
     p = M_CheckParm("-episode");
@@ -1070,7 +1070,7 @@ void D_DoomMain(void)
     {
         startepisode = myargv[p + 1][0] - '0';
         startmap = 1;
-        autostart = true;
+        autostart = 1;
     }
 
     p = M_CheckParm("-warp");
@@ -1083,7 +1083,7 @@ void D_DoomMain(void)
             startepisode = myargv[p + 1][0] - '0';
             startmap = myargv[p + 2][0] - '0';
         }
-        autostart = true;
+        autostart = 1;
     }
 
     printf("M_LoadDefaults: Load system defaults.\n");
@@ -1182,7 +1182,7 @@ void D_DoomMain(void)
     if (p && p < myargc - 1)
     {
         G_RecordDemo(myargv[p + 1]);
-        autostart = true;
+        autostart = 1;
     }
 
     p = M_CheckParm("-playdemo");

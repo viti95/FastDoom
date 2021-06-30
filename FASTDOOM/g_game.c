@@ -86,12 +86,12 @@ boolean respawnmonsters;
 int gameepisode;
 int gamemap;
 
-byte paused;
+byte paused = 0;
 byte sendpause; // send a pause event next tic
 byte sendsave;  // send a save event next tic
 byte usergame;  // ok to save / end game
 
-byte timingdemo; // if true, exit with report on completion
+byte timingdemo = 0; // if true, exit with report on completion
 int starttime;   // for comparative timing purposes
 
 byte viewactive;
@@ -103,12 +103,12 @@ int gametic;
 int totalkills, totalitems, totalsecret; // for intermission
 
 char demoname[32];
-byte demorecording;
-byte demoplayback;
+byte demorecording = 0;
+byte demoplayback = 0;
 byte *demobuffer;
 byte *demo_p;
 byte *demoend;
-byte singledemo; // quit after playing a demo from cmdline
+byte singledemo = 0; // quit after playing a demo from cmdline
 
 wbstartstruct_t wminfo; // parms for world map / intermission
 
