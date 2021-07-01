@@ -39,6 +39,8 @@ typedef enum
 	M_UNUSED2,
 	M_DISNEYSS,
 	M_TANDYSS,
+	M_PC1BIT,
+	M_COVOX,
 	M_LAST
 } SCARD;
 

@@ -3,11 +3,11 @@
 //
 typedef struct
 {
-	char	   *name;
-	int		*location;
-	int		defaultvalue;
+	char *name;
+	int *location;
+	int defaultvalue;
 } default_t;
 
-void M_SaveDefaults (void);
+void M_SaveDefaults(void);
 int CheckParm(char *string);
-int M_LoadDefaults (void);
+int M_LoadDefaults(void);

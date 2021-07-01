@@ -43,7 +43,9 @@ char cards[M_LAST][20] = {
 	"Unused",
 	"Unused",
 	"Disney Sound Source",
-	"Tandy Sound Source"};
+	"Tandy Sound Source",
+	"PC Speaker (1 bit)",
+	"COVOX"};
 
 char controls[C_LAST][20] = {
 	S_CON1,
@@ -87,7 +89,8 @@ item_t mainitems[] =
 		{MAIN_CSFX, 21, 13, 39, -1, -1},
 		{MAIN_TYPE, 21, 14, 39, -1, -1},
 		{MAIN_CONFIG, 21, 15, 39, -1, -1},
-		{MAIN_SAVE, 21, 16, 39, -1, -1},};
+		{MAIN_SAVE, 21, 16, 39, -1, -1},
+};
 
 menu_t mainmenu =
 	{

@@ -10,11 +10,15 @@ int getSBParam(char *string, char field)
 
   p = strchr(string, field);
 
-  if (!p) return -1;
-  else p++;
+  if (!p)
+    return -1;
+  else
+    p++;
 
-  if (field == 'A' || field == 'P') sscanf(p, "%x", &rc); // hex field
-  else sscanf(p, "%d", &rc); // decimal field
+  if (field == 'A' || field == 'P')
+    sscanf(p, "%x", &rc); // hex field
+  else
+    sscanf(p, "%d", &rc); // decimal field
 
   return rc;
 }
@@ -32,7 +36,8 @@ int SmellsLikeSB(int *addr, int *irq, int *dma, int *midi)
 {
   char *var = getenv("BLASTER");
 
-  if (!var) return 0;
+  if (!var)
+    return 0;
 
   *addr = getSBParam(var, 'A');
   *irq = getSBParam(var, 'I');
@@ -54,11 +59,11 @@ int SmellsLikeGUS(int *addr, int *irq, int *dma)
   char *var = getenv("ULTRASND");
   int dummy;
 
-  if (!var) return 0;
+  if (!var)
+    return 0;
   else
   {
     sscanf(var, "%x,%d,%d,%d,%d", addr, dma, &dummy, irq, &dummy);
     return 1;
   }
-
 }

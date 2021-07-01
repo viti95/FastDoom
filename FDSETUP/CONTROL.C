@@ -3,25 +3,28 @@
 //
 #include "main.h"
 
-enum {CON_MOUSE,CON_KEY,CON_MAX};
-item_t controlitems[]=
+enum
 {
-	{CON_MOUSE,		26,11,28,	-1,-1},
-	{CON_KEY,		26,12,28,	-1,-1}
-};
-menu_t controlmenu=
-{
-	&controlitems[0],
 	CON_MOUSE,
-	CON_MAX,
-	0x7f
+	CON_KEY,
+	CON_MAX
 };
+item_t controlitems[] =
+	{
+		{CON_MOUSE, 26, 11, 28, -1, -1},
+		{CON_KEY, 26, 12, 28, -1, -1}};
+menu_t controlmenu =
+	{
+		&controlitems[0],
+		CON_MOUSE,
+		CON_MAX,
+		0x7f};
 
-int ChooseController (void)
+int ChooseController(void)
 {
-	short	key;
+	short key;
 	short field;
-	int   rval = 0;
+	int rval = 0;
 
 	SaveScreen();
 	DrawPup(&control);
@@ -30,46 +33,45 @@ int ChooseController (void)
 
 	if (newc.control == C_MOUSE)
 		field = CON_MOUSE;
-   else
-      field = CON_KEY;
+	else
+		field = CON_KEY;
 
 	controlmenu.startitem = field;
-	while(1)
+	while (1)
 	{
 		SetupMenu(&controlmenu);
 		field = GetMenuInput();
 		key = menukey;
-		switch ( key )
+		switch (key)
 		{
-			case KEY_ESC:
-				rval = -1;
+		case KEY_ESC:
+			rval = -1;
+			goto func_exit;
+
+		case KEY_ENTER:
+		case KEY_F10:
+			switch (field)
+			{
+			case CON_KEY:
+				newc.control = C_KEY;
+				usemouse = 0;
 				goto func_exit;
 
-         case KEY_ENTER:
-         case KEY_F10:
-         switch ( field )
-         {
-            case CON_KEY:
-               newc.control = C_KEY;
-               usemouse = 0;
-               goto func_exit;
-  
-            case CON_MOUSE:
-               newc.control = C_MOUSE;
-               usemouse = 1;
-               goto func_exit;
-  
-            default:
-               break;
-         }
-            break;
-      }
-   }
-  
-   func_exit:
+			case CON_MOUSE:
+				newc.control = C_MOUSE;
+				usemouse = 1;
+				goto func_exit;
+
+			default:
+				break;
+			}
+			break;
+		}
+	}
+
+func_exit:
 
 	RestoreScreen();
 	DrawCurrentConfig();
-   return ( rval );
+	return (rval);
 }
- 
