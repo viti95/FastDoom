@@ -959,12 +959,14 @@ int MV_StartPlayback(
                                  MV_ServiceVoc);
         MV_MixRate = PCSpeaker_SampleRate;
         MV_DMAChannel = -1;
+        break;
     case LPTDAC:
         LPT_BeginBufferedPlayback(MV_MixBuffer[0],
                                  TotalBufferSize, MV_NumberOfBuffers,
                                  MV_ServiceVoc);
         MV_MixRate = LPT_SampleRate;
         MV_DMAChannel = -1;
+        break;
     }
 
     RateScale11025 = (11025 * 0x10000) / MV_MixRate;

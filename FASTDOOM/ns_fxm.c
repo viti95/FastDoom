@@ -116,6 +116,7 @@ int FX_SetupCard(int SoundCard, fx_device *device)
         device->MaxVoices = 8;
         device->MaxSampleBits = 8;
         device->MaxChannels = 1;
+        break;
     case LPTDAC:
         DeviceStatus = LPT_Init(SoundCard);
         if (DeviceStatus != LPT_Ok)
@@ -126,6 +127,7 @@ int FX_SetupCard(int SoundCard, fx_device *device)
         device->MaxVoices = 8;
         device->MaxSampleBits = 8;
         device->MaxChannels = 1;
+        break;
     default:
         status = FX_Error;
     }

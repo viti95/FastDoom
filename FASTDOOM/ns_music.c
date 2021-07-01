@@ -80,6 +80,7 @@ int MUSIC_Init(
     case LPTDAC:
     default:
         status = MUSIC_Error;
+        break;
     }
 
     return (status);
