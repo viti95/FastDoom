@@ -11,7 +11,9 @@ Doom port for DOS, based on PCDoom by @nukeykt. The goal of this port is to make
 * Added option to render Spectre and invisible objects like the Sega Saturn port did
 * New option to show only objects that are not far away from the player. All the enemies are still rendered as they're important
 * PC Speaker uses all sounds available (just for fun!)
+* New mode for PC Speaker (digitized sound!)
 * Disney Sound Source support
+* COVOX LPT DAC support
 * Lot's of optimizations to make the game run faster / smoother
 * Removed low memory limit (may cause crashes with low RAM)
 * NEW DETAIL LEVEL: POTATO. It renders the full scene with a quarter width resolution (max 80x200). 8-bit and 16-bit ISA video cards can play the game full screen much better!! My Western Digital Paradise PVGA1A ISA (1989) can render the game at a constant >25 fps with a 486DX-50
@@ -24,7 +26,7 @@ Doom port for DOS, based on PCDoom by @nukeykt. The goal of this port is to make
 * Added low quality sound support (8000Hz instead of 11025Hz). Enabled with "-lowsound" parameter.
 * Replaced DOS/4GW with DOS/32A providing a good speedup!
 * New setup program
-* New video modes (Mode 13h, CGA, EGA, Hercules, Text modes)
+* New video modes (Mode 13h, CGA, EGA, Hercules, Text modes, VESA 2.0)
 
 ## DEMO
 
@@ -49,8 +51,9 @@ FastDoom 0.6 Live Demo:
 
 1) Install Borland C++ 4.52 (Windows 3.1, Windows 9x)
 2) Install Laughing Dog Screen Maker 1.14 (MS-DOS)
-3) Open setup.ide project in Borland C++ IDE
-4) Build the project
+3) Run .\FDSETUP\SCREENS\MAKE.BAT (MS-DOS)
+4) Open setup.ide project in Borland C++ IDE
+5) Build the project
 
 ## Contributing
 
