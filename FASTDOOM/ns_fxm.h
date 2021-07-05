@@ -56,8 +56,5 @@ void FX_SetVolume(int volume);
 int FX_PlayRaw(unsigned char *ptr, unsigned long length, unsigned rate,
                int vol, int left, int right, int priority,
                unsigned long callbackval);
-int FX_PlayLoopedRaw(char *ptr, unsigned long length, char *loopstart,
-                     char *loopend, unsigned rate, int pitchoffset, int vol, int left,
-                     int right, int priority, unsigned long callbackval);
 
 #endif

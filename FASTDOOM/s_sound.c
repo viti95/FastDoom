@@ -35,6 +35,8 @@
 #include "dmx.h"
 #include "ns_music.h"
 
+#include "p_mobj.h"
+
 #define S_MAX_VOLUME 127
 
 // when to clip out sounds
@@ -361,7 +363,7 @@ int S_getChannel(void *origin,
     return cnum;
 }
 
-void S_StartSound(void *origin_p, byte sfx_id)
+void S_StartSound(mobj_t *origin, byte sfx_id)
 {
 
     int rc;
@@ -369,16 +371,12 @@ void S_StartSound(void *origin_p, byte sfx_id)
     sfxinfo_t *sfx;
     int cnum;
     int volume;
-    mobj_t *origin;
 
     if (snd_SfxDevice == snd_none)
         return;
 
     volume = snd_SfxVolume;
-    origin = (mobj_t *)origin_p;
-
-    sfx = &S_sfx[sfx_id];
-
+    
     // Check to see if it is audible,
     //  and if not, modify the params
     if (origin && origin != players.mo)
@@ -388,13 +386,13 @@ void S_StartSound(void *origin_p, byte sfx_id)
                                  &volume,
                                  &sep);
 
+        if (!rc)
+            return;
+
         if (origin->x == players.mo->x && origin->y == players.mo->y)
         {
             sep = NORM_SEP;
         }
-
-        if (!rc)
-            return;
     }
     else
     {
@@ -403,6 +401,8 @@ void S_StartSound(void *origin_p, byte sfx_id)
 
     // kill old sound
     S_StopSound(origin);
+
+    sfx = &S_sfx[sfx_id];
 
     // try to find a channel
     cnum = S_getChannel(origin, sfx);
@@ -434,27 +434,19 @@ void S_StartSound(void *origin_p, byte sfx_id)
 //
 // Updates music & sounds
 //
-void S_UpdateSounds(void *listener_p)
+void S_UpdateSounds(mobj_t *listener)
 {
     int audible;
     int cnum;
     int volume;
     int sep;
-    sfxinfo_t *sfx;
-    channel_t *c;
-    int i;
-    mobj_t *listener;
 
     if (snd_SfxDevice == snd_none)
         return;
 
-    listener = (mobj_t *)listener_p;
-
     for (cnum = 0; cnum < numChannels; cnum++)
     {
-        c = &channels[cnum];
-        sfx = c->sfxinfo;
-
+        channel_t *c = &channels[cnum];
         if (c->sfxinfo)
         {
             if (SFX_Playing(c->handle))
@@ -465,7 +457,7 @@ void S_UpdateSounds(void *listener_p)
 
                 // check non-local sounds for distance clipping
                 //  or modify their params
-                if (c->origin && listener_p != c->origin)
+                if (c->origin && listener != c->origin)
                 {
                     audible = S_AdjustSoundParams(listener,
                                                   c->origin,
