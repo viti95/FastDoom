@@ -223,7 +223,7 @@ int S_AdjustSoundParams(mobj_t *listener,
     // From _GG1_ p.428. Appox. eucledian distance fast.
     approx_dist = adx + ady - ((adx < ady ? adx : ady) >> 1);
 
-    if (gamemap != 8 && approx_dist > S_CLIPPING_DIST)
+    if (approx_dist > S_CLIPPING_DIST)
     {
         return 0;
     }
@@ -255,13 +255,6 @@ int S_AdjustSoundParams(mobj_t *listener,
     if (approx_dist < S_CLOSE_DIST)
     {
         *vol = snd_SfxVolume;
-    }
-    else if (gamemap == 8)
-    {
-        if (approx_dist > S_CLIPPING_DIST)
-            approx_dist = S_CLIPPING_DIST;
-
-        *vol = 15 + Div1000((snd_SfxVolume - 15) * ((S_CLIPPING_DIST - approx_dist) >> FRACBITS));
     }
     else
     {
