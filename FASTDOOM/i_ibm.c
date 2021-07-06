@@ -40,6 +40,8 @@
 #include "doomdef.h"
 #include "doomstat.h"
 
+#include "std_func.h"
+
 #ifdef MODE_VBE2
 #include "i_vesa.h"
 #endif

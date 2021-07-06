@@ -37,6 +37,8 @@
 
 #include "p_mobj.h"
 
+#include "std_func.h"
+
 // Current music/sfx card - index useless
 //  w/o a reference LUT in a sound module.
 extern int snd_MusicDevice;

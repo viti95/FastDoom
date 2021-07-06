@@ -39,6 +39,8 @@
 // Data.
 #include "sounds.h"
 
+#include "std_func.h"
+
 typedef enum
 {
     DI_EAST,

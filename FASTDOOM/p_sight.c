@@ -26,6 +26,8 @@
 // State.
 #include "r_state.h"
 
+#include "std_func.h"
+
 //
 // P_CheckSight
 //

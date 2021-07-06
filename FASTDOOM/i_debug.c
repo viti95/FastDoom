@@ -9,7 +9,6 @@
 
 #define EXE_DEBUG_ENABLED 0
 
-
 #if (EXE_DEBUG_ENABLED == 1)
 unsigned short *Scrn = (unsigned short *)0xB0000;
 int Curx, Cury = 0;

@@ -29,6 +29,8 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
+#include "std_func.h"
+
 #include <conio.h>
 
 #define SC_INDEX 0x3C4

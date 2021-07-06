@@ -34,6 +34,8 @@
 #include "r_data.h"
 #include "r_draw.h"
 
+#include "std_func.h"
+
 #include <conio.h>
 
 #define SC_INDEX 0x3C4

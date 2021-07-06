@@ -35,6 +35,8 @@
 // Data.
 #include "sounds.h"
 
+#include "std_func.h"
+
 fixed_t tmbbox[4];
 mobj_t *tmthing;
 int tmflags;

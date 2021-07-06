@@ -32,7 +32,7 @@
 #include "r_local.h"
 #include "r_sky.h"
 
-
+#include "std_func.h"
 
 // Fineangles in the SCREENWIDTH wide window.
 #define FIELDOFVIEW 2048

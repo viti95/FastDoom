@@ -29,6 +29,8 @@
 // State.
 #include "r_state.h"
 
+#include "std_func.h"
+
 //
 // P_AproxDistance
 // Gives an estimation of distance (not exact)
