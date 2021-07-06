@@ -22,6 +22,24 @@
 #include "doomtype.h"
 #include "p_mobj.h"
 
+#define S_MAX_VOLUME 127
+
+// Distance tp origin when sounds should be maxed out.
+// This should relate to movement clipping resolution
+// (see BLOCKMAP handling).
+#define S_CLOSE_DIST (200 * 0x10000)
+
+#define NORM_SEP 128
+
+#define S_STEREO_SWING (96 * 0x10000)
+
+// when to clip out sounds
+// Does not fit the large outdoor areas.
+#define S_CLIPPING_DIST (1200 * 0x10000)
+#define S_CLIPPING_DIST_BOSS (10000 * 0x10000)
+
+extern int snd_clipping;
+
 //
 // Initializes sound stuff, including volume
 // Sets channels, SFX and music volume,

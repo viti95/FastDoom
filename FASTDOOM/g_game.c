@@ -61,6 +61,8 @@
 
 #include "g_game.h"
 
+#include "s_sound.h"
+
 #define SAVEGAMESIZE 0x2c000
 #define SAVESTRINGSIZE 24
 
@@ -354,6 +356,13 @@ void G_DoLoadLevel(void)
     mousex = 0;
     sendpause = sendsave = paused = 0;
     memset(mousebuttons, 0, sizeof(mousebuttons));
+
+    if (gamemap == 8 && gamemission == doom){
+        // BOSSES
+        snd_clipping = S_CLIPPING_DIST_BOSS;
+    }else{
+        snd_clipping = S_CLIPPING_DIST;
+    }
 }
 
 //

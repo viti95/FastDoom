@@ -37,35 +37,6 @@
 
 #include "p_mobj.h"
 
-#define S_MAX_VOLUME 127
-
-// when to clip out sounds
-// Does not fit the large outdoor areas.
-#define S_CLIPPING_DIST (1200 * 0x10000)
-
-// Distance tp origin when sounds should be maxed out.
-// This should relate to movement clipping resolution
-// (see BLOCKMAP handling).
-#define S_CLOSE_DIST (200 * 0x10000)
-
-//#define S_ATTENUATOR ((S_CLIPPING_DIST - S_CLOSE_DIST) >> FRACBITS)
-#define S_ATTENUATOR 1000
-
-// Adjustable by menu.
-#define NORM_VOLUME snd_MaxVolume
-
-#define NORM_PITCH 128
-#define NORM_PRIORITY 64
-#define NORM_SEP 128
-
-#define S_STEREO_SWING (96 * 0x10000)
-
-// percent attenuation from front to back
-#define S_IFRACVOL 30
-
-#define NA 0
-#define S_NUMCHANNELS 2
-
 // Current music/sfx card - index useless
 //  w/o a reference LUT in a sound module.
 extern int snd_MusicDevice;
@@ -107,17 +78,13 @@ static byte mus_paused;
 // music currently being played
 static musicinfo_t *mus_playing = 0;
 
+int snd_clipping = S_CLIPPING_DIST;
+
 //
 // Internals.
 //
-int S_getChannel(void *origin,
-                 sfxinfo_t *sfxinfo);
-
-int S_AdjustSoundParams(mobj_t *listener,
-                        mobj_t *source,
-                        int *vol,
-                        int *sep);
-
+int S_getChannel(void *origin, sfxinfo_t *sfxinfo);
+int S_AdjustSoundParams(mobj_t *listener, mobj_t *source, int *vol, int *sep);
 void S_StopChannel(int cnum);
 
 void S_SetMusicVolume(int volume)
@@ -225,7 +192,7 @@ int S_AdjustSoundParams(mobj_t *listener,
     // From _GG1_ p.428. Appox. eucledian distance fast.
     approx_dist = adx + ady - ((adx < ady ? adx : ady) >> 1);
 
-    if (approx_dist > S_CLIPPING_DIST)
+    if (approx_dist > snd_clipping)
     {
         return 0;
     }
@@ -237,10 +204,7 @@ int S_AdjustSoundParams(mobj_t *listener,
     else
     {
         // angle of source to listener
-        angle = R_PointToAngle2(listener->x,
-                                listener->y,
-                                source->x,
-                                source->y);
+        angle = R_PointToAngle2(listener->x, listener->y, source->x, source->y);
 
         angle -= listener->angle;
         if (angle <= listener->angle)
@@ -261,10 +225,10 @@ int S_AdjustSoundParams(mobj_t *listener,
     else
     {
         // distance effect
-        *vol = Div1000(snd_SfxVolume * ((S_CLIPPING_DIST - approx_dist) >> FRACBITS));
+        *vol = Div1000(snd_SfxVolume * ((snd_clipping - approx_dist) >> FRACBITS));
     }
 
-    return (*vol > 0);
+    return *vol;
 }
 
 void S_SetSfxVolume(int volume)
@@ -314,8 +278,7 @@ void S_StopSound(void *origin)
 // S_getChannel :
 //   If none available, return -1.  Otherwise channel #.
 //
-int S_getChannel(void *origin,
-                 sfxinfo_t *sfxinfo)
+int S_getChannel(void *origin, sfxinfo_t *sfxinfo)
 {
     // channel number to use
     int cnum;
@@ -381,10 +344,7 @@ void S_StartSound(mobj_t *origin, byte sfx_id)
     //  and if not, modify the params
     if (origin && origin != players.mo)
     {
-        rc = S_AdjustSoundParams(players.mo,
-                                 origin,
-                                 &volume,
-                                 &sep);
+        rc = S_AdjustSoundParams(players.mo, origin, &volume, &sep);
 
         if (!rc)
             return;
@@ -459,10 +419,7 @@ void S_UpdateSounds(mobj_t *listener)
                 //  or modify their params
                 if (c->origin && listener != c->origin)
                 {
-                    audible = S_AdjustSoundParams(listener,
-                                                  c->origin,
-                                                  &volume,
-                                                  &sep);
+                    audible = S_AdjustSoundParams(listener, c->origin, &volume, &sep);
 
                     if (!audible)
                         S_StopChannel(cnum);
