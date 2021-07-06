@@ -36,7 +36,7 @@
 // when to clip out sounds
 // Does not fit the large outdoor areas.
 #define S_CLIPPING_DIST (1200 * 0x10000)
-#define S_CLIPPING_DIST_BOSS (10000 * 0x10000)
+#define S_CLIPPING_DIST_BOSS (3600 * 0x10000)
 
 extern int snd_clipping;
 
