@@ -200,14 +200,14 @@ void W_InitMultipleFiles(char **filenames)
 unsigned int W_LumpNameHash(char *s)
 {
     unsigned hash;
-    (void)((hash = toupper(s[0]), s[1]) &&
-           (hash = hash * 2 + toupper(s[1]), s[2]) &&
-           (hash = hash * 2 + toupper(s[2]), s[3]) &&
-           (hash = hash * 2 + toupper(s[3]), s[4]) &&
-           (hash = hash * 2 + toupper(s[4]), s[5]) &&
-           (hash = hash * 2 + toupper(s[5]), s[6]) &&
-           (hash = hash * 2 + toupper(s[6]),
-            hash = hash + toupper(s[7])));
+    (void)((hash = toupperint((int)(s[0])), s[1]) &&
+           (hash = hash * 2 + toupperint((int)(s[1])), s[2]) &&
+           (hash = hash * 2 + toupperint((int)(s[2])), s[3]) &&
+           (hash = hash * 2 + toupperint((int)(s[3])), s[4]) &&
+           (hash = hash * 2 + toupperint((int)(s[4])), s[5]) &&
+           (hash = hash * 2 + toupperint((int)(s[5])), s[6]) &&
+           (hash = hash * 2 + toupperint((int)(s[6])),
+            hash = hash + toupperint((int)(s[7]))));
     return hash;
 }
 
