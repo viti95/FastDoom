@@ -57,7 +57,7 @@ int ExpandTics(int low)
 	delta = low - (maketic & 0xff);
 	opt = maketic & ~0xff;
 
-	if (delta < 64)
+	if (delta < -64)
 		return opt + 256 + low;
 	else if (delta > 64)
 		return opt - 256 + low;
