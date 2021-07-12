@@ -488,22 +488,19 @@ byte PIT_AddThingIntercepts(mobj_t *thing)
     // check a corner to corner crossection for hit
     if (tracepositive)
     {
-        x1 = thing->x - thing->radius;
-        x2 = thing->x + thing->radius;
-
         y1 = thing->y + thing->radius;
         y2 = thing->y - thing->radius;
     }
     else
     {
-        x1 = thing->x - thing->radius;
-        x2 = thing->x + thing->radius;
-
         y1 = thing->y - thing->radius;
         y2 = thing->y + thing->radius;
     }
 
+    x1 = thing->x - thing->radius;
     s1 = P_PointOnDivlineSide(x1, y1, &trace);
+
+    x2 = thing->x + thing->radius;
     s2 = P_PointOnDivlineSide(x2, y2, &trace);
 
     if (s1 == s2)
