@@ -498,9 +498,8 @@ byte PIT_AddThingIntercepts(mobj_t *thing)
     }
 
     x1 = thing->x - thing->radius;
-    s1 = P_PointOnDivlineSide(x1, y1, &trace);
-
     x2 = thing->x + thing->radius;
+    s1 = P_PointOnDivlineSide(x1, y1, &trace);
     s2 = P_PointOnDivlineSide(x2, y2, &trace);
 
     if (s1 == s2)
