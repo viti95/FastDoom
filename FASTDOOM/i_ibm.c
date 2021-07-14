@@ -184,7 +184,7 @@ void I_StartupSound(void);
 void I_ShutdownSound(void);
 void I_ShutdownTimer(void);
 
-#if defined(MODE_EGA) || defined(MODE_T25) || defined(MODE_T50) || defined(MODE_PCP)
+#if defined(MODE_EGA) || defined(MODE_T25) || defined(MODE_T50) || defined(MODE_PCP) || defined(MODE_CVB)
 byte lut16colors[14 * 256];
 byte *ptrlut16colors;
 #endif
@@ -340,7 +340,44 @@ const byte textcolors[48] = {
     0x3F, 0x3F, 0x3F};
 #endif
 
-#if defined(MODE_EGA) || defined(MODE_T25) || defined(MODE_T50) || defined(MODE_PCP)
+#ifdef MODE_CVB
+/*const byte textcolors[48] = {  // standard IBM CGA
+    0x00, 0x00, 0x00,
+    0x00, 0x18, 0x06,
+    0x09, 0x0a, 0x2f,
+    0x04, 0x26, 0x37,
+    0x20, 0x03, 0x15,
+    0x1c, 0x1c, 0x1c,
+    0x2c, 0x0e, 0x3f,
+    0x26, 0x2a, 0x3f,
+    0x12, 0x12, 0x00,
+    0x0f, 0x2e, 0x00,
+    0x1c, 0x1c, 0x1c,
+    0x18, 0x3b, 0x21,
+    0x37, 0x15, 0x04,
+    0x35, 0x31, 0x07,
+    0x3f, 0x20, 0x3a,
+    0x3f, 0x3f, 0x3f};*/
+const byte textcolors[48] = {  // ATi Small Wonder
+    0x00, 0x00, 0x00,
+    0x22, 0x04, 0x00,
+    0x06, 0x15, 0x00,
+    0x26, 0x1f, 0x00,
+    0x03, 0x0f, 0x23,
+    0x16, 0x17, 0x15,
+    0x00, 0x2b, 0x00,
+    0x1a, 0x38, 0x00,
+    0x18, 0x01, 0x36,
+    0x3f, 0x07, 0x31,
+    0x14, 0x15, 0x13,
+    0x3f, 0x22, 0x0e,
+    0x0a, 0x13, 0x3f,
+    0x39, 0x1e, 0x3f,
+    0x07, 0x32, 0x3f,
+    0x3f, 0x3f, 0x3f};
+#endif
+
+#if defined(MODE_EGA) || defined(MODE_T25) || defined(MODE_T50) || defined(MODE_PCP) || defined(MODE_CVB)
 void I_ProcessPalette(byte *palette)
 {
     int i, j;
@@ -406,7 +443,7 @@ void I_SetPalette(int numpalette)
     ptrsumcolors11 = sumcolors11 + numpalette * 256;
 #endif
 
-#if defined(MODE_T25) || defined(MODE_T50) || defined(MODE_EGA) || defined(MODE_PCP)
+#if defined(MODE_T25) || defined(MODE_T50) || defined(MODE_EGA) || defined(MODE_PCP) || defined(MODE_CVB)
     ptrlut16colors = lut16colors + numpalette * 256;
 #endif
 
@@ -433,7 +470,7 @@ void I_SetPalette(int numpalette)
 // Graphics mode
 //
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
 int updatestate;
 #endif
 byte *pcscreen, *currentscreen, *destscreen, *destview;
@@ -825,7 +862,29 @@ void CPLUS_DrawBackbuffer(void)
             *(vram + 0x2000) = (color4 & 3) << 6 | (color5 & 3) << 4 | (color6 & 3) << 2 | (color7 & 3);
             *(vram + 0x4000) = (color0 & 12) << 4 | (color1 & 12) << 2 | (color2 & 12) | (color3 & 12) >> 2;
             *(vram + 0x6000) = (color4 & 12) << 4 | (color5 & 12) << 2 | (color6 & 12) | (color7 & 12) >> 2;
-	    }
+        }
+    }
+}
+#endif
+
+#ifdef MODE_CVB
+void CVBS_DrawBackbuffer(void)
+{
+    int x;
+    unsigned char *vram = (unsigned char *)0xB8000;
+    unsigned int base = 0;
+
+    for (base = 0; base < SCREENHEIGHT * 320; base += 320)
+    {
+        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++)
+        {
+            unsigned char color0 = ptrlut16colors[backbuffer[base]];
+            unsigned char color1 = ptrlut16colors[backbuffer[base + 2]];
+            unsigned char color2 = ptrlut16colors[backbuffer[base + 320]];
+            unsigned char color3 = ptrlut16colors[backbuffer[base + 322]];
+            *(vram) = color0 << 4 | color1;
+            *(vram + 0x2000) = color2 << 4 | color3;
+        }
     }
 }
 #endif
@@ -969,6 +1028,9 @@ void I_FinishUpdate(void)
 #endif
 #ifdef MODE_PCP
     CPLUS_DrawBackbuffer();
+#endif
+#ifdef MODE_CVB
+    CVBS_DrawBackbuffer();
 #endif
 
     if (showFPS)
@@ -1123,6 +1185,12 @@ void I_InitGraphics(void)
     regs.w.ax = 0x04;
     int386(0x10, (union REGS *)&regs, &regs);
     outp(0x3DD, 0x10);
+    pcscreen = destscreen = (byte *)0xB8000;
+#endif
+#ifdef MODE_CVB
+    regs.w.ax = 0x06;
+    int386(0x10, (union REGS *)&regs, &regs);
+    outp(0x3D8, 0x1A);
     pcscreen = destscreen = (byte *)0xB8000;
 #endif
 #ifdef MODE_EGA

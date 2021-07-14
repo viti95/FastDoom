@@ -9,3 +9,4 @@ call cleanhgc.bat
 call cleanvbr.bat
 call cleanvbp.bat
 call cleanpcp.bat
+call cleancvb.bat
