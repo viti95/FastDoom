@@ -347,7 +347,7 @@ void WI_slamBackground(void)
 	CopyDWords(screen1, screen0, (SCREENWIDTH * SCREENHEIGHT) / 4);
 	V_MarkRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP)
 	CopyDWords(screen1, backbuffer, (SCREENWIDTH * SCREENHEIGHT) / 4);
 #endif
 }
@@ -399,7 +399,7 @@ void WI_drawLF(void)
 #ifdef MODE_Y
 	V_DrawPatchScreen0((SCREENWIDTH - lnames[wbs->last]->width) / 2, y, lnames[wbs->last]);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP)
 	V_DrawPatchDirect((SCREENWIDTH - lnames[wbs->last]->width) / 2, y, lnames[wbs->last]);
 #endif
 
@@ -415,7 +415,7 @@ void WI_drawLF(void)
 #ifdef MODE_Y
 	V_DrawPatchScreen0((SCREENWIDTH - finished->width) / 2, y, finished);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP)
 	V_DrawPatchDirect((SCREENWIDTH - finished->width) / 2, y, finished);
 #endif
 }
@@ -465,7 +465,7 @@ void WI_drawEL(void)
 #ifdef MODE_Y
 	V_DrawPatchScreen0((SCREENWIDTH - entering->width) / 2, y, entering);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP)
 	V_DrawPatchDirect((SCREENWIDTH - entering->width) / 2, y, entering);
 #endif
 
@@ -481,12 +481,12 @@ void WI_drawEL(void)
 #ifdef MODE_Y
 	V_DrawPatchScreen0((SCREENWIDTH - lnames[wbs->next]->width) / 2, y, lnames[wbs->next]);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP)
 	V_DrawPatchDirect((SCREENWIDTH - lnames[wbs->next]->width) / 2, y, lnames[wbs->next]);
 #endif
 }
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP)
 void WI_drawOnLnode(int n, patch_t *c[])
 {
 
@@ -520,7 +520,7 @@ void WI_drawOnLnode(int n, patch_t *c[])
 #ifdef MODE_Y
 		V_DrawPatchScreen0(lnodes[wbs->epsd][n].x, lnodes[wbs->epsd][n].y, c[i]);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP)
 		V_DrawPatchDirect(lnodes[wbs->epsd][n].x, lnodes[wbs->epsd][n].y, c[i]);
 #endif
 	}
@@ -592,7 +592,7 @@ void WI_updateAnimatedBack(void)
 	}
 }
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP)
 void WI_drawAnimatedBack(void)
 {
 	int i;
@@ -613,7 +613,7 @@ void WI_drawAnimatedBack(void)
 #ifdef MODE_Y
 			V_DrawPatchScreen0(a->loc.x, a->loc.y, a->p[a->ctr]);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP)
 			V_DrawPatchDirect(a->loc.x, a->loc.y, a->p[a->ctr]);
 #endif
 		}
@@ -651,7 +651,7 @@ int WI_drawNumTwoDigits(int x, int y, int n)
 	x -= 2 * fontwidth;
 	return x;
 #endif
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP)
 	int original;
 	int fontwidth = num[0]->width;
 
@@ -665,7 +665,7 @@ int WI_drawNumTwoDigits(int x, int y, int n)
 #ifdef MODE_Y
 	V_DrawPatchScreen0(x, y, num[original - Mul10(n)]);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP)
 	V_DrawPatchDirect(x, y, num[original - Mul10(n)]);
 #endif
 
@@ -675,7 +675,7 @@ int WI_drawNumTwoDigits(int x, int y, int n)
 #ifdef MODE_Y
 	V_DrawPatchScreen0(x, y, num[original - Mul10(n)]);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP)
 	V_DrawPatchDirect(x, y, num[original - Mul10(n)]);
 #endif
 
@@ -683,7 +683,7 @@ int WI_drawNumTwoDigits(int x, int y, int n)
 #endif
 }
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP)
 int WI_drawNum(int x, int y, int n)
 {
 
@@ -703,7 +703,7 @@ int WI_drawNum(int x, int y, int n)
 #ifdef MODE_Y
 	V_DrawPatchScreen0(x, y, num[original - Mul10(n)]);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP)
 	V_DrawPatchDirect(x, y, num[original - Mul10(n)]);
 #endif
 	} while (n);
@@ -733,7 +733,7 @@ void WI_drawPercent(int x, int y, int p)
 	V_DrawPatchScreen0(x, y, percent);
 	WI_drawNum(x, y, p);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP)
 	V_DrawPatchDirect(x, y, percent);
 	WI_drawNum(x, y, p);
 #endif
@@ -777,7 +777,7 @@ void WI_drawTime(int x,
 #ifdef MODE_Y
 				V_DrawPatchScreen0(x, y, colon);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP)
 				V_DrawPatchDirect(x, y, colon);
 #endif
 			}
@@ -789,7 +789,7 @@ void WI_drawTime(int x,
 #ifdef MODE_Y
 		V_DrawPatchScreen0(x - sucks->width, y, sucks);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP)
 		V_DrawPatchDirect(x - sucks->width, y, sucks);
 #endif
 	}
@@ -837,7 +837,7 @@ void WI_unloadData(void)
 	}
 
 	Z_Free(lnames);
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP)
 	Z_Free(screen1);
 #endif
 
@@ -886,7 +886,7 @@ void WI_updateShowNextLoc(void)
 		snl_pointeron = (cnt & 31) < 20;
 }
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP)
 void WI_drawShowNextLoc(void)
 {
 
@@ -930,7 +930,7 @@ void WI_drawShowNextLoc(void)
 void WI_drawNoState(void)
 {
 	snl_pointeron = 1;
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP)
 	WI_drawShowNextLoc();
 #endif
 }
@@ -1084,7 +1084,7 @@ void WI_drawStats(void)
 	WI_slamBackground();
 
 	// draw animated background
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP)
 	WI_drawAnimatedBack();
 #endif
 
@@ -1099,7 +1099,7 @@ void WI_drawStats(void)
 #ifdef MODE_Y
 	V_DrawPatchScreen0(SP_STATSX, SP_STATSY, kills);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP)
 	V_DrawPatchDirect(SP_STATSX, SP_STATSY, kills);
 #endif
 
@@ -1114,7 +1114,7 @@ void WI_drawStats(void)
 #ifdef MODE_Y
 	V_DrawPatchScreen0(SP_STATSX, SP_STATSY + lh, items);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP)
 	V_DrawPatchDirect(SP_STATSX, SP_STATSY + lh, items);
 #endif
 
@@ -1129,7 +1129,7 @@ void WI_drawStats(void)
 #ifdef MODE_Y
 	V_DrawPatchScreen0(SP_STATSX, SP_STATSY + 2 * lh, sp_secret);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP)
 	V_DrawPatchDirect(SP_STATSX, SP_STATSY + 2 * lh, sp_secret);
 #endif
 	WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY + 2 * lh, cnt_secret);
@@ -1143,7 +1143,7 @@ void WI_drawStats(void)
 #ifdef MODE_Y
 	V_DrawPatchScreen0(SP_TIMEX, SP_TIMEY, time);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP)
 	V_DrawPatchDirect(SP_TIMEX, SP_TIMEY, time);
 #endif
 	WI_drawTime(SCREENWIDTH / 2 - SP_TIMEX, SP_TIMEY, cnt_time);
@@ -1159,7 +1159,7 @@ void WI_drawStats(void)
 #ifdef MODE_Y
 		V_DrawPatchScreen0(SCREENWIDTH / 2 + SP_TIMEX, SP_TIMEY, par);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP)
 		V_DrawPatchDirect(SCREENWIDTH / 2 + SP_TIMEX, SP_TIMEY, par);
 #endif
 
@@ -1254,7 +1254,7 @@ void WI_loadData(void)
 	strcpy(bgname, name);
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP)
 	screen1 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
 
 	// background
@@ -1358,7 +1358,7 @@ void WI_Drawer(void)
 	case StatCount:
 		WI_drawStats();
 		break;
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP)
 	case ShowNextLoc:
 		WI_drawShowNextLoc();
 		break;

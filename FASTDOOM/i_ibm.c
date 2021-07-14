@@ -184,7 +184,7 @@ void I_StartupSound(void);
 void I_ShutdownSound(void);
 void I_ShutdownTimer(void);
 
-#if defined(MODE_EGA) || defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_EGA) || defined(MODE_T25) || defined(MODE_T50) || defined(MODE_PCP)
 byte lut16colors[14 * 256];
 byte *ptrlut16colors;
 #endif
@@ -320,7 +320,27 @@ const byte textcolors[48] = {
     0x3F, 0x3F, 0x3F};
 #endif
 
-#if defined(MODE_EGA) || defined(MODE_T25) || defined(MODE_T50)
+#ifdef MODE_PCP
+const byte textcolors[48] = {
+    0x00, 0x00, 0x00,
+    0x00, 0x2A, 0x00,
+    0x2A, 0x00, 0x00,
+    0x2A, 0x15, 0x00,
+    0x15, 0x15, 0x15,
+    0x15, 0x3F, 0x15,
+    0x3F, 0x15, 0x15,
+    0x3F, 0x3F, 0x15,
+    0x00, 0x00, 0x2A,
+    0x00, 0x2A, 0x2A,
+    0x2A, 0x00, 0x2A,
+    0x2A, 0x2A, 0x2A,
+    0x15, 0x15, 0x3F,
+    0x15, 0x3F, 0x3F,
+    0x3F, 0x15, 0x3F,
+    0x3F, 0x3F, 0x3F};
+#endif
+
+#if defined(MODE_EGA) || defined(MODE_T25) || defined(MODE_T50) || defined(MODE_PCP)
 void I_ProcessPalette(byte *palette)
 {
     int i, j;
@@ -386,7 +406,7 @@ void I_SetPalette(int numpalette)
     ptrsumcolors11 = sumcolors11 + numpalette * 256;
 #endif
 
-#if defined(MODE_T25) || defined(MODE_T50) || defined(MODE_EGA)
+#if defined(MODE_T25) || defined(MODE_T50) || defined(MODE_EGA) || defined(MODE_PCP)
     ptrlut16colors = lut16colors + numpalette * 256;
 #endif
 
@@ -413,7 +433,7 @@ void I_SetPalette(int numpalette)
 // Graphics mode
 //
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP)
 int updatestate;
 #endif
 byte *pcscreen, *currentscreen, *destscreen, *destview;
@@ -782,6 +802,34 @@ void EGA_DrawBackbuffer(void)
 }
 #endif
 
+#ifdef MODE_PCP
+void CPLUS_DrawBackbuffer(void)
+{
+    int x;
+    unsigned char *vram = (unsigned char *)0xB8000;
+    unsigned int base = 0;
+
+    for (base = 0; base < SCREENHEIGHT * 320; base += 320)
+    {
+        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++)
+        {
+            unsigned char color0 = ptrlut16colors[backbuffer[base]];
+            unsigned char color1 = ptrlut16colors[backbuffer[base + 1]];
+            unsigned char color2 = ptrlut16colors[backbuffer[base + 2]];
+            unsigned char color3 = ptrlut16colors[backbuffer[base + 3]];
+            unsigned char color4 = ptrlut16colors[backbuffer[base + 320]];
+            unsigned char color5 = ptrlut16colors[backbuffer[base + 321]];
+            unsigned char color6 = ptrlut16colors[backbuffer[base + 322]];
+            unsigned char color7 = ptrlut16colors[backbuffer[base + 323]];
+            *(vram) = (color0 & 3) << 6 | (color1 & 3) << 4 | (color2 & 3) << 2 | (color3 & 3);
+            *(vram + 0x2000) = (color4 & 3) << 6 | (color5 & 3) << 4 | (color6 & 3) << 2 | (color7 & 3);
+            *(vram + 0x4000) = (color0 & 12) << 4 | (color1 & 12) << 2 | (color2 & 12) | (color3 & 12) >> 2;
+            *(vram + 0x6000) = (color4 & 12) << 4 | (color5 & 12) << 2 | (color6 & 12) | (color7 & 12) >> 2;
+	    }
+    }
+}
+#endif
+
 #ifdef MODE_CGA
 void CGA_DrawBackbuffer(void)
 {
@@ -918,6 +966,9 @@ void I_FinishUpdate(void)
 #endif
 #ifdef MODE_EGA
     EGA_DrawBackbuffer();
+#endif
+#ifdef MODE_PCP
+    CPLUS_DrawBackbuffer();
 #endif
 
     if (showFPS)
@@ -1066,6 +1117,12 @@ void I_InitGraphics(void)
 #ifdef MODE_CGA_BW
     regs.w.ax = 0x06;
     int386(0x10, (union REGS *)&regs, &regs);
+    pcscreen = destscreen = (byte *)0xB8000;
+#endif
+#ifdef MODE_PCP
+    regs.w.ax = 0x04;
+    int386(0x10, (union REGS *)&regs, &regs);
+    outp(0x3DD, 0x10);
     pcscreen = destscreen = (byte *)0xB8000;
 #endif
 #ifdef MODE_EGA

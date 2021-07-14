@@ -252,7 +252,7 @@ static byte st_statusbaron;
 // !deathmatch && st_statusbaron
 static byte st_armson;
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP)
 // main bar left
 static patch_t *sbar;
 #endif
@@ -404,7 +404,7 @@ cheatseq_t cheat_clev = {cheat_clev_seq, 0};
 //
 void ST_Stop(void);
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP)
 void ST_refreshBackground(void)
 {
 	if (st_statusbaron)
@@ -414,7 +414,7 @@ void ST_refreshBackground(void)
 #ifdef MODE_Y
 			V_SetRect(ST_BACKGROUND_COLOR, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y, screen0);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP)
 			V_SetRect(ST_BACKGROUND_COLOR, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y, backbuffer);
 #endif
 		}
@@ -425,12 +425,12 @@ void ST_refreshBackground(void)
 #ifdef MODE_Y
 			V_CopyRect(ST_X, 0, screen4, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y, screen0);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP)
 			V_CopyRect(ST_X, 0, screen4, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y, backbuffer);
 #endif
 		}
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP)
 		updatestate |= I_STATBAR;
 #endif
 	}
@@ -1091,7 +1091,7 @@ void ST_DrawerText8050()
 }
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP)
 void ST_drawWidgets(byte refresh)
 {
 	int i;
@@ -1133,7 +1133,7 @@ void ST_drawWidgets(byte refresh)
 }
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP)
 void ST_Drawer(byte fullscreen, byte refresh)
 {
 	st_statusbaron = (!fullscreen) || automapactive;
@@ -1160,7 +1160,7 @@ void ST_Drawer(byte fullscreen, byte refresh)
 }
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP)
 void ST_loadGraphics(void)
 {
 
@@ -1234,7 +1234,7 @@ void ST_loadGraphics(void)
 }
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP)
 void ST_loadData(void)
 {
 	ST_loadGraphics();
@@ -1266,7 +1266,7 @@ void ST_unloadGraphics(void)
 	for (i = 0; i < NUMCARDS; i++)
 		Z_ChangeTag(keys[i], PU_CACHE);
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP)
 	Z_ChangeTag(sbar, PU_CACHE);
 #endif
 
@@ -1488,7 +1488,7 @@ void ST_Stop(void)
 	st_stopped = 1;
 }
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP)
 void ST_Init(void)
 {
 	ST_loadData();

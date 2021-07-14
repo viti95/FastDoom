@@ -8,3 +8,4 @@ call cleanbwc.bat
 call cleanhgc.bat
 call cleanvbr.bat
 call cleanvbp.bat
+call cleanpcp.bat

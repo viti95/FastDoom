@@ -36,11 +36,11 @@
 byte screen0[SCREENWIDTH * SCREENHEIGHT];
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP)
 byte screen4[SCREENWIDTH * 32];
 #endif
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP)
 byte backbuffer[SCREENWIDTH * SCREENHEIGHT];
 #endif
 
@@ -141,7 +141,7 @@ void V_SetRect(byte color, int width, int height, int destx, int desty, byte *de
 // V_DrawPatch
 // Masks a column based masked pic to the screen.
 //
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP)
 void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
 {
 
@@ -416,7 +416,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
 }
 #endif
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP)
 void V_DrawPatchDirect(int x, int y, patch_t *patch)
 {
     int count;

@@ -15,7 +15,7 @@ extern byte processedpalette[14 * 768];
 extern byte processedpalette[14 * 1024];
 #endif
 
-#if defined(MODE_T25) || defined(MODE_T50) || defined(MODE_EGA)
+#if defined(MODE_T25) || defined(MODE_T50) || defined(MODE_EGA) || defined(MODE_PCP)
 extern byte lut16colors[14 * 256];
 extern byte *ptrlut16colors;
 #endif
@@ -31,7 +31,7 @@ extern byte *ptrsumcolors10;
 extern byte *ptrsumcolors11;
 #endif
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP)
 extern int updatestate;
 #endif
 
