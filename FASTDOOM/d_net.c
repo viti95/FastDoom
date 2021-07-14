@@ -52,17 +52,17 @@ void D_DoAdvanceDemo(void);
 int ExpandTics(int low)
 {
 	int delta;
+	int opt;
 
 	delta = low - (maketic & 0xff);
+	opt = maketic & ~0xff;
 
-	if (delta >= -64 && delta <= 64)
-		return (maketic & ~0xff) + low;
-	if (delta > 64)
-		return (maketic & ~0xff) - 256 + low;
 	if (delta < -64)
-		return (maketic & ~0xff) + 256 + low;
+		return opt + 256 + low;
+	else if (delta > 64)
+		return opt - 256 + low;
 
-	return 0;
+	return opt + low;
 }
 
 //

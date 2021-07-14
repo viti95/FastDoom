@@ -57,17 +57,11 @@ byte P_PointOnLineSide(fixed_t x, fixed_t y, line_t *line)
 
     if (!line->dx)
     {
-        if (x <= line->v1->x)
-            return line->dy > 0;
-
-        return line->dy < 0;
+        return (x <= line->v1->x) ^ (line->dy <= 0);
     }
     if (!line->dy)
     {
-        if (y <= line->v1->y)
-            return line->dx < 0;
-
-        return line->dx > 0;
+        return (y <= line->v1->y) ^ (line->dx >= 0);
     }
 
     dx = (x - line->v1->x);
@@ -141,17 +135,11 @@ byte P_PointOnDivlineSide(fixed_t x,
 
     if (!line->dx)
     {
-        if (x <= line->x)
-            return line->dy > 0;
-
-        return line->dy < 0;
+        return (x <= line->x) ^ (line->dy <= 0);
     }
     if (!line->dy)
     {
-        if (y <= line->y)
-            return line->dx < 0;
-
-        return line->dx > 0;
+        return (y <= line->y) ^ (line->dx >= 0);
     }
 
     dx = (x - line->x);
@@ -500,21 +488,17 @@ byte PIT_AddThingIntercepts(mobj_t *thing)
     // check a corner to corner crossection for hit
     if (tracepositive)
     {
-        x1 = thing->x - thing->radius;
-        x2 = thing->x + thing->radius;
-
         y1 = thing->y + thing->radius;
         y2 = thing->y - thing->radius;
     }
     else
     {
-        x1 = thing->x - thing->radius;
-        x2 = thing->x + thing->radius;
-
         y1 = thing->y - thing->radius;
         y2 = thing->y + thing->radius;
     }
 
+    x1 = thing->x - thing->radius;
+    x2 = thing->x + thing->radius;
     s1 = P_PointOnDivlineSide(x1, y1, &trace);
     s2 = P_PointOnDivlineSide(x2, y2, &trace);
 
