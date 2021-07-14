@@ -76,7 +76,7 @@ int snd_DesiredMusicDevice;
 
 void I_SetMusicVolume(int volume)
 {
-    MUSIC_SetVolume(volume * 2);
+    MUSIC_SetVolume(volume);
     snd_MusicVolume = volume;
 }
 

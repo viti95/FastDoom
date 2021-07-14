@@ -1162,7 +1162,7 @@ void D_DoomMain(void)
 
     printf("S_Init: Setting up sound.\n");
     D_RedrawTitle();
-    S_Init(sfxVolume * 8, musicVolume * 8);
+    S_Init(sfxVolume * 8, musicVolume * 17);
 
 #if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
     printf("HU_Init: Setting up heads up display.\n");
