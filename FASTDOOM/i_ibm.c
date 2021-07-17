@@ -845,23 +845,44 @@ void CPLUS_DrawBackbuffer(void)
     int x;
     unsigned char *vram = (unsigned char *)0xB8000;
     unsigned int base = 0;
+    unsigned char color0, color1, color2, color3;
 
-    for (base = 0; base < SCREENHEIGHT * 320; base += 320)
+    for (base = 0; base < SCREENHEIGHT * 320;)
     {
         for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++)
         {
-            unsigned char color0 = ptrlut16colors[backbuffer[base]];
-            unsigned char color1 = ptrlut16colors[backbuffer[base + 1]];
-            unsigned char color2 = ptrlut16colors[backbuffer[base + 2]];
-            unsigned char color3 = ptrlut16colors[backbuffer[base + 3]];
-            unsigned char color4 = ptrlut16colors[backbuffer[base + 320]];
-            unsigned char color5 = ptrlut16colors[backbuffer[base + 321]];
-            unsigned char color6 = ptrlut16colors[backbuffer[base + 322]];
-            unsigned char color7 = ptrlut16colors[backbuffer[base + 323]];
+            color0 = ptrlut16colors[backbuffer[base]];
+            color1 = ptrlut16colors[backbuffer[base + 1]];
+            color2 = ptrlut16colors[backbuffer[base + 2]];
+            color3 = ptrlut16colors[backbuffer[base + 3]];
             *(vram) = (color0 & 3) << 6 | (color1 & 3) << 4 | (color2 & 3) << 2 | (color3 & 3);
-            *(vram + 0x2000) = (color4 & 3) << 6 | (color5 & 3) << 4 | (color6 & 3) << 2 | (color7 & 3);
+        }
+        base -= 320; vram -= 80;
+        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++)
+        {
+            color0 = ptrlut16colors[backbuffer[base]];
+            color1 = ptrlut16colors[backbuffer[base + 1]];
+            color2 = ptrlut16colors[backbuffer[base + 2]];
+            color3 = ptrlut16colors[backbuffer[base + 3]];
             *(vram + 0x4000) = (color0 & 12) << 4 | (color1 & 12) << 2 | (color2 & 12) | (color3 & 12) >> 2;
-            *(vram + 0x6000) = (color4 & 12) << 4 | (color5 & 12) << 2 | (color6 & 12) | (color7 & 12) >> 2;
+        }
+        vram -= 80;
+        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++)
+        {
+            color0 = ptrlut16colors[backbuffer[base]];
+            color1 = ptrlut16colors[backbuffer[base + 1]];
+            color2 = ptrlut16colors[backbuffer[base + 2]];
+            color3 = ptrlut16colors[backbuffer[base + 3]];
+            *(vram + 0x2000) = (color0 & 3) << 6 | (color1 & 3) << 4 | (color2 & 3) << 2 | (color3 & 3);
+        }
+        base -= 320; vram -= 80;
+        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++)
+        {
+            color0 = ptrlut16colors[backbuffer[base]];
+            color1 = ptrlut16colors[backbuffer[base + 1]];
+            color2 = ptrlut16colors[backbuffer[base + 2]];
+            color3 = ptrlut16colors[backbuffer[base + 3]];
+            *(vram + 0x6000) = (color0 & 12) << 4 | (color1 & 12) << 2 | (color2 & 12) | (color3 & 12) >> 2;
         }
     }
 }
@@ -873,18 +894,24 @@ void CVBS_DrawBackbuffer(void)
     int x;
     unsigned char *vram = (unsigned char *)0xB8000;
     unsigned int base = 0;
+    unsigned char color0, color1;
 
-    for (base = 0; base < SCREENHEIGHT * 320; base += 320)
+    for (base = 0; base < SCREENHEIGHT * 320;)
     {
         for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++)
         {
-            unsigned char color0 = ptrlut16colors[backbuffer[base]];
-            unsigned char color1 = ptrlut16colors[backbuffer[base + 2]];
-            unsigned char color2 = ptrlut16colors[backbuffer[base + 320]];
-            unsigned char color3 = ptrlut16colors[backbuffer[base + 322]];
+            color0 = ptrlut16colors[backbuffer[base]];
+            color1 = ptrlut16colors[backbuffer[base + 2]];
             *(vram) = color0 << 4 | color1;
-            *(vram + 0x2000) = color2 << 4 | color3;
         }
+        vram += 0x1FB0;
+        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++)
+        {
+            color0 = ptrlut16colors[backbuffer[base]];
+            color1 = ptrlut16colors[backbuffer[base + 2]];
+            *(vram) = color0 << 4 | color1;
+        }
+        vram -= 0x2000;
     }
 }
 #endif
