@@ -34,8 +34,6 @@
 // State.
 #include "doomstat.h"
 
-
-
 // status bar height at bottom of screen
 #define SBARHEIGHT 32
 
@@ -60,7 +58,7 @@ int columnofs[SCREENWIDTH];
 #if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
 byte *ylookup[SCREENHEIGHT];
 #endif
-#if defined(MODE_Y) || defined(MODE_T8025) || defined(MODE_T8050)
+#if defined(MODE_Y) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025)
 byte **ylookup;
 #endif
 
@@ -195,6 +193,146 @@ void R_DrawSkyFlatPotato(void)
         dest += SCREENWIDTH / 4;
         count--;
     };
+}
+#endif
+
+#ifdef MODE_T4025
+void R_DrawColumnText4025(void)
+{
+    fixed_t frac;
+    fixed_t fracstep;
+    int count;
+    unsigned short *dest;
+
+    dest = textdestscreen + Mul40(dc_yl) + dc_x;
+    count = dest + Mul40(dc_yh - dc_yl);
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    do
+    {
+        *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 219;
+        dest += 40;
+        frac += fracstep;
+    } while (dest <= count);
+}
+void R_DrawSpanText4025(void)
+{
+    int countp;
+    unsigned position;
+    unsigned step;
+    unsigned short *dest;
+    byte *source;
+    byte *colormap;
+
+    dest = textdestscreen + Mul40(ds_y);
+    countp = dest + ds_x2;
+    dest += ds_x1;
+
+    position = ((ds_xfrac << 10) & 0xffff0000) | ((ds_yfrac >> 6) & 0xffff);
+    step = ((ds_xstep << 10) & 0xffff0000) | ((ds_ystep >> 6) & 0xffff);
+
+    source = ds_source;
+    colormap = ds_colormap;
+
+    do
+    {
+        unsigned xtemp;
+        unsigned ytemp;
+        unsigned spot;
+
+        ytemp = position >> 4;
+        ytemp = ytemp & 4032;
+        xtemp = position >> 26;
+        spot = xtemp | ytemp;
+        *dest++ = colormap[source[spot]] << 8 | 219;
+        position += step;
+    } while (dest <= countp);
+}
+void R_DrawSkyFlatText4025(void)
+{
+    int count;
+    unsigned short *dest;
+
+    dest = textdestscreen + Mul40(dc_yl) + dc_x;
+    count = dest + Mul40(dc_yh - dc_yl);
+
+    do
+    {
+        *dest = 6 << 8 | 219;
+        dest += 40;
+    } while (dest <= count);
+}
+void R_DrawFuzzColumnFastText4025(void)
+{
+    int count;
+    unsigned short *dest;
+    unsigned short vmem;
+
+    dest = textdestscreen + Mul40(dc_yl) + dc_x;
+    count = dest + Mul40(dc_yh - dc_yl);
+
+    do
+    {
+        vmem = *dest & 0x0F00;
+
+        if (vmem >= 0x800)
+        {
+            vmem -= 0x800;
+            *dest = vmem | 219;
+        }
+
+        dest += 40;
+    } while (dest <= count);
+}
+void R_DrawFuzzColumnSaturnText4025(void)
+{
+    int count;
+    unsigned short *dest;
+    fixed_t frac;
+    fixed_t fracstep;
+    int initialdrawpos = 0;
+
+    count = (dc_yh - dc_yl) / 2 - 1;
+
+    if (count < 0)
+        return;
+
+    initialdrawpos = dc_yl + dc_x;
+
+    dest = textdestscreen + Mul40(dc_yl) + dc_x;
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    if (initialdrawpos & 1)
+    {
+        dest += 40;
+        frac += fracstep;
+    }
+
+    fracstep = 2 * fracstep;
+
+    do
+    {
+        *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 219;
+
+        dest += 80;
+        frac += fracstep;
+    } while (count--);
+
+    if ((dc_yh - dc_yl) & 1)
+    {
+        *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 219;
+    }
+    else
+    {
+        if (!(initialdrawpos & 1))
+        {
+            *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 219;
+        }
+    }
 }
 #endif
 
@@ -711,7 +849,7 @@ void R_DrawSpanPotato(void)
 //
 #define FUZZTABLE 50
 
-#if defined(MODE_Y) || defined(MODE_T8025) || defined(MODE_T8050)
+#if defined(MODE_Y) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025)
 #define FUZZOFF (SCREENWIDTH / 4)
 #endif
 
@@ -914,6 +1052,41 @@ void R_DrawFuzzColumnFastPotato(void)
         dest += SCREENWIDTH / 4;
         count--;
     }
+}
+#endif
+
+#ifdef MODE_T4025
+void R_DrawFuzzColumnText4025(void)
+{
+    int count;
+    unsigned short *dest;
+    unsigned short vmem;
+
+    dest = textdestscreen + Mul40(dc_yl) + dc_x;
+    count = dest + Mul40(dc_yh - dc_yl);
+
+    do
+    {
+        vmem = *dest & 0x0F00;
+
+        if (fuzzoffset[fuzzpos] > 0)
+        {
+            if (vmem >= 0x800)
+                vmem -= 0x800;
+        }
+        else
+        {
+            if (vmem < 0x800)
+                vmem += 0x800;
+        }
+
+        *dest = vmem | 219;
+
+        if (++fuzzpos == FUZZTABLE)
+            fuzzpos = 0;
+
+        dest += 40;
+    } while (dest <= count);
 }
 #endif
 
@@ -1478,6 +1651,22 @@ void R_DrawSpanFlatText8050(void)
 }
 #endif
 
+#ifdef MODE_T4025
+void R_DrawSpanFlatText4025(void)
+{
+    int countp;
+    unsigned short *dest;
+
+    unsigned short color = ds_colormap[ds_source[FLATPIXELCOLOR]] << 8 | 219;
+
+    dest = textdestscreen + Mul40(ds_y) + ds_x1;
+
+    countp = ds_x2 - ds_x1 + 1;
+
+    SetWords((byte *)dest, color, countp);
+}
+#endif
+
 #ifdef MODE_T8025
 void R_DrawSpanFlatText8025(void)
 {
@@ -1526,7 +1715,7 @@ void R_InitBuffer(int width, int height)
     //  e.g. smaller view windows
     //  with border and/or status bar.
 
-#if defined(MODE_T8025) || defined(MODE_T8050)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025)
     viewwindowx = 0;
 #endif
 #if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
@@ -1538,7 +1727,7 @@ void R_InitBuffer(int width, int height)
         columnofs[i] = viewwindowx + i;
 
 // Samw with base row offset.
-#if defined(MODE_T8025) || defined(MODE_T8050)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025)
     viewwindowy = 0;
 #endif
 #if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)

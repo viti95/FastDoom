@@ -532,7 +532,7 @@ fixed_t R_ScaleFromGlobalAngle(angle_t visangle)
 #ifdef MODE_Y
     num = FixedMul(projection, sineb) << detailshift;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_T4025)
     num = FixedMul(projection, sineb);
 #endif
     den = FixedMul(rw_distance, sinea);
@@ -700,7 +700,10 @@ void R_ExecuteSetViewSize(void)
         viewheight = (setblocks * 168 / 10) & ~7;
         automapheight = SCREENHEIGHT - 32;
     }
-
+#ifdef MODE_T4025
+    scaledviewwidth = 40;
+    viewheight = 25;
+#endif
 #if defined(MODE_T8025) || defined(MODE_T8050)
     scaledviewwidth = 80;
     viewheight = 50;
@@ -722,7 +725,7 @@ void R_ExecuteSetViewSize(void)
 #ifdef MODE_Y
     viewwidth = scaledviewwidth >> detailshift;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_T4025)
     viewwidth = scaledviewwidth;
 #endif
 
@@ -736,6 +739,30 @@ void R_ExecuteSetViewSize(void)
     projection = centerxfrac;
     iprojection = FixedDiv(FRACUNIT << 8, projection);
 
+#ifdef MODE_T4025
+    colfunc = basecolfunc = R_DrawColumnText4025;
+
+    if (untexturedSurfaces)
+    {
+        spanfunc = R_DrawSpanFlatText4025;
+    }
+    else
+    {
+        spanfunc = R_DrawSpanText4025;
+    }
+
+    if (flatSky)
+        skyfunc = R_DrawSkyFlatText4025;
+    else
+        skyfunc = R_DrawColumnText4025;
+
+    if (flatShadows)
+        fuzzcolfunc = R_DrawFuzzColumnFastText4025;
+    else if (saturnShadows)
+        fuzzcolfunc = R_DrawFuzzColumnSaturnText4025;
+    else
+        fuzzcolfunc = R_DrawFuzzColumnText4025;
+#endif
 #ifdef MODE_T8025
     colfunc = basecolfunc = R_DrawColumnText8025;
 
@@ -881,7 +908,7 @@ void R_ExecuteSetViewSize(void)
 #ifdef MODE_Y
     pspriteiscaleshifted = pspriteiscale >> detailshift;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_T4025)
     pspriteiscaleshifted = pspriteiscale;
 #endif
 
@@ -897,7 +924,7 @@ void R_ExecuteSetViewSize(void)
 #ifdef MODE_Y
         yslope[i] = FixedDiv((viewwidth << detailshift) / 2 * FRACUNIT, dy);
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_T4025)
         yslope[i] = FixedDiv((viewwidth) / 2 * FRACUNIT, dy);
 #endif
     }
@@ -918,7 +945,7 @@ void R_ExecuteSetViewSize(void)
 #ifdef MODE_Y
             level = startmap - Mul320(j) / (viewwidth << detailshift) / DISTMAP;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_T4025)
             level = startmap - Mul320(j) / (viewwidth) / DISTMAP;
 #endif
             if (level < 0)
@@ -1090,6 +1117,12 @@ void R_RenderPlayerView(player_t *player)
     // Check for new console commands.
     NetUpdate();
 
+#ifdef MODE_T4025
+    if (flatSurfaces)
+        R_DrawPlanesFlatSurfacesText4025();
+    else
+        R_DrawPlanes();
+#endif
 #ifdef MODE_T8025
     if (flatSurfaces)
         R_DrawPlanesFlatSurfacesText8025();

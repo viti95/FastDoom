@@ -61,7 +61,7 @@ extern boolean forceLowDetail;
 extern boolean forcePotatoDetail;
 extern int forceScreenSize;
 
-#ifdef MODE_T8025
+#if defined(MODE_T8025) || defined(MODE_T4025)
 extern boolean CGAcard;
 #endif
 

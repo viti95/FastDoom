@@ -797,6 +797,62 @@ void R_DrawPlanesFlatSurfacesText8050(void)
 }
 #endif
 
+#ifdef MODE_T4025
+void R_DrawPlanesFlatSurfacesText4025(void)
+{
+    visplane_t *pl;
+
+    int count;
+    unsigned short *dest;
+    unsigned short color;
+    int x;
+
+    for (pl = visplanes; pl < lastvisplane; pl++)
+    {
+        if (!pl->modified || pl->minx > pl->maxx)
+            continue;
+
+        // sky flat
+        if (pl->picnum == skyflatnum)
+        {
+            R_DrawSky(pl);
+            continue;
+        }
+
+        dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
+        color = colormaps[dc_source[FLATPIXELCOLOR]] << 8 | 219;
+
+        for (x = pl->minx; x <= pl->maxx; x++)
+        {
+            if (pl->top[x] > pl->bottom[x])
+                continue;
+
+            count = pl->bottom[x] - pl->top[x];
+            dest = textdestscreen + Mul40(pl->top[x]) + x;
+
+            while (count >= 3)
+            {
+                *(dest) = color;
+                *(dest + SCREENWIDTH / 8) = color;
+                *(dest + SCREENWIDTH / 4) = color;
+                *(dest + SCREENWIDTH / 8 + SCREENWIDTH / 4) = color;
+                dest += SCREENWIDTH / 2;
+                count -= 4;
+            }
+
+            while (count >= 0)
+            {
+                *dest = color;
+                dest += SCREENWIDTH / 8;
+                count--;
+            };
+        }
+
+        Z_ChangeTag(dc_source, PU_CACHE);
+    }
+}
+#endif
+
 #ifdef MODE_T8025
 void R_DrawPlanesFlatSurfacesText8025(void)
 {

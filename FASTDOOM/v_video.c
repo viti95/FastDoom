@@ -308,6 +308,50 @@ void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
 }
 #endif
 
+#if defined(MODE_T4025)
+void V_WriteTextColorDirect(int x, int y, char *string, unsigned short color)
+{
+    unsigned short *dest;
+
+    dest = textdestscreen + Mul40(y) + x;
+
+    while (*string)
+    {
+        *dest++ = color | *string;
+        string++;
+    }
+}
+
+void V_WriteTextDirect(int x, int y, char *string)
+{
+    unsigned short *dest;
+
+    dest = textdestscreen + Mul40(y) + x;
+
+    while (*string)
+    {
+        *dest++ = 12 << 8 | *string;
+        string++;
+    }
+}
+
+void V_WriteCharColorDirect(int x, int y, unsigned char c, unsigned short color)
+{
+    unsigned short *dest;
+
+    dest = textdestscreen + Mul40(y) + x;
+    *dest = color | c;
+}
+
+void V_WriteCharDirect(int x, int y, unsigned char c)
+{
+    unsigned short *dest;
+
+    dest = textdestscreen + Mul40(y) + x;
+    *dest = 12 << 8 | c;
+}
+#endif
+
 #if defined(MODE_T8025) || defined(MODE_T8050)
 void V_WriteTextColorDirect(int x, int y, char *string, unsigned short color)
 {
@@ -489,6 +533,51 @@ void V_DrawPatchDirectText8050(int x, int y, patch_t *patch)
                 *dest = ptrlut16colors[*source] << 8 | 219;
                 source += 4;
                 dest += 80;
+            }
+            column = (column_t *)((byte *)column + column->length + 4);
+        }
+
+        desttop += 1;
+    }
+}
+#endif
+
+#ifdef MODE_T4025
+void V_DrawPatchDirectText4025(int x, int y, patch_t *patch)
+{
+    int count;
+    int col;
+    column_t *column;
+    unsigned short *desttop;
+    unsigned short *dest;
+    byte *source;
+    int w;
+
+    y -= patch->topoffset;
+    x -= patch->leftoffset;
+
+    x /= 8; // 320 --> 40
+    y /= 8; // 200 --> 25
+
+    desttop = textdestscreen + Mul40(y) + x;
+
+    w = patch->width;
+    for (col = 0; col < w; col += 8)
+    {
+        column = (column_t *)((byte *)patch + patch->columnofs[col]);
+
+        // step through the posts in a column
+        while (column->topdelta != 0xff)
+        {
+            source = (byte *)column + 3;
+            dest = desttop + Mul40(column->topdelta / 8);
+            count = column->length / 4;
+
+            while (count--)
+            {
+                *dest = ptrlut16colors[*source] << 8 | 219;
+                source += 8;
+                dest += 40;
             }
             column = (column_t *)((byte *)column + column->length + 4);
         }

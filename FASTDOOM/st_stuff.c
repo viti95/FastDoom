@@ -875,6 +875,114 @@ void ST_doPaletteStuff(void)
 	}
 }
 
+#ifdef MODE_T4025
+void ST_DrawerText4025()
+{
+	st_armson = 1;
+
+	if (w_health.n.on)
+	{
+		V_WriteTextColorDirect(1, 21, "HEALTH   %%", 7 << 8);
+		STlib_drawNumText(&(w_health.n), 8, 21);
+	}
+
+	if (w_armor.n.on)
+	{
+		V_WriteTextColorDirect(1, 22, "ARMOR    %%", 7 << 8);
+		STlib_drawNumText(&(w_armor.n), 8, 22);
+	}
+
+	if (w_ready.on)
+	{
+		V_WriteTextColorDirect(1, 23, "AMMO   ", 7 << 8);
+		STlib_drawNumText(&(w_ready), 8, 23);
+	}
+
+	if (w_ammo[0].on)
+	{
+		V_WriteTextColorDirect(27, 20, "BULL    /", 7 << 8);
+		STlib_drawNumText(&(w_ammo[0]), 32, 20);
+		STlib_drawNumText(&(w_maxammo[0]), 36, 20);
+
+		V_WriteTextColorDirect(27, 21, "SHEL    /", 7 << 8);
+		STlib_drawNumText(&(w_ammo[1]), 32, 21);
+		STlib_drawNumText(&(w_maxammo[1]), 36, 21);
+
+		V_WriteTextColorDirect(27, 22, "RCKT    /", 7 << 8);
+		STlib_drawNumText(&(w_ammo[3]), 32, 22);
+		STlib_drawNumText(&(w_maxammo[3]), 36, 22);
+
+		V_WriteTextColorDirect(27, 23, "CELL    /", 7 << 8);
+		STlib_drawNumText(&(w_ammo[2]), 32, 23);
+		STlib_drawNumText(&(w_maxammo[2]), 36, 23);
+	}
+
+	if ((st_faceindex - 3) % 8 == 0)
+	{
+		// LOOK RIGHT
+		V_WriteCharDirect(25, 20, 16);
+		V_WriteCharDirect(25, 21, 16);
+		V_WriteCharDirect(25, 22, 16);
+		V_WriteCharDirect(25, 23, 16);
+	}
+	else
+	{
+		if ((st_faceindex - 4) % 8 == 0)
+		{
+			// LOOK LEFT
+			V_WriteCharDirect(13, 20, 17);
+			V_WriteCharDirect(13, 21, 17);
+			V_WriteCharDirect(13, 22, 17);
+			V_WriteCharDirect(13, 23, 17);
+		}
+	}
+
+	if (w_keyboxes[0].on)
+	{
+		V_WriteTextColorDirect(1, 20, "KEYS   ", 7 << 8);
+
+		switch (keyboxes[0])
+		{
+		case -1:
+			V_WriteCharColorDirect(8, 20, 249, 7 << 8);
+			break;
+		case 0:
+			V_WriteCharColorDirect(8, 20, 20, 1 << 8);
+			break;
+		case 3:
+			V_WriteCharColorDirect(8, 20, 2, 1 << 8);
+			break;
+		}
+
+		switch (keyboxes[1])
+		{
+		case -1:
+			V_WriteCharColorDirect(9, 20, 249, 7 << 8);
+			break;
+		case 1:
+			V_WriteCharColorDirect(9, 20, 20, 14 << 8);
+			break;
+		case 4:
+			V_WriteCharColorDirect(9, 20, 2, 14 << 8);
+			break;
+		}
+
+		switch (keyboxes[2])
+		{
+		case -1:
+			V_WriteCharColorDirect(10, 20, 249, 7 << 8);
+			break;
+		case 2:
+			V_WriteCharColorDirect(10, 20, 20, 4 << 8);
+			break;
+		case 5:
+			V_WriteCharColorDirect(10, 20, 2, 4 << 8);
+			break;
+		}
+	}
+}
+#endif
+
 #ifdef MODE_T8025
 void ST_DrawerText8025()
 {

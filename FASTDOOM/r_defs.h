@@ -259,7 +259,7 @@ extern byte *destview;
 extern byte *destscreen;
 extern byte *pcscreen;
 
-#if defined(MODE_T8025) || defined(MODE_T8050)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025)
 extern unsigned short *textdestscreen;
 extern byte textpage;
 #endif

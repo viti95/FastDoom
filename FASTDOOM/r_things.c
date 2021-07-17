@@ -266,7 +266,7 @@ void R_DrawVisSprite(vissprite_t *vis)
 #ifdef MODE_Y
     dc_iscale = abs(vis->xiscale) >> detailshift;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_T4025)
     dc_iscale = abs(vis->xiscale);
 #endif
 
@@ -477,7 +477,7 @@ void R_ProjectSprite(mobj_t *thing)
 #ifdef MODE_Y
     vis->scale = xscale << detailshift;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_T4025)
     vis->scale = xscale;
 #endif
 
@@ -529,7 +529,7 @@ void R_ProjectSprite(mobj_t *thing)
 #ifdef MODE_Y
         index = xscale >> (LIGHTSCALESHIFT - detailshift);
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_T4025)
         index = xscale >> LIGHTSCALESHIFT;
 #endif
 
@@ -614,7 +614,7 @@ void R_DrawPSprite(pspdef_t *psp)
 #ifdef MODE_Y
     vis->scale = pspritescale << detailshift;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_T4025)
     vis->scale = pspritescale;
 #endif
 

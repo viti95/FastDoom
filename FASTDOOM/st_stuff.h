@@ -43,6 +43,7 @@ void ST_Ticker(void);
 
 // Called by main loop.
 void ST_Drawer(byte fullscreen, byte refresh);
+void ST_DrawerText4025();
 void ST_DrawerText8025();
 void ST_DrawerText8050();
 

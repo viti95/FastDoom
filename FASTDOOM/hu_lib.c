@@ -75,7 +75,15 @@ void HUlib_drawTextLine(hu_textline_t *l)
     int w;
     int x;
     unsigned char c;
-
+#ifdef MODE_T4025
+    x = l->x / 8;
+    for (i = 0; i < l->len; i++)
+    {
+        c = toupper(l->l[i]);
+        V_WriteCharDirect(x, l->y / 8, c);
+        x++;
+    }
+#endif
 #ifdef MODE_T8025
     x = l->x / 4;
     for (i = 0; i < l->len; i++)
