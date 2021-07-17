@@ -529,6 +529,9 @@ fixed_t R_ScaleFromGlobalAngle(angle_t visangle)
     // both sines are allways positive
     sinea = finesine[anglea >> ANGLETOFINESHIFT];
     sineb = finesine[angleb >> ANGLETOFINESHIFT];
+#ifdef MODE_T4050
+    num = FixedMul(projection, sineb) << 1;
+#endif
 #ifdef MODE_Y
     num = FixedMul(projection, sineb) << detailshift;
 #endif
@@ -700,6 +703,10 @@ void R_ExecuteSetViewSize(void)
         viewheight = (setblocks * 168 / 10) & ~7;
         automapheight = SCREENHEIGHT - 32;
     }
+#ifdef MODE_T4050
+    scaledviewwidth = 80;
+    viewheight = 50;
+#endif
 #ifdef MODE_T4025
     scaledviewwidth = 40;
     viewheight = 25;
@@ -722,6 +729,9 @@ void R_ExecuteSetViewSize(void)
         detailshift = setdetail;
 #endif
 
+#ifdef MODE_T4050
+    viewwidth = scaledviewwidth >> 1;
+#endif
 #ifdef MODE_Y
     viewwidth = scaledviewwidth >> detailshift;
 #endif
@@ -739,6 +749,30 @@ void R_ExecuteSetViewSize(void)
     projection = centerxfrac;
     iprojection = FixedDiv(FRACUNIT << 8, projection);
 
+#ifdef MODE_T4050
+    colfunc = basecolfunc = R_DrawColumnText4050;
+
+    if (untexturedSurfaces)
+    {
+        spanfunc = R_DrawSpanFlatText4050;
+    }
+    else
+    {
+        spanfunc = R_DrawSpanText4050;
+    }
+
+    if (flatSky)
+        skyfunc = R_DrawSkyFlatText4050;
+    else
+        skyfunc = R_DrawColumnText4050;
+
+    if (flatShadows)
+        fuzzcolfunc = R_DrawFuzzColumnFastText4050;
+    else if (saturnShadows)
+        fuzzcolfunc = R_DrawFuzzColumnSaturnText4050;
+    else
+        fuzzcolfunc = R_DrawFuzzColumnText4050;
+#endif
 #ifdef MODE_T4025
     colfunc = basecolfunc = R_DrawColumnText4025;
 
@@ -905,6 +939,9 @@ void R_ExecuteSetViewSize(void)
     pspritescale = FRACUNIT * viewwidth / SCREENWIDTH;
     pspriteiscale = FRACUNIT * SCREENWIDTH / viewwidth;
 
+#ifdef MODE_T4050
+    pspriteiscaleshifted = pspriteiscale >> 1;
+#endif
 #ifdef MODE_Y
     pspriteiscaleshifted = pspriteiscale >> detailshift;
 #endif
@@ -921,6 +958,9 @@ void R_ExecuteSetViewSize(void)
         dy = ((i - viewheight / 2) << FRACBITS) + FRACUNIT / 2;
         dy = abs(dy);
 
+#ifdef MODE_T4050
+        yslope[i] = FixedDiv((viewwidth << 1) / 2 * FRACUNIT, dy);
+#endif
 #ifdef MODE_Y
         yslope[i] = FixedDiv((viewwidth << detailshift) / 2 * FRACUNIT, dy);
 #endif
@@ -942,6 +982,9 @@ void R_ExecuteSetViewSize(void)
         startmap = ((LIGHTLEVELS - 1 - i) * 2) * NUMCOLORMAPS / LIGHTLEVELS;
         for (j = 0; j < MAXLIGHTSCALE; j++)
         {
+#ifdef MODE_T4050
+            level = startmap - Mul320(j) / (viewwidth << 1) / DISTMAP;
+#endif
 #ifdef MODE_Y
             level = startmap - Mul320(j) / (viewwidth << detailshift) / DISTMAP;
 #endif
@@ -1117,6 +1160,12 @@ void R_RenderPlayerView(player_t *player)
     // Check for new console commands.
     NetUpdate();
 
+#ifdef MODE_T4050
+    if (flatSurfaces)
+        R_DrawPlanesFlatSurfacesText4050();
+    else
+        R_DrawPlanes();
+#endif
 #ifdef MODE_T4025
     if (flatSurfaces)
         R_DrawPlanesFlatSurfacesText4025();

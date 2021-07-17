@@ -38,7 +38,7 @@ extern int columnofs[SCREENWIDTH];
 #if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
 extern byte *ylookup[SCREENHEIGHT];
 #endif
-#if defined(MODE_Y) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025)
+#if defined(MODE_Y) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050)
 extern byte **ylookup;
 #endif
 
@@ -88,6 +88,13 @@ void R_DrawFuzzColumnText4025(void);
 void R_DrawFuzzColumnFastText4025(void);
 void R_DrawFuzzColumnSaturnText4025(void);
 
+void R_DrawColumnText4050(void);
+void R_DrawSpanText4050(void);
+void R_DrawSkyFlatText4050(void);
+void R_DrawFuzzColumnText4050(void);
+void R_DrawFuzzColumnFastText4050(void);
+void R_DrawFuzzColumnSaturnText4050(void);
+
 void R_DrawColumn_13h(void);
 void R_DrawSpan_13h(void);
 void R_DrawFuzzColumn_13h(void);
@@ -127,6 +134,7 @@ void R_DrawSpanFlatPotato(void);
 void R_DrawSpanFlatText8050(void);
 void R_DrawSpanFlatText8025(void);
 void R_DrawSpanFlatText4025(void);
+void R_DrawSpanFlatText4050(void);
 
 void R_InitBuffer(int width, int height);
 

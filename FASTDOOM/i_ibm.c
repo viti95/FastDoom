@@ -184,7 +184,7 @@ void I_StartupSound(void);
 void I_ShutdownSound(void);
 void I_ShutdownTimer(void);
 
-#if defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025)
+#if defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050)
 byte lut16colors[14 * 256];
 byte *ptrlut16colors;
 #endif
@@ -300,7 +300,7 @@ void I_ProcessPalette(byte *palette)
 }
 #endif
 
-#if defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025)
+#if defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050)
 const byte textcolors[48] = {
     0x00, 0x00, 0x00,
     0x00, 0x00, 0x2A,
@@ -320,7 +320,7 @@ const byte textcolors[48] = {
     0x3F, 0x3F, 0x3F};
 #endif
 
-#if defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025)
+#if defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050)
 void I_ProcessPalette(byte *palette)
 {
     int i, j;
@@ -386,7 +386,7 @@ void I_SetPalette(int numpalette)
     ptrsumcolors11 = sumcolors11 + numpalette * 256;
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_EGA) || defined(MODE_T4025)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_EGA) || defined(MODE_T4025) || defined(MODE_T4050)
     ptrlut16colors = lut16colors + numpalette * 256;
 #endif
 
@@ -422,7 +422,7 @@ byte *pcscreen, *currentscreen, *destscreen, *destview;
 byte page = 0;
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050)
 unsigned short *textdestscreen = (unsigned short *)0xB8000;
 byte textpage = 0;
 #endif
@@ -826,7 +826,7 @@ void I_FinishUpdate(void)
     }
 #endif
 
-#ifdef MODE_T4025
+#if defined(MODE_T4025) || defined(MODE_T4050)
     // Change video page
     regs.h.ah = 0x05;
     regs.h.al = textpage;
@@ -965,7 +965,7 @@ void I_FinishUpdate(void)
 //
 void I_InitGraphics(void)
 {
-#ifdef MODE_T4025
+#if defined(MODE_T4025) || defined(MODE_T4050)
     // Set 40x25 color mode
     regs.h.ah = 0x00;
     regs.h.al = 0x01;

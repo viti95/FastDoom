@@ -263,6 +263,9 @@ void R_DrawVisSprite(vissprite_t *vis)
         colfunc = fuzzcolfunc;
     }
 
+#ifdef MODE_T4050
+    dc_iscale = abs(vis->xiscale) >> 1;
+#endif
 #ifdef MODE_Y
     dc_iscale = abs(vis->xiscale) >> detailshift;
 #endif
@@ -474,6 +477,9 @@ void R_ProjectSprite(mobj_t *thing)
     vis = vissprites + num_vissprite++;
     vis->mobjflags = thing->flags;
 
+#ifdef MODE_T4050
+    vis->scale = xscale << 1;
+#endif
 #ifdef MODE_Y
     vis->scale = xscale << detailshift;
 #endif
@@ -526,6 +532,9 @@ void R_ProjectSprite(mobj_t *thing)
     {
         // diminished light
 
+#ifdef MODE_T4050
+        index = xscale >> (LIGHTSCALESHIFT - 1);
+#endif
 #ifdef MODE_Y
         index = xscale >> (LIGHTSCALESHIFT - detailshift);
 #endif
@@ -611,6 +620,9 @@ void R_DrawPSprite(pspdef_t *psp)
     vis->x1 = x1 < 0 ? 0 : x1;
     vis->x2 = x2 > viewwidthlimit ? viewwidthlimit : x2;
 
+#ifdef MODE_T4050
+    vis->scale = pspritescale << 1;
+#endif
 #ifdef MODE_Y
     vis->scale = pspritescale << detailshift;
 #endif

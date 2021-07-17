@@ -875,7 +875,7 @@ void ST_doPaletteStuff(void)
 	}
 }
 
-#ifdef MODE_T4025
+#if defined(MODE_T4025) || defined(MODE_T4050)
 void ST_DrawerText4025()
 {
 	st_armson = 1;

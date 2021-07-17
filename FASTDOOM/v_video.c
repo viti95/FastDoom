@@ -30,8 +30,6 @@
 
 #include "v_video.h"
 
-
-
 #ifdef MODE_Y
 byte screen0[SCREENWIDTH * SCREENHEIGHT];
 #endif
@@ -130,7 +128,7 @@ void V_SetRect(byte color, int width, int height, int destx, int desty, byte *de
         int widthcomp = width / 2;
 
         for (; height > 0; height--)
-        {    
+        {
             SetWords(dest, colorcomp, widthcomp);
             dest += SCREENWIDTH;
         }
@@ -308,7 +306,7 @@ void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
 }
 #endif
 
-#if defined(MODE_T4025)
+#if defined(MODE_T4025) || defined(MODE_T4050)
 void V_WriteTextColorDirect(int x, int y, char *string, unsigned short color)
 {
     unsigned short *dest;
@@ -533,6 +531,70 @@ void V_DrawPatchDirectText8050(int x, int y, patch_t *patch)
                 *dest = ptrlut16colors[*source] << 8 | 219;
                 source += 4;
                 dest += 80;
+            }
+            column = (column_t *)((byte *)column + column->length + 4);
+        }
+
+        desttop += 1;
+    }
+}
+#endif
+
+#ifdef MODE_T4050
+void V_DrawPatchDirectText4050(int x, int y, patch_t *patch)
+{
+    int count;
+    int col;
+    column_t *column;
+    unsigned short *desttop;
+    unsigned short *dest;
+    byte *source;
+    int w;
+    byte odd;
+    unsigned short vmem;
+
+    y -= patch->topoffset;
+    x -= patch->leftoffset;
+
+    x /= 8; // 320 --> 40
+    y /= 4; // 200 --> 50
+
+    desttop = textdestscreen + Mul40(y / 2) + x;
+
+    w = patch->width;
+    for (col = 0; col < w; col += 8)
+    {
+        column = (column_t *)((byte *)patch + patch->columnofs[col]);
+
+        // step through the posts in a column
+        while (column->topdelta != 0xff)
+        {
+            source = (byte *)column + 3;
+            odd = (column->topdelta / 4 + y) % 2;
+            dest = desttop + Mul40(column->topdelta / 8);
+            count = column->length / 4;
+
+            while (count--)
+            {
+                vmem = *dest;
+
+                if (odd)
+                {
+                    vmem = vmem & 0x0F00;
+                    *dest = vmem | ptrlut16colors[*source] << 12 | 223;
+
+                    odd = 0;
+                    dest += 40;
+                }
+                else
+                {
+                    vmem = vmem & 0xF000;
+                    *dest = vmem | ptrlut16colors[*source] << 8 | 223;
+
+                    odd = 1;
+                }
+
+                source += 4;
             }
             column = (column_t *)((byte *)column + column->length + 4);
         }

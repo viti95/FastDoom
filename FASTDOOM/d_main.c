@@ -102,7 +102,7 @@ boolean forceLowDetail;
 boolean forcePotatoDetail;
 int forceScreenSize;
 
-#if defined(MODE_T8025) || defined(MODE_T4025)
+#if defined(MODE_T8025) || defined(MODE_T4025) || defined(MODE_T4050)
 boolean CGAcard;
 #endif
 
@@ -245,7 +245,7 @@ void D_Display(void)
 #endif
         }
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050)
         ST_doPaletteStuff();
 #endif
 #if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
@@ -344,7 +344,7 @@ void D_Display(void)
         else
             y = viewwindowy + 4;
 
-#ifdef MODE_T4025
+#if defined(MODE_T4025) || defined(MODE_T4050)
         V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 2, "PAUSE");
 #endif
 
@@ -364,10 +364,10 @@ void D_Display(void)
     // menus go directly to the screen
     M_Drawer(); // menu is drawn even on top of everything
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050)
     if (gamestate == GS_LEVEL)
     {
-#ifdef MODE_T4025
+#if defined(MODE_T4025) || defined(MODE_T4050)
         ST_DrawerText4025();
 #endif
 #ifdef MODE_T8025
@@ -477,6 +477,9 @@ void D_PageTicker(void)
 //
 void D_PageDrawer(void)
 {
+#ifdef MODE_T4050
+    V_DrawPatchDirectText4050(0, 0, W_CacheLumpName(pagename, PU_CACHE));
+#endif
 #ifdef MODE_T4025
      V_DrawPatchDirectText4025(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
@@ -912,7 +915,7 @@ void D_DoomMain(void)
     D_AddFile("mode16.wad");
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050)
     D_AddFile("modetxt.wad");
 #endif
 
@@ -935,7 +938,7 @@ void D_DoomMain(void)
     forceLowDetail = M_CheckParm("-forceLQ");
     forcePotatoDetail = M_CheckParm("-forcePQ");
 
-#if defined(MODE_T8025) || defined(MODE_T4025)
+#if defined(MODE_T8025) || defined(MODE_T4025) || defined(MODE_T4050)
     CGAcard = M_CheckParm("-cga");
 #endif
 
