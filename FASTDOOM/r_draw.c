@@ -60,7 +60,7 @@ int columnofs[SCREENWIDTH];
 #if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
 byte *ylookup[SCREENHEIGHT];
 #endif
-#if defined(MODE_Y) || defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_Y) || defined(MODE_T8025) || defined(MODE_T8050)
 byte **ylookup;
 #endif
 
@@ -198,7 +198,7 @@ void R_DrawSkyFlatPotato(void)
 }
 #endif
 
-#ifdef MODE_T25
+#ifdef MODE_T8025
 void R_DrawColumnText8025(void)
 {
     fixed_t frac;
@@ -266,7 +266,7 @@ void R_DrawColumnText8025(void)
 }
 #endif
 
-#ifdef MODE_T25
+#ifdef MODE_T8025
 void R_DrawSpanText8025(void)
 {
     int spot;
@@ -313,7 +313,7 @@ void R_DrawSpanText8025(void)
 }
 #endif
 
-#ifdef MODE_T50
+#ifdef MODE_T8050
 void R_DrawColumnText8050(void)
 {
     fixed_t frac;
@@ -336,7 +336,7 @@ void R_DrawColumnText8050(void)
 }
 #endif
 
-#ifdef MODE_T50
+#ifdef MODE_T8050
 void R_DrawSkyFlatText8050(void)
 {
     int count;
@@ -353,7 +353,7 @@ void R_DrawSkyFlatText8050(void)
 }
 #endif
 
-#ifdef MODE_T25
+#ifdef MODE_T8025
 void R_DrawSkyFlatText8025(void)
 {
     int count;
@@ -407,7 +407,7 @@ void R_DrawSkyFlatText8025(void)
 }
 #endif
 
-#ifdef MODE_T25
+#ifdef MODE_T8025
 void R_DrawFuzzColumnSaturnText8025(void)
 {
     fixed_t frac;
@@ -509,7 +509,7 @@ void R_DrawFuzzColumnSaturnText8025(void)
 }
 #endif
 
-#ifdef MODE_T50
+#ifdef MODE_T8050
 void R_DrawFuzzColumnSaturnText8050(void)
 {
     int count;
@@ -560,7 +560,7 @@ void R_DrawFuzzColumnSaturnText8050(void)
 }
 #endif
 
-#ifdef MODE_T25
+#ifdef MODE_T8025
 void R_DrawFuzzColumnFastText8025(void)
 {
     register int count;
@@ -607,7 +607,7 @@ void R_DrawFuzzColumnFastText8025(void)
 }
 #endif
 
-#ifdef MODE_T50
+#ifdef MODE_T8050
 void R_DrawFuzzColumnFastText8050(void)
 {
     int count;
@@ -632,7 +632,7 @@ void R_DrawFuzzColumnFastText8050(void)
 }
 #endif
 
-#ifdef MODE_T50
+#ifdef MODE_T8050
 void R_DrawSpanText8050(void)
 {
     int countp;
@@ -711,7 +711,7 @@ void R_DrawSpanPotato(void)
 //
 #define FUZZTABLE 50
 
-#if defined(MODE_Y) || defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_Y) || defined(MODE_T8025) || defined(MODE_T8050)
 #define FUZZOFF (SCREENWIDTH / 4)
 #endif
 
@@ -917,7 +917,7 @@ void R_DrawFuzzColumnFastPotato(void)
 }
 #endif
 
-#ifdef MODE_T25
+#ifdef MODE_T8025
 void R_DrawFuzzColumnText8025(void)
 {
     register int count;
@@ -990,7 +990,7 @@ void R_DrawFuzzColumnText8025(void)
 }
 #endif
 
-#ifdef MODE_T50
+#ifdef MODE_T8050
 void R_DrawFuzzColumnText8050(void)
 {
     int count;
@@ -1462,7 +1462,7 @@ void R_DrawSpanFlatPotato(void)
 }
 #endif
 
-#ifdef MODE_T50
+#ifdef MODE_T8050
 void R_DrawSpanFlatText8050(void)
 {
     int countp;
@@ -1478,7 +1478,7 @@ void R_DrawSpanFlatText8050(void)
 }
 #endif
 
-#ifdef MODE_T25
+#ifdef MODE_T8025
 void R_DrawSpanFlatText8025(void)
 {
     int countp;
@@ -1526,7 +1526,7 @@ void R_InitBuffer(int width, int height)
     //  e.g. smaller view windows
     //  with border and/or status bar.
 
-#if defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_T8025) || defined(MODE_T8050)
     viewwindowx = 0;
 #endif
 #if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
@@ -1538,7 +1538,7 @@ void R_InitBuffer(int width, int height)
         columnofs[i] = viewwindowx + i;
 
 // Samw with base row offset.
-#if defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_T8025) || defined(MODE_T8050)
     viewwindowy = 0;
 #endif
 #if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)

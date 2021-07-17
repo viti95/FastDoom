@@ -329,7 +329,7 @@ static patch_t **lnames;
 // CODE
 //
 
-#if defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_T8025) || defined(MODE_T8050)
 char bgname[9];
 #endif
 
@@ -337,10 +337,10 @@ byte *screen1;
 
 void WI_slamBackground(void)
 {
-#ifdef MODE_T25
+#ifdef MODE_T8025
 	V_DrawPatchDirectText8025(0, 0, W_CacheLumpName(bgname, PU_CACHE));
 #endif
-#ifdef MODE_T50
+#ifdef MODE_T8050
 	V_DrawPatchDirectText8050(0, 0, W_CacheLumpName(bgname, PU_CACHE));
 #endif
 #ifdef MODE_Y
@@ -357,12 +357,12 @@ void WI_drawLF(void)
 {
 	int y = WI_TITLEY;
 
-#if defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_T8025) || defined(MODE_T8050)
 	char *titlecurrent;
 	char *titlenext;
 #endif
 
-#if defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_T8025) || defined(MODE_T8050)
 	if (gamemode == commercial)
 	{
 		if (gamemission == pack_plut)
@@ -390,10 +390,10 @@ void WI_drawLF(void)
 
 	// draw <LevelName>
 
-#ifdef MODE_T25
+#ifdef MODE_T8025
 	V_WriteTextDirect((SCREENWIDTH - lnames[wbs->last]->width) / 8, y / 8, titlecurrent);
 #endif
-#ifdef MODE_T50
+#ifdef MODE_T8050
 	V_WriteTextDirect((SCREENWIDTH - lnames[wbs->last]->width) / 8, y / 4, titlecurrent);
 #endif
 #ifdef MODE_Y
@@ -406,10 +406,10 @@ void WI_drawLF(void)
 	// draw "Finished!"
 	y += (5 * lnames[wbs->last]->height) / 4;
 
-#ifdef MODE_T25
+#ifdef MODE_T8025
 	V_WriteTextDirect((SCREENWIDTH - finished->width) / 8, y / 8, "FINISHED");
 #endif
-#ifdef MODE_T50
+#ifdef MODE_T8050
 	V_WriteTextDirect((SCREENWIDTH - finished->width) / 8, y / 4, "FINISHED");
 #endif
 #ifdef MODE_Y
@@ -424,12 +424,12 @@ void WI_drawLF(void)
 void WI_drawEL(void)
 {
 	int y = WI_TITLEY;
-#if defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_T8025) || defined(MODE_T8050)
 	char *titlecurrent;
 	char *titlenext;
 #endif
 
-#if defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_T8025) || defined(MODE_T8050)
 	if (gamemode == commercial)
 	{
 		if (gamemission == pack_plut)
@@ -456,10 +456,10 @@ void WI_drawEL(void)
 #endif
 
 // draw "Entering"
-#ifdef MODE_T25
+#ifdef MODE_T8025
 	V_WriteTextDirect((SCREENWIDTH - entering->width) / 8, y / 8, "ENTERING");
 #endif
-#ifdef MODE_T50
+#ifdef MODE_T8050
 	V_WriteTextDirect((SCREENWIDTH - entering->width) / 8, y / 4, "ENTERING");
 #endif
 #ifdef MODE_Y
@@ -472,10 +472,10 @@ void WI_drawEL(void)
 	// draw level
 	y += (5 * lnames[wbs->next]->height) / 4;
 
-#ifdef MODE_T25
+#ifdef MODE_T8025
 	V_WriteTextDirect((SCREENWIDTH - lnames[wbs->next]->width) / 8, y / 8, titlenext);
 #endif
-#ifdef MODE_T50
+#ifdef MODE_T8050
 	V_WriteTextDirect((SCREENWIDTH - lnames[wbs->next]->width) / 8, y / 4, titlenext);
 #endif
 #ifdef MODE_Y
@@ -631,7 +631,7 @@ void WI_drawAnimatedBack(void)
 int WI_drawNumTwoDigits(int x, int y, int n)
 {
 
-#ifdef MODE_T25
+#ifdef MODE_T8025
 	int fontwidth = num[0]->width;
 	char strnum[4];
 
@@ -641,7 +641,7 @@ int WI_drawNumTwoDigits(int x, int y, int n)
 	x -= 2 * fontwidth;
 	return x;
 #endif
-#ifdef MODE_T50
+#ifdef MODE_T8050
 	int fontwidth = num[0]->width;
 	char strnum[4];
 
@@ -714,18 +714,18 @@ int WI_drawNum(int x, int y, int n)
 
 void WI_drawPercent(int x, int y, int p)
 {
-#if defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_T8025) || defined(MODE_T8050)
 	char strnum[4];
 #endif
 
 	if (p < 0)
 		return;
 
-#ifdef MODE_T25
+#ifdef MODE_T8025
 	sprintf(strnum, "%i%%", p);
 	V_WriteTextDirect(x / 2, y / 8 - 1, strnum);
 #endif
-#ifdef MODE_T50
+#ifdef MODE_T8050
 	sprintf(strnum, "%i%%", p);
 	V_WriteTextDirect(x / 2, y / 4 - 1, strnum);
 #endif
@@ -768,10 +768,10 @@ void WI_drawTime(int x,
 			// draw
 			if (div == 60 || t / div)
 			{
-#ifdef MODE_T25
+#ifdef MODE_T8025
 				V_WriteTextDirect(x / 4, y / 8, ":");
 #endif
-#ifdef MODE_T50
+#ifdef MODE_T8050
 				V_WriteTextDirect(x / 4, y / 4, ":");
 #endif
 #ifdef MODE_Y
@@ -1090,10 +1090,10 @@ void WI_drawStats(void)
 
 	WI_drawLF();
 
-#ifdef MODE_T25
+#ifdef MODE_T8025
 	V_WriteTextDirect(SP_STATSX / 2, SP_STATSY / 8, "KILLS:");
 #endif
-#ifdef MODE_T50
+#ifdef MODE_T8050
 	V_WriteTextDirect(SP_STATSX / 2, SP_STATSY / 4, "KILLS:");
 #endif
 #ifdef MODE_Y
@@ -1105,10 +1105,10 @@ void WI_drawStats(void)
 
 	WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY, cnt_kills);
 
-#ifdef MODE_T25
+#ifdef MODE_T8025
 	V_WriteTextDirect(SP_STATSX / 2, (SP_STATSY + lh) / 8, "ITEMS:");
 #endif
-#ifdef MODE_T50
+#ifdef MODE_T8050
 	V_WriteTextDirect(SP_STATSX / 2, (SP_STATSY + lh) / 4, "ITEMS:");
 #endif
 #ifdef MODE_Y
@@ -1120,10 +1120,10 @@ void WI_drawStats(void)
 
 	WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY + lh, cnt_items);
 
-#ifdef MODE_T25
+#ifdef MODE_T8025
 	V_WriteTextDirect(SP_STATSX / 2, (SP_STATSY + 2 * lh) / 8, "SECRET:");
 #endif
-#ifdef MODE_T50
+#ifdef MODE_T8050
 	V_WriteTextDirect(SP_STATSX / 2, (SP_STATSY + 2 * lh) / 4, "SECRET:");
 #endif
 #ifdef MODE_Y
@@ -1134,10 +1134,10 @@ void WI_drawStats(void)
 #endif
 	WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY + 2 * lh, cnt_secret);
 
-#ifdef MODE_T25
+#ifdef MODE_T8025
 	V_WriteTextDirect(SP_TIMEX / 2, SP_TIMEY / 8, "TIME:");
 #endif
-#ifdef MODE_T50
+#ifdef MODE_T8050
 	V_WriteTextDirect(SP_TIMEX / 2, SP_TIMEY / 4, "TIME:");
 #endif
 #ifdef MODE_Y
@@ -1150,10 +1150,10 @@ void WI_drawStats(void)
 
 	if (wbs->epsd < 3)
 	{
-#ifdef MODE_T25
+#ifdef MODE_T8025
 		V_WriteTextDirect((SCREENWIDTH / 2 + SP_TIMEX) / 4, SP_TIMEY / 8, "PAR:");
 #endif
-#ifdef MODE_T50
+#ifdef MODE_T8050
 		V_WriteTextDirect((SCREENWIDTH / 2 + SP_TIMEX) / 4, SP_TIMEY / 4, "PAR:");
 #endif
 #ifdef MODE_Y
@@ -1250,7 +1250,7 @@ void WI_loadData(void)
 		}
 	}
 
-#if defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_T8025) || defined(MODE_T8050)
 	strcpy(bgname, name);
 #endif
 

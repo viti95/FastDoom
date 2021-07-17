@@ -308,7 +308,7 @@ void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
 }
 #endif
 
-#if defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_T8025) || defined(MODE_T8050)
 void V_WriteTextColorDirect(int x, int y, char *string, unsigned short color)
 {
     unsigned short *dest;
@@ -453,7 +453,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
 }
 #endif
 
-#ifdef MODE_T50
+#ifdef MODE_T8050
 void V_DrawPatchDirectText8050(int x, int y, patch_t *patch)
 {
     int count;
@@ -498,7 +498,7 @@ void V_DrawPatchDirectText8050(int x, int y, patch_t *patch)
 }
 #endif
 
-#ifdef MODE_T25
+#ifdef MODE_T8025
 void V_DrawPatchDirectText8025(int x, int y, patch_t *patch)
 {
     int count;

@@ -76,7 +76,7 @@ void HUlib_drawTextLine(hu_textline_t *l)
     int x;
     unsigned char c;
 
-#ifdef MODE_T25
+#ifdef MODE_T8025
     x = l->x / 4;
     for (i = 0; i < l->len; i++)
     {
@@ -85,7 +85,7 @@ void HUlib_drawTextLine(hu_textline_t *l)
         x++;
     }
 #endif
-#ifdef MODE_T50
+#ifdef MODE_T8050
     x = l->x / 4;
     for (i = 0; i < l->len; i++)
     {

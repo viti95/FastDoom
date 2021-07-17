@@ -102,7 +102,7 @@ boolean forceLowDetail;
 boolean forcePotatoDetail;
 int forceScreenSize;
 
-#ifdef MODE_T25
+#ifdef MODE_T8025
 boolean CGAcard;
 #endif
 
@@ -245,7 +245,7 @@ void D_Display(void)
 #endif
         }
 
-#if defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_T8025) || defined(MODE_T8050)
         ST_doPaletteStuff();
 #endif
 #if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
@@ -344,11 +344,11 @@ void D_Display(void)
         else
             y = viewwindowy + 4;
 
-#ifdef MODE_T25
+#ifdef MODE_T8025
         V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 4, "PAUSE");
 #endif
 
-#ifdef MODE_T50
+#ifdef MODE_T8050
         V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 2, "PAUSE");
 #endif
 
@@ -360,13 +360,13 @@ void D_Display(void)
     // menus go directly to the screen
     M_Drawer(); // menu is drawn even on top of everything
 
-#if defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_T8025) || defined(MODE_T8050)
     if (gamestate == GS_LEVEL)
     {
-#ifdef MODE_T25
+#ifdef MODE_T8025
         ST_DrawerText8025();
 #endif
-#ifdef MODE_T50
+#ifdef MODE_T8050
         ST_DrawerText8050();
 #endif
     }
@@ -470,10 +470,10 @@ void D_PageTicker(void)
 //
 void D_PageDrawer(void)
 {
-#ifdef MODE_T25
+#ifdef MODE_T8025
     V_DrawPatchDirectText8025(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
-#ifdef MODE_T50
+#ifdef MODE_T8050
     V_DrawPatchDirectText8050(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
 #ifdef MODE_Y
@@ -902,7 +902,7 @@ void D_DoomMain(void)
     D_AddFile("mode16.wad");
 #endif
 
-#if defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_T8025) || defined(MODE_T8050)
     D_AddFile("modetxt.wad");
 #endif
 
@@ -925,7 +925,7 @@ void D_DoomMain(void)
     forceLowDetail = M_CheckParm("-forceLQ");
     forcePotatoDetail = M_CheckParm("-forcePQ");
 
-#ifdef MODE_T25
+#ifdef MODE_T8025
     CGAcard = M_CheckParm("-cga");
 #endif
 
@@ -1130,7 +1130,7 @@ void D_DoomMain(void)
     M_CheckParmDisable("-novsync", &waitVsync);
     M_CheckParmDisable("-nofps", &showFPS);
 
-#if defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_T8025) || defined(MODE_T8050)
     noMelt = 1;
 #endif
 

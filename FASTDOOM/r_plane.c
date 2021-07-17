@@ -741,7 +741,7 @@ void R_DrawPlanesFlatSurfacesPotato(void)
     }
 }
 
-#ifdef MODE_T50
+#ifdef MODE_T8050
 void R_DrawPlanesFlatSurfacesText8050(void)
 {
     visplane_t *pl;
@@ -797,7 +797,7 @@ void R_DrawPlanesFlatSurfacesText8050(void)
 }
 #endif
 
-#ifdef MODE_T25
+#ifdef MODE_T8025
 void R_DrawPlanesFlatSurfacesText8025(void)
 {
     visplane_t *pl;

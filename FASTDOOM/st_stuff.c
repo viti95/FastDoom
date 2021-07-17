@@ -875,7 +875,7 @@ void ST_doPaletteStuff(void)
 	}
 }
 
-#ifdef MODE_T25
+#ifdef MODE_T8025
 void ST_DrawerText8025()
 {
 	st_armson = 1;
@@ -983,7 +983,7 @@ void ST_DrawerText8025()
 }
 #endif
 
-#ifdef MODE_T50
+#ifdef MODE_T8050
 void ST_DrawerText8050()
 {
 	st_armson = 1;

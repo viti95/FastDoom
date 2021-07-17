@@ -38,7 +38,7 @@ extern int columnofs[SCREENWIDTH];
 #if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
 extern byte *ylookup[SCREENHEIGHT];
 #endif
-#if defined(MODE_Y) || defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_Y) || defined(MODE_T8025) || defined(MODE_T8050)
 extern byte **ylookup;
 #endif
 
