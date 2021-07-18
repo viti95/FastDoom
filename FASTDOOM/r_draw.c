@@ -2477,7 +2477,8 @@ void R_FillBackScreen(void)
 #endif
 
 #ifdef MODE_VBE2_DIRECT
-
+    dest = pcscreen + 3 * 320 * 200;
+    CopyBytes(screen1, dest, (SCREENHEIGHT - SBARHEIGHT) * SCREENWIDTH);
 #endif
 
 #ifdef MODE_Y
@@ -2508,6 +2509,12 @@ void R_FillBackScreen(void)
 #ifdef MODE_VBE2_DIRECT
 void R_VideoErase(unsigned ofs, int count)
 {
+    byte *dest;
+    byte *source;
+   
+    dest = destscreen + ofs;
+    source = pcscreen + 320 * 200 * 3 + ofs; // Page 3
+    CopyBytes(source, dest, count);
 }
 #endif
 

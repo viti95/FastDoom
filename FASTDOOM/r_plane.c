@@ -1071,7 +1071,7 @@ void R_DrawPlanesFlatSurfaces_13h(void)
 }
 #endif
 
-#if defined(MODE_VBE2_DIRECT)
+#ifdef MODE_VBE2_DIRECT
 void R_DrawPlanesFlatSurfacesVBE2(void)
 {
     visplane_t *pl;

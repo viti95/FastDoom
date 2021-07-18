@@ -433,7 +433,18 @@ byte textpage = 0;
 #ifdef MODE_VBE2_DIRECT
 void I_UpdateBox(int x, int y, int w, int h)
 {
-    
+    byte *dest;
+    byte *source;
+    int i;
+
+    dest = destscreen + Mul320(y) + x;
+    source = screen0 + Mul320(y) + x;
+
+    for (i = y; i < y + h; i++){
+        CopyBytes(source, dest, w);
+        dest += 320;
+        source += 320;
+    }
 }
 #endif
 
