@@ -768,7 +768,7 @@ void AM_drawFline(fline_t *fl,
 	register int ay;
 	register int d;
 
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 #define PUTDOT(xx, yy, cc) screen0[Mul320(yy) + (xx)] = (cc)
 #endif
 
@@ -1047,7 +1047,7 @@ void AM_Drawer(void)
 	updatestate |= I_FULLSCRN;
 #endif
 
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 	SetDWords(screen0, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
 #endif
 #if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
@@ -1061,7 +1061,7 @@ void AM_Drawer(void)
 	if (cheating == 2)
 		AM_drawThings(THINGCOLORS, THINGRANGE);
 
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 	V_MarkRect(0, 0, SCREENWIDTH, automapheight);
 #endif
 }

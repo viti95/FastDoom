@@ -58,7 +58,7 @@ int columnofs[SCREENWIDTH];
 #if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
 byte *ylookup[SCREENHEIGHT];
 #endif
-#if defined(MODE_Y) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050)
+#if defined(MODE_Y) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_VBE2_DIRECT)
 byte **ylookup;
 #endif
 
@@ -193,6 +193,167 @@ void R_DrawSkyFlatPotato(void)
         dest += SCREENWIDTH / 4;
         count--;
     };
+}
+#endif
+
+#ifdef MODE_VBE2_DIRECT
+/*void R_DrawColumnVBE2(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac, fracstep;
+
+    count = dc_yh - dc_yl;
+    if (count < 0)
+        return;
+
+    dest = destview + Mul320(dc_yl) + dc_x;
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    do
+    {
+        *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]];
+        dest += SCREENWIDTH;
+        frac += fracstep;
+    } while (count--);
+}*/
+
+/*void R_DrawSpanVBE2(void)
+{
+    fixed_t xfrac, yfrac;
+    byte *dest;
+    int count, spot;
+
+    xfrac = ds_xfrac;
+    yfrac = ds_yfrac;
+
+    dest = destview + Mul320(ds_y) + ds_x1;
+    count = ds_x2 - ds_x1;
+    do
+    {
+        spot = ((yfrac >> (16 - 6)) & (63 * 64)) + ((xfrac >> 16) & 63);
+        *dest++ = ds_colormap[ds_source[spot]];
+        xfrac += ds_xstep;
+        yfrac += ds_ystep;
+    } while (count--);
+}*/
+
+void R_DrawSkyFlatVBE2(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac, fracstep;
+
+    count = dc_yh - dc_yl;
+    if (count < 0)
+        return;
+
+    dest = destview + Mul320(dc_yl) + dc_x;
+
+    do
+    {
+        *dest = 220;
+        dest += SCREENWIDTH;
+    } while (count--);
+}
+void R_DrawFuzzColumnFastVBE2(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac, fracstep;
+
+    dest = destview + Mul320(dc_yl) + dc_x;
+
+    count = dc_yh - dc_yl;
+
+    while (count >= 3)
+    {
+        *(dest) = colormaps[6 * 256 + dest[0]];
+        *(dest + SCREENWIDTH) = colormaps[6 * 256 + dest[SCREENWIDTH]];
+        *(dest + 2 * SCREENWIDTH) = colormaps[6 * 256 + dest[2 * SCREENWIDTH]];
+        *(dest + 3 * SCREENWIDTH) = colormaps[6 * 256 + dest[3 * SCREENWIDTH]];
+        dest += 4 * SCREENWIDTH;
+        count -= 4;
+    }
+
+    while (count >= 0)
+    {
+        *dest = colormaps[6 * 256 + dest[0]];
+        dest += SCREENWIDTH;
+        count--;
+    };
+}
+void R_DrawFuzzColumnSaturnVBE2(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac;
+    fixed_t fracstep;
+    int initialdrawpos = 0;
+
+    count = (dc_yh - dc_yl) / 2 - 1;
+
+    if (count < 0)
+        return;
+
+    initialdrawpos = dc_yl + dc_x;
+
+    dest = destview + Mul320(dc_yl) + dc_x;
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    if (initialdrawpos & 1)
+    {
+        dest += SCREENWIDTH;
+        frac += fracstep;
+    }
+
+    fracstep = 2 * fracstep;
+
+    do
+    {
+        *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
+
+        dest += 2 * SCREENWIDTH;
+        frac += fracstep;
+    } while (count--);
+
+    if ((dc_yh - dc_yl) & 1)
+    {
+        *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
+    }
+    else
+    {
+        if (!(initialdrawpos & 1))
+        {
+            *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
+        }
+    }
+}
+
+void R_DrawSpanFlatVBE2(void)
+{
+    byte *dest;
+    int countp;
+
+    lighttable_t color = ds_colormap[ds_source[FLATPIXELCOLOR]];
+
+    dest = destview + Mul320(ds_y) + ds_x1;
+
+    countp = ds_x2 - ds_x1 + 1;
+
+    if (countp % 2)
+    {
+        SetBytes(dest, color, countp);
+    }
+    else
+    {
+        unsigned short colorcomp = color << 8 | color;
+        SetWords(dest, colorcomp, countp / 2);
+    }
 }
 #endif
 
@@ -1159,7 +1320,7 @@ void R_DrawSpanPotato(void)
 #define FUZZOFF (SCREENWIDTH / 4)
 #endif
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 #define FUZZOFF (SCREENWIDTH)
 #endif
 
@@ -1358,6 +1519,34 @@ void R_DrawFuzzColumnFastPotato(void)
         dest += SCREENWIDTH / 4;
         count--;
     }
+}
+#endif
+
+#ifdef MODE_VBE2_DIRECT
+void R_DrawFuzzColumnVBE2(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac, fracstep;
+
+    if (!dc_yl)
+        dc_yl = 1;
+    if (dc_yh == viewheight - 1)
+        dc_yh = viewheight - 2;
+
+    count = dc_yh - dc_yl;
+    if (count < 0)
+        return;
+
+    dest = destview + Mul320(dc_yl) + dc_x;
+
+    do
+    {
+        *dest = colormaps[6 * 256 + dest[fuzzoffset[fuzzpos]]];
+        if (++fuzzpos == FUZZTABLE)
+            fuzzpos = 0;
+        dest += SCREENWIDTH;
+    } while (count--);
 }
 #endif
 
@@ -2130,7 +2319,7 @@ void R_InitBuffer(int width, int height)
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050)
     viewwindowx = 0;
 #endif
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
     viewwindowx = (SCREENWIDTH - width) >> 1;
 #endif
 
@@ -2142,7 +2331,7 @@ void R_InitBuffer(int width, int height)
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050)
     viewwindowy = 0;
 #endif
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
     if (width == SCREENWIDTH)
         viewwindowy = 0;
     else
@@ -2161,7 +2350,7 @@ void R_InitBuffer(int width, int height)
 //  for variable screen sizes
 // Also draws a beveled edge.
 //
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 void R_FillBackScreen(void)
 {
     byte *src;
@@ -2180,7 +2369,7 @@ void R_FillBackScreen(void)
 
     char *name;
 
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
     if (scaledviewwidth == 320)
         return;
 #endif
@@ -2210,7 +2399,7 @@ void R_FillBackScreen(void)
 
     src = W_CacheLumpName(name, PU_CACHE);
 
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
     screen1 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
     dest = screen1;
 #endif
@@ -2231,7 +2420,7 @@ void R_FillBackScreen(void)
 
     for (x = 0; x < scaledviewwidth; x += 8)
     {
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
         V_DrawPatch(viewwindowx + x, viewwindowy - 8, screen1, patch);
 #endif
 #if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
@@ -2243,7 +2432,7 @@ void R_FillBackScreen(void)
 
     for (x = 0; x < scaledviewwidth; x += 8)
     {
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
         V_DrawPatch(viewwindowx + x, viewwindowy + viewheight, screen1, patch);
 #endif
 #if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
@@ -2254,7 +2443,7 @@ void R_FillBackScreen(void)
 
     for (y = 0; y < viewheight; y += 8)
     {
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
         V_DrawPatch(viewwindowx - 8, viewwindowy + y, screen1, patch);
 #endif
 #if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
@@ -2265,7 +2454,7 @@ void R_FillBackScreen(void)
 
     for (y = 0; y < viewheight; y += 8)
     {
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
         V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + y, screen1, patch);
 #endif
 #if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
@@ -2274,7 +2463,7 @@ void R_FillBackScreen(void)
     }
 
     // Draw beveled edge.
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
     V_DrawPatch(viewwindowx - 8, viewwindowy - 8, screen1, W_CacheLumpName("BRDR_TL", PU_CACHE));
     V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy - 8, screen1, W_CacheLumpName("BRDR_TR", PU_CACHE));
     V_DrawPatch(viewwindowx - 8, viewwindowy + viewheight, screen1, W_CacheLumpName("BRDR_BL", PU_CACHE));
@@ -2285,6 +2474,10 @@ void R_FillBackScreen(void)
     V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy - 8, background_buffer, W_CacheLumpName("BRDR_TR", PU_CACHE));
     V_DrawPatch(viewwindowx - 8, viewwindowy + viewheight, background_buffer, W_CacheLumpName("BRDR_BL", PU_CACHE));
     V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + viewheight, background_buffer, W_CacheLumpName("BRDR_BR", PU_CACHE));
+#endif
+
+#ifdef MODE_VBE2_DIRECT
+
 #endif
 
 #ifdef MODE_Y
@@ -2303,7 +2496,7 @@ void R_FillBackScreen(void)
     }
 #endif
 
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
     Z_Free(screen1);
 #endif
 }
@@ -2312,6 +2505,12 @@ void R_FillBackScreen(void)
 //
 // Copy a screen buffer.
 //
+#ifdef MODE_VBE2_DIRECT
+void R_VideoErase(unsigned ofs, int count)
+{
+}
+#endif
+
 #ifdef MODE_Y
 void R_VideoErase(unsigned ofs, int count)
 {
@@ -2354,7 +2553,7 @@ void R_VideoErase(unsigned ofs, int count)
 // Draws the border around the view
 //  for different size windows?
 //
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 void R_DrawViewBorder(void)
 {
     int top;

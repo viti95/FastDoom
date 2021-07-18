@@ -39,11 +39,11 @@
 // Screen 0 is the screen updated by I_Update screen.
 // Screen 1 is an extra buffer.
 
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 extern byte screen0[SCREENWIDTH * SCREENHEIGHT];
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 extern byte screen4[SCREENWIDTH * 32];
 #endif
 
@@ -51,7 +51,7 @@ extern byte screen4[SCREENWIDTH * 32];
 extern byte backbuffer[SCREENWIDTH * SCREENHEIGHT];
 #endif
 
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 extern int dirtybox[4];
 #endif
 
@@ -79,7 +79,7 @@ void V_WriteCharDirect(int x, int y, unsigned char c);
 void V_WriteTextColorDirect(int x, int y, char *string, unsigned short color);
 void V_WriteCharColorDirect(int x, int y, unsigned char c, unsigned short color);
 
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 void V_MarkRect(int x, int y, int width, int height);
 #endif
 

@@ -535,7 +535,7 @@ fixed_t R_ScaleFromGlobalAngle(angle_t visangle)
 #ifdef MODE_Y
     num = FixedMul(projection, sineb) << detailshift;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_T4025)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT)
     num = FixedMul(projection, sineb);
 #endif
     den = FixedMul(rw_distance, sinea);
@@ -735,7 +735,7 @@ void R_ExecuteSetViewSize(void)
 #ifdef MODE_Y
     viewwidth = scaledviewwidth >> detailshift;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_T4025)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT)
     viewwidth = scaledviewwidth;
 #endif
 
@@ -931,6 +931,27 @@ void R_ExecuteSetViewSize(void)
         fuzzcolfunc = R_DrawFuzzColumn_13h;
 #endif
 
+#ifdef MODE_VBE2_DIRECT
+    colfunc = basecolfunc = R_DrawColumnVBE2;
+
+    if (untexturedSurfaces)
+        spanfunc = R_DrawSpanFlatVBE2;
+    else
+        spanfunc = R_DrawSpanVBE2;
+
+    if (flatSky)
+        skyfunc = R_DrawSkyFlatVBE2;
+    else
+        skyfunc = R_DrawColumnVBE2;
+
+    if (flatShadows)
+        fuzzcolfunc = R_DrawFuzzColumnFastVBE2;
+    else if (saturnShadows)
+        fuzzcolfunc = R_DrawFuzzColumnSaturnVBE2;
+    else
+        fuzzcolfunc = R_DrawFuzzColumnVBE2;
+#endif
+
     R_InitBuffer(scaledviewwidth, viewheight);
 
     R_InitTextureMapping();
@@ -945,7 +966,7 @@ void R_ExecuteSetViewSize(void)
 #ifdef MODE_Y
     pspriteiscaleshifted = pspriteiscale >> detailshift;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_T4025)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT)
     pspriteiscaleshifted = pspriteiscale;
 #endif
 
@@ -964,7 +985,7 @@ void R_ExecuteSetViewSize(void)
 #ifdef MODE_Y
         yslope[i] = FixedDiv((viewwidth << detailshift) / 2 * FRACUNIT, dy);
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_T4025)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT)
         yslope[i] = FixedDiv((viewwidth) / 2 * FRACUNIT, dy);
 #endif
     }
@@ -988,7 +1009,7 @@ void R_ExecuteSetViewSize(void)
 #ifdef MODE_Y
             level = startmap - Mul320(j) / (viewwidth << detailshift) / DISTMAP;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_T4025)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT)
             level = startmap - Mul320(j) / (viewwidth) / DISTMAP;
 #endif
             if (level < 0)
@@ -1127,6 +1148,10 @@ void R_SetupFrame(player_t *player)
         fixedcolormap = 0;
 
     validcount++;
+    
+    #ifdef MODE_VBE2_DIRECT
+    destview = destscreen + Mul320(viewwindowy) + viewwindowx;
+    #endif
 
     #ifdef MODE_Y
     destview = destscreen + Mul80(viewwindowy) + (viewwindowx >> 2);
@@ -1207,6 +1232,12 @@ void R_RenderPlayerView(player_t *player)
 #if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
     if (flatSurfaces)
         R_DrawPlanesFlatSurfaces_13h();
+    else
+        R_DrawPlanes();
+#endif
+#ifdef MODE_VBE2_DIRECT
+    if (flatSurfaces)
+        R_DrawPlanesFlatSurfacesVBE2();
     else
         R_DrawPlanes();
 #endif

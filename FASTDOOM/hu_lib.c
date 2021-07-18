@@ -102,7 +102,7 @@ void HUlib_drawTextLine(hu_textline_t *l)
         x++;
     }
 #endif
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
     // draw the new stuff
     x = l->x;
     for (i = 0; i < l->len; i++)
@@ -140,7 +140,7 @@ void HUlib_eraseTextLine(hu_textline_t *l)
     // and the text must either need updating or refreshing
     // (because of a recent change back from the automap)
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
     if (!automapactive && viewwindowx && l->needsupdate)
     {
         lh = l->f[0]->height + 1;

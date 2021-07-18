@@ -89,7 +89,7 @@ void wipe_initMelt()
     int i;
 
     // copy start screen to main screen
-    #ifdef MODE_Y
+    #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
     CopyDWords(screen2, screen0, (SCREENWIDTH * SCREENHEIGHT) / 4);
     #endif
     #if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
@@ -143,7 +143,7 @@ byte wipe_doMelt(int ticks)
                 if (dy >= SCREENHEIGHT - y_val)
                     dy = SCREENHEIGHT - y_val;
                 s = &((short *)screen3)[Mul200(i) + y_val];
-                #ifdef MODE_Y
+                #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
                 d = &((short *)screen0)[Mul160(y_val) + i];
                 #endif
                 #if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
@@ -156,7 +156,7 @@ byte wipe_doMelt(int ticks)
                 }
                 y_val += dy;
                 s = &((short *)screen2)[Mul200(i)];
-                #ifdef MODE_Y
+                #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
                 d = &((short *)screen0)[Mul160(y_val) + i];
                 #endif
                 #if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
@@ -253,6 +253,13 @@ void wipe_ReadScreen(byte *scr)
 }
 #endif
 
+#ifdef MODE_VBE2_DIRECT
+void wipe_ReadScreen(byte *scr)
+{
+    CopyDWords(destscreen, scr, SCREENWIDTH * SCREENHEIGHT / 4);
+}
+#endif
+
 #if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
 void wipe_ReadScreen(byte *scr)
 {
@@ -260,7 +267,7 @@ void wipe_ReadScreen(byte *scr)
 }
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 void wipe_StartScreen()
 {
     screen2 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
@@ -268,7 +275,7 @@ void wipe_StartScreen()
 }
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 void wipe_EndScreen()
 {
     screen3 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
@@ -276,7 +283,7 @@ void wipe_EndScreen()
 }
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 int wipe_ScreenWipe(int ticks)
 {
     int rc;
@@ -289,7 +296,7 @@ int wipe_ScreenWipe(int ticks)
     }
 
     // do a piece of wipe-in
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
     V_MarkRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
 #endif
 

@@ -30,11 +30,11 @@
 
 #include "v_video.h"
 
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 byte screen0[SCREENWIDTH * SCREENHEIGHT];
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 byte screen4[SCREENWIDTH * 32];
 #endif
 
@@ -42,7 +42,7 @@ byte screen4[SCREENWIDTH * 32];
 byte backbuffer[SCREENWIDTH * SCREENHEIGHT];
 #endif
 
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 int dirtybox[4];
 #endif
 
@@ -69,11 +69,8 @@ int usegamma;
 //
 // V_MarkRect
 //
-#ifdef MODE_Y
-void V_MarkRect(int x,
-                int y,
-                int width,
-                int height)
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+void V_MarkRect(int x, int y, int width, int height)
 {
     M_AddToBox(dirtybox, x, y);
     M_AddToBox(dirtybox, x + width - 1, y + height - 1);
@@ -88,7 +85,7 @@ void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int de
     byte *src;
     byte *dest;
 
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
     V_MarkRect(destx, desty, width, height);
 #endif
 
@@ -108,7 +105,7 @@ void V_SetRect(byte color, int width, int height, int destx, int desty, byte *de
 {
     byte *dest;
 
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
     V_MarkRect(destx, desty, width, height);
 #endif
 
@@ -139,7 +136,7 @@ void V_SetRect(byte color, int width, int height, int destx, int desty, byte *de
 // V_DrawPatch
 // Masks a column based masked pic to the screen.
 //
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
 {
 
@@ -197,7 +194,7 @@ void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
 }
 #endif
 
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 void V_DrawPatchScreen0(int x, int y, patch_t *patch)
 {
 
@@ -262,7 +259,7 @@ void V_DrawPatchScreen0(int x, int y, patch_t *patch)
 // Masks a column based masked pic to the screen.
 // Flips horizontally, e.g. to mirror face.
 //
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
 {
 
@@ -398,6 +395,43 @@ void V_WriteCharDirect(int x, int y, unsigned char c)
 // V_DrawPatchDirect
 // Draws directly to the screen on the pc.
 //
+#ifdef MODE_VBE2_DIRECT
+void V_DrawPatchDirect(int x, int y, patch_t *patch)
+{
+    int count;
+    int col;
+    column_t *column;
+    byte *desttop;
+    byte *dest;
+    byte *source;
+    int w;
+
+    y -= patch->topoffset;
+    x -= patch->leftoffset;
+
+    col = 0;
+    desttop = destscreen + Mul320(y) + x;
+    w = patch->width;
+    for (; col < w; x++, col++, desttop++)
+    {
+        column = (column_t *)((byte *)patch + patch->columnofs[col]);
+        // Step through the posts in a column
+        while (column->topdelta != 0xff)
+        {
+            source = (byte *)column + 3;
+            dest = desttop + Mul320(column->topdelta);
+            count = column->length;
+            while (count--)
+            {
+                *dest = *source++;
+                dest += SCREENWIDTH;
+            }
+            column = (column_t *)((byte *)column + column->length + 4);
+        }
+    }
+}
+#endif
+
 #ifdef MODE_Y
 void V_DrawPatchDirect(int x, int y, patch_t *patch)
 {

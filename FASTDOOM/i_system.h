@@ -87,7 +87,7 @@ void I_ShutdownGraphics(void);
 void I_ProcessPalette(byte *palette);
 void I_SetPalette(int numpalette);
 
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 void I_UpdateNoBlit(void);
 #endif
 void I_FinishUpdate(void);
