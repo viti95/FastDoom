@@ -1127,7 +1127,10 @@ void R_SetupFrame(player_t *player)
         fixedcolormap = 0;
 
     validcount++;
+
+    #ifdef MODE_Y
     destview = destscreen + Mul80(viewwindowy) + (viewwindowx >> 2);
+    #endif
 }
 
 //
