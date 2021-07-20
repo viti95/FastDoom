@@ -772,7 +772,7 @@ void AM_drawFline(fline_t *fl,
 #define PUTDOT(xx, yy, cc) screen0[Mul320(yy) + (xx)] = (cc)
 #endif
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
 #define PUTDOT(xx, yy, cc) backbuffer[Mul320(yy) + (xx)] = (cc)
 #endif
 
@@ -1043,14 +1043,14 @@ void AM_Drawer(void)
 	if (!automapactive)
 		return;
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
 	updatestate |= I_FULLSCRN;
 #endif
 
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 	SetDWords(screen0, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
 	SetDWords(backbuffer, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
 #endif
 

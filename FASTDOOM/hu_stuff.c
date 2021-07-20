@@ -236,7 +236,7 @@ char *mapnamest[] = // TNT WAD map names.
         THUSTR_31,
         THUSTR_32};
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V)
 void HU_Init(void)
 {
 
@@ -323,7 +323,7 @@ void HU_Drawer(void)
             HUlib_addCharToTextLine(&w_fps, *(f++));
         }
         HUlib_drawTextLine(&w_fps);
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
         updatestate |= I_MESSAGES;
 #endif
     }

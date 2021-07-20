@@ -304,7 +304,7 @@ void F_Ticker(void)
 #include "hu_stuff.h"
 extern patch_t *hu_font[HU_FONTSIZE];
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V)
 void F_TextWrite(void)
 {
 	byte *src;
@@ -322,7 +322,7 @@ void F_TextWrite(void)
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 	dest = screen0;
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
 	dest = backbuffer;
 #endif
 
@@ -373,7 +373,7 @@ void F_TextWrite(void)
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 		V_DrawPatchScreen0(cx, cy, hu_font[c]);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
 		V_DrawPatchDirect(cx, cy, hu_font[c]);
 #endif
 		cx += w;
@@ -662,7 +662,7 @@ byte F_CastResponder(event_t *ev)
 	return 1;
 }
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V)
 void F_CastPrint(char *text)
 {
 	char *ch;
@@ -710,7 +710,7 @@ void F_CastPrint(char *text)
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 		V_DrawPatchScreen0(cx, 180, hu_font[c]);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
 		V_DrawPatchDirect(cx, 180, hu_font[c]);
 #endif
 		cx += w;
@@ -721,7 +721,7 @@ void F_CastPrint(char *text)
 //
 // F_CastDrawer
 //
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V)
 void F_CastDrawer(void)
 {
 	spritedef_t *sprdef;
@@ -734,7 +734,7 @@ void F_CastDrawer(void)
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 	V_DrawPatchScreen0(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
 	V_DrawPatchDirect(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
 #endif
 
@@ -752,7 +752,7 @@ void F_CastDrawer(void)
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 		V_DrawPatchFlippedScreen0(160, 170, patch);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
 		V_DrawPatchDirect(160, 170, patch);
 #endif
 	}
@@ -761,7 +761,7 @@ void F_CastDrawer(void)
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 		V_DrawPatchScreen0(160, 170, patch);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
 		V_DrawPatchDirect(160, 170, patch);
 #endif
 	}
@@ -821,7 +821,7 @@ void F_CastDrawerText(void)
 }
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V)
 void F_DrawPatchCol(int x, patch_t *patch, int col)
 {
 	column_t *column;
@@ -835,7 +835,7 @@ void F_DrawPatchCol(int x, patch_t *patch, int col)
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 	desttop = screen0 + x;
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
 	desttop = backbuffer + x;
 #endif
 
@@ -1061,7 +1061,7 @@ void F_BunnyScrollText(void)
 //
 // F_BunnyScroll
 //
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V)
 void F_BunnyScroll(void)
 {
 	int scrolled;
@@ -1101,7 +1101,7 @@ void F_BunnyScroll(void)
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 		V_DrawPatchScreen0((SCREENWIDTH - 13 * 8) / 2, (SCREENHEIGHT - 8 * 8) / 2, W_CacheLumpName("END0", PU_CACHE));
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
 		V_DrawPatchDirect((SCREENWIDTH - 13 * 8) / 2, (SCREENHEIGHT - 8 * 8) / 2, W_CacheLumpName("END0", PU_CACHE));
 #endif
 		laststage = 0;
@@ -1121,7 +1121,7 @@ void F_BunnyScroll(void)
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 	V_DrawPatchScreen0((SCREENWIDTH - 13 * 8) / 2, (SCREENHEIGHT - 8 * 8) / 2, W_CacheLumpName(name, PU_CACHE));
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
 	V_DrawPatchDirect((SCREENWIDTH - 13 * 8) / 2, (SCREENHEIGHT - 8 * 8) / 2, W_CacheLumpName(name, PU_CACHE));
 #endif
 }
@@ -1134,7 +1134,7 @@ void F_Drawer(void)
 {
 	if (finalestage == 2)
 	{
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V)
 		F_CastDrawer();
 #endif
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050)
@@ -1148,7 +1148,7 @@ void F_Drawer(void)
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050)
 		F_TextWriteText();
 #endif
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V)
 		F_TextWrite();
 #endif
 	}
@@ -1174,7 +1174,7 @@ void F_Drawer(void)
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 				V_DrawPatchScreen0(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
 				V_DrawPatchDirect(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 #endif
 			}
@@ -1195,7 +1195,7 @@ void F_Drawer(void)
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 				V_DrawPatchScreen0(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
 				V_DrawPatchDirect(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
 #endif
 			}
@@ -1217,12 +1217,12 @@ void F_Drawer(void)
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 			V_DrawPatchScreen0(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
 			V_DrawPatchDirect(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
 #endif
 			break;
 		case 3:
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V)
 			F_BunnyScroll();
 #endif
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050)
@@ -1245,7 +1245,7 @@ void F_Drawer(void)
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 			V_DrawPatchScreen0(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
 			V_DrawPatchDirect(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
 #endif
 			break;

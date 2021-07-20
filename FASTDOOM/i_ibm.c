@@ -42,6 +42,19 @@
 
 #include "std_func.h"
 
+#define SEQ_MAPMASK  0x02
+#define SEQ_ADDR (0x3c4)
+#define SEQ_OUT(_REG_, _VAL_)                  \
+    {                                          \
+        outpw(SEQ_ADDR, (_VAL_ << 8) | _REG_); \
+    }
+
+#define CRTC_ADDR_COL 0x3d4
+#define CRTC_OUT_COL(_REG_, _VAL_)                    \
+    {                                                 \
+        outpw(CRTC_ADDR_COL, ((_VAL_) << 8) | _REG_); \
+    }
+
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 #include "i_vesa.h"
 #endif
@@ -208,7 +221,7 @@ byte gammatable[5][256] =
         {2, 3, 4, 4, 5, 6, 6, 7, 7, 8, 9, 9, 10, 10, 10, 11, 11, 12, 12, 13, 13, 13, 14, 14, 15, 15, 15, 16, 16, 16, 17, 17, 17, 18, 18, 18, 19, 19, 19, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 26, 27, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 30, 31, 31, 31, 31, 32, 32, 32, 32, 33, 33, 33, 33, 33, 34, 34, 34, 34, 35, 35, 35, 35, 35, 36, 36, 36, 36, 37, 37, 37, 37, 37, 38, 38, 38, 38, 38, 39, 39, 39, 39, 40, 40, 40, 40, 40, 41, 41, 41, 41, 41, 42, 42, 42, 42, 42, 43, 43, 43, 43, 43, 44, 44, 44, 44, 44, 45, 45, 45, 45, 45, 45, 46, 46, 46, 46, 46, 47, 47, 47, 47, 47, 48, 48, 48, 48, 48, 48, 49, 49, 49, 49, 49, 50, 50, 50, 50, 50, 50, 51, 51, 51, 51, 51, 51, 52, 52, 52, 52, 52, 53, 53, 53, 53, 53, 53, 54, 54, 54, 54, 54, 54, 55, 55, 55, 55, 55, 55, 56, 56, 56, 56, 56, 56, 57, 57, 57, 57, 57, 57, 58, 58, 58, 58, 58, 58, 59, 59, 59, 59, 59, 59, 60, 60, 60, 60, 60, 60, 61, 61, 61, 61, 61, 61, 61, 62, 62, 62, 62, 62, 62, 63, 63, 63, 63, 63, 63},
         {4, 5, 7, 8, 9, 9, 10, 11, 12, 12, 13, 13, 14, 15, 15, 16, 16, 17, 17, 17, 18, 18, 19, 19, 20, 20, 20, 21, 21, 21, 22, 22, 23, 23, 23, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 30, 31, 31, 31, 32, 32, 32, 32, 32, 33, 33, 33, 33, 34, 34, 34, 34, 35, 35, 35, 35, 35, 36, 36, 36, 36, 37, 37, 37, 37, 37, 38, 38, 38, 38, 38, 39, 39, 39, 39, 39, 40, 40, 40, 40, 40, 41, 41, 41, 41, 41, 42, 42, 42, 42, 42, 43, 43, 43, 43, 43, 43, 44, 44, 44, 44, 44, 45, 45, 45, 45, 45, 45, 46, 46, 46, 46, 46, 46, 47, 47, 47, 47, 47, 47, 48, 48, 48, 48, 48, 48, 49, 49, 49, 49, 49, 49, 50, 50, 50, 50, 50, 50, 50, 51, 51, 51, 51, 51, 51, 52, 52, 52, 52, 52, 52, 52, 53, 53, 53, 53, 53, 53, 54, 54, 54, 54, 54, 54, 54, 55, 55, 55, 55, 55, 55, 55, 56, 56, 56, 56, 56, 56, 56, 57, 57, 57, 57, 57, 57, 57, 58, 58, 58, 58, 58, 58, 58, 58, 59, 59, 59, 59, 59, 59, 59, 60, 60, 60, 60, 60, 60, 60, 60, 61, 61, 61, 61, 61, 61, 61, 61, 62, 62, 62, 62, 62, 62, 62, 62, 63, 63, 63, 63, 63, 63, 63}};
 
-#if defined(MODE_Y) || defined(MODE_13H) || (defined(MODE_VBE2) && !defined(MODE_PM)) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_Y) || defined(MODE_13H) || (defined(MODE_VBE2) && !defined(MODE_PM)) || defined(MODE_VBE2_DIRECT) || defined(MODE_V)
 byte processedpalette[14 * 768];
 #endif
 #if defined(MODE_VBE2) && defined(MODE_PM)
@@ -243,7 +256,7 @@ void I_ProcessPalette(byte *palette)
 }
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || (defined(MODE_VBE2) && !defined(MODE_PM)) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_Y) || defined(MODE_13H) || (defined(MODE_VBE2) && !defined(MODE_PM)) || defined(MODE_VBE2_DIRECT) || defined(MODE_V)
 void I_ProcessPalette(byte *palette)
 {
     int i;
@@ -390,7 +403,7 @@ void I_SetPalette(int numpalette)
     ptrlut16colors = lut16colors + numpalette * 256;
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || (defined(MODE_VBE2) && !defined(MODE_PM)) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_Y) || defined(MODE_13H) || (defined(MODE_VBE2) && !defined(MODE_PM)) || defined(MODE_VBE2_DIRECT) || defined(MODE_V)
     {
         int i;
         int pos = Mul768(numpalette);
@@ -413,7 +426,7 @@ void I_SetPalette(int numpalette)
 // Graphics mode
 //
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
 int updatestate;
 #endif
 byte *pcscreen, *currentscreen, *destscreen, *destview;
@@ -440,7 +453,8 @@ void I_UpdateBox(int x, int y, int w, int h)
     dest = destscreen + Mul320(y) + x;
     source = screen0 + Mul320(y) + x;
 
-    for (i = y; i < y + h; i++){
+    for (i = y; i < y + h; i++)
+    {
         CopyBytes(source, dest, w);
         dest += 320;
         source += 320;
@@ -969,6 +983,25 @@ void I_FinishUpdate(void)
 #ifdef MODE_EGA
     EGA_DrawBackbuffer();
 #endif
+#ifdef MODE_V
+    {
+        int x, y;
+
+        for (x = 0; x < 320; x++){
+            int xp = x / 4;
+            outp(SC_INDEX + 1, 1 << (x & 3));
+            for (y = 0; y < 400; y++){
+                int pos_x_backbuffer;
+                int pos_y_backbuffer;
+
+                pos_x_backbuffer = ((x * 200) / 320);
+                pos_y_backbuffer = 320 - ((y * 320) / 400);
+
+                pcscreen[y * 80 + xp] = backbuffer[pos_x_backbuffer * 320 + pos_y_backbuffer];
+            }
+        }
+    }
+#endif
 
     if (showFPS)
     {
@@ -1103,6 +1136,19 @@ void I_InitGraphics(void)
     outp(CRTC_INDEX, CRTC_MODE);
     outp(CRTC_INDEX + 1, inp(CRTC_INDEX + 1) | 0x40);
     outp(GC_INDEX, GC_READMAP);
+#endif
+#ifdef MODE_V
+    regs.w.ax = 0x13;
+    int386(0x10, (union REGS *)&regs, &regs);
+    pcscreen = currentscreen = (byte *)0xA0000;
+    destscreen = (byte *)0xA4000;
+
+    SEQ_OUT(0x04, 0x06);
+    CRTC_OUT_COL(0x17, 0xe3);
+    CRTC_OUT_COL(0x14, 0x00);
+    CRTC_OUT_COL(0x09, 0x40);
+
+    outp(SEQ_ADDR, SEQ_MAPMASK);
 #endif
 #ifdef MODE_13H
     regs.w.ax = 0x13;

@@ -92,7 +92,7 @@ void wipe_initMelt()
     #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
     CopyDWords(screen2, screen0, (SCREENWIDTH * SCREENHEIGHT) / 4);
     #endif
-    #if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+    #if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
     CopyDWords(screen2, backbuffer, (SCREENWIDTH * SCREENHEIGHT) / 4);
     #endif
 
@@ -146,7 +146,7 @@ byte wipe_doMelt(int ticks)
                 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
                 d = &((short *)screen0)[Mul160(y_val) + i];
                 #endif
-                #if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+                #if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
                 d = &((short *)backbuffer)[Mul160(y_val) + i];
                 #endif
                 for (j = dy; j; j--)
@@ -159,7 +159,7 @@ byte wipe_doMelt(int ticks)
                 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
                 d = &((short *)screen0)[Mul160(y_val) + i];
                 #endif
-                #if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+                #if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
                 d = &((short *)backbuffer)[Mul160(y_val) + i];
                 #endif
                 idx = 0;
@@ -260,14 +260,14 @@ void wipe_ReadScreen(byte *scr)
 }
 #endif
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
 void wipe_ReadScreen(byte *scr)
 {
     CopyDWords(backbuffer, scr, SCREENWIDTH * SCREENHEIGHT / 4);
 }
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V)
 void wipe_StartScreen()
 {
     screen2 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
@@ -275,7 +275,7 @@ void wipe_StartScreen()
 }
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V)
 void wipe_EndScreen()
 {
     screen3 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
@@ -283,7 +283,7 @@ void wipe_EndScreen()
 }
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V)
 int wipe_ScreenWipe(int ticks)
 {
     int rc;
