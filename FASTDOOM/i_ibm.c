@@ -42,7 +42,7 @@
 
 #include "std_func.h"
 
-#define SEQ_MAPMASK  0x02
+#define SEQ_MAPMASK 0x02
 #define SEQ_ADDR (0x3c4)
 #define SEQ_OUT(_REG_, _VAL_)                  \
     {                                          \
@@ -985,19 +985,26 @@ void I_FinishUpdate(void)
 #endif
 #ifdef MODE_V
     {
+        int plane;
         int x, y;
 
-        for (x = 0; x < 320; x++){
-            int xp = x / 4;
-            outp(SC_INDEX + 1, 1 << (x & 3));
-            for (y = 0; y < 400; y++){
-                int pos_x_backbuffer;
-                int pos_y_backbuffer;
+        for (plane = 0; plane < 4; plane++)
+        {
+            outp(SC_INDEX + 1, 1 << plane);
+            for (x = plane; x < 320; x += 4)
+            {
+                int yp = 0;
+                int xp = x / 4;
+                for (y = 0; y < 400; y++, yp += 80)
+                {
+                    int pos_x_backbuffer;
+                    int pos_y_backbuffer;
 
-                pos_x_backbuffer = ((x * 200) / 320);
-                pos_y_backbuffer = 320 - ((y * 320) / 400);
+                    pos_x_backbuffer = ((x * 5) / 8);
+                    pos_y_backbuffer = 320 - ((y * 4) / 5);
 
-                pcscreen[y * 80 + xp] = backbuffer[pos_x_backbuffer * 320 + pos_y_backbuffer];
+                    pcscreen[yp + xp] = backbuffer[pos_x_backbuffer * 320 + pos_y_backbuffer];
+                }
             }
         }
     }
