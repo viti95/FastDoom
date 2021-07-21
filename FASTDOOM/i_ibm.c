@@ -213,6 +213,13 @@ byte *ptrsumcolors10;
 byte *ptrsumcolors11;
 #endif
 
+#if defined(MODE_V)
+int lutplane0[320 * 400 / 4];
+int lutplane1[320 * 400 / 4];
+int lutplane2[320 * 400 / 4];
+int lutplane3[320 * 400 / 4];
+#endif
+
 byte gammatable[5][256] =
     {
         {0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 10, 11, 11, 11, 11, 12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15, 16, 16, 16, 16, 17, 17, 17, 17, 18, 18, 18, 18, 19, 19, 19, 19, 20, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 26, 27, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 30, 31, 31, 31, 31, 32, 32, 32, 32, 32, 33, 33, 33, 33, 34, 34, 34, 34, 35, 35, 35, 35, 36, 36, 36, 36, 37, 37, 37, 37, 38, 38, 38, 38, 39, 39, 39, 39, 40, 40, 40, 40, 41, 41, 41, 41, 42, 42, 42, 42, 43, 43, 43, 43, 44, 44, 44, 44, 45, 45, 45, 45, 46, 46, 46, 46, 47, 47, 47, 47, 48, 48, 48, 48, 49, 49, 49, 49, 50, 50, 50, 50, 51, 51, 51, 51, 52, 52, 52, 52, 53, 53, 53, 53, 54, 54, 54, 54, 55, 55, 55, 55, 56, 56, 56, 56, 57, 57, 57, 57, 58, 58, 58, 58, 59, 59, 59, 59, 60, 60, 60, 60, 61, 61, 61, 61, 62, 62, 62, 62, 63, 63, 63, 63},
@@ -985,27 +992,42 @@ void I_FinishUpdate(void)
 #endif
 #ifdef MODE_V
     {
-        int plane;
         int x, y;
 
-        for (plane = 0; plane < 4; plane++)
+        outp(SC_INDEX + 1, 1 << 0);
+        for (x = 0; x < 320 * 400 / 4; x += 4)
         {
-            outp(SC_INDEX + 1, 1 << plane);
-            for (x = plane; x < 320; x += 4)
-            {
-                int yp = 0;
-                int xp = x / 4;
-                for (y = 0; y < 400; y++, yp += 80)
-                {
-                    int pos_x_backbuffer;
-                    int pos_y_backbuffer;
+            pcscreen[x] = backbuffer[lutplane0[x]];
+            pcscreen[x + 1] = backbuffer[lutplane0[x + 1]];
+            pcscreen[x + 2] = backbuffer[lutplane0[x + 2]];
+            pcscreen[x + 3] = backbuffer[lutplane0[x + 3]];
+        }
 
-                    pos_x_backbuffer = ((x * 5) / 8);
-                    pos_y_backbuffer = 320 - ((y * 4) / 5);
+        outp(SC_INDEX + 1, 1 << 1);
+        for (x = 0; x < 320 * 400 / 4; x += 4)
+        {
+            pcscreen[x] = backbuffer[lutplane1[x]];
+            pcscreen[x + 1] = backbuffer[lutplane1[x + 1]];
+            pcscreen[x + 2] = backbuffer[lutplane1[x + 2]];
+            pcscreen[x + 3] = backbuffer[lutplane1[x + 3]];
+        }
 
-                    pcscreen[yp + xp] = backbuffer[pos_x_backbuffer * 320 + pos_y_backbuffer];
-                }
-            }
+        outp(SC_INDEX + 1, 1 << 2);
+        for (x = 0; x < 320 * 400 / 4; x += 4)
+        {
+            pcscreen[x] = backbuffer[lutplane2[x]];
+            pcscreen[x + 1] = backbuffer[lutplane2[x + 1]];
+            pcscreen[x + 2] = backbuffer[lutplane2[x + 2]];
+            pcscreen[x + 3] = backbuffer[lutplane2[x + 3]];
+        }
+
+        outp(SC_INDEX + 1, 1 << 3);
+        for (x = 0; x < 320 * 400 / 4; x += 4)
+        {
+            pcscreen[x] = backbuffer[lutplane3[x]];
+            pcscreen[x + 1] = backbuffer[lutplane3[x + 1]];
+            pcscreen[x + 2] = backbuffer[lutplane3[x + 2]];
+            pcscreen[x + 3] = backbuffer[lutplane3[x + 3]];
         }
     }
 #endif
@@ -1145,6 +1167,76 @@ void I_InitGraphics(void)
     outp(GC_INDEX, GC_READMAP);
 #endif
 #ifdef MODE_V
+
+    {
+        int x, y;
+
+        // Initialize LUT
+        for (x = 0; x < 320; x += 4)
+        {
+            int yp = 0;
+            int xp = x / 4;
+            for (y = 0; y < 400; y++, yp += 80)
+            {
+                int pos_x_backbuffer;
+                int pos_y_backbuffer;
+
+                pos_x_backbuffer = ((x * 5) / 8);
+                pos_y_backbuffer = 320 - ((y * 4) / 5);
+
+                lutplane0[yp + xp] = pos_x_backbuffer * 320 + pos_y_backbuffer;
+            }
+        }
+
+        for (x = 1; x < 320; x += 4)
+        {
+            int yp = 0;
+            int xp = x / 4;
+            for (y = 0; y < 400; y++, yp += 80)
+            {
+                int pos_x_backbuffer;
+                int pos_y_backbuffer;
+
+                pos_x_backbuffer = ((x * 5) / 8);
+                pos_y_backbuffer = 320 - ((y * 4) / 5);
+
+                lutplane1[yp + xp] = pos_x_backbuffer * 320 + pos_y_backbuffer;
+            }
+        }
+
+        for (x = 2; x < 320; x += 4)
+        {
+            int yp = 0;
+            int xp = x / 4;
+            for (y = 0; y < 400; y++, yp += 80)
+            {
+                int pos_x_backbuffer;
+                int pos_y_backbuffer;
+
+                pos_x_backbuffer = ((x * 5) / 8);
+                pos_y_backbuffer = 320 - ((y * 4) / 5);
+
+                lutplane2[yp + xp] = pos_x_backbuffer * 320 + pos_y_backbuffer;
+            }
+        }
+
+        for (x = 3; x < 320; x += 4)
+        {
+            int yp = 0;
+            int xp = x / 4;
+            for (y = 0; y < 400; y++, yp += 80)
+            {
+                int pos_x_backbuffer;
+                int pos_y_backbuffer;
+
+                pos_x_backbuffer = ((x * 5) / 8);
+                pos_y_backbuffer = 320 - ((y * 4) / 5);
+
+                lutplane3[yp + xp] = pos_x_backbuffer * 320 + pos_y_backbuffer;
+            }
+        }
+    }
+
     regs.w.ax = 0x13;
     int386(0x10, (union REGS *)&regs, &regs);
     pcscreen = currentscreen = (byte *)0xA0000;
