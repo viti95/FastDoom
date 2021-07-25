@@ -31,7 +31,7 @@ extern byte *ptrsumcolors10;
 extern byte *ptrsumcolors11;
 #endif
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
+#if defined(USE_BACKBUFFER)
 extern int updatestate;
 #endif
 

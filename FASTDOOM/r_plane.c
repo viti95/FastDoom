@@ -1025,7 +1025,7 @@ void R_DrawPlanesFlatSurfacesText8025(void)
 }
 #endif
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
+#if defined(USE_BACKBUFFER)
 void R_DrawPlanesFlatSurfaces_13h(void)
 {
     visplane_t *pl;

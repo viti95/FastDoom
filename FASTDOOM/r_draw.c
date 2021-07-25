@@ -55,7 +55,7 @@ int viewwindowy;
 
 int columnofs[SCREENWIDTH];
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
+#if defined(USE_BACKBUFFER)
 byte *ylookup[SCREENHEIGHT];
 #endif
 #if defined(MODE_Y) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_VBE2_DIRECT)
@@ -64,7 +64,7 @@ byte **ylookup;
 
 int automapheight;
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
+#if defined(USE_BACKBUFFER)
 byte *background_buffer = 0;
 #endif
 
@@ -1320,7 +1320,7 @@ void R_DrawSpanPotato(void)
 #define FUZZOFF (SCREENWIDTH / 4)
 #endif
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V)
+#if defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 #define FUZZOFF (SCREENWIDTH)
 #endif
 
@@ -2319,7 +2319,7 @@ void R_InitBuffer(int width, int height)
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050)
     viewwindowx = 0;
 #endif
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     viewwindowx = (SCREENWIDTH - width) >> 1;
 #endif
 
@@ -2331,14 +2331,14 @@ void R_InitBuffer(int width, int height)
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050)
     viewwindowy = 0;
 #endif
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     if (width == SCREENWIDTH)
         viewwindowy = 0;
     else
         viewwindowy = (SCREENHEIGHT - SBARHEIGHT - height) >> 1;
 #endif
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
+#if defined(USE_BACKBUFFER)
     for (i = 0; i < height; i++)
         ylookup[i] = backbuffer + Mul320(i + viewwindowy);
 #endif
@@ -2350,7 +2350,7 @@ void R_InitBuffer(int width, int height)
 //  for variable screen sizes
 // Also draws a beveled edge.
 //
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void R_FillBackScreen(void)
 {
     byte *src;
@@ -2374,7 +2374,7 @@ void R_FillBackScreen(void)
         return;
 #endif
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
+#if defined(USE_BACKBUFFER)
     if (scaledviewwidth == SCREENWIDTH)
     {
         if (background_buffer)
@@ -2403,7 +2403,7 @@ void R_FillBackScreen(void)
     screen1 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
     dest = screen1;
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
+#if defined(USE_BACKBUFFER)
     dest = background_buffer;
 #endif
 
@@ -2423,7 +2423,7 @@ void R_FillBackScreen(void)
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
         V_DrawPatch(viewwindowx + x, viewwindowy - 8, screen1, patch);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
+#if defined(USE_BACKBUFFER)
         V_DrawPatch(viewwindowx + x, viewwindowy - 8, background_buffer, patch);
 #endif
     }
@@ -2435,7 +2435,7 @@ void R_FillBackScreen(void)
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
         V_DrawPatch(viewwindowx + x, viewwindowy + viewheight, screen1, patch);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
+#if defined(USE_BACKBUFFER)
         V_DrawPatch(viewwindowx + x, viewwindowy + viewheight, background_buffer, patch);
 #endif
     }
@@ -2446,7 +2446,7 @@ void R_FillBackScreen(void)
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
         V_DrawPatch(viewwindowx - 8, viewwindowy + y, screen1, patch);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
+#if defined(USE_BACKBUFFER)
         V_DrawPatch(viewwindowx - 8, viewwindowy + y, background_buffer, patch);
 #endif
     }
@@ -2457,7 +2457,7 @@ void R_FillBackScreen(void)
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
         V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + y, screen1, patch);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
+#if defined(USE_BACKBUFFER)
         V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + y, background_buffer, patch);
 #endif
     }
@@ -2469,7 +2469,7 @@ void R_FillBackScreen(void)
     V_DrawPatch(viewwindowx - 8, viewwindowy + viewheight, screen1, W_CacheLumpName("BRDR_BL", PU_CACHE));
     V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + viewheight, screen1, W_CacheLumpName("BRDR_BR", PU_CACHE));
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
+#if defined(USE_BACKBUFFER)
     V_DrawPatch(viewwindowx - 8, viewwindowy - 8, background_buffer, W_CacheLumpName("BRDR_TL", PU_CACHE));
     V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy - 8, background_buffer, W_CacheLumpName("BRDR_TR", PU_CACHE));
     V_DrawPatch(viewwindowx - 8, viewwindowy + viewheight, background_buffer, W_CacheLumpName("BRDR_BL", PU_CACHE));
@@ -2539,7 +2539,7 @@ void R_VideoErase(unsigned ofs, int count)
 }
 #endif
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
+#if defined(USE_BACKBUFFER)
 void R_VideoErase(unsigned ofs, int count)
 {
     // LFB copy.
@@ -2560,7 +2560,7 @@ void R_VideoErase(unsigned ofs, int count)
 // Draws the border around the view
 //  for different size windows?
 //
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void R_DrawViewBorder(void)
 {
     int top;
@@ -2593,7 +2593,7 @@ void R_DrawViewBorder(void)
 }
 #endif
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_V)
+#if defined(USE_BACKBUFFER)
 void R_DrawSkyFlat_13h(void)
 {
     register int count;
