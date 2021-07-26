@@ -42,19 +42,6 @@
 
 #include "std_func.h"
 
-#define SEQ_MAPMASK 0x02
-#define SEQ_ADDR (0x3c4)
-#define SEQ_OUT(_REG_, _VAL_)                  \
-    {                                          \
-        outpw(SEQ_ADDR, (_VAL_ << 8) | _REG_); \
-    }
-
-#define CRTC_ADDR_COL 0x3d4
-#define CRTC_OUT_COL(_REG_, _VAL_)                    \
-    {                                                 \
-        outpw(CRTC_ADDR_COL, ((_VAL_) << 8) | _REG_); \
-    }
-
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 #include "i_vesa.h"
 #endif
@@ -91,6 +78,7 @@ extern int usemouse;
 //
 
 #define SC_INDEX 0x3C4
+#define SC_DATA	0x3C5
 #define SC_RESET 0
 #define SC_CLOCK 1
 #define SC_MAPMASK 2
@@ -98,6 +86,7 @@ extern int usemouse;
 #define SC_MEMMODE 4
 
 #define CRTC_INDEX 0x3D4
+#define CRTC_DATA 0x3D5
 #define CRTC_H_TOTAL 0
 #define CRTC_H_DISPEND 1
 #define CRTC_H_BLANK 2
@@ -125,6 +114,7 @@ extern int usemouse;
 #define CRTC_LINECOMPARE 24
 
 #define GC_INDEX 0x3CE
+#define GC_DATA 0x3CF
 #define GC_SETRESET 0
 #define GC_ENABLESETRESET 1
 #define GC_COLORCOMPARE 2
@@ -148,6 +138,21 @@ extern int usemouse;
 #define PEL_READ_ADR 0x3c7
 #define PEL_DATA 0x3c9
 #define PEL_MASK 0x3c6
+
+
+#define SYNC_RESET		0
+#define MAP_MASK		2
+#define MEMORY_MODE		4
+
+#define READ_MAP		4
+#define GRAPHICS_MODE	5
+#define MISCELLANOUS	6
+
+#define MISC_OUTPUT	0x3C2
+
+#define MAX_SCAN_LINE	9
+#define UNDERLINE		0x14
+#define	MODE_CONTROL	0x17
 
 #define VBLCOUNTER 34000 // hardware tics to a frame
 
@@ -214,10 +219,10 @@ byte *ptrsumcolors11;
 #endif
 
 #if defined(MODE_V)
-int lutplane0[320 * 400 / 4];
-int lutplane1[320 * 400 / 4];
-int lutplane2[320 * 400 / 4];
-int lutplane3[320 * 400 / 4];
+int lutplane0[(320 * 350) / 4];
+int lutplane1[(320 * 350) / 4];
+int lutplane2[(320 * 350) / 4];
+int lutplane3[(320 * 350) / 4];
 #endif
 
 byte gammatable[5][256] =
@@ -995,7 +1000,7 @@ void I_FinishUpdate(void)
         int x, y;
 
         outp(SC_INDEX + 1, 1 << 0);
-        for (x = 0; x < 320 * 400 / 4; x += 4)
+        for (x = 0; x < (320 * 350) / 4; x += 4)
         {
             pcscreen[x] = backbuffer[lutplane0[x]];
             pcscreen[x + 1] = backbuffer[lutplane0[x + 1]];
@@ -1004,7 +1009,7 @@ void I_FinishUpdate(void)
         }
 
         outp(SC_INDEX + 1, 1 << 1);
-        for (x = 0; x < 320 * 400 / 4; x += 4)
+        for (x = 0; x < (320 * 350) / 4; x += 4)
         {
             pcscreen[x] = backbuffer[lutplane1[x]];
             pcscreen[x + 1] = backbuffer[lutplane1[x + 1]];
@@ -1013,7 +1018,7 @@ void I_FinishUpdate(void)
         }
 
         outp(SC_INDEX + 1, 1 << 2);
-        for (x = 0; x < 320 * 400 / 4; x += 4)
+        for (x = 0; x < (320 * 350) / 4; x += 4)
         {
             pcscreen[x] = backbuffer[lutplane2[x]];
             pcscreen[x + 1] = backbuffer[lutplane2[x + 1]];
@@ -1022,7 +1027,7 @@ void I_FinishUpdate(void)
         }
 
         outp(SC_INDEX + 1, 1 << 3);
-        for (x = 0; x < 320 * 400 / 4; x += 4)
+        for (x = 0; x < (320 * 350) / 4; x += 4)
         {
             pcscreen[x] = backbuffer[lutplane3[x]];
             pcscreen[x + 1] = backbuffer[lutplane3[x + 1]];
@@ -1176,13 +1181,13 @@ void I_InitGraphics(void)
         {
             int yp = 0;
             int xp = x / 4;
-            for (y = 0; y < 400; y++, yp += 80)
+            for (y = 0; y < 350; y++, yp += 80)
             {
                 int pos_x_backbuffer;
                 int pos_y_backbuffer;
 
-                pos_x_backbuffer = ((x * 5) / 8);
-                pos_y_backbuffer = 320 - ((y * 4) / 5);
+                pos_x_backbuffer = ((x * 200) / 320);
+                pos_y_backbuffer = 320 - ((y * 320) / 350);
 
                 lutplane0[yp + xp] = pos_x_backbuffer * 320 + pos_y_backbuffer;
             }
@@ -1192,13 +1197,13 @@ void I_InitGraphics(void)
         {
             int yp = 0;
             int xp = x / 4;
-            for (y = 0; y < 400; y++, yp += 80)
+            for (y = 0; y < 350; y++, yp += 80)
             {
                 int pos_x_backbuffer;
                 int pos_y_backbuffer;
 
-                pos_x_backbuffer = ((x * 5) / 8);
-                pos_y_backbuffer = 320 - ((y * 4) / 5);
+                pos_x_backbuffer = ((x * 200) / 320);
+                pos_y_backbuffer = 320 - ((y * 320) / 350);
 
                 lutplane1[yp + xp] = pos_x_backbuffer * 320 + pos_y_backbuffer;
             }
@@ -1208,13 +1213,13 @@ void I_InitGraphics(void)
         {
             int yp = 0;
             int xp = x / 4;
-            for (y = 0; y < 400; y++, yp += 80)
+            for (y = 0; y < 350; y++, yp += 80)
             {
                 int pos_x_backbuffer;
                 int pos_y_backbuffer;
 
-                pos_x_backbuffer = ((x * 5) / 8);
-                pos_y_backbuffer = 320 - ((y * 4) / 5);
+                pos_x_backbuffer = ((x * 200) / 320);
+                pos_y_backbuffer = 320 - ((y * 320) / 350);
 
                 lutplane2[yp + xp] = pos_x_backbuffer * 320 + pos_y_backbuffer;
             }
@@ -1224,13 +1229,13 @@ void I_InitGraphics(void)
         {
             int yp = 0;
             int xp = x / 4;
-            for (y = 0; y < 400; y++, yp += 80)
+            for (y = 0; y < 350; y++, yp += 80)
             {
                 int pos_x_backbuffer;
                 int pos_y_backbuffer;
 
-                pos_x_backbuffer = ((x * 5) / 8);
-                pos_y_backbuffer = 320 - ((y * 4) / 5);
+                pos_x_backbuffer = ((x * 200) / 320);
+                pos_y_backbuffer = 320 - ((y * 320) / 350);
 
                 lutplane3[yp + xp] = pos_x_backbuffer * 320 + pos_y_backbuffer;
             }
@@ -1242,12 +1247,63 @@ void I_InitGraphics(void)
     pcscreen = currentscreen = (byte *)0xA0000;
     destscreen = (byte *)0xA4000;
 
-    SEQ_OUT(0x04, 0x06);
-    CRTC_OUT_COL(0x17, 0xe3);
-    CRTC_OUT_COL(0x14, 0x00);
-    CRTC_OUT_COL(0x09, 0x40);
+    //
+    // switch to linear, non-chain4 mode
+    //
+    outp(SC_INDEX, SYNC_RESET);
+    outp(SC_DATA, 1);
 
-    outp(SEQ_ADDR, SEQ_MAPMASK);
+    outp(SC_INDEX, MEMORY_MODE);
+    outp(SC_DATA, (inp(SC_DATA) & ~0x08) | 0x04);
+    outp(GC_INDEX, GRAPHICS_MODE);
+    outp(GC_DATA, (inp(GC_DATA) & ~0x10) | 0x00);
+    outp(GC_INDEX, MISCELLANOUS);
+    outp(GC_DATA, (inp(GC_DATA) & ~0x02) | 0x00);
+    outp(MISC_OUTPUT, 0xA3); // 350-scan-line scan rate
+    
+    outp(SC_INDEX, SYNC_RESET);
+    outp(SC_DATA, 3);
+
+    //
+    // unprotect CRTC0 through CRTC0
+    //
+    outp(CRTC_INDEX, 0x11);
+    outp(CRTC_DATA, (inp(CRTC_DATA) & ~0x80) | 0x00);
+
+    //
+    // stop scanning each line twice
+    //
+    outp(CRTC_INDEX, MAX_SCAN_LINE);
+    outp(CRTC_DATA, (inp(CRTC_DATA) & ~0x1F) | 0x00);
+
+    //
+    // change the CRTC from doubleword to byte mode
+    //
+    outp(CRTC_INDEX, UNDERLINE);
+    outp(CRTC_DATA, (inp(CRTC_DATA) & ~0x40) | 0x00);
+    outp(CRTC_INDEX, MODE_CONTROL);
+    outp(CRTC_DATA, (inp(CRTC_DATA) & ~0x00) | 0x40);
+
+    //
+    // set the vertical counts for 350-scan-line mode
+    //
+    outp(CRTC_INDEX, 0x06);
+    outp(CRTC_INDEX + 1, 0xBF);
+    outp(CRTC_INDEX, 0x07);
+    outp(CRTC_INDEX + 1, 0x1F);
+    outp(CRTC_INDEX, 0x10);
+    outp(CRTC_INDEX + 1, 0x83);
+    outp(CRTC_INDEX, 0x11);
+    outp(CRTC_INDEX + 1, 0x85);
+    outp(CRTC_INDEX, 0x12);
+    outp(CRTC_INDEX + 1, 0x5D);
+    outp(CRTC_INDEX, 0x15);
+    outp(CRTC_INDEX + 1, 0x63);
+    outp(CRTC_INDEX, 0x16);
+    outp(CRTC_INDEX + 1, 0xBA);
+
+    outp (SC_INDEX, MAP_MASK);
+    outp (GC_INDEX, READ_MAP);
 #endif
 #ifdef MODE_13H
     regs.w.ax = 0x13;
