@@ -78,7 +78,7 @@ extern int usemouse;
 //
 
 #define SC_INDEX 0x3C4
-#define SC_DATA	0x3C5
+#define SC_DATA 0x3C5
 #define SC_RESET 0
 #define SC_CLOCK 1
 #define SC_MAPMASK 2
@@ -139,20 +139,19 @@ extern int usemouse;
 #define PEL_DATA 0x3c9
 #define PEL_MASK 0x3c6
 
+#define SYNC_RESET 0
+#define MAP_MASK 2
+#define MEMORY_MODE 4
 
-#define SYNC_RESET		0
-#define MAP_MASK		2
-#define MEMORY_MODE		4
+#define READ_MAP 4
+#define GRAPHICS_MODE 5
+#define MISCELLANOUS 6
 
-#define READ_MAP		4
-#define GRAPHICS_MODE	5
-#define MISCELLANOUS	6
+#define MISC_OUTPUT 0x3C2
 
-#define MISC_OUTPUT	0x3C2
-
-#define MAX_SCAN_LINE	9
-#define UNDERLINE		0x14
-#define	MODE_CONTROL	0x17
+#define MAX_SCAN_LINE 9
+#define UNDERLINE 0x14
+#define MODE_CONTROL 0x17
 
 #define VBLCOUNTER 34000 // hardware tics to a frame
 
@@ -1002,37 +1001,46 @@ void I_FinishUpdate(void)
         outp(SC_INDEX + 1, 1 << 0);
         for (x = 0; x < (320 * 350) / 4; x += 4)
         {
-            pcscreen[x] = backbuffer[lutplane0[x]];
-            pcscreen[x + 1] = backbuffer[lutplane0[x + 1]];
-            pcscreen[x + 2] = backbuffer[lutplane0[x + 2]];
-            pcscreen[x + 3] = backbuffer[lutplane0[x + 3]];
+            destscreen[x] = backbuffer[lutplane0[x]];
+            destscreen[x + 1] = backbuffer[lutplane0[x + 1]];
+            destscreen[x + 2] = backbuffer[lutplane0[x + 2]];
+            destscreen[x + 3] = backbuffer[lutplane0[x + 3]];
         }
 
         outp(SC_INDEX + 1, 1 << 1);
         for (x = 0; x < (320 * 350) / 4; x += 4)
         {
-            pcscreen[x] = backbuffer[lutplane1[x]];
-            pcscreen[x + 1] = backbuffer[lutplane1[x + 1]];
-            pcscreen[x + 2] = backbuffer[lutplane1[x + 2]];
-            pcscreen[x + 3] = backbuffer[lutplane1[x + 3]];
+            destscreen[x] = backbuffer[lutplane1[x]];
+            destscreen[x + 1] = backbuffer[lutplane1[x + 1]];
+            destscreen[x + 2] = backbuffer[lutplane1[x + 2]];
+            destscreen[x + 3] = backbuffer[lutplane1[x + 3]];
         }
 
         outp(SC_INDEX + 1, 1 << 2);
         for (x = 0; x < (320 * 350) / 4; x += 4)
         {
-            pcscreen[x] = backbuffer[lutplane2[x]];
-            pcscreen[x + 1] = backbuffer[lutplane2[x + 1]];
-            pcscreen[x + 2] = backbuffer[lutplane2[x + 2]];
-            pcscreen[x + 3] = backbuffer[lutplane2[x + 3]];
+            destscreen[x] = backbuffer[lutplane2[x]];
+            destscreen[x + 1] = backbuffer[lutplane2[x + 1]];
+            destscreen[x + 2] = backbuffer[lutplane2[x + 2]];
+            destscreen[x + 3] = backbuffer[lutplane2[x + 3]];
         }
 
         outp(SC_INDEX + 1, 1 << 3);
         for (x = 0; x < (320 * 350) / 4; x += 4)
         {
-            pcscreen[x] = backbuffer[lutplane3[x]];
-            pcscreen[x + 1] = backbuffer[lutplane3[x + 1]];
-            pcscreen[x + 2] = backbuffer[lutplane3[x + 2]];
-            pcscreen[x + 3] = backbuffer[lutplane3[x + 3]];
+            destscreen[x] = backbuffer[lutplane3[x]];
+            destscreen[x + 1] = backbuffer[lutplane3[x + 1]];
+            destscreen[x + 2] = backbuffer[lutplane3[x + 2]];
+            destscreen[x + 3] = backbuffer[lutplane3[x + 3]];
+        }
+
+        outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
+
+        //Next plane
+        destscreen += 0x7000;
+        if (destscreen == (byte *)0xae000)
+        {
+            destscreen = (byte *)0xa0000;
         }
     }
 #endif
@@ -1245,7 +1253,7 @@ void I_InitGraphics(void)
     regs.w.ax = 0x13;
     int386(0x10, (union REGS *)&regs, &regs);
     pcscreen = currentscreen = (byte *)0xA0000;
-    destscreen = (byte *)0xA4000;
+    destscreen = (byte *)0xA7000;
 
     //
     // switch to linear, non-chain4 mode
@@ -1260,7 +1268,7 @@ void I_InitGraphics(void)
     outp(GC_INDEX, MISCELLANOUS);
     outp(GC_DATA, (inp(GC_DATA) & ~0x02) | 0x00);
     outp(MISC_OUTPUT, 0xA3); // 350-scan-line scan rate
-    
+
     outp(SC_INDEX, SYNC_RESET);
     outp(SC_DATA, 3);
 
@@ -1302,8 +1310,8 @@ void I_InitGraphics(void)
     outp(CRTC_INDEX, 0x16);
     outp(CRTC_INDEX + 1, 0xBA);
 
-    outp (SC_INDEX, MAP_MASK);
-    outp (GC_INDEX, READ_MAP);
+    outp(SC_INDEX, MAP_MASK);
+    outp(GC_INDEX, READ_MAP);
 #endif
 #ifdef MODE_13H
     regs.w.ax = 0x13;
