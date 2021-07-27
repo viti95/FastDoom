@@ -1047,42 +1047,54 @@ void I_FinishUpdate(void)
 #if defined(MODE_V2)
     {
         int x, y;
+        int xp, yp;
 
         byte *destscreendisp = destscreen + 15 + 15 * 80;
+        byte *backbufferdisp = backbuffer + 319;
 
         outp(SC_INDEX + 1, 1 << 0);
-        for (y = 0; y < 200; y += 4)
+        for (y = 0, yp = 0; y < 50; y++, yp += 1280)
         {
-            for (x = 0; x < 320; x++)
+            int xp = 0;
+            for (x = 0; x < 320; x++, xp += 80)
             {
-                destscreendisp[x * 80 + y / 4] = backbuffer[y * 320 + (319 - x)];
+                destscreendisp[xp + y] = backbufferdisp[yp - x];
             }
         }
+
+        backbufferdisp += 320;
 
         outp(SC_INDEX + 1, 1 << 1);
-        for (y = 1; y < 200; y += 4)
+        for (y = 0, yp = 0; y < 50; y++, yp += 1280)
         {
-            for (x = 0; x < 320; x++)
+            int xp = 0;
+            for (x = 0; x < 320; x++, xp += 80)
             {
-                destscreendisp[x * 80 + y / 4] = backbuffer[y * 320 + (319 - x)];
+                destscreendisp[xp + y] = backbufferdisp[yp - x];
             }
         }
+
+        backbufferdisp += 320;
 
         outp(SC_INDEX + 1, 1 << 2);
-        for (y = 2; y < 200; y += 4)
+        for (y = 0, yp = 0; y < 50; y++, yp += 1280)
         {
-            for (x = 0; x < 320; x++)
+            int xp = 0;
+            for (x = 0; x < 320; x++, xp += 80)
             {
-                destscreendisp[x * 80 + y / 4] = backbuffer[y * 320 + (319 - x)];
+                destscreendisp[xp + y] = backbufferdisp[yp - x];
             }
         }
 
+        backbufferdisp += 320;
+
         outp(SC_INDEX + 1, 1 << 3);
-        for (y = 3; y < 200; y += 4)
+        for (y = 0, yp = 0; y < 50; y++, yp += 1280)
         {
-            for (x = 0; x < 320; x++)
+            int xp = 0;
+            for (x = 0; x < 320; x++, xp += 80)
             {
-                destscreendisp[x * 80 + y / 4] = backbuffer[y * 320 + (319 - x)];
+                destscreendisp[xp + y] = backbufferdisp[yp - x];
             }
         }
 
