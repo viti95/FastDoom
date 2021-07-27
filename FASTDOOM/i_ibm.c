@@ -1048,19 +1048,41 @@ void I_FinishUpdate(void)
     {
         int x, y;
 
-        for (x = 0; x < 200; x++)
+        byte *destscreendisp = destscreen + 15;
+
+        outp(SC_INDEX + 1, 1 << 0);
+        for (y = 0; y < 200; y += 4)
         {
-            int xp = x / 4;
-            outp(SC_INDEX + 1, 1 << (x & 3));
-            for (y = 14; y < 320 + 14; y++)
+            for (x = 0; x < 320; x++)
             {
-                int pos_x_backbuffer;
-                int pos_y_backbuffer;
+                destscreendisp[(x + 15) * 80 + y / 4] = backbuffer[y * 320 + (319 - x)];
+            }
+        }
 
-                pos_x_backbuffer = x;
-                pos_y_backbuffer = 320 - y;
+        outp(SC_INDEX + 1, 1 << 1);
+        for (y = 1; y < 200; y += 4)
+        {
+            for (x = 0; x < 320; x++)
+            {
+                destscreendisp[(x + 15) * 80 + y / 4] = backbuffer[y * 320 + (319 - x)];
+            }
+        }
 
-                destscreen[y * 80 + xp + 15] = backbuffer[pos_x_backbuffer * 320 + pos_y_backbuffer + 13];
+        outp(SC_INDEX + 1, 1 << 2);
+        for (y = 2; y < 200; y += 4)
+        {
+            for (x = 0; x < 320; x++)
+            {
+                destscreendisp[(x + 15) * 80 + y / 4] = backbuffer[y * 320 + (319 - x)];
+            }
+        }
+
+        outp(SC_INDEX + 1, 1 << 3);
+        for (y = 3; y < 200; y += 4)
+        {
+            for (x = 0; x < 320; x++)
+            {
+                destscreendisp[(x + 15) * 80 + y / 4] = backbuffer[y * 320 + (319 - x)];
             }
         }
 
