@@ -217,7 +217,7 @@ byte *ptrsumcolors10;
 byte *ptrsumcolors11;
 #endif
 
-#if defined(MODE_V)
+#if defined(MODE_V) || defined(MODE_V2)
 int lutplane0[(320 * 350) / 4];
 int lutplane1[(320 * 350) / 4];
 int lutplane2[(320 * 350) / 4];
@@ -1047,54 +1047,32 @@ void I_FinishUpdate(void)
 #if defined(MODE_V2)
     {
         int x, y;
-        int xp, yp;
-
-        byte *destscreendisp = destscreen + 15 + 15 * 80;
-        byte *backbufferdisp = backbuffer + 319;
 
         outp(SC_INDEX + 1, 1 << 0);
-        for (y = 0, yp = 0; y < 50; y++, yp += 1280)
-        {
-            int xp = 0;
-            for (x = 0; x < 320; x++, xp += 80)
-            {
-                destscreendisp[xp + y] = backbufferdisp[yp - x];
+        for (x = 15; x < 65; x++){
+            for (y = 15 * 80; y < 335 * 80; y += 80){
+                destscreen[y + x] = backbuffer[lutplane0[y + x]];
             }
         }
-
-        backbufferdisp += 320;
 
         outp(SC_INDEX + 1, 1 << 1);
-        for (y = 0, yp = 0; y < 50; y++, yp += 1280)
-        {
-            int xp = 0;
-            for (x = 0; x < 320; x++, xp += 80)
-            {
-                destscreendisp[xp + y] = backbufferdisp[yp - x];
+        for (x = 15; x < 65; x++){
+            for (y = 15 * 80; y < 335 * 80; y += 80){
+                destscreen[y + x] = backbuffer[lutplane1[y + x]];
             }
         }
-
-        backbufferdisp += 320;
 
         outp(SC_INDEX + 1, 1 << 2);
-        for (y = 0, yp = 0; y < 50; y++, yp += 1280)
-        {
-            int xp = 0;
-            for (x = 0; x < 320; x++, xp += 80)
-            {
-                destscreendisp[xp + y] = backbufferdisp[yp - x];
+        for (x = 15; x < 65; x++){
+            for (y = 15 * 80; y < 335 * 80; y += 80){
+                destscreen[y + x] = backbuffer[lutplane2[y + x]];
             }
         }
 
-        backbufferdisp += 320;
-
         outp(SC_INDEX + 1, 1 << 3);
-        for (y = 0, yp = 0; y < 50; y++, yp += 1280)
-        {
-            int xp = 0;
-            for (x = 0; x < 320; x++, xp += 80)
-            {
-                destscreendisp[xp + y] = backbufferdisp[yp - x];
+        for (x = 15; x < 65; x++){
+            for (y = 15 * 80; y < 335 * 80; y += 80){
+                destscreen[y + x] = backbuffer[lutplane3[y + x]];
             }
         }
 
@@ -1314,6 +1292,42 @@ void I_InitGraphics(void)
         }
     }
 #endif
+#if defined(MODE_V2)
+    {
+        int x, y;
+
+        for (x = 0; x < 200; x++)
+        {
+            int xp = x / 4;
+            for (y = 15; y < 320 + 15; y++)
+            {
+                int pos_x_backbuffer;
+                int pos_y_backbuffer;
+
+                pos_x_backbuffer = x;
+                pos_y_backbuffer = 319 - y;
+
+                switch (x % 4)
+                {
+                case 0:
+                    lutplane0[y * 80 + xp + 15] = pos_x_backbuffer * 320 + pos_y_backbuffer + 15;
+                    break;
+                case 1:
+                    lutplane1[y * 80 + xp + 15] = pos_x_backbuffer * 320 + pos_y_backbuffer + 15;
+                    break;
+                case 2:
+                    lutplane2[y * 80 + xp + 15] = pos_x_backbuffer * 320 + pos_y_backbuffer + 15;
+                    break;
+                case 3:
+                    lutplane3[y * 80 + xp + 15] = pos_x_backbuffer * 320 + pos_y_backbuffer + 15;
+                    break;
+                }
+            }
+        }
+    }
+
+#endif
+
 #if defined(MODE_V) || defined(MODE_V2)
 
     regs.w.ax = 0x13;
