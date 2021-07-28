@@ -1050,29 +1050,41 @@ void I_FinishUpdate(void)
 
         outp(SC_INDEX + 1, 1 << 0);
         for (x = 15; x < 65; x++){
-            for (y = 15 * 80; y < 335 * 80; y += 80){
+            for (y = 15 * 80; y < 335 * 80; y += 320){
                 destscreen[y + x] = backbuffer[lutplane0[y + x]];
+                destscreen[y + x + 80] = backbuffer[lutplane0[y + x + 80]];
+                destscreen[y + x + 160] = backbuffer[lutplane0[y + x + 160]];
+                destscreen[y + x + 240] = backbuffer[lutplane0[y + x + 240]];
             }
         }
 
         outp(SC_INDEX + 1, 1 << 1);
         for (x = 15; x < 65; x++){
-            for (y = 15 * 80; y < 335 * 80; y += 80){
+            for (y = 15 * 80; y < 335 * 80; y += 320){
                 destscreen[y + x] = backbuffer[lutplane1[y + x]];
+                destscreen[y + x + 80] = backbuffer[lutplane1[y + x + 80]];
+                destscreen[y + x + 160] = backbuffer[lutplane1[y + x + 160]];
+                destscreen[y + x + 240] = backbuffer[lutplane1[y + x + 240]];
             }
         }
 
         outp(SC_INDEX + 1, 1 << 2);
         for (x = 15; x < 65; x++){
-            for (y = 15 * 80; y < 335 * 80; y += 80){
+            for (y = 15 * 80; y < 335 * 80; y += 320){
                 destscreen[y + x] = backbuffer[lutplane2[y + x]];
+                destscreen[y + x + 80] = backbuffer[lutplane2[y + x + 80]];
+                destscreen[y + x + 160] = backbuffer[lutplane2[y + x + 160]];
+                destscreen[y + x + 240] = backbuffer[lutplane2[y + x + 240]];
             }
         }
 
         outp(SC_INDEX + 1, 1 << 3);
         for (x = 15; x < 65; x++){
-            for (y = 15 * 80; y < 335 * 80; y += 80){
+            for (y = 15 * 80; y < 335 * 80; y += 320){
                 destscreen[y + x] = backbuffer[lutplane3[y + x]];
+                destscreen[y + x + 80] = backbuffer[lutplane3[y + x + 80]];
+                destscreen[y + x + 160] = backbuffer[lutplane3[y + x + 160]];
+                destscreen[y + x + 240] = backbuffer[lutplane3[y + x + 240]];
             }
         }
 
