@@ -741,7 +741,93 @@ void R_DrawPlanesFlatSurfacesPotato(void)
     }
 }
 
-#ifdef MODE_T8050
+#if defined(MODE_T80100)
+void R_DrawPlanesFlatSurfacesText80100(void)
+{
+    visplane_t *pl;
+
+    int count;
+    int countblock;
+    unsigned short *dest;
+    unsigned short vmem;
+    unsigned short color;
+    unsigned short colorblock;
+    int x;
+    byte odd;
+
+    for (pl = visplanes; pl < lastvisplane; pl++)
+    {
+        if (!pl->modified || pl->minx > pl->maxx)
+            continue;
+
+        // sky flat
+        if (pl->picnum == skyflatnum)
+        {
+            R_DrawSky(pl);
+            continue;
+        }
+
+        dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
+
+        color = colormaps[dc_source[FLATPIXELCOLOR]];
+        colorblock = color << 8 | 219;
+
+        for (x = pl->minx; x <= pl->maxx; x++)
+        {
+            if (pl->top[x] > pl->bottom[x])
+                continue;
+
+            odd = pl->top[x] % 2;
+            dest = textdestscreen + Mul80(pl->top[x] / 2) + x;
+            count = pl->bottom[x] - pl->top[x];
+
+            if (count >= 1 && odd || count == 0)
+            {
+                vmem = *dest;
+
+                if (odd)
+                {
+                    vmem = vmem & 0x0F00;
+                    *dest = vmem | color << 12 | 223;
+
+                    odd = 0;
+                    dest += 80;
+                }
+                else
+                {
+                    vmem = vmem & 0xF000;
+                    *dest = vmem | color << 8 | 223;
+                    continue;
+                }
+
+                count--;
+            }
+
+            countblock = (count + 1) / 2;
+            count -= countblock * 2;
+
+            while (countblock)
+            {
+                *dest = colorblock;
+                dest += 80;
+
+                countblock--;
+            }
+
+            if (count >= 0 && !odd)
+            {
+                vmem = *dest;
+                vmem = vmem & 0xF000;
+                *dest = vmem | color << 8 | 223;
+            }
+        }
+
+        Z_ChangeTag(dc_source, PU_CACHE);
+    }
+}
+#endif
+
+#if defined(MODE_T8050)
 void R_DrawPlanesFlatSurfacesText8050(void)
 {
     visplane_t *pl;

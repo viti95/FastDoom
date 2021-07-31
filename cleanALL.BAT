@@ -13,3 +13,4 @@ call cleant12.bat
 call cleanvbd.bat
 call cleanv.bat
 call cleanv2.bat
+call cleant52.bat

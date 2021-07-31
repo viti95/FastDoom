@@ -1091,7 +1091,7 @@ void ST_DrawerText8025()
 }
 #endif
 
-#ifdef MODE_T8050
+#if defined(MODE_T8050) || defined(MODE_T80100)
 void ST_DrawerText8050()
 {
 	st_armson = 1;

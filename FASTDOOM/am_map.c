@@ -776,7 +776,7 @@ void AM_drawFline(fline_t *fl,
 #define PUTDOT(xx, yy, cc) backbuffer[Mul320(yy) + (xx)] = (cc)
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
 #define PUTDOT(xx, yy, cc)
 #endif
 

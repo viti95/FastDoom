@@ -15,7 +15,7 @@ extern byte processedpalette[14 * 768];
 extern byte processedpalette[14 * 1024];
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_EGA) || defined(MODE_T4025) || defined(MODE_T4050)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_EGA) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
 extern byte lut16colors[14 * 256];
 extern byte *ptrlut16colors;
 #endif

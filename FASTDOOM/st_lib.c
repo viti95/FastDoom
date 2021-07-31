@@ -64,7 +64,7 @@ void STlib_initNum(st_number_t *n,
 // Note: worth the trouble?
 //
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
 void STlib_drawNumText(st_number_t *n, int x, int y)
 {
     int num = *n->num;

@@ -38,6 +38,7 @@ void R_DrawPlanes(void);
 void R_DrawPlanesFlatSurfaces(void);
 void R_DrawPlanesFlatSurfacesLow(void);
 void R_DrawPlanesFlatSurfacesPotato(void);
+void R_DrawPlanesFlatSurfacesText80100(void);
 void R_DrawPlanesFlatSurfacesText8050(void);
 void R_DrawPlanesFlatSurfacesText8025(void);
 void R_DrawPlanesFlatSurfacesText4025(void);
