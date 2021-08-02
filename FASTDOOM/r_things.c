@@ -61,9 +61,12 @@ typedef struct
 //  which increases counter clockwise (protractor).
 // There was a lot of stuff grabbed wrong, so I changed it...
 //
+
+#if !defined(MODE_T8050) && !defined(MODE_T80100)
 fixed_t pspritescale;
 fixed_t pspriteiscale;
 fixed_t pspriteiscaleshifted;
+#endif
 
 lighttable_t **spritelights;
 

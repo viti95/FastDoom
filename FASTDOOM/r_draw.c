@@ -48,7 +48,7 @@
 //  and the total size == width*height*depth/8.,
 //
 
-#if !defined(MODE_T8050)
+#if !defined(MODE_T8050) && !defined(MODE_T80100)
 int viewwidth;
 int viewheight;
 int scaledviewwidth;
@@ -2744,7 +2744,7 @@ void R_InitBuffer(int width, int height)
     //  e.g. smaller view windows
     //  with border and/or status bar.
 
-#if defined(MODE_T8025) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_T8025) || defined(MODE_T4025) || defined(MODE_T4050)
     viewwindowx = 0;
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
@@ -2756,7 +2756,7 @@ void R_InitBuffer(int width, int height)
         columnofs[i] = viewwindowx + i;
 
 // Same with base row offset.
-#if defined(MODE_T8025) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_T8025) || defined(MODE_T4025) || defined(MODE_T4050)
     viewwindowy = 0;
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
