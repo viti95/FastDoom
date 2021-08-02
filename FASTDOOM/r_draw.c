@@ -34,6 +34,8 @@
 // State.
 #include "doomstat.h"
 
+#include "sizeopt.h"
+
 // status bar height at bottom of screen
 #define SBARHEIGHT 32
 
@@ -46,12 +48,14 @@
 //  and the total size == width*height*depth/8.,
 //
 
+#if !defined(MODE_T8050)
 int viewwidth;
-int viewwidthlimit;
-int scaledviewwidth;
 int viewheight;
+int scaledviewwidth;
+int viewwidthlimit;
 int viewwindowx;
 int viewwindowy;
+#endif
 
 int columnofs[SCREENWIDTH];
 
@@ -2740,7 +2744,7 @@ void R_InitBuffer(int width, int height)
     //  e.g. smaller view windows
     //  with border and/or status bar.
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_T8025) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
     viewwindowx = 0;
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
@@ -2751,8 +2755,8 @@ void R_InitBuffer(int width, int height)
     for (i = 0; i < width; i++)
         columnofs[i] = viewwindowx + i;
 
-// Samw with base row offset.
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
+// Same with base row offset.
+#if defined(MODE_T8025) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
     viewwindowy = 0;
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)

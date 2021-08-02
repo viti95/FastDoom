@@ -32,6 +32,8 @@
 #include "doomstat.h"
 #include "r_state.h"
 
+#include "sizeopt.h"
+
 seg_t *curline;
 side_t *sidedef;
 line_t *linedef;

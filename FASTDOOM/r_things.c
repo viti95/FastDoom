@@ -34,6 +34,8 @@
 
 #include <conio.h>
 
+#include "sizeopt.h"
+
 #define SC_INDEX 0x3C4
 
 #define MINZ (FRACUNIT * 4)

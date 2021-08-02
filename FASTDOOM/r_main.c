@@ -34,6 +34,10 @@
 
 #include "std_func.h"
 
+//#include "i_debug.h"
+
+#include "sizeopt.h"
+
 // Fineangles in the SCREENWIDTH wide window.
 #define FIELDOFVIEW 2048
 
@@ -45,6 +49,7 @@ int validcount = 1;
 lighttable_t *fixedcolormap;
 extern lighttable_t **walllights;
 
+#if !defined(MODE_T8050)
 int centerx;
 int centery;
 
@@ -53,6 +58,7 @@ fixed_t centeryfrac;
 fixed_t centeryfracshifted;
 fixed_t projection;
 fixed_t iprojection;
+#endif
 
 fixed_t viewx;
 fixed_t viewy;
@@ -691,6 +697,7 @@ void R_ExecuteSetViewSize(void)
     if (forceScreenSize)
         setblocks = forceScreenSize;
 
+#if !defined(MODE_T8050)
     if (setblocks == 11)
     {
         scaledviewwidth = SCREENWIDTH;
@@ -703,6 +710,8 @@ void R_ExecuteSetViewSize(void)
         viewheight = (setblocks * 168 / 10) & ~7;
         automapheight = SCREENHEIGHT - 32;
     }
+#endif
+
 #ifdef MODE_T4050
     scaledviewwidth = 80;
     viewheight = 50;
@@ -715,7 +724,7 @@ void R_ExecuteSetViewSize(void)
     scaledviewwidth = 160;
     viewheight = 100;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050)
+#if defined(MODE_T8025)
     scaledviewwidth = 80;
     viewheight = 50;
 #endif
@@ -739,12 +748,12 @@ void R_ExecuteSetViewSize(void)
 #ifdef MODE_Y
     viewwidth = scaledviewwidth >> detailshift;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_T8025) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT)
     viewwidth = scaledviewwidth;
 #endif
 
+#if !defined(MODE_T8050)
     viewwidthlimit = viewwidth - 1;
-
     centery = viewheight / 2;
     centerx = viewwidth / 2;
     centerxfrac = centerx << FRACBITS;
@@ -752,6 +761,19 @@ void R_ExecuteSetViewSize(void)
     centeryfracshifted = centeryfrac >> 4;
     projection = centerxfrac;
     iprojection = FixedDiv(FRACUNIT << 8, projection);
+#endif
+
+    /*I_Printf("scaledviewwidth: %d\n", scaledviewwidth);
+    I_Printf("viewwidth: %d\n", viewwidth);
+    I_Printf("viewheight: %d\n", viewheight);
+    I_Printf("viewwidthlimit: %d\n", viewwidthlimit);
+    I_Printf("centerx: %d\n", centerx);
+    I_Printf("centery: %d\n", centery);
+    I_Printf("centerxfrac: %d\n", centerxfrac);
+    I_Printf("centeryfrac: %d\n", centeryfrac);
+    I_Printf("centeryfracshifted: %d\n", centeryfracshifted);
+    I_Printf("projection: %d\n", projection);
+    I_Printf("iprojection: %d\n", iprojection);*/
 
 #ifdef MODE_T4050
     colfunc = basecolfunc = R_DrawColumnText4050;
@@ -987,8 +1009,13 @@ void R_ExecuteSetViewSize(void)
     R_InitTextureMapping();
 
     // psprite scales
+#if !defined(MODE_T8050)
     pspritescale = FRACUNIT * viewwidth / SCREENWIDTH;
     pspriteiscale = FRACUNIT * SCREENWIDTH / viewwidth;
+
+    /*I_Printf("pspritescale: %d\n", pspritescale);
+    I_Printf("pspriteiscale: %d\n", pspriteiscale);*/
+#endif
 
 #if defined(MODE_T4050) || defined(MODE_T80100)
     pspriteiscaleshifted = pspriteiscale >> 1;
@@ -996,9 +1023,11 @@ void R_ExecuteSetViewSize(void)
 #ifdef MODE_Y
     pspriteiscaleshifted = pspriteiscale >> detailshift;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_T8025) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT)
     pspriteiscaleshifted = pspriteiscale;
 #endif
+
+    //I_Printf("pspriteiscaleshifted: %d\n", pspriteiscaleshifted);
 
     // thing clipping
     SetWords(screenheightarray, viewheight, viewwidth);

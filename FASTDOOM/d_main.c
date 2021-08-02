@@ -62,6 +62,8 @@
 
 #include "i_vesa.h"
 
+#include "sizeopt.h"
+
 #define BGCOLOR 7
 #define FGCOLOR 8
 
