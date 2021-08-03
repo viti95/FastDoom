@@ -49,7 +49,7 @@ int validcount = 1;
 lighttable_t *fixedcolormap;
 extern lighttable_t **walllights;
 
-#if !defined(MODE_T8050) && !defined(MODE_T80100) && !defined(MODE_T8025)
+#if !defined(MODE_T8050) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025)
 int centerx;
 int centery;
 
@@ -697,7 +697,7 @@ void R_ExecuteSetViewSize(void)
     if (forceScreenSize)
         setblocks = forceScreenSize;
 
-#if !defined(MODE_T8050) && !defined(MODE_T80100) && !defined(MODE_T8025)
+#if !defined(MODE_T8050) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025)
     if (setblocks == 11)
     {
         scaledviewwidth = SCREENWIDTH;
@@ -715,10 +715,6 @@ void R_ExecuteSetViewSize(void)
 #ifdef MODE_T4050
     scaledviewwidth = 80;
     viewheight = 50;
-#endif
-#ifdef MODE_T4025
-    scaledviewwidth = 40;
-    viewheight = 25;
 #endif
 #ifdef MODE_Y
     if (forcePotatoDetail || forceLowDetail || forceHighDetail)
@@ -740,11 +736,11 @@ void R_ExecuteSetViewSize(void)
 #ifdef MODE_Y
     viewwidth = scaledviewwidth >> detailshift;
 #endif
-#if defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT)
+#if defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     viewwidth = scaledviewwidth;
 #endif
 
-#if !defined(MODE_T8050) && !defined(MODE_T80100) && !defined(MODE_T8025)
+#if !defined(MODE_T8050) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025)
     viewwidthlimit = viewwidth - 1;
     centery = viewheight / 2;
     centerx = viewwidth / 2;
@@ -1001,7 +997,7 @@ void R_ExecuteSetViewSize(void)
     R_InitTextureMapping();
 
     // psprite scales
-#if !defined(MODE_T8050) && !defined(MODE_T80100) && !defined(MODE_T8025)
+#if !defined(MODE_T8050) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025)
     pspritescale = FRACUNIT * viewwidth / SCREENWIDTH;
     pspriteiscale = FRACUNIT * SCREENWIDTH / viewwidth;
 
@@ -1015,7 +1011,7 @@ void R_ExecuteSetViewSize(void)
 #ifdef MODE_Y
     pspriteiscaleshifted = pspriteiscale >> detailshift;
 #endif
-#if defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT)
+#if defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     pspriteiscaleshifted = pspriteiscale;
 #endif
 
