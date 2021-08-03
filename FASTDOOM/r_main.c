@@ -34,8 +34,6 @@
 
 #include "std_func.h"
 
-//#include "i_debug.h"
-
 #include "sizeopt.h"
 
 // Fineangles in the SCREENWIDTH wide window.
@@ -744,18 +742,6 @@ void R_ExecuteSetViewSize(void)
     iprojection = FixedDiv(FRACUNIT << 8, projection);
 #endif
 
-    /*I_Printf("scaledviewwidth: %d\n", scaledviewwidth);
-    I_Printf("viewwidth: %d\n", viewwidth);
-    I_Printf("viewheight: %d\n", viewheight);
-    I_Printf("viewwidthlimit: %d\n", viewwidthlimit);
-    I_Printf("centerx: %d\n", centerx);
-    I_Printf("centery: %d\n", centery);
-    I_Printf("centerxfrac: %d\n", centerxfrac);
-    I_Printf("centeryfrac: %d\n", centeryfrac);
-    I_Printf("centeryfracshifted: %d\n", centeryfracshifted);
-    I_Printf("projection: %d\n", projection);
-    I_Printf("iprojection: %d\n", iprojection);*/
-
 #ifdef MODE_T4050
     colfunc = basecolfunc = R_DrawColumnText4050;
 
@@ -993,9 +979,6 @@ void R_ExecuteSetViewSize(void)
 #if !defined(MODE_T8050) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050)
     pspritescale = FRACUNIT * viewwidth / SCREENWIDTH;
     pspriteiscale = FRACUNIT * SCREENWIDTH / viewwidth;
-
-    /*I_Printf("pspritescale: %d\n", pspritescale);
-    I_Printf("pspriteiscale: %d\n", pspriteiscale);*/
 #endif
 
 #ifdef MODE_Y
@@ -1004,8 +987,6 @@ void R_ExecuteSetViewSize(void)
 #if defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     pspriteiscaleshifted = pspriteiscale;
 #endif
-
-    //I_Printf("pspriteiscaleshifted: %d\n", pspriteiscaleshifted);
 
     // thing clipping
     SetWords(screenheightarray, viewheight, viewwidth);
