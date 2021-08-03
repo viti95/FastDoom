@@ -20,6 +20,25 @@
 #define pspriteiscaleshifted 524288
 #endif
 
+#if defined(MODE_T4050)
+#define scaledviewwidth 80
+#define viewwidth 40
+#define viewheight 50
+#define viewwidthlimit 39
+#define viewwindowx 0
+#define viewwindowy 0
+#define centerx 20
+#define centery 25
+#define centerxfrac 1310720
+#define centeryfrac 1638400
+#define centeryfracshifted 102400
+#define projection 1310720
+#define iprojection 838860
+#define pspritescale 8192
+#define pspriteiscale 524288
+#define pspriteiscaleshifted 262144
+#endif
+
 #if defined(MODE_T8025) || defined(MODE_T8050)
 #define scaledviewwidth 80
 #define viewwidth 80

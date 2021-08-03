@@ -49,7 +49,7 @@ int validcount = 1;
 lighttable_t *fixedcolormap;
 extern lighttable_t **walllights;
 
-#if !defined(MODE_T8050) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025)
+#if !defined(MODE_T8050) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050)
 int centerx;
 int centery;
 
@@ -697,7 +697,7 @@ void R_ExecuteSetViewSize(void)
     if (forceScreenSize)
         setblocks = forceScreenSize;
 
-#if !defined(MODE_T8050) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025)
+#if !defined(MODE_T8050) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050)
     if (setblocks == 11)
     {
         scaledviewwidth = SCREENWIDTH;
@@ -712,10 +712,6 @@ void R_ExecuteSetViewSize(void)
     }
 #endif
 
-#ifdef MODE_T4050
-    scaledviewwidth = 80;
-    viewheight = 50;
-#endif
 #ifdef MODE_Y
     if (forcePotatoDetail || forceLowDetail || forceHighDetail)
     {
@@ -730,9 +726,6 @@ void R_ExecuteSetViewSize(void)
         detailshift = setdetail;
 #endif
 
-#if defined(MODE_T4050)
-    viewwidth = scaledviewwidth >> 1;
-#endif
 #ifdef MODE_Y
     viewwidth = scaledviewwidth >> detailshift;
 #endif
@@ -740,7 +733,7 @@ void R_ExecuteSetViewSize(void)
     viewwidth = scaledviewwidth;
 #endif
 
-#if !defined(MODE_T8050) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025)
+#if !defined(MODE_T8050) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050)
     viewwidthlimit = viewwidth - 1;
     centery = viewheight / 2;
     centerx = viewwidth / 2;
@@ -997,7 +990,7 @@ void R_ExecuteSetViewSize(void)
     R_InitTextureMapping();
 
     // psprite scales
-#if !defined(MODE_T8050) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025)
+#if !defined(MODE_T8050) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050)
     pspritescale = FRACUNIT * viewwidth / SCREENWIDTH;
     pspriteiscale = FRACUNIT * SCREENWIDTH / viewwidth;
 
@@ -1005,9 +998,6 @@ void R_ExecuteSetViewSize(void)
     I_Printf("pspriteiscale: %d\n", pspriteiscale);*/
 #endif
 
-#if defined(MODE_T4050)
-    pspriteiscaleshifted = pspriteiscale >> 1;
-#endif
 #ifdef MODE_Y
     pspriteiscaleshifted = pspriteiscale >> detailshift;
 #endif
