@@ -62,7 +62,7 @@ typedef struct
 // There was a lot of stuff grabbed wrong, so I changed it...
 //
 
-#if !defined(MODE_T8050) && !defined(MODE_T80100)
+#if !defined(MODE_T8050) && !defined(MODE_T80100) && !defined(MODE_T8025)
 fixed_t pspritescale;
 fixed_t pspriteiscale;
 fixed_t pspriteiscaleshifted;

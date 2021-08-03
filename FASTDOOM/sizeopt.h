@@ -1,7 +1,7 @@
 #ifndef __SIZEOPT__
 #define __SIZEOPT__
 
-#if defined(MODE_T8050)
+#if defined(MODE_T8025) || defined(MODE_T8050)
 #define scaledviewwidth 80
 #define viewwidth 80
 #define viewheight 50
