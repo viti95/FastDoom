@@ -38,6 +38,19 @@
              graphics a VGA video card is recommended
  Controls:   Keyboard (mouse recommended)
 
+ Supported WADS
+ --------------
+
+ The supported wads are the following:
+    * DOOM.WAD -> DOOM Registered (3 episodes)
+    * DOOM1.WAD -> DOOM Shareware (1 episode)
+    * DOOMU.WAD -> Ultimate DOOM (4 episodes)
+    * DOOM2.WAD -> DOOM II
+    * PLUTONIA.WAD -> Final DOOM The Plutonia Experiment
+    * TNT.WAD -> Final DOOM TNT Evilution 
+
+ All of them must be the 1.9 version to work fine.
+
  Supported hardware
  ------------------
  
