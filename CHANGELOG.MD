@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.8.6 (4 Aug 2021)
+* Added new video modes (for LGR's vertical monitor). Both support page flipping.
+ * FDOOMV.EXE  => FastDoom Planar 320x350 vertical mode. The base 320x200 image is stretched to 320x350 (wrong aspect ratio)
+ * FDOOMV2.EXE => FastDoom Planar 320x350 vertical mode. The base 320x200 image is centered in the screen, leaving black borders
+* Optimizations for text modes
+
 ## 0.8.5 (20 Jul 2021)
 * Added new video modes
  * FDOOMT1.EXE  => FastDoom 40x25 16 colors text mode
