@@ -84,6 +84,8 @@
  * FDOOMT25.EXE => FastDoom 80x25 16 colors text mode (virtual resolution of
                    80x50)
  * FDOOMT50.EXE => FastDoom 80x50 16 colors text mode
+ * FDOOMT52.EXE => FastDoom 80x50 16 colors text mode (virtual resolution of
+                   80x100)
  * FDOOMVBR.EXE => FastDoom for VBE 2.0 cards. Uses real mode (default, and
                    more compatible). If you use UniVBE use this version
  * FDOOMVBP.EXE => FastDoom for VBE 2.0 cards. Uses protected mode
