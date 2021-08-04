@@ -1371,6 +1371,10 @@ void I_InitGraphics(void)
     outp(GC_DATA, (inp(GC_DATA) & ~0x10) | 0x00);
     outp(GC_INDEX, MISCELLANOUS);
     outp(GC_DATA, (inp(GC_DATA) & ~0x02) | 0x00);
+
+    outpw(SC_INDEX, 0xf02);
+    SetDWords(pcscreen, 0, 0x4000);
+
     outp(MISC_OUTPUT, 0xA3); // 350-scan-line scan rate
 
     outp(SC_INDEX, SYNC_RESET);
