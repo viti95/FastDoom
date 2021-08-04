@@ -327,7 +327,6 @@ extern gamestate_t wipegamestate;
 
 void G_DoLoadLevel(void)
 {
-
     // DOOM determines the sky texture to be used
     // depending on the current episode, and the game version.
     if (gamemode == commercial)
@@ -651,8 +650,6 @@ void G_DoCompleted(void)
     int i;
 
     gameaction = ga_nothing;
-
-    S_ClearSounds(); // clear sound cache
 
     G_PlayerFinishLevel(); // take away cards and stuff
 

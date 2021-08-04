@@ -532,7 +532,7 @@ void S_ClearSounds(void)
     {
         if (S_sfx[i].data != 0)
         {
-            Z_ChangeTag(S_sfx[i].data, PU_CACHE);
+            Z_Free(S_sfx[i].data);
             S_sfx[i].data = 0;
         }
     }

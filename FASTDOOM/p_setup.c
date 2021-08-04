@@ -554,6 +554,7 @@ void P_SetupLevel(int episode,
 
     // Make sure all sounds are stopped before Z_FreeTags.
     S_Start();
+    S_ClearSounds();
 
     Z_FreeTags(PU_LEVEL, PU_PURGELEVEL - 1);
 
