@@ -90,9 +90,13 @@
                    extensions. Some video cards crash with this mode, it
                    should be a little bit faster than the real mode version
  * FDOOMVBD.EXE => FastDoom for VBE 2.0 cards with LFB (triple buffered),
-		   all rendering is done directly onto the video card, the
-		   same way Mode Y does. Faster for systems with slow RAM
-		   access.
+		           all rendering is done directly onto the video card, the
+		           same way Mode Y does. Faster for systems with slow RAM
+		           access.
+ * FDOOMV.EXE   => FastDoom Planar 320x350 vertical mode. The base 320x200 
+                   image is stretched to 320x350 (wrong aspect ratio)
+ * FDOOMV2.EXE =>  FastDoom Planar 320x350 vertical mode. The base 320x200 
+                   image is centered in the screen, leaving black borders
  * FDSETUP.EXE  => Utility to setup controls and sound cards
 
  Command line parameters
