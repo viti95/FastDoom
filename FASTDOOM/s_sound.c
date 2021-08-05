@@ -104,8 +104,8 @@ void S_StopMusic(void)
 
         MUSIC_StopSong();
         //I_UnRegisterSong(mus_playing->handle);
-        Z_ChangeTag(mus_playing->data, PU_CACHE);
-
+        Z_Free(mus_playing->data);
+        
         mus_playing->data = 0;
         mus_playing = 0;
     }
