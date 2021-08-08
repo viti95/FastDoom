@@ -201,7 +201,7 @@ void I_StartupSound(void);
 void I_ShutdownSound(void);
 void I_ShutdownTimer(void);
 
-#if defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP)
+#if defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
 byte lut16colors[14 * 256];
 byte *ptrlut16colors;
 #endif
@@ -344,6 +344,43 @@ const byte textcolors[48] = {
     0x3F, 0x3F, 0x3F};
 #endif
 
+#ifdef MODE_CVB
+const byte textcolors[48] = {  // standard IBM CGA
+    0x00, 0x00, 0x00,
+    0x00, 0x18, 0x06,
+    0x09, 0x0a, 0x2f,
+    0x04, 0x26, 0x37,
+    0x20, 0x03, 0x15,
+    0x1c, 0x1c, 0x1c,
+    0x2c, 0x0e, 0x3f,
+    0x26, 0x2a, 0x3f,
+    0x12, 0x12, 0x00,
+    0x0f, 0x2e, 0x00,
+    0x1c, 0x1c, 0x1c,
+    0x18, 0x3b, 0x21,
+    0x37, 0x15, 0x04,
+    0x35, 0x31, 0x07,
+    0x3f, 0x20, 0x3a,
+    0x3f, 0x3f, 0x3f};
+/*const byte textcolors[48] = {  // ATi Small Wonder
+    0x00, 0x00, 0x00,
+    0x22, 0x04, 0x00,
+    0x06, 0x15, 0x00,
+    0x26, 0x1f, 0x00,
+    0x03, 0x0f, 0x23,
+    0x16, 0x17, 0x15,
+    0x00, 0x2b, 0x00,
+    0x1a, 0x38, 0x00,
+    0x18, 0x01, 0x36,
+    0x3f, 0x07, 0x31,
+    0x14, 0x15, 0x13,
+    0x3f, 0x22, 0x0e,
+    0x0a, 0x13, 0x3f,
+    0x39, 0x1e, 0x3f,
+    0x07, 0x32, 0x3f,
+    0x3f, 0x3f, 0x3f};*/
+#endif
+
 #ifdef MODE_PCP
 const byte textcolors[48] = {
     0x00, 0x00, 0x00,
@@ -364,7 +401,7 @@ const byte textcolors[48] = {
     0x3F, 0x3F, 0x3F};
 #endif
 
-#if defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP)
+#if defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
 void I_ProcessPalette(byte *palette)
 {
     int i, j;
@@ -430,7 +467,7 @@ void I_SetPalette(int numpalette)
     ptrsumcolors11 = sumcolors11 + numpalette * 256;
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_EGA) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_EGA) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
     ptrlut16colors = lut16colors + numpalette * 256;
 #endif
 
@@ -780,7 +817,6 @@ void HERC_DrawBackbuffer(void)
 #endif
 
 #ifdef MODE_EGA
-
 void EGA_DrawBackbuffer(void)
 {
     byte plane_red[SCREENWIDTH * SCREENHEIGHT / 8];
@@ -841,6 +877,34 @@ void EGA_DrawBackbuffer(void)
     {
         destscreen = (byte *)0xa0000;
         page = 0;
+    }
+}
+#endif
+
+#ifdef MODE_CVB
+void CVBS_DrawBackbuffer(void)
+{
+    int x;
+    unsigned char *vram = (unsigned char *)0xB8000;
+    unsigned int base = 0;
+    unsigned char color0, color1;
+
+    for (base = 0; base < SCREENHEIGHT * 320;)
+    {
+        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++)
+        {
+            color0 = ptrlut16colors[backbuffer[base]];
+            color1 = ptrlut16colors[backbuffer[base + 2]];
+            *(vram) = color0 << 4 | color1;
+        }
+        vram += 0x1FB0;
+        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++)
+        {
+            color0 = ptrlut16colors[backbuffer[base]];
+            color1 = ptrlut16colors[backbuffer[base + 2]];
+            *(vram) = color0 << 4 | color1;
+        }
+        vram -= 0x2000;
     }
 }
 #endif
@@ -1067,6 +1131,9 @@ void I_FinishUpdate(void)
 #endif
 #ifdef MODE_PCP
     CPLUS_DrawBackbuffer();
+#endif
+#ifdef MODE_CVB
+    CVBS_DrawBackbuffer();
 #endif
 #if defined(MODE_V)
     {
@@ -1548,6 +1615,12 @@ void I_InitGraphics(void)
     int386(0x10, (union REGS *)&regs, &regs);
     outp(0x3C4, 0x2);
     pcscreen = destscreen = (byte *)0xA0000;
+#endif
+#ifdef MODE_CVB
+    regs.w.ax = 0x06;
+    int386(0x10, (union REGS *)&regs, &regs);
+    outp(0x3D8, 0x1A); // Enable color burst
+    pcscreen = destscreen = (byte *)0xB8000;
 #endif
 #ifdef MODE_HERC
     //byte Graph_720x348[12] = {0x03, 0x36, 0x2D, 0x2E, 0x07, 0x5B, 0x02, 0x57, 0x57, 0x02, 0x03, 0x0A};

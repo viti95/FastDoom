@@ -920,6 +920,10 @@ void D_DoomMain(void)
     D_AddFile("mode16.wad");
 #endif
 
+#ifdef MODE_CVB
+    D_AddFile("modecvbs.wad");
+#endif
+
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
     D_AddFile("modetxt.wad");
 #endif
