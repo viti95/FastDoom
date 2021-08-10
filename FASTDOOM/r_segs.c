@@ -33,6 +33,8 @@
 
 #include <conio.h>
 
+#include "sizeopt.h"
+
 #define SC_INDEX 0x3C4
 
 // OPTIMIZE: closed two sided lines as single sided

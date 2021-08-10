@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## 0.8.6 (4 Aug 2021)
+* Added new video modes (for LGR's vertical monitor). Both support page flipping.
+ * FDOOMV.EXE  => FastDoom Planar 320x350 vertical mode. The base 320x200 image is stretched to 320x350 (wrong aspect ratio)
+ * FDOOMV2.EXE => FastDoom Planar 320x350 vertical mode. The base 320x200 image is centered in the screen, leaving black borders
+ * FDOOMT52.EXE => FastDoom Text Mode 80x100 (80x50 double height)
+* Optimizations for text modes
+
+## 0.8.5 (20 Jul 2021)
+* Added new video modes
+ * FDOOMT1.EXE  => FastDoom 40x25 16 colors text mode
+ * FDOOMT12.EXE => FastDoom 40x25 16 colors text mode (virtual resolution of 40x50)
+ * FDOOMVBD.EXE => FastDoom for VBE 2.0 cards with LFB (triple buffered), all rendering is done directly onto the video card, the same way Mode Y does. Faster for systems with slow RAM access.
+* More optimizations (thanks to @RamonUnch)
+
 ## 0.8.4 (1 Jul 2021)
 * Added support for two new sound cards:
     * PC Speaker digitized (1 bit, 11KHz, mono)

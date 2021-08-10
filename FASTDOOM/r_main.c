@@ -34,6 +34,8 @@
 
 #include "std_func.h"
 
+#include "sizeopt.h"
+
 // Fineangles in the SCREENWIDTH wide window.
 #define FIELDOFVIEW 2048
 
@@ -45,6 +47,7 @@ int validcount = 1;
 lighttable_t *fixedcolormap;
 extern lighttable_t **walllights;
 
+#if !defined(MODE_T8050) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050)
 int centerx;
 int centery;
 
@@ -53,6 +56,7 @@ fixed_t centeryfrac;
 fixed_t centeryfracshifted;
 fixed_t projection;
 fixed_t iprojection;
+#endif
 
 fixed_t viewx;
 fixed_t viewy;
@@ -529,10 +533,17 @@ fixed_t R_ScaleFromGlobalAngle(angle_t visangle)
     // both sines are allways positive
     sinea = finesine[anglea >> ANGLETOFINESHIFT];
     sineb = finesine[angleb >> ANGLETOFINESHIFT];
+#if defined(MODE_T4050) || defined(MODE_T80100)
+    num = FixedMul(projection, sineb) << 1;
+#endif
 #ifdef MODE_Y
     num = FixedMul(projection, sineb) << detailshift;
 #endif
+<<<<<<< HEAD
 #if defined(MODE_T25) || defined(MODE_T50) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+=======
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT)
+>>>>>>> upstream/master
     num = FixedMul(projection, sineb);
 #endif
     den = FixedMul(rw_distance, sinea);
@@ -688,6 +699,7 @@ void R_ExecuteSetViewSize(void)
     if (forceScreenSize)
         setblocks = forceScreenSize;
 
+#if !defined(MODE_T8050) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050)
     if (setblocks == 11)
     {
         scaledviewwidth = SCREENWIDTH;
@@ -700,11 +712,8 @@ void R_ExecuteSetViewSize(void)
         viewheight = (setblocks * 168 / 10) & ~7;
         automapheight = SCREENHEIGHT - 32;
     }
-
-#if defined(MODE_T25) || defined(MODE_T50)
-    scaledviewwidth = 80;
-    viewheight = 50;
 #endif
+
 #ifdef MODE_Y
     if (forcePotatoDetail || forceLowDetail || forceHighDetail)
     {
@@ -722,12 +731,16 @@ void R_ExecuteSetViewSize(void)
 #ifdef MODE_Y
     viewwidth = scaledviewwidth >> detailshift;
 #endif
+<<<<<<< HEAD
 #if defined(MODE_T25) || defined(MODE_T50) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+=======
+#if defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+>>>>>>> upstream/master
     viewwidth = scaledviewwidth;
 #endif
 
+#if !defined(MODE_T8050) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050)
     viewwidthlimit = viewwidth - 1;
-
     centery = viewheight / 2;
     centerx = viewwidth / 2;
     centerxfrac = centerx << FRACBITS;
@@ -735,8 +748,57 @@ void R_ExecuteSetViewSize(void)
     centeryfracshifted = centeryfrac >> 4;
     projection = centerxfrac;
     iprojection = FixedDiv(FRACUNIT << 8, projection);
+#endif
 
-#ifdef MODE_T25
+#ifdef MODE_T4050
+    colfunc = basecolfunc = R_DrawColumnText4050;
+
+    if (untexturedSurfaces)
+    {
+        spanfunc = R_DrawSpanFlatText4050;
+    }
+    else
+    {
+        spanfunc = R_DrawSpanText4050;
+    }
+
+    if (flatSky)
+        skyfunc = R_DrawSkyFlatText4050;
+    else
+        skyfunc = R_DrawColumnText4050;
+
+    if (flatShadows)
+        fuzzcolfunc = R_DrawFuzzColumnFastText4050;
+    else if (saturnShadows)
+        fuzzcolfunc = R_DrawFuzzColumnSaturnText4050;
+    else
+        fuzzcolfunc = R_DrawFuzzColumnText4050;
+#endif
+#ifdef MODE_T4025
+    colfunc = basecolfunc = R_DrawColumnText4025;
+
+    if (untexturedSurfaces)
+    {
+        spanfunc = R_DrawSpanFlatText4025;
+    }
+    else
+    {
+        spanfunc = R_DrawSpanText4025;
+    }
+
+    if (flatSky)
+        skyfunc = R_DrawSkyFlatText4025;
+    else
+        skyfunc = R_DrawColumnText4025;
+
+    if (flatShadows)
+        fuzzcolfunc = R_DrawFuzzColumnFastText4025;
+    else if (saturnShadows)
+        fuzzcolfunc = R_DrawFuzzColumnSaturnText4025;
+    else
+        fuzzcolfunc = R_DrawFuzzColumnText4025;
+#endif
+#ifdef MODE_T8025
     colfunc = basecolfunc = R_DrawColumnText8025;
 
     if (untexturedSurfaces)
@@ -760,7 +822,7 @@ void R_ExecuteSetViewSize(void)
     else
         fuzzcolfunc = R_DrawFuzzColumnText8025;
 #endif
-#ifdef MODE_T50
+#if defined(MODE_T8050)
     colfunc = basecolfunc = R_DrawColumnText8050;
 
     if (untexturedSurfaces)
@@ -784,6 +846,32 @@ void R_ExecuteSetViewSize(void)
     else
         fuzzcolfunc = R_DrawFuzzColumnText8050;
 #endif
+
+#if defined(MODE_T80100)
+    colfunc = basecolfunc = R_DrawColumnText80100;
+
+    if (untexturedSurfaces)
+    {
+        spanfunc = R_DrawSpanFlatText80100;
+    }
+    else
+    {
+        spanfunc = R_DrawSpanText80100;
+    }
+
+    if (flatSky)
+        skyfunc = R_DrawSkyFlatText80100;
+    else
+        skyfunc = R_DrawColumnText80100;
+
+    if (flatShadows)
+        fuzzcolfunc = R_DrawFuzzColumnFastText80100;
+    else if (saturnShadows)
+        fuzzcolfunc = R_DrawFuzzColumnSaturnText80100;
+    else
+        fuzzcolfunc = R_DrawFuzzColumnText80100;
+#endif
+
 #ifdef MODE_Y
     switch (detailshift)
     {
@@ -849,7 +937,11 @@ void R_ExecuteSetViewSize(void)
         break;
     }
 #endif
+<<<<<<< HEAD
 #if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+=======
+#if defined(USE_BACKBUFFER)
+>>>>>>> upstream/master
     colfunc = basecolfunc = R_DrawColumn_13h;
 
     if (untexturedSurfaces)
@@ -870,18 +962,45 @@ void R_ExecuteSetViewSize(void)
         fuzzcolfunc = R_DrawFuzzColumn_13h;
 #endif
 
+#ifdef MODE_VBE2_DIRECT
+    colfunc = basecolfunc = R_DrawColumnVBE2;
+
+    if (untexturedSurfaces)
+        spanfunc = R_DrawSpanFlatVBE2;
+    else
+        spanfunc = R_DrawSpanVBE2;
+
+    if (flatSky)
+        skyfunc = R_DrawSkyFlatVBE2;
+    else
+        skyfunc = R_DrawColumnVBE2;
+
+    if (flatShadows)
+        fuzzcolfunc = R_DrawFuzzColumnFastVBE2;
+    else if (saturnShadows)
+        fuzzcolfunc = R_DrawFuzzColumnSaturnVBE2;
+    else
+        fuzzcolfunc = R_DrawFuzzColumnVBE2;
+#endif
+
     R_InitBuffer(scaledviewwidth, viewheight);
 
     R_InitTextureMapping();
 
     // psprite scales
+#if !defined(MODE_T8050) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050)
     pspritescale = FRACUNIT * viewwidth / SCREENWIDTH;
     pspriteiscale = FRACUNIT * SCREENWIDTH / viewwidth;
+#endif
 
 #ifdef MODE_Y
     pspriteiscaleshifted = pspriteiscale >> detailshift;
 #endif
+<<<<<<< HEAD
 #if defined(MODE_T25) || defined(MODE_T50) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+=======
+#if defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+>>>>>>> upstream/master
     pspriteiscaleshifted = pspriteiscale;
 #endif
 
@@ -894,10 +1013,17 @@ void R_ExecuteSetViewSize(void)
         dy = ((i - viewheight / 2) << FRACBITS) + FRACUNIT / 2;
         dy = abs(dy);
 
+#if defined(MODE_T4050) || defined(MODE_T80100)
+        yslope[i] = FixedDiv((viewwidth << 1) / 2 * FRACUNIT, dy);
+#endif
 #ifdef MODE_Y
         yslope[i] = FixedDiv((viewwidth << detailshift) / 2 * FRACUNIT, dy);
 #endif
+<<<<<<< HEAD
 #if defined(MODE_T25) || defined(MODE_T50) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+=======
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT)
+>>>>>>> upstream/master
         yslope[i] = FixedDiv((viewwidth) / 2 * FRACUNIT, dy);
 #endif
     }
@@ -915,10 +1041,17 @@ void R_ExecuteSetViewSize(void)
         startmap = ((LIGHTLEVELS - 1 - i) * 2) * NUMCOLORMAPS / LIGHTLEVELS;
         for (j = 0; j < MAXLIGHTSCALE; j++)
         {
+#if defined(MODE_T4050) || defined(MODE_T80100)
+            level = startmap - Mul320(j) / (viewwidth << 1) / DISTMAP;
+#endif
 #ifdef MODE_Y
             level = startmap - Mul320(j) / (viewwidth << detailshift) / DISTMAP;
 #endif
+<<<<<<< HEAD
 #if defined(MODE_T25) || defined(MODE_T50) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+=======
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT)
+>>>>>>> upstream/master
             level = startmap - Mul320(j) / (viewwidth) / DISTMAP;
 #endif
             if (level < 0)
@@ -1057,7 +1190,14 @@ void R_SetupFrame(player_t *player)
         fixedcolormap = 0;
 
     validcount++;
+    
+    #ifdef MODE_VBE2_DIRECT
+    destview = destscreen + Mul320(viewwindowy) + viewwindowx;
+    #endif
+
+    #ifdef MODE_Y
     destview = destscreen + Mul80(viewwindowy) + (viewwindowx >> 2);
+    #endif
 }
 
 //
@@ -1090,13 +1230,33 @@ void R_RenderPlayerView(player_t *player)
     // Check for new console commands.
     NetUpdate();
 
-#ifdef MODE_T25
+#ifdef MODE_T4050
+    if (flatSurfaces)
+        R_DrawPlanesFlatSurfacesText4050();
+    else
+        R_DrawPlanes();
+#endif
+#ifdef MODE_T4025
+    if (flatSurfaces)
+        R_DrawPlanesFlatSurfacesText4025();
+    else
+        R_DrawPlanes();
+#endif
+#ifdef MODE_T8025
     if (flatSurfaces)
         R_DrawPlanesFlatSurfacesText8025();
     else
         R_DrawPlanes();
 #endif
-#ifdef MODE_T50
+
+#if defined(MODE_T80100)
+    if (flatSurfaces)
+        R_DrawPlanesFlatSurfacesText80100();
+    else
+        R_DrawPlanes();
+#endif
+
+#if defined(MODE_T8050)
     if (flatSurfaces)
         R_DrawPlanesFlatSurfacesText8050();
     else
@@ -1119,9 +1279,19 @@ void R_RenderPlayerView(player_t *player)
     else
         R_DrawPlanes();
 #endif
+<<<<<<< HEAD
 #if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+=======
+#if defined(USE_BACKBUFFER)
+>>>>>>> upstream/master
     if (flatSurfaces)
         R_DrawPlanesFlatSurfaces_13h();
+    else
+        R_DrawPlanes();
+#endif
+#ifdef MODE_VBE2_DIRECT
+    if (flatSurfaces)
+        R_DrawPlanesFlatSurfacesVBE2();
     else
         R_DrawPlanes();
 #endif

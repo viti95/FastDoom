@@ -104,8 +104,8 @@ void S_StopMusic(void)
 
         MUSIC_StopSong();
         //I_UnRegisterSong(mus_playing->handle);
-        Z_ChangeTag(mus_playing->data, PU_CACHE);
-
+        Z_Free(mus_playing->data);
+        
         mus_playing->data = 0;
         mus_playing = 0;
     }
@@ -532,7 +532,7 @@ void S_ClearSounds(void)
     {
         if (S_sfx[i].data != 0)
         {
-            Z_ChangeTag(S_sfx[i].data, PU_CACHE);
+            Z_Free(S_sfx[i].data);
             S_sfx[i].data = 0;
         }
     }

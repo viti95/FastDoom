@@ -327,7 +327,6 @@ extern gamestate_t wipegamestate;
 
 void G_DoLoadLevel(void)
 {
-
     // DOOM determines the sky texture to be used
     // depending on the current episode, and the game version.
     if (gamemode == commercial)
@@ -652,8 +651,6 @@ void G_DoCompleted(void)
 
     gameaction = ga_nothing;
 
-    S_ClearSounds(); // clear sound cache
-
     G_PlayerFinishLevel(); // take away cards and stuff
 
     if (automapactive)
@@ -853,7 +850,7 @@ void G_DoLoadGame(void)
         R_ExecuteSetViewSize();
 
 // draw the pattern into the back screen
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     R_FillBackScreen();
 #endif
 }
@@ -926,7 +923,7 @@ void G_DoSaveGame(void)
     Z_Free(savebuffer);
 
 // draw the pattern into the back screen
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     R_FillBackScreen();
 #endif
 }

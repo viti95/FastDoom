@@ -39,19 +39,19 @@
 // Screen 0 is the screen updated by I_Update screen.
 // Screen 1 is an extra buffer.
 
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 extern byte screen0[SCREENWIDTH * SCREENHEIGHT];
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 extern byte screen4[SCREENWIDTH * 32];
 #endif
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
 extern byte backbuffer[SCREENWIDTH * SCREENHEIGHT];
 #endif
 
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 extern int dirtybox[4];
 #endif
 
@@ -68,8 +68,11 @@ void V_DrawPatchScreen0(int x, int y, patch_t *patch);
 void V_DrawPatchDirect(int x, int y, patch_t *patch);
 void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch);
 
+void V_DrawPatchDirectText4050(int x, int y, patch_t *patch);
+void V_DrawPatchDirectText4025(int x, int y, patch_t *patch);
 void V_DrawPatchDirectText8025(int x, int y, patch_t *patch);
 void V_DrawPatchDirectText8050(int x, int y, patch_t *patch);
+void V_DrawPatchDirectText80100(int x, int y, patch_t *patch);
 
 void V_WriteTextDirect(int x, int y, char *string);
 void V_WriteCharDirect(int x, int y, unsigned char c);
@@ -77,7 +80,7 @@ void V_WriteCharDirect(int x, int y, unsigned char c);
 void V_WriteTextColorDirect(int x, int y, char *string, unsigned short color);
 void V_WriteCharColorDirect(int x, int y, unsigned char c, unsigned short color);
 
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 void V_MarkRect(int x, int y, int width, int height);
 #endif
 

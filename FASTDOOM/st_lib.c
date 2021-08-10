@@ -64,7 +64,7 @@ void STlib_initNum(st_number_t *n,
 // Note: worth the trouble?
 //
 
-#if defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
 void STlib_drawNumText(st_number_t *n, int x, int y)
 {
     int num = *n->num;
@@ -81,7 +81,7 @@ void STlib_drawNumText(st_number_t *n, int x, int y)
 }
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void STlib_drawNum(st_number_t *n, byte refresh)
 {
     int num = *n->num;
@@ -95,7 +95,7 @@ void STlib_drawNum(st_number_t *n, byte refresh)
         return;
     }
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
     updatestate |= I_STATBAR;
 #endif
 
@@ -110,19 +110,19 @@ void STlib_drawNum(st_number_t *n, byte refresh)
 
     if (simpleStatusBar)
     {
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
         V_SetRect(ST_BACKGROUND_COLOR, w * 3, h, x, n->y, screen0);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
         V_SetRect(ST_BACKGROUND_COLOR, w * 3, h, x, n->y, backbuffer);
 #endif
     }
     else
     {
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
         V_CopyRect(x, n->y - ST_Y, screen4, w * 3, h, x, n->y, screen0);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
         V_CopyRect(x, n->y - ST_Y, screen4, w * 3, h, x, n->y, backbuffer);
 #endif
     }
@@ -136,10 +136,10 @@ void STlib_drawNum(st_number_t *n, byte refresh)
     // in the special case of 0, you draw 0
     if (!num)
     {
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
         V_DrawPatchScreen0(x - w, n->y, n->p[0]);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
         V_DrawPatchDirect(x - w, n->y, n->p[0]);
 #endif
         return;
@@ -152,17 +152,17 @@ void STlib_drawNum(st_number_t *n, byte refresh)
 
         num = Div10(num);
         x -= w;
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
         V_DrawPatchScreen0(x, n->y, n->p[original - Mul10(num)]);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
         V_DrawPatchDirect(x, n->y, n->p[original - Mul10(num)]);
 #endif
     } while (num);
 }
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void STlib_updateNum(st_number_t *n, byte refresh)
 {
     if (*n->on)
@@ -183,15 +183,15 @@ void STlib_initPercent(st_percent_t *p,
     p->p = percent;
 }
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void STlib_updatePercent(st_percent_t *per, int refresh)
 {
     if (refresh && *per->n.on)
     {
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
         V_DrawPatchScreen0(per->n.x, per->n.y, per->p);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
         V_DrawPatchDirect(per->n.x, per->n.y, per->p);
 #endif
     }
@@ -215,7 +215,7 @@ void STlib_initMultIcon(st_multicon_t *i,
     i->p = il;
 }
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void STlib_updateMultIcon(st_multicon_t *mi, byte refresh)
 {
     int w;
@@ -234,32 +234,32 @@ void STlib_updateMultIcon(st_multicon_t *mi, byte refresh)
 
             if (simpleStatusBar)
             {
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
                 V_SetRect(ST_BACKGROUND_COLOR, w, h, x, y, screen0);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
                 V_SetRect(ST_BACKGROUND_COLOR, w, h, x, y, backbuffer);
 #endif
             }
             else
             {
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
                 V_CopyRect(x, y - ST_Y, screen4, w, h, x, y, screen0);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
                 V_CopyRect(x, y - ST_Y, screen4, w, h, x, y, backbuffer);
 #endif
             }
         }
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
         V_DrawPatchScreen0(mi->x, mi->y, mi->p[*mi->inum]);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
         V_DrawPatchDirect(mi->x, mi->y, mi->p[*mi->inum]);
 #endif
         mi->oldinum = *mi->inum;
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
         updatestate |= I_STATBAR;
 #endif
     }
@@ -278,31 +278,31 @@ void STlib_initBinIcon(st_binicon_t *b,
     b->p = i;
 }
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void STlib_updateBinIcon(st_binicon_t *bi, byte refresh)
 {
     if (*bi->on && refresh)
     {
         if (simpleStatusBar)
         {
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
             V_SetRect(ST_BACKGROUND_COLOR, 40, 30, bi->x, bi->y, screen0);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
             V_SetRect(ST_BACKGROUND_COLOR, 40, 30, bi->x, bi->y, backbuffer);
 #endif
         }
         else
         {
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
             V_DrawPatchScreen0(bi->x, bi->y, bi->p);
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
             V_DrawPatchDirect(bi->x, bi->y, bi->p);
 #endif
         }
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
         updatestate |= I_STATBAR;
 #endif
     }

@@ -8,5 +8,11 @@ call cleanbwc.bat
 call cleanhgc.bat
 call cleanvbr.bat
 call cleanvbp.bat
+call cleant1.bat
+call cleant12.bat
+call cleanvbd.bat
+call cleanv.bat
+call cleanv2.bat
+call cleant52.bat
 call cleanpcp.bat
 call cleancvb.bat

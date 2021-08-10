@@ -46,6 +46,11 @@ fixed_t FixedDiv2(fixed_t a, fixed_t b);
     "sal eax,16",      \
     "idiv ebx" parm[eax][ebx] value[eax] modify exact[eax edx]
 
+int Mul40(int value);
+#pragma aux Mul40 = \
+    "lea eax, [eax+eax*4]", \
+    "shl eax, 3" parm[eax] value[eax] modify exact[eax]
+
 int Mul80(int value);
 #pragma aux Mul80 = \
     "lea eax, [eax+eax*4]", \

@@ -42,7 +42,7 @@
 
 #include "std_func.h"
 
-#ifdef MODE_VBE2
+#if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 #include "i_vesa.h"
 #endif
 
@@ -78,6 +78,7 @@ extern int usemouse;
 //
 
 #define SC_INDEX 0x3C4
+#define SC_DATA 0x3C5
 #define SC_RESET 0
 #define SC_CLOCK 1
 #define SC_MAPMASK 2
@@ -85,6 +86,7 @@ extern int usemouse;
 #define SC_MEMMODE 4
 
 #define CRTC_INDEX 0x3D4
+#define CRTC_DATA 0x3D5
 #define CRTC_H_TOTAL 0
 #define CRTC_H_DISPEND 1
 #define CRTC_H_BLANK 2
@@ -112,6 +114,7 @@ extern int usemouse;
 #define CRTC_LINECOMPARE 24
 
 #define GC_INDEX 0x3CE
+#define GC_DATA 0x3CF
 #define GC_SETRESET 0
 #define GC_ENABLESETRESET 1
 #define GC_COLORCOMPARE 2
@@ -135,6 +138,20 @@ extern int usemouse;
 #define PEL_READ_ADR 0x3c7
 #define PEL_DATA 0x3c9
 #define PEL_MASK 0x3c6
+
+#define SYNC_RESET 0
+#define MAP_MASK 2
+#define MEMORY_MODE 4
+
+#define READ_MAP 4
+#define GRAPHICS_MODE 5
+#define MISCELLANOUS 6
+
+#define MISC_OUTPUT 0x3C2
+
+#define MAX_SCAN_LINE 9
+#define UNDERLINE 0x14
+#define MODE_CONTROL 0x17
 
 #define VBLCOUNTER 34000 // hardware tics to a frame
 
@@ -184,7 +201,7 @@ void I_StartupSound(void);
 void I_ShutdownSound(void);
 void I_ShutdownTimer(void);
 
-#if defined(MODE_EGA) || defined(MODE_T25) || defined(MODE_T50) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
 byte lut16colors[14 * 256];
 byte *ptrlut16colors;
 #endif
@@ -200,6 +217,13 @@ byte *ptrsumcolors10;
 byte *ptrsumcolors11;
 #endif
 
+#if defined(MODE_V) || defined(MODE_V2)
+int lutplane0[(320 * 350) / 4];
+int lutplane1[(320 * 350) / 4];
+int lutplane2[(320 * 350) / 4];
+int lutplane3[(320 * 350) / 4];
+#endif
+
 byte gammatable[5][256] =
     {
         {0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 10, 11, 11, 11, 11, 12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15, 16, 16, 16, 16, 17, 17, 17, 17, 18, 18, 18, 18, 19, 19, 19, 19, 20, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 26, 27, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 30, 31, 31, 31, 31, 32, 32, 32, 32, 32, 33, 33, 33, 33, 34, 34, 34, 34, 35, 35, 35, 35, 36, 36, 36, 36, 37, 37, 37, 37, 38, 38, 38, 38, 39, 39, 39, 39, 40, 40, 40, 40, 41, 41, 41, 41, 42, 42, 42, 42, 43, 43, 43, 43, 44, 44, 44, 44, 45, 45, 45, 45, 46, 46, 46, 46, 47, 47, 47, 47, 48, 48, 48, 48, 49, 49, 49, 49, 50, 50, 50, 50, 51, 51, 51, 51, 52, 52, 52, 52, 53, 53, 53, 53, 54, 54, 54, 54, 55, 55, 55, 55, 56, 56, 56, 56, 57, 57, 57, 57, 58, 58, 58, 58, 59, 59, 59, 59, 60, 60, 60, 60, 61, 61, 61, 61, 62, 62, 62, 62, 63, 63, 63, 63},
@@ -208,7 +232,7 @@ byte gammatable[5][256] =
         {2, 3, 4, 4, 5, 6, 6, 7, 7, 8, 9, 9, 10, 10, 10, 11, 11, 12, 12, 13, 13, 13, 14, 14, 15, 15, 15, 16, 16, 16, 17, 17, 17, 18, 18, 18, 19, 19, 19, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 26, 27, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 30, 31, 31, 31, 31, 32, 32, 32, 32, 33, 33, 33, 33, 33, 34, 34, 34, 34, 35, 35, 35, 35, 35, 36, 36, 36, 36, 37, 37, 37, 37, 37, 38, 38, 38, 38, 38, 39, 39, 39, 39, 40, 40, 40, 40, 40, 41, 41, 41, 41, 41, 42, 42, 42, 42, 42, 43, 43, 43, 43, 43, 44, 44, 44, 44, 44, 45, 45, 45, 45, 45, 45, 46, 46, 46, 46, 46, 47, 47, 47, 47, 47, 48, 48, 48, 48, 48, 48, 49, 49, 49, 49, 49, 50, 50, 50, 50, 50, 50, 51, 51, 51, 51, 51, 51, 52, 52, 52, 52, 52, 53, 53, 53, 53, 53, 53, 54, 54, 54, 54, 54, 54, 55, 55, 55, 55, 55, 55, 56, 56, 56, 56, 56, 56, 57, 57, 57, 57, 57, 57, 58, 58, 58, 58, 58, 58, 59, 59, 59, 59, 59, 59, 60, 60, 60, 60, 60, 60, 61, 61, 61, 61, 61, 61, 61, 62, 62, 62, 62, 62, 62, 63, 63, 63, 63, 63, 63},
         {4, 5, 7, 8, 9, 9, 10, 11, 12, 12, 13, 13, 14, 15, 15, 16, 16, 17, 17, 17, 18, 18, 19, 19, 20, 20, 20, 21, 21, 21, 22, 22, 23, 23, 23, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 30, 31, 31, 31, 32, 32, 32, 32, 32, 33, 33, 33, 33, 34, 34, 34, 34, 35, 35, 35, 35, 35, 36, 36, 36, 36, 37, 37, 37, 37, 37, 38, 38, 38, 38, 38, 39, 39, 39, 39, 39, 40, 40, 40, 40, 40, 41, 41, 41, 41, 41, 42, 42, 42, 42, 42, 43, 43, 43, 43, 43, 43, 44, 44, 44, 44, 44, 45, 45, 45, 45, 45, 45, 46, 46, 46, 46, 46, 46, 47, 47, 47, 47, 47, 47, 48, 48, 48, 48, 48, 48, 49, 49, 49, 49, 49, 49, 50, 50, 50, 50, 50, 50, 50, 51, 51, 51, 51, 51, 51, 52, 52, 52, 52, 52, 52, 52, 53, 53, 53, 53, 53, 53, 54, 54, 54, 54, 54, 54, 54, 55, 55, 55, 55, 55, 55, 55, 56, 56, 56, 56, 56, 56, 56, 57, 57, 57, 57, 57, 57, 57, 58, 58, 58, 58, 58, 58, 58, 58, 59, 59, 59, 59, 59, 59, 59, 60, 60, 60, 60, 60, 60, 60, 60, 61, 61, 61, 61, 61, 61, 61, 61, 62, 62, 62, 62, 62, 62, 62, 62, 63, 63, 63, 63, 63, 63, 63}};
 
-#if defined(MODE_Y) || defined(MODE_13H) || (defined(MODE_VBE2) && !defined(MODE_PM))
+#if defined(MODE_Y) || defined(MODE_13H) || (defined(MODE_VBE2) && !defined(MODE_PM)) || defined(MODE_VBE2_DIRECT) || defined(MODE_V) || defined(MODE_V2)
 byte processedpalette[14 * 768];
 #endif
 #if defined(MODE_VBE2) && defined(MODE_PM)
@@ -243,7 +267,7 @@ void I_ProcessPalette(byte *palette)
 }
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || (defined(MODE_VBE2) && !defined(MODE_PM))
+#if defined(MODE_Y) || defined(MODE_13H) || (defined(MODE_VBE2) && !defined(MODE_PM)) || defined(MODE_VBE2_DIRECT) || defined(MODE_V) || defined(MODE_V2)
 void I_ProcessPalette(byte *palette)
 {
     int i;
@@ -300,7 +324,7 @@ void I_ProcessPalette(byte *palette)
 }
 #endif
 
-#if defined(MODE_EGA) || defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
 const byte textcolors[48] = {
     0x00, 0x00, 0x00,
     0x00, 0x00, 0x2A,
@@ -318,6 +342,43 @@ const byte textcolors[48] = {
     0x3F, 0x15, 0x3F,
     0x3F, 0x3F, 0x15,
     0x3F, 0x3F, 0x3F};
+#endif
+
+#ifdef MODE_CVB
+const byte textcolors[48] = {  // standard IBM CGA
+    0x00, 0x00, 0x00,
+    0x00, 0x18, 0x06,
+    0x09, 0x0a, 0x2f,
+    0x04, 0x26, 0x37,
+    0x20, 0x03, 0x15,
+    0x1c, 0x1c, 0x1c,
+    0x2c, 0x0e, 0x3f,
+    0x26, 0x2a, 0x3f,
+    0x12, 0x12, 0x00,
+    0x0f, 0x2e, 0x00,
+    0x1c, 0x1c, 0x1c,
+    0x18, 0x3b, 0x21,
+    0x37, 0x15, 0x04,
+    0x35, 0x31, 0x07,
+    0x3f, 0x20, 0x3a,
+    0x3f, 0x3f, 0x3f};
+/*const byte textcolors[48] = {  // ATi Small Wonder
+    0x00, 0x00, 0x00,
+    0x22, 0x04, 0x00,
+    0x06, 0x15, 0x00,
+    0x26, 0x1f, 0x00,
+    0x03, 0x0f, 0x23,
+    0x16, 0x17, 0x15,
+    0x00, 0x2b, 0x00,
+    0x1a, 0x38, 0x00,
+    0x18, 0x01, 0x36,
+    0x3f, 0x07, 0x31,
+    0x14, 0x15, 0x13,
+    0x3f, 0x22, 0x0e,
+    0x0a, 0x13, 0x3f,
+    0x39, 0x1e, 0x3f,
+    0x07, 0x32, 0x3f,
+    0x3f, 0x3f, 0x3f};*/
 #endif
 
 #ifdef MODE_PCP
@@ -340,44 +401,7 @@ const byte textcolors[48] = {
     0x3F, 0x3F, 0x3F};
 #endif
 
-#ifdef MODE_CVB
-/*const byte textcolors[48] = {  // standard IBM CGA
-    0x00, 0x00, 0x00,
-    0x00, 0x18, 0x06,
-    0x09, 0x0a, 0x2f,
-    0x04, 0x26, 0x37,
-    0x20, 0x03, 0x15,
-    0x1c, 0x1c, 0x1c,
-    0x2c, 0x0e, 0x3f,
-    0x26, 0x2a, 0x3f,
-    0x12, 0x12, 0x00,
-    0x0f, 0x2e, 0x00,
-    0x1c, 0x1c, 0x1c,
-    0x18, 0x3b, 0x21,
-    0x37, 0x15, 0x04,
-    0x35, 0x31, 0x07,
-    0x3f, 0x20, 0x3a,
-    0x3f, 0x3f, 0x3f};*/
-const byte textcolors[48] = {  // ATi Small Wonder
-    0x00, 0x00, 0x00,
-    0x22, 0x04, 0x00,
-    0x06, 0x15, 0x00,
-    0x26, 0x1f, 0x00,
-    0x03, 0x0f, 0x23,
-    0x16, 0x17, 0x15,
-    0x00, 0x2b, 0x00,
-    0x1a, 0x38, 0x00,
-    0x18, 0x01, 0x36,
-    0x3f, 0x07, 0x31,
-    0x14, 0x15, 0x13,
-    0x3f, 0x22, 0x0e,
-    0x0a, 0x13, 0x3f,
-    0x39, 0x1e, 0x3f,
-    0x07, 0x32, 0x3f,
-    0x3f, 0x3f, 0x3f};
-#endif
-
-#if defined(MODE_EGA) || defined(MODE_T25) || defined(MODE_T50) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
 void I_ProcessPalette(byte *palette)
 {
     int i, j;
@@ -443,11 +467,11 @@ void I_SetPalette(int numpalette)
     ptrsumcolors11 = sumcolors11 + numpalette * 256;
 #endif
 
-#if defined(MODE_T25) || defined(MODE_T50) || defined(MODE_EGA) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_EGA) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
     ptrlut16colors = lut16colors + numpalette * 256;
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || (defined(MODE_VBE2) && !defined(MODE_PM))
+#if defined(MODE_Y) || defined(MODE_13H) || (defined(MODE_VBE2) && !defined(MODE_PM)) || defined(MODE_VBE2_DIRECT) || defined(MODE_V) || defined(MODE_V2)
     {
         int i;
         int pos = Mul768(numpalette);
@@ -470,16 +494,16 @@ void I_SetPalette(int numpalette)
 // Graphics mode
 //
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
 int updatestate;
 #endif
 byte *pcscreen, *currentscreen, *destscreen, *destview;
 
-#ifdef MODE_EGA
+#if defined(MODE_EGA) || defined(MODE_VBE2_DIRECT)
 byte page = 0;
 #endif
 
-#if defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
 unsigned short *textdestscreen = (unsigned short *)0xB8000;
 byte textpage = 0;
 #endif
@@ -487,6 +511,25 @@ byte textpage = 0;
 //
 // I_UpdateBox
 //
+#ifdef MODE_VBE2_DIRECT
+void I_UpdateBox(int x, int y, int w, int h)
+{
+    byte *dest;
+    byte *source;
+    int i;
+
+    dest = destscreen + Mul320(y) + x;
+    source = screen0 + Mul320(y) + x;
+
+    for (i = y; i < y + h; i++)
+    {
+        CopyBytes(source, dest, w);
+        dest += 320;
+        source += 320;
+    }
+}
+#endif
+
 #ifdef MODE_Y
 void I_UpdateBox(int x, int y, int w, int h)
 {
@@ -570,7 +613,7 @@ void I_UpdateBox(int x, int y, int w, int h)
 //
 // I_UpdateNoBlit
 //
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 int olddb[2][4];
 void I_UpdateNoBlit(void)
 {
@@ -774,7 +817,6 @@ void HERC_DrawBackbuffer(void)
 #endif
 
 #ifdef MODE_EGA
-
 void EGA_DrawBackbuffer(void)
 {
     byte plane_red[SCREENWIDTH * SCREENHEIGHT / 8];
@@ -839,55 +881,6 @@ void EGA_DrawBackbuffer(void)
 }
 #endif
 
-#ifdef MODE_PCP
-void CPLUS_DrawBackbuffer(void)
-{
-    int x;
-    unsigned char *vram = (unsigned char *)0xB8000;
-    unsigned int base = 0;
-    unsigned char color0, color1, color2, color3;
-
-    for (base = 0; base < SCREENHEIGHT * 320;)
-    {
-        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++)
-        {
-            color0 = ptrlut16colors[backbuffer[base]];
-            color1 = ptrlut16colors[backbuffer[base + 1]];
-            color2 = ptrlut16colors[backbuffer[base + 2]];
-            color3 = ptrlut16colors[backbuffer[base + 3]];
-            *(vram) = (color0 & 3) << 6 | (color1 & 3) << 4 | (color2 & 3) << 2 | (color3 & 3);
-        }
-        base -= 320; vram -= 80;
-        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++)
-        {
-            color0 = ptrlut16colors[backbuffer[base]];
-            color1 = ptrlut16colors[backbuffer[base + 1]];
-            color2 = ptrlut16colors[backbuffer[base + 2]];
-            color3 = ptrlut16colors[backbuffer[base + 3]];
-            *(vram + 0x4000) = (color0 & 12) << 4 | (color1 & 12) << 2 | (color2 & 12) | (color3 & 12) >> 2;
-        }
-        vram -= 80;
-        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++)
-        {
-            color0 = ptrlut16colors[backbuffer[base]];
-            color1 = ptrlut16colors[backbuffer[base + 1]];
-            color2 = ptrlut16colors[backbuffer[base + 2]];
-            color3 = ptrlut16colors[backbuffer[base + 3]];
-            *(vram + 0x2000) = (color0 & 3) << 6 | (color1 & 3) << 4 | (color2 & 3) << 2 | (color3 & 3);
-        }
-        base -= 320; vram -= 80;
-        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++)
-        {
-            color0 = ptrlut16colors[backbuffer[base]];
-            color1 = ptrlut16colors[backbuffer[base + 1]];
-            color2 = ptrlut16colors[backbuffer[base + 2]];
-            color3 = ptrlut16colors[backbuffer[base + 3]];
-            *(vram + 0x6000) = (color0 & 12) << 4 | (color1 & 12) << 2 | (color2 & 12) | (color3 & 12) >> 2;
-        }
-    }
-}
-#endif
-
 #ifdef MODE_CVB
 void CVBS_DrawBackbuffer(void)
 {
@@ -916,6 +909,57 @@ void CVBS_DrawBackbuffer(void)
 }
 #endif
 
+#ifdef MODE_PCP
+void CPLUS_DrawBackbuffer(void)
+{
+    int x;
+    unsigned char *vram = (unsigned char *)0xB8000;
+    unsigned int base = 0;
+    unsigned char color0, color1, color2, color3;
+
+    for (base = 0; base < SCREENHEIGHT * 320;)
+    {
+        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++)
+        {
+            color0 = ptrlut16colors[backbuffer[base]];
+            color1 = ptrlut16colors[backbuffer[base + 1]];
+            color2 = ptrlut16colors[backbuffer[base + 2]];
+            color3 = ptrlut16colors[backbuffer[base + 3]];
+            *(vram) = (color0 & 3) << 6 | (color1 & 3) << 4 | (color2 & 3) << 2 | (color3 & 3);
+        }
+        base -= 320;
+        vram -= 80;
+        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++)
+        {
+            color0 = ptrlut16colors[backbuffer[base]];
+            color1 = ptrlut16colors[backbuffer[base + 1]];
+            color2 = ptrlut16colors[backbuffer[base + 2]];
+            color3 = ptrlut16colors[backbuffer[base + 3]];
+            *(vram + 0x4000) = (color0 & 12) << 4 | (color1 & 12) << 2 | (color2 & 12) | (color3 & 12) >> 2;
+        }
+        vram -= 80;
+        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++)
+        {
+            color0 = ptrlut16colors[backbuffer[base]];
+            color1 = ptrlut16colors[backbuffer[base + 1]];
+            color2 = ptrlut16colors[backbuffer[base + 2]];
+            color3 = ptrlut16colors[backbuffer[base + 3]];
+            *(vram + 0x2000) = (color0 & 3) << 6 | (color1 & 3) << 4 | (color2 & 3) << 2 | (color3 & 3);
+        }
+        base -= 320;
+        vram -= 80;
+        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++)
+        {
+            color0 = ptrlut16colors[backbuffer[base]];
+            color1 = ptrlut16colors[backbuffer[base + 1]];
+            color2 = ptrlut16colors[backbuffer[base + 2]];
+            color3 = ptrlut16colors[backbuffer[base + 3]];
+            *(vram + 0x6000) = (color0 & 12) << 4 | (color1 & 12) << 2 | (color2 & 12) | (color3 & 12) >> 2;
+        }
+    }
+}
+#endif
+
 #ifdef MODE_CGA
 void CGA_DrawBackbuffer(void)
 {
@@ -938,7 +982,7 @@ void CGA_DrawBackbuffer(void)
 }
 #endif
 
-#ifdef MODE_VBE2
+#if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 static struct VBE_VbeInfoBlock vbeinfo;
 static struct VBE_ModeInfoBlock vbemode;
 char *Types[8] = {"Text", "CGA", "Hercules", "Planar", "Packed Pixel", "Unchained", "Directcolor", "YUV"};
@@ -960,7 +1004,24 @@ void I_FinishUpdate(void)
     }
 #endif
 
-#ifdef MODE_T25
+#if defined(MODE_T4025) || defined(MODE_T4050)
+    // Change video page
+    regs.h.ah = 0x05;
+    regs.h.al = textpage;
+    regs.h.bh = 0x00;
+    regs.h.bl = 0x00;
+    int386(0x10, &regs, &regs);
+
+    textdestscreen += 1024;
+    textpage++;
+    if (textpage == 3)
+    {
+        textdestscreen = (unsigned short *)0xB8000;
+        textpage = 0;
+    }
+#endif
+
+#ifdef MODE_T8025
     // Change video page
     regs.h.ah = 0x05;
     regs.h.al = textpage;
@@ -976,7 +1037,7 @@ void I_FinishUpdate(void)
         textpage = 0;
     }
 #endif
-#ifdef MODE_T50
+#if defined(MODE_T8050) || defined(MODE_T80100)
     // Change video page
     regs.h.ah = 0x05;
     regs.h.al = textpage;
@@ -1000,6 +1061,21 @@ void I_FinishUpdate(void)
     if (destscreen == (byte *)0xac000)
     {
         destscreen = (byte *)0xa0000;
+    }
+#endif
+#ifdef MODE_VBE2_DIRECT
+    VBE_SetDisplayStart(0, 200 * page);
+
+    page++;
+
+    if (page == 3)
+    {
+        page = 0;
+        destscreen -= 2 * 320 * 200;
+    }
+    else
+    {
+        destscreen += 320 * 200;
     }
 #endif
 #if defined(MODE_13H) || defined(MODE_VBE2)
@@ -1059,6 +1135,122 @@ void I_FinishUpdate(void)
 #ifdef MODE_CVB
     CVBS_DrawBackbuffer();
 #endif
+#if defined(MODE_V)
+    {
+        int x, y;
+
+        outp(SC_INDEX + 1, 1 << 0);
+        for (x = 0; x < (320 * 350) / 4; x += 4)
+        {
+            destscreen[x] = backbuffer[lutplane0[x]];
+            destscreen[x + 1] = backbuffer[lutplane0[x + 1]];
+            destscreen[x + 2] = backbuffer[lutplane0[x + 2]];
+            destscreen[x + 3] = backbuffer[lutplane0[x + 3]];
+        }
+
+        outp(SC_INDEX + 1, 1 << 1);
+        for (x = 0; x < (320 * 350) / 4; x += 4)
+        {
+            destscreen[x] = backbuffer[lutplane1[x]];
+            destscreen[x + 1] = backbuffer[lutplane1[x + 1]];
+            destscreen[x + 2] = backbuffer[lutplane1[x + 2]];
+            destscreen[x + 3] = backbuffer[lutplane1[x + 3]];
+        }
+
+        outp(SC_INDEX + 1, 1 << 2);
+        for (x = 0; x < (320 * 350) / 4; x += 4)
+        {
+            destscreen[x] = backbuffer[lutplane2[x]];
+            destscreen[x + 1] = backbuffer[lutplane2[x + 1]];
+            destscreen[x + 2] = backbuffer[lutplane2[x + 2]];
+            destscreen[x + 3] = backbuffer[lutplane2[x + 3]];
+        }
+
+        outp(SC_INDEX + 1, 1 << 3);
+        for (x = 0; x < (320 * 350) / 4; x += 4)
+        {
+            destscreen[x] = backbuffer[lutplane3[x]];
+            destscreen[x + 1] = backbuffer[lutplane3[x + 1]];
+            destscreen[x + 2] = backbuffer[lutplane3[x + 2]];
+            destscreen[x + 3] = backbuffer[lutplane3[x + 3]];
+        }
+
+        outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
+
+        //Next plane
+        destscreen += 0x7000;
+        if (destscreen == (byte *)0xae000)
+        {
+            destscreen = (byte *)0xa0000;
+        }
+    }
+#endif
+#if defined(MODE_V2)
+    {
+        int x, y;
+
+        outp(SC_INDEX + 1, 1 << 0);
+        for (y = 15 * 80; y < 335 * 80; y += 80)
+        {
+            for (x = 15; x < 65; x += 5)
+            {
+                destscreen[y + x] = backbuffer[lutplane0[y + x]];
+                destscreen[y + x + 1] = backbuffer[lutplane0[y + x + 1]];
+                destscreen[y + x + 2] = backbuffer[lutplane0[y + x + 2]];
+                destscreen[y + x + 3] = backbuffer[lutplane0[y + x + 3]];
+                destscreen[y + x + 4] = backbuffer[lutplane0[y + x + 4]];
+            }
+        }
+
+        outp(SC_INDEX + 1, 1 << 1);
+        for (y = 15 * 80; y < 335 * 80; y += 80)
+        {
+            for (x = 15; x < 65; x += 5)
+            {
+                destscreen[y + x] = backbuffer[lutplane1[y + x]];
+                destscreen[y + x + 1] = backbuffer[lutplane1[y + x + 1]];
+                destscreen[y + x + 2] = backbuffer[lutplane1[y + x + 2]];
+                destscreen[y + x + 3] = backbuffer[lutplane1[y + x + 3]];
+                destscreen[y + x + 4] = backbuffer[lutplane1[y + x + 4]];
+            }
+        }
+
+        outp(SC_INDEX + 1, 1 << 2);
+        for (y = 15 * 80; y < 335 * 80; y += 80)
+        {
+            for (x = 15; x < 65; x += 5)
+            {
+                destscreen[y + x] = backbuffer[lutplane2[y + x]];
+                destscreen[y + x + 1] = backbuffer[lutplane2[y + x + 1]];
+                destscreen[y + x + 2] = backbuffer[lutplane2[y + x + 2]];
+                destscreen[y + x + 3] = backbuffer[lutplane2[y + x + 3]];
+                destscreen[y + x + 4] = backbuffer[lutplane2[y + x + 4]];
+            }
+        }
+
+        outp(SC_INDEX + 1, 1 << 3);
+        for (y = 15 * 80; y < 335 * 80; y += 80)
+        {
+            for (x = 15; x < 65; x += 5)
+            {
+                destscreen[y + x] = backbuffer[lutplane3[y + x]];
+                destscreen[y + x + 1] = backbuffer[lutplane3[y + x + 1]];
+                destscreen[y + x + 2] = backbuffer[lutplane3[y + x + 2]];
+                destscreen[y + x + 3] = backbuffer[lutplane3[y + x + 3]];
+                destscreen[y + x + 4] = backbuffer[lutplane3[y + x + 4]];
+            }
+        }
+
+        outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
+
+        //Next plane
+        destscreen += 0x7000;
+        if (destscreen == (byte *)0xae000)
+        {
+            destscreen = (byte *)0xa0000;
+        }
+    }
+#endif
 
     if (showFPS)
     {
@@ -1088,8 +1280,36 @@ void I_FinishUpdate(void)
 //
 void I_InitGraphics(void)
 {
+#if defined(MODE_T4025) || defined(MODE_T4050)
+    // Set 40x25 color mode
+    regs.h.ah = 0x00;
+    regs.h.al = 0x01;
+    int386(0x10, &regs, &regs);
 
-#ifdef MODE_T25
+    // Disable cursor
+    regs.h.ah = 0x01;
+    regs.h.ch = 0x3F;
+    int386(0x10, &regs, &regs);
+
+    // CGA Disable blink
+    if (CGAcard)
+    {
+        I_DisableCGABlink();
+    }
+    else
+    {
+        // Disable blinking
+        regs.h.ah = 0x10;
+        regs.h.al = 0x03;
+        regs.h.bl = 0x00;
+        regs.h.bh = 0x00;
+        int386(0x10, &regs, &regs);
+    }
+
+    textdestscreen = (unsigned short *)0xB8000;
+    textpage = 0;
+#endif
+#ifdef MODE_T8025
     // Set 80x25 color mode
     regs.h.ah = 0x00;
     regs.h.al = 0x03;
@@ -1118,7 +1338,7 @@ void I_InitGraphics(void)
     textdestscreen = (unsigned short *)0xB8000;
     textpage = 0;
 #endif
-#ifdef MODE_T50
+#if defined(MODE_T8050) || defined(MODE_T80100)
     // Set 80x25 color mode
     regs.h.ah = 0x00;
     regs.h.al = 0x03;
@@ -1165,6 +1385,182 @@ void I_InitGraphics(void)
     outp(CRTC_INDEX, CRTC_MODE);
     outp(CRTC_INDEX + 1, inp(CRTC_INDEX + 1) | 0x40);
     outp(GC_INDEX, GC_READMAP);
+#endif
+#if defined(MODE_V)
+
+    {
+        int x, y;
+
+        // Initialize LUT
+        for (x = 0; x < 320; x += 4)
+        {
+            int yp = 0;
+            int xp = x / 4;
+            for (y = 0; y < 350; y++, yp += 80)
+            {
+                int pos_x_backbuffer;
+                int pos_y_backbuffer;
+
+                pos_x_backbuffer = ((x * 200) / 320);
+                pos_y_backbuffer = 320 - ((y * 320) / 350);
+
+                lutplane0[yp + xp] = pos_x_backbuffer * 320 + pos_y_backbuffer;
+            }
+        }
+
+        for (x = 1; x < 320; x += 4)
+        {
+            int yp = 0;
+            int xp = x / 4;
+            for (y = 0; y < 350; y++, yp += 80)
+            {
+                int pos_x_backbuffer;
+                int pos_y_backbuffer;
+
+                pos_x_backbuffer = ((x * 200) / 320);
+                pos_y_backbuffer = 320 - ((y * 320) / 350);
+
+                lutplane1[yp + xp] = pos_x_backbuffer * 320 + pos_y_backbuffer;
+            }
+        }
+
+        for (x = 2; x < 320; x += 4)
+        {
+            int yp = 0;
+            int xp = x / 4;
+            for (y = 0; y < 350; y++, yp += 80)
+            {
+                int pos_x_backbuffer;
+                int pos_y_backbuffer;
+
+                pos_x_backbuffer = ((x * 200) / 320);
+                pos_y_backbuffer = 320 - ((y * 320) / 350);
+
+                lutplane2[yp + xp] = pos_x_backbuffer * 320 + pos_y_backbuffer;
+            }
+        }
+
+        for (x = 3; x < 320; x += 4)
+        {
+            int yp = 0;
+            int xp = x / 4;
+            for (y = 0; y < 350; y++, yp += 80)
+            {
+                int pos_x_backbuffer;
+                int pos_y_backbuffer;
+
+                pos_x_backbuffer = ((x * 200) / 320);
+                pos_y_backbuffer = 320 - ((y * 320) / 350);
+
+                lutplane3[yp + xp] = pos_x_backbuffer * 320 + pos_y_backbuffer;
+            }
+        }
+    }
+#endif
+#if defined(MODE_V2)
+    {
+        int x, y;
+
+        for (x = 0; x < 200; x++)
+        {
+            int xp = x / 4;
+            for (y = 15; y < 320 + 15; y++)
+            {
+                int pos_x_backbuffer;
+                int pos_y_backbuffer;
+
+                pos_x_backbuffer = x;
+                pos_y_backbuffer = 319 - y;
+
+                switch (x % 4)
+                {
+                case 0:
+                    lutplane0[y * 80 + xp + 15] = pos_x_backbuffer * 320 + pos_y_backbuffer + 15;
+                    break;
+                case 1:
+                    lutplane1[y * 80 + xp + 15] = pos_x_backbuffer * 320 + pos_y_backbuffer + 15;
+                    break;
+                case 2:
+                    lutplane2[y * 80 + xp + 15] = pos_x_backbuffer * 320 + pos_y_backbuffer + 15;
+                    break;
+                case 3:
+                    lutplane3[y * 80 + xp + 15] = pos_x_backbuffer * 320 + pos_y_backbuffer + 15;
+                    break;
+                }
+            }
+        }
+    }
+
+#endif
+
+#if defined(MODE_V) || defined(MODE_V2)
+
+    regs.w.ax = 0x13;
+    int386(0x10, (union REGS *)&regs, &regs);
+    pcscreen = currentscreen = (byte *)0xA0000;
+    destscreen = (byte *)0xA7000;
+
+    //
+    // switch to linear, non-chain4 mode
+    //
+    outp(SC_INDEX, SYNC_RESET);
+    outp(SC_DATA, 1);
+
+    outp(SC_INDEX, MEMORY_MODE);
+    outp(SC_DATA, (inp(SC_DATA) & ~0x08) | 0x04);
+    outp(GC_INDEX, GRAPHICS_MODE);
+    outp(GC_DATA, (inp(GC_DATA) & ~0x10) | 0x00);
+    outp(GC_INDEX, MISCELLANOUS);
+    outp(GC_DATA, (inp(GC_DATA) & ~0x02) | 0x00);
+
+    outpw(SC_INDEX, 0xf02);
+    SetDWords(pcscreen, 0, 0x4000);
+
+    outp(MISC_OUTPUT, 0xA3); // 350-scan-line scan rate
+
+    outp(SC_INDEX, SYNC_RESET);
+    outp(SC_DATA, 3);
+
+    //
+    // unprotect CRTC0 through CRTC0
+    //
+    outp(CRTC_INDEX, 0x11);
+    outp(CRTC_DATA, (inp(CRTC_DATA) & ~0x80) | 0x00);
+
+    //
+    // stop scanning each line twice
+    //
+    outp(CRTC_INDEX, MAX_SCAN_LINE);
+    outp(CRTC_DATA, (inp(CRTC_DATA) & ~0x1F) | 0x00);
+
+    //
+    // change the CRTC from doubleword to byte mode
+    //
+    outp(CRTC_INDEX, UNDERLINE);
+    outp(CRTC_DATA, (inp(CRTC_DATA) & ~0x40) | 0x00);
+    outp(CRTC_INDEX, MODE_CONTROL);
+    outp(CRTC_DATA, (inp(CRTC_DATA) & ~0x00) | 0x40);
+
+    //
+    // set the vertical counts for 350-scan-line mode
+    //
+    outp(CRTC_INDEX, 0x06);
+    outp(CRTC_INDEX + 1, 0xBF);
+    outp(CRTC_INDEX, 0x07);
+    outp(CRTC_INDEX + 1, 0x1F);
+    outp(CRTC_INDEX, 0x10);
+    outp(CRTC_INDEX + 1, 0x83);
+    outp(CRTC_INDEX, 0x11);
+    outp(CRTC_INDEX + 1, 0x85);
+    outp(CRTC_INDEX, 0x12);
+    outp(CRTC_INDEX + 1, 0x5D);
+    outp(CRTC_INDEX, 0x15);
+    outp(CRTC_INDEX + 1, 0x63);
+    outp(CRTC_INDEX, 0x16);
+    outp(CRTC_INDEX + 1, 0xBA);
+
+    outp(SC_INDEX, MAP_MASK);
+    outp(GC_INDEX, READ_MAP);
 #endif
 #ifdef MODE_13H
     regs.w.ax = 0x13;
@@ -1214,17 +1610,17 @@ void I_InitGraphics(void)
     outp(0x3DD, 0x10);
     pcscreen = destscreen = (byte *)0xB8000;
 #endif
-#ifdef MODE_CVB
-    regs.w.ax = 0x06;
-    int386(0x10, (union REGS *)&regs, &regs);
-    outp(0x3D8, 0x1A);
-    pcscreen = destscreen = (byte *)0xB8000;
-#endif
 #ifdef MODE_EGA
     regs.w.ax = 0x0D;
     int386(0x10, (union REGS *)&regs, &regs);
     outp(0x3C4, 0x2);
     pcscreen = destscreen = (byte *)0xA0000;
+#endif
+#ifdef MODE_CVB
+    regs.w.ax = 0x06;
+    int386(0x10, (union REGS *)&regs, &regs);
+    outp(0x3D8, 0x1A); // Enable color burst
+    pcscreen = destscreen = (byte *)0xB8000;
 #endif
 #ifdef MODE_HERC
     //byte Graph_720x348[12] = {0x03, 0x36, 0x2D, 0x2E, 0x07, 0x5B, 0x02, 0x57, 0x57, 0x02, 0x03, 0x0A};
@@ -1242,7 +1638,7 @@ void I_InitGraphics(void)
     pcscreen = destscreen = (byte *)0xB0000;
 #endif
 
-#ifdef MODE_VBE2
+#if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 
     int mode;
 

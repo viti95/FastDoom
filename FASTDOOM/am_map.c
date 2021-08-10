@@ -768,15 +768,15 @@ void AM_drawFline(fline_t *fl,
 	register int ay;
 	register int d;
 
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 #define PUTDOT(xx, yy, cc) screen0[Mul320(yy) + (xx)] = (cc)
 #endif
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
 #define PUTDOT(xx, yy, cc) backbuffer[Mul320(yy) + (xx)] = (cc)
 #endif
 
-#if defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
 #define PUTDOT(xx, yy, cc)
 #endif
 
@@ -1043,14 +1043,14 @@ void AM_Drawer(void)
 	if (!automapactive)
 		return;
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
 	updatestate |= I_FULLSCRN;
 #endif
 
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 	SetDWords(screen0, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
 	SetDWords(backbuffer, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
 #endif
 
@@ -1061,7 +1061,7 @@ void AM_Drawer(void)
 	if (cheating == 2)
 		AM_drawThings(THINGCOLORS, THINGRANGE);
 
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 	V_MarkRect(0, 0, SCREENWIDTH, automapheight);
 #endif
 }

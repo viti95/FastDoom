@@ -75,8 +75,16 @@ void HUlib_drawTextLine(hu_textline_t *l)
     int w;
     int x;
     unsigned char c;
-
-#ifdef MODE_T25
+#if defined(MODE_T4025) || defined(MODE_T4050)
+    x = l->x / 8;
+    for (i = 0; i < l->len; i++)
+    {
+        c = toupper(l->l[i]);
+        V_WriteCharDirect(x, l->y / 8, c);
+        x++;
+    }
+#endif
+#ifdef MODE_T8025
     x = l->x / 4;
     for (i = 0; i < l->len; i++)
     {
@@ -85,7 +93,7 @@ void HUlib_drawTextLine(hu_textline_t *l)
         x++;
     }
 #endif
-#ifdef MODE_T50
+#if defined(MODE_T8050) || defined(MODE_T80100)
     x = l->x / 4;
     for (i = 0; i < l->len; i++)
     {
@@ -94,7 +102,7 @@ void HUlib_drawTextLine(hu_textline_t *l)
         x++;
     }
 #endif
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     // draw the new stuff
     x = l->x;
     for (i = 0; i < l->len; i++)
@@ -132,7 +140,7 @@ void HUlib_eraseTextLine(hu_textline_t *l)
     // and the text must either need updating or refreshing
     // (because of a recent change back from the automap)
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     if (!automapactive && viewwindowx && l->needsupdate)
     {
         lh = l->f[0]->height + 1;
@@ -147,7 +155,7 @@ void HUlib_eraseTextLine(hu_textline_t *l)
             }
         }
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
         updatestate |= I_MESSAGES;
 #endif
     }
@@ -228,7 +236,7 @@ void HUlib_drawSText(hu_stext_t *s)
         HUlib_drawTextLine(l); // no cursor, please
     }
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
     updatestate |= I_MESSAGES;
 #endif
 }

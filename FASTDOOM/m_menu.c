@@ -533,33 +533,43 @@ void M_DrawLoad(void)
 {
     int i;
 
-#ifdef MODE_T25
+#if defined(MODE_T4025) || defined(MODE_T4050)
+    V_WriteTextDirect(9, 3, "LOAD GAME");
+#endif
+#ifdef MODE_T8025
     V_WriteTextDirect(18, 3, "LOAD GAME");
 #endif
-#ifdef MODE_T50
+#if defined(MODE_T8050) || defined(MODE_T80100)
     V_WriteTextDirect(18, 7, "LOAD GAME");
 #endif
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     V_DrawPatchDirect(72, 28, W_CacheLumpName("M_LOADG", PU_CACHE));
 #endif
 
     for (i = 0; i < load_end; i++)
     {
-#ifdef MODE_T25
+#if defined(MODE_T4025) || defined(MODE_T4050)
+        M_DrawSaveLoadBorderText(LoadDef.x / 8, (LoadDef.y + LINEHEIGHT * i) / 8 - 2);
+        V_WriteCharDirect(LoadDef.x / 8 - 1, (LoadDef.y + LINEHEIGHT * i) / 8, '|');
+        V_WriteTextDirect(LoadDef.x / 8, (LoadDef.y + LINEHEIGHT * i) / 8, savegamestrings[i]);
+        V_WriteCharDirect(LoadDef.x / 8 + 24, (LoadDef.y + LINEHEIGHT * i) / 8, '|');
+        M_DrawSaveLoadBorderText(LoadDef.x / 8, (LoadDef.y + LINEHEIGHT * i) / 8);
+#endif
+#ifdef MODE_T8025
         M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 8 - 2);
         V_WriteCharDirect(LoadDef.x / 4 - 1, (LoadDef.y + LINEHEIGHT * i) / 8, '|');
         V_WriteTextDirect(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 8, savegamestrings[i]);
         V_WriteCharDirect(LoadDef.x / 4 + 24, (LoadDef.y + LINEHEIGHT * i) / 8, '|');
         M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 8);
 #endif
-#ifdef MODE_T50
+#if defined(MODE_T8050) || defined(MODE_T80100)
         M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + (LINEHEIGHT)*i) / 4 - 2);
         V_WriteCharDirect(LoadDef.x / 4 - 1, (LoadDef.y + LINEHEIGHT * i) / 4, '|');
         V_WriteTextDirect(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 4, savegamestrings[i]);
         V_WriteCharDirect(LoadDef.x / 4 + 24, (LoadDef.y + LINEHEIGHT * i) / 4, '|');
         M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 4);
 #endif
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
         M_DrawSaveLoadBorder(LoadDef.x, LoadDef.y + LINEHEIGHT * i);
         M_WriteText(LoadDef.x, LoadDef.y + LINEHEIGHT * i, savegamestrings[i]);
 #endif
@@ -569,7 +579,7 @@ void M_DrawLoad(void)
 //
 // Draw border for the savegame description
 //
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void M_DrawSaveLoadBorder(int x, int y)
 {
     int i;
@@ -586,7 +596,7 @@ void M_DrawSaveLoadBorder(int x, int y)
 }
 #endif
 
-#if defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
 void M_DrawSaveLoadBorderText(int x, int y)
 {
     int i;
@@ -640,33 +650,43 @@ void M_DrawSave(void)
 {
     int i;
 
-#ifdef MODE_T25
+#if defined(MODE_T4025) || defined(MODE_T4050)
+    V_WriteTextDirect(9, 3, "SAVE GAME");
+#endif
+#ifdef MODE_T8025
     V_WriteTextDirect(18, 3, "SAVE GAME");
 #endif
-#ifdef MODE_T50
+#if defined(MODE_T8050) || defined(MODE_T80100)
     V_WriteTextDirect(18, 7, "SAVE GAME");
 #endif
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     V_DrawPatchDirect(72, 28, W_CacheLumpName("M_SAVEG", PU_CACHE));
 #endif
 
     for (i = 0; i < load_end; i++)
     {
-#ifdef MODE_T25
+#if defined(MODE_T4025) || defined(MODE_T4050)
+        M_DrawSaveLoadBorderText(LoadDef.x / 8, (LoadDef.y + LINEHEIGHT * i) / 8 - 2);
+        V_WriteCharDirect(LoadDef.x / 8 - 1, (LoadDef.y + LINEHEIGHT * i) / 8, '|');
+        V_WriteTextDirect(LoadDef.x / 8, (LoadDef.y + LINEHEIGHT * i) / 8, savegamestrings[i]);
+        V_WriteCharDirect(LoadDef.x / 8 + 24, (LoadDef.y + LINEHEIGHT * i) / 8, '|');
+        M_DrawSaveLoadBorderText(LoadDef.x / 8, (LoadDef.y + LINEHEIGHT * i) / 8);
+#endif
+#ifdef MODE_T8025
         M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 8 - 2);
         V_WriteCharDirect(LoadDef.x / 4 - 1, (LoadDef.y + LINEHEIGHT * i) / 8, '|');
         V_WriteTextDirect(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 8, savegamestrings[i]);
         V_WriteCharDirect(LoadDef.x / 4 + 24, (LoadDef.y + LINEHEIGHT * i) / 8, '|');
         M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 8);
 #endif
-#ifdef MODE_T50
+#if defined(MODE_T8050) || defined(MODE_T80100)
         M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + (LINEHEIGHT)*i) / 4 - 2);
         V_WriteCharDirect(LoadDef.x / 4 - 1, (LoadDef.y + LINEHEIGHT * i) / 4, '|');
         V_WriteTextDirect(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 4, savegamestrings[i]);
         V_WriteCharDirect(LoadDef.x / 4 + 24, (LoadDef.y + LINEHEIGHT * i) / 4, '|');
         M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 4);
 #endif
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
         M_DrawSaveLoadBorder(LoadDef.x, LoadDef.y + LINEHEIGHT * i);
         M_WriteText(LoadDef.x, LoadDef.y + LINEHEIGHT * i, savegamestrings[i]);
 #endif
@@ -674,13 +694,16 @@ void M_DrawSave(void)
 
     if (saveStringEnter)
     {
-#ifdef MODE_T25
+#if defined(MODE_T4025) || defined(MODE_T4050)
+        V_WriteTextDirect((LoadDef.x / 8) + strlen(savegamestrings[saveSlot]), (LoadDef.y + LINEHEIGHT * saveSlot) / 8, "_");
+#endif
+#ifdef MODE_T8025
         V_WriteTextDirect((LoadDef.x / 4) + strlen(savegamestrings[saveSlot]), (LoadDef.y + LINEHEIGHT * saveSlot) / 8, "_");
 #endif
-#ifdef MODE_T50
+#if defined(MODE_T8050) || defined(MODE_T80100)
         V_WriteTextDirect((LoadDef.x / 4) + strlen(savegamestrings[saveSlot]), (LoadDef.y + LINEHEIGHT * saveSlot) / 4, "_");
 #endif
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
         i = M_StringWidth(savegamestrings[saveSlot]);
         M_WriteText(LoadDef.x + i, LoadDef.y + LINEHEIGHT * saveSlot, "_");
 #endif
@@ -801,13 +824,23 @@ void M_DrawReadThis1(void)
 {
     inhelpscreens = 1;
 
-#ifdef MODE_T25
+#ifdef MODE_T4025
+    V_DrawPatchDirectText4025(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+#endif
+
+#ifdef MODE_T4050
+    V_DrawPatchDirectText4050(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+#endif
+#ifdef MODE_T8025
     V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 #endif
-#ifdef MODE_T50
+#if defined(MODE_T8050)
     V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 #endif
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_T80100)
+    V_DrawPatchDirectText80100(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+#endif
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     V_DrawPatchDirect(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 #endif
 }
@@ -819,13 +852,22 @@ void M_DrawReadThis2(void)
 {
     inhelpscreens = 1;
 
-#ifdef MODE_T25
+#ifdef MODE_T4025
+    V_DrawPatchDirectText4025(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
+#endif
+#ifdef MODE_T4050
+    V_DrawPatchDirectText4050(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
+#endif
+#ifdef MODE_T8025
     V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
 #endif
-#ifdef MODE_T50
+#if defined(MODE_T8050)
     V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
 #endif
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_T80100)
+    V_DrawPatchDirectText80100(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
+#endif
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     V_DrawPatchDirect(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
 #endif
 }
@@ -834,13 +876,22 @@ void M_DrawReadThisRetail(void)
 {
     inhelpscreens = 1;
 
-#ifdef MODE_T25
+#ifdef MODE_T4025 
+    V_DrawPatchDirectText4025(0, 0, W_CacheLumpName("HELP", PU_CACHE));
+#endif
+#ifdef MODE_T4050
+    V_DrawPatchDirectText4050(0, 0, W_CacheLumpName("HELP", PU_CACHE));
+#endif
+#ifdef MODE_T8025
     V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("HELP", PU_CACHE));
 #endif
-#ifdef MODE_T50
+#if defined(MODE_T8050)
     V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("HELP", PU_CACHE));
 #endif
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_T80100)
+    V_DrawPatchDirectText80100(0, 0, W_CacheLumpName("HELP", PU_CACHE));
+#endif
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     V_DrawPatchDirect(0, 0, W_CacheLumpName("HELP", PU_CACHE));
 #endif
 }
@@ -850,7 +901,16 @@ void M_DrawReadThisRetail(void)
 //
 void M_DrawSound(void)
 {
-#ifdef MODE_T25
+#if defined(MODE_T4025) || defined(MODE_T4050)
+    V_WriteTextDirect(15, 4, "SOUND VOLUME");
+
+    M_DrawThermoText(SoundDef.x / 8, (SoundDef.y + LINEHEIGHT * (sfx_vol + 1)) / 8, 16, sfxVolume);
+    M_DrawThermoText(SoundDef.x / 8, (SoundDef.y + LINEHEIGHT * (music_vol + 1)) / 8, 16, musicVolume);
+
+    V_WriteTextDirect(10, 16, "Mono Sound:");
+    V_WriteTextDirect(20, 16, monoSound ? "ON" : "OFF");
+#endif
+#ifdef MODE_T8025
     V_WriteTextDirect(30, 4, "SOUND VOLUME");
 
     M_DrawThermoText(SoundDef.x / 4, (SoundDef.y + LINEHEIGHT * (sfx_vol + 1)) / 8, 16, sfxVolume);
@@ -859,7 +919,7 @@ void M_DrawSound(void)
     V_WriteTextDirect(20, 16, "Mono Sound:");
     V_WriteTextDirect(40, 16, monoSound ? "ON" : "OFF");
 #endif
-#ifdef MODE_T50
+#if defined(MODE_T8050) || defined(MODE_T80100)
     V_WriteTextDirect(30, 8, "SOUND VOLUME");
 
     M_DrawThermoText(SoundDef.x / 4, (SoundDef.y + LINEHEIGHT * (sfx_vol + 1)) / 4, 16, sfxVolume);
@@ -868,7 +928,7 @@ void M_DrawSound(void)
     V_WriteTextDirect(20, 32, "Mono Sound:");
     V_WriteTextDirect(40, 32, monoSound ? "ON" : "OFF");
 #endif
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     V_DrawPatchDirect(60, 38, W_CacheLumpName("M_SVOL", PU_CACHE));
 
     M_DrawThermo(SoundDef.x, SoundDef.y + LINEHEIGHT * (sfx_vol + 1), 16, sfxVolume);
@@ -915,7 +975,7 @@ void M_MusicVol(int choice)
         break;
     }
 
-    S_SetMusicVolume(musicVolume * 8);
+    S_SetMusicVolume(musicVolume * 17);
 }
 
 //
@@ -923,13 +983,16 @@ void M_MusicVol(int choice)
 //
 void M_DrawMainMenu(void)
 {
-#ifdef MODE_T25
+#if defined(MODE_T4025) || defined(MODE_T4050)
+    V_WriteTextDirect(11, 5, "DOOM");
+#endif
+#ifdef MODE_T8025
     V_WriteTextDirect(23, 5, "DOOM");
 #endif
-#ifdef MODE_T50
+#if defined(MODE_T8050) || defined(MODE_T80100)
     V_WriteTextDirect(23, 10, "DOOM");
 #endif
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     V_DrawPatchDirect(94, 2, W_CacheLumpName("M_DOOM", PU_CACHE));
 #endif
 }
@@ -939,15 +1002,19 @@ void M_DrawMainMenu(void)
 //
 void M_DrawNewGame(void)
 {
-#ifdef MODE_T25
+#if defined(MODE_T4025) || defined(MODE_T4050)
+    V_WriteTextDirect(12, 2, "NEW GAME");
+    V_WriteTextDirect(6, 4, "Choose skill level:");
+#endif
+#ifdef MODE_T8025
     V_WriteTextDirect(24, 2, "NEW GAME");
     V_WriteTextDirect(13, 4, "Choose skill level:");
 #endif
-#ifdef MODE_T50
+#if defined(MODE_T8050) || defined(MODE_T80100)
     V_WriteTextDirect(24, 2, "NEW GAME");
     V_WriteTextDirect(13, 9, "Choose skill level:");
 #endif
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     V_DrawPatchDirect(96, 14, W_CacheLumpName("M_NEWG", PU_CACHE));
     V_DrawPatchDirect(54, 38, W_CacheLumpName("M_SKILL", PU_CACHE));
 #endif
@@ -968,13 +1035,16 @@ int epi;
 
 void M_DrawEpisode(void)
 {
-#ifdef MODE_T25
+#if defined(MODE_T4025) || defined(MODE_T4050)
+    V_WriteTextDirect(13, 4, "WHICH EPISODE?");
+#endif
+#ifdef MODE_T8025
     V_WriteTextDirect(27, 4, "WHICH EPISODE?");
 #endif
-#ifdef MODE_T50
+#if defined(MODE_T8050) || defined(MODE_T80100)
     V_WriteTextDirect(27, 9, "WHICH EPISODE?");
 #endif
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     V_DrawPatchDirect(54, 38, W_CacheLumpName("M_EPISOD", PU_CACHE));
 #endif
 }
@@ -1020,19 +1090,25 @@ const char msgNames[2][9] = {"M_MSGOFF", "M_MSGON"};
 
 void M_DrawOptions(void)
 {
-#ifdef MODE_T25
+#if defined(MODE_T4025) || defined(MODE_T4050)
+    V_WriteTextDirect(13, 2, "OPTIONS");
+    V_WriteTextDirect((OptionsDef.x + 120) / 8, (OptionsDef.y + LINEHEIGHT * messages) / 8, showMessages == 0 ? "OFF" : "ON");
+    M_DrawThermoText(OptionsDef.x / 8, (OptionsDef.y + LINEHEIGHT * (mousesens + 1)) / 8, 10, mouseSensitivity);
+    M_DrawThermoText(OptionsDef.x / 8, (OptionsDef.y + LINEHEIGHT * (scrnsize + 1)) / 8, 9, screenSize);
+#endif
+#ifdef MODE_T8025
     V_WriteTextDirect(27, 2, "OPTIONS");
     V_WriteTextDirect((OptionsDef.x + 120) / 6, (OptionsDef.y + LINEHEIGHT * messages) / 8, showMessages == 0 ? "OFF" : "ON");
     M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (mousesens + 1)) / 8, 10, mouseSensitivity);
     M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (scrnsize + 1)) / 8, 9, screenSize);
 #endif
-#ifdef MODE_T50
+#if defined(MODE_T8050) || defined(MODE_T80100)
     V_WriteTextDirect(27, 6, "OPTIONS");
     V_WriteTextDirect((OptionsDef.x + 120) / 6, (OptionsDef.y + LINEHEIGHT * messages) / 4, showMessages == 0 ? "OFF" : "ON");
     M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (mousesens + 1)) / 4, 10, mouseSensitivity);
     M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (scrnsize + 1)) / 4, 9, screenSize);
 #endif
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     V_DrawPatchDirect(108, 15, W_CacheLumpName("M_OPTTTL", PU_CACHE));
     V_DrawPatchDirect(OptionsDef.x + 120, OptionsDef.y + LINEHEIGHT * messages, W_CacheLumpName((char *)msgNames[showMessages], PU_CACHE));
     M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (mousesens + 1), 10, mouseSensitivity);
@@ -1044,7 +1120,38 @@ void M_DrawDisplay(void)
 {
     //V_DrawPatchDirect(54, 15, 0, W_CacheLumpName("M_DISOPT", PU_CACHE));
 
-#ifdef MODE_T25
+#if defined(MODE_T4025) || defined(MODE_T4050)
+    V_WriteTextDirect(7, 2, "VSync:");
+    V_WriteTextDirect(30, 2, waitVsync ? "ON" : "OFF");
+
+    V_WriteTextDirect(7, 4, "Detail level:");
+    V_WriteTextDirect(30, 4, detailLevel == 2 ? "POTATO" : detailLevel == 1 ? "LOW"
+                                                                            : "HIGH");
+
+    V_WriteTextDirect(7, 6, "Visplane rendering:");
+    V_WriteTextDirect(30, 6, (!untexturedSurfaces && !flatSurfaces) ? "FULL" : untexturedSurfaces ? "FLAT"
+                                                                                                  : "FLATTER");
+
+    V_WriteTextDirect(7, 8, "Sky rendering:");
+    V_WriteTextDirect(30, 8, flatSky ? "FLAT" : "FULL");
+
+    V_WriteTextDirect(7, 10, "Invisible rendering:");
+    V_WriteTextDirect(30, 10, (!saturnShadows && !flatShadows) ? "FUZZY" : flatShadows ? "FLAT"
+                                                                                       : "SEGA SATURN");
+
+    V_WriteTextDirect(7, 12, "Show FPS:");
+    V_WriteTextDirect(30, 12, showFPS ? "ON" : "OFF");
+
+    V_WriteTextDirect(7, 14, "Sprite culling:");
+    V_WriteTextDirect(30, 14, nearSprites ? "ON" : "OFF");
+
+    V_WriteTextDirect(7, 16, "Melting load effect:");
+    V_WriteTextDirect(30, 16, noMelt ? "OFF" : "ON");
+
+    V_WriteTextDirect(7, 18, "Uncapped framerate:");
+    V_WriteTextDirect(30, 18, uncappedFPS ? "ON" : "OFF");
+#endif
+#ifdef MODE_T8025
     V_WriteTextDirect(15, 2, "VSync:");
     V_WriteTextDirect(45, 2, waitVsync ? "ON" : "OFF");
 
@@ -1075,7 +1182,7 @@ void M_DrawDisplay(void)
     V_WriteTextDirect(15, 18, "Uncapped framerate:");
     V_WriteTextDirect(45, 18, uncappedFPS ? "ON" : "OFF");
 #endif
-#ifdef MODE_T50
+#if defined(MODE_T8050) || defined(MODE_T80100)
     V_WriteTextDirect(15, 5, "VSync:");
     V_WriteTextDirect(45, 5, waitVsync ? "ON" : "OFF");
 
@@ -1106,7 +1213,7 @@ void M_DrawDisplay(void)
     V_WriteTextDirect(15, 37, "Uncapped framerate:");
     V_WriteTextDirect(45, 37, uncappedFPS ? "ON" : "OFF");
 #endif
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     M_WriteText(58, 24, "VSYNC:");
     M_WriteText(214, 24, waitVsync ? "ON" : "OFF");
 
@@ -1513,7 +1620,7 @@ void M_SizeDisplay(int choice)
 //
 //      Menu Functions
 //
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void M_DrawThermo(int x, int y, int thermWidth, int thermDot)
 {
     int xx;
@@ -1533,7 +1640,7 @@ void M_DrawThermo(int x, int y, int thermWidth, int thermDot)
 }
 #endif
 
-#if defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
 void M_DrawThermoText(int x, int y, int thermWidth, int thermDot)
 {
     int xx;
@@ -1580,10 +1687,10 @@ int M_StringWidth(char *string)
             w += 4;
         else
         {
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
             w += hu_font[c]->width;
 #endif
-#if defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
             w += 8;
 #endif
         }
@@ -1599,10 +1706,10 @@ int M_StringHeight(char *string)
 {
     int i;
     int h;
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     int height = hu_font[0]->height;
 #endif
-#if defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
     int height = 8;
 #endif
 
@@ -1617,7 +1724,7 @@ int M_StringHeight(char *string)
 //
 //      Write a string using the hu_font
 //
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void M_WriteText(int x, int y, char *string)
 {
     int w;
@@ -2028,20 +2135,23 @@ void M_Drawer(void)
 
             x = 160 - M_StringWidth(string) / 2;
 
-#ifdef MODE_T25
+#if defined(MODE_T4025) || defined(MODE_T4050)
+            V_WriteTextDirect(x / 8, y / 8, string);
+#endif
+#ifdef MODE_T8025
             V_WriteTextDirect(x / 4, y / 8, string);
 #endif
-#ifdef MODE_T50
+#if defined(MODE_T8050) || defined(MODE_T80100)
             V_WriteTextDirect(x / 4, y / 4, string);
 #endif
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
             M_WriteText(x, y, string);
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
             y += hu_font[0]->height;
 #endif
-#if defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
             y += 8;
 #endif
         }
@@ -2067,13 +2177,16 @@ void M_Drawer(void)
     {
         if (currentMenu->menuitems[i].name[0])
         {
-#ifdef MODE_T25
+#if defined(MODE_T4025) || defined(MODE_T4050)
+            V_WriteTextDirect(x / 8, y / 8, currentMenu->menuitems[i].text);
+#endif
+#ifdef MODE_T8025
             V_WriteTextDirect(x / 4, y / 8, currentMenu->menuitems[i].text);
 #endif
-#ifdef MODE_T50
+#if defined(MODE_T8050) || defined(MODE_T80100)
             V_WriteTextDirect(x / 4, y / 4, currentMenu->menuitems[i].text);
 #endif
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
             V_DrawPatchDirect(x, y, W_CacheLumpName(currentMenu->menuitems[i].name, PU_CACHE));
 #endif
         }
@@ -2082,13 +2195,16 @@ void M_Drawer(void)
     }
 
 // DRAW SKULL
-#ifdef MODE_T25
+#if defined(MODE_T4025) || defined(MODE_T4050)
+    V_WriteCharDirect(currentMenu->x / 8 - 3, currentMenu->y / 8 + itemOn * 2, whichSkull + 1);
+#endif
+#ifdef MODE_T8025
     V_WriteCharDirect(currentMenu->x / 4 - 3, currentMenu->y / 8 + itemOn * 2, whichSkull + 1);
 #endif
-#ifdef MODE_T50
+#if defined(MODE_T8050) || defined(MODE_T80100)
     V_WriteCharDirect(currentMenu->x / 4 - 3, currentMenu->y / 4 + itemOn * 4, whichSkull + 1);
 #endif
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     V_DrawPatchDirect(x + SKULLXOFF, currentMenu->y - 5 + itemOn * LINEHEIGHT, W_CacheLumpName(skullName[whichSkull], PU_CACHE));
 #endif
 }

@@ -30,21 +30,19 @@
 
 #include "v_video.h"
 
-
-
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 byte screen0[SCREENWIDTH * SCREENHEIGHT];
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 byte screen4[SCREENWIDTH * 32];
 #endif
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
 byte backbuffer[SCREENWIDTH * SCREENHEIGHT];
 #endif
 
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 int dirtybox[4];
 #endif
 
@@ -71,11 +69,8 @@ int usegamma;
 //
 // V_MarkRect
 //
-#ifdef MODE_Y
-void V_MarkRect(int x,
-                int y,
-                int width,
-                int height)
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+void V_MarkRect(int x, int y, int width, int height)
 {
     M_AddToBox(dirtybox, x, y);
     M_AddToBox(dirtybox, x + width - 1, y + height - 1);
@@ -90,7 +85,7 @@ void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int de
     byte *src;
     byte *dest;
 
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
     V_MarkRect(destx, desty, width, height);
 #endif
 
@@ -110,7 +105,7 @@ void V_SetRect(byte color, int width, int height, int destx, int desty, byte *de
 {
     byte *dest;
 
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
     V_MarkRect(destx, desty, width, height);
 #endif
 
@@ -130,7 +125,7 @@ void V_SetRect(byte color, int width, int height, int destx, int desty, byte *de
         int widthcomp = width / 2;
 
         for (; height > 0; height--)
-        {    
+        {
             SetWords(dest, colorcomp, widthcomp);
             dest += SCREENWIDTH;
         }
@@ -141,7 +136,7 @@ void V_SetRect(byte color, int width, int height, int destx, int desty, byte *de
 // V_DrawPatch
 // Masks a column based masked pic to the screen.
 //
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
 {
 
@@ -199,7 +194,7 @@ void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
 }
 #endif
 
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 void V_DrawPatchScreen0(int x, int y, patch_t *patch)
 {
 
@@ -264,7 +259,7 @@ void V_DrawPatchScreen0(int x, int y, patch_t *patch)
 // Masks a column based masked pic to the screen.
 // Flips horizontally, e.g. to mirror face.
 //
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
 {
 
@@ -308,7 +303,51 @@ void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
 }
 #endif
 
-#if defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_T4025) || defined(MODE_T4050)
+void V_WriteTextColorDirect(int x, int y, char *string, unsigned short color)
+{
+    unsigned short *dest;
+
+    dest = textdestscreen + Mul40(y) + x;
+
+    while (*string)
+    {
+        *dest++ = color | *string;
+        string++;
+    }
+}
+
+void V_WriteTextDirect(int x, int y, char *string)
+{
+    unsigned short *dest;
+
+    dest = textdestscreen + Mul40(y) + x;
+
+    while (*string)
+    {
+        *dest++ = 12 << 8 | *string;
+        string++;
+    }
+}
+
+void V_WriteCharColorDirect(int x, int y, unsigned char c, unsigned short color)
+{
+    unsigned short *dest;
+
+    dest = textdestscreen + Mul40(y) + x;
+    *dest = color | c;
+}
+
+void V_WriteCharDirect(int x, int y, unsigned char c)
+{
+    unsigned short *dest;
+
+    dest = textdestscreen + Mul40(y) + x;
+    *dest = 12 << 8 | c;
+}
+#endif
+
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T80100)
 void V_WriteTextColorDirect(int x, int y, char *string, unsigned short color)
 {
     unsigned short *dest;
@@ -356,6 +395,43 @@ void V_WriteCharDirect(int x, int y, unsigned char c)
 // V_DrawPatchDirect
 // Draws directly to the screen on the pc.
 //
+#ifdef MODE_VBE2_DIRECT
+void V_DrawPatchDirect(int x, int y, patch_t *patch)
+{
+    int count;
+    int col;
+    column_t *column;
+    byte *desttop;
+    byte *dest;
+    byte *source;
+    int w;
+
+    y -= patch->topoffset;
+    x -= patch->leftoffset;
+
+    col = 0;
+    desttop = destscreen + Mul320(y) + x;
+    w = patch->width;
+    for (; col < w; x++, col++, desttop++)
+    {
+        column = (column_t *)((byte *)patch + patch->columnofs[col]);
+        // Step through the posts in a column
+        while (column->topdelta != 0xff)
+        {
+            source = (byte *)column + 3;
+            dest = desttop + Mul320(column->topdelta);
+            count = column->length;
+            while (count--)
+            {
+                *dest = *source++;
+                dest += SCREENWIDTH;
+            }
+            column = (column_t *)((byte *)column + column->length + 4);
+        }
+    }
+}
+#endif
+
 #ifdef MODE_Y
 void V_DrawPatchDirect(int x, int y, patch_t *patch)
 {
@@ -416,7 +492,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
 }
 #endif
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
 void V_DrawPatchDirect(int x, int y, patch_t *patch)
 {
     int count;
@@ -453,7 +529,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
 }
 #endif
 
-#ifdef MODE_T50
+#if defined(MODE_T8050)
 void V_DrawPatchDirectText8050(int x, int y, patch_t *patch)
 {
     int count;
@@ -498,7 +574,180 @@ void V_DrawPatchDirectText8050(int x, int y, patch_t *patch)
 }
 #endif
 
-#ifdef MODE_T25
+#ifdef MODE_T4050
+void V_DrawPatchDirectText4050(int x, int y, patch_t *patch)
+{
+    int count;
+    int col;
+    column_t *column;
+    unsigned short *desttop;
+    unsigned short *dest;
+    byte *source;
+    int w;
+    byte odd;
+    unsigned short vmem;
+
+    y -= patch->topoffset;
+    x -= patch->leftoffset;
+
+    x /= 8; // 320 --> 40
+    y /= 4; // 200 --> 50
+
+    desttop = textdestscreen + Mul40(y / 2) + x;
+
+    w = patch->width;
+    for (col = 0; col < w; col += 8)
+    {
+        column = (column_t *)((byte *)patch + patch->columnofs[col]);
+
+        // step through the posts in a column
+        while (column->topdelta != 0xff)
+        {
+            source = (byte *)column + 3;
+            odd = (column->topdelta / 4 + y) % 2;
+            dest = desttop + Mul40(column->topdelta / 8);
+            count = column->length / 4;
+
+            while (count--)
+            {
+                vmem = *dest;
+
+                if (odd)
+                {
+                    vmem = vmem & 0x0F00;
+                    *dest = vmem | ptrlut16colors[*source] << 12 | 223;
+
+                    odd = 0;
+                    dest += 40;
+                }
+                else
+                {
+                    vmem = vmem & 0xF000;
+                    *dest = vmem | ptrlut16colors[*source] << 8 | 223;
+
+                    odd = 1;
+                }
+
+                source += 4;
+            }
+            column = (column_t *)((byte *)column + column->length + 4);
+        }
+
+        desttop += 1;
+    }
+}
+#endif
+
+#ifdef MODE_T80100
+void V_DrawPatchDirectText80100(int x, int y, patch_t *patch)
+{
+    int count;
+    int col;
+    column_t *column;
+    unsigned short *desttop;
+    unsigned short *dest;
+    byte *source;
+    int w;
+    byte odd;
+    unsigned short vmem;
+
+    y -= patch->topoffset;
+    x -= patch->leftoffset;
+
+    x /= 4; // 320 --> 80
+    y /= 2; // 200 --> 100
+
+    desttop = textdestscreen + Mul80(y / 2) + x;
+
+    w = patch->width;
+    for (col = 0; col < w; col += 4)
+    {
+        column = (column_t *)((byte *)patch + patch->columnofs[col]);
+
+        // step through the posts in a column
+        while (column->topdelta != 0xff)
+        {
+            source = (byte *)column + 3;
+            odd = (column->topdelta / 4 + y) % 2;
+            dest = desttop + Mul80(column->topdelta / 4);
+            count = column->length / 2;
+
+            while (count--)
+            {
+                vmem = *dest;
+
+                if (odd)
+                {
+                    vmem = vmem & 0x0F00;
+                    *dest = vmem | ptrlut16colors[*source] << 12 | 223;
+
+                    odd = 0;
+                    dest += 80;
+                }
+                else
+                {
+                    vmem = vmem & 0xF000;
+                    *dest = vmem | ptrlut16colors[*source] << 8 | 223;
+
+                    odd = 1;
+                }
+
+                source += 2;
+            }
+            column = (column_t *)((byte *)column + column->length + 4);
+        }
+
+        desttop += 1;
+    }
+}
+#endif
+
+#ifdef MODE_T4025
+void V_DrawPatchDirectText4025(int x, int y, patch_t *patch)
+{
+    int count;
+    int col;
+    column_t *column;
+    unsigned short *desttop;
+    unsigned short *dest;
+    byte *source;
+    int w;
+
+    y -= patch->topoffset;
+    x -= patch->leftoffset;
+
+    x /= 8; // 320 --> 40
+    y /= 8; // 200 --> 25
+
+    desttop = textdestscreen + Mul40(y) + x;
+
+    w = patch->width;
+    for (col = 0; col < w; col += 8)
+    {
+        column = (column_t *)((byte *)patch + patch->columnofs[col]);
+
+        // step through the posts in a column
+        while (column->topdelta != 0xff)
+        {
+            source = (byte *)column + 3;
+            dest = desttop + Mul40(column->topdelta / 8);
+            count = column->length / 4;
+
+            while (count--)
+            {
+                *dest = ptrlut16colors[*source] << 8 | 219;
+                source += 8;
+                dest += 40;
+            }
+            column = (column_t *)((byte *)column + column->length + 4);
+        }
+
+        desttop += 1;
+    }
+}
+#endif
+
+#ifdef MODE_T8025
 void V_DrawPatchDirectText8025(int x, int y, patch_t *patch)
 {
     int count;

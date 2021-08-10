@@ -38,13 +38,26 @@
              graphics a VGA video card is recommended
  Controls:   Keyboard (mouse recommended)
 
+ Supported WADS
+ --------------
+
+ The supported wads are the following:
+    * DOOM.WAD -> DOOM Registered (3 episodes)
+    * DOOM1.WAD -> DOOM Shareware (1 episode)
+    * DOOMU.WAD -> Ultimate DOOM (4 episodes)
+    * DOOM2.WAD -> DOOM II
+    * PLUTONIA.WAD -> Final DOOM The Plutonia Experiment
+    * TNT.WAD -> Final DOOM TNT Evilution 
+
+ All of them must be the 1.9 version to work fine.
+
  Supported hardware
  ------------------
  
  CPU: Any x86 processor that supports 32 bit i386 instruction set
  Video cards: Hercules, CGA, EGA, VGA
  Sound cards: Sound Blaster, PC Speaker, Disney Sound Source,
-              Gravis Ultrasound, Pro Audio Spectrum
+              Gravis Ultrasound, Pro Audio Spectrum, COVOX LPT DAC
  Music cards: Sound Blaster (OPL2 and OPL3), Adlib, MIDI, Gravis Ultrasound
               Sound Blaster AWE32
 
@@ -65,14 +78,27 @@
  * FDOOMHGC.EXE => FastDoom 640x400 monochrome Hercules. Requires a fast
                    CPU. Also uses ordered dithering 2x2. Internal resolution
                    320x200
+ * FDOOMT1.EXE  => FastDoom 40x25 16 colors text mode
+ * FDOOMT12.EXE => FastDoom 40x25 16 colors text mode (virtual resolution of
+                   40x50)
  * FDOOMT25.EXE => FastDoom 80x25 16 colors text mode (virtual resolution of
                    80x50)
  * FDOOMT50.EXE => FastDoom 80x50 16 colors text mode
+ * FDOOMT52.EXE => FastDoom 80x50 16 colors text mode (virtual resolution of
+                   80x100)
  * FDOOMVBR.EXE => FastDoom for VBE 2.0 cards. Uses real mode (default, and
                    more compatible). If you use UniVBE use this version
  * FDOOMVBP.EXE => FastDoom for VBE 2.0 cards. Uses protected mode
                    extensions. Some video cards crash with this mode, it
                    should be a little bit faster than the real mode version
+ * FDOOMVBD.EXE => FastDoom for VBE 2.0 cards with LFB (triple buffered),
+		           all rendering is done directly onto the video card, the
+		           same way Mode Y does. Faster for systems with slow RAM
+		           access.
+ * FDOOMV.EXE   => FastDoom Planar 320x350 vertical mode. The base 320x200 
+                   image is stretched to 320x350 (wrong aspect ratio)
+ * FDOOMV2.EXE =>  FastDoom Planar 320x350 vertical mode. The base 320x200 
+                   image is centered in the screen, leaving black borders
  * FDSETUP.EXE  => Utility to setup controls and sound cards
 
  Command line parameters

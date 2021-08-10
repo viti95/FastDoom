@@ -38,6 +38,8 @@
 
 #include <conio.h>
 
+#include "sizeopt.h"
+
 #define SC_INDEX 0x3C4
 
 //
@@ -741,7 +743,93 @@ void R_DrawPlanesFlatSurfacesPotato(void)
     }
 }
 
-#ifdef MODE_T50
+#if defined(MODE_T80100)
+void R_DrawPlanesFlatSurfacesText80100(void)
+{
+    visplane_t *pl;
+
+    int count;
+    int countblock;
+    unsigned short *dest;
+    unsigned short vmem;
+    unsigned short color;
+    unsigned short colorblock;
+    int x;
+    byte odd;
+
+    for (pl = visplanes; pl < lastvisplane; pl++)
+    {
+        if (!pl->modified || pl->minx > pl->maxx)
+            continue;
+
+        // sky flat
+        if (pl->picnum == skyflatnum)
+        {
+            R_DrawSky(pl);
+            continue;
+        }
+
+        dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
+
+        color = colormaps[dc_source[FLATPIXELCOLOR]];
+        colorblock = color << 8 | 219;
+
+        for (x = pl->minx; x <= pl->maxx; x++)
+        {
+            if (pl->top[x] > pl->bottom[x])
+                continue;
+
+            odd = pl->top[x] % 2;
+            dest = textdestscreen + Mul80(pl->top[x] / 2) + x;
+            count = pl->bottom[x] - pl->top[x];
+
+            if (count >= 1 && odd || count == 0)
+            {
+                vmem = *dest;
+
+                if (odd)
+                {
+                    vmem = vmem & 0x0F00;
+                    *dest = vmem | color << 12 | 223;
+
+                    odd = 0;
+                    dest += 80;
+                }
+                else
+                {
+                    vmem = vmem & 0xF000;
+                    *dest = vmem | color << 8 | 223;
+                    continue;
+                }
+
+                count--;
+            }
+
+            countblock = (count + 1) / 2;
+            count -= countblock * 2;
+
+            while (countblock)
+            {
+                *dest = colorblock;
+                dest += 80;
+
+                countblock--;
+            }
+
+            if (count >= 0 && !odd)
+            {
+                vmem = *dest;
+                vmem = vmem & 0xF000;
+                *dest = vmem | color << 8 | 223;
+            }
+        }
+
+        Z_ChangeTag(dc_source, PU_CACHE);
+    }
+}
+#endif
+
+#if defined(MODE_T8050)
 void R_DrawPlanesFlatSurfacesText8050(void)
 {
     visplane_t *pl;
@@ -797,7 +885,149 @@ void R_DrawPlanesFlatSurfacesText8050(void)
 }
 #endif
 
-#ifdef MODE_T25
+#ifdef MODE_T4050
+void R_DrawPlanesFlatSurfacesText4050(void)
+{
+    visplane_t *pl;
+
+    int count;
+    int countblock;
+    unsigned short *dest;
+    unsigned short vmem;
+    unsigned short color;
+    unsigned short colorblock;
+    int x;
+    byte odd;
+
+    for (pl = visplanes; pl < lastvisplane; pl++)
+    {
+        if (!pl->modified || pl->minx > pl->maxx)
+            continue;
+
+        // sky flat
+        if (pl->picnum == skyflatnum)
+        {
+            R_DrawSky(pl);
+            continue;
+        }
+
+        dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
+
+        color = colormaps[dc_source[FLATPIXELCOLOR]];
+        colorblock = color << 8 | 219;
+
+        for (x = pl->minx; x <= pl->maxx; x++)
+        {
+            if (pl->top[x] > pl->bottom[x])
+                continue;
+
+            odd = pl->top[x] % 2;
+            dest = textdestscreen + Mul40(pl->top[x] / 2) + x;
+            count = pl->bottom[x] - pl->top[x];
+
+            if (count >= 1 && odd || count == 0)
+            {
+                vmem = *dest;
+
+                if (odd)
+                {
+                    vmem = vmem & 0x0F00;
+                    *dest = vmem | color << 12 | 223;
+
+                    odd = 0;
+                    dest += 40;
+                }
+                else
+                {
+                    vmem = vmem & 0xF000;
+                    *dest = vmem | color << 8 | 223;
+                    continue;
+                }
+
+                count--;
+            }
+
+            countblock = (count + 1) / 2;
+            count -= countblock * 2;
+
+            while (countblock)
+            {
+                *dest = colorblock;
+                dest += 40;
+
+                countblock--;
+            }
+
+            if (count >= 0 && !odd)
+            {
+                vmem = *dest;
+                vmem = vmem & 0xF000;
+                *dest = vmem | color << 8 | 223;
+            }
+        }
+
+        Z_ChangeTag(dc_source, PU_CACHE);
+    }
+}
+#endif
+
+#ifdef MODE_T4025
+void R_DrawPlanesFlatSurfacesText4025(void)
+{
+    visplane_t *pl;
+
+    int count;
+    unsigned short *dest;
+    unsigned short color;
+    int x;
+
+    for (pl = visplanes; pl < lastvisplane; pl++)
+    {
+        if (!pl->modified || pl->minx > pl->maxx)
+            continue;
+
+        // sky flat
+        if (pl->picnum == skyflatnum)
+        {
+            R_DrawSky(pl);
+            continue;
+        }
+
+        dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
+        color = colormaps[dc_source[FLATPIXELCOLOR]] << 8 | 219;
+
+        for (x = pl->minx; x <= pl->maxx; x++)
+        {
+            if (pl->top[x] > pl->bottom[x])
+                continue;
+
+            count = pl->bottom[x] - pl->top[x];
+            dest = textdestscreen + Mul40(pl->top[x]) + x;
+
+            while (count >= 3)
+            {
+                *(dest) = color;
+                *(dest + SCREENWIDTH / 8) = color;
+                *(dest + SCREENWIDTH / 4) = color;
+                *(dest + SCREENWIDTH / 8 + SCREENWIDTH / 4) = color;
+                dest += SCREENWIDTH / 2;
+                count -= 4;
+            }
+
+            while (count >= 0)
+            {
+                *dest = color;
+                dest += SCREENWIDTH / 8;
+                count--;
+            };
+        }
+
+        Z_ChangeTag(dc_source, PU_CACHE);
+    }
+}
+#endif
+
+#ifdef MODE_T8025
 void R_DrawPlanesFlatSurfacesText8025(void)
 {
     visplane_t *pl;
@@ -883,7 +1113,7 @@ void R_DrawPlanesFlatSurfacesText8025(void)
 }
 #endif
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
 void R_DrawPlanesFlatSurfaces_13h(void)
 {
     visplane_t *pl;
@@ -916,6 +1146,52 @@ void R_DrawPlanesFlatSurfaces_13h(void)
 
             count = pl->bottom[x] - pl->top[x];
             dest = ylookup[pl->top[x]] + columnofs[x];
+
+            do
+            {
+                *dest = color;
+                dest += SCREENWIDTH;
+            } while (count--);
+        }
+
+        Z_ChangeTag(dc_source, PU_CACHE);
+    }
+}
+#endif
+
+#ifdef MODE_VBE2_DIRECT
+void R_DrawPlanesFlatSurfacesVBE2(void)
+{
+    visplane_t *pl;
+
+    int count;
+    byte *dest;
+    lighttable_t color;
+    int x;
+
+    for (pl = visplanes; pl < lastvisplane; pl++)
+    {
+        if (!pl->modified || pl->minx > pl->maxx)
+            continue;
+
+        // sky flat
+        if (pl->picnum == skyflatnum)
+        {
+            R_DrawSky(pl);
+            continue;
+        }
+
+        dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
+
+        color = colormaps[dc_source[FLATPIXELCOLOR]];
+
+        for (x = pl->minx; x <= pl->maxx; x++)
+        {
+            if (pl->top[x] > pl->bottom[x])
+                continue;
+
+            count = pl->bottom[x] - pl->top[x];
+            dest = destview + Mul320(pl->top[x]) + x;
 
             do
             {

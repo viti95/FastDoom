@@ -34,6 +34,8 @@
 
 #include <conio.h>
 
+#include "sizeopt.h"
+
 #define SC_INDEX 0x3C4
 
 #define MINZ (FRACUNIT * 4)
@@ -59,9 +61,12 @@ typedef struct
 //  which increases counter clockwise (protractor).
 // There was a lot of stuff grabbed wrong, so I changed it...
 //
+
+#if !defined(MODE_T8050) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050)
 fixed_t pspritescale;
 fixed_t pspriteiscale;
 fixed_t pspriteiscaleshifted;
+#endif
 
 lighttable_t **spritelights;
 
@@ -263,10 +268,13 @@ void R_DrawVisSprite(vissprite_t *vis)
         colfunc = fuzzcolfunc;
     }
 
+#if defined(MODE_T4050) || defined(MODE_T80100)
+    dc_iscale = abs(vis->xiscale) >> 1;
+#endif
 #ifdef MODE_Y
     dc_iscale = abs(vis->xiscale) >> detailshift;
 #endif
-#if defined(MODE_T25) || defined(MODE_T50) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT)
     dc_iscale = abs(vis->xiscale);
 #endif
 
@@ -474,10 +482,13 @@ void R_ProjectSprite(mobj_t *thing)
     vis = vissprites + num_vissprite++;
     vis->mobjflags = thing->flags;
 
+#if defined(MODE_T4050) || defined(MODE_T80100)
+    vis->scale = xscale << 1;
+#endif
 #ifdef MODE_Y
     vis->scale = xscale << detailshift;
 #endif
-#if defined(MODE_T25) || defined(MODE_T50) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT)
     vis->scale = xscale;
 #endif
 
@@ -526,10 +537,13 @@ void R_ProjectSprite(mobj_t *thing)
     {
         // diminished light
 
+#if defined(MODE_T4050) || defined(MODE_T80100)
+        index = xscale >> (LIGHTSCALESHIFT - 1);
+#endif
 #ifdef MODE_Y
         index = xscale >> (LIGHTSCALESHIFT - detailshift);
 #endif
-#if defined(MODE_T25) || defined(MODE_T50) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT)
         index = xscale >> LIGHTSCALESHIFT;
 #endif
 
@@ -611,10 +625,13 @@ void R_DrawPSprite(pspdef_t *psp)
     vis->x1 = x1 < 0 ? 0 : x1;
     vis->x2 = x2 > viewwidthlimit ? viewwidthlimit : x2;
 
+#if defined(MODE_T4050) || defined(MODE_T80100)
+    vis->scale = pspritescale << 1;
+#endif
 #ifdef MODE_Y
     vis->scale = pspritescale << detailshift;
 #endif
-#if defined(MODE_T25) || defined(MODE_T50) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT)
     vis->scale = pspritescale;
 #endif
 

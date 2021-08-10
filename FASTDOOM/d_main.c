@@ -62,6 +62,8 @@
 
 #include "i_vesa.h"
 
+#include "sizeopt.h"
+
 #define BGCOLOR 7
 #define FGCOLOR 8
 
@@ -102,7 +104,7 @@ boolean forceLowDetail;
 boolean forcePotatoDetail;
 int forceScreenSize;
 
-#ifdef MODE_T25
+#if defined(MODE_T8025) || defined(MODE_T4025) || defined(MODE_T4050)
 boolean CGAcard;
 #endif
 
@@ -215,14 +217,14 @@ void D_Display(void)
     if (gamestate != wipegamestate && !noMelt)
     {
         wipe = true;
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
         wipe_StartScreen();
 #endif
     }
     else
         wipe = false;
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     if (gamestate == GS_LEVEL && gametic)
         HU_Erase();
 #endif
@@ -237,18 +239,18 @@ void D_Display(void)
         {
             // [crispy] update automap while playing
             R_RenderPlayerView(&players);
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
             AM_Drawer();
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
             updatestate |= I_FULLVIEW;
 #endif
 #endif
         }
 
-#if defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
         ST_doPaletteStuff();
 #endif
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
         if (!automapactive || (automapactive && !fullscreen))
         {
             redrawsbar = wipe || (viewheight != 200 && fullscreen) || (inhelpscreensstate && !inhelpscreens); // just put away the help screen
@@ -261,28 +263,28 @@ void D_Display(void)
 
     case GS_INTERMISSION:
         WI_Drawer();
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
         updatestate |= I_FULLSCRN;
 #endif
         break;
 
     case GS_FINALE:
         F_Drawer();
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
         updatestate |= I_FULLSCRN;
 #endif
         break;
 
     case GS_DEMOSCREEN:
         D_PageDrawer();
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
         updatestate |= I_FULLSCRN;
 #endif
         break;
     }
 
     // draw buffered stuff to screen
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
     I_UpdateNoBlit();
 #endif
 
@@ -294,7 +296,7 @@ void D_Display(void)
             R_RenderPlayerView(&players);
 
         HU_Drawer();
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
         updatestate |= I_FULLVIEW;
 #endif
     }
@@ -309,7 +311,7 @@ void D_Display(void)
     if (gamestate == GS_LEVEL && oldgamestate != GS_LEVEL)
     {
         viewactivestate = 0; // view was not active
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
         R_FillBackScreen(); // draw the pattern into the back screen
 #endif
     }
@@ -321,10 +323,10 @@ void D_Display(void)
             borderdrawcount = 3;
         if (borderdrawcount)
         {
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
             R_DrawViewBorder(); // erase old menu stuff
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
             updatestate |= I_FULLSCRN;
 #endif
             borderdrawcount--;
@@ -344,15 +346,19 @@ void D_Display(void)
         else
             y = viewwindowy + 4;
 
-#ifdef MODE_T25
-        V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 4, "PAUSE");
-#endif
-
-#ifdef MODE_T50
+#if defined(MODE_T4025) || defined(MODE_T4050)
         V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 2, "PAUSE");
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#ifdef MODE_T8025
+        V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 4, "PAUSE");
+#endif
+
+#if defined(MODE_T8050) || defined(MODE_T80100)
+        V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 2, "PAUSE");
+#endif
+
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
         V_DrawPatchDirect(viewwindowx + (scaledviewwidth - 68) / 2, y, W_CacheLumpName("M_PAUSE", PU_CACHE));
 #endif
     }
@@ -360,13 +366,16 @@ void D_Display(void)
     // menus go directly to the screen
     M_Drawer(); // menu is drawn even on top of everything
 
-#if defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
     if (gamestate == GS_LEVEL)
     {
-#ifdef MODE_T25
+#if defined(MODE_T4025) || defined(MODE_T4050)
+        ST_DrawerText4025();
+#endif
+#ifdef MODE_T8025
         ST_DrawerText8025();
 #endif
-#ifdef MODE_T50
+#if defined(MODE_T8050) || defined(MODE_T80100)
         ST_DrawerText8050();
 #endif
     }
@@ -382,13 +391,13 @@ void D_Display(void)
     }
 
 // wipe update
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     wipe_EndScreen();
 #endif
 
     wipestart = ticcount - 1;
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     do
     {
         do
@@ -397,11 +406,11 @@ void D_Display(void)
         } while (!tics);
         wipestart = ticcount;
         done = wipe_ScreenWipe(tics);
-#ifdef MODE_Y
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
         I_UpdateNoBlit();
 #endif
         M_Drawer(); // menu is drawn even on top of wipes
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
         updatestate = I_FULLSCRN;
 #endif
         I_FinishUpdate(); // page flip or blit buffer
@@ -470,16 +479,25 @@ void D_PageTicker(void)
 //
 void D_PageDrawer(void)
 {
-#ifdef MODE_T25
+#ifdef MODE_T4050
+    V_DrawPatchDirectText4050(0, 0, W_CacheLumpName(pagename, PU_CACHE));
+#endif
+#ifdef MODE_T4025
+     V_DrawPatchDirectText4025(0, 0, W_CacheLumpName(pagename, PU_CACHE));
+#endif
+#ifdef MODE_T8025
     V_DrawPatchDirectText8025(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
-#ifdef MODE_T50
+#if defined(MODE_T8050)
     V_DrawPatchDirectText8050(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
-#ifdef MODE_Y
+#if defined(MODE_T80100)
+    V_DrawPatchDirectText80100(0, 0, W_CacheLumpName(pagename, PU_CACHE));
+#endif
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
     V_DrawPatchScreen0(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
     V_DrawPatchDirect(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
 }
@@ -906,7 +924,7 @@ void D_DoomMain(void)
     D_AddFile("modecvbs.wad");
 #endif
 
-#if defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
     D_AddFile("modetxt.wad");
 #endif
 
@@ -929,7 +947,7 @@ void D_DoomMain(void)
     forceLowDetail = M_CheckParm("-forceLQ");
     forcePotatoDetail = M_CheckParm("-forcePQ");
 
-#ifdef MODE_T25
+#if defined(MODE_T8025) || defined(MODE_T4025) || defined(MODE_T4050)
     CGAcard = M_CheckParm("-cga");
 #endif
 
@@ -1134,7 +1152,7 @@ void D_DoomMain(void)
     M_CheckParmDisable("-novsync", &waitVsync);
     M_CheckParmDisable("-nofps", &showFPS);
 
-#if defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T80100) || defined(MODE_T4025) || defined(MODE_T4050)
     noMelt = 1;
 #endif
 
@@ -1166,15 +1184,15 @@ void D_DoomMain(void)
 
     printf("S_Init: Setting up sound.\n");
     D_RedrawTitle();
-    S_Init(sfxVolume * 8, musicVolume * 8);
+    S_Init(sfxVolume * 8, musicVolume * 17);
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     printf("HU_Init: Setting up heads up display.\n");
     D_RedrawTitle();
     HU_Init();
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     printf("ST_Init: Init status bar.\n");
     D_RedrawTitle();
     ST_Init();

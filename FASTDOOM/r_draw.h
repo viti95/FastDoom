@@ -35,10 +35,10 @@ extern byte *dc_source;
 
 extern int columnofs[SCREENWIDTH];
 
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(USE_BACKBUFFER)
 extern byte *ylookup[SCREENHEIGHT];
 #endif
-#if defined(MODE_Y) || defined(MODE_T25) || defined(MODE_T50)
+#if defined(MODE_Y) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_VBE2_DIRECT) || defined(MODE_T80100)
 extern byte **ylookup;
 #endif
 
@@ -74,12 +74,33 @@ void R_DrawSkyFlatText8050(void);
 void R_DrawSpanText8050(void);
 void R_DrawFuzzColumnFastText8050(void);
 
+void R_DrawColumnText80100(void);
+void R_DrawFuzzColumnText80100(void);
+void R_DrawFuzzColumnSaturnText80100(void);
+void R_DrawSkyFlatText80100(void);
+void R_DrawSpanText80100(void);
+void R_DrawFuzzColumnFastText80100(void);
+
 void R_DrawColumnText8025(void);
 void R_DrawSpanText8025(void);
 void R_DrawSkyFlatText8025(void);
 void R_DrawFuzzColumnText8025(void);
 void R_DrawFuzzColumnFastText8025(void);
 void R_DrawFuzzColumnSaturnText8025(void);
+
+void R_DrawColumnText4025(void);
+void R_DrawSpanText4025(void);
+void R_DrawSkyFlatText4025(void);
+void R_DrawFuzzColumnText4025(void);
+void R_DrawFuzzColumnFastText4025(void);
+void R_DrawFuzzColumnSaturnText4025(void);
+
+void R_DrawColumnText4050(void);
+void R_DrawSpanText4050(void);
+void R_DrawSkyFlatText4050(void);
+void R_DrawFuzzColumnText4050(void);
+void R_DrawFuzzColumnFastText4050(void);
+void R_DrawFuzzColumnSaturnText4050(void);
 
 void R_DrawColumn_13h(void);
 void R_DrawSpan_13h(void);
@@ -88,6 +109,13 @@ void R_DrawFuzzColumnFast_13h(void);
 void R_DrawSkyFlat_13h(void);
 void R_DrawSpanFlat_13h(void);
 void R_DrawFuzzColumnSaturn_13h(void);
+
+void R_DrawColumnVBE2(void);
+void R_DrawSpanVBE2(void);
+void R_DrawSkyFlatVBE2(void);
+void R_DrawFuzzColumnFastVBE2(void);
+void R_DrawFuzzColumnSaturnVBE2(void);
+void R_DrawFuzzColumnVBE2(void);
 
 void R_VideoErase(unsigned ofs, int count);
 
@@ -117,8 +145,13 @@ void R_DrawSpanFlatLow(void);
 void R_DrawSpanPotato(void);
 void R_DrawSpanFlatPotato(void);
 
+void R_DrawSpanFlatText80100(void);
 void R_DrawSpanFlatText8050(void);
 void R_DrawSpanFlatText8025(void);
+void R_DrawSpanFlatText4025(void);
+void R_DrawSpanFlatText4050(void);
+
+void R_DrawSpanFlatVBE2(void);
 
 void R_InitBuffer(int width, int height);
 
