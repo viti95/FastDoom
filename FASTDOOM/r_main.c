@@ -539,11 +539,7 @@ fixed_t R_ScaleFromGlobalAngle(angle_t visangle)
 #ifdef MODE_Y
     num = FixedMul(projection, sineb) << detailshift;
 #endif
-<<<<<<< HEAD
-#if defined(MODE_T25) || defined(MODE_T50) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
-=======
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT)
->>>>>>> upstream/master
     num = FixedMul(projection, sineb);
 #endif
     den = FixedMul(rw_distance, sinea);
@@ -731,11 +727,7 @@ void R_ExecuteSetViewSize(void)
 #ifdef MODE_Y
     viewwidth = scaledviewwidth >> detailshift;
 #endif
-<<<<<<< HEAD
-#if defined(MODE_T25) || defined(MODE_T50) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
-=======
 #if defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
->>>>>>> upstream/master
     viewwidth = scaledviewwidth;
 #endif
 
@@ -937,11 +929,7 @@ void R_ExecuteSetViewSize(void)
         break;
     }
 #endif
-<<<<<<< HEAD
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
-=======
 #if defined(USE_BACKBUFFER)
->>>>>>> upstream/master
     colfunc = basecolfunc = R_DrawColumn_13h;
 
     if (untexturedSurfaces)
@@ -996,11 +984,7 @@ void R_ExecuteSetViewSize(void)
 #ifdef MODE_Y
     pspriteiscaleshifted = pspriteiscale >> detailshift;
 #endif
-<<<<<<< HEAD
-#if defined(MODE_T25) || defined(MODE_T50) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
-=======
 #if defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
->>>>>>> upstream/master
     pspriteiscaleshifted = pspriteiscale;
 #endif
 
@@ -1019,11 +1003,7 @@ void R_ExecuteSetViewSize(void)
 #ifdef MODE_Y
         yslope[i] = FixedDiv((viewwidth << detailshift) / 2 * FRACUNIT, dy);
 #endif
-<<<<<<< HEAD
-#if defined(MODE_T25) || defined(MODE_T50) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
-=======
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT)
->>>>>>> upstream/master
         yslope[i] = FixedDiv((viewwidth) / 2 * FRACUNIT, dy);
 #endif
     }
@@ -1047,11 +1027,7 @@ void R_ExecuteSetViewSize(void)
 #ifdef MODE_Y
             level = startmap - Mul320(j) / (viewwidth << detailshift) / DISTMAP;
 #endif
-<<<<<<< HEAD
-#if defined(MODE_T25) || defined(MODE_T50) || defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_EGA) || defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
-=======
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT)
->>>>>>> upstream/master
             level = startmap - Mul320(j) / (viewwidth) / DISTMAP;
 #endif
             if (level < 0)
@@ -1279,11 +1255,7 @@ void R_RenderPlayerView(player_t *player)
     else
         R_DrawPlanes();
 #endif
-<<<<<<< HEAD
-#if defined(MODE_13H) || defined(MODE_CGA) || defined(MODE_CGA_BW) || defined(MODE_EGA) || defined(MODE_HERC) || defined(MODE_VBE2) || defined(MODE_PCP) || defined(MODE_CVB)
-=======
 #if defined(USE_BACKBUFFER)
->>>>>>> upstream/master
     if (flatSurfaces)
         R_DrawPlanesFlatSurfaces_13h();
     else
