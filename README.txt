@@ -55,7 +55,7 @@
  ------------------
  
  CPU: Any x86 processor that supports 32 bit i386 instruction set
- Video cards: Hercules, CGA, EGA, VGA
+ Video cards: Hercules, CGA, EGA, VGA, Plantronics ColorPlus
  Sound cards: Sound Blaster, PC Speaker, Disney Sound Source,
               Gravis Ultrasound, Pro Audio Spectrum, COVOX LPT DAC
  Music cards: Sound Blaster (OPL2 and OPL3), Adlib, MIDI, Gravis Ultrasound
@@ -97,8 +97,11 @@
 		           access.
  * FDOOMV.EXE   => FastDoom Planar 320x350 vertical mode. The base 320x200 
                    image is stretched to 320x350 (wrong aspect ratio)
- * FDOOMV2.EXE =>  FastDoom Planar 320x350 vertical mode. The base 320x200 
+ * FDOOMV2.EXE  => FastDoom Planar 320x350 vertical mode. The base 320x200 
                    image is centered in the screen, leaving black borders
+ * FDOOMPCP.EXE => FastDoom for Plantronics ColorPlus cards. 320x200 and 
+                   16 colors!
+ * FDOOMCVB.EXE => FastDoom CGA composite mode. 160x200 and 16 colors!
  * FDSETUP.EXE  => Utility to setup controls and sound cards
 
  Command line parameters
@@ -163,6 +166,7 @@
  -LPT1 => Forces LPT1 port for Disney Sound Source
  -LPT2 => Forces LPT2 port for Disney Sound Source
  -LPT3 => Forces LPT3 port for Disney Sound Source
+ -disabledemo => Disables defered demos
 
  Author
  ------

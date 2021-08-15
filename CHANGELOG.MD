@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.8.7 (16 Aug 2021)
+* Added new video modes. Huge thanks to @PickledDog for implementing these
+ * FDOOMPCP.EXE => FastDoom for Plantronics ColorPlus cards. 320x200 and 16 colors!
+ * FDOOMCVB.EXE => FastDoom CGA composite mode. 160x200 and 16 colors!
+* New command line parameter that allows disabling the defered demos (-disabledemo)
+
 ## 0.8.6 (4 Aug 2021)
 * Added new video modes (for LGR's vertical monitor). Both support page flipping.
  * FDOOMV.EXE  => FastDoom Planar 320x350 vertical mode. The base 320x200 image is stretched to 320x350 (wrong aspect ratio)
