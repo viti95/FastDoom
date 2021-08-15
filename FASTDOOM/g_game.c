@@ -94,7 +94,7 @@ byte sendsave;  // send a save event next tic
 byte usergame;  // ok to save / end game
 
 byte timingdemo = 0; // if true, exit with report on completion
-int starttime;   // for comparative timing purposes
+int starttime;       // for comparative timing purposes
 
 byte viewactive;
 
@@ -218,8 +218,6 @@ void G_BuildTiccmd(ticcmd_t *cmd)
         turnheld = 0;
         tspeed = 2; // slow turn
     }
-
-
 
     side = 0;
 
@@ -356,10 +354,13 @@ void G_DoLoadLevel(void)
     sendpause = sendsave = paused = 0;
     memset(mousebuttons, 0, sizeof(mousebuttons));
 
-    if (gamemap == 8 && gamemission == doom){
+    if (gamemap == 8 && gamemission == doom)
+    {
         // BOSSES
         snd_clipping = S_CLIPPING_DIST_BOSS;
-    }else{
+    }
+    else
+    {
         snd_clipping = S_CLIPPING_DIST;
     }
 }
@@ -1156,8 +1157,11 @@ char *defdemoname;
 
 void G_DeferedPlayDemo(char *name)
 {
-    defdemoname = name;
-    gameaction = ga_playdemo;
+    if (!disableDemo)
+    {
+        defdemoname = name;
+        gameaction = ga_playdemo;
+    }
 }
 
 void G_DoPlayDemo(void)

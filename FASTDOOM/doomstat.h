@@ -66,6 +66,7 @@ extern boolean CGAcard;
 #endif
 
 extern boolean logTimedemo;
+extern boolean disableDemo;
 
 extern boolean uncappedFPS;
 extern boolean waitVsync;

@@ -109,6 +109,7 @@ boolean CGAcard;
 #endif
 
 boolean logTimedemo;
+boolean disableDemo;
 
 boolean uncappedFPS;
 boolean waitVsync;
@@ -961,6 +962,8 @@ void D_DoomMain(void)
     reverseStereo = M_CheckParm("-reverseStereo");
 
     logTimedemo = M_CheckParm("-logTimedemo");
+
+    disableDemo = M_CheckParm("-disabledemo");
 
     bfgedition = M_CheckParm("-bfg");
 
