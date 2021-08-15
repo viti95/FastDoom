@@ -4,3 +4,4 @@ wmake fdoomvbe.exe EXTERNOPT="/dMODE_VBE2 /dMODE_PM /dUSE_BACKBUFFER" %1 %2 %3 %
 copy fdoomvbe.exe ..\fdoomvbp.exe
 cd ..
 sb -r fdoomvbp.exe
+ss fdoomvbp.exe dos32a.d32
