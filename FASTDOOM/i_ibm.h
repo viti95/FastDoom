@@ -20,6 +20,11 @@ extern byte lut16colors[14 * 256];
 extern byte *ptrlut16colors;
 #endif
 
+#if defined(MODE_CGA)
+extern byte lut4colors[14 * 256];
+extern byte *ptrlut4colors;
+#endif
+
 #if defined(MODE_CGA_BW) || defined(MODE_HERC)
 extern byte sumcolors00[14 * 256];
 extern byte sumcolors01[14 * 256];

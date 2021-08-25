@@ -206,6 +206,11 @@ byte lut16colors[14 * 256];
 byte *ptrlut16colors;
 #endif
 
+#if defined(MODE_CGA)
+byte lut4colors[14 * 256];
+byte *ptrlut4colors;
+#endif
+
 #if defined(MODE_CGA_BW) || defined(MODE_HERC)
 byte sumcolors00[14 * 256];
 byte sumcolors01[14 * 256];
@@ -260,12 +265,6 @@ byte scantokey[128] =
         0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0 // 7
 };
-
-#if defined(MODE_CGA)
-void I_ProcessPalette(byte *palette)
-{
-}
-#endif
 
 #if defined(MODE_Y) || defined(MODE_13H) || (defined(MODE_VBE2) && !defined(MODE_PM)) || defined(MODE_VBE2_DIRECT) || defined(MODE_V) || defined(MODE_V2)
 void I_ProcessPalette(byte *palette)
@@ -325,7 +324,7 @@ void I_ProcessPalette(byte *palette)
 #endif
 
 #if defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
-const byte textcolors[48] = {
+const byte colors[48] = {
     0x00, 0x00, 0x00,
     0x00, 0x00, 0x2A,
     0x00, 0x2A, 0x00,
@@ -345,7 +344,7 @@ const byte textcolors[48] = {
 #endif
 
 #ifdef MODE_CVB
-const byte textcolors[48] = {  // standard IBM CGA
+const byte colors[48] = {  // standard IBM CGA
     0x00, 0x00, 0x00,
     0x00, 0x18, 0x06,
     0x09, 0x0a, 0x2f,
@@ -362,7 +361,7 @@ const byte textcolors[48] = {  // standard IBM CGA
     0x35, 0x31, 0x07,
     0x3f, 0x20, 0x3a,
     0x3f, 0x3f, 0x3f};
-/*const byte textcolors[48] = {  // ATi Small Wonder
+/*const byte colors[48] = {  // ATi Small Wonder
     0x00, 0x00, 0x00,
     0x22, 0x04, 0x00,
     0x06, 0x15, 0x00,
@@ -382,7 +381,7 @@ const byte textcolors[48] = {  // standard IBM CGA
 #endif
 
 #ifdef MODE_PCP
-const byte textcolors[48] = {
+const byte colors[48] = {
     0x00, 0x00, 0x00,
     0x00, 0x2A, 0x00,
     0x2A, 0x00, 0x00,
@@ -399,6 +398,14 @@ const byte textcolors[48] = {
     0x15, 0x3F, 0x3F,
     0x3F, 0x15, 0x3F,
     0x3F, 0x3F, 0x3F};
+#endif
+
+#ifdef MODE_CGA
+const byte colors[12] = {
+    0x00, 0x00, 0x00,
+    0x00, 0x2A, 0x00,
+    0x2A, 0x00, 0x00,
+    0x2A, 0x15, 0x00};
 #endif
 
 #if defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
@@ -426,13 +433,13 @@ void I_ProcessPalette(byte *palette)
             int cR, cG, cB;
             int pos = j * 3;
 
-            r2 = (int)textcolors[pos];
+            r2 = (int)colors[pos];
             cR = abs(r2 - r1);
 
-            g2 = (int)textcolors[pos + 1];
+            g2 = (int)colors[pos + 1];
             cG = abs(g2 - g1);
 
-            b2 = (int)textcolors[pos + 2];
+            b2 = (int)colors[pos + 2];
             cB = abs(b2 - b1);
 
             distance = cR + cG + cB;
@@ -447,6 +454,58 @@ void I_ProcessPalette(byte *palette)
             {
                 best_difference = distance;
                 lut16colors[i] = j;
+            }
+        }
+    }
+}
+#endif
+
+#if defined(MODE_CGA)
+void I_ProcessPalette(byte *palette)
+{
+    int i, j;
+    byte *ptr = gammatable[usegamma];
+
+    for (i = 0; i < 14 * 256; i++)
+    {
+        int distance;
+
+        int r1, g1, b1;
+
+        int best_difference = MAXINT;
+        int best_color;
+
+        r1 = (int)ptr[*palette++];
+        g1 = (int)ptr[*palette++];
+        b1 = (int)ptr[*palette++];
+
+        for (j = 0; j < 4; j++)
+        {
+            int r2, g2, b2;
+            int cR, cG, cB;
+            int pos = j * 3;
+
+            r2 = (int)colors[pos];
+            cR = abs(r2 - r1);
+
+            g2 = (int)colors[pos + 1];
+            cG = abs(g2 - g1);
+
+            b2 = (int)colors[pos + 2];
+            cB = abs(b2 - b1);
+
+            distance = cR + cG + cB;
+
+            if (distance == 0)
+            {
+                lut4colors[i] = j;
+                break;
+            }
+
+            if (best_difference > distance)
+            {
+                best_difference = distance;
+                lut4colors[i] = j;
             }
         }
     }
@@ -469,6 +528,10 @@ void I_SetPalette(int numpalette)
 
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_EGA) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
     ptrlut16colors = lut16colors + numpalette * 256;
+#endif
+
+#if defined(MODE_CGA)
+    ptrlut4colors = lut4colors + numpalette * 256;
 #endif
 
 #if defined(MODE_Y) || defined(MODE_13H) || (defined(MODE_VBE2) && !defined(MODE_PM)) || defined(MODE_VBE2_DIRECT) || defined(MODE_V) || defined(MODE_V2)
@@ -973,9 +1036,9 @@ void CGA_DrawBackbuffer(void)
         {
             unsigned char color;
             unsigned char color2;
-            color = (backbuffer[base] >> 6) << 6 | (backbuffer[base + 1] >> 6) << 4 | (backbuffer[base + 2] >> 6) << 2 | (backbuffer[base + 3] >> 6);
+            color = (ptrlut4colors[backbuffer[base]]) << 6 | (ptrlut4colors[backbuffer[base + 1]]) << 4 | (ptrlut4colors[backbuffer[base + 2]]) << 2 | (ptrlut4colors[backbuffer[base + 3]]);
             *(vram) = color;
-            color2 = (backbuffer[base + 320] >> 6) << 6 | (backbuffer[base + 321] >> 6) << 4 | (backbuffer[base + 322] >> 6) << 2 | (backbuffer[base + 323] >> 6);
+            color2 = (ptrlut4colors[backbuffer[base + 320]]) << 6 | (ptrlut4colors[backbuffer[base + 321]]) << 4 | (ptrlut4colors[backbuffer[base + 322]]) << 2 | (ptrlut4colors[backbuffer[base + 323]]);
             *(vram + 0x2000) = color2;
         }
     }
