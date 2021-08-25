@@ -148,7 +148,7 @@ fixed_t angleturn[3] = {640, 1280, 320}; // + slow turn
 byte gamekeydown[NUMKEYS];
 int turnheld; // for accelerative turning
 
-byte mousearray[4];
+byte mousearray[5];
 byte *mousebuttons = &mousearray[1]; // allow [-1]
 
 // mouse values are used once
