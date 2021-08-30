@@ -917,7 +917,7 @@ void D_DoomMain(void)
 
     IdentifyVersion();
 
-#if defined(MODE_EGA) || defined(MODE_PCP)
+#if defined(MODE_EGA) || defined(MODE_PCP) || defined(MODE_EGA640)
     D_AddFile("mode16.wad");
 #endif
 

@@ -16,3 +16,4 @@ call cleanv2.bat
 call cleant52.bat
 call cleanpcp.bat
 call cleancvb.bat
+call cleane.bat

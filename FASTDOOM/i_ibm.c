@@ -201,7 +201,7 @@ void I_StartupSound(void);
 void I_ShutdownSound(void);
 void I_ShutdownTimer(void);
 
-#if defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_EGA640) || defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
 byte lut16colors[14 * 256];
 byte *ptrlut16colors;
 #endif
@@ -323,7 +323,7 @@ void I_ProcessPalette(byte *palette)
 }
 #endif
 
-#if defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_EGA640) || defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
 const byte colors[48] = {
     0x00, 0x00, 0x00,
     0x00, 0x00, 0x2A,
@@ -408,7 +408,7 @@ const byte colors[12] = {
     0x2A, 0x15, 0x00};
 #endif
 
-#if defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_EGA640) || defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
 void I_ProcessPalette(byte *palette)
 {
     int i, j;
@@ -526,7 +526,7 @@ void I_SetPalette(int numpalette)
     ptrsumcolors11 = sumcolors11 + numpalette * 256;
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_EGA) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_EGA640) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_EGA) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
     ptrlut16colors = lut16colors + numpalette * 256;
 #endif
 
@@ -562,7 +562,7 @@ int updatestate;
 #endif
 byte *pcscreen, *currentscreen, *destscreen, *destview;
 
-#if defined(MODE_EGA) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_EGA) || defined(MODE_VBE2_DIRECT) || defined(MODE_EGA640)
 byte page = 0;
 #endif
 
@@ -879,6 +879,100 @@ void HERC_DrawBackbuffer(void)
 }
 #endif
 
+#ifdef MODE_EGA640
+void EGA640_DrawBackbuffer(void)
+{
+    byte plane_red[SCREENWIDTH * SCREENHEIGHT / 4];
+    byte plane_green[SCREENWIDTH * SCREENHEIGHT / 4];
+    byte plane_blue[SCREENWIDTH * SCREENHEIGHT / 4];
+    byte plane_intensity[SCREENWIDTH * SCREENHEIGHT / 4];
+
+    int x, y;
+    unsigned int base = 0;
+    unsigned int plane_position = 0;
+
+    // Chunky 2 planar conversion (hi Amiga fans!)
+
+    for (base = 0; base < SCREENHEIGHT * SCREENWIDTH; base += 8)
+    {
+        unsigned char color;
+
+        unsigned char color0 = ptrlut16colors[backbuffer[base]];
+        unsigned char color1 = ptrlut16colors[backbuffer[base + 1]];
+        unsigned char color2 = ptrlut16colors[backbuffer[base + 2]];
+        unsigned char color3 = ptrlut16colors[backbuffer[base + 3]];
+        unsigned char color4 = ptrlut16colors[backbuffer[base + 4]];
+        unsigned char color5 = ptrlut16colors[backbuffer[base + 5]];
+        unsigned char color6 = ptrlut16colors[backbuffer[base + 6]];
+        unsigned char color7 = ptrlut16colors[backbuffer[base + 7]];
+
+        color = ((color0 >> 3) & 1) << 7 | ((color0 >> 3) & 1) << 6 | ((color1 >> 3) & 1) << 5 | ((color1 >> 3) & 1) << 4 | ((color2 >> 3) & 1) << 3 | ((color2 >> 3) & 1) << 2 | ((color3 >> 3) & 1) << 1 | ((color3 >> 3) & 1);
+
+        plane_red[plane_position] = color;
+
+        color = ((color4 >> 3) & 1) << 7 | ((color4 >> 3) & 1) << 6 | ((color5 >> 3) & 1) << 5 | ((color5 >> 3) & 1) << 4 | ((color6 >> 3) & 1) << 3 | ((color6 >> 3) & 1) << 2 | ((color7 >> 3) & 1) << 1 | ((color7 >> 3) & 1);
+
+        plane_red[plane_position + 1] = color;
+
+        color = ((color0 >> 2) & 1) << 7 | ((color0 >> 2) & 1) << 6 | ((color1 >> 2) & 1) << 5 | ((color1 >> 2) & 1) << 4 | ((color2 >> 2) & 1) << 3 | ((color2 >> 2) & 1) << 2 | ((color3 >> 2) & 1) << 1 | ((color3 >> 2) & 1);
+
+        plane_green[plane_position] = color;
+
+        color = ((color4 >> 2) & 1) << 7 | ((color4 >> 2) & 1) << 6 | ((color5 >> 2) & 1) << 5 | ((color5 >> 2) & 1) << 4 | ((color6 >> 2) & 1) << 3 | ((color6 >> 2) & 1) << 2 | ((color7 >> 2) & 1) << 1 | ((color7 >> 2) & 1);
+
+        plane_green[plane_position + 1] = color;
+
+        color = ((color0 >> 1) & 1) << 7 | ((color0 >> 1) & 1) << 6 | ((color1 >> 1) & 1) << 5 | ((color1 >> 1) & 1) << 4 | ((color2 >> 1) & 1) << 3 | ((color2 >> 1) & 1) << 2 | ((color3 >> 1) & 1) << 1 | ((color3 >> 1) & 1);
+
+        plane_blue[plane_position] = color;
+
+        color = ((color4 >> 1) & 1) << 7 | ((color4 >> 1) & 1) << 6 | ((color5 >> 1) & 1) << 5 | ((color5 >> 1) & 1) << 4 | ((color6 >> 1) & 1) << 3 | ((color6 >> 1) & 1) << 2 | ((color7 >> 1) & 1) << 1 | ((color7 >> 1) & 1);
+
+        plane_blue[plane_position + 1] = color;
+
+        color = ((color0) & 1) << 7 | ((color0) & 1) << 6 | ((color1) & 1) << 5 | ((color1) & 1) << 4 | ((color2) & 1) << 3 | ((color2) & 1) << 2 | ((color3) & 1) << 1 | ((color3) & 1);
+
+        plane_intensity[plane_position] = color;
+
+        color = ((color4) & 1) << 7 | ((color4) & 1) << 6 | ((color5) & 1) << 5 | ((color5) & 1) << 4 | ((color6) & 1) << 3 | ((color6) & 1) << 2 | ((color7) & 1) << 1 | ((color7) & 1);
+        
+        plane_intensity[plane_position + 1] = color;
+
+        plane_position += 2;
+    }
+
+    // Copy each bitplane
+    outp(0x3C5, 1 << (3 & 0x03));
+    CopyDWords(plane_red, destscreen, SCREENWIDTH * SCREENHEIGHT / 16);
+
+    outp(0x3C5, 1 << (2 & 0x03));
+    CopyDWords(plane_green, destscreen, SCREENWIDTH * SCREENHEIGHT / 16);
+
+    outp(0x3C5, 1 << (1 & 0x03));
+    CopyDWords(plane_blue, destscreen, SCREENWIDTH * SCREENHEIGHT / 16);
+
+    outp(0x3C5, 1 << (0 & 0x03));
+    CopyDWords(plane_intensity, destscreen, SCREENWIDTH * SCREENHEIGHT / 16);
+
+    // Change video page
+    regs.h.ah = 0x05;
+    regs.h.al = page;
+    regs.h.bh = 0x00;
+    regs.h.bl = 0x00;
+    int386(0x10, &regs, &regs);
+
+    //Next plane
+    destscreen += 0x4000;
+
+    page++;
+    if (page == 3)
+    {
+        destscreen = (byte *)0xa0000;
+        page = 0;
+    }
+}
+#endif
+
 #ifdef MODE_EGA
 void EGA_DrawBackbuffer(void)
 {
@@ -1191,6 +1285,9 @@ void I_FinishUpdate(void)
 #endif
 #ifdef MODE_EGA
     EGA_DrawBackbuffer();
+#endif
+#ifdef MODE_EGA640
+    EGA640_DrawBackbuffer();
 #endif
 #ifdef MODE_PCP
     CPLUS_DrawBackbuffer();
@@ -1675,6 +1772,12 @@ void I_InitGraphics(void)
 #endif
 #ifdef MODE_EGA
     regs.w.ax = 0x0D;
+    int386(0x10, (union REGS *)&regs, &regs);
+    outp(0x3C4, 0x2);
+    pcscreen = destscreen = (byte *)0xA0000;
+#endif
+#ifdef MODE_EGA640
+    regs.w.ax = 0x0E;
     int386(0x10, (union REGS *)&regs, &regs);
     outp(0x3C4, 0x2);
     pcscreen = destscreen = (byte *)0xA0000;
