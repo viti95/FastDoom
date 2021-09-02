@@ -201,7 +201,7 @@ void I_StartupSound(void);
 void I_ShutdownSound(void);
 void I_ShutdownTimer(void);
 
-#if defined(MODE_EGA640) || defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
 byte lut16colors[14 * 256];
 byte *ptrlut16colors;
 #endif
@@ -209,6 +209,17 @@ byte *ptrlut16colors;
 #if defined(MODE_CGA)
 byte lut4colors[14 * 256];
 byte *ptrlut4colors;
+#endif
+
+#if defined(MODE_EGA640)
+byte lutcolors00[14 * 256];
+byte lutcolors01[14 * 256];
+byte lutcolors10[14 * 256];
+byte lutcolors11[14 * 256];
+byte *ptrlutcolors00;
+byte *ptrlutcolors01;
+byte *ptrlutcolors10;
+byte *ptrlutcolors11;
 #endif
 
 #if defined(MODE_CGA_BW) || defined(MODE_HERC)
@@ -344,7 +355,7 @@ const byte colors[48] = {
 #endif
 
 #ifdef MODE_CVB
-const byte colors[48] = {  // standard IBM CGA
+const byte colors[48] = { // standard IBM CGA
     0x00, 0x00, 0x00,
     0x00, 0x18, 0x06,
     0x09, 0x0a, 0x2f,
@@ -408,7 +419,92 @@ const byte colors[12] = {
     0x2A, 0x15, 0x00};
 #endif
 
-#if defined(MODE_EGA640) || defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_EGA640)
+
+int I_GetClosestColor(int r1, int g1, int b1)
+{
+    int i;
+
+    int result;
+
+    int distance;
+    int best_difference = MAXINT;
+
+    for (i = 0; i < 16; i++)
+    {
+        int r2, g2, b2;
+        int cR, cG, cB;
+        int pos = i * 3;
+
+        r2 = (int)colors[pos];
+        cR = abs(r2 - r1);
+
+        g2 = (int)colors[pos + 1];
+        cG = abs(g2 - g1);
+
+        b2 = (int)colors[pos + 2];
+        cB = abs(b2 - b1);
+
+        distance = cR + cG + cB;
+
+        if (distance == 0)
+        {
+            return i;
+        }
+
+        if (best_difference > distance)
+        {
+            best_difference = distance;
+            result = i;
+        }
+    }
+
+    return result;
+}
+
+void I_ProcessPalette(byte *palette)
+{
+    int i;
+
+    byte *ptr = gammatable[usegamma];
+
+    for (i = 0; i < 14 * 256; i++, palette += 3)
+    {
+        int r, g, b;
+        int r2, g2, b2;
+
+        r = (int)ptr[*palette];
+        g = (int)ptr[*(palette + 1)];
+        b = (int)ptr[*(palette + 2)];
+
+        r2 = (r * 0) / 4 + r;
+        g2 = (g * 0) / 4 + g;
+        b2 = (b * 0) / 4 + b;
+
+        lutcolors00[i] = I_GetClosestColor(r2, g2, b2);
+
+        r2 = (r * 2) / 4 + r;
+        g2 = (g * 2) / 4 + g;
+        b2 = (b * 2) / 4 + b;
+
+        lutcolors01[i] = I_GetClosestColor(r2, g2, b2);
+
+        r2 = (r * 3) / 4 + r;
+        g2 = (g * 3) / 4 + g;
+        b2 = (b * 3) / 4 + b;
+
+        lutcolors10[i] = I_GetClosestColor(r2, g2, b2);
+
+        r2 = (r * 1) / 4 + r;
+        g2 = (g * 1) / 4 + g;
+        b2 = (b * 1) / 4 + b;
+
+        lutcolors11[i] = I_GetClosestColor(r2, g2, b2);
+    }
+}
+#endif
+
+#if defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
 void I_ProcessPalette(byte *palette)
 {
     int i, j;
@@ -421,7 +517,6 @@ void I_ProcessPalette(byte *palette)
         int r1, g1, b1;
 
         int best_difference = MAXINT;
-        int best_color;
 
         r1 = (int)ptr[*palette++];
         g1 = (int)ptr[*palette++];
@@ -473,7 +568,6 @@ void I_ProcessPalette(byte *palette)
         int r1, g1, b1;
 
         int best_difference = MAXINT;
-        int best_color;
 
         r1 = (int)ptr[*palette++];
         g1 = (int)ptr[*palette++];
@@ -526,7 +620,14 @@ void I_SetPalette(int numpalette)
     ptrsumcolors11 = sumcolors11 + numpalette * 256;
 #endif
 
-#if defined(MODE_EGA640) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_EGA) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_EGA640)
+    ptrlutcolors00 = lutcolors00 + numpalette * 256;
+    ptrlutcolors01 = lutcolors01 + numpalette * 256;
+    ptrlutcolors10 = lutcolors10 + numpalette * 256;
+    ptrlutcolors11 = lutcolors11 + numpalette * 256;
+#endif
+
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_EGA) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
     ptrlut16colors = lut16colors + numpalette * 256;
 #endif
 
@@ -890,21 +991,38 @@ void EGA640_DrawBackbuffer(void)
     int x, y;
     unsigned int base = 0;
     unsigned int plane_position = 0;
+    int line;
 
     // Chunky 2 planar conversion (hi Amiga fans!)
 
     for (base = 0; base < SCREENHEIGHT * SCREENWIDTH; base += 8)
     {
-        unsigned char color;
+        unsigned char color, color0, color1, color2, color3, color4, color5, color6, color7;
 
-        unsigned char color0 = ptrlut16colors[backbuffer[base]];
-        unsigned char color1 = ptrlut16colors[backbuffer[base + 1]];
-        unsigned char color2 = ptrlut16colors[backbuffer[base + 2]];
-        unsigned char color3 = ptrlut16colors[backbuffer[base + 3]];
-        unsigned char color4 = ptrlut16colors[backbuffer[base + 4]];
-        unsigned char color5 = ptrlut16colors[backbuffer[base + 5]];
-        unsigned char color6 = ptrlut16colors[backbuffer[base + 6]];
-        unsigned char color7 = ptrlut16colors[backbuffer[base + 7]];
+        line = (base / 320) % 2;
+
+        if (line)
+        {
+            color0 = ptrlutcolors10[backbuffer[base]];
+            color1 = ptrlutcolors11[backbuffer[base + 1]];
+            color2 = ptrlutcolors10[backbuffer[base + 2]];
+            color3 = ptrlutcolors11[backbuffer[base + 3]];
+            color4 = ptrlutcolors10[backbuffer[base + 4]];
+            color5 = ptrlutcolors11[backbuffer[base + 5]];
+            color6 = ptrlutcolors10[backbuffer[base + 6]];
+            color7 = ptrlutcolors11[backbuffer[base + 7]];
+        }
+        else
+        {
+            color0 = ptrlutcolors00[backbuffer[base]];
+            color1 = ptrlutcolors01[backbuffer[base + 1]];
+            color2 = ptrlutcolors00[backbuffer[base + 2]];
+            color3 = ptrlutcolors01[backbuffer[base + 3]];
+            color4 = ptrlutcolors00[backbuffer[base + 4]];
+            color5 = ptrlutcolors01[backbuffer[base + 5]];
+            color6 = ptrlutcolors00[backbuffer[base + 6]];
+            color7 = ptrlutcolors01[backbuffer[base + 7]];
+        }
 
         color = ((color0 >> 3) & 1) << 7 | ((color0 >> 3) & 1) << 6 | ((color1 >> 3) & 1) << 5 | ((color1 >> 3) & 1) << 4 | ((color2 >> 3) & 1) << 3 | ((color2 >> 3) & 1) << 2 | ((color3 >> 3) & 1) << 1 | ((color3 >> 3) & 1);
 
@@ -930,12 +1048,12 @@ void EGA640_DrawBackbuffer(void)
 
         plane_blue[plane_position + 1] = color;
 
-        color = ((color0) & 1) << 7 | ((color0) & 1) << 6 | ((color1) & 1) << 5 | ((color1) & 1) << 4 | ((color2) & 1) << 3 | ((color2) & 1) << 2 | ((color3) & 1) << 1 | ((color3) & 1);
+        color = ((color0)&1) << 7 | ((color0)&1) << 6 | ((color1)&1) << 5 | ((color1)&1) << 4 | ((color2)&1) << 3 | ((color2)&1) << 2 | ((color3)&1) << 1 | ((color3)&1);
 
         plane_intensity[plane_position] = color;
 
-        color = ((color4) & 1) << 7 | ((color4) & 1) << 6 | ((color5) & 1) << 5 | ((color5) & 1) << 4 | ((color6) & 1) << 3 | ((color6) & 1) << 2 | ((color7) & 1) << 1 | ((color7) & 1);
-        
+        color = ((color4)&1) << 7 | ((color4)&1) << 6 | ((color5)&1) << 5 | ((color5)&1) << 4 | ((color6)&1) << 3 | ((color6)&1) << 2 | ((color7)&1) << 1 | ((color7)&1);
+
         plane_intensity[plane_position + 1] = color;
 
         plane_position += 2;
