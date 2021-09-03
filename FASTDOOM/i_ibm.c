@@ -408,7 +408,7 @@ const byte colors[12] = {
     0x2A, 0x15, 0x00};
 #endif
 
-#if defined(MODE_EGA640)
+#if defined(MODE_CGA) || defined(MODE_EGA640) || defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
 
 int I_SQRT(int x)
 {
@@ -434,6 +434,10 @@ int I_SQRT(int x)
     }
     return ans;
 }
+
+#endif
+
+#if defined(MODE_EGA640)
 
 int I_GetClosestColor(int r1, int g1, int b1)
 {
@@ -561,6 +565,8 @@ void I_ProcessPalette(byte *palette)
                 break;
             }
 
+            distance = I_SQRT(distance);
+
             if (best_difference > distance)
             {
                 best_difference = distance;
@@ -611,6 +617,8 @@ void I_ProcessPalette(byte *palette)
                 lut4colors[i] = j;
                 break;
             }
+
+            distance = I_SQRT(distance);
 
             if (best_difference > distance)
             {
