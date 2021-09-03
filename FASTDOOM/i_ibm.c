@@ -410,6 +410,31 @@ const byte colors[12] = {
 
 #if defined(MODE_EGA640)
 
+int I_SQRT(int x)
+{
+    int start = 1, end = x / 2, ans;
+
+    if (x == 0 || x == 1)
+        return x;
+
+    while (start <= end)
+    {
+        int mid = (start + end) / 2;
+
+        if (mid * mid == x)
+            return mid;
+
+        if (mid <= x / mid)
+        {
+            start = mid + 1;
+            ans = mid;
+        }
+        else
+            end = mid - 1;
+    }
+    return ans;
+}
+
 int I_GetClosestColor(int r1, int g1, int b1)
 {
     int i;
@@ -440,6 +465,8 @@ int I_GetClosestColor(int r1, int g1, int b1)
         {
             return i;
         }
+
+        distance = I_SQRT(distance);
 
         if (best_difference > distance)
         {
@@ -980,7 +1007,8 @@ void EGA640_DrawBackbuffer(void)
     int x, y;
     unsigned int base = 0;
     unsigned int plane_position = 0;
-    int line;
+    int line = 0;
+    int odd = 0;
 
     // Chunky 2 planar conversion (hi Amiga fans!)
 
@@ -988,9 +1016,14 @@ void EGA640_DrawBackbuffer(void)
     {
         unsigned char color;
 
-        line = (base / 320) % 2;
+        line++;
+        if (line == 40)
+        {
+            line = 0;
+            odd = !odd;
+        }
 
-        if (line)
+        if (odd)
         {
             // ODD
             color = ((ptrlutcolors10[backbuffer[base]] >> 3) & 1) << 7 | ((ptrlutcolors11[backbuffer[base]] >> 3) & 1) << 6 | ((ptrlutcolors10[backbuffer[base + 1]] >> 3) & 1) << 5 | ((ptrlutcolors11[backbuffer[base + 1]] >> 3) & 1) << 4 | ((ptrlutcolors10[backbuffer[base + 2]] >> 3) & 1) << 3 | ((ptrlutcolors11[backbuffer[base + 2]] >> 3) & 1) << 2 | ((ptrlutcolors10[backbuffer[base + 3]] >> 3) & 1) << 1 | ((ptrlutcolors11[backbuffer[base + 3]] >> 3) & 1);
