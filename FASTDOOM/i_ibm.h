@@ -20,22 +20,6 @@ extern byte lut16colors[14 * 256];
 extern byte *ptrlut16colors;
 #endif
 
-#if defined(MODE_CGA)
-extern byte lut4colors[14 * 256];
-extern byte *ptrlut4colors;
-#endif
-
-#if defined(MODE_CGA_BW) || defined(MODE_HERC)
-extern byte sumcolors00[14 * 256];
-extern byte sumcolors01[14 * 256];
-extern byte sumcolors10[14 * 256];
-extern byte sumcolors11[14 * 256];
-extern byte *ptrsumcolors00;
-extern byte *ptrsumcolors01;
-extern byte *ptrsumcolors10;
-extern byte *ptrsumcolors11;
-#endif
-
 #if defined(USE_BACKBUFFER)
 extern int updatestate;
 #endif

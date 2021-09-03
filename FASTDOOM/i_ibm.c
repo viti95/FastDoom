@@ -211,7 +211,7 @@ byte lut4colors[14 * 256];
 byte *ptrlut4colors;
 #endif
 
-#if defined(MODE_EGA640)
+#if defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_EGA640)
 byte lutcolors00[14 * 256];
 byte lutcolors01[14 * 256];
 byte lutcolors10[14 * 256];
@@ -220,17 +220,6 @@ byte *ptrlutcolors00;
 byte *ptrlutcolors01;
 byte *ptrlutcolors10;
 byte *ptrlutcolors11;
-#endif
-
-#if defined(MODE_CGA_BW) || defined(MODE_HERC)
-byte sumcolors00[14 * 256];
-byte sumcolors01[14 * 256];
-byte sumcolors10[14 * 256];
-byte sumcolors11[14 * 256];
-byte *ptrsumcolors00;
-byte *ptrsumcolors01;
-byte *ptrsumcolors10;
-byte *ptrsumcolors11;
 #endif
 
 #if defined(MODE_V) || defined(MODE_V2)
@@ -326,10 +315,10 @@ void I_ProcessPalette(byte *palette)
         g = ptr[*(palette + 1)];
         b = ptr[*(palette + 2)];
 
-        sumcolors00[i] = (r + g + b) > 38;
-        sumcolors01[i] = (r + g + b) > 115;
-        sumcolors10[i] = (r + g + b) > 155;
-        sumcolors11[i] = (r + g + b) > 77;
+        lutcolors00[i] = (r + g + b) > 38;
+        lutcolors01[i] = (r + g + b) > 115;
+        lutcolors10[i] = (r + g + b) > 155;
+        lutcolors11[i] = (r + g + b) > 77;
     }
 }
 #endif
@@ -614,10 +603,10 @@ void I_SetPalette(int numpalette)
 {
 
 #if defined(MODE_CGA_BW) || defined(MODE_HERC)
-    ptrsumcolors00 = sumcolors00 + numpalette * 256;
-    ptrsumcolors01 = sumcolors01 + numpalette * 256;
-    ptrsumcolors10 = sumcolors10 + numpalette * 256;
-    ptrsumcolors11 = sumcolors11 + numpalette * 256;
+    ptrlutcolors00 = lutcolors00 + numpalette * 256;
+    ptrlutcolors01 = lutcolors01 + numpalette * 256;
+    ptrlutcolors10 = lutcolors10 + numpalette * 256;
+    ptrlutcolors11 = lutcolors11 + numpalette * 256;
 #endif
 
 #if defined(MODE_EGA640)
@@ -892,24 +881,24 @@ void CGA_BW_DrawBackbuffer(void)
             byte finalcolor1;
 
             color0 = ptrbackbuffer[x];
-            finalcolor0 = (ptrsumcolors00[color0]) << 7 | (ptrsumcolors10[color0]) << 6;
+            finalcolor0 = (ptrlutcolors00[color0]) << 7 | (ptrlutcolors10[color0]) << 6;
             color1 = ptrbackbuffer[x + 1];
-            finalcolor0 |= (ptrsumcolors00[color1]) << 5 | (ptrsumcolors10[color1]) << 4;
+            finalcolor0 |= (ptrlutcolors00[color1]) << 5 | (ptrlutcolors10[color1]) << 4;
             color2 = ptrbackbuffer[x + 2];
-            finalcolor0 |= (ptrsumcolors00[color2]) << 3 | (ptrsumcolors10[color2]) << 2;
+            finalcolor0 |= (ptrlutcolors00[color2]) << 3 | (ptrlutcolors10[color2]) << 2;
             color3 = ptrbackbuffer[x + 3];
-            finalcolor0 |= (ptrsumcolors00[color3]) << 1 | (ptrsumcolors10[color3]);
+            finalcolor0 |= (ptrlutcolors00[color3]) << 1 | (ptrlutcolors10[color3]);
 
             *(vram + (x / 4)) = finalcolor0;
 
             color4 = ptrbackbuffer[x + 320];
-            finalcolor1 = (ptrsumcolors01[color4]) << 7 | (ptrsumcolors11[color4]) << 6;
+            finalcolor1 = (ptrlutcolors01[color4]) << 7 | (ptrlutcolors11[color4]) << 6;
             color5 = ptrbackbuffer[x + 321];
-            finalcolor1 |= (ptrsumcolors01[color5]) << 5 | (ptrsumcolors11[color5]) << 4;
+            finalcolor1 |= (ptrlutcolors01[color5]) << 5 | (ptrlutcolors11[color5]) << 4;
             color6 = ptrbackbuffer[x + 322];
-            finalcolor1 |= (ptrsumcolors01[color6]) << 3 | (ptrsumcolors11[color6]) << 2;
+            finalcolor1 |= (ptrlutcolors01[color6]) << 3 | (ptrlutcolors11[color6]) << 2;
             color7 = ptrbackbuffer[x + 323];
-            finalcolor1 |= (ptrsumcolors01[color7]) << 1 | (ptrsumcolors11[color7]);
+            finalcolor1 |= (ptrlutcolors01[color7]) << 1 | (ptrlutcolors11[color7]);
 
             *(vram + 0x2000 + (x / 4)) = finalcolor1;
         }
@@ -945,33 +934,33 @@ void HERC_DrawBackbuffer(void)
             byte finalcolor3;
 
             color0 = ptrbackbuffer[x];
-            finalcolor0 = (ptrsumcolors00[color0]) << 7 | (ptrsumcolors10[color0]) << 6;
-            finalcolor1 = (ptrsumcolors01[color0]) << 7 | (ptrsumcolors11[color0]) << 6;
+            finalcolor0 = (ptrlutcolors00[color0]) << 7 | (ptrlutcolors10[color0]) << 6;
+            finalcolor1 = (ptrlutcolors01[color0]) << 7 | (ptrlutcolors11[color0]) << 6;
             color1 = ptrbackbuffer[x + 1];
-            finalcolor0 |= (ptrsumcolors00[color1]) << 5 | (ptrsumcolors10[color1]) << 4;
-            finalcolor1 |= (ptrsumcolors01[color1]) << 5 | (ptrsumcolors11[color1]) << 4;
+            finalcolor0 |= (ptrlutcolors00[color1]) << 5 | (ptrlutcolors10[color1]) << 4;
+            finalcolor1 |= (ptrlutcolors01[color1]) << 5 | (ptrlutcolors11[color1]) << 4;
             color2 = ptrbackbuffer[x + 2];
-            finalcolor0 |= (ptrsumcolors00[color2]) << 3 | (ptrsumcolors10[color2]) << 2;
-            finalcolor1 |= (ptrsumcolors01[color2]) << 3 | (ptrsumcolors11[color2]) << 2;
+            finalcolor0 |= (ptrlutcolors00[color2]) << 3 | (ptrlutcolors10[color2]) << 2;
+            finalcolor1 |= (ptrlutcolors01[color2]) << 3 | (ptrlutcolors11[color2]) << 2;
             color3 = ptrbackbuffer[x + 3];
-            finalcolor0 |= (ptrsumcolors00[color3]) << 1 | (ptrsumcolors10[color3]);
-            finalcolor1 |= (ptrsumcolors01[color3]) << 1 | (ptrsumcolors11[color3]);
+            finalcolor0 |= (ptrlutcolors00[color3]) << 1 | (ptrlutcolors10[color3]);
+            finalcolor1 |= (ptrlutcolors01[color3]) << 1 | (ptrlutcolors11[color3]);
 
             *(vram + (x / 4)) = finalcolor0;
             *(vram + 0x2000 + (x / 4)) = finalcolor1;
 
             color4 = ptrbackbuffer[x + 320];
-            finalcolor2 = (ptrsumcolors00[color4]) << 7 | (ptrsumcolors10[color4]) << 6;
-            finalcolor3 = (ptrsumcolors01[color4]) << 7 | (ptrsumcolors11[color4]) << 6;
+            finalcolor2 = (ptrlutcolors00[color4]) << 7 | (ptrlutcolors10[color4]) << 6;
+            finalcolor3 = (ptrlutcolors01[color4]) << 7 | (ptrlutcolors11[color4]) << 6;
             color5 = ptrbackbuffer[x + 321];
-            finalcolor2 |= (ptrsumcolors00[color5]) << 5 | (ptrsumcolors10[color5]) << 4;
-            finalcolor3 |= (ptrsumcolors01[color5]) << 5 | (ptrsumcolors11[color5]) << 4;
+            finalcolor2 |= (ptrlutcolors00[color5]) << 5 | (ptrlutcolors10[color5]) << 4;
+            finalcolor3 |= (ptrlutcolors01[color5]) << 5 | (ptrlutcolors11[color5]) << 4;
             color6 = ptrbackbuffer[x + 322];
-            finalcolor2 |= (ptrsumcolors00[color6]) << 3 | (ptrsumcolors10[color6]) << 2;
-            finalcolor3 |= (ptrsumcolors01[color6]) << 3 | (ptrsumcolors11[color6]) << 2;
+            finalcolor2 |= (ptrlutcolors00[color6]) << 3 | (ptrlutcolors10[color6]) << 2;
+            finalcolor3 |= (ptrlutcolors01[color6]) << 3 | (ptrlutcolors11[color6]) << 2;
             color7 = ptrbackbuffer[x + 323];
-            finalcolor2 |= (ptrsumcolors00[color7]) << 1 | (ptrsumcolors10[color7]);
-            finalcolor3 |= (ptrsumcolors01[color7]) << 1 | (ptrsumcolors11[color7]);
+            finalcolor2 |= (ptrlutcolors00[color7]) << 1 | (ptrlutcolors10[color7]);
+            finalcolor3 |= (ptrlutcolors01[color7]) << 1 | (ptrlutcolors11[color7]);
 
             *(vram + 0x4000 + (x / 4)) = finalcolor2;
             *(vram + 0x6000 + (x / 4)) = finalcolor3;
