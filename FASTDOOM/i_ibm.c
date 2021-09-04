@@ -201,7 +201,7 @@ void I_StartupSound(void);
 void I_ShutdownSound(void);
 void I_ShutdownTimer(void);
 
-#if defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_CGA16) || defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
 byte lut16colors[14 * 256];
 byte *ptrlut16colors;
 #endif
@@ -323,7 +323,7 @@ void I_ProcessPalette(byte *palette)
 }
 #endif
 
-#if defined(MODE_EGA640) || defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_CGA16) || defined(MODE_EGA640) || defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
 const byte colors[48] = {
     0x00, 0x00, 0x00,
     0x00, 0x00, 0x2A,
@@ -408,7 +408,7 @@ const byte colors[12] = {
     0x2A, 0x15, 0x00};
 #endif
 
-#if defined(MODE_CGA) || defined(MODE_EGA640) || defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_CGA16) || defined(MODE_CGA) || defined(MODE_EGA640) || defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
 
 int I_SQRT(int x)
 {
@@ -524,7 +524,7 @@ void I_ProcessPalette(byte *palette)
 }
 #endif
 
-#if defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_CGA16) || defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
 void I_ProcessPalette(byte *palette)
 {
     int i, j;
@@ -637,21 +637,14 @@ void I_ProcessPalette(byte *palette)
 void I_SetPalette(int numpalette)
 {
 
-#if defined(MODE_CGA_BW) || defined(MODE_HERC)
+#if defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_EGA640)
     ptrlutcolors00 = lutcolors00 + numpalette * 256;
     ptrlutcolors01 = lutcolors01 + numpalette * 256;
     ptrlutcolors10 = lutcolors10 + numpalette * 256;
     ptrlutcolors11 = lutcolors11 + numpalette * 256;
 #endif
 
-#if defined(MODE_EGA640)
-    ptrlutcolors00 = lutcolors00 + numpalette * 256;
-    ptrlutcolors01 = lutcolors01 + numpalette * 256;
-    ptrlutcolors10 = lutcolors10 + numpalette * 256;
-    ptrlutcolors11 = lutcolors11 + numpalette * 256;
-#endif
-
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_EGA) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_CGA16) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_EGA) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
     ptrlut16colors = lut16colors + numpalette * 256;
 #endif
 
@@ -999,6 +992,31 @@ void HERC_DrawBackbuffer(void)
 
             *(vram + 0x4000 + (x / 4)) = finalcolor2;
             *(vram + 0x6000 + (x / 4)) = finalcolor3;
+        }
+    }
+}
+#endif
+
+#ifdef MODE_CGA16
+void CGA16_DrawBackbuffer(void)
+{
+    unsigned char *vram = (unsigned char *)0xB8000;
+    int i;
+    unsigned int base = 0;
+    unsigned int line = 0;
+
+    for (i = 1; i < 16000; i += 2){
+        unsigned char color0 = ptrlut16colors[backbuffer[base]];
+        unsigned char color1 = ptrlut16colors[backbuffer[base + 2]];
+
+        vram[i] = color0 << 4 | color1;
+
+        line++;
+        if (line == 80){
+            line = 0;
+            base += 324;
+        }else{
+            base += 4;
         }
     }
 }
@@ -1430,6 +1448,9 @@ void I_FinishUpdate(void)
 #endif
 #ifdef MODE_CGA_BW
     CGA_BW_DrawBackbuffer();
+#endif
+#ifdef MODE_CGA16
+    CGA16_DrawBackbuffer();
 #endif
 #ifdef MODE_EGA
     EGA_DrawBackbuffer();
@@ -1906,6 +1927,64 @@ void I_InitGraphics(void)
     int386(0x10, (union REGS *)&regs, &regs);
 
     pcscreen = destscreen = (byte *)0xB8000;
+#endif
+#ifdef MODE_CGA16
+    unsigned char *vram = (unsigned char *)0xB8000;
+    int i;
+
+    // Set 80x25 color mode
+    regs.h.ah = 0x00;
+    regs.h.al = 0x03;
+    int386(0x10, &regs, &regs);
+
+    // Disable cursor
+    regs.h.ah = 0x01;
+    regs.h.ch = 0x3F;
+    int386(0x10, &regs, &regs);
+
+    // Disable blinking
+    regs.h.ah = 0x10;
+    regs.h.al = 0x03;
+    regs.h.bl = 0x00;
+    regs.h.bh = 0x00;
+    int386(0x10, &regs, &regs);
+
+    /* set mode control register for 80x25 text mode and disable video output */
+    outp(0x3D8, 1);
+
+    /*
+        These settings put the 6845 into "graphics" mode without actually
+        switching the CGA controller into graphics mode.  The register
+        values are directly copied from CGA graphics mode register
+        settings.  The 6845 does not directly display graphics, the
+        6845 only generates addresses and sync signals, the CGA
+        attribute controller either displays character ROM data or color
+        pixel data, this is external to the 6845 and keeps the CGA card
+        in text mode.
+        ref: HELPPC
+    */
+
+    /* set vert total lines to 127 */
+    outp(0x3D4, 0x04);
+	outp(0x3D5, 0x7F);
+    /* set vert displayed char rows to 100 */
+    outp(0x3D4, 0x06);
+	outp(0x3D5, 0x64);
+    /* set vert sync position to 112 */
+    outp(0x3D4, 0x07);
+	outp(0x3D5, 0x70);
+    /* set char scan line count to 1 */
+    outp(0x3D4, 0x09);
+	outp(0x3D5, 0x01);
+
+    /* re-enable the video output in 80x25 text mode */
+    outp(0x3D8, 9);
+
+    /* init screen */
+
+    for (i = 0; i < 16000; i += 2){
+        vram[i] = 0xDE;
+    }
 #endif
 #ifdef MODE_CGA_BW
     regs.w.ax = 0x06;
