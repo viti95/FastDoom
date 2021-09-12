@@ -20,6 +20,7 @@ typedef enum
    PC,
    PC1bit,
    LPTDAC,
+   SoundBlasterDirect,
    NumSoundCards
 } soundcardnames;
 

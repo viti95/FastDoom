@@ -68,6 +68,7 @@
 #define DSP_SpeakerOff 0xd3
 #define DSP_GetVersion 0xE1
 #define DSP_Reset 0xFFFF
+#define DSP_DirectDAC 0x10
 
 #define DSP_SignedBit 0x10
 #define DSP_StereoBit 0x20

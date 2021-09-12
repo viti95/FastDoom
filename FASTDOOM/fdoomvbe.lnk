@@ -42,6 +42,7 @@ file ns_fxm.obj
 file ns_multi.obj
 file ns_speak.obj
 file ns_lpt.obj
+file ns_sbdm.obj
 file i_debug.obj
 file i_random.obj
 file i_main.obj

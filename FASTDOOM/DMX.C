@@ -337,6 +337,8 @@ int ASS_GetSoundCardCode(int sndDevice)
         return PC1bit;
     case snd_LPTDAC:
         return LPTDAC;
+    case snd_SBDirect:
+        return SoundBlasterDirect;
     default:
         return -1;
     }
@@ -372,6 +374,7 @@ void ASS_Init(int rate, int maxsng, int mdev, int sdev)
         return;
     case SoundBlaster:
     case Awe32:
+    case SoundBlasterDirect:
         FX_SetupSoundBlaster(dmx_blaster, (int *)&SbMaxVoices, (int *)&SbMaxBits, (int *)&SbMaxChannels);
         printf("Sound Blaster DSP %01X.%02X\n", BLASTER_Version >> 8, BLASTER_Version && 7);
         printf("ADDR: %03X, IRQ: %u, DMA LOW: %u, DMA HIGH: %u\n", BLASTER_Config.Address, BLASTER_Config.Interrupt, BLASTER_Config.Dma8, BLASTER_Config.Dma16);

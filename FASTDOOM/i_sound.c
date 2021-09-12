@@ -86,7 +86,7 @@ void I_SetMusicVolume(int volume)
 //
 int I_GetSfxLumpNum(sfxinfo_t *sfx)
 {
-    const char snd_prefixen[] = {'P', 'P', 'A', 'S', 'S', 'S', 'M', 'M', 'M', 'S', 'S', 'S', 'S', 'S', 'S', 'S'};
+    const char snd_prefixen[] = {'P', 'P', 'A', 'S', 'S', 'S', 'M', 'M', 'M', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'};
     char namebuf[9];
     sprintf(namebuf, "D%c%s", snd_prefixen[snd_SfxDevice], sfx->name);
     return W_GetNumForName(namebuf);
@@ -130,7 +130,7 @@ void I_sndArbitrateCards(void)
     // figure out what i've got to initialize
     //
     gus = snd_MusicDevice == snd_GUS || snd_SfxDevice == snd_GUS;
-    sb = snd_SfxDevice == snd_SB;
+    sb = snd_SfxDevice == snd_SB || snd_SBDirect;
     ensoniq = snd_SfxDevice == snd_ENSONIQ;
     adlib = snd_MusicDevice == snd_Adlib || snd_MusicDevice == snd_SB || snd_MusicDevice == snd_PAS;
     midi = snd_MusicDevice == snd_MPU;

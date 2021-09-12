@@ -78,6 +78,7 @@ int MUSIC_Init(
     case PC:
     case PC1bit:
     case LPTDAC:
+    case SoundBlasterDirect:
     default:
         status = MUSIC_Error;
         break;
