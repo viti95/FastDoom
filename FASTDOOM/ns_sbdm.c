@@ -150,6 +150,7 @@ int SBDM_Init(int soundcard)
     }
 
     BLASTER_ResetDSP();
+    BLASTER_SpeakerOn();
 
     status = SBDM_Ok;
 
