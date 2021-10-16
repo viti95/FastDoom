@@ -16,6 +16,7 @@
 //
 
 #include <stdio.h>
+#include <conio.h>
 
 #include "std_func.h"
 
@@ -313,19 +314,44 @@ void HU_Drawer(void)
 
     HUlib_drawSText(&w_message);
 
-    if (showFPS)
+    if (debugPort)
     {
-        sprintf(str, "%i.%01i", fps >> FRACBITS, Mul10(fps & 65535) >> FRACBITS);
-        HUlib_clearTextLine(&w_fps);
-        f = str;
-        while (*f)
-        {
-            HUlib_addCharToTextLine(&w_fps, *(f++));
+        int outfps = fps >> FRACBITS;
+        int outval = 0;
+        unsigned int counter = 0;
+
+        if (outfps > 99){
+            outp(0x80, 0x99);
+            outp(0x80, 0x00);
+            return;
         }
-        HUlib_drawTextLine(&w_fps);
+
+        while (outfps)
+        {
+            outval |= (outfps % 10) << counter;
+            outfps /= 10;
+            counter += 4;
+        }
+        outp(0x80, outval);
+        outp(0x80, 0x00);
+    }
+    else
+    {
+
+        if (showFPS)
+        {
+            sprintf(str, "%i.%01i", fps >> FRACBITS, Mul10(fps & 65535) >> FRACBITS);
+            HUlib_clearTextLine(&w_fps);
+            f = str;
+            while (*f)
+            {
+                HUlib_addCharToTextLine(&w_fps, *(f++));
+            }
+            HUlib_drawTextLine(&w_fps);
 #if defined(USE_BACKBUFFER)
-        updatestate |= I_MESSAGES;
+            updatestate |= I_MESSAGES;
 #endif
+        }
     }
 
     if (automapactive)
