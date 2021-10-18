@@ -256,7 +256,7 @@ void D_Display(void)
         if (!automapactive || (automapactive && !fullscreen))
         {
             redrawsbar = wipe || (viewheight != 200 && fullscreen) || (inhelpscreensstate && !inhelpscreens); // just put away the help screen
-            ST_Drawer(viewheight == 200, redrawsbar);
+            ST_Drawer(screenblocks, redrawsbar);
         }
 #endif
 
@@ -368,8 +368,15 @@ void D_Display(void)
     // menus go directly to the screen
     M_Drawer(); // menu is drawn even on top of everything
 
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+    if (screenblocks == 11 && gamestate == GS_LEVEL)
+    {
+        ST_DrawerMini();
+    }
+#endif
+
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
-    if (gamestate == GS_LEVEL)
+    if (screenblocks <= 11 && gamestate == GS_LEVEL)
     {
 #if defined(MODE_T4025) || defined(MODE_T4050)
         ST_DrawerText4025();
@@ -485,7 +492,7 @@ void D_PageDrawer(void)
     V_DrawPatchDirectText4050(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
 #ifdef MODE_T4025
-     V_DrawPatchDirectText4025(0, 0, W_CacheLumpName(pagename, PU_CACHE));
+    V_DrawPatchDirectText4025(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
 #ifdef MODE_T8025
     V_DrawPatchDirectText8025(0, 0, W_CacheLumpName(pagename, PU_CACHE));
@@ -974,8 +981,8 @@ void D_DoomMain(void)
             forceScreenSize = atoi(myargv[p + 1]);
         if (forceScreenSize < 3)
             forceScreenSize = 3;
-        else if (forceScreenSize > 11)
-            forceScreenSize = 11;
+        else if (forceScreenSize > 12)
+            forceScreenSize = 12;
     }
 
     switch (gamemode)

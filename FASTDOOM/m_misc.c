@@ -44,6 +44,7 @@
 #include "dstrings.h"
 
 #include "m_misc.h"
+#include "m_menu.h"
 
 int myargc;
 char **myargv;
@@ -188,8 +189,6 @@ extern int mouseSensitivity;
 extern int showMessages;
 
 extern int detailLevel;
-
-extern int screenblocks;
 
 extern int showMessages;
 

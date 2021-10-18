@@ -55,6 +55,8 @@
 
 #include "st_lib.h"
 
+#include "m_menu.h"
+
 //
 // STATUS BAR DATA
 //
@@ -248,9 +250,6 @@ static byte st_firsttime;
 
 // whether left-side main status bar is active
 static byte st_statusbaron;
-
-// !deathmatch && st_statusbaron
-static byte st_armson;
 
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 // main bar left
@@ -812,9 +811,6 @@ void ST_updateWidgets(void)
 
 	// refresh everything if this is him coming back to life
 	ST_updateFaceWidget();
-
-	// used by w_arms[] widgets
-	st_armson = st_statusbaron;
 }
 
 void ST_Ticker(void)
@@ -878,8 +874,6 @@ void ST_doPaletteStuff(void)
 #if defined(MODE_T4025) || defined(MODE_T4050)
 void ST_DrawerText4025()
 {
-	st_armson = 1;
-
 	if (w_health.n.on)
 	{
 		V_WriteTextColorDirect(1, 21, "HEALTH   %%", 7 << 8);
@@ -986,8 +980,6 @@ void ST_DrawerText4025()
 #ifdef MODE_T8025
 void ST_DrawerText8025()
 {
-	st_armson = 1;
-
 	if (w_health.n.on)
 	{
 		V_WriteTextColorDirect(1, 21, "HEALTH   %%", 7 << 8);
@@ -1094,8 +1086,6 @@ void ST_DrawerText8025()
 #if defined(MODE_T8050) || defined(MODE_T80100)
 void ST_DrawerText8050()
 {
-	st_armson = 1;
-
 	if (w_health.n.on)
 	{
 		V_WriteTextColorDirect(1, 46, "HEALTH   %%", 7 << 8);
@@ -1204,9 +1194,6 @@ void ST_drawWidgets(byte refresh)
 {
 	int i;
 
-	// used by w_arms[] widgets
-	st_armson = st_statusbaron;
-
 	STlib_updateNum(&w_ready, refresh);
 
 	STlib_updateNum(&w_ammo[0], refresh);
@@ -1242,13 +1229,18 @@ void ST_drawWidgets(byte refresh)
 #endif
 
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-void ST_Drawer(byte fullscreen, byte refresh)
+void ST_Drawer(byte screenblocks, byte refresh)
 {
-	st_statusbaron = (!fullscreen) || automapactive;
-	st_firsttime = st_firsttime || refresh;
+
+	st_statusbaron = (screenblocks < 11) || automapactive;
 
 	// Do red-/gold-shifts from damage/items
 	ST_doPaletteStuff();
+
+	st_firsttime = st_firsttime || refresh;
+
+	if (screenblocks >= 11)
+		return;
 
 	// If just after ST_Start(), refresh all
 	if (st_firsttime)
@@ -1261,10 +1253,28 @@ void ST_Drawer(byte fullscreen, byte refresh)
 		// and refresh all widgets
 		ST_drawWidgets(1);
 	}
-
 	// Otherwise, update as little as possible
 	else
+	{
 		ST_drawWidgets(0);
+	}
+}
+
+void ST_DrawerMini()
+{
+	// Do red-/gold-shifts from damage/items
+	ST_doPaletteStuff();
+
+	STlib_updateNum_Direct(&w_ready);
+
+	STlib_updateNum_Direct(&(w_health.n));
+	STlib_updateNum_Direct(&(w_armor.n));
+
+	STlib_updateMultIcon_Direct(&w_faces);
+
+	STlib_updateMultIcon_Direct(&w_keyboxes[0]);
+	STlib_updateMultIcon_Direct(&w_keyboxes[1]);
+	STlib_updateMultIcon_Direct(&w_keyboxes[2]);
 }
 #endif
 
@@ -1409,6 +1419,69 @@ void ST_initData(void)
 	STlib_init();
 }
 
+void ST_createWidgets_mini(void)
+{
+
+	// ready weapon ammo
+	STlib_initNum(&w_ready,
+				  270,
+				  170,
+				  shortnum,
+				  &plyr->ammo[weaponinfo[plyr->readyweapon].ammo],
+				  &st_statusbaron);
+
+	// the last weapon type
+	w_ready.data = plyr->readyweapon;
+
+	// health percentage
+	STlib_initPercent(&w_health,
+					  270,
+					  180,
+					  shortnum,
+					  &plyr->health,
+					  &st_statusbaron,
+					  tallpercent);
+
+	// faces
+	STlib_initMultIcon(&w_faces,
+					   285,
+					   165,
+					   faces,
+					   &st_faceindex,
+					   &st_statusbaron);
+
+	// armor percentage - should be colored later
+	STlib_initPercent(&w_armor,
+					  270,
+					  190,
+					  shortnum,
+					  &plyr->armorpoints,
+					  &st_statusbaron, tallpercent);
+
+	// keyboxes 0-2
+	STlib_initMultIcon(&w_keyboxes[0],
+					   275,
+					   169,
+					   keys,
+					   &keyboxes[0],
+					   &st_statusbaron);
+
+	STlib_initMultIcon(&w_keyboxes[1],
+					   275,
+					   179,
+					   keys,
+					   &keyboxes[1],
+					   &st_statusbaron);
+
+	STlib_initMultIcon(&w_keyboxes[2],
+					   275,
+					   189,
+					   keys,
+					   &keyboxes[2],
+					   &st_statusbaron);
+
+}
+
 void ST_createWidgets(void)
 {
 
@@ -1444,37 +1517,37 @@ void ST_createWidgets(void)
 					   ST_ARMSX,
 					   ST_ARMSY,
 					   arms[0], (int *)&plyr->weaponowned[1],
-					   &st_armson);
+					   &st_statusbaron);
 
 	STlib_initMultIcon(&w_arms[1],
 					   ST_ARMSX + ST_ARMSXSPACE,
 					   ST_ARMSY,
 					   arms[1], (int *)&plyr->weaponowned[2],
-					   &st_armson);
+					   &st_statusbaron);
 
 	STlib_initMultIcon(&w_arms[2],
 					   ST_ARMSX + 2 * ST_ARMSXSPACE,
 					   ST_ARMSY,
 					   arms[2], (int *)&plyr->weaponowned[3],
-					   &st_armson);
+					   &st_statusbaron);
 
 	STlib_initMultIcon(&w_arms[3],
 					   ST_ARMSX,
 					   ST_ARMSY + 10,
 					   arms[3], (int *)&plyr->weaponowned[4],
-					   &st_armson);
+					   &st_statusbaron);
 
 	STlib_initMultIcon(&w_arms[4],
 					   ST_ARMSX + ST_ARMSXSPACE,
 					   ST_ARMSY + 10,
 					   arms[4], (int *)&plyr->weaponowned[5],
-					   &st_armson);
+					   &st_statusbaron);
 
 	STlib_initMultIcon(&w_arms[5],
 					   ST_ARMSX + 2 * ST_ARMSXSPACE,
 					   ST_ARMSY + 10,
 					   arms[5], (int *)&plyr->weaponowned[6],
-					   &st_armson);
+					   &st_statusbaron);
 
 	// faces
 	STlib_initMultIcon(&w_faces,
@@ -1582,7 +1655,13 @@ void ST_Start(void)
 		ST_Stop();
 
 	ST_initData();
-	ST_createWidgets();
+
+	if (screenblocks == 11){
+		ST_createWidgets_mini();
+	}else{
+		ST_createWidgets();
+	}
+
 	st_stopped = 0;
 }
 

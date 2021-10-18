@@ -29,6 +29,10 @@
 // Even when the menu is not displayed,
 // this can resize the view and change game parameters.
 // Does all the real work of the menu interaction.
+
+extern int screenblocks;
+extern int screenSize;
+
 byte M_Responder(event_t *ev);
 
 // Called by main loop,

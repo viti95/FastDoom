@@ -1094,25 +1094,25 @@ void M_DrawOptions(void)
     V_WriteTextDirect(13, 2, "OPTIONS");
     V_WriteTextDirect((OptionsDef.x + 120) / 8, (OptionsDef.y + LINEHEIGHT * messages) / 8, showMessages == 0 ? "OFF" : "ON");
     M_DrawThermoText(OptionsDef.x / 8, (OptionsDef.y + LINEHEIGHT * (mousesens + 1)) / 8, 10, mouseSensitivity);
-    M_DrawThermoText(OptionsDef.x / 8, (OptionsDef.y + LINEHEIGHT * (scrnsize + 1)) / 8, 9, screenSize);
+    M_DrawThermoText(OptionsDef.x / 8, (OptionsDef.y + LINEHEIGHT * (scrnsize + 1)) / 8, 10, screenSize);
 #endif
 #ifdef MODE_T8025
     V_WriteTextDirect(27, 2, "OPTIONS");
     V_WriteTextDirect((OptionsDef.x + 120) / 6, (OptionsDef.y + LINEHEIGHT * messages) / 8, showMessages == 0 ? "OFF" : "ON");
     M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (mousesens + 1)) / 8, 10, mouseSensitivity);
-    M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (scrnsize + 1)) / 8, 9, screenSize);
+    M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (scrnsize + 1)) / 8, 10, screenSize);
 #endif
 #if defined(MODE_T8050) || defined(MODE_T80100)
     V_WriteTextDirect(27, 6, "OPTIONS");
     V_WriteTextDirect((OptionsDef.x + 120) / 6, (OptionsDef.y + LINEHEIGHT * messages) / 4, showMessages == 0 ? "OFF" : "ON");
     M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (mousesens + 1)) / 4, 10, mouseSensitivity);
-    M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (scrnsize + 1)) / 4, 9, screenSize);
+    M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (scrnsize + 1)) / 4, 10, screenSize);
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     V_DrawPatchDirect(108, 15, W_CacheLumpName("M_OPTTTL", PU_CACHE));
     V_DrawPatchDirect(OptionsDef.x + 120, OptionsDef.y + LINEHEIGHT * messages, W_CacheLumpName((char *)msgNames[showMessages], PU_CACHE));
     M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (mousesens + 1), 10, mouseSensitivity);
-    M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (scrnsize + 1), 9, screenSize);
+    M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (scrnsize + 1), 10, screenSize);
 #endif
 }
 
@@ -1606,7 +1606,7 @@ void M_SizeDisplay(int choice)
         }
         break;
     case 1:
-        if (screenSize < 8)
+        if (screenSize < 9)
         {
             screenblocks++;
             screenSize++;

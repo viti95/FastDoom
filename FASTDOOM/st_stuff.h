@@ -42,7 +42,8 @@ void ST_Responder(event_t *ev);
 void ST_Ticker(void);
 
 // Called by main loop.
-void ST_Drawer(byte fullscreen, byte refresh);
+void ST_Drawer(byte screenblocks, byte refresh);
+void ST_DrawerMini();
 void ST_DrawerText4025();
 void ST_DrawerText8025();
 void ST_DrawerText8050();
@@ -52,6 +53,9 @@ void ST_Start(void);
 
 // Called by startup code.
 void ST_Init(void);
+
+void ST_createWidgets(void);
+void ST_createWidgets_mini(void);
 
 void ST_doPaletteStuff(void);
 

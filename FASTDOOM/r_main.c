@@ -36,6 +36,10 @@
 
 #include "sizeopt.h"
 
+#include "m_menu.h"
+
+#include "st_stuff.h"
+
 // Fineangles in the SCREENWIDTH wide window.
 #define FIELDOFVIEW 2048
 
@@ -670,12 +674,17 @@ byte setsizeneeded;
 int setblocks;
 int setdetail;
 
-void R_SetViewSize(int blocks,
-                   int detail)
+void R_SetViewSize(int blocks, int detail)
 {
     setsizeneeded = 1;
     setblocks = blocks;
     setdetail = detail;
+    
+    if (blocks == 11){
+        ST_createWidgets_mini();
+    }else{
+        ST_createWidgets();
+    }
 }
 
 //
@@ -696,7 +705,7 @@ void R_ExecuteSetViewSize(void)
         setblocks = forceScreenSize;
 
 #if !defined(MODE_T8050) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050)
-    if (setblocks == 11)
+    if (setblocks >= 11)
     {
         scaledviewwidth = SCREENWIDTH;
         viewheight = SCREENHEIGHT;
@@ -1044,7 +1053,6 @@ void R_ExecuteSetViewSize(void)
 // R_Init
 //
 extern int detailLevel;
-extern int screenblocks;
 
 void R_Init(void)
 {

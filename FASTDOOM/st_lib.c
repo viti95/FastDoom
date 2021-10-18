@@ -160,6 +160,46 @@ void STlib_drawNum(st_number_t *n, byte refresh)
 #endif
     } while (num);
 }
+
+void STlib_drawNum_Direct(st_number_t *n)
+{
+    int num = *n->num;
+    int w;
+    int h;
+    int x;
+
+    w = n->p[0]->width;
+    h = n->p[0]->height;
+    x = n->x;
+
+    n->oldnum = *n->num;
+
+    // clear the area
+    x = n->x - 3 * w;
+
+    // if non-number, do not draw it
+    if (num == 1994)
+        return;
+
+    x = n->x;
+
+    // in the special case of 0, you draw 0
+    if (!num)
+    {
+        V_DrawPatchDirect(x - w, n->y, n->p[0]);
+        return;
+    }
+
+    // draw the new number
+    do
+    {
+        int original = num;
+
+        num = Div10(num);
+        x -= w;
+        V_DrawPatchDirect(x, n->y, n->p[original - Mul10(num)]);
+    } while (num);
+}
 #endif
 
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
@@ -167,6 +207,11 @@ void STlib_updateNum(st_number_t *n, byte refresh)
 {
     if (*n->on)
         STlib_drawNum(n, refresh);
+}
+
+void STlib_updateNum_Direct(st_number_t *n)
+{
+    STlib_drawNum_Direct(n);
 }
 #endif
 
@@ -198,6 +243,12 @@ void STlib_updatePercent(st_percent_t *per, int refresh)
 
     STlib_updateNum(&per->n, refresh);
 }
+
+void STlib_updatePercent_Direct(st_percent_t *per)
+{
+    V_DrawPatchDirect(per->n.x, per->n.y, per->p);
+    STlib_updateNum_Direct(&per->n);
+}
 #endif
 
 void STlib_initMultIcon(st_multicon_t *i,
@@ -216,6 +267,16 @@ void STlib_initMultIcon(st_multicon_t *i,
 }
 
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+void STlib_updateMultIcon_Direct(st_multicon_t *mi)
+{
+    int w;
+    int h;
+    int x;
+    int y;
+
+    V_DrawPatchDirect(mi->x, mi->y, mi->p[*mi->inum]);
+}
+
 void STlib_updateMultIcon(st_multicon_t *mi, byte refresh)
 {
     int w;
@@ -306,5 +367,10 @@ void STlib_updateBinIcon(st_binicon_t *bi, byte refresh)
         updatestate |= I_STATBAR;
 #endif
     }
+}
+
+void STlib_updateBinIcon_Direct(st_binicon_t *bi)
+{
+    V_DrawPatchDirect(bi->x, bi->y, bi->p);
 }
 #endif
