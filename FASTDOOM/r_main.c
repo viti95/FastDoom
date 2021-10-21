@@ -680,7 +680,7 @@ void R_SetViewSize(int blocks, int detail)
     setblocks = blocks;
     setdetail = detail;
     
-    if (blocks == 11){
+    if (blocks == 11 && gamestate == GS_LEVEL){
         ST_createWidgets_mini();
     }else{
         ST_createWidgets();

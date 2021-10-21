@@ -274,7 +274,9 @@ void STlib_updateMultIcon_Direct(st_multicon_t *mi)
     int x;
     int y;
 
-    V_DrawPatchDirect(mi->x, mi->y, mi->p[*mi->inum]);
+    if (*mi->inum != -1){
+        V_DrawPatchDirect(mi->x, mi->y, mi->p[*mi->inum]);
+    }
 }
 
 void STlib_updateMultIcon(st_multicon_t *mi, byte refresh)

@@ -1421,7 +1421,6 @@ void ST_initData(void)
 
 void ST_createWidgets_mini(void)
 {
-
 	// ready weapon ammo
 	STlib_initNum(&w_ready,
 				  270,
@@ -1434,13 +1433,12 @@ void ST_createWidgets_mini(void)
 	w_ready.data = plyr->readyweapon;
 
 	// health percentage
-	STlib_initPercent(&w_health,
+	STlib_initNum(&(w_health.n),
 					  270,
 					  180,
 					  shortnum,
 					  &plyr->health,
-					  &st_statusbaron,
-					  tallpercent);
+					  &st_statusbaron);
 
 	// faces
 	STlib_initMultIcon(&w_faces,
@@ -1451,12 +1449,12 @@ void ST_createWidgets_mini(void)
 					   &st_statusbaron);
 
 	// armor percentage - should be colored later
-	STlib_initPercent(&w_armor,
+	STlib_initNum(&(w_armor.n),
 					  270,
 					  190,
 					  shortnum,
 					  &plyr->armorpoints,
-					  &st_statusbaron, tallpercent);
+					  &st_statusbaron);
 
 	// keyboxes 0-2
 	STlib_initMultIcon(&w_keyboxes[0],
