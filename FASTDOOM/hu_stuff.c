@@ -314,32 +314,33 @@ void HU_Drawer(void)
 
     HUlib_drawSText(&w_message);
 
-    if (debugPort)
+    if (showFPS)
     {
-        int outfps = fps >> FRACBITS;
-        int outval = 0;
-        unsigned int counter = 0;
+        if (debugPort)
+        {
+            int outfps = fps >> FRACBITS;
+            int outval = 0;
+            unsigned int counter = 0;
 
-        if (outfps > 99){
-            outp(0x80, 0x99);
+            if (outfps > 99)
+            {
+                outp(0x80, 0x99);
+                outp(0x80, 0x00);
+                return;
+            }
+
+            while (outfps)
+            {
+                outval |= (outfps % 10) << counter;
+                outfps /= 10;
+                counter += 4;
+            }
+            outp(0x80, outval);
             outp(0x80, 0x00);
-            return;
         }
-
-        while (outfps)
+        else
         {
-            outval |= (outfps % 10) << counter;
-            outfps /= 10;
-            counter += 4;
-        }
-        outp(0x80, outval);
-        outp(0x80, 0x00);
-    }
-    else
-    {
 
-        if (showFPS)
-        {
             sprintf(str, "%i.%01i", fps >> FRACBITS, Mul10(fps & 65535) >> FRACBITS);
             HUlib_clearTextLine(&w_fps);
             f = str;
