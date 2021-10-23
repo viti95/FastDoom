@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 0.8.8 (23 Oct 2021)
+* Added new video modes
+    * FDOOMC16.EXE => FastDoom CGA 160x100 and 16 colors
+    * FDOOMV16.EXE => FastDoom VGA 160x200 and 16 colors
+    * FDOOME.EXE   => FastDoom EGA 640x200 (dithering 16 colors)
+* Added support for Sound Blaster Direct mode. This mode doesn't require IRQ nor DMA, but it's a bit slower and limited to 8-bit mono sound. Useful for PCMCIA clone cards and problematic cards/systems.
+* Better CGA 320x200 and 4 colors support
+* Added new screen size with a minimalistic HUD
+* New command line parameter that allows showing the FPS via the debug port 0x80 (-debugPort)
+
 ## 0.8.7 (16 Aug 2021)
 * Added new video modes. Huge thanks to @PickledDog for implementing these
  * FDOOMPCP.EXE => FastDoom for Plantronics ColorPlus cards. 320x200 and 16 colors!
