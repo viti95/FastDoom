@@ -35,7 +35,7 @@
  RAM:        4 MB (the executable runs even with less RAM, but it's 
              possible to see random crashes due to low RAM)
  Video card: Any ISA 8-bit Hercules, CGA, EGA or VGA video card. For cool
-             graphics a VGA video card is recommended
+             graphics a fast VGA video card is recommended
  Controls:   Keyboard (mouse recommended)
 
  Supported WADS
@@ -92,9 +92,9 @@
                    extensions. Some video cards crash with this mode, it
                    should be a little bit faster than the real mode version
  * FDOOMVBD.EXE => FastDoom for VBE 2.0 cards with LFB (triple buffered),
-		           all rendering is done directly onto the video card, the
-		           same way Mode Y does. Faster for systems with slow RAM
-		           access.
+		   all rendering is done directly onto the video card, the
+		   same way Mode Y does. Faster for systems with slow RAM
+		   access.
  * FDOOMV.EXE   => FastDoom Planar 320x350 vertical mode. The base 320x200 
                    image is stretched to 320x350 (wrong aspect ratio)
  * FDOOMV2.EXE  => FastDoom Planar 320x350 vertical mode. The base 320x200 
@@ -102,6 +102,10 @@
  * FDOOMPCP.EXE => FastDoom for Plantronics ColorPlus cards. 320x200 and 
                    16 colors!
  * FDOOMCVB.EXE => FastDoom CGA composite mode. 160x200 and 16 colors!
+ * FDOOMC16.EXE => FastDoom CGA 160x100 and 16 colors
+ * FDOOMV16.EXE => FastDoom VGA 160x200 and 16 colors
+ * FDOOME.EXE   => FastDoom EGA 640x200. Requires a very fast CPU and 16-bit
+		   ISA video card (at least). Dithering with 16 colors
  * FDSETUP.EXE  => Utility to setup controls and sound cards
 
  Command line parameters
@@ -167,6 +171,7 @@
  -LPT2 => Forces LPT2 port for Disney Sound Source
  -LPT3 => Forces LPT3 port for Disney Sound Source
  -disabledemo => Disables defered demos
+ -debugPort => Shows FPS via the debug port (0x80)
 
  Author
  ------
