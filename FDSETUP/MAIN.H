@@ -41,6 +41,7 @@ typedef enum
 	M_TANDYSS,
 	M_PC1BIT,
 	M_COVOX,
+	M_SBDIRECT,
 	M_LAST
 } SCARD;
 

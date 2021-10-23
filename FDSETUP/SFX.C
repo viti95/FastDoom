@@ -13,6 +13,7 @@ enum
 	DCARD_TANDY,
 	DCARD_PC1BIT,
 	DCARD_COVOX,
+	DCARD_SBDIRECT,
 	DCARD_NONE,
 	DCARD_MAX
 };
@@ -27,7 +28,8 @@ item_t idcarditems[] =
 		{DCARD_TANDY, 27, 14, 25, -1, -1},
 		{DCARD_PC1BIT, 27, 15, 25, -1, -1},
 		{DCARD_COVOX, 27, 16, 25, -1, -1},
-		{DCARD_NONE, 27, 17, 25, -1, -1}};
+		{DCARD_SBDIRECT, 27, 17, 25, -1, -1},
+		{DCARD_NONE, 27, 18, 25, -1, -1}};
 
 menu_t idcardmenu =
 	{
@@ -83,6 +85,10 @@ int ChooseFxCard(void)
 
 	case M_COVOX:
 		field = DCARD_COVOX;
+		break;
+
+	case M_SBDIRECT:
+		field = DCARD_SBDIRECT;
 		break;
 	}
 
@@ -152,6 +158,14 @@ int ChooseFxCard(void)
 
 			case DCARD_COVOX:
 				newc.d.card = M_COVOX;
+				newc.d.port = -1;
+				newc.d.midiport = -1;
+				newc.d.irq = -1;
+				newc.d.dma = -1;
+				goto func_exit;
+
+			case DCARD_SBDIRECT:
+				newc.d.card = M_SBDIRECT;
 				newc.d.port = -1;
 				newc.d.midiport = -1;
 				newc.d.irq = -1;
@@ -573,6 +587,10 @@ int SetupFX(void)
 		break;
 
 	case M_COVOX:
+		savefx = TRUE;
+		break;
+
+	case M_SBDIRECT:
 		savefx = TRUE;
 		break;
 
