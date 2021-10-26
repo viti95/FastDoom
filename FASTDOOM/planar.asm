@@ -46,7 +46,81 @@ PUBLIC  R_DrawColumnPotato_
 	mov		ebx,[_dc_x]
 	add		edi,ebx
 	add		edi,[_destview]
-	jmp		cdraw
+	
+	mov		eax,[_dc_yh]
+	inc		eax
+	sub		eax,ebp						; pixel count
+	mov		[pixelcount],eax			; save for final pixel
+	js		donep						; nothing to scale
+	shr		eax,1						; double pixel count
+	mov		[loopcount],eax
+	
+	mov		ecx,[_dc_iscale]
+	
+	mov		eax,[_centery]
+	sub		eax,ebp
+	imul	ecx
+	mov		ebp,[_dc_texturemid]
+	sub		ebp,eax
+	shl		ebp,9						; 7 significant bits, 25 frac
+	
+	mov		esi,[_dc_source]
+	
+	mov		ebx,[_dc_iscale]
+	shl		ebx,9
+	mov		eax,OFFSET patch1p+2			; convice tasm to modify code...
+	mov		[eax],ebx
+	mov		eax,OFFSET patch2p+2			; convice tasm to modify code...
+	mov		[eax],ebx
+	
+; eax		aligned colormap
+; ebx		aligned colormap
+; ecx,edx	scratch
+; esi		virtual source
+; edi		moving destination pointer
+; ebp		frac
+
+	mov		ecx,ebp						; begin calculating first pixel
+	add		ebp,ebx						; advance frac pointer
+	shr		ecx,25						; finish calculation for first pixel
+	mov		edx,ebp						; begin calculating second pixel
+	add		ebp,ebx						; advance frac pointer
+	shr		edx,25						; finish calculation for second pixel
+	mov		eax,[_dc_colormap]
+	mov		ebx,eax
+	mov		al,[esi+ecx]				; get first pixel
+	mov		bl,[esi+edx]				; get second pixel
+	mov		al,[eax]					; color translate first pixel
+	mov		bl,[ebx]					; color translate second pixel
+	
+	test	[pixelcount],0fffffffeh
+	jnz		doubleloopp					; at least two pixels to map
+	jmp		checklastp
+doubleloopp:
+	mov		ecx,ebp						; begin calculating third pixel
+patch1p:
+	add		ebp,12345678h				; advance frac pointer
+	mov		[edi],al					; write first pixel
+	shr		ecx,25						; finish calculation for third pixel
+	mov		edx,ebp						; begin calculating fourth pixel
+patch2p:
+	add		ebp,12345678h				; advance frac pointer
+	mov		[edi+SCREENWIDTH/4],bl		; write second pixel
+	shr		edx,25						; finish calculation for fourth pixel
+	mov		al,[esi+ecx]				; get third pixel
+	add		edi,SCREENWIDTH/2			; advance to third pixel destination
+	mov		bl,[esi+edx]				; get fourth pixel
+	dec		[loopcount]					; done with loop?
+	mov		al,[eax]					; color translate third pixel
+	mov		bl,[ebx]					; color translate fourth pixel
+	jnz		doubleloopp
+checklastp:
+	test	[pixelcount],1
+	jz		donep
+	mov		[edi],al					; write final pixel
+donep:
+	POPR
+	ret
 ENDP
 
 PROC  R_DrawColumnLow_
@@ -66,7 +140,81 @@ PUBLIC  R_DrawColumnLow_
 	shl		eax,cl
 	mov		edx,SC_INDEX+1
 	out		dx,al
-	jmp		cdraw
+
+	mov		eax,[_dc_yh]
+	inc		eax
+	sub		eax,ebp						; pixel count
+	mov		[pixelcount],eax			; save for final pixel
+	js		donel						; nothing to scale
+	shr		eax,1						; double pixel count
+	mov		[loopcount],eax
+	
+	mov		ecx,[_dc_iscale]
+	
+	mov		eax,[_centery]
+	sub		eax,ebp
+	imul	ecx
+	mov		ebp,[_dc_texturemid]
+	sub		ebp,eax
+	shl		ebp,9						; 7 significant bits, 25 frac
+	
+	mov		esi,[_dc_source]
+	
+	mov		ebx,[_dc_iscale]
+	shl		ebx,9
+	mov		eax,OFFSET patch1l+2			; convice tasm to modify code...
+	mov		[eax],ebx
+	mov		eax,OFFSET patch2l+2			; convice tasm to modify code...
+	mov		[eax],ebx
+	
+; eax		aligned colormap
+; ebx		aligned colormap
+; ecx,edx	scratch
+; esi		virtual source
+; edi		moving destination pointer
+; ebp		frac
+
+	mov		ecx,ebp						; begin calculating first pixel
+	add		ebp,ebx						; advance frac pointer
+	shr		ecx,25						; finish calculation for first pixel
+	mov		edx,ebp						; begin calculating second pixel
+	add		ebp,ebx						; advance frac pointer
+	shr		edx,25						; finish calculation for second pixel
+	mov		eax,[_dc_colormap]
+	mov		ebx,eax
+	mov		al,[esi+ecx]				; get first pixel
+	mov		bl,[esi+edx]				; get second pixel
+	mov		al,[eax]					; color translate first pixel
+	mov		bl,[ebx]					; color translate second pixel
+	
+	test	[pixelcount],0fffffffeh
+	jnz		doubleloopl					; at least two pixels to map
+	jmp		checklastl
+doubleloopl:
+	mov		ecx,ebp						; begin calculating third pixel
+patch1l:
+	add		ebp,12345678h				; advance frac pointer
+	mov		[edi],al					; write first pixel
+	shr		ecx,25						; finish calculation for third pixel
+	mov		edx,ebp						; begin calculating fourth pixel
+patch2l:
+	add		ebp,12345678h				; advance frac pointer
+	mov		[edi+SCREENWIDTH/4],bl		; write second pixel
+	shr		edx,25						; finish calculation for fourth pixel
+	mov		al,[esi+ecx]				; get third pixel
+	add		edi,SCREENWIDTH/2			; advance to third pixel destination
+	mov		bl,[esi+edx]				; get fourth pixel
+	dec		[loopcount]					; done with loop?
+	mov		al,[eax]					; color translate third pixel
+	mov		bl,[ebx]					; color translate fourth pixel
+	jnz		doubleloopl
+checklastl:
+	test	[pixelcount],1
+	jz		done
+	mov		[edi],al					; write final pixel
+donel:
+	POPR
+	ret
 ENDP
 	
 PROC  R_DrawColumn_
