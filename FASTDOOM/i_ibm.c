@@ -211,7 +211,7 @@ byte lut4colors[14 * 256];
 byte *ptrlut4colors;
 #endif
 
-#if defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_EGA640)
+#if defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_EGA640) || defined(MODE_ATI640)
 byte lutcolors00[14 * 256];
 byte lutcolors01[14 * 256];
 byte lutcolors10[14 * 256];
@@ -343,6 +343,26 @@ const byte colors[48] = {
     0x3F, 0x3F, 0x3F};
 #endif
 
+#if defined(MODE_ATI640)
+const byte colors[48] = { // Color      R G B I     G R I B
+    0x00, 0x00, 0x00,     // Black      0 0 0 0     0 0 0 0
+    0x00, 0x2A, 0x00,     // Green      0 1 0 0     1 0 0 0
+    0x2A, 0x00, 0x00,     // Red        1 0 0 0     0 1 0 0
+    0x2A, 0x15, 0x00,     // Brown      1 1 0 0     1 1 0 0
+    0x15, 0x15, 0x15,     // Gray       0 0 0 1     0 0 1 0
+    0x15, 0x3F, 0x15,     // L green    0 1 0 1     1 0 1 0
+    0x3F, 0x15, 0x15,     // L red      1 0 0 1     0 1 1 0
+    0x3F, 0x3F, 0x15,     // Yellow     1 1 0 1     1 1 1 0
+    0x00, 0x00, 0x2A,     // Blue       0 0 1 0     0 0 0 1
+    0x00, 0x2A, 0x2A,     // Cyan       0 1 1 0     1 0 0 1
+    0x2A, 0x00, 0x2A,     // Magenta    1 0 1 0     0 1 0 1
+    0x2A, 0x2A, 0x2A,     // L Gray     1 1 1 0     1 1 0 1
+    0x15, 0x15, 0x3F,     // L blue     0 0 1 1     0 0 1 1
+    0x15, 0x3F, 0x3F,     // L cyan     0 1 1 1     1 0 1 1
+    0x3F, 0x15, 0x3F,     // L magenta  1 0 1 1     0 1 1 1
+    0x3F, 0x3F, 0x3F};    // White      1 1 1 1     1 1 1 1
+#endif
+
 #ifdef MODE_CVB
 const byte colors[48] = { // standard IBM CGA
     0x00, 0x00, 0x00,
@@ -408,7 +428,7 @@ const byte colors[12] = {
     0x2A, 0x15, 0x00};
 #endif
 
-#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CGA) || defined(MODE_EGA640) || defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CGA) || defined(MODE_EGA640) || defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB) || defined(MODE_ATI640)
 
 int I_SQRT(int x)
 {
@@ -437,7 +457,7 @@ int I_SQRT(int x)
 
 #endif
 
-#if defined(MODE_EGA640)
+#if defined(MODE_EGA640) || defined(MODE_ATI640)
 
 int I_GetClosestColor(int r1, int g1, int b1)
 {
@@ -637,7 +657,7 @@ void I_ProcessPalette(byte *palette)
 void I_SetPalette(int numpalette)
 {
 
-#if defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_EGA640)
+#if defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_EGA640) || defined(MODE_ATI640)
     ptrlutcolors00 = lutcolors00 + numpalette * 256;
     ptrlutcolors01 = lutcolors01 + numpalette * 256;
     ptrlutcolors10 = lutcolors10 + numpalette * 256;
@@ -1040,6 +1060,72 @@ void VGA16_DrawBackbuffer(void)
         unsigned char color1 = ptrlut16colors[backbuffer[base + 2]];
 
         vram[i] = color0 << 4 | color1;
+    }
+}
+#endif
+
+#ifdef MODE_ATI640
+void ATI640_DrawBackbuffer(void)
+{
+    int x;
+
+    unsigned char *vramScanline1 = (unsigned char *)0xB0000;
+    unsigned char *vramScanline2 = (unsigned char *)0xB2000;
+    unsigned char *vramScanline3 = (unsigned char *)0xB4000;
+    unsigned char *vramScanline4 = (unsigned char *)0xB6000;
+    
+    unsigned int base = 0;
+    unsigned char color0, color1, color2, color3;
+
+    for (base = 0; base < SCREENHEIGHT * 320;)
+    {
+        // 1st scanline
+
+        for (x = 0; x < 160; x++, base += 2, vramScanline1++)
+        {
+            color0 = ptrlutcolors00[backbuffer[base]];
+            color1 = ptrlutcolors01[backbuffer[base]];
+            color2 = ptrlutcolors00[backbuffer[base + 1]];
+            color3 = ptrlutcolors01[backbuffer[base + 1]];
+            *(vramScanline1) = (color0 & 3) << 6 | (color1 & 3) << 4 | (color2 & 3) << 2 | (color3 & 3);
+            *(vramScanline1 + 0x8000) = (color0 & 12) << 4 | (color1 & 12) << 2 | (color2 & 12) | (color3 & 12) >> 2;
+        }
+
+        // 2st scanline
+
+        for (x = 0; x < 160; x++, base += 2, vramScanline2++)
+        {
+            color0 = ptrlutcolors10[backbuffer[base]];
+            color1 = ptrlutcolors11[backbuffer[base]];
+            color2 = ptrlutcolors10[backbuffer[base + 1]];
+            color3 = ptrlutcolors11[backbuffer[base + 1]];
+            *(vramScanline2) = (color0 & 3) << 6 | (color1 & 3) << 4 | (color2 & 3) << 2 | (color3 & 3);
+            *(vramScanline2 + 0x8000) = (color0 & 12) << 4 | (color1 & 12) << 2 | (color2 & 12) | (color3 & 12) >> 2;
+        }
+
+        // 3rd scanline
+
+        for (x = 0; x < 160; x++, base += 2, vramScanline3++)
+        {
+            color0 = ptrlutcolors00[backbuffer[base]];
+            color1 = ptrlutcolors01[backbuffer[base]];
+            color2 = ptrlutcolors00[backbuffer[base + 1]];
+            color3 = ptrlutcolors01[backbuffer[base + 1]];
+            *(vramScanline3) = (color0 & 3) << 6 | (color1 & 3) << 4 | (color2 & 3) << 2 | (color3 & 3);
+            *(vramScanline3 + 0x8000) = (color0 & 12) << 4 | (color1 & 12) << 2 | (color2 & 12) | (color3 & 12) >> 2;
+        }
+
+        // 4th scanline
+
+        for (x = 0; x < 160; x++, base += 2, vramScanline4++)
+        {
+            color0 = ptrlutcolors10[backbuffer[base]];
+            color1 = ptrlutcolors11[backbuffer[base]];
+            color2 = ptrlutcolors10[backbuffer[base + 1]];
+            color3 = ptrlutcolors11[backbuffer[base + 1]];
+            *(vramScanline4) = (color0 & 3) << 6 | (color1 & 3) << 4 | (color2 & 3) << 2 | (color3 & 3);
+            *(vramScanline4 + 0x8000) = (color0 & 12) << 4 | (color1 & 12) << 2 | (color2 & 12) | (color3 & 12) >> 2;
+        }
     }
 }
 #endif
@@ -1464,6 +1550,9 @@ void I_FinishUpdate(void)
 #endif
 #ifdef MODE_EGA640
     EGA640_DrawBackbuffer();
+#endif
+#ifdef MODE_ATI640
+    ATI640_DrawBackbuffer();
 #endif
 #ifdef MODE_PCP
     CPLUS_DrawBackbuffer();
@@ -2026,6 +2115,35 @@ void I_InitGraphics(void)
     int386(0x10, (union REGS *)&regs, &regs);
     outp(0x3C4, 0x2);
     pcscreen = destscreen = (byte *)0xA0000;
+#endif
+#ifdef MODE_ATI640
+
+    static int parms[16] = {0x70, 0x50, 0x58, 0x0a,
+                            0x40, 0x06, 0x32, 0x38,
+                            0x02, 0x03, 0x06, 0x07,
+                            0x00, 0x00, 0x00, 0x00};
+    int i;
+
+    /* Set the Graphics Solution to 640 x 200 with 16 colors in 
+	   Color Mode */
+    outp(0x3D8, 0x2);
+
+    /* Set extended graphics registers */
+    outp(0x3DD, 0x80);
+
+    outp(0x03D8, 0x2);
+    /* Program 6845 crt controlller */
+    for (i = 0; i < 16; ++i)
+    {
+        outp(0x3D4, i);
+        outp(0x3D5, parms[i]);
+    }
+    outp(0x3D8, 0x0A);
+    outp(0x3D9, 0x30);
+
+    outp(0x3dd, 0x80);
+
+    pcscreen = destscreen = (byte *)0xB0000;
 #endif
 #ifdef MODE_CVB
     regs.w.ax = 0x06;

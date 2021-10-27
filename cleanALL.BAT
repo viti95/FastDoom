@@ -19,3 +19,4 @@ call cleancvb.bat
 call cleane.bat
 call cleanc16.bat
 call cleanv16.bat
+call cleanati.bat
