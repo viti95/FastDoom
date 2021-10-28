@@ -46,7 +46,8 @@ char cards[M_LAST][20] = {
 	"Tandy Sound Source",
 	"PC Speaker (1 bit)",
 	"COVOX",
-	"Sound Blaster DM"
+	"Sound Blaster DM",
+	"PC Speaker (PWM)"
 	};
 
 char controls[C_LAST][20] = {
