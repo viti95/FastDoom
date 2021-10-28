@@ -17,6 +17,7 @@
 #include "ns_multi.h"
 #include "ns_muldf.h"
 #include "ns_speak.h"
+#include "ns_pwm.h"
 #include "ns_lpt.h"
 #include "ns_sbdm.h"
 
@@ -802,6 +803,9 @@ int MV_SetMixMode(
     case PC1bit:
         MV_MixMode = PCSpeaker_SetMixMode(mode);
         break;
+    case PCPWM:
+        MV_MixMode = PCSpeakerPWM_SetMixMode(mode);
+        break;
     case LPTDAC:
         MV_MixMode = LPT_SetMixMode(mode);
         break;
@@ -964,6 +968,13 @@ int MV_StartPlayback(
         MV_MixRate = PCSpeaker_SampleRate;
         MV_DMAChannel = -1;
         break;
+    case PCPWM:
+        PCSpeakerPWM_BeginBufferedPlayback(MV_MixBuffer[0],
+                                 TotalBufferSize, MV_NumberOfBuffers,
+                                 MV_ServiceVoc);
+        MV_MixRate = PCSpeakerPWM_SampleRate;
+        MV_DMAChannel = -1;
+        break;
     case LPTDAC:
         LPT_BeginBufferedPlayback(MV_MixBuffer[0],
                                  TotalBufferSize, MV_NumberOfBuffers,
@@ -1030,6 +1041,9 @@ void MV_StopPlayback(
         break;
     case PC1bit:
         PCSpeaker_StopPlayback();
+        break;
+    case PCPWM:
+        PCSpeakerPWM_StopPlayback();
         break;
     case LPTDAC:
         LPT_StopPlayback();
@@ -1387,6 +1401,10 @@ int MV_Init(
         status = PCSpeaker_Init(soundcard);
         break;
 
+    case PCPWM:
+        status = PCSpeakerPWM_Init(soundcard);
+        break;
+
     case LPTDAC:
         status = LPT_Init(soundcard);
         break;
@@ -1503,6 +1521,9 @@ int MV_Shutdown(
         break;
     case PC1bit:
         PCSpeaker_Shutdown();
+        break;
+    case PCPWM:
+        PCSpeakerPWM_Shutdown();
         break;
     case LPTDAC:
         LPT_Shutdown();
