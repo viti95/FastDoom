@@ -201,9 +201,20 @@ void I_StartupSound(void);
 void I_ShutdownSound(void);
 void I_ShutdownTimer(void);
 
-#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
 byte lut16colors[14 * 256];
 byte *ptrlut16colors;
+#endif
+
+#if defined(MODE_EGA)
+byte lutRcolor[14 * 256];
+byte lutGcolor[14 * 256];
+byte lutBcolor[14 * 256];
+byte lutIcolor[14 * 256];
+byte *ptrlutRcolor;
+byte *ptrlutGcolor;
+byte *ptrlutBcolor;
+byte *ptrlutIcolor;
 #endif
 
 #if defined(MODE_CGA)
@@ -544,7 +555,7 @@ void I_ProcessPalette(byte *palette)
 }
 #endif
 
-#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
 void I_ProcessPalette(byte *palette)
 {
     int i, j;
@@ -591,6 +602,114 @@ void I_ProcessPalette(byte *palette)
             {
                 best_difference = distance;
                 lut16colors[i] = j;
+            }
+        }
+    }
+}
+#endif
+
+#if defined(MODE_EGA)
+void I_ProcessPalette(byte *palette)
+{
+    int i, j;
+    byte *ptr = gammatable[usegamma];
+
+    for (i = 0; i < 14 * 256; i++)
+    {
+        int distance;
+
+        int r1, g1, b1;
+
+        int best_difference = MAXINT;
+
+        r1 = (int)ptr[*palette++];
+        g1 = (int)ptr[*palette++];
+        b1 = (int)ptr[*palette++];
+
+        for (j = 0; j < 16; j++)
+        {
+            int r2, g2, b2;
+            int cR, cG, cB;
+            int pos = j * 3;
+
+            r2 = (int)colors[pos];
+            cR = abs(r2 - r1);
+
+            g2 = (int)colors[pos + 1];
+            cG = abs(g2 - g1);
+
+            b2 = (int)colors[pos + 2];
+            cB = abs(b2 - b1);
+
+            distance = cR + cG + cB;
+
+            if (distance == 0)
+            {
+                // R
+                if (j & 8){
+                    lutRcolor[i] = 0xFF;
+                }else{
+                    lutRcolor[i] = 0x00;
+                }
+
+                // G
+                if (j & 4){
+                    lutGcolor[i] = 0xFF;
+                }else{
+                    lutGcolor[i] = 0x00;
+                }
+
+                // B
+                if (j & 2){
+                    lutBcolor[i] = 0xFF;
+                }else{
+                    lutBcolor[i] = 0x00;
+                }
+
+                // I
+                if (j & 1){
+                    lutIcolor[i] = 0xFF;
+                }else{
+                    lutIcolor[i] = 0x00;
+                }
+
+                break;
+            }
+
+            distance = I_SQRT(distance);
+
+            if (best_difference > distance)
+            {
+                best_difference = distance;
+
+                // R
+                if (j & 8){
+                    lutRcolor[i] = 0xFF;
+                }else{
+                    lutRcolor[i] = 0x00;
+                }
+
+                // G
+                if (j & 4){
+                    lutGcolor[i] = 0xFF;
+                }else{
+                    lutGcolor[i] = 0x00;
+                }
+
+                // B
+                if (j & 2){
+                    lutBcolor[i] = 0xFF;
+                }else{
+                    lutBcolor[i] = 0x00;
+                }
+
+                // I
+                if (j & 1){
+                    lutIcolor[i] = 0xFF;
+                }else{
+                    lutIcolor[i] = 0x00;
+                }
+
             }
         }
     }
@@ -664,12 +783,19 @@ void I_SetPalette(int numpalette)
     ptrlutcolors11 = lutcolors11 + numpalette * 256;
 #endif
 
-#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_EGA) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
     ptrlut16colors = lut16colors + numpalette * 256;
 #endif
 
 #if defined(MODE_CGA)
     ptrlut4colors = lut4colors + numpalette * 256;
+#endif
+
+#if defined(MODE_EGA)
+    ptrlutRcolor = lutRcolor + numpalette * 256;
+    ptrlutGcolor = lutGcolor + numpalette * 256;
+    ptrlutBcolor = lutBcolor + numpalette * 256;
+    ptrlutIcolor = lutIcolor + numpalette * 256;
 #endif
 
 #if defined(MODE_Y) || defined(MODE_13H) || (defined(MODE_VBE2) && !defined(MODE_PM)) || defined(MODE_VBE2_DIRECT) || defined(MODE_V) || defined(MODE_V2)
@@ -1250,48 +1376,100 @@ void EGA640_DrawBackbuffer(void)
 #ifdef MODE_EGA
 void EGA_DrawBackbuffer(void)
 {
-    byte plane_red[SCREENWIDTH * SCREENHEIGHT / 8];
-    byte plane_green[SCREENWIDTH * SCREENHEIGHT / 8];
-    byte plane_blue[SCREENWIDTH * SCREENHEIGHT / 8];
-    byte plane_intensity[SCREENWIDTH * SCREENHEIGHT / 8];
+    int i;
+    byte *backbufferptr;
 
-    int x, y;
-    unsigned int base = 0;
-    unsigned int plane_position = 0;
+    // Red
+    outp(0x3C5, 1 << (3 & 0x03));
 
-    // Chunky 2 planar conversion (hi Amiga fans!)
-
-    for (base = 0; base < SCREENHEIGHT * SCREENWIDTH; base += 8)
-    {
-        unsigned char color0 = ptrlut16colors[backbuffer[base]];
-        unsigned char color1 = ptrlut16colors[backbuffer[base + 1]];
-        unsigned char color2 = ptrlut16colors[backbuffer[base + 2]];
-        unsigned char color3 = ptrlut16colors[backbuffer[base + 3]];
-        unsigned char color4 = ptrlut16colors[backbuffer[base + 4]];
-        unsigned char color5 = ptrlut16colors[backbuffer[base + 5]];
-        unsigned char color6 = ptrlut16colors[backbuffer[base + 6]];
-        unsigned char color7 = ptrlut16colors[backbuffer[base + 7]];
-
-        plane_red[plane_position] = ((color0 >> 3) & 1) << 7 | ((color1 >> 3) & 1) << 6 | ((color2 >> 3) & 1) << 5 | ((color3 >> 3) & 1) << 4 | ((color4 >> 3) & 1) << 3 | ((color5 >> 3) & 1) << 2 | ((color6 >> 3) & 1) << 1 | ((color7 >> 3) & 1);
-        plane_green[plane_position] = ((color0 >> 2) & 1) << 7 | ((color1 >> 2) & 1) << 6 | ((color2 >> 2) & 1) << 5 | ((color3 >> 2) & 1) << 4 | ((color4 >> 2) & 1) << 3 | ((color5 >> 2) & 1) << 2 | ((color6 >> 2) & 1) << 1 | ((color7 >> 2) & 1);
-        plane_blue[plane_position] = ((color0 >> 1) & 1) << 7 | ((color1 >> 1) & 1) << 6 | ((color2 >> 1) & 1) << 5 | ((color3 >> 1) & 1) << 4 | ((color4 >> 1) & 1) << 3 | ((color5 >> 1) & 1) << 2 | ((color6 >> 1) & 1) << 1 | ((color7 >> 1) & 1);
-        plane_intensity[plane_position] = ((color0)&1) << 7 | ((color1)&1) << 6 | ((color2)&1) << 5 | ((color3)&1) << 4 | ((color4)&1) << 3 | ((color5)&1) << 2 | ((color6)&1) << 1 | ((color7)&1);
-
-        plane_position++;
+    for (i = 0, backbufferptr = backbuffer; i < SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 8){
+        unsigned char color0 = ptrlutRcolor[*(backbufferptr)];
+        unsigned char color1 = ptrlutRcolor[*(backbufferptr + 1)];
+        unsigned char color2 = ptrlutRcolor[*(backbufferptr + 2)];
+        unsigned char color3 = ptrlutRcolor[*(backbufferptr + 3)];
+        unsigned char color4 = ptrlutRcolor[*(backbufferptr + 4)];
+        unsigned char color5 = ptrlutRcolor[*(backbufferptr + 5)];
+        unsigned char color6 = ptrlutRcolor[*(backbufferptr + 6)];
+        unsigned char color7 = ptrlutRcolor[*(backbufferptr + 7)];
+        
+        destscreen[i] = (color0 & 0x80) | 
+                        (color1 & 0x40) |
+                        (color2 & 0x20) |
+                        (color3 & 0x10) |
+                        (color4 & 0x08) |
+                        (color5 & 0x04) |
+                        (color6 & 0x02) |
+                        (color7 & 0x01);
     }
 
-    // Copy each bitplane
-    outp(0x3C5, 1 << (3 & 0x03));
-    CopyDWords(plane_red, destscreen, SCREENWIDTH * SCREENHEIGHT / 32);
-
+    // Green
     outp(0x3C5, 1 << (2 & 0x03));
-    CopyDWords(plane_green, destscreen, SCREENWIDTH * SCREENHEIGHT / 32);
 
+    for (i = 0, backbufferptr = backbuffer; i < SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 8){
+        unsigned char color0 = ptrlutGcolor[*(backbufferptr)];
+        unsigned char color1 = ptrlutGcolor[*(backbufferptr + 1)];
+        unsigned char color2 = ptrlutGcolor[*(backbufferptr + 2)];
+        unsigned char color3 = ptrlutGcolor[*(backbufferptr + 3)];
+        unsigned char color4 = ptrlutGcolor[*(backbufferptr + 4)];
+        unsigned char color5 = ptrlutGcolor[*(backbufferptr + 5)];
+        unsigned char color6 = ptrlutGcolor[*(backbufferptr + 6)];
+        unsigned char color7 = ptrlutGcolor[*(backbufferptr + 7)];
+        
+        destscreen[i] = (color0 & 0x80) | 
+                        (color1 & 0x40) |
+                        (color2 & 0x20) |
+                        (color3 & 0x10) |
+                        (color4 & 0x08) |
+                        (color5 & 0x04) |
+                        (color6 & 0x02) |
+                        (color7 & 0x01);
+    }
+
+    // Blue
     outp(0x3C5, 1 << (1 & 0x03));
-    CopyDWords(plane_blue, destscreen, SCREENWIDTH * SCREENHEIGHT / 32);
 
+    for (i = 0, backbufferptr = backbuffer; i < SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 8){
+        unsigned char color0 = ptrlutBcolor[*(backbufferptr)];
+        unsigned char color1 = ptrlutBcolor[*(backbufferptr + 1)];
+        unsigned char color2 = ptrlutBcolor[*(backbufferptr + 2)];
+        unsigned char color3 = ptrlutBcolor[*(backbufferptr + 3)];
+        unsigned char color4 = ptrlutBcolor[*(backbufferptr + 4)];
+        unsigned char color5 = ptrlutBcolor[*(backbufferptr + 5)];
+        unsigned char color6 = ptrlutBcolor[*(backbufferptr + 6)];
+        unsigned char color7 = ptrlutBcolor[*(backbufferptr + 7)];
+        
+        destscreen[i] = (color0 & 0x80) | 
+                        (color1 & 0x40) |
+                        (color2 & 0x20) |
+                        (color3 & 0x10) |
+                        (color4 & 0x08) |
+                        (color5 & 0x04) |
+                        (color6 & 0x02) |
+                        (color7 & 0x01);
+    }
+
+    // Intensity
     outp(0x3C5, 1 << (0 & 0x03));
-    CopyDWords(plane_intensity, destscreen, SCREENWIDTH * SCREENHEIGHT / 32);
+
+    for (i = 0, backbufferptr = backbuffer; i < SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 8){
+        unsigned char color0 = ptrlutIcolor[*(backbufferptr)];
+        unsigned char color1 = ptrlutIcolor[*(backbufferptr + 1)];
+        unsigned char color2 = ptrlutIcolor[*(backbufferptr + 2)];
+        unsigned char color3 = ptrlutIcolor[*(backbufferptr + 3)];
+        unsigned char color4 = ptrlutIcolor[*(backbufferptr + 4)];
+        unsigned char color5 = ptrlutIcolor[*(backbufferptr + 5)];
+        unsigned char color6 = ptrlutIcolor[*(backbufferptr + 6)];
+        unsigned char color7 = ptrlutIcolor[*(backbufferptr + 7)];
+        
+        destscreen[i] = (color0 & 0x80) | 
+                        (color1 & 0x40) |
+                        (color2 & 0x20) |
+                        (color3 & 0x10) |
+                        (color4 & 0x08) |
+                        (color5 & 0x04) |
+                        (color6 & 0x02) |
+                        (color7 & 0x01);
+    }
 
     // Change video page
     regs.h.ah = 0x05;

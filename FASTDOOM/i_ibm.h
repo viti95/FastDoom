@@ -20,6 +20,17 @@ extern byte lut16colors[14 * 256];
 extern byte *ptrlut16colors;
 #endif
 
+#if defined(MODE_EGA)
+extern byte lutRcolor[14 * 256];
+extern byte lutGcolor[14 * 256];
+extern byte lutBcolor[14 * 256];
+extern byte lutIcolor[14 * 256];
+extern byte *ptrlutRcolor;
+extern byte *ptrlutGcolor;
+extern byte *ptrlutBcolor;
+extern byte *ptrlutIcolor;
+#endif
+
 #if defined(USE_BACKBUFFER)
 extern int updatestate;
 #endif
