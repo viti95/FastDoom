@@ -1083,7 +1083,6 @@ void CGA_BW_DrawBackbuffer(void)
 #ifdef MODE_HERC
 void HERC_DrawBackbuffer(void)
 {
-
     int x;
     unsigned char *vram = (unsigned char *)0xB0000;
     byte *ptrbackbuffer;
@@ -1092,52 +1091,41 @@ void HERC_DrawBackbuffer(void)
     {
         for (x = 0; x < 320; x += 4)
         {
-            byte color0;
-            byte color1;
-            byte color2;
-            byte color3;
-
-            byte color4;
-            byte color5;
-            byte color6;
-            byte color7;
-
+            byte color;
             byte finalcolor0;
             byte finalcolor1;
-            byte finalcolor2;
-            byte finalcolor3;
 
-            color0 = ptrbackbuffer[x];
-            finalcolor0 = (ptrlutcolors00[color0]) << 7 | (ptrlutcolors10[color0]) << 6;
-            finalcolor1 = (ptrlutcolors01[color0]) << 7 | (ptrlutcolors11[color0]) << 6;
-            color1 = ptrbackbuffer[x + 1];
-            finalcolor0 |= (ptrlutcolors00[color1]) << 5 | (ptrlutcolors10[color1]) << 4;
-            finalcolor1 |= (ptrlutcolors01[color1]) << 5 | (ptrlutcolors11[color1]) << 4;
-            color2 = ptrbackbuffer[x + 2];
-            finalcolor0 |= (ptrlutcolors00[color2]) << 3 | (ptrlutcolors10[color2]) << 2;
-            finalcolor1 |= (ptrlutcolors01[color2]) << 3 | (ptrlutcolors11[color2]) << 2;
-            color3 = ptrbackbuffer[x + 3];
-            finalcolor0 |= (ptrlutcolors00[color3]) << 1 | (ptrlutcolors10[color3]);
-            finalcolor1 |= (ptrlutcolors01[color3]) << 1 | (ptrlutcolors11[color3]);
+            color = ptrbackbuffer[x];
+            finalcolor0 = (ptrlutcolors00[color]) << 7 | (ptrlutcolors10[color]) << 6;
+            finalcolor1 = (ptrlutcolors01[color]) << 7 | (ptrlutcolors11[color]) << 6;
+            color = ptrbackbuffer[x + 1];
+            finalcolor0 |= (ptrlutcolors00[color]) << 5 | (ptrlutcolors10[color]) << 4;
+            finalcolor1 |= (ptrlutcolors01[color]) << 5 | (ptrlutcolors11[color]) << 4;
+            color = ptrbackbuffer[x + 2];
+            finalcolor0 |= (ptrlutcolors00[color]) << 3 | (ptrlutcolors10[color]) << 2;
+            finalcolor1 |= (ptrlutcolors01[color]) << 3 | (ptrlutcolors11[color]) << 2;
+            color = ptrbackbuffer[x + 3];
+            finalcolor0 |= (ptrlutcolors00[color]) << 1 | (ptrlutcolors10[color]);
+            finalcolor1 |= (ptrlutcolors01[color]) << 1 | (ptrlutcolors11[color]);
 
             *(vram + (x / 4)) = finalcolor0;
             *(vram + 0x2000 + (x / 4)) = finalcolor1;
 
-            color4 = ptrbackbuffer[x + 320];
-            finalcolor2 = (ptrlutcolors00[color4]) << 7 | (ptrlutcolors10[color4]) << 6;
-            finalcolor3 = (ptrlutcolors01[color4]) << 7 | (ptrlutcolors11[color4]) << 6;
-            color5 = ptrbackbuffer[x + 321];
-            finalcolor2 |= (ptrlutcolors00[color5]) << 5 | (ptrlutcolors10[color5]) << 4;
-            finalcolor3 |= (ptrlutcolors01[color5]) << 5 | (ptrlutcolors11[color5]) << 4;
-            color6 = ptrbackbuffer[x + 322];
-            finalcolor2 |= (ptrlutcolors00[color6]) << 3 | (ptrlutcolors10[color6]) << 2;
-            finalcolor3 |= (ptrlutcolors01[color6]) << 3 | (ptrlutcolors11[color6]) << 2;
-            color7 = ptrbackbuffer[x + 323];
-            finalcolor2 |= (ptrlutcolors00[color7]) << 1 | (ptrlutcolors10[color7]);
-            finalcolor3 |= (ptrlutcolors01[color7]) << 1 | (ptrlutcolors11[color7]);
+            color = ptrbackbuffer[x + 320];
+            finalcolor0 = (ptrlutcolors00[color]) << 7 | (ptrlutcolors10[color]) << 6;
+            finalcolor1 = (ptrlutcolors01[color]) << 7 | (ptrlutcolors11[color]) << 6;
+            color = ptrbackbuffer[x + 321];
+            finalcolor0 |= (ptrlutcolors00[color]) << 5 | (ptrlutcolors10[color]) << 4;
+            finalcolor1 |= (ptrlutcolors01[color]) << 5 | (ptrlutcolors11[color]) << 4;
+            color = ptrbackbuffer[x + 322];
+            finalcolor0 |= (ptrlutcolors00[color]) << 3 | (ptrlutcolors10[color]) << 2;
+            finalcolor1 |= (ptrlutcolors01[color]) << 3 | (ptrlutcolors11[color]) << 2;
+            color = ptrbackbuffer[x + 323];
+            finalcolor0 |= (ptrlutcolors00[color]) << 1 | (ptrlutcolors10[color]);
+            finalcolor1 |= (ptrlutcolors01[color]) << 1 | (ptrlutcolors11[color]);
 
-            *(vram + 0x4000 + (x / 4)) = finalcolor2;
-            *(vram + 0x6000 + (x / 4)) = finalcolor3;
+            *(vram + 0x4000 + (x / 4)) = finalcolor0;
+            *(vram + 0x6000 + (x / 4)) = finalcolor1;
         }
     }
 }
@@ -1195,63 +1183,95 @@ void ATI640_DrawBackbuffer(void)
 {
     int x;
 
-    unsigned char *vramScanline1 = (unsigned char *)0xB0000;
-    unsigned char *vramScanline2 = (unsigned char *)0xB2000;
-    unsigned char *vramScanline3 = (unsigned char *)0xB4000;
-    unsigned char *vramScanline4 = (unsigned char *)0xB6000;
+    unsigned char *vram = (unsigned char *)0xB0000;
     
     unsigned int base = 0;
-    unsigned char color0, color1, color2, color3;
 
     for (base = 0; base < SCREENHEIGHT * 320;)
     {
-        // 1st scanline
-
-        for (x = 0; x < 160; x++, base += 2, vramScanline1++)
+        for (x = 0; x < 160; x++, base += 2, vram++)
         {
-            color0 = ptrlutcolors00[backbuffer[base]];
-            color1 = ptrlutcolors01[backbuffer[base]];
-            color2 = ptrlutcolors00[backbuffer[base + 1]];
-            color3 = ptrlutcolors01[backbuffer[base + 1]];
-            *(vramScanline1) = (color0 & 3) << 6 | (color1 & 3) << 4 | (color2 & 3) << 2 | (color3 & 3);
-            *(vramScanline1 + 0x8000) = (color0 & 12) << 4 | (color1 & 12) << 2 | (color2 & 12) | (color3 & 12) >> 2;
+            unsigned char color;
+            unsigned char tmpColor0;
+            unsigned char tmpColor1;
+
+            color = ptrlutcolors00[backbuffer[base]];
+            tmpColor0 = (color & 3) << 6;
+            tmpColor1 = (color & 12) << 4;
+
+            color = ptrlutcolors01[backbuffer[base]];
+            tmpColor0 |= (color & 3) << 4;
+            tmpColor1 |= (color & 12) << 2;
+
+            color = ptrlutcolors00[backbuffer[base + 1]];
+            tmpColor0 |= (color & 3) << 2;
+            tmpColor1 |= (color & 12);
+
+            color = ptrlutcolors01[backbuffer[base + 1]];
+            tmpColor0 |= (color & 3);
+            tmpColor1 |= (color & 12) >> 2;
+
+            *(vram) = tmpColor0;
+            *(vram + 0x8000) = tmpColor1;
+        
+            color = ptrlutcolors10[backbuffer[base + 320]];
+            tmpColor0 = (color & 3) << 6;
+            tmpColor1 = (color & 12) << 4;
+
+            color = ptrlutcolors11[backbuffer[base + 320]];
+            tmpColor0 |= (color & 3) << 4;
+            tmpColor1 |= (color & 12) << 2;
+
+            color = ptrlutcolors10[backbuffer[base + 321]];
+            tmpColor0 |= (color & 3) << 2;
+            tmpColor1 |= (color & 12);
+
+            color = ptrlutcolors11[backbuffer[base + 321]];
+            tmpColor0 |= (color & 3);
+            tmpColor1 |= (color & 12) >> 2;
+
+            *(vram + 0x2000) = tmpColor0;
+            *(vram + 0xA000) = tmpColor1;
+
+            color = ptrlutcolors00[backbuffer[base + 640]];
+            tmpColor0 = (color & 3) << 6;
+            tmpColor1 = (color & 12) << 4;
+
+            color = ptrlutcolors01[backbuffer[base + 640]];
+            tmpColor0 |= (color & 3) << 4;
+            tmpColor1 |= (color & 12) << 2;
+
+            color = ptrlutcolors00[backbuffer[base + 641]];
+            tmpColor0 |= (color & 3) << 2;
+            tmpColor1 |= (color & 12);
+
+            color = ptrlutcolors01[backbuffer[base + 641]];
+            tmpColor0 |= (color & 3);
+            tmpColor1 |= (color & 12) >> 2;
+
+            *(vram + 0x4000) = tmpColor0;
+            *(vram + 0xC000) = tmpColor1;
+
+            color = ptrlutcolors10[backbuffer[base + 960]];
+            tmpColor0 = (color & 3) << 6;
+            tmpColor1 = (color & 12) << 4;
+
+            color = ptrlutcolors11[backbuffer[base + 960]];
+            tmpColor0 |= (color & 3) << 4;
+            tmpColor1 |= (color & 12) << 2;
+
+            color = ptrlutcolors10[backbuffer[base + 961]];
+            tmpColor0 |= (color & 3) << 2;
+            tmpColor1 |= (color & 12);
+
+            color = ptrlutcolors11[backbuffer[base + 961]];
+            tmpColor0 |= (color & 3);
+            tmpColor1 |= (color & 12) >> 2;
+
+            *(vram + 0x6000) = tmpColor0;
+            *(vram + 0xE000) = tmpColor1;
         }
-
-        // 2st scanline
-
-        for (x = 0; x < 160; x++, base += 2, vramScanline2++)
-        {
-            color0 = ptrlutcolors10[backbuffer[base]];
-            color1 = ptrlutcolors11[backbuffer[base]];
-            color2 = ptrlutcolors10[backbuffer[base + 1]];
-            color3 = ptrlutcolors11[backbuffer[base + 1]];
-            *(vramScanline2) = (color0 & 3) << 6 | (color1 & 3) << 4 | (color2 & 3) << 2 | (color3 & 3);
-            *(vramScanline2 + 0x8000) = (color0 & 12) << 4 | (color1 & 12) << 2 | (color2 & 12) | (color3 & 12) >> 2;
-        }
-
-        // 3rd scanline
-
-        for (x = 0; x < 160; x++, base += 2, vramScanline3++)
-        {
-            color0 = ptrlutcolors00[backbuffer[base]];
-            color1 = ptrlutcolors01[backbuffer[base]];
-            color2 = ptrlutcolors00[backbuffer[base + 1]];
-            color3 = ptrlutcolors01[backbuffer[base + 1]];
-            *(vramScanline3) = (color0 & 3) << 6 | (color1 & 3) << 4 | (color2 & 3) << 2 | (color3 & 3);
-            *(vramScanline3 + 0x8000) = (color0 & 12) << 4 | (color1 & 12) << 2 | (color2 & 12) | (color3 & 12) >> 2;
-        }
-
-        // 4th scanline
-
-        for (x = 0; x < 160; x++, base += 2, vramScanline4++)
-        {
-            color0 = ptrlutcolors10[backbuffer[base]];
-            color1 = ptrlutcolors11[backbuffer[base]];
-            color2 = ptrlutcolors10[backbuffer[base + 1]];
-            color3 = ptrlutcolors11[backbuffer[base + 1]];
-            *(vramScanline4) = (color0 & 3) << 6 | (color1 & 3) << 4 | (color2 & 3) << 2 | (color3 & 3);
-            *(vramScanline4 + 0x8000) = (color0 & 12) << 4 | (color1 & 12) << 2 | (color2 & 12) | (color3 & 12) >> 2;
-        }
+        base += 960;
     }
 }
 #endif
