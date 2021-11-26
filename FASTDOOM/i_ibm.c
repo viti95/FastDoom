@@ -772,7 +772,7 @@ void I_ProcessPalette(byte *palette)
 
             if (distance == 0)
             {
-                lut4colors[i] = j;
+                lut4colors[i] = j | j << 2 | j << 4 | j << 6;
                 break;
             }
 
@@ -781,7 +781,7 @@ void I_ProcessPalette(byte *palette)
             if (best_difference > distance)
             {
                 best_difference = distance;
-                lut4colors[i] = j;
+                lut4colors[i] = j | j << 2 | j << 4 | j << 6;
             }
         }
     }
@@ -1662,11 +1662,12 @@ void CGA_DrawBackbuffer(void)
         for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++)
         {
             unsigned char color;
-            unsigned char color2;
-            color = (ptrlut4colors[backbuffer[base]]) << 6 | (ptrlut4colors[backbuffer[base + 1]]) << 4 | (ptrlut4colors[backbuffer[base + 2]]) << 2 | (ptrlut4colors[backbuffer[base + 3]]);
+
+            color = (ptrlut4colors[backbuffer[base]]) & 0xC0 | (ptrlut4colors[backbuffer[base + 1]]) & 0x30 | (ptrlut4colors[backbuffer[base + 2]]) & 0x0C | (ptrlut4colors[backbuffer[base + 3]]) & 0x03;
             *(vram) = color;
-            color2 = (ptrlut4colors[backbuffer[base + 320]]) << 6 | (ptrlut4colors[backbuffer[base + 321]]) << 4 | (ptrlut4colors[backbuffer[base + 322]]) << 2 | (ptrlut4colors[backbuffer[base + 323]]);
-            *(vram + 0x2000) = color2;
+
+            color = (ptrlut4colors[backbuffer[base + 320]]) & 0xC0 | (ptrlut4colors[backbuffer[base + 321]]) & 0x30 | (ptrlut4colors[backbuffer[base + 322]]) & 0x0C | (ptrlut4colors[backbuffer[base + 323]]) & 0x03;
+            *(vram + 0x2000) = color;
         }
     }
 }
