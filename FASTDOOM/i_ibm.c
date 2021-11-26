@@ -1524,29 +1524,55 @@ void CPLUS_DrawBackbuffer(void)
     int x;
     unsigned char *vram = (unsigned char *)0xB8000;
     unsigned int base = 0;
-    unsigned char color0, color1, color2, color3;
 
     for (base = 0; base < SCREENHEIGHT * 320;)
     {
         for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++)
         {
-            color0 = ptrlut16colors[backbuffer[base]];
-            color1 = ptrlut16colors[backbuffer[base + 1]];
-            color2 = ptrlut16colors[backbuffer[base + 2]];
-            color3 = ptrlut16colors[backbuffer[base + 3]];
-            *(vram) = (color0 & 3) << 6 | (color1 & 3) << 4 | (color2 & 3) << 2 | (color3 & 3);
-            *(vram + 0x4000) = (color0 & 12) << 4 | (color1 & 12) << 2 | (color2 & 12) | (color3 & 12) >> 2;
+            unsigned char color;
+            
+            unsigned char tmpColor0;
+            unsigned char tmpColor1;
+
+            color = ptrlut16colors[backbuffer[base]];
+            tmpColor0 = (color & 3) << 6;
+            tmpColor1 = (color & 12) << 4;
+
+            color = ptrlut16colors[backbuffer[base + 1]];
+            tmpColor0 |= (color & 3) << 4;
+            tmpColor1 |= (color & 12) << 2;
+
+            color = ptrlut16colors[backbuffer[base + 2]];
+            tmpColor0 |= (color & 3) << 2;
+            tmpColor1 |= (color & 12);
+
+            color = ptrlut16colors[backbuffer[base + 3]];
+            tmpColor0 |= (color & 3);
+            tmpColor1 |= (color & 12) >> 2;
+
+            *(vram) = tmpColor0;
+            *(vram + 0x4000) = tmpColor1;
+
+            color = ptrlut16colors[backbuffer[base + 320]];
+            tmpColor0 = (color & 3) << 6;
+            tmpColor1 = (color & 12) << 4;
+
+            color = ptrlut16colors[backbuffer[base + 321]];
+            tmpColor0 |= (color & 3) << 4;
+            tmpColor1 |= (color & 12) << 2;
+
+            color = ptrlut16colors[backbuffer[base + 322]];
+            tmpColor0 |= (color & 3) << 2;
+            tmpColor1 |= (color & 12);
+
+            color = ptrlut16colors[backbuffer[base + 323]];
+            tmpColor0 |= (color & 3);
+            tmpColor1 |= (color & 12) >> 2;
+
+            *(vram + 0x2000) = tmpColor0;
+            *(vram + 0x6000) = tmpColor1;
         }
-        vram -= 80;
-        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++)
-        {
-            color0 = ptrlut16colors[backbuffer[base]];
-            color1 = ptrlut16colors[backbuffer[base + 1]];
-            color2 = ptrlut16colors[backbuffer[base + 2]];
-            color3 = ptrlut16colors[backbuffer[base + 3]];
-            *(vram + 0x2000) = (color0 & 3) << 6 | (color1 & 3) << 4 | (color2 & 3) << 2 | (color3 & 3);
-            *(vram + 0x6000) = (color0 & 12) << 4 | (color1 & 12) << 2 | (color2 & 12) | (color3 & 12) >> 2;
-        }
+        base += 320;
     }
 }
 #endif
