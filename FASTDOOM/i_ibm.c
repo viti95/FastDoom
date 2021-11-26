@@ -1383,92 +1383,136 @@ void EGA_DrawBackbuffer(void)
     outp(0x3C5, 1 << (3 & 0x03));
 
     for (i = 0, backbufferptr = backbuffer; i < SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 8){
-        unsigned char color0 = ptrlutRcolor[*(backbufferptr)];
-        unsigned char color1 = ptrlutRcolor[*(backbufferptr + 1)];
-        unsigned char color2 = ptrlutRcolor[*(backbufferptr + 2)];
-        unsigned char color3 = ptrlutRcolor[*(backbufferptr + 3)];
-        unsigned char color4 = ptrlutRcolor[*(backbufferptr + 4)];
-        unsigned char color5 = ptrlutRcolor[*(backbufferptr + 5)];
-        unsigned char color6 = ptrlutRcolor[*(backbufferptr + 6)];
-        unsigned char color7 = ptrlutRcolor[*(backbufferptr + 7)];
-        
-        destscreen[i] = (color0 & 0x80) | 
-                        (color1 & 0x40) |
-                        (color2 & 0x20) |
-                        (color3 & 0x10) |
-                        (color4 & 0x08) |
-                        (color5 & 0x04) |
-                        (color6 & 0x02) |
-                        (color7 & 0x01);
+        unsigned char color;
+        unsigned char tmpColor;
+
+        color = ptrlutRcolor[*(backbufferptr)];
+        tmpColor = color & 0x80;
+
+        color = ptrlutRcolor[*(backbufferptr + 1)];
+        tmpColor |= color & 0x40;
+
+        color = ptrlutRcolor[*(backbufferptr + 2)];
+        tmpColor |= color & 0x20;
+
+        color = ptrlutRcolor[*(backbufferptr + 3)];
+        tmpColor |= color & 0x10;
+
+        color = ptrlutRcolor[*(backbufferptr + 4)];
+        tmpColor |= color & 0x08;
+
+        color = ptrlutRcolor[*(backbufferptr + 5)];
+        tmpColor |= color & 0x04;
+
+        color = ptrlutRcolor[*(backbufferptr + 6)];
+        tmpColor |= color & 0x02;
+
+        color = ptrlutRcolor[*(backbufferptr + 7)];
+        tmpColor |= color & 0x01;
+
+        destscreen[i] = tmpColor;
     }
 
     // Green
     outp(0x3C5, 1 << (2 & 0x03));
 
     for (i = 0, backbufferptr = backbuffer; i < SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 8){
-        unsigned char color0 = ptrlutGcolor[*(backbufferptr)];
-        unsigned char color1 = ptrlutGcolor[*(backbufferptr + 1)];
-        unsigned char color2 = ptrlutGcolor[*(backbufferptr + 2)];
-        unsigned char color3 = ptrlutGcolor[*(backbufferptr + 3)];
-        unsigned char color4 = ptrlutGcolor[*(backbufferptr + 4)];
-        unsigned char color5 = ptrlutGcolor[*(backbufferptr + 5)];
-        unsigned char color6 = ptrlutGcolor[*(backbufferptr + 6)];
-        unsigned char color7 = ptrlutGcolor[*(backbufferptr + 7)];
-        
-        destscreen[i] = (color0 & 0x80) | 
-                        (color1 & 0x40) |
-                        (color2 & 0x20) |
-                        (color3 & 0x10) |
-                        (color4 & 0x08) |
-                        (color5 & 0x04) |
-                        (color6 & 0x02) |
-                        (color7 & 0x01);
+        unsigned char color;
+        unsigned char tmpColor;
+
+        color = ptrlutGcolor[*(backbufferptr)];
+        tmpColor = color & 0x80;
+
+        color = ptrlutGcolor[*(backbufferptr + 1)];
+        tmpColor |= color & 0x40;
+
+        color = ptrlutGcolor[*(backbufferptr + 2)];
+        tmpColor |= color & 0x20;
+
+        color = ptrlutGcolor[*(backbufferptr + 3)];
+        tmpColor |= color & 0x10;
+
+        color = ptrlutGcolor[*(backbufferptr + 4)];
+        tmpColor |= color & 0x08;
+
+        color = ptrlutGcolor[*(backbufferptr + 5)];
+        tmpColor |= color & 0x04;
+
+        color = ptrlutGcolor[*(backbufferptr + 6)];
+        tmpColor |= color & 0x02;
+
+        color = ptrlutGcolor[*(backbufferptr + 7)];
+        tmpColor |= color & 0x01;
+
+        destscreen[i] = tmpColor;
     }
 
     // Blue
     outp(0x3C5, 1 << (1 & 0x03));
 
     for (i = 0, backbufferptr = backbuffer; i < SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 8){
-        unsigned char color0 = ptrlutBcolor[*(backbufferptr)];
-        unsigned char color1 = ptrlutBcolor[*(backbufferptr + 1)];
-        unsigned char color2 = ptrlutBcolor[*(backbufferptr + 2)];
-        unsigned char color3 = ptrlutBcolor[*(backbufferptr + 3)];
-        unsigned char color4 = ptrlutBcolor[*(backbufferptr + 4)];
-        unsigned char color5 = ptrlutBcolor[*(backbufferptr + 5)];
-        unsigned char color6 = ptrlutBcolor[*(backbufferptr + 6)];
-        unsigned char color7 = ptrlutBcolor[*(backbufferptr + 7)];
-        
-        destscreen[i] = (color0 & 0x80) | 
-                        (color1 & 0x40) |
-                        (color2 & 0x20) |
-                        (color3 & 0x10) |
-                        (color4 & 0x08) |
-                        (color5 & 0x04) |
-                        (color6 & 0x02) |
-                        (color7 & 0x01);
+        unsigned char color;
+        unsigned char tmpColor;
+
+        color = ptrlutBcolor[*(backbufferptr)];
+        tmpColor = color & 0x80;
+
+        color = ptrlutBcolor[*(backbufferptr + 1)];
+        tmpColor |= color & 0x40;
+
+        color = ptrlutBcolor[*(backbufferptr + 2)];
+        tmpColor |= color & 0x20;
+
+        color = ptrlutBcolor[*(backbufferptr + 3)];
+        tmpColor |= color & 0x10;
+
+        color = ptrlutBcolor[*(backbufferptr + 4)];
+        tmpColor |= color & 0x08;
+
+        color = ptrlutBcolor[*(backbufferptr + 5)];
+        tmpColor |= color & 0x04;
+
+        color = ptrlutBcolor[*(backbufferptr + 6)];
+        tmpColor |= color & 0x02;
+
+        color = ptrlutBcolor[*(backbufferptr + 7)];
+        tmpColor |= color & 0x01;
+
+        destscreen[i] = tmpColor;
     }
 
     // Intensity
     outp(0x3C5, 1 << (0 & 0x03));
 
     for (i = 0, backbufferptr = backbuffer; i < SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 8){
-        unsigned char color0 = ptrlutIcolor[*(backbufferptr)];
-        unsigned char color1 = ptrlutIcolor[*(backbufferptr + 1)];
-        unsigned char color2 = ptrlutIcolor[*(backbufferptr + 2)];
-        unsigned char color3 = ptrlutIcolor[*(backbufferptr + 3)];
-        unsigned char color4 = ptrlutIcolor[*(backbufferptr + 4)];
-        unsigned char color5 = ptrlutIcolor[*(backbufferptr + 5)];
-        unsigned char color6 = ptrlutIcolor[*(backbufferptr + 6)];
-        unsigned char color7 = ptrlutIcolor[*(backbufferptr + 7)];
-        
-        destscreen[i] = (color0 & 0x80) | 
-                        (color1 & 0x40) |
-                        (color2 & 0x20) |
-                        (color3 & 0x10) |
-                        (color4 & 0x08) |
-                        (color5 & 0x04) |
-                        (color6 & 0x02) |
-                        (color7 & 0x01);
+        unsigned char color;
+        unsigned char tmpColor;
+
+        color = ptrlutIcolor[*(backbufferptr)];
+        tmpColor = color & 0x80;
+
+        color = ptrlutIcolor[*(backbufferptr + 1)];
+        tmpColor |= color & 0x40;
+
+        color = ptrlutIcolor[*(backbufferptr + 2)];
+        tmpColor |= color & 0x20;
+
+        color = ptrlutIcolor[*(backbufferptr + 3)];
+        tmpColor |= color & 0x10;
+
+        color = ptrlutIcolor[*(backbufferptr + 4)];
+        tmpColor |= color & 0x08;
+
+        color = ptrlutIcolor[*(backbufferptr + 5)];
+        tmpColor |= color & 0x04;
+
+        color = ptrlutIcolor[*(backbufferptr + 6)];
+        tmpColor |= color & 0x02;
+
+        color = ptrlutIcolor[*(backbufferptr + 7)];
+        tmpColor |= color & 0x01;
+
+        destscreen[i] = tmpColor;
     }
 
     // Change video page
