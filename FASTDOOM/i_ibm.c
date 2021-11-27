@@ -587,7 +587,7 @@ void I_ProcessPalette(byte *palette)
 }
 #endif
 
-#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_CVB)
 void I_ProcessPalette(byte *palette)
 {
     int i, j;
@@ -634,6 +634,59 @@ void I_ProcessPalette(byte *palette)
             {
                 best_difference = distance;
                 lut16colors[i] = j;
+            }
+        }
+    }
+}
+#endif
+
+#if defined(MODE_PCP)
+void I_ProcessPalette(byte *palette)
+{
+    int i, j;
+    byte *ptr = gammatable[usegamma];
+
+    for (i = 0; i < 14 * 256; i++)
+    {
+        int distance;
+
+        int r1, g1, b1;
+
+        int best_difference = MAXINT;
+
+        r1 = (int)ptr[*palette++];
+        g1 = (int)ptr[*palette++];
+        b1 = (int)ptr[*palette++];
+
+        for (j = 0; j < 16; j++)
+        {
+            int r2, g2, b2;
+            int cR, cG, cB;
+            int pos = j * 3;
+
+            r2 = (int)colors[pos];
+            cR = abs(r2 - r1);
+
+            g2 = (int)colors[pos + 1];
+            cG = abs(g2 - g1);
+
+            b2 = (int)colors[pos + 2];
+            cB = abs(b2 - b1);
+
+            distance = cR + cG + cB;
+
+            if (distance == 0)
+            {
+                lut16colors[i] = j | j << 4;
+                break;
+            }
+
+            distance = I_SQRT(distance);
+
+            if (best_difference > distance)
+            {
+                best_difference = distance;
+                lut16colors[i] = j | j << 4;
             }
         }
     }
@@ -1605,7 +1658,7 @@ void CVBS_DrawBackbuffer(void)
 #endif
 
 #ifdef MODE_PCP
-void CPLUS_DrawBackbuffer(void)
+void PCP_DrawBackbuffer(void)
 {
     int x;
     unsigned char *vram = (unsigned char *)0xB8000;
@@ -1622,10 +1675,10 @@ void CPLUS_DrawBackbuffer(void)
 
             color = ptrlut16colors[backbuffer[base]];
             tmpColor0 = (color & 3) << 6;
-            tmpColor1 = (color & 12) << 4;
+            tmpColor1 = (color & 0xC0);
 
             color = ptrlut16colors[backbuffer[base + 1]];
-            tmpColor0 |= (color & 3) << 4;
+            tmpColor0 |= (color & 0x30);
             tmpColor1 |= (color & 12) << 2;
 
             color = ptrlut16colors[backbuffer[base + 2]];
@@ -1641,10 +1694,10 @@ void CPLUS_DrawBackbuffer(void)
 
             color = ptrlut16colors[backbuffer[base + 320]];
             tmpColor0 = (color & 3) << 6;
-            tmpColor1 = (color & 12) << 4;
+            tmpColor1 = (color & 0xC0);
 
             color = ptrlut16colors[backbuffer[base + 321]];
-            tmpColor0 |= (color & 3) << 4;
+            tmpColor0 |= (color & 0x30);
             tmpColor1 |= (color & 12) << 2;
 
             color = ptrlut16colors[backbuffer[base + 322]];
@@ -1846,7 +1899,7 @@ void I_FinishUpdate(void)
     ATI640_DrawBackbuffer();
 #endif
 #ifdef MODE_PCP
-    CPLUS_DrawBackbuffer();
+    PCP_DrawBackbuffer();
 #endif
 #ifdef MODE_CVB
     CVBS_DrawBackbuffer();
