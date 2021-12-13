@@ -329,7 +329,7 @@ void R_DrawVisSprite(vissprite_t *vis)
                 continue;
             }
 
-            #if defined(MODE_VGA16)
+            #if defined(MODE_VGA16) || defined(MODE_CGA16)
 		    if (dc_x % 2 == 1){
                 column = (column_t *)((byte *)column + column->length + 4);
                 continue;
