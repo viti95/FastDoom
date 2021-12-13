@@ -161,6 +161,14 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 	dc_x = x1;
 	do
 	{
+		#if defined(MODE_VGA16)
+		if (dc_x % 2 == 1){
+			spryscale += rw_scalestep;
+			dc_x++;
+			continue;
+		}
+		#endif
+
 		// calculate lighting
 		if (maskedtexturecol[dc_x] != MAXSHORT)
 		{
@@ -368,6 +376,21 @@ void R_RenderSegLoop(void)
 			}
 			else
 			{
+				#if defined(MODE_VGA16)
+				if (dc_x % 2 == 1){
+					cc_rwx = viewheight;
+					fc_rwx = -1;
+					
+					rw_scale += rw_scalestep;
+					topfrac += topstep;
+					bottomfrac += bottomstep;
+
+					ceilingclip[rw_x] = cc_rwx;
+					floorclip[rw_x] = fc_rwx;
+					continue;
+				}
+				#endif
+
 				// single sided line
 				dc_yl = yl;
 				dc_yh = yh;
@@ -414,6 +437,20 @@ void R_RenderSegLoop(void)
 				}
 				else
 				{
+					#if defined(MODE_VGA16)
+					if (dc_x % 2 == 1){
+						cc_rwx = mid;
+
+						rw_scale += rw_scalestep;
+						topfrac += topstep;
+						bottomfrac += bottomstep;
+
+						ceilingclip[rw_x] = cc_rwx;
+						floorclip[rw_x] = fc_rwx;
+						continue;
+					}
+					#endif
+
 					dc_yl = yl;
 					dc_yh = mid;
 					dc_texturemid = rw_toptexturemid;
@@ -463,6 +500,20 @@ void R_RenderSegLoop(void)
 				}
 				else
 				{
+					#if defined(MODE_VGA16)
+					if (dc_x % 2 == 1){
+						fc_rwx = mid;
+						
+						rw_scale += rw_scalestep;
+						topfrac += topstep;
+						bottomfrac += bottomstep;
+
+						ceilingclip[rw_x] = cc_rwx;
+						floorclip[rw_x] = fc_rwx;
+						continue;
+					}
+					#endif
+
 					dc_yl = mid;
 					dc_yh = yh;
 					dc_texturemid = rw_bottomtexturemid;
