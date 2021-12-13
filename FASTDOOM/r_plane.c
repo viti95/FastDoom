@@ -1141,6 +1141,12 @@ void R_DrawPlanesFlatSurfaces_13h(void)
 
         for (x = pl->minx; x <= pl->maxx; x++)
         {
+            #if defined(MODE_VGA16) || defined(MODE_CGA16)
+            if (x % 2 == 1){
+                continue;
+            }
+            #endif
+
             if (pl->top[x] > pl->bottom[x])
                 continue;
 
