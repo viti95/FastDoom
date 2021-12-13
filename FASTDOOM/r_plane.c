@@ -108,6 +108,12 @@ void R_MapPlane(int y, int x1)
     fixed_t length;
     unsigned index;
 
+    #if defined(MODE_CGA16)
+		if (y % 2 == 1){
+			return;
+		}
+    #endif
+
     ds_x1 = x1;
     ds_y = y;
 
