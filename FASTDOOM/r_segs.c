@@ -161,14 +161,6 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 	dc_x = x1;
 	do
 	{
-		#if defined(MODE_VGA16) || defined(MODE_CGA16)
-		if (dc_x % 2 == 1){
-			spryscale += rw_scalestep;
-			dc_x++;
-			continue;
-		}
-		#endif
-
 		// calculate lighting
 		if (maskedtexturecol[dc_x] != MAXSHORT)
 		{
@@ -253,7 +245,13 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 				dc_yh = yh;
 				dc_yl = yl;
 
-				colfunc();
+				#if defined(MODE_VGA16) || defined(MODE_CGA16)
+				if (dc_x % 2 == 0){
+					colfunc();
+				}
+				#else
+					colfunc();
+				#endif
 
 				col = (column_t *)((byte *)col + col->length + 4);
 			}
@@ -376,21 +374,6 @@ void R_RenderSegLoop(void)
 			}
 			else
 			{
-				#if defined(MODE_VGA16) || defined(MODE_CGA16)
-				if (dc_x % 2 == 1){
-					cc_rwx = viewheight;
-					fc_rwx = -1;
-					
-					rw_scale += rw_scalestep;
-					topfrac += topstep;
-					bottomfrac += bottomstep;
-
-					ceilingclip[rw_x] = cc_rwx;
-					floorclip[rw_x] = fc_rwx;
-					continue;
-				}
-				#endif
-
 				// single sided line
 				dc_yl = yl;
 				dc_yh = yh;
@@ -414,7 +397,14 @@ void R_RenderSegLoop(void)
 					dc_source = texturecomposite[tex] + ofs;
 				}
 
-				colfunc();
+				#if defined(MODE_VGA16) || defined(MODE_CGA16)
+				if (dc_x % 2 == 0){
+					colfunc();
+				}
+				#else
+					colfunc();
+				#endif
+
 				cc_rwx = viewheight;
 				fc_rwx = -1;
 			}
@@ -437,20 +427,6 @@ void R_RenderSegLoop(void)
 				}
 				else
 				{
-					#if defined(MODE_VGA16) || defined(MODE_CGA16)
-					if (dc_x % 2 == 1){
-						cc_rwx = mid;
-
-						rw_scale += rw_scalestep;
-						topfrac += topstep;
-						bottomfrac += bottomstep;
-
-						ceilingclip[rw_x] = cc_rwx;
-						floorclip[rw_x] = fc_rwx;
-						continue;
-					}
-					#endif
-
 					dc_yl = yl;
 					dc_yh = mid;
 					dc_texturemid = rw_toptexturemid;
@@ -473,7 +449,14 @@ void R_RenderSegLoop(void)
 						dc_source = texturecomposite[tex] + ofs;
 					}
 
-					colfunc();
+					#if defined(MODE_VGA16) || defined(MODE_CGA16)
+					if (dc_x % 2 == 0){
+						colfunc();
+					}
+					#else
+						colfunc();
+					#endif
+
 					cc_rwx = mid;
 				}
 			}
@@ -500,20 +483,6 @@ void R_RenderSegLoop(void)
 				}
 				else
 				{
-					#if defined(MODE_VGA16) || defined(MODE_CGA16)
-					if (dc_x % 2 == 1){
-						fc_rwx = mid;
-
-						rw_scale += rw_scalestep;
-						topfrac += topstep;
-						bottomfrac += bottomstep;
-
-						ceilingclip[rw_x] = cc_rwx;
-						floorclip[rw_x] = fc_rwx;
-						continue;
-					}
-					#endif
-
 					dc_yl = mid;
 					dc_yh = yh;
 					dc_texturemid = rw_bottomtexturemid;
@@ -536,7 +505,14 @@ void R_RenderSegLoop(void)
 						dc_source = texturecomposite[tex] + ofs;
 					}
 
-					colfunc();
+					#if defined(MODE_VGA16) || defined(MODE_CGA16)
+					if (dc_x % 2 == 0){
+						colfunc();
+					}
+					#else
+						colfunc();
+					#endif
+
 					fc_rwx = mid;
 				}
 			}

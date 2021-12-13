@@ -329,20 +329,19 @@ void R_DrawVisSprite(vissprite_t *vis)
                 continue;
             }
 
-            #if defined(MODE_VGA16) || defined(MODE_CGA16)
-		    if (dc_x % 2 == 1){
-                column = (column_t *)((byte *)column + column->length + 4);
-                continue;
-            }
-            #endif
-
             dc_source = (byte *)column + 3;
             dc_texturemid = basetexturemid - (column->topdelta << FRACBITS);
 
             dc_yh = yh;
             dc_yl = yl;
 
-            colfunc();
+            #if defined(MODE_VGA16) || defined(MODE_CGA16)
+            if (dc_x % 2 == 0){
+                colfunc();
+            }
+            #else
+                colfunc();
+            #endif
 
             column = (column_t *)((byte *)column + column->length + 4);
         }

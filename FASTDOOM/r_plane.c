@@ -109,7 +109,7 @@ void R_MapPlane(int y, int x1)
     unsigned index;
 
     #if defined(MODE_CGA16)
-		if (y % 2 == 1){
+		if (y % 2 != 0){
 			return;
 		}
     #endif
@@ -1238,7 +1238,7 @@ void R_DrawSky(visplane_t *pl)
         for (x = pl->minx; x <= pl->maxx; x++)
         {
             #if defined(MODE_VGA16) || defined(MODE_CGA16)
-            if (x % 2 == 1){
+            if (x % 2 != 0){
                 continue;
             }
             #endif
@@ -1279,7 +1279,7 @@ void R_DrawSky(visplane_t *pl)
         for (x = pl->minx; x <= pl->maxx; x++)
         {
             #if defined(MODE_VGA16) || defined(MODE_CGA16)
-            if (x % 2 == 1){
+            if (x % 2 != 0){
                 continue;
             }
             #endif
