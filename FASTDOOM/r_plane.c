@@ -1225,6 +1225,12 @@ void R_DrawSky(visplane_t *pl)
 
         for (x = pl->minx; x <= pl->maxx; x++)
         {
+            #if defined(MODE_VGA16) || defined(MODE_CGA16)
+            if (x % 2 == 1){
+                continue;
+            }
+            #endif
+
             dc_yl = pl->top[x];
             dc_yh = pl->bottom[x];
 
@@ -1260,6 +1266,12 @@ void R_DrawSky(visplane_t *pl)
     {
         for (x = pl->minx; x <= pl->maxx; x++)
         {
+            #if defined(MODE_VGA16) || defined(MODE_CGA16)
+            if (x % 2 == 1){
+                continue;
+            }
+            #endif
+
             dc_yl = pl->top[x];
             dc_yh = pl->bottom[x];
 
