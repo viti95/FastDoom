@@ -248,11 +248,8 @@ byte gammatable[5][256] =
         {2, 3, 4, 4, 5, 6, 6, 7, 7, 8, 9, 9, 10, 10, 10, 11, 11, 12, 12, 13, 13, 13, 14, 14, 15, 15, 15, 16, 16, 16, 17, 17, 17, 18, 18, 18, 19, 19, 19, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 26, 27, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 30, 31, 31, 31, 31, 32, 32, 32, 32, 33, 33, 33, 33, 33, 34, 34, 34, 34, 35, 35, 35, 35, 35, 36, 36, 36, 36, 37, 37, 37, 37, 37, 38, 38, 38, 38, 38, 39, 39, 39, 39, 40, 40, 40, 40, 40, 41, 41, 41, 41, 41, 42, 42, 42, 42, 42, 43, 43, 43, 43, 43, 44, 44, 44, 44, 44, 45, 45, 45, 45, 45, 45, 46, 46, 46, 46, 46, 47, 47, 47, 47, 47, 48, 48, 48, 48, 48, 48, 49, 49, 49, 49, 49, 50, 50, 50, 50, 50, 50, 51, 51, 51, 51, 51, 51, 52, 52, 52, 52, 52, 53, 53, 53, 53, 53, 53, 54, 54, 54, 54, 54, 54, 55, 55, 55, 55, 55, 55, 56, 56, 56, 56, 56, 56, 57, 57, 57, 57, 57, 57, 58, 58, 58, 58, 58, 58, 59, 59, 59, 59, 59, 59, 60, 60, 60, 60, 60, 60, 61, 61, 61, 61, 61, 61, 61, 62, 62, 62, 62, 62, 62, 63, 63, 63, 63, 63, 63},
         {4, 5, 7, 8, 9, 9, 10, 11, 12, 12, 13, 13, 14, 15, 15, 16, 16, 17, 17, 17, 18, 18, 19, 19, 20, 20, 20, 21, 21, 21, 22, 22, 23, 23, 23, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 30, 31, 31, 31, 32, 32, 32, 32, 32, 33, 33, 33, 33, 34, 34, 34, 34, 35, 35, 35, 35, 35, 36, 36, 36, 36, 37, 37, 37, 37, 37, 38, 38, 38, 38, 38, 39, 39, 39, 39, 39, 40, 40, 40, 40, 40, 41, 41, 41, 41, 41, 42, 42, 42, 42, 42, 43, 43, 43, 43, 43, 43, 44, 44, 44, 44, 44, 45, 45, 45, 45, 45, 45, 46, 46, 46, 46, 46, 46, 47, 47, 47, 47, 47, 47, 48, 48, 48, 48, 48, 48, 49, 49, 49, 49, 49, 49, 50, 50, 50, 50, 50, 50, 50, 51, 51, 51, 51, 51, 51, 52, 52, 52, 52, 52, 52, 52, 53, 53, 53, 53, 53, 53, 54, 54, 54, 54, 54, 54, 54, 55, 55, 55, 55, 55, 55, 55, 56, 56, 56, 56, 56, 56, 56, 57, 57, 57, 57, 57, 57, 57, 58, 58, 58, 58, 58, 58, 58, 58, 59, 59, 59, 59, 59, 59, 59, 60, 60, 60, 60, 60, 60, 60, 60, 61, 61, 61, 61, 61, 61, 61, 61, 62, 62, 62, 62, 62, 62, 62, 62, 63, 63, 63, 63, 63, 63, 63}};
 
-#if defined(MODE_Y) || defined(MODE_13H) || (defined(MODE_VBE2) && !defined(MODE_PM)) || defined(MODE_VBE2_DIRECT) || defined(MODE_V) || defined(MODE_V2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V) || defined(MODE_V2)
 byte processedpalette[14 * 768];
-#endif
-#if defined(MODE_VBE2) && defined(MODE_PM)
-byte processedpalette[14 * 1024];
 #endif
 
 byte scantokey[128] =
@@ -283,7 +280,7 @@ const byte vga16palette[672] = {
 
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || (defined(MODE_VBE2) && !defined(MODE_PM)) || defined(MODE_VBE2_DIRECT) || defined(MODE_V) || defined(MODE_V2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V) || defined(MODE_V2)
 void I_ProcessPalette(byte *palette)
 {
     int i;
@@ -296,23 +293,6 @@ void I_ProcessPalette(byte *palette)
         processedpalette[i + 1] = ptr[*(palette + 1)];
         processedpalette[i + 2] = ptr[*(palette + 2)];
         processedpalette[i + 3] = ptr[*(palette + 3)];
-    }
-}
-#endif
-
-#if defined(MODE_VBE2) && defined(MODE_PM)
-void I_ProcessPalette(byte *palette)
-{
-    int i;
-
-    byte *ptr = gammatable[usegamma];
-
-    for (i = 0; i < 14 * 1024; i += 4, palette += 3)
-    {
-        processedpalette[i] = ptr[*(palette + 2)];     // B
-        processedpalette[i + 1] = ptr[*(palette + 1)]; // G
-        processedpalette[i + 2] = ptr[*palette];       // R
-        //processedpalette[i + 3] = 0x00;                 // Unused
     }
 }
 #endif
@@ -1027,20 +1007,13 @@ void I_SetPalette(int numpalette)
     }
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || (defined(MODE_VBE2) && !defined(MODE_PM)) || defined(MODE_VBE2_DIRECT) || defined(MODE_V) || defined(MODE_V2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V) || defined(MODE_V2)
     {
         int pos = Mul768(numpalette);
 
         _outbyte(PEL_WRITE_ADR, 0);
 
         OutString(PEL_DATA, ((unsigned char *)processedpalette) + pos, 768);
-    }
-#endif
-
-#if defined(MODE_VBE2) && defined(MODE_PM)
-    {
-        int pos = numpalette * 1024;
-        VBE_SetPalette(((unsigned char *)processedpalette) + pos);
     }
 #endif
 }

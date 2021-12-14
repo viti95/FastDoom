@@ -28,9 +28,7 @@
 //#define S3FIX
 
 /* Disables the Proteted Mode Extensions (buggy on some cards (e.g. matrox)) */
-#ifndef MODE_PM
 #define DISABLE_PM_EXTENSIONS
-#endif
 
 /* Disables the Linar Frame Buffer */
 // #define DISABLE_LFB
@@ -210,8 +208,6 @@ void DPMI_UNMAP_PHYSICAL(void *p);
 //                      VBE/VESA Low Level Functions
 // ------------------------------------------------------------------------
 
-int VBE_Test(void);
-
 /*
   *
   * Returns true if a VBE BIOS-extension version 2.0 or greater is available
@@ -236,33 +232,13 @@ int VBE_IsModeLinear(short Mode);
   *
   */
 
-extern tagSetBankType VBE_SetBank;
-
+void VBE_SetBank(short bnk);
 /*
   * void VBE_SetBank (short bnk);
   *
   * Sets the A-Window to the specified bank. 0xa0000 points to another
   * location of the video memory. Be aware, that the bank is dependent
   * of the granularity field in the modeinfoblock.
-  *
-  */
-
-extern tagSetPaletteType VBE_SetPalette;
-
-/*
-  * void VBE_SetPalette (unsigned char *palptr);
-  *
-  * Sets the video card palette.
-  * 4 bytes per palette entry, BGRx format. The x isn't used at all.
-  * WTF were they thinking!
-  *
-  */
-
-unsigned int VBE_VideoMemory(void);
-
-/*
-  *
-  * Return the amount of display memory available  (in bytes)
   *
   */
 
@@ -300,27 +276,11 @@ char *VBE_GetVideoPtr(short mode);
   * mode. May fail on weired DPMI-Systems (tested: pmodew, dos4g, win95)
   */
 
-extern tagSetDisplayStartType VBE_SetDisplayStart;
-
-/* void VBE_SetDisplayStart (short x, short y); */
+void VBE_SetDisplayStart (short x, short y);
 
 /*
   * Adjust the position of the logical upper left pixel.
   * (for scrolling & page flipping)
-  */
-
-void VBE_SetPixelsPerScanline(short Pixels);
-/*
-  * Sets the number of pixels per scanline. Warning, not all VESA VBE
-  * implementations support this feature. However, it might be usefull
-  * if you have to deal with non linear frame buffers.
-  */
-
-short VBE_MaxBytesPerScanline(void);
-/*
-  * Returns the maxumum bytes per scanline. Unfortunately this function is
-  * more or less useless because most vesa implementations doesn't give valid
-  * results.
   */
 
 void VBE_SetDACWidth(char bits);
@@ -328,14 +288,6 @@ void VBE_SetDACWidth(char bits);
 /*
   * Sets the DAC into the 6 (default) or 8 bit color mode. You have to
   * check first if the DAC supports 8 bit using the VBE_8BitDAC function.
-  *
-  */
-
-int VBE_8BitDAC(void);
-
-/*
-  * Returns non-zero, if the DAC can be switched into the 8-Bit mode.
-  * (only usefull in 256 color modes. Gives you a better color-control)
   *
   */
 

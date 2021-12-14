@@ -77,24 +77,10 @@ static unsigned long BytesPerScanline;
 static unsigned char BitsPerPixel;
 
 /*
-  * Protected Mode Direct Call Informations
-  */
-
-void *pmcode;
-void *pm_setwindowcall;
-void *pm_setdisplaystartcall;
-void *pm_setpalette;
-void VBE_InitPM(void);
-
-/*
  *  This function pointers will be initialized after you called
  *  VBE_Init. It'll be set to the realmode or protected mode call
  *  code
  */
-
-tagSetDisplayStartType VBE_SetDisplayStart;
-tagSetBankType VBE_SetBank;
-tagSetPaletteType VBE_SetPalette;
 
 static void PrepareRegisters(void)
 {
@@ -187,48 +173,7 @@ int VBE_IsModeLinear(short Mode)
 #endif
 }
 
-#ifndef DISABLE_PM_EXTENSIONS
-
-void asmSDS(short lowaddr, short hiaddr);
-#pragma aux asmSDS = "mov ax, 0x4f07" \
-                     "xor ebx, ebx"   \
-                     "call [pm_setdisplaystartcall]" parm[cx][dx] modify[eax ebx ecx edx esi edi];
-
-static void PM_SetDisplayStart(short x, short y)
-{
-  unsigned long addr = (y * BytesPerScanline + x);
-  unsigned short loaddr = addr & 0xffff;
-  unsigned short hiaddr = (addr >> 16);
-  asmSDS(loaddr, hiaddr);
-}
-
-void asmSB(short bnk);
-#pragma aux asmSB = "mov ax, 0x4f05" \
-                    "mov bx, 0"      \
-                    "call [pm_setwindowcall]" parm[dx] modify[eax ebx ecx edx esi edi];
-
-static void PM_SetBank(short bnk)
-{
-  if (bnk == vbelastbank)
-    return;
-  vbelastbank = bnk;
-  asmSB(bnk);
-}
-
-void asmSP(unsigned char *palptr);
-#pragma aux asmSP = "mov ax, 0x4f09" \
-                    "mov bl, 0"      \
-                    "mov ecx, 256"   \
-                    "mov edx, 0"     \
-                    "call [pm_setpalette]" parm[edi] modify[eax ebx ecx edx esi edi];
-
-static void PM_SetPalette(unsigned char *palptr)
-{
-  asmSP(palptr);
-}
-#endif
-
-static void RM_SetDisplayStart(short x, short y)
+void VBE_SetDisplayStart(short x, short y)
 {
   PrepareRegisters();
   RMI.EAX = 0x00004f07;
@@ -272,19 +217,6 @@ void VBE_SetMode(short Mode, int linear, int clear)
   VBE_Mode_Information(Mode, &a);
   BytesPerScanline = a.BytesPerScanline;
   BitsPerPixel = a.BitsPerPixel;
-  /* Reinitalize the Protected Mode part. This hasn't been defined by VESA,
-   * but it avoids a lot of errors and incompatibilities */
-  VBE_InitPM();
-}
-
-int VBE_Test(void)
-{
-  return (VBE_Controller_Info_Pointer->vbeVersion.hi >= 0x2);
-}
-
-unsigned int VBE_VideoMemory(void)
-{
-  return (VBE_Controller_Info_Pointer->TotalMemory * 1024 * 64);
 }
 
 int VBE_FindMode(int xres, int yres, char bpp)
@@ -340,7 +272,7 @@ char *VBE_GetVideoPtr(short mode)
   return (char *)LastPhysicalMapping;
 }
 
-void RM_SetBank(short bnk)
+void VBE_SetBank(short bnk)
 {
   if (bnk == vbelastbank)
     return;
@@ -352,66 +284,12 @@ void RM_SetBank(short bnk)
   vbelastbank = bnk;
 }
 
-short VBE_MaxBytesPerScanline(void)
-{
-  PrepareRegisters();
-  RMI.EAX = 0x00004f06;
-  RMI.EBX = 3;
-  RMIRQ(0x10);
-  return regs.w.bx;
-}
-
-void VBE_SetPixelsPerScanline(short Pixels)
-{
-  PrepareRegisters();
-  RMI.EAX = 0x00004f06;
-  RMI.EBX = 0;
-  RMI.ECX = Pixels;
-  RMIRQ(0x10);
-  BytesPerScanline = (Pixels * BitsPerPixel / 8);
-}
-
 void VBE_SetDACWidth(char bits)
 {
   PrepareRegisters();
   RMI.EAX = 0x00004f08;
   RMI.EBX = bits << 8;
   RMIRQ(0x10);
-}
-
-int VBE_8BitDAC(void)
-{
-  return (VBE_Controller_Info_Pointer->Capabilities & 1);
-}
-
-void VBE_InitPM(void)
-{
-#ifndef DISABLE_PM_EXTENSIONS
-  unsigned short *pm_pointer;
-#endif
-  VBE_SetDisplayStart = RM_SetDisplayStart;
-  VBE_SetBank = RM_SetBank;
-#ifndef DISABLE_PM_EXTENSIONS
-  PrepareRegisters();
-  RMI.EAX = 0x00004f0a;
-  RMIRQ(0x10);
-  if ((RMI.EAX) == 0x004f)
-  {
-    if (pmcode)
-      free(pmcode);
-    // get some memory to copy the stuff.
-    pmcode = malloc(RMI.ECX & 0x0000ffff);
-    pm_pointer = (unsigned short *)(((unsigned long)RMI.ES << 4) | (RMI.EDI));
-    memcpy(pmcode, pm_pointer, (RMI.ECX & 0x0000ffff));
-    pm_pointer = (unsigned short *)pmcode;
-    pm_setwindowcall = (void *)(((unsigned long)RMI.ES << 4) | (RMI.EDI + pm_pointer[0]));
-    pm_setdisplaystartcall = (void *)(((unsigned long)RMI.ES << 4) | (RMI.EDI + pm_pointer[1]));
-    pm_setpalette = (void *)(((unsigned long)RMI.ES << 4) | (RMI.EDI + pm_pointer[2]));
-    VBE_SetDisplayStart = PM_SetDisplayStart;
-    VBE_SetBank = PM_SetBank;
-    VBE_SetPalette = PM_SetPalette;
-  }
-#endif
 }
 
 void VBE_Init(void)
@@ -440,8 +318,6 @@ void VBE_Init(void)
   VBE_Controller_Info_Pointer->OemVendorNamePtr = (char *)((((unsigned long)VBE_Controller_Info_Pointer->OemVendorNamePtr >> 16) << 4) + (unsigned short)VBE_Controller_Info_Pointer->OemVendorNamePtr);
   VBE_Controller_Info_Pointer->OemProductNamePtr = (char *)((((unsigned long)VBE_Controller_Info_Pointer->OemProductNamePtr >> 16) << 4) + (unsigned short)VBE_Controller_Info_Pointer->OemProductNamePtr);
   VBE_Controller_Info_Pointer->OemProductRevPtr = (char *)((((unsigned long)VBE_Controller_Info_Pointer->OemProductRevPtr >> 16) << 4) + (unsigned short)VBE_Controller_Info_Pointer->OemProductRevPtr);
-
-  VBE_InitPM();
 }
 
 void VBE_Done(void)
@@ -452,8 +328,4 @@ void VBE_Done(void)
   }
   DPMI_FreeDOSMem(&VbeModePool);
   DPMI_FreeDOSMem(&VbeInfoPool);
-#ifndef DISABLE_PM_EXTENSIONS
-  if (pmcode)
-    free(pmcode);
-#endif
 }

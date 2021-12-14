@@ -88,9 +88,6 @@
                    80x100)
  * FDOOMVBR.EXE => FastDoom for VBE 2.0 cards. Uses real mode (default, and
                    more compatible). If you use UniVBE use this version
- * FDOOMVBP.EXE => FastDoom for VBE 2.0 cards. Uses protected mode
-                   extensions. Some video cards crash with this mode, it
-                   should be a little bit faster than the real mode version
  * FDOOMVBD.EXE => FastDoom for VBE 2.0 cards with LFB (triple buffered),
 		   all rendering is done directly onto the video card, the
 		   same way Mode Y does. Faster for systems with slow RAM
