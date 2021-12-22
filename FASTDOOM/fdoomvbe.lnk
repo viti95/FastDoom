@@ -7,8 +7,8 @@ option stub=wstub
 option statics
 option symfile
 option verbose
-libpath %WATCOM%\lib386
-libpath %WATCOM%\lib386\dos
+libpath %WATCOM%/lib386
+libpath %WATCOM%/lib386/dos
 lib noemu387.lib
 lib gf1_osf.lib
 lib pawe32.lib

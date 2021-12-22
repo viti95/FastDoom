@@ -224,7 +224,7 @@ extern ticcmd_t localcmds[BACKUPTICS];
 extern int maketic;
 extern int nettics;
 
-extern byte autorun;
+extern int autorun;
 
 extern char *mapnames[];
 extern char *mapnames2[];
