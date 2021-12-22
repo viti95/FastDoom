@@ -161,7 +161,7 @@ int dclicks2;
 int savegameslot;
 char savedescription[32];
 
-byte autorun;
+int autorun;
 
 //
 // G_BuildTiccmd
