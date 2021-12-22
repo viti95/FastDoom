@@ -42,7 +42,7 @@ FastDoom 0.6 Live Demo:
 ## Build instructions (FastDOOM)
 
 1) Install Open Watcom C version 2.0
-2) Install Turbo Assembler 3.1, which is distributed with Borland C++ 3.1 (1992, not compatible with x64, use DOSBox or a real DOS environment)
+2) Install NASM
 3) Install DOS/32A
 4) Add Watcom's bin folder (binnt on Windows, binw on DOS) to the PATH.
 5) Run cleanall.bat
