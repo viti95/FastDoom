@@ -24,16 +24,16 @@
 # --------------------------------------------------------------------------
 
 # Build options for 486DX/SX
-#CCOPTS = $(EXTERNOPT) /omaxet /oh /ol+ /zp4 /4r /ei /j /zq
+#CCOPTS = $(EXTERNOPT) -omaxet -oh -ol+ -zp4 -4r -ei -j -zq
 
 # Build options for 386DX/SX
-CCOPTS = $(EXTERNOPT) /omaxet /oh /ol+ /zp4 /3r /ei /j /zq
+CCOPTS = $(EXTERNOPT) -omaxet -oh -ol+ -zp4 -3r -ei -j -zq
 
 # Build options for Pentium
-#CCOPTS = $(EXTERNOPT) /omaxet /oh /ol+ /zp4 /5r /ei /j /zq
+#CCOPTS = $(EXTERNOPT) -omaxet -oh -ol+ -zp4 -5r -ei -j -zq
 
 # Build options for profiling (Pentium required)
-#CCOPTS = $(EXTERNOPT) /omaxet /oh /ol+ /zp4 /5r /ei /j /zq /et
+#CCOPTS = $(EXTERNOPT) -omaxet -oh -ol+ -zp4 -5r -ei -j -zq -et
 
 GLOBOBJS_Y = &
  ns_dpmi.obj &
@@ -471,30 +471,36 @@ GLOBOBJS_TEXT = &
  dmx.obj &
  mus2mid.obj
 
-fdoomy.exe : $(GLOBOBJS_Y) 
- wlink @fdoomy.lnk 
+fdoomy.exe : $(GLOBOBJS_Y)
+ wlink @fdoomy.lnk
 
-fdoom13h.exe : $(GLOBOBJS_13H) 
- wlink @fdoom13h.lnk 
+fdoom13h.exe : $(GLOBOBJS_13H)
+ wlink @fdoom13h.lnk
 
 fdoomvbe.exe : $(GLOBOBJS_VBE)
  wlink @fdoomvbe.lnk
 
-fdoomtxt.exe : $(GLOBOBJS_TEXT) 
- wlink @fdoomtxt.lnk 
+fdoomtxt.exe : $(GLOBOBJS_TEXT)
+ wlink @fdoomtxt.lnk
 
 fdoomvbd.exe : $(GLOBOBJS_VBD)
  wlink @fdoomvbd.lnk
 
 .c.obj :
- wcc386 $(CCOPTS) $[*
+ wcc386 $(CCOPTS) -fo=$[*.obj $[*.c
 
 .asm.obj :
- tasm /mx /q $[*
+ nasm -f obj -o $[*.obj $[*.asm
+
+!ifndef __LINUX__
+DELCMD = del
+!else
+DELCMD = rm -f
+!endif
 
 clean : .SYMBOLIC
- del *.exe
- del *.map
- del *.err
- del *.obj
- del *.sym
+ $(DELCMD) *.exe
+ $(DELCMD) *.map
+ $(DELCMD) *.err
+ $(DELCMD) *.obj
+ $(DELCMD) *.sym
