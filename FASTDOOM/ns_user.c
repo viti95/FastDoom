@@ -15,7 +15,7 @@ char *USER_GetText(const char *parameter)
     char *ptr;
 
     text = NULL;
-    i = 1;
+    /*i = 1;
     while (i < _argc)
     {
         ptr = _argv[i];
@@ -33,7 +33,7 @@ char *USER_GetText(const char *parameter)
         }
 
         i++;
-    }
+    }*/
 
     return (text);
 }

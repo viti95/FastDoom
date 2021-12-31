@@ -5,6 +5,7 @@
 #include "ns_task.h"
 #include "ns_inter.h"
 #include "ns_pcfx.h"
+#include "std_func.h"
 
 #define TRUE (1 == 1)
 #define FALSE (!TRUE)
@@ -32,7 +33,7 @@ int PCFX_Stop(int handle)
         return (PCFX_Warning);
     }
 
-    flags = DisableInterrupts();
+    //flags = DisableInterrupts();
 
     // Turn off speaker
     outp(0x61, inp(0x61) & 0xfc);
@@ -42,7 +43,7 @@ int PCFX_Stop(int handle)
     PCFX_Priority = 0;
     PCFX_LastSample = 0;
 
-    RestoreInterrupts(flags);
+    //RestoreInterrupts(flags);
 
     if (PCFX_CallBackFunc)
     {
@@ -100,7 +101,7 @@ int PCFX_Play(PCSound *sound, int priority, unsigned long callbackval)
         PCFX_VoiceHandle = PCFX_MinVoiceHandle;
     }
 
-    flags = DisableInterrupts();
+    //flags = DisableInterrupts();
 
     PCFX_LengthLeft = sound->length;
 
@@ -111,7 +112,7 @@ int PCFX_Play(PCSound *sound, int priority, unsigned long callbackval)
     PCFX_Sound = &sound->data;
     PCFX_CallBackVal = callbackval;
 
-    RestoreInterrupts(flags);
+    //RestoreInterrupts(flags);
 
     return (PCFX_VoiceHandle);
 }
@@ -133,7 +134,7 @@ int PCFX_SetTotalVolume(int volume)
 {
     unsigned flags;
 
-    flags = DisableInterrupts();
+    //flags = DisableInterrupts();
 
     volume = max(volume, 0);
     volume = min(volume, PCFX_MaxVolume);
@@ -145,7 +146,7 @@ int PCFX_SetTotalVolume(int volume)
         outp(0x61, inp(0x61) & 0xfc);
     }
 
-    RestoreInterrupts(flags);
+    //RestoreInterrupts(flags);
 
     return (PCFX_Ok);
 }

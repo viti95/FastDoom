@@ -56,9 +56,9 @@ void AWE32_NoteOff(
 {
     unsigned temp;
 
-    temp = SetES();
-    awe32NoteOff(channel, key, velocity);
-    RestoreES(temp);
+    //temp = SetES();
+    //awe32NoteOff(channel, key, velocity);
+    //RestoreES(temp);
     NoteFlags[key] ^= (1 << channel);
 }
 
@@ -70,9 +70,9 @@ void AWE32_NoteOn(
 {
     unsigned temp;
 
-    temp = SetES();
-    awe32NoteOn(channel, key, velocity);
-    RestoreES(temp);
+    //temp = SetES();
+    //awe32NoteOn(channel, key, velocity);
+    //RestoreES(temp);
     NoteFlags[key] |= (1 << channel);
 }
 
@@ -84,9 +84,9 @@ void AWE32_PolyAftertouch(
 {
     unsigned temp;
 
-    temp = SetES();
-    awe32PolyKeyPressure(channel, key, pressure);
-    RestoreES(temp);
+    //temp = SetES();
+    //awe32PolyKeyPressure(channel, key, pressure);
+    //RestoreES(temp);
 }
 
 void AWE32_ChannelAftertouch(
@@ -96,9 +96,9 @@ void AWE32_ChannelAftertouch(
 {
     unsigned temp;
 
-    temp = SetES();
-    awe32ChannelPressure(channel, pressure);
-    RestoreES(temp);
+    //temp = SetES();
+    //awe32ChannelPressure(channel, pressure);
+    //RestoreES(temp);
 }
 
 void AWE32_ControlChange(
@@ -111,7 +111,7 @@ void AWE32_ControlChange(
     int i;
     unsigned channelmask;
 
-    temp = SetES();
+    //temp = SetES();
 
     if (number == 0x7b)
     {
@@ -120,16 +120,16 @@ void AWE32_ControlChange(
         {
             if (NoteFlags[i] & channelmask)
             {
-                awe32NoteOff(channel, i, 0);
+                //awe32NoteOff(channel, i, 0);
                 NoteFlags[i] ^= channelmask;
             }
         }
     }
     else
     {
-        awe32Controller(channel, number, value);
+        //awe32Controller(channel, number, value);
     }
-    RestoreES(temp);
+    //RestoreES(temp);
 }
 
 void AWE32_ProgramChange(
@@ -139,9 +139,9 @@ void AWE32_ProgramChange(
 {
     unsigned temp;
 
-    temp = SetES();
-    awe32ProgramChange(channel, program);
-    RestoreES(temp);
+    //temp = SetES();
+    //awe32ProgramChange(channel, program);
+    //RestoreES(temp);
 }
 
 void AWE32_PitchBend(
@@ -152,9 +152,9 @@ void AWE32_PitchBend(
 {
     unsigned temp;
 
-    temp = SetES();
-    awe32PitchBend(channel, lsb, msb);
-    RestoreES(temp);
+    //temp = SetES();
+    //awe32PitchBend(channel, lsb, msb);
+    //RestoreES(temp);
 }
 
 static void ShutdownMPU(
@@ -193,14 +193,14 @@ static void LoadSBK(
     lBankSizes[0] = 0;       /* ram is not needed */
 
     spSound.banksizes = lBankSizes;
-    awe32DefineBankSizes(&spSound);
-    awe32SoundPad.SPad1 = awe32SPad1Obj;
-    awe32SoundPad.SPad2 = awe32SPad2Obj;
-    awe32SoundPad.SPad3 = awe32SPad3Obj;
-    awe32SoundPad.SPad4 = awe32SPad4Obj;
-    awe32SoundPad.SPad5 = awe32SPad5Obj;
-    awe32SoundPad.SPad6 = awe32SPad6Obj;
-    awe32SoundPad.SPad7 = awe32SPad7Obj;
+    //awe32DefineBankSizes(&spSound);
+    //awe32SoundPad.SPad1 = awe32SPad1Obj;
+    //awe32SoundPad.SPad2 = awe32SPad2Obj;
+    //awe32SoundPad.SPad3 = awe32SPad3Obj;
+    //awe32SoundPad.SPad4 = awe32SPad4Obj;
+    //awe32SoundPad.SPad5 = awe32SPad5Obj;
+    //awe32SoundPad.SPad6 = awe32SPad6Obj;
+    //awe32SoundPad.SPad7 = awe32SPad7Obj;
 }
 
 int AWE32_Init(
@@ -242,19 +242,19 @@ int AWE32_Init(
         wEMUBaseAddx = wSBCBaseAddx + 0x400;
     }
 
-    status = awe32Detect(wEMUBaseAddx);
+    //status = awe32Detect(wEMUBaseAddx);
     if (status)
     {
         return (AWE32_Error);
     }
 
-    status = awe32InitHardware();
+    //status = awe32InitHardware();
     if (status)
     {
         return (AWE32_Error);
     }
 
-    status = awe32InitMIDI();
+    //status = awe32InitMIDI();
     if (status)
     {
         AWE32_Shutdown();
@@ -264,18 +264,18 @@ int AWE32_Init(
     if (status != DPMI_Ok)
     {
         ShutdownMPU();
-        awe32Terminate();
+        //awe32Terminate();
         return (AWE32_Error);
     }
 
     // Set the number of voices to use to 32
-    awe32NumG = 32;
+    //awe32NumG = 32;
 
-    awe32TotalPatchRam(&spSound);
+    //awe32TotalPatchRam(&spSound);
 
     LoadSBK();
-    awe32InitMIDI();
-    awe32InitNRPN();
+    //awe32InitMIDI();
+    //awe32InitNRPN();
 
     memset(NoteFlags, 0, sizeof(NoteFlags));
 
@@ -287,5 +287,5 @@ void AWE32_Shutdown(
 
 {
     ShutdownMPU();
-    awe32Terminate();
+    //awe32Terminate();
 }

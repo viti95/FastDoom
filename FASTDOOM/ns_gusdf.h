@@ -93,11 +93,11 @@ typedef volatile struct voicestatus
 } voicestatus;
 
 
-VoiceNode *GUSWAVE_GetVoice(int handle);
+static VoiceNode *GUSWAVE_GetVoice(int handle);
 
 int GUSWAVE_Play(VoiceNode *voice, int angle, int volume, int channels);
 
-VoiceNode *GUSWAVE_AllocVoice(int priority);
+static VoiceNode *GUSWAVE_AllocVoice(int priority);
 static int GUSWAVE_InitVoices(void);
 
 #endif

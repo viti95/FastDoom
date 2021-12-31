@@ -1374,7 +1374,7 @@ void M_QuitResponse(int ch)
     #ifndef MODE_HERC
     do
     {
-        I_WaitSingleVBL();
+        //I_WaitSingleVBL();
     } while (i--);
     #endif
 

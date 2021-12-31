@@ -37,10 +37,10 @@ void *D32DosMemAlloc(
     union REGS r;
 
     // DPMI allocate DOS memory
-    r.x.eax = 0x0100;
+    r.x.ax = 0x0100;
 
     // Number of paragraphs requested
-    r.x.ebx = (size + 15) >> 4;
+    r.x.bx = (size + 15) >> 4;
     int386(0x31, &r, &r);
     if (r.x.cflag)
     {
@@ -48,7 +48,7 @@ void *D32DosMemAlloc(
         return (NULL);
     }
 
-    return ((void *)((r.x.eax & 0xFFFF) << 4));
+    return ((void *)((r.x.ax & 0xFFFF) << 4));
 }
 
 /*---------------------------------------------------------------------
@@ -72,7 +72,7 @@ int GUS_Init(
 
     GUS_Installed = 0;
 
-    GetUltraCfg(&os);
+    //GetUltraCfg(&os);
 
     if (os.forced_gf1_irq > 7)
     {
@@ -92,13 +92,13 @@ int GUS_Init(
     }
 
     os.voices = 24;
-    ret = gf1_load_os(&os);
+    //ret = gf1_load_os(&os);
     if (ret)
     {
         return (GUS_Error);
     }
 
-    GUS_TotalMemory = gf1_mem_avail();
+    //GUS_TotalMemory = gf1_mem_avail();
     GUS_MemConfig = (GUS_TotalMemory - 1) >> 18;
 
     GUS_Installed = 1;
@@ -121,7 +121,7 @@ void GUS_Shutdown(
         GUS_Installed--;
         if (GUS_Installed == 0)
         {
-            gf1_unload_os();
+            //gf1_unload_os();
         }
     }
 }
@@ -147,7 +147,7 @@ void GUSWAVE_Shutdown(
         {
             if (GUSWAVE_Voices[i].mem != 0) // Compare to NULL
             {
-                gf1_free(GUSWAVE_Voices[i].mem);
+                //gf1_free(GUSWAVE_Voices[i].mem);
                 GUSWAVE_Voices[i].mem = 0;
             }
         }

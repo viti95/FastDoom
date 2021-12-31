@@ -8,6 +8,7 @@
 #include "ns_inter.h"
 #include "ns_gf1.h"
 #include "ns_gusmi.h"
+#include "std_func.h"
 
 #define TRUE (1 == 1)
 #define FALSE (!TRUE)
@@ -143,9 +144,9 @@ int GUSMIDI_UnloadPatch(
 
    if (PatchLoaded[prog])
    {
-      flags = DisableInterrupts();
+      //flags = DisableInterrupts();
 
-      gf1_unload_patch(&Patch[prog]);
+      //gf1_unload_patch(&Patch[prog]);
       if (PatchWaves[prog] != NULL)
       {
          USRHOOKS_FreeMem(PatchWaves[prog]);
@@ -156,7 +157,7 @@ int GUSMIDI_UnloadPatch(
       Patch[prog].nlayers = 0;
       PatchLoaded[prog] = FALSE;
 
-      RestoreInterrupts(flags);
+      //RestoreInterrupts(flags);
    }
 
    return (GUS_Ok);
@@ -195,7 +196,7 @@ int GUSMIDI_LoadPatch(
    strcat(text, ProgramName[prog]);
    strcat(text, ".pat");
 
-   ret = gf1_get_patch_info(text, &patchi);
+   //ret = gf1_get_patch_info(text, &patchi);
    if (ret != OK)
    {
       return (GUS_Error);
@@ -207,7 +208,7 @@ int GUSMIDI_LoadPatch(
       return (GUS_Error);
    }
 
-   ret = gf1_load_patch(text, &patchi, &Patch[prog], &GUS_HoldBuffer, DMABUFFSIZE, (unsigned char *)wave_buff, PATCH_LOAD_8_BIT);
+   //ret = gf1_load_patch(text, &patchi, &Patch[prog], &GUS_HoldBuffer, DMABUFFSIZE, (unsigned char *)wave_buff, PATCH_LOAD_8_BIT);
 
    if (ret != OK)
    {
@@ -238,11 +239,11 @@ void GUSMIDI_ProgramChange(
 
    if (PatchLoaded[prog])
    {
-      gf1_midi_change_program(&Patch[prog], channel);
+      //gf1_midi_change_program(&Patch[prog], channel);
    }
    else
    {
-      gf1_midi_change_program(NULL, channel);
+      //gf1_midi_change_program(NULL, channel);
    }
 }
 
@@ -266,13 +267,12 @@ void GUSMIDI_NoteOn(
 
       if (PatchLoaded[prog])
       {
-         gf1_midi_note_on(&Patch[note + 128], 1,
-                          note, velocity, 9);
+         //gf1_midi_note_on(&Patch[note + 128], 1, note, velocity, 9);
       }
    }
    else
    {
-      gf1_midi_note_on(0L, 1, note, velocity, chan);
+      //gf1_midi_note_on(0L, 1, note, velocity, chan);
    }
 }
 
@@ -288,7 +288,7 @@ void GUSMIDI_NoteOff(
     int velocity)
 
 {
-   gf1_midi_note_off(note, chan);
+   //gf1_midi_note_off(note, chan);
 }
 #pragma warn.par
 
@@ -304,7 +304,7 @@ void GUSMIDI_ControlChange(
     int value)
 
 {
-   gf1_midi_parameter(channel, number, value);
+   //gf1_midi_parameter(channel, number, value);
 }
 
 /*---------------------------------------------------------------------
@@ -319,7 +319,7 @@ void GUSMIDI_PitchBend(
     int msb)
 
 {
-   gf1_midi_pitch_bend(channel, lsb, msb);
+   //gf1_midi_pitch_bend(channel, lsb, msb);
 }
 
 /*---------------------------------------------------------------------
@@ -357,7 +357,7 @@ void GUSMIDI_SetVolume(
    GUSMIDI_Volume = volume;
 
    // range = 0 to 127
-   gf1_midi_synth_volume(0, volume >> 1);
+   //gf1_midi_synth_volume(0, volume >> 1);
 }
 
 /*---------------------------------------------------------------------
@@ -432,7 +432,7 @@ int GUSMIDI_Init(
    //      mem = gf1_malloc( 8192 );
    //      }
 
-   startmem = gf1_mem_avail();
+   //startmem = gf1_mem_avail();
    for (i = 0; i < NUM_PATCHES; i++)
    {
       ret = GUSMIDI_LoadPatch(i);

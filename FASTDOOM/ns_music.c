@@ -13,6 +13,7 @@
 #include "ns_scape.h"
 #include "ns_llm.h"
 #include "ns_user.h"
+#include "std_func.h"
 
 #define TRUE (1 == 1)
 #define FALSE (!TRUE)

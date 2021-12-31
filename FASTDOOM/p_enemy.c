@@ -235,7 +235,7 @@ byte P_NotMove(mobj_t *actor)
         tryy = actor->y;
         break;
     case DI_NORTHEAST:
-        optSpeed = Mul47000(actor->info->speed);
+        optSpeed = (47000 * actor->info->speed);
         tryx = actor->x + optSpeed;
         tryy = actor->y + optSpeed;
         break;
@@ -244,7 +244,7 @@ byte P_NotMove(mobj_t *actor)
         tryy = actor->y + actor->info->speed * FRACUNIT;
         break;
     case DI_NORTHWEST:
-        optSpeed = Mul47000(actor->info->speed);
+        optSpeed = (47000 * actor->info->speed);
         tryx = actor->x - optSpeed;
         tryy = actor->y + optSpeed;
         break;
@@ -253,7 +253,7 @@ byte P_NotMove(mobj_t *actor)
         tryy = actor->y;
         break;
     case DI_SOUTHWEST:
-        optSpeed = Mul47000(actor->info->speed);
+        optSpeed = (47000 * actor->info->speed);
         tryx = actor->x - optSpeed;
         tryy = actor->y - optSpeed;
         break;
@@ -262,7 +262,7 @@ byte P_NotMove(mobj_t *actor)
         tryy = actor->y - actor->info->speed * FRACUNIT;
         break;
     case DI_SOUTHEAST:
-        optSpeed = Mul47000(actor->info->speed);
+        optSpeed = (47000 * actor->info->speed);
         tryx = actor->x + optSpeed;
         tryy = actor->y - optSpeed;
         break;
@@ -917,7 +917,7 @@ void A_BruisAttack(mobj_t *actor)
     if (P_CheckMeleeRange(actor))
     {
         S_StartSound(actor, sfx_claw);
-        damage = Mul10((P_Random & 7) + 1);
+        damage = (10 * (P_Random & 7) + 1);
         P_DamageMobj(actor->target, actor, actor, damage);
         return;
     }
@@ -1110,7 +1110,7 @@ void A_VileChase(mobj_t *actor)
             viletryy = actor->y;
             break;
         case 1:
-            optSpeed = Mul47000(actor->info->speed);
+            optSpeed = (47000 * actor->info->speed);
             viletryx = actor->x + optSpeed;
             viletryy = actor->y + optSpeed;
             break;
@@ -1119,7 +1119,7 @@ void A_VileChase(mobj_t *actor)
             viletryy = actor->y + actor->info->speed * FRACUNIT;
             break;
         case 3:
-            optSpeed = Mul47000(actor->info->speed);
+            optSpeed = (47000 * actor->info->speed);
             viletryx = actor->x - optSpeed;
             viletryy = actor->y + optSpeed;
             break;
@@ -1128,7 +1128,7 @@ void A_VileChase(mobj_t *actor)
             viletryy = actor->y;
             break;
         case 5:
-            optSpeed = Mul47000(actor->info->speed);
+            optSpeed = (47000 * actor->info->speed);
             viletryx = actor->x - optSpeed;
             viletryy = actor->y - optSpeed;
             break;
@@ -1137,7 +1137,7 @@ void A_VileChase(mobj_t *actor)
             viletryy = actor->y - actor->info->speed * FRACUNIT;
             break;
         case 7:
-            optSpeed = Mul47000(actor->info->speed);
+            optSpeed = (47000 * actor->info->speed);
             viletryx = actor->x + optSpeed;
             viletryy = actor->y - optSpeed;
             break;
@@ -1400,8 +1400,7 @@ void A_SkullAttack(mobj_t *actor)
 
     dist = P_AproxDistance(dest->x - actor->x, dest->y - actor->y);
 
-    // VITI95: OPTIMIZE
-    dist = DivSKULLSPEED(dist);
+    dist /= SKULLSPEED;
 
     if (dist < 1)
     {

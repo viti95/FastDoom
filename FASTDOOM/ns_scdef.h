@@ -85,7 +85,7 @@
 
 static void SOUNDSCAPE_EnableInterrupt(void);
 static void SOUNDSCAPE_DisableInterrupt(void);
-static void __interrupt __far SOUNDSCAPE_ServiceInterrupt(void);
+static void SOUNDSCAPE_ServiceInterrupt(void);
 static int ga_read(int rnum);
 static void ga_write(int rnum, int value);
 static int ad_read(int rnum);

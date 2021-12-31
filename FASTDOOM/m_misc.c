@@ -24,6 +24,8 @@
 #include <stdio.h>
 #include <unistd.h>
 
+#include <sys/stat.h>
+
 #include "std_func.h"
 
 #include "doomdef.h"

@@ -8,7 +8,7 @@
 #include "ns_irq.h"
 #include "ns_pas16.h"
 #include "ns_p16df.h"
-
+#include "std_func.h"
 #include "fastmath.h"
 
 static const int PAS_Interrupts[PAS_MaxIrq + 1] =
@@ -18,7 +18,7 @@ static const int PAS_Interrupts[PAS_MaxIrq + 1] =
         INVALID, INVALID, 0x72, 0x73,
         0x74, INVALID, INVALID, 0x77};
 
-static void(interrupt far *PAS_OldInt)(void);
+static void(*PAS_OldInt)(void);
 
 static int PAS_IntController1Mask;
 static int PAS_IntController2Mask;
@@ -154,7 +154,7 @@ MVState *PAS_GetStateTable(
    ptr = (MVState *)((((unsigned)regs.w.dx) << 4) +
                      ((unsigned)regs.w.bx));
 #else
-   ptr = MK_FP(regs.w.dx, regs.w.bx);
+   //ptr = MK_FP(regs.w.dx, regs.w.bx);
 #endif
 
    return (ptr);
@@ -191,7 +191,7 @@ MVFunc *PAS_GetFunctionTable(
    ptr = (MVFunc *)((((unsigned)regs.w.dx) << 4) +
                     ((unsigned)regs.w.bx));
 #else
-   ptr = MK_FP(regs.w.dx, regs.w.bx);
+   //ptr = MK_FP(regs.w.dx, regs.w.bx);
 #endif
 
    return (ptr);
@@ -264,7 +264,7 @@ void PAS_EnableInterrupt(
    int data;
    unsigned flags;
 
-   flags = DisableInterrupts();
+   //flags = DisableInterrupts();
 
    if (PAS_Irq < 8)
    {
@@ -289,7 +289,7 @@ void PAS_EnableInterrupt(
    PAS_Write(InterruptControl, data);
    PAS_State->intrctlr = data;
 
-   RestoreInterrupts(flags);
+   //RestoreInterrupts(flags);
 }
 
 /*---------------------------------------------------------------------
@@ -306,7 +306,7 @@ void PAS_DisableInterrupt(
    int data;
    unsigned flags;
 
-   flags = DisableInterrupts();
+   //flags = DisableInterrupts();
 
    // Disable the interrupt on the PAS
    data = PAS_State->intrctlr;
@@ -332,7 +332,7 @@ void PAS_DisableInterrupt(
       outp(0xA1, mask);
    }
 
-   RestoreInterrupts(flags);
+   //RestoreInterrupts(flags);
 }
 
 /*---------------------------------------------------------------------
@@ -342,16 +342,14 @@ void PAS_DisableInterrupt(
    transfer.  Calls the user supplied callback function.
 ---------------------------------------------------------------------*/
 
-void interrupt far PAS_ServiceInterrupt(
-    void)
-
+void PAS_ServiceInterrupt(void)
 {
 #ifdef USESTACK
    // save stack
-   GetStack(&oldStackSelector, &oldStackPointer);
+   //GetStack(&oldStackSelector, &oldStackPointer);
 
    // set our stack
-   SetStack(StackSelector, StackPointer);
+   //SetStack(StackSelector, StackPointer);
 #endif
 
    irqstatus = PAS_Read(InterruptStatus);
@@ -359,10 +357,10 @@ void interrupt far PAS_ServiceInterrupt(
    {
 #ifdef USESTACK
       // restore stack
-      SetStack(oldStackSelector, oldStackPointer);
+      //SetStack(oldStackSelector, oldStackPointer);
 #endif
 
-      _chain_intr(PAS_OldInt);
+      //_chain_intr(PAS_OldInt);
    }
 
    // Clear the interrupt
@@ -391,7 +389,7 @@ void interrupt far PAS_ServiceInterrupt(
 
 #ifdef USESTACK
    // restore stack
-   SetStack(oldStackSelector, oldStackPointer);
+   //SetStack(oldStackSelector, oldStackPointer);
 #endif
 }
 
@@ -445,7 +443,7 @@ void PAS_SetSampleRateTimer(
    int data;
    unsigned flags;
 
-   flags = DisableInterrupts();
+   //flags = DisableInterrupts();
 
    // Disable the Sample Rate Timer
    data = PAS_State->audiofilt;
@@ -466,7 +464,7 @@ void PAS_SetSampleRateTimer(
    PAS_Write(SampleRateTimer, HiByte);
    PAS_State->samplerate = PAS_TimeInterval;
 
-   RestoreInterrupts(flags);
+   //RestoreInterrupts(flags);
 }
 
 /*---------------------------------------------------------------------
@@ -485,7 +483,7 @@ void PAS_SetSampleBufferCount(
    int data;
    unsigned flags;
 
-   flags = DisableInterrupts();
+   //flags = DisableInterrupts();
 
    // Disable the Sample Buffer Count
    data = PAS_State->audiofilt;
@@ -514,7 +512,7 @@ void PAS_SetSampleBufferCount(
    PAS_Write(SampleBufferCount, HiByte);
    PAS_State->samplecnt = count;
 
-   RestoreInterrupts(flags);
+   //RestoreInterrupts(flags);
 }
 
 /*---------------------------------------------------------------------
@@ -868,7 +866,7 @@ int PAS_CallMVFunction(
    callregs.IP = function;
    callregs.CS = function >> 16;
 
-   status = DPMI_CallRealModeFunction(&callregs);
+   //status = DPMI_CallRealModeFunction(&callregs);
    if (status != DPMI_Ok)
    {
       return (PAS_Error);
@@ -892,8 +890,8 @@ int PAS_SetPCMVolume(
    volume = max(0, volume);
    volume = min(volume, 255);
 
-   volume = Mul100(volume);
-   volume = Div255(volume);
+   volume = (100 * volume);
+   volume = (volume) / 255;
 
    status = PAS_CallMVFunction(PAS_Func->SetMixer, volume,
                                OUTPUTMIXER, L_PCM);
@@ -925,8 +923,8 @@ void PAS_SetFMVolume(
    volume = max(0, volume);
    volume = min(volume, 255);
 
-   volume = Mul100(volume);
-   volume = Div255(volume);
+   volume = (100 * volume);
+   volume = (volume) / 255;
    if (PAS_Func)
    {
       PAS_CallMVFunction(PAS_Func->SetMixer, volume, OUTPUTMIXER, L_FM);
@@ -962,7 +960,7 @@ int PAS_GetFMVolume(
 
    totalvolume = (rightvolume + leftvolume) / 2;
    totalvolume = (totalvolume << 8) - totalvolume;
-   totalvolume = Div100(totalvolume);
+   totalvolume = (totalvolume) / 100;
    totalvolume = min(255, totalvolume);
 
    return (totalvolume);
@@ -1037,28 +1035,28 @@ int PAS_FindCard(
 {
    int status;
 
-   status = PAS_TestAddress(DEFAULT_BASE);
+   //status = PAS_TestAddress(DEFAULT_BASE);
    if (status == 0)
    {
       PAS_TranslateCode = DEFAULT_BASE;
       return (PAS_Ok);
    }
 
-   status = PAS_TestAddress(ALT_BASE_1);
+   //status = PAS_TestAddress(ALT_BASE_1);
    if (status == 0)
    {
       PAS_TranslateCode = ALT_BASE_1;
       return (PAS_Ok);
    }
 
-   status = PAS_TestAddress(ALT_BASE_2);
+   //status = PAS_TestAddress(ALT_BASE_2);
    if (status == 0)
    {
       PAS_TranslateCode = ALT_BASE_2;
       return (PAS_Ok);
    }
 
-   status = PAS_TestAddress(ALT_BASE_3);
+   //status = PAS_TestAddress(ALT_BASE_3);
    if (status == 0)
    {
       PAS_TranslateCode = ALT_BASE_3;
@@ -1361,10 +1359,10 @@ int PAS_Init(
 
    // Install our interrupt handler
    Interrupt = PAS_Interrupts[PAS_Irq];
-   PAS_OldInt = _dos_getvect(Interrupt);
+   //PAS_OldInt = _dos_getvect(Interrupt);
    if (PAS_Irq < 8)
    {
-      _dos_setvect(Interrupt, PAS_ServiceInterrupt);
+      //_dos_setvect(Interrupt, PAS_ServiceInterrupt);
    }
    else
    {
@@ -1416,7 +1414,7 @@ void PAS_Shutdown(
       {
          IRQ_RestoreVector(Interrupt);
       }
-      _dos_setvect(Interrupt, PAS_OldInt);
+      //_dos_setvect(Interrupt, PAS_OldInt);
 
       PAS_SoundPlaying = FALSE;
 

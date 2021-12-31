@@ -23,7 +23,7 @@ const int SOUNDSCAPE_SampleSize[SOUNDSCAPE_MaxMixMode + 1] =
         MONO_8BIT_SAMPLE_SIZE, STEREO_8BIT_SAMPLE_SIZE,
         MONO_16BIT_SAMPLE_SIZE, STEREO_16BIT_SAMPLE_SIZE};
 
-static void(__interrupt __far *SOUNDSCAPE_OldInt)(void);
+static void(*SOUNDSCAPE_OldInt)(void);
 
 static int SOUNDSCAPE_Installed = FALSE;
 static int SOUNDSCAPE_FoundCard = FALSE;
@@ -155,23 +155,21 @@ static void SOUNDSCAPE_DisableInterrupt(
    transfer.  Calls the user supplied callback function.
 ---------------------------------------------------------------------*/
 
-static void __interrupt __far SOUNDSCAPE_ServiceInterrupt(
-    void)
-
+static void SOUNDSCAPE_ServiceInterrupt(void)
 {
     // save stack
-    GetStack(&oldStackSelector, &oldStackPointer);
+    //GetStack(&oldStackSelector, &oldStackPointer);
 
     // set our stack
-    SetStack(StackSelector, StackPointer);
+    //SetStack(StackSelector, StackPointer);
 
     if (!(inp(SOUNDSCAPE_Config.WavePort + AD_STATUS) & 0x01))
     {
         // restore stack
-        SetStack(oldStackSelector, oldStackPointer);
+        //SetStack(oldStackSelector, oldStackPointer);
 
         // Wasn't our interrupt.  Call the old one.
-        _chain_intr(SOUNDSCAPE_OldInt);
+        //_chain_intr(SOUNDSCAPE_OldInt);
     }
 
     // clear the AD-1848 interrupt
@@ -191,7 +189,7 @@ static void __interrupt __far SOUNDSCAPE_ServiceInterrupt(
     }
 
     // restore stack
-    SetStack(oldStackSelector, oldStackPointer);
+    //SetStack(oldStackSelector, oldStackPointer);
 
     // send EOI to Interrupt Controller
     if (SOUNDSCAPE_Config.WaveIRQ > 7)
@@ -280,13 +278,13 @@ static void tdelay(
     long time;
     unsigned flags;
 
-    flags = DisableInterrupts();
+    //flags = DisableInterrupts();
     _enable();
     time = clock() + CLOCKS_PER_SEC / 4;
     while (clock() < time)
         ;
 
-    RestoreInterrupts(flags);
+    //RestoreInterrupts(flags);
 }
 
 /*---------------------------------------------------------------------
@@ -1086,10 +1084,10 @@ static int SOUNDSCAPE_Setup(
 
     // Install our interrupt handler
     Interrupt = SOUNDSCAPE_Interrupts[SOUNDSCAPE_Config.WaveIRQ];
-    SOUNDSCAPE_OldInt = _dos_getvect(Interrupt);
+    //SOUNDSCAPE_OldInt = _dos_getvect(Interrupt);
     if (SOUNDSCAPE_Config.WaveIRQ < 8)
     {
-        _dos_setvect(Interrupt, SOUNDSCAPE_ServiceInterrupt);
+        //_dos_setvect(Interrupt, SOUNDSCAPE_ServiceInterrupt);
     }
     else
     {
@@ -1250,7 +1248,7 @@ void SOUNDSCAPE_Shutdown(
     {
         IRQ_RestoreVector(Interrupt);
     }
-    _dos_setvect(Interrupt, SOUNDSCAPE_OldInt);
+    //_dos_setvect(Interrupt, SOUNDSCAPE_OldInt);
 
     SOUNDSCAPE_SoundPlaying = FALSE;
 

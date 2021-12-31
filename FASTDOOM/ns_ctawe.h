@@ -39,16 +39,14 @@ typedef short int SHORT;
 typedef unsigned int UINT;
 typedef signed long LONG;
 
-#ifndef FAR
-#define FAR __far
-#endif
+#define FAR
 
 #ifndef HUGE
-#define HUGE __huge
+#define HUGE
 #endif
 
 #ifndef PASCAL
-#define PASCAL __pascal
+#define PASCAL
 #endif
 
 typedef void FAR *LPVOID;

@@ -89,8 +89,8 @@ void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int de
     V_MarkRect(destx, desty, width, height);
 #endif
 
-    src = srcscrn + Mul320(srcy) + srcx;
-    dest = destscrn + Mul320(desty) + destx;
+    src = srcscrn + (320 * srcy) + srcx;
+    dest = destscrn + (320 * desty) + destx;
 
     for (; height > 0; height--)
     {
@@ -109,7 +109,7 @@ void V_SetRect(byte color, int width, int height, int destx, int desty, byte *de
     V_MarkRect(destx, desty, width, height);
 #endif
 
-    dest = destscrn + Mul320(desty) + destx;
+    dest = destscrn + (320 * desty) + destx;
 
     if (width % 2)
     {
@@ -151,7 +151,7 @@ void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
     y -= patch->topoffset;
     x -= patch->leftoffset;
 
-    desttop = scrn + Mul320(y) + x;
+    desttop = scrn + (320 * y) + x;
 
     w = patch->width;
 
@@ -163,7 +163,7 @@ void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
         while (column->topdelta != 0xff)
         {
             register const byte *source = (byte *)column + 3;
-            register byte *dest = desttop + Mul320(column->topdelta);
+            register byte *dest = desttop + (320 * column->topdelta);
             register int count = column->length;
 
             if ((count -= 4) >= 0)
@@ -211,7 +211,7 @@ void V_DrawPatchScreen0(int x, int y, patch_t *patch)
 
     V_MarkRect(x, y, patch->width, patch->height);
 
-    desttop = screen0 + Mul320(y) + x;
+    desttop = screen0 + (320 * y) + x;
 
     w = patch->width;
 
@@ -223,7 +223,7 @@ void V_DrawPatchScreen0(int x, int y, patch_t *patch)
         while (column->topdelta != 0xff)
         {
             register const byte *source = (byte *)column + 3;
-            register byte *dest = desttop + Mul320(column->topdelta);
+            register byte *dest = desttop + (320 * column->topdelta);
             register int count = column->length;
 
             if ((count -= 4) >= 0)
@@ -277,7 +277,7 @@ void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
     V_MarkRect(x, y, patch->width, patch->height);
 
     col = 0;
-    desttop = screen0 + Mul320(y) + x;
+    desttop = screen0 + (320 * y) + x;
 
     w = patch->width;
 
@@ -289,7 +289,7 @@ void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
         while (column->topdelta != 0xff)
         {
             source = (byte *)column + 3;
-            dest = desttop + Mul320(column->topdelta);
+            dest = desttop + (320 * column->topdelta);
             count = column->length;
 
             while (count--)
@@ -308,7 +308,7 @@ void V_WriteTextColorDirect(int x, int y, char *string, unsigned short color)
 {
     unsigned short *dest;
 
-    dest = textdestscreen + Mul40(y) + x;
+    dest = textdestscreen + (40 * y) + x;
 
     while (*string)
     {
@@ -321,7 +321,7 @@ void V_WriteTextDirect(int x, int y, char *string)
 {
     unsigned short *dest;
 
-    dest = textdestscreen + Mul40(y) + x;
+    dest = textdestscreen + (40 * y) + x;
 
     while (*string)
     {
@@ -334,7 +334,7 @@ void V_WriteCharColorDirect(int x, int y, unsigned char c, unsigned short color)
 {
     unsigned short *dest;
 
-    dest = textdestscreen + Mul40(y) + x;
+    dest = textdestscreen + (40 * y) + x;
     *dest = color | c;
 }
 
@@ -342,7 +342,7 @@ void V_WriteCharDirect(int x, int y, unsigned char c)
 {
     unsigned short *dest;
 
-    dest = textdestscreen + Mul40(y) + x;
+    dest = textdestscreen + (40 * y) + x;
     *dest = 12 << 8 | c;
 }
 #endif
@@ -352,7 +352,7 @@ void V_WriteTextColorDirect(int x, int y, char *string, unsigned short color)
 {
     unsigned short *dest;
 
-    dest = textdestscreen + Mul80(y) + x;
+    dest = textdestscreen + (80 * y) + x;
 
     while (*string)
     {
@@ -365,7 +365,7 @@ void V_WriteTextDirect(int x, int y, char *string)
 {
     unsigned short *dest;
 
-    dest = textdestscreen + Mul80(y) + x;
+    dest = textdestscreen + (80 * y) + x;
 
     while (*string)
     {
@@ -378,7 +378,7 @@ void V_WriteCharColorDirect(int x, int y, unsigned char c, unsigned short color)
 {
     unsigned short *dest;
 
-    dest = textdestscreen + Mul80(y) + x;
+    dest = textdestscreen + (80 * y) + x;
     *dest = color | c;
 }
 
@@ -386,7 +386,7 @@ void V_WriteCharDirect(int x, int y, unsigned char c)
 {
     unsigned short *dest;
 
-    dest = textdestscreen + Mul80(y) + x;
+    dest = textdestscreen + (80 * y) + x;
     *dest = 12 << 8 | c;
 }
 #endif
@@ -410,7 +410,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
     x -= patch->leftoffset;
 
     col = 0;
-    desttop = destscreen + Mul320(y) + x;
+    desttop = destscreen + (320 * y) + x;
     w = patch->width;
     for (; col < w; x++, col++, desttop++)
     {
@@ -419,7 +419,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
         while (column->topdelta != 0xff)
         {
             source = (byte *)column + 3;
-            dest = desttop + Mul320(column->topdelta);
+            dest = desttop + (320 * column->topdelta);
             count = column->length;
             while (count--)
             {
@@ -446,7 +446,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
     y -= patch->topoffset;
     x -= patch->leftoffset;
 
-    desttop = destscreen + Mul80(y) + (x >> 2);
+    desttop = destscreen + (80 * y) + (x >> 2);
 
     w = patch->width;
     for (col = 0; col < w; col++)
@@ -459,7 +459,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
         while (column->topdelta != 0xff)
         {
             register const byte *source = (byte *)column + 3;
-            register byte *dest = desttop + Mul80(column->topdelta);
+            register byte *dest = desttop + (80 * column->topdelta);
             register int count = column->length;
 
             if ((count -= 4) >= 0)
@@ -507,7 +507,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
     x -= patch->leftoffset;
 
     col = 0;
-    desttop = backbuffer + Mul320(y) + x;
+    desttop = backbuffer + (y * 320) + x;
     w = patch->width;
     for (; col < w; x++, col++, desttop++)
     {
@@ -516,7 +516,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
         while (column->topdelta != 0xff)
         {
             source = (byte *)column + 3;
-            dest = desttop + Mul320(column->topdelta);
+            dest = desttop + (column->topdelta * 320);
             count = column->length;
             while (count--)
             {
@@ -546,7 +546,7 @@ void V_DrawPatchDirectText8050(int x, int y, patch_t *patch)
     x /= 4; // 320 --> 80
     y /= 4; // 200 --> 50
 
-    desttop = textdestscreen + Mul80(y) + x;
+    desttop = textdestscreen + (80 * y) + x;
 
     w = patch->width;
     for (col = 0; col < w; col += 4)
@@ -557,7 +557,7 @@ void V_DrawPatchDirectText8050(int x, int y, patch_t *patch)
         while (column->topdelta != 0xff)
         {
             source = (byte *)column + 3;
-            dest = desttop + Mul80(column->topdelta / 4);
+            dest = desttop + (80 * column->topdelta / 4);
             count = column->length / 4;
 
             while (count--)
@@ -593,7 +593,7 @@ void V_DrawPatchDirectText4050(int x, int y, patch_t *patch)
     x /= 8; // 320 --> 40
     y /= 4; // 200 --> 50
 
-    desttop = textdestscreen + Mul40(y / 2) + x;
+    desttop = textdestscreen + (40 * y / 2) + x;
 
     w = patch->width;
     for (col = 0; col < w; col += 8)
@@ -605,7 +605,7 @@ void V_DrawPatchDirectText4050(int x, int y, patch_t *patch)
         {
             source = (byte *)column + 3;
             odd = (column->topdelta / 4 + y) % 2;
-            dest = desttop + Mul40(column->topdelta / 8);
+            dest = desttop + (40 * column->topdelta / 8);
             count = column->length / 4;
 
             while (count--)
@@ -657,7 +657,7 @@ void V_DrawPatchDirectText80100(int x, int y, patch_t *patch)
     x /= 4; // 320 --> 80
     y /= 2; // 200 --> 100
 
-    desttop = textdestscreen + Mul80(y / 2) + x;
+    desttop = textdestscreen + (80 * y / 2) + x;
 
     w = patch->width;
     for (col = 0; col < w; col += 4)
@@ -669,7 +669,7 @@ void V_DrawPatchDirectText80100(int x, int y, patch_t *patch)
         {
             source = (byte *)column + 3;
             odd = (column->topdelta / 4 + y) % 2;
-            dest = desttop + Mul80(column->topdelta / 4);
+            dest = desttop + (80 * column->topdelta / 4);
             count = column->length / 2;
 
             while (count--)
@@ -719,7 +719,7 @@ void V_DrawPatchDirectText4025(int x, int y, patch_t *patch)
     x /= 8; // 320 --> 40
     y /= 8; // 200 --> 25
 
-    desttop = textdestscreen + Mul40(y) + x;
+    desttop = textdestscreen + (40 * y) + x;
 
     w = patch->width;
     for (col = 0; col < w; col += 8)
@@ -730,7 +730,7 @@ void V_DrawPatchDirectText4025(int x, int y, patch_t *patch)
         while (column->topdelta != 0xff)
         {
             source = (byte *)column + 3;
-            dest = desttop + Mul40(column->topdelta / 8);
+            dest = desttop + (40 * column->topdelta / 8);
             count = column->length / 4;
 
             while (count--)
@@ -766,7 +766,7 @@ void V_DrawPatchDirectText8025(int x, int y, patch_t *patch)
     x /= 4; // 320 --> 80
     y /= 4; // 200 --> 50
 
-    desttop = textdestscreen + Mul80(y / 2) + x;
+    desttop = textdestscreen + (80 * y / 2) + x;
 
     w = patch->width;
     for (col = 0; col < w; col += 4)
@@ -778,7 +778,7 @@ void V_DrawPatchDirectText8025(int x, int y, patch_t *patch)
         {
             source = (byte *)column + 3;
             odd = (column->topdelta / 4 + y) % 2;
-            dest = desttop + Mul80(column->topdelta / 8);
+            dest = desttop + (80 * column->topdelta / 8);
             count = column->length / 4;
 
             while (count--)

@@ -12,6 +12,7 @@
 #include "ns_music.h"
 #include "ns_midi.h"
 #include "ns_midif.h"
+#include "std_func.h"
 
 #include "fastmath.h"
 
@@ -186,8 +187,8 @@ static void _MIDI_AdvanceTick(void)
     }
     else
     {
-        tickDivision = Div70(_MIDI_Tick) + 1;
-        _MIDI_Tick -= Mul70(tickDivision);
+        tickDivision = (_MIDI_Tick) / 70 + 1;
+        _MIDI_Tick -= (70 * tickDivision);
     }
 
     _MIDI_Beat += tickDivision;
@@ -687,7 +688,7 @@ static void _MIDI_SetChannelVolume(
     if (_MIDI_Funcs->SetVolume == NULL)
     {
         volume *= _MIDI_TotalVolume;
-        volume = Div255(volume);
+        volume = (volume) / 255;
     }
 
     // For user volume
@@ -730,13 +731,13 @@ int MIDI_Reset(
 
     MIDI_AllNotesOff();
 
-    flags = DisableInterrupts();
+    //flags = DisableInterrupts();
     _enable();
     time = clock() + CLOCKS_PER_SEC / 24;
     while (clock() < time)
         ;
 
-    RestoreInterrupts(flags);
+    //RestoreInterrupts(flags);
 
     for (channel = 0; channel < NUM_MIDI_CHANNELS; channel++)
     {

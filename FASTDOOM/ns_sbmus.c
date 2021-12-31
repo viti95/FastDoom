@@ -9,7 +9,7 @@
 #include "ns_sbmus.h"
 #include "ns_sbmdf.h"
 #include "ns_llm.h"
-
+#include "std_func.h"
 #include "fastmath.h"
 
 #define TRUE (1 == 1)
@@ -1116,7 +1116,7 @@ void AL_SetPitchBend(
 
    TotalBend = pitchbend * Channel[channel].PitchBendRange;
    //TotalBend /= (PITCHBEND_CENTER / FINETUNE_RANGE);
-   TotalBend = Div51200(TotalBend);
+   TotalBend = (TotalBend) / 51200;
 
    Channel[channel].KeyOffset = (int)(TotalBend / FINETUNE_RANGE);
    Channel[channel].KeyOffset -= Channel[channel].PitchBendSemiTones;

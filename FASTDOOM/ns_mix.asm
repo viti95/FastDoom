@@ -1,5 +1,5 @@
 BITS 32
-%include "macros.inc"
+%include "./FastDoom/macros.inc"
 
 extern _MV_HarshClipTable
 extern _MV_MixDestination

@@ -178,7 +178,7 @@ int SFX_PlayPatch(void *vdata, int sep, int vol)
         }
         len -= 32;
 
-        return FX_PlayRaw(data + 24, len, rate, vol * 2, Div63((254 - sep) * vol), Div63((sep)*vol), 100, 0);
+        return FX_PlayRaw(data + 24, len, rate, vol * 2, ((254 - sep) * vol) / 63, ((sep)*vol) / 63, 100, 0);
     }
 
     return -1;
@@ -211,7 +211,7 @@ void SFX_SetOrigin(int handle, int sep, int vol)
     if (voice == NULL)
         return;
 
-    MV_SetVoiceVolume(voice, vol * 2, Div63((254 - sep) * vol), Div63((sep)*vol));
+    MV_SetVoiceVolume(voice, vol * 2, ((254 - sep) * vol) / 63, ((sep)*vol) / 63);
     MV_SetVoicePitch(voice, voice->SamplingRate);
 }
 int GF1_Detect(void)

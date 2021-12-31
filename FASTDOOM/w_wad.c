@@ -22,7 +22,7 @@
 #include <unistd.h>
 #include <malloc.h>
 #include <fcntl.h>
-#include <alloca.h>
+#include <stdlib.h>
 #include "doomtype.h"
 #include "doomstat.h"
 #include "i_system.h"
@@ -118,7 +118,8 @@ void W_AddFile(char *filename)
     printf("\tadding %s\n", filename);
     startlump = numlumps;
 
-    if (strcmpi(filename + strlen(filename) - 3, "wad"))
+    if (strcasecmp(filename + strlen(filename) - 3, "wad"))
+    //if (strcmpi(filename + strlen(filename) - 3, "wad"))
     {
         // single lump file
         fileinfo = &singleinfo;

@@ -691,23 +691,23 @@ int WI_drawNumTwoDigits(int x, int y, int n)
 		return 0;
 
 	original = n;
-	n = Div10(n);
+	n = (n) / 10;
 	x -= fontwidth;
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-	V_DrawPatchScreen0(x, y, num[original - Mul10(n)]);
+	V_DrawPatchScreen0(x, y, num[original - (10 * n)]);
 #endif
 #if defined(USE_BACKBUFFER)
-	V_DrawPatchDirect(x, y, num[original - Mul10(n)]);
+	V_DrawPatchDirect(x, y, num[original - (10 * n)]);
 #endif
 
 	original = n;
-	n = Div10(n);
+	n = (n) / 10;
 	x -= fontwidth;
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-	V_DrawPatchScreen0(x, y, num[original - Mul10(n)]);
+	V_DrawPatchScreen0(x, y, num[original - (10 * n)]);
 #endif
 #if defined(USE_BACKBUFFER)
-	V_DrawPatchDirect(x, y, num[original - Mul10(n)]);
+	V_DrawPatchDirect(x, y, num[original - (10 * n)]);
 #endif
 
 	return x;
@@ -729,13 +729,13 @@ int WI_drawNum(int x, int y, int n)
 	{
 		int original = n;
 
-		n = Div10(n);
+		n = (n) / 10;
 		x -= fontwidth;
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-	V_DrawPatchScreen0(x, y, num[original - Mul10(n)]);
+	V_DrawPatchScreen0(x, y, num[original - (10 * n)]);
 #endif
 #if defined(USE_BACKBUFFER)
-	V_DrawPatchDirect(x, y, num[original - Mul10(n)]);
+	V_DrawPatchDirect(x, y, num[original - (10 * n)]);
 #endif
 	} while (n);
 
@@ -999,11 +999,11 @@ void WI_updateStats(void)
 		acceleratestage = 0;
 
 		// VITI95: OPTIMIZE
-		cnt_kills = Mul100(plrs.skills) / wbs->maxkills;
-		cnt_items = Mul100(plrs.sitems) / wbs->maxitems;
-		cnt_secret = Mul100(plrs.ssecret) / wbs->maxsecret;
-		cnt_time = Div35(plrs.stime);
-		cnt_par = Div35(wbs->partime);
+		cnt_kills = (100 * plrs.skills) / wbs->maxkills;
+		cnt_items = (100 * plrs.sitems) / wbs->maxitems;
+		cnt_secret = (100 * plrs.ssecret) / wbs->maxsecret;
+		cnt_time = (plrs.stime) / 35;
+		cnt_par = (wbs->partime) / 35;
 		S_StartSound(0, sfx_barexp);
 		sp_state = 10;
 	}
@@ -1017,7 +1017,7 @@ void WI_updateStats(void)
 		if (!(bcnt & 3))
 			S_StartSound(0, sfx_pistol);
 
-		optSkills = Mul100(plrs.skills) / wbs->maxkills;
+		optSkills = (100 * plrs.skills) / wbs->maxkills;
 
 		if (cnt_kills >= optSkills)
 		{
@@ -1035,7 +1035,7 @@ void WI_updateStats(void)
 		if (!(bcnt & 3))
 			S_StartSound(0, sfx_pistol);
 
-		optSitems = Mul100(plrs.sitems) / wbs->maxitems;
+		optSitems = (100 * plrs.sitems) / wbs->maxitems;
 
 		if (cnt_items >= optSitems)
 		{
@@ -1053,7 +1053,7 @@ void WI_updateStats(void)
 		if (!(bcnt & 3))
 			S_StartSound(0, sfx_pistol);
 
-		optSsecret = Mul100(plrs.ssecret) / wbs->maxsecret;
+		optSsecret = (100 * plrs.ssecret) / wbs->maxsecret;
 
 		if (cnt_secret >= optSsecret)
 		{
@@ -1072,13 +1072,13 @@ void WI_updateStats(void)
 
 		cnt_time += 3;
 
-		optStime = Div35(plrs.stime);
+		optStime = (plrs.stime) / 35;
 		if (cnt_time >= optStime)
 			cnt_time = optStime;
 
 		cnt_par += 3;
 
-		optPartime = Div35(wbs->partime);
+		optPartime = (wbs->partime) / 35;
 		if (cnt_par >= optPartime)
 		{
 			cnt_par = optPartime;

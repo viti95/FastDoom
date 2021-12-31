@@ -443,7 +443,7 @@ void R_DrawPlanesFlatSurfaces(void)
 
             count = pl->bottom[x] - pl->top[x];
 
-            dest = destview + Mul80(pl->top[x]) + (x >> 2);
+            dest = destview + (80 * pl->top[x]) + (x >> 2);
 
             while (count >= 3)
             {
@@ -483,7 +483,7 @@ void R_DrawPlanesFlatSurfaces(void)
 
             count = pl->bottom[x] - pl->top[x];
 
-            dest = destview + Mul80(pl->top[x]) + (x >> 2);
+            dest = destview + (80 * pl->top[x]) + (x >> 2);
 
             while (count >= 3)
             {
@@ -523,7 +523,7 @@ void R_DrawPlanesFlatSurfaces(void)
 
             count = pl->bottom[x] - pl->top[x];
 
-            dest = destview + Mul80(pl->top[x]) + (x >> 2);
+            dest = destview + (80 * pl->top[x]) + (x >> 2);
 
             while (count >= 3)
             {
@@ -563,7 +563,7 @@ void R_DrawPlanesFlatSurfaces(void)
 
             count = pl->bottom[x] - pl->top[x];
 
-            dest = destview + Mul80(pl->top[x]) + (x >> 2);
+            dest = destview + (80 * pl->top[x]) + (x >> 2);
 
             while (count >= 3)
             {
@@ -627,7 +627,7 @@ void R_DrawPlanesFlatSurfacesLow(void)
 
             count = pl->bottom[x] - pl->top[x];
 
-            dest = destview + Mul80(pl->top[x]) + (x >> 1);
+            dest = destview + (80 * pl->top[x]) + (x >> 1);
 
             while (count >= 3)
             {
@@ -667,7 +667,7 @@ void R_DrawPlanesFlatSurfacesLow(void)
 
             count = pl->bottom[x] - pl->top[x];
 
-            dest = destview + Mul80(pl->top[x]) + (x >> 1);
+            dest = destview + (80 * pl->top[x]) + (x >> 1);
 
             while (count >= 3)
             {
@@ -725,7 +725,7 @@ void R_DrawPlanesFlatSurfacesPotato(void)
 
             count = pl->bottom[x] - pl->top[x];
 
-            dest = destview + Mul80(pl->top[x]) + x;
+            dest = destview + (80 * pl->top[x]) + x;
 
             while (count >= 3)
             {
@@ -786,7 +786,7 @@ void R_DrawPlanesFlatSurfacesText80100(void)
                 continue;
 
             odd = pl->top[x] % 2;
-            dest = textdestscreen + Mul80(pl->top[x] / 2) + x;
+            dest = textdestscreen + (80 * pl->top[x] / 2) + x;
             count = pl->bottom[x] - pl->top[x];
 
             if (count >= 1 && odd || count == 0)
@@ -866,7 +866,7 @@ void R_DrawPlanesFlatSurfacesText8050(void)
                 continue;
 
             count = pl->bottom[x] - pl->top[x];
-            dest = textdestscreen + Mul80(pl->top[x]) + x;
+            dest = textdestscreen + (80 * pl->top[x]) + x;
 
             while (count >= 3)
             {
@@ -928,7 +928,7 @@ void R_DrawPlanesFlatSurfacesText4050(void)
                 continue;
 
             odd = pl->top[x] % 2;
-            dest = textdestscreen + Mul40(pl->top[x] / 2) + x;
+            dest = textdestscreen + (40 * pl->top[x] / 2) + x;
             count = pl->bottom[x] - pl->top[x];
 
             if (count >= 1 && odd || count == 0)
@@ -1008,7 +1008,7 @@ void R_DrawPlanesFlatSurfacesText4025(void)
                 continue;
 
             count = pl->bottom[x] - pl->top[x];
-            dest = textdestscreen + Mul40(pl->top[x]) + x;
+            dest = textdestscreen + (40 * pl->top[x]) + x;
 
             while (count >= 3)
             {
@@ -1070,7 +1070,7 @@ void R_DrawPlanesFlatSurfacesText8025(void)
                 continue;
 
             odd = pl->top[x] % 2;
-            dest = textdestscreen + Mul80(pl->top[x] / 2) + x;
+            dest = textdestscreen + (80 * pl->top[x] / 2) + x;
             count = pl->bottom[x] - pl->top[x];
 
             if (count >= 1 && odd || count == 0)
@@ -1203,7 +1203,7 @@ void R_DrawPlanesFlatSurfacesVBE2(void)
                 continue;
 
             count = pl->bottom[x] - pl->top[x];
-            dest = destview + Mul320(pl->top[x]) + x;
+            dest = destview + (320 * pl->top[x]) + x;
 
             do
             {

@@ -53,7 +53,7 @@ static unsigned long oldStackPointer;
 static task HeadTask;
 static task *TaskList = &HeadTask;
 
-static void(__interrupt __far *OldInt8)(void);
+static void(*OldInt8)(void);
 
 static volatile long TaskServiceRate = 0x10000L;
 static volatile long TaskServiceCount = 0;
@@ -74,8 +74,8 @@ static void TS_FreeTaskList(void);
 static void TS_SetClockSpeed(long speed);
 static long TS_SetTimer(long TickBase);
 static void TS_SetTimerToMaxTaskRate(void);
-static void __interrupt __far TS_ServiceSchedule(void);
-static void __interrupt __far TS_ServiceScheduleIntEnabled(void);
+static void TS_ServiceSchedule(void);
+static void TS_ServiceScheduleIntEnabled(void);
 static void TS_AddTask(task *ptr);
 static int TS_Startup(void);
 static void RestoreRealTimeClock(void);
@@ -104,7 +104,7 @@ static void TS_FreeTaskList(void)
     task *next;
     unsigned flags;
 
-    flags = DisableInterrupts();
+    //flags = DisableInterrupts();
 
     node = TaskList->next;
     while (node != TaskList)
@@ -117,14 +117,14 @@ static void TS_FreeTaskList(void)
     TaskList->next = TaskList;
     TaskList->prev = TaskList;
 
-    RestoreInterrupts(flags);
+    //RestoreInterrupts(flags);
 }
 
 static void TS_SetClockSpeed(long speed)
 {
     unsigned flags;
 
-    flags = DisableInterrupts();
+    //flags = DisableInterrupts();
 
     if ((speed > 0) && (speed < 0x10000L))
     {
@@ -139,7 +139,7 @@ static void TS_SetClockSpeed(long speed)
     outp(0x40, TaskServiceRate);
     outp(0x40, TaskServiceRate >> 8);
 
-    RestoreInterrupts(flags);
+    //RestoreInterrupts(flags);
 }
 
 static long TS_SetTimer(long TickBase)
@@ -162,7 +162,7 @@ static void TS_SetTimerToMaxTaskRate(void)
     long MaxServiceRate;
     unsigned flags;
 
-    flags = DisableInterrupts();
+    //flags = DisableInterrupts();
 
     MaxServiceRate = 0x10000L;
 
@@ -182,12 +182,12 @@ static void TS_SetTimerToMaxTaskRate(void)
         TS_SetClockSpeed(MaxServiceRate);
     }
 
-    RestoreInterrupts(flags);
+    //RestoreInterrupts(flags);
 }
 
 #ifdef NOINTS
 
-static void __interrupt __far TS_ServiceSchedule(void)
+static void TS_ServiceSchedule(void)
 {
     task *ptr;
     task *next;
@@ -196,10 +196,10 @@ static void __interrupt __far TS_ServiceSchedule(void)
 
 #ifdef USESTACK
     // save stack
-    GetStack(&oldStackSelector, &oldStackPointer);
+    //GetStack(&oldStackSelector, &oldStackPointer);
 
     // set our stack
-    SetStack(StackSelector, StackPointer);
+    //SetStack(StackSelector, StackPointer);
 #endif
 
     ptr = TaskList->next;
@@ -223,14 +223,14 @@ static void __interrupt __far TS_ServiceSchedule(void)
 
 #ifdef USESTACK
     // restore stack
-    SetStack(oldStackSelector, oldStackPointer);
+    //SetStack(oldStackSelector, oldStackPointer);
 #endif
 
     TaskServiceCount += TaskServiceRate;
     if (TaskServiceCount > 0xffffL)
     {
         TaskServiceCount &= 0xffff;
-        _chain_intr(OldInt8);
+        //_chain_intr(OldInt8);
     }
 
     outp(0x20, 0x20);
@@ -240,7 +240,7 @@ static void __interrupt __far TS_ServiceSchedule(void)
 
 #else
 
-static void __interrupt __far TS_ServiceScheduleIntEnabled(void)
+static void TS_ServiceScheduleIntEnabled(void)
 {
     task *ptr;
     task *next;
@@ -250,7 +250,7 @@ static void __interrupt __far TS_ServiceScheduleIntEnabled(void)
     if (TaskServiceCount > 0xffffL)
     {
         TaskServiceCount &= 0xffff;
-        _chain_intr(OldInt8);
+        //_chain_intr(OldInt8);
     }
 
     outp(0x20, 0x20);
@@ -268,7 +268,7 @@ static void __interrupt __far TS_ServiceScheduleIntEnabled(void)
     GetStack(&oldStackSelector, &oldStackPointer);
 
     // set our stack
-    SetStack(StackSelector, StackPointer);
+    //SetStack(StackSelector, StackPointer);
 #endif
 
     while (TS_TimesInInterrupt)
@@ -296,7 +296,7 @@ static void __interrupt __far TS_ServiceScheduleIntEnabled(void)
 
 #ifdef USESTACK
     // restore stack
-    SetStack(oldStackSelector, oldStackPointer);
+    //SetStack(oldStackSelector, oldStackPointer);
 #endif
 
     TS_InInterrupt = FALSE;
@@ -405,11 +405,11 @@ static int TS_Startup(
         TS_TimesInInterrupt = 0;
 #endif
 
-        OldInt8 = _dos_getvect(0x08);
+        //OldInt8 = _dos_getvect(0x08);
 #ifdef NOINTS
-        _dos_setvect(0x08, TS_ServiceSchedule);
+        //_dos_setvect(0x08, TS_ServiceSchedule);
 #else
-        _dos_setvect(0x08, TS_ServiceScheduleIntEnabled);
+        //_dos_setvect(0x08, TS_ServiceScheduleIntEnabled);
 #endif
 
         TS_Installed = TRUE;
@@ -434,7 +434,7 @@ void TS_Shutdown(
 
         TS_SetClockSpeed(0);
 
-        _dos_setvect(0x08, OldInt8);
+        //_dos_setvect(0x08, OldInt8);
 
 #ifdef USESTACK
 
@@ -527,7 +527,7 @@ int TS_Terminate(
     task *next;
     unsigned flags;
 
-    flags = DisableInterrupts();
+    //flags = DisableInterrupts();
 
     ptr = TaskList->next;
     while (ptr != TaskList)
@@ -543,7 +543,7 @@ int TS_Terminate(
 
             TS_SetTimerToMaxTaskRate();
 
-            RestoreInterrupts(flags);
+            //RestoreInterrupts(flags);
 
             return (TASK_Ok);
         }
@@ -551,7 +551,7 @@ int TS_Terminate(
         ptr = next;
     }
 
-    RestoreInterrupts(flags);
+    //RestoreInterrupts(flags);
 
     return (TASK_Warning);
 }
@@ -569,7 +569,7 @@ void TS_Dispatch(
     task *ptr;
     unsigned flags;
 
-    flags = DisableInterrupts();
+    //flags = DisableInterrupts();
 
     ptr = TaskList->next;
     while (ptr != TaskList)
@@ -578,7 +578,7 @@ void TS_Dispatch(
         ptr = ptr->next;
     }
 
-    RestoreInterrupts(flags);
+    //RestoreInterrupts(flags);
 }
 
 /*---------------------------------------------------------------------
@@ -594,10 +594,10 @@ void TS_SetTaskRate(
 {
     unsigned flags;
 
-    flags = DisableInterrupts();
+    //flags = DisableInterrupts();
 
     Task->rate = TS_SetTimer(rate);
     TS_SetTimerToMaxTaskRate();
 
-    RestoreInterrupts(flags);
+    //RestoreInterrupts(flags);
 }

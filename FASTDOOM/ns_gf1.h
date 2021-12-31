@@ -119,17 +119,7 @@
 #define DIG_BUFFER_DONE 2
 #define DIG_PAUSE 3
 
-#if defined(__BORLANDC__)
-#undef RFAR
-#define RFAR far
-#elif defined(_MSC_VER) && (_MSC_VER <= 600)
-#define RFAR far
-#elif defined(_MSC_VER) && (_MSC_VER > 600)
-#define RFAR __far
-#else
-#undef RFAR
 #define RFAR
-#endif
 
 /* structure definitions */
 struct load_os

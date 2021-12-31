@@ -8,7 +8,7 @@
 static union REGS Regs;
 static struct SREGS SegRegs;
 
-int DPMI_CallRealModeFunction(dpmi_regs *callregs)
+/*int DPMI_CallRealModeFunction(dpmi_regs *callregs)
 {
     // Setup our registers to call DPMI
     Regs.w.ax = 0x0301;
@@ -17,7 +17,7 @@ int DPMI_CallRealModeFunction(dpmi_regs *callregs)
     Regs.w.cx = 0;
 
     SegRegs.es = FP_SEG(callregs);
-    Regs.x.edi = FP_OFF(callregs);
+    Regs.x.di = FP_OFF(callregs);
 
     // Call Real-mode procedure with Far Return Frame
     int386x(0x31, &Regs, &Regs, &SegRegs);
@@ -28,7 +28,7 @@ int DPMI_CallRealModeFunction(dpmi_regs *callregs)
     }
 
     return (DPMI_Ok);
-}
+}*/
 
 int DPMI_LockMemory(void *address, unsigned length)
 {

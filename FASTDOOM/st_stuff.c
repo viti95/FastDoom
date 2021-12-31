@@ -511,9 +511,9 @@ void ST_Responder(event_t *ev)
 
 				if (gamemode == commercial)
 				{
-					musnum = mus_runnin + Mul10(buf[0] - '0') + buf[1] - '0' - 1;
+					musnum = mus_runnin + (10 * buf[0] - '0') + buf[1] - '0' - 1;
 
-					if ((Mul10(buf[0] - '0') + buf[1] - '0') > 35)
+					if (((10 * buf[0] - '0') + buf[1] - '0') > 35)
 						plyr->message = STSTR_NOMUS;
 					else
 						S_ChangeMusic(musnum, 1);
@@ -618,7 +618,7 @@ int ST_calcPainOffset(void)
 
 	if (health != oldhealth)
 	{
-		lastcalc = ST_FACESTRIDE * (Div101((100 - health) * ST_NUMPAINFACES));
+		lastcalc = ST_FACESTRIDE * (((100 - health) * ST_NUMPAINFACES) / 101);
 		oldhealth = health;
 	}
 	return lastcalc;

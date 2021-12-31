@@ -20,6 +20,7 @@
 #include "ns_pwm.h"
 #include "ns_lpt.h"
 #include "ns_sbdm.h"
+#include "std_func.h"
 
 #include "fastmath.h"
 
@@ -192,10 +193,10 @@ void MV_PlayVoice(
 {
     unsigned flags;
 
-    flags = DisableInterrupts();
+    //flags = DisableInterrupts();
     LL_SortedInsertion(&VoiceList, voice, prev, next, VoiceNode, priority);
 
-    RestoreInterrupts(flags);
+    //RestoreInterrupts(flags);
 }
 
 /*---------------------------------------------------------------------
@@ -210,13 +211,13 @@ void MV_StopVoice(
 {
     unsigned flags;
 
-    flags = DisableInterrupts();
+    //flags = DisableInterrupts();
 
     // move the voice from the play list to the free list
     LL_Remove(voice, next, prev);
     LL_Add(&VoicePool, voice, next, prev);
 
-    RestoreInterrupts(flags);
+    //RestoreInterrupts(flags);
 }
 
 /*---------------------------------------------------------------------
@@ -256,10 +257,10 @@ void MV_ServiceVoc(
     //buffer even when no sounds are playing.
     if (!MV_BufferEmpty[MV_MixPage])
     {
-        ClearBuffer_DW(MV_MixBuffer[MV_MixPage], MV_Silence, MV_BufferSize >> 2);
+        //ClearBuffer_DW(MV_MixBuffer[MV_MixPage], MV_Silence, MV_BufferSize >> 2);
         if ((MV_SoundCard == UltraSound) && (MV_Channels == 2))
         {
-            ClearBuffer_DW(MV_MixBuffer[MV_MixPage] + MV_RightChannelOffset, MV_Silence, MV_BufferSize >> 2);
+            //ClearBuffer_DW(MV_MixBuffer[MV_MixPage] + MV_RightChannelOffset, MV_Silence, MV_BufferSize >> 2);
         }
         MV_BufferEmpty[MV_MixPage] = TRUE;
     }
@@ -403,7 +404,7 @@ VoiceNode *MV_GetVoice(int handle)
     VoiceNode *voice;
     unsigned flags;
 
-    flags = DisableInterrupts();
+    //flags = DisableInterrupts();
 
     for (voice = VoiceList.next; voice != &VoiceList; voice = voice->next)
     {
@@ -413,7 +414,7 @@ VoiceNode *MV_GetVoice(int handle)
         }
     }
 
-    RestoreInterrupts(flags);
+    //RestoreInterrupts(flags);
 
     if (voice == &VoiceList)
     {
@@ -477,12 +478,12 @@ int MV_Kill(
     unsigned flags;
     unsigned long callbackval;
 
-    flags = DisableInterrupts();
+    //flags = DisableInterrupts();
 
     voice = MV_GetVoice(handle);
     if (voice == NULL)
     {
-        RestoreInterrupts(flags);
+        //RestoreInterrupts(flags);
         return (MV_Error);
     }
 
@@ -490,7 +491,7 @@ int MV_Kill(
 
     MV_StopVoice(voice);
 
-    RestoreInterrupts(flags);
+    //RestoreInterrupts(flags);
 
     if (MV_CallBackFunc)
     {
@@ -514,7 +515,7 @@ VoiceNode *MV_AllocVoice(
     VoiceNode *node;
     unsigned flags;
 
-    flags = DisableInterrupts();
+    //flags = DisableInterrupts();
 
     // Check if we have any free voices
     if (LL_Empty(&VoicePool, next, prev))
@@ -528,13 +529,13 @@ VoiceNode *MV_AllocVoice(
     if (LL_Empty(&VoicePool, next, prev))
     {
         // No free voices
-        RestoreInterrupts(flags);
+        //RestoreInterrupts(flags);
         return (NULL);
     }
 
     voice = VoicePool.next;
     LL_Remove(voice, next, prev);
-    RestoreInterrupts(flags);
+    //RestoreInterrupts(flags);
 
     // Find a free voice handle
     do
@@ -609,7 +610,7 @@ static void MV_SetVoiceMixMode(
     unsigned flags;
     int test;
 
-    flags = DisableInterrupts();
+    //flags = DisableInterrupts();
 
     test = T_DEFAULT;
     if (MV_Bits == 8)
@@ -715,7 +716,7 @@ static void MV_SetVoiceMixMode(
         voice->mix = MV_Mix8BitMono;
     }
 
-    RestoreInterrupts(flags);
+    //RestoreInterrupts(flags);
 }
 
 /*---------------------------------------------------------------------
@@ -870,7 +871,7 @@ int MV_StartPlayback(
     int buffer;
 
     // Initialize the buffers
-    ClearBuffer_DW(MV_MixBuffer[0], MV_Silence, TotalBufferSize >> 2);
+    //ClearBuffer_DW(MV_MixBuffer[0], MV_Silence, TotalBufferSize >> 2);
     SetDWords(MV_BufferEmpty, TRUE, MV_NumberOfBuffers);
 
     // Set the mix buffer variables
@@ -1054,7 +1055,7 @@ void MV_StopPlayback(
     }
 
     // Make sure all callbacks are done.
-    flags = DisableInterrupts();
+    //flags = DisableInterrupts();
 
     for (voice = VoiceList.next; voice != &VoiceList; voice = next)
     {
@@ -1068,7 +1069,7 @@ void MV_StopPlayback(
         }
     }
 
-    RestoreInterrupts(flags);
+    //RestoreInterrupts(flags);
 }
 
 /*---------------------------------------------------------------------
@@ -1172,7 +1173,7 @@ void MV_CreateVolumeTable(
         {
             val = i - 0x8000;
             val *= level;
-            val = Div63(val);
+            val = (val) / 63;
             MV_VolumeTable[index][i / 256] = val;
         }
     }
@@ -1182,7 +1183,7 @@ void MV_CreateVolumeTable(
         {
             val = i - 0x80;
             val *= level;
-            val = Div63(val);
+            val = (val) / 63;
             MV_VolumeTable[volume][i] = val;
         }
     }
@@ -1351,8 +1352,8 @@ int MV_Init(
     }
 
     // Allocate mix buffer within 1st megabyte
-    status = DPMI_GetDOSMemory((void **)&ptr, &MV_BufferDescriptor,
-                               2 * TotalBufferSize);
+    //status = DPMI_GetDOSMemory((void **)&ptr, &MV_BufferDescriptor,
+    //                           2 * TotalBufferSize);
 
     if (status)
     {
@@ -1422,7 +1423,7 @@ int MV_Init(
         MV_Voices = NULL;
         MV_TotalMemory = 0;
 
-        DPMI_FreeDOSMemory(MV_BufferDescriptor);
+        //DPMI_FreeDOSMemory(MV_BufferDescriptor);
 
         return (MV_Error);
     }
@@ -1485,7 +1486,7 @@ int MV_Shutdown(
         return (MV_Ok);
     }
 
-    flags = DisableInterrupts();
+    //flags = DisableInterrupts();
 
     MV_KillAllVoices();
 
@@ -1533,7 +1534,7 @@ int MV_Shutdown(
         break;
     }
 
-    RestoreInterrupts(flags);
+    //RestoreInterrupts(flags);
 
     // Free any voices we allocated
     USRHOOKS_FreeMem(MV_Voices);
@@ -1546,7 +1547,7 @@ int MV_Shutdown(
     MV_MaxVoices = 1;
 
     // Release the descriptor from our mix buffer
-    DPMI_FreeDOSMemory(MV_BufferDescriptor);
+    //DPMI_FreeDOSMemory(MV_BufferDescriptor);
     SetBytes(MV_MixBuffer, NULL, NumberOfBuffers);
 
     return (MV_Ok);

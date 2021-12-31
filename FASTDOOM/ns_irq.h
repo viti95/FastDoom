@@ -10,7 +10,7 @@ enum IRQ_ERRORS
 
 #define VALID_IRQ(irq) (((irq) >= 0) && ((irq) <= 15))
 
-int IRQ_SetVector(int vector, void(__interrupt *function)(void));
+int IRQ_SetVector(int vector, void(*function)(void));
 int IRQ_RestoreVector(int vector);
 
 #endif

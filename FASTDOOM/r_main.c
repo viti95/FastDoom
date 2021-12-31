@@ -40,6 +40,8 @@
 
 #include "st_stuff.h"
 
+#include "std_func.h"
+
 // Fineangles in the SCREENWIDTH wide window.
 #define FIELDOFVIEW 2048
 
@@ -1031,13 +1033,13 @@ void R_ExecuteSetViewSize(void)
         for (j = 0; j < MAXLIGHTSCALE; j++)
         {
 #if defined(MODE_T4050) || defined(MODE_T80100)
-            level = startmap - Mul320(j) / (viewwidth << 1) / DISTMAP;
+            level = startmap - (320 * j) / (viewwidth << 1) / DISTMAP;
 #endif
 #ifdef MODE_Y
-            level = startmap - Mul320(j) / (viewwidth << detailshift) / DISTMAP;
+            level = startmap - (320 * j) / (viewwidth << detailshift) / DISTMAP;
 #endif
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT)
-            level = startmap - Mul320(j) / (viewwidth) / DISTMAP;
+            level = startmap - (320 * j) / (viewwidth) / DISTMAP;
 #endif
             if (level < 0)
                 level = 0;
@@ -1176,11 +1178,11 @@ void R_SetupFrame(player_t *player)
     validcount++;
     
     #ifdef MODE_VBE2_DIRECT
-    destview = destscreen + Mul320(viewwindowy) + viewwindowx;
+    destview = destscreen + (320 * viewwindowy) + viewwindowx;
     #endif
 
     #ifdef MODE_Y
-    destview = destscreen + Mul80(viewwindowy) + (viewwindowx >> 2);
+    destview = destscreen + (80 * viewwindowy) + (viewwindowx >> 2);
     #endif
 }
 

@@ -227,7 +227,7 @@ int S_AdjustSoundParams(mobj_t *listener,
     else
     {
         // distance effect
-        *vol = Div1000(snd_SfxVolume * ((snd_clipping - approx_dist) >> FRACBITS));
+        *vol = (snd_SfxVolume * ((snd_clipping - approx_dist) >> FRACBITS)) / 1000;
     }
 
     return *vol;

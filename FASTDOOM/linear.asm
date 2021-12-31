@@ -16,8 +16,8 @@
 ;
 
 BITS 32
-%include "defs.inc"
-%include "macros.inc"
+%include "./FastDoom/defs.inc"
+%include "./FastDoom/macros.inc"
 
 extern _centery
 

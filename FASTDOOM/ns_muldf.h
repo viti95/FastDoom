@@ -1,6 +1,8 @@
 #ifndef ___MULTIVC_H
 #define ___MULTIVC_H
 
+#include "std_func.h"
+
 #define TRUE (1 == 1)
 #define FALSE (!TRUE)
 

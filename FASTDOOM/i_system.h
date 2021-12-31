@@ -93,7 +93,7 @@ void I_UpdateNoBlit(void);
 void I_FinishUpdate(void);
 
 // Wait for vertical retrace or pause a bit.
-void I_WaitSingleVBL(void);
+/*void I_WaitSingleVBL(void);
 #pragma aux I_WaitSingleVBL = \
     "mov dx, 0x3DA", \
     "l1: in al, dx", \
@@ -101,12 +101,12 @@ void I_WaitSingleVBL(void);
     "jnz l1", \
     "l2: in al, dx", \
     "and al, 0x08", \
-    "jz l2" modify [al dx]
+    "jz l2" modify [al dx]*/
 
-void I_DisableCGABlink(void);
+/*void I_DisableCGABlink(void);
 #pragma aux I_DisableCGABlink = \   
     "mov dx, 0x3D8", \
     "mov al, 0x9", \   
-    "out dx, al" modify [al dx]
+    "out dx, al" modify [al dx]*/
 
 #endif

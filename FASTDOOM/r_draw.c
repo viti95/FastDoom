@@ -117,7 +117,7 @@ void R_DrawSkyFlat(void)
 
     outp(SC_INDEX + 1, 1 << (dc_x & 3));
 
-    dest = destview + Mul80(dc_yl) + (dc_x >> 2);
+    dest = destview + (80 * dc_yl) + (dc_x >> 2);
 
     count = dc_yh - dc_yl;
 
@@ -148,7 +148,7 @@ void R_DrawSkyFlatLow(void)
 
     outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
 
-    dest = destview + Mul80(dc_yl) + (dc_x >> 1);
+    dest = destview + (80 * dc_yl) + (dc_x >> 1);
 
     count = dc_yh - dc_yl;
 
@@ -177,7 +177,7 @@ void R_DrawSkyFlatPotato(void)
     register int count;
     register byte *dest;
 
-    dest = destview + Mul80(dc_yl) + dc_x;
+    dest = destview + (80 * dc_yl) + dc_x;
 
     count = dc_yh - dc_yl;
 
@@ -211,7 +211,7 @@ void R_DrawSkyFlatPotato(void)
     if (count < 0)
         return;
 
-    dest = destview + Mul320(dc_yl) + dc_x;
+    dest = destview + (320 * dc_yl) + dc_x;
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
@@ -233,7 +233,7 @@ void R_DrawSkyFlatPotato(void)
     xfrac = ds_xfrac;
     yfrac = ds_yfrac;
 
-    dest = destview + Mul320(ds_y) + ds_x1;
+    dest = destview + (320 * ds_y) + ds_x1;
     count = ds_x2 - ds_x1;
     do
     {
@@ -254,7 +254,7 @@ void R_DrawSkyFlatVBE2(void)
     if (count < 0)
         return;
 
-    dest = destview + Mul320(dc_yl) + dc_x;
+    dest = destview + (320 * dc_yl) + dc_x;
 
     do
     {
@@ -268,7 +268,7 @@ void R_DrawFuzzColumnFastVBE2(void)
     byte *dest;
     fixed_t frac, fracstep;
 
-    dest = destview + Mul320(dc_yl) + dc_x;
+    dest = destview + (320 * dc_yl) + dc_x;
 
     count = dc_yh - dc_yl;
 
@@ -304,7 +304,7 @@ void R_DrawFuzzColumnSaturnVBE2(void)
 
     initialdrawpos = dc_yl + dc_x;
 
-    dest = destview + Mul320(dc_yl) + dc_x;
+    dest = destview + (320 * dc_yl) + dc_x;
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
@@ -345,7 +345,7 @@ void R_DrawSpanFlatVBE2(void)
 
     lighttable_t color = ds_colormap[ds_source[FLATPIXELCOLOR]];
 
-    dest = destview + Mul320(ds_y) + ds_x1;
+    dest = destview + (320 * ds_y) + ds_x1;
 
     countp = ds_x2 - ds_x1 + 1;
 
@@ -373,7 +373,7 @@ void R_DrawColumnText4050(void)
     unsigned short vmem;
 
     odd = dc_yl % 2;
-    dest = textdestscreen + Mul40(dc_yl / 2) + dc_x;
+    dest = textdestscreen + (40 * dc_yl / 2) + dc_x;
     count = dc_yh - dc_yl;
 
     fracstep = dc_iscale;
@@ -440,7 +440,7 @@ void R_DrawSpanText4050(void)
     byte even;
     unsigned short vmem_filter;
 
-    dest = textdestscreen + Mul40(ds_y / 2);
+    dest = textdestscreen + (40 * ds_y / 2);
     countp = dest + ds_x2;
     dest += ds_x1;
 
@@ -480,7 +480,7 @@ void R_DrawSkyFlatText4050(void)
     unsigned short vmem;
 
     odd = dc_yl % 2;
-    dest = textdestscreen + Mul40(dc_yl / 2) + dc_x;
+    dest = textdestscreen + (40 * dc_yl / 2) + dc_x;
     count = dc_yh - dc_yl;
 
     if (count >= 1 && odd || count == 0)
@@ -531,7 +531,7 @@ void R_DrawFuzzColumnFastText4050(void)
     unsigned short local_color;
 
     odd = dc_yl % 2;
-    dest = textdestscreen + Mul40(dc_yl / 2) + dc_x;
+    dest = textdestscreen + (40 * dc_yl / 2) + dc_x;
     count = dc_yh - dc_yl;
 
     do
@@ -583,7 +583,7 @@ void R_DrawFuzzColumnSaturnText4050(void)
 
     initialdrawpos = dc_yl + dc_x;
     odd = dc_yl % 2;
-    dest = textdestscreen + Mul40(dc_yl / 2) + dc_x;
+    dest = textdestscreen + (40 * dc_yl / 2) + dc_x;
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
@@ -675,8 +675,8 @@ void R_DrawColumnText4025(void)
     int count;
     unsigned short *dest;
 
-    dest = textdestscreen + Mul40(dc_yl) + dc_x;
-    count = dest + Mul40(dc_yh - dc_yl);
+    dest = textdestscreen + (40 * dc_yl) + dc_x;
+    count = dest + (40 * dc_yh - dc_yl);
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
@@ -697,7 +697,7 @@ void R_DrawSpanText4025(void)
     byte *source;
     byte *colormap;
 
-    dest = textdestscreen + Mul40(ds_y);
+    dest = textdestscreen + (40 * ds_y);
     countp = dest + ds_x2;
     dest += ds_x1;
 
@@ -726,8 +726,8 @@ void R_DrawSkyFlatText4025(void)
     int count;
     unsigned short *dest;
 
-    dest = textdestscreen + Mul40(dc_yl) + dc_x;
-    count = dest + Mul40(dc_yh - dc_yl);
+    dest = textdestscreen + (40 * dc_yl) + dc_x;
+    count = dest + (40 * dc_yh - dc_yl);
 
     do
     {
@@ -741,8 +741,8 @@ void R_DrawFuzzColumnFastText4025(void)
     unsigned short *dest;
     unsigned short vmem;
 
-    dest = textdestscreen + Mul40(dc_yl) + dc_x;
-    count = dest + Mul40(dc_yh - dc_yl);
+    dest = textdestscreen + (40 * dc_yl) + dc_x;
+    count = dest + (40 * dc_yh - dc_yl);
 
     do
     {
@@ -772,7 +772,7 @@ void R_DrawFuzzColumnSaturnText4025(void)
 
     initialdrawpos = dc_yl + dc_x;
 
-    dest = textdestscreen + Mul40(dc_yl) + dc_x;
+    dest = textdestscreen + (40 * dc_yl) + dc_x;
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
@@ -819,7 +819,7 @@ void R_DrawColumnText8025(void)
     unsigned short vmem;
 
     odd = dc_yl % 2;
-    dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
+    dest = textdestscreen + (80 * dc_yl / 2) + dc_x;
     count = dc_yh - dc_yl;
 
     fracstep = dc_iscale;
@@ -887,7 +887,7 @@ void R_DrawColumnText80100(void)
     unsigned short vmem;
 
     odd = dc_yl % 2;
-    dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
+    dest = textdestscreen + (80 * dc_yl / 2) + dc_x;
     count = dc_yh - dc_yl;
 
     fracstep = dc_iscale;
@@ -957,7 +957,7 @@ void R_DrawSpanText8025(void)
     byte even;
     unsigned short vmem_filter;
 
-    dest = textdestscreen + Mul80(ds_y / 2);
+    dest = textdestscreen + (80 * ds_y / 2);
     countp = dest + ds_x2;
     dest += ds_x1;
 
@@ -1004,7 +1004,7 @@ void R_DrawSpanText80100(void)
     byte even;
     unsigned short vmem_filter;
 
-    dest = textdestscreen + Mul80(ds_y / 2);
+    dest = textdestscreen + (80 * ds_y / 2);
     countp = dest + ds_x2;
     dest += ds_x1;
 
@@ -1045,8 +1045,8 @@ void R_DrawColumnText8050(void)
     int count;
     unsigned short *dest;
 
-    dest = textdestscreen + Mul80(dc_yl) + dc_x;
-    count = dest + Mul80(dc_yh - dc_yl);
+    dest = textdestscreen + (80 * dc_yl) + dc_x;
+    count = dest + (80 * dc_yh - dc_yl);
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
@@ -1070,7 +1070,7 @@ void R_DrawSkyFlatText80100(void)
     unsigned short vmem;
 
     odd = dc_yl % 2;
-    dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
+    dest = textdestscreen + (80 * dc_yl / 2) + dc_x;
     count = dc_yh - dc_yl;
 
     if (count >= 1 && odd || count == 0)
@@ -1120,8 +1120,8 @@ void R_DrawSkyFlatText8050(void)
     int count;
     unsigned short *dest;
 
-    dest = textdestscreen + Mul80(dc_yl) + dc_x;
-    count = dest + Mul80(dc_yh - dc_yl);
+    dest = textdestscreen + (80 * dc_yl) + dc_x;
+    count = dest + (80 * dc_yh - dc_yl);
 
     do
     {
@@ -1141,7 +1141,7 @@ void R_DrawSkyFlatText8025(void)
     unsigned short vmem;
 
     odd = dc_yl % 2;
-    dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
+    dest = textdestscreen + (80 * dc_yl / 2) + dc_x;
     count = dc_yh - dc_yl;
 
     if (count >= 1 && odd || count == 0)
@@ -1203,7 +1203,7 @@ void R_DrawFuzzColumnSaturnText8025(void)
 
     initialdrawpos = dc_yl + dc_x;
     odd = dc_yl % 2;
-    dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
+    dest = textdestscreen + (80 * dc_yl / 2) + dc_x;
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
@@ -1305,7 +1305,7 @@ void R_DrawFuzzColumnSaturnText80100(void)
 
     initialdrawpos = dc_yl + dc_x;
     odd = dc_yl % 2;
-    dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
+    dest = textdestscreen + (80 * dc_yl / 2) + dc_x;
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
@@ -1405,7 +1405,7 @@ void R_DrawFuzzColumnSaturnText8050(void)
 
     initialdrawpos = dc_yl + dc_x;
 
-    dest = textdestscreen + Mul80(dc_yl) + dc_x;
+    dest = textdestscreen + (80 * dc_yl) + dc_x;
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
@@ -1450,7 +1450,7 @@ void R_DrawFuzzColumnFastText8025(void)
     unsigned short local_color;
 
     odd = dc_yl % 2;
-    dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
+    dest = textdestscreen + (80 * dc_yl / 2) + dc_x;
     count = dc_yh - dc_yl;
 
     do
@@ -1497,7 +1497,7 @@ void R_DrawFuzzColumnFastText80100(void)
     unsigned short local_color;
 
     odd = dc_yl % 2;
-    dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
+    dest = textdestscreen + (80 * dc_yl / 2) + dc_x;
     count = dc_yh - dc_yl;
 
     do
@@ -1541,8 +1541,8 @@ void R_DrawFuzzColumnFastText8050(void)
     unsigned short *dest;
     unsigned short vmem;
 
-    dest = textdestscreen + Mul80(dc_yl) + dc_x;
-    count = dest + Mul80(dc_yh - dc_yl);
+    dest = textdestscreen + (80 * dc_yl) + dc_x;
+    count = dest + (80 * dc_yh - dc_yl);
 
     do
     {
@@ -1569,7 +1569,7 @@ void R_DrawSpanText8050(void)
     byte *source;
     byte *colormap;
 
-    dest = textdestscreen + Mul80(ds_y);
+    dest = textdestscreen + (80 * ds_y);
     countp = dest + ds_x2;
     dest += ds_x1;
 
@@ -1613,7 +1613,7 @@ void R_DrawSpanPotato(void)
     source = ds_source;
     colormap = ds_colormap;
 
-    dest = destview + Mul80(ds_y);
+    dest = destview + (80 * ds_y);
     count = dest + ds_x2;
     dest += ds_x1;
 
@@ -1678,7 +1678,7 @@ void R_DrawFuzzColumn(void)
     outpw(GC_INDEX, GC_READMAP + ((dc_x & 3) << 8));
     outp(SC_INDEX + 1, 1 << (dc_x & 3));
 
-    dest = destview + Mul80(dc_yl) + (dc_x >> 2);
+    dest = destview + (80 * dc_yl) + (dc_x >> 2);
 
     do
     {
@@ -1710,7 +1710,7 @@ void R_DrawFuzzColumnLow(void)
     outpw(GC_INDEX, GC_READMAP + ((dc_x & 1) << 9));
     outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
 
-    dest = destview + Mul80(dc_yl) + (dc_x >> 1);
+    dest = destview + (80 * dc_yl) + (dc_x >> 1);
 
     do
     {
@@ -1739,7 +1739,7 @@ void R_DrawFuzzColumnPotato(void)
     if (count < 0)
         return;
 
-    dest = destview + Mul80(dc_yl) + dc_x;
+    dest = destview + (80 * dc_yl) + dc_x;
 
     do
     {
@@ -1760,7 +1760,7 @@ void R_DrawFuzzColumnFast(void)
     outpw(GC_INDEX, GC_READMAP + ((dc_x & 3) << 8));
     outp(SC_INDEX + 1, 1 << (dc_x & 3));
 
-    dest = destview + Mul80(dc_yl) + (dc_x >> 2);
+    dest = destview + (80 * dc_yl) + (dc_x >> 2);
 
     count = dc_yh - dc_yl;
 
@@ -1792,7 +1792,7 @@ void R_DrawFuzzColumnFastLow(void)
     outpw(GC_INDEX, GC_READMAP + ((dc_x & 1) << 9));
     outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
 
-    dest = destview + Mul80(dc_yl) + (dc_x >> 1);
+    dest = destview + (80 * dc_yl) + (dc_x >> 1);
 
     count = dc_yh - dc_yl;
 
@@ -1821,7 +1821,7 @@ void R_DrawFuzzColumnFastPotato(void)
     register int count;
     register byte *dest;
 
-    dest = destview + Mul80(dc_yl) + dc_x;
+    dest = destview + (80 * dc_yl) + dc_x;
 
     count = dc_yh - dc_yl;
 
@@ -1860,7 +1860,7 @@ void R_DrawFuzzColumnVBE2(void)
     if (count < 0)
         return;
 
-    dest = destview + Mul320(dc_yl) + dc_x;
+    dest = destview + (320 * dc_yl) + dc_x;
 
     do
     {
@@ -1882,7 +1882,7 @@ void R_DrawFuzzColumnText4050(void)
     unsigned short local_color;
 
     odd = dc_yl % 2;
-    dest = textdestscreen + Mul40(dc_yl / 2) + dc_x;
+    dest = textdestscreen + (40 * dc_yl / 2) + dc_x;
     count = dc_yh - dc_yl;
 
     do
@@ -1952,8 +1952,8 @@ void R_DrawFuzzColumnText4025(void)
     unsigned short *dest;
     unsigned short vmem;
 
-    dest = textdestscreen + Mul40(dc_yl) + dc_x;
-    count = dest + Mul40(dc_yh - dc_yl);
+    dest = textdestscreen + (40 * dc_yl) + dc_x;
+    count = dest + (40 * dc_yh - dc_yl);
 
     do
     {
@@ -1990,7 +1990,7 @@ void R_DrawFuzzColumnText8025(void)
     unsigned short local_color;
 
     odd = dc_yl % 2;
-    dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
+    dest = textdestscreen + (80 * dc_yl / 2) + dc_x;
     count = dc_yh - dc_yl;
 
     do
@@ -2063,7 +2063,7 @@ void R_DrawFuzzColumnText80100(void)
     unsigned short local_color;
 
     odd = dc_yl % 2;
-    dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
+    dest = textdestscreen + (80 * dc_yl / 2) + dc_x;
     count = dc_yh - dc_yl;
 
     do
@@ -2133,8 +2133,8 @@ void R_DrawFuzzColumnText8050(void)
     unsigned short *dest;
     unsigned short vmem;
 
-    dest = textdestscreen + Mul80(dc_yl) + dc_x;
-    count = dest + Mul80(dc_yh - dc_yl);
+    dest = textdestscreen + (80 * dc_yl) + dc_x;
+    count = dest + (80 * dc_yh - dc_yl);
 
     do
     {
@@ -2179,7 +2179,7 @@ void R_DrawFuzzColumnSaturn(void)
 
     initialdrawpos = dc_yl + dc_x;
 
-    dest = destview + Mul80(dc_yl) + (dc_x >> 2);
+    dest = destview + (80 * dc_yl) + (dc_x >> 2);
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
@@ -2231,7 +2231,7 @@ void R_DrawFuzzColumnSaturnLow(void)
 
     initialdrawpos = dc_yl + dc_x;
 
-    dest = destview + Mul80(dc_yl) + (dc_x >> 1);
+    dest = destview + (80 * dc_yl) + (dc_x >> 1);
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
@@ -2283,7 +2283,7 @@ void R_DrawFuzzColumnSaturnPotato(void)
 
     initialdrawpos = dc_yl + dc_x;
 
-    dest = destview + Mul80(dc_yl) + dc_x;
+    dest = destview + (80 * dc_yl) + dc_x;
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
@@ -2362,7 +2362,7 @@ void R_DrawSpanFlat(void)
     total_pixels = ds_x2 - ds_x1;
 
     color = ds_colormap[ds_source[FLATPIXELCOLOR]];
-    origin_y = (int)destview + Mul80(ds_y);
+    origin_y = (int)destview + (80 * ds_y);
 
     first_plane = ds_x1 & 3;
     last_plane = (ds_x2 + 1) & 3;
@@ -2498,7 +2498,7 @@ void R_DrawSpanFlatLow(void)
     total_pixels = ds_x2 - ds_x1;
 
     color = ds_colormap[ds_source[FLATPIXELCOLOR]];
-    origin_y = (int)destview + Mul80(ds_y);
+    origin_y = (int)destview + (80 * ds_y);
 
     first_plane = ds_x1 & 1;
     last_plane = (ds_x2 + 1) & 1;
@@ -2582,7 +2582,7 @@ void R_DrawSpanFlatPotato(void)
 
     lighttable_t color = ds_colormap[ds_source[FLATPIXELCOLOR]];
 
-    dest = destview + Mul80(ds_y) + ds_x1;
+    dest = destview + (80 * ds_y) + ds_x1;
 
     countp = ds_x2 - ds_x1 + 1;
 
@@ -2610,7 +2610,7 @@ void R_DrawSpanFlatText80100(void)
     unsigned short vmem_filter;
     unsigned short color;
 
-    dest = textdestscreen + Mul80(ds_y / 2);
+    dest = textdestscreen + (80 * ds_y / 2);
     countp = dest + ds_x2;
     dest += ds_x1;
 
@@ -2639,7 +2639,7 @@ void R_DrawSpanFlatText8050(void)
 
     unsigned short color = ds_colormap[ds_source[FLATPIXELCOLOR]] << 8 | 219;
 
-    dest = textdestscreen + Mul80(ds_y) + ds_x1;
+    dest = textdestscreen + (80 * ds_y) + ds_x1;
 
     countp = ds_x2 - ds_x1 + 1;
 
@@ -2659,7 +2659,7 @@ void R_DrawSpanFlatText4050(void)
     unsigned short vmem_filter;
     unsigned short color;
 
-    dest = textdestscreen + Mul40(ds_y / 2);
+    dest = textdestscreen + (40 * ds_y / 2);
     countp = dest + ds_x2;
     dest += ds_x1;
 
@@ -2688,7 +2688,7 @@ void R_DrawSpanFlatText4025(void)
 
     unsigned short color = ds_colormap[ds_source[FLATPIXELCOLOR]] << 8 | 219;
 
-    dest = textdestscreen + Mul40(ds_y) + ds_x1;
+    dest = textdestscreen + (40 * ds_y) + ds_x1;
 
     countp = ds_x2 - ds_x1 + 1;
 
@@ -2708,7 +2708,7 @@ void R_DrawSpanFlatText8025(void)
     unsigned short vmem_filter;
     unsigned short color;
 
-    dest = textdestscreen + Mul80(ds_y / 2);
+    dest = textdestscreen + (80 * ds_y / 2);
     countp = dest + ds_x2;
     dest += ds_x1;
 
@@ -2762,7 +2762,7 @@ void R_InitBuffer(int width, int height)
 
 #if defined(USE_BACKBUFFER)
     for (i = 0; i < height; i++)
-        ylookup[i] = backbuffer + Mul320(i + viewwindowy);
+        ylookup[i] = backbuffer + (320 * i + viewwindowy);
 #endif
 }
 
@@ -2997,14 +2997,14 @@ void R_DrawViewBorder(void)
     side = (SCREENWIDTH - scaledviewwidth) / 2;
 
     // copy top and one line of left side
-    R_VideoErase(0, Mul320(top) + side);
+    R_VideoErase(0, (320 * top) + side);
 
     // copy one line of right side and bottom
-    ofs = Mul320(viewheight + top) - side;
-    R_VideoErase(ofs, Mul320(top) + side);
+    ofs = (320 * viewheight + top) - side;
+    R_VideoErase(ofs, (320 * top) + side);
 
     // copy sides using wraparound
-    ofs = Mul320(top) + SCREENWIDTH - side;
+    ofs = (320 * top) + SCREENWIDTH - side;
     side <<= 1;
 
     for (i = 1; i < viewheight; i++)

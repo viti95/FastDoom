@@ -1009,7 +1009,7 @@ void I_SetPalette(int numpalette)
 
 #if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V) || defined(MODE_V2)
     {
-        int pos = Mul768(numpalette);
+        int pos = (768 * numpalette);
 
         _outbyte(PEL_WRITE_ADR, 0);
 
@@ -1046,8 +1046,8 @@ void I_UpdateBox(int x, int y, int w, int h)
     byte *source;
     int i;
 
-    dest = destscreen + Mul320(y) + x;
-    source = screen0 + Mul320(y) + x;
+    dest = destscreen + (320 * y) + x;
+    source = screen0 + (320 * y) + x;
 
     for (i = y; i < y + h; i++)
     {
@@ -1075,7 +1075,7 @@ void I_UpdateBox(int x, int y, int w, int h)
     sp_x2 = (x + w) / 8;
     count = sp_x2 - sp_x1 + 1;
     step = SCREENWIDTH - count * 8;
-    offset = Mul320(y) + sp_x1 * 8;
+    offset = (320 * y) + sp_x1 * 8;
     poffset = offset / 4;
     pstep = step / 4;
 
@@ -1877,7 +1877,7 @@ void I_FinishUpdate(void)
 #ifndef MODE_HERC
     if (waitVsync)
     {
-        I_WaitSingleVBL();
+        //I_WaitSingleVBL();
     }
 #endif
 
@@ -1967,7 +1967,7 @@ void I_FinishUpdate(void)
         if (updatestate & I_MESSAGES && screenblocks > 7)
         {
             int i;
-            for (i = 0; i < Mul320(viewwindowy + viewheight); i += SCREENWIDTH)
+            for (i = 0; i < (320 * viewwindowy + viewheight); i += SCREENWIDTH)
             {
                 CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
             }
@@ -1976,7 +1976,7 @@ void I_FinishUpdate(void)
         else
         {
             int i;
-            for (i = Mul320(viewwindowy) + viewwindowx; i < Mul320(viewwindowy + viewheight); i += SCREENWIDTH)
+            for (i = (320 * viewwindowy) + viewwindowx; i < (320 * viewwindowy + viewheight); i += SCREENWIDTH)
             {
                 CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
             }
@@ -2155,7 +2155,7 @@ void I_FinishUpdate(void)
         {
             // in case of a very fast system, this will limit the sampling
             // minus 1!, exactly 35 FPS when measeraring for a longer time.
-            opt1 = Mul35(fps_counter - 1) << FRACBITS;
+            opt1 = (35 * fps_counter - 1) << FRACBITS;
             opt2 = (ticcount - fps_starttime) << FRACBITS;
             fps = (opt1 >> 14 >= opt2) ? ((opt1 ^ opt2) >> 31) ^ MAXINT : FixedDiv2(opt1, opt2);
             fps_nextcalculation = ticcount + 12;
@@ -2183,7 +2183,7 @@ void I_InitGraphics(void)
     // CGA Disable blink
     if (CGAcard)
     {
-        I_DisableCGABlink();
+        //I_DisableCGABlink();
     }
     else
     {
@@ -2212,7 +2212,7 @@ void I_InitGraphics(void)
     // CGA Disable blink
     if (CGAcard)
     {
-        I_DisableCGABlink();
+        //I_DisableCGABlink();
     }
     else
     {
@@ -2816,13 +2816,13 @@ void I_TimerISR(task *task)
 // Keyboard
 //
 
-void(__interrupt __far *oldkeyboardisr)() = NULL;
+void(*oldkeyboardisr)() = NULL;
 
 //
 // I_KeyboardISR
 //
 
-void __interrupt I_KeyboardISR(void)
+void I_KeyboardISR(void)
 {
     // Get the scan code
 
@@ -2839,14 +2839,14 @@ void __interrupt I_KeyboardISR(void)
 //
 void I_StartupKeyboard(void)
 {
-    oldkeyboardisr = _dos_getvect(KEYBOARDINT);
-    _dos_setvect(0x8000 | KEYBOARDINT, I_KeyboardISR);
+    //oldkeyboardisr = _dos_getvect(KEYBOARDINT);
+    //_dos_setvect(0x8000 | KEYBOARDINT, I_KeyboardISR);
 }
 
 void I_ShutdownKeyboard(void)
 {
-    if (oldkeyboardisr)
-        _dos_setvect(KEYBOARDINT, oldkeyboardisr);
+    //if (oldkeyboardisr)
+    //    _dos_setvect(KEYBOARDINT, oldkeyboardisr);
     *(short *)0x41c = *(short *)0x41a; // clear bios key buffer
 }
 
@@ -2953,7 +2953,7 @@ void I_StartupDPMI(void)
     // lock the entire program down
     //
 
-    DPMI_LockMemory(&__begtext, &___Argc - &__begtext);
+    //DPMI_LockMemory(&__begtext, &___Argc - &__begtext);
 }
 
 //
@@ -3044,10 +3044,10 @@ byte *I_ZoneBase(int *size)
     byte *ptr;
 
     SetDWords(meminfo, 0, sizeof(meminfo) / 4);
-    segread(&segregs);
+    //segread(&segregs);
     segregs.es = segregs.ds;
     regs.w.ax = 0x500; // get memory info
-    regs.x.edi = (int)&meminfo;
+    regs.x.di = (int)&meminfo;
     int386x(0x31, &regs, &regs, &segregs);
 
     heap = meminfo[0];
@@ -3077,14 +3077,14 @@ byte *I_AllocLow(int length)
     byte *mem;
 
     // DPMI call 100h allocates DOS memory
-    segread(&segregs);
+    //segread(&segregs);
     regs.w.ax = 0x0100; // DPMI allocate DOS memory
     regs.w.bx = (length + 15) / 16;
     int386(DPMI_INT, &regs, &regs);
     //segment = regs.w.ax;
     //selector = regs.w.dx;
 
-    mem = (void *)((regs.x.eax & 0xFFFF) << 4);
+    mem = (void *)((regs.x.ax & 0xFFFF) << 4);
 
     memset(mem, 0, length);
     return mem;
@@ -3098,11 +3098,11 @@ void DPMIInt(int i)
     dpmiregs.ss = realstackseg;
     dpmiregs.sp = REALSTACKSIZE - 4;
 
-    segread(&segregs);
+    //segread(&segregs);
     regs.w.ax = 0x300;
     regs.w.bx = i;
     regs.w.cx = 0;
-    regs.x.edi = (unsigned)&dpmiregs;
+    regs.x.di = (unsigned)&dpmiregs;
     segregs.es = segregs.ds;
     int386x(DPMI_INT, &regs, &regs, &segregs);
 }

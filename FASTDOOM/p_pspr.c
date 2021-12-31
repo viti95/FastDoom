@@ -461,7 +461,7 @@ void A_Punch(player_t *player,
     damage = P_Random_Mul2_Mod10_Plus1;
 
     if (player->powers[pw_strength])
-        damage = Mul10(damage);
+        damage = (10 * damage);
 
     angle = player->mo->angle;
     angle += (P_Random - P_Random) << 18;

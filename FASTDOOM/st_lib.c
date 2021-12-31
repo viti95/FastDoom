@@ -150,13 +150,13 @@ void STlib_drawNum(st_number_t *n, byte refresh)
     {
         int original = num;
 
-        num = Div10(num);
+        num = (num) / 10;
         x -= w;
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-        V_DrawPatchScreen0(x, n->y, n->p[original - Mul10(num)]);
+        V_DrawPatchScreen0(x, n->y, n->p[original - (10 * num)]);
 #endif
 #if defined(USE_BACKBUFFER)
-        V_DrawPatchDirect(x, n->y, n->p[original - Mul10(num)]);
+        V_DrawPatchDirect(x, n->y, n->p[original - (10 * num)]);
 #endif
     } while (num);
 }
@@ -195,9 +195,9 @@ void STlib_drawNum_Direct(st_number_t *n)
     {
         int original = num;
 
-        num = Div10(num);
+        num = (num) / 10;
         x -= w;
-        V_DrawPatchDirect(x, n->y, n->p[original - Mul10(num)]);
+        V_DrawPatchDirect(x, n->y, n->p[original - (10 * num)]);
     } while (num);
 }
 #endif

@@ -94,8 +94,8 @@ static void RMIRQ(char irq)
   memset(&regs, 0, sizeof(regs));
   regs.w.ax = 0x0300; // Simulate Real-Mode interrupt
   regs.h.bl = irq;
-  sregs.es = FP_SEG(&RMI);
-  regs.x.edi = FP_OFF(&RMI);
+  //sregs.es = FP_SEG(&RMI);
+  //regs.x.di = FP_OFF(&RMI);
   int386x(0x31, &regs, &regs, &sregs);
 }
 
@@ -153,7 +153,7 @@ void VBE_Mode_Information(short Mode, struct VBE_ModeInfoBlock *a)
   RMI.EAX = 0x00004f01; // Get SVGA-Mode Information
   RMI.ECX = Mode;
   RMI.ES = VbeModePool.segment; // Segment of realmode data
-  RMI.EDI = 0;                  // offset of realmode data
+  RMI.di = 0;                  // offset of realmode data
   RMIRQ(0x10);
   memcpy(a, VBE_ModeInfo_Pointer, sizeof(struct VBE_ModeInfoBlock));
 }
@@ -264,11 +264,11 @@ char *VBE_GetVideoPtr(short mode)
   /* Unmap the last physical mapping (if there is one...) */
   if (LastPhysicalMapping)
   {
-    DPMI_UNMAP_PHYSICAL(LastPhysicalMapping);
+    //DPMI_UNMAP_PHYSICAL(LastPhysicalMapping);
     LastPhysicalMapping = NULL;
   }
-  LastPhysicalMapping = DPMI_MAP_PHYSICAL((void *)ModeInfo.PhysBasePtr,
-                                          (long)(VBE_Controller_Info_Pointer->TotalMemory) * 64 * 1024);
+  //LastPhysicalMapping = DPMI_MAP_PHYSICAL((void *)ModeInfo.PhysBasePtr,
+  //                                        (long)(VBE_Controller_Info_Pointer->TotalMemory) * 64 * 1024);
   return (char *)LastPhysicalMapping;
 }
 
@@ -298,8 +298,8 @@ void VBE_Init(void)
 
   /* Allocate the Dos Memory for Mode and Controller Information Blocks */
   /* and translate their pointers into flat memory space                */
-  DPMI_AllocDOSMem(512 / 16, &VbeInfoPool);
-  DPMI_AllocDOSMem(256 / 16, &VbeModePool);
+  //DPMI_AllocDOSMem(512 / 16, &VbeInfoPool);
+  //DPMI_AllocDOSMem(256 / 16, &VbeModePool);
   VBE_ModeInfo_Pointer = (struct VBE_ModeInfoBlock *)(VbeModePool.segment * 16);
   VBE_Controller_Info_Pointer = (struct VBE_VbeInfoBlock *)(VbeInfoPool.segment * 16);
 
@@ -310,7 +310,7 @@ void VBE_Init(void)
   PrepareRegisters();
   RMI.EAX = 0x00004f00;         // Get SVGA-Information
   RMI.ES = VbeInfoPool.segment; // Segment of realmode data
-  RMI.EDI = 0;                  // offset of realmode data
+  RMI.di = 0;                  // offset of realmode data
   RMIRQ(0x10);
   // Translate the Realmode Pointers into flat-memory address space
   VBE_Controller_Info_Pointer->OemStringPtr = (char *)((((unsigned long)VBE_Controller_Info_Pointer->OemStringPtr >> 16) << 4) + (unsigned short)VBE_Controller_Info_Pointer->OemStringPtr);
@@ -324,8 +324,8 @@ void VBE_Done(void)
 {
   if (LastPhysicalMapping)
   {
-    DPMI_UNMAP_PHYSICAL(LastPhysicalMapping);
+    //DPMI_UNMAP_PHYSICAL(LastPhysicalMapping);
   }
-  DPMI_FreeDOSMem(&VbeModePool);
-  DPMI_FreeDOSMem(&VbeInfoPool);
+  //DPMI_FreeDOSMem(&VbeModePool);
+  //DPMI_FreeDOSMem(&VbeInfoPool);
 }

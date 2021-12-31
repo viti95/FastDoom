@@ -183,7 +183,7 @@ byte P_NotGiveArmor(player_t *player, int armortype)
 {
 	int hits;
 
-	hits = Mul100(armortype);
+	hits = (100 * armortype);
 	if (player->armorpoints >= hits)
 		return 1; // don't pick up
 
@@ -668,7 +668,7 @@ void P_DamageMobj(mobj_t *target,
 							  target->y);
 
 		// VITI95: OPTIMIZE
-		thrust = Mul819200(damage) / target->info->mass;
+		thrust = (819200 * damage) / target->info->mass;
 
 		// make fall forwards sometimes
 		if (damage < 40 && damage > target->health && target->z - inflictor->z > 64 * FRACUNIT && (P_Random & 1))
@@ -701,7 +701,7 @@ void P_DamageMobj(mobj_t *target,
 		if (player->armortype)
 		{
 			if (player->armortype == 1)
-				saved = Div3(damage);
+				saved = damage / 3;
 			else
 				saved = damage / 2;
 

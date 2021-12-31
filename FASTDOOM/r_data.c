@@ -32,7 +32,7 @@
 #include "doomstat.h"
 #include "r_sky.h"
 
-#include <alloca.h>
+#include <stdlib.h>
 
 #include "r_data.h"
 

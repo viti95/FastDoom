@@ -769,11 +769,11 @@ void AM_drawFline(fline_t *fl,
 	register int d;
 
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-#define PUTDOT(xx, yy, cc) screen0[Mul320(yy) + (xx)] = (cc)
+#define PUTDOT(xx, yy, cc) screen0[(320 * yy) + (xx)] = (cc)
 #endif
 
 #if defined(USE_BACKBUFFER)
-#define PUTDOT(xx, yy, cc) backbuffer[Mul320(yy) + (xx)] = (cc)
+#define PUTDOT(xx, yy, cc) backbuffer[(320 * yy) + (xx)] = (cc)
 #endif
 
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
@@ -1048,10 +1048,10 @@ void AM_Drawer(void)
 #endif
 
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-	SetDWords(screen0, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
+	SetDWords(screen0, BACKGROUND, (80 * automapheight)); // Clear automap frame buffer
 #endif
 #if defined(USE_BACKBUFFER)
-	SetDWords(backbuffer, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
+	SetDWords(backbuffer, BACKGROUND, (80 * automapheight)); // Clear automap frame buffer
 #endif
 
 	if (grid)

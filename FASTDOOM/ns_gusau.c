@@ -10,6 +10,7 @@
 #include "ns_gf1.h"
 #include "ns_gusmi.h"
 #include "ns_gusau.h"
+#include "std_func.h"
 
 static const int GUSWAVE_PanTable[32] =
     {
@@ -152,7 +153,7 @@ unsigned short GUS_Silence16[512] =
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-static int LOADDS GUSWAVE_CallBack(
+static int GUSWAVE_CallBack(
     int reason,
     int voice,
     unsigned char **buf,
@@ -249,7 +250,7 @@ static VoiceNode *GUSWAVE_GetVoice(
     VoiceNode *voice;
     unsigned flags;
 
-    flags = DisableInterrupts();
+    //flags = DisableInterrupts();
 
     voice = VoiceList.start;
 
@@ -263,7 +264,7 @@ static VoiceNode *GUSWAVE_GetVoice(
         voice = voice->next;
     }
 
-    RestoreInterrupts(flags);
+    //RestoreInterrupts(flags);
 
     return (voice);
 }
@@ -304,7 +305,7 @@ int GUSWAVE_VoicesPlaying(
     int NumVoices = 0;
     unsigned flags;
 
-    flags = DisableInterrupts();
+    //flags = DisableInterrupts();
 
     for (index = 0; index < GUSWAVE_MaxVoices; index++)
     {
@@ -314,7 +315,7 @@ int GUSWAVE_VoicesPlaying(
         }
     }
 
-    RestoreInterrupts(flags);
+    //RestoreInterrupts(flags);
 
     return (NumVoices);
 }
@@ -332,22 +333,22 @@ int GUSWAVE_Kill(
     VoiceNode *voice;
     unsigned flags;
 
-    flags = DisableInterrupts();
+    //flags = DisableInterrupts();
 
     voice = GUSWAVE_GetVoice(handle);
 
     if (voice == NULL)
     {
-        RestoreInterrupts(flags);
+        //RestoreInterrupts(flags);
 
         return (GUSWAVE_Warning);
     }
 
-    RestoreInterrupts(flags);
+    //RestoreInterrupts(flags);
 
     if (voice->Active)
     {
-        gf1_stop_digital(voice->GF1voice);
+        //gf1_stop_digital(voice->GF1voice);
     }
 
     //   RestoreInterrupts( flags );
@@ -373,7 +374,7 @@ int GUSWAVE_KillAllVoices(
         return (GUSWAVE_Ok);
     }
 
-    flags = DisableInterrupts();
+    //flags = DisableInterrupts();
 
     // Remove all the voices from the list
     for (i = 0; i < GUSWAVE_MaxVoices; i++)
@@ -382,7 +383,7 @@ int GUSWAVE_KillAllVoices(
         {
             //         GUSWAVE_Kill( GUSWAVE_Voices[ i ].handle );
 
-            gf1_stop_digital(GUSWAVE_Voices[i].GF1voice);
+            //gf1_stop_digital(GUSWAVE_Voices[i].GF1voice);
         }
     }
 
@@ -406,7 +407,7 @@ int GUSWAVE_KillAllVoices(
         }
     }
 
-    RestoreInterrupts(flags);
+    //RestoreInterrupts(flags);
 
     return (GUSWAVE_Ok);
 }
@@ -431,8 +432,7 @@ void GUSWAVE_SetVolume(
     {
         if (GUSWAVE_Voices[i].Active)
         {
-            gf1_dig_set_vol(GUSWAVE_Voices[i].GF1voice,
-                            GUSWAVE_Volume - (255 - GUSWAVE_Voices[i].Volume) * 4);
+            //gf1_dig_set_vol(GUSWAVE_Voices[i].GF1voice, GUSWAVE_Volume - (255 - GUSWAVE_Voices[i].Volume) * 4);
         }
     }
 }
@@ -443,9 +443,7 @@ void GUSWAVE_SetVolume(
    Retrieve an inactive or lower priority voice for output.
 ---------------------------------------------------------------------*/
 
-static VoiceNode *GUSWAVE_AllocVoice(
-    int priority)
-
+static VoiceNode *GUSWAVE_AllocVoice(int priority)
 {
     VoiceNode *voice;
     VoiceNode *node;
@@ -455,7 +453,7 @@ static VoiceNode *GUSWAVE_AllocVoice(
     // priority than one that is playing.
     if (GUSWAVE_VoicesPlaying() >= GUSWAVE_MaxVoices)
     {
-        flags = DisableInterrupts();
+        //flags = DisableInterrupts();
 
         node = VoiceList.start;
         voice = node;
@@ -469,7 +467,7 @@ static VoiceNode *GUSWAVE_AllocVoice(
             node = node->next;
         }
 
-        RestoreInterrupts(flags);
+        //RestoreInterrupts(flags);
 
         if (priority >= voice->priority)
         {
@@ -478,7 +476,7 @@ static VoiceNode *GUSWAVE_AllocVoice(
     }
 
     // Check if any voices are in the voice pool
-    flags = DisableInterrupts();
+    //flags = DisableInterrupts();
 
     voice = VoicePool.start;
     if (voice != NULL)
@@ -486,7 +484,7 @@ static VoiceNode *GUSWAVE_AllocVoice(
         LL_Remove(VoiceNode, &VoicePool, voice);
     }
 
-    RestoreInterrupts(flags);
+    //RestoreInterrupts(flags);
 
     if (voice != NULL)
     {
@@ -591,27 +589,27 @@ int GUSWAVE_Play(
 
     servicefunction = GUSWAVE_CallBack;
 
-    VoiceNumber = gf1_play_digital(0, voice->sound, voice->length,
-                                   voice->mem, GUSWAVE_Volume - (255 - volume) * 4, pan,
-                                   voice->RateScale, type, &GUS_HoldBuffer, servicefunction);
+    //VoiceNumber = gf1_play_digital(0, voice->sound, voice->length,
+    //                               voice->mem, GUSWAVE_Volume - (255 - volume) * 4, pan,
+    //                               voice->RateScale, type, &GUS_HoldBuffer, servicefunction);
 
     if (VoiceNumber == NO_MORE_VOICES)
     {
-        flags = DisableInterrupts();
+        //flags = DisableInterrupts();
         LL_AddToTail(VoiceNode, &VoicePool, voice);
-        RestoreInterrupts(flags);
+        //RestoreInterrupts(flags);
 
         return (GUSWAVE_Warning);
     }
 
-    flags = DisableInterrupts();
+    //flags = DisableInterrupts();
     voice->GF1voice = VoiceNumber;
     voice->Active = TRUE;
     LL_AddToTail(VoiceNode, &VoiceList, voice);
     VoiceStatus[VoiceNumber].playing = TRUE;
     VoiceStatus[VoiceNumber].Voice = voice;
 
-    RestoreInterrupts(flags);
+    //RestoreInterrupts(flags);
 
     return (voice->handle);
 }
@@ -717,7 +715,7 @@ static int GUSWAVE_InitVoices(
         GUSWAVE_Voices[i].Active = FALSE;
         GUSWAVE_Voices[i].GF1voice = 0;
 
-        GUSWAVE_Voices[i].mem = gf1_malloc(GF1BSIZE);
+        //GUSWAVE_Voices[i].mem = gf1_malloc(GF1BSIZE);
         if (GUSWAVE_Voices[i].mem == 0) // Compare to NULL
         {
             GUSWAVE_MaxVoices = i;

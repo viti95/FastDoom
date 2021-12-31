@@ -32,8 +32,6 @@
 
 #include <conio.h>
 
-
-
 #define GC_INDEX 0x3CE
 #define GC_READMAP 4
 
@@ -142,12 +140,12 @@ byte wipe_doMelt(int ticks)
                 dy = (y_val < 16) ? y_val + 1 : 8;
                 if (dy >= SCREENHEIGHT - y_val)
                     dy = SCREENHEIGHT - y_val;
-                s = &((short *)screen3)[Mul200(i) + y_val];
+                s = &((short *)screen3)[(200 * i) + y_val];
                 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-                d = &((short *)screen0)[Mul160(y_val) + i];
+                d = &((short *)screen0)[(160 * y_val) + i];
                 #endif
                 #if defined(USE_BACKBUFFER)
-                d = &((short *)backbuffer)[Mul160(y_val) + i];
+                d = &((short *)backbuffer)[(160 * y_val) + i];
                 #endif
                 for (j = dy; j; j--)
                 {
@@ -155,12 +153,12 @@ byte wipe_doMelt(int ticks)
                     idx += SCREENWIDTH / 2;
                 }
                 y_val += dy;
-                s = &((short *)screen2)[Mul200(i)];
+                s = &((short *)screen2)[(200 * i)];
                 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-                d = &((short *)screen0)[Mul160(y_val) + i];
+                d = &((short *)screen0)[(160 * y_val) + i];
                 #endif
                 #if defined(USE_BACKBUFFER)
-                d = &((short *)backbuffer)[Mul160(y_val) + i];
+                d = &((short *)backbuffer)[(160 * y_val) + i];
                 #endif
                 idx = 0;
                 for (j = SCREENHEIGHT - y_val; j; j--)

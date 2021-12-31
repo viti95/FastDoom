@@ -9,6 +9,7 @@
 #include "ns_irq.h"
 #include "ns_sb.h"
 #include "ns_sbdef.h"
+#include "std_func.h"
 
 const int BLASTER_Interrupts[BLASTER_MaxIrq + 1] =
     {
@@ -24,7 +25,7 @@ const int BLASTER_SampleSize[BLASTER_MaxMixMode + 1] =
 
 CARD_CAPABILITY BLASTER_Card;
 
-static void(__interrupt __far *BLASTER_OldInt)(void);
+static void(*BLASTER_OldInt)(void);
 
 BLASTER_CONFIG BLASTER_Config =
     {
@@ -165,16 +166,14 @@ void BLASTER_DisableInterrupt(
    transfer.  Calls the user supplied callback function.
 ---------------------------------------------------------------------*/
 
-void __interrupt __far BLASTER_ServiceInterrupt(
-    void)
-
+void BLASTER_ServiceInterrupt(void)
 {
 #ifdef USESTACK
     // save stack
-    GetStack(&oldStackSelector, &oldStackPointer);
+    //GetStack(&oldStackSelector, &oldStackPointer);
 
     // set our stack
-    SetStack(StackSelector, StackPointer);
+    //SetStack(StackSelector, StackPointer);
 #endif
 
     // Acknowledge interrupt
@@ -200,11 +199,11 @@ void __interrupt __far BLASTER_ServiceInterrupt(
         {
 #ifdef USESTACK
             // restore stack
-            SetStack(oldStackSelector, oldStackPointer);
+            //SetStack(oldStackSelector, oldStackPointer);
 #endif
 
             // Wasn't our interrupt.  Call the old one.
-            _chain_intr(BLASTER_OldInt);
+            //_chain_intr(BLASTER_OldInt);
         }
     }
     else
@@ -238,7 +237,7 @@ void __interrupt __far BLASTER_ServiceInterrupt(
 
 #ifdef USESTACK
     // restore stack
-    SetStack(oldStackSelector, oldStackPointer);
+    //SetStack(oldStackSelector, oldStackPointer);
 #endif
 
     // send EOI to Interrupt Controller
@@ -1576,10 +1575,10 @@ int BLASTER_Init(
         // Leave a little room at top of stack just for the hell of it...
         StackPointer = kStackSize - sizeof(long);
 
-        BLASTER_OldInt = _dos_getvect(Interrupt);
+        //BLASTER_OldInt = _dos_getvect(Interrupt);
         if (Irq < 8)
         {
-            _dos_setvect(Interrupt, BLASTER_ServiceInterrupt);
+            //_dos_setvect(Interrupt, BLASTER_ServiceInterrupt);
         }
         else
         {
@@ -1628,7 +1627,7 @@ void BLASTER_Shutdown(
     {
         IRQ_RestoreVector(Interrupt);
     }
-    _dos_setvect(Interrupt, BLASTER_OldInt);
+    //_dos_setvect(Interrupt, BLASTER_OldInt);
 
     BLASTER_SoundPlaying = FALSE;
 

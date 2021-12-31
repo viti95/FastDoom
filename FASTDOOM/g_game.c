@@ -416,7 +416,7 @@ void G_Responder(event_t *ev)
         mousebuttons[0] = ev->data1 & 1;
         mousebuttons[1] = ev->data1 & 2;
         mousebuttons[2] = ev->data1 & 4;
-        mousex = Div10(ev->data2 * (mouseSensitivity + 5));
+        mousex = (ev->data2 * (mouseSensitivity + 5)) / 10;
         return; // eat events
 
     default:
@@ -727,9 +727,9 @@ void G_DoCompleted(void)
     wminfo.maxitems = totalitems;
     wminfo.maxsecret = totalsecret;
     if (gamemode == commercial)
-        wminfo.partime = Mul35(cpars[gamemap - 1]);
+        wminfo.partime = (35 * cpars[gamemap - 1]);
     else
-        wminfo.partime = Mul35(pars[gameepisode][gamemap]);
+        wminfo.partime = (35 * pars[gameepisode][gamemap]);
 
     wminfo.plyr.in = true;
     wminfo.plyr.skills = players.killcount;
@@ -1237,12 +1237,12 @@ void G_CheckDemoStatus(void)
             FILE *logFile = fopen("bench.txt", "a");
             if (logFile)
             {
-                fprintf(logFile, "Timed %i gametics in %i realtics. FPS: %i.%03i\n", gametic, realtics, resultfps >> FRACBITS, Mul1000(resultfps & 65535) >> FRACBITS);
+                fprintf(logFile, "Timed %i gametics in %i realtics. FPS: %i.%03i\n", gametic, realtics, resultfps >> FRACBITS, (1000 * resultfps & 65535) >> FRACBITS);
                 fclose(logFile);
             }
         }
 
-        I_Error("Timed %i gametics in %i realtics. FPS: %i.%03i", gametic, realtics, resultfps >> FRACBITS, Mul1000(resultfps & 65535) >> FRACBITS);
+        I_Error("Timed %i gametics in %i realtics. FPS: %i.%03i", gametic, realtics, resultfps >> FRACBITS, (1000 * resultfps & 65535) >> FRACBITS);
     }
 
     if (demoplayback)

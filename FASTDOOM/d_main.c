@@ -25,6 +25,7 @@
 #include <conio.h>
 #include <dos.h>
 #include <io.h>
+#include <unistd.h>
 
 #include "doomdef.h"
 #include "doomstat.h"
@@ -60,7 +61,9 @@
 
 #include "d_main.h"
 
+#if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 #include "i_vesa.h"
+#endif
 
 #include "sizeopt.h"
 

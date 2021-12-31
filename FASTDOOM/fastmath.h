@@ -27,277 +27,106 @@ typedef int fixed_t;
 
 #define FRACBITS 16
 #define FRACUNIT (1 << FRACBITS)
-  
+#define MAXINT ((int)0x7fffffff)
+
 #define PI_F 3.14159265f
-#define FIXED_TO_FLOAT(inp)       ((float)inp) / (1 << FRACBITS)
-#define FLOAT_TO_FIXED(inp)       (fixed_t)(inp * (1 << FRACBITS))
-#define ANGLE_TO_FLOAT(x)       (x * ((float)(PI_F / 4096.0f)))
+#define FIXED_TO_FLOAT(inp) ((float)inp) / (1 << FRACBITS)
+#define FLOAT_TO_FIXED(inp) (fixed_t)(inp * (1 << FRACBITS))
+#define ANGLE_TO_FLOAT(x) (x * ((float)(PI_F / 4096.0f)))
 
-fixed_t FixedMul(fixed_t a, fixed_t b);
-#pragma aux FixedMul = \
-    "imul ebx",        \
-    "shrd eax,edx,16" parm[eax][ebx] value[eax] modify exact[eax edx]
+inline static const fixed_t FixedMul(fixed_t a, fixed_t b)
+{
+    fixed_t result;
+    int dummy;
 
-#define FixedDiv(a,b) (((abs(a) >> 14) >= abs(b)) ? (((a) ^ (b)) >> 31) ^ MAXINT : FixedDiv2(a, b))
-fixed_t FixedDiv2(fixed_t a, fixed_t b);
-#pragma aux FixedDiv2 =        \
-    "cdq",                     \
-    "shld edx,eax,16", \
-    "sal eax,16",      \
-    "idiv ebx" parm[eax][ebx] value[eax] modify exact[eax edx]
+    asm("  imull %3 ;"
+        "  shrdl $16,%1,%0 ;"
+        : "=a"(result), /* eax is always the result */
+          "=d"(dummy)   /* cphipps - fix compile problem with gcc-2.95.1
+				   edx is clobbered, but it might be an input */
+        : "0"(a),       /* eax is also first operand */
+          "r"(b)        /* second operand could be mem or reg before,
+				   but gcc compile problems mean i can only us reg */
+        : "%cc"         /* edx and condition codes clobbered */
+    );
 
-int Mul40(int value);
-#pragma aux Mul40 = \
-    "lea eax, [eax+eax*4]", \
-    "shl eax, 3" parm[eax] value[eax] modify exact[eax]
+    return result;
+}
 
-int Mul80(int value);
-#pragma aux Mul80 = \
-    "lea eax, [eax+eax*4]", \
-    "shl eax, 4" parm[eax] value[eax] modify exact[eax]
+inline static const fixed_t FixedDiv2(fixed_t a, fixed_t b)
+{
+    fixed_t result;
+    int dummy;
+    asm(" idivl %4 ;"
+        : "=a"(result),
+          "=d"(dummy) /* cphipps - fix compile problems with gcc 2.95.1
+			     edx is clobbered, but also an input */
+        : "0"(a << 16),
+          "1"(a >> 16),
+          "r"(b)
+        : "%cc");
+    return result;
+}
 
-int Mul320(int value);
-#pragma aux Mul320 = \
-    "lea eax, [eax+eax*4]", \
-    "sal eax, 6" parm[eax] value[eax] modify exact[eax]
+#define abs2(x) (((x) < 0) ? -(x) : (x))
+//#define abs(x) (((x) + ((x) >> 31)) ^ ((x) >> 31))
 
-int Mul10(int value);
-#pragma aux Mul10 = \
-    "lea eax, [eax+eax*4]", \
-    "add eax, eax" parm[eax] value[eax] modify exact[eax]
+inline static const fixed_t FixedDiv(fixed_t a, fixed_t b)
+{
+    if (abs2(a) >> 14 < abs2(b))
+    {
+        return FixedDiv2(a, b);
+    }
+    return ((a ^ b) >> 31) ^ MAXINT;
+}
 
-int Mul100(int value);
-#pragma aux Mul100 = \
-    "lea eax, [eax+eax*4]", \
-    "lea eax, [eax+eax*4]", \
-    "sal eax, 2" parm[eax] value[eax] modify exact[eax]
+inline static const void CopyBytes(void *src, void *dest, int num_bytes)
+{
+    asm volatile("rep movsb"
+                 : "+D"(dest), "+S"(src), "+c"(num_bytes)::"memory");
+}
 
-int Mul1000(int value);
-#pragma aux Mul1000 = \
-    "lea eax, [eax+eax*4]", \
-    "lea eax, [eax+eax*4]", \
-    "lea eax, [eax+eax*4]", \
-    "sal eax, 2" parm[eax] value[eax] modify exact[eax]
+inline static const void CopyWords(void *src, void *dest, int num_words)
+{
+    asm volatile("rep movsw"
+                 : "+D"(dest), "+S"(src), "+c"(num_words)::"memory");
+}
 
-int Mul819200(int value);
-#pragma aux Mul819200 = \
-    "lea eax, [eax+eax*4]", \
-    "lea eax, [eax+eax*4]", \
-    "sal eax, 15" parm[eax] value[eax] modify exact[eax]
+inline static const void CopyDWords(void *src, void *dest, int num_dwords)
+{
+    asm volatile("rep movsd"
+                 : "+D"(dest), "+S"(src), "+c"(num_dwords)::"memory");
+}
 
-int Mul35(int value);
-#pragma aux Mul35 = \
-    "lea eax, [edx+edx*8]", \
-    "sal eax, 2", \
-    "sub eax, edx" parm[edx] value[eax] modify exact[eax edx]
+inline static const void SetBytes(void *dest, unsigned char value, int num_bytes)
+{
+    asm volatile("rep stosb"
+                 : "+c"(num_bytes), "+D"(dest)
+                 : "a"(value)
+                 : "cc", "memory");
+}
 
-int Mul768(int value);
-#pragma aux Mul768 = \
-    "lea eax, [edx+edx]", \
-    "add eax, edx", \
-    "sal eax, 8" parm[edx] value[eax] modify exact[eax edx]
+inline static const void SetWords(void *dest, short value, int num_words)
+{
+    asm volatile("rep stosw"
+                 : "+c"(num_words), "+D"(dest)
+                 : "a"(value)
+                 : "cc", "memory");
+}
 
-int Mul85(int value);
-#pragma aux Mul85 = \
-    "lea edx, [eax+eax*4]", \
-    "lea edx, [eax+edx*4]", \
-    "lea eax, [eax+edx*4]" parm[eax] value[eax] modify exact[eax edx]
+inline static const void SetDWords(void *dest, int value, int num_dwords)
+{
+    asm volatile("rep stosl"
+                 : "+c"(num_dwords), "+D"(dest)
+                 : "a"(value)
+                 : "cc", "memory");
+}
 
-int Mul160(int value);
-#pragma aux Mul160 = \
-    "lea eax, [eax+eax*4]", \
-    "sal eax, 5" parm[eax] value[eax] modify exact[eax]
-
-int Mul200(int value);
-#pragma aux Mul200 = \
-    "lea eax, [eax+eax*4]", \
-    "lea eax, [eax+eax*4]", \
-    "sal eax, 3" parm[eax] value[eax] modify exact[eax]
-
-int Mul409(int value);
-#pragma aux Mul409 = \
-    "lea eax, [edx+edx*4]", \
-    "lea eax, [eax+eax*4]", \
-    "add eax, eax", \
-    "add eax, edx", \
-    "lea eax, [edx+eax*8]" parm[edx] value[eax] modify exact[eax edx]
-
-int Mul26843545(int value);
-#pragma aux Mul26843545 = \
-    "lea eax, [edx+edx]", \
-    "add eax, edx", \
-    "lea ecx, [edx+eax*4]", \
-    "mov eax, ecx", \
-    "sal eax, 6", \
-    "sub eax, ecx", \
-    "mov ecx, eax", \
-    "sal ecx, 12", \
-    "add eax, ecx", \
-    "lea eax, [edx+eax*8]" parm[edx] value[eax] modify exact[eax ecx edx]
-
-int Mul70(int value);
-#pragma aux Mul70 = \
-    "lea eax, [edx+edx*8]", \
-    "sal eax, 2", \
-    "sub eax, edx", \
-    "add eax, eax" parm[edx] value[eax] modify exact[eax edx]
-
-int Mul47000(int value);
-#pragma aux Mul47000 = \
-    "lea eax, [edx+edx]", \
-    "add eax, edx", \
-    "lea eax, [edx+eax*4]", \
-    "lea eax, [eax+eax*8]", \
-    "add eax, eax", \
-    "add eax, edx", \
-    "lea eax, [eax+eax*4]", \
-    "lea eax, [eax+eax*4]", \
-    "sal eax, 3" parm[edx] value[eax] modify exact[eax edx]
-
-int Div1000(int value);
-#pragma aux Div1000 = \
-    "mov edx, 0x10624DD3", \
-    "mul edx", \
-    "shr edx, 6" parm[eax] value[edx] modify exact[eax edx]
-
-int Div10(int value);
-#pragma aux Div10 = \
-    "mov eax, 1717986919", \
-    "imul ecx", \
-    "mov eax, edx", \
-    "sar eax, 2", \
-    "sar ecx, 31", \
-    "sub eax, ecx" parm[ecx] value[eax] modify exact[eax ecx edx]
-
-int Div3(int value);
-#pragma aux Div3 = \
-    "mov eax, 0x55555556", \
-    "imul ecx", \
-    "mov eax, ecx", \
-    "shr eax, 31", \
-    "add edx, eax" parm[ecx] value[edx] modify exact[eax ecx edx]
-
-int Div63(int value);
-#pragma aux Div63 = \
-    "mov edx, -2113396605", \
-    "mov eax, ecx", \
-    "imul edx", \
-    "add edx, ecx", \
-    "sar edx, 5", \
-    "sar ecx, 31", \
-    "sub edx, ecx" parm[ecx] value[edx] modify exact[eax ecx edx]
-
-int Div101(int value);
-#pragma aux Div101 = \
-    "mov edx, 680390859", \
-    "mov eax, ecx", \
-    "imul edx", \
-    "sar edx, 4", \
-    "sar ecx, 31", \
-    "sub edx, ecx" parm[ecx] value[edx] modify exact[eax ecx edx]
-
-int Div35(int value);
-#pragma aux Div35 = \
-    "mov edx, -368140053", \
-    "mov eax, ecx", \
-    "imul edx", \
-    "add edx, ecx", \
-    "sar edx, 5", \
-    "sar ecx, 31", \
-    "sub edx, ecx" parm[ecx] value[edx] modify exact[eax ecx edx]
-
-int DivSKULLSPEED(int value);
-#pragma aux DivSKULLSPEED = \
-    "mov edx, 1717986919", \
-    "mov eax, ecx", \
-    "imul edx", \
-    "sar edx, 19", \
-    "sar ecx, 31", \
-    "sub edx, ecx" parm[ecx] value[edx] modify exact[eax ecx edx]
-
-int Div100(int value);
-#pragma aux Div100 = \
-    "mov edx, 1374389535", \
-    "mov eax, ecx", \
-    "imul edx", \
-    "sar edx, 5", \
-    "sar ecx, 31", \
-    "sub edx, ecx" parm[ecx] value[edx] modify exact[eax ecx edx]
-
-int Div255(int value);
-#pragma aux Div255 = \
-    "mov edx, -2139062143", \
-    "mov eax, ecx", \
-    "imul edx", \
-    "add edx, ecx", \
-    "sar edx, 7", \
-    "sar ecx, 31", \
-    "sub edx, ecx" parm[ecx] value[edx] modify exact[eax ecx edx]
-
-unsigned long Div51200(unsigned long value);
-#pragma aux Div51200 = \
-    "mov ecx, 1374389535", \
-    "mov eax, edx", \
-    "mul ecx", \
-    "shr edx, 14" parm[edx] value[edx] modify exact[eax ecx edx]
-
-int Div70(int value);
-#pragma aux Div70 = \
-    "mov edx, -368140053", \
-    "mov eax, ecx", \
-    "imul edx", \
-    "add edx, ecx", \
-    "sar edx, 6", \
-    "sar ecx, 31", \
-    "sub edx, ecx" parm[ecx] value[edx] modify exact[eax ecx edx]
-
-int Div96(int value);
-#pragma aux Div96 = \
-    "mov edx, 715827883", \
-    "mov eax, ecx", \
-    "imul edx", \
-    "sar edx, 4", \
-    "sar ecx, 31", \
-    "sub edx, ecx" parm[ecx] value[edx] modify exact[eax ecx edx]
-
-void CopyBytes(void *src, void *dest, int num_bytes);
-#pragma aux CopyBytes = \
-    "rep movsb" \
-    parm [esi] [edi] [ecx] modify[edi esi ecx];
-
-void CopyWords(void *src, void *dest, int num_words);
-#pragma aux CopyWords =     \
-    "rep movsw"          \
-    parm [esi] [edi] [ecx] modify[edi esi ecx];
-
-void CopyDWords(void *src, void *dest, int num_dwords);
-#pragma aux CopyDWords =     \
-    "rep movsd"             \
-    parm [esi] [edi] [ecx]  \
-    modify [esi edi ecx];
-
-void SetBytes(void *dest, unsigned char value, int num_bytes);
-#pragma aux SetBytes = \
-    "rep stosb" \
-    parm [edi] [al] [ecx] \
-    modify [edi ecx];
-
-void SetWords(void *dest, short value, int num_words);
-#pragma aux SetWords = \
-    "rep stosw" \
-    parm [edi] [ax] [ecx] \
-    modify [edi ecx];
-
-void SetDWords(void *dest, int value, int num_dwords);
-#pragma aux SetDWords = \
-    "rep stosd" \
-    parm [edi] [eax] [ecx] \
-    modify [edi ecx];
-
-void OutString(unsigned short Port, unsigned char *addr, int c);
-#pragma aux OutString = \
-    "rep outsb" \
-    parm [dx] [si] [cx] nomemory \
-    modify exact [si cx] nomemory;
+inline static const void OutString(unsigned short port, unsigned char *addr, int c)
+{
+    asm volatile("rep outsb %%ds:(%0), %3"
+                 : "+S"(addr), "+c"(c)
+                 : "m"(addr), "Nd"(port), "0"(addr), "1"(c));
+}
 
 #endif // __DOOMMATH__
