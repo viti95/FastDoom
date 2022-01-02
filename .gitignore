@@ -4,6 +4,7 @@
 *.map
 *.obj
 *.sym
+*.o
 
 #VSCODE
 .vscode/*
