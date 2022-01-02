@@ -1237,12 +1237,12 @@ void G_CheckDemoStatus(void)
             FILE *logFile = fopen("bench.txt", "a");
             if (logFile)
             {
-                fprintf(logFile, "Timed %i gametics in %i realtics. FPS: %i.%03i\n", gametic, realtics, resultfps >> FRACBITS, (1000 * resultfps & 65535) >> FRACBITS);
+                fprintf(logFile, "Timed %i gametics in %i realtics. FPS: %i.%03i\n", gametic, realtics, resultfps >> FRACBITS, 1000 * (resultfps & 65535) >> FRACBITS);
                 fclose(logFile);
             }
         }
 
-        I_Error("Timed %i gametics in %i realtics. FPS: %i.%03i", gametic, realtics, resultfps >> FRACBITS, (1000 * resultfps & 65535) >> FRACBITS);
+        I_Error("Timed %i gametics in %i realtics. FPS: %i.%03i", gametic, realtics, resultfps >> FRACBITS, 1000 * (resultfps & 65535) >> FRACBITS);
     }
 
     if (demoplayback)

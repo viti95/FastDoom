@@ -786,7 +786,7 @@ void R_DrawPlanesFlatSurfacesText80100(void)
                 continue;
 
             odd = pl->top[x] % 2;
-            dest = textdestscreen + (80 * pl->top[x] / 2) + x;
+            dest = textdestscreen + 80 * (pl->top[x] / 2) + x;
             count = pl->bottom[x] - pl->top[x];
 
             if (count >= 1 && odd || count == 0)
@@ -928,7 +928,7 @@ void R_DrawPlanesFlatSurfacesText4050(void)
                 continue;
 
             odd = pl->top[x] % 2;
-            dest = textdestscreen + (40 * pl->top[x] / 2) + x;
+            dest = textdestscreen + 40 * (pl->top[x] / 2) + x;
             count = pl->bottom[x] - pl->top[x];
 
             if (count >= 1 && odd || count == 0)
@@ -1070,7 +1070,7 @@ void R_DrawPlanesFlatSurfacesText8025(void)
                 continue;
 
             odd = pl->top[x] % 2;
-            dest = textdestscreen + (80 * pl->top[x] / 2) + x;
+            dest = textdestscreen + 80 * (pl->top[x] / 2) + x;
             count = pl->bottom[x] - pl->top[x];
 
             if (count >= 1 && odd || count == 0)

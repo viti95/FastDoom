@@ -1967,7 +1967,7 @@ void I_FinishUpdate(void)
         if (updatestate & I_MESSAGES && screenblocks > 7)
         {
             int i;
-            for (i = 0; i < (320 * viewwindowy + viewheight); i += SCREENWIDTH)
+            for (i = 0; i < 320 * (viewwindowy + viewheight); i += SCREENWIDTH)
             {
                 CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
             }
@@ -1976,7 +1976,7 @@ void I_FinishUpdate(void)
         else
         {
             int i;
-            for (i = (320 * viewwindowy) + viewwindowx; i < (320 * viewwindowy + viewheight); i += SCREENWIDTH)
+            for (i = (320 * viewwindowy) + viewwindowx; i < 320 * (viewwindowy + viewheight); i += SCREENWIDTH)
             {
                 CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
             }
@@ -2155,7 +2155,7 @@ void I_FinishUpdate(void)
         {
             // in case of a very fast system, this will limit the sampling
             // minus 1!, exactly 35 FPS when measeraring for a longer time.
-            opt1 = (35 * fps_counter - 1) << FRACBITS;
+            opt1 = 35 * (fps_counter - 1) << FRACBITS;
             opt2 = (ticcount - fps_starttime) << FRACBITS;
             fps = (opt1 >> 14 >= opt2) ? ((opt1 ^ opt2) >> 31) ^ MAXINT : FixedDiv2(opt1, opt2);
             fps_nextcalculation = ticcount + 12;

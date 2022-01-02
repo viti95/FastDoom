@@ -878,7 +878,7 @@ void F_DrawPatchColText4025(int x, patch_t *patch, int col){
 	while (column->topdelta != 0xff)
 	{
 		source = (byte *)column + 3;
-		dest = desttop + (80 * column->topdelta / 8);
+		dest = desttop + 80 * (column->topdelta / 8);
 		count = column->length / 8;
 
 		while (count--)
@@ -913,7 +913,7 @@ void F_DrawPatchColText8025(int x, patch_t *patch, int col)
 	{
 		source = (byte *)column + 3;
 		odd = (column->topdelta / 4) % 2;
-		dest = desttop + (80 * column->topdelta / 8);
+		dest = desttop + 80 * (column->topdelta / 8);
 		count = column->length / 4;
 
 		while (count--)
@@ -962,7 +962,7 @@ void F_DrawPatchColText8050(int x, patch_t *patch, int col)
 	while (column->topdelta != 0xff)
 	{
 		source = (byte *)column + 3;
-		dest = desttop + (80 * column->topdelta / 4);
+		dest = desttop + 80 * (column->topdelta / 4);
 		count = column->length / 4;
 
 		while (count--)

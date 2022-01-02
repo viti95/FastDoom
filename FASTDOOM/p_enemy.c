@@ -917,7 +917,7 @@ void A_BruisAttack(mobj_t *actor)
     if (P_CheckMeleeRange(actor))
     {
         S_StartSound(actor, sfx_claw);
-        damage = (10 * (P_Random & 7) + 1);
+        damage = 10 * ((P_Random & 7) + 1);
         P_DamageMobj(actor->target, actor, actor, damage);
         return;
     }

@@ -557,7 +557,7 @@ void V_DrawPatchDirectText8050(int x, int y, patch_t *patch)
         while (column->topdelta != 0xff)
         {
             source = (byte *)column + 3;
-            dest = desttop + (80 * column->topdelta / 4);
+            dest = desttop + 80 * (column->topdelta / 4);
             count = column->length / 4;
 
             while (count--)
@@ -605,7 +605,7 @@ void V_DrawPatchDirectText4050(int x, int y, patch_t *patch)
         {
             source = (byte *)column + 3;
             odd = (column->topdelta / 4 + y) % 2;
-            dest = desttop + (40 * column->topdelta / 8);
+            dest = desttop + 40 * (column->topdelta / 8);
             count = column->length / 4;
 
             while (count--)
@@ -657,7 +657,7 @@ void V_DrawPatchDirectText80100(int x, int y, patch_t *patch)
     x /= 4; // 320 --> 80
     y /= 2; // 200 --> 100
 
-    desttop = textdestscreen + (80 * y / 2) + x;
+    desttop = textdestscreen + 80 * (y / 2) + x;
 
     w = patch->width;
     for (col = 0; col < w; col += 4)
@@ -669,7 +669,7 @@ void V_DrawPatchDirectText80100(int x, int y, patch_t *patch)
         {
             source = (byte *)column + 3;
             odd = (column->topdelta / 4 + y) % 2;
-            dest = desttop + (80 * column->topdelta / 4);
+            dest = desttop + 80 * (column->topdelta / 4);
             count = column->length / 2;
 
             while (count--)
@@ -730,7 +730,7 @@ void V_DrawPatchDirectText4025(int x, int y, patch_t *patch)
         while (column->topdelta != 0xff)
         {
             source = (byte *)column + 3;
-            dest = desttop + (40 * column->topdelta / 8);
+            dest = desttop + 40 * (column->topdelta / 8);
             count = column->length / 4;
 
             while (count--)
@@ -766,7 +766,7 @@ void V_DrawPatchDirectText8025(int x, int y, patch_t *patch)
     x /= 4; // 320 --> 80
     y /= 4; // 200 --> 50
 
-    desttop = textdestscreen + (80 * y / 2) + x;
+    desttop = textdestscreen + 80 * (y / 2) + x;
 
     w = patch->width;
     for (col = 0; col < w; col += 4)
@@ -778,7 +778,7 @@ void V_DrawPatchDirectText8025(int x, int y, patch_t *patch)
         {
             source = (byte *)column + 3;
             odd = (column->topdelta / 4 + y) % 2;
-            dest = desttop + (80 * column->topdelta / 8);
+            dest = desttop + 80 * (column->topdelta / 8);
             count = column->length / 4;
 
             while (count--)
