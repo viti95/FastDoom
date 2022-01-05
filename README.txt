@@ -115,6 +115,7 @@
  -forceLQ => Forces low detail mode (160x200)
  -forceHQ => Forces high detail mode (320x200)
  -cga => Fixes text modes for CGA cards
+ -pagefix => Fixes text modes (80x50 and 80x100) for newer VGA cards
  -lowsound => Plays all sounds at 8 KHz (lower cpu usage)
  -8bitsound => Forces all sounds to play at 8 bits resolution
  -ram => Allocates all memory available (default only allocates 8 MB)
