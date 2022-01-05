@@ -65,6 +65,10 @@ extern int forceScreenSize;
 extern boolean CGAcard;
 #endif
 
+#if defined(MODE_T8050) || defined(MODE_T80100)
+extern boolean videoPageFix;
+#endif
+
 extern boolean logTimedemo;
 extern boolean disableDemo;
 

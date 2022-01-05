@@ -108,6 +108,10 @@ int forceScreenSize;
 boolean CGAcard;
 #endif
 
+#if defined(MODE_T8050) || defined(MODE_T80100)
+boolean videoPageFix;
+#endif
+
 boolean logTimedemo;
 boolean disableDemo;
 
@@ -962,6 +966,10 @@ void D_DoomMain(void)
 
 #if defined(MODE_T8025) || defined(MODE_T4025) || defined(MODE_T4050)
     CGAcard = M_CheckParm("-cga");
+#endif
+
+#if defined(MODE_T8050) || defined(MODE_T80100)
+    videoPageFix = M_CheckParm("-pagefix");
 #endif
 
     lowSound = M_CheckParm("-lowsound");

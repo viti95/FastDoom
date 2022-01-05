@@ -1922,7 +1922,12 @@ void I_FinishUpdate(void)
     regs.h.bl = 0x00;
     int386(0x10, &regs, &regs);
 
-    textdestscreen += 4128;
+    if (videoPageFix){
+        textdestscreen += 4000;
+    }else{
+        textdestscreen += 4128;
+    }
+    
     textpage++;
     if (textpage == 3)
     {
