@@ -206,7 +206,7 @@ byte lut16colors[14 * 256];
 byte *ptrlut16colors;
 #endif
 
-#if defined(MODE_CGA136)
+#if defined(MODE_CGA136) || defined(MODE_VGA136)
 byte lut136colors[14 * 256];
 byte *ptrlut136colors;
 #endif
@@ -376,7 +376,7 @@ const byte colors[48] = {
     0x3F, 0x3F, 0x3F};
 #endif
 
-#if defined(MODE_CGA136)
+#if defined(MODE_CGA136) || defined(MODE_VGA136)
 const byte colors[3 * 256] = {
     0x00, 0x00, 0x00,
     0x00, 0x00, 0x1E,
@@ -959,7 +959,7 @@ void I_ProcessPalette(byte *palette)
 }
 #endif
 
-#if defined(MODE_CGA136)
+#if defined(MODE_CGA136) || defined(MODE_VGA136)
 void I_ProcessPalette(byte *palette)
 {
     int i, j;
@@ -1265,7 +1265,7 @@ void I_SetPalette(int numpalette)
     ptrlut16colors = lut16colors + numpalette * 256;
 #endif
 
-#if defined(MODE_CGA136)
+#if defined(MODE_CGA136) || defined(MODE_VGA136)
     ptrlut136colors = lut136colors + numpalette * 256;
 #endif
 
@@ -1711,6 +1711,21 @@ void VGA16_DrawBackbuffer(void)
         unsigned char color1 = ptrlut16colors[backbuffer[base + 2]];
 
         vram[i] = color0 << 4 | color1;
+    }
+}
+#endif
+
+#ifdef MODE_VGA136
+void VGA136_DrawBackbuffer(void)
+{
+    unsigned char *vram = (unsigned char *)0xB8000;
+    int i;
+    unsigned int base = 0;
+    unsigned int line = 0;
+
+    for (i = 1; i < 32000; i += 2, base += 4)
+    {
+        vram[i] = ptrlut136colors[backbuffer[base]];
     }
 }
 #endif
@@ -2363,6 +2378,9 @@ void I_FinishUpdate(void)
 #ifdef MODE_VGA16
     VGA16_DrawBackbuffer();
 #endif
+#ifdef MODE_VGA136
+    VGA136_DrawBackbuffer();
+#endif
 #ifdef MODE_EGA
     EGA_DrawBackbuffer();
 #endif
@@ -2842,7 +2860,7 @@ void I_InitGraphics(void)
 
     pcscreen = destscreen = (byte *)0xB8000;
 #endif
-#if defined(MODE_CGA16) || defined(MODE_CGA136) || defined(MODE_VGA16)
+#if defined(MODE_CGA16) || defined(MODE_CGA136) || defined(MODE_VGA16) || defined(MODE_VGA136)
     unsigned char *vram = (unsigned char *)0xB8000;
     int i;
 
@@ -2915,6 +2933,13 @@ void I_InitGraphics(void)
     for (i = 0; i < 32000; i += 2)
     {
         vram[i] = 0xDE;
+    }
+#endif
+
+#if defined(MODE_VGA136)
+    for (i = 0; i < 32000; i += 2)
+    {
+        vram[i] = 0xB1;
     }
 #endif
 

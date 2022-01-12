@@ -339,7 +339,7 @@ void R_DrawVisSprite(vissprite_t *vis)
             if (dc_x % 2 == 0){
                 colfunc();
             }
-            #elif defined(MODE_CGA136)
+            #elif defined(MODE_CGA136) || defined(MODE_VGA136)
             if (dc_x % 4 == 0){
                 colfunc();
             }
