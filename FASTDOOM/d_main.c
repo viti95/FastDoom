@@ -933,6 +933,10 @@ void D_DoomMain(void)
     D_AddFile("mode16.wad");
 #endif
 
+#if defined(MODE_CGA136)
+    D_AddFile("mode136.wad");
+#endif
+
 #if defined(MODE_VGA16)
     D_AddFile("mode16v.wad");
 #endif

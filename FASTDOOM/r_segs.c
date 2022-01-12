@@ -249,6 +249,10 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 				if (dc_x % 2 == 0){
 					colfunc();
 				}
+				#elif defined(MODE_CGA136)
+				if (dc_x % 4 == 0){
+					colfunc();
+				}
 				#else
 					colfunc();
 				#endif
@@ -401,6 +405,10 @@ void R_RenderSegLoop(void)
 				if (dc_x % 2 == 0){
 					colfunc();
 				}
+				#elif defined(MODE_CGA136)
+				if (dc_x % 4 == 0){
+					colfunc();
+				}
 				#else
 					colfunc();
 				#endif
@@ -451,6 +459,10 @@ void R_RenderSegLoop(void)
 
 					#if defined(MODE_VGA16) || defined(MODE_CGA16)
 					if (dc_x % 2 == 0){
+						colfunc();
+					}
+					#elif defined(MODE_CGA136)
+					if (dc_x % 4 == 0){
 						colfunc();
 					}
 					#else
@@ -507,6 +519,10 @@ void R_RenderSegLoop(void)
 
 					#if defined(MODE_VGA16) || defined(MODE_CGA16)
 					if (dc_x % 2 == 0){
+						colfunc();
+					}
+					#elif defined(MODE_CGA136)
+					if (dc_x % 4 == 0){
 						colfunc();
 					}
 					#else
