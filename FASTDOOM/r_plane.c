@@ -108,7 +108,7 @@ void R_MapPlane(int y, int x1)
     fixed_t length;
     unsigned index;
 
-    #if defined(MODE_CGA16)
+    #if defined(MODE_CGA16) || defined(MODE_CGA136)
 		if (y % 2 != 0){
 			return;
 		}
@@ -1148,7 +1148,13 @@ void R_DrawPlanesFlatSurfaces_13h(void)
         for (x = pl->minx; x <= pl->maxx; x++)
         {
             #if defined(MODE_VGA16) || defined(MODE_CGA16)
-            if (x % 2 == 1){
+            if (x % 2 != 0){
+                continue;
+            }
+            #endif
+
+            #if defined(MODE_CGA136) || defined(MODE_VGA136)
+            if (x % 4 != 0){
                 continue;
             }
             #endif
@@ -1243,6 +1249,12 @@ void R_DrawSky(visplane_t *pl)
             }
             #endif
 
+            #if defined(MODE_CGA136) || defined(MODE_VGA136)
+            if (x % 4 != 0){
+                continue;
+            }
+            #endif
+
             dc_yl = pl->top[x];
             dc_yh = pl->bottom[x];
 
@@ -1280,6 +1292,12 @@ void R_DrawSky(visplane_t *pl)
         {
             #if defined(MODE_VGA16) || defined(MODE_CGA16)
             if (x % 2 != 0){
+                continue;
+            }
+            #endif
+
+            #if defined(MODE_CGA136) || defined(MODE_VGA136)
+            if (x % 4 != 0){
                 continue;
             }
             #endif
