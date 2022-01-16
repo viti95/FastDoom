@@ -843,7 +843,7 @@ void I_ProcessPalette(byte *palette)
         g1 = (int)ptr[*palette++];
         b1 = (int)ptr[*palette++];
 
-        for (j = 0; j < 136; j++)
+        for (j = 0; j < 122; j++)
         {
             int r2, g2, b2;
             int cR, cG, cB;
