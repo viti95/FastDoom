@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## 0.8.9 (26 Jan 2022)
+* Added new video modes. Huge thanks to @FrenkelS
+    * FDOOMC36.EXE => FastDoom CGA 80x100 (122 pseudocolors)
+    * FDOOMV36.EXE => FastDoom VGA 80x200 (122 pseudocolors)
+    * FDOOMATI.EXE => FastDoom ATI Small Wonder 640x200 (dithering 16 colors)
+* Small optimization for Potato and Low detail column rendering
+* Optimized Plantronics ColorPlus, EGA, CGA and Hercules modes
+* Added custom palette for VGA 160x200 mode
+* Optimized CGA 160x100 and VGA 160x200 rendering
+* Remove FDOOMVBP.EXE. It was very buggy and problematic, and in 99% of the cases a little bit slower than FDOOMVBR.EXE
+* Converted all ASM files to NASM. This allows to build FastDoom with 100% open source compilers. Borland Turbo Assembler requirement is now gone. Huge thanks to @0x90
+* Fix screen flickering on 80x50 and 80x100 text modes. Use the parameter "-pagefix" in case it flickers
+* New mode for PC Speakers. Based on the PWM method, a little bit better but uses more CPU 
+
 ## 0.8.8 (23 Oct 2021)
 * Added new video modes
     * FDOOMC16.EXE => FastDoom CGA 160x100 and 16 colors
