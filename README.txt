@@ -55,7 +55,8 @@
  ------------------
  
  CPU: Any x86 processor that supports 32 bit i386 instruction set
- Video cards: Hercules, CGA, EGA, VGA, Plantronics ColorPlus
+ Video cards: Hercules, CGA, EGA, VGA, Plantronics ColorPlus, 
+              ATI Small Wonder
  Sound cards: Sound Blaster, PC Speaker, Disney Sound Source,
               Gravis Ultrasound, Pro Audio Spectrum, COVOX LPT DAC
  Music cards: Sound Blaster (OPL2 and OPL3), Adlib, MIDI, Gravis Ultrasound
@@ -103,6 +104,10 @@
  * FDOOMV16.EXE => FastDoom VGA 160x200 and 16 colors
  * FDOOME.EXE   => FastDoom EGA 640x200. Requires a very fast CPU and 16-bit
 		   ISA video card (at least). Dithering with 16 colors
+ * FDOOMATI.EXE => FastDoom ATI Small Wonder 640x200. Requires a very fast 
+         CPU and 16-bit ISA video card (at least). Dithering with 16 colors
+ * FDOOMC36.EXE => FastDoom CGA 80x100 and 122 pseudocolors
+ * FDOOMV36.EXE => FastDoom VGA 80x200 and 122 pseudocolors
  * FDSETUP.EXE  => Utility to setup controls and sound cards
 
  Command line parameters
