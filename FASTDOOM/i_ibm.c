@@ -1793,11 +1793,7 @@ void EGA640_DrawBackbuffer(void)
     CopyDWords(plane_intensity, destscreen, SCREENWIDTH * SCREENHEIGHT / 16);
 
     // Change video page
-    regs.h.ah = 0x05;
-    regs.h.al = page;
-    regs.h.bh = 0x00;
-    regs.h.bl = 0x00;
-    int386(0x10, &regs, &regs);
+    outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
 
     //Next plane
     destscreen += 0x4000;
