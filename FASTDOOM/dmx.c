@@ -264,7 +264,7 @@ void AL_SetCard(void *data)
         tmb[i * 13 + 0] = cdata[8 + i * 36 + 4 + 0];
         tmb[i * 13 + 1] = cdata[8 + i * 36 + 4 + 7];
         tmb[i * 13 + 2] = cdata[8 + i * 36 + 4 + 4] | cdata[8 + i * 36 + 4 + 5];
-        tmb[i * 13 + 3] = cdata[8 + i * 36 + 4 + 11] | cdata[8 + i * 36 + 4 + 12];
+        tmb[i * 13 + 3] = cdata[8 + i * 36 + 4 + 11] & 192;
         tmb[i * 13 + 4] = cdata[8 + i * 36 + 4 + 1];
         tmb[i * 13 + 5] = cdata[8 + i * 36 + 4 + 8];
         tmb[i * 13 + 6] = cdata[8 + i * 36 + 4 + 2];
@@ -280,7 +280,7 @@ void AL_SetCard(void *data)
         tmb[(i + 35) * 13 + 0] = cdata[8 + i * 36 + 4 + 0];
         tmb[(i + 35) * 13 + 1] = cdata[8 + i * 36 + 4 + 7];
         tmb[(i + 35) * 13 + 2] = cdata[8 + i * 36 + 4 + 4] | cdata[8 + i * 36 + 4 + 5];
-        tmb[(i + 35) * 13 + 3] = cdata[8 + i * 36 + 4 + 11] | cdata[8 + i * 36 + 4 + 12];
+        tmb[(i + 35) * 13 + 3] = cdata[8 + i * 36 + 4 + 11] & 192;
         tmb[(i + 35) * 13 + 4] = cdata[8 + i * 36 + 4 + 1];
         tmb[(i + 35) * 13 + 5] = cdata[8 + i * 36 + 4 + 8];
         tmb[(i + 35) * 13 + 6] = cdata[8 + i * 36 + 4 + 2];
