@@ -1487,9 +1487,9 @@ void CGA_BW_DrawBackbuffer(void)
     unsigned char *vram = (unsigned char *)0xB8000;
     byte *ptrbackbuffer;
 
-    for (ptrbackbuffer = backbuffer; ptrbackbuffer < backbuffer + 200 * 640 / 2; ptrbackbuffer += 640, vram += 80)
+    for (ptrbackbuffer = backbuffer; ptrbackbuffer < backbuffer + 200 * 640 / 2; ptrbackbuffer += 640)
     {
-        for (x = 0; x < 320; x += 4)
+        for (x = 0; x < 320; x += 4, vram++)
         {
             byte color;
             byte finalcolor;
@@ -1503,7 +1503,7 @@ void CGA_BW_DrawBackbuffer(void)
             color = ptrbackbuffer[x + 3];
             finalcolor |= (ptrlutcolors00[color]) & 0x02 | (ptrlutcolors10[color]) & 0x01;
 
-            *(vram + (x / 4)) = finalcolor;
+            *(vram) = finalcolor;
 
             color = ptrbackbuffer[x + 320];
             finalcolor = (ptrlutcolors01[color]) & 0x80 | (ptrlutcolors11[color]) & 0x40;
@@ -1514,7 +1514,7 @@ void CGA_BW_DrawBackbuffer(void)
             color = ptrbackbuffer[x + 323];
             finalcolor |= (ptrlutcolors01[color]) & 0x02 | (ptrlutcolors11[color]) & 0x01;
 
-            *(vram + 0x2000 + (x / 4)) = finalcolor;
+            *(vram + 0x2000) = finalcolor;
         }
     }
 }
