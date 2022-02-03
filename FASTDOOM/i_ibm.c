@@ -697,63 +697,7 @@ int I_GetClosestColor(int r1, int g1, int b1)
 }
 #endif
 
-#if defined(MODE_EGA640)
-void I_ProcessPalette(byte *palette)
-{
-    int i;
-
-    byte *ptr = gammatable[usegamma];
-
-    for (i = 0; i < 14 * 1024; i += 4, palette += 3)
-    {
-        unsigned char color;
-        int r, g, b;
-        int r2, g2, b2;
-
-        r = (int)ptr[*palette];
-        g = (int)ptr[*(palette + 1)];
-        b = (int)ptr[*(palette + 2)];
-
-        r2 = (r * 0) / 4 + r;
-        g2 = (g * 0) / 4 + g;
-        b2 = (b * 0) / 4 + b;
-
-        color = I_GetClosestColor(r2, g2, b2);
-        color |= color << 4;
-
-        lutcolors[i] = color;
-
-        r2 = (r * 2) / 4 + r;
-        g2 = (g * 2) / 4 + g;
-        b2 = (b * 2) / 4 + b;
-
-        color = I_GetClosestColor(r2, g2, b2);
-        color |= color << 4;
-
-        lutcolors[i + 1] = color;
-
-        r2 = (r * 3) / 4 + r;
-        g2 = (g * 3) / 4 + g;
-        b2 = (b * 3) / 4 + b;
-
-        color = I_GetClosestColor(r2, g2, b2);
-        color |= color << 4;
-
-        lutcolors[i + 2] = color;
-
-        r2 = (r * 1) / 4 + r;
-        g2 = (g * 1) / 4 + g;
-        b2 = (b * 1) / 4 + b;
-
-        color = I_GetClosestColor(r2, g2, b2);
-        color |= color << 4;
-
-        lutcolors[i + 3] = color;
-    }
-}
-#endif
-
-#if defined(MODE_ATI640)
+#if defined(MODE_EGA640) || defined(MODE_ATI640)
 void I_ProcessPalette(byte *palette)
 {
     int i;
