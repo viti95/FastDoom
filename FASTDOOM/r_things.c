@@ -335,7 +335,7 @@ void R_DrawVisSprite(vissprite_t *vis)
             dc_yh = yh;
             dc_yl = yl;
 
-            #if defined(MODE_VGA16) || defined(MODE_CGA16)
+            #if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CVB)
             if (dc_x % 2 == 0){
                 colfunc();
             }
