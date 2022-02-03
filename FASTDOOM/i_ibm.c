@@ -1717,58 +1717,148 @@ void ATI640_DrawBackbuffer(void)
 #ifdef MODE_EGA640
 void EGA640_DrawBackbuffer(void)
 {
-    byte plane_red[SCREENWIDTH * SCREENHEIGHT / 4];
-    byte plane_green[SCREENWIDTH * SCREENHEIGHT / 4];
-    byte plane_blue[SCREENWIDTH * SCREENHEIGHT / 4];
-    byte plane_intensity[SCREENWIDTH * SCREENHEIGHT / 4];
+    int i;
+    byte *backbufferptr;
 
-    int x, y;
-    unsigned int base = 0;
-    unsigned int plane_position = 0;
+    // Red
+    outp(0x3C5, 1 << (3 & 0x03));
 
-    // Chunky 2 planar conversion (hi Amiga fans!)
-
-    for (base = 0; base < SCREENHEIGHT * SCREENWIDTH; base += 8, plane_position += 2)
+    for (i = 0, backbufferptr = backbuffer; i < 2 * SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 4)
     {
         unsigned char color;
+        unsigned char tmpColor;
 
-        color = ptrlutcolors[backbuffer[base] * 2] & 0x80 | (ptrlutcolors[backbuffer[base] * 2 + 1] & 0x80) >> 1 | (ptrlutcolors[backbuffer[base + 1] * 2] & 0x80) >> 2 | (ptrlutcolors[backbuffer[base + 1] * 2 + 1] & 0x80) >> 3 | ptrlutcolors[backbuffer[base + 2] * 2] & 0x08 | (ptrlutcolors[backbuffer[base + 2] * 2 + 1] & 0x08) >> 1 | (ptrlutcolors[backbuffer[base + 3] * 2] & 0x08) >> 2 | (ptrlutcolors[backbuffer[base + 3] * 2 + 1] & 0x08) >> 3;
-        plane_red[plane_position] = color;
+        color = ptrlutcolors[*(backbufferptr) * 2];
+        tmpColor = color & 0x80;
 
-        color = ptrlutcolors[backbuffer[base + 4] * 2] & 0x80 | (ptrlutcolors[backbuffer[base + 4] * 2 + 1] & 0x80) >> 1 | (ptrlutcolors[backbuffer[base + 5] * 2] & 0x80) >> 2 | (ptrlutcolors[backbuffer[base + 5] * 2 + 1] & 0x80) >> 3 | ptrlutcolors[backbuffer[base + 6] * 2] & 0x08 | (ptrlutcolors[backbuffer[base + 6] * 2 + 1] & 0x08) >> 1 | (ptrlutcolors[backbuffer[base + 7] * 2] & 0x08) >> 2 | (ptrlutcolors[backbuffer[base + 7] * 2 + 1] & 0x08) >> 3;
-        plane_red[plane_position + 1] = color;
+        color = ptrlutcolors[*(backbufferptr) * 2 + 1];
+        tmpColor |= (color & 0x80) >> 1;
 
-        color = (ptrlutcolors[backbuffer[base] * 2] & 0x40) << 1 | ptrlutcolors[backbuffer[base] * 2 + 1] & 0x40 | (ptrlutcolors[backbuffer[base + 1] * 2] & 0x40) >> 1 | (ptrlutcolors[backbuffer[base + 1] * 2 + 1] & 0x40) >> 2 | (ptrlutcolors[backbuffer[base + 2] * 2] & 0x04) << 1 | ptrlutcolors[backbuffer[base + 2] * 2 + 1] & 0x04 | (ptrlutcolors[backbuffer[base + 3] * 2] & 0x04) >> 1 | (ptrlutcolors[backbuffer[base + 3] * 2 + 1] & 0x04) >> 2;
-        plane_green[plane_position] = color;
+        color = ptrlutcolors[*(backbufferptr + 1) * 2];
+        tmpColor |= (color & 0x80) >> 2;
 
-        color = (ptrlutcolors[backbuffer[base + 4] * 2] & 0x40) << 1 | ptrlutcolors[backbuffer[base + 4] * 2 + 1] & 0x40 | (ptrlutcolors[backbuffer[base + 5] * 2] & 0x40) >> 1 | (ptrlutcolors[backbuffer[base + 5] * 2 + 1] & 0x40) >> 2 | (ptrlutcolors[backbuffer[base + 6] * 2] & 0x04) << 1 | ptrlutcolors[backbuffer[base + 6] * 2 + 1] & 0x04 | (ptrlutcolors[backbuffer[base + 7] * 2] & 0x04) >> 1 | (ptrlutcolors[backbuffer[base + 7] * 2 + 1] & 0x04) >> 2;
-        plane_green[plane_position + 1] = color;
+        color = ptrlutcolors[*(backbufferptr + 1) * 2 + 1];
+        tmpColor |= (color & 0x80) >> 3;
 
-        color = (ptrlutcolors[backbuffer[base] * 2] & 0x20) << 2 | (ptrlutcolors[backbuffer[base] * 2 + 1] & 0x20) << 1 | ptrlutcolors[backbuffer[base + 1] * 2] & 0x20 | (ptrlutcolors[backbuffer[base + 1] * 2 + 1] & 0x20) >> 1 | (ptrlutcolors[backbuffer[base + 2] * 2] & 0x02) << 2 | (ptrlutcolors[backbuffer[base + 2] * 2 + 1] & 0x02) << 1 | ptrlutcolors[backbuffer[base + 3] * 2] & 0x02 | (ptrlutcolors[backbuffer[base + 3] * 2 + 1] & 0x02) >> 1;
-        plane_blue[plane_position] = color;
+        color = ptrlutcolors[*(backbufferptr + 2) * 2];
+        tmpColor |= color & 0x08;
 
-        color = (ptrlutcolors[backbuffer[base + 4] * 2] & 0x20) << 2 | (ptrlutcolors[backbuffer[base + 4] * 2 + 1] & 0x20) << 1 | ptrlutcolors[backbuffer[base + 5] * 2] & 0x20 | (ptrlutcolors[backbuffer[base + 5] * 2 + 1] & 0x20) >> 1 | (ptrlutcolors[backbuffer[base + 6] * 2] & 0x02) << 2 | (ptrlutcolors[backbuffer[base + 6] * 2 + 1] & 0x02) << 1 | ptrlutcolors[backbuffer[base + 7] * 2] & 0x02 | (ptrlutcolors[backbuffer[base + 7] * 2 + 1] & 0x02) >> 1;
-        plane_blue[plane_position + 1] = color;
+        color = ptrlutcolors[*(backbufferptr + 2) * 2 + 1];
+        tmpColor |= (color & 0x08) >> 1;
 
-        color = (ptrlutcolors[backbuffer[base] * 2] & 0x10) << 3 | (ptrlutcolors[backbuffer[base] * 2 + 1] & 0x10) << 2 | (ptrlutcolors[backbuffer[base + 1] * 2] & 0x10) << 1 | ptrlutcolors[backbuffer[base + 1] * 2 + 1] & 0x10 | (ptrlutcolors[backbuffer[base + 2] * 2] & 0x01) << 3 | (ptrlutcolors[backbuffer[base + 2] * 2 + 1] & 0x01) << 2 | (ptrlutcolors[backbuffer[base + 3] * 2] & 0x01) << 1 | ptrlutcolors[backbuffer[base + 3] * 2 + 1] & 0x01;
-        plane_intensity[plane_position] = color;
+        color = ptrlutcolors[*(backbufferptr + 3) * 2];
+        tmpColor |= (color & 0x08) >> 2;
 
-        color = (ptrlutcolors[backbuffer[base + 4] * 2] & 0x10) << 3 | (ptrlutcolors[backbuffer[base + 4] * 2 + 1] & 0x10) << 2 | (ptrlutcolors[backbuffer[base + 5] * 2] & 0x10) << 1 | ptrlutcolors[backbuffer[base + 5] * 2 + 1] & 0x10 | (ptrlutcolors[backbuffer[base + 6] * 2] & 0x01) << 3 | (ptrlutcolors[backbuffer[base + 6] * 2 + 1] & 0x01) << 2 | (ptrlutcolors[backbuffer[base + 7] * 2] & 0x01) << 1 | ptrlutcolors[backbuffer[base + 7] * 2 + 1] & 0x01;
-        plane_intensity[plane_position + 1] = color;
+        color = ptrlutcolors[*(backbufferptr + 3) * 2 + 1];
+        tmpColor |= (color & 0x08) >> 3;
+
+        destscreen[i] = tmpColor;
     }
 
-    // Copy each bitplane
-    outp(0x3C5, 1 << (3 & 0x03));
-    CopyDWords(plane_red, destscreen, SCREENWIDTH * SCREENHEIGHT / 16);
-
+    // Green
     outp(0x3C5, 1 << (2 & 0x03));
-    CopyDWords(plane_green, destscreen, SCREENWIDTH * SCREENHEIGHT / 16);
 
+    for (i = 0, backbufferptr = backbuffer; i < 2 * SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 4)
+    {
+        unsigned char color;
+        unsigned char tmpColor;
+
+        color = ptrlutcolors[*(backbufferptr) * 2];
+        tmpColor = (color & 0x40) << 1;
+
+        color = ptrlutcolors[*(backbufferptr) * 2 + 1];
+        tmpColor |= color & 0x40;
+
+        color = ptrlutcolors[*(backbufferptr + 1) * 2];
+        tmpColor |= (color & 0x40) >> 1;
+
+        color = ptrlutcolors[*(backbufferptr + 1) * 2 + 1];
+        tmpColor |= (color & 0x40) >> 2;
+
+        color = ptrlutcolors[*(backbufferptr + 2) * 2];
+        tmpColor |= (color & 0x04) << 1;
+
+        color = ptrlutcolors[*(backbufferptr + 2) * 2 + 1];
+        tmpColor |= color & 0x04;
+
+        color = ptrlutcolors[*(backbufferptr + 3) * 2];
+        tmpColor |= (color & 0x04) >> 1;
+
+        color = ptrlutcolors[*(backbufferptr + 3) * 2 + 1];
+        tmpColor |= (color & 0x04) >> 2;
+
+        destscreen[i] = tmpColor;
+    }
+
+    // Blue
     outp(0x3C5, 1 << (1 & 0x03));
-    CopyDWords(plane_blue, destscreen, SCREENWIDTH * SCREENHEIGHT / 16);
 
+    for (i = 0, backbufferptr = backbuffer; i < 2 * SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 4)
+    {
+        unsigned char color;
+        unsigned char tmpColor;
+
+        color = ptrlutcolors[*(backbufferptr) * 2];
+        tmpColor = (color & 0x20) << 2;
+
+        color = ptrlutcolors[*(backbufferptr) * 2 + 1];
+        tmpColor |= (color & 0x20) << 1;
+
+        color = ptrlutcolors[*(backbufferptr + 1) * 2];
+        tmpColor |= color & 0x20;
+
+        color = ptrlutcolors[*(backbufferptr + 1) * 2 + 1];
+        tmpColor |= (color & 0x20) >> 1;
+
+        color = ptrlutcolors[*(backbufferptr + 2) * 2];
+        tmpColor |= (color & 0x02) << 2;
+
+        color = ptrlutcolors[*(backbufferptr + 2) * 2 + 1];
+        tmpColor |= (color & 0x02) << 1;
+
+        color = ptrlutcolors[*(backbufferptr + 3) * 2];
+        tmpColor |= color & 0x02;
+
+        color = ptrlutcolors[*(backbufferptr + 3) * 2 + 1];
+        tmpColor |= (color & 0x02) >> 1;
+
+        destscreen[i] = tmpColor;
+    }
+
+    // Intensity
     outp(0x3C5, 1 << (0 & 0x03));
-    CopyDWords(plane_intensity, destscreen, SCREENWIDTH * SCREENHEIGHT / 16);
+
+    for (i = 0, backbufferptr = backbuffer; i < 2 * SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 4)
+    {
+        unsigned char color;
+        unsigned char tmpColor;
+
+        color = ptrlutcolors[*(backbufferptr) * 2];
+        tmpColor = (color & 0x10) << 3;
+
+        color = ptrlutcolors[*(backbufferptr) * 2 + 1];
+        tmpColor |= (color & 0x10) << 2;
+
+        color = ptrlutcolors[*(backbufferptr + 1) * 2];
+        tmpColor |= (color & 0x10) << 1;
+
+        color = ptrlutcolors[*(backbufferptr + 1) * 2 + 1];
+        tmpColor |= color & 0x10;
+
+        color = ptrlutcolors[*(backbufferptr + 2) * 2];
+        tmpColor |= (color & 0x01) << 3;
+
+        color = ptrlutcolors[*(backbufferptr + 2) * 2 + 1];
+        tmpColor |= (color & 0x01) << 2;
+
+        color = ptrlutcolors[*(backbufferptr + 3) * 2];
+        tmpColor |= (color & 0x01) << 1;
+
+        color = ptrlutcolors[*(backbufferptr + 3) * 2 + 1];
+        tmpColor |= color & 0x01;
+
+        destscreen[i] = tmpColor;
+    }
 
     // Change video page
     outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
