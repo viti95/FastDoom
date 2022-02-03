@@ -227,18 +227,7 @@ byte lut4colors[14 * 256];
 byte *ptrlut4colors;
 #endif
 
-#if defined(MODE_EGA640)
-byte lutcolors00[14 * 256];
-byte lutcolors01[14 * 256];
-byte lutcolors10[14 * 256];
-byte lutcolors11[14 * 256];
-byte *ptrlutcolors00;
-byte *ptrlutcolors01;
-byte *ptrlutcolors10;
-byte *ptrlutcolors11;
-#endif
-
-#if defined(MODE_HERC) || defined(MODE_ATI640)
+#if defined(MODE_HERC) || defined(MODE_ATI640) || defined(MODE_EGA640)
 byte lutcolors[14 * 1024];
 byte *ptrlutcolors;
 #endif
@@ -715,7 +704,7 @@ void I_ProcessPalette(byte *palette)
 
     byte *ptr = gammatable[usegamma];
 
-    for (i = 0; i < 14 * 256; i++, palette += 3)
+    for (i = 0; i < 14 * 1024; i += 4, palette += 3)
     {
         unsigned char color;
         int r, g, b;
@@ -732,7 +721,7 @@ void I_ProcessPalette(byte *palette)
         color = I_GetClosestColor(r2, g2, b2);
         color |= color << 4;
 
-        lutcolors00[i] = color;
+        lutcolors[i] = color;
 
         r2 = (r * 2) / 4 + r;
         g2 = (g * 2) / 4 + g;
@@ -741,7 +730,7 @@ void I_ProcessPalette(byte *palette)
         color = I_GetClosestColor(r2, g2, b2);
         color |= color << 4;
 
-        lutcolors01[i] = color;
+        lutcolors[i + 1] = color;
 
         r2 = (r * 3) / 4 + r;
         g2 = (g * 3) / 4 + g;
@@ -750,7 +739,7 @@ void I_ProcessPalette(byte *palette)
         color = I_GetClosestColor(r2, g2, b2);
         color |= color << 4;
 
-        lutcolors10[i] = color;
+        lutcolors[i + 2] = color;
 
         r2 = (r * 1) / 4 + r;
         g2 = (g * 1) / 4 + g;
@@ -759,7 +748,7 @@ void I_ProcessPalette(byte *palette)
         color = I_GetClosestColor(r2, g2, b2);
         color |= color << 4;
 
-        lutcolors11[i] = color;
+        lutcolors[i + 3] = color;
     }
 }
 #endif
@@ -1224,14 +1213,7 @@ void I_ProcessPalette(byte *palette)
 void I_SetPalette(int numpalette)
 {
 
-#if defined(MODE_EGA640)
-    ptrlutcolors00 = lutcolors00 + numpalette * 256;
-    ptrlutcolors01 = lutcolors01 + numpalette * 256;
-    ptrlutcolors10 = lutcolors10 + numpalette * 256;
-    ptrlutcolors11 = lutcolors11 + numpalette * 256;
-#endif
-
-#if defined(MODE_ATI640) || defined(MODE_HERC)
+#if defined(MODE_ATI640) || defined(MODE_HERC) || defined(MODE_EGA640)
     ptrlutcolors = lutcolors + numpalette * 1024;
 #endif
 
@@ -1836,55 +1818,55 @@ void EGA640_DrawBackbuffer(void)
         if (odd)
         {
             // ODD
-            color = ptrlutcolors10[backbuffer[base]] & 0x80 | (ptrlutcolors11[backbuffer[base]] & 0x80) >> 1 | (ptrlutcolors10[backbuffer[base + 1]] & 0x80) >> 2 | (ptrlutcolors11[backbuffer[base + 1]] & 0x80) >> 3 | ptrlutcolors10[backbuffer[base + 2]] & 0x08 | (ptrlutcolors11[backbuffer[base + 2]] & 0x08) >> 1 | (ptrlutcolors10[backbuffer[base + 3]] & 0x08) >> 2 | (ptrlutcolors11[backbuffer[base + 3]] & 0x08) >> 3;
+            color = ptrlutcolors[backbuffer[base] * 4 + 2] & 0x80 | (ptrlutcolors[backbuffer[base] * 4 + 3] & 0x80) >> 1 | (ptrlutcolors[backbuffer[base + 1] * 4 + 2] & 0x80) >> 2 | (ptrlutcolors[backbuffer[base + 1] * 4 + 3] & 0x80) >> 3 | ptrlutcolors[backbuffer[base + 2] * 4 + 2] & 0x08 | (ptrlutcolors[backbuffer[base + 2] * 4 + 3] & 0x08) >> 1 | (ptrlutcolors[backbuffer[base + 3] * 4 + 2] & 0x08) >> 2 | (ptrlutcolors[backbuffer[base + 3] * 4 + 3] & 0x08) >> 3;
             plane_red[plane_position] = color;
 
-            color = ptrlutcolors10[backbuffer[base + 4]] & 0x80 | (ptrlutcolors11[backbuffer[base + 4]] & 0x80) >> 1 | (ptrlutcolors10[backbuffer[base + 5]] & 0x80) >> 2 | (ptrlutcolors11[backbuffer[base + 5]] & 0x80) >> 3 | ptrlutcolors10[backbuffer[base + 6]] & 0x08 | (ptrlutcolors11[backbuffer[base + 6]] & 0x08) >> 1 | (ptrlutcolors10[backbuffer[base + 7]] & 0x08) >> 2 | (ptrlutcolors11[backbuffer[base + 7]] & 0x08) >> 3;
+            color = ptrlutcolors[backbuffer[base + 4] * 4 + 2] & 0x80 | (ptrlutcolors[backbuffer[base + 4] * 4 + 3] & 0x80) >> 1 | (ptrlutcolors[backbuffer[base + 5] * 4 + 2] & 0x80) >> 2 | (ptrlutcolors[backbuffer[base + 5] * 4 + 3] & 0x80) >> 3 | ptrlutcolors[backbuffer[base + 6] * 4 + 2] & 0x08 | (ptrlutcolors[backbuffer[base + 6] * 4 + 3] & 0x08) >> 1 | (ptrlutcolors[backbuffer[base + 7] * 4 + 2] & 0x08) >> 2 | (ptrlutcolors[backbuffer[base + 7] * 4 + 3] & 0x08) >> 3;
             plane_red[plane_position + 1] = color;
 
-            color = (ptrlutcolors10[backbuffer[base]] & 0x40) << 1 | ptrlutcolors11[backbuffer[base]] & 0x40 | (ptrlutcolors10[backbuffer[base + 1]] & 0x40) >> 1 | (ptrlutcolors11[backbuffer[base + 1]] & 0x40) >> 2 | (ptrlutcolors10[backbuffer[base + 2]] & 0x04) << 1 | ptrlutcolors11[backbuffer[base + 2]] & 0x04 | (ptrlutcolors10[backbuffer[base + 3]] & 0x04) >> 1 | (ptrlutcolors11[backbuffer[base + 3]] & 0x04) >> 2;
+            color = (ptrlutcolors[backbuffer[base] * 4 + 2] & 0x40) << 1 | ptrlutcolors[backbuffer[base] * 4 + 3] & 0x40 | (ptrlutcolors[backbuffer[base + 1] * 4 + 2] & 0x40) >> 1 | (ptrlutcolors[backbuffer[base + 1] * 4 + 3] & 0x40) >> 2 | (ptrlutcolors[backbuffer[base + 2] * 4 + 2] & 0x04) << 1 | ptrlutcolors[backbuffer[base + 2] * 4 + 3] & 0x04 | (ptrlutcolors[backbuffer[base + 3] * 4 + 2] & 0x04) >> 1 | (ptrlutcolors[backbuffer[base + 3] * 4 + 3] & 0x04) >> 2;
             plane_green[plane_position] = color;
 
-            color = (ptrlutcolors10[backbuffer[base + 4]] & 0x40) << 1 | ptrlutcolors11[backbuffer[base + 4]] & 0x40 | (ptrlutcolors10[backbuffer[base + 5]] & 0x40) >> 1 | (ptrlutcolors11[backbuffer[base + 5]] & 0x40) >> 2 | (ptrlutcolors10[backbuffer[base + 6]] & 0x04) << 1 | ptrlutcolors11[backbuffer[base + 6]] & 0x04 | (ptrlutcolors10[backbuffer[base + 7]] & 0x04) >> 1 | (ptrlutcolors11[backbuffer[base + 7]] & 0x04) >> 2;
+            color = (ptrlutcolors[backbuffer[base + 4] * 4 + 2] & 0x40) << 1 | ptrlutcolors[backbuffer[base + 4] * 4 + 3] & 0x40 | (ptrlutcolors[backbuffer[base + 5] * 4 + 2] & 0x40) >> 1 | (ptrlutcolors[backbuffer[base + 5] * 4 + 3] & 0x40) >> 2 | (ptrlutcolors[backbuffer[base + 6] * 4 + 2] & 0x04) << 1 | ptrlutcolors[backbuffer[base + 6] * 4 + 3] & 0x04 | (ptrlutcolors[backbuffer[base + 7] * 4 + 2] & 0x04) >> 1 | (ptrlutcolors[backbuffer[base + 7] * 4 + 3] & 0x04) >> 2;
             plane_green[plane_position + 1] = color;
 
-            color = (ptrlutcolors10[backbuffer[base]] & 0x20) << 2 | (ptrlutcolors11[backbuffer[base]] & 0x20) << 1 | ptrlutcolors10[backbuffer[base + 1]] & 0x20 | (ptrlutcolors11[backbuffer[base + 1]] & 0x20) >> 1 | (ptrlutcolors10[backbuffer[base + 2]] & 0x02) << 2 | (ptrlutcolors11[backbuffer[base + 2]] & 0x02) << 1 | ptrlutcolors10[backbuffer[base + 3]] & 0x02 | (ptrlutcolors11[backbuffer[base + 3]] & 0x02) >> 1;
+            color = (ptrlutcolors[backbuffer[base] * 4 + 2] & 0x20) << 2 | (ptrlutcolors[backbuffer[base] * 4 + 3] & 0x20) << 1 | ptrlutcolors[backbuffer[base + 1] * 4 + 2] & 0x20 | (ptrlutcolors[backbuffer[base + 1] * 4 + 3] & 0x20) >> 1 | (ptrlutcolors[backbuffer[base + 2] * 4 + 2] & 0x02) << 2 | (ptrlutcolors[backbuffer[base + 2] * 4 + 3] & 0x02) << 1 | ptrlutcolors[backbuffer[base + 3] * 4 + 2] & 0x02 | (ptrlutcolors[backbuffer[base + 3] * 4 + 3] & 0x02) >> 1;
             plane_blue[plane_position] = color;
 
-            color = (ptrlutcolors10[backbuffer[base + 4]] & 0x20) << 2 | (ptrlutcolors11[backbuffer[base + 4]] & 0x20) << 1 | ptrlutcolors10[backbuffer[base + 5]] & 0x20 | (ptrlutcolors11[backbuffer[base + 5]] & 0x20) >> 1 | (ptrlutcolors10[backbuffer[base + 6]] & 0x02) << 2 | (ptrlutcolors11[backbuffer[base + 6]] & 0x02) << 1 | ptrlutcolors10[backbuffer[base + 7]] & 0x02 | (ptrlutcolors11[backbuffer[base + 7]] & 0x02) >> 1;
+            color = (ptrlutcolors[backbuffer[base + 4] * 4 + 2] & 0x20) << 2 | (ptrlutcolors[backbuffer[base + 4] * 4 + 3] & 0x20) << 1 | ptrlutcolors[backbuffer[base + 5] * 4 + 2] & 0x20 | (ptrlutcolors[backbuffer[base + 5] * 4 + 3] & 0x20) >> 1 | (ptrlutcolors[backbuffer[base + 6] * 4 + 2] & 0x02) << 2 | (ptrlutcolors[backbuffer[base + 6] * 4 + 3] & 0x02) << 1 | ptrlutcolors[backbuffer[base + 7] * 4 + 2] & 0x02 | (ptrlutcolors[backbuffer[base + 7] * 4 + 3] & 0x02) >> 1;
             plane_blue[plane_position + 1] = color;
 
-            color = (ptrlutcolors10[backbuffer[base]] & 0x10) << 3 | (ptrlutcolors11[backbuffer[base]] & 0x10) << 2 | (ptrlutcolors10[backbuffer[base + 1]] & 0x10) << 1 | ptrlutcolors11[backbuffer[base + 1]] & 0x10 | (ptrlutcolors10[backbuffer[base + 2]] & 0x01) << 3 | (ptrlutcolors11[backbuffer[base + 2]] & 0x01) << 2 | (ptrlutcolors10[backbuffer[base + 3]] & 0x01) << 1 | ptrlutcolors11[backbuffer[base + 3]] & 0x01;
+            color = (ptrlutcolors[backbuffer[base] * 4 + 2] & 0x10) << 3 | (ptrlutcolors[backbuffer[base] * 4 + 3] & 0x10) << 2 | (ptrlutcolors[backbuffer[base + 1] * 4 + 2] & 0x10) << 1 | ptrlutcolors[backbuffer[base + 1] * 4 + 3] & 0x10 | (ptrlutcolors[backbuffer[base + 2] * 4 + 2] & 0x01) << 3 | (ptrlutcolors[backbuffer[base + 2] * 4 + 3] & 0x01) << 2 | (ptrlutcolors[backbuffer[base + 3] * 4 + 2] & 0x01) << 1 | ptrlutcolors[backbuffer[base + 3] * 4 + 3] & 0x01;
             plane_intensity[plane_position] = color;
 
-            color = (ptrlutcolors10[backbuffer[base + 4]] & 0x10) << 3 | (ptrlutcolors11[backbuffer[base + 4]] & 0x10) << 2 | (ptrlutcolors10[backbuffer[base + 5]] & 0x10) << 1 | ptrlutcolors11[backbuffer[base + 5]] & 0x10 | (ptrlutcolors10[backbuffer[base + 6]] & 0x01) << 3 | (ptrlutcolors11[backbuffer[base + 6]] & 0x01) << 2 | (ptrlutcolors10[backbuffer[base + 7]] & 0x01) << 1 | ptrlutcolors11[backbuffer[base + 7]] & 0x01;
+            color = (ptrlutcolors[backbuffer[base + 4] * 4 + 2] & 0x10) << 3 | (ptrlutcolors[backbuffer[base + 4] * 4 + 3] & 0x10) << 2 | (ptrlutcolors[backbuffer[base + 5] * 4 + 2] & 0x10) << 1 | ptrlutcolors[backbuffer[base + 5] * 4 + 3] & 0x10 | (ptrlutcolors[backbuffer[base + 6] * 4 + 2] & 0x01) << 3 | (ptrlutcolors[backbuffer[base + 6] * 4 + 3] & 0x01) << 2 | (ptrlutcolors[backbuffer[base + 7] * 4 + 2] & 0x01) << 1 | ptrlutcolors[backbuffer[base + 7] * 4 + 3] & 0x01;
             plane_intensity[plane_position + 1] = color;
         }
         else
         {
             // EVEN
-            color = ptrlutcolors00[backbuffer[base]] & 0x80 | (ptrlutcolors01[backbuffer[base]] & 0x80) >> 1 | (ptrlutcolors00[backbuffer[base + 1]] & 0x80) >> 2 | (ptrlutcolors01[backbuffer[base + 1]] & 0x80) >> 3 | ptrlutcolors00[backbuffer[base + 2]] & 0x08 | (ptrlutcolors01[backbuffer[base + 2]] & 0x08) >> 1 | (ptrlutcolors00[backbuffer[base + 3]] & 0x08) >> 2 | (ptrlutcolors01[backbuffer[base + 3]] & 0x08) >> 3;
+            color = ptrlutcolors[backbuffer[base] * 4] & 0x80 | (ptrlutcolors[backbuffer[base] * 4 + 1] & 0x80) >> 1 | (ptrlutcolors[backbuffer[base + 1] * 4] & 0x80) >> 2 | (ptrlutcolors[backbuffer[base + 1] * 4 + 1] & 0x80) >> 3 | ptrlutcolors[backbuffer[base + 2] * 4] & 0x08 | (ptrlutcolors[backbuffer[base + 2] * 4 + 1] & 0x08) >> 1 | (ptrlutcolors[backbuffer[base + 3] * 4] & 0x08) >> 2 | (ptrlutcolors[backbuffer[base + 3] * 4 + 1] & 0x08) >> 3;
             plane_red[plane_position] = color;
 
-            color = ptrlutcolors00[backbuffer[base + 4]] & 0x80 | (ptrlutcolors01[backbuffer[base + 4]] & 0x80) >> 1 | (ptrlutcolors00[backbuffer[base + 5]] & 0x80) >> 2 | (ptrlutcolors01[backbuffer[base + 5]] & 0x80) >> 3 | ptrlutcolors00[backbuffer[base + 6]] & 0x08 | (ptrlutcolors01[backbuffer[base + 6]] & 0x08) >> 1 | (ptrlutcolors00[backbuffer[base + 7]] & 0x08) >> 2 | (ptrlutcolors01[backbuffer[base + 7]] & 0x08) >> 3;
+            color = ptrlutcolors[backbuffer[base + 4] * 4] & 0x80 | (ptrlutcolors[backbuffer[base + 4] * 4 + 1] & 0x80) >> 1 | (ptrlutcolors[backbuffer[base + 5] * 4] & 0x80) >> 2 | (ptrlutcolors[backbuffer[base + 5] * 4 + 1] & 0x80) >> 3 | ptrlutcolors[backbuffer[base + 6] * 4] & 0x08 | (ptrlutcolors[backbuffer[base + 6] * 4 + 1] & 0x08) >> 1 | (ptrlutcolors[backbuffer[base + 7] * 4] & 0x08) >> 2 | (ptrlutcolors[backbuffer[base + 7] * 4 + 1] & 0x08) >> 3;
             plane_red[plane_position + 1] = color;
 
-            color = (ptrlutcolors00[backbuffer[base]] & 0x40) << 1 | ptrlutcolors01[backbuffer[base]] & 0x40 | (ptrlutcolors00[backbuffer[base + 1]] & 0x40) >> 1 | (ptrlutcolors01[backbuffer[base + 1]] & 0x40) >> 2 | (ptrlutcolors00[backbuffer[base + 2]] & 0x04) << 1 | ptrlutcolors01[backbuffer[base + 2]] & 0x04 | (ptrlutcolors00[backbuffer[base + 3]] & 0x04) >> 1 | (ptrlutcolors01[backbuffer[base + 3]] & 0x04) >> 2;
+            color = (ptrlutcolors[backbuffer[base] * 4] & 0x40) << 1 | ptrlutcolors[backbuffer[base] * 4 + 1] & 0x40 | (ptrlutcolors[backbuffer[base + 1] * 4] & 0x40) >> 1 | (ptrlutcolors[backbuffer[base + 1] * 4 + 1] & 0x40) >> 2 | (ptrlutcolors[backbuffer[base + 2] * 4] & 0x04) << 1 | ptrlutcolors[backbuffer[base + 2] * 4 + 1] & 0x04 | (ptrlutcolors[backbuffer[base + 3] * 4] & 0x04) >> 1 | (ptrlutcolors[backbuffer[base + 3] * 4 + 1] & 0x04) >> 2;
             plane_green[plane_position] = color;
 
-            color = (ptrlutcolors00[backbuffer[base + 4]] & 0x40) << 1 | ptrlutcolors01[backbuffer[base + 4]] & 0x40 | (ptrlutcolors00[backbuffer[base + 5]] & 0x40) >> 1 | (ptrlutcolors01[backbuffer[base + 5]] & 0x40) >> 2 | (ptrlutcolors00[backbuffer[base + 6]] & 0x04) << 1 | ptrlutcolors01[backbuffer[base + 6]] & 0x04 | (ptrlutcolors00[backbuffer[base + 7]] & 0x04) >> 1 | (ptrlutcolors01[backbuffer[base + 7]] & 0x04) >> 2;
+            color = (ptrlutcolors[backbuffer[base + 4] * 4] & 0x40) << 1 | ptrlutcolors[backbuffer[base + 4] * 4 + 1] & 0x40 | (ptrlutcolors[backbuffer[base + 5] * 4] & 0x40) >> 1 | (ptrlutcolors[backbuffer[base + 5] * 4 + 1] & 0x40) >> 2 | (ptrlutcolors[backbuffer[base + 6] * 4] & 0x04) << 1 | ptrlutcolors[backbuffer[base + 6] * 4 + 1] & 0x04 | (ptrlutcolors[backbuffer[base + 7] * 4] & 0x04) >> 1 | (ptrlutcolors[backbuffer[base + 7] * 4 + 1] & 0x04) >> 2;
             plane_green[plane_position + 1] = color;
 
-            color = (ptrlutcolors00[backbuffer[base]] & 0x20) << 2 | (ptrlutcolors01[backbuffer[base]] & 0x20) << 1 | ptrlutcolors00[backbuffer[base + 1]] & 0x20 | (ptrlutcolors01[backbuffer[base + 1]] & 0x20) >> 1 | (ptrlutcolors00[backbuffer[base + 2]] & 0x02) << 2 | (ptrlutcolors01[backbuffer[base + 2]] & 0x02) << 1 | ptrlutcolors00[backbuffer[base + 3]] & 0x02 | (ptrlutcolors01[backbuffer[base + 3]] & 0x02) >> 1;
+            color = (ptrlutcolors[backbuffer[base] * 4] & 0x20) << 2 | (ptrlutcolors[backbuffer[base] * 4 + 1] & 0x20) << 1 | ptrlutcolors[backbuffer[base + 1] * 4] & 0x20 | (ptrlutcolors[backbuffer[base + 1] * 4 + 1] & 0x20) >> 1 | (ptrlutcolors[backbuffer[base + 2] * 4] & 0x02) << 2 | (ptrlutcolors[backbuffer[base + 2] * 4 + 1] & 0x02) << 1 | ptrlutcolors[backbuffer[base + 3] * 4] & 0x02 | (ptrlutcolors[backbuffer[base + 3] * 4 + 1] & 0x02) >> 1;
             plane_blue[plane_position] = color;
 
-            color = (ptrlutcolors00[backbuffer[base + 4]] & 0x20) << 2 | (ptrlutcolors01[backbuffer[base + 4]] & 0x20) << 1 | ptrlutcolors00[backbuffer[base + 5]] & 0x20 | (ptrlutcolors01[backbuffer[base + 5]] & 0x20) >> 1 | (ptrlutcolors00[backbuffer[base + 6]] & 0x02) << 2 | (ptrlutcolors01[backbuffer[base + 6]] & 0x02) << 1 | ptrlutcolors00[backbuffer[base + 7]] & 0x02 | (ptrlutcolors01[backbuffer[base + 7]] & 0x02) >> 1;
+            color = (ptrlutcolors[backbuffer[base + 4] * 4] & 0x20) << 2 | (ptrlutcolors[backbuffer[base + 4] * 4 + 1] & 0x20) << 1 | ptrlutcolors[backbuffer[base + 5] * 4] & 0x20 | (ptrlutcolors[backbuffer[base + 5] * 4 + 1] & 0x20) >> 1 | (ptrlutcolors[backbuffer[base + 6] * 4] & 0x02) << 2 | (ptrlutcolors[backbuffer[base + 6] * 4 + 1] & 0x02) << 1 | ptrlutcolors[backbuffer[base + 7] * 4] & 0x02 | (ptrlutcolors[backbuffer[base + 7] * 4 + 1] & 0x02) >> 1;
             plane_blue[plane_position + 1] = color;
 
-            color = (ptrlutcolors00[backbuffer[base]] & 0x10) << 3 | (ptrlutcolors01[backbuffer[base]] & 0x10) << 2 | (ptrlutcolors00[backbuffer[base + 1]] & 0x10) << 1 | ptrlutcolors01[backbuffer[base + 1]] & 0x10 | (ptrlutcolors00[backbuffer[base + 2]] & 0x01) << 3 | (ptrlutcolors01[backbuffer[base + 2]] & 0x01) << 2 | (ptrlutcolors00[backbuffer[base + 3]] & 0x01) << 1 | ptrlutcolors01[backbuffer[base + 3]] & 0x01;
+            color = (ptrlutcolors[backbuffer[base] * 4] & 0x10) << 3 | (ptrlutcolors[backbuffer[base] * 4 + 1] & 0x10) << 2 | (ptrlutcolors[backbuffer[base + 1] * 4] & 0x10) << 1 | ptrlutcolors[backbuffer[base + 1] * 4 + 1] & 0x10 | (ptrlutcolors[backbuffer[base + 2] * 4] & 0x01) << 3 | (ptrlutcolors[backbuffer[base + 2] * 4 + 1] & 0x01) << 2 | (ptrlutcolors[backbuffer[base + 3] * 4] & 0x01) << 1 | ptrlutcolors[backbuffer[base + 3] * 4 + 1] & 0x01;
             plane_intensity[plane_position] = color;
 
-            color = (ptrlutcolors00[backbuffer[base + 4]] & 0x10) << 3 | (ptrlutcolors01[backbuffer[base + 4]] & 0x10) << 2 | (ptrlutcolors00[backbuffer[base + 5]] & 0x10) << 1 | ptrlutcolors01[backbuffer[base + 5]] & 0x10 | (ptrlutcolors00[backbuffer[base + 6]] & 0x01) << 3 | (ptrlutcolors01[backbuffer[base + 6]] & 0x01) << 2 | (ptrlutcolors00[backbuffer[base + 7]] & 0x01) << 1 | ptrlutcolors01[backbuffer[base + 7]] & 0x01;
+            color = (ptrlutcolors[backbuffer[base + 4] * 4] & 0x10) << 3 | (ptrlutcolors[backbuffer[base + 4] * 4 + 1] & 0x10) << 2 | (ptrlutcolors[backbuffer[base + 5] * 4] & 0x10) << 1 | ptrlutcolors[backbuffer[base + 5] * 4 + 1] & 0x10 | (ptrlutcolors[backbuffer[base + 6] * 4] & 0x01) << 3 | (ptrlutcolors[backbuffer[base + 6] * 4 + 1] & 0x01) << 2 | (ptrlutcolors[backbuffer[base + 7] * 4] & 0x01) << 1 | ptrlutcolors[backbuffer[base + 7] * 4 + 1] & 0x01;
             plane_intensity[plane_position + 1] = color;
         }
 
