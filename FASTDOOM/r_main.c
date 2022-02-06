@@ -1095,27 +1095,29 @@ R_PointInSubsector(fixed_t x,
 
         if (!node->dx)
         {
-            if (x <= node->x)
-            {
-                side = node->dy > 0;
-            }
-            else
-            {
-                side = node->dy < 0;
-            }
+//            if (x <= node->x)
+//            {
+//                side = node->dy > 0;
+//            }
+//            else
+//            {
+//                side = node->dy < 0;
+//            }
+            side = (x <= node->x)^(node->dy <= 0);
         }
         else
         {
             if (!node->dy)
             {
-                if (y <= node->y)
-                {
-                    side = node->dx < 0;
-                }
-                else
-                {
-                    side = node->dx > 0;
-                }
+//                if (y <= node->y)
+//                {
+//                    side = node->dx < 0;
+//                }
+//                else
+//                {
+//                    side = node->dx > 0;
+//                }
+                side = (y <= node->y)^(node->dx >= 0);
             }
             else
             {
