@@ -237,13 +237,6 @@ byte lutcolors[14 * 512];
 byte *ptrlutcolors;
 #endif
 
-#if defined(MODE_V2)
-int lutplane0[(320 * 350) / 4];
-int lutplane1[(320 * 350) / 4];
-int lutplane2[(320 * 350) / 4];
-int lutplane3[(320 * 350) / 4];
-#endif
-
 byte gammatable[5][256] =
     {
         {0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 10, 11, 11, 11, 11, 12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15, 16, 16, 16, 16, 17, 17, 17, 17, 18, 18, 18, 18, 19, 19, 19, 19, 20, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 26, 27, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 30, 31, 31, 31, 31, 32, 32, 32, 32, 32, 33, 33, 33, 33, 34, 34, 34, 34, 35, 35, 35, 35, 36, 36, 36, 36, 37, 37, 37, 37, 38, 38, 38, 38, 39, 39, 39, 39, 40, 40, 40, 40, 41, 41, 41, 41, 42, 42, 42, 42, 43, 43, 43, 43, 44, 44, 44, 44, 45, 45, 45, 45, 46, 46, 46, 46, 47, 47, 47, 47, 48, 48, 48, 48, 49, 49, 49, 49, 50, 50, 50, 50, 51, 51, 51, 51, 52, 52, 52, 52, 53, 53, 53, 53, 54, 54, 54, 54, 55, 55, 55, 55, 56, 56, 56, 56, 57, 57, 57, 57, 58, 58, 58, 58, 59, 59, 59, 59, 60, 60, 60, 60, 61, 61, 61, 61, 62, 62, 62, 62, 63, 63, 63, 63},
@@ -2215,102 +2208,98 @@ void I_FinishUpdate(void)
 #endif
 #if defined(MODE_V2)
     {
-        int x, y;
+        int x;
 
         byte *ptrdestscreen;
-        int *ptrlutplane;
+        int pos;
 
         outp(SC_INDEX + 1, 1 << 0);
 
         ptrdestscreen = destscreen + 15 * 80 + 15;
-        ptrlutplane = lutplane0 + 15 * 80 + 15;
+        pos = 319;
 
-        for (y = 0; y < 320; y++)
-        {
+        do {
             for (x = 0; x < 10; x++)
             {
-                ptrdestscreen[0] = backbuffer[ptrlutplane[0]];
-                ptrdestscreen[1] = backbuffer[ptrlutplane[1]];
-                ptrdestscreen[2] = backbuffer[ptrlutplane[2]];
-                ptrdestscreen[3] = backbuffer[ptrlutplane[3]];
-                ptrdestscreen[4] = backbuffer[ptrlutplane[4]];
+                ptrdestscreen[0] = backbuffer[pos];
+                ptrdestscreen[1] = backbuffer[pos + 1280];
+                ptrdestscreen[2] = backbuffer[pos + 2560];
+                ptrdestscreen[3] = backbuffer[pos + 3840];
+                ptrdestscreen[4] = backbuffer[pos + 5120];
 
-                ptrlutplane += 5;
+                pos += 1280 * 5;
                 ptrdestscreen += 5;
             }
 
-            ptrlutplane += 30;
+            pos -= (1280 * 50 + 1);
             ptrdestscreen += 30;
-        }
+        }while (pos > -1);
 
         outp(SC_INDEX + 1, 1 << 1);
 
         ptrdestscreen = destscreen + 15 * 80 + 15;
-        ptrlutplane = lutplane1 + 15 * 80 + 15;
+        pos = 639;
 
-        for (y = 0; y < 320; y++)
-        {
+        do {
             for (x = 0; x < 10; x++)
             {
-                ptrdestscreen[0] = backbuffer[ptrlutplane[0]];
-                ptrdestscreen[1] = backbuffer[ptrlutplane[1]];
-                ptrdestscreen[2] = backbuffer[ptrlutplane[2]];
-                ptrdestscreen[3] = backbuffer[ptrlutplane[3]];
-                ptrdestscreen[4] = backbuffer[ptrlutplane[4]];
+                ptrdestscreen[0] = backbuffer[pos];
+                ptrdestscreen[1] = backbuffer[pos + 1280];
+                ptrdestscreen[2] = backbuffer[pos + 2560];
+                ptrdestscreen[3] = backbuffer[pos + 3840];
+                ptrdestscreen[4] = backbuffer[pos + 5120];
 
-                ptrlutplane += 5;
+                pos += 1280 * 5;
                 ptrdestscreen += 5;
             }
 
-            ptrlutplane += 30;
+            pos -= (1280 * 50 + 1);
             ptrdestscreen += 30;
-        }
+        }while (pos > 319);
 
         outp(SC_INDEX + 1, 1 << 2);
 
         ptrdestscreen = destscreen + 15 * 80 + 15;
-        ptrlutplane = lutplane2 + 15 * 80 + 15;
+        pos = 959;
 
-        for (y = 0; y < 320; y++)
-        {
+        do {
             for (x = 0; x < 10; x++)
             {
-                ptrdestscreen[0] = backbuffer[ptrlutplane[0]];
-                ptrdestscreen[1] = backbuffer[ptrlutplane[1]];
-                ptrdestscreen[2] = backbuffer[ptrlutplane[2]];
-                ptrdestscreen[3] = backbuffer[ptrlutplane[3]];
-                ptrdestscreen[4] = backbuffer[ptrlutplane[4]];
+                ptrdestscreen[0] = backbuffer[pos];
+                ptrdestscreen[1] = backbuffer[pos + 1280];
+                ptrdestscreen[2] = backbuffer[pos + 2560];
+                ptrdestscreen[3] = backbuffer[pos + 3840];
+                ptrdestscreen[4] = backbuffer[pos + 5120];
 
-                ptrlutplane += 5;
+                pos += 1280 * 5;
                 ptrdestscreen += 5;
             }
 
-            ptrlutplane += 30;
+            pos -= (1280 * 50 + 1);
             ptrdestscreen += 30;
-        }
+        }while (pos > 639);
 
         outp(SC_INDEX + 1, 1 << 3);
 
         ptrdestscreen = destscreen + 15 * 80 + 15;
-        ptrlutplane = lutplane3 + 15 * 80 + 15;
+        pos = 1279;
 
-        for (y = 0; y < 320; y++)
-        {
+        do {
             for (x = 0; x < 10; x++)
             {
-                ptrdestscreen[0] = backbuffer[ptrlutplane[0]];
-                ptrdestscreen[1] = backbuffer[ptrlutplane[1]];
-                ptrdestscreen[2] = backbuffer[ptrlutplane[2]];
-                ptrdestscreen[3] = backbuffer[ptrlutplane[3]];
-                ptrdestscreen[4] = backbuffer[ptrlutplane[4]];
+                ptrdestscreen[0] = backbuffer[pos];
+                ptrdestscreen[1] = backbuffer[pos + 1280];
+                ptrdestscreen[2] = backbuffer[pos + 2560];
+                ptrdestscreen[3] = backbuffer[pos + 3840];
+                ptrdestscreen[4] = backbuffer[pos + 5120];
 
-                ptrlutplane += 5;
+                pos += 1280 * 5;
                 ptrdestscreen += 5;
             }
 
-            ptrlutplane += 30;
+            pos -= (1280 * 50 + 1);
             ptrdestscreen += 30;
-        }
+        }while (pos > 959);
 
         outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
 
@@ -2457,44 +2446,8 @@ void I_InitGraphics(void)
     outp(CRTC_INDEX + 1, inp(CRTC_INDEX + 1) | 0x40);
     outp(GC_INDEX, GC_READMAP);
 #endif
-#if defined(MODE_V2)
-    {
-        int x, y;
-
-        for (x = 0; x < 200; x++)
-        {
-            int xp = x / 4;
-            for (y = 15; y < 320 + 15; y++)
-            {
-                int pos_x_backbuffer;
-                int pos_y_backbuffer;
-
-                pos_x_backbuffer = x;
-                pos_y_backbuffer = 319 - y;
-
-                switch (x % 4)
-                {
-                case 0:
-                    lutplane0[y * 80 + xp + 15] = pos_x_backbuffer * 320 + pos_y_backbuffer + 15;
-                    break;
-                case 1:
-                    lutplane1[y * 80 + xp + 15] = pos_x_backbuffer * 320 + pos_y_backbuffer + 15;
-                    break;
-                case 2:
-                    lutplane2[y * 80 + xp + 15] = pos_x_backbuffer * 320 + pos_y_backbuffer + 15;
-                    break;
-                case 3:
-                    lutplane3[y * 80 + xp + 15] = pos_x_backbuffer * 320 + pos_y_backbuffer + 15;
-                    break;
-                }
-            }
-        }
-    }
-
-#endif
 
 #if defined(MODE_V2)
-
     regs.w.ax = 0x13;
     int386(0x10, (union REGS *)&regs, &regs);
     pcscreen = currentscreen = (byte *)0xA0000;
