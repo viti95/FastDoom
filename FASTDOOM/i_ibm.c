@@ -2217,56 +2217,99 @@ void I_FinishUpdate(void)
     {
         int x, y;
 
+        byte *ptrdestscreen;
+        int *ptrlutplane;
+
         outp(SC_INDEX + 1, 1 << 0);
-        for (y = 15 * 80; y < 335 * 80; y += 80)
+
+        ptrdestscreen = destscreen + 15 * 80 + 15;
+        ptrlutplane = lutplane0 + 15 * 80 + 15;
+
+        for (y = 0; y < 320; y++)
         {
-            for (x = 15; x < 65; x += 5)
+            for (x = 0; x < 10; x++)
             {
-                destscreen[y + x] = backbuffer[lutplane0[y + x]];
-                destscreen[y + x + 1] = backbuffer[lutplane0[y + x + 1]];
-                destscreen[y + x + 2] = backbuffer[lutplane0[y + x + 2]];
-                destscreen[y + x + 3] = backbuffer[lutplane0[y + x + 3]];
-                destscreen[y + x + 4] = backbuffer[lutplane0[y + x + 4]];
+                ptrdestscreen[0] = backbuffer[ptrlutplane[0]];
+                ptrdestscreen[1] = backbuffer[ptrlutplane[1]];
+                ptrdestscreen[2] = backbuffer[ptrlutplane[2]];
+                ptrdestscreen[3] = backbuffer[ptrlutplane[3]];
+                ptrdestscreen[4] = backbuffer[ptrlutplane[4]];
+
+                ptrlutplane += 5;
+                ptrdestscreen += 5;
             }
+
+            ptrlutplane += 30;
+            ptrdestscreen += 30;
         }
 
         outp(SC_INDEX + 1, 1 << 1);
-        for (y = 15 * 80; y < 335 * 80; y += 80)
+
+        ptrdestscreen = destscreen + 15 * 80 + 15;
+        ptrlutplane = lutplane1 + 15 * 80 + 15;
+
+        for (y = 0; y < 320; y++)
         {
-            for (x = 15; x < 65; x += 5)
+            for (x = 0; x < 10; x++)
             {
-                destscreen[y + x] = backbuffer[lutplane1[y + x]];
-                destscreen[y + x + 1] = backbuffer[lutplane1[y + x + 1]];
-                destscreen[y + x + 2] = backbuffer[lutplane1[y + x + 2]];
-                destscreen[y + x + 3] = backbuffer[lutplane1[y + x + 3]];
-                destscreen[y + x + 4] = backbuffer[lutplane1[y + x + 4]];
+                ptrdestscreen[0] = backbuffer[ptrlutplane[0]];
+                ptrdestscreen[1] = backbuffer[ptrlutplane[1]];
+                ptrdestscreen[2] = backbuffer[ptrlutplane[2]];
+                ptrdestscreen[3] = backbuffer[ptrlutplane[3]];
+                ptrdestscreen[4] = backbuffer[ptrlutplane[4]];
+
+                ptrlutplane += 5;
+                ptrdestscreen += 5;
             }
+
+            ptrlutplane += 30;
+            ptrdestscreen += 30;
         }
 
         outp(SC_INDEX + 1, 1 << 2);
-        for (y = 15 * 80; y < 335 * 80; y += 80)
+
+        ptrdestscreen = destscreen + 15 * 80 + 15;
+        ptrlutplane = lutplane2 + 15 * 80 + 15;
+
+        for (y = 0; y < 320; y++)
         {
-            for (x = 15; x < 65; x += 5)
+            for (x = 0; x < 10; x++)
             {
-                destscreen[y + x] = backbuffer[lutplane2[y + x]];
-                destscreen[y + x + 1] = backbuffer[lutplane2[y + x + 1]];
-                destscreen[y + x + 2] = backbuffer[lutplane2[y + x + 2]];
-                destscreen[y + x + 3] = backbuffer[lutplane2[y + x + 3]];
-                destscreen[y + x + 4] = backbuffer[lutplane2[y + x + 4]];
+                ptrdestscreen[0] = backbuffer[ptrlutplane[0]];
+                ptrdestscreen[1] = backbuffer[ptrlutplane[1]];
+                ptrdestscreen[2] = backbuffer[ptrlutplane[2]];
+                ptrdestscreen[3] = backbuffer[ptrlutplane[3]];
+                ptrdestscreen[4] = backbuffer[ptrlutplane[4]];
+
+                ptrlutplane += 5;
+                ptrdestscreen += 5;
             }
+
+            ptrlutplane += 30;
+            ptrdestscreen += 30;
         }
 
         outp(SC_INDEX + 1, 1 << 3);
-        for (y = 15 * 80; y < 335 * 80; y += 80)
+
+        ptrdestscreen = destscreen + 15 * 80 + 15;
+        ptrlutplane = lutplane3 + 15 * 80 + 15;
+
+        for (y = 0; y < 320; y++)
         {
-            for (x = 15; x < 65; x += 5)
+            for (x = 0; x < 10; x++)
             {
-                destscreen[y + x] = backbuffer[lutplane3[y + x]];
-                destscreen[y + x + 1] = backbuffer[lutplane3[y + x + 1]];
-                destscreen[y + x + 2] = backbuffer[lutplane3[y + x + 2]];
-                destscreen[y + x + 3] = backbuffer[lutplane3[y + x + 3]];
-                destscreen[y + x + 4] = backbuffer[lutplane3[y + x + 4]];
+                ptrdestscreen[0] = backbuffer[ptrlutplane[0]];
+                ptrdestscreen[1] = backbuffer[ptrlutplane[1]];
+                ptrdestscreen[2] = backbuffer[ptrlutplane[2]];
+                ptrdestscreen[3] = backbuffer[ptrlutplane[3]];
+                ptrdestscreen[4] = backbuffer[ptrlutplane[4]];
+
+                ptrlutplane += 5;
+                ptrdestscreen += 5;
             }
+
+            ptrlutplane += 30;
+            ptrdestscreen += 30;
         }
 
         outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
