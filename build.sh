@@ -65,10 +65,6 @@ elif [ "$target" = "fdoomvbd.exe" ]; then
   buildopts="-dMODE_VBE2_DIRECT"
   buildtarget="fdoomvbd.exe"
 
-elif [ "$target" = "fdoomv.exe" ]; then
-  buildopts="-dMODE_V -dUSE_BACKBUFFER"
-  buildtarget="fdoom13h.exe"
-
 elif [ "$target" = "fdoomv2.exe" ]; then
   buildopts="-dMODE_V2 -dUSE_BACKBUFFER"
   buildtarget="fdoom13h.exe"
