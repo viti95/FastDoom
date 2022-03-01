@@ -835,7 +835,7 @@ void R_DrawPlanesFlatSurfacesText80100(void)
 }
 #endif
 
-#if defined(MODE_T8050)
+#if defined(MODE_T8050) || defined(MODE_T8043)
 void R_DrawPlanesFlatSurfacesText8050(void)
 {
     visplane_t *pl;

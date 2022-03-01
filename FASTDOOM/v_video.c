@@ -347,7 +347,7 @@ void V_WriteCharDirect(int x, int y, unsigned char c)
 }
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T80100)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T80100)
 void V_WriteTextColorDirect(int x, int y, char *string, unsigned short color)
 {
     unsigned short *dest;
@@ -747,7 +747,7 @@ void V_DrawPatchDirectText4025(int x, int y, patch_t *patch)
 }
 #endif
 
-#ifdef MODE_T8025
+#if defined(MODE_T8025) || defined(MODE_T8043)
 void V_DrawPatchDirectText8025(int x, int y, patch_t *patch)
 {
     int count;

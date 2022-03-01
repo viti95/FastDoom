@@ -48,7 +48,7 @@
 //  and the total size == width*height*depth/8.,
 //
 
-#if !defined(MODE_T8050) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050)
+#if !defined(MODE_T8050) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_T8043)
 int viewwidth;
 int viewheight;
 int scaledviewwidth;
@@ -62,7 +62,7 @@ int columnofs[SCREENWIDTH];
 #if defined(USE_BACKBUFFER)
 byte *ylookup[SCREENHEIGHT];
 #endif
-#if defined(MODE_Y) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_VBE2_DIRECT) || defined(MODE_T80100)
+#if defined(MODE_Y) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_VBE2_DIRECT) || defined(MODE_T80100)
 byte **ylookup;
 #endif
 
@@ -1037,7 +1037,7 @@ void R_DrawSpanText80100(void)
 }
 #endif
 
-#if defined(MODE_T8050)
+#if defined(MODE_T8050) || defined(MODE_T8043)
 void R_DrawColumnText8050(void)
 {
     fixed_t frac;
@@ -1114,7 +1114,7 @@ void R_DrawSkyFlatText80100(void)
 }
 #endif
 
-#if defined(MODE_T8050)
+#if defined(MODE_T8050) || defined(MODE_T8043)
 void R_DrawSkyFlatText8050(void)
 {
     int count;
@@ -1389,7 +1389,7 @@ void R_DrawFuzzColumnSaturnText80100(void)
 }
 #endif
 
-#if defined(MODE_T8050)
+#if defined(MODE_T8050) || defined(MODE_T8043)
 void R_DrawFuzzColumnSaturnText8050(void)
 {
     int count;
@@ -1534,7 +1534,7 @@ void R_DrawFuzzColumnFastText80100(void)
 }
 #endif
 
-#if defined(MODE_T8050)
+#if defined(MODE_T8050) || defined(MODE_T8043)
 void R_DrawFuzzColumnFastText8050(void)
 {
     int count;
@@ -1559,7 +1559,7 @@ void R_DrawFuzzColumnFastText8050(void)
 }
 #endif
 
-#if defined(MODE_T8050) || defined(MODE_T80100)
+#if defined(MODE_T8050) || defined(MODE_T80100) || defined(MODE_T8043)
 void R_DrawSpanText8050(void)
 {
     int countp;
@@ -1638,7 +1638,7 @@ void R_DrawSpanPotato(void)
 //
 #define FUZZTABLE 50
 
-#if defined(MODE_Y) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_Y) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
 #define FUZZOFF (SCREENWIDTH / 4)
 #endif
 
@@ -2126,7 +2126,7 @@ void R_DrawFuzzColumnText80100(void)
 }
 #endif
 
-#if defined(MODE_T8050)
+#if defined(MODE_T8050) || defined(MODE_T8043)
 void R_DrawFuzzColumnText8050(void)
 {
     int count;
@@ -2631,7 +2631,7 @@ void R_DrawSpanFlatText80100(void)
 }
 #endif
 
-#if defined(MODE_T8050)
+#if defined(MODE_T8050) || defined(MODE_T8043)
 void R_DrawSpanFlatText8050(void)
 {
     int countp;
