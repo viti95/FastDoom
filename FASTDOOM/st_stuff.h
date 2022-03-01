@@ -46,6 +46,7 @@ void ST_Drawer(byte screenblocks, byte refresh);
 void ST_DrawerMini();
 void ST_DrawerText4025();
 void ST_DrawerText8025();
+void ST_DrawerText8043();
 void ST_DrawerText8050();
 
 // Called when the console player is spawned on each level.

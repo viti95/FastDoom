@@ -347,7 +347,7 @@ void WI_slamBackground(void)
 	V_DrawPatchDirectText8025(0, 0, W_CacheLumpName(bgname, PU_CACHE));
 #endif
 #ifdef MODE_T8043
-	V_DrawPatchDirectText8025(0, 0, W_CacheLumpName(bgname, PU_CACHE));
+	V_DrawPatchDirectText8043(0, 0, W_CacheLumpName(bgname, PU_CACHE));
 #endif
 #if defined(MODE_T8050)
 	V_DrawPatchDirectText8050(0, 0, W_CacheLumpName(bgname, PU_CACHE));

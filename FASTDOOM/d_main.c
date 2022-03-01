@@ -360,11 +360,7 @@ void D_Display(void)
         V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 4, "PAUSE");
 #endif
 
-#if defined(MODE_T8043)
-        V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 3, "PAUSE");
-#endif
-
-#if defined(MODE_T8050) || defined(MODE_T80100)
+#if defined(MODE_T8050) || defined(MODE_T80100) || defined(MODE_T8043)
         V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 2, "PAUSE");
 #endif
 
@@ -393,7 +389,7 @@ void D_Display(void)
         ST_DrawerText8025();
 #endif
 #if defined(MODE_T8043)
-        ST_DrawerText8025();
+        ST_DrawerText8043();
 #endif
 #if defined(MODE_T8050) || defined(MODE_T80100)
         ST_DrawerText8050();
@@ -509,7 +505,7 @@ void D_PageDrawer(void)
     V_DrawPatchDirectText8025(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
 #if defined(MODE_T8043)
-    V_DrawPatchDirectText8025(0, 0, W_CacheLumpName(pagename, PU_CACHE));
+    V_DrawPatchDirectText8043(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
 #if defined(MODE_T8050)
     V_DrawPatchDirectText8050(0, 0, W_CacheLumpName(pagename, PU_CACHE));
