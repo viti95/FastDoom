@@ -402,7 +402,7 @@ void F_TextWriteText(void)
 #endif
 
 #ifdef MODE_T8043
-	SetWords(textdestscreen, 0, 80 * 25);
+	SetWords(textdestscreen, 0, 80 * 43);
 #endif
 
 #if defined(MODE_T8050) || defined(MODE_T80100)
@@ -807,7 +807,7 @@ void F_CastDrawerText(void)
 	V_WriteTextDirect(40 - strlen(castorder[castnum].name) / 2, 23, castorder[castnum].name);
 #endif
 #ifdef MODE_T8043
-	V_WriteTextDirect(40 - strlen(castorder[castnum].name) / 2, 23, castorder[castnum].name);
+	V_WriteTextDirect(40 - strlen(castorder[castnum].name) / 2, 41, castorder[castnum].name);
 #endif
 #if defined(MODE_T8050) || defined(MODE_T80100)
 	V_WriteTextDirect(40 - strlen(castorder[castnum].name) / 2, 48, castorder[castnum].name);
@@ -1057,7 +1057,7 @@ void F_BunnyScrollText(void)
 		V_WriteTextDirect(37, 12, "THE END");
 #endif
 #ifdef MODE_T8043
-		V_WriteTextDirect(37, 12, "THE END");
+		V_WriteTextDirect(37, 21, "THE END");
 #endif
 #if defined(MODE_T8050) || defined(MODE_T80100)
 		V_WriteTextDirect(37, 25, "THE END");
@@ -1081,7 +1081,7 @@ void F_BunnyScrollText(void)
 	V_WriteTextDirect(37, 12, "THE END");
 #endif
 #ifdef MODE_T8043
-	V_WriteTextDirect(37, 12, "THE END");
+	V_WriteTextDirect(37, 21, "THE END");
 #endif
 #if defined(MODE_T8050) || defined(MODE_T80100)
 	V_WriteTextDirect(37, 25, "THE END");
