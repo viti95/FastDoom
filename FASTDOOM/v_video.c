@@ -557,7 +557,7 @@ void V_DrawPatchDirectText8043(int x, int y, patch_t *patch)
         while (column->topdelta != 0xff)
         {
             source = (byte *)column + 3;
-            dest = desttop + Mul80(column->topdelta / 4);
+            dest = desttop + Mul80(column->topdelta / 5);
             count = column->length / 4;
 
             while (count--)
