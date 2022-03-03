@@ -241,17 +241,17 @@ void D_Display(void)
     case GS_LEVEL:
         if (!gametic)
             break;
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
         if (automapactive)
         {
             // [crispy] update automap while playing
             R_RenderPlayerView(&players);
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
             AM_Drawer();
 #if defined(USE_BACKBUFFER)
             updatestate |= I_FULLVIEW;
 #endif
-#endif
         }
+#endif
 
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
         ST_doPaletteStuff();
@@ -298,7 +298,9 @@ void D_Display(void)
 
     if (gamestate == GS_LEVEL && gametic)
     {
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
         if (!automapactive)
+#endif
             R_RenderPlayerView(&players);
 
         HU_Drawer();
@@ -323,7 +325,11 @@ void D_Display(void)
     }
 
     // see if the border needs to be updated to the screen
-    if (gamestate == GS_LEVEL && !automapactive && scaledviewwidth != 320)
+    if (gamestate == GS_LEVEL 
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+        && !automapactive 
+#endif
+        && scaledviewwidth != 320)
     {
         if (menuactive || menuactivestate || !viewactivestate)
             borderdrawcount = 3;
@@ -347,9 +353,11 @@ void D_Display(void)
     // draw pause pic
     if (paused)
     {
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
         if (automapactive)
             y = 4;
         else
+#endif
             y = viewwindowy + 4;
 
 #if defined(MODE_T4025) || defined(MODE_T4050)

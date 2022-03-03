@@ -355,8 +355,10 @@ void HU_Drawer(void)
         }
     }
 
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     if (automapactive)
         HUlib_drawTextLine(&w_title);
+#endif
 }
 
 void HU_Erase(void)

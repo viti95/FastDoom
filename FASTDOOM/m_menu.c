@@ -1877,15 +1877,19 @@ byte M_Responder(event_t *ev)
         switch (ch)
         {
         case KEY_MINUS: // Screen size down
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
             if (automapactive)
                 return 0;
+#endif
             M_SizeDisplay(0);
             S_StartSound(NULL, sfx_stnmov);
             return 1;
 
         case KEY_EQUALS: // Screen size up
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
             if (automapactive)
                 return 0;
+#endif
             M_SizeDisplay(1);
             S_StartSound(NULL, sfx_stnmov);
             return 1;

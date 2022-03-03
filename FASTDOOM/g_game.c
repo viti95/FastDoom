@@ -385,8 +385,10 @@ void G_Responder(event_t *ev)
     if (gamestate == GS_LEVEL)
     {
         ST_Responder(ev); // status window ate it
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
         if (AM_Responder(ev))
             return; // automap ate it
+#endif
     }
 
     if (gamestate == GS_FINALE)
@@ -523,7 +525,9 @@ void G_Ticker(void)
     case GS_LEVEL:
         P_Ticker();
         ST_Ticker();
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
         AM_Ticker();
+#endif
         HU_Ticker();
         break;
 
@@ -654,8 +658,10 @@ void G_DoCompleted(void)
 
     G_PlayerFinishLevel(); // take away cards and stuff
 
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     if (automapactive)
         AM_Stop();
+#endif
 
     if (gamemode != commercial)
         switch (gamemap)
@@ -739,7 +745,9 @@ void G_DoCompleted(void)
 
     gamestate = GS_INTERMISSION;
     viewactive = 0;
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     automapactive = 0;
+#endif
 
     WI_Start(&wminfo);
 }
@@ -1031,7 +1039,9 @@ void G_InitNew(skill_t skill,
     usergame = 1; // will be set false if a demo
     paused = 0;
     demoplayback = 0;
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     automapactive = 0;
+#endif
     viewactive = 1;
     gameepisode = episode;
     gamemap = map;

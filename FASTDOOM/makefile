@@ -78,7 +78,6 @@ GLOBOBJS_Y = &
  g_game.obj &
  m_menu.obj &
  m_misc.obj &
- am_map.obj &
  p_ceilng.obj &
  p_doors.obj &
  p_enemy.obj &

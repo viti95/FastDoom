@@ -108,7 +108,9 @@ void F_StartFinale(void)
 	gameaction = ga_nothing;
 	gamestate = GS_FINALE;
 	viewactive = 0;
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 	automapactive = 0;
+#endif
 
 	if (gamemode == commercial)
 	{

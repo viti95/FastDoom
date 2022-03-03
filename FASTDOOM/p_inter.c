@@ -578,12 +578,14 @@ void P_KillMobj(mobj_t *source, mobj_t *target)
 		target->player->playerstate = PST_DEAD;
 		P_DropWeapon(target->player);
 
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 		if (target->player == &players && automapactive)
 		{
 			// don't die in auto map,
 			// switch view prior to dying
 			AM_Stop();
 		}
+#endif
 	}
 
 	if (target->health < -target->info->spawnhealth && target->info->xdeathstate)
