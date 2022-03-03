@@ -22,3 +22,4 @@ call cleanc36.bat
 call cleanv36.bat
 call cleant43.bat
 call cleant86.bat
+call cleane16.bat
