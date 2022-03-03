@@ -93,7 +93,7 @@
 #define iprojection 419430
 #define pspritescale 16384
 #define pspriteiscale 262144
-#define pspriteiscaleshifted 262144
+#define pspriteiscaleshifted 131072
 #endif
 
 #if defined(MODE_T80100)

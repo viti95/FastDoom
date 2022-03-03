@@ -1559,7 +1559,7 @@ void R_DrawFuzzColumnFastText8050(void)
 }
 #endif
 
-#if defined(MODE_T8050) || defined(MODE_T80100) || defined(MODE_T8043)
+#if defined(MODE_T8050) || defined(MODE_T8043)
 void R_DrawSpanText8050(void)
 {
     int countp;
