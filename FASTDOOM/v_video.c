@@ -347,7 +347,7 @@ void V_WriteCharDirect(int x, int y, unsigned char c)
 }
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T80100)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T80100)
 void V_WriteTextColorDirect(int x, int y, char *string, unsigned short color)
 {
     unsigned short *dest;
@@ -531,6 +531,51 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
 
 #if defined(MODE_T8043)
 void V_DrawPatchDirectText8043(int x, int y, patch_t *patch)
+{
+    int count;
+    int col;
+    column_t *column;
+    unsigned short *desttop;
+    unsigned short *dest;
+    byte *source;
+    int w;
+
+    y -= patch->topoffset;
+    x -= patch->leftoffset;
+
+    x /= 4; // 320 --> 80
+    y = (y * 149) / 32; // 200 --> 43
+
+    desttop = textdestscreen + Mul80(y) + x;
+
+    w = patch->width;
+    for (col = 0; col < w; col += 4)
+    {
+        column = (column_t *)((byte *)patch + patch->columnofs[col]);
+
+        // step through the posts in a column
+        while (column->topdelta != 0xff)
+        {
+            source = (byte *)column + 3;
+            dest = desttop + Mul80(column->topdelta / 5);
+            count = column->length / 4;
+
+            while (count--)
+            {
+                *dest = ptrlut16colors[*source] << 8 | 219;
+                source += 4;
+                dest += 80;
+            }
+            column = (column_t *)((byte *)column + column->length + 4);
+        }
+
+        desttop += 1;
+    }
+}
+#endif
+
+#if defined(MODE_T8086)
+void V_DrawPatchDirectText8086(int x, int y, patch_t *patch)
 {
     int count;
     int col;
@@ -792,7 +837,7 @@ void V_DrawPatchDirectText4025(int x, int y, patch_t *patch)
 }
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8043)
+#if defined(MODE_T8025)
 void V_DrawPatchDirectText8025(int x, int y, patch_t *patch)
 {
     int count;

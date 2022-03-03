@@ -749,7 +749,7 @@ void R_DrawPlanesFlatSurfacesPotato(void)
     }
 }
 
-#if defined(MODE_T80100)
+#if defined(MODE_T80100) || defined(MODE_T8086)
 void R_DrawPlanesFlatSurfacesText80100(void)
 {
     visplane_t *pl;

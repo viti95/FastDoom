@@ -62,7 +62,7 @@ typedef struct
 // There was a lot of stuff grabbed wrong, so I changed it...
 //
 
-#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050)
+#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8086) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050)
 fixed_t pspritescale;
 fixed_t pspriteiscale;
 fixed_t pspriteiscaleshifted;
@@ -268,7 +268,7 @@ void R_DrawVisSprite(vissprite_t *vis)
         colfunc = fuzzcolfunc;
     }
 
-#if defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_T8086)
     dc_iscale = abs(vis->xiscale) >> 1;
 #endif
 #ifdef MODE_Y
@@ -492,7 +492,7 @@ void R_ProjectSprite(mobj_t *thing)
     vis = vissprites + num_vissprite++;
     vis->mobjflags = thing->flags;
 
-#if defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_T8086)
     vis->scale = xscale << 1;
 #endif
 #ifdef MODE_Y
@@ -547,7 +547,7 @@ void R_ProjectSprite(mobj_t *thing)
     {
         // diminished light
 
-#if defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_T8086)
         index = xscale >> (LIGHTSCALESHIFT - 1);
 #endif
 #ifdef MODE_Y
@@ -635,7 +635,7 @@ void R_DrawPSprite(pspdef_t *psp)
     vis->x1 = x1 < 0 ? 0 : x1;
     vis->x2 = x2 > viewwidthlimit ? viewwidthlimit : x2;
 
-#if defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_T8086)
     vis->scale = pspritescale << 1;
 #endif
 #ifdef MODE_Y

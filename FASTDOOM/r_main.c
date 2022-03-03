@@ -51,7 +51,7 @@ int validcount = 1;
 lighttable_t *fixedcolormap;
 extern lighttable_t **walllights;
 
-#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050)
+#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8086) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050)
 int centerx;
 int centery;
 
@@ -537,7 +537,7 @@ fixed_t R_ScaleFromGlobalAngle(angle_t visangle)
     // both sines are allways positive
     sinea = finesine[anglea >> ANGLETOFINESHIFT];
     sineb = finesine[angleb >> ANGLETOFINESHIFT];
-#if defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_T8086)
     num = FixedMul(projection, sineb) << 1;
 #endif
 #ifdef MODE_Y
@@ -704,7 +704,7 @@ void R_ExecuteSetViewSize(void)
     if (forceScreenSize)
         setblocks = forceScreenSize;
 
-#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050)
+#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8086) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050)
     if (setblocks >= 11)
     {
         scaledviewwidth = SCREENWIDTH;
@@ -740,7 +740,7 @@ void R_ExecuteSetViewSize(void)
     viewwidth = scaledviewwidth;
 #endif
 
-#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050)
+#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8086) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050)
     viewwidthlimit = viewwidth - 1;
     centery = viewheight / 2;
     centerx = viewwidth / 2;
@@ -848,7 +848,7 @@ void R_ExecuteSetViewSize(void)
         fuzzcolfunc = R_DrawFuzzColumnText8050;
 #endif
 
-#if defined(MODE_T80100)
+#if defined(MODE_T80100) || defined(MODE_T8086)
     colfunc = basecolfunc = R_DrawColumnText80100;
 
     if (untexturedSurfaces)
@@ -985,7 +985,7 @@ void R_ExecuteSetViewSize(void)
     R_InitTextureMapping();
 
     // psprite scales
-#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050)
+#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8086) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050)
     pspritescale = FRACUNIT * viewwidth / SCREENWIDTH;
     pspriteiscale = FRACUNIT * SCREENWIDTH / viewwidth;
 #endif
@@ -1006,7 +1006,7 @@ void R_ExecuteSetViewSize(void)
         dy = ((i - viewheight / 2) << FRACBITS) + FRACUNIT / 2;
         dy = abs(dy);
 
-#if defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_T8086)
         yslope[i] = FixedDiv((viewwidth << 1) / 2 * FRACUNIT, dy);
 #endif
 #ifdef MODE_Y
@@ -1030,7 +1030,7 @@ void R_ExecuteSetViewSize(void)
         startmap = ((LIGHTLEVELS - 1 - i) * 2) * NUMCOLORMAPS / LIGHTLEVELS;
         for (j = 0; j < MAXLIGHTSCALE; j++)
         {
-#if defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_T8086)
             level = startmap - Mul320(j) / (viewwidth << 1) / DISTMAP;
 #endif
 #ifdef MODE_Y
@@ -1233,7 +1233,7 @@ void R_RenderPlayerView(player_t *player)
         R_DrawPlanes();
 #endif
 
-#if defined(MODE_T80100)
+#if defined(MODE_T80100) || defined(MODE_T8086)
     if (flatSurfaces)
         R_DrawPlanesFlatSurfacesText80100();
     else

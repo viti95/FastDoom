@@ -201,7 +201,7 @@ void I_StartupSound(void);
 void I_ShutdownSound(void);
 void I_ShutdownTimer(void);
 
-#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
 byte lut16colors[14 * 256];
 byte *ptrlut16colors;
 #endif
@@ -378,7 +378,7 @@ void I_ProcessPalette(byte *palette)
 }
 #endif
 
-#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_EGA640) || defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_EGA640) || defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
 const byte colors[48] = {
     0x00, 0x00, 0x00,
     0x00, 0x00, 0x2A,
@@ -609,7 +609,7 @@ const byte colors[12] = {
     0x2A, 0x15, 0x00};
 #endif
 
-#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CGA) || defined(MODE_EGA640) || defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB) || defined(MODE_ATI640)
+#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CGA) || defined(MODE_EGA640) || defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB) || defined(MODE_ATI640)
 
 int I_SQRT(int x)
 {
@@ -722,7 +722,7 @@ void I_ProcessPalette(byte *palette)
 }
 #endif
 
-#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_CVB)
+#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_CVB)
 void I_ProcessPalette(byte *palette)
 {
     int i, j;
@@ -1078,7 +1078,7 @@ void I_SetPalette(int numpalette)
     ptrlutcolors = lutcolors + numpalette * 512;
 #endif
 
-#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
     ptrlut16colors = lut16colors + numpalette * 256;
 #endif
 
@@ -1121,7 +1121,7 @@ byte *pcscreen, *currentscreen, *destscreen, *destview;
 byte page = 0;
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
 unsigned short *textdestscreen = (unsigned short *)0xB8000;
 byte textpage = 0;
 #endif
@@ -2086,7 +2086,7 @@ void I_FinishUpdate(void)
     }
 #endif
 
-#ifdef MODE_T8043
+#if defined(MODE_T8043) || defined(MODE_T8086)
     // Change video page
     regs.h.ah = 0x05;
     regs.h.al = textpage;
@@ -2417,13 +2417,13 @@ void I_InitGraphics(void)
     textdestscreen = (unsigned short *)0xB8000;
     textpage = 0;
 #endif
-#if defined(MODE_T8050) || defined(MODE_T80100) || defined(MODE_T8043)
+#if defined(MODE_T8050) || defined(MODE_T80100) || defined(MODE_T8043) || defined(MODE_T8086)
     // Set 80x25 color mode
     regs.h.ah = 0x00;
     regs.h.al = 0x03;
     int386(0x10, &regs, &regs);
 
-    // Change font size to 8x8 (only VGA cards)
+    // Change font size to 8x8
     regs.h.ah = 0x11;
     regs.h.al = 0x12;
     regs.h.bh = 0;

@@ -49,6 +49,10 @@ elif [ "$target" = "fdoomt43.exe" ]; then
   buildopts="-dMODE_T8043"
   buildtarget="fdoomtxt.exe"
 
+elif [ "$target" = "fdoomt86.exe" ]; then
+  buildopts="-dMODE_T8086"
+  buildtarget="fdoomtxt.exe"
+
 elif [ "$target" = "fdoomt50.exe" ]; then
   buildopts="-dMODE_T8050"
   buildtarget="fdoomtxt.exe"
