@@ -72,6 +72,7 @@ void V_DrawPatchDirectText4050(int x, int y, patch_t *patch);
 void V_DrawPatchDirectText4025(int x, int y, patch_t *patch);
 void V_DrawPatchDirectText8025(int x, int y, patch_t *patch);
 void V_DrawPatchDirectText8043(int x, int y, patch_t *patch);
+void V_DrawPatchDirectText8086(int x, int y, patch_t *patch);
 void V_DrawPatchDirectText8050(int x, int y, patch_t *patch);
 void V_DrawPatchDirectText80100(int x, int y, patch_t *patch);
 
