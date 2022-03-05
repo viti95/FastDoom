@@ -2635,6 +2635,11 @@ void I_InitGraphics(void)
     {
         vram[i] = 0xDE;
     }
+
+    for (i = 16000 + 1280; i < 16000 + 1280 + 1280; i += 2)
+    {
+        vram[i] = 0x00;
+    }
 #endif
 #if defined(MODE_CGA16) || defined(MODE_CGA136) || defined(MODE_VGA16) || defined(MODE_VGA136)
     unsigned char *vram = (unsigned char *)0xB8000;
