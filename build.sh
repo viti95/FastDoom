@@ -97,6 +97,10 @@ elif [ "$target" = "fdoomv36.exe" ]; then
   buildopts="-dMODE_VGA136 -dUSE_BACKBUFFER"
   buildtarget="fdoom13h.exe"
 
+elif [ "$target" = "fdoome36.exe" ]; then
+  buildopts="-dMODE_EGA136 -dUSE_BACKBUFFER"
+  buildtarget="fdoome3h.exe"
+
 elif [ "$target" = "fdoome.exe" ]; then
   buildopts="-dMODE_EGA640 -dUSE_BACKBUFFER"
   buildtarget="fdoom13h.exe"

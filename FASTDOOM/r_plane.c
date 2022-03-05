@@ -1153,7 +1153,7 @@ void R_DrawPlanesFlatSurfaces_13h(void)
             }
             #endif
 
-            #if defined(MODE_CGA136) || defined(MODE_VGA136)
+            #if defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136)
             if (x % 4 != 0){
                 continue;
             }
@@ -1249,7 +1249,7 @@ void R_DrawSky(visplane_t *pl)
             }
             #endif
 
-            #if defined(MODE_CGA136) || defined(MODE_VGA136)
+            #if defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136)
             if (x % 4 != 0){
                 continue;
             }
@@ -1296,7 +1296,7 @@ void R_DrawSky(visplane_t *pl)
             }
             #endif
 
-            #if defined(MODE_CGA136) || defined(MODE_VGA136)
+            #if defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136)
             if (x % 4 != 0){
                 continue;
             }

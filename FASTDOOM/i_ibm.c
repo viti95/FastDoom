@@ -206,7 +206,7 @@ byte lut16colors[14 * 256];
 byte *ptrlut16colors;
 #endif
 
-#if defined(MODE_CGA136) || defined(MODE_VGA136)
+#if defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136)
 byte lut136colors[14 * 256];
 byte *ptrlut136colors;
 #endif
@@ -398,7 +398,7 @@ const byte colors[48] = {
     0x3F, 0x3F, 0x3F};
 #endif
 
-#if defined(MODE_CGA136) || defined(MODE_VGA136)
+#if defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136)
 const byte colors[4 * 122] = {
     0x00, 0x00, 0x00, 0x00,
     0x01, 0x00, 0x00, 0x1E,
@@ -775,7 +775,7 @@ void I_ProcessPalette(byte *palette)
 }
 #endif
 
-#if defined(MODE_CGA136) || defined(MODE_VGA136)
+#if defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136)
 void I_ProcessPalette(byte *palette)
 {
     int i, j;
@@ -1082,7 +1082,7 @@ void I_SetPalette(int numpalette)
     ptrlut16colors = lut16colors + numpalette * 256;
 #endif
 
-#if defined(MODE_CGA136) || defined(MODE_VGA136)
+#if defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136)
     ptrlut136colors = lut136colors + numpalette * 256;
 #endif
 
@@ -1475,6 +1475,32 @@ void EGA16_DrawBackbuffer(void)
 void CGA136_DrawBackbuffer(void)
 {
     unsigned char *vram = (unsigned char *)0xB8000;
+    int i;
+    unsigned int base = 0;
+    unsigned int line = 0;
+
+    for (i = 1; i < 16000; i += 2)
+    {
+        vram[i] = ptrlut136colors[backbuffer[base]];
+
+        line++;
+        if (line == 80)
+        {
+            line = 0;
+            base += 324;
+        }
+        else
+        {
+            base += 4;
+        }
+    }
+}
+#endif
+
+#ifdef MODE_EGA136
+void EGA136_DrawBackbuffer(void)
+{
+    unsigned char *vram = (unsigned char *)0xB8500;
     int i;
     unsigned int base = 0;
     unsigned int line = 0;
@@ -2242,6 +2268,9 @@ void I_FinishUpdate(void)
 #ifdef MODE_VGA136
     VGA136_DrawBackbuffer();
 #endif
+#ifdef MODE_EGA136
+    EGA136_DrawBackbuffer();
+#endif
 #ifdef MODE_EGA
     EGA_DrawBackbuffer();
 #endif
@@ -2603,7 +2632,7 @@ void I_InitGraphics(void)
 
     pcscreen = destscreen = (byte *)0xB8000;
 #endif
-#if defined(MODE_EGA16)
+#if defined(MODE_EGA16) || defined(MODE_EGA136)
     unsigned char *vram = (unsigned char *)0xB8000;
     int i;
 
@@ -2633,7 +2662,12 @@ void I_InitGraphics(void)
 
     for (i = 1280; i < 16000 + 1280; i += 2)
     {
+#ifdef MODE_EGA16
         vram[i] = 0xDE;
+#endif
+#ifdef MODE_EGA136
+        vram[i] = 0xB1;
+#endif
     }
 
     for (i = 16000 + 1280; i < 16000 + 1280 + 1280; i += 2)
