@@ -47,7 +47,7 @@ https://user-images.githubusercontent.com/8323882/147228550-bf93cc50-3c92-4a7a-b
 2) Install NASM
 3) Install DOS/32A
 4) Add Watcom's bin folder (binnt on Windows, binw on DOS) to the PATH.
-5) Run cleanall.bat
+5) Run makeall.bat
 
 ## Build instructions (FDSETUP)
 
