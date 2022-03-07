@@ -18,6 +18,7 @@ call make.bat clean T25
 call make.bat clean T43
 call make.bat clean T50
 call make.bat clean T52
+call make.bat clean T86
 call make.bat clean V2
 call make.bat clean V16
 call make.bat clean V36

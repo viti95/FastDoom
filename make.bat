@@ -31,6 +31,7 @@ if "%2"=="T25" GOTO mode_t25
 if "%2"=="T43" GOTO mode_t43
 if "%2"=="T50" GOTO mode_t50
 if "%2"=="T52" GOTO mode_t52
+if "%2"=="T86" GOTO mode_t86
 if "%2"=="V2"  GOTO mode_v2
 if "%2"=="V16" GOTO mode_v16
 if "%2"=="V36" GOTO mode_v36
