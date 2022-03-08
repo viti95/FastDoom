@@ -970,6 +970,10 @@ void D_DoomMain(void)
     D_AddFile("mode4.wad");
 #endif
 
+#if defined(MODE_ATI640) || defined(MODE_EGA640)
+    D_AddFile("mode16d.wad");
+#endif
+
     setbuf(stdout, NULL);
     modifiedgame = false;
 
