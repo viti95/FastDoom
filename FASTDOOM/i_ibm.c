@@ -1526,16 +1526,12 @@ void EGA136_DrawBackbuffer(void)
 #ifdef MODE_VGA16
 void VGA16_DrawBackbuffer(void)
 {
-    unsigned char *vram = (unsigned char *)0xB8000;
-    int i;
-    unsigned int base = 0;
+    unsigned char *vram;
+    byte *ptrbackbuffer = backbuffer;
 
-    for (i = 1; i < 32000; i += 2, base += 4)
+    for (vram = (unsigned char *) 0xB8001; vram < (unsigned char *) 0xBFD00; vram += 2, ptrbackbuffer += 4)
     {
-        unsigned char color0 = ptrlut16colors[backbuffer[base]];
-        unsigned char color1 = ptrlut16colors[backbuffer[base + 2]];
-
-        vram[i] = color0 << 4 | color1;
+        *vram = ptrlut16colors[*ptrbackbuffer] << 4 | ptrlut16colors[*(ptrbackbuffer + 2)];
     }
 }
 #endif
