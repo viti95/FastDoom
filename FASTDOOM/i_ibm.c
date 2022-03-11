@@ -1529,7 +1529,6 @@ void VGA16_DrawBackbuffer(void)
     unsigned char *vram = (unsigned char *)0xB8000;
     int i;
     unsigned int base = 0;
-    unsigned int line = 0;
 
     for (i = 1; i < 32000; i += 2, base += 4)
     {
@@ -1547,7 +1546,6 @@ void VGA136_DrawBackbuffer(void)
     unsigned char *vram = (unsigned char *)0xB8000;
     int i;
     unsigned int base = 0;
-    unsigned int line = 0;
 
     for (i = 1; i < 32000; i += 2, base += 4)
     {
