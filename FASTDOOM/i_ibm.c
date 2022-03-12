@@ -262,7 +262,7 @@ byte scantokey[128] =
         'b', 'n', 'm', ',', '.', '/', KEY_RSHIFT, '*',
         KEY_RALT, ' ', 0, KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, // 3
         KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10, 0, 0, KEY_HOME,
-        KEY_UPARROW, KEY_PGUP, '-', KEY_LEFTARROW, '5', KEY_RIGHTARROW, '+', KEY_END, //4
+        KEY_UPARROW, KEY_PGUP, '-', KEY_LEFTARROW, '5', KEY_RIGHTARROW, '+', KEY_END, // 4
         KEY_DOWNARROW, KEY_PGDN, KEY_INS, KEY_DEL, 0, 0, 0, KEY_F11,
         KEY_F12, 0, 0, 0, 0, 0, 0, 0, // 5
         0, 0, 0, 0, 0, 0, 0, 0,
@@ -1282,10 +1282,10 @@ void I_UpdateNoBlit(void)
     }
 
     // Leave current box for next update
-    //CopyDWords(olddb[1], olddb[0], 4);
-    //CopyDWords(dirtybox, olddb[1], 4);
-    //memcpy(olddb[0], olddb[1], 16);
-    //memcpy(olddb[1], dirtybox, 16);
+    // CopyDWords(olddb[1], olddb[0], 4);
+    // CopyDWords(dirtybox, olddb[1], 4);
+    // memcpy(olddb[0], olddb[1], 16);
+    // memcpy(olddb[1], dirtybox, 16);
 
     olddb[0][0] = olddb[1][0];
     olddb[0][1] = olddb[1][1];
@@ -1416,29 +1416,23 @@ void HERC_DrawBackbuffer(void)
 #ifdef MODE_CGA16
 void CGA16_DrawBackbuffer(void)
 {
-    unsigned char *vram = (unsigned char *)0xB8000;
-    int i;
-    unsigned int base = 0;
-    unsigned int line = 0;
+    unsigned char *vram = (unsigned char *)0xB8001;
+    unsigned char line = 0;
+    byte *ptrbackbuffer = backbuffer;
 
-    for (i = 1; i < 16000; i += 2)
+    do
     {
-        unsigned char color0 = ptrlut16colors[backbuffer[base]];
-        unsigned char color1 = ptrlut16colors[backbuffer[base + 2]];
-
-        vram[i] = color0 << 4 | color1;
+        *vram = ptrlut16colors[*ptrbackbuffer] << 4 | ptrlut16colors[*(ptrbackbuffer + 2)];
+        vram += 2;
+        ptrbackbuffer += 4;
 
         line++;
         if (line == 80)
         {
             line = 0;
-            base += 324;
+            ptrbackbuffer += 320;
         }
-        else
-        {
-            base += 4;
-        }
-    }
+    } while (vram < (unsigned char *)0xBBE80);
 }
 #endif
 
@@ -1448,7 +1442,7 @@ void EGA16_DrawBackbuffer(void)
     unsigned char *vram = (unsigned char *)0xB8500;
     int i;
     unsigned int base = 0;
-    unsigned int line = 0;
+    unsigned char line = 0;
 
     for (i = 1; i < 16000; i += 2)
     {
@@ -1477,7 +1471,7 @@ void CGA136_DrawBackbuffer(void)
     unsigned char *vram = (unsigned char *)0xB8000;
     int i;
     unsigned int base = 0;
-    unsigned int line = 0;
+    unsigned char line = 0;
 
     for (i = 1; i < 16000; i += 2)
     {
@@ -1503,7 +1497,7 @@ void EGA136_DrawBackbuffer(void)
     unsigned char *vram = (unsigned char *)0xB8500;
     int i;
     unsigned int base = 0;
-    unsigned int line = 0;
+    unsigned char line = 0;
 
     for (i = 1; i < 16000; i += 2)
     {
@@ -1529,7 +1523,7 @@ void VGA16_DrawBackbuffer(void)
     unsigned char *vram;
     byte *ptrbackbuffer = backbuffer;
 
-    for (vram = (unsigned char *) 0xB8001; vram < (unsigned char *) 0xBFD00; vram += 2, ptrbackbuffer += 4)
+    for (vram = (unsigned char *)0xB8001; vram < (unsigned char *)0xBFD00; vram += 2, ptrbackbuffer += 4)
     {
         *vram = ptrlut16colors[*ptrbackbuffer] << 4 | ptrlut16colors[*(ptrbackbuffer + 2)];
     }
@@ -1661,10 +1655,10 @@ void EGA640_DrawBackbuffer(void)
         unsigned char color;
         unsigned char tmpColor;
 
-        color = ptrlutcolors[*(backbufferptr) * 2];
+        color = ptrlutcolors[*(backbufferptr)*2];
         tmpColor = color & 0x80;
 
-        color = ptrlutcolors[*(backbufferptr) * 2 + 1];
+        color = ptrlutcolors[*(backbufferptr)*2 + 1];
         tmpColor |= (color & 0x80) >> 1;
 
         color = ptrlutcolors[*(backbufferptr + 1) * 2];
@@ -1696,10 +1690,10 @@ void EGA640_DrawBackbuffer(void)
         unsigned char color;
         unsigned char tmpColor;
 
-        color = ptrlutcolors[*(backbufferptr) * 2];
+        color = ptrlutcolors[*(backbufferptr)*2];
         tmpColor = (color & 0x40) << 1;
 
-        color = ptrlutcolors[*(backbufferptr) * 2 + 1];
+        color = ptrlutcolors[*(backbufferptr)*2 + 1];
         tmpColor |= color & 0x40;
 
         color = ptrlutcolors[*(backbufferptr + 1) * 2];
@@ -1731,10 +1725,10 @@ void EGA640_DrawBackbuffer(void)
         unsigned char color;
         unsigned char tmpColor;
 
-        color = ptrlutcolors[*(backbufferptr) * 2];
+        color = ptrlutcolors[*(backbufferptr)*2];
         tmpColor = (color & 0x20) << 2;
 
-        color = ptrlutcolors[*(backbufferptr) * 2 + 1];
+        color = ptrlutcolors[*(backbufferptr)*2 + 1];
         tmpColor |= (color & 0x20) << 1;
 
         color = ptrlutcolors[*(backbufferptr + 1) * 2];
@@ -1766,10 +1760,10 @@ void EGA640_DrawBackbuffer(void)
         unsigned char color;
         unsigned char tmpColor;
 
-        color = ptrlutcolors[*(backbufferptr) * 2];
+        color = ptrlutcolors[*(backbufferptr)*2];
         tmpColor = (color & 0x10) << 3;
 
-        color = ptrlutcolors[*(backbufferptr) * 2 + 1];
+        color = ptrlutcolors[*(backbufferptr)*2 + 1];
         tmpColor |= (color & 0x10) << 2;
 
         color = ptrlutcolors[*(backbufferptr + 1) * 2];
@@ -1796,7 +1790,7 @@ void EGA640_DrawBackbuffer(void)
     // Change video page
     outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
 
-    //Next plane
+    // Next plane
     destscreen += 0x4000;
 
     page++;
@@ -1957,7 +1951,7 @@ void EGA_DrawBackbuffer(void)
     // Change video page
     outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
 
-    //Next plane
+    // Next plane
     destscreen += 0x2000;
 
     page++;
@@ -2150,7 +2144,7 @@ void I_FinishUpdate(void)
         textdestscreen = (unsigned short *)0xB8000;
         textpage = 0;
     }
-    //textdestscreen = (unsigned short *)0xB8000;
+    // textdestscreen = (unsigned short *)0xB8000;
 #endif
 
 #if defined(MODE_T8050) || defined(MODE_T80100)
@@ -2161,12 +2155,15 @@ void I_FinishUpdate(void)
     regs.h.bl = 0x00;
     int386(0x10, &regs, &regs);
 
-    if (videoPageFix){
+    if (videoPageFix)
+    {
         textdestscreen += 4000;
-    }else{
+    }
+    else
+    {
         textdestscreen += 4128;
     }
-    
+
     textpage++;
     if (textpage == 3)
     {
@@ -2177,7 +2174,7 @@ void I_FinishUpdate(void)
 #ifdef MODE_Y
     outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
 
-    //Next plane
+    // Next plane
     destscreen += 0x4000;
     if (destscreen == (byte *)0xac000)
     {
@@ -2292,7 +2289,8 @@ void I_FinishUpdate(void)
         ptrdestscreen = destscreen + 15 * 80 + 15;
         pos = 319;
 
-        do {
+        do
+        {
             for (x = 0; x < 10; x++)
             {
                 ptrdestscreen[0] = backbuffer[pos];
@@ -2307,14 +2305,15 @@ void I_FinishUpdate(void)
 
             pos -= (1280 * 50 + 1);
             ptrdestscreen += 30;
-        }while (pos > -1);
+        } while (pos > -1);
 
         outp(SC_INDEX + 1, 1 << 1);
 
         ptrdestscreen = destscreen + 15 * 80 + 15;
         pos = 639;
 
-        do {
+        do
+        {
             for (x = 0; x < 10; x++)
             {
                 ptrdestscreen[0] = backbuffer[pos];
@@ -2329,14 +2328,15 @@ void I_FinishUpdate(void)
 
             pos -= (1280 * 50 + 1);
             ptrdestscreen += 30;
-        }while (pos > 319);
+        } while (pos > 319);
 
         outp(SC_INDEX + 1, 1 << 2);
 
         ptrdestscreen = destscreen + 15 * 80 + 15;
         pos = 959;
 
-        do {
+        do
+        {
             for (x = 0; x < 10; x++)
             {
                 ptrdestscreen[0] = backbuffer[pos];
@@ -2351,14 +2351,15 @@ void I_FinishUpdate(void)
 
             pos -= (1280 * 50 + 1);
             ptrdestscreen += 30;
-        }while (pos > 639);
+        } while (pos > 639);
 
         outp(SC_INDEX + 1, 1 << 3);
 
         ptrdestscreen = destscreen + 15 * 80 + 15;
         pos = 1279;
 
-        do {
+        do
+        {
             for (x = 0; x < 10; x++)
             {
                 ptrdestscreen[0] = backbuffer[pos];
@@ -2373,11 +2374,11 @@ void I_FinishUpdate(void)
 
             pos -= (1280 * 50 + 1);
             ptrdestscreen += 30;
-        }while (pos > 959);
+        } while (pos > 959);
 
         outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
 
-        //Next plane
+        // Next plane
         destscreen += 0x7000;
         if (destscreen == (byte *)0xae000)
         {
@@ -2783,8 +2784,8 @@ void I_InitGraphics(void)
                             0x00, 0x00, 0x00, 0x00};
     int i;
 
-    /* Set the Graphics Solution to 640 x 200 with 16 colors in 
-	   Color Mode */
+    /* Set the Graphics Solution to 640 x 200 with 16 colors in
+       Color Mode */
     outp(0x3D8, 0x2);
 
     /* Set extended graphics registers */
@@ -2811,9 +2812,9 @@ void I_InitGraphics(void)
     pcscreen = destscreen = (byte *)0xB8000;
 #endif
 #ifdef MODE_HERC
-    //byte Graph_720x348[12] = {0x03, 0x36, 0x2D, 0x2E, 0x07, 0x5B, 0x02, 0x57, 0x57, 0x02, 0x03, 0x0A};
+    // byte Graph_720x348[12] = {0x03, 0x36, 0x2D, 0x2E, 0x07, 0x5B, 0x02, 0x57, 0x57, 0x02, 0x03, 0x0A};
     byte Graph_640x400[12] = {0x03, 0x34, 0x28, 0x2A, 0x47, 0x69, 0x00, 0x64, 0x65, 0x02, 0x03, 0x0A};
-    //byte Graph_640x200[12] = {0x03, 0x6E, 0x28, 0x2E, 0x07, 0x67, 0x0A, 0x64, 0x65, 0x02, 0x01, 0x0A}; --> NOT WORKING ON REAL HARDWARE
+    // byte Graph_640x200[12] = {0x03, 0x6E, 0x28, 0x2E, 0x07, 0x67, 0x0A, 0x64, 0x65, 0x02, 0x01, 0x0A}; --> NOT WORKING ON REAL HARDWARE
     int i;
 
     outp(0x03BF, Graph_640x400[0]);
@@ -3276,8 +3277,8 @@ byte *I_AllocLow(int length)
     regs.w.ax = 0x0100; // DPMI allocate DOS memory
     regs.w.bx = (length + 15) / 16;
     int386(DPMI_INT, &regs, &regs);
-    //segment = regs.w.ax;
-    //selector = regs.w.dx;
+    // segment = regs.w.ax;
+    // selector = regs.w.dx;
 
     mem = (void *)((regs.x.eax & 0xFFFF) << 4);
 
