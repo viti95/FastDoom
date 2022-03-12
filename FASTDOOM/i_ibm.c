@@ -1473,19 +1473,22 @@ void CGA136_DrawBackbuffer(void)
     unsigned int base = 0;
     unsigned char line = 0;
 
-    for (i = 1; i < 16000; i += 2)
+    for (i = 1; i < 16000; i += 8)
     {
         vram[i] = ptrlut136colors[backbuffer[base]];
+        vram[i + 2] = ptrlut136colors[backbuffer[base + 4]];
+        vram[i + 4] = ptrlut136colors[backbuffer[base + 8]];
+        vram[i + 6] = ptrlut136colors[backbuffer[base + 12]];
 
         line++;
-        if (line == 80)
+        if (line == 20)
         {
             line = 0;
-            base += 324;
+            base += 336;
         }
         else
         {
-            base += 4;
+            base += 16;
         }
     }
 }
