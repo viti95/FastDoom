@@ -1468,29 +1468,26 @@ void EGA16_DrawBackbuffer(void)
 #ifdef MODE_CGA136
 void CGA136_DrawBackbuffer(void)
 {
-    unsigned char *vram = (unsigned char *)0xB8000;
-    int i;
-    unsigned int base = 0;
-    unsigned char line = 0;
+    unsigned char *vram = (unsigned char *)0xB8001;
+    byte *ptrbackbuffer = backbuffer;
+    unsigned char line = 20;
 
-    for (i = 1; i < 16000; i += 8)
-    {
-        vram[i] = ptrlut136colors[backbuffer[base]];
-        vram[i + 2] = ptrlut136colors[backbuffer[base + 4]];
-        vram[i + 4] = ptrlut136colors[backbuffer[base + 8]];
-        vram[i + 6] = ptrlut136colors[backbuffer[base + 12]];
+    do {
+        *vram = ptrlut136colors[*ptrbackbuffer];
+        *(vram + 2) = ptrlut136colors[*(ptrbackbuffer + 4)];
+        *(vram + 4) = ptrlut136colors[*(ptrbackbuffer + 8)];
+        *(vram + 6) = ptrlut136colors[*(ptrbackbuffer + 12)];
 
-        line++;
-        if (line == 20)
+        vram += 8;
+        ptrbackbuffer += 16;
+
+        line--;
+        if (line == 0)
         {
-            line = 0;
-            base += 336;
+            line = 20;
+            ptrbackbuffer += 320;
         }
-        else
-        {
-            base += 16;
-        }
-    }
+    } while (vram < (unsigned char *)0xBBE80);
 }
 #endif
 
