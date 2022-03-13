@@ -1417,7 +1417,7 @@ void HERC_DrawBackbuffer(void)
 void CGA16_DrawBackbuffer(void)
 {
     unsigned char *vram = (unsigned char *)0xB8001;
-    unsigned char line = 0;
+    unsigned char line = 80;
     byte *ptrbackbuffer = backbuffer;
 
     do
@@ -1442,7 +1442,7 @@ void EGA16_DrawBackbuffer(void)
     unsigned char *vram = (unsigned char *)0xB8500;
     int i;
     unsigned int base = 0;
-    unsigned char line = 0;
+    unsigned char line = 80;
 
     for (i = 1; i < 16000; i += 2)
     {
