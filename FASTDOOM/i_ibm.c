@@ -1533,14 +1533,18 @@ void VGA16_DrawBackbuffer(void)
 #ifdef MODE_VGA136
 void VGA136_DrawBackbuffer(void)
 {
-    unsigned char *vram = (unsigned char *)0xB8000;
-    int i;
-    unsigned int base = 0;
+    unsigned char *vram = (unsigned char *)0xB8001;
+    byte *ptrbackbuffer = backbuffer;
 
-    for (i = 1; i < 32000; i += 2, base += 4)
-    {
-        vram[i] = ptrlut136colors[backbuffer[base]];
-    }
+    do {
+        *vram = ptrlut136colors[*ptrbackbuffer];
+        *(vram + 2) = ptrlut136colors[*(ptrbackbuffer + 4)];
+        *(vram + 4) = ptrlut136colors[*(ptrbackbuffer + 8)];
+        *(vram + 6) = ptrlut136colors[*(ptrbackbuffer + 12)];
+
+        vram += 8;
+        ptrbackbuffer += 16;
+    } while (vram < (unsigned char *)0xBFD00);
 }
 #endif
 
