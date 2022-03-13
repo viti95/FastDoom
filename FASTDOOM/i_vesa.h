@@ -232,26 +232,7 @@ int VBE_IsModeLinear(short Mode);
   *
   */
 
-void VBE_SetBank(short bnk);
-/*
-  * void VBE_SetBank (short bnk);
-  *
-  * Sets the A-Window to the specified bank. 0xa0000 points to another
-  * location of the video memory. Be aware, that the bank is dependent
-  * of the granularity field in the modeinfoblock.
-  *
-  */
-
 void VBE_Mode_Information(short Mode, struct VBE_ModeInfoBlock *a);
-
-/*
-  *
-  * Request the ModeInfoBlock for the specified mode. Look into the VBE 2.0
-  * specs. for more information.
-  *
-  */
-
-int VBE_FindMode(int xres, int yres, char bpp);
 
 /*
   *

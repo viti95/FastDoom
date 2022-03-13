@@ -219,41 +219,6 @@ void VBE_SetMode(short Mode, int linear, int clear)
   BitsPerPixel = a.BitsPerPixel;
 }
 
-int VBE_FindMode(int xres, int yres, char bpp)
-{
-  int i;
-  int real_bpp; // true number of bits per pixel... fix lots of buggy bioses
-  struct VBE_ModeInfoBlock Info;
-
-  // try to find the mode in the ControllerInfoBlock:
-  // terminates on a -1 (vesa spec) and on a 0 (lousy bioses)
-  for (i = 0; ((VBE_Controller_Info_Pointer->VideoModePtr[i] != 0xffff) &&
-               (VBE_Controller_Info_Pointer->VideoModePtr[i] != 0));
-       i++)
-  {
-    VBE_Mode_Information(VBE_Controller_Info_Pointer->VideoModePtr[i], &Info);
-    // use the field-masks to calculate the acutal bit-size if we are searching
-    // for a 15 or 16 bit mode (fix for lousy bioses)
-    if ((bpp == 15) || (bpp == 16))
-    {
-      real_bpp = Info.RedMaskSize +
-                 Info.GreenMaskSize +
-                 Info.BlueMaskSize;
-    }
-    else
-    {
-      real_bpp = Info.BitsPerPixel;
-    }
-    if ((xres == Info.XResolution) &&
-        (yres == Info.YResolution) &&
-        (bpp == real_bpp))
-    {
-      return VBE_Controller_Info_Pointer->VideoModePtr[i];
-    }
-  }
-  return -1;
-}
-
 char *VBE_GetVideoPtr(short mode)
 {
   void *phys;
@@ -270,18 +235,6 @@ char *VBE_GetVideoPtr(short mode)
   LastPhysicalMapping = DPMI_MAP_PHYSICAL((void *)ModeInfo.PhysBasePtr,
                                           (long)(VBE_Controller_Info_Pointer->TotalMemory) * 64 * 1024);
   return (char *)LastPhysicalMapping;
-}
-
-void VBE_SetBank(short bnk)
-{
-  if (bnk == vbelastbank)
-    return;
-  PrepareRegisters();
-  RMI.EAX = 0x00004f05;
-  RMI.EBX = 0;
-  RMI.EDX = bnk;
-  RMIRQ(0x10);
-  vbelastbank = bnk;
 }
 
 void VBE_SetDACWidth(char bits)

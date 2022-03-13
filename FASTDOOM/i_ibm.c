@@ -2895,7 +2895,7 @@ void I_ShutdownGraphics(void)
     outp(0x03B8, Text_80x25[11]);
 #endif
 
-#ifdef MODE_VBE2
+#if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
     VBE_Done();
 #endif
 
