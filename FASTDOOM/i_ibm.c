@@ -2080,8 +2080,6 @@ void CGA_DrawBackbuffer(void)
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 static struct VBE_VbeInfoBlock vbeinfo;
 static struct VBE_ModeInfoBlock vbemode;
-char *Types[8] = {"Text", "CGA", "Hercules", "Planar", "Packed Pixel", "Unchained", "Directcolor", "YUV"};
-char *MemoryType[2] = {"Banked", "Linear"};
 unsigned short vesavideomode = 0xFFFF;
 int vesalinear = -1;
 char *vesavideoptr;
@@ -2839,11 +2837,6 @@ void I_InitGraphics(void)
 
     // Get VBE info
     VBE_Controller_Information(&vbeinfo);
-    printf("%s %hi.%hi\n", vbeinfo.vbeSignature, vbeinfo.vbeVersion.hi, vbeinfo.vbeVersion.lo);
-    printf("%s\n", vbeinfo.OemStringPtr);
-    printf("%s\n", vbeinfo.OemVendorNamePtr);
-    printf("%s\n", vbeinfo.OemProductNamePtr);
-    printf("%hi kb\n", vbeinfo.TotalMemory * 64);
 
     // Get VBE modes
     for (mode = 0; vbeinfo.VideoModePtr[mode] != 0xffff; mode++)
@@ -2853,16 +2846,6 @@ void I_InitGraphics(void)
         {
             vesavideomode = vbeinfo.VideoModePtr[mode];
             vesalinear = VBE_IsModeLinear(vesavideomode);
-
-            printf("Mode 0x%3x: %3ix%3i %1i bpp (%-12s, %s) %2hi pages\n",
-                   vesavideomode,
-                   vbemode.XResolution,
-                   vbemode.YResolution,
-                   vbemode.BitsPerPixel,
-                   Types[vbemode.MemoryModel],
-                   MemoryType[vesalinear],
-                   vbemode.NumberOfImagePages);
-
             break;
         }
     }
