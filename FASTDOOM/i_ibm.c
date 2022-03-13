@@ -1439,29 +1439,23 @@ void CGA16_DrawBackbuffer(void)
 #ifdef MODE_EGA16
 void EGA16_DrawBackbuffer(void)
 {
-    unsigned char *vram = (unsigned char *)0xB8500;
-    int i;
-    unsigned int base = 0;
+    unsigned char *vram = (unsigned char *)0xB8501;
     unsigned char line = 80;
+    byte *ptrbackbuffer = backbuffer;
 
-    for (i = 1; i < 16000; i += 2)
+    do
     {
-        unsigned char color0 = ptrlut16colors[backbuffer[base]];
-        unsigned char color1 = ptrlut16colors[backbuffer[base + 2]];
-
-        vram[i] = color0 << 4 | color1;
+        *vram = ptrlut16colors[*ptrbackbuffer] << 4 | ptrlut16colors[*(ptrbackbuffer + 2)];
+        vram += 2;
+        ptrbackbuffer += 4;
 
         line--;
         if (line == 0)
         {
             line = 80;
-            base += 324;
+            ptrbackbuffer += 320;
         }
-        else
-        {
-            base += 4;
-        }
-    }
+    } while (vram < (unsigned char *)0xBC380);
 }
 #endif
 
