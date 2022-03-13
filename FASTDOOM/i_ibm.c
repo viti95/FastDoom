@@ -1426,10 +1426,10 @@ void CGA16_DrawBackbuffer(void)
         vram += 2;
         ptrbackbuffer += 4;
 
-        line++;
-        if (line == 80)
+        line--;
+        if (line == 0)
         {
-            line = 0;
+            line = 80;
             ptrbackbuffer += 320;
         }
     } while (vram < (unsigned char *)0xBBE80);
@@ -1451,10 +1451,10 @@ void EGA16_DrawBackbuffer(void)
 
         vram[i] = color0 << 4 | color1;
 
-        line++;
-        if (line == 80)
+        line--;
+        if (line == 0)
         {
-            line = 0;
+            line = 80;
             base += 324;
         }
         else
@@ -1503,10 +1503,10 @@ void EGA136_DrawBackbuffer(void)
     {
         vram[i] = ptrlut136colors[backbuffer[base]];
 
-        line++;
-        if (line == 80)
+        line--;
+        if (line == 0)
         {
-            line = 0;
+            line = 80;
             base += 324;
         }
         else
