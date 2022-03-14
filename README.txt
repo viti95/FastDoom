@@ -87,14 +87,15 @@
  * FDOOMT50.EXE => FastDoom 80x50 16 colors text mode
  * FDOOMT52.EXE => FastDoom 80x50 16 colors text mode (virtual resolution of
                    80x100)
+ * FDOOMT43.EXE => FastDoom 80x43 16 colors text mode (only EGA cards)
+ * FDOOMT86.EXE => FastDoom 80x43 16 colors text mode (virtual resolution of
+                   80x86, only EGA cards)
  * FDOOMVBR.EXE => FastDoom for VBE 2.0 cards. Uses real mode (default, and
                    more compatible). If you use UniVBE use this version
  * FDOOMVBD.EXE => FastDoom for VBE 2.0 cards with LFB (triple buffered),
 		   all rendering is done directly onto the video card, the
 		   same way Mode Y does. Faster for systems with slow RAM
 		   access.
- * FDOOMV.EXE   => FastDoom Planar 320x350 vertical mode. The base 320x200 
-                   image is stretched to 320x350 (wrong aspect ratio)
  * FDOOMV2.EXE  => FastDoom Planar 320x350 vertical mode. The base 320x200 
                    image is centered in the screen, leaving black borders
  * FDOOMPCP.EXE => FastDoom for Plantronics ColorPlus cards. 320x200 and 
@@ -102,12 +103,14 @@
  * FDOOMCVB.EXE => FastDoom CGA composite mode. 160x200 and 16 colors!
  * FDOOMC16.EXE => FastDoom CGA 160x100 and 16 colors
  * FDOOMV16.EXE => FastDoom VGA 160x200 and 16 colors
+ * FDOOME16.EXE => FastDoom EGA 160x100 and 16 colors
  * FDOOME.EXE   => FastDoom EGA 640x200. Requires a very fast CPU and 16-bit
 		   ISA video card (at least). Dithering with 16 colors
  * FDOOMATI.EXE => FastDoom ATI Small Wonder 640x200. Requires a very fast 
          CPU and 16-bit ISA video card (at least). Dithering with 16 colors
  * FDOOMC36.EXE => FastDoom CGA 80x100 and 122 pseudocolors
  * FDOOMV36.EXE => FastDoom VGA 80x200 and 122 pseudocolors
+ * FDOOME36.EXE => FastDoom EGA 80x100 and 122 pseudocolors
  * FDSETUP.EXE  => Utility to setup controls and sound cards
 
  Command line parameters
