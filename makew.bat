@@ -201,21 +201,17 @@ if "%1"=="build" GOTO build
 
 :build
 cd fastdoom
-wmake %base% EXTERNOPT="%options%" 
+wmake %base% EXTERNOPT="%options%"
 copy %base% ..\%executable%
 cd ..
-sb -r %executable%
-ss %executable% dos32a.d32
 goto end
 
 :clean
 cd fastdoom
 wmake clean
-wmake %base% EXTERNOPT="%options%" 
+wmake %base% EXTERNOPT="%options%"
 copy %base% ..\%executable%
 cd ..
-sb -r %executable%
-ss %executable% dos32a.d32
 goto end
 
 :missing_parameters
