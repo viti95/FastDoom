@@ -201,7 +201,7 @@ if "%1"=="build" GOTO build
 
 :build
 cd fastdoom
-wmake %base% EXTERNOPT="%options%" 
+wmake %base% EXTERNOPT="%options%" -j 4
 copy %base% ..\%executable%
 cd ..
 sb -r %executable%
@@ -211,7 +211,7 @@ goto end
 :clean
 cd fastdoom
 wmake clean
-wmake %base% EXTERNOPT="%options%" 
+wmake %base% EXTERNOPT="%options%" -j 4
 copy %base% ..\%executable%
 cd ..
 sb -r %executable%
