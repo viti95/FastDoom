@@ -1,14 +1,5 @@
 @echo off
 
-echo ==============================================
-echo = FastDOOM make tool for DOS                 =
-echo = Usage: make.bat compile_mode target        =
-echo = compile_mode: clean (full clean & build)   =
-echo = compile_mode: build (just build)           =
-echo = Check the README for possible targets      =
-echo ==============================================
-echo.
-
 if "%1"=="" GOTO missing_parameters
 if "%2"=="" GOTO missing_parameters
 
@@ -43,159 +34,160 @@ if "%2"=="Y"   GOTO mode_y
 set base=fdoom13h.exe
 set executable=fdoom13h.exe
 set options=/dMODE_13H /dUSE_BACKBUFFER
-goto compile_mode
+goto compile
 
 :mode_ati
 set base=fdoom13h.exe
 set executable=fdoomati.exe
 set options=/dMODE_ATI640 /dUSE_BACKBUFFER
-goto compile_mode
+goto compile
 
 :mode_bwc
 set base=fdoom13h.exe
 set executable=fdoombwc.exe
 set options=/dMODE_CGA_BW /dUSE_BACKBUFFER
-goto compile_mode
+goto compile
 
 :mode_c16
 set base=fdoom13h.exe
 set executable=fdoomc16.exe
 set options=/dMODE_CGA16 /dUSE_BACKBUFFER
-goto compile_mode
+goto compile
 
 :mode_c36
 set base=fdoom13h.exe
 set executable=fdoomc36.exe
 set options=/dMODE_CGA136 /dUSE_BACKBUFFER
-goto compile_mode
+goto compile
 
 :mode_cga
 set base=fdoom13h.exe
 set executable=fdoomcga.exe
 set options=/dMODE_CGA /dUSE_BACKBUFFER
-goto compile_mode
+goto compile
 
 :mode_cvb
 set base=fdoom13h.exe
 set executable=fdoomcvb.exe
 set options=/dMODE_CVB /dUSE_BACKBUFFER
-goto compile_mode
+goto compile
 
 :mode_e
 set base=fdoom13h.exe
 set executable=fdoome.exe
 set options=/dMODE_EGA640 /dUSE_BACKBUFFER
-goto compile_mode
+goto compile
 
 :mode_e16
 set base=fdoom13h.exe
 set executable=fdoome16.exe
 set options=/dMODE_EGA16 /dUSE_BACKBUFFER
-goto compile_mode
+goto compile
 
 :mode_e36
 set base=fdoom13h.exe
 set executable=fdoome36.exe
 set options=/dMODE_EGA136 /dUSE_BACKBUFFER
-goto compile_mode
+goto compile
 
 :mode_ega
 set base=fdoom13h.exe
 set executable=fdoomega.exe
 set options=/dMODE_EGA /dUSE_BACKBUFFER
-goto compile_mode
+goto compile
 
 :mode_hgc
 set base=fdoom13h.exe
 set executable=fdoomhgc.exe
 set options=/dMODE_HERC /dUSE_BACKBUFFER
-goto compile_mode
+echo HERCULES
+goto compile
 
 :mode_pcp
 set base=fdoom13h.exe
 set executable=fdoompcp.exe
 set options=/dMODE_PCP /dUSE_BACKBUFFER
-goto compile_mode
+goto compile
 
 :mode_t1
 set base=fdoomtxt.exe
 set executable=fdoomt1.exe
 set options=/dMODE_T4025
-goto compile_mode
+goto compile
 
 :mode_t12
 set base=fdoomtxt.exe
 set executable=fdoomt12.exe
 set options=/dMODE_T4050
-goto compile_mode
+goto compile
 
 :mode_t25
 set base=fdoomtxt.exe
 set executable=fdoomt25.exe
 set options=/dMODE_T8025
-goto compile_mode
+goto compile
 
 :mode_t43
 set base=fdoomtxt.exe
 set executable=fdoomt43.exe
 set options=/dMODE_T8043
-goto compile_mode
+goto compile
 
 :mode_t50
 set base=fdoomtxt.exe
 set executable=fdoomt50.exe
 set options=/dMODE_T8050
-goto compile_mode
+goto compile
 
 :mode_t52
 set base=fdoomtxt.exe
 set executable=fdoomt52.exe
 set options=/dMODE_T80100
-goto compile_mode
+goto compile
 
 :mode_t86
 set base=fdoomtxt.exe
 set executable=fdoomt86.exe
 set options=/dMODE_T8086
-goto compile_mode
+goto compile
 
 :mode_v2
 set base=fdoom13h.exe
 set executable=fdoomv2.exe
 set options=/dMODE_V2 /dUSE_BACKBUFFER
-goto compile_mode
+goto compile
 
 :mode_v16
 set base=fdoom13h.exe
 set executable=fdoomv16.exe
 set options=/dMODE_VGA16 /dUSE_BACKBUFFER
-goto compile_mode
+goto compile
 
 :mode_v36
 set base=fdoom13h.exe
 set executable=fdoomv36.exe
 set options=/dMODE_VGA136 /dUSE_BACKBUFFER
-goto compile_mode
+goto compile
 
 :mode_vbd
 set base=fdoomvbd.exe
 set executable=fdoomvbd.exe
 set options=/dMODE_VBE2_DIRECT
-goto compile_mode
+goto compile
 
 :mode_vbr
 set base=fdoomvbe.exe
 set executable=fdoomvbr.exe
 set options=/dMODE_VBE2 /dUSE_BACKBUFFER
-goto compile_mode
+goto compile
 
 :mode_y
 set base=fdoomy.exe
 set executable=fdoom.exe
 set options=/dMODE_Y
-goto compile_mode
+goto compile
 
-:compile_mode
+:compile
 if "%1"=="clean" GOTO clean
 if "%1"=="build" GOTO build
 
