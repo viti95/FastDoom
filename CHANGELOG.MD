@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 0.8.10 (14 Mar 2022)
+* Added new video modes
+    * FDOOME16.EXE => FastDoom EGA 160x100
+    * FDOOME36.EXE => FastDoom EGA 80x100 (122 pseudocolors)
+    * FDOOMT43.EXE => FastDoom 80x43 16 colors text mode (only EGA cards)
+    * FDOOMT86.EXE => FastDoom 80x43 16 colors text mode (virtual resolution of 80x86, only EGA cards)
+* Multiple optimizations for special backbuffered modes
+* Better colormaps / palettes for black&white modes, and 16 color dithered modes
+* Removed FDOOMV.EXE, the scaling was horrible and didn't look good at all
+* Revert custom palette for VGA 160x100 mode. The attribute controller requires the display to go blank to change each color association. Not doing this causes some random screen glitches while changing the palette (which I haven't been able to solve, since the hardware works this way). VGA 256 color mode doesn't have this problem.
+
 ## 0.8.9 (26 Jan 2022)
 * Added new video modes. Huge thanks to @FrenkelS
     * FDOOMC36.EXE => FastDoom CGA 80x100 (122 pseudocolors)
