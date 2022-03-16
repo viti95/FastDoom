@@ -1554,7 +1554,7 @@ void VGA136_DrawBackbuffer(void)
 #ifdef MODE_ATI640
 void ATI640_DrawBackbuffer(void)
 {
-    int x;
+    unsigned char x;
 
     unsigned char *vram = (unsigned char *)0xB0000;
 
@@ -1973,9 +1973,9 @@ void EGA_DrawBackbuffer(void)
 #ifdef MODE_CVB
 void CVBS_DrawBackbuffer(void)
 {
-    int x;
+    unsigned char x;
     unsigned char *vram = (unsigned char *)0xB8000;
-    unsigned int base = 0;
+    unsigned short base = 0;
     unsigned char color0, color1;
 
     for (base = 0; base < SCREENHEIGHT * 320;)
