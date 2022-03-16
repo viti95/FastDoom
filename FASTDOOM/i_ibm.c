@@ -1646,7 +1646,7 @@ void ATI640_DrawBackbuffer(void)
 #ifdef MODE_EGA640
 void EGA640_DrawBackbuffer(void)
 {
-    int i;
+    unsigned short i;
     byte *backbufferptr;
 
     // Red
@@ -1807,7 +1807,7 @@ void EGA640_DrawBackbuffer(void)
 #ifdef MODE_EGA
 void EGA_DrawBackbuffer(void)
 {
-    int i;
+    unsigned short i;
     byte *backbufferptr;
 
     // Red
@@ -2279,8 +2279,6 @@ void I_FinishUpdate(void)
 #endif
 #if defined(MODE_V2)
     {
-        int x;
-
         byte *ptrdestscreen;
         int pos;
 
@@ -2291,6 +2289,8 @@ void I_FinishUpdate(void)
 
         do
         {
+            unsigned char x;
+
             for (x = 0; x < 10; x++)
             {
                 ptrdestscreen[0] = backbuffer[pos];
@@ -2314,6 +2314,8 @@ void I_FinishUpdate(void)
 
         do
         {
+            unsigned char x;
+
             for (x = 0; x < 10; x++)
             {
                 ptrdestscreen[0] = backbuffer[pos];
@@ -2337,6 +2339,8 @@ void I_FinishUpdate(void)
 
         do
         {
+            unsigned char x;
+
             for (x = 0; x < 10; x++)
             {
                 ptrdestscreen[0] = backbuffer[pos];
@@ -2360,6 +2364,8 @@ void I_FinishUpdate(void)
 
         do
         {
+            unsigned char x;
+            
             for (x = 0; x < 10; x++)
             {
                 ptrdestscreen[0] = backbuffer[pos];
