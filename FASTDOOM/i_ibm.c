@@ -1367,15 +1367,17 @@ void HERC_DrawBackbuffer(void)
     unsigned char *vram = (unsigned char *)0xB0000;
     byte *ptrbackbuffer = backbuffer;
 
-    do {
+    do
+    {
         unsigned char x = 80;
 
-        do {
+        do
+        {
             byte *ptr;
             byte finalcolor0;
             byte finalcolor1;
 
-            ptr = ptrlutcolors + *(ptrbackbuffer) * 4;
+            ptr = ptrlutcolors + *(ptrbackbuffer)*4;
             finalcolor0 = *ptr & 0x80 | *(ptr + 1) & 0x40;
             finalcolor1 = *(ptr + 2) & 0x80 | *(ptr + 3) & 0x40;
             ptr = ptrlutcolors + *(ptrbackbuffer + 1) * 4;
@@ -1410,7 +1412,7 @@ void HERC_DrawBackbuffer(void)
             ptrbackbuffer += 4;
             vram++;
             x--;
-        }while (x > 0);
+        } while (x > 0);
 
         ptrbackbuffer += 320;
     } while (vram < (unsigned char *)0xB1F40);
@@ -1470,7 +1472,8 @@ void CGA136_DrawBackbuffer(void)
     byte *ptrbackbuffer = backbuffer;
     unsigned char line = 20;
 
-    do {
+    do
+    {
         *vram = ptrlut136colors[*ptrbackbuffer];
         *(vram + 2) = ptrlut136colors[*(ptrbackbuffer + 4)];
         *(vram + 4) = ptrlut136colors[*(ptrbackbuffer + 8)];
@@ -1496,7 +1499,8 @@ void EGA136_DrawBackbuffer(void)
     byte *ptrbackbuffer = backbuffer;
     unsigned char line = 20;
 
-    do {
+    do
+    {
         *vram = ptrlut136colors[*ptrbackbuffer];
         *(vram + 2) = ptrlut136colors[*(ptrbackbuffer + 4)];
         *(vram + 4) = ptrlut136colors[*(ptrbackbuffer + 8)];
@@ -1534,7 +1538,8 @@ void VGA136_DrawBackbuffer(void)
     unsigned char *vram = (unsigned char *)0xB8001;
     byte *ptrbackbuffer = backbuffer;
 
-    do {
+    do
+    {
         *vram = ptrlut136colors[*ptrbackbuffer];
         *(vram + 2) = ptrlut136colors[*(ptrbackbuffer + 4)];
         *(vram + 4) = ptrlut136colors[*(ptrbackbuffer + 8)];
@@ -1549,7 +1554,7 @@ void VGA136_DrawBackbuffer(void)
 #ifdef MODE_ATI640
 void ATI640_DrawBackbuffer(void)
 {
-    unsigned char x;
+    int x;
 
     unsigned char *vram = (unsigned char *)0xB0000;
 
@@ -2365,7 +2370,7 @@ void I_FinishUpdate(void)
         do
         {
             unsigned char x;
-            
+
             for (x = 0; x < 10; x++)
             {
                 ptrdestscreen[0] = backbuffer[pos];
