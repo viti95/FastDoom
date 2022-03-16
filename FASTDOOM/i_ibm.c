@@ -1324,40 +1324,45 @@ extern int screenblocks;
 #ifdef MODE_CGA_BW
 void CGA_BW_DrawBackbuffer(void)
 {
-    int x;
     unsigned char *vram = (unsigned char *)0xB8000;
-    byte *ptrbackbuffer;
+    byte *ptrbackbuffer = backbuffer;
 
-    for (ptrbackbuffer = backbuffer; ptrbackbuffer < backbuffer + 200 * 640 / 2; ptrbackbuffer += 640)
-    {
-        for (x = 0; x < 320; x += 4, vram++)
-        {
-            unsigned short color;
+    do {
+        unsigned char x = 80;
+
+        do {
+            byte *ptr;
             byte finalcolor;
 
-            color = ptrbackbuffer[x] * 2;
-            finalcolor = (ptrlutcolors[color]) & 0x80 | (ptrlutcolors[color + 1]) & 0x40;
-            color = ptrbackbuffer[x + 1] * 2;
-            finalcolor |= (ptrlutcolors[color]) & 0x20 | (ptrlutcolors[color + 1]) & 0x10;
-            color = ptrbackbuffer[x + 2] * 2;
-            finalcolor |= (ptrlutcolors[color]) & 0x08 | (ptrlutcolors[color + 1]) & 0x04;
-            color = ptrbackbuffer[x + 3] * 2;
-            finalcolor |= (ptrlutcolors[color]) & 0x02 | (ptrlutcolors[color + 1]) & 0x01;
+            ptr = ptrlutcolors + *(ptrbackbuffer) * 2;
+            finalcolor = *ptr & 0x80 | *(ptr + 1) & 0x40;
+            ptr = ptrlutcolors + *(ptrbackbuffer + 1) * 2;
+            finalcolor |= *ptr & 0x20 | *(ptr + 1) & 0x10;
+            ptr = ptrlutcolors + *(ptrbackbuffer + 2) * 2;
+            finalcolor |= *ptr & 0x08 | *(ptr + 1) & 0x04;
+            ptr = ptrlutcolors + *(ptrbackbuffer + 3) * 2;
+            finalcolor |= *ptr & 0x02 | *(ptr + 1) & 0x01;
 
             *(vram) = finalcolor;
 
-            color = ptrbackbuffer[x + 320] * 2;
-            finalcolor = (ptrlutcolors[color]) & 0x80 | (ptrlutcolors[color + 1]) & 0x40;
-            color = ptrbackbuffer[x + 321] * 2;
-            finalcolor |= (ptrlutcolors[color]) & 0x20 | (ptrlutcolors[color + 1]) & 0x10;
-            color = ptrbackbuffer[x + 322] * 2;
-            finalcolor |= (ptrlutcolors[color]) & 0x08 | (ptrlutcolors[color + 1]) & 0x04;
-            color = ptrbackbuffer[x + 323] * 2;
-            finalcolor |= (ptrlutcolors[color]) & 0x02 | (ptrlutcolors[color + 1]) & 0x01;
+            ptr = ptrlutcolors + *(ptrbackbuffer + 320) * 2;
+            finalcolor = *ptr & 0x80 | *(ptr + 1) & 0x40;
+            ptr = ptrlutcolors + *(ptrbackbuffer + 321) * 2;
+            finalcolor |= *ptr & 0x20 | *(ptr + 1) & 0x10;
+            ptr = ptrlutcolors + *(ptrbackbuffer + 322) * 2;
+            finalcolor |= *ptr & 0x08 | *(ptr + 1) & 0x04;
+            ptr = ptrlutcolors + *(ptrbackbuffer + 323) * 2;
+            finalcolor |= *ptr & 0x02 | *(ptr + 1) & 0x01;
 
             *(vram + 0x2000) = finalcolor;
-        }
-    }
+
+            ptrbackbuffer += 4;
+            vram++;
+            x--;
+        }while (x > 0);
+
+        ptrbackbuffer += 320;
+    } while (vram < (unsigned char *)0xB1F40);
 }
 #endif
 
