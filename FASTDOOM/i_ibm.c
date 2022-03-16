@@ -1369,7 +1369,7 @@ void HERC_DrawBackbuffer(void)
 
     for (ptrbackbuffer = backbuffer; ptrbackbuffer < backbuffer + 400 * 640 / 4; ptrbackbuffer += 640)
     {
-        int x;
+        unsigned short x;
 
         for (x = 0; x < 320; x += 4, vram++)
         {

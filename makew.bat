@@ -100,7 +100,6 @@ goto compile
 set base=fdoom13h.exe
 set executable=fdoomhgc.exe
 set options=/dMODE_HERC /dUSE_BACKBUFFER
-echo HERCULES
 goto compile
 
 :mode_pcp
