@@ -2156,7 +2156,6 @@ void I_FinishUpdate(void)
         textdestscreen = (unsigned short *)0xB8000;
         textpage = 0;
     }
-    // textdestscreen = (unsigned short *)0xB8000;
 #endif
 
 #if defined(MODE_T8050) || defined(MODE_T80100)
