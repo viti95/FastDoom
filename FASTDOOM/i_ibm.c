@@ -42,6 +42,9 @@
 
 #include "std_func.h"
 
+#define BYTELOW(value)   (((unsigned char *)&value)[0])
+#define BYTEHIGH(value)  (((unsigned char *)&value)[1])
+
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 #include "i_vesa.h"
 #endif
@@ -1333,30 +1336,34 @@ void CGA_BW_DrawBackbuffer(void)
 
         do
         {
-            register byte *ptr;
-            register byte finalcolor;
+            unsigned short *ptr;
+            unsigned short finalcolor;
+            byte colormix;
 
+            // Process two pixels at the same time (16-bit)
             ptr = ptrlutcolors + *(ptrbackbuffer) * 2;
-            finalcolor = *ptr & 0x80 | *(ptr + 1) & 0x40;
+            finalcolor = *ptr & 0x8040;
             ptr = ptrlutcolors + *(ptrbackbuffer + 1) * 2;
-            finalcolor |= *ptr & 0x20 | *(ptr + 1) & 0x10;
+            finalcolor |= *ptr & 0x2010;
             ptr = ptrlutcolors + *(ptrbackbuffer + 2) * 2;
-            finalcolor |= *ptr & 0x08 | *(ptr + 1) & 0x04;
+            finalcolor |= *ptr & 0x0804;
             ptr = ptrlutcolors + *(ptrbackbuffer + 3) * 2;
-            finalcolor |= *ptr & 0x02 | *(ptr + 1) & 0x01;
+            finalcolor |= *ptr & 0x0201;
 
-            *(vram) = finalcolor;
+            colormix = BYTEHIGH(finalcolor) | BYTELOW(finalcolor); 
+            *(vram) = colormix;
 
             ptr = ptrlutcolors + *(ptrbackbuffer + 320) * 2;
-            finalcolor = *ptr & 0x80 | *(ptr + 1) & 0x40;
+            finalcolor = *ptr & 0x8040;
             ptr = ptrlutcolors + *(ptrbackbuffer + 321) * 2;
-            finalcolor |= *ptr & 0x20 | *(ptr + 1) & 0x10;
+            finalcolor |= *ptr & 0x2010;
             ptr = ptrlutcolors + *(ptrbackbuffer + 322) * 2;
-            finalcolor |= *ptr & 0x08 | *(ptr + 1) & 0x04;
+            finalcolor |= *ptr & 0x0804;
             ptr = ptrlutcolors + *(ptrbackbuffer + 323) * 2;
-            finalcolor |= *ptr & 0x02 | *(ptr + 1) & 0x01;
+            finalcolor |= *ptr & 0x0201;
 
-            *(vram + 0x2000) = finalcolor;
+            colormix = BYTEHIGH(finalcolor) | BYTELOW(finalcolor); 
+            *(vram + 0x2000) = colormix;
 
             ptrbackbuffer += 4;
             vram++;
