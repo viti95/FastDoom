@@ -42,8 +42,13 @@
 
 #include "std_func.h"
 
-#define BYTELOW(value)   (((unsigned char *)&value)[0])
-#define BYTEHIGH(value)  (((unsigned char *)&value)[1])
+#define BYTE0_USHORT(value)  (((unsigned char *)&value)[0])
+#define BYTE1_USHORT(value)  (((unsigned char *)&value)[1])
+
+#define BYTE0_UINT(value)   (((unsigned char *)&value)[0])
+#define BYTE1_UINT(value)   (((unsigned char *)&value)[1])
+#define BYTE2_UINT(value)   (((unsigned char *)&value)[2])
+#define BYTE3_UINT(value)   (((unsigned char *)&value)[3])
 
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 #include "i_vesa.h"
@@ -1338,7 +1343,6 @@ void CGA_BW_DrawBackbuffer(void)
         {
             unsigned short *ptr;
             unsigned short finalcolor;
-            byte colormix;
 
             // Process two pixels at the same time (16-bit)
             ptr = ptrlutcolors + *(ptrbackbuffer) * 2;
@@ -1350,8 +1354,7 @@ void CGA_BW_DrawBackbuffer(void)
             ptr = ptrlutcolors + *(ptrbackbuffer + 3) * 2;
             finalcolor |= *ptr & 0x0201;
 
-            colormix = BYTEHIGH(finalcolor) | BYTELOW(finalcolor); 
-            *(vram) = colormix;
+            *(vram) = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor); 
 
             ptr = ptrlutcolors + *(ptrbackbuffer + 320) * 2;
             finalcolor = *ptr & 0x8040;
@@ -1362,8 +1365,7 @@ void CGA_BW_DrawBackbuffer(void)
             ptr = ptrlutcolors + *(ptrbackbuffer + 323) * 2;
             finalcolor |= *ptr & 0x0201;
 
-            colormix = BYTEHIGH(finalcolor) | BYTELOW(finalcolor); 
-            *(vram + 0x2000) = colormix;
+            *(vram + 0x2000) = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor); 
 
             ptrbackbuffer += 4;
             vram++;
@@ -1387,41 +1389,33 @@ void HERC_DrawBackbuffer(void)
 
         do
         {
-            byte *ptr;
-            byte finalcolor0;
-            byte finalcolor1;
+            unsigned int *ptr;
+            unsigned int finalcolor;
 
+            // Process four pixels at the same time (32-bit)
             ptr = ptrlutcolors + *(ptrbackbuffer)*4;
-            finalcolor0 = *ptr & 0x80 | *(ptr + 1) & 0x40;
-            finalcolor1 = *(ptr + 2) & 0x80 | *(ptr + 3) & 0x40;
+            finalcolor = *ptr & 0x80408040;
             ptr = ptrlutcolors + *(ptrbackbuffer + 1) * 4;
-            finalcolor0 |= *ptr & 0x20 | *(ptr + 1) & 0x10;
-            finalcolor1 |= *(ptr + 2) & 0x20 | *(ptr + 3) & 0x10;
+            finalcolor |= *ptr & 0x20102010;
             ptr = ptrlutcolors + *(ptrbackbuffer + 2) * 4;
-            finalcolor0 |= *ptr & 0x08 | *(ptr + 1) & 0x04;
-            finalcolor1 |= *(ptr + 2) & 0x08 | *(ptr + 3) & 0x04;
+            finalcolor |= *ptr & 0x08040804;
             ptr = ptrlutcolors + *(ptrbackbuffer + 3) * 4;
-            finalcolor0 |= *ptr & 0x02 | *(ptr + 1) & 0x01;
-            finalcolor1 |= *(ptr + 2) & 0x02 | *(ptr + 3) & 0x01;
+            finalcolor |= *ptr & 0x02010201;
 
-            *(vram) = finalcolor0;
-            *(vram + 0x2000) = finalcolor1;
+            *(vram) = BYTE0_UINT(finalcolor) | BYTE1_UINT(finalcolor);
+            *(vram + 0x2000) = BYTE2_UINT(finalcolor) | BYTE3_UINT(finalcolor);
 
             ptr = ptrlutcolors + *(ptrbackbuffer + 320) * 4;
-            finalcolor0 = *ptr & 0x80 | *(ptr + 1) & 0x40;
-            finalcolor1 = *(ptr + 2) & 0x80 | *(ptr + 3) & 0x40;
+            finalcolor = *ptr & 0x80408040;
             ptr = ptrlutcolors + *(ptrbackbuffer + 321) * 4;
-            finalcolor0 |= *ptr & 0x20 | *(ptr + 1) & 0x10;
-            finalcolor1 |= *(ptr + 2) & 0x20 | *(ptr + 3) & 0x10;
+            finalcolor |= *ptr & 0x20102010;
             ptr = ptrlutcolors + *(ptrbackbuffer + 322) * 4;
-            finalcolor0 |= *ptr & 0x08 | *(ptr + 1) & 0x04;
-            finalcolor1 |= *(ptr + 2) & 0x08 | *(ptr + 3) & 0x04;
+            finalcolor |= *ptr & 0x08040804;
             ptr = ptrlutcolors + *(ptrbackbuffer + 323) * 4;
-            finalcolor0 |= *ptr & 0x02 | *(ptr + 1) & 0x01;
-            finalcolor1 |= *(ptr + 2) & 0x02 | *(ptr + 3) & 0x01;
+            finalcolor |= *ptr & 0x02010201;
 
-            *(vram + 0x4000) = finalcolor0;
-            *(vram + 0x6000) = finalcolor1;
+            *(vram + 0x4000) = BYTE0_UINT(finalcolor) | BYTE1_UINT(finalcolor);
+            *(vram + 0x6000) = BYTE2_UINT(finalcolor) | BYTE3_UINT(finalcolor);
 
             ptrbackbuffer += 4;
             vram++;
