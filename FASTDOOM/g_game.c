@@ -186,7 +186,7 @@ void G_BuildTiccmd(ticcmd_t *cmd)
 
     forward = 0;
 
-    if (gamekeydown[key_up])
+    if (gamekeydown[key_up] || mousebuttons[mousebforward])
     {
         forward += forwardmove[speed];
     }
