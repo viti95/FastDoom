@@ -33,6 +33,10 @@ elif [ "$target" = "fdoomhgc.exe" ]; then
   buildopts="-dMODE_HERC -dUSE_BACKBUFFER"
   buildtarget="fdoom13h.exe"
 
+elif [ "$target" = "fdoomhg2.exe" ]; then
+  buildopts="-dMODE_HERC200 -dUSE_BACKBUFFER"
+  buildtarget="fdoom13h.exe"
+
 elif [ "$target" = "fdoomt1.exe" ]; then
   buildopts="-dMODE_T4025"
   buildtarget="fdoomtxt.exe"

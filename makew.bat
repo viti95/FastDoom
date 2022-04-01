@@ -29,6 +29,7 @@ if "%2"=="V36" GOTO mode_v36
 if "%2"=="VBD" GOTO mode_vbd
 if "%2"=="VBR" GOTO mode_vbr
 if "%2"=="Y"   GOTO mode_y
+if "%2"=="HG2" GOTO mode_hg2
 
 :mode_13h
 set base=fdoom13h.exe
@@ -100,6 +101,12 @@ goto compile
 set base=fdoom13h.exe
 set executable=fdoomhgc.exe
 set options=/dMODE_HERC /dUSE_BACKBUFFER
+goto compile
+
+:mode_hg2
+set base=fdoom13h.exe
+set executable=fdoomhg2.exe
+set options=/dMODE_HERC200 /dUSE_BACKBUFFER
 goto compile
 
 :mode_pcp
@@ -184,6 +191,12 @@ goto compile
 set base=fdoomy.exe
 set executable=fdoom.exe
 set options=/dMODE_Y
+goto compile
+
+:mode_mda
+set base=fdoomtxt.exe
+set executable=fdoommda.exe
+set options=/dMODE_MDA
 goto compile
 
 :compile

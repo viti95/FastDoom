@@ -1389,7 +1389,7 @@ void M_QuitResponse(int ch)
     else
         S_StartSound(NULL, quitsounds[(gametic >> 2) & 7]);
 
-    #ifndef MODE_HERC
+    #if !defined(MODE_HERC) && !defined(MODE_HERC200)
     do
     {
         I_WaitSingleVBL();
