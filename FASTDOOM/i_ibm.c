@@ -209,9 +209,14 @@ void I_StartupSound(void);
 void I_ShutdownSound(void);
 void I_ShutdownTimer(void);
 
-#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_CVB)
 byte lut16colors[14 * 256];
 byte *ptrlut16colors;
+#endif
+
+#if defined(MODE_PCP)
+unsigned short lut16colors[14 * 256 * 2];
+unsigned short *ptrlut16colors;
 #endif
 
 #if defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136)
@@ -871,7 +876,18 @@ void I_ProcessPalette(byte *palette)
 
             if (distance == 0)
             {
-                lut16colors[i] = j | j << 4;
+                unsigned short value;
+                unsigned short value2;
+                
+                value = j & 12;
+                value = value | value >> 2 | value << 2 | value << 4;
+                value <<= 8;
+                
+                value2 = j & 3;
+                value2 = value2 | value2 << 2 | value2 << 4 | value2 << 6;
+                value2;
+
+                lut16colors[i] = value | value2;
                 break;
             }
 
@@ -879,8 +895,18 @@ void I_ProcessPalette(byte *palette)
 
             if (best_difference > distance)
             {
-                best_difference = distance;
-                lut16colors[i] = j | j << 4;
+                unsigned short value;
+                unsigned short value2;
+                
+                value = j & 12;
+                value = value | value >> 2 | value << 2 | value << 4;
+                value <<= 8;
+                
+                value2 = j & 3;
+                value2 = value2 | value2 << 2 | value2 << 4 | value2 << 6;
+                value2;
+
+                lut16colors[i] = value | value2;
             }
         }
     }
@@ -1086,7 +1112,11 @@ void I_SetPalette(int numpalette)
     ptrlutcolors = lutcolors + numpalette * 512;
 #endif
 
-#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB)
+#if defined(MODE_PCP)
+    ptrlut16colors = lut16colors + numpalette * 256;
+#endif
+
+#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_CVB)
     ptrlut16colors = lut16colors + numpalette * 256;
 #endif
 
@@ -2017,48 +2047,38 @@ void PCP_DrawBackbuffer(void)
     {
         for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++)
         {
-            unsigned char color;
-
-            unsigned char tmpColor0;
-            unsigned char tmpColor1;
+            unsigned short color;
+            unsigned short finalcolor;
 
             color = ptrlut16colors[backbuffer[base]];
-            tmpColor0 = (color & 3) << 6;
-            tmpColor1 = (color & 0xC0);
+            finalcolor = color & 0xC0C0;
 
             color = ptrlut16colors[backbuffer[base + 1]];
-            tmpColor0 |= (color & 0x30);
-            tmpColor1 |= (color & 12) << 2;
+            finalcolor |= color & 0x3030;
 
             color = ptrlut16colors[backbuffer[base + 2]];
-            tmpColor0 |= (color & 3) << 2;
-            tmpColor1 |= (color & 12);
+            finalcolor |= color & 0x0C0C;
 
             color = ptrlut16colors[backbuffer[base + 3]];
-            tmpColor0 |= (color & 3);
-            tmpColor1 |= (color & 12) >> 2;
+            finalcolor |= color & 0x0303;
 
-            *(vram) = tmpColor0;
-            *(vram + 0x4000) = tmpColor1;
+            *(vram) = BYTE0_USHORT(finalcolor); 
+            *(vram + 0x4000) = BYTE1_USHORT(finalcolor);
 
             color = ptrlut16colors[backbuffer[base + 320]];
-            tmpColor0 = (color & 3) << 6;
-            tmpColor1 = (color & 0xC0);
+            finalcolor = color & 0xC0C0;
 
             color = ptrlut16colors[backbuffer[base + 321]];
-            tmpColor0 |= (color & 0x30);
-            tmpColor1 |= (color & 12) << 2;
+            finalcolor |= color & 0x3030;
 
             color = ptrlut16colors[backbuffer[base + 322]];
-            tmpColor0 |= (color & 3) << 2;
-            tmpColor1 |= (color & 12);
+            finalcolor |= color & 0x0C0C;
 
             color = ptrlut16colors[backbuffer[base + 323]];
-            tmpColor0 |= (color & 3);
-            tmpColor1 |= (color & 12) >> 2;
+            finalcolor |= color & 0x0303;
 
-            *(vram + 0x2000) = tmpColor0;
-            *(vram + 0x6000) = tmpColor1;
+            *(vram + 0x2000) = BYTE0_USHORT(finalcolor);
+            *(vram + 0x6000) = BYTE1_USHORT(finalcolor);
         }
         base += 320;
     }
