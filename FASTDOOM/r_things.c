@@ -336,11 +336,11 @@ void R_DrawVisSprite(vissprite_t *vis)
             dc_yl = yl;
 
             #if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CVB) || defined(MODE_EGA16)
-            if (dc_x % 2 == 0){
+            if ((dc_x & 1) == 0){
                 colfunc();
             }
             #elif defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136)
-            if (dc_x % 4 == 0){
+            if ((dc_x & 3) == 0){
                 colfunc();
             }
             #else

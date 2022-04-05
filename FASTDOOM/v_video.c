@@ -111,7 +111,7 @@ void V_SetRect(byte color, int width, int height, int destx, int desty, byte *de
 
     dest = destscrn + Mul320(desty) + destx;
 
-    if (width % 2)
+    if (width & 1)
     {
         for (; height > 0; height--)
         {
@@ -512,13 +512,13 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
     for (; col < w; x++, col++, desttop++)
     {
 #if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_CVBS)
-        if ((int) desttop % 2){
+        if ((int) desttop & 1){
             continue;
         }
 #endif
 
 #if defined(MODE_VGA136) || defined(MODE_CGA136) || defined(MODE_EGA136)
-        if ((int) desttop % 4){
+        if ((int) desttop & 3){
             continue;
         }
 #endif
@@ -706,7 +706,7 @@ void V_DrawPatchDirectText4050(int x, int y, patch_t *patch)
         while (column->topdelta != 0xff)
         {
             source = (byte *)column + 3;
-            odd = (column->topdelta / 4 + y) % 2;
+            odd = (column->topdelta / 4 + y) & 1;
             dest = desttop + Mul40(column->topdelta / 8);
             count = column->length / 4;
 
@@ -770,7 +770,7 @@ void V_DrawPatchDirectText80100(int x, int y, patch_t *patch)
         while (column->topdelta != 0xff)
         {
             source = (byte *)column + 3;
-            odd = (column->topdelta / 4 + y) % 2;
+            odd = (column->topdelta / 4 + y) & 1;
             dest = desttop + Mul80(column->topdelta / 4);
             count = column->length / 2;
 
@@ -879,7 +879,7 @@ void V_DrawPatchDirectText8025(int x, int y, patch_t *patch)
         while (column->topdelta != 0xff)
         {
             source = (byte *)column + 3;
-            odd = (column->topdelta / 4 + y) % 2;
+            odd = (column->topdelta / 4 + y) & 1;
             dest = desttop + Mul80(column->topdelta / 8);
             count = column->length / 4;
 

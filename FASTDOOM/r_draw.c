@@ -306,7 +306,7 @@ void R_DrawSpanFlatVBE2(void)
 
     countp = ds_x2 - ds_x1 + 1;
 
-    if (countp % 2)
+    if (countp & 1)
     {
         SetBytes(dest, color, countp);
     }
@@ -329,7 +329,7 @@ void R_DrawColumnText4050(void)
     byte odd;
     unsigned short vmem;
 
-    odd = dc_yl % 2;
+    odd = dc_yl & 1;
     dest = textdestscreen + Mul40(dc_yl / 2) + dc_x;
     count = dc_yh - dc_yl;
 
@@ -404,10 +404,10 @@ void R_DrawSpanText4050(void)
     position = ((ds_xfrac << 10) & 0xffff0000) | ((ds_yfrac >> 6) & 0xffff);
     step = ((ds_xstep << 10) & 0xffff0000) | ((ds_ystep >> 6) & 0xffff);
 
-    odd = ds_y % 2;
+    odd = ds_y & 1;
     shift = 8 | (odd << 2);
 
-    even = (ds_y + 1) % 2;
+    even = (ds_y + 1) & 1;
     vmem_filter = 0xF00 << (even * 4);
 
     do
@@ -436,7 +436,7 @@ void R_DrawSkyFlatText4050(void)
     byte odd;
     unsigned short vmem;
 
-    odd = dc_yl % 2;
+    odd = dc_yl & 1;
     dest = textdestscreen + Mul40(dc_yl / 2) + dc_x;
     count = dc_yh - dc_yl;
 
@@ -487,7 +487,7 @@ void R_DrawFuzzColumnFastText4050(void)
     unsigned short vmem;
     unsigned short local_color;
 
-    odd = dc_yl % 2;
+    odd = dc_yl & 1;
     dest = textdestscreen + Mul40(dc_yl / 2) + dc_x;
     count = dc_yh - dc_yl;
 
@@ -539,7 +539,7 @@ void R_DrawFuzzColumnSaturnText4050(void)
         return;
 
     initialdrawpos = dc_yl + dc_x;
-    odd = dc_yl % 2;
+    odd = dc_yl & 1;
     dest = textdestscreen + Mul40(dc_yl / 2) + dc_x;
 
     fracstep = dc_iscale;
@@ -775,7 +775,7 @@ void R_DrawColumnText8025(void)
     byte odd;
     unsigned short vmem;
 
-    odd = dc_yl % 2;
+    odd = dc_yl & 1;
     dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
     count = dc_yh - dc_yl;
 
@@ -843,7 +843,7 @@ void R_DrawColumnText80100(void)
     byte odd;
     unsigned short vmem;
 
-    odd = dc_yl % 2;
+    odd = dc_yl & 1;
     dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
     count = dc_yh - dc_yl;
 
@@ -921,10 +921,10 @@ void R_DrawSpanText8025(void)
     position = ((ds_xfrac << 10) & 0xffff0000) | ((ds_yfrac >> 6) & 0xffff);
     step = ((ds_xstep << 10) & 0xffff0000) | ((ds_ystep >> 6) & 0xffff);
 
-    odd = ds_y % 2;
+    odd = ds_y & 1;
     shift = 8 | (odd << 2);
 
-    even = (ds_y + 1) % 2;
+    even = (ds_y + 1) & 1;
     vmem_filter = 0xF00 << (even * 4);
 
     do
@@ -968,10 +968,10 @@ void R_DrawSpanText80100(void)
     position = ((ds_xfrac << 10) & 0xffff0000) | ((ds_yfrac >> 6) & 0xffff);
     step = ((ds_xstep << 10) & 0xffff0000) | ((ds_ystep >> 6) & 0xffff);
 
-    odd = ds_y % 2;
+    odd = ds_y & 1;
     shift = 8 | (odd << 2);
 
-    even = (ds_y + 1) % 2;
+    even = (ds_y + 1) & 1;
     vmem_filter = 0xF00 << (even * 4);
 
     do
@@ -1026,7 +1026,7 @@ void R_DrawSkyFlatText80100(void)
     byte odd;
     unsigned short vmem;
 
-    odd = dc_yl % 2;
+    odd = dc_yl & 1;
     dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
     count = dc_yh - dc_yl;
 
@@ -1097,7 +1097,7 @@ void R_DrawSkyFlatText8025(void)
     byte odd;
     unsigned short vmem;
 
-    odd = dc_yl % 2;
+    odd = dc_yl & 1;
     dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
     count = dc_yh - dc_yl;
 
@@ -1159,7 +1159,7 @@ void R_DrawFuzzColumnSaturnText8025(void)
         return;
 
     initialdrawpos = dc_yl + dc_x;
-    odd = dc_yl % 2;
+    odd = dc_yl & 1;
     dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
 
     fracstep = dc_iscale;
@@ -1261,7 +1261,7 @@ void R_DrawFuzzColumnSaturnText80100(void)
         return;
 
     initialdrawpos = dc_yl + dc_x;
-    odd = dc_yl % 2;
+    odd = dc_yl & 1;
     dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
 
     fracstep = dc_iscale;
@@ -1406,7 +1406,7 @@ void R_DrawFuzzColumnFastText8025(void)
     unsigned short vmem;
     unsigned short local_color;
 
-    odd = dc_yl % 2;
+    odd = dc_yl & 1;
     dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
     count = dc_yh - dc_yl;
 
@@ -1453,7 +1453,7 @@ void R_DrawFuzzColumnFastText80100(void)
     unsigned short vmem;
     unsigned short local_color;
 
-    odd = dc_yl % 2;
+    odd = dc_yl & 1;
     dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
     count = dc_yh - dc_yl;
 
@@ -1838,7 +1838,7 @@ void R_DrawFuzzColumnText4050(void)
     unsigned short vmem;
     unsigned short local_color;
 
-    odd = dc_yl % 2;
+    odd = dc_yl & 1;
     dest = textdestscreen + Mul40(dc_yl / 2) + dc_x;
     count = dc_yh - dc_yl;
 
@@ -1946,7 +1946,7 @@ void R_DrawFuzzColumnText8025(void)
     unsigned short vmem;
     unsigned short local_color;
 
-    odd = dc_yl % 2;
+    odd = dc_yl & 1;
     dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
     count = dc_yh - dc_yl;
 
@@ -2019,7 +2019,7 @@ void R_DrawFuzzColumnText80100(void)
     unsigned short vmem;
     unsigned short local_color;
 
-    odd = dc_yl % 2;
+    odd = dc_yl & 1;
     dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
     count = dc_yh - dc_yl;
 
@@ -2342,7 +2342,7 @@ void R_DrawSpanFlat(void)
         dest = (byte *)origin_y + dsm_x1;
         countp = dsm_x2 - dsm_x1 + 1;
 
-        if (countp % 2)
+        if (countp & 1)
         {
             SetBytes(dest, color, countp);
         }
@@ -2478,7 +2478,7 @@ void R_DrawSpanFlatLow(void)
         dest = (byte *)origin_y + dsm_x1;
         countp = dsm_x2 - dsm_x1 + 1;
 
-        if (countp % 2)
+        if (countp & 1)
         {
             SetBytes(dest, color, countp);
         }
@@ -2543,7 +2543,7 @@ void R_DrawSpanFlatPotato(void)
 
     countp = ds_x2 - ds_x1 + 1;
 
-    if (countp % 2)
+    if (countp & 1)
     {
         SetBytes(dest, color, countp);
     }
@@ -2571,12 +2571,12 @@ void R_DrawSpanFlatText80100(void)
     countp = dest + ds_x2;
     dest += ds_x1;
 
-    odd = ds_y % 2;
+    odd = ds_y & 1;
     shift = 8 | (odd << 2);
     color = ds_colormap[ds_source[FLATPIXELCOLOR]];
     color = color << shift | 223;
 
-    even = (ds_y + 1) % 2;
+    even = (ds_y + 1) & 1;
     vmem_filter = 0xF00 << (even * 4);
 
     do
@@ -2620,12 +2620,12 @@ void R_DrawSpanFlatText4050(void)
     countp = dest + ds_x2;
     dest += ds_x1;
 
-    odd = ds_y % 2;
+    odd = ds_y & 1;
     shift = 8 | (odd << 2);
     color = ds_colormap[ds_source[FLATPIXELCOLOR]];
     color = color << shift | 223;
 
-    even = (ds_y + 1) % 2;
+    even = (ds_y + 1) & 1;
     vmem_filter = 0xF00 << (even * 4);
 
     do
@@ -2669,12 +2669,12 @@ void R_DrawSpanFlatText8025(void)
     countp = dest + ds_x2;
     dest += ds_x1;
 
-    odd = ds_y % 2;
+    odd = ds_y & 1;
     shift = 8 | (odd << 2);
     color = ds_colormap[ds_source[FLATPIXELCOLOR]];
     color = color << shift | 223;
 
-    even = (ds_y + 1) % 2;
+    even = (ds_y + 1) & 1;
     vmem_filter = 0xF00 << (even * 4);
 
     do
@@ -3064,7 +3064,7 @@ void R_DrawSpanFlat_13h(void)
 
     countp = ds_x2 - ds_x1 + 1;
 
-    if (countp % 2)
+    if (countp & 1)
     {
         SetBytes(dest, color, countp);
     }

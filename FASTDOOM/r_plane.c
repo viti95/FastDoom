@@ -109,7 +109,7 @@ void R_MapPlane(int y, int x1)
     unsigned index;
 
     #if defined(MODE_CGA16) || defined(MODE_CGA136) || defined(MODE_EGA16)
-		if (y % 2 != 0){
+		if (y & 1){
 			return;
 		}
     #endif
@@ -785,7 +785,7 @@ void R_DrawPlanesFlatSurfacesText80100(void)
             if (pl->top[x] > pl->bottom[x])
                 continue;
 
-            odd = pl->top[x] % 2;
+            odd = pl->top[x] & 1;
             dest = textdestscreen + Mul80(pl->top[x] / 2) + x;
             count = pl->bottom[x] - pl->top[x];
 
@@ -927,7 +927,7 @@ void R_DrawPlanesFlatSurfacesText4050(void)
             if (pl->top[x] > pl->bottom[x])
                 continue;
 
-            odd = pl->top[x] % 2;
+            odd = pl->top[x] & 1;
             dest = textdestscreen + Mul40(pl->top[x] / 2) + x;
             count = pl->bottom[x] - pl->top[x];
 
@@ -1069,7 +1069,7 @@ void R_DrawPlanesFlatSurfacesText8025(void)
             if (pl->top[x] > pl->bottom[x])
                 continue;
 
-            odd = pl->top[x] % 2;
+            odd = pl->top[x] & 1;
             dest = textdestscreen + Mul80(pl->top[x] / 2) + x;
             count = pl->bottom[x] - pl->top[x];
 
@@ -1148,13 +1148,13 @@ void R_DrawPlanesFlatSurfaces_13h(void)
         for (x = pl->minx; x <= pl->maxx; x++)
         {
             #if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CVB) || defined(MODE_EGA16)
-            if (x % 2 != 0){
+            if (x & 1){
                 continue;
             }
             #endif
 
             #if defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136)
-            if (x % 4 != 0){
+            if (x & 3){
                 continue;
             }
             #endif
@@ -1244,13 +1244,13 @@ void R_DrawSky(visplane_t *pl)
         for (x = pl->minx; x <= pl->maxx; x++)
         {
             #if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CVB) || defined(MODE_EGA16)
-            if (x % 2 != 0){
+            if (x & 1){
                 continue;
             }
             #endif
 
             #if defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136)
-            if (x % 4 != 0){
+            if (x & 3){
                 continue;
             }
             #endif
@@ -1291,13 +1291,13 @@ void R_DrawSky(visplane_t *pl)
         for (x = pl->minx; x <= pl->maxx; x++)
         {
             #if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CVB) || defined(MODE_EGA16)
-            if (x % 2 != 0){
+            if (x & 1){
                 continue;
             }
             #endif
 
             #if defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136)
-            if (x % 4 != 0){
+            if (x & 3){
                 continue;
             }
             #endif

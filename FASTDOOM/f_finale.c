@@ -933,7 +933,7 @@ void F_DrawPatchColText8025(int x, patch_t *patch, int col)
 	while (column->topdelta != 0xff)
 	{
 		source = (byte *)column + 3;
-		odd = (column->topdelta / 4) % 2;
+		odd = (column->topdelta / 4) & 1;
 		dest = desttop + Mul80(column->topdelta / 8);
 		count = column->length / 4;
 
