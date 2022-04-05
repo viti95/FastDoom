@@ -215,7 +215,7 @@ byte *ptrlut16colors;
 #endif
 
 #if defined(MODE_PCP)
-unsigned short lut16colors[14 * 256 * 2];
+unsigned short lut16colors[14 * 256];
 unsigned short *ptrlut16colors;
 #endif
 
