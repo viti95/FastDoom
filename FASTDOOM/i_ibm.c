@@ -2112,13 +2112,28 @@ void CGA_DrawBackbuffer(void)
     {
         for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++)
         {
-            unsigned char color;
+            unsigned short color;
+            unsigned short tmpColor;
 
-            color = (ptrlut4colors[backbuffer[base]]) & 0xC0 | (ptrlut4colors[backbuffer[base + 1]]) & 0x30 | (ptrlut4colors[backbuffer[base + 2]]) & 0x0C | (ptrlut4colors[backbuffer[base + 3]]) & 0x03;
-            *(vram) = color;
+            BYTE1_USHORT(color) = (ptrlut4colors[backbuffer[base]]);
+            BYTE0_USHORT(color) = (ptrlut4colors[backbuffer[base + 1]]);
+            tmpColor = color & 0xC030;
 
-            color = (ptrlut4colors[backbuffer[base + 320]]) & 0xC0 | (ptrlut4colors[backbuffer[base + 321]]) & 0x30 | (ptrlut4colors[backbuffer[base + 322]]) & 0x0C | (ptrlut4colors[backbuffer[base + 323]]) & 0x03;
-            *(vram + 0x2000) = color;
+            BYTE1_USHORT(color) = (ptrlut4colors[backbuffer[base + 2]]);
+            BYTE0_USHORT(color) = (ptrlut4colors[backbuffer[base + 3]]);
+            tmpColor |= color & 0x0C03;
+
+            *(vram) = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
+
+            BYTE1_USHORT(color) = (ptrlut4colors[backbuffer[base + 320]]);
+            BYTE0_USHORT(color) = (ptrlut4colors[backbuffer[base + 321]]);
+            tmpColor = color & 0xC030;
+
+            BYTE1_USHORT(color) = (ptrlut4colors[backbuffer[base + 322]]);
+            BYTE0_USHORT(color) = (ptrlut4colors[backbuffer[base + 323]]);
+            tmpColor |= color & 0x0C03;
+
+            *(vram + 0x2000) = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
         }
     }
 }
