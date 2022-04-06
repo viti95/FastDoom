@@ -1906,34 +1906,26 @@ void EGA_DrawBackbuffer(void)
 
     for (i = 0, backbufferptr = backbuffer; i < SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 8)
     {
-        unsigned char color;
-        unsigned char tmpColor;
+        unsigned short color;
+        unsigned short tmpColor;
 
-        color = ptrlutRcolor[*(backbufferptr)];
-        tmpColor = color & 0x80;
+        BYTE1_USHORT(color) = ptrlutRcolor[*(backbufferptr)];
+        BYTE0_USHORT(color) = ptrlutRcolor[*(backbufferptr + 1)];       
+        tmpColor = color & 0x8040;
 
-        color = ptrlutRcolor[*(backbufferptr + 1)];
-        tmpColor |= color & 0x40;
+        BYTE1_USHORT(color) = ptrlutRcolor[*(backbufferptr + 2)];
+        BYTE0_USHORT(color) = ptrlutRcolor[*(backbufferptr + 3)];       
+        tmpColor |= color & 0x2010;
 
-        color = ptrlutRcolor[*(backbufferptr + 2)];
-        tmpColor |= color & 0x20;
+        BYTE1_USHORT(color) = ptrlutRcolor[*(backbufferptr + 4)];
+        BYTE0_USHORT(color) = ptrlutRcolor[*(backbufferptr + 5)];       
+        tmpColor |= color & 0x0804;
 
-        color = ptrlutRcolor[*(backbufferptr + 3)];
-        tmpColor |= color & 0x10;
+        BYTE1_USHORT(color) = ptrlutRcolor[*(backbufferptr + 6)];
+        BYTE0_USHORT(color) = ptrlutRcolor[*(backbufferptr + 7)];       
+        tmpColor |= color & 0x0201;
 
-        color = ptrlutRcolor[*(backbufferptr + 4)];
-        tmpColor |= color & 0x08;
-
-        color = ptrlutRcolor[*(backbufferptr + 5)];
-        tmpColor |= color & 0x04;
-
-        color = ptrlutRcolor[*(backbufferptr + 6)];
-        tmpColor |= color & 0x02;
-
-        color = ptrlutRcolor[*(backbufferptr + 7)];
-        tmpColor |= color & 0x01;
-
-        destscreen[i] = tmpColor;
+        destscreen[i] = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
     }
 
     // Green
@@ -1941,34 +1933,26 @@ void EGA_DrawBackbuffer(void)
 
     for (i = 0, backbufferptr = backbuffer; i < SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 8)
     {
-        unsigned char color;
-        unsigned char tmpColor;
+        unsigned short color;
+        unsigned short tmpColor;
 
-        color = ptrlutGcolor[*(backbufferptr)];
-        tmpColor = color & 0x80;
+        BYTE1_USHORT(color) = ptrlutGcolor[*(backbufferptr)];
+        BYTE0_USHORT(color) = ptrlutGcolor[*(backbufferptr + 1)];       
+        tmpColor = color & 0x8040;
 
-        color = ptrlutGcolor[*(backbufferptr + 1)];
-        tmpColor |= color & 0x40;
+        BYTE1_USHORT(color) = ptrlutGcolor[*(backbufferptr + 2)];
+        BYTE0_USHORT(color) = ptrlutGcolor[*(backbufferptr + 3)];       
+        tmpColor |= color & 0x2010;
 
-        color = ptrlutGcolor[*(backbufferptr + 2)];
-        tmpColor |= color & 0x20;
+        BYTE1_USHORT(color) = ptrlutGcolor[*(backbufferptr + 4)];
+        BYTE0_USHORT(color) = ptrlutGcolor[*(backbufferptr + 5)];       
+        tmpColor |= color & 0x0804;
 
-        color = ptrlutGcolor[*(backbufferptr + 3)];
-        tmpColor |= color & 0x10;
+        BYTE1_USHORT(color) = ptrlutGcolor[*(backbufferptr + 6)];
+        BYTE0_USHORT(color) = ptrlutGcolor[*(backbufferptr + 7)];       
+        tmpColor |= color & 0x0201;
 
-        color = ptrlutGcolor[*(backbufferptr + 4)];
-        tmpColor |= color & 0x08;
-
-        color = ptrlutGcolor[*(backbufferptr + 5)];
-        tmpColor |= color & 0x04;
-
-        color = ptrlutGcolor[*(backbufferptr + 6)];
-        tmpColor |= color & 0x02;
-
-        color = ptrlutGcolor[*(backbufferptr + 7)];
-        tmpColor |= color & 0x01;
-
-        destscreen[i] = tmpColor;
+        destscreen[i] = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
     }
 
     // Blue
@@ -1976,34 +1960,26 @@ void EGA_DrawBackbuffer(void)
 
     for (i = 0, backbufferptr = backbuffer; i < SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 8)
     {
-        unsigned char color;
-        unsigned char tmpColor;
+        unsigned short color;
+        unsigned short tmpColor;
 
-        color = ptrlutBcolor[*(backbufferptr)];
-        tmpColor = color & 0x80;
+        BYTE1_USHORT(color) = ptrlutBcolor[*(backbufferptr)];
+        BYTE0_USHORT(color) = ptrlutBcolor[*(backbufferptr + 1)];       
+        tmpColor = color & 0x8040;
 
-        color = ptrlutBcolor[*(backbufferptr + 1)];
-        tmpColor |= color & 0x40;
+        BYTE1_USHORT(color) = ptrlutBcolor[*(backbufferptr + 2)];
+        BYTE0_USHORT(color) = ptrlutBcolor[*(backbufferptr + 3)];       
+        tmpColor |= color & 0x2010;
 
-        color = ptrlutBcolor[*(backbufferptr + 2)];
-        tmpColor |= color & 0x20;
+        BYTE1_USHORT(color) = ptrlutBcolor[*(backbufferptr + 4)];
+        BYTE0_USHORT(color) = ptrlutBcolor[*(backbufferptr + 5)];       
+        tmpColor |= color & 0x0804;
 
-        color = ptrlutBcolor[*(backbufferptr + 3)];
-        tmpColor |= color & 0x10;
+        BYTE1_USHORT(color) = ptrlutBcolor[*(backbufferptr + 6)];
+        BYTE0_USHORT(color) = ptrlutBcolor[*(backbufferptr + 7)];       
+        tmpColor |= color & 0x0201;
 
-        color = ptrlutBcolor[*(backbufferptr + 4)];
-        tmpColor |= color & 0x08;
-
-        color = ptrlutBcolor[*(backbufferptr + 5)];
-        tmpColor |= color & 0x04;
-
-        color = ptrlutBcolor[*(backbufferptr + 6)];
-        tmpColor |= color & 0x02;
-
-        color = ptrlutBcolor[*(backbufferptr + 7)];
-        tmpColor |= color & 0x01;
-
-        destscreen[i] = tmpColor;
+        destscreen[i] = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
     }
 
     // Intensity
@@ -2011,34 +1987,26 @@ void EGA_DrawBackbuffer(void)
 
     for (i = 0, backbufferptr = backbuffer; i < SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 8)
     {
-        unsigned char color;
-        unsigned char tmpColor;
+        unsigned short color;
+        unsigned short tmpColor;
 
-        color = ptrlutIcolor[*(backbufferptr)];
-        tmpColor = color & 0x80;
+        BYTE1_USHORT(color) = ptrlutIcolor[*(backbufferptr)];
+        BYTE0_USHORT(color) = ptrlutIcolor[*(backbufferptr + 1)];       
+        tmpColor = color & 0x8040;
 
-        color = ptrlutIcolor[*(backbufferptr + 1)];
-        tmpColor |= color & 0x40;
+        BYTE1_USHORT(color) = ptrlutIcolor[*(backbufferptr + 2)];
+        BYTE0_USHORT(color) = ptrlutIcolor[*(backbufferptr + 3)];       
+        tmpColor |= color & 0x2010;
 
-        color = ptrlutIcolor[*(backbufferptr + 2)];
-        tmpColor |= color & 0x20;
+        BYTE1_USHORT(color) = ptrlutIcolor[*(backbufferptr + 4)];
+        BYTE0_USHORT(color) = ptrlutIcolor[*(backbufferptr + 5)];       
+        tmpColor |= color & 0x0804;
 
-        color = ptrlutIcolor[*(backbufferptr + 3)];
-        tmpColor |= color & 0x10;
+        BYTE1_USHORT(color) = ptrlutIcolor[*(backbufferptr + 6)];
+        BYTE0_USHORT(color) = ptrlutIcolor[*(backbufferptr + 7)];       
+        tmpColor |= color & 0x0201;
 
-        color = ptrlutIcolor[*(backbufferptr + 4)];
-        tmpColor |= color & 0x08;
-
-        color = ptrlutIcolor[*(backbufferptr + 5)];
-        tmpColor |= color & 0x04;
-
-        color = ptrlutIcolor[*(backbufferptr + 6)];
-        tmpColor |= color & 0x02;
-
-        color = ptrlutIcolor[*(backbufferptr + 7)];
-        tmpColor |= color & 0x01;
-
-        destscreen[i] = tmpColor;
+        destscreen[i] = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
     }
 
     // Change video page
