@@ -140,10 +140,10 @@ static void MV_Mix(
             {
                 if (rate == 131072){
                     // 22.050
-                    voclength = (voice->length - position + rate - 1) >> 17;
+                    voclength = (voice->length - position + 131071) >> 17;
                 }else{
                     // 11.025
-                    voclength = (voice->length - position + rate - 1) >> 16;
+                    voclength = (voice->length - position + 65535) >> 16;
                 }
             }
             else
@@ -179,7 +179,13 @@ static void MV_Mix(
             if (length > 0)
             {
                 // Get the position of the last sample in the buffer
-                FixedPointBufferSize = voice->RateScale * (length - 1);
+                if (voice->RateScale == 131072){
+                    // 22.050
+                    FixedPointBufferSize = (length - 1) << 17;
+                }else{
+                    // 11.025
+                    FixedPointBufferSize = (length - 1) << 16;
+                }
             }
         }
     }
