@@ -219,6 +219,11 @@ unsigned short lut16colors[14 * 256];
 unsigned short *ptrlut16colors;
 #endif
 
+#if defined(MODE_ATI640)
+unsigned short lutcolors[14 * 512];
+unsigned short *ptrlutcolors;
+#endif
+
 #if defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136)
 byte lut136colors[14 * 256];
 byte *ptrlut136colors;
@@ -245,7 +250,7 @@ byte lutcolors[14 * 1024];
 byte *ptrlutcolors;
 #endif
 
-#if defined(MODE_CGA_BW) || defined(MODE_EGA640) || defined(MODE_ATI640) || defined(MODE_HERC200)
+#if defined(MODE_CGA_BW) || defined(MODE_EGA640) || defined(MODE_HERC200)
 byte lutcolors[14 * 512];
 byte *ptrlutcolors;
 #endif
@@ -697,7 +702,7 @@ int I_GetClosestColor(int r1, int g1, int b1)
 }
 #endif
 
-#if defined(MODE_EGA640) || defined(MODE_ATI640)
+#if defined(MODE_EGA640)
 void I_ProcessPalette(byte *palette)
 {
     int i;
@@ -731,6 +736,58 @@ void I_ProcessPalette(byte *palette)
         color |= color << 4;
 
         lutcolors[i + 1] = color;
+    }
+}
+#endif
+
+#if defined(MODE_ATI640)
+void I_ProcessPalette(byte *palette)
+{
+    int i;
+
+    byte *ptr = gammatable[usegamma];
+
+    for (i = 0; i < 14 * 512; i += 2, palette += 3)
+    {
+        unsigned char color;
+        unsigned short value;
+        unsigned short value2;
+        int r, g, b;
+        int r2, g2, b2;
+
+        r = (int)ptr[*palette];
+        g = (int)ptr[*(palette + 1)];
+        b = (int)ptr[*(palette + 2)];
+
+        r2 = (r * 1) / 3 + r;
+        g2 = (g * 1) / 3 + g;
+        b2 = (b * 1) / 3 + b;
+
+        color = I_GetClosestColor(r2, g2, b2);
+        value = color & 12;
+        value = value | value >> 2 | value << 2 | value << 4;
+        value <<= 8;
+        
+        value2 = color & 3;
+        value2 = value2 | value2 << 2 | value2 << 4 | value2 << 6;
+        value2;
+
+        lutcolors[i] = value | value2;
+
+        r2 = (r * 2) / 3 + r;
+        g2 = (g * 2) / 3 + g;
+        b2 = (b * 2) / 3 + b;
+
+        color = I_GetClosestColor(r2, g2, b2);
+        value = color & 12;
+        value = value | value >> 2 | value << 2 | value << 4;
+        value <<= 8;
+        
+        value2 = color & 3;
+        value2 = value2 | value2 << 2 | value2 << 4 | value2 << 6;
+        value2;
+
+        lutcolors[i + 1] = value | value2;
     }
 }
 #endif
@@ -1108,7 +1165,11 @@ void I_SetPalette(int numpalette)
     ptrlutcolors = lutcolors + numpalette * 1024;
 #endif
 
-#if defined(MODE_CGA_BW) || defined(MODE_HERC200) || defined(MODE_EGA640) || defined(MODE_ATI640)
+#if defined(MODE_CGA_BW) || defined(MODE_HERC200) || defined(MODE_EGA640)
+    ptrlutcolors = lutcolors + numpalette * 512;
+#endif
+
+#if defined(MODE_ATI640)
     ptrlutcolors = lutcolors + numpalette * 512;
 #endif
 
@@ -1650,85 +1711,68 @@ void ATI640_DrawBackbuffer(void)
     {
         for (x = 0; x < 160; x++, base += 2, vram++)
         {
-            unsigned char color;
-            unsigned char tmpColor0;
-            unsigned char tmpColor1;
+            unsigned short color;
+            unsigned short finalcolor;
 
             color = ptrlutcolors[backbuffer[base] * 2];
-            tmpColor0 = (color & 3) << 6;
-            tmpColor1 = (color & 0xC0);
+            finalcolor = color & 0xC0C0;
 
             color = ptrlutcolors[backbuffer[base] * 2 + 1];
-            tmpColor0 |= (color & 0x30);
-            tmpColor1 |= (color & 12) << 2;
+            finalcolor |= color & 0x3030;
 
             color = ptrlutcolors[backbuffer[base + 1] * 2];
-            tmpColor0 |= (color & 3) << 2;
-            tmpColor1 |= (color & 12);
+            finalcolor |= color & 0x0C0C;
 
             color = ptrlutcolors[backbuffer[base + 1] * 2 + 1];
-            tmpColor0 |= (color & 3);
-            tmpColor1 |= (color & 12) >> 2;
+            finalcolor |= color & 0x0303;
 
-            *(vram) = tmpColor0;
-            *(vram + 0x8000) = tmpColor1;
+            *(vram) = BYTE0_USHORT(finalcolor);
+            *(vram + 0x8000) = BYTE1_USHORT(finalcolor);
 
             color = ptrlutcolors[backbuffer[base + 320] * 2];
-            tmpColor0 = (color & 3) << 6;
-            tmpColor1 = (color & 0xC0);
+            finalcolor = color & 0xC0C0;
 
             color = ptrlutcolors[backbuffer[base + 320] * 2 + 1];
-            tmpColor0 |= (color & 0x30);
-            tmpColor1 |= (color & 12) << 2;
+            finalcolor |= color & 0x3030;
 
             color = ptrlutcolors[backbuffer[base + 321] * 2];
-            tmpColor0 |= (color & 3) << 2;
-            tmpColor1 |= (color & 12);
+            finalcolor |= color & 0x0C0C;
 
             color = ptrlutcolors[backbuffer[base + 321] * 2 + 1];
-            tmpColor0 |= (color & 3);
-            tmpColor1 |= (color & 12) >> 2;
+            finalcolor |= color & 0x0303;
 
-            *(vram + 0x2000) = tmpColor0;
-            *(vram + 0xA000) = tmpColor1;
+            *(vram + 0x2000) = BYTE0_USHORT(finalcolor);
+            *(vram + 0xA000) = BYTE1_USHORT(finalcolor);
 
             color = ptrlutcolors[backbuffer[base + 640] * 2];
-            tmpColor0 = (color & 3) << 6;
-            tmpColor1 = (color & 0xC0);
+            finalcolor = color & 0xC0C0;
 
             color = ptrlutcolors[backbuffer[base + 640] * 2 + 1];
-            tmpColor0 |= (color & 0x30);
-            tmpColor1 |= (color & 12) << 2;
+            finalcolor |= color & 0x3030;
 
             color = ptrlutcolors[backbuffer[base + 641] * 2];
-            tmpColor0 |= (color & 3) << 2;
-            tmpColor1 |= (color & 12);
+            finalcolor |= color & 0x0C0C;
 
             color = ptrlutcolors[backbuffer[base + 641] * 2 + 1];
-            tmpColor0 |= (color & 3);
-            tmpColor1 |= (color & 12) >> 2;
+            finalcolor |= color & 0x0303;
 
-            *(vram + 0x4000) = tmpColor0;
-            *(vram + 0xC000) = tmpColor1;
+            *(vram + 0x4000) = BYTE0_USHORT(finalcolor);
+            *(vram + 0xC000) = BYTE1_USHORT(finalcolor);
 
             color = ptrlutcolors[backbuffer[base + 960] * 2];
-            tmpColor0 = (color & 3) << 6;
-            tmpColor1 = (color & 0xC0);
+            finalcolor = color & 0xC0C0;
 
             color = ptrlutcolors[backbuffer[base + 960] * 2 + 1];
-            tmpColor0 |= (color & 0x30);
-            tmpColor1 |= (color & 12) << 2;
+            finalcolor |= color & 0x3030;
 
             color = ptrlutcolors[backbuffer[base + 961] * 2];
-            tmpColor0 |= (color & 3) << 2;
-            tmpColor1 |= (color & 12);
+            finalcolor |= color & 0x0C0C;
 
             color = ptrlutcolors[backbuffer[base + 961] * 2 + 1];
-            tmpColor0 |= (color & 3);
-            tmpColor1 |= (color & 12) >> 2;
+            finalcolor |= color & 0x0303;
 
-            *(vram + 0x6000) = tmpColor0;
-            *(vram + 0xE000) = tmpColor1;
+            *(vram + 0x6000) = BYTE0_USHORT(finalcolor);
+            *(vram + 0xE000) = BYTE1_USHORT(finalcolor);
         }
     }
 }
