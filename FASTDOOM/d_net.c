@@ -47,25 +47,6 @@ void G_BuildTiccmd(ticcmd_t *cmd);
 void D_DoAdvanceDemo(void);
 
 //
-//
-//
-int ExpandTics(int low)
-{
-	int delta;
-	int opt;
-
-	delta = low - (maketic & 0xff);
-	opt = maketic & ~0xff;
-
-	if (delta < -64)
-		return opt + 256 + low;
-	else if (delta > 64)
-		return opt - 256 + low;
-
-	return opt + low;
-}
-
-//
 // NetUpdate
 // Builds ticcmds for console player,
 // sends out a packet
@@ -77,6 +58,9 @@ void NetUpdate(void)
 	int nowtime;
 	int newtics;
 	int i, j;
+	int delta;
+	int opt;
+	int low;
 
 	// check time
 	nowtime = ticcount;
@@ -112,7 +96,17 @@ void NetUpdate(void)
 	if (singletics)
 		return; // singletic update is syncronous
 
-	nettics = ExpandTics((byte)maketic);
+	low = (byte) maketic;
+
+	delta = low - (maketic & 0xff);
+	opt = (maketic & ~0xff) + low;
+
+	if (delta < -64)
+		nettics = opt + 256;
+	else if (delta > 64)
+		nettics = opt - 256;
+
+	nettics = opt;
 }
 
 //
