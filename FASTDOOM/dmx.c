@@ -136,7 +136,7 @@ void MUS_PlaySong(int handle, int volume)
         return;
     }
     MUSIC_PlaySong((unsigned char *)mus_data, mus_loop);
-    MUSIC_SetVolume(volume * 2);
+    MUSIC_SetVolume(volume);
 }
 
 int SFX_PlayPatch(void *vdata, int sep, int vol)
