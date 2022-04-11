@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 0.8.11 (11 Apr 2022)
+* Optimized backbuffered video modes: Hercules, CGA B&W, Plantronics ColorPlus, EGA, ATI 640x400
+* Small optimization on multiple modulo operations, sound code and gameplay code
+* Fixed music initialization volume (@deat322)
+* Fixed mouse move fordward button (@deat322)
+* Include full FastDoom version number (issue #72, @SpitFire-666)
+
 ## 0.8.10 (14 Mar 2022)
 * Added new video modes
     * FDOOME16.EXE => FastDoom EGA 160x100

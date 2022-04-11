@@ -107,7 +107,8 @@
  * FDOOME.EXE   => FastDoom EGA 640x200. Requires a very fast CPU and 16-bit
 		   ISA video card (at least). Dithering with 16 colors
  * FDOOMATI.EXE => FastDoom ATI Small Wonder 640x200. Requires a very fast 
-         CPU and 16-bit ISA video card (at least). Dithering with 16 colors
+		   CPU and 16-bit ISA video card (at least). 
+                   Dithering with 16 colors
  * FDOOMC36.EXE => FastDoom CGA 80x100 and 122 pseudocolors
  * FDOOMV36.EXE => FastDoom VGA 80x200 and 122 pseudocolors
  * FDOOME36.EXE => FastDoom EGA 80x100 and 122 pseudocolors
