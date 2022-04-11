@@ -96,17 +96,7 @@ void NetUpdate(void)
 	if (singletics)
 		return; // singletic update is syncronous
 
-	low = (byte) maketic;
-
-	delta = low - (maketic & 0xff);
-	opt = (maketic & ~0xff) + low;
-
-	if (delta < -64)
-		nettics = opt + 256;
-	else if (delta > 64)
-		nettics = opt - 256;
-
-	nettics = opt;
+	nettics = maketic;
 }
 
 //
