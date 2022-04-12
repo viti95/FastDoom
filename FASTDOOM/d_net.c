@@ -29,15 +29,10 @@
 //
 // gametic is the tic about to (or currently being) run
 // maketic is the tick that hasn't had control made for it yet
-// nettics[] has the maketics for all players
-//
-// a gametic cannot be run until nettics[] > gametic for all players
 //
 #define PL_DRONE 0x80 // bit flag in doomdata->player
 
 ticcmd_t localcmds[BACKUPTICS];
-
-int nettics;
 
 int maketic;
 int skiptics;
@@ -57,10 +52,7 @@ void NetUpdate(void)
 {
 	int nowtime;
 	int newtics;
-	int i, j;
-	int delta;
-	int opt;
-	int low;
+	int i;
 
 	// check time
 	nowtime = ticcount;
@@ -95,8 +87,6 @@ void NetUpdate(void)
 
 	if (singletics)
 		return; // singletic update is syncronous
-
-	nettics = maketic;
 }
 
 //
@@ -105,7 +95,7 @@ void NetUpdate(void)
 //
 void D_CheckNetGame(void)
 {
-	nettics = 0;
+	maketic = 0;
 	playeringame = true;
 }
 
@@ -132,7 +122,7 @@ void TryRunTics(void)
 	// get available tics
 	NetUpdate();
 
-	availabletics = nettics - gametic;
+	availabletics = maketic - gametic;
 
 	// decide how many tics to run
 	if (realtics + 1 < availabletics)
@@ -146,7 +136,7 @@ void TryRunTics(void)
 		counts = 1;
 
 	// wait for new tics if needed
-	while (nettics < gametic + counts)
+	while (maketic < gametic + counts)
 	{
 		NetUpdate();
 
