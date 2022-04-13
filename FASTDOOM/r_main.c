@@ -51,7 +51,7 @@ int validcount = 1;
 lighttable_t *fixedcolormap;
 extern lighttable_t **walllights;
 
-#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8086) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050)
+#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8086) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA)
 int centerx;
 int centery;
 
@@ -543,7 +543,7 @@ fixed_t R_ScaleFromGlobalAngle(angle_t visangle)
 #ifdef MODE_Y
     num = FixedMul(projection, sineb) << detailshift;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT) || defined(MODE_MDA)
     num = FixedMul(projection, sineb);
 #endif
     den = FixedMul(rw_distance, sinea);
@@ -704,7 +704,7 @@ void R_ExecuteSetViewSize(void)
     if (forceScreenSize)
         setblocks = forceScreenSize;
 
-#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8086) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050)
+#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8086) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA)
     if (setblocks >= 11)
     {
         scaledviewwidth = SCREENWIDTH;
@@ -740,7 +740,7 @@ void R_ExecuteSetViewSize(void)
     viewwidth = scaledviewwidth;
 #endif
 
-#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8086) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050)
+#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8086) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA)
     viewwidthlimit = viewwidth - 1;
     centery = viewheight / 2;
     centerx = viewwidth / 2;
@@ -822,6 +822,30 @@ void R_ExecuteSetViewSize(void)
         fuzzcolfunc = R_DrawFuzzColumnSaturnText8025;
     else
         fuzzcolfunc = R_DrawFuzzColumnText8025;
+#endif
+#ifdef MODE_MDA
+    colfunc = basecolfunc = R_DrawColumnTextMDA;
+
+    if (untexturedSurfaces)
+    {
+        spanfunc = R_DrawSpanFlatTextMDA;
+    }
+    else
+    {
+        spanfunc = R_DrawSpanTextMDA;
+    }
+
+    if (flatSky)
+        skyfunc = R_DrawSkyFlatTextMDA;
+    else
+        skyfunc = R_DrawColumnTextMDA;
+
+    if (flatShadows)
+        fuzzcolfunc = R_DrawFuzzColumnFastTextMDA;
+    else if (saturnShadows)
+        fuzzcolfunc = R_DrawFuzzColumnSaturnTextMDA;
+    else
+        fuzzcolfunc = R_DrawFuzzColumnTextMDA;
 #endif
 #if defined(MODE_T8050) || defined(MODE_T8043)
     colfunc = basecolfunc = R_DrawColumnText8050;
@@ -985,7 +1009,7 @@ void R_ExecuteSetViewSize(void)
     R_InitTextureMapping();
 
     // psprite scales
-#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8086) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050)
+#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8086) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA)
     pspritescale = FRACUNIT * viewwidth / SCREENWIDTH;
     pspriteiscale = FRACUNIT * SCREENWIDTH / viewwidth;
 #endif
@@ -1012,7 +1036,7 @@ void R_ExecuteSetViewSize(void)
 #ifdef MODE_Y
         yslope[i] = FixedDiv((viewwidth << detailshift) / 2 * FRACUNIT, dy);
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT) || defined(MODE_MDA)
         yslope[i] = FixedDiv((viewwidth) / 2 * FRACUNIT, dy);
 #endif
     }
@@ -1036,7 +1060,7 @@ void R_ExecuteSetViewSize(void)
 #ifdef MODE_Y
             level = startmap - Mul320(j) / (viewwidth << detailshift) / DISTMAP;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT) || defined(MODE_MDA)
             level = startmap - Mul320(j) / (viewwidth) / DISTMAP;
 #endif
             if (level < 0)
@@ -1229,6 +1253,12 @@ void R_RenderPlayerView(player_t *player)
 #ifdef MODE_T8025
     if (flatSurfaces)
         R_DrawPlanesFlatSurfacesText8025();
+    else
+        R_DrawPlanes();
+#endif
+#ifdef MODE_MDA
+    if (flatSurfaces)
+        R_DrawPlanesFlatSurfacesTextMDA();
     else
         R_DrawPlanes();
 #endif

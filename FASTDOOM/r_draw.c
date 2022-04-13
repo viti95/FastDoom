@@ -48,7 +48,7 @@
 //  and the total size == width*height*depth/8.,
 //
 
-#if !defined(MODE_T8050) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_T8043) && !defined(MODE_T8086)
+#if !defined(MODE_T8050) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_T8043) && !defined(MODE_T8086) && !defined(MODE_MDA)
 int viewwidth;
 int viewheight;
 int scaledviewwidth;
@@ -62,7 +62,7 @@ int columnofs[SCREENWIDTH];
 #if defined(USE_BACKBUFFER)
 byte *ylookup[SCREENHEIGHT];
 #endif
-#if defined(MODE_Y) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_VBE2_DIRECT) || defined(MODE_T80100)
+#if defined(MODE_Y) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_VBE2_DIRECT) || defined(MODE_T80100) || defined(MODE_MDA)
 byte **ylookup;
 #endif
 
@@ -764,6 +764,74 @@ void R_DrawFuzzColumnSaturnText4025(void)
 }
 #endif
 
+#ifdef MODE_MDA
+void R_DrawColumnTextMDA(void)
+{
+    fixed_t frac;
+    fixed_t fracstep;
+    int count;
+    int countblock;
+    unsigned short *dest;
+    byte odd;
+    unsigned short vmem;
+
+    odd = dc_yl & 1;
+    dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
+    count = dc_yh - dc_yl;
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    if (count >= 1 && odd || count == 0)
+    {
+        vmem = *dest;
+
+        if (odd)
+        {
+            vmem = vmem & 0x0F00;
+            *dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 12 | 223;
+
+            odd = 0;
+            dest += 80;
+            frac += fracstep;
+        }
+        else
+        {
+            vmem = vmem & 0xF000;
+            *dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 223;
+            return;
+        }
+
+        count--;
+    }
+
+    countblock = (count + 1) / 2;
+    count -= countblock * 2;
+
+    while (countblock)
+    {
+        unsigned short firstcolor, secondcolor;
+
+        firstcolor = dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8;
+        frac += fracstep;
+        secondcolor = dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 12;
+
+        *dest = firstcolor | secondcolor | 223;
+        dest += 80;
+
+        frac += fracstep;
+        countblock--;
+    }
+
+    if (count >= 0 && !odd)
+    {
+        vmem = *dest;
+        vmem = vmem & 0xF000;
+        *dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 223;
+    }
+}
+#endif
+
 #ifdef MODE_T8025
 void R_DrawColumnText8025(void)
 {
@@ -897,6 +965,53 @@ void R_DrawColumnText80100(void)
         vmem = vmem & 0xF000;
         *dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 223;
     }
+}
+#endif
+
+#ifdef MODE_MDA
+void R_DrawSpanTextMDA(void)
+{
+    int spot;
+    int countp;
+    unsigned position;
+    unsigned step;
+    byte odd;
+    byte shift;
+    unsigned short *dest;
+    unsigned short vmem;
+    byte even;
+    unsigned short vmem_filter;
+
+    dest = textdestscreen + Mul80(ds_y / 2);
+    countp = dest + ds_x2;
+    dest += ds_x1;
+
+    position = ((ds_xfrac << 10) & 0xffff0000) | ((ds_yfrac >> 6) & 0xffff);
+    step = ((ds_xstep << 10) & 0xffff0000) | ((ds_ystep >> 6) & 0xffff);
+
+    odd = ds_y & 1;
+    shift = 8 | (odd << 2);
+
+    even = (ds_y + 1) & 1;
+    vmem_filter = 0xF00 << (even * 4);
+
+    do
+    {
+        unsigned xtemp;
+        unsigned ytemp;
+        unsigned spot;
+
+        ytemp = position >> 4;
+        ytemp = ytemp & 4032;
+        xtemp = position >> 26;
+        spot = xtemp | ytemp;
+
+        vmem = *dest;
+        vmem = vmem & vmem_filter;
+        *dest++ = vmem | ds_colormap[ds_source[spot]] << shift | 223;
+
+        position += step;
+    } while (dest <= countp);
 }
 #endif
 
@@ -1088,6 +1203,60 @@ void R_DrawSkyFlatText8050(void)
 }
 #endif
 
+#ifdef MODE_MDA
+void R_DrawSkyFlatTextMDA(void)
+{
+    int count;
+    int countblock;
+    unsigned short *dest;
+    byte odd;
+    unsigned short vmem;
+
+    odd = dc_yl & 1;
+    dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
+    count = dc_yh - dc_yl;
+
+    if (count >= 1 && odd || count == 0)
+    {
+        vmem = *dest;
+
+        if (odd)
+        {
+            vmem = vmem & 0x0F00;
+            *dest = vmem | 6 << 12 | 223;
+
+            odd = 0;
+            dest += 80;
+        }
+        else
+        {
+            vmem = vmem & 0xF000;
+            *dest = vmem | 6 << 8 | 223;
+            return;
+        }
+
+        count--;
+    }
+
+    countblock = (count + 1) / 2;
+    count -= countblock * 2;
+
+    while (countblock)
+    {
+        *dest = 6 << 8 | 219;
+        dest += 80;
+        countblock--;
+    }
+
+    if (count >= 0 && !odd)
+    {
+        vmem = *dest;
+        vmem = vmem & 0xF000;
+        *dest = vmem | 6 << 8 | 223;
+    }
+}
+#endif
+
 #ifdef MODE_T8025
 void R_DrawSkyFlatText8025(void)
 {
@@ -1138,6 +1307,108 @@ void R_DrawSkyFlatText8025(void)
         vmem = *dest;
         vmem = vmem & 0xF000;
         *dest = vmem | 6 << 8 | 223;
+    }
+}
+#endif
+
+#ifdef MODE_MDA
+void R_DrawFuzzColumnSaturnTextMDA(void)
+{
+    fixed_t frac;
+    fixed_t fracstep;
+    int count;
+    unsigned short *dest;
+    byte odd;
+    unsigned short vmem;
+    int initialdrawpos = 0;
+
+    count = (dc_yh - dc_yl) / 2 - 1;
+
+    if (count < 0)
+        return;
+
+    initialdrawpos = dc_yl + dc_x;
+    odd = dc_yl & 1;
+    dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    if (initialdrawpos & 1)
+    {
+        if (odd)
+        {
+            dest += 80;
+            odd = 0;
+        }
+        else
+        {
+            odd = 1;
+        }
+        frac += fracstep;
+    }
+
+    fracstep = 2 * fracstep;
+
+    if (odd)
+    {
+        do
+        {
+            vmem = *dest;
+
+            vmem = vmem & 0x0F00;
+            *dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 12 | 223;
+
+            dest += 80;
+
+            frac += fracstep;
+        } while (count--);
+
+        if ((dc_yh - dc_yl) & 1)
+        {
+            vmem = *dest;
+            vmem = vmem & 0x0F00;
+            *dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 12 | 223;
+        }
+        else
+        {
+            if (!(initialdrawpos & 1))
+            {
+                vmem = *dest;
+                vmem = vmem & 0x0F00;
+                *dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 12 | 223;
+            }
+        }
+    }
+    else
+    {
+        do
+        {
+            vmem = *dest;
+
+            vmem = vmem & 0xF000;
+            *dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 223;
+
+            dest += 80;
+
+            frac += fracstep;
+        } while (count--);
+
+        if ((dc_yh - dc_yl) & 1)
+        {
+            vmem = *dest;
+            vmem = vmem & 0xF000;
+            *dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 223;
+        }
+        else
+        {
+            if (!(initialdrawpos & 1))
+            {
+                vmem = *dest;
+                vmem = vmem & 0xF000;
+                *dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 223;
+            }
+        }
     }
 }
 #endif
@@ -1397,6 +1668,53 @@ void R_DrawFuzzColumnSaturnText8050(void)
 }
 #endif
 
+#ifdef MODE_MDA
+void R_DrawFuzzColumnFastTextMDA(void)
+{
+    register int count;
+    unsigned short *dest;
+    byte odd;
+    unsigned short vmem;
+    unsigned short local_color;
+
+    odd = dc_yl & 1;
+    dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
+    count = dc_yh - dc_yl;
+
+    do
+    {
+        vmem = *dest;
+        vmem = vmem & 0xFF00;
+
+        if (odd)
+        {
+            local_color = vmem & 0xF000;
+
+            if (local_color >= 0x8000)
+            {
+                vmem -= 0x8000;
+                *dest = vmem | 223;
+            }
+
+            odd = 0;
+            dest += 80;
+        }
+        else
+        {
+            local_color = vmem & 0x0F00;
+
+            if (local_color >= 0x800)
+            {
+                vmem -= 0x800;
+                *dest = vmem | 223;
+            }
+
+            odd = 1;
+        }
+    } while (count--);
+}
+#endif
+
 #ifdef MODE_T8025
 void R_DrawFuzzColumnFastText8025(void)
 {
@@ -1595,7 +1913,7 @@ void R_DrawSpanPotato(void)
 //
 #define FUZZTABLE 50
 
-#if defined(MODE_Y) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_Y) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_MDA)
 #define FUZZOFF (SCREENWIDTH / 4)
 #endif
 
@@ -1934,6 +2252,79 @@ void R_DrawFuzzColumnText4025(void)
 
         dest += 40;
     } while (dest <= count);
+}
+#endif
+
+#ifdef MODE_MDA
+void R_DrawFuzzColumnTextMDA(void)
+{
+    register int count;
+    unsigned short *dest;
+    byte odd;
+    unsigned short vmem;
+    unsigned short local_color;
+
+    odd = dc_yl & 1;
+    dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
+    count = dc_yh - dc_yl;
+
+    do
+    {
+        vmem = *dest;
+        vmem = vmem & 0xFF00;
+
+        if (odd)
+        {
+            local_color = vmem & 0xF000;
+
+            if (fuzzoffset[fuzzpos] > 0)
+            {
+                if (local_color >= 0x8000)
+                {
+                    vmem -= 0x8000;
+                    *dest = vmem | 223;
+                }
+            }
+            else
+            {
+                if (local_color < 0x8000)
+                {
+                    vmem += 0x8000;
+                    *dest = vmem | 223;
+                }
+            }
+
+            odd = 0;
+            dest += 80;
+        }
+        else
+        {
+            local_color = vmem & 0x0F00;
+
+            if (fuzzoffset[fuzzpos] > 0)
+            {
+                if (local_color >= 0x800)
+                {
+                    vmem -= 0x800;
+                    *dest = vmem | 223;
+                }
+            }
+            else
+            {
+                if (local_color < 0x800)
+                {
+                    vmem += 0x800;
+                    *dest = vmem | 223;
+                }
+            }
+
+            odd = 1;
+        }
+
+        if (++fuzzpos == FUZZTABLE)
+            fuzzpos = 0;
+
+    } while (count--);
 }
 #endif
 
@@ -2650,6 +3041,39 @@ void R_DrawSpanFlatText4025(void)
     countp = ds_x2 - ds_x1 + 1;
 
     SetWords((byte *)dest, color, countp);
+}
+#endif
+
+#ifdef MODE_MDA
+void R_DrawSpanFlatTextMDA(void)
+{
+    int countp;
+    byte odd;
+    byte even;
+    byte shift;
+    unsigned short *dest;
+    unsigned short vmem;
+    unsigned short vmem_filter;
+    unsigned short color;
+
+    dest = textdestscreen + Mul80(ds_y / 2);
+    countp = dest + ds_x2;
+    dest += ds_x1;
+
+    odd = ds_y & 1;
+    shift = 8 | (odd << 2);
+    color = ds_colormap[ds_source[FLATPIXELCOLOR]];
+    color = color << shift | 223;
+
+    even = (ds_y + 1) & 1;
+    vmem_filter = 0xF00 << (even * 4);
+
+    do
+    {
+        vmem = *dest;
+        vmem = vmem & vmem_filter;
+        *dest++ = vmem | color;
+    } while (dest <= countp);
 }
 #endif
 

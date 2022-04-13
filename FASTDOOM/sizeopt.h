@@ -39,7 +39,7 @@
 #define pspriteiscaleshifted 262144
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_MDA)
 #define scaledviewwidth 80
 #define viewwidth 80
 #define viewheight 50

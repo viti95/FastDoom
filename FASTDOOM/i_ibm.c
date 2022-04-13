@@ -845,6 +845,13 @@ void I_ProcessPalette(byte *palette)
 }
 #endif
 
+#if defined(MODE_MDA)
+void I_ProcessPalette(byte *palette)
+{
+
+}
+#endif
+
 #if defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136)
 void I_ProcessPalette(byte *palette)
 {
@@ -1223,6 +1230,10 @@ byte page = 0;
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
 unsigned short *textdestscreen = (unsigned short *)0xB8000;
 byte textpage = 0;
+#endif
+
+#if defined(MODE_MDA)
+unsigned short *textdestscreen = (unsigned short *)0xB0000;
 #endif
 
 //
@@ -2196,7 +2207,7 @@ void I_FinishUpdate(void)
     static int fps_counter, fps_starttime, fps_nextcalculation;
     int opt1, opt2;
 
-#ifndef MODE_HERC
+#if !defined(MODE_HERC) && !defined(MODE_HERC200) && !defined(MODE_MDA)
     if (waitVsync)
     {
         I_WaitSingleVBL();
@@ -2588,6 +2599,12 @@ void I_InitGraphics(void)
 
     textdestscreen = (unsigned short *)0xB8000;
     textpage = 0;
+#endif
+#if defined(MODE_MDA)
+    // Set 80x25 color mode
+    regs.h.ah = 0x00;
+    regs.h.al = 0x07;
+    int386(0x10, &regs, &regs);
 #endif
 #if defined(MODE_T8050) || defined(MODE_T80100) || defined(MODE_T8043) || defined(MODE_T8086)
     // Set 80x25 color mode
@@ -3332,7 +3349,7 @@ void I_Quit(void)
     M_SaveDefaults();
     scr = (byte *)W_CacheLumpName("ENDOOM", PU_CACHE);
     I_Shutdown();
-#if defined(MODE_HERC) || defined(MODE_HERC200)
+#if defined(MODE_HERC) || defined(MODE_HERC200) || defined(MODE_MDA)
     CopyDWords(scr, (void *)0xb0000, (80 * 25 * 2) / 4);
 #else
     CopyDWords(scr, (void *)0xb8000, (80 * 25 * 2) / 4);

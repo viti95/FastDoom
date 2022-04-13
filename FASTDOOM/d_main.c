@@ -253,7 +253,7 @@ void D_Display(void)
         }
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_MDA)
         ST_doPaletteStuff();
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
@@ -364,7 +364,7 @@ void D_Display(void)
         V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 2, "PAUSE");
 #endif
 
-#ifdef MODE_T8025
+#if defined(MODE_T8025) || defined(MODE_MDA)
         V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 4, "PAUSE");
 #endif
 
@@ -387,13 +387,13 @@ void D_Display(void)
     }
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_MDA)
     if (screenblocks <= 11 && gamestate == GS_LEVEL)
     {
 #if defined(MODE_T4025) || defined(MODE_T4050)
         ST_DrawerText4025();
 #endif
-#ifdef MODE_T8025
+#if defined(MODE_T8025) || defined(MODE_MDA)
         ST_DrawerText8025();
 #endif
 #if defined(MODE_T8043) || defined(MODE_T8086)
@@ -509,7 +509,7 @@ void D_PageDrawer(void)
 #ifdef MODE_T4025
     V_DrawPatchDirectText4025(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
-#ifdef MODE_T8025
+#if defined(MODE_T8025) || defined(MODE_MDA)
     V_DrawPatchDirectText8025(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
 #if defined(MODE_T8043)
@@ -1197,7 +1197,7 @@ void D_DoomMain(void)
     M_CheckParmDisable("-novsync", &waitVsync);
     M_CheckParmDisable("-nofps", &showFPS);
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T80100) || defined(MODE_T4025) || defined(MODE_T4050)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T80100) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA)
     noMelt = 1;
 #endif
 

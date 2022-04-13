@@ -383,7 +383,7 @@ void F_TextWrite(void)
 }
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_MDA)
 void F_TextWriteText(void)
 {
 	int x, y, w;
@@ -399,7 +399,7 @@ void F_TextWriteText(void)
 	SetWords(textdestscreen, 0, 40 * 25);
 #endif
 
-#ifdef MODE_T8025
+#if defined(MODE_T8025) || defined(MODE_MDA)
 	SetWords(textdestscreen, 0, 80 * 25);
 #endif
 
@@ -774,7 +774,7 @@ void F_CastDrawer(void)
 }
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_MDA)
 void F_CastDrawerText(void)
 {
 	spritedef_t *sprdef;
@@ -789,7 +789,7 @@ void F_CastDrawerText(void)
 #ifdef MODE_T4025
 	V_DrawPatchDirectText4025(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
 #endif
-#ifdef MODE_T8025
+#if defined(MODE_T8025) || defined(MODE_MDA)
 	V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
 #endif
 #ifdef MODE_T8043
@@ -808,7 +808,7 @@ void F_CastDrawerText(void)
 #if defined(MODE_T4025) || defined(MODE_T4050)
 	V_WriteTextDirect(40 - strlen(castorder[castnum].name) / 2, 12, castorder[castnum].name);
 #endif
-#ifdef MODE_T8025
+#if defined(MODE_T8025) || defined(MODE_MDA)
 	V_WriteTextDirect(40 - strlen(castorder[castnum].name) / 2, 23, castorder[castnum].name);
 #endif
 #if defined(MODE_T8043) || defined(MODE_T8086)
@@ -830,7 +830,7 @@ void F_CastDrawerText(void)
 #ifdef MODE_T4025
 	V_DrawPatchDirectText4025(160, 170, patch);
 #endif
-#ifdef MODE_T8025
+#if defined(MODE_T8025) || defined(MODE_MDA)
 	V_DrawPatchDirectText8025(160, 170, patch);
 #endif
 #ifdef MODE_T8043
@@ -966,6 +966,57 @@ void F_DrawPatchColText8025(int x, patch_t *patch, int col)
 }
 #endif
 
+#if defined(MODE_MDA)
+void F_DrawPatchColText8025(int x, patch_t *patch, int col)
+{
+	column_t *column;
+	byte *source;
+	unsigned short *desttop;
+	unsigned short *dest;
+	int count;
+	byte odd;
+	unsigned short vmem;
+
+	column = (column_t *)((byte *)patch + patch->columnofs[col]);
+	desttop = textdestscreen + x / 4;
+
+	// step through the posts in a column
+	while (column->topdelta != 0xff)
+	{
+		source = (byte *)column + 3;
+		odd = (column->topdelta / 4) & 1;
+		dest = desttop + Mul80(column->topdelta / 8);
+		count = column->length / 4;
+
+		while (count--)
+		{
+			vmem = *dest;
+
+			if (odd)
+			{
+				vmem = vmem & 0x0F00;
+				*dest = vmem | *source << 12 | 223;
+
+				odd = 0;
+				dest += 80;
+			}
+			else
+			{
+				vmem = vmem & 0xF000;
+				*dest = vmem | *source << 8 | 223;
+
+				odd = 1;
+			}
+
+			source += 4;
+		}
+		column = (column_t *)((byte *)column + column->length + 4);
+	}
+
+	desttop += 1;
+}
+#endif
+
 #if defined(MODE_T8050) || defined(MODE_T80100)
 void F_DrawPatchColText8050(int x, patch_t *patch, int col)
 {
@@ -999,7 +1050,7 @@ void F_DrawPatchColText8050(int x, patch_t *patch, int col)
 }
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_MDA)
 void F_BunnyScrollText(void)
 {
 	int scrolled;
@@ -1027,7 +1078,7 @@ void F_BunnyScrollText(void)
 #if defined(MODE_T4025) || defined(MODE_T4050)
 			F_DrawPatchColText4025(x, p1, x + scrolled);
 #endif
-#ifdef MODE_T8025
+#if defined(MODE_T8025) || defined(MODE_MDA)
 			F_DrawPatchColText8025(x, p1, x + scrolled);
 #endif
 #if defined(MODE_T8043) || defined(MODE_T8086)
@@ -1042,7 +1093,7 @@ void F_BunnyScrollText(void)
 #if defined(MODE_T4025) || defined(MODE_T4050)
 			F_DrawPatchColText4025(x, p1, x + scrolled - 320);
 #endif
-#ifdef MODE_T8025
+#if defined(MODE_T8025) || defined(MODE_MDA)
 			F_DrawPatchColText8025(x, p2, x + scrolled - 320);
 #endif
 #if defined(MODE_T8043) || defined(MODE_T8086)
@@ -1061,7 +1112,7 @@ void F_BunnyScrollText(void)
 #if defined(MODE_T4025) || defined(MODE_T4050)
 		V_WriteTextDirect(17, 12, "THE END");
 #endif
-#ifdef MODE_T8025
+#if defined(MODE_T8025) || defined(MODE_MDA)
 		V_WriteTextDirect(37, 12, "THE END");
 #endif
 #if defined(MODE_T8043) || defined(MODE_T8086)
@@ -1085,7 +1136,7 @@ void F_BunnyScrollText(void)
 #if defined(MODE_T4025) || defined(MODE_T4050)
 	V_WriteTextDirect(17, 12, "THE END");
 #endif
-#ifdef MODE_T8025
+#if defined(MODE_T8025) || defined(MODE_MDA)
 	V_WriteTextDirect(37, 12, "THE END");
 #endif
 #if defined(MODE_T8043) || defined(MODE_T8086)
@@ -1176,7 +1227,7 @@ void F_Drawer(void)
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 		F_CastDrawer();
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_MDA)
 		F_CastDrawerText();
 #endif
 		return;
@@ -1184,7 +1235,7 @@ void F_Drawer(void)
 
 	if (!finalestage)
 	{
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_MDA)
 		F_TextWriteText();
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
@@ -1204,7 +1255,7 @@ void F_Drawer(void)
 #ifdef MODE_T4050
 				V_DrawPatchDirectText4050(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 #endif
-#ifdef MODE_T8025
+#if defined(MODE_T8025) || defined(MODE_MDA)
 				V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 #endif
 #ifdef MODE_T8043
@@ -1234,7 +1285,7 @@ void F_Drawer(void)
 #ifdef MODE_T4050
 				V_DrawPatchDirectText4050(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
 #endif
-#ifdef MODE_T8025
+#if defined(MODE_T8025) || defined(MODE_MDA)
 				V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
 #endif
 #ifdef MODE_T8043
@@ -1265,7 +1316,7 @@ void F_Drawer(void)
 #ifdef MODE_T4050
 			V_DrawPatchDirectText4050(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
 #endif
-#ifdef MODE_T8025
+#if defined(MODE_T8025) || defined(MODE_MDA)
 			V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
 #endif
 #ifdef MODE_T8043
@@ -1302,7 +1353,7 @@ void F_Drawer(void)
 #ifdef MODE_T4050
 			V_DrawPatchDirectText4050(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
 #endif
-#ifdef MODE_T8025
+#if defined(MODE_T8025) || defined(MODE_MDA)
 			V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
 #endif
 #ifdef MODE_T8043

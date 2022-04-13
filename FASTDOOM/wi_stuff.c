@@ -329,7 +329,7 @@ static patch_t **lnames;
 // CODE
 //
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_MDA)
 char bgname[9];
 #endif
 
@@ -343,7 +343,7 @@ void WI_slamBackground(void)
 #ifdef MODE_T4050
 	V_DrawPatchDirectText4050(0, 0, W_CacheLumpName(bgname, PU_CACHE));
 #endif
-#ifdef MODE_T8025
+#if defined(MODE_T8025) || defined(MODE_MDA)
 	V_DrawPatchDirectText8025(0, 0, W_CacheLumpName(bgname, PU_CACHE));
 #endif
 #ifdef MODE_T8043
@@ -372,12 +372,12 @@ void WI_drawLF(void)
 {
 	int y = WI_TITLEY;
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_MDA)
 	char *titlecurrent;
 	char *titlenext;
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_MDA)
 	if (gamemode == commercial)
 	{
 		if (gamemission == pack_plut)
@@ -408,7 +408,7 @@ void WI_drawLF(void)
 #if defined(MODE_T4025) || defined(MODE_T4050)
 	V_WriteTextDirect((SCREENWIDTH - lnames[wbs->last]->width) / 16, y / 8, titlecurrent);
 #endif
-#ifdef MODE_T8025
+#if defined(MODE_T8025) || defined(MODE_MDA)
 	V_WriteTextDirect((SCREENWIDTH - lnames[wbs->last]->width) / 8, y / 8, titlecurrent);
 #endif
 #if defined(MODE_T8050) || defined(MODE_T80100) || defined(MODE_T8043) || defined(MODE_T8086)
@@ -427,7 +427,7 @@ void WI_drawLF(void)
 #if defined(MODE_T4025) || defined(MODE_T4050)
 	V_WriteTextDirect((SCREENWIDTH - finished->width) / 16, y / 8, "FINISHED");
 #endif
-#ifdef MODE_T8025
+#if defined(MODE_T8025) || defined(MODE_MDA)
 	V_WriteTextDirect((SCREENWIDTH - finished->width) / 8, y / 8, "FINISHED");
 #endif
 #if defined(MODE_T8050) || defined(MODE_T80100) || defined(MODE_T8043) || defined(MODE_T8086)
@@ -445,12 +445,12 @@ void WI_drawLF(void)
 void WI_drawEL(void)
 {
 	int y = WI_TITLEY;
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_MDA)
 	char *titlecurrent;
 	char *titlenext;
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_MDA)
 	if (gamemode == commercial)
 	{
 		if (gamemission == pack_plut)
@@ -480,7 +480,7 @@ void WI_drawEL(void)
 #if defined(MODE_T4025) || defined(MODE_T4050)
 	V_WriteTextDirect((SCREENWIDTH - entering->width) / 16, y / 8, "ENTERING");
 #endif
-#ifdef MODE_T8025
+#if defined(MODE_T8025) || defined(MODE_MDA)
 	V_WriteTextDirect((SCREENWIDTH - entering->width) / 8, y / 8, "ENTERING");
 #endif
 #if defined(MODE_T8050) || defined(MODE_T80100) || defined(MODE_T8043) || defined(MODE_T8086)
@@ -499,7 +499,7 @@ void WI_drawEL(void)
 #if defined(MODE_T4025) || defined(MODE_T4050)
 	V_WriteTextDirect((SCREENWIDTH - lnames[wbs->next]->width) / 16, y / 8, titlenext);
 #endif
-#ifdef MODE_T8025
+#if defined(MODE_T8025) || defined(MODE_MDA)
 	V_WriteTextDirect((SCREENWIDTH - lnames[wbs->next]->width) / 8, y / 8, titlenext);
 #endif
 #if defined(MODE_T8050) || defined(MODE_T80100) || defined(MODE_T8043) || defined(MODE_T8086)
@@ -668,7 +668,7 @@ int WI_drawNumTwoDigits(int x, int y, int n)
 	x -= 4 * fontwidth;
 	return x;
 #endif
-#ifdef MODE_T8025
+#if defined(MODE_T8025) || defined(MODE_MDA)
 	int fontwidth = num[0]->width;
 	char strnum[4];
 
@@ -751,7 +751,7 @@ int WI_drawNum(int x, int y, int n)
 
 void WI_drawPercent(int x, int y, int p)
 {
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_MDA)
 	char strnum[4];
 #endif
 
@@ -762,7 +762,7 @@ void WI_drawPercent(int x, int y, int p)
 	sprintf(strnum, "%i%%", p);
 	V_WriteTextDirect(x / 4, y / 8 - 1, strnum);
 #endif
-#ifdef MODE_T8025
+#if defined(MODE_T8025) || defined(MODE_MDA)
 	sprintf(strnum, "%i%%", p);
 	V_WriteTextDirect(x / 2, y / 8 - 1, strnum);
 #endif
@@ -812,7 +812,7 @@ void WI_drawTime(int x,
 #if defined(MODE_T4025) || defined(MODE_T4050)
 				V_WriteTextDirect(x / 8, y / 8, ":");
 #endif
-#ifdef MODE_T8025
+#if defined(MODE_T8025) || defined(MODE_MDA)
 				V_WriteTextDirect(x / 4, y / 8, ":");
 #endif
 #if defined(MODE_T8050) || defined(MODE_T80100) || defined(MODE_T8043) || defined(MODE_T8086)
@@ -1137,7 +1137,7 @@ void WI_drawStats(void)
 #if defined(MODE_T4025) || defined(MODE_T4050)
 	V_WriteTextDirect(SP_STATSX / 4, SP_STATSY / 8, "KILLS:");
 #endif
-#ifdef MODE_T8025
+#if defined(MODE_T8025) || defined(MODE_MDA)
 	V_WriteTextDirect(SP_STATSX / 2, SP_STATSY / 8, "KILLS:");
 #endif
 #if defined(MODE_T8050) || defined(MODE_T80100) || defined(MODE_T8043) || defined(MODE_T8086)
@@ -1155,7 +1155,7 @@ void WI_drawStats(void)
 #if defined(MODE_T4025) || defined(MODE_T4050)
 	V_WriteTextDirect(SP_STATSX / 4, (SP_STATSY + lh) / 8, "ITEMS:");
 #endif
-#ifdef MODE_T8025
+#if defined(MODE_T8025) || defined(MODE_MDA)
 	V_WriteTextDirect(SP_STATSX / 2, (SP_STATSY + lh) / 8, "ITEMS:");
 #endif
 #if defined(MODE_T8050) || defined(MODE_T80100) || defined(MODE_T8043) || defined(MODE_T8086)
@@ -1173,7 +1173,7 @@ void WI_drawStats(void)
 #if defined(MODE_T4025) || defined(MODE_T4050)
 	V_WriteTextDirect(SP_STATSX / 4, (SP_STATSY + 2 * lh) / 8, "SECRET:");
 #endif
-#ifdef MODE_T8025
+#if defined(MODE_T8025) || defined(MODE_MDA)
 	V_WriteTextDirect(SP_STATSX / 2, (SP_STATSY + 2 * lh) / 8, "SECRET:");
 #endif
 #if defined(MODE_T8050) || defined(MODE_T80100) || defined(MODE_T8043) || defined(MODE_T8086)
@@ -1190,7 +1190,7 @@ void WI_drawStats(void)
 #if defined(MODE_T4025) || defined(MODE_T4050)
 	V_WriteTextDirect(SP_TIMEX / 4, SP_TIMEY / 8, "TIME:");
 #endif
-#ifdef MODE_T8025
+#if defined(MODE_T8025) || defined(MODE_MDA)
 	V_WriteTextDirect(SP_TIMEX / 2, SP_TIMEY / 8, "TIME:");
 #endif
 #if defined(MODE_T8050) || defined(MODE_T80100) || defined(MODE_T8043) || defined(MODE_T8086)
@@ -1209,7 +1209,7 @@ void WI_drawStats(void)
 #if defined(MODE_T4025) || defined(MODE_T4050)
 		V_WriteTextDirect((SCREENWIDTH / 2 + SP_TIMEX) / 8, SP_TIMEY / 8, "PAR:");
 #endif
-#ifdef MODE_T8025
+#if defined(MODE_T8025) || defined(MODE_MDA)
 		V_WriteTextDirect((SCREENWIDTH / 2 + SP_TIMEX) / 4, SP_TIMEY / 8, "PAR:");
 #endif
 #if defined(MODE_T8050) || defined(MODE_T80100) || defined(MODE_T8043) || defined(MODE_T8086)
@@ -1309,7 +1309,7 @@ void WI_loadData(void)
 		}
 	}
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_MDA)
 	strcpy(bgname, name);
 #endif
 

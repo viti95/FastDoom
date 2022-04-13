@@ -30,6 +30,7 @@ if "%2"=="VBD" GOTO mode_vbd
 if "%2"=="VBR" GOTO mode_vbr
 if "%2"=="Y"   GOTO mode_y
 if "%2"=="HG2" GOTO mode_hg2
+if "%2"=="MDA" GOTO mode_mda
 
 :mode_13h
 set base=fdoom13h.exe
