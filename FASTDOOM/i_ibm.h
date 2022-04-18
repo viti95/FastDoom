@@ -6,7 +6,7 @@
 extern int ticcount;
 extern fixed_t fps;
 
-extern byte *currentscreen;
+extern unsigned short *currentscreen;
 
 #if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
 extern byte processedpalette[14 * 768];

@@ -32,7 +32,8 @@
 
 #include <conio.h>
 
-
+#define BYTE0_USHORT(value)  (((unsigned char *)&value)[0])
+#define BYTE1_USHORT(value)  (((unsigned char *)&value)[1])
 
 #define GC_INDEX 0x3CE
 #define GC_READMAP 4
@@ -196,59 +197,95 @@ void wipe_ReadScreen(byte *scr)
     outp(GC_INDEX, GC_READMAP);
 
     outp(GC_INDEX + 1, 0);
-    for (j = 0; j < SCREENWIDTH * SCREENHEIGHT / 4; j += 8)
+    for (j = 0; j < SCREENWIDTH * SCREENHEIGHT / 8; j += 4)
     {
-        int i = j * 4;
-        scr[i] = currentscreen[j];
-        scr[i + 4] = currentscreen[j + 1];
-        scr[i + 8] = currentscreen[j + 2];
-        scr[i + 12] = currentscreen[j + 3];
-        scr[i + 16] = currentscreen[j + 4];
-        scr[i + 20] = currentscreen[j + 5];
-        scr[i + 24] = currentscreen[j + 6];
-        scr[i + 28] = currentscreen[j + 7];
+        int i = j * 8;
+        unsigned short value;
+
+        value = currentscreen[j];
+        scr[i] = BYTE0_USHORT(value);
+        scr[i + 4] = BYTE1_USHORT(value);
+
+        value = currentscreen[j + 1];
+        scr[i + 8] = BYTE0_USHORT(value);
+        scr[i + 12] = BYTE1_USHORT(value);
+
+        value = currentscreen[j + 2];
+        scr[i + 16] = BYTE0_USHORT(value);
+        scr[i + 20] = BYTE1_USHORT(value);
+
+        value = currentscreen[j + 3];
+        scr[i + 24] = BYTE0_USHORT(value);
+        scr[i + 28] = BYTE1_USHORT(value);
     }
 
     outp(GC_INDEX + 1, 1);
-    for (j = 0; j < SCREENWIDTH * SCREENHEIGHT / 4; j += 8)
+    for (j = 0; j < SCREENWIDTH * SCREENHEIGHT / 8; j += 4)
     {
-        int i = j * 4;
-        scr[i + 1] = currentscreen[j];
-        scr[i + 5] = currentscreen[j + 1];
-        scr[i + 9] = currentscreen[j + 2];
-        scr[i + 13] = currentscreen[j + 3];
-        scr[i + 17] = currentscreen[j + 4];
-        scr[i + 21] = currentscreen[j + 5];
-        scr[i + 25] = currentscreen[j + 6];
-        scr[i + 29] = currentscreen[j + 7];
+        int i = j * 8;
+        unsigned short value;
+
+        value = currentscreen[j];
+        scr[i + 1] = BYTE0_USHORT(value);
+        scr[i + 5] = BYTE1_USHORT(value);
+
+        value = currentscreen[j + 1];
+        scr[i + 9] = BYTE0_USHORT(value);
+        scr[i + 13] = BYTE1_USHORT(value);
+
+        value = currentscreen[j + 2];
+        scr[i + 17] = BYTE0_USHORT(value);
+        scr[i + 21] = BYTE1_USHORT(value);
+
+        value = currentscreen[j + 3];
+        scr[i + 25] = BYTE0_USHORT(value);
+        scr[i + 29] = BYTE1_USHORT(value);
     }
 
     outp(GC_INDEX + 1, 2);
-    for (j = 0; j < SCREENWIDTH * SCREENHEIGHT / 4; j += 8)
+    for (j = 0; j < SCREENWIDTH * SCREENHEIGHT / 8; j += 4)
     {
-        int i = j * 4;
-        scr[i + 2] = currentscreen[j];
-        scr[i + 6] = currentscreen[j + 1];
-        scr[i + 10] = currentscreen[j + 2];
-        scr[i + 14] = currentscreen[j + 3];
-        scr[i + 18] = currentscreen[j + 4];
-        scr[i + 22] = currentscreen[j + 5];
-        scr[i + 26] = currentscreen[j + 6];
-        scr[i + 30] = currentscreen[j + 7];
+        int i = j * 8;
+        unsigned short value;
+
+        value = currentscreen[j];
+        scr[i + 2] = BYTE0_USHORT(value);
+        scr[i + 6] = BYTE1_USHORT(value);
+
+        value = currentscreen[j + 1];
+        scr[i + 10] = BYTE0_USHORT(value);
+        scr[i + 14] = BYTE1_USHORT(value);
+
+        value = currentscreen[j + 2];
+        scr[i + 18] = BYTE0_USHORT(value);
+        scr[i + 22] = BYTE1_USHORT(value);
+
+        value = currentscreen[j + 3];
+        scr[i + 26] = BYTE0_USHORT(value);
+        scr[i + 30] = BYTE1_USHORT(value);
     }
 
     outp(GC_INDEX + 1, 3);
-    for (j = 0; j < SCREENWIDTH * SCREENHEIGHT / 4; j += 8)
+    for (j = 0; j < SCREENWIDTH * SCREENHEIGHT / 8; j += 4)
     {
-        int i = j * 4;
-        scr[i + 3] = currentscreen[j];
-        scr[i + 7] = currentscreen[j + 1];
-        scr[i + 11] = currentscreen[j + 2];
-        scr[i + 15] = currentscreen[j + 3];
-        scr[i + 19] = currentscreen[j + 4];
-        scr[i + 23] = currentscreen[j + 5];
-        scr[i + 27] = currentscreen[j + 6];
-        scr[i + 31] = currentscreen[j + 7];
+        int i = j * 8;
+        unsigned short value;
+
+        value = currentscreen[j];
+        scr[i + 3] = BYTE0_USHORT(value);
+        scr[i + 7] = BYTE1_USHORT(value);
+
+        value = currentscreen[j + 1];
+        scr[i + 11] = BYTE0_USHORT(value);
+        scr[i + 15] = BYTE1_USHORT(value);
+
+        value = currentscreen[j + 2];
+        scr[i + 19] = BYTE0_USHORT(value);
+        scr[i + 23] = BYTE1_USHORT(value);
+
+        value = currentscreen[j + 3];
+        scr[i + 27] = BYTE0_USHORT(value);
+        scr[i + 31] = BYTE1_USHORT(value);
     }
 }
 #endif

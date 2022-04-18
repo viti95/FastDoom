@@ -1221,7 +1221,8 @@ void I_SetPalette(int numpalette)
 #if defined(USE_BACKBUFFER)
 int updatestate;
 #endif
-byte *pcscreen, *currentscreen, *destscreen, *destview;
+byte *pcscreen, *destscreen, *destview;
+unsigned short *currentscreen;
 
 #if defined(MODE_EGA) || defined(MODE_VBE2_DIRECT) || defined(MODE_EGA640)
 byte page = 0;
@@ -1348,7 +1349,7 @@ void I_UpdateNoBlit(void)
     int realdr[4];
 
     // Set current screen
-    currentscreen = destscreen;
+    currentscreen = (unsigned short *)destscreen;
 
     // Update dirtybox size
     realdr[BOXTOP] = dirtybox[BOXTOP];
@@ -2640,7 +2641,8 @@ void I_InitGraphics(void)
 #ifdef MODE_Y
     regs.w.ax = 0x13;
     int386(0x10, (union REGS *)&regs, &regs);
-    pcscreen = currentscreen = (byte *)0xA0000;
+    pcscreen = (byte *)0xA0000;
+    currentscreen = (unsigned short *)0xA0000;
     destscreen = (byte *)0xA4000;
 
     outp(SC_INDEX, SC_MEMMODE);
@@ -2661,7 +2663,8 @@ void I_InitGraphics(void)
 #if defined(MODE_V2)
     regs.w.ax = 0x13;
     int386(0x10, (union REGS *)&regs, &regs);
-    pcscreen = currentscreen = (byte *)0xA0000;
+    pcscreen = (byte *)0xA0000;
+    currentscreen = (unsigned short *)0xA0000;
     destscreen = (byte *)0xA7000;
 
     //
