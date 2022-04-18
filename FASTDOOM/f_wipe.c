@@ -51,29 +51,24 @@ byte *screen3;
 void wipe_shittyColMajorXform(short *array)
 {
     int y;
-    int base_y = 0;
-    short *dest;
-
-    dest = (short *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
+    short *ptrarray = array;
+    short *dest = (short *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
 
     for (y = 0; y < SCREENHEIGHT; y++)
     {
-
         int base_x = y;
         int x;
 
-        for (x = 0; x < SCREENWIDTH / 16; x++)
+        for (x = 0; x < SCREENWIDTH / 16; x++, base_x += 1600, ptrarray += 8)
         {
-            dest[base_x] = array[base_y];
-            dest[base_x + 200] = array[base_y + 1];
-            dest[base_x + 400] = array[base_y + 2];
-            dest[base_x + 600] = array[base_y + 3];
-            dest[base_x + 800] = array[base_y + 4];
-            dest[base_x + 1000] = array[base_y + 5];
-            dest[base_x + 1200] = array[base_y + 6];
-            dest[base_x + 1400] = array[base_y + 7];
-            base_x += 1600;
-            base_y += 8;
+            dest[base_x] = ptrarray[0];
+            dest[base_x + 200] = ptrarray[1];
+            dest[base_x + 400] = ptrarray[2];
+            dest[base_x + 600] = ptrarray[3];
+            dest[base_x + 800] = ptrarray[4];
+            dest[base_x + 1000] = ptrarray[5];
+            dest[base_x + 1200] = ptrarray[6];
+            dest[base_x + 1400] = ptrarray[7];
         }
     }
 
@@ -118,7 +113,8 @@ void wipe_initMelt()
 
 byte wipe_doMelt(int ticks)
 {
-    int i;
+    unsigned char i;
+    unsigned short i200;
     byte done = 1;
 
     if (noMelt)
@@ -126,7 +122,7 @@ byte wipe_doMelt(int ticks)
 
     while (ticks--)
     {
-        for (i = 0; i < SCREENWIDTH / 2; i++)
+        for (i = 0, i200 = 0; i < SCREENWIDTH / 2; i++, i200 += 200)
         {
             int y_val = y[i];
             if (y_val < 0)
@@ -143,7 +139,7 @@ byte wipe_doMelt(int ticks)
                 dy = (y_val < 16) ? y_val + 1 : 8;
                 if (dy >= SCREENHEIGHT - y_val)
                     dy = SCREENHEIGHT - y_val;
-                s = &((short *)screen3)[Mul200(i) + y_val];
+                s = &((short *)screen3)[i200 + y_val];
                 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
                 d = &((short *)screen0)[Mul160(y_val) + i];
                 #endif
@@ -156,7 +152,7 @@ byte wipe_doMelt(int ticks)
                     idx += SCREENWIDTH / 2;
                 }
                 y_val += dy;
-                s = &((short *)screen2)[Mul200(i)];
+                s = &((short *)screen2)[i200];
                 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
                 d = &((short *)screen0)[Mul160(y_val) + i];
                 #endif
@@ -323,8 +319,6 @@ void wipe_EndScreen()
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 int wipe_ScreenWipe(int ticks)
 {
-    int rc;
-
     // initial stuff
     if (!go)
     {
@@ -337,10 +331,8 @@ int wipe_ScreenWipe(int ticks)
     V_MarkRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
 #endif
 
-    rc = wipe_doMelt(ticks);
-
     // final stuff
-    if (rc)
+    if (wipe_doMelt(ticks))
     {
         go = 0;
         wipe_exitMelt();
