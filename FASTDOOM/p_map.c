@@ -233,7 +233,7 @@ byte PIT_CheckThing(mobj_t *thing)
     // check for skulls slamming into things
     if (tmthing->flags & MF_SKULLFLY)
     {
-        damage = ((P_Random & 7) + 1) * tmthing->info->damage;
+        damage = (P_Random_And7_Plus1) * tmthing->info->damage;
 
         P_DamageMobj(thing, tmthing, tmthing, damage);
 
@@ -275,7 +275,7 @@ byte PIT_CheckThing(mobj_t *thing)
         }
 
         // damage / explode
-        damage = ((P_Random & 7) + 1) * tmthing->info->damage;
+        damage = (P_Random_And7_Plus1) * tmthing->info->damage;
         P_DamageMobj(thing, tmthing, tmthing->target, damage);
 
         // don't traverse any more

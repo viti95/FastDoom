@@ -855,7 +855,7 @@ void A_TroopAttack(mobj_t *actor)
     if (P_CheckMeleeRange(actor))
     {
         S_StartSound(actor, sfx_claw);
-        damage = ((P_Random & 7) + 1) * 3;
+        damage = P_Random_And7_Plus1 * 3;
         P_DamageMobj(actor->target, actor, actor, damage);
         return;
     }
@@ -917,7 +917,7 @@ void A_BruisAttack(mobj_t *actor)
     if (P_CheckMeleeRange(actor))
     {
         S_StartSound(actor, sfx_claw);
-        damage = Mul10((P_Random & 7) + 1);
+        damage = Mul10(P_Random_And7_Plus1);
         P_DamageMobj(actor->target, actor, actor, damage);
         return;
     }

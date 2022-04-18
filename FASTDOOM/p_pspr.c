@@ -749,8 +749,7 @@ void A_BFGSpray(mobj_t *mo)
                     linetarget->z + (linetarget->height >> 2),
                     MT_EXTRABFG);
 
-        damage = 15;
-        damage += (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7) + (P_Random & 7);
+        damage = (P_Random_And7_Plus1) + (P_Random_And7_Plus1) + (P_Random_And7_Plus1) + (P_Random_And7_Plus1) + (P_Random_And7_Plus1) + (P_Random_And7_Plus1) + (P_Random_And7_Plus1) + (P_Random_And7_Plus1) + (P_Random_And7_Plus1) + (P_Random_And7_Plus1) + (P_Random_And7_Plus1) + (P_Random_And7_Plus1) + (P_Random_And7_Plus1) + (P_Random_And7_Plus1) + (P_Random_And7_Plus1);
 
         P_DamageMobj(linetarget, mo->target, mo->target, damage);
     }

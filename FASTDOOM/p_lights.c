@@ -189,7 +189,7 @@ void P_SpawnStrobeFlash(sector_t *sector,
     sector->special = 0;
 
     if (!inSync)
-        flash->count = (P_Random & 7) + 1;
+        flash->count = P_Random_And7_Plus1;
     else
         flash->count = 1;
 }

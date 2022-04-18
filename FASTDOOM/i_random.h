@@ -10,6 +10,7 @@ extern byte rndtableMul2Mod10Plus1[256];
 extern byte rndtableMul3Mod5Plus1[256];
 extern byte rndtableMul10Mod6Plus1[256];
 extern char rndtableMod3Minus1[256];
+extern byte rndtableAnd7Plus1[256];
 extern byte rndindex;
 extern byte prndindex;
 
@@ -26,3 +27,4 @@ extern byte prndindex;
 #define P_Random_Mul2_Mod10_Plus1 rndtableMul2Mod10Plus1[++prndindex]
 #define P_Random_Mul3_Mod5_Plus1 rndtableMul3Mod5Plus1[++prndindex]
 #define P_Random_Mul10_Mod6_Plus1 rndtableMul10Mod6Plus1[++prndindex]
+#define P_Random_And7_Plus1 rndtableAnd7Plus1[++prndindex]
