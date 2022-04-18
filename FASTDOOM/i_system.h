@@ -109,4 +109,10 @@ void I_DisableCGABlink(void);
     "mov al, 0x9", \   
     "out dx, al" modify [al dx]
 
+void I_DisableMDABlink(void);
+#pragma aux I_DisableMDABlink = \   
+    "mov dx, 0x3B8", \
+    "mov al, 0x9", \   
+    "out dx, al" modify [al dx]
+
 #endif

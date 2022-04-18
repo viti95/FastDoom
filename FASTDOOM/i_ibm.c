@@ -2605,6 +2605,9 @@ void I_InitGraphics(void)
     regs.h.ah = 0x00;
     regs.h.al = 0x07;
     int386(0x10, &regs, &regs);
+
+    // Disable MDA blink
+    I_DisableMDABlink();
 #endif
 #if defined(MODE_T8050) || defined(MODE_T80100) || defined(MODE_T8043) || defined(MODE_T8086)
     // Set 80x25 color mode
