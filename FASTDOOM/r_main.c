@@ -709,12 +709,14 @@ void R_ExecuteSetViewSize(void)
     {
         scaledviewwidth = SCREENWIDTH;
         viewheight = SCREENHEIGHT;
+        viewheight32 = SCREENHEIGHT << 16 | SCREENHEIGHT;
         automapheight = SCREENHEIGHT;
     }
     else
     {
         scaledviewwidth = setblocks * 32;
         viewheight = (setblocks * 168 / 10) & ~7;
+        viewheight32 = viewheight << 16 | viewheight;
         automapheight = SCREENHEIGHT - 32;
     }
 #endif
@@ -735,9 +737,11 @@ void R_ExecuteSetViewSize(void)
 
 #ifdef MODE_Y
     viewwidth = scaledviewwidth >> detailshift;
+    viewwidthhalf = viewwidth / 2;
 #endif
 #if defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     viewwidth = scaledviewwidth;
+    viewwidthhalf = viewwidth / 2;
 #endif
 
 #if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8086) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA)

@@ -176,25 +176,20 @@ void R_ClearPlanes(void)
     int i;
     angle_t angle;
 
+    int *floorclipint = (int *)floorclip;
+    int *ceilingclipint = (int *)ceilingclip;
+
     // opening / clipping determination
-    for (i = 0; i < viewwidth; i += 8)
+    for (i = 0; i < viewwidthhalf; i += 4)
     {
-        floorclip[i] = viewheight;
-        ceilingclip[i] = -1;
-        floorclip[i + 1] = viewheight;
-        ceilingclip[i + 1] = -1;
-        floorclip[i + 2] = viewheight;
-        ceilingclip[i + 2] = -1;
-        floorclip[i + 3] = viewheight;
-        ceilingclip[i + 3] = -1;
-        floorclip[i + 4] = viewheight;
-        ceilingclip[i + 4] = -1;
-        floorclip[i + 5] = viewheight;
-        ceilingclip[i + 5] = -1;
-        floorclip[i + 6] = viewheight;
-        ceilingclip[i + 6] = -1;
-        floorclip[i + 7] = viewheight;
-        ceilingclip[i + 7] = -1;
+        floorclipint[i] = viewheight32;
+        ceilingclipint[i] = -1;
+        floorclipint[i + 1] = viewheight32;
+        ceilingclipint[i + 1] = -1;
+        floorclipint[i + 2] = viewheight32;
+        ceilingclipint[i + 2] = -1;
+        floorclipint[i + 3] = viewheight32;
+        ceilingclipint[i + 3] = -1;
     }
 
     lastvisplane = visplanes;

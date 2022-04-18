@@ -265,6 +265,9 @@ void D_Display(void)
 #endif
 
         fullscreen = viewheight == 200;
+#if !defined(MODE_T8050) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_T8043) && !defined(MODE_T8086) && !defined(MODE_MDA)
+        viewheight32 = viewheight << 16 | viewheight;
+#endif
         break;
 
     case GS_INTERMISSION:

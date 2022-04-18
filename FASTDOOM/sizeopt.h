@@ -4,8 +4,10 @@
 #if defined(MODE_T4025)
 #define scaledviewwidth 40
 #define viewwidth 40
-#define viewheight 25
+#define viewwidthhalf 20
 #define viewwidthlimit 39
+#define viewheight 25
+#define viewheight32 (25 << 16 | 25)
 #define viewwindowx 0
 #define viewwindowy 0
 #define centerx 20
@@ -23,8 +25,10 @@
 #if defined(MODE_T4050)
 #define scaledviewwidth 80
 #define viewwidth 40
-#define viewheight 50
+#define viewwidthhalf 20
 #define viewwidthlimit 39
+#define viewheight 50
+#define viewheight32 (50 << 16 | 50)
 #define viewwindowx 0
 #define viewwindowy 0
 #define centerx 20
@@ -42,8 +46,10 @@
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_MDA)
 #define scaledviewwidth 80
 #define viewwidth 80
-#define viewheight 50
+#define viewwidthhalf 40
 #define viewwidthlimit 79
+#define viewheight 50
+#define viewheight32 (50 << 16 | 50)
 #define viewwindowx 0
 #define viewwindowy 0
 #define centerx 40
@@ -61,8 +67,10 @@
 #if defined(MODE_T8043)
 #define scaledviewwidth 80
 #define viewwidth 80
-#define viewheight 43
+#define viewwidthhalf 40
 #define viewwidthlimit 79
+#define viewheight 43
+#define viewheight32 (43 << 16 | 43)
 #define viewwindowx 0
 #define viewwindowy 0
 #define centerx 40
@@ -80,8 +88,10 @@
 #if defined(MODE_T8086)
 #define scaledviewwidth 160
 #define viewwidth 80
-#define viewheight 86
+#define viewwidthhalf 40
 #define viewwidthlimit 79
+#define viewheight 86
+#define viewheight32 (86 << 16 | 86)
 #define viewwindowx 0
 #define viewwindowy 0
 #define centerx 40
@@ -99,8 +109,10 @@
 #if defined(MODE_T80100)
 #define scaledviewwidth 160
 #define viewwidth 80
-#define viewheight 100
+#define viewwidthhalf 40
 #define viewwidthlimit 79
+#define viewheight 100
+#define viewheight32 (100 << 16 | 100)
 #define viewwindowx 0
 #define viewwindowy 0
 #define centerx 40

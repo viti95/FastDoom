@@ -182,8 +182,10 @@ extern int mousebfire;
 extern int mousebstrafe;
 extern int mousebforward;
 extern int viewwidth;
+extern int viewwidthhalf;
 extern int viewwidthlimit;
 extern int viewheight;
+extern int viewheight32;
 
 extern int mouseSensitivity;
 extern int showMessages;

@@ -41,9 +41,11 @@ extern lighttable_t datacolormaps[34 * 256 + 255];
 extern lighttable_t *colormaps;
 
 extern int viewwidth;
+extern int viewwidthhalf;
 extern int viewwidthlimit;
 extern int scaledviewwidth;
 extern int viewheight;
+extern int viewheight32;
 
 extern int firstflat;
 
