@@ -50,30 +50,29 @@ byte *screen3;
 
 void wipe_shittyColMajorXform(short *array)
 {
-    int y;
+    unsigned char y;
     short *ptrarray = array;
     short *dest = (short *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
 
-    for (y = 0; y < SCREENHEIGHT; y++)
+    for (y = 0; y < SCREENHEIGHT; y++, dest -= 31999)
     {
-        int base_x = y;
-        int x;
+        unsigned char x;
 
-        for (x = 0; x < SCREENWIDTH / 16; x++, base_x += 1600, ptrarray += 8)
+        for (x = 0; x < SCREENWIDTH / 16; x++, dest += 1600, ptrarray += 8)
         {
-            dest[base_x] = ptrarray[0];
-            dest[base_x + 200] = ptrarray[1];
-            dest[base_x + 400] = ptrarray[2];
-            dest[base_x + 600] = ptrarray[3];
-            dest[base_x + 800] = ptrarray[4];
-            dest[base_x + 1000] = ptrarray[5];
-            dest[base_x + 1200] = ptrarray[6];
-            dest[base_x + 1400] = ptrarray[7];
+            *dest = ptrarray[0];
+            *(dest + 200) = ptrarray[1];
+            *(dest + 400) = ptrarray[2];
+            *(dest + 600) = ptrarray[3];
+            *(dest + 800) = ptrarray[4];
+            *(dest + 1000) = ptrarray[5];
+            *(dest + 1200) = ptrarray[6];
+            *(dest + 1400) = ptrarray[7];
         }
     }
 
+    dest -= 200;
     CopyDWords(dest, array, (SCREENWIDTH * SCREENHEIGHT) / 4);
-    //memcpy(array, dest, SCREENWIDTH * SCREENHEIGHT);
 
     Z_Free(dest);
 }
