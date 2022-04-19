@@ -108,6 +108,10 @@ int forceScreenSize;
 boolean CGAcard;
 #endif
 
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
+boolean VGADACfix;
+#endif
+
 #if defined(MODE_T8050) || defined(MODE_T80100)
 boolean videoPageFix;
 #endif
@@ -990,6 +994,10 @@ void D_DoomMain(void)
 
 #if defined(MODE_T8025) || defined(MODE_T4025) || defined(MODE_T4050)
     CGAcard = M_CheckParm("-cga");
+#endif
+
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
+    VGADACfix = M_CheckParm("-fixDAC");
 #endif
 
 #if defined(MODE_T8050) || defined(MODE_T80100)

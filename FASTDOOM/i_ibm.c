@@ -1205,11 +1205,19 @@ void I_SetPalette(int numpalette)
 
 #if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
     {
+        int i;
         int pos = Mul768(numpalette);
 
         _outbyte(PEL_WRITE_ADR, 0);
 
-        OutString(PEL_DATA, ((unsigned char *)processedpalette) + pos, 768);
+        if (VGADACfix){
+            for(i = 0; i < 768; i++)
+            {
+                _outbyte(PEL_DATA, processedpalette[pos++]);
+            }
+        }else{
+            OutString(PEL_DATA, ((unsigned char *)processedpalette) + pos, 768);
+        }
     }
 #endif
 }
