@@ -109,7 +109,7 @@ boolean CGAcard;
 #endif
 
 #if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
-boolean VGADACfix;
+boolean VGADACfix = false;
 #endif
 
 #if defined(MODE_T8050) || defined(MODE_T80100)

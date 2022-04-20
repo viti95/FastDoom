@@ -42,13 +42,13 @@
 
 #include "std_func.h"
 
-#define BYTE0_USHORT(value)  (((unsigned char *)&value)[0])
-#define BYTE1_USHORT(value)  (((unsigned char *)&value)[1])
+#define BYTE0_USHORT(value) (((unsigned char *)&value)[0])
+#define BYTE1_USHORT(value) (((unsigned char *)&value)[1])
 
-#define BYTE0_UINT(value)   (((unsigned char *)&value)[0])
-#define BYTE1_UINT(value)   (((unsigned char *)&value)[1])
-#define BYTE2_UINT(value)   (((unsigned char *)&value)[2])
-#define BYTE3_UINT(value)   (((unsigned char *)&value)[3])
+#define BYTE0_UINT(value) (((unsigned char *)&value)[0])
+#define BYTE1_UINT(value) (((unsigned char *)&value)[1])
+#define BYTE2_UINT(value) (((unsigned char *)&value)[2])
+#define BYTE3_UINT(value) (((unsigned char *)&value)[3])
 
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 #include "i_vesa.h"
@@ -767,7 +767,7 @@ void I_ProcessPalette(byte *palette)
         value = color & 12;
         value = value | value >> 2 | value << 2 | value << 4;
         value <<= 8;
-        
+
         value2 = color & 3;
         value2 = value2 | value2 << 2 | value2 << 4 | value2 << 6;
         value2;
@@ -782,7 +782,7 @@ void I_ProcessPalette(byte *palette)
         value = color & 12;
         value = value | value >> 2 | value << 2 | value << 4;
         value <<= 8;
-        
+
         value2 = color & 3;
         value2 = value2 | value2 << 2 | value2 << 4 | value2 << 6;
         value2;
@@ -848,7 +848,6 @@ void I_ProcessPalette(byte *palette)
 #if defined(MODE_MDA)
 void I_ProcessPalette(byte *palette)
 {
-
 }
 #endif
 
@@ -942,11 +941,11 @@ void I_ProcessPalette(byte *palette)
             {
                 unsigned short value;
                 unsigned short value2;
-                
+
                 value = j & 12;
                 value = value | value >> 2 | value << 2 | value << 4;
                 value <<= 8;
-                
+
                 value2 = j & 3;
                 value2 = value2 | value2 << 2 | value2 << 4 | value2 << 6;
                 value2;
@@ -961,11 +960,11 @@ void I_ProcessPalette(byte *palette)
             {
                 unsigned short value;
                 unsigned short value2;
-                
+
                 value = j & 12;
                 value = value | value >> 2 | value << 2 | value << 4;
                 value <<= 8;
-                
+
                 value2 = j & 3;
                 value2 = value2 | value2 << 2 | value2 << 4 | value2 << 6;
                 value2;
@@ -1210,12 +1209,15 @@ void I_SetPalette(int numpalette)
 
         _outbyte(PEL_WRITE_ADR, 0);
 
-        if (VGADACfix){
-            for(i = 0; i < 768; i++)
+        if (VGADACfix)
+        {
+            for (i = 0; i < 768; i++)
             {
                 _outbyte(PEL_DATA, processedpalette[pos++]);
             }
-        }else{
+        }
+        else
+        {
             OutString(PEL_DATA, ((unsigned char *)processedpalette) + pos, 768);
         }
     }
@@ -1456,7 +1458,7 @@ void CGA_BW_DrawBackbuffer(void)
             unsigned short finalcolor;
 
             // Process two pixels at the same time (16-bit)
-            ptr = ptrlutcolors + *(ptrbackbuffer) * 2;
+            ptr = ptrlutcolors + *(ptrbackbuffer)*2;
             finalcolor = *ptr & 0x8040;
             ptr = ptrlutcolors + *(ptrbackbuffer + 1) * 2;
             finalcolor |= *ptr & 0x2010;
@@ -1465,7 +1467,7 @@ void CGA_BW_DrawBackbuffer(void)
             ptr = ptrlutcolors + *(ptrbackbuffer + 3) * 2;
             finalcolor |= *ptr & 0x0201;
 
-            *(vram) = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor); 
+            *(vram) = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor);
 
             ptr = ptrlutcolors + *(ptrbackbuffer + 320) * 2;
             finalcolor = *ptr & 0x8040;
@@ -1476,7 +1478,7 @@ void CGA_BW_DrawBackbuffer(void)
             ptr = ptrlutcolors + *(ptrbackbuffer + 323) * 2;
             finalcolor |= *ptr & 0x0201;
 
-            *(vram + 0x2000) = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor); 
+            *(vram + 0x2000) = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor);
 
             ptrbackbuffer += 4;
             vram++;
@@ -1504,7 +1506,7 @@ void HERC200_DrawBackbuffer(void)
             unsigned short finalcolor;
 
             // Process two pixels at the same time (16-bit)
-            ptr = ptrlutcolors + *(ptrbackbuffer) * 2;
+            ptr = ptrlutcolors + *(ptrbackbuffer)*2;
             finalcolor = *ptr & 0x8040;
             ptr = ptrlutcolors + *(ptrbackbuffer + 1) * 2;
             finalcolor |= *ptr & 0x2010;
@@ -1513,7 +1515,7 @@ void HERC200_DrawBackbuffer(void)
             ptr = ptrlutcolors + *(ptrbackbuffer + 3) * 2;
             finalcolor |= *ptr & 0x0201;
 
-            *(vram) = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor); 
+            *(vram) = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor);
 
             ptr = ptrlutcolors + *(ptrbackbuffer + 320) * 2;
             finalcolor = *ptr & 0x8040;
@@ -1524,7 +1526,7 @@ void HERC200_DrawBackbuffer(void)
             ptr = ptrlutcolors + *(ptrbackbuffer + 323) * 2;
             finalcolor |= *ptr & 0x0201;
 
-            *(vram + 0x2000) = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor); 
+            *(vram + 0x2000) = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor);
 
             ptrbackbuffer += 4;
             vram++;
@@ -1974,19 +1976,19 @@ void EGA_DrawBackbuffer(void)
         unsigned short tmpColor;
 
         BYTE1_USHORT(color) = ptrlutRcolor[*(backbufferptr)];
-        BYTE0_USHORT(color) = ptrlutRcolor[*(backbufferptr + 1)];       
+        BYTE0_USHORT(color) = ptrlutRcolor[*(backbufferptr + 1)];
         tmpColor = color & 0x8040;
 
         BYTE1_USHORT(color) = ptrlutRcolor[*(backbufferptr + 2)];
-        BYTE0_USHORT(color) = ptrlutRcolor[*(backbufferptr + 3)];       
+        BYTE0_USHORT(color) = ptrlutRcolor[*(backbufferptr + 3)];
         tmpColor |= color & 0x2010;
 
         BYTE1_USHORT(color) = ptrlutRcolor[*(backbufferptr + 4)];
-        BYTE0_USHORT(color) = ptrlutRcolor[*(backbufferptr + 5)];       
+        BYTE0_USHORT(color) = ptrlutRcolor[*(backbufferptr + 5)];
         tmpColor |= color & 0x0804;
 
         BYTE1_USHORT(color) = ptrlutRcolor[*(backbufferptr + 6)];
-        BYTE0_USHORT(color) = ptrlutRcolor[*(backbufferptr + 7)];       
+        BYTE0_USHORT(color) = ptrlutRcolor[*(backbufferptr + 7)];
         tmpColor |= color & 0x0201;
 
         destscreen[i] = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
@@ -2001,19 +2003,19 @@ void EGA_DrawBackbuffer(void)
         unsigned short tmpColor;
 
         BYTE1_USHORT(color) = ptrlutGcolor[*(backbufferptr)];
-        BYTE0_USHORT(color) = ptrlutGcolor[*(backbufferptr + 1)];       
+        BYTE0_USHORT(color) = ptrlutGcolor[*(backbufferptr + 1)];
         tmpColor = color & 0x8040;
 
         BYTE1_USHORT(color) = ptrlutGcolor[*(backbufferptr + 2)];
-        BYTE0_USHORT(color) = ptrlutGcolor[*(backbufferptr + 3)];       
+        BYTE0_USHORT(color) = ptrlutGcolor[*(backbufferptr + 3)];
         tmpColor |= color & 0x2010;
 
         BYTE1_USHORT(color) = ptrlutGcolor[*(backbufferptr + 4)];
-        BYTE0_USHORT(color) = ptrlutGcolor[*(backbufferptr + 5)];       
+        BYTE0_USHORT(color) = ptrlutGcolor[*(backbufferptr + 5)];
         tmpColor |= color & 0x0804;
 
         BYTE1_USHORT(color) = ptrlutGcolor[*(backbufferptr + 6)];
-        BYTE0_USHORT(color) = ptrlutGcolor[*(backbufferptr + 7)];       
+        BYTE0_USHORT(color) = ptrlutGcolor[*(backbufferptr + 7)];
         tmpColor |= color & 0x0201;
 
         destscreen[i] = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
@@ -2028,19 +2030,19 @@ void EGA_DrawBackbuffer(void)
         unsigned short tmpColor;
 
         BYTE1_USHORT(color) = ptrlutBcolor[*(backbufferptr)];
-        BYTE0_USHORT(color) = ptrlutBcolor[*(backbufferptr + 1)];       
+        BYTE0_USHORT(color) = ptrlutBcolor[*(backbufferptr + 1)];
         tmpColor = color & 0x8040;
 
         BYTE1_USHORT(color) = ptrlutBcolor[*(backbufferptr + 2)];
-        BYTE0_USHORT(color) = ptrlutBcolor[*(backbufferptr + 3)];       
+        BYTE0_USHORT(color) = ptrlutBcolor[*(backbufferptr + 3)];
         tmpColor |= color & 0x2010;
 
         BYTE1_USHORT(color) = ptrlutBcolor[*(backbufferptr + 4)];
-        BYTE0_USHORT(color) = ptrlutBcolor[*(backbufferptr + 5)];       
+        BYTE0_USHORT(color) = ptrlutBcolor[*(backbufferptr + 5)];
         tmpColor |= color & 0x0804;
 
         BYTE1_USHORT(color) = ptrlutBcolor[*(backbufferptr + 6)];
-        BYTE0_USHORT(color) = ptrlutBcolor[*(backbufferptr + 7)];       
+        BYTE0_USHORT(color) = ptrlutBcolor[*(backbufferptr + 7)];
         tmpColor |= color & 0x0201;
 
         destscreen[i] = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
@@ -2055,19 +2057,19 @@ void EGA_DrawBackbuffer(void)
         unsigned short tmpColor;
 
         BYTE1_USHORT(color) = ptrlutIcolor[*(backbufferptr)];
-        BYTE0_USHORT(color) = ptrlutIcolor[*(backbufferptr + 1)];       
+        BYTE0_USHORT(color) = ptrlutIcolor[*(backbufferptr + 1)];
         tmpColor = color & 0x8040;
 
         BYTE1_USHORT(color) = ptrlutIcolor[*(backbufferptr + 2)];
-        BYTE0_USHORT(color) = ptrlutIcolor[*(backbufferptr + 3)];       
+        BYTE0_USHORT(color) = ptrlutIcolor[*(backbufferptr + 3)];
         tmpColor |= color & 0x2010;
 
         BYTE1_USHORT(color) = ptrlutIcolor[*(backbufferptr + 4)];
-        BYTE0_USHORT(color) = ptrlutIcolor[*(backbufferptr + 5)];       
+        BYTE0_USHORT(color) = ptrlutIcolor[*(backbufferptr + 5)];
         tmpColor |= color & 0x0804;
 
         BYTE1_USHORT(color) = ptrlutIcolor[*(backbufferptr + 6)];
-        BYTE0_USHORT(color) = ptrlutIcolor[*(backbufferptr + 7)];       
+        BYTE0_USHORT(color) = ptrlutIcolor[*(backbufferptr + 7)];
         tmpColor |= color & 0x0201;
 
         destscreen[i] = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
@@ -2142,7 +2144,7 @@ void PCP_DrawBackbuffer(void)
             color = ptrlut16colors[backbuffer[base + 3]];
             finalcolor |= color & 0x0303;
 
-            *(vram) = BYTE0_USHORT(finalcolor); 
+            *(vram) = BYTE0_USHORT(finalcolor);
             *(vram + 0x4000) = BYTE1_USHORT(finalcolor);
 
             color = ptrlut16colors[backbuffer[base + 320]];
@@ -2545,6 +2547,43 @@ void I_FinishUpdate(void)
         }
     }
 }
+
+// Test VGA REP OUTSB capability
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
+void I_TestFastSetPalette(void)
+{
+    if (!VGADACfix)
+    {
+        byte test_palette[768];
+        unsigned short x;
+        byte y;
+
+        // Initialize test palette
+        for (x = 0; x < 768; x++)
+        {
+            test_palette[x] = x & 63;
+        }
+
+        // Write test palette using REP STOSB
+        _outbyte(PEL_WRITE_ADR, 0);
+        OutString(PEL_DATA, test_palette, 768);
+
+        // Read palette from VGA card
+        // and compare results
+        _outbyte(PEL_READ_ADR, 0);
+        for (x = 0; x < 768; x++)
+        {
+            byte read_data = _inbyte(PEL_DATA);
+
+            if (read_data != test_palette[x])
+            {
+                VGADACfix = true;
+                return;
+            }
+        }
+    }
+}
+#endif
 
 //
 // I_InitGraphics
@@ -3032,6 +3071,10 @@ void I_InitGraphics(void)
     {
         I_Error("Compatible VESA 2.0 video mode not found! (320x200 8bpp required)");
     }
+#endif
+
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
+    I_TestFastSetPalette();
 #endif
 
     I_ProcessPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
