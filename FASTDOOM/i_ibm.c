@@ -1211,9 +1211,14 @@ void I_SetPalette(int numpalette)
 
         if (VGADACfix)
         {
-            for (i = 0; i < 768; i++)
+            byte *ptrprocessedpalette = processedpalette + pos;
+            for (i = 0; i < 768; i += 4)
             {
-                _outbyte(PEL_DATA, processedpalette[pos++]);
+                _outbyte(PEL_DATA, *(ptrprocessedpalette));
+                _outbyte(PEL_DATA, *(ptrprocessedpalette + 1));
+                _outbyte(PEL_DATA, *(ptrprocessedpalette + 2));
+                _outbyte(PEL_DATA, *(ptrprocessedpalette + 3));
+                ptrprocessedpalette += 4;
             }
         }
         else
