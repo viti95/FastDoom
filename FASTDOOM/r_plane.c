@@ -1057,7 +1057,7 @@ void R_DrawPlanesFlatSurfacesTextMDA(void)
         dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
 
         color = colormaps[dc_source[FLATPIXELCOLOR]];
-        colorblock = color << 8 | 219;
+        colorblock = 0x0F << 8 | color;
 
         for (x = pl->minx; x <= pl->maxx; x++)
         {
@@ -1075,7 +1075,8 @@ void R_DrawPlanesFlatSurfacesTextMDA(void)
                 if (odd)
                 {
                     vmem = vmem & 0x0F00;
-                    *dest = vmem | color << 12 | 223;
+                    //*dest = vmem | color << 12 | 223;
+                    *dest = 0x0F << 8 | 0xDB;
 
                     odd = 0;
                     dest += 80;
@@ -1083,7 +1084,8 @@ void R_DrawPlanesFlatSurfacesTextMDA(void)
                 else
                 {
                     vmem = vmem & 0xF000;
-                    *dest = vmem | color << 8 | 223;
+                    //*dest = vmem | color << 8 | 223;
+                    *dest = 0x0F << 8 | 0xDB;
                     continue;
                 }
 
@@ -1105,7 +1107,8 @@ void R_DrawPlanesFlatSurfacesTextMDA(void)
             {
                 vmem = *dest;
                 vmem = vmem & 0xF000;
-                *dest = vmem | color << 8 | 223;
+                //*dest = vmem | color << 8 | 223;
+                *dest = 0x0F << 8 | 0xDB;
             }
         }
 

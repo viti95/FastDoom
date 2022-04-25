@@ -81,12 +81,11 @@ void R_DrawSkyFlatText80100(void);
 void R_DrawSpanText80100(void);
 void R_DrawFuzzColumnFastText80100(void);
 
-void R_DrawColumnTextMDA(void);
+void R_DrawLineColumnTextMDA(void);
+void R_DrawEmptyColumnTextMDA(void);
 void R_DrawSpanTextMDA(void);
-void R_DrawSkyFlatTextMDA(void);
-void R_DrawFuzzColumnTextMDA(void);
-void R_DrawFuzzColumnFastTextMDA(void);
-void R_DrawFuzzColumnSaturnTextMDA(void);
+void R_DrawSkyTextMDA(void);
+void R_DrawSpriteTextMDA(void);
 
 void R_DrawColumnText8025(void);
 void R_DrawSpanText8025(void);

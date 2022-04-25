@@ -343,6 +343,8 @@ void R_DrawVisSprite(vissprite_t *vis)
             if ((dc_x & 3) == 0){
                 colfunc();
             }
+            #elif defined(MODE_MDA)
+                R_DrawSpriteTextMDA();
             #else
                 colfunc();
             #endif

@@ -43,6 +43,7 @@ void R_DrawPlanesFlatSurfacesText8050(void);
 void R_DrawPlanesFlatSurfacesText8025(void);
 void R_DrawPlanesFlatSurfacesText4025(void);
 void R_DrawPlanesFlatSurfacesText4050(void);
+void R_DrawPlanesFlatSurfacesTextMDA(void);
 void R_DrawPlanesFlatSurfaces_13h(void);
 void R_DrawPlanesFlatSurfacesVBE2(void);
 void R_DrawSky(visplane_t *pl);

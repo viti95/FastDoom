@@ -253,6 +253,12 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 				if ((dc_x & 3) == 0){
 					colfunc();
 				}
+				#elif defined(MODE_MDA)
+					if (dc_x == x1 || dc_x == x2){
+						R_DrawLineColumnTextMDA();
+					}else{
+						R_DrawEmptyColumnTextMDA();
+					}
 				#else
 					colfunc();
 				#endif
@@ -298,6 +304,10 @@ void R_RenderSegLoop(void)
 
 	int cc_rwx;
 	int fc_rwx;
+
+	#if defined(MODE_MDA)
+	int first = rw_x;
+	#endif
 
 	//texturecolumn = 0;				// shut up compiler warning
 
@@ -409,6 +419,12 @@ void R_RenderSegLoop(void)
 				if ((dc_x & 3) == 0){
 					colfunc();
 				}
+				#elif defined(MODE_MDA)
+					if (first == rw_x || rw_x == rw_stopx - 1){
+						R_DrawLineColumnTextMDA();
+					}else{
+						R_DrawEmptyColumnTextMDA();
+					}
 				#else
 					colfunc();
 				#endif
@@ -465,6 +481,12 @@ void R_RenderSegLoop(void)
 					if ((dc_x & 3) == 0){
 						colfunc();
 					}
+					#elif defined(MODE_MDA)
+						if (first == rw_x || rw_x == rw_stopx - 1){
+							R_DrawLineColumnTextMDA();
+						}else{
+							R_DrawEmptyColumnTextMDA();
+						}
 					#else
 						colfunc();
 					#endif
@@ -525,6 +547,12 @@ void R_RenderSegLoop(void)
 					if ((dc_x & 3) == 0){
 						colfunc();
 					}
+					#elif defined(MODE_MDA)
+						if (first == rw_x || rw_x == rw_stopx - 1){
+							R_DrawLineColumnTextMDA();
+						}else{
+							R_DrawEmptyColumnTextMDA();
+						}
 					#else
 						colfunc();
 					#endif

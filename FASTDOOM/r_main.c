@@ -828,28 +828,13 @@ void R_ExecuteSetViewSize(void)
         fuzzcolfunc = R_DrawFuzzColumnText8025;
 #endif
 #ifdef MODE_MDA
-    colfunc = basecolfunc = R_DrawColumnTextMDA;
+    colfunc = basecolfunc = R_DrawLineColumnTextMDA;
 
-    if (untexturedSurfaces)
-    {
-        spanfunc = R_DrawSpanFlatTextMDA;
-    }
-    else
-    {
-        spanfunc = R_DrawSpanTextMDA;
-    }
+    spanfunc = R_DrawSpanTextMDA;
 
-    if (flatSky)
-        skyfunc = R_DrawSkyFlatTextMDA;
-    else
-        skyfunc = R_DrawColumnTextMDA;
+    skyfunc = R_DrawSkyTextMDA;
 
-    if (flatShadows)
-        fuzzcolfunc = R_DrawFuzzColumnFastTextMDA;
-    else if (saturnShadows)
-        fuzzcolfunc = R_DrawFuzzColumnSaturnTextMDA;
-    else
-        fuzzcolfunc = R_DrawFuzzColumnTextMDA;
+    fuzzcolfunc = R_DrawLineColumnTextMDA;
 #endif
 #if defined(MODE_T8050) || defined(MODE_T8043)
     colfunc = basecolfunc = R_DrawColumnText8050;
@@ -1261,10 +1246,7 @@ void R_RenderPlayerView(player_t *player)
         R_DrawPlanes();
 #endif
 #ifdef MODE_MDA
-    if (flatSurfaces)
-        R_DrawPlanesFlatSurfacesTextMDA();
-    else
-        R_DrawPlanes();
+    R_DrawPlanesFlatSurfacesTextMDA();
 #endif
 
 #if defined(MODE_T80100) || defined(MODE_T8086)
