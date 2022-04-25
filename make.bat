@@ -206,7 +206,7 @@ goto compile_mode
 :mode_mda
 set base=fdoomtxt.exe
 set executable=fdoommda.exe
-set options=/dMODE_MDA /dUSE_BACKBUFFER
+set options=/dMODE_MDA
 goto compile_mode
 
 :compile_mode

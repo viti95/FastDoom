@@ -113,6 +113,10 @@ elif [ "$target" = "fdoom13h.exe" ]; then
   buildopts="-dMODE_13H -dUSE_BACKBUFFER"
   buildtarget="fdoom13h.exe"
 
+elif [ "$target" = "fdoommda.exe" ]; then
+  buildopts="-dMODE_13H -dUSE_BACKBUFFER"
+  buildtarget="fdoommda.exe"
+
 elif [ "$target" = "clean" ]; then
   cd FASTDOOM
   wmake clean
