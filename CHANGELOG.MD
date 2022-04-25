@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.8.12 (27 Apr 2022)
+* New video mode: IBA MDA text mode. Just for fun, quick'n'dirty
+* Small optimization on gameplay code and melting screen functions
+* Fixed corruption on VGA palettes (issue #75)
+
 ## 0.8.11 (11 Apr 2022)
 * Optimized backbuffered video modes: Hercules, CGA B&W, Plantronics ColorPlus, EGA, ATI 640x400
 * Small optimization on multiple modulo operations, sound code and gameplay code

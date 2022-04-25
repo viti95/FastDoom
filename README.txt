@@ -93,9 +93,9 @@
  * FDOOMVBR.EXE => FastDoom for VBE 2.0 cards. Uses real mode (default, and
                    more compatible). If you use UniVBE use this version
  * FDOOMVBD.EXE => FastDoom for VBE 2.0 cards with LFB (triple buffered),
-		   all rendering is done directly onto the video card, the
-		   same way Mode Y does. Faster for systems with slow RAM
-		   access.
+                   all rendering is done directly onto the video card, the
+                   same way Mode Y does. Faster for systems with slow RAM
+                   access.
  * FDOOMV2.EXE  => FastDoom Planar 320x350 vertical mode. The base 320x200 
                    image is centered in the screen, leaving black borders
  * FDOOMPCP.EXE => FastDoom for Plantronics ColorPlus cards. 320x200 and 
@@ -105,13 +105,20 @@
  * FDOOMV16.EXE => FastDoom VGA 160x200 and 16 colors
  * FDOOME16.EXE => FastDoom EGA 160x100 and 16 colors
  * FDOOME.EXE   => FastDoom EGA 640x200. Requires a very fast CPU and 16-bit
-		   ISA video card (at least). Dithering with 16 colors
+                   ISA video card (at least). Dithering with 16 colors
  * FDOOMATI.EXE => FastDoom ATI Small Wonder 640x200. Requires a very fast 
-		   CPU and 16-bit ISA video card (at least). 
+                   CPU and 16-bit ISA video card (at least).
                    Dithering with 16 colors
  * FDOOMC36.EXE => FastDoom CGA 80x100 and 122 pseudocolors
  * FDOOMV36.EXE => FastDoom VGA 80x200 and 122 pseudocolors
  * FDOOME36.EXE => FastDoom EGA 80x100 and 122 pseudocolors
+ * FDOOMHG2.EXE => Experimental FastDoom 640x200 monochrome Hercules.
+                   Requires a fast CPU. Uses ordered dithering 2x2. 
+                   Internal resolution 320x200. 
+                   Not working on real hardware (?), but running fine
+                   on emulators (DosBox-X).
+ * FDOOMMDA.EXE => FastDoom MDA 80x25 text mode. Internal resolution 80x50.
+                   Very quick'n'dirty, only Neo can play this mode properly.
  * FDSETUP.EXE  => Utility to setup controls and sound cards
 
  Command line parameters
