@@ -186,6 +186,7 @@
  -LPT3 => Forces LPT3 port for Disney Sound Source
  -disabledemo => Disables defered demos
  -debugPort => Shows FPS via the debug port (0x80)
+ -fixDAC => Fixes palette corruption with VGA cards
 
  Author
  ------
