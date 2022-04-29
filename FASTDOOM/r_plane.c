@@ -1070,11 +1070,11 @@ void R_DrawPlanesFlatSurfacesTextMDA(void)
 
             if (count >= 1 && odd || count == 0)
             {
-                vmem = *dest;
+                //vmem = *dest;
 
                 if (odd)
                 {
-                    vmem = vmem & 0x0F00;
+                    //vmem = vmem & 0x0F00;
                     //*dest = vmem | color << 12 | 223;
                     *dest = 0x0F << 8 | 0xDB;
 
@@ -1083,7 +1083,7 @@ void R_DrawPlanesFlatSurfacesTextMDA(void)
                 }
                 else
                 {
-                    vmem = vmem & 0xF000;
+                    //vmem = vmem & 0xF000;
                     //*dest = vmem | color << 8 | 223;
                     *dest = 0x0F << 8 | 0xDB;
                     continue;
@@ -1105,8 +1105,8 @@ void R_DrawPlanesFlatSurfacesTextMDA(void)
 
             if (count >= 0 && !odd)
             {
-                vmem = *dest;
-                vmem = vmem & 0xF000;
+                //vmem = *dest;
+                //vmem = vmem & 0xF000;
                 //*dest = vmem | color << 8 | 223;
                 *dest = 0x0F << 8 | 0xDB;
             }
