@@ -156,8 +156,9 @@ byte P_NotBlockThingsIterator(int x, int y, byte (*func)(mobj_t *));
 
 extern divline_t trace;
 
-void P_PathTraverseLI(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2, byte (*trav)(intercept_t *));
-void P_PathTraverseLITH(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2, byte (*trav)(intercept_t *));
+void P_PathTraverseLI(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2);
+void P_PathTraverseLITH(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2);
+void P_TraverseIntercepts(traverser_t func);
 
 void P_UnsetThingPosition(mobj_t *thing);
 void P_SetThingPosition(mobj_t *thing);
