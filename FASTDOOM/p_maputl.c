@@ -537,8 +537,6 @@ void P_TraverseIntercepts(traverser_t func)
 
     count = intercept_p - intercepts;
 
-    in = 0; // shut up compiler warning
-
     while (count--)
     {
         dist = MAXINT;
