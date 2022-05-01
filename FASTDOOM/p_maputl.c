@@ -405,7 +405,6 @@ intercept_t intercepts[MAXINTERCEPTS];
 intercept_t *intercept_p;
 
 divline_t trace;
-int earlyout;
 
 //
 // PIT_AddLineIntercepts.
@@ -449,13 +448,7 @@ byte PIT_AddLineIntercepts(line_t *ld)
 
     if (frac < 0)
         return 1; // behind source
-
-    // try to early out the check
-    if (earlyout && frac < FRACUNIT && !ld->backsector)
-    {
-        return 0; // stop checking
-    }
-
+    
     intercept_p->frac = frac;
     intercept_p->isaline = 1;
     intercept_p->d.line = ld;
@@ -589,8 +582,6 @@ void P_PathTraverse(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2, int flags, b
     int mapystep;
 
     int count;
-
-    earlyout = flags & PT_EARLYOUT;
 
     validcount++;
     intercept_p = intercepts;
