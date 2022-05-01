@@ -528,7 +528,7 @@ byte PIT_AddThingIntercepts(mobj_t *thing)
 // Returns true if the traverser function returns true
 // for all lines.
 //
-void P_TraverseIntercepts(traverser_t func, fixed_t maxfrac)
+void P_TraverseIntercepts(traverser_t func)
 {
     int count;
     fixed_t dist;
@@ -551,7 +551,7 @@ void P_TraverseIntercepts(traverser_t func, fixed_t maxfrac)
             }
         }
 
-        if (dist > maxfrac || !func(in))
+        if (dist > FRACUNIT || !func(in))
             return; // checked everything in range, don't bother going farther
 
         in->frac = MAXINT;
@@ -701,6 +701,6 @@ void P_PathTraverse(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2, int flags, b
         }
     }
     // go through the sorted list
-    P_TraverseIntercepts(trav, FRACUNIT);
+    P_TraverseIntercepts(trav);
     return;
 }
