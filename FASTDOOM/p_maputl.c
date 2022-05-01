@@ -524,15 +524,14 @@ byte PIT_AddThingIntercepts(mobj_t *thing)
 void P_TraverseIntercepts(traverser_t func)
 {
     int count;
-    fixed_t dist;
-    intercept_t *scan;
-    intercept_t *in;
-
     count = intercept_p - intercepts;
 
     while (count--)
     {
-        dist = MAXINT;
+        fixed_t dist = MAXINT;
+        intercept_t *scan;
+        intercept_t *in;
+
         for (scan = intercepts; scan < intercept_p; scan++)
         {
             if (scan->frac < dist)
@@ -558,7 +557,7 @@ void P_TraverseIntercepts(traverser_t func)
 // Returns true if the traverser function returns true
 // for all lines.
 //
-void P_PathTraverseLI(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2, byte (*trav)(intercept_t *))
+void P_PathTraverseLI(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2)
 {
     fixed_t xt1;
     fixed_t yt1;
@@ -689,12 +688,10 @@ void P_PathTraverseLI(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2, byte (*tra
             mapy += mapystep;
         }
     }
-    // go through the sorted list
-    P_TraverseIntercepts(trav);
     return;
 }
 
-void P_PathTraverseLITH(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2, byte (*trav)(intercept_t *))
+void P_PathTraverseLITH(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2)
 {
     fixed_t xt1;
     fixed_t yt1;
@@ -825,7 +822,5 @@ void P_PathTraverseLITH(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2, byte (*t
             mapy += mapystep;
         }
     }
-    // go through the sorted list
-    P_TraverseIntercepts(trav);
     return;
 }
