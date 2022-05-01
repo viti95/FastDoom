@@ -653,12 +653,12 @@ retry:
 
     bestslidefrac = FRACUNIT + 1;
 
-    P_PathTraverse(leadx, leady, leadx + mo->momx, leady + mo->momy,
-                   PT_ADDLINES, PTR_SlideTraverse);
-    P_PathTraverse(trailx, leady, trailx + mo->momx, leady + mo->momy,
-                   PT_ADDLINES, PTR_SlideTraverse);
-    P_PathTraverse(leadx, traily, leadx + mo->momx, traily + mo->momy,
-                   PT_ADDLINES, PTR_SlideTraverse);
+    P_PathTraverseLI(leadx, leady, leadx + mo->momx, leady + mo->momy,
+                   PTR_SlideTraverse);
+    P_PathTraverseLI(trailx, leady, trailx + mo->momx, leady + mo->momy,
+                   PTR_SlideTraverse);
+    P_PathTraverseLI(leadx, traily, leadx + mo->momx, traily + mo->momy,
+                   PTR_SlideTraverse);
 
     // move up to the wall
     if (bestslidefrac == FRACUNIT + 1)
@@ -1061,9 +1061,8 @@ P_AimLineAttack(mobj_t *t1,
     attackrange = distance;
     linetarget = NULL;
 
-    P_PathTraverse(t1->x, t1->y,
+    P_PathTraverseLITH(t1->x, t1->y,
                    x2, y2,
-                   PT_ADDLINES | PT_ADDTHINGS,
                    PTR_AimTraverse);
 
     if (linetarget)
@@ -1110,9 +1109,8 @@ void P_LineAttack(mobj_t *t1,
     attackrange = distance;
     aimslope = slope;
 
-    P_PathTraverse(t1->x, t1->y,
+    P_PathTraverseLITH(t1->x, t1->y,
                    x2, y2,
-                   PT_ADDLINES | PT_ADDTHINGS,
                    PTR_ShootTraverse);
 }
 
@@ -1168,7 +1166,7 @@ void P_UseLines(player_t *player)
     x2 = x1 + (USERANGE >> FRACBITS) * finecosine[angle];
     y2 = y1 + (USERANGE >> FRACBITS) * finesine[angle];
 
-    P_PathTraverse(x1, y1, x2, y2, PT_ADDLINES, PTR_UseTraverse);
+    P_PathTraverseLI(x1, y1, x2, y2, PTR_UseTraverse);
 }
 
 //

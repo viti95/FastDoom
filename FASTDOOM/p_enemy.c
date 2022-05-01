@@ -631,8 +631,6 @@ seeyou:
 //
 void A_Chase(mobj_t *actor)
 {
-    int delta;
-
     actor->reactiontime -= actor->reactiontime != 0;
 
     // modify target threshold
@@ -649,6 +647,8 @@ void A_Chase(mobj_t *actor)
     // turn towards movement direction if not there yet
     if (actor->movedir < 8)
     {
+        int delta;
+        
         actor->angle &= (7 << 29);
         delta = actor->angle - (((int)actor->movedir) << 29);
 
