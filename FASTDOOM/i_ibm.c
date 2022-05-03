@@ -1261,9 +1261,10 @@ void I_UpdateBox(int x, int y, int w, int h)
     byte *dest;
     byte *source;
     int i;
+    int offset = Mul320(y) + x;
 
-    dest = destscreen + Mul320(y) + x;
-    source = screen0 + Mul320(y) + x;
+    dest = destscreen + offset;
+    source = screen0 + offset;
 
     for (i = y; i < y + h; i++)
     {
