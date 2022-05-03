@@ -12,7 +12,6 @@
 #if (EXE_DEBUG_ENABLED == 1)
 unsigned short *Scrn = (unsigned short *)0xB0000;
 int Curx, Cury = 0;
-unsigned short EmptySpace = COLOURS << 8 | 0x20;
 
 void I_Putchar(byte c);
 
