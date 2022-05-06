@@ -1096,10 +1096,6 @@ R_PointInSubsector(fixed_t x,
     fixed_t left;
     fixed_t right;
 
-    // single subsector is a special case
-    if (!numnodes)
-        return subsectors;
-
     nodenum = firstnode;
 
     while (!(nodenum & NF_SUBSECTOR))

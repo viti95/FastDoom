@@ -56,7 +56,6 @@ sector_t *sectors;
 int numsubsectors;
 subsector_t *subsectors;
 
-int numnodes;
 int firstnode;
 node_t *nodes;
 
@@ -241,6 +240,7 @@ void P_LoadNodes(int lump)
     int k;
     mapnode_t *mn;
     node_t *no;
+    int numnodes;
 
     numnodes = W_LumpLength(lump) / sizeof(mapnode_t);
     firstnode = numnodes - 1;

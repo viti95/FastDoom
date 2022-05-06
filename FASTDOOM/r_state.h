@@ -74,7 +74,6 @@ extern sector_t *sectors;
 
 extern subsector_t *subsectors;
 
-extern int numnodes;
 extern int firstnode;
 extern node_t *nodes;
 
