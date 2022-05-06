@@ -47,7 +47,6 @@ void P_SpawnMapThing(mapthing_t *mthing);
 int numvertexes;
 vertex_t *vertexes;
 
-int numsegs;
 seg_t *segs;
 
 int numsectors;
@@ -140,6 +139,7 @@ void P_LoadSegs(int lump)
     line_t *ldef;
     int linedef;
     int side;
+    int numsegs;
 
     numsegs = W_LumpLength(lump) / sizeof(mapseg_t);
     segs = Z_MallocUnowned(numsegs * sizeof(seg_t), PU_LEVEL);
