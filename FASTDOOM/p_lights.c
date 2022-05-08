@@ -226,7 +226,8 @@ void EV_TurnTagLightsOff(line_t *line)
     for (j = -1; (j = P_FindSectorFromLineTag(line, j)) >= 0;)
     {
         sector_t *sector = sectors + j, *tsec;
-        int i, min = sector->lightlevel;
+        short i; 
+        short min = sector->lightlevel;
         // find min neighbor light level
         for (i = 0; i < sector->linecount; i++)
             if ((tsec = getNextSector(sector->lines[i], sector)) && tsec->lightlevel < min)
@@ -247,7 +248,8 @@ void EV_LightTurnOn(line_t *line, int bright)
     for (i = -1; (i = P_FindSectorFromLineTag(line, i)) >= 0;)
     {
         sector_t *temp, *sector = sectors + i;
-        int j, tbright = bright; //jff 5/17/98 search for maximum PER sector
+        short j; 
+        int tbright = bright; //jff 5/17/98 search for maximum PER sector
 
         // bright = 0 means to search for highest light level surrounding sector
 

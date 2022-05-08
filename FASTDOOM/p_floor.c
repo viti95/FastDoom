@@ -220,7 +220,7 @@ int EV_DoFloor(line_t *line,
 {
 	int secnum;
 	int rtn;
-	int i;
+	short i;
 	sector_t *sec;
 	floormove_t *floor;
 

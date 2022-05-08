@@ -89,7 +89,7 @@ typedef struct
     int nexttag,firsttag;  // killough 1/30/98: improves searches for tags.
 
     // 0 = untraversed, 1,2 = sndlines -1
-    int soundtraversed;
+    byte soundtraversed;
 
     // thing that made a sound (or null)
     mobj_t *soundtarget;
@@ -109,7 +109,7 @@ typedef struct
     // thinker_t for reversable actions
     void *specialdata;
 
-    int linecount;
+    short linecount;
     struct line_s **lines; // [linecount] size
 
 } sector_t;

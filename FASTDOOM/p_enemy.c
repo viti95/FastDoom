@@ -78,10 +78,9 @@ void A_Fall(mobj_t *actor);
 
 mobj_t *soundtarget;
 
-void P_RecursiveSound(sector_t *sec,
-                      int soundblocks)
+void P_RecursiveSound(sector_t *sec, byte soundblocks)
 {
-    int i;
+    short i;
     line_t *check;
     sector_t *other;
 
@@ -126,8 +125,7 @@ void P_RecursiveSound(sector_t *sec,
 // If a monster yells at a player,
 // it will alert other monsters to the player.
 //
-void P_NoiseAlert(mobj_t *target,
-                  mobj_t *emmiter)
+void P_NoiseAlert(mobj_t *target, mobj_t *emmiter)
 {
     soundtarget = target;
     validcount++;

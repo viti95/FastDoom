@@ -237,7 +237,7 @@ getNextSector(line_t *line,
 //
 fixed_t P_FindLowestFloorSurrounding(sector_t *sec)
 {
-	int i;
+	short i;
 	line_t *check;
 	sector_t *other;
 	fixed_t floor = sec->floorheight;
@@ -262,7 +262,7 @@ fixed_t P_FindLowestFloorSurrounding(sector_t *sec)
 //
 fixed_t P_FindHighestFloorSurrounding(sector_t *sec)
 {
-	int i;
+	short i;
 	line_t *check;
 	sector_t *other;
 	fixed_t floor = -500 * FRACUNIT;
@@ -287,7 +287,7 @@ fixed_t P_FindHighestFloorSurrounding(sector_t *sec)
 fixed_t P_FindNextHighestFloor(sector_t *sec, int currentheight)
 {
 	sector_t *other;
-	int i;
+	short i;
 
 	for (i = 0; i < sec->linecount; i++)
 		if ((other = getNextSector(sec->lines[i], sec)) &&
@@ -310,7 +310,7 @@ fixed_t P_FindNextHighestFloor(sector_t *sec, int currentheight)
 fixed_t
 P_FindLowestCeilingSurrounding(sector_t *sec)
 {
-	int i;
+	short i;
 	line_t *check;
 	sector_t *other;
 	fixed_t height = MAXINT;
@@ -334,7 +334,7 @@ P_FindLowestCeilingSurrounding(sector_t *sec)
 //
 fixed_t P_FindHighestCeilingSurrounding(sector_t *sec)
 {
-	int i;
+	short i;
 	line_t *check;
 	sector_t *other;
 	fixed_t height = 0;
@@ -374,7 +374,7 @@ int P_FindSectorFromLineTag(line_t *line, int start)
 int P_FindMinSurroundingLight(sector_t *sector,
 							  int max)
 {
-	int i;
+	short i;
 	int min;
 	line_t *line;
 	sector_t *check;
@@ -1068,7 +1068,7 @@ int EV_DoDonut(line_t *line)
 	sector_t *s3;
 	int secnum;
 	int rtn;
-	int i;
+	short i;
 	floormove_t *floor;
 
 	secnum = -1;
