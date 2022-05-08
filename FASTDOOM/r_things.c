@@ -492,7 +492,6 @@ void R_ProjectSprite(mobj_t *thing)
         }
     }
     vis = vissprites + num_vissprite++;
-    vis->mobjflags = thing->flags;
 
 #if defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_T8086)
     vis->scale = xscale << 1;
@@ -632,7 +631,6 @@ void R_DrawPSprite(pspdef_t *psp)
 
     // store information in a vissprite
     vis = &avis;
-    vis->mobjflags = 0;
     vis->texturemid = (BASEYCENTER << FRACBITS) + FRACUNIT / 2 - (psp->sy - spritetopoffset[lump]);
     vis->x1 = x1 < 0 ? 0 : x1;
     vis->x2 = x2 > viewwidthlimit ? viewwidthlimit : x2;

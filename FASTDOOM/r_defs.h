@@ -329,8 +329,8 @@ typedef struct vissprite_s
     struct vissprite_s *prev;
     struct vissprite_s *next;
 
-    int x1;
-    int x2;
+    short x1;
+    short x2;
 
     // for line side calculation
     fixed_t gx;
@@ -349,13 +349,11 @@ typedef struct vissprite_s
     fixed_t xiscale;
 
     fixed_t texturemid;
-    int patch;
+    short patch;
 
     // for color translation and shadow draw,
     //  maxbright frames as well
     lighttable_t *colormap;
-
-    int mobjflags;
 
 } vissprite_t;
 
@@ -408,8 +406,8 @@ typedef struct
     fixed_t height;
     int picnum;
     int lightlevel;
-    int minx;
-    int maxx;
+    short minx;
+    short maxx;
     byte modified;
 
     // leave pads for [minx-1]/[maxx+1]
