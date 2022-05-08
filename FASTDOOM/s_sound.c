@@ -86,7 +86,7 @@ int snd_clipping = S_CLIPPING_DIST;
 // Internals.
 //
 int S_getChannel(void *origin, sfxinfo_t *sfxinfo);
-int S_AdjustSoundParams(mobj_t *listener, mobj_t *source, int *vol, int *sep);
+byte S_AdjustSoundParams(mobj_t *listener, mobj_t *source, int *vol, int *sep);
 void S_StopChannel(int cnum);
 
 void S_SetMusicVolume(int volume)
@@ -174,7 +174,7 @@ void S_StopChannel(int cnum)
 // If the sound is not audible, returns a 0.
 // Otherwise, modifies parameters and returns 1.
 //
-int S_AdjustSoundParams(mobj_t *listener,
+byte S_AdjustSoundParams(mobj_t *listener,
                         mobj_t *source,
                         int *vol,
                         int *sep)
@@ -196,7 +196,22 @@ int S_AdjustSoundParams(mobj_t *listener,
 
     if (approx_dist > snd_clipping)
     {
-        return 0;
+        return 1; // Non audible
+    }
+
+    // volume calculation
+    if (approx_dist < S_CLOSE_DIST)
+    {
+        *vol = snd_SfxVolume;
+    }
+    else
+    {
+        // distance effect
+        *vol = Div1000(snd_SfxVolume * ((snd_clipping - approx_dist) >> FRACBITS));
+    }
+
+    if (*vol == 0){
+        return 1; // Non audible
     }
 
     if (monoSound)
@@ -219,18 +234,7 @@ int S_AdjustSoundParams(mobj_t *listener,
         *sep = 128 - (((optSine << 6) + (optSine << 5)) >> FRACBITS);
     }
 
-    // volume calculation
-    if (approx_dist < S_CLOSE_DIST)
-    {
-        *vol = snd_SfxVolume;
-    }
-    else
-    {
-        // distance effect
-        *vol = Div1000(snd_SfxVolume * ((snd_clipping - approx_dist) >> FRACBITS));
-    }
-
-    return *vol;
+    return 0; // Audible
 }
 
 void S_SetSfxVolume(int volume)
@@ -330,8 +334,6 @@ int S_getChannel(void *origin, sfxinfo_t *sfxinfo)
 
 void S_StartSound(mobj_t *origin, byte sfx_id)
 {
-
-    int rc;
     int sep;
     sfxinfo_t *sfx;
     int cnum;
@@ -346,10 +348,11 @@ void S_StartSound(mobj_t *origin, byte sfx_id)
     //  and if not, modify the params
     if (origin && origin != players.mo)
     {
-        rc = S_AdjustSoundParams(players.mo, origin, &volume, &sep);
+        byte rc = S_AdjustSoundParams(players.mo, origin, &volume, &sep);
 
-        if (!rc)
+        if (rc){
             return;
+        }
 
         if (origin->x == players.mo->x && origin->y == players.mo->y)
         {
@@ -398,7 +401,6 @@ void S_StartSound(mobj_t *origin, byte sfx_id)
 //
 void S_UpdateSounds(mobj_t *listener)
 {
-    int audible;
     int cnum;
     int volume;
     int sep;
@@ -421,10 +423,11 @@ void S_UpdateSounds(mobj_t *listener)
                 //  or modify their params
                 if (c->origin && listener != c->origin)
                 {
-                    audible = S_AdjustSoundParams(listener, c->origin, &volume, &sep);
+                    byte audible = S_AdjustSoundParams(listener, c->origin, &volume, &sep);
 
-                    if (!audible)
+                    if (audible){
                         S_StopChannel(cnum);
+                    }
                     else
                         SFX_SetOrigin(c->handle, sep, volume);
                 }
