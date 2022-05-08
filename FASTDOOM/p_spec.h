@@ -174,7 +174,7 @@ typedef enum
 typedef struct
 {
     line_t *line;
-    bwhere_e where;
+    byte where;
     int btexture;
     int btimer;
     mobj_t *soundorg;

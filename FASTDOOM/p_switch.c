@@ -125,10 +125,7 @@ void P_InitSwitchList(void)
 //
 // Start a button counting down till it turns off.
 //
-void P_StartButton(line_t *line,
-				   bwhere_e w,
-				   int texture,
-				   int time)
+void P_StartButton(line_t *line, byte w, int texture)
 {
 	int i;
 
@@ -148,7 +145,7 @@ void P_StartButton(line_t *line,
 			buttonlist[i].line = line;
 			buttonlist[i].where = w;
 			buttonlist[i].btexture = texture;
-			buttonlist[i].btimer = time;
+			buttonlist[i].btimer = BUTTONTIME;
 			buttonlist[i].soundorg = (mobj_t *)&line->frontsector->soundorg;
 			return;
 		}
@@ -186,7 +183,7 @@ void P_ChangeSwitchTexture(line_t *line,
 			sides[line->sidenum[0]].toptexture = switchlist[i ^ 1];
 
 			if (useAgain)
-				P_StartButton(line, top, switchlist[i], BUTTONTIME);
+				P_StartButton(line, top, switchlist[i]);
 
 			return;
 		}
@@ -198,7 +195,7 @@ void P_ChangeSwitchTexture(line_t *line,
 				sides[line->sidenum[0]].midtexture = switchlist[i ^ 1];
 
 				if (useAgain)
-					P_StartButton(line, middle, switchlist[i], BUTTONTIME);
+					P_StartButton(line, middle, switchlist[i]);
 
 				return;
 			}
@@ -210,7 +207,7 @@ void P_ChangeSwitchTexture(line_t *line,
 					sides[line->sidenum[0]].bottomtexture = switchlist[i ^ 1];
 
 					if (useAgain)
-						P_StartButton(line, bottom, switchlist[i], BUTTONTIME);
+						P_StartButton(line, bottom, switchlist[i]);
 
 					return;
 				}

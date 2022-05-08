@@ -81,7 +81,7 @@ void G_DoVictory(void);
 void G_DoWorldDone(void);
 void G_DoSaveGame(void);
 
-gameaction_t gameaction;
+byte gameaction;
 gamestate_t gamestate;
 skill_t gameskill;
 boolean respawnmonsters;

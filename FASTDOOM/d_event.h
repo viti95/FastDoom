@@ -35,7 +35,7 @@ typedef enum
 // Event structure.
 typedef struct
 {
-    evtype_t type;
+    byte type;
     int data1; // keys / mouse buttons
     int data2; // mouse x move
     int data3; // mouse y move
@@ -93,6 +93,6 @@ typedef enum
 #define MAXEVENTS 64
 
 extern event_t events[MAXEVENTS];
-extern gameaction_t gameaction;
+extern byte gameaction;
 
 #endif
