@@ -156,8 +156,7 @@ void P_StartButton(line_t *line, byte w, int texture)
 // Function that changes wall texture.
 // Tell it if switch is ok to use again (1=yes, it's a button).
 //
-void P_ChangeSwitchTexture(line_t *line,
-						   int useAgain)
+void P_ChangeSwitchTexture(line_t *line, byte useAgain)
 {
 	int texTop;
 	int texMid;
