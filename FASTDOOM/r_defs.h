@@ -173,7 +173,7 @@ typedef struct line_s
     fixed_t bbox[4];
 
     // To aid move clipping.
-    slopetype_t slopetype;
+    byte slopetype;
 
     // Front and back sector.
     // Note: redundant? Can be retrieved from SideDefs.
