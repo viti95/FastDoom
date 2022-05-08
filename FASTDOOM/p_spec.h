@@ -184,8 +184,8 @@ typedef struct
 // max # of wall switches in a level
 #define MAXSWITCHES 50
 
-// 4 players, 4 buttons each at once, max.
-#define MAXBUTTONS 16
+// 1 player, 4 buttons each at once, max.
+#define MAXBUTTONS 4
 
 // 1 second, in ticks.
 #define BUTTONTIME 35
