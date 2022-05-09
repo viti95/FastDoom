@@ -58,7 +58,7 @@ extern int numlumps;
 
 void W_InitMultipleFiles(char **filenames);
 
-int W_GetNumForName(char *name);
+short W_GetNumForName(char *name);
 
 #define W_LumpLength(lump) lumpinfo[lump].size
 

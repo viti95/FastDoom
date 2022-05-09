@@ -87,7 +87,7 @@ typedef struct
     // for the internal origin of the patch.
     int originx;
     int originy;
-    int patch;
+    short patch;
 } texpatch_t;
 
 // A maptexturedef_t describes a rectangular texture,
@@ -102,7 +102,7 @@ struct texture_t
     short width;
     short height;
     // Index in textures list
-    int index;
+    short index;
     // Next in hash table chain
     texture_t *next;
     // All the patches[patchcount]
@@ -119,7 +119,7 @@ int firstspritelump;
 int lastspritelump;
 int numspritelumps;
 
-int numtextures;
+short numtextures;
 texture_t **textures;
 texture_t **textures_hashtable;
 
@@ -332,7 +332,7 @@ void R_GenerateLookup(int texnum)
 void GenerateTextureHashTable(void)
 {
     texture_t **rover;
-    int i;
+    short i;
     int key;
 
     textures_hashtable = Z_MallocUnowned(sizeof(texture_t *) * numtextures, PU_STATIC);
@@ -392,15 +392,15 @@ void R_InitTextures(void)
     char *names;
     char *name_p;
 
-    int *patchlookup;
+    short *patchlookup;
 
     int totalwidth;
     int nummappatches;
     int offset;
     int maxoff;
     int maxoff2;
-    int numtextures1;
-    int numtextures2;
+    short numtextures1;
+    short numtextures2;
 
     int *directory;
 
@@ -615,9 +615,9 @@ void R_InitData(void)
 // R_FlatNumForName
 // Retrieval, get a flat number for a flat name.
 //
-int R_FlatNumForName(char *name)
+short R_FlatNumForName(char *name)
 {
-    int i;
+    short i;
 
     i = W_GetNumForName(name);
     return i - firstflat;
@@ -628,7 +628,7 @@ int R_FlatNumForName(char *name)
 // Check whether texture is available.
 // Filter out NoTexture indicator.
 //
-int R_TextureNumForName(char *name)
+short R_TextureNumForName(char *name)
 {
     texture_t *texture;
     int key;

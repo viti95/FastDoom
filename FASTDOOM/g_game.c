@@ -967,7 +967,7 @@ void G_DoNewGame(void)
 }
 
 // The sky texture to be used instead of the F_SKY1 dummy.
-extern int skytexture;
+extern short skytexture;
 
 void G_InitNew(skill_t skill,
                int episode,

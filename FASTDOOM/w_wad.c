@@ -216,7 +216,7 @@ unsigned int W_LumpNameHash(char *s)
 // Returns -1 if name not found.
 //
 
-int W_GetNumForName(char *name)
+short W_GetNumForName(char *name)
 {
     int i;
     int hash;

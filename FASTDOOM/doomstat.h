@@ -227,7 +227,7 @@ extern boolean singletics;
 // Needed to store the number of the dummy sky flat.
 // Used for rendering,
 //  as well as tracking projectiles etc.
-extern int skyflatnum;
+extern short skyflatnum;
 
 extern ticcmd_t localcmds[BACKUPTICS];
 

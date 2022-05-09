@@ -30,8 +30,8 @@
 //
 // sky mapping
 //
-int skyflatnum;
-int skytexture;
+short skyflatnum;
+short skytexture;
 
 //
 // R_InitSkyMap

@@ -54,11 +54,11 @@
 typedef struct
 {
 	byte istexture;
-	int picnum;
-	int basepic;
-	int numpics;
-	int lastpic;	// basepics + numpics
-	int currentpic; // store last animation pic
+	short picnum;
+	short basepic;
+	short numpics;
+	short lastpic;	// basepics + numpics
+	short currentpic; // store last animation pic
 } anim_t;
 
 //

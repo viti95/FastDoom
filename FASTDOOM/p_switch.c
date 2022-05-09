@@ -84,7 +84,7 @@ static const switchlist_t alphSwitchList[] =
 
 		{"\0", "\0", 0}};
 
-int switchlist[MAXSWITCHES * 2];
+short switchlist[MAXSWITCHES * 2];
 int numswitches;
 button_t buttonlist[MAXBUTTONS];
 
@@ -125,7 +125,7 @@ void P_InitSwitchList(void)
 //
 // Start a button counting down till it turns off.
 //
-void P_StartButton(line_t *line, byte w, int texture)
+void P_StartButton(line_t *line, byte w, short texture)
 {
 	int i;
 
