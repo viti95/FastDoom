@@ -41,7 +41,7 @@ lumpinfo_t *lumpinfo;
 int numlumps;
 
 // Hash table for fast lookups
-int lumphash[HASHTABLESIZE];
+short lumphash[HASHTABLESIZE];
 
 void **lumpcache;
 
@@ -218,10 +218,10 @@ unsigned int W_LumpNameHash(char *s)
 
 short W_GetNumForName(char *name)
 {
-    int i;
-    int hash;
+    short i;
+    short hash;
 
-    hash = W_LumpNameHash(name) & (int)(HASHTABLESIZE - 1);
+    hash = W_LumpNameHash(name) & (short)(HASHTABLESIZE - 1);
 
     for (i = lumphash[hash]; i != -1; i = lumpinfo[i].next)
     {
@@ -295,7 +295,7 @@ void W_GenerateHashTable(void)
     // Generate hash table
     if (numlumps > 0)
     {
-        SetDWords(lumphash, -1, HASHTABLESIZE);
+        SetWords(lumphash, -1, HASHTABLESIZE);
 
         for (i = 0; i < numlumps; ++i)
         {
