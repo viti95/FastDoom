@@ -59,6 +59,11 @@ int viewwindowx;
 int viewwindowy;
 #endif
 
+#if defined(MODE_13H) || defined(MODE_VBE2)
+int endscreen;
+int startscreen;
+#endif
+
 int columnofs[SCREENWIDTH];
 
 #if defined(USE_BACKBUFFER)
@@ -2981,6 +2986,10 @@ void R_InitBuffer(int width, int height)
 
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     viewwindowx = (SCREENWIDTH - width) >> 1;
+
+    #if defined(MODE_13H) || defined(MODE_VBE2)
+    startscreen = Mul320(viewwindowy) + viewwindowx;
+    #endif
 #endif
 
     // Column offset. For windows.
@@ -2990,9 +2999,23 @@ void R_InitBuffer(int width, int height)
 // Same with base row offset.
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     if (width == SCREENWIDTH)
+    {
         viewwindowy = 0;
+
+        #if defined(MODE_13H) || defined(MODE_VBE2)
+        startscreen = viewwindowx;
+        endscreen = Mul320(viewheight);
+        #endif
+    }
     else
+    {
         viewwindowy = (SCREENHEIGHT - SBARHEIGHT - height) >> 1;
+
+        #if defined(MODE_13H) || defined(MODE_VBE2)
+        startscreen = Mul320(viewwindowy) + viewwindowx;
+        endscreen = Mul320(viewwindowy + viewheight);
+        #endif
+    }
 #endif
 
 #if defined(USE_BACKBUFFER)

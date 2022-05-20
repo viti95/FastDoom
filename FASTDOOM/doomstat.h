@@ -158,6 +158,11 @@ extern int viewwidthlimit;
 extern int automapheight;
 extern int scaledviewwidth;
 
+#if defined(MODE_13H) || defined(MODE_VBE2)
+extern int endscreen;
+extern int startscreen;
+#endif
+
 // -------------------------------------
 // Scores, rating.
 // Statistics on a given map, for intermission.

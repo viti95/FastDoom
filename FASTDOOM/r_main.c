@@ -719,6 +719,10 @@ void R_ExecuteSetViewSize(void)
         viewheight32 = viewheight << 16 | viewheight;
         automapheight = SCREENHEIGHT - 32;
     }
+
+    #if defined(MODE_13H) || defined(MODE_VBE2)
+    endscreen = Mul320(viewwindowy + viewheight);
+    #endif
 #endif
 
 #ifdef MODE_Y

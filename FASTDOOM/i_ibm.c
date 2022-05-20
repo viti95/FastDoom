@@ -2343,7 +2343,7 @@ void I_FinishUpdate(void)
         if (updatestate & I_MESSAGES && screenblocks > 7)
         {
             int i;
-            for (i = 0; i < Mul320(viewwindowy + viewheight); i += SCREENWIDTH)
+            for (i = 0; i < endscreen; i += SCREENWIDTH)
             {
                 CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
             }
@@ -2352,7 +2352,7 @@ void I_FinishUpdate(void)
         else
         {
             int i;
-            for (i = Mul320(viewwindowy) + viewwindowx; i < Mul320(viewwindowy + viewheight); i += SCREENWIDTH)
+            for (i = startscreen; i < endscreen; i += SCREENWIDTH)
             {
                 CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
             }
