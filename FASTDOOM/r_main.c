@@ -71,8 +71,6 @@ angle_t viewangle;
 fixed_t viewcos;
 fixed_t viewsin;
 
-player_t *viewplayer;
-
 // 0 = high, 1 = low
 int detailshift;
 
@@ -1159,24 +1157,23 @@ R_PointInSubsector(fixed_t x,
 //
 // R_SetupFrame
 //
-void R_SetupFrame(player_t *player)
+void R_SetupFrame(void)
 {
     int i;
 
-    viewplayer = player;
-    viewx = player->mo->x;
-    viewy = player->mo->y;
-    viewangle = player->mo->angle;
-    extralight = player->extralight;
+    viewx = (players.mo)->x;
+    viewy = (players.mo)->y;
+    viewangle = (players.mo)->angle;
+    extralight = players.extralight;
 
-    viewz = player->viewz;
+    viewz = players.viewz;
 
     viewsin = finesine[viewangle >> ANGLETOFINESHIFT];
     viewcos = finecosine[viewangle >> ANGLETOFINESHIFT];
 
-    if (player->fixedcolormap)
+    if (players.fixedcolormap)
     {
-        fixedcolormap = colormaps + player->fixedcolormap * 256 * sizeof(lighttable_t);
+        fixedcolormap = colormaps + players.fixedcolormap * 256 * sizeof(lighttable_t);
 
         walllights = scalelightfixed;
 
@@ -1200,9 +1197,9 @@ void R_SetupFrame(player_t *player)
 //
 // R_RenderView
 //
-void R_RenderPlayerView(player_t *player)
+void R_RenderPlayerView(void)
 {
-    R_SetupFrame(player);
+    R_SetupFrame();
 
     // Clear buffers.
     R_ClearClipSegs();

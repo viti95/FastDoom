@@ -249,7 +249,7 @@ void D_Display(void)
         if (automapactive)
         {
             // [crispy] update automap while playing
-            R_RenderPlayerView(&players);
+            R_RenderPlayerView();
             AM_Drawer();
 #if defined(USE_BACKBUFFER)
             updatestate |= I_FULLVIEW;
@@ -308,7 +308,7 @@ void D_Display(void)
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
         if (!automapactive)
 #endif
-            R_RenderPlayerView(&players);
+            R_RenderPlayerView();
 
         HU_Drawer();
 #if defined(USE_BACKBUFFER)

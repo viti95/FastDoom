@@ -53,7 +53,6 @@
 #define HU_INPUTWIDTH 64
 #define HU_INPUTHEIGHT 1
 
-static player_t *plr;
 patch_t *hu_font[HU_FONTSIZE];
 static hu_textline_t w_title;
 static hu_textline_t w_fps;
@@ -261,7 +260,6 @@ void HU_Start(void)
     int i;
     char const *s;
 
-    plr = &players;
     message_on = 0;
     message_dontfuckwithme = 0;
     message_nottobefuckedwith = 0;
@@ -386,10 +384,10 @@ void HU_Ticker(void)
     {
 
         // display message if necessary
-        if ((plr->message && !message_nottobefuckedwith) || (plr->message && message_dontfuckwithme))
+        if ((players.message && !message_nottobefuckedwith) || (players.message && message_dontfuckwithme))
         {
-            HUlib_addMessageToSText(&w_message, 0, plr->message);
-            plr->message = 0;
+            HUlib_addMessageToSText(&w_message, 0, players.message);
+            players.message = 0;
             message_on = 1;
             message_counter = HU_MSGTIMEOUT;
             message_nottobefuckedwith = message_dontfuckwithme;

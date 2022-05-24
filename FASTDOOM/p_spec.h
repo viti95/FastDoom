@@ -42,7 +42,7 @@ void P_ShootSpecialLine(mobj_t *thing,
 
 void P_CrossSpecialLine(int linenum, byte side, mobj_t *thing);
 
-void P_PlayerInSpecialSector(player_t *player);
+void P_PlayerInSpecialSector(void);
 
 int twoSided(int sector,
              int line);

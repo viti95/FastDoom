@@ -583,7 +583,7 @@ void P_SpawnPlayer(mapthing_t *mthing)
     p->viewheight = VIEWHEIGHT;
 
     // setup gun psprite
-    P_SetupPsprites(p);
+    P_SetupPsprites();
 
     if (mthing->type - 1 == 0)
     {

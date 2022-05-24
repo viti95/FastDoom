@@ -661,7 +661,7 @@ void R_DrawPSprite(pspdef_t *psp)
 
     vis->patch = lump;
 
-    if (viewplayer->powers[pw_invisibility] > 4 * 32 || viewplayer->powers[pw_invisibility] & 8)
+    if (players.powers[pw_invisibility] > 4 * 32 || players.powers[pw_invisibility] & 8)
     {
         // shadow draw
         vis->colormap = NULL;
@@ -695,7 +695,7 @@ void R_DrawPlayerSprites(void)
     pspdef_t *psp;
 
     // get light level
-    lightnum = (viewplayer->mo->subsector->sector->lightlevel >> LIGHTSEGSHIFT) + extralight;
+    lightnum = (players.mo->subsector->sector->lightlevel >> LIGHTSEGSHIFT) + extralight;
 
     if (lightnum < 0)
         spritelights = scalelight[0];
@@ -709,7 +709,7 @@ void R_DrawPlayerSprites(void)
     mceilingclip = negonearray;
 
     // add all active psprites
-    psp = viewplayer->psprites;
+    psp = players.psprites;
 
     if (psp->state)
         R_DrawPSprite(psp);

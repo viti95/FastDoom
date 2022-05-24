@@ -928,14 +928,14 @@ void P_InitTagLists(void)
 // Called every tic frame
 //  that the player origin is in a special sector
 //
-void P_PlayerInSpecialSector(player_t *player)
+void P_PlayerInSpecialSector(void)
 {
 	sector_t *sector;
 
-	sector = player->mo->subsector->sector;
+	sector = players.mo->subsector->sector;
 
 	// Falling, not all the way down yet?
-	if (player->mo->z != sector->floorheight)
+	if (players.mo->z != sector->floorheight)
 		return;
 
 	// Has hitten ground.
@@ -943,43 +943,43 @@ void P_PlayerInSpecialSector(player_t *player)
 	{
 	case 5:
 		// HELLSLIME DAMAGE
-		if (!player->powers[pw_ironfeet])
+		if (!players.powers[pw_ironfeet])
 			if (!(leveltime & 0x1f))
-				P_DamageMobj(player->mo, NULL, NULL, 10);
+				P_DamageMobj(players.mo, NULL, NULL, 10);
 		break;
 
 	case 7:
 		// NUKAGE DAMAGE
-		if (!player->powers[pw_ironfeet])
+		if (!players.powers[pw_ironfeet])
 			if (!(leveltime & 0x1f))
-				P_DamageMobj(player->mo, NULL, NULL, 5);
+				P_DamageMobj(players.mo, NULL, NULL, 5);
 		break;
 
 	case 16:
 		// SUPER HELLSLIME DAMAGE
 	case 4:
 		// STROBE HURT
-		if (!player->powers[pw_ironfeet] || (P_Random < 5))
+		if (!players.powers[pw_ironfeet] || (P_Random < 5))
 		{
 			if (!(leveltime & 0x1f))
-				P_DamageMobj(player->mo, NULL, NULL, 20);
+				P_DamageMobj(players.mo, NULL, NULL, 20);
 		}
 		break;
 
 	case 9:
 		// SECRET SECTOR
-		player->secretcount++;
+		players.secretcount++;
 		sector->special = 0;
 		break;
 
 	case 11:
 		// EXIT SUPER DAMAGE! (for E1M8 finale)
-		player->cheats &= ~CF_GODMODE;
+		players.cheats &= ~CF_GODMODE;
 
 		if (!(leveltime & 0x1f))
-			P_DamageMobj(player->mo, NULL, NULL, 20);
+			P_DamageMobj(players.mo, NULL, NULL, 20);
 
-		if (player->health <= 10)
+		if (players.health <= 10)
 			G_ExitLevel();
 		break;
 	};

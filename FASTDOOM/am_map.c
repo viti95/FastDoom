@@ -214,8 +214,6 @@ static fixed_t scale_mtof = INITSCALEMTOF;
 // used by FTOM to scale from frame-buffer-to-map coords (=1/scale_mtof)
 static fixed_t scale_ftom;
 
-static player_t *plr; // the player represented by an arrow
-
 static byte followplayer = 1; // specifies whether to follow the player around
 
 static unsigned char cheat_amap_seq[] = {'i', 'd', 'd', 't', 0xff};
@@ -266,8 +264,8 @@ void AM_restoreScaleAndLoc(void)
 	}
 	else
 	{
-		m_x = plr->mo->x - m_w / 2;
-		m_y = plr->mo->y - m_h / 2;
+		m_x = players.mo->x - m_w / 2;
+		m_y = players.mo->y - m_h / 2;
 	}
 	m_x2 = m_x + m_w;
 	m_y2 = m_y + m_h;
@@ -358,9 +356,8 @@ void AM_initVariables(void)
 	m_w = FTOM(SCREENWIDTH);
 	m_h = FTOM(automapheight);
 
-	plr = &players;
-	m_x = plr->mo->x - m_w / 2;
-	m_y = plr->mo->y - m_h / 2;
+	m_x = players.mo->x - m_w / 2;
+	m_y = players.mo->y - m_h / 2;
 	AM_changeWindowLoc();
 
 	// for saving & restoring
@@ -513,11 +510,11 @@ byte AM_Responder(event_t *ev)
 		case AM_FOLLOWKEY:
 			followplayer = !followplayer;
 			f_oldloc.x = MAXINT;
-			plr->message = followplayer ? AMSTR_FOLLOWON : AMSTR_FOLLOWOFF;
+			players.message = followplayer ? AMSTR_FOLLOWON : AMSTR_FOLLOWOFF;
 			break;
 		case AM_GRIDKEY:
 			grid = !grid;
-			plr->message = grid ? AMSTR_GRIDON : AMSTR_GRIDOFF;
+			players.message = grid ? AMSTR_GRIDON : AMSTR_GRIDOFF;
 			break;
 		default:
 			rc = 0;
@@ -587,14 +584,14 @@ void AM_changeWindowScale(void)
 void AM_doFollowPlayer(void)
 {
 
-	if (f_oldloc.x != plr->mo->x || f_oldloc.y != plr->mo->y)
+	if (f_oldloc.x != players.mo->x || f_oldloc.y != players.mo->y)
 	{
-		m_x = FTOM(MTOF(plr->mo->x)) - m_w / 2;
-		m_y = FTOM(MTOF(plr->mo->y)) - m_h / 2;
+		m_x = FTOM(MTOF(players.mo->x)) - m_w / 2;
+		m_y = FTOM(MTOF(players.mo->y)) - m_h / 2;
 		m_x2 = m_x + m_w;
 		m_y2 = m_y + m_h;
-		f_oldloc.x = plr->mo->x;
-		f_oldloc.y = plr->mo->y;
+		f_oldloc.x = players.mo->x;
+		f_oldloc.y = players.mo->y;
 	}
 }
 
@@ -943,7 +940,7 @@ void AM_drawWalls(void)
 				}
 			}
 		}
-		else if (plr->powers[pw_allmap])
+		else if (players.powers[pw_allmap])
 		{
 			if (!(lines[i].flags & LINE_NEVERSEE))
 				AM_drawMline(&l, GRAYS + 3);
@@ -1017,7 +1014,7 @@ void AM_drawLineCharacter(mline_t *lineguy,
 
 void AM_drawPlayers(void)
 {
-	AM_drawLineCharacter(player_arrow, NUMPLYRLINES, 0, plr->mo->angle, WHITE, plr->mo->x, plr->mo->y);
+	AM_drawLineCharacter(player_arrow, NUMPLYRLINES, 0, players.mo->angle, WHITE, players.mo->x, players.mo->y);
 }
 
 void AM_drawThings(int colors,

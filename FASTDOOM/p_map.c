@@ -1147,7 +1147,7 @@ byte PTR_UseTraverse(intercept_t *in)
 // P_UseLines
 // Looks for special lines in front of the player to activate.
 //
-void P_UseLines(player_t *player)
+void P_UseLines(void)
 {
     int angle;
     fixed_t x1;
@@ -1155,12 +1155,12 @@ void P_UseLines(player_t *player)
     fixed_t x2;
     fixed_t y2;
 
-    usething = player->mo;
+    usething = players.mo;
 
-    angle = player->mo->angle >> ANGLETOFINESHIFT;
+    angle = players.mo->angle >> ANGLETOFINESHIFT;
 
-    x1 = player->mo->x;
-    y1 = player->mo->y;
+    x1 = players.mo->x;
+    y1 = players.mo->y;
     x2 = x1 + (USERANGE >> FRACBITS) * finecosine[angle];
     y2 = y1 + (USERANGE >> FRACBITS) * finesine[angle];
 
