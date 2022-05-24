@@ -405,7 +405,7 @@ typedef struct
 {
     fixed_t height;
     int picnum;
-    int lightlevel;
+    short lightlevel;
     short minx;
     short maxx;
     byte modified;
