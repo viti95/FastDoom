@@ -242,9 +242,6 @@
 #define ST_MAPTITLEY 0
 #define ST_MAPHEIGHT 1
 
-// main player in game
-static player_t *plyr;
-
 // ST_Start() has just been called
 static byte st_firsttime;
 
@@ -456,48 +453,48 @@ void ST_Responder(event_t *ev)
 			// 'dqd' cheat for toggleable god mode
 			if (cht_CheckCheat(&cheat_god, ev->data1))
 			{
-				plyr->cheats ^= CF_GODMODE;
-				if (plyr->cheats & CF_GODMODE)
+				players.cheats ^= CF_GODMODE;
+				if (players.cheats & CF_GODMODE)
 				{
-					if (plyr->mo)
-						plyr->mo->health = 100;
+					if (players.mo)
+						players.mo->health = 100;
 
-					plyr->health = 100;
-					plyr->message = STSTR_DQDON;
+					players.health = 100;
+					players.message = STSTR_DQDON;
 				}
 				else
-					plyr->message = STSTR_DQDOFF;
+					players.message = STSTR_DQDOFF;
 			}
 			// 'fa' cheat for killer fucking arsenal
 			else if (cht_CheckCheat(&cheat_ammonokey, ev->data1))
 			{
-				plyr->armorpoints = 200;
-				plyr->armortype = 2;
+				players.armorpoints = 200;
+				players.armortype = 2;
 
 				for (i = 0; i < NUMWEAPONS; i++)
-					plyr->weaponowned[i] = true;
+					players.weaponowned[i] = true;
 
 				for (i = 0; i < NUMAMMO; i++)
-					plyr->ammo[i] = plyr->maxammo[i];
+					players.ammo[i] = players.maxammo[i];
 
-				plyr->message = STSTR_FAADDED;
+				players.message = STSTR_FAADDED;
 			}
 			// 'kfa' cheat for key full ammo
 			else if (cht_CheckCheat(&cheat_ammo, ev->data1))
 			{
-				plyr->armorpoints = 200;
-				plyr->armortype = 2;
+				players.armorpoints = 200;
+				players.armortype = 2;
 
 				for (i = 0; i < NUMWEAPONS; i++)
-					plyr->weaponowned[i] = true;
+					players.weaponowned[i] = true;
 
 				for (i = 0; i < NUMAMMO; i++)
-					plyr->ammo[i] = plyr->maxammo[i];
+					players.ammo[i] = players.maxammo[i];
 
 				for (i = 0; i < NUMCARDS; i++)
-					plyr->cards[i] = true;
+					players.cards[i] = true;
 
-				plyr->message = STSTR_KFAADDED;
+				players.message = STSTR_KFAADDED;
 			}
 			// 'mus' cheat for changing music
 			else if (cht_CheckCheat(&cheat_mus, ev->data1))
@@ -506,7 +503,7 @@ void ST_Responder(event_t *ev)
 				char buf[3];
 				int musnum;
 
-				plyr->message = STSTR_MUS;
+				players.message = STSTR_MUS;
 				cht_GetParam(&cheat_mus, buf);
 
 				if (gamemode == commercial)
@@ -514,7 +511,7 @@ void ST_Responder(event_t *ev)
 					musnum = mus_runnin + Mul10(buf[0] - '0') + buf[1] - '0' - 1;
 
 					if ((Mul10(buf[0] - '0') + buf[1] - '0') > 35)
-						plyr->message = STSTR_NOMUS;
+						players.message = STSTR_NOMUS;
 					else
 						S_ChangeMusic(musnum, 1);
 				}
@@ -523,19 +520,19 @@ void ST_Responder(event_t *ev)
 					musnum = mus_e1m1 + (buf[0] - '1') * 9 + (buf[1] - '1');
 
 					if (((buf[0] - '1') * 9 + buf[1] - '1') > 31)
-						plyr->message = STSTR_NOMUS;
+						players.message = STSTR_NOMUS;
 					else
 						S_ChangeMusic(musnum, 1);
 				}
 			}
 			else if (cht_CheckCheat(&cheat_noclip, ev->data1) || cht_CheckCheat(&cheat_commercial_noclip, ev->data1))
 			{
-				plyr->cheats ^= CF_NOCLIP;
+				players.cheats ^= CF_NOCLIP;
 
-				if (plyr->cheats & CF_NOCLIP)
-					plyr->message = STSTR_NCON;
+				if (players.cheats & CF_NOCLIP)
+					players.message = STSTR_NCON;
 				else
-					plyr->message = STSTR_NCOFF;
+					players.message = STSTR_NCOFF;
 			}
 
 			// 'behold?' power-up cheats
@@ -543,28 +540,28 @@ void ST_Responder(event_t *ev)
 			{
 				if (cht_CheckCheat(&cheat_powerup[i], ev->data1))
 				{
-					if (!plyr->powers[i])
+					if (!players.powers[i])
 						P_NotGivePower(i);
 					else if (i != pw_strength)
-						plyr->powers[i] = 1;
+						players.powers[i] = 1;
 					else
-						plyr->powers[i] = 0;
+						players.powers[i] = 0;
 
-					plyr->message = STSTR_BEHOLDX;
+					players.message = STSTR_BEHOLDX;
 				}
 			}
 
 			// 'behold' power-up menu
 			if (cht_CheckCheat(&cheat_powerup[6], ev->data1))
 			{
-				plyr->message = STSTR_BEHOLD;
+				players.message = STSTR_BEHOLD;
 			}
 			// 'choppers' invulnerability & chainsaw
 			else if (cht_CheckCheat(&cheat_choppers, ev->data1))
 			{
-				plyr->weaponowned[wp_chainsaw] = true;
-				plyr->powers[pw_invulnerability] = true;
-				plyr->message = STSTR_CHOPPERS;
+				players.weaponowned[wp_chainsaw] = true;
+				players.powers[pw_invulnerability] = true;
+				players.message = STSTR_CHOPPERS;
 			}
 		}
 
@@ -602,7 +599,7 @@ void ST_Responder(event_t *ev)
 				return;
 
 			// So be it.
-			plyr->message = STSTR_CLEV;
+			players.message = STSTR_CLEV;
 			G_DeferedInitNew(gameskill, epsd, map);
 		}
 	}
@@ -614,7 +611,7 @@ int ST_calcPainOffset(void)
 	static int lastcalc;
 	static int oldhealth = -1;
 
-	health = plyr->health > 100 ? 100 : plyr->health;
+	health = players.health > 100 ? 100 : players.health;
 
 	if (health != oldhealth)
 	{
@@ -643,7 +640,7 @@ void ST_updateFaceWidget(void)
 	//if (priority < 10)
 	//{
 	// dead
-	if (!plyr->health)
+	if (!players.health)
 	{
 		priority = 9;
 		st_faceindex = ST_DEADFACE;
@@ -651,17 +648,17 @@ void ST_updateFaceWidget(void)
 	}
 	//}
 
-	if (priority < 9 && plyr->bonuscount)
+	if (priority < 9 && players.bonuscount)
 	{
 		// picking up bonus
 		doevilgrin = 0;
 
 		for (i = 0; i < NUMWEAPONS; i++)
 		{
-			if (oldweaponsowned[i] != plyr->weaponowned[i])
+			if (oldweaponsowned[i] != players.weaponowned[i])
 			{
 				doevilgrin = 1;
-				oldweaponsowned[i] = plyr->weaponowned[i];
+				oldweaponsowned[i] = players.weaponowned[i];
 			}
 		}
 		if (doevilgrin)
@@ -673,33 +670,33 @@ void ST_updateFaceWidget(void)
 		}
 	}
 
-	if (priority < 8 && plyr->damagecount && plyr->attacker && plyr->attacker != plyr->mo)
+	if (priority < 8 && players.damagecount && players.attacker && players.attacker != players.mo)
 	{
 		// being attacked
 		priority = 7;
 
-		if (plyr->health - st_oldhealth > ST_MUCHPAIN)
+		if (players.health - st_oldhealth > ST_MUCHPAIN)
 		{
 			st_facecount = ST_TURNCOUNT;
 			st_faceindex = ST_calcPainOffset() + ST_OUCHOFFSET;
 		}
 		else
 		{
-			badguyangle = R_PointToAngle2(plyr->mo->x,
-										  plyr->mo->y,
-										  plyr->attacker->x,
-										  plyr->attacker->y);
+			badguyangle = R_PointToAngle2(players.mo->x,
+										  players.mo->y,
+										  players.attacker->x,
+										  players.attacker->y);
 
-			if (badguyangle > plyr->mo->angle)
+			if (badguyangle > players.mo->angle)
 			{
 				// whether right or left
-				diffang = badguyangle - plyr->mo->angle;
+				diffang = badguyangle - players.mo->angle;
 				i = diffang > ANG180;
 			}
 			else
 			{
 				// whether left or right
-				diffang = plyr->mo->angle - badguyangle;
+				diffang = players.mo->angle - badguyangle;
 				i = diffang <= ANG180;
 			} // confusing, aint it?
 
@@ -724,11 +721,11 @@ void ST_updateFaceWidget(void)
 		}
 	}
 
-	if (priority < 7 && plyr->damagecount)
+	if (priority < 7 && players.damagecount)
 	{
 		// getting hurt because of your own damn stupidity
 
-		if (plyr->health - st_oldhealth > ST_MUCHPAIN)
+		if (players.health - st_oldhealth > ST_MUCHPAIN)
 		{
 			priority = 7;
 			st_facecount = ST_TURNCOUNT;
@@ -745,7 +742,7 @@ void ST_updateFaceWidget(void)
 	if (priority < 6)
 	{
 		// rapid firing
-		if (plyr->attackdown)
+		if (players.attackdown)
 		{
 			if (lastattackdown == -1)
 				lastattackdown = ST_RAMPAGEDELAY;
@@ -761,7 +758,7 @@ void ST_updateFaceWidget(void)
 			lastattackdown = -1;
 	}
 
-	if (priority < 5 && ((plyr->cheats & CF_GODMODE) || plyr->powers[pw_invulnerability]))
+	if (priority < 5 && ((players.cheats & CF_GODMODE) || players.powers[pw_invulnerability]))
 	{
 		// invulnerability
 
@@ -790,23 +787,23 @@ void ST_updateWidgets(void)
 	static int largeammo = 1994; // means "n/a"
 	int i;
 
-	if (weaponinfo[plyr->readyweapon].ammo == am_noammo)
+	if (weaponinfo[players.readyweapon].ammo == am_noammo)
 		w_ready.num = &largeammo;
 	else
-		w_ready.num = &plyr->ammo[weaponinfo[plyr->readyweapon].ammo];
-	w_ready.data = plyr->readyweapon;
+		w_ready.num = &players.ammo[weaponinfo[players.readyweapon].ammo];
+	w_ready.data = players.readyweapon;
 
 	// update keycard multiple widgets
-	keyboxes[0] = plyr->cards[0] ? 0 : -1;
-	if (plyr->cards[3])
+	keyboxes[0] = players.cards[0] ? 0 : -1;
+	if (players.cards[3])
 		keyboxes[0] = 3;
 
-	keyboxes[1] = plyr->cards[1] ? 1 : -1;
-	if (plyr->cards[4])
+	keyboxes[1] = players.cards[1] ? 1 : -1;
+	if (players.cards[4])
 		keyboxes[1] = 4;
 
-	keyboxes[2] = plyr->cards[2] ? 2 : -1;
-	if (plyr->cards[5])
+	keyboxes[2] = players.cards[2] ? 2 : -1;
+	if (players.cards[5])
 		keyboxes[2] = 5;
 
 	// refresh everything if this is him coming back to life
@@ -817,7 +814,7 @@ void ST_Ticker(void)
 {
 	st_randomnumber = M_Random;
 	ST_updateWidgets();
-	st_oldhealth = plyr->health;
+	st_oldhealth = players.health;
 }
 
 static int st_palette = 0;
@@ -830,12 +827,12 @@ void ST_doPaletteStuff(void)
 	int cnt;
 	int bzc;
 
-	cnt = plyr->damagecount;
+	cnt = players.damagecount;
 
-	if (plyr->powers[pw_strength])
+	if (players.powers[pw_strength])
 	{
 		// slowly fade the berzerk out
-		bzc = 12 - (plyr->powers[pw_strength] >> 6);
+		bzc = 12 - (players.powers[pw_strength] >> 6);
 
 		if (bzc > cnt)
 			cnt = bzc;
@@ -850,16 +847,16 @@ void ST_doPaletteStuff(void)
 
 		palette += STARTREDPALS;
 	}
-	else if (plyr->bonuscount)
+	else if (players.bonuscount)
 	{
-		palette = (plyr->bonuscount + 7) >> 3;
+		palette = (players.bonuscount + 7) >> 3;
 
 		if (palette > NUMBONUSPALS - 1)
 			palette = NUMBONUSPALS - 1;
 
 		palette += STARTBONUSPALS;
 	}
-	else if (plyr->powers[pw_ironfeet] > 4 * 32 || plyr->powers[pw_ironfeet] & 8)
+	else if (players.powers[pw_ironfeet] > 4 * 32 || players.powers[pw_ironfeet] & 8)
 		palette = RADIATIONPAL;
 	else
 		palette = 0;
@@ -1507,7 +1504,6 @@ void ST_initData(void)
 	int i;
 
 	st_firsttime = 1;
-	plyr = &players;
 
 	st_statusbaron = 1;
 
@@ -1517,7 +1513,7 @@ void ST_initData(void)
 	st_oldhealth = -1;
 
 	for (i = 0; i < NUMWEAPONS; i++)
-		oldweaponsowned[i] = plyr->weaponowned[i];
+		oldweaponsowned[i] = players.weaponowned[i];
 
 	for (i = 0; i < 3; i++)
 		keyboxes[i] = -1;
@@ -1532,18 +1528,18 @@ void ST_createWidgets_mini(void)
 				  270,
 				  170,
 				  shortnum,
-				  &plyr->ammo[weaponinfo[plyr->readyweapon].ammo],
+				  &players.ammo[weaponinfo[players.readyweapon].ammo],
 				  &st_statusbaron);
 
 	// the last weapon type
-	w_ready.data = plyr->readyweapon;
+	w_ready.data = players.readyweapon;
 
 	// health percentage
 	STlib_initNum(&(w_health.n),
 					  270,
 					  180,
 					  shortnum,
-					  &plyr->health,
+					  &players.health,
 					  &st_statusbaron);
 
 	// faces
@@ -1559,7 +1555,7 @@ void ST_createWidgets_mini(void)
 					  270,
 					  190,
 					  shortnum,
-					  &plyr->armorpoints,
+					  &players.armorpoints,
 					  &st_statusbaron);
 
 	// keyboxes 0-2
@@ -1594,18 +1590,18 @@ void ST_createWidgets(void)
 				  ST_AMMOX,
 				  ST_AMMOY,
 				  tallnum,
-				  &plyr->ammo[weaponinfo[plyr->readyweapon].ammo],
+				  &players.ammo[weaponinfo[players.readyweapon].ammo],
 				  &st_statusbaron);
 
 	// the last weapon type
-	w_ready.data = plyr->readyweapon;
+	w_ready.data = players.readyweapon;
 
 	// health percentage
 	STlib_initPercent(&w_health,
 					  ST_HEALTHX,
 					  ST_HEALTHY,
 					  tallnum,
-					  &plyr->health,
+					  &players.health,
 					  &st_statusbaron,
 					  tallpercent);
 
@@ -1620,37 +1616,37 @@ void ST_createWidgets(void)
 	STlib_initMultIcon(&w_arms[0],
 					   ST_ARMSX,
 					   ST_ARMSY,
-					   arms[0], (int *)&plyr->weaponowned[1],
+					   arms[0], (int *)&players.weaponowned[1],
 					   &st_statusbaron);
 
 	STlib_initMultIcon(&w_arms[1],
 					   ST_ARMSX + ST_ARMSXSPACE,
 					   ST_ARMSY,
-					   arms[1], (int *)&plyr->weaponowned[2],
+					   arms[1], (int *)&players.weaponowned[2],
 					   &st_statusbaron);
 
 	STlib_initMultIcon(&w_arms[2],
 					   ST_ARMSX + 2 * ST_ARMSXSPACE,
 					   ST_ARMSY,
-					   arms[2], (int *)&plyr->weaponowned[3],
+					   arms[2], (int *)&players.weaponowned[3],
 					   &st_statusbaron);
 
 	STlib_initMultIcon(&w_arms[3],
 					   ST_ARMSX,
 					   ST_ARMSY + 10,
-					   arms[3], (int *)&plyr->weaponowned[4],
+					   arms[3], (int *)&players.weaponowned[4],
 					   &st_statusbaron);
 
 	STlib_initMultIcon(&w_arms[4],
 					   ST_ARMSX + ST_ARMSXSPACE,
 					   ST_ARMSY + 10,
-					   arms[4], (int *)&plyr->weaponowned[5],
+					   arms[4], (int *)&players.weaponowned[5],
 					   &st_statusbaron);
 
 	STlib_initMultIcon(&w_arms[5],
 					   ST_ARMSX + 2 * ST_ARMSXSPACE,
 					   ST_ARMSY + 10,
-					   arms[5], (int *)&plyr->weaponowned[6],
+					   arms[5], (int *)&players.weaponowned[6],
 					   &st_statusbaron);
 
 	// faces
@@ -1666,7 +1662,7 @@ void ST_createWidgets(void)
 					  ST_ARMORX,
 					  ST_ARMORY,
 					  tallnum,
-					  &plyr->armorpoints,
+					  &players.armorpoints,
 					  &st_statusbaron, tallpercent);
 
 	// keyboxes 0-2
@@ -1696,28 +1692,28 @@ void ST_createWidgets(void)
 				  ST_AMMO0X,
 				  ST_AMMO0Y,
 				  shortnum,
-				  &plyr->ammo[0],
+				  &players.ammo[0],
 				  &st_statusbaron);
 
 	STlib_initNum(&w_ammo[1],
 				  ST_AMMO1X,
 				  ST_AMMO1Y,
 				  shortnum,
-				  &plyr->ammo[1],
+				  &players.ammo[1],
 				  &st_statusbaron);
 
 	STlib_initNum(&w_ammo[2],
 				  ST_AMMO2X,
 				  ST_AMMO2Y,
 				  shortnum,
-				  &plyr->ammo[2],
+				  &players.ammo[2],
 				  &st_statusbaron);
 
 	STlib_initNum(&w_ammo[3],
 				  ST_AMMO3X,
 				  ST_AMMO3Y,
 				  shortnum,
-				  &plyr->ammo[3],
+				  &players.ammo[3],
 				  &st_statusbaron);
 
 	// max ammo count (all four kinds)
@@ -1725,28 +1721,28 @@ void ST_createWidgets(void)
 				  ST_MAXAMMO0X,
 				  ST_MAXAMMO0Y,
 				  shortnum,
-				  &plyr->maxammo[0],
+				  &players.maxammo[0],
 				  &st_statusbaron);
 
 	STlib_initNum(&w_maxammo[1],
 				  ST_MAXAMMO1X,
 				  ST_MAXAMMO1Y,
 				  shortnum,
-				  &plyr->maxammo[1],
+				  &players.maxammo[1],
 				  &st_statusbaron);
 
 	STlib_initNum(&w_maxammo[2],
 				  ST_MAXAMMO2X,
 				  ST_MAXAMMO2Y,
 				  shortnum,
-				  &plyr->maxammo[2],
+				  &players.maxammo[2],
 				  &st_statusbaron);
 
 	STlib_initNum(&w_maxammo[3],
 				  ST_MAXAMMO3X,
 				  ST_MAXAMMO3Y,
 				  shortnum,
-				  &plyr->maxammo[3],
+				  &players.maxammo[3],
 				  &st_statusbaron);
 }
 

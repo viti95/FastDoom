@@ -1738,7 +1738,7 @@ void A_CloseShotgun2(player_t *player,
                      pspdef_t *psp)
 {
     S_StartSound(players.mo, sfx_dbcls);
-    A_ReFire(NULL, psp);
+    A_ReFire(NULL, NULL);
 }
 
 mobj_t *braintargets[32];

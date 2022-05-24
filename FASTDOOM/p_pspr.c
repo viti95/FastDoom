@@ -527,7 +527,7 @@ void A_FireMissile(player_t *player,
                    pspdef_t *psp)
 {
     players.ammo[weaponinfo[players.readyweapon].ammo]--;
-    P_SpawnPlayerMissile(players.mo, MT_ROCKET);
+    P_SpawnPlayerMissile(MT_ROCKET);
 }
 
 //
@@ -537,7 +537,7 @@ void A_FireBFG(player_t *player,
                pspdef_t *psp)
 {
     players.ammo[weaponinfo[players.readyweapon].ammo] -= BFGCELLS;
-    P_SpawnPlayerMissile(players.mo, MT_BFG);
+    P_SpawnPlayerMissile(MT_BFG);
 }
 
 //
@@ -550,7 +550,7 @@ void A_FirePlasma(player_t *player,
 
     P_SetPsprite(ps_flash, weaponinfo[players.readyweapon].flashstate + (P_Random & 1));
 
-    P_SpawnPlayerMissile(players.mo, MT_PLASMA);
+    P_SpawnPlayerMissile(MT_PLASMA);
 }
 
 //
@@ -560,22 +560,22 @@ void A_FirePlasma(player_t *player,
 //
 fixed_t bulletslope;
 
-void P_BulletSlope(mobj_t *mo)
+void P_BulletSlope(void)
 {
     angle_t an;
 
     // see which target is to be aimed at
-    an = mo->angle;
-    bulletslope = P_AimLineAttack(mo, an, HALFMISSILERANGE);
+    an = players.mo->angle;
+    bulletslope = P_AimLineAttack(players.mo, an, HALFMISSILERANGE);
 
     if (!linetarget)
     {
         an += 1 << 26;
-        bulletslope = P_AimLineAttack(mo, an, HALFMISSILERANGE);
+        bulletslope = P_AimLineAttack(players.mo, an, HALFMISSILERANGE);
         if (!linetarget)
         {
             an -= 2 << 26;
-            bulletslope = P_AimLineAttack(mo, an, HALFMISSILERANGE);
+            bulletslope = P_AimLineAttack(players.mo, an, HALFMISSILERANGE);
         }
     }
 }
@@ -583,18 +583,18 @@ void P_BulletSlope(mobj_t *mo)
 //
 // P_GunShot
 //
-void P_GunShot(mobj_t *mo, boolean accurate)
+void P_GunShot(boolean accurate)
 {
     angle_t angle;
     int damage;
 
     damage = P_Random_Mul5_Mod3_Plus1;
-    angle = mo->angle;
+    angle = players.mo->angle;
 
     if (!accurate)
         angle += (P_Random - P_Random) << 18;
 
-    P_LineAttack(mo, angle, MISSILERANGE, bulletslope, damage);
+    P_LineAttack(players.mo, angle, MISSILERANGE, bulletslope, damage);
 }
 
 //
@@ -610,8 +610,8 @@ void A_FirePistol(player_t *player,
 
     P_SetPsprite(ps_flash, weaponinfo[players.readyweapon].flashstate);
 
-    P_BulletSlope(players.mo);
-    P_GunShot(players.mo, !players.refire);
+    P_BulletSlope();
+    P_GunShot(!players.refire);
 }
 
 //
@@ -627,15 +627,15 @@ void A_FireShotgun(player_t *player,
 
     P_SetPsprite(ps_flash, weaponinfo[players.readyweapon].flashstate);
 
-    P_BulletSlope(players.mo);
+    P_BulletSlope();
 
-    P_GunShot(players.mo, false);
-    P_GunShot(players.mo, false);
-    P_GunShot(players.mo, false);
-    P_GunShot(players.mo, false);
-    P_GunShot(players.mo, false);
-    P_GunShot(players.mo, false);
-    P_GunShot(players.mo, false);
+    P_GunShot(false);
+    P_GunShot(false);
+    P_GunShot(false);
+    P_GunShot(false);
+    P_GunShot(false);
+    P_GunShot(false);
+    P_GunShot(false);
 }
 
 //
@@ -655,7 +655,7 @@ void A_FireShotgun2(player_t *player,
 
     P_SetPsprite(ps_flash, weaponinfo[players.readyweapon].flashstate);
 
-    P_BulletSlope(players.mo);
+    P_BulletSlope();
 
     for (i = 0; i < 20; i++)
     {
@@ -682,9 +682,9 @@ void A_FireCGun(player_t *player,
 
     P_SetPsprite(ps_flash, weaponinfo[players.readyweapon].flashstate + psp->state - &states[S_CHAIN1]);
 
-    P_BulletSlope(players.mo);
+    P_BulletSlope();
 
-    P_GunShot(players.mo, !players.refire);
+    P_GunShot(!players.refire);
 }
 
 //
@@ -759,8 +759,8 @@ void P_SetupPsprites(void)
     int i;
 
     // remove all psprites
-    players.psprites[0].state = NULL;
-    players.psprites[1].state = NULL;
+    players.psprites[ps_weapon].state = NULL;
+    players.psprites[ps_flash].state = NULL;
 
     // spawn the gun
     players.pendingweapon = players.readyweapon;
@@ -777,7 +777,7 @@ void P_MovePsprites(void)
     pspdef_t *psp;
     state_t *state;
 
-    psp = &players.psprites[0];
+    psp = &players.psprites[ps_weapon];
 
     // a null state means not active
     if ((state = psp->state))

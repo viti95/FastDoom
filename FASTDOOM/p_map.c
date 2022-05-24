@@ -1115,7 +1115,6 @@ void P_LineAttack(mobj_t *t1,
 //
 // USE LINES
 //
-mobj_t *usething;
 
 byte PTR_UseTraverse(intercept_t *in)
 {
@@ -1126,7 +1125,7 @@ byte PTR_UseTraverse(intercept_t *in)
         P_LineOpening(in->d.line);
         if (openrange <= 0)
         {
-            S_StartSound(usething, sfx_noway);
+            S_StartSound(players.mo, sfx_noway);
 
             // can't use through a wall
             return 0;
@@ -1135,9 +1134,9 @@ byte PTR_UseTraverse(intercept_t *in)
         return 1;
     }
 
-    side = P_PointOnLineSide(usething->x, usething->y, in->d.line);
+    side = P_PointOnLineSide(players.mo->x, players.mo->y, in->d.line);
     
-    P_UseSpecialLine(usething, in->d.line, side);
+    P_UseSpecialLine(players.mo, in->d.line, side);
 
     // can't use for than one special line in a row
     return 0;
@@ -1154,8 +1153,6 @@ void P_UseLines(void)
     fixed_t y1;
     fixed_t x2;
     fixed_t y2;
-
-    usething = players.mo;
 
     angle = players.mo->angle >> ANGLETOFINESHIFT;
 
