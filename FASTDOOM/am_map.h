@@ -25,7 +25,7 @@
 #define AM_MSGEXITED (AM_MSGHEADER | ('x' << 8))
 
 // Called by main loop.
-byte AM_Responder(event_t *ev);
+byte AM_Responder(void);
 
 // Called by main loop.
 void AM_Ticker(void);

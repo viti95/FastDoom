@@ -369,12 +369,12 @@ void G_DoLoadLevel(void)
 // G_Responder
 // Get info needed to make ticcmd_ts for the players.
 //
-void G_Responder(event_t *ev)
+void G_Responder(void)
 {
     // any other key pops up menu if in demos
     if (gameaction == ga_nothing && !singledemo && (demoplayback || gamestate == GS_DEMOSCREEN))
     {
-        if (ev->type == ev_keydown || (ev->type == ev_mouse && ev->data1))
+        if (current_ev->type == ev_keydown || (current_ev->type == ev_mouse && current_ev->data1))
         {
             M_StartControlPanel();
             return;
@@ -384,41 +384,41 @@ void G_Responder(event_t *ev)
 
     if (gamestate == GS_LEVEL)
     {
-        ST_Responder(ev); // status window ate it
+        ST_Responder(current_ev); // status window ate it
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-        if (AM_Responder(ev))
+        if (AM_Responder())
             return; // automap ate it
 #endif
     }
 
     if (gamestate == GS_FINALE)
     {
-        if (F_Responder(ev))
+        if (F_Responder())
             return; // finale ate the event
     }
 
-    switch (ev->type)
+    switch (current_ev->type)
     {
     case ev_keydown:
-        if (ev->data1 == KEY_PAUSE)
+        if (current_ev->data1 == KEY_PAUSE)
         {
             sendpause = 1;
             return;
         }
-        if (ev->data1 < NUMKEYS)
-            gamekeydown[ev->data1] = 1;
+        if (current_ev->data1 < NUMKEYS)
+            gamekeydown[current_ev->data1] = 1;
         return; // eat key down events
 
     case ev_keyup:
-        if (ev->data1 < NUMKEYS)
-            gamekeydown[ev->data1] = 0;
+        if (current_ev->data1 < NUMKEYS)
+            gamekeydown[current_ev->data1] = 0;
         return; // always let key up events filter down
 
     case ev_mouse:
-        mousebuttons[0] = ev->data1 & 1;
-        mousebuttons[1] = ev->data1 & 2;
-        mousebuttons[2] = ev->data1 & 4;
-        mousex = Div10(ev->data2 * (mouseSensitivity + 5));
+        mousebuttons[0] = current_ev->data1 & 1;
+        mousebuttons[1] = current_ev->data1 & 2;
+        mousebuttons[2] = current_ev->data1 & 4;
+        mousex = Div10(current_ev->data2 * (mouseSensitivity + 5));
         return; // eat events
 
     default:

@@ -1798,22 +1798,19 @@ const char gammamsg[5][26] =
         GAMMALVL3,
         GAMMALVL4};
 
-byte M_Responder(event_t *ev)
+byte M_Responder(void)
 {
     int ch;
     int i;
-    static int lasty = 0;
-    static int lastx = 0;
 
-    ch = -1;
-
-    if (ev->type == ev_keydown)
+    if (current_ev->type == ev_keydown)
     {
-        ch = ev->data1;
+        ch = current_ev->data1;
     }
-
-    if (ch == -1)
+    else
+    {
         return 0;
+    }
 
     // Save Game string input
     if (saveStringEnter)

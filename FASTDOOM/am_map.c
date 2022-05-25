@@ -439,7 +439,7 @@ void AM_maxOutWindowScale(void)
 //
 // Handle events (user inputs) in automap mode
 //
-byte AM_Responder(event_t *ev)
+byte AM_Responder(void)
 {
 
 	byte rc = 0;
@@ -447,18 +447,18 @@ byte AM_Responder(event_t *ev)
 
 	if (!automapactive)
 	{
-		if (ev->type == ev_keydown && ev->data1 == AM_STARTKEY)
+		if (current_ev->type == ev_keydown && current_ev->data1 == AM_STARTKEY)
 		{
 			AM_Start();
 			viewactive = 0;
 			rc = 1;
 		}
 	}
-	else if (ev->type == ev_keydown)
+	else if (current_ev->type == ev_keydown)
 	{
 
 		rc = 1;
-		switch (ev->data1)
+		switch (current_ev->data1)
 		{
 		case AM_PANRIGHTKEY: // pan right
 			if (!followplayer)
@@ -519,7 +519,7 @@ byte AM_Responder(event_t *ev)
 		default:
 			rc = 0;
 		}
-		if (cht_CheckCheat(&cheat_amap, ev->data1))
+		if (cht_CheckCheat(&cheat_amap))
 		{
 			rc = 0;
 
@@ -528,10 +528,10 @@ byte AM_Responder(event_t *ev)
 				cheating = 0;
 		}
 	}
-	else if (ev->type == ev_keyup)
+	else if (current_ev->type == ev_keyup)
 	{
 		rc = 0;
-		switch (ev->data1)
+		switch (current_ev->data1)
 		{
 		case AM_PANRIGHTKEY:
 			if (!followplayer)

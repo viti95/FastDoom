@@ -171,20 +171,20 @@ void D_PostEvent(event_t *ev)
     eventhead = (++eventhead) & (MAXEVENTS - 1);
 }
 
+event_t *current_ev;
+
 //
 // D_ProcessEvents
 // Send all the events of the given timestamp down the responder chain
 //
 void D_ProcessEvents(void)
 {
-    event_t *ev;
-
     for (; eventtail != eventhead; eventtail = (++eventtail) & (MAXEVENTS - 1))
     {
-        ev = &events[eventtail];
-        if (M_Responder(ev))
+        current_ev = &events[eventtail];
+        if (M_Responder())
             continue; // menu ate the event
-        G_Responder(ev);
+        G_Responder();
     }
 }
 

@@ -20,6 +20,8 @@
 #include "i_system.h"
 #include "z_zone.h"
 
+#include "doomstat.h"
+
 //
 // CHEAT SEQUENCE PACKAGE
 //
@@ -28,16 +30,14 @@
 // Called in st_stuff module, which handles the input.
 // Returns a 1 if the cheat was successful, 0 if failed.
 //
-byte cht_CheckCheat(cheatseq_t *cht, char key)
+byte cht_CheckCheat(cheatseq_t *cht)
 {
-    byte rc = 0;
-
     if (!cht->p)
         cht->p = cht->sequence; // initialize if first time
 
     if (*cht->p == 0)
-        *(cht->p++) = key;
-    else if (key == *cht->p)
+        *(cht->p++) = current_ev->data1;
+    else if (current_ev->data1 == *cht->p)
         cht->p++;
     else
         cht->p = cht->sequence;
@@ -47,10 +47,10 @@ byte cht_CheckCheat(cheatseq_t *cht, char key)
     else if (*cht->p == 0xff) // end of sequence character
     {
         cht->p = cht->sequence;
-        rc = 1;
+        return 1;
     }
 
-    return rc;
+    return 0;
 }
 
 void cht_GetParam(cheatseq_t *cht, char *buffer)

@@ -28,7 +28,7 @@ typedef struct
 
 typedef unsigned char byte;
 
-byte cht_CheckCheat(cheatseq_t *cht, char key);
+byte cht_CheckCheat(cheatseq_t *cht);
 void cht_GetParam(cheatseq_t *cht, char *buffer);
 
 #endif

@@ -51,7 +51,7 @@ char *finaleflat;
 
 void F_StartCast(void);
 void F_CastTicker(void);
-byte F_CastResponder(event_t *ev);
+byte F_CastResponder(void);
 void F_CastDrawer(void);
 void F_CastDrawerText(void);
 
@@ -249,10 +249,10 @@ void F_StartFinale(void)
 	finalecount = 0;
 }
 
-byte F_Responder(event_t *event)
+byte F_Responder(void)
 {
 	if (finalestage == 2)
-		return F_CastResponder(event);
+		return F_CastResponder();
 
 	return 0;
 }
@@ -648,9 +648,9 @@ void F_CastTicker(void)
 // F_CastResponder
 //
 
-byte F_CastResponder(event_t *ev)
+byte F_CastResponder(void)
 {
-	if (ev->type != ev_keydown)
+	if (current_ev->type != ev_keydown)
 		return 0;
 
 	if (castdeath)

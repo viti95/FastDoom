@@ -33,7 +33,7 @@
 extern int screenblocks;
 extern int screenSize;
 
-byte M_Responder(event_t *ev);
+byte M_Responder(void);
 
 // Called by main loop,
 // only used for menu (skull cursor) animation.

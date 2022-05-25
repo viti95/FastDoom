@@ -148,6 +148,8 @@ extern byte paused;        // Game Pause?
 
 extern byte viewactive;
 
+extern struct ev_s *current_ev;
+
 extern int viewwindowx;
 extern int viewwindowy;
 extern int viewheight;

@@ -26,7 +26,7 @@
 //
 
 // Called by main loop.
-byte F_Responder(event_t *ev);
+byte F_Responder(void);
 
 // Called by main loop.
 void F_Ticker(void);

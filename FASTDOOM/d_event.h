@@ -33,7 +33,7 @@ typedef enum
 } evtype_t;
 
 // Event structure.
-typedef struct
+typedef struct ev_s
 {
     byte type;
     int data1; // keys / mouse buttons
