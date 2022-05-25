@@ -482,20 +482,20 @@ byte P_LookForPlayers(mobj_t *actor)
     angle_t an;
     fixed_t dist;
 
-    if (players.health <= 0 || !P_CheckSight(actor, players.mo))
+    if (players.health <= 0 || !P_CheckSight(actor, players_mo))
         return 1; // dead, out of sight
 
-    an = R_PointToAngle2(actor->x, actor->y, players.mo->x, players.mo->y) - actor->angle;
+    an = R_PointToAngle2(actor->x, actor->y, players_mo->x, players_mo->y) - actor->angle;
 
     if (an > ANG90 && an < ANG270)
     {
-        dist = P_AproxDistance(players.mo->x - actor->x, players.mo->y - actor->y);
+        dist = P_AproxDistance(players_mo->x - actor->x, players_mo->y - actor->y);
         // if real close, react anyway
         if (dist > MELEERANGE)
             return 1; // behind back
     }
 
-    actor->target = players.mo;
+    actor->target = players_mo;
     return 0;
 }
 
@@ -506,10 +506,10 @@ byte P_LookForPlayersAllAround(mobj_t *actor)
     angle_t an;
     fixed_t dist;
 
-    if (players.health <= 0 || !P_CheckSight(actor, players.mo))
+    if (players.health <= 0 || !P_CheckSight(actor, players_mo))
         return 0; // dead, out of sight
 
-    actor->target = players.mo;
+    actor->target = players_mo;
     return 1;
 }
 
@@ -1722,13 +1722,13 @@ void A_BabyMetal(mobj_t *mo)
 void A_OpenShotgun2(player_t *player,
                     pspdef_t *psp)
 {
-    S_StartSound(players.mo, sfx_dbopn);
+    S_StartSound(players_mo, sfx_dbopn);
 }
 
 void A_LoadShotgun2(player_t *player,
                     pspdef_t *psp)
 {
-    S_StartSound(players.mo, sfx_dbload);
+    S_StartSound(players_mo, sfx_dbload);
 }
 
 void A_ReFire(player_t *player,
@@ -1737,7 +1737,7 @@ void A_ReFire(player_t *player,
 void A_CloseShotgun2(player_t *player,
                      pspdef_t *psp)
 {
-    S_StartSound(players.mo, sfx_dbcls);
+    S_StartSound(players_mo, sfx_dbcls);
     A_ReFire(NULL, NULL);
 }
 

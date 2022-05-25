@@ -1125,7 +1125,7 @@ byte PTR_UseTraverse(intercept_t *in)
         P_LineOpening(in->d.line);
         if (openrange <= 0)
         {
-            S_StartSound(players.mo, sfx_noway);
+            S_StartSound(players_mo, sfx_noway);
 
             // can't use through a wall
             return 0;
@@ -1134,9 +1134,9 @@ byte PTR_UseTraverse(intercept_t *in)
         return 1;
     }
 
-    side = P_PointOnLineSide(players.mo->x, players.mo->y, in->d.line);
+    side = P_PointOnLineSide(players_mo->x, players_mo->y, in->d.line);
     
-    P_UseSpecialLine(players.mo, in->d.line, side);
+    P_UseSpecialLine(players_mo, in->d.line, side);
 
     // can't use for than one special line in a row
     return 0;
@@ -1154,10 +1154,10 @@ void P_UseLines(void)
     fixed_t x2;
     fixed_t y2;
 
-    angle = players.mo->angle >> ANGLETOFINESHIFT;
+    angle = players_mo->angle >> ANGLETOFINESHIFT;
 
-    x1 = players.mo->x;
-    y1 = players.mo->y;
+    x1 = players_mo->x;
+    y1 = players_mo->y;
     x2 = x1 + (USERANGE >> FRACBITS) * finecosine[angle];
     y2 = y1 + (USERANGE >> FRACBITS) * finesine[angle];
 

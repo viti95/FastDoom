@@ -456,8 +456,8 @@ void ST_Responder(event_t *ev)
 				players.cheats ^= CF_GODMODE;
 				if (players.cheats & CF_GODMODE)
 				{
-					if (players.mo)
-						players.mo->health = 100;
+					if (players_mo)
+						players_mo->health = 100;
 
 					players.health = 100;
 					players.message = STSTR_DQDON;
@@ -669,7 +669,7 @@ void ST_updateFaceWidget(void)
 		}
 	}
 
-	if (priority < 8 && players.damagecount && players.attacker && players.attacker != players.mo)
+	if (priority < 8 && players.damagecount && players.attacker && players.attacker != players_mo)
 	{
 		// being attacked
 		priority = 7;
@@ -681,21 +681,21 @@ void ST_updateFaceWidget(void)
 		}
 		else
 		{
-			badguyangle = R_PointToAngle2(players.mo->x,
-										  players.mo->y,
+			badguyangle = R_PointToAngle2(players_mo->x,
+										  players_mo->y,
 										  players.attacker->x,
 										  players.attacker->y);
 
-			if (badguyangle > players.mo->angle)
+			if (badguyangle > players_mo->angle)
 			{
 				// whether right or left
-				diffang = badguyangle - players.mo->angle;
+				diffang = badguyangle - players_mo->angle;
 				i = diffang > ANG180;
 			}
 			else
 			{
 				// whether left or right
-				diffang = players.mo->angle - badguyangle;
+				diffang = players_mo->angle - badguyangle;
 				i = diffang <= ANG180;
 			} // confusing, aint it?
 

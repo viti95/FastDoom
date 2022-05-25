@@ -203,6 +203,7 @@ extern int gametic;
 
 // Bookkeeping on players - state.
 extern player_t players;
+extern mobj_t *players_mo;
 
 // Alive? Disconnected?
 extern boolean playeringame;

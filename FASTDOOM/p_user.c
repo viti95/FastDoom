@@ -45,8 +45,8 @@ void P_Thrust(angle_t angle, fixed_t move)
 {
 	angle >>= ANGLETOFINESHIFT;
 
-	players.mo->momx += FixedMul(move, finecosine[angle]);
-	players.mo->momy += FixedMul(move, finesine[angle]);
+	players_mo->momx += FixedMul(move, finecosine[angle]);
+	players_mo->momy += FixedMul(move, finesine[angle]);
 }
 
 //
@@ -65,19 +65,19 @@ void P_CalcHeight(void)
 	// Note: a LUT allows for effects
 	//  like a ramp with low health.
 
-	players.bob = FixedMul(players.mo->momx, players.mo->momx) + FixedMul(players.mo->momy, players.mo->momy);
+	players.bob = FixedMul(players_mo->momx, players_mo->momx) + FixedMul(players_mo->momy, players_mo->momy);
 	players.bob >>= 2;
 	if (players.bob > MAXBOB)
 		players.bob = MAXBOB;
 
 	if (!onground)
 	{
-		players.viewz = players.mo->z + VIEWHEIGHT;
+		players.viewz = players_mo->z + VIEWHEIGHT;
 
-		if (players.viewz > players.mo->ceilingz - 4 * FRACUNIT)
-			players.viewz = players.mo->ceilingz - 4 * FRACUNIT;
+		if (players.viewz > players_mo->ceilingz - 4 * FRACUNIT)
+			players.viewz = players_mo->ceilingz - 4 * FRACUNIT;
 
-		players.viewz = players.mo->z + players.viewheight;
+		players.viewz = players_mo->z + players.viewheight;
 		return;
 	}
 
@@ -108,10 +108,10 @@ void P_CalcHeight(void)
 				players.deltaviewheight = 1;
 		}
 	}
-	players.viewz = players.mo->z + players.viewheight + bob;
+	players.viewz = players_mo->z + players.viewheight + bob;
 
-	if (players.viewz > players.mo->ceilingz - 4 * FRACUNIT)
-		players.viewz = players.mo->ceilingz - 4 * FRACUNIT;
+	if (players.viewz > players_mo->ceilingz - 4 * FRACUNIT)
+		players.viewz = players_mo->ceilingz - 4 * FRACUNIT;
 }
 
 //
@@ -123,24 +123,24 @@ void P_MovePlayer(void)
 
 	cmd = &players.cmd;
 
-	players.mo->angle += (cmd->angleturn << 16);
+	players_mo->angle += (cmd->angleturn << 16);
 
 	// Do not let the player control movement
 	//  if not onground.
-	onground = (players.mo->z <= players.mo->floorz);
+	onground = (players_mo->z <= players_mo->floorz);
 
 	if (onground)
 	{
 		if (cmd->forwardmove)
-			P_Thrust(players.mo->angle, cmd->forwardmove * 2048);
+			P_Thrust(players_mo->angle, cmd->forwardmove * 2048);
 
 		if (cmd->sidemove)
-			P_Thrust(players.mo->angle - ANG90, cmd->sidemove * 2048);
+			P_Thrust(players_mo->angle - ANG90, cmd->sidemove * 2048);
 	}
 
-	if ((cmd->forwardmove || cmd->sidemove) && players.mo->state == &states[S_PLAY])
+	if ((cmd->forwardmove || cmd->sidemove) && players_mo->state == &states[S_PLAY])
 	{
-		P_NotSetMobjState(players.mo, S_PLAY_RUN1);
+		P_NotSetMobjState(players_mo, S_PLAY_RUN1);
 	}
 }
 
@@ -165,29 +165,29 @@ void P_DeathThink(void)
 		players.viewheight = 6 * FRACUNIT;
 
 	players.deltaviewheight = 0;
-	onground = (players.mo->z <= players.mo->floorz);
+	onground = (players_mo->z <= players_mo->floorz);
 	P_CalcHeight();
 
-	if (players.attacker && players.attacker != players.mo)
+	if (players.attacker && players.attacker != players_mo)
 	{
-		angle = R_PointToAngle2(players.mo->x,
-								players.mo->y,
+		angle = R_PointToAngle2(players_mo->x,
+								players_mo->y,
 								players.attacker->x,
 								players.attacker->y);
 
-		delta = angle - players.mo->angle;
+		delta = angle - players_mo->angle;
 
 		if (delta < ANG5 || delta > (unsigned)-ANG5)
 		{
 			// Looking at killer,
 			//  so fade damage flash down.
-			players.mo->angle = angle;
+			players_mo->angle = angle;
 			players.damagecount -= players.damagecount != 0;
 		}
 		else if (delta < ANG180)
-			players.mo->angle += ANG5;
+			players_mo->angle += ANG5;
 		else
-			players.mo->angle -= ANG5;
+			players_mo->angle -= ANG5;
 	}
 	else
 		players.damagecount -= players.damagecount != 0;
@@ -206,18 +206,18 @@ void P_PlayerThink(void)
 
 	// fixme: do this in the cheat code
 	if (players.cheats & CF_NOCLIP)
-		players.mo->flags |= MF_NOCLIP;
+		players_mo->flags |= MF_NOCLIP;
 	else
-		players.mo->flags &= ~MF_NOCLIP;
+		players_mo->flags &= ~MF_NOCLIP;
 
 	// chain saw run forward
 	cmd = &players.cmd;
-	if (players.mo->flags & MF_JUSTATTACKED)
+	if (players_mo->flags & MF_JUSTATTACKED)
 	{
 		cmd->angleturn = 0;
 		cmd->forwardmove = 0xc800 / 512;
 		cmd->sidemove = 0;
-		players.mo->flags &= ~MF_JUSTATTACKED;
+		players_mo->flags &= ~MF_JUSTATTACKED;
 	}
 
 	if (players.playerstate == PST_DEAD)
@@ -229,14 +229,14 @@ void P_PlayerThink(void)
 	// Move around.
 	// Reactiontime is used to prevent movement
 	//  for a bit after a teleport.
-	if (players.mo->reactiontime)
-		players.mo->reactiontime--;
+	if (players_mo->reactiontime)
+		players_mo->reactiontime--;
 	else
 		P_MovePlayer();
 
 	P_CalcHeight();
 
-	if (players.mo->subsector->sector->special)
+	if (players_mo->subsector->sector->special)
 		P_PlayerInSpecialSector();
 
 	// Check for weapon change.
@@ -297,7 +297,7 @@ void P_PlayerThink(void)
 
 	if (players.powers[pw_invisibility])
 		if (!--players.powers[pw_invisibility])
-			players.mo->flags &= ~MF_SHADOW;
+			players_mo->flags &= ~MF_SHADOW;
 
 	players.powers[pw_infrared] -= players.powers[pw_infrared] != 0;
 	players.powers[pw_ironfeet] -= players.powers[pw_ironfeet] != 0;

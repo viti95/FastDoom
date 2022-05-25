@@ -185,8 +185,8 @@ byte S_AdjustSoundParams(mobj_t *source, int *vol, int *sep)
 
     // calculate the distance to sound origin
     //  and clip it if necessary
-    adx = abs(players.mo->x - source->x);
-    ady = abs(players.mo->y - source->y);
+    adx = abs(players_mo->x - source->x);
+    ady = abs(players_mo->y - source->y);
 
     // From _GG1_ p.428. Appox. eucledian distance fast.
     approx_dist = adx + ady - ((adx < ady ? adx : ady) >> 1);
@@ -218,10 +218,10 @@ byte S_AdjustSoundParams(mobj_t *source, int *vol, int *sep)
     else
     {
         // angle of source to listener
-        angle = R_PointToAngle2(players.mo->x, players.mo->y, source->x, source->y);
+        angle = R_PointToAngle2(players_mo->x, players_mo->y, source->x, source->y);
 
-        angle -= players.mo->angle;
-        if (angle <= players.mo->angle)
+        angle -= players_mo->angle;
+        if (angle <= players_mo->angle)
             angle += 0xffffffff;
 
         angle >>= ANGLETOFINESHIFT;
@@ -343,7 +343,7 @@ void S_StartSound(mobj_t *origin, byte sfx_id)
     
     // Check to see if it is audible,
     //  and if not, modify the params
-    if (origin && origin != players.mo)
+    if (origin && origin != players_mo)
     {
         byte rc = S_AdjustSoundParams(origin, &volume, &sep);
 
@@ -351,7 +351,7 @@ void S_StartSound(mobj_t *origin, byte sfx_id)
             return;
         }
 
-        if (origin->x == players.mo->x && origin->y == players.mo->y)
+        if (origin->x == players_mo->x && origin->y == players_mo->y)
         {
             sep = NORM_SEP;
         }
@@ -418,7 +418,7 @@ void S_UpdateSounds(void)
 
                 // check non-local sounds for distance clipping
                 //  or modify their params
-                if (c->origin && players.mo != c->origin)
+                if (c->origin && players_mo != c->origin)
                 {
                     byte audible = S_AdjustSoundParams(c->origin, &volume, &sep);
 

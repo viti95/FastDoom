@@ -573,6 +573,7 @@ void P_SpawnPlayer(mapthing_t *mthing)
     mobj->health = p->health;
 
     p->mo = mobj;
+    players_mo = mobj;
     p->playerstate = PST_LIVE;
     p->refire = 0;
     p->message = NULL;
@@ -809,37 +810,37 @@ void P_SpawnPlayerMissile(byte type)
     fixed_t slope;
 
     // see which target is to be aimed at
-    an = players.mo->angle;
-    slope = P_AimLineAttack(players.mo, an, HALFMISSILERANGE);
+    an = players_mo->angle;
+    slope = P_AimLineAttack(players_mo, an, HALFMISSILERANGE);
 
     if (!linetarget)
     {
         an += 1 << 26;
-        slope = P_AimLineAttack(players.mo, an, HALFMISSILERANGE);
+        slope = P_AimLineAttack(players_mo, an, HALFMISSILERANGE);
 
         if (!linetarget)
         {
             an -= 2 << 26;
-            slope = P_AimLineAttack(players.mo, an, HALFMISSILERANGE);
+            slope = P_AimLineAttack(players_mo, an, HALFMISSILERANGE);
         }
 
         if (!linetarget)
         {
-            an = players.mo->angle;
+            an = players_mo->angle;
             slope = 0;
         }
     }
 
-    x = players.mo->x;
-    y = players.mo->y;
-    z = players.mo->z + 4 * 8 * FRACUNIT;
+    x = players_mo->x;
+    y = players_mo->y;
+    z = players_mo->z + 4 * 8 * FRACUNIT;
 
     th = P_SpawnMobj(x, y, z, type);
 
     if (th->info->seesound)
         S_StartSound(th, th->info->seesound);
 
-    th->target = players.mo;
+    th->target = players_mo;
     th->angle = an;
     th->momx = FixedMul(th->info->speed, finecosine[an >> ANGLETOFINESHIFT]);
     th->momy = FixedMul(th->info->speed, finesine[an >> ANGLETOFINESHIFT]);

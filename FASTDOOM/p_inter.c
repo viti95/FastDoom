@@ -169,7 +169,7 @@ byte P_NotGiveBody(int num)
 	players.health += num;
 	if (players.health > MAXHEALTH)
 		players.health = MAXHEALTH;
-	players.mo->health = players.health;
+	players_mo->health = players.health;
 
 	return 0;
 }
@@ -217,7 +217,7 @@ byte P_NotGivePower(int power)
 		return 0;
 	case pw_invisibility:
 		players.powers[power] = INVISTICS;
-		players.mo->flags |= MF_SHADOW;
+		players_mo->flags |= MF_SHADOW;
 		return 0;
 	case pw_infrared:
 		players.powers[power] = INFRATICS;
@@ -280,7 +280,7 @@ void P_TouchSpecialThing(mobj_t *special, mobj_t *toucher)
 		players.health++; // can go over 100%
 		if (players.health > 200)
 			players.health = 200;
-		players.mo->health = players.health;
+		players_mo->health = players.health;
 		players.message = GOTHTHBONUS;
 		break;
 
@@ -297,7 +297,7 @@ void P_TouchSpecialThing(mobj_t *special, mobj_t *toucher)
 		players.health += 100;
 		if (players.health > 200)
 			players.health = 200;
-		players.mo->health = players.health;
+		players_mo->health = players.health;
 		players.message = GOTSUPER;
 		sound = sfx_getpow;
 		break;
@@ -306,7 +306,7 @@ void P_TouchSpecialThing(mobj_t *special, mobj_t *toucher)
 		if (gamemode != commercial)
 			return;
 		players.health = 200;
-		players.mo->health = players.health;
+		players_mo->health = players.health;
 		P_NotGiveArmor(2);
 		players.message = GOTMSPHERE;
 		sound = sfx_getpow;

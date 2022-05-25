@@ -1161,9 +1161,9 @@ void R_SetupFrame(void)
 {
     int i;
 
-    viewx = (players.mo)->x;
-    viewy = (players.mo)->y;
-    viewangle = (players.mo)->angle;
+    viewx = (players_mo)->x;
+    viewy = (players_mo)->y;
+    viewangle = (players_mo)->angle;
     extralight = players.extralight;
 
     viewz = players.viewz;

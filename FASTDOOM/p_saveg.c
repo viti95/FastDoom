@@ -69,7 +69,8 @@ void P_UnArchivePlayers(void)
 	save_p += sizeof(player_t);
 
 	// will be set when unarc thinker
-	players.mo = NULL;
+	players_mo = NULL;
+	players_mo = NULL;
 	players.message = NULL;
 	players.attacker = NULL;
 
@@ -268,6 +269,7 @@ void P_UnArchiveThinkers(void)
 			{
 				mobj->player = &players;
 				mobj->player->mo = mobj;
+				players_mo = mobj;
 			}
 			P_SetThingPosition(mobj);
 			mobj->info = &mobjinfo[mobj->type];

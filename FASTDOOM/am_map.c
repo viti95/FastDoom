@@ -264,8 +264,8 @@ void AM_restoreScaleAndLoc(void)
 	}
 	else
 	{
-		m_x = players.mo->x - m_w / 2;
-		m_y = players.mo->y - m_h / 2;
+		m_x = players_mo->x - m_w / 2;
+		m_y = players_mo->y - m_h / 2;
 	}
 	m_x2 = m_x + m_w;
 	m_y2 = m_y + m_h;
@@ -356,8 +356,8 @@ void AM_initVariables(void)
 	m_w = FTOM(SCREENWIDTH);
 	m_h = FTOM(automapheight);
 
-	m_x = players.mo->x - m_w / 2;
-	m_y = players.mo->y - m_h / 2;
+	m_x = players_mo->x - m_w / 2;
+	m_y = players_mo->y - m_h / 2;
 	AM_changeWindowLoc();
 
 	// for saving & restoring
@@ -584,14 +584,14 @@ void AM_changeWindowScale(void)
 void AM_doFollowPlayer(void)
 {
 
-	if (f_oldloc.x != players.mo->x || f_oldloc.y != players.mo->y)
+	if (f_oldloc.x != players_mo->x || f_oldloc.y != players_mo->y)
 	{
-		m_x = FTOM(MTOF(players.mo->x)) - m_w / 2;
-		m_y = FTOM(MTOF(players.mo->y)) - m_h / 2;
+		m_x = FTOM(MTOF(players_mo->x)) - m_w / 2;
+		m_y = FTOM(MTOF(players_mo->y)) - m_h / 2;
 		m_x2 = m_x + m_w;
 		m_y2 = m_y + m_h;
-		f_oldloc.x = players.mo->x;
-		f_oldloc.y = players.mo->y;
+		f_oldloc.x = players_mo->x;
+		f_oldloc.y = players_mo->y;
 	}
 }
 
@@ -1014,7 +1014,7 @@ void AM_drawLineCharacter(mline_t *lineguy,
 
 void AM_drawPlayers(void)
 {
-	AM_drawLineCharacter(player_arrow, NUMPLYRLINES, 0, players.mo->angle, WHITE, players.mo->x, players.mo->y);
+	AM_drawLineCharacter(player_arrow, NUMPLYRLINES, 0, players_mo->angle, WHITE, players_mo->x, players_mo->y);
 }
 
 void AM_drawThings(int colors,

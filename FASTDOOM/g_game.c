@@ -100,6 +100,7 @@ byte viewactive;
 
 boolean playeringame;
 player_t players;
+mobj_t *players_mo;
 
 int gametic;
 int totalkills, totalitems, totalsecret; // for intermission
