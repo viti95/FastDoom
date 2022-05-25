@@ -67,14 +67,14 @@ void P_InitThinkers(void);
 //
 // P_PSPR
 //
-void P_SetupPsprites(player_t *curplayer);
-void P_MovePsprites(player_t *curplayer);
-void P_DropWeapon(player_t *player);
+void P_SetupPsprites(void);
+void P_MovePsprites(void);
+void P_DropWeapon(void);
 
 //
 // P_USER
 //
-void P_PlayerThink(player_t *player);
+void P_PlayerThink(void);
 
 //
 // P_MOBJ
@@ -99,7 +99,7 @@ void P_MobjTicklessThinker(mobj_t *mobj);
 void P_SpawnPuff(fixed_t x, fixed_t y, fixed_t z);
 void P_SpawnBlood(fixed_t x, fixed_t y, fixed_t z, int damage);
 mobj_t *P_SpawnMissile(mobj_t *source, mobj_t *dest, byte type);
-void P_SpawnPlayerMissile(mobj_t *source, byte type);
+void P_SpawnPlayerMissile(byte type);
 
 //
 // P_ENEMY
@@ -180,7 +180,7 @@ byte P_TryMove(mobj_t *thing, fixed_t x, fixed_t y);
 byte P_TeleportMove(mobj_t *thing, fixed_t x, fixed_t y);
 void P_SlideMove(mobj_t *mo);
 byte P_CheckSight(mobj_t *t1, mobj_t *t2);
-void P_UseLines(player_t *player);
+void P_UseLines(void);
 
 byte P_ChangeSector(sector_t *sector, byte crunch);
 

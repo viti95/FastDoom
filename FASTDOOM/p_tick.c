@@ -86,7 +86,7 @@ void P_Ticker(void)
     if (paused || (menuactive && !demoplayback && players.viewz != 1))
         return;
 
-    P_PlayerThink(&players);
+    P_PlayerThink();
 
     P_RunThinkers();
     P_UpdateSpecials();

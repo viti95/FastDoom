@@ -86,7 +86,7 @@ int snd_clipping = S_CLIPPING_DIST;
 // Internals.
 //
 int S_getChannel(void *origin, sfxinfo_t *sfxinfo);
-byte S_AdjustSoundParams(mobj_t *listener, mobj_t *source, int *vol, int *sep);
+byte S_AdjustSoundParams(mobj_t *source, int *vol, int *sep);
 void S_StopChannel(int cnum);
 
 void S_SetMusicVolume(int volume)
@@ -174,10 +174,7 @@ void S_StopChannel(int cnum)
 // If the sound is not audible, returns a 0.
 // Otherwise, modifies parameters and returns 1.
 //
-byte S_AdjustSoundParams(mobj_t *listener,
-                        mobj_t *source,
-                        int *vol,
-                        int *sep)
+byte S_AdjustSoundParams(mobj_t *source, int *vol, int *sep)
 {
     fixed_t approx_dist;
     fixed_t adx;
@@ -188,8 +185,8 @@ byte S_AdjustSoundParams(mobj_t *listener,
 
     // calculate the distance to sound origin
     //  and clip it if necessary
-    adx = abs(listener->x - source->x);
-    ady = abs(listener->y - source->y);
+    adx = abs(players.mo->x - source->x);
+    ady = abs(players.mo->y - source->y);
 
     // From _GG1_ p.428. Appox. eucledian distance fast.
     approx_dist = adx + ady - ((adx < ady ? adx : ady) >> 1);
@@ -221,10 +218,10 @@ byte S_AdjustSoundParams(mobj_t *listener,
     else
     {
         // angle of source to listener
-        angle = R_PointToAngle2(listener->x, listener->y, source->x, source->y);
+        angle = R_PointToAngle2(players.mo->x, players.mo->y, source->x, source->y);
 
-        angle -= listener->angle;
-        if (angle <= listener->angle)
+        angle -= players.mo->angle;
+        if (angle <= players.mo->angle)
             angle += 0xffffffff;
 
         angle >>= ANGLETOFINESHIFT;
@@ -348,7 +345,7 @@ void S_StartSound(mobj_t *origin, byte sfx_id)
     //  and if not, modify the params
     if (origin && origin != players.mo)
     {
-        byte rc = S_AdjustSoundParams(players.mo, origin, &volume, &sep);
+        byte rc = S_AdjustSoundParams(origin, &volume, &sep);
 
         if (rc){
             return;
@@ -399,7 +396,7 @@ void S_StartSound(mobj_t *origin, byte sfx_id)
 //
 // Updates music & sounds
 //
-void S_UpdateSounds(mobj_t *listener)
+void S_UpdateSounds(void)
 {
     int cnum;
     int volume;
@@ -421,9 +418,9 @@ void S_UpdateSounds(mobj_t *listener)
 
                 // check non-local sounds for distance clipping
                 //  or modify their params
-                if (c->origin && listener != c->origin)
+                if (c->origin && players.mo != c->origin)
                 {
-                    byte audible = S_AdjustSoundParams(listener, c->origin, &volume, &sep);
+                    byte audible = S_AdjustSoundParams(c->origin, &volume, &sep);
 
                     if (audible){
                         S_StopChannel(cnum);

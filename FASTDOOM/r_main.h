@@ -121,7 +121,7 @@ R_PointInSubsector(fixed_t x,
 //
 
 // Called by G_Drawer.
-void R_RenderPlayerView(player_t *player);
+void R_RenderPlayerView(void);
 
 // Called by startup code.
 void R_Init(void);
