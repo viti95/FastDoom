@@ -143,6 +143,10 @@ typedef struct
 	fixed_t slp, islp;
 } islope_t;
 
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_V2)
+byte *hercules = (byte *)0xB0000;
+#endif
+
 //
 // The vector graphics for the automap.
 //  A line drawing of the player pointing right,
@@ -583,7 +587,6 @@ void AM_changeWindowScale(void)
 //
 void AM_doFollowPlayer(void)
 {
-
 	if (f_oldloc.x != players_mo->x || f_oldloc.y != players_mo->y)
 	{
 		m_x = FTOM(MTOF(players_mo->x)) - m_w / 2;
@@ -765,16 +768,16 @@ void AM_drawFline(fline_t *fl,
 	register int ay;
 	register int d;
 
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-#define PUTDOT(xx, yy, cc) screen0[Mul320(yy) + (xx)] = (cc)
-#endif
+//#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+//#define PUTDOT(xx, yy, cc) screen0[Mul320(yy) + (xx)] = (cc)
+//#endif
 
-#if defined(USE_BACKBUFFER)
-#define PUTDOT(xx, yy, cc) backbuffer[Mul320(yy) + (xx)] = (cc)
-#endif
+//#if defined(USE_BACKBUFFER)
+//#define PUTDOT(xx, yy, cc) backbuffer[Mul320(yy) + (xx)] = (cc)
+//#endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_MDA)
-#define PUTDOT(xx, yy, cc)
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_V2)
+#define PUTDOT(xx, yy, cc) hercules[(0x2000 * (yy % 4)) + (80 * (yy / 4)) + (xx / 8)] = hercules[(0x2000 * (yy % 4)) + (80 * (yy / 4)) + (xx / 8)] | (1 << ((xx) % 8))
 #endif
 
 	dx = fl->b.x - fl->a.x;
@@ -805,7 +808,8 @@ void AM_drawFline(fline_t *fl,
 		d = ay - ax / 2;
 		while (1)
 		{
-			PUTDOT(x, y, color);
+			//PUTDOT(x, y, color);
+			hercules[(8192 * (y % 4)) + (80 * (y / 4)) + (x / 8)] = hercules[(8192 * (y % 4)) + (80 * (y / 4)) + (x / 8)] | (1 << ((x) % 8));
 			if (x == fl->b.x)
 				return;
 			if (d >= 0)
@@ -822,7 +826,8 @@ void AM_drawFline(fline_t *fl,
 		d = ax - ay / 2;
 		while (1)
 		{
-			PUTDOT(x, y, color);
+			//PUTDOT(x, y, color);
+			hercules[(8192 * (y % 4)) + (80 * (y / 4)) + (x / 8)] = hercules[(8192 * (y % 4)) + (80 * (y / 4)) + (x / 8)] | (1 << ((x) % 8));
 			if (y == fl->b.y)
 				return;
 			if (d >= 0)
@@ -1044,11 +1049,17 @@ void AM_Drawer(void)
 	updatestate |= I_FULLSCRN;
 #endif
 
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-	SetDWords(screen0, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
-#endif
-#if defined(USE_BACKBUFFER)
-	SetDWords(backbuffer, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_V2)
+	//if (HERCmap){
+		SetDWords((void *)0xB0000, 0, 8192);
+	/*}else{
+		#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+		SetDWords(screen0, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
+		#endif
+		#if defined(USE_BACKBUFFER)
+		SetDWords(backbuffer, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
+		#endif
+	}*/
 #endif
 
 	if (grid)

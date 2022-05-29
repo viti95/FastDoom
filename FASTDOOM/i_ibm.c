@@ -2594,8 +2594,31 @@ void I_TestFastSetPalette(void)
 //
 // I_InitGraphics
 //
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_V2)
+void I_InitHerculesHalfMode(void){
+    byte Graph_640x400[12] = {0x03, 0x34, 0x28, 0x2A, 0x47, 0x69, 0x00, 0x64, 0x65, 0x02, 0x03, 0x0A};
+    int i;
+
+    outp(0x03BF, Graph_640x400[0]);
+    for (i = 0; i < 10; i++)
+    {
+        outp(0x03B4, i);
+        outp(0x03B5, Graph_640x400[i + 1]);
+    }
+    outp(0x03B8, Graph_640x400[11]);
+
+    SetDWords((void *)0xB0000, 0, 8192);
+}
+#endif
+
 void I_InitGraphics(void)
 {
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_V2)
+    //if (HERCmap) {
+        I_InitHerculesHalfMode();
+    //}
+#endif
+
 #if defined(MODE_T4025) || defined(MODE_T4050)
     // Set 40x25 color mode
     regs.h.ah = 0x00;
