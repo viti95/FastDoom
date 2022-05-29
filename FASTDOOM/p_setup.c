@@ -431,7 +431,6 @@ void P_LoadSideDefs(int lump)
 //
 void P_LoadBlockMap(int lump)
 {
-    int i;
     int count;
 
     blockmaplump = W_CacheLumpNum(lump, PU_LEVEL);
