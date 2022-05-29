@@ -257,7 +257,10 @@ void P_LoadNodes(int lump)
         no->x = mn->x << FRACBITS;
         no->y = mn->y << FRACBITS;
         no->dx = mn->dx << FRACBITS;
+        no->dxs = no->dx >> FRACBITS;
         no->dy = mn->dy << FRACBITS;
+        no->dys = no->dy >> FRACBITS;
+        
         for (j = 0; j < 2; j++)
         {
             no->children[j] = mn->children[j];
@@ -345,8 +348,10 @@ void P_LoadLineDefs(int lump)
         v1 = ld->v1 = &vertexes[mld->v1];
         v2 = ld->v2 = &vertexes[mld->v2];
         ld->dx = v2->x - v1->x;
+        ld->dxs = ld->dx >> FRACBITS;
         ld->dy = v2->y - v1->y;
-
+        ld->dys = ld->dy >> FRACBITS;
+        
         if (!ld->dx)
             ld->slopetype = ST_VERTICAL;
         else if (!ld->dy)

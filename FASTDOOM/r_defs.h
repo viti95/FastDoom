@@ -159,6 +159,10 @@ typedef struct line_s
     fixed_t dx;
     fixed_t dy;
 
+    // Precalculated FRACBITS shift dx - dy
+    fixed_t dxs;
+    fixed_t dys;
+
     // Animation related.
     short flags;
     short special;
@@ -235,6 +239,8 @@ typedef struct
     fixed_t y;
     fixed_t dx;
     fixed_t dy;
+    fixed_t dxs;
+    fixed_t dys;
 
     // Bounding box for each child.
     fixed_t bbox[2][4];

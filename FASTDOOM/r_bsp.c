@@ -523,8 +523,8 @@ void R_RenderBSPNode(int bspnum)
             dx = (viewx - bsp->x);
             dy = (viewy - bsp->y);
 
-            left = (bsp->dy >> FRACBITS) * (dx >> FRACBITS);
-            right = (dy >> FRACBITS) * (bsp->dx >> FRACBITS);
+            left = (bsp->dys) * (dx >> FRACBITS);
+            right = (dy >> FRACBITS) * (bsp->dxs);
 
             side = right >= left;
 

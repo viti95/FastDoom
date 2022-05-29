@@ -1140,8 +1140,8 @@ R_PointInSubsector(fixed_t x,
                 }
                 else
                 {
-                    left = FixedMul(node->dy >> FRACBITS, dx);
-                    right = FixedMul(dy, node->dx >> FRACBITS);
+                    left = FixedMul(node->dys, dx);
+                    right = FixedMul(dy, node->dxs);
 
                     side = right >= left;
                 }
