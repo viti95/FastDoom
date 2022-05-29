@@ -165,7 +165,7 @@ angle_t
 R_PointToAngle(fixed_t x,
                fixed_t y)
 {
-    fixed_t tempDivision, slopeDiv;
+    fixed_t tempDivision;
 
     x -= viewx;
     y -= viewy;
@@ -324,7 +324,7 @@ R_PointToAngle2(fixed_t x1,
                 fixed_t x2,
                 fixed_t y2)
 {
-    fixed_t tempDivision, slopeDiv;
+    fixed_t tempDivision;
 
     viewx = x1;
     viewy = y1;
