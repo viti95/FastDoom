@@ -82,6 +82,8 @@ fixed_t bmaporgx;
 fixed_t bmaporgy;
 // for thing chains
 mobj_t **blocklinks;
+// LUT bmapwidth muls
+int *bmapwidthmuls;
 
 // REJECT
 // For fast sight rejection.
@@ -432,6 +434,7 @@ void P_LoadSideDefs(int lump)
 void P_LoadBlockMap(int lump)
 {
     int count;
+    int i;
 
     blockmaplump = W_CacheLumpNum(lump, PU_LEVEL);
     blockmap = blockmaplump + 4;
@@ -445,6 +448,14 @@ void P_LoadBlockMap(int lump)
     count = sizeof(*blocklinks) * bmapwidth * bmapheight;
     blocklinks = Z_MallocUnowned(count, PU_LEVEL);
     memset(blocklinks, 0, count);
+
+    // LUT bmapwidth muls
+    count = sizeof(int) * bmapheight;
+    bmapwidthmuls = Z_MallocUnowned(count, PU_LEVEL);
+
+    for (i = 0; i < bmapheight; i++){
+        bmapwidthmuls[i] = i * bmapwidth;
+    }
 }
 
 //

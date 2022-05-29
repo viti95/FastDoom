@@ -273,7 +273,7 @@ void P_UnsetThingPosition(mobj_t *thing)
 
             if (blockx >= 0 && blockx < bmapwidth && blocky >= 0 && blocky < bmapheight)
             {
-                blocklinks[blocky * bmapwidth + blockx] = thing->bnext;
+                blocklinks[bmapwidthmuls[blocky] + blockx] = thing->bnext;
             }
         }
     }
@@ -320,7 +320,7 @@ void P_SetThingPosition(mobj_t *thing)
 
         if (blockx >= 0 && blockx < bmapwidth && blocky >= 0 && blocky < bmapheight)
         {
-            link = &blocklinks[blocky * bmapwidth + blockx];
+            link = &blocklinks[bmapwidthmuls[blocky] + blockx];
             thing->bprev = NULL;
             thing->bnext = *link;
             if (*link)
@@ -361,7 +361,7 @@ byte P_NotBlockLinesIterator(int x, int y, byte (*func)(line_t *))
     if (x < 0 || y < 0 || x >= bmapwidth || y >= bmapheight)
         return 0;
 
-    offset = y * bmapwidth + x;
+    offset = bmapwidthmuls[y] + x;
 
     offset = *(blockmap + offset);
 
@@ -390,7 +390,7 @@ byte P_NotBlockThingsIterator(int x, int y, byte (*func)(mobj_t *))
     if (x < 0 || y < 0 || x >= bmapwidth || y >= bmapheight)
         return 0;
 
-    for (mobj = blocklinks[y * bmapwidth + x]; mobj; mobj = mobj->bnext)
+    for (mobj = blocklinks[bmapwidthmuls[y] + x]; mobj; mobj = mobj->bnext)
     {
         if (!func(mobj))
             return 1;
