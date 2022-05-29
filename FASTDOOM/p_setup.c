@@ -255,7 +255,9 @@ void P_LoadNodes(int lump)
     for (i = 0; i < numnodes; i++, no++, mn++)
     {
         no->x = mn->x << FRACBITS;
+        no->xs = no->x >> FRACBITS;
         no->y = mn->y << FRACBITS;
+        no->ys = no->y >> FRACBITS;
         no->dx = mn->dx << FRACBITS;
         no->dxs = no->dx >> FRACBITS;
         no->dy = mn->dy << FRACBITS;

@@ -236,7 +236,9 @@ typedef struct
 {
     // Partition line.
     fixed_t x;
+    fixed_t xs;
     fixed_t y;
+    fixed_t ys;
     fixed_t dx;
     fixed_t dy;
     fixed_t dxs;

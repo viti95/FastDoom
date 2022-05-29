@@ -520,11 +520,11 @@ void R_RenderBSPNode(int bspnum)
             bsp = &nodes[bspnum];
 
             //decide which side the view point is on
-            dx = (viewx - bsp->x);
-            dy = (viewy - bsp->y);
+            dx = (viewxs - bsp->xs);
+            dy = (viewys - bsp->ys);
 
-            left = (bsp->dys) * (dx >> FRACBITS);
-            right = (dy >> FRACBITS) * (bsp->dxs);
+            left = (bsp->dys) * (dx);
+            right = (dy) * (bsp->dxs);
 
             side = right >= left;
 

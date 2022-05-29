@@ -63,7 +63,9 @@ fixed_t iprojection;
 #endif
 
 fixed_t viewx;
+fixed_t viewxs;
 fixed_t viewy;
+fixed_t viewys;
 fixed_t viewz;
 
 angle_t viewangle;
@@ -326,11 +328,8 @@ R_PointToAngle2(fixed_t x1,
 {
     fixed_t tempDivision;
 
-    viewx = x1;
-    viewy = y1;
-
-    x2 -= viewx;
-    y2 -= viewy;
+    x2 -= x1;
+    y2 -= y1;
 
     if ((!x2) && (!y2))
         return 0;
@@ -1162,7 +1161,9 @@ void R_SetupFrame(void)
     int i;
 
     viewx = (players_mo)->x;
+    viewxs = viewx >> FRACBITS;
     viewy = (players_mo)->y;
+    viewys = viewy >> FRACBITS;
     viewangle = (players_mo)->angle;
     extralight = players.extralight;
 

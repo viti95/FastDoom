@@ -86,7 +86,9 @@ extern side_t *sides;
 // POV data.
 //
 extern fixed_t viewx;
+extern fixed_t viewxs;
 extern fixed_t viewy;
+extern fixed_t viewys;
 extern fixed_t viewz;
 
 extern angle_t viewangle;
