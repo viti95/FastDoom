@@ -51,6 +51,8 @@
 #if !defined(MODE_T8050) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_T8043) && !defined(MODE_T8086) && !defined(MODE_MDA)
 int viewwidth;
 int viewheight;
+int viewheightshift;
+int viewheightopt;
 int viewheight32;
 int scaledviewwidth;
 int viewwidthhalf;

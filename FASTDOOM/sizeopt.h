@@ -7,6 +7,8 @@
 #define viewwidthhalf 20
 #define viewwidthlimit 39
 #define viewheight 25
+#define viewheightshift 25 << 16
+#define viewheightopt (25 << 16) - 25
 #define viewheight32 (25 << 16 | 25)
 #define viewwindowx 0
 #define viewwindowy 0
@@ -28,6 +30,8 @@
 #define viewwidthhalf 20
 #define viewwidthlimit 39
 #define viewheight 50
+#define viewheightshift 50 << 16
+#define viewheightopt (50 << 16) - 50
 #define viewheight32 (50 << 16 | 50)
 #define viewwindowx 0
 #define viewwindowy 0
@@ -49,6 +53,8 @@
 #define viewwidthhalf 40
 #define viewwidthlimit 79
 #define viewheight 50
+#define viewheightshift 50 << 16
+#define viewheightopt (50 << 16) - 50
 #define viewheight32 (50 << 16 | 50)
 #define viewwindowx 0
 #define viewwindowy 0
@@ -70,6 +76,8 @@
 #define viewwidthhalf 40
 #define viewwidthlimit 79
 #define viewheight 43
+#define viewheightshift 43 << 16
+#define viewheightopt (43 << 16) - 43
 #define viewheight32 (43 << 16 | 43)
 #define viewwindowx 0
 #define viewwindowy 0
@@ -91,6 +99,8 @@
 #define viewwidthhalf 40
 #define viewwidthlimit 79
 #define viewheight 86
+#define viewheightshift 86 << 16
+#define viewheightopt (86 << 16) - 86
 #define viewheight32 (86 << 16 | 86)
 #define viewwindowx 0
 #define viewwindowy 0
@@ -112,6 +122,8 @@
 #define viewwidthhalf 40
 #define viewwidthlimit 79
 #define viewheight 100
+#define viewheightshift 100 << 16
+#define viewheightopt (100 << 16) - 100
 #define viewheight32 (100 << 16 | 100)
 #define viewwindowx 0
 #define viewwindowy 0

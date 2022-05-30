@@ -45,6 +45,8 @@ extern int viewwidthhalf;
 extern int viewwidthlimit;
 extern int scaledviewwidth;
 extern int viewheight;
+extern int viewheightshift;
+extern int viewheightopt;
 extern int viewheight32;
 
 extern int firstflat;

@@ -32,6 +32,8 @@ extern int viewwidth;
 extern int viewwidthhalf;
 extern int viewwidthlimit;
 extern int viewheight;
+extern int viewheightshift;
+extern int viewheightopt;
 extern int viewheight32;
 extern int viewwindowx;
 extern int viewwindowy;

@@ -389,8 +389,6 @@ void R_ProjectSprite(mobj_t *thing)
 
     int index;
 
-    int calcopt;
-
     vissprite_t *vis;
 
     angle_t ang;
@@ -459,14 +457,13 @@ void R_ProjectSprite(mobj_t *thing)
 
     // killough 4/9/98: clip things which are out of view due to height
     // viti95 6/6/20: optimize by removing divisions and using multiplications instead. Also discard first than calculate other things.
-    calcopt = viewheight << FRACBITS;
 
-    if (FixedMul(thing->z - viewz, xscale) > calcopt)
+    if (FixedMul(thing->z - viewz, xscale) > viewheightshift)
         return;
 
     gzt = thing->z + spritetopoffset[lump];
 
-    if (calcopt - viewheight < FixedMul(viewz - gzt, xscale))
+    if (viewheightopt < FixedMul(viewz - gzt, xscale))
         return;
 
     if (num_vissprite >= num_vissprite_alloc) // killough
