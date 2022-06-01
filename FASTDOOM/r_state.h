@@ -96,11 +96,6 @@ extern fixed_t viewz;
 
 extern angle_t viewangle;
 
-// ?
-extern angle_t clipangle;
-extern angle_t clipangleneg;
-extern angle_t fieldofview;
-
 extern int viewangletox[FINEANGLES / 2];
 extern angle_t xtoviewangle[SCREENWIDTH + 1];
 

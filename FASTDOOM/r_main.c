@@ -77,12 +77,6 @@ fixed_t viewsin;
 // 0 = high, 1 = low
 int detailshift;
 
-//
-// precalculated math tables
-//
-angle_t clipangle;
-angle_t clipangleneg;
-angle_t fieldofview;
 
 // The viewangletox[viewangle + FINEANGLES/4] lookup
 // maps the visible view angles to screen X coordinates,
@@ -622,10 +616,6 @@ void R_InitTextureMapping(void)
         else if (viewangletox[i] == viewwidth + 1)
             viewangletox[i] = viewwidth;
     }
-
-    clipangle = xtoviewangle[0];
-    clipangleneg = -clipangle;
-    fieldofview = 2 * clipangle;
 }
 
 //

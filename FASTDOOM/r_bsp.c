@@ -34,6 +34,10 @@
 
 #include "sizeopt.h"
 
+#define clipangle 537395200
+#define clipangleneg (-clipangle)
+#define fieldofview (clipangle * 2)
+
 seg_t *curline;
 side_t *sidedef;
 line_t *linedef;
