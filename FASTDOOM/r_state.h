@@ -90,6 +90,7 @@ extern side_t *sides;
 extern fixed_t viewx;
 extern fixed_t viewxs;
 extern fixed_t viewy;
+extern fixed_t viewyneg;
 extern fixed_t viewys;
 extern fixed_t viewz;
 

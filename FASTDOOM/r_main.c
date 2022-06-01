@@ -65,6 +65,7 @@ fixed_t iprojection;
 fixed_t viewx;
 fixed_t viewxs;
 fixed_t viewy;
+fixed_t viewyneg;
 fixed_t viewys;
 fixed_t viewz;
 
@@ -1167,6 +1168,7 @@ void R_SetupFrame(void)
     viewx = (players_mo)->x;
     viewxs = viewx >> FRACBITS;
     viewy = (players_mo)->y;
+    viewyneg = -viewy;
     viewys = viewy >> FRACBITS;
     viewangle = (players_mo)->angle;
     extralight = players.extralight;
