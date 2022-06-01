@@ -440,7 +440,7 @@ void R_RenderSegLoop(void)
 			{
 				// top wall
 				mid = pixhigh >> HEIGHTBITS;
-				pixhigh += pixhighstep;
+				pixhigh -= pixhighstep;
 
 				if (mid >= fc_rwx)
 					mid = fc_rwx - 1;
@@ -505,7 +505,7 @@ void R_RenderSegLoop(void)
 			{
 				// bottom wall
 				mid = (pixlow + HEIGHTUNIT - 1) >> HEIGHTBITS;
-				pixlow += pixlowstep;
+				pixlow -= pixlowstep;
 
 				// no space above wall?
 				if (mid <= cc_rwx)
@@ -576,8 +576,8 @@ void R_RenderSegLoop(void)
 		}
 
 		rw_scale += rw_scalestep;
-		topfrac += topstep;
-		bottomfrac += bottomstep;
+		topfrac -= topstep;
+		bottomfrac -= bottomstep;
 
 		ceilingclip[rw_x] = cc_rwx;
 		floorclip[rw_x] = fc_rwx;
@@ -832,10 +832,10 @@ void R_StoreWallRange(int start,
 	worldtop >>= 4;
 	worldbottom >>= 4;
 
-	topstep = -FixedMul(rw_scalestep, worldtop);
+	topstep = FixedMul(rw_scalestep, worldtop);
 	topfrac = centeryfracshifted - FixedMul(worldtop, rw_scale);
 
-	bottomstep = -FixedMul(rw_scalestep, worldbottom);
+	bottomstep = FixedMul(rw_scalestep, worldbottom);
 	bottomfrac = centeryfracshifted - FixedMul(worldbottom, rw_scale);
 
 	if (backsector)
@@ -846,13 +846,13 @@ void R_StoreWallRange(int start,
 		if (worldhigh < worldtop)
 		{
 			pixhigh = centeryfracshifted - FixedMul(worldhigh, rw_scale);
-			pixhighstep = -FixedMul(rw_scalestep, worldhigh);
+			pixhighstep = FixedMul(rw_scalestep, worldhigh);
 		}
 
 		if (worldlow > worldbottom)
 		{
 			pixlow = centeryfracshifted - FixedMul(worldlow, rw_scale);
-			pixlowstep = -FixedMul(rw_scalestep, worldlow);
+			pixlowstep = FixedMul(rw_scalestep, worldlow);
 		}
 	}
 
