@@ -65,6 +65,7 @@ typedef struct
 #if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8086) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA)
 fixed_t pspritescale;
 fixed_t pspriteiscale;
+fixed_t pspriteiscaleneg;
 fixed_t pspriteiscaleshifted;
 #endif
 
@@ -644,7 +645,7 @@ void R_DrawPSprite(pspdef_t *psp)
 
     if (flip)
     {
-        vis->xiscale = -pspriteiscale;
+        vis->xiscale = pspriteiscaleneg;
         vis->startfrac = spritewidth[lump] - 1;
     }
     else

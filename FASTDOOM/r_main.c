@@ -81,6 +81,7 @@ int detailshift;
 // precalculated math tables
 //
 angle_t clipangle;
+angle_t clipangleneg;
 angle_t fieldofview;
 
 // The viewangletox[viewangle + FINEANGLES/4] lookup
@@ -623,6 +624,7 @@ void R_InitTextureMapping(void)
     }
 
     clipangle = xtoviewangle[0];
+    clipangleneg = -clipangle;
     fieldofview = 2 * clipangle;
 }
 
@@ -1007,6 +1009,7 @@ void R_ExecuteSetViewSize(void)
 #if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8086) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA)
     pspritescale = FRACUNIT * viewwidth / SCREENWIDTH;
     pspriteiscale = FRACUNIT * SCREENWIDTH / viewwidth;
+    pspriteiscaleneg = -pspriteiscale;
 #endif
 
 #ifdef MODE_Y

@@ -21,6 +21,7 @@
 #define iprojection 838860
 #define pspritescale 8192
 #define pspriteiscale 524288
+#define pspriteiscaleneg -524288
 #define pspriteiscaleshifted 524288
 #endif
 
@@ -44,6 +45,7 @@
 #define iprojection 838860
 #define pspritescale 8192
 #define pspriteiscale 524288
+#define pspriteiscaleneg -524288
 #define pspriteiscaleshifted 262144
 #endif
 
@@ -67,6 +69,7 @@
 #define iprojection 419430
 #define pspritescale 16384
 #define pspriteiscale 262144
+#define pspriteiscaleneg -262144
 #define pspriteiscaleshifted 262144
 #endif
 
@@ -90,6 +93,7 @@
 #define iprojection 419430
 #define pspritescale 16384
 #define pspriteiscale 262144
+#define pspriteiscaleneg -262144
 #define pspriteiscaleshifted 262144
 #endif
 
@@ -113,6 +117,7 @@
 #define iprojection 419430
 #define pspritescale 16384
 #define pspriteiscale 262144
+#define pspriteiscaleneg -262144
 #define pspriteiscaleshifted 131072
 #endif
 
@@ -136,6 +141,7 @@
 #define iprojection 419430
 #define pspritescale 16384
 #define pspriteiscale 262144
+#define pspriteiscaleneg -262144
 #define pspriteiscaleshifted 131072
 #endif
 
