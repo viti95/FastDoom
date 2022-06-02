@@ -350,9 +350,9 @@ byte R_CheckBBox(fixed_t *bspcoord)
     // Find the corners of the box
     // that define the edges from current viewpoint.
     boxx = viewx <= bspcoord[BOXLEFT] ? 0 : viewx < bspcoord[BOXRIGHT] ? 1 : 2;
-    boxy = viewy >= bspcoord[BOXTOP] ? 0 : viewy > bspcoord[BOXBOTTOM] ? 1 : 2;
+    boxy = viewy >= bspcoord[BOXTOP] ? (0 << 2) : viewy > bspcoord[BOXBOTTOM] ? (1 << 2) : (2 << 2);
 
-    boxpos = (boxy << 2) + boxx;
+    boxpos = boxy + boxx;
 
     switch (boxpos)
     {
