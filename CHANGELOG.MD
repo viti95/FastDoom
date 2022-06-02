@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 0.8.13 (02 Jun 2022)
+* Small performance uplift
+
 ## 0.8.12 (27 Apr 2022)
 * New video mode: IBA MDA text mode. Just for fun, quick'n'dirty
 * Small optimization on gameplay code and melting screen functions
