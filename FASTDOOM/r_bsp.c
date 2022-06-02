@@ -326,14 +326,21 @@ clipsolid:
 //  if some part of the bbox might be visible.
 //
 
+const unsigned int checkcoord[9][4] = {
+    {BOXRIGHT, BOXTOP, BOXLEFT, BOXBOTTOM},    /* Above,Left */
+    {BOXRIGHT, BOXTOP, BOXLEFT, BOXTOP},       /* Above,Center */
+    {BOXRIGHT, BOXBOTTOM, BOXLEFT, BOXTOP},    /* Above,Right */
+    {BOXLEFT, BOXTOP, BOXLEFT, BOXBOTTOM},     /* Center,Left */
+    {-1, 0, 0, 0},                             /* Center,Center */
+    {BOXRIGHT, BOXBOTTOM, BOXRIGHT, BOXTOP},   /* Center,Right */
+    {BOXLEFT, BOXTOP, BOXRIGHT, BOXBOTTOM},    /* Below,Left */
+    {BOXLEFT, BOXBOTTOM, BOXRIGHT, BOXBOTTOM}, /* Below,Center */
+    {BOXLEFT, BOXBOTTOM, BOXRIGHT, BOXTOP}     /* Below,Right */
+};
+
 byte R_CheckBBox(fixed_t *bspcoord)
 {
-    byte boxpos;
-
-    fixed_t x1;
-    fixed_t y1;
-    fixed_t x2;
-    fixed_t y2;
+    unsigned int *boxptr = &checkcoord[0][0];
 
     angle_t angle1;
     angle_t angle2;
@@ -347,75 +354,30 @@ byte R_CheckBBox(fixed_t *bspcoord)
 
     // Find the corners of the box
     // that define the edges from current viewpoint.
-    if (viewx > bspcoord[BOXLEFT]){
-        if (viewx < bspcoord[BOXRIGHT])
-            boxpos = 1;
-        else   
-            boxpos = 2;
-    }else{
-        boxpos = 0;
-    }
-
-    if (viewy < bspcoord[BOXTOP]){
-        if (viewy > bspcoord[BOXBOTTOM])
-            boxpos += 1 << 2;
-        else
-            boxpos += 2 << 2;
-    }
-
-    switch (boxpos)
+    if (viewy < bspcoord[BOXTOP])
     {
-    case 0:
-        x1 = bspcoord[BOXRIGHT];
-        y1 = bspcoord[BOXTOP];
-        x2 = bspcoord[BOXLEFT];
-        y2 = bspcoord[BOXBOTTOM];
-        break;
-    case 1:
-        x1 = bspcoord[BOXRIGHT];
-        y1 = y2 = bspcoord[BOXTOP];
-        x2 = bspcoord[BOXLEFT];
-        break;
-    case 2:
-        x1 = bspcoord[BOXRIGHT];
-        y1 = bspcoord[BOXBOTTOM];
-        x2 = bspcoord[BOXLEFT];
-        y2 = bspcoord[BOXTOP];
-        break;
-    case 4:
-        x1 = x2 = bspcoord[BOXLEFT];
-        y1 = bspcoord[BOXTOP];
-        y2 = bspcoord[BOXBOTTOM];
-        break;
-    case 5:
+        if (viewy <= bspcoord[BOXBOTTOM])
+            boxptr += 24;
+        else
+            boxptr += 12;
+    }
+
+    if (viewx > bspcoord[BOXLEFT])
+    {
+        if (viewx >= bspcoord[BOXRIGHT])
+            boxptr += 8;
+        else
+            boxptr += 4;
+    }
+
+    if (boxptr[0] == -1)
+    {
         return 1;
-    case 6:
-        x1 = x2 = bspcoord[BOXRIGHT];
-        y1 = bspcoord[BOXBOTTOM];
-        y2 = bspcoord[BOXTOP];
-        break;
-    case 8:
-        x1 = bspcoord[BOXLEFT];
-        y1 = bspcoord[BOXTOP];
-        x2 = bspcoord[BOXRIGHT];
-        y2 = bspcoord[BOXBOTTOM];
-        break;
-    case 9:
-        x1 = bspcoord[BOXLEFT];
-        y1 = y2 = bspcoord[BOXBOTTOM];
-        x2 = bspcoord[BOXRIGHT];
-        break;
-    case 10:
-        x1 = bspcoord[BOXLEFT];
-        y1 = bspcoord[BOXBOTTOM];
-        x2 = bspcoord[BOXRIGHT];
-        y2 = bspcoord[BOXTOP];
-        break;
     }
 
     // check clip list for an open space
-    angle1 = R_PointToAngle(x1, y1) - viewangle;
-    angle2 = R_PointToAngle(x2, y2) - viewangle;
+    angle1 = R_PointToAngle(bspcoord[boxptr[0]], bspcoord[boxptr[1]]) - viewangle;
+    angle2 = R_PointToAngle(bspcoord[boxptr[2]], bspcoord[boxptr[3]]) - viewangle;
 
     span = angle1 - angle2;
 
@@ -481,7 +443,7 @@ void R_Subsector(int num)
 
     sub = &subsectors[num];
     frontsector = sub->sector;
-    
+
     if (frontsector->floorheight < viewz)
         floorplane = R_FindPlane(frontsector->floorheight, frontsector->floorpic, frontsector->lightlevel);
 
@@ -520,7 +482,7 @@ void R_RenderBSPNode(int bspnum)
 
     while (true)
     {
-        //Front sides.
+        // Front sides.
         while ((bspnum & NF_SUBSECTOR) == 0)
         {
             if (sp == MAX_BSP_DEPTH)
@@ -528,7 +490,7 @@ void R_RenderBSPNode(int bspnum)
 
             bsp = &nodes[bspnum];
 
-            //decide which side the view point is on
+            // decide which side the view point is on
             dx = (viewxs - bsp->xs);
             dy = (viewys - bsp->ys);
 
@@ -552,11 +514,11 @@ void R_RenderBSPNode(int bspnum)
 
         if (sp == 0)
         {
-            //back at root node and not visible. All done!
+            // back at root node and not visible. All done!
             return;
         }
 
-        //Back sides.
+        // Back sides.
 
         sp--;
 
@@ -565,17 +527,17 @@ void R_RenderBSPNode(int bspnum)
         bsp = &nodes[bspnum];
 
         // Possibly divide back space.
-        //Walk back up the tree until we find
-        //a node that has a visible backspace.
+        // Walk back up the tree until we find
+        // a node that has a visible backspace.
         while (!R_CheckBBox(bsp->bbox[side ^ 1]))
         {
             if (sp == 0)
             {
-                //back at root node and not visible. All done!
+                // back at root node and not visible. All done!
                 return;
             }
 
-            //Back side next.
+            // Back side next.
 
             sp--;
 
