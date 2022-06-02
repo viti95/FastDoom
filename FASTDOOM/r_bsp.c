@@ -380,10 +380,6 @@ byte R_CheckBBox(fixed_t *bspcoord)
         x2 = bspcoord[BOXLEFT];
         y2 = bspcoord[BOXTOP];
         break;
-    case 3:
-    case 7:
-        x1 = x2 = y1 = y2 = bspcoord[BOXTOP];
-        break;
     case 4:
         x1 = x2 = bspcoord[BOXLEFT];
         y1 = bspcoord[BOXTOP];
