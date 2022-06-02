@@ -328,7 +328,7 @@ clipsolid:
 
 byte R_CheckBBox(fixed_t *bspcoord)
 {
-    byte boxpos = 0;
+    byte boxpos;
 
     fixed_t x1;
     fixed_t y1;
@@ -349,9 +349,11 @@ byte R_CheckBBox(fixed_t *bspcoord)
     // that define the edges from current viewpoint.
     if (viewx > bspcoord[BOXLEFT]){
         if (viewx < bspcoord[BOXRIGHT])
-            boxpos += 1;
+            boxpos = 1;
         else   
-            boxpos += 2;
+            boxpos = 2;
+    }else{
+        boxpos = 0;
     }
 
     if (viewy < bspcoord[BOXTOP]){
