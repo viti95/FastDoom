@@ -326,7 +326,7 @@ clipsolid:
 //  if some part of the bbox might be visible.
 //
 
-const unsigned int checkcoord[9][4] = {
+const int checkcoord[9][4] = {
     {BOXRIGHT, BOXTOP, BOXLEFT, BOXBOTTOM},    /* Above,Left */
     {BOXRIGHT, BOXTOP, BOXLEFT, BOXTOP},       /* Above,Center */
     {BOXRIGHT, BOXBOTTOM, BOXLEFT, BOXTOP},    /* Above,Right */
@@ -340,7 +340,7 @@ const unsigned int checkcoord[9][4] = {
 
 byte R_CheckBBox(fixed_t *bspcoord)
 {
-    unsigned int *boxptr;
+    int *boxptr;
 
     angle_t angle1;
     angle_t angle2;
@@ -373,9 +373,7 @@ byte R_CheckBBox(fixed_t *bspcoord)
     }
 
     if (boxptr[0] == -1)
-    {
         return 1;
-    }
 
     // check clip list for an open space
     angle1 = R_PointToAngle(bspcoord[boxptr[0]], bspcoord[boxptr[1]]) - viewangle;
