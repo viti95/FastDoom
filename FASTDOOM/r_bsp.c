@@ -340,7 +340,7 @@ const unsigned int checkcoord[9][4] = {
 
 byte R_CheckBBox(fixed_t *bspcoord)
 {
-    unsigned int *boxptr = &checkcoord[0][0];
+    unsigned int *boxptr;
 
     angle_t angle1;
     angle_t angle2;
@@ -357,9 +357,11 @@ byte R_CheckBBox(fixed_t *bspcoord)
     if (viewy < bspcoord[BOXTOP])
     {
         if (viewy <= bspcoord[BOXBOTTOM])
-            boxptr += 24;
+            boxptr = (&checkcoord[0][0]) + 24;
         else
-            boxptr += 12;
+            boxptr = (&checkcoord[0][0]) + 12;
+    }else{
+        boxptr = (&checkcoord[0][0]);
     }
 
     if (viewx > bspcoord[BOXLEFT])
