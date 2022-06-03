@@ -777,7 +777,7 @@ void AM_drawFline(fline_t *fl,
 //#endif
 
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_V2) || defined(MODE_CGA)
-#define PUTDOT(xx, yy, cc) hercules[(0x2000 * (yy % 4)) + (80 * (yy / 4)) + (xx / 8)] = hercules[(0x2000 * (yy % 4)) + (80 * (yy / 4)) + (xx / 8)] | (1 << (7 - (xx % 8)))
+#define PUTDOT(xx, yy, cc) hercules[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] = hercules[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] | (1 << (7 - ((xx) % 8)))
 #endif
 
 	dx = fl->b.x - fl->a.x;
@@ -808,7 +808,11 @@ void AM_drawFline(fline_t *fl,
 		d = ay - ax / 2;
 		while (1)
 		{
-			PUTDOT(x, y, color);
+			PUTDOT((2 * x), (2 * y), color);
+			PUTDOT((2 * x) + 1, (2 * y), color);
+			PUTDOT((2 * x), (2 * y) + 1, color);
+			PUTDOT((2 * x) + 1, (2 * y) + 1, color);
+			
 			//hercules[(8192 * (y % 4)) + (80 * (y / 4)) + (x / 8)] = hercules[(8192 * (y % 4)) + (80 * (y / 4)) + (x / 8)] | (1 << ((x) % 8));
 			if (x == fl->b.x)
 				return;
@@ -826,7 +830,11 @@ void AM_drawFline(fline_t *fl,
 		d = ax - ay / 2;
 		while (1)
 		{
-			PUTDOT(x, y, color);
+			PUTDOT((2 * x), (2 * y), color);
+			PUTDOT((2 * x) + 1, (2 * y), color);
+			PUTDOT((2 * x), (2 * y) + 1, color);
+			PUTDOT((2 * x) + 1, (2 * y) + 1, color);
+
 			//hercules[(8192 * (y % 4)) + (80 * (y / 4)) + (x / 8)] = hercules[(8192 * (y % 4)) + (80 * (y / 4)) + (x / 8)] | (1 << ((x) % 8));
 			if (y == fl->b.y)
 				return;
