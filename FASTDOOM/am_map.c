@@ -143,7 +143,7 @@ typedef struct
 	fixed_t slp, islp;
 } islope_t;
 
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_V2)
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_V2) || defined(MODE_CGA)
 byte *hercules = (byte *)0xB0000;
 #endif
 
@@ -776,8 +776,8 @@ void AM_drawFline(fline_t *fl,
 //#define PUTDOT(xx, yy, cc) backbuffer[Mul320(yy) + (xx)] = (cc)
 //#endif
 
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_V2)
-#define PUTDOT(xx, yy, cc) hercules[(0x2000 * (yy % 4)) + (80 * (yy / 4)) + (xx / 8)] = hercules[(0x2000 * (yy % 4)) + (80 * (yy / 4)) + (xx / 8)] | (1 << ((xx) % 8))
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_V2) || defined(MODE_CGA)
+#define PUTDOT(xx, yy, cc) hercules[(0x2000 * (yy % 4)) + (80 * (yy / 4)) + (xx / 8)] = hercules[(0x2000 * (yy % 4)) + (80 * (yy / 4)) + (xx / 8)] | (1 << (7 - (xx % 8)))
 #endif
 
 	dx = fl->b.x - fl->a.x;
@@ -808,8 +808,8 @@ void AM_drawFline(fline_t *fl,
 		d = ay - ax / 2;
 		while (1)
 		{
-			//PUTDOT(x, y, color);
-			hercules[(8192 * (y % 4)) + (80 * (y / 4)) + (x / 8)] = hercules[(8192 * (y % 4)) + (80 * (y / 4)) + (x / 8)] | (1 << ((x) % 8));
+			PUTDOT(x, y, color);
+			//hercules[(8192 * (y % 4)) + (80 * (y / 4)) + (x / 8)] = hercules[(8192 * (y % 4)) + (80 * (y / 4)) + (x / 8)] | (1 << ((x) % 8));
 			if (x == fl->b.x)
 				return;
 			if (d >= 0)
@@ -826,8 +826,8 @@ void AM_drawFline(fline_t *fl,
 		d = ax - ay / 2;
 		while (1)
 		{
-			//PUTDOT(x, y, color);
-			hercules[(8192 * (y % 4)) + (80 * (y / 4)) + (x / 8)] = hercules[(8192 * (y % 4)) + (80 * (y / 4)) + (x / 8)] | (1 << ((x) % 8));
+			PUTDOT(x, y, color);
+			//hercules[(8192 * (y % 4)) + (80 * (y / 4)) + (x / 8)] = hercules[(8192 * (y % 4)) + (80 * (y / 4)) + (x / 8)] | (1 << ((x) % 8));
 			if (y == fl->b.y)
 				return;
 			if (d >= 0)
@@ -1049,7 +1049,7 @@ void AM_Drawer(void)
 	updatestate |= I_FULLSCRN;
 #endif
 
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_V2)
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_V2) || defined(MODE_CGA)
 	//if (HERCmap){
 		SetDWords((void *)0xB0000, 0, 8192);
 	/*}else{
