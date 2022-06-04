@@ -783,7 +783,7 @@ void AM_drawFlineHercules(fline_t *fl)
 	register int d;
 
 #define PUTDOTH(xx, yy) automapbuffer[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] = automapbuffer[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] | (0x80 >> ((xx) % 8))
-#define PUTDOT2H(xx, yy) automapbuffer[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] = automapbuffer[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] | (0x80 >> ((xx) % 8)) | (0x80 >> (((xx) + 1) % 8))
+#define PUTDOT2H(xx, yy) automapbuffer[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] = automapbuffer[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] | (0xC0 >> ((xx) % 8))
 
 	dx = fl->b.x - fl->a.x;
 
