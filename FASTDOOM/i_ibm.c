@@ -2616,9 +2616,9 @@ void I_InitHerculesHalfMode(void){
 void I_InitGraphics(void)
 {
 #ifdef SUPPORTS_HERCULES_AUTOMAP
-    //if (HERCmap) {
+    if (HERCmap) {
         I_InitHerculesHalfMode();
-    //}
+    }
 #endif
 
 #if defined(MODE_T4025) || defined(MODE_T4050)

@@ -757,8 +757,7 @@ byte AM_clipMline(mline_t *ml, fline_t *fl)
 //
 // Classic Bresenham w/ whatever optimizations needed for speed
 //
-void AM_drawFline(fline_t *fl,
-				  int color)
+void AM_drawFlineHercules(fline_t *fl, int color)
 {
 	register int x;
 	register int y;
@@ -770,16 +769,8 @@ void AM_drawFline(fline_t *fl,
 	register int ay;
 	register int d;
 
-//#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-//#define PUTDOT(xx, yy, cc) screen0[Mul320(yy) + (xx)] = (cc)
-//#endif
-
-//#if defined(USE_BACKBUFFER)
-//#define PUTDOT(xx, yy, cc) backbuffer[Mul320(yy) + (xx)] = (cc)
-//#endif
-
 #ifdef SUPPORTS_HERCULES_AUTOMAP
-#define PUTDOT(xx, yy, cc) hercules[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] = hercules[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] | (1 << (7 - ((xx) % 8)))
+#define PUTDOTH(xx, yy, cc) hercules[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] = hercules[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] | (1 << (7 - ((xx) % 8)))
 #endif
 
 	dx = fl->b.x - fl->a.x;
@@ -810,12 +801,11 @@ void AM_drawFline(fline_t *fl,
 		d = ay - ax / 2;
 		while (1)
 		{
-			PUTDOT((2 * x), (2 * y), color);
-			PUTDOT((2 * x) + 1, (2 * y), color);
-			PUTDOT((2 * x), (2 * y) + 1, color);
-			PUTDOT((2 * x) + 1, (2 * y) + 1, color);
+			PUTDOTH((2 * x), (2 * y), color);
+			PUTDOTH((2 * x) + 1, (2 * y), color);
+			PUTDOTH((2 * x), (2 * y) + 1, color);
+			PUTDOTH((2 * x) + 1, (2 * y) + 1, color);
 			
-			//hercules[(8192 * (y % 4)) + (80 * (y / 4)) + (x / 8)] = hercules[(8192 * (y % 4)) + (80 * (y / 4)) + (x / 8)] | (1 << ((x) % 8));
 			if (x == fl->b.x)
 				return;
 			if (d >= 0)
@@ -832,12 +822,92 @@ void AM_drawFline(fline_t *fl,
 		d = ax - ay / 2;
 		while (1)
 		{
-			PUTDOT((2 * x), (2 * y), color);
-			PUTDOT((2 * x) + 1, (2 * y), color);
-			PUTDOT((2 * x), (2 * y) + 1, color);
-			PUTDOT((2 * x) + 1, (2 * y) + 1, color);
+			PUTDOTH((2 * x), (2 * y), color);
+			PUTDOTH((2 * x) + 1, (2 * y), color);
+			PUTDOTH((2 * x), (2 * y) + 1, color);
+			PUTDOTH((2 * x) + 1, (2 * y) + 1, color);
 
-			//hercules[(8192 * (y % 4)) + (80 * (y / 4)) + (x / 8)] = hercules[(8192 * (y % 4)) + (80 * (y / 4)) + (x / 8)] | (1 << ((x) % 8));
+			if (y == fl->b.y)
+				return;
+			if (d >= 0)
+			{
+				x += sx;
+				d -= ay;
+			}
+			y += sy;
+			d += ax;
+		}
+	}
+}
+
+void AM_drawFline(fline_t *fl, int color)
+{
+	register int x;
+	register int y;
+	register int dx;
+	register int dy;
+	register int sx;
+	register int sy;
+	register int ax;
+	register int ay;
+	register int d;
+
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#define PUTDOT(xx, yy, cc) screen0[Mul320(yy) + (xx)] = (cc)
+#endif
+
+#if defined(USE_BACKBUFFER)
+#define PUTDOT(xx, yy, cc) backbuffer[Mul320(yy) + (xx)] = (cc)
+#endif
+
+	dx = fl->b.x - fl->a.x;
+
+	if (dx < 0){
+		ax = 2 * -dx;
+		sx = -1;
+	}else{
+		ax = 2 * dx;
+		sx = 1;
+	}
+
+	dy = fl->b.y - fl->a.y;
+
+	if (dy < 0){
+		ay = 2 * -dy;
+		sy = -1;
+	}else{
+		ay = 2 * dy;
+		sy = 1;
+	}
+
+	x = fl->a.x;
+	y = fl->a.y;
+
+	if (ax > ay)
+	{
+		d = ay - ax / 2;
+		while (1)
+		{
+			PUTDOT(x, y, color);
+			
+			if (x == fl->b.x)
+				return;
+			if (d >= 0)
+			{
+				y += sy;
+				d -= ax;
+			}
+			x += sx;
+			d += ay;
+		}
+	}
+	else
+	{
+		d = ax - ay / 2;
+		while (1)
+		{
+			PUTDOT(x, y, color);
+
 			if (y == fl->b.y)
 				return;
 			if (d >= 0)
@@ -859,8 +929,18 @@ void AM_drawMline(mline_t *ml,
 {
 	static fline_t fl;
 
+	#ifdef SUPPORTS_HERCULES_AUTOMAP
+	if (AM_clipMline(ml, &fl))
+		if(HERCmap){
+			AM_drawFlineHercules(&fl, color); // draws it on frame buffer using fb coords
+		}else{
+			AM_drawFline(&fl, color); // draws it on frame buffer using fb coords
+		}
+	#else
 	if (AM_clipMline(ml, &fl))
 		AM_drawFline(&fl, color); // draws it on frame buffer using fb coords
+	#endif
+
 }
 
 //
@@ -1060,16 +1140,23 @@ void AM_Drawer(void)
 #endif
 
 #ifdef SUPPORTS_HERCULES_AUTOMAP
-	//if (HERCmap){
-		SetDWords((void *)0xB0000, 0, 8192);
-	/*}else{
+	if (HERCmap){
+		SetDWords(hercules, 0, 8192);
+	}else{
 		#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 		SetDWords(screen0, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
 		#endif
 		#if defined(USE_BACKBUFFER)
 		SetDWords(backbuffer, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
 		#endif
-	}*/
+	}
+#else
+	#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+	SetDWords(screen0, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
+	#endif
+	#if defined(USE_BACKBUFFER)
+	SetDWords(backbuffer, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
+	#endif
 #endif
 
 	if (grid)

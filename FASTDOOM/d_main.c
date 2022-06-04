@@ -108,7 +108,7 @@ int forceScreenSize;
 boolean CGAcard;
 #endif
 
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_V2)
+#ifdef SUPPORTS_HERCULES_AUTOMAP
 boolean HERCmap;
 #endif
 
@@ -1004,8 +1004,8 @@ void D_DoomMain(void)
     CGAcard = M_CheckParm("-cga");
 #endif
 
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_V2)
-    HERCmap = M_CheckParm("-HERCmap");
+#ifdef SUPPORTS_HERCULES_AUTOMAP
+    HERCmap = M_CheckParm("-hercmap");
 #endif
 
 #if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
