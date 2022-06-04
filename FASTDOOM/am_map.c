@@ -757,6 +757,7 @@ byte AM_clipMline(mline_t *ml, fline_t *fl)
 //
 // Classic Bresenham w/ whatever optimizations needed for speed
 //
+#ifdef SUPPORTS_HERCULES_AUTOMAP
 void AM_drawFlineHercules(fline_t *fl, int color)
 {
 	register int x;
@@ -769,9 +770,7 @@ void AM_drawFlineHercules(fline_t *fl, int color)
 	register int ay;
 	register int d;
 
-#ifdef SUPPORTS_HERCULES_AUTOMAP
 #define PUTDOTH(xx, yy, cc) hercules[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] = hercules[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] | (1 << (7 - ((xx) % 8)))
-#endif
 
 	dx = fl->b.x - fl->a.x;
 
@@ -839,6 +838,7 @@ void AM_drawFlineHercules(fline_t *fl, int color)
 		}
 	}
 }
+#endif
 
 void AM_drawFline(fline_t *fl, int color)
 {

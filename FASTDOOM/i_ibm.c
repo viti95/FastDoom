@@ -2615,6 +2615,10 @@ void I_InitHerculesHalfMode(void){
 
 void I_InitGraphics(void)
 {
+#if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
+    int mode;
+#endif
+
 #ifdef SUPPORTS_HERCULES_AUTOMAP
     if (HERCmap) {
         I_InitHerculesHalfMode();
@@ -3061,9 +3065,6 @@ void I_InitGraphics(void)
 #endif
 
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
-
-    int mode;
-
     VBE_Init();
 
     // Get VBE info
