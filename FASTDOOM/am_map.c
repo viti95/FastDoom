@@ -41,6 +41,8 @@
 
 #include "doomstat.h"
 
+#include "options.h"
+
 // For use if I do walls with outsides/insides
 #define REDS (256 - 5 * 16)
 #define REDRANGE 16
@@ -223,6 +225,10 @@ static byte stopped = true;
 
 extern byte viewactive;
 
+#ifdef SUPPORTS_HERCULES_AUTOMAP
+byte *automapbuffer;
+#endif
+
 //
 //
 //
@@ -395,6 +401,12 @@ void AM_Stop(void)
 	automapactive = 0;
 	ST_Responder(&st_notify);
 	stopped = 1;
+
+#ifdef SUPPORTS_HERCULES_AUTOMAP
+	if (HERCmap){
+ 		Z_Free(automapbuffer);
+	}
+#endif
 }
 
 //
@@ -403,6 +415,12 @@ void AM_Stop(void)
 void AM_Start(void)
 {
 	static int lastlevel = -1, lastepisode = -1;
+
+#ifdef SUPPORTS_HERCULES_AUTOMAP
+	if (HERCmap){
+ 		automapbuffer = (byte *)Z_MallocUnowned(32768, PU_STATIC);
+	}
+#endif
 
 	if (!stopped)
 		AM_Stop();
@@ -583,7 +601,6 @@ void AM_changeWindowScale(void)
 //
 void AM_doFollowPlayer(void)
 {
-
 	if (f_oldloc.x != players_mo->x || f_oldloc.y != players_mo->y)
 	{
 		m_x = FTOM(MTOF(players_mo->x)) - m_w / 2;
@@ -752,8 +769,103 @@ byte AM_clipMline(mline_t *ml, fline_t *fl)
 //
 // Classic Bresenham w/ whatever optimizations needed for speed
 //
-void AM_drawFline(fline_t *fl,
-				  int color)
+#ifdef SUPPORTS_HERCULES_AUTOMAP
+void AM_drawFlineHercules(fline_t *fl)
+{
+	register int x;
+	register int y;
+	register int dx;
+	register int dy;
+	register int sx;
+	register int sy;
+	register int ax;
+	register int ay;
+	register int d;
+
+#define PUTDOTH(xx, yy) automapbuffer[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] = automapbuffer[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] | (0x80 >> ((xx) % 8))
+#define PUTDOT2H(xx, yy) automapbuffer[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] = automapbuffer[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] | (0xC0 >> ((xx) % 8))
+
+	dx = fl->b.x - fl->a.x;
+
+	if (dx < 0){
+		ax = 2 * -dx;
+		sx = -1;
+	}else{
+		ax = 2 * dx;
+		sx = 1;
+	}
+
+	dy = fl->b.y - fl->a.y;
+
+	if (dy < 0){
+		ay = 2 * -dy;
+		sy = -1;
+	}else{
+		ay = 2 * dy;
+		sy = 1;
+	}
+
+	x = fl->a.x;
+	y = fl->a.y;
+
+	if (ax > ay)
+	{
+		d = ay - ax / 2;
+		while (1)
+		{
+			if ((7 - ((x) % 8)) > 0){
+				// We can optimize write 2 pixels on the same scanline
+				PUTDOT2H((2 * x), (2 * y));
+				PUTDOT2H((2 * x), (2 * y) + 1);
+			}else{
+				PUTDOTH((2 * x), (2 * y));
+				PUTDOTH((2 * x) + 1, (2 * y));
+				PUTDOTH((2 * x), (2 * y) + 1);
+				PUTDOTH((2 * x) + 1, (2 * y) + 1);
+			}
+
+			if (x == fl->b.x)
+				return;
+			if (d >= 0)
+			{
+				y += sy;
+				d -= ax;
+			}
+			x += sx;
+			d += ay;
+		}
+	}
+	else
+	{
+		d = ax - ay / 2;
+		while (1)
+		{
+			if ((7 - ((x) % 8)) > 0){
+				// We can optimize write 2 pixels on the same scanline
+				PUTDOT2H((2 * x), (2 * y));
+				PUTDOT2H((2 * x), (2 * y) + 1);
+			}else{
+				PUTDOTH((2 * x), (2 * y));
+				PUTDOTH((2 * x) + 1, (2 * y));
+				PUTDOTH((2 * x), (2 * y) + 1);
+				PUTDOTH((2 * x) + 1, (2 * y) + 1);
+			}
+
+			if (y == fl->b.y)
+				return;
+			if (d >= 0)
+			{
+				x += sx;
+				d -= ay;
+			}
+			y += sy;
+			d += ax;
+		}
+	}
+}
+#endif
+
+void AM_drawFline(fline_t *fl, int color)
 {
 	register int x;
 	register int y;
@@ -771,10 +883,6 @@ void AM_drawFline(fline_t *fl,
 
 #if defined(USE_BACKBUFFER)
 #define PUTDOT(xx, yy, cc) backbuffer[Mul320(yy) + (xx)] = (cc)
-#endif
-
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_MDA)
-#define PUTDOT(xx, yy, cc)
 #endif
 
 	dx = fl->b.x - fl->a.x;
@@ -806,6 +914,7 @@ void AM_drawFline(fline_t *fl,
 		while (1)
 		{
 			PUTDOT(x, y, color);
+			
 			if (x == fl->b.x)
 				return;
 			if (d >= 0)
@@ -823,6 +932,7 @@ void AM_drawFline(fline_t *fl,
 		while (1)
 		{
 			PUTDOT(x, y, color);
+
 			if (y == fl->b.y)
 				return;
 			if (d >= 0)
@@ -844,8 +954,18 @@ void AM_drawMline(mline_t *ml,
 {
 	static fline_t fl;
 
+	#ifdef SUPPORTS_HERCULES_AUTOMAP
+	if (AM_clipMline(ml, &fl))
+		if(HERCmap){
+			AM_drawFlineHercules(&fl); // draws it on frame buffer using fb coords
+		}else{
+			AM_drawFline(&fl, color); // draws it on frame buffer using fb coords
+		}
+	#else
 	if (AM_clipMline(ml, &fl))
 		AM_drawFline(&fl, color); // draws it on frame buffer using fb coords
+	#endif
+
 }
 
 //
@@ -1044,11 +1164,24 @@ void AM_Drawer(void)
 	updatestate |= I_FULLSCRN;
 #endif
 
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#ifdef SUPPORTS_HERCULES_AUTOMAP
+	if (HERCmap){
+		SetDWords(automapbuffer, 0, 8192);
+	}else{
+		#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+		SetDWords(screen0, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
+		#endif
+		#if defined(USE_BACKBUFFER)
+		SetDWords(backbuffer, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
+		#endif
+	}
+#else
+	#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 	SetDWords(screen0, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
-#endif
-#if defined(USE_BACKBUFFER)
+	#endif
+	#if defined(USE_BACKBUFFER)
 	SetDWords(backbuffer, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
+	#endif
 #endif
 
 	if (grid)
@@ -1057,6 +1190,10 @@ void AM_Drawer(void)
 	AM_drawPlayers();
 	if (cheating == 2)
 		AM_drawThings(THINGCOLORS, THINGRANGE);
+	
+#ifdef SUPPORTS_HERCULES_AUTOMAP
+	CopyDWords(automapbuffer, (byte *)0xB0000, 8192);
+#endif
 
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 	V_MarkRect(0, 0, SCREENWIDTH, automapheight);

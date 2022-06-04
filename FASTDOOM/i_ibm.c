@@ -42,6 +42,8 @@
 
 #include "std_func.h"
 
+#include "options.h"
+
 #define BYTE0_USHORT(value) (((unsigned char *)&value)[0])
 #define BYTE1_USHORT(value) (((unsigned char *)&value)[1])
 
@@ -2594,8 +2596,35 @@ void I_TestFastSetPalette(void)
 //
 // I_InitGraphics
 //
+#ifdef SUPPORTS_HERCULES_AUTOMAP
+void I_InitHerculesHalfMode(void){
+    byte Graph_640x400[12] = {0x03, 0x34, 0x28, 0x2A, 0x47, 0x69, 0x00, 0x64, 0x65, 0x02, 0x03, 0x0A};
+    int i;
+
+    outp(0x03BF, Graph_640x400[0]);
+    for (i = 0; i < 10; i++)
+    {
+        outp(0x03B4, i);
+        outp(0x03B5, Graph_640x400[i + 1]);
+    }
+    outp(0x03B8, Graph_640x400[11]);
+
+    SetDWords((void *)0xB0000, 0, 8192);
+}
+#endif
+
 void I_InitGraphics(void)
 {
+#if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
+    int mode;
+#endif
+
+#ifdef SUPPORTS_HERCULES_AUTOMAP
+    if (HERCmap) {
+        I_InitHerculesHalfMode();
+    }
+#endif
+
 #if defined(MODE_T4025) || defined(MODE_T4050)
     // Set 40x25 color mode
     regs.h.ah = 0x00;
@@ -3036,9 +3065,6 @@ void I_InitGraphics(void)
 #endif
 
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
-
-    int mode;
-
     VBE_Init();
 
     // Get VBE info

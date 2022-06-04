@@ -32,6 +32,8 @@
 // We need the playr data structure as well.
 #include "d_player.h"
 
+#include "options.h"
+
 
 
 // ------------------------
@@ -63,6 +65,10 @@ extern int forceScreenSize;
 
 #if defined(MODE_T8025) || defined(MODE_T4025) || defined(MODE_T4050)
 extern boolean CGAcard;
+#endif
+
+#ifdef SUPPORTS_HERCULES_AUTOMAP
+extern boolean HERCmap;
 #endif
 
 #if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
