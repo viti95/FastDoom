@@ -225,6 +225,10 @@ static byte stopped = true;
 
 extern byte viewactive;
 
+#ifdef SUPPORTS_HERCULES_AUTOMAP
+byte *automapbuffer;
+#endif
+
 //
 //
 //
@@ -397,6 +401,12 @@ void AM_Stop(void)
 	automapactive = 0;
 	ST_Responder(&st_notify);
 	stopped = 1;
+
+#ifdef SUPPORTS_HERCULES_AUTOMAP
+	if (HERCmap){
+ 		Z_Free(automapbuffer);
+	}
+#endif
 }
 
 //
@@ -405,6 +415,12 @@ void AM_Stop(void)
 void AM_Start(void)
 {
 	static int lastlevel = -1, lastepisode = -1;
+
+#ifdef SUPPORTS_HERCULES_AUTOMAP
+	if (HERCmap){
+ 		automapbuffer = (byte *)Z_MallocUnowned(32768, PU_STATIC);
+	}
+#endif
 
 	if (!stopped)
 		AM_Stop();
@@ -756,8 +772,6 @@ byte AM_clipMline(mline_t *ml, fline_t *fl)
 #ifdef SUPPORTS_HERCULES_AUTOMAP
 void AM_drawFlineHercules(fline_t *fl)
 {
-	byte *hercules = (byte *)0xB0000;
-
 	register int x;
 	register int y;
 	register int dx;
@@ -768,7 +782,7 @@ void AM_drawFlineHercules(fline_t *fl)
 	register int ay;
 	register int d;
 
-#define PUTDOTH(xx, yy) hercules[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] = hercules[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] | (1 << (7 - ((xx) % 8)))
+#define PUTDOTH(xx, yy) automapbuffer[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] = automapbuffer[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] | (1 << (7 - ((xx) % 8)))
 
 	dx = fl->b.x - fl->a.x;
 
@@ -1139,8 +1153,7 @@ void AM_Drawer(void)
 
 #ifdef SUPPORTS_HERCULES_AUTOMAP
 	if (HERCmap){
-		byte *hercules = (byte *)0xB0000;
-		SetDWords(hercules, 0, 8192);
+		SetDWords(automapbuffer, 0, 8192);
 	}else{
 		#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 		SetDWords(screen0, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
@@ -1164,6 +1177,10 @@ void AM_Drawer(void)
 	AM_drawPlayers();
 	if (cheating == 2)
 		AM_drawThings(THINGCOLORS, THINGRANGE);
+	
+#ifdef SUPPORTS_HERCULES_AUTOMAP
+	CopyDWords(automapbuffer, (byte *)0xB0000, 8192);
+#endif
 
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 	V_MarkRect(0, 0, SCREENWIDTH, automapheight);
