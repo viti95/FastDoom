@@ -783,6 +783,7 @@ void AM_drawFlineHercules(fline_t *fl)
 	register int d;
 
 #define PUTDOTH(xx, yy) automapbuffer[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] = automapbuffer[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] | (1 << (7 - ((xx) % 8)))
+#define PUTDOT2H(xx, yy) automapbuffer[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] = automapbuffer[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] | (1 << (7 - ((xx) % 8))) | (1 << (7 - ((xx) + 1) % 8))
 
 	dx = fl->b.x - fl->a.x;
 
@@ -812,11 +813,17 @@ void AM_drawFlineHercules(fline_t *fl)
 		d = ay - ax / 2;
 		while (1)
 		{
-			PUTDOTH((2 * x), (2 * y));
-			PUTDOTH((2 * x) + 1, (2 * y));
-			PUTDOTH((2 * x), (2 * y) + 1);
-			PUTDOTH((2 * x) + 1, (2 * y) + 1);
-			
+			if ((7 - ((x) % 8)) > 0){
+				// We can optimize write 2 pixels on the same scanline
+				PUTDOT2H((2 * x), (2 * y));
+				PUTDOT2H((2 * x), (2 * y) + 1);
+			}else{
+				PUTDOTH((2 * x), (2 * y));
+				PUTDOTH((2 * x) + 1, (2 * y));
+				PUTDOTH((2 * x), (2 * y) + 1);
+				PUTDOTH((2 * x) + 1, (2 * y) + 1);
+			}
+
 			if (x == fl->b.x)
 				return;
 			if (d >= 0)
@@ -833,10 +840,16 @@ void AM_drawFlineHercules(fline_t *fl)
 		d = ax - ay / 2;
 		while (1)
 		{
-			PUTDOTH((2 * x), (2 * y));
-			PUTDOTH((2 * x) + 1, (2 * y));
-			PUTDOTH((2 * x), (2 * y) + 1);
-			PUTDOTH((2 * x) + 1, (2 * y) + 1);
+			if ((7 - ((x) % 8)) > 0){
+				// We can optimize write 2 pixels on the same scanline
+				PUTDOT2H((2 * x), (2 * y));
+				PUTDOT2H((2 * x), (2 * y) + 1);
+			}else{
+				PUTDOTH((2 * x), (2 * y));
+				PUTDOTH((2 * x) + 1, (2 * y));
+				PUTDOTH((2 * x), (2 * y) + 1);
+				PUTDOTH((2 * x) + 1, (2 * y) + 1);
+			}
 
 			if (y == fl->b.y)
 				return;
