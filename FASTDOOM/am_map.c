@@ -145,10 +145,6 @@ typedef struct
 	fixed_t slp, islp;
 } islope_t;
 
-#ifdef SUPPORTS_HERCULES_AUTOMAP
-byte *hercules = (byte *)0xB0000;
-#endif
-
 //
 // The vector graphics for the automap.
 //  A line drawing of the player pointing right,
@@ -758,8 +754,10 @@ byte AM_clipMline(mline_t *ml, fline_t *fl)
 // Classic Bresenham w/ whatever optimizations needed for speed
 //
 #ifdef SUPPORTS_HERCULES_AUTOMAP
-void AM_drawFlineHercules(fline_t *fl, int color)
+void AM_drawFlineHercules(fline_t *fl)
 {
+	byte *hercules = (byte *)0xB0000;
+
 	register int x;
 	register int y;
 	register int dx;
@@ -770,7 +768,7 @@ void AM_drawFlineHercules(fline_t *fl, int color)
 	register int ay;
 	register int d;
 
-#define PUTDOTH(xx, yy, cc) hercules[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] = hercules[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] | (1 << (7 - ((xx) % 8)))
+#define PUTDOTH(xx, yy) hercules[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] = hercules[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] | (1 << (7 - ((xx) % 8)))
 
 	dx = fl->b.x - fl->a.x;
 
@@ -800,10 +798,10 @@ void AM_drawFlineHercules(fline_t *fl, int color)
 		d = ay - ax / 2;
 		while (1)
 		{
-			PUTDOTH((2 * x), (2 * y), color);
-			PUTDOTH((2 * x) + 1, (2 * y), color);
-			PUTDOTH((2 * x), (2 * y) + 1, color);
-			PUTDOTH((2 * x) + 1, (2 * y) + 1, color);
+			PUTDOTH((2 * x), (2 * y));
+			PUTDOTH((2 * x) + 1, (2 * y));
+			PUTDOTH((2 * x), (2 * y) + 1);
+			PUTDOTH((2 * x) + 1, (2 * y) + 1);
 			
 			if (x == fl->b.x)
 				return;
@@ -821,10 +819,10 @@ void AM_drawFlineHercules(fline_t *fl, int color)
 		d = ax - ay / 2;
 		while (1)
 		{
-			PUTDOTH((2 * x), (2 * y), color);
-			PUTDOTH((2 * x) + 1, (2 * y), color);
-			PUTDOTH((2 * x), (2 * y) + 1, color);
-			PUTDOTH((2 * x) + 1, (2 * y) + 1, color);
+			PUTDOTH((2 * x), (2 * y));
+			PUTDOTH((2 * x) + 1, (2 * y));
+			PUTDOTH((2 * x), (2 * y) + 1);
+			PUTDOTH((2 * x) + 1, (2 * y) + 1);
 
 			if (y == fl->b.y)
 				return;
@@ -932,7 +930,7 @@ void AM_drawMline(mline_t *ml,
 	#ifdef SUPPORTS_HERCULES_AUTOMAP
 	if (AM_clipMline(ml, &fl))
 		if(HERCmap){
-			AM_drawFlineHercules(&fl, color); // draws it on frame buffer using fb coords
+			AM_drawFlineHercules(&fl); // draws it on frame buffer using fb coords
 		}else{
 			AM_drawFline(&fl, color); // draws it on frame buffer using fb coords
 		}
@@ -1141,6 +1139,7 @@ void AM_Drawer(void)
 
 #ifdef SUPPORTS_HERCULES_AUTOMAP
 	if (HERCmap){
+		byte *hercules = (byte *)0xB0000;
 		SetDWords(hercules, 0, 8192);
 	}else{
 		#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
