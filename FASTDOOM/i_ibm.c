@@ -42,6 +42,8 @@
 
 #include "std_func.h"
 
+#include "options.h"
+
 #define BYTE0_USHORT(value) (((unsigned char *)&value)[0])
 #define BYTE1_USHORT(value) (((unsigned char *)&value)[1])
 
@@ -2594,7 +2596,7 @@ void I_TestFastSetPalette(void)
 //
 // I_InitGraphics
 //
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_V2) || defined(MODE_CGA)
+#ifdef SUPPORTS_HERCULES_AUTOMAP
 void I_InitHerculesHalfMode(void){
     byte Graph_640x400[12] = {0x03, 0x34, 0x28, 0x2A, 0x47, 0x69, 0x00, 0x64, 0x65, 0x02, 0x03, 0x0A};
     int i;
@@ -2613,7 +2615,7 @@ void I_InitHerculesHalfMode(void){
 
 void I_InitGraphics(void)
 {
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_V2) || defined(MODE_CGA)
+#ifdef SUPPORTS_HERCULES_AUTOMAP
     //if (HERCmap) {
         I_InitHerculesHalfMode();
     //}

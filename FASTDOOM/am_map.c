@@ -41,6 +41,8 @@
 
 #include "doomstat.h"
 
+#include "options.h"
+
 // For use if I do walls with outsides/insides
 #define REDS (256 - 5 * 16)
 #define REDRANGE 16
@@ -143,7 +145,7 @@ typedef struct
 	fixed_t slp, islp;
 } islope_t;
 
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_V2) || defined(MODE_CGA)
+#ifdef SUPPORTS_HERCULES_AUTOMAP
 byte *hercules = (byte *)0xB0000;
 #endif
 
@@ -776,7 +778,7 @@ void AM_drawFline(fline_t *fl,
 //#define PUTDOT(xx, yy, cc) backbuffer[Mul320(yy) + (xx)] = (cc)
 //#endif
 
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_V2) || defined(MODE_CGA)
+#ifdef SUPPORTS_HERCULES_AUTOMAP
 #define PUTDOT(xx, yy, cc) hercules[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] = hercules[(0x2000 * ((yy) % 4)) + (80 * ((yy) / 4)) + ((xx) / 8)] | (1 << (7 - ((xx) % 8)))
 #endif
 
@@ -1057,7 +1059,7 @@ void AM_Drawer(void)
 	updatestate |= I_FULLSCRN;
 #endif
 
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_V2) || defined(MODE_CGA)
+#ifdef SUPPORTS_HERCULES_AUTOMAP
 	//if (HERCmap){
 		SetDWords((void *)0xB0000, 0, 8192);
 	/*}else{
