@@ -25,5 +25,4 @@ call make.bat clean V36
 call make.bat clean VBD
 call make.bat clean VBR
 call make.bat clean Y
-call make.bat clean HG2
 call make.bat clean MDA

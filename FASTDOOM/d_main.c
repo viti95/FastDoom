@@ -974,7 +974,7 @@ void D_DoomMain(void)
     D_AddFile("modemda.wad");
 #endif
 
-#if defined(MODE_CGA_BW) || defined(MODE_HERC) || defined(MODE_HERC200)
+#if defined(MODE_CGA_BW) || defined(MODE_HERC)
     D_AddFile("modebw.wad");
 #endif
 

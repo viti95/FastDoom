@@ -112,11 +112,6 @@
  * FDOOMC36.EXE => FastDoom CGA 80x100 and 122 pseudocolors
  * FDOOMV36.EXE => FastDoom VGA 80x200 and 122 pseudocolors
  * FDOOME36.EXE => FastDoom EGA 80x100 and 122 pseudocolors
- * FDOOMHG2.EXE => Experimental FastDoom 640x200 monochrome Hercules.
-                   Requires a fast CPU. Uses ordered dithering 2x2. 
-                   Internal resolution 320x200. 
-                   Not working on real hardware (?), but running fine
-                   on emulators (DosBox-X).
  * FDOOMMDA.EXE => FastDoom MDA 80x25 text mode. Internal resolution 80x50.
                    Very quick'n'dirty, only Neo can play this mode properly.
  * FDSETUP.EXE  => Utility to setup controls and sound cards

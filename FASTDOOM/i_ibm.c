@@ -252,7 +252,7 @@ byte lutcolors[14 * 1024];
 byte *ptrlutcolors;
 #endif
 
-#if defined(MODE_CGA_BW) || defined(MODE_EGA640) || defined(MODE_HERC200)
+#if defined(MODE_CGA_BW) || defined(MODE_EGA640)
 byte lutcolors[14 * 512];
 byte *ptrlutcolors;
 #endif
@@ -308,7 +308,7 @@ void I_ProcessPalette(byte *palette)
 }
 #endif
 
-#if defined(MODE_CGA_BW) || defined(MODE_HERC200)
+#if defined(MODE_CGA_BW)
 void I_ProcessPalette(byte *palette)
 {
     int i;
@@ -1173,7 +1173,7 @@ void I_SetPalette(int numpalette)
     ptrlutcolors = lutcolors + numpalette * 1024;
 #endif
 
-#if defined(MODE_CGA_BW) || defined(MODE_HERC200) || defined(MODE_EGA640)
+#if defined(MODE_CGA_BW) || defined(MODE_EGA640)
     ptrlutcolors = lutcolors + numpalette * 512;
 #endif
 
@@ -1495,54 +1495,6 @@ void CGA_BW_DrawBackbuffer(void)
 
         ptrbackbuffer += 320;
     } while (vram < (unsigned char *)0xB9F40);
-}
-#endif
-
-#ifdef MODE_HERC200
-void HERC200_DrawBackbuffer(void)
-{
-    unsigned char *vram = (unsigned char *)0xB0000;
-    byte *ptrbackbuffer = backbuffer;
-
-    do
-    {
-        unsigned char x = 80;
-
-        do
-        {
-            unsigned short *ptr;
-            unsigned short finalcolor;
-
-            // Process two pixels at the same time (16-bit)
-            ptr = ptrlutcolors + *(ptrbackbuffer)*2;
-            finalcolor = *ptr & 0x8040;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 1) * 2;
-            finalcolor |= *ptr & 0x2010;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 2) * 2;
-            finalcolor |= *ptr & 0x0804;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 3) * 2;
-            finalcolor |= *ptr & 0x0201;
-
-            *(vram) = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor);
-
-            ptr = ptrlutcolors + *(ptrbackbuffer + 320) * 2;
-            finalcolor = *ptr & 0x8040;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 321) * 2;
-            finalcolor |= *ptr & 0x2010;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 322) * 2;
-            finalcolor |= *ptr & 0x0804;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 323) * 2;
-            finalcolor |= *ptr & 0x0201;
-
-            *(vram + 0x2000) = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor);
-
-            ptrbackbuffer += 4;
-            vram++;
-            x--;
-        } while (x > 0);
-
-        ptrbackbuffer += 320;
-    } while (vram < (unsigned char *)0xB1F40);
 }
 #endif
 
@@ -2226,7 +2178,7 @@ void I_FinishUpdate(void)
     static int fps_counter, fps_starttime, fps_nextcalculation;
     int opt1, opt2;
 
-#if !defined(MODE_HERC) && !defined(MODE_HERC200) && !defined(MODE_MDA)
+#if !defined(MODE_HERC) && !defined(MODE_MDA)
     if (waitVsync)
     {
         I_WaitSingleVBL();
@@ -2374,9 +2326,6 @@ void I_FinishUpdate(void)
 #endif
 #ifdef MODE_HERC
     HERC_DrawBackbuffer();
-#endif
-#ifdef MODE_HERC200
-    HERC200_DrawBackbuffer();
 #endif
 #ifdef MODE_CGA
     CGA_DrawBackbuffer();
@@ -3048,22 +2997,6 @@ void I_InitGraphics(void)
     pcscreen = destscreen = (byte *)0xB0000;
 #endif
 
-#ifdef MODE_HERC200
-    // byte Graph_720x348[12] = {0x03, 0x36, 0x2D, 0x2E, 0x07, 0x5B, 0x02, 0x57, 0x57, 0x02, 0x03, 0x0A};
-    // byte Graph_640x400[12] = {0x03, 0x34, 0x28, 0x2A, 0x47, 0x69, 0x00, 0x64, 0x65, 0x02, 0x03, 0x0A};
-    byte Graph_640x200[12] = {0x03, 0x6E, 0x28, 0x2E, 0x07, 0x67, 0x0A, 0x64, 0x65, 0x02, 0x01, 0x0A};
-    int i;
-
-    outp(0x03BF, Graph_640x200[0]);
-    for (i = 0; i < 10; i++)
-    {
-        outp(0x03B4, i);
-        outp(0x03B5, Graph_640x200[i + 1]);
-    }
-    outp(0x03B8, Graph_640x200[11]);
-    pcscreen = destscreen = (byte *)0xB0000;
-#endif
-
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
     VBE_Init();
 
@@ -3118,7 +3051,7 @@ void I_InitGraphics(void)
 //
 void I_ShutdownGraphics(void)
 {
-#if defined(MODE_HERC) || defined(MODE_HERC200)
+#if defined(MODE_HERC)
     byte Text_80x25[12] = {0x00, 0x61, 0x50, 0x52, 0x0F, 0x19, 0x06, 0x19, 0x19, 0x02, 0x0D, 0x08};
     int i;
 
@@ -3438,7 +3371,7 @@ void I_Quit(void)
     M_SaveDefaults();
     scr = (byte *)W_CacheLumpName("ENDOOM", PU_CACHE);
     I_Shutdown();
-#if defined(MODE_HERC) || defined(MODE_HERC200) || defined(MODE_MDA)
+#if defined(MODE_HERC) || defined(MODE_MDA)
     CopyDWords(scr, (void *)0xb0000, (80 * 25 * 2) / 4);
 #else
     CopyDWords(scr, (void *)0xb8000, (80 * 25 * 2) / 4);
