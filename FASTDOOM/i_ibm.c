@@ -2558,7 +2558,7 @@ void I_InitHerculesHalfMode(void){
     }
     outp(0x03B8, Graph_640x400[11]);
 
-    SetDWords((void *)0xB0000, 0, 8192);
+    SetDWords((byte *)0xB0000, 0, 8192);
 }
 #endif
 
