@@ -226,6 +226,8 @@ static byte stopped = true;
 extern byte viewactive;
 
 #ifdef SUPPORTS_HERCULES_AUTOMAP
+byte *automapbuffer1;
+byte *automapbuffer2;
 byte *automapbuffer;
 #endif
 
@@ -403,8 +405,10 @@ void AM_Stop(void)
 	stopped = 1;
 
 #ifdef SUPPORTS_HERCULES_AUTOMAP
-	if (HERCmap){
- 		Z_Free(automapbuffer);
+	if (HERCmap)
+	{
+		Z_Free(automapbuffer1);
+		Z_Free(automapbuffer2);
 	}
 #endif
 }
@@ -417,8 +421,17 @@ void AM_Start(void)
 	static int lastlevel = -1, lastepisode = -1;
 
 #ifdef SUPPORTS_HERCULES_AUTOMAP
-	if (HERCmap){
- 		automapbuffer = (byte *)Z_MallocUnowned(32768, PU_STATIC);
+	if (HERCmap)
+	{
+		// Init buffers
+		automapbuffer1 = (byte *)Z_MallocUnowned(32768, PU_STATIC);
+		automapbuffer2 = (byte *)Z_MallocUnowned(32768, PU_STATIC);
+		SetDWords(automapbuffer1, 0, 8192);
+		SetDWords(automapbuffer2, 0, 8192);
+		automapbuffer = automapbuffer1;
+
+		// Clear VRAM
+		SetDWords((byte *)0xB0000, 0, 8192);
 	}
 #endif
 
@@ -787,20 +800,26 @@ void AM_drawFlineHercules(fline_t *fl)
 
 	dx = fl->b.x - fl->a.x;
 
-	if (dx < 0){
+	if (dx < 0)
+	{
 		ax = 2 * -dx;
 		sx = -1;
-	}else{
+	}
+	else
+	{
 		ax = 2 * dx;
 		sx = 1;
 	}
 
 	dy = fl->b.y - fl->a.y;
 
-	if (dy < 0){
+	if (dy < 0)
+	{
 		ay = 2 * -dy;
 		sy = -1;
-	}else{
+	}
+	else
+	{
 		ay = 2 * dy;
 		sy = 1;
 	}
@@ -813,11 +832,14 @@ void AM_drawFlineHercules(fline_t *fl)
 		d = ay - ax / 2;
 		while (1)
 		{
-			if ((7 - ((x) % 8)) > 0){
+			if ((7 - ((x) % 8)) > 0)
+			{
 				// We can optimize write 2 pixels on the same scanline
 				PUTDOT2H((2 * x), (2 * y));
 				PUTDOT2H((2 * x), (2 * y) + 1);
-			}else{
+			}
+			else
+			{
 				PUTDOTH((2 * x), (2 * y));
 				PUTDOTH((2 * x) + 1, (2 * y));
 				PUTDOTH((2 * x), (2 * y) + 1);
@@ -840,11 +862,14 @@ void AM_drawFlineHercules(fline_t *fl)
 		d = ax - ay / 2;
 		while (1)
 		{
-			if ((7 - ((x) % 8)) > 0){
+			if ((7 - ((x) % 8)) > 0)
+			{
 				// We can optimize write 2 pixels on the same scanline
 				PUTDOT2H((2 * x), (2 * y));
 				PUTDOT2H((2 * x), (2 * y) + 1);
-			}else{
+			}
+			else
+			{
 				PUTDOTH((2 * x), (2 * y));
 				PUTDOTH((2 * x) + 1, (2 * y));
 				PUTDOTH((2 * x), (2 * y) + 1);
@@ -887,20 +912,26 @@ void AM_drawFline(fline_t *fl, int color)
 
 	dx = fl->b.x - fl->a.x;
 
-	if (dx < 0){
+	if (dx < 0)
+	{
 		ax = 2 * -dx;
 		sx = -1;
-	}else{
+	}
+	else
+	{
 		ax = 2 * dx;
 		sx = 1;
 	}
 
 	dy = fl->b.y - fl->a.y;
 
-	if (dy < 0){
+	if (dy < 0)
+	{
 		ay = 2 * -dy;
 		sy = -1;
-	}else{
+	}
+	else
+	{
 		ay = 2 * dy;
 		sy = 1;
 	}
@@ -914,7 +945,7 @@ void AM_drawFline(fline_t *fl, int color)
 		while (1)
 		{
 			PUTDOT(x, y, color);
-			
+
 			if (x == fl->b.x)
 				return;
 			if (d >= 0)
@@ -954,18 +985,20 @@ void AM_drawMline(mline_t *ml,
 {
 	static fline_t fl;
 
-	#ifdef SUPPORTS_HERCULES_AUTOMAP
+#ifdef SUPPORTS_HERCULES_AUTOMAP
 	if (AM_clipMline(ml, &fl))
-		if(HERCmap){
+		if (HERCmap)
+		{
 			AM_drawFlineHercules(&fl); // draws it on frame buffer using fb coords
-		}else{
+		}
+		else
+		{
 			AM_drawFline(&fl, color); // draws it on frame buffer using fb coords
 		}
-	#else
+#else
 	if (AM_clipMline(ml, &fl))
-		AM_drawFline(&fl, color); // draws it on frame buffer using fb coords
-	#endif
-
+		AM_drawFline(&fl, color);							 // draws it on frame buffer using fb coords
+#endif
 }
 
 //
@@ -1157,6 +1190,9 @@ void AM_drawThings(int colors,
 
 void AM_Drawer(void)
 {
+	int i;
+	byte *herc = (byte *)0xB0000;
+
 	if (!automapactive)
 		return;
 
@@ -1165,23 +1201,37 @@ void AM_Drawer(void)
 #endif
 
 #ifdef SUPPORTS_HERCULES_AUTOMAP
-	if (HERCmap){
+	if (HERCmap)
+	{
+
+		// Change automapbuffer
+		if (automapbuffer == automapbuffer1)
+		{
+			automapbuffer = automapbuffer2;
+		}
+		else
+		{
+			automapbuffer = automapbuffer1;
+		}
+
 		SetDWords(automapbuffer, 0, 8192);
-	}else{
-		#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+	}
+	else
+	{
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 		SetDWords(screen0, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
-		#endif
-		#if defined(USE_BACKBUFFER)
+#endif
+#if defined(USE_BACKBUFFER)
 		SetDWords(backbuffer, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
-		#endif
+#endif
 	}
 #else
-	#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-	SetDWords(screen0, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
-	#endif
-	#if defined(USE_BACKBUFFER)
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+	SetDWords(screen0, BACKGROUND, Mul80(automapheight));	 // Clear automap frame buffer
+#endif
+#if defined(USE_BACKBUFFER)
 	SetDWords(backbuffer, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
-	#endif
+#endif
 #endif
 
 	if (grid)
@@ -1190,9 +1240,28 @@ void AM_Drawer(void)
 	AM_drawPlayers();
 	if (cheating == 2)
 		AM_drawThings(THINGCOLORS, THINGRANGE);
-	
+
 #ifdef SUPPORTS_HERCULES_AUTOMAP
-	CopyDWords(automapbuffer, (byte *)0xB0000, 8192);
+	
+	if (automapbuffer == automapbuffer1)
+	{
+		for (i = 0; i < 32768; i++)
+		{
+			if (automapbuffer[i] != automapbuffer2[i]){
+				herc[i] = automapbuffer[i];
+			}
+		}
+	}
+	else
+	{
+		for (i = 0; i < 32768; i++)
+		{
+			if (automapbuffer[i] != automapbuffer1[i]){
+				herc[i] = automapbuffer[i];
+			}
+		}
+	}
+
 #endif
 
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
