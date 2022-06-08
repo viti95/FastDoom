@@ -292,9 +292,11 @@ byte scantokey[128] =
 };
 
 #ifdef MODE_HERC
-byte vrambuffer1[32768];
-byte vrambuffer2[32768];
-byte *vrambuffer;
+byte vrambuffer[32768];
+#endif
+
+#ifdef MODE_CGA_BW
+byte vrambuffer[16384];
 #endif
 
 #if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
@@ -1460,6 +1462,7 @@ extern int screenblocks;
 void CGA_BW_DrawBackbuffer(void)
 {
     unsigned char *vram = (unsigned char *)0xB8000;
+    byte *ptrvrambuffer = vrambuffer;
     byte *ptrbackbuffer = backbuffer;
 
     do
@@ -1470,6 +1473,7 @@ void CGA_BW_DrawBackbuffer(void)
         {
             unsigned short *ptr;
             unsigned short finalcolor;
+            byte tmp;
 
             // Process two pixels at the same time (16-bit)
             ptr = ptrlutcolors + *(ptrbackbuffer)*2;
@@ -1481,7 +1485,12 @@ void CGA_BW_DrawBackbuffer(void)
             ptr = ptrlutcolors + *(ptrbackbuffer + 3) * 2;
             finalcolor |= *ptr & 0x0201;
 
-            *(vram) = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor);
+            tmp = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor);
+
+            if (tmp != *ptrvrambuffer){
+                *vram = tmp;
+                *ptrvrambuffer = tmp;
+            }
 
             ptr = ptrlutcolors + *(ptrbackbuffer + 320) * 2;
             finalcolor = *ptr & 0x8040;
@@ -1492,15 +1501,22 @@ void CGA_BW_DrawBackbuffer(void)
             ptr = ptrlutcolors + *(ptrbackbuffer + 323) * 2;
             finalcolor |= *ptr & 0x0201;
 
-            *(vram + 0x2000) = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor);
+            tmp = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor);
+
+            if (tmp != *(ptrvrambuffer + 0x2000)){
+                *(vram + 0x2000) = tmp;
+                *(ptrvrambuffer + 0x2000) = tmp;
+            }
 
             ptrbackbuffer += 4;
+            ptrvrambuffer++;
             vram++;
             x--;
+
         } while (x > 0);
 
         ptrbackbuffer += 320;
-    } while (vram < (unsigned char *)0xB9F40);
+    } while (vram < 0xB9F40);
 }
 #endif
 
@@ -1508,9 +1524,8 @@ void CGA_BW_DrawBackbuffer(void)
 void HERC_DrawBackbuffer(void)
 {
     unsigned char *vram = (unsigned char *)0xB0000;
-    byte *ptrvram = vrambuffer;
+    byte *ptrvrambuffer = vrambuffer;
     byte *ptrbackbuffer = backbuffer;
-    int i;
 
     do
     {
@@ -1520,6 +1535,7 @@ void HERC_DrawBackbuffer(void)
         {
             unsigned int *ptr;
             unsigned int finalcolor;
+            byte tmp;
 
             // Process four pixels at the same time (32-bit)
             ptr = ptrlutcolors + *(ptrbackbuffer)*4;
@@ -1531,9 +1547,20 @@ void HERC_DrawBackbuffer(void)
             ptr = ptrlutcolors + *(ptrbackbuffer + 3) * 4;
             finalcolor |= *ptr & 0x02010201;
 
-            *(ptrvram) = BYTE0_UINT(finalcolor) | BYTE1_UINT(finalcolor);
-            *(ptrvram + 0x2000) = BYTE2_UINT(finalcolor) | BYTE3_UINT(finalcolor);
+            tmp = BYTE0_UINT(finalcolor) | BYTE1_UINT(finalcolor);
 
+            if (tmp != *ptrvrambuffer){
+                *vram = tmp;
+                *ptrvrambuffer = tmp;
+            }
+                
+            tmp = BYTE2_UINT(finalcolor) | BYTE3_UINT(finalcolor);
+
+            if (tmp != *(ptrvrambuffer + 0x2000)){
+                *(vram + 0x2000) = tmp;
+                *(ptrvrambuffer + 0x2000) = tmp;
+            }
+                
             ptr = ptrlutcolors + *(ptrbackbuffer + 320) * 4;
             finalcolor = *ptr & 0x80408040;
             ptr = ptrlutcolors + *(ptrbackbuffer + 321) * 4;
@@ -1543,32 +1570,29 @@ void HERC_DrawBackbuffer(void)
             ptr = ptrlutcolors + *(ptrbackbuffer + 323) * 4;
             finalcolor |= *ptr & 0x02010201;
 
-            *(ptrvram + 0x4000) = BYTE0_UINT(finalcolor) | BYTE1_UINT(finalcolor);
-            *(ptrvram + 0x6000) = BYTE2_UINT(finalcolor) | BYTE3_UINT(finalcolor);
+            tmp = BYTE0_UINT(finalcolor) | BYTE1_UINT(finalcolor);
+
+            if (tmp != *(ptrvrambuffer + 0x4000)){
+                *(vram + 0x4000) = tmp;
+                *(ptrvrambuffer + 0x4000) = tmp;
+            }
+
+            tmp = BYTE2_UINT(finalcolor) | BYTE3_UINT(finalcolor);
+
+            if (tmp != *(ptrvrambuffer + 0x6000)){
+                *(vram + 0x6000) = tmp;
+                *(ptrvrambuffer + 0x6000) = tmp;
+            }
 
             ptrbackbuffer += 4;
-            ptrvram++;
+            ptrvrambuffer++;
+            vram++;
             x--;
+            
         } while (x > 0);
 
         ptrbackbuffer += 320;
-    } while (ptrvram < vrambuffer + 0x1F40);
-
-    if (vrambuffer == vrambuffer1){
-        for (i = 0; i < 32768; i++){
-            if (vrambuffer[i] != vrambuffer2[i])
-                vram[i] = vrambuffer[i];
-        }
-
-        vrambuffer = vrambuffer2;
-    }else{
-        for (i = 0; i < 32768; i++){
-            if (vrambuffer[i] != vrambuffer1[i])
-                vram[i] = vrambuffer[i];
-        }
-
-        vrambuffer = vrambuffer1;
-    }
+    } while (vram < 0xB1F40);
 }
 #endif
 
@@ -2570,7 +2594,8 @@ void I_TestFastSetPalette(void)
 // I_InitGraphics
 //
 #ifdef SUPPORTS_HERCULES_AUTOMAP
-void I_InitHerculesHalfMode(void){
+void I_InitHerculesHalfMode(void)
+{
     byte Graph_640x400[12] = {0x03, 0x34, 0x28, 0x2A, 0x47, 0x69, 0x00, 0x64, 0x65, 0x02, 0x03, 0x0A};
     int i;
 
@@ -2593,7 +2618,8 @@ void I_InitGraphics(void)
 #endif
 
 #ifdef SUPPORTS_HERCULES_AUTOMAP
-    if (HERCmap) {
+    if (HERCmap)
+    {
         I_InitHerculesHalfMode();
     }
 #endif
@@ -2951,6 +2977,9 @@ void I_InitGraphics(void)
     regs.w.ax = 0x06;
     int386(0x10, (union REGS *)&regs, &regs);
     pcscreen = destscreen = (byte *)0xB8000;
+
+    SetDWords(vrambuffer, 0, 4096);
+    SetDWords(pcscreen, 0, 4096);
 #endif
 #ifdef MODE_PCP
     regs.w.ax = 0x04;
@@ -3020,11 +3049,8 @@ void I_InitGraphics(void)
     outp(0x03B8, Graph_640x400[11]);
     pcscreen = destscreen = (byte *)0xB0000;
 
-    SetDWords(vrambuffer1, 0, 8192);
-    SetDWords(vrambuffer2, 0, 8192);
+    SetDWords(vrambuffer, 0, 8192);
     SetDWords(pcscreen, 0, 8192);
-
-    vrambuffer = vrambuffer1;
 #endif
 
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
