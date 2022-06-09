@@ -341,6 +341,10 @@ byte vrambuffer[16384];
 byte vrambuffer[65536];
 #endif
 
+#ifdef MODE_CVB
+byte vrambuffer[16384];
+#endif
+
 #if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
 void I_ProcessPalette(byte *palette)
 {
@@ -2299,27 +2303,54 @@ void EGA_DrawBackbuffer(void)
 #ifdef MODE_CVB
 void CVBS_DrawBackbuffer(void)
 {
-    unsigned char x;
+
     unsigned char *vram = (unsigned char *)0xB8000;
     unsigned short base = 0;
-    unsigned char color0, color1;
+    byte *ptrvrambuffer = vrambuffer;
 
     for (base = 0; base < SCREENHEIGHT * 320;)
     {
-        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++)
+        unsigned char x;
+
+        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++, ptrvrambuffer++)
         {
+            unsigned char color0, color1;
+            byte tmp;
+
             color0 = ptrlut16colors[backbuffer[base]];
             color1 = ptrlut16colors[backbuffer[base + 2]];
-            *(vram) = color0 << 4 | color1;
+
+            tmp = color0 << 4 | color1;
+
+            if (tmp != *(ptrvrambuffer))
+            {
+                *(vram) = tmp;
+                *(ptrvrambuffer) = tmp;
+            }
         }
+
         vram += 0x1FB0;
-        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++)
+        ptrvrambuffer += 0x1FB0;
+
+        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++, ptrvrambuffer++)
         {
+            unsigned char color0, color1;
+            byte tmp;
+
             color0 = ptrlut16colors[backbuffer[base]];
             color1 = ptrlut16colors[backbuffer[base + 2]];
-            *(vram) = color0 << 4 | color1;
+
+            tmp = color0 << 4 | color1;
+
+            if (tmp != *(ptrvrambuffer))
+            {
+                *(vram) = tmp;
+                *(ptrvrambuffer) = tmp;
+            }
         }
+
         vram -= 0x2000;
+        ptrvrambuffer -= 0x2000;
     }
 }
 #endif
@@ -3226,6 +3257,9 @@ void I_InitGraphics(void)
     int386(0x10, (union REGS *)&regs, &regs);
     outp(0x3DD, 0x10);
     pcscreen = destscreen = (byte *)0xB8000;
+
+    SetDWords(vrambuffer, 0, 8192);
+    SetDWords(pcscreen, 0, 8192);
 #endif
 #ifdef MODE_EGA
     regs.w.ax = 0x0D;
