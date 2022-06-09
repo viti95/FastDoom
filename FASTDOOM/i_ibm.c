@@ -314,6 +314,10 @@ byte vrambufferB3[8192];
 byte vrambufferI3[8192];
 #endif
 
+#ifdef MODE_PCP
+byte vrambuffer[32768];
+#endif
+
 #if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
 void I_ProcessPalette(byte *palette)
 {
@@ -2050,7 +2054,8 @@ void EGA_DrawBackbuffer(void)
 
         tmp = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
 
-        if (tmp != vrambufferR[i]){
+        if (tmp != vrambufferR[i])
+        {
             destscreen[i] = tmp;
             vrambufferR[i] = tmp;
         }
@@ -2083,7 +2088,8 @@ void EGA_DrawBackbuffer(void)
 
         tmp = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
 
-        if (tmp != vrambufferG[i]){
+        if (tmp != vrambufferG[i])
+        {
             destscreen[i] = tmp;
             vrambufferG[i] = tmp;
         }
@@ -2116,7 +2122,8 @@ void EGA_DrawBackbuffer(void)
 
         tmp = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
 
-        if (tmp != vrambufferB[i]){
+        if (tmp != vrambufferB[i])
+        {
             destscreen[i] = tmp;
             vrambufferB[i] = tmp;
         }
@@ -2149,7 +2156,8 @@ void EGA_DrawBackbuffer(void)
 
         tmp = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
 
-        if (tmp != vrambufferI[i]){
+        if (tmp != vrambufferI[i])
+        {
             destscreen[i] = tmp;
             vrambufferI[i] = tmp;
         }
@@ -2203,14 +2211,16 @@ void PCP_DrawBackbuffer(void)
 {
     int x;
     unsigned char *vram = (unsigned char *)0xB8000;
+    byte *ptrvrambuffer = vrambuffer;
     unsigned int base = 0;
 
     for (base = 0; base < SCREENHEIGHT * 320;)
     {
-        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++)
+        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++, ptrvrambuffer++)
         {
             unsigned short color;
             unsigned short finalcolor;
+            byte tmp;
 
             color = ptrlut16colors[backbuffer[base]];
             finalcolor = color & 0xC0C0;
@@ -2224,8 +2234,21 @@ void PCP_DrawBackbuffer(void)
             color = ptrlut16colors[backbuffer[base + 3]];
             finalcolor |= color & 0x0303;
 
-            *(vram) = BYTE0_USHORT(finalcolor);
-            *(vram + 0x4000) = BYTE1_USHORT(finalcolor);
+            tmp = BYTE0_USHORT(finalcolor);
+
+            if (tmp != *(ptrvrambuffer))
+            {
+                *(vram) = tmp;
+                *(ptrvrambuffer) = tmp;
+            }
+
+            tmp = BYTE1_USHORT(finalcolor);
+
+            if (tmp != *(ptrvrambuffer + 0x4000))
+            {
+                *(vram + 0x4000) = tmp;
+                *(ptrvrambuffer + 0x4000) = tmp;
+            }
 
             color = ptrlut16colors[backbuffer[base + 320]];
             finalcolor = color & 0xC0C0;
@@ -2239,8 +2262,21 @@ void PCP_DrawBackbuffer(void)
             color = ptrlut16colors[backbuffer[base + 323]];
             finalcolor |= color & 0x0303;
 
-            *(vram + 0x2000) = BYTE0_USHORT(finalcolor);
-            *(vram + 0x6000) = BYTE1_USHORT(finalcolor);
+            tmp = BYTE0_USHORT(finalcolor);
+
+            if (tmp != *(ptrvrambuffer + 0x2000))
+            {
+                *(vram + 0x2000) = tmp;
+                *(ptrvrambuffer + 0x2000) = tmp;
+            }
+
+            tmp = BYTE1_USHORT(finalcolor);
+
+            if (tmp != *(ptrvrambuffer + 0x6000))
+            {
+                *(vram + 0x6000) = tmp;
+                *(ptrvrambuffer + 0x6000) = tmp;
+            }
         }
         base += 320;
     }
