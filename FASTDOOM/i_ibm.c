@@ -3117,6 +3117,9 @@ void I_InitGraphics(void)
     int386(0x10, (union REGS *)&regs, &regs);
 
     pcscreen = destscreen = (byte *)0xB8000;
+
+    SetDWords(vrambuffer, 0, 4096);
+    SetDWords(pcscreen, 0, 4096);
 #endif
 #if defined(MODE_EGA16) || defined(MODE_EGA136)
     unsigned char *vram = (unsigned char *)0xB8000;
@@ -3266,12 +3269,38 @@ void I_InitGraphics(void)
     int386(0x10, (union REGS *)&regs, &regs);
     outp(0x3C4, 0x2);
     pcscreen = destscreen = (byte *)0xA0000;
+
+    SetDWords(vrambufferR1, 0, 2048);
+    SetDWords(vrambufferG1, 0, 2048);
+    SetDWords(vrambufferB1, 0, 2048);
+    SetDWords(vrambufferI1, 0, 2048);
+    SetDWords(vrambufferR2, 0, 2048);
+    SetDWords(vrambufferG2, 0, 2048);
+    SetDWords(vrambufferB2, 0, 2048);
+    SetDWords(vrambufferI2, 0, 2048);
+    SetDWords(vrambufferR3, 0, 2048);
+    SetDWords(vrambufferG3, 0, 2048);
+    SetDWords(vrambufferB3, 0, 2048);
+    SetDWords(vrambufferI3, 0, 2048);
 #endif
 #ifdef MODE_EGA640
     regs.w.ax = 0x0E;
     int386(0x10, (union REGS *)&regs, &regs);
     outp(0x3C4, 0x2);
     pcscreen = destscreen = (byte *)0xA0000;
+
+    SetDWords(vrambufferR1, 0, 4096);
+    SetDWords(vrambufferG1, 0, 4096);
+    SetDWords(vrambufferB1, 0, 4096);
+    SetDWords(vrambufferI1, 0, 4096);
+    SetDWords(vrambufferR2, 0, 4096);
+    SetDWords(vrambufferG2, 0, 4096);
+    SetDWords(vrambufferB2, 0, 4096);
+    SetDWords(vrambufferI2, 0, 4096);
+    SetDWords(vrambufferR3, 0, 4096);
+    SetDWords(vrambufferG3, 0, 4096);
+    SetDWords(vrambufferB3, 0, 4096);
+    SetDWords(vrambufferI3, 0, 4096);
 #endif
 #ifdef MODE_ATI640
 
@@ -3301,12 +3330,18 @@ void I_InitGraphics(void)
     outp(0x3dd, 0x80);
 
     pcscreen = destscreen = (byte *)0xB0000;
+
+    SetDWords(vrambuffer, 0, 16384);
+    SetDWords(pcscreen, 0, 16384);
 #endif
 #ifdef MODE_CVB
     regs.w.ax = 0x06;
     int386(0x10, (union REGS *)&regs, &regs);
     outp(0x3D8, 0x1A); // Enable color burst
     pcscreen = destscreen = (byte *)0xB8000;
+
+    SetDWords(vrambuffer, 0, 4096);
+    SetDWords(pcscreen, 0, 4096);
 #endif
 #ifdef MODE_HERC
     // byte Graph_720x348[12] = {0x03, 0x36, 0x2D, 0x2E, 0x07, 0x5B, 0x02, 0x57, 0x57, 0x02, 0x03, 0x0A};
