@@ -318,6 +318,10 @@ byte vrambufferI3[8192];
 byte vrambuffer[32768];
 #endif
 
+#ifdef MODE_CGA
+byte vrambuffer[16384];
+#endif
+
 #if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
 void I_ProcessPalette(byte *palette)
 {
@@ -2286,16 +2290,18 @@ void PCP_DrawBackbuffer(void)
 #ifdef MODE_CGA
 void CGA_DrawBackbuffer(void)
 {
-    int x, y;
+    int x;
     unsigned char *vram = (unsigned char *)0xB8000;
+    byte *ptrvrambuffer = vrambuffer;
     unsigned int base = 0;
 
     for (base = 0; base < SCREENHEIGHT * 320; base += 320)
     {
-        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++)
+        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++, ptrvrambuffer++)
         {
             unsigned short color;
             unsigned short tmpColor;
+            byte tmp;
 
             BYTE1_USHORT(color) = (ptrlut4colors[backbuffer[base]]);
             BYTE0_USHORT(color) = (ptrlut4colors[backbuffer[base + 1]]);
@@ -2305,7 +2311,13 @@ void CGA_DrawBackbuffer(void)
             BYTE0_USHORT(color) = (ptrlut4colors[backbuffer[base + 3]]);
             tmpColor |= color & 0x0C03;
 
-            *(vram) = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
+            tmp = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
+
+            if (tmp != *(ptrvrambuffer))
+            {
+                *(vram) = tmp;
+                *(ptrvrambuffer) = tmp;
+            }
 
             BYTE1_USHORT(color) = (ptrlut4colors[backbuffer[base + 320]]);
             BYTE0_USHORT(color) = (ptrlut4colors[backbuffer[base + 321]]);
@@ -2315,7 +2327,13 @@ void CGA_DrawBackbuffer(void)
             BYTE0_USHORT(color) = (ptrlut4colors[backbuffer[base + 323]]);
             tmpColor |= color & 0x0C03;
 
-            *(vram + 0x2000) = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
+            tmp = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
+
+            if (tmp != *(ptrvrambuffer + 0x2000))
+            {
+                *(vram + 0x2000) = tmp;
+                *(ptrvrambuffer + 0x2000) = tmp;
+            }
         }
     }
 }
