@@ -314,12 +314,31 @@ byte vrambufferB3[8192];
 byte vrambufferI3[8192];
 #endif
 
+#ifdef MODE_EGA640
+byte vrambufferR1[16384];
+byte vrambufferG1[16384];
+byte vrambufferB1[16384];
+byte vrambufferI1[16384];
+byte vrambufferR2[16384];
+byte vrambufferG2[16384];
+byte vrambufferB2[16384];
+byte vrambufferI2[16384];
+byte vrambufferR3[16384];
+byte vrambufferG3[16384];
+byte vrambufferB3[16384];
+byte vrambufferI3[16384];
+#endif
+
 #ifdef MODE_PCP
 byte vrambuffer[32768];
 #endif
 
 #ifdef MODE_CGA
 byte vrambuffer[16384];
+#endif
+
+#ifdef MODE_ATI640
+byte vrambuffer[65536];
 #endif
 
 #if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
@@ -1761,17 +1780,17 @@ void VGA136_DrawBackbuffer(void)
 void ATI640_DrawBackbuffer(void)
 {
     int x;
-
     unsigned char *vram = (unsigned char *)0xB0000;
-
+    byte *ptrvrambuffer = vrambuffer;
     unsigned int base = 0;
 
     for (base = 0; base < SCREENHEIGHT * 320; base += 960)
     {
-        for (x = 0; x < 160; x++, base += 2, vram++)
+        for (x = 0; x < 160; x++, base += 2, vram++, ptrvrambuffer++)
         {
             unsigned short color;
             unsigned short finalcolor;
+            byte tmp;
 
             color = ptrlutcolors[backbuffer[base] * 2];
             finalcolor = color & 0xC0C0;
@@ -1785,8 +1804,21 @@ void ATI640_DrawBackbuffer(void)
             color = ptrlutcolors[backbuffer[base + 1] * 2 + 1];
             finalcolor |= color & 0x0303;
 
-            *(vram) = BYTE0_USHORT(finalcolor);
-            *(vram + 0x8000) = BYTE1_USHORT(finalcolor);
+            tmp = BYTE0_USHORT(finalcolor);
+
+            if (tmp != *(ptrvrambuffer))
+            {
+                *(vram) = tmp;
+                *(ptrvrambuffer) = tmp;
+            }
+
+            tmp = BYTE1_USHORT(finalcolor);
+
+            if (tmp != *(ptrvrambuffer + 0x8000))
+            {
+                *(vram + 0x8000) = tmp;
+                *(ptrvrambuffer + 0x8000) = tmp;
+            }
 
             color = ptrlutcolors[backbuffer[base + 320] * 2];
             finalcolor = color & 0xC0C0;
@@ -1800,8 +1832,21 @@ void ATI640_DrawBackbuffer(void)
             color = ptrlutcolors[backbuffer[base + 321] * 2 + 1];
             finalcolor |= color & 0x0303;
 
-            *(vram + 0x2000) = BYTE0_USHORT(finalcolor);
-            *(vram + 0xA000) = BYTE1_USHORT(finalcolor);
+            tmp = BYTE0_USHORT(finalcolor);
+
+            if (tmp != *(ptrvrambuffer + 0x2000))
+            {
+                *(vram + 0x2000) = tmp;
+                *(ptrvrambuffer + 0x2000) = tmp;
+            }
+
+            tmp = BYTE1_USHORT(finalcolor);
+
+            if (tmp != *(ptrvrambuffer + 0xA000))
+            {
+                *(vram + 0xA000) = tmp;
+                *(ptrvrambuffer + 0xA000) = tmp;
+            }
 
             color = ptrlutcolors[backbuffer[base + 640] * 2];
             finalcolor = color & 0xC0C0;
@@ -1815,8 +1860,21 @@ void ATI640_DrawBackbuffer(void)
             color = ptrlutcolors[backbuffer[base + 641] * 2 + 1];
             finalcolor |= color & 0x0303;
 
-            *(vram + 0x4000) = BYTE0_USHORT(finalcolor);
-            *(vram + 0xC000) = BYTE1_USHORT(finalcolor);
+            tmp = BYTE0_USHORT(finalcolor);
+
+            if (tmp != *(ptrvrambuffer + 0x4000))
+            {
+                *(vram + 0x4000) = tmp;
+                *(ptrvrambuffer + 0x4000) = tmp;
+            }
+
+            tmp = BYTE1_USHORT(finalcolor);
+
+            if (tmp != *(ptrvrambuffer + 0xC000))
+            {
+                *(vram + 0xC000) = tmp;
+                *(ptrvrambuffer + 0xC000) = tmp;
+            }
 
             color = ptrlutcolors[backbuffer[base + 960] * 2];
             finalcolor = color & 0xC0C0;
@@ -1830,8 +1888,21 @@ void ATI640_DrawBackbuffer(void)
             color = ptrlutcolors[backbuffer[base + 961] * 2 + 1];
             finalcolor |= color & 0x0303;
 
-            *(vram + 0x6000) = BYTE0_USHORT(finalcolor);
-            *(vram + 0xE000) = BYTE1_USHORT(finalcolor);
+            tmp = BYTE0_USHORT(finalcolor);
+
+            if (tmp != *(ptrvrambuffer + 0x6000))
+            {
+                *(vram + 0x6000) = tmp;
+                *(ptrvrambuffer + 0x6000) = tmp;
+            }
+
+            tmp = BYTE1_USHORT(finalcolor);
+
+            if (tmp != *(ptrvrambuffer + 0xE000))
+            {
+                *(vram + 0xE000) = tmp;
+                *(ptrvrambuffer + 0xE000) = tmp;
+            }
         }
     }
 }
@@ -1842,6 +1913,33 @@ void EGA640_DrawBackbuffer(void)
 {
     unsigned short i;
     byte *backbufferptr;
+
+    byte *vrambufferR;
+    byte *vrambufferG;
+    byte *vrambufferB;
+    byte *vrambufferI;
+
+    switch (page)
+    {
+    case 0:
+        vrambufferR = vrambufferR1;
+        vrambufferG = vrambufferG1;
+        vrambufferB = vrambufferB1;
+        vrambufferI = vrambufferI1;
+        break;
+    case 1:
+        vrambufferR = vrambufferR2;
+        vrambufferG = vrambufferG2;
+        vrambufferB = vrambufferB2;
+        vrambufferI = vrambufferI2;
+        break;
+    case 2:
+        vrambufferR = vrambufferR3;
+        vrambufferG = vrambufferG3;
+        vrambufferB = vrambufferB3;
+        vrambufferI = vrambufferI3;
+        break;
+    }
 
     // Red
     outp(0x3C5, 1 << (3 & 0x03));
@@ -1875,7 +1973,11 @@ void EGA640_DrawBackbuffer(void)
         color = ptrlutcolors[*(backbufferptr + 3) * 2 + 1];
         tmpColor |= (color & 0x08) >> 3;
 
-        destscreen[i] = tmpColor;
+        if (tmpColor != vrambufferR[i])
+        {
+            destscreen[i] = tmpColor;
+            vrambufferR[i] = tmpColor;
+        }
     }
 
     // Green
@@ -1910,7 +2012,11 @@ void EGA640_DrawBackbuffer(void)
         color = ptrlutcolors[*(backbufferptr + 3) * 2 + 1];
         tmpColor |= (color & 0x04) >> 2;
 
-        destscreen[i] = tmpColor;
+        if (tmpColor != vrambufferG[i])
+        {
+            destscreen[i] = tmpColor;
+            vrambufferG[i] = tmpColor;
+        }
     }
 
     // Blue
@@ -1945,7 +2051,11 @@ void EGA640_DrawBackbuffer(void)
         color = ptrlutcolors[*(backbufferptr + 3) * 2 + 1];
         tmpColor |= (color & 0x02) >> 1;
 
-        destscreen[i] = tmpColor;
+        if (tmpColor != vrambufferB[i])
+        {
+            destscreen[i] = tmpColor;
+            vrambufferB[i] = tmpColor;
+        }
     }
 
     // Intensity
@@ -1980,7 +2090,11 @@ void EGA640_DrawBackbuffer(void)
         color = ptrlutcolors[*(backbufferptr + 3) * 2 + 1];
         tmpColor |= color & 0x01;
 
-        destscreen[i] = tmpColor;
+        if (tmpColor != vrambufferI[i])
+        {
+            destscreen[i] = tmpColor;
+            vrambufferI[i] = tmpColor;
+        }
     }
 
     // Change video page
