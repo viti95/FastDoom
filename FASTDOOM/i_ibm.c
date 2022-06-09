@@ -299,6 +299,21 @@ byte vrambuffer[32768];
 byte vrambuffer[16384];
 #endif
 
+#ifdef MODE_EGA
+byte vrambufferR1[8192];
+byte vrambufferG1[8192];
+byte vrambufferB1[8192];
+byte vrambufferI1[8192];
+byte vrambufferR2[8192];
+byte vrambufferG2[8192];
+byte vrambufferB2[8192];
+byte vrambufferI2[8192];
+byte vrambufferR3[8192];
+byte vrambufferG3[8192];
+byte vrambufferB3[8192];
+byte vrambufferI3[8192];
+#endif
+
 #if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
 void I_ProcessPalette(byte *palette)
 {
@@ -1487,7 +1502,8 @@ void CGA_BW_DrawBackbuffer(void)
 
             tmp = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor);
 
-            if (tmp != *ptrvrambuffer){
+            if (tmp != *ptrvrambuffer)
+            {
                 *vram = tmp;
                 *ptrvrambuffer = tmp;
             }
@@ -1503,7 +1519,8 @@ void CGA_BW_DrawBackbuffer(void)
 
             tmp = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor);
 
-            if (tmp != *(ptrvrambuffer + 0x2000)){
+            if (tmp != *(ptrvrambuffer + 0x2000))
+            {
                 *(vram + 0x2000) = tmp;
                 *(ptrvrambuffer + 0x2000) = tmp;
             }
@@ -1549,18 +1566,20 @@ void HERC_DrawBackbuffer(void)
 
             tmp = BYTE0_UINT(finalcolor) | BYTE1_UINT(finalcolor);
 
-            if (tmp != *ptrvrambuffer){
+            if (tmp != *ptrvrambuffer)
+            {
                 *vram = tmp;
                 *ptrvrambuffer = tmp;
             }
-                
+
             tmp = BYTE2_UINT(finalcolor) | BYTE3_UINT(finalcolor);
 
-            if (tmp != *(ptrvrambuffer + 0x2000)){
+            if (tmp != *(ptrvrambuffer + 0x2000))
+            {
                 *(vram + 0x2000) = tmp;
                 *(ptrvrambuffer + 0x2000) = tmp;
             }
-                
+
             ptr = ptrlutcolors + *(ptrbackbuffer + 320) * 4;
             finalcolor = *ptr & 0x80408040;
             ptr = ptrlutcolors + *(ptrbackbuffer + 321) * 4;
@@ -1572,14 +1591,16 @@ void HERC_DrawBackbuffer(void)
 
             tmp = BYTE0_UINT(finalcolor) | BYTE1_UINT(finalcolor);
 
-            if (tmp != *(ptrvrambuffer + 0x4000)){
+            if (tmp != *(ptrvrambuffer + 0x4000))
+            {
                 *(vram + 0x4000) = tmp;
                 *(ptrvrambuffer + 0x4000) = tmp;
             }
 
             tmp = BYTE2_UINT(finalcolor) | BYTE3_UINT(finalcolor);
 
-            if (tmp != *(ptrvrambuffer + 0x6000)){
+            if (tmp != *(ptrvrambuffer + 0x6000))
+            {
                 *(vram + 0x6000) = tmp;
                 *(ptrvrambuffer + 0x6000) = tmp;
             }
@@ -1588,7 +1609,7 @@ void HERC_DrawBackbuffer(void)
             ptrvrambuffer++;
             vram++;
             x--;
-            
+
         } while (x > 0);
 
         ptrbackbuffer += 320;
@@ -1975,6 +1996,33 @@ void EGA_DrawBackbuffer(void)
     unsigned short i;
     byte *backbufferptr;
 
+    byte *vrambufferR;
+    byte *vrambufferG;
+    byte *vrambufferB;
+    byte *vrambufferI;
+
+    switch (page)
+    {
+    case 0:
+        vrambufferR = vrambufferR1;
+        vrambufferG = vrambufferG1;
+        vrambufferB = vrambufferB1;
+        vrambufferI = vrambufferI1;
+        break;
+    case 1:
+        vrambufferR = vrambufferR2;
+        vrambufferG = vrambufferG2;
+        vrambufferB = vrambufferB2;
+        vrambufferI = vrambufferI2;
+        break;
+    case 2:
+        vrambufferR = vrambufferR3;
+        vrambufferG = vrambufferG3;
+        vrambufferB = vrambufferB3;
+        vrambufferI = vrambufferI3;
+        break;
+    }
+
     // Red
     outp(0x3C5, 1 << (3 & 0x03));
 
@@ -1982,6 +2030,7 @@ void EGA_DrawBackbuffer(void)
     {
         unsigned short color;
         unsigned short tmpColor;
+        byte tmp;
 
         BYTE1_USHORT(color) = ptrlutRcolor[*(backbufferptr)];
         BYTE0_USHORT(color) = ptrlutRcolor[*(backbufferptr + 1)];
@@ -1999,7 +2048,12 @@ void EGA_DrawBackbuffer(void)
         BYTE0_USHORT(color) = ptrlutRcolor[*(backbufferptr + 7)];
         tmpColor |= color & 0x0201;
 
-        destscreen[i] = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
+        tmp = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
+
+        if (tmp != vrambufferR[i]){
+            destscreen[i] = tmp;
+            vrambufferR[i] = tmp;
+        }
     }
 
     // Green
@@ -2009,6 +2063,7 @@ void EGA_DrawBackbuffer(void)
     {
         unsigned short color;
         unsigned short tmpColor;
+        byte tmp;
 
         BYTE1_USHORT(color) = ptrlutGcolor[*(backbufferptr)];
         BYTE0_USHORT(color) = ptrlutGcolor[*(backbufferptr + 1)];
@@ -2026,7 +2081,12 @@ void EGA_DrawBackbuffer(void)
         BYTE0_USHORT(color) = ptrlutGcolor[*(backbufferptr + 7)];
         tmpColor |= color & 0x0201;
 
-        destscreen[i] = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
+        tmp = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
+
+        if (tmp != vrambufferG[i]){
+            destscreen[i] = tmp;
+            vrambufferG[i] = tmp;
+        }
     }
 
     // Blue
@@ -2036,6 +2096,7 @@ void EGA_DrawBackbuffer(void)
     {
         unsigned short color;
         unsigned short tmpColor;
+        byte tmp;
 
         BYTE1_USHORT(color) = ptrlutBcolor[*(backbufferptr)];
         BYTE0_USHORT(color) = ptrlutBcolor[*(backbufferptr + 1)];
@@ -2053,7 +2114,12 @@ void EGA_DrawBackbuffer(void)
         BYTE0_USHORT(color) = ptrlutBcolor[*(backbufferptr + 7)];
         tmpColor |= color & 0x0201;
 
-        destscreen[i] = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
+        tmp = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
+
+        if (tmp != vrambufferB[i]){
+            destscreen[i] = tmp;
+            vrambufferB[i] = tmp;
+        }
     }
 
     // Intensity
@@ -2063,6 +2129,7 @@ void EGA_DrawBackbuffer(void)
     {
         unsigned short color;
         unsigned short tmpColor;
+        byte tmp;
 
         BYTE1_USHORT(color) = ptrlutIcolor[*(backbufferptr)];
         BYTE0_USHORT(color) = ptrlutIcolor[*(backbufferptr + 1)];
@@ -2080,7 +2147,12 @@ void EGA_DrawBackbuffer(void)
         BYTE0_USHORT(color) = ptrlutIcolor[*(backbufferptr + 7)];
         tmpColor |= color & 0x0201;
 
-        destscreen[i] = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
+        tmp = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
+
+        if (tmp != vrambufferI[i]){
+            destscreen[i] = tmp;
+            vrambufferI[i] = tmp;
+        }
     }
 
     // Change video page
