@@ -292,6 +292,9 @@
 #define AMSTR_GRIDON "Grid ON"
 #define AMSTR_GRIDOFF "Grid OFF"
 
+#define AMSTR_TRANSON "Transparent Map ON"
+#define AMSTR_TRANSOFF "Transparent Map OFF"
+
 #define AMSTR_MARKEDSPOT "Marked Spot"
 #define AMSTR_MARKSCLEARED "All Marks Cleared"
 

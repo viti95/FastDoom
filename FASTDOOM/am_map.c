@@ -95,6 +95,7 @@
 #define AM_GRIDKEY 'g'
 #define AM_MARKKEY 'm'
 #define AM_CLEARMARKKEY 'c'
+#define AM_TRANSPARENTMAP 't'
 
 #define AM_NUMMARKPOINTS 10
 
@@ -172,6 +173,10 @@ mline_t thintriangle_guy[] = {
 
 static int cheating = 0;
 static int grid = 0;
+
+#ifdef USE_BACKBUFFER
+static int transparentmap = 0;
+#endif
 
 static int leveljuststarted = 1; // kluge until AM_LevelInit() is called
 
@@ -547,6 +552,12 @@ byte AM_Responder(void)
 			grid = !grid;
 			players.message = grid ? AMSTR_GRIDON : AMSTR_GRIDOFF;
 			break;
+#ifdef USE_BACKBUFFER
+		case AM_TRANSPARENTMAP:
+			transparentmap = !transparentmap;
+			players.message = transparentmap ? AMSTR_TRANSON : AMSTR_TRANSOFF;
+			break;
+#endif
 		default:
 			rc = 0;
 		}
@@ -997,7 +1008,7 @@ void AM_drawMline(mline_t *ml,
 		}
 #else
 	if (AM_clipMline(ml, &fl))
-		AM_drawFline(&fl, color);							 // draws it on frame buffer using fb coords
+		AM_drawFline(&fl, color);						  // draws it on frame buffer using fb coords
 #endif
 }
 
@@ -1222,15 +1233,21 @@ void AM_Drawer(void)
 		SetDWords(screen0, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
 #endif
 #if defined(USE_BACKBUFFER)
-		SetDWords(backbuffer, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
+		if (!transparentmap)
+		{
+			SetDWords(backbuffer, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
+		}
 #endif
 	}
 #else
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-	SetDWords(screen0, BACKGROUND, Mul80(automapheight));	 // Clear automap frame buffer
+	SetDWords(screen0, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
 #endif
 #if defined(USE_BACKBUFFER)
-	SetDWords(backbuffer, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
+	if (!transparentmap)
+	{
+		SetDWords(backbuffer, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
+	}
 #endif
 #endif
 
@@ -1242,12 +1259,13 @@ void AM_Drawer(void)
 		AM_drawThings(THINGCOLORS, THINGRANGE);
 
 #ifdef SUPPORTS_HERCULES_AUTOMAP
-	
+
 	if (automapbuffer == automapbuffer1)
 	{
 		for (i = 0; i < 32768; i++)
 		{
-			if (automapbuffer[i] != automapbuffer2[i]){
+			if (automapbuffer[i] != automapbuffer2[i])
+			{
 				herc[i] = automapbuffer[i];
 			}
 		}
@@ -1256,7 +1274,8 @@ void AM_Drawer(void)
 	{
 		for (i = 0; i < 32768; i++)
 		{
-			if (automapbuffer[i] != automapbuffer1[i]){
+			if (automapbuffer[i] != automapbuffer1[i])
+			{
 				herc[i] = automapbuffer[i];
 			}
 		}
