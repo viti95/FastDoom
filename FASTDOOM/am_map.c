@@ -43,6 +43,8 @@
 
 #include "options.h"
 
+#include "m_menu.h"
+
 // For use if I do walls with outsides/insides
 #define REDS (256 - 5 * 16)
 #define REDRANGE 16
@@ -439,6 +441,9 @@ void AM_Start(void)
 	}
 #endif
 
+	if (screenSize < 7)
+		transparentmap = 0;
+
 	if (!stopped)
 		AM_Stop();
 	stopped = 0;
@@ -552,6 +557,8 @@ byte AM_Responder(void)
 			players.message = grid ? AMSTR_GRIDON : AMSTR_GRIDOFF;
 			break;
 		case AM_TRANSPARENTMAP:
+			if (screenSize < 7)
+				break;
 			transparentmap = !transparentmap;
 			players.message = transparentmap ? AMSTR_TRANSON : AMSTR_TRANSOFF;
 			break;
