@@ -58,6 +58,8 @@
 #define YELLOWRANGE 1
 #define BLACK 0
 #define WHITE (256 - 47)
+#define TRANSPARENTPIXEL 251
+#define TRANSPARENTPIXELDWORD 0xFBFBFBFB
 
 // Automap colors
 #define BACKGROUND BLACK
@@ -173,10 +175,7 @@ mline_t thintriangle_guy[] = {
 
 static int cheating = 0;
 static int grid = 0;
-
-#ifdef USE_BACKBUFFER
-static int transparentmap = 0;
-#endif
+int transparentmap = 0;
 
 static int leveljuststarted = 1; // kluge until AM_LevelInit() is called
 
@@ -552,12 +551,10 @@ byte AM_Responder(void)
 			grid = !grid;
 			players.message = grid ? AMSTR_GRIDON : AMSTR_GRIDOFF;
 			break;
-#ifdef USE_BACKBUFFER
 		case AM_TRANSPARENTMAP:
 			transparentmap = !transparentmap;
 			players.message = transparentmap ? AMSTR_TRANSON : AMSTR_TRANSOFF;
 			break;
-#endif
 		default:
 			rc = 0;
 		}
@@ -1008,7 +1005,7 @@ void AM_drawMline(mline_t *ml,
 		}
 #else
 	if (AM_clipMline(ml, &fl))
-		AM_drawFline(&fl, color);						  // draws it on frame buffer using fb coords
+		AM_drawFline(&fl, color); // draws it on frame buffer using fb coords
 #endif
 }
 
@@ -1230,24 +1227,34 @@ void AM_Drawer(void)
 	else
 	{
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-		SetDWords(screen0, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
+		if (transparentmap)
+		{
+			SetDWords(screen0, TRANSPARENTPIXELDWORD, Mul80(automapheight)); // Clear automap frame buffer
+		}
+		else
+		{
+			SetDWords(screen0, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
+		}
 #endif
 #if defined(USE_BACKBUFFER)
 		if (!transparentmap)
-		{
 			SetDWords(backbuffer, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
-		}
 #endif
 	}
 #else
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-	SetDWords(screen0, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
+	if (transparentmap)
+	{
+		SetDWords(screen0, TRANSPARENTPIXELDWORD, Mul80(automapheight)); // Clear automap frame buffer
+	}
+	else
+	{
+		SetDWords(screen0, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
+	}
 #endif
 #if defined(USE_BACKBUFFER)
 	if (!transparentmap)
-	{
 		SetDWords(backbuffer, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
-	}
 #endif
 #endif
 

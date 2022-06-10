@@ -40,6 +40,8 @@
 #include "doomdef.h"
 #include "doomstat.h"
 
+#include "am_map.h"
+
 #include "std_func.h"
 
 #include "options.h"
@@ -1329,6 +1331,31 @@ void I_UpdateBox(int x, int y, int w, int h)
         source += 320;
     }
 }
+
+void I_UpdateBoxTransparent(int x, int y, int w, int h)
+{
+    byte *dest;
+    byte *source;
+    int i;
+    int offset = Mul320(y) + x;
+
+    dest = destscreen + offset;
+    source = screen0 + offset;
+
+    for (i = y; i < y + h; i++)
+    {
+        for (x = 0; x < w; x++)
+        {
+            if (source[x] != 251)
+            {
+                dest[x] = source[x];
+            }
+        }
+
+        dest += 320;
+        source += 320;
+    }
+}
 #endif
 
 #ifdef MODE_Y
@@ -1406,6 +1433,52 @@ void I_UpdateBox(int x, int y, int w, int h)
                 source += step;
                 dest += pstep;
             }
+        }
+    }
+}
+
+void I_UpdateBoxTransparent(int x, int y, int w, int h)
+{
+    int i, j, k, count;
+    int sp_x1, sp_x2;
+    int poffset;
+    int offset;
+    int pstep;
+    int step;
+    byte *dest, *source;
+
+    outp(SC_INDEX, SC_MAPMASK);
+
+    sp_x1 = x / 8;
+    sp_x2 = (x + w) / 8;
+    count = sp_x2 - sp_x1 + 1;
+    step = SCREENWIDTH - count * 8;
+    offset = Mul320(y) + sp_x1 * 8;
+    poffset = offset / 4;
+    pstep = step / 4;
+
+    count *= 2;
+
+    for (i = 0; i < 4; i++)
+    {
+        outp(SC_INDEX + 1, 1 << i);
+        source = &screen0[offset + i];
+        dest = destscreen + poffset;
+
+        for (j = 0; j < h; j++)
+        {
+            k = dest + count;
+
+            while (dest < k)
+            {
+                if (*source != 251)
+                    *dest = *source;
+                dest++;
+                source += 4;
+            }
+
+            source += step;
+            dest += pstep;
         }
     }
 }
@@ -1490,7 +1563,10 @@ void I_UpdateNoBlit(void)
         y = realdr[BOXBOTTOM];
         h = realdr[BOXTOP] - y + 1;
 
-        I_UpdateBox(x, y, w, h);
+        if (transparentmap)
+            I_UpdateBoxTransparent(x, y, w, h);
+        else
+            I_UpdateBox(x, y, w, h);
     }
     // Clear box
     dirtybox[BOXTOP] = dirtybox[BOXRIGHT] = MININT;
