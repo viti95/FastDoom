@@ -234,14 +234,8 @@ byte *ptrlut136colors;
 #endif
 
 #if defined(MODE_EGA)
-byte lutRcolor[14 * 256];
-byte lutGcolor[14 * 256];
-byte lutBcolor[14 * 256];
-byte lutIcolor[14 * 256];
-byte *ptrlutRcolor;
-byte *ptrlutGcolor;
-byte *ptrlutBcolor;
-byte *ptrlutIcolor;
+byte lutcolor[4][14 * 256];
+unsigned int pospalette;
 #endif
 
 #if defined(MODE_CGA)
@@ -302,18 +296,7 @@ byte vrambuffer[16384];
 #endif
 
 #ifdef MODE_EGA
-byte vrambufferR1[8192];
-byte vrambufferG1[8192];
-byte vrambufferB1[8192];
-byte vrambufferI1[8192];
-byte vrambufferR2[8192];
-byte vrambufferG2[8192];
-byte vrambufferB2[8192];
-byte vrambufferI2[8192];
-byte vrambufferR3[8192];
-byte vrambufferG3[8192];
-byte vrambufferB3[8192];
-byte vrambufferI3[8192];
+unsigned short vrambuffer[4][3][8192]; // Color, Plane, VRAM
 #endif
 
 #ifdef MODE_EGA640
@@ -1074,41 +1057,41 @@ void I_ProcessPalette(byte *palette)
                 // R
                 if (j & 8)
                 {
-                    lutRcolor[i] = 0xFF;
+                    lutcolor[3][i] = 0xFF;
                 }
                 else
                 {
-                    lutRcolor[i] = 0x00;
+                    lutcolor[3][i] = 0x00;
                 }
 
                 // G
                 if (j & 4)
                 {
-                    lutGcolor[i] = 0xFF;
+                    lutcolor[2][i] = 0xFF;
                 }
                 else
                 {
-                    lutGcolor[i] = 0x00;
+                    lutcolor[2][i] = 0x00;
                 }
 
                 // B
                 if (j & 2)
                 {
-                    lutBcolor[i] = 0xFF;
+                    lutcolor[1][i] = 0xFF;
                 }
                 else
                 {
-                    lutBcolor[i] = 0x00;
+                    lutcolor[1][i] = 0x00;
                 }
 
                 // I
                 if (j & 1)
                 {
-                    lutIcolor[i] = 0xFF;
+                    lutcolor[0][i] = 0xFF;
                 }
                 else
                 {
-                    lutIcolor[i] = 0x00;
+                    lutcolor[0][i] = 0x00;
                 }
 
                 break;
@@ -1123,41 +1106,41 @@ void I_ProcessPalette(byte *palette)
                 // R
                 if (j & 8)
                 {
-                    lutRcolor[i] = 0xFF;
+                    lutcolor[3][i] = 0xFF;
                 }
                 else
                 {
-                    lutRcolor[i] = 0x00;
+                    lutcolor[3][i] = 0x00;
                 }
 
                 // G
                 if (j & 4)
                 {
-                    lutGcolor[i] = 0xFF;
+                    lutcolor[2][i] = 0xFF;
                 }
                 else
                 {
-                    lutGcolor[i] = 0x00;
+                    lutcolor[2][i] = 0x00;
                 }
 
                 // B
                 if (j & 2)
                 {
-                    lutBcolor[i] = 0xFF;
+                    lutcolor[1][i] = 0xFF;
                 }
                 else
                 {
-                    lutBcolor[i] = 0x00;
+                    lutcolor[1][i] = 0x00;
                 }
 
                 // I
                 if (j & 1)
                 {
-                    lutIcolor[i] = 0xFF;
+                    lutcolor[0][i] = 0xFF;
                 }
                 else
                 {
-                    lutIcolor[i] = 0x00;
+                    lutcolor[0][i] = 0x00;
                 }
             }
         }
@@ -1254,10 +1237,7 @@ void I_SetPalette(int numpalette)
 #endif
 
 #if defined(MODE_EGA)
-    ptrlutRcolor = lutRcolor + numpalette * 256;
-    ptrlutGcolor = lutGcolor + numpalette * 256;
-    ptrlutBcolor = lutBcolor + numpalette * 256;
-    ptrlutIcolor = lutIcolor + numpalette * 256;
+    pospalette = numpalette * 256;
 #endif
 
 #if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
@@ -2195,170 +2175,55 @@ void EGA640_DrawBackbuffer(void)
 #ifdef MODE_EGA
 void EGA_DrawBackbuffer(void)
 {
-    unsigned short i;
     byte *backbufferptr;
+    unsigned short *ptrvrambuffer;
+    int i;
 
-    byte *vrambufferR;
-    byte *vrambufferG;
-    byte *vrambufferB;
-    byte *vrambufferI;
-
-    switch (page)
+    // Each plane
+    for (i = 0; i < 4; i++)
     {
-    case 0:
-        vrambufferR = vrambufferR1;
-        vrambufferG = vrambufferG1;
-        vrambufferB = vrambufferB1;
-        vrambufferI = vrambufferI1;
-        break;
-    case 1:
-        vrambufferR = vrambufferR2;
-        vrambufferG = vrambufferG2;
-        vrambufferB = vrambufferB2;
-        vrambufferI = vrambufferI2;
-        break;
-    case 2:
-        vrambufferR = vrambufferR3;
-        vrambufferG = vrambufferG3;
-        vrambufferB = vrambufferB3;
-        vrambufferI = vrambufferI3;
-        break;
-    }
+        byte *ptrlutcolor = lutcolor[i] + pospalette;
 
-    // Red
-    outp(0x3C5, 1 << (3 & 0x03));
+        outp(0x3C5, 1 << i);
 
-    for (i = 0, backbufferptr = backbuffer; i < SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 8)
-    {
-        unsigned short color;
-        unsigned short tmpColor;
-        byte tmp;
+        backbufferptr = backbuffer;
+        ptrvrambuffer = vrambuffer[i][page];
 
-        BYTE1_USHORT(tmpColor) = ptrlutRcolor[*(backbufferptr)];
-        BYTE0_USHORT(tmpColor) = ptrlutRcolor[*(backbufferptr + 1)];
-        tmpColor &= 0x8040;
-
-        BYTE1_USHORT(color) = ptrlutRcolor[*(backbufferptr + 2)];
-        BYTE0_USHORT(color) = ptrlutRcolor[*(backbufferptr + 3)];
-        tmpColor |= color & 0x2010;
-
-        BYTE1_USHORT(color) = ptrlutRcolor[*(backbufferptr + 4)];
-        BYTE0_USHORT(color) = ptrlutRcolor[*(backbufferptr + 5)];
-        tmpColor |= color & 0x0804;
-
-        BYTE1_USHORT(color) = ptrlutRcolor[*(backbufferptr + 6)];
-        BYTE0_USHORT(color) = ptrlutRcolor[*(backbufferptr + 7)];
-        tmpColor |= color & 0x0201;
-
-        tmp = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
-
-        if (tmp != vrambufferR[i])
+        do
         {
-            destscreen[i] = tmp;
-            vrambufferR[i] = tmp;
-        }
-    }
+            unsigned short color;
+            unsigned short tmpColor;
 
-    // Green
-    outp(0x3C5, 1 << (2 & 0x03));
+            BYTE1_USHORT(tmpColor) = ptrlutcolor[*(backbufferptr)];
+            BYTE0_USHORT(tmpColor) = ptrlutcolor[*(backbufferptr + 1)];
+            tmpColor &= 0x8040;
 
-    for (i = 0, backbufferptr = backbuffer; i < SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 8)
-    {
-        unsigned short color;
-        unsigned short tmpColor;
-        byte tmp;
+            BYTE1_USHORT(color) = ptrlutcolor[*(backbufferptr + 2)];
+            BYTE0_USHORT(color) = ptrlutcolor[*(backbufferptr + 3)];
+            tmpColor |= color & 0x2010;
 
-        BYTE1_USHORT(tmpColor) = ptrlutGcolor[*(backbufferptr)];
-        BYTE0_USHORT(tmpColor) = ptrlutGcolor[*(backbufferptr + 1)];
-        tmpColor &= 0x8040;
+            BYTE1_USHORT(color) = ptrlutcolor[*(backbufferptr + 4)];
+            BYTE0_USHORT(color) = ptrlutcolor[*(backbufferptr + 5)];
+            tmpColor |= color & 0x0804;
 
-        BYTE1_USHORT(color) = ptrlutGcolor[*(backbufferptr + 2)];
-        BYTE0_USHORT(color) = ptrlutGcolor[*(backbufferptr + 3)];
-        tmpColor |= color & 0x2010;
+            BYTE1_USHORT(color) = ptrlutcolor[*(backbufferptr + 6)];
+            BYTE0_USHORT(color) = ptrlutcolor[*(backbufferptr + 7)];
+            tmpColor |= color & 0x0201;
 
-        BYTE1_USHORT(color) = ptrlutGcolor[*(backbufferptr + 4)];
-        BYTE0_USHORT(color) = ptrlutGcolor[*(backbufferptr + 5)];
-        tmpColor |= color & 0x0804;
+            if (tmpColor != *ptrvrambuffer)
+            {
+                *ptrvrambuffer = tmpColor;
+                *destscreen = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
+            }
 
-        BYTE1_USHORT(color) = ptrlutGcolor[*(backbufferptr + 6)];
-        BYTE0_USHORT(color) = ptrlutGcolor[*(backbufferptr + 7)];
-        tmpColor |= color & 0x0201;
+            destscreen++;
+            ptrvrambuffer++;
+            backbufferptr += 8;
 
-        tmp = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
+        } while (backbufferptr < backbuffer + SCREENWIDTH * SCREENHEIGHT);
 
-        if (tmp != vrambufferG[i])
-        {
-            destscreen[i] = tmp;
-            vrambufferG[i] = tmp;
-        }
-    }
-
-    // Blue
-    outp(0x3C5, 1 << (1 & 0x03));
-
-    for (i = 0, backbufferptr = backbuffer; i < SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 8)
-    {
-        unsigned short color;
-        unsigned short tmpColor;
-        byte tmp;
-
-        BYTE1_USHORT(tmpColor) = ptrlutBcolor[*(backbufferptr)];
-        BYTE0_USHORT(tmpColor) = ptrlutBcolor[*(backbufferptr + 1)];
-        tmpColor &= 0x8040;
-
-        BYTE1_USHORT(color) = ptrlutBcolor[*(backbufferptr + 2)];
-        BYTE0_USHORT(color) = ptrlutBcolor[*(backbufferptr + 3)];
-        tmpColor |= color & 0x2010;
-
-        BYTE1_USHORT(color) = ptrlutBcolor[*(backbufferptr + 4)];
-        BYTE0_USHORT(color) = ptrlutBcolor[*(backbufferptr + 5)];
-        tmpColor |= color & 0x0804;
-
-        BYTE1_USHORT(color) = ptrlutBcolor[*(backbufferptr + 6)];
-        BYTE0_USHORT(color) = ptrlutBcolor[*(backbufferptr + 7)];
-        tmpColor |= color & 0x0201;
-
-        tmp = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
-
-        if (tmp != vrambufferB[i])
-        {
-            destscreen[i] = tmp;
-            vrambufferB[i] = tmp;
-        }
-    }
-
-    // Intensity
-    outp(0x3C5, 1 << (0 & 0x03));
-
-    for (i = 0, backbufferptr = backbuffer; i < SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 8)
-    {
-        unsigned short color;
-        unsigned short tmpColor;
-        byte tmp;
-
-        BYTE1_USHORT(tmpColor) = ptrlutIcolor[*(backbufferptr)];
-        BYTE0_USHORT(tmpColor) = ptrlutIcolor[*(backbufferptr + 1)];
-        tmpColor &= 0x8040;
-
-        BYTE1_USHORT(color) = ptrlutIcolor[*(backbufferptr + 2)];
-        BYTE0_USHORT(color) = ptrlutIcolor[*(backbufferptr + 3)];
-        tmpColor |= color & 0x2010;
-
-        BYTE1_USHORT(color) = ptrlutIcolor[*(backbufferptr + 4)];
-        BYTE0_USHORT(color) = ptrlutIcolor[*(backbufferptr + 5)];
-        tmpColor |= color & 0x0804;
-
-        BYTE1_USHORT(color) = ptrlutIcolor[*(backbufferptr + 6)];
-        BYTE0_USHORT(color) = ptrlutIcolor[*(backbufferptr + 7)];
-        tmpColor |= color & 0x0201;
-
-        tmp = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
-
-        if (tmp != vrambufferI[i])
-        {
-            destscreen[i] = tmp;
-            vrambufferI[i] = tmp;
-        }
+        backbufferptr = backbuffer;
+        destscreen -= SCREENWIDTH * SCREENHEIGHT / 8;
     }
 
     // Change video page
@@ -3346,18 +3211,18 @@ void I_InitGraphics(void)
     outp(0x3C4, 0x2);
     pcscreen = destscreen = (byte *)0xA0000;
 
-    SetDWords(vrambufferR1, 0, 2048);
-    SetDWords(vrambufferG1, 0, 2048);
-    SetDWords(vrambufferB1, 0, 2048);
-    SetDWords(vrambufferI1, 0, 2048);
-    SetDWords(vrambufferR2, 0, 2048);
-    SetDWords(vrambufferG2, 0, 2048);
-    SetDWords(vrambufferB2, 0, 2048);
-    SetDWords(vrambufferI2, 0, 2048);
-    SetDWords(vrambufferR3, 0, 2048);
-    SetDWords(vrambufferG3, 0, 2048);
-    SetDWords(vrambufferB3, 0, 2048);
-    SetDWords(vrambufferI3, 0, 2048);
+    SetDWords(vrambuffer[0][0], 0, 2048);
+    SetDWords(vrambuffer[1][0], 0, 2048);
+    SetDWords(vrambuffer[2][0], 0, 2048);
+    SetDWords(vrambuffer[3][0], 0, 2048);
+    SetDWords(vrambuffer[0][1], 0, 2048);
+    SetDWords(vrambuffer[1][1], 0, 2048);
+    SetDWords(vrambuffer[2][1], 0, 2048);
+    SetDWords(vrambuffer[3][1], 0, 2048);
+    SetDWords(vrambuffer[0][2], 0, 2048);
+    SetDWords(vrambuffer[1][2], 0, 2048);
+    SetDWords(vrambuffer[2][2], 0, 2048);
+    SetDWords(vrambuffer[3][2], 0, 2048);
 #endif
 #ifdef MODE_EGA640
     regs.w.ax = 0x0E;
