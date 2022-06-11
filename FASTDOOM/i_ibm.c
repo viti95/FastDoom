@@ -2234,9 +2234,9 @@ void EGA_DrawBackbuffer(void)
         unsigned short tmpColor;
         byte tmp;
 
-        BYTE1_USHORT(color) = ptrlutRcolor[*(backbufferptr)];
-        BYTE0_USHORT(color) = ptrlutRcolor[*(backbufferptr + 1)];
-        tmpColor = color & 0x8040;
+        BYTE1_USHORT(tmpColor) = ptrlutRcolor[*(backbufferptr)];
+        BYTE0_USHORT(tmpColor) = ptrlutRcolor[*(backbufferptr + 1)];
+        tmpColor &= 0x8040;
 
         BYTE1_USHORT(color) = ptrlutRcolor[*(backbufferptr + 2)];
         BYTE0_USHORT(color) = ptrlutRcolor[*(backbufferptr + 3)];
@@ -2268,9 +2268,9 @@ void EGA_DrawBackbuffer(void)
         unsigned short tmpColor;
         byte tmp;
 
-        BYTE1_USHORT(color) = ptrlutGcolor[*(backbufferptr)];
-        BYTE0_USHORT(color) = ptrlutGcolor[*(backbufferptr + 1)];
-        tmpColor = color & 0x8040;
+        BYTE1_USHORT(tmpColor) = ptrlutGcolor[*(backbufferptr)];
+        BYTE0_USHORT(tmpColor) = ptrlutGcolor[*(backbufferptr + 1)];
+        tmpColor &= 0x8040;
 
         BYTE1_USHORT(color) = ptrlutGcolor[*(backbufferptr + 2)];
         BYTE0_USHORT(color) = ptrlutGcolor[*(backbufferptr + 3)];
@@ -2302,9 +2302,9 @@ void EGA_DrawBackbuffer(void)
         unsigned short tmpColor;
         byte tmp;
 
-        BYTE1_USHORT(color) = ptrlutBcolor[*(backbufferptr)];
-        BYTE0_USHORT(color) = ptrlutBcolor[*(backbufferptr + 1)];
-        tmpColor = color & 0x8040;
+        BYTE1_USHORT(tmpColor) = ptrlutBcolor[*(backbufferptr)];
+        BYTE0_USHORT(tmpColor) = ptrlutBcolor[*(backbufferptr + 1)];
+        tmpColor &= 0x8040;
 
         BYTE1_USHORT(color) = ptrlutBcolor[*(backbufferptr + 2)];
         BYTE0_USHORT(color) = ptrlutBcolor[*(backbufferptr + 3)];
@@ -2336,9 +2336,9 @@ void EGA_DrawBackbuffer(void)
         unsigned short tmpColor;
         byte tmp;
 
-        BYTE1_USHORT(color) = ptrlutIcolor[*(backbufferptr)];
-        BYTE0_USHORT(color) = ptrlutIcolor[*(backbufferptr + 1)];
-        tmpColor = color & 0x8040;
+        BYTE1_USHORT(tmpColor) = ptrlutIcolor[*(backbufferptr)];
+        BYTE0_USHORT(tmpColor) = ptrlutIcolor[*(backbufferptr + 1)];
+        tmpColor &= 0x8040;
 
         BYTE1_USHORT(color) = ptrlutIcolor[*(backbufferptr + 2)];
         BYTE0_USHORT(color) = ptrlutIcolor[*(backbufferptr + 3)];
