@@ -2389,9 +2389,9 @@ void CGA_DrawBackbuffer(void)
             unsigned short tmpColor;
             byte tmp;
 
-            BYTE1_USHORT(color) = (ptrlut4colors[backbuffer[base]]);
-            BYTE0_USHORT(color) = (ptrlut4colors[backbuffer[base + 1]]);
-            tmpColor = color & 0xC030;
+            BYTE1_USHORT(tmpColor) = (ptrlut4colors[backbuffer[base]]);
+            BYTE0_USHORT(tmpColor) = (ptrlut4colors[backbuffer[base + 1]]);
+            tmpColor &= 0xC030;
 
             BYTE1_USHORT(color) = (ptrlut4colors[backbuffer[base + 2]]);
             BYTE0_USHORT(color) = (ptrlut4colors[backbuffer[base + 3]]);
@@ -2405,9 +2405,9 @@ void CGA_DrawBackbuffer(void)
                 *(ptrvrambuffer) = tmp;
             }
 
-            BYTE1_USHORT(color) = (ptrlut4colors[backbuffer[base + 320]]);
-            BYTE0_USHORT(color) = (ptrlut4colors[backbuffer[base + 321]]);
-            tmpColor = color & 0xC030;
+            BYTE1_USHORT(tmpColor) = (ptrlut4colors[backbuffer[base + 320]]);
+            BYTE0_USHORT(tmpColor) = (ptrlut4colors[backbuffer[base + 321]]);
+            tmpColor &= 0xC030;
 
             BYTE1_USHORT(color) = (ptrlut4colors[backbuffer[base + 322]]);
             BYTE0_USHORT(color) = (ptrlut4colors[backbuffer[base + 323]]);
