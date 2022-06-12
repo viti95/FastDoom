@@ -319,7 +319,7 @@ byte vrambuffer[32768];
 #endif
 
 #ifdef MODE_CGA
-byte vrambuffer[16384];
+unsigned short vrambuffer[16384];
 #endif
 
 #ifdef MODE_ATI640
@@ -2371,7 +2371,7 @@ void CGA_DrawBackbuffer(void)
 {
     int x;
     unsigned char *vram = (unsigned char *)0xB8000;
-    byte *ptrvrambuffer = vrambuffer;
+    unsigned short *ptrvrambuffer = vrambuffer;
     unsigned int base = 0;
 
     for (base = 0; base < SCREENHEIGHT * 320; base += 320)
@@ -2390,12 +2390,9 @@ void CGA_DrawBackbuffer(void)
             BYTE0_USHORT(color) = (ptrlut4colors[backbuffer[base + 3]]);
             tmpColor |= color & 0x0C03;
 
-            tmp = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
-
-            if (tmp != *(ptrvrambuffer))
-            {
-                *(vram) = tmp;
-                *(ptrvrambuffer) = tmp;
+            if (tmpColor != *(ptrvrambuffer)){
+                *(ptrvrambuffer) = tmpColor;
+                *(vram) = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
             }
 
             BYTE1_USHORT(tmpColor) = (ptrlut4colors[backbuffer[base + 320]]);
@@ -2406,12 +2403,9 @@ void CGA_DrawBackbuffer(void)
             BYTE0_USHORT(color) = (ptrlut4colors[backbuffer[base + 323]]);
             tmpColor |= color & 0x0C03;
 
-            tmp = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
-
-            if (tmp != *(ptrvrambuffer + 0x2000))
-            {
-                *(vram + 0x2000) = tmp;
-                *(ptrvrambuffer + 0x2000) = tmp;
+            if (tmpColor != *(ptrvrambuffer + 0x2000)){
+                *(ptrvrambuffer + 0x2000) = tmpColor;
+                *(vram + 0x2000) = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
             }
         }
     }
