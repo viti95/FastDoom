@@ -292,7 +292,7 @@ byte vrambuffer[32768];
 #endif
 
 #ifdef MODE_CGA_BW
-byte vrambuffer[16384];
+unsigned short vrambuffer[16384];
 #endif
 
 #ifdef MODE_EGA
@@ -1564,7 +1564,7 @@ extern int screenblocks;
 void CGA_BW_DrawBackbuffer(void)
 {
     unsigned char *vram = (unsigned char *)0xB8000;
-    byte *ptrvrambuffer = vrambuffer;
+    unsigned short *ptrvrambuffer = vrambuffer;
     byte *ptrbackbuffer = backbuffer;
 
     do
@@ -1575,7 +1575,6 @@ void CGA_BW_DrawBackbuffer(void)
         {
             unsigned short *ptr;
             unsigned short finalcolor;
-            byte tmp;
 
             // Process two pixels at the same time (16-bit)
             ptr = ptrlutcolors + *(ptrbackbuffer)*2;
@@ -1587,12 +1586,9 @@ void CGA_BW_DrawBackbuffer(void)
             ptr = ptrlutcolors + *(ptrbackbuffer + 3) * 2;
             finalcolor |= *ptr & 0x0201;
 
-            tmp = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor);
-
-            if (tmp != *ptrvrambuffer)
-            {
-                *vram = tmp;
-                *ptrvrambuffer = tmp;
+            if (finalcolor != *ptrvrambuffer){
+                *ptrvrambuffer = finalcolor;
+                *vram = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor);
             }
 
             ptr = ptrlutcolors + *(ptrbackbuffer + 320) * 2;
@@ -1604,12 +1600,9 @@ void CGA_BW_DrawBackbuffer(void)
             ptr = ptrlutcolors + *(ptrbackbuffer + 323) * 2;
             finalcolor |= *ptr & 0x0201;
 
-            tmp = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer + 0x2000))
-            {
-                *(vram + 0x2000) = tmp;
-                *(ptrvrambuffer + 0x2000) = tmp;
+            if (finalcolor != *(ptrvrambuffer + 0x2000)){
+                *(ptrvrambuffer + 0x2000) = finalcolor;
+                *(vram + 0x2000) = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor);
             }
 
             ptrbackbuffer += 4;
