@@ -1206,7 +1206,10 @@ void AM_drawThings(int colors,
 void AM_Drawer(void)
 {
 	int i;
+
+#ifdef SUPPORTS_HERCULES_AUTOMAP
 	byte *herc = (byte *)0xB0000;
+#endif
 
 	if (!automapactive)
 		return;
@@ -1276,22 +1279,36 @@ void AM_Drawer(void)
 
 	if (automapbuffer == automapbuffer1)
 	{
-		for (i = 0; i < 32768; i++)
+		for (i = 0; i < 32768; i += 4)
 		{
 			if (automapbuffer[i] != automapbuffer2[i])
-			{
 				herc[i] = automapbuffer[i];
-			}
+
+			if (automapbuffer[i + 1] != automapbuffer2[i + 1])
+				herc[i + 1] = automapbuffer[i + 1];
+
+			if (automapbuffer[i + 2] != automapbuffer2[i + 2])
+				herc[i + 2] = automapbuffer[i + 2];
+
+			if (automapbuffer[i + 3] != automapbuffer2[i + 3])
+				herc[i + 3] = automapbuffer[i + 3];
 		}
 	}
 	else
 	{
-		for (i = 0; i < 32768; i++)
+		for (i = 0; i < 32768; i += 4)
 		{
 			if (automapbuffer[i] != automapbuffer1[i])
-			{
 				herc[i] = automapbuffer[i];
-			}
+
+			if (automapbuffer[i + 1] != automapbuffer1[i + 1])
+				herc[i + 1] = automapbuffer[i + 1];
+
+			if (automapbuffer[i + 2] != automapbuffer1[i + 2])
+				herc[i + 2] = automapbuffer[i + 2];
+
+			if (automapbuffer[i + 3] != automapbuffer1[i + 3])
+				herc[i + 3] = automapbuffer[i + 3];
 		}
 	}
 
