@@ -3046,7 +3046,7 @@ void I_InitGraphics(void)
 
     pcscreen = destscreen = (byte *)0xB8000;
 
-    SetDWords(vrambuffer, 0, 4096);
+    SetDWords(vrambuffer, 0, 8192);
     SetDWords(pcscreen, 0, 4096);
 #endif
 #if defined(MODE_EGA16) || defined(MODE_EGA136)
@@ -3180,7 +3180,7 @@ void I_InitGraphics(void)
     int386(0x10, (union REGS *)&regs, &regs);
     pcscreen = destscreen = (byte *)0xB8000;
 
-    SetDWords(vrambuffer, 0, 4096);
+    SetDWords(vrambuffer, 0, 8192);
     SetDWords(pcscreen, 0, 4096);
 #endif
 #ifdef MODE_PCP
