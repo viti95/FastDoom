@@ -411,7 +411,7 @@ void R_DrawSpanText4050(void)
     dest += ds_x1;
 
     position = ((ds_xfrac << 10) & 0xffff0000) | ((ds_yfrac >> 6) & 0xffff);
-    step = ((ds_xstep << 10) & 0xffff0000) | ((ds_ystep >> 6) & 0xffff);
+    step = ds_xstep | ds_ystep;
 
     odd = ds_y & 1;
     shift = 8 | (odd << 2);
@@ -668,7 +668,7 @@ void R_DrawSpanText4025(void)
     dest += ds_x1;
 
     position = ((ds_xfrac << 10) & 0xffff0000) | ((ds_yfrac >> 6) & 0xffff);
-    step = ((ds_xstep << 10) & 0xffff0000) | ((ds_ystep >> 6) & 0xffff);
+    step = ds_xstep | ds_ystep;
 
     source = ds_source;
     colormap = ds_colormap;
@@ -1140,7 +1140,7 @@ void R_DrawSpanText8025(void)
     dest += ds_x1;
 
     position = ((ds_xfrac << 10) & 0xffff0000) | ((ds_yfrac >> 6) & 0xffff);
-    step = ((ds_xstep << 10) & 0xffff0000) | ((ds_ystep >> 6) & 0xffff);
+    step = ds_xstep | ds_ystep;
 
     odd = ds_y & 1;
     shift = 8 | (odd << 2);
@@ -1187,7 +1187,7 @@ void R_DrawSpanText80100(void)
     dest += ds_x1;
 
     position = ((ds_xfrac << 10) & 0xffff0000) | ((ds_yfrac >> 6) & 0xffff);
-    step = ((ds_xstep << 10) & 0xffff0000) | ((ds_ystep >> 6) & 0xffff);
+    step = ds_xstep | ds_ystep;
 
     odd = ds_y & 1;
     shift = 8 | (odd << 2);
@@ -1809,7 +1809,7 @@ void R_DrawSpanText8050(void)
     dest += ds_x1;
 
     position = ((ds_xfrac << 10) & 0xffff0000) | ((ds_yfrac >> 6) & 0xffff);
-    step = ((ds_xstep << 10) & 0xffff0000) | ((ds_ystep >> 6) & 0xffff);
+    step = ds_xstep | ds_ystep;
 
     source = ds_source;
     colormap = ds_colormap;
@@ -1843,7 +1843,7 @@ void R_DrawSpanPotato(void)
     int count;
 
     position = ((ds_xfrac << 10) & 0xffff0000) | ((ds_yfrac >> 6) & 0xffff);
-    step = ((ds_xstep << 10) & 0xffff0000) | ((ds_ystep >> 6) & 0xffff);
+    step = ds_xstep | ds_ystep;
 
     source = ds_source;
     colormap = ds_colormap;

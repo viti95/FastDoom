@@ -163,11 +163,7 @@ CODE_SYM_DEF R_DrawSpanVBE2
   ; build composite step
 
   mov	edx,[_ds_xstep]
-  shl	edx,10
-  and	edx,0ffff0000h
   mov	eax,[_ds_ystep]
-  shr	eax,6
-  and	eax,0ffffh
   or	edx,eax
 
   mov	esi,[_ds_source]
