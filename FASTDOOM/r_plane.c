@@ -108,7 +108,7 @@ void R_MapPlane(int y, int x1)
     fixed_t length;
     unsigned index;
 
-    #if defined(MODE_CGA16) || defined(MODE_CGA136) || defined(MODE_EGA16)
+    #if defined(MODE_CGA16) || defined(MODE_CGA136) || defined(MODE_EGA16) || defined(MODE_EGA136)
 		if (y & 1){
 			return;
 		}
