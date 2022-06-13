@@ -481,7 +481,7 @@ void R_RenderBSPNode(int bspnum)
     while (true)
     {
         // Front sides.
-        while ((bspnum & NF_SUBSECTOR) == 0)
+        while ((short)bspnum >= 0)
         {
             fixed_t dx, dy;
             fixed_t left, right;
