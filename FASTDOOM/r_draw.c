@@ -411,7 +411,7 @@ void R_DrawSpanText4050(void)
     dest += ds_x1;
 
     position = ((ds_xfrac << 10) & 0xffff0000) | ((ds_yfrac >> 6) & 0xffff);
-    step = ds_xstep | ds_ystep;
+    step = ds_step;
 
     odd = ds_y & 1;
     shift = 8 | (odd << 2);
@@ -668,7 +668,7 @@ void R_DrawSpanText4025(void)
     dest += ds_x1;
 
     position = ((ds_xfrac << 10) & 0xffff0000) | ((ds_yfrac >> 6) & 0xffff);
-    step = ds_xstep | ds_ystep;
+    step = ds_step;
 
     source = ds_source;
     colormap = ds_colormap;
@@ -1140,7 +1140,7 @@ void R_DrawSpanText8025(void)
     dest += ds_x1;
 
     position = ((ds_xfrac << 10) & 0xffff0000) | ((ds_yfrac >> 6) & 0xffff);
-    step = ds_xstep | ds_ystep;
+    step = ds_step;
 
     odd = ds_y & 1;
     shift = 8 | (odd << 2);
@@ -1187,7 +1187,7 @@ void R_DrawSpanText80100(void)
     dest += ds_x1;
 
     position = ((ds_xfrac << 10) & 0xffff0000) | ((ds_yfrac >> 6) & 0xffff);
-    step = ds_xstep | ds_ystep;
+    step = ds_step;
 
     odd = ds_y & 1;
     shift = 8 | (odd << 2);
@@ -1809,7 +1809,7 @@ void R_DrawSpanText8050(void)
     dest += ds_x1;
 
     position = ((ds_xfrac << 10) & 0xffff0000) | ((ds_yfrac >> 6) & 0xffff);
-    step = ds_xstep | ds_ystep;
+    step = ds_step;
 
     source = ds_source;
     colormap = ds_colormap;
@@ -1843,7 +1843,7 @@ void R_DrawSpanPotato(void)
     int count;
 
     position = ((ds_xfrac << 10) & 0xffff0000) | ((ds_yfrac >> 6) & 0xffff);
-    step = ds_xstep | ds_ystep;
+    step = ds_step;
 
     source = ds_source;
     colormap = ds_colormap;
@@ -2573,8 +2573,7 @@ lighttable_t *ds_colormap;
 
 fixed_t ds_xfrac;
 fixed_t ds_yfrac;
-fixed_t ds_xstep;
-fixed_t ds_ystep;
+fixed_t ds_step;
 
 // start of a 64*64 tile image
 byte *ds_source;

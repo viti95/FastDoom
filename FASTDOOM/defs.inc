@@ -47,6 +47,5 @@ extern _ds_x2
 extern _ds_colormap
 extern _ds_xfrac
 extern _ds_yfrac
-extern _ds_xstep
-extern _ds_ystep
+extern _ds_step
 extern _ds_source

@@ -85,8 +85,8 @@ fixed_t baseyscale;
 
 fixed_t cachedheight[SCREENHEIGHT];
 fixed_t cacheddistance[SCREENHEIGHT];
-fixed_t cachedxstep[SCREENHEIGHT];
-fixed_t cachedystep[SCREENHEIGHT];
+
+fixed_t cachedstep[SCREENHEIGHT];
 
 //
 // R_MapPlane
@@ -135,14 +135,12 @@ void R_MapPlane(int y, int x1)
         {
             cachedheight[y] = planeheight;
             distance = cacheddistance[y] = FixedMul(planeheight, yslope[y]);
-            ds_xstep = cachedxstep[y] = (FixedMul(distance, basexscale) << 10) & 0xFFFF0000;
-            ds_ystep = cachedystep[y] = (FixedMul(distance, baseyscale) >> 6) & 0xFFFF;
+            ds_step = cachedstep[y] = ((FixedMul(distance, basexscale) << 10) & 0xFFFF0000) | ((FixedMul(distance, baseyscale) >> 6) & 0xFFFF);
         }
         else
         {
             distance = cacheddistance[y];
-            ds_xstep = cachedxstep[y];
-            ds_ystep = cachedystep[y];
+            ds_step = cachedstep[y];
         }
 
         angle = (viewangle + xtoviewangle[x1]) >> ANGLETOFINESHIFT;

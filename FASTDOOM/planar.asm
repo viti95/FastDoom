@@ -360,9 +360,7 @@ CODE_SYM_DEF R_DrawSpan
 
   mov  [frac],ebx
 
-  mov  ebx,[_ds_xstep]
-  mov  eax,[_ds_ystep]
-  or   ebx,eax
+  mov  ebx,[_ds_step]
 
   mov  [fracstep],ebx
 
@@ -517,9 +515,7 @@ CODE_SYM_DEF R_DrawSpanLow
 
   mov  [frac],ebx
 
-  mov  ebx,[_ds_xstep]
-  mov  eax,[_ds_ystep]
-  or   ebx,eax
+  mov  ebx,[_ds_step]
 
   mov [fracstep],ebx
 
