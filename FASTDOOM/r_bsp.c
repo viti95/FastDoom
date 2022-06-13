@@ -473,11 +473,9 @@ void R_Subsector(int num)
 void R_RenderBSPNode(int bspnum)
 {
     node_t *bsp;
-    fixed_t dx, dy;
-    fixed_t left, right;
     int stack_bsp[MAX_BSP_DEPTH];
     byte stack_side[MAX_BSP_DEPTH];
-    int sp = 0;
+    byte sp = 0;
     byte side = 0;
 
     while (true)
@@ -485,6 +483,9 @@ void R_RenderBSPNode(int bspnum)
         // Front sides.
         while ((bspnum & NF_SUBSECTOR) == 0)
         {
+            fixed_t dx, dy;
+            fixed_t left, right;
+
             if (sp == MAX_BSP_DEPTH)
                 break;
 
