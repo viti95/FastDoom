@@ -183,7 +183,7 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 				dc_colormap = walllights[index];
 			}
 
-			sprtopscreen = centeryfrac - FixedMul(dc_texturemid, spryscale);
+			sprtopscreen = centeryfrac - FixedMulEDX(spryscale, dc_texturemid);
 
 			// VITI95: OPTIMIZE
 			dc_iscale = 0xffffffffu / (unsigned)spryscale;
@@ -365,7 +365,7 @@ void R_RenderSegLoop(void)
 		{
 			// calculate texture offset
 			angle = (rw_centerangle + xtoviewangle[rw_x]) >> ANGLETOFINESHIFT;
-			texturecolumn = rw_offset - FixedMul(finetangent[angle], rw_distance);
+			texturecolumn = rw_offset - FixedMulEDX(finetangent[angle], rw_distance);
 			texturecolumn >>= FRACBITS;
 			// calculate lighting
 			index = rw_scale >> LIGHTSCALESHIFT;
@@ -615,7 +615,7 @@ void R_StoreWallRange(int start,
 
 	distangle = ANG90 - offsetangle;
 	hyp = R_PointToDist(curline->v1->x, curline->v1->y);
-	rw_distance = FixedMul(hyp, finesine[distangle >> ANGLETOFINESHIFT]);
+	rw_distance = FixedMulEDX(hyp, finesine[distangle >> ANGLETOFINESHIFT]);
 
 	ds_p->x1 = rw_x = start;
 	ds_p->x2 = stop;
@@ -784,7 +784,7 @@ void R_StoreWallRange(int start,
 		if (offsetangle > ANG180)
 			offsetangle = -offsetangle;
 
-		rw_offset = FixedMul(hyp, finesine[offsetangle >> ANGLETOFINESHIFT]);
+		rw_offset = FixedMulEDX(hyp, finesine[offsetangle >> ANGLETOFINESHIFT]);
 
 		if (rw_normalangle - rw_angle1 < ANG180)
 			rw_offset = -rw_offset;
