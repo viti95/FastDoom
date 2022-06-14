@@ -45,8 +45,8 @@ void P_Thrust(angle_t angle, fixed_t move)
 {
 	angle >>= ANGLETOFINESHIFT;
 
-	players_mo->momx += FixedMul(move, finecosine[angle]);
-	players_mo->momy += FixedMul(move, finesine[angle]);
+	players_mo->momx += FixedMulEDX(move, finecosine[angle]);
+	players_mo->momy += FixedMulEDX(move, finesine[angle]);
 }
 
 //
