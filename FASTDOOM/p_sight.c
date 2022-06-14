@@ -138,7 +138,7 @@ byte P_CrossSubsector(int num)
             return 0; // stop
 
         // P_InterceptVector2
-        denIV = FixedMul(divl.dy >> 8, strace.dx) - FixedMul(divl.dx >> 8, strace.dy);
+        denIV = FixedMulEDX(divl.dy >> 8, strace.dx) - FixedMulEDX(divl.dx >> 8, strace.dy);
 
         if (denIV == 0)
         {
@@ -146,7 +146,7 @@ byte P_CrossSubsector(int num)
         }
         else
         {
-            numIV = FixedMul((divl.x - strace.x) >> 8, divl.dy) + FixedMul((strace.y - divl.y) >> 8, divl.dx);
+            numIV = FixedMulEDX((divl.x - strace.x) >> 8, divl.dy) + FixedMulEDX((strace.y - divl.y) >> 8, divl.dx);
             frac = FixedDiv(numIV, denIV);
         }
 
