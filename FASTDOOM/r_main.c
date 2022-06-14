@@ -139,8 +139,8 @@ byte R_PointOnSegSide(fixed_t x,
     if ((ldy ^ ldx ^ dx ^ dy) & 0x80000000)
         return ((ldy ^ dx) & 0x80000000) != 0;
 
-    left = FixedMul(ldy >> FRACBITS, dx);
-    right = FixedMul(dy, ldx >> FRACBITS);
+    left = FixedMulEDX(ldy >> FRACBITS, dx);
+    right = FixedMulEDX(dy, ldx >> FRACBITS);
 
     // returns 0/1 front/back side
     return right >= left;
