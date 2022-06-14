@@ -122,7 +122,7 @@ void R_MapPlane(int y, int x1)
         if (planeheight != cachedheight[y])
         {
             cachedheight[y] = planeheight;
-            distance = cacheddistance[y] = FixedMul(planeheight, yslope[y]);
+            distance = cacheddistance[y] = FixedMulEDX(planeheight, yslope[y]);
         }
         else
         {
@@ -133,9 +133,15 @@ void R_MapPlane(int y, int x1)
     {
         if (planeheight != cachedheight[y])
         {
+            fixed_t step;
+
             cachedheight[y] = planeheight;
-            distance = cacheddistance[y] = FixedMul(planeheight, yslope[y]);
-            ds_step = cachedstep[y] = ((FixedMul(distance, basexscale) << 10) & 0xFFFF0000) | ((FixedMul(distance, baseyscale) >> 6) & 0xFFFF);
+            distance = cacheddistance[y] = FixedMulEDX(planeheight, yslope[y]);
+
+            step = ((FixedMulEDX(distance, basexscale) << 10) & 0xFFFF0000);
+            step |= ((FixedMulEDX(distance, baseyscale) >> 6) & 0xFFFF);
+            ds_step = step; 
+            cachedstep[y] = step;
         }
         else
         {
