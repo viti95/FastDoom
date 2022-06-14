@@ -67,8 +67,8 @@ byte P_PointOnLineSide(fixed_t x, fixed_t y, line_t *line)
     dx = (x - line->v1->x);
     dy = (y - line->v1->y);
 
-    left = FixedMul(line->dys, dx);
-    right = FixedMul(dy, line->dxs);
+    left = FixedMulEDX(line->dys, dx);
+    right = FixedMulEDX(dy, line->dxs);
 
     return right >= left;
 }
