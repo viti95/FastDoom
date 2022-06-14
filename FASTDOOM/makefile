@@ -24,16 +24,16 @@
 # --------------------------------------------------------------------------
 
 # Build options for 486DX/SX
-#CCOPTS = $(EXTERNOPT) -omaxet -oh -ol+ -zp4 -4r -ei -j -zq
+#CCOPTS = $(EXTERNOPT) -omaxtnrih -ol+ -oe=32 -zp4 -4r -ei -j -zq -zc
 
 # Build options for 386DX/SX
-CCOPTS = $(EXTERNOPT) -omaxet -oh -ol+ -zp4 -3r -ei -j -zq
+CCOPTS = $(EXTERNOPT) -omaxtnrih -ol+ -oe=32 -zp4 -3r -ei -j -zq -zc
 
 # Build options for Pentium
-#CCOPTS = $(EXTERNOPT) -omaxet -oh -ol+ -zp4 -5r -ei -j -zq
+#CCOPTS = $(EXTERNOPT) -omaxtnrih -ol+ -oe=32 -zp4 -5r -ei -j -zq -zc
 
 # Build options for profiling (Pentium required)
-#CCOPTS = $(EXTERNOPT) -omaxet -oh -ol+ -zp4 -5r -ei -j -zq -et
+#CCOPTS = $(EXTERNOPT) -omaxtnrih -ol+ -oe=32 -zp4 -5r -ei -j -zq -zc -et
 
 GLOBOBJS_Y = &
  ns_dpmi.obj &
