@@ -531,15 +531,15 @@ fixed_t R_ScaleFromGlobalAngle(angle_t visangle)
     sinea = finesine[anglea >> ANGLETOFINESHIFT];
     sineb = finesine[angleb >> ANGLETOFINESHIFT];
 #if defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_T8086)
-    num = FixedMul(projection, sineb) << 1;
+    num = FixedMulEDX(projection, sineb) << 1;
 #endif
 #ifdef MODE_Y
-    num = FixedMul(projection, sineb) << detailshift;
+    num = FixedMulEDX(projection, sineb) << detailshift;
 #endif
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT) || defined(MODE_MDA)
-    num = FixedMul(projection, sineb);
+    num = FixedMulEDX(projection, sineb);
 #endif
-    den = FixedMul(rw_distance, sinea);
+    den = FixedMulEDX(rw_distance, sinea);
 
     if (den > num >> 16)
     {
