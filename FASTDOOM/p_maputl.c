@@ -149,8 +149,8 @@ byte P_PointOnDivlineSide(fixed_t x,
     if ((line->dy ^ line->dx ^ dx ^ dy) & 0x80000000)
         return ((line->dy ^ dx) & 0x80000000) != 0;
 
-    left = FixedMul(line->dy >> 8, dx >> 8);
-    right = FixedMul(dy >> 8, line->dx >> 8);
+    left = FixedMulEDX(line->dy >> 8, dx >> 8);
+    right = FixedMulEDX(dy >> 8, line->dx >> 8);
 
     return right >= left;
 }
