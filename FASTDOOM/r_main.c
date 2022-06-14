@@ -1137,8 +1137,8 @@ R_PointInSubsector(fixed_t x,
                 }
                 else
                 {
-                    left = FixedMul(node->dys, dx);
-                    right = FixedMul(dy, node->dxs);
+                    left = FixedMulEDX(node->dys, dx);
+                    right = FixedMulEDX(dy, node->dxs);
 
                     side = right >= left;
                 }
