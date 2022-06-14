@@ -65,7 +65,7 @@ void P_CalcHeight(void)
 	// Note: a LUT allows for effects
 	//  like a ramp with low health.
 
-	players.bob = FixedMul(players_mo->momx, players_mo->momx) + FixedMul(players_mo->momy, players_mo->momy);
+	players.bob = FixedMulEDX(players_mo->momx, players_mo->momx) + FixedMulEDX(players_mo->momy, players_mo->momy);
 	players.bob >>= 2;
 	if (players.bob > MAXBOB)
 		players.bob = MAXBOB;
@@ -82,7 +82,7 @@ void P_CalcHeight(void)
 	}
 
 	angle = Mul409(leveltime) & FINEMASK;
-	bob = FixedMul(players.bob / 2, finesine[angle]);
+	bob = FixedMulEDX(players.bob / 2, finesine[angle]);
 
 	// move viewheight
 	if (players.playerstate == PST_LIVE)
