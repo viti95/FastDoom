@@ -170,14 +170,12 @@ P_InterceptVector(divline_t *v2,
     fixed_t num;
     fixed_t den;
 
-    den = FixedMul(v1->dy >> 8, v2->dx) - FixedMul(v1->dx >> 8, v2->dy);
+    den = FixedMulEDX(v2->dx, v1->dy >> 8) - FixedMulEDX(v2->dy, v1->dx >> 8);
 
     if (den == 0)
         return 0;
 
-    num =
-        FixedMul((v1->x - v2->x) >> 8, v1->dy) + FixedMul((v2->y - v1->y) >> 8, v1->dx);
-
+    num = FixedMulEDX((v1->x - v2->x) >> 8, v1->dy) + FixedMulEDX((v2->y - v1->y) >> 8, v1->dx);
     frac = FixedDiv(num, den);
 
     return frac;
