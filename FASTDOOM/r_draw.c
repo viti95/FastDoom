@@ -410,7 +410,7 @@ void R_DrawSpanText4050(void)
     countp = dest + ds_x2;
     dest += ds_x1;
 
-    position = ((ds_xfrac << 10) & 0xffff0000) | ((ds_yfrac >> 6) & 0xffff);
+    position = ds_frac;
     step = ds_step;
 
     odd = ds_y & 1;
@@ -667,7 +667,7 @@ void R_DrawSpanText4025(void)
     countp = dest + ds_x2;
     dest += ds_x1;
 
-    position = ((ds_xfrac << 10) & 0xffff0000) | ((ds_yfrac >> 6) & 0xffff);
+    position = ds_frac;
     step = ds_step;
 
     source = ds_source;
@@ -1139,7 +1139,7 @@ void R_DrawSpanText8025(void)
     countp = dest + ds_x2;
     dest += ds_x1;
 
-    position = ((ds_xfrac << 10) & 0xffff0000) | ((ds_yfrac >> 6) & 0xffff);
+    position = ds_frac;
     step = ds_step;
 
     odd = ds_y & 1;
@@ -1186,7 +1186,7 @@ void R_DrawSpanText80100(void)
     countp = dest + ds_x2;
     dest += ds_x1;
 
-    position = ((ds_xfrac << 10) & 0xffff0000) | ((ds_yfrac >> 6) & 0xffff);
+    position = ds_frac;
     step = ds_step;
 
     odd = ds_y & 1;
@@ -1808,7 +1808,7 @@ void R_DrawSpanText8050(void)
     countp = dest + ds_x2;
     dest += ds_x1;
 
-    position = ((ds_xfrac << 10) & 0xffff0000) | ((ds_yfrac >> 6) & 0xffff);
+    position = ds_frac;
     step = ds_step;
 
     source = ds_source;
@@ -1842,7 +1842,7 @@ void R_DrawSpanPotato(void)
 
     int count;
 
-    position = ((ds_xfrac << 10) & 0xffff0000) | ((ds_yfrac >> 6) & 0xffff);
+    position = ds_frac;
     step = ds_step;
 
     source = ds_source;
@@ -2571,8 +2571,7 @@ int ds_x2;
 
 lighttable_t *ds_colormap;
 
-fixed_t ds_xfrac;
-fixed_t ds_yfrac;
+fixed_t ds_frac;
 fixed_t ds_step;
 
 // start of a 64*64 tile image

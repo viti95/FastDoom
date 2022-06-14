@@ -350,13 +350,7 @@ CODE_SYM_DEF R_DrawSpan
   add  edi,[_destview]
   mov  [dest],edi
 
-  mov  ebx,[_ds_xfrac]
-  shl  ebx,10
-  and  ebx,0xFFFF0000
-  mov  eax,[_ds_yfrac]
-  shr  eax,6
-  and  eax,0x0000FFFF
-  or   ebx,eax
+  mov  ebx,[_ds_frac]
 
   mov  [frac],ebx
 
@@ -505,13 +499,7 @@ CODE_SYM_DEF R_DrawSpanLow
   add  edi,[_destview]
   mov  [dest],edi
 
-  mov  ebx,[_ds_xfrac]
-  shl  ebx,10
-  and  ebx,0xFFFF0000
-  mov  eax,[_ds_yfrac]
-  shr  eax,6
-  and  eax,0x0000FFFF
-  or   ebx,eax
+  mov  ebx,[_ds_frac]
 
   mov  [frac],ebx
 

@@ -145,8 +145,8 @@ void R_MapPlane(int y, int x1)
 
         angle = (viewangle + xtoviewangle[x1]) >> ANGLETOFINESHIFT;
         length = FixedMul(distance, distscale[x1]);
-        ds_xfrac = viewx + FixedMul(finecosine[angle], length);
-        ds_yfrac = viewyneg - FixedMul(finesine[angle], length);
+
+        ds_frac = (((viewx + FixedMul(finecosine[angle], length)) << 10) & 0xFFFF0000) | (((viewyneg - FixedMul(finesine[angle], length)) >> 6) & 0xFFFF);
     }
 
     if (fixedcolormap)

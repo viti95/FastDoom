@@ -152,13 +152,7 @@ CODE_SYM_DEF R_DrawSpanVBE2
 
   ; build composite position
 
-  mov  ecx,[_ds_xfrac]
-  shl  ecx,10
-  and  ecx,0xFFFF0000
-  mov  eax,[_ds_yfrac]
-  shr  eax,6
-  and  eax,0x0000FFFF
-  or   ecx,eax
+  mov  ecx,[_ds_frac]
 
   ; build composite step
 
