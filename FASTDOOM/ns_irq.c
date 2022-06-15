@@ -74,7 +74,7 @@ void fixebp(void);
     "lar   ebx, ebx" \
     "bt    ebx, 22"  \
     "jc    bigstk"   \
-    "movzx esp, sp"  \
+    "and   esp, 0x0000FFFF" \
     "mov   ebp, esp" \
     "bigstk:" modify exact[ebx];
 

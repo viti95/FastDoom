@@ -44,7 +44,7 @@ int DPMI_LockMemoryRegion(void *start, void *end);
             "shr    ebx, 4",       \
             "int    31h",          \
             "jc     DPMI_Exit",    \
-            "movzx  eax, ax",      \
+            "and    eax, 0x0000FFFF" \
             "shl    eax, 4",       \
             "mov    [ esi ], eax", \
             "mov    [ edi ], edx", \
