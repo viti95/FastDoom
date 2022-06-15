@@ -74,14 +74,10 @@ CODE_SYM_DEF R_DrawColumn_13h
   sub   eax,[_centery]
   imul  ecx
   mov   edx,[_dc_texturemid]
-
-  shl   ecx,9
+  shl   ecx,9 ; 7 significant bits, 25 frac
   add   edx,eax
-  
   mov   esi,[_dc_source]
-
-  shl   edx,9
-
+  shl   edx,9 ; 7 significant bits, 25 frac
   mov   eax,[_dc_colormap]
 
   xor   ebx,ebx
@@ -155,7 +151,7 @@ CONTINUE_CODE_SECTION
 ; R_DrawSpan_13h
 ; ==============
 CODE_SYM_DEF R_DrawSpan_13h
-  pusha
+  pushad
 
   mov     eax,[_ds_x1]
   mov     ebx,[_ds_x2]

@@ -53,13 +53,12 @@ CODE_SYM_DEF R_DrawColumnVBE2
   pushad
 
   mov  ebp,[_dc_yh]
+  mov  ebx,[_dc_x]
   lea  edi,[ebp+ebp*4]
   sal  edi,6
-  mov  ebx,[_dc_x]
   add  edi,ebx
-  add  edi,[_destview]
-
   mov  eax,[_dc_yl]
+  add  edi,[_destview]
   sub  ebp,eax ; ebp = pixel count
   or   ebp,ebp
   js   short .done
@@ -69,13 +68,11 @@ CODE_SYM_DEF R_DrawColumnVBE2
   sub   eax,[_centery]
   imul  ecx
   mov   edx,[_dc_texturemid]
+  shl   ecx,9 ; 7 significant bits, 25 frac
   add   edx,eax
+  mov   esi,[_dc_source]
   shl   edx,9 ; 7 significant bits, 25 frac
-
-  shl  ecx,9 ; 7 significant bits, 25 frac
-  mov  esi,[_dc_source]
-
-  mov  eax,[_dc_colormap]
+  mov   eax,[_dc_colormap]
 
   xor   ebx,ebx
   shld  ebx,edx,7 ; get address of first location
@@ -99,8 +96,8 @@ CODE_SYM_DEF R_DrawColumnVBE2
     add  edx,ecx                         ; calculate next location
     mov  al,[eax]                        ; translate the color
     mov  ebx,edx
-    shr  ebx,25
     mov  [edi-(LINE-1)*SCREENWIDTH],al   ; draw a pixel to the buffer
+    shr  ebx,25
     %assign LINE LINE-1
 %endrep
 
@@ -145,32 +142,24 @@ CODE_SYM_DEF R_DrawSpanVBE2
   mov  eax,[_ds_x1]
   mov  ebx,[_ds_x2]
   mov  eax,[mapcalls+eax*4]
+  mov  ecx,[_ds_frac]        ; build composite position
   mov  [callpoint],eax ; spot to jump into unwound
+  mov	 edx,[_ds_step]
   mov  eax,[mapcalls+4+ebx*4]
+  mov	 esi,[_ds_source]
   mov  [returnpoint],eax ; spot to patch a ret at
   mov  [eax], byte OP_RET
 
-  ; build composite position
-
-  mov  ecx,[_ds_frac]
-
-  ; build composite step
-
-  mov	edx,[_ds_step]
-
-  mov	esi,[_ds_source]
-
   mov  ebp,[_ds_y]
+  mov  eax,[_ds_colormap]
   lea  edi,[ebp+ebp*4]
   sal  edi,6
   add  edi,[_destview]
 
-  mov  eax,[_ds_colormap]
-
   ; feed the pipeline and jump in
 
-  mov   ebp,0x00000FFF  ; used to mask off slop high bits from position
   shld  ebx,ecx,22      ; shift y units in
+  mov   ebp,0x0FFF  ; used to mask off slop high bits from position
   shld  ebx,ecx,6       ; shift x units in
   and   ebx,ebp         ; mask off slop bits
   call  [callpoint]
@@ -197,11 +186,11 @@ CODE_SYM_DEF R_DrawSpanVBE2
       %assign LINE LINE+1
       mov   al,[esi+ebx]           ; get source pixel
       shld  ebx,ecx,22             ; shift y units in
-      shld  ebx,ecx,6              ; shift x units in
       mov   al,[eax]               ; translate color
+      shld  ebx,ecx,6              ; shift x units in
+      mov   [edi+PLANE+PCOL*4],al  ; write pixel
       and   ebx,ebp                ; mask off slop bits
       add   ecx,edx                ; position += step
-      mov   [edi+PLANE+PCOL*4],al  ; write pixel
       %assign PLANE PLANE+1
   %endrep
 %assign PCOL PCOL+1
