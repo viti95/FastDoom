@@ -63,9 +63,8 @@ CODE_SYM_DEF R_DrawColumn_13h
   mov  ebx,ebp
   mov  edi,[_ylookup+ebx*4]
   mov  ebx,[_dc_x]
-  add  edi,[_columnofs + ebx*4]
-
   mov  eax,[_dc_yl]
+  add  edi,[_columnofs + ebx*4]
   sub  ebp,eax         ; ebp = pixel count
   or   ebp,ebp
   js   short .done
@@ -75,11 +74,13 @@ CODE_SYM_DEF R_DrawColumn_13h
   sub   eax,[_centery]
   imul  ecx
   mov   edx,[_dc_texturemid]
-  add   edx,eax
-  shl   edx,9
 
   shl   ecx,9
+  add   edx,eax
+  
   mov   esi,[_dc_source]
+
+  shl   edx,9
 
   mov   eax,[_dc_colormap]
 
@@ -103,8 +104,8 @@ CODE_SYM_DEF R_DrawColumn_13h
     add  edx,ecx                        ; calculate next location
     mov  al,[eax]                       ; translate the color
     mov  ebx,edx
-    shr  ebx,25
     mov  [edi-(LINE-1)*SCREENWIDTH],al  ; draw a pixel to the buffer
+    shr  ebx,25
     %assign LINE LINE-1
 %endrep
 
@@ -159,31 +160,23 @@ CODE_SYM_DEF R_DrawSpan_13h
   mov     eax,[_ds_x1]
   mov     ebx,[_ds_x2]
   mov     eax,[mapcalls+eax*4]
+  mov     ecx,[_ds_frac]        ; build composite position
   mov     [callpoint],eax       ; spot to jump into unwound
+  mov     edx,[_ds_step]        ; build composite step
   mov     eax,[mapcalls+4+ebx*4]
+  mov     esi,[_ds_source]
   mov     [returnpoint],eax     ; spot to patch a ret at
+  mov     edi,[_ds_y]
   mov     [eax], byte OP_RET
 
-  ; build composite position
-
-  mov     ecx,[_ds_frac]
-
-  ; build composite step
-
-  mov     edx,[_ds_step]
-
-  mov     esi,[_ds_source]
-
-  mov     edi,[_ds_y]
   mov     edi,[_ylookup+edi*4]
-  add     edi,[_columnofs]
-
   mov     eax,[_ds_colormap]
+  add     edi,[_columnofs]
 
   ; feed the pipeline and jump in
 
-  mov     ebp,0x0FFF  ; used to mask off slop high bits from position
   shld    ebx,ecx,22  ; shift y units in
+  mov     ebp,0x0FFF  ; used to mask off slop high bits from position
   shld    ebx,ecx,6   ; shift x units in
   and     ebx,ebp     ; mask off slop bits
   call    [callpoint]
@@ -208,11 +201,11 @@ CODE_SYM_DEF R_DrawSpan_13h
       %assign LINE LINE+1
       mov   al,[esi+ebx]           ; get source pixel
       shld  ebx,ecx,22             ; shift y units in
-      shld  ebx,ecx,6              ; shift x units in
       mov   al,[eax]               ; translate color
+      shld  ebx,ecx,6              ; shift x units in
+      mov   [edi+PLANE+PCOL*4],al  ; write pixel
       and   ebx,ebp                ; mask off slop bits
       add   ecx,edx                ; position += step
-      mov   [edi+PLANE+PCOL*4],al  ; write pixel
       %assign PLANE PLANE+1
   %endrep
 %assign PCOL PCOL+1
