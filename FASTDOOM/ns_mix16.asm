@@ -62,10 +62,9 @@ CODE_SYM_DEF MV_Mix8BitMono16
         mov     eax,apatch6+2
         mov     [eax],edx
 
-        mov     edi, [_MV_MixDestination]         ; Get the position to write to
-
         ; Number of samples to mix
         shr     ecx, 1                          ; double sample count
+        mov     edi, [_MV_MixDestination]       ; Get the position to write to
         test    ecx, ecx
         je      exit8m
 
