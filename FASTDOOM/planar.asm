@@ -389,9 +389,9 @@ CODE_SYM_DEF R_DrawSpan
   jz    short .hfill
   shld  ecx,ebp,22
   shld  ecx,ebp,6
-  add   ebp,[fracpstep]
   and   ecx,0x00000FFF
   mov   al,[esi+ecx]
+  add   ebp,[fracpstep]
   mov   dl,[eax]
   mov   [edi],dl
   inc   edi
@@ -414,12 +414,12 @@ CODE_SYM_DEF R_DrawSpan
 .hfillone:
   mov   eax,[_ds_colormap]
   mov   esi,[_ds_source]
-  mov   edi,[dest]
   mov   ebp,[frac]
   shld  ecx,ebp,22
   shld  ecx,ebp,6
   and   ecx,0x00000FFF
   mov   al,[esi+ecx]
+  mov   edi,[dest]
   mov   dl,[eax]
   mov   [edi],dl
   jmp   short .hdoneplane
@@ -539,9 +539,9 @@ CODE_SYM_DEF R_DrawSpanLow
   jz    short .lfill
   shld  ecx,ebp,22
   shld  ecx,ebp,6
-  add   ebp,[fracpstep]
   and   ecx,0x00000FFF
   mov   al,[esi+ecx]
+  add   ebp,[fracpstep]
   mov   dl,[eax]
   mov   [edi],dl
   inc   edi
@@ -564,12 +564,12 @@ CODE_SYM_DEF R_DrawSpanLow
 .lfillone:
   mov   eax,[_ds_colormap]
   mov   esi,[_ds_source]
-  mov   edi,[dest]
   mov   ebp,[frac]
   shld  ecx,ebp,22
   shld  ecx,ebp,6
   and   ecx,0x00000FFF
   mov   al,[esi+ecx]
+  mov   edi,[dest]
   mov   dl,[eax]
   mov   [edi],dl
   jmp   short .ldoneplane
