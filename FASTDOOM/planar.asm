@@ -123,18 +123,18 @@ CODE_SYM_DEF R_DrawColumnLow
   pushad
 
   mov  ebp,[_dc_yl]
-  lea  edi,[ebp+ebp*4]
-  shl  edi,4
   mov  ebx,[_dc_x]
+  lea  edi,[ebp+ebp*4]
   mov  ecx,ebx
+  shl  edi,4    
   shr  ebx,1
   add  edi,ebx
-  add  edi,[_destview]
   and  ecx,1
+  add  edi,[_destview]
   shl  ecx,1
   mov  eax,3
-  shl  eax,cl
   mov  edx,SC_INDEX+1
+  shl  eax,cl
   out  dx,al
 
   mov  eax,[_dc_yh]
@@ -151,12 +151,11 @@ CODE_SYM_DEF R_DrawColumnLow
   sub   eax,ebp
   imul  ecx
   mov   ebp,[_dc_texturemid]
+  mov   esi,[_dc_source]
   sub   ebp,eax
+  mov  ebx,[_dc_iscale]
   shl   ebp,9 ; 7 significant bits, 25 frac
 
-  mov  esi,[_dc_source]
-
-  mov  ebx,[_dc_iscale]
   shl  ebx,9
   mov  eax,.patch1l+2  ; self-modifying code...
   mov  [eax],ebx
@@ -171,12 +170,12 @@ CODE_SYM_DEF R_DrawColumnLow
   ; ebp = frac
 
   mov  ecx,ebp  ; begin calculating first pixel
+  mov  eax,[_dc_colormap]
   add  ebp,ebx  ; advance frac pointer
   shr  ecx,25   ; finish calculation for first pixel
   mov  edx,ebp  ; begin calculating second pixel
   add  ebp,ebx  ; advance frac pointer
-  shr  edx,25   ; finish calculation for second pixel
-  mov  eax,[_dc_colormap]
+  shr  edx,25   ; finish calculation for second pixel  
   mov  ebx,eax
   mov  al,[esi+ecx]  ; get first pixel
   mov  bl,[esi+edx]  ; get second pixel
