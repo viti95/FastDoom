@@ -38,32 +38,27 @@ CODE_SYM_DEF R_DrawColumnPotato
   pushad
 
   mov  ebp,[_dc_yl]
-  lea  edi,[ebp+ebp*4]
-  sal  edi,4
   mov  ebx,[_dc_x]
-  add  edi,ebx
-  add  edi,[_destview]
-
+  lea  edi,[ebp+ebp*4]  
   mov  eax,[_dc_yh]
+  sal  edi,4
   inc  eax
+  add  edi,ebx  
   sub  eax,ebp           ; pixel count
+  add  edi,[_destview]
   mov  [pixelcount],eax  ; save for final pixel
   js   .donep            ; nothing to scale
   shr  eax,1             ; double pixel count
   mov  [loopcount],eax
-
   mov  ecx,[_dc_iscale]
-
-  mov   eax,[_centery]
-  sub   eax,ebp
-  imul  ecx
-  mov   ebp,[_dc_texturemid]
-  sub   ebp,eax
-  shl   ebp,9  ; 7 significant bits, 25 frac
-
-  mov  esi,[_dc_source]
-
+  mov  eax,[_centery]
+  sub  eax,ebp
+  imul ecx
+  mov  ebp,[_dc_texturemid]
+  sub  ebp,eax
+  shl  ebp,9  ; 7 significant bits, 25 frac
   mov  ebx,[_dc_iscale]
+  mov  esi,[_dc_source]
   shl  ebx,9
   mov  eax,.patch1p+2  ; self-modifying code...
   mov  [eax],ebx
@@ -82,8 +77,8 @@ CODE_SYM_DEF R_DrawColumnPotato
   shr  ecx,25   ; finish calculation for first pixel
   mov  edx,ebp  ; begin calculating second pixel
   add  ebp,ebx  ; advance frac pointer
-  shr  edx,25   ; finish calculation for second pixel
   mov  eax,[_dc_colormap]
+  shr  edx,25   ; finish calculation for second pixel
   mov  ebx,eax
   mov  al,[esi+ecx]  ; get first pixel
   mov  bl,[esi+edx]  ; get second pixel
