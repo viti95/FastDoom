@@ -309,7 +309,6 @@ dest:       dd 0
 endplane:   dd 0
 curplane:   dd 0
 frac:       dd 0
-fracstep:   dd 0
 fracpstep:  dd 0
 curx:       dd 0
 curpx:      dd 0
@@ -343,8 +342,6 @@ CODE_SYM_DEF R_DrawSpan
   mov  [frac],ebx
 
   mov  ebx,[_ds_step]
-
-  mov  [fracstep],ebx
 
   shl   ebx,2
   mov   [fracpstep],ebx
@@ -456,7 +453,7 @@ CODE_SYM_DEF R_DrawSpan
   jz    short .hdone
   mov   [curplane],ecx
   mov   ebx,[frac]
-  add   ebx,[fracstep]
+  add   ebx,[_ds_step]
   mov   [frac],ebx
   inc   dword [curx]
   jmp   .hplane
@@ -492,8 +489,6 @@ CODE_SYM_DEF R_DrawSpanLow
   mov  [frac],ebx
 
   mov  ebx,[_ds_step]
-
-  mov [fracstep],ebx
 
   shl   ebx,1
   mov   [fracpstep],ebx
@@ -606,7 +601,7 @@ CODE_SYM_DEF R_DrawSpanLow
   jz    short .ldone
   mov   [curplane],ecx
   mov   ebx,[frac]
-  add   ebx,[fracstep]
+  add   ebx,[_ds_step]
   mov   [frac],ebx
   inc   dword [curx]
   jmp   .lplane
