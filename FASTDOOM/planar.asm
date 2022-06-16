@@ -125,15 +125,14 @@ CODE_SYM_DEF R_DrawColumnLow
   mov  ebp,[_dc_yl]
   mov  ebx,[_dc_x]
   lea  edi,[ebp+ebp*4]
-  mov  ecx,ebx
+  lea  ecx,[ebx+ebx]
   shl  edi,4    
   shr  ebx,1
   add  edi,ebx
-  and  ecx,1
+  and  cl,2
   add  edi,[_destview]
-  shl  ecx,1
   mov  eax,3
-  mov  edx,SC_INDEX+1
+  mov  dx,SC_INDEX+1
   shl  eax,cl
   out  dx,al
 
