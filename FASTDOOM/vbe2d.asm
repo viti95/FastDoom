@@ -55,11 +55,11 @@ CODE_SYM_DEF R_DrawColumnVBE2
   mov  ebp,[_dc_yh]
   mov  ebx,[_dc_x]
   lea  edi,[ebp+ebp*4]
-  sal  edi,6
-  add  edi,ebx
   mov  eax,[_dc_yl]
-  add  edi,[_destview]
+  sal  edi,6
   sub  ebp,eax ; ebp = pixel count
+  add  edi,ebx
+  add  edi,[_destview]
   or   ebp,ebp
   js   short .done
 
