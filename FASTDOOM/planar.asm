@@ -478,20 +478,16 @@ CODE_SYM_DEF R_DrawSpanLow
   mov  [curplane],ebx
   shr  eax,1
   mov  ebp,[_ds_y]
-  lea  edi,[ebp+ebp*4]
-  shl  edi,4
-  add  edi,eax
-  add  edi,[_destview]
-  mov  [dest],edi
-
   mov  ebx,[_ds_frac]
-
+  lea  edi,[ebp+ebp*4]
   mov  [frac],ebx
-
+  shl  edi,4
   mov  ebx,[_ds_step]
-
+  add  edi,eax
   shl   ebx,1
+  add  edi,[_destview]
   mov   [fracpstep],ebx
+  mov  [dest],edi
   mov   eax,.lpatch1+2
   mov   [eax],ebx
   mov   eax,.lpatch2+2
