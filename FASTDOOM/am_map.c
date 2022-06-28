@@ -631,8 +631,10 @@ void AM_doFollowPlayer(void)
 {
 	if (f_oldloc.x != players_mo->x || f_oldloc.y != players_mo->y)
 	{
-		m_x = FTOM(MTOF(players_mo->x)) - m_w / 2;
-		m_y = FTOM(MTOF(players_mo->y)) - m_h / 2;
+    	// [JN] Prevent player arrow from jittering 
+    	// by not using FTOM->MTOF conversion.
+		m_x = players_mo->x - m_w / 2;
+		m_y = players_mo->y - m_h / 2;
 		m_x2 = m_x + m_w;
 		m_y2 = m_y + m_h;
 		f_oldloc.x = players_mo->x;
