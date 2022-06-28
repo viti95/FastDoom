@@ -62,10 +62,11 @@ CODE_SYM_DEF MV_Mix8BitMono16
         mov     eax,apatch6+2
         mov     [eax],edx
 
+        mov     edi, [_MV_MixDestination]         ; Get the position to write to
+
         ; Number of samples to mix
         shr     ecx, 1                          ; double sample count
-        mov     edi, [_MV_MixDestination]       ; Get the position to write to
-        test    ecx, ecx
+        cmp     ecx, 0
         je      exit8m
 
 ;     eax - scratch
@@ -97,16 +98,14 @@ CODE_SYM_DEF MV_Mix8BitMono16
 
         ALIGN 4
 mix8Mloop:
-        xor     edx, edx
-        mov     dl, byte [edi]                 ; get current sample from destination
+        movzx   edx, byte [edi]                 ; get current sample from destination
 apatch1:
         movsx   eax, byte [2*eax+0x12345678]    ; volume translate first sample
 apatch2:
         movsx   ebx, byte [2*ebx+0x12345678]    ; volume translate second sample
         add     eax, edx                        ; mix first sample
 apatch9:
-        xor     edx, edx
-        mov     dl, byte [edi + 1]             ; get current sample from destination
+        movzx   edx, byte [edi + 1]             ; get current sample from destination
 apatch3:
         mov     eax, [eax + 0x12345678]         ; harsh clip new sample
         add     ebx, edx                        ; mix second sample
@@ -196,7 +195,7 @@ CODE_SYM_DEF MV_Mix8BitStereo16
         mov     edi, [_MV_MixDestination]         ; Get the position to write to
 
         ; Number of samples to mix
-        test    ecx, ecx
+        cmp     ecx, 0
         je      short exit8S
 
 ;     eax - scratch
@@ -222,16 +221,14 @@ CODE_SYM_DEF MV_Mix8BitStereo16
 mix8Sloop:
 bpatch1:
         movsx   eax, byte [2*ebx+0x12345678]    ; volume translate left sample
-        xor     edx, edx
-        mov     dl, byte [edi]                 ; get current sample from destination
+        movzx   edx, byte [edi]                 ; get current sample from destination
 bpatch2:
         movsx   ebx, byte [2*ebx+0x12345678]    ; volume translate right sample
         add     eax, edx                        ; mix left sample
 bpatch3:
         add     ebp,0x12345678                  ; advance frac pointer
 bpatch6:
-        xor     edx, edx
-        mov     dl, byte [edi+0x12345678]      ; get current sample from destination
+        movzx   edx, byte [edi+0x12345678]      ; get current sample from destination
 bpatch4:
         mov     eax, [eax + 0x12345678]         ; harsh clip left sample
         add     ebx, edx                        ; mix right sample
@@ -296,7 +293,7 @@ CODE_SYM_DEF MV_Mix16BitMono16
         mov     edi, [_MV_MixDestination]         ; Get the position to write to
 
         ; Number of samples to mix
-        test    ecx, ecx
+        cmp     ecx, 0
         je exit16M
 
 ;     eax - scratch
@@ -314,11 +311,9 @@ CODE_SYM_DEF MV_Mix16BitMono16
         mov     ebx,ebp                         ; begin calculating first sample
         add     ebp,edx                         ; advance frac pointer
         shr     ebx,16                          ; finish calculation for first sample
-        xor     eax, eax
-        mov     ax, word [esi+2*ebx]           ; get low byte of sample
-        xor     ax, 0x8000
-        xor     ebx, ebx
-        mov     bl, ah
+        movzx   eax, word [esi+2*ebx]           ; get low byte of sample
+        xor     eax, 0x00008000
+        movzx   ebx, ah
         sub     ah, ah
 
         movsx   edx, word [edi]                 ; get current sample from destination
@@ -350,13 +345,11 @@ m16skip2:
 cpatch3:
         add     ebp, 0x12345678                 ; advance frac pointer
 
-        xor     eax, eax
-        mov     ax, word [esi+2*ebx]           ; get second sample
+        movzx   eax, word [esi+2*ebx]           ; get second sample
 cpatch4:
         add     edi, 2                          ; move destination to second sample
         xor     eax, 0x00008000
-        xor     ebx, ebx
-        mov     bl, ah
+        movzx   ebx, ah
         sub     ah, ah
 
         dec     ecx                             ; decrement count
@@ -424,7 +417,7 @@ CODE_SYM_DEF MV_Mix16BitStereo16
         mov     edi, [_MV_MixDestination]         ; Get the position to write to
 
         ; Number of samples to mix
-        test    ecx, ecx
+        cmp     ecx, 0
         je      exit16S
 
 ;     eax - scratch
@@ -441,8 +434,7 @@ CODE_SYM_DEF MV_Mix16BitStereo16
         mov     ebx,ebp                         ; begin calculating first sample
         shr     ebx,16                          ; finish calculation for first sample
 
-        xor     edx, edx
-        mov     dx, word [esi+2*ebx]           ; get first sample
+        movzx   edx, word [esi+2*ebx]           ; get first sample
         xor     edx, 0x00008000                 ; Change from signed to unsigned
         movzx   esi, dh                         ; put high byte in esi
         sub     dh, dh                          ; lo byte in edx
