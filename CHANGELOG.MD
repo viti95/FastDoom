@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 0.8.14 (16 Jun 2022)
+* Performance uplift, avoid AGI stalls on column and visplane rendering code (486). Also small optimizations in sound code.
+* Dual screen support. Now it's possible to use an Hercules card/monitor to render the automap. Use the command line parameter '-hercmap'.
+* Better performance on 8-bit ISA cards and special backbuffered modes (Hercules, CGA, Plantronics ColorPlus, EGA, ATI 640x200).
+* Removed Hercules 640x200 mode. It only worked on emulators, didn't work at all on real hardware. Even can cause serious problems on B&W monitors.
+* Added transparent automap support. Press 'T' while on automap mode. Only supported while in 'fullscreen' mode.
+
 ## 0.8.13 (02 Jun 2022)
 * Small performance uplift
 

@@ -182,6 +182,7 @@
  -disabledemo => Disables defered demos
  -debugPort => Shows FPS via the debug port (0x80)
  -fixDAC => Fixes palette corruption with VGA cards
+ -hercmap => Enable Hercules automap (requires dual video card setup)
 
  Author
  ------

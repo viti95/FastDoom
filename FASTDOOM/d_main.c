@@ -810,7 +810,7 @@ void IdentifyVersion(void)
 
     if (num_wads > 1)
     {
-        printf("\nFastDoom version 0.8.13\n");
+        printf("\nFastDoom version 0.8.14\n");
         printf("\nFound more than one IWAD. Please select the IWAD you want to play:\n\n");
         printf("     1. DOOM Shareware                 (doom1.wad)\n");
         printf("     2. DOOM                           (doom.wad)\n");
@@ -1093,7 +1093,7 @@ void D_DoomMain(void)
     int386(0x10, &regs, &regs);
     D_DrawTitle(title, FGCOLOR, BGCOLOR);
 
-    printf("\nFastDoom version 0.8.13\n");
+    printf("\nFastDoom version 0.8.14\n");
     printf("P_Init: Checking cmd-line parameters...\n");
 
     // turbo option
