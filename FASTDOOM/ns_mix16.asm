@@ -66,7 +66,7 @@ CODE_SYM_DEF MV_Mix8BitMono16
 
         ; Number of samples to mix
         shr     ecx, 1                          ; double sample count
-        cmp     ecx, 0
+        test    ecx, ecx
         je      exit8m
 
 ;     eax - scratch
@@ -195,7 +195,7 @@ CODE_SYM_DEF MV_Mix8BitStereo16
         mov     edi, [_MV_MixDestination]         ; Get the position to write to
 
         ; Number of samples to mix
-        cmp     ecx, 0
+        test    ecx, ecx        
         je      short exit8S
 
 ;     eax - scratch
@@ -293,7 +293,7 @@ CODE_SYM_DEF MV_Mix16BitMono16
         mov     edi, [_MV_MixDestination]         ; Get the position to write to
 
         ; Number of samples to mix
-        cmp     ecx, 0
+        test    ecx, ecx
         je exit16M
 
 ;     eax - scratch
@@ -417,7 +417,7 @@ CODE_SYM_DEF MV_Mix16BitStereo16
         mov     edi, [_MV_MixDestination]         ; Get the position to write to
 
         ; Number of samples to mix
-        cmp     ecx, 0
+        test    ecx, ecx
         je      exit16S
 
 ;     eax - scratch
