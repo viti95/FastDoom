@@ -353,18 +353,18 @@ CODE_SYM_DEF R_DrawSpan
   mov   edx,SC_INDEX+1
   out   dx,al
   mov   eax,[_ds_x2]
-  cmp   eax,[curx]
-  jb   .hdone
+  cmp   [curx], eax
+  jae   .hdone
   sub   eax,[curplane]
   js   .hdoneplane
   shr   eax,2
   mov   [endpx],eax
   dec   eax
   js   .hfillone
-  shr   eax,1
   mov   ebx,[curx]
   shr   ebx,2
-  cmp   ebx,[endpx]
+  shr   eax,1
+  cmp   [endpx], ebx
   jz   .hfillone
   mov   [curpx],ebx
   inc   ebx
@@ -446,7 +446,7 @@ CODE_SYM_DEF R_DrawSpan
   jnz   short .hskip
   inc   dword [dest]
 .hskip:
-  cmp   ecx,[endplane]
+  cmp   [endplane],ecx
   jz    short .hdone
   mov   ebx,[frac]
   mov   [curplane],ecx
@@ -501,18 +501,18 @@ CODE_SYM_DEF R_DrawSpanLow
   mov   edx,SC_INDEX+1
   out   dx,al
   mov   eax,[_ds_x2]
-  cmp   eax,[curx]
-  jb   .ldone
+  cmp   [curx],eax
+  jae   .ldone
   sub   eax,[curplane]
   js   .ldoneplane
   shr   eax,1
   mov   [endpx],eax
   dec   eax
   js    .lfillone
-  shr   eax,1
   mov   ebx,[curx]
   shr   ebx,1
-  cmp   ebx,[endpx]
+  shr   eax,1
+  cmp   [endpx],ebx
   jz    .lfillone
   mov   [curpx],ebx
   inc   ebx
@@ -594,7 +594,7 @@ CODE_SYM_DEF R_DrawSpanLow
   jnz   short .lskip
   inc   dword [dest]
 .lskip:
-  cmp   ecx,[endplane]
+  cmp   [endplane],ecx
   jz    short .ldone
   mov   [curplane],ecx
   mov   ebx,[frac]
