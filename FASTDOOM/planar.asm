@@ -131,7 +131,7 @@ CODE_SYM_DEF R_DrawColumnLow
   add  edi,ebx
   and  ecx,1
   add  edi,[_destview]
-  shl  ecx,1
+  add  ecx, ecx
   mov  eax,3
   mov  edx,SC_INDEX+1
   shl  eax,cl
@@ -487,7 +487,7 @@ CODE_SYM_DEF R_DrawSpanLow
 
   mov  ebx,[_ds_step]
 
-  shl   ebx,1
+  add   ebx, ebx
   mov   [fracpstep],ebx
   mov   eax,.lpatch1+2
   mov   [eax],ebx
