@@ -628,11 +628,6 @@ static void MV_SetVoiceMixMode(
         test |= T_8BITS;
     }
 
-    if (voice->bits == 16)
-    {
-        test |= T_16BITSOURCE;
-    }
-
     if (MV_Channels == 1)
     {
         test |= T_MONO;
@@ -654,17 +649,8 @@ static void MV_SetVoiceMixMode(
 
     switch (test)
     {
-    case T_8BITS | T_MONO | T_16BITSOURCE:
-        voice->mix = MV_Mix8BitMono16;
-        break;
-
     case T_8BITS | T_MONO:
         voice->mix = MV_Mix8BitMono;
-        break;
-
-    case T_8BITS | T_16BITSOURCE | T_LEFTQUIET:
-        MV_LeftVolume = MV_RightVolume;
-        voice->mix = MV_Mix8BitMono16;
         break;
 
     case T_8BITS | T_LEFTQUIET:
@@ -672,33 +658,16 @@ static void MV_SetVoiceMixMode(
         voice->mix = MV_Mix8BitMono;
         break;
 
-    case T_8BITS | T_16BITSOURCE | T_RIGHTQUIET:
-        voice->mix = MV_Mix8BitMono16;
-        break;
-
     case T_8BITS | T_RIGHTQUIET:
         voice->mix = MV_Mix8BitMono;
-        break;
-
-    case T_8BITS | T_16BITSOURCE:
-        voice->mix = MV_Mix8BitStereo16;
         break;
 
     case T_8BITS:
         voice->mix = MV_Mix8BitStereo;
         break;
 
-    case T_MONO | T_16BITSOURCE:
-        voice->mix = MV_Mix16BitMono16;
-        break;
-
     case T_MONO:
         voice->mix = MV_Mix16BitMono;
-        break;
-
-    case T_16BITSOURCE | T_LEFTQUIET:
-        MV_LeftVolume = MV_RightVolume;
-        voice->mix = MV_Mix16BitMono16;
         break;
 
     case T_LEFTQUIET:
@@ -706,16 +675,8 @@ static void MV_SetVoiceMixMode(
         voice->mix = MV_Mix16BitMono;
         break;
 
-    case T_16BITSOURCE | T_RIGHTQUIET:
-        voice->mix = MV_Mix16BitMono16;
-        break;
-
     case T_RIGHTQUIET:
         voice->mix = MV_Mix16BitMono;
-        break;
-
-    case T_16BITSOURCE:
-        voice->mix = MV_Mix16BitStereo16;
         break;
 
     case T_SIXTEENBIT_STEREO:

@@ -181,18 +181,6 @@ void MV_Mix16BitMono(unsigned long position,
 void MV_Mix16BitStereo(unsigned long position,
                        unsigned long rate, unsigned char *start, unsigned long length);
 
-void MV_Mix16BitMono16(unsigned long position,
-                       unsigned long rate, unsigned char *start, unsigned long length);
-
-void MV_Mix8BitMono16(unsigned long position, unsigned long rate,
-                      unsigned char *start, unsigned long length);
-
-void MV_Mix8BitStereo16(unsigned long position,
-                        unsigned long rate, unsigned char *start, unsigned long length);
-
-void MV_Mix16BitStereo16(unsigned long position,
-                         unsigned long rate, unsigned char *start, unsigned long length);
-
 void MV_16BitReverb(char *src, char *dest, VOLUME16 *volume, int count);
 #pragma aux MV_16BitReverb parm[eax][edx][ebx][ecx] modify exact[eax ebx ecx edx esi edi]
 void MV_8BitReverb(signed char *src, signed char *dest, VOLUME16 *volume, int count);

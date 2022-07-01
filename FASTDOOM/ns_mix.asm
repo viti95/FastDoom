@@ -205,9 +205,9 @@ CODE_SYM_DEF MV_Mix8BitStereo
 ; bpatch5 - harsh clip table
 
         mov     eax,ebp                     ; begin calculating first sample
+        xor     ebx,ebx
         shr     eax,16                      ; finish calculation for first sample
-
-        movzx   ebx, byte [esi+eax]         ; get first sample
+        mov     bl, byte [esi+eax]          ; get first sample
 
         align 4
 mix8Sloop:
@@ -434,9 +434,9 @@ CODE_SYM_DEF MV_Mix16BitStereo
 ; dpatch3 - sample rate
 
         mov     eax,ebp                         ; begin calculating first sample
+        xor     ebx,ebx
         shr     eax,16                          ; finish calculation for first sample
-
-        movzx   ebx, byte [esi+eax]             ; get first sample
+        mov     bl, byte [esi+eax]              ; get first sample
 
         align 4
 mix16Sloop:

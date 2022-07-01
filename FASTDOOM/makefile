@@ -47,7 +47,6 @@ GLOBOBJS_Y = &
  ns_sb.obj &
  ns_sbmus.obj &
  ns_pas16.obj &
- ns_mix16.obj &
  ns_mix.obj &
  ns_gmtbr.obj &
  ns_scape.obj &
@@ -134,7 +133,6 @@ GLOBOBJS_13H = &
  ns_sb.obj &
  ns_sbmus.obj &
  ns_pas16.obj &
- ns_mix16.obj &
  ns_mix.obj &
  ns_gmtbr.obj &
  ns_scape.obj &
@@ -221,7 +219,6 @@ GLOBOBJS_VBE = &
  ns_sb.obj &
  ns_sbmus.obj &
  ns_pas16.obj &
- ns_mix16.obj &
  ns_mix.obj &
  ns_gmtbr.obj &
  ns_scape.obj &
@@ -309,7 +306,6 @@ GLOBOBJS_VBD = &
  ns_sb.obj &
  ns_sbmus.obj &
  ns_pas16.obj &
- ns_mix16.obj &
  ns_mix.obj &
  ns_gmtbr.obj &
  ns_scape.obj &
@@ -397,7 +393,6 @@ GLOBOBJS_TEXT = &
  ns_sb.obj &
  ns_sbmus.obj &
  ns_pas16.obj &
- ns_mix16.obj &
  ns_mix.obj &
  ns_gmtbr.obj &
  ns_scape.obj &
