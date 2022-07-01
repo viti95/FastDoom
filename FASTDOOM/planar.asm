@@ -354,7 +354,7 @@ CODE_SYM_DEF R_DrawSpan
   out   dx,al
   mov   eax,[_ds_x2]
   cmp   [curx], eax
-  jae   .hdone
+  ja   .hdone
   sub   eax,[curplane]
   js   .hdoneplane
   shr   eax,2
@@ -502,7 +502,7 @@ CODE_SYM_DEF R_DrawSpanLow
   out   dx,al
   mov   eax,[_ds_x2]
   cmp   [curx],eax
-  jae   .ldone
+  ja   .ldone
   sub   eax,[curplane]
   js   .ldoneplane
   shr   eax,1
