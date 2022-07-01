@@ -38,15 +38,20 @@ void (*PCSpeaker_CallBack)(void);
 
 static void PCSpeaker_ServiceInterrupt(task *Task)
 {
-    if (*PCSpeaker_SoundPtr & 0x80 && *PCSpeaker_SoundPtr > -128)
+    if (*PCSpeaker_SoundPtr > -128)
     {
+        unsigned short valueComp = ((unsigned short)*PCSpeaker_SoundPtr) + 128;
+        unsigned char value = (unsigned char) valueComp;
+        value >>= 6;
+        value &= 2;
+
         // Turn on
-        outp(0x61, inp(0x61) | 0x03);
+        outp(0x61, (inp(0x61) & 0xFC) | value);
     }
     else
     {
         // Turn off
-        outp(0x61, inp(0x61) & 0xfc);
+        outp(0x61, inp(0x61) & 0xFC);
     }
 
     PCSpeaker_SoundPtr++;
@@ -85,7 +90,7 @@ void PCSpeaker_StopPlayback(void)
     if (PCSpeaker_SoundPlaying)
     {
         // Turn off
-        outp(0x61, inp(0x61) & 0xfc);
+        outp(0x61, inp(0x61) & 0xFC);
         TS_Terminate(PCSpeaker_Timer);
         PCSpeaker_SoundPlaying = 0;
         PCSpeaker_BufferStart = NULL;
