@@ -94,7 +94,6 @@ boolean unlimitedRAM;
 boolean nearSprites;
 boolean monoSound;
 boolean lowSound;
-boolean eightBitSound;
 boolean noMelt;
 
 boolean reverseStereo;
@@ -1014,7 +1013,6 @@ void D_DoomMain(void)
 #endif
 
     lowSound = M_CheckParm("-lowsound");
-    eightBitSound = M_CheckParm("-8bitsound");
 
     unlimitedRAM = M_CheckParm("-ram");
 

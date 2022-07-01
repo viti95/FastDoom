@@ -386,14 +386,7 @@ void ASS_Init(int rate, int maxsng, int mdev, int sdev)
 
     sample_rate = lowSound ? 8000 : 11025;
 
-    if (eightBitSound)
-    {
-        status = FX_Init(sound_device, numChannels, 2, 8, sample_rate);
-    }
-    else
-    {
-        status = FX_Init(sound_device, numChannels, 2, 16, sample_rate);
-    }
+    status = FX_Init(sound_device, numChannels, 2, 8, sample_rate);
 
     FX_SetVolume(255);
 
