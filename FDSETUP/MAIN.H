@@ -42,7 +42,6 @@ typedef enum
 	M_PC1BIT,
 	M_COVOX,
 	M_SBDIRECT,
-	M_PCPWM,
 	M_LAST
 } SCARD;
 
