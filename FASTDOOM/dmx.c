@@ -335,8 +335,6 @@ int ASS_GetSoundCardCode(int sndDevice)
         return TandySoundSource;
     case snd_PC1BIT:
         return PC1bit;
-    case snd_PCPWM:
-        return PCPWM;
     case snd_LPTDAC:
         return LPTDAC;
     case snd_SBDirect:
