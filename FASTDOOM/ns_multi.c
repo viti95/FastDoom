@@ -19,6 +19,7 @@
 #include "ns_speak.h"
 #include "ns_lpt.h"
 #include "ns_sbdm.h"
+#include "ns_adbfx.h"
 
 #include "fastmath.h"
 
@@ -780,6 +781,9 @@ int MV_SetMixMode(
     case SoundBlasterDirect:
         MV_MixMode = SBDM_SetMixMode(mode);
         break;
+    case AdlibFX:
+        MV_MixMode = ADBFX_SetMixMode(mode);
+        break;
     }
 
     MV_Channels = 1;
@@ -950,6 +954,13 @@ int MV_StartPlayback(
         MV_MixRate = SBDM_SampleRate;
         MV_DMAChannel = -1;
         break;
+    case AdlibFX:
+        ADBFX_BeginBufferedPlayback(MV_MixBuffer[0],
+                                 TotalBufferSize, MV_NumberOfBuffers,
+                                 MV_ServiceVoc);
+        MV_MixRate = ADBFX_SampleRate;
+        MV_DMAChannel = -1;
+        break;
     }
 
     RateScale11025 = (11025 * 0x10000) / MV_MixRate;
@@ -1008,6 +1019,9 @@ void MV_StopPlayback(
         break;
     case SoundBlasterDirect:
         SBDM_StopPlayback;
+        break;
+    case AdlibFX:
+        ADBFX_StopPlayback;
         break;
     }
 
@@ -1366,8 +1380,14 @@ int MV_Init(
     case SoundBlasterDirect:
         status = SBDM_Init(soundcard);
         break;
+
+    case AdlibFX:
+        status = ADBFX_Init(soundcard);
+        break;
+
     default:
         break;
+
     }
 
     if (status != MV_Ok)
@@ -1481,6 +1501,9 @@ int MV_Shutdown(
         break;
     case SoundBlasterDirect:
         SBDM_Shutdown();
+        break;
+    case AdlibFX:
+        ADBFX_Shutdown();
         break;
     }
 

@@ -331,6 +331,8 @@ int ASS_GetSoundCardCode(int sndDevice)
         return LPTDAC;
     case snd_SBDirect:
         return SoundBlasterDirect;
+    case snd_AdlibFX:
+        return AdlibFX;
     default:
         return -1;
     }
