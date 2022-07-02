@@ -228,7 +228,6 @@ void I_StartupSound(void)
 //
 void I_ShutdownSound(void)
 {
-    int s;
     S_PauseSound();
     ASS_DeInit();
 }
