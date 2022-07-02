@@ -227,26 +227,18 @@ void GF1_SetMap(void *data, int len)
         fclose(ini);
     }
 }
-int SB_Detect(int *port, int *irq, int *dma, int *unk)
+
+int SB_Detect(int *port, int *irq, int *dma)
 {
-    if (FX_GetBlasterSettings(&dmx_blaster))
-    {
-        if (!port || !irq || !dma)
-        {
-            return -1;
-        }
-        dmx_blaster.Type = fx_SB;
-        dmx_blaster.Address = *port;
-        dmx_blaster.Interrupt = *irq;
-        dmx_blaster.Dma8 = *dma;
-    }
+    FX_GetBlasterSettings(&dmx_blaster);
     return 0;
 }
-void SB_SetCard(int port, int irq, int dma) {} //FIXME
+
 int AL_Detect(int *port, int *unk)
 {
     return !AL_DetectFM();
 }
+
 void AL_SetCard(void *data)
 {
     unsigned char *cdata;

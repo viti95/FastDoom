@@ -166,13 +166,9 @@ void I_sndArbitrateCards(void)
     }
     if (sb)
     {
-        if (SB_Detect(&snd_SBport, &snd_SBirq, &snd_SBdma, 0))
+        if (SB_Detect(&snd_SBport, &snd_SBirq, &snd_SBdma))
         {
             printf("SB isn't responding at p=0x%x, i=%d, d=%d\n", snd_SBport, snd_SBirq, snd_SBdma);
-        }
-        else
-        {
-            SB_SetCard(snd_SBport, snd_SBirq, snd_SBdma);
         }
     }
 
