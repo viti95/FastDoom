@@ -45,8 +45,7 @@ static void ADBFX_ServiceInterrupt(task *Task)
     unsigned short valueComp = 255 - ((unsigned short)*ADBFX_SoundPtr + 128);
     unsigned char value = (unsigned char) valueComp >> 2;
 
-
-    AL_SendOutputToPort(ADLIB_PORT, 0x40, value);
+    outp(ADLIB_PORT + 1, value);
 
     ADBFX_SoundPtr++;
 
@@ -176,6 +175,9 @@ int ADBFX_Init(int soundcard)
 
     AL_SendOutputToPort(ADLIB_PORT, 0xB0, 0x20);
     AL_SendOutputToPort(ADLIB_PORT, 0xA0, 0x00);
+
+    /* First sample */
+    AL_SendOutputToPort(ADLIB_PORT, 0x40, 0x00);
 
     status = ADBFX_Ok;
 
