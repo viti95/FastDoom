@@ -14,6 +14,7 @@ enum
 	DCARD_PC1BIT,
 	DCARD_COVOX,
 	DCARD_SBDIRECT,
+	DCARD_ADBFX,
 	DCARD_NONE,
 	DCARD_MAX
 };
@@ -29,15 +30,17 @@ item_t idcarditems[] =
 		{DCARD_PC1BIT, 27, 15, 25, -1, -1},
 		{DCARD_COVOX, 27, 16, 25, -1, -1},
 		{DCARD_SBDIRECT, 27, 17, 25, -1, -1},
-		{DCARD_PCPWM, 27, 18, 25, -1, -1},
-		{DCARD_NONE, 27, 19, 25, -1, -1}};
+		{DCARD_ADBFX, 27, 18, 25, -1, -1},
+		{DCARD_NONE, 27, 19, 25, -1, -1}
+	};
 
 menu_t idcardmenu =
 	{
 		&idcarditems[0],
 		DCARD_NONE,
 		DCARD_MAX,
-		0x7f};
+		0x7f
+	};
 
 int ChooseFxCard(void)
 {
@@ -84,8 +87,8 @@ int ChooseFxCard(void)
 		field = DCARD_PC1BIT;
 		break;
 
-	case M_PCPWM:
-		field = DCARD_PCPWM;
+	case M_ADBFX:
+		field = DCARD_ADBFX;
 		break;
 
 	case M_COVOX:
@@ -161,8 +164,8 @@ int ChooseFxCard(void)
 				newc.d.dma = -1;
 				goto func_exit;
 
-			case DCARD_PCPWM:
-				newc.d.card = M_PCPWM;
+			case DCARD_ADBFX:
+				newc.d.card = M_ADBFX;
 				newc.d.port = -1;
 				newc.d.midiport = -1;
 				newc.d.irq = -1;
@@ -599,7 +602,7 @@ int SetupFX(void)
 		savefx = TRUE;
 		break;
 	
-	case M_PCPWM:
+	case M_ADBFX:
 		savefx = TRUE;
 		break;
 
