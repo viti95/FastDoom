@@ -42,7 +42,7 @@ void (*ADBFX_CallBack)(void);
 
 static void ADBFX_ServiceInterrupt(task *Task)
 {
-    unsigned short valueComp = 255 - ((unsigned short)*ADBFX_SoundPtr + 128);
+    unsigned short valueComp = ((unsigned short)*ADBFX_SoundPtr) + 128;
     unsigned char value = (unsigned char) valueComp >> 2;
 
     outp(ADLIB_PORT + 1, value);
