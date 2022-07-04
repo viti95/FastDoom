@@ -40,10 +40,21 @@ void (*ADBFX_CallBack)(void);
    transfer.  Calls the user supplied callback function.
 ---------------------------------------------------------------------*/
 
+const unsigned char LUTdb[256] = {
+    63, 63, 63, 63, 58, 58, 58, 58, 53, 53, 53, 53, 49, 49, 49, 49, 45, 45, 45, 45, 41, 41, 41, 
+    41, 38, 38, 38, 38, 34, 34, 34, 34, 32, 32, 32, 32, 29, 29, 29, 29, 27, 27, 27, 27, 24, 24, 
+    24, 24, 22, 22, 22, 22, 21, 21, 21, 21, 19, 19, 19, 19, 17, 17, 17, 17, 16, 16, 16, 16, 15, 
+    15, 15, 15, 13, 13, 13, 13, 12, 12, 12, 12, 11, 11, 11, 11, 10, 10, 10, 10, 9, 9, 9, 9, 9, 
+    9, 9, 9, 8, 8, 8, 8, 7, 7, 7, 7, 7, 7, 7, 7, 6, 6, 6, 6, 6, 6, 6, 6, 5, 5, 5, 5, 5, 5, 5, 5, 
+    4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0};
+
 static void ADBFX_ServiceInterrupt(task *Task)
 {
-    unsigned short valueComp = ((unsigned short)*ADBFX_SoundPtr) + 128;
-    unsigned char value = (unsigned char) valueComp >> 2;
+    unsigned char value = *(LUTdb + 128 + *ADBFX_SoundPtr);
 
     outp(ADLIB_PORT + 1, value);
 
@@ -159,7 +170,7 @@ int ADBFX_Init(int soundcard)
 
     AL_SendOutputToPort(ADLIB_PORT, 0x20, 0x21);
     AL_SendOutputToPort(ADLIB_PORT, 0x60, 0xF0);
-    AL_SendOutputToPort(ADLIB_PORT, 0x80, 0xF0);	
+    AL_SendOutputToPort(ADLIB_PORT, 0x80, 0xF0);
     AL_SendOutputToPort(ADLIB_PORT, 0xC0, 0x01);
     AL_SendOutputToPort(ADLIB_PORT, 0xE0, 0x00);
     AL_SendOutputToPort(ADLIB_PORT, 0x43, 0x3F);
@@ -167,11 +178,11 @@ int ADBFX_Init(int soundcard)
     AL_SendOutputToPort(ADLIB_PORT, 0xA0, 0x8F);
     AL_SendOutputToPort(ADLIB_PORT, 0xB0, 0x2E);
 
-   /* Wait */
-   for (i = 0; i < 256; i++)
-   {
-      inp(ADLIB_PORT);
-   }
+    /* Wait */
+    for (i = 0; i < 256; i++)
+    {
+        inp(ADLIB_PORT);
+    }
 
     AL_SendOutputToPort(ADLIB_PORT, 0xB0, 0x20);
     AL_SendOutputToPort(ADLIB_PORT, 0xA0, 0x00);
