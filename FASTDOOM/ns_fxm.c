@@ -12,6 +12,7 @@
 #include "ns_llm.h"
 #include "ns_user.h"
 #include "ns_fxm.h"
+#include "ns_adbfx.h"
 
 #define TRUE (1 == 1)
 #define FALSE (!TRUE)
@@ -140,6 +141,17 @@ int FX_SetupCard(int SoundCard, fx_device *device)
         device->MaxSampleBits = 8;
         device->MaxChannels = 1;
         break;
+    case AdlibFX:
+        DeviceStatus = ADBFX_Init(SoundCard);
+        if (DeviceStatus != ADBFX_Ok)
+        {
+            status = FX_Error;
+            break;
+        }
+        device->MaxVoices = 8;
+        device->MaxSampleBits = 8;
+        device->MaxChannels = 1;
+        break;
     default:
         status = FX_Error;
     }
@@ -255,6 +267,7 @@ int FX_Init(
     case UltraSound:
     case PC1bit:
     case LPTDAC:
+    case AdlibFX:
     case SoundBlasterDirect:
         devicestatus = MV_Init(SoundCard, FX_MixRate, numvoices, numchannels, samplebits);
         if (devicestatus != MV_Ok)
@@ -308,6 +321,7 @@ int FX_Shutdown(
     case UltraSound:
     case PC1bit:
     case LPTDAC:
+    case AdlibFX:
     case SoundBlasterDirect:
         status = MV_Shutdown();
         if (status != MV_Ok)
@@ -351,6 +365,7 @@ int FX_SetCallBack(
     case UltraSound:
     case PC1bit:
     case LPTDAC:
+    case AdlibFX:
     case SoundBlasterDirect:
         MV_SetCallBack(function);
         break;
