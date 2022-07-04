@@ -256,17 +256,12 @@ void __interrupt __far BLASTER_ServiceInterrupt(
    Writes a byte of data to the sound card's DSP.
 ---------------------------------------------------------------------*/
 
-int BLASTER_WriteDSP(
-    unsigned data)
-
+void BLASTER_WriteDSP(unsigned data)
 {
     int port;
     unsigned count;
-    int status;
 
     port = BLASTER_Config.Address + BLASTER_WritePort;
-
-    status = BLASTER_Error;
 
     count = 0xFFFF;
 
@@ -275,14 +270,11 @@ int BLASTER_WriteDSP(
         if ((inp(port) & 0x80) == 0)
         {
             outp(port, data);
-            status = BLASTER_Ok;
             break;
         }
 
         count--;
     } while (count > 0);
-
-    return (status);
 }
 
 /*---------------------------------------------------------------------
@@ -900,8 +892,8 @@ int BLASTER_BeginBufferedPlayback(
     int DmaStatus;
     int TransferLength;
 
-    //JIM
-    //   if ( BLASTER_SoundPlaying || BLASTER_SoundRecording )
+    // JIM
+    //    if ( BLASTER_SoundPlaying || BLASTER_SoundRecording )
     {
         BLASTER_StopPlayback();
     }

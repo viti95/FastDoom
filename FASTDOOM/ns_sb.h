@@ -71,7 +71,7 @@ enum BLASTER_Types
 
 void BLASTER_EnableInterrupt(void);
 void BLASTER_DisableInterrupt(void);
-int BLASTER_WriteDSP(unsigned data);
+void BLASTER_WriteDSP(unsigned data);
 int BLASTER_ReadDSP(void);
 int BLASTER_ResetDSP(void);
 int BLASTER_GetDSPVersion(void);
