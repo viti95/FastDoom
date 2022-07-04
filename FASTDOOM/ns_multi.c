@@ -868,7 +868,7 @@ int MV_StartPlayback(
             return (MV_Error);
         }
 
-        MV_MixRate = BLASTER_GetPlaybackRate();
+        MV_MixRate = BLASTER_SampleRate;
         MV_DMAChannel = BLASTER_DMAChannel;
         break;
 

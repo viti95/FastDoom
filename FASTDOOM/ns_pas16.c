@@ -8,6 +8,7 @@
 #include "ns_irq.h"
 #include "ns_pas16.h"
 #include "ns_p16df.h"
+#include "ns_muldf.h"
 
 #include "fastmath.h"
 
@@ -386,7 +387,7 @@ void interrupt far PAS_ServiceInterrupt(
    // Call the caller's callback function
    if (PAS_CallBack != NULL)
    {
-      PAS_CallBack();
+      MV_ServiceVoc();
    }
 
 #ifdef USESTACK

@@ -11,6 +11,8 @@
 
 #include "ns_sbmus.h"
 
+#include "ns_muldf.h"
+
 #include "m_misc.h"
 
 #include "doomstat.h"
@@ -78,7 +80,7 @@ static void ADBFX_ServiceInterrupt(task *Task)
         // Call the caller's callback function
         if (ADBFX_CallBack != NULL)
         {
-            ADBFX_CallBack();
+            MV_ServiceVoc();
         }
     }
 }

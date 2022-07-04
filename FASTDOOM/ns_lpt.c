@@ -6,6 +6,7 @@
 #include "ns_cards.h"
 #include "ns_user.h"
 #include "ns_lpt.h"
+#include "ns_muldf.h"
 
 #include "m_misc.h"
 
@@ -60,7 +61,7 @@ static void LPT_ServiceInterrupt(task *Task)
         // Call the caller's callback function
         if (LPT_CallBack != NULL)
         {
-            LPT_CallBack();
+            MV_ServiceVoc();
         }
     }
 }

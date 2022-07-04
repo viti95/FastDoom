@@ -6,6 +6,7 @@
 #include "ns_cards.h"
 #include "ns_user.h"
 #include "ns_speak.h"
+#include "ns_muldf.h"
 
 #include "m_misc.h"
 
@@ -74,7 +75,7 @@ static void PCSpeaker_ServiceInterrupt(task *Task)
         // Call the caller's callback function
         if (PCSpeaker_CallBack != NULL)
         {
-            PCSpeaker_CallBack();
+            MV_ServiceVoc();
         }
     }
 }

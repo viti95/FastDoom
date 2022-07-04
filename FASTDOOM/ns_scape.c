@@ -10,6 +10,7 @@
 #include "ns_irq.h"
 #include "ns_scape.h"
 #include "ns_scdef.h"
+#include "ns_muldf.h"
 
 const int SOUNDSCAPE_Interrupts[SOUNDSCAPE_MaxIrq + 1] =
     {
@@ -187,7 +188,7 @@ static void __interrupt __far SOUNDSCAPE_ServiceInterrupt(
     // Call the caller's callback function
     if (SOUNDSCAPE_CallBack != NULL)
     {
-        SOUNDSCAPE_CallBack();
+        MV_ServiceVoc();
     }
 
     // restore stack

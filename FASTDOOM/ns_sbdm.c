@@ -8,6 +8,7 @@
 #include "ns_sbdm.h"
 #include "ns_sb.h"
 #include "ns_sbdef.h"
+#include "ns_muldf.h"
 
 #include "m_misc.h"
 
@@ -63,7 +64,7 @@ static void SBDM_ServiceInterrupt(task *Task)
         // Call the caller's callback function
         if (SBDM_CallBack != NULL)
         {
-            SBDM_CallBack();
+            MV_ServiceVoc();
         }
     }
 }

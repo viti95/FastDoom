@@ -9,6 +9,7 @@
 #include "ns_irq.h"
 #include "ns_sb.h"
 #include "ns_sbdef.h"
+#include "ns_muldf.h"
 
 const int BLASTER_Interrupts[BLASTER_MaxIrq + 1] =
     {
@@ -42,7 +43,7 @@ static int BLASTER_TotalDMABufferSize;
 static int BLASTER_TransferLength = 0;
 static int BLASTER_MixMode = BLASTER_DefaultMixMode;
 static int BLASTER_SamplePacketSize = MONO_16BIT_SAMPLE_SIZE;
-static unsigned BLASTER_SampleRate = BLASTER_DefaultSampleRate;
+unsigned BLASTER_SampleRate = BLASTER_DefaultSampleRate;
 
 static unsigned BLASTER_HaltTransferCommand = DSP_Halt8bitTransfer;
 
@@ -233,7 +234,7 @@ void __interrupt __far BLASTER_ServiceInterrupt(
     // Call the caller's callback function
     if (BLASTER_CallBack != NULL)
     {
-        BLASTER_CallBack();
+        MV_ServiceVoc();
     }
 
 #ifdef USESTACK
@@ -522,20 +523,6 @@ void BLASTER_SetPlaybackRate(
         BLASTER_WriteDSP(HiByte);
         BLASTER_WriteDSP(LoByte);
     }
-}
-
-/*---------------------------------------------------------------------
-   Function: BLASTER_GetPlaybackRate
-
-   Returns the rate at which the digitized sound will be played in
-   hertz.
----------------------------------------------------------------------*/
-
-unsigned BLASTER_GetPlaybackRate(
-    void)
-
-{
-    return (BLASTER_SampleRate);
 }
 
 /*---------------------------------------------------------------------

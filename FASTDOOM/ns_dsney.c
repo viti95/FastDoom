@@ -14,6 +14,7 @@
 #include "ns_cards.h"
 #include "ns_user.h"
 #include "ns_dsney.h"
+#include "ns_muldf.h"
 
 #include "m_misc.h"
 
@@ -80,7 +81,7 @@ static void SS_ServiceInterrupt(
             // Call the caller's callback function
             if (SS_CallBack != NULL)
             {
-                SS_CallBack();
+                MV_ServiceVoc();
             }
         }
 

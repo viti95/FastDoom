@@ -15,6 +15,7 @@ typedef struct
 extern BLASTER_CONFIG BLASTER_Config;
 extern int BLASTER_DMAChannel;
 extern int BLASTER_Version;
+extern unsigned BLASTER_SampleRate;
 
 #define UNDEFINED -1
 
@@ -78,7 +79,6 @@ int BLASTER_GetDSPVersion(void);
 void BLASTER_SpeakerOn(void);
 void BLASTER_SpeakerOff(void);
 void BLASTER_SetPlaybackRate(unsigned rate);
-unsigned BLASTER_GetPlaybackRate(void);
 int BLASTER_SetMixMode(int mode);
 void BLASTER_StopPlayback(void);
 int BLASTER_SetupDMABuffer(char *BufferPtr, int BufferSize, int mode);
