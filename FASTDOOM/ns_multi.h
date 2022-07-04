@@ -37,9 +37,6 @@ void MV_StopPlayback(void);
 int MV_PlayRaw(unsigned char *ptr, unsigned long length,
                unsigned rate, int vol, int left,
                int right, int priority);
-int MV_PlayLoopedRaw(unsigned char *ptr, unsigned long length,
-                     char *loopstart, char *loopend, unsigned rate,
-                     int vol, int left, int right, int priority);
 void MV_CreateVolumeTable(int index, int volume, int MaxVolume);
 void MV_SetVolume(int volume);
 void MV_SetReverseStereo(int setting);

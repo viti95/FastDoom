@@ -1013,17 +1013,15 @@ void MV_StopPlayback(
 }
 
 /*---------------------------------------------------------------------
-   Function: MV_PlayLoopedRaw
+   Function: MV_PlayRaw
 
    Begin playback of sound data with the given sound levels and
    priority.
 ---------------------------------------------------------------------*/
 
-int MV_PlayLoopedRaw(
+int MV_PlayRaw(
     unsigned char *ptr,
     unsigned long length,
-    char *loopstart,
-    char *loopend,
     unsigned rate,
     int vol,
     int left,
@@ -1056,30 +1054,6 @@ int MV_PlayLoopedRaw(
     MV_PlayVoice(voice);
 
     return (voice->handle);
-}
-
-/*---------------------------------------------------------------------
-   Function: MV_PlayRaw
-
-   Begin playback of sound data with the given sound levels and
-   priority.
----------------------------------------------------------------------*/
-
-int MV_PlayRaw(
-    unsigned char *ptr,
-    unsigned long length,
-    unsigned rate,
-    int vol,
-    int left,
-    int right,
-    int priority)
-
-{
-    int status;
-
-    status = MV_PlayLoopedRaw(ptr, length, NULL, NULL, rate, vol, left, right, priority);
-
-    return (status);
 }
 
 /*---------------------------------------------------------------------
