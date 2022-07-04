@@ -130,14 +130,10 @@ int LPT_BeginBufferedPlayback(
 
 int LPT_Init(int soundcard)
 {
-    int status;
-
     if (LPT_Installed)
     {
         LPT_Shutdown();
     }
-
-    status = LPT_Ok;
 
     LPT_SoundPlaying = 0;
 
@@ -147,7 +143,7 @@ int LPT_Init(int soundcard)
 
     LPT_Installed = 1;
 
-    return (status);
+    return (LPT_Ok);
 }
 
 /*---------------------------------------------------------------------

@@ -131,8 +131,6 @@ int SBDM_BeginBufferedPlayback(
 
 int SBDM_Init(int soundcard)
 {
-    int status;
-
     if (SBDM_Installed)
     {
         SBDM_Shutdown();
@@ -140,8 +138,6 @@ int SBDM_Init(int soundcard)
 
     BLASTER_ResetDSP();
     BLASTER_SpeakerOn();
-
-    status = SBDM_Ok;
 
     SBDM_SoundPlaying = 0;
 
@@ -151,7 +147,7 @@ int SBDM_Init(int soundcard)
 
     SBDM_Installed = 1;
 
-    return (status);
+    return (SBDM_Ok);
 }
 
 /*---------------------------------------------------------------------

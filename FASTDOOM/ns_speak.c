@@ -144,14 +144,10 @@ int PCSpeaker_BeginBufferedPlayback(
 
 int PCSpeaker_Init(int soundcard)
 {
-    int status;
-
     if (PCSpeaker_Installed)
     {
         PCSpeaker_Shutdown();
     }
-
-    status = PCSpeaker_Ok;
 
     PCSpeaker_SoundPlaying = 0;
 
@@ -161,7 +157,7 @@ int PCSpeaker_Init(int soundcard)
 
     PCSpeaker_Installed = 1;
 
-    return (status);
+    return (PCSpeaker_Ok);
 }
 
 /*---------------------------------------------------------------------

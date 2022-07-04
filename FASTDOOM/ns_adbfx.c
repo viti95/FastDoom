@@ -148,7 +148,7 @@ int ADBFX_BeginBufferedPlayback(
 
 int ADBFX_Init(int soundcard)
 {
-    int status, i;
+    int i;
 
     if (ADBFX_Installed)
     {
@@ -179,8 +179,6 @@ int ADBFX_Init(int soundcard)
     /* First sample */
     AL_SendOutputToPort(ADLIB_PORT, 0x40, 0x00);
 
-    status = ADBFX_Ok;
-
     ADBFX_SoundPlaying = 0;
 
     ADBFX_CallBack = NULL;
@@ -189,7 +187,7 @@ int ADBFX_Init(int soundcard)
 
     ADBFX_Installed = 1;
 
-    return (status);
+    return (ADBFX_Ok);
 }
 
 /*---------------------------------------------------------------------
