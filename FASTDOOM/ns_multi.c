@@ -369,16 +369,8 @@ playbackstatus MV_GetNextRawBlock(
 {
     if (voice->BlockLength <= 0)
     {
-        if (voice->LoopStart == NULL)
-        {
-            voice->Playing = FALSE;
-            return (NoMoreData);
-        }
-
-        voice->BlockLength = voice->LoopSize;
-        voice->NextBlock = voice->LoopStart;
-        voice->length = 0;
-        voice->position = 0;
+        voice->Playing = FALSE;
+        return (NoMoreData);
     }
 
     voice->sound = voice->NextBlock;
@@ -1058,9 +1050,6 @@ int MV_PlayLoopedRaw(
     voice->next = NULL;
     voice->prev = NULL;
     voice->priority = priority;
-    voice->LoopStart = loopstart;
-    voice->LoopEnd = loopend;
-    voice->LoopSize = (voice->LoopEnd - voice->LoopStart) + 1;
 
     MV_SetVoicePitch(voice, rate);
     MV_SetVoiceVolume(voice, vol, left, right);

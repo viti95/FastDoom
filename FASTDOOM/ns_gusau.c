@@ -641,8 +641,6 @@ int GUSWAVE_StartDemandFeedPlayback(
     voice->GetSound = GUSWAVE_GetNextDemandFeedBlock;
     voice->Playing = TRUE;
     voice->DemandFeed = function;
-    voice->LoopStart = NULL;
-    voice->LoopCount = 0;
     voice->BlockLength = 0;
     voice->length = 256;
     voice->sound = (bits == 8) ? GUS_Silence8 : (char *)GUS_Silence16;

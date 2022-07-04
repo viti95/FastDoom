@@ -48,10 +48,6 @@ typedef volatile struct VoiceNode
     int GF1voice;      /* handle to active voice */
 
     char *NextBlock;
-    char *LoopStart;
-    char *LoopEnd;
-    unsigned LoopCount;
-    unsigned long LoopSize;
     unsigned long BlockLength;
 
     unsigned char *sound;
