@@ -158,20 +158,6 @@ int SS_BeginBufferedPlayback(
 }
 
 /*---------------------------------------------------------------------
-   Function: SS_SetMixMode
-
-   Sets the sound card to play samples in mono or stereo.
----------------------------------------------------------------------*/
-
-int SS_SetMixMode(
-    int mode)
-
-{
-    mode = MONO_8BIT;
-    return (mode);
-}
-
-/*---------------------------------------------------------------------
    Function: SS_TestTimer
 
    Used as a delay in SS_TestSoundSource.

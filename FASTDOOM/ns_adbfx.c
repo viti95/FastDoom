@@ -192,12 +192,6 @@ int ADBFX_Init(int soundcard)
     return (status);
 }
 
-int ADBFX_SetMixMode(int mode)
-{
-    mode = MONO_8BIT;
-    return (mode);
-}
-
 /*---------------------------------------------------------------------
    Function: ADBFX_Shutdown
 

@@ -17,7 +17,6 @@ enum ADBFX_Errors
 
 void ADBFX_StopPlayback(void);
 int ADBFX_BeginBufferedPlayback(char *BufferStart, int BufferSize, int NumDivisions, void (*CallBackFunc)(void));
-int ADBFX_SetMixMode(int mode);
 int ADBFX_Init(int soundcard);
 void ADBFX_Shutdown(void);
 

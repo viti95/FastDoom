@@ -164,12 +164,6 @@ int PCSpeaker_Init(int soundcard)
     return (status);
 }
 
-int PCSpeaker_SetMixMode(int mode)
-{
-    mode = MONO_8BIT;
-    return (mode);
-}
-
 /*---------------------------------------------------------------------
    Function: PCSpeaker_Shutdown
 

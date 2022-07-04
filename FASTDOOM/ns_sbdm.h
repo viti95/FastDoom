@@ -17,7 +17,6 @@ enum SBDM_Errors
 
 void SBDM_StopPlayback(void);
 int SBDM_BeginBufferedPlayback(char *BufferStart, int BufferSize, int NumDivisions, void (*CallBackFunc)(void));
-int SBDM_SetMixMode(int mode);
 int SBDM_Init(int soundcard);
 void SBDM_Shutdown(void);
 

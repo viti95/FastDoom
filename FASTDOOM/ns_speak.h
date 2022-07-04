@@ -17,7 +17,6 @@ enum PCSpeaker_Errors
 
 void PCSpeaker_StopPlayback(void);
 int PCSpeaker_BeginBufferedPlayback(char *BufferStart, int BufferSize, int NumDivisions, void (*CallBackFunc)(void));
-int PCSpeaker_SetMixMode(int mode);
 int PCSpeaker_Init(int soundcard);
 void PCSpeaker_Shutdown(void);
 

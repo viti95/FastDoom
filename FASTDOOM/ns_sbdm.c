@@ -154,12 +154,6 @@ int SBDM_Init(int soundcard)
     return (status);
 }
 
-int SBDM_SetMixMode(int mode)
-{
-    mode = MONO_8BIT;
-    return (mode);
-}
-
 /*---------------------------------------------------------------------
    Function: SBDM_Shutdown
 
