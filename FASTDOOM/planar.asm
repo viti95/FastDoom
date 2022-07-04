@@ -41,7 +41,7 @@ CODE_SYM_DEF R_DrawColumnPotato
   mov  ebx,[_dc_x]
   lea  edi,[ebp+ebp*4]  
   mov  eax,[_dc_yh]
-  sal  edi,4
+  shl  edi,4
   inc  eax
   add  edi,ebx  
   sub  eax,ebp           ; pixel count

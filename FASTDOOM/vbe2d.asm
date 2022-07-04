@@ -55,7 +55,7 @@ CODE_SYM_DEF R_DrawColumnVBE2
   mov  ebp,[_dc_yh]
   mov  ebx,[_dc_x]
   lea  edi,[ebp+ebp*4]
-  sal  edi,6
+  shl  edi,6
   add  edi,ebx
   mov  eax,[_dc_yl]
   add  edi,[_destview]
@@ -153,7 +153,7 @@ CODE_SYM_DEF R_DrawSpanVBE2
   mov  ebp,[_ds_y]
   mov  eax,[_ds_colormap]
   lea  edi,[ebp+ebp*4]
-  sal  edi,6
+  shl  edi,6
   add  edi,[_destview]
 
   ; feed the pipeline and jump in
