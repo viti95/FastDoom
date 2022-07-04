@@ -72,7 +72,6 @@ static VoiceNode VoicePool;
 static int MV_MixPage = 0;
 static int MV_VoiceHandle = MV_MinVoiceHandle;
 
-static void (*MV_CallBackFunc)(unsigned long) = NULL;
 static void (*MV_MixFunction)(VoiceNode *voice, int buffer);
 
 char *MV_HarshClipTable;
@@ -288,11 +287,6 @@ void MV_ServiceVoc(
         if (!voice->Playing)
         {
             MV_StopVoice(voice);
-
-            if (MV_CallBackFunc)
-            {
-                MV_CallBackFunc(voice->callbackval);
-            }
         }
     }
 }
@@ -502,11 +496,6 @@ int MV_Kill(
     MV_StopVoice(voice);
 
     RestoreInterrupts(flags);
-
-    if (MV_CallBackFunc)
-    {
-        MV_CallBackFunc(callbackval);
-    }
 
     return (MV_Ok);
 }
@@ -1033,11 +1022,6 @@ void MV_StopPlayback(
         next = voice->next;
 
         MV_StopVoice(voice);
-
-        if (MV_CallBackFunc)
-        {
-            MV_CallBackFunc(voice->callbackval);
-        }
     }
 
     RestoreInterrupts(flags);
@@ -1390,7 +1374,6 @@ int MV_Init(
 
     MV_SoundCard = soundcard;
     MV_Installed = TRUE;
-    MV_CallBackFunc = NULL;
 
     // Set the sampling rate
     MV_RequestedMixRate = MixRate;
