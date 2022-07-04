@@ -18,7 +18,6 @@ enum LPT_Errors
 void LPT_StopPlayback(void);
 int LPT_BeginBufferedPlayback(char *BufferStart, int BufferSize, int NumDivisions, void (*CallBackFunc)(void));
 int LPT_SetMixMode(int mode);
-void LPT_SetCallBack(void (*func)(void));
 int LPT_Init(int soundcard);
 void LPT_Shutdown(void);
 

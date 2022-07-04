@@ -916,7 +916,7 @@ int BLASTER_BeginBufferedPlayback(
 
     BLASTER_SetPlaybackRate(SampleRate);
 
-    BLASTER_SetCallBack(CallBackFunc);
+    BLASTER_CallBack = CallBackFunc;
 
     BLASTER_EnableInterrupt();
 
@@ -1379,19 +1379,6 @@ int BLASTER_GetCardInfo(
 }
 
 /*---------------------------------------------------------------------
-   Function: BLASTER_SetCallBack
-
-   Specifies the user function to call at the end of a sound transfer.
----------------------------------------------------------------------*/
-
-void BLASTER_SetCallBack(
-    void (*func)(void))
-
-{
-    BLASTER_CallBack = func;
-}
-
-/*---------------------------------------------------------------------
    Function: allocateTimerStack
 
    Allocate a block of memory from conventional (low) memory and return
@@ -1527,7 +1514,7 @@ int BLASTER_Init(
 
         BLASTER_SoundPlaying = FALSE;
 
-        BLASTER_SetCallBack(NULL);
+        BLASTER_CallBack = NULL;
 
         BLASTER_DMABuffer = NULL;
 
@@ -1634,7 +1621,7 @@ void BLASTER_Shutdown(
 
     BLASTER_DMABuffer = NULL;
 
-    BLASTER_SetCallBack(NULL);
+    BLASTER_CallBack = NULL;
 
     deallocateTimerStack(StackSelector);
     StackSelector = NULL;

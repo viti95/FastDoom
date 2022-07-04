@@ -30,8 +30,6 @@ static int GUSWAVE_MaxVoices = VOICES;
 //static
 int GUSWAVE_Installed = FALSE;
 
-static void (*GUSWAVE_CallBackFunc)(unsigned long) = NULL;
-
 // current volume for dig audio - from 0 to 4095
 static int GUSWAVE_Volume = MAX_VOLUME;
 
@@ -227,10 +225,6 @@ static int LOADDS GUSWAVE_CallBack(
             LL_AddToTail(VoiceNode, &VoicePool, Voice);
         }
 
-        if (GUSWAVE_CallBackFunc)
-        {
-            GUSWAVE_CallBackFunc(Voice->callbackval);
-        }
     }
 
     return (DIG_DONE);
@@ -736,19 +730,6 @@ static int GUSWAVE_InitVoices(
 }
 
 /*---------------------------------------------------------------------
-   Function: GUSWAVE_SetCallBack
-
-   Set the function to call when a voice stops.
----------------------------------------------------------------------*/
-
-void GUSWAVE_SetCallBack(
-    void (*function)(unsigned long))
-
-{
-    GUSWAVE_CallBackFunc = function;
-}
-
-/*---------------------------------------------------------------------
    Function: GUSWAVE_Init
 
    Initializes the Gravis Ultrasound for digitized sound playback.
@@ -783,7 +764,6 @@ int GUSWAVE_Init(
 
     GUSWAVE_SetReverseStereo(FALSE);
 
-    GUSWAVE_CallBackFunc = NULL;
     GUSWAVE_Installed = TRUE;
 
     return (GUSWAVE_Ok);

@@ -118,8 +118,8 @@ int ADBFX_BeginBufferedPlayback(
         ADBFX_StopPlayback();
     }
 
-    ADBFX_SetCallBack(CallBackFunc);
-
+    ADBFX_CallBack = CallBackFunc;
+    
     ADBFX_BufferStart = BufferStart;
     ADBFX_CurrentBuffer = BufferStart;
     ADBFX_SoundPtr = BufferStart;
@@ -137,17 +137,6 @@ int ADBFX_BeginBufferedPlayback(
     TS_Dispatch();
 
     return (ADBFX_Ok);
-}
-
-/*---------------------------------------------------------------------
-   Function: ADBFX_SetCallBack
-
-   Specifies the user function to call at the end of a sound transfer.
----------------------------------------------------------------------*/
-
-void ADBFX_SetCallBack(void (*func)(void))
-{
-    ADBFX_CallBack = func;
 }
 
 /*---------------------------------------------------------------------
@@ -194,7 +183,7 @@ int ADBFX_Init(int soundcard)
 
     ADBFX_SoundPlaying = 0;
 
-    ADBFX_SetCallBack(NULL);
+    ADBFX_CallBack = NULL;
 
     ADBFX_BufferStart = NULL;
 
@@ -223,7 +212,7 @@ void ADBFX_Shutdown(void)
 
     ADBFX_BufferStart = NULL;
 
-    ADBFX_SetCallBack(NULL);
+    ADBFX_CallBack = NULL;
 
     ADBFX_Installed = 0;
 }

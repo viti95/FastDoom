@@ -32,7 +32,6 @@ int SOUNDSCAPE_SetMixMode(int mode);
 void SOUNDSCAPE_StopPlayback(void);
 int SOUNDSCAPE_BeginBufferedPlayback(char *BufferStart, int BufferSize, int NumDivisions, unsigned SampleRate, int MixMode, void (*CallBackFunc)(void));
 int SOUNDSCAPE_GetCardInfo(int *MaxSampleBits, int *MaxChannels);
-void SOUNDSCAPE_SetCallBack(void (*func)(void));
 int SOUNDSCAPE_GetMIDIPort(void);
 int SOUNDSCAPE_Init(void);
 void SOUNDSCAPE_Shutdown(void);

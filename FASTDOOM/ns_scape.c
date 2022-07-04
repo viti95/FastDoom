@@ -556,7 +556,7 @@ int SOUNDSCAPE_BeginBufferedPlayback(
 
     SOUNDSCAPE_SetPlaybackRate(SampleRate);
 
-    SOUNDSCAPE_SetCallBack(CallBackFunc);
+    SOUNDSCAPE_CallBack = CallBackFunc;
 
     SOUNDSCAPE_EnableInterrupt();
 
@@ -592,19 +592,6 @@ int SOUNDSCAPE_GetCardInfo(
     }
 
     return (status);
-}
-
-/*---------------------------------------------------------------------
-   Function: SOUNDSCAPE_SetCallBack
-
-   Specifies the user function to call at the end of a sound transfer.
----------------------------------------------------------------------*/
-
-void SOUNDSCAPE_SetCallBack(
-    void (*func)(void))
-
-{
-    SOUNDSCAPE_CallBack = func;
 }
 
 /*---------------------------------------------------------------------
@@ -1159,7 +1146,7 @@ int SOUNDSCAPE_Init(
     SOUNDSCAPE_IntController2Mask = inp(0xA1);
 
     SOUNDSCAPE_SoundPlaying = FALSE;
-    SOUNDSCAPE_SetCallBack(NULL);
+    SOUNDSCAPE_CallBack = NULL;
     SOUNDSCAPE_DMABuffer = NULL;
 
     status = SOUNDSCAPE_FindCard();
@@ -1256,7 +1243,7 @@ void SOUNDSCAPE_Shutdown(
 
     SOUNDSCAPE_DMABuffer = NULL;
 
-    SOUNDSCAPE_SetCallBack(NULL);
+    SOUNDSCAPE_CallBack = NULL;
 
     if (StackSelector != NULL)
     {

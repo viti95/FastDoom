@@ -36,7 +36,6 @@ int PAS_SetPCMVolume(int volume);
 void PAS_SetFMVolume(int volume);
 int PAS_GetFMVolume(void);
 int PAS_GetCardInfo(int *MaxSampleBits, int *MaxChannels);
-void PAS_SetCallBack(void (*func)(void));
 int PAS_SaveMusicVolume(void);
 void PAS_RestoreMusicVolume(void);
 int PAS_Init(void);

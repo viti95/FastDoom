@@ -340,44 +340,6 @@ int FX_Shutdown(
 }
 
 /*---------------------------------------------------------------------
-   Function: FX_SetCallback
-
-   Sets the function to call when a voice is done.
----------------------------------------------------------------------*/
-
-int FX_SetCallBack(
-    void (*function)(unsigned long))
-
-{
-    int status;
-
-    status = FX_Ok;
-
-    switch (FX_SoundDevice)
-    {
-    case SoundBlaster:
-    case Awe32:
-    case ProAudioSpectrum:
-    case SoundMan16:
-    case SoundScape:
-    case SoundSource:
-    case TandySoundSource:
-    case UltraSound:
-    case PC1bit:
-    case LPTDAC:
-    case AdlibFX:
-    case SoundBlasterDirect:
-        MV_SetCallBack(function);
-        break;
-
-    default:
-        status = FX_Error;
-    }
-
-    return (status);
-}
-
-/*---------------------------------------------------------------------
    Function: FX_SetVolume
 
    Sets the volume of the current sound device.

@@ -103,7 +103,6 @@ int BLASTER_GetEnv(BLASTER_CONFIG *Config);
 int BLASTER_SetCardSettings(BLASTER_CONFIG Config);
 int BLASTER_GetCardSettings(BLASTER_CONFIG *Config);
 int BLASTER_GetCardInfo(int *MaxSampleBits, int *MaxChannels);
-void BLASTER_SetCallBack(void (*func)(void));
 void BLASTER_SetupWaveBlaster(void);
 void BLASTER_ShutdownWaveBlaster(void);
 int BLASTER_Init(void);

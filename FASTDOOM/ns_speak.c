@@ -114,7 +114,7 @@ int PCSpeaker_BeginBufferedPlayback(
         PCSpeaker_StopPlayback();
     }
 
-    PCSpeaker_SetCallBack(CallBackFunc);
+    PCSpeaker_CallBack = CallBackFunc;
 
     PCSpeaker_BufferStart = BufferStart;
     PCSpeaker_CurrentBuffer = BufferStart;
@@ -133,17 +133,6 @@ int PCSpeaker_BeginBufferedPlayback(
     TS_Dispatch();
 
     return (PCSpeaker_Ok);
-}
-
-/*---------------------------------------------------------------------
-   Function: PCSpeaker_SetCallBack
-
-   Specifies the user function to call at the end of a sound transfer.
----------------------------------------------------------------------*/
-
-void PCSpeaker_SetCallBack(void (*func)(void))
-{
-    PCSpeaker_CallBack = func;
 }
 
 /*---------------------------------------------------------------------
@@ -166,7 +155,7 @@ int PCSpeaker_Init(int soundcard)
 
     PCSpeaker_SoundPlaying = 0;
 
-    PCSpeaker_SetCallBack(NULL);
+    PCSpeaker_CallBack = NULL;
 
     PCSpeaker_BufferStart = NULL;
 
@@ -195,7 +184,7 @@ void PCSpeaker_Shutdown(void)
 
     PCSpeaker_BufferStart = NULL;
 
-    PCSpeaker_SetCallBack(NULL);
+    PCSpeaker_CallBack = NULL;
 
     PCSpeaker_Installed = 0;
 }

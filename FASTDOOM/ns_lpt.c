@@ -100,7 +100,7 @@ int LPT_BeginBufferedPlayback(
         LPT_StopPlayback();
     }
 
-    LPT_SetCallBack(CallBackFunc);
+    LPT_CallBack = CallBackFunc;
 
     LPT_BufferStart = BufferStart;
     LPT_CurrentBuffer = BufferStart;
@@ -119,17 +119,6 @@ int LPT_BeginBufferedPlayback(
     TS_Dispatch();
 
     return (LPT_Ok);
-}
-
-/*---------------------------------------------------------------------
-   Function: LPT_SetCallBack
-
-   Specifies the user function to call at the end of a sound transfer.
----------------------------------------------------------------------*/
-
-void LPT_SetCallBack(void (*func)(void))
-{
-    LPT_CallBack = func;
 }
 
 /*---------------------------------------------------------------------
@@ -152,7 +141,7 @@ int LPT_Init(int soundcard)
 
     LPT_SoundPlaying = 0;
 
-    LPT_SetCallBack(NULL);
+    LPT_CallBack = NULL;
 
     LPT_BufferStart = NULL;
 
@@ -181,7 +170,7 @@ void LPT_Shutdown(void)
 
     LPT_BufferStart = NULL;
 
-    LPT_SetCallBack(NULL);
+    LPT_CallBack = NULL;
 
     LPT_Installed = 0;
 }

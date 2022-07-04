@@ -813,7 +813,7 @@ int PAS_BeginBufferedPlayback(
 
    // VITI95: OPTIMIZE
    PAS_TransferLength = BufferSize / NumDivisions;
-   PAS_SetCallBack(CallBackFunc);
+   PAS_CallBack = CallBackFunc;
 
    DmaStatus = PAS_SetupDMABuffer(BufferStart, BufferSize, DMA_AutoInitRead);
    if (DmaStatus == PAS_Error)
@@ -1010,19 +1010,6 @@ int PAS_GetCardInfo(
    }
 
    return (PAS_Ok);
-}
-
-/*---------------------------------------------------------------------
-   Function: PAS_SetCallBack
-
-   Specifies the user function to call at the end of a sound transfer.
----------------------------------------------------------------------*/
-
-void PAS_SetCallBack(
-    void (*func)(void))
-
-{
-   PAS_CallBack = func;
 }
 
 /*---------------------------------------------------------------------
@@ -1346,7 +1333,7 @@ int PAS_Init(
 
    PAS_SoundPlaying = FALSE;
 
-   PAS_SetCallBack(NULL);
+   PAS_CallBack = NULL;
 
    PAS_DMABuffer = NULL;
 
@@ -1422,7 +1409,7 @@ void PAS_Shutdown(
 
       PAS_DMABuffer = NULL;
 
-      PAS_SetCallBack(NULL);
+      PAS_CallBack = NULL;
 
       PAS_CallMVFunction(PAS_Func->SetMixer, PAS_OriginalPCMLeftVolume,
                          OUTPUTMIXER, L_PCM);

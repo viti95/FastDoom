@@ -1251,19 +1251,6 @@ void MV_SetVolume(
 }
 
 /*---------------------------------------------------------------------
-   Function: MV_SetCallBack
-
-   Set the function to call when a voice stops.
----------------------------------------------------------------------*/
-
-void MV_SetCallBack(
-    void (*function)(unsigned long))
-
-{
-    MV_CallBackFunc = function;
-}
-
-/*---------------------------------------------------------------------
    Function: MV_SetReverseStereo
 
    Set the orientation of the left and right channels.

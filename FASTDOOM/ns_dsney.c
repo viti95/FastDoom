@@ -135,7 +135,7 @@ int SS_BeginBufferedPlayback(
         SS_StopPlayback();
     }
 
-    SS_SetCallBack(CallBackFunc);
+    SS_CallBack = CallBackFunc;
 
     SS_BufferStart = BufferStart;
     SS_CurrentBuffer = BufferStart;
@@ -169,19 +169,6 @@ int SS_SetMixMode(
 {
     mode = MONO_8BIT;
     return (mode);
-}
-
-/*---------------------------------------------------------------------
-   Function: SS_SetCallBack
-
-   Specifies the user function to call at the end of a sound transfer.
----------------------------------------------------------------------*/
-
-void SS_SetCallBack(
-    void (*func)(void))
-
-{
-    SS_CallBack = func;
 }
 
 /*---------------------------------------------------------------------
@@ -336,7 +323,7 @@ int SS_Init(
 
     SS_SoundPlaying = FALSE;
 
-    SS_SetCallBack(NULL);
+    SS_CallBack = NULL;
 
     SS_BufferStart = NULL;
 
@@ -364,7 +351,7 @@ void SS_Shutdown(
 
     SS_BufferStart = NULL;
 
-    SS_SetCallBack(NULL);
+    SS_CallBack = NULL;
 
     SS_Installed = FALSE;
 }

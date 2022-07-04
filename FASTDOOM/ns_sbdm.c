@@ -101,7 +101,7 @@ int SBDM_BeginBufferedPlayback(
         SBDM_StopPlayback();
     }
 
-    SBDM_SetCallBack(CallBackFunc);
+    SBDM_CallBack = CallBackFunc;
 
     SBDM_BufferStart = BufferStart;
     SBDM_CurrentBuffer = BufferStart;
@@ -120,17 +120,6 @@ int SBDM_BeginBufferedPlayback(
     TS_Dispatch();
 
     return (SBDM_Ok);
-}
-
-/*---------------------------------------------------------------------
-   Function: SBDM_SetCallBack
-
-   Specifies the user function to call at the end of a sound transfer.
----------------------------------------------------------------------*/
-
-void SBDM_SetCallBack(void (*func)(void))
-{
-    SBDM_CallBack = func;
 }
 
 /*---------------------------------------------------------------------
@@ -156,7 +145,7 @@ int SBDM_Init(int soundcard)
 
     SBDM_SoundPlaying = 0;
 
-    SBDM_SetCallBack(NULL);
+    SBDM_CallBack = NULL;
 
     SBDM_BufferStart = NULL;
 
@@ -185,7 +174,7 @@ void SBDM_Shutdown(void)
 
     SBDM_BufferStart = NULL;
 
-    SBDM_SetCallBack(NULL);
+    SBDM_CallBack = NULL;
 
     SBDM_Installed = 0;
 }
