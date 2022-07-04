@@ -92,8 +92,6 @@ typedef struct VoiceNode
     short *LeftVolume;
     short *RightVolume;
 
-    unsigned long callbackval;
-
 } VoiceNode;
 
 typedef struct

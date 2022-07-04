@@ -15,7 +15,6 @@ static long PCFX_LengthLeft;
 static char *PCFX_Sound = NULL;
 static int PCFX_LastSample;
 static int PCFX_Priority;
-static unsigned long PCFX_CallBackVal;
 static int PCFX_TotalVolume = PCFX_MaxVolume;
 static task *PCFX_ServiceTask = NULL;
 static int PCFX_VoiceHandle = PCFX_MinVoiceHandle;
@@ -77,7 +76,7 @@ static void PCFX_Service(task *Task)
     }
 }
 
-int PCFX_Play(PCSound *sound, int priority, unsigned long callbackval)
+int PCFX_Play(PCSound *sound, int priority)
 {
     unsigned flags;
 
@@ -103,7 +102,6 @@ int PCFX_Play(PCSound *sound, int priority, unsigned long callbackval)
     PCFX_Priority = priority;
 
     PCFX_Sound = &sound->data;
-    PCFX_CallBackVal = callbackval;
 
     RestoreInterrupts(flags);
 

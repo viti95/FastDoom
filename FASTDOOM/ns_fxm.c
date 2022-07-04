@@ -407,13 +407,12 @@ int FX_PlayRaw(
     int vol,
     int left,
     int right,
-    int priority,
-    unsigned long callbackval)
+    int priority)
 
 {
     int handle;
 
-    handle = MV_PlayRaw(ptr, length, rate, vol, left, right, priority, callbackval);
+    handle = MV_PlayRaw(ptr, length, rate, vol, left, right, priority);
     if (handle < MV_Ok)
     {
         handle = FX_Warning;

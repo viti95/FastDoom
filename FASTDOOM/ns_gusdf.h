@@ -74,8 +74,6 @@ typedef volatile struct VoiceNode
 
     void (*DemandFeed)(char **ptr, unsigned long *length);
 
-    unsigned long callbackval;
-
     int Volume;
     int Pan;
 } VoiceNode;

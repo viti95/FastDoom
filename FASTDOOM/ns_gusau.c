@@ -624,8 +624,7 @@ int GUSWAVE_StartDemandFeedPlayback(
     int pitchoffset,
     int angle,
     int volume,
-    int priority,
-    unsigned long callbackval)
+    int priority)
 
 {
     VoiceNode *voice;
@@ -652,7 +651,6 @@ int GUSWAVE_StartDemandFeedPlayback(
     voice->next = NULL;
     voice->prev = NULL;
     voice->priority = priority;
-    voice->callbackval = callbackval;
     voice->SamplingRate = rate;
     voice->RateScale = (voice->SamplingRate * 0x10000) >> 16;
 

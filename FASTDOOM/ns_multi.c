@@ -480,7 +480,6 @@ int MV_Kill(
 {
     VoiceNode *voice;
     unsigned flags;
-    unsigned long callbackval;
 
     flags = DisableInterrupts();
 
@@ -490,8 +489,6 @@ int MV_Kill(
         RestoreInterrupts(flags);
         return (MV_Error);
     }
-
-    callbackval = voice->callbackval;
 
     MV_StopVoice(voice);
 
@@ -864,7 +861,7 @@ int MV_StartPlayback(
     case UltraSound:
 
         status = GUSWAVE_StartDemandFeedPlayback(MV_ServiceGus, 1,
-                                                 MV_Bits, MV_RequestedMixRate, 0, (MV_Channels == 1) ? 0 : 24, 255, 0xffff, 0);
+                                                 MV_Bits, MV_RequestedMixRate, 0, (MV_Channels == 1) ? 0 : 24, 255, 0xffff);
         if (status < GUSWAVE_Ok)
         {
             return (MV_Error);
@@ -873,7 +870,7 @@ int MV_StartPlayback(
         if (MV_Channels == 2)
         {
             status = GUSWAVE_StartDemandFeedPlayback(MV_ServiceRightGus, 1,
-                                                     MV_Bits, MV_RequestedMixRate, 0, 8, 255, 0xffff, 0);
+                                                     MV_Bits, MV_RequestedMixRate, 0, 8, 255, 0xffff);
             if (status < GUSWAVE_Ok)
             {
                 GUSWAVE_KillAllVoices();
@@ -1043,8 +1040,7 @@ int MV_PlayLoopedRaw(
     int vol,
     int left,
     int right,
-    int priority,
-    unsigned long callbackval)
+    int priority)
 
 {
     VoiceNode *voice;
@@ -1067,7 +1063,6 @@ int MV_PlayLoopedRaw(
     voice->next = NULL;
     voice->prev = NULL;
     voice->priority = priority;
-    voice->callbackval = callbackval;
     voice->LoopStart = loopstart;
     voice->LoopEnd = loopend;
     voice->LoopSize = (voice->LoopEnd - voice->LoopStart) + 1;
@@ -1093,13 +1088,12 @@ int MV_PlayRaw(
     int vol,
     int left,
     int right,
-    int priority,
-    unsigned long callbackval)
+    int priority)
 
 {
     int status;
 
-    status = MV_PlayLoopedRaw(ptr, length, NULL, NULL, rate, vol, left, right, priority, callbackval);
+    status = MV_PlayLoopedRaw(ptr, length, NULL, NULL, rate, vol, left, right, priority);
 
     return (status);
 }

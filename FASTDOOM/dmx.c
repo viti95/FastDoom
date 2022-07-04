@@ -165,7 +165,7 @@ int SFX_PlayPatch(void *vdata, int sep, int vol)
         {
             pcspkmuse.data[i] = divisors[dmxpcs->data[i]];
         }
-        pcshandle = PCFX_Play((PCSound *)&pcspkmuse, 100, 0);
+        pcshandle = PCFX_Play((PCSound *)&pcspkmuse, 100);
         return pcshandle | 0x8000;
     }
     else if (type == 3)
@@ -178,7 +178,7 @@ int SFX_PlayPatch(void *vdata, int sep, int vol)
         }
         len -= 32;
 
-        return FX_PlayRaw(data + 24, len, rate, vol * 2, Div63((254 - sep) * vol), Div63((sep)*vol), 100, 0);
+        return FX_PlayRaw(data + 24, len, rate, vol * 2, Div63((254 - sep) * vol), Div63((sep)*vol), 100);
     }
 
     return -1;
