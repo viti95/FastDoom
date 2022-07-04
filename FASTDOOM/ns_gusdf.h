@@ -28,14 +28,6 @@
 
 typedef enum
 {
-    Raw,
-    VOC,
-    DemandFeed,
-    WAV
-} wavedata;
-
-typedef enum
-{
     NoMoreData,
     KeepPlaying,
     SoundDone
@@ -46,7 +38,6 @@ typedef volatile struct VoiceNode
     struct VoiceNode *next;
     struct VoiceNode *prev;
 
-    wavedata wavetype;
     int bits;
     playbackstatus (*GetSound)(volatile struct VoiceNode *voice);
 

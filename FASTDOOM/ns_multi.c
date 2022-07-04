@@ -1048,7 +1048,6 @@ int MV_PlayLoopedRaw(
         return (MV_Error);
     }
 
-    voice->wavetype = Raw;
     voice->bits = 8;
     voice->GetSound = MV_GetNextRawBlock;
     voice->Playing = TRUE;

@@ -60,7 +60,6 @@ typedef struct VoiceNode
     struct VoiceNode *next;
     struct VoiceNode *prev;
 
-    wavedata wavetype;
     char bits;
 
     playbackstatus (*GetSound)(struct VoiceNode *voice);

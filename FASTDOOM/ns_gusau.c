@@ -637,7 +637,6 @@ int GUSWAVE_StartDemandFeedPlayback(
         return (GUSWAVE_Warning);
     }
 
-    voice->wavetype = DemandFeed;
     voice->bits = bits;
     voice->GetSound = GUSWAVE_GetNextDemandFeedBlock;
     voice->Playing = TRUE;
