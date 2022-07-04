@@ -72,8 +72,6 @@ static VoiceNode VoicePool;
 static int MV_MixPage = 0;
 static int MV_VoiceHandle = MV_MinVoiceHandle;
 
-static void (*MV_MixFunction)(VoiceNode *voice, int buffer);
-
 char *MV_HarshClipTable;
 char *MV_MixDestination;
 short *MV_LeftVolume;
@@ -279,7 +277,7 @@ void MV_ServiceVoc(
     {
         MV_BufferEmpty[MV_MixPage] = FALSE;
 
-        MV_MixFunction(voice, MV_MixPage);
+        MV_Mix(voice, MV_MixPage);
 
         next = voice->next;
 
@@ -833,8 +831,6 @@ int MV_StartPlayback(
 
     // Set the mix buffer variables
     MV_MixPage = 1;
-
-    MV_MixFunction = MV_Mix;
 
     //JIM
     //   MV_MixRate = MV_RequestedMixRate;
