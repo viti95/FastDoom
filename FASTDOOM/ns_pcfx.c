@@ -16,7 +16,6 @@ static char *PCFX_Sound = NULL;
 static int PCFX_LastSample;
 static int PCFX_Priority;
 static unsigned long PCFX_CallBackVal;
-static void (*PCFX_CallBackFunc)(unsigned long) = NULL;
 static int PCFX_TotalVolume = PCFX_MaxVolume;
 static task *PCFX_ServiceTask = NULL;
 static int PCFX_VoiceHandle = PCFX_MinVoiceHandle;
@@ -43,11 +42,6 @@ int PCFX_Stop(int handle)
     PCFX_LastSample = 0;
 
     RestoreInterrupts(flags);
-
-    if (PCFX_CallBackFunc)
-    {
-        PCFX_CallBackFunc(PCFX_CallBackVal);
-    }
 
     return (PCFX_Ok);
 }
@@ -162,7 +156,6 @@ int PCFX_Init(void){
     PCFX_ServiceTask = TS_ScheduleTask(&PCFX_Service, 140, 2, NULL);
     TS_Dispatch();
 
-    PCFX_CallBackFunc = NULL;
     PCFX_Installed = TRUE;
 
     return (PCFX_Ok);
