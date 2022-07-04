@@ -24,7 +24,6 @@ static char *ADBFX_BufferEnd;
 static char *ADBFX_CurrentBuffer;
 static int ADBFX_BufferNum = 0;
 static int ADBFX_NumBuffers = 0;
-static int ADBFX_TotalBufferSize = 0;
 static int ADBFX_TransferLength = 0;
 static int ADBFX_CurrentLength = 0;
 
@@ -125,7 +124,6 @@ int ADBFX_BeginBufferedPlayback(
     ADBFX_BufferStart = BufferStart;
     ADBFX_CurrentBuffer = BufferStart;
     ADBFX_SoundPtr = BufferStart;
-    ADBFX_TotalBufferSize = BufferSize;
     ADBFX_BufferEnd = BufferStart + BufferSize;
     // VITI95: OPTIMIZE
     ADBFX_TransferLength = BufferSize / NumDivisions;
