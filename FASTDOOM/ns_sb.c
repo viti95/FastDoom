@@ -386,7 +386,6 @@ int BLASTER_GetDSPVersion(
 
     if (version >= DSP_Version4xx)
     {
-        BLASTER_Card.IsSupported = TRUE;
         BLASTER_Card.HasMixer = YES;
         BLASTER_Card.MaxMixMode = STEREO_16BIT;
         BLASTER_Card.MinSamplingRate = 5000;
@@ -395,7 +394,6 @@ int BLASTER_GetDSPVersion(
     }
     else if (version >= DSP_Version3xx)
     {
-        BLASTER_Card.IsSupported = TRUE;
         BLASTER_Card.HasMixer = YES;
         BLASTER_Card.MaxMixMode = STEREO_8BIT;
         BLASTER_Card.MinSamplingRate = 4000;
@@ -404,7 +402,6 @@ int BLASTER_GetDSPVersion(
     }
     else if (version >= DSP_Version2xx)
     {
-        BLASTER_Card.IsSupported = TRUE;
         BLASTER_Card.HasMixer = NO;
         BLASTER_Card.MaxMixMode = MONO_8BIT;
         BLASTER_Card.MinSamplingRate = 4000;
@@ -414,7 +411,6 @@ int BLASTER_GetDSPVersion(
     else
     {
         // DSP_Version1xx
-        BLASTER_Card.IsSupported = TRUE;
         BLASTER_Card.HasMixer = NO;
         BLASTER_Card.MaxMixMode = MONO_8BIT;
         BLASTER_Card.MinSamplingRate = 4000;

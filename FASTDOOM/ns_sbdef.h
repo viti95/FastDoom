@@ -96,7 +96,6 @@
 
 typedef struct
 {
-    int IsSupported;
     int HasMixer;
     int MaxMixMode;
     int MinSamplingRate;
