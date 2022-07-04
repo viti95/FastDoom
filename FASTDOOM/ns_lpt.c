@@ -15,7 +15,6 @@
 static int LPT_Installed = 0;
 
 static char *LPT_BufferStart;
-static char *LPT_BufferEnd;
 static char *LPT_CurrentBuffer;
 static int LPT_BufferNum = 0;
 static int LPT_NumBuffers = 0;
@@ -105,7 +104,6 @@ int LPT_BeginBufferedPlayback(
     LPT_BufferStart = BufferStart;
     LPT_CurrentBuffer = BufferStart;
     LPT_SoundPtr = BufferStart;
-    LPT_BufferEnd = BufferStart + BufferSize;
     // VITI95: OPTIMIZE
     LPT_TransferLength = BufferSize / NumDivisions;
     LPT_CurrentLength = LPT_TransferLength;

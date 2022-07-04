@@ -17,7 +17,6 @@
 static int SBDM_Installed = 0;
 
 static char *SBDM_BufferStart;
-static char *SBDM_BufferEnd;
 static char *SBDM_CurrentBuffer;
 static int SBDM_BufferNum = 0;
 static int SBDM_NumBuffers = 0;
@@ -106,7 +105,6 @@ int SBDM_BeginBufferedPlayback(
     SBDM_BufferStart = BufferStart;
     SBDM_CurrentBuffer = BufferStart;
     SBDM_SoundPtr = BufferStart;
-    SBDM_BufferEnd = BufferStart + BufferSize;
     // VITI95: OPTIMIZE
     SBDM_TransferLength = BufferSize / NumDivisions;
     SBDM_CurrentLength = SBDM_TransferLength;

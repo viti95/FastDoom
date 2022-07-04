@@ -15,7 +15,6 @@
 static int PCSpeaker_Installed = 0;
 
 static char *PCSpeaker_BufferStart;
-static char *PCSpeaker_BufferEnd;
 static char *PCSpeaker_CurrentBuffer;
 static int PCSpeaker_BufferNum = 0;
 static int PCSpeaker_NumBuffers = 0;
@@ -119,7 +118,6 @@ int PCSpeaker_BeginBufferedPlayback(
     PCSpeaker_BufferStart = BufferStart;
     PCSpeaker_CurrentBuffer = BufferStart;
     PCSpeaker_SoundPtr = BufferStart;
-    PCSpeaker_BufferEnd = BufferStart + BufferSize;
     // VITI95: OPTIMIZE
     PCSpeaker_TransferLength = BufferSize / NumDivisions;
     PCSpeaker_CurrentLength = PCSpeaker_TransferLength;

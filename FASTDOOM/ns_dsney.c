@@ -27,7 +27,6 @@ static int SS_Port = SS_DefaultPort;
 static int SS_OffCommand = 0xc;
 
 static char *SS_BufferStart;
-static char *SS_BufferEnd;
 static char *SS_CurrentBuffer;
 static int SS_BufferNum = 0;
 static int SS_NumBuffers = 0;
@@ -140,7 +139,6 @@ int SS_BeginBufferedPlayback(
     SS_BufferStart = BufferStart;
     SS_CurrentBuffer = BufferStart;
     SS_SoundPtr = BufferStart;
-    SS_BufferEnd = BufferStart + BufferSize;
     // VITI95: OPTIMIZE
     SS_TransferLength = BufferSize / NumDivisions;
     SS_CurrentLength = SS_TransferLength;
