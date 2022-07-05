@@ -169,7 +169,7 @@ CODE_SYM_DEF MV_Mix8BitStereo
 
         ; Volume table ptr
         mov     ebx, [_MV_LeftVolume]
-        mov     eax, bpatch1+4
+        mov     eax, bpatch1+6
         mov     [eax],ebx
 
         mov     ebx, [_MV_RightVolume]
@@ -215,8 +215,8 @@ CODE_SYM_DEF MV_Mix8BitStereo
         align 4
 mix8Sloop:
 bpatch1:
-        movsx   eax, byte [2*ebx+0x12345678] ; volume translate left sample
         xor     edx, edx
+        movsx   eax, byte [2*ebx+0x12345678] ; volume translate left sample        
         mov     dl, byte [edi]              ; get current sample from destination
 bpatch2:
         movsx   ebx, byte [2*ebx+0x12345678] ; volume translate right sample
