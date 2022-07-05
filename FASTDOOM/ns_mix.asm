@@ -162,7 +162,7 @@ CODE_SYM_DEF MV_Mix8BitStereo
 
         ; Right channel offset
         mov     ebx, [_MV_RightChannelOffset]
-        mov     eax, bpatch6+4
+        mov     eax, bpatch6+2
         mov     [eax],ebx
         mov     eax, bpatch7+2
         mov     [eax],ebx
@@ -224,7 +224,6 @@ bpatch2:
 bpatch3:
         add     ebp, 0x12345678              ; advance frac pointer
 bpatch6:
-        xor     edx,edx
         mov     dl, byte [edi+0x12345678]   ; get current sample from destination
 bpatch4:
         mov     eax, [eax + 0x12345678]      ; harsh clip left sample
