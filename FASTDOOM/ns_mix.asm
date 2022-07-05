@@ -129,7 +129,7 @@ apatch6:
 apatch8:
         add     edi, 2                          ; move destination to third sample
         dec     ecx                             ; decrement count
-        jnz     mix8Mloop                       ; loop
+        jnz     short mix8Mloop                  ; loop
 
         mov     [_MV_MixDestination], edi       ; Store the current write position
         mov     [_MV_MixPosition], ebp          ; return position
@@ -240,7 +240,7 @@ bpatch8:
         xor     ebx, ebx
         dec     ecx                          ; decrement count
         mov     bl, byte [esi+edx]          ; get second sample
-        jnz     mix8Sloop                    ; loop
+        jnz     short mix8Sloop                    ; loop
 
         mov     [_MV_MixDestination], edi    ; Store the current write position
         mov     [_MV_MixPosition], ebp       ; return position
@@ -297,7 +297,7 @@ CODE_SYM_DEF MV_Mix16BitMono
         ; Number of samples to mix
         shr     ecx, 1                          ; double sample count
         test    ecx, ecx
-        je      exit16M
+        je      near exit16M
 
 ;     eax - scratch
 ;     ebx - scratch
@@ -425,7 +425,7 @@ CODE_SYM_DEF MV_Mix16BitStereo
 
         ; Number of samples to mix
         test     ecx, ecx
-        je      exit16S
+        je      near exit16S
 
 ;     eax - scratch
 ;     ebx - scratch

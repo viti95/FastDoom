@@ -1,6 +1,8 @@
 ; use djgpp or (Open) Watcom compatible segments and symbols?
 ; default is Watcom
 
+CPU 386
+
 %ifdef DJGPP_ASM
   %define BEGIN_CODE_SECTION segment .text public class=CODE USE32
   %define BEGIN_DATA_SECTION segment .data public class=DATA USE32

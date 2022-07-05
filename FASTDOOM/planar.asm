@@ -453,7 +453,7 @@ CODE_SYM_DEF R_DrawSpan
   add   ebx,[_ds_step]
   inc   dword [curx]
   mov   [frac],ebx  
-  jmp   .hplane
+  jmp   near .hplane
 .hdone:
   popad
   ret
@@ -601,7 +601,7 @@ CODE_SYM_DEF R_DrawSpanLow
   add   ebx,[_ds_step]
   mov   [frac],ebx
   inc   dword [curx]
-  jmp   .lplane
+  jmp   near .lplane
 .ldone:
   popad
   ret
