@@ -648,7 +648,7 @@ int GUSWAVE_StartDemandFeedPlayback(
     voice->next = NULL;
     voice->prev = NULL;
     voice->priority = priority;
-    voice->RateScale = (rate * 0x10000) >> 16;
+    voice->RateScale = rate;
 
     handle = GUSWAVE_Play(voice, angle, volume, channels);
 
