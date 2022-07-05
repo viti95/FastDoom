@@ -746,17 +746,9 @@ int MV_SetMixMode(
 
     case SoundSource:
     case TandySoundSource:
-        MV_MixMode = MONO_8BIT;
-        break;
     case PC1bit:
-        MV_MixMode = MONO_8BIT;
-        break;
     case LPTDAC:
-        MV_MixMode = MONO_8BIT;
-        break;
     case SoundBlasterDirect:
-        MV_MixMode = MONO_8BIT;
-        break;
     case AdlibFX:
         MV_MixMode = MONO_8BIT;
         break;
