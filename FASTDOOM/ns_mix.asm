@@ -50,7 +50,6 @@ CODE_SYM_DEF MV_Mix8BitMono
 
         ; Harsh Clip table ptr
         mov     ebx,[_MV_HarshClipTable]
-        add     ebx,128
         mov     eax,apatch3+2
         mov     [eax],ebx
         mov     eax, apatch4+2
@@ -182,7 +181,6 @@ CODE_SYM_DEF MV_Mix8BitStereo
 
         ; Harsh Clip table ptr
         mov     ebx, [_MV_HarshClipTable]
-        add     ebx,128
         mov     eax, bpatch4+2
         mov     [eax],ebx
         mov     eax, bpatch5+2

@@ -1091,6 +1091,8 @@ void MV_CalcVolume(
     {
         MV_CreateVolumeTable(volume, volume, MaxVolume);
     }
+
+    MV_HarshClipTable += 128;
 }
 
 /*---------------------------------------------------------------------
