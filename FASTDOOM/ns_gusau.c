@@ -544,8 +544,7 @@ playbackstatus GUSWAVE_GetNextDemandFeedBlock(
 
 int GUSWAVE_Play(
     VoiceNode *voice,
-    int angle,
-    int channels)
+    int angle)
 
 {
     int VoiceNumber;
@@ -555,10 +554,6 @@ int GUSWAVE_Play(
     int (*servicefunction)(int reason, int voice, unsigned char **buf, unsigned long *size);
 
     type = 0;
-    if (channels != 1)
-    {
-        type |= TYPE_STEREO;
-    }
 
     if (voice->bits == 8)
     {
@@ -614,10 +609,8 @@ int GUSWAVE_Play(
 
 int GUSWAVE_StartDemandFeedPlayback(
     void (*function)(char **ptr, unsigned long *length),
-    int channels,
     int bits,
     int rate,
-    int pitchoffset,
     int angle)
 
 {
@@ -644,7 +637,7 @@ int GUSWAVE_StartDemandFeedPlayback(
     voice->priority = 0xffff;
     voice->RateScale = rate;
 
-    handle = GUSWAVE_Play(voice, angle, channels);
+    handle = GUSWAVE_Play(voice, angle);
 
     return (handle);
 }
