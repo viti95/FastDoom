@@ -96,7 +96,8 @@ CODE_SYM_DEF MV_Mix8BitMono
 
         align 4
 mix8Mloop:
-        movzx   edx, byte [edi]                 ; get current sample from destination
+        xor     edx, edx
+        mov     dl, byte [edi]                  ; get current sample from destination
 apatch1:
         movsx   eax, byte [2*eax+0x12345678]    ; volume translate first sample
 apatch2:
@@ -213,7 +214,8 @@ CODE_SYM_DEF MV_Mix8BitStereo
 mix8Sloop:
 bpatch1:
         movsx   eax, byte [2*ebx+0x12345678] ; volume translate left sample
-        movzx   edx, byte [edi]              ; get current sample from destination
+        xor     edx, edx
+        mov     dl, byte [edi]              ; get current sample from destination
 bpatch2:
         movsx   ebx, byte [2*ebx+0x12345678] ; volume translate right sample
         add     eax, edx                     ; mix left sample
@@ -233,8 +235,9 @@ bpatch7:
         shr     edx, 16                      ; finish calculation for second sample
 bpatch8:
         add     edi, 2                       ; move destination to second sample
-        movzx   ebx, byte [esi+edx]          ; get second sample
+        xor     ebx, ebx
         dec     ecx                          ; decrement count
+        mov     bl, byte [esi+edx]          ; get second sample
         jnz     mix8Sloop                    ; loop
 
         mov     [_MV_MixDestination], edi    ; Store the current write position
