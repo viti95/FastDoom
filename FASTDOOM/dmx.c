@@ -212,7 +212,6 @@ void SFX_SetOrigin(int handle, int sep, int vol)
         return;
 
     MV_SetVoiceVolume(voice, vol * 2, Div63((254 - sep) * vol), Div63((sep)*vol));
-    MV_SetVoicePitch(voice, voice->SamplingRate);
 }
 int GF1_Detect(void)
 {

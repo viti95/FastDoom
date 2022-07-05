@@ -546,8 +546,6 @@ VoiceNode *MV_AllocVoice(
 
 void MV_SetVoicePitch(VoiceNode *voice, unsigned long rate)
 {
-    voice->SamplingRate = rate;
-
     switch (rate)
     {
     case 11025:

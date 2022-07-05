@@ -74,7 +74,6 @@ typedef struct VoiceNode
 
     unsigned char *sound;
     unsigned long length;
-    unsigned long SamplingRate;
     unsigned long RateScale;
     unsigned long position;
     int Playing;
