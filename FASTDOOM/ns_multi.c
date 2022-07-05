@@ -367,7 +367,7 @@ playbackstatus MV_GetNextRawBlock(
     VoiceNode *voice)
 
 {
-    if (voice->BlockLength <= 0)
+    if (voice->BlockLength == 0)
     {
         voice->Playing = FALSE;
         return (NoMoreData);
@@ -620,28 +620,19 @@ static void MV_SetVoiceMixMode(
         }
     }
 
-    // Default case
-    voice->mix = MV_Mix8BitMono;
-
     switch (test)
     {
     case T_8BITS | T_MONO:
+    case T_8BITS | T_RIGHTQUIET:
         voice->mix = MV_Mix8BitMono;
         break;
-
     case T_8BITS | T_LEFTQUIET:
         MV_LeftVolume = MV_RightVolume;
         voice->mix = MV_Mix8BitMono;
         break;
-
-    case T_8BITS | T_RIGHTQUIET:
-        voice->mix = MV_Mix8BitMono;
-        break;
-
     case T_8BITS:
         voice->mix = MV_Mix8BitStereo;
         break;
-
     default:
         voice->mix = MV_Mix8BitMono;
     }
