@@ -437,8 +437,7 @@ void GUSWAVE_SetVolume(
    Retrieve an inactive or lower priority voice for output.
 ---------------------------------------------------------------------*/
 
-static VoiceNode *GUSWAVE_AllocVoice(
-    int priority)
+static VoiceNode *GUSWAVE_AllocVoice(void)
 
 {
     VoiceNode *voice;
@@ -465,7 +464,7 @@ static VoiceNode *GUSWAVE_AllocVoice(
 
         RestoreInterrupts(flags);
 
-        if (priority >= voice->priority)
+        if (0xffff >= voice->priority)
         {
             GUSWAVE_Kill(voice->handle);
         }
@@ -546,7 +545,6 @@ playbackstatus GUSWAVE_GetNextDemandFeedBlock(
 int GUSWAVE_Play(
     VoiceNode *voice,
     int angle,
-    int volume,
     int channels)
 
 {
@@ -579,14 +577,12 @@ int GUSWAVE_Play(
 
     voice->Pan = pan;
 
-    volume = max(0, volume);
-    volume = min(255, volume);
-    voice->Volume = volume;
+    voice->Volume = 255;
 
     servicefunction = GUSWAVE_CallBack;
 
     VoiceNumber = gf1_play_digital(0, voice->sound, voice->length,
-                                   voice->mem, GUSWAVE_Volume - (255 - volume) * 4, pan,
+                                   voice->mem, GUSWAVE_Volume, pan,
                                    voice->RateScale, type, &GUS_HoldBuffer, servicefunction);
 
     if (VoiceNumber == NO_MORE_VOICES)
@@ -622,16 +618,14 @@ int GUSWAVE_StartDemandFeedPlayback(
     int bits,
     int rate,
     int pitchoffset,
-    int angle,
-    int volume,
-    int priority)
+    int angle)
 
 {
     VoiceNode *voice;
     int handle;
 
     // Request a voice from the voice pool
-    voice = GUSWAVE_AllocVoice(priority);
+    voice = GUSWAVE_AllocVoice();
     if (voice == NULL)
     {
         return (GUSWAVE_Warning);
@@ -647,10 +641,10 @@ int GUSWAVE_StartDemandFeedPlayback(
     voice->NextBlock = NULL;
     voice->next = NULL;
     voice->prev = NULL;
-    voice->priority = priority;
+    voice->priority = 0xffff;
     voice->RateScale = rate;
 
-    handle = GUSWAVE_Play(voice, angle, volume, channels);
+    handle = GUSWAVE_Play(voice, angle, channels);
 
     return (handle);
 }

@@ -813,7 +813,7 @@ int MV_StartPlayback(
     case UltraSound:
 
         status = GUSWAVE_StartDemandFeedPlayback(MV_ServiceGus, 1,
-                                                 MV_Bits, MV_RequestedMixRate, 0, (MV_Channels == 1) ? 0 : 24, 255, 0xffff);
+                                                 MV_Bits, MV_RequestedMixRate, 0, (MV_Channels == 1) ? 0 : 24);
         if (status < GUSWAVE_Ok)
         {
             return (MV_Error);
@@ -822,7 +822,7 @@ int MV_StartPlayback(
         if (MV_Channels == 2)
         {
             status = GUSWAVE_StartDemandFeedPlayback(MV_ServiceRightGus, 1,
-                                                     MV_Bits, MV_RequestedMixRate, 0, 8, 255, 0xffff);
+                                                     MV_Bits, MV_RequestedMixRate, 0, 8);
             if (status < GUSWAVE_Ok)
             {
                 GUSWAVE_KillAllVoices();
