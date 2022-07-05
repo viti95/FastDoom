@@ -38,7 +38,7 @@ CODE_SYM_DEF MV_Mix8BitMono
         mov     [eax],bl
         mov     eax,apatch8+2
         mov     [eax],bl
-        mov     eax,apatch9+4
+        mov     eax,apatch9+2
         mov     [eax],bl
 
         ; Volume table ptr
@@ -104,7 +104,6 @@ apatch2:
         movsx   ebx, byte [2*ebx+0x12345678]    ; volume translate second sample
         add     eax, edx                        ; mix first sample
 apatch9:
-        xor     edx, edx
         mov     dl, byte [edi + 1]             ; get current sample from destination
 apatch3:
         mov     eax, [eax + 0x12345678]         ; harsh clip new sample
