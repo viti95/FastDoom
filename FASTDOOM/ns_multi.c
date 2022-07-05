@@ -642,23 +642,6 @@ static void MV_SetVoiceMixMode(
         voice->mix = MV_Mix8BitStereo;
         break;
 
-    case T_MONO:
-        voice->mix = MV_Mix16BitMono;
-        break;
-
-    case T_LEFTQUIET:
-        MV_LeftVolume = MV_RightVolume;
-        voice->mix = MV_Mix16BitMono;
-        break;
-
-    case T_RIGHTQUIET:
-        voice->mix = MV_Mix16BitMono;
-        break;
-
-    case T_SIXTEENBIT_STEREO:
-        voice->mix = MV_Mix16BitStereo;
-        break;
-
     default:
         voice->mix = MV_Mix8BitMono;
     }
