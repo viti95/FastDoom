@@ -169,7 +169,7 @@ CODE_SYM_DEF MV_Mix8BitStereo
 
         ; Volume table ptr
         mov     ebx, [_MV_LeftVolume]
-        mov     eax, bpatch1+6
+        mov     eax, bpatch1+4
         mov     [eax],ebx
 
         mov     ebx, [_MV_RightVolume]
@@ -212,10 +212,11 @@ CODE_SYM_DEF MV_Mix8BitStereo
         shr     eax,16                      ; finish calculation for first sample
         mov     bl, byte [esi+eax]          ; get first sample
 
+        xor     edx, edx
+
         align 4
 mix8Sloop:
 bpatch1:
-        xor     edx, edx
         movsx   eax, byte [2*ebx+0x12345678] ; volume translate left sample        
         mov     dl, byte [edi]              ; get current sample from destination
 bpatch2:
@@ -231,15 +232,15 @@ bpatch4:
         mov     [edi], al                    ; write left sample to destination
 bpatch5:
         mov     ebx, [ebx + 0x12345678]      ; harsh clip right sample
-        mov     edx, ebp                     ; begin calculating second sample
+        mov     eax, ebp                     ; begin calculating second sample
 bpatch7:
         mov     [edi+0x12345678], bl         ; write right sample to destination
-        shr     edx, 16                      ; finish calculation for second sample
+        shr     eax, 16                      ; finish calculation for second sample
 bpatch8:
         add     edi, 2                       ; move destination to second sample
         xor     ebx, ebx
         dec     ecx                          ; decrement count
-        mov     bl, byte [esi+edx]          ; get second sample
+        mov     bl, byte [esi+eax]          ; get second sample
         jnz     short mix8Sloop                    ; loop
 
         mov     [_MV_MixDestination], edi    ; Store the current write position
