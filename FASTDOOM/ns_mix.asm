@@ -123,8 +123,10 @@ apatch7:
         mov     [edi], bl                       ; write new sample to destination
 apatch6:
         add     ebp, 0x12345678                 ; advance frac pointer
-        movzx   ebx, byte [esi+eax]             ; get fourth sample
-        movzx   eax, byte [esi+edx]             ; get third sample
+        xor     ebx, ebx
+        mov     bl, byte [esi+eax]              ; get fourth sample
+        xor     eax, eax
+        mov     al, byte [esi+edx]             ; get third sample
 apatch8:
         add     edi, 2                          ; move destination to third sample
         dec     ecx                             ; decrement count
@@ -161,7 +163,7 @@ CODE_SYM_DEF MV_Mix8BitStereo
 
         ; Right channel offset
         mov     ebx, [_MV_RightChannelOffset]
-        mov     eax, bpatch6+3
+        mov     eax, bpatch6+4
         mov     [eax],ebx
         mov     eax, bpatch7+2
         mov     [eax],ebx
@@ -223,7 +225,8 @@ bpatch2:
 bpatch3:
         add     ebp, 0x12345678              ; advance frac pointer
 bpatch6:
-        movzx   edx, byte [edi+0x12345678]   ; get current sample from destination
+        xor     edx,edx
+        mov     dl, byte [edi+0x12345678]   ; get current sample from destination
 bpatch4:
         mov     eax, [eax + 0x12345678]      ; harsh clip left sample
         add     ebx, edx                     ; mix right sample
