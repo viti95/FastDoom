@@ -596,11 +596,7 @@ static void MV_SetVoiceMixMode(
 
     flags = DisableInterrupts();
 
-    test = T_DEFAULT;
-    if (MV_Bits == 8)
-    {
-        test |= T_8BITS;
-    }
+    test = T_DEFAULT | T_8BITS;
 
     if (MV_Channels == 1)
     {
@@ -618,6 +614,10 @@ static void MV_SetVoiceMixMode(
         }
     }
 
+    if (MV_SoundCard == UltraSound){
+        test |= T_ULTRASOUND;
+    }
+
     switch (test)
     {
     case T_8BITS | T_MONO:
@@ -632,7 +632,8 @@ static void MV_SetVoiceMixMode(
         voice->mix = MV_Mix8BitStereo;
         break;
     default:
-        voice->mix = MV_Mix8BitMono;
+        // Ultrasound
+        voice->mix = MV_Mix8BitUltrasound;
     }
 
     RestoreInterrupts(flags);

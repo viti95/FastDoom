@@ -32,15 +32,6 @@ CODE_SYM_DEF MV_Mix8BitMono
 
         mov     esi, ebx ; Source pointer
 
-        ; Sample size
-        mov     ebx,[_MV_SampleSize]
-        mov     eax,apatch7+2
-        mov     [eax],bl
-        mov     eax,apatch8+2
-        mov     [eax],bl
-        mov     eax,apatch9+2
-        mov     [eax],bl
-
         ; Volume table ptr
         mov     ebx,[_MV_LeftVolume] ; Since we're mono, use left volume
         mov     eax,apatch1+4
@@ -102,7 +93,6 @@ apatch1:
 apatch2:
         movsx   ebx, byte [2*ebx+0x12345678]    ; volume translate second sample
         add     eax, edx                        ; mix first sample
-apatch9:
         mov     dl, byte [edi + 1]             ; get current sample from destination
 apatch3:
         mov     eax, [eax + 0x12345678]         ; harsh clip new sample
@@ -115,7 +105,6 @@ apatch5:
         add     ebp, 0x12345678                 ; advance frac pointer
         shr     edx, 16                         ; finish calculation for third sample
         mov     eax, ebp                        ; begin calculating fourth sample
-apatch7:
         add     edi, 1                          ; move destination to second sample
         shr     eax, 16                         ; finish calculation for fourth sample
         mov     [edi], bl                       ; write new sample to destination
@@ -125,8 +114,7 @@ apatch6:
         mov     bl, byte [esi+eax]              ; get fourth sample
         xor     eax, eax
         mov     al, byte [esi+edx]             ; get third sample
-apatch8:
-        add     edi, 2                          ; move destination to third sample
+        add     edi, 1                          ; move destination to third sample
         dec     ecx                             ; decrement count
         jnz     short mix8Mloop                  ; loop
 
@@ -153,11 +141,6 @@ CODE_SYM_DEF MV_Mix8BitStereo
         mov     ebp, eax
 
         mov     esi, ebx ; Source pointer
-
-        ; Sample size
-        mov     ebx, [_MV_SampleSize]
-        mov     eax, bpatch8+2
-        mov     [eax],bl
 
         ; Right channel offset
         mov     ebx, [_MV_RightChannelOffset]
@@ -234,7 +217,6 @@ bpatch5:
 bpatch7:
         mov     [edi+0x12345678], bl         ; write right sample to destination
         shr     eax, 16                      ; finish calculation for second sample
-bpatch8:
         add     edi, 2                       ; move destination to second sample
         xor     ebx, ebx
         dec     ecx                          ; decrement count
@@ -245,5 +227,110 @@ bpatch8:
         mov     [_MV_MixPosition], ebp       ; return position
 
 exit8S:
+        popad
+        ret
+
+;================
+;
+; MV_Mix8BitStereo
+;
+;================
+
+; eax - position
+; edx - rate
+; ebx - start
+; ecx - number of samples to mix
+
+CODE_SYM_DEF MV_Mix8BitUltrasound
+        pushad
+        mov     ebp, eax
+
+        mov     esi, ebx ; Source pointer
+
+        ; Right channel offset
+        mov     ebx, [_MV_RightChannelOffset]
+        mov     eax, cpatch6+2
+        mov     [eax],ebx
+        mov     eax, cpatch7+2
+        mov     [eax],ebx
+
+        ; Volume table ptr
+        mov     ebx, [_MV_LeftVolume]
+        mov     eax, cpatch1+4
+        mov     [eax],ebx
+
+        mov     ebx, [_MV_RightVolume]
+        mov     eax, cpatch2+4
+        mov     [eax],ebx
+
+        ; Rate scale ptr
+        mov     eax, cpatch3+2
+        mov     [eax],edx
+
+        ; Harsh Clip table ptr
+        mov     ebx, [_MV_HarshClipTable]
+        mov     eax, cpatch4+2
+        mov     [eax],ebx
+        mov     eax, cpatch5+2
+        mov     [eax],ebx
+
+        mov     edi, [_MV_MixDestination] ; Get the position to write to
+
+        ; Number of samples to mix
+        test    ecx, ecx
+        je      short exit8S
+
+;     eax - scratch
+;     ebx - scratch
+;     edx - scratch
+;     ecx - count
+;     edi - destination
+;     esi - source
+;     ebp - frac pointer
+; bpatch1 - left volume table
+; bpatch2 - right volume table
+; bpatch3 - sample rate
+; bpatch4 - harsh clip table
+; bpatch5 - harsh clip table
+
+        mov     eax,ebp                     ; begin calculating first sample
+        xor     ebx,ebx
+        shr     eax,16                      ; finish calculation for first sample
+        mov     bl, byte [esi+eax]          ; get first sample
+
+        xor     edx, edx
+
+        align 4
+mix8Uloop:
+cpatch1:
+        movsx   eax, byte [2*ebx+0x12345678] ; volume translate left sample        
+        mov     dl, byte [edi]              ; get current sample from destination
+cpatch2:
+        movsx   ebx, byte [2*ebx+0x12345678] ; volume translate right sample
+        add     eax, edx                     ; mix left sample
+cpatch3:
+        add     ebp, 0x12345678              ; advance frac pointer
+cpatch6:
+        mov     dl, byte [edi+0x12345678]   ; get current sample from destination
+cpatch4:
+        mov     eax, [eax + 0x12345678]      ; harsh clip left sample
+        add     ebx, edx                     ; mix right sample
+        mov     [edi], al                    ; write left sample to destination
+cpatch5:
+        mov     ebx, [ebx + 0x12345678]      ; harsh clip right sample
+        mov     eax, ebp                     ; begin calculating second sample
+cpatch7:
+        mov     [edi+0x12345678], bl         ; write right sample to destination
+        shr     eax, 16                      ; finish calculation for second sample
+        add     edi, 1                       ; move destination to second sample
+        xor     ebx, ebx
+        dec     ecx                          ; decrement count
+        mov     bl, byte [esi+eax]          ; get second sample
+        jnz     short mix8Uloop                    ; loop
+
+        mov     [_MV_MixDestination], edi    ; Store the current write position
+        mov     [_MV_MixPosition], ebp       ; return position
+
+exit8U:
         popad
         ret

@@ -19,6 +19,7 @@
 #define T_16BITSOURCE 4
 #define T_LEFTQUIET 8
 #define T_RIGHTQUIET 16
+#define T_ULTRASOUND 32
 #define T_DEFAULT T_SIXTEENBIT_STEREO
 
 #define MV_MaxPanPosition 31
@@ -161,10 +162,8 @@ void ClearBuffer_DW(void *ptr, unsigned data, int length);
             "pop    es",     \
             parm[edi][eax][ecx] modify exact[ecx edi];
 
-void MV_Mix8BitMono(unsigned long position, unsigned long rate,
-                    unsigned char *start, unsigned long length);
-
-void MV_Mix8BitStereo(unsigned long position,
-                      unsigned long rate, unsigned char *start, unsigned long length);
+void MV_Mix8BitMono(unsigned long position, unsigned long rate, unsigned char *start, unsigned long length);
+void MV_Mix8BitStereo(unsigned long position, unsigned long rate, unsigned char *start, unsigned long length);
+void MV_Mix8BitUltrasound(unsigned long position, unsigned long rate, unsigned char *start, unsigned long length);
 
 #endif
