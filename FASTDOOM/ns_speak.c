@@ -39,8 +39,7 @@ static void PCSpeaker_ServiceInterrupt(task *Task)
 {
     if (*PCSpeaker_SoundPtr > -128)
     {
-        unsigned short valueComp = ((unsigned short)*PCSpeaker_SoundPtr) + 128;
-        unsigned char value = (unsigned char) valueComp;
+        unsigned char value = (unsigned char) *PCSpeaker_SoundPtr;
         value >>= 6;
         value &= 2;
 
