@@ -105,7 +105,7 @@ apatch5:
         add     ebp, 0x12345678                 ; advance frac pointer
         shr     edx, 16                         ; finish calculation for third sample
         mov     eax, ebp                        ; begin calculating fourth sample
-        add     edi, 1                          ; move destination to second sample
+        inc     edi                             ; move destination to second sample
         shr     eax, 16                         ; finish calculation for fourth sample
         mov     [edi], bl                       ; write new sample to destination
 apatch6:
@@ -114,7 +114,7 @@ apatch6:
         mov     bl, byte [esi+eax]              ; get fourth sample
         xor     eax, eax
         mov     al, byte [esi+edx]             ; get third sample
-        add     edi, 1                          ; move destination to third sample
+        inc     edi                             ; move destination to third sample
         dec     ecx                             ; decrement count
         jnz     short mix8Mloop                  ; loop
 
@@ -322,7 +322,7 @@ cpatch5:
 cpatch7:
         mov     [edi+0x12345678], bl         ; write right sample to destination
         shr     eax, 16                      ; finish calculation for second sample
-        add     edi, 1                       ; move destination to second sample
+        inc     edi                          ; move destination to second sample
         xor     ebx, ebx
         dec     ecx                          ; decrement count
         mov     bl, byte [esi+eax]          ; get second sample
