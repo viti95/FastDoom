@@ -41,15 +41,15 @@ CODE_SYM_DEF MV_Mix8BitMono
 
         ; Harsh Clip table ptr
         mov     ebx,[_MV_HarshClipTable]
-        mov     eax,apatch3+2
+        mov     eax,apatch3+3
         mov     [eax],ebx
-        mov     eax, apatch4+2
+        mov     eax,apatch4+3
         mov     [eax],ebx
 
         ; Rate scale ptr
-        mov     eax, apatch5+2
+        mov     eax,apatch5+2
         mov     [eax],edx
-        mov     eax, apatch6+2
+        mov     eax,apatch6+2
         mov     [eax],edx
 
         mov     edi,[_MV_MixDestination] ; Get the position to write to
@@ -84,39 +84,38 @@ CODE_SYM_DEF MV_Mix8BitMono
         movzx   eax, byte [esi+eax]             ; get first sample
         movzx   ebx, byte [esi+ebx]             ; get second sample
 
+        xor     edx, edx
+
         align 4
 mix8Mloop:
-        xor     edx, edx
         mov     dl, byte [edi]                  ; get current sample from destination
 apatch1:
         movsx   eax, byte [2*eax+0x12345678]    ; volume translate first sample
 apatch2:
         movsx   ebx, byte [2*ebx+0x12345678]    ; volume translate second sample
-        add     eax, edx                        ; mix first sample
-        mov     dl, byte [edi + 1]             ; get current sample from destination
 apatch3:
-        mov     eax, [eax + 0x12345678]         ; harsh clip new sample
-        add     ebx, edx                        ; mix second sample
-        mov     [edi], al                       ; write new sample to destination
-        mov     edx, ebp                        ; begin calculating third sample
+        mov     eax, [eax + edx + 0x12345678]   ; mix first sample + harsh clip new sample
+        mov     dl, byte [edi + 1]              ; get current sample from destination
+        mov     [edi], al                       ; write new sample to destination        
+        inc     edi                             ; move destination to second sample
 apatch4:
-        mov     ebx, [ebx + 0x12345678]         ; harsh clip new sample
+        mov     ebx, [ebx + edx + 0x12345678]   ; mix second sample + harsh clip new sample
+        mov     eax, ebp                        ; begin calculating third sample
+        mov     [edi], bl                       ; write new sample to destination
+        shr     eax, 16                         ; finish calculation for third sample        
 apatch5:
         add     ebp, 0x12345678                 ; advance frac pointer
-        shr     edx, 16                         ; finish calculation for third sample
-        mov     eax, ebp                        ; begin calculating fourth sample
-        inc     edi                             ; move destination to second sample
-        shr     eax, 16                         ; finish calculation for fourth sample
-        mov     [edi], bl                       ; write new sample to destination
+        mov     al, byte [esi+eax]              ; get third sample
+        mov     ebx, ebp                        ; begin calculating fourth sample
+        and     eax, 0x000000FF
+        shr     ebx, 16                         ; finish calculation for fourth sample
 apatch6:
         add     ebp, 0x12345678                 ; advance frac pointer
-        xor     ebx, ebx
-        mov     bl, byte [esi+eax]              ; get fourth sample
-        xor     eax, eax
-        mov     al, byte [esi+edx]             ; get third sample
+        mov     bl, byte [esi+ebx]              ; get fourth sample
         inc     edi                             ; move destination to third sample
+        and     ebx, 0x000000FF
         dec     ecx                             ; decrement count
-        jnz     short mix8Mloop                  ; loop
+        jnz     short mix8Mloop                 ; loop
 
         mov     [_MV_MixDestination], edi       ; Store the current write position
         mov     [_MV_MixPosition], ebp          ; return position
