@@ -37,29 +37,12 @@ void (*PCSpeaker_CallBack)(void);
 
 static void PCSpeaker_ServiceInterrupt(task *Task)
 {
-    if (*PCSpeaker_SoundPtr > -128)
-    {
-        unsigned char value = (unsigned char) *PCSpeaker_SoundPtr;
-        value >>= 6;
-        value &= 2;
+    unsigned char value = (unsigned char) *PCSpeaker_SoundPtr;
 
-        // Turn on
-        outp(0x61, (inp(0x61) & 0xFC) | value);
-    }
-    else
-    {
-        // Turn off
-        outp(0x61, inp(0x61) & 0xFC);
-    }
-
-    // PWM code. Now works well. Except for that background whistle.
-
-    /*unsigned char value = (unsigned char) *PCSpeaker_SoundPtr;
-
-    outp(0x43, 0xb0);
+    outp(0x43, 0xB0);
     outp(0x42, value >> 1);
     outp(0x42, 0);
-    outp(0x61, inp(0x61) | 0x3);*/
+    outp(0x61, inp(0x61) | 0x3);
 
     PCSpeaker_SoundPtr++;
 
