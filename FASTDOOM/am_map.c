@@ -1316,7 +1316,14 @@ void AM_Drawer(void)
 
 #endif
 
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-	V_MarkRect(0, 0, SCREENWIDTH, automapheight);
+#ifdef SUPPORTS_HERCULES_AUTOMAP
+	#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+		if(!HERCmap)
+			V_MarkRect(0, 0, SCREENWIDTH, automapheight);
+	#endif
+#else
+	#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+		V_MarkRect(0, 0, SCREENWIDTH, automapheight);
+	#endif
 #endif
 }
