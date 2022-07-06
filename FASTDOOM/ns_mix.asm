@@ -105,15 +105,13 @@ apatch4:
         shr     eax, 16                         ; finish calculation for third sample        
 apatch5:
         add     ebp, 0x12345678                 ; advance frac pointer
-        mov     al, byte [esi+eax]              ; get third sample
+        movzx   eax, byte [esi+eax]              ; get third sample
         mov     ebx, ebp                        ; begin calculating fourth sample
-        and     eax, 0x000000FF
         shr     ebx, 16                         ; finish calculation for fourth sample
 apatch6:
         add     ebp, 0x12345678                 ; advance frac pointer
-        mov     bl, byte [esi+ebx]              ; get fourth sample
+        movzx   ebx, byte [esi+ebx]              ; get fourth sample
         inc     edi                             ; move destination to third sample
-        and     ebx, 0x000000FF
         dec     ecx                             ; decrement count
         jnz     short mix8Mloop                 ; loop
 
@@ -196,9 +194,9 @@ CODE_SYM_DEF MV_Mix8BitStereo
 
         align 4
 mix8Sloop:
+        mov     dl, byte [edi]              ; get current sample from destination
 bpatch1:
         movsx   eax, byte [2*ebx+0x12345678] ; volume translate left sample        
-        mov     dl, byte [edi]              ; get current sample from destination
 bpatch2:
         movsx   ebx, byte [2*ebx+0x12345678] ; volume translate right sample
         add     eax, edx                     ; mix left sample
@@ -217,9 +215,8 @@ bpatch7:
         mov     [edi+0x12345678], bl         ; write right sample to destination
         shr     eax, 16                      ; finish calculation for second sample
         add     edi, 2                       ; move destination to second sample
-        xor     ebx, ebx
         dec     ecx                          ; decrement count
-        mov     bl, byte [esi+eax]          ; get second sample
+        movzx   ebx, byte [esi+eax]          ; get second sample
         jnz     short mix8Sloop                    ; loop
 
         mov     [_MV_MixDestination], edi    ; Store the current write position
@@ -301,9 +298,9 @@ CODE_SYM_DEF MV_Mix8BitUltrasound
 
         align 4
 mix8Uloop:
+        mov     dl, byte [edi]              ; get current sample from destination
 cpatch1:
         movsx   eax, byte [2*ebx+0x12345678] ; volume translate left sample        
-        mov     dl, byte [edi]              ; get current sample from destination
 cpatch2:
         movsx   ebx, byte [2*ebx+0x12345678] ; volume translate right sample
         add     eax, edx                     ; mix left sample
@@ -322,9 +319,8 @@ cpatch7:
         mov     [edi+0x12345678], bl         ; write right sample to destination
         shr     eax, 16                      ; finish calculation for second sample
         inc     edi                          ; move destination to second sample
-        xor     ebx, ebx
         dec     ecx                          ; decrement count
-        mov     bl, byte [esi+eax]          ; get second sample
+        movzx   ebx, byte [esi+eax]          ; get second sample
         jnz     short mix8Uloop                    ; loop
 
         mov     [_MV_MixDestination], edi    ; Store the current write position
