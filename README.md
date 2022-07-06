@@ -14,6 +14,8 @@ Doom port for DOS, based on PCDoom by @nukeykt. The goal of this port is to make
 * New mode for PC Speaker (digitized sound!)
 * Disney Sound Source support
 * COVOX LPT DAC support
+* Adlib OPL2 PCM support
+* Hercules automap support
 * Lot's of optimizations to make the game run faster / smoother
 * Removed low memory limit (may cause crashes with low RAM)
 * NEW DETAIL LEVEL: POTATO. It renders the full scene with a quarter width resolution (max 80x200). 8-bit and 16-bit ISA video cards can play the game full screen much better!! My Western Digital Paradise PVGA1A ISA (1989) can render the game at a constant >25 fps with a 486DX-50

@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.8.15 (06 Jul 2022)
+* Added Adlib PCM support (yeah that OPL2 can do that)
+* Optimizations in sound code
+* "Better" quality PC Speaker (1-bit)
+* Fixed Hercules automap on modes Y and VBD
 ## 0.8.14 (16 Jun 2022)
 * Performance uplift, avoid AGI stalls on column and visplane rendering code (486). Also small optimizations in sound code.
 * Dual screen support. Now it's possible to use an Hercules card/monitor to render the automap. Use the command line parameter '-hercmap'.
