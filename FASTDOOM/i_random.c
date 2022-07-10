@@ -1,4 +1,5 @@
 #include "i_random.h"
+#include "options.h"
 
 byte rndtable[256] = {
     0, 8, 109, 220, 222, 241, 149, 107, 75, 248, 254, 140, 16, 66,

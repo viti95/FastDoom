@@ -22,7 +22,7 @@
 
 // Needed for FRACUNIT.
 #include "doomdef.h"
-
+#include "options.h"
 // Needed for Flat retrieval.
 #include "r_data.h"
 #include "r_sky.h"

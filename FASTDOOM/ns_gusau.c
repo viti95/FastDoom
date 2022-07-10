@@ -10,6 +10,7 @@
 #include "ns_gf1.h"
 #include "ns_gusmi.h"
 #include "ns_gusau.h"
+#include "options.h"
 
 static const int GUSWAVE_PanTable[32] =
     {

@@ -8,6 +8,7 @@
 #include "ns_inter.h"
 #include "ns_gf1.h"
 #include "ns_gusmi.h"
+#include "options.h"
 
 #define TRUE (1 == 1)
 #define FALSE (!TRUE)

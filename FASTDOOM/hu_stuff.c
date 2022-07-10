@@ -36,6 +36,8 @@
 #include "dstrings.h"
 #include "sounds.h"
 
+#include "options.h"
+
 //
 // Locally used constants, shortcuts.
 //

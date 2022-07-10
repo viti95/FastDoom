@@ -46,6 +46,8 @@
 #include "m_misc.h"
 #include "m_menu.h"
 
+#include "options.h"
+
 int myargc;
 char **myargv;
 

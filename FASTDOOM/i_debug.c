@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "doomtype.h"
 #include "fastmath.h"
+#include "options.h"
 
 #define COLOURS 0xFF
 #define COLS 80

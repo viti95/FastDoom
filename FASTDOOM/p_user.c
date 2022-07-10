@@ -20,7 +20,7 @@
 
 #include "doomdef.h"
 #include "d_event.h"
-
+#include "options.h"
 #include "p_local.h"
 
 #include "doomstat.h"

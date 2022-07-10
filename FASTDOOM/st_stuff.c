@@ -19,7 +19,7 @@
 //
 
 #include <stdio.h>
-
+#include "options.h"
 #include "i_random.h"
 
 #include "i_system.h"

@@ -2,6 +2,7 @@
 
 #include <stddef.h>
 #include "ns_llm.h"
+#include "options.h"
 
 #define OFFSET(structure, offset) \
     (*((char **)&(structure)[offset]))

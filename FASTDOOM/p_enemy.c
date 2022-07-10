@@ -21,7 +21,7 @@
 #include <stdlib.h>
 
 #include "i_random.h"
-
+#include "options.h"
 #include "m_misc.h"
 #include "i_system.h"
 

@@ -17,7 +17,7 @@
 //
 
 #include <string.h>
-
+#include "options.h"
 #include "doomdef.h"
 
 #include "m_misc.h"

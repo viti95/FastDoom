@@ -17,7 +17,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
+#include "options.h"
 #include "i_system.h"
 #include "i_sound.h"
 #include "sounds.h"

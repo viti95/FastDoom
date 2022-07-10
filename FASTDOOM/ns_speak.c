@@ -9,7 +9,7 @@
 #include "ns_muldf.h"
 
 #include "m_misc.h"
-
+#include "options.h"
 #include "doomstat.h"
 
 static int PCSpeaker_Installed = 0;

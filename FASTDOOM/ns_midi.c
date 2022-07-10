@@ -12,7 +12,7 @@
 #include "ns_music.h"
 #include "ns_midi.h"
 #include "ns_midif.h"
-
+#include "options.h"
 #include "fastmath.h"
 
 extern int MUSIC_SoundDevice;

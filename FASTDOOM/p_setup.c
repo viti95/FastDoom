@@ -21,7 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include "options.h"
 #include "z_zone.h"
 
 #include "m_misc.h"

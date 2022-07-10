@@ -19,7 +19,7 @@
 #include "dutils.h"
 #include "i_system.h"
 #include "z_zone.h"
-
+#include "options.h"
 #include "doomstat.h"
 
 //

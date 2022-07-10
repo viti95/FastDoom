@@ -20,7 +20,7 @@
 #include "ns_lpt.h"
 #include "ns_sbdm.h"
 #include "ns_adbfx.h"
-
+#include "options.h"
 #include "fastmath.h"
 
 #define RoundFixed(fixedval, bits)             \

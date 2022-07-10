@@ -3,6 +3,7 @@
 #include <malloc.h>
 #include <conio.h>
 #include <string.h>
+#include "options.h"
 
 /*-----------------05-14-97 05:19pm-----------------
   *

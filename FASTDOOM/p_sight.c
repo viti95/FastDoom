@@ -17,7 +17,7 @@
 //
 
 #include <stdlib.h>
-
+#include "options.h"
 #include "doomdef.h"
 
 #include "i_system.h"

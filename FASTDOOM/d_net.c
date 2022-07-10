@@ -23,6 +23,7 @@
 #include "doomdef.h"
 #include "doomstat.h"
 #include "d_main.h"
+#include "options.h"
 
 //
 // NETWORKING

@@ -27,7 +27,7 @@
 
 #include "doomstat.h"
 
-
+#include "options.h"
 
 // boolean : whether the screen is always erased
 #define noterased viewwindowx

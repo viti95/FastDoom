@@ -18,7 +18,7 @@
 //
 
 #include "doomstat.h"
-
+#include "options.h"
 #include "i_random.h"
 
 #include "z_zone.h"

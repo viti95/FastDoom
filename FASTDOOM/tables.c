@@ -31,6 +31,7 @@
 //
 
 #include "tables.h"
+#include "options.h"
 
 const fixed_t finetangent[4096] =
     {

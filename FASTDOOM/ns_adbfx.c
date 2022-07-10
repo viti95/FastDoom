@@ -17,6 +17,8 @@
 
 #include "doomstat.h"
 
+#include "options.h"
+
 static int ADBFX_Installed = 0;
 
 static char *ADBFX_BufferStart;

@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <conio.h>
-
+#include "options.h"
 #include "doomdef.h"
 #include "doomstat.h"
 #include "d_net.h"

@@ -19,7 +19,7 @@
 #include <stdlib.h>
 
 #include "i_system.h"
-
+#include "options.h"
 #include "doomdef.h"
 #include "doomstat.h"
 

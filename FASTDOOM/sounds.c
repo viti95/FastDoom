@@ -19,6 +19,7 @@
 
 #include "doomtype.h"
 #include "sounds.h"
+#include "options.h"
 
 //
 // Information about all the music

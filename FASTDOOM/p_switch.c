@@ -19,7 +19,7 @@
 #include "i_system.h"
 #include "doomdef.h"
 #include "p_local.h"
-
+#include "options.h"
 #include "g_game.h"
 
 #include "s_sound.h"

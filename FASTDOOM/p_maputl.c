@@ -20,7 +20,7 @@
 //
 
 #include <stdlib.h>
-
+#include "options.h"
 #include "m_misc.h"
 
 #include "doomdef.h"

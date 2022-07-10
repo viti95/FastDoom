@@ -18,7 +18,7 @@
 //
 
 #include <string.h>
-
+#include "options.h"
 #include "i_random.h"
 
 #include "doomdef.h"

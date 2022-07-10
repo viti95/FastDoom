@@ -64,6 +64,8 @@
 
 #include "sizeopt.h"
 
+#include "options.h"
+
 #define BGCOLOR 7
 #define FGCOLOR 8
 

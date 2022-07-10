@@ -13,6 +13,7 @@
 #include "ns_user.h"
 #include "ns_fxm.h"
 #include "ns_adbfx.h"
+#include "options.h"
 
 #define TRUE (1 == 1)
 #define FALSE (!TRUE)

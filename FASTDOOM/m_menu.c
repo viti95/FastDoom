@@ -52,7 +52,7 @@
 
 #include "m_menu.h"
 
-
+#include "options.h"
 
 extern patch_t *hu_font[HU_FONTSIZE];
 extern byte message_dontfuckwithme;

@@ -32,6 +32,8 @@
 
 #include <conio.h>
 
+#include "options.h"
+
 #define BYTE0_USHORT(value)  (((unsigned char *)&value)[0])
 #define BYTE1_USHORT(value)  (((unsigned char *)&value)[1])
 

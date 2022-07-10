@@ -20,7 +20,7 @@
 
 #include <conio.h>
 #include "doomdef.h"
-
+#include "options.h"
 #include "i_system.h"
 #include "i_ibm.h"
 #include "z_zone.h"

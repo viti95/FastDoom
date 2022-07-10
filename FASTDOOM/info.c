@@ -28,6 +28,8 @@
 
 #include "p_mobj.h"
 
+#include "options.h"
+
 // Doesn't work with g++, needs actionf_p1
 void A_Light0();
 void A_WeaponReady();

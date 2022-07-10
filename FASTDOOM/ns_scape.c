@@ -11,6 +11,7 @@
 #include "ns_scape.h"
 #include "ns_scdef.h"
 #include "ns_muldf.h"
+#include "options.h"
 
 const int SOUNDSCAPE_Interrupts[SOUNDSCAPE_MaxIrq + 1] =
     {

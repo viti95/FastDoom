@@ -2,6 +2,7 @@
 #include <conio.h>
 #include <stdlib.h>
 #include "ns_dma.h"
+#include "options.h"
 
 #define DMA_MaxChannel 7
 

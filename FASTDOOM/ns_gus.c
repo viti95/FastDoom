@@ -9,6 +9,7 @@
 #include "ns_gusmi.h"
 #include "ns_gusau.h"
 #include "ns_gusdf.h"
+#include "options.h"
 
 // size of DMA buffer for patch loading
 #define DMABUFFSIZE 2048U

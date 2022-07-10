@@ -4,6 +4,7 @@
 #include "ns_sb.h"
 #include "ns_ctawe.h"
 #include "ns_awe32.h"
+#include "options.h"
 
 #define _inp inp
 #define _outp outp

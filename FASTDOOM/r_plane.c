@@ -20,7 +20,7 @@
 
 #include <string.h>
 #include <stdlib.h>
-
+#include "options.h"
 #include "i_system.h"
 #include "i_ibm.h"
 #include "z_zone.h"

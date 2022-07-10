@@ -21,7 +21,7 @@
 #include <conio.h>
 #include "i_system.h"
 #include "r_local.h"
-
+#include "options.h"
 #include "doomdef.h"
 #include "doomdata.h"
 #include "doomstat.h"

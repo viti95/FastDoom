@@ -16,7 +16,7 @@
 //	The status bar widget code.
 //
 #include "std_func.h"
-
+#include "options.h"
 #include "doomdef.h"
 
 #include "z_zone.h"

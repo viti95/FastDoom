@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include "ns_usrho.h"
+#include "options.h"
 
 int USRHOOKS_GetMem(
     void **ptr,

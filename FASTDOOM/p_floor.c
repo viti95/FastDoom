@@ -17,7 +17,7 @@
 //
 
 #include <string.h>
-
+#include "options.h"
 #include "z_zone.h"
 #include "doomdef.h"
 #include "p_local.h"

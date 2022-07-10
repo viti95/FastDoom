@@ -12,6 +12,7 @@
 #include "ns_inter.h"
 #include "ns_ll.h"
 #include "ns_task.h"
+#include "options.h"
 
 #ifdef USESTACK
 #include "ns_dpmi.h"

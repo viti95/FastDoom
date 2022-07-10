@@ -23,6 +23,8 @@
 
 #include "mus2mid.h"
 
+#include "options.h"
+
 #define NUM_CHANNELS 16
 
 #define MIDI_PERCUSSION_CHAN 9

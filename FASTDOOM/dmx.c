@@ -32,6 +32,7 @@
 #include "ns_muldf.h"
 #include "i_sound.h"
 #include "m_misc.h"
+#include "options.h"
 
 typedef struct
 {
@@ -178,7 +179,7 @@ int SFX_PlayPatch(void *vdata, int sep, int vol)
         }
         len -= 32;
 
-        return FX_PlayRaw(data + 24, len, rate, vol * 2, Div63((254 - sep) * vol), Div63((sep)*vol), 100);
+        return MV_PlayRaw(data + 24, len, rate, vol * 2, Div63((254 - sep) * vol), Div63((sep)*vol), 100);
     }
 
     return -1;

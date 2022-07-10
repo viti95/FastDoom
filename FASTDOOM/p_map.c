@@ -18,7 +18,7 @@
 //
 
 #include <stdlib.h>
-
+#include "options.h"
 #include "i_random.h"
 
 #include "m_misc.h"

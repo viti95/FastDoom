@@ -19,7 +19,7 @@
 
 #include <string.h>
 #include <stdio.h>
-
+#include "options.h"
 #include "i_system.h"
 #include "z_zone.h"
 

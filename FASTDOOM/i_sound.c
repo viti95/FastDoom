@@ -36,6 +36,8 @@
 #include "ns_task.h"
 #include "ns_music.h"
 
+#include "options.h"
+
 //
 // I_StartupTimer
 //

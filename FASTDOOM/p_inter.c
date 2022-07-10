@@ -22,7 +22,7 @@
 #include "doomdef.h"
 #include "dstrings.h"
 #include "sounds.h"
-
+#include "options.h"
 #include "doomstat.h"
 
 #include "i_random.h"

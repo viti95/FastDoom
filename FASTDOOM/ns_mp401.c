@@ -4,6 +4,7 @@
 #include "ns_dpmi.h"
 #include "ns_user.h"
 #include "ns_mp401.h"
+#include "options.h"
 
 #define MIDI_NOTE_OFF 0x80
 #define MIDI_NOTE_ON 0x90

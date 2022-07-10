@@ -10,6 +10,7 @@
 #include "ns_sb.h"
 #include "ns_sbdef.h"
 #include "ns_muldf.h"
+#include "options.h"
 
 const int BLASTER_Interrupts[BLASTER_MaxIrq + 1] =
     {

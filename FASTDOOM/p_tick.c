@@ -19,7 +19,7 @@
 
 #include "z_zone.h"
 #include "p_local.h"
-
+#include "options.h"
 #include "doomstat.h"
 
 int leveltime;

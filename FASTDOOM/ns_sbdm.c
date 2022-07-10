@@ -11,7 +11,7 @@
 #include "ns_muldf.h"
 
 #include "m_misc.h"
-
+#include "options.h"
 #include "doomstat.h"
 
 static int SBDM_Installed = 0;

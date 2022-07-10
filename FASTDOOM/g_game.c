@@ -63,6 +63,8 @@
 
 #include "s_sound.h"
 
+#include "options.h"
+
 #define SAVEGAMESIZE 0x2c000
 #define SAVESTRINGSIZE 24
 

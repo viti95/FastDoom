@@ -43,79 +43,79 @@ if "%2"=="MDA" GOTO mode_mda
 :mode_13h
 set base=fdoom13h.exe
 set executable=fdoom13h.exe
-set options=/dMODE_13H /dUSE_BACKBUFFER
+set options=/dMODE_13H
 goto compile_mode
 
 :mode_ati
 set base=fdoom13h.exe
 set executable=fdoomati.exe
-set options=/dMODE_ATI640 /dUSE_BACKBUFFER
+set options=/dMODE_ATI640
 goto compile_mode
 
 :mode_bwc
 set base=fdoom13h.exe
 set executable=fdoombwc.exe
-set options=/dMODE_CGA_BW /dUSE_BACKBUFFER
+set options=/dMODE_CGA_BW
 goto compile_mode
 
 :mode_c16
 set base=fdoom13h.exe
 set executable=fdoomc16.exe
-set options=/dMODE_CGA16 /dUSE_BACKBUFFER
+set options=/dMODE_CGA16
 goto compile_mode
 
 :mode_c36
 set base=fdoom13h.exe
 set executable=fdoomc36.exe
-set options=/dMODE_CGA136 /dUSE_BACKBUFFER
+set options=/dMODE_CGA136
 goto compile_mode
 
 :mode_cga
 set base=fdoom13h.exe
 set executable=fdoomcga.exe
-set options=/dMODE_CGA /dUSE_BACKBUFFER
+set options=/dMODE_CGA
 goto compile_mode
 
 :mode_cvb
 set base=fdoom13h.exe
 set executable=fdoomcvb.exe
-set options=/dMODE_CVB /dUSE_BACKBUFFER
+set options=/dMODE_CVB
 goto compile_mode
 
 :mode_e
 set base=fdoom13h.exe
 set executable=fdoome.exe
-set options=/dMODE_EGA640 /dUSE_BACKBUFFER
+set options=/dMODE_EGA640
 goto compile_mode
 
 :mode_e16
 set base=fdoom13h.exe
 set executable=fdoome16.exe
-set options=/dMODE_EGA16 /dUSE_BACKBUFFER
+set options=/dMODE_EGA16
 goto compile_mode
 
 :mode_e36
 set base=fdoom13h.exe
 set executable=fdoome36.exe
-set options=/dMODE_EGA136 /dUSE_BACKBUFFER
+set options=/dMODE_EGA136
 goto compile_mode
 
 :mode_ega
 set base=fdoom13h.exe
 set executable=fdoomega.exe
-set options=/dMODE_EGA /dUSE_BACKBUFFER
+set options=/dMODE_EGA
 goto compile_mode
 
 :mode_hgc
 set base=fdoom13h.exe
 set executable=fdoomhgc.exe
-set options=/dMODE_HERC /dUSE_BACKBUFFER
+set options=/dMODE_HERC
 goto compile_mode
 
 :mode_pcp
 set base=fdoom13h.exe
 set executable=fdoompcp.exe
-set options=/dMODE_PCP /dUSE_BACKBUFFER
+set options=/dMODE_PCP
 goto compile_mode
 
 :mode_t1
@@ -163,19 +163,19 @@ goto compile_mode
 :mode_v2
 set base=fdoom13h.exe
 set executable=fdoomv2.exe
-set options=/dMODE_V2 /dUSE_BACKBUFFER
+set options=/dMODE_V2
 goto compile_mode
 
 :mode_v16
 set base=fdoom13h.exe
 set executable=fdoomv16.exe
-set options=/dMODE_VGA16 /dUSE_BACKBUFFER
+set options=/dMODE_VGA16
 goto compile_mode
 
 :mode_v36
 set base=fdoom13h.exe
 set executable=fdoomv36.exe
-set options=/dMODE_VGA136 /dUSE_BACKBUFFER
+set options=/dMODE_VGA136
 goto compile_mode
 
 :mode_vbd
@@ -187,7 +187,7 @@ goto compile_mode
 :mode_vbr
 set base=fdoomvbe.exe
 set executable=fdoomvbr.exe
-set options=/dMODE_VBE2 /dUSE_BACKBUFFER
+set options=/dMODE_VBE2
 goto compile_mode
 
 :mode_y

@@ -15,7 +15,7 @@
 #include "ns_user.h"
 #include "ns_dsney.h"
 #include "ns_muldf.h"
-
+#include "options.h"
 #include "m_misc.h"
 
 #define TRUE (1 == 1)

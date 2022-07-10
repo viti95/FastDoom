@@ -9,7 +9,7 @@
 #include "ns_pas16.h"
 #include "ns_p16df.h"
 #include "ns_muldf.h"
-
+#include "options.h"
 #include "fastmath.h"
 
 static const int PAS_Interrupts[PAS_MaxIrq + 1] =

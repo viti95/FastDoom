@@ -27,7 +27,7 @@
 #include "doomstat.h"
 #include "i_system.h"
 #include "z_zone.h"
-
+#include "options.h"
 #include "w_wad.h"
 
 #define HASHTABLESIZE 4096

@@ -9,7 +9,7 @@
 #include "ns_sbmus.h"
 #include "ns_sbmdf.h"
 #include "ns_llm.h"
-
+#include "options.h"
 #include "fastmath.h"
 
 #define TRUE (1 == 1)

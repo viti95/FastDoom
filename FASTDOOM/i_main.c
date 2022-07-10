@@ -21,6 +21,7 @@
 
 #include "m_misc.h"
 #include "d_main.h"
+#include "options.h"
 
 int main(int argc, char **argv)
 {

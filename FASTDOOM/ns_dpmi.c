@@ -1,6 +1,7 @@
 #include <dos.h>
 #include <string.h>
 #include "ns_dpmi.h"
+#include "options.h"
 
 #define TRUE (1 == 1)
 #define FALSE (!TRUE)

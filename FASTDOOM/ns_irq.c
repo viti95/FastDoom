@@ -1,6 +1,7 @@
 #include <dos.h>
 #include <stdlib.h>
 #include "ns_irq.h"
+#include "options.h"
 
 #define D32RealSeg(P) ((((unsigned long)(P)) >> 4) & 0xFFFF)
 #define D32RealOff(P) (((unsigned long)(P)) & 0xF)

@@ -5,6 +5,7 @@
 #include "ns_task.h"
 #include "ns_inter.h"
 #include "ns_pcfx.h"
+#include "options.h"
 
 #define TRUE (1 == 1)
 #define FALSE (!TRUE)

@@ -17,7 +17,7 @@
 //
 
 #include "doomdef.h"
-
+#include "options.h"
 #include "s_sound.h"
 
 #include "p_local.h"
