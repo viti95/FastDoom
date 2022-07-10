@@ -17,6 +17,10 @@ elif [ "$target" = "fdoomcga.exe" ]; then
   buildopts="-dMODE_CGA"
   buildtarget="fdoom13h.exe"
 
+elif [ "$target" = "fdoomati.exe" ]; then
+  buildopts="-dMODE_ATI640"
+  buildtarget="fdoom13h.exe"
+
 elif [ "$target" = "fdoomega.exe" ]; then
   buildopts="-dMODE_EGA"
   buildtarget="fdoom13h.exe"
@@ -93,9 +97,13 @@ elif [ "$target" = "fdoomv36.exe" ]; then
   buildopts="-dMODE_VGA136"
   buildtarget="fdoom13h.exe"
 
+elif [ "$target" = "fdoome16.exe" ]; then
+  buildopts="-dMODE_EGA16"
+  buildtarget="fdoom13h.exe"
+
 elif [ "$target" = "fdoome36.exe" ]; then
   buildopts="-dMODE_EGA136"
-  buildtarget="fdoome3h.exe"
+  buildtarget="fdoom13h.exe"
 
 elif [ "$target" = "fdoome.exe" ]; then
   buildopts="-dMODE_EGA640"
@@ -107,7 +115,7 @@ elif [ "$target" = "fdoom13h.exe" ]; then
 
 elif [ "$target" = "fdoommda.exe" ]; then
   buildopts="-dMODE_MDA"
-  buildtarget="fdoommda.exe"
+  buildtarget="fdoomtxt.exe"
 
 elif [ "$target" = "clean" ]; then
   cd FASTDOOM
