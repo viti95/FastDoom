@@ -43,6 +43,7 @@ typedef enum
     snd_LPTDAC,
     snd_SBDirect,
     snd_AdlibFX,
+    snd_PCPWM,
     NUM_SCARDS
 } cardenum_t;
 

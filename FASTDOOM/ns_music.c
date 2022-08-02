@@ -78,6 +78,7 @@ int MUSIC_Init(
     case TandySoundSource:
     case PC:
     case PC1bit:
+    case PCPWM:
     case LPTDAC:
     case SoundBlasterDirect:
     case AdlibFX:

@@ -74,8 +74,6 @@ void LPT_StopPlayback(void)
 {
     if (LPT_SoundPlaying)
     {
-        // Turn off
-        outp(0x61, inp(0x61) & 0xfc);
         TS_Terminate(LPT_Timer);
         LPT_SoundPlaying = 0;
         LPT_BufferStart = NULL;

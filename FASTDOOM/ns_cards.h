@@ -22,6 +22,7 @@ typedef enum
    LPTDAC,
    SoundBlasterDirect,
    AdlibFX,
+   PCPWM,
    NumSoundCards
 } soundcardnames;
 
