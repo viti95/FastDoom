@@ -7,6 +7,7 @@
 #include "ns_user.h"
 #include "ns_pwm.h"
 #include "ns_muldf.h"
+#include "ns_inter.h"
 
 #include "m_misc.h"
 #include "options.h"
@@ -38,6 +39,9 @@ void (*PCSpeaker_PWM_CallBack)(void);
 static void PCSpeaker_PWM_ServiceInterrupt(task *Task)
 {
     unsigned char value = (unsigned char) *PCSpeaker_PWM_SoundPtr;
+    unsigned flags;
+
+    flags = DisableInterrupts();
 
     outp(0x43, 0xB0);
     outp(0x42, value >> 1);
@@ -66,6 +70,8 @@ static void PCSpeaker_PWM_ServiceInterrupt(task *Task)
             MV_ServiceVoc();
         }
     }
+
+    RestoreInterrupts(flags);
 }
 
 /*---------------------------------------------------------------------
@@ -78,12 +84,13 @@ void PCSpeaker_PWM_StopPlayback(void)
 {
     if (PCSpeaker_PWM_SoundPlaying)
     {
-        // Turn off
-        outp(0x61, inp(0x61) & 0xFC);
         TS_Terminate(PCSpeaker_PWM_Timer);
         PCSpeaker_PWM_SoundPlaying = 0;
         PCSpeaker_PWM_BufferStart = NULL;
     }
+
+    // Turn off
+    outp(0x61, inp(0x61) & 0xFC);
 }
 
 /*---------------------------------------------------------------------
@@ -137,6 +144,9 @@ int PCSpeaker_PWM_Init(int soundcard)
     }
 
     outp(0x61, inp(0x61) | 0x3);
+    outp(0x43, 0xB0);
+    outp(0x42, 0);
+    outp(0x42, 0);
 
     PCSpeaker_PWM_SoundPlaying = 0;
 
