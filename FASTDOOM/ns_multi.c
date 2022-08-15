@@ -1266,7 +1266,7 @@ int MV_Init(
 
     case SoundSource:
     case TandySoundSource:
-        status = SS_Init(soundcard);
+        status = SS_Init(soundcard, -1);
         break;
     
     case PC1bit:
@@ -1278,7 +1278,7 @@ int MV_Init(
         break;
 
     case LPTDAC:
-        status = LPT_Init(soundcard);
+        status = LPT_Init(soundcard, -1);
         break;
     
     case SoundBlasterDirect:

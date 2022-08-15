@@ -24,6 +24,8 @@ static int LPT_CurrentLength = 0;
 static char *LPT_SoundPtr;
 volatile int LPT_SoundPlaying;
 
+static int LPT_Port = 0x378;
+
 static task *LPT_Timer;
 
 void (*LPT_CallBack)(void);
@@ -37,7 +39,7 @@ void (*LPT_CallBack)(void);
 
 static void LPT_ServiceInterrupt(task *Task)
 {
-    outp(0x378, *LPT_SoundPtr);
+    outp(LPT_Port, *LPT_SoundPtr);
 
     LPT_SoundPtr++;
 
@@ -123,7 +125,7 @@ int LPT_BeginBufferedPlayback(
    sounds.
 ---------------------------------------------------------------------*/
 
-int LPT_Init(int soundcard)
+int LPT_Init(int soundcard, int port)
 {
     if (LPT_Installed)
     {
@@ -135,6 +137,9 @@ int LPT_Init(int soundcard)
     LPT_CallBack = NULL;
 
     LPT_BufferStart = NULL;
+
+    if (port != -1)
+        LPT_Port = port;
 
     LPT_Installed = 1;
 

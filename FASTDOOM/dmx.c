@@ -58,6 +58,7 @@ char *mid_data = NULL;
 
 int mus_loop = 0;
 int dmx_mus_port = 0;
+int dmx_lpt_port = 0;
 
 int MUS_RegisterSong(void *data)
 {
@@ -228,13 +229,12 @@ void GF1_SetMap(void *data, int len)
     }
 }
 
-int SB_Detect(int *port, int *irq, int *dma)
+void SB_Detect(void)
 {
     FX_GetBlasterSettings(&dmx_blaster);
-    return 0;
 }
 
-int AL_Detect(int *port, int *unk)
+int AL_Detect(void)
 {
     return !AL_DetectFM();
 }
@@ -286,7 +286,7 @@ void AL_SetCard(void *data)
     AL_RegisterTimbreBank(tmb);
     free(tmb);
 }
-int MPU_Detect(int *port, int *unk)
+int MPU_Detect(int *port)
 {
     if (port == NULL)
     {
@@ -297,6 +297,11 @@ int MPU_Detect(int *port, int *unk)
 void MPU_SetCard(int port)
 {
     dmx_mus_port = port;
+}
+
+void LPT_SetPort(int port)
+{
+    dmx_lpt_port = port;
 }
 
 int ASS_GetSoundCardCode(int sndDevice)
@@ -375,8 +380,13 @@ void ASS_Init(int rate, int maxsng, int mdev, int sdev)
         printf("Sound Blaster DSP %01X.%02X\n", BLASTER_Version >> 8, BLASTER_Version && 7);
         printf("ADDR: %03X, IRQ: %u, DMA LOW: %u, DMA HIGH: %u\n", BLASTER_Config.Address, BLASTER_Config.Interrupt, BLASTER_Config.Dma8, BLASTER_Config.Dma16);
         break;
+    case SoundSource:
+    case TandySoundSource:
+    case LPTDAC:
+        FX_SetupCard(sound_device, &fx_device, dmx_lpt_port);
+        break;
     default:
-        FX_SetupCard(sound_device, &fx_device);
+        FX_SetupCard(sound_device, &fx_device, -1);
         break;
     }
 

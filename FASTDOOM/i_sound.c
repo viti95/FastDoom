@@ -65,8 +65,8 @@ void I_ShutdownTimer(void)
 //
 // Sound header & data
 //
-int snd_SBport, snd_SBirq, snd_SBdma; // sound blaster variables
-int snd_Mport;                        // midi variables
+int snd_Mport;       // midi variables
+int snd_LPTport;     // LPT port
 
 int snd_MusicVolume; // maximum volume for music
 int snd_SfxVolume;   // maximum volume for sound
@@ -100,8 +100,8 @@ int I_GetSfxLumpNum(sfxinfo_t *sfx)
 
 void I_sndArbitrateCards(void)
 {
-    byte gus, adlib, sb, midi, ensoniq;
-    int i, wait, dmxlump;
+    byte gus, adlib, sb, midi, ensoniq, lpt;
+    int dmxlump;
 
     snd_SfxVolume = 127;
     snd_SfxDevice = snd_DesiredSfxDevice;
@@ -136,6 +136,7 @@ void I_sndArbitrateCards(void)
     ensoniq = snd_SfxDevice == snd_ENSONIQ;
     adlib = snd_MusicDevice == snd_Adlib || snd_MusicDevice == snd_SB || snd_MusicDevice == snd_PAS;
     midi = snd_MusicDevice == snd_MPU;
+    lpt = snd_SfxDevice == snd_DISNEY || snd_SfxDevice == snd_TANDY || snd_SfxDevice == snd_LPTDAC;
 
     //
     // initialize whatever i've got
@@ -168,15 +169,12 @@ void I_sndArbitrateCards(void)
     }
     if (sb)
     {
-        if (SB_Detect(&snd_SBport, &snd_SBirq, &snd_SBdma))
-        {
-            printf("SB isn't responding at p=0x%x, i=%d, d=%d\n", snd_SBport, snd_SBirq, snd_SBdma);
-        }
+        SB_Detect();
     }
 
     if (adlib)
     {
-        if (AL_Detect(&wait, 0))
+        if (AL_Detect())
         {
             printf("Adlib isn't responding.\n");
         }
@@ -190,7 +188,7 @@ void I_sndArbitrateCards(void)
 
     if (midi)
     {
-        if (MPU_Detect(&snd_Mport, &i))
+        if (MPU_Detect(&snd_Mport))
         {
             printf("MPU-401 isn't reponding @ p=0x%x.\n", snd_Mport);
         }
@@ -198,6 +196,11 @@ void I_sndArbitrateCards(void)
         {
             MPU_SetCard(snd_Mport);
         }
+    }
+
+    if (lpt)
+    {
+        LPT_SetPort(snd_LPTport);
     }
 }
 

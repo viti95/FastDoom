@@ -226,23 +226,8 @@ int SS_TestSoundSource(
 
 int SS_DetectSoundSource(void)
 {
-    if (M_CheckParm("-LPT1"))
-    {
-        SS_Port = SS_Port1;
-        return (TRUE);
-    }
 
-    if (M_CheckParm("-LPT2"))
-    {
-        SS_Port = SS_Port2;
-        return (TRUE);
-    }
-
-    if (M_CheckParm("-LPT3"))
-    {
-        SS_Port = SS_Port3;
-        return (TRUE);
-    }
+    /* Autodetect Sound Source port */
 
     if (SS_TestSoundSource(SS_Port1))
     {
@@ -272,9 +257,7 @@ int SS_DetectSoundSource(void)
    sounds.
 ---------------------------------------------------------------------*/
 
-int SS_Init(
-    int soundcard)
-
+int SS_Init(int soundcard, int port)
 {
     int status;
 
@@ -294,10 +277,9 @@ int SS_Init(
         SS_OffCommand = 0x0c;
     }
 
-    status = SS_DetectSoundSource();
-    if (!status)
-    {
-        return (SS_Warning);
+    if (!SS_DetectSoundSource()){
+        if (port != -1)
+            SS_Port = port;
     }
 
     status = SS_Ok;

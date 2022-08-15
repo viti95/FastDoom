@@ -26,7 +26,7 @@ enum SS_ERRORS
 
 void SS_StopPlayback(void);
 int SS_BeginBufferedPlayback(char *BufferStart, int BufferSize, int NumDivisions, void (*CallBackFunc)(void));
-int SS_Init(int soundcard);
+int SS_Init(int soundcard, int port);
 void SS_Shutdown(void);
 
 #endif

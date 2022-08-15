@@ -30,7 +30,7 @@ int FX_Installed = FALSE;
    Sets the configuration of a sound device.
 ---------------------------------------------------------------------*/
 
-int FX_SetupCard(int SoundCard, fx_device *device)
+int FX_SetupCard(int SoundCard, fx_device *device, int port)
 {
     int status;
     int DeviceStatus;
@@ -99,7 +99,7 @@ int FX_SetupCard(int SoundCard, fx_device *device)
 
     case SoundSource:
     case TandySoundSource:
-        DeviceStatus = SS_Init(SoundCard);
+        DeviceStatus = SS_Init(SoundCard, port);
         if (DeviceStatus != SS_Ok)
         {
             status = FX_Error;
@@ -133,7 +133,7 @@ int FX_SetupCard(int SoundCard, fx_device *device)
         device->MaxChannels = 1;
         break;
     case LPTDAC:
-        DeviceStatus = LPT_Init(SoundCard);
+        DeviceStatus = LPT_Init(SoundCard, port);
         if (DeviceStatus != LPT_Ok)
         {
             status = FX_Error;
