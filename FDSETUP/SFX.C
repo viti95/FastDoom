@@ -134,68 +134,141 @@ int ChooseFxCard(void)
 
 			case DCARD_PC:
 				newc.d.card = M_PC;
-				newc.d.port = -1;
+				newc.d.lptport = -1;
 				newc.d.midiport = -1;
-				newc.d.irq = -1;
-				newc.d.dma = -1;
 				goto func_exit;
 
 			case DCARD_DISNEY:
 				newc.d.card = M_DISNEYSS;
-				newc.d.port = -1;
+				newc.d.lptport = -1;
 				newc.d.midiport = -1;
-				newc.d.irq = -1;
-				newc.d.dma = -1;
 				goto func_exit;
 
 			case DCARD_TANDY:
 				newc.d.card = M_TANDYSS;
-				newc.d.port = -1;
+				newc.d.lptport = -1;
 				newc.d.midiport = -1;
-				newc.d.irq = -1;
-				newc.d.dma = -1;
 				goto func_exit;
 
 			case DCARD_PC1BIT:
 				newc.d.card = M_PC1BIT;
-				newc.d.port = -1;
+				newc.d.lptport = -1;
 				newc.d.midiport = -1;
-				newc.d.irq = -1;
-				newc.d.dma = -1;
 				goto func_exit;
 
 			case DCARD_ADBFX:
 				newc.d.card = M_ADBFX;
-				newc.d.port = -1;
+				newc.d.lptport = -1;
 				newc.d.midiport = -1;
-				newc.d.irq = -1;
-				newc.d.dma = -1;
 				goto func_exit;
 
 			case DCARD_COVOX:
 				newc.d.card = M_COVOX;
-				newc.d.port = -1;
+				newc.d.lptport = -1;
 				newc.d.midiport = -1;
-				newc.d.irq = -1;
-				newc.d.dma = -1;
 				goto func_exit;
 
 			case DCARD_SBDIRECT:
 				newc.d.card = M_SBDIRECT;
-				newc.d.port = -1;
+				newc.d.lptport = -1;
 				newc.d.midiport = -1;
-				newc.d.irq = -1;
-				newc.d.dma = -1;
 				goto func_exit;
 
 			case DCARD_NONE:
 				newc.d.card = M_NONE;
-				newc.d.port = -1;
+				newc.d.lptport = -1;
 				newc.d.midiport = -1;
-				newc.d.irq = -1;
-				newc.d.dma = -1;
 				goto func_exit;
 
+			default:
+				break;
+			}
+			break;
+		}
+	}
+
+func_exit:
+
+	RestoreScreen();
+	return (rval);
+}
+
+enum
+{
+	LPT_PORT_3BC,
+	LPT_PORT_378,
+	LPT_PORT_278,
+	LPT_PORT_MAX
+};
+
+item_t lptportitems[] =
+	{
+		{LPT_PORT_3BC, 32, 9, 13, -1, -1},
+		{LPT_PORT_378, 32, 10, 13, -1, -1},
+		{LPT_PORT_278, 32, 11, 13, -1, -1}};
+
+menu_t lptportmenu =
+	{
+		&lptportitems[0],
+		LPT_PORT_378,
+		LPT_PORT_MAX,
+		0x7f};
+
+int ChooseLPTPort(DMXCARD *card) // RETURN: 0 = OK, -1 == ABORT
+{
+	short field;
+	short key;
+	int rval = 0;
+
+	SaveScreen();
+	DrawPup(&lptport);
+
+	// DEFAULT FIELD ========================================
+
+	switch (card->lptport)
+	{
+	default:
+	case 0x378:
+		field = LPT_PORT_378;
+		break;
+
+	case 0x278:
+		field = LPT_PORT_278;
+		break;
+
+	case 0x3BC:
+		field = LPT_PORT_3BC;
+		break;
+	}
+
+	lptportmenu.startitem = field;
+	while (1)
+	{
+		SetupMenu(&lptportmenu);
+		field = GetMenuInput();
+		key = menukey;
+		switch (key)
+		{
+		case KEY_ESC:
+			rval = -1;
+			goto func_exit;
+
+		case KEY_ENTER:
+		case KEY_F10:
+			switch (field)
+			{
+			case LPT_PORT_378:
+				card->lptport = 0x378;
+				goto func_exit;
+
+			case LPT_PORT_278:
+				card->lptport = 0x278;
+				goto func_exit;
+
+			case LPT_PORT_3BC:
+				card->lptport = 0x3BC;
+				goto func_exit;
+				
 			default:
 				break;
 			}
@@ -239,7 +312,7 @@ menu_t sbdmamenu =
 		SB_DMA_MAX,
 		0x7f};
 
-int ChooseSbDma(DMXCARD *card)
+/*int ChooseSbDma(DMXCARD *card)
 {
 	short key;
 	short field;
@@ -327,7 +400,7 @@ func_exit:
 
 	RestoreScreen();
 	return (rval);
-}
+}*/
 
 //
 // Choose SB IRQ channel
@@ -352,7 +425,7 @@ menu_t sbirqmenu =
 		SB_IRQ_MAX,
 		0x7f};
 
-int ChooseSbIrq(DMXCARD *card)
+/*int ChooseSbIrq(DMXCARD *card)
 {
 	short field;
 	short key;
@@ -419,7 +492,7 @@ func_exit:
 
 	RestoreScreen();
 	return (rval);
-}
+}*/
 
 //
 //	Choose # of simultaneous digital channels
@@ -595,6 +668,8 @@ int SetupFX(void)
 
 	case M_DISNEYSS:
 	case M_TANDYSS:
+		if (ChooseLPTPort(&newc.d) == -1)
+			return (-1);
 		savefx = TRUE;
 		break;
 
@@ -607,6 +682,8 @@ int SetupFX(void)
 		break;
 
 	case M_COVOX:
+		if (ChooseLPTPort(&newc.d) == -1)
+			return (-1);
 		savefx = TRUE;
 		break;
 
@@ -622,12 +699,6 @@ int SetupFX(void)
 
 	case M_WAVE:
 	case M_SB:
-		if (ChooseSbPort(&newc.d) == -1)
-			return (-1);
-		if (ChooseSbIrq(&newc.d) == -1)
-			return (-1);
-		if (ChooseSbDma(&newc.d) == -1)
-			return (-1);
 		ChooseNumDig();
 		savefx = TRUE;
 		break;

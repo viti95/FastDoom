@@ -307,10 +307,8 @@ void StartUp(void)
 	curk.mouse[2] = 2;
 
 	newc.m.card = M_NONE;
-	newc.m.port = -1;
+	newc.m.lptport = -1;
 	newc.m.midiport = -1;
-	newc.m.irq = -1;
-	newc.m.dma = -1;
 	newc.d = newc.m;
 	newc.numdig = 2;
 
@@ -326,24 +324,17 @@ void StartUp(void)
 		//
 		if (SmellsLikeGUS(&addr, &irq, &dma))
 		{
-			if (newc.m.irq > 7)
-				ErrorWindow(&gusirqer);
-
 			newc.m.card = M_GUS;
-			newc.m.port = addr;
+			newc.m.lptport = addr;
 			newc.m.midiport = -1;
-			newc.m.irq = irq;
-			newc.m.dma = dma;
 			newc.d = newc.m;
 			//fprintf(stderr, "GUS: addr=%x, irq=%d, dma=%d\n", addr, irq, dma);
 		}
 		else if (SmellsLikeSB(&addr, &irq, &dma, &midi))
 		{
 			newc.m.card = M_SB;
-			newc.m.port = addr;
+			newc.m.lptport = addr;
 			newc.m.midiport = midi;
-			newc.m.irq = irq;
-			newc.m.dma = dma;
 			newc.d = newc.m;
 		}
 
@@ -363,10 +354,6 @@ void StartUp(void)
 		lastc.numdig = newc.numdig;
 		lastc.m = newc.m;
 		lastc.d = newc.d;
-
-		if (newc.m.irq > 7)
-			ErrorWindow(&gusirqer);
-
 		mainmenu.startitem = MAIN_CMUSIC;
 	}
 

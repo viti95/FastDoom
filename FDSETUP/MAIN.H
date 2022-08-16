@@ -56,10 +56,8 @@ typedef enum
 typedef struct
 {
 	SCARD card;
-	short port;
 	short midiport;
-	short irq;
-	short dma;
+	short lptport;
 } DMXCARD;
 
 typedef struct
@@ -164,7 +162,6 @@ int QuitAndSave(void);
 
 // MUSIC.C
 int SetupMusic(void);
-int ChooseSbPort(DMXCARD *card);
 int ChooseMidiPort(DMXCARD *card);
 
 // SFX.C

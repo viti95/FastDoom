@@ -215,7 +215,7 @@ menu_t sbportmenu =
 		SB_PORT_MAX,
 		0x7f};
 
-int ChooseSbPort(DMXCARD *card) // RETURN: 0 = OK, -1 == ABORT
+/*int ChooseSbPort(DMXCARD *card) // RETURN: 0 = OK, -1 == ABORT
 {
 	short field;
 	short key;
@@ -316,7 +316,7 @@ func_exit:
 
 	RestoreScreen();
 	return (rval);
-}
+}*/
 
 //
 // Menu for choosing Music Card
@@ -422,30 +422,22 @@ int ChooseMusicCard(void) // RETURN: 0 = OK, -1 == ABORT
 			{
 			case MCARD_SBAWE32:
 				newc.m.card = M_SBAWE32;
-				newc.m.port = -1;
-				newc.m.irq = -1;
-				newc.m.dma = -1;
+				newc.m.lptport = -1;
 				goto func_exit;
 
 			case MCARD_GMIDI:
 				newc.m.card = M_GMIDI;
-				newc.m.port = -1;
-				newc.m.irq = -1;
-				newc.m.dma = -1;
+				newc.m.lptport = -1;
 				goto func_exit;
 
 			case MCARD_CANVAS:
 				newc.m.card = M_CANVAS;
-				newc.m.port = -1;
-				newc.m.irq = -1;
-				newc.m.dma = -1;
+				newc.m.lptport = -1;
 				goto func_exit;
 
 			case MCARD_WAVE:
 				newc.m.card = M_WAVE;
-				newc.m.port = -1;
-				newc.m.irq = -1;
-				newc.m.dma = -1;
+				newc.m.lptport = -1;
 				goto func_exit;
 
 			case MCARD_SB:
@@ -464,18 +456,14 @@ int ChooseMusicCard(void) // RETURN: 0 = OK, -1 == ABORT
 
 			case MCARD_ADLIB:
 				newc.m.card = M_ADLIB;
-				newc.m.port = -1;
+				newc.m.lptport = -1;
 				newc.m.midiport = -1;
-				newc.m.irq = -1;
-				newc.m.dma = -1;
 				goto func_exit;
 
 			case MCARD_NONE:
 				newc.m.card = M_NONE;
-				newc.m.port = -1;
+				newc.m.lptport = -1;
 				newc.m.midiport = -1;
-				newc.m.irq = -1;
-				newc.m.dma = -1;
 				goto func_exit;
 
 			default:
@@ -521,8 +509,8 @@ int SetupMusic(void)
 		break;
 
 	case M_SB:
-		if (ChooseSbPort(&newc.m) == -1)
-			return (-1);
+		/*if (ChooseSbPort(&newc.m) == -1)
+			return (-1);*/
 		savemusic = TRUE;
 		break;
 
