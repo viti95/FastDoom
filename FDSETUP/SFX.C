@@ -15,23 +15,25 @@ enum
 	DCARD_COVOX,
 	DCARD_SBDIRECT,
 	DCARD_ADBFX,
+	DCARD_PCPWM,
 	DCARD_NONE,
 	DCARD_MAX
 };
 
 item_t idcarditems[] =
 	{
-		{DCARD_GUS, 27, 9, 25, -1, -1},
-		{DCARD_PAS, 27, 10, 25, -1, -1},
-		{DCARD_SB, 27, 11, 25, -1, -1},
-		{DCARD_PC, 27, 12, 25, -1, -1},
-		{DCARD_DISNEY, 27, 13, 25, -1, -1},
-		{DCARD_TANDY, 27, 14, 25, -1, -1},
-		{DCARD_PC1BIT, 27, 15, 25, -1, -1},
-		{DCARD_COVOX, 27, 16, 25, -1, -1},
-		{DCARD_SBDIRECT, 27, 17, 25, -1, -1},
-		{DCARD_ADBFX, 27, 18, 25, -1, -1},
-		{DCARD_NONE, 27, 19, 25, -1, -1}
+		{DCARD_GUS, 27, 7, 25, -1, -1},
+		{DCARD_PAS, 27, 8, 25, -1, -1},
+		{DCARD_SB, 27, 9, 25, -1, -1},
+		{DCARD_PC, 27, 10, 25, -1, -1},
+		{DCARD_DISNEY, 27, 11, 25, -1, -1},
+		{DCARD_TANDY, 27, 12, 25, -1, -1},
+		{DCARD_PC1BIT, 27, 13, 25, -1, -1},
+		{DCARD_COVOX, 27, 14, 25, -1, -1},
+		{DCARD_SBDIRECT, 27, 15, 25, -1, -1},
+		{DCARD_ADBFX, 27, 16, 25, -1, -1},
+		{DCARD_PCPWM, 27, 17, 25, -1, -1},
+		{DCARD_NONE, 27, 18, 25, -1, -1}
 	};
 
 menu_t idcardmenu =
@@ -89,6 +91,10 @@ int ChooseFxCard(void)
 
 	case M_ADBFX:
 		field = DCARD_ADBFX;
+		break;
+	
+	case M_PCPWM:
+		field = DCARD_PCPWM;
 		break;
 
 	case M_COVOX:
@@ -158,6 +164,12 @@ int ChooseFxCard(void)
 
 			case DCARD_ADBFX:
 				newc.d.card = M_ADBFX;
+				newc.d.lptport = -1;
+				newc.d.midiport = -1;
+				goto func_exit;
+
+			case DCARD_PCPWM:
+				newc.d.card = M_PCPWM;
 				newc.d.lptport = -1;
 				newc.d.midiport = -1;
 				goto func_exit;
@@ -268,7 +280,7 @@ int ChooseLPTPort(DMXCARD *card) // RETURN: 0 = OK, -1 == ABORT
 			case LPT_PORT_3BC:
 				card->lptport = 0x3BC;
 				goto func_exit;
-				
+
 			default:
 				break;
 			}
@@ -678,6 +690,10 @@ int SetupFX(void)
 		break;
 	
 	case M_ADBFX:
+		savefx = TRUE;
+		break;
+
+	case M_PCPWM:
 		savefx = TRUE;
 		break;
 

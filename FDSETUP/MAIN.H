@@ -43,6 +43,7 @@ typedef enum
 	M_COVOX,
 	M_SBDIRECT,
 	M_ADBFX,
+	M_PCPWM,
 	M_LAST
 } SCARD;
 

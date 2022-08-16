@@ -47,7 +47,8 @@ char cards[M_LAST][20] = {
 	"PC Speaker (1 bit)",
 	"COVOX",
 	"Sound Blaster DM",
-	"Adlib PCM (1 bit)"
+	"Adlib PCM (1 bit)",
+	"PC Speaker (PWM)"
 	};
 
 char controls[C_LAST][20] = {
