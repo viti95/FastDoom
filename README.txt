@@ -175,9 +175,6 @@
  -nosfx => Disables sound
  -nomusic => Disables music
  -config XX => Loads an alternative configuration file 
- -LPT1 => Forces LPT1 port for Disney Sound Source
- -LPT2 => Forces LPT2 port for Disney Sound Source
- -LPT3 => Forces LPT3 port for Disney Sound Source
  -disabledemo => Disables defered demos
  -debugPort => Shows FPS via the debug port (0x80)
  -fixDAC => Fixes palette corruption with VGA cards
