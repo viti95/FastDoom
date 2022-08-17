@@ -22,6 +22,8 @@ static int CMS_NumBuffers = 0;
 static int CMS_TransferLength = 0;
 static int CMS_CurrentLength = 0;
 
+unsigned short CMS_Port = 0x220;
+
 static char *CMS_SoundPtr;
 volatile int CMS_SoundPlaying;
 
@@ -45,7 +47,7 @@ static void CMS_SetRegister(unsigned short regAddr, unsigned char reg, unsigned 
 static void CMS_Reset(void)
 {
     int i;
-    unsigned short port = 0x220;
+    unsigned short port = CMS_Port;
     // Null all 20 registers (first SAA1099)
     for (i = 0; i < 20; i++){
         CMS_SetRegister(port, i, 0x00);
@@ -73,7 +75,7 @@ static void CMS_Reset(void)
 
 static void CMS_ServiceInterrupt(task *Task)
 {
-    unsigned short port = 0x220;
+    unsigned short port = CMS_Port;
 
     unsigned char value0;
     unsigned char value1;
@@ -192,8 +194,8 @@ int CMS_Init(int soundcard)
     }
 
     CMS_Reset();
-    CMS_SetRegister(0x220, 0x18, 0x82);
-    CMS_SetRegister(0x220, 0x19, 0x82);
+    CMS_SetRegister(CMS_Port, 0x18, 0x82);
+    CMS_SetRegister(CMS_Port, 0x19, 0x82);
 
     CMS_SoundPlaying = 0;
 
