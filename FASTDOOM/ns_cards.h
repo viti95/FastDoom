@@ -23,6 +23,7 @@ typedef enum
    SoundBlasterDirect,
    AdlibFX,
    PCPWM,
+   CMS,
    NumSoundCards
 } soundcardnames;
 

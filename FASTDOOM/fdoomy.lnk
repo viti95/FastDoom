@@ -41,6 +41,7 @@ file ns_fxm.obj
 file ns_multi.obj
 file ns_speak.obj
 file ns_pwm.obj
+file ns_cms.obj
 file ns_lpt.obj
 file ns_sbdm.obj
 file ns_adbfx.obj

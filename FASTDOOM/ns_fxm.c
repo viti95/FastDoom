@@ -8,6 +8,7 @@
 #include "ns_dsney.h"
 #include "ns_speak.h"
 #include "ns_pwm.h"
+#include "ns_cms.h"
 #include "ns_lpt.h"
 #include "ns_sbdm.h"
 #include "ns_llm.h"
@@ -132,6 +133,16 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
         device->MaxSampleBits = 8;
         device->MaxChannels = 1;
         break;
+    case CMS:
+        DeviceStatus = CMS_Init(SoundCard);
+        if (DeviceStatus != CMS_Ok)
+        {
+            status = FX_Error;
+            break;
+        }
+        device->MaxVoices = 8;
+        device->MaxSampleBits = 8;
+        device->MaxChannels = 1;
     case LPTDAC:
         DeviceStatus = LPT_Init(SoundCard, port);
         if (DeviceStatus != LPT_Ok)
@@ -280,6 +291,7 @@ int FX_Init(
     case UltraSound:
     case PC1bit:
     case PCPWM:
+    case CMS:
     case LPTDAC:
     case AdlibFX:
     case SoundBlasterDirect:
@@ -335,6 +347,7 @@ int FX_Shutdown(
     case UltraSound:
     case PC1bit:
     case PCPWM:
+    case CMS:
     case LPTDAC:
     case AdlibFX:
     case SoundBlasterDirect:

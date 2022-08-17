@@ -44,6 +44,7 @@ typedef enum
     snd_SBDirect,
     snd_AdlibFX,
     snd_PCPWM,
+    snd_CMS,
     NUM_SCARDS
 } cardenum_t;
 

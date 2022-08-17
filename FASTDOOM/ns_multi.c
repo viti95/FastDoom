@@ -18,6 +18,7 @@
 #include "ns_muldf.h"
 #include "ns_speak.h"
 #include "ns_pwm.h"
+#include "ns_cms.h"
 #include "ns_lpt.h"
 #include "ns_sbdm.h"
 #include "ns_adbfx.h"
@@ -722,6 +723,7 @@ int MV_SetMixMode(
     case TandySoundSource:
     case PC1bit:
     case PCPWM:
+    case CMS:
     case LPTDAC:
     case SoundBlasterDirect:
     case AdlibFX:
@@ -886,6 +888,13 @@ int MV_StartPlayback(
         MV_MixRate = PCSpeaker_PWM_SampleRate;
         MV_DMAChannel = -1;
         break;
+    case CMS:
+        CMS_BeginBufferedPlayback(MV_MixBuffer[0],
+                                 TotalBufferSize, MV_NumberOfBuffers,
+                                 MV_ServiceVoc);
+        MV_MixRate = CMS_SampleRate;
+        MV_DMAChannel = -1;
+        break;
     case LPTDAC:
         LPT_BeginBufferedPlayback(MV_MixBuffer[0],
                                  TotalBufferSize, MV_NumberOfBuffers,
@@ -962,6 +971,9 @@ void MV_StopPlayback(
         break;
     case PCPWM:
         PCSpeaker_PWM_StopPlayback();
+        break;
+    case CMS:
+        CMS_StopPlayback();
         break;
     case LPTDAC:
         LPT_StopPlayback();
@@ -1276,6 +1288,10 @@ int MV_Init(
     case PCPWM:
         status = PCSpeaker_PWM_Init(soundcard);
         break;
+    
+    case CMS:
+        status = CMS_Init(soundcard);
+        break;
 
     case LPTDAC:
         status = LPT_Init(soundcard, -1);
@@ -1401,6 +1417,9 @@ int MV_Shutdown(
         break;
     case PCPWM:
         PCSpeaker_PWM_Shutdown();
+        break;
+    case CMS:
+        CMS_Shutdown();
         break;
     case LPTDAC:
         LPT_Shutdown();

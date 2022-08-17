@@ -79,6 +79,7 @@ int MUSIC_Init(
     case PC:
     case PC1bit:
     case PCPWM:
+    case CMS:
     case LPTDAC:
     case SoundBlasterDirect:
     case AdlibFX:

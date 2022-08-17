@@ -334,6 +334,8 @@ int ASS_GetSoundCardCode(int sndDevice)
         return PC1bit;
     case snd_PCPWM:
         return PCPWM;
+    case snd_CMS:
+        return CMS;
     case snd_LPTDAC:
         return LPTDAC;
     case snd_SBDirect:
