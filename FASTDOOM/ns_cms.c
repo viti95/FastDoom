@@ -73,7 +73,7 @@ static void CMS_ServiceInterrupt(task *Task)
     value &= 0xF0;
     value |= value >> 4;
 
-    CMS_SetRegister(CMS_Port, 0x02, value);
+    outp(CMS_Port, value);
 
     CMS_SoundPtr++;
 
@@ -168,6 +168,7 @@ int CMS_Init(int soundcard)
 
     CMS_Reset();
     CMS_SetRegister(CMS_Port, 0x18, 0x82);
+    outp(CMS_Port + 1, 0x02);
 
     CMS_SoundPlaying = 0;
 
