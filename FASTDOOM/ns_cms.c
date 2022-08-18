@@ -68,16 +68,12 @@ static void CMS_Reset(void)
 
 static void CMS_ServiceInterrupt(task *Task)
 {
-    unsigned short port = CMS_Port;
+    unsigned char value = (unsigned char) *CMS_SoundPtr;
 
-    unsigned char valuecopy;
-    
-    unsigned char value1 = (unsigned char) *CMS_SoundPtr;
+    value &= 0xF0;
+    value |= value >> 4;
 
-    value1 &= 0xF0;
-    value1 |= value1 >> 4;
-
-    CMS_SetRegister(port, 0x02, value1);
+    CMS_SetRegister(CMS_Port, 0x02, value);
 
     CMS_SoundPtr++;
 
