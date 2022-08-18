@@ -306,6 +306,125 @@ func_exit:
 	return (rval);
 }
 
+enum
+{
+	CMS_PORT_210,
+	CMS_PORT_220,
+	CMS_PORT_230,
+	CMS_PORT_240,
+	CMS_PORT_250,
+	CMS_PORT_260,
+	CMS_PORT_MAX
+};
+
+item_t cmsportitems[] =
+	{
+		{CMS_PORT_210, 32, 9, 13, -1, -1},
+		{CMS_PORT_220, 32, 10, 13, -1, -1},
+		{CMS_PORT_230, 32, 11, 13, -1, -1},
+		{CMS_PORT_240, 32, 12, 13, -1, -1},
+		{CMS_PORT_250, 32, 13, 13, -1, -1},
+		{CMS_PORT_260, 32, 14, 13, -1, -1}};
+
+menu_t cmsportmenu =
+	{
+		&cmsportitems[0],
+		CMS_PORT_220,
+		CMS_PORT_MAX,
+		0x7f};
+
+int ChooseCMSPort(DMXCARD *card) // RETURN: 0 = OK, -1 == ABORT
+{
+	short field;
+	short key;
+	int rval = 0;
+
+	SaveScreen();
+	DrawPup(&cmsport);
+
+	// DEFAULT FIELD ========================================
+
+	switch (card->soundport)
+	{
+	default:
+	case 0x210:
+		field = CMS_PORT_210;
+		break;
+
+	case 0x220:
+		field = CMS_PORT_220;
+		break;
+
+	case 0x230:
+		field = CMS_PORT_230;
+		break;
+
+	case 0x240:
+		field = CMS_PORT_240;
+		break;
+
+	case 0x250:
+		field = CMS_PORT_250;
+		break;
+
+	case 0x260:
+		field = CMS_PORT_260;
+		break;
+	}
+
+	cmsportmenu.startitem = field;
+	while (1)
+	{
+		SetupMenu(&cmsportmenu);
+		field = GetMenuInput();
+		key = menukey;
+		switch (key)
+		{
+		case KEY_ESC:
+			rval = -1;
+			goto func_exit;
+
+		case KEY_ENTER:
+		case KEY_F10:
+			switch (field)
+			{
+			case CMS_PORT_210:
+				card->soundport = 0x210;
+				goto func_exit;
+
+			case CMS_PORT_220:
+				card->soundport = 0x220;
+				goto func_exit;
+
+			case CMS_PORT_230:
+				card->soundport = 0x230;
+				goto func_exit;
+
+			case CMS_PORT_240:
+				card->soundport = 0x240;
+				goto func_exit;
+
+			case CMS_PORT_250:
+				card->soundport = 0x250;
+				goto func_exit;
+
+			case CMS_PORT_260:
+				card->soundport = 0x260;
+				goto func_exit;
+
+			default:
+				break;
+			}
+			break;
+		}
+	}
+
+func_exit:
+
+	RestoreScreen();
+	return (rval);
+}
+
 //
 // Choose SB DMA channel
 //
@@ -693,12 +812,18 @@ int SetupFX(void)
 	case M_PC1BIT:
 	case M_ADBFX:
 	case M_PCPWM:
-	case M_CMS:
 	case M_SBDIRECT:
 	case M_PAS:
 	case M_GUS:
 	case M_WAVE:
 	case M_SB:
+		ChooseNumDig();
+		savefx = TRUE;
+		break;
+	
+	case M_CMS:
+		if (ChooseCMSPort(&newc.d) == -1)
+			return (-1);
 		ChooseNumDig();
 		savefx = TRUE;
 		break;
