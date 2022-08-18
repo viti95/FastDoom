@@ -77,26 +77,27 @@ static void CMS_ServiceInterrupt(task *Task)
 {
     unsigned short port = CMS_Port;
 
-    unsigned char value0;
-    unsigned char value1;
+    unsigned char valuecopy;
+    
+    unsigned char value1 = (unsigned char) *CMS_SoundPtr;
+    unsigned char value2;
 
-    unsigned char value = (unsigned char) *CMS_SoundPtr;
+    value1 = value1 >> 4;
 
-    outp(port + 1, 2);
+    valuecopy = value1;
+    value1 = value1 << 1;
+    value1 = value1 & 0xF;
+    value2 = value1;
 
-    value = value / 16;
+    value2 <<= 4;
 
-    value0 = value;
-    value0 = value0 << 1;
-    value0 = value0 & 0xF;
-    value0 = (value0 << 4) | value0;
+    value1 = value1 | value2;
 
-    CMS_SetRegister(port, 0x02, value0);
+    CMS_SetRegister(port, 0x02, value1);
 
-    value1 = value;
-
-    if (value1 != 8)
-    {
+    if (valuecopy & 0x08){
+        value1 = 0x00;
+    }else{
         value1 = 0xEE;
     }
 
