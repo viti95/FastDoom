@@ -51,8 +51,8 @@ static void CMS_Reset(void)
 
     for (k = 0; k < 2; k++){
 
-        // Null all 20 registers
-        for (i = 0; i < 20; i++){
+        // Null all 32 registers
+        for (i = 0; i < 32; i++){
             CMS_SetRegister(port, i, 0x00);
         }
 
@@ -73,28 +73,11 @@ static void CMS_ServiceInterrupt(task *Task)
     unsigned char valuecopy;
     
     unsigned char value1 = (unsigned char) *CMS_SoundPtr;
-    unsigned char value2;
 
-    value1 = value1 >> 4;
-
-    valuecopy = value1;
-    value1 = value1 << 1;
-    value1 = value1 & 0xF;
-    value2 = value1;
-
-    value2 <<= 4;
-
-    value1 = value1 | value2;
+    value1 &= 0xF0;
+    value1 |= value1 >> 4;
 
     CMS_SetRegister(port, 0x02, value1);
-
-    if (valuecopy & 0x08){
-        value1 = 0x00;
-    }else{
-        value1 = 0xEE;
-    }
-
-    CMS_SetRegister(port, 0x05, value1);
 
     CMS_SoundPtr++;
 
@@ -189,7 +172,6 @@ int CMS_Init(int soundcard)
 
     CMS_Reset();
     CMS_SetRegister(CMS_Port, 0x18, 0x82);
-    CMS_SetRegister(CMS_Port, 0x19, 0x82);
 
     CMS_SoundPlaying = 0;
 
