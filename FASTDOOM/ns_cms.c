@@ -46,31 +46,24 @@ static void CMS_SetRegister(unsigned short regAddr, unsigned char reg, unsigned 
 
 static void CMS_Reset(void)
 {
-    int i;
+    int i, k;
     unsigned short port = CMS_Port;
-    // Null all 20 registers (first SAA1099)
-    for (i = 0; i < 20; i++){
-        CMS_SetRegister(port, i, 0x00);
+
+    for (k = 0; k < 2; k++){
+
+        // Null all 20 registers
+        for (i = 0; i < 20; i++){
+            CMS_SetRegister(port, i, 0x00);
+        }
+
+        // Reset chip
+        CMS_SetRegister(port, 0x1C, 0x02);
+
+        // Enable chip
+        CMS_SetRegister(port, 0x1C, 0x01);
+
+        port += 2;
     }
-
-    // Reset chip
-    CMS_SetRegister(port, 0x1C, 0x02);
-
-    // Enable chip
-    CMS_SetRegister(port, 0x1C, 0x01);
-
-    port += 2;
-
-    // Null all 20 registers (second SAA1099)
-    for (i = 0; i < 20; i++){
-        CMS_SetRegister(port, i, 0x00);
-    }
-
-    // Reset chip
-    CMS_SetRegister(port, 0x1C, 0x02);
-
-    // Enable chip
-    CMS_SetRegister(port, 0x1C, 0x01);
 }
 
 static void CMS_ServiceInterrupt(task *Task)
