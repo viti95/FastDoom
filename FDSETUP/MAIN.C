@@ -47,8 +47,9 @@ char cards[M_LAST][20] = {
 	"PC Speaker (1 bit)",
 	"COVOX",
 	"Sound Blaster DM",
-	"Adlib PCM (1 bit)",
-	"PC Speaker (PWM)"
+	"Adlib PCM (6 bit)",
+	"PC Speaker (PWM)",
+	"C/MS (4 bit)"
 	};
 
 char controls[C_LAST][20] = {
@@ -308,7 +309,7 @@ void StartUp(void)
 	curk.mouse[2] = 2;
 
 	newc.m.card = M_NONE;
-	newc.m.lptport = -1;
+	newc.m.soundport = -1;
 	newc.m.midiport = -1;
 	newc.d = newc.m;
 	newc.numdig = 2;
@@ -326,7 +327,7 @@ void StartUp(void)
 		if (SmellsLikeGUS(&addr, &irq, &dma))
 		{
 			newc.m.card = M_GUS;
-			newc.m.lptport = addr;
+			newc.m.soundport = addr;
 			newc.m.midiport = -1;
 			newc.d = newc.m;
 			//fprintf(stderr, "GUS: addr=%x, irq=%d, dma=%d\n", addr, irq, dma);
@@ -334,7 +335,7 @@ void StartUp(void)
 		else if (SmellsLikeSB(&addr, &irq, &dma, &midi))
 		{
 			newc.m.card = M_SB;
-			newc.m.lptport = addr;
+			newc.m.soundport = addr;
 			newc.m.midiport = midi;
 			newc.d = newc.m;
 		}

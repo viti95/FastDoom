@@ -422,22 +422,22 @@ int ChooseMusicCard(void) // RETURN: 0 = OK, -1 == ABORT
 			{
 			case MCARD_SBAWE32:
 				newc.m.card = M_SBAWE32;
-				newc.m.lptport = -1;
+				newc.m.soundport = -1;
 				goto func_exit;
 
 			case MCARD_GMIDI:
 				newc.m.card = M_GMIDI;
-				newc.m.lptport = -1;
+				newc.m.soundport = -1;
 				goto func_exit;
 
 			case MCARD_CANVAS:
 				newc.m.card = M_CANVAS;
-				newc.m.lptport = -1;
+				newc.m.soundport = -1;
 				goto func_exit;
 
 			case MCARD_WAVE:
 				newc.m.card = M_WAVE;
-				newc.m.lptport = -1;
+				newc.m.soundport = -1;
 				goto func_exit;
 
 			case MCARD_SB:
@@ -456,13 +456,13 @@ int ChooseMusicCard(void) // RETURN: 0 = OK, -1 == ABORT
 
 			case MCARD_ADLIB:
 				newc.m.card = M_ADLIB;
-				newc.m.lptport = -1;
+				newc.m.soundport = -1;
 				newc.m.midiport = -1;
 				goto func_exit;
 
 			case MCARD_NONE:
 				newc.m.card = M_NONE;
-				newc.m.lptport = -1;
+				newc.m.soundport = -1;
 				newc.m.midiport = -1;
 				goto func_exit;
 
@@ -509,8 +509,6 @@ int SetupMusic(void)
 		break;
 
 	case M_SB:
-		/*if (ChooseSbPort(&newc.m) == -1)
-			return (-1);*/
 		savemusic = TRUE;
 		break;
 
@@ -521,6 +519,10 @@ int SetupMusic(void)
 		break;
 
 	case M_SBAWE32:
+		newc.m.midiport = 0x620;
+		savemusic = TRUE;
+		break;
+
 	case M_CANVAS:
 		newc.m.midiport = 0x330;
 		if (ChooseMidiPort(&newc.m) == -1)

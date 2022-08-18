@@ -44,6 +44,7 @@ typedef enum
 	M_SBDIRECT,
 	M_ADBFX,
 	M_PCPWM,
+	M_CMS,
 	M_LAST
 } SCARD;
 
@@ -58,7 +59,7 @@ typedef struct
 {
 	SCARD card;
 	short midiport;
-	short lptport;
+	short soundport;
 } DMXCARD;
 
 typedef struct

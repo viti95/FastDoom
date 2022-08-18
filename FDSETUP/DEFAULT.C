@@ -84,7 +84,7 @@ default_t defaults[] =
 		{"snd_musicdevice", (int *)&newc.m.card, 0},
 		{"snd_sfxdevice", (int *)&newc.d.card, 0},
 		{"snd_mport", (int *)&newc.m.midiport, 0x330},
-		{"snd_lptport", (int *)&newc.d.lptport, 0x378},
+		{"snd_sport", (int *)&newc.d.soundport, 0x378},
 
 		{"usegamma", &usegamma, 0},
 };
@@ -105,12 +105,12 @@ void M_SaveDefaults(void)
 	int i;
 	FILE *f;
 
-	if (newc.m.lptport == -1)
+	if (newc.m.soundport == -1)
 	{
-		if (newc.d.lptport == -1)
-			newc.m.lptport = 0x378;
+		if (newc.d.soundport == -1)
+			newc.m.soundport = 0x378;
 		else
-			newc.m.lptport = newc.d.lptport;
+			newc.m.soundport = newc.d.soundport;
 	}
 
 	if (newc.control != C_KEY)
@@ -197,7 +197,7 @@ int M_LoadDefaults(void)
 
 	fclose(f);
 
-	newc.d.lptport = newc.m.lptport;
+	newc.d.soundport = newc.m.soundport;
 
 	if (usemouse)
 		newc.control = C_MOUSE;

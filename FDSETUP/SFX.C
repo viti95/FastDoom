@@ -16,23 +16,25 @@ enum
 	DCARD_SBDIRECT,
 	DCARD_ADBFX,
 	DCARD_PCPWM,
+	DCARD_CMS,
 	DCARD_NONE,
 	DCARD_MAX
 };
 
 item_t idcarditems[] =
 	{
-		{DCARD_GUS, 27, 7, 25, -1, -1},
-		{DCARD_PAS, 27, 8, 25, -1, -1},
-		{DCARD_SB, 27, 9, 25, -1, -1},
-		{DCARD_PC, 27, 10, 25, -1, -1},
-		{DCARD_DISNEY, 27, 11, 25, -1, -1},
-		{DCARD_TANDY, 27, 12, 25, -1, -1},
-		{DCARD_PC1BIT, 27, 13, 25, -1, -1},
-		{DCARD_COVOX, 27, 14, 25, -1, -1},
-		{DCARD_SBDIRECT, 27, 15, 25, -1, -1},
-		{DCARD_ADBFX, 27, 16, 25, -1, -1},
-		{DCARD_PCPWM, 27, 17, 25, -1, -1},
+		{DCARD_GUS, 27, 6, 25, -1, -1},
+		{DCARD_PAS, 27, 7, 25, -1, -1},
+		{DCARD_SB, 27, 8, 25, -1, -1},
+		{DCARD_PC, 27, 9, 25, -1, -1},
+		{DCARD_DISNEY, 27, 10, 25, -1, -1},
+		{DCARD_TANDY, 27, 11, 25, -1, -1},
+		{DCARD_PC1BIT, 27, 12, 25, -1, -1},
+		{DCARD_COVOX, 27, 13, 25, -1, -1},
+		{DCARD_SBDIRECT, 27, 14, 25, -1, -1},
+		{DCARD_ADBFX, 27, 15, 25, -1, -1},
+		{DCARD_PCPWM, 27, 16, 25, -1, -1},
+		{DCARD_CMS, 27, 17, 25, -1, -1},
 		{DCARD_NONE, 27, 18, 25, -1, -1}
 	};
 
@@ -96,6 +98,10 @@ int ChooseFxCard(void)
 	case M_PCPWM:
 		field = DCARD_PCPWM;
 		break;
+	
+	case M_CMS:
+		field = DCARD_CMS;
+		break;
 
 	case M_COVOX:
 		field = DCARD_COVOX;
@@ -140,55 +146,61 @@ int ChooseFxCard(void)
 
 			case DCARD_PC:
 				newc.d.card = M_PC;
-				newc.d.lptport = -1;
+				newc.d.soundport = -1;
 				newc.d.midiport = -1;
 				goto func_exit;
 
 			case DCARD_DISNEY:
 				newc.d.card = M_DISNEYSS;
-				newc.d.lptport = -1;
+				newc.d.soundport = -1;
 				newc.d.midiport = -1;
 				goto func_exit;
 
 			case DCARD_TANDY:
 				newc.d.card = M_TANDYSS;
-				newc.d.lptport = -1;
+				newc.d.soundport = -1;
 				newc.d.midiport = -1;
 				goto func_exit;
 
 			case DCARD_PC1BIT:
 				newc.d.card = M_PC1BIT;
-				newc.d.lptport = -1;
+				newc.d.soundport = -1;
 				newc.d.midiport = -1;
 				goto func_exit;
 
 			case DCARD_ADBFX:
 				newc.d.card = M_ADBFX;
-				newc.d.lptport = -1;
+				newc.d.soundport = -1;
 				newc.d.midiport = -1;
 				goto func_exit;
 
 			case DCARD_PCPWM:
 				newc.d.card = M_PCPWM;
-				newc.d.lptport = -1;
+				newc.d.soundport = -1;
+				newc.d.midiport = -1;
+				goto func_exit;
+
+			case DCARD_CMS:
+				newc.d.card = M_CMS;
+				newc.d.soundport = 0x220;
 				newc.d.midiport = -1;
 				goto func_exit;
 
 			case DCARD_COVOX:
 				newc.d.card = M_COVOX;
-				newc.d.lptport = -1;
+				newc.d.soundport = -1;
 				newc.d.midiport = -1;
 				goto func_exit;
 
 			case DCARD_SBDIRECT:
 				newc.d.card = M_SBDIRECT;
-				newc.d.lptport = -1;
+				newc.d.soundport = -1;
 				newc.d.midiport = -1;
 				goto func_exit;
 
 			case DCARD_NONE:
 				newc.d.card = M_NONE;
-				newc.d.lptport = -1;
+				newc.d.soundport = -1;
 				newc.d.midiport = -1;
 				goto func_exit;
 
@@ -237,7 +249,7 @@ int ChooseLPTPort(DMXCARD *card) // RETURN: 0 = OK, -1 == ABORT
 
 	// DEFAULT FIELD ========================================
 
-	switch (card->lptport)
+	switch (card->soundport)
 	{
 	default:
 	case 0x378:
@@ -270,15 +282,15 @@ int ChooseLPTPort(DMXCARD *card) // RETURN: 0 = OK, -1 == ABORT
 			switch (field)
 			{
 			case LPT_PORT_378:
-				card->lptport = 0x378;
+				card->soundport = 0x378;
 				goto func_exit;
 
 			case LPT_PORT_278:
-				card->lptport = 0x278;
+				card->soundport = 0x278;
 				goto func_exit;
 
 			case LPT_PORT_3BC:
-				card->lptport = 0x3BC;
+				card->soundport = 0x3BC;
 				goto func_exit;
 
 			default:
@@ -663,62 +675,34 @@ int SetupFX(void)
 	switch (newc.d.card)
 	{
 	default:
-		savefx = FALSE;
-		break;
-
 	case M_NONE:
-		savefx = TRUE;
-		break;
-
 	case M_PC:
-		savefx = TRUE;
-		break;
-
 	case M_ADLIB:
-		savefx = TRUE;
+		savefx = FALSE;
 		break;
 
 	case M_DISNEYSS:
 	case M_TANDYSS:
-		if (ChooseLPTPort(&newc.d) == -1)
-			return (-1);
-		savefx = TRUE;
-		break;
-
-	case M_PC1BIT:
-		savefx = TRUE;
-		break;
-	
-	case M_ADBFX:
-		savefx = TRUE;
-		break;
-
-	case M_PCPWM:
-		savefx = TRUE;
-		break;
-
 	case M_COVOX:
 		if (ChooseLPTPort(&newc.d) == -1)
 			return (-1);
-		savefx = TRUE;
-		break;
-
-	case M_SBDIRECT:
-		savefx = TRUE;
-		break;
-
-	case M_PAS:
-	case M_GUS:
 		ChooseNumDig();
 		savefx = TRUE;
 		break;
 
+	case M_PC1BIT:
+	case M_ADBFX:
+	case M_PCPWM:
+	case M_CMS:
+	case M_SBDIRECT:
+	case M_PAS:
+	case M_GUS:
 	case M_WAVE:
 	case M_SB:
 		ChooseNumDig();
 		savefx = TRUE;
 		break;
-
+		
 	case M_CANVAS:
 		newc.d.midiport = 0x330;
 		if (ChooseMidiPort(&newc.d) == -1)
