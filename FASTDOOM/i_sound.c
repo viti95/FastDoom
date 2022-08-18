@@ -66,7 +66,7 @@ void I_ShutdownTimer(void)
 // Sound header & data
 //
 int snd_Mport;       // midi variables
-int snd_LPTport;     // LPT port
+int snd_Sport;       // sound port
 
 int snd_MusicVolume; // maximum volume for music
 int snd_SfxVolume;   // maximum volume for sound
@@ -200,7 +200,7 @@ void I_sndArbitrateCards(void)
 
     if (lpt)
     {
-        LPT_SetPort(snd_LPTport);
+        LPT_SetPort(snd_Sport);
     }
 }
 
