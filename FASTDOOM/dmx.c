@@ -58,7 +58,7 @@ char *mid_data = NULL;
 
 int mus_loop = 0;
 int dmx_mus_port = 0;
-int dmx_lpt_port = 0;
+int dmx_snd_port = 0;
 
 int MUS_RegisterSong(void *data)
 {
@@ -299,9 +299,9 @@ void MPU_SetCard(int port)
     dmx_mus_port = port;
 }
 
-void LPT_SetPort(int port)
+void SND_SetPort(int port)
 {
-    dmx_lpt_port = port;
+    dmx_snd_port = port;
 }
 
 int ASS_GetSoundCardCode(int sndDevice)
@@ -385,7 +385,8 @@ void ASS_Init(int rate, int maxsng, int mdev, int sdev)
     case SoundSource:
     case TandySoundSource:
     case LPTDAC:
-        FX_SetupCard(sound_device, &fx_device, dmx_lpt_port);
+    case CMS:
+        FX_SetupCard(sound_device, &fx_device, dmx_snd_port);
         break;
     default:
         FX_SetupCard(sound_device, &fx_device, -1);

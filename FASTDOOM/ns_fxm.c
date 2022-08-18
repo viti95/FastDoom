@@ -134,7 +134,7 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
         device->MaxChannels = 1;
         break;
     case CMS:
-        DeviceStatus = CMS_Init(SoundCard);
+        DeviceStatus = CMS_Init(SoundCard, port);
         if (DeviceStatus != CMS_Ok)
         {
             status = FX_Error;

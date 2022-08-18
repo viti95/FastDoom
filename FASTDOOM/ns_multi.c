@@ -1290,7 +1290,7 @@ int MV_Init(
         break;
     
     case CMS:
-        status = CMS_Init(soundcard);
+        status = CMS_Init(soundcard, -1);
         break;
 
     case LPTDAC:

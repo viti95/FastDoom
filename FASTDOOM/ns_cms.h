@@ -17,7 +17,7 @@ enum CMS_Errors
 
 void CMS_StopPlayback(void);
 int CMS_BeginBufferedPlayback(char *BufferStart, int BufferSize, int NumDivisions, void (*CallBackFunc)(void));
-int CMS_Init(int soundcard);
+int CMS_Init(int soundcard, int port);
 void CMS_Shutdown(void);
 
 #endif

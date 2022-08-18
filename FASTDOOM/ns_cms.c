@@ -159,7 +159,7 @@ int CMS_BeginBufferedPlayback(
    sounds.
 ---------------------------------------------------------------------*/
 
-int CMS_Init(int soundcard)
+int CMS_Init(int soundcard, int port)
 {
     if (CMS_Installed)
     {
@@ -175,6 +175,9 @@ int CMS_Init(int soundcard)
     CMS_CallBack = NULL;
 
     CMS_BufferStart = NULL;
+
+    if (port != -1)
+        CMS_Port = port;
 
     CMS_Installed = 1;
 

@@ -100,7 +100,7 @@ int I_GetSfxLumpNum(sfxinfo_t *sfx)
 
 void I_sndArbitrateCards(void)
 {
-    byte gus, adlib, sb, midi, ensoniq, lpt;
+    byte gus, adlib, sb, midi, ensoniq, lpt, cms;
     int dmxlump;
 
     snd_SfxVolume = 127;
@@ -137,6 +137,7 @@ void I_sndArbitrateCards(void)
     adlib = snd_MusicDevice == snd_Adlib || snd_MusicDevice == snd_SB || snd_MusicDevice == snd_PAS;
     midi = snd_MusicDevice == snd_MPU;
     lpt = snd_SfxDevice == snd_DISNEY || snd_SfxDevice == snd_TANDY || snd_SfxDevice == snd_LPTDAC;
+    cms = snd_SfxDevice == snd_CMS;
 
     //
     // initialize whatever i've got
@@ -200,7 +201,12 @@ void I_sndArbitrateCards(void)
 
     if (lpt)
     {
-        LPT_SetPort(snd_Sport);
+        SND_SetPort(snd_Sport);
+    }
+
+    if (cms)
+    {
+        SND_SetPort(snd_Sport);
     }
 }
 

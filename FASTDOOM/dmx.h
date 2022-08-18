@@ -35,7 +35,7 @@ int AL_Detect(void);
 void AL_SetCard(void *data);
 int MPU_Detect(int *port);
 void MPU_SetCard(int port);
-void LPT_SetPort(int port);
+void SND_SetPort(int port);
 void ASS_Init(int rate, int maxsng, int mdev, int sdev);
 void ASS_DeInit(void);
 void WAV_PlayMode(int channels, int samplerate);
