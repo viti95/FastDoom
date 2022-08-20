@@ -51,6 +51,10 @@ extern byte screen4[SCREENWIDTH * 32];
 extern byte backbuffer[SCREENWIDTH * SCREENHEIGHT];
 #endif
 
+#if defined(MODE_MDA)
+extern unsigned short backbuffer[80 * 25 * 2];
+#endif
+
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 extern int dirtybox[4];
 #endif

@@ -1287,7 +1287,7 @@ byte textpage = 0;
 #endif
 
 #if defined(MODE_MDA)
-unsigned short *textdestscreen = (unsigned short *)0xB0000;
+unsigned short *textdestscreen = backbuffer;
 #endif
 
 //
@@ -2430,6 +2430,10 @@ void I_FinishUpdate(void)
     {
         I_WaitSingleVBL();
     }
+#endif
+
+#if defined(MODE_MDA)
+    CopyDWords(backbuffer, 0xB0000, 1000);
 #endif
 
 #if defined(MODE_T4025) || defined(MODE_T4050)

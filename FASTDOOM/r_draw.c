@@ -782,34 +782,22 @@ void R_DrawLineColumnTextMDA(void)
     int countblock;
     unsigned short *dest;
     byte odd;
-    unsigned short vmem;
 
     odd = dc_yl & 1;
-    dest = ((unsigned short *)0xB0000) + Mul80(dc_yl / 2) + dc_x;
+    dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
     count = dc_yh - dc_yl;
-
-    //fracstep = dc_iscale;
-    //frac = dc_texturemid + (dc_yl - centery) * fracstep;
 
     if (count >= 1 && odd || count == 0)
     {
-        //vmem = *dest;
-
         if (odd)
         {
-            //vmem = vmem & 0x0F00;
             *dest = 0x0F << 8 | 0xDB;
-            //*dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 12 | 223;
-
             odd = 0;
             dest += 80;
-            //frac += fracstep;
         }
         else
         {
-            //vmem = vmem & 0xF000;
             *dest = 0x0F << 8 | 0xDB;
-            //*dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 223;
             return;
         }
 
@@ -823,24 +811,15 @@ void R_DrawLineColumnTextMDA(void)
     {
         unsigned short firstcolor, secondcolor;
 
-        //firstcolor = dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8;
-        //frac += fracstep;
-        //secondcolor = dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 12;
-
         *dest = 0x0F << 8 | 0xDB;
-        //*dest = firstcolor | secondcolor | 223;
         dest += 80;
 
-        //frac += fracstep;
         countblock--;
     }
 
     if (count >= 0 && !odd)
     {
-        //vmem = *dest;
-        //vmem = vmem & 0xF000;
         *dest = 0x0F << 8 | 0xDB;
-        //*dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 223;
     }
 }
 
@@ -852,33 +831,22 @@ void R_DrawSpriteTextMDA(void)
     int countblock;
     unsigned short *dest;
     byte odd;
-    unsigned short vmem;
 
     odd = dc_yl & 1;
-    dest = ((unsigned short *)0xB0000) + Mul80(dc_yl / 2) + dc_x;
+    dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
     count = dc_yh - dc_yl;
-
-    //fracstep = dc_iscale;
-    //frac = dc_texturemid + (dc_yl - centery) * fracstep;
 
     if (count >= 1 && odd || count == 0)
     {
-        //vmem = *dest;
-
         if (odd)
         {
-            //vmem = vmem & 0x0F00;
-            //*dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 12 | 223;
             *dest = 0x0F << 8 | 0xB0;
 
             odd = 0;
             dest += 80;
-            //frac += fracstep;
         }
         else
         {
-            //vmem = vmem & 0xF000;
-            //*dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 223;
             *dest = 0x0F << 8 | 0xB0;
             return;
         }
@@ -891,24 +859,14 @@ void R_DrawSpriteTextMDA(void)
 
     while (countblock)
     {
-        //unsigned short firstcolor, secondcolor;
-
-        //firstcolor = dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8;
-        //frac += fracstep;
-        //secondcolor = dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 12;
-
         *dest = 0x0F << 8 | 0xB0;
         dest += 80;
 
-        //frac += fracstep;
         countblock--;
     }
 
     if (count >= 0 && !odd)
     {
-        //vmem = *dest;
-        //vmem = vmem & 0xF000;
-        //*dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 223;
         *dest = 0x0F << 8 | 0xB0;
     }
 }
@@ -921,33 +879,22 @@ void R_DrawEmptyColumnTextMDA(void)
     int countblock;
     unsigned short *dest;
     byte odd;
-    unsigned short vmem;
 
     odd = dc_yl & 1;
-    dest = ((unsigned short *)0xB0000) + Mul80(dc_yl / 2) + dc_x;
+    dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
     count = dc_yh - dc_yl;
-
-    //fracstep = dc_iscale;
-    //frac = dc_texturemid + (dc_yl - centery) * fracstep;
 
     if (count >= 1 && odd || count == 0)
     {
-        //vmem = *dest;
-
         if (odd)
         {
-            //vmem = vmem & 0x0F00;
-            //*dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 12 | 223;
             *dest = 0x0F << 8 | 0xDB;
 
             odd = 0;
             dest += 80;
-            //frac += fracstep;
         }
         else
         {
-            //vmem = vmem & 0xF000;
-            //*dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 223;
             *dest = 0x0F << 8 | 0xDB;
             return;
         }
@@ -962,24 +909,14 @@ void R_DrawEmptyColumnTextMDA(void)
     {
         unsigned short firstcolor, secondcolor;
 
-        //firstcolor = dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8;
-        //frac += fracstep;
-        //secondcolor = dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 12;
-
         *dest = 0x0F << 8 | 0x00;
-
-        //*dest = firstcolor | secondcolor | 223;
         dest += 80;
 
-        //frac += fracstep;
         countblock--;
     }
 
     if (count >= 0 && !odd)
     {
-        //vmem = *dest;
-        //vmem = vmem & 0xF000;
-        //*dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 223;
         *dest = 0x0F << 8 | 0xDB;
     }
 }
@@ -1316,20 +1253,15 @@ void R_DrawSkyTextMDA(void)
     int countblock;
     unsigned short *dest;
     byte odd;
-    unsigned short vmem;
 
     odd = dc_yl & 1;
-    dest = ((unsigned short *)0xB0000) + Mul80(dc_yl / 2) + dc_x;
+    dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
     count = dc_yh - dc_yl;
 
     if (count >= 1 && odd || count == 0)
     {
-        //vmem = *dest;
-
         if (odd)
         {
-            //vmem = vmem & 0x0F00;
-            //*dest = vmem | 6 << 12 | 223;
             *dest = 6 << 8 | 219;
 
             odd = 0;
@@ -1337,8 +1269,6 @@ void R_DrawSkyTextMDA(void)
         }
         else
         {
-            //vmem = vmem & 0xF000;
-            //*dest = vmem | 6 << 8 | 223;
             *dest = 6 << 8 | 219;
             return;
         }
@@ -1358,9 +1288,6 @@ void R_DrawSkyTextMDA(void)
 
     if (count >= 0 && !odd)
     {
-        //vmem = *dest;
-        //vmem = vmem & 0xF000;
-        //*dest = vmem | 6 << 8 | 223;
         *dest = 6 << 8 | 219;
     }
 }
