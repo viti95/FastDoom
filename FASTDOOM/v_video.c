@@ -43,7 +43,7 @@ byte backbuffer[SCREENWIDTH * SCREENHEIGHT];
 #endif
 
 #if defined(MODE_MDA)
-unsigned short backbuffer[80 * 25 * 2];
+unsigned short backbuffer[80 * 25];
 #endif
 
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
