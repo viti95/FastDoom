@@ -604,17 +604,6 @@ static void MV_SetVoiceMixMode(
     {
         test |= T_MONO;
     }
-    else
-    {
-        if (IS_QUIET(voice->RightVolume))
-        {
-            test |= T_RIGHTQUIET;
-        }
-        else if (IS_QUIET(voice->LeftVolume))
-        {
-            test |= T_LEFTQUIET;
-        }
-    }
 
     if (MV_SoundCard == UltraSound){
         test |= T_ULTRASOUND;
@@ -623,11 +612,6 @@ static void MV_SetVoiceMixMode(
     switch (test)
     {
     case T_8BITS | T_MONO:
-    case T_8BITS | T_RIGHTQUIET:
-        voice->mix = MV_Mix8BitMono;
-        break;
-    case T_8BITS | T_LEFTQUIET:
-        MV_LeftVolume = MV_RightVolume;
         voice->mix = MV_Mix8BitMono;
         break;
     case T_8BITS:
@@ -723,12 +707,14 @@ int MV_SetMixMode(
     case TandySoundSource:
     case PC1bit:
     case PCPWM:
-    case CMS:
     case LPTDAC:
     case SoundBlasterDirect:
     case AdlibFX:
         MV_MixMode = MONO_8BIT;
         break;
+
+    case CMS:
+        MV_MixMode = STEREO_8BIT;
     }
 
     MV_Channels = 1;
@@ -762,6 +748,7 @@ int MV_SetMixMode(
     MV_BufferLength = TotalBufferSize;
 
     MV_RightChannelOffset = MV_SampleSize / 2;
+
     if ((MV_SoundCard == UltraSound) && (MV_Channels == 2))
     {
         MV_SampleSize /= 2;

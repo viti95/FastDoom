@@ -3,6 +3,8 @@
 
 #define MV_MinVoiceHandle 1
 
+extern int MV_RightChannelOffset;
+
 enum MV_Errors
 {
     MV_Warning = -2,

@@ -8,6 +8,7 @@
 #include "ns_cms.h"
 #include "ns_muldf.h"
 #include "ns_inter.h"
+#include "ns_multi.h"
 
 #include "m_misc.h"
 #include "options.h"
@@ -15,8 +16,8 @@
 
 static int CMS_Installed = 0;
 
-static char *CMS_BufferStart;
-static char *CMS_CurrentBuffer;
+static short *CMS_BufferStart;
+static short *CMS_CurrentBuffer;
 static int CMS_BufferNum = 0;
 static int CMS_NumBuffers = 0;
 static int CMS_TransferLength = 0;
@@ -24,7 +25,7 @@ static int CMS_CurrentLength = 0;
 
 unsigned short CMS_Port = 0x220;
 
-static char *CMS_SoundPtr;
+static short *CMS_SoundPtr;
 volatile int CMS_SoundPlaying;
 
 static task *CMS_Timer;
@@ -46,34 +47,36 @@ static void CMS_SetRegister(unsigned short regAddr, unsigned char reg, unsigned 
 
 static void CMS_Reset(void)
 {
-    int i, k;
+    int i;
     unsigned short port = CMS_Port;
 
-    for (k = 0; k < 2; k++){
-
-        // Null all 32 registers
-        for (i = 0; i < 32; i++){
-            CMS_SetRegister(port, i, 0x00);
-        }
-
-        // Reset chip
-        CMS_SetRegister(port, 0x1C, 0x02);
-
-        // Enable chip
-        CMS_SetRegister(port, 0x1C, 0x01);
-
-        port += 2;
+    // Null all 32 registers
+    for (i = 0; i < 32; i++){
+        CMS_SetRegister(port, i, 0x00);
+        CMS_SetRegister(port + 2, i, 0x00);
     }
+
+    // Reset chip
+    CMS_SetRegister(port, 0x1C, 0x02);
+    CMS_SetRegister(port + 2, 0x1C, 0x02);
+
+    // Enable chip
+    CMS_SetRegister(port, 0x1C, 0x01);
+    CMS_SetRegister(port + 2, 0x1C, 0x01);
 }
 
 static void CMS_ServiceInterrupt(task *Task)
-{
-    unsigned char value = (unsigned char) *CMS_SoundPtr;
+{   
+    char *ptr = CMS_SoundPtr;
 
-    value &= 0xF0;
-    value |= value >> 4;
+    unsigned char value1 = (unsigned char)*(ptr);
+    unsigned char value2 = (unsigned char)*(ptr + MV_RightChannelOffset);
+    
+    value1 = value1 >> 4;
+    value2 = value2 & 0xF0;
 
-    outp(CMS_Port, value);
+    CMS_SetRegister(CMS_Port, 0x02, value1);
+    CMS_SetRegister(CMS_Port + 2, 0x02, value2);
 
     CMS_SoundPtr++;
 
@@ -139,7 +142,7 @@ int CMS_BeginBufferedPlayback(
     CMS_CurrentBuffer = BufferStart;
     CMS_SoundPtr = BufferStart;
     // VITI95: OPTIMIZE
-    CMS_TransferLength = BufferSize / NumDivisions;
+    CMS_TransferLength = (BufferSize / NumDivisions) / 2;
     CMS_CurrentLength = CMS_TransferLength;
     CMS_BufferNum = 0;
     CMS_NumBuffers = NumDivisions;
@@ -168,7 +171,7 @@ int CMS_Init(int soundcard, int port)
 
     CMS_Reset();
     CMS_SetRegister(CMS_Port, 0x18, 0x82);
-    outp(CMS_Port + 1, 0x02);
+    CMS_SetRegister(CMS_Port + 2, 0x18, 0x82);
 
     CMS_SoundPlaying = 0;
 
