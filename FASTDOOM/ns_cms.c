@@ -200,6 +200,9 @@ void CMS_Shutdown(void)
 {
     CMS_StopPlayback();
 
+    CMS_SetRegister(CMS_Port, 0x1C, 0x02);
+    CMS_SetRegister(CMS_Port + 2, 0x1C, 0x02);
+
     CMS_SoundPlaying = 0;
 
     CMS_BufferStart = NULL;
