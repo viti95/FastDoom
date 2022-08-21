@@ -15,6 +15,7 @@ Doom port for DOS, based on PCDoom by @nukeykt. The goal of this port is to make
 * Disney Sound Source support
 * COVOX LPT DAC support
 * Adlib OPL2 PCM support
+* Creative Music System / Game Blaster support
 * Hercules automap support
 * Lot's of optimizations to make the game run faster / smoother
 * Removed low memory limit (may cause crashes with low RAM)

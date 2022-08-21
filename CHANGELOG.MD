@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 0.8.16 (21 Aug 2022)
+* Added Creative Music System / Game Blaster PCM support (4-bit stereo DAC)
+* Added PC Speaker PWM support (now working properly, CPU intensive)
+* Disney Sound Source / COVOX parallel port now is selectable (FDSetup)
+* Remove -LPTx command line parameters as they are now not needed
+* Fixed flickering in MDA video mode.
+
 ## 0.8.15 (06 Jul 2022)
 * Added Adlib PCM support (yeah that OPL2 can do that)
 * Optimizations in sound code
