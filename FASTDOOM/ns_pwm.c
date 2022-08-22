@@ -39,9 +39,7 @@ void (*PCSpeaker_PWM_CallBack)(void);
 static void PCSpeaker_PWM_ServiceInterrupt(task *Task)
 {
     unsigned char value = (unsigned char) *PCSpeaker_PWM_SoundPtr;
-    unsigned flags;
 
-    flags = DisableInterrupts();
 
     outp(0x43, 0xB0);
     outp(0x42, value >> 1);
@@ -70,8 +68,6 @@ static void PCSpeaker_PWM_ServiceInterrupt(task *Task)
             MV_ServiceVoc();
         }
     }
-
-    RestoreInterrupts(flags);
 }
 
 /*---------------------------------------------------------------------
