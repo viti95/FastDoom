@@ -109,6 +109,10 @@ int forceScreenSize;
 boolean CGAcard;
 #endif
 
+#if defined(MODE_CGA)
+boolean CGApalette1;
+#endif
+
 #ifdef SUPPORTS_HERCULES_AUTOMAP
 boolean HERCmap;
 #endif
@@ -1000,6 +1004,10 @@ void D_DoomMain(void)
 
 #if defined(MODE_T8025) || defined(MODE_T4025) || defined(MODE_T4050)
     CGAcard = M_CheckParm("-cga");
+#endif
+
+#if defined(MODE_CGA)
+    CGApalette1 = M_CheckParm("-palette1");
 #endif
 
 #ifdef SUPPORTS_HERCULES_AUTOMAP

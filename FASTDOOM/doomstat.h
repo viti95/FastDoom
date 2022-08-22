@@ -66,6 +66,10 @@ extern int forceScreenSize;
 extern boolean CGAcard;
 #endif
 
+#if defined(MODE_CGA)
+extern boolean CGApalette1;
+#endif
+
 #ifdef SUPPORTS_HERCULES_AUTOMAP
 extern boolean HERCmap;
 #endif
