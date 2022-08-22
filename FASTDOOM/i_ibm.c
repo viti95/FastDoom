@@ -39,6 +39,7 @@
 #include "ns_task.h"
 #include "doomdef.h"
 #include "doomstat.h"
+#include "ns_inter.h"
 
 #include "am_map.h"
 
@@ -289,6 +290,10 @@ byte scantokey[128] =
 
 #ifdef MODE_HERC
 byte vrambuffer[32768];
+#endif
+
+#if defined(MODE_CGA16) || defined(MODE_CGA136)
+byte vrambuffer[16384];
 #endif
 
 #ifdef MODE_CGA_BW
@@ -1698,6 +1703,43 @@ void HERC_DrawBackbuffer(void)
 #endif
 
 #ifdef MODE_CGA16
+void CGA16_DrawBackbuffer_Snow(void)
+{
+    unsigned char *vram = (unsigned char *)0xB8001;
+    unsigned char line = 80;
+    byte *ptrbackbuffer = backbuffer;
+    byte *ptrvrambuffer = vrambuffer;
+
+    unsigned flags;
+
+    flags = DisableInterrupts();
+
+    do
+    {
+        unsigned char tmp = ptrlut16colors[*ptrbackbuffer] << 4 | ptrlut16colors[*(ptrbackbuffer + 2)];
+    
+        if (tmp != *ptrvrambuffer)
+        {
+            I_WaitCGA();
+            *vram = tmp;
+            *ptrvrambuffer = tmp;
+        }
+
+        vram += 2;
+        ptrvrambuffer += 2;
+        ptrbackbuffer += 4;
+
+        line--;
+        if (line == 0)
+        {
+            line = 80;
+            ptrbackbuffer += 320;
+        }
+    } while (vram < (unsigned char *)0xBBE80);
+
+    RestoreInterrupts(flags);
+}
+
 void CGA16_DrawBackbuffer(void)
 {
     unsigned char *vram = (unsigned char *)0xB8001;
@@ -1744,6 +1786,70 @@ void EGA16_DrawBackbuffer(void)
 #endif
 
 #ifdef MODE_CGA136
+void CGA136_DrawBackbuffer_Snow(void)
+{
+    unsigned char *vram = (unsigned char *)0xB8001;
+    byte *ptrbackbuffer = backbuffer;
+    byte *ptrvrambuffer = vrambuffer;
+    unsigned char line = 20;
+
+    unsigned flags;
+
+    flags = DisableInterrupts();
+
+    do
+    {
+        unsigned char tmp = ptrlut136colors[*ptrbackbuffer];
+
+        if (tmp != *ptrvrambuffer)
+        {
+            I_WaitCGA();
+            *vram = tmp;
+            *ptrvrambuffer = tmp;
+        }
+
+        tmp = ptrlut136colors[*(ptrbackbuffer + 4)];
+
+        if (tmp != *(ptrvrambuffer + 2))
+        {
+            I_WaitCGA();
+            *(vram + 2) = tmp;
+            *(ptrvrambuffer + 2) = tmp;
+        }
+
+        tmp = ptrlut136colors[*(ptrbackbuffer + 8)];
+
+        if (tmp != *(ptrvrambuffer + 4))
+        {
+            I_WaitCGA();
+            *(vram + 4) = tmp;
+            *(ptrvrambuffer + 4) = tmp;
+        }
+
+        tmp = ptrlut136colors[*(ptrbackbuffer + 12)];
+
+        if (tmp != *(ptrvrambuffer + 6))
+        {
+            I_WaitCGA();
+            *(vram + 6) = tmp;
+            *(ptrvrambuffer + 6) = tmp;
+        }
+
+        vram += 8;
+        ptrbackbuffer += 16;
+        ptrvrambuffer += 8;
+
+        line--;
+        if (line == 0)
+        {
+            line = 20;
+            ptrbackbuffer += 320;
+        }
+    } while (vram < (unsigned char *)0xBBE80);
+
+    RestoreInterrupts(flags);
+}
+
 void CGA136_DrawBackbuffer(void)
 {
     unsigned char *vram = (unsigned char *)0xB8001;
@@ -2585,13 +2691,21 @@ void I_FinishUpdate(void)
     CGA_BW_DrawBackbuffer();
 #endif
 #ifdef MODE_CGA16
-    CGA16_DrawBackbuffer();
+    if (CGAfix){
+        CGA16_DrawBackbuffer_Snow();
+    }else{
+        CGA16_DrawBackbuffer();   
+    }
 #endif
 #ifdef MODE_EGA16
     EGA16_DrawBackbuffer();
 #endif
 #ifdef MODE_CGA136
-    CGA136_DrawBackbuffer();
+    if (CGAfix){
+        CGA136_DrawBackbuffer_Snow();
+    }else{
+        CGA136_DrawBackbuffer();
+    }
 #endif
 #ifdef MODE_VGA16
     VGA16_DrawBackbuffer();
@@ -3154,16 +3268,22 @@ void I_InitGraphics(void)
 #endif
 
 #if defined(MODE_CGA16)
+    SetDWords(vrambuffer, 0, 4096);
+
     for (i = 0; i < 16000; i += 2)
     {
         vram[i] = 0xDE;
+        vrambuffer[i] = 0xDE;
     }
 #endif
 
 #if defined(MODE_CGA136)
+    SetDWords(vrambuffer, 0, 4096);
+    
     for (i = 0; i < 16000; i += 2)
     {
         vram[i] = 0xB1;
+        vrambuffer[i] = 0xB1;
     }
 #endif
 

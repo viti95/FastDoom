@@ -103,6 +103,17 @@ void I_WaitSingleVBL(void);
     "and al, 0x08", \
     "jz l2" modify [al dx]
 
+// Wait for CGA to be available
+void I_WaitCGA(void);
+#pragma aux I_WaitCGA = \
+    "mov dx, 0x3DA", \
+    "wdn: in al, dx", \
+    "test al, 0x01", \
+    "jz wdn", \
+    "wdr: in al, dx", \
+    "test al, 0x01", \
+    "jz wdr" modify [al dx]
+
 void I_DisableCGABlink(void);
 #pragma aux I_DisableCGABlink = \   
     "mov dx, 0x3D8", \

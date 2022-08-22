@@ -113,6 +113,10 @@ boolean CGAcard;
 boolean CGApalette1;
 #endif
 
+#if defined(MODE_CGA16) || defined(MODE_CGA136)
+boolean CGAfix;
+#endif
+
 #ifdef SUPPORTS_HERCULES_AUTOMAP
 boolean HERCmap;
 #endif
@@ -1008,6 +1012,10 @@ void D_DoomMain(void)
 
 #if defined(MODE_CGA)
     CGApalette1 = M_CheckParm("-palette1");
+#endif
+
+#if defined(MODE_CGA16) || defined(MODE_CGA136)
+    CGAfix = M_CheckParm("-snow");
 #endif
 
 #ifdef SUPPORTS_HERCULES_AUTOMAP

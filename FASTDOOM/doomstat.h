@@ -70,6 +70,10 @@ extern boolean CGAcard;
 extern boolean CGApalette1;
 #endif
 
+#if defined(MODE_CGA16) || defined(MODE_CGA136)
+extern boolean CGAfix;
+#endif
+
 #ifdef SUPPORTS_HERCULES_AUTOMAP
 extern boolean HERCmap;
 #endif
