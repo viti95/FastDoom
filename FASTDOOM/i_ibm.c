@@ -1717,10 +1717,6 @@ void CGA16_DrawBackbuffer_Snow(void)
     byte *ptrbackbuffer = backbuffer;
     byte *ptrvrambuffer = vrambuffer;
 
-    unsigned flags;
-
-    flags = DisableInterrupts();
-
     do
     {
         unsigned char tmp = ptrlut16colors[*ptrbackbuffer] << 4 | ptrlut16colors[*(ptrbackbuffer + 2)];
@@ -1743,8 +1739,6 @@ void CGA16_DrawBackbuffer_Snow(void)
             ptrbackbuffer += 320;
         }
     } while (vram < (unsigned char *)0xBBE80);
-
-    RestoreInterrupts(flags);
 }
 
 void CGA16_DrawBackbuffer(void)
@@ -1800,10 +1794,6 @@ void CGA136_DrawBackbuffer_Snow(void)
     byte *ptrvrambuffer = vrambuffer;
     unsigned char line = 20;
 
-    unsigned flags;
-
-    flags = DisableInterrupts();
-
     do
     {
         unsigned char tmp = ptrlut136colors[*ptrbackbuffer];
@@ -1853,8 +1843,6 @@ void CGA136_DrawBackbuffer_Snow(void)
             ptrbackbuffer += 320;
         }
     } while (vram < (unsigned char *)0xBBE80);
-
-    RestoreInterrupts(flags);
 }
 
 void CGA136_DrawBackbuffer(void)
