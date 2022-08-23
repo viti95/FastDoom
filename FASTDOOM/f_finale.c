@@ -789,8 +789,11 @@ void F_CastDrawerText(void)
 #ifdef MODE_T4025
 	V_DrawPatchDirectText4025(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
 #endif
-#if defined(MODE_T8025) || defined(MODE_MDA)
+#if defined(MODE_T8025)
 	V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
+#endif
+#if defined(MODE_MDA)
+	V_DrawPatchDirectTextMDA(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
 #endif
 #ifdef MODE_T8043
 	V_DrawPatchDirectText8043(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
@@ -830,8 +833,11 @@ void F_CastDrawerText(void)
 #ifdef MODE_T4025
 	V_DrawPatchDirectText4025(160, 170, patch);
 #endif
-#if defined(MODE_T8025) || defined(MODE_MDA)
+#if defined(MODE_T8025)
 	V_DrawPatchDirectText8025(160, 170, patch);
+#endif
+#if defined(MODE_MDA)
+	V_DrawPatchDirectTextMDA(160, 170, patch);
 #endif
 #ifdef MODE_T8043
 	V_DrawPatchDirectText8043(160, 170, patch);
@@ -1255,8 +1261,11 @@ void F_Drawer(void)
 #ifdef MODE_T4050
 				V_DrawPatchDirectText4050(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 #endif
-#if defined(MODE_T8025) || defined(MODE_MDA)
+#if defined(MODE_T8025)
 				V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+#endif
+#if defined(MODE_MDA)
+				V_DrawPatchDirectTextMDA(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 #endif
 #ifdef MODE_T8043
 				V_DrawPatchDirectText8043(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
@@ -1285,8 +1294,11 @@ void F_Drawer(void)
 #ifdef MODE_T4050
 				V_DrawPatchDirectText4050(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
 #endif
-#if defined(MODE_T8025) || defined(MODE_MDA)
+#if defined(MODE_T8025)
 				V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
+#endif
+#if defined(MODE_MDA)
+				V_DrawPatchDirectTextMDA(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
 #endif
 #ifdef MODE_T8043
 				V_DrawPatchDirectText8043(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
@@ -1316,8 +1328,11 @@ void F_Drawer(void)
 #ifdef MODE_T4050
 			V_DrawPatchDirectText4050(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
 #endif
-#if defined(MODE_T8025) || defined(MODE_MDA)
+#if defined(MODE_T8025)
 			V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
+#endif
+#if defined(MODE_MDA)
+			V_DrawPatchDirectTextMDA(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
 #endif
 #ifdef MODE_T8043
 			V_DrawPatchDirectText8043(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
@@ -1353,8 +1368,11 @@ void F_Drawer(void)
 #ifdef MODE_T4050
 			V_DrawPatchDirectText4050(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
 #endif
-#if defined(MODE_T8025) || defined(MODE_MDA)
+#if defined(MODE_T8025)
 			V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
+#endif
+#if defined(MODE_MDA)
+			V_DrawPatchDirectTextMDA(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
 #endif
 #ifdef MODE_T8043
 			V_DrawPatchDirectText8043(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));

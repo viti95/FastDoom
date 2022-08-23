@@ -918,7 +918,7 @@ void V_DrawPatchDirectText8025(int x, int y, patch_t *patch)
 #endif
 
 #if defined(MODE_MDA)
-void V_DrawPatchDirectText8025(int x, int y, patch_t *patch)
+void V_DrawPatchDirectTextMDA(int x, int y, patch_t *patch)
 {
     int count;
     int col;
@@ -953,24 +953,16 @@ void V_DrawPatchDirectText8025(int x, int y, patch_t *patch)
 
             while (count--)
             {
-                //vmem = *dest;
-
                 *dest = 0x07 << 8 | *source;
 
                 if (odd)
                 {
-                    //vmem = vmem & 0x0F00;
-                    //*dest = vmem | *source << 12 | 223;
-                    *dest = 0x07 << 8 | *source;
 
                     odd = 0;
                     dest += 80;
                 }
                 else
                 {
-                    //vmem = vmem & 0xF000;
-                    //*dest = vmem | *source << 8 | 223;
-                    *dest = 0x07 << 8 | *source;
 
                     odd = 1;
                 }

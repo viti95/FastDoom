@@ -526,8 +526,11 @@ void D_PageDrawer(void)
 #ifdef MODE_T4025
     V_DrawPatchDirectText4025(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
-#if defined(MODE_T8025) || defined(MODE_MDA)
+#if defined(MODE_T8025)
     V_DrawPatchDirectText8025(0, 0, W_CacheLumpName(pagename, PU_CACHE));
+#endif
+#if defined(MODE_MDA)
+    V_DrawPatchDirectTextMDA(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
 #if defined(MODE_T8043)
     V_DrawPatchDirectText8043(0, 0, W_CacheLumpName(pagename, PU_CACHE));

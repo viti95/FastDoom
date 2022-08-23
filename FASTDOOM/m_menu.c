@@ -831,8 +831,11 @@ void M_DrawReadThis1(void)
 #ifdef MODE_T4050
     V_DrawPatchDirectText4050(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 #endif
-#if defined(MODE_T8025) || defined(MODE_MDA)
+#if defined(MODE_T8025)
     V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+#endif
+#if defined(MODE_MDA)
+    V_DrawPatchDirectTextMDA(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 #endif
 #ifdef MODE_T8043
     V_DrawPatchDirectText8043(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
@@ -864,8 +867,11 @@ void M_DrawReadThis2(void)
 #ifdef MODE_T4050
     V_DrawPatchDirectText4050(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
 #endif
-#if defined(MODE_T8025) || defined(MODE_MDA)
+#if defined(MODE_T8025)
     V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
+#endif
+#if defined(MODE_MDA)
+    V_DrawPatchDirectTextMDA(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
 #endif
 #ifdef MODE_T8043
     V_DrawPatchDirectText8043(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
@@ -894,8 +900,11 @@ void M_DrawReadThisRetail(void)
 #ifdef MODE_T4050
     V_DrawPatchDirectText4050(0, 0, W_CacheLumpName("HELP", PU_CACHE));
 #endif
-#if defined(MODE_T8025) || defined(MODE_MDA)
+#if defined(MODE_T8025)
     V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("HELP", PU_CACHE));
+#endif
+#if defined(MODE_MDA)
+    V_DrawPatchDirectTextMDA(0, 0, W_CacheLumpName("HELP", PU_CACHE));
 #endif
 #ifdef MODE_T8043
     V_DrawPatchDirectText8043(0, 0, W_CacheLumpName("HELP", PU_CACHE));
