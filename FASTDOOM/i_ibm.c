@@ -1212,14 +1212,6 @@ void I_ProcessPalette(byte *palette)
 //
 void I_SetPalette(int numpalette)
 {
-
-#if defined(MODE_CGA16) || defined(MODE_CGA136)
-    if (CGAfix)
-    {
-        numpalette = 0; // Avoid setting the palette as is insanely slow to redraw all the screen
-    }
-#endif
-
 #if defined(MODE_HERC)
     ptrlutcolors = lutcolors + numpalette * 1024;
 #endif
