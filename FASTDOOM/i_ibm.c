@@ -1738,11 +1738,20 @@ void CGA16_DrawBackbuffer(void)
     unsigned char *vram = (unsigned char *)0xB8001;
     unsigned char line = 80;
     byte *ptrbackbuffer = backbuffer;
+    byte *ptrvrambuffer = vrambuffer;
 
     do
     {
-        *vram = ptrlut16colors[*ptrbackbuffer] << 4 | ptrlut16colors[*(ptrbackbuffer + 2)];
+        unsigned char tmp = ptrlut16colors[*ptrbackbuffer] << 4 | ptrlut16colors[*(ptrbackbuffer + 2)];
+    
+        if (tmp != *ptrvrambuffer)
+        {
+            *vram = tmp;
+            *ptrvrambuffer = tmp;
+        }
+
         vram += 2;
+        ptrvrambuffer += 2;
         ptrbackbuffer += 4;
 
         line--;
@@ -1841,17 +1850,46 @@ void CGA136_DrawBackbuffer(void)
 {
     unsigned char *vram = (unsigned char *)0xB8001;
     byte *ptrbackbuffer = backbuffer;
+    byte *ptrvrambuffer = vrambuffer;
     unsigned char line = 20;
 
     do
     {
-        *vram = ptrlut136colors[*ptrbackbuffer];
-        *(vram + 2) = ptrlut136colors[*(ptrbackbuffer + 4)];
-        *(vram + 4) = ptrlut136colors[*(ptrbackbuffer + 8)];
-        *(vram + 6) = ptrlut136colors[*(ptrbackbuffer + 12)];
+        unsigned char tmp = ptrlut136colors[*ptrbackbuffer];
+
+        if (tmp != *ptrvrambuffer)
+        {
+            *vram = tmp;
+            *ptrvrambuffer = tmp;
+        }
+
+        tmp = ptrlut136colors[*(ptrbackbuffer + 4)];
+
+        if (tmp != *(ptrvrambuffer + 2))
+        {
+            *(vram + 2) = tmp;
+            *(ptrvrambuffer + 2) = tmp;
+        }
+
+        tmp = ptrlut136colors[*(ptrbackbuffer + 8)];
+
+        if (tmp != *(ptrvrambuffer + 4))
+        {
+            *(vram + 4) = tmp;
+            *(ptrvrambuffer + 4) = tmp;
+        }
+
+        tmp = ptrlut136colors[*(ptrbackbuffer + 12)];
+
+        if (tmp != *(ptrvrambuffer + 6))
+        {
+            *(vram + 6) = tmp;
+            *(ptrvrambuffer + 6) = tmp;
+        }
 
         vram += 8;
         ptrbackbuffer += 16;
+        ptrvrambuffer += 8;
 
         line--;
         if (line == 0)
