@@ -34,6 +34,8 @@ int DPMI_GetDOSMemory(void **ptr, int *descriptor, unsigned length);
 int DPMI_FreeDOSMemory(int descriptor);
 int DPMI_LockMemory(void *address, unsigned length);
 int DPMI_LockMemoryRegion(void *start, void *end);
+int DPMI_MapMemory (unsigned long *physaddress, unsigned long *linaddress, unsigned long size);
+int DPMI_UnmapMemory (unsigned long *linaddress);
 
 #define DPMI_Lock(variable) \
    (DPMI_LockMemory(&(variable), sizeof(variable)))

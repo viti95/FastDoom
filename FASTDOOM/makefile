@@ -66,6 +66,8 @@ GLOBOBJS_Y = &
  ns_lpt.obj &
  ns_sbdm.obj &
  ns_adbfx.obj &
+ ns_pci.obj &
+ ns_ac97.obj &
  i_debug.obj &
  i_random.obj &
  i_main.obj &
@@ -121,6 +123,7 @@ GLOBOBJS_Y = &
  f_wipe.obj &
  info.obj &
  dmx.obj &
+ judasasm.obj &
  mus2mid.obj
 
 GLOBOBJS_13H = &
@@ -209,6 +212,7 @@ GLOBOBJS_13H = &
  f_wipe.obj &
  info.obj &
  dmx.obj &
+ judasasm.obj &
  mus2mid.obj
 
 GLOBOBJS_VBE = &
@@ -298,6 +302,7 @@ GLOBOBJS_VBE = &
  f_wipe.obj &
  info.obj &
  dmx.obj &
+ judasasm.obj &
  mus2mid.obj
 
 GLOBOBJS_VBD = &
@@ -387,6 +392,7 @@ GLOBOBJS_VBD = &
  f_wipe.obj &
  info.obj &
  dmx.obj &
+ judasasm.obj &
  mus2mid.obj
 
 GLOBOBJS_TEXT = &
@@ -473,6 +479,7 @@ GLOBOBJS_TEXT = &
  f_wipe.obj &
  info.obj &
  dmx.obj &
+ judasasm.obj &
  mus2mid.obj
 
 fdoomy.exe : $(GLOBOBJS_Y)

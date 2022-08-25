@@ -42,88 +42,126 @@
 
 #define PI 3.1415926536
 
-typedef enum
-{
-    Raw,
-    VOC,
-    DemandFeed,
-    WAV
+typedef int bool;
+typedef int BOOL;
+typedef unsigned char BYTE;
+typedef unsigned short WORD;
+typedef unsigned int DWORD;
+typedef unsigned char UCHAR;
+typedef unsigned short USHORT;
+typedef unsigned int UINT;
+typedef unsigned long ULONG;
+typedef DWORD dword;
+typedef WORD word;
+typedef BYTE byte;
+#define LOWORD(l)      ((WORD)((DWORD)(l)))
+#define HIWORD(l)      ((WORD)(((DWORD)(l)>>16)&0xFFFF))
+#define LOBYTE(w)      ((BYTE)(w))
+#define HIBYTE(w)      ((BYTE)(((WORD)(w)>>8)&0xFF))
+
+#define BIT0           1
+#define BIT1           2
+#define BIT2           4
+#define BIT3           8
+#define BIT4           0x10
+#define BIT5           0x20
+#define BIT6           0x40
+#define BIT7           0x80
+#define BIT8           0x100
+#define BIT9           0x200
+#define BIT10          0x400
+#define BIT11          0x800
+#define BIT12          0x1000
+#define BIT13          0x2000
+#define BIT14          0x4000
+#define BIT15          0x8000
+#define BIT16          0x10000
+#define BIT17          0x20000
+#define BIT18          0x40000
+#define BIT19          0x80000
+#define BIT20          0x100000
+#define BIT21          0x200000
+#define BIT22          0x400000
+#define BIT23          0x800000
+#define BIT24          0x1000000
+#define BIT25          0x2000000
+#define BIT26          0x4000000
+#define BIT27          0x8000000
+#define BIT28          0x10000000
+#define BIT29          0x20000000
+#define BIT30          0x40000000
+#define BIT31          0x80000000
+
+typedef enum {
+	Raw, VOC, DemandFeed, WAV
 } wavedata;
 
-typedef enum
-{
-    NoMoreData,
-    KeepPlaying
+typedef enum {
+	NoMoreData, KeepPlaying
 } playbackstatus;
 
-typedef struct VoiceNode
-{
-    struct VoiceNode *next;
-    struct VoiceNode *prev;
+typedef struct VoiceNode {
+	struct VoiceNode *next;
+	struct VoiceNode *prev;
 
-    char bits;
+	char bits;
 
-    playbackstatus (*GetSound)(struct VoiceNode *voice);
+	playbackstatus (*GetSound)(struct VoiceNode *voice);
 
-    void (*mix)(unsigned long position, unsigned long rate,
-                unsigned char *start, unsigned long length);
+	void (*mix)(unsigned long position, unsigned long rate,
+			unsigned char *start, unsigned long length);
 
-    unsigned char *NextBlock;
-    unsigned long BlockLength;
+	unsigned char *NextBlock;
+	unsigned long BlockLength;
 
-    unsigned long FixedPointBufferSize;
+	unsigned long FixedPointBufferSize;
 
-    unsigned char *sound;
-    unsigned long length;
-    unsigned long RateScale;
-    unsigned long position;
-    int Playing;
+	unsigned char *sound;
+	unsigned long length;
+	unsigned long RateScale;
+	unsigned long position;
+	int Playing;
 
-    int handle;
-    int priority;
+	int handle;
+	int priority;
 
-    void (*DemandFeed)(char **ptr, unsigned long *length);
+	void (*DemandFeed)(char **ptr, unsigned long *length);
 
-    short *LeftVolume;
-    short *RightVolume;
+	short *LeftVolume;
+	short *RightVolume;
 
 } VoiceNode;
 
-typedef struct
-{
-    VoiceNode *start;
-    VoiceNode *end;
+typedef struct {
+	VoiceNode *start;
+	VoiceNode *end;
 } VList;
 
-typedef struct
-{
-    char left;
-    char right;
+typedef struct {
+	char left;
+	char right;
 } Pan;
 
 typedef signed short MONO16;
 typedef signed char MONO8;
 
-typedef struct
-{
-    MONO16 left;
-    MONO16 right;
-    //   unsigned short left;
-    //   unsigned short right;
+typedef struct {
+	MONO16 left;
+	MONO16 right;
+	//   unsigned short left;
+	//   unsigned short right;
 } STEREO16;
 
-typedef struct
-{
-    MONO16 left;
-    MONO16 right;
+typedef struct {
+	MONO16 left;
+	MONO16 right;
 } SIGNEDSTEREO16;
 
-typedef struct
-{
-    //   MONO8 left;
-    //   MONO8 right;
-    char left;
-    char right;
+typedef struct {
+	//   MONO8 left;
+	//   MONO8 right;
+	char left;
+	char right;
 } STEREO8;
 
 typedef MONO8 VOLUME8[256];
@@ -139,10 +177,10 @@ void MV_ServiceVoc(void);
 static playbackstatus MV_GetNextDemandFeedBlock(VoiceNode *voice);
 static playbackstatus MV_GetNextRawBlock(VoiceNode *voice);
 
-VoiceNode *MV_GetVoice(int handle);
-static VoiceNode *MV_AllocVoice(int priority);
+VoiceNode* MV_GetVoice(int handle);
+static VoiceNode* MV_AllocVoice(int priority);
 
-static short *MV_GetVolumeTable(int vol);
+static short* MV_GetVolumeTable(int vol);
 
 static void MV_SetVoiceMixMode(VoiceNode *voice);
 
@@ -162,8 +200,11 @@ void ClearBuffer_DW(void *ptr, unsigned data, int length);
             "pop    es",     \
             parm[edi][eax][ecx] modify exact[ecx edi];
 
-void MV_Mix8BitMono(unsigned long position, unsigned long rate, unsigned char *start, unsigned long length);
-void MV_Mix8BitStereo(unsigned long position, unsigned long rate, unsigned char *start, unsigned long length);
-void MV_Mix8BitUltrasound(unsigned long position, unsigned long rate, unsigned char *start, unsigned long length);
+void MV_Mix8BitMono(unsigned long position, unsigned long rate,
+		unsigned char *start, unsigned long length);
+void MV_Mix8BitStereo(unsigned long position, unsigned long rate,
+		unsigned char *start, unsigned long length);
+void MV_Mix8BitUltrasound(unsigned long position, unsigned long rate,
+		unsigned char *start, unsigned long length);
 
 #endif

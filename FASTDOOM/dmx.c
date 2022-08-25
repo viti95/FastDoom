@@ -342,6 +342,8 @@ int ASS_GetSoundCardCode(int sndDevice)
         return SoundBlasterDirect;
     case snd_AdlibFX:
         return AdlibFX;
+    case snd_AC97:
+    	return AC97;
     default:
         return -1;
     }
@@ -386,6 +388,7 @@ void ASS_Init(int rate, int maxsng, int mdev, int sdev)
     case TandySoundSource:
     case LPTDAC:
     case CMS:
+    case AC97:
         FX_SetupCard(sound_device, &fx_device, dmx_snd_port);
         break;
     default:

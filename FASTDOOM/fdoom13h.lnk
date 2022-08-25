@@ -45,6 +45,8 @@ file ns_cms.obj
 file ns_lpt.obj
 file ns_sbdm.obj
 file ns_adbfx.obj
+file ns_pci.obj
+file ns_ac97.obj
 file i_debug.obj
 file i_random.obj
 file i_main.obj

@@ -19,6 +19,7 @@
 #include "ns_speak.h"
 #include "ns_pwm.h"
 #include "ns_cms.h"
+#include "ns_ac97.h"
 #include "ns_lpt.h"
 #include "ns_sbdm.h"
 #include "ns_adbfx.h"
@@ -714,6 +715,7 @@ int MV_SetMixMode(
         break;
 
     case CMS:
+    case AC97:
         MV_MixMode = STEREO_8BIT;
     }
 
@@ -882,6 +884,13 @@ int MV_StartPlayback(
         MV_MixRate = CMS_SampleRate;
         MV_DMAChannel = -1;
         break;
+    case AC97:
+        AC97_BeginBufferedPlayback(MV_MixBuffer[0],
+                                 TotalBufferSize, MV_NumberOfBuffers,
+                                 MV_ServiceVoc);
+        MV_MixRate = CMS_SampleRate;
+        MV_DMAChannel = -1;
+        break;
     case LPTDAC:
         LPT_BeginBufferedPlayback(MV_MixBuffer[0],
                                  TotalBufferSize, MV_NumberOfBuffers,
@@ -962,6 +971,9 @@ void MV_StopPlayback(
     case CMS:
         CMS_StopPlayback();
         break;
+    case AC97:
+    	AC97_StopPlayback();
+    	break;
     case LPTDAC:
         LPT_StopPlayback();
         break;
@@ -1280,6 +1292,10 @@ int MV_Init(
         status = CMS_Init(soundcard, -1);
         break;
 
+    case AC97:
+    	status = AC97_Init(soundcard, -1);
+    	break;
+
     case LPTDAC:
         status = LPT_Init(soundcard, -1);
         break;
@@ -1408,6 +1424,9 @@ int MV_Shutdown(
     case CMS:
         CMS_Shutdown();
         break;
+    case AC97:
+    	AC97_Shutdown();
+    	break;
     case LPTDAC:
         LPT_Shutdown();
         break;

@@ -15,6 +15,7 @@
 #include "ns_user.h"
 #include "ns_fxm.h"
 #include "ns_adbfx.h"
+#include "ns_ac97.h"
 #include "options.h"
 
 #define TRUE (1 == 1)
@@ -136,6 +137,16 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
     case CMS:
         DeviceStatus = CMS_Init(SoundCard, port);
         if (DeviceStatus != CMS_Ok)
+        {
+            status = FX_Error;
+            break;
+        }
+        device->MaxVoices = 8;
+        device->MaxSampleBits = 8;
+        device->MaxChannels = 2;
+    case AC97:
+        DeviceStatus = AC97_Init(SoundCard, port);
+        if (DeviceStatus != AC97_Ok)
         {
             status = FX_Error;
             break;
@@ -292,6 +303,7 @@ int FX_Init(
     case PC1bit:
     case PCPWM:
     case CMS:
+    case AC97:
     case LPTDAC:
     case AdlibFX:
     case SoundBlasterDirect:
@@ -348,6 +360,7 @@ int FX_Shutdown(
     case PC1bit:
     case PCPWM:
     case CMS:
+    case AC97:
     case LPTDAC:
     case AdlibFX:
     case SoundBlasterDirect:

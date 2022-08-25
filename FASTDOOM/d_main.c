@@ -1262,6 +1262,8 @@ void D_DoomMain(void)
     D_RedrawTitle();
     I_Init();
 
+    return;
+
     printf("D_CheckNetGame: Checking network game status.\n");
     D_RedrawTitle();
     D_CheckNetGame();
