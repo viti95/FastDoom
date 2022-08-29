@@ -288,11 +288,11 @@ byte scantokey[128] =
         0, 0, 0, 0, 0, 0, 0, 0 // 7
 };
 
-#ifdef MODE_HERC
+#if defined(MODE_HERC)
 byte vrambuffer[32768];
 #endif
 
-#if defined(MODE_CGA16) || defined(MODE_CGA136)
+#if defined(MODE_CGA16) || defined(MODE_CGA136) || defined(MODE_EGA16) || defined(MODE_EGA136)
 byte vrambuffer[16384];
 #endif
 
@@ -1770,11 +1770,20 @@ void EGA16_DrawBackbuffer(void)
     unsigned char *vram = (unsigned char *)0xB8501;
     unsigned char line = 80;
     byte *ptrbackbuffer = backbuffer;
+    byte *ptrvrambuffer = vrambuffer;
 
     do
     {
-        *vram = ptrlut16colors[*ptrbackbuffer] << 4 | ptrlut16colors[*(ptrbackbuffer + 2)];
+        unsigned char tmp = ptrlut16colors[*ptrbackbuffer] << 4 | ptrlut16colors[*(ptrbackbuffer + 2)];
+
+        if (tmp != *ptrvrambuffer)
+        {
+            *vram = tmp;
+            *ptrvrambuffer = tmp;
+        }
+
         vram += 2;
+        ptrvrambuffer += 2;
         ptrbackbuffer += 4;
 
         line--;
@@ -1906,17 +1915,46 @@ void EGA136_DrawBackbuffer(void)
 {
     unsigned char *vram = (unsigned char *)0xB8501;
     byte *ptrbackbuffer = backbuffer;
+    byte *ptrvrambuffer = vrambuffer;
     unsigned char line = 20;
 
     do
     {
-        *vram = ptrlut136colors[*ptrbackbuffer];
-        *(vram + 2) = ptrlut136colors[*(ptrbackbuffer + 4)];
-        *(vram + 4) = ptrlut136colors[*(ptrbackbuffer + 8)];
-        *(vram + 6) = ptrlut136colors[*(ptrbackbuffer + 12)];
+        unsigned char tmp = ptrlut136colors[*ptrbackbuffer];
+
+		if (tmp != *ptrvrambuffer)
+		{
+			*vram = tmp;
+			*ptrvrambuffer = tmp;
+		}
+
+		tmp = ptrlut136colors[*(ptrbackbuffer + 4)];
+
+		if (tmp != *(ptrvrambuffer + 2))
+		{
+			*(vram + 2) = tmp;
+			*(ptrvrambuffer + 2) = tmp;
+		}
+
+		tmp = ptrlut136colors[*(ptrbackbuffer + 8)];
+
+		if (tmp != *(ptrvrambuffer + 4))
+		{
+			*(vram + 4) = tmp;
+			*(ptrvrambuffer + 4) = tmp;
+		}
+
+		tmp = ptrlut136colors[*(ptrbackbuffer + 12)];
+
+		if (tmp != *(ptrvrambuffer + 6))
+		{
+			*(vram + 6) = tmp;
+			*(ptrvrambuffer + 6) = tmp;
+		}
 
         vram += 8;
         ptrbackbuffer += 16;
+        ptrvrambuffer += 8;
 
         line--;
         if (line == 0)
@@ -3217,6 +3255,8 @@ void I_InitGraphics(void)
     outp(0x3D4, 0x09);
     outp(0x3D5, 0x02);
 
+    SetDWords(vrambuffer, 0, 4096);
+
     for (i = 0; i < 1280; i += 2)
     {
         vram[i] = 0x00;
@@ -3229,6 +3269,16 @@ void I_InitGraphics(void)
 #endif
 #ifdef MODE_EGA136
         vram[i] = 0xB1;
+#endif
+    }
+
+    for (i = 0; i < 16000; i += 2)
+    {
+#ifdef MODE_EGA16
+        vrambuffer[i] = 0xDE;
+#endif
+#ifdef MODE_EGA136
+        vrambuffer[i] = 0xB1;
 #endif
     }
 
