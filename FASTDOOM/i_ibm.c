@@ -2145,27 +2145,28 @@ void EGA640_DrawBackbuffer(void)
     byte *vrambufferB;
     byte *vrambufferI;
 
-    switch (page)
+    if (destscreen == 0xA0000)
     {
-    case 0:
         vrambufferR = vrambufferR1;
         vrambufferG = vrambufferG1;
         vrambufferB = vrambufferB1;
         vrambufferI = vrambufferI1;
-        break;
-    case 1:
-        vrambufferR = vrambufferR2;
-        vrambufferG = vrambufferG2;
-        vrambufferB = vrambufferB2;
-        vrambufferI = vrambufferI2;
-        break;
-    case 2:
-        vrambufferR = vrambufferR3;
-        vrambufferG = vrambufferG3;
-        vrambufferB = vrambufferB3;
-        vrambufferI = vrambufferI3;
-        break;
     }
+    else
+    	if (destscreen == 0xA4000)
+    	{
+            vrambufferR = vrambufferR2;
+            vrambufferG = vrambufferG2;
+            vrambufferB = vrambufferB2;
+            vrambufferI = vrambufferI2;
+    	}
+    	else
+    	{
+            vrambufferR = vrambufferR3;
+            vrambufferG = vrambufferG3;
+            vrambufferB = vrambufferB3;
+            vrambufferI = vrambufferI3;
+    	}
 
     // Red
     outp(0x3C5, 1 << (3 & 0x03));
@@ -2327,16 +2328,10 @@ void EGA640_DrawBackbuffer(void)
     outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
 
     // Next plane
-    if (page == 2)
-    {
-    	page = 0;
-        destscreen = (byte *)0xA0000;
-    }
+    if (destscreen == 0xA8000)
+        destscreen = 0xA0000;
     else
-    {
-    	page++;
     	destscreen += 0x4000;
-    }
 }
 #endif
 
