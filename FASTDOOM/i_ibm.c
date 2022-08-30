@@ -2713,9 +2713,7 @@ void I_FinishUpdate(void)
 
 #if !defined(MODE_HERC) && !defined(MODE_MDA)
     if (waitVsync)
-    {
         I_WaitSingleVBL();
-    }
 #endif
 
 #if defined(MODE_MDA)
@@ -2782,13 +2780,9 @@ void I_FinishUpdate(void)
     int386(0x10, &regs, &regs);
 
     if (videoPageFix)
-    {
         textdestscreen += 4000;
-    }
     else
-    {
         textdestscreen += 4128;
-    }
 
     textpage++;
     if (textpage == 3)
@@ -2801,24 +2795,22 @@ void I_FinishUpdate(void)
     outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
 
     // Next plane
-    destscreen += 0x4000;
-    if (destscreen == (byte *)0xac000)
-    {
-        destscreen = (byte *)0xa0000;
-    }
+    if (destscreen == (byte *)0xA8000)
+        destscreen = (byte *)0xA0000;
+    else
+    	destscreen += 0x4000;
 #endif
 #ifdef MODE_VBE2_DIRECT
     VBE_SetDisplayStart_Y(Mul200(page));
 
-    page++;
-
-    if (page == 3)
+    if (page == 2)
     {
         page = 0;
         destscreen -= 2 * 320 * 200;
     }
     else
     {
+    	page++;
         destscreen += 320 * 200;
     }
 #endif
@@ -2871,21 +2863,19 @@ void I_FinishUpdate(void)
     CGA_BW_DrawBackbuffer();
 #endif
 #ifdef MODE_CGA16
-    if (CGAfix){
+    if (CGAfix)
         CGA16_DrawBackbuffer_Snow();
-    }else{
+    else
         CGA16_DrawBackbuffer();   
-    }
 #endif
 #ifdef MODE_EGA16
     EGA16_DrawBackbuffer();
 #endif
 #ifdef MODE_CGA136
-    if (CGAfix){
+    if (CGAfix)
         CGA136_DrawBackbuffer_Snow();
-    }else{
+    else
         CGA136_DrawBackbuffer();
-    }
 #endif
 #ifdef MODE_VGA16
     VGA16_DrawBackbuffer();
@@ -3004,9 +2994,7 @@ void I_InitGraphics(void)
 
 #ifdef SUPPORTS_HERCULES_AUTOMAP
     if (HERCmap)
-    {
         I_InitHerculesHalfMode();
-    }
 #endif
 
 #if defined(MODE_T4025) || defined(MODE_T4050)
