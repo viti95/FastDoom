@@ -1281,8 +1281,12 @@ int updatestate;
 byte *pcscreen, *destscreen, *destview;
 unsigned short *currentscreen;
 
-#if defined(MODE_EGA) || defined(MODE_VBE2_DIRECT) || defined(MODE_EGA640)
+#if defined(MODE_EGA) || defined(MODE_EGA640)
 byte page = 0;
+#endif
+
+#if defined(MODE_VBE2_DIRECT)
+short page = 0;
 #endif
 
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
@@ -2815,16 +2819,16 @@ void I_FinishUpdate(void)
     	destscreen += 0x4000;
 #endif
 #ifdef MODE_VBE2_DIRECT
-    VBE_SetDisplayStart_Y(Mul200(page));
+    VBE_SetDisplayStart_Y(page);
 
-    if (page == 2)
+    if (page == 400)
     {
         page = 0;
         destscreen -= 2 * 320 * 200;
     }
     else
     {
-    	page++;
+    	page += 200;
         destscreen += 320 * 200;
     }
 #endif
