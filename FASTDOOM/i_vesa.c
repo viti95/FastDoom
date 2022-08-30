@@ -100,6 +100,16 @@ static void RMIRQ(char irq)
   int386x(0x31, &regs, &regs, &sregs);
 }
 
+static void RMIRQ10()
+{
+  memset(&regs, 0, sizeof(regs));
+  regs.w.ax = 0x0300; // Simulate Real-Mode interrupt
+  regs.h.bl = 0x10;
+  sregs.es = FP_SEG(&RMI);
+  regs.x.edi = FP_OFF(&RMI);
+  int386x(0x31, &regs, &regs, &sregs);
+}
+
 void DPMI_AllocDOSMem(short int paras, struct DPMI_PTR *p)
 {
   /* DPMI call 100h allocates DOS memory */
@@ -155,7 +165,7 @@ void VBE_Mode_Information(short Mode, struct VBE_ModeInfoBlock *a)
   RMI.ECX = Mode;
   RMI.ES = VbeModePool.segment; // Segment of realmode data
   RMI.EDI = 0;                  // offset of realmode data
-  RMIRQ(0x10);
+  RMIRQ10();
   memcpy(a, VBE_ModeInfo_Pointer, sizeof(struct VBE_ModeInfoBlock));
 }
 
@@ -181,7 +191,17 @@ void VBE_SetDisplayStart(short x, short y)
   RMI.EBX = 0;
   RMI.ECX = x;
   RMI.EDX = y;
-  RMIRQ(0x10);
+  RMIRQ10();
+}
+
+void VBE_SetDisplayStart_Y(short y)
+{
+  PrepareRegisters();
+  RMI.EAX = 0x00004f07;
+  RMI.EBX = 0;
+  RMI.ECX = 0;
+  RMI.EDX = y;
+  RMIRQ10();
 }
 
 void setbiosmode(unsigned short c);
@@ -212,7 +232,7 @@ void VBE_SetMode(short Mode, int linear, int clear)
   PrepareRegisters();
   RMI.EAX = 0x00004f02;
   RMI.EBX = rawmode;
-  RMIRQ(0x10);
+  RMIRQ10();
 
   // get the current mode-info block and set some parameters...
   VBE_Mode_Information(Mode, &a);
@@ -243,7 +263,7 @@ void VBE_SetDACWidth(char bits)
   PrepareRegisters();
   RMI.EAX = 0x00004f08;
   RMI.EBX = bits << 8;
-  RMIRQ(0x10);
+  RMIRQ10();
 }
 
 void VBE_Init(void)
@@ -265,7 +285,7 @@ void VBE_Init(void)
   RMI.EAX = 0x00004f00;         // Get SVGA-Information
   RMI.ES = VbeInfoPool.segment; // Segment of realmode data
   RMI.EDI = 0;                  // offset of realmode data
-  RMIRQ(0x10);
+  RMIRQ10();
   // Translate the Realmode Pointers into flat-memory address space
   VBE_Controller_Info_Pointer->OemStringPtr = (char *)((((unsigned long)VBE_Controller_Info_Pointer->OemStringPtr >> 16) << 4) + (unsigned short)VBE_Controller_Info_Pointer->OemStringPtr);
   VBE_Controller_Info_Pointer->VideoModePtr = (unsigned short *)((((unsigned long)VBE_Controller_Info_Pointer->VideoModePtr >> 16) << 4) + (unsigned short)VBE_Controller_Info_Pointer->VideoModePtr);

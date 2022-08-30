@@ -2808,7 +2808,7 @@ void I_FinishUpdate(void)
     }
 #endif
 #ifdef MODE_VBE2_DIRECT
-    VBE_SetDisplayStart(0, 200 * page);
+    VBE_SetDisplayStart_Y(Mul200(page));
 
     page++;
 

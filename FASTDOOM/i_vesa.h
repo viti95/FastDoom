@@ -258,6 +258,7 @@ char *VBE_GetVideoPtr(short mode);
   */
 
 void VBE_SetDisplayStart (short x, short y);
+void VBE_SetDisplayStart_Y (short y);
 
 /*
   * Adjust the position of the logical upper left pixel.
