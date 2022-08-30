@@ -2458,6 +2458,123 @@ void CVBS_DrawBackbuffer(void)
 }
 #endif
 
+#ifdef MODE_V2
+void V2_DrawBackbuffer(void)
+{
+    byte *ptrdestscreen;
+    int pos;
+
+    outp(SC_INDEX + 1, 1 << 0);
+
+    ptrdestscreen = destscreen + 15 * 80 + 15;
+    pos = 319;
+
+    do
+    {
+        unsigned char x;
+
+        for (x = 0; x < 10; x++)
+        {
+            ptrdestscreen[0] = backbuffer[pos];
+            ptrdestscreen[1] = backbuffer[pos + 1280];
+            ptrdestscreen[2] = backbuffer[pos + 2560];
+            ptrdestscreen[3] = backbuffer[pos + 3840];
+            ptrdestscreen[4] = backbuffer[pos + 5120];
+
+            pos += 1280 * 5;
+            ptrdestscreen += 5;
+        }
+
+        pos -= (1280 * 50 + 1);
+        ptrdestscreen += 30;
+    } while (pos > -1);
+
+    outp(SC_INDEX + 1, 1 << 1);
+
+    ptrdestscreen = destscreen + 15 * 80 + 15;
+    pos = 639;
+
+    do
+    {
+        unsigned char x;
+
+        for (x = 0; x < 10; x++)
+        {
+            ptrdestscreen[0] = backbuffer[pos];
+            ptrdestscreen[1] = backbuffer[pos + 1280];
+            ptrdestscreen[2] = backbuffer[pos + 2560];
+            ptrdestscreen[3] = backbuffer[pos + 3840];
+            ptrdestscreen[4] = backbuffer[pos + 5120];
+
+            pos += 1280 * 5;
+            ptrdestscreen += 5;
+        }
+
+        pos -= (1280 * 50 + 1);
+        ptrdestscreen += 30;
+    } while (pos > 319);
+
+    outp(SC_INDEX + 1, 1 << 2);
+
+    ptrdestscreen = destscreen + 15 * 80 + 15;
+    pos = 959;
+
+    do
+    {
+        unsigned char x;
+
+        for (x = 0; x < 10; x++)
+        {
+            ptrdestscreen[0] = backbuffer[pos];
+            ptrdestscreen[1] = backbuffer[pos + 1280];
+            ptrdestscreen[2] = backbuffer[pos + 2560];
+            ptrdestscreen[3] = backbuffer[pos + 3840];
+            ptrdestscreen[4] = backbuffer[pos + 5120];
+
+            pos += 1280 * 5;
+            ptrdestscreen += 5;
+        }
+
+        pos -= (1280 * 50 + 1);
+        ptrdestscreen += 30;
+    } while (pos > 639);
+
+    outp(SC_INDEX + 1, 1 << 3);
+
+    ptrdestscreen = destscreen + 15 * 80 + 15;
+    pos = 1279;
+
+    do
+    {
+        unsigned char x;
+
+        for (x = 0; x < 10; x++)
+        {
+            ptrdestscreen[0] = backbuffer[pos];
+            ptrdestscreen[1] = backbuffer[pos + 1280];
+            ptrdestscreen[2] = backbuffer[pos + 2560];
+            ptrdestscreen[3] = backbuffer[pos + 3840];
+            ptrdestscreen[4] = backbuffer[pos + 5120];
+
+            pos += 1280 * 5;
+            ptrdestscreen += 5;
+        }
+
+        pos -= (1280 * 50 + 1);
+        ptrdestscreen += 30;
+    } while (pos > 959);
+
+    outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
+
+    // Next plane
+    destscreen += 0x7000;
+    if (destscreen == (byte *)0xae000)
+    {
+        destscreen = (byte *)0xa0000;
+    }
+}
+#endif
+
 #ifdef MODE_PCP
 void PCP_DrawBackbuffer(void)
 {
@@ -2794,120 +2911,8 @@ void I_FinishUpdate(void)
 #ifdef MODE_CVB
     CVBS_DrawBackbuffer();
 #endif
-#if defined(MODE_V2)
-    {
-        byte *ptrdestscreen;
-        int pos;
-
-        outp(SC_INDEX + 1, 1 << 0);
-
-        ptrdestscreen = destscreen + 15 * 80 + 15;
-        pos = 319;
-
-        do
-        {
-            unsigned char x;
-
-            for (x = 0; x < 10; x++)
-            {
-                ptrdestscreen[0] = backbuffer[pos];
-                ptrdestscreen[1] = backbuffer[pos + 1280];
-                ptrdestscreen[2] = backbuffer[pos + 2560];
-                ptrdestscreen[3] = backbuffer[pos + 3840];
-                ptrdestscreen[4] = backbuffer[pos + 5120];
-
-                pos += 1280 * 5;
-                ptrdestscreen += 5;
-            }
-
-            pos -= (1280 * 50 + 1);
-            ptrdestscreen += 30;
-        } while (pos > -1);
-
-        outp(SC_INDEX + 1, 1 << 1);
-
-        ptrdestscreen = destscreen + 15 * 80 + 15;
-        pos = 639;
-
-        do
-        {
-            unsigned char x;
-
-            for (x = 0; x < 10; x++)
-            {
-                ptrdestscreen[0] = backbuffer[pos];
-                ptrdestscreen[1] = backbuffer[pos + 1280];
-                ptrdestscreen[2] = backbuffer[pos + 2560];
-                ptrdestscreen[3] = backbuffer[pos + 3840];
-                ptrdestscreen[4] = backbuffer[pos + 5120];
-
-                pos += 1280 * 5;
-                ptrdestscreen += 5;
-            }
-
-            pos -= (1280 * 50 + 1);
-            ptrdestscreen += 30;
-        } while (pos > 319);
-
-        outp(SC_INDEX + 1, 1 << 2);
-
-        ptrdestscreen = destscreen + 15 * 80 + 15;
-        pos = 959;
-
-        do
-        {
-            unsigned char x;
-
-            for (x = 0; x < 10; x++)
-            {
-                ptrdestscreen[0] = backbuffer[pos];
-                ptrdestscreen[1] = backbuffer[pos + 1280];
-                ptrdestscreen[2] = backbuffer[pos + 2560];
-                ptrdestscreen[3] = backbuffer[pos + 3840];
-                ptrdestscreen[4] = backbuffer[pos + 5120];
-
-                pos += 1280 * 5;
-                ptrdestscreen += 5;
-            }
-
-            pos -= (1280 * 50 + 1);
-            ptrdestscreen += 30;
-        } while (pos > 639);
-
-        outp(SC_INDEX + 1, 1 << 3);
-
-        ptrdestscreen = destscreen + 15 * 80 + 15;
-        pos = 1279;
-
-        do
-        {
-            unsigned char x;
-
-            for (x = 0; x < 10; x++)
-            {
-                ptrdestscreen[0] = backbuffer[pos];
-                ptrdestscreen[1] = backbuffer[pos + 1280];
-                ptrdestscreen[2] = backbuffer[pos + 2560];
-                ptrdestscreen[3] = backbuffer[pos + 3840];
-                ptrdestscreen[4] = backbuffer[pos + 5120];
-
-                pos += 1280 * 5;
-                ptrdestscreen += 5;
-            }
-
-            pos -= (1280 * 50 + 1);
-            ptrdestscreen += 30;
-        } while (pos > 959);
-
-        outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
-
-        // Next plane
-        destscreen += 0x7000;
-        if (destscreen == (byte *)0xae000)
-        {
-            destscreen = (byte *)0xa0000;
-        }
-    }
+#ifdef MODE_V2
+    V2_DrawBackbuffer();
 #endif
 
     if (showFPS)
