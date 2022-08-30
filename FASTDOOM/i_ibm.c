@@ -2323,13 +2323,15 @@ void EGA640_DrawBackbuffer(void)
     outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
 
     // Next plane
-    destscreen += 0x4000;
-
-    page++;
-    if (page == 3)
+    if (page == 2)
     {
-        destscreen = (byte *)0xa0000;
-        page = 0;
+    	page = 0;
+        destscreen = (byte *)0xA0000;
+    }
+    else
+    {
+    	page++;
+    	destscreen += 0x4000;
     }
 }
 #endif
@@ -2392,13 +2394,15 @@ void EGA_DrawBackbuffer(void)
     outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
 
     // Next plane
-    destscreen += 0x2000;
-
-    page++;
-    if (page == 3)
+    if (page == 2)
     {
-        destscreen = (byte *)0xa0000;
-        page = 0;
+    	page = 0;
+        destscreen = (byte *)0xA0000;
+    }
+    else
+    {
+    	page++;
+    	destscreen += 0x2000;
     }
 }
 #endif
@@ -2567,11 +2571,10 @@ void V2_DrawBackbuffer(void)
     outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
 
     // Next plane
-    destscreen += 0x7000;
-    if (destscreen == (byte *)0xae000)
-    {
-        destscreen = (byte *)0xa0000;
-    }
+    if (destscreen == (byte *)0xA7000)
+        destscreen = (byte *)0xA0000;
+    else
+        destscreen += 0x7000;
 }
 #endif
 
@@ -2728,12 +2731,15 @@ void I_FinishUpdate(void)
     regs.h.bl = 0x00;
     int386(0x10, &regs, &regs);
 
-    textdestscreen += 1024;
-    textpage++;
-    if (textpage == 3)
+    if (textpage == 2)
     {
+    	textpage = 0;
         textdestscreen = (unsigned short *)0xB8000;
-        textpage = 0;
+    }
+    else
+    {
+    	textpage++;
+    	textdestscreen += 1024;
     }
 #endif
 
@@ -2745,12 +2751,15 @@ void I_FinishUpdate(void)
     regs.h.bl = 0x00;
     int386(0x10, &regs, &regs);
 
-    textdestscreen += 2048;
-    textpage++;
-    if (textpage == 3)
+    if (textpage == 2)
     {
+    	textpage = 0;
         textdestscreen = (unsigned short *)0xB8000;
-        textpage = 0;
+    }
+    else
+    {
+    	textpage++;
+    	textdestscreen += 2048;
     }
 #endif
 
@@ -2762,12 +2771,15 @@ void I_FinishUpdate(void)
     regs.h.bl = 0x00;
     int386(0x10, &regs, &regs);
 
-    textdestscreen += 3568;
-    textpage++;
-    if (textpage == 3)
+    if (textpage == 2)
     {
-        textdestscreen = (unsigned short *)0xB8000;
         textpage = 0;
+        textdestscreen = (unsigned short *)0xB8000;
+    }
+    else
+    {
+    	textpage++;
+    	textdestscreen += 3568;
     }
 #endif
 
@@ -2779,16 +2791,18 @@ void I_FinishUpdate(void)
     regs.h.bl = 0x00;
     int386(0x10, &regs, &regs);
 
-    if (videoPageFix)
-        textdestscreen += 4000;
-    else
-        textdestscreen += 4128;
-
-    textpage++;
-    if (textpage == 3)
+    if (textpage == 2)
     {
+    	textpage = 0;
         textdestscreen = (unsigned short *)0xB8000;
-        textpage = 0;
+    }
+    else
+    {
+    	textpage++;
+        if (videoPageFix)
+            textdestscreen += 4000;
+        else
+            textdestscreen += 4128;
     }
 #endif
 #ifdef MODE_Y
