@@ -8,7 +8,7 @@ extern fixed_t fps;
 
 extern unsigned short *currentscreen;
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2) || defined(MODE_XGA)
 extern byte processedpalette[14 * 768];
 #endif
 
