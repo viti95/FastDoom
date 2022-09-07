@@ -66,6 +66,10 @@
 
 #include "options.h"
 
+#ifdef MODE_XGA
+#include "xga_drv.h"
+#endif
+
 #define BGCOLOR 7
 #define FGCOLOR 8
 
@@ -1242,6 +1246,11 @@ void D_DoomMain(void)
 
     printf("Z_Init: Init zone memory allocation daemon. \n");
     Z_Init();
+
+#ifdef MODE_XGA
+	printf ("XGA_Init: Detect and initialize XGA.\n");
+	XGA_Init();
+#endif
 
     printf("W_Init: Init WADfiles.\n");
     W_InitMultipleFiles(wadfiles);

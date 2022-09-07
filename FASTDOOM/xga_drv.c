@@ -539,18 +539,6 @@ void XGA_I_UpdateBox(unsigned char *src, int x, int y, int width, int height)
 	unsigned int vga_offset = VGA_TBL_PHYSICAL_OFFSET[y] + x;
 	unsigned char *dest = xga_info.dpmi_base;
 
-	/*	
-	int row, col;
-
-	for(row=0; row<height; row++)
-	{
-		for(col=0; col<width; col++)
-		{
-			dest[xga_offset + XGA_TBL_PHYSICAL_OFFSET[row] + col] = src[vga_offset + VGA_TBL_PHYSICAL_OFFSET[row] + col];
-		}
-	}
-	*/
-
 	// This is a straight rectangular PxBlt.
 	// set up map A, source. VGA 320x200 buffer
 	xga_cop_word_w(&xga_info, XGA_COP_PIXMAP_IDX, 1);

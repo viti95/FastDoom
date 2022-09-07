@@ -47,6 +47,10 @@
 
 #include "options.h"
 
+#ifdef MODE_XGA
+#include "xga_drv.h"
+#endif
+
 #define BYTE0_USHORT(value) (((unsigned char *)&value)[0])
 #define BYTE1_USHORT(value) (((unsigned char *)&value)[1])
 
@@ -57,6 +61,10 @@
 
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 #include "i_vesa.h"
+#endif
+
+#ifdef MODE_XGA
+#include "xga_drv.h"
 #endif
 
 //
@@ -1269,6 +1277,10 @@ void I_SetPalette(int numpalette)
         }
     }
 #endif
+
+#ifdef MODE_XGA
+    XGA_I_SetPalette(numpalette);
+#endif
 }
 
 //
@@ -2131,6 +2143,13 @@ void ATI640_DrawBackbuffer(void)
             }
         }
     }
+}
+#endif
+
+#ifdef MODE_XGA
+void XGA_DrawBackbuffer(void)
+{
+    XGA_I_UpdateBox(backbuffer, 0, 0, 320, 200);
 }
 #endif
 
