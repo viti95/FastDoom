@@ -2933,6 +2933,9 @@ void I_FinishUpdate(void)
 #ifdef MODE_CVB
     CVBS_DrawBackbuffer();
 #endif
+#ifdef MODE_XGA
+    XGA_DrawBackbuffer();
+#endif
 #ifdef MODE_V2
     V2_DrawBackbuffer();
 #endif
