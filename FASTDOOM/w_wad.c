@@ -45,8 +45,7 @@ short lumphash[HASHTABLESIZE];
 
 void **lumpcache;
 
-void ExtractFileBase(char *path,
-                     char *dest)
+void ExtractFileBase(char *path, char *dest)
 {
     char *src;
 
@@ -63,7 +62,8 @@ void ExtractFileBase(char *path,
 
     while (*src && *src != '.')
     {
-        *dest++ = toupper((int)*src++);
+    	int t = (int)*src++;
+		*dest++ = toupper(t);
     }
 }
 
