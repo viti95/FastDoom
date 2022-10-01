@@ -66,9 +66,6 @@
 
 #include "options.h"
 
-#define BGCOLOR 7
-#define FGCOLOR 8
-
 //
 // D-DoomLoop()
 // Not a globally visible function,
@@ -768,7 +765,10 @@ void D_RedrawTitle(void)
     D_SetCursorPosition(0, 0);
 
     //Draw title
-    D_DrawTitle(title, FGCOLOR, BGCOLOR);
+    if (complevel >= COMPLEVEL_ULTIMATE_DOOM)
+        D_DrawTitle(title, 8, 7);
+    else
+        D_DrawTitle(title, 4, 7);
 
     //Restore old cursor pos
     D_SetCursorPosition(column, row);
@@ -842,7 +842,7 @@ void IdentifyVersion(void)
         case 1:
             if (!access("doom1.wad", R_OK))
             {
-                complevel = 2;
+                complevel = COMPLEVEL_DOOM;
                 gamemode = shareware;
                 gamemission = doom;
                 D_AddFile("doom1.wad");
@@ -852,7 +852,7 @@ void IdentifyVersion(void)
         case 2:
             if (!access("doom.wad", R_OK))
             {
-                complevel = 2;
+                complevel = COMPLEVEL_DOOM;
                 gamemode = registered;
                 gamemission = doom;
                 D_AddFile("doom.wad");
@@ -862,7 +862,7 @@ void IdentifyVersion(void)
         case 3:
             if (!access("doomu.wad", R_OK))
             {
-                complevel = 3;
+                complevel = COMPLEVEL_ULTIMATE_DOOM;
                 gamemode = retail;
                 gamemission = doom;
                 D_AddFile("doomu.wad");
@@ -872,7 +872,7 @@ void IdentifyVersion(void)
         case 4:
             if (!access("doom2.wad", R_OK))
             {
-                complevel = 2;
+                complevel = COMPLEVEL_DOOM;
                 gamemode = commercial;
                 gamemission = doom2;
                 D_AddFile("doom2.wad");
@@ -882,7 +882,7 @@ void IdentifyVersion(void)
         case 5:
             if (!access("plutonia.wad", R_OK))
             {
-                complevel = 4;
+                complevel = COMPLEVEL_FINAL_DOOM;
                 gamemode = commercial;
                 gamemission = pack_plut;
                 D_AddFile("plutonia.wad");
@@ -892,7 +892,7 @@ void IdentifyVersion(void)
         case 6:
             if (!access("tnt.wad", R_OK))
             {
-                complevel = 4;
+                complevel = COMPLEVEL_FINAL_DOOM;
                 gamemode = commercial;
                 gamemission = pack_tnt;
                 D_AddFile("tnt.wad");
@@ -1118,7 +1118,10 @@ void D_DoomMain(void)
 
     regs.w.ax = 3;
     int386(0x10, &regs, &regs);
-    D_DrawTitle(title, FGCOLOR, BGCOLOR);
+    if (complevel >= COMPLEVEL_ULTIMATE_DOOM)
+        D_DrawTitle(title, 8, 7);
+    else
+        D_DrawTitle(title, 4, 7);
 
     printf("\nFastDoom version " FDOOMVERSION "\n");
     printf("P_Init: Checking cmd-line parameters...\n");

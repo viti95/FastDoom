@@ -242,10 +242,13 @@ void P_ZMovement(mobj_t *mo)
     {
         // hit the floor
 
-        if (mo->flags & MF_SKULLFLY)
+        if (complevel >= COMPLEVEL_ULTIMATE_DOOM)
         {
-            // the skull slammed into something
-            mo->momz = -mo->momz;
+            if (mo->flags & MF_SKULLFLY)
+            {
+                // the skull slammed into something
+                mo->momz = -mo->momz;
+            }
         }
 
         if (mo->momz < 0)
@@ -263,11 +266,13 @@ void P_ZMovement(mobj_t *mo)
         }
         mo->z = mo->floorz;
 
-        // OPTIMIZE NEGATE
-        if (mo->flags & MF_SKULLFLY)
+        if (complevel < COMPLEVEL_ULTIMATE_DOOM)
         {
-            // the skull slammed into something
-            mo->momz = -mo->momz;
+            if (mo->flags & MF_SKULLFLY)
+            {
+                // the skull slammed into something
+                mo->momz = -mo->momz;
+            }
         }
 
         if ((mo->flags & MF_MISSILE) && !(mo->flags & MF_NOCLIP))

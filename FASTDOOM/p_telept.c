@@ -28,6 +28,8 @@
 // State.
 #include "r_state.h"
 
+#include "doomstat.h"
+
 //
 // TELEPORTATION
 //
@@ -85,7 +87,10 @@ int EV_Teleport(line_t *line, byte side, mobj_t *thing)
 				if (!P_TeleportMove(thing, m->x, m->y))
 					return 0;
 
-				thing->z = thing->floorz;
+				if (complevel < COMPLEVEL_FINAL_DOOM)
+				{
+					thing->z = thing->floorz;
+				}
 
 				if (thing->player)
 					thing->player->viewz = thing->z + thing->player->viewheight;
