@@ -242,7 +242,8 @@ void P_ZMovement(mobj_t *mo)
     {
         // hit the floor
 
-        if (mo->flags & MF_SKULLFLY)
+        // Only in Ultimate/Final DOOM mode
+        if (complevel >= 3 && mo->flags & MF_SKULLFLY)
         {
             // the skull slammed into something
             mo->momz = -mo->momz;
@@ -264,7 +265,8 @@ void P_ZMovement(mobj_t *mo)
         mo->z = mo->floorz;
 
         // OPTIMIZE NEGATE
-        if (mo->flags & MF_SKULLFLY)
+        // Only in DOOM2 compatibility mode
+        if (complevel < 3 && mo->flags & MF_SKULLFLY)
         {
             // the skull slammed into something
             mo->momz = -mo->momz;
