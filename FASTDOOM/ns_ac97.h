@@ -28,6 +28,8 @@ enum AC97_Errors {
 #define DEVICE_HDA_SIS                     8
 #define DEVICE_HDA_ULI                     9
 #define DEVICE_HDA_VIA                     10
+#define DEVICE_VIA						   11
+#define DEVICE_NSC						   12
 
 typedef struct {
 	WORD vender_id;
@@ -101,6 +103,10 @@ static AUDIO_DEVICE_LIST audio_dev_list[] =
 
 				{ 0x1039, 0x7012, PCI_ANY_ID, PCI_ANY_ID, DEVICE_SIS,
 						"SiS SI7012 integrated AC97 audio codec" },
+
+				// NON-SUPPORTED ?
+				{ 0x1039, 0x7019, PCI_ANY_ID, PCI_ANY_ID, DEVICE_SIS,
+						"SiS SI7019 integrated AC97 audio codec" },
 
 				// supported controllers HDA INTEL
 				{ 0x8086, 0x2668, PCI_ANY_ID, PCI_ANY_ID, DEVICE_HDA_INTEL,
@@ -186,6 +192,10 @@ static AUDIO_DEVICE_LIST audio_dev_list[] =
 
 				{ 0x1106, 0x3288, PCI_ANY_ID, PCI_ANY_ID, DEVICE_HDA_VIA,
 						"VIA 8251/8237 integrated High Definition Audio controller" },
+
+				// NON-SUPPORTED ?
+				{ 0x1106, 0x3059, PCI_ANY_ID, PCI_ANY_ID, DEVICE_HDA_VIA,
+						"VIA 8233/8235/8237 integrated AC97 audio codec" },
 
 				// null entry
 				{ 0x0000, 0x0000, PCI_ANY_ID, PCI_ANY_ID, 0, "" } };
