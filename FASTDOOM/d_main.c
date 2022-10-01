@@ -144,6 +144,8 @@ extern int musicVolume;
 
 extern byte inhelpscreens;
 
+unsigned char complevel = 0;
+
 skill_t startskill;
 int startepisode;
 int startmap;
@@ -840,6 +842,7 @@ void IdentifyVersion(void)
         case 1:
             if (!access("doom1.wad", R_OK))
             {
+                complevel = 2;
                 gamemode = shareware;
                 gamemission = doom;
                 D_AddFile("doom1.wad");
@@ -849,6 +852,7 @@ void IdentifyVersion(void)
         case 2:
             if (!access("doom.wad", R_OK))
             {
+                complevel = 2;
                 gamemode = registered;
                 gamemission = doom;
                 D_AddFile("doom.wad");
@@ -858,6 +862,7 @@ void IdentifyVersion(void)
         case 3:
             if (!access("doomu.wad", R_OK))
             {
+                complevel = 3;
                 gamemode = retail;
                 gamemission = doom;
                 D_AddFile("doomu.wad");
@@ -867,6 +872,7 @@ void IdentifyVersion(void)
         case 4:
             if (!access("doom2.wad", R_OK))
             {
+                complevel = 2;
                 gamemode = commercial;
                 gamemission = doom2;
                 D_AddFile("doom2.wad");
@@ -876,6 +882,7 @@ void IdentifyVersion(void)
         case 5:
             if (!access("plutonia.wad", R_OK))
             {
+                complevel = 4;
                 gamemode = commercial;
                 gamemission = pack_plut;
                 D_AddFile("plutonia.wad");
@@ -885,6 +892,7 @@ void IdentifyVersion(void)
         case 6:
             if (!access("tnt.wad", R_OK))
             {
+                complevel = 4;
                 gamemode = commercial;
                 gamemission = pack_tnt;
                 D_AddFile("tnt.wad");

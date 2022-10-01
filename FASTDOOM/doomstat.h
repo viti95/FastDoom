@@ -97,6 +97,8 @@ extern boolean debugPort;
 // Set if homebrew PWAD stuff has been added.
 extern boolean modifiedgame;
 
+extern unsigned char complevel;
+
 // -------------------------------------------
 // Selected skill type, map etc.
 //
