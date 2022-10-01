@@ -363,7 +363,7 @@ byte P_NotBlockLinesIterator(int x, int y, byte (*func)(line_t *))
 
     offset = *(blockmap + offset);
 
-    for (list = blockmaplump + offset + 1; *list != -1; list++)
+    for (list = blockmaplump + offset; *list != -1; list++)
     {
         ld = &lines[*list];
 
