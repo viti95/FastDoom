@@ -973,6 +973,11 @@ void D_DoomMain(void)
     union REGS regs;
 
     IdentifyVersion();
+    if ((p = M_CheckParm("-complevel")))
+    {
+        if (p < myargc - 1)
+            complevel = atoi(myargv[p + 1]);
+    }
 
 #if defined(MODE_EGA) || defined(MODE_PCP) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_VGA16)
     D_AddFile("mode16.wad");
