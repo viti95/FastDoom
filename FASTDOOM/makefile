@@ -515,3 +515,9 @@ clean : .SYMBOLIC
  $(DELCMD) *.err
  $(DELCMD) *.obj
  $(DELCMD) *.sym
+ $(DELCMD) *.EXE
+ $(DELCMD) *.MAP
+ $(DELCMD) *.ERR
+ $(DELCMD) *.OBJ
+ $(DELCMD) *.SYM
+ 
