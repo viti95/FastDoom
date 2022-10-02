@@ -24,8 +24,6 @@ static int AC97_NumBuffers = 0;
 static int AC97_TransferLength = 0;
 static int AC97_CurrentLength = 0;
 
-unsigned short AC97_Port = 0x220;
-
 static short *AC97_SoundPtr;
 volatile int AC97_SoundPlaying;
 
@@ -333,9 +331,6 @@ int AC97_Init(int soundcard, int port) {
 	AC97_CallBack = NULL;
 
 	AC97_BufferStart = NULL;
-
-	if (port != -1)
-		AC97_Port = port;
 
 	AC97_Installed = 1;
 
