@@ -384,15 +384,7 @@ void ASS_Init(int rate, int maxsng, int mdev, int sdev)
         printf("Sound Blaster DSP %01X.%02X\n", BLASTER_Version >> 8, BLASTER_Version && 7);
         printf("ADDR: %03X, IRQ: %u, DMA LOW: %u, DMA HIGH: %u\n", BLASTER_Config.Address, BLASTER_Config.Interrupt, BLASTER_Config.Dma8, BLASTER_Config.Dma16);
         break;
-    case SoundSource:
-    case TandySoundSource:
-    case LPTDAC:
-    case CMS:
-    case AC97:
-        FX_SetupCard(sound_device, &fx_device, dmx_snd_port);
-        break;
     default:
-        FX_SetupCard(sound_device, &fx_device, -1);
         break;
     }
 

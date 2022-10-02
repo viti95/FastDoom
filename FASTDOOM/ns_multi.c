@@ -23,6 +23,7 @@
 #include "ns_lpt.h"
 #include "ns_sbdm.h"
 #include "ns_adbfx.h"
+#include "dmx.h"
 #include "options.h"
 #include "fastmath.h"
 
@@ -1277,7 +1278,7 @@ int MV_Init(
 
     case SoundSource:
     case TandySoundSource:
-        status = SS_Init(soundcard, -1);
+        status = SS_Init(soundcard, dmx_snd_port);
         break;
     
     case PC1bit:
@@ -1289,15 +1290,15 @@ int MV_Init(
         break;
     
     case CMS:
-        status = CMS_Init(soundcard, -1);
+        status = CMS_Init(soundcard, dmx_snd_port);
         break;
 
     case AC97:
-    	status = AC97_Init(soundcard, -1);
+    	status = AC97_Init(soundcard, dmx_snd_port);
     	break;
 
     case LPTDAC:
-        status = LPT_Init(soundcard, -1);
+        status = LPT_Init(soundcard, dmx_snd_port);
         break;
     
     case SoundBlasterDirect:

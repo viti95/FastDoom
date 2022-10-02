@@ -15,6 +15,8 @@
 #ifndef _DMX_H_
 #define _DMX_H_
 
+extern int dmx_snd_port;
+
 int AL_DetectFM(void);
 int MPU_Init(int addr);
 int GUS_Init(void);
