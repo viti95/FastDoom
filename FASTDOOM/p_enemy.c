@@ -1582,7 +1582,7 @@ void A_BossDeath(mobj_t *mo)
     }
     else
     {
-        if (gamemode == commercial)
+        if (complevel < COMPLEVEL_ULTIMATE_DOOM)
         {
             if (gamemap != 8)
                 return;
