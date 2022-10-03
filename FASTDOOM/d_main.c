@@ -911,6 +911,7 @@ void IdentifyVersion(void)
             gamemode = commercial;
             gamemission = doom2;
             D_AddFile("doom2.wad");
+            complevel = COMPLEVEL_DOOM;
             return;
         }
 
@@ -919,6 +920,7 @@ void IdentifyVersion(void)
             gamemode = commercial;
             gamemission = pack_plut;
             D_AddFile("plutonia.wad");
+            complevel = COMPLEVEL_FINAL_DOOM;
             return;
         }
 
@@ -927,6 +929,7 @@ void IdentifyVersion(void)
             gamemode = commercial;
             gamemission = pack_tnt;
             D_AddFile("tnt.wad");
+            complevel = COMPLEVEL_FINAL_DOOM;
             return;
         }
 
@@ -935,6 +938,7 @@ void IdentifyVersion(void)
             gamemode = registered;
             gamemission = doom;
             D_AddFile("doom.wad");
+            complevel = COMPLEVEL_DOOM;
             return;
         }
 
@@ -943,6 +947,7 @@ void IdentifyVersion(void)
             gamemode = retail;
             gamemission = doom;
             D_AddFile("doomu.wad");
+            complevel = COMPLEVEL_ULTIMATE_DOOM;
             return;
         }
 
@@ -951,6 +956,7 @@ void IdentifyVersion(void)
             gamemode = shareware;
             gamemission = doom;
             D_AddFile("doom1.wad");
+            complevel = COMPLEVEL_DOOM;
             return;
         }
 
