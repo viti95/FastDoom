@@ -615,7 +615,7 @@ void P_SpawnMapThing(mapthing_t *mthing)
     fixed_t z;
 
     // count deathmatch start positions
-    if (mthing->type == 11 || mthing->type == 2 || mthing->type == 3 || mthing->type == 4)
+    if (!mthing || mthing->type == 11 || mthing->type == 2 || mthing->type == 3 || mthing->type == 4)
     {
         return;
     }
