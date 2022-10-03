@@ -86,8 +86,6 @@ typedef struct
     short special;
     short tag;
 
-    int nexttag,firsttag;  // killough 1/30/98: improves searches for tags.
-
     // 0 = untraversed, 1,2 = sndlines -1
     byte soundtraversed;
 
