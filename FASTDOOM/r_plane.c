@@ -179,6 +179,7 @@ void R_ClearPlanes(void)
 {
     int i;
     angle_t angle;
+    fixed_t optCosine, optSine;
 
     int *floorclipint = (int *)floorclip;
     int *ceilingclipint = (int *)ceilingclip;
@@ -211,8 +212,10 @@ void R_ClearPlanes(void)
     angle = (viewangle - ANG90) >> ANGLETOFINESHIFT;
 
     // scale will be unit scale at SCREENWIDTH/2 distance
-    basexscale = FixedMul(finecosine[angle], iprojection) >> 8;
-    baseyscale = -FixedMul(finesine[angle], iprojection) >> 8;
+    optCosine = finecosine[angle];
+    optSine = finesine[angle];
+    basexscale = ((abs(optCosine) >> 14) >= centerxfrac) ? ((optCosine ^ centerxfrac) >> 31) ^ MAXINT : FixedDiv2(optCosine, centerxfrac);
+    baseyscale = -(((abs(optSine) >> 14) >= centerxfrac) ? ((optSine ^ centerxfrac) >> 31) ^ MAXINT : FixedDiv2(optSine, centerxfrac));
 }
 
 //

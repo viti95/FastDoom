@@ -509,7 +509,7 @@ void R_ProjectSprite(mobj_t *thing)
     vis->x1 = x1 < 0 ? 0 : x1;
     vis->x2 = x2 > viewwidthlimit ? viewwidthlimit : x2;
     //iscale = FixedDiv(FRACUNIT, xscale);
-    iscale = FixedMul(tz, iprojection) >> 8;
+    iscale = (4 >= xscale) ? (65536 ^ xscale >> 31) ^ MAXINT : FixedDiv2(65536, xscale);
 
     if (flip)
     {
