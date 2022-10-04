@@ -262,9 +262,9 @@ byte P_CheckSight(mobj_t *t1, mobj_t *t2)
     // First check for trivial rejection.
 
     // Determine subsector entries in REJECT table.
-    s1 = (t1->subsector->sector - sectors);
-    s2 = (t2->subsector->sector - sectors);
-    pnum = s1 * numsectors + s2;
+    pnum = Div84((int)t1->subsector->sector - (int)sectors);
+    pnum *= numsectors;
+    pnum += Div84((int)t2->subsector->sector - (int)sectors);
     bytenum = pnum >> 3;
     bitnum = 1 << (pnum & 7);
 
