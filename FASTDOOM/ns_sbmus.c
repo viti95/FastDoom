@@ -123,31 +123,6 @@ static int AL_MaxMidiChannel = 16;
    Sends data to the Adlib using a specified port.
 ---------------------------------------------------------------------*/
 
-void AL_SendOutputToPort(
-    int port,
-    int reg,
-    int data)
-
-{
-   int delay;
-
-   outp(port, reg);
-
-   for (delay = 6; delay > 0; delay--)
-   //   for( delay = 2; delay > 0 ; delay-- )
-   {
-      inp(port);
-   }
-
-   outp(port + 1, data);
-
-   //   for( delay = 35; delay > 0 ; delay-- )
-   for (delay = 27; delay > 0; delay--)
-   //   for( delay = 2; delay > 0 ; delay-- )
-   {
-      inp(port);
-   }
-}
 
 void AL_SendOutputToPort_OPL2LPT(int port, int reg, int data)
 {
@@ -224,6 +199,16 @@ void AL_SendOutputToPort_OPL3LPT(int port, int reg, int data)
    {
       inp(lpt_ctrl);
    }
+}
+
+
+void AL_SendOutputToPort(
+    int port,
+    int reg,
+    int data)
+
+{
+   AL_SendOutputToPort_OPL3LPT(port, reg, data);
 }
 
 /*---------------------------------------------------------------------
@@ -1141,29 +1126,7 @@ int AL_DetectFM(
     void)
 
 {
-   int status1;
-   int status2;
-   int i;
-
-   AL_SendOutputToPort(ADLIB_PORT, 4, 0x60); // Reset T1 & T2
-   AL_SendOutputToPort(ADLIB_PORT, 4, 0x80); // Reset IRQ
-
-   status1 = inp(ADLIB_PORT);
-
-   AL_SendOutputToPort(ADLIB_PORT, 2, 0xff); // Set timer 1
-   AL_SendOutputToPort(ADLIB_PORT, 4, 0x21); // Start timer 1
-
-   for (i = 100; i > 0; i--)
-   {
-      inp(ADLIB_PORT);
-   }
-
-   status2 = inp(ADLIB_PORT);
-
-   AL_SendOutputToPort(ADLIB_PORT, 4, 0x60);
-   AL_SendOutputToPort(ADLIB_PORT, 4, 0x80);
-
-   return (((status1 & 0xe0) == 0x00) && ((status2 & 0xe0) == 0xc0));
+   return 1;
 }
 
 /*---------------------------------------------------------------------
