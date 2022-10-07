@@ -294,4 +294,3 @@ byte P_CheckSight(mobj_t *t1, mobj_t *t2)
     // the head node is the last node output
     return P_CrossBSPNode(firstnode);
 }
-
