@@ -1158,50 +1158,11 @@ int AL_Init(int soundcard)
    BLASTER_CONFIG Blaster;
    int status = BLASTER_Ok;
 
-   AL_Stereo = FALSE;
-   AL_OPL3 = FALSE;
-   AL_LeftPort = 0x388;
-   AL_RightPort = 0x388;
-
-   switch (soundcard)
-   {
-   case ProAudioSpectrum:
-   case SoundMan16:
-      AL_OPL3 = TRUE;
-      AL_Stereo = TRUE;
-      AL_LeftPort = 0x388;
-      AL_RightPort = 0x38A;
-      break;
-
-   case SoundBlaster:
-      status = BLASTER_GetCardSettings(&Blaster);
-      if (status != BLASTER_Ok)
-      {
-         status = BLASTER_GetEnv(&Blaster);
-         if (status != BLASTER_Ok)
-         {
-            break;
-         }
-      }
-
-      switch (Blaster.Type)
-      {
-      case SBPro2:
-      case SB16:
-         AL_OPL3 = TRUE;
-         AL_Stereo = TRUE;
-         AL_LeftPort = Blaster.Address;
-         AL_RightPort = Blaster.Address + 2;
-         break;
-
-      case SBPro:
-         AL_Stereo = TRUE;
-         AL_LeftPort = Blaster.Address;
-         AL_RightPort = Blaster.Address + 2;
-         break;
-      }
-      break;
-   }
+   AL_Stereo = TRUE;
+   AL_OPL3 = TRUE;
+   // LPT PORTS
+   AL_LeftPort = 0x378;
+   AL_RightPort = 0x378;
 
    AL_CalcPitchInfo();
    AL_Reset();
