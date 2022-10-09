@@ -110,19 +110,13 @@ static VOICELIST Voice_Pool;
 
 static CHANNEL Channel[NUM_CHANNELS];
 
+static int ADLIB_PORT = 0x388;
 static int AL_LeftPort = 0x388;
 static int AL_RightPort = 0x388;
 static int AL_Stereo = FALSE;
 static int AL_SendStereo = FALSE;
 static int AL_OPL3 = FALSE;
 static int AL_MaxMidiChannel = 16;
-
-/*---------------------------------------------------------------------
-   Function: AL_SendOutputToPort
-
-   Sends data to the Adlib using a specified port.
----------------------------------------------------------------------*/
-
 
 void AL_SendOutputToPort_OPL2LPT(int port, int reg, int data)
 {
@@ -202,14 +196,44 @@ void AL_SendOutputToPort_OPL3LPT(int port, int reg, int data)
 }
 
 
+/*---------------------------------------------------------------------
+   Function: AL_SendOutputToPort
+
+   Sends data to the Adlib using a specified port.
+---------------------------------------------------------------------*/
+
 void AL_SendOutputToPort(
     int port,
     int reg,
     int data)
 
 {
-   AL_SendOutputToPort_OPL3LPT(port, reg, data);
+   int delay;
+
+   // use OPL3 func for this. TODO use soundcard enum
+   if(ADLIB_PORT == 0x378) {
+      AL_SendOutputToPort_OPL3LPT(port, reg, data);
+      return;
+   }
+
+   outp(port, reg);
+
+   for (delay = 6; delay > 0; delay--)
+   //   for( delay = 2; delay > 0 ; delay-- )
+   {
+      inp(port);
+   }
+
+   outp(port + 1, data);
+
+   //   for( delay = 35; delay > 0 ; delay-- )
+   for (delay = 27; delay > 0; delay--)
+   //   for( delay = 2; delay > 0 ; delay-- )
+   {
+      inp(port);
+   }
 }
+
 
 /*---------------------------------------------------------------------
    Function: AL_SendOutput
@@ -1126,7 +1150,34 @@ int AL_DetectFM(
     void)
 
 {
-   return 1;
+   int status1;
+   int status2;
+   int i;
+
+   // no detection for OPL2LPT or OPL3LPT
+   if (ADLIB_PORT == 0x378) {
+      return 1;
+   }
+
+   AL_SendOutputToPort(ADLIB_PORT, 4, 0x60); // Reset T1 & T2
+   AL_SendOutputToPort(ADLIB_PORT, 4, 0x80); // Reset IRQ
+
+   status1 = inp(ADLIB_PORT);
+
+   AL_SendOutputToPort(ADLIB_PORT, 2, 0xff); // Set timer 1
+   AL_SendOutputToPort(ADLIB_PORT, 4, 0x21); // Start timer 1
+
+   for (i = 100; i > 0; i--)
+   {
+      inp(ADLIB_PORT);
+   }
+
+   status2 = inp(ADLIB_PORT);
+
+   AL_SendOutputToPort(ADLIB_PORT, 4, 0x60);
+   AL_SendOutputToPort(ADLIB_PORT, 4, 0x80);
+
+   return (((status1 & 0xe0) == 0x00) && ((status2 & 0xe0) == 0xc0));
 }
 
 /*---------------------------------------------------------------------
@@ -1158,11 +1209,58 @@ int AL_Init(int soundcard)
    BLASTER_CONFIG Blaster;
    int status = BLASTER_Ok;
 
-   AL_Stereo = TRUE;
-   AL_OPL3 = TRUE;
-   // LPT PORTS
-   AL_LeftPort = 0x378;
-   AL_RightPort = 0x378;
+   AL_Stereo = FALSE;
+   AL_OPL3 = FALSE;
+   AL_LeftPort = 0x388;
+   AL_RightPort = 0x388;
+
+   switch (soundcard)
+   {
+   case ProAudioSpectrum:
+   case SoundMan16:
+      AL_OPL3 = TRUE;
+      AL_Stereo = TRUE;
+      AL_LeftPort = 0x388;
+      AL_RightPort = 0x38A;
+      break;
+
+   case SoundBlaster:
+      status = BLASTER_GetCardSettings(&Blaster);
+      if (status != BLASTER_Ok)
+      {
+         status = BLASTER_GetEnv(&Blaster);
+         if (status != BLASTER_Ok)
+         {
+            break;
+         }
+      }
+
+      switch (Blaster.Type)
+      {
+      case SBPro2:
+      case SB16:
+         AL_OPL3 = TRUE;
+         AL_Stereo = TRUE;
+         AL_LeftPort = Blaster.Address;
+         AL_RightPort = Blaster.Address + 2;
+         break;
+
+      case SBPro:
+         AL_Stereo = TRUE;
+         AL_LeftPort = Blaster.Address;
+         AL_RightPort = Blaster.Address + 2;
+         break;
+
+      case Adlib:
+         AL_Stereo = TRUE;
+         AL_OPL3 = TRUE;
+         // LPT PORTS
+         AL_LeftPort = 0x378;
+         AL_RightPort = 0x378;
+         ADLIB_PORT = 0x378;
+      }
+      break;
+   }
 
    AL_CalcPitchInfo();
    AL_Reset();
