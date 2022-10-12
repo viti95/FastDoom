@@ -1973,7 +1973,15 @@ void EGA136_DrawBackbuffer(void)
 #ifdef MODE_EGA80
 void EGA80_DrawBackbuffer(void)
 {
+    unsigned char *vram = (unsigned char *)0xA0000;
+    byte *ptrbackbuffer = backbuffer;
+    unsigned int pos = 0;
 
+    for (pos = 0; pos < 80 * 200; pos++){
+        *vram = ptrlut16colors[*(ptrbackbuffer)];
+        vram++;
+        ptrbackbuffer+=4;
+    }
 }
 #endif
 
