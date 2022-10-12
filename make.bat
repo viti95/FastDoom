@@ -39,6 +39,7 @@ if "%2"=="VBD" GOTO mode_vbd
 if "%2"=="VBR" GOTO mode_vbr
 if "%2"=="Y"   GOTO mode_y
 if "%2"=="MDA" GOTO mode_mda
+if "%2"=="E80" GOTO mode_e80
 
 :mode_13h
 set base=fdoom13h.exe
@@ -164,6 +165,12 @@ goto compile_mode
 set base=fdoom13h.exe
 set executable=fdoomv2.exe
 set options=/dMODE_V2
+goto compile_mode
+
+:mode_e80
+set base=fdoom13h.exe
+set executable=fdoome80.exe
+set options=/dMODE_EGA80
 goto compile_mode
 
 :mode_v16
