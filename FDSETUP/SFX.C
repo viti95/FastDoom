@@ -797,6 +797,8 @@ int SetupFX(void)
 	case M_NONE:
 	case M_PC:
 	case M_ADLIB:
+	case M_OPL2LPT:
+	case M_OPL3LPT:
 		savefx = FALSE;
 		break;
 
