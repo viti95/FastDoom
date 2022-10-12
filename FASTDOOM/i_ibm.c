@@ -292,7 +292,7 @@ byte scantokey[128] =
 byte vrambuffer[32768];
 #endif
 
-#if defined(MODE_CGA16) || defined(MODE_CGA136) || defined(MODE_EGA16) || defined(MODE_EGA136)
+#if defined(MODE_CGA16) || defined(MODE_CGA136) || defined(MODE_EGA16) || defined(MODE_EGA136) || defined(MODE_EGA80)
 byte vrambuffer[16384];
 #endif
 
@@ -1974,16 +1974,43 @@ void EGA136_DrawBackbuffer(void)
 void EGA80_DrawBackbuffer(void)
 {
     unsigned char *vram = (unsigned char *)0xA0000;
+    byte *ptrvrambuffer = vrambuffer;
     byte *ptrbackbuffer = backbuffer;
 
     do
     {
-        *vram = ptrlut16colors[*ptrbackbuffer];
-        *(vram + 1) = ptrlut16colors[*(ptrbackbuffer + 4)];
-        *(vram + 2) = ptrlut16colors[*(ptrbackbuffer + 8)];
-        *(vram + 3) = ptrlut16colors[*(ptrbackbuffer + 12)];
+        byte tmp;
+
+        tmp = ptrlut16colors[*ptrbackbuffer];
+        if (tmp != *(ptrvrambuffer))
+        {
+            *(vram) = tmp;
+            *(ptrvrambuffer) = tmp;
+        }
+
+        tmp = ptrlut16colors[*(ptrbackbuffer + 4)];
+        if (tmp != *(ptrvrambuffer + 1))
+        {
+            *(vram + 1) = tmp;
+            *(ptrvrambuffer + 1) = tmp;
+        }
+
+        tmp = ptrlut16colors[*(ptrbackbuffer + 8)];
+        if (tmp != *(ptrvrambuffer + 2))
+        {
+            *(vram + 2) = tmp;
+            *(ptrvrambuffer + 2) = tmp;
+        }
+
+        tmp = ptrlut16colors[*(ptrbackbuffer + 12)];
+        if (tmp != *(ptrvrambuffer + 3))
+        {
+            *(vram + 3) = tmp;
+            *(ptrvrambuffer + 3) = tmp;
+        }
 
         vram += 4;
+        ptrvrambuffer += 4;
         ptrbackbuffer += 16;
     } while (vram < (unsigned char *)0xA3E80);
 }
@@ -3455,7 +3482,9 @@ void I_InitGraphics(void)
 
     // Set Bit Mask to omit the latch registers
     outp(0x3CE, 0x08);
-    outp(0x3CF, 0xFF); // maybe 0x00 ??
+    outp(0x3CF, 0xFF);
+
+    SetDWords(vrambuffer, 0, 4096);
 #endif
 #ifdef MODE_EGA640
     regs.w.ax = 0x0E;
