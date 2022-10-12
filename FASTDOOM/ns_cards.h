@@ -24,6 +24,8 @@ typedef enum
    AdlibFX,
    PCPWM,
    CMS,
+   OPL2LPT,
+   OPL3LPT,
    NumSoundCards
 } soundcardnames;
 

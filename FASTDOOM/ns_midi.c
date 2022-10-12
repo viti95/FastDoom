@@ -1032,6 +1032,7 @@ static void _MIDI_InitEMIDI(
     switch (MUSIC_SoundDevice)
     {
     case SoundBlaster:
+    case OPL3LPT:
         type = EMIDI_SoundBlaster;
         break;
 
@@ -1044,6 +1045,7 @@ static void _MIDI_InitEMIDI(
         break;
 
     case Adlib:
+    case OPL2LPT:
         type = EMIDI_Adlib;
         break;
 

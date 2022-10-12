@@ -56,6 +56,8 @@ int MUSIC_Init(
     case Adlib:
     case ProAudioSpectrum:
     case SoundMan16:
+    case OPL2LPT:
+    case OPL3LPT:
         status = MUSIC_InitFM(SoundCard, &MUSIC_MidiFunctions);
         break;
 
@@ -110,6 +112,8 @@ int MUSIC_Shutdown(
     switch (MUSIC_SoundDevice)
     {
     case Adlib:
+    case OPL2LPT:
+    case OPL3LPT:
         AL_Shutdown();
         break;
 
@@ -225,6 +229,8 @@ int MUSIC_PlaySong(
     {
     case SoundBlaster:
     case Adlib:
+    case OPL2LPT:
+    case OPL3LPT:
     case ProAudioSpectrum:
     case SoundMan16:
     case GenMidi:
@@ -331,6 +337,8 @@ int MUSIC_InitFM(
         break;
 
     case Adlib:
+    case OPL2LPT:
+    case OPL3LPT:
         Funcs->SetVolume = NULL;
         Funcs->GetVolume = NULL;
         break;
