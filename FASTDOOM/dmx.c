@@ -294,6 +294,12 @@ int MPU_Detect(int *port)
     }
     return MPU_Init(*port);
 }
+
+void OPLxLPT_SetCard(int port)
+{
+    dmx_mus_port = port;
+}
+
 void MPU_SetCard(int port)
 {
     dmx_mus_port = port;

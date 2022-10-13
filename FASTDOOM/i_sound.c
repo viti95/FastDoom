@@ -193,6 +193,7 @@ void I_sndArbitrateCards(void)
         void *genmidi = W_CacheLumpName("GENMIDI", PU_STATIC);
         AL_SetCard(genmidi);
         Z_Free(genmidi);
+        OPLxLPT_SetCard(snd_Mport);
     }
 
     if (midi)
