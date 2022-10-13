@@ -22,7 +22,7 @@ void AL_SendOutput(int voice, int reg, int data);
 void AL_StereoOn(void);
 void AL_StereoOff(void);
 void AL_Shutdown(void);
-int AL_Init(int soundcard);
+int AL_Init(int soundcard, int Address);
 void AL_Reset(void);
 void AL_NoteOff(int channel, int key, int velocity);
 void AL_NoteOn(int channel, int key, int vel);

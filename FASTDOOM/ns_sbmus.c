@@ -118,6 +118,9 @@ static int AL_SendStereo = FALSE;
 static int AL_OPL3 = FALSE;
 static int AL_MaxMidiChannel = 16;
 
+static int AL_OPL2LPT = FALSE;
+static int AL_OPL3LPT = FALSE;
+
 void AL_SendOutputToPort_OPL2LPT(int port, int reg, int data)
 {
    int i;
@@ -202,16 +205,18 @@ void AL_SendOutputToPort_OPL3LPT(int port, int reg, int data)
    Sends data to the Adlib using a specified port.
 ---------------------------------------------------------------------*/
 
-void AL_SendOutputToPort(
-    int port,
-    int reg,
-    int data)
-
+void AL_SendOutputToPort(int port, int reg, int data)
 {
    int delay;
 
-   // use OPL3 func for this. TODO use soundcard enum
-   if(ADLIB_PORT == 0x378) {
+   if (AL_OPL2LPT)
+   {
+      AL_SendOutputToPort_OPL2LPT(port, reg, data);
+      return;
+   }
+
+   if (AL_OPL3LPT)
+   {
       AL_SendOutputToPort_OPL3LPT(port, reg, data);
       return;
    }
@@ -1146,16 +1151,14 @@ void AL_SetPitchBend(
    Determines if an Adlib compatible card is installed in the machine.
 ---------------------------------------------------------------------*/
 
-int AL_DetectFM(
-    void)
-
+int AL_DetectFM(void)
 {
    int status1;
    int status2;
    int i;
 
    // no detection for OPL2LPT or OPL3LPT
-   if (ADLIB_PORT == 0x378) {
+   if (ADLIB_PORT == 0x378 || ADLIB_PORT == 0x278 || ADLIB_PORT == 0x3BC) {
       return 1;
    }
 
@@ -1203,19 +1206,36 @@ void AL_Shutdown(
    Begins use of the sound card.
 ---------------------------------------------------------------------*/
 
-int AL_Init(int soundcard)
-
+int AL_Init(int soundcard, int Address)
 {
    BLASTER_CONFIG Blaster;
    int status = BLASTER_Ok;
 
-   AL_Stereo = FALSE;
-   AL_OPL3 = FALSE;
-   AL_LeftPort = 0x388;
-   AL_RightPort = 0x388;
-
    switch (soundcard)
    {
+   case Adlib:
+   default:
+      AL_OPL3 = FALSE;
+      AL_Stereo = FALSE;
+      AL_LeftPort = 0x388;
+      AL_RightPort = 0x388;
+      break;
+   case OPL2LPT:
+      AL_OPL3 = FALSE;
+      AL_Stereo = FALSE;
+      AL_LeftPort = Address;
+      AL_RightPort = Address;
+      AL_OPL2LPT = TRUE;
+      ADLIB_PORT = Address;
+      break;
+   case OPL3LPT:
+      AL_OPL3 = TRUE;
+      AL_Stereo = TRUE;
+      AL_LeftPort = Address;
+      AL_RightPort = Address;
+      AL_OPL3LPT = TRUE;
+      ADLIB_PORT = Address;
+      break;
    case ProAudioSpectrum:
    case SoundMan16:
       AL_OPL3 = TRUE;
@@ -1244,20 +1264,17 @@ int AL_Init(int soundcard)
          AL_LeftPort = Blaster.Address;
          AL_RightPort = Blaster.Address + 2;
          break;
-
       case SBPro:
          AL_Stereo = TRUE;
          AL_LeftPort = Blaster.Address;
          AL_RightPort = Blaster.Address + 2;
          break;
-
-      case Adlib:
-         AL_Stereo = TRUE;
-         AL_OPL3 = TRUE;
-         // LPT PORTS
-         AL_LeftPort = 0x378;
-         AL_RightPort = 0x378;
-         ADLIB_PORT = 0x378;
+      default:
+         AL_OPL3 = FALSE;
+         AL_Stereo = FALSE;
+         AL_LeftPort = 0x388;
+         AL_RightPort = 0x388;
+         break;
       }
       break;
    }
