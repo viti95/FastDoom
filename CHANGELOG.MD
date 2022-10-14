@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## 0.9 (14 Oct 2022)
+* Fixed lot's of crashing bugs. May be a performance impact, but it's better than crashing the whole game. Huge thanks to @RamonUnch for discovering the issues, and providing extensive testing in lots of maps and demos.
+* Added commandline parameter "-palette1" to enable the black-cyan-magenta-white palette on CGA 320x200 mode.
+* Added commandline parameter "-snow" to enable a fix snow bug in IBM CGA cards on modes 160x100 16-color and 80x100 136-color.
+* Added basic compatibility levels support. Now demos wont desync. Also again huge thanks to @RamonUnch. And thanks Decino for the marvelous video explaining the compatibility levels.
+    * Added commandline parameter "-complevel X" to select any compatibility level
+    * Supported compatibility levels are:
+        * 2 -> Doom 1.9 (also Doom II)
+        * 3 -> Ultimate Doom
+        * 4 -> Final Doom
+* Added OPL2LPT and OPL3LPT support by Jordi Sesmero (@jsmolina)
+* Added new video mode FDOOME80.EXE => FastDoom EGA 80x200 16-color. This video mode is 640x200 EGA mode with write mode 2 enabled, so we can write 8 pixels
+at the same time with a single 8-bit write (that's 32-bit written at once, and avoiding the chunky2planar process). Should perform well on 8-bit ISA EGA cards.
+* Updated FastDoom Setup program with the new music devices. Also small visual fixes.
+* As always small optimizations here and there.
+
 ## 0.8.16 (21 Aug 2022)
 * Added Creative Music System / Game Blaster PCM support (4-bit stereo DAC)
 * Added PC Speaker PWM support (now working properly, CPU intensive)
@@ -12,6 +28,7 @@
 * Optimizations in sound code
 * "Better" quality PC Speaker (1-bit)
 * Fixed Hercules automap on modes Y and VBD
+
 ## 0.8.14 (16 Jun 2022)
 * Performance uplift, avoid AGI stalls on column and visplane rendering code (486). Also small optimizations in sound code.
 * Dual screen support. Now it's possible to use an Hercules card/monitor to render the automap. Use the command line parameter '-hercmap'.
