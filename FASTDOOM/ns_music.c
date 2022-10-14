@@ -24,7 +24,7 @@ static midifuncs MUSIC_MidiFunctions;
 
 
 int MUSIC_InitAWE32(midifuncs *Funcs);
-int MUSIC_InitFM(int card, midifuncs *Funcs);
+int MUSIC_InitFM(int card, midifuncs *Funcs, int Address);
 int MUSIC_InitMidi(int card, midifuncs *Funcs, int Address);
 int MUSIC_InitGUS(midifuncs *Funcs);
 
@@ -34,10 +34,7 @@ int MUSIC_InitGUS(midifuncs *Funcs);
    Selects which sound device to use.
 ---------------------------------------------------------------------*/
 
-int MUSIC_Init(
-    int SoundCard,
-    int Address)
-
+int MUSIC_Init(int SoundCard, int Address)
 {
     int i;
     int status;
@@ -56,7 +53,9 @@ int MUSIC_Init(
     case Adlib:
     case ProAudioSpectrum:
     case SoundMan16:
-        status = MUSIC_InitFM(SoundCard, &MUSIC_MidiFunctions);
+    case OPL2LPT:
+    case OPL3LPT:
+        status = MUSIC_InitFM(SoundCard, &MUSIC_MidiFunctions, Address);
         break;
 
     case GenMidi:
@@ -110,6 +109,8 @@ int MUSIC_Shutdown(
     switch (MUSIC_SoundDevice)
     {
     case Adlib:
+    case OPL2LPT:
+    case OPL3LPT:
         AL_Shutdown();
         break;
 
@@ -225,6 +226,8 @@ int MUSIC_PlaySong(
     {
     case SoundBlaster:
     case Adlib:
+    case OPL2LPT:
+    case OPL3LPT:
     case ProAudioSpectrum:
     case SoundMan16:
     case GenMidi:
@@ -286,23 +289,23 @@ int MUSIC_InitAWE32(
     return (status);
 }
 
-int MUSIC_InitFM(
-    int card,
-    midifuncs *Funcs)
-
+int MUSIC_InitFM(int card, midifuncs *Funcs, int Address)
 {
     int status;
     int passtatus;
 
     status = MIDI_Ok;
 
-    if (!AL_DetectFM())
+    if (card != OPL2LPT && card != OPL3LPT)
     {
-        return (MUSIC_Error);
+        if (!AL_DetectFM())
+        {
+            return (MUSIC_Error);
+        }
     }
-
+    
     // Init the fm routines
-    AL_Init(card);
+    AL_Init(card, Address);
 
     Funcs->NoteOff = AL_NoteOff;
     Funcs->NoteOn = AL_NoteOn;
@@ -331,6 +334,8 @@ int MUSIC_InitFM(
         break;
 
     case Adlib:
+    case OPL2LPT:
+    case OPL3LPT:
         Funcs->SetVolume = NULL;
         Funcs->GetVolume = NULL;
         break;

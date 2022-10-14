@@ -49,7 +49,9 @@ char cards[M_LAST][20] = {
 	"Sound Blaster DM",
 	"Adlib PCM (6 bit)",
 	"PC Speaker (PWM)",
-	"C/MS (4 bit)"
+	"C/MS (4 bit)",
+	"OPL2LPT",
+	"OPL3LPT"
 	};
 
 char controls[C_LAST][20] = {
