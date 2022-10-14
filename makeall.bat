@@ -26,3 +26,4 @@ call make.bat clean VBD
 call make.bat clean VBR
 call make.bat clean Y
 call make.bat clean MDA
+call make.bat clean E80
