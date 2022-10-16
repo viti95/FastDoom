@@ -1594,7 +1594,8 @@ void CGA_BW_DrawBackbuffer(void)
             ptr = ptrlutcolors + *(ptrbackbuffer + 3) * 2;
             finalcolor |= *ptr & 0x0201;
 
-            if (finalcolor != *ptrvrambuffer){
+            if (finalcolor != *ptrvrambuffer)
+            {
                 *ptrvrambuffer = finalcolor;
                 *vram = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor);
             }
@@ -1608,7 +1609,8 @@ void CGA_BW_DrawBackbuffer(void)
             ptr = ptrlutcolors + *(ptrbackbuffer + 323) * 2;
             finalcolor |= *ptr & 0x0201;
 
-            if (finalcolor != *(ptrvrambuffer + 0x2000)){
+            if (finalcolor != *(ptrvrambuffer + 0x2000))
+            {
                 *(ptrvrambuffer + 0x2000) = finalcolor;
                 *(vram + 0x2000) = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor);
             }
@@ -1979,10 +1981,10 @@ void EGAW1_DrawBackbuffer(void)
 
     do
     {
-        unsigned int pos1 = ptrlut16colors[*ptrbackbuffer] & 0xF0;
-        unsigned int pos2 = ptrlut16colors[*(ptrbackbuffer + 2)] & 0x0F;
+        unsigned int pos1 = ptrlut16colors[*ptrbackbuffer];
+        unsigned int pos2 = ptrlut16colors[*(ptrbackbuffer + 2)];
 
-        unsigned int finalpos = pos1 | pos2;
+        unsigned int finalpos = pos1 | pos2 << 4;
         
         byte read = *(basevram + finalpos); // Read block into latches
         *(vram) = read;                     // Copy from latches
@@ -2221,8 +2223,7 @@ void EGA640_DrawBackbuffer(void)
         vrambufferB = vrambufferB1;
         vrambufferI = vrambufferI1;
     }
-    else
-    	if (destscreen == 0xA4000)
+    else if (destscreen == 0xA4000)
     	{
             vrambufferR = vrambufferR2;
             vrambufferG = vrambufferG2;
@@ -2747,7 +2748,8 @@ void CGA_DrawBackbuffer(void)
             BYTE0_USHORT(color) = (ptrlut4colors[backbuffer[base + 3]]);
             tmpColor |= color & 0x0C03;
 
-            if (tmpColor != *(ptrvrambuffer)){
+            if (tmpColor != *(ptrvrambuffer))
+            {
                 *(ptrvrambuffer) = tmpColor;
                 *(vram) = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
             }
@@ -2760,7 +2762,8 @@ void CGA_DrawBackbuffer(void)
             BYTE0_USHORT(color) = (ptrlut4colors[backbuffer[base + 323]]);
             tmpColor |= color & 0x0C03;
 
-            if (tmpColor != *(ptrvrambuffer + 0x2000)){
+            if (tmpColor != *(ptrvrambuffer + 0x2000))
+            {
                 *(ptrvrambuffer + 0x2000) = tmpColor;
                 *(vram + 0x2000) = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
             }
@@ -3281,7 +3284,8 @@ void I_InitGraphics(void)
     regs.w.ax = 0x04;
     int386(0x10, (union REGS *)&regs, &regs);
 
-    if (!CGApalette1){
+    if (!CGApalette1)
+    {
         // Set palette and intensity (CGA)
         regs.w.ax = 0x0B00;
         regs.w.bx = 0x0100;
@@ -3509,8 +3513,8 @@ void I_InitGraphics(void)
     // Step 1 ??
 
     // Enable 128kb addressing
-    //outp(0x3CE, 0x06);
-    //outp(0x3CF, 0x01); // 0x03 ??
+    // outp(0x3CE, 0x06);
+    // outp(0x3CF, 0x01); // 0x03 ??
 
     // Step 2
     // Copy all possible combinations to the VRAM
@@ -3531,8 +3535,7 @@ void I_InitGraphics(void)
                 bitstatuspos1 = (pos1 >> counter) & 1;
                 bitstatuspos2 = (pos2 >> counter) & 1;
 
-                final = bitstatuspos1 || bitstatuspos1 << 1 || bitstatuspos1 << 2 || bitstatuspos1 << 3
-                        || bitstatuspos2 << 4 || bitstatuspos2 << 5 || bitstatuspos2 << 6 || bitstatuspos2 << 7;
+                    final = bitstatuspos1 | bitstatuspos1 << 1 | bitstatuspos1 << 2 | bitstatuspos1 << 3 | bitstatuspos2 << 4 | bitstatuspos2 << 5 | bitstatuspos2 << 6 | bitstatuspos2 << 7;
 
                 *basevram = final;
             }   
