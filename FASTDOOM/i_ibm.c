@@ -1973,7 +1973,23 @@ void EGA136_DrawBackbuffer(void)
 #ifdef MODE_EGAW1
 void EGAW1_DrawBackbuffer(void)
 {
+    unsigned char *basevram = (unsigned char *)0xA3E80;
+    unsigned char *vram = (unsigned char *)0xA0000;
+    byte *ptrbackbuffer = backbuffer;
 
+    do
+    {
+        byte pos1 = ptrlut16colors[*ptrbackbuffer] & 0x0F;
+        byte pos2 = ptrlut16colors[*(ptrbackbuffer + 2)] & 0xF0;
+
+        byte finalpos = pos1 + pos2;
+        
+        byte read = *(basevram + finalpos); // Read block into latches
+        *(vram) = read;                     // Copy from latches
+        
+        vram += 1;
+        ptrbackbuffer += 4;
+    } while (vram < (unsigned char *)0xA3E80);
 }
 #endif
 
@@ -3479,27 +3495,52 @@ void I_InitGraphics(void)
 #endif
 #ifdef MODE_EGAW1
     {   
-    int value = 0;
+    unsigned int pos1 = 0;
+    unsigned int pos2 = 0;
+    unsigned int counter = 0;
+    byte valueI = 0;
+    byte valueB = 0;
+    byte valueG = 0;
+    byte valueR = 0;
+    byte *basevram;
 
     regs.w.ax = 0x0E;
     int386(0x10, (union REGS *)&regs, &regs);
     pcscreen = destscreen = (byte *)0xA0000;
 
-    // Step 1
+    basevram = (byte *)0xA3E80; // Init at ending of viewable screen
+
+    // Step 1 ??
 
     // Enable 128kb addressing
     //outp(0x3CE, 0x06);
     //outp(0x3CF, 0x01); // 0x03 ??
 
     // Step 2
-
     // Copy all possible combinations to the VRAM
 
-    for (int i = 0; i < 2; i++)
+    for (pos1 = 0; pos1 < 16; pos1++)
     {
-        for (int j = 0; j < 16; j++)
+        for (pos2 = 0; pos2 < 16; pos2++)
         {
+            for (counter = 0; counter < 4; counter++)
+            {
+                byte bitstatuspos1;
+                byte bitstatuspos2;
+                byte final;
+                
+                outp(0x3C5, 1 << counter); // Change plane
 
+                bitstatuspos1 = (pos1 >> counter) & 1;
+                bitstatuspos2 = (pos2 >> counter) & 1;
+
+                final = bitstatuspos1 || bitstatuspos1 << 1 || bitstatuspos1 << 2 || bitstatuspos1 << 3
+                        || bitstatuspos2 << 4 || bitstatuspos2 << 5 || bitstatuspos2 << 6 || bitstatuspos2 << 7;
+
+                *basevram = final;
+            }   
+
+            basevram++;         
         }
     }
 
