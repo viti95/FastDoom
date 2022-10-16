@@ -3498,10 +3498,6 @@ void I_InitGraphics(void)
     unsigned int pos1 = 0;
     unsigned int pos2 = 0;
     unsigned int counter = 0;
-    byte valueI = 0;
-    byte valueB = 0;
-    byte valueG = 0;
-    byte valueR = 0;
     byte *basevram;
 
     regs.w.ax = 0x0E;
