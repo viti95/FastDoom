@@ -292,7 +292,7 @@ byte scantokey[128] =
 byte vrambuffer[32768];
 #endif
 
-#if defined(MODE_CGA16) || defined(MODE_CGA136) || defined(MODE_EGA16) || defined(MODE_EGA136) || defined(MODE_EGA80)
+#if defined(MODE_CGA16) || defined(MODE_CGA136) || defined(MODE_EGA16) || defined(MODE_EGA136) || defined(MODE_EGA80) || defined(MODE_EGAW1)
 byte vrambuffer[16384];
 #endif
 
@@ -1975,36 +1975,42 @@ void EGA136_DrawBackbuffer(void)
 #ifdef MODE_EGAW1
 void EGAW1_DrawBackbuffer(void)
 {
-    unsigned char *basevram = (unsigned char *)0xA3E80;
-    unsigned char *vram = (unsigned char *)0xA0000;
+    byte *vram = (byte *)0xA0000;
+    byte *ptrvrambuffer = vrambuffer;
     byte *ptrbackbuffer = backbuffer;
 
     byte latch;
-    unsigned int lastlatch = 0;
+    byte lastlatch = 0;
 
     do
     {
-        unsigned int pos1 = ptrlut16colors[*ptrbackbuffer];
-        unsigned int pos2 = ptrlut16colors[*(ptrbackbuffer + 2)];
+        byte pos1 = ptrlut16colors[*ptrbackbuffer];
+        byte pos2 = ptrlut16colors[*(ptrbackbuffer + 2)];
 
-        unsigned int finalpos = pos1 | pos2 << 4;
+        byte value = pos1 | pos2 << 4;
 
-        if (lastlatch != finalpos)
-        {
-            // Read + write
-            latch = *(basevram + finalpos); // Read block into latches
-            *(vram) = latch;                // Copy from latches
-            lastlatch = finalpos;           // Update new latches
-        }
-        else
-        {
-            // Write
-            *(vram) = latch;                // Just copy from latches
+        // Avoid accessing to VRAM whenever possible
+        if (*ptrvrambuffer != value){
+            // If the latch has already a good value, use it!
+            if (lastlatch != value)
+            {
+                // Read + write
+                latch = *((byte *)0xA3E80 + value);  // Read block into latches
+                *(vram) = latch;                     // Copy from latches
+                lastlatch = value;                   // Update new latches
+            }
+            else
+            {
+                // Write
+                *(vram) = latch;                     // Just copy from latches
+            }
+            *ptrvrambuffer = value;
         }
 
         vram += 1;
         ptrbackbuffer += 4;
-    } while (vram < (unsigned char *)0xA3E80);
+        ptrvrambuffer += 1;
+    } while (vram < (byte *)0xA3E80);
 }
 #endif
 
