@@ -26,3 +26,4 @@ call makew.bat clean VBD
 call makew.bat clean VBR
 call makew.bat clean Y
 call makew.bat clean MDA
+call makew.bat clean EW1
