@@ -1718,7 +1718,7 @@ void CGA16_DrawBackbuffer_Snow(void)
     do
     {
         unsigned char tmp = ptrlut16colors[*ptrbackbuffer] << 4 | ptrlut16colors[*(ptrbackbuffer + 2)];
-    
+
         if (tmp != *ptrvrambuffer)
         {
             I_WaitCGA();
@@ -1749,7 +1749,7 @@ void CGA16_DrawBackbuffer(void)
     do
     {
         unsigned char tmp = ptrlut16colors[*ptrbackbuffer] << 4 | ptrlut16colors[*(ptrbackbuffer + 2)];
-    
+
         if (tmp != *ptrvrambuffer)
         {
             *vram = tmp;
@@ -1928,35 +1928,35 @@ void EGA136_DrawBackbuffer(void)
     {
         unsigned char tmp = ptrlut136colors[*ptrbackbuffer];
 
-		if (tmp != *ptrvrambuffer)
-		{
-			*vram = tmp;
-			*ptrvrambuffer = tmp;
-		}
+        if (tmp != *ptrvrambuffer)
+        {
+            *vram = tmp;
+            *ptrvrambuffer = tmp;
+        }
 
-		tmp = ptrlut136colors[*(ptrbackbuffer + 4)];
+        tmp = ptrlut136colors[*(ptrbackbuffer + 4)];
 
-		if (tmp != *(ptrvrambuffer + 2))
-		{
-			*(vram + 2) = tmp;
-			*(ptrvrambuffer + 2) = tmp;
-		}
+        if (tmp != *(ptrvrambuffer + 2))
+        {
+            *(vram + 2) = tmp;
+            *(ptrvrambuffer + 2) = tmp;
+        }
 
-		tmp = ptrlut136colors[*(ptrbackbuffer + 8)];
+        tmp = ptrlut136colors[*(ptrbackbuffer + 8)];
 
-		if (tmp != *(ptrvrambuffer + 4))
-		{
-			*(vram + 4) = tmp;
-			*(ptrvrambuffer + 4) = tmp;
-		}
+        if (tmp != *(ptrvrambuffer + 4))
+        {
+            *(vram + 4) = tmp;
+            *(ptrvrambuffer + 4) = tmp;
+        }
 
-		tmp = ptrlut136colors[*(ptrbackbuffer + 12)];
+        tmp = ptrlut136colors[*(ptrbackbuffer + 12)];
 
-		if (tmp != *(ptrvrambuffer + 6))
-		{
-			*(vram + 6) = tmp;
-			*(ptrvrambuffer + 6) = tmp;
-		}
+        if (tmp != *(ptrvrambuffer + 6))
+        {
+            *(vram + 6) = tmp;
+            *(ptrvrambuffer + 6) = tmp;
+        }
 
         vram += 8;
         ptrbackbuffer += 16;
@@ -1982,7 +1982,7 @@ void EGAW1_DrawBackbuffer(void)
     byte *ptrbackbuffer = backbuffer;
 
     byte latch;
-    
+
     do
     {
         byte pos1 = ptrlut16colors[*ptrbackbuffer];
@@ -1991,19 +1991,20 @@ void EGAW1_DrawBackbuffer(void)
         byte value = pos1 | pos2 << 4;
 
         // Avoid accessing to VRAM whenever possible
-        if (*ptrvrambuffer != value){
+        if (*ptrvrambuffer != value)
+        {
             // If the latch has already a good value, use it!
             if (lastlatch != value)
             {
                 // Read + write
-                latch = *((byte *)0xA3E80 + value);  // Read block into latches
-                *(vram) = latch;                     // Copy from latches
-                lastlatch = value;                   // Update new latches
+                latch = *((byte *)0xA3E80 + value); // Read block into latches
+                *(vram) = latch;                    // Copy from latches
+                lastlatch = value;                  // Update new latches
             }
             else
             {
                 // Write
-                *(vram) = latch;                     // Just copy from latches
+                *(vram) = latch; // Just copy from latches
             }
             *ptrvrambuffer = value;
         }
@@ -2244,19 +2245,19 @@ void EGA640_DrawBackbuffer(void)
         vrambufferI = vrambufferI1;
     }
     else if (destscreen == 0xA4000)
-    	{
-            vrambufferR = vrambufferR2;
-            vrambufferG = vrambufferG2;
-            vrambufferB = vrambufferB2;
-            vrambufferI = vrambufferI2;
-    	}
-    	else
-    	{
-            vrambufferR = vrambufferR3;
-            vrambufferG = vrambufferG3;
-            vrambufferB = vrambufferB3;
-            vrambufferI = vrambufferI3;
-    	}
+    {
+        vrambufferR = vrambufferR2;
+        vrambufferG = vrambufferG2;
+        vrambufferB = vrambufferB2;
+        vrambufferI = vrambufferI2;
+    }
+    else
+    {
+        vrambufferR = vrambufferR3;
+        vrambufferG = vrambufferG3;
+        vrambufferB = vrambufferB3;
+        vrambufferI = vrambufferI3;
+    }
 
     // Red
     outp(0x3C5, 1 << (3 & 0x03));
@@ -2421,7 +2422,7 @@ void EGA640_DrawBackbuffer(void)
     if (destscreen == 0xA8000)
         destscreen = 0xA0000;
     else
-    	destscreen += 0x4000;
+        destscreen += 0x4000;
 }
 #endif
 
@@ -2485,13 +2486,13 @@ void EGA_DrawBackbuffer(void)
     // Next plane
     if (page == 2)
     {
-    	page = 0;
+        page = 0;
         destscreen = (byte *)0xA0000;
     }
     else
     {
-    	page++;
-    	destscreen += 0x2000;
+        page++;
+        destscreen += 0x2000;
     }
 }
 #endif
@@ -2824,13 +2825,13 @@ void I_FinishUpdate(void)
 
     if (textpage == 2)
     {
-    	textpage = 0;
+        textpage = 0;
         textdestscreen = (unsigned short *)0xB8000;
     }
     else
     {
-    	textpage++;
-    	textdestscreen += 1024;
+        textpage++;
+        textdestscreen += 1024;
     }
 #endif
 
@@ -2844,13 +2845,13 @@ void I_FinishUpdate(void)
 
     if (textpage == 2)
     {
-    	textpage = 0;
+        textpage = 0;
         textdestscreen = (unsigned short *)0xB8000;
     }
     else
     {
-    	textpage++;
-    	textdestscreen += 2048;
+        textpage++;
+        textdestscreen += 2048;
     }
 #endif
 
@@ -2869,8 +2870,8 @@ void I_FinishUpdate(void)
     }
     else
     {
-    	textpage++;
-    	textdestscreen += 3568;
+        textpage++;
+        textdestscreen += 3568;
     }
 #endif
 
@@ -2884,12 +2885,12 @@ void I_FinishUpdate(void)
 
     if (textpage == 2)
     {
-    	textpage = 0;
+        textpage = 0;
         textdestscreen = (unsigned short *)0xB8000;
     }
     else
     {
-    	textpage++;
+        textpage++;
         if (videoPageFix)
             textdestscreen += 4000;
         else
@@ -2903,7 +2904,7 @@ void I_FinishUpdate(void)
     if (destscreen == (byte *)0xA8000)
         destscreen = (byte *)0xA0000;
     else
-    	destscreen += 0x4000;
+        destscreen += 0x4000;
 #endif
 #ifdef MODE_VBE2_DIRECT
     VBE_SetDisplayStart_Y(page);
@@ -2915,7 +2916,7 @@ void I_FinishUpdate(void)
     }
     else
     {
-    	page += 200;
+        page += 200;
         destscreen += 320 * 200;
     }
 #endif
@@ -2971,7 +2972,7 @@ void I_FinishUpdate(void)
     if (CGAfix)
         CGA16_DrawBackbuffer_Snow();
     else
-        CGA16_DrawBackbuffer();   
+        CGA16_DrawBackbuffer();
 #endif
 #ifdef MODE_EGA16
     EGA16_DrawBackbuffer();
@@ -3459,7 +3460,7 @@ void I_InitGraphics(void)
 
 #if defined(MODE_CGA136)
     SetDWords(vrambuffer, 0, 4096);
-    
+
     for (i = 0; i < 16000; i += 2)
     {
         vram[i] = 0xB1;
@@ -3518,65 +3519,64 @@ void I_InitGraphics(void)
     SetDWords(vrambuffer[3][2], 0, 2048);
 #endif
 #ifdef MODE_EGAW1
-    {   
-    unsigned int pos1 = 0;
-    unsigned int pos2 = 0;
-    unsigned int counter = 0;
-    byte *basevram;
-
-    regs.w.ax = 0x0E;
-    int386(0x10, (union REGS *)&regs, &regs);
-    pcscreen = destscreen = (byte *)0xA0000;
-
-    basevram = (byte *)0xA3E80; // Init at ending of viewable screen
-
-    // Step 1 ??
-
-    // Enable 128kb addressing
-    // outp(0x3CE, 0x06);
-    // outp(0x3CF, 0x01); // 0x03 ??
-
-    // Step 2
-    // Copy all possible combinations to the VRAM
-
-    outp(0x3C4, 0x02);
-    for (pos1 = 0; pos1 < 16; pos1++)
     {
-        for (pos2 = 0; pos2 < 16; pos2++)
-        {
-            for (counter = 0; counter < 4; counter++)
-            {
-                byte bitstatuspos1;
-                byte bitstatuspos2;
-                byte final;
-                
-                outp(0x3C5, 1 << counter); // Change plane
+        unsigned int pos1 = 0;
+        unsigned int pos2 = 0;
+        unsigned int counter = 0;
+        byte *basevram;
 
-                bitstatuspos1 = (pos1 >> counter) & 1;
-                bitstatuspos2 = (pos2 >> counter) & 1;
+        regs.w.ax = 0x0E;
+        int386(0x10, (union REGS *)&regs, &regs);
+        pcscreen = destscreen = (byte *)0xA0000;
+
+        basevram = (byte *)0xA3E80; // Init at ending of viewable screen
+
+        // Step 1 ??
+
+        // Enable 128kb addressing
+        // outp(0x3CE, 0x06);
+        // outp(0x3CF, 0x01); // 0x03 ??
+
+        // Step 2
+        // Copy all possible combinations to the VRAM
+
+        outp(0x3C4, 0x02);
+        for (pos1 = 0; pos1 < 16; pos1++)
+        {
+            for (pos2 = 0; pos2 < 16; pos2++)
+            {
+                for (counter = 0; counter < 4; counter++)
+                {
+                    byte bitstatuspos1;
+                    byte bitstatuspos2;
+                    byte final;
+
+                    outp(0x3C5, 1 << counter); // Change plane
+
+                    bitstatuspos1 = (pos1 >> counter) & 1;
+                    bitstatuspos2 = (pos2 >> counter) & 1;
 
                     final = bitstatuspos1 | bitstatuspos1 << 1 | bitstatuspos1 << 2 | bitstatuspos1 << 3 | bitstatuspos2 << 4 | bitstatuspos2 << 5 | bitstatuspos2 << 6 | bitstatuspos2 << 7;
+                    *basevram = final;
+                }
 
-                *basevram = final;
-            }   
-
-            basevram++;
+                basevram++;
+            }
         }
-    }
 
-    // Step 3
+        // Step 3
 
-    // Write Mode 1
-    outp(0x3CE, 0x05);
-    outp(0x3CF, 0x01);
+        // Write Mode 1
+        outp(0x3CE, 0x05);
+        outp(0x3CF, 0x01);
 
-    // Write to all 4 planes
-    outp(0x3C4, 0x02);
-    outp(0x3C5, 0x0F);
+        // Write to all 4 planes
+        outp(0x3C4, 0x02);
+        outp(0x3C5, 0x0F);
 
-    // Set Bit Mask to use the latch registers
-    outp(0x3CE, 0x08);
-    outp(0x3CF, 0xFF);
+        // Set Bit Mask to use the latch registers
+        outp(0x3CE, 0x08);
+        outp(0x3CF, 0xFF);
     }
 #endif
 #ifdef MODE_EGA80
