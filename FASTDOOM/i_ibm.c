@@ -1979,16 +1979,29 @@ void EGAW1_DrawBackbuffer(void)
     unsigned char *vram = (unsigned char *)0xA0000;
     byte *ptrbackbuffer = backbuffer;
 
+    byte latch;
+    unsigned int lastlatch = 0;
+
     do
     {
         unsigned int pos1 = ptrlut16colors[*ptrbackbuffer];
         unsigned int pos2 = ptrlut16colors[*(ptrbackbuffer + 2)];
 
         unsigned int finalpos = pos1 | pos2 << 4;
-        
-        byte read = *(basevram + finalpos); // Read block into latches
-        *(vram) = read;                     // Copy from latches
-        
+
+        if (lastlatch != finalpos)
+        {
+            // Read + write
+            latch = *(basevram + finalpos); // Read block into latches
+            *(vram) = latch;                // Copy from latches
+            lastlatch = finalpos;           // Update new latches
+        }
+        else
+        {
+            // Write
+            *(vram) = latch;                // Just copy from latches
+        }
+
         vram += 1;
         ptrbackbuffer += 4;
     } while (vram < (unsigned char *)0xA3E80);
