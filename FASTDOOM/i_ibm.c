@@ -214,7 +214,7 @@ void I_StartupSound(void);
 void I_ShutdownSound(void);
 void I_ShutdownTimer(void);
 
-#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_CVB) || defined(MODE_EGA80)
+#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_CVB) || defined(MODE_EGA80) || defined(MODE_EGAW1)
 byte lut16colors[14 * 256];
 byte *ptrlut16colors;
 #endif
@@ -292,7 +292,7 @@ byte scantokey[128] =
 byte vrambuffer[32768];
 #endif
 
-#if defined(MODE_CGA16) || defined(MODE_CGA136) || defined(MODE_EGA16) || defined(MODE_EGA136) || defined(MODE_EGA80)
+#if defined(MODE_CGA16) || defined(MODE_CGA136) || defined(MODE_EGA16) || defined(MODE_EGA136) || defined(MODE_EGA80) || defined(MODE_EGAW1)
 byte vrambuffer[16384];
 #endif
 
@@ -442,7 +442,7 @@ void I_ProcessPalette(byte *palette)
 }
 #endif
 
-#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_EGA640) || defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_EGA80)
+#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_EGA640) || defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_EGA80) || defined(MODE_EGAW1)
 const byte colors[48] = {
     0x00, 0x00, 0x00,
     0x00, 0x00, 0x2A,
@@ -673,7 +673,7 @@ const byte colors[12] = {
     0x2A, 0x15, 0x00};
 #endif
 
-#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_CGA) || defined(MODE_EGA640) || defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB) || defined(MODE_ATI640) || defined(MODE_EGA80)
+#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_CGA) || defined(MODE_EGA640) || defined(MODE_EGA) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB) || defined(MODE_ATI640) || defined(MODE_EGA80) || defined(MODE_EGAW1)
 
 int I_SQRT(int x)
 {
@@ -838,7 +838,7 @@ void I_ProcessPalette(byte *palette)
 }
 #endif
 
-#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_CVB) || defined(MODE_EGA80)
+#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_CVB) || defined(MODE_EGA80) || defined(MODE_EGAW1)
 void I_ProcessPalette(byte *palette)
 {
     int i, j;
@@ -1228,7 +1228,7 @@ void I_SetPalette(int numpalette)
     ptrlut16colors = lut16colors + numpalette * 256;
 #endif
 
-#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_CVB) || defined(MODE_EGA80)
+#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_CVB) || defined(MODE_EGA80) || defined(MODE_EGAW1)
     ptrlut16colors = lut16colors + numpalette * 256;
 #endif
 
@@ -1594,7 +1594,8 @@ void CGA_BW_DrawBackbuffer(void)
             ptr = ptrlutcolors + *(ptrbackbuffer + 3) * 2;
             finalcolor |= *ptr & 0x0201;
 
-            if (finalcolor != *ptrvrambuffer){
+            if (finalcolor != *ptrvrambuffer)
+            {
                 *ptrvrambuffer = finalcolor;
                 *vram = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor);
             }
@@ -1608,7 +1609,8 @@ void CGA_BW_DrawBackbuffer(void)
             ptr = ptrlutcolors + *(ptrbackbuffer + 323) * 2;
             finalcolor |= *ptr & 0x0201;
 
-            if (finalcolor != *(ptrvrambuffer + 0x2000)){
+            if (finalcolor != *(ptrvrambuffer + 0x2000))
+            {
                 *(ptrvrambuffer + 0x2000) = finalcolor;
                 *(vram + 0x2000) = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor);
             }
@@ -1970,6 +1972,49 @@ void EGA136_DrawBackbuffer(void)
 }
 #endif
 
+#ifdef MODE_EGAW1
+byte lastlatch = 0;
+
+void EGAW1_DrawBackbuffer(void)
+{
+    byte *vram = (byte *)0xA0000;
+    byte *ptrvrambuffer = vrambuffer;
+    byte *ptrbackbuffer = backbuffer;
+
+    byte latch;
+    
+    do
+    {
+        byte pos1 = ptrlut16colors[*ptrbackbuffer];
+        byte pos2 = ptrlut16colors[*(ptrbackbuffer + 2)];
+
+        byte value = pos1 | pos2 << 4;
+
+        // Avoid accessing to VRAM whenever possible
+        if (*ptrvrambuffer != value){
+            // If the latch has already a good value, use it!
+            if (lastlatch != value)
+            {
+                // Read + write
+                latch = *((byte *)0xA3E80 + value);  // Read block into latches
+                *(vram) = latch;                     // Copy from latches
+                lastlatch = value;                   // Update new latches
+            }
+            else
+            {
+                // Write
+                *(vram) = latch;                     // Just copy from latches
+            }
+            *ptrvrambuffer = value;
+        }
+
+        vram += 1;
+        ptrbackbuffer += 4;
+        ptrvrambuffer += 1;
+    } while (vram < (byte *)0xA3E80);
+}
+#endif
+
 #ifdef MODE_EGA80
 void EGA80_DrawBackbuffer(void)
 {
@@ -2198,8 +2243,7 @@ void EGA640_DrawBackbuffer(void)
         vrambufferB = vrambufferB1;
         vrambufferI = vrambufferI1;
     }
-    else
-    	if (destscreen == 0xA4000)
+    else if (destscreen == 0xA4000)
     	{
             vrambufferR = vrambufferR2;
             vrambufferG = vrambufferG2;
@@ -2724,7 +2768,8 @@ void CGA_DrawBackbuffer(void)
             BYTE0_USHORT(color) = (ptrlut4colors[backbuffer[base + 3]]);
             tmpColor |= color & 0x0C03;
 
-            if (tmpColor != *(ptrvrambuffer)){
+            if (tmpColor != *(ptrvrambuffer))
+            {
                 *(ptrvrambuffer) = tmpColor;
                 *(vram) = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
             }
@@ -2737,7 +2782,8 @@ void CGA_DrawBackbuffer(void)
             BYTE0_USHORT(color) = (ptrlut4colors[backbuffer[base + 323]]);
             tmpColor |= color & 0x0C03;
 
-            if (tmpColor != *(ptrvrambuffer + 0x2000)){
+            if (tmpColor != *(ptrvrambuffer + 0x2000))
+            {
                 *(ptrvrambuffer + 0x2000) = tmpColor;
                 *(vram + 0x2000) = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
             }
@@ -2938,6 +2984,9 @@ void I_FinishUpdate(void)
 #endif
 #ifdef MODE_EGA80
     EGA80_DrawBackbuffer();
+#endif
+#ifdef MODE_EGAW1
+    EGAW1_DrawBackbuffer();
 #endif
 #ifdef MODE_VGA16
     VGA16_DrawBackbuffer();
@@ -3255,7 +3304,8 @@ void I_InitGraphics(void)
     regs.w.ax = 0x04;
     int386(0x10, (union REGS *)&regs, &regs);
 
-    if (!CGApalette1){
+    if (!CGApalette1)
+    {
         // Set palette and intensity (CGA)
         regs.w.ax = 0x0B00;
         regs.w.bx = 0x0100;
@@ -3466,6 +3516,68 @@ void I_InitGraphics(void)
     SetDWords(vrambuffer[1][2], 0, 2048);
     SetDWords(vrambuffer[2][2], 0, 2048);
     SetDWords(vrambuffer[3][2], 0, 2048);
+#endif
+#ifdef MODE_EGAW1
+    {   
+    unsigned int pos1 = 0;
+    unsigned int pos2 = 0;
+    unsigned int counter = 0;
+    byte *basevram;
+
+    regs.w.ax = 0x0E;
+    int386(0x10, (union REGS *)&regs, &regs);
+    pcscreen = destscreen = (byte *)0xA0000;
+
+    basevram = (byte *)0xA3E80; // Init at ending of viewable screen
+
+    // Step 1 ??
+
+    // Enable 128kb addressing
+    // outp(0x3CE, 0x06);
+    // outp(0x3CF, 0x01); // 0x03 ??
+
+    // Step 2
+    // Copy all possible combinations to the VRAM
+
+    outp(0x3C4, 0x02);
+    for (pos1 = 0; pos1 < 16; pos1++)
+    {
+        for (pos2 = 0; pos2 < 16; pos2++)
+        {
+            for (counter = 0; counter < 4; counter++)
+            {
+                byte bitstatuspos1;
+                byte bitstatuspos2;
+                byte final;
+                
+                outp(0x3C5, 1 << counter); // Change plane
+
+                bitstatuspos1 = (pos1 >> counter) & 1;
+                bitstatuspos2 = (pos2 >> counter) & 1;
+
+                    final = bitstatuspos1 | bitstatuspos1 << 1 | bitstatuspos1 << 2 | bitstatuspos1 << 3 | bitstatuspos2 << 4 | bitstatuspos2 << 5 | bitstatuspos2 << 6 | bitstatuspos2 << 7;
+
+                *basevram = final;
+            }   
+
+            basevram++;
+        }
+    }
+
+    // Step 3
+
+    // Write Mode 1
+    outp(0x3CE, 0x05);
+    outp(0x3CF, 0x01);
+
+    // Write to all 4 planes
+    outp(0x3C4, 0x02);
+    outp(0x3C5, 0x0F);
+
+    // Set Bit Mask to use the latch registers
+    outp(0x3CE, 0x08);
+    outp(0x3CF, 0xFF);
+    }
 #endif
 #ifdef MODE_EGA80
     regs.w.ax = 0x0E;
