@@ -1979,10 +1979,10 @@ void EGAW1_DrawBackbuffer(void)
 
     do
     {
-        byte pos1 = ptrlut16colors[*ptrbackbuffer] & 0x0F;
-        byte pos2 = ptrlut16colors[*(ptrbackbuffer + 2)] & 0xF0;
+        unsigned int pos1 = ptrlut16colors[*ptrbackbuffer] & 0xF0;
+        unsigned int pos2 = ptrlut16colors[*(ptrbackbuffer + 2)] & 0x0F;
 
-        byte finalpos = pos1 + pos2;
+        unsigned int finalpos = pos1 | pos2;
         
         byte read = *(basevram + finalpos); // Read block into latches
         *(vram) = read;                     // Copy from latches
@@ -3515,6 +3515,7 @@ void I_InitGraphics(void)
     // Step 2
     // Copy all possible combinations to the VRAM
 
+    outp(0x3C4, 0x02);
     for (pos1 = 0; pos1 < 16; pos1++)
     {
         for (pos2 = 0; pos2 < 16; pos2++)
@@ -3536,15 +3537,15 @@ void I_InitGraphics(void)
                 *basevram = final;
             }   
 
-            basevram++;         
+            basevram++;
         }
     }
 
     // Step 3
 
-    // Write Mode 2
+    // Write Mode 1
     outp(0x3CE, 0x05);
-    outp(0x3CF, 0x02);
+    outp(0x3CF, 0x01);
 
     // Write to all 4 planes
     outp(0x3C4, 0x02);
@@ -3552,7 +3553,7 @@ void I_InitGraphics(void)
 
     // Set Bit Mask to use the latch registers
     outp(0x3CE, 0x08);
-    outp(0x3CF, 0x00);
+    outp(0x3CF, 0xFF);
     }
 #endif
 #ifdef MODE_EGA80
