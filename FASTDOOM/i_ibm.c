@@ -1973,6 +1973,8 @@ void EGA136_DrawBackbuffer(void)
 #endif
 
 #ifdef MODE_EGAW1
+byte lastlatch = 0;
+
 void EGAW1_DrawBackbuffer(void)
 {
     byte *vram = (byte *)0xA0000;
@@ -1980,8 +1982,7 @@ void EGAW1_DrawBackbuffer(void)
     byte *ptrbackbuffer = backbuffer;
 
     byte latch;
-    byte lastlatch = 0;
-
+    
     do
     {
         byte pos1 = ptrlut16colors[*ptrbackbuffer];
