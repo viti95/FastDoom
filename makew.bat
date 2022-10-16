@@ -163,13 +163,13 @@ goto compile
 set base=fdoom13h.exe
 set executable=fdoome80.exe
 set options=/dMODE_EGA80
-goto compile_mode
+goto compile
 
 :mode_ew1
 set base=fdoom13h.exe
 set executable=fdoomew1.exe
 set options=/dMODE_EGAW1
-goto compile_mode
+goto compile
 
 :mode_v16
 set base=fdoom13h.exe

@@ -11,7 +11,7 @@
 
  Version
  -------
- 0.8.16
+ 0.9
 
  About
  -----
@@ -59,12 +59,13 @@
  ------------------
  
  CPU: Any x86 processor that supports 32 bit i386 instruction set
- Video cards: Hercules, CGA, EGA, VGA, Plantronics ColorPlus, 
+ Video cards: MDA, Hercules, CGA, EGA, VGA, Plantronics ColorPlus, 
               ATI Small Wonder
  Sound cards: Sound Blaster, PC Speaker, Disney Sound Source,
-              Gravis Ultrasound, Pro Audio Spectrum, COVOX LPT DAC
+              Gravis Ultrasound, Pro Audio Spectrum, COVOX LPT DAC,
+              Creative Music System
  Music cards: Sound Blaster (OPL2 and OPL3), Adlib, MIDI, Gravis Ultrasound
-              Sound Blaster AWE32
+              Sound Blaster AWE32, OPL2LPT, OPL3LPT
 
  Executables
  -----------
@@ -118,6 +119,8 @@
  * FDOOME36.EXE => FastDoom EGA 80x100 and 122 pseudocolors
  * FDOOMMDA.EXE => FastDoom MDA 80x25 text mode. Internal resolution 80x50.
                    Very quick'n'dirty, only Neo can play this mode properly.
+ * FDOOME80.EXE => FastDoom EGA 80x200 and 16 colors
+ * FDOOMEW1.EXE => FastDoom EGA 160x200 and 16 colors
  * FDSETUP.EXE  => Utility to setup controls and sound cards
 
  Command line parameters
@@ -183,6 +186,15 @@
  -debugPort => Shows FPS via the debug port (0x80)
  -fixDAC => Fixes palette corruption with VGA cards
  -hercmap => Enable Hercules automap (requires dual video card setup)
+ -snow => Fix for snow on IBM CGA cards in modes 160x100 16-color
+          and 80x100 136-color
+ -palette1 => Choose the black-cyan-magenta-white palette on mode
+              CGA 320x200 4-color
+ -complevel X => Force any compatibility level. Supported
+                 compatibility levels:
+                 2 - Doom 1.9 (Also Doom II)
+                 3 - Ultimate Doom
+                 4 - Final Doom
 
  Author
  ------
