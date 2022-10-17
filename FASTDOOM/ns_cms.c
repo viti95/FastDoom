@@ -9,6 +9,7 @@
 #include "ns_muldf.h"
 #include "ns_inter.h"
 #include "ns_multi.h"
+#include "ns_midif.h"
 
 #include "m_misc.h"
 #include "options.h"
@@ -148,7 +149,7 @@ unsigned char ChanEnableReg[2] = {0,0};
 // Note priority
 unsigned char NotePriority;
 
-unsigned short channelpitch[16];
+unsigned short channelpitch[NUM_MIDI_CHANNELS];
 
 
 /*---------------------------------------------------------------------
@@ -403,7 +404,7 @@ int CMS_MIDI_Init(int port)
     		cms_synth[i].voice = 0;
     		cms_synth[i].velocity = 0;
         }
-        for (i=0;i<MAX_CMS_CHANNELS;i++)
+        for (i=0;i<NUM_MIDI_CHANNELS;i++)
         {
             channelpitch[i] = 8192;
         }
@@ -573,7 +574,7 @@ void CMS_NoteOn(int channel, int key, int velocity)
 void CMS_ControlChange(int channel, int number, int value)
 {
   unsigned char i;
-    if ((number==121) || (number==123)) // All Sound/Notes Off
+    if ((number==MIDI_RESET_ALL_CONTROLLERS) || (number==MIDI_ALL_NOTES_OFF)) // All Sound/Notes Off
     {
   		for (i=0;i<MAX_CMS_CHANNELS;i++) 
     		  if (cms_synth[i].note != 0)
@@ -581,7 +582,15 @@ void CMS_ControlChange(int channel, int number, int value)
     				cmsDisableVoice(i);
 				cms_synth[i].note = 0;
 				cms_synth[i].priority = 0;
+    				cms_synth[i].ch = 0;
+    				cms_synth[i].voice = 0;
+    				cms_synth[i].velocity = 0;
 		 	}
+		if (number==MIDI_RESET_ALL_CONTROLLERS)
+		{
+        		for (i=0;i<NUM_MIDI_CHANNELS;i++)
+            			channelpitch[i] = 8192;
+		}
     }
 }
 
@@ -602,7 +611,7 @@ void CMS_PitchBend(int channel, int lsb, int msb)
 
     pitchwheel = lsb + (msb << 8);
 
-    channelpitch[channel] = pichwheel;
+    channelpitch[channel] = pitchwheel;
 
     for(i=0; i<MAX_CMS_CHANNELS; i++)
     {
