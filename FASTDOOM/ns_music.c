@@ -10,6 +10,7 @@
 #include "ns_gusmi.h"
 #include "ns_mp401.h"
 #include "ns_awe32.h"
+#include "ns_cms.h"
 #include "ns_scape.h"
 #include "ns_llm.h"
 #include "ns_user.h"
@@ -27,6 +28,7 @@ int MUSIC_InitAWE32(midifuncs *Funcs);
 int MUSIC_InitFM(int card, midifuncs *Funcs, int Address);
 int MUSIC_InitMidi(int card, midifuncs *Funcs, int Address);
 int MUSIC_InitGUS(midifuncs *Funcs);
+int MUSIC_InitCMS(midifuncs *Funcs, int Address);
 
 /*---------------------------------------------------------------------
    Function: MUSIC_Init
@@ -73,12 +75,15 @@ int MUSIC_Init(int SoundCard, int Address)
         status = MUSIC_InitGUS(&MUSIC_MidiFunctions);
         break;
 
+    case CMS:
+	status = MUSIC_InitCMS(&MUSIC_MidiFunctions, Address);
+	break;
+
     case SoundSource:
     case TandySoundSource:
     case PC:
     case PC1bit:
     case PCPWM:
-    case CMS:
     case LPTDAC:
     case SoundBlasterDirect:
     case AdlibFX:
@@ -145,6 +150,8 @@ int MUSIC_Shutdown(
     case UltraSound:
         GUSMIDI_Shutdown();
         break;
+    case CMS:
+	CMS_MIDI_Shutdown();
     }
 
     return (status);
@@ -236,6 +243,7 @@ int MUSIC_PlaySong(
     case SoundScape:
     case Awe32:
     case UltraSound:
+    case CMS:
         MIDI_StopSong();
         status = MIDI_PlaySong(song, loopflag);
         if (status != MIDI_Ok)
@@ -443,4 +451,34 @@ int MUSIC_InitGUS(
 
     return (status);
 }
+
+int MUSIC_InitCMS(
+    midifuncs *Funcs,
+    int Address)
+
+{
+    int status;
+
+    status = MUSIC_Ok;
+
+    if (CMS_MIDI_Init(Address) != CMS_Ok)
+    {
+        return (MUSIC_Error);
+    }
+
+    Funcs->NoteOff = CMS_NoteOff;
+    Funcs->NoteOn = CMS_NoteOn;
+    Funcs->PolyAftertouch = NULL;
+    Funcs->ControlChange = CMS_ControlChange;
+    Funcs->ProgramChange = CMS_ProgramChange;
+    Funcs->ChannelAftertouch = NULL;
+    Funcs->PitchBend = CMS_PitchBend;
+    Funcs->SetVolume = NULL;
+    Funcs->GetVolume = NULL;
+
+    MIDI_SetMidiFuncs(Funcs);
+
+    return (status);
+}
+
 
