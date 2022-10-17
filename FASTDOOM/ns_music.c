@@ -76,8 +76,8 @@ int MUSIC_Init(int SoundCard, int Address)
         break;
 
     case CMS:
-	status = MUSIC_InitCMS(&MUSIC_MidiFunctions, Address);
-	break;
+        status = MUSIC_InitCMS(&MUSIC_MidiFunctions, Address);
+        break;
 
     case SoundSource:
     case TandySoundSource:

@@ -305,6 +305,11 @@ void MPU_SetCard(int port)
     dmx_mus_port = port;
 }
 
+void CMS_SetCard(int port)
+{
+    dmx_mus_port = port;
+}
+
 void SND_SetPort(int port)
 {
     dmx_snd_port = port;
