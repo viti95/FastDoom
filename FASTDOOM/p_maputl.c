@@ -283,16 +283,14 @@ void P_UnsetThingPosition(mobj_t *thing)
 // based on it's x y.
 // Sets thing->subsector properly
 //
-void P_SetThingPosition(mobj_t *thing)
+void P_SetThingPositionSubsector(mobj_t *thing, subsector_t *ss)
 {
-    subsector_t *ss;
     sector_t *sec;
     int blockx;
     int blocky;
     mobj_t **link;
 
     // link into subsector
-    ss = R_PointInSubsector(thing->x, thing->y);
     thing->subsector = ss;
 
     if (!(thing->flags & MF_NOSECTOR))
@@ -332,6 +330,11 @@ void P_SetThingPosition(mobj_t *thing)
             thing->bnext = thing->bprev = NULL;
         }
     }
+}
+
+void P_SetThingPosition(mobj_t *thing)
+{
+    P_SetThingPositionSubsector(thing, R_PointInSubsector(thing->x,thing->y));
 }
 
 //
