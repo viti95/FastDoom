@@ -29,6 +29,10 @@ elif [ "$target" = "fdoomew1.exe" ]; then
   buildopts="-dMODE_EGAW1"
   buildtarget="fdoom13h.exe"
 
+elif [ "$target" = "fdoome10.exe" ]; then
+  buildopts="-dMODE_EGA10"
+  buildtarget="fdoom13h.exe"
+
 elif [ "$target" = "fdoombwc.exe" ]; then
   buildopts="-dMODE_CGA_BW"
   buildtarget="fdoom13h.exe"
@@ -141,5 +145,6 @@ cd FASTDOOM
 wmake "$buildtarget" EXTERNOPT="$buildopts $@"
 cp "$buildtarget" "../$target"
 cd ..
+echo "RIP AND TEAR"
 
 exit 0

@@ -28,3 +28,4 @@ call make.bat clean Y
 call make.bat clean MDA
 call make.bat clean EW1
 call make.bat clean E80
+call make.bat clean E10
