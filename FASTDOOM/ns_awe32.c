@@ -6,9 +6,6 @@
 #include "ns_awe32.h"
 #include "options.h"
 
-#define _inp inp
-#define _outp outp
-
 /*  DSP defines  */
 #define MPU_ACK_OK 0xfe
 #define MPU_RESET_CMD 0xff
@@ -167,22 +164,22 @@ static void ShutdownMPU(
     for (dwCount = 0; dwCount < 0x2000; dwCount++)
         ;
     dwCount = 0x2000;
-    while (dwCount && _inp(MPUPort(1)) & 0x40)
+    while (dwCount && inp(MPUPort(1)) & 0x40)
         --dwCount;
-    _outp(MPUPort(1), MPU_RESET_CMD);
+    outp(MPUPort(1), MPU_RESET_CMD);
     for (dwCount = 0; dwCount < 0x2000; dwCount++)
         ;
-    _inp(MPUPort(0));
+    inp(MPUPort(0));
 
     for (dwCount = 0; dwCount < 0x2000; dwCount++)
         ;
     dwCount = 0x2000;
-    while (dwCount && _inp(MPUPort(1)) & 0x40)
+    while (dwCount && inp(MPUPort(1)) & 0x40)
         --dwCount;
-    _outp(MPUPort(1), MPU_RESET_CMD);
+    outp(MPUPort(1), MPU_RESET_CMD);
     for (dwCount = 0; dwCount < 0x2000; dwCount++)
         ;
-    _inp(MPUPort(0));
+    inp(MPUPort(0));
 }
 
 static void LoadSBK(
