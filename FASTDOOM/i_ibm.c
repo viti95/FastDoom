@@ -3697,7 +3697,7 @@ void I_InitGraphics(void)
 
         basevram = (byte *)0xA3E80; // Init at ending of viewable screen
 
-        // Step 2
+        // Step 1
         // Copy all possible combinations to the VRAM
 
         outp(0x3C4, 0x02);
@@ -3747,7 +3747,7 @@ void I_InitGraphics(void)
             }
         }
 
-        // Step 3
+        // Step 2
 
         // Write Mode 1
         outp(0x3CE, 0x05);
@@ -3775,13 +3775,7 @@ void I_InitGraphics(void)
 
         basevram = (byte *)0xA3E80; // Init at ending of viewable screen
 
-        // Step 1 ??
-
-        // Enable 128kb addressing
-        // outp(0x3CE, 0x06);
-        // outp(0x3CF, 0x01); // 0x03 ??
-
-        // Step 2
+        // Step 1
         // Copy all possible combinations to the VRAM
 
         outp(0x3C4, 0x02);
@@ -3808,7 +3802,7 @@ void I_InitGraphics(void)
             }
         }
 
-        // Step 3
+        // Step 2
 
         // Write Mode 1
         outp(0x3CE, 0x05);
