@@ -39,10 +39,9 @@ void (*PCSpeaker_PWM_CallBack)(void);
 static void PCSpeaker_PWM_ServiceInterrupt(task *Task)
 {
     unsigned char value = (unsigned char) *PCSpeaker_PWM_SoundPtr;
+    unsigned short final = value >> 1 | 0xB0 << 4;
 
-
-    outp(0x43, 0xB0);
-    outp(0x42, value >> 1);
+    outpw(0x42, final);
     outp(0x42, 0);
 
     PCSpeaker_PWM_SoundPtr++;
