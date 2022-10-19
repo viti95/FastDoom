@@ -171,16 +171,6 @@ extern int usemouse;
 #define TIMERINT 8
 #define KEYBOARDINT 9
 
-#define CRTCOFF (_inbyte(STATUS_REGISTER_1) & 1)
-#define CLI _disable()
-#define STI _enable()
-
-#define _outbyte(x, y) (outp(x, y))
-#define _outhword(x, y) (outpw(x, y))
-
-#define _inbyte(x) (inp(x))
-#define _inhword(x) (inpw(x))
-
 #define MOUSEB1 1
 #define MOUSEB2 2
 #define MOUSEB3 4
@@ -1339,17 +1329,17 @@ void I_SetPalette(int numpalette)
         int i;
         int pos = Mul768(numpalette);
 
-        _outbyte(PEL_WRITE_ADR, 0);
+        outp(PEL_WRITE_ADR, 0);
 
         if (VGADACfix)
         {
             byte *ptrprocessedpalette = processedpalette + pos;
             for (i = 0; i < 768; i += 4)
             {
-                _outbyte(PEL_DATA, *(ptrprocessedpalette));
-                _outbyte(PEL_DATA, *(ptrprocessedpalette + 1));
-                _outbyte(PEL_DATA, *(ptrprocessedpalette + 2));
-                _outbyte(PEL_DATA, *(ptrprocessedpalette + 3));
+                outp(PEL_DATA, *(ptrprocessedpalette));
+                outp(PEL_DATA, *(ptrprocessedpalette + 1));
+                outp(PEL_DATA, *(ptrprocessedpalette + 2));
+                outp(PEL_DATA, *(ptrprocessedpalette + 3));
                 ptrprocessedpalette += 4;
             }
         }
@@ -3235,15 +3225,15 @@ void I_TestFastSetPalette(void)
         }
 
         // Write test palette using REP STOSB
-        _outbyte(PEL_WRITE_ADR, 0);
+        outp(PEL_WRITE_ADR, 0);
         OutString(PEL_DATA, test_palette, 768);
 
         // Read palette from VGA card
         // and compare results
-        _outbyte(PEL_READ_ADR, 0);
+        outp(PEL_READ_ADR, 0);
         for (x = 0; x < 768; x++)
         {
-            byte read_data = _inbyte(PEL_DATA);
+            byte read_data = inp(PEL_DATA);
 
             if (read_data != test_palette[x])
             {
@@ -4116,12 +4106,12 @@ void __interrupt I_KeyboardISR(void)
 {
     // Get the scan code
 
-    keyboardque[kbdhead & (KBDQUESIZE - 1)] = _inbyte(0x60);
+    keyboardque[kbdhead & (KBDQUESIZE - 1)] = inp(0x60);
     kbdhead++;
 
     // acknowledge the interrupt
 
-    _outbyte(0x20, 0x20);
+    outp(0x20, 0x20);
 }
 
 //
