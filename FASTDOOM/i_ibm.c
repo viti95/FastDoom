@@ -2163,8 +2163,6 @@ void EGAW1_DrawBackbuffer(void)
     byte *ptrvrambuffer = vrambuffer;
     byte *ptrbackbuffer = backbuffer;
 
-    byte latch;
-
     do
     {
         byte pos1 = ptrlut16colors[*ptrbackbuffer];
@@ -2175,9 +2173,13 @@ void EGAW1_DrawBackbuffer(void)
         // Avoid accessing to VRAM whenever possible
         if (*ptrvrambuffer != value)
         {
+            *ptrvrambuffer = value;
+
             // If the latch has already a good value, use it!
             if (lastlatch != value)
             {
+                byte latch;
+
                 // Read + write
                 latch = *((byte *)0xA3E80 + value); // Read block into latches
                 *(vram) = latch;                    // Copy from latches
@@ -2186,9 +2188,9 @@ void EGAW1_DrawBackbuffer(void)
             else
             {
                 // Write
-                *(vram) = latch; // Just copy from latches
+                *(vram) = 0
+                ; // Just copy from latches
             }
-            *ptrvrambuffer = value;
         }
 
         vram += 1;
