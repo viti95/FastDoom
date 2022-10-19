@@ -1437,8 +1437,6 @@ void I_UpdateBox(int x, int y, int w, int h)
     int step;
     byte *dest, *source;
 
-    outp(SC_INDEX, SC_MAPMASK);
-
     sp_x1 = x / 8;
     sp_x2 = (x + w) / 8;
     count = sp_x2 - sp_x1 + 1;
@@ -1514,8 +1512,6 @@ void I_UpdateBoxTransparent(int x, int y, int w, int h)
     int pstep;
     int step;
     byte *dest, *source;
-
-    outp(SC_INDEX, SC_MAPMASK);
 
     sp_x1 = x / 8;
     sp_x2 = (x + w) / 8;
