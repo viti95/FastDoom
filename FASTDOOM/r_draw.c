@@ -3090,8 +3090,7 @@ void R_FillBackScreen(void)
 
 #ifdef MODE_Y
     for (i = 0; i < 4; i++)
-    {
-        outp(SC_INDEX, SC_MAPMASK);
+    {        
         outp(SC_INDEX + 1, 1 << i);
 
         dest = (byte *)0xac000;
