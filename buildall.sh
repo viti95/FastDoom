@@ -60,4 +60,4 @@
 ./build.sh clean
 ./build.sh fdoome80.exe
 ./build.sh clean
-./build.sh fdoome10.exe
+./build.sh fdoome14.exe

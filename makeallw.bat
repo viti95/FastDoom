@@ -28,4 +28,4 @@ call makew.bat clean Y
 call makew.bat clean MDA
 call makew.bat clean EW1
 call makew.bat clean E80
-call makew.bat clean E10
+call makew.bat clean E14

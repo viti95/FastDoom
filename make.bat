@@ -41,7 +41,7 @@ if "%2"=="Y"   GOTO mode_y
 if "%2"=="MDA" GOTO mode_mda
 if "%2"=="E80" GOTO mode_e80
 if "%2"=="EW1" GOTO mode_ew1
-if "%2"=="E10" GOTO mode_e10
+if "%2"=="E14" GOTO mode_e14
 
 :mode_13h
 set base=fdoom13h.exe
@@ -181,10 +181,10 @@ set executable=fdoomew1.exe
 set options=/dMODE_EGAW1
 goto compile_mode
 
-:mode_e10
+:mode_e14
 set base=fdoom13h.exe
-set executable=fdoome10.exe
-set options=/dMODE_EGA10
+set executable=fdoome14.exe
+set options=/dMODE_EGA14
 goto compile_mode
 
 :mode_v16
