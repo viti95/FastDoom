@@ -143,8 +143,7 @@ fi
 
 cd FASTDOOM
 wmake "$buildtarget" EXTERNOPT="$buildopts $@"
-cp "$buildtarget" "../$target"
+yes | cp -rf "$buildtarget" "../${target^^}"
 cd ..
 echo "RIP AND TEAR"
-
 exit 0
