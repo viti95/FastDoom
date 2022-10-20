@@ -352,10 +352,10 @@ void cmsSound(unsigned char voice,unsigned char freq,unsigned char octave,unsign
 {
 	if (voice > 5)
 	    {
-		if (ChanReg[voice]&0x1 == 0)
+		if ((ChanReg[voice]&0x1) == 0)
 			CmsOctaveStore[OctavReg[voice]-0x10+3] = (CmsOctaveStore[OctavReg[voice]-0x10+3] & 0xF0) | octave;
 		else
-			CmsOctaveStore[OctavReg[voice]-0x10+3] = ((CmsOctaveStore[OctavReg[voice]-0x10+3] & 0xF) << 4) | octave;
+			CmsOctaveStore[OctavReg[voice]-0x10+3] = (CmsOctaveStore[OctavReg[voice]-0x10+3] & 0xF) | (octave << 4);
 		CMS_SetRegister(CMS_Port + 2, OctavReg[voice], CmsOctaveStore[OctavReg[voice]-0x10+3]);
 		CMS_SetRegister(CMS_Port + 2, ChanReg[voice], (amplitudeLeft << 4) | amplitudeRight);
 		CMS_SetRegister(CMS_Port + 2, ChanReg[voice] | 0x8, freq);
@@ -364,10 +364,10 @@ void cmsSound(unsigned char voice,unsigned char freq,unsigned char octave,unsign
 	    }
 	else
 	    {
-		if (ChanReg[voice]&0x1 == 0)
+		if ((ChanReg[voice]&0x1) == 0)
 			CmsOctaveStore[OctavReg[voice]-0x10] = (CmsOctaveStore[OctavReg[voice]-0x10] & 0xF0) | octave;
 		else
-			CmsOctaveStore[OctavReg[voice]-0x10] = ((CmsOctaveStore[OctavReg[voice]-0x10] & 0xF) << 4) | octave;
+			CmsOctaveStore[OctavReg[voice]-0x10] = (CmsOctaveStore[OctavReg[voice]-0x10] & 0xF) | (octave << 4);
 		CMS_SetRegister(CMS_Port, OctavReg[voice], CmsOctaveStore[OctavReg[voice]-0x10]);
 		CMS_SetRegister(CMS_Port, ChanReg[voice], (amplitudeLeft << 4) | amplitudeRight);
 		CMS_SetRegister(CMS_Port, ChanReg[voice] | 0x8, freq);
