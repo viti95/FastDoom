@@ -162,6 +162,7 @@ void P_TraverseIntercepts(traverser_t func);
 
 void P_UnsetThingPosition(mobj_t *thing);
 void P_SetThingPosition(mobj_t *thing);
+void P_SetThingPositionSubsector(mobj_t* thing, subsector_t *ss);
 
 //
 // P_MAP

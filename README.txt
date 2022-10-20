@@ -120,6 +120,7 @@
  * FDOOMMDA.EXE => FastDoom MDA 80x25 text mode. Internal resolution 80x50.
                    Very quick'n'dirty, only Neo can play this mode properly.
  * FDOOME80.EXE => FastDoom EGA 80x200 and 16 colors
+ * FDOOMEW1.EXE => FastDoom EGA 160x200 and 16 colors
  * FDSETUP.EXE  => Utility to setup controls and sound cards
 
  Command line parameters

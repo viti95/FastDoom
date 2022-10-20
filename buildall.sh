@@ -56,4 +56,8 @@
 ./build.sh clean
 ./build.sh fdoomati.exe
 ./build.sh clean
+./build.sh fdoomew1.exe
+./build.sh clean
 ./build.sh fdoome80.exe
+./build.sh clean
+./build.sh fdoome14.exe

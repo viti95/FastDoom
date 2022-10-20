@@ -384,6 +384,8 @@ int CMS_MIDI_Init(int port)
 {
     int i;
 
+    CMS_Port = port;
+
 #ifdef CMS_DEBUG_X
     debug_log("CMS_MIDI_Init port= %i (CMS_Port = %i)\r\n",port,CMS_Port);
 #endif

@@ -31,6 +31,8 @@ if "%2"=="VBR" GOTO mode_vbr
 if "%2"=="Y"   GOTO mode_y
 if "%2"=="MDA" GOTO mode_mda
 if "%2"=="E80" GOTO mode_e80
+if "%2"=="EW1" GOTO mode_ew1
+if "%2"=="E14" GOTO mode_e14
 
 :mode_13h
 set base=fdoom13h.exe
@@ -162,6 +164,18 @@ goto compile
 set base=fdoom13h.exe
 set executable=fdoome80.exe
 set options=/dMODE_EGA80
+goto compile
+
+:mode_ew1
+set base=fdoom13h.exe
+set executable=fdoomew1.exe
+set options=/dMODE_EGAW1
+goto compile
+
+:mode_e14
+set base=fdoom13h.exe
+set executable=fdoome14.exe
+set options=/dMODE_EGA14
 goto compile
 
 :mode_v16

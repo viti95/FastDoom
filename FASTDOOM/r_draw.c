@@ -3090,8 +3090,7 @@ void R_FillBackScreen(void)
 
 #ifdef MODE_Y
     for (i = 0; i < 4; i++)
-    {
-        outp(SC_INDEX, SC_MAPMASK);
+    {        
         outp(SC_INDEX + 1, 1 << i);
 
         dest = (byte *)0xac000;
@@ -3132,7 +3131,6 @@ void R_VideoErase(unsigned ofs, int count)
     byte *source;
     int countp;
 
-    outp(SC_INDEX, SC_MAPMASK);
     outp(SC_INDEX + 1, 15);
     outp(GC_INDEX, GC_MODE);
     outp(GC_INDEX + 1, inp(GC_INDEX + 1) | 1);
@@ -3141,7 +3139,6 @@ void R_VideoErase(unsigned ofs, int count)
     countp = count / 4;
     CopyBytes(source, dest, countp);
 
-    outp(GC_INDEX, GC_MODE);
     outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~1);
 }
 #endif
