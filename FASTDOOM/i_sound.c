@@ -35,6 +35,7 @@
 
 #include "ns_task.h"
 #include "ns_music.h"
+#include "ns_cms.h"
 
 #include "options.h"
 
@@ -222,6 +223,23 @@ void I_sndArbitrateCards(void)
     if (cmsmus)
     {
         CMS_SetCard(snd_Mport);
+    }
+
+    if (cmsfx && cmsmus)
+    {
+        CMS_SetMode(CMS_MusicFX);
+    }
+    else
+    {
+        if (cmsfx)
+        {
+            CMS_SetMode(CMS_OnlyFX);
+        }
+
+        if (cmsmus)
+        {
+            CMS_SetMode(CMS_OnlyMusic);
+        }
     }
 }
 

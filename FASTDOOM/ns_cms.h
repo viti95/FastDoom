@@ -17,6 +17,14 @@ enum CMS_Errors
     CMS_DPMI_Error
 };
 
+enum CMS_Modes
+{
+    CMS_None,
+    CMS_OnlyFX,
+    CMS_OnlyMusic,
+    CMS_MusicFX
+};
+
 typedef struct {
         unsigned char note;
         unsigned char priority;
@@ -24,6 +32,8 @@ typedef struct {
         unsigned char voice;
 	unsigned char velocity;
 } mid_channel;
+
+void CMS_SetMode(unsigned char mode);
 
 // FX sound proto
 void CMS_StopPlayback(void);
