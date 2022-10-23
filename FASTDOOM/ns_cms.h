@@ -5,7 +5,8 @@
 
 #define CMS_SampleRate 11025
 
-#define MAX_CMS_CHANNELS 12
+// max tone channels. Channels 10 and 11 are reserved for percussion
+#define MAX_CMS_CHANNELS 10
 
 enum CMS_Errors
 {

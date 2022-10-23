@@ -432,43 +432,49 @@ void CMS_NoteOff(int channel, int key, int velocity)
   unsigned char i;
   unsigned char voice;
 
-#ifdef CMS_DEBUG
-    debug_log("CMS_NoteOff\r\n");
-#endif
-    voice = MAX_CMS_CHANNELS;
-    for(i=0; i<MAX_CMS_CHANNELS; i++)
+    if (channel == 9)
     {
-      	if(cms_synth[i].note==key)
-      	{
-        	voice = i;
-        	break;
-      	}
+	CMS_SetRegister(CMS_Port+2, 0x19, 0x0);
+	CMS_SetRegister(CMS_Port+2, 0x15, 0x0); // noise ch 11
+	cmsDisableVoice(11);
     }
-
-
-    // Note not found, ignore note off command
-    if(voice==MAX_CMS_CHANNELS)
+    else
     {
-#ifdef CMS_DEBUG
-	debug_log("not found Ch=%u,note=%u\n",channel & 0xFF,key & 0xFF);
-#endif
-    	return;
-    }
+    	voice = MAX_CMS_CHANNELS;
+    	for(i=0; i<MAX_CMS_CHANNELS; i++)
+    	{
+      		if(cms_synth[i].note==key)
+      		{
+        		voice = i;
+        		break;
+      		}
+    	}
 
-    // decrease priority for all notes greater than current
-    for (i=0; i<MAX_CMS_CHANNELS; i++)
-	if (cms_synth[i].priority > cms_synth[voice].priority )
-		cms_synth[i].priority = cms_synth[i].priority - 1;
+
+    	// Note not found, ignore note off command
+    	if(voice==MAX_CMS_CHANNELS)
+    	{
+#ifdef CMS_DEBUG
+		debug_log("not found Ch=%u,note=%u\n",channel & 0xFF,key & 0xFF);
+#endif
+    		return;
+    	}
+
+    	// decrease priority for all notes greater than current
+    	for (i=0; i<MAX_CMS_CHANNELS; i++)
+		if (cms_synth[i].priority > cms_synth[voice].priority )
+			cms_synth[i].priority = cms_synth[i].priority - 1;
 
     
-    if (NotePriority != 0) NotePriority--;
+    	if (NotePriority != 0) NotePriority--;
 
-    cmsDisableVoice(voice);
-    cms_synth[voice].note = 0;
-    cms_synth[voice].priority = 0;
-    cms_synth[voice].ch = 0;
-    cms_synth[voice].voice = 0;
-    cms_synth[voice].velocity = 0;
+    	cmsDisableVoice(voice);
+    	cms_synth[voice].note = 0;
+    	cms_synth[voice].priority = 0;
+    	cms_synth[voice].ch = 0;
+    	cms_synth[voice].voice = 0;
+    	cms_synth[voice].velocity = 0;
+    }
 }
 
 void CMS_NoteOn(int channel, int key, int velocity)
@@ -484,6 +490,71 @@ void CMS_NoteOn(int channel, int key, int velocity)
 #ifdef CMS_DEBUG
     debug_log("CMS_NoteOn channel=%i;key=%i;velocity=%i\r\n",channel,key,velocity);
 #endif
+  if (channel == 9)
+  {
+    if (velocity != 0)
+       {
+#ifdef CMS_DEBUG
+       debug_log("DRUM ON note= %u\n",note);
+#endif
+	CMS_SetRegister(CMS_Port+2, 0x19, 0x84); // envelope: single dacay
+	switch (key) {
+		case 37: // Side Stick
+			CMS_SetRegister(CMS_Port+2, 0x16, 0x00); // noise gen 1 31.3kHz
+			CMS_SetRegister(CMS_Port+2, 0x15, 0x20); // noise ch 11
+			cmsSound(11,0,2,atten[velocity],atten[velocity]);
+			break;
+		case 38: // Acoustic Snare
+			CMS_SetRegister(CMS_Port+2, 0x16, 0x00); // noise gen 1 31.3kHz
+			CMS_SetRegister(CMS_Port+2, 0x15, 0x20); // noise ch 11
+			cmsSound(11,0,0,atten[velocity],atten[velocity]);
+			break;
+		case 39: // Hand Clap
+			CMS_SetRegister(CMS_Port+2, 0x16, 0x10); // noise gen 1 15.6kHz
+			CMS_SetRegister(CMS_Port+2, 0x15, 0x20); // noise ch 11
+			cmsSound(11,0,3,atten[velocity],atten[velocity]);
+			break;
+		case 40: // Electric Snare
+			CMS_SetRegister(CMS_Port+2, 0x16, 0x10); // noise gen 1 15.6kHz
+			CMS_SetRegister(CMS_Port+2, 0x15, 0x20); // noise ch 11
+			cmsSound(11,0,1,atten[velocity],atten[velocity]);
+			break;
+		case 42: // Closed Hi Hat
+			CMS_SetRegister(CMS_Port+2, 0x16, 0x10); // noise gen 1 15.6kHz
+			CMS_SetRegister(CMS_Port+2, 0x15, 0x20); // noise ch 11
+			cmsSound(11,0,2,atten[velocity],atten[velocity]);
+			break;
+		case 44: // Pedal Hi-Hat
+			CMS_SetRegister(CMS_Port+2, 0x16, 0x10); // noise gen 1 15.6kHz
+			CMS_SetRegister(CMS_Port+2, 0x15, 0x20); // noise ch 11
+			cmsSound(11,0,0,atten[velocity],atten[velocity]);
+			break;
+		case 52: // Chinese Cymbal
+			CMS_SetRegister(CMS_Port+2, 0x16, 0x20); // noise gen 1 7.6kHz
+			CMS_SetRegister(CMS_Port+2, 0x15, 0x20); // noise ch 11
+			cmsSound(11,0,2,atten[velocity],atten[velocity]);
+			break;
+		case 55: // Splash Cymbal
+			CMS_SetRegister(CMS_Port+2, 0x16, 0x20); // noise gen 1 7.6kHz
+			CMS_SetRegister(CMS_Port+2, 0x15, 0x20); // noise ch 11
+			cmsSound(11,0,0,atten[velocity],atten[velocity]);
+			break;
+		case 71: // Short Whistle
+		case 72: // Long Whistle
+			cmsSound(11,0,6,atten[velocity],atten[velocity]);
+			break;
+		default:
+			cmsSound(11,0,1,atten[velocity],atten[velocity]);
+        }
+       }
+    else
+       {
+	CMS_SetRegister(CMS_Port+2, 0x19, 0x0); // turn off envelope gen 1
+	CMS_SetRegister(CMS_Port+2, 0x15, 0x0); // turn off noise ch 11
+	cmsDisableVoice(11);
+       }
+  }
+  else
   if (velocity != 0)
   {
 	//note_cms = key + 1;
