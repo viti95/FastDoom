@@ -9,5 +9,4 @@ typedef struct
 } default_t;
 
 void M_SaveDefaults(void);
-int CheckParm(char *string);
 int M_LoadDefaults(void);

@@ -131,16 +131,6 @@ void M_SaveDefaults(void)
 	fclose(f);
 }
 
-int CheckParm(char *string)
-{
-	int i;
-
-	for (i = 1; i < myargc; i++)
-		if (!strcmp(myargv[i], string))
-			return i;
-	return 0;
-}
-
 /*
 ==============
 =

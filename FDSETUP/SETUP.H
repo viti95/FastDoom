@@ -51,8 +51,10 @@ void RestoreScreen(void);
 void DrawRadios(radiogroup_t *rg);
 
 void DrawPup(pup_t far *pup);
+extern unsigned char mono;
 extern char errorstring[80];
 void Error(char *string);
+int CheckParm(char *string);
 
 extern char **myargv;
 extern int myargc;
