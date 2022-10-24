@@ -59,7 +59,10 @@ void Invert(item_t *item)
 
 	for (i = 0; i < item->w; i++)
 	{
-		*(screen + 1) = inv_attrib;
+		if (mono)
+			*(screen + 1) = 0x70;
+		else
+			*(screen + 1) = 0x7f;
 		screen += 2;
 	}
 }
