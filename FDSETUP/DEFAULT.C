@@ -105,13 +105,13 @@ void M_SaveDefaults(void)
 	int i;
 	FILE *f;
 
-	if (newc.m.soundport == -1)
+	/*if (newc.m.soundport == -1)
 	{
 		if (newc.d.soundport == -1)
 			newc.m.soundport = 0x378;
 		else
 			newc.m.soundport = newc.d.soundport;
-	}
+	}*/
 
 	if (newc.control != C_KEY)
 	{
@@ -187,7 +187,7 @@ int M_LoadDefaults(void)
 
 	fclose(f);
 
-	newc.d.soundport = newc.m.soundport;
+	//newc.d.soundport = newc.m.soundport;
 
 	if (usemouse)
 		newc.control = C_MOUSE;

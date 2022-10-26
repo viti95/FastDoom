@@ -49,7 +49,7 @@ char cards[M_LAST][20] = {
 	"Sound Blaster DM",
 	"Adlib PCM (6 bit)",
 	"PC Speaker (PWM)",
-	"C/MS (4 bit)",
+	"C/MS (Game Blaster)",
 	"OPL2LPT",
 	"OPL3LPT"
 	};
@@ -313,7 +313,7 @@ void StartUp(void)
 	newc.m.card = M_NONE;
 	newc.m.soundport = -1;
 	newc.m.midiport = -1;
-	newc.d = newc.m;
+	//newc.d = newc.m;
 	newc.numdig = 2;
 
 	DrawPup(&title);
@@ -331,7 +331,7 @@ void StartUp(void)
 			newc.m.card = M_GUS;
 			newc.m.soundport = addr;
 			newc.m.midiport = -1;
-			newc.d = newc.m;
+			//newc.d = newc.m;
 			//fprintf(stderr, "GUS: addr=%x, irq=%d, dma=%d\n", addr, irq, dma);
 		}
 		else if (SmellsLikeSB(&addr, &irq, &dma, &midi))
@@ -339,7 +339,7 @@ void StartUp(void)
 			newc.m.card = M_SB;
 			newc.m.soundport = addr;
 			newc.m.midiport = midi;
-			newc.d = newc.m;
+			//newc.d = newc.m;
 		}
 
 		ChooseController();
