@@ -11,9 +11,9 @@
 #define MPU_RESET_CMD 0xff
 #define MPU_ENTER_UART 0x3f
 
-static WORD wSBCBaseAddx; /* Sound Blaster base address */
-static WORD wEMUBaseAddx; /* EMU8000 subsystem base address */
-static WORD wMpuBaseAddx; /* MPU401 base address */
+static int wSBCBaseAddx; /* Sound Blaster base address */
+static int wEMUBaseAddx; /* EMU8000 subsystem base address */
+static int wMpuBaseAddx; /* MPU401 base address */
 
 static unsigned short NoteFlags[128];
 
