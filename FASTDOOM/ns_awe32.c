@@ -1,4 +1,7 @@
 #include <conio.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <dos.h>
 #include <string.h>
 #include "ns_dpmi.h"
 #include "ns_sb.h"
@@ -11,9 +14,9 @@
 #define MPU_RESET_CMD 0xff
 #define MPU_ENTER_UART 0x3f
 
-static WORD wSBCBaseAddx; /* Sound Blaster base address */
-static WORD wEMUBaseAddx; /* EMU8000 subsystem base address */
-static WORD wMpuBaseAddx; /* MPU401 base address */
+static int wSBCBaseAddx; /* Sound Blaster base address */
+static int wEMUBaseAddx; /* EMU8000 subsystem base address */
+static int wMpuBaseAddx; /* MPU401 base address */
 
 static unsigned short NoteFlags[128];
 
@@ -25,9 +28,13 @@ static SOUND_PACKET spSound =
     {
         0};
 
+static char* pPresets[MAXBANKS]    = {0};
+
 static LONG lBankSizes[MAXBANKS] =
     {
         0};
+
+static char Packet[PACKETSIZE]     = {0};
 
 unsigned SetES(void);
 #pragma aux SetES = \
@@ -182,23 +189,92 @@ static void ShutdownMPU(
     inp(MPUPort(0));
 }
 
+/*OIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII?*/
+/*? OpenSBK                                                                ?*/
+/*? Locate and open a SBK file.                                            ?*/
+/*OIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII?*/
+FILE*
+OpenSBK (const char* szSBKFile)
+{
+    FILE* fp;
+
+    return fopen(szSBKFile, "rb");
+}
+
 static void LoadSBK(
     void)
 {
-    /* use embeded preset objects */
-    spSound.bank_no = 0;     /* load as Bank 0 */
-    spSound.total_banks = 1; /* use 1 bank first */
-    lBankSizes[0] = 0;       /* ram is not needed */
+    int i;
+    FILE* fp;
+    char* szSBKFile="SYNTHGS.SBK";
 
+    fp = OpenSBK(szSBKFile);
+    if (!fp) {
+	        printf("AWE32 ERROR:  Cannot open %s\n", szSBKFile);
+
+    					/* use embeded preset objects */
+    		spSound.bank_no = 0;     /* load as Bank 0 */
+    		spSound.total_banks = 1; /* use 1 bank first */
+    		lBankSizes[0] = 0;       /* ram is not needed */
+
+    		spSound.banksizes = lBankSizes;
+    		awe32DefineBankSizes(&spSound);
+    		awe32SoundPad.SPad1 = awe32SPad1Obj;
+    		awe32SoundPad.SPad2 = awe32SPad2Obj;
+    		awe32SoundPad.SPad3 = awe32SPad3Obj;
+    		awe32SoundPad.SPad4 = awe32SPad4Obj;
+    		awe32SoundPad.SPad5 = awe32SPad5Obj;
+    		awe32SoundPad.SPad6 = awe32SPad6Obj;
+    		awe32SoundPad.SPad7 = awe32SPad7Obj;
+
+        	return ;
+    }
+    
+    /* allocate ram */
+    spSound.bank_no = 0;                        /* load as Bank 0 */
+    spSound.total_banks = 1;                    /* use 1 bank first */
+    lBankSizes[0] = spSound.total_patch_ram;    /* use all available ram */
     spSound.banksizes = lBankSizes;
     awe32DefineBankSizes(&spSound);
-    awe32SoundPad.SPad1 = awe32SPad1Obj;
-    awe32SoundPad.SPad2 = awe32SPad2Obj;
-    awe32SoundPad.SPad3 = awe32SPad3Obj;
-    awe32SoundPad.SPad4 = awe32SPad4Obj;
-    awe32SoundPad.SPad5 = awe32SPad5Obj;
-    awe32SoundPad.SPad6 = awe32SPad6Obj;
-    awe32SoundPad.SPad7 = awe32SPad7Obj;
+
+    /* request to load */
+    spSound.data = Packet;
+    fread(Packet, 1, PACKETSIZE, fp);
+    if (awe32SFontLoadRequest(&spSound)) {
+        fclose(fp);
+        printf("AWE32 ERROR:  Cannot load SoundFont file %s\n", szSBKFile);
+        return ;
+    }
+    
+    /* stream samples */
+    fseek(fp, spSound.sample_seek, SEEK_SET);
+    for (i=0; i<spSound.no_sample_packets; i++) {
+        fread(Packet, 1, PACKETSIZE, fp);
+        awe32StreamSample(&spSound);
+    }
+    
+    /* setup SoundFont preset objects */
+    fseek(fp, spSound.preset_seek, SEEK_SET);
+    pPresets[0] = (char*) malloc((unsigned) spSound.preset_read_size);
+    fread(pPresets[0], 1, (unsigned) spSound.preset_read_size, fp);
+    spSound.presets = pPresets[0];
+    if (awe32SetPresets(&spSound)) {
+        fclose(fp);
+        printf("AWE32 ERROR:  Invalid SoundFont file %s\n", szSBKFile);
+        return ;
+    }
+    fclose(fp);
+    
+    /* calculate actual ram used */
+    if (spSound.no_sample_packets) {
+        lBankSizes[0] = spSound.preset_seek - spSound.sample_seek + 160;
+        spSound.total_patch_ram -= lBankSizes[0];
+    }
+    else
+        lBankSizes[0] = 0;          /* no sample in SBK file */
+
+    return ;
+
 }
 
 int AWE32_Init(
@@ -266,11 +342,12 @@ int AWE32_Init(
         return (AWE32_Error);
     }
 
+    // Tronix: don't needed for SBK. Voices must be set to 30 by default
     // Set the number of voices to use to 32
-    awe32NumG = 32;
+    //awe32NumG = 32;
 
     awe32TotalPatchRam(&spSound);
-
+   
     LoadSBK();
     awe32InitMIDI();
     awe32InitNRPN();
@@ -284,6 +361,13 @@ void AWE32_Shutdown(
     void)
 
 {
+    int i;
+
+    /* free allocated memory */
+    awe32ReleaseAllBanks(&spSound);
+    for (i=0; i<spSound.total_banks; i++)
+        if (pPresets[i]) free(pPresets[i]);
+
     ShutdownMPU();
     awe32Terminate();
 }
