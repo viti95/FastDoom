@@ -361,6 +361,13 @@ void AWE32_Shutdown(
     void)
 
 {
+    int i;
+
+    /* free allocated memory */
+    awe32ReleaseAllBanks(&spSound);
+    for (i=0; i<spSound.total_banks; i++)
+        if (pPresets[i]) free(pPresets[i]);
+
     ShutdownMPU();
     awe32Terminate();
 }
