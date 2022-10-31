@@ -163,9 +163,9 @@ for a in range(first, last):
 
                 print(best_ratio, best_character, best_color_0, best_color_1)
 
-                output_file.write(str(best_color_0 << 4 | best_color_1))
-                output_file.write(",")
                 output_file.write(str(best_character))
+                output_file.write(",")                
+                output_file.write(str(best_color_0 << 4 | best_color_1))
                 output_file.write(",")
                 output_file.flush()
 

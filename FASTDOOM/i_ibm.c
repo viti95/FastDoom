@@ -1918,28 +1918,28 @@ void CGA16_DrawBackbuffer(void)
 #ifdef MODE_CGA_AFH
 void CGA_AFH_DrawBackbuffer_Snow(void)
 {
-    unsigned char *vram = (unsigned char *)0xB8000;
+    unsigned short *vram = (unsigned short *)0xB8000;
     unsigned char line = 80;
     byte *ptrbackbuffer = backbuffer;
     unsigned short *ptrvrambuffer = vrambuffer;
+    unsigned short *ptrLUT = ansifromhellLUT;
 
     do
     {
-        unsigned short lutPOS = (ptrlut16colors[*(ptrbackbuffer + 3)] & 0xF000) |
-                                (ptrlut16colors[*(ptrbackbuffer + 2)] & 0x0F00) |
+        unsigned short lutPOS = (ptrlut16colors[*(ptrbackbuffer)]     & 0x000F) |
                                 (ptrlut16colors[*(ptrbackbuffer + 1)] & 0x00F0) |
-                                (ptrlut16colors[*(ptrbackbuffer)]     & 0x000F);
-        
+                                (ptrlut16colors[*(ptrbackbuffer + 2)] & 0x0F00) |
+                                (ptrlut16colors[*(ptrbackbuffer + 3)] & 0xF000);
+
         if (*ptrvrambuffer != lutPOS)
         {
             I_WaitCGA();
 
-            *(vram) = ansifromhellLUT[lutPOS * 2 + 1];
-            *(vram + 1) = ansifromhellLUT[lutPOS * 2];
+            *(vram) = ptrLUT[lutPOS];
             *(ptrvrambuffer) = lutPOS;
         }
 
-        vram += 2;
+        vram += 1;
         ptrvrambuffer += 1;
         ptrbackbuffer += 4;
 
@@ -1949,31 +1949,31 @@ void CGA_AFH_DrawBackbuffer_Snow(void)
             line = 80;
             ptrbackbuffer += 320;
         }
-    } while (vram < (unsigned char *)0xBBE80);
+    } while (vram < (unsigned short *)0xBBE80);
 }
 
 void CGA_AFH_DrawBackbuffer(void)
 {
-    unsigned char *vram = (unsigned char *)0xB8000;
+    unsigned short *vram = (unsigned short *)0xB8000;
     unsigned char line = 80;
     byte *ptrbackbuffer = backbuffer;
     unsigned short *ptrvrambuffer = vrambuffer;
+    unsigned short *ptrLUT = ansifromhellLUT;
 
     do
     {
-        unsigned short lutPOS = (ptrlut16colors[*(ptrbackbuffer + 3)] & 0xF000) |
-                                (ptrlut16colors[*(ptrbackbuffer + 2)] & 0x0F00) |
+        unsigned short lutPOS = (ptrlut16colors[*(ptrbackbuffer)]     & 0x000F) |
                                 (ptrlut16colors[*(ptrbackbuffer + 1)] & 0x00F0) |
-                                (ptrlut16colors[*(ptrbackbuffer)]     & 0x000F);
-        
+                                (ptrlut16colors[*(ptrbackbuffer + 2)] & 0x0F00) |
+                                (ptrlut16colors[*(ptrbackbuffer + 3)] & 0xF000);
+
         if (*ptrvrambuffer != lutPOS)
         {
-            *(vram) = ansifromhellLUT[lutPOS * 2 + 1];
-            *(vram + 1) = ansifromhellLUT[lutPOS * 2];
+            *(vram) = ptrLUT[lutPOS];
             *(ptrvrambuffer) = lutPOS;
         }
 
-        vram += 2;
+        vram += 1;
         ptrvrambuffer += 1;
         ptrbackbuffer += 4;
 
@@ -1983,7 +1983,7 @@ void CGA_AFH_DrawBackbuffer(void)
             line = 80;
             ptrbackbuffer += 320;
         }
-    } while (vram < (unsigned char *)0xBBE80);
+    } while (vram < (unsigned short *)0xBBE80);
 }
 
 #endif
