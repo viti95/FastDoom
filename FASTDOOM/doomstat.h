@@ -70,8 +70,8 @@ extern boolean CGAcard;
 extern boolean CGApalette1;
 #endif
 
-#if defined(MODE_CGA16) || defined(MODE_CGA136)
-extern boolean CGAfix;
+#if defined(MODE_CGA16) || defined(MODE_CGA136) || defined(MODE_CGA_AFH)
+extern boolean snowfix;
 #endif
 
 #ifdef SUPPORTS_HERCULES_AUTOMAP
