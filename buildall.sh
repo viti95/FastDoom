@@ -61,3 +61,5 @@
 ./build.sh fdoome80.exe
 ./build.sh clean
 ./build.sh fdoome14.exe
+./build.sh clean
+./build.sh fdoomcah.exe
