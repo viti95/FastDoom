@@ -238,7 +238,8 @@ extern int maxammo[NUMAMMO];
 //
 
 // File handling stuff.
-extern char basedefault[12];
+extern char basedefault[13];
+extern char sbkfile[13];
 
 // wipegamestate can be set to -1
 //  to force a wipe on the next draw

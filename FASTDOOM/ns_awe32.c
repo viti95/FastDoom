@@ -8,6 +8,7 @@
 #include "ns_ctawe.h"
 #include "ns_awe32.h"
 #include "options.h"
+#include "doomstat.h"
 
 /*  DSP defines  */
 #define MPU_ACK_OK 0xfe
@@ -189,28 +190,14 @@ static void ShutdownMPU(
     inp(MPUPort(0));
 }
 
-/*OIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII?*/
-/*? OpenSBK                                                                ?*/
-/*? Locate and open a SBK file.                                            ?*/
-/*OIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII?*/
-FILE*
-OpenSBK (const char* szSBKFile)
-{
-    FILE* fp;
-
-    return fopen(szSBKFile, "rb");
-}
-
-static void LoadSBK(
-    void)
+static void LoadSBK(void)
 {
     int i;
     FILE* fp;
-    char* szSBKFile="SYNTHGS.SBK";
 
-    fp = OpenSBK(szSBKFile);
+    fp = fopen(sbkfile, "rb");
     if (!fp) {
-	        printf("AWE32 ERROR:  Cannot open %s\n", szSBKFile);
+	        printf("AWE32 ERROR:  Cannot open %s\n", sbkfile);
 
     					/* use embeded preset objects */
     		spSound.bank_no = 0;     /* load as Bank 0 */
@@ -230,6 +217,8 @@ static void LoadSBK(
         	return ;
     }
     
+    printf("Loading SoundFont: %s\n", sbkfile);
+
     /* allocate ram */
     spSound.bank_no = 0;                        /* load as Bank 0 */
     spSound.total_banks = 1;                    /* use 1 bank first */
@@ -242,7 +231,7 @@ static void LoadSBK(
     fread(Packet, 1, PACKETSIZE, fp);
     if (awe32SFontLoadRequest(&spSound)) {
         fclose(fp);
-        printf("AWE32 ERROR:  Cannot load SoundFont file %s\n", szSBKFile);
+        printf("AWE32 ERROR:  Cannot load SoundFont file %s\n", sbkfile);
         return ;
     }
     
@@ -260,7 +249,7 @@ static void LoadSBK(
     spSound.presets = pPresets[0];
     if (awe32SetPresets(&spSound)) {
         fclose(fp);
-        printf("AWE32 ERROR:  Invalid SoundFont file %s\n", szSBKFile);
+        printf("AWE32 ERROR:  Invalid SoundFont file %s\n", sbkfile);
         return ;
     }
     fclose(fp);
@@ -277,9 +266,7 @@ static void LoadSBK(
 
 }
 
-int AWE32_Init(
-    void)
-
+int AWE32_Init(void)
 {
     int status;
     BLASTER_CONFIG Blaster;

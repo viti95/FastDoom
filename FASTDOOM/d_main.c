@@ -156,7 +156,8 @@ boolean bfgedition;
 gamemode_t gamemode = indetermined;
 gamemission_t gamemission = doom;
 
-char basedefault[12]; // default file
+char basedefault[13]; // default file
+char sbkfile[13] = "SYNTHGS.SBK";
 
 void D_CheckNetGame(void);
 void D_ProcessEvents(void);
@@ -1074,6 +1075,13 @@ void D_DoomMain(void)
             forceScreenSize = 3;
         else if (forceScreenSize > 12)
             forceScreenSize = 12;
+    }
+
+    p = M_CheckParm("-sbk");
+    if (p)
+    {
+        memset(sbkfile, 0, sizeof(sbkfile));
+        sprintf(sbkfile, "%s", myargv[p + 1]);
     }
 
     switch (gamemode)
