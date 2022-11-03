@@ -63,3 +63,4 @@
 ./build.sh fdoome14.exe
 ./build.sh clean
 ./build.sh fdoomcah.exe
+./stub.sh
