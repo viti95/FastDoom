@@ -107,6 +107,9 @@ for x in range(256):
             character_lut_set[x][y][z] = create_image_character(x, colors[y], colors[z])
 
 # Generate all LUT combinatios, and get best result
+
+count = 0
+
 #for a in range(16):
 for a in range(first, last):
     current_lut_item[0] = colors[a]
@@ -117,6 +120,8 @@ for a in range(first, last):
             for d in range(16):
                 current_lut_item[3] = colors[d]
                 
+                count = count + 1
+
                 # Create 8x2 image from the 4x1 image
                 lut_image = create_image_lut(current_lut_item)
 
@@ -161,7 +166,7 @@ for a in range(first, last):
                 #best_image_filename = "%06dm.png" % position
                 #best_image.save(best_image_filename)
 
-                print(best_ratio, best_character, best_color_0, best_color_1)
+                print(outfile_str, count, best_ratio, best_character, best_color_0, best_color_1)
 
                 output_file.write(str(best_character))
                 output_file.write(",")                
