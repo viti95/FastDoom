@@ -1,5 +1,7 @@
 from PIL import ImageChops, ImageStat, Image
 import sys
+import math
+import numpy
 
 vars = sys.argv[1:]
 
@@ -27,13 +29,9 @@ colors = [
     
 character_set = [None] * 256
 
-def compare_images(img1, img2):
-    # Generate diff image in memory.
-    diff_img = ImageChops.difference(img1, img2)
-    # Calculate difference as a ratio.
-    stat = ImageStat.Stat(diff_img)
-    diff_ratio = sum(stat.mean) / 765
-    return diff_ratio
+def compare_images_mse(img1, img2):
+    errors = numpy.asarray(ImageChops.difference(img1, img2)) / 255
+    return math.sqrt(numpy.mean(numpy.square(errors)))
 
 def create_image_lut(lut_item):
     im = Image.new(mode="RGB", size=(8,2))
@@ -143,7 +141,7 @@ for a in range(first, last):
                     for y in range(16):
                         for z in range(16):
                             character_image = character_lut_set[x][y][z]
-                            ratio = compare_images(lut_image, character_image)
+                            ratio = compare_images_mse(lut_image, character_image)
 
                             if ratio < best_ratio:
                                 best_ratio = ratio
