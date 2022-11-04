@@ -1,4 +1,4 @@
-from PIL import ImageChops, ImageStat, Image
+from PIL import ImageChops, Image
 import sys
 import math
 import numpy
@@ -129,15 +129,6 @@ for a in range(first, last):
                 best_color_1 = 0
 
                 for x in range(256):
-
-                    # Optimization 1
-                    if x == 7 or x == 22 or x == 28 or x == 32 or x == 44 or x == 45 or x == 46 or x == 61 or x == 95 or x == 97 or x == 99 or x == 101 or \
-                       x == 103 or x == 109 or x == 110 or x == 111 or x == 112 or x == 113 or x == 114 or x == 115 or x == 117 or x == 118 or x == 119 or \
-                       x == 120 or x == 121 or x == 122 or x == 135 or x == 145 or x == 169 or x == 170 or x == 183 or x == 184 or x == 187 or x == 191 or \
-                       x == 194 or x == 196 or x == 201 or x == 203 or x == 205 or x == 209 or x == 210 or x == 213 or x == 214 or x == 218 or x == 219 or \
-                       x == 222 or x == 223 or x == 224 or x == 229 or x == 236 or x == 249 or x == 250 or x == 254 or x == 255:
-                       continue
-
                     for y in range(16):
                         for z in range(16):
                             character_image = character_lut_set[x][y][z]
