@@ -29,7 +29,10 @@ void SetMark(item_t *item, int value)
 {
 	char far *screen;
 
-	screen = MK_FP(0xb800, item->y * 160 + (item->x - 3) * 2);
+	if (mono)
+		screen = MK_FP(0xb000, item->y * 160 + (item->x - 3) * 2);
+	else
+		screen = MK_FP(0xb800, item->y * 160 + (item->x - 3) * 2);
 	*screen = ' ';
 	if (value)
 		*screen = 7;
@@ -43,12 +46,23 @@ void Invert(item_t *item)
 	char far *screen;
 	int i;
 
-	movedata(0xb800, item->y * 160, FP_SEG(&buffer), FP_OFF(&buffer), 160);
-	screen = MK_FP(0xb800, item->y * 160 + item->x * 2);
+	if (mono)
+	{
+		movedata(0xb000, item->y * 160, FP_SEG(&buffer), FP_OFF(&buffer), 160);
+		screen = MK_FP(0xb000, item->y * 160 + item->x * 2);
+	}
+	else
+	{
+		movedata(0xb800, item->y * 160, FP_SEG(&buffer), FP_OFF(&buffer), 160);
+		screen = MK_FP(0xb800, item->y * 160 + item->x * 2);
+	}
 
 	for (i = 0; i < item->w; i++)
 	{
-		*(screen + 1) = inv_attrib;
+		if (mono)
+			*(screen + 1) = 0x70;
+		else
+			*(screen + 1) = 0x7f;
 		screen += 2;
 	}
 }
@@ -58,7 +72,10 @@ void Invert(item_t *item)
 //
 void UnInvert(item_t *item)
 {
-	movedata(FP_SEG(&buffer), FP_OFF(&buffer), 0xb800, item->y * 160, 160);
+	if (mono)
+		movedata(FP_SEG(&buffer), FP_OFF(&buffer), 0xb000, item->y * 160, 160);
+	else
+		movedata(FP_SEG(&buffer), FP_OFF(&buffer), 0xb800, item->y * 160, 160);
 }
 
 //

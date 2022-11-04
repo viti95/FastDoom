@@ -10,12 +10,14 @@
 #include <conio.h>
 #include <mem.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "main.h" // #includes setup.h
 
 //
 //	Fatal error
 //
+unsigned char mono = 0;
 char errorstring[80];
 void Error(char *string)
 {
@@ -39,7 +41,11 @@ void DrawRadios(radiogroup_t *rg)
 	r = rg->radios;
 	for (i = 0; i < rg->amount; i++)
 	{
-		screen = MK_FP(0xb800, (r->y * 160) + (r->x * 2));
+		if (mono)
+			screen = MK_FP(0xb000, (r->y * 160) + (r->x * 2));
+		else
+			screen = MK_FP(0xb800, (r->y * 160) + (r->x * 2));
+		
 		*(screen + 1) = color;
 		if (value == r->value)
 			*screen = 7;
@@ -56,7 +62,10 @@ static int layer = 0; // which screen layer we're at
 char far screens[MAXLAYERS][4000];
 void SaveScreen(void)
 {
-	movedata(0xb800, 0, FP_SEG(&screens[layer]), FP_OFF(&screens[layer]), 4000);
+	if (mono)
+		movedata(0xb000, 0, FP_SEG(&screens[layer]), FP_OFF(&screens[layer]), 4000);
+	else
+		movedata(0xb800, 0, FP_SEG(&screens[layer]), FP_OFF(&screens[layer]), 4000);
 	layer++;
 	if (layer > MAXLAYERS)
 	{
@@ -73,7 +82,10 @@ void RestoreScreen(void)
 	layer--;
 	if (layer < 0)
 		Error("Restored one layer too many!");
-	movedata(FP_SEG(&screens[layer]), FP_OFF(&screens[layer]), 0xb800, 0, 4000);
+	if (mono)
+		movedata(FP_SEG(&screens[layer]), FP_OFF(&screens[layer]), 0xb000, 0, 4000);
+	else
+		movedata(FP_SEG(&screens[layer]), FP_OFF(&screens[layer]), 0xb800, 0, 4000);
 }
 
 //
@@ -90,12 +102,18 @@ void DrawDimEdge(pup_t far *pup)
 
 	for (i = pup->y + 1; i < pup->y + pup->height + 1; i++)
 	{
-		screen = MK_FP(0xb800, i * 160 + (pup->x + pup->width) * 2);
+		if (mono)
+			screen = MK_FP(0xb000, i * 160 + (pup->x + pup->width) * 2);
+		else
+			screen = MK_FP(0xb800, i * 160 + (pup->x + pup->width) * 2);
 		*(screen + 1) = 8;
 		*(screen + 3) = 8;
 	}
 
-	screen = MK_FP(0xb800, (pup->y + pup->height) * 160 + (pup->x + 2) * 2);
+	if (mono)
+		screen = MK_FP(0xb000, (pup->y + pup->height) * 160 + (pup->x + 2) * 2);
+	else
+		screen = MK_FP(0xb800, (pup->y + pup->height) * 160 + (pup->x + 2) * 2);
 	for (i = 0; i < pup->width; i++)
 	{
 		*(screen + 1) = 8;
@@ -128,7 +146,10 @@ void DrawPup(pup_t far *pup)
 	y = pup->y;
 	DrawDimEdge(pup);
 	data = (char far *)(pup + 1);
-	screen = MK_FP(0xb800, y * 160 + x * 2);
+	if (mono)
+		screen = MK_FP(0xb000, y * 160 + x * 2);
+	else
+		screen = MK_FP(0xb800, y * 160 + x * 2);
 	string = normal;
 
 	while (1)
@@ -154,7 +175,10 @@ void DrawPup(pup_t far *pup)
 					return; // finished!
 				w = width;
 				y++;
-				screen = MK_FP(0xb800, y * 160 + x * 2);
+				if (mono)
+					screen = MK_FP(0xb000, y * 160 + x * 2);
+				else
+					screen = MK_FP(0xb800, y * 160 + x * 2);
 			}
 			break;
 
@@ -173,7 +197,10 @@ void DrawPup(pup_t far *pup)
 						return; // finished!
 					w = width;
 					y++;
-					screen = MK_FP(0xb800, y * 160 + x * 2);
+					if (mono)
+						screen = MK_FP(0xb000, y * 160 + x * 2);
+					else
+						screen = MK_FP(0xb800, y * 160 + x * 2);
 				}
 			}
 			break;
@@ -190,7 +217,10 @@ void DrawPup(pup_t far *pup)
 					return; // finished!
 				w = width;
 				y++;
-				screen = MK_FP(0xb800, y * 160 + x * 2);
+				if (mono)
+					screen = MK_FP(0xb000, y * 160 + x * 2);
+				else
+					screen = MK_FP(0xb800, y * 160 + x * 2);
 			}
 			break;
 		}
@@ -200,10 +230,21 @@ void DrawPup(pup_t far *pup)
 char **myargv;
 int myargc;
 
+int CheckParm(char *string)
+{
+	int i;
+
+	for (i = 1; i < myargc; i++)
+		if (!strcmp(myargv[i], string))
+			return i;
+	return 0;
+}
+
 void main(int argc, char *argv[])
 {
 	myargv = argv;
 	myargc = argc;
 
+	mono = CheckParm("-mono");
 	StartUp();
 }

@@ -105,13 +105,13 @@ void M_SaveDefaults(void)
 	int i;
 	FILE *f;
 
-	if (newc.m.soundport == -1)
+	/*if (newc.m.soundport == -1)
 	{
 		if (newc.d.soundport == -1)
 			newc.m.soundport = 0x378;
 		else
 			newc.m.soundport = newc.d.soundport;
-	}
+	}*/
 
 	if (newc.control != C_KEY)
 	{
@@ -129,16 +129,6 @@ void M_SaveDefaults(void)
 		fprintf(f, "%s\t\t%i\n", defaults[i].name, *defaults[i].location);
 
 	fclose(f);
-}
-
-int CheckParm(char *string)
-{
-	int i;
-
-	for (i = 1; i < myargc; i++)
-		if (!strcmp(myargv[i], string))
-			return i;
-	return 0;
 }
 
 /*
@@ -197,7 +187,7 @@ int M_LoadDefaults(void)
 
 	fclose(f);
 
-	newc.d.soundport = newc.m.soundport;
+	//newc.d.soundport = newc.m.soundport;
 
 	if (usemouse)
 		newc.control = C_MOUSE;

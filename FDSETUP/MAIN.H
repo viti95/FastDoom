@@ -45,6 +45,8 @@ typedef enum
 	M_ADBFX,
 	M_PCPWM,
 	M_CMS,
+	M_OPL2LPT,
+	M_OPL3LPT,
 	M_LAST
 } SCARD;
 

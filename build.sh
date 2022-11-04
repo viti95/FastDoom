@@ -25,6 +25,14 @@ elif [ "$target" = "fdoomega.exe" ]; then
   buildopts="-dMODE_EGA"
   buildtarget="fdoom13h.exe"
 
+elif [ "$target" = "fdoomew1.exe" ]; then
+  buildopts="-dMODE_EGAW1"
+  buildtarget="fdoom13h.exe"
+
+elif [ "$target" = "fdoome14.exe" ]; then
+  buildopts="-dMODE_EGA14"
+  buildtarget="fdoom13h.exe"
+
 elif [ "$target" = "fdoombwc.exe" ]; then
   buildopts="-dMODE_CGA_BW"
   buildtarget="fdoom13h.exe"
@@ -85,12 +93,20 @@ elif [ "$target" = "fdoomc16.exe" ]; then
   buildopts="-dMODE_CGA16"
   buildtarget="fdoom13h.exe"
 
+elif [ "$target" = "fdoomcah.exe" ]; then
+  buildopts="-dMODE_CGA_AFH"
+  buildtarget="fdoom13h.exe"
+
 elif [ "$target" = "fdoomc36.exe" ]; then
   buildopts="-dMODE_CGA136"
   buildtarget="fdoom13h.exe"
 
 elif [ "$target" = "fdoomv16.exe" ]; then
   buildopts="-dMODE_VGA16"
+  buildtarget="fdoom13h.exe"
+
+elif [ "$target" = "fdoome80.exe" ]; then
+  buildopts="-dMODE_EGA80"
   buildtarget="fdoom13h.exe"
 
 elif [ "$target" = "fdoomv36.exe" ]; then
@@ -135,7 +151,7 @@ fi
 
 cd FASTDOOM
 wmake "$buildtarget" EXTERNOPT="$buildopts $@"
-cp "$buildtarget" "../$target"
+yes | cp -rf "$buildtarget" "../${target^^}"
 cd ..
-
+echo "RIP AND TEAR"
 exit 0

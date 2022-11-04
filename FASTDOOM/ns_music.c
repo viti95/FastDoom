@@ -10,6 +10,7 @@
 #include "ns_gusmi.h"
 #include "ns_mp401.h"
 #include "ns_awe32.h"
+#include "ns_cms.h"
 #include "ns_scape.h"
 #include "ns_llm.h"
 #include "ns_user.h"
@@ -24,9 +25,10 @@ static midifuncs MUSIC_MidiFunctions;
 
 
 int MUSIC_InitAWE32(midifuncs *Funcs);
-int MUSIC_InitFM(int card, midifuncs *Funcs);
+int MUSIC_InitFM(int card, midifuncs *Funcs, int Address);
 int MUSIC_InitMidi(int card, midifuncs *Funcs, int Address);
 int MUSIC_InitGUS(midifuncs *Funcs);
+int MUSIC_InitCMS(midifuncs *Funcs, int Address);
 
 /*---------------------------------------------------------------------
    Function: MUSIC_Init
@@ -34,10 +36,7 @@ int MUSIC_InitGUS(midifuncs *Funcs);
    Selects which sound device to use.
 ---------------------------------------------------------------------*/
 
-int MUSIC_Init(
-    int SoundCard,
-    int Address)
-
+int MUSIC_Init(int SoundCard, int Address)
 {
     int i;
     int status;
@@ -56,7 +55,9 @@ int MUSIC_Init(
     case Adlib:
     case ProAudioSpectrum:
     case SoundMan16:
-        status = MUSIC_InitFM(SoundCard, &MUSIC_MidiFunctions);
+    case OPL2LPT:
+    case OPL3LPT:
+        status = MUSIC_InitFM(SoundCard, &MUSIC_MidiFunctions, Address);
         break;
 
     case GenMidi:
@@ -74,12 +75,15 @@ int MUSIC_Init(
         status = MUSIC_InitGUS(&MUSIC_MidiFunctions);
         break;
 
+    case CMS:
+        status = MUSIC_InitCMS(&MUSIC_MidiFunctions, Address);
+        break;
+
     case SoundSource:
     case TandySoundSource:
     case PC:
     case PC1bit:
     case PCPWM:
-    case CMS:
     case LPTDAC:
     case SoundBlasterDirect:
     case AdlibFX:
@@ -110,6 +114,8 @@ int MUSIC_Shutdown(
     switch (MUSIC_SoundDevice)
     {
     case Adlib:
+    case OPL2LPT:
+    case OPL3LPT:
         AL_Shutdown();
         break;
 
@@ -144,6 +150,8 @@ int MUSIC_Shutdown(
     case UltraSound:
         GUSMIDI_Shutdown();
         break;
+    case CMS:
+	CMS_MIDI_Shutdown();
     }
 
     return (status);
@@ -225,6 +233,8 @@ int MUSIC_PlaySong(
     {
     case SoundBlaster:
     case Adlib:
+    case OPL2LPT:
+    case OPL3LPT:
     case ProAudioSpectrum:
     case SoundMan16:
     case GenMidi:
@@ -233,6 +243,7 @@ int MUSIC_PlaySong(
     case SoundScape:
     case Awe32:
     case UltraSound:
+    case CMS:
         MIDI_StopSong();
         status = MIDI_PlaySong(song, loopflag);
         if (status != MIDI_Ok)
@@ -286,23 +297,23 @@ int MUSIC_InitAWE32(
     return (status);
 }
 
-int MUSIC_InitFM(
-    int card,
-    midifuncs *Funcs)
-
+int MUSIC_InitFM(int card, midifuncs *Funcs, int Address)
 {
     int status;
     int passtatus;
 
     status = MIDI_Ok;
 
-    if (!AL_DetectFM())
+    if (card != OPL2LPT && card != OPL3LPT)
     {
-        return (MUSIC_Error);
+        if (!AL_DetectFM())
+        {
+            return (MUSIC_Error);
+        }
     }
-
+    
     // Init the fm routines
-    AL_Init(card);
+    AL_Init(card, Address);
 
     Funcs->NoteOff = AL_NoteOff;
     Funcs->NoteOn = AL_NoteOn;
@@ -331,6 +342,8 @@ int MUSIC_InitFM(
         break;
 
     case Adlib:
+    case OPL2LPT:
+    case OPL3LPT:
         Funcs->SetVolume = NULL;
         Funcs->GetVolume = NULL;
         break;
@@ -438,4 +451,34 @@ int MUSIC_InitGUS(
 
     return (status);
 }
+
+int MUSIC_InitCMS(
+    midifuncs *Funcs,
+    int Address)
+
+{
+    int status;
+
+    status = MUSIC_Ok;
+
+    if (CMS_MIDI_Init(Address) != CMS_Ok)
+    {
+        return (MUSIC_Error);
+    }
+
+    Funcs->NoteOff = CMS_NoteOff;
+    Funcs->NoteOn = CMS_NoteOn;
+    Funcs->PolyAftertouch = NULL;
+    Funcs->ControlChange = CMS_ControlChange;
+    Funcs->ProgramChange = CMS_ProgramChange;
+    Funcs->ChannelAftertouch = NULL;
+    Funcs->PitchBend = CMS_PitchBend;
+    Funcs->SetVolume = NULL;
+    Funcs->GetVolume = NULL;
+
+    MIDI_SetMidiFuncs(Funcs);
+
+    return (status);
+}
+
 

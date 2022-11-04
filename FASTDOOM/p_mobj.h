@@ -261,6 +261,9 @@ typedef struct mobj_s
     // Only valid if type == MT_PLAYER
     struct player_s *player;
 
+    // Player number last looked for.
+    int lastlook;
+
     // For nightmare respawn.
     mapthing_t spawnpoint;
 

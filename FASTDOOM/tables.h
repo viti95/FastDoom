@@ -67,6 +67,10 @@ typedef unsigned angle_t;
 //  without additional checking.
 extern const angle_t tantoangle[SLOPERANGE + 1];
 
+#if defined(MODE_CGA_AFH)
+extern const unsigned char ansifromhellLUT[131072];
+#endif
+
 // Utility function,
 //  called by R_PointToAngle.
 

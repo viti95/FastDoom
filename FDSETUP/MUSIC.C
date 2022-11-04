@@ -184,141 +184,6 @@ func_exit:
 }
 
 //
-// Choose which SoundBlaster port to use (or any port!)
-//
-enum
-{
-	SB_PORT_210,
-	SB_PORT_220,
-	SB_PORT_230,
-	SB_PORT_240,
-	SB_PORT_250,
-	SB_PORT_260,
-	SB_PORT_280,
-	SB_PORT_MAX
-};
-
-item_t sbportitems[] =
-	{
-		{SB_PORT_210, 32, 9, 13, -1, -1},
-		{SB_PORT_220, 32, 10, 13, -1, -1},
-		{SB_PORT_230, 32, 11, 13, -1, -1},
-		{SB_PORT_240, 32, 12, 13, -1, -1},
-		{SB_PORT_250, 32, 13, 13, -1, -1},
-		{SB_PORT_260, 32, 14, 13, -1, -1},
-		{SB_PORT_280, 32, 15, 13, -1, -1}};
-
-menu_t sbportmenu =
-	{
-		&sbportitems[0],
-		SB_PORT_220,
-		SB_PORT_MAX,
-		0x7f};
-
-/*int ChooseSbPort(DMXCARD *card) // RETURN: 0 = OK, -1 == ABORT
-{
-	short field;
-	short key;
-	int rval = 0;
-
-	SaveScreen();
-	DrawPup(&sbport);
-
-	// DEFAULT FIELD ========================================
-
-	switch (card->port)
-	{
-	default:
-		field = SB_PORT_220;
-		break;
-
-	case 0x210:
-		field = SB_PORT_210;
-		break;
-
-	case 0x220:
-		field = SB_PORT_220;
-		break;
-
-	case 0x230:
-		field = SB_PORT_230;
-		break;
-
-	case 0x240:
-		field = SB_PORT_240;
-		break;
-
-	case 0x250:
-		field = SB_PORT_250;
-		break;
-
-	case 0x260:
-		field = SB_PORT_260;
-		break;
-
-	case 0x280:
-		field = SB_PORT_280;
-		break;
-	}
-
-	sbportmenu.startitem = field;
-	while (1)
-	{
-		SetupMenu(&sbportmenu);
-		field = GetMenuInput();
-		key = menukey;
-		switch (key)
-		{
-		case KEY_ESC:
-			rval = -1;
-			goto func_exit;
-
-		case KEY_ENTER:
-		case KEY_F10:
-			switch (field)
-			{
-			case SB_PORT_210:
-				card->port = 0x210;
-				goto func_exit;
-
-			case SB_PORT_220:
-				card->port = 0x220;
-				goto func_exit;
-
-			case SB_PORT_230:
-				card->port = 0x230;
-				goto func_exit;
-
-			case SB_PORT_240:
-				card->port = 0x240;
-				goto func_exit;
-
-			case SB_PORT_250:
-				card->port = 0x250;
-				goto func_exit;
-
-			case SB_PORT_260:
-				card->port = 0x260;
-				goto func_exit;
-
-			case SB_PORT_280:
-				card->port = 0x280;
-				goto func_exit;
-
-			default:
-				break;
-			}
-			break;
-		}
-	}
-
-func_exit:
-
-	RestoreScreen();
-	return (rval);
-}*/
-
-//
 // Menu for choosing Music Card
 //
 enum
@@ -331,21 +196,27 @@ enum
 	MCARD_PAS,
 	MCARD_SB,
 	MCARD_ADLIB,
+	MCARD_OPL2LPT,
+	MCARD_OPL3LPT,
+	MCARD_CMS,
 	MCARD_NONE,
 	MCARD_MAX
 };
 
 item_t mcarditems[] =
 	{
-		{MCARD_GMIDI, 26, 8, 28, -1, -1},
-		{MCARD_SBAWE32, 26, 9, 28, -1, -1},
-		{MCARD_CANVAS, 26, 10, 28, -1, -1},
-		{MCARD_WAVE, 26, 11, 28, -1, -1},
-		{MCARD_GUS, 26, 12, 28, -1, -1},
-		{MCARD_PAS, 26, 13, 28, -1, -1},
-		{MCARD_SB, 26, 14, 28, -1, -1},
-		{MCARD_ADLIB, 26, 15, 28, -1, -1},
-		{MCARD_NONE, 26, 16, 28, -1, -1}};
+		{MCARD_GMIDI, 26, 7, 28, -1, -1},
+		{MCARD_SBAWE32, 26, 8, 28, -1, -1},
+		{MCARD_CANVAS, 26, 9, 28, -1, -1},
+		{MCARD_WAVE, 26, 10, 28, -1, -1},
+		{MCARD_GUS, 26, 11, 28, -1, -1},
+		{MCARD_PAS, 26, 12, 28, -1, -1},
+		{MCARD_SB, 26, 13, 28, -1, -1},
+		{MCARD_ADLIB, 26, 14, 28, -1, -1},
+		{MCARD_OPL2LPT, 26, 15, 28, -1, -1},
+		{MCARD_OPL3LPT, 26, 16, 28, -1, -1},
+		{MCARD_CMS, 26, 17, 28, -1, -1},
+		{MCARD_NONE, 26, 18, 28, -1, -1}};
 
 menu_t mcardmenu =
 	{
@@ -369,6 +240,18 @@ int ChooseMusicCard(void) // RETURN: 0 = OK, -1 == ABORT
 
 	case M_ADLIB:
 		field = MCARD_ADLIB;
+		break;
+	
+	case M_OPL2LPT:
+		field = MCARD_OPL2LPT;
+		break;
+	
+	case M_OPL3LPT:
+		field = MCARD_OPL3LPT;
+		break;
+
+	case M_CMS:
+		field = MCARD_CMS;
 		break;
 
 	case M_PAS:
@@ -460,10 +343,233 @@ int ChooseMusicCard(void) // RETURN: 0 = OK, -1 == ABORT
 				newc.m.midiport = -1;
 				goto func_exit;
 
+			case MCARD_OPL2LPT:
+				newc.m.card = M_OPL2LPT;
+				newc.m.midiport = -1;
+				goto func_exit;
+			
+			case MCARD_OPL3LPT:
+				newc.m.card = M_OPL3LPT;
+				newc.m.midiport = -1;
+				goto func_exit;
+
+			case MCARD_CMS:
+				newc.m.card = M_CMS;
+				newc.m.midiport = -1;
+				goto func_exit;
+
 			case MCARD_NONE:
 				newc.m.card = M_NONE;
 				newc.m.soundport = -1;
 				newc.m.midiport = -1;
+				goto func_exit;
+
+			default:
+				break;
+			}
+			break;
+		}
+	}
+
+func_exit:
+
+	RestoreScreen();
+	return (rval);
+}
+
+enum
+{
+	LPT_PORT_3BC,
+	LPT_PORT_378,
+	LPT_PORT_278,
+	LPT_PORT_MAX
+};
+
+item_t lptportitemsm[] =
+	{
+		{LPT_PORT_3BC, 32, 9, 13, -1, -1},
+		{LPT_PORT_378, 32, 10, 13, -1, -1},
+		{LPT_PORT_278, 32, 11, 13, -1, -1}};
+
+menu_t lptportmenum =
+	{
+		&lptportitemsm[0],
+		LPT_PORT_378,
+		LPT_PORT_MAX,
+		0x7f};
+
+int ChooseLPTPortMusic(DMXCARD *card) // RETURN: 0 = OK, -1 == ABORT
+{
+	short field;
+	short key;
+	int rval = 0;
+
+	SaveScreen();
+	DrawPup(&lptport);
+
+	// DEFAULT FIELD ========================================
+
+	switch (card->midiport)
+	{
+	default:
+	case 0x378:
+		field = LPT_PORT_378;
+		break;
+
+	case 0x278:
+		field = LPT_PORT_278;
+		break;
+
+	case 0x3BC:
+		field = LPT_PORT_3BC;
+		break;
+	}
+
+	lptportmenum.startitem = field;
+	while (1)
+	{
+		SetupMenu(&lptportmenum);
+		field = GetMenuInput();
+		key = menukey;
+		switch (key)
+		{
+		case KEY_ESC:
+			rval = -1;
+			goto func_exit;
+
+		case KEY_ENTER:
+		case KEY_F10:
+			switch (field)
+			{
+			case LPT_PORT_378:
+				card->midiport = 0x378;
+				goto func_exit;
+
+			case LPT_PORT_278:
+				card->midiport = 0x278;
+				goto func_exit;
+
+			case LPT_PORT_3BC:
+				card->midiport = 0x3BC;
+				goto func_exit;
+
+			default:
+				break;
+			}
+			break;
+		}
+	}
+
+func_exit:
+
+	RestoreScreen();
+	return (rval);
+}
+
+enum
+{
+	CMS_PORT_210,
+	CMS_PORT_220,
+	CMS_PORT_230,
+	CMS_PORT_240,
+	CMS_PORT_250,
+	CMS_PORT_260,
+	CMS_PORT_MAX
+};
+
+item_t cmsportitemsm[] =
+	{
+		{CMS_PORT_210, 32, 9, 13, -1, -1},
+		{CMS_PORT_220, 32, 10, 13, -1, -1},
+		{CMS_PORT_230, 32, 11, 13, -1, -1},
+		{CMS_PORT_240, 32, 12, 13, -1, -1},
+		{CMS_PORT_250, 32, 13, 13, -1, -1},
+		{CMS_PORT_260, 32, 14, 13, -1, -1}};
+
+menu_t cmsportmenum =
+	{
+		&cmsportitemsm[0],
+		CMS_PORT_220,
+		CMS_PORT_MAX,
+		0x7f};
+
+int ChooseCMSPortMusic(DMXCARD *card) // RETURN: 0 = OK, -1 == ABORT
+{
+	short field;
+	short key;
+	int rval = 0;
+
+	SaveScreen();
+	DrawPup(&cmsport);
+
+	// DEFAULT FIELD ========================================
+
+	switch (card->midiport)
+	{
+	default:
+	case 0x210:
+		field = CMS_PORT_210;
+		break;
+
+	case 0x220:
+		field = CMS_PORT_220;
+		break;
+
+	case 0x230:
+		field = CMS_PORT_230;
+		break;
+
+	case 0x240:
+		field = CMS_PORT_240;
+		break;
+
+	case 0x250:
+		field = CMS_PORT_250;
+		break;
+
+	case 0x260:
+		field = CMS_PORT_260;
+		break;
+	}
+
+	cmsportmenum.startitem = field;
+	while (1)
+	{
+		SetupMenu(&cmsportmenum);
+		field = GetMenuInput();
+		key = menukey;
+		switch (key)
+		{
+		case KEY_ESC:
+			rval = -1;
+			goto func_exit;
+
+		case KEY_ENTER:
+		case KEY_F10:
+			switch (field)
+			{
+			case CMS_PORT_210:
+				card->midiport = 0x210;
+				goto func_exit;
+
+			case CMS_PORT_220:
+				card->midiport = 0x220;
+				goto func_exit;
+
+			case CMS_PORT_230:
+				card->midiport = 0x230;
+				goto func_exit;
+
+			case CMS_PORT_240:
+				card->midiport = 0x240;
+				goto func_exit;
+
+			case CMS_PORT_250:
+				card->midiport = 0x250;
+				goto func_exit;
+
+			case CMS_PORT_260:
+				card->midiport = 0x260;
 				goto func_exit;
 
 			default:
@@ -500,6 +606,19 @@ int SetupMusic(void)
 		break;
 
 	case M_ADLIB:
+		savemusic = TRUE;
+		break;
+
+	case M_OPL2LPT:
+	case M_OPL3LPT:
+		if (ChooseLPTPortMusic(&newc.m) == -1)
+			return (-1);
+		savemusic = TRUE;
+		break;
+
+	case M_CMS:
+		if (ChooseCMSPortMusic(&newc.m) == -1)
+			return (-1);
 		savemusic = TRUE;
 		break;
 

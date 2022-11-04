@@ -18,7 +18,6 @@
 #define centeryfrac 786432
 #define centeryfracshifted 49152
 #define projection 1310720
-#define iprojection 838860
 #define pspritescale 8192
 #define pspriteiscale 524288
 #define pspriteiscaleneg -524288
@@ -42,7 +41,6 @@
 #define centeryfrac 1638400
 #define centeryfracshifted 102400
 #define projection 1310720
-#define iprojection 838860
 #define pspritescale 8192
 #define pspriteiscale 524288
 #define pspriteiscaleneg -524288
@@ -66,7 +64,6 @@
 #define centeryfrac 1638400
 #define centeryfracshifted 102400
 #define projection 2621440
-#define iprojection 419430
 #define pspritescale 16384
 #define pspriteiscale 262144
 #define pspriteiscaleneg -262144
@@ -90,7 +87,6 @@
 #define centeryfrac 1376256
 #define centeryfracshifted 86016
 #define projection 2621440
-#define iprojection 419430
 #define pspritescale 16384
 #define pspriteiscale 262144
 #define pspriteiscaleneg -262144
@@ -114,7 +110,6 @@
 #define centeryfrac 2752512
 #define centeryfracshifted 172032
 #define projection 2621440
-#define iprojection 419430
 #define pspritescale 16384
 #define pspriteiscale 262144
 #define pspriteiscaleneg -262144
@@ -138,7 +133,6 @@
 #define centeryfrac 3276800
 #define centeryfracshifted 204800
 #define projection 2621440
-#define iprojection 419430
 #define pspritescale 16384
 #define pspriteiscale 262144
 #define pspriteiscaleneg -262144

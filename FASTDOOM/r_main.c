@@ -59,7 +59,6 @@ fixed_t centerxfrac;
 fixed_t centeryfrac;
 fixed_t centeryfracshifted;
 fixed_t projection;
-fixed_t iprojection;
 #endif
 
 fixed_t viewx;
@@ -750,7 +749,6 @@ void R_ExecuteSetViewSize(void)
     centeryfrac = centery << FRACBITS;
     centeryfracshifted = centeryfrac >> 4;
     projection = centerxfrac;
-    iprojection = FixedDiv(FRACUNIT << 8, projection);
 #endif
 
 #ifdef MODE_T4050

@@ -111,8 +111,7 @@ void S_StopMusic(void)
     }
 }
 
-void S_ChangeMusic(int musicnum,
-                   int looping)
+void S_ChangeMusic(int musicnum, int looping)
 {
     musicinfo_t *music;
     char namebuf[9];
@@ -120,7 +119,7 @@ void S_ChangeMusic(int musicnum,
     if (snd_MusicDevice == snd_none)
         return;
 
-    if (snd_MusicDevice == snd_Adlib && musicnum == mus_intro)
+    if ((snd_MusicDevice == snd_Adlib || snd_MusicDevice == snd_OPL2LPT || snd_MusicDevice == snd_SB || snd_MusicDevice == snd_OPL3LPT || snd_MusicDevice == snd_CMS) && musicnum == mus_intro)
     {
         musicnum = mus_introa;
     }

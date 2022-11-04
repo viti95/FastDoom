@@ -473,6 +473,7 @@ void P_NewChaseDir(mobj_t *actor)
 
 //
 // P_LookForPlayers
+// Here we return 1 if lookup faile
 //
 
 byte P_LookForPlayers(mobj_t *actor)
@@ -481,6 +482,11 @@ byte P_LookForPlayers(mobj_t *actor)
     int stop;
     angle_t an;
     fixed_t dist;
+
+    stop = (actor->lastlook - 1) & 3;
+    actor->lastlook = 0;
+    if(stop == 0)
+        return 1;
 
     if (players.health <= 0 || !P_CheckSight(actor, players_mo))
         return 1; // dead, out of sight
@@ -498,13 +504,18 @@ byte P_LookForPlayers(mobj_t *actor)
     actor->target = players_mo;
     return 0;
 }
-
+// Here we return 0 if lookup fails!
 byte P_LookForPlayersAllAround(mobj_t *actor)
 {
     int c;
     int stop;
     angle_t an;
     fixed_t dist;
+
+    stop = (actor->lastlook - 1) & 3;
+    actor->lastlook = 0;
+    if(stop == 0)
+        return 0;
 
     if (players.health <= 0 || !P_CheckSight(actor, players_mo))
         return 0; // dead, out of sight
@@ -1047,7 +1058,6 @@ void A_SkelFist(mobj_t *actor)
 // Detect a corpse that could be raised.
 //
 mobj_t *corpsehit;
-mobj_t *vileobj;
 fixed_t viletryx;
 fixed_t viletryy;
 
@@ -1140,7 +1150,6 @@ void A_VileChase(mobj_t *actor)
         yl = (viletryy - bmaporgy - MAXRADIUS * 2) >> MAPBLOCKSHIFT;
         yh = (viletryy - bmaporgy + MAXRADIUS * 2) >> MAPBLOCKSHIFT;
 
-        vileobj = actor;
         for (bx = xl; bx <= xh; bx++)
         {
             for (by = yl; by <= yh; by++)
@@ -1571,7 +1580,7 @@ void A_BossDeath(mobj_t *mo)
     }
     else
     {
-        if (gamemode == commercial)
+        if (complevel < COMPLEVEL_ULTIMATE_DOOM)
         {
             if (gamemap != 8)
                 return;

@@ -70,9 +70,6 @@
 #include "xga_drv.h"
 #endif
 
-#define BGCOLOR 7
-#define FGCOLOR 8
-
 //
 // D-DoomLoop()
 // Not a globally visible function,
@@ -117,8 +114,8 @@ boolean CGAcard;
 boolean CGApalette1;
 #endif
 
-#if defined(MODE_CGA16) || defined(MODE_CGA136)
-boolean CGAfix;
+#if defined(MODE_CGA16) || defined(MODE_CGA136) || defined(MODE_CGA_AFH)
+boolean snowfix;
 #endif
 
 #ifdef SUPPORTS_HERCULES_AUTOMAP
@@ -148,6 +145,8 @@ extern int musicVolume;
 
 extern byte inhelpscreens;
 
+unsigned char complevel = 0;
+
 skill_t startskill;
 int startepisode;
 int startmap;
@@ -161,7 +160,8 @@ boolean bfgedition;
 gamemode_t gamemode = indetermined;
 gamemission_t gamemission = doom;
 
-char basedefault[12]; // default file
+char basedefault[13]; // default file
+char sbkfile[13] = "SYNTHGS.SBK";
 
 void D_CheckNetGame(void);
 void D_ProcessEvents(void);
@@ -770,7 +770,10 @@ void D_RedrawTitle(void)
     D_SetCursorPosition(0, 0);
 
     //Draw title
-    D_DrawTitle(title, FGCOLOR, BGCOLOR);
+    if (complevel >= COMPLEVEL_ULTIMATE_DOOM)
+        D_DrawTitle(title, 8, 7);
+    else
+        D_DrawTitle(title, 4, 7);
 
     //Restore old cursor pos
     D_SetCursorPosition(column, row);
@@ -844,6 +847,7 @@ void IdentifyVersion(void)
         case 1:
             if (!access("doom1.wad", R_OK))
             {
+                complevel = COMPLEVEL_DOOM;
                 gamemode = shareware;
                 gamemission = doom;
                 D_AddFile("doom1.wad");
@@ -853,6 +857,7 @@ void IdentifyVersion(void)
         case 2:
             if (!access("doom.wad", R_OK))
             {
+                complevel = COMPLEVEL_DOOM;
                 gamemode = registered;
                 gamemission = doom;
                 D_AddFile("doom.wad");
@@ -862,6 +867,7 @@ void IdentifyVersion(void)
         case 3:
             if (!access("doomu.wad", R_OK))
             {
+                complevel = COMPLEVEL_ULTIMATE_DOOM;
                 gamemode = retail;
                 gamemission = doom;
                 D_AddFile("doomu.wad");
@@ -871,6 +877,7 @@ void IdentifyVersion(void)
         case 4:
             if (!access("doom2.wad", R_OK))
             {
+                complevel = COMPLEVEL_DOOM;
                 gamemode = commercial;
                 gamemission = doom2;
                 D_AddFile("doom2.wad");
@@ -880,6 +887,7 @@ void IdentifyVersion(void)
         case 5:
             if (!access("plutonia.wad", R_OK))
             {
+                complevel = COMPLEVEL_FINAL_DOOM;
                 gamemode = commercial;
                 gamemission = pack_plut;
                 D_AddFile("plutonia.wad");
@@ -889,6 +897,7 @@ void IdentifyVersion(void)
         case 6:
             if (!access("tnt.wad", R_OK))
             {
+                complevel = COMPLEVEL_FINAL_DOOM;
                 gamemode = commercial;
                 gamemission = pack_tnt;
                 D_AddFile("tnt.wad");
@@ -907,6 +916,7 @@ void IdentifyVersion(void)
             gamemode = commercial;
             gamemission = doom2;
             D_AddFile("doom2.wad");
+            complevel = COMPLEVEL_DOOM;
             return;
         }
 
@@ -915,6 +925,7 @@ void IdentifyVersion(void)
             gamemode = commercial;
             gamemission = pack_plut;
             D_AddFile("plutonia.wad");
+            complevel = COMPLEVEL_FINAL_DOOM;
             return;
         }
 
@@ -923,6 +934,7 @@ void IdentifyVersion(void)
             gamemode = commercial;
             gamemission = pack_tnt;
             D_AddFile("tnt.wad");
+            complevel = COMPLEVEL_FINAL_DOOM;
             return;
         }
 
@@ -931,6 +943,7 @@ void IdentifyVersion(void)
             gamemode = registered;
             gamemission = doom;
             D_AddFile("doom.wad");
+            complevel = COMPLEVEL_DOOM;
             return;
         }
 
@@ -939,6 +952,7 @@ void IdentifyVersion(void)
             gamemode = retail;
             gamemission = doom;
             D_AddFile("doomu.wad");
+            complevel = COMPLEVEL_ULTIMATE_DOOM;
             return;
         }
 
@@ -947,6 +961,7 @@ void IdentifyVersion(void)
             gamemode = shareware;
             gamemission = doom;
             D_AddFile("doom1.wad");
+            complevel = COMPLEVEL_DOOM;
             return;
         }
 
@@ -969,8 +984,13 @@ void D_DoomMain(void)
     union REGS regs;
 
     IdentifyVersion();
+    if ((p = M_CheckParm("-complevel")))
+    {
+        if (p < myargc - 1)
+            complevel = atoi(myargv[p + 1]);
+    }
 
-#if defined(MODE_EGA) || defined(MODE_PCP) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_VGA16)
+#if defined(MODE_EGA) || defined(MODE_PCP) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_VGA16) || defined(MODE_EGA80) || defined(MODE_EGAW1) || defined(MODE_EGA14) || defined(MODE_CGA_AFH)
     D_AddFile("mode16.wad");
 #endif
 
@@ -1021,8 +1041,8 @@ void D_DoomMain(void)
     CGApalette1 = M_CheckParm("-palette1");
 #endif
 
-#if defined(MODE_CGA16) || defined(MODE_CGA136)
-    CGAfix = M_CheckParm("-snow");
+#if defined(MODE_CGA16) || defined(MODE_CGA136) || defined(MODE_CGA_AFH)
+    snowfix = M_CheckParm("-snow");
 #endif
 
 #ifdef SUPPORTS_HERCULES_AUTOMAP
@@ -1059,6 +1079,13 @@ void D_DoomMain(void)
             forceScreenSize = 3;
         else if (forceScreenSize > 12)
             forceScreenSize = 12;
+    }
+
+    p = M_CheckParm("-sbk");
+    if (p)
+    {
+        memset(sbkfile, 0, sizeof(sbkfile));
+        sprintf(sbkfile, "%s", myargv[p + 1]);
     }
 
     switch (gamemode)
@@ -1114,7 +1141,10 @@ void D_DoomMain(void)
 
     regs.w.ax = 3;
     int386(0x10, &regs, &regs);
-    D_DrawTitle(title, FGCOLOR, BGCOLOR);
+    if (complevel >= COMPLEVEL_ULTIMATE_DOOM)
+        D_DrawTitle(title, 8, 7);
+    else
+        D_DrawTitle(title, 4, 7);
 
     printf("\nFastDoom version " FDOOMVERSION "\n");
     printf("P_Init: Checking cmd-line parameters...\n");

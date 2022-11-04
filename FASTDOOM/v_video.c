@@ -515,13 +515,13 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
     w = patch->width;
     for (; col < w; x++, col++, desttop++)
     {
-#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_CVBS)
+#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_CVBS) || defined(MODE_EGAW1)
         if ((int) desttop & 1){
             continue;
         }
 #endif
 
-#if defined(MODE_VGA136) || defined(MODE_CGA136) || defined(MODE_EGA136)
+#if defined(MODE_VGA136) || defined(MODE_CGA136) || defined(MODE_EGA136) || defined(MODE_EGA80)
         if ((int) desttop & 3){
             continue;
         }

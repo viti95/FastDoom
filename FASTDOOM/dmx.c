@@ -294,7 +294,18 @@ int MPU_Detect(int *port)
     }
     return MPU_Init(*port);
 }
+
+void OPLxLPT_SetCard(int port)
+{
+    dmx_mus_port = port;
+}
+
 void MPU_SetCard(int port)
+{
+    dmx_mus_port = port;
+}
+
+void CMS_SetCard(int port)
 {
     dmx_mus_port = port;
 }
@@ -342,6 +353,10 @@ int ASS_GetSoundCardCode(int sndDevice)
         return SoundBlasterDirect;
     case snd_AdlibFX:
         return AdlibFX;
+    case snd_OPL2LPT:
+        return OPL2LPT;
+    case snd_OPL3LPT:
+        return OPL3LPT;
     default:
         return -1;
     }

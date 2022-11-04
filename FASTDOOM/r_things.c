@@ -336,11 +336,11 @@ void R_DrawVisSprite(vissprite_t *vis)
             dc_yh = yh;
             dc_yl = yl;
 
-            #if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CVB) || defined(MODE_EGA16)
+            #if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CVB) || defined(MODE_EGA16) || defined(MODE_EGAW1)
             if ((dc_x & 1) == 0){
                 colfunc();
             }
-            #elif defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136)
+            #elif defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136) || defined(MODE_EGA80)
             if ((dc_x & 3) == 0){
                 colfunc();
             }
@@ -509,7 +509,7 @@ void R_ProjectSprite(mobj_t *thing)
     vis->x1 = x1 < 0 ? 0 : x1;
     vis->x2 = x2 > viewwidthlimit ? viewwidthlimit : x2;
     //iscale = FixedDiv(FRACUNIT, xscale);
-    iscale = FixedMul(tz, iprojection) >> 8;
+    iscale = (4 >= xscale) ? (65536 ^ xscale >> 31) ^ MAXINT : FixedDiv2(65536, xscale);
 
     if (flip)
     {

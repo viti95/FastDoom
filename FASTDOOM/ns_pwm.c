@@ -40,7 +40,6 @@ static void PCSpeaker_PWM_ServiceInterrupt(task *Task)
 {
     unsigned char value = (unsigned char) *PCSpeaker_PWM_SoundPtr;
 
-
     outp(0x43, 0xB0);
     outp(0x42, value >> 1);
     outp(0x42, 0);

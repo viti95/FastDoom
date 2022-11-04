@@ -30,12 +30,9 @@ enum
     VERSION = 109
 };
 
-#define EXE_VERSION_1_9 0
-#define EXE_VERSION_ULTIMATE 1
-#define EXE_VERSION_FINAL 2
-#define EXE_VERSION_FINAL2 3
-
-#define EXE_VERSION EXE_VERSION_ULTIMATE
+#define COMPLEVEL_DOOM              2
+#define COMPLEVEL_ULTIMATE_DOOM     3
+#define COMPLEVEL_FINAL_DOOM        4
 
 // Game mode handling - identify IWAD version
 //  to handle IWAD dependend animations etc.

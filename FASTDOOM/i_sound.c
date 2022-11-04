@@ -35,6 +35,7 @@
 
 #include "ns_task.h"
 #include "ns_music.h"
+#include "ns_cms.h"
 
 #include "options.h"
 
@@ -88,7 +89,7 @@ void I_SetMusicVolume(int volume)
 //
 int I_GetSfxLumpNum(sfxinfo_t *sfx)
 {
-    const char snd_prefixen[] = {'P', 'P', 'A', 'S', 'S', 'S', 'M', 'M', 'M', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'};
+    const char snd_prefixen[] = {'P', 'P', 'A', 'S', 'S', 'S', 'M', 'M', 'M', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'A', 'A'};
     char namebuf[9];
     sprintf(namebuf, "D%c%s", snd_prefixen[snd_SfxDevice], sfx->name);
     return W_GetNumForName(namebuf);
@@ -100,7 +101,7 @@ int I_GetSfxLumpNum(sfxinfo_t *sfx)
 
 void I_sndArbitrateCards(void)
 {
-    byte gus, adlib, sb, midi, ensoniq, lpt, cms;
+    byte gus, adlib, sb, midi, ensoniq, lpt, cmsfx, cmsmus, oplxlpt;
     int dmxlump;
 
     snd_SfxVolume = 127;
@@ -135,9 +136,11 @@ void I_sndArbitrateCards(void)
     sb = snd_SfxDevice == snd_SB || snd_SBDirect;
     ensoniq = snd_SfxDevice == snd_ENSONIQ;
     adlib = snd_MusicDevice == snd_Adlib || snd_MusicDevice == snd_SB || snd_MusicDevice == snd_PAS;
+    oplxlpt = snd_MusicDevice == snd_OPL2LPT || snd_MusicDevice == snd_OPL3LPT;
     midi = snd_MusicDevice == snd_MPU;
     lpt = snd_SfxDevice == snd_DISNEY || snd_SfxDevice == snd_TANDY || snd_SfxDevice == snd_LPTDAC;
-    cms = snd_SfxDevice == snd_CMS;
+    cmsfx = snd_SfxDevice == snd_CMS;
+    cmsmus = snd_MusicDevice == snd_CMS;
 
     //
     // initialize whatever i've got
@@ -187,6 +190,14 @@ void I_sndArbitrateCards(void)
         }
     }
 
+    if (oplxlpt)
+    {
+        void *genmidi = W_CacheLumpName("GENMIDI", PU_STATIC);
+        AL_SetCard(genmidi);
+        Z_Free(genmidi);
+        OPLxLPT_SetCard(snd_Mport);
+    }
+
     if (midi)
     {
         if (MPU_Detect(&snd_Mport))
@@ -204,9 +215,31 @@ void I_sndArbitrateCards(void)
         SND_SetPort(snd_Sport);
     }
 
-    if (cms)
+    if (cmsfx)
     {
         SND_SetPort(snd_Sport);
+    }
+
+    if (cmsmus)
+    {
+        CMS_SetCard(snd_Mport);
+    }
+
+    if (cmsfx && cmsmus)
+    {
+        CMS_SetMode(CMS_MusicFX);
+    }
+    else
+    {
+        if (cmsfx)
+        {
+            CMS_SetMode(CMS_OnlyFX);
+        }
+
+        if (cmsmus)
+        {
+            CMS_SetMode(CMS_OnlyMusic);
+        }
     }
 }
 

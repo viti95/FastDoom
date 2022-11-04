@@ -283,16 +283,14 @@ void P_UnsetThingPosition(mobj_t *thing)
 // based on it's x y.
 // Sets thing->subsector properly
 //
-void P_SetThingPosition(mobj_t *thing)
+void P_SetThingPositionSubsector(mobj_t *thing, subsector_t *ss)
 {
-    subsector_t *ss;
     sector_t *sec;
     int blockx;
     int blocky;
     mobj_t **link;
 
     // link into subsector
-    ss = R_PointInSubsector(thing->x, thing->y);
     thing->subsector = ss;
 
     if (!(thing->flags & MF_NOSECTOR))
@@ -334,6 +332,11 @@ void P_SetThingPosition(mobj_t *thing)
     }
 }
 
+void P_SetThingPosition(mobj_t *thing)
+{
+    P_SetThingPositionSubsector(thing, R_PointInSubsector(thing->x,thing->y));
+}
+
 //
 // BLOCK MAP ITERATORS
 // For each line/thing in the given mapblock,
@@ -363,7 +366,7 @@ byte P_NotBlockLinesIterator(int x, int y, byte (*func)(line_t *))
 
     offset = *(blockmap + offset);
 
-    for (list = blockmaplump + offset + 1; *list != -1; list++)
+    for (list = blockmaplump + offset; *list != -1; list++)
     {
         ld = &lines[*list];
 
@@ -446,7 +449,7 @@ byte PIT_AddLineIntercepts(line_t *ld)
 
     if (frac < 0)
         return 1; // behind source
-    
+
     intercept_p->frac = frac;
     intercept_p->isaline = 1;
     intercept_p->d.line = ld;
@@ -473,6 +476,9 @@ byte PIT_AddThingIntercepts(mobj_t *thing)
     divline_t dl;
 
     fixed_t frac;
+
+    if (!((thing->flags & MF_SHOOTABLE)))
+        return 1; // not shootable
 
     tracepositive = (trace.dx ^ trace.dy) > 0;
 
@@ -610,7 +616,7 @@ void P_PathTraverseLI(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2)
         partial = FRACUNIT - ((x1 >> MAPBTOFRAC) & (FRACUNIT - 1));
         opt1 = y2 - y1;
         opt2 = abs(x2 - x1);
-        //ystep = FixedDiv(y2 - y1, abs(x2 - x1));
+        // ystep = FixedDiv(y2 - y1, abs(x2 - x1));
         ystep = ((abs(opt1) >> 14) >= opt2) ? ((opt1 ^ opt2) >> 31) ^ MAXINT : FixedDiv2(opt1, opt2);
     }
     else if (xt2 < xt1)
@@ -619,7 +625,7 @@ void P_PathTraverseLI(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2)
         partial = (x1 >> MAPBTOFRAC) & (FRACUNIT - 1);
         opt1 = y2 - y1;
         opt2 = abs(x2 - x1);
-        //ystep = FixedDiv(y2 - y1, abs(x2 - x1));
+        // ystep = FixedDiv(y2 - y1, abs(x2 - x1));
         ystep = ((abs(opt1) >> 14) >= opt2) ? ((opt1 ^ opt2) >> 31) ^ MAXINT : FixedDiv2(opt1, opt2);
     }
     else
@@ -637,7 +643,7 @@ void P_PathTraverseLI(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2)
         partial = FRACUNIT - ((y1 >> MAPBTOFRAC) & (FRACUNIT - 1));
         opt1 = x2 - x1;
         opt2 = abs(y2 - y1);
-        //xstep = FixedDiv(x2 - x1, abs(y2 - y1));
+        // xstep = FixedDiv(x2 - x1, abs(y2 - y1));
         xstep = ((abs(opt1) >> 14) >= opt2) ? ((opt1 ^ opt2) >> 31) ^ MAXINT : FixedDiv2(opt1, opt2);
     }
     else if (yt2 < yt1)
@@ -646,7 +652,7 @@ void P_PathTraverseLI(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2)
         partial = (y1 >> MAPBTOFRAC) & (FRACUNIT - 1);
         opt1 = x2 - x1;
         opt2 = abs(y2 - y1);
-        //xstep = FixedDiv(x2 - x1, abs(y2 - y1));
+        // xstep = FixedDiv(x2 - x1, abs(y2 - y1));
         xstep = ((abs(opt1) >> 14) >= opt2) ? ((opt1 ^ opt2) >> 31) ^ MAXINT : FixedDiv2(opt1, opt2);
     }
     else
@@ -744,7 +750,7 @@ void P_PathTraverseLITH(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2)
         partial = FRACUNIT - ((x1 >> MAPBTOFRAC) & (FRACUNIT - 1));
         opt1 = y2 - y1;
         opt2 = abs(x2 - x1);
-        //ystep = FixedDiv(y2 - y1, abs(x2 - x1));
+        // ystep = FixedDiv(y2 - y1, abs(x2 - x1));
         ystep = ((abs(opt1) >> 14) >= opt2) ? ((opt1 ^ opt2) >> 31) ^ MAXINT : FixedDiv2(opt1, opt2);
     }
     else if (xt2 < xt1)
@@ -753,7 +759,7 @@ void P_PathTraverseLITH(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2)
         partial = (x1 >> MAPBTOFRAC) & (FRACUNIT - 1);
         opt1 = y2 - y1;
         opt2 = abs(x2 - x1);
-        //ystep = FixedDiv(y2 - y1, abs(x2 - x1));
+        // ystep = FixedDiv(y2 - y1, abs(x2 - x1));
         ystep = ((abs(opt1) >> 14) >= opt2) ? ((opt1 ^ opt2) >> 31) ^ MAXINT : FixedDiv2(opt1, opt2);
     }
     else
@@ -771,7 +777,7 @@ void P_PathTraverseLITH(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2)
         partial = FRACUNIT - ((y1 >> MAPBTOFRAC) & (FRACUNIT - 1));
         opt1 = x2 - x1;
         opt2 = abs(y2 - y1);
-        //xstep = FixedDiv(x2 - x1, abs(y2 - y1));
+        // xstep = FixedDiv(x2 - x1, abs(y2 - y1));
         xstep = ((abs(opt1) >> 14) >= opt2) ? ((opt1 ^ opt2) >> 31) ^ MAXINT : FixedDiv2(opt1, opt2);
     }
     else if (yt2 < yt1)
@@ -780,7 +786,7 @@ void P_PathTraverseLITH(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2)
         partial = (y1 >> MAPBTOFRAC) & (FRACUNIT - 1);
         opt1 = x2 - x1;
         opt2 = abs(y2 - y1);
-        //xstep = FixedDiv(x2 - x1, abs(y2 - y1));
+        // xstep = FixedDiv(x2 - x1, abs(y2 - y1));
         xstep = ((abs(opt1) >> 14) >= opt2) ? ((opt1 ^ opt2) >> 31) ^ MAXINT : FixedDiv2(opt1, opt2);
     }
     else

@@ -242,10 +242,13 @@ void P_ZMovement(mobj_t *mo)
     {
         // hit the floor
 
-        if (mo->flags & MF_SKULLFLY)
+        if (complevel >= COMPLEVEL_ULTIMATE_DOOM)
         {
-            // the skull slammed into something
-            mo->momz = -mo->momz;
+            if (mo->flags & MF_SKULLFLY)
+            {
+                // the skull slammed into something
+                mo->momz = -mo->momz;
+            }
         }
 
         if (mo->momz < 0)
@@ -263,11 +266,13 @@ void P_ZMovement(mobj_t *mo)
         }
         mo->z = mo->floorz;
 
-        // OPTIMIZE NEGATE
-        if (mo->flags & MF_SKULLFLY)
+        if (complevel < COMPLEVEL_ULTIMATE_DOOM)
         {
-            // the skull slammed into something
-            mo->momz = -mo->momz;
+            if (mo->flags & MF_SKULLFLY)
+            {
+                // the skull slammed into something
+                mo->momz = -mo->momz;
+            }
         }
 
         if ((mo->flags & MF_MISSILE) && !(mo->flags & MF_NOCLIP))
@@ -463,8 +468,8 @@ P_SpawnMobj(fixed_t x, fixed_t y, fixed_t z, byte type)
     if (gameskill != sk_nightmare)
         mobj->reactiontime = info->reactiontime;
 
-    //mobj->lastlook = P_Random & 0;
-    P_Random;
+    mobj->lastlook = P_Random & (MAXPLAYERS - 1); // MAXPLAYERS=4
+
     // do not set the state with P_SetMobjState,
     // because action routines can not be called yet
     st = &states[info->spawnstate];
@@ -610,7 +615,7 @@ void P_SpawnMapThing(mapthing_t *mthing)
     fixed_t z;
 
     // count deathmatch start positions
-    if (mthing->type == 11 || mthing->type == 2 || mthing->type == 3 || mthing->type == 4)
+    if (!mthing || mthing->type == 11 || mthing->type == 2 || mthing->type == 3 || mthing->type == 4)
     {
         return;
     }

@@ -62,6 +62,8 @@ line_t *ceilingline;
 line_t *spechit[MAXSPECIALCROSS];
 int numspechit;
 
+subsector_t *newsubsec;
+
 //
 // TELEPORT MOVE
 //
@@ -152,7 +154,7 @@ byte P_TeleportMove(mobj_t *thing, fixed_t x, fixed_t y)
     thing->x = x;
     thing->y = y;
 
-    P_SetThingPosition(thing);
+    P_SetThingPositionSubsector(thing, newsubsec);
 
     return 1;
 }
@@ -333,7 +335,6 @@ byte P_NotCheckPosition(mobj_t *thing, fixed_t x, fixed_t y)
     int yh;
     int bx;
     int by;
-    subsector_t *newsubsec;
 
     tmthing = thing;
     tmflags = thing->flags;
@@ -436,7 +437,7 @@ byte P_TryMove(mobj_t *thing, fixed_t x, fixed_t y)
     thing->x = x;
     thing->y = y;
 
-    P_SetThingPosition(thing);
+    P_SetThingPositionSubsector(thing, newsubsec);
 
     // if any special lines were hit, do the effect
     if (!(thing->flags & (MF_TELEPORT | MF_NOCLIP)))

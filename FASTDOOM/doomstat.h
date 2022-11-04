@@ -70,8 +70,8 @@ extern boolean CGAcard;
 extern boolean CGApalette1;
 #endif
 
-#if defined(MODE_CGA16) || defined(MODE_CGA136)
-extern boolean CGAfix;
+#if defined(MODE_CGA16) || defined(MODE_CGA136) || defined(MODE_CGA_AFH)
+extern boolean snowfix;
 #endif
 
 #ifdef SUPPORTS_HERCULES_AUTOMAP
@@ -96,6 +96,8 @@ extern boolean debugPort;
 
 // Set if homebrew PWAD stuff has been added.
 extern boolean modifiedgame;
+
+extern unsigned char complevel;
 
 // -------------------------------------------
 // Selected skill type, map etc.
@@ -236,7 +238,8 @@ extern int maxammo[NUMAMMO];
 //
 
 // File handling stuff.
-extern char basedefault[12];
+extern char basedefault[13];
+extern char sbkfile[13];
 
 // wipegamestate can be set to -1
 //  to force a wipe on the next draw
