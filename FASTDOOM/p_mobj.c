@@ -620,6 +620,10 @@ void P_SpawnMapThing(mapthing_t *mthing)
         return;
     }
 
+    // PS3DOOM: This will fix the crash in eg. plutonia.wad map12.
+    if (mthing->type <= 0)
+        return;
+
     // check for players specially
     if (mthing->type == 1)
     {
