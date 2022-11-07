@@ -52,6 +52,8 @@
     * DOOM2.WAD -> DOOM II
     * PLUTONIA.WAD -> Final DOOM The Plutonia Experiment
     * TNT.WAD -> Final DOOM TNT Evilution 
+    * FREEDM1.WAD -> FreeDoom Phase 1 (experimental)
+    * FREEDM2.WAD -> FreeDoom Phase 2 (experimental)
 
  All of them must be the 1.9 version to work fine.
 
@@ -121,6 +123,8 @@
                    Very quick'n'dirty, only Neo can play this mode properly.
  * FDOOME80.EXE => FastDoom EGA 80x200 and 16 colors
  * FDOOMEW1.EXE => FastDoom EGA 160x200 and 16 colors
+ * FDOOME14.EXE => FastDoom EGA 320x200 and 14 colors
+ * FDOOMCAH.EXE => FastDoom CGA ANSI from Hell (320x100, 16 colors)
  * FDSETUP.EXE  => Utility to setup controls and sound cards
 
  Command line parameters
@@ -195,6 +199,8 @@
                  2 - Doom 1.9 (Also Doom II)
                  3 - Ultimate Doom
                  4 - Final Doom
+ -iwad X => Load an IWAD file
+ -sbk X => Load a SBK soundfont for AWE32/AWE64 soundcards
 
  Author
  ------

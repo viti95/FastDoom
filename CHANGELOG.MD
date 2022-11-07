@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 0.9.1 (7 Nov 2022)
+* Creative Music System (Game Blaste) music support by @Tronix286
+* New EGA 320x200 (14 color) mode FDOOME14.EXE, much faster on 8-bit ISA cards compared to FDOOMEGA.EXE
+* Updated FastDoom Setup program with new music devices. Support for MDA / Hercules video cards using parameter "-mono"
+* New CGA ANSI from Hell mode, based on the same idea of Area5150. Base resolution of 320x100 and 16 colors. Not perfect but awesome for CGA cards.
+* Add SBK soundfont loading support for Creative AWE32/AWE64 sound cards by @Tronix286. Use paramer "-sbk".
+* Updated startup menu, now it only shows available WADs. Also experimental support for FreeDoom Phase 1+2.
+* New command line parameter "-iwad" to load any IWAD directly
+* Fixed Plutonia MAP12 crash by @Tronix286 and @RamonUnch
+* Small bugfixes and optimizations
+
 ## 0.9 (14 Oct 2022)
 * Fixed lot's of crashing bugs. May be a performance impact, but it's better than crashing the whole game. Huge thanks to @RamonUnch for discovering the issues, and providing extensive testing in lots of maps and demos.
 * Added commandline parameter "-palette1" to enable the black-cyan-magenta-white palette on CGA 320x200 mode.
@@ -11,8 +22,7 @@
         * 3 -> Ultimate Doom
         * 4 -> Final Doom
 * Added OPL2LPT and OPL3LPT support by Jordi Sesmero (@jsmolina)
-* Added new video mode FDOOME80.EXE => FastDoom EGA 80x200 16-color. This video mode is 640x200 EGA mode with write mode 2 enabled, so we can write 8 pixels
-at the same time with a single 8-bit write (that's 32-bit written at once, and avoiding the chunky2planar process). Should perform well on 8-bit ISA EGA cards.
+* Added new video mode FDOOME80.EXE => FastDoom EGA 80x200 16-color. This video mode is 640x200 EGA mode with write mode 2 enabled, so we can write 8 pixels at the same time with a single 8-bit write (that's 32-bit written at once, and avoiding the chunky2planar process). Should perform well on 8-bit ISA EGA cards.
 * Updated FastDoom Setup program with the new music devices. Also small visual fixes.
 * As always small optimizations here and there.
 
