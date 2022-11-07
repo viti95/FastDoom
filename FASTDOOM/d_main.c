@@ -1040,14 +1040,14 @@ void IdentifyVersion(void)
 
     if (!access("freedm1.wad", R_OK))
     {
-        printf("     7. FreeDoom Phase 1 (experimental, freedm1.wad)\n");
+        printf("     7. FreeDoom Phase 1               (experimental, freedm1.wad)\n");
         selection = 55;
         num_wads++;
     }
 
     if (!access("freedm2.wad", R_OK))
     {
-        printf("     8. FreeDoom Phase 2 (experimental, freedm2.wad)\n");
+        printf("     8. FreeDoom Phase 2               (experimental, freedm2.wad)\n");
         selection = 56;
         num_wads++;
     }
