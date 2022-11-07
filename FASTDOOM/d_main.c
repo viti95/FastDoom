@@ -156,7 +156,7 @@ boolean bfgedition;
 gamemode_t gamemode = indetermined;
 gamemission_t gamemission = doom;
 
-char basedefault[13]; // default file
+char basedefault[13] = "fdoom.cfg"; // default file
 char sbkfile[13] = "SYNTHGS.SBK";
 char iwadfile[13];
 
@@ -343,9 +343,9 @@ void D_Display(void)
     }
 
     // see if the border needs to be updated to the screen
-    if (gamestate == GS_LEVEL 
+    if (gamestate == GS_LEVEL
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-        && !automapactive 
+        && !automapactive
 #endif
         && scaledviewwidth != 320)
     {
@@ -720,18 +720,18 @@ void D_DrawTitle(char *string, int fc, int bc)
     int row;
     int i;
 
-    //Calculate text color
+    // Calculate text color
     color = (bc << 4) | fc;
 
-    //Get column position
+    // Get column position
     column = D_GetCursorColumn();
 
-    //Get row position
+    // Get row position
     row = D_GetCursorRow();
 
     for (i = 0; i < strlen(string); i++)
     {
-        //Set character
+        // Set character
         regs.h.ah = 9;
         regs.h.al = string[i];
         regs.w.cx = 1;
@@ -739,11 +739,11 @@ void D_DrawTitle(char *string, int fc, int bc)
         regs.h.bh = 0;
         int386(0x10, &regs, &regs);
 
-        //Check cursor position
+        // Check cursor position
         if (++column > 79)
             column = 0;
 
-        //Set position
+        // Set position
         D_SetCursorPosition(column, row);
     }
 }
@@ -759,20 +759,20 @@ void D_RedrawTitle(void)
     int column;
     int row;
 
-    //Get current cursor pos
+    // Get current cursor pos
     column = D_GetCursorColumn();
     row = D_GetCursorRow();
 
-    //Set cursor pos to zero
+    // Set cursor pos to zero
     D_SetCursorPosition(0, 0);
 
-    //Draw title
+    // Draw title
     if (complevel >= COMPLEVEL_ULTIMATE_DOOM)
         D_DrawTitle(title, 8, 7);
     else
         D_DrawTitle(title, 4, 7);
 
-    //Restore old cursor pos
+    // Restore old cursor pos
     D_SetCursorPosition(column, row);
 }
 
@@ -793,6 +793,189 @@ void D_AddFile(char *file)
     wadfiles[numwadfiles] = newfile;
 }
 
+void LoadIWAD(int selection)
+{
+    switch (selection)
+    {
+    case 49:
+        if (!access("doom1.wad", R_OK))
+        {
+            complevel = COMPLEVEL_DOOM;
+            gamemode = shareware;
+            gamemission = doom;
+            D_AddFile("doom1.wad");
+            return;
+        }
+        else
+        {
+            I_Error("The selected IWAD was not found");
+        }
+        break;
+    case 50:
+        if (!access("doom.wad", R_OK))
+        {
+            complevel = COMPLEVEL_DOOM;
+            gamemode = registered;
+            gamemission = doom;
+            D_AddFile("doom.wad");
+            return;
+        }
+        else
+        {
+            I_Error("The selected IWAD was not found");
+        }
+        break;
+    case 51:
+        if (!access("doomu.wad", R_OK))
+        {
+            complevel = COMPLEVEL_ULTIMATE_DOOM;
+            gamemode = retail;
+            gamemission = doom;
+            D_AddFile("doomu.wad");
+            return;
+        }
+        else
+        {
+            I_Error("The selected IWAD was not found");
+        }
+        break;
+    case 52:
+        if (!access("doom2.wad", R_OK))
+        {
+            complevel = COMPLEVEL_DOOM;
+            gamemode = commercial;
+            gamemission = doom2;
+            D_AddFile("doom2.wad");
+            return;
+        }
+        else
+        {
+            I_Error("The selected IWAD was not found");
+        }
+        break;
+    case 53:
+        if (!access("plutonia.wad", R_OK))
+        {
+            complevel = COMPLEVEL_FINAL_DOOM;
+            gamemode = commercial;
+            gamemission = pack_plut;
+            D_AddFile("plutonia.wad");
+            return;
+        }
+        else
+        {
+            I_Error("The selected IWAD was not found");
+        }
+        break;
+    case 54:
+        if (!access("tnt.wad", R_OK))
+        {
+            complevel = COMPLEVEL_FINAL_DOOM;
+            gamemode = commercial;
+            gamemission = pack_tnt;
+            D_AddFile("tnt.wad");
+            return;
+        }
+        else
+        {
+            I_Error("The selected IWAD was not found");
+        }
+        break;
+    case 55:
+        if (!access("freedm1.wad", R_OK))
+        {
+            complevel = COMPLEVEL_ULTIMATE_DOOM;
+            gamemode = retail;
+            gamemission = doom;
+            D_AddFile("freedm1.wad");
+            return;
+        }
+        else
+        {
+            I_Error("The selected IWAD was not found");
+        }
+        break;
+    case 56:
+        if (!access("freedm2.wad", R_OK))
+        {
+            complevel = COMPLEVEL_DOOM;
+            gamemode = commercial;
+            gamemission = doom2;
+            D_AddFile("freedm2.wad");
+            return;
+        }
+        else
+        {
+            I_Error("The selected IWAD was not found");
+        }
+        break;
+    default:
+        I_Error("The selected IWAD was not found");
+        break;
+    }
+}
+
+void LoadExternalIWAD(void)
+{
+    if (access(iwadfile, R_OK))
+        I_Error("The selected IWAD was not found");
+
+    if (!strcmp(iwadfile, "doom1.wad"))
+    {
+        LoadIWAD(49);
+        return;
+    }
+
+    if (!strcmp(iwadfile, "doom.wad"))
+    {
+        LoadIWAD(50);
+        return;
+    }
+
+    if (!strcmp(iwadfile, "doomu.wad"))
+    {
+        LoadIWAD(51);
+        return;
+    }
+
+    if (!strcmp(iwadfile, "doom2.wad"))
+    {
+        LoadIWAD(52);
+        return;
+    }
+
+    if (!strcmp(iwadfile, "plutonia.wad"))
+    {
+        LoadIWAD(53);
+        return;
+    }
+
+    if (!strcmp(iwadfile, "tnt.wad"))
+    {
+        LoadIWAD(54);
+        return;
+    }
+
+    if (!strcmp(iwadfile, "freedm1.wad"))
+    {
+        LoadIWAD(55);
+        return;
+    }
+
+    if (!strcmp(iwadfile, "freedm2.wad"))
+    {
+        LoadIWAD(56);
+        return;
+    }
+
+    // Unknown IWAD. Load as Doom 2.
+    complevel = COMPLEVEL_DOOM;
+    gamemode = commercial;
+    gamemission = doom2;
+    D_AddFile(iwadfile);
+    return;
+}
+
 //
 // IdentifyVersion
 // Checks availability of IWAD files by name,
@@ -804,185 +987,79 @@ void IdentifyVersion(void)
     int selection = -1;
     int num_wads = 0;
 
-    strcpy(basedefault, "fdoom.cfg");
-
     if (iwadfile[0] != 0)
     {
-        if (!access(iwadfile, R_OK))
-        {
-            complevel = COMPLEVEL_DOOM;
-            gamemode = commercial;
-            gamemission = doom2;
-            D_AddFile(iwadfile);
-            return;
-        }
-        else
-        {
-            I_Error("The selected IWAD was not found");
-        }
+        LoadExternalIWAD();
+        return;
+    }
+
+    printf("\nFastDoom version " FDOOMVERSION "\n");
+    printf("\nPlease select the IWAD you want to play:\n\n");
+
+    if (!access("doom1.wad", R_OK))
+    {
+        printf("     1. DOOM Shareware                 (doom1.wad)\n");
+        selection = 49;
+        num_wads++;
+    }
+
+    if (!access("doom.wad", R_OK))
+    {
+        printf("     2. DOOM                           (doom.wad)\n");
+        selection = 50;
+        num_wads++;
+    }
+
+    if (!access("doomu.wad", R_OK))
+    {
+        printf("     3. The Ultimate DOOM              (doomu.wad)\n");
+        selection = 51;
+        num_wads++;
     }
 
     if (!access("doom2.wad", R_OK))
+    {
+        printf("     4. DOOM II                        (doom2.wad)\n");
+        selection = 52;
         num_wads++;
+    }
 
     if (!access("plutonia.wad", R_OK))
+    {
+        printf("     5. DOOM II: Plutonia Experiment   (plutonia.wad)\n");
+        selection = 53;
         num_wads++;
+    }
 
     if (!access("tnt.wad", R_OK))
+    {
+        printf("     6. DOOM II: TNT - Evilution       (tnt.wad)\n");
+        selection = 54;
         num_wads++;
+    }
 
-    if (!access("doom.wad", R_OK))
+    if (!access("freedm1.wad", R_OK))
+    {
+        printf("     7. FreeDoom Phase 1 (experimental, freedm1.wad)\n");
+        selection = 55;
         num_wads++;
+    }
 
-    if (!access("doomu.wad", R_OK))
+    if (!access("freedm2.wad", R_OK))
+    {
+        printf("     8. FreeDoom Phase 2 (experimental, freedm2.wad)\n");
+        selection = 56;
         num_wads++;
-
-    if (!access("doom1.wad", R_OK))
-        num_wads++;
+    }
 
     if (num_wads > 1)
     {
-        printf("\nFastDoom version " FDOOMVERSION "\n");
-        printf("\nFound more than one IWAD. Please select the IWAD you want to play:\n\n");
-        printf("     1. DOOM Shareware                 (doom1.wad)\n");
-        printf("     2. DOOM                           (doom.wad)\n");
-        printf("     3. The Ultimate DOOM              (doomu.wad)\n");
-        printf("     4. DOOM II                        (doom2.wad)\n");
-        printf("     5. DOOM II: Plutonia Experiment   (plutonia.wad)\n");
-        printf("     6. DOOM II: TNT - Evilution       (tnt.wad)\n\n");
-        printf("Please enter the selection: ");
+        printf("\nPlease enter the selection: ");
         fflush(stdout);
-        selection = getch() - 48;
-        printf("%d\n", selection);
-
-        switch (selection)
-        {
-        case 1:
-            if (!access("doom1.wad", R_OK))
-            {
-                complevel = COMPLEVEL_DOOM;
-                gamemode = shareware;
-                gamemission = doom;
-                D_AddFile("doom1.wad");
-                return;
-            }
-            break;
-        case 2:
-            if (!access("doom.wad", R_OK))
-            {
-                complevel = COMPLEVEL_DOOM;
-                gamemode = registered;
-                gamemission = doom;
-                D_AddFile("doom.wad");
-                return;
-            }
-            break;
-        case 3:
-            if (!access("doomu.wad", R_OK))
-            {
-                complevel = COMPLEVEL_ULTIMATE_DOOM;
-                gamemode = retail;
-                gamemission = doom;
-                D_AddFile("doomu.wad");
-                return;
-            }
-            break;
-        case 4:
-            if (!access("doom2.wad", R_OK))
-            {
-                complevel = COMPLEVEL_DOOM;
-                gamemode = commercial;
-                gamemission = doom2;
-                D_AddFile("doom2.wad");
-                return;
-            }
-            break;
-        case 5:
-            if (!access("plutonia.wad", R_OK))
-            {
-                complevel = COMPLEVEL_FINAL_DOOM;
-                gamemode = commercial;
-                gamemission = pack_plut;
-                D_AddFile("plutonia.wad");
-                return;
-            }
-            break;
-        case 6:
-            if (!access("tnt.wad", R_OK))
-            {
-                complevel = COMPLEVEL_FINAL_DOOM;
-                gamemode = commercial;
-                gamemission = pack_tnt;
-                D_AddFile("tnt.wad");
-                return;
-            }
-            break;
-        }
-
-        I_Error("The selected IWAD was not found");
+        selection = getch();
     }
-    else if (num_wads == 1)
-    {
-        if (!access("doom2.wad", R_OK))
-        {
-            complevel = COMPLEVEL_DOOM;
-            gamemode = commercial;
-            gamemission = doom2;
-            D_AddFile("doom2.wad");
-            return;
-        }
 
-        if (!access("plutonia.wad", R_OK))
-        {
-            complevel = COMPLEVEL_FINAL_DOOM;
-            gamemode = commercial;
-            gamemission = pack_plut;
-            D_AddFile("plutonia.wad");
-            return;
-        }
-
-        if (!access("tnt.wad", R_OK))
-        {
-            complevel = COMPLEVEL_FINAL_DOOM;
-            gamemode = commercial;
-            gamemission = pack_tnt;
-            D_AddFile("tnt.wad");
-            return;
-        }
-
-        if (!access("doom.wad", R_OK))
-        {
-            complevel = COMPLEVEL_DOOM;
-            gamemode = registered;
-            gamemission = doom;
-            D_AddFile("doom.wad");
-            return;
-        }
-
-        if (!access("doomu.wad", R_OK))
-        {
-            complevel = COMPLEVEL_ULTIMATE_DOOM;
-            gamemode = retail;
-            gamemission = doom;
-            D_AddFile("doomu.wad");
-            return;
-        }
-
-        if (!access("doom1.wad", R_OK))
-        {
-            complevel = COMPLEVEL_DOOM;
-            gamemode = shareware;
-            gamemission = doom;
-            D_AddFile("doom1.wad");
-            return;
-        }
-
-        return;
-    }
-    else
-    {
-        I_Error("No IWAD was found");
-    }
+    LoadIWAD(selection);
 }
 
 //
