@@ -2,10 +2,11 @@
 
 ## 0.9.1 (7 Nov 2022)
 * Creative Music System (Game Blaste) music support by @Tronix286
+* New EGA 160x200 (16 color) mode FDOOMEW1.EXE, fast on 8-bit ISA cards
 * New EGA 320x200 (14 color) mode FDOOME14.EXE, much faster on 8-bit ISA cards compared to FDOOMEGA.EXE
 * Updated FastDoom Setup program with new music devices. Support for MDA / Hercules video cards using parameter "-mono"
 * New CGA ANSI from Hell mode, based on the same idea of Area5150. Base resolution of 320x100 and 16 colors. Not perfect but awesome for CGA cards.
-* Add SBK soundfont loading support for Creative AWE32/AWE64 sound cards by @Tronix286. Use paramer "-sbk".
+* Add SBK soundfont loading support for Creative AWE32/AWE64 sound cards by @Tronix286. Use parameter "-sbk".
 * Updated startup menu, now it only shows available WADs. Also experimental support for FreeDoom Phase 1+2.
 * New command line parameter "-iwad" to load any IWAD directly
 * Fixed Plutonia MAP12 crash by @Tronix286 and @RamonUnch
