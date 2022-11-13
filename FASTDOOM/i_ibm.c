@@ -290,10 +290,6 @@ byte vrambuffer[16384];
 unsigned short vrambuffer[16384];
 #endif
 
-#if defined(MODE_EGA14)
-unsigned short vrambuffer[16384];
-#endif
-
 #ifdef MODE_CGA_BW
 unsigned short vrambuffer[16384];
 #endif
@@ -2095,11 +2091,11 @@ void EGA136_DrawBackbuffer(void)
 #if defined(MODE_EGA14)
 
 unsigned char latch;
+unsigned short lastlatch;
 
 void EGA14_DrawBackbuffer(void)
 {
     byte *vram = (byte *)0xA0000;
-    unsigned short *ptrvrambuffer = vrambuffer;
     byte *ptrbackbuffer = backbuffer;
 
     do
@@ -2108,13 +2104,17 @@ void EGA14_DrawBackbuffer(void)
                                16 * ptrlut16colors[*(ptrbackbuffer + 1)] +
                                ptrlut16colors[*(ptrbackbuffer + 2)];
 
-        // Read + write
-        latch = *((byte *)0xA3E80 + value);
+        // Avoid read from VRAM whenever possible
+        if (lastlatch != value)
+        {
+            latch = *((byte *)0xA3E80 + value);
+            lastlatch = value;
+        }
+        
         *(vram) = ptrlut16colors[*(ptrbackbuffer + 3)];
-
+        
         vram += 1;
         ptrbackbuffer += 4;
-        ptrvrambuffer += 1;
     } while (vram < (byte *)0xA3E80);
 }
 #endif
