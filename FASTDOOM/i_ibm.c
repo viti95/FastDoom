@@ -3908,9 +3908,9 @@ void I_InitGraphics(void)
 
         // Step 2
 
-        // Write Mode 1
+        // Write Mode 2
         outp(0x3CE, 0x05);
-        outp(0x3CF, 0x01);
+        outp(0x3CF, 0x02);
 
         // Write to all 4 planes
         outp(0x3C4, 0x02);
@@ -3918,7 +3918,11 @@ void I_InitGraphics(void)
 
         // Set Bit Mask to use the latch registers
         outp(0x3CE, 0x08);
-        outp(0x3CF, 0xFF);
+        outp(0x3CF, 0x00);
+
+        // Set logical operation to OR
+        outp(0x3CE, 0x03);
+        outp(0x3CF, 0x18);
     }
 #endif
 #ifdef MODE_EGAW1
