@@ -9,7 +9,6 @@ call make.bat clean CVB
 call make.bat clean E
 call make.bat clean E16
 call make.bat clean E36
-call make.bat clean EGA
 call make.bat clean HGC
 call make.bat clean PCP
 call make.bat clean T1
@@ -28,5 +27,5 @@ call make.bat clean Y
 call make.bat clean MDA
 call make.bat clean EW1
 call make.bat clean E80
-call make.bat clean E14
+call make.bat clean EGA
 call make.bat clean CAH

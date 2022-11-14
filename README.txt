@@ -123,7 +123,6 @@
                    Very quick'n'dirty, only Neo can play this mode properly.
  * FDOOME80.EXE => FastDoom EGA 80x200 and 16 colors
  * FDOOMEW1.EXE => FastDoom EGA 160x200 and 16 colors
- * FDOOME14.EXE => FastDoom EGA 320x200 and 14 colors
  * FDOOMCAH.EXE => FastDoom CGA ANSI from Hell (320x100, 16 colors)
  * FDSETUP.EXE  => Utility to setup controls and sound cards
 

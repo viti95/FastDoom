@@ -6,8 +6,6 @@
 ./build.sh clean
 ./build.sh fdoomcga.exe
 ./build.sh clean
-./build.sh fdoomega.exe
-./build.sh clean
 ./build.sh fdoombwc.exe
 ./build.sh clean
 ./build.sh fdoomhgc.exe
@@ -60,7 +58,7 @@
 ./build.sh clean
 ./build.sh fdoome80.exe
 ./build.sh clean
-./build.sh fdoome14.exe
+./build.sh fdoomega.exe
 ./build.sh clean
 ./build.sh fdoomcah.exe
 ./stub.sh

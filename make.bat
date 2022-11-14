@@ -22,7 +22,6 @@ if "%2"=="CVB" GOTO mode_cvb
 if "%2"=="E"   GOTO mode_e
 if "%2"=="E16" GOTO mode_e16
 if "%2"=="E36" GOTO mode_e36
-if "%2"=="EGA" GOTO mode_ega
 if "%2"=="HGC" GOTO mode_hgc
 if "%2"=="PCP" GOTO mode_pcp
 if "%2"=="T1"  GOTO mode_t1
@@ -41,7 +40,7 @@ if "%2"=="Y"   GOTO mode_y
 if "%2"=="MDA" GOTO mode_mda
 if "%2"=="E80" GOTO mode_e80
 if "%2"=="EW1" GOTO mode_ew1
-if "%2"=="E14" GOTO mode_e14
+if "%2"=="EGA" GOTO mode_ega
 if "%2"=="CAH" GOTO mode_cah
 
 :mode_13h
@@ -108,12 +107,6 @@ goto compile_mode
 set base=fdoom13h.exe
 set executable=fdoome36.exe
 set options=/dMODE_EGA136
-goto compile_mode
-
-:mode_ega
-set base=fdoom13h.exe
-set executable=fdoomega.exe
-set options=/dMODE_EGA
 goto compile_mode
 
 :mode_hgc
@@ -188,10 +181,10 @@ set executable=fdoomew1.exe
 set options=/dMODE_EGAW1
 goto compile_mode
 
-:mode_e14
+:mode_ega
 set base=fdoom13h.exe
-set executable=fdoome14.exe
-set options=/dMODE_EGA14
+set executable=fdoomega.exe
+set options=/dMODE_EGA
 goto compile_mode
 
 :mode_v16
