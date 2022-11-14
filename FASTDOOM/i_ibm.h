@@ -12,20 +12,9 @@ extern unsigned short *currentscreen;
 extern byte processedpalette[14 * 768];
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_EGA) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
 extern byte lut16colors[14 * 256];
 extern byte *ptrlut16colors;
-#endif
-
-#if defined(MODE_EGA)
-extern byte lutRcolor[14 * 256];
-extern byte lutGcolor[14 * 256];
-extern byte lutBcolor[14 * 256];
-extern byte lutIcolor[14 * 256];
-extern byte *ptrlutRcolor;
-extern byte *ptrlutGcolor;
-extern byte *ptrlutBcolor;
-extern byte *ptrlutIcolor;
 #endif
 
 #if defined(USE_BACKBUFFER)

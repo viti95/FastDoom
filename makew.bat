@@ -13,7 +13,6 @@ if "%2"=="CVB" GOTO mode_cvb
 if "%2"=="E"   GOTO mode_e
 if "%2"=="E16" GOTO mode_e16
 if "%2"=="E36" GOTO mode_e36
-if "%2"=="EGA" GOTO mode_ega
 if "%2"=="HGC" GOTO mode_hgc
 if "%2"=="PCP" GOTO mode_pcp
 if "%2"=="T1"  GOTO mode_t1
@@ -99,12 +98,6 @@ goto compile
 set base=fdoom13h.exe
 set executable=fdoome36.exe
 set options=/dMODE_EGA136
-goto compile
-
-:mode_ega
-set base=fdoom13h.exe
-set executable=fdoomega.exe
-set options=/dMODE_EGA
 goto compile
 
 :mode_hgc
