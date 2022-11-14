@@ -1975,7 +1975,7 @@ void EGA_DrawBackbuffer(void)
                 ReadMem((byte *)0xA3E80 + vramlut);
             }
 
-            *(vram) = fullvalue & 0x0F;
+            *(vram) = fullvalue;
         }
 
         vram += 1;
