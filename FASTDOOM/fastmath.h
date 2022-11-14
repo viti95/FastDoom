@@ -337,4 +337,9 @@ void OutString(unsigned short Port, unsigned char *addr, int c);
     parm [dx] [si] [cx] nomemory \
     modify exact [si cx] nomemory;
 
+void ReadMem(unsigned char *memptr);
+#pragma aux ReadMem = \
+    "mov al, [eax]" \
+    parm[eax] modify exact[eax]
+
 #endif // __DOOMMATH__

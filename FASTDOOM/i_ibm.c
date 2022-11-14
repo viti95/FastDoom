@@ -1680,7 +1680,7 @@ void CGA_AFH_DrawBackbuffer_Snow(void)
 
     do
     {
-        unsigned short lutPOS = (ptrlut16colors[*(ptrbackbuffer)]     & 0x000F) |
+        unsigned short lutPOS = (ptrlut16colors[*(ptrbackbuffer)] & 0x000F) |
                                 (ptrlut16colors[*(ptrbackbuffer + 1)] & 0x00F0) |
                                 (ptrlut16colors[*(ptrbackbuffer + 2)] & 0x0F00) |
                                 (ptrlut16colors[*(ptrbackbuffer + 3)] & 0xF000);
@@ -1716,7 +1716,7 @@ void CGA_AFH_DrawBackbuffer(void)
 
     do
     {
-        unsigned short lutPOS = (ptrlut16colors[*(ptrbackbuffer)]     & 0x000F) |
+        unsigned short lutPOS = (ptrlut16colors[*(ptrbackbuffer)] & 0x000F) |
                                 (ptrlut16colors[*(ptrbackbuffer + 1)] & 0x00F0) |
                                 (ptrlut16colors[*(ptrbackbuffer + 2)] & 0x0F00) |
                                 (ptrlut16colors[*(ptrbackbuffer + 3)] & 0xF000);
@@ -1946,7 +1946,6 @@ void EGA136_DrawBackbuffer(void)
 
 #if defined(MODE_EGA)
 
-byte latch;
 unsigned short lastlatch;
 unsigned short vrambuffer[16000];
 
@@ -1959,9 +1958,9 @@ void EGA_DrawBackbuffer(void)
     do
     {
         unsigned short fullvalue = 16 * 16 * 16 * ptrlut16colors[*ptrbackbuffer] +
-                               16 * 16 * ptrlut16colors[*(ptrbackbuffer + 1)] +
-                               16 * ptrlut16colors[*(ptrbackbuffer + 2)] +
-                               ptrlut16colors[*(ptrbackbuffer + 3)];
+                                   16 * 16 * ptrlut16colors[*(ptrbackbuffer + 1)] +
+                                   16 * ptrlut16colors[*(ptrbackbuffer + 2)] +
+                                   ptrlut16colors[*(ptrbackbuffer + 3)];
 
         if (*(ptrvrambuffer) != fullvalue)
         {
@@ -1973,7 +1972,7 @@ void EGA_DrawBackbuffer(void)
             if (lastlatch != vramlut)
             {
                 lastlatch = vramlut;
-                latch = *((byte *)0xA3E80 + vramlut);
+                ReadMem((byte *)0xA3E80 + vramlut);
             }
 
             *(vram) = fullvalue & 0x0F;
@@ -2020,8 +2019,7 @@ void EGAW1_DrawBackbuffer(void)
             else
             {
                 // Write
-                *(vram) = 0
-                ; // Just copy from latches
+                *(vram) = 0; // Just copy from latches
             }
         }
 
