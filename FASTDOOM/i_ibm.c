@@ -277,7 +277,7 @@ byte scantokey[128] =
 byte vrambuffer[32768];
 #endif
 
-#if defined(MODE_CGA16) || defined(MODE_CGA136) || defined(MODE_EGA16) || defined(MODE_EGA136) || defined(MODE_EGA80) || defined(MODE_EGAW1)
+#if defined(MODE_CGA16) || defined(MODE_CGA136) || defined(MODE_EGA16) || defined(MODE_EGA136) || defined(MODE_EGA80)
 byte vrambuffer[16384];
 #endif
 
@@ -1945,7 +1945,6 @@ void EGA136_DrawBackbuffer(void)
 #endif
 
 #if defined(MODE_EGA)
-
 unsigned short lastlatch;
 unsigned short vrambuffer[16000];
 
@@ -1986,47 +1985,42 @@ void EGA_DrawBackbuffer(void)
 #endif
 
 #if defined(MODE_EGAW1)
-byte lastlatch = 0;
+unsigned short lastlatch;
+unsigned short vrambuffer[8000];
 
 void EGAW1_DrawBackbuffer(void)
 {
     byte *vram = (byte *)0xA0000;
-    byte *ptrvrambuffer = vrambuffer;
     byte *ptrbackbuffer = backbuffer;
+    unsigned short *ptrvrambuffer = vrambuffer;
 
     do
     {
-        byte pos1 = ptrlut16colors[*ptrbackbuffer];
-        byte pos2 = ptrlut16colors[*(ptrbackbuffer + 2)];
+        unsigned short fullvalue = 16 * 16 * 16 * ptrlut16colors[*ptrbackbuffer] +
+                                   16 * 16 * ptrlut16colors[*(ptrbackbuffer + 2)] +
+                                   16 * ptrlut16colors[*(ptrbackbuffer + 4)] +
+                                   ptrlut16colors[*(ptrbackbuffer + 6)];
 
-        byte value = pos1 | pos2 << 4;
-
-        // Avoid accessing to VRAM whenever possible
-        if (*ptrvrambuffer != value)
+        if (*(ptrvrambuffer) != fullvalue)
         {
-            *ptrvrambuffer = value;
+            unsigned short vramlut;
 
-            // If the latch has already a good value, use it!
-            if (lastlatch != value)
-            {
-                byte latch;
+            *(ptrvrambuffer) = fullvalue;
+            vramlut = fullvalue >> 4;
 
-                // Read + write
-                latch = *((byte *)0xA3E80 + value); // Read block into latches
-                *(vram) = latch;                    // Copy from latches
-                lastlatch = value;                  // Update new latches
-            }
-            else
+            if (lastlatch != vramlut)
             {
-                // Write
-                *(vram) = 0; // Just copy from latches
+                lastlatch = vramlut;
+                ReadMem((byte *)0xA1F40 + vramlut);
             }
+
+            *(vram) = fullvalue;
         }
 
         vram += 1;
-        ptrbackbuffer += 4;
+        ptrbackbuffer += 8;
         ptrvrambuffer += 1;
-    } while (vram < (byte *)0xA3E80);
+    } while (vram < (byte *)0xA1F40);
 }
 #endif
 
@@ -3519,14 +3513,15 @@ void I_InitGraphics(void)
     {
         unsigned int pos1 = 0;
         unsigned int pos2 = 0;
+        unsigned int pos3 = 0;
         unsigned int counter = 0;
         byte *basevram;
 
-        regs.w.ax = 0x0E;
+        regs.w.ax = 0x0D;
         int386(0x10, (union REGS *)&regs, &regs);
         pcscreen = destscreen = (byte *)0xA0000;
 
-        basevram = (byte *)0xA3E80; // Init at ending of viewable screen
+        basevram = (byte *)0xA1F40; // Init at ending of viewable screen
 
         // Step 1
         // Copy all possible combinations to the VRAM
@@ -3536,30 +3531,37 @@ void I_InitGraphics(void)
         {
             for (pos2 = 0; pos2 < 16; pos2++)
             {
-                for (counter = 0; counter < 4; counter++)
+                for (pos3 = 0; pos3 < 16; pos3++)
                 {
-                    byte bitstatuspos1;
-                    byte bitstatuspos2;
-                    byte final;
+                    for (counter = 0; counter < 4; counter++)
+                    {
+                        byte bitstatuspos1;
+                        byte bitstatuspos2;
+                        byte bitstatuspos3;
 
-                    outp(0x3C5, 1 << counter); // Change plane
+                        byte final;
 
-                    bitstatuspos1 = (pos1 >> counter) & 1;
-                    bitstatuspos2 = (pos2 >> counter) & 1;
+                        outp(0x3C5, 1 << counter); // Change plane
 
-                    final = bitstatuspos1 | bitstatuspos1 << 1 | bitstatuspos1 << 2 | bitstatuspos1 << 3 | bitstatuspos2 << 4 | bitstatuspos2 << 5 | bitstatuspos2 << 6 | bitstatuspos2 << 7;
-                    *basevram = final;
+                        bitstatuspos1 = (pos1 >> counter) & 1;
+                        bitstatuspos2 = (pos2 >> counter) & 1;
+                        bitstatuspos3 = (pos3 >> counter) & 1;
+
+                        final = bitstatuspos1 << 6 | bitstatuspos1 << 7 |
+                                bitstatuspos2 << 4 | bitstatuspos2 << 5 |
+                                bitstatuspos3 << 2 | bitstatuspos3 << 3;
+                        *basevram = final;
+                    }
+                    basevram++;
                 }
-
-                basevram++;
             }
         }
 
         // Step 2
 
-        // Write Mode 1
+        // Write Mode 2
         outp(0x3CE, 0x05);
-        outp(0x3CF, 0x01);
+        outp(0x3CF, 0x02);
 
         // Write to all 4 planes
         outp(0x3C4, 0x02);
@@ -3567,7 +3569,11 @@ void I_InitGraphics(void)
 
         // Set Bit Mask to use the latch registers
         outp(0x3CE, 0x08);
-        outp(0x3CF, 0xFF);
+        outp(0x3CF, 0x03);
+
+        // Set logical operation to OR
+        outp(0x3CE, 0x03);
+        outp(0x3CF, 0x10);
     }
 #endif
 #if defined(MODE_EGA80)
