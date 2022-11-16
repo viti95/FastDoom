@@ -532,7 +532,7 @@ fixed_t R_ScaleFromGlobalAngle(angle_t visangle)
 #if defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_T8086)
     num = FixedMulEDX(projection, sineb) << 1;
 #endif
-#ifdef MODE_Y
+#if defined(MODE_Y)
     num = FixedMulEDX(projection, sineb) << detailshift;
 #endif
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT) || defined(MODE_MDA)
@@ -718,7 +718,7 @@ void R_ExecuteSetViewSize(void)
     #endif
 #endif
 
-#ifdef MODE_Y
+#if defined(MODE_Y)
     if (forcePotatoDetail || forceLowDetail || forceHighDetail)
     {
         if (forceHighDetail)
@@ -732,7 +732,7 @@ void R_ExecuteSetViewSize(void)
         detailshift = setdetail;
 #endif
 
-#ifdef MODE_Y
+#if defined(MODE_Y)
     viewwidth = scaledviewwidth >> detailshift;
     viewwidthhalf = viewwidth / 2;
 #endif
@@ -751,7 +751,7 @@ void R_ExecuteSetViewSize(void)
     projection = centerxfrac;
 #endif
 
-#ifdef MODE_T4050
+#if defined(MODE_T4050)
     colfunc = basecolfunc = R_DrawColumnText4050;
 
     if (untexturedSurfaces)
@@ -775,7 +775,7 @@ void R_ExecuteSetViewSize(void)
     else
         fuzzcolfunc = R_DrawFuzzColumnText4050;
 #endif
-#ifdef MODE_T4025
+#if defined(MODE_T4025)
     colfunc = basecolfunc = R_DrawColumnText4025;
 
     if (untexturedSurfaces)
@@ -799,7 +799,7 @@ void R_ExecuteSetViewSize(void)
     else
         fuzzcolfunc = R_DrawFuzzColumnText4025;
 #endif
-#ifdef MODE_T8025
+#if defined(MODE_T8025)
     colfunc = basecolfunc = R_DrawColumnText8025;
 
     if (untexturedSurfaces)
@@ -823,7 +823,7 @@ void R_ExecuteSetViewSize(void)
     else
         fuzzcolfunc = R_DrawFuzzColumnText8025;
 #endif
-#ifdef MODE_MDA
+#if defined(MODE_MDA)
     colfunc = basecolfunc = R_DrawLineColumnTextMDA;
 
     spanfunc = R_DrawSpanTextMDA;
@@ -882,7 +882,7 @@ void R_ExecuteSetViewSize(void)
         fuzzcolfunc = R_DrawFuzzColumnText80100;
 #endif
 
-#ifdef MODE_Y
+#if defined(MODE_Y)
     switch (detailshift)
     {
     case 0:
@@ -968,7 +968,7 @@ void R_ExecuteSetViewSize(void)
         fuzzcolfunc = R_DrawFuzzColumn_13h;
 #endif
 
-#ifdef MODE_VBE2_DIRECT
+#if defined(MODE_VBE2_DIRECT)
     colfunc = basecolfunc = R_DrawColumnVBE2;
 
     if (untexturedSurfaces)
@@ -1000,7 +1000,7 @@ void R_ExecuteSetViewSize(void)
     pspriteiscaleneg = -pspriteiscale;
 #endif
 
-#ifdef MODE_Y
+#if defined(MODE_Y)
     pspriteiscaleshifted = pspriteiscale >> detailshift;
 #endif
 #if defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
@@ -1019,7 +1019,7 @@ void R_ExecuteSetViewSize(void)
 #if defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_T8086)
         yslope[i] = FixedDiv((viewwidth << 1) / 2 * FRACUNIT, dy);
 #endif
-#ifdef MODE_Y
+#if defined(MODE_Y)
         yslope[i] = FixedDiv((viewwidth << detailshift) / 2 * FRACUNIT, dy);
 #endif
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT) || defined(MODE_MDA)
@@ -1043,7 +1043,7 @@ void R_ExecuteSetViewSize(void)
 #if defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_T8086)
             level = startmap - Mul320(j) / (viewwidth << 1) / DISTMAP;
 #endif
-#ifdef MODE_Y
+#if defined(MODE_Y)
             level = startmap - Mul320(j) / (viewwidth << detailshift) / DISTMAP;
 #endif
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT) || defined(MODE_MDA)
@@ -1183,11 +1183,11 @@ void R_SetupFrame(void)
 
     validcount++;
     
-    #ifdef MODE_VBE2_DIRECT
+    #if defined(MODE_VBE2_DIRECT)
     destview = destscreen + Mul320(viewwindowy) + viewwindowx;
     #endif
 
-    #ifdef MODE_Y
+    #if defined(MODE_Y)
     destview = destscreen + Mul80(viewwindowy) + (viewwindowx >> 2);
     #endif
 }
@@ -1209,7 +1209,7 @@ void R_RenderPlayerView(void)
     NetUpdate();
 
 // Set potato mode VGA plane
-#ifdef MODE_Y
+#if defined(MODE_Y)
     if (detailshift == 2)
     {
         outp(SC_INDEX + 1, 15);
@@ -1222,25 +1222,25 @@ void R_RenderPlayerView(void)
     // Check for new console commands.
     NetUpdate();
 
-#ifdef MODE_T4050
+#if defined(MODE_T4050)
     if (flatSurfaces)
         R_DrawPlanesFlatSurfacesText4050();
     else
         R_DrawPlanes();
 #endif
-#ifdef MODE_T4025
+#if defined(MODE_T4025)
     if (flatSurfaces)
         R_DrawPlanesFlatSurfacesText4025();
     else
         R_DrawPlanes();
 #endif
-#ifdef MODE_T8025
+#if defined(MODE_T8025)
     if (flatSurfaces)
         R_DrawPlanesFlatSurfacesText8025();
     else
         R_DrawPlanes();
 #endif
-#ifdef MODE_MDA
+#if defined(MODE_MDA)
     R_DrawPlanesFlatSurfacesTextMDA();
 #endif
 
@@ -1257,7 +1257,7 @@ void R_RenderPlayerView(void)
     else
         R_DrawPlanes();
 #endif
-#ifdef MODE_Y
+#if defined(MODE_Y)
     if (flatSurfaces)
         switch (detailshift)
         {
@@ -1280,7 +1280,7 @@ void R_RenderPlayerView(void)
     else
         R_DrawPlanes();
 #endif
-#ifdef MODE_VBE2_DIRECT
+#if defined(MODE_VBE2_DIRECT)
     if (flatSurfaces)
         R_DrawPlanesFlatSurfacesVBE2();
     else

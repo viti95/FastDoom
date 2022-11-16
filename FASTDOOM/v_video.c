@@ -399,7 +399,7 @@ void V_WriteCharDirect(int x, int y, unsigned char c)
 // V_DrawPatchDirect
 // Draws directly to the screen on the pc.
 //
-#ifdef MODE_VBE2_DIRECT
+#if defined(MODE_VBE2_DIRECT)
 void V_DrawPatchDirect(int x, int y, patch_t *patch)
 {
     int count;
@@ -436,7 +436,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
 }
 #endif
 
-#ifdef MODE_Y
+#if defined(MODE_Y)
 void V_DrawPatchDirect(int x, int y, patch_t *patch)
 {
     int count;
@@ -680,7 +680,7 @@ void V_DrawPatchDirectText8050(int x, int y, patch_t *patch)
 }
 #endif
 
-#ifdef MODE_T4050
+#if defined(MODE_T4050)
 void V_DrawPatchDirectText4050(int x, int y, patch_t *patch)
 {
     int count;
@@ -744,7 +744,7 @@ void V_DrawPatchDirectText4050(int x, int y, patch_t *patch)
 }
 #endif
 
-#ifdef MODE_T80100
+#if defined(MODE_T80100)
 void V_DrawPatchDirectText80100(int x, int y, patch_t *patch)
 {
     int count;
@@ -808,7 +808,7 @@ void V_DrawPatchDirectText80100(int x, int y, patch_t *patch)
 }
 #endif
 
-#ifdef MODE_T4025
+#if defined(MODE_T4025)
 void V_DrawPatchDirectText4025(int x, int y, patch_t *patch)
 {
     int count;

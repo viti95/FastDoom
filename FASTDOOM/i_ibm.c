@@ -285,11 +285,11 @@ byte vrambuffer[16384];
 unsigned short vrambuffer[16384];
 #endif
 
-#ifdef MODE_CGA_BW
+#if defined(MODE_CGA_BW)
 unsigned short vrambuffer[16384];
 #endif
 
-#ifdef MODE_EGA640
+#if defined(MODE_EGA640)
 byte vrambufferR1[16384];
 byte vrambufferG1[16384];
 byte vrambufferB1[16384];
@@ -304,19 +304,19 @@ byte vrambufferB3[16384];
 byte vrambufferI3[16384];
 #endif
 
-#ifdef MODE_PCP
+#if defined(MODE_PCP)
 byte vrambuffer[32768];
 #endif
 
-#ifdef MODE_CGA
+#if defined(MODE_CGA)
 unsigned short vrambuffer[16384];
 #endif
 
-#ifdef MODE_ATI640
+#if defined(MODE_ATI640)
 byte vrambuffer[65536];
 #endif
 
-#ifdef MODE_CVB
+#if defined(MODE_CVB)
 byte vrambuffer[16384];
 #endif
 
@@ -593,7 +593,7 @@ const byte colors[48] = { // Color      R G B I     G R I B
     0x3F, 0x3F, 0x3F};    // White      1 1 1 1     1 1 1 1
 #endif
 
-#ifdef MODE_CVB
+#if defined(MODE_CVB)
 const byte colors[48] = { // standard IBM CGA
     0x00, 0x00, 0x00,
     0x00, 0x18, 0x06,
@@ -630,7 +630,7 @@ const byte colors[48] = { // standard IBM CGA
     0x3f, 0x3f, 0x3f};*/
 #endif
 
-#ifdef MODE_PCP
+#if defined(MODE_PCP)
 const byte colors[48] = {
     0x00, 0x00, 0x00,
     0x00, 0x2A, 0x00,
@@ -650,7 +650,7 @@ const byte colors[48] = {
     0x3F, 0x3F, 0x3F};
 #endif
 
-#ifdef MODE_CGA
+#if defined(MODE_CGA)
 const byte colors[12] = {
     0x00, 0x00, 0x00,
     0x00, 0x2A, 0x00,
@@ -1204,7 +1204,7 @@ unsigned short *textdestscreen = backbuffer;
 //
 // I_UpdateBox
 //
-#ifdef MODE_VBE2_DIRECT
+#if defined(MODE_VBE2_DIRECT)
 void I_UpdateBox(int x, int y, int w, int h)
 {
     byte *dest;
@@ -1249,7 +1249,7 @@ void I_UpdateBoxTransparent(int x, int y, int w, int h)
 }
 #endif
 
-#ifdef MODE_Y
+#if defined(MODE_Y)
 void I_UpdateBox(int x, int y, int w, int h)
 {
     int i, j, k, count;
@@ -1467,7 +1467,7 @@ void I_UpdateNoBlit(void)
 
 extern int screenblocks;
 
-#ifdef MODE_CGA_BW
+#if defined(MODE_CGA_BW)
 void CGA_BW_DrawBackbuffer(void)
 {
     unsigned char *vram = (unsigned char *)0xB8000;
@@ -1526,7 +1526,7 @@ void CGA_BW_DrawBackbuffer(void)
 }
 #endif
 
-#ifdef MODE_HERC
+#if defined(MODE_HERC)
 void HERC_DrawBackbuffer(void)
 {
     unsigned char *vram = (unsigned char *)0xB0000;
@@ -1606,7 +1606,7 @@ void HERC_DrawBackbuffer(void)
 }
 #endif
 
-#ifdef MODE_CGA16
+#if defined(MODE_CGA16)
 void CGA16_DrawBackbuffer_Snow(void)
 {
     unsigned char *vram = (unsigned char *)0xB8001;
@@ -1669,7 +1669,7 @@ void CGA16_DrawBackbuffer(void)
 }
 #endif
 
-#ifdef MODE_CGA_AFH
+#if defined(MODE_CGA_AFH)
 void CGA_AFH_DrawBackbuffer_Snow(void)
 {
     unsigned short *vram = (unsigned short *)0xB8000;
@@ -1742,7 +1742,7 @@ void CGA_AFH_DrawBackbuffer(void)
 
 #endif
 
-#ifdef MODE_EGA16
+#if defined(MODE_EGA16)
 void EGA16_DrawBackbuffer(void)
 {
     unsigned char *vram = (unsigned char *)0xB8501;
@@ -1774,7 +1774,7 @@ void EGA16_DrawBackbuffer(void)
 }
 #endif
 
-#ifdef MODE_CGA136
+#if defined(MODE_CGA136)
 void CGA136_DrawBackbuffer_Snow(void)
 {
     unsigned char *vram = (unsigned char *)0xB8001;
@@ -1888,7 +1888,7 @@ void CGA136_DrawBackbuffer(void)
 }
 #endif
 
-#ifdef MODE_EGA136
+#if defined(MODE_EGA136)
 void EGA136_DrawBackbuffer(void)
 {
     unsigned char *vram = (unsigned char *)0xB8501;
@@ -1985,7 +1985,7 @@ void EGA_DrawBackbuffer(void)
 }
 #endif
 
-#ifdef MODE_EGAW1
+#if defined(MODE_EGAW1)
 byte lastlatch = 0;
 
 void EGAW1_DrawBackbuffer(void)
@@ -2030,7 +2030,7 @@ void EGAW1_DrawBackbuffer(void)
 }
 #endif
 
-#ifdef MODE_EGA80
+#if defined(MODE_EGA80)
 void EGA80_DrawBackbuffer(void)
 {
     unsigned char *vram = (unsigned char *)0xA0000;
@@ -2076,7 +2076,7 @@ void EGA80_DrawBackbuffer(void)
 }
 #endif
 
-#ifdef MODE_VGA16
+#if defined(MODE_VGA16)
 void VGA16_DrawBackbuffer(void)
 {
     unsigned char *vram;
@@ -2089,7 +2089,7 @@ void VGA16_DrawBackbuffer(void)
 }
 #endif
 
-#ifdef MODE_VGA136
+#if defined(MODE_VGA136)
 void VGA136_DrawBackbuffer(void)
 {
     unsigned char *vram = (unsigned char *)0xB8001;
@@ -2108,7 +2108,7 @@ void VGA136_DrawBackbuffer(void)
 }
 #endif
 
-#ifdef MODE_ATI640
+#if defined(MODE_ATI640)
 void ATI640_DrawBackbuffer(void)
 {
     int x;
@@ -2240,7 +2240,7 @@ void ATI640_DrawBackbuffer(void)
 }
 #endif
 
-#ifdef MODE_EGA640
+#if defined(MODE_EGA640)
 void EGA640_DrawBackbuffer(void)
 {
     unsigned short i;
@@ -2440,7 +2440,7 @@ void EGA640_DrawBackbuffer(void)
 }
 #endif
 
-#ifdef MODE_CVB
+#if defined(MODE_CVB)
 void CVBS_DrawBackbuffer(void)
 {
 
@@ -2495,7 +2495,7 @@ void CVBS_DrawBackbuffer(void)
 }
 #endif
 
-#ifdef MODE_V2
+#if defined(MODE_V2)
 void V2_DrawBackbuffer(void)
 {
     byte *ptrdestscreen;
@@ -2611,7 +2611,7 @@ void V2_DrawBackbuffer(void)
 }
 #endif
 
-#ifdef MODE_PCP
+#if defined(MODE_PCP)
 void PCP_DrawBackbuffer(void)
 {
     int x;
@@ -2688,7 +2688,7 @@ void PCP_DrawBackbuffer(void)
 }
 #endif
 
-#ifdef MODE_CGA
+#if defined(MODE_CGA)
 void CGA_DrawBackbuffer(void)
 {
     int x;
@@ -2778,7 +2778,7 @@ void I_FinishUpdate(void)
     }
 #endif
 
-#ifdef MODE_T8025
+#if defined(MODE_T8025)
     // Change video page
     regs.h.ah = 0x05;
     regs.h.al = textpage;
@@ -2840,7 +2840,7 @@ void I_FinishUpdate(void)
             textdestscreen += 4128;
     }
 #endif
-#ifdef MODE_Y
+#if defined(MODE_Y)
     outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
 
     // Next plane
@@ -2849,7 +2849,7 @@ void I_FinishUpdate(void)
     else
         destscreen += 0x4000;
 #endif
-#ifdef MODE_VBE2_DIRECT
+#if defined(MODE_VBE2_DIRECT)
     VBE_SetDisplayStart_Y(page);
 
     if (page == 400)
@@ -2902,67 +2902,67 @@ void I_FinishUpdate(void)
         updatestate &= ~I_MESSAGES;
     }
 #endif
-#ifdef MODE_HERC
+#if defined(MODE_HERC)
     HERC_DrawBackbuffer();
 #endif
-#ifdef MODE_CGA
+#if defined(MODE_CGA)
     CGA_DrawBackbuffer();
 #endif
-#ifdef MODE_CGA_BW
+#if defined(MODE_CGA_BW)
     CGA_BW_DrawBackbuffer();
 #endif
-#ifdef MODE_CGA16
+#if defined(MODE_CGA16)
     if (snowfix)
         CGA16_DrawBackbuffer_Snow();
     else
         CGA16_DrawBackbuffer();
 #endif
-#ifdef MODE_CGA_AFH
+#if defined(MODE_CGA_AFH)
     if (snowfix)
         CGA_AFH_DrawBackbuffer_Snow();
     else
         CGA_AFH_DrawBackbuffer();
 #endif
-#ifdef MODE_EGA16
+#if defined(MODE_EGA16)
     EGA16_DrawBackbuffer();
 #endif
-#ifdef MODE_CGA136
+#if defined(MODE_CGA136)
     if (snowfix)
         CGA136_DrawBackbuffer_Snow();
     else
         CGA136_DrawBackbuffer();
 #endif
-#ifdef MODE_EGA80
+#if defined(MODE_EGA80)
     EGA80_DrawBackbuffer();
 #endif
-#ifdef MODE_EGA
+#if defined(MODE_EGA)
     EGA_DrawBackbuffer();
 #endif
-#ifdef MODE_EGAW1
+#if defined(MODE_EGAW1)
     EGAW1_DrawBackbuffer();
 #endif
-#ifdef MODE_VGA16
+#if defined(MODE_VGA16)
     VGA16_DrawBackbuffer();
 #endif
-#ifdef MODE_VGA136
+#if defined(MODE_VGA136)
     VGA136_DrawBackbuffer();
 #endif
-#ifdef MODE_EGA136
+#if defined(MODE_EGA136)
     EGA136_DrawBackbuffer();
 #endif
-#ifdef MODE_EGA640
+#if defined(MODE_EGA640)
     EGA640_DrawBackbuffer();
 #endif
-#ifdef MODE_ATI640
+#if defined(MODE_ATI640)
     ATI640_DrawBackbuffer();
 #endif
-#ifdef MODE_PCP
+#if defined(MODE_PCP)
     PCP_DrawBackbuffer();
 #endif
-#ifdef MODE_CVB
+#if defined(MODE_CVB)
     CVBS_DrawBackbuffer();
 #endif
-#ifdef MODE_V2
+#if defined(MODE_V2)
     V2_DrawBackbuffer();
 #endif
 
@@ -3087,7 +3087,7 @@ void I_InitGraphics(void)
     textdestscreen = (unsigned short *)0xB8000;
     textpage = 0;
 #endif
-#ifdef MODE_T8025
+#if defined(MODE_T8025)
     // Set 80x25 color mode
     regs.h.ah = 0x00;
     regs.h.al = 0x03;
@@ -3153,7 +3153,7 @@ void I_InitGraphics(void)
     textdestscreen = (unsigned short *)0xB8000;
     textpage = 0;
 #endif
-#ifdef MODE_Y
+#if defined(MODE_Y)
     regs.w.ax = 0x13;
     int386(0x10, (union REGS *)&regs, &regs);
     pcscreen = (byte *)0xA0000;
@@ -3244,12 +3244,12 @@ void I_InitGraphics(void)
     outp(SC_INDEX, MAP_MASK);
     outp(GC_INDEX, READ_MAP);
 #endif
-#ifdef MODE_13H
+#if defined(MODE_13H)
     regs.w.ax = 0x13;
     int386(0x10, (union REGS *)&regs, &regs);
     pcscreen = destscreen = (byte *)0xA0000;
 #endif
-#ifdef MODE_CGA
+#if defined(MODE_CGA)
     // Set video mode 4
     regs.w.ax = 0x04;
     int386(0x10, (union REGS *)&regs, &regs);
@@ -3319,20 +3319,20 @@ void I_InitGraphics(void)
 
     for (i = 1280; i < 16000 + 1280; i += 2)
     {
-#ifdef MODE_EGA16
+#if defined(MODE_EGA16)
         vram[i] = 0xDE;
 #endif
-#ifdef MODE_EGA136
+#if defined(MODE_EGA136)
         vram[i] = 0xB1;
 #endif
     }
 
     for (i = 0; i < 16000; i += 2)
     {
-#ifdef MODE_EGA16
+#if defined(MODE_EGA16)
         vrambuffer[i] = 0xDE;
 #endif
-#ifdef MODE_EGA136
+#if defined(MODE_EGA136)
         vrambuffer[i] = 0xB1;
 #endif
     }
@@ -3431,7 +3431,7 @@ void I_InitGraphics(void)
     }
 #endif
 
-#ifdef MODE_CGA_BW
+#if defined(MODE_CGA_BW)
     regs.w.ax = 0x06;
     int386(0x10, (union REGS *)&regs, &regs);
     pcscreen = destscreen = (byte *)0xB8000;
@@ -3439,7 +3439,7 @@ void I_InitGraphics(void)
     SetDWords(vrambuffer, 0, 8192);
     SetDWords(pcscreen, 0, 4096);
 #endif
-#ifdef MODE_PCP
+#if defined(MODE_PCP)
     regs.w.ax = 0x04;
     int386(0x10, (union REGS *)&regs, &regs);
     outp(0x3DD, 0x10);
@@ -3448,7 +3448,7 @@ void I_InitGraphics(void)
     SetDWords(vrambuffer, 0, 8192);
     SetDWords(pcscreen, 0, 8192);
 #endif
-#ifdef MODE_EGA
+#if defined(MODE_EGA)
     {
         unsigned int pos1 = 0;
         unsigned int pos2 = 0;
@@ -3515,7 +3515,7 @@ void I_InitGraphics(void)
         outp(0x3CF, 0x10);
     }
 #endif
-#ifdef MODE_EGAW1
+#if defined(MODE_EGAW1)
     {
         unsigned int pos1 = 0;
         unsigned int pos2 = 0;
@@ -3570,7 +3570,7 @@ void I_InitGraphics(void)
         outp(0x3CF, 0xFF);
     }
 #endif
-#ifdef MODE_EGA80
+#if defined(MODE_EGA80)
     regs.w.ax = 0x0E;
     int386(0x10, (union REGS *)&regs, &regs);
     pcscreen = destscreen = (byte *)0xA0000;
@@ -3589,7 +3589,7 @@ void I_InitGraphics(void)
 
     SetDWords(vrambuffer, 0, 4096);
 #endif
-#ifdef MODE_EGA640
+#if defined(MODE_EGA640)
     regs.w.ax = 0x0E;
     int386(0x10, (union REGS *)&regs, &regs);
     outp(0x3C4, 0x2);
@@ -3608,7 +3608,7 @@ void I_InitGraphics(void)
     SetDWords(vrambufferB3, 0, 4096);
     SetDWords(vrambufferI3, 0, 4096);
 #endif
-#ifdef MODE_ATI640
+#if defined(MODE_ATI640)
 
     static int parms[16] = {0x70, 0x50, 0x58, 0x0a,
                             0x40, 0x06, 0x32, 0x38,
@@ -3640,7 +3640,7 @@ void I_InitGraphics(void)
     SetDWords(vrambuffer, 0, 16384);
     SetDWords(pcscreen, 0, 16384);
 #endif
-#ifdef MODE_CVB
+#if defined(MODE_CVB)
     regs.w.ax = 0x06;
     int386(0x10, (union REGS *)&regs, &regs);
     outp(0x3D8, 0x1A); // Enable color burst
@@ -3649,7 +3649,7 @@ void I_InitGraphics(void)
     SetDWords(vrambuffer, 0, 4096);
     SetDWords(pcscreen, 0, 4096);
 #endif
-#ifdef MODE_HERC
+#if defined(MODE_HERC)
     // byte Graph_720x348[12] = {0x03, 0x36, 0x2D, 0x2E, 0x07, 0x5B, 0x02, 0x57, 0x57, 0x02, 0x03, 0x0A};
     byte Graph_640x400[12] = {0x03, 0x34, 0x28, 0x2A, 0x47, 0x69, 0x00, 0x64, 0x65, 0x02, 0x03, 0x0A};
     // byte Graph_640x200[12] = {0x03, 0x6E, 0x28, 0x2E, 0x07, 0x67, 0x0A, 0x64, 0x65, 0x02, 0x01, 0x0A};

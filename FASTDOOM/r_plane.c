@@ -893,7 +893,7 @@ void R_DrawPlanesFlatSurfacesText8050(void)
 }
 #endif
 
-#ifdef MODE_T4050
+#if defined(MODE_T4050)
 void R_DrawPlanesFlatSurfacesText4050(void)
 {
     visplane_t *pl;
@@ -979,7 +979,7 @@ void R_DrawPlanesFlatSurfacesText4050(void)
 }
 #endif
 
-#ifdef MODE_T4025
+#if defined(MODE_T4025)
 void R_DrawPlanesFlatSurfacesText4025(void)
 {
     visplane_t *pl;
@@ -1035,7 +1035,7 @@ void R_DrawPlanesFlatSurfacesText4025(void)
 }
 #endif
 
-#ifdef MODE_MDA
+#if defined(MODE_MDA)
 void R_DrawPlanesFlatSurfacesTextMDA(void)
 {
     visplane_t *pl;
@@ -1114,7 +1114,7 @@ void R_DrawPlanesFlatSurfacesTextMDA(void)
 }
 #endif
 
-#ifdef MODE_T8025
+#if defined(MODE_T8025)
 void R_DrawPlanesFlatSurfacesText8025(void)
 {
     visplane_t *pl;
@@ -1258,7 +1258,7 @@ void R_DrawPlanesFlatSurfaces_13h(void)
 }
 #endif
 
-#ifdef MODE_VBE2_DIRECT
+#if defined(MODE_VBE2_DIRECT)
 void R_DrawPlanesFlatSurfacesVBE2(void)
 {
     visplane_t *pl;

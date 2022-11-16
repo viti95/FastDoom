@@ -521,10 +521,10 @@ void D_PageTicker(void)
 //
 void D_PageDrawer(void)
 {
-#ifdef MODE_T4050
+#if defined(MODE_T4050)
     V_DrawPatchDirectText4050(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
-#ifdef MODE_T4025
+#if defined(MODE_T4025)
     V_DrawPatchDirectText4025(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
 #if defined(MODE_T8025)
@@ -1093,7 +1093,7 @@ void D_DoomMain(void)
     D_AddFile("mode136.wad");
 #endif
 
-#ifdef MODE_CVB
+#if defined(MODE_CVB)
     D_AddFile("modecvbs.wad");
 #endif
 
@@ -1109,7 +1109,7 @@ void D_DoomMain(void)
     D_AddFile("modebw.wad");
 #endif
 
-#ifdef MODE_CGA
+#if defined(MODE_CGA)
     D_AddFile("mode4.wad");
 #endif
 

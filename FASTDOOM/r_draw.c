@@ -118,7 +118,7 @@ fixed_t dc_texturemid;
 // first pixel in a column (possibly virtual)
 byte *dc_source;
 
-#ifdef MODE_Y
+#if defined(MODE_Y)
 void R_DrawSkyFlat(void)
 {
     register int count;
@@ -149,7 +149,7 @@ void R_DrawSkyFlat(void)
 }
 #endif
 
-#ifdef MODE_Y
+#if defined(MODE_Y)
 void R_DrawSkyFlatLow(void)
 {
     register int count;
@@ -180,7 +180,7 @@ void R_DrawSkyFlatLow(void)
 }
 #endif
 
-#ifdef MODE_Y
+#if defined(MODE_Y)
 void R_DrawSkyFlatPotato(void)
 {
     register int count;
@@ -209,7 +209,7 @@ void R_DrawSkyFlatPotato(void)
 }
 #endif
 
-#ifdef MODE_VBE2_DIRECT
+#if defined(MODE_VBE2_DIRECT)
 void R_DrawSkyFlatVBE2(void)
 {
     int count;
@@ -327,7 +327,7 @@ void R_DrawSpanFlatVBE2(void)
 }
 #endif
 
-#ifdef MODE_T4050
+#if defined(MODE_T4050)
 void R_DrawColumnText4050(void)
 {
     fixed_t frac;
@@ -633,7 +633,7 @@ void R_DrawFuzzColumnSaturnText4050(void)
 }
 #endif
 
-#ifdef MODE_T4025
+#if defined(MODE_T4025)
 void R_DrawColumnText4025(void)
 {
     fixed_t frac;
@@ -773,7 +773,7 @@ void R_DrawFuzzColumnSaturnText4025(void)
 }
 #endif
 
-#ifdef MODE_MDA
+#if defined(MODE_MDA)
 void R_DrawLineColumnTextMDA(void)
 {
     fixed_t frac;
@@ -922,7 +922,7 @@ void R_DrawEmptyColumnTextMDA(void)
 }
 #endif
 
-#ifdef MODE_T8025
+#if defined(MODE_T8025)
 void R_DrawColumnText8025(void)
 {
     fixed_t frac;
@@ -1058,7 +1058,7 @@ void R_DrawColumnText80100(void)
 }
 #endif
 
-#ifdef MODE_T8025
+#if defined(MODE_T8025)
 void R_DrawSpanText8025(void)
 {
     int spot;
@@ -1246,7 +1246,7 @@ void R_DrawSkyFlatText8050(void)
 }
 #endif
 
-#ifdef MODE_MDA
+#if defined(MODE_MDA)
 void R_DrawSkyTextMDA(void)
 {
     int count;
@@ -1293,7 +1293,7 @@ void R_DrawSkyTextMDA(void)
 }
 #endif
 
-#ifdef MODE_T8025
+#if defined(MODE_T8025)
 void R_DrawSkyFlatText8025(void)
 {
     int count;
@@ -1347,7 +1347,7 @@ void R_DrawSkyFlatText8025(void)
 }
 #endif
 
-#ifdef MODE_T8025
+#if defined(MODE_T8025)
 void R_DrawFuzzColumnSaturnText8025(void)
 {
     fixed_t frac;
@@ -1602,7 +1602,7 @@ void R_DrawFuzzColumnSaturnText8050(void)
 }
 #endif
 
-#ifdef MODE_T8025
+#if defined(MODE_T8025)
 void R_DrawFuzzColumnFastText8025(void)
 {
     register int count;
@@ -1757,7 +1757,7 @@ void R_DrawSpanText8050(void)
 }
 #endif
 
-#ifdef MODE_Y
+#if defined(MODE_Y)
 void R_DrawSpanPotato(void)
 {
     unsigned position;
@@ -1820,7 +1820,7 @@ int fuzzoffset[FUZZTABLE] =
 
 int fuzzpos = 0;
 
-#ifdef MODE_Y
+#if defined(MODE_Y)
 void R_DrawFuzzColumn(void)
 {
     register int count;
@@ -1852,7 +1852,7 @@ void R_DrawFuzzColumn(void)
 }
 #endif
 
-#ifdef MODE_Y
+#if defined(MODE_Y)
 void R_DrawFuzzColumnLow(void)
 {
     register int count;
@@ -1884,7 +1884,7 @@ void R_DrawFuzzColumnLow(void)
 }
 #endif
 
-#ifdef MODE_Y
+#if defined(MODE_Y)
 void R_DrawFuzzColumnPotato(void)
 {
     register int count;
@@ -1913,7 +1913,7 @@ void R_DrawFuzzColumnPotato(void)
 }
 #endif
 
-#ifdef MODE_Y
+#if defined(MODE_Y)
 void R_DrawFuzzColumnFast(void)
 {
     register int count;
@@ -1945,7 +1945,7 @@ void R_DrawFuzzColumnFast(void)
 }
 #endif
 
-#ifdef MODE_Y
+#if defined(MODE_Y)
 void R_DrawFuzzColumnFastLow(void)
 {
     register int count;
@@ -1977,7 +1977,7 @@ void R_DrawFuzzColumnFastLow(void)
 }
 #endif
 
-#ifdef MODE_Y
+#if defined(MODE_Y)
 void R_DrawFuzzColumnFastPotato(void)
 {
     register int count;
@@ -2006,7 +2006,7 @@ void R_DrawFuzzColumnFastPotato(void)
 }
 #endif
 
-#ifdef MODE_VBE2_DIRECT
+#if defined(MODE_VBE2_DIRECT)
 void R_DrawFuzzColumnVBE2(void)
 {
     int count;
@@ -2034,7 +2034,7 @@ void R_DrawFuzzColumnVBE2(void)
 }
 #endif
 
-#ifdef MODE_T4050
+#if defined(MODE_T4050)
 void R_DrawFuzzColumnText4050(void)
 {
     register int count;
@@ -2107,7 +2107,7 @@ void R_DrawFuzzColumnText4050(void)
 }
 #endif
 
-#ifdef MODE_T4025
+#if defined(MODE_T4025)
 void R_DrawFuzzColumnText4025(void)
 {
     int count;
@@ -2142,7 +2142,7 @@ void R_DrawFuzzColumnText4025(void)
 }
 #endif
 
-#ifdef MODE_T8025
+#if defined(MODE_T8025)
 void R_DrawFuzzColumnText8025(void)
 {
     register int count;
@@ -2323,7 +2323,7 @@ void R_DrawFuzzColumnText8050(void)
 }
 #endif
 
-#ifdef MODE_Y
+#if defined(MODE_Y)
 void R_DrawFuzzColumnSaturn(void)
 {
     int count;
@@ -2375,7 +2375,7 @@ void R_DrawFuzzColumnSaturn(void)
 }
 #endif
 
-#ifdef MODE_Y
+#if defined(MODE_Y)
 void R_DrawFuzzColumnSaturnLow(void)
 {
     int count;
@@ -2429,7 +2429,7 @@ void R_DrawFuzzColumnSaturnLow(void)
 }
 #endif
 
-#ifdef MODE_Y
+#if defined(MODE_Y)
 void R_DrawFuzzColumnSaturnPotato(void)
 {
     int count;
@@ -2504,7 +2504,7 @@ fixed_t ds_step;
 // start of a 64*64 tile image
 byte *ds_source;
 
-#ifdef MODE_Y
+#if defined(MODE_Y)
 void R_DrawSpanFlat(void)
 {
     register byte *dest;
@@ -2640,7 +2640,7 @@ void R_DrawSpanFlat(void)
 }
 #endif
 
-#ifdef MODE_Y
+#if defined(MODE_Y)
 void R_DrawSpanFlatLow(void)
 {
     register byte *dest;
@@ -2734,7 +2734,7 @@ void R_DrawSpanFlatLow(void)
 }
 #endif
 
-#ifdef MODE_Y
+#if defined(MODE_Y)
 void R_DrawSpanFlatPotato(void)
 {
     int countp;
@@ -2807,7 +2807,7 @@ void R_DrawSpanFlatText8050(void)
 }
 #endif
 
-#ifdef MODE_T4050
+#if defined(MODE_T4050)
 void R_DrawSpanFlatText4050(void)
 {
     int countp;
@@ -2840,7 +2840,7 @@ void R_DrawSpanFlatText4050(void)
 }
 #endif
 
-#ifdef MODE_T4025
+#if defined(MODE_T4025)
 void R_DrawSpanFlatText4025(void)
 {
     int countp;
@@ -2856,14 +2856,14 @@ void R_DrawSpanFlatText4025(void)
 }
 #endif
 
-#ifdef MODE_MDA
+#if defined(MODE_MDA)
 void R_DrawSpanTextMDA(void)
 {
 
 }
 #endif
 
-#ifdef MODE_T8025
+#if defined(MODE_T8025)
 void R_DrawSpanFlatText8025(void)
 {
     int countp;
@@ -3083,12 +3083,12 @@ void R_FillBackScreen(void)
     V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + viewheight, background_buffer, W_CacheLumpName("BRDR_BR", PU_CACHE));
 #endif
 
-#ifdef MODE_VBE2_DIRECT
+#if defined(MODE_VBE2_DIRECT)
     dest = pcscreen + 3 * 320 * 200;
     CopyBytes(screen1, dest, (SCREENHEIGHT - SBARHEIGHT) * SCREENWIDTH);
 #endif
 
-#ifdef MODE_Y
+#if defined(MODE_Y)
     for (i = 0; i < 4; i++)
     {        
         outp(SC_INDEX + 1, 1 << i);
@@ -3112,7 +3112,7 @@ void R_FillBackScreen(void)
 //
 // Copy a screen buffer.
 //
-#ifdef MODE_VBE2_DIRECT
+#if defined(MODE_VBE2_DIRECT)
 void R_VideoErase(unsigned ofs, int count)
 {
     byte *dest;
@@ -3124,7 +3124,7 @@ void R_VideoErase(unsigned ofs, int count)
 }
 #endif
 
-#ifdef MODE_Y
+#if defined(MODE_Y)
 void R_VideoErase(unsigned ofs, int count)
 {
     byte *dest;

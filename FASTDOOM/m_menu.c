@@ -824,11 +824,11 @@ void M_DrawReadThis1(void)
 {
     inhelpscreens = 1;
 
-#ifdef MODE_T4025
+#if defined(MODE_T4025)
     V_DrawPatchDirectText4025(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 #endif
 
-#ifdef MODE_T4050
+#if defined(MODE_T4050)
     V_DrawPatchDirectText4050(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 #endif
 #if defined(MODE_T8025)
@@ -837,10 +837,10 @@ void M_DrawReadThis1(void)
 #if defined(MODE_MDA)
     V_DrawPatchDirectTextMDA(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 #endif
-#ifdef MODE_T8043
+#if defined(MODE_T8043)
     V_DrawPatchDirectText8043(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 #endif
-#ifdef MODE_T8086
+#if defined(MODE_T8086)
     V_DrawPatchDirectText8086(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 #endif
 #if defined(MODE_T8050)
@@ -861,10 +861,10 @@ void M_DrawReadThis2(void)
 {
     inhelpscreens = 1;
 
-#ifdef MODE_T4025
+#if defined(MODE_T4025)
     V_DrawPatchDirectText4025(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
 #endif
-#ifdef MODE_T4050
+#if defined(MODE_T4050)
     V_DrawPatchDirectText4050(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
 #endif
 #if defined(MODE_T8025)
@@ -873,10 +873,10 @@ void M_DrawReadThis2(void)
 #if defined(MODE_MDA)
     V_DrawPatchDirectTextMDA(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
 #endif
-#ifdef MODE_T8043
+#if defined(MODE_T8043)
     V_DrawPatchDirectText8043(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
 #endif
-#ifdef MODE_T8086
+#if defined(MODE_T8086)
     V_DrawPatchDirectText8086(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
 #endif
 #if defined(MODE_T8050)
@@ -894,10 +894,10 @@ void M_DrawReadThisRetail(void)
 {
     inhelpscreens = 1;
 
-#ifdef MODE_T4025 
+#if defined(MODE_T4025) 
     V_DrawPatchDirectText4025(0, 0, W_CacheLumpName("HELP", PU_CACHE));
 #endif
-#ifdef MODE_T4050
+#if defined(MODE_T4050)
     V_DrawPatchDirectText4050(0, 0, W_CacheLumpName("HELP", PU_CACHE));
 #endif
 #if defined(MODE_T8025)
@@ -906,10 +906,10 @@ void M_DrawReadThisRetail(void)
 #if defined(MODE_MDA)
     V_DrawPatchDirectTextMDA(0, 0, W_CacheLumpName("HELP", PU_CACHE));
 #endif
-#ifdef MODE_T8043
+#if defined(MODE_T8043)
     V_DrawPatchDirectText8043(0, 0, W_CacheLumpName("HELP", PU_CACHE));
 #endif
-#ifdef MODE_T8086
+#if defined(MODE_T8086)
     V_DrawPatchDirectText8086(0, 0, W_CacheLumpName("HELP", PU_CACHE));
 #endif
 #if defined(MODE_T8050)

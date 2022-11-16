@@ -186,7 +186,7 @@ void wipe_exitMelt()
 // wipe_ReadScreen
 // Reads the screen currently displayed into a linear buffer.
 //
-#ifdef MODE_Y
+#if defined(MODE_Y)
 void wipe_ReadScreen(byte *scr)
 {
     int j;
@@ -287,7 +287,7 @@ void wipe_ReadScreen(byte *scr)
 }
 #endif
 
-#ifdef MODE_VBE2_DIRECT
+#if defined(MODE_VBE2_DIRECT)
 void wipe_ReadScreen(byte *scr)
 {
     CopyDWords(destscreen, scr, SCREENWIDTH * SCREENHEIGHT / 4);

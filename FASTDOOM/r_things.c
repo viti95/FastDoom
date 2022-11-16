@@ -272,7 +272,7 @@ void R_DrawVisSprite(vissprite_t *vis)
 #if defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_T8086)
     dc_iscale = abs(vis->xiscale) >> 1;
 #endif
-#ifdef MODE_Y
+#if defined(MODE_Y)
     dc_iscale = abs(vis->xiscale) >> detailshift;
 #endif
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT) || defined(MODE_MDA)
@@ -494,7 +494,7 @@ void R_ProjectSprite(mobj_t *thing)
 #if defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_T8086)
     vis->scale = xscale << 1;
 #endif
-#ifdef MODE_Y
+#if defined(MODE_Y)
     vis->scale = xscale << detailshift;
 #endif
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT) || defined(MODE_MDA)
@@ -549,7 +549,7 @@ void R_ProjectSprite(mobj_t *thing)
 #if defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_T8086)
         index = xscale >> (LIGHTSCALESHIFT - 1);
 #endif
-#ifdef MODE_Y
+#if defined(MODE_Y)
         index = xscale >> (LIGHTSCALESHIFT - detailshift);
 #endif
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT) || defined(MODE_MDA)
@@ -636,7 +636,7 @@ void R_DrawPSprite(pspdef_t *psp)
 #if defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_T8086)
     vis->scale = pspritescale << 1;
 #endif
-#ifdef MODE_Y
+#if defined(MODE_Y)
     vis->scale = pspritescale << detailshift;
 #endif
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT) || defined(MODE_MDA)
