@@ -1069,7 +1069,22 @@ void I_ProcessPalette(byte *palette)
 void I_ProcessPalette(byte *palette)
 {
     int i, j;
+    unsigned char *ptrLUT55;
+    unsigned char *ptrLUT13;
     byte *ptr = gammatable[usegamma];
+
+    if (CGAmodel == CGA_OLD)
+    {
+        ptrLUT55 = oldCGA55LUT;
+        ptrLUT13 = oldCGA13LUT;
+    }
+
+    if (CGAmodel == CGA_NEW)
+    {
+        ptrLUT55 = newCGA55LUT;
+        ptrLUT13 = newCGA13LUT;
+    }
+
 
     for (i = 0; i < 14 * 256; i++)
     {
@@ -1090,13 +1105,13 @@ void I_ProcessPalette(byte *palette)
             int pos = j * 3;
             unsigned short value;
 
-            r2 = (int)oldCGA55LUT[pos];
+            r2 = (int)ptrLUT55[pos];
             cR = abs(r2 - r1);
 
-            g2 = (int)oldCGA55LUT[pos + 1];
+            g2 = (int)ptrLUT55[pos + 1];
             cG = abs(g2 - g1);
 
-            b2 = (int)oldCGA55LUT[pos + 2];
+            b2 = (int)ptrLUT55[pos + 2];
             cB = abs(b2 - b1);
 
             distance = cR + cG + cB;
@@ -1127,13 +1142,13 @@ void I_ProcessPalette(byte *palette)
                 int pos = j * 3;
                 unsigned short value;
 
-                r2 = (int)oldCGA13LUT[pos];
+                r2 = (int)ptrLUT13[pos];
                 cR = abs(r2 - r1);
 
-                g2 = (int)oldCGA13LUT[pos + 1];
+                g2 = (int)ptrLUT13[pos + 1];
                 cG = abs(g2 - g1);
 
-                b2 = (int)oldCGA13LUT[pos + 2];
+                b2 = (int)ptrLUT13[pos + 2];
                 cB = abs(b2 - b1);
 
                 distance = cR + cG + cB;

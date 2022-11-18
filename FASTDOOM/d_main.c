@@ -110,6 +110,10 @@ boolean CGAcard;
 boolean CGApalette1;
 #endif
 
+#if defined(MODE_CGA512)
+unsigned char CGAmodel;
+#endif
+
 #if defined(MODE_CGA16) || defined(MODE_CGA136) || defined(MODE_CGA_AFH)
 boolean snowfix;
 #endif
@@ -1062,6 +1066,29 @@ void IdentifyVersion(void)
     LoadIWAD(selection);
 }
 
+#if defined(MODE_CGA512)
+unsigned char SelectIBMCGA(void)
+{
+    int selection = -1;
+
+    printf("\nWhich IBM CGA model do you have:\n\n");
+    printf("     1. Old model\n");
+    printf("     2. New model\n");
+
+    fflush(stdout);
+    selection = getch();
+
+    switch(selection){
+        case 49:
+            return CGA_OLD;
+        case 50:
+            return CGA_NEW;
+        default:
+            I_Error("Wrong selection");
+    }
+}
+#endif
+
 //
 // D_DoomMain
 //
@@ -1079,6 +1106,11 @@ void D_DoomMain(void)
     }
 
     IdentifyVersion();
+
+#if defined(MODE_CGA512)
+    CGAmodel = SelectIBMCGA();
+#endif
+
     if ((p = M_CheckParm("-complevel")))
     {
         if (p < myargc - 1)
