@@ -108,7 +108,7 @@ void R_MapPlane(int y, int x1)
     fixed_t length;
     unsigned index;
 
-    #if defined(MODE_CGA16) || defined(MODE_CGA136) || defined(MODE_EGA16) || defined(MODE_EGA136)
+    #if defined(MODE_CGA16) || defined(MODE_CGA136) || defined(MODE_EGA16) || defined(MODE_EGA136) || defined(MODE_CGA512) || defined(MODE_CGA_AFH)
 		if (y & 1){
 			return;
 		}
@@ -1234,7 +1234,7 @@ void R_DrawPlanesFlatSurfaces_13h(void)
             }
             #endif
 
-            #if defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136) || defined(MODE_EGA80)
+            #if defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136) || defined(MODE_EGA80) || defined(MODE_CGA512)
             if (x & 3){
                 continue;
             }
@@ -1330,7 +1330,7 @@ void R_DrawSky(visplane_t *pl)
             }
             #endif
 
-            #if defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136) || defined(MODE_EGA80)
+            #if defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136) || defined(MODE_EGA80) || defined(MODE_CGA512)
             if (x & 3){
                 continue;
             }
@@ -1377,7 +1377,7 @@ void R_DrawSky(visplane_t *pl)
             }
             #endif
 
-            #if defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136) || defined(MODE_EGA80)
+            #if defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136) || defined(MODE_EGA80) || defined(MODE_CGA512)
             if (x & 3){
                 continue;
             }

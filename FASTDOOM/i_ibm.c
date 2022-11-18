@@ -214,6 +214,11 @@ unsigned short lut16colors[14 * 256];
 unsigned short *ptrlut16colors;
 #endif
 
+#if defined(MODE_CGA512)
+unsigned short lut256colors[14 * 256];
+unsigned short *ptrlut256colors;
+#endif
+
 #if defined(MODE_ATI640)
 unsigned short lutcolors[14 * 512];
 unsigned short *ptrlutcolors;
@@ -658,7 +663,7 @@ const byte colors[12] = {
     0x2A, 0x15, 0x00};
 #endif
 
-#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_CGA) || defined(MODE_EGA640) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB) || defined(MODE_ATI640) || defined(MODE_EGA80) || defined(MODE_EGAW1) || defined(MODE_EGA) || defined(MODE_CGA_AFH)
+#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_CGA) || defined(MODE_EGA640) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB) || defined(MODE_ATI640) || defined(MODE_EGA80) || defined(MODE_EGAW1) || defined(MODE_EGA) || defined(MODE_CGA_AFH) || defined(MODE_CGA512)
 
 int I_SQRT(int x)
 {
@@ -1060,6 +1065,100 @@ void I_ProcessPalette(byte *palette)
 }
 #endif
 
+#if defined(MODE_CGA512)
+void I_ProcessPalette(byte *palette)
+{
+    int i, j;
+    byte *ptr = gammatable[usegamma];
+
+    for (i = 0; i < 14 * 256; i++)
+    {
+        int distance;
+
+        int r1, g1, b1;
+
+        int best_difference = MAXINT;
+
+        r1 = (int)ptr[*palette++];
+        g1 = (int)ptr[*palette++];
+        b1 = (int)ptr[*palette++];
+
+        for (j = 0; j < 256; j++)
+        {
+            int r2, g2, b2;
+            int cR, cG, cB;
+            int pos = j * 3;
+            unsigned short value;
+
+            r2 = (int)oldCGA55LUT[pos];
+            cR = abs(r2 - r1);
+
+            g2 = (int)oldCGA55LUT[pos + 1];
+            cG = abs(g2 - g1);
+
+            b2 = (int)oldCGA55LUT[pos + 2];
+            cB = abs(b2 - b1);
+
+            distance = cR + cG + cB;
+
+            if (distance == 0)
+            {
+                value = j << 8 | 0x55;
+                lut256colors[i] = value;
+                break;
+            }
+
+            distance = I_SQRT(distance);
+
+            if (best_difference > distance)
+            {
+                best_difference = distance;
+                value = j << 8 | 0x55;
+                lut256colors[i] = value;
+            }
+        }
+
+        if (distance != 0)
+        {
+            for (j = 0; j < 256; j++)
+            {
+                int r2, g2, b2;
+                int cR, cG, cB;
+                int pos = j * 3;
+                unsigned short value;
+
+                r2 = (int)oldCGA13LUT[pos];
+                cR = abs(r2 - r1);
+
+                g2 = (int)oldCGA13LUT[pos + 1];
+                cG = abs(g2 - g1);
+
+                b2 = (int)oldCGA13LUT[pos + 2];
+                cB = abs(b2 - b1);
+
+                distance = cR + cG + cB;
+
+                if (distance == 0)
+                {
+                    value = i << 8 | 0x13;
+                    lut256colors[i] = value;
+                    break;
+                }
+
+                distance = I_SQRT(distance);
+
+                if (best_difference > distance)
+                {
+                    best_difference = distance;
+                    value = i << 8 | 0x13;
+                    lut256colors[i] = value;
+                }
+            }
+        }
+    }
+}
+#endif
+
 #if defined(MODE_CGA)
 void I_ProcessPalette(byte *palette)
 {
@@ -1125,6 +1224,10 @@ void I_SetPalette(int numpalette)
 
 #if defined(MODE_CGA_BW) || defined(MODE_EGA640)
     ptrlutcolors = lutcolors + numpalette * 512;
+#endif
+
+#if defined(MODE_CGA512)
+    ptrlut256colors = lut256colors + numpalette * 256;
 #endif
 
 #if defined(MODE_ATI640)
@@ -2605,6 +2708,33 @@ void V2_DrawBackbuffer(void)
 }
 #endif
 
+#if defined(MODE_CGA512)
+void CGA512_DrawBackbuffer(void)
+{
+    unsigned short *vram = (unsigned short *)0xB8000;
+    byte *ptrbackbuffer = backbuffer;
+    unsigned char line = 80;
+
+    do
+    {
+        unsigned short tmp = ptrlut256colors[*ptrbackbuffer];
+
+        I_WaitCGA();
+        *vram = tmp;
+
+        vram += 1;
+        ptrbackbuffer += 4;
+
+        line--;
+        if (line == 0)
+        {
+            line = 80;
+            ptrbackbuffer += 320;
+        }
+    } while (vram < (unsigned short *)0xBBE80);
+}
+#endif
+
 #if defined(MODE_PCP)
 void PCP_DrawBackbuffer(void)
 {
@@ -2949,6 +3079,9 @@ void I_FinishUpdate(void)
 #endif
 #if defined(MODE_ATI640)
     ATI640_DrawBackbuffer();
+#endif
+#if defined(MODE_CGA512)
+    CGA512_DrawBackbuffer();
 #endif
 #if defined(MODE_PCP)
     PCP_DrawBackbuffer();
@@ -3336,7 +3469,7 @@ void I_InitGraphics(void)
         vram[i] = 0x00;
     }
 #endif
-#if defined(MODE_CGA16) || defined(MODE_CGA136) || defined(MODE_VGA16) || defined(MODE_VGA136) || defined(MODE_CGA_AFH)
+#if defined(MODE_CGA16) || defined(MODE_CGA136) || defined(MODE_CGA512) || defined(MODE_VGA16) || defined(MODE_VGA136) || defined(MODE_CGA_AFH)
     unsigned char *vram = (unsigned char *)0xB8000;
     int i;
 

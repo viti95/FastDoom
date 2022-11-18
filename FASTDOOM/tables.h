@@ -71,6 +71,13 @@ extern const angle_t tantoangle[SLOPERANGE + 1];
 extern const unsigned char ansifromhellLUT[131072];
 #endif
 
+#ifdef MODE_CGA512
+extern const unsigned char oldCGA55LUT[768];
+extern const unsigned char oldCGA13LUT[768];
+extern const unsigned char newCGA55LUT[768];
+extern const unsigned char newCGA13LUT[768];
+#endif
+
 // Utility function,
 //  called by R_PointToAngle.
 
