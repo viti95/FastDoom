@@ -710,13 +710,13 @@ int I_GetClosestColor(int r1, int g1, int b1)
         int pos = i * 3;
 
         r2 = (int)colors[pos];
-        cR = abs(r2 - r1);
+        cR = (r2 - r1) * (r2 - r1);
 
         g2 = (int)colors[pos + 1];
-        cG = abs(g2 - g1);
+        cG = (g2 - g1) * (g2 - g1);
 
         b2 = (int)colors[pos + 2];
-        cB = abs(b2 - b1);
+        cB = (b2 - b1) * (b2 - b1);
 
         distance = cR + cG + cB;
 
@@ -853,13 +853,13 @@ void I_ProcessPalette(byte *palette)
             int pos = j * 3;
 
             r2 = (int)colors[pos];
-            cR = abs(r2 - r1);
+            cR = (r2 - r1) * (r2 - r1);
 
             g2 = (int)colors[pos + 1];
-            cG = abs(g2 - g1);
+            cG = (g2 - g1) * (g2 - g1);
 
             b2 = (int)colors[pos + 2];
-            cB = abs(b2 - b1);
+            cB = (b2 - b1) * (b2 - b1);
 
             distance = cR + cG + cB;
 
@@ -906,13 +906,13 @@ void I_ProcessPalette(byte *palette)
             int pos = j * 3;
 
             r2 = (int)colors[pos];
-            cR = abs(r2 - r1);
+            cR = (r2 - r1) * (r2 - r1);
 
             g2 = (int)colors[pos + 1];
-            cG = abs(g2 - g1);
+            cG = (g2 - g1) * (g2 - g1);
 
             b2 = (int)colors[pos + 2];
-            cB = abs(b2 - b1);
+            cB = (b2 - b1) * (b2 - b1);
 
             distance = cR + cG + cB;
 
@@ -965,13 +965,13 @@ void I_ProcessPalette(byte *palette)
             int pos = j * 4;
 
             r2 = (int)colors[pos + 1];
-            cR = abs(r2 - r1);
+            cR = (r2 - r1) * (r2 - r1);
 
             g2 = (int)colors[pos + 2];
-            cG = abs(g2 - g1);
+            cG = (g2 - g1) * (g2 - g1);
 
             b2 = (int)colors[pos + 3];
-            cB = abs(b2 - b1);
+            cB = (b2 - b1) * (b2 - b1);
 
             distance = cR + cG + cB;
 
@@ -1016,13 +1016,13 @@ void I_ProcessPalette(byte *palette)
             int pos = j * 3;
 
             r2 = (int)colors[pos];
-            cR = abs(r2 - r1);
+            cR = (r2 - r1) * (r2 - r1);
 
             g2 = (int)colors[pos + 1];
-            cG = abs(g2 - g1);
+            cG = (g2 - g1) * (g2 - g1);
 
             b2 = (int)colors[pos + 2];
-            cB = abs(b2 - b1);
+            cB = (b2 - b1) * (b2 - b1);
 
             distance = cR + cG + cB;
 
@@ -1106,13 +1106,13 @@ void I_ProcessPalette(byte *palette)
             unsigned short value;
 
             r2 = (int)ptrLUT55[pos];
-            cR = abs(r2 - r1);
+            cR = (r2 - r1) * (r2 - r1);
 
             g2 = (int)ptrLUT55[pos + 1];
-            cG = abs(g2 - g1);
+            cG = (g2 - g1) * (g2 - g1);
 
             b2 = (int)ptrLUT55[pos + 2];
-            cB = abs(b2 - b1);
+            cB = (b2 - b1) * (b2 - b1);
 
             distance = cR + cG + cB;
 
@@ -1143,13 +1143,13 @@ void I_ProcessPalette(byte *palette)
                 unsigned short value;
 
                 r2 = (int)ptrLUT13[pos];
-                cR = abs(r2 - r1);
+                cR = (r2 - r1) * (r2 - r1);
 
                 g2 = (int)ptrLUT13[pos + 1];
-                cG = abs(g2 - g1);
+                cG = (g2 - g1) * (g2 - g1);
 
                 b2 = (int)ptrLUT13[pos + 2];
-                cB = abs(b2 - b1);
+                cB = (b2 - b1) * (b2 - b1);
 
                 distance = cR + cG + cB;
 
@@ -1199,13 +1199,13 @@ void I_ProcessPalette(byte *palette)
             int pos = j * 3;
 
             r2 = (int)colors[pos];
-            cR = abs(r2 - r1);
+            cR = (r2 - r1) * (r2 - r1);
 
             g2 = (int)colors[pos + 1];
-            cG = abs(g2 - g1);
+            cG = (g2 - g1) * (g2 - g1);
 
             b2 = (int)colors[pos + 2];
-            cB = abs(b2 - b1);
+            cB = (b2 - b1) * (b2 - b1);
 
             distance = cR + cG + cB;
 
