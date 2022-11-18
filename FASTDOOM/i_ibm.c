@@ -2709,20 +2709,27 @@ void V2_DrawBackbuffer(void)
 #endif
 
 #if defined(MODE_CGA512)
+unsigned short vrambuffer[8000];
 void CGA512_DrawBackbuffer(void)
 {
     unsigned short *vram = (unsigned short *)0xB8000;
     byte *ptrbackbuffer = backbuffer;
+    unsigned short *ptrvrambuffer = vrambuffer;
     unsigned char line = 80;
 
     do
     {
         unsigned short tmp = ptrlut256colors[*ptrbackbuffer];
 
-        I_WaitCGA();
-        *vram = tmp;
+        if (*ptrvrambuffer != tmp)
+        {
+            *ptrvrambuffer = tmp;
+            I_WaitCGA();
+            *vram = tmp;
+        }
 
         vram += 1;
+        ptrvrambuffer += 1;
         ptrbackbuffer += 4;
 
         line--;
