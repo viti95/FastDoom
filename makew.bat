@@ -33,6 +33,7 @@ if "%2"=="E80" GOTO mode_e80
 if "%2"=="EW1" GOTO mode_ew1
 if "%2"=="EGA" GOTO mode_ega
 if "%2"=="CAH" GOTO mode_cah
+if "%2"=="512" GOTO mode_512
 
 :mode_13h
 set base=fdoom13h.exe
@@ -62,6 +63,12 @@ goto compile
 set base=fdoom13h.exe
 set executable=fdoomcah.exe
 set options=/dMODE_CGA_AFH
+goto compile
+
+:mode_512
+set base=fdoom13h.exe
+set executable=fdoom512.exe
+set options=/dMODE_CGA512
 goto compile
 
 :mode_c36

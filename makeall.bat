@@ -29,3 +29,4 @@ call make.bat clean EW1
 call make.bat clean E80
 call make.bat clean EGA
 call make.bat clean CAH
+call make.bat clean 512
