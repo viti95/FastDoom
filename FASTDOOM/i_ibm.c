@@ -1140,7 +1140,7 @@ void I_ProcessPalette(byte *palette)
 
                 if (distance == 0)
                 {
-                    value = i << 8 | 0x13;
+                    value = j << 8 | 0x13;
                     lut256colors[i] = value;
                     break;
                 }
@@ -1150,7 +1150,7 @@ void I_ProcessPalette(byte *palette)
                 if (best_difference > distance)
                 {
                     best_difference = distance;
-                    value = i << 8 | 0x13;
+                    value = j << 8 | 0x13;
                     lut256colors[i] = value;
                 }
             }
