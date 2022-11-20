@@ -107,6 +107,10 @@
 #include "ega_320.h"
 #endif
 
+#if defined(MODE_EGAW1)
+#include "ega_160.h"
+#endif
+
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 #include "i_vesa.h"
 #endif
@@ -252,7 +256,7 @@ void I_StartupSound(void);
 void I_ShutdownSound(void);
 void I_ShutdownTimer(void);
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_EGA80) || defined(MODE_EGAW1)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_EGA80)
 byte lut16colors[14 * 256];
 byte *ptrlut16colors;
 #endif
@@ -295,7 +299,7 @@ byte scantokey[128] =
 byte vrambuffer[16384];
 #endif
 
-#if defined(MODE_CGA_AFH) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_VGA16) || defined(MODE_13H) || defined(MODE_PCP) || defined(MODE_ATI640) || defined(MODE_CGA) || defined(MODE_CVB) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_EGA640) || defined(MODE_V2) || defined(MODE_EGA)
+#if defined(MODE_CGA_AFH) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_VGA16) || defined(MODE_13H) || defined(MODE_PCP) || defined(MODE_ATI640) || defined(MODE_CGA) || defined(MODE_CVB) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_EGA640) || defined(MODE_V2) || defined(MODE_EGA) || defined(MODE_EGAW1)
 void I_ProcessPalette(byte *palette)
 {
     #if defined(MODE_CGA_AFH)
@@ -353,6 +357,10 @@ void I_ProcessPalette(byte *palette)
     #if defined(MODE_EGA)
     EGA_ProcessPalette(palette);
     #endif
+
+    #if defined(MODE_EGAW1)
+    EGA_160_ProcessPalette(palette);
+    #endif
 }
 #endif
 
@@ -373,7 +381,7 @@ void I_ProcessPalette(byte *palette)
 }
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_EGA80) || defined(MODE_EGAW1)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_EGA80)
 const byte colors[48] = {
     0x00, 0x00, 0x00,  // 0
     0x00, 0x00, 0x2A,  // 1
@@ -393,7 +401,7 @@ const byte colors[48] = {
     0x3F, 0x3F, 0x3F}; // 15
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_EGA80) || defined(MODE_EGAW1)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_EGA80)
 void I_ProcessPalette(byte *palette)
 {
     int i, j;
@@ -484,6 +492,10 @@ void I_SetPalette(int numpalette)
 
 #if defined(MODE_EGA)
     EGA_SetPalette(numpalette);
+#endif
+
+#if defined(MODE_EGAW1)
+    EGA_160_SetPalette(numpalette);
 #endif
 
 #if defined(MODE_Y) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
@@ -802,46 +814,6 @@ void I_UpdateNoBlit(void)
 
 extern int screenblocks;
 
-#if defined(MODE_EGAW1)
-unsigned short lastlatch;
-unsigned short vrambuffer[8000];
-
-void EGAW1_DrawBackbuffer(void)
-{
-    byte *vram = (byte *)0xA0000;
-    byte *ptrbackbuffer = backbuffer;
-    unsigned short *ptrvrambuffer = vrambuffer;
-
-    do
-    {
-        unsigned short fullvalue = 16 * 16 * 16 * ptrlut16colors[*ptrbackbuffer] +
-                                   16 * 16 * ptrlut16colors[*(ptrbackbuffer + 2)] +
-                                   16 * ptrlut16colors[*(ptrbackbuffer + 4)] +
-                                   ptrlut16colors[*(ptrbackbuffer + 6)];
-
-        if (*(ptrvrambuffer) != fullvalue)
-        {
-            unsigned short vramlut;
-
-            *(ptrvrambuffer) = fullvalue;
-            vramlut = fullvalue >> 4;
-
-            if (lastlatch != vramlut)
-            {
-                lastlatch = vramlut;
-                ReadMem((byte *)0xA1F40 + vramlut);
-            }
-
-            *(vram) = fullvalue;
-        }
-
-        vram += 1;
-        ptrbackbuffer += 8;
-        ptrvrambuffer += 1;
-    } while (vram < (byte *)0xA1F40);
-}
-#endif
-
 #if defined(MODE_EGA80)
 void EGA80_DrawBackbuffer(void)
 {
@@ -1088,7 +1060,7 @@ void I_FinishUpdate(void)
     EGA_DrawBackbuffer();
 #endif
 #if defined(MODE_EGAW1)
-    EGAW1_DrawBackbuffer();
+    EGA_160_DrawBackbuffer();
 #endif
 #if defined(MODE_VGA16)
     VGA_16_DrawBackbuffer();
@@ -1357,71 +1329,7 @@ void I_InitGraphics(void)
 #endif
 
 #if defined(MODE_EGAW1)
-    {
-        unsigned int pos1 = 0;
-        unsigned int pos2 = 0;
-        unsigned int pos3 = 0;
-        unsigned int counter = 0;
-        byte *basevram;
-
-        regs.w.ax = 0x0D;
-        int386(0x10, (union REGS *)&regs, &regs);
-        pcscreen = destscreen = (byte *)0xA0000;
-
-        basevram = (byte *)0xA1F40; // Init at ending of viewable screen
-
-        // Step 1
-        // Copy all possible combinations to the VRAM
-
-        outp(0x3C4, 0x02);
-        for (pos1 = 0; pos1 < 16; pos1++)
-        {
-            for (pos2 = 0; pos2 < 16; pos2++)
-            {
-                for (pos3 = 0; pos3 < 16; pos3++)
-                {
-                    for (counter = 0; counter < 4; counter++)
-                    {
-                        byte bitstatuspos1;
-                        byte bitstatuspos2;
-                        byte bitstatuspos3;
-
-                        byte final;
-
-                        outp(0x3C5, 1 << counter); // Change plane
-
-                        bitstatuspos1 = (pos1 >> counter) & 1;
-                        bitstatuspos2 = (pos2 >> counter) & 1;
-                        bitstatuspos3 = (pos3 >> counter) & 1;
-
-                        final = bitstatuspos1 << 6 | bitstatuspos1 << 7 |
-                                bitstatuspos2 << 4 | bitstatuspos2 << 5 |
-                                bitstatuspos3 << 2 | bitstatuspos3 << 3;
-                        *basevram = final;
-                    }
-                    basevram++;
-                }
-            }
-        }
-
-        // Step 2
-
-        // Write Mode 2
-        outp(0x3CE, 0x05);
-        outp(0x3CF, 0x02);
-
-        // Write to all 4 planes
-        outp(0x3C4, 0x02);
-        outp(0x3C5, 0x0F);
-
-        // Set Bit Mask to use the latch registers
-        outp(0x3CE, 0x08);
-        outp(0x3CF, 0x03);
-
-        // Set logical operation to OR
-        outp(0x3CE, 0x03);
-        outp(0x3CF, 0x10);
-    }
+    EGA_160_InitGraphics();
 #endif
 #if defined(MODE_EGA80)
     regs.w.ax = 0x0E;
