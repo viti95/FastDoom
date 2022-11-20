@@ -111,6 +111,10 @@
 #include "ega_160.h"
 #endif
 
+#if defined(MODE_EGA80)
+#include "ega_80.h"
+#endif
+
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 #include "i_vesa.h"
 #endif
@@ -256,7 +260,7 @@ void I_StartupSound(void);
 void I_ShutdownSound(void);
 void I_ShutdownTimer(void);
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_EGA80)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
 byte lut16colors[14 * 256];
 byte *ptrlut16colors;
 #endif
@@ -295,11 +299,7 @@ byte scantokey[128] =
         0, 0, 0, 0, 0, 0, 0, 0 // 7
 };
 
-#if defined(MODE_EGA80)
-byte vrambuffer[16384];
-#endif
-
-#if defined(MODE_CGA_AFH) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_VGA16) || defined(MODE_13H) || defined(MODE_PCP) || defined(MODE_ATI640) || defined(MODE_CGA) || defined(MODE_CVB) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_EGA640) || defined(MODE_V2) || defined(MODE_EGA) || defined(MODE_EGAW1)
+#if defined(MODE_CGA_AFH) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_VGA16) || defined(MODE_13H) || defined(MODE_PCP) || defined(MODE_ATI640) || defined(MODE_CGA) || defined(MODE_CVB) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_EGA640) || defined(MODE_V2) || defined(MODE_EGA) || defined(MODE_EGAW1) || defined(MODE_EGA80)
 void I_ProcessPalette(byte *palette)
 {
     #if defined(MODE_CGA_AFH)
@@ -361,6 +361,10 @@ void I_ProcessPalette(byte *palette)
     #if defined(MODE_EGAW1)
     EGA_160_ProcessPalette(palette);
     #endif
+
+    #if defined(MODE_EGA80)
+    EGA_80_ProcessPalette(palette);
+    #endif
 }
 #endif
 
@@ -381,7 +385,7 @@ void I_ProcessPalette(byte *palette)
 }
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_EGA80)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
 const byte colors[48] = {
     0x00, 0x00, 0x00,  // 0
     0x00, 0x00, 0x2A,  // 1
@@ -401,7 +405,7 @@ const byte colors[48] = {
     0x3F, 0x3F, 0x3F}; // 15
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_EGA80)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
 void I_ProcessPalette(byte *palette)
 {
     int i, j;
@@ -496,6 +500,10 @@ void I_SetPalette(int numpalette)
 
 #if defined(MODE_EGAW1)
     EGA_160_SetPalette(numpalette);
+#endif
+
+#if defined(MODE_EGA80)
+    EGA_80_SetPalette(numpalette);
 #endif
 
 #if defined(MODE_Y) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
@@ -814,52 +822,6 @@ void I_UpdateNoBlit(void)
 
 extern int screenblocks;
 
-#if defined(MODE_EGA80)
-void EGA80_DrawBackbuffer(void)
-{
-    unsigned char *vram = (unsigned char *)0xA0000;
-    byte *ptrvrambuffer = vrambuffer;
-    byte *ptrbackbuffer = backbuffer;
-
-    do
-    {
-        byte tmp;
-
-        tmp = ptrlut16colors[*ptrbackbuffer];
-        if (tmp != *(ptrvrambuffer))
-        {
-            *(vram) = tmp;
-            *(ptrvrambuffer) = tmp;
-        }
-
-        tmp = ptrlut16colors[*(ptrbackbuffer + 4)];
-        if (tmp != *(ptrvrambuffer + 1))
-        {
-            *(vram + 1) = tmp;
-            *(ptrvrambuffer + 1) = tmp;
-        }
-
-        tmp = ptrlut16colors[*(ptrbackbuffer + 8)];
-        if (tmp != *(ptrvrambuffer + 2))
-        {
-            *(vram + 2) = tmp;
-            *(ptrvrambuffer + 2) = tmp;
-        }
-
-        tmp = ptrlut16colors[*(ptrbackbuffer + 12)];
-        if (tmp != *(ptrvrambuffer + 3))
-        {
-            *(vram + 3) = tmp;
-            *(ptrvrambuffer + 3) = tmp;
-        }
-
-        vram += 4;
-        ptrvrambuffer += 4;
-        ptrbackbuffer += 16;
-    } while (vram < (unsigned char *)0xA3E80);
-}
-#endif
-
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 static struct VBE_VbeInfoBlock vbeinfo;
 static struct VBE_ModeInfoBlock vbemode;
@@ -1054,7 +1016,7 @@ void I_FinishUpdate(void)
     EGA_16_DrawBackbuffer();
 #endif
 #if defined(MODE_EGA80)
-    EGA80_DrawBackbuffer();
+    EGA_80_DrawBackbuffer();
 #endif
 #if defined(MODE_EGA)
     EGA_DrawBackbuffer();
@@ -1332,23 +1294,7 @@ void I_InitGraphics(void)
     EGA_160_InitGraphics();
 #endif
 #if defined(MODE_EGA80)
-    regs.w.ax = 0x0E;
-    int386(0x10, (union REGS *)&regs, &regs);
-    pcscreen = destscreen = (byte *)0xA0000;
-
-    // Write Mode 2
-    outp(0x3CE, 0x05);
-    outp(0x3CF, 0x02);
-
-    // Write to all 4 planes
-    outp(0x3C4, 0x02);
-    outp(0x3C5, 0x0F);
-
-    // Set Bit Mask to omit the latch registers
-    outp(0x3CE, 0x08);
-    outp(0x3CF, 0xFF);
-
-    SetDWords(vrambuffer, 0, 4096);
+    EGA_80_InitGraphics();
 #endif
 #if defined(MODE_EGA640)
     EGA_640_InitGraphics();
