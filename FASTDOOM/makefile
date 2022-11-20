@@ -137,6 +137,7 @@ GLOBOBJS_13H = &
  herc.obj &
  cga_bw.obj &
  ega_640.obj &
+ vga_vert.obj &
  math.obj &
  ns_dpmi.obj &
  ns_pcfx.obj &

@@ -15,7 +15,7 @@
 
 #include "doomstat.h"
 
-#if defined(MODE_13H)
+#if defined(MODE_13H) || defined(MODE_V2)
 
 void VGA_TestFastSetPalette(void)
 {
