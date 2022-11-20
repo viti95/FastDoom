@@ -21,6 +21,7 @@ file ega_16.obj
 file vga.obj
 file vga_16.obj
 file vga_13h.obj
+file pcp.obj
 file math.obj
 file ns_dpmi.obj
 file ns_pcfx.obj

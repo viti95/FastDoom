@@ -70,6 +70,10 @@
 #include "vga_13h.h"
 #endif
 
+#if defined(MODE_PCP)
+#include "pcp.h"
+#endif
+
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 #include "i_vesa.h"
 #endif
@@ -306,10 +310,6 @@ byte vrambufferB3[16384];
 byte vrambufferI3[16384];
 #endif
 
-#if defined(MODE_PCP)
-byte vrambuffer[32768];
-#endif
-
 #if defined(MODE_CGA)
 unsigned short vrambuffer[16384];
 #endif
@@ -322,7 +322,7 @@ byte vrambuffer[65536];
 byte vrambuffer[16384];
 #endif
 
-#if defined(MODE_CGA_AFH) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_VGA16) || defined(MODE_13H)
+#if defined(MODE_CGA_AFH) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_VGA16) || defined(MODE_13H) || defined(MODE_PCP)
 void I_ProcessPalette(byte *palette)
 {
     #if defined(MODE_CGA_AFH)
@@ -343,6 +343,10 @@ void I_ProcessPalette(byte *palette)
 
     #if defined(MODE_13H)
     VGA_13H_ProcessPalette(palette);
+    #endif
+
+    #if defined(MODE_PCP)
+    PCP_ProcessPalette(palette);
     #endif
 }
 #endif
@@ -657,26 +661,6 @@ const byte colors[48] = { // standard IBM CGA
     0x3f, 0x3f, 0x3f};*/
 #endif
 
-#if defined(MODE_PCP)
-const byte colors[48] = {
-    0x00, 0x00, 0x00,
-    0x00, 0x2A, 0x00,
-    0x2A, 0x00, 0x00,
-    0x2A, 0x15, 0x00,
-    0x15, 0x15, 0x15,
-    0x15, 0x3F, 0x15,
-    0x3F, 0x15, 0x15,
-    0x3F, 0x3F, 0x15,
-    0x00, 0x00, 0x2A,
-    0x00, 0x2A, 0x2A,
-    0x2A, 0x00, 0x2A,
-    0x2A, 0x2A, 0x2A,
-    0x15, 0x15, 0x3F,
-    0x15, 0x3F, 0x3F,
-    0x3F, 0x15, 0x3F,
-    0x3F, 0x3F, 0x3F};
-#endif
-
 #if defined(MODE_CGA)
 const byte colors[12] = {
     0x00, 0x00, 0x00,
@@ -685,7 +669,7 @@ const byte colors[12] = {
     0x2A, 0x15, 0x00};
 #endif
 
-#if defined(MODE_CGA) || defined(MODE_EGA640) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB) || defined(MODE_ATI640) || defined(MODE_EGA80) || defined(MODE_EGAW1) || defined(MODE_EGA)
+#if defined(MODE_CGA) || defined(MODE_EGA640) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_CVB) || defined(MODE_ATI640) || defined(MODE_EGA80) || defined(MODE_EGAW1) || defined(MODE_EGA)
 
 int I_SQRT(int x)
 {
@@ -960,80 +944,6 @@ void I_ProcessPalette(byte *palette)
 }
 #endif
 
-#if defined(MODE_PCP)
-void I_ProcessPalette(byte *palette)
-{
-    int i, j;
-    byte *ptr = gammatable[usegamma];
-
-    for (i = 0; i < 14 * 256; i++)
-    {
-        int distance;
-
-        int r1, g1, b1;
-
-        int best_difference = MAXINT;
-
-        r1 = (int)ptr[*palette++];
-        g1 = (int)ptr[*palette++];
-        b1 = (int)ptr[*palette++];
-
-        for (j = 0; j < 16; j++)
-        {
-            int r2, g2, b2;
-            int cR, cG, cB;
-            int pos = j * 3;
-
-            r2 = (int)colors[pos];
-            cR = abs(r2 - r1);
-
-            g2 = (int)colors[pos + 1];
-            cG = abs(g2 - g1);
-
-            b2 = (int)colors[pos + 2];
-            cB = abs(b2 - b1);
-
-            distance = cR + cG + cB;
-
-            if (distance == 0)
-            {
-                unsigned short value;
-                unsigned short value2;
-
-                value = j & 12;
-                value = value | value >> 2 | value << 2 | value << 4;
-                value <<= 8;
-
-                value2 = j & 3;
-                value2 = value2 | value2 << 2 | value2 << 4 | value2 << 6;
-                value2;
-
-                lut16colors[i] = value | value2;
-                break;
-            }
-
-            distance = I_SQRT(distance);
-
-            if (best_difference > distance)
-            {
-                unsigned short value;
-                unsigned short value2;
-
-                value = j & 12;
-                value = value | value >> 2 | value << 2 | value << 4;
-                value <<= 8;
-
-                value2 = j & 3;
-                value2 = value2 | value2 << 2 | value2 << 4 | value2 << 6;
-                value2;
-
-                lut16colors[i] = value | value2;
-            }
-        }
-    }
-}
-#endif
-
 #if defined(MODE_CGA)
 void I_ProcessPalette(byte *palette)
 {
@@ -1106,7 +1016,7 @@ void I_SetPalette(int numpalette)
 #endif
 
 #if defined(MODE_PCP)
-    ptrlut16colors = lut16colors + numpalette * 256;
+    PCP_SetPalette(numpalette);
 #endif
 
 #if defined(MODE_CGA16)
@@ -2414,83 +2324,6 @@ void V2_DrawBackbuffer(void)
 }
 #endif
 
-#if defined(MODE_PCP)
-void PCP_DrawBackbuffer(void)
-{
-    int x;
-    unsigned char *vram = (unsigned char *)0xB8000;
-    byte *ptrvrambuffer = vrambuffer;
-    unsigned int base = 0;
-
-    for (base = 0; base < SCREENHEIGHT * 320;)
-    {
-        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++, ptrvrambuffer++)
-        {
-            unsigned short color;
-            unsigned short finalcolor;
-            byte tmp;
-
-            color = ptrlut16colors[backbuffer[base]];
-            finalcolor = color & 0xC0C0;
-
-            color = ptrlut16colors[backbuffer[base + 1]];
-            finalcolor |= color & 0x3030;
-
-            color = ptrlut16colors[backbuffer[base + 2]];
-            finalcolor |= color & 0x0C0C;
-
-            color = ptrlut16colors[backbuffer[base + 3]];
-            finalcolor |= color & 0x0303;
-
-            tmp = BYTE0_USHORT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer))
-            {
-                *(vram) = tmp;
-                *(ptrvrambuffer) = tmp;
-            }
-
-            tmp = BYTE1_USHORT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer + 0x4000))
-            {
-                *(vram + 0x4000) = tmp;
-                *(ptrvrambuffer + 0x4000) = tmp;
-            }
-
-            color = ptrlut16colors[backbuffer[base + 320]];
-            finalcolor = color & 0xC0C0;
-
-            color = ptrlut16colors[backbuffer[base + 321]];
-            finalcolor |= color & 0x3030;
-
-            color = ptrlut16colors[backbuffer[base + 322]];
-            finalcolor |= color & 0x0C0C;
-
-            color = ptrlut16colors[backbuffer[base + 323]];
-            finalcolor |= color & 0x0303;
-
-            tmp = BYTE0_USHORT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer + 0x2000))
-            {
-                *(vram + 0x2000) = tmp;
-                *(ptrvrambuffer + 0x2000) = tmp;
-            }
-
-            tmp = BYTE1_USHORT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer + 0x6000))
-            {
-                *(vram + 0x6000) = tmp;
-                *(ptrvrambuffer + 0x6000) = tmp;
-            }
-        }
-        base += 320;
-    }
-}
-#endif
-
 #if defined(MODE_CGA)
 void CGA_DrawBackbuffer(void)
 {
@@ -3238,13 +3071,7 @@ void I_InitGraphics(void)
     SetDWords(pcscreen, 0, 4096);
 #endif
 #if defined(MODE_PCP)
-    regs.w.ax = 0x04;
-    int386(0x10, (union REGS *)&regs, &regs);
-    outp(0x3DD, 0x10);
-    pcscreen = destscreen = (byte *)0xB8000;
-
-    SetDWords(vrambuffer, 0, 8192);
-    SetDWords(pcscreen, 0, 8192);
+    PCP_InitGraphics();
 #endif
 #if defined(MODE_EGA)
     {
