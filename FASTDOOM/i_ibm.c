@@ -78,6 +78,10 @@
 #include "ati.h"
 #endif
 
+#if defined(MODE_CGA)
+#include "cga.h"
+#endif
+
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 #include "i_vesa.h"
 #endif
@@ -233,11 +237,6 @@ byte lut136colors[14 * 256];
 byte *ptrlut136colors;
 #endif
 
-#if defined(MODE_CGA)
-byte lut4colors[14 * 256];
-byte *ptrlut4colors;
-#endif
-
 #if defined(MODE_HERC)
 byte lutcolors[14 * 1024];
 byte *ptrlutcolors;
@@ -309,15 +308,11 @@ byte vrambufferB3[16384];
 byte vrambufferI3[16384];
 #endif
 
-#if defined(MODE_CGA)
-unsigned short vrambuffer[16384];
-#endif
-
 #if defined(MODE_CVB)
 byte vrambuffer[16384];
 #endif
 
-#if defined(MODE_CGA_AFH) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_VGA16) || defined(MODE_13H) || defined(MODE_PCP) || defined(MODE_ATI640)
+#if defined(MODE_CGA_AFH) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_VGA16) || defined(MODE_13H) || defined(MODE_PCP) || defined(MODE_ATI640) || defined(MODE_CGA)
 void I_ProcessPalette(byte *palette)
 {
     #if defined(MODE_CGA_AFH)
@@ -346,6 +341,10 @@ void I_ProcessPalette(byte *palette)
 
     #if defined(MODE_ATI640)
     ATI640_ProcessPalette(palette);
+    #endif
+
+    #if defined(MODE_CGA)
+    CGA_ProcessPalette(palette);
     #endif
 }
 #endif
@@ -640,14 +639,6 @@ const byte colors[48] = { // standard IBM CGA
     0x3f, 0x3f, 0x3f};*/
 #endif
 
-#if defined(MODE_CGA)
-const byte colors[12] = {
-    0x00, 0x00, 0x00,
-    0x00, 0x2A, 0x00,
-    0x2A, 0x00, 0x00,
-    0x2A, 0x15, 0x00};
-#endif
-
 #if defined(MODE_EGA640)
 void I_ProcessPalette(byte *palette)
 {
@@ -796,59 +787,6 @@ void I_ProcessPalette(byte *palette)
 }
 #endif
 
-#if defined(MODE_CGA)
-void I_ProcessPalette(byte *palette)
-{
-    int i, j;
-    byte *ptr = gammatable[usegamma];
-
-    for (i = 0; i < 14 * 256; i++)
-    {
-        int distance;
-
-        int r1, g1, b1;
-
-        int best_difference = MAXINT;
-
-        r1 = (int)ptr[*palette++];
-        g1 = (int)ptr[*palette++];
-        b1 = (int)ptr[*palette++];
-
-        for (j = 0; j < 4; j++)
-        {
-            int r2, g2, b2;
-            int cR, cG, cB;
-            int pos = j * 3;
-
-            r2 = (int)colors[pos];
-            cR = abs(r2 - r1);
-
-            g2 = (int)colors[pos + 1];
-            cG = abs(g2 - g1);
-
-            b2 = (int)colors[pos + 2];
-            cB = abs(b2 - b1);
-
-            distance = cR + cG + cB;
-
-            if (distance == 0)
-            {
-                lut4colors[i] = j | j << 2 | j << 4 | j << 6;
-                break;
-            }
-
-            distance = SQRT(distance);
-
-            if (best_difference > distance)
-            {
-                best_difference = distance;
-                lut4colors[i] = j | j << 2 | j << 4 | j << 6;
-            }
-        }
-    }
-}
-#endif
-
 //
 // I_SetPalette
 // Palette source must use 8 bit RGB elements.
@@ -896,7 +834,7 @@ void I_SetPalette(int numpalette)
 #endif
 
 #if defined(MODE_CGA)
-    ptrlut4colors = lut4colors + numpalette * 256;
+    CGA_SetPalette(numpalette);
 #endif
 
 #if defined(MODE_Y) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
@@ -2044,54 +1982,6 @@ void V2_DrawBackbuffer(void)
 }
 #endif
 
-#if defined(MODE_CGA)
-void CGA_DrawBackbuffer(void)
-{
-    int x;
-    unsigned char *vram = (unsigned char *)0xB8000;
-    unsigned short *ptrvrambuffer = vrambuffer;
-    unsigned int base = 0;
-
-    for (base = 0; base < SCREENHEIGHT * 320; base += 320)
-    {
-        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++, ptrvrambuffer++)
-        {
-            unsigned short color;
-            unsigned short tmpColor;
-            byte tmp;
-
-            BYTE1_USHORT(tmpColor) = (ptrlut4colors[backbuffer[base]]);
-            BYTE0_USHORT(tmpColor) = (ptrlut4colors[backbuffer[base + 1]]);
-            tmpColor &= 0xC030;
-
-            BYTE1_USHORT(color) = (ptrlut4colors[backbuffer[base + 2]]);
-            BYTE0_USHORT(color) = (ptrlut4colors[backbuffer[base + 3]]);
-            tmpColor |= color & 0x0C03;
-
-            if (tmpColor != *(ptrvrambuffer))
-            {
-                *(ptrvrambuffer) = tmpColor;
-                *(vram) = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
-            }
-
-            BYTE1_USHORT(tmpColor) = (ptrlut4colors[backbuffer[base + 320]]);
-            BYTE0_USHORT(tmpColor) = (ptrlut4colors[backbuffer[base + 321]]);
-            tmpColor &= 0xC030;
-
-            BYTE1_USHORT(color) = (ptrlut4colors[backbuffer[base + 322]]);
-            BYTE0_USHORT(color) = (ptrlut4colors[backbuffer[base + 323]]);
-            tmpColor |= color & 0x0C03;
-
-            if (tmpColor != *(ptrvrambuffer + 0x2000))
-            {
-                *(ptrvrambuffer + 0x2000) = tmpColor;
-                *(vram + 0x2000) = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
-            }
-        }
-    }
-}
-#endif
-
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 static struct VBE_VbeInfoBlock vbeinfo;
 static struct VBE_ModeInfoBlock vbemode;
@@ -2623,42 +2513,7 @@ void I_InitGraphics(void)
     VGA_13H_InitGraphics();
 #endif
 #if defined(MODE_CGA)
-    // Set video mode 4
-    regs.w.ax = 0x04;
-    int386(0x10, (union REGS *)&regs, &regs);
-
-    if (!CGApalette1)
-    {
-        // Set palette and intensity (CGA)
-        regs.w.ax = 0x0B00;
-        regs.w.bx = 0x0100;
-        int386(0x10, (union REGS *)&regs, &regs);
-        regs.w.ax = 0x0B00;
-        regs.w.bx = 0x0000;
-        int386(0x10, (union REGS *)&regs, &regs);
-
-        // Fix EGA/VGA wrong colors
-        regs.w.ax = 0x1000;
-        regs.w.bx = 0x0000;
-        int386(0x10, (union REGS *)&regs, &regs);
-
-        regs.w.ax = 0x1000;
-        regs.w.bx = 0x0201;
-        int386(0x10, (union REGS *)&regs, &regs);
-
-        regs.w.ax = 0x1000;
-        regs.w.bx = 0x0402;
-        int386(0x10, (union REGS *)&regs, &regs);
-
-        regs.w.ax = 0x1000;
-        regs.w.bx = 0x0603;
-        int386(0x10, (union REGS *)&regs, &regs);
-    }
-
-    pcscreen = destscreen = (byte *)0xB8000;
-
-    SetDWords(vrambuffer, 0, 8192);
-    SetDWords(pcscreen, 0, 4096);
+    CGA_InitGraphics();
 #endif
 #if defined(MODE_EGA136)
     unsigned char *vram = (unsigned char *)0xB8000;
