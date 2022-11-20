@@ -61,28 +61,28 @@ void CGA_16_ProcessPalette(byte *palette)
             int pos = j * 3;
 
             r2 = (int)colors[pos];
-            cR = abs(r2 - r1);
+            cR = (r2 - r1) * (r2 - r1);
 
             g2 = (int)colors[pos + 1];
-            cG = abs(g2 - g1);
+            cG = (g2 - g1) * (g2 - g1);
 
             b2 = (int)colors[pos + 2];
-            cB = abs(b2 - b1);
+            cB = (b2 - b1) * (b2 - b1);
 
-            distance = cR + cG + cB;
+            distance = SQRT(cR + cG + cB);
 
             if (distance == 0)
             {
                 lut16colors[i] = j;
                 break;
             }
-
-            distance = SQRT(distance);
-
-            if (best_difference > distance)
+            else
             {
-                best_difference = distance;
-                lut16colors[i] = j;
+                if (best_difference > distance)
+                {
+                    best_difference = distance;
+                    lut16colors[i] = j;
+                }
             }
         }
     }

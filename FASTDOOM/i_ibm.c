@@ -74,6 +74,10 @@
 #include "pcp.h"
 #endif
 
+#if defined(MODE_ATI640)
+#include "ati.h"
+#endif
+
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 #include "i_vesa.h"
 #endif
@@ -224,11 +228,6 @@ byte lut16colors[14 * 256];
 byte *ptrlut16colors;
 #endif
 
-#if defined(MODE_ATI640)
-unsigned short lutcolors[14 * 512];
-unsigned short *ptrlutcolors;
-#endif
-
 #if defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136)
 byte lut136colors[14 * 256];
 byte *ptrlut136colors;
@@ -314,15 +313,11 @@ byte vrambufferI3[16384];
 unsigned short vrambuffer[16384];
 #endif
 
-#if defined(MODE_ATI640)
-byte vrambuffer[65536];
-#endif
-
 #if defined(MODE_CVB)
 byte vrambuffer[16384];
 #endif
 
-#if defined(MODE_CGA_AFH) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_VGA16) || defined(MODE_13H) || defined(MODE_PCP)
+#if defined(MODE_CGA_AFH) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_VGA16) || defined(MODE_13H) || defined(MODE_PCP) || defined(MODE_ATI640)
 void I_ProcessPalette(byte *palette)
 {
     #if defined(MODE_CGA_AFH)
@@ -347,6 +342,10 @@ void I_ProcessPalette(byte *palette)
 
     #if defined(MODE_PCP)
     PCP_ProcessPalette(palette);
+    #endif
+
+    #if defined(MODE_ATI640)
+    ATI640_ProcessPalette(palette);
     #endif
 }
 #endif
@@ -604,26 +603,6 @@ const byte colors[4 * 122] = {
     0xFF, 0x3F, 0x3F, 0x3F};
 #endif
 
-#if defined(MODE_ATI640)
-const byte colors[48] = { // Color      R G B I     G R I B
-    0x00, 0x00, 0x00,     // Black      0 0 0 0     0 0 0 0
-    0x00, 0x2A, 0x00,     // Green      0 1 0 0     1 0 0 0
-    0x2A, 0x00, 0x00,     // Red        1 0 0 0     0 1 0 0
-    0x2A, 0x15, 0x00,     // Brown      1 1 0 0     1 1 0 0
-    0x15, 0x15, 0x15,     // Gray       0 0 0 1     0 0 1 0
-    0x15, 0x3F, 0x15,     // L green    0 1 0 1     1 0 1 0
-    0x3F, 0x15, 0x15,     // L red      1 0 0 1     0 1 1 0
-    0x3F, 0x3F, 0x15,     // Yellow     1 1 0 1     1 1 1 0
-    0x00, 0x00, 0x2A,     // Blue       0 0 1 0     0 0 0 1
-    0x00, 0x2A, 0x2A,     // Cyan       0 1 1 0     1 0 0 1
-    0x2A, 0x00, 0x2A,     // Magenta    1 0 1 0     0 1 0 1
-    0x2A, 0x2A, 0x2A,     // L Gray     1 1 1 0     1 1 0 1
-    0x15, 0x15, 0x3F,     // L blue     0 0 1 1     0 0 1 1
-    0x15, 0x3F, 0x3F,     // L cyan     0 1 1 1     1 0 1 1
-    0x3F, 0x15, 0x3F,     // L magenta  1 0 1 1     0 1 1 1
-    0x3F, 0x3F, 0x3F};    // White      1 1 1 1     1 1 1 1
-#endif
-
 #if defined(MODE_CVB)
 const byte colors[48] = { // standard IBM CGA
     0x00, 0x00, 0x00,
@@ -669,52 +648,6 @@ const byte colors[12] = {
     0x2A, 0x15, 0x00};
 #endif
 
-#if defined(MODE_EGA640) || defined(MODE_ATI640)
-
-int I_GetClosestColor(int r1, int g1, int b1)
-{
-    int i;
-
-    int result;
-
-    int distance;
-    int best_difference = MAXINT;
-
-    for (i = 0; i < 16; i++)
-    {
-        int r2, g2, b2;
-        int cR, cG, cB;
-        int pos = i * 3;
-
-        r2 = (int)colors[pos];
-        cR = abs(r2 - r1);
-
-        g2 = (int)colors[pos + 1];
-        cG = abs(g2 - g1);
-
-        b2 = (int)colors[pos + 2];
-        cB = abs(b2 - b1);
-
-        distance = cR + cG + cB;
-
-        if (distance == 0)
-        {
-            return i;
-        }
-
-        distance = SQRT(distance);
-
-        if (best_difference > distance)
-        {
-            best_difference = distance;
-            result = i;
-        }
-    }
-
-    return result;
-}
-#endif
-
 #if defined(MODE_EGA640)
 void I_ProcessPalette(byte *palette)
 {
@@ -736,7 +669,7 @@ void I_ProcessPalette(byte *palette)
         g2 = (g * 1) / 3 + g;
         b2 = (b * 1) / 3 + b;
 
-        color = I_GetClosestColor(r2, g2, b2);
+        color = GetClosestColor(colors, 16, r2, g2, b2);
         color |= color << 4;
 
         lutcolors[i] = color;
@@ -745,62 +678,10 @@ void I_ProcessPalette(byte *palette)
         g2 = (g * 2) / 3 + g;
         b2 = (b * 2) / 3 + b;
 
-        color = I_GetClosestColor(r2, g2, b2);
+        color = GetClosestColor(colors, 16, r2, g2, b2);
         color |= color << 4;
 
         lutcolors[i + 1] = color;
-    }
-}
-#endif
-
-#if defined(MODE_ATI640)
-void I_ProcessPalette(byte *palette)
-{
-    int i;
-
-    byte *ptr = gammatable[usegamma];
-
-    for (i = 0; i < 14 * 512; i += 2, palette += 3)
-    {
-        unsigned char color;
-        unsigned short value;
-        unsigned short value2;
-        int r, g, b;
-        int r2, g2, b2;
-
-        r = (int)ptr[*palette];
-        g = (int)ptr[*(palette + 1)];
-        b = (int)ptr[*(palette + 2)];
-
-        r2 = (r * 1) / 3 + r;
-        g2 = (g * 1) / 3 + g;
-        b2 = (b * 1) / 3 + b;
-
-        color = I_GetClosestColor(r2, g2, b2);
-        value = color & 12;
-        value = value | value >> 2 | value << 2 | value << 4;
-        value <<= 8;
-
-        value2 = color & 3;
-        value2 = value2 | value2 << 2 | value2 << 4 | value2 << 6;
-        value2;
-
-        lutcolors[i] = value | value2;
-
-        r2 = (r * 2) / 3 + r;
-        g2 = (g * 2) / 3 + g;
-        b2 = (b * 2) / 3 + b;
-
-        color = I_GetClosestColor(r2, g2, b2);
-        value = color & 12;
-        value = value | value >> 2 | value << 2 | value << 4;
-        value <<= 8;
-
-        value2 = color & 3;
-        value2 = value2 | value2 << 2 | value2 << 4 | value2 << 6;
-        value2;
-
-        lutcolors[i + 1] = value | value2;
     }
 }
 #endif
@@ -983,7 +864,7 @@ void I_SetPalette(int numpalette)
 #endif
 
 #if defined(MODE_ATI640)
-    ptrlutcolors = lutcolors + numpalette * 512;
+    ATI640_SetPalette(numpalette);
 #endif
 
 #if defined(MODE_PCP)
@@ -1789,138 +1670,6 @@ void VGA136_DrawBackbuffer(void)
         vram += 8;
         ptrbackbuffer += 16;
     } while (vram < (unsigned char *)0xBFD00);
-}
-#endif
-
-#if defined(MODE_ATI640)
-void ATI640_DrawBackbuffer(void)
-{
-    int x;
-    unsigned char *vram = (unsigned char *)0xB0000;
-    byte *ptrvrambuffer = vrambuffer;
-    unsigned int base = 0;
-
-    for (base = 0; base < SCREENHEIGHT * 320; base += 960)
-    {
-        for (x = 0; x < 160; x++, base += 2, vram++, ptrvrambuffer++)
-        {
-            unsigned short color;
-            unsigned short finalcolor;
-            byte tmp;
-
-            color = ptrlutcolors[backbuffer[base] * 2];
-            finalcolor = color & 0xC0C0;
-
-            color = ptrlutcolors[backbuffer[base] * 2 + 1];
-            finalcolor |= color & 0x3030;
-
-            color = ptrlutcolors[backbuffer[base + 1] * 2];
-            finalcolor |= color & 0x0C0C;
-
-            color = ptrlutcolors[backbuffer[base + 1] * 2 + 1];
-            finalcolor |= color & 0x0303;
-
-            tmp = BYTE0_USHORT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer))
-            {
-                *(vram) = tmp;
-                *(ptrvrambuffer) = tmp;
-            }
-
-            tmp = BYTE1_USHORT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer + 0x8000))
-            {
-                *(vram + 0x8000) = tmp;
-                *(ptrvrambuffer + 0x8000) = tmp;
-            }
-
-            color = ptrlutcolors[backbuffer[base + 320] * 2];
-            finalcolor = color & 0xC0C0;
-
-            color = ptrlutcolors[backbuffer[base + 320] * 2 + 1];
-            finalcolor |= color & 0x3030;
-
-            color = ptrlutcolors[backbuffer[base + 321] * 2];
-            finalcolor |= color & 0x0C0C;
-
-            color = ptrlutcolors[backbuffer[base + 321] * 2 + 1];
-            finalcolor |= color & 0x0303;
-
-            tmp = BYTE0_USHORT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer + 0x2000))
-            {
-                *(vram + 0x2000) = tmp;
-                *(ptrvrambuffer + 0x2000) = tmp;
-            }
-
-            tmp = BYTE1_USHORT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer + 0xA000))
-            {
-                *(vram + 0xA000) = tmp;
-                *(ptrvrambuffer + 0xA000) = tmp;
-            }
-
-            color = ptrlutcolors[backbuffer[base + 640] * 2];
-            finalcolor = color & 0xC0C0;
-
-            color = ptrlutcolors[backbuffer[base + 640] * 2 + 1];
-            finalcolor |= color & 0x3030;
-
-            color = ptrlutcolors[backbuffer[base + 641] * 2];
-            finalcolor |= color & 0x0C0C;
-
-            color = ptrlutcolors[backbuffer[base + 641] * 2 + 1];
-            finalcolor |= color & 0x0303;
-
-            tmp = BYTE0_USHORT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer + 0x4000))
-            {
-                *(vram + 0x4000) = tmp;
-                *(ptrvrambuffer + 0x4000) = tmp;
-            }
-
-            tmp = BYTE1_USHORT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer + 0xC000))
-            {
-                *(vram + 0xC000) = tmp;
-                *(ptrvrambuffer + 0xC000) = tmp;
-            }
-
-            color = ptrlutcolors[backbuffer[base + 960] * 2];
-            finalcolor = color & 0xC0C0;
-
-            color = ptrlutcolors[backbuffer[base + 960] * 2 + 1];
-            finalcolor |= color & 0x3030;
-
-            color = ptrlutcolors[backbuffer[base + 961] * 2];
-            finalcolor |= color & 0x0C0C;
-
-            color = ptrlutcolors[backbuffer[base + 961] * 2 + 1];
-            finalcolor |= color & 0x0303;
-
-            tmp = BYTE0_USHORT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer + 0x6000))
-            {
-                *(vram + 0x6000) = tmp;
-                *(ptrvrambuffer + 0x6000) = tmp;
-            }
-
-            tmp = BYTE1_USHORT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer + 0xE000))
-            {
-                *(vram + 0xE000) = tmp;
-                *(ptrvrambuffer + 0xE000) = tmp;
-            }
-        }
-    }
 }
 #endif
 
@@ -3217,36 +2966,7 @@ void I_InitGraphics(void)
     SetDWords(vrambufferI3, 0, 4096);
 #endif
 #if defined(MODE_ATI640)
-
-    static int parms[16] = {0x70, 0x50, 0x58, 0x0a,
-                            0x40, 0x06, 0x32, 0x38,
-                            0x02, 0x03, 0x06, 0x07,
-                            0x00, 0x00, 0x00, 0x00};
-    int i;
-
-    /* Set the Graphics Solution to 640 x 200 with 16 colors in
-       Color Mode */
-    outp(0x3D8, 0x2);
-
-    /* Set extended graphics registers */
-    outp(0x3DD, 0x80);
-
-    outp(0x03D8, 0x2);
-    /* Program 6845 crt controlller */
-    for (i = 0; i < 16; ++i)
-    {
-        outp(0x3D4, i);
-        outp(0x3D5, parms[i]);
-    }
-    outp(0x3D8, 0x0A);
-    outp(0x3D9, 0x30);
-
-    outp(0x3dd, 0x80);
-
-    pcscreen = destscreen = (byte *)0xB0000;
-
-    SetDWords(vrambuffer, 0, 16384);
-    SetDWords(pcscreen, 0, 16384);
+    ATI640_InitGraphics();
 #endif
 #if defined(MODE_CVB)
     regs.w.ax = 0x06;

@@ -62,15 +62,15 @@ void PCP_ProcessPalette(byte *palette)
             int pos = j * 3;
 
             r2 = (int)colors[pos];
-            cR = abs(r2 - r1);
+            cR = (r2 - r1) * (r2 - r1);
 
             g2 = (int)colors[pos + 1];
-            cG = abs(g2 - g1);
+            cG = (g2 - g1) * (g2 - g1);
 
             b2 = (int)colors[pos + 2];
-            cB = abs(b2 - b1);
+            cB = (b2 - b1) * (b2 - b1);
 
-            distance = cR + cG + cB;
+            distance = SQRT(cR + cG + cB);
 
             if (distance == 0)
             {
@@ -88,23 +88,23 @@ void PCP_ProcessPalette(byte *palette)
                 lut16colors[i] = value | value2;
                 break;
             }
-
-            distance = SQRT(distance);
-
-            if (best_difference > distance)
+            else
             {
-                unsigned short value;
-                unsigned short value2;
+                if (best_difference > distance)
+                {
+                    unsigned short value;
+                    unsigned short value2;
 
-                value = j & 12;
-                value = value | value >> 2 | value << 2 | value << 4;
-                value <<= 8;
+                    value = j & 12;
+                    value = value | value >> 2 | value << 2 | value << 4;
+                    value <<= 8;
 
-                value2 = j & 3;
-                value2 = value2 | value2 << 2 | value2 << 4 | value2 << 6;
-                value2;
+                    value2 = j & 3;
+                    value2 = value2 | value2 << 2 | value2 << 4 | value2 << 6;
+                    value2;
 
-                lut16colors[i] = value | value2;
+                    lut16colors[i] = value | value2;
+                }
             }
         }
     }

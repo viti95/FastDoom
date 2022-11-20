@@ -131,6 +131,7 @@ GLOBOBJS_13H = &
  vga_16.obj &
  vga_13h.obj &
  pcp.obj &
+ ati.obj &
  math.obj &
  ns_dpmi.obj &
  ns_pcfx.obj &
