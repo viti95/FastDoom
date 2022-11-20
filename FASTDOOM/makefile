@@ -126,6 +126,7 @@ GLOBOBJS_Y = &
 GLOBOBJS_13H = &
  cga_afh.obj &
  cga_16.obj &
+ ega_16.obj &
  math.obj &
  ns_dpmi.obj &
  ns_pcfx.obj &

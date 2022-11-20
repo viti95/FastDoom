@@ -17,6 +17,7 @@ name fdoom13h
 
 file cga_afh.obj
 file cga_16.obj
+file ega_16.obj
 file math.obj
 file ns_dpmi.obj
 file ns_pcfx.obj
