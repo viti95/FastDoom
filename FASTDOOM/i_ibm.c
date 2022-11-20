@@ -86,6 +86,10 @@
 #include "cga_cvbs.h"
 #endif
 
+#if defined(MODE_HERC)
+#include "herc.h"
+#endif
+
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 #include "i_vesa.h"
 #endif
@@ -241,11 +245,6 @@ byte lut136colors[14 * 256];
 byte *ptrlut136colors;
 #endif
 
-#if defined(MODE_HERC)
-byte lutcolors[14 * 1024];
-byte *ptrlutcolors;
-#endif
-
 #if defined(MODE_CGA_BW) || defined(MODE_EGA640)
 byte lutcolors[14 * 512];
 byte *ptrlutcolors;
@@ -285,10 +284,6 @@ byte scantokey[128] =
         0, 0, 0, 0, 0, 0, 0, 0 // 7
 };
 
-#if defined(MODE_HERC)
-byte vrambuffer[32768];
-#endif
-
 #if defined(MODE_CGA136) || defined(MODE_EGA136) || defined(MODE_EGA80)
 byte vrambuffer[16384];
 #endif
@@ -312,7 +307,7 @@ byte vrambufferB3[16384];
 byte vrambufferI3[16384];
 #endif
 
-#if defined(MODE_CGA_AFH) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_VGA16) || defined(MODE_13H) || defined(MODE_PCP) || defined(MODE_ATI640) || defined(MODE_CGA) || defined(MODE_CVB)
+#if defined(MODE_CGA_AFH) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_VGA16) || defined(MODE_13H) || defined(MODE_PCP) || defined(MODE_ATI640) || defined(MODE_CGA) || defined(MODE_CVB) || defined(MODE_HERC)
 void I_ProcessPalette(byte *palette)
 {
     #if defined(MODE_CGA_AFH)
@@ -349,6 +344,10 @@ void I_ProcessPalette(byte *palette)
 
     #if defined(MODE_CVB)
     CGA_CVBS_ProcessPalette(palette);
+    #endif
+
+    #if defined(MODE_HERC)
+    HERC_ProcessPalette(palette);
     #endif
 }
 #endif
@@ -401,60 +400,6 @@ void I_ProcessPalette(byte *palette)
         else
         {
             lutcolors[i + 1] = 0x00;
-        }
-    }
-}
-#endif
-
-#if defined(MODE_HERC)
-void I_ProcessPalette(byte *palette)
-{
-    int i;
-
-    byte *ptr = gammatable[usegamma];
-
-    for (i = 0; i < 14 * 1024; i += 4, palette += 3)
-    {
-        byte r, g, b;
-
-        r = ptr[*palette];
-        g = ptr[*(palette + 1)];
-        b = ptr[*(palette + 2)];
-
-        if (r + g + b > 38)
-        {
-            lutcolors[i] = 0xFF;
-        }
-        else
-        {
-            lutcolors[i] = 0x00;
-        }
-
-        if (r + g + b > 115)
-        {
-            lutcolors[i + 1] = 0xFF;
-        }
-        else
-        {
-            lutcolors[i + 1] = 0x00;
-        }
-
-        if (r + g + b > 155)
-        {
-            lutcolors[i + 2] = 0xFF;
-        }
-        else
-        {
-            lutcolors[i + 2] = 0x00;
-        }
-
-        if (r + g + b > 77)
-        {
-            lutcolors[i + 3] = 0xFF;
-        }
-        else
-        {
-            lutcolors[i + 3] = 0x00;
         }
     }
 }
@@ -733,7 +678,7 @@ void I_ProcessPalette(byte *palette)
 void I_SetPalette(int numpalette)
 {
 #if defined(MODE_HERC)
-    ptrlutcolors = lutcolors + numpalette * 1024;
+    HERC_SetPalette(numpalette);
 #endif
 
 #if defined(MODE_CGA_BW) || defined(MODE_EGA640)
@@ -1156,86 +1101,6 @@ void CGA_BW_DrawBackbuffer(void)
 
         ptrbackbuffer += 320;
     } while (vram < 0xB9F40);
-}
-#endif
-
-#if defined(MODE_HERC)
-void HERC_DrawBackbuffer(void)
-{
-    unsigned char *vram = (unsigned char *)0xB0000;
-    byte *ptrvrambuffer = vrambuffer;
-    byte *ptrbackbuffer = backbuffer;
-
-    do
-    {
-        unsigned char x = 80;
-
-        do
-        {
-            unsigned int *ptr;
-            unsigned int finalcolor;
-            byte tmp;
-
-            // Process four pixels at the same time (32-bit)
-            ptr = ptrlutcolors + *(ptrbackbuffer)*4;
-            finalcolor = *ptr & 0x80408040;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 1) * 4;
-            finalcolor |= *ptr & 0x20102010;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 2) * 4;
-            finalcolor |= *ptr & 0x08040804;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 3) * 4;
-            finalcolor |= *ptr & 0x02010201;
-
-            tmp = BYTE0_UINT(finalcolor) | BYTE1_UINT(finalcolor);
-
-            if (tmp != *ptrvrambuffer)
-            {
-                *vram = tmp;
-                *ptrvrambuffer = tmp;
-            }
-
-            tmp = BYTE2_UINT(finalcolor) | BYTE3_UINT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer + 0x2000))
-            {
-                *(vram + 0x2000) = tmp;
-                *(ptrvrambuffer + 0x2000) = tmp;
-            }
-
-            ptr = ptrlutcolors + *(ptrbackbuffer + 320) * 4;
-            finalcolor = *ptr & 0x80408040;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 321) * 4;
-            finalcolor |= *ptr & 0x20102010;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 322) * 4;
-            finalcolor |= *ptr & 0x08040804;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 323) * 4;
-            finalcolor |= *ptr & 0x02010201;
-
-            tmp = BYTE0_UINT(finalcolor) | BYTE1_UINT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer + 0x4000))
-            {
-                *(vram + 0x4000) = tmp;
-                *(ptrvrambuffer + 0x4000) = tmp;
-            }
-
-            tmp = BYTE2_UINT(finalcolor) | BYTE3_UINT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer + 0x6000))
-            {
-                *(vram + 0x6000) = tmp;
-                *(ptrvrambuffer + 0x6000) = tmp;
-            }
-
-            ptrbackbuffer += 4;
-            ptrvrambuffer++;
-            vram++;
-            x--;
-
-        } while (x > 0);
-
-        ptrbackbuffer += 320;
-    } while (vram < 0xB1F40);
 }
 #endif
 
@@ -2715,22 +2580,7 @@ void I_InitGraphics(void)
     CGA_CVBS_InitGraphics();
 #endif
 #if defined(MODE_HERC)
-    // byte Graph_720x348[12] = {0x03, 0x36, 0x2D, 0x2E, 0x07, 0x5B, 0x02, 0x57, 0x57, 0x02, 0x03, 0x0A};
-    byte Graph_640x400[12] = {0x03, 0x34, 0x28, 0x2A, 0x47, 0x69, 0x00, 0x64, 0x65, 0x02, 0x03, 0x0A};
-    // byte Graph_640x200[12] = {0x03, 0x6E, 0x28, 0x2E, 0x07, 0x67, 0x0A, 0x64, 0x65, 0x02, 0x01, 0x0A};
-    int i;
-
-    outp(0x03BF, Graph_640x400[0]);
-    for (i = 0; i < 10; i++)
-    {
-        outp(0x03B4, i);
-        outp(0x03B5, Graph_640x400[i + 1]);
-    }
-    outp(0x03B8, Graph_640x400[11]);
-    pcscreen = destscreen = (byte *)0xB0000;
-
-    SetDWords(vrambuffer, 0, 8192);
-    SetDWords(pcscreen, 0, 8192);
+    HERC_InitGraphics();
 #endif
 
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
@@ -2792,16 +2642,7 @@ void I_InitGraphics(void)
 void I_ShutdownGraphics(void)
 {
 #if defined(MODE_HERC)
-    byte Text_80x25[12] = {0x00, 0x61, 0x50, 0x52, 0x0F, 0x19, 0x06, 0x19, 0x19, 0x02, 0x0D, 0x08};
-    int i;
-
-    outp(0x03BF, Text_80x25[0]);
-    for (i = 0; i < 10; i++)
-    {
-        outp(0x03B4, i);
-        outp(0x03B5, Text_80x25[i + 1]);
-    }
-    outp(0x03B8, Text_80x25[11]);
+    HERC_ShutdownGraphics();
 #endif
 
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)

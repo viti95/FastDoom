@@ -25,6 +25,7 @@ file pcp.obj
 file ati.obj
 file cga.obj
 file cga_cvbs.obj
+file herc.obj
 file math.obj
 file ns_dpmi.obj
 file ns_pcfx.obj
