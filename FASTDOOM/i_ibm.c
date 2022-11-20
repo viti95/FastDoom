@@ -94,6 +94,10 @@
 #include "cga_bw.h"
 #endif
 
+#if defined(MODE_EGA640)
+#include "ega_640.h"
+#endif
+
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 #include "i_vesa.h"
 #endif
@@ -249,11 +253,6 @@ byte lut136colors[14 * 256];
 byte *ptrlut136colors;
 #endif
 
-#if defined(MODE_EGA640)
-byte lutcolors[14 * 512];
-byte *ptrlutcolors;
-#endif
-
 byte gammatable[5][256] =
     {
         {0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 10, 11, 11, 11, 11, 12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15, 16, 16, 16, 16, 17, 17, 17, 17, 18, 18, 18, 18, 19, 19, 19, 19, 20, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 26, 27, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 30, 31, 31, 31, 31, 32, 32, 32, 32, 32, 33, 33, 33, 33, 34, 34, 34, 34, 35, 35, 35, 35, 36, 36, 36, 36, 37, 37, 37, 37, 38, 38, 38, 38, 39, 39, 39, 39, 40, 40, 40, 40, 41, 41, 41, 41, 42, 42, 42, 42, 43, 43, 43, 43, 44, 44, 44, 44, 45, 45, 45, 45, 46, 46, 46, 46, 47, 47, 47, 47, 48, 48, 48, 48, 49, 49, 49, 49, 50, 50, 50, 50, 51, 51, 51, 51, 52, 52, 52, 52, 53, 53, 53, 53, 54, 54, 54, 54, 55, 55, 55, 55, 56, 56, 56, 56, 57, 57, 57, 57, 58, 58, 58, 58, 59, 59, 59, 59, 60, 60, 60, 60, 61, 61, 61, 61, 62, 62, 62, 62, 63, 63, 63, 63},
@@ -292,22 +291,7 @@ byte scantokey[128] =
 byte vrambuffer[16384];
 #endif
 
-#if defined(MODE_EGA640)
-byte vrambufferR1[16384];
-byte vrambufferG1[16384];
-byte vrambufferB1[16384];
-byte vrambufferI1[16384];
-byte vrambufferR2[16384];
-byte vrambufferG2[16384];
-byte vrambufferB2[16384];
-byte vrambufferI2[16384];
-byte vrambufferR3[16384];
-byte vrambufferG3[16384];
-byte vrambufferB3[16384];
-byte vrambufferI3[16384];
-#endif
-
-#if defined(MODE_CGA_AFH) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_VGA16) || defined(MODE_13H) || defined(MODE_PCP) || defined(MODE_ATI640) || defined(MODE_CGA) || defined(MODE_CVB) || defined(MODE_HERC) || defined(MODE_CGA_BW)
+#if defined(MODE_CGA_AFH) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_VGA16) || defined(MODE_13H) || defined(MODE_PCP) || defined(MODE_ATI640) || defined(MODE_CGA) || defined(MODE_CVB) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_EGA640)
 void I_ProcessPalette(byte *palette)
 {
     #if defined(MODE_CGA_AFH)
@@ -353,6 +337,10 @@ void I_ProcessPalette(byte *palette)
     #if defined(MODE_CGA_BW)
     CGA_BW_ProcessPalette(palette);
     #endif
+
+    #if defined(MODE_EGA640)
+    EGA_640_ProcessPalette(palette);
+    #endif
 }
 #endif
 
@@ -373,7 +361,7 @@ void I_ProcessPalette(byte *palette)
 }
 #endif
 
-#if defined(MODE_EGA640) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_EGA80) || defined(MODE_EGAW1) || defined(MODE_EGA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_EGA80) || defined(MODE_EGAW1) || defined(MODE_EGA)
 const byte colors[48] = {
     0x00, 0x00, 0x00,  // 0
     0x00, 0x00, 0x2A,  // 1
@@ -519,44 +507,6 @@ const byte colors[4 * 122] = {
     0xFF, 0x3F, 0x3F, 0x3F};
 #endif
 
-#if defined(MODE_EGA640)
-void I_ProcessPalette(byte *palette)
-{
-    int i;
-
-    byte *ptr = gammatable[usegamma];
-
-    for (i = 0; i < 14 * 512; i += 2, palette += 3)
-    {
-        unsigned char color;
-        int r, g, b;
-        int r2, g2, b2;
-
-        r = (int)ptr[*palette];
-        g = (int)ptr[*(palette + 1)];
-        b = (int)ptr[*(palette + 2)];
-
-        r2 = (r * 1) / 3 + r;
-        g2 = (g * 1) / 3 + g;
-        b2 = (b * 1) / 3 + b;
-
-        color = GetClosestColor(colors, 16, r2, g2, b2);
-        color |= color << 4;
-
-        lutcolors[i] = color;
-
-        r2 = (r * 2) / 3 + r;
-        g2 = (g * 2) / 3 + g;
-        b2 = (b * 2) / 3 + b;
-
-        color = GetClosestColor(colors, 16, r2, g2, b2);
-        color |= color << 4;
-
-        lutcolors[i + 1] = color;
-    }
-}
-#endif
-
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_EGA80) || defined(MODE_EGAW1) || defined(MODE_EGA)
 void I_ProcessPalette(byte *palette)
 {
@@ -650,7 +600,7 @@ void I_SetPalette(int numpalette)
 #endif
 
 #if defined(MODE_EGA640)
-    ptrlutcolors = lutcolors + numpalette * 512;
+    EGA_640_SetPalette(numpalette);    
 #endif
 
 #if defined(MODE_CGA_BW)
@@ -733,10 +683,6 @@ int updatestate;
 #endif
 byte *pcscreen, *destscreen, *destview;
 unsigned short *currentscreen;
-
-#if defined(MODE_EGA640)
-byte page = 0;
-#endif
 
 #if defined(MODE_VBE2_DIRECT)
 short page = 0;
@@ -1332,206 +1278,6 @@ void VGA136_DrawBackbuffer(void)
 }
 #endif
 
-#if defined(MODE_EGA640)
-void EGA640_DrawBackbuffer(void)
-{
-    unsigned short i;
-    byte *backbufferptr;
-
-    byte *vrambufferR;
-    byte *vrambufferG;
-    byte *vrambufferB;
-    byte *vrambufferI;
-
-    if (destscreen == 0xA0000)
-    {
-        vrambufferR = vrambufferR1;
-        vrambufferG = vrambufferG1;
-        vrambufferB = vrambufferB1;
-        vrambufferI = vrambufferI1;
-    }
-    else if (destscreen == 0xA4000)
-    {
-        vrambufferR = vrambufferR2;
-        vrambufferG = vrambufferG2;
-        vrambufferB = vrambufferB2;
-        vrambufferI = vrambufferI2;
-    }
-    else
-    {
-        vrambufferR = vrambufferR3;
-        vrambufferG = vrambufferG3;
-        vrambufferB = vrambufferB3;
-        vrambufferI = vrambufferI3;
-    }
-
-    // Red
-    outp(0x3C5, 1 << (3 & 0x03));
-
-    for (i = 0, backbufferptr = backbuffer; i < 2 * SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 4)
-    {
-        unsigned char color;
-        unsigned char tmpColor;
-
-        color = ptrlutcolors[*(backbufferptr)*2];
-        tmpColor = color & 0x80;
-
-        color = ptrlutcolors[*(backbufferptr)*2 + 1];
-        tmpColor |= (color & 0x80) >> 1;
-
-        color = ptrlutcolors[*(backbufferptr + 1) * 2];
-        tmpColor |= (color & 0x80) >> 2;
-
-        color = ptrlutcolors[*(backbufferptr + 1) * 2 + 1];
-        tmpColor |= (color & 0x80) >> 3;
-
-        color = ptrlutcolors[*(backbufferptr + 2) * 2];
-        tmpColor |= color & 0x08;
-
-        color = ptrlutcolors[*(backbufferptr + 2) * 2 + 1];
-        tmpColor |= (color & 0x08) >> 1;
-
-        color = ptrlutcolors[*(backbufferptr + 3) * 2];
-        tmpColor |= (color & 0x08) >> 2;
-
-        color = ptrlutcolors[*(backbufferptr + 3) * 2 + 1];
-        tmpColor |= (color & 0x08) >> 3;
-
-        if (tmpColor != vrambufferR[i])
-        {
-            destscreen[i] = tmpColor;
-            vrambufferR[i] = tmpColor;
-        }
-    }
-
-    // Green
-    outp(0x3C5, 1 << (2 & 0x03));
-
-    for (i = 0, backbufferptr = backbuffer; i < 2 * SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 4)
-    {
-        unsigned char color;
-        unsigned char tmpColor;
-
-        color = ptrlutcolors[*(backbufferptr)*2];
-        tmpColor = (color & 0x40) << 1;
-
-        color = ptrlutcolors[*(backbufferptr)*2 + 1];
-        tmpColor |= color & 0x40;
-
-        color = ptrlutcolors[*(backbufferptr + 1) * 2];
-        tmpColor |= (color & 0x40) >> 1;
-
-        color = ptrlutcolors[*(backbufferptr + 1) * 2 + 1];
-        tmpColor |= (color & 0x40) >> 2;
-
-        color = ptrlutcolors[*(backbufferptr + 2) * 2];
-        tmpColor |= (color & 0x04) << 1;
-
-        color = ptrlutcolors[*(backbufferptr + 2) * 2 + 1];
-        tmpColor |= color & 0x04;
-
-        color = ptrlutcolors[*(backbufferptr + 3) * 2];
-        tmpColor |= (color & 0x04) >> 1;
-
-        color = ptrlutcolors[*(backbufferptr + 3) * 2 + 1];
-        tmpColor |= (color & 0x04) >> 2;
-
-        if (tmpColor != vrambufferG[i])
-        {
-            destscreen[i] = tmpColor;
-            vrambufferG[i] = tmpColor;
-        }
-    }
-
-    // Blue
-    outp(0x3C5, 1 << (1 & 0x03));
-
-    for (i = 0, backbufferptr = backbuffer; i < 2 * SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 4)
-    {
-        unsigned char color;
-        unsigned char tmpColor;
-
-        color = ptrlutcolors[*(backbufferptr)*2];
-        tmpColor = (color & 0x20) << 2;
-
-        color = ptrlutcolors[*(backbufferptr)*2 + 1];
-        tmpColor |= (color & 0x20) << 1;
-
-        color = ptrlutcolors[*(backbufferptr + 1) * 2];
-        tmpColor |= color & 0x20;
-
-        color = ptrlutcolors[*(backbufferptr + 1) * 2 + 1];
-        tmpColor |= (color & 0x20) >> 1;
-
-        color = ptrlutcolors[*(backbufferptr + 2) * 2];
-        tmpColor |= (color & 0x02) << 2;
-
-        color = ptrlutcolors[*(backbufferptr + 2) * 2 + 1];
-        tmpColor |= (color & 0x02) << 1;
-
-        color = ptrlutcolors[*(backbufferptr + 3) * 2];
-        tmpColor |= color & 0x02;
-
-        color = ptrlutcolors[*(backbufferptr + 3) * 2 + 1];
-        tmpColor |= (color & 0x02) >> 1;
-
-        if (tmpColor != vrambufferB[i])
-        {
-            destscreen[i] = tmpColor;
-            vrambufferB[i] = tmpColor;
-        }
-    }
-
-    // Intensity
-    outp(0x3C5, 1 << (0 & 0x03));
-
-    for (i = 0, backbufferptr = backbuffer; i < 2 * SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 4)
-    {
-        unsigned char color;
-        unsigned char tmpColor;
-
-        color = ptrlutcolors[*(backbufferptr)*2];
-        tmpColor = (color & 0x10) << 3;
-
-        color = ptrlutcolors[*(backbufferptr)*2 + 1];
-        tmpColor |= (color & 0x10) << 2;
-
-        color = ptrlutcolors[*(backbufferptr + 1) * 2];
-        tmpColor |= (color & 0x10) << 1;
-
-        color = ptrlutcolors[*(backbufferptr + 1) * 2 + 1];
-        tmpColor |= color & 0x10;
-
-        color = ptrlutcolors[*(backbufferptr + 2) * 2];
-        tmpColor |= (color & 0x01) << 3;
-
-        color = ptrlutcolors[*(backbufferptr + 2) * 2 + 1];
-        tmpColor |= (color & 0x01) << 2;
-
-        color = ptrlutcolors[*(backbufferptr + 3) * 2];
-        tmpColor |= (color & 0x01) << 1;
-
-        color = ptrlutcolors[*(backbufferptr + 3) * 2 + 1];
-        tmpColor |= color & 0x01;
-
-        if (tmpColor != vrambufferI[i])
-        {
-            destscreen[i] = tmpColor;
-            vrambufferI[i] = tmpColor;
-        }
-    }
-
-    // Change video page
-    outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
-
-    // Next plane
-    if (destscreen == 0xA8000)
-        destscreen = 0xA0000;
-    else
-        destscreen += 0x4000;
-}
-#endif
-
 #if defined(MODE_V2)
 void V2_DrawBackbuffer(void)
 {
@@ -1866,7 +1612,7 @@ void I_FinishUpdate(void)
     EGA136_DrawBackbuffer();
 #endif
 #if defined(MODE_EGA640)
-    EGA640_DrawBackbuffer();
+    EGA_640_DrawBackbuffer();
 #endif
 #if defined(MODE_ATI640)
     ATI640_DrawBackbuffer();
@@ -2465,23 +2211,7 @@ void I_InitGraphics(void)
     SetDWords(vrambuffer, 0, 4096);
 #endif
 #if defined(MODE_EGA640)
-    regs.w.ax = 0x0E;
-    int386(0x10, (union REGS *)&regs, &regs);
-    outp(0x3C4, 0x2);
-    pcscreen = destscreen = (byte *)0xA0000;
-
-    SetDWords(vrambufferR1, 0, 4096);
-    SetDWords(vrambufferG1, 0, 4096);
-    SetDWords(vrambufferB1, 0, 4096);
-    SetDWords(vrambufferI1, 0, 4096);
-    SetDWords(vrambufferR2, 0, 4096);
-    SetDWords(vrambufferG2, 0, 4096);
-    SetDWords(vrambufferB2, 0, 4096);
-    SetDWords(vrambufferI2, 0, 4096);
-    SetDWords(vrambufferR3, 0, 4096);
-    SetDWords(vrambufferG3, 0, 4096);
-    SetDWords(vrambufferB3, 0, 4096);
-    SetDWords(vrambufferI3, 0, 4096);
+    EGA_640_InitGraphics();
 #endif
 #if defined(MODE_ATI640)
     ATI640_InitGraphics();

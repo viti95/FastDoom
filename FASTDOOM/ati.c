@@ -50,13 +50,22 @@ void ATI640_ProcessPalette(byte *palette)
         int r, g, b;
         int r2, g2, b2;
 
+        int l;
+
         r = (int)ptr[*palette];
         g = (int)ptr[*(palette + 1)];
         b = (int)ptr[*(palette + 2)];
 
-        r2 = (r * 1) / 3 + r;
-        g2 = (g * 1) / 3 + g;
-        b2 = (b * 1) / 3 + b;
+        l = (r * 300) / 1000 + (g * 600) / 1000 + (b * 100) / 1000;
+
+        r2 = r + (333 * (l + r)) / 1000;
+        if (r2 > 255) r2 = 255;
+
+        g2 = g + (333 * (l + g)) / 1000;
+        if (g2 > 255) g2 = 255;
+
+        b2 = b + (333 * (l + b)) / 1000;
+        if (b2 > 255) b2 = 255;
 
         color = GetClosestColor(colors, 16, r2, g2, b2);
         value = color & 12;
@@ -69,9 +78,14 @@ void ATI640_ProcessPalette(byte *palette)
 
         lutcolors[i] = value | value2;
 
-        r2 = (r * 2) / 3 + r;
-        g2 = (g * 2) / 3 + g;
-        b2 = (b * 2) / 3 + b;
+        r2 = r - (333 * (l - r)) / 1000;
+        if (r2 < 0) r2 = 0;
+
+        g2 = g - (333 * (l - g)) / 1000;
+        if (g2 < 0) g2 = 0;
+
+        b2 = b - (333 * (l - b)) / 1000;
+        if (b2 < 0) b2 = 0;
 
         color = GetClosestColor(colors, 16, r2, g2, b2);
         value = color & 12;
