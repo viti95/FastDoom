@@ -669,35 +669,6 @@ const byte colors[12] = {
     0x2A, 0x15, 0x00};
 #endif
 
-#if defined(MODE_CGA) || defined(MODE_EGA640) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_CVB) || defined(MODE_ATI640) || defined(MODE_EGA80) || defined(MODE_EGAW1) || defined(MODE_EGA)
-
-int I_SQRT(int x)
-{
-    int start = 1, end = x / 2, ans;
-
-    if (x == 0 || x == 1)
-        return x;
-
-    while (start <= end)
-    {
-        int mid = (start + end) / 2;
-
-        if (mid * mid == x)
-            return mid;
-
-        if (mid <= x / mid)
-        {
-            start = mid + 1;
-            ans = mid;
-        }
-        else
-            end = mid - 1;
-    }
-    return ans;
-}
-
-#endif
-
 #if defined(MODE_EGA640) || defined(MODE_ATI640)
 
 int I_GetClosestColor(int r1, int g1, int b1)
@@ -731,7 +702,7 @@ int I_GetClosestColor(int r1, int g1, int b1)
             return i;
         }
 
-        distance = I_SQRT(distance);
+        distance = SQRT(distance);
 
         if (best_difference > distance)
         {
@@ -875,7 +846,7 @@ void I_ProcessPalette(byte *palette)
                 break;
             }
 
-            distance = I_SQRT(distance);
+            distance = SQRT(distance);
 
             if (best_difference > distance)
             {
@@ -985,7 +956,7 @@ void I_ProcessPalette(byte *palette)
                 break;
             }
 
-            distance = I_SQRT(distance);
+            distance = SQRT(distance);
 
             if (best_difference > distance)
             {
