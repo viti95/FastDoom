@@ -90,6 +90,10 @@
 #include "herc.h"
 #endif
 
+#if defined(MODE_CGA_BW)
+#include "cga_bw.h"
+#endif
+
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 #include "i_vesa.h"
 #endif
@@ -245,7 +249,7 @@ byte lut136colors[14 * 256];
 byte *ptrlut136colors;
 #endif
 
-#if defined(MODE_CGA_BW) || defined(MODE_EGA640)
+#if defined(MODE_EGA640)
 byte lutcolors[14 * 512];
 byte *ptrlutcolors;
 #endif
@@ -288,10 +292,6 @@ byte scantokey[128] =
 byte vrambuffer[16384];
 #endif
 
-#if defined(MODE_CGA_BW)
-unsigned short vrambuffer[16384];
-#endif
-
 #if defined(MODE_EGA640)
 byte vrambufferR1[16384];
 byte vrambufferG1[16384];
@@ -307,7 +307,7 @@ byte vrambufferB3[16384];
 byte vrambufferI3[16384];
 #endif
 
-#if defined(MODE_CGA_AFH) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_VGA16) || defined(MODE_13H) || defined(MODE_PCP) || defined(MODE_ATI640) || defined(MODE_CGA) || defined(MODE_CVB) || defined(MODE_HERC)
+#if defined(MODE_CGA_AFH) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_VGA16) || defined(MODE_13H) || defined(MODE_PCP) || defined(MODE_ATI640) || defined(MODE_CGA) || defined(MODE_CVB) || defined(MODE_HERC) || defined(MODE_CGA_BW)
 void I_ProcessPalette(byte *palette)
 {
     #if defined(MODE_CGA_AFH)
@@ -349,6 +349,10 @@ void I_ProcessPalette(byte *palette)
     #if defined(MODE_HERC)
     HERC_ProcessPalette(palette);
     #endif
+
+    #if defined(MODE_CGA_BW)
+    CGA_BW_ProcessPalette(palette);
+    #endif
 }
 #endif
 
@@ -365,42 +369,6 @@ void I_ProcessPalette(byte *palette)
         processedpalette[i + 1] = ptr[*(palette + 1)];
         processedpalette[i + 2] = ptr[*(palette + 2)];
         processedpalette[i + 3] = ptr[*(palette + 3)];
-    }
-}
-#endif
-
-#if defined(MODE_CGA_BW)
-void I_ProcessPalette(byte *palette)
-{
-    int i;
-
-    byte *ptr = gammatable[usegamma];
-
-    for (i = 0; i < 14 * 512; i += 2, palette += 3)
-    {
-        byte r, g, b;
-
-        r = ptr[*palette];
-        g = ptr[*(palette + 1)];
-        b = ptr[*(palette + 2)];
-
-        if (r + g + b > 32)
-        {
-            lutcolors[i] = 0xFF;
-        }
-        else
-        {
-            lutcolors[i] = 0x00;
-        }
-
-        if (r + g + b > 64)
-        {
-            lutcolors[i + 1] = 0xFF;
-        }
-        else
-        {
-            lutcolors[i + 1] = 0x00;
-        }
     }
 }
 #endif
@@ -681,8 +649,12 @@ void I_SetPalette(int numpalette)
     HERC_SetPalette(numpalette);
 #endif
 
-#if defined(MODE_CGA_BW) || defined(MODE_EGA640)
+#if defined(MODE_EGA640)
     ptrlutcolors = lutcolors + numpalette * 512;
+#endif
+
+#if defined(MODE_CGA_BW)
+    CGA_BW_SetPalette(numpalette);
 #endif
 
 #if defined(MODE_ATI640)
@@ -1044,65 +1016,6 @@ void I_UpdateNoBlit(void)
 //
 
 extern int screenblocks;
-
-#if defined(MODE_CGA_BW)
-void CGA_BW_DrawBackbuffer(void)
-{
-    unsigned char *vram = (unsigned char *)0xB8000;
-    unsigned short *ptrvrambuffer = vrambuffer;
-    byte *ptrbackbuffer = backbuffer;
-
-    do
-    {
-        unsigned char x = 80;
-
-        do
-        {
-            unsigned short *ptr;
-            unsigned short finalcolor;
-
-            // Process two pixels at the same time (16-bit)
-            ptr = ptrlutcolors + *(ptrbackbuffer)*2;
-            finalcolor = *ptr & 0x8040;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 1) * 2;
-            finalcolor |= *ptr & 0x2010;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 2) * 2;
-            finalcolor |= *ptr & 0x0804;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 3) * 2;
-            finalcolor |= *ptr & 0x0201;
-
-            if (finalcolor != *ptrvrambuffer)
-            {
-                *ptrvrambuffer = finalcolor;
-                *vram = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor);
-            }
-
-            ptr = ptrlutcolors + *(ptrbackbuffer + 320) * 2;
-            finalcolor = *ptr & 0x8040;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 321) * 2;
-            finalcolor |= *ptr & 0x2010;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 322) * 2;
-            finalcolor |= *ptr & 0x0804;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 323) * 2;
-            finalcolor |= *ptr & 0x0201;
-
-            if (finalcolor != *(ptrvrambuffer + 0x2000))
-            {
-                *(ptrvrambuffer + 0x2000) = finalcolor;
-                *(vram + 0x2000) = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor);
-            }
-
-            ptrbackbuffer += 4;
-            ptrvrambuffer++;
-            vram++;
-            x--;
-
-        } while (x > 0);
-
-        ptrbackbuffer += 320;
-    } while (vram < 0xB9F40);
-}
-#endif
 
 #if defined(MODE_CGA136)
 void CGA136_DrawBackbuffer_Snow(void)
@@ -2391,16 +2304,13 @@ void I_InitGraphics(void)
 #endif
 
 #if defined(MODE_CGA_BW)
-    regs.w.ax = 0x06;
-    int386(0x10, (union REGS *)&regs, &regs);
-    pcscreen = destscreen = (byte *)0xB8000;
-
-    SetDWords(vrambuffer, 0, 8192);
-    SetDWords(pcscreen, 0, 4096);
+    CGA_BW_InitGraphics();
 #endif
+
 #if defined(MODE_PCP)
     PCP_InitGraphics();
 #endif
+
 #if defined(MODE_EGA)
     {
         unsigned int pos1 = 0;
