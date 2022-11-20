@@ -54,37 +54,7 @@ void CGA_16_ProcessPalette(byte *palette)
         g1 = (int)ptr[*palette++];
         b1 = (int)ptr[*palette++];
 
-        for (j = 0; j < 16; j++)
-        {
-            int r2, g2, b2;
-            int cR, cG, cB;
-            int pos = j * 3;
-
-            r2 = (int)colors[pos];
-            cR = (r2 - r1) * (r2 - r1);
-
-            g2 = (int)colors[pos + 1];
-            cG = (g2 - g1) * (g2 - g1);
-
-            b2 = (int)colors[pos + 2];
-            cB = (b2 - b1) * (b2 - b1);
-
-            distance = SQRT(cR + cG + cB);
-
-            if (distance == 0)
-            {
-                lut16colors[i] = j;
-                break;
-            }
-            else
-            {
-                if (best_difference > distance)
-                {
-                    best_difference = distance;
-                    lut16colors[i] = j;
-                }
-            }
-        }
+        lut16colors[i] = GetClosestColor(colors, 16, r1, g1, b1);
     }
 }
 
