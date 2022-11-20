@@ -49,64 +49,26 @@ void PCP_ProcessPalette(byte *palette)
 
         int r1, g1, b1;
 
-        int best_difference = MAXINT;
+        int bestcolor;
+
+        unsigned short value;
+        unsigned short value2;
 
         r1 = (int)ptr[*palette++];
         g1 = (int)ptr[*palette++];
         b1 = (int)ptr[*palette++];
 
-        for (j = 0; j < 16; j++)
-        {
-            int r2, g2, b2;
-            int cR, cG, cB;
-            int pos = j * 3;
+        bestcolor = GetClosestColor(colors, 16, r1, g1, b1);
 
-            r2 = (int)colors[pos];
-            cR = (r2 - r1) * (r2 - r1);
+        value = bestcolor & 12;
+        value = value | value >> 2 | value << 2 | value << 4;
+        value <<= 8;
 
-            g2 = (int)colors[pos + 1];
-            cG = (g2 - g1) * (g2 - g1);
+        value2 = bestcolor & 3;
+        value2 = value2 | value2 << 2 | value2 << 4 | value2 << 6;
+        value2;
 
-            b2 = (int)colors[pos + 2];
-            cB = (b2 - b1) * (b2 - b1);
-
-            distance = SQRT(cR + cG + cB);
-
-            if (distance == 0)
-            {
-                unsigned short value;
-                unsigned short value2;
-
-                value = j & 12;
-                value = value | value >> 2 | value << 2 | value << 4;
-                value <<= 8;
-
-                value2 = j & 3;
-                value2 = value2 | value2 << 2 | value2 << 4 | value2 << 6;
-                value2;
-
-                lut16colors[i] = value | value2;
-                break;
-            }
-            else
-            {
-                if (best_difference > distance)
-                {
-                    unsigned short value;
-                    unsigned short value2;
-
-                    value = j & 12;
-                    value = value | value >> 2 | value << 2 | value << 4;
-                    value <<= 8;
-
-                    value2 = j & 3;
-                    value2 = value2 | value2 << 2 | value2 << 4 | value2 << 6;
-                    value2;
-
-                    lut16colors[i] = value | value2;
-                }
-            }
-        }
+        lut16colors[i] = value | value2;
     }
 }
 

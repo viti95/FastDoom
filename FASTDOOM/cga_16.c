@@ -45,10 +45,7 @@ void CGA_16_ProcessPalette(byte *palette)
     for (i = 0; i < 14 * 256; i++)
     {
         int distance;
-
         int r1, g1, b1;
-
-        int best_difference = MAXINT;
 
         r1 = (int)ptr[*palette++];
         g1 = (int)ptr[*palette++];
