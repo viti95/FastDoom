@@ -133,6 +133,7 @@ GLOBOBJS_13H = &
  pcp.obj &
  ati.obj &
  cga.obj &
+ cga_cvbs.obj &
  math.obj &
  ns_dpmi.obj &
  ns_pcfx.obj &
