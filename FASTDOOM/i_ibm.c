@@ -65,6 +65,11 @@
 #include "vga_16.h"
 #endif
 
+#if defined(MODE_13H)
+#include "vga.h"
+#include "vga_13h.h"
+#endif
+
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 #include "i_vesa.h"
 #endif
@@ -248,7 +253,7 @@ byte gammatable[5][256] =
         {2, 3, 4, 4, 5, 6, 6, 7, 7, 8, 9, 9, 10, 10, 10, 11, 11, 12, 12, 13, 13, 13, 14, 14, 15, 15, 15, 16, 16, 16, 17, 17, 17, 18, 18, 18, 19, 19, 19, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 26, 27, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 30, 31, 31, 31, 31, 32, 32, 32, 32, 33, 33, 33, 33, 33, 34, 34, 34, 34, 35, 35, 35, 35, 35, 36, 36, 36, 36, 37, 37, 37, 37, 37, 38, 38, 38, 38, 38, 39, 39, 39, 39, 40, 40, 40, 40, 40, 41, 41, 41, 41, 41, 42, 42, 42, 42, 42, 43, 43, 43, 43, 43, 44, 44, 44, 44, 44, 45, 45, 45, 45, 45, 45, 46, 46, 46, 46, 46, 47, 47, 47, 47, 47, 48, 48, 48, 48, 48, 48, 49, 49, 49, 49, 49, 50, 50, 50, 50, 50, 50, 51, 51, 51, 51, 51, 51, 52, 52, 52, 52, 52, 53, 53, 53, 53, 53, 53, 54, 54, 54, 54, 54, 54, 55, 55, 55, 55, 55, 55, 56, 56, 56, 56, 56, 56, 57, 57, 57, 57, 57, 57, 58, 58, 58, 58, 58, 58, 59, 59, 59, 59, 59, 59, 60, 60, 60, 60, 60, 60, 61, 61, 61, 61, 61, 61, 61, 62, 62, 62, 62, 62, 62, 63, 63, 63, 63, 63, 63},
         {4, 5, 7, 8, 9, 9, 10, 11, 12, 12, 13, 13, 14, 15, 15, 16, 16, 17, 17, 17, 18, 18, 19, 19, 20, 20, 20, 21, 21, 21, 22, 22, 23, 23, 23, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 30, 31, 31, 31, 32, 32, 32, 32, 32, 33, 33, 33, 33, 34, 34, 34, 34, 35, 35, 35, 35, 35, 36, 36, 36, 36, 37, 37, 37, 37, 37, 38, 38, 38, 38, 38, 39, 39, 39, 39, 39, 40, 40, 40, 40, 40, 41, 41, 41, 41, 41, 42, 42, 42, 42, 42, 43, 43, 43, 43, 43, 43, 44, 44, 44, 44, 44, 45, 45, 45, 45, 45, 45, 46, 46, 46, 46, 46, 46, 47, 47, 47, 47, 47, 47, 48, 48, 48, 48, 48, 48, 49, 49, 49, 49, 49, 49, 50, 50, 50, 50, 50, 50, 50, 51, 51, 51, 51, 51, 51, 52, 52, 52, 52, 52, 52, 52, 53, 53, 53, 53, 53, 53, 54, 54, 54, 54, 54, 54, 54, 55, 55, 55, 55, 55, 55, 55, 56, 56, 56, 56, 56, 56, 56, 57, 57, 57, 57, 57, 57, 57, 58, 58, 58, 58, 58, 58, 58, 58, 59, 59, 59, 59, 59, 59, 59, 60, 60, 60, 60, 60, 60, 60, 60, 61, 61, 61, 61, 61, 61, 61, 61, 62, 62, 62, 62, 62, 62, 62, 62, 63, 63, 63, 63, 63, 63, 63}};
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
+#if defined(MODE_Y) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
 byte processedpalette[14 * 768];
 #endif
 
@@ -317,7 +322,7 @@ byte vrambuffer[65536];
 byte vrambuffer[16384];
 #endif
 
-#if defined(MODE_CGA_AFH) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_VGA16)
+#if defined(MODE_CGA_AFH) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_VGA16) || defined(MODE_13H)
 void I_ProcessPalette(byte *palette)
 {
     #if defined(MODE_CGA_AFH)
@@ -335,10 +340,14 @@ void I_ProcessPalette(byte *palette)
     #if defined(MODE_VGA16)
     VGA_16_ProcessPalette(palette);
     #endif
+
+    #if defined(MODE_13H)
+    VGA_13H_ProcessPalette(palette);
+    #endif
 }
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
+#if defined(MODE_Y) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
 void I_ProcessPalette(byte *palette)
 {
     int i;
@@ -1116,6 +1125,10 @@ void I_SetPalette(int numpalette)
     CGA_AFH_SetPalette(numpalette);
 #endif
 
+#if defined(MODE_13H)
+    VGA_13H_SetPalette(numpalette);
+#endif
+
 #if defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136)
     ptrlut136colors = lut136colors + numpalette * 256;
 #endif
@@ -1124,7 +1137,7 @@ void I_SetPalette(int numpalette)
     ptrlut4colors = lut4colors + numpalette * 256;
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
+#if defined(MODE_Y) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
     {
         int i;
         int pos = Mul768(numpalette);
@@ -2653,8 +2666,11 @@ void I_FinishUpdate(void)
         destscreen += 320 * 200;
     }
 #endif
-#if defined(MODE_13H) || defined(MODE_VBE2)
+#if defined(MODE_13H)
+    VGA_13H_DrawBackbuffer();
+#endif
 
+#if defined(MODE_VBE2)
     if (updatestate & I_FULLSCRN)
     {
         CopyDWords(backbuffer, pcscreen, SCREENHEIGHT * SCREENWIDTH / 4);
@@ -2780,7 +2796,7 @@ void I_FinishUpdate(void)
 }
 
 // Test VGA REP OUTSB capability
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
+#if defined(MODE_Y) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
 void I_TestFastSetPalette(void)
 {
     if (!VGADACfix)
@@ -3051,9 +3067,7 @@ void I_InitGraphics(void)
     outp(GC_INDEX, READ_MAP);
 #endif
 #if defined(MODE_13H)
-    regs.w.ax = 0x13;
-    int386(0x10, (union REGS *)&regs, &regs);
-    pcscreen = destscreen = (byte *)0xA0000;
+    VGA_13H_InitGraphics();
 #endif
 #if defined(MODE_CGA)
     // Set video mode 4
@@ -3505,8 +3519,12 @@ void I_InitGraphics(void)
     }
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
+#if defined(MODE_Y) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
     I_TestFastSetPalette();
+#endif
+
+#if defined(MODE_13H)
+    VGA_TestFastSetPalette();
 #endif
 
     I_ProcessPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
