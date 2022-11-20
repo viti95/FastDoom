@@ -29,6 +29,7 @@ file herc.obj
 file cga_bw.obj
 file ega_640.obj
 file vga_vert.obj
+file ega_320.obj
 file math.obj
 file ns_dpmi.obj
 file ns_pcfx.obj
