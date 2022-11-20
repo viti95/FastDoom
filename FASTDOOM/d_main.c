@@ -110,7 +110,7 @@ boolean CGAcard;
 boolean CGApalette1;
 #endif
 
-#if defined(MODE_CGA16) || defined(MODE_CGA136) || defined(MODE_CGA_AFH)
+#if defined(MODE_CGA16) || defined(MODE_CGA_AFH)
 boolean snowfix;
 #endif
 
@@ -1089,10 +1089,6 @@ void D_DoomMain(void)
     D_AddFile("mode16.wad");
 #endif
 
-#if defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136)
-    D_AddFile("mode136.wad");
-#endif
-
 #if defined(MODE_CVB)
     D_AddFile("modecvbs.wad");
 #endif
@@ -1136,7 +1132,7 @@ void D_DoomMain(void)
     CGApalette1 = M_CheckParm("-palette1");
 #endif
 
-#if defined(MODE_CGA16) || defined(MODE_CGA136) || defined(MODE_CGA_AFH)
+#if defined(MODE_CGA16) || defined(MODE_CGA_AFH)
     snowfix = M_CheckParm("-snow");
 #endif
 

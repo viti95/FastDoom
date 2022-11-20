@@ -7,12 +7,10 @@ if "%2"=="13H" GOTO mode_13h
 if "%2"=="ATI" GOTO mode_ati
 if "%2"=="BWC" GOTO mode_bwc
 if "%2"=="C16" GOTO mode_c16
-if "%2"=="C36" GOTO mode_c36
 if "%2"=="CGA" GOTO mode_cga
 if "%2"=="CVB" GOTO mode_cvb
 if "%2"=="E"   GOTO mode_e
 if "%2"=="E16" GOTO mode_e16
-if "%2"=="E36" GOTO mode_e36
 if "%2"=="HGC" GOTO mode_hgc
 if "%2"=="PCP" GOTO mode_pcp
 if "%2"=="T1"  GOTO mode_t1
@@ -24,7 +22,6 @@ if "%2"=="T52" GOTO mode_t52
 if "%2"=="T86" GOTO mode_t86
 if "%2"=="V2"  GOTO mode_v2
 if "%2"=="V16" GOTO mode_v16
-if "%2"=="V36" GOTO mode_v36
 if "%2"=="VBD" GOTO mode_vbd
 if "%2"=="VBR" GOTO mode_vbr
 if "%2"=="Y"   GOTO mode_y
@@ -64,12 +61,6 @@ set executable=fdoomcah.exe
 set options=/dMODE_CGA_AFH
 goto compile
 
-:mode_c36
-set base=fdoom13h.exe
-set executable=fdoomc36.exe
-set options=/dMODE_CGA136
-goto compile
-
 :mode_cga
 set base=fdoom13h.exe
 set executable=fdoomcga.exe
@@ -92,12 +83,6 @@ goto compile
 set base=fdoom13h.exe
 set executable=fdoome16.exe
 set options=/dMODE_EGA16
-goto compile
-
-:mode_e36
-set base=fdoom13h.exe
-set executable=fdoome36.exe
-set options=/dMODE_EGA136
 goto compile
 
 :mode_hgc
@@ -182,12 +167,6 @@ goto compile
 set base=fdoom13h.exe
 set executable=fdoomv16.exe
 set options=/dMODE_VGA16
-goto compile
-
-:mode_v36
-set base=fdoom13h.exe
-set executable=fdoomv36.exe
-set options=/dMODE_VGA136
 goto compile
 
 :mode_vbd

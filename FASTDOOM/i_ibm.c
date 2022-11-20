@@ -248,11 +248,6 @@ byte lut16colors[14 * 256];
 byte *ptrlut16colors;
 #endif
 
-#if defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136)
-byte lut136colors[14 * 256];
-byte *ptrlut136colors;
-#endif
-
 byte gammatable[5][256] =
     {
         {0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 10, 11, 11, 11, 11, 12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15, 16, 16, 16, 16, 17, 17, 17, 17, 18, 18, 18, 18, 19, 19, 19, 19, 20, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 26, 27, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 30, 31, 31, 31, 31, 32, 32, 32, 32, 32, 33, 33, 33, 33, 34, 34, 34, 34, 35, 35, 35, 35, 36, 36, 36, 36, 37, 37, 37, 37, 38, 38, 38, 38, 39, 39, 39, 39, 40, 40, 40, 40, 41, 41, 41, 41, 42, 42, 42, 42, 43, 43, 43, 43, 44, 44, 44, 44, 45, 45, 45, 45, 46, 46, 46, 46, 47, 47, 47, 47, 48, 48, 48, 48, 49, 49, 49, 49, 50, 50, 50, 50, 51, 51, 51, 51, 52, 52, 52, 52, 53, 53, 53, 53, 54, 54, 54, 54, 55, 55, 55, 55, 56, 56, 56, 56, 57, 57, 57, 57, 58, 58, 58, 58, 59, 59, 59, 59, 60, 60, 60, 60, 61, 61, 61, 61, 62, 62, 62, 62, 63, 63, 63, 63},
@@ -287,7 +282,7 @@ byte scantokey[128] =
         0, 0, 0, 0, 0, 0, 0, 0 // 7
 };
 
-#if defined(MODE_CGA136) || defined(MODE_EGA136) || defined(MODE_EGA80)
+#if defined(MODE_EGA80)
 byte vrambuffer[16384];
 #endif
 
@@ -381,132 +376,6 @@ const byte colors[48] = {
     0x3F, 0x3F, 0x3F}; // 15
 #endif
 
-#if defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136)
-const byte colors[4 * 122] = {
-    0x00, 0x00, 0x00, 0x00,
-    0x01, 0x00, 0x00, 0x1E,
-    0x02, 0x00, 0x1E, 0x00,
-    0x03, 0x00, 0x1E, 0x1E,
-    0x04, 0x1E, 0x00, 0x00,
-    0x05, 0x1E, 0x00, 0x1E,
-    0x06, 0x1E, 0x0F, 0x00,
-    0x07, 0x1E, 0x1E, 0x1E,
-    0x08, 0x0F, 0x0F, 0x0F,
-    0x09, 0x0F, 0x0F, 0x2D,
-    0x0A, 0x0F, 0x2D, 0x0F,
-    0x0B, 0x0F, 0x2D, 0x2D,
-    0x0C, 0x2D, 0x0F, 0x0F,
-    0x0D, 0x2D, 0x0F, 0x2D,
-    0x0E, 0x2D, 0x2D, 0x0F,
-    0x0F, 0x2D, 0x2D, 0x2D,
-    0x11, 0x00, 0x00, 0x2A,
-    0x13, 0x00, 0x1E, 0x2A,
-    0x15, 0x1E, 0x00, 0x2A,
-    0x16, 0x1E, 0x0F, 0x1E,
-    0x17, 0x1E, 0x1E, 0x2A,
-    0x18, 0x0F, 0x0F, 0x21,
-    0x19, 0x0F, 0x0F, 0x36,
-    0x1A, 0x0F, 0x2D, 0x21,
-    0x1B, 0x0F, 0x2D, 0x36,
-    0x1C, 0x2D, 0x0F, 0x21,
-    0x1D, 0x2D, 0x0F, 0x36,
-    0x1E, 0x2D, 0x2D, 0x21,
-    0x1F, 0x2D, 0x2D, 0x36,
-    0x22, 0x00, 0x2A, 0x00,
-    0x23, 0x00, 0x2A, 0x1E,
-    0x24, 0x1E, 0x1E, 0x00,
-    0x26, 0x1E, 0x21, 0x00,
-    0x27, 0x1E, 0x2A, 0x1E,
-    0x28, 0x0F, 0x21, 0x0F,
-    0x29, 0x0F, 0x21, 0x2D,
-    0x2A, 0x0F, 0x36, 0x0F,
-    0x2B, 0x0F, 0x36, 0x2D,
-    0x2C, 0x2D, 0x21, 0x0F,
-    0x2D, 0x2D, 0x21, 0x2D,
-    0x2E, 0x2D, 0x36, 0x0F,
-    0x2F, 0x2D, 0x36, 0x2D,
-    0x33, 0x00, 0x2A, 0x2A,
-    0x36, 0x1E, 0x21, 0x1E,
-    0x37, 0x1E, 0x2A, 0x2A,
-    0x38, 0x0F, 0x21, 0x21,
-    0x39, 0x0F, 0x21, 0x36,
-    0x3A, 0x0F, 0x36, 0x21,
-    0x3B, 0x0F, 0x36, 0x36,
-    0x3C, 0x2D, 0x21, 0x21,
-    0x3D, 0x2D, 0x21, 0x36,
-    0x3E, 0x2D, 0x36, 0x21,
-    0x3F, 0x2D, 0x36, 0x36,
-    0x44, 0x2A, 0x00, 0x00,
-    0x45, 0x2A, 0x00, 0x1E,
-    0x46, 0x2A, 0x0F, 0x00,
-    0x47, 0x2A, 0x1E, 0x1E,
-    0x48, 0x21, 0x0F, 0x0F,
-    0x49, 0x21, 0x0F, 0x2D,
-    0x4A, 0x21, 0x2D, 0x0F,
-    0x4B, 0x21, 0x2D, 0x2D,
-    0x4C, 0x36, 0x0F, 0x0F,
-    0x4D, 0x36, 0x0F, 0x2D,
-    0x4E, 0x36, 0x2D, 0x0F,
-    0x4F, 0x36, 0x2D, 0x2D,
-    0x55, 0x2A, 0x00, 0x2A,
-    0x56, 0x2A, 0x0F, 0x1E,
-    0x57, 0x2A, 0x1E, 0x2A,
-    0x58, 0x21, 0x0F, 0x21,
-    0x59, 0x21, 0x0F, 0x36,
-    0x5A, 0x21, 0x2D, 0x21,
-    0x5B, 0x21, 0x2D, 0x36,
-    0x5C, 0x36, 0x0F, 0x21,
-    0x5D, 0x36, 0x0F, 0x36,
-    0x5E, 0x36, 0x2D, 0x21,
-    0x5F, 0x36, 0x2D, 0x36,
-    0x66, 0x2A, 0x15, 0x00,
-    0x67, 0x2A, 0x21, 0x1E,
-    0x68, 0x21, 0x15, 0x0F,
-    0x69, 0x21, 0x15, 0x2D,
-    0x6A, 0x21, 0x2F, 0x0F,
-    0x6B, 0x21, 0x2F, 0x2D,
-    0x6C, 0x36, 0x15, 0x0F,
-    0x6D, 0x36, 0x15, 0x2D,
-    0x6E, 0x36, 0x2F, 0x0F,
-    0x6F, 0x36, 0x2F, 0x2D,
-    0x77, 0x2A, 0x2A, 0x2A,
-    0x78, 0x21, 0x21, 0x21,
-    0x79, 0x21, 0x21, 0x36,
-    0x7A, 0x21, 0x36, 0x21,
-    0x7B, 0x21, 0x36, 0x36,
-    0x7C, 0x36, 0x21, 0x21,
-    0x7D, 0x36, 0x21, 0x36,
-    0x7E, 0x36, 0x36, 0x21,
-    0x7F, 0x36, 0x36, 0x36,
-    0x88, 0x15, 0x15, 0x15,
-    0x89, 0x15, 0x15, 0x2F,
-    0x8A, 0x15, 0x2F, 0x15,
-    0x8B, 0x15, 0x2F, 0x2F,
-    0x8C, 0x2F, 0x15, 0x15,
-    0x8D, 0x2F, 0x15, 0x2F,
-    0x8E, 0x2F, 0x2F, 0x15,
-    0x8F, 0x2F, 0x2F, 0x2F,
-    0x99, 0x15, 0x15, 0x3F,
-    0x9B, 0x15, 0x2F, 0x3F,
-    0x9D, 0x2F, 0x15, 0x3F,
-    0x9F, 0x2F, 0x2F, 0x3F,
-    0xAA, 0x15, 0x3F, 0x15,
-    0xAB, 0x15, 0x3F, 0x2F,
-    0xAE, 0x2F, 0x3F, 0x15,
-    0xAF, 0x2F, 0x3F, 0x2F,
-    0xBB, 0x15, 0x3F, 0x3F,
-    0xBF, 0x2F, 0x3F, 0x3F,
-    0xCC, 0x3F, 0x15, 0x15,
-    0xCD, 0x3F, 0x15, 0x2F,
-    0xCE, 0x3F, 0x2F, 0x15,
-    0xCF, 0x3F, 0x2F, 0x2F,
-    0xDD, 0x3F, 0x15, 0x3F,
-    0xDF, 0x3F, 0x2F, 0x3F,
-    0xEE, 0x3F, 0x3F, 0x15,
-    0xEF, 0x3F, 0x3F, 0x2F,
-    0xFF, 0x3F, 0x3F, 0x3F};
-#endif
-
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_EGA80) || defined(MODE_EGAW1) || defined(MODE_EGA)
 void I_ProcessPalette(byte *palette)
 {
@@ -535,57 +404,6 @@ void I_ProcessPalette(byte *palette)
 #if defined(MODE_MDA)
 void I_ProcessPalette(byte *palette)
 {
-}
-#endif
-
-#if defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136)
-void I_ProcessPalette(byte *palette)
-{
-    int i, j;
-    byte *ptr = gammatable[usegamma];
-
-    for (i = 0; i < 14 * 256; i++)
-    {
-        int distance;
-
-        int r1, g1, b1;
-
-        int best_difference = MAXINT;
-
-        r1 = (int)ptr[*palette++];
-        g1 = (int)ptr[*palette++];
-        b1 = (int)ptr[*palette++];
-
-        for (j = 0; j < 122; j++)
-        {
-            int r2, g2, b2;
-            int cR, cG, cB;
-            int pos = j * 4;
-
-            r2 = (int)colors[pos + 1];
-            cR = abs(r2 - r1);
-
-            g2 = (int)colors[pos + 2];
-            cG = abs(g2 - g1);
-
-            b2 = (int)colors[pos + 3];
-            cB = abs(b2 - b1);
-
-            distance = cR + cG + cB;
-
-            if (distance == 0)
-            {
-                lut136colors[i] = colors[pos];
-                break;
-            }
-
-            if (best_difference > distance)
-            {
-                best_difference = distance;
-                lut136colors[i] = colors[pos];
-            }
-        }
-    }
 }
 #endif
 
@@ -637,10 +455,6 @@ void I_SetPalette(int numpalette)
 
 #if defined(MODE_CVB)
     CGA_CVBS_SetPalette(numpalette);
-#endif
-
-#if defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136)
-    ptrlut136colors = lut136colors + numpalette * 256;
 #endif
 
 #if defined(MODE_CGA)
@@ -963,176 +777,6 @@ void I_UpdateNoBlit(void)
 
 extern int screenblocks;
 
-#if defined(MODE_CGA136)
-void CGA136_DrawBackbuffer_Snow(void)
-{
-    unsigned char *vram = (unsigned char *)0xB8001;
-    byte *ptrbackbuffer = backbuffer;
-    byte *ptrvrambuffer = vrambuffer;
-    unsigned char line = 20;
-
-    do
-    {
-        unsigned char tmp = ptrlut136colors[*ptrbackbuffer];
-
-        if (tmp != *ptrvrambuffer)
-        {
-            I_WaitCGA();
-            *vram = tmp;
-            *ptrvrambuffer = tmp;
-        }
-
-        tmp = ptrlut136colors[*(ptrbackbuffer + 4)];
-
-        if (tmp != *(ptrvrambuffer + 2))
-        {
-            I_WaitCGA();
-            *(vram + 2) = tmp;
-            *(ptrvrambuffer + 2) = tmp;
-        }
-
-        tmp = ptrlut136colors[*(ptrbackbuffer + 8)];
-
-        if (tmp != *(ptrvrambuffer + 4))
-        {
-            I_WaitCGA();
-            *(vram + 4) = tmp;
-            *(ptrvrambuffer + 4) = tmp;
-        }
-
-        tmp = ptrlut136colors[*(ptrbackbuffer + 12)];
-
-        if (tmp != *(ptrvrambuffer + 6))
-        {
-            I_WaitCGA();
-            *(vram + 6) = tmp;
-            *(ptrvrambuffer + 6) = tmp;
-        }
-
-        vram += 8;
-        ptrbackbuffer += 16;
-        ptrvrambuffer += 8;
-
-        line--;
-        if (line == 0)
-        {
-            line = 20;
-            ptrbackbuffer += 320;
-        }
-    } while (vram < (unsigned char *)0xBBE80);
-}
-
-void CGA136_DrawBackbuffer(void)
-{
-    unsigned char *vram = (unsigned char *)0xB8001;
-    byte *ptrbackbuffer = backbuffer;
-    byte *ptrvrambuffer = vrambuffer;
-    unsigned char line = 20;
-
-    do
-    {
-        unsigned char tmp = ptrlut136colors[*ptrbackbuffer];
-
-        if (tmp != *ptrvrambuffer)
-        {
-            *vram = tmp;
-            *ptrvrambuffer = tmp;
-        }
-
-        tmp = ptrlut136colors[*(ptrbackbuffer + 4)];
-
-        if (tmp != *(ptrvrambuffer + 2))
-        {
-            *(vram + 2) = tmp;
-            *(ptrvrambuffer + 2) = tmp;
-        }
-
-        tmp = ptrlut136colors[*(ptrbackbuffer + 8)];
-
-        if (tmp != *(ptrvrambuffer + 4))
-        {
-            *(vram + 4) = tmp;
-            *(ptrvrambuffer + 4) = tmp;
-        }
-
-        tmp = ptrlut136colors[*(ptrbackbuffer + 12)];
-
-        if (tmp != *(ptrvrambuffer + 6))
-        {
-            *(vram + 6) = tmp;
-            *(ptrvrambuffer + 6) = tmp;
-        }
-
-        vram += 8;
-        ptrbackbuffer += 16;
-        ptrvrambuffer += 8;
-
-        line--;
-        if (line == 0)
-        {
-            line = 20;
-            ptrbackbuffer += 320;
-        }
-    } while (vram < (unsigned char *)0xBBE80);
-}
-#endif
-
-#if defined(MODE_EGA136)
-void EGA136_DrawBackbuffer(void)
-{
-    unsigned char *vram = (unsigned char *)0xB8501;
-    byte *ptrbackbuffer = backbuffer;
-    byte *ptrvrambuffer = vrambuffer;
-    unsigned char line = 20;
-
-    do
-    {
-        unsigned char tmp = ptrlut136colors[*ptrbackbuffer];
-
-        if (tmp != *ptrvrambuffer)
-        {
-            *vram = tmp;
-            *ptrvrambuffer = tmp;
-        }
-
-        tmp = ptrlut136colors[*(ptrbackbuffer + 4)];
-
-        if (tmp != *(ptrvrambuffer + 2))
-        {
-            *(vram + 2) = tmp;
-            *(ptrvrambuffer + 2) = tmp;
-        }
-
-        tmp = ptrlut136colors[*(ptrbackbuffer + 8)];
-
-        if (tmp != *(ptrvrambuffer + 4))
-        {
-            *(vram + 4) = tmp;
-            *(ptrvrambuffer + 4) = tmp;
-        }
-
-        tmp = ptrlut136colors[*(ptrbackbuffer + 12)];
-
-        if (tmp != *(ptrvrambuffer + 6))
-        {
-            *(vram + 6) = tmp;
-            *(ptrvrambuffer + 6) = tmp;
-        }
-
-        vram += 8;
-        ptrbackbuffer += 16;
-        ptrvrambuffer += 8;
-
-        line--;
-        if (line == 0)
-        {
-            line = 20;
-            ptrbackbuffer += 320;
-        }
-    } while (vram < (unsigned char *)0xBC380);
-}
-#endif
-
 #if defined(MODE_EGA)
 unsigned short lastlatch;
 unsigned short vrambuffer[16000];
@@ -1256,25 +900,6 @@ void EGA80_DrawBackbuffer(void)
         ptrvrambuffer += 4;
         ptrbackbuffer += 16;
     } while (vram < (unsigned char *)0xA3E80);
-}
-#endif
-
-#if defined(MODE_VGA136)
-void VGA136_DrawBackbuffer(void)
-{
-    unsigned char *vram = (unsigned char *)0xB8001;
-    byte *ptrbackbuffer = backbuffer;
-
-    do
-    {
-        *vram = ptrlut136colors[*ptrbackbuffer];
-        *(vram + 2) = ptrlut136colors[*(ptrbackbuffer + 4)];
-        *(vram + 4) = ptrlut136colors[*(ptrbackbuffer + 8)];
-        *(vram + 6) = ptrlut136colors[*(ptrbackbuffer + 12)];
-
-        vram += 8;
-        ptrbackbuffer += 16;
-    } while (vram < (unsigned char *)0xBFD00);
 }
 #endif
 
@@ -1587,12 +1212,6 @@ void I_FinishUpdate(void)
 #if defined(MODE_EGA16)
     EGA_16_DrawBackbuffer();
 #endif
-#if defined(MODE_CGA136)
-    if (snowfix)
-        CGA136_DrawBackbuffer_Snow();
-    else
-        CGA136_DrawBackbuffer();
-#endif
 #if defined(MODE_EGA80)
     EGA80_DrawBackbuffer();
 #endif
@@ -1604,12 +1223,6 @@ void I_FinishUpdate(void)
 #endif
 #if defined(MODE_VGA16)
     VGA_16_DrawBackbuffer();
-#endif
-#if defined(MODE_VGA136)
-    VGA136_DrawBackbuffer();
-#endif
-#if defined(MODE_EGA136)
-    EGA136_DrawBackbuffer();
 #endif
 #if defined(MODE_EGA640)
     EGA_640_DrawBackbuffer();
@@ -1926,127 +1539,6 @@ void I_InitGraphics(void)
 #endif
 #if defined(MODE_CGA)
     CGA_InitGraphics();
-#endif
-#if defined(MODE_EGA136)
-    unsigned char *vram = (unsigned char *)0xB8000;
-    int i;
-
-    // Disable cursor
-    regs.h.ah = 0x01;
-    regs.h.ch = 0x3F;
-    int386(0x10, &regs, &regs);
-
-    // Disable blinking
-    regs.h.ah = 0x10;
-    regs.h.al = 0x03;
-    regs.h.bl = 0x00;
-    regs.h.bh = 0x00;
-    int386(0x10, &regs, &regs);
-
-    /* EGA hires mode is 640x350 with a 9x14 character cell.  The pixel aspect
-        ratio is 1:1.37, so if we make the blocks 3 scans tall you get a square
-        pixel at 160x100, but some of the scan lines are not used (50) */
-
-    outp(0x3D4, 0x09);
-    outp(0x3D5, 0x02);
-
-    SetDWords(vrambuffer, 0, 4096);
-
-    for (i = 0; i < 1280; i += 2)
-    {
-        vram[i] = 0x00;
-    }
-
-    for (i = 1280; i < 16000 + 1280; i += 2)
-    {
-#if defined(MODE_EGA136)
-        vram[i] = 0xB1;
-#endif
-    }
-
-    for (i = 0; i < 16000; i += 2)
-    {
-#if defined(MODE_EGA136)
-        vrambuffer[i] = 0xB1;
-#endif
-    }
-
-    for (i = 16000 + 1280; i < 16000 + 1280 + 1280; i += 2)
-    {
-        vram[i] = 0x00;
-    }
-#endif
-
-#if defined(MODE_CGA136) || defined(MODE_VGA136)
-    unsigned char *vram = (unsigned char *)0xB8000;
-    int i;
-
-    // Set 80x25 color mode
-    regs.h.ah = 0x00;
-    regs.h.al = 0x03;
-    int386(0x10, &regs, &regs);
-
-    // Disable cursor
-    regs.h.ah = 0x01;
-    regs.h.ch = 0x3F;
-    int386(0x10, &regs, &regs);
-
-    // Disable blinking
-    regs.h.ah = 0x10;
-    regs.h.al = 0x03;
-    regs.h.bl = 0x00;
-    regs.h.bh = 0x00;
-    int386(0x10, &regs, &regs);
-
-    /* set mode control register for 80x25 text mode and disable video output */
-    outp(0x3D8, 1);
-
-    /*
-        These settings put the 6845 into "graphics" mode without actually
-        switching the CGA controller into graphics mode.  The register
-        values are directly copied from CGA graphics mode register
-        settings.  The 6845 does not directly display graphics, the
-        6845 only generates addresses and sync signals, the CGA
-        attribute controller either displays character ROM data or color
-        pixel data, this is external to the 6845 and keeps the CGA card
-        in text mode.
-        ref: HELPPC
-    */
-
-    /* set vert total lines to 127 */
-    outp(0x3D4, 0x04);
-    outp(0x3D5, 0x7F);
-    /* set vert displayed char rows to 100 */
-    outp(0x3D4, 0x06);
-    outp(0x3D5, 0x64);
-    /* set vert sync position to 112 */
-    outp(0x3D4, 0x07);
-    outp(0x3D5, 0x70);
-    /* set char scan line count to 1 */
-    outp(0x3D4, 0x09);
-    outp(0x3D5, 0x01);
-
-    /* re-enable the video output in 80x25 text mode */
-    outp(0x3D8, 9);
-
-    /* init screen */
-#endif
-
-#if defined(MODE_CGA136)
-    SetDWords(vrambuffer, 0, 4096);
-
-    for (i = 0; i < 16000; i += 2)
-    {
-        vram[i] = 0xB1;
-        vrambuffer[i] = 0xB1;
-    }
-#endif
-
-#if defined(MODE_VGA136)
-    for (i = 0; i < 32000; i += 2)
-    {
-        vram[i] = 0xB1;
-    }
 #endif
 
 #if defined(MODE_CGA_BW)

@@ -3,12 +3,10 @@ call makew.bat clean 13H
 call makew.bat clean ATI
 call makew.bat clean BWC
 call makew.bat clean C16
-call makew.bat clean C36
 call makew.bat clean CGA
 call makew.bat clean CVB
 call makew.bat clean E
 call makew.bat clean E16
-call makew.bat clean E36
 call makew.bat clean HGC
 call makew.bat clean PCP
 call makew.bat clean T1
@@ -20,7 +18,6 @@ call makew.bat clean T52
 call makew.bat clean T86
 call makew.bat clean V2
 call makew.bat clean V16
-call makew.bat clean V36
 call makew.bat clean VBD
 call makew.bat clean VBR
 call makew.bat clean Y

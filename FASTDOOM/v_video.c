@@ -521,7 +521,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
         }
 #endif
 
-#if defined(MODE_VGA136) || defined(MODE_CGA136) || defined(MODE_EGA136) || defined(MODE_EGA80)
+#if defined(MODE_EGA80)
         if ((int) desttop & 3){
             continue;
         }
