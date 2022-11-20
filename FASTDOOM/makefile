@@ -124,6 +124,8 @@ GLOBOBJS_Y = &
  mus2mid.obj
 
 GLOBOBJS_13H = &
+ cga_afh.obj &
+ math.obj &
  ns_dpmi.obj &
  ns_pcfx.obj &
  ns_task.obj &
