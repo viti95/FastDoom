@@ -230,6 +230,8 @@ GLOBOBJS_13H = &
  mus2mid.obj
 
 GLOBOBJS_VBE = &
+ vbe2.obj &
+ vga.obj &
  ns_dpmi.obj &
  ns_pcfx.obj &
  ns_task.obj &

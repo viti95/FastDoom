@@ -6,7 +6,6 @@
 #include <stdarg.h>
 
 #include "vga.h"
-#include "vga_13h.h"
 #include "doomtype.h"
 #include "i_ibm.h"
 #include "v_video.h"
@@ -15,15 +14,23 @@
 #include "i_system.h"
 #include "doomstat.h"
 #include "m_menu.h"
+#include "i_vesa.h"
 
 #define SBARHEIGHT 32
 
-#if defined(MODE_13H)
+#if defined(MODE_VBE2)
 
-byte processedpalette[14 * 768];
 union REGS regs;
 
-void VGA_13H_ProcessPalette(byte *palette)
+static struct VBE_VbeInfoBlock vbeinfo;
+static struct VBE_ModeInfoBlock vbemode;
+unsigned short vesavideomode = 0xFFFF;
+int vesalinear = -1;
+char *vesavideoptr;
+
+byte processedpalette[14 * 768];
+
+void VBE2_ProcessPalette(byte *palette)
 {
     int i;
 
@@ -38,7 +45,7 @@ void VGA_13H_ProcessPalette(byte *palette)
     }
 }
 
-void VGA_13H_SetPalette(int numpalette)
+void VBE2_SetPalette(int numpalette)
 {
     int i;
     int pos = Mul768(numpalette);
@@ -63,7 +70,7 @@ void VGA_13H_SetPalette(int numpalette)
     }
 }
 
-void VGA_13H_DrawBackbuffer(void)
+void VBE2_DrawBackbuffer(void)
 {
     if (updatestate & I_FULLSCRN)
     {
@@ -103,11 +110,48 @@ void VGA_13H_DrawBackbuffer(void)
     }
 }
 
-void VGA_13H_InitGraphics(void)
+void VBE2_InitGraphics(void)
 {
-    regs.w.ax = 0x13;
-    int386(0x10, (union REGS *)&regs, &regs);
-    pcscreen = destscreen = (byte *)0xA0000;
+    int mode;
+
+    VBE_Init();
+
+    // Get VBE info
+    VBE_Controller_Information(&vbeinfo);
+
+    // Get VBE modes
+    for (mode = 0; vbeinfo.VideoModePtr[mode] != 0xffff; mode++)
+    {
+        VBE_Mode_Information(vbeinfo.VideoModePtr[mode], &vbemode);
+        if (vbemode.XResolution == 320 && vbemode.YResolution == 200 && vbemode.BitsPerPixel == 8)
+        {
+            vesavideomode = vbeinfo.VideoModePtr[mode];
+            vesalinear = VBE_IsModeLinear(vesavideomode);
+            break;
+        }
+    }
+
+    // If a VESA compatible 320x200 8bpp mode is found, use it!
+    if (vesavideomode != 0xFFFF)
+    {
+        VBE_SetMode(vesavideomode, vesalinear, 1);
+
+        if (vesalinear == 1)
+        {
+            pcscreen = destscreen = VBE_GetVideoPtr(vesavideomode);
+        }
+        else
+        {
+            pcscreen = destscreen = (char *)0xA0000;
+        }
+
+        // Force 6 bits resolution per color
+        VBE_SetDACWidth(6);
+    }
+    else
+    {
+        I_Error("Compatible VESA 2.0 video mode not found! (320x200 8bpp required)");
+    }
 }
 
 #endif
