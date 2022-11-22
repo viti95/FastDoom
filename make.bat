@@ -186,7 +186,7 @@ goto compile_mode
 
 :mode_vbr
 set base=fdoomvbe.exe
-set executable=fdoomvbr.exe
+set executable=fdoom13h.exe
 set options=/dMODE_VBE2
 goto compile_mode
 

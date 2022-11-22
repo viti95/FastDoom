@@ -67,7 +67,7 @@ elif [ "$target" = "fdoomt52.exe" ]; then
 
 elif [ "$target" = "fdoomvbr.exe" ]; then
   buildopts="-dMODE_VBE2"
-  buildtarget="fdoomvbe.exe"
+  buildtarget="fdoom13h.exe"
 
 elif [ "$target" = "fdoomvbd.exe" ]; then
   buildopts="-dMODE_VBE2_DIRECT"

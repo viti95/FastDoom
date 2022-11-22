@@ -32,6 +32,8 @@ file vga_vert.obj
 file ega_320.obj
 file ega_160.obj
 file ega_80.obj
+file vbe2.obj
+file i_vesa.obj
 file math.obj
 file ns_dpmi.obj
 file ns_pcfx.obj
