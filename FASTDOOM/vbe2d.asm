@@ -3,8 +3,10 @@
 ;
 
 BITS 32
-%include "defs.inc"
 %include "macros.inc"
+
+%ifdef MODE_VBE2_DIRECT
+%include "defs.inc"
 
 extern _destview
 extern _centery
@@ -198,3 +200,5 @@ CODE_SYM_DEF R_DrawSpanVBE2
 
 hmap320:
   ret
+
+%endif

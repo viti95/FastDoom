@@ -41,145 +41,145 @@ if "%2"=="EGA" GOTO mode_ega
 if "%2"=="CAH" GOTO mode_cah
 
 :mode_13h
-set base=fdoom13h.exe
+set base=fdoom.exe
 set executable=fdoom13h.exe
 set options=/dMODE_13H
 goto compile_mode
 
 :mode_ati
-set base=fdoom13h.exe
+set base=fdoom.exe
 set executable=fdoomati.exe
 set options=/dMODE_ATI640
 goto compile_mode
 
 :mode_bwc
-set base=fdoom13h.exe
+set base=fdoom.exe
 set executable=fdoombwc.exe
 set options=/dMODE_CGA_BW
 goto compile_mode
 
 :mode_c16
-set base=fdoom13h.exe
+set base=fdoom.exe
 set executable=fdoomc16.exe
 set options=/dMODE_CGA16
 goto compile_mode
 
 :mode_cah
-set base=fdoom13h.exe
+set base=fdoom.exe
 set executable=fdoomcah.exe
 set options=/dMODE_CGA_AFH
 goto compile_mode
 
 :mode_cga
-set base=fdoom13h.exe
+set base=fdoom.exe
 set executable=fdoomcga.exe
 set options=/dMODE_CGA
 goto compile_mode
 
 :mode_cvb
-set base=fdoom13h.exe
+set base=fdoom.exe
 set executable=fdoomcvb.exe
 set options=/dMODE_CVB
 goto compile_mode
 
 :mode_e
-set base=fdoom13h.exe
+set base=fdoom.exe
 set executable=fdoome.exe
 set options=/dMODE_EGA640
 goto compile_mode
 
 :mode_e16
-set base=fdoom13h.exe
+set base=fdoom.exe
 set executable=fdoome16.exe
 set options=/dMODE_EGA16
 goto compile_mode
 
 :mode_hgc
-set base=fdoom13h.exe
+set base=fdoom.exe
 set executable=fdoomhgc.exe
 set options=/dMODE_HERC
 goto compile_mode
 
 :mode_pcp
-set base=fdoom13h.exe
+set base=fdoom.exe
 set executable=fdoompcp.exe
 set options=/dMODE_PCP
 goto compile_mode
 
 :mode_t1
-set base=fdoomtxt.exe
+set base=fdoom.exe
 set executable=fdoomt1.exe
 set options=/dMODE_T4025
 goto compile_mode
 
 :mode_t12
-set base=fdoomtxt.exe
+set base=fdoom.exe
 set executable=fdoomt12.exe
 set options=/dMODE_T4050
 goto compile_mode
 
 :mode_t25
-set base=fdoomtxt.exe
+set base=fdoom.exe
 set executable=fdoomt25.exe
 set options=/dMODE_T8025
 goto compile_mode
 
 :mode_t43
-set base=fdoomtxt.exe
+set base=fdoom.exe
 set executable=fdoomt43.exe
 set options=/dMODE_T8043
 goto compile_mode
 
 :mode_t50
-set base=fdoomtxt.exe
+set base=fdoom.exe
 set executable=fdoomt50.exe
 set options=/dMODE_T8050
 goto compile_mode
 
 :mode_t52
-set base=fdoomtxt.exe
+set base=fdoom.exe
 set executable=fdoomt52.exe
 set options=/dMODE_T80100
 goto compile_mode
 
 :mode_t86
-set base=fdoomtxt.exe
+set base=fdoom.exe
 set executable=fdoomt86.exe
 set options=/dMODE_T8086
 goto compile_mode
 
 :mode_v2
-set base=fdoom13h.exe
+set base=fdoom.exe
 set executable=fdoomv2.exe
 set options=/dMODE_V2
 goto compile_mode
 
 :mode_e80
-set base=fdoom13h.exe
+set base=fdoom.exe
 set executable=fdoome80.exe
 set options=/dMODE_EGA80
 goto compile_mode
 
 :mode_ew1
-set base=fdoom13h.exe
+set base=fdoom.exe
 set executable=fdoomew1.exe
 set options=/dMODE_EGAW1
 goto compile_mode
 
 :mode_ega
-set base=fdoom13h.exe
+set base=fdoom.exe
 set executable=fdoomega.exe
 set options=/dMODE_EGA
 goto compile_mode
 
 :mode_v16
-set base=fdoom13h.exe
+set base=fdoom.exe
 set executable=fdoomv16.exe
 set options=/dMODE_VGA16
 goto compile_mode
 
 :mode_vbd
-set base=fdoomvbd.exe
+set base=fdoom.exe
 set executable=fdoomvbd.exe
 set options=/dMODE_VBE2_DIRECT
 goto compile_mode
@@ -191,13 +191,13 @@ set options=/dMODE_VBE2
 goto compile_mode
 
 :mode_y
-set base=fdoomy.exe
+set base=fdoom.exe
 set executable=fdoom.exe
 set options=/dMODE_Y
 goto compile_mode
 
 :mode_mda
-set base=fdoomtxt.exe
+set base=fdoom.exe
 set executable=fdoommda.exe
 set options=/dMODE_MDA
 goto compile_mode

@@ -26,6 +26,8 @@
   * Structure to do the Realmode Interrupt Calls.
   */
 
+#if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
+
 #pragma pack(1)
 
 #define VBE2SIGNATURE "VBE2"
@@ -303,3 +305,5 @@ void VBE_Done(void)
   DPMI_FreeDOSMem(&VbeModePool);
   DPMI_FreeDOSMem(&VbeInfoPool);
 }
+
+#endif

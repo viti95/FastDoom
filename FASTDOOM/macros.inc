@@ -22,3 +22,71 @@ CPU 386
     %1_:
   %endmacro
 %endif
+
+%ifdef MODE_13H
+%define USE_BACKBUFFER
+%endif
+
+%ifdef MODE_ATI640
+%define USE_BACKBUFFER
+%endif
+
+%ifdef MODE_CGA_BW
+%define USE_BACKBUFFER
+%endif
+
+%ifdef MODE_CGA16
+%define USE_BACKBUFFER
+%endif
+
+%ifdef MODE_CGA
+%define USE_BACKBUFFER
+%endif
+
+%ifdef MODE_CVB
+%define USE_BACKBUFFER
+%endif
+
+%ifdef MODE_EGA640
+%define USE_BACKBUFFER
+%endif
+
+%ifdef MODE_EGA16
+%define USE_BACKBUFFER
+%endif
+
+%ifdef MODE_HERC
+%define USE_BACKBUFFER
+%endif
+
+%ifdef MODE_PCP
+%define USE_BACKBUFFER
+%endif
+
+%ifdef MODE_V2
+%define USE_BACKBUFFER
+%endif
+
+%ifdef MODE_VGA16
+%define USE_BACKBUFFER
+%endif
+
+%ifdef MODE_VBE2
+%define USE_BACKBUFFER
+%endif
+
+%ifdef MODE_EGA80
+%define USE_BACKBUFFER
+%endif
+
+%ifdef MODE_EGAW1
+%define USE_BACKBUFFER
+%endif
+
+%ifdef MODE_EGA
+%define USE_BACKBUFFER
+%endif
+
+%ifdef MODE_CGA_AFH
+%define USE_BACKBUFFER
+%endif

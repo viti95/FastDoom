@@ -13,8 +13,28 @@ lib noemu387.lib
 lib gf1_osf.lib
 lib pawe32.lib
 format os2 le
-name fdoomy
+name fdoom
 
+file cga_afh.obj
+file cga_16.obj
+file ega_16.obj
+file vga.obj
+file vga_16.obj
+file vga_13h.obj
+file pcp.obj
+file ati.obj
+file cga.obj
+file cga_cvbs.obj
+file herc.obj
+file cga_bw.obj
+file ega_640.obj
+file vga_vert.obj
+file ega_320.obj
+file ega_160.obj
+file ega_80.obj
+file vbe2.obj
+file i_vesa.obj
+file math.obj
 file ns_dpmi.obj
 file ns_pcfx.obj
 file ns_task.obj
@@ -51,6 +71,8 @@ file i_main.obj
 file i_ibm.obj
 file i_sound.obj
 file planar.obj
+file linear.obj
+file vbe2d.obj
 file tables.obj
 file f_finale.obj
 file d_main.obj

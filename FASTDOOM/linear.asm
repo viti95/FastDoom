@@ -16,8 +16,10 @@
 ;
 
 BITS 32
-%include "defs.inc"
 %include "macros.inc"
+
+%ifdef USE_BACKBUFFER
+%include "defs.inc"
 
 extern _centery
 
@@ -208,3 +210,5 @@ CODE_SYM_DEF R_DrawSpan_13h
 %endrep
 
 hmap320: ret
+
+%endif
