@@ -70,6 +70,10 @@ extern boolean CGAcard;
 extern boolean CGApalette1;
 #endif
 
+#if defined(MODE_CGA512)
+extern unsigned char CGAmodel;
+#endif
+
 #if defined(MODE_CGA16) || defined(MODE_CGA_AFH)
 extern boolean snowfix;
 #endif

@@ -47,4 +47,12 @@ void D_StartTitle(void);
 
 void D_Display(void);
 
+#if defined(MODE_CGA512)
+enum CGA_MODEL
+{
+    CGA_OLD,
+    CGA_NEW
+};
+#endif
+
 #endif

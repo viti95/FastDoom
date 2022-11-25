@@ -67,6 +67,13 @@ typedef unsigned angle_t;
 //  without additional checking.
 extern const angle_t tantoangle[SLOPERANGE + 1];
 
+#if defined(MODE_CGA512)
+extern const unsigned char oldCGA55LUT[768];
+extern const unsigned char oldCGA13LUT[768];
+extern const unsigned char newCGA55LUT[768];
+extern const unsigned char newCGA13LUT[768];
+#endif
+
 // Utility function,
 //  called by R_PointToAngle.
 

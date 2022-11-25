@@ -90,3 +90,7 @@ CPU 386
 %ifdef MODE_CGA_AFH
 %define USE_BACKBUFFER
 %endif
+
+%ifdef MODE_CGA512
+%define USE_BACKBUFFER
+%endif

@@ -26,3 +26,4 @@ call make.bat clean fdoomew1.exe
 call make.bat clean fdoome80.exe
 call make.bat clean fdoomega.exe
 call make.bat clean fdoomcah.exe
+call make.bat clean fdoom512.exe
