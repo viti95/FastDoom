@@ -265,7 +265,7 @@ void I_StartupSound(void);
 void I_ShutdownSound(void);
 void I_ShutdownTimer(void);
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(TEXT_MODE) 
 byte lut16colors[14 * 256];
 byte *ptrlut16colors;
 #endif
@@ -517,6 +517,10 @@ void I_SetPalette(int numpalette)
 
 #if defined(MODE_VBE2)
     VBE2_SetPalette(numpalette);
+#endif
+
+#if defined(TEXT_MODE) 
+    ptrlut16colors = lut16colors + numpalette * 256;
 #endif
 
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
