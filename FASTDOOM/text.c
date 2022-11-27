@@ -39,6 +39,9 @@ const byte colors[48] = {
 byte lut16colors[14 * 256];
 byte *ptrlut16colors;
 
+unsigned short *textdestscreen = (unsigned short *)0xB8000;
+byte textpage = 0;
+
 void TEXT_40x25_InitGraphics(void)
 {
     union REGS regs;
@@ -154,6 +157,101 @@ void TEXT_ProcessPalette(byte *palette)
 void TEXT_SetPalette(int numpalette)
 {
     ptrlut16colors = lut16colors + numpalette * 256;
+}
+
+void TEXT_40x25_ChangeVideoPage(void)
+{
+    union REGS regs;
+
+    // Change video page
+    regs.h.ah = 0x05;
+    regs.h.al = textpage;
+    regs.h.bh = 0x00;
+    regs.h.bl = 0x00;
+    int386(0x10, &regs, &regs);
+
+    if (textpage == 2)
+    {
+        textpage = 0;
+        textdestscreen = (unsigned short *)0xB8000;
+    }
+    else
+    {
+        textpage++;
+        textdestscreen += 1024;
+    }
+}
+
+void TEXT_80x25_ChangeVideoPage(void)
+{
+    union REGS regs;
+
+    // Change video page
+    regs.h.ah = 0x05;
+    regs.h.al = textpage;
+    regs.h.bh = 0x00;
+    regs.h.bl = 0x00;
+    int386(0x10, &regs, &regs);
+
+    if (textpage == 2)
+    {
+        textpage = 0;
+        textdestscreen = (unsigned short *)0xB8000;
+    }
+    else
+    {
+        textpage++;
+        textdestscreen += 2048;
+    }
+}
+
+void TEXT_80x25_EGA_Double_ChangeVideoPage(void)
+{
+    union REGS regs;
+
+    // Change video page
+    regs.h.ah = 0x05;
+    regs.h.al = textpage;
+    regs.h.bh = 0x00;
+    regs.h.bl = 0x00;
+    int386(0x10, &regs, &regs);
+
+    if (textpage == 2)
+    {
+        textpage = 0;
+        textdestscreen = (unsigned short *)0xB8000;
+    }
+    else
+    {
+        textpage++;
+        textdestscreen += 3568;
+    }
+}
+
+void TEXT_80x25_Double_ChangeVideoPage(void)
+{
+    union REGS regs;
+
+    // Change video page
+    regs.h.ah = 0x05;
+    regs.h.al = textpage;
+    regs.h.bh = 0x00;
+    regs.h.bl = 0x00;
+    int386(0x10, &regs, &regs);
+
+    if (textpage == 2)
+    {
+        textpage = 0;
+        textdestscreen = (unsigned short *)0xB8000;
+    }
+    else
+    {
+        textpage++;
+        if (videoPageFix)
+            textdestscreen += 4000;
+        else
+            textdestscreen += 4128;
+    }
 }
 
 #endif

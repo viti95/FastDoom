@@ -471,11 +471,6 @@ unsigned short *currentscreen;
 short page = 0;
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
-unsigned short *textdestscreen = (unsigned short *)0xB8000;
-byte textpage = 0;
-#endif
-
 #if defined(MODE_MDA)
 unsigned short *textdestscreen = backbuffer;
 #endif
@@ -769,87 +764,21 @@ void I_FinishUpdate(void)
 #endif
 
 #if defined(MODE_T4025) || defined(MODE_T4050)
-    // Change video page
-    regs.h.ah = 0x05;
-    regs.h.al = textpage;
-    regs.h.bh = 0x00;
-    regs.h.bl = 0x00;
-    int386(0x10, &regs, &regs);
-
-    if (textpage == 2)
-    {
-        textpage = 0;
-        textdestscreen = (unsigned short *)0xB8000;
-    }
-    else
-    {
-        textpage++;
-        textdestscreen += 1024;
-    }
+    TEXT_40x25_ChangeVideoPage();
 #endif
 
 #if defined(MODE_T8025)
-    // Change video page
-    regs.h.ah = 0x05;
-    regs.h.al = textpage;
-    regs.h.bh = 0x00;
-    regs.h.bl = 0x00;
-    int386(0x10, &regs, &regs);
-
-    if (textpage == 2)
-    {
-        textpage = 0;
-        textdestscreen = (unsigned short *)0xB8000;
-    }
-    else
-    {
-        textpage++;
-        textdestscreen += 2048;
-    }
+    TEXT_80x25_ChangeVideoPage();
 #endif
 
 #if defined(MODE_T8043) || defined(MODE_T8086)
-    // Change video page
-    regs.h.ah = 0x05;
-    regs.h.al = textpage;
-    regs.h.bh = 0x00;
-    regs.h.bl = 0x00;
-    int386(0x10, &regs, &regs);
-
-    if (textpage == 2)
-    {
-        textpage = 0;
-        textdestscreen = (unsigned short *)0xB8000;
-    }
-    else
-    {
-        textpage++;
-        textdestscreen += 3568;
-    }
+    TEXT_80x25_EGA_Double_ChangeVideoPage();
 #endif
 
 #if defined(MODE_T8050) || defined(MODE_T80100)
-    // Change video page
-    regs.h.ah = 0x05;
-    regs.h.al = textpage;
-    regs.h.bh = 0x00;
-    regs.h.bl = 0x00;
-    int386(0x10, &regs, &regs);
-
-    if (textpage == 2)
-    {
-        textpage = 0;
-        textdestscreen = (unsigned short *)0xB8000;
-    }
-    else
-    {
-        textpage++;
-        if (videoPageFix)
-            textdestscreen += 4000;
-        else
-            textdestscreen += 4128;
-    }
+    TEXT_80x25_Double_ChangeVideoPage();
 #endif
+
 #if defined(MODE_Y)
     outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
 

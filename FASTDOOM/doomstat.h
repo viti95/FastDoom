@@ -86,7 +86,7 @@ extern boolean HERCmap;
 extern boolean VGADACfix;
 #endif
 
-#if defined(MODE_T8050) || defined(MODE_T80100)
+#if defined(TEXT_MODE)
 extern boolean videoPageFix;
 #endif
 

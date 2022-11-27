@@ -126,7 +126,7 @@ boolean HERCmap;
 boolean VGADACfix = false;
 #endif
 
-#if defined(MODE_T8050) || defined(MODE_T80100)
+#if defined(TEXT_MODE)
 boolean videoPageFix;
 #endif
 
@@ -1176,7 +1176,7 @@ void D_DoomMain(void)
     VGADACfix = M_CheckParm("-fixDAC");
 #endif
 
-#if defined(MODE_T8050) || defined(MODE_T80100)
+#if defined(TEXT_MODE)
     videoPageFix = M_CheckParm("-pagefix");
 #endif
 
