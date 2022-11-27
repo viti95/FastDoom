@@ -102,7 +102,7 @@ boolean forceLowDetail;
 boolean forcePotatoDetail;
 int forceScreenSize;
 
-#if defined(MODE_T8025) || defined(MODE_T4025) || defined(MODE_T4050)
+#if defined(TEXT_MODE)
 boolean CGAcard;
 #endif
 
@@ -1156,7 +1156,7 @@ void D_DoomMain(void)
     forceLowDetail = M_CheckParm("-forceLQ");
     forcePotatoDetail = M_CheckParm("-forcePQ");
 
-#if defined(MODE_T8025) || defined(MODE_T4025) || defined(MODE_T4050)
+#if defined(TEXT_MODE)
     CGAcard = M_CheckParm("-cga");
 #endif
 

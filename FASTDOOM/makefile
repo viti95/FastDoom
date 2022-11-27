@@ -56,6 +56,7 @@ GLOBOBJS = &
  vbe2.obj &
  i_vesa.obj &
  cga_512.obj &
+ text.obj &
  math.obj &
  ns_dpmi.obj &
  ns_pcfx.obj &

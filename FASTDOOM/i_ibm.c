@@ -132,6 +132,10 @@
 #include "cga_512.h"
 #endif
 
+#if defined(TEXT_MODE)
+#include "text.h"
+#endif
+
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 #include "i_vesa.h"
 #endif
@@ -277,11 +281,6 @@ void I_StartupSound(void);
 void I_ShutdownSound(void);
 void I_ShutdownTimer(void);
 
-#if defined(TEXT_MODE) 
-byte lut16colors[14 * 256];
-byte *ptrlut16colors;
-#endif
-
 byte gammatable[5][256] =
     {
         {0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 10, 11, 11, 11, 11, 12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15, 16, 16, 16, 16, 17, 17, 17, 17, 18, 18, 18, 18, 19, 19, 19, 19, 20, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 26, 27, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 30, 31, 31, 31, 31, 32, 32, 32, 32, 32, 33, 33, 33, 33, 34, 34, 34, 34, 35, 35, 35, 35, 36, 36, 36, 36, 37, 37, 37, 37, 38, 38, 38, 38, 39, 39, 39, 39, 40, 40, 40, 40, 41, 41, 41, 41, 42, 42, 42, 42, 43, 43, 43, 43, 44, 44, 44, 44, 45, 45, 45, 45, 46, 46, 46, 46, 47, 47, 47, 47, 48, 48, 48, 48, 49, 49, 49, 49, 50, 50, 50, 50, 51, 51, 51, 51, 52, 52, 52, 52, 53, 53, 53, 53, 54, 54, 54, 54, 55, 55, 55, 55, 56, 56, 56, 56, 57, 57, 57, 57, 58, 58, 58, 58, 59, 59, 59, 59, 60, 60, 60, 60, 61, 61, 61, 61, 62, 62, 62, 62, 63, 63, 63, 63},
@@ -312,7 +311,6 @@ byte scantokey[128] =
         0, 0, 0, 0, 0, 0, 0, 0 // 7
 };
 
-#if defined(MODE_CGA_AFH) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_VGA16) || defined(MODE_13H) || defined(MODE_PCP) || defined(MODE_ATI640) || defined(MODE_CGA) || defined(MODE_CVB) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_EGA640) || defined(MODE_V2) || defined(MODE_EGA) || defined(MODE_EGAW1) || defined(MODE_EGA80) || defined(MODE_VBE2) || defined(MODE_CGA512) || defined(MODE_MDA) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 void I_ProcessPalette(byte *palette)
 {
     #if defined(MODE_CGA_AFH)
@@ -378,53 +376,11 @@ void I_ProcessPalette(byte *palette)
     #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(MODE_VBE2) || defined(MODE_13H) || defined(MODE_V2)
     VGA_ProcessPalette(palette);
     #endif
+
+    #if defined(TEXT_MODE)
+    TEXT_ProcessPalette(palette);
+    #endif
 }
-#endif
-
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
-const byte colors[48] = {
-    0x00, 0x00, 0x00,  // 0
-    0x00, 0x00, 0x2A,  // 1
-    0x00, 0x2A, 0x00,  // 2
-    0x00, 0x2A, 0x2A,  // 3
-    0x2A, 0x00, 0x00,  // 4
-    0x2A, 0x00, 0x2A,  // 5
-    0x2A, 0x15, 0x00,  // 6
-    0x2A, 0x2A, 0x2A,  // 7
-    0x15, 0x15, 0x15,  // 8
-    0x15, 0x15, 0x3F,  // 9
-    0x15, 0x3F, 0x15,  // 10
-    0x15, 0x3F, 0x3F,  // 11
-    0x3F, 0x15, 0x15,  // 12
-    0x3F, 0x15, 0x3F,  // 13
-    0x3F, 0x3F, 0x15,  // 14
-    0x3F, 0x3F, 0x3F}; // 15
-#endif
-
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
-void I_ProcessPalette(byte *palette)
-{
-    int i, j;
-    byte *ptr = gammatable[usegamma];
-
-    for (i = 0; i < 14 * 256; i++)
-    {
-        int distance;
-
-        int r1, g1, b1;
-
-        int bestcolor;
-
-        r1 = (int)ptr[*palette++];
-        g1 = (int)ptr[*palette++];
-        b1 = (int)ptr[*palette++];
-
-        bestcolor = GetClosestColor(colors, 16, r1, g1, b1);
-
-        lut16colors[i] = bestcolor;
-    }
-}
-#endif
 
 //
 // I_SetPalette
@@ -489,7 +445,7 @@ void I_SetPalette(int numpalette)
 #endif
 
 #if defined(TEXT_MODE) 
-    ptrlut16colors = lut16colors + numpalette * 256;
+    TEXT_SetPalette(numpalette);
 #endif
 
 #if defined(MODE_CGA512)
@@ -1051,59 +1007,13 @@ void I_InitGraphics(void)
 #endif
 
 #if defined(MODE_T4025) || defined(MODE_T4050)
-    // Set 40x25 color mode
-    regs.h.ah = 0x00;
-    regs.h.al = 0x01;
-    int386(0x10, &regs, &regs);
-
-    // Disable cursor
-    regs.h.ah = 0x01;
-    regs.h.ch = 0x3F;
-    int386(0x10, &regs, &regs);
-
-    // CGA Disable blink
-    if (CGAcard)
-    {
-        I_DisableCGABlink();
-    }
-    else
-    {
-        // Disable blinking
-        regs.h.ah = 0x10;
-        regs.h.al = 0x03;
-        regs.h.bl = 0x00;
-        regs.h.bh = 0x00;
-        int386(0x10, &regs, &regs);
-    }
+    TEXT_40x25_InitGraphics();
 
     textdestscreen = (unsigned short *)0xB8000;
     textpage = 0;
 #endif
 #if defined(MODE_T8025)
-    // Set 80x25 color mode
-    regs.h.ah = 0x00;
-    regs.h.al = 0x03;
-    int386(0x10, &regs, &regs);
-
-    // Disable cursor
-    regs.h.ah = 0x01;
-    regs.h.ch = 0x3F;
-    int386(0x10, &regs, &regs);
-
-    // CGA Disable blink
-    if (CGAcard)
-    {
-        I_DisableCGABlink();
-    }
-    else
-    {
-        // Disable blinking
-        regs.h.ah = 0x10;
-        regs.h.al = 0x03;
-        regs.h.bl = 0x00;
-        regs.h.bh = 0x00;
-        int386(0x10, &regs, &regs);
-    }
+    TEXT_80x25_InitGraphics();
 
     textdestscreen = (unsigned short *)0xB8000;
     textpage = 0;
@@ -1118,29 +1028,7 @@ void I_InitGraphics(void)
     I_DisableMDABlink();
 #endif
 #if defined(MODE_T8050) || defined(MODE_T80100) || defined(MODE_T8043) || defined(MODE_T8086)
-    // Set 80x25 color mode
-    regs.h.ah = 0x00;
-    regs.h.al = 0x03;
-    int386(0x10, &regs, &regs);
-
-    // Change font size to 8x8
-    regs.h.ah = 0x11;
-    regs.h.al = 0x12;
-    regs.h.bh = 0;
-    regs.h.bl = 0;
-    int386(0x10, &regs, &regs);
-
-    // Disable cursor
-    regs.h.ah = 0x01;
-    regs.h.ch = 0x3F;
-    int386(0x10, &regs, &regs);
-
-    // Disable blinking
-    regs.h.ah = 0x10;
-    regs.h.al = 0x03;
-    regs.h.bl = 0x00;
-    regs.h.bh = 0x00;
-    int386(0x10, &regs, &regs);
+    TEXT_80x25_Double_InitGraphics();
 
     textdestscreen = (unsigned short *)0xB8000;
     textpage = 0;
