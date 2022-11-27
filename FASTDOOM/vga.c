@@ -17,6 +17,8 @@
 
 #if defined(MODE_13H) || defined(MODE_V2) || defined(MODE_VBE2) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 
+byte processedpalette[14 * 768];
+
 void VGA_TestFastSetPalette(void)
 {
     if (!VGADACfix)
@@ -48,6 +50,21 @@ void VGA_TestFastSetPalette(void)
                 return;
             }
         }
+    }
+}
+
+void VGA_ProcessPalette(byte *palette)
+{
+    int i;
+
+    byte *ptr = gammatable[usegamma];
+
+    for (i = 0; i < 14 * 768; i += 4, palette += 4)
+    {
+        processedpalette[i] = ptr[*palette];
+        processedpalette[i + 1] = ptr[*(palette + 1)];
+        processedpalette[i + 2] = ptr[*(palette + 2)];
+        processedpalette[i + 3] = ptr[*(palette + 3)];
     }
 }
 

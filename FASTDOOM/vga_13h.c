@@ -20,23 +20,7 @@
 
 #if defined(MODE_13H)
 
-byte processedpalette[14 * 768];
 union REGS regs;
-
-void VGA_13H_ProcessPalette(byte *palette)
-{
-    int i;
-
-    byte *ptr = gammatable[usegamma];
-
-    for (i = 0; i < 14 * 768; i += 4, palette += 4)
-    {
-        processedpalette[i] = ptr[*palette];
-        processedpalette[i + 1] = ptr[*(palette + 1)];
-        processedpalette[i + 2] = ptr[*(palette + 2)];
-        processedpalette[i + 3] = ptr[*(palette + 3)];
-    }
-}
 
 void VGA_13H_DrawBackbuffer(void)
 {

@@ -28,23 +28,6 @@ unsigned short vesavideomode = 0xFFFF;
 int vesalinear = -1;
 char *vesavideoptr;
 
-byte processedpalette[14 * 768];
-
-void VBE2_ProcessPalette(byte *palette)
-{
-    int i;
-
-    byte *ptr = gammatable[usegamma];
-
-    for (i = 0; i < 14 * 768; i += 4, palette += 4)
-    {
-        processedpalette[i] = ptr[*palette];
-        processedpalette[i + 1] = ptr[*(palette + 1)];
-        processedpalette[i + 2] = ptr[*(palette + 2)];
-        processedpalette[i + 3] = ptr[*(palette + 3)];
-    }
-}
-
 void VBE2_DrawBackbuffer(void)
 {
     if (updatestate & I_FULLSCRN)

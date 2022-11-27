@@ -19,23 +19,6 @@
 
 union REGS regs;
 
-byte processedpalette[14 * 768];
-
-void VGA_VERT_ProcessPalette(byte *palette)
-{
-    int i;
-
-    byte *ptr = gammatable[usegamma];
-
-    for (i = 0; i < 14 * 768; i += 4, palette += 4)
-    {
-        processedpalette[i] = ptr[*palette];
-        processedpalette[i + 1] = ptr[*(palette + 1)];
-        processedpalette[i + 2] = ptr[*(palette + 2)];
-        processedpalette[i + 3] = ptr[*(palette + 3)];
-    }
-}
-
 void VGA_VERT_DrawBackbuffer(void)
 {
     byte *ptrdestscreen;
