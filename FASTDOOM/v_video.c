@@ -30,6 +30,10 @@
 
 #include "v_video.h"
 
+#if defined(TEXT_MODE)
+#include "text.h"
+#endif
+
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 byte screen0[SCREENWIDTH * SCREENHEIGHT];
 #endif
