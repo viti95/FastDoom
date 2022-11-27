@@ -1002,43 +1002,6 @@ void I_FinishUpdate(void)
     }
 }
 
-// Test VGA REP OUTSB capability
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-void I_TestFastSetPalette(void)
-{
-    if (!VGADACfix)
-    {
-        byte test_palette[768];
-        unsigned short x;
-        byte y;
-
-        // Initialize test palette
-        for (x = 0; x < 768; x++)
-        {
-            test_palette[x] = x & 63;
-        }
-
-        // Write test palette using REP STOSB
-        outp(PEL_WRITE_ADR, 0);
-        OutString(PEL_DATA, test_palette, 768);
-
-        // Read palette from VGA card
-        // and compare results
-        outp(PEL_READ_ADR, 0);
-        for (x = 0; x < 768; x++)
-        {
-            byte read_data = inp(PEL_DATA);
-
-            if (read_data != test_palette[x])
-            {
-                VGADACfix = true;
-                return;
-            }
-        }
-    }
-}
-#endif
-
 //
 // I_InitGraphics
 //
@@ -1294,11 +1257,7 @@ void I_InitGraphics(void)
     }
 #endif
 
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-    I_TestFastSetPalette();
-#endif
-
-#if defined(MODE_13H) || defined(MODE_V2) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_V2) || defined(MODE_VBE2) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
     VGA_TestFastSetPalette();
 #endif
 

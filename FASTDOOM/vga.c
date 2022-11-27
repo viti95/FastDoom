@@ -19,6 +19,7 @@
 
 byte processedpalette[14 * 768];
 
+// Test VGA REP OUTSB capability
 void VGA_TestFastSetPalette(void)
 {
     if (!VGADACfix)
