@@ -120,6 +120,14 @@
 #include "vga.h"
 #endif
 
+#if defined(MODE_Y)
+#include "vga.h"
+#endif
+
+#if defined(MODE_VBE2_DIRECT)
+#include "vga.h"
+#endif
+
 #if defined(MODE_CGA512)
 #include "cga_512.h"
 #endif
@@ -489,20 +497,12 @@ void I_SetPalette(int numpalette)
     CGA_AFH_SetPalette(numpalette);
 #endif
 
-#if defined(MODE_13H)
-    VGA_13H_SetPalette(numpalette);
-#endif
-
 #if defined(MODE_CVB)
     CGA_CVBS_SetPalette(numpalette);
 #endif
 
 #if defined(MODE_CGA)
     CGA_SetPalette(numpalette);
-#endif
-
-#if defined(MODE_V2)
-    VGA_VERT_SetPalette(numpalette);
 #endif
 
 #if defined(MODE_EGA)
@@ -517,10 +517,6 @@ void I_SetPalette(int numpalette)
     EGA_80_SetPalette(numpalette);
 #endif
 
-#if defined(MODE_VBE2)
-    VBE2_SetPalette(numpalette);
-#endif
-
 #if defined(TEXT_MODE) 
     ptrlut16colors = lut16colors + numpalette * 256;
 #endif
@@ -529,30 +525,8 @@ void I_SetPalette(int numpalette)
     CGA_512_SetPalette(numpalette);
 #endif
 
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-    {
-        int i;
-        int pos = Mul768(numpalette);
-
-        outp(PEL_WRITE_ADR, 0);
-
-        if (VGADACfix)
-        {
-            byte *ptrprocessedpalette = processedpalette + pos;
-            for (i = 0; i < 768; i += 4)
-            {
-                outp(PEL_DATA, *(ptrprocessedpalette));
-                outp(PEL_DATA, *(ptrprocessedpalette + 1));
-                outp(PEL_DATA, *(ptrprocessedpalette + 2));
-                outp(PEL_DATA, *(ptrprocessedpalette + 3));
-                ptrprocessedpalette += 4;
-            }
-        }
-        else
-        {
-            OutString(PEL_DATA, ((unsigned char *)processedpalette) + pos, 768);
-        }
-    }
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2) || defined(MODE_13H) || defined(MODE_VBE2)
+    VGA_SetPalette(numpalette);
 #endif
 }
 

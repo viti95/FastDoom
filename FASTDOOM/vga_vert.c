@@ -36,31 +36,6 @@ void VGA_VERT_ProcessPalette(byte *palette)
     }
 }
 
-void VGA_VERT_SetPalette(int numpalette)
-{
-    int i;
-    int pos = Mul768(numpalette);
-
-    outp(PEL_WRITE_ADR, 0);
-
-    if (VGADACfix)
-    {
-        byte *ptrprocessedpalette = processedpalette + pos;
-        for (i = 0; i < 768; i += 4)
-        {
-            outp(PEL_DATA, *(ptrprocessedpalette));
-            outp(PEL_DATA, *(ptrprocessedpalette + 1));
-            outp(PEL_DATA, *(ptrprocessedpalette + 2));
-            outp(PEL_DATA, *(ptrprocessedpalette + 3));
-            ptrprocessedpalette += 4;
-        }
-    }
-    else
-    {
-        OutString(PEL_DATA, ((unsigned char *)processedpalette) + pos, 768);
-    }
-}
-
 void VGA_VERT_DrawBackbuffer(void)
 {
     byte *ptrdestscreen;
