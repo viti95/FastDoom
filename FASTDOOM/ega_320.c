@@ -14,8 +14,6 @@
 
 #if defined(MODE_EGA)
 
-union REGS regs;
-
 const byte colors[48] = {
     0x00, 0x00, 0x00,  // 0
     0x00, 0x00, 0x2A,  // 1
@@ -105,6 +103,8 @@ void EGA_DrawBackbuffer(void)
 
 void EGA_InitGraphics(void)
 {
+    union REGS regs;
+
     unsigned int pos1 = 0;
     unsigned int pos2 = 0;
     unsigned int pos3 = 0;

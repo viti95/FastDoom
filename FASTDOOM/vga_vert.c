@@ -17,8 +17,6 @@
 
 #if defined(MODE_V2)
 
-union REGS regs;
-
 void VGA_VERT_DrawBackbuffer(void)
 {
     byte *ptrdestscreen;
@@ -135,6 +133,8 @@ void VGA_VERT_DrawBackbuffer(void)
 
 void VGA_VERT_InitGraphics(void)
 {
+    union REGS regs;
+
     regs.w.ax = 0x13;
     int386(0x10, (union REGS *)&regs, &regs);
     pcscreen = (byte *)0xA0000;

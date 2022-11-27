@@ -16,8 +16,6 @@
 
 #if defined(MODE_EGA640)
 
-union REGS regs;
-
 const byte colors[48] = {
     0x00, 0x00, 0x00,  // 0
     0x00, 0x00, 0x2A,  // 1
@@ -309,6 +307,8 @@ void EGA_640_DrawBackbuffer(void)
 
 void EGA_640_InitGraphics(void)
 {
+    union REGS regs;
+
     regs.w.ax = 0x0E;
     int386(0x10, (union REGS *)&regs, &regs);
     outp(0x3C4, 0x2);

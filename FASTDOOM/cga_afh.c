@@ -21,7 +21,6 @@ const unsigned char ansifromhellLUT[131072] = {
 unsigned short lut16colors[14 * 256];
 unsigned short *ptrlut16colors;
 unsigned short vrambuffer[16384];
-union REGS regs;
 
 const byte colors[48] = {
     0x00, 0x00, 0x00,  // 0
@@ -141,6 +140,7 @@ void CGA_AFH_DrawBackbuffer(void)
 
 void CGA_AFH_InitGraphics(void)
 {
+    union REGS regs;
     unsigned char *vram = (unsigned char *)0xB8000;
     int i;
 

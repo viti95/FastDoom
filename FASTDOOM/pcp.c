@@ -14,8 +14,6 @@
 
 #if defined(MODE_PCP)
 
-union REGS regs;
-
 const byte colors[48] = {
     0x00, 0x00, 0x00,
     0x00, 0x2A, 0x00,
@@ -154,6 +152,8 @@ void PCP_DrawBackbuffer(void)
 
 void PCP_InitGraphics(void)
 {
+    union REGS regs;
+
     regs.w.ax = 0x04;
     int386(0x10, (union REGS *)&regs, &regs);
     outp(0x3DD, 0x10);

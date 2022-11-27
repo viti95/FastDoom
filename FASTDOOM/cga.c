@@ -15,8 +15,6 @@
 
 #if defined(MODE_CGA)
 
-union REGS regs;
-
 byte lut4colors[14 * 256];
 byte *ptrlut4colors;
 
@@ -104,6 +102,8 @@ void CGA_DrawBackbuffer(void)
 
 void CGA_InitGraphics(void)
 {
+    union REGS regs;
+
     // Set video mode 4
     regs.w.ax = 0x04;
     int386(0x10, (union REGS *)&regs, &regs);

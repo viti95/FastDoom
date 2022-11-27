@@ -17,7 +17,6 @@
 byte lut16colors[14 * 256];
 byte *ptrlut16colors;
 byte vrambuffer[16384];
-union REGS regs;
 
 const byte colors[48] = {
     0x00, 0x00, 0x00,  // 0
@@ -78,6 +77,8 @@ void VGA_16_DrawBackbuffer(void)
 
 void VGA_16_InitGraphics(void)
 {
+    union REGS regs;
+
     unsigned char *vram = (unsigned char *)0xB8000;
     int i;
 

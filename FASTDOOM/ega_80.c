@@ -14,8 +14,6 @@
 
 #if defined(MODE_EGA80)
 
-union REGS regs;
-
 const byte colors[48] = {
     0x00, 0x00, 0x00,  // 0
     0x00, 0x00, 0x2A,  // 1
@@ -112,6 +110,8 @@ void EGA_80_DrawBackbuffer(void)
 
 void EGA_80_InitGraphics(void)
 {
+    union REGS regs;
+
     regs.w.ax = 0x0E;
     int386(0x10, (union REGS *)&regs, &regs);
     pcscreen = destscreen = (byte *)0xA0000;

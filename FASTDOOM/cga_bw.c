@@ -15,8 +15,6 @@
 
 #if defined(MODE_CGA_BW)
 
-union REGS regs;
-
 byte lutcolors[14 * 512];
 byte *ptrlutcolors;
 unsigned short vrambuffer[16384];
@@ -107,6 +105,8 @@ void CGA_BW_DrawBackbuffer(void)
 
 void CGA_BW_InitGraphics(void)
 {
+    union REGS regs;
+    
     regs.w.ax = 0x06;
     int386(0x10, (union REGS *)&regs, &regs);
     pcscreen = destscreen = (byte *)0xB8000;

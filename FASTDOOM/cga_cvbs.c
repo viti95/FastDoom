@@ -15,8 +15,6 @@
 
 #if defined(MODE_CVB)
 
-union REGS regs;
-
 const byte colors[48] = { // standard IBM CGA
     0x00, 0x00, 0x00,
     0x00, 0x18, 0x06,
@@ -139,6 +137,8 @@ void CGA_CVBS_DrawBackbuffer(void)
 
 void CGA_CVBS_InitGraphics(void)
 {
+    union REGS regs;
+
     regs.w.ax = 0x06;
     int386(0x10, (union REGS *)&regs, &regs);
     outp(0x3D8, 0x1A); // Enable color burst

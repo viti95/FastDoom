@@ -20,8 +20,6 @@
 
 #if defined(MODE_VBE2)
 
-union REGS regs;
-
 static struct VBE_VbeInfoBlock vbeinfo;
 static struct VBE_ModeInfoBlock vbemode;
 unsigned short vesavideomode = 0xFFFF;

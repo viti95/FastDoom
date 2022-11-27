@@ -20,8 +20,6 @@
 
 #if defined(MODE_13H)
 
-union REGS regs;
-
 void VGA_13H_DrawBackbuffer(void)
 {
     if (updatestate & I_FULLSCRN)
@@ -64,6 +62,8 @@ void VGA_13H_DrawBackbuffer(void)
 
 void VGA_13H_InitGraphics(void)
 {
+    union REGS regs;
+
     regs.w.ax = 0x13;
     int386(0x10, (union REGS *)&regs, &regs);
     pcscreen = destscreen = (byte *)0xA0000;

@@ -15,8 +15,6 @@
 
 #if defined(MODE_HERC)
 
-union REGS regs;
-
 byte lutcolors[14 * 1024];
 byte *ptrlutcolors;
 byte vrambuffer[32768];
