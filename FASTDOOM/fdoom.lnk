@@ -34,6 +34,7 @@ file ega_160.obj
 file ega_80.obj
 file vbe2.obj
 file i_vesa.obj
+file cga_512.obj
 file math.obj
 file ns_dpmi.obj
 file ns_pcfx.obj

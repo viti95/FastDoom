@@ -120,6 +120,10 @@
 #include "vga.h"
 #endif
 
+#if defined(MODE_CGA512)
+#include "cga_512.h"
+#endif
+
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 #include "i_vesa.h"
 #endif
@@ -270,11 +274,6 @@ byte lut16colors[14 * 256];
 byte *ptrlut16colors;
 #endif
 
-#if defined(MODE_CGA512)
-unsigned short lut256colors[14 * 256];
-unsigned short *ptrlut256colors;
-#endif
-
 byte gammatable[5][256] =
     {
         {0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 10, 11, 11, 11, 11, 12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15, 16, 16, 16, 16, 17, 17, 17, 17, 18, 18, 18, 18, 19, 19, 19, 19, 20, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 26, 27, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 30, 31, 31, 31, 31, 32, 32, 32, 32, 32, 33, 33, 33, 33, 34, 34, 34, 34, 35, 35, 35, 35, 36, 36, 36, 36, 37, 37, 37, 37, 38, 38, 38, 38, 39, 39, 39, 39, 40, 40, 40, 40, 41, 41, 41, 41, 42, 42, 42, 42, 43, 43, 43, 43, 44, 44, 44, 44, 45, 45, 45, 45, 46, 46, 46, 46, 47, 47, 47, 47, 48, 48, 48, 48, 49, 49, 49, 49, 50, 50, 50, 50, 51, 51, 51, 51, 52, 52, 52, 52, 53, 53, 53, 53, 54, 54, 54, 54, 55, 55, 55, 55, 56, 56, 56, 56, 57, 57, 57, 57, 58, 58, 58, 58, 59, 59, 59, 59, 60, 60, 60, 60, 61, 61, 61, 61, 62, 62, 62, 62, 63, 63, 63, 63},
@@ -309,7 +308,7 @@ byte scantokey[128] =
         0, 0, 0, 0, 0, 0, 0, 0 // 7
 };
 
-#if defined(MODE_CGA_AFH) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_VGA16) || defined(MODE_13H) || defined(MODE_PCP) || defined(MODE_ATI640) || defined(MODE_CGA) || defined(MODE_CVB) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_EGA640) || defined(MODE_V2) || defined(MODE_EGA) || defined(MODE_EGAW1) || defined(MODE_EGA80) || defined(MODE_VBE2)
+#if defined(MODE_CGA_AFH) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_VGA16) || defined(MODE_13H) || defined(MODE_PCP) || defined(MODE_ATI640) || defined(MODE_CGA) || defined(MODE_CVB) || defined(MODE_HERC) || defined(MODE_CGA_BW) || defined(MODE_EGA640) || defined(MODE_V2) || defined(MODE_EGA) || defined(MODE_EGAW1) || defined(MODE_EGA80) || defined(MODE_VBE2) || defined(MODE_CGA512) || defined(MODE_MDA)
 void I_ProcessPalette(byte *palette)
 {
     #if defined(MODE_CGA_AFH)
@@ -379,6 +378,10 @@ void I_ProcessPalette(byte *palette)
     #if defined(MODE_VBE2)
     VBE2_ProcessPalette(palette);
     #endif
+
+    #if defined(MODE_CGA512)
+    CGA_512_ProcessPalette(palette);
+    #endif
 }
 #endif
 
@@ -440,120 +443,6 @@ void I_ProcessPalette(byte *palette)
         bestcolor = GetClosestColor(colors, 16, r1, g1, b1);
 
         lut16colors[i] = bestcolor;
-    }
-}
-#endif
-
-#if defined(MODE_MDA)
-void I_ProcessPalette(byte *palette)
-{
-}
-#endif
-
-#if defined(MODE_CGA512)
-void I_ProcessPalette(byte *palette)
-{
-    int i, j;
-    unsigned char *ptrLUT55;
-    unsigned char *ptrLUT13;
-    byte *ptr = gammatable[usegamma];
-
-    if (CGAmodel == CGA_OLD)
-    {
-        ptrLUT55 = oldCGA55LUT;
-        ptrLUT13 = oldCGA13LUT;
-    }
-
-    if (CGAmodel == CGA_NEW)
-    {
-        ptrLUT55 = newCGA55LUT;
-        ptrLUT13 = newCGA13LUT;
-    }
-
-    for (i = 0; i < 14 * 256; i++)
-    {
-        int distance;
-
-        int r1, g1, b1;
-
-        int best_difference = MAXINT;
-
-        r1 = (int)ptr[*palette++];
-        g1 = (int)ptr[*palette++];
-        b1 = (int)ptr[*palette++];
-
-        for (j = 0; j < 256; j++)
-        {
-            int r2, g2, b2;
-            int cR, cG, cB;
-            int pos = j * 3;
-            unsigned short value;
-
-            r2 = (int)ptrLUT55[pos];
-            cR = (r2 - r1) * (r2 - r1);
-
-            g2 = (int)ptrLUT55[pos + 1];
-            cG = (g2 - g1) * (g2 - g1);
-
-            b2 = (int)ptrLUT55[pos + 2];
-            cB = (b2 - b1) * (b2 - b1);
-
-            distance = cR + cG + cB;
-
-            if (distance == 0)
-            {
-                value = (j & 0x0F) << 12 | (j & 0xF0) << 4 | 0x55;
-                lut256colors[i] = value;
-                break;
-            }
-
-            distance = SQRT(distance);
-
-            if (best_difference > distance)
-            {
-                best_difference = distance;
-                value = (j & 0x0F) << 12 | (j & 0xF0) << 4 | 0x55;
-                lut256colors[i] = value;
-            }
-        }
-
-        if (distance != 0)
-        {
-            for (j = 0; j < 256; j++)
-            {
-                int r2, g2, b2;
-                int cR, cG, cB;
-                int pos = j * 3;
-                unsigned short value;
-
-                r2 = (int)ptrLUT13[pos];
-                cR = (r2 - r1) * (r2 - r1);
-
-                g2 = (int)ptrLUT13[pos + 1];
-                cG = (g2 - g1) * (g2 - g1);
-
-                b2 = (int)ptrLUT13[pos + 2];
-                cB = (b2 - b1) * (b2 - b1);
-
-                distance = cR + cG + cB;
-
-                if (distance == 0)
-                {
-                    value = (j & 0x0F) << 12 | (j & 0xF0) << 4 | 0x13;
-                    lut256colors[i] = value;
-                    break;
-                }
-
-                distance = SQRT(distance);
-
-                if (best_difference > distance)
-                {
-                    best_difference = distance;
-                    value = (j & 0x0F) << 12 | (j & 0xF0) << 4 | 0x13;
-                    lut256colors[i] = value;
-                }
-            }
-        }
     }
 }
 #endif
@@ -637,7 +526,7 @@ void I_SetPalette(int numpalette)
 #endif
 
 #if defined(MODE_CGA512)
-    ptrlut256colors = lut256colors + numpalette * 256;
+    CGA_512_SetPalette(numpalette);
 #endif
 
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
@@ -950,40 +839,6 @@ void I_UpdateNoBlit(void)
 }
 #endif
 
-#if defined(MODE_CGA512)
-unsigned short vrambuffer[8000];
-void CGA512_DrawBackbuffer(void)
-{
-    unsigned short *vram = (unsigned short *)0xB8000;
-    byte *ptrbackbuffer = backbuffer;
-    unsigned short *ptrvrambuffer = vrambuffer;
-    unsigned char line = 80;
-
-    do
-    {
-        unsigned short tmp = ptrlut256colors[*ptrbackbuffer];
-
-        if (*ptrvrambuffer != tmp)
-        {
-            *ptrvrambuffer = tmp;
-            I_WaitCGA();
-            *vram = tmp;
-        }
-
-        vram += 1;
-        ptrvrambuffer += 1;
-        ptrbackbuffer += 4;
-
-        line--;
-        if (line == 0)
-        {
-            line = 80;
-            ptrbackbuffer += 320;
-        }
-    } while (vram < (unsigned short *)0xBBE80);
-}
-#endif
-
 //
 // I_FinishUpdate
 //
@@ -1167,7 +1022,7 @@ void I_FinishUpdate(void)
     ATI640_DrawBackbuffer();
 #endif
 #if defined(MODE_CGA512)
-    CGA512_DrawBackbuffer();
+    CGA_512_DrawBackbuffer();
 #endif
 #if defined(MODE_PCP)
     PCP_DrawBackbuffer();
@@ -1413,59 +1268,9 @@ void I_InitGraphics(void)
 #if defined(MODE_CGA)
     CGA_InitGraphics();
 #endif
+
 #if defined(MODE_CGA512)
-    unsigned char *vram = (unsigned char *)0xB8000;
-    int i;
-
-    // Set 80x25 color mode
-    regs.h.ah = 0x00;
-    regs.h.al = 0x03;
-    int386(0x10, &regs, &regs);
-
-    // Disable cursor
-    regs.h.ah = 0x01;
-    regs.h.ch = 0x3F;
-    int386(0x10, &regs, &regs);
-
-    // Disable blinking
-    regs.h.ah = 0x10;
-    regs.h.al = 0x03;
-    regs.h.bl = 0x00;
-    regs.h.bh = 0x00;
-    int386(0x10, &regs, &regs);
-
-    /* set mode control register for 80x25 text mode and disable video output */
-    outp(0x3D8, 1);
-
-    /*
-        These settings put the 6845 into "graphics" mode without actually
-        switching the CGA controller into graphics mode.  The register
-        values are directly copied from CGA graphics mode register
-        settings.  The 6845 does not directly display graphics, the
-        6845 only generates addresses and sync signals, the CGA
-        attribute controller either displays character ROM data or color
-        pixel data, this is external to the 6845 and keeps the CGA card
-        in text mode.
-        ref: HELPPC
-    */
-
-    /* set vert total lines to 127 */
-    outp(0x3D4, 0x04);
-    outp(0x3D5, 0x7F);
-    /* set vert displayed char rows to 100 */
-    outp(0x3D4, 0x06);
-    outp(0x3D5, 0x64);
-    /* set vert sync position to 112 */
-    outp(0x3D4, 0x07);
-    outp(0x3D5, 0x70);
-    /* set char scan line count to 1 */
-    outp(0x3D4, 0x09);
-    outp(0x3D5, 0x01);
-
-    /* re-enable the video output in 80x25 text mode */
-    outp(0x3D8, 9);
-
-    /* init screen */
+    CGA_512_InitGraphics();
 #endif
 
 #if defined(MODE_CGA_BW)
