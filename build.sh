@@ -91,7 +91,7 @@ elif [ "$target" = "fdoomc16.exe" ]; then
 
 elif [ "$target" = "fdoom512.exe" ]; then
   buildopts="-dMODE_CGA512"
-  buildtarget="fdoom13h.exe"
+  buildtarget="fdoom.exe"
 
 elif [ "$target" = "fdoomcah.exe" ]; then
   buildopts="-dMODE_CGA_AFH"
