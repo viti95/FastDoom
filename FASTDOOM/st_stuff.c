@@ -1461,42 +1461,6 @@ void ST_loadData(void)
 }
 #endif
 
-void ST_unloadGraphics(void)
-{
-
-	int i;
-
-	// unload the numbers, tall and short
-	for (i = 0; i < 10; i++)
-	{
-		Z_ChangeTag(tallnum[i], PU_CACHE);
-		Z_ChangeTag(shortnum[i], PU_CACHE);
-	}
-	// unload tall percent
-	Z_ChangeTag(tallpercent, PU_CACHE);
-
-	// unload arms background
-	Z_ChangeTag(armsbg, PU_CACHE);
-
-	// unload gray #'s
-	for (i = 0; i < 6; i++)
-		Z_ChangeTag(arms[i][0], PU_CACHE);
-
-	// unload the key cards
-	for (i = 0; i < NUMCARDS; i++)
-		Z_ChangeTag(keys[i], PU_CACHE);
-
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-	Z_ChangeTag(sbar, PU_CACHE);
-#endif
-
-	for (i = 0; i < ST_NUMFACES; i++)
-		Z_ChangeTag(faces[i], PU_CACHE);
-
-	// Note: nobody ain't seen no unloading
-	//   of stminus yet. Dude.
-}
-
 void ST_initData(void)
 {
 
