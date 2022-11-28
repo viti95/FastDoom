@@ -116,9 +116,6 @@
  * FDOOMATI.EXE => FastDoom ATI Small Wonder 640x200. Requires a very fast 
                    CPU and 16-bit ISA video card (at least).
                    Dithering with 16 colors
- * FDOOMC36.EXE => FastDoom CGA 80x100 and 122 pseudocolors
- * FDOOMV36.EXE => FastDoom VGA 80x200 and 122 pseudocolors
- * FDOOME36.EXE => FastDoom EGA 80x100 and 122 pseudocolors
  * FDOOMMDA.EXE => FastDoom MDA 80x25 text mode. Internal resolution 80x50.
                    Very quick'n'dirty, only Neo can play this mode properly.
  * FDOOME80.EXE => FastDoom EGA 80x200 and 16 colors
@@ -190,7 +187,6 @@
  -fixDAC => Fixes palette corruption with VGA cards
  -hercmap => Enable Hercules automap (requires dual video card setup)
  -snow => Fix for snow on IBM CGA cards in modes 160x100 16-color
-          and 80x100 136-color
  -palette1 => Choose the black-cyan-magenta-white palette on mode
               CGA 320x200 4-color
  -complevel X => Force any compatibility level. Supported

@@ -251,7 +251,7 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 				if ((dc_x & 1) == 0){
 					colfunc();
 				}
-				#elif defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136) || defined(MODE_EGA80) || defined(MODE_CGA512)
+				#elif defined(MODE_EGA80) || defined(MODE_CGA512)
 				if ((dc_x & 3) == 0){
 					colfunc();
 				}
@@ -417,7 +417,7 @@ void R_RenderSegLoop(void)
 				if ((dc_x & 1) == 0){
 					colfunc();
 				}
-				#elif defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136) || defined(MODE_EGA80) || defined(MODE_CGA512)
+				#elif defined(MODE_EGA80) || defined(MODE_CGA512)
 				if ((dc_x & 3) == 0){
 					colfunc();
 				}
@@ -479,7 +479,7 @@ void R_RenderSegLoop(void)
 					if ((dc_x & 1) == 0){
 						colfunc();
 					}
-					#elif defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136) || defined(MODE_EGA80) || defined(MODE_CGA512)
+					#elif defined(MODE_EGA80) || defined(MODE_CGA512)
 					if ((dc_x & 3) == 0){
 						colfunc();
 					}
@@ -545,7 +545,7 @@ void R_RenderSegLoop(void)
 					if ((dc_x & 1) == 0){
 						colfunc();
 					}
-					#elif defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136) || defined(MODE_EGA80) || defined(MODE_CGA512)
+					#elif defined(MODE_EGA80) || defined(MODE_CGA512)
 					if ((dc_x & 3) == 0){
 						colfunc();
 					}

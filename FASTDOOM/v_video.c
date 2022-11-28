@@ -30,6 +30,10 @@
 
 #include "v_video.h"
 
+#if defined(TEXT_MODE)
+#include "text.h"
+#endif
+
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 byte screen0[SCREENWIDTH * SCREENHEIGHT];
 #endif
@@ -40,10 +44,6 @@ byte screen4[SCREENWIDTH * 32];
 
 #if defined(USE_BACKBUFFER)
 byte backbuffer[SCREENWIDTH * SCREENHEIGHT];
-#endif
-
-#if defined(MODE_MDA)
-unsigned short backbuffer[80 * 25];
 #endif
 
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
@@ -521,7 +521,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
         }
 #endif
 
-#if defined(MODE_VGA136) || defined(MODE_CGA136) || defined(MODE_EGA136) || defined(MODE_EGA80) || defined(MODE_CGA512)
+#if defined(MODE_EGA80) || defined(MODE_CGA512)
         if ((int) desttop & 3){
             continue;
         }

@@ -102,7 +102,7 @@ boolean forceLowDetail;
 boolean forcePotatoDetail;
 int forceScreenSize;
 
-#if defined(MODE_T8025) || defined(MODE_T4025) || defined(MODE_T4050)
+#if defined(TEXT_MODE)
 boolean CGAcard;
 #endif
 
@@ -114,7 +114,7 @@ boolean CGApalette1;
 unsigned char CGAmodel;
 #endif
 
-#if defined(MODE_CGA16) || defined(MODE_CGA136) || defined(MODE_CGA_AFH)
+#if defined(MODE_CGA16) || defined(MODE_CGA_AFH)
 boolean snowfix;
 #endif
 
@@ -126,7 +126,7 @@ boolean HERCmap;
 boolean VGADACfix = false;
 #endif
 
-#if defined(MODE_T8050) || defined(MODE_T80100)
+#if defined(TEXT_MODE)
 boolean videoPageFix;
 #endif
 
@@ -1121,10 +1121,6 @@ void D_DoomMain(void)
     D_AddFile("mode16.wad");
 #endif
 
-#if defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136)
-    D_AddFile("mode136.wad");
-#endif
-
 #if defined(MODE_CVB)
     D_AddFile("modecvbs.wad");
 #endif
@@ -1160,7 +1156,7 @@ void D_DoomMain(void)
     forceLowDetail = M_CheckParm("-forceLQ");
     forcePotatoDetail = M_CheckParm("-forcePQ");
 
-#if defined(MODE_T8025) || defined(MODE_T4025) || defined(MODE_T4050)
+#if defined(TEXT_MODE)
     CGAcard = M_CheckParm("-cga");
 #endif
 
@@ -1168,7 +1164,7 @@ void D_DoomMain(void)
     CGApalette1 = M_CheckParm("-palette1");
 #endif
 
-#if defined(MODE_CGA16) || defined(MODE_CGA136) || defined(MODE_CGA_AFH)
+#if defined(MODE_CGA16) || defined(MODE_CGA_AFH)
     snowfix = M_CheckParm("-snow");
 #endif
 
@@ -1180,7 +1176,7 @@ void D_DoomMain(void)
     VGADACfix = M_CheckParm("-fixDAC");
 #endif
 
-#if defined(MODE_T8050) || defined(MODE_T80100)
+#if defined(TEXT_MODE)
     videoPageFix = M_CheckParm("-pagefix");
 #endif
 

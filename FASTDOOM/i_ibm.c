@@ -47,16 +47,101 @@
 
 #include "options.h"
 
-#define BYTE0_USHORT(value) (((unsigned char *)&value)[0])
-#define BYTE1_USHORT(value) (((unsigned char *)&value)[1])
+#include "math.h"
 
-#define BYTE0_UINT(value) (((unsigned char *)&value)[0])
-#define BYTE1_UINT(value) (((unsigned char *)&value)[1])
-#define BYTE2_UINT(value) (((unsigned char *)&value)[2])
-#define BYTE3_UINT(value) (((unsigned char *)&value)[3])
+#if defined(MODE_CGA_AFH)
+#include "cga_afh.h"
+#endif
+
+#if defined(MODE_CGA16)
+#include "cga_16.h"
+#endif
+
+#if defined(MODE_EGA16)
+#include "ega_16.h"
+#endif
+
+#if defined(MODE_VGA16)
+#include "vga_16.h"
+#endif
+
+#if defined(MODE_13H)
+#include "vga.h"
+#include "vga_13h.h"
+#endif
+
+#if defined(MODE_V2)
+#include "vga.h"
+#include "vga_vert.h"
+#endif
+
+#if defined(MODE_PCP)
+#include "pcp.h"
+#endif
+
+#if defined(MODE_ATI640)
+#include "ati.h"
+#endif
+
+#if defined(MODE_CGA)
+#include "cga.h"
+#endif
+
+#if defined(MODE_CVB)
+#include "cga_cvbs.h"
+#endif
+
+#if defined(MODE_HERC)
+#include "herc.h"
+#endif
+
+#if defined(MODE_CGA_BW)
+#include "cga_bw.h"
+#endif
+
+#if defined(MODE_EGA640)
+#include "ega_640.h"
+#endif
+
+#if defined(MODE_EGA)
+#include "ega_320.h"
+#endif
+
+#if defined(MODE_EGAW1)
+#include "ega_160.h"
+#endif
+
+#if defined(MODE_EGA80)
+#include "ega_80.h"
+#endif
+
+#if defined(MODE_VBE2)
+#include "vga.h"
+#endif
+
+#if defined(MODE_Y)
+#include "vga_y.h"
+#include "vga.h"
+#endif
+
+#if defined(MODE_VBE2_DIRECT)
+#include "vga.h"
+#endif
+
+#if defined(MODE_CGA512)
+#include "cga_512.h"
+#endif
+
+#if defined(TEXT_MODE)
+#include "text.h"
+#endif
 
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 #include "i_vesa.h"
+#endif
+
+#if defined(MODE_MDA)
+#include "mda.h"
 #endif
 
 //
@@ -69,10 +154,6 @@
 //
 // Code
 //
-
-void I_StartupNet(void);
-void I_ShutdownNet(void);
-void I_ReadExternDriver(void);
 
 typedef struct
 {
@@ -204,58 +285,6 @@ void I_StartupSound(void);
 void I_ShutdownSound(void);
 void I_ShutdownTimer(void);
 
-#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_CVB) || defined(MODE_EGA80) || defined(MODE_EGAW1) || defined(MODE_EGA)
-byte lut16colors[14 * 256];
-byte *ptrlut16colors;
-#endif
-
-#if defined(MODE_PCP) || defined(MODE_CGA_AFH)
-unsigned short lut16colors[14 * 256];
-unsigned short *ptrlut16colors;
-#endif
-
-#if defined(MODE_CGA512)
-unsigned short lut256colors[14 * 256];
-unsigned short *ptrlut256colors;
-#endif
-
-#if defined(MODE_ATI640)
-unsigned short lutcolors[14 * 512];
-unsigned short *ptrlutcolors;
-#endif
-
-#if defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136)
-byte lut136colors[14 * 256];
-byte *ptrlut136colors;
-#endif
-
-#if defined(MODE_CGA)
-byte lut4colors[14 * 256];
-byte *ptrlut4colors;
-#endif
-
-#if defined(MODE_HERC)
-byte lutcolors[14 * 1024];
-byte *ptrlutcolors;
-#endif
-
-#if defined(MODE_CGA_BW) || defined(MODE_EGA640)
-byte lutcolors[14 * 512];
-byte *ptrlutcolors;
-#endif
-
-byte gammatable[5][256] =
-    {
-        {0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 10, 11, 11, 11, 11, 12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15, 16, 16, 16, 16, 17, 17, 17, 17, 18, 18, 18, 18, 19, 19, 19, 19, 20, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 26, 27, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 30, 31, 31, 31, 31, 32, 32, 32, 32, 32, 33, 33, 33, 33, 34, 34, 34, 34, 35, 35, 35, 35, 36, 36, 36, 36, 37, 37, 37, 37, 38, 38, 38, 38, 39, 39, 39, 39, 40, 40, 40, 40, 41, 41, 41, 41, 42, 42, 42, 42, 43, 43, 43, 43, 44, 44, 44, 44, 45, 45, 45, 45, 46, 46, 46, 46, 47, 47, 47, 47, 48, 48, 48, 48, 49, 49, 49, 49, 50, 50, 50, 50, 51, 51, 51, 51, 52, 52, 52, 52, 53, 53, 53, 53, 54, 54, 54, 54, 55, 55, 55, 55, 56, 56, 56, 56, 57, 57, 57, 57, 58, 58, 58, 58, 59, 59, 59, 59, 60, 60, 60, 60, 61, 61, 61, 61, 62, 62, 62, 62, 63, 63, 63, 63},
-        {0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 11, 11, 11, 11, 12, 12, 12, 12, 13, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15, 16, 16, 16, 16, 17, 17, 17, 18, 18, 18, 18, 19, 19, 19, 19, 20, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 26, 27, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 30, 31, 31, 31, 31, 32, 32, 32, 32, 32, 33, 33, 33, 33, 34, 34, 34, 34, 35, 35, 35, 35, 36, 36, 36, 36, 37, 37, 37, 37, 37, 38, 38, 38, 38, 39, 39, 39, 39, 40, 40, 40, 40, 40, 41, 41, 41, 41, 42, 42, 42, 42, 43, 43, 43, 43, 43, 44, 44, 44, 44, 45, 45, 45, 45, 46, 46, 46, 46, 46, 47, 47, 47, 47, 48, 48, 48, 48, 49, 49, 49, 49, 49, 50, 50, 50, 50, 51, 51, 51, 51, 51, 52, 52, 52, 52, 53, 53, 53, 53, 53, 54, 54, 54, 54, 55, 55, 55, 55, 55, 56, 56, 56, 56, 57, 57, 57, 57, 57, 58, 58, 58, 58, 59, 59, 59, 59, 59, 60, 60, 60, 60, 61, 61, 61, 61, 61, 62, 62, 62, 62, 63, 63, 63, 63, 63},
-        {1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 6, 7, 7, 8, 8, 8, 9, 9, 9, 10, 10, 10, 11, 11, 11, 12, 12, 12, 13, 13, 13, 14, 14, 14, 15, 15, 15, 15, 16, 16, 16, 17, 17, 17, 18, 18, 18, 18, 19, 19, 19, 19, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 26, 27, 27, 27, 27, 28, 28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 30, 31, 31, 31, 31, 32, 32, 32, 32, 33, 33, 33, 33, 33, 34, 34, 34, 34, 35, 35, 35, 35, 36, 36, 36, 36, 36, 37, 37, 37, 37, 38, 38, 38, 38, 38, 39, 39, 39, 39, 40, 40, 40, 40, 40, 41, 41, 41, 41, 41, 42, 42, 42, 42, 43, 43, 43, 43, 43, 44, 44, 44, 44, 44, 45, 45, 45, 45, 45, 46, 46, 46, 46, 47, 47, 47, 47, 47, 48, 48, 48, 48, 48, 49, 49, 49, 49, 49, 50, 50, 50, 50, 50, 51, 51, 51, 51, 51, 52, 52, 52, 52, 52, 53, 53, 53, 53, 53, 54, 54, 54, 54, 54, 55, 55, 55, 55, 55, 56, 56, 56, 56, 56, 57, 57, 57, 57, 57, 57, 58, 58, 58, 58, 58, 59, 59, 59, 59, 59, 60, 60, 60, 60, 60, 61, 61, 61, 61, 61, 61, 62, 62, 62, 62, 62, 63, 63, 63, 63, 63},
-        {2, 3, 4, 4, 5, 6, 6, 7, 7, 8, 9, 9, 10, 10, 10, 11, 11, 12, 12, 13, 13, 13, 14, 14, 15, 15, 15, 16, 16, 16, 17, 17, 17, 18, 18, 18, 19, 19, 19, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 23, 23, 23, 23, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 26, 27, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 30, 31, 31, 31, 31, 32, 32, 32, 32, 33, 33, 33, 33, 33, 34, 34, 34, 34, 35, 35, 35, 35, 35, 36, 36, 36, 36, 37, 37, 37, 37, 37, 38, 38, 38, 38, 38, 39, 39, 39, 39, 40, 40, 40, 40, 40, 41, 41, 41, 41, 41, 42, 42, 42, 42, 42, 43, 43, 43, 43, 43, 44, 44, 44, 44, 44, 45, 45, 45, 45, 45, 45, 46, 46, 46, 46, 46, 47, 47, 47, 47, 47, 48, 48, 48, 48, 48, 48, 49, 49, 49, 49, 49, 50, 50, 50, 50, 50, 50, 51, 51, 51, 51, 51, 51, 52, 52, 52, 52, 52, 53, 53, 53, 53, 53, 53, 54, 54, 54, 54, 54, 54, 55, 55, 55, 55, 55, 55, 56, 56, 56, 56, 56, 56, 57, 57, 57, 57, 57, 57, 58, 58, 58, 58, 58, 58, 59, 59, 59, 59, 59, 59, 60, 60, 60, 60, 60, 60, 61, 61, 61, 61, 61, 61, 61, 62, 62, 62, 62, 62, 62, 63, 63, 63, 63, 63, 63},
-        {4, 5, 7, 8, 9, 9, 10, 11, 12, 12, 13, 13, 14, 15, 15, 16, 16, 17, 17, 17, 18, 18, 19, 19, 20, 20, 20, 21, 21, 21, 22, 22, 23, 23, 23, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29, 29, 30, 30, 30, 30, 31, 31, 31, 32, 32, 32, 32, 32, 33, 33, 33, 33, 34, 34, 34, 34, 35, 35, 35, 35, 35, 36, 36, 36, 36, 37, 37, 37, 37, 37, 38, 38, 38, 38, 38, 39, 39, 39, 39, 39, 40, 40, 40, 40, 40, 41, 41, 41, 41, 41, 42, 42, 42, 42, 42, 43, 43, 43, 43, 43, 43, 44, 44, 44, 44, 44, 45, 45, 45, 45, 45, 45, 46, 46, 46, 46, 46, 46, 47, 47, 47, 47, 47, 47, 48, 48, 48, 48, 48, 48, 49, 49, 49, 49, 49, 49, 50, 50, 50, 50, 50, 50, 50, 51, 51, 51, 51, 51, 51, 52, 52, 52, 52, 52, 52, 52, 53, 53, 53, 53, 53, 53, 54, 54, 54, 54, 54, 54, 54, 55, 55, 55, 55, 55, 55, 55, 56, 56, 56, 56, 56, 56, 56, 57, 57, 57, 57, 57, 57, 57, 58, 58, 58, 58, 58, 58, 58, 58, 59, 59, 59, 59, 59, 59, 59, 60, 60, 60, 60, 60, 60, 60, 60, 61, 61, 61, 61, 61, 61, 61, 61, 62, 62, 62, 62, 62, 62, 62, 62, 63, 63, 63, 63, 63, 63, 63}};
-
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
-byte processedpalette[14 * 768];
-#endif
-
 byte scantokey[128] =
     {
         //  0           1       2       3       4       5       6       7
@@ -278,954 +307,76 @@ byte scantokey[128] =
         0, 0, 0, 0, 0, 0, 0, 0 // 7
 };
 
-#if defined(MODE_HERC)
-byte vrambuffer[32768];
-#endif
-
-#if defined(MODE_CGA16) || defined(MODE_CGA136) || defined(MODE_EGA16) || defined(MODE_EGA136) || defined(MODE_EGA80)
-byte vrambuffer[16384];
-#endif
-
-#if defined(MODE_CGA_AFH)
-unsigned short vrambuffer[16384];
-#endif
-
-#if defined(MODE_CGA_BW)
-unsigned short vrambuffer[16384];
-#endif
-
-#if defined(MODE_EGA640)
-byte vrambufferR1[16384];
-byte vrambufferG1[16384];
-byte vrambufferB1[16384];
-byte vrambufferI1[16384];
-byte vrambufferR2[16384];
-byte vrambufferG2[16384];
-byte vrambufferB2[16384];
-byte vrambufferI2[16384];
-byte vrambufferR3[16384];
-byte vrambufferG3[16384];
-byte vrambufferB3[16384];
-byte vrambufferI3[16384];
-#endif
-
-#if defined(MODE_PCP)
-byte vrambuffer[32768];
-#endif
-
-#if defined(MODE_CGA)
-unsigned short vrambuffer[16384];
-#endif
-
-#if defined(MODE_ATI640)
-byte vrambuffer[65536];
-#endif
-
-#if defined(MODE_CVB)
-byte vrambuffer[16384];
-#endif
-
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
 void I_ProcessPalette(byte *palette)
 {
-    int i;
+    #if defined(MODE_CGA_AFH)
+    CGA_AFH_ProcessPalette(palette);
+    #endif
 
-    byte *ptr = gammatable[usegamma];
+    #if defined(MODE_CGA16)
+    CGA_16_ProcessPalette(palette);
+    #endif
 
-    for (i = 0; i < 14 * 768; i += 4, palette += 4)
-    {
-        processedpalette[i] = ptr[*palette];
-        processedpalette[i + 1] = ptr[*(palette + 1)];
-        processedpalette[i + 2] = ptr[*(palette + 2)];
-        processedpalette[i + 3] = ptr[*(palette + 3)];
-    }
+    #if defined(MODE_EGA16)
+    EGA_16_ProcessPalette(palette);
+    #endif
+
+    #if defined(MODE_VGA16)
+    VGA_16_ProcessPalette(palette);
+    #endif
+
+    #if defined(MODE_PCP)
+    PCP_ProcessPalette(palette);
+    #endif
+
+    #if defined(MODE_ATI640)
+    ATI_640_ProcessPalette(palette);
+    #endif
+
+    #if defined(MODE_CGA)
+    CGA_ProcessPalette(palette);
+    #endif
+
+    #if defined(MODE_CVB)
+    CGA_CVBS_ProcessPalette(palette);
+    #endif
+
+    #if defined(MODE_HERC)
+    HERC_ProcessPalette(palette);
+    #endif
+
+    #if defined(MODE_CGA_BW)
+    CGA_BW_ProcessPalette(palette);
+    #endif
+
+    #if defined(MODE_EGA640)
+    EGA_640_ProcessPalette(palette);
+    #endif
+
+    #if defined(MODE_EGA)
+    EGA_ProcessPalette(palette);
+    #endif
+
+    #if defined(MODE_EGAW1)
+    EGA_160_ProcessPalette(palette);
+    #endif
+
+    #if defined(MODE_EGA80)
+    EGA_80_ProcessPalette(palette);
+    #endif
+
+    #if defined(MODE_CGA512)
+    CGA_512_ProcessPalette(palette);
+    #endif
+
+    #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(MODE_VBE2) || defined(MODE_13H) || defined(MODE_V2)
+    VGA_ProcessPalette(palette);
+    #endif
+
+    #if defined(TEXT_MODE)
+    TEXT_ProcessPalette(palette);
+    #endif
 }
-#endif
-
-#if defined(MODE_CGA_BW)
-void I_ProcessPalette(byte *palette)
-{
-    int i;
-
-    byte *ptr = gammatable[usegamma];
-
-    for (i = 0; i < 14 * 512; i += 2, palette += 3)
-    {
-        byte r, g, b;
-
-        r = ptr[*palette];
-        g = ptr[*(palette + 1)];
-        b = ptr[*(palette + 2)];
-
-        if (r + g + b > 32)
-        {
-            lutcolors[i] = 0xFF;
-        }
-        else
-        {
-            lutcolors[i] = 0x00;
-        }
-
-        if (r + g + b > 64)
-        {
-            lutcolors[i + 1] = 0xFF;
-        }
-        else
-        {
-            lutcolors[i + 1] = 0x00;
-        }
-    }
-}
-#endif
-
-#if defined(MODE_HERC)
-void I_ProcessPalette(byte *palette)
-{
-    int i;
-
-    byte *ptr = gammatable[usegamma];
-
-    for (i = 0; i < 14 * 1024; i += 4, palette += 3)
-    {
-        byte r, g, b;
-
-        r = ptr[*palette];
-        g = ptr[*(palette + 1)];
-        b = ptr[*(palette + 2)];
-
-        if (r + g + b > 38)
-        {
-            lutcolors[i] = 0xFF;
-        }
-        else
-        {
-            lutcolors[i] = 0x00;
-        }
-
-        if (r + g + b > 115)
-        {
-            lutcolors[i + 1] = 0xFF;
-        }
-        else
-        {
-            lutcolors[i + 1] = 0x00;
-        }
-
-        if (r + g + b > 155)
-        {
-            lutcolors[i + 2] = 0xFF;
-        }
-        else
-        {
-            lutcolors[i + 2] = 0x00;
-        }
-
-        if (r + g + b > 77)
-        {
-            lutcolors[i + 3] = 0xFF;
-        }
-        else
-        {
-            lutcolors[i + 3] = 0x00;
-        }
-    }
-}
-#endif
-
-#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_EGA640) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_EGA80) || defined(MODE_EGAW1) || defined(MODE_CGA_AFH) || defined(MODE_EGA)
-const byte colors[48] = {
-    0x00, 0x00, 0x00,  // 0
-    0x00, 0x00, 0x2A,  // 1
-    0x00, 0x2A, 0x00,  // 2
-    0x00, 0x2A, 0x2A,  // 3
-    0x2A, 0x00, 0x00,  // 4
-    0x2A, 0x00, 0x2A,  // 5
-    0x2A, 0x15, 0x00,  // 6
-    0x2A, 0x2A, 0x2A,  // 7
-    0x15, 0x15, 0x15,  // 8
-    0x15, 0x15, 0x3F,  // 9
-    0x15, 0x3F, 0x15,  // 10
-    0x15, 0x3F, 0x3F,  // 11
-    0x3F, 0x15, 0x15,  // 12
-    0x3F, 0x15, 0x3F,  // 13
-    0x3F, 0x3F, 0x15,  // 14
-    0x3F, 0x3F, 0x3F}; // 15
-#endif
-
-#if defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136)
-const byte colors[4 * 122] = {
-    0x00, 0x00, 0x00, 0x00,
-    0x01, 0x00, 0x00, 0x1E,
-    0x02, 0x00, 0x1E, 0x00,
-    0x03, 0x00, 0x1E, 0x1E,
-    0x04, 0x1E, 0x00, 0x00,
-    0x05, 0x1E, 0x00, 0x1E,
-    0x06, 0x1E, 0x0F, 0x00,
-    0x07, 0x1E, 0x1E, 0x1E,
-    0x08, 0x0F, 0x0F, 0x0F,
-    0x09, 0x0F, 0x0F, 0x2D,
-    0x0A, 0x0F, 0x2D, 0x0F,
-    0x0B, 0x0F, 0x2D, 0x2D,
-    0x0C, 0x2D, 0x0F, 0x0F,
-    0x0D, 0x2D, 0x0F, 0x2D,
-    0x0E, 0x2D, 0x2D, 0x0F,
-    0x0F, 0x2D, 0x2D, 0x2D,
-    0x11, 0x00, 0x00, 0x2A,
-    0x13, 0x00, 0x1E, 0x2A,
-    0x15, 0x1E, 0x00, 0x2A,
-    0x16, 0x1E, 0x0F, 0x1E,
-    0x17, 0x1E, 0x1E, 0x2A,
-    0x18, 0x0F, 0x0F, 0x21,
-    0x19, 0x0F, 0x0F, 0x36,
-    0x1A, 0x0F, 0x2D, 0x21,
-    0x1B, 0x0F, 0x2D, 0x36,
-    0x1C, 0x2D, 0x0F, 0x21,
-    0x1D, 0x2D, 0x0F, 0x36,
-    0x1E, 0x2D, 0x2D, 0x21,
-    0x1F, 0x2D, 0x2D, 0x36,
-    0x22, 0x00, 0x2A, 0x00,
-    0x23, 0x00, 0x2A, 0x1E,
-    0x24, 0x1E, 0x1E, 0x00,
-    0x26, 0x1E, 0x21, 0x00,
-    0x27, 0x1E, 0x2A, 0x1E,
-    0x28, 0x0F, 0x21, 0x0F,
-    0x29, 0x0F, 0x21, 0x2D,
-    0x2A, 0x0F, 0x36, 0x0F,
-    0x2B, 0x0F, 0x36, 0x2D,
-    0x2C, 0x2D, 0x21, 0x0F,
-    0x2D, 0x2D, 0x21, 0x2D,
-    0x2E, 0x2D, 0x36, 0x0F,
-    0x2F, 0x2D, 0x36, 0x2D,
-    0x33, 0x00, 0x2A, 0x2A,
-    0x36, 0x1E, 0x21, 0x1E,
-    0x37, 0x1E, 0x2A, 0x2A,
-    0x38, 0x0F, 0x21, 0x21,
-    0x39, 0x0F, 0x21, 0x36,
-    0x3A, 0x0F, 0x36, 0x21,
-    0x3B, 0x0F, 0x36, 0x36,
-    0x3C, 0x2D, 0x21, 0x21,
-    0x3D, 0x2D, 0x21, 0x36,
-    0x3E, 0x2D, 0x36, 0x21,
-    0x3F, 0x2D, 0x36, 0x36,
-    0x44, 0x2A, 0x00, 0x00,
-    0x45, 0x2A, 0x00, 0x1E,
-    0x46, 0x2A, 0x0F, 0x00,
-    0x47, 0x2A, 0x1E, 0x1E,
-    0x48, 0x21, 0x0F, 0x0F,
-    0x49, 0x21, 0x0F, 0x2D,
-    0x4A, 0x21, 0x2D, 0x0F,
-    0x4B, 0x21, 0x2D, 0x2D,
-    0x4C, 0x36, 0x0F, 0x0F,
-    0x4D, 0x36, 0x0F, 0x2D,
-    0x4E, 0x36, 0x2D, 0x0F,
-    0x4F, 0x36, 0x2D, 0x2D,
-    0x55, 0x2A, 0x00, 0x2A,
-    0x56, 0x2A, 0x0F, 0x1E,
-    0x57, 0x2A, 0x1E, 0x2A,
-    0x58, 0x21, 0x0F, 0x21,
-    0x59, 0x21, 0x0F, 0x36,
-    0x5A, 0x21, 0x2D, 0x21,
-    0x5B, 0x21, 0x2D, 0x36,
-    0x5C, 0x36, 0x0F, 0x21,
-    0x5D, 0x36, 0x0F, 0x36,
-    0x5E, 0x36, 0x2D, 0x21,
-    0x5F, 0x36, 0x2D, 0x36,
-    0x66, 0x2A, 0x15, 0x00,
-    0x67, 0x2A, 0x21, 0x1E,
-    0x68, 0x21, 0x15, 0x0F,
-    0x69, 0x21, 0x15, 0x2D,
-    0x6A, 0x21, 0x2F, 0x0F,
-    0x6B, 0x21, 0x2F, 0x2D,
-    0x6C, 0x36, 0x15, 0x0F,
-    0x6D, 0x36, 0x15, 0x2D,
-    0x6E, 0x36, 0x2F, 0x0F,
-    0x6F, 0x36, 0x2F, 0x2D,
-    0x77, 0x2A, 0x2A, 0x2A,
-    0x78, 0x21, 0x21, 0x21,
-    0x79, 0x21, 0x21, 0x36,
-    0x7A, 0x21, 0x36, 0x21,
-    0x7B, 0x21, 0x36, 0x36,
-    0x7C, 0x36, 0x21, 0x21,
-    0x7D, 0x36, 0x21, 0x36,
-    0x7E, 0x36, 0x36, 0x21,
-    0x7F, 0x36, 0x36, 0x36,
-    0x88, 0x15, 0x15, 0x15,
-    0x89, 0x15, 0x15, 0x2F,
-    0x8A, 0x15, 0x2F, 0x15,
-    0x8B, 0x15, 0x2F, 0x2F,
-    0x8C, 0x2F, 0x15, 0x15,
-    0x8D, 0x2F, 0x15, 0x2F,
-    0x8E, 0x2F, 0x2F, 0x15,
-    0x8F, 0x2F, 0x2F, 0x2F,
-    0x99, 0x15, 0x15, 0x3F,
-    0x9B, 0x15, 0x2F, 0x3F,
-    0x9D, 0x2F, 0x15, 0x3F,
-    0x9F, 0x2F, 0x2F, 0x3F,
-    0xAA, 0x15, 0x3F, 0x15,
-    0xAB, 0x15, 0x3F, 0x2F,
-    0xAE, 0x2F, 0x3F, 0x15,
-    0xAF, 0x2F, 0x3F, 0x2F,
-    0xBB, 0x15, 0x3F, 0x3F,
-    0xBF, 0x2F, 0x3F, 0x3F,
-    0xCC, 0x3F, 0x15, 0x15,
-    0xCD, 0x3F, 0x15, 0x2F,
-    0xCE, 0x3F, 0x2F, 0x15,
-    0xCF, 0x3F, 0x2F, 0x2F,
-    0xDD, 0x3F, 0x15, 0x3F,
-    0xDF, 0x3F, 0x2F, 0x3F,
-    0xEE, 0x3F, 0x3F, 0x15,
-    0xEF, 0x3F, 0x3F, 0x2F,
-    0xFF, 0x3F, 0x3F, 0x3F};
-#endif
-
-#if defined(MODE_ATI640)
-const byte colors[48] = { // Color      R G B I     G R I B
-    0x00, 0x00, 0x00,     // Black      0 0 0 0     0 0 0 0
-    0x00, 0x2A, 0x00,     // Green      0 1 0 0     1 0 0 0
-    0x2A, 0x00, 0x00,     // Red        1 0 0 0     0 1 0 0
-    0x2A, 0x15, 0x00,     // Brown      1 1 0 0     1 1 0 0
-    0x15, 0x15, 0x15,     // Gray       0 0 0 1     0 0 1 0
-    0x15, 0x3F, 0x15,     // L green    0 1 0 1     1 0 1 0
-    0x3F, 0x15, 0x15,     // L red      1 0 0 1     0 1 1 0
-    0x3F, 0x3F, 0x15,     // Yellow     1 1 0 1     1 1 1 0
-    0x00, 0x00, 0x2A,     // Blue       0 0 1 0     0 0 0 1
-    0x00, 0x2A, 0x2A,     // Cyan       0 1 1 0     1 0 0 1
-    0x2A, 0x00, 0x2A,     // Magenta    1 0 1 0     0 1 0 1
-    0x2A, 0x2A, 0x2A,     // L Gray     1 1 1 0     1 1 0 1
-    0x15, 0x15, 0x3F,     // L blue     0 0 1 1     0 0 1 1
-    0x15, 0x3F, 0x3F,     // L cyan     0 1 1 1     1 0 1 1
-    0x3F, 0x15, 0x3F,     // L magenta  1 0 1 1     0 1 1 1
-    0x3F, 0x3F, 0x3F};    // White      1 1 1 1     1 1 1 1
-#endif
-
-#if defined(MODE_CVB)
-const byte colors[48] = { // standard IBM CGA
-    0x00, 0x00, 0x00,
-    0x00, 0x18, 0x06,
-    0x09, 0x0a, 0x2f,
-    0x04, 0x26, 0x37,
-    0x20, 0x03, 0x15,
-    0x1c, 0x1c, 0x1c,
-    0x2c, 0x0e, 0x3f,
-    0x26, 0x2a, 0x3f,
-    0x12, 0x12, 0x00,
-    0x0f, 0x2e, 0x00,
-    0x1c, 0x1c, 0x1c,
-    0x18, 0x3b, 0x21,
-    0x37, 0x15, 0x04,
-    0x35, 0x31, 0x07,
-    0x3f, 0x20, 0x3a,
-    0x3f, 0x3f, 0x3f};
-/*const byte colors[48] = {  // ATi Small Wonder
-    0x00, 0x00, 0x00,
-    0x22, 0x04, 0x00,
-    0x06, 0x15, 0x00,
-    0x26, 0x1f, 0x00,
-    0x03, 0x0f, 0x23,
-    0x16, 0x17, 0x15,
-    0x00, 0x2b, 0x00,
-    0x1a, 0x38, 0x00,
-    0x18, 0x01, 0x36,
-    0x3f, 0x07, 0x31,
-    0x14, 0x15, 0x13,
-    0x3f, 0x22, 0x0e,
-    0x0a, 0x13, 0x3f,
-    0x39, 0x1e, 0x3f,
-    0x07, 0x32, 0x3f,
-    0x3f, 0x3f, 0x3f};*/
-#endif
-
-#if defined(MODE_PCP)
-const byte colors[48] = {
-    0x00, 0x00, 0x00,
-    0x00, 0x2A, 0x00,
-    0x2A, 0x00, 0x00,
-    0x2A, 0x15, 0x00,
-    0x15, 0x15, 0x15,
-    0x15, 0x3F, 0x15,
-    0x3F, 0x15, 0x15,
-    0x3F, 0x3F, 0x15,
-    0x00, 0x00, 0x2A,
-    0x00, 0x2A, 0x2A,
-    0x2A, 0x00, 0x2A,
-    0x2A, 0x2A, 0x2A,
-    0x15, 0x15, 0x3F,
-    0x15, 0x3F, 0x3F,
-    0x3F, 0x15, 0x3F,
-    0x3F, 0x3F, 0x3F};
-#endif
-
-#if defined(MODE_CGA)
-const byte colors[12] = {
-    0x00, 0x00, 0x00,
-    0x00, 0x2A, 0x00,
-    0x2A, 0x00, 0x00,
-    0x2A, 0x15, 0x00};
-#endif
-
-#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_CGA) || defined(MODE_EGA640) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_PCP) || defined(MODE_CVB) || defined(MODE_ATI640) || defined(MODE_EGA80) || defined(MODE_EGAW1) || defined(MODE_EGA) || defined(MODE_CGA_AFH) || defined(MODE_CGA512)
-
-int I_SQRT(int x)
-{
-    int start = 1, end = x / 2, ans;
-
-    if (x == 0 || x == 1)
-        return x;
-
-    while (start <= end)
-    {
-        int mid = (start + end) / 2;
-
-        if (mid * mid == x)
-            return mid;
-
-        if (mid <= x / mid)
-        {
-            start = mid + 1;
-            ans = mid;
-        }
-        else
-            end = mid - 1;
-    }
-    return ans;
-}
-
-#endif
-
-#if defined(MODE_EGA640) || defined(MODE_ATI640)
-
-int I_GetClosestColor(int r1, int g1, int b1)
-{
-    int i;
-
-    int result;
-
-    int distance;
-    int best_difference = MAXINT;
-
-    for (i = 0; i < 16; i++)
-    {
-        int r2, g2, b2;
-        int cR, cG, cB;
-        int pos = i * 3;
-
-        r2 = (int)colors[pos];
-        cR = (r2 - r1) * (r2 - r1);
-
-        g2 = (int)colors[pos + 1];
-        cG = (g2 - g1) * (g2 - g1);
-
-        b2 = (int)colors[pos + 2];
-        cB = (b2 - b1) * (b2 - b1);
-
-        distance = cR + cG + cB;
-
-        if (distance == 0)
-        {
-            return i;
-        }
-
-        distance = I_SQRT(distance);
-
-        if (best_difference > distance)
-        {
-            best_difference = distance;
-            result = i;
-        }
-    }
-
-    return result;
-}
-#endif
-
-#if defined(MODE_EGA640)
-void I_ProcessPalette(byte *palette)
-{
-    int i;
-
-    byte *ptr = gammatable[usegamma];
-
-    for (i = 0; i < 14 * 512; i += 2, palette += 3)
-    {
-        unsigned char color;
-        int r, g, b;
-        int r2, g2, b2;
-
-        r = (int)ptr[*palette];
-        g = (int)ptr[*(palette + 1)];
-        b = (int)ptr[*(palette + 2)];
-
-        r2 = (r * 1) / 3 + r;
-        g2 = (g * 1) / 3 + g;
-        b2 = (b * 1) / 3 + b;
-
-        color = I_GetClosestColor(r2, g2, b2);
-        color |= color << 4;
-
-        lutcolors[i] = color;
-
-        r2 = (r * 2) / 3 + r;
-        g2 = (g * 2) / 3 + g;
-        b2 = (b * 2) / 3 + b;
-
-        color = I_GetClosestColor(r2, g2, b2);
-        color |= color << 4;
-
-        lutcolors[i + 1] = color;
-    }
-}
-#endif
-
-#if defined(MODE_ATI640)
-void I_ProcessPalette(byte *palette)
-{
-    int i;
-
-    byte *ptr = gammatable[usegamma];
-
-    for (i = 0; i < 14 * 512; i += 2, palette += 3)
-    {
-        unsigned char color;
-        unsigned short value;
-        unsigned short value2;
-        int r, g, b;
-        int r2, g2, b2;
-
-        r = (int)ptr[*palette];
-        g = (int)ptr[*(palette + 1)];
-        b = (int)ptr[*(palette + 2)];
-
-        r2 = (r * 1) / 3 + r;
-        g2 = (g * 1) / 3 + g;
-        b2 = (b * 1) / 3 + b;
-
-        color = I_GetClosestColor(r2, g2, b2);
-        value = color & 12;
-        value = value | value >> 2 | value << 2 | value << 4;
-        value <<= 8;
-
-        value2 = color & 3;
-        value2 = value2 | value2 << 2 | value2 << 4 | value2 << 6;
-        value2;
-
-        lutcolors[i] = value | value2;
-
-        r2 = (r * 2) / 3 + r;
-        g2 = (g * 2) / 3 + g;
-        b2 = (b * 2) / 3 + b;
-
-        color = I_GetClosestColor(r2, g2, b2);
-        value = color & 12;
-        value = value | value >> 2 | value << 2 | value << 4;
-        value <<= 8;
-
-        value2 = color & 3;
-        value2 = value2 | value2 << 2 | value2 << 4 | value2 << 6;
-        value2;
-
-        lutcolors[i + 1] = value | value2;
-    }
-}
-#endif
-
-#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_CVB) || defined(MODE_EGA80) || defined(MODE_EGAW1) || defined(MODE_EGA)
-void I_ProcessPalette(byte *palette)
-{
-    int i, j;
-    byte *ptr = gammatable[usegamma];
-
-    for (i = 0; i < 14 * 256; i++)
-    {
-        int distance;
-
-        int r1, g1, b1;
-
-        int best_difference = MAXINT;
-
-        r1 = (int)ptr[*palette++];
-        g1 = (int)ptr[*palette++];
-        b1 = (int)ptr[*palette++];
-
-        for (j = 0; j < 16; j++)
-        {
-            int r2, g2, b2;
-            int cR, cG, cB;
-            int pos = j * 3;
-
-            r2 = (int)colors[pos];
-            cR = (r2 - r1) * (r2 - r1);
-
-            g2 = (int)colors[pos + 1];
-            cG = (g2 - g1) * (g2 - g1);
-
-            b2 = (int)colors[pos + 2];
-            cB = (b2 - b1) * (b2 - b1);
-
-            distance = cR + cG + cB;
-
-            if (distance == 0)
-            {
-                lut16colors[i] = j;
-                break;
-            }
-
-            distance = I_SQRT(distance);
-
-            if (best_difference > distance)
-            {
-                best_difference = distance;
-                lut16colors[i] = j;
-            }
-        }
-    }
-}
-#endif
-
-#if defined(MODE_CGA_AFH)
-void I_ProcessPalette(byte *palette)
-{
-    int i, j;
-    byte *ptr = gammatable[usegamma];
-
-    for (i = 0; i < 14 * 256; i++)
-    {
-        int distance;
-
-        int r1, g1, b1;
-
-        int best_difference = MAXINT;
-
-        r1 = (int)ptr[*palette++];
-        g1 = (int)ptr[*palette++];
-        b1 = (int)ptr[*palette++];
-
-        for (j = 0; j < 16; j++)
-        {
-            int r2, g2, b2;
-            int cR, cG, cB;
-            int pos = j * 3;
-
-            r2 = (int)colors[pos];
-            cR = (r2 - r1) * (r2 - r1);
-
-            g2 = (int)colors[pos + 1];
-            cG = (g2 - g1) * (g2 - g1);
-
-            b2 = (int)colors[pos + 2];
-            cB = (b2 - b1) * (b2 - b1);
-
-            distance = cR + cG + cB;
-
-            if (distance == 0)
-            {
-                lut16colors[i] = j | j << 4 | j << 8 | j << 12;
-                break;
-            }
-
-            distance = I_SQRT(distance);
-
-            if (best_difference > distance)
-            {
-                best_difference = distance;
-                lut16colors[i] = j | j << 4 | j << 8 | j << 12;
-            }
-        }
-    }
-}
-#endif
-
-#if defined(MODE_MDA)
-void I_ProcessPalette(byte *palette)
-{
-}
-#endif
-
-#if defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136)
-void I_ProcessPalette(byte *palette)
-{
-    int i, j;
-    byte *ptr = gammatable[usegamma];
-
-    for (i = 0; i < 14 * 256; i++)
-    {
-        int distance;
-
-        int r1, g1, b1;
-
-        int best_difference = MAXINT;
-
-        r1 = (int)ptr[*palette++];
-        g1 = (int)ptr[*palette++];
-        b1 = (int)ptr[*palette++];
-
-        for (j = 0; j < 122; j++)
-        {
-            int r2, g2, b2;
-            int cR, cG, cB;
-            int pos = j * 4;
-
-            r2 = (int)colors[pos + 1];
-            cR = (r2 - r1) * (r2 - r1);
-
-            g2 = (int)colors[pos + 2];
-            cG = (g2 - g1) * (g2 - g1);
-
-            b2 = (int)colors[pos + 3];
-            cB = (b2 - b1) * (b2 - b1);
-
-            distance = cR + cG + cB;
-
-            if (distance == 0)
-            {
-                lut136colors[i] = colors[pos];
-                break;
-            }
-
-            if (best_difference > distance)
-            {
-                best_difference = distance;
-                lut136colors[i] = colors[pos];
-            }
-        }
-    }
-}
-#endif
-
-#if defined(MODE_PCP)
-void I_ProcessPalette(byte *palette)
-{
-    int i, j;
-    byte *ptr = gammatable[usegamma];
-
-    for (i = 0; i < 14 * 256; i++)
-    {
-        int distance;
-
-        int r1, g1, b1;
-
-        int best_difference = MAXINT;
-
-        r1 = (int)ptr[*palette++];
-        g1 = (int)ptr[*palette++];
-        b1 = (int)ptr[*palette++];
-
-        for (j = 0; j < 16; j++)
-        {
-            int r2, g2, b2;
-            int cR, cG, cB;
-            int pos = j * 3;
-
-            r2 = (int)colors[pos];
-            cR = (r2 - r1) * (r2 - r1);
-
-            g2 = (int)colors[pos + 1];
-            cG = (g2 - g1) * (g2 - g1);
-
-            b2 = (int)colors[pos + 2];
-            cB = (b2 - b1) * (b2 - b1);
-
-            distance = cR + cG + cB;
-
-            if (distance == 0)
-            {
-                unsigned short value;
-                unsigned short value2;
-
-                value = j & 12;
-                value = value | value >> 2 | value << 2 | value << 4;
-                value <<= 8;
-
-                value2 = j & 3;
-                value2 = value2 | value2 << 2 | value2 << 4 | value2 << 6;
-                value2;
-
-                lut16colors[i] = value | value2;
-                break;
-            }
-
-            distance = I_SQRT(distance);
-
-            if (best_difference > distance)
-            {
-                unsigned short value;
-                unsigned short value2;
-
-                value = j & 12;
-                value = value | value >> 2 | value << 2 | value << 4;
-                value <<= 8;
-
-                value2 = j & 3;
-                value2 = value2 | value2 << 2 | value2 << 4 | value2 << 6;
-                value2;
-
-                lut16colors[i] = value | value2;
-            }
-        }
-    }
-}
-#endif
-
-#if defined(MODE_CGA512)
-void I_ProcessPalette(byte *palette)
-{
-    int i, j;
-    unsigned char *ptrLUT55;
-    unsigned char *ptrLUT13;
-    byte *ptr = gammatable[usegamma];
-
-    if (CGAmodel == CGA_OLD)
-    {
-        ptrLUT55 = oldCGA55LUT;
-        ptrLUT13 = oldCGA13LUT;
-    }
-
-    if (CGAmodel == CGA_NEW)
-    {
-        ptrLUT55 = newCGA55LUT;
-        ptrLUT13 = newCGA13LUT;
-    }
-
-
-    for (i = 0; i < 14 * 256; i++)
-    {
-        int distance;
-
-        int r1, g1, b1;
-
-        int best_difference = MAXINT;
-
-        r1 = (int)ptr[*palette++];
-        g1 = (int)ptr[*palette++];
-        b1 = (int)ptr[*palette++];
-
-        for (j = 0; j < 256; j++)
-        {
-            int r2, g2, b2;
-            int cR, cG, cB;
-            int pos = j * 3;
-            unsigned short value;
-
-            r2 = (int)ptrLUT55[pos];
-            cR = (r2 - r1) * (r2 - r1);
-
-            g2 = (int)ptrLUT55[pos + 1];
-            cG = (g2 - g1) * (g2 - g1);
-
-            b2 = (int)ptrLUT55[pos + 2];
-            cB = (b2 - b1) * (b2 - b1);
-
-            distance = cR + cG + cB;
-
-            if (distance == 0)
-            {
-                value = (j & 0x0F) << 12 | (j & 0xF0) << 4 | 0x55;
-                lut256colors[i] = value;
-                break;
-            }
-
-            distance = I_SQRT(distance);
-
-            if (best_difference > distance)
-            {
-                best_difference = distance;
-                value = (j & 0x0F) << 12 | (j & 0xF0) << 4 | 0x55;
-                lut256colors[i] = value;
-            }
-        }
-
-        if (distance != 0)
-        {
-            for (j = 0; j < 256; j++)
-            {
-                int r2, g2, b2;
-                int cR, cG, cB;
-                int pos = j * 3;
-                unsigned short value;
-
-                r2 = (int)ptrLUT13[pos];
-                cR = (r2 - r1) * (r2 - r1);
-
-                g2 = (int)ptrLUT13[pos + 1];
-                cG = (g2 - g1) * (g2 - g1);
-
-                b2 = (int)ptrLUT13[pos + 2];
-                cB = (b2 - b1) * (b2 - b1);
-
-                distance = cR + cG + cB;
-
-                if (distance == 0)
-                {
-                    value = (j & 0x0F) << 12 | (j & 0xF0) << 4 | 0x13;
-                    lut256colors[i] = value;
-                    break;
-                }
-
-                distance = I_SQRT(distance);
-
-                if (best_difference > distance)
-                {
-                    best_difference = distance;
-                    value = (j & 0x0F) << 12 | (j & 0xF0) << 4 | 0x13;
-                    lut256colors[i] = value;
-                }
-            }
-        }
-    }
-}
-#endif
-
-#if defined(MODE_CGA)
-void I_ProcessPalette(byte *palette)
-{
-    int i, j;
-    byte *ptr = gammatable[usegamma];
-
-    for (i = 0; i < 14 * 256; i++)
-    {
-        int distance;
-
-        int r1, g1, b1;
-
-        int best_difference = MAXINT;
-
-        r1 = (int)ptr[*palette++];
-        g1 = (int)ptr[*palette++];
-        b1 = (int)ptr[*palette++];
-
-        for (j = 0; j < 4; j++)
-        {
-            int r2, g2, b2;
-            int cR, cG, cB;
-            int pos = j * 3;
-
-            r2 = (int)colors[pos];
-            cR = (r2 - r1) * (r2 - r1);
-
-            g2 = (int)colors[pos + 1];
-            cG = (g2 - g1) * (g2 - g1);
-
-            b2 = (int)colors[pos + 2];
-            cB = (b2 - b1) * (b2 - b1);
-
-            distance = cR + cG + cB;
-
-            if (distance == 0)
-            {
-                lut4colors[i] = j | j << 2 | j << 4 | j << 6;
-                break;
-            }
-
-            distance = I_SQRT(distance);
-
-            if (best_difference > distance)
-            {
-                best_difference = distance;
-                lut4colors[i] = j | j << 2 | j << 4 | j << 6;
-            }
-        }
-    }
-}
-#endif
 
 //
 // I_SetPalette
@@ -1234,61 +385,71 @@ void I_ProcessPalette(byte *palette)
 void I_SetPalette(int numpalette)
 {
 #if defined(MODE_HERC)
-    ptrlutcolors = lutcolors + numpalette * 1024;
+    HERC_SetPalette(numpalette);
 #endif
 
-#if defined(MODE_CGA_BW) || defined(MODE_EGA640)
-    ptrlutcolors = lutcolors + numpalette * 512;
+#if defined(MODE_EGA640)
+    EGA_640_SetPalette(numpalette);    
 #endif
 
-#if defined(MODE_CGA512)
-    ptrlut256colors = lut256colors + numpalette * 256;
+#if defined(MODE_CGA_BW)
+    CGA_BW_SetPalette(numpalette);
 #endif
 
 #if defined(MODE_ATI640)
-    ptrlutcolors = lutcolors + numpalette * 512;
+    ATI_640_SetPalette(numpalette);
 #endif
 
 #if defined(MODE_PCP)
-    ptrlut16colors = lut16colors + numpalette * 256;
+    PCP_SetPalette(numpalette);
 #endif
 
-#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_EGA16) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_CVB) || defined(MODE_EGA80) || defined(MODE_EGAW1) || defined(MODE_EGA) || defined(MODE_CGA_AFH)
-    ptrlut16colors = lut16colors + numpalette * 256;
+#if defined(MODE_CGA16)
+    CGA_16_SetPalette(numpalette);
 #endif
 
-#if defined(MODE_CGA136) || defined(MODE_VGA136) || defined(MODE_EGA136)
-    ptrlut136colors = lut136colors + numpalette * 256;
+#if defined(MODE_EGA16)
+    EGA_16_SetPalette(numpalette);
+#endif
+
+#if defined(MODE_VGA16)
+    VGA_16_SetPalette(numpalette);
+#endif
+
+#if defined(MODE_CGA_AFH)
+    CGA_AFH_SetPalette(numpalette);
+#endif
+
+#if defined(MODE_CVB)
+    CGA_CVBS_SetPalette(numpalette);
 #endif
 
 #if defined(MODE_CGA)
-    ptrlut4colors = lut4colors + numpalette * 256;
+    CGA_SetPalette(numpalette);
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
-    {
-        int i;
-        int pos = Mul768(numpalette);
+#if defined(MODE_EGA)
+    EGA_SetPalette(numpalette);
+#endif
 
-        outp(PEL_WRITE_ADR, 0);
+#if defined(MODE_EGAW1)
+    EGA_160_SetPalette(numpalette);
+#endif
 
-        if (VGADACfix)
-        {
-            byte *ptrprocessedpalette = processedpalette + pos;
-            for (i = 0; i < 768; i += 4)
-            {
-                outp(PEL_DATA, *(ptrprocessedpalette));
-                outp(PEL_DATA, *(ptrprocessedpalette + 1));
-                outp(PEL_DATA, *(ptrprocessedpalette + 2));
-                outp(PEL_DATA, *(ptrprocessedpalette + 3));
-                ptrprocessedpalette += 4;
-            }
-        }
-        else
-        {
-            OutString(PEL_DATA, ((unsigned char *)processedpalette) + pos, 768);
-        }
-    }
+#if defined(MODE_EGA80)
+    EGA_80_SetPalette(numpalette);
+#endif
+
+#if defined(TEXT_MODE) 
+    TEXT_SetPalette(numpalette);
+#endif
+
+#if defined(MODE_CGA512)
+    CGA_512_SetPalette(numpalette);
+#endif
+
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2) || defined(MODE_13H) || defined(MODE_VBE2)
+    VGA_SetPalette(numpalette);
 #endif
 }
 
@@ -1301,23 +462,6 @@ int updatestate;
 #endif
 byte *pcscreen, *destscreen, *destview;
 unsigned short *currentscreen;
-
-#if defined(MODE_EGA640)
-byte page = 0;
-#endif
-
-#if defined(MODE_VBE2_DIRECT)
-short page = 0;
-#endif
-
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
-unsigned short *textdestscreen = (unsigned short *)0xB8000;
-byte textpage = 0;
-#endif
-
-#if defined(MODE_MDA)
-unsigned short *textdestscreen = backbuffer;
-#endif
 
 //
 // I_UpdateBox
@@ -1585,1311 +729,6 @@ void I_UpdateNoBlit(void)
 
 extern int screenblocks;
 
-#if defined(MODE_CGA_BW)
-void CGA_BW_DrawBackbuffer(void)
-{
-    unsigned char *vram = (unsigned char *)0xB8000;
-    unsigned short *ptrvrambuffer = vrambuffer;
-    byte *ptrbackbuffer = backbuffer;
-
-    do
-    {
-        unsigned char x = 80;
-
-        do
-        {
-            unsigned short *ptr;
-            unsigned short finalcolor;
-
-            // Process two pixels at the same time (16-bit)
-            ptr = ptrlutcolors + *(ptrbackbuffer)*2;
-            finalcolor = *ptr & 0x8040;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 1) * 2;
-            finalcolor |= *ptr & 0x2010;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 2) * 2;
-            finalcolor |= *ptr & 0x0804;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 3) * 2;
-            finalcolor |= *ptr & 0x0201;
-
-            if (finalcolor != *ptrvrambuffer)
-            {
-                *ptrvrambuffer = finalcolor;
-                *vram = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor);
-            }
-
-            ptr = ptrlutcolors + *(ptrbackbuffer + 320) * 2;
-            finalcolor = *ptr & 0x8040;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 321) * 2;
-            finalcolor |= *ptr & 0x2010;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 322) * 2;
-            finalcolor |= *ptr & 0x0804;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 323) * 2;
-            finalcolor |= *ptr & 0x0201;
-
-            if (finalcolor != *(ptrvrambuffer + 0x2000))
-            {
-                *(ptrvrambuffer + 0x2000) = finalcolor;
-                *(vram + 0x2000) = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor);
-            }
-
-            ptrbackbuffer += 4;
-            ptrvrambuffer++;
-            vram++;
-            x--;
-
-        } while (x > 0);
-
-        ptrbackbuffer += 320;
-    } while (vram < 0xB9F40);
-}
-#endif
-
-#if defined(MODE_HERC)
-void HERC_DrawBackbuffer(void)
-{
-    unsigned char *vram = (unsigned char *)0xB0000;
-    byte *ptrvrambuffer = vrambuffer;
-    byte *ptrbackbuffer = backbuffer;
-
-    do
-    {
-        unsigned char x = 80;
-
-        do
-        {
-            unsigned int *ptr;
-            unsigned int finalcolor;
-            byte tmp;
-
-            // Process four pixels at the same time (32-bit)
-            ptr = ptrlutcolors + *(ptrbackbuffer)*4;
-            finalcolor = *ptr & 0x80408040;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 1) * 4;
-            finalcolor |= *ptr & 0x20102010;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 2) * 4;
-            finalcolor |= *ptr & 0x08040804;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 3) * 4;
-            finalcolor |= *ptr & 0x02010201;
-
-            tmp = BYTE0_UINT(finalcolor) | BYTE1_UINT(finalcolor);
-
-            if (tmp != *ptrvrambuffer)
-            {
-                *vram = tmp;
-                *ptrvrambuffer = tmp;
-            }
-
-            tmp = BYTE2_UINT(finalcolor) | BYTE3_UINT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer + 0x2000))
-            {
-                *(vram + 0x2000) = tmp;
-                *(ptrvrambuffer + 0x2000) = tmp;
-            }
-
-            ptr = ptrlutcolors + *(ptrbackbuffer + 320) * 4;
-            finalcolor = *ptr & 0x80408040;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 321) * 4;
-            finalcolor |= *ptr & 0x20102010;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 322) * 4;
-            finalcolor |= *ptr & 0x08040804;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 323) * 4;
-            finalcolor |= *ptr & 0x02010201;
-
-            tmp = BYTE0_UINT(finalcolor) | BYTE1_UINT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer + 0x4000))
-            {
-                *(vram + 0x4000) = tmp;
-                *(ptrvrambuffer + 0x4000) = tmp;
-            }
-
-            tmp = BYTE2_UINT(finalcolor) | BYTE3_UINT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer + 0x6000))
-            {
-                *(vram + 0x6000) = tmp;
-                *(ptrvrambuffer + 0x6000) = tmp;
-            }
-
-            ptrbackbuffer += 4;
-            ptrvrambuffer++;
-            vram++;
-            x--;
-
-        } while (x > 0);
-
-        ptrbackbuffer += 320;
-    } while (vram < 0xB1F40);
-}
-#endif
-
-#if defined(MODE_CGA16)
-void CGA16_DrawBackbuffer_Snow(void)
-{
-    unsigned char *vram = (unsigned char *)0xB8001;
-    unsigned char line = 80;
-    byte *ptrbackbuffer = backbuffer;
-    byte *ptrvrambuffer = vrambuffer;
-
-    do
-    {
-        unsigned char tmp = ptrlut16colors[*ptrbackbuffer] << 4 | ptrlut16colors[*(ptrbackbuffer + 2)];
-
-        if (tmp != *ptrvrambuffer)
-        {
-            I_WaitCGA();
-            *vram = tmp;
-            *ptrvrambuffer = tmp;
-        }
-
-        vram += 2;
-        ptrvrambuffer += 2;
-        ptrbackbuffer += 4;
-
-        line--;
-        if (line == 0)
-        {
-            line = 80;
-            ptrbackbuffer += 320;
-        }
-    } while (vram < (unsigned char *)0xBBE80);
-}
-
-void CGA16_DrawBackbuffer(void)
-{
-    unsigned char *vram = (unsigned char *)0xB8001;
-    unsigned char line = 80;
-    byte *ptrbackbuffer = backbuffer;
-    byte *ptrvrambuffer = vrambuffer;
-
-    do
-    {
-        unsigned char tmp = ptrlut16colors[*ptrbackbuffer] << 4 | ptrlut16colors[*(ptrbackbuffer + 2)];
-
-        if (tmp != *ptrvrambuffer)
-        {
-            *vram = tmp;
-            *ptrvrambuffer = tmp;
-        }
-
-        vram += 2;
-        ptrvrambuffer += 2;
-        ptrbackbuffer += 4;
-
-        line--;
-        if (line == 0)
-        {
-            line = 80;
-            ptrbackbuffer += 320;
-        }
-    } while (vram < (unsigned char *)0xBBE80);
-}
-#endif
-
-#if defined(MODE_CGA_AFH)
-void CGA_AFH_DrawBackbuffer_Snow(void)
-{
-    unsigned short *vram = (unsigned short *)0xB8000;
-    unsigned char line = 80;
-    byte *ptrbackbuffer = backbuffer;
-    unsigned short *ptrvrambuffer = vrambuffer;
-    unsigned short *ptrLUT = ansifromhellLUT;
-
-    do
-    {
-        unsigned short lutPOS = (ptrlut16colors[*(ptrbackbuffer)] & 0x000F) |
-                                (ptrlut16colors[*(ptrbackbuffer + 1)] & 0x00F0) |
-                                (ptrlut16colors[*(ptrbackbuffer + 2)] & 0x0F00) |
-                                (ptrlut16colors[*(ptrbackbuffer + 3)] & 0xF000);
-
-        if (*ptrvrambuffer != lutPOS)
-        {
-            I_WaitCGA();
-
-            *(vram) = ptrLUT[lutPOS];
-            *(ptrvrambuffer) = lutPOS;
-        }
-
-        vram += 1;
-        ptrvrambuffer += 1;
-        ptrbackbuffer += 4;
-
-        line--;
-        if (line == 0)
-        {
-            line = 80;
-            ptrbackbuffer += 320;
-        }
-    } while (vram < (unsigned short *)0xBBE80);
-}
-
-void CGA_AFH_DrawBackbuffer(void)
-{
-    unsigned short *vram = (unsigned short *)0xB8000;
-    unsigned char line = 80;
-    byte *ptrbackbuffer = backbuffer;
-    unsigned short *ptrvrambuffer = vrambuffer;
-    unsigned short *ptrLUT = ansifromhellLUT;
-
-    do
-    {
-        unsigned short lutPOS = (ptrlut16colors[*(ptrbackbuffer)] & 0x000F) |
-                                (ptrlut16colors[*(ptrbackbuffer + 1)] & 0x00F0) |
-                                (ptrlut16colors[*(ptrbackbuffer + 2)] & 0x0F00) |
-                                (ptrlut16colors[*(ptrbackbuffer + 3)] & 0xF000);
-
-        if (*ptrvrambuffer != lutPOS)
-        {
-            *(vram) = ptrLUT[lutPOS];
-            *(ptrvrambuffer) = lutPOS;
-        }
-
-        vram += 1;
-        ptrvrambuffer += 1;
-        ptrbackbuffer += 4;
-
-        line--;
-        if (line == 0)
-        {
-            line = 80;
-            ptrbackbuffer += 320;
-        }
-    } while (vram < (unsigned short *)0xBBE80);
-}
-
-#endif
-
-#if defined(MODE_EGA16)
-void EGA16_DrawBackbuffer(void)
-{
-    unsigned char *vram = (unsigned char *)0xB8501;
-    unsigned char line = 80;
-    byte *ptrbackbuffer = backbuffer;
-    byte *ptrvrambuffer = vrambuffer;
-
-    do
-    {
-        unsigned char tmp = ptrlut16colors[*ptrbackbuffer] << 4 | ptrlut16colors[*(ptrbackbuffer + 2)];
-
-        if (tmp != *ptrvrambuffer)
-        {
-            *vram = tmp;
-            *ptrvrambuffer = tmp;
-        }
-
-        vram += 2;
-        ptrvrambuffer += 2;
-        ptrbackbuffer += 4;
-
-        line--;
-        if (line == 0)
-        {
-            line = 80;
-            ptrbackbuffer += 320;
-        }
-    } while (vram < (unsigned char *)0xBC380);
-}
-#endif
-
-#if defined(MODE_CGA136)
-void CGA136_DrawBackbuffer_Snow(void)
-{
-    unsigned char *vram = (unsigned char *)0xB8001;
-    byte *ptrbackbuffer = backbuffer;
-    byte *ptrvrambuffer = vrambuffer;
-    unsigned char line = 20;
-
-    do
-    {
-        unsigned char tmp = ptrlut136colors[*ptrbackbuffer];
-
-        if (tmp != *ptrvrambuffer)
-        {
-            I_WaitCGA();
-            *vram = tmp;
-            *ptrvrambuffer = tmp;
-        }
-
-        tmp = ptrlut136colors[*(ptrbackbuffer + 4)];
-
-        if (tmp != *(ptrvrambuffer + 2))
-        {
-            I_WaitCGA();
-            *(vram + 2) = tmp;
-            *(ptrvrambuffer + 2) = tmp;
-        }
-
-        tmp = ptrlut136colors[*(ptrbackbuffer + 8)];
-
-        if (tmp != *(ptrvrambuffer + 4))
-        {
-            I_WaitCGA();
-            *(vram + 4) = tmp;
-            *(ptrvrambuffer + 4) = tmp;
-        }
-
-        tmp = ptrlut136colors[*(ptrbackbuffer + 12)];
-
-        if (tmp != *(ptrvrambuffer + 6))
-        {
-            I_WaitCGA();
-            *(vram + 6) = tmp;
-            *(ptrvrambuffer + 6) = tmp;
-        }
-
-        vram += 8;
-        ptrbackbuffer += 16;
-        ptrvrambuffer += 8;
-
-        line--;
-        if (line == 0)
-        {
-            line = 20;
-            ptrbackbuffer += 320;
-        }
-    } while (vram < (unsigned char *)0xBBE80);
-}
-
-void CGA136_DrawBackbuffer(void)
-{
-    unsigned char *vram = (unsigned char *)0xB8001;
-    byte *ptrbackbuffer = backbuffer;
-    byte *ptrvrambuffer = vrambuffer;
-    unsigned char line = 20;
-
-    do
-    {
-        unsigned char tmp = ptrlut136colors[*ptrbackbuffer];
-
-        if (tmp != *ptrvrambuffer)
-        {
-            *vram = tmp;
-            *ptrvrambuffer = tmp;
-        }
-
-        tmp = ptrlut136colors[*(ptrbackbuffer + 4)];
-
-        if (tmp != *(ptrvrambuffer + 2))
-        {
-            *(vram + 2) = tmp;
-            *(ptrvrambuffer + 2) = tmp;
-        }
-
-        tmp = ptrlut136colors[*(ptrbackbuffer + 8)];
-
-        if (tmp != *(ptrvrambuffer + 4))
-        {
-            *(vram + 4) = tmp;
-            *(ptrvrambuffer + 4) = tmp;
-        }
-
-        tmp = ptrlut136colors[*(ptrbackbuffer + 12)];
-
-        if (tmp != *(ptrvrambuffer + 6))
-        {
-            *(vram + 6) = tmp;
-            *(ptrvrambuffer + 6) = tmp;
-        }
-
-        vram += 8;
-        ptrbackbuffer += 16;
-        ptrvrambuffer += 8;
-
-        line--;
-        if (line == 0)
-        {
-            line = 20;
-            ptrbackbuffer += 320;
-        }
-    } while (vram < (unsigned char *)0xBBE80);
-}
-#endif
-
-#if defined(MODE_EGA136)
-void EGA136_DrawBackbuffer(void)
-{
-    unsigned char *vram = (unsigned char *)0xB8501;
-    byte *ptrbackbuffer = backbuffer;
-    byte *ptrvrambuffer = vrambuffer;
-    unsigned char line = 20;
-
-    do
-    {
-        unsigned char tmp = ptrlut136colors[*ptrbackbuffer];
-
-        if (tmp != *ptrvrambuffer)
-        {
-            *vram = tmp;
-            *ptrvrambuffer = tmp;
-        }
-
-        tmp = ptrlut136colors[*(ptrbackbuffer + 4)];
-
-        if (tmp != *(ptrvrambuffer + 2))
-        {
-            *(vram + 2) = tmp;
-            *(ptrvrambuffer + 2) = tmp;
-        }
-
-        tmp = ptrlut136colors[*(ptrbackbuffer + 8)];
-
-        if (tmp != *(ptrvrambuffer + 4))
-        {
-            *(vram + 4) = tmp;
-            *(ptrvrambuffer + 4) = tmp;
-        }
-
-        tmp = ptrlut136colors[*(ptrbackbuffer + 12)];
-
-        if (tmp != *(ptrvrambuffer + 6))
-        {
-            *(vram + 6) = tmp;
-            *(ptrvrambuffer + 6) = tmp;
-        }
-
-        vram += 8;
-        ptrbackbuffer += 16;
-        ptrvrambuffer += 8;
-
-        line--;
-        if (line == 0)
-        {
-            line = 20;
-            ptrbackbuffer += 320;
-        }
-    } while (vram < (unsigned char *)0xBC380);
-}
-#endif
-
-#if defined(MODE_EGA)
-unsigned short lastlatch;
-unsigned short vrambuffer[16000];
-
-void EGA_DrawBackbuffer(void)
-{
-    byte *vram = (byte *)0xA0000;
-    byte *ptrbackbuffer = backbuffer;
-    unsigned short *ptrvrambuffer = vrambuffer;
-
-    do
-    {
-        unsigned short fullvalue = 16 * 16 * 16 * ptrlut16colors[*ptrbackbuffer] +
-                                   16 * 16 * ptrlut16colors[*(ptrbackbuffer + 1)] +
-                                   16 * ptrlut16colors[*(ptrbackbuffer + 2)] +
-                                   ptrlut16colors[*(ptrbackbuffer + 3)];
-
-        if (*(ptrvrambuffer) != fullvalue)
-        {
-            unsigned short vramlut;
-
-            *(ptrvrambuffer) = fullvalue;
-            vramlut = fullvalue >> 4;
-
-            if (lastlatch != vramlut)
-            {
-                lastlatch = vramlut;
-                ReadMem((byte *)0xA3E80 + vramlut);
-            }
-
-            *(vram) = fullvalue;
-        }
-
-        vram += 1;
-        ptrbackbuffer += 4;
-        ptrvrambuffer += 1;
-    } while (vram < (byte *)0xA3E80);
-}
-#endif
-
-#if defined(MODE_EGAW1)
-unsigned short lastlatch;
-unsigned short vrambuffer[8000];
-
-void EGAW1_DrawBackbuffer(void)
-{
-    byte *vram = (byte *)0xA0000;
-    byte *ptrbackbuffer = backbuffer;
-    unsigned short *ptrvrambuffer = vrambuffer;
-
-    do
-    {
-        unsigned short fullvalue = 16 * 16 * 16 * ptrlut16colors[*ptrbackbuffer] +
-                                   16 * 16 * ptrlut16colors[*(ptrbackbuffer + 2)] +
-                                   16 * ptrlut16colors[*(ptrbackbuffer + 4)] +
-                                   ptrlut16colors[*(ptrbackbuffer + 6)];
-
-        if (*(ptrvrambuffer) != fullvalue)
-        {
-            unsigned short vramlut;
-
-            *(ptrvrambuffer) = fullvalue;
-            vramlut = fullvalue >> 4;
-
-            if (lastlatch != vramlut)
-            {
-                lastlatch = vramlut;
-                ReadMem((byte *)0xA1F40 + vramlut);
-            }
-
-            *(vram) = fullvalue;
-        }
-
-        vram += 1;
-        ptrbackbuffer += 8;
-        ptrvrambuffer += 1;
-    } while (vram < (byte *)0xA1F40);
-}
-#endif
-
-#if defined(MODE_EGA80)
-void EGA80_DrawBackbuffer(void)
-{
-    unsigned char *vram = (unsigned char *)0xA0000;
-    byte *ptrvrambuffer = vrambuffer;
-    byte *ptrbackbuffer = backbuffer;
-
-    do
-    {
-        byte tmp;
-
-        tmp = ptrlut16colors[*ptrbackbuffer];
-        if (tmp != *(ptrvrambuffer))
-        {
-            *(vram) = tmp;
-            *(ptrvrambuffer) = tmp;
-        }
-
-        tmp = ptrlut16colors[*(ptrbackbuffer + 4)];
-        if (tmp != *(ptrvrambuffer + 1))
-        {
-            *(vram + 1) = tmp;
-            *(ptrvrambuffer + 1) = tmp;
-        }
-
-        tmp = ptrlut16colors[*(ptrbackbuffer + 8)];
-        if (tmp != *(ptrvrambuffer + 2))
-        {
-            *(vram + 2) = tmp;
-            *(ptrvrambuffer + 2) = tmp;
-        }
-
-        tmp = ptrlut16colors[*(ptrbackbuffer + 12)];
-        if (tmp != *(ptrvrambuffer + 3))
-        {
-            *(vram + 3) = tmp;
-            *(ptrvrambuffer + 3) = tmp;
-        }
-
-        vram += 4;
-        ptrvrambuffer += 4;
-        ptrbackbuffer += 16;
-    } while (vram < (unsigned char *)0xA3E80);
-}
-#endif
-
-#if defined(MODE_VGA16)
-void VGA16_DrawBackbuffer(void)
-{
-    unsigned char *vram;
-    byte *ptrbackbuffer = backbuffer;
-
-    for (vram = (unsigned char *)0xB8001; vram < (unsigned char *)0xBFD00; vram += 2, ptrbackbuffer += 4)
-    {
-        *vram = ptrlut16colors[*ptrbackbuffer] << 4 | ptrlut16colors[*(ptrbackbuffer + 2)];
-    }
-}
-#endif
-
-#if defined(MODE_VGA136)
-void VGA136_DrawBackbuffer(void)
-{
-    unsigned char *vram = (unsigned char *)0xB8001;
-    byte *ptrbackbuffer = backbuffer;
-
-    do
-    {
-        *vram = ptrlut136colors[*ptrbackbuffer];
-        *(vram + 2) = ptrlut136colors[*(ptrbackbuffer + 4)];
-        *(vram + 4) = ptrlut136colors[*(ptrbackbuffer + 8)];
-        *(vram + 6) = ptrlut136colors[*(ptrbackbuffer + 12)];
-
-        vram += 8;
-        ptrbackbuffer += 16;
-    } while (vram < (unsigned char *)0xBFD00);
-}
-#endif
-
-#if defined(MODE_ATI640)
-void ATI640_DrawBackbuffer(void)
-{
-    int x;
-    unsigned char *vram = (unsigned char *)0xB0000;
-    byte *ptrvrambuffer = vrambuffer;
-    unsigned int base = 0;
-
-    for (base = 0; base < SCREENHEIGHT * 320; base += 960)
-    {
-        for (x = 0; x < 160; x++, base += 2, vram++, ptrvrambuffer++)
-        {
-            unsigned short color;
-            unsigned short finalcolor;
-            byte tmp;
-
-            color = ptrlutcolors[backbuffer[base] * 2];
-            finalcolor = color & 0xC0C0;
-
-            color = ptrlutcolors[backbuffer[base] * 2 + 1];
-            finalcolor |= color & 0x3030;
-
-            color = ptrlutcolors[backbuffer[base + 1] * 2];
-            finalcolor |= color & 0x0C0C;
-
-            color = ptrlutcolors[backbuffer[base + 1] * 2 + 1];
-            finalcolor |= color & 0x0303;
-
-            tmp = BYTE0_USHORT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer))
-            {
-                *(vram) = tmp;
-                *(ptrvrambuffer) = tmp;
-            }
-
-            tmp = BYTE1_USHORT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer + 0x8000))
-            {
-                *(vram + 0x8000) = tmp;
-                *(ptrvrambuffer + 0x8000) = tmp;
-            }
-
-            color = ptrlutcolors[backbuffer[base + 320] * 2];
-            finalcolor = color & 0xC0C0;
-
-            color = ptrlutcolors[backbuffer[base + 320] * 2 + 1];
-            finalcolor |= color & 0x3030;
-
-            color = ptrlutcolors[backbuffer[base + 321] * 2];
-            finalcolor |= color & 0x0C0C;
-
-            color = ptrlutcolors[backbuffer[base + 321] * 2 + 1];
-            finalcolor |= color & 0x0303;
-
-            tmp = BYTE0_USHORT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer + 0x2000))
-            {
-                *(vram + 0x2000) = tmp;
-                *(ptrvrambuffer + 0x2000) = tmp;
-            }
-
-            tmp = BYTE1_USHORT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer + 0xA000))
-            {
-                *(vram + 0xA000) = tmp;
-                *(ptrvrambuffer + 0xA000) = tmp;
-            }
-
-            color = ptrlutcolors[backbuffer[base + 640] * 2];
-            finalcolor = color & 0xC0C0;
-
-            color = ptrlutcolors[backbuffer[base + 640] * 2 + 1];
-            finalcolor |= color & 0x3030;
-
-            color = ptrlutcolors[backbuffer[base + 641] * 2];
-            finalcolor |= color & 0x0C0C;
-
-            color = ptrlutcolors[backbuffer[base + 641] * 2 + 1];
-            finalcolor |= color & 0x0303;
-
-            tmp = BYTE0_USHORT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer + 0x4000))
-            {
-                *(vram + 0x4000) = tmp;
-                *(ptrvrambuffer + 0x4000) = tmp;
-            }
-
-            tmp = BYTE1_USHORT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer + 0xC000))
-            {
-                *(vram + 0xC000) = tmp;
-                *(ptrvrambuffer + 0xC000) = tmp;
-            }
-
-            color = ptrlutcolors[backbuffer[base + 960] * 2];
-            finalcolor = color & 0xC0C0;
-
-            color = ptrlutcolors[backbuffer[base + 960] * 2 + 1];
-            finalcolor |= color & 0x3030;
-
-            color = ptrlutcolors[backbuffer[base + 961] * 2];
-            finalcolor |= color & 0x0C0C;
-
-            color = ptrlutcolors[backbuffer[base + 961] * 2 + 1];
-            finalcolor |= color & 0x0303;
-
-            tmp = BYTE0_USHORT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer + 0x6000))
-            {
-                *(vram + 0x6000) = tmp;
-                *(ptrvrambuffer + 0x6000) = tmp;
-            }
-
-            tmp = BYTE1_USHORT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer + 0xE000))
-            {
-                *(vram + 0xE000) = tmp;
-                *(ptrvrambuffer + 0xE000) = tmp;
-            }
-        }
-    }
-}
-#endif
-
-#if defined(MODE_EGA640)
-void EGA640_DrawBackbuffer(void)
-{
-    unsigned short i;
-    byte *backbufferptr;
-
-    byte *vrambufferR;
-    byte *vrambufferG;
-    byte *vrambufferB;
-    byte *vrambufferI;
-
-    if (destscreen == 0xA0000)
-    {
-        vrambufferR = vrambufferR1;
-        vrambufferG = vrambufferG1;
-        vrambufferB = vrambufferB1;
-        vrambufferI = vrambufferI1;
-    }
-    else if (destscreen == 0xA4000)
-    {
-        vrambufferR = vrambufferR2;
-        vrambufferG = vrambufferG2;
-        vrambufferB = vrambufferB2;
-        vrambufferI = vrambufferI2;
-    }
-    else
-    {
-        vrambufferR = vrambufferR3;
-        vrambufferG = vrambufferG3;
-        vrambufferB = vrambufferB3;
-        vrambufferI = vrambufferI3;
-    }
-
-    // Red
-    outp(0x3C5, 1 << (3 & 0x03));
-
-    for (i = 0, backbufferptr = backbuffer; i < 2 * SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 4)
-    {
-        unsigned char color;
-        unsigned char tmpColor;
-
-        color = ptrlutcolors[*(backbufferptr)*2];
-        tmpColor = color & 0x80;
-
-        color = ptrlutcolors[*(backbufferptr)*2 + 1];
-        tmpColor |= (color & 0x80) >> 1;
-
-        color = ptrlutcolors[*(backbufferptr + 1) * 2];
-        tmpColor |= (color & 0x80) >> 2;
-
-        color = ptrlutcolors[*(backbufferptr + 1) * 2 + 1];
-        tmpColor |= (color & 0x80) >> 3;
-
-        color = ptrlutcolors[*(backbufferptr + 2) * 2];
-        tmpColor |= color & 0x08;
-
-        color = ptrlutcolors[*(backbufferptr + 2) * 2 + 1];
-        tmpColor |= (color & 0x08) >> 1;
-
-        color = ptrlutcolors[*(backbufferptr + 3) * 2];
-        tmpColor |= (color & 0x08) >> 2;
-
-        color = ptrlutcolors[*(backbufferptr + 3) * 2 + 1];
-        tmpColor |= (color & 0x08) >> 3;
-
-        if (tmpColor != vrambufferR[i])
-        {
-            destscreen[i] = tmpColor;
-            vrambufferR[i] = tmpColor;
-        }
-    }
-
-    // Green
-    outp(0x3C5, 1 << (2 & 0x03));
-
-    for (i = 0, backbufferptr = backbuffer; i < 2 * SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 4)
-    {
-        unsigned char color;
-        unsigned char tmpColor;
-
-        color = ptrlutcolors[*(backbufferptr)*2];
-        tmpColor = (color & 0x40) << 1;
-
-        color = ptrlutcolors[*(backbufferptr)*2 + 1];
-        tmpColor |= color & 0x40;
-
-        color = ptrlutcolors[*(backbufferptr + 1) * 2];
-        tmpColor |= (color & 0x40) >> 1;
-
-        color = ptrlutcolors[*(backbufferptr + 1) * 2 + 1];
-        tmpColor |= (color & 0x40) >> 2;
-
-        color = ptrlutcolors[*(backbufferptr + 2) * 2];
-        tmpColor |= (color & 0x04) << 1;
-
-        color = ptrlutcolors[*(backbufferptr + 2) * 2 + 1];
-        tmpColor |= color & 0x04;
-
-        color = ptrlutcolors[*(backbufferptr + 3) * 2];
-        tmpColor |= (color & 0x04) >> 1;
-
-        color = ptrlutcolors[*(backbufferptr + 3) * 2 + 1];
-        tmpColor |= (color & 0x04) >> 2;
-
-        if (tmpColor != vrambufferG[i])
-        {
-            destscreen[i] = tmpColor;
-            vrambufferG[i] = tmpColor;
-        }
-    }
-
-    // Blue
-    outp(0x3C5, 1 << (1 & 0x03));
-
-    for (i = 0, backbufferptr = backbuffer; i < 2 * SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 4)
-    {
-        unsigned char color;
-        unsigned char tmpColor;
-
-        color = ptrlutcolors[*(backbufferptr)*2];
-        tmpColor = (color & 0x20) << 2;
-
-        color = ptrlutcolors[*(backbufferptr)*2 + 1];
-        tmpColor |= (color & 0x20) << 1;
-
-        color = ptrlutcolors[*(backbufferptr + 1) * 2];
-        tmpColor |= color & 0x20;
-
-        color = ptrlutcolors[*(backbufferptr + 1) * 2 + 1];
-        tmpColor |= (color & 0x20) >> 1;
-
-        color = ptrlutcolors[*(backbufferptr + 2) * 2];
-        tmpColor |= (color & 0x02) << 2;
-
-        color = ptrlutcolors[*(backbufferptr + 2) * 2 + 1];
-        tmpColor |= (color & 0x02) << 1;
-
-        color = ptrlutcolors[*(backbufferptr + 3) * 2];
-        tmpColor |= color & 0x02;
-
-        color = ptrlutcolors[*(backbufferptr + 3) * 2 + 1];
-        tmpColor |= (color & 0x02) >> 1;
-
-        if (tmpColor != vrambufferB[i])
-        {
-            destscreen[i] = tmpColor;
-            vrambufferB[i] = tmpColor;
-        }
-    }
-
-    // Intensity
-    outp(0x3C5, 1 << (0 & 0x03));
-
-    for (i = 0, backbufferptr = backbuffer; i < 2 * SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 4)
-    {
-        unsigned char color;
-        unsigned char tmpColor;
-
-        color = ptrlutcolors[*(backbufferptr)*2];
-        tmpColor = (color & 0x10) << 3;
-
-        color = ptrlutcolors[*(backbufferptr)*2 + 1];
-        tmpColor |= (color & 0x10) << 2;
-
-        color = ptrlutcolors[*(backbufferptr + 1) * 2];
-        tmpColor |= (color & 0x10) << 1;
-
-        color = ptrlutcolors[*(backbufferptr + 1) * 2 + 1];
-        tmpColor |= color & 0x10;
-
-        color = ptrlutcolors[*(backbufferptr + 2) * 2];
-        tmpColor |= (color & 0x01) << 3;
-
-        color = ptrlutcolors[*(backbufferptr + 2) * 2 + 1];
-        tmpColor |= (color & 0x01) << 2;
-
-        color = ptrlutcolors[*(backbufferptr + 3) * 2];
-        tmpColor |= (color & 0x01) << 1;
-
-        color = ptrlutcolors[*(backbufferptr + 3) * 2 + 1];
-        tmpColor |= color & 0x01;
-
-        if (tmpColor != vrambufferI[i])
-        {
-            destscreen[i] = tmpColor;
-            vrambufferI[i] = tmpColor;
-        }
-    }
-
-    // Change video page
-    outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
-
-    // Next plane
-    if (destscreen == 0xA8000)
-        destscreen = 0xA0000;
-    else
-        destscreen += 0x4000;
-}
-#endif
-
-#if defined(MODE_CVB)
-void CVBS_DrawBackbuffer(void)
-{
-
-    unsigned char *vram = (unsigned char *)0xB8000;
-    unsigned short base = 0;
-    byte *ptrvrambuffer = vrambuffer;
-
-    for (base = 0; base < SCREENHEIGHT * 320;)
-    {
-        unsigned char x;
-
-        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++, ptrvrambuffer++)
-        {
-            unsigned char color0, color1;
-            byte tmp;
-
-            color0 = ptrlut16colors[backbuffer[base]];
-            color1 = ptrlut16colors[backbuffer[base + 2]];
-
-            tmp = color0 << 4 | color1;
-
-            if (tmp != *(ptrvrambuffer))
-            {
-                *(vram) = tmp;
-                *(ptrvrambuffer) = tmp;
-            }
-        }
-
-        vram += 0x1FB0;
-        ptrvrambuffer += 0x1FB0;
-
-        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++, ptrvrambuffer++)
-        {
-            unsigned char color0, color1;
-            byte tmp;
-
-            color0 = ptrlut16colors[backbuffer[base]];
-            color1 = ptrlut16colors[backbuffer[base + 2]];
-
-            tmp = color0 << 4 | color1;
-
-            if (tmp != *(ptrvrambuffer))
-            {
-                *(vram) = tmp;
-                *(ptrvrambuffer) = tmp;
-            }
-        }
-
-        vram -= 0x2000;
-        ptrvrambuffer -= 0x2000;
-    }
-}
-#endif
-
-#if defined(MODE_V2)
-void V2_DrawBackbuffer(void)
-{
-    byte *ptrdestscreen;
-    int pos;
-
-    outp(SC_INDEX + 1, 1 << 0);
-
-    ptrdestscreen = destscreen + 15 * 80 + 15;
-    pos = 319;
-
-    do
-    {
-        unsigned char x;
-
-        for (x = 0; x < 10; x++)
-        {
-            ptrdestscreen[0] = backbuffer[pos];
-            ptrdestscreen[1] = backbuffer[pos + 1280];
-            ptrdestscreen[2] = backbuffer[pos + 2560];
-            ptrdestscreen[3] = backbuffer[pos + 3840];
-            ptrdestscreen[4] = backbuffer[pos + 5120];
-
-            pos += 1280 * 5;
-            ptrdestscreen += 5;
-        }
-
-        pos -= (1280 * 50 + 1);
-        ptrdestscreen += 30;
-    } while (pos > -1);
-
-    outp(SC_INDEX + 1, 1 << 1);
-
-    ptrdestscreen = destscreen + 15 * 80 + 15;
-    pos = 639;
-
-    do
-    {
-        unsigned char x;
-
-        for (x = 0; x < 10; x++)
-        {
-            ptrdestscreen[0] = backbuffer[pos];
-            ptrdestscreen[1] = backbuffer[pos + 1280];
-            ptrdestscreen[2] = backbuffer[pos + 2560];
-            ptrdestscreen[3] = backbuffer[pos + 3840];
-            ptrdestscreen[4] = backbuffer[pos + 5120];
-
-            pos += 1280 * 5;
-            ptrdestscreen += 5;
-        }
-
-        pos -= (1280 * 50 + 1);
-        ptrdestscreen += 30;
-    } while (pos > 319);
-
-    outp(SC_INDEX + 1, 1 << 2);
-
-    ptrdestscreen = destscreen + 15 * 80 + 15;
-    pos = 959;
-
-    do
-    {
-        unsigned char x;
-
-        for (x = 0; x < 10; x++)
-        {
-            ptrdestscreen[0] = backbuffer[pos];
-            ptrdestscreen[1] = backbuffer[pos + 1280];
-            ptrdestscreen[2] = backbuffer[pos + 2560];
-            ptrdestscreen[3] = backbuffer[pos + 3840];
-            ptrdestscreen[4] = backbuffer[pos + 5120];
-
-            pos += 1280 * 5;
-            ptrdestscreen += 5;
-        }
-
-        pos -= (1280 * 50 + 1);
-        ptrdestscreen += 30;
-    } while (pos > 639);
-
-    outp(SC_INDEX + 1, 1 << 3);
-
-    ptrdestscreen = destscreen + 15 * 80 + 15;
-    pos = 1279;
-
-    do
-    {
-        unsigned char x;
-
-        for (x = 0; x < 10; x++)
-        {
-            ptrdestscreen[0] = backbuffer[pos];
-            ptrdestscreen[1] = backbuffer[pos + 1280];
-            ptrdestscreen[2] = backbuffer[pos + 2560];
-            ptrdestscreen[3] = backbuffer[pos + 3840];
-            ptrdestscreen[4] = backbuffer[pos + 5120];
-
-            pos += 1280 * 5;
-            ptrdestscreen += 5;
-        }
-
-        pos -= (1280 * 50 + 1);
-        ptrdestscreen += 30;
-    } while (pos > 959);
-
-    outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
-
-    // Next plane
-    if (destscreen == (byte *)0xA7000)
-        destscreen = (byte *)0xA0000;
-    else
-        destscreen += 0x7000;
-}
-#endif
-
-#if defined(MODE_CGA512)
-unsigned short vrambuffer[8000];
-void CGA512_DrawBackbuffer(void)
-{
-    unsigned short *vram = (unsigned short *)0xB8000;
-    byte *ptrbackbuffer = backbuffer;
-    unsigned short *ptrvrambuffer = vrambuffer;
-    unsigned char line = 80;
-
-    do
-    {
-        unsigned short tmp = ptrlut256colors[*ptrbackbuffer];
-
-        if (*ptrvrambuffer != tmp)
-        {
-            *ptrvrambuffer = tmp;
-            I_WaitCGA();
-            *vram = tmp;
-        }
-
-        vram += 1;
-        ptrvrambuffer += 1;
-        ptrbackbuffer += 4;
-
-        line--;
-        if (line == 0)
-        {
-            line = 80;
-            ptrbackbuffer += 320;
-        }
-    } while (vram < (unsigned short *)0xBBE80);
-}
-#endif
-
-#if defined(MODE_PCP)
-void PCP_DrawBackbuffer(void)
-{
-    int x;
-    unsigned char *vram = (unsigned char *)0xB8000;
-    byte *ptrvrambuffer = vrambuffer;
-    unsigned int base = 0;
-
-    for (base = 0; base < SCREENHEIGHT * 320;)
-    {
-        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++, ptrvrambuffer++)
-        {
-            unsigned short color;
-            unsigned short finalcolor;
-            byte tmp;
-
-            color = ptrlut16colors[backbuffer[base]];
-            finalcolor = color & 0xC0C0;
-
-            color = ptrlut16colors[backbuffer[base + 1]];
-            finalcolor |= color & 0x3030;
-
-            color = ptrlut16colors[backbuffer[base + 2]];
-            finalcolor |= color & 0x0C0C;
-
-            color = ptrlut16colors[backbuffer[base + 3]];
-            finalcolor |= color & 0x0303;
-
-            tmp = BYTE0_USHORT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer))
-            {
-                *(vram) = tmp;
-                *(ptrvrambuffer) = tmp;
-            }
-
-            tmp = BYTE1_USHORT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer + 0x4000))
-            {
-                *(vram + 0x4000) = tmp;
-                *(ptrvrambuffer + 0x4000) = tmp;
-            }
-
-            color = ptrlut16colors[backbuffer[base + 320]];
-            finalcolor = color & 0xC0C0;
-
-            color = ptrlut16colors[backbuffer[base + 321]];
-            finalcolor |= color & 0x3030;
-
-            color = ptrlut16colors[backbuffer[base + 322]];
-            finalcolor |= color & 0x0C0C;
-
-            color = ptrlut16colors[backbuffer[base + 323]];
-            finalcolor |= color & 0x0303;
-
-            tmp = BYTE0_USHORT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer + 0x2000))
-            {
-                *(vram + 0x2000) = tmp;
-                *(ptrvrambuffer + 0x2000) = tmp;
-            }
-
-            tmp = BYTE1_USHORT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer + 0x6000))
-            {
-                *(vram + 0x6000) = tmp;
-                *(ptrvrambuffer + 0x6000) = tmp;
-            }
-        }
-        base += 320;
-    }
-}
-#endif
-
-#if defined(MODE_CGA)
-void CGA_DrawBackbuffer(void)
-{
-    int x;
-    unsigned char *vram = (unsigned char *)0xB8000;
-    unsigned short *ptrvrambuffer = vrambuffer;
-    unsigned int base = 0;
-
-    for (base = 0; base < SCREENHEIGHT * 320; base += 320)
-    {
-        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++, ptrvrambuffer++)
-        {
-            unsigned short color;
-            unsigned short tmpColor;
-            byte tmp;
-
-            BYTE1_USHORT(tmpColor) = (ptrlut4colors[backbuffer[base]]);
-            BYTE0_USHORT(tmpColor) = (ptrlut4colors[backbuffer[base + 1]]);
-            tmpColor &= 0xC030;
-
-            BYTE1_USHORT(color) = (ptrlut4colors[backbuffer[base + 2]]);
-            BYTE0_USHORT(color) = (ptrlut4colors[backbuffer[base + 3]]);
-            tmpColor |= color & 0x0C03;
-
-            if (tmpColor != *(ptrvrambuffer))
-            {
-                *(ptrvrambuffer) = tmpColor;
-                *(vram) = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
-            }
-
-            BYTE1_USHORT(tmpColor) = (ptrlut4colors[backbuffer[base + 320]]);
-            BYTE0_USHORT(tmpColor) = (ptrlut4colors[backbuffer[base + 321]]);
-            tmpColor &= 0xC030;
-
-            BYTE1_USHORT(color) = (ptrlut4colors[backbuffer[base + 322]]);
-            BYTE0_USHORT(color) = (ptrlut4colors[backbuffer[base + 323]]);
-            tmpColor |= color & 0x0C03;
-
-            if (tmpColor != *(ptrvrambuffer + 0x2000))
-            {
-                *(ptrvrambuffer + 0x2000) = tmpColor;
-                *(vram + 0x2000) = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
-            }
-        }
-    }
-}
-#endif
-
-#if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
-static struct VBE_VbeInfoBlock vbeinfo;
-static struct VBE_ModeInfoBlock vbemode;
-unsigned short vesavideomode = 0xFFFF;
-int vesalinear = -1;
-char *vesavideoptr;
-#endif
-
 void I_FinishUpdate(void)
 {
     static int fps_counter, fps_starttime, fps_nextcalculation;
@@ -2901,218 +740,109 @@ void I_FinishUpdate(void)
 #endif
 
 #if defined(MODE_MDA)
-    CopyDWords(backbuffer, 0xB0000, 1000);
+    MDA_DrawBackbuffer();
 #endif
 
 #if defined(MODE_T4025) || defined(MODE_T4050)
-    // Change video page
-    regs.h.ah = 0x05;
-    regs.h.al = textpage;
-    regs.h.bh = 0x00;
-    regs.h.bl = 0x00;
-    int386(0x10, &regs, &regs);
-
-    if (textpage == 2)
-    {
-        textpage = 0;
-        textdestscreen = (unsigned short *)0xB8000;
-    }
-    else
-    {
-        textpage++;
-        textdestscreen += 1024;
-    }
+    TEXT_40x25_ChangeVideoPage();
 #endif
 
 #if defined(MODE_T8025)
-    // Change video page
-    regs.h.ah = 0x05;
-    regs.h.al = textpage;
-    regs.h.bh = 0x00;
-    regs.h.bl = 0x00;
-    int386(0x10, &regs, &regs);
-
-    if (textpage == 2)
-    {
-        textpage = 0;
-        textdestscreen = (unsigned short *)0xB8000;
-    }
-    else
-    {
-        textpage++;
-        textdestscreen += 2048;
-    }
+    TEXT_80x25_ChangeVideoPage();
 #endif
 
 #if defined(MODE_T8043) || defined(MODE_T8086)
-    // Change video page
-    regs.h.ah = 0x05;
-    regs.h.al = textpage;
-    regs.h.bh = 0x00;
-    regs.h.bl = 0x00;
-    int386(0x10, &regs, &regs);
-
-    if (textpage == 2)
-    {
-        textpage = 0;
-        textdestscreen = (unsigned short *)0xB8000;
-    }
-    else
-    {
-        textpage++;
-        textdestscreen += 3568;
-    }
+    TEXT_80x25_EGA_Double_ChangeVideoPage();
 #endif
 
 #if defined(MODE_T8050) || defined(MODE_T80100)
-    // Change video page
-    regs.h.ah = 0x05;
-    regs.h.al = textpage;
-    regs.h.bh = 0x00;
-    regs.h.bl = 0x00;
-    int386(0x10, &regs, &regs);
-
-    if (textpage == 2)
-    {
-        textpage = 0;
-        textdestscreen = (unsigned short *)0xB8000;
-    }
-    else
-    {
-        textpage++;
-        if (videoPageFix)
-            textdestscreen += 4000;
-        else
-            textdestscreen += 4128;
-    }
+    TEXT_80x25_Double_ChangeVideoPage();
 #endif
+
 #if defined(MODE_Y)
-    outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
-
-    // Next plane
-    if (destscreen == (byte *)0xA8000)
-        destscreen = (byte *)0xA0000;
-    else
-        destscreen += 0x4000;
+    VGA_Y_ChangeVideoPage();
 #endif
+
 #if defined(MODE_VBE2_DIRECT)
-    VBE_SetDisplayStart_Y(page);
-
-    if (page == 400)
-    {
-        page = 0;
-        destscreen -= 2 * 320 * 200;
-    }
-    else
-    {
-        page += 200;
-        destscreen += 320 * 200;
-    }
+    VBE2_ChangeVideoPage();
 #endif
-#if defined(MODE_13H) || defined(MODE_VBE2)
 
-    if (updatestate & I_FULLSCRN)
-    {
-        CopyDWords(backbuffer, pcscreen, SCREENHEIGHT * SCREENWIDTH / 4);
-        updatestate = I_NOUPDATE; // clear out all draw types
-    }
-    if (updatestate & I_FULLVIEW)
-    {
-        if (updatestate & I_MESSAGES && screenblocks > 7)
-        {
-            int i;
-            for (i = 0; i < endscreen; i += SCREENWIDTH)
-            {
-                CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
-            }
-            updatestate &= ~(I_FULLVIEW | I_MESSAGES);
-        }
-        else
-        {
-            int i;
-            for (i = startscreen; i < endscreen; i += SCREENWIDTH)
-            {
-                CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
-            }
-            updatestate &= ~I_FULLVIEW;
-        }
-    }
-    if (updatestate & I_STATBAR)
-    {
-        CopyDWords(backbuffer + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), pcscreen + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), SCREENWIDTH * SBARHEIGHT / 4);
-        updatestate &= ~I_STATBAR;
-    }
-    if (updatestate & I_MESSAGES)
-    {
-        CopyDWords(backbuffer, pcscreen, (SCREENWIDTH * 28) / 4);
-        updatestate &= ~I_MESSAGES;
-    }
+#if defined(MODE_13H)
+    VGA_13H_DrawBackbuffer();
 #endif
+
+#if defined(MODE_VBE2)
+    VBE2_DrawBackbuffer();
+#endif
+
 #if defined(MODE_HERC)
     HERC_DrawBackbuffer();
 #endif
+
 #if defined(MODE_CGA)
     CGA_DrawBackbuffer();
 #endif
+
 #if defined(MODE_CGA_BW)
     CGA_BW_DrawBackbuffer();
 #endif
+
 #if defined(MODE_CGA16)
     if (snowfix)
-        CGA16_DrawBackbuffer_Snow();
+        CGA_16_DrawBackbuffer_Snow();
     else
-        CGA16_DrawBackbuffer();
+        CGA_16_DrawBackbuffer();
 #endif
+
 #if defined(MODE_CGA_AFH)
     if (snowfix)
         CGA_AFH_DrawBackbuffer_Snow();
     else
         CGA_AFH_DrawBackbuffer();
 #endif
+
 #if defined(MODE_EGA16)
-    EGA16_DrawBackbuffer();
+    EGA_16_DrawBackbuffer();
 #endif
-#if defined(MODE_CGA136)
-    if (snowfix)
-        CGA136_DrawBackbuffer_Snow();
-    else
-        CGA136_DrawBackbuffer();
-#endif
+
 #if defined(MODE_EGA80)
-    EGA80_DrawBackbuffer();
+    EGA_80_DrawBackbuffer();
 #endif
+
 #if defined(MODE_EGA)
     EGA_DrawBackbuffer();
 #endif
+
 #if defined(MODE_EGAW1)
-    EGAW1_DrawBackbuffer();
+    EGA_160_DrawBackbuffer();
 #endif
+
 #if defined(MODE_VGA16)
-    VGA16_DrawBackbuffer();
+    VGA_16_DrawBackbuffer();
 #endif
-#if defined(MODE_VGA136)
-    VGA136_DrawBackbuffer();
-#endif
-#if defined(MODE_EGA136)
-    EGA136_DrawBackbuffer();
-#endif
+
 #if defined(MODE_EGA640)
-    EGA640_DrawBackbuffer();
+    EGA_640_DrawBackbuffer();
 #endif
+
 #if defined(MODE_ATI640)
-    ATI640_DrawBackbuffer();
+    ATI_640_DrawBackbuffer();
 #endif
+
 #if defined(MODE_CGA512)
-    CGA512_DrawBackbuffer();
+    CGA_512_DrawBackbuffer();
 #endif
+
 #if defined(MODE_PCP)
     PCP_DrawBackbuffer();
 #endif
+
 #if defined(MODE_CVB)
-    CVBS_DrawBackbuffer();
+    CGA_CVBS_DrawBackbuffer();
 #endif
+
 #if defined(MODE_V2)
-    V2_DrawBackbuffer();
+    VGA_VERT_DrawBackbuffer();
 #endif
 
     if (showFPS)
@@ -3138,43 +868,6 @@ void I_FinishUpdate(void)
     }
 }
 
-// Test VGA REP OUTSB capability
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
-void I_TestFastSetPalette(void)
-{
-    if (!VGADACfix)
-    {
-        byte test_palette[768];
-        unsigned short x;
-        byte y;
-
-        // Initialize test palette
-        for (x = 0; x < 768; x++)
-        {
-            test_palette[x] = x & 63;
-        }
-
-        // Write test palette using REP STOSB
-        outp(PEL_WRITE_ADR, 0);
-        OutString(PEL_DATA, test_palette, 768);
-
-        // Read palette from VGA card
-        // and compare results
-        outp(PEL_READ_ADR, 0);
-        for (x = 0; x < 768; x++)
-        {
-            byte read_data = inp(PEL_DATA);
-
-            if (read_data != test_palette[x])
-            {
-                VGADACfix = true;
-                return;
-            }
-        }
-    }
-}
-#endif
-
 //
 // I_InitGraphics
 //
@@ -3198,680 +891,99 @@ void I_InitHerculesHalfMode(void)
 
 void I_InitGraphics(void)
 {
-#if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
-    int mode;
-#endif
 
 #ifdef SUPPORTS_HERCULES_AUTOMAP
     if (HERCmap)
         I_InitHerculesHalfMode();
 #endif
 
-#if defined(MODE_T4025) || defined(MODE_T4050)
-    // Set 40x25 color mode
-    regs.h.ah = 0x00;
-    regs.h.al = 0x01;
-    int386(0x10, &regs, &regs);
-
-    // Disable cursor
-    regs.h.ah = 0x01;
-    regs.h.ch = 0x3F;
-    int386(0x10, &regs, &regs);
-
-    // CGA Disable blink
-    if (CGAcard)
-    {
-        I_DisableCGABlink();
-    }
-    else
-    {
-        // Disable blinking
-        regs.h.ah = 0x10;
-        regs.h.al = 0x03;
-        regs.h.bl = 0x00;
-        regs.h.bh = 0x00;
-        int386(0x10, &regs, &regs);
-    }
-
-    textdestscreen = (unsigned short *)0xB8000;
-    textpage = 0;
-#endif
-#if defined(MODE_T8025)
-    // Set 80x25 color mode
-    regs.h.ah = 0x00;
-    regs.h.al = 0x03;
-    int386(0x10, &regs, &regs);
-
-    // Disable cursor
-    regs.h.ah = 0x01;
-    regs.h.ch = 0x3F;
-    int386(0x10, &regs, &regs);
-
-    // CGA Disable blink
-    if (CGAcard)
-    {
-        I_DisableCGABlink();
-    }
-    else
-    {
-        // Disable blinking
-        regs.h.ah = 0x10;
-        regs.h.al = 0x03;
-        regs.h.bl = 0x00;
-        regs.h.bh = 0x00;
-        int386(0x10, &regs, &regs);
-    }
-
-    textdestscreen = (unsigned short *)0xB8000;
-    textpage = 0;
-#endif
-#if defined(MODE_MDA)
-    // Set 80x25 color mode
-    regs.h.ah = 0x00;
-    regs.h.al = 0x07;
-    int386(0x10, &regs, &regs);
-
-    // Disable MDA blink
-    I_DisableMDABlink();
-#endif
-#if defined(MODE_T8050) || defined(MODE_T80100) || defined(MODE_T8043) || defined(MODE_T8086)
-    // Set 80x25 color mode
-    regs.h.ah = 0x00;
-    regs.h.al = 0x03;
-    int386(0x10, &regs, &regs);
-
-    // Change font size to 8x8
-    regs.h.ah = 0x11;
-    regs.h.al = 0x12;
-    regs.h.bh = 0;
-    regs.h.bl = 0;
-    int386(0x10, &regs, &regs);
-
-    // Disable cursor
-    regs.h.ah = 0x01;
-    regs.h.ch = 0x3F;
-    int386(0x10, &regs, &regs);
-
-    // Disable blinking
-    regs.h.ah = 0x10;
-    regs.h.al = 0x03;
-    regs.h.bl = 0x00;
-    regs.h.bh = 0x00;
-    int386(0x10, &regs, &regs);
-
-    textdestscreen = (unsigned short *)0xB8000;
-    textpage = 0;
-#endif
-#if defined(MODE_Y)
-    regs.w.ax = 0x13;
-    int386(0x10, (union REGS *)&regs, &regs);
-    pcscreen = (byte *)0xA0000;
-    currentscreen = (unsigned short *)0xA0000;
-    destscreen = (byte *)0xA4000;
-
-    outp(SC_INDEX, SC_MEMMODE);
-    outp(SC_INDEX + 1, (inp(SC_INDEX + 1) & ~8) | 4);
-    outp(GC_INDEX, GC_MODE);
-    outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~0x13);
-    outp(GC_INDEX, GC_MISCELLANEOUS);
-    outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~2);
-    outpw(SC_INDEX, 0xf02);
-    SetDWords(pcscreen, 0, 0x4000);
-    outp(CRTC_INDEX, CRTC_UNDERLINE);
-    outp(CRTC_INDEX + 1, inp(CRTC_INDEX + 1) & ~0x40);
-    outp(CRTC_INDEX, CRTC_MODE);
-    outp(CRTC_INDEX + 1, inp(CRTC_INDEX + 1) | 0x40);
-    outp(GC_INDEX, GC_READMAP);
-#endif
-
-#if defined(MODE_V2)
-    regs.w.ax = 0x13;
-    int386(0x10, (union REGS *)&regs, &regs);
-    pcscreen = (byte *)0xA0000;
-    currentscreen = (unsigned short *)0xA0000;
-    destscreen = (byte *)0xA7000;
-
-    //
-    // switch to linear, non-chain4 mode
-    //
-    outp(SC_INDEX, SYNC_RESET);
-    outp(SC_DATA, 1);
-
-    outp(SC_INDEX, MEMORY_MODE);
-    outp(SC_DATA, (inp(SC_DATA) & ~0x08) | 0x04);
-    outp(GC_INDEX, GRAPHICS_MODE);
-    outp(GC_DATA, (inp(GC_DATA) & ~0x10) | 0x00);
-    outp(GC_INDEX, MISCELLANOUS);
-    outp(GC_DATA, (inp(GC_DATA) & ~0x02) | 0x00);
-
-    outpw(SC_INDEX, 0xf02);
-    SetDWords(pcscreen, 0, 0x4000);
-
-    outp(MISC_OUTPUT, 0xA3); // 350-scan-line scan rate
-
-    outp(SC_INDEX, SYNC_RESET);
-    outp(SC_DATA, 3);
-
-    //
-    // unprotect CRTC0 through CRTC0
-    //
-    outp(CRTC_INDEX, 0x11);
-    outp(CRTC_DATA, (inp(CRTC_DATA) & ~0x80) | 0x00);
-
-    //
-    // stop scanning each line twice
-    //
-    outp(CRTC_INDEX, MAX_SCAN_LINE);
-    outp(CRTC_DATA, (inp(CRTC_DATA) & ~0x1F) | 0x00);
-
-    //
-    // change the CRTC from doubleword to byte mode
-    //
-    outp(CRTC_INDEX, UNDERLINE);
-    outp(CRTC_DATA, (inp(CRTC_DATA) & ~0x40) | 0x00);
-    outp(CRTC_INDEX, MODE_CONTROL);
-    outp(CRTC_DATA, (inp(CRTC_DATA) & ~0x00) | 0x40);
-
-    //
-    // set the vertical counts for 350-scan-line mode
-    //
-    outp(CRTC_INDEX, 0x06);
-    outp(CRTC_INDEX + 1, 0xBF);
-    outp(CRTC_INDEX, 0x07);
-    outp(CRTC_INDEX + 1, 0x1F);
-    outp(CRTC_INDEX, 0x10);
-    outp(CRTC_INDEX + 1, 0x83);
-    outp(CRTC_INDEX, 0x11);
-    outp(CRTC_INDEX + 1, 0x85);
-    outp(CRTC_INDEX, 0x12);
-    outp(CRTC_INDEX + 1, 0x5D);
-    outp(CRTC_INDEX, 0x15);
-    outp(CRTC_INDEX + 1, 0x63);
-    outp(CRTC_INDEX, 0x16);
-    outp(CRTC_INDEX + 1, 0xBA);
-
-    outp(SC_INDEX, MAP_MASK);
-    outp(GC_INDEX, READ_MAP);
-#endif
-#if defined(MODE_13H)
-    regs.w.ax = 0x13;
-    int386(0x10, (union REGS *)&regs, &regs);
-    pcscreen = destscreen = (byte *)0xA0000;
-#endif
-#if defined(MODE_CGA)
-    // Set video mode 4
-    regs.w.ax = 0x04;
-    int386(0x10, (union REGS *)&regs, &regs);
-
-    if (!CGApalette1)
-    {
-        // Set palette and intensity (CGA)
-        regs.w.ax = 0x0B00;
-        regs.w.bx = 0x0100;
-        int386(0x10, (union REGS *)&regs, &regs);
-        regs.w.ax = 0x0B00;
-        regs.w.bx = 0x0000;
-        int386(0x10, (union REGS *)&regs, &regs);
-
-        // Fix EGA/VGA wrong colors
-        regs.w.ax = 0x1000;
-        regs.w.bx = 0x0000;
-        int386(0x10, (union REGS *)&regs, &regs);
-
-        regs.w.ax = 0x1000;
-        regs.w.bx = 0x0201;
-        int386(0x10, (union REGS *)&regs, &regs);
-
-        regs.w.ax = 0x1000;
-        regs.w.bx = 0x0402;
-        int386(0x10, (union REGS *)&regs, &regs);
-
-        regs.w.ax = 0x1000;
-        regs.w.bx = 0x0603;
-        int386(0x10, (union REGS *)&regs, &regs);
-    }
-
-    pcscreen = destscreen = (byte *)0xB8000;
-
-    SetDWords(vrambuffer, 0, 8192);
-    SetDWords(pcscreen, 0, 4096);
-#endif
-#if defined(MODE_EGA16) || defined(MODE_EGA136)
-    unsigned char *vram = (unsigned char *)0xB8000;
-    int i;
-
-    // Disable cursor
-    regs.h.ah = 0x01;
-    regs.h.ch = 0x3F;
-    int386(0x10, &regs, &regs);
-
-    // Disable blinking
-    regs.h.ah = 0x10;
-    regs.h.al = 0x03;
-    regs.h.bl = 0x00;
-    regs.h.bh = 0x00;
-    int386(0x10, &regs, &regs);
-
-    /* EGA hires mode is 640x350 with a 9x14 character cell.  The pixel aspect
-        ratio is 1:1.37, so if we make the blocks 3 scans tall you get a square
-        pixel at 160x100, but some of the scan lines are not used (50) */
-
-    outp(0x3D4, 0x09);
-    outp(0x3D5, 0x02);
-
-    SetDWords(vrambuffer, 0, 4096);
-
-    for (i = 0; i < 1280; i += 2)
-    {
-        vram[i] = 0x00;
-    }
-
-    for (i = 1280; i < 16000 + 1280; i += 2)
-    {
-#if defined(MODE_EGA16)
-        vram[i] = 0xDE;
-#endif
-#if defined(MODE_EGA136)
-        vram[i] = 0xB1;
-#endif
-    }
-
-    for (i = 0; i < 16000; i += 2)
-    {
-#if defined(MODE_EGA16)
-        vrambuffer[i] = 0xDE;
-#endif
-#if defined(MODE_EGA136)
-        vrambuffer[i] = 0xB1;
-#endif
-    }
-
-    for (i = 16000 + 1280; i < 16000 + 1280 + 1280; i += 2)
-    {
-        vram[i] = 0x00;
-    }
-#endif
-#if defined(MODE_CGA16) || defined(MODE_CGA136) || defined(MODE_CGA512) || defined(MODE_VGA16) || defined(MODE_VGA136) || defined(MODE_CGA_AFH)
-    unsigned char *vram = (unsigned char *)0xB8000;
-    int i;
-
-    // Set 80x25 color mode
-    regs.h.ah = 0x00;
-    regs.h.al = 0x03;
-    int386(0x10, &regs, &regs);
-
-    // Disable cursor
-    regs.h.ah = 0x01;
-    regs.h.ch = 0x3F;
-    int386(0x10, &regs, &regs);
-
-    // Disable blinking
-    regs.h.ah = 0x10;
-    regs.h.al = 0x03;
-    regs.h.bl = 0x00;
-    regs.h.bh = 0x00;
-    int386(0x10, &regs, &regs);
-
-    /* set mode control register for 80x25 text mode and disable video output */
-    outp(0x3D8, 1);
-
-    /*
-        These settings put the 6845 into "graphics" mode without actually
-        switching the CGA controller into graphics mode.  The register
-        values are directly copied from CGA graphics mode register
-        settings.  The 6845 does not directly display graphics, the
-        6845 only generates addresses and sync signals, the CGA
-        attribute controller either displays character ROM data or color
-        pixel data, this is external to the 6845 and keeps the CGA card
-        in text mode.
-        ref: HELPPC
-    */
-
-    /* set vert total lines to 127 */
-    outp(0x3D4, 0x04);
-    outp(0x3D5, 0x7F);
-    /* set vert displayed char rows to 100 */
-    outp(0x3D4, 0x06);
-    outp(0x3D5, 0x64);
-    /* set vert sync position to 112 */
-    outp(0x3D4, 0x07);
-    outp(0x3D5, 0x70);
-    /* set char scan line count to 1 */
-    outp(0x3D4, 0x09);
-    outp(0x3D5, 0x01);
-
-    /* re-enable the video output in 80x25 text mode */
-    outp(0x3D8, 9);
-
-    /* init screen */
+#if defined(MODE_CGA_AFH)
+    CGA_AFH_InitGraphics();
 #endif
 
 #if defined(MODE_CGA16)
-    SetDWords(vrambuffer, 0, 4096);
-
-    for (i = 0; i < 16000; i += 2)
-    {
-        vram[i] = 0xDE;
-        vrambuffer[i] = 0xDE;
-    }
+    CGA_16_InitGraphics();
 #endif
 
-#if defined(MODE_CGA136)
-    SetDWords(vrambuffer, 0, 4096);
-
-    for (i = 0; i < 16000; i += 2)
-    {
-        vram[i] = 0xB1;
-        vrambuffer[i] = 0xB1;
-    }
+#if defined(MODE_EGA16)
+    EGA_16_InitGraphics();
 #endif
 
 #if defined(MODE_VGA16)
-    for (i = 0; i < 32000; i += 2)
-    {
-        vram[i] = 0xDE;
-    }
+    VGA_16_InitGraphics();
 #endif
 
-#if defined(MODE_VGA136)
-    for (i = 0; i < 32000; i += 2)
-    {
-        vram[i] = 0xB1;
-    }
+#if defined(MODE_T4025) || defined(MODE_T4050)
+    TEXT_40x25_InitGraphics();
+#endif
+
+#if defined(MODE_T8025)
+    TEXT_80x25_InitGraphics();
+#endif
+
+#if defined(MODE_T8050) || defined(MODE_T80100) || defined(MODE_T8043) || defined(MODE_T8086)
+    TEXT_80x25_Double_InitGraphics();
+#endif
+
+#if defined(MODE_MDA)
+    MDA_InitGraphics();
+#endif
+
+#if defined(MODE_Y)
+    VGA_Y_InitGraphics();
+#endif
+
+#if defined(MODE_V2)
+    VGA_VERT_InitGraphics();
+#endif
+#if defined(MODE_13H)
+    VGA_13H_InitGraphics();
+#endif
+#if defined(MODE_CGA)
+    CGA_InitGraphics();
+#endif
+
+#if defined(MODE_CGA512)
+    CGA_512_InitGraphics();
 #endif
 
 #if defined(MODE_CGA_BW)
-    regs.w.ax = 0x06;
-    int386(0x10, (union REGS *)&regs, &regs);
-    pcscreen = destscreen = (byte *)0xB8000;
-
-    SetDWords(vrambuffer, 0, 8192);
-    SetDWords(pcscreen, 0, 4096);
+    CGA_BW_InitGraphics();
 #endif
+
 #if defined(MODE_PCP)
-    regs.w.ax = 0x04;
-    int386(0x10, (union REGS *)&regs, &regs);
-    outp(0x3DD, 0x10);
-    pcscreen = destscreen = (byte *)0xB8000;
-
-    SetDWords(vrambuffer, 0, 8192);
-    SetDWords(pcscreen, 0, 8192);
+    PCP_InitGraphics();
 #endif
+
 #if defined(MODE_EGA)
-    {
-        unsigned int pos1 = 0;
-        unsigned int pos2 = 0;
-        unsigned int pos3 = 0;
-        unsigned int counter = 0;
-        byte *basevram;
-
-        regs.w.ax = 0x0E;
-        int386(0x10, (union REGS *)&regs, &regs);
-        pcscreen = destscreen = (byte *)0xA0000;
-
-        basevram = (byte *)0xA3E80; // Init at ending of viewable screen
-
-        // Step 1
-        // Copy all possible combinations to the VRAM
-
-        outp(0x3C4, 0x02);
-        for (pos1 = 0; pos1 < 16; pos1++)
-        {
-            for (pos2 = 0; pos2 < 16; pos2++)
-            {
-                for (pos3 = 0; pos3 < 16; pos3++)
-                {
-                    for (counter = 0; counter < 4; counter++)
-                    {
-                        byte bitstatuspos1;
-                        byte bitstatuspos2;
-                        byte bitstatuspos3;
-
-                        byte final;
-
-                        outp(0x3C5, 1 << counter); // Change plane
-
-                        bitstatuspos1 = (pos1 >> counter) & 1;
-                        bitstatuspos2 = (pos2 >> counter) & 1;
-                        bitstatuspos3 = (pos3 >> counter) & 1;
-
-                        final = bitstatuspos1 << 6 | bitstatuspos1 << 7 |
-                                bitstatuspos2 << 4 | bitstatuspos2 << 5 |
-                                bitstatuspos3 << 2 | bitstatuspos3 << 3;
-                        *basevram = final;
-                    }
-                    basevram++;
-                }
-            }
-        }
-
-        // Step 2
-
-        // Write Mode 2
-        outp(0x3CE, 0x05);
-        outp(0x3CF, 0x02);
-
-        // Write to all 4 planes
-        outp(0x3C4, 0x02);
-        outp(0x3C5, 0x0F);
-
-        // Set Bit Mask to use the latch registers
-        outp(0x3CE, 0x08);
-        outp(0x3CF, 0x03);
-
-        // Set logical operation to OR
-        outp(0x3CE, 0x03);
-        outp(0x3CF, 0x10);
-    }
+    EGA_InitGraphics();
 #endif
+
 #if defined(MODE_EGAW1)
-    {
-        unsigned int pos1 = 0;
-        unsigned int pos2 = 0;
-        unsigned int pos3 = 0;
-        unsigned int counter = 0;
-        byte *basevram;
-
-        regs.w.ax = 0x0D;
-        int386(0x10, (union REGS *)&regs, &regs);
-        pcscreen = destscreen = (byte *)0xA0000;
-
-        basevram = (byte *)0xA1F40; // Init at ending of viewable screen
-
-        // Step 1
-        // Copy all possible combinations to the VRAM
-
-        outp(0x3C4, 0x02);
-        for (pos1 = 0; pos1 < 16; pos1++)
-        {
-            for (pos2 = 0; pos2 < 16; pos2++)
-            {
-                for (pos3 = 0; pos3 < 16; pos3++)
-                {
-                    for (counter = 0; counter < 4; counter++)
-                    {
-                        byte bitstatuspos1;
-                        byte bitstatuspos2;
-                        byte bitstatuspos3;
-
-                        byte final;
-
-                        outp(0x3C5, 1 << counter); // Change plane
-
-                        bitstatuspos1 = (pos1 >> counter) & 1;
-                        bitstatuspos2 = (pos2 >> counter) & 1;
-                        bitstatuspos3 = (pos3 >> counter) & 1;
-
-                        final = bitstatuspos1 << 6 | bitstatuspos1 << 7 |
-                                bitstatuspos2 << 4 | bitstatuspos2 << 5 |
-                                bitstatuspos3 << 2 | bitstatuspos3 << 3;
-                        *basevram = final;
-                    }
-                    basevram++;
-                }
-            }
-        }
-
-        // Step 2
-
-        // Write Mode 2
-        outp(0x3CE, 0x05);
-        outp(0x3CF, 0x02);
-
-        // Write to all 4 planes
-        outp(0x3C4, 0x02);
-        outp(0x3C5, 0x0F);
-
-        // Set Bit Mask to use the latch registers
-        outp(0x3CE, 0x08);
-        outp(0x3CF, 0x03);
-
-        // Set logical operation to OR
-        outp(0x3CE, 0x03);
-        outp(0x3CF, 0x10);
-    }
+    EGA_160_InitGraphics();
 #endif
 #if defined(MODE_EGA80)
-    regs.w.ax = 0x0E;
-    int386(0x10, (union REGS *)&regs, &regs);
-    pcscreen = destscreen = (byte *)0xA0000;
-
-    // Write Mode 2
-    outp(0x3CE, 0x05);
-    outp(0x3CF, 0x02);
-
-    // Write to all 4 planes
-    outp(0x3C4, 0x02);
-    outp(0x3C5, 0x0F);
-
-    // Set Bit Mask to omit the latch registers
-    outp(0x3CE, 0x08);
-    outp(0x3CF, 0xFF);
-
-    SetDWords(vrambuffer, 0, 4096);
+    EGA_80_InitGraphics();
 #endif
 #if defined(MODE_EGA640)
-    regs.w.ax = 0x0E;
-    int386(0x10, (union REGS *)&regs, &regs);
-    outp(0x3C4, 0x2);
-    pcscreen = destscreen = (byte *)0xA0000;
-
-    SetDWords(vrambufferR1, 0, 4096);
-    SetDWords(vrambufferG1, 0, 4096);
-    SetDWords(vrambufferB1, 0, 4096);
-    SetDWords(vrambufferI1, 0, 4096);
-    SetDWords(vrambufferR2, 0, 4096);
-    SetDWords(vrambufferG2, 0, 4096);
-    SetDWords(vrambufferB2, 0, 4096);
-    SetDWords(vrambufferI2, 0, 4096);
-    SetDWords(vrambufferR3, 0, 4096);
-    SetDWords(vrambufferG3, 0, 4096);
-    SetDWords(vrambufferB3, 0, 4096);
-    SetDWords(vrambufferI3, 0, 4096);
+    EGA_640_InitGraphics();
 #endif
 #if defined(MODE_ATI640)
-
-    static int parms[16] = {0x70, 0x50, 0x58, 0x0a,
-                            0x40, 0x06, 0x32, 0x38,
-                            0x02, 0x03, 0x06, 0x07,
-                            0x00, 0x00, 0x00, 0x00};
-    int i;
-
-    /* Set the Graphics Solution to 640 x 200 with 16 colors in
-       Color Mode */
-    outp(0x3D8, 0x2);
-
-    /* Set extended graphics registers */
-    outp(0x3DD, 0x80);
-
-    outp(0x03D8, 0x2);
-    /* Program 6845 crt controlller */
-    for (i = 0; i < 16; ++i)
-    {
-        outp(0x3D4, i);
-        outp(0x3D5, parms[i]);
-    }
-    outp(0x3D8, 0x0A);
-    outp(0x3D9, 0x30);
-
-    outp(0x3dd, 0x80);
-
-    pcscreen = destscreen = (byte *)0xB0000;
-
-    SetDWords(vrambuffer, 0, 16384);
-    SetDWords(pcscreen, 0, 16384);
+    ATI_640_InitGraphics();
 #endif
 #if defined(MODE_CVB)
-    regs.w.ax = 0x06;
-    int386(0x10, (union REGS *)&regs, &regs);
-    outp(0x3D8, 0x1A); // Enable color burst
-    pcscreen = destscreen = (byte *)0xB8000;
-
-    SetDWords(vrambuffer, 0, 4096);
-    SetDWords(pcscreen, 0, 4096);
+    CGA_CVBS_InitGraphics();
 #endif
 #if defined(MODE_HERC)
-    // byte Graph_720x348[12] = {0x03, 0x36, 0x2D, 0x2E, 0x07, 0x5B, 0x02, 0x57, 0x57, 0x02, 0x03, 0x0A};
-    byte Graph_640x400[12] = {0x03, 0x34, 0x28, 0x2A, 0x47, 0x69, 0x00, 0x64, 0x65, 0x02, 0x03, 0x0A};
-    // byte Graph_640x200[12] = {0x03, 0x6E, 0x28, 0x2E, 0x07, 0x67, 0x0A, 0x64, 0x65, 0x02, 0x01, 0x0A};
-    int i;
-
-    outp(0x03BF, Graph_640x400[0]);
-    for (i = 0; i < 10; i++)
-    {
-        outp(0x03B4, i);
-        outp(0x03B5, Graph_640x400[i + 1]);
-    }
-    outp(0x03B8, Graph_640x400[11]);
-    pcscreen = destscreen = (byte *)0xB0000;
-
-    SetDWords(vrambuffer, 0, 8192);
-    SetDWords(pcscreen, 0, 8192);
+    HERC_InitGraphics();
 #endif
 
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
-    VBE_Init();
-
-    // Get VBE info
-    VBE_Controller_Information(&vbeinfo);
-
-    // Get VBE modes
-    for (mode = 0; vbeinfo.VideoModePtr[mode] != 0xffff; mode++)
-    {
-        VBE_Mode_Information(vbeinfo.VideoModePtr[mode], &vbemode);
-        if (vbemode.XResolution == 320 && vbemode.YResolution == 200 && vbemode.BitsPerPixel == 8)
-        {
-            vesavideomode = vbeinfo.VideoModePtr[mode];
-            vesalinear = VBE_IsModeLinear(vesavideomode);
-            break;
-        }
-    }
-
-    // If a VESA compatible 320x200 8bpp mode is found, use it!
-    if (vesavideomode != 0xFFFF)
-    {
-        VBE_SetMode(vesavideomode, vesalinear, 1);
-
-        if (vesalinear == 1)
-        {
-            pcscreen = destscreen = VBE_GetVideoPtr(vesavideomode);
-        }
-        else
-        {
-            pcscreen = destscreen = (char *)0xA0000;
-        }
-
-        // Force 6 bits resolution per color
-        VBE_SetDACWidth(6);
-    }
-    else
-    {
-        I_Error("Compatible VESA 2.0 video mode not found! (320x200 8bpp required)");
-    }
+    VBE2_InitGraphics();
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
-    I_TestFastSetPalette();
+#if defined(MODE_13H) || defined(MODE_V2) || defined(MODE_VBE2) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+    VGA_TestFastSetPalette();
 #endif
 
     I_ProcessPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
@@ -3884,16 +996,7 @@ void I_InitGraphics(void)
 void I_ShutdownGraphics(void)
 {
 #if defined(MODE_HERC)
-    byte Text_80x25[12] = {0x00, 0x61, 0x50, 0x52, 0x0F, 0x19, 0x06, 0x19, 0x19, 0x02, 0x0D, 0x08};
-    int i;
-
-    outp(0x03BF, Text_80x25[0]);
-    for (i = 0; i < 10; i++)
-    {
-        outp(0x03B4, i);
-        outp(0x03B5, Text_80x25[i + 1]);
-    }
-    outp(0x03B8, Text_80x25[11]);
+    HERC_ShutdownGraphics();
 #endif
 
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)

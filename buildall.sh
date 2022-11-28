@@ -36,15 +36,9 @@
 ./build.sh clean
 ./build.sh fdoomc16.exe
 ./build.sh clean
-./build.sh fdoomc36.exe
-./build.sh clean
 ./build.sh fdoomv16.exe
 ./build.sh clean
-./build.sh fdoomv36.exe
-./build.sh clean
 ./build.sh fdoome16.exe
-./build.sh clean
-./build.sh fdoome36.exe
 ./build.sh clean
 ./build.sh fdoome.exe
 ./build.sh clean

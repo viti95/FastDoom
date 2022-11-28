@@ -62,7 +62,7 @@ extern boolean forceLowDetail;
 extern boolean forcePotatoDetail;
 extern int forceScreenSize;
 
-#if defined(MODE_T8025) || defined(MODE_T4025) || defined(MODE_T4050)
+#if defined(TEXT_MODE)
 extern boolean CGAcard;
 #endif
 
@@ -74,7 +74,7 @@ extern boolean CGApalette1;
 extern unsigned char CGAmodel;
 #endif
 
-#if defined(MODE_CGA16) || defined(MODE_CGA136) || defined(MODE_CGA_AFH)
+#if defined(MODE_CGA16) || defined(MODE_CGA_AFH)
 extern boolean snowfix;
 #endif
 
@@ -86,7 +86,7 @@ extern boolean HERCmap;
 extern boolean VGADACfix;
 #endif
 
-#if defined(MODE_T8050) || defined(MODE_T80100)
+#if defined(TEXT_MODE)
 extern boolean videoPageFix;
 #endif
 

@@ -34,6 +34,7 @@
 #define __TABLES__
 
 #include "fastmath.h"
+#include "doomtype.h"
 
 #define FINEANGLES 8192
 #define FINEMASK (FINEANGLES - 1)
@@ -67,16 +68,7 @@ typedef unsigned angle_t;
 //  without additional checking.
 extern const angle_t tantoangle[SLOPERANGE + 1];
 
-#if defined(MODE_CGA_AFH)
-extern const unsigned char ansifromhellLUT[131072];
-#endif
-
-#ifdef MODE_CGA512
-extern const unsigned char oldCGA55LUT[768];
-extern const unsigned char oldCGA13LUT[768];
-extern const unsigned char newCGA55LUT[768];
-extern const unsigned char newCGA13LUT[768];
-#endif
+extern const byte gammatable[5][256];
 
 // Utility function,
 //  called by R_PointToAngle.
