@@ -121,6 +121,7 @@
 #endif
 
 #if defined(MODE_Y)
+#include "vga_y.h"
 #include "vga.h"
 #endif
 
@@ -918,16 +919,12 @@ void I_InitGraphics(void)
 
 #if defined(MODE_T4025) || defined(MODE_T4050)
     TEXT_40x25_InitGraphics();
-
-    textdestscreen = (unsigned short *)0xB8000;
-    textpage = 0;
 #endif
+
 #if defined(MODE_T8025)
     TEXT_80x25_InitGraphics();
-
-    textdestscreen = (unsigned short *)0xB8000;
-    textpage = 0;
 #endif
+
 #if defined(MODE_MDA)
     // Set 80x25 color mode
     regs.h.ah = 0x00;
@@ -939,30 +936,10 @@ void I_InitGraphics(void)
 #endif
 #if defined(MODE_T8050) || defined(MODE_T80100) || defined(MODE_T8043) || defined(MODE_T8086)
     TEXT_80x25_Double_InitGraphics();
-
-    textdestscreen = (unsigned short *)0xB8000;
-    textpage = 0;
 #endif
-#if defined(MODE_Y)
-    regs.w.ax = 0x13;
-    int386(0x10, (union REGS *)&regs, &regs);
-    pcscreen = (byte *)0xA0000;
-    currentscreen = (unsigned short *)0xA0000;
-    destscreen = (byte *)0xA4000;
 
-    outp(SC_INDEX, SC_MEMMODE);
-    outp(SC_INDEX + 1, (inp(SC_INDEX + 1) & ~8) | 4);
-    outp(GC_INDEX, GC_MODE);
-    outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~0x13);
-    outp(GC_INDEX, GC_MISCELLANEOUS);
-    outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~2);
-    outpw(SC_INDEX, 0xf02);
-    SetDWords(pcscreen, 0, 0x4000);
-    outp(CRTC_INDEX, CRTC_UNDERLINE);
-    outp(CRTC_INDEX + 1, inp(CRTC_INDEX + 1) & ~0x40);
-    outp(CRTC_INDEX, CRTC_MODE);
-    outp(CRTC_INDEX + 1, inp(CRTC_INDEX + 1) | 0x40);
-    outp(GC_INDEX, GC_READMAP);
+#if defined(MODE_Y)
+    VGA_Y_InitGraphics();
 #endif
 
 #if defined(MODE_V2)

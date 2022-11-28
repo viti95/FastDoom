@@ -57,6 +57,7 @@ GLOBOBJS = &
  i_vesa.obj &
  cga_512.obj &
  text.obj &
+ vga_y.obj &
  math.obj &
  ns_dpmi.obj &
  ns_pcfx.obj &

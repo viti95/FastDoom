@@ -36,6 +36,7 @@ file vbe2.obj
 file i_vesa.obj
 file cga_512.obj
 file text.obj
+file vga_y.obj
 file math.obj
 file ns_dpmi.obj
 file ns_pcfx.obj
