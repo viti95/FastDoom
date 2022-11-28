@@ -116,7 +116,6 @@
 #endif
 
 #if defined(MODE_VBE2)
-#include "vbe2.h"
 #include "vga.h"
 #endif
 

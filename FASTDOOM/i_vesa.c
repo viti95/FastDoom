@@ -5,6 +5,11 @@
 #include <string.h>
 #include "options.h"
 #include "r_defs.h"
+#include "i_ibm.h"
+#include "m_menu.h"
+#include "doomstat.h"
+#include "i_system.h"
+#include "v_video.h"
 
 /*-----------------05-14-97 05:19pm-----------------
   *
@@ -356,5 +361,49 @@ void VBE2_InitGraphics(void)
         I_Error("Compatible VESA 2.0 video mode not found! (320x200 8bpp required)");
     }
 }
+
+#if defined(MODE_VBE2)
+#define SBARHEIGHT 32
+
+void VBE2_DrawBackbuffer(void)
+{
+    if (updatestate & I_FULLSCRN)
+    {
+        CopyDWords(backbuffer, pcscreen, SCREENHEIGHT * SCREENWIDTH / 4);
+        updatestate = I_NOUPDATE; // clear out all draw types
+    }
+    if (updatestate & I_FULLVIEW)
+    {
+        if (updatestate & I_MESSAGES && screenblocks > 7)
+        {
+            int i;
+            for (i = 0; i < endscreen; i += SCREENWIDTH)
+            {
+                CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
+            }
+            updatestate &= ~(I_FULLVIEW | I_MESSAGES);
+        }
+        else
+        {
+            int i;
+            for (i = startscreen; i < endscreen; i += SCREENWIDTH)
+            {
+                CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
+            }
+            updatestate &= ~I_FULLVIEW;
+        }
+    }
+    if (updatestate & I_STATBAR)
+    {
+        CopyDWords(backbuffer + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), pcscreen + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), SCREENWIDTH * SBARHEIGHT / 4);
+        updatestate &= ~I_STATBAR;
+    }
+    if (updatestate & I_MESSAGES)
+    {
+        CopyDWords(backbuffer, pcscreen, (SCREENWIDTH * 28) / 4);
+        updatestate &= ~I_MESSAGES;
+    }
+}
+#endif
 
 #endif

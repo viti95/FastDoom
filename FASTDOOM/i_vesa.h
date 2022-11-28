@@ -273,6 +273,7 @@ void VBE_SetDACWidth(char bits);
   *
   */
 
- void VBE2_InitGraphics(void);
+void VBE2_InitGraphics(void);
+void VBE2_DrawBackbuffer(void);
 
 #endif
