@@ -35,6 +35,7 @@ file ega_80.obj
 file i_vesa.obj
 file cga_512.obj
 file text.obj
+file mda.obj
 file vga_y.obj
 file math.obj
 file ns_dpmi.obj

@@ -140,6 +140,10 @@
 #include "i_vesa.h"
 #endif
 
+#if defined(MODE_MDA)
+#include "mda.h"
+#endif
+
 //
 // Macros
 //
@@ -459,10 +463,6 @@ int updatestate;
 byte *pcscreen, *destscreen, *destview;
 unsigned short *currentscreen;
 
-#if defined(MODE_MDA)
-unsigned short *textdestscreen = backbuffer;
-#endif
-
 //
 // I_UpdateBox
 //
@@ -740,7 +740,7 @@ void I_FinishUpdate(void)
 #endif
 
 #if defined(MODE_MDA)
-    CopyDWords(backbuffer, 0xB0000, 1000);
+    MDA_DrawBackbuffer();
 #endif
 
 #if defined(MODE_T4025) || defined(MODE_T4050)
@@ -921,17 +921,12 @@ void I_InitGraphics(void)
     TEXT_80x25_InitGraphics();
 #endif
 
-#if defined(MODE_MDA)
-    // Set 80x25 color mode
-    regs.h.ah = 0x00;
-    regs.h.al = 0x07;
-    int386(0x10, &regs, &regs);
-
-    // Disable MDA blink
-    I_DisableMDABlink();
-#endif
 #if defined(MODE_T8050) || defined(MODE_T80100) || defined(MODE_T8043) || defined(MODE_T8086)
     TEXT_80x25_Double_InitGraphics();
+#endif
+
+#if defined(MODE_MDA)
+    MDA_InitGraphics();
 #endif
 
 #if defined(MODE_Y)
