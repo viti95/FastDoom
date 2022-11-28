@@ -5,8 +5,6 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#include "vga.h"
-#include "vga_13h.h"
 #include "doomtype.h"
 #include "i_ibm.h"
 #include "v_video.h"

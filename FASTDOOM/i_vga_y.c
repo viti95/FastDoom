@@ -5,8 +5,6 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#include "vga.h"
-#include "vga_y.h"
 #include "doomtype.h"
 #include "i_ibm.h"
 #include "v_video.h"
@@ -15,6 +13,7 @@
 #include "i_system.h"
 #include "doomstat.h"
 #include "m_menu.h"
+#include "i_vga.h"
 
 #define SC_MEMMODE 4
 #define GC_MODE 5

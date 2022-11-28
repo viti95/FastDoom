@@ -11,9 +11,8 @@
 #include "tables.h"
 #include "math.h"
 #include "i_system.h"
-#include "vga.h"
-#include "vga_vert.h"
 #include "doomstat.h"
+#include "i_vga.h"
 
 #if defined(MODE_V2)
 

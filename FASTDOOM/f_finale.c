@@ -38,7 +38,7 @@
 #include "options.h"
 
 #if defined(TEXT_MODE)
-#include "text.h"
+#include "i_text.h"
 #endif
 
 // Stage of animation:
