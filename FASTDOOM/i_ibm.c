@@ -459,10 +459,6 @@ int updatestate;
 byte *pcscreen, *destscreen, *destview;
 unsigned short *currentscreen;
 
-#if defined(MODE_VBE2_DIRECT)
-short page = 0;
-#endif
-
 #if defined(MODE_MDA)
 unsigned short *textdestscreen = backbuffer;
 #endif
@@ -768,18 +764,7 @@ void I_FinishUpdate(void)
 #endif
 
 #if defined(MODE_VBE2_DIRECT)
-    VBE_SetDisplayStart_Y(page);
-
-    if (page == 400)
-    {
-        page = 0;
-        destscreen -= 2 * 320 * 200;
-    }
-    else
-    {
-        page += 200;
-        destscreen += 320 * 200;
-    }
+    VBE2_ChangeVideoPage();
 #endif
 
 #if defined(MODE_13H)

@@ -12,25 +12,25 @@
 #include "v_video.h"
 
 /*-----------------05-14-97 05:19pm-----------------
-  *
-  *     SUBMiSSiVES VESA VBE 2.0 Application Core
-  *     -----------------------------------------
-  *
-  * tested and works well under Dos4G, PmodeW and Win95
-  *
-  * This code also works for buggy VBE's and finds
-  * the mode even if the modelist is placed in dos-memory.
-  *
-  * * Bugfixes:     Now also supports a fix for S3 chips.
-  * * Changes:	    Removed Matrox Mystique Support since noone used it..
-  * * Bugfixes:	    Now a more clever BPP detection (since some bioses sucks)
-  *                 Enhanced FindMode function (now terminates on 0)
-  *
-  * --------------------------------------------------*/
+ *
+ *     SUBMiSSiVES VESA VBE 2.0 Application Core
+ *     -----------------------------------------
+ *
+ * tested and works well under Dos4G, PmodeW and Win95
+ *
+ * This code also works for buggy VBE's and finds
+ * the mode even if the modelist is placed in dos-memory.
+ *
+ * * Bugfixes:     Now also supports a fix for S3 chips.
+ * * Changes:	    Removed Matrox Mystique Support since noone used it..
+ * * Bugfixes:	    Now a more clever BPP detection (since some bioses sucks)
+ *                 Enhanced FindMode function (now terminates on 0)
+ *
+ * --------------------------------------------------*/
 
 /*
-  * Structure to do the Realmode Interrupt Calls.
-  */
+ * Structure to do the Realmode Interrupt Calls.
+ */
 
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 
@@ -40,8 +40,8 @@
 #define VBE3SIGNATURE "VBE3"
 
 /*-----------------07-26-97 11:04am-----------------
-  * Realmode Callback Structure!
-  * --------------------------------------------------*/
+ * Realmode Callback Structure!
+ * --------------------------------------------------*/
 
 static struct rminfo
 {
@@ -58,9 +58,9 @@ static struct rminfo
 } RMI;
 
 /*
-  * Structures that hold the preallocated DOS-Memory Aeras
-  * and their translated near-pointers!
-  */
+ * Structures that hold the preallocated DOS-Memory Aeras
+ * and their translated near-pointers!
+ */
 
 static struct DPMI_PTR VbeInfoPool = {0, 0};
 static struct DPMI_PTR VbeModePool = {0, 0};
@@ -76,10 +76,10 @@ static union REGS regs;
 static struct SREGS sregs;
 
 /*
-  * Some informations 'bout the last mode which was set
-  * These informations are required to compensate some differencies
-  * between the normal and direct PM calling methods
-  */
+ * Some informations 'bout the last mode which was set
+ * These informations are required to compensate some differencies
+ * between the normal and direct PM calling methods
+ */
 
 static signed short vbelastbank = -1;
 static unsigned long BytesPerScanline;
@@ -320,46 +320,46 @@ char *vesavideoptr;
 
 void VBE2_InitGraphics(void)
 {
-    int mode;
+  int mode;
 
-    VBE_Init();
+  VBE_Init();
 
-    // Get VBE info
-    VBE_Controller_Information(&vbeinfo);
+  // Get VBE info
+  VBE_Controller_Information(&vbeinfo);
 
-    // Get VBE modes
-    for (mode = 0; vbeinfo.VideoModePtr[mode] != 0xffff; mode++)
+  // Get VBE modes
+  for (mode = 0; vbeinfo.VideoModePtr[mode] != 0xffff; mode++)
+  {
+    VBE_Mode_Information(vbeinfo.VideoModePtr[mode], &vbemode);
+    if (vbemode.XResolution == 320 && vbemode.YResolution == 200 && vbemode.BitsPerPixel == 8)
     {
-        VBE_Mode_Information(vbeinfo.VideoModePtr[mode], &vbemode);
-        if (vbemode.XResolution == 320 && vbemode.YResolution == 200 && vbemode.BitsPerPixel == 8)
-        {
-            vesavideomode = vbeinfo.VideoModePtr[mode];
-            vesalinear = VBE_IsModeLinear(vesavideomode);
-            break;
-        }
+      vesavideomode = vbeinfo.VideoModePtr[mode];
+      vesalinear = VBE_IsModeLinear(vesavideomode);
+      break;
     }
+  }
 
-    // If a VESA compatible 320x200 8bpp mode is found, use it!
-    if (vesavideomode != 0xFFFF)
+  // If a VESA compatible 320x200 8bpp mode is found, use it!
+  if (vesavideomode != 0xFFFF)
+  {
+    VBE_SetMode(vesavideomode, vesalinear, 1);
+
+    if (vesalinear == 1)
     {
-        VBE_SetMode(vesavideomode, vesalinear, 1);
-
-        if (vesalinear == 1)
-        {
-            pcscreen = destscreen = VBE_GetVideoPtr(vesavideomode);
-        }
-        else
-        {
-            pcscreen = destscreen = (char *)0xA0000;
-        }
-
-        // Force 6 bits resolution per color
-        VBE_SetDACWidth(6);
+      pcscreen = destscreen = VBE_GetVideoPtr(vesavideomode);
     }
     else
     {
-        I_Error("Compatible VESA 2.0 video mode not found! (320x200 8bpp required)");
+      pcscreen = destscreen = (char *)0xA0000;
     }
+
+    // Force 6 bits resolution per color
+    VBE_SetDACWidth(6);
+  }
+  else
+  {
+    I_Error("Compatible VESA 2.0 video mode not found! (320x200 8bpp required)");
+  }
 }
 
 #if defined(MODE_VBE2)
@@ -367,43 +367,61 @@ void VBE2_InitGraphics(void)
 
 void VBE2_DrawBackbuffer(void)
 {
-    if (updatestate & I_FULLSCRN)
+  if (updatestate & I_FULLSCRN)
+  {
+    CopyDWords(backbuffer, pcscreen, SCREENHEIGHT * SCREENWIDTH / 4);
+    updatestate = I_NOUPDATE; // clear out all draw types
+  }
+  if (updatestate & I_FULLVIEW)
+  {
+    if (updatestate & I_MESSAGES && screenblocks > 7)
     {
-        CopyDWords(backbuffer, pcscreen, SCREENHEIGHT * SCREENWIDTH / 4);
-        updatestate = I_NOUPDATE; // clear out all draw types
+      int i;
+      for (i = 0; i < endscreen; i += SCREENWIDTH)
+      {
+        CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
+      }
+      updatestate &= ~(I_FULLVIEW | I_MESSAGES);
     }
-    if (updatestate & I_FULLVIEW)
+    else
     {
-        if (updatestate & I_MESSAGES && screenblocks > 7)
-        {
-            int i;
-            for (i = 0; i < endscreen; i += SCREENWIDTH)
-            {
-                CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
-            }
-            updatestate &= ~(I_FULLVIEW | I_MESSAGES);
-        }
-        else
-        {
-            int i;
-            for (i = startscreen; i < endscreen; i += SCREENWIDTH)
-            {
-                CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
-            }
-            updatestate &= ~I_FULLVIEW;
-        }
+      int i;
+      for (i = startscreen; i < endscreen; i += SCREENWIDTH)
+      {
+        CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
+      }
+      updatestate &= ~I_FULLVIEW;
     }
-    if (updatestate & I_STATBAR)
-    {
-        CopyDWords(backbuffer + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), pcscreen + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), SCREENWIDTH * SBARHEIGHT / 4);
-        updatestate &= ~I_STATBAR;
-    }
-    if (updatestate & I_MESSAGES)
-    {
-        CopyDWords(backbuffer, pcscreen, (SCREENWIDTH * 28) / 4);
-        updatestate &= ~I_MESSAGES;
-    }
+  }
+  if (updatestate & I_STATBAR)
+  {
+    CopyDWords(backbuffer + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), pcscreen + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), SCREENWIDTH * SBARHEIGHT / 4);
+    updatestate &= ~I_STATBAR;
+  }
+  if (updatestate & I_MESSAGES)
+  {
+    CopyDWords(backbuffer, pcscreen, (SCREENWIDTH * 28) / 4);
+    updatestate &= ~I_MESSAGES;
+  }
 }
 #endif
+
+short page = 0;
+
+void VBE2_ChangeVideoPage(void)
+{
+  VBE_SetDisplayStart_Y(page);
+
+  if (page == 400)
+  {
+    page = 0;
+    destscreen -= 2 * 320 * 200;
+  }
+  else
+  {
+    page += 200;
+    destscreen += 320 * 200;
+  }
+}
 
 #endif
