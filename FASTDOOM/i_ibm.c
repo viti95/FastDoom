@@ -327,7 +327,7 @@ void I_ProcessPalette(byte *palette)
     #endif
 
     #if defined(MODE_ATI640)
-    ATI640_ProcessPalette(palette);
+    ATI_640_ProcessPalette(palette);
     #endif
 
     #if defined(MODE_CGA)
@@ -394,7 +394,7 @@ void I_SetPalette(int numpalette)
 #endif
 
 #if defined(MODE_ATI640)
-    ATI640_SetPalette(numpalette);
+    ATI_640_SetPalette(numpalette);
 #endif
 
 #if defined(MODE_PCP)
@@ -765,14 +765,9 @@ void I_FinishUpdate(void)
 #endif
 
 #if defined(MODE_Y)
-    outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
-
-    // Next plane
-    if (destscreen == (byte *)0xA8000)
-        destscreen = (byte *)0xA0000;
-    else
-        destscreen += 0x4000;
+    VGA_Y_ChangeVideoPage();
 #endif
+
 #if defined(MODE_VBE2_DIRECT)
     VBE_SetDisplayStart_Y(page);
 
@@ -787,6 +782,7 @@ void I_FinishUpdate(void)
         destscreen += 320 * 200;
     }
 #endif
+
 #if defined(MODE_13H)
     VGA_13H_DrawBackbuffer();
 #endif
@@ -794,57 +790,73 @@ void I_FinishUpdate(void)
 #if defined(MODE_VBE2)
     VBE2_DrawBackbuffer();
 #endif
+
 #if defined(MODE_HERC)
     HERC_DrawBackbuffer();
 #endif
+
 #if defined(MODE_CGA)
     CGA_DrawBackbuffer();
 #endif
+
 #if defined(MODE_CGA_BW)
     CGA_BW_DrawBackbuffer();
 #endif
+
 #if defined(MODE_CGA16)
     if (snowfix)
         CGA_16_DrawBackbuffer_Snow();
     else
         CGA_16_DrawBackbuffer();
 #endif
+
 #if defined(MODE_CGA_AFH)
     if (snowfix)
         CGA_AFH_DrawBackbuffer_Snow();
     else
         CGA_AFH_DrawBackbuffer();
 #endif
+
 #if defined(MODE_EGA16)
     EGA_16_DrawBackbuffer();
 #endif
+
 #if defined(MODE_EGA80)
     EGA_80_DrawBackbuffer();
 #endif
+
 #if defined(MODE_EGA)
     EGA_DrawBackbuffer();
 #endif
+
 #if defined(MODE_EGAW1)
     EGA_160_DrawBackbuffer();
 #endif
+
 #if defined(MODE_VGA16)
     VGA_16_DrawBackbuffer();
 #endif
+
 #if defined(MODE_EGA640)
     EGA_640_DrawBackbuffer();
 #endif
+
 #if defined(MODE_ATI640)
-    ATI640_DrawBackbuffer();
+    ATI_640_DrawBackbuffer();
 #endif
+
 #if defined(MODE_CGA512)
     CGA_512_DrawBackbuffer();
 #endif
+
 #if defined(MODE_PCP)
     PCP_DrawBackbuffer();
 #endif
+
 #if defined(MODE_CVB)
     CGA_CVBS_DrawBackbuffer();
 #endif
+
 #if defined(MODE_V2)
     VGA_VERT_DrawBackbuffer();
 #endif
@@ -978,7 +990,7 @@ void I_InitGraphics(void)
     EGA_640_InitGraphics();
 #endif
 #if defined(MODE_ATI640)
-    ATI640_InitGraphics();
+    ATI_640_InitGraphics();
 #endif
 #if defined(MODE_CVB)
     CGA_CVBS_InitGraphics();

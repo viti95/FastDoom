@@ -36,7 +36,7 @@ unsigned short lutcolors[14 * 512];
 unsigned short *ptrlutcolors;
 byte vrambuffer[65536];
 
-void ATI640_ProcessPalette(byte *palette)
+void ATI_640_ProcessPalette(byte *palette)
 {
     int i;
 
@@ -100,12 +100,12 @@ void ATI640_ProcessPalette(byte *palette)
     }
 }
 
-void ATI640_SetPalette(int numpalette)
+void ATI_640_SetPalette(int numpalette)
 {
     ptrlutcolors = lutcolors + numpalette * 512;
 }
 
-void ATI640_DrawBackbuffer(void)
+void ATI_640_DrawBackbuffer(void)
 {
     int x;
     unsigned char *vram = (unsigned char *)0xB0000;
@@ -235,7 +235,7 @@ void ATI640_DrawBackbuffer(void)
     }
 }
 
-void ATI640_InitGraphics(void)
+void ATI_640_InitGraphics(void)
 {
     static int parms[16] = {0x70, 0x50, 0x58, 0x0a,
                             0x40, 0x06, 0x32, 0x38,

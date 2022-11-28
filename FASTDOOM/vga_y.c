@@ -52,4 +52,15 @@ void VGA_Y_InitGraphics(void)
     outp(GC_INDEX, GC_READMAP);
 }
 
+void VGA_Y_ChangeVideoPage(void)
+{
+    outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
+
+    // Next plane
+    if (destscreen == (byte *)0xA8000)
+        destscreen = (byte *)0xA0000;
+    else
+        destscreen += 0x4000;
+}
+
 #endif
