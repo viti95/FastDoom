@@ -34,6 +34,7 @@
 #define __TABLES__
 
 #include "fastmath.h"
+#include "doomtype.h"
 
 #define FINEANGLES 8192
 #define FINEMASK (FINEANGLES - 1)
@@ -66,6 +67,8 @@ typedef unsigned angle_t;
 // The +1 size is to handle the case when x==y
 //  without additional checking.
 extern const angle_t tantoangle[SLOPERANGE + 1];
+
+extern const byte gammatable[5][256];
 
 // Utility function,
 //  called by R_PointToAngle.

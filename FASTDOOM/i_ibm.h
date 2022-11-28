@@ -7,7 +7,6 @@ extern int ticcount;
 extern fixed_t fps;
 
 extern unsigned short *currentscreen;
-extern byte gammatable[5][256];
 
 #if defined(USE_BACKBUFFER)
 extern int updatestate;
