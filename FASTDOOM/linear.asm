@@ -68,7 +68,6 @@ CODE_SYM_DEF R_DrawColumn_13h
   mov  eax,[_dc_yl]
   add  edi,[_columnofs + ebx*4]
   sub  ebp,eax         ; ebp = pixel count
-  or   ebp,ebp
   js   short .done
 
   mov   ecx,[_dc_iscale]
