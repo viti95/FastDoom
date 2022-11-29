@@ -285,28 +285,6 @@ void I_StartupSound(void);
 void I_ShutdownSound(void);
 void I_ShutdownTimer(void);
 
-byte scantokey[128] =
-    {
-        //  0           1       2       3       4       5       6       7
-        //  8           9       A       B       C       D       E       F
-        0, 27, '1', '2', '3', '4', '5', '6',
-        '7', '8', '9', '0', '-', '=', KEY_BACKSPACE, 9, // 0
-        'q', 'w', 'e', 'r', 't', 'y', 'u', 'i',
-        'o', 'p', '[', ']', 13, KEY_RCTRL, 'a', 's', // 1
-        'd', 'f', 'g', 'h', 'j', 'k', 'l', ';',
-        39, '`', KEY_LSHIFT, 92, 'z', 'x', 'c', 'v', // 2
-        'b', 'n', 'm', ',', '.', '/', KEY_RSHIFT, '*',
-        KEY_RALT, ' ', 0, KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, // 3
-        KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10, 0, 0, KEY_HOME,
-        KEY_UPARROW, KEY_PGUP, '-', KEY_LEFTARROW, '5', KEY_RIGHTARROW, '+', KEY_END, // 4
-        KEY_DOWNARROW, KEY_PGDN, KEY_INS, KEY_DEL, 0, 0, 0, KEY_F11,
-        KEY_F12, 0, 0, 0, 0, 0, 0, 0, // 5
-        0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, // 6
-        0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0 // 7
-};
-
 void I_ProcessPalette(byte *palette)
 {
     #if defined(MODE_CGA_AFH)
@@ -1021,6 +999,28 @@ void I_ShutdownGraphics(void)
 #define SC_DOWNARROW 0x50
 #define SC_LEFTARROW 0x4b
 #define SC_RIGHTARROW 0x4d
+
+byte scantokey[128] =
+    {
+        //  0           1       2       3       4       5       6       7
+        //  8           9       A       B       C       D       E       F
+        0, 27, '1', '2', '3', '4', '5', '6',
+        '7', '8', '9', '0', '-', '=', KEY_BACKSPACE, 9, // 0
+        'q', 'w', 'e', 'r', 't', 'y', 'u', 'i',
+        'o', 'p', '[', ']', 13, KEY_RCTRL, 'a', 's', // 1
+        'd', 'f', 'g', 'h', 'j', 'k', 'l', ';',
+        39, '`', KEY_LSHIFT, 92, 'z', 'x', 'c', 'v', // 2
+        'b', 'n', 'm', ',', '.', '/', KEY_RSHIFT, '*',
+        KEY_RALT, ' ', 0, KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, // 3
+        KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10, 0, 0, KEY_HOME,
+        KEY_UPARROW, KEY_PGUP, '-', KEY_LEFTARROW, '5', KEY_RIGHTARROW, '+', KEY_END, // 4
+        KEY_DOWNARROW, KEY_PGDN, KEY_INS, KEY_DEL, 0, 0, 0, KEY_F11,
+        KEY_F12, 0, 0, 0, 0, 0, 0, 0, // 5
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, // 6
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0 // 7
+};
 
 void I_StartTic(void)
 {
