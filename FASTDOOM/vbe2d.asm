@@ -62,7 +62,6 @@ CODE_SYM_DEF R_DrawColumnVBE2
   mov  eax,[_dc_yl]
   add  edi,[_destview]
   sub  ebp,eax ; ebp = pixel count
-  or   ebp,ebp
   js   short .done
 
   mov  ecx,[_dc_iscale]
