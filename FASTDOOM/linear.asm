@@ -62,11 +62,10 @@ CODE_SYM_DEF R_DrawColumn_13h
   pushad
 
   mov  ebp,[_dc_yh]
-  mov  ebx,ebp
-  mov  edi,[_ylookup+ebx*4]
   mov  ebx,[_dc_x]
+  mov  edi,[_ylookup+ebp*4]
   mov  eax,[_dc_yl]
-  add  edi,[_columnofs + ebx*4]
+  add  edi,[_columnofs+ebx*4]
   sub  ebp,eax         ; ebp = pixel count
   js   short .done
 
