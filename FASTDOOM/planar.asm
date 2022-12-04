@@ -225,23 +225,24 @@ CODE_SYM_DEF R_DrawColumn
 
   mov  ebp,[_dc_yl]
   mov  ebx,[_dc_x]
-  lea  edi,[ebp+ebp*4]
   mov  cl,bl
-  shl  edi,4
-  shr  ebx,2
-  and  cl,3
-  add  edi,ebx
   mov  eax,1
+  and  cl,3
   mov  edx,SC_INDEX+1
   shl  eax,cl
-  add  edi,[_destview]
   out  dx,al
   mov  eax,[_dc_yh]
   inc  eax
   sub  eax,ebp           ; pixel count
   js   .done             ; nothing to scale
+
+  lea  edi,[ebp+ebp*4]
   mov  ecx,[_dc_iscale]
+  shl  edi,4
+  shr  ebx,2
+  add  edi,ebx
   mov  [pixelcount],eax  ; save for final pixel
+  add  edi,[_destview]
   shr  eax,1             ; double pixel count
   mov  [loopcount],eax
   mov   eax,[_centery]
