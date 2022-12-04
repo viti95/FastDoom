@@ -142,8 +142,8 @@ CODE_SYM_DEF R_DrawColumnLow
   mov  eax,[_dc_yh]
   inc  eax
   sub  eax,ebp           ; pixel count
-  mov  [pixelcount],eax  ; save for final pixel
   js   .donel            ; nothing to scale
+  mov  [pixelcount],eax  ; save for final pixel
   shr  eax,1             ; double pixel count
   mov  [loopcount],eax
 
@@ -235,11 +235,11 @@ CODE_SYM_DEF R_DrawColumn
   add  edi,[_destview]
   out  dx,al
   mov  eax,[_dc_yh]
-  mov  ecx,[_dc_iscale]
   inc  eax
   sub  eax,ebp           ; pixel count
-  mov  [pixelcount],eax  ; save for final pixel
   js   .done             ; nothing to scale
+  mov  ecx,[_dc_iscale]
+  mov  [pixelcount],eax  ; save for final pixel
   shr  eax,1             ; double pixel count
   mov  [loopcount],eax
   mov   eax,[_centery]
