@@ -155,15 +155,14 @@ CODE_SYM_DEF R_DrawSpanVBE2
   mov  ebp,[_ds_y]
   mov  eax,[_ds_colormap]
   lea  edi,[ebp+ebp*4]
-  shl  edi,6
-  add  edi,[_destview]
-
-  ; feed the pipeline and jump in
-
   shld  ebx,ecx,22      ; shift y units in
+  shl  edi,6
   mov   ebp,0x0FFF  ; used to mask off slop high bits from position
+  add  edi,[_destview]
   shld  ebx,ecx,6       ; shift x units in
   and   ebx,ebp         ; mask off slop bits
+  
+  ; feed the pipeline and jump in
   call  [callpoint]
 
   mov  ebx,[returnpoint]
