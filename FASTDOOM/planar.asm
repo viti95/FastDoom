@@ -126,13 +126,13 @@ CODE_SYM_DEF R_DrawColumnLow
 
   mov  ebp,[_dc_yl]
   mov  ebx,[_dc_x]
-  lea  edi,[ebp+ebp*4]
+
   mov  ecx,ebx
-  shl  edi,4    
+   
   shr  ebx,1
-  add  edi,ebx
+
   and  ecx,1
-  add  edi,[_destview]
+
   add  ecx, ecx
   mov  eax,3
   mov  edx,SC_INDEX+1
@@ -144,12 +144,14 @@ CODE_SYM_DEF R_DrawColumnLow
   sub  eax,ebp           ; pixel count
   js   .donel            ; nothing to scale
   mov  [pixelcount],eax  ; save for final pixel
+  lea  edi,[ebp+ebp*4]
   shr  eax,1             ; double pixel count
+  shl  edi,4 
   mov  [loopcount],eax
-
+  add  edi,ebx
   mov  ecx,[_dc_iscale]
-
-  mov   eax,[_centery]
+  mov  eax,[_centery]
+  add  edi,[_destview]
   sub   eax,ebp
   imul  ecx
   mov   ebp,[_dc_texturemid]
