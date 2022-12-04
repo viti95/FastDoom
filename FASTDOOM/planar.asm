@@ -41,15 +41,15 @@ CODE_SYM_DEF R_DrawColumnPotato
 
   mov  ebp,[_dc_yl]
   mov  ebx,[_dc_x]
-  lea  edi,[ebp+ebp*4]  
-  mov  eax,[_dc_yh]
+  lea  edi,[ebp+ebp*4]    
   shl  edi,4
-  inc  eax
   add  edi,ebx  
-  sub  eax,ebp           ; pixel count
   add  edi,[_destview]
-  mov  [pixelcount],eax  ; save for final pixel
   js   .donep            ; nothing to scale
+  mov  eax,[_dc_yh]
+  inc  eax
+  sub  eax,ebp           ; pixel count
+  mov  [pixelcount],eax  ; save for final pixel
   shr  eax,1             ; double pixel count
   mov  [loopcount],eax
   mov  ecx,[_dc_iscale]
