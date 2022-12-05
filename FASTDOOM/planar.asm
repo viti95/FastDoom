@@ -502,9 +502,9 @@ CODE_SYM_DEF R_DrawSpanLow
   mov   ecx,[curplane]
 .lplane:
   mov   eax,3
-  shl   eax,cl
-  shl   eax,cl
   mov   edx,SC_INDEX+1
+  shl   eax,cl
+  shl   eax,cl
   out   dx,al
   mov   eax,[_ds_x2]
   cmp   [curx],eax
@@ -527,10 +527,10 @@ CODE_SYM_DEF R_DrawSpanLow
   sub   eax,ebx
   js    .ldoneplane
   mov   [loopcount],eax
-  mov   eax,[_ds_colormap]
-  mov   ebx,eax
   mov   esi,[_ds_source]
+  mov   eax,[_ds_colormap]
   mov   edi,[dest]
+  mov   ebx,eax
   mov   ebp,[frac]
   test  [curpx],dword 1
   jz    short .lfill
@@ -559,12 +559,12 @@ CODE_SYM_DEF R_DrawSpanLow
   jnz   short .ldoubleloop
   jmp   short .lchecklast
 .lfillone:
-  mov   eax,[_ds_colormap]
-  mov   esi,[_ds_source]
   mov   ebp,[frac]
+  mov   eax,[_ds_colormap]
   shld  ecx,ebp,22
   shld  ecx,ebp,6
   and   ecx,0x00000FFF
+  mov   esi,[_ds_source]
   mov   al,[esi+ecx]
   mov   edi,[dest]
   mov   dl,[eax]
@@ -583,10 +583,10 @@ CODE_SYM_DEF R_DrawSpanLow
   shld  edx,ebp,6
 .lpatch2:
   add   ebp,0x12345678 ; runtime patched
-  and   edx,0x00000FFF
   mov   al,[esi+ecx]
-  mov   bl,[esi+edx]
+  and   edx,0x00000FFF
   dec   dword [loopcount]
+  mov   bl,[esi+edx]
   mov   dl,[eax]
   jnz   short .ldoubleloop
 .lchecklast:
@@ -602,11 +602,11 @@ CODE_SYM_DEF R_DrawSpanLow
 .lskip:
   cmp   [endplane],ecx
   jz    short .ldone
-  mov   [curplane],ecx
   mov   ebx,[frac]
+  mov   [curplane],ecx
   add   ebx,[_ds_step]
-  mov   [frac],ebx
   inc   dword [curx]
+  mov   [frac],ebx
   jmp   near .lplane
 .ldone:
   popad
