@@ -39,18 +39,18 @@ BEGIN_CODE_SECTION
 CODE_SYM_DEF R_DrawColumnPotato
   pushad
 
-  mov  ebp,[_dc_yl]
-  mov  ebx,[_dc_x]
-  lea  edi,[ebp+ebp*4]    
-  shl  edi,4
-  add  edi,ebx  
-  add  edi,[_destview]
-  js   .donep            ; nothing to scale
   mov  eax,[_dc_yh]
+  mov  ebp,[_dc_yl]
   inc  eax
   sub  eax,ebp           ; pixel count
+  js   .donep            ; nothing to scale
+  lea  edi,[ebp+ebp*4]    
+  mov  ebx,[_dc_x]
+  shl  edi,4
   mov  [pixelcount],eax  ; save for final pixel
+  add  edi,ebx  
   shr  eax,1             ; double pixel count
+  add  edi,[_destview]  
   mov  [loopcount],eax
   mov  ecx,[_dc_iscale]
   mov  eax,[_centery]
@@ -124,32 +124,29 @@ CODE_SYM_DEF R_DrawColumnPotato
 CODE_SYM_DEF R_DrawColumnLow
   pushad
 
-  mov  ebp,[_dc_yl]
-  mov  ebx,[_dc_x]
-
-  mov  ecx,ebx
-   
-  shr  ebx,1
-
-  and  ecx,1
-
-  add  ecx, ecx
-  mov  eax,3
-  mov  edx,SC_INDEX+1
-  shl  eax,cl
-  out  dx,al
-
   mov  eax,[_dc_yh]
+  mov  ebp,[_dc_yl]
   inc  eax
   sub  eax,ebp           ; pixel count
+
   js   .donel            ; nothing to scale
+
   mov  [pixelcount],eax  ; save for final pixel
-  lea  edi,[ebp+ebp*4]
+  mov  ebx,[_dc_x]
   shr  eax,1             ; double pixel count
-  shl  edi,4 
+  mov  ecx,ebx
   mov  [loopcount],eax
-  add  edi,ebx
+  shr  ebx,1
+  and  ecx,1
+  mov  eax,3
+  add  ecx, ecx
+  mov  edx,SC_INDEX+1
+  shl  eax,cl
+  lea  edi,[ebp+ebp*4]
+  out  dx,al
+  shl  edi,4 
   mov  ecx,[_dc_iscale]
+  add  edi,ebx
   mov  eax,[_centery]
   add  edi,[_destview]
   sub   eax,ebp
