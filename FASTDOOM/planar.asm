@@ -149,13 +149,13 @@ CODE_SYM_DEF R_DrawColumnLow
   add  edi,ebx
   mov  eax,[_centery]
   add  edi,[_destview]
-  sub   eax,ebp
-  imul  ecx
-  mov   ebp,[_dc_texturemid]
-  mov   esi,[_dc_source]
-  sub   ebp,eax
+  sub  eax,ebp
+  imul ecx
+  mov  ebp,[_dc_texturemid]
+  mov  esi,[_dc_source]
+  sub  ebp,eax
   mov  ebx,[_dc_iscale]
-  shl   ebp,9 ; 7 significant bits, 25 frac
+  shl  ebp,9 ; 7 significant bits, 25 frac
 
   shl  ebx,9
   mov  eax,.patch1l+2  ; self-modifying code...
@@ -220,29 +220,33 @@ CODE_SYM_DEF R_DrawColumnLow
 CODE_SYM_DEF R_DrawColumn
   pushad
 
-  mov  ebp,[_dc_yl]
-  mov  ebx,[_dc_x]
-  mov  cl,bl
-  mov  eax,1
-  and  cl,3
-  mov  edx,SC_INDEX+1
-  shl  eax,cl
-  out  dx,al
   mov  eax,[_dc_yh]
+  mov  ebp,[_dc_yl]
   inc  eax
   sub  eax,ebp           ; pixel count
+
   js   .done             ; nothing to scale
 
+  mov  ebx,[_dc_x]
+  mov  [pixelcount],eax  ; save for final pixel
+  mov  cl,bl
+  shr  eax,1             ; double pixel count
+  and  cl,3
+  mov  [loopcount],eax
+  mov  edx,SC_INDEX+1
+  mov  eax,1
   lea  edi,[ebp+ebp*4]
-  mov  ecx,[_dc_iscale]
+  shl  eax,cl
   shl  edi,4
+  out  dx,al
+
   shr  ebx,2
   add  edi,ebx
-  mov  [pixelcount],eax  ; save for final pixel
+  
   add  edi,[_destview]
-  shr  eax,1             ; double pixel count
-  mov  [loopcount],eax
+
   mov   eax,[_centery]
+  mov  ecx,[_dc_iscale]
   sub   eax,ebp
   imul  ecx
   mov   ebp,[_dc_texturemid]
