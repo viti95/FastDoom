@@ -287,73 +287,73 @@ void I_ShutdownTimer(void);
 
 void I_ProcessPalette(byte *palette)
 {
-    #if defined(MODE_CGA_AFH)
+#if defined(MODE_CGA_AFH)
     CGA_AFH_ProcessPalette(palette);
-    #endif
+#endif
 
-    #if defined(MODE_CGA16)
+#if defined(MODE_CGA16)
     CGA_16_ProcessPalette(palette);
-    #endif
+#endif
 
-    #if defined(MODE_EGA16)
+#if defined(MODE_EGA16)
     EGA_16_ProcessPalette(palette);
-    #endif
+#endif
 
-    #if defined(MODE_VGA16)
+#if defined(MODE_VGA16)
     VGA_16_ProcessPalette(palette);
-    #endif
+#endif
 
-    #if defined(MODE_PCP)
+#if defined(MODE_PCP)
     PCP_ProcessPalette(palette);
-    #endif
+#endif
 
-    #if defined(MODE_ATI640)
+#if defined(MODE_ATI640)
     ATI_640_ProcessPalette(palette);
-    #endif
+#endif
 
-    #if defined(MODE_CGA)
+#if defined(MODE_CGA)
     CGA_ProcessPalette(palette);
-    #endif
+#endif
 
-    #if defined(MODE_CVB)
+#if defined(MODE_CVB)
     CGA_CVBS_ProcessPalette(palette);
-    #endif
+#endif
 
-    #if defined(MODE_HERC)
+#if defined(MODE_HERC)
     HERC_ProcessPalette(palette);
-    #endif
+#endif
 
-    #if defined(MODE_CGA_BW)
+#if defined(MODE_CGA_BW)
     CGA_BW_ProcessPalette(palette);
-    #endif
+#endif
 
-    #if defined(MODE_EGA640)
+#if defined(MODE_EGA640)
     EGA_640_ProcessPalette(palette);
-    #endif
+#endif
 
-    #if defined(MODE_EGA)
+#if defined(MODE_EGA)
     EGA_ProcessPalette(palette);
-    #endif
+#endif
 
-    #if defined(MODE_EGAW1)
+#if defined(MODE_EGAW1)
     EGA_160_ProcessPalette(palette);
-    #endif
+#endif
 
-    #if defined(MODE_EGA80)
+#if defined(MODE_EGA80)
     EGA_80_ProcessPalette(palette);
-    #endif
+#endif
 
-    #if defined(MODE_CGA512)
+#if defined(MODE_CGA512)
     CGA_512_ProcessPalette(palette);
-    #endif
+#endif
 
-    #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(MODE_VBE2) || defined(MODE_13H) || defined(MODE_V2)
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(MODE_VBE2) || defined(MODE_13H) || defined(MODE_V2)
     VGA_ProcessPalette(palette);
-    #endif
+#endif
 
-    #if defined(TEXT_MODE)
+#if defined(TEXT_MODE)
     TEXT_ProcessPalette(palette);
-    #endif
+#endif
 }
 
 //
@@ -367,7 +367,7 @@ void I_SetPalette(int numpalette)
 #endif
 
 #if defined(MODE_EGA640)
-    EGA_640_SetPalette(numpalette);    
+    EGA_640_SetPalette(numpalette);
 #endif
 
 #if defined(MODE_CGA_BW)
@@ -418,7 +418,7 @@ void I_SetPalette(int numpalette)
     EGA_80_SetPalette(numpalette);
 #endif
 
-#if defined(TEXT_MODE) 
+#if defined(TEXT_MODE)
     TEXT_SetPalette(numpalette);
 #endif
 
@@ -1113,7 +1113,7 @@ void __interrupt I_KeyboardISR(void)
 {
     // Get the scan code
 
-    keyboardque[kbdhead & (KBDQUESIZE - 1)] = inp(0x60);
+    keyboardque[kbdhead & (KBDQUESIZE - 1)] = InByte60h();
     kbdhead++;
 
     // acknowledge the interrupt

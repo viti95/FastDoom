@@ -342,6 +342,11 @@ void ReadMem(unsigned char *memptr);
     "mov al, [eax]" \
     parm[eax] modify exact[eax]
 
+unsigned char InByte60h(void);
+#pragma aux InByte60h = \
+    "in al, 0x60" \
+    value[al] modify[al] nomemory ;
+
 void OutByte20h(unsigned char al);
 #pragma aux OutByte20h = \
     "out 0x20, al" \
