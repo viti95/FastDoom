@@ -342,4 +342,9 @@ void ReadMem(unsigned char *memptr);
     "mov al, [eax]" \
     parm[eax] modify exact[eax]
 
+void OutByte20h(unsigned char al);
+#pragma aux OutByte20h = \
+    "out 0x20, al" \
+    parm[al] nomemory;
+
 #endif // __DOOMMATH__

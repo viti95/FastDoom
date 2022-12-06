@@ -1118,7 +1118,7 @@ void __interrupt I_KeyboardISR(void)
 
     // acknowledge the interrupt
 
-    outp(0x20, 0x20);
+    OutByte20h(0x20);
 }
 
 //
