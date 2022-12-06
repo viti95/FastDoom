@@ -352,4 +352,9 @@ void OutByteA0h(unsigned char al);
     "out 0xA0, al" \
     parm[al] nomemory;
 
+void OutByte61h(unsigned char al);
+#pragma aux OutByte61h = \
+    "out 0x61, al" \
+    parm[al] nomemory;
+
 #endif // __DOOMMATH__

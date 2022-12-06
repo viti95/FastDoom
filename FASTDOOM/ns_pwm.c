@@ -85,7 +85,7 @@ void PCSpeaker_PWM_StopPlayback(void)
     }
 
     // Turn off
-    outp(0x61, inp(0x61) & 0xFC);
+    OutByte61h(inp(0x61) & 0xFC);
 }
 
 /*---------------------------------------------------------------------
@@ -138,7 +138,7 @@ int PCSpeaker_PWM_Init(int soundcard)
         PCSpeaker_PWM_Shutdown();
     }
 
-    outp(0x61, inp(0x61) | 0x3);
+    OutByte61h(inp(0x61) | 0x3);
     outp(0x43, 0xB0);
     outp(0x42, 0);
     outp(0x42, 0);

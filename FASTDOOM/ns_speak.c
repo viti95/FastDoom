@@ -44,12 +44,12 @@ static void PCSpeaker_ServiceInterrupt(task *Task)
         value &= 2;
 
         // Turn on
-        outp(0x61, (inp(0x61) & 0xFC) | value);
+        OutByte61h((inp(0x61) & 0xFC) | value);
     }
     else
     {
         // Turn off
-        outp(0x61, inp(0x61) & 0xFC);
+        OutByte61h(inp(0x61) & 0xFC);
     }
 
     PCSpeaker_SoundPtr++;
@@ -88,7 +88,7 @@ void PCSpeaker_StopPlayback(void)
     if (PCSpeaker_SoundPlaying)
     {
         // Turn off
-        outp(0x61, inp(0x61) & 0xFC);
+        OutByte61h(inp(0x61) & 0xFC);
         TS_Terminate(PCSpeaker_Timer);
         PCSpeaker_SoundPlaying = 0;
         PCSpeaker_BufferStart = NULL;
