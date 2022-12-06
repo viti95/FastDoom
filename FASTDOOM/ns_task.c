@@ -13,6 +13,7 @@
 #include "ns_ll.h"
 #include "ns_task.h"
 #include "options.h"
+#include "fastmath.h"
 
 #ifdef USESTACK
 #include "ns_dpmi.h"
@@ -234,7 +235,7 @@ static void __interrupt __far TS_ServiceSchedule(void)
         _chain_intr(OldInt8);
     }
 
-    outp(0x20, 0x20);
+    OutByte20h(0x20);
 
     TS_InInterrupt = FALSE;
 }
@@ -254,7 +255,7 @@ static void __interrupt __far TS_ServiceScheduleIntEnabled(void)
         _chain_intr(OldInt8);
     }
 
-    outp(0x20, 0x20);
+    OutByte20h(0x20);
 
     if (TS_InInterrupt)
     {

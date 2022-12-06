@@ -373,9 +373,9 @@ void interrupt far PAS_ServiceInterrupt(
    // send EOI to Interrupt Controller
    if (PAS_Irq > 7)
    {
-      outp(0xA0, 0x20);
+      OutByteA0h(0x20);
    }
-   outp(0x20, 0x20);
+   OutByte20h(0x20);
 
    // Keep track of current buffer
    PAS_CurrentDMABuffer += PAS_TransferLength;

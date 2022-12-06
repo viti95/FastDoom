@@ -11,6 +11,7 @@
 #include "ns_sbdef.h"
 #include "ns_muldf.h"
 #include "options.h"
+#include "fastmath.h"
 
 const int BLASTER_Interrupts[BLASTER_MaxIrq + 1] =
     {
@@ -246,10 +247,10 @@ void __interrupt __far BLASTER_ServiceInterrupt(
     // send EOI to Interrupt Controller
     if (BLASTER_Config.Interrupt > 7)
     {
-        outp(0xA0, 0x20);
+        OutByteA0h(0x20);
     }
 
-    outp(0x20, 0x20);
+    OutByte20h(0x20);
 }
 
 /*---------------------------------------------------------------------

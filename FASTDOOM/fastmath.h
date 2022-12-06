@@ -347,4 +347,9 @@ void OutByte20h(unsigned char al);
     "out 0x20, al" \
     parm[al] nomemory;
 
+void OutByteA0h(unsigned char al);
+#pragma aux OutByteA0h = \
+    "out 0xA0, al" \
+    parm[al] nomemory;
+
 #endif // __DOOMMATH__

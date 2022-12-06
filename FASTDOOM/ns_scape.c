@@ -12,6 +12,7 @@
 #include "ns_scdef.h"
 #include "ns_muldf.h"
 #include "options.h"
+#include "fastmath.h"
 
 const int SOUNDSCAPE_Interrupts[SOUNDSCAPE_MaxIrq + 1] =
     {
@@ -198,9 +199,9 @@ static void __interrupt __far SOUNDSCAPE_ServiceInterrupt(
     // send EOI to Interrupt Controller
     if (SOUNDSCAPE_Config.WaveIRQ > 7)
     {
-        outp(0xA0, 0x20);
+        OutByteA0h(0x20);
     }
-    outp(0x20, 0x20);
+    OutByte20h(0x20);
 }
 
 /*---------------------------------------------------------------------
