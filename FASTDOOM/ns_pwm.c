@@ -40,9 +40,9 @@ static void PCSpeaker_PWM_ServiceInterrupt(task *Task)
 {
     unsigned char value = (unsigned char) *PCSpeaker_PWM_SoundPtr;
 
-    outp(0x43, 0xB0);
-    outp(0x42, value >> 1);
-    outp(0x42, 0);
+    OutByte43h(0xB0);
+    OutByte42h(value >> 1);
+    OutByte42h(0);
 
     PCSpeaker_PWM_SoundPtr++;
 
@@ -139,9 +139,9 @@ int PCSpeaker_PWM_Init(int soundcard)
     }
 
     OutByte61h(inp(0x61) | 0x3);
-    outp(0x43, 0xB0);
-    outp(0x42, 0);
-    outp(0x42, 0);
+    OutByte43h(0xB0);
+    OutByte42h(0);
+    OutByte42h(0);
 
     PCSpeaker_PWM_SoundPlaying = 0;
 

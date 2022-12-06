@@ -352,6 +352,16 @@ void OutByteA0h(unsigned char al);
     "out 0xA0, al" \
     parm[al] nomemory;
 
+void OutByte42h(unsigned char al);
+#pragma aux OutByte42h = \
+    "out 0x42, al" \
+    parm[al] nomemory;
+
+void OutByte43h(unsigned char al);
+#pragma aux OutByte43h = \
+    "out 0x43, al" \
+    parm[al] nomemory;
+
 void OutByte61h(unsigned char al);
 #pragma aux OutByte61h = \
     "out 0x61, al" \

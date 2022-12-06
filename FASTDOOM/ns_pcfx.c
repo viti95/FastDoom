@@ -60,9 +60,9 @@ static void PCFX_Service(task *Task)
             PCFX_LastSample = value;
             if (value)
             {
-                outp(0x43, 0xb6);
-                outp(0x42, value);
-                outp(0x42, value >> 8);
+                OutByte43h(0xb6);
+                OutByte42h(value);
+                OutByte42h(value >> 8);
                 OutByte61h(inp(0x61) | 0x3);
             }
             else
