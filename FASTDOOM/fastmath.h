@@ -347,6 +347,11 @@ unsigned char InByte60h(void);
     "in al, 0x60" \
     value[al] modify[al] nomemory ;
 
+unsigned char InByte61h(void);
+#pragma aux InByte61h = \
+    "in al, 0x61" \
+    value[al] modify[al] nomemory ;
+
 void OutByte20h(unsigned char al);
 #pragma aux OutByte20h = \
     "out 0x20, al" \

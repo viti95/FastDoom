@@ -35,7 +35,7 @@ int PCFX_Stop(int handle)
     flags = DisableInterrupts();
 
     // Turn off speaker
-    OutByte61h(inp(0x61) & 0xfc);
+    OutByte61h(InByte61h() & 0xfc);
 
     PCFX_Sound = NULL;
     PCFX_LengthLeft = 0;
@@ -64,11 +64,11 @@ static void PCFX_Service(task *Task)
                 OutByte43h(0xb6);
                 OutByte42h(value);
                 OutByte42h(value >> 8);
-                OutByte61h(inp(0x61) | 0x3);
+                OutByte61h(InByte61h() | 0x3);
             }
             else
             {
-                OutByte61h(inp(0x61) & 0xfc);
+                OutByte61h(InByte61h() & 0xfc);
             }
         }
         if (--PCFX_LengthLeft == 0)
@@ -136,7 +136,7 @@ int PCFX_SetTotalVolume(int volume)
 
     if (volume == 0)
     {
-        OutByte61h(inp(0x61) & 0xfc);
+        OutByte61h(InByte61h() & 0xfc);
     }
 
     RestoreInterrupts(flags);
