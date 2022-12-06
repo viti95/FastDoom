@@ -6,6 +6,7 @@
 #include "ns_inter.h"
 #include "ns_pcfx.h"
 #include "options.h"
+#include "fastmath.h"
 
 #define TRUE (1 == 1)
 #define FALSE (!TRUE)
