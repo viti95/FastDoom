@@ -134,14 +134,14 @@ CODE_SYM_DEF R_DrawColumnLow
   mov  [pixelcount],eax  ; save for final pixel
   mov  ebx,[_dc_x]
   shr  eax,1             ; double pixel count
-  mov  ecx,ebx
+  mov  cl,bl
   mov  [loopcount],eax
   shr  ebx,1
-  and  ecx,1
-  mov  eax,3
-  add  ecx, ecx
+  and  cl,1
+  mov  al,3
+  add  cl, cl
   mov  dx,SC_INDEX+1
-  shl  eax,cl
+  shl  al,cl
   lea  edi,[ebp+ebp*4]
   out  dx,al
   shl  edi,4 
@@ -234,9 +234,9 @@ CODE_SYM_DEF R_DrawColumn
   and  cl,3
   mov  [loopcount],eax
   mov  dx,SC_INDEX+1
-  mov  eax,1
+  mov  al,1
   lea  edi,[ebp+ebp*4]
-  shl  eax,cl
+  shl  al,cl
   shl  edi,4
   shr  ebx,2
   out  dx,al
@@ -498,10 +498,10 @@ CODE_SYM_DEF R_DrawSpanLow
   mov   [eax],ebx
   mov   ecx,[curplane]
 .lplane:
-  mov   eax,3
+  mov   al,3
   mov   dx,SC_INDEX+1
-  shl   eax,cl
-  shl   eax,cl
+  shl   al,cl
+  shl   al,cl
   out   dx,al
   mov   eax,[_ds_x2]
   cmp   [curx],eax
