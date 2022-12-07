@@ -140,7 +140,7 @@ CODE_SYM_DEF R_DrawColumnLow
   and  ecx,1
   mov  eax,3
   add  ecx, ecx
-  mov  edx,SC_INDEX+1
+  mov  dx,SC_INDEX+1
   shl  eax,cl
   lea  edi,[ebp+ebp*4]
   out  dx,al
@@ -233,19 +233,16 @@ CODE_SYM_DEF R_DrawColumn
   shr  eax,1             ; double pixel count
   and  cl,3
   mov  [loopcount],eax
-  mov  edx,SC_INDEX+1
+  mov  dx,SC_INDEX+1
   mov  eax,1
   lea  edi,[ebp+ebp*4]
   shl  eax,cl
   shl  edi,4
-  out  dx,al
-
   shr  ebx,2
+  out  dx,al
   add  edi,ebx
-  
-  add  edi,[_destview]
-
   mov   eax,[_centery]
+  add  edi,[_destview]
   mov  ecx,[_dc_iscale]
   sub   eax,ebp
   imul  ecx
@@ -356,7 +353,7 @@ CODE_SYM_DEF R_DrawSpan
 .hplane:
   mov   al,1
   shl   al,cl
-  mov   edx,SC_INDEX+1
+  mov   dx,SC_INDEX+1
   out   dx,al
   mov   eax,[_ds_x2]
   cmp   [curx], eax
@@ -414,9 +411,9 @@ CODE_SYM_DEF R_DrawSpan
   mov   ebp,[frac]
   mov   esi,[_ds_source]
   shld  ecx,ebp,22
-  mov   eax,[_ds_colormap]
   shld  ecx,ebp,6
   and   ecx,0x00000FFF
+  mov   eax,[_ds_colormap]
   mov   al,[esi+ecx]
   mov   edi,[dest]
   mov   dl,[eax]
@@ -502,7 +499,7 @@ CODE_SYM_DEF R_DrawSpanLow
   mov   ecx,[curplane]
 .lplane:
   mov   eax,3
-  mov   edx,SC_INDEX+1
+  mov   dx,SC_INDEX+1
   shl   eax,cl
   shl   eax,cl
   out   dx,al
