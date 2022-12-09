@@ -215,8 +215,9 @@ bpatch7:
         mov     [edi+0x12345678], bl         ; write right sample to destination
         shr     eax, 16                      ; finish calculation for second sample
         add     edi, 2                       ; move destination to second sample
+        xor     ebx, ebx
         dec     ecx                          ; decrement count
-        movzx   ebx, byte [esi+eax]          ; get second sample
+        mov     bl, byte [esi+eax]          ; get second sample
         jnz     short mix8Sloop                    ; loop
 
         mov     [_MV_MixDestination], edi    ; Store the current write position
@@ -319,8 +320,9 @@ cpatch7:
         mov     [edi+0x12345678], bl         ; write right sample to destination
         shr     eax, 16                      ; finish calculation for second sample
         inc     edi                          ; move destination to second sample
+        xor     ebx,ebx
         dec     ecx                          ; decrement count
-        movzx   ebx, byte [esi+eax]          ; get second sample
+        mov     bl, byte [esi+eax]          ; get second sample
         jnz     short mix8Uloop                    ; loop
 
         mov     [_MV_MixDestination], edi    ; Store the current write position
