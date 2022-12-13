@@ -155,7 +155,7 @@ fdoom.exe : $(GLOBOBJS)
  wcc386 $(CCOPTS) -fo=$[*.obj $[*.c
 
 .asm.obj :
- nasm $(EXTERNOPT) -f obj -o $[*.obj $[*.asm
+ nasm $(EXTERNOPT) -Oxv -f obj -o $[*.obj $[*.asm
 
 !ifndef __LINUX__
 DELCMD = del

@@ -55,7 +55,7 @@ byte lut16colors[14 * 256];
 byte *ptrlut16colors;
 byte vrambuffer[16384];
 
-void CGA_CVBS_ProcessPalette(byte *palette)
+void I_ProcessPalette(byte *palette)
 {
     int i, j;
     byte *ptr = gammatable[usegamma];

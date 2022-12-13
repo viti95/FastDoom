@@ -54,7 +54,7 @@ void VGA_TestFastSetPalette(void)
     }
 }
 
-void VGA_ProcessPalette(byte *palette)
+void I_ProcessPalette(byte *palette)
 {
     int i;
 

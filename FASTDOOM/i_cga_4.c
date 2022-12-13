@@ -26,7 +26,7 @@ const byte colors[12] = {
 
 unsigned short vrambuffer[16384];
 
-void CGA_ProcessPalette(byte *palette)
+void I_ProcessPalette(byte *palette)
 {
     int i, j;
     byte *ptr = gammatable[usegamma];

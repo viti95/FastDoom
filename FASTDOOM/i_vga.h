@@ -29,5 +29,5 @@
 #define MODE_CONTROL 0x17
 
 void VGA_TestFastSetPalette(void);
-void VGA_ProcessPalette(byte *palette);
+void I_ProcessPalette(byte *palette);
 void I_SetPalette(int numpalette);

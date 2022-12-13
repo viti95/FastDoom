@@ -19,7 +19,7 @@ byte lutcolors[14 * 512];
 byte *ptrlutcolors;
 unsigned short vrambuffer[16384];
 
-void CGA_BW_ProcessPalette(byte *palette)
+void I_ProcessPalette(byte *palette)
 {
     int i;
 

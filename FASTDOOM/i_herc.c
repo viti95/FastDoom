@@ -19,7 +19,7 @@ byte lutcolors[14 * 1024];
 byte *ptrlutcolors;
 byte vrambuffer[32768];
 
-void HERC_ProcessPalette(byte *palette)
+void I_ProcessPalette(byte *palette)
 {
     int i;
 

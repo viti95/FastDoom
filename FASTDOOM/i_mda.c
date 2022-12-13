@@ -32,6 +32,11 @@ void MDA_InitGraphics(void)
     I_DisableMDABlink();
 }
 
+void I_ProcessPalette(byte *palette)
+{
+    // Do nothing
+}
+
 void I_SetPalette(int numpalette)
 {
     // Do nothing

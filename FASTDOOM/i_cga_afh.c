@@ -41,7 +41,7 @@ const byte colors[48] = {
     0x3F, 0x3F, 0x15,  // 14
     0x3F, 0x3F, 0x3F}; // 15
 
-void CGA_AFH_ProcessPalette(byte *palette)
+void I_ProcessPalette(byte *palette)
 {
     int i, j;
     byte *ptr = gammatable[usegamma];

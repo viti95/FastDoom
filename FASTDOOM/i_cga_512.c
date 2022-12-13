@@ -29,7 +29,7 @@ unsigned short lut256colors[14 * 256];
 unsigned short *ptrlut256colors;
 unsigned short vrambuffer[8000];
 
-void CGA_512_ProcessPalette(byte *palette)
+void I_ProcessPalette(byte *palette)
 {
     int i, j;
     unsigned char *ptrLUT55;

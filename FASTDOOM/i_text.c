@@ -129,7 +129,7 @@ void TEXT_80x25_Double_InitGraphics(void)
     int386(0x10, &regs, &regs);
 }
 
-void TEXT_ProcessPalette(byte *palette)
+void I_ProcessPalette(byte *palette)
 {
     int i, j;
     byte *ptr = gammatable[usegamma];

@@ -36,7 +36,7 @@ unsigned short lut16colors[14 * 256];
 unsigned short *ptrlut16colors;
 byte vrambuffer[32768];
 
-void PCP_ProcessPalette(byte *palette)
+void I_ProcessPalette(byte *palette)
 {
     int i, j;
     byte *ptr = gammatable[usegamma];

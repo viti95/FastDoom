@@ -38,7 +38,7 @@ byte *ptrlut16colors;
 unsigned short lastlatch;
 unsigned short vrambuffer[8000];
 
-void EGA_160_ProcessPalette(byte *palette)
+void I_ProcessPalette(byte *palette)
 {
     int i, j;
     byte *ptr = gammatable[usegamma];

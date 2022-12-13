@@ -36,7 +36,7 @@ unsigned short lutcolors[14 * 512];
 unsigned short *ptrlutcolors;
 byte vrambuffer[65536];
 
-void ATI_640_ProcessPalette(byte *palette)
+void I_ProcessPalette(byte *palette)
 {
     int i;
 

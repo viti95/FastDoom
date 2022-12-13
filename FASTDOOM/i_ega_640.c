@@ -52,7 +52,7 @@ byte vrambufferI3[16384];
 
 byte page = 0;
 
-void EGA_640_ProcessPalette(byte *palette)
+void I_ProcessPalette(byte *palette)
 {
     int i;
 
