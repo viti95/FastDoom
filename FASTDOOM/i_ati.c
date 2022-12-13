@@ -100,12 +100,12 @@ void ATI_640_ProcessPalette(byte *palette)
     }
 }
 
-void ATI_640_SetPalette(int numpalette)
+void I_SetPalette(int numpalette)
 {
     ptrlutcolors = lutcolors + numpalette * 512;
 }
 
-void ATI_640_DrawBackbuffer(void)
+void I_FinishUpdate(void)
 {
     int x;
     unsigned char *vram = (unsigned char *)0xB0000;

@@ -357,81 +357,6 @@ void I_ProcessPalette(byte *palette)
 }
 
 //
-// I_SetPalette
-// Palette source must use 8 bit RGB elements.
-//
-void I_SetPalette(int numpalette)
-{
-#if defined(MODE_HERC)
-    HERC_SetPalette(numpalette);
-#endif
-
-#if defined(MODE_EGA640)
-    EGA_640_SetPalette(numpalette);
-#endif
-
-#if defined(MODE_CGA_BW)
-    CGA_BW_SetPalette(numpalette);
-#endif
-
-#if defined(MODE_ATI640)
-    ATI_640_SetPalette(numpalette);
-#endif
-
-#if defined(MODE_PCP)
-    PCP_SetPalette(numpalette);
-#endif
-
-#if defined(MODE_CGA16)
-    CGA_16_SetPalette(numpalette);
-#endif
-
-#if defined(MODE_EGA16)
-    EGA_16_SetPalette(numpalette);
-#endif
-
-#if defined(MODE_VGA16)
-    VGA_16_SetPalette(numpalette);
-#endif
-
-#if defined(MODE_CGA_AFH)
-    CGA_AFH_SetPalette(numpalette);
-#endif
-
-#if defined(MODE_CVB)
-    CGA_CVBS_SetPalette(numpalette);
-#endif
-
-#if defined(MODE_CGA)
-    CGA_SetPalette(numpalette);
-#endif
-
-#if defined(MODE_EGA)
-    EGA_SetPalette(numpalette);
-#endif
-
-#if defined(MODE_EGAW1)
-    EGA_160_SetPalette(numpalette);
-#endif
-
-#if defined(MODE_EGA80)
-    EGA_80_SetPalette(numpalette);
-#endif
-
-#if defined(TEXT_MODE)
-    TEXT_SetPalette(numpalette);
-#endif
-
-#if defined(MODE_CGA512)
-    CGA_512_SetPalette(numpalette);
-#endif
-
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2) || defined(MODE_13H) || defined(MODE_VBE2)
-    VGA_SetPalette(numpalette);
-#endif
-}
-
-//
 // Graphics mode
 //
 
@@ -707,142 +632,28 @@ void I_UpdateNoBlit(void)
 
 extern int screenblocks;
 
-void I_FinishUpdate(void)
+void I_CalculateFPS(void)
 {
     static int fps_counter, fps_starttime, fps_nextcalculation;
     int opt1, opt2;
 
-#if !defined(MODE_HERC) && !defined(MODE_MDA)
-    if (waitVsync)
-        I_WaitSingleVBL();
-#endif
-
-#if defined(MODE_MDA)
-    MDA_DrawBackbuffer();
-#endif
-
-#if defined(MODE_T4025) || defined(MODE_T4050)
-    TEXT_40x25_ChangeVideoPage();
-#endif
-
-#if defined(MODE_T8025)
-    TEXT_80x25_ChangeVideoPage();
-#endif
-
-#if defined(MODE_T8043) || defined(MODE_T8086)
-    TEXT_80x25_EGA_Double_ChangeVideoPage();
-#endif
-
-#if defined(MODE_T8050) || defined(MODE_T80100)
-    TEXT_80x25_Double_ChangeVideoPage();
-#endif
-
-#if defined(MODE_Y)
-    VGA_Y_ChangeVideoPage();
-#endif
-
-#if defined(MODE_VBE2_DIRECT)
-    VBE2_ChangeVideoPage();
-#endif
-
-#if defined(MODE_13H)
-    VGA_13H_DrawBackbuffer();
-#endif
-
-#if defined(MODE_VBE2)
-    VBE2_DrawBackbuffer();
-#endif
-
-#if defined(MODE_HERC)
-    HERC_DrawBackbuffer();
-#endif
-
-#if defined(MODE_CGA)
-    CGA_DrawBackbuffer();
-#endif
-
-#if defined(MODE_CGA_BW)
-    CGA_BW_DrawBackbuffer();
-#endif
-
-#if defined(MODE_CGA16)
-    if (snowfix)
-        CGA_16_DrawBackbuffer_Snow();
-    else
-        CGA_16_DrawBackbuffer();
-#endif
-
-#if defined(MODE_CGA_AFH)
-    if (snowfix)
-        CGA_AFH_DrawBackbuffer_Snow();
-    else
-        CGA_AFH_DrawBackbuffer();
-#endif
-
-#if defined(MODE_EGA16)
-    EGA_16_DrawBackbuffer();
-#endif
-
-#if defined(MODE_EGA80)
-    EGA_80_DrawBackbuffer();
-#endif
-
-#if defined(MODE_EGA)
-    EGA_DrawBackbuffer();
-#endif
-
-#if defined(MODE_EGAW1)
-    EGA_160_DrawBackbuffer();
-#endif
-
-#if defined(MODE_VGA16)
-    VGA_16_DrawBackbuffer();
-#endif
-
-#if defined(MODE_EGA640)
-    EGA_640_DrawBackbuffer();
-#endif
-
-#if defined(MODE_ATI640)
-    ATI_640_DrawBackbuffer();
-#endif
-
-#if defined(MODE_CGA512)
-    CGA_512_DrawBackbuffer();
-#endif
-
-#if defined(MODE_PCP)
-    PCP_DrawBackbuffer();
-#endif
-
-#if defined(MODE_CVB)
-    CGA_CVBS_DrawBackbuffer();
-#endif
-
-#if defined(MODE_V2)
-    VGA_VERT_DrawBackbuffer();
-#endif
-
-    if (showFPS)
+    if (fps_counter == 0)
     {
-        if (fps_counter == 0)
-        {
-            fps_starttime = ticcount;
-        }
+        fps_starttime = ticcount;
+    }
 
-        fps_counter++;
+    fps_counter++;
 
-        // store a value and/or draw when data is ok:
-        if (fps_counter > (TICRATE * 2) && fps_nextcalculation < ticcount)
-        {
-            // in case of a very fast system, this will limit the sampling
-            // minus 1!, exactly 35 FPS when measeraring for a longer time.
-            opt1 = Mul35(fps_counter - 1) << FRACBITS;
-            opt2 = (ticcount - fps_starttime) << FRACBITS;
-            fps = (opt1 >> 14 >= opt2) ? ((opt1 ^ opt2) >> 31) ^ MAXINT : FixedDiv2(opt1, opt2);
-            fps_nextcalculation = ticcount + 12;
-            fps_counter = 0; // flush old data
-        }
+    // store a value and/or draw when data is ok:
+    if (fps_counter > (TICRATE * 2) && fps_nextcalculation < ticcount)
+    {
+        // in case of a very fast system, this will limit the sampling
+        // minus 1!, exactly 35 FPS when measeraring for a longer time.
+        opt1 = Mul35(fps_counter - 1) << FRACBITS;
+        opt2 = (ticcount - fps_starttime) << FRACBITS;
+        fps = (opt1 >> 14 >= opt2) ? ((opt1 ^ opt2) >> 31) ^ MAXINT : FixedDiv2(opt1, opt2);
+        fps_nextcalculation = ticcount + 12;
+        fps_counter = 0; // flush old data
     }
 }
 

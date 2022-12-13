@@ -59,12 +59,12 @@ void EGA_80_ProcessPalette(byte *palette)
     }
 }
 
-void EGA_80_SetPalette(int numpalette)
+void I_SetPalette(int numpalette)
 {
     ptrlut16colors = lut16colors + numpalette * 256;
 }
 
-void EGA_80_DrawBackbuffer(void)
+void I_FinishUpdate(void)
 {
     unsigned char *vram = (unsigned char *)0xA0000;
     byte *ptrvrambuffer = vrambuffer;

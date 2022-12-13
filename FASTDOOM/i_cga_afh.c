@@ -11,6 +11,7 @@
 #include "tables.h"
 #include "math.h"
 #include "i_system.h"
+#include "doomstat.h"
 
 #if defined(MODE_CGA_AFH)
 
@@ -63,7 +64,7 @@ void CGA_AFH_ProcessPalette(byte *palette)
     }
 }
 
-void CGA_AFH_SetPalette(int numpalette)
+void I_SetPalette(int numpalette)
 {
     ptrlut16colors = lut16colors + numpalette * 256;
 }
@@ -136,6 +137,14 @@ void CGA_AFH_DrawBackbuffer(void)
             ptrbackbuffer += 320;
         }
     } while (vram < (unsigned short *)0xBBE80);
+}
+
+void I_FinishUpdate(void)
+{
+    if(snowfix)
+        CGA_AFH_DrawBackbuffer_Snow();
+    else
+        CGA_AFH_DrawBackbuffer();
 }
 
 void CGA_AFH_InitGraphics(void)

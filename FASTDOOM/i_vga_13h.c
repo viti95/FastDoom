@@ -18,7 +18,7 @@
 
 #if defined(MODE_13H)
 
-void VGA_13H_DrawBackbuffer(void)
+void I_FinishUpdate(void)
 {
     if (updatestate & I_FULLSCRN)
     {

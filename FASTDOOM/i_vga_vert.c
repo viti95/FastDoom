@@ -16,7 +16,7 @@
 
 #if defined(MODE_V2)
 
-void VGA_VERT_DrawBackbuffer(void)
+void I_FinishUpdate(void)
 {
     byte *ptrdestscreen;
     int pos;

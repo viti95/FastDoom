@@ -43,12 +43,12 @@ void HERC_ProcessPalette(byte *palette)
     }
 }
 
-void HERC_SetPalette(int numpalette)
+void I_SetPalette(int numpalette)
 {
     ptrlutcolors = lutcolors + numpalette * 1024;
 }
 
-void HERC_DrawBackbuffer(void)
+void I_FinishUpdate(void)
 {
     unsigned char *vram = (unsigned char *)0xB0000;
     byte *ptrvrambuffer = vrambuffer;

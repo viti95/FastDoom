@@ -432,7 +432,16 @@ void D_Display(void)
     // normal update
     if (!wipe)
     {
+#if !defined(MODE_HERC) && !defined(MODE_MDA)
+        if (waitVsync)
+            I_WaitSingleVBL();
+#endif
+        
         I_FinishUpdate(); // page flip or blit buffer
+        
+        if (showFPS)
+            I_CalculateFPS();
+        
         return;
     }
 
@@ -459,7 +468,16 @@ void D_Display(void)
 #if defined(USE_BACKBUFFER)
         updatestate = I_FULLSCRN;
 #endif
+
+#if !defined(MODE_HERC) && !defined(MODE_MDA)
+        if (waitVsync)
+            I_WaitSingleVBL();
+#endif
+        
         I_FinishUpdate(); // page flip or blit buffer
+        
+        if (showFPS)
+            I_CalculateFPS();
     } while (!done);
 #endif
 }

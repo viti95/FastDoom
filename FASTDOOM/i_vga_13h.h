@@ -1,4 +1,4 @@
 #include "doomtype.h"
 
-void VGA_13H_DrawBackbuffer(void);
+void I_FinishUpdate(void);
 void VGA_13H_InitGraphics(void);

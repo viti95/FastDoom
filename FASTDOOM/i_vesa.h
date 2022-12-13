@@ -274,7 +274,7 @@ void VBE_SetDACWidth(char bits);
   */
 
 void VBE2_InitGraphics(void);
-void VBE2_DrawBackbuffer(void);
-void VBE2_ChangeVideoPage(void);
+void I_FinishUpdate(void);
+void I_FinishUpdate(void);
 
 #endif

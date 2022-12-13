@@ -11,6 +11,7 @@
 #include "tables.h"
 #include "math.h"
 #include "i_system.h"
+#include "doomstat.h"
 
 #if defined(MODE_CGA16)
 
@@ -54,7 +55,7 @@ void CGA_16_ProcessPalette(byte *palette)
     }
 }
 
-void CGA_16_SetPalette(int numpalette)
+void I_SetPalette(int numpalette)
 {
     ptrlut16colors = lut16colors + numpalette * 256;
 }
@@ -118,6 +119,14 @@ void CGA_16_DrawBackbuffer(void)
             ptrbackbuffer += 320;
         }
     } while (vram < (unsigned char *)0xBBE80);
+}
+
+void I_FinishUpdate(void)
+{
+    if(snowfix)
+        CGA_16_DrawBackbuffer_Snow();
+    else
+        CGA_16_DrawBackbuffer();
 }
 
 void CGA_16_InitGraphics(void)

@@ -135,12 +135,12 @@ void CGA_512_ProcessPalette(byte *palette)
     }
 }
 
-void CGA_512_SetPalette(int numpalette)
+void I_SetPalette(int numpalette)
 {
     ptrlut256colors = lut256colors + numpalette * 256;
 }
 
-void CGA_512_DrawBackbuffer(void)
+void I_FinishUpdate(void)
 {
     unsigned short *vram = (unsigned short *)0xB8000;
     byte *ptrbackbuffer = backbuffer;

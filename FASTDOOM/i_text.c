@@ -152,12 +152,15 @@ void TEXT_ProcessPalette(byte *palette)
     }
 }
 
-void TEXT_SetPalette(int numpalette)
+void I_SetPalette(int numpalette)
 {
     ptrlut16colors = lut16colors + numpalette * 256;
 }
 
-void TEXT_40x25_ChangeVideoPage(void)
+#if defined(MODE_T4025) || defined(MODE_T4050)
+
+// 40x25 ChangeVideoPage
+void I_FinishUpdate(void)
 {
     union REGS regs;
 
@@ -180,7 +183,12 @@ void TEXT_40x25_ChangeVideoPage(void)
     }
 }
 
-void TEXT_80x25_ChangeVideoPage(void)
+#endif
+
+#if defined(MODE_T8025)
+
+// 80x25 ChangeVideoPage
+void I_FinishUpdate(void)
 {
     union REGS regs;
 
@@ -203,7 +211,12 @@ void TEXT_80x25_ChangeVideoPage(void)
     }
 }
 
-void TEXT_80x25_EGA_Double_ChangeVideoPage(void)
+#endif
+
+#if defined(MODE_T8043) || defined(MODE_T8086)
+
+// 80x25 EGA Double ChangeVideoPage
+void I_FinishUpdate(void)
 {
     union REGS regs;
 
@@ -226,7 +239,12 @@ void TEXT_80x25_EGA_Double_ChangeVideoPage(void)
     }
 }
 
-void TEXT_80x25_Double_ChangeVideoPage(void)
+#endif
+
+#if defined(MODE_T8050) || defined(MODE_T80100)
+
+// 80x25 Double ChangeVideoPage
+void I_FinishUpdate(void)
 {
     union REGS regs;
 
@@ -251,5 +269,7 @@ void TEXT_80x25_Double_ChangeVideoPage(void)
             textdestscreen += 4128;
     }
 }
+
+#endif
 
 #endif

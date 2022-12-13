@@ -1,6 +1,6 @@
 #include "doomtype.h"
 
 void ATI_640_ProcessPalette(byte *palette);
-void ATI_640_SetPalette(int numpalette);
-void ATI_640_DrawBackbuffer(void);
+void I_SetPalette(int numpalette);
+void I_FinishUpdate(void);
 void ATI_640_InitGraphics(void);

@@ -41,12 +41,12 @@ void CGA_BW_ProcessPalette(byte *palette)
     }
 }
 
-void CGA_BW_SetPalette(int numpalette)
+void I_SetPalette(int numpalette)
 {
     ptrlutcolors = lutcolors + numpalette * 512;
 }
 
-void CGA_BW_DrawBackbuffer(void)
+void I_FinishUpdate(void)
 {
     unsigned char *vram = (unsigned char *)0xB8000;
     unsigned short *ptrvrambuffer = vrambuffer;

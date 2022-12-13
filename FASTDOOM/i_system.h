@@ -91,6 +91,7 @@ void I_SetPalette(int numpalette);
 void I_UpdateNoBlit(void);
 #endif
 void I_FinishUpdate(void);
+void I_CalculateFPS(void);
 
 // Wait for vertical retrace or pause a bit.
 void I_WaitSingleVBL(void);

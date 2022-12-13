@@ -70,12 +70,12 @@ void PCP_ProcessPalette(byte *palette)
     }
 }
 
-void PCP_SetPalette(int numpalette)
+void I_SetPalette(int numpalette)
 {
     ptrlut16colors = lut16colors + numpalette * 256;
 }
 
-void PCP_DrawBackbuffer(void)
+void I_FinishUpdate(void)
 {
     int x;
     unsigned char *vram = (unsigned char *)0xB8000;

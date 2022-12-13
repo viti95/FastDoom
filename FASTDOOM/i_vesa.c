@@ -365,7 +365,7 @@ void VBE2_InitGraphics(void)
 #if defined(MODE_VBE2)
 #define SBARHEIGHT 32
 
-void VBE2_DrawBackbuffer(void)
+void I_FinishUpdate(void)
 {
   if (updatestate & I_FULLSCRN)
   {
@@ -406,9 +406,10 @@ void VBE2_DrawBackbuffer(void)
 }
 #endif
 
+#if defined(MODE_VBE2_DIRECT)
 short page = 0;
 
-void VBE2_ChangeVideoPage(void)
+void I_FinishUpdate(void)
 {
   VBE_SetDisplayStart_Y(page);
 
@@ -423,5 +424,6 @@ void VBE2_ChangeVideoPage(void)
     destscreen += 320 * 200;
   }
 }
+#endif
 
 #endif

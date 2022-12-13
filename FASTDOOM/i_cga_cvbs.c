@@ -78,12 +78,12 @@ void CGA_CVBS_ProcessPalette(byte *palette)
     }
 }
 
-void CGA_CVBS_SetPalette(int numpalette)
+void I_SetPalette(int numpalette)
 {
     ptrlut16colors = lut16colors + numpalette * 256;
 }
 
-void CGA_CVBS_DrawBackbuffer(void)
+void I_FinishUpdate(void)
 {
     unsigned char *vram = (unsigned char *)0xB8000;
     unsigned short base = 0;

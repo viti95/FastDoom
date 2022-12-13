@@ -102,12 +102,12 @@ void EGA_640_ProcessPalette(byte *palette)
     }
 }
 
-void EGA_640_SetPalette(int numpalette)
+void I_SetPalette(int numpalette)
 {
     ptrlutcolors = lutcolors + numpalette * 512;
 }
 
-void EGA_640_DrawBackbuffer(void)
+void I_FinishUpdate(void)
 {
     unsigned short i;
     byte *backbufferptr;

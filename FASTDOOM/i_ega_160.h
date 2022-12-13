@@ -1,6 +1,6 @@
 #include "doomtype.h"
 
 void EGA_160_ProcessPalette(byte *palette);
-void EGA_160_SetPalette(int numpalette);
-void EGA_160_DrawBackbuffer(void);
+void I_SetPalette(int numpalette);
+void I_FinishUpdate(void);
 void EGA_160_InitGraphics(void);

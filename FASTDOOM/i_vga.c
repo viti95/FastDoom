@@ -69,7 +69,7 @@ void VGA_ProcessPalette(byte *palette)
     }
 }
 
-void VGA_SetPalette(int numpalette)
+void I_SetPalette(int numpalette)
 {
     int i;
     int pos = Mul768(numpalette);
