@@ -450,7 +450,7 @@ void R_Subsector(int num)
     if (frontsector->floorheight < viewz)
         floorplane = R_FindPlane(frontsector->floorheight, frontsector->floorpic, frontsector->lightlevel);
 
-    if (frontsector->ceilingheight > viewz || frontsector->ceilingpic == skyflatnum)
+    if (frontsector->ceilingheight > viewz || frontsector->isskyflatnum)
         ceilingplane = R_FindPlane(frontsector->ceilingheight, frontsector->ceilingpic, frontsector->lightlevel);
 
     R_AddSprites(frontsector);

@@ -931,7 +931,7 @@ byte PTR_ShootTraverse(intercept_t *in)
             break;
         }
 
-        if (li->frontsector->ceilingpic == skyflatnum && (z > li->frontsector->ceilingheight || (li->backsector && li->backsector->ceilingpic == skyflatnum)))
+        if (li->frontsector->isskyflatnum && (z > li->frontsector->ceilingheight || (li->backsector && li->backsector->isskyflatnum)))
         {
             // don't shoot the sky! it's a sky hack wall
             return 0;

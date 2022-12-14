@@ -154,6 +154,7 @@ void P_UnArchiveWorld(void)
 		sec->ceilingheight = *get++ << FRACBITS;
 		sec->floorpic = *get++;
 		sec->ceilingpic = *get++;
+		sec->isskyflatnum = sec->ceilingpic == skyflatnum;
 		sec->lightlevel = *get++;
 		sec->special = *get++; // needed?
 		sec->tag = *get++;	   // needed?

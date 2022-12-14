@@ -82,6 +82,7 @@ typedef struct
     fixed_t ceilingheight;
     short floorpic;
     short ceilingpic;
+    byte isskyflatnum;
     short lightlevel;
     short special;
     short tag;
