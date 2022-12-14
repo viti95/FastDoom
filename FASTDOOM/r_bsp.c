@@ -504,7 +504,7 @@ void R_RenderBSPNode(int bspnum)
             side = right >= left;
 
             stack_bsp[sp] = bspnum;
-            stack_side[sp] = side;
+            stack_side[sp] = side ^ 1;
 
             sp++;
 
@@ -531,7 +531,7 @@ void R_RenderBSPNode(int bspnum)
         // Possibly divide back space.
         // Walk back up the tree until we find
         // a node that has a visible backspace.
-        while (!R_CheckBBox(bsp->bbox[stack_side[sp] ^ 1]))
+        while (!R_CheckBBox(bsp->bbox[stack_side[sp]]))
         {
             if (sp == 0)
             {
@@ -546,6 +546,6 @@ void R_RenderBSPNode(int bspnum)
             bsp = &nodes[stack_bsp[sp]];
         }
 
-        bspnum = bsp->children[stack_side[sp] ^ 1];
+        bspnum = bsp->children[stack_side[sp]];
     }
 }
