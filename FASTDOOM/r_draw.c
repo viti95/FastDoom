@@ -71,7 +71,10 @@ int columnofs[SCREENWIDTH];
 #if defined(USE_BACKBUFFER)
 byte *ylookup[SCREENHEIGHT];
 #endif
-#if defined(MODE_Y) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_VBE2_DIRECT) || defined(MODE_T80100) || defined(MODE_MDA)
+#if defined(MODE_Y)
+byte *ylookup[SCREENHEIGHT];
+#endif
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_VBE2_DIRECT) || defined(MODE_T80100) || defined(MODE_MDA)
 byte **ylookup;
 #endif
 
@@ -1757,44 +1760,6 @@ void R_DrawSpanText8050(void)
 }
 #endif
 
-#if defined(MODE_Y)
-void R_DrawSpanPotato(void)
-{
-    unsigned position;
-    unsigned step;
-
-    byte *source;
-    byte *colormap;
-    byte *dest;
-
-    int count;
-
-    position = ds_frac;
-    step = ds_step;
-
-    source = ds_source;
-    colormap = ds_colormap;
-
-    dest = destview + Mul80(ds_y);
-    count = dest + ds_x2;
-    dest += ds_x1;
-
-    do
-    {
-        unsigned xtemp;
-        unsigned ytemp;
-        unsigned spot;
-
-        ytemp = position >> 4;
-        ytemp = ytemp & 4032;
-        xtemp = position >> 26;
-        spot = xtemp | ytemp;
-        *dest++ = colormap[source[spot]];
-        position += step;
-    } while (dest <= count);
-}
-#endif
-
 //
 // Spectre/Invisibility.
 //
@@ -2921,7 +2886,7 @@ void R_InitBuffer(int width, int height)
 
     // Column offset. For windows.
     for (i = 0; i < width; i++)
-        columnofs[i] = viewwindowx + i;
+        columnofs[i] = i;
 
 // Same with base row offset.
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
@@ -2948,6 +2913,10 @@ void R_InitBuffer(int width, int height)
 #if defined(USE_BACKBUFFER)
     for (i = 0; i < height; i++)
         ylookup[i] = backbuffer + Mul320(i + viewwindowy);
+#endif
+#if defined(MODE_Y)
+    for (i = 0; i < height; i++)
+        ylookup[i] = Mul80(i);
 #endif
 }
 

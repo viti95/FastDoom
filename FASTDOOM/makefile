@@ -96,6 +96,7 @@ GLOBOBJS = &
  i_sound.obj &
  planar.obj &
  linear.obj &
+ potato.obj &
  vbe2d.obj &
  tables.obj &
  f_finale.obj &

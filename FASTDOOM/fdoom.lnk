@@ -76,6 +76,7 @@ file math.obj
 file i_sound.obj
 file planar.obj
 file linear.obj
+file potato.obj
 file vbe2d.obj
 file tables.obj
 file f_finale.obj
