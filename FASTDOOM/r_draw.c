@@ -66,14 +66,15 @@ int endscreen;
 int startscreen;
 #endif
 
-int columnofs[SCREENWIDTH];
-
 #if defined(USE_BACKBUFFER)
+int columnofs[SCREENWIDTH];
 byte *ylookup[SCREENHEIGHT];
 #endif
+
 #if defined(MODE_Y)
 byte *ylookup[SCREENHEIGHT];
 #endif
+
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_VBE2_DIRECT) || defined(MODE_T80100) || defined(MODE_MDA)
 byte **ylookup;
 #endif
@@ -2884,9 +2885,20 @@ void R_InitBuffer(int width, int height)
     #endif
 #endif
 
+#if defined(USE_BACKBUFFER)
+    for (i = 0; i < height; i++)
+        ylookup[i] = backbuffer + Mul320(i + viewwindowy);
+#endif
+#if defined(MODE_Y)
+    for (i = 0; i < height; i++)
+        ylookup[i] = Mul80(i);
+#endif
+
     // Column offset. For windows.
+#if defined(USE_BACKBUFFER)
     for (i = 0; i < width; i++)
-        columnofs[i] = i;
+        columnofs[i] = viewwindowx + i;
+#endif
 
 // Same with base row offset.
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)

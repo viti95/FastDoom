@@ -65,11 +65,11 @@ CODE_SYM_DEF R_DrawColumnPotato
   mov  ebp,[_dc_yh]
   mov  eax,[_dc_yl]
   mov  edi,[_ylookup+ebp*4]
-  mov  ebx,[_dc_x]
-  add  edi,[_destview]
-  add  edi,[_columnofs+ebx*4]    
   sub  ebp,eax         ; ebp = pixel count
   js   short .done
+
+  add  edi,[_destview]
+  add  edi,[_dc_x]
 
   mov   ecx,[_dc_iscale]
 
@@ -169,7 +169,6 @@ CODE_SYM_DEF R_DrawSpanPotato
 
   mov     edi,[_ylookup+edi*4]
   mov     eax,[_ds_colormap]
-  add     edi,[_columnofs]
   add     edi,[_destview]
 
   ; feed the pipeline and jump in
@@ -178,6 +177,7 @@ CODE_SYM_DEF R_DrawSpanPotato
   mov     ebp,0x0FFF  ; used to mask off slop high bits from position
   shld    ebx,ecx,6   ; shift x units in
   and     ebx,ebp     ; mask off slop bits
+  add     ecx,edx
   call    [callpoint]
 
   mov     ebx,[returnpoint]

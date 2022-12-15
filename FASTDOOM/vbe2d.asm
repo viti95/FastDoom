@@ -161,6 +161,7 @@ CODE_SYM_DEF R_DrawSpanVBE2
   add  edi,[_destview]
   shld  ebx,ecx,6       ; shift x units in
   and   ebx,ebp         ; mask off slop bits
+  add   ecx,edx
   
   ; feed the pipeline and jump in
   call  [callpoint]

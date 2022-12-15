@@ -175,6 +175,7 @@ CODE_SYM_DEF R_DrawSpan_13h
   mov     ebp,0x0FFF  ; used to mask off slop high bits from position
   shld    ebx,ecx,6   ; shift x units in
   and     ebx,ebp     ; mask off slop bits
+  add     ecx,edx
   call    [callpoint]
 
   mov     ebx,[returnpoint]
