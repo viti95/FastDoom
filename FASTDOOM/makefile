@@ -97,6 +97,7 @@ GLOBOBJS = &
  planar.obj &
  linear.obj &
  potato.obj &
+ low.obj &
  vbe2d.obj &
  tables.obj &
  f_finale.obj &
