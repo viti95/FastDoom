@@ -70,9 +70,9 @@ CODE_SYM_DEF R_DrawColumnLow
 
   ; set plane
   mov  ecx,[_dc_x]
-  mov  esi, ecx
   add  edi,[_destview]
-
+  mov  esi, ecx
+  
   and  cl,1
   mov  al,3
   add  cl, cl
@@ -81,8 +81,8 @@ CODE_SYM_DEF R_DrawColumnLow
   out  dx,al
 
   shr esi,1
-  add edi,esi
   mov eax, ebx
+  add edi,esi
 
   mov   ecx,[_dc_iscale]
 
