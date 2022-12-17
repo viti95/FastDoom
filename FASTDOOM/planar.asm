@@ -27,107 +27,6 @@ extern _centery
 
 BEGIN_DATA_SECTION
 
-pixelcount: dd 0
-loopcount:  dd 0
-
-BEGIN_CODE_SECTION
-
-; ===========================================================================
-; R_DrawColumn
-; vertical texture mapping, full resolution
-; ===========================================================================
-CODE_SYM_DEF R_DrawColumn
-  pushad
-
-  mov  eax,[_dc_yh]
-  mov  ebp,[_dc_yl]
-  inc  eax
-  sub  eax,ebp           ; pixel count
-
-  js   .done             ; nothing to scale
-
-  mov  ebx,[_dc_x]
-  mov  [pixelcount],eax  ; save for final pixel
-  mov  cl,bl
-  shr  eax,1             ; double pixel count
-  and  cl,3
-  mov  [loopcount],eax
-  mov  dx,SC_INDEX+1
-  mov  al,1
-  lea  edi,[ebp+ebp*4]
-  shl  al,cl
-  shl  edi,4
-  shr  ebx,2
-  out  dx,al
-  add  edi,ebx
-  mov   eax,[_centery]
-  add  edi,[_destview]
-  mov  ecx,[_dc_iscale]
-  sub   eax,ebp
-  imul  ecx
-  mov   ebp,[_dc_texturemid]
-  mov  esi,[_dc_source]
-  sub   ebp,eax
-  mov  ebx,[_dc_iscale]
-  shl   ebp,9 ; 7 significant bits, 25 frac
-  shl  ebx,9
-  mov  eax,.patch1+2
-  mov  [eax],ebx
-  mov  eax,.patch2+2
-  mov  [eax],ebx
-
-  ; eax = aligned colormap
-  ; ebx = aligned colormap
-  ; ecx,edx = scratch
-  ; esi = virtual source
-  ; edi = moving destination pointer
-  ; ebp = frac
-
-  mov  ecx,ebp  ; begin calculating first pixel
-  add  ebp,ebx  ; advance frac pointer
-  shr  ecx,25   ; finish calculation for first pixel
-  mov  edx,ebp  ; begin calculating second pixel
-  mov  eax,[_dc_colormap]
-  add  ebp,ebx  ; advance frac pointer
-  shr  edx,25   ; finish calculation for second pixel
-  mov  ebx,eax
-  mov  al,[esi+ecx]  ; get first pixel
-  mov  bl,[esi+edx]  ; get second pixel
-  mov  al,[eax]      ; color translate first pixel
-  mov  bl,[ebx]      ; color translate second pixel
-
-  test  [pixelcount],dword -2
-  jnz   short .doubleloop ; at least two pixels to map?
-  jmp   short .checklast
-.doubleloop:
-  mov   ecx,ebp ; begin calculating third pixel
-.patch1:
-  add   ebp,0x12345678 ; advance frac pointer (runtime patched)
-  mov   [edi],al       ; write first pixel
-  shr   ecx,25         ; finish calculation for third pixel
-  mov   edx,ebp        ; begin calculating fourth pixel
-.patch2:
-  add   ebp,0x12345678          ; advance frac pointer (runtime patched)
-  mov   [edi+SCREENWIDTH/4],bl  ; write second pixel
-  shr   edx,25                  ; finish calculation for fourth pixel
-  mov   al,[esi+ecx]            ; get third pixel
-  add   edi,SCREENWIDTH/2	      ; advance to third pixel destination
-  mov   bl,[esi+edx]            ; get fourth pixel
-  dec   dword [loopcount]       ; done with loop?
-  mov   al,[eax]                ; color translate third pixel
-  mov   bl,[ebx]                ; color translate fourth pixel
-  jnz   short .doubleloop
-.checklast:
-  test  [pixelcount],dword 1
-  jz    short .done
-  mov   [edi],al ; write final pixel
-.done:
-  popad
-  ret
-; R_DrawColumn ends
-
-CONTINUE_DATA_SECTION
-
 dest:       dd 0
 endplane:   dd 0
 curplane:   dd 0
@@ -136,8 +35,9 @@ fracpstep:  dd 0
 curx:       dd 0
 curpx:      dd 0
 endpx:      dd 0
+loopcount:  dd 0
 
-CONTINUE_CODE_SECTION
+BEGIN_CODE_SECTION
 
 ; ===========================================================================
 ; R_DrawSpan
