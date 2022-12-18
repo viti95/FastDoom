@@ -74,11 +74,9 @@ file i_mda.obj
 file i_vga_y.obj
 file math.obj
 file i_sound.obj
-file planar.obj
 file linear.obj
-file planar_potato.obj
-file planar_low.obj
-file planar_high.obj
+file planar.obj
+file planar2.obj
 file vbe2d.obj
 file tables.obj
 file f_finale.obj

@@ -91,6 +91,98 @@ CODE_SYM_DEF R_DrawColumnPotato
   ret
 ; R_DrawColumn_13h ends
 
+; ================
+; R_DrawColumnLow
+; ================
+CODE_SYM_DEF R_DrawColumnLow
+  pushad
+
+  mov  ebp,[_dc_yh]
+  mov  ebx,[_dc_yl]
+  mov  edi,[_ylookup+ebp*4]
+  sub  ebp,ebx         ; ebp = pixel count
+  js   short .done
+
+  ; set plane
+  mov  ecx,[_dc_x]
+  add  edi,[_destview]
+  mov  esi, ecx
+  
+  and  cl,1
+  mov  al,3
+  add  cl, cl
+  mov  dx,SC_INDEX+1
+  shl  al,cl
+  out  dx,al
+
+  shr esi,1
+  mov eax, ebx
+  add edi,esi
+
+  mov   ecx,[_dc_iscale]
+
+  sub   eax,[_centery]
+  imul  ecx
+  mov   edx,[_dc_texturemid]
+  shl   ecx,9 ; 7 significant bits, 25 frac
+  add   edx,eax
+  mov   esi,[_dc_source]
+  shl   edx,9 ; 7 significant bits, 25 frac
+  mov   eax,[_dc_colormap]
+
+  xor   ebx,ebx
+  shld  ebx,edx,7
+  call  [scalecalls+4+ebp*4]
+
+.done:
+  popad
+  ret
+; R_DrawColumn_13h ends
+
+CODE_SYM_DEF R_DrawColumn
+  pushad
+
+  mov  ebp,[_dc_yh]
+  mov  ebx,[_dc_yl]
+  mov  edi,[_ylookup+ebp*4]
+  sub  ebp,ebx         ; ebp = pixel count
+  js   short .done
+
+  ; set plane
+  mov  ecx,[_dc_x]
+  add  edi,[_destview]
+  mov  esi, ecx
+  
+  and  cl,3
+  mov  dx,SC_INDEX+1
+  mov  al,1
+  shl  al,cl
+  out  dx,al
+
+  shr esi,2
+  mov eax, ebx
+  add edi,esi
+
+  mov   ecx,[_dc_iscale]
+
+  sub   eax,[_centery]
+  imul  ecx
+  mov   edx,[_dc_texturemid]
+  shl   ecx,9 ; 7 significant bits, 25 frac
+  add   edx,eax
+  mov   esi,[_dc_source]
+  shl   edx,9 ; 7 significant bits, 25 frac
+  mov   eax,[_dc_colormap]
+
+  xor   ebx,ebx
+  shld  ebx,edx,7
+  call  [scalecalls+4+ebp*4]
+
+.done:
+  popad
+  ret
+; R_DrawColumn_13h ends
+
 %macro SCALELABEL 1
   vscale%1
 %endmacro

@@ -94,11 +94,9 @@ GLOBOBJS = &
  i_main.obj &
  i_ibm.obj &
  i_sound.obj &
- planar.obj &
  linear.obj &
- planar_potato.obj &
- planar_low.obj &
- planar_high.obj &
+ planar.obj &
+ planar2.obj &
  vbe2d.obj &
  tables.obj &
  f_finale.obj &
