@@ -631,7 +631,7 @@ void I_InitGraphics(void)
     TEXT_80x25_InitGraphics();
 #endif
 
-#if defined(MODE_T8050) || defined(MODE_T80100) || defined(MODE_T8043) || defined(MODE_T8086)
+#if defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086)
     TEXT_80x25_Double_InitGraphics();
 #endif
 

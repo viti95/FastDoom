@@ -99,7 +99,7 @@ void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int de
     for (; height > 0; height--)
     {
         CopyBytes(src, dest, width);
-        //memcpy(dest, src, width);
+        // memcpy(dest, src, width);
         src += SCREENWIDTH;
         dest += SCREENWIDTH;
     }
@@ -351,7 +351,7 @@ void V_WriteCharDirect(int x, int y, unsigned char c)
 }
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T80100) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_MDA)
 void V_WriteTextColorDirect(int x, int y, char *string, unsigned short color)
 {
     unsigned short *dest;
@@ -516,13 +516,15 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
     for (; col < w; x++, col++, desttop++)
     {
 #if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CVBS) || defined(MODE_EGAW1)
-        if ((int) desttop & 1){
+        if ((int)desttop & 1)
+        {
             continue;
         }
 #endif
 
 #if defined(MODE_EGA80) || defined(MODE_CGA512)
-        if ((int) desttop & 3){
+        if ((int)desttop & 3)
+        {
             continue;
         }
 #endif
@@ -559,7 +561,7 @@ void V_DrawPatchDirectText8043(int x, int y, patch_t *patch)
     y -= patch->topoffset;
     x -= patch->leftoffset;
 
-    x /= 4; // 320 --> 80
+    x /= 4;             // 320 --> 80
     y = (y * 149) / 32; // 200 --> 43
 
     desttop = textdestscreen + Mul80(y) + x;
@@ -604,7 +606,7 @@ void V_DrawPatchDirectText8086(int x, int y, patch_t *patch)
     y -= patch->topoffset;
     x -= patch->leftoffset;
 
-    x /= 4; // 320 --> 80
+    x /= 4;             // 320 --> 80
     y = (y * 149) / 32; // 200 --> 43
 
     desttop = textdestscreen + Mul80(y) + x;
@@ -735,70 +737,6 @@ void V_DrawPatchDirectText4050(int x, int y, patch_t *patch)
                 }
 
                 source += 4;
-            }
-            column = (column_t *)((byte *)column + column->length + 4);
-        }
-
-        desttop += 1;
-    }
-}
-#endif
-
-#if defined(MODE_T80100)
-void V_DrawPatchDirectText80100(int x, int y, patch_t *patch)
-{
-    int count;
-    int col;
-    column_t *column;
-    unsigned short *desttop;
-    unsigned short *dest;
-    byte *source;
-    int w;
-    byte odd;
-    unsigned short vmem;
-
-    y -= patch->topoffset;
-    x -= patch->leftoffset;
-
-    x /= 4; // 320 --> 80
-    y /= 2; // 200 --> 100
-
-    desttop = textdestscreen + Mul80(y / 2) + x;
-
-    w = patch->width;
-    for (col = 0; col < w; col += 4)
-    {
-        column = (column_t *)((byte *)patch + patch->columnofs[col]);
-
-        // step through the posts in a column
-        while (column->topdelta != 0xff)
-        {
-            source = (byte *)column + 3;
-            odd = (column->topdelta / 4 + y) & 1;
-            dest = desttop + Mul80(column->topdelta / 4);
-            count = column->length / 2;
-
-            while (count--)
-            {
-                vmem = *dest;
-
-                if (odd)
-                {
-                    vmem = vmem & 0x0F00;
-                    *dest = vmem | ptrlut16colors[*source] << 12 | 223;
-
-                    odd = 0;
-                    dest += 80;
-                }
-                else
-                {
-                    vmem = vmem & 0xF000;
-                    *dest = vmem | ptrlut16colors[*source] << 8 | 223;
-
-                    odd = 1;
-                }
-
-                source += 2;
             }
             column = (column_t *)((byte *)column + column->length + 4);
         }

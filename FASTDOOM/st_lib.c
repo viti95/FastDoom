@@ -32,7 +32,6 @@
 
 #include "doomstat.h"
 
-
 #include <stdio.h>
 
 // in AM_map.c
@@ -64,7 +63,7 @@ void STlib_initNum(st_number_t *n,
 // Note: worth the trouble?
 //
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA)
 void STlib_drawNumText(st_number_t *n, int x, int y)
 {
     int num = *n->num;
@@ -274,7 +273,8 @@ void STlib_updateMultIcon_Direct(st_multicon_t *mi)
     int x;
     int y;
 
-    if (*mi->inum != -1){
+    if (*mi->inum != -1)
+    {
         V_DrawPatchDirect(mi->x, mi->y, mi->p[*mi->inum]);
     }
 }

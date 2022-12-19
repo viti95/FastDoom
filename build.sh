@@ -61,10 +61,6 @@ elif [ "$target" = "fdoomt50.exe" ]; then
   buildopts="-dMODE_T8050"
   buildtarget="fdoom.exe"
 
-elif [ "$target" = "fdoomt52.exe" ]; then
-  buildopts="-dMODE_T80100"
-  buildtarget="fdoom.exe"
-
 elif [ "$target" = "fdoomvbr.exe" ]; then
   buildopts="-dMODE_VBE2"
   buildtarget="fdoom.exe"

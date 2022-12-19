@@ -241,7 +241,7 @@ void I_FinishUpdate(void)
 
 #endif
 
-#if defined(MODE_T8050) || defined(MODE_T80100)
+#if defined(MODE_T8050)
 
 // 80x25 Double ChangeVideoPage
 void I_FinishUpdate(void)

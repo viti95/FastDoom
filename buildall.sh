@@ -22,8 +22,6 @@
 ./build.sh clean
 ./build.sh fdoomt50.exe
 ./build.sh clean
-./build.sh fdoomt52.exe
-./build.sh clean
 ./build.sh fdoomvbr.exe
 ./build.sh clean
 ./build.sh fdoomvbd.exe

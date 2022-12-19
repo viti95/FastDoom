@@ -48,7 +48,7 @@
 //  and the total size == width*height*depth/8.,
 //
 
-#if !defined(MODE_T8050) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_T8043) && !defined(MODE_T8086) && !defined(MODE_MDA)
+#if !defined(MODE_T8050) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_T8043) && !defined(MODE_T8086) && !defined(MODE_MDA)
 int viewwidth;
 int viewheight;
 int viewheightshift;
@@ -75,7 +75,7 @@ byte *ylookup[SCREENHEIGHT];
 byte *ylookup[SCREENHEIGHT];
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_VBE2_DIRECT) || defined(MODE_T80100) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_VBE2_DIRECT) || defined(MODE_MDA)
 byte **ylookup;
 #endif
 
@@ -994,7 +994,7 @@ void R_DrawColumnText8025(void)
 }
 #endif
 
-#if defined(MODE_T80100) || defined(MODE_T8086)
+#if defined(MODE_T8086)
 void R_DrawColumnText80100(void)
 {
     fixed_t frac;
@@ -1109,7 +1109,7 @@ void R_DrawSpanText8025(void)
 }
 #endif
 
-#if defined(MODE_T80100) || defined(MODE_T8086)
+#if defined(MODE_T8086)
 void R_DrawSpanText80100(void)
 {
     int spot;
@@ -1179,7 +1179,7 @@ void R_DrawColumnText8050(void)
 }
 #endif
 
-#if defined(MODE_T80100) || defined(MODE_T8086)
+#if defined(MODE_T8086)
 void R_DrawSkyFlatText80100(void)
 {
     int count;
@@ -1453,7 +1453,7 @@ void R_DrawFuzzColumnSaturnText8025(void)
 }
 #endif
 
-#if defined(MODE_T80100) || defined(MODE_T8086)
+#if defined(MODE_T8086)
 void R_DrawFuzzColumnSaturnText80100(void)
 {
     fixed_t frac;
@@ -1653,7 +1653,7 @@ void R_DrawFuzzColumnFastText8025(void)
 }
 #endif
 
-#if defined(MODE_T80100) || defined(MODE_T8086)
+#if defined(MODE_T8086)
 void R_DrawFuzzColumnFastText80100(void)
 {
     register int count;
@@ -1766,7 +1766,7 @@ void R_DrawSpanText8050(void)
 //
 #define FUZZTABLE 50
 
-#if defined(MODE_Y) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_MDA)
+#if defined(MODE_Y) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA)
 #define FUZZOFF (SCREENWIDTH / 4)
 #endif
 
@@ -2181,7 +2181,7 @@ void R_DrawFuzzColumnText8025(void)
 }
 #endif
 
-#if defined(MODE_T80100) || defined(MODE_T8086)
+#if defined(MODE_T8086)
 void R_DrawFuzzColumnText80100(void)
 {
     register int count;
@@ -2724,7 +2724,7 @@ void R_DrawSpanFlatPotato(void)
 }
 #endif
 
-#if defined(MODE_T80100) || defined(MODE_T8086)
+#if defined(MODE_T8086)
 void R_DrawSpanFlatText80100(void)
 {
     int countp;
@@ -2825,7 +2825,6 @@ void R_DrawSpanFlatText4025(void)
 #if defined(MODE_MDA)
 void R_DrawSpanTextMDA(void)
 {
-
 }
 #endif
 
@@ -2880,9 +2879,9 @@ void R_InitBuffer(int width, int height)
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     viewwindowx = (SCREENWIDTH - width) >> 1;
 
-    #if defined(MODE_13H) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_VBE2)
     startscreen = Mul320(viewwindowy) + viewwindowx;
-    #endif
+#endif
 #endif
 
 #if defined(USE_BACKBUFFER)
@@ -2894,7 +2893,7 @@ void R_InitBuffer(int width, int height)
         ylookup[i] = Mul80(i);
 #endif
 
-    // Column offset. For windows.
+        // Column offset. For windows.
 #if defined(USE_BACKBUFFER)
     for (i = 0; i < width; i++)
         columnofs[i] = viewwindowx + i;
@@ -2906,22 +2905,21 @@ void R_InitBuffer(int width, int height)
     {
         viewwindowy = 0;
 
-        #if defined(MODE_13H) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_VBE2)
         startscreen = viewwindowx;
         endscreen = Mul320(viewheight);
-        #endif
+#endif
     }
     else
     {
         viewwindowy = (SCREENHEIGHT - SBARHEIGHT - height) >> 1;
 
-        #if defined(MODE_13H) || defined(MODE_VBE2)
+#if defined(MODE_13H) || defined(MODE_VBE2)
         startscreen = Mul320(viewwindowy) + viewwindowx;
         endscreen = Mul320(viewwindowy + viewheight);
-        #endif
+#endif
     }
 #endif
-
 }
 
 //
@@ -3063,7 +3061,7 @@ void R_FillBackScreen(void)
 
 #if defined(MODE_Y)
     for (i = 0; i < 4; i++)
-    {        
+    {
         outp(SC_INDEX + 1, 1 << i);
 
         dest = (byte *)0xac000;

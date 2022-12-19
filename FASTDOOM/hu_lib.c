@@ -102,7 +102,7 @@ void HUlib_drawTextLine(hu_textline_t *l)
         x++;
     }
 #endif
-#if defined(MODE_T8050) || defined(MODE_T80100)
+#if defined(MODE_T8050)
     x = l->x / 4;
     for (i = 0; i < l->len; i++)
     {

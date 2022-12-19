@@ -275,7 +275,7 @@ void D_Display(void)
         }
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA)
         ST_doPaletteStuff();
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
@@ -390,7 +390,7 @@ void D_Display(void)
         V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 4, "PAUSE");
 #endif
 
-#if defined(MODE_T8050) || defined(MODE_T80100) || defined(MODE_T8043) || defined(MODE_T8086)
+#if defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086)
         V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 2, "PAUSE");
 #endif
 
@@ -409,7 +409,7 @@ void D_Display(void)
     }
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA)
     if (screenblocks <= 11 && gamestate == GS_LEVEL)
     {
 #if defined(MODE_T4025) || defined(MODE_T4050)
@@ -421,7 +421,7 @@ void D_Display(void)
 #if defined(MODE_T8043) || defined(MODE_T8086)
         ST_DrawerText8043();
 #endif
-#if defined(MODE_T8050) || defined(MODE_T80100)
+#if defined(MODE_T8050)
         ST_DrawerText8050();
 #endif
     }
@@ -436,12 +436,12 @@ void D_Display(void)
         if (waitVsync)
             I_WaitSingleVBL();
 #endif
-        
+
         I_FinishUpdate(); // page flip or blit buffer
-        
+
         if (showFPS)
             I_CalculateFPS();
-        
+
         return;
     }
 
@@ -473,9 +473,9 @@ void D_Display(void)
         if (waitVsync)
             I_WaitSingleVBL();
 #endif
-        
+
         I_FinishUpdate(); // page flip or blit buffer
-        
+
         if (showFPS)
             I_CalculateFPS();
     } while (!done);
@@ -563,9 +563,6 @@ void D_PageDrawer(void)
 #endif
 #if defined(MODE_T8050)
     V_DrawPatchDirectText8050(0, 0, W_CacheLumpName(pagename, PU_CACHE));
-#endif
-#if defined(MODE_T80100)
-    V_DrawPatchDirectText80100(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
     V_DrawPatchScreen0(0, 0, W_CacheLumpName(pagename, PU_CACHE));
@@ -1096,13 +1093,14 @@ unsigned char SelectIBMCGA(void)
     fflush(stdout);
     selection = getch();
 
-    switch(selection){
-        case 49:
-            return CGA_OLD;
-        case 50:
-            return CGA_NEW;
-        default:
-            I_Error("Wrong selection");
+    switch (selection)
+    {
+    case 49:
+        return CGA_OLD;
+    case 50:
+        return CGA_NEW;
+    default:
+        I_Error("Wrong selection");
     }
 }
 #endif
@@ -1143,7 +1141,7 @@ void D_DoomMain(void)
     D_AddFile("modecvbs.wad");
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T80100)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050)
     D_AddFile("modetxt.wad");
 #endif
 
@@ -1411,7 +1409,7 @@ void D_DoomMain(void)
     M_CheckParmDisable("-novsync", &waitVsync);
     M_CheckParmDisable("-nofps", &showFPS);
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T80100) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA)
     noMelt = 1;
 #endif
 

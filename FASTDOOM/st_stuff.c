@@ -223,7 +223,7 @@
 #define ST_DETHX 109
 #define ST_DETHY 191
 
-//Incoming messages window location
+// Incoming messages window location
 #define ST_MSGTEXTX 0
 #define ST_MSGTEXTY 0
 // Dimensions given in characters.
@@ -636,9 +636,9 @@ void ST_updateFaceWidget(void)
 	byte doevilgrin;
 	int pos;
 
-	//if (priority < 10)
+	// if (priority < 10)
 	//{
-	// dead
+	//  dead
 	if (!players.health)
 	{
 		priority = 9;
@@ -1185,7 +1185,7 @@ void ST_DrawerText8043()
 }
 #endif
 
-#if defined(MODE_T8050) || defined(MODE_T80100)
+#if defined(MODE_T8050)
 void ST_DrawerText8050()
 {
 	if (w_health.n.on)
@@ -1401,7 +1401,7 @@ void ST_loadGraphics(void)
 	}
 
 	// Load percent key.
-	//Note: why not load STMINUS here, too?
+	// Note: why not load STMINUS here, too?
 	tallpercent = (patch_t *)W_CacheLumpName("STTPRCNT", PU_STATIC);
 
 	// key cards
@@ -1499,11 +1499,11 @@ void ST_createWidgets_mini(void)
 
 	// health percentage
 	STlib_initNum(&(w_health.n),
-					  270,
-					  180,
-					  shortnum,
-					  &players.health,
-					  &st_statusbaron);
+				  270,
+				  180,
+				  shortnum,
+				  &players.health,
+				  &st_statusbaron);
 
 	// faces
 	STlib_initMultIcon(&w_faces,
@@ -1515,11 +1515,11 @@ void ST_createWidgets_mini(void)
 
 	// armor percentage - should be colored later
 	STlib_initNum(&(w_armor.n),
-					  270,
-					  190,
-					  shortnum,
-					  &players.armorpoints,
-					  &st_statusbaron);
+				  270,
+				  190,
+				  shortnum,
+				  &players.armorpoints,
+				  &st_statusbaron);
 
 	// keyboxes 0-2
 	STlib_initMultIcon(&w_keyboxes[0],
@@ -1542,7 +1542,6 @@ void ST_createWidgets_mini(void)
 					   keys,
 					   &keyboxes[2],
 					   &st_statusbaron);
-
 }
 
 void ST_createWidgets(void)
@@ -1719,9 +1718,12 @@ void ST_Start(void)
 
 	ST_initData();
 
-	if (screenblocks == 11){
+	if (screenblocks == 11)
+	{
 		ST_createWidgets_mini();
-	}else{
+	}
+	else
+	{
 		ST_createWidgets();
 	}
 

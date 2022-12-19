@@ -62,7 +62,7 @@ typedef struct
 // There was a lot of stuff grabbed wrong, so I changed it...
 //
 
-#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8086) && !defined(MODE_T80100) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA)
+#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8086) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA)
 fixed_t pspritescale;
 fixed_t pspriteiscale;
 fixed_t pspriteiscaleneg;
@@ -201,7 +201,7 @@ void R_InitSpriteDefs(char const **namelist)
         sprites[i].numframes = maxframe;
         sprites[i].spriteframes = Z_MallocUnowned(maxframe * sizeof(spriteframe_t), PU_STATIC);
         CopyBytes(sprtemp, sprites[i].spriteframes, maxframe * sizeof(spriteframe_t));
-        //memcpy(sprites[i].spriteframes, sprtemp, maxframe * sizeof(spriteframe_t));
+        // memcpy(sprites[i].spriteframes, sprtemp, maxframe * sizeof(spriteframe_t));
     }
 }
 
@@ -269,7 +269,7 @@ void R_DrawVisSprite(vissprite_t *vis)
         colfunc = fuzzcolfunc;
     }
 
-#if defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_T8086)
+#if defined(MODE_T4050) || defined(MODE_T8086)
     dc_iscale = abs(vis->xiscale) >> 1;
 #endif
 #if defined(MODE_Y)
@@ -336,19 +336,21 @@ void R_DrawVisSprite(vissprite_t *vis)
             dc_yh = yh;
             dc_yl = yl;
 
-            #if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CVB) || defined(MODE_EGAW1)
-            if ((dc_x & 1) == 0){
+#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CVB) || defined(MODE_EGAW1)
+            if ((dc_x & 1) == 0)
+            {
                 colfunc();
             }
-            #elif defined(MODE_EGA80) || defined(MODE_CGA512)
-            if ((dc_x & 3) == 0){
+#elif defined(MODE_EGA80) || defined(MODE_CGA512)
+            if ((dc_x & 3) == 0)
+            {
                 colfunc();
             }
-            #elif defined(MODE_MDA)
-                R_DrawSpriteTextMDA();
-            #else
-                colfunc();
-            #endif
+#elif defined(MODE_MDA)
+            R_DrawSpriteTextMDA();
+#else
+            colfunc();
+#endif
 
             column = (column_t *)((byte *)column + column->length + 4);
         }
@@ -485,13 +487,13 @@ void R_ProjectSprite(mobj_t *thing)
             num_vissprite_alloc = num_vissprite_alloc * 2;
             vissprites = Z_MallocUnowned(num_vissprite_alloc * sizeof(*vissprites), PU_STATIC);
             CopyBytes(vissprites_old, vissprites, num_vissprite_alloc_old * sizeof(*vissprites));
-            //memcpy(vissprites, vissprites_old, num_vissprite_alloc_old * sizeof(*vissprites));
+            // memcpy(vissprites, vissprites_old, num_vissprite_alloc_old * sizeof(*vissprites));
             Z_Free(vissprites_old);
         }
     }
     vis = vissprites + num_vissprite++;
 
-#if defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_T8086)
+#if defined(MODE_T4050) || defined(MODE_T8086)
     vis->scale = xscale << 1;
 #endif
 #if defined(MODE_Y)
@@ -508,7 +510,7 @@ void R_ProjectSprite(mobj_t *thing)
     vis->texturemid = gzt - viewz;
     vis->x1 = x1 < 0 ? 0 : x1;
     vis->x2 = x2 > viewwidthlimit ? viewwidthlimit : x2;
-    //iscale = FixedDiv(FRACUNIT, xscale);
+    // iscale = FixedDiv(FRACUNIT, xscale);
     iscale = (4 >= xscale) ? (65536 ^ xscale >> 31) ^ MAXINT : FixedDiv2(65536, xscale);
 
     if (flip)
@@ -546,7 +548,7 @@ void R_ProjectSprite(mobj_t *thing)
     {
         // diminished light
 
-#if defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_T8086)
+#if defined(MODE_T4050) || defined(MODE_T8086)
         index = xscale >> (LIGHTSCALESHIFT - 1);
 #endif
 #if defined(MODE_Y)
@@ -633,7 +635,7 @@ void R_DrawPSprite(pspdef_t *psp)
     vis->x1 = x1 < 0 ? 0 : x1;
     vis->x2 = x2 > viewwidthlimit ? viewwidthlimit : x2;
 
-#if defined(MODE_T4050) || defined(MODE_T80100) || defined(MODE_T8086)
+#if defined(MODE_T4050) || defined(MODE_T8086)
     vis->scale = pspritescale << 1;
 #endif
 #if defined(MODE_Y)
@@ -720,7 +722,7 @@ void R_DrawPlayerSprites(void)
 // R_SortVisSprites
 //
 
-//#define bcopyp(d, s, n) memcpy(d, s, (n) * sizeof(void *))
+// #define bcopyp(d, s, n) memcpy(d, s, (n) * sizeof(void *))
 #define bcopyp(d, s, n) CopyDWords(s, d, (n))
 
 static void msort(vissprite_t **s, vissprite_t **t, int n)
@@ -847,7 +849,7 @@ void R_DrawSprite(vissprite_t *spr)
         }
 
         // clip this piece of the sprite
-        if (ds->silhouette & SIL_BOTTOM && spr->gz < ds->bsilheight) //bottom sil
+        if (ds->silhouette & SIL_BOTTOM && spr->gz < ds->bsilheight) // bottom sil
             for (x = r1; x <= r2; x++)
             {
                 if (clipbot[x] == viewheight)

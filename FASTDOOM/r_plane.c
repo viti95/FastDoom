@@ -108,11 +108,12 @@ void R_MapPlane(int y, int x1)
     fixed_t length;
     unsigned index;
 
-    #if defined(MODE_CGA16) || defined(MODE_CGA512) || defined(MODE_CGA_AFH)
-		if (y & 1){
-			return;
-		}
-    #endif
+#if defined(MODE_CGA16) || defined(MODE_CGA512) || defined(MODE_CGA_AFH)
+    if (y & 1)
+    {
+        return;
+    }
+#endif
 
     ds_x1 = x1;
     ds_y = y;
@@ -140,7 +141,7 @@ void R_MapPlane(int y, int x1)
 
             step = ((FixedMulEDX(distance, basexscale) << 10) & 0xFFFF0000);
             step |= ((FixedMulEDX(distance, baseyscale) >> 6) & 0xFFFF);
-            ds_step = step; 
+            ds_step = step;
             cachedstep[y] = step;
         }
         else
@@ -751,7 +752,7 @@ void R_DrawPlanesFlatSurfacesPotato(void)
     }
 }
 
-#if defined(MODE_T80100) || defined(MODE_T8086)
+#if defined(MODE_T8086)
 void R_DrawPlanesFlatSurfacesText80100(void)
 {
     visplane_t *pl;
@@ -1228,17 +1229,19 @@ void R_DrawPlanesFlatSurfaces_13h(void)
 
         for (x = pl->minx; x <= pl->maxx; x++)
         {
-            #if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CVB) || defined(MODE_EGAW1)
-            if (x & 1){
+#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CVB) || defined(MODE_EGAW1)
+            if (x & 1)
+            {
                 continue;
             }
-            #endif
+#endif
 
-            #if defined(MODE_EGA80) || defined(MODE_CGA512)
-            if (x & 3){
+#if defined(MODE_EGA80) || defined(MODE_CGA512)
+            if (x & 3)
+            {
                 continue;
             }
-            #endif
+#endif
 
             if (pl->top[x] > pl->bottom[x])
                 continue;
@@ -1324,17 +1327,19 @@ void R_DrawSky(visplane_t *pl)
 
         for (x = pl->minx; x <= pl->maxx; x++)
         {
-            #if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CVB) || defined(MODE_EGAW1)
-            if (x & 1){
+#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CVB) || defined(MODE_EGAW1)
+            if (x & 1)
+            {
                 continue;
             }
-            #endif
+#endif
 
-            #if defined(MODE_EGA80) || defined(MODE_CGA512)
-            if (x & 3){
+#if defined(MODE_EGA80) || defined(MODE_CGA512)
+            if (x & 3)
+            {
                 continue;
             }
-            #endif
+#endif
 
             dc_yl = pl->top[x];
             dc_yh = pl->bottom[x];
@@ -1371,17 +1376,19 @@ void R_DrawSky(visplane_t *pl)
     {
         for (x = pl->minx; x <= pl->maxx; x++)
         {
-            #if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CVB) || defined(MODE_EGAW1)
-            if (x & 1){
+#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CVB) || defined(MODE_EGAW1)
+            if (x & 1)
+            {
                 continue;
             }
-            #endif
+#endif
 
-            #if defined(MODE_EGA80) || defined(MODE_CGA512)
-            if (x & 3){
+#if defined(MODE_EGA80) || defined(MODE_CGA512)
+            if (x & 3)
+            {
                 continue;
             }
-            #endif
+#endif
 
             dc_yl = pl->top[x];
             dc_yh = pl->bottom[x];
