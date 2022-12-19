@@ -52,7 +52,6 @@ file i_main.obj
 file i_ibm.obj
 file i_cga_afh.obj
 file i_cga_16.obj
-file i_ega_16.obj
 file i_vga.obj
 file i_vga_16.obj
 file i_vga_13h.obj
