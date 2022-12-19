@@ -6,7 +6,6 @@ call build.bat clean fdoomc16.exe
 call build.bat clean fdoomcga.exe
 call build.bat clean fdoomcvb.exe
 call build.bat clean fdoome.exe
-call build.bat clean fdoome16.exe
 call build.bat clean fdoomhgc.exe
 call build.bat clean fdoompcp.exe
 call build.bat clean fdoomt1.exe

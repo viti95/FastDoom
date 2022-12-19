@@ -38,8 +38,6 @@
 ./build.sh clean
 ./build.sh fdoomv16.exe
 ./build.sh clean
-./build.sh fdoome16.exe
-./build.sh clean
 ./build.sh fdoome.exe
 ./build.sh clean
 ./build.sh fdoom13h.exe

@@ -10,7 +10,6 @@ if "%2"=="fdoomc16.exe" GOTO mode_c16
 if "%2"=="fdoomcga.exe" GOTO mode_cga
 if "%2"=="fdoomcvb.exe" GOTO mode_cvb
 if "%2"=="fdoome.exe"   GOTO mode_e
-if "%2"=="fdoome16.exe" GOTO mode_e16
 if "%2"=="fdoomhgc.exe" GOTO mode_hgc
 if "%2"=="fdoompcp.exe" GOTO mode_pcp
 if "%2"=="fdoomt1.exe"  GOTO mode_t1
@@ -84,12 +83,6 @@ goto compile
 set base=fdoom.exe
 set executable=fdoome.exe
 set options=-dMODE_EGA640
-goto compile
-
-:mode_e16
-set base=fdoom.exe
-set executable=fdoome16.exe
-set options=-dMODE_EGA16
 goto compile
 
 :mode_hgc

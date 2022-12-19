@@ -51,10 +51,6 @@ CPU 386
 %define USE_BACKBUFFER
 %endif
 
-%ifdef MODE_EGA16
-%define USE_BACKBUFFER
-%endif
-
 %ifdef MODE_HERC
 %define USE_BACKBUFFER
 %endif

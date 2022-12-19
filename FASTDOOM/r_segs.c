@@ -247,7 +247,7 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 				dc_yh = yh;
 				dc_yl = yl;
 
-				#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CVB) || defined(MODE_EGA16) || defined(MODE_EGAW1)
+				#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CVB) || defined(MODE_EGAW1)
 				if ((dc_x & 1) == 0){
 					colfunc();
 				}
@@ -413,7 +413,7 @@ void R_RenderSegLoop(void)
 					dc_source = texturecomposite[tex] + ofs;
 				}
 
-				#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CVB) || defined(MODE_EGA16) || defined(MODE_EGAW1)
+				#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CVB) || defined(MODE_EGAW1)
 				if ((dc_x & 1) == 0){
 					colfunc();
 				}
@@ -475,7 +475,7 @@ void R_RenderSegLoop(void)
 						dc_source = texturecomposite[tex] + ofs;
 					}
 
-					#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CVB) || defined(MODE_EGA16) || defined(MODE_EGAW1)
+					#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CVB) || defined(MODE_EGAW1)
 					if ((dc_x & 1) == 0){
 						colfunc();
 					}
@@ -541,7 +541,7 @@ void R_RenderSegLoop(void)
 						dc_source = texturecomposite[tex] + ofs;
 					}
 
-					#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CVB) || defined(MODE_EGA16) || defined(MODE_EGAW1)
+					#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CVB) || defined(MODE_EGAW1)
 					if ((dc_x & 1) == 0){
 						colfunc();
 					}
