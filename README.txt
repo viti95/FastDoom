@@ -11,7 +11,7 @@
 
  Version
  -------
- 0.9.1
+ 0.9.2
 
  About
  -----
@@ -92,11 +92,7 @@
  * FDOOMT25.EXE => FastDoom 80x25 16 colors text mode (virtual resolution of
                    80x50)
  * FDOOMT50.EXE => FastDoom 80x50 16 colors text mode
- * FDOOMT52.EXE => FastDoom 80x50 16 colors text mode (virtual resolution of
-                   80x100)
  * FDOOMT43.EXE => FastDoom 80x43 16 colors text mode (only EGA cards)
- * FDOOMT86.EXE => FastDoom 80x43 16 colors text mode (virtual resolution of
-                   80x86, only EGA cards)
  * FDOOMVBR.EXE => FastDoom for VBE 2.0 cards. Uses real mode (default, and
                    more compatible). If you use UniVBE use this version
  * FDOOMVBD.EXE => FastDoom for VBE 2.0 cards with LFB (triple buffered),
@@ -110,7 +106,6 @@
  * FDOOMCVB.EXE => FastDoom CGA composite mode. 160x200 and 16 colors!
  * FDOOMC16.EXE => FastDoom CGA 160x100 and 16 colors
  * FDOOMV16.EXE => FastDoom VGA 160x200 and 16 colors
- * FDOOME16.EXE => FastDoom EGA 160x100 and 16 colors
  * FDOOME.EXE   => FastDoom EGA 640x200. Requires a very fast CPU and 16-bit
                    ISA video card (at least). Dithering with 16 colors
  * FDOOMATI.EXE => FastDoom ATI Small Wonder 640x200. Requires a very fast 
@@ -121,6 +116,7 @@
  * FDOOME80.EXE => FastDoom EGA 80x200 and 16 colors
  * FDOOMEW1.EXE => FastDoom EGA 160x200 and 16 colors
  * FDOOMCAH.EXE => FastDoom CGA ANSI from Hell (320x100, 16 colors)
+ * FDOOM512.EXE => FastDoom CGA "512 color" composite mode (80x100)
  * FDSETUP.EXE  => Utility to setup controls and sound cards
 
  Command line parameters

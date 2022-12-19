@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 0.9.2 (19 Dic 2022)
+* New video mode, IBM CGA 80x100 "512 color" mode with composite output (available for old and new IBM CGA cards)
+* Optimized R_DrawColumnPotato and R_DrawSpanPotato for Potato mode in FDOOM.EXE, up to 22% more FPS
+* Optimized R_DrawColumnLow for Low detail in FDOOM.EXE, up to 10% more FPS
+* Optimized R_DrawColumn for High detail in FDOOM.EXE, up to 10% more FPS
+* FDOOMEGA.EXE now uses same thechnique as FDOOME14.EXE but with full 16 colors, so FDOOME14.EXE has been removed as is not needed anymore (and now FDOOMEGA.EXE is much faster)
+* Huge video code refactor, much easier to create and mantain new video modes (no changes in terms of performance)
+* Removed VGA 80x100 and EGA 80x86 text modes. Too slow on real hardware, they required lot's of VRAM reads which are very slow
+* Removed EGA 160x100 text mode. Other EGA video modes offer much better quality, and have better aspect ratio
+* Removed 136 pseudo-color modes, as CGA modes have been superseeded with better ones, same for EGA/VGA
+* Minor optimizations here and there
+
 ## 0.9.1 (7 Nov 2022)
 * Creative Music System (Game Blaste) music support by @Tronix286
 * New EGA 160x200 (16 color) mode FDOOMEW1.EXE, fast on 8-bit ISA cards
