@@ -213,7 +213,7 @@ void I_FinishUpdate(void)
 
 #endif
 
-#if defined(MODE_T8043) || defined(MODE_T8086)
+#if defined(MODE_T8043)
 
 // 80x25 EGA Double ChangeVideoPage
 void I_FinishUpdate(void)

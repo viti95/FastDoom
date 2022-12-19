@@ -51,7 +51,7 @@ int validcount = 1;
 lighttable_t *fixedcolormap;
 extern lighttable_t **walllights;
 
-#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8086) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA)
+#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA)
 int centerx;
 int centery;
 
@@ -528,7 +528,7 @@ fixed_t R_ScaleFromGlobalAngle(angle_t visangle)
     // both sines are allways positive
     sinea = finesine[anglea >> ANGLETOFINESHIFT];
     sineb = finesine[angleb >> ANGLETOFINESHIFT];
-#if defined(MODE_T4050) || defined(MODE_T8086)
+#if defined(MODE_T4050)
     num = FixedMulEDX(projection, sineb) << 1;
 #endif
 #if defined(MODE_Y)
@@ -695,7 +695,7 @@ void R_ExecuteSetViewSize(void)
     if (forceScreenSize)
         setblocks = forceScreenSize;
 
-#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8086) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA)
+#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA)
     if (setblocks >= 11)
     {
         scaledviewwidth = SCREENWIDTH;
@@ -743,7 +743,7 @@ void R_ExecuteSetViewSize(void)
     viewwidthhalf = viewwidth / 2;
 #endif
 
-#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8086) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA)
+#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA)
     viewwidthlimit = viewwidth - 1;
     centery = viewheight / 2;
     centerx = viewwidth / 2;
@@ -859,31 +859,6 @@ void R_ExecuteSetViewSize(void)
         fuzzcolfunc = R_DrawFuzzColumnText8050;
 #endif
 
-#if defined(MODE_T8086)
-    colfunc = basecolfunc = R_DrawColumnText80100;
-
-    if (untexturedSurfaces)
-    {
-        spanfunc = R_DrawSpanFlatText80100;
-    }
-    else
-    {
-        spanfunc = R_DrawSpanText80100;
-    }
-
-    if (flatSky)
-        skyfunc = R_DrawSkyFlatText80100;
-    else
-        skyfunc = R_DrawColumnText80100;
-
-    if (flatShadows)
-        fuzzcolfunc = R_DrawFuzzColumnFastText80100;
-    else if (saturnShadows)
-        fuzzcolfunc = R_DrawFuzzColumnSaturnText80100;
-    else
-        fuzzcolfunc = R_DrawFuzzColumnText80100;
-#endif
-
 #if defined(MODE_Y)
     switch (detailshift)
     {
@@ -996,7 +971,7 @@ void R_ExecuteSetViewSize(void)
     R_InitTextureMapping();
 
     // psprite scales
-#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8086) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA)
+#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA)
     pspritescale = FRACUNIT * viewwidth / SCREENWIDTH;
     pspriteiscale = FRACUNIT * SCREENWIDTH / viewwidth;
     pspriteiscaleneg = -pspriteiscale;
@@ -1018,7 +993,7 @@ void R_ExecuteSetViewSize(void)
         dy = ((i - viewheight / 2) << FRACBITS) + FRACUNIT / 2;
         dy = abs(dy);
 
-#if defined(MODE_T4050) || defined(MODE_T8086)
+#if defined(MODE_T4050)
         yslope[i] = FixedDiv((viewwidth << 1) / 2 * FRACUNIT, dy);
 #endif
 #if defined(MODE_Y)
@@ -1042,7 +1017,7 @@ void R_ExecuteSetViewSize(void)
         startmap = ((LIGHTLEVELS - 1 - i) * 2) * NUMCOLORMAPS / LIGHTLEVELS;
         for (j = 0; j < MAXLIGHTSCALE; j++)
         {
-#if defined(MODE_T4050) || defined(MODE_T8086)
+#if defined(MODE_T4050)
             level = startmap - Mul320(j) / (viewwidth << 1) / DISTMAP;
 #endif
 #if defined(MODE_Y)
@@ -1244,13 +1219,6 @@ void R_RenderPlayerView(void)
 #endif
 #if defined(MODE_MDA)
     R_DrawPlanesFlatSurfacesTextMDA();
-#endif
-
-#if defined(MODE_T8086)
-    if (flatSurfaces)
-        R_DrawPlanesFlatSurfacesText80100();
-    else
-        R_DrawPlanes();
 #endif
 
 #if defined(MODE_T8050) || defined(MODE_T8043)

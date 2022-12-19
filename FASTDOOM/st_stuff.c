@@ -1079,7 +1079,7 @@ void ST_DrawerText8025()
 }
 #endif
 
-#if defined(MODE_T8043) || defined(MODE_T8086)
+#if defined(MODE_T8043)
 void ST_DrawerText8043()
 {
 	if (w_health.n.on)

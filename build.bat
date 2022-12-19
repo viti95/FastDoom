@@ -17,7 +17,6 @@ if "%2"=="fdoomt12.exe" GOTO mode_t12
 if "%2"=="fdoomt25.exe" GOTO mode_t25
 if "%2"=="fdoomt43.exe" GOTO mode_t43
 if "%2"=="fdoomt50.exe" GOTO mode_t50
-if "%2"=="fdoomt86.exe" GOTO mode_t86
 if "%2"=="fdoomv2.exe"  GOTO mode_v2
 if "%2"=="fdoomv16.exe" GOTO mode_v16
 if "%2"=="fdoomvbd.exe" GOTO mode_vbd
@@ -124,12 +123,6 @@ goto compile
 set base=fdoom.exe
 set executable=fdoomt50.exe
 set options=-dMODE_T8050
-goto compile
-
-:mode_t86
-set base=fdoom.exe
-set executable=fdoomt86.exe
-set options=-dMODE_T8086
 goto compile
 
 :mode_v2

@@ -93,27 +93,4 @@
 #define pspriteiscaleshifted 262144
 #endif
 
-#if defined(MODE_T8086)
-#define scaledviewwidth 160
-#define viewwidth 80
-#define viewwidthhalf 40
-#define viewwidthlimit 79
-#define viewheight 86
-#define viewheightshift 86 << 16
-#define viewheightopt (86 << 16) - 86
-#define viewheight32 (86 << 16 | 86)
-#define viewwindowx 0
-#define viewwindowy 0
-#define centerx 40
-#define centery 43
-#define centerxfrac 2621440
-#define centeryfrac 2752512
-#define centeryfracshifted 172032
-#define projection 2621440
-#define pspritescale 16384
-#define pspriteiscale 262144
-#define pspriteiscaleneg -262144
-#define pspriteiscaleshifted 131072
-#endif
-
 #endif

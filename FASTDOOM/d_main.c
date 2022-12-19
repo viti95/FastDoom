@@ -275,7 +275,7 @@ void D_Display(void)
         }
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA)
         ST_doPaletteStuff();
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
@@ -390,7 +390,7 @@ void D_Display(void)
         V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 4, "PAUSE");
 #endif
 
-#if defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086)
+#if defined(MODE_T8050) || defined(MODE_T8043)
         V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 2, "PAUSE");
 #endif
 
@@ -409,7 +409,7 @@ void D_Display(void)
     }
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA)
     if (screenblocks <= 11 && gamestate == GS_LEVEL)
     {
 #if defined(MODE_T4025) || defined(MODE_T4050)
@@ -418,7 +418,7 @@ void D_Display(void)
 #if defined(MODE_T8025) || defined(MODE_MDA)
         ST_DrawerText8025();
 #endif
-#if defined(MODE_T8043) || defined(MODE_T8086)
+#if defined(MODE_T8043)
         ST_DrawerText8043();
 #endif
 #if defined(MODE_T8050)
@@ -557,9 +557,6 @@ void D_PageDrawer(void)
 #endif
 #if defined(MODE_T8043)
     V_DrawPatchDirectText8043(0, 0, W_CacheLumpName(pagename, PU_CACHE));
-#endif
-#if defined(MODE_T8086)
-    V_DrawPatchDirectText8086(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
 #if defined(MODE_T8050)
     V_DrawPatchDirectText8050(0, 0, W_CacheLumpName(pagename, PU_CACHE));
@@ -1141,7 +1138,7 @@ void D_DoomMain(void)
     D_AddFile("modecvbs.wad");
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050)
     D_AddFile("modetxt.wad");
 #endif
 
@@ -1409,7 +1406,7 @@ void D_DoomMain(void)
     M_CheckParmDisable("-novsync", &waitVsync);
     M_CheckParmDisable("-nofps", &showFPS);
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8086) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA)
     noMelt = 1;
 #endif
 

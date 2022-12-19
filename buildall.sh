@@ -18,8 +18,6 @@
 ./build.sh clean
 ./build.sh fdoomt43.exe
 ./build.sh clean
-./build.sh fdoomt86.exe
-./build.sh clean
 ./build.sh fdoomt50.exe
 ./build.sh clean
 ./build.sh fdoomvbr.exe
