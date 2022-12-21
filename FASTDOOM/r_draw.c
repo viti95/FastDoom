@@ -2460,15 +2460,6 @@ void R_InitBuffer(int width, int height)
 #endif
 #endif
 
-#if defined(USE_BACKBUFFER)
-    for (i = 0; i < height; i++)
-        ylookup[i] = backbuffer + Mul320(i + viewwindowy);
-#endif
-#if defined(MODE_Y)
-    for (i = 0; i < height; i++)
-        ylookup[i] = Mul80(i);
-#endif
-
         // Column offset. For windows.
 #if defined(USE_BACKBUFFER)
     for (i = 0; i < width; i++)
@@ -2496,6 +2487,16 @@ void R_InitBuffer(int width, int height)
 #endif
     }
 #endif
+
+#if defined(USE_BACKBUFFER)
+    for (i = 0; i < height; i++)
+        ylookup[i] = backbuffer + Mul320(i + viewwindowy);
+#endif
+#if defined(MODE_Y)
+    for (i = 0; i < height; i++)
+        ylookup[i] = Mul80(i);
+#endif
+
 }
 
 //
