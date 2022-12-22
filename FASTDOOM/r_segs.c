@@ -716,7 +716,7 @@ void R_StoreWallRange(int start,
 		worldlow = backsector->floorheight - viewz;
 
 		// hack to allow height changes in outdoor areas
-		if (frontsector->isskyflatnum && backsector->isskyflatnum)
+		if (frontsector->ceilingpic == skyflatnum && backsector->ceilingpic == skyflatnum)
 		{
 			worldtop = worldhigh;
 		}
@@ -826,7 +826,7 @@ void R_StoreWallRange(int start,
 		markfloor = 0;
 	}
 
-	if (frontsector->ceilingheight <= viewz && !frontsector->isskyflatnum)
+	if (frontsector->ceilingheight <= viewz && frontsector->ceilingpic != skyflatnum)
 	{
 		// below view plane
 		markceiling = 0;

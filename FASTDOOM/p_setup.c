@@ -222,7 +222,6 @@ void P_LoadSectors(int lump)
         ss->ceilingheight = ms->ceilingheight << FRACBITS;
         ss->floorpic = R_FlatNumForName(ms->floorpic);
         ss->ceilingpic = R_FlatNumForName(ms->ceilingpic);
-        ss->isskyflatnum = ss->ceilingpic == skyflatnum;
         ss->lightlevel = ms->lightlevel;
         ss->special = ms->special;
         ss->tag = ms->tag;
