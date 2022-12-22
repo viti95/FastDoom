@@ -231,7 +231,7 @@ align 4
 
 mapcalls:
   %assign LINE 0
-  %rep SCREENWIDTH+1
+  %rep (SCREENWIDTH/4)+1
     MAPDEFINE LINE
     %assign LINE LINE+1
   %endrep
@@ -285,7 +285,7 @@ CODE_SYM_DEF R_DrawSpanPotato
 
 %assign LINE 0
 %assign PCOL 0
-%rep SCREENWIDTH/4
+%rep SCREENWIDTH/16
   %assign PLANE 0
   %rep 4
     MAPLABEL LINE:
@@ -308,6 +308,6 @@ CODE_SYM_DEF R_DrawSpanPotato
 %assign PCOL PCOL+1
 %endrep
 
-hmap320: ret
+hmap80: ret
 
 %endif
