@@ -186,13 +186,19 @@ CODE_SYM_DEF R_DrawSpanVBE2
   %rep 4
     MAPLABEL LINE:
       %assign LINE LINE+1
-      mov   al,[esi+ebx]           ; get source pixel
-      shld  ebx,ecx,22             ; shift y units in
-      mov   al,[eax]               ; translate color
-      shld  ebx,ecx,6              ; shift x units in
-      mov   [edi+PLANE+PCOL*4],al  ; write pixel
-      and   ebx,ebp                ; mask off slop bits
-      add   ecx,edx                ; position += step
+      %if LINE = 320
+        mov   al,[esi+ebx]           ; get source pixel
+        mov   al,[eax]               ; translate color
+        mov   [edi+PLANE+PCOL*4],al  ; write pixel
+      %else
+        mov   al,[esi+ebx]           ; get source pixel
+        shld  ebx,ecx,22             ; shift y units in
+        mov   al,[eax]               ; translate color
+        shld  ebx,ecx,6              ; shift x units in
+        mov   [edi+PLANE+PCOL*4],al  ; write pixel
+        and   ebx,ebp                ; mask off slop bits
+        add   ecx,edx                ; position += step
+      %endif
       %assign PLANE PLANE+1
   %endrep
 %assign PCOL PCOL+1
