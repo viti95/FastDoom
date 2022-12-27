@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [ $# -lt 1 ]; then
   echo "Usage: $0 target.exe [buildopts]"
