@@ -39,6 +39,8 @@
 
 #include "options.h"
 
+#include "ns_cd.h"
+
 //
 // I_StartupTimer
 //
@@ -101,7 +103,7 @@ int I_GetSfxLumpNum(sfxinfo_t *sfx)
 
 void I_sndArbitrateCards(void)
 {
-    byte gus, adlib, sb, midi, ensoniq, lpt, cmsfx, cmsmus, oplxlpt;
+    byte gus, adlib, sb, midi, ensoniq, lpt, cmsfx, cmsmus, oplxlpt, audiocd;
     int dmxlump;
 
     snd_SfxVolume = 127;
@@ -141,6 +143,7 @@ void I_sndArbitrateCards(void)
     lpt = snd_SfxDevice == snd_DISNEY || snd_SfxDevice == snd_TANDY || snd_SfxDevice == snd_LPTDAC;
     cmsfx = snd_SfxDevice == snd_CMS;
     cmsmus = snd_MusicDevice == snd_CMS;
+    audiocd = snd_MusicDevice == snd_CD;
 
     //
     // initialize whatever i've got
@@ -240,6 +243,11 @@ void I_sndArbitrateCards(void)
         {
             CMS_SetMode(CMS_OnlyMusic);
         }
+    }
+
+    if (audiocd)
+    {
+
     }
 }
 

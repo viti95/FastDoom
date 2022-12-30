@@ -39,6 +39,8 @@
 
 #include "std_func.h"
 
+#include "ns_cd.h"
+
 // Current music/sfx card - index useless
 //  w/o a reference LUT in a sound module.
 extern int snd_MusicDevice;
@@ -89,13 +91,31 @@ int S_getChannel(void *origin, sfxinfo_t *sfxinfo);
 byte S_AdjustSoundParams(mobj_t *source, int *vol, int *sep);
 void S_StopChannel(int cnum);
 
-void S_SetMusicVolume(int volume)
+void S_SetMusicVolumeCD(int volume)
+{
+
+}
+
+void S_SetMusicVolumeMIDI(int volume)
 {
     I_SetMusicVolume(volume);
     snd_MusicVolume = volume;
 }
 
-void S_StopMusic(void)
+void S_SetMusicVolume(int volume)
+{
+    if (snd_MusicDevice == snd_CD)
+        S_SetMusicVolumeCD(volume);
+    else
+        S_SetMusicVolumeMIDI(volume);
+}
+
+void S_StopMusicCD(void)
+{
+
+}
+
+void S_StopMusicMIDI(void)
 {
     if (mus_playing)
     {
@@ -111,7 +131,20 @@ void S_StopMusic(void)
     }
 }
 
-void S_ChangeMusic(int musicnum, int looping)
+void S_StopMusic(void)
+{
+    if (snd_MusicDevice == snd_CD)
+        S_StopMusicCD();
+    else
+        S_StopMusicMIDI();
+}
+
+void S_ChangeMusicCD(int musicnum, int looping)
+{
+
+}
+
+void S_ChangeMusicMIDI(int musicnum, int looping)
 {
     musicinfo_t *music;
     char namebuf[9];
@@ -148,6 +181,14 @@ void S_ChangeMusic(int musicnum, int looping)
     MUS_PlaySong(music->handle, snd_MusicVolume);
 
     mus_playing = music;
+}
+
+void S_ChangeMusic(int musicnum, int looping)
+{
+    if (snd_MusicDevice == snd_CD)
+        S_ChangeMusicCD(musicnum, looping);
+    else
+        S_ChangeMusicMIDI(musicnum, looping);
 }
 
 void S_StopChannel(int cnum)

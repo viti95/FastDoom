@@ -512,7 +512,7 @@ void ST_Responder(event_t *ev)
 					if ((Mul10(buf[0] - '0') + buf[1] - '0') > 35)
 						players.message = STSTR_NOMUS;
 					else
-						S_ChangeMusic(musnum, 1);
+						S_ChangeMusic(musnum, true);
 				}
 				else
 				{
@@ -521,7 +521,7 @@ void ST_Responder(event_t *ev)
 					if (((buf[0] - '1') * 9 + buf[1] - '1') > 31)
 						players.message = STSTR_NOMUS;
 					else
-						S_ChangeMusic(musnum, 1);
+						S_ChangeMusic(musnum, true);
 				}
 			}
 			else if (cht_CheckCheat(&cheat_noclip) || cht_CheckCheat(&cheat_commercial_noclip))
