@@ -253,21 +253,13 @@ void I_sndArbitrateCards(void)
             return;
         }
 
-        CD_Volumeinfo.Volume0 = 255;
-        CD_Volumeinfo.Volume1 = 255;
-        CD_Volumeinfo.Volume2 = 255;
-        CD_Volumeinfo.Volume3 = 255;
-        CD_SetVolume();
+        CD_SetVolume(255);
         CD_SetTrack(2);                       
         CD_Lock(LOCK);                         
         CD_Seek(CD_Cdrom_data.Track_position); 
         delay(400);                            
                                                
         CD_PlayAudio(CD_Cdrom_data.Track_position, CD_Cdrom_data.Endofdisk);
-        CD_GetVolume();
-        //CD_StopAudio();
-        //CD_Lock(UNLOCK);
-        //CD_DeInit();
     }
 }
 

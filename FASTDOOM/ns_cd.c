@@ -621,7 +621,7 @@ void CD_GetVolume(void)
     CD_Cdrom_data.Error = Tray_request_Pointers->Status;
 }
 
-void CD_SetVolume(void)
+void CD_SetVolume(unsigned char vol)
 {
     typedef struct Tray_request
     {
@@ -639,6 +639,11 @@ void CD_SetVolume(void)
 
     static struct Tray_request *Tray_request_Pointers;
     static struct CD_Volumeinfo *CD_Volume_Pointers;
+
+    CD_Volumeinfo.Volume0 = vol;
+    CD_Volumeinfo.Volume1 = vol;
+    CD_Volumeinfo.Volume2 = vol;
+    CD_Volumeinfo.Volume3 = vol;
 
     Tray_request_Pointers = (struct Tray_request *)(CD_Device_req.segment * 16);
     CD_Volume_Pointers = (struct CD_Volumeinfo *)(CD_Device_extra.segment * 16);
@@ -738,6 +743,13 @@ void CD_Getpos(void)
     CD_DeviceRequest();
 
     CD_Cdrom_data.Error = Tray_request_Pointers->Status;
+}
+
+void CD_Exit(void)
+{
+    CD_StopAudio();
+    CD_Lock(UNLOCK);
+    CD_DeInit();
 }
 
 void CD_DeInit(void)

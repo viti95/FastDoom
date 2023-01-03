@@ -51,7 +51,7 @@ extern struct CD_Volumeinfo CD_Volumeinfo;
 // ------------------------------------------------------------------------
 unsigned long CD_HeadPosition(void);
 void CD_GetVolume(void);
-void CD_SetVolume(void);
+void CD_SetVolume(unsigned char vol);
 short CD_GetUPC(void);
 void CD_Get_Audio_info(void);
 void CD_SetTrack(short Tracknum);
@@ -69,6 +69,8 @@ short CD_Mediach(void);
 void CD_Lock(unsigned char Doormode);
 int CD_Init(void);
 void CD_DeInit(void);
+void CD_Exit(void);
+
 // ------------------------------------------------------------------------
 //                          DPMI Support Functions..
 // ------------------------------------------------------------------------
