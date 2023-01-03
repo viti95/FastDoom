@@ -108,7 +108,7 @@ unsigned long HSG(unsigned long Value)
     return (Value);
 }
 
-short CD_Cdrom_installed(void)
+short CD_CdromInstalled(void)
 {
     DPMI_AllocDOSMem(4, &CD_Device_req);
     DPMI_AllocDOSMem(2, &CD_Device_extra);
@@ -121,11 +121,11 @@ short CD_Cdrom_installed(void)
         return (0);
     CD_Cdrom_data.Drives = (short)regs.x.ebx;
     CD_Cdrom_data.First_drive = (short)regs.x.ecx;
-    CD_Get_Audio_info();
+    CD_GetAudioInfo();
     return (1);
 }
 
-void CD_Get_Audio_info(void)
+void CD_GetAudioInfo(void)
 {
     typedef struct IOCTLI
     {
@@ -760,7 +760,7 @@ void CD_DeInit(void)
 
 int CD_Init(void)
 {
-    if (!CD_Cdrom_installed())
+    if (!CD_CdromInstalled())
     {
         printf("MSCDEX WAS NOT FOUND!\n");
         return 0;

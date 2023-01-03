@@ -53,7 +53,7 @@ unsigned long CD_HeadPosition(void);
 void CD_GetVolume(void);
 void CD_SetVolume(unsigned char vol);
 short CD_GetUPC(void);
-void CD_Get_Audio_info(void);
+void CD_GetAudioInfo(void);
 void CD_SetTrack(short Tracknum);
 void CD_TrackLength(short Tracknum, unsigned char *min, unsigned char *sec, unsigned char *frame);
 void CD_Status(void);
