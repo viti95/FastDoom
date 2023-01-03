@@ -1,424 +1,763 @@
-/* CDPLAY Command-Line CD-Player Utility (C) 1995 by Edgar Swank  */
-/* This program is shareware. If it's useful to you please send   */
-/* $5 to Edgar Swank; 5515 Spinnaker Dr., #4; San Jose, CA 95123  */
-
-#include <dos.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <conio.h>
-#include <bios.h>
-#include <string.h>
-
 #include "ns_cd.h"
 
-int device;
-int i;
-long HSldout;
-int status;
-int busy;
+#pragma pack(1);
 
-struct ReqHdr
+struct DPMI_PTR
 {
-    char rhlen;   /* Length in bytes of request header */
-    char subu;    /* Subunit code for minor devices */
-    char comc;    /* Command code field */
-    int status;   /* Status */
-    char rsvd[8]; /* Reserved */
+    unsigned short int segment;
+    unsigned short int selector;
 };
 
-#define rherr 0x8000
-#define rhbusy 0x0020
-#define rhdone 0x0010
-#define rherm 0x00ff
+struct CD_Cdrom_data CD_Cdrom_data;
+struct CD_Volumeinfo CD_Volumeinfo;
 
-struct SeekReq
+typedef struct CD_Playinfo
 {
-    struct ReqHdr rh;
-    char am;           /* 0 Addressing mode = High Sierra */
-    long ta;           /* 0 Transfer address */
-    int str;           /* 0 Number of sectors to read */
-    unsigned long ssn; /*   Starting sector number */
-};
+    unsigned char Control;
+    unsigned char Adr;
+    unsigned char Track;
+    unsigned char Index;
+    unsigned char Min;
+    unsigned char Sec;
+    unsigned char Frame;
+    unsigned char Zero;
+    unsigned char Amin;
+    unsigned char Asec;
+    unsigned char Aframe;
+} CD_Playinfo;
 
-struct PlayReq
+static struct rminfo
 {
-    struct ReqHdr rh;
-    char am;      /* 0 Addressing mode = High Sierra */
-    long Strsect; /*   Starting sector number */
-    long Nsect;   /*   Number of sectors to read */
-};
+    unsigned long EDI;
+    unsigned long ESI;
+    unsigned long EBP;
+    unsigned long reserved_by_system;
+    unsigned long EBX;
+    unsigned long EDX;
+    unsigned long ECX;
+    unsigned long EAX;
+    unsigned short flags;
+    unsigned short ES, DS, FS, GS, IP, CS, SP, SS;
+} RMI;
 
-static struct ReqHdr StopPlayReq = {13, 0, 133, 0};
+static struct DPMI_PTR CD_Device_req = {0, 0};
+static struct DPMI_PTR CD_Device_extra = {0, 0};
+static union REGS regs;
+static struct SREGS sregs;
 
-/* The following values are valid command codes */
-
-#define play_audio 132   /* PLAY AUDIO   */
-#define stop_audio 133   /* STOP AUDIO   */
-#define resume_audio 136 /* RESUME AUDIO */
-
-struct IOCTLI
+static void PrepareRegisters(void)
 {
-    struct ReqHdr rh;
-    char mdb;         /* Media descriptor byte from BPB 0 */
-    void far *tranad; /* Transfer address */
-    int tranct;       /* Number of bytes to transfer */
-    int ssn;          /* Starting sector number 0 */
-    void far *volid;  /* DWORD ptr to requested vol ID if error 0FH */
-};
-
-struct IOCTLO
-{
-    struct ReqHdr rh;
-    char mdb;         /* Media descriptor byte from BPB 0 */
-    void far *tranad; /* Transfer address */
-    int tranct;       /* Number of bytes to transfer */
-    int ssn;          /* Starting sector number 0 */
-    void far *volid;  /* DWORD ptr to requested vol ID if error 0FH */
-};
-
-/* Audio Channel Control */
-struct icvc
-{
-    char ic;
-    unsigned char vc;
-};
-
-static struct
-{
-    char cc; /* 3 Control block code */
-    struct icvc z[4];
-} AI = {3};
-
-/* Return Volume Size */
-
-static struct
-{
-    char cc;      /* Control block code */
-    long volsize; /* Volume size */
-} vs = {8};
-
-int min;
-float sec;
-float secrem;
-long Strtsect, Nsect;
-
-/*Audio Disk Info*/
-
-static struct
-{
-    char cc;                   /* 10  Control block code */
-    unsigned char lotrak;      /* Lowest track number */
-    unsigned char hitrak;      /* Highest track number */
-    unsigned char ldouttrk[4]; /* Starting point of the lead-out track */
-} di = {10};
-
-/* Audio Track Info */
-
-static struct
-{
-    char cc;                   /* 11 Control block code */
-    unsigned char trakno;      /* Track number */
-    unsigned char trakstrt[4]; /* Starting point of the track (Red Book)*/
-    unsigned char tctl;        /* Track control information */
-} ati = {11};
-
-/* Audio Q-Channel Info */
-
-static struct
-{
-    char cc;     /* 12 Control block code */
-    char ctladr; /*    CONTROL and ADR byte */
-    char tno;    /*    Track number (TNO)  BCD*/
-    char point;  /*    (POINT) or Index (X) */
-                 /* Running time within a track */
-    char min;    /* (MIN)    */
-    char sec;    /* (SEC)    */
-    char frame;  /* (FRAME)  */
-    char zero;   /* (ZERO)   */
-                 /* Running time on the disk */
-    char amin;   /* (AMIN) or (PMIN)         */
-    char asec;   /* (ASEC) or (PSEC)         */
-    char aframe; /* (AFRAME) or (PFRAME)     */
-} Qi = {12};
-
-/*int cdrck(int device);
-void cdrreq(int device, void *cdrrh);
-int ioctl_in(int device, void far *tranad, int tranct);
-int ioctl_out(int device, void far *tranad, int tranct);
-void ioctl_in_ck(int device, void far *tranad, int tranct);
-void seek(int device, long track);
-void play(int device, long Strsect, long Nsect);
-void Stop_Audio(int device);
-long HSSect(unsigned char RB[4]);*/
-
-int CD_detectFirstCD(void)
-{
-    int i;
-
-    for (i = 0; i < 26; i++)
-    {
-        if (CD_cdrck(i))
-            return i;
-    }
-
-    return -1;
+    memset(&RMI, 0, sizeof(RMI));
+    memset(&sregs, 0, sizeof(sregs));
+    memset(&regs, 0, sizeof(regs));
 }
 
-void rm_main(int argc, char *argv[])
+static void RMIRQ(char irq)
 {
-    printf("CDPLAY (C) 1995 by Edgar Swank\n");
-    if (argc < 2 || argv[1][0] == '?')
-    {
-        printf("One Operand Required. CDROM Device Letter\n");
-        printf("0-4 Optional Operands, [+]Track to Play[Start]\n");
-        printf("  Left Channel L|R|0  Right Channel L|R|0\n");
-        printf("  xx.x-seconds to skip at head of track\n");
-        printf("  xx.x-seconds to play (up to end of track[disk]\n");
-        exit(8);
-    }
-
-    device = toupper(argv[1][0]);
-    device = device - 'A';
-    if (!CD_cdrck(device))
-    {
-        printf("Device %c is not a CD-ROM, or MSCDEX is not installed\n",
-               device + 'A');
-    }
-
-    status = CD_ioctl_in(device, &Qi, sizeof(Qi));
-    busy = status & 0x0200;
-    if (busy)
-    {
-        printf("CD-Player %c is already playing. Play will continue\
- with other operands ignored.\n",
-               device + 'A');
-    }
-    else /* not busy*/
-    {
-        CD_ioctl_in_ck(device, &vs, sizeof(vs));
-        min = vs.volsize / (60 * 75);
-        sec = ((float)(vs.volsize - ((long)min * 60 * 75))) / 75.;
-
-        printf("Device %c is size %ld, or %d:%02.2f\n",
-               device + 'A',
-               vs.volsize,
-               min, sec);
-
-        CD_ioctl_in_ck(device, &di, sizeof(di));
-        HSldout = CD_HSSect(di.ldouttrk);
-
-        printf("Audio tracks %d to %d.  Lead-Out Track %2d:%02d %ld\n",
-               (int)di.lotrak,
-               (int)di.hitrak,
-               di.ldouttrk[2], di.ldouttrk[1],
-               HSldout);
-
-        for (ati.trakno = di.lotrak; ati.trakno <= di.hitrak; ati.trakno++)
-        {
-            CD_ioctl_in_ck(device, &ati, sizeof(ati));
-            printf("  Track %d  Address %2d:%02d %ld\n",
-                   (int)ati.trakno,
-                   ati.trakstrt[2], ati.trakstrt[1],
-                   CD_HSSect(ati.trakstrt));
-        }
-
-        if (argc < 3)
-            ati.trakno = 1;
-        else
-            ati.trakno = (char)atoi(argv[2]);
-
-        if (ati.trakno < di.lotrak || ati.trakno > di.hitrak)
-        {
-            printf("Specified track %s is bad conversion or outside range.\n",
-                   argv[2]);
-            exit(8);
-        }
-
-        CD_ioctl_in_ck(device, &ati, sizeof(ati));
-        Strtsect = CD_HSSect(ati.trakstrt);
-
-        if (ati.trakno < di.hitrak && argc > 2 && argv[2][0] != '+')
-        {
-            ati.trakno++;
-            CD_ioctl_in_ck(device, &ati, sizeof(ati));
-            Nsect = CD_HSSect(ati.trakstrt) - Strtsect;
-        }
-        else
-            Nsect = HSldout - Strtsect;
-
-        AI.z[0].vc = 255;
-        AI.z[1].vc = 255;
-        AI.z[0].ic = 0;
-        AI.z[1].ic = 1;
-        printf("Audio Channel default: Normal Stereo\n");
-
-
-        CD_ioctl_out(device, &AI, sizeof(AI));
-
-        CD_seek(device, Strtsect);
-
-        printf("Play from Sector %ld for %ld Sectors\n", Strtsect, Nsect);
-        CD_play(device, Strtsect, Nsect);
-    }
-
-    {
-        int n;
-        for (n = 1; n < 12; n++)
-            printf("\n");
-    }
-    
-    printf("\nPress Esc to stop playing and exit, Space to keep playing and exit.\n");
-
-    /*while (1)
-    {
-        char key = 0;
-        if (bioskey(1))
-        {
-            key = bioskey(0);
-            if (key == 0x1b)
-                Stop_Audio(device);
-            if (key == ' ')
-            {
-                {
-                    int n;
-                    for (n = 1; n < 15; n++)
-                        printf("\n");
-                }
-                exit(0);
-            }
-        }
-        status = ioctl_in(device, &Qi, sizeof(Qi));
-        gotoxy(1, 14);
-        printf("Track %2d: %02d:%02d:%02d  Disk: %02d:%02d:%02d\n\n",
-               (int)(Qi.tno & 0x0f) + 10 * ((Qi.tno & 0xf0) >> 4),
-               (int)Qi.min, (int)Qi.sec, (int)Qi.frame,
-               (int)Qi.amin, (int)Qi.asec, (int)Qi.aframe);
-
-        busy = status & 0x0200;
-        printf("Status: %s", busy ? "Busy" : "Idle");
-        if (!busy)
-            break;
-    }*/
-
+    memset(&regs, 0, sizeof(regs));
+    regs.w.ax = 0x0300;
+    regs.h.bl = irq;
+    sregs.es = FP_SEG(&RMI);
+    regs.x.edi = FP_OFF(&RMI);
+    int386x(0x31, &regs, &regs, &sregs);
 }
 
-void CD_ioctl_in_ck(int device, void far *tranad, int tranct)
+void DPMI_AllocDOSMem(short int paras, struct DPMI_PTR *p)
 {
-    int status;
-    status = CD_ioctl_in(device, tranad, tranct);
-    if (status & rherr)
-        printf("IOCTL_IN returned error %x\n", status & rherm);
-    if (status & rhbusy)
-        printf("IOCTL_IN returned busy\n");
+    PrepareRegisters();
+    regs.w.ax = 0x0100;
+    regs.w.bx = paras;
+    int386x(0x31, &regs, &regs, &sregs);
+    p->segment = regs.w.ax;
+    p->selector = regs.w.dx;
 }
 
-int CD_ioctl_in(int device, void far *tranad, int tranct)
+void DPMI_FreeDOSMem(struct DPMI_PTR *p)
 {
-    struct IOCTLI ioc;
-
-    ioc.mdb = 0;
-    ioc.ssn = 0;
-    ioc.volid = NULL;
-    ioc.rh.rhlen = 13;
-    ioc.rh.comc = 3;
-    ioc.rh.status = 0;
-    ioc.tranad = tranad;
-    ioc.tranct = tranct;
-    CD_cdrreq(device, &ioc);
-    return (ioc.rh.status);
+    memset(&sregs, 0, sizeof(sregs));
+    regs.w.ax = 0x0101;
+    regs.w.dx = p->selector;
+    int386x(0x31, &regs, &regs, &sregs);
 }
 
-int CD_ioctl_out(int device, void far *tranad, int tranct)
+void CD_DeviceRequest(void)
 {
-    struct IOCTLO ioc;
-
-    ioc.mdb = 0;
-    ioc.ssn = 0;
-    ioc.volid = NULL;
-    ioc.rh.rhlen = 13;
-    ioc.rh.comc = 12;
-    ioc.rh.status = 0;
-    ioc.tranad = tranad;
-    ioc.tranct = tranct;
-    CD_cdrreq(device, &ioc);
-    if (ioc.rh.status & rherr)
-        printf("IOCTL_OUT returned error %x\n", ioc.rh.status & rherm);
-    if (ioc.rh.status & rhbusy)
-        printf("IOCTL_OUT returned busy\n");
-    return (ioc.rh.status);
+    PrepareRegisters();
+    RMI.EAX = 0x01510;
+    RMI.ECX = CD_Cdrom_data.First_drive;
+    RMI.EDI = 0;
+    RMI.ES = CD_Device_req.segment;
+    RMIRQ(0x02F);
 }
 
-void CD_play(int device, long Strsect, long Nsect)
+void Red_book(unsigned long Value, unsigned char *min, unsigned char *sec, unsigned char *frame)
 {
-    struct PlayReq prq;
-    prq.am = 0; /*High Sierra Addressing*/
-    prq.Strsect = Strsect;
-    prq.Nsect = Nsect;
-    prq.rh.rhlen = 13;
-    prq.rh.comc = 132; /*Play*/
-    prq.rh.status = 0;
-    CD_cdrreq(device, &prq);
-    if (prq.rh.status & rherr)
-        printf("PLAY returned error %x\n", prq.rh.status & rherm);
-    if (prq.rh.status & rhbusy)
-        printf("PLAY returned busy\n");
+    *frame = (Value & 0x000000FF);
+    *sec = (Value & 0x0000FF00) >> 8;
+    *min = (Value & 0x00FF0000) >> 16;
 }
 
-void CD_Stop_Audio(int device)
+unsigned long HSG(unsigned long Value)
 {
-    CD_cdrreq(device, &StopPlayReq);
+    unsigned char min, sec, frame;
+
+    Red_book(Value, &min, &sec, &frame);
+    Value = (unsigned long)min * 4500;
+    Value += (short)sec * 75;
+    Value += frame - 150;
+    return (Value);
 }
 
-void CD_seek(int device, long track)
+short CD_Cdrom_installed(void)
 {
-    struct SeekReq skr;
-    skr.am = 0; /*High Sierra Addressing*/
-    skr.ta = 0;
-    skr.str = 0;
-    skr.ssn = track;
-    skr.rh.rhlen = 13;
-    skr.rh.comc = 131; /*seek*/
-    skr.rh.status = 0;
-    CD_cdrreq(device, &skr);
-    if (skr.rh.status & rherr)
-        printf("SEEK returned error %x\n", skr.rh.status & rherm);
-    if (skr.rh.status & rhbusy)
-        printf("SEEK returned busy\n");
-}
+    DPMI_AllocDOSMem(4, &CD_Device_req);
+    DPMI_AllocDOSMem(2, &CD_Device_extra);
 
-/*CDROM Device Driver Direct Request*/
-void CD_cdrreq(int device, void *cdrrh)
-{
-    union REGS inr, outr;
-    struct SREGS seg;
-    seg.es = FP_SEG(cdrrh);
-    inr.w.bx = FP_OFF(cdrrh);
-    inr.w.cx = device;
-    inr.w.ax = 0x1510;
-    int386x(0x2f, &inr, &outr, &seg);
-}
-/*CDROM Drive Check*/
-int CD_cdrck(int device)
-{
-    union REGS inr, outr;
-    inr.w.bx = 0;
-    inr.w.cx = device;
-    inr.w.ax = 0x150b;
-    int386(0x2f, &inr, &outr);
-    if (outr.w.bx == 0xadad)
-        return (outr.w.ax);
-    else
+    PrepareRegisters();
+    regs.x.eax = 0x01500;
+    int386(0x02F, &regs, &regs);
+
+    if (regs.x.ebx == 0)
         return (0);
+    CD_Cdrom_data.Drives = (short)regs.x.ebx;
+    CD_Cdrom_data.First_drive = (short)regs.x.ecx;
+    CD_Get_Audio_info();
+    return (1);
 }
 
-long CD_HSSect(unsigned char RB[4])
+void CD_Get_Audio_info(void)
 {
-    long sector;
-    int min, sec, frame;
-    frame = RB[0]; /*little-Endian*/
-    sec = RB[1];
-    min = RB[2];
-    sector = ((long)min * 60 + (long)sec) * 75 + frame - 150;
-    return (sector);
+    typedef struct IOCTLI
+    {
+        unsigned char Length;
+        unsigned char Subunit;
+        unsigned char Comcode;
+        unsigned short Status;
+        unsigned char Unused[8];
+        unsigned char Media;
+        unsigned long Address;
+        unsigned short Bytes;
+        unsigned short Sector;
+        unsigned long VolID;
+    } IOCTLI;
+    typedef struct Track_data
+    {
+        unsigned char Mode;
+        unsigned char Lowest;
+        unsigned char Highest;
+        unsigned long Address;
+    } Track_data;
+
+    static struct IOCTLI *IOCTLI_Pointers;
+    static struct Track_data *Track_data_Pointers;
+
+    IOCTLI_Pointers = (struct IOCTLI *)(CD_Device_req.segment * 16);
+    Track_data_Pointers = (struct Track_data *)(CD_Device_extra.segment * 16);
+
+    memset(IOCTLI_Pointers, 0, sizeof(struct IOCTLI));
+    memset(Track_data_Pointers, 0, sizeof(struct Track_data));
+
+    IOCTLI_Pointers->Length = sizeof(struct IOCTLI);
+    IOCTLI_Pointers->Comcode = 3;
+    IOCTLI_Pointers->Address = CD_Device_extra.segment << 16;
+    IOCTLI_Pointers->Bytes = sizeof(struct Track_data);
+    Track_data_Pointers->Mode = 0x0A;
+    CD_DeviceRequest();
+
+    memcpy(&CD_Cdrom_data.DiskID, &Track_data_Pointers->Lowest, 6);
+    CD_Cdrom_data.Low_audio = Track_data_Pointers->Lowest;
+    CD_Cdrom_data.High_audio = Track_data_Pointers->Highest;
+    Red_book(Track_data_Pointers->Address, &CD_Cdrom_data.Disk_length_min, &CD_Cdrom_data.Disk_length_sec, &CD_Cdrom_data.Disk_length_frames);
+    CD_Cdrom_data.Endofdisk = HSG(Track_data_Pointers->Address);
+    CD_Cdrom_data.Error = IOCTLI_Pointers->Status;
+}
+
+unsigned long CD_GetTrackLength(short Tracknum)
+{
+    unsigned long Start, Finish;
+    unsigned short CT;
+
+    CT = CD_Cdrom_data.Current_track;
+    CD_SetTrack(Tracknum);
+    Start = CD_Cdrom_data.Track_position;
+    if (Tracknum < CD_Cdrom_data.High_audio)
+    {
+        CD_SetTrack(Tracknum + 1);
+        Finish = CD_Cdrom_data.Track_position;
+    }
+    else
+        Finish = CD_Cdrom_data.Endofdisk;
+
+    CD_SetTrack(CT);
+
+    Finish -= Start;
+    return (Finish);
+}
+
+void CD_TrackLength(short Tracknum, unsigned char *min, unsigned char *sec, unsigned char *frame)
+{
+    unsigned long Value;
+
+    Value = CD_GetTrackLength(Tracknum);
+    Value += 150;
+    *frame = Value % 75;
+    Value -= *frame;
+    Value /= 75;
+    *sec = Value % 60;
+    Value -= *sec;
+    Value /= 60;
+    *min = Value;
+}
+
+short CD_DonePlay(void)
+{
+    CD_CMD(CLOSE_TRAY);
+    return ((CD_Cdrom_data.Error & BUSY) == 0);
+}
+
+unsigned long CD_HeadPosition(void)
+{
+    typedef struct Tray_request
+    {
+        unsigned char Length;
+        unsigned char Subunit;
+        unsigned char Comcode;
+        unsigned short Status;
+        unsigned char Unused[8];
+        unsigned char Media;
+        unsigned long Address;
+        unsigned short Bytes;
+        unsigned short Sector;
+        unsigned long VolID;
+        unsigned char Unused2[4];
+    } Tray_request;
+    typedef struct Head_data
+    {
+        unsigned char Mode;
+        unsigned char Adr_mode;
+        unsigned long Address;
+    } Head_data;
+
+    static struct Tray_request *Tray_request_Pointers;
+    static struct Head_data *Head_data_Pointers;
+
+    Tray_request_Pointers = (struct Tray_request *)(CD_Device_req.segment * 16);
+    Head_data_Pointers = (struct Head_data *)(CD_Device_extra.segment * 16);
+
+    memset(Tray_request_Pointers, 0, sizeof(struct Tray_request));
+    memset(Head_data_Pointers, 0, sizeof(struct Head_data));
+
+    Tray_request_Pointers->Length = sizeof(struct Tray_request);
+    Tray_request_Pointers->Comcode = 3;
+    Tray_request_Pointers->Address = CD_Device_extra.segment << 16;
+    Tray_request_Pointers->Bytes = 6;
+    Head_data_Pointers->Mode = 0x01;
+    Head_data_Pointers->Adr_mode = 0x00;
+
+    CD_DeviceRequest();
+
+    CD_Cdrom_data.Error = Tray_request_Pointers->Status;
+    return (Head_data_Pointers->Address);
+}
+
+void CD_SetTrack(short Tracknum)
+{
+    typedef struct Tray_request
+    {
+        unsigned char Length;
+        unsigned char Subunit;
+        unsigned char Comcode;
+        unsigned short Status;
+        unsigned char Unused[8];
+        unsigned char Media;
+        unsigned long Address;
+        unsigned short Bytes;
+        unsigned short Sector;
+        unsigned long VolID;
+    } Tray_request;
+    typedef struct Track_data
+    {
+        unsigned char Mode;
+        unsigned char Track;
+        unsigned long Address;
+        unsigned char Control;
+    } Head_data;
+
+    static struct Tray_request *Tray_request_Pointers;
+    static struct Track_data *Track_data_Pointers;
+
+    Tray_request_Pointers = (struct Tray_request *)(CD_Device_req.segment * 16);
+    Track_data_Pointers = (struct Track_data *)(CD_Device_extra.segment * 16);
+
+    memset(Tray_request_Pointers, 0, sizeof(struct Tray_request));
+    memset(Track_data_Pointers, 0, sizeof(struct Track_data));
+
+    Tray_request_Pointers->Length = sizeof(struct Tray_request);
+    Tray_request_Pointers->Comcode = 3;
+    Tray_request_Pointers->Address = CD_Device_extra.segment << 16;
+    Tray_request_Pointers->Bytes = 7;
+
+    Track_data_Pointers->Mode = 0x0B;
+    Track_data_Pointers->Track = Tracknum;
+
+    CD_DeviceRequest();
+
+    CD_Cdrom_data.Error = Tray_request_Pointers->Status;
+    CD_Cdrom_data.Track_position = HSG(Track_data_Pointers->Address);
+    CD_Cdrom_data.Current_track = Tracknum;
+    CD_Cdrom_data.Track_type = Track_data_Pointers->Control & TRACK_MASK;
+}
+
+void CD_Status(void)
+{
+    typedef struct Tray_request
+    {
+        unsigned char Length;
+        unsigned char Subunit;
+        unsigned char Comcode;
+        unsigned short Status;
+        unsigned char Unused[8];
+        unsigned char Media;
+        unsigned long Address;
+        unsigned short Bytes;
+        unsigned short Sector;
+        unsigned long VolID;
+    } Tray_request;
+    typedef struct CD_data
+    {
+        unsigned char Mode;
+        unsigned long Status;
+    } CD_data;
+
+    static struct Tray_request *Tray_request_Pointers;
+    static struct CD_data *CD_data_Pointers;
+
+    Tray_request_Pointers = (struct Tray_request *)(CD_Device_req.segment * 16);
+    CD_data_Pointers = (struct CD_data *)(CD_Device_extra.segment * 16);
+
+    memset(Tray_request_Pointers, 0, sizeof(struct Tray_request));
+    memset(CD_data_Pointers, 0, sizeof(struct CD_data));
+
+    Tray_request_Pointers->Length = sizeof(struct Tray_request);
+    Tray_request_Pointers->Comcode = 3;
+    Tray_request_Pointers->Address = CD_Device_extra.segment << 16;
+    Tray_request_Pointers->Bytes = 5;
+    CD_data_Pointers->Mode = 0x06;
+
+    CD_DeviceRequest();
+
+    CD_Cdrom_data.Error = Tray_request_Pointers->Status;
+    CD_Cdrom_data.Status = CD_data_Pointers->Status;
+}
+
+void CD_Seek(unsigned long Location)
+{
+    unsigned char min, sec, frame;
+    typedef struct Play_request
+    {
+        unsigned char Length;
+        unsigned char Subunit;
+        unsigned char Comcode;
+        unsigned short Status;
+        unsigned char Unused[8];
+        unsigned char Addressmode;
+        unsigned long Transfer;
+        unsigned short Sector;
+        unsigned long Seekpos;
+    } Play_request;
+
+    static struct Play_request *Play_request_Pointers;
+
+    Play_request_Pointers = (struct Play_request *)(CD_Device_req.segment * 16);
+
+    memset(Play_request_Pointers, 0, sizeof(struct Play_request));
+
+    Play_request_Pointers->Length = sizeof(struct Play_request);
+    Play_request_Pointers->Comcode = 131;
+    Play_request_Pointers->Seekpos = Location;
+
+    CD_DeviceRequest();
+
+    CD_Cdrom_data.Error = Play_request_Pointers->Status;
+}
+
+void CD_StopAudio(void)
+{
+    typedef struct Stop_request
+    {
+        unsigned char Length;
+        unsigned char Subunit;
+        unsigned char Comcode;
+        unsigned short Status;
+        unsigned char Unused[8];
+    } Stop_request;
+
+    static struct Stop_request *Stop_request_Pointers;
+
+    Stop_request_Pointers = (struct Stop_request *)(CD_Device_req.segment * 16);
+
+    memset(Stop_request_Pointers, 0, sizeof(struct Stop_request));
+
+    Stop_request_Pointers->Length = sizeof(struct Stop_request);
+    Stop_request_Pointers->Comcode = 133;
+
+    CD_DeviceRequest();
+
+    CD_Cdrom_data.Error = Stop_request_Pointers->Status;
+}
+
+void CD_ResumeAudio(void)
+{
+    typedef struct Stop_request
+    {
+        unsigned char Length;
+        unsigned char Subunit;
+        unsigned char Comcode;
+        unsigned short Status;
+        unsigned char Unused[8];
+    } Stop_request;
+
+    static struct Stop_request *Stop_request_Pointers;
+
+    Stop_request_Pointers = (struct Stop_request *)(CD_Device_req.segment * 16);
+
+    memset(Stop_request_Pointers, 0, sizeof(struct Stop_request));
+
+    Stop_request_Pointers->Length = sizeof(struct Stop_request);
+    Stop_request_Pointers->Comcode = 136;
+
+    CD_DeviceRequest();
+
+    CD_Cdrom_data.Error = Stop_request_Pointers->Status;
+}
+
+void CD_PlayAudio(unsigned long Begin, unsigned long End)
+{
+    typedef struct Play_request
+    {
+        unsigned char Length;
+        unsigned char Subunit;
+        unsigned char Comcode;
+        unsigned short Status;
+        unsigned char Unused[8];
+        unsigned char Addressmode;
+        unsigned long Start;
+        unsigned long Playlength;
+    } Play_request;
+
+    static struct Play_request *Play_request_Pointers;
+
+    Play_request_Pointers = (struct Play_request *)(CD_Device_req.segment * 16);
+
+    memset(Play_request_Pointers, 0, sizeof(struct Play_request));
+
+    Play_request_Pointers->Length = sizeof(struct Play_request);
+    Play_request_Pointers->Comcode = 132;
+    Play_request_Pointers->Start = Begin;
+    Play_request_Pointers->Playlength = End - Begin;
+
+    CD_DeviceRequest();
+
+    CD_Cdrom_data.Error = Play_request_Pointers->Status;
+}
+
+void CD_CMD(unsigned char Mode)
+{
+    typedef struct Tray_request
+    {
+        unsigned char Length;
+        unsigned char Subunit;
+        unsigned char Comcode;
+        unsigned short Status;
+        unsigned char Unused[8];
+        unsigned char Media;
+        unsigned long Address;
+        unsigned short Bytes;
+        unsigned short Sector;
+        unsigned long VolID;
+        unsigned char Unused2[4];
+    } Tray_request;
+    typedef struct CD_Mode
+    {
+        unsigned char Mode;
+    } CD_Mode;
+
+    static struct Tray_request *Tray_request_Pointers;
+    static struct CD_Mode *CD_Mode_Pointers;
+
+    Tray_request_Pointers = (struct Tray_request *)(CD_Device_req.segment * 16);
+    CD_Mode_Pointers = (struct CD_Mode *)(CD_Device_extra.segment * 16);
+
+    memset(Tray_request_Pointers, 0, sizeof(struct Tray_request));
+    memset(CD_Mode_Pointers, 0, sizeof(struct CD_Mode));
+
+    CD_Mode_Pointers->Mode = Mode;
+    Tray_request_Pointers->Length = sizeof(struct Tray_request);
+    Tray_request_Pointers->Comcode = 12;
+    Tray_request_Pointers->Address = CD_Device_extra.segment << 16;
+    Tray_request_Pointers->Bytes = 1;
+
+    CD_DeviceRequest();
+
+    CD_Cdrom_data.Error = Tray_request_Pointers->Status;
+}
+
+void CD_Lock(unsigned char Doormode)
+{
+    typedef struct Tray_request
+    {
+        unsigned char Length;
+        unsigned char Subunit;
+        unsigned char Comcode;
+        unsigned short Status;
+        unsigned char Unused[8];
+        unsigned char Media;
+        unsigned long Address;
+        unsigned short Bytes;
+        unsigned char Unused2[4];
+    } Tray_request;
+
+    typedef struct CD_Data
+    {
+        unsigned char Mode;
+        unsigned char Media;
+    } CD_Data;
+
+    static struct Tray_request *Tray_request_Pointers;
+    static struct CD_Data *CD_Data_Pointers;
+
+    Tray_request_Pointers = (struct Tray_request *)(CD_Device_req.segment * 16);
+    CD_Data_Pointers = (struct CD_Data *)(CD_Device_extra.segment * 16);
+
+    memset(Tray_request_Pointers, 0, sizeof(struct Tray_request));
+    memset(CD_Data_Pointers, 0, sizeof(struct CD_Data));
+
+    Tray_request_Pointers->Length = sizeof(struct Tray_request);
+    Tray_request_Pointers->Comcode = 12;
+    Tray_request_Pointers->Address = CD_Device_extra.segment << 16;
+    Tray_request_Pointers->Bytes = 2;
+    CD_Data_Pointers->Mode = 1;
+    CD_Data_Pointers->Media = Doormode;
+
+    CD_DeviceRequest();
+
+    CD_Cdrom_data.Error = Tray_request_Pointers->Status;
+}
+
+short CD_Mediach(void)
+{
+    typedef struct Tray_request
+    {
+        unsigned char Length;
+        unsigned char Subunit;
+        unsigned char Comcode;
+        unsigned short Status;
+        unsigned char Unused[8];
+        unsigned char Media;
+        unsigned long Address;
+        unsigned short Bytes;
+        unsigned short Sector;
+        unsigned long VolID;
+    } Tray_request;
+
+    typedef struct CD_Data
+    {
+        unsigned char Mode;
+        unsigned char Media;
+    } CD_Data;
+
+    static struct Tray_request *Tray_request_Pointers;
+    static struct CD_Data *CD_Data_Pointers;
+
+    Tray_request_Pointers = (struct Tray_request *)(CD_Device_req.segment * 16);
+    CD_Data_Pointers = (struct CD_Data *)(CD_Device_extra.segment * 16);
+
+    memset(Tray_request_Pointers, 0, sizeof(struct Tray_request));
+    memset(CD_Data_Pointers, 0, sizeof(struct CD_Data));
+
+    Tray_request_Pointers->Length = sizeof(struct Tray_request);
+    Tray_request_Pointers->Comcode = 3;
+    Tray_request_Pointers->Address = CD_Device_extra.segment << 16;
+    Tray_request_Pointers->Bytes = 2;
+    CD_Data_Pointers->Mode = 0x09;
+
+    CD_DeviceRequest();
+
+    CD_Cdrom_data.Error = Tray_request_Pointers->Status;
+    return (CD_Data_Pointers->Media);
+}
+
+void CD_GetVolume(void)
+{
+    typedef struct Tray_request
+    {
+        unsigned char Length;
+        unsigned char Subunit;
+        unsigned char Comcode;
+        unsigned short Status;
+        unsigned char Unused[8];
+        unsigned char Media;
+        unsigned long Address;
+        unsigned short Bytes;
+        unsigned short Sector;
+        unsigned long VolID;
+    } Tray_request;
+
+    static struct Tray_request *Tray_request_Pointers;
+    static struct CD_Volumeinfo *CD_Volume_Pointers;
+
+    Tray_request_Pointers = (struct Tray_request *)(CD_Device_req.segment * 16);
+    CD_Volume_Pointers = (struct CD_Volumeinfo *)(CD_Device_extra.segment * 16);
+
+    memset(Tray_request_Pointers, 0, sizeof(struct Tray_request));
+    Tray_request_Pointers->Length = sizeof(struct Tray_request);
+    Tray_request_Pointers->Comcode = 3;
+    Tray_request_Pointers->Address = CD_Device_extra.segment << 16;
+    Tray_request_Pointers->Bytes = 9;
+    CD_Volume_Pointers->Mode = 0x04;
+
+    CD_DeviceRequest();
+    memcpy(&CD_Volumeinfo, CD_Volume_Pointers, sizeof(struct CD_Volumeinfo));
+    CD_Cdrom_data.Error = Tray_request_Pointers->Status;
+}
+
+void CD_SetVolume(void)
+{
+    typedef struct Tray_request
+    {
+        unsigned char Length;
+        unsigned char Subunit;
+        unsigned char Comcode;
+        unsigned short Status;
+        unsigned char Unused[8];
+        unsigned char Media;
+        unsigned long Address;
+        unsigned short Bytes;
+        unsigned short Sector;
+        unsigned long VolID;
+    } Tray_request;
+
+    static struct Tray_request *Tray_request_Pointers;
+    static struct CD_Volumeinfo *CD_Volume_Pointers;
+
+    Tray_request_Pointers = (struct Tray_request *)(CD_Device_req.segment * 16);
+    CD_Volume_Pointers = (struct CD_Volumeinfo *)(CD_Device_extra.segment * 16);
+
+    memset(Tray_request_Pointers, 0, sizeof(struct Tray_request));
+    memcpy(CD_Volume_Pointers, &CD_Volumeinfo, sizeof(struct CD_Volumeinfo));
+    Tray_request_Pointers->Length = sizeof(struct Tray_request);
+    Tray_request_Pointers->Comcode = 12;
+    Tray_request_Pointers->Address = CD_Device_extra.segment << 16;
+    Tray_request_Pointers->Bytes = 9;
+    CD_Volume_Pointers->Mode = 0x03;
+
+    CD_DeviceRequest();
+
+    CD_Cdrom_data.Error = Tray_request_Pointers->Status;
+}
+
+short CD_GetUPC(void)
+{
+    typedef struct Tray_request
+    {
+        unsigned char Length;
+        unsigned char Subunit;
+        unsigned char Comcode;
+        unsigned short Status;
+        unsigned char Unused[8];
+        unsigned char Media;
+        unsigned long Address;
+        unsigned short Bytes;
+        unsigned short Sector;
+        unsigned long VolID;
+    } Tray_request;
+    typedef struct UPC_data
+    {
+        unsigned char Mode;
+        unsigned char Adr;
+        unsigned char UPC[17];
+        unsigned char Zero;
+        unsigned char Aframe;
+    } UPC_data;
+
+    static struct Tray_request *Tray_request_Pointers;
+    static struct UPC_data *UPC_data_Pointers;
+
+    Tray_request_Pointers = (struct Tray_request *)(CD_Device_req.segment * 16);
+    UPC_data_Pointers = (struct UPC_data *)(CD_Device_extra.segment * 16);
+
+    memset(Tray_request_Pointers, 0, sizeof(struct Tray_request));
+    memset(UPC_data_Pointers, 0, sizeof(struct UPC_data));
+
+    Tray_request_Pointers->Length = sizeof(struct Tray_request);
+    Tray_request_Pointers->Comcode = 3;
+    Tray_request_Pointers->Address = CD_Device_extra.segment << 16;
+    Tray_request_Pointers->Bytes = 11;
+    UPC_data_Pointers->Mode = 0x0E;
+    UPC_data_Pointers->Adr = 0x02;
+
+    CD_DeviceRequest();
+
+    CD_Cdrom_data.Error = Tray_request_Pointers->Status;
+    if (UPC_data_Pointers->Adr == 0)
+        memset(&UPC_data_Pointers->UPC, 0, 7);
+    memcpy(&CD_Cdrom_data.UPC[0], &UPC_data_Pointers->UPC[0], 7);
+    return 1;
+}
+
+void CD_Getpos(void)
+{
+    typedef struct Tray_request
+    {
+        unsigned char Length;
+        unsigned char Subunit;
+        unsigned char Comcode;
+        unsigned short Status;
+        unsigned char Unused[8];
+        unsigned char Media;
+        unsigned long Address;
+        unsigned short Bytes;
+        unsigned short Sector;
+        unsigned long VolID;
+    } Tray_request;
+
+    static struct Tray_request *Tray_request_Pointers;
+    static struct CD_Playinfo *CD_Playinfo_Pointers;
+
+    Tray_request_Pointers = (struct Tray_request *)(CD_Device_req.segment * 16);
+    CD_Playinfo_Pointers = (struct CD_Playinfo *)(CD_Device_extra.segment * 16);
+
+    memset(Tray_request_Pointers, 0, sizeof(struct Tray_request));
+    memset(CD_Playinfo_Pointers, 0, sizeof(struct CD_Playinfo));
+
+    Tray_request_Pointers->Length = sizeof(struct Tray_request);
+    Tray_request_Pointers->Comcode = 3;
+    Tray_request_Pointers->Address = CD_Device_extra.segment << 16;
+    Tray_request_Pointers->Bytes = 6;
+    CD_Playinfo_Pointers->Control = 12;
+    CD_DeviceRequest();
+
+    CD_Cdrom_data.Error = Tray_request_Pointers->Status;
+}
+
+void CD_DeInit(void)
+{
+    DPMI_FreeDOSMem(&CD_Device_req);
+    DPMI_FreeDOSMem(&CD_Device_req);
+}
+
+int CD_Init(void)
+{
+    if (!CD_Cdrom_installed())
+    {
+        printf("MSCDEX WAS NOT FOUND!\n");
+        return 0;
+    }
+    else
+    {
+        printf(" - Init: MSCDEX found.\n");
+        printf(" - Tracks: %d\n", CD_Cdrom_data.High_audio);
+        printf(" - Time: %d min, %d sec\n", CD_Cdrom_data.Disk_length_min, CD_Cdrom_data.Disk_length_sec);
+        return 1;
+    }
 }

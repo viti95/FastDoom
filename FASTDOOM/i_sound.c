@@ -68,8 +68,8 @@ void I_ShutdownTimer(void)
 //
 // Sound header & data
 //
-int snd_Mport;       // midi variables
-int snd_Sport;       // sound port
+int snd_Mport; // midi variables
+int snd_Sport; // sound port
 
 int snd_MusicVolume; // maximum volume for music
 int snd_SfxVolume;   // maximum volume for sound
@@ -84,7 +84,6 @@ void I_SetMusicVolume(int volume)
     MUSIC_SetVolume(volume);
     snd_MusicVolume = volume;
 }
-
 //
 // Retrieve the raw data lump index
 //  for a given SFX name.
@@ -247,7 +246,28 @@ void I_sndArbitrateCards(void)
 
     if (audiocd)
     {
+        if(!CD_Init())
+        {
+            // Error on AudioCD init
+            snd_MusicDevice = snd_none;
+            return;
+        }
 
+        CD_Volumeinfo.Volume0 = 255;
+        CD_Volumeinfo.Volume1 = 255;
+        CD_Volumeinfo.Volume2 = 255;
+        CD_Volumeinfo.Volume3 = 255;
+        CD_SetVolume();
+        CD_SetTrack(2);                       
+        CD_Lock(LOCK);                         
+        CD_Seek(CD_Cdrom_data.Track_position); 
+        delay(400);                            
+                                               
+        CD_PlayAudio(CD_Cdrom_data.Track_position, CD_Cdrom_data.Endofdisk);
+        CD_GetVolume();
+        //CD_StopAudio();
+        //CD_Lock(UNLOCK);
+        //CD_DeInit();
     }
 }
 
