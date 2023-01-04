@@ -98,16 +98,6 @@ static void PrepareRegisters(void)
   memset(&regs, 0, sizeof(regs));
 }
 
-static void RMIRQ(char irq)
-{
-  memset(&regs, 0, sizeof(regs));
-  regs.w.ax = 0x0300; // Simulate Real-Mode interrupt
-  regs.h.bl = irq;
-  sregs.es = FP_SEG(&RMI);
-  regs.x.edi = FP_OFF(&RMI);
-  int386x(0x31, &regs, &regs, &sregs);
-}
-
 static void RMIRQ10()
 {
   memset(&regs, 0, sizeof(regs));

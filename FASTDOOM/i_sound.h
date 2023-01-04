@@ -47,6 +47,7 @@ typedef enum
     snd_CMS,
     snd_OPL2LPT,
     snd_OPL3LPT,
+    snd_CD,
     NUM_SCARDS
 } cardenum_t;
 

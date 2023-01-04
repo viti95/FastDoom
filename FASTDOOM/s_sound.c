@@ -39,6 +39,8 @@
 
 #include "std_func.h"
 
+#include "ns_cd.h"
+
 // Current music/sfx card - index useless
 //  w/o a reference LUT in a sound module.
 extern int snd_MusicDevice;
@@ -46,6 +48,9 @@ extern int snd_SfxDevice;
 // Config file? Same disclaimer as above.
 extern int snd_DesiredMusicDevice;
 extern int snd_DesiredSfxDevice;
+
+int cdlooping = 0;
+int cdtrack = 0;
 
 typedef struct
 {
@@ -89,13 +94,27 @@ int S_getChannel(void *origin, sfxinfo_t *sfxinfo);
 byte S_AdjustSoundParams(mobj_t *source, int *vol, int *sep);
 void S_StopChannel(int cnum);
 
-void S_SetMusicVolume(int volume)
+void S_SetMusicVolumeCD(int volume)
+{
+    CD_SetVolume(volume);
+    snd_MusicVolume = volume;
+}
+
+void S_SetMusicVolumeMIDI(int volume)
 {
     I_SetMusicVolume(volume);
     snd_MusicVolume = volume;
 }
 
-void S_StopMusic(void)
+void S_SetMusicVolume(int volume)
+{
+    if (snd_MusicDevice == snd_CD)
+        S_SetMusicVolumeCD(volume);
+    else
+        S_SetMusicVolumeMIDI(volume);
+}
+
+void S_StopMusicMIDI(void)
 {
     if (mus_playing)
     {
@@ -111,7 +130,35 @@ void S_StopMusic(void)
     }
 }
 
-void S_ChangeMusic(int musicnum, int looping)
+void S_ChangeMusicCD(int musicnum, int looping)
+{
+    unsigned long tracklength;
+
+    cdtrack = musicnum;    
+    cdlooping = looping;
+
+    // Not enough CD tracks. At least not crash.
+    if (cdtrack > CD_Cdrom_data.High_audio)
+        cdtrack = cdtrack % CD_Cdrom_data.High_audio;
+
+    tracklength = CD_GetTrackLength(cdtrack);
+    CD_SetTrack(cdtrack);
+    CD_Seek(CD_Cdrom_data.Track_position);
+    delay(400);
+    CD_PlayAudio(CD_Cdrom_data.Track_position, CD_Cdrom_data.Track_position + tracklength);
+}
+
+void S_CheckCD(void)
+{
+    if (cdlooping && !mus_paused)
+    {
+        CD_GetAudioStatus();
+        if ((CD_Cdrom_data.Status & (1 << 9)) ? 0 : 1)
+            S_ChangeMusicCD(cdtrack, cdlooping);
+    }
+}
+
+void S_ChangeMusicMIDI(int musicnum, int looping)
 {
     musicinfo_t *music;
     char namebuf[9];
@@ -130,7 +177,7 @@ void S_ChangeMusic(int musicnum, int looping)
         return;
 
     // shutdown old music
-    S_StopMusic();
+    S_StopMusicMIDI();
 
     // get lumpnum if neccessary
     if (!music->lumpnum)
@@ -148,6 +195,14 @@ void S_ChangeMusic(int musicnum, int looping)
     MUS_PlaySong(music->handle, snd_MusicVolume);
 
     mus_playing = music;
+}
+
+void S_ChangeMusic(int musicnum, int looping)
+{
+    if (snd_MusicDevice == snd_CD)
+        S_ChangeMusicCD(musicnum, looping);
+    else
+        S_ChangeMusicMIDI(musicnum, looping);
 }
 
 void S_StopChannel(int cnum)
@@ -241,8 +296,15 @@ void S_SetSfxVolume(int volume)
 //
 // Stop and resume music, during game PAUSE.
 //
-void S_PauseSound(void)
+void S_PauseMusic(void)
 {
+    if (snd_MusicDevice == snd_CD)
+    {
+        CD_StopAudio();
+        mus_paused = 1;
+        return;
+    }
+
     if (mus_playing && !mus_paused)
     {
         MUSIC_Pause();
@@ -250,8 +312,15 @@ void S_PauseSound(void)
     }
 }
 
-void S_ResumeSound(void)
+void S_ResumeMusic(void)
 {
+    if (snd_MusicDevice == snd_CD)
+    {
+        CD_ResumeAudio();
+        mus_paused = 0;
+        return;
+    }
+
     if (mus_playing && mus_paused)
     {
         MUSIC_Continue();

@@ -103,11 +103,7 @@ int PAS_CheckForDriver(
    regs.w.ax = MV_CheckForDriver;
    regs.w.bx = 0x3f3f;
 
-#ifdef __386__
    int386(MV_SoundInt, &regs, &regs);
-#else
-   int86(MV_SoundInt, &regs, &regs);
-#endif
 
    if (regs.w.ax != MV_CheckForDriver)
    {
@@ -140,11 +136,7 @@ MVState *PAS_GetStateTable(
 
    regs.w.ax = MV_GetPointerToStateTable;
 
-#ifdef __386__
    int386(MV_SoundInt, &regs, &regs);
-#else
-   int86(MV_SoundInt, &regs, &regs);
-#endif
 
    if (regs.w.ax != MV_Signature)
    {
@@ -177,11 +169,7 @@ MVFunc *PAS_GetFunctionTable(
 
    regs.w.ax = MV_GetPointerToFunctionTable;
 
-#ifdef __386__
    int386(MV_SoundInt, &regs, &regs);
-#else
-   int86(MV_SoundInt, &regs, &regs);
-#endif
 
    if (regs.w.ax != MV_Signature)
    {
@@ -213,11 +201,7 @@ int PAS_GetCardSettings(
 
    regs.w.ax = MV_GetDmaIrqInt;
 
-#ifdef __386__
    int386(MV_SoundInt, &regs, &regs);
-#else
-   int86(MV_SoundInt, &regs, &regs);
-#endif
 
    if (regs.w.ax != MV_Signature)
    {

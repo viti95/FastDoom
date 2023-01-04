@@ -39,6 +39,8 @@
 
 #include "options.h"
 
+#include "ns_cd.h"
+
 //
 // I_StartupTimer
 //
@@ -66,8 +68,8 @@ void I_ShutdownTimer(void)
 //
 // Sound header & data
 //
-int snd_Mport;       // midi variables
-int snd_Sport;       // sound port
+int snd_Mport; // midi variables
+int snd_Sport; // sound port
 
 int snd_MusicVolume; // maximum volume for music
 int snd_SfxVolume;   // maximum volume for sound
@@ -82,7 +84,6 @@ void I_SetMusicVolume(int volume)
     MUSIC_SetVolume(volume);
     snd_MusicVolume = volume;
 }
-
 //
 // Retrieve the raw data lump index
 //  for a given SFX name.
@@ -101,7 +102,7 @@ int I_GetSfxLumpNum(sfxinfo_t *sfx)
 
 void I_sndArbitrateCards(void)
 {
-    byte gus, adlib, sb, midi, ensoniq, lpt, cmsfx, cmsmus, oplxlpt;
+    byte gus, adlib, sb, midi, ensoniq, lpt, cmsfx, cmsmus, oplxlpt, audiocd;
     int dmxlump;
 
     snd_SfxVolume = 127;
@@ -141,6 +142,7 @@ void I_sndArbitrateCards(void)
     lpt = snd_SfxDevice == snd_DISNEY || snd_SfxDevice == snd_TANDY || snd_SfxDevice == snd_LPTDAC;
     cmsfx = snd_SfxDevice == snd_CMS;
     cmsmus = snd_MusicDevice == snd_CMS;
+    audiocd = snd_MusicDevice == snd_CD;
 
     //
     // initialize whatever i've got
@@ -241,6 +243,18 @@ void I_sndArbitrateCards(void)
             CMS_SetMode(CMS_OnlyMusic);
         }
     }
+
+    if (audiocd)
+    {
+        if(!CD_Init())
+        {
+            // Error on AudioCD init
+            I_Error("Cannot play AudioCD music");
+        }
+
+        CD_SetVolume(255);
+        CD_Lock(LOCK);
+    }
 }
 
 //
@@ -272,6 +286,6 @@ void I_StartupSound(void)
 //
 void I_ShutdownSound(void)
 {
-    S_PauseSound();
+    S_PauseMusic();
     ASS_DeInit();
 }

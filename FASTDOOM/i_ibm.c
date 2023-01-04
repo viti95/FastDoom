@@ -40,6 +40,7 @@
 #include "doomdef.h"
 #include "doomstat.h"
 #include "ns_inter.h"
+#include "ns_cd.h"
 
 #include "am_map.h"
 
@@ -1017,6 +1018,10 @@ void I_Error(char *error, ...)
     vprintf(error, argptr);
     va_end(argptr);
     printf("\n");
+
+    if (snd_MusicDevice == snd_CD)
+        CD_Exit();
+
     exit(1);
 }
 
@@ -1049,6 +1054,9 @@ void I_Quit(void)
     regs.h.dh = 23;
     int386(0x10, (union REGS *)&regs, &regs); // Set text pos
     printf("\n");
+
+    if (snd_MusicDevice == snd_CD)
+        CD_Exit();
 
     exit(0);
 }

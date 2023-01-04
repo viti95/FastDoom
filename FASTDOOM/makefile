@@ -88,6 +88,7 @@ GLOBOBJS = &
  ns_lpt.obj &
  ns_sbdm.obj &
  ns_adbfx.obj &
+ ns_cd.obj &
  i_debug.obj &
  i_random.obj &
  i_main.obj &
