@@ -150,7 +150,7 @@ void S_ChangeMusicCD(int musicnum, int looping)
 
 void S_CheckCD(void)
 {
-    if (cdlooping)
+    if (cdlooping && !mus_paused)
     {
         CD_GetAudioStatus();
         if ((CD_Cdrom_data.Status & (1 << 9)) ? 0 : 1)
