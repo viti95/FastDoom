@@ -516,6 +516,11 @@ void D_DoomLoop(void)
 
         S_UpdateSounds(); // move positional sounds
 
+        if (snd_MusicDevice == snd_CD) // check music track (looping)
+        {
+            //S_CheckCD();
+        }
+
         // Update display, next frame, with current state.
         D_Display();
     }

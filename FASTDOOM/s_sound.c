@@ -49,6 +49,9 @@ extern int snd_SfxDevice;
 extern int snd_DesiredMusicDevice;
 extern int snd_DesiredSfxDevice;
 
+int cdlooping = 0;
+int cdtrack = 0;
+
 typedef struct
 {
     // sound information (if null, channel avail.)
@@ -129,16 +132,30 @@ void S_StopMusicMIDI(void)
 
 void S_ChangeMusicCD(int musicnum, int looping)
 {
-    int track = musicnum;
+    unsigned long tracklength;
+
+    cdtrack = musicnum;    
+    cdlooping = looping;
 
     // Not enough CD tracks. At least not crash.
-    if (track > CD_Cdrom_data.High_audio)
-        track = track % CD_Cdrom_data.High_audio;
+    if (cdtrack > CD_Cdrom_data.High_audio)
+        cdtrack = cdtrack % CD_Cdrom_data.High_audio;
 
-    CD_SetTrack(track);
+    tracklength = CD_GetTrackLength(cdtrack);
+    CD_SetTrack(cdtrack);
     CD_Seek(CD_Cdrom_data.Track_position);
     delay(400);
-    CD_PlayAudio(CD_Cdrom_data.Track_position, CD_Cdrom_data.Endofdisk);
+    CD_PlayAudio(CD_Cdrom_data.Track_position, CD_Cdrom_data.Track_position + tracklength);
+}
+
+void S_CheckCD(void)
+{
+    if (cdlooping)
+    {
+        CD_Status();
+        if (CD_Cdrom_data.Status & 0x100)
+            S_ChangeMusicCD(cdtrack, cdlooping);
+    }
 }
 
 void S_ChangeMusicMIDI(int musicnum, int looping)

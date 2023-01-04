@@ -56,6 +56,7 @@ short CD_GetUPC(void);
 void CD_GetAudioInfo(void);
 void CD_SetTrack(short Tracknum);
 void CD_TrackLength(short Tracknum, unsigned char *min, unsigned char *sec, unsigned char *frame);
+unsigned long CD_GetTrackLength(short Tracknum);
 void CD_Status(void);
 void CD_Seek(unsigned long Location);
 void CD_PlayAudio(unsigned long Begin, unsigned long End);

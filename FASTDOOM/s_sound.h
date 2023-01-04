@@ -77,6 +77,7 @@ void S_StopMusic(void);
 // Stop and resume music, during game PAUSE.
 void S_PauseMusic(void);
 void S_ResumeMusic(void);
+void S_CheckCD(void);
 
 //
 // Updates music & sounds
