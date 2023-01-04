@@ -518,7 +518,7 @@ void D_DoomLoop(void)
 
         if (snd_MusicDevice == snd_CD) // check music track (looping)
         {
-            //S_CheckCD();
+            S_CheckCD();
         }
 
         // Update display, next frame, with current state.

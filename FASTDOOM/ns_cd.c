@@ -172,6 +172,48 @@ void CD_GetAudioInfo(void)
     CD_Cdrom_data.Error = IOCTLI_Pointers->Status;
 }
 
+void CD_GetAudioStatus(void)
+{
+    typedef struct IOCTLI
+    {
+        unsigned char Length;
+        unsigned char Subunit;
+        unsigned char Comcode;
+        unsigned short Status;
+        unsigned char Unused[8];
+        unsigned char Media;
+        unsigned long Address;
+        unsigned short Bytes;
+        unsigned short Sector;
+        unsigned long VolID;
+    } IOCTLI;
+    typedef struct Track_data
+    {
+        unsigned char Mode;
+        unsigned char Lowest;
+        unsigned char Highest;
+        unsigned long Address;
+    } Track_data;
+
+    static struct IOCTLI *IOCTLI_Pointers;
+    static struct Track_data *Track_data_Pointers;
+
+    IOCTLI_Pointers = (struct IOCTLI *)(CD_Device_req.segment * 16);
+    Track_data_Pointers = (struct Track_data *)(CD_Device_extra.segment * 16);
+
+    memset(IOCTLI_Pointers, 0, sizeof(struct IOCTLI));
+    memset(Track_data_Pointers, 0, sizeof(struct Track_data));
+
+    IOCTLI_Pointers->Length = sizeof(struct IOCTLI);
+    IOCTLI_Pointers->Comcode = 3;
+    IOCTLI_Pointers->Address = CD_Device_extra.segment << 16;
+    IOCTLI_Pointers->Bytes = sizeof(struct Track_data);
+    Track_data_Pointers->Mode = 0x0A;
+    CD_DeviceRequest();
+
+    CD_Cdrom_data.Status = IOCTLI_Pointers->Status;
+}
+
 unsigned long CD_GetTrackLength(short Tracknum)
 {
     unsigned long Start, Finish;
