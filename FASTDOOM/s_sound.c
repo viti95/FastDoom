@@ -93,7 +93,8 @@ void S_StopChannel(int cnum);
 
 void S_SetMusicVolumeCD(int volume)
 {
-
+    CD_SetVolume(volume);
+    snd_MusicVolume = volume;
 }
 
 void S_SetMusicVolumeMIDI(int volume)
@@ -112,7 +113,7 @@ void S_SetMusicVolume(int volume)
 
 void S_StopMusicCD(void)
 {
-
+    CD_StopAudio();
 }
 
 void S_StopMusicMIDI(void)
@@ -141,7 +142,16 @@ void S_StopMusic(void)
 
 void S_ChangeMusicCD(int musicnum, int looping)
 {
+    int track = musicnum;
 
+    // Not enough CD tracks. At least not crash.
+    if (track > CD_Cdrom_data.High_audio)
+        track = track % CD_Cdrom_data.High_audio;
+
+    CD_SetTrack(track);
+    CD_Seek(CD_Cdrom_data.Track_position);
+    delay(400);
+    CD_PlayAudio(CD_Cdrom_data.Track_position, CD_Cdrom_data.Endofdisk);
 }
 
 void S_ChangeMusicMIDI(int musicnum, int looping)

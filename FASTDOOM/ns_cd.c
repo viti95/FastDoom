@@ -767,9 +767,15 @@ int CD_Init(void)
     }
     else
     {
-        printf(" - Init: MSCDEX found.\n");
-        printf(" - Tracks: %d\n", CD_Cdrom_data.High_audio);
-        printf(" - Time: %d min, %d sec\n", CD_Cdrom_data.Disk_length_min, CD_Cdrom_data.Disk_length_sec);
+        printf("MSCDEX found\n");
+        printf("Tracks: %d\n", CD_Cdrom_data.High_audio);
+
+        if (!CD_Cdrom_data.High_audio)
+        {
+            // No tracks!
+            return 0;
+        }
+
         return 1;
     }
 }

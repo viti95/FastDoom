@@ -254,12 +254,7 @@ void I_sndArbitrateCards(void)
         }
 
         CD_SetVolume(255);
-        CD_SetTrack(2);                       
-        CD_Lock(LOCK);                         
-        CD_Seek(CD_Cdrom_data.Track_position); 
-        delay(400);                            
-                                               
-        CD_PlayAudio(CD_Cdrom_data.Track_position, CD_Cdrom_data.Endofdisk);
+        CD_Lock(LOCK);
     }
 }
 
