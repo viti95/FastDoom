@@ -281,34 +281,32 @@ void S_SetSfxVolume(int volume)
 //
 void S_PauseMusic(void)
 {
+    if (snd_MusicDevice == snd_CD)
+    {
+        CD_StopAudio();
+        mus_paused = 1;
+        return;
+    }
+
     if (mus_playing && !mus_paused)
     {
-        if (snd_MusicDevice == snd_CD)
-        {
-            CD_StopAudio();
-        }
-        else
-        {
-            MUSIC_Pause();
-        }
-
+        MUSIC_Pause();
         mus_paused = 1;
     }
 }
 
 void S_ResumeMusic(void)
 {
+    if (snd_MusicDevice == snd_CD)
+    {
+        CD_ResumeAudio();
+        mus_paused = 0;
+        return;
+    }
+
     if (mus_playing && mus_paused)
     {
-        if (snd_MusicDevice == snd_CD)
-        {
-            CD_ResumeAudio();
-        }
-        else
-        {
-            MUSIC_Continue();
-        }
-
+        MUSIC_Continue();
         mus_paused = 0;
     }
 }
