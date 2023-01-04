@@ -510,9 +510,9 @@ void G_Ticker(void)
         case BTS_PAUSE:
             paused ^= 1;
             if (paused)
-                S_PauseSound();
+                S_PauseMusic();
             else
-                S_ResumeSound();
+                S_ResumeMusic();
             break;
 
         case BTS_SAVEGAME:
@@ -981,7 +981,7 @@ void G_InitNew(skill_t skill,
     if (paused)
     {
         paused = 0;
-        S_ResumeSound();
+        S_ResumeMusic();
     }
 
     if (skill > sk_nightmare)

@@ -111,11 +111,6 @@ void S_SetMusicVolume(int volume)
         S_SetMusicVolumeMIDI(volume);
 }
 
-void S_StopMusicCD(void)
-{
-    CD_StopAudio();
-}
-
 void S_StopMusicMIDI(void)
 {
     if (mus_playing)
@@ -130,14 +125,6 @@ void S_StopMusicMIDI(void)
         mus_playing->data = 0;
         mus_playing = 0;
     }
-}
-
-void S_StopMusic(void)
-{
-    if (snd_MusicDevice == snd_CD)
-        S_StopMusicCD();
-    else
-        S_StopMusicMIDI();
 }
 
 void S_ChangeMusicCD(int musicnum, int looping)
@@ -173,7 +160,7 @@ void S_ChangeMusicMIDI(int musicnum, int looping)
         return;
 
     // shutdown old music
-    S_StopMusic();
+    S_StopMusicMIDI();
 
     // get lumpnum if neccessary
     if (!music->lumpnum)
@@ -292,20 +279,36 @@ void S_SetSfxVolume(int volume)
 //
 // Stop and resume music, during game PAUSE.
 //
-void S_PauseSound(void)
+void S_PauseMusic(void)
 {
     if (mus_playing && !mus_paused)
     {
-        MUSIC_Pause();
+        if (snd_MusicDevice == snd_CD)
+        {
+            CD_StopAudio();
+        }
+        else
+        {
+            MUSIC_Pause();
+        }
+
         mus_paused = 1;
     }
 }
 
-void S_ResumeSound(void)
+void S_ResumeMusic(void)
 {
     if (mus_playing && mus_paused)
     {
-        MUSIC_Continue();
+        if (snd_MusicDevice == snd_CD)
+        {
+            CD_ResumeAudio();
+        }
+        else
+        {
+            MUSIC_Continue();
+        }
+
         mus_paused = 0;
     }
 }

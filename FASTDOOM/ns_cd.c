@@ -52,11 +52,11 @@ static void PrepareRegisters(void)
     memset(&regs, 0, sizeof(regs));
 }
 
-static void RMIRQ(char irq)
+static void RMIRQ2F()
 {
     memset(&regs, 0, sizeof(regs));
     regs.w.ax = 0x0300;
-    regs.h.bl = irq;
+    regs.h.bl = 0x02F;
     sregs.es = FP_SEG(&RMI);
     regs.x.edi = FP_OFF(&RMI);
     int386x(0x31, &regs, &regs, &sregs);
@@ -87,7 +87,7 @@ void CD_DeviceRequest(void)
     RMI.ECX = CD_Cdrom_data.First_drive;
     RMI.EDI = 0;
     RMI.ES = CD_Device_req.segment;
-    RMIRQ(0x02F);
+    RMIRQ2F();
 }
 
 void Red_book(unsigned long Value, unsigned char *min, unsigned char *sec, unsigned char *frame)
@@ -773,6 +773,7 @@ int CD_Init(void)
         if (!CD_Cdrom_data.High_audio)
         {
             // No tracks!
+            printf("NO AUDIO-CD TRACKS AVAILABLE!\n");
             return 0;
         }
 

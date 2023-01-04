@@ -249,8 +249,7 @@ void I_sndArbitrateCards(void)
         if(!CD_Init())
         {
             // Error on AudioCD init
-            snd_MusicDevice = snd_none;
-            return;
+            I_Error("Cannot play AudioCD music");
         }
 
         CD_SetVolume(255);
@@ -287,6 +286,6 @@ void I_StartupSound(void)
 //
 void I_ShutdownSound(void)
 {
-    S_PauseSound();
+    S_PauseMusic();
     ASS_DeInit();
 }
