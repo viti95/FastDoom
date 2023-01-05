@@ -51,7 +51,8 @@ char cards[M_LAST][20] = {
 	"PC Speaker (PWM)",
 	"C/MS (Game Blaster)",
 	"OPL2LPT",
-	"OPL3LPT"
+	"OPL3LPT",
+	"Audio-CD"
 	};
 
 char controls[C_LAST][20] = {

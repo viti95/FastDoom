@@ -199,23 +199,25 @@ enum
 	MCARD_OPL2LPT,
 	MCARD_OPL3LPT,
 	MCARD_CMS,
+	MCARD_CD,
 	MCARD_NONE,
 	MCARD_MAX
 };
 
 item_t mcarditems[] =
 	{
-		{MCARD_GMIDI, 26, 7, 28, -1, -1},
-		{MCARD_SBAWE32, 26, 8, 28, -1, -1},
-		{MCARD_CANVAS, 26, 9, 28, -1, -1},
-		{MCARD_WAVE, 26, 10, 28, -1, -1},
-		{MCARD_GUS, 26, 11, 28, -1, -1},
-		{MCARD_PAS, 26, 12, 28, -1, -1},
-		{MCARD_SB, 26, 13, 28, -1, -1},
-		{MCARD_ADLIB, 26, 14, 28, -1, -1},
-		{MCARD_OPL2LPT, 26, 15, 28, -1, -1},
-		{MCARD_OPL3LPT, 26, 16, 28, -1, -1},
-		{MCARD_CMS, 26, 17, 28, -1, -1},
+		{MCARD_GMIDI, 26, 6, 28, -1, -1},
+		{MCARD_SBAWE32, 26, 7, 28, -1, -1},
+		{MCARD_CANVAS, 26, 8, 28, -1, -1},
+		{MCARD_WAVE, 26, 9, 28, -1, -1},
+		{MCARD_GUS, 26, 10, 28, -1, -1},
+		{MCARD_PAS, 26, 11, 28, -1, -1},
+		{MCARD_SB, 26, 12, 28, -1, -1},
+		{MCARD_ADLIB, 26, 13, 28, -1, -1},
+		{MCARD_OPL2LPT, 26, 14, 28, -1, -1},
+		{MCARD_OPL3LPT, 26, 15, 28, -1, -1},
+		{MCARD_CMS, 26, 16, 28, -1, -1},
+		{MCARD_CD, 26, 17, 28, -1, -1},
 		{MCARD_NONE, 26, 18, 28, -1, -1}};
 
 menu_t mcardmenu =
@@ -252,6 +254,10 @@ int ChooseMusicCard(void) // RETURN: 0 = OK, -1 == ABORT
 
 	case M_CMS:
 		field = MCARD_CMS;
+		break;
+
+	case M_CD:
+		field = MCARD_CD;
 		break;
 
 	case M_PAS:
@@ -355,6 +361,11 @@ int ChooseMusicCard(void) // RETURN: 0 = OK, -1 == ABORT
 
 			case MCARD_CMS:
 				newc.m.card = M_CMS;
+				newc.m.midiport = -1;
+				goto func_exit;
+
+			case MCARD_CD:
+				newc.m.card = M_CD;
 				newc.m.midiport = -1;
 				goto func_exit;
 
@@ -619,6 +630,10 @@ int SetupMusic(void)
 	case M_CMS:
 		if (ChooseCMSPortMusic(&newc.m) == -1)
 			return (-1);
+		savemusic = TRUE;
+		break;
+
+	case M_CD:
 		savemusic = TRUE;
 		break;
 

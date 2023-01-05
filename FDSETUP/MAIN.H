@@ -47,6 +47,7 @@ typedef enum
 	M_CMS,
 	M_OPL2LPT,
 	M_OPL3LPT,
+	M_CD,
 	M_LAST
 } SCARD;
 
