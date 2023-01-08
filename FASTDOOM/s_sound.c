@@ -134,7 +134,16 @@ void S_ChangeMusicCD(int musicnum, int looping)
 {
     unsigned long tracklength;
 
-    cdtrack = musicnum;    
+    // Doom 2, TNT and Plutonia fix
+    if (gamemode == commercial)
+        cdtrack = musicnum - mus_introa; // Last Doom music track
+    else
+        cdtrack = musicnum;
+
+    // Avoid possible errors
+    if (cdtrack < 1)
+        cdtrack = 1;
+
     cdlooping = looping;
 
     // Not enough CD tracks. At least not crash.
