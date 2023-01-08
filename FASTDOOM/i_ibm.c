@@ -602,6 +602,20 @@ void I_InitHerculesHalfMode(void)
 
     SetDWords((byte *)0xB0000, 0, 8192);
 }
+
+void I_FinishHerculesHalfMode(void)
+{
+    byte Text_80x25[12] = {0x00, 0x61, 0x50, 0x52, 0x0F, 0x19, 0x06, 0x19, 0x19, 0x02, 0x0D, 0x08};
+    int i;
+
+    outp(0x03BF, Text_80x25[0]);
+    for (i = 0; i < 10; i++)
+    {
+        outp(0x03B4, i);
+        outp(0x03B5, Text_80x25[i + 1]);
+    }
+    outp(0x03B8, Text_80x25[11]);
+}
 #endif
 
 void I_InitGraphics(void)
@@ -712,6 +726,11 @@ void I_ShutdownGraphics(void)
 
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
     VBE_Done();
+#endif
+
+#ifdef SUPPORTS_HERCULES_AUTOMAP
+    if (HERCmap)
+        I_FinishHerculesHalfMode();
 #endif
 
     regs.w.ax = 3;
