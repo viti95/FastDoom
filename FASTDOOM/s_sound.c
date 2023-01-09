@@ -50,7 +50,7 @@ extern int snd_DesiredMusicDevice;
 extern int snd_DesiredSfxDevice;
 
 int cdlooping = 0;
-int cdtrack = 0;
+int cdmusicnum = 0;
 
 typedef struct
 {
@@ -133,6 +133,9 @@ void S_StopMusicMIDI(void)
 void S_ChangeMusicCD(int musicnum, int looping)
 {
     unsigned long tracklength;
+    int cdtrack;
+
+    cdmusicnum = musicnum;
 
     // Doom 2, TNT and Plutonia fix
     if (gamemode == commercial)
@@ -163,7 +166,7 @@ void S_CheckCD(void)
     {
         CD_GetAudioStatus();
         if ((CD_Cdrom_data.Status & (1 << 9)) ? 0 : 1)
-            S_ChangeMusicCD(cdtrack, cdlooping);
+            S_ChangeMusicCD(cdmusicnum, cdlooping);
     }
 }
 
