@@ -122,12 +122,96 @@ void S_StopMusicMIDI(void)
             MUSIC_Continue();
 
         MUSIC_StopSong();
-        //I_UnRegisterSong(mus_playing->handle);
         Z_Free(mus_playing->data);
-        
+
         mus_playing->data = 0;
         mus_playing = 0;
     }
+}
+
+unsigned char S_MapMusicCD(int musicnum)
+{
+    unsigned char MusicMap[68] = {
+        
+        // Empty
+
+        1,  //track1: mus_None,
+
+        // Doom, Ultimate Doom
+
+        1,  //track1: mus_e1m1
+        2,  //track2: mus_e1m2
+        3,  //track3: mus_e1m3
+        4,  //track4: mus_e1m4
+        5,  //track5: mus_e1m5
+        6,  //track6: mus_e1m6
+        7,  //track7: mus_e1m7
+        8,  //track8: mus_e1m8
+        9,  //track9: mus_e1m9
+        10, //track10: mus_e2m1
+        11, //track11: mus_e2m2
+        12, //track12: mus_e2m3
+        13, //track13: mus_e2m4
+        7,  //track7:  mus_e2m5
+        14, //track14: mus_e2m6
+        15, //track15: mus_e2m7
+        16, //track16: mus_e2m8
+        17, //track17: mus_e2m9
+        17, //track17: mus_e3m1
+        18, //track18: mus_e3m2
+        19, //track19: mus_e3m3
+        8,  //track8: mus_e3m4
+        7,  //track7: mus_e3m5
+        6,  //track6: mus_e3m6
+        15, //track15: mus_e3m7
+        20, //track20: mus_e3m8
+        9,  //track9: mus_e3m9
+        12, //track12: mus_inter
+        21, //track21: mus_intro
+        22, //track22: mus_bunny
+        23, //track23: mus_victor
+        21,  //track21: mus_introa
+
+        // Doom 2, TNT, Plutonia
+
+        1, //track1: mus_runnin - MAP1
+        2, //track2: mus_stalks - MAP2
+        3, //track3: mus_countd - MAP3
+        4, //track4: mus_betwee - MAP4
+        5, //track5: mus_doom - MAP5
+        6, //track6: mus_the_da - MAP6
+        7, //track7: mus_shawn - MAP7
+        8, //track8: mus_ddtblu - MAP8
+        9, //track9: mus_in_cit - MAP9
+        10, //track10: mus_dead - MAP10
+        2, //track2: mus_stlks2 - MAP11
+        6, //track6: mus_theda2 - MAP12
+        5, //track5: mus_doom2 - MAP13
+        8, //track8: mus_ddtbl2 - MAP14
+        1, //track1: mus_runni2 - MAP15
+        10, //track10: mus_dead2 - MAP16
+        2, //track2: mus_stlks3 - MAP17
+        18, //track18: mus_romero - MAP18
+        7, //track7: mus_shawn2 - MAP19
+        20, //track20: mus_messag - MAP20
+        3, //track3: mus_count2 - MAP21
+        8, //track8: mus_ddtbl3 - MAP22
+        23, //track23: mus_ampie - MAP23
+        6, //track6: mus_theda3 - MAP24
+        25, //track25: mus_adrian - MAP25
+        20, //track20: mus_messg2 - MAP26
+        18, //track18: mus_romer2 - MAP27
+        28, //track28: mus_tense - MAP28
+        7, //track7: mus_shawn3 - MAP29
+        30, //track30: mus_openin - MAP30
+        31, //track31: mus_evil - MAP31
+        32, //track32: mus_ultima - MAP32
+        33, //track33: mus_read_m
+        34, //Track34: mus_dm2ttl
+        35, //Track35: mus_dm2int
+    };
+
+    return MusicMap[musicnum];
 }
 
 void S_ChangeMusicCD(int musicnum, int looping)
@@ -136,17 +220,7 @@ void S_ChangeMusicCD(int musicnum, int looping)
     int cdtrack;
 
     cdmusicnum = musicnum;
-
-    // Doom 2, TNT and Plutonia fix
-    if (gamemode == commercial)
-        cdtrack = musicnum - mus_introa; // Last Doom music track
-    else
-        cdtrack = musicnum;
-
-    // Avoid possible errors
-    if (cdtrack < 1)
-        cdtrack = 1;
-
+    cdtrack = S_MapMusicCD(musicnum);
     cdlooping = looping;
 
     // Not enough CD tracks. At least not crash.
@@ -273,7 +347,8 @@ byte S_AdjustSoundParams(mobj_t *source, int *vol, int *sep)
         *vol = Div1000(snd_SfxVolume * ((snd_clipping - approx_dist) >> FRACBITS));
     }
 
-    if (*vol == 0){
+    if (*vol == 0)
+    {
         return 1; // Non audible
     }
 
@@ -420,14 +495,15 @@ void S_StartSound(mobj_t *origin, byte sfx_id)
         return;
 
     volume = snd_SfxVolume;
-    
+
     // Check to see if it is audible,
     //  and if not, modify the params
     if (origin && origin != players_mo)
     {
         byte rc = S_AdjustSoundParams(origin, &volume, &sep);
 
-        if (rc){
+        if (rc)
+        {
             return;
         }
 
@@ -502,7 +578,8 @@ void S_UpdateSounds(void)
                 {
                     byte audible = S_AdjustSoundParams(c->origin, &volume, &sep);
 
-                    if (audible){
+                    if (audible)
+                    {
                         S_StopChannel(cnum);
                     }
                     else
