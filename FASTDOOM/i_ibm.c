@@ -615,6 +615,8 @@ void I_FinishHerculesHalfMode(void)
         outp(0x03B5, Text_80x25[i + 1]);
     }
     outp(0x03B8, Text_80x25[11]);
+
+    SetDWords((byte *)0xB0000, 0, 8192);
 }
 #endif
 
