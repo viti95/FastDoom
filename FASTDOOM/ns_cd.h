@@ -11,6 +11,8 @@
 #define MEDIA_CHANGE 9
 #define TRACK_MASK 208
 
+#define MAX_TRACKS 99
+
 struct CD_Cdrom_data
 {
     unsigned short Drives;
@@ -45,6 +47,8 @@ typedef struct CD_Volumeinfo
 
 extern struct CD_Cdrom_data CD_Cdrom_data;
 extern struct CD_Volumeinfo CD_Volumeinfo;
+
+extern unsigned long TrackLength[MAX_TRACKS];
 
 // ------------------------------------------------------------------------
 //                      CDROM Prototypes

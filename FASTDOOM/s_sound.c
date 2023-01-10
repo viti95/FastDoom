@@ -131,7 +131,7 @@ void S_StopMusicMIDI(void)
 
 unsigned char S_MapMusicCD(int musicnum)
 {
-    unsigned char MusicMap[68] = {
+    unsigned char MusicMap[NUMMUSIC] = {
         
         // Empty
 
@@ -216,7 +216,6 @@ unsigned char S_MapMusicCD(int musicnum)
 
 void S_ChangeMusicCD(int musicnum, int looping)
 {
-    unsigned long tracklength;
     int cdtrack;
 
     cdmusicnum = musicnum;
@@ -227,11 +226,8 @@ void S_ChangeMusicCD(int musicnum, int looping)
     if (cdtrack > CD_Cdrom_data.High_audio)
         cdtrack = cdtrack % CD_Cdrom_data.High_audio;
 
-    tracklength = CD_GetTrackLength(cdtrack);
     CD_SetTrack(cdtrack);
-    CD_Seek(CD_Cdrom_data.Track_position);
-    delay(400);
-    CD_PlayAudio(CD_Cdrom_data.Track_position, CD_Cdrom_data.Track_position + tracklength);
+    CD_PlayAudio(CD_Cdrom_data.Track_position, CD_Cdrom_data.Track_position + TrackLength[cdtrack]);
 }
 
 void S_CheckCD(void)

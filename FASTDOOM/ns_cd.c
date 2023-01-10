@@ -45,6 +45,8 @@ static struct DPMI_PTR CD_Device_extra = {0, 0};
 static union REGS regs;
 static struct SREGS sregs;
 
+unsigned long TrackLength[MAX_TRACKS];
+
 static void PrepareRegisters(void)
 {
     memset(&RMI, 0, sizeof(RMI));
@@ -809,6 +811,8 @@ int CD_Init(void)
     }
     else
     {
+        int i;
+
         printf("MSCDEX found\n");
         printf("Tracks: %d\n", CD_Cdrom_data.High_audio);
 
@@ -817,6 +821,17 @@ int CD_Init(void)
             // No tracks!
             printf("NO AUDIO-CD TRACKS AVAILABLE!\n");
             return 0;
+        }
+
+        for (i = 0; i < MAX_TRACKS; i++)
+        {
+            TrackLength[i] = 0;
+        }
+
+        // Cache track lengths
+        for (i = 1; i <= CD_Cdrom_data.High_audio; i++)
+        {
+            TrackLength[i] = CD_GetTrackLength(i);
         }
 
         return 1;
