@@ -191,24 +191,24 @@ unsigned char S_MapMusicCD(int musicnum)
         1, //track1: mus_runni2 - MAP15
         10, //track10: mus_dead2 - MAP16
         2, //track2: mus_stlks3 - MAP17
-        18, //track18: mus_romero - MAP18
+        11, //track18: mus_romero - MAP18
         7, //track7: mus_shawn2 - MAP19
-        20, //track20: mus_messag - MAP20
+        12, //track20: mus_messag - MAP20
         3, //track3: mus_count2 - MAP21
         8, //track8: mus_ddtbl3 - MAP22
-        23, //track23: mus_ampie - MAP23
+        13, //track23: mus_ampie - MAP23
         6, //track6: mus_theda3 - MAP24
-        25, //track25: mus_adrian - MAP25
-        20, //track20: mus_messg2 - MAP26
-        18, //track18: mus_romer2 - MAP27
-        28, //track28: mus_tense - MAP28
+        14, //track25: mus_adrian - MAP25
+        12, //track20: mus_messg2 - MAP26
+        11, //track18: mus_romer2 - MAP27
+        15, //track28: mus_tense - MAP28
         7, //track7: mus_shawn3 - MAP29
-        30, //track30: mus_openin - MAP30
-        31, //track31: mus_evil - MAP31
-        32, //track32: mus_ultima - MAP32
-        33, //track33: mus_read_m
-        34, //Track34: mus_dm2ttl
-        35, //Track35: mus_dm2int
+        16, //track30: mus_openin - MAP30
+        17, //track31: mus_evil - MAP31
+        18, //track32: mus_ultima - MAP32
+        19, //track33: mus_read_m
+        20, //Track34: mus_dm2ttl
+        21, //Track35: mus_dm2int
     };
 
     return MusicMap[musicnum];
