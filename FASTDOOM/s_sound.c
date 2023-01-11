@@ -130,88 +130,173 @@ void S_StopMusicMIDI(void)
 }
 
 unsigned char S_MapMusicCD(int musicnum)
-{
-    unsigned char MusicMap[NUMMUSIC] = {
-        
-        // Empty
-
-        1,  //track1: mus_None,
-
-        // Doom, Ultimate Doom
-
-        1,  //track1: mus_e1m1
-        2,  //track2: mus_e1m2
-        3,  //track3: mus_e1m3
-        4,  //track4: mus_e1m4
-        5,  //track5: mus_e1m5
-        6,  //track6: mus_e1m6
-        7,  //track7: mus_e1m7
-        8,  //track8: mus_e1m8
-        9,  //track9: mus_e1m9
-        10, //track10: mus_e2m1
-        11, //track11: mus_e2m2
-        12, //track12: mus_e2m3
-        13, //track13: mus_e2m4
-        7,  //track7:  mus_e2m5
-        14, //track14: mus_e2m6
-        15, //track15: mus_e2m7
-        16, //track16: mus_e2m8
-        17, //track17: mus_e2m9
-        17, //track17: mus_e3m1
-        18, //track18: mus_e3m2
-        19, //track19: mus_e3m3
-        8,  //track8: mus_e3m4
-        7,  //track7: mus_e3m5
-        6,  //track6: mus_e3m6
-        15, //track15: mus_e3m7
-        20, //track20: mus_e3m8
-        9,  //track9: mus_e3m9
-        12, //track12: mus_inter
-        21, //track21: mus_intro
-        22, //track22: mus_bunny
-        23, //track23: mus_victor
-        21,  //track21: mus_introa
-
-        // Doom 2, TNT, Plutonia
-
-        1, //track1: mus_runnin - MAP1
-        2, //track2: mus_stalks - MAP2
-        3, //track3: mus_countd - MAP3
-        4, //track4: mus_betwee - MAP4
-        5, //track5: mus_doom - MAP5
-        6, //track6: mus_the_da - MAP6
-        7, //track7: mus_shawn - MAP7
-        8, //track8: mus_ddtblu - MAP8
-        9, //track9: mus_in_cit - MAP9
-        10, //track10: mus_dead - MAP10
-        2, //track2: mus_stlks2 - MAP11
-        6, //track6: mus_theda2 - MAP12
-        5, //track5: mus_doom2 - MAP13
-        8, //track8: mus_ddtbl2 - MAP14
-        1, //track1: mus_runni2 - MAP15
-        10, //track10: mus_dead2 - MAP16
-        2, //track2: mus_stlks3 - MAP17
-        11, //track18: mus_romero - MAP18
-        7, //track7: mus_shawn2 - MAP19
-        12, //track20: mus_messag - MAP20
-        3, //track3: mus_count2 - MAP21
-        8, //track8: mus_ddtbl3 - MAP22
-        13, //track23: mus_ampie - MAP23
-        6, //track6: mus_theda3 - MAP24
-        14, //track25: mus_adrian - MAP25
-        12, //track20: mus_messg2 - MAP26
-        11, //track18: mus_romer2 - MAP27
-        15, //track28: mus_tense - MAP28
-        7, //track7: mus_shawn3 - MAP29
-        16, //track30: mus_openin - MAP30
-        17, //track31: mus_evil - MAP31
-        18, //track32: mus_ultima - MAP32
-        19, //track33: mus_read_m
-        20, //Track34: mus_dm2ttl
-        21, //Track35: mus_dm2int
+{   
+    unsigned char DoomMusicMap[33] = {
+        1,  //mus_None,
+        1,  //mus_e1m1
+        2,  //mus_e1m2
+        3,  //mus_e1m3
+        4,  //mus_e1m4
+        5,  //mus_e1m5
+        6,  //mus_e1m6
+        7,  //mus_e1m7
+        8,  //mus_e1m8
+        9,  //mus_e1m9
+        10, //mus_e2m1
+        11, //mus_e2m2
+        12, //mus_e2m3
+        13, //mus_e2m4
+        7,  //mus_e2m5
+        14, //mus_e2m6
+        15, //mus_e2m7
+        16, //mus_e2m8
+        17, //mus_e2m9
+        17, //mus_e3m1
+        18, //mus_e3m2
+        19, //mus_e3m3
+        8,  //mus_e3m4
+        7,  //mus_e3m5
+        6,  //mus_e3m6
+        15, //mus_e3m7
+        20, //mus_e3m8
+        9,  //mus_e3m9
+        12, //mus_inter
+        21, //mus_intro
+        22, //mus_bunny
+        23, //mus_victor
+        21  //mus_introa
     };
 
-    return MusicMap[musicnum];
+    unsigned char Doom2MusicMap[36] = {
+        1,  //mus_None,
+        1,  //mus_runnin - MAP1
+        2,  //mus_stalks - MAP2
+        3,  //mus_countd - MAP3
+        4,  //mus_betwee - MAP4
+        5,  //mus_doom - MAP5
+        6,  //mus_the_da - MAP6
+        7,  //mus_shawn - MAP7
+        8,  //mus_ddtblu - MAP8
+        9,  //mus_in_cit - MAP9
+        10, //mus_dead - MAP10
+        2,  //mus_stlks2 - MAP11
+        6,  //mus_theda2 - MAP12
+        5,  //mus_doom2 - MAP13
+        8,  //mus_ddtbl2 - MAP14
+        1,  //mus_runni2 - MAP15
+        10, //mus_dead2 - MAP16
+        2,  //mus_stlks3 - MAP17
+        11, //mus_romero - MAP18
+        7,  //mus_shawn2 - MAP19
+        12, //mus_messag - MAP20
+        3,  //mus_count2 - MAP21
+        8,  //mus_ddtbl3 - MAP22
+        13, //mus_ampie - MAP23
+        6,  //mus_theda3 - MAP24
+        14, //mus_adrian - MAP25
+        12, //mus_messg2 - MAP26
+        11, //mus_romer2 - MAP27
+        15, //mus_tense - MAP28
+        7,  //mus_shawn3 - MAP29
+        16, //mus_openin - MAP30
+        17, //mus_evil - MAP31
+        18, //mus_ultima - MAP32
+        19, //mus_read_m
+        20, //mus_dm2ttl
+        21  //mus_dm2int
+    };
+
+    unsigned char TNTMusicMap[36] = {
+        1,  //mus_None,
+        1,  //mus_runnin - MAP1
+        2,  //mus_stalks - MAP2
+        3,  //mus_countd - MAP3
+        4,  //mus_betwee - MAP4
+        5,  //mus_doom - MAP5
+        6,  //mus_the_da - MAP6
+        7,  //mus_shawn - MAP7
+        8,  //mus_ddtblu - MAP8
+        1,  //mus_in_cit - MAP9
+        9,  //mus_dead - MAP10
+        10, //mus_stlks2 - MAP11
+        11, //mus_theda2 - MAP12
+        4,  //mus_doom2 - MAP13
+        12, //mus_ddtbl2 - MAP14
+        2,  //mus_runni2 - MAP15
+        13, //mus_dead2 - MAP16
+        5,  //mus_stlks3 - MAP17
+        9,  //mus_romero - MAP18
+        14, //mus_shawn2 - MAP19
+        15, //mus_messag - MAP20
+        16, //mus_count2 - MAP21
+        17, //mus_ddtbl3 - MAP22
+        18, //mus_ampie - MAP23
+        19, //mus_theda3 - MAP24
+        20, //mus_adrian - MAP25
+        13, //mus_messg2 - MAP26
+        8,  //mus_romer2 - MAP27
+        17, //mus_tense - MAP28
+        4,  //mus_shawn3 - MAP29
+        8,  //mus_openin - MAP30
+        21, //mus_evil - MAP31
+        16, //mus_ultima - MAP32
+        22, //mus_read_m
+        23, //mus_dm2ttl
+        21  //mus_dm2int
+    };
+
+    unsigned char PlutoniaMusicMap[36] = {
+        1,  //mus_None,
+        1,  //mus_runnin - MAP1
+        2,  //mus_stalks - MAP2
+        3,  //mus_countd - MAP3
+        4,  //mus_betwee - MAP4
+        5,  //mus_doom - MAP5
+        6,  //mus_the_da - MAP6
+        7,  //mus_shawn - MAP7
+        8,  //mus_ddtblu - MAP8
+        9,  //mus_in_cit - MAP9
+        10, //mus_dead - MAP10
+        11, //mus_stlks2 - MAP11
+        12, //mus_theda2 - MAP12
+        13, //mus_doom2 - MAP13
+        14, //mus_ddtbl2 - MAP14
+        15, //mus_runni2 - MAP15
+        16, //mus_dead2 - MAP16
+        17, //mus_stlks3 - MAP17
+        10, //mus_romero - MAP18
+        18, //mus_shawn2 - MAP19
+        19, //mus_messag - MAP20
+        20, //mus_count2 - MAP21
+        21, //mus_ddtbl3 - MAP22
+        22, //mus_ampie - MAP23
+        23, //mus_theda3 - MAP24
+        24, //mus_adrian - MAP25
+        19, //mus_messg2 - MAP26
+        7,  //mus_romer2 - MAP27
+        8,  //mus_tense - MAP28
+        17, //mus_shawn3 - MAP29
+        25, //mus_openin - MAP30
+        6,  //mus_evil - MAP31
+        14, //mus_ultima - MAP32
+        20, //mus_read_m
+        26, //mus_dm2ttl
+        27  //mus_dm2int
+    };
+
+    switch(gamemission)
+    {
+        case doom:
+            return DoomMusicMap[musicnum];
+        case doom2:
+            return Doom2MusicMap[musicnum - mus_introa];
+        case pack_plut:
+            return PlutoniaMusicMap[musicnum - mus_introa];
+        case pack_tnt:
+            return TNTMusicMap[musicnum - mus_introa];
+        default:
+            return 1;
+    }
 }
 
 void S_ChangeMusicCD(int musicnum, int looping)
