@@ -48,6 +48,7 @@ typedef struct CD_Volumeinfo
 extern struct CD_Cdrom_data CD_Cdrom_data;
 extern struct CD_Volumeinfo CD_Volumeinfo;
 
+extern unsigned long TrackBeginPosition[MAX_TRACKS];
 extern unsigned long TrackLength[MAX_TRACKS];
 
 // ------------------------------------------------------------------------
@@ -64,7 +65,7 @@ void CD_TrackLength(short Tracknum, unsigned char *min, unsigned char *sec, unsi
 unsigned long CD_GetTrackLength(short Tracknum);
 void CD_Status(void);
 void CD_Seek(unsigned long Location);
-void CD_PlayAudio(unsigned long Begin, unsigned long End);
+void CD_PlayAudio(unsigned long Begin, unsigned long Length);
 void CD_StopAudio(void);
 void CD_ResumeAudio(void);
 void CD_CMD(unsigned char mode);

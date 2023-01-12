@@ -45,6 +45,7 @@ static struct DPMI_PTR CD_Device_extra = {0, 0};
 static union REGS regs;
 static struct SREGS sregs;
 
+unsigned long TrackBeginPosition[MAX_TRACKS];
 unsigned long TrackLength[MAX_TRACKS];
 
 static void PrepareRegisters(void)
@@ -475,7 +476,7 @@ void CD_ResumeAudio(void)
     CD_Cdrom_data.Error = Stop_request_Pointers->Status;
 }
 
-void CD_PlayAudio(unsigned long Begin, unsigned long End)
+void CD_PlayAudio(unsigned long Begin, unsigned long Length)
 {
     typedef struct Play_request
     {
@@ -498,7 +499,7 @@ void CD_PlayAudio(unsigned long Begin, unsigned long End)
     Play_request_Pointers->Length = sizeof(struct Play_request);
     Play_request_Pointers->Comcode = 132;
     Play_request_Pointers->Start = Begin;
-    Play_request_Pointers->Playlength = End - Begin;
+    Play_request_Pointers->Playlength = Length;
 
     CD_DeviceRequest();
 
@@ -825,12 +826,15 @@ int CD_Init(void)
 
         for (i = 0; i < MAX_TRACKS; i++)
         {
+            TrackBeginPosition[i] = 0;
             TrackLength[i] = 0;
         }
 
-        // Cache track lengths
+        // Cache track begin and end position
         for (i = 1; i <= CD_Cdrom_data.High_audio; i++)
         {
+            CD_SetTrack(i);
+            TrackBeginPosition[i] = CD_Cdrom_data.Track_position;
             TrackLength[i] = CD_GetTrackLength(i);
         }
 
