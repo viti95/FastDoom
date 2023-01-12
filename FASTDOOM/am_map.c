@@ -492,7 +492,12 @@ byte AM_Responder(void)
 		if (current_ev->type == ev_keydown && current_ev->data1 == AM_STARTKEY)
 		{
 			AM_Start();
-			viewactive = 0;
+
+			if (HERCmap)
+				viewactive = 1;
+			else
+				viewactive = 0;
+				
 			rc = 1;
 		}
 	}
