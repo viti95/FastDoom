@@ -493,11 +493,12 @@ byte AM_Responder(void)
 		{
 			AM_Start();
 
-			if (HERCmap)
-				viewactive = 1;
-			else
-				viewactive = 0;
-				
+#ifdef SUPPORTS_HERCULES_AUTOMAP
+			viewactive = HERCmap;
+#else
+			viewactive = 0;
+#endif
+
 			rc = 1;
 		}
 	}

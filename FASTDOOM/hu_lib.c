@@ -149,7 +149,12 @@ void HUlib_eraseTextLine(hu_textline_t *l)
     // (because of a recent change back from the automap)
 
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+
+#ifdef SUPPORTS_HERCULES_AUTOMAP
     if ((!automapactive || (automapactive && HERCmap)) && viewwindowx && l->needsupdate)
+#else
+    if (!automapactive && viewwindowx && l->needsupdate)
+#endif
     {
         lh = l->f[0]->height + 1;
         for (y = l->y, yoffset = Mul320(y); y < l->y + lh; y++, yoffset += SCREENWIDTH)

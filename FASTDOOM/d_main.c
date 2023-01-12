@@ -349,7 +349,13 @@ void D_Display(void)
     // see if the border needs to be updated to the screen
     if (gamestate == GS_LEVEL
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+
+#ifdef SUPPORTS_HERCULES_AUTOMAP
         && (!automapactive || (automapactive && HERCmap))
+#else
+        && !automapactive
+#endif
+        
 #endif
         && scaledviewwidth != 320)
     {
