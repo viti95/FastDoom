@@ -311,6 +311,7 @@ void S_ChangeMusicCD(int musicnum, int looping)
     if (cdtrack > CD_Cdrom_data.High_audio)
         cdtrack = cdtrack % CD_Cdrom_data.High_audio;
 
+    CD_StopAudio();
     CD_SetTrack(cdtrack);
     CD_PlayAudio(CD_Cdrom_data.Track_position, CD_Cdrom_data.Track_position + TrackLength[cdtrack]);
 }
