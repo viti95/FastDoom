@@ -8,9 +8,9 @@
 #define COLS 80
 #define ROWS 25
 
-#define EXE_DEBUG_ENABLED 0
+#define DEBUG_ENABLED 0
 
-#if (EXE_DEBUG_ENABLED == 1)
+#if (DEBUG_ENABLED == 1)
 unsigned short *Scrn = (unsigned short *)0xB0000;
 int Curx, Cury = 0;
 

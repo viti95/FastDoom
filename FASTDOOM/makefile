@@ -90,6 +90,7 @@ GLOBOBJS = &
  ns_adbfx.obj &
  ns_cd.obj &
  i_debug.obj &
+ i_log.obj &
  i_random.obj &
  i_main.obj &
  i_ibm.obj &

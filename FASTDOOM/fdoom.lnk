@@ -48,6 +48,7 @@ file ns_sbdm.obj
 file ns_adbfx.obj
 file ns_cd.obj
 file i_debug.obj
+file i_log.obj
 file i_random.obj
 file i_main.obj
 file i_ibm.obj
