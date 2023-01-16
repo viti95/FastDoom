@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.9.3 (16 Jan 2023)
+* AudioCD music support. Custom AudioCD mappings for (Ultimate) Doom, Doom II, TNT and Plutonia. (thanks @theelf for testing and the idea!)
+* Fixed bugs on Hercules automap mode (thanks @Darmok for testing)
+* Small optimizations in rendering code
+
 ## 0.9.2 (19 Dic 2022)
 * New video mode, IBM CGA 80x100 "512 color" mode with composite output (available for old and new IBM CGA cards)
 * Optimized R_DrawColumnPotato and R_DrawSpanPotato for Potato mode in FDOOM.EXE, up to 22% more FPS

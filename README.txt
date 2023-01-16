@@ -11,7 +11,7 @@
 
  Version
  -------
- 0.9.2
+ 0.9.3
 
  About
  -----
@@ -67,7 +67,7 @@
               Gravis Ultrasound, Pro Audio Spectrum, COVOX LPT DAC,
               Creative Music System
  Music cards: Sound Blaster (OPL2 and OPL3), Adlib, MIDI, Gravis Ultrasound
-              Sound Blaster AWE32, OPL2LPT, OPL3LPT
+              Sound Blaster AWE32, OPL2LPT, OPL3LPT, AudioCD (MSCDEX)
 
  Executables
  -----------
