@@ -1,5 +1,11 @@
 #include "ns_cd.h"
 
+//#define CD_LOG
+
+#ifdef CD_LOG
+#include "i_log.h"
+#endif
+
 #pragma pack(1);
 
 struct DPMI_PTR
@@ -85,6 +91,10 @@ void DPMI_FreeDOSMem(struct DPMI_PTR *p)
 
 void CD_DeviceRequest(void)
 {
+    #ifdef CD_LOG
+    I_Log("CD_DeviceRequest: Execute MSCDEX request\n");
+    #endif
+
     PrepareRegisters();
     RMI.EAX = 0x01510;
     RMI.ECX = CD_Cdrom_data.First_drive;
@@ -113,17 +123,38 @@ unsigned long HSG(unsigned long Value)
 
 short CD_CdromInstalled(void)
 {
+    #ifdef CD_LOG
+    I_Log("CD_CdromInstalled: Alloc DOS MEM\n");
+    #endif
+
     DPMI_AllocDOSMem(4, &CD_Device_req);
     DPMI_AllocDOSMem(2, &CD_Device_extra);
 
+    #ifdef CD_LOG
+    I_Log("CD_CdromInstalled: Prepare registers\n");
+    #endif
+
     PrepareRegisters();
     regs.x.eax = 0x01500;
+
+    #ifdef CD_LOG
+    I_Log("CD_CdromInstalled: Call 0x2F IRQ\n");
+    #endif
+
     int386(0x02F, &regs, &regs);
 
     if (regs.x.ebx == 0)
         return (0);
+
+    #ifdef CD_LOG
+    I_Log("CD_CdromInstalled: MSCDEX OK, Drive %u\n", regs.x.ebx);
+    #endif
+
     CD_Cdrom_data.Drives = (short)regs.x.ebx;
     CD_Cdrom_data.First_drive = (short)regs.x.ecx;
+    CD_Status();
+    CD_Mediach();
+    CD_StopAudio();
     CD_GetAudioInfo();
     return (1);
 }
@@ -153,6 +184,10 @@ void CD_GetAudioInfo(void)
 
     static struct IOCTLI *IOCTLI_Pointers;
     static struct Track_data *Track_data_Pointers;
+
+    #ifdef CD_LOG
+    I_Log("CD_GetAudioInfo: Get AudioCD information\n");
+    #endif
 
     IOCTLI_Pointers = (struct IOCTLI *)(CD_Device_req.segment * 16);
     Track_data_Pointers = (struct Track_data *)(CD_Device_extra.segment * 16);
@@ -201,6 +236,10 @@ void CD_GetAudioStatus(void)
     static struct IOCTLI *IOCTLI_Pointers;
     static struct Track_data *Track_data_Pointers;
 
+    #ifdef CD_LOG
+    I_Log("CD_GetAudioStatus\n");
+    #endif
+
     IOCTLI_Pointers = (struct IOCTLI *)(CD_Device_req.segment * 16);
     Track_data_Pointers = (struct Track_data *)(CD_Device_extra.segment * 16);
 
@@ -215,6 +254,10 @@ void CD_GetAudioStatus(void)
     CD_DeviceRequest();
 
     CD_Cdrom_data.Status = IOCTLI_Pointers->Status;
+
+    #ifdef CD_LOG
+    I_Log("CD_GetAudioStatus: %u\n", CD_Cdrom_data.Status);
+    #endif
 }
 
 unsigned long CD_GetTrackLength(short Tracknum)
@@ -377,6 +420,10 @@ void CD_Status(void)
     static struct Tray_request *Tray_request_Pointers;
     static struct CD_data *CD_data_Pointers;
 
+    #ifdef CD_LOG
+    I_Log("CD_Status: Get MSCDEX status\n");
+    #endif
+
     Tray_request_Pointers = (struct Tray_request *)(CD_Device_req.segment * 16);
     CD_data_Pointers = (struct CD_data *)(CD_Device_extra.segment * 16);
 
@@ -439,6 +486,10 @@ void CD_StopAudio(void)
 
     static struct Stop_request *Stop_request_Pointers;
 
+    #ifdef CD_LOG
+    I_Log("CD_StopAudio\n");
+    #endif
+
     Stop_request_Pointers = (struct Stop_request *)(CD_Device_req.segment * 16);
 
     memset(Stop_request_Pointers, 0, sizeof(struct Stop_request));
@@ -463,6 +514,10 @@ void CD_ResumeAudio(void)
     } Stop_request;
 
     static struct Stop_request *Stop_request_Pointers;
+
+    #ifdef CD_LOG
+    I_Log("CD_ResumeAudio\n");
+    #endif
 
     Stop_request_Pointers = (struct Stop_request *)(CD_Device_req.segment * 16);
 
@@ -491,6 +546,10 @@ void CD_PlayAudio(unsigned long Begin, unsigned long Length)
     } Play_request;
 
     static struct Play_request *Play_request_Pointers;
+
+    #ifdef CD_LOG
+    I_Log("CD_PlayAudio (%u, %u)\n", Begin, Length);
+    #endif
 
     Play_request_Pointers = (struct Play_request *)(CD_Device_req.segment * 16);
 
@@ -614,6 +673,10 @@ short CD_Mediach(void)
     static struct Tray_request *Tray_request_Pointers;
     static struct CD_Data *CD_Data_Pointers;
 
+    #ifdef CD_LOG
+    I_Log("CD_Mediach: Check disk\n");
+    #endif
+
     Tray_request_Pointers = (struct Tray_request *)(CD_Device_req.segment * 16);
     CD_Data_Pointers = (struct CD_Data *)(CD_Device_extra.segment * 16);
 
@@ -684,6 +747,10 @@ void CD_SetVolume(unsigned char vol)
 
     static struct Tray_request *Tray_request_Pointers;
     static struct CD_Volumeinfo *CD_Volume_Pointers;
+
+    #ifdef CD_LOG
+    I_Log("CD_SetVolume %u\n", vol);
+    #endif
 
     CD_Volumeinfo.Volume0 = vol;
     CD_Volumeinfo.Volume1 = vol;
@@ -805,8 +872,16 @@ void CD_DeInit(void)
 
 int CD_Init(void)
 {
+    #ifdef CD_LOG
+    I_Log("CD_Init\n");
+    #endif
+
     if (!CD_CdromInstalled())
     {
+        #ifdef CD_LOG
+        I_Log("CD_CdromInstalled failed\n");
+        #endif
+
         printf("MSCDEX WAS NOT FOUND!\n");
         return 0;
     }
@@ -814,12 +889,22 @@ int CD_Init(void)
     {
         int i;
 
+        #ifdef CD_LOG
+        I_Log("CD_CdromInstalled OK\n");
+        I_Log("CD_Init: %d AudioCD tracks\n", CD_Cdrom_data.High_audio);
+        #endif
+
         printf("MSCDEX found\n");
         printf("Tracks: %d\n", CD_Cdrom_data.High_audio);
 
         if (!CD_Cdrom_data.High_audio)
         {
             // No tracks!
+
+            #ifdef CD_LOG
+            I_Log("CD_Init: NO AudioCD tracks available\n");
+            #endif
+
             printf("NO AUDIO-CD TRACKS AVAILABLE!\n");
             return 0;
         }
@@ -830,12 +915,20 @@ int CD_Init(void)
             TrackLength[i] = 0;
         }
 
+        #ifdef CD_LOG
+        I_Log("CD_Init: Cache AudioCD information\n");
+        #endif
+
         // Cache track begin and end position
         for (i = 1; i <= CD_Cdrom_data.High_audio; i++)
         {
             CD_SetTrack(i);
             TrackBeginPosition[i] = CD_Cdrom_data.Track_position;
             TrackLength[i] = CD_GetTrackLength(i);
+
+            #ifdef CD_LOG
+            I_Log("CD_Init: Track %d, Begin %u, Length %u\n", i, TrackBeginPosition[i], TrackLength[i]);
+            #endif
         }
 
         return 1;
