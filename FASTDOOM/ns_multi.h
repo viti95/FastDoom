@@ -42,6 +42,7 @@ int MV_PlayRaw(unsigned char *ptr, unsigned long length,
 void MV_CreateVolumeTable(int index, int volume, int MaxVolume);
 void MV_SetVolume(int volume);
 void MV_SetReverseStereo(int setting);
+void MV_ReverseStereo(void);
 int MV_Init(int soundcard, int MixRate, int Voices, int numchannels,
             int samplebits);
 int MV_Shutdown(void);

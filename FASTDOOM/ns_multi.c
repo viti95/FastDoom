@@ -1175,6 +1175,14 @@ void MV_SetReverseStereo(
     MV_SwapLeftRight = setting;
 }
 
+void MV_ReverseStereo(void)
+{
+    if (MV_SwapLeftRight == TRUE)
+        MV_SwapLeftRight = FALSE;
+    else
+        MV_SwapLeftRight = TRUE;
+}
+
 /*---------------------------------------------------------------------
    Function: MV_Init
 

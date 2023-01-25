@@ -415,7 +415,7 @@ void ASS_Init(int rate, int maxsng, int mdev, int sdev)
     FX_SetVolume(255);
 
     if (reverseStereo)
-        MV_SetReverseStereo(true);
+        MV_ReverseStereo();
 }
 
 void ASS_DeInit(void)
