@@ -379,6 +379,12 @@ void ASS_Init(int rate, int maxsng, int mdev, int sdev)
     sound_device = ASS_GetSoundCardCode(sdev);
 
     status = MUSIC_Init(music_device, dmx_mus_port);
+
+    if (status != MUSIC_Ok)
+    {
+        I_Error("Error initializing Music device: %u", status);
+    }
+
     if (status == MUSIC_Ok)
     {
         MUSIC_SetVolume(0);
@@ -411,6 +417,11 @@ void ASS_Init(int rate, int maxsng, int mdev, int sdev)
     sample_rate = lowSound ? 8000 : 11025;
 
     status = FX_Init(sound_device, numChannels, 2, 8, sample_rate);
+
+    if (status != FX_Ok)
+    {
+        I_Error("Error initializing Sound device: %u", status);
+    }
 
     FX_SetVolume(255);
 
