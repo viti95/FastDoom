@@ -62,150 +62,141 @@ typedef DWORD FAR *LPDWORD;
 #define LOWORD(l) ((WORD)(DWORD)(l))
 #define HIWORD(l) ((WORD)((((DWORD)(l)) >> 16) & 0xFFFF))
 
-#if defined(__cplusplus)
-extern "C"
+/* Start of modules */
+extern int *__midieng_code(void);
+extern int *__hardware_code(void);
+extern int *__sbkload_code(void);
+extern int *__nrpn_code(void);
+extern int __midivar_data;
+extern int __nrpnvar_data;
+extern int __embed_data;
+
+typedef char SCRATCH[702];
+typedef char SOUNDFONT[124];
+typedef char GCHANNEL[20];
+typedef char MIDICHANNEL[32];
+typedef char NRPNCHANNEL[96];
+
+typedef struct
 {
-#endif
+    SHORT bank_no;       /* Slot number being used */
+    SHORT total_banks;   /* Total number of banks */
+    LONG FAR *banksizes; /* Pointer to a list of bank sizes */
+    LONG file_size;      /* exact size of the sound font file */
+    char FAR *data;      /* Address of buffer of size >= PACKETSIZE */
+    char FAR *presets;   /* Allocated memory for preset data */
 
-    /* Start of modules */
-    extern int *__midieng_code(void);
-    extern int *__hardware_code(void);
-    extern int *__sbkload_code(void);
-    extern int *__nrpn_code(void);
-    extern int __midivar_data;
-    extern int __nrpnvar_data;
-    extern int __embed_data;
+    LONG total_patch_ram;    /* Total patch ram available */
+    SHORT no_sample_packets; /* Number of packets of sound sample to stream */
+    LONG sample_seek;        /* Start file location of sound sample */
+    LONG preset_seek;        /* Address of preset_seek location */
+    LONG preset_read_size;   /* Number of bytes from preset_seek to allocate and read */
+    LONG preset_size;        /* Preset actual size */
+} SOUND_PACKET;
 
-    typedef char SCRATCH[702];
-    typedef char SOUNDFONT[124];
-    typedef char GCHANNEL[20];
-    typedef char MIDICHANNEL[32];
-    typedef char NRPNCHANNEL[96];
+typedef struct
+{
+    SHORT tag;             /* Must be 0x100 or 0x101 */
+    SHORT preset_size;     /* Preset table of this size is required */
+    SHORT no_wave_packets; /* Number of packets of Wave sample to stream. */
+    LONG reserved;
 
-    typedef struct
-    {
-        SHORT bank_no;       /* Slot number being used */
-        SHORT total_banks;   /* Total number of banks */
-        LONG FAR *banksizes; /* Pointer to a list of bank sizes */
-        LONG file_size;      /* exact size of the sound font file */
-        char FAR *data;      /* Address of buffer of size >= PACKETSIZE */
-        char FAR *presets;   /* Allocated memory for preset data */
+    SHORT bank_no;         /* bank number */
+    char FAR *data;        /* Address of packet of size PACKETSIZE */
+    char FAR *presets;     /* Allocated memory for preset data */
+    LONG sample_size;      /* Sample size, i.e. number of samples */
+    LONG samples_per_sec;  /* Samples per second */
+    SHORT bits_per_sample; /* Bits per sample, 8 or 16 */
+    SHORT no_channels;     /* Number of channels, 1=mono, 2=stereo */
+    SHORT looping;         /* Looping? 0=no, 1=yes */
+    LONG startloop;        /* if looping, then these are the addresses */
+    LONG endloop;
+    SHORT release; /* release time, 0=24ms, 8191=23.78s */
+} WAVE_PACKET;
 
-        LONG total_patch_ram;    /* Total patch ram available */
-        SHORT no_sample_packets; /* Number of packets of sound sample to stream */
-        LONG sample_seek;        /* Start file location of sound sample */
-        LONG preset_seek;        /* Address of preset_seek location */
-        LONG preset_read_size;   /* Number of bytes from preset_seek to allocate and read */
-        LONG preset_size;        /* Preset actual size */
-    } SOUND_PACKET;
+typedef struct
+{
+    LPBYTE SPad1;
+    LPBYTE SPad2;
+    LPBYTE SPad3;
+    LPBYTE SPad4;
+    LPBYTE SPad5;
+    LPBYTE SPad6;
+    LPBYTE SPad7;
+} SOUNDPAD;
 
-    typedef struct
-    {
-        SHORT tag;             /* Must be 0x100 or 0x101 */
-        SHORT preset_size;     /* Preset table of this size is required */
-        SHORT no_wave_packets; /* Number of packets of Wave sample to stream. */
-        LONG reserved;
+/* AWE32 variables */
+extern WORD awe32NumG;
+extern WORD awe32BaseAddx;
+extern DWORD awe32DramSize;
 
-        SHORT bank_no;         /* bank number */
-        char FAR *data;        /* Address of packet of size PACKETSIZE */
-        char FAR *presets;     /* Allocated memory for preset data */
-        LONG sample_size;      /* Sample size, i.e. number of samples */
-        LONG samples_per_sec;  /* Samples per second */
-        SHORT bits_per_sample; /* Bits per sample, 8 or 16 */
-        SHORT no_channels;     /* Number of channels, 1=mono, 2=stereo */
-        SHORT looping;         /* Looping? 0=no, 1=yes */
-        LONG startloop;        /* if looping, then these are the addresses */
-        LONG endloop;
-        SHORT release; /* release time, 0=24ms, 8191=23.78s */
-    } WAVE_PACKET;
+/* MIDI variables */
+extern SCRATCH awe32Scratch;
+extern SOUNDFONT awe32SFont[4];
+extern GCHANNEL awe32GChannel[32];
+extern MIDICHANNEL awe32MIDIChannel[16];
+extern SOUNDPAD awe32SoundPad;
 
-    typedef struct
-    {
-        LPBYTE SPad1;
-        LPBYTE SPad2;
-        LPBYTE SPad3;
-        LPBYTE SPad4;
-        LPBYTE SPad5;
-        LPBYTE SPad6;
-        LPBYTE SPad7;
-    } SOUNDPAD;
+/* NRPN variables */
+extern NRPNCHANNEL awe32NRPNChannel[16];
 
-    /* AWE32 variables */
-    extern WORD awe32NumG;
-    extern WORD awe32BaseAddx;
-    extern DWORD awe32DramSize;
+/* SoundFont objects */
+extern BYTE awe32SPad1Obj[];
+extern BYTE awe32SPad2Obj[];
+extern BYTE awe32SPad3Obj[];
+extern BYTE awe32SPad4Obj[];
+extern BYTE awe32SPad5Obj[];
+extern BYTE awe32SPad6Obj[];
+extern BYTE awe32SPad7Obj[];
 
-    /* MIDI variables */
-    extern SCRATCH awe32Scratch;
-    extern SOUNDFONT awe32SFont[4];
-    extern GCHANNEL awe32GChannel[32];
-    extern MIDICHANNEL awe32MIDIChannel[16];
-    extern SOUNDPAD awe32SoundPad;
+/* AWE register functions */
+extern void PASCAL awe32RegW(WORD, WORD);
+extern WORD PASCAL awe32RegRW(WORD);
+extern void PASCAL awe32RegDW(WORD, DWORD);
+extern DWORD PASCAL awe32RegRDW(WORD);
 
-    /* NRPN variables */
-    extern NRPNCHANNEL awe32NRPNChannel[16];
+/* MIDI support functions */
+extern WORD PASCAL awe32InitMIDI(void);
+extern WORD PASCAL awe32NoteOn(WORD, WORD, WORD);
+extern WORD PASCAL awe32NoteOff(WORD, WORD, WORD);
+extern WORD PASCAL awe32ProgramChange(WORD, WORD);
+extern WORD PASCAL awe32Controller(WORD, WORD, WORD);
+extern WORD PASCAL awe32PolyKeyPressure(WORD, WORD, WORD);
+extern WORD PASCAL awe32ChannelPressure(WORD, WORD);
+extern WORD PASCAL awe32PitchBend(WORD, WORD, WORD);
+extern WORD PASCAL awe32Sysex(WORD, LPBYTE, WORD);
+extern WORD PASCAL __awe32NoteOff(WORD, WORD, WORD, WORD);
+extern WORD PASCAL __awe32IsPlaying(WORD, WORD, WORD, WORD);
 
-    /* SoundFont objects */
-    extern BYTE awe32SPad1Obj[];
-    extern BYTE awe32SPad2Obj[];
-    extern BYTE awe32SPad3Obj[];
-    extern BYTE awe32SPad4Obj[];
-    extern BYTE awe32SPad5Obj[];
-    extern BYTE awe32SPad6Obj[];
-    extern BYTE awe32SPad7Obj[];
+/* NRPN support functions */
+extern WORD PASCAL awe32InitNRPN(void);
 
-    /* AWE register functions */
-    extern void PASCAL awe32RegW(WORD, WORD);
-    extern WORD PASCAL awe32RegRW(WORD);
-    extern void PASCAL awe32RegDW(WORD, DWORD);
-    extern DWORD PASCAL awe32RegRDW(WORD);
+/* Hardware support functions */
+extern WORD PASCAL awe32Detect(WORD);
+extern WORD PASCAL awe32InitHardware(void);
+extern WORD PASCAL awe32Terminate(void);
 
-    /* MIDI support functions */
-    extern WORD PASCAL awe32InitMIDI(void);
-    extern WORD PASCAL awe32NoteOn(WORD, WORD, WORD);
-    extern WORD PASCAL awe32NoteOff(WORD, WORD, WORD);
-    extern WORD PASCAL awe32ProgramChange(WORD, WORD);
-    extern WORD PASCAL awe32Controller(WORD, WORD, WORD);
-    extern WORD PASCAL awe32PolyKeyPressure(WORD, WORD, WORD);
-    extern WORD PASCAL awe32ChannelPressure(WORD, WORD);
-    extern WORD PASCAL awe32PitchBend(WORD, WORD, WORD);
-    extern WORD PASCAL awe32Sysex(WORD, LPBYTE, WORD);
-    extern WORD PASCAL __awe32NoteOff(WORD, WORD, WORD, WORD);
-    extern WORD PASCAL __awe32IsPlaying(WORD, WORD, WORD, WORD);
+/* SoundFont support functions */
+extern WORD PASCAL awe32TotalPatchRam(SOUND_PACKET FAR *);
+extern WORD PASCAL awe32DefineBankSizes(SOUND_PACKET FAR *);
+extern WORD PASCAL awe32SFontLoadRequest(SOUND_PACKET FAR *);
+extern WORD PASCAL awe32StreamSample(SOUND_PACKET FAR *);
+extern WORD PASCAL awe32SetPresets(SOUND_PACKET FAR *);
+extern WORD PASCAL awe32ReleaseBank(SOUND_PACKET FAR *);
+extern WORD PASCAL awe32ReleaseAllBanks(SOUND_PACKET FAR *);
+extern WORD PASCAL awe32WPLoadRequest(WAVE_PACKET FAR *);
+extern WORD PASCAL awe32WPLoadWave(WAVE_PACKET FAR *);
+extern WORD PASCAL awe32WPStreamWave(WAVE_PACKET FAR *);
+extern WORD PASCAL awe32WPBuildSFont(WAVE_PACKET FAR *);
 
-    /* NRPN support functions */
-    extern WORD PASCAL awe32InitNRPN(void);
-
-    /* Hardware support functions */
-    extern WORD PASCAL awe32Detect(WORD);
-    extern WORD PASCAL awe32InitHardware(void);
-    extern WORD PASCAL awe32Terminate(void);
-
-    /* SoundFont support functions */
-    extern WORD PASCAL awe32TotalPatchRam(SOUND_PACKET FAR *);
-    extern WORD PASCAL awe32DefineBankSizes(SOUND_PACKET FAR *);
-    extern WORD PASCAL awe32SFontLoadRequest(SOUND_PACKET FAR *);
-    extern WORD PASCAL awe32StreamSample(SOUND_PACKET FAR *);
-    extern WORD PASCAL awe32SetPresets(SOUND_PACKET FAR *);
-    extern WORD PASCAL awe32ReleaseBank(SOUND_PACKET FAR *);
-    extern WORD PASCAL awe32ReleaseAllBanks(SOUND_PACKET FAR *);
-    extern WORD PASCAL awe32WPLoadRequest(WAVE_PACKET FAR *);
-    extern WORD PASCAL awe32WPLoadWave(WAVE_PACKET FAR *);
-    extern WORD PASCAL awe32WPStreamWave(WAVE_PACKET FAR *);
-    extern WORD PASCAL awe32WPBuildSFont(WAVE_PACKET FAR *);
-
-    /* End of modules */
-    extern int *__midieng_ecode(void);
-    extern int *__hardware_ecode(void);
-    extern int *__sbkload_ecode(void);
-    extern int *__nrpn_ecode(void);
-    extern int __midivar_edata;
-    extern int __nrpnvar_edata;
-    extern int __embed_edata;
-
-#if defined(__cplusplus)
-}
-#endif
+/* End of modules */
+extern int *__midieng_ecode(void);
+extern int *__hardware_ecode(void);
+extern int *__sbkload_ecode(void);
+extern int *__nrpn_ecode(void);
+extern int __midivar_edata;
+extern int __nrpnvar_edata;
+extern int __embed_edata;
 
 #if defined(__SC__)
 #pragma pack()

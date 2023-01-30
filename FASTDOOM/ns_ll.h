@@ -1,9 +1,5 @@
 #ifndef __linklist_h
 #define __linklist_h
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 
 #define LL_CreateNewLinkedList(rootnode, type, next, prev) \
     {                                                      \
@@ -82,7 +78,4 @@ extern "C"
 #define LL_Empty LL_ListEmpty
 #define LL_Move LL_MoveNode
 
-#ifdef __cplusplus
-};
-#endif
 #endif
