@@ -192,6 +192,11 @@
                  4 - Final Doom
  -iwad X => Load an IWAD file
  -sbk X => Load a SBK soundfont for AWE32/AWE64 soundcards
+ 
+ Limitations / Known bugs
+ ------------------------
+ * Gravis UltraSound cards require IRQ to be 7 or less, otherwise those
+   cards won't work. This is a limitation of the Apogee Sound System.
 
  Author
  ------
