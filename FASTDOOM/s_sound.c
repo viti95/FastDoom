@@ -54,6 +54,8 @@ int cdlooping = 0;
 int cdmusicnum = 0;
 
 int wavhandle;
+int wavmusicnum = 0;
+int wavlooping = 0;
 
 typedef struct
 {
@@ -373,6 +375,9 @@ void S_ChangeMusicWAV(int musicnum, int looping)
     memset(filename, 0, sizeof(filename));
     memset(subfolder, 0, sizeof(subfolder));
 
+    wavmusicnum = musicnum;
+    wavlooping = looping;
+
     switch (gamemission)
     {
     case doom:
@@ -557,6 +562,7 @@ void S_PauseMusic(void)
         mus_paused = 1;
         return;
     case snd_WAV:
+        MV_Kill(wavhandle); // Apogee Sound System doesn't support pause audio samples
         return;
     default:
         if (mus_playing && !mus_paused)
@@ -578,6 +584,7 @@ void S_ResumeMusic(void)
         mus_paused = 0;
         return;
     case snd_WAV:
+        S_ChangeMusicWAV(wavmusicnum, wavlooping);
         return;
     default:
         if (mus_playing && mus_paused)
