@@ -78,6 +78,7 @@ void S_StopMusic(void);
 void S_PauseMusic(void);
 void S_ResumeMusic(void);
 void S_CheckCD(void);
+void S_CheckWAV(void);
 
 //
 // Updates music & sounds

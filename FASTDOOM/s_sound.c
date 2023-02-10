@@ -337,6 +337,15 @@ void S_CheckCD(void)
     }
 }
 
+void S_CheckWAV(void)
+{
+    if (wavlooping)
+    {
+        if (!MV_VoicePlaying(wavhandle))
+            S_ChangeMusicWAV(wavmusicnum, wavlooping);
+    }
+}
+
 unsigned char *LoadFile(char *filename, int *length)
 {
     FILE *in;
