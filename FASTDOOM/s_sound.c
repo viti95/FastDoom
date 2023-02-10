@@ -56,6 +56,7 @@ int cdmusicnum = 0;
 int wavhandle;
 int wavmusicnum = 0;
 int wavlooping = 0;
+unsigned char *wavfileptr;
 
 typedef struct
 {
@@ -376,10 +377,20 @@ unsigned char *LoadFile(char *filename, int *length)
 void S_ChangeMusicWAV(int musicnum, int looping)
 {
     int length;
-    unsigned char *rawptr;
+    
 
     char filename[80];
     char subfolder[5];
+
+    if (MV_VoicePlaying(wavhandle))
+    {
+        MV_Kill(wavhandle);
+    }
+
+    if (wavfileptr != NULL)
+    {
+        free(wavfileptr);
+    }
 
     memset(filename, 0, sizeof(filename));
     memset(subfolder, 0, sizeof(subfolder));
@@ -405,14 +416,9 @@ void S_ChangeMusicWAV(int musicnum, int looping)
 
     sprintf(filename, "MUSIC/%s/mus_%u.raw", subfolder, S_MapMusicCD(musicnum));
 
-    rawptr = LoadFile(filename, &length);
+    wavfileptr = LoadFile(filename, &length);
 
-    if (MV_VoicePlaying(wavhandle))
-    {
-        MV_Kill(wavhandle);
-    }
-
-    wavhandle = MV_PlayRaw(rawptr, length, 22050, 255, 255, 255, 0);
+    wavhandle = MV_PlayRaw(wavfileptr, length, 22050, 255, 255, 255, 0);
 }
 
 void S_ChangeMusicMIDI(int musicnum, int looping)
