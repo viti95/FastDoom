@@ -52,7 +52,5 @@ int FX_SetupSoundBlaster(fx_blaster_config blaster, int *MaxVoices, int *MaxSamp
 int FX_Init(int SoundCard, int numvoices, int numchannels, int samplebits, unsigned int mixrate);
 int FX_Shutdown(void);
 void FX_SetVolume(int volume);
-int FX_PlayRaw(unsigned char *ptr, unsigned long length, unsigned rate,
-               int vol, int left, int right, int priority);
 
 #endif

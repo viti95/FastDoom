@@ -421,30 +421,3 @@ void FX_SetVolume(
         break;
     }
 }
-
-/*---------------------------------------------------------------------
-   Function: FX_PlayRaw
-
-   Begin playback of raw sound data with the given volume and priority.
----------------------------------------------------------------------*/
-
-int FX_PlayRaw(
-    unsigned char *ptr,
-    unsigned long length,
-    unsigned rate,
-    int vol,
-    int left,
-    int right,
-    int priority)
-
-{
-    int handle;
-
-    handle = MV_PlayRaw(ptr, length, rate, vol, left, right, priority);
-    if (handle < MV_Ok)
-    {
-        handle = FX_Warning;
-    }
-
-    return (handle);
-}

@@ -40,6 +40,7 @@
 #include "std_func.h"
 
 #include "ns_cd.h"
+#include "ns_multi.h"
 
 // Current music/sfx card - index useless
 //  w/o a reference LUT in a sound module.
@@ -51,6 +52,8 @@ extern int snd_DesiredSfxDevice;
 
 int cdlooping = 0;
 int cdmusicnum = 0;
+
+int wavhandle;
 
 typedef struct
 {
@@ -108,10 +111,17 @@ void S_SetMusicVolumeMIDI(int volume)
 
 void S_SetMusicVolume(int volume)
 {
-    if (snd_MusicDevice == snd_CD)
+    switch (snd_MusicDevice)
+    {
+    case snd_CD:
         S_SetMusicVolumeCD(volume);
-    else
+        return;
+    case snd_WAV:
+        return;
+    default:
         S_SetMusicVolumeMIDI(volume);
+        return;
+    }
 }
 
 void S_StopMusicMIDI(void)
@@ -130,172 +140,172 @@ void S_StopMusicMIDI(void)
 }
 
 unsigned char S_MapMusicCD(int musicnum)
-{   
+{
     unsigned char DoomMusicMap[33] = {
-        1,  //mus_None,
-        1,  //mus_e1m1
-        2,  //mus_e1m2
-        3,  //mus_e1m3
-        4,  //mus_e1m4
-        5,  //mus_e1m5
-        6,  //mus_e1m6
-        7,  //mus_e1m7
-        8,  //mus_e1m8
-        9,  //mus_e1m9
-        10, //mus_e2m1
-        11, //mus_e2m2
-        12, //mus_e2m3
-        13, //mus_e2m4
-        7,  //mus_e2m5
-        14, //mus_e2m6
-        15, //mus_e2m7
-        16, //mus_e2m8
-        17, //mus_e2m9
-        17, //mus_e3m1
-        18, //mus_e3m2
-        19, //mus_e3m3
-        8,  //mus_e3m4
-        7,  //mus_e3m5
-        6,  //mus_e3m6
-        15, //mus_e3m7
-        20, //mus_e3m8
-        9,  //mus_e3m9
-        12, //mus_inter
-        21, //mus_intro
-        22, //mus_bunny
-        23, //mus_victor
-        21  //mus_introa
+        1,  // mus_None,
+        1,  // mus_e1m1
+        2,  // mus_e1m2
+        3,  // mus_e1m3
+        4,  // mus_e1m4
+        5,  // mus_e1m5
+        6,  // mus_e1m6
+        7,  // mus_e1m7
+        8,  // mus_e1m8
+        9,  // mus_e1m9
+        10, // mus_e2m1
+        11, // mus_e2m2
+        12, // mus_e2m3
+        13, // mus_e2m4
+        7,  // mus_e2m5
+        14, // mus_e2m6
+        15, // mus_e2m7
+        16, // mus_e2m8
+        17, // mus_e2m9
+        17, // mus_e3m1
+        18, // mus_e3m2
+        19, // mus_e3m3
+        8,  // mus_e3m4
+        7,  // mus_e3m5
+        6,  // mus_e3m6
+        15, // mus_e3m7
+        20, // mus_e3m8
+        9,  // mus_e3m9
+        12, // mus_inter
+        21, // mus_intro
+        22, // mus_bunny
+        23, // mus_victor
+        21  // mus_introa
     };
 
     unsigned char Doom2MusicMap[36] = {
-        1,  //mus_None,
-        1,  //mus_runnin - MAP1
-        2,  //mus_stalks - MAP2
-        3,  //mus_countd - MAP3
-        4,  //mus_betwee - MAP4
-        5,  //mus_doom - MAP5
-        6,  //mus_the_da - MAP6
-        7,  //mus_shawn - MAP7
-        8,  //mus_ddtblu - MAP8
-        9,  //mus_in_cit - MAP9
-        10, //mus_dead - MAP10
-        2,  //mus_stlks2 - MAP11
-        6,  //mus_theda2 - MAP12
-        5,  //mus_doom2 - MAP13
-        8,  //mus_ddtbl2 - MAP14
-        1,  //mus_runni2 - MAP15
-        10, //mus_dead2 - MAP16
-        2,  //mus_stlks3 - MAP17
-        11, //mus_romero - MAP18
-        7,  //mus_shawn2 - MAP19
-        12, //mus_messag - MAP20
-        3,  //mus_count2 - MAP21
-        8,  //mus_ddtbl3 - MAP22
-        13, //mus_ampie - MAP23
-        6,  //mus_theda3 - MAP24
-        14, //mus_adrian - MAP25
-        12, //mus_messg2 - MAP26
-        11, //mus_romer2 - MAP27
-        15, //mus_tense - MAP28
-        7,  //mus_shawn3 - MAP29
-        16, //mus_openin - MAP30
-        17, //mus_evil - MAP31
-        18, //mus_ultima - MAP32
-        19, //mus_read_m
-        20, //mus_dm2ttl
-        21  //mus_dm2int
+        1,  // mus_None,
+        1,  // mus_runnin - MAP1
+        2,  // mus_stalks - MAP2
+        3,  // mus_countd - MAP3
+        4,  // mus_betwee - MAP4
+        5,  // mus_doom - MAP5
+        6,  // mus_the_da - MAP6
+        7,  // mus_shawn - MAP7
+        8,  // mus_ddtblu - MAP8
+        9,  // mus_in_cit - MAP9
+        10, // mus_dead - MAP10
+        2,  // mus_stlks2 - MAP11
+        6,  // mus_theda2 - MAP12
+        5,  // mus_doom2 - MAP13
+        8,  // mus_ddtbl2 - MAP14
+        1,  // mus_runni2 - MAP15
+        10, // mus_dead2 - MAP16
+        2,  // mus_stlks3 - MAP17
+        11, // mus_romero - MAP18
+        7,  // mus_shawn2 - MAP19
+        12, // mus_messag - MAP20
+        3,  // mus_count2 - MAP21
+        8,  // mus_ddtbl3 - MAP22
+        13, // mus_ampie - MAP23
+        6,  // mus_theda3 - MAP24
+        14, // mus_adrian - MAP25
+        12, // mus_messg2 - MAP26
+        11, // mus_romer2 - MAP27
+        15, // mus_tense - MAP28
+        7,  // mus_shawn3 - MAP29
+        16, // mus_openin - MAP30
+        17, // mus_evil - MAP31
+        18, // mus_ultima - MAP32
+        19, // mus_read_m
+        20, // mus_dm2ttl
+        21  // mus_dm2int
     };
 
     unsigned char TNTMusicMap[36] = {
-        1,  //mus_None,
-        1,  //mus_runnin - MAP1
-        2,  //mus_stalks - MAP2
-        3,  //mus_countd - MAP3
-        4,  //mus_betwee - MAP4
-        5,  //mus_doom - MAP5
-        6,  //mus_the_da - MAP6
-        7,  //mus_shawn - MAP7
-        8,  //mus_ddtblu - MAP8
-        1,  //mus_in_cit - MAP9
-        9,  //mus_dead - MAP10
-        10, //mus_stlks2 - MAP11
-        11, //mus_theda2 - MAP12
-        4,  //mus_doom2 - MAP13
-        12, //mus_ddtbl2 - MAP14
-        2,  //mus_runni2 - MAP15
-        13, //mus_dead2 - MAP16
-        5,  //mus_stlks3 - MAP17
-        9,  //mus_romero - MAP18
-        14, //mus_shawn2 - MAP19
-        15, //mus_messag - MAP20
-        16, //mus_count2 - MAP21
-        17, //mus_ddtbl3 - MAP22
-        18, //mus_ampie - MAP23
-        19, //mus_theda3 - MAP24
-        20, //mus_adrian - MAP25
-        13, //mus_messg2 - MAP26
-        8,  //mus_romer2 - MAP27
-        17, //mus_tense - MAP28
-        4,  //mus_shawn3 - MAP29
-        8,  //mus_openin - MAP30
-        21, //mus_evil - MAP31
-        16, //mus_ultima - MAP32
-        22, //mus_read_m
-        23, //mus_dm2ttl
-        21  //mus_dm2int
+        1,  // mus_None,
+        1,  // mus_runnin - MAP1
+        2,  // mus_stalks - MAP2
+        3,  // mus_countd - MAP3
+        4,  // mus_betwee - MAP4
+        5,  // mus_doom - MAP5
+        6,  // mus_the_da - MAP6
+        7,  // mus_shawn - MAP7
+        8,  // mus_ddtblu - MAP8
+        1,  // mus_in_cit - MAP9
+        9,  // mus_dead - MAP10
+        10, // mus_stlks2 - MAP11
+        11, // mus_theda2 - MAP12
+        4,  // mus_doom2 - MAP13
+        12, // mus_ddtbl2 - MAP14
+        2,  // mus_runni2 - MAP15
+        13, // mus_dead2 - MAP16
+        5,  // mus_stlks3 - MAP17
+        9,  // mus_romero - MAP18
+        14, // mus_shawn2 - MAP19
+        15, // mus_messag - MAP20
+        16, // mus_count2 - MAP21
+        17, // mus_ddtbl3 - MAP22
+        18, // mus_ampie - MAP23
+        19, // mus_theda3 - MAP24
+        20, // mus_adrian - MAP25
+        13, // mus_messg2 - MAP26
+        8,  // mus_romer2 - MAP27
+        17, // mus_tense - MAP28
+        4,  // mus_shawn3 - MAP29
+        8,  // mus_openin - MAP30
+        21, // mus_evil - MAP31
+        16, // mus_ultima - MAP32
+        22, // mus_read_m
+        23, // mus_dm2ttl
+        21  // mus_dm2int
     };
 
     unsigned char PlutoniaMusicMap[36] = {
-        1,  //mus_None,
-        1,  //mus_runnin - MAP1
-        2,  //mus_stalks - MAP2
-        3,  //mus_countd - MAP3
-        4,  //mus_betwee - MAP4
-        5,  //mus_doom - MAP5
-        6,  //mus_the_da - MAP6
-        7,  //mus_shawn - MAP7
-        8,  //mus_ddtblu - MAP8
-        9,  //mus_in_cit - MAP9
-        10, //mus_dead - MAP10
-        11, //mus_stlks2 - MAP11
-        12, //mus_theda2 - MAP12
-        13, //mus_doom2 - MAP13
-        14, //mus_ddtbl2 - MAP14
-        15, //mus_runni2 - MAP15
-        16, //mus_dead2 - MAP16
-        17, //mus_stlks3 - MAP17
-        10, //mus_romero - MAP18
-        18, //mus_shawn2 - MAP19
-        19, //mus_messag - MAP20
-        20, //mus_count2 - MAP21
-        21, //mus_ddtbl3 - MAP22
-        22, //mus_ampie - MAP23
-        23, //mus_theda3 - MAP24
-        24, //mus_adrian - MAP25
-        19, //mus_messg2 - MAP26
-        7,  //mus_romer2 - MAP27
-        8,  //mus_tense - MAP28
-        17, //mus_shawn3 - MAP29
-        25, //mus_openin - MAP30
-        6,  //mus_evil - MAP31
-        14, //mus_ultima - MAP32
-        20, //mus_read_m
-        26, //mus_dm2ttl
-        27  //mus_dm2int
+        1,  // mus_None,
+        1,  // mus_runnin - MAP1
+        2,  // mus_stalks - MAP2
+        3,  // mus_countd - MAP3
+        4,  // mus_betwee - MAP4
+        5,  // mus_doom - MAP5
+        6,  // mus_the_da - MAP6
+        7,  // mus_shawn - MAP7
+        8,  // mus_ddtblu - MAP8
+        9,  // mus_in_cit - MAP9
+        10, // mus_dead - MAP10
+        11, // mus_stlks2 - MAP11
+        12, // mus_theda2 - MAP12
+        13, // mus_doom2 - MAP13
+        14, // mus_ddtbl2 - MAP14
+        15, // mus_runni2 - MAP15
+        16, // mus_dead2 - MAP16
+        17, // mus_stlks3 - MAP17
+        10, // mus_romero - MAP18
+        18, // mus_shawn2 - MAP19
+        19, // mus_messag - MAP20
+        20, // mus_count2 - MAP21
+        21, // mus_ddtbl3 - MAP22
+        22, // mus_ampie - MAP23
+        23, // mus_theda3 - MAP24
+        24, // mus_adrian - MAP25
+        19, // mus_messg2 - MAP26
+        7,  // mus_romer2 - MAP27
+        8,  // mus_tense - MAP28
+        17, // mus_shawn3 - MAP29
+        25, // mus_openin - MAP30
+        6,  // mus_evil - MAP31
+        14, // mus_ultima - MAP32
+        20, // mus_read_m
+        26, // mus_dm2ttl
+        27  // mus_dm2int
     };
 
-    switch(gamemission)
+    switch (gamemission)
     {
-        case doom:
-            return DoomMusicMap[musicnum];
-        case doom2:
-            return Doom2MusicMap[musicnum - mus_introa];
-        case pack_plut:
-            return PlutoniaMusicMap[musicnum - mus_introa];
-        case pack_tnt:
-            return TNTMusicMap[musicnum - mus_introa];
-        default:
-            return 1;
+    case doom:
+        return DoomMusicMap[musicnum];
+    case doom2:
+        return Doom2MusicMap[musicnum - mus_introa];
+    case pack_plut:
+        return PlutoniaMusicMap[musicnum - mus_introa];
+    case pack_tnt:
+        return TNTMusicMap[musicnum - mus_introa];
+    default:
+        return 1;
     }
 }
 
@@ -323,6 +333,72 @@ void S_CheckCD(void)
         if ((CD_Cdrom_data.Status & (1 << 9)) ? 0 : 1)
             S_ChangeMusicCD(cdmusicnum, cdlooping);
     }
+}
+
+unsigned char *LoadFile(char *filename, int *length)
+{
+    FILE *in;
+    long size;
+    unsigned char *ptr;
+
+    if ((in = fopen(filename, "rb")) == NULL)
+        I_Error("FILE NOT FOUND");
+
+    fseek(in, 0, SEEK_END);
+    size = ftell(in);
+    fseek(in, 0, SEEK_SET);
+
+    ptr = (unsigned char *)malloc(size);
+    if (ptr == NULL)
+        I_Error("OUT OF MEMORY");
+
+    if (fread(ptr, size, 1, in) != 1)
+        I_Error("UNEXPECTED END OF FILE");
+
+    fclose(in);
+
+    *length = size;
+
+    return (ptr);
+}
+
+void S_ChangeMusicWAV(int musicnum, int looping)
+{
+    int length;
+    unsigned char *rawptr;
+
+    char filename[80];
+    char subfolder[5];
+
+    memset(filename, 0, sizeof(filename));
+    memset(subfolder, 0, sizeof(subfolder));
+
+    switch (gamemission)
+    {
+    case doom:
+        sprintf(subfolder, "DOOM1");
+        break;
+    case doom2:
+        sprintf(subfolder, "DOOM2");
+        break;
+    case pack_plut:
+        sprintf(subfolder, "PLUTONIA");
+        break;
+    case pack_tnt:
+        sprintf(subfolder, "TNT");
+        break;
+    }
+
+    sprintf(filename, "MUSIC/%s/mus_%u.raw", subfolder, S_MapMusicCD(musicnum));
+
+    rawptr = LoadFile(filename, &length);
+
+    if (MV_VoicePlaying(wavhandle))
+    {
+        MV_Kill(wavhandle);
+    }
+
+    wavhandle = MV_PlayRaw(rawptr, length, 22050, 255, 255, 255, 0);
 }
 
 void S_ChangeMusicMIDI(int musicnum, int looping)
@@ -366,10 +442,18 @@ void S_ChangeMusicMIDI(int musicnum, int looping)
 
 void S_ChangeMusic(int musicnum, int looping)
 {
-    if (snd_MusicDevice == snd_CD)
+    switch (snd_MusicDevice)
+    {
+    case snd_CD:
         S_ChangeMusicCD(musicnum, looping);
-    else
+        break;
+    case snd_WAV:
+        S_ChangeMusicWAV(musicnum, looping);
+        break;
+    default:
         S_ChangeMusicMIDI(musicnum, looping);
+        break;
+    }
 }
 
 void S_StopChannel(int cnum)
@@ -466,33 +550,42 @@ void S_SetSfxVolume(int volume)
 //
 void S_PauseMusic(void)
 {
-    if (snd_MusicDevice == snd_CD)
+    switch (snd_MusicDevice)
     {
+    case snd_CD:
         CD_StopAudio();
         mus_paused = 1;
         return;
-    }
-
-    if (mus_playing && !mus_paused)
-    {
-        MUSIC_Pause();
-        mus_paused = 1;
+    case snd_WAV:
+        return;
+    default:
+        if (mus_playing && !mus_paused)
+        {
+            MUSIC_Pause();
+            mus_paused = 1;
+        }
+        return;
     }
 }
 
 void S_ResumeMusic(void)
 {
-    if (snd_MusicDevice == snd_CD)
+
+    switch (snd_MusicDevice)
     {
+    case snd_CD:
         CD_ResumeAudio();
         mus_paused = 0;
         return;
-    }
-
-    if (mus_playing && mus_paused)
-    {
-        MUSIC_Continue();
-        mus_paused = 0;
+    case snd_WAV:
+        return;
+    default:
+        if (mus_playing && mus_paused)
+        {
+            MUSIC_Continue();
+            mus_paused = 0;
+        }
+        return;
     }
 }
 

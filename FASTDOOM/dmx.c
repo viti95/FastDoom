@@ -33,6 +33,7 @@
 #include "i_sound.h"
 #include "m_misc.h"
 #include "options.h"
+#include "i_system.h"
 
 typedef struct
 {
@@ -357,6 +358,10 @@ int ASS_GetSoundCardCode(int sndDevice)
         return OPL2LPT;
     case snd_OPL3LPT:
         return OPL3LPT;
+    case snd_CD:
+        return AudioCD;
+    case snd_WAV:
+        return FileWAV;
     default:
         return -1;
     }

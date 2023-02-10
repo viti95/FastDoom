@@ -79,6 +79,11 @@ int MUSIC_Init(int SoundCard, int Address)
         status = MUSIC_InitCMS(&MUSIC_MidiFunctions, Address);
         break;
 
+    case AudioCD:
+    case FileWAV:
+        status = MUSIC_Ok;
+        break;
+
     case SoundSource:
     case TandySoundSource:
     case PC:

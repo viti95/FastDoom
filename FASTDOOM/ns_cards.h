@@ -26,6 +26,8 @@ typedef enum
    CMS,
    OPL2LPT,
    OPL3LPT,
+   AudioCD,
+   FileWAV,
    NumSoundCards
 } soundcardnames;
 
