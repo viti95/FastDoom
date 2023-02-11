@@ -340,7 +340,7 @@ void S_CheckCD(void)
 
 void S_CheckWAV(void)
 {
-    if (wavlooping)
+    if (wavlooping && !mus_paused)
     {
         if (!MV_VoicePlaying(wavhandle))
             S_ChangeMusicWAV(wavmusicnum, wavlooping);
@@ -578,6 +578,7 @@ void S_PauseMusic(void)
         return;
     case snd_WAV:
         MV_Kill(wavhandle); // Apogee Sound System doesn't support pause audio samples
+        mus_paused = 1;
         return;
     default:
         if (mus_playing && !mus_paused)
@@ -600,6 +601,7 @@ void S_ResumeMusic(void)
         return;
     case snd_WAV:
         S_ChangeMusicWAV(wavmusicnum, wavlooping);
+        mus_paused = 0;
         return;
     default:
         if (mus_playing && mus_paused)
