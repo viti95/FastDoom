@@ -36,10 +36,10 @@ void I_ProcessPalette(byte *palette)
 
         sum = r + g + b;
 
-        lutcolors[i] = sum > 38 ? 0xFF : 0x00;
-        lutcolors[i + 1] = sum > 115 ? 0xFF : 0x00;
-        lutcolors[i + 2] = sum > 155 ? 0xFF : 0x00;
-        lutcolors[i + 3] = sum > 77 ? 0xFF : 0x00;
+        lutcolors[i] = sum > 19 ? 0xFF : 0x00;
+        lutcolors[i + 1] = sum > 59 ? 0xFF : 0x00;
+        lutcolors[i + 2] = sum > 79 ? 0xFF : 0x00;
+        lutcolors[i + 3] = sum > 39 ? 0xFF : 0x00;
     }
 }
 
