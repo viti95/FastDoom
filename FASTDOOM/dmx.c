@@ -378,10 +378,11 @@ void ASS_Init(int rate, int maxsng, int mdev, int sdev)
 
     fx_device fx_device;
 
-    status = 0;
+    if (mdev != snd_none)
+    {
+        status = MUSIC_Ok;
 
     music_device = ASS_GetSoundCardCode(mdev);
-    sound_device = ASS_GetSoundCardCode(sdev);
 
     status = MUSIC_Init(music_device, dmx_mus_port);
 
@@ -393,7 +394,14 @@ void ASS_Init(int rate, int maxsng, int mdev, int sdev)
     if (status == MUSIC_Ok)
     {
         MUSIC_SetVolume(0);
+        }
     }
+
+    if (sdev != snd_none)
+    {
+        status = FX_Ok;
+
+        sound_device = ASS_GetSoundCardCode(sdev);
 
     switch (sound_device)
     {
@@ -432,6 +440,7 @@ void ASS_Init(int rate, int maxsng, int mdev, int sdev)
 
     if (reverseStereo)
         MV_ReverseStereo();
+    }
 }
 
 void ASS_DeInit(void)

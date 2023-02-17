@@ -338,15 +338,6 @@ void S_CheckCD(void)
     }
 }
 
-void S_CheckWAV(void)
-{
-    if (wavlooping && !mus_paused)
-    {
-        if (!MV_VoicePlaying(wavhandle))
-            S_ChangeMusicWAV(wavmusicnum, wavlooping);
-    }
-}
-
 unsigned char *LoadFile(char *filename, int *length)
 {
     FILE *in;
@@ -419,6 +410,15 @@ void S_ChangeMusicWAV(int musicnum, int looping)
     wavfileptr = LoadFile(filename, &length);
 
     wavhandle = MV_PlayRaw(wavfileptr, length, 22050, 255, 255, 255, 0);
+}
+
+void S_CheckWAV(void)
+{
+    if (wavlooping && !mus_paused)
+    {
+        if (!MV_VoicePlaying(wavhandle))
+            S_ChangeMusicWAV(wavmusicnum, wavlooping);
+    }
 }
 
 void S_ChangeMusicMIDI(int musicnum, int looping)
