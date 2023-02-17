@@ -255,8 +255,8 @@ extern int usemouse;
 
 byte mousepresent;
 
-int ticcount;
-fixed_t fps;
+unsigned int ticcount;
+unsigned int fps;
 
 // REGS stuff used for int calls
 union REGS regs;
@@ -560,8 +560,8 @@ extern int screenblocks;
 
 void I_CalculateFPS(void)
 {
-    static int fps_counter, fps_starttime, fps_nextcalculation;
-    int opt1, opt2;
+    static unsigned int fps_counter, fps_starttime, fps_nextcalculation;
+    unsigned int opt1, opt2;
 
     if (fps_counter == 0)
     {
@@ -575,9 +575,9 @@ void I_CalculateFPS(void)
     {
         // in case of a very fast system, this will limit the sampling
         // minus 1!, exactly 35 FPS when measeraring for a longer time.
-        opt1 = Mul35(fps_counter - 1) << FRACBITS;
-        opt2 = (ticcount - fps_starttime) << FRACBITS;
-        fps = (opt1 >> 14 >= opt2) ? ((opt1 ^ opt2) >> 31) ^ MAXINT : FixedDiv2(opt1, opt2);
+        opt1 = Mul10(Mul35(fps_counter - 1));
+        opt2 = ticcount - fps_starttime;
+        fps = opt1 / opt2;
         fps_nextcalculation = ticcount + 12;
         fps_counter = 0; // flush old data
     }

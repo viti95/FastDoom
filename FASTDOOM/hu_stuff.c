@@ -340,8 +340,7 @@ void HU_Drawer(void)
         }
         else
         {
-
-            sprintf(str, "%i.%01i", fps >> FRACBITS, Mul10(fps & 65535) >> FRACBITS);
+            sprintf(str, "%u.%u", fps / 10, fps % 10);
             HUlib_clearTextLine(&w_fps);
             f = str;
             while (*f)

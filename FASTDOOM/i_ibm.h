@@ -3,8 +3,8 @@
 #include "doomtype.h"
 #include "options.h"
 
-extern int ticcount;
-extern fixed_t fps;
+extern unsigned int ticcount;
+extern unsigned int fps;
 
 extern unsigned short *currentscreen;
 
