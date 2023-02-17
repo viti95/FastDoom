@@ -1234,28 +1234,26 @@ void G_TimeDemo(char *name)
 
 void G_CheckDemoStatus(void)
 {
-    int endtime;
-    int realtics;
-    int resultfps;
+    unsigned int realtics;
+    unsigned int resultfps;
 
     if (timingdemo)
     {
-        endtime = ticcount;
-        realtics = endtime - starttime;
+        realtics = ticcount - starttime;
 
-        resultfps = FixedMul(FixedDiv(gametic << FRACBITS, realtics << FRACBITS), 35 << FRACBITS);
+        resultfps = (35 * 1000 * (unsigned int)gametic) / (unsigned int)realtics;
 
         if (logTimedemo)
         {
             FILE *logFile = fopen("bench.txt", "a");
             if (logFile)
             {
-                fprintf(logFile, "Timed %i gametics in %i realtics. FPS: %i.%03i\n", gametic, realtics, resultfps >> FRACBITS, Mul1000(resultfps & 65535) >> FRACBITS);
+                fprintf(logFile, "Timed %i gametics in %u realtics. FPS: %u.%u\n", gametic, realtics, resultfps / 1000, resultfps % 1000);
                 fclose(logFile);
             }
         }
 
-        I_Error("Timed %i gametics in %i realtics. FPS: %i.%03i", gametic, realtics, resultfps >> FRACBITS, Mul1000(resultfps & 65535) >> FRACBITS);
+        I_Error("Timed %i gametics in %u realtics. FPS: %u.%u", gametic, realtics, resultfps / 1000, resultfps % 1000);
     }
 
     if (demoplayback)

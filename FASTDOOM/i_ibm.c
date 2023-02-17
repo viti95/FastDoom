@@ -575,7 +575,7 @@ void I_CalculateFPS(void)
     {
         // in case of a very fast system, this will limit the sampling
         // minus 1!, exactly 35 FPS when measeraring for a longer time.
-        opt1 = Mul10(Mul35(fps_counter - 1));
+        opt1 = 35 * 10 * (fps_counter - 1);
         opt2 = ticcount - fps_starttime;
         fps = opt1 / opt2;
         fps_nextcalculation = ticcount + 12;
