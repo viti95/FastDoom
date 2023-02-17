@@ -388,7 +388,7 @@ void ASS_Init(int rate, int maxsng, int mdev, int sdev)
 
     if (status != MUSIC_Ok)
     {
-        I_Error("Error initializing Music device: %u", status);
+            I_Error("Error initializing Music device: %i", status);
     }
 
     if (status == MUSIC_Ok)
@@ -433,7 +433,7 @@ void ASS_Init(int rate, int maxsng, int mdev, int sdev)
 
     if (status != FX_Ok)
     {
-        I_Error("Error initializing Sound device: %u", status);
+            I_Error("Error initializing Sound device: %i", status);
     }
 
     FX_SetVolume(255);
