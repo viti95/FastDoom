@@ -51,25 +51,25 @@
 #include "math.h"
 
 #if defined(MODE_CGA_AFH)
-#include "i_cga_afh.h"
+#include "i_cgaafh.h"
 #endif
 
 #if defined(MODE_CGA16)
-#include "i_cga_16.h"
+#include "i_cga16.h"
 #endif
 
 #if defined(MODE_VGA16)
-#include "i_vga_16.h"
+#include "i_vga16.h"
 #endif
 
 #if defined(MODE_13H)
 #include "i_vga.h"
-#include "i_vga_13h.h"
+#include "i_vga13h.h"
 #endif
 
 #if defined(MODE_V2)
 #include "i_vga.h"
-#include "i_vga_vert.h"
+#include "i_vgaver.h"
 #endif
 
 #if defined(MODE_PCP)
@@ -81,11 +81,11 @@
 #endif
 
 #if defined(MODE_CGA)
-#include "i_cga_4.h"
+#include "i_cga4.h"
 #endif
 
 #if defined(MODE_CVB)
-#include "i_cga_cvbs.h"
+#include "i_cgacvb.h"
 #endif
 
 #if defined(MODE_HERC)
@@ -93,23 +93,23 @@
 #endif
 
 #if defined(MODE_CGA_BW)
-#include "i_cga_bw.h"
+#include "i_cgabw.h"
 #endif
 
 #if defined(MODE_EGA640)
-#include "i_ega_640.h"
+#include "i_ega640.h"
 #endif
 
 #if defined(MODE_EGA)
-#include "i_ega_320.h"
+#include "i_ega320.h"
 #endif
 
 #if defined(MODE_EGAW1)
-#include "i_ega_160.h"
+#include "i_ega160.h"
 #endif
 
 #if defined(MODE_EGA80)
-#include "i_ega_80.h"
+#include "i_ega80.h"
 #endif
 
 #if defined(MODE_VBE2)
@@ -117,7 +117,7 @@
 #endif
 
 #if defined(MODE_Y)
-#include "i_vga_y.h"
+#include "i_vgay.h"
 #include "i_vga.h"
 #endif
 
@@ -126,7 +126,7 @@
 #endif
 
 #if defined(MODE_CGA512)
-#include "i_cga_512.h"
+#include "i_cga512.h"
 #endif
 
 #if defined(TEXT_MODE)

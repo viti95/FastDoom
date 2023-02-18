@@ -36,27 +36,27 @@ CCOPTS = $(EXTERNOPT) -omaxtnrih -ol+ -oe=32 -zp4 -3r -ei -j -zq -zc
 #CCOPTS = $(EXTERNOPT) -omaxtnrih -ol+ -oe=32 -zp4 -5r -ei -j -zq -zc -et
 
 GLOBOBJS = &
- i_cga_afh.obj &
- i_cga_16.obj &
+ i_cgaafh.obj &
+ i_cga16.obj &
  i_vga.obj &
- i_vga_16.obj &
- i_vga_13h.obj &
+ i_vga16.obj &
+ i_vga13h.obj &
  i_pcp.obj &
  i_ati.obj &
- i_cga_4.obj &
- i_cga_cvbs.obj &
+ i_cga4.obj &
+ i_cgacvb.obj &
  i_herc.obj &
- i_cga_bw.obj &
- i_ega_640.obj &
- i_vga_vert.obj &
- i_ega_320.obj &
- i_ega_160.obj &
- i_ega_80.obj &
+ i_cgabw.obj &
+ i_ega640.obj &
+ i_vgaver.obj &
+ i_ega320.obj &
+ i_ega160.obj &
+ i_ega80.obj &
  i_vesa.obj &
- i_cga_512.obj &
+ i_cga512.obj &
  i_text.obj &
  i_mda.obj &
- i_vga_y.obj &
+ i_vgay.obj &
  math.obj &
  ns_dpmi.obj &
  ns_pcfx.obj &
