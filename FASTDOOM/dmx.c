@@ -218,7 +218,7 @@ void SFX_SetOrigin(int handle, int sep, int vol)
 }
 int GF1_Detect(void)
 {
-    return 0; //FIXME
+    return 0; // FIXME
 }
 void GF1_SetMap(void *data, int len)
 {
@@ -382,18 +382,18 @@ void ASS_Init(int rate, int maxsng, int mdev, int sdev)
     {
         status = MUSIC_Ok;
 
-    music_device = ASS_GetSoundCardCode(mdev);
+        music_device = ASS_GetSoundCardCode(mdev);
 
-    status = MUSIC_Init(music_device, dmx_mus_port);
+        status = MUSIC_Init(music_device, dmx_mus_port);
 
-    if (status != MUSIC_Ok)
-    {
+        if (status != MUSIC_Ok)
+        {
             I_Error("Error initializing Music device: %i", status);
-    }
+        }
 
-    if (status == MUSIC_Ok)
-    {
-        MUSIC_SetVolume(0);
+        if (status == MUSIC_Ok)
+        {
+            MUSIC_SetVolume(0);
         }
     }
 
@@ -403,43 +403,43 @@ void ASS_Init(int rate, int maxsng, int mdev, int sdev)
 
         sound_device = ASS_GetSoundCardCode(sdev);
 
-    switch (sound_device)
-    {
-    case PC:
-        PCFX_Init();
-        PCFX_SetTotalVolume(255);
-        return;
-    case SoundBlaster:
-    case Awe32:
-    case SoundBlasterDirect:
-        FX_SetupSoundBlaster(dmx_blaster, (int *)&SbMaxVoices, (int *)&SbMaxBits, (int *)&SbMaxChannels);
-        printf("Sound Blaster DSP %01X.%02X\n", BLASTER_Version >> 8, BLASTER_Version && 7);
-        printf("ADDR: %03X, IRQ: %u, DMA LOW: %u, DMA HIGH: %u\n", BLASTER_Config.Address, BLASTER_Config.Interrupt, BLASTER_Config.Dma8, BLASTER_Config.Dma16);
-        break;
-    case SoundSource:
-    case TandySoundSource:
-    case LPTDAC:
-    case CMS:
-        FX_SetupCard(sound_device, &fx_device, dmx_snd_port);
-        break;
-    default:
-        FX_SetupCard(sound_device, &fx_device, -1);
-        break;
-    }
+        switch (sound_device)
+        {
+        case PC:
+            PCFX_Init();
+            PCFX_SetTotalVolume(255);
+            return;
+        case SoundBlaster:
+        case Awe32:
+        case SoundBlasterDirect:
+            FX_SetupSoundBlaster(dmx_blaster, (int *)&SbMaxVoices, (int *)&SbMaxBits, (int *)&SbMaxChannels);
+            printf("Sound Blaster DSP %01X.%02X\n", BLASTER_Version >> 8, BLASTER_Version && 7);
+            printf("ADDR: %03X, IRQ: %u, DMA LOW: %u, DMA HIGH: %u\n", BLASTER_Config.Address, BLASTER_Config.Interrupt, BLASTER_Config.Dma8, BLASTER_Config.Dma16);
+            break;
+        case SoundSource:
+        case TandySoundSource:
+        case LPTDAC:
+        case CMS:
+            FX_SetupCard(sound_device, &fx_device, dmx_snd_port);
+            break;
+        default:
+            FX_SetupCard(sound_device, &fx_device, -1);
+            break;
+        }
 
-    sample_rate = lowSound ? 8000 : 11025;
+        sample_rate = lowSound ? 8000 : 11025;
 
-    status = FX_Init(sound_device, numChannels, 2, 8, sample_rate);
+        status = FX_Init(sound_device, numChannels, 2, 8, sample_rate);
 
-    if (status != FX_Ok)
-    {
+        if (status != FX_Ok)
+        {
             I_Error("Error initializing Sound device: %i", status);
-    }
+        }
 
-    FX_SetVolume(255);
+        FX_SetVolume(255);
 
-    if (reverseStereo)
-        MV_ReverseStereo();
+        if (reverseStereo)
+            MV_ReverseStereo();
     }
 }
 

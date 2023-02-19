@@ -48,6 +48,7 @@ typedef enum
 	M_OPL2LPT,
 	M_OPL3LPT,
 	M_CD,
+	M_WAV,
 	M_LAST
 } SCARD;
 

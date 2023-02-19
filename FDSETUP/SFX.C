@@ -800,6 +800,7 @@ int SetupFX(void)
 	case M_OPL2LPT:
 	case M_OPL3LPT:
 	case M_CD:
+	case M_WAV:
 		savefx = FALSE;
 		break;
 

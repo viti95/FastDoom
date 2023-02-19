@@ -4,6 +4,12 @@
 *.map
 *.obj
 *.sym
+*.ERR
+*.EXE
+*.MAP
+*.OBJ
+*.SYM
+
 
 #VSCODE
 .vscode/*
