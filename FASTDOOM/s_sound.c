@@ -368,7 +368,7 @@ unsigned char *LoadFile(char *filename, int *length)
 void S_ChangeMusicWAV(int musicnum, int looping)
 {
     int length;
-    
+    unsigned int sample_rate;
 
     char filename[80];
     char subfolder[5];
@@ -409,7 +409,20 @@ void S_ChangeMusicWAV(int musicnum, int looping)
 
     wavfileptr = LoadFile(filename, &length);
 
-    wavhandle = MV_PlayRaw(wavfileptr, length, 22050, 255, 255, 255, 0);
+    switch(snd_PCMRate)
+    {
+        case 0:
+        sample_rate = 11025;
+        break;
+        case 1:
+        sample_rate = 22050;
+        break;
+        case 2:
+        sample_rate = 44100;
+        break;
+    }
+
+    wavhandle = MV_PlayRaw(wavfileptr, length, sample_rate, 255, 255, 255, 0);
 }
 
 void S_CheckWAV(void)

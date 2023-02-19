@@ -71,6 +71,7 @@ void I_ShutdownTimer(void)
 int snd_Mport; // midi variables
 int snd_Sport; // sound port
 int snd_Rate; // sound rate
+int snd_PCMRate; // sound PCM rate
 
 int snd_MusicVolume; // maximum volume for music
 int snd_SfxVolume;   // maximum volume for sound

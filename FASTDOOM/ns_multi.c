@@ -984,7 +984,7 @@ void MV_StopPlayback(
 int MV_PlayRaw(
     unsigned char *ptr,
     unsigned long length,
-    unsigned rate,
+    unsigned long rate,
     int vol,
     int left,
     int right,

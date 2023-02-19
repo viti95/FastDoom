@@ -53,5 +53,6 @@ typedef enum
 } cardenum_t;
 
 extern int snd_Rate;
+extern int snd_PCMRate;
 
 #endif
