@@ -41,6 +41,7 @@
 
 #include "ns_cd.h"
 #include "ns_multi.h"
+#include "ns_muldf.h"
 
 // Current music/sfx card - index useless
 //  w/o a reference LUT in a sound module.
@@ -106,6 +107,17 @@ void S_SetMusicVolumeCD(int volume)
     snd_MusicVolume = volume;
 }
 
+void S_SetMusicVolumeWAV(int volume)
+{
+    VoiceNode *voice;
+
+    voice = MV_GetVoice(wavhandle);
+    if (voice != NULL)
+        MV_SetVoiceVolume(voice, volume, 255, 255);
+
+    snd_MusicVolume = volume;
+}
+
 void S_SetMusicVolumeMIDI(int volume)
 {
     I_SetMusicVolume(volume);
@@ -120,6 +132,7 @@ void S_SetMusicVolume(int volume)
         S_SetMusicVolumeCD(volume);
         return;
     case snd_WAV:
+        S_SetMusicVolumeWAV(volume);
         return;
     default:
         S_SetMusicVolumeMIDI(volume);
