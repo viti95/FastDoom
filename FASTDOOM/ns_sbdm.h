@@ -3,8 +3,6 @@
 
 #define MONO_8BIT 0
 
-#define SBDM_SampleRate 11025
-
 enum SBDM_Errors
 {
     SBDM_Warning = -2,

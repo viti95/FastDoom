@@ -9,6 +9,7 @@
 #include "ns_sb.h"
 #include "ns_sbdef.h"
 #include "ns_muldf.h"
+#include "ns_fxm.h"
 
 #include "m_misc.h"
 #include "options.h"
@@ -113,7 +114,7 @@ int SBDM_BeginBufferedPlayback(
 
     SBDM_SoundPlaying = 1;
 
-    SBDM_Timer = TS_ScheduleTask(SBDM_ServiceInterrupt, SBDM_SampleRate, 1, NULL);
+    SBDM_Timer = TS_ScheduleTask(SBDM_ServiceInterrupt, FX_MixRate, 1, NULL);
     TS_Dispatch();
 
     return (SBDM_Ok);

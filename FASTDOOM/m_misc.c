@@ -205,6 +205,8 @@ extern int sfxVolume;
 extern int musicVolume;
 extern int snd_Mport;
 extern int snd_Sport;
+extern int snd_Rate;
+extern int snd_PCMRate;
 
 typedef struct
 {
@@ -307,6 +309,8 @@ default_t defaults[] =
         {"snd_sfxdevice", &snd_DesiredSfxDevice, 0},
         {"snd_mport", &snd_Mport, 0x330},
         {"snd_sport", &snd_Sport, 0x378},
+        {"snd_rate", &snd_Rate, 2},
+        {"snd_pcmrate", &snd_PCMRate, 0},
 
         {"usegamma", &usegamma, 0}
 };

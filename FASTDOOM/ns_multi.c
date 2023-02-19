@@ -24,6 +24,7 @@
 #include "ns_adbfx.h"
 #include "options.h"
 #include "fastmath.h"
+#include "ns_fxm.h"
 
 #define RoundFixed(fixedval, bits)             \
     (                                          \
@@ -137,13 +138,7 @@ static void MV_Mix(
         {
             if (position < voice->length)
             {
-                if (rate == 131072){
-                    // 22.050
-                    voclength = (voice->length - position + 131071) >> 17;
-                }else{
-                    // 11.025
-                    voclength = (voice->length - position + 65535) >> 16;
-                }
+                voclength = (voice->length - position + rate - 1) / rate;
             }
             else
             {
@@ -177,14 +172,7 @@ static void MV_Mix(
 
             if (length > 0)
             {
-                // Get the position of the last sample in the buffer
-                if (voice->RateScale == 131072){
-                    // 22.050
-                    FixedPointBufferSize = (length - 1) << 17;
-                }else{
-                    // 11.025
-                    FixedPointBufferSize = (length - 1) << 16;
-                }
+                FixedPointBufferSize = voice->RateScale * (length - 1);
             }
         }
     }
@@ -865,7 +853,7 @@ int MV_StartPlayback(
         PCSpeaker_BeginBufferedPlayback(MV_MixBuffer[0],
                                  TotalBufferSize, MV_NumberOfBuffers,
                                  MV_ServiceVoc);
-        MV_MixRate = PCSpeaker_SampleRate;
+        MV_MixRate = FX_MixRate;
         MV_DMAChannel = -1;
         break;
     case PCPWM:
@@ -879,28 +867,28 @@ int MV_StartPlayback(
         CMS_BeginBufferedPlayback(MV_MixBuffer[0],
                                  TotalBufferSize, MV_NumberOfBuffers,
                                  MV_ServiceVoc);
-        MV_MixRate = CMS_SampleRate;
+        MV_MixRate = FX_MixRate;
         MV_DMAChannel = -1;
         break;
     case LPTDAC:
         LPT_BeginBufferedPlayback(MV_MixBuffer[0],
                                  TotalBufferSize, MV_NumberOfBuffers,
                                  MV_ServiceVoc);
-        MV_MixRate = LPT_SampleRate;
+        MV_MixRate = FX_MixRate;
         MV_DMAChannel = -1;
         break;
     case SoundBlasterDirect:
         SBDM_BeginBufferedPlayback(MV_MixBuffer[0],
                                  TotalBufferSize, MV_NumberOfBuffers,
                                  MV_ServiceVoc);
-        MV_MixRate = SBDM_SampleRate;
+        MV_MixRate = FX_MixRate;
         MV_DMAChannel = -1;
         break;
     case AdlibFX:
         ADBFX_BeginBufferedPlayback(MV_MixBuffer[0],
                                  TotalBufferSize, MV_NumberOfBuffers,
                                  MV_ServiceVoc);
-        MV_MixRate = ADBFX_SampleRate;
+        MV_MixRate = FX_MixRate;
         MV_DMAChannel = -1;
         break;
     }
@@ -996,7 +984,7 @@ void MV_StopPlayback(
 int MV_PlayRaw(
     unsigned char *ptr,
     unsigned long length,
-    unsigned rate,
+    unsigned long rate,
     int vol,
     int left,
     int right,

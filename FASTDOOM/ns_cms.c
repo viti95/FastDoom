@@ -10,6 +10,7 @@
 #include "ns_inter.h"
 #include "ns_multi.h"
 #include "ns_midif.h"
+#include "ns_fxm.h"
 
 #include "m_misc.h"
 #include "options.h"
@@ -276,7 +277,7 @@ int CMS_BeginBufferedPlayback(
 
     CMS_SoundPlaying = 1;
 
-    CMS_Timer = TS_ScheduleTask(CMS_ServiceInterrupt, CMS_SampleRate, 1, NULL);
+    CMS_Timer = TS_ScheduleTask(CMS_ServiceInterrupt, FX_MixRate, 1, NULL);
     TS_Dispatch();
 
     return (CMS_Ok);

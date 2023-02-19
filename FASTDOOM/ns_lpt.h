@@ -3,8 +3,6 @@
 
 #define MONO_8BIT 0
 
-#define LPT_SampleRate 11025
-
 enum LPT_Errors
 {
     LPT_Warning = -2,

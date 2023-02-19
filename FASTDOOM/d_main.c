@@ -92,7 +92,6 @@ boolean showFPS;
 boolean unlimitedRAM;
 boolean nearSprites;
 boolean monoSound;
-boolean lowSound;
 boolean noMelt;
 
 boolean reverseStereo;
@@ -1208,8 +1207,6 @@ void D_DoomMain(void)
 #if defined(TEXT_MODE)
     videoPageFix = M_CheckParm("-pagefix");
 #endif
-
-    lowSound = M_CheckParm("-lowsound");
 
     unlimitedRAM = M_CheckParm("-ram");
 

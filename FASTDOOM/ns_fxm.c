@@ -20,7 +20,7 @@
 #define TRUE (1 == 1)
 #define FALSE (!TRUE)
 
-static unsigned FX_MixRate;
+unsigned int FX_MixRate;
 
 int FX_SoundDevice = -1;
 int FX_Installed = FALSE;

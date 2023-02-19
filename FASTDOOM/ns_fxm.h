@@ -46,6 +46,8 @@ enum fx_BLASTER_Types
        fx_SB16 = 6
 };
 
+extern unsigned int FX_MixRate;
+
 int FX_SetupCard(int SoundCard, fx_device *device, int port);
 int FX_GetBlasterSettings(fx_blaster_config *blaster);
 int FX_SetupSoundBlaster(fx_blaster_config blaster, int *MaxVoices, int *MaxSampleBits, int *MaxChannels);
