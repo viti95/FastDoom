@@ -3,8 +3,6 @@
 
 #define MONO_8BIT 0
 
-#define ADBFX_SampleRate 11025
-
 enum ADBFX_Errors
 {
     ADBFX_Warning = -2,

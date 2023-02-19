@@ -853,7 +853,7 @@ int MV_StartPlayback(
         PCSpeaker_BeginBufferedPlayback(MV_MixBuffer[0],
                                  TotalBufferSize, MV_NumberOfBuffers,
                                  MV_ServiceVoc);
-        MV_MixRate = PCSpeaker_SampleRate;
+        MV_MixRate = FX_MixRate;
         MV_DMAChannel = -1;
         break;
     case PCPWM:
@@ -867,7 +867,7 @@ int MV_StartPlayback(
         CMS_BeginBufferedPlayback(MV_MixBuffer[0],
                                  TotalBufferSize, MV_NumberOfBuffers,
                                  MV_ServiceVoc);
-        MV_MixRate = CMS_SampleRate;
+        MV_MixRate = FX_MixRate;
         MV_DMAChannel = -1;
         break;
     case LPTDAC:
@@ -888,7 +888,7 @@ int MV_StartPlayback(
         ADBFX_BeginBufferedPlayback(MV_MixBuffer[0],
                                  TotalBufferSize, MV_NumberOfBuffers,
                                  MV_ServiceVoc);
-        MV_MixRate = ADBFX_SampleRate;
+        MV_MixRate = FX_MixRate;
         MV_DMAChannel = -1;
         break;
     }

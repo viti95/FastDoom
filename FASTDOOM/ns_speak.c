@@ -7,6 +7,7 @@
 #include "ns_user.h"
 #include "ns_speak.h"
 #include "ns_muldf.h"
+#include "ns_fxm.h"
 
 #include "m_misc.h"
 #include "options.h"
@@ -125,7 +126,7 @@ int PCSpeaker_BeginBufferedPlayback(
 
     PCSpeaker_SoundPlaying = 1;
 
-    PCSpeaker_Timer = TS_ScheduleTask(PCSpeaker_ServiceInterrupt, PCSpeaker_SampleRate, 1, NULL);
+    PCSpeaker_Timer = TS_ScheduleTask(PCSpeaker_ServiceInterrupt, FX_MixRate, 1, NULL);
     TS_Dispatch();
 
     return (PCSpeaker_Ok);

@@ -8,10 +8,9 @@
 #include "ns_adbfx.h"
 #include "ns_sb.h"
 #include "ns_sbdef.h"
-
 #include "ns_sbmus.h"
-
 #include "ns_muldf.h"
+#include "ns_fxm.h"
 
 #include "m_misc.h"
 
@@ -153,7 +152,7 @@ int ADBFX_BeginBufferedPlayback(
 
     ADBFX_SoundPlaying = 1;
 
-    ADBFX_Timer = TS_ScheduleTask(ADBFX_ServiceInterrupt, ADBFX_SampleRate, 1, NULL);
+    ADBFX_Timer = TS_ScheduleTask(ADBFX_ServiceInterrupt, FX_MixRate, 1, NULL);
     TS_Dispatch();
 
     return (ADBFX_Ok);

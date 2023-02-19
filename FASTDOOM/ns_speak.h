@@ -3,8 +3,6 @@
 
 #define MONO_8BIT 0
 
-#define PCSpeaker_SampleRate 11025
-
 enum PCSpeaker_Errors
 {
     PCSpeaker_Warning = -2,
