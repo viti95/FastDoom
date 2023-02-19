@@ -111,12 +111,13 @@ void S_SetMusicVolumeWAV(int volume)
 {
     VoiceNode *voice;
 
+    snd_MusicVolume = volume;
+
     voice = MV_GetVoice(wavhandle);
     if (voice == NULL)
         return;
     
-    MV_SetVoiceVolume(voice, volume, volume, volume);
-    snd_MusicVolume = volume;
+    MV_SetVoiceVolume(voice, volume, volume, volume);    
 }
 
 void S_SetMusicVolumeMIDI(int volume)
@@ -383,6 +384,7 @@ void S_ChangeMusicWAV(int musicnum, int looping)
 {
     int length;
     unsigned int sample_rate;
+    int volume;
 
     char filename[80];
     char subfolder[5];
@@ -436,7 +438,9 @@ void S_ChangeMusicWAV(int musicnum, int looping)
         break;
     }
 
-    wavhandle = MV_PlayRaw(wavfileptr, length, sample_rate, 255, 255, 255, 0);
+    volume = snd_MusicVolume;
+
+    wavhandle = MV_PlayRaw(wavfileptr, length, sample_rate, volume, volume, volume, 0);
 }
 
 void S_CheckWAV(void)
