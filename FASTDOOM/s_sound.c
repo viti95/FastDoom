@@ -112,15 +112,16 @@ void S_SetMusicVolumeWAV(int volume)
     VoiceNode *voice;
 
     voice = MV_GetVoice(wavhandle);
-    if (voice != NULL)
-        MV_SetVoiceVolume(voice, volume, 255, 255);
-
+    if (voice == NULL)
+        return;
+    
+    MV_SetVoiceVolume(voice, volume, 255, 255);
     snd_MusicVolume = volume;
 }
 
 void S_SetMusicVolumeMIDI(int volume)
 {
-    I_SetMusicVolume(volume);
+    MUSIC_SetVolume(volume);
     snd_MusicVolume = volume;
 }
 
@@ -830,7 +831,6 @@ void S_Init(int sfxVolume, int musicVolume)
     int i;
 
     S_SetSfxVolume(sfxVolume);
-    // No music with Linux - another dummy.
     S_SetMusicVolume(musicVolume);
 
     // Allocating the internal channels for mixing

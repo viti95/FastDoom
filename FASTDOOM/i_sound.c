@@ -81,11 +81,6 @@ int snd_MusicDevice; // current music card # (index to dmxCodes)
 int snd_DesiredSfxDevice;
 int snd_DesiredMusicDevice;
 
-void I_SetMusicVolume(int volume)
-{
-    MUSIC_SetVolume(volume);
-    snd_MusicVolume = volume;
-}
 //
 // Retrieve the raw data lump index
 //  for a given SFX name.

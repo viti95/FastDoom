@@ -62,7 +62,6 @@ void I_LoopSong(int handle);
 // plays a song, and when the song is done, starts playing it again in
 // an endless loop.  the start is faded in over three seconds.
 
-void I_SetMusicVolume(int volume);
 void I_ResumeSong(int handle);
 
 //  SFX I/O
