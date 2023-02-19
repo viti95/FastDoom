@@ -52,4 +52,6 @@ typedef enum
     NUM_SCARDS
 } cardenum_t;
 
+extern int snd_Rate;
+
 #endif

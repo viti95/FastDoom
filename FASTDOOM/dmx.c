@@ -34,6 +34,7 @@
 #include "m_misc.h"
 #include "options.h"
 #include "i_system.h"
+#include "i_sound.h"
 
 typedef struct
 {
@@ -370,7 +371,7 @@ int ASS_GetSoundCardCode(int sndDevice)
 void ASS_Init(int rate, int maxsng, int mdev, int sdev)
 {
     int status, music_device, sound_device;
-    int sample_rate;
+    unsigned int sample_rate;
 
     int SbMaxVoices;
     int SbMaxBits;
@@ -427,7 +428,24 @@ void ASS_Init(int rate, int maxsng, int mdev, int sdev)
             break;
         }
 
-        sample_rate = lowSound ? 8000 : 11025;
+        switch(snd_Rate)
+        {
+            case 0:
+            sample_rate = 7000;
+            break;
+            case 1:
+            sample_rate = 8000;
+            break;
+            case 2:
+            sample_rate = 11025;
+            break;
+            case 3:
+            sample_rate = 22050;
+            break;
+            case 4:
+            sample_rate = 44100;
+            break;
+        }
 
         status = FX_Init(sound_device, numChannels, 2, 8, sample_rate);
 

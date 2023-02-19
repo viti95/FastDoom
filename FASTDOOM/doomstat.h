@@ -52,7 +52,6 @@ extern boolean showFPS;
 extern boolean unlimitedRAM;
 extern boolean nearSprites;
 extern boolean monoSound;
-extern boolean lowSound;
 extern boolean noMelt;
 
 extern boolean reverseStereo;
