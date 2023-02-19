@@ -24,6 +24,7 @@
 #include "ns_adbfx.h"
 #include "options.h"
 #include "fastmath.h"
+#include "ns_fxm.h"
 
 #define RoundFixed(fixedval, bits)             \
     (                                          \
@@ -873,14 +874,14 @@ int MV_StartPlayback(
         LPT_BeginBufferedPlayback(MV_MixBuffer[0],
                                  TotalBufferSize, MV_NumberOfBuffers,
                                  MV_ServiceVoc);
-        MV_MixRate = LPT_SampleRate;
+        MV_MixRate = FX_MixRate;
         MV_DMAChannel = -1;
         break;
     case SoundBlasterDirect:
         SBDM_BeginBufferedPlayback(MV_MixBuffer[0],
                                  TotalBufferSize, MV_NumberOfBuffers,
                                  MV_ServiceVoc);
-        MV_MixRate = SBDM_SampleRate;
+        MV_MixRate = FX_MixRate;
         MV_DMAChannel = -1;
         break;
     case AdlibFX:

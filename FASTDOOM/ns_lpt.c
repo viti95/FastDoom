@@ -7,6 +7,7 @@
 #include "ns_user.h"
 #include "ns_lpt.h"
 #include "ns_muldf.h"
+#include "ns_fxm.h"
 
 #include "m_misc.h"
 #include "options.h"
@@ -112,7 +113,7 @@ int LPT_BeginBufferedPlayback(
 
     LPT_SoundPlaying = 1;
 
-    LPT_Timer = TS_ScheduleTask(LPT_ServiceInterrupt, LPT_SampleRate, 1, NULL);
+    LPT_Timer = TS_ScheduleTask(LPT_ServiceInterrupt, FX_MixRate, 1, NULL);
     TS_Dispatch();
 
     return (LPT_Ok);
