@@ -86,6 +86,9 @@ default_t defaults[] =
 		{"snd_mport", (int *)&newc.m.midiport, 0x330},
 		{"snd_sport", (int *)&newc.d.soundport, 0x378},
 
+		{"snd_rate", (int *)&newc.d.rate, 2},
+		{"snd_pcmrate", (int *)&newc.m.pcmrate, 1},
+
 		{"usegamma", &usegamma, 0},
 };
 

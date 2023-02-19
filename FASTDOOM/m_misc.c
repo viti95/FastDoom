@@ -310,7 +310,7 @@ default_t defaults[] =
         {"snd_mport", &snd_Mport, 0x330},
         {"snd_sport", &snd_Sport, 0x378},
         {"snd_rate", &snd_Rate, 2},
-        {"snd_pcmrate", &snd_PCMRate, 0},
+        {"snd_pcmrate", &snd_PCMRate, 1},
 
         {"usegamma", &usegamma, 0}
 };
