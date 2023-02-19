@@ -115,7 +115,7 @@ void S_SetMusicVolumeWAV(int volume)
     if (voice == NULL)
         return;
     
-    MV_SetVoiceVolume(voice, volume, 255, 255);
+    MV_SetVoiceVolume(voice, volume, volume, volume);
     snd_MusicVolume = volume;
 }
 
