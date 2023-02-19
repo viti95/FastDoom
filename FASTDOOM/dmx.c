@@ -440,9 +440,21 @@ void ASS_Init(int rate, int maxsng, int mdev, int sdev)
             sample_rate = 11025;
             break;
             case 3:
-            sample_rate = 22050;
+            sample_rate = 12000;
             break;
             case 4:
+            sample_rate = 16000;
+            break;
+            case 5:
+            sample_rate = 22050;
+            break;
+            case 6:
+            sample_rate = 24000;
+            break;
+            case 7:
+            sample_rate = 32000;
+            break;
+            case 8:
             sample_rate = 44100;
             break;
         }
