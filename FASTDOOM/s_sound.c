@@ -42,6 +42,7 @@
 #include "ns_cd.h"
 #include "ns_multi.h"
 #include "ns_muldf.h"
+#include "ns_fxm.h"
 
 // Current music/sfx card - index useless
 //  w/o a reference LUT in a sound module.
@@ -116,8 +117,8 @@ void S_SetMusicVolumeWAV(int volume)
     voice = MV_GetVoice(wavhandle);
     if (voice == NULL)
         return;
-    
-    MV_SetVoiceVolume(voice, volume, volume, volume);    
+
+    MV_SetVoiceVolume(voice, volume, volume, volume);
 }
 
 void S_SetMusicVolumeMIDI(int volume)
@@ -380,6 +381,78 @@ unsigned char *LoadFile(char *filename, int *length)
     return (ptr);
 }
 
+static byte * PlaybackBuffer;
+static int PlaybackPointer;
+static int PlayingPointer;
+static int Playingvoice;
+static boolean Playing=false;
+static boolean Playback=false;
+
+#define PLAYBACKBUFFERSIZE 16384
+#define PLAYBACKDELTASIZE  256
+
+//***************************************************************************
+//
+// SD_UpdatePlaybackSound - Update playback of a sound in chunks
+//
+//***************************************************************************
+void S_UpdateStreamingPCM(char **ptr, unsigned long *length)
+{
+    if (Playing == false)
+    {
+        *ptr = NULL;
+        *length = 0;
+        return;
+    }
+    if (PlayingPointer == PlaybackPointer)
+    {
+        *ptr = NULL;
+        *length = 0;
+        if (Playback == false)
+        {
+            MV_Kill(Playingvoice);
+            free(PlaybackBuffer);
+            Playing = false;
+        }
+        return;
+    }
+
+    *length = PLAYBACKDELTASIZE;
+
+    if (PlayingPointer == -1)
+    {
+        *ptr = NULL;
+        *length = 0;
+        return;
+    }
+
+    *ptr = &PlaybackBuffer[PlayingPointer];
+
+    PlayingPointer = (PlayingPointer + *length) &
+                     (PLAYBACKBUFFERSIZE - 1);
+}
+
+void S_StartStreamingPCM(void)
+{
+    if (Playback == true)
+        return;
+
+    Playback = true;
+    PlaybackBuffer = malloc(PLAYBACKBUFFERSIZE);
+    Playing = false;
+    PlayingPointer = -1;
+    PlaybackPointer = 0;
+
+    Playingvoice = MV_StartDemandFeedPlayback(S_UpdateStreamingPCM,
+                                              FX_MixRate,
+                                              255, 255, 255, 0);
+    if (Playingvoice == NULL)
+    {
+        free(PlaybackBuffer);
+        Playback = false;
+    }
+}
+
 void S_ChangeMusicWAV(int musicnum, int looping)
 {
     int length;
@@ -425,15 +498,15 @@ void S_ChangeMusicWAV(int musicnum, int looping)
 
     wavfileptr = LoadFile(filename, &length);
 
-    switch(snd_PCMRate)
+    switch (snd_PCMRate)
     {
-        case 0:
+    case 0:
         sample_rate = 11025;
         break;
-        case 1:
+    case 1:
         sample_rate = 22050;
         break;
-        case 2:
+    case 2:
         sample_rate = 44100;
         break;
     }
