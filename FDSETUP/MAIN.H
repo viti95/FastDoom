@@ -64,6 +64,8 @@ typedef struct
 	SCARD card;
 	short midiport;
 	short soundport;
+	short rate;
+	short pcmrate;
 } DMXCARD;
 
 typedef struct
