@@ -415,8 +415,8 @@ void S_UpdateStreamingPCM(char **ptr, unsigned long *length)
 
     if (musictotalremaining - PLAYBACKDELTASIZE > PLAYBACKDELTASIZE){
         I_Log("Read 256 bytes\n");
-        fread(ReadBuffer, PLAYBACKDELTASIZE, 1, musicfile);
-        *ptr = ReadBuffer;
+        fread(&ReadBuffer, PLAYBACKDELTASIZE, 1, musicfile);
+        *ptr = &ReadBuffer;
         *length = PLAYBACKDELTASIZE;
         musictotalremaining -= PLAYBACKDELTASIZE;
         I_Log("Read 256 bytes OK\n");
@@ -429,8 +429,8 @@ void S_UpdateStreamingPCM(char **ptr, unsigned long *length)
 
         I_Log("Read %i bytes\n", lastchunk);
 
-        fread(ReadBuffer, lastchunk, 1, musicfile);
-        *ptr = ReadBuffer;
+        fread(&ReadBuffer, lastchunk, 1, musicfile);
+        *ptr = &ReadBuffer;
         *length = lastchunk;
 
         musictotalremaining -= lastchunk;
