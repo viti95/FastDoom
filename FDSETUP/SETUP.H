@@ -43,6 +43,7 @@ extern pup_t far askpres, far cmodem, far consel, far control, far cserial,
 	far modsave, far mousentr, far mouspres, far netplay, far netplay2,
 	far netsave, far netserr, far netwk2, far numdig, far phonelst, far quitwin,
 	far sbdma, far sbirq, far sbport, far lptport, far cmsport, far sersave, far show, far sockerr,
+	far freqpcm, far freqall, 
 	far title;
 
 #define MAXLAYERS 5 // max amount of screens to save

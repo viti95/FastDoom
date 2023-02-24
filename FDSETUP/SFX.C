@@ -781,6 +781,160 @@ func_exit:
 	return (rval);
 }
 
+enum
+{
+	FREQ_7000,
+	FREQ_8000,
+	FREQ_11025,
+	FREQ_12000,
+	FREQ_16000,
+	FREQ_22050,
+	FREQ_24000,
+	FREQ_32000,
+	FREQ_44100,
+	FREQ_MAX
+};
+
+item_t freqitems[] =
+	{
+		{FREQ_7000, 27, 9, 26, -1, -1},
+		{FREQ_8000, 27, 10, 26, -1, -1},
+		{FREQ_11025, 27, 11, 26, -1, -1},
+		{FREQ_12000, 27, 12, 26, -1, -1},
+		{FREQ_16000, 27, 13, 26, -1, -1},
+		{FREQ_22050, 27, 14, 26, -1, -1},
+		{FREQ_24000, 27, 15, 26, -1, -1},
+		{FREQ_32000, 27, 16, 26, -1, -1},
+		{FREQ_44100, 27, 17, 26, -1, -1}
+	};
+
+menu_t freqmenu =
+	{
+		&freqitems[0],
+		FREQ_11025,
+		FREQ_MAX,
+		0x7f};
+
+int ChooseFreq(void)
+{
+	short key;
+	short field;
+	int rval = 0;
+
+	SaveScreen();
+	DrawPup(&freqall);
+
+	// DEFAULT FIELD ========================================
+
+	switch (newc.d.rate)
+	{
+	default:
+		field = FREQ_11025;
+		break;
+
+	case 0:
+		field = FREQ_7000;
+		break;
+
+	case 1:
+		field = FREQ_8000;
+		break;
+
+	case 2:
+		field = FREQ_11025;
+		break;
+
+	case 3:
+		field = FREQ_12000;
+		break;
+
+	case 4:
+		field = FREQ_16000;
+		break;
+
+	case 5:
+		field = FREQ_22050;
+		break;
+
+	case 6:
+		field = FREQ_24000;
+		break;
+
+	case 7:
+		field = FREQ_32000;
+		break;
+	
+	case 8:
+		field = FREQ_44100;
+		break;
+	}
+
+	freqmenu.startitem = field;
+
+	while (1)
+	{
+		SetupMenu(&freqmenu);
+		field = GetMenuInput();
+		key = menukey;
+		switch (key)
+		{
+		case KEY_ESC:
+			rval = -1;
+			goto func_exit;
+
+		case KEY_ENTER:
+		case KEY_F10:
+			switch (field)
+			{
+			case FREQ_7000:
+				newc.d.rate = 0;
+				goto func_exit;
+
+			case FREQ_8000:
+				newc.d.rate = 1;
+				goto func_exit;
+
+			case FREQ_11025:
+				newc.d.rate = 2;
+				goto func_exit;
+
+			case FREQ_12000:
+				newc.d.rate = 3;
+				goto func_exit;
+
+			case FREQ_16000:
+				newc.d.rate = 4;
+				goto func_exit;
+
+			case FREQ_22050:
+				newc.d.rate = 5;
+				goto func_exit;
+
+			case FREQ_24000:
+				newc.d.rate = 6;
+				goto func_exit;
+
+			case FREQ_32000:
+				newc.d.rate = 7;
+				goto func_exit;
+
+			case FREQ_44100:
+				newc.d.rate = 8;
+				goto func_exit;
+
+			default:
+				break;
+			}
+			break;
+		}
+	}
+
+func_exit:
+
+	RestoreScreen();
+	return (rval);
+}
+
 //
 // Setup Sound Effects card
 //
@@ -806,21 +960,35 @@ int SetupFX(void)
 
 	case M_DISNEYSS:
 	case M_TANDYSS:
+		if (ChooseLPTPort(&newc.d) == -1)
+			return (-1);
+		newc.d.rate = 0; // 7KHz
+		ChooseNumDig();
+		savefx = TRUE;
+		break;
+
 	case M_COVOX:
 		if (ChooseLPTPort(&newc.d) == -1)
 			return (-1);
+		ChooseFreq();
 		ChooseNumDig();
 		savefx = TRUE;
 		break;
 
 	case M_PC1BIT:
 	case M_ADBFX:
-	case M_PCPWM:
 	case M_SBDIRECT:
-	case M_PAS:
 	case M_GUS:
-	case M_WAVE:
+	case M_PAS:
 	case M_SB:
+	case M_WAVE:
+		ChooseFreq();
+		ChooseNumDig();
+		savefx = TRUE;
+		break;
+
+	case M_PCPWM:
+		newc.d.rate = 4; // 16KHz
 		ChooseNumDig();
 		savefx = TRUE;
 		break;
@@ -828,6 +996,7 @@ int SetupFX(void)
 	case M_CMS:
 		if (ChooseCMSPort(&newc.d) == -1)
 			return (-1);
+		ChooseFreq();
 		ChooseNumDig();
 		savefx = TRUE;
 		break;

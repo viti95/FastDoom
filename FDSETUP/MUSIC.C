@@ -378,6 +378,7 @@ int ChooseMusicCard(void) // RETURN: 0 = OK, -1 == ABORT
 			case MCARD_WAV:
 				newc.m.card = M_WAV;
 				newc.m.midiport = -1;
+				newc.m.pcmrate = 0;
 				goto func_exit;
 
 			case MCARD_NONE:
@@ -607,6 +608,96 @@ func_exit:
 	return (rval);
 }
 
+enum
+{
+	PCM_FREQ_11025,
+	PCM_FREQ_22050,
+	PCM_FREQ_44100,
+	PCM_FREQ_MAX
+};
+
+item_t pcmfreqitemsm[] =
+	{
+		{PCM_FREQ_11025, 32, 9, 13, -1, -1},
+		{PCM_FREQ_22050, 32, 10, 13, -1, -1},
+		{PCM_FREQ_44100, 32, 11, 13, -1, -1}
+	};
+
+menu_t pcmfreqmenum =
+	{
+		&pcmfreqitemsm[0],
+		PCM_FREQ_11025,
+		PCM_FREQ_MAX,
+		0x7f};
+
+int ChoosePCMFreqMusic(DMXCARD *card) // RETURN: 0 = OK, -1 == ABORT
+{
+	short field;
+	short key;
+	int rval = 0;
+
+	SaveScreen();
+	DrawPup(&freqpcm);
+
+	// DEFAULT FIELD ========================================
+
+	switch (card->pcmrate)
+	{
+	default:
+	case 0:
+		field = PCM_FREQ_11025;
+		break;
+
+	case 1:
+		field = PCM_FREQ_22050;
+		break;
+
+	case 2:
+		field = PCM_FREQ_44100;
+		break;
+	}
+
+	pcmfreqmenum.startitem = field;
+	while (1)
+	{
+		SetupMenu(&pcmfreqmenum);
+		field = GetMenuInput();
+		key = menukey;
+		switch (key)
+		{
+		case KEY_ESC:
+			rval = -1;
+			goto func_exit;
+
+		case KEY_ENTER:
+		case KEY_F10:
+			switch (field)
+			{
+			case PCM_FREQ_11025:
+				card->pcmrate = 0;
+				goto func_exit;
+
+			case PCM_FREQ_22050:
+				card->pcmrate = 1;
+				goto func_exit;
+
+			case PCM_FREQ_44100:
+				card->pcmrate = 2;
+				goto func_exit;
+
+			default:
+				break;
+			}
+			break;
+		}
+	}
+
+func_exit:
+
+	RestoreScreen();
+	return (rval);
+}
+
 //
 // Choose Music Card menu
 //
@@ -639,10 +730,15 @@ int SetupMusic(void)
 	case M_NONE:
 	case M_ADLIB:
 	case M_CD:
-	case M_WAV:
 	case M_PAS:
 	case M_GUS:
 	case M_SB:
+		savemusic = TRUE;
+		break;
+
+	case M_WAV:
+		if (ChoosePCMFreqMusic(&newc.m) == -1)
+			return (-1);
 		savemusic = TRUE;
 		break;
 
