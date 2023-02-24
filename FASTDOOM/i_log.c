@@ -1,6 +1,6 @@
 #include "i_log.h"
 
-#define LOG_ENABLED 0
+#define LOG_ENABLED 1
 
 #if (LOG_ENABLED == 1)
 

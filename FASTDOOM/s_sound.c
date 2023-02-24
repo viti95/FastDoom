@@ -44,6 +44,8 @@
 #include "ns_muldf.h"
 #include "ns_fxm.h"
 
+#include "i_log.h"
+
 // Current music/sfx card - index useless
 //  w/o a reference LUT in a sound module.
 extern int snd_MusicDevice;
@@ -58,7 +60,6 @@ int cdmusicnum = 0;
 int wavhandle;
 int wavmusicnum = 0;
 int wavlooping = 0;
-unsigned char *wavfileptr;
 
 typedef struct
 {
@@ -354,7 +355,7 @@ void S_CheckCD(void)
     }
 }
 
-unsigned char *LoadFile(char *filename, int *length)
+/*unsigned char *LoadFile(char *filename, int *length)
 {
     FILE *in;
     long size;
@@ -379,93 +380,68 @@ unsigned char *LoadFile(char *filename, int *length)
     *length = size;
 
     return (ptr);
+}*/
+
+FILE *musicfile = NULL;
+long musicsize;
+long musictotalremaining;
+
+void OpenFile(char *filename)
+{
+    unsigned char *ptr;
+
+    if ((musicfile = fopen(filename, "rb")) == NULL)
+        I_Error("FILE NOT FOUND");
+
+    fseek(musicfile, 0, SEEK_END);
+    musicsize = ftell(musicfile);
+    fseek(musicfile, 0, SEEK_SET);
 }
 
-static byte * PlaybackBuffer;
-static int PlaybackPointer;
-static int PlayingPointer;
-static int Playingvoice;
-static boolean Playing=false;
-static boolean Playback=false;
+#define PLAYBACKDELTASIZE 256
 
-#define PLAYBACKBUFFERSIZE 16384
-#define PLAYBACKDELTASIZE  256
+byte ReadBuffer[PLAYBACKDELTASIZE];
 
-//***************************************************************************
-//
-// SD_UpdatePlaybackSound - Update playback of a sound in chunks
-//
-//***************************************************************************
 void S_UpdateStreamingPCM(char **ptr, unsigned long *length)
 {
-    if (Playing == false)
+    I_Log("UpdatePCM\n");
+    if (musicfile == NULL)
     {
         *ptr = NULL;
         *length = 0;
-        return;
-    }
-    if (PlayingPointer == PlaybackPointer)
-    {
-        *ptr = NULL;
-        *length = 0;
-        if (Playback == false)
-        {
-            MV_Kill(Playingvoice);
-            free(PlaybackBuffer);
-            Playing = false;
-        }
+        I_Log("Music file NULL\n");
         return;
     }
 
-    *length = PLAYBACKDELTASIZE;
-
-    if (PlayingPointer == -1)
-    {
-        *ptr = NULL;
-        *length = 0;
+    if (musictotalremaining - PLAYBACKDELTASIZE > PLAYBACKDELTASIZE){
+        I_Log("Read 256 bytes\n");
+        fread(ReadBuffer, PLAYBACKDELTASIZE, 1, musicfile);
+        *ptr = ReadBuffer;
+        *length = PLAYBACKDELTASIZE;
+        musictotalremaining -= PLAYBACKDELTASIZE;
+        I_Log("Read 256 bytes OK\n");
         return;
     }
 
-    *ptr = &PlaybackBuffer[PlayingPointer];
+    if (musictotalremaining - PLAYBACKDELTASIZE > 0)
+    {
+        long lastchunk = musictotalremaining - PLAYBACKDELTASIZE;
 
-    PlayingPointer = (PlayingPointer + *length) &
-                     (PLAYBACKBUFFERSIZE - 1);
-}
+        I_Log("Read %i bytes\n", lastchunk);
 
-void S_StartStreamingPCM(void)
-{
-    int sample_rate;
+        fread(ReadBuffer, lastchunk, 1, musicfile);
+        *ptr = ReadBuffer;
+        *length = lastchunk;
 
-    if (Playback == true)
+        musictotalremaining -= lastchunk;
+        I_Log("Read %i bytes OK\n", lastchunk);
         return;
-
-    Playback = true;
-    PlaybackBuffer = malloc(PLAYBACKBUFFERSIZE);
-    Playing = false;
-    PlayingPointer = -1;
-    PlaybackPointer = 0;
-
-    switch (snd_PCMRate)
-    {
-    case 0:
-        sample_rate = 11025;
-        break;
-    case 1:
-        sample_rate = 22050;
-        break;
-    case 2:
-        sample_rate = 44100;
-        break;
     }
 
-    Playingvoice = MV_StartDemandFeedPlayback(S_UpdateStreamingPCM,
-                                              sample_rate,
-                                              255, 255, 255, 0);
-    if (Playingvoice == NULL)
-    {
-        free(PlaybackBuffer);
-        Playback = false;
-    }
+    I_Log("No more data to read\n");
+
+    *ptr = NULL;
+    *length = 0;
 }
 
 void S_ChangeMusicWAV(int musicnum, int looping)
@@ -479,12 +455,16 @@ void S_ChangeMusicWAV(int musicnum, int looping)
 
     if (MV_VoicePlaying(wavhandle))
     {
+        I_Log("Kill music handle\n");
         MV_Kill(wavhandle);
+        I_Log("Kill music handle OK\n");
     }
 
-    if (wavfileptr != NULL)
+    if (musicfile != NULL)
     {
-        free(wavfileptr);
+        I_Log("Close music file\n");
+        fclose(musicfile);
+        I_Log("Close music file OK\n");
     }
 
     memset(filename, 0, sizeof(filename));
@@ -511,8 +491,6 @@ void S_ChangeMusicWAV(int musicnum, int looping)
 
     sprintf(filename, "MUSIC/%s/mus_%u.raw", subfolder, S_MapMusicCD(musicnum));
 
-    wavfileptr = LoadFile(filename, &length);
-
     switch (snd_PCMRate)
     {
     case 0:
@@ -528,7 +506,15 @@ void S_ChangeMusicWAV(int musicnum, int looping)
 
     volume = snd_MusicVolume;
 
-    wavhandle = MV_PlayRaw(wavfileptr, length, sample_rate, volume, volume, volume, 0);
+    I_Log("Open file %s\n", filename);
+    OpenFile(filename);
+    I_Log("Open file OK\n");
+
+    musictotalremaining = musicsize;
+
+    I_Log("Start stream\n");
+    wavhandle = MV_StartDemandFeedPlayback(S_UpdateStreamingPCM, sample_rate, volume, volume, volume, 0);
+    I_Log("Start stream OK\n");
 }
 
 void S_CheckWAV(void)

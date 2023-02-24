@@ -26,6 +26,8 @@
 #include "fastmath.h"
 #include "ns_fxm.h"
 
+#include "i_log.h"
+
 #define RoundFixed(fixedval, bits)             \
     (                                          \
         (                                      \
@@ -314,10 +316,10 @@ void MV_ServiceRightGus(char **ptr, unsigned long *length)
    Controls playback of demand fed data.
 ---------------------------------------------------------------------*/
 
-playbackstatus MV_GetNextDemandFeedBlock(
-    VoiceNode *voice)
-
+playbackstatus MV_GetNextDemandFeedBlock(VoiceNode *voice)
 {
+    I_Log("MV_GetNextDemandFeedBlock\n");
+
     if (voice->BlockLength > 0)
     {
         voice->position -= voice->length;
@@ -326,11 +328,13 @@ playbackstatus MV_GetNextDemandFeedBlock(
         voice->BlockLength -= voice->length;
         voice->length <<= 16;
 
+        I_Log("KeepPlaying\n");
         return (KeepPlaying);
     }
 
     if (voice->DemandFeed == NULL)
     {
+        I_Log("NoMoreData\n");
         return (NoMoreData);
     }
 
@@ -342,8 +346,11 @@ playbackstatus MV_GetNextDemandFeedBlock(
 
     if ((voice->length > 0) && (voice->sound != NULL))
     {
+        I_Log("KeepPlaying\n");
         return (KeepPlaying);
     }
+
+    I_Log("NoMoreData\n");
     return (NoMoreData);
 }
 
@@ -992,13 +999,15 @@ int MV_StartDemandFeedPlayback(
 {
     VoiceNode *voice;
 
-    if (!MV_Installed)
-        return (MV_Error);
-
+    I_Log("MV_StartDemandFeedPlayback\n");
     // Request a voice from the voice pool
     voice = MV_AllocVoice(priority);
     if (voice == NULL)
+    {
+        I_Log("Voice null\n");
         return (MV_Error);
+    }
+        
 
     voice->bits = 8;
     voice->GetSound = MV_GetNextDemandFeedBlock;
@@ -1014,9 +1023,15 @@ int MV_StartDemandFeedPlayback(
     voice->prev = NULL;
     voice->priority = priority;
 
+    I_Log("MV_SetVoicePitch\n");
     MV_SetVoicePitch(voice, rate);
+    I_Log("MV_SetVoicePitch OK\n");
+    I_Log("MV_SetVoiceVolume\n");
     MV_SetVoiceVolume(voice, vol, left, right);
+    I_Log("MV_SetVoiceVolume OK\n");
+    I_Log("MV_PlayVoice\n");
     MV_PlayVoice(voice);
+    I_Log("MV_PlayVoice OK\n");
 
     return (voice->handle);
 }
