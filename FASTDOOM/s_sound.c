@@ -434,6 +434,8 @@ void S_UpdateStreamingPCM(char **ptr, unsigned long *length)
 
 void S_StartStreamingPCM(void)
 {
+    int sample_rate;
+
     if (Playback == true)
         return;
 
@@ -443,8 +445,21 @@ void S_StartStreamingPCM(void)
     PlayingPointer = -1;
     PlaybackPointer = 0;
 
+    switch (snd_PCMRate)
+    {
+    case 0:
+        sample_rate = 11025;
+        break;
+    case 1:
+        sample_rate = 22050;
+        break;
+    case 2:
+        sample_rate = 44100;
+        break;
+    }
+
     Playingvoice = MV_StartDemandFeedPlayback(S_UpdateStreamingPCM,
-                                              FX_MixRate,
+                                              sample_rate,
                                               255, 255, 255, 0);
     if (Playingvoice == NULL)
     {
