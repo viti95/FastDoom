@@ -44,7 +44,7 @@
 #include "ns_muldf.h"
 #include "ns_fxm.h"
 
-#include "i_log.h"
+#define PLAYBACKDELTASIZE 256
 
 // Current music/sfx card - index useless
 //  w/o a reference LUT in a sound module.
@@ -53,6 +53,8 @@ extern int snd_SfxDevice;
 // Config file? Same disclaimer as above.
 extern int snd_DesiredMusicDevice;
 extern int snd_DesiredSfxDevice;
+
+char ReadBuffer[PLAYBACKDELTASIZE];
 
 int cdlooping = 0;
 int cdmusicnum = 0;
@@ -355,33 +357,6 @@ void S_CheckCD(void)
     }
 }
 
-/*unsigned char *LoadFile(char *filename, int *length)
-{
-    FILE *in;
-    long size;
-    unsigned char *ptr;
-
-    if ((in = fopen(filename, "rb")) == NULL)
-        I_Error("FILE NOT FOUND");
-
-    fseek(in, 0, SEEK_END);
-    size = ftell(in);
-    fseek(in, 0, SEEK_SET);
-
-    ptr = (unsigned char *)malloc(size);
-    if (ptr == NULL)
-        I_Error("OUT OF MEMORY");
-
-    if (fread(ptr, size, 1, in) != 1)
-        I_Error("UNEXPECTED END OF FILE");
-
-    fclose(in);
-
-    *length = size;
-
-    return (ptr);
-}*/
-
 FILE *musicfile = NULL;
 long musicsize;
 long musictotalremaining;
@@ -390,7 +365,9 @@ void OpenFile(char *filename)
 {
     unsigned char *ptr;
 
-    if ((musicfile = fopen(filename, "rb")) == NULL)
+    musicfile = fopen(filename, "rb");
+
+    if (musicfile == NULL)
         I_Error("FILE NOT FOUND");
 
     fseek(musicfile, 0, SEEK_END);
@@ -398,28 +375,29 @@ void OpenFile(char *filename)
     fseek(musicfile, 0, SEEK_SET);
 }
 
-#define PLAYBACKDELTASIZE 256
-
-char ReadBuffer[PLAYBACKDELTASIZE];
-
 void S_UpdateStreamingPCM(char **ptr, unsigned long *length)
 {
-    I_Log("UpdatePCM\n");
     if (musicfile == NULL)
     {
         *ptr = NULL;
         *length = 0;
-        I_Log("Music file NULL\n");
         return;
     }
 
+    if (musictotalremaining <= 0)
+    {
+        *ptr = NULL;
+        *length = 0;
+        return;
+    } 
+
     if (musictotalremaining - PLAYBACKDELTASIZE > PLAYBACKDELTASIZE){
-        I_Log("Read 256 bytes\n");
-        fread(ReadBuffer, sizeof(char), PLAYBACKDELTASIZE, musicfile);
+        fread(ReadBuffer, PLAYBACKDELTASIZE, 1, musicfile);
+
         *ptr = ReadBuffer;
         *length = PLAYBACKDELTASIZE;
+
         musictotalremaining -= PLAYBACKDELTASIZE;
-        I_Log("Read 256 bytes OK\n");
         return;
     }
 
@@ -427,18 +405,14 @@ void S_UpdateStreamingPCM(char **ptr, unsigned long *length)
     {
         long lastchunk = musictotalremaining - PLAYBACKDELTASIZE;
 
-        I_Log("Read %i bytes\n", lastchunk);
+        fread(ReadBuffer, lastchunk, 1, musicfile);
 
-        fread(ReadBuffer, sizeof(char), lastchunk, musicfile);
         *ptr = ReadBuffer;
         *length = lastchunk;
 
         musictotalremaining -= lastchunk;
-        I_Log("Read %i bytes OK\n", lastchunk);
         return;
     }
-
-    I_Log("No more data to read\n");
 
     *ptr = NULL;
     *length = 0;
@@ -455,16 +429,12 @@ void S_ChangeMusicWAV(int musicnum, int looping)
 
     if (MV_VoicePlaying(wavhandle))
     {
-        I_Log("Kill music handle\n");
         MV_Kill(wavhandle);
-        I_Log("Kill music handle OK\n");
     }
 
     if (musicfile != NULL)
     {
-        I_Log("Close music file\n");
         fclose(musicfile);
-        I_Log("Close music file OK\n");
     }
 
     memset(filename, 0, sizeof(filename));
@@ -506,15 +476,11 @@ void S_ChangeMusicWAV(int musicnum, int looping)
 
     volume = snd_MusicVolume;
 
-    I_Log("Open file %s\n", filename);
     OpenFile(filename);
-    I_Log("Open file OK\n");
 
     musictotalremaining = musicsize;
 
-    I_Log("Start stream\n");
     wavhandle = MV_StartDemandFeedPlayback(S_UpdateStreamingPCM, sample_rate, volume, volume, volume, 0);
-    I_Log("Start stream OK\n");
 }
 
 void S_CheckWAV(void)
