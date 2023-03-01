@@ -18,6 +18,7 @@
 
 #include "std_func.h"
 #include <string.h>
+#include <strings.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <malloc.h>
