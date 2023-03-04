@@ -100,8 +100,6 @@ void W_AddFile(char *filename)
     filelump_t singleinfo;
     int storehandle;
 
-    boolean cleanfileinfo = false;
-
     // open the file and add to directory
 
     // handle reload indicator.
@@ -139,8 +137,7 @@ void W_AddFile(char *filename)
             modifiedgame = true;
         }
         length = header.numlumps * sizeof(filelump_t);
-        fileinfo = Z_MallocUnowned(length, PU_STATIC);
-        cleanfileinfo = true;
+        fileinfo = alloca(length);
         lseek(handle, header.infotableofs, SEEK_SET);
         read(handle, fileinfo, length);
         numlumps += header.numlumps;
@@ -163,9 +160,6 @@ void W_AddFile(char *filename)
 
     if (reloadname)
         close(handle);
-
-    if (cleanfileinfo == true)
-        Z_Free(fileinfo);
 }
 
 //
