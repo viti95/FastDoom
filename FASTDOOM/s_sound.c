@@ -42,9 +42,6 @@
 #include "ns_cd.h"
 #include "ns_multi.h"
 #include "ns_muldf.h"
-#include "ns_fxm.h"
-
-#define PLAYBACKDELTASIZE 256
 
 // Current music/sfx card - index useless
 //  w/o a reference LUT in a sound module.
@@ -54,14 +51,13 @@ extern int snd_SfxDevice;
 extern int snd_DesiredMusicDevice;
 extern int snd_DesiredSfxDevice;
 
-char ReadBuffer[PLAYBACKDELTASIZE];
-
 int cdlooping = 0;
 int cdmusicnum = 0;
 
 int wavhandle;
 int wavmusicnum = 0;
 int wavlooping = 0;
+unsigned char *wavfileptr;
 
 typedef struct
 {
@@ -120,8 +116,8 @@ void S_SetMusicVolumeWAV(int volume)
     voice = MV_GetVoice(wavhandle);
     if (voice == NULL)
         return;
-
-    MV_SetVoiceVolume(voice, volume, volume, volume);
+    
+    MV_SetVoiceVolume(voice, volume, volume, volume);    
 }
 
 void S_SetMusicVolumeMIDI(int volume)
@@ -357,65 +353,31 @@ void S_CheckCD(void)
     }
 }
 
-FILE *musicfile = NULL;
-long musicsize;
-long musictotalremaining;
-
-void OpenFile(char *filename)
+unsigned char *LoadFile(char *filename, int *length)
 {
+    FILE *in;
+    long size;
     unsigned char *ptr;
 
-    musicfile = fopen(filename, "rb");
-
-    if (musicfile == NULL)
+    if ((in = fopen(filename, "rb")) == NULL)
         I_Error("FILE NOT FOUND");
 
-    fseek(musicfile, 0, SEEK_END);
-    musicsize = ftell(musicfile);
-    fseek(musicfile, 0, SEEK_SET);
-}
+    fseek(in, 0, SEEK_END);
+    size = ftell(in);
+    fseek(in, 0, SEEK_SET);
 
-void S_UpdateStreamingPCM(char **ptr, unsigned long *length)
-{
-    if (musicfile == NULL)
-    {
-        *ptr = NULL;
-        *length = 0;
-        return;
-    }
+    ptr = (unsigned char *)malloc(size);
+    if (ptr == NULL)
+        I_Error("OUT OF MEMORY");
 
-    if (musictotalremaining <= 0)
-    {
-        *ptr = NULL;
-        *length = 0;
-        return;
-    } 
+    if (fread(ptr, size, 1, in) != 1)
+        I_Error("UNEXPECTED END OF FILE");
 
-    if (musictotalremaining - PLAYBACKDELTASIZE > PLAYBACKDELTASIZE){
-        fread(ReadBuffer, PLAYBACKDELTASIZE, 1, musicfile);
+    fclose(in);
 
-        *ptr = ReadBuffer;
-        *length = PLAYBACKDELTASIZE;
+    *length = size;
 
-        musictotalremaining -= PLAYBACKDELTASIZE;
-        return;
-    }
-
-    if (musictotalremaining - PLAYBACKDELTASIZE > 0)
-    {
-        long lastchunk = musictotalremaining - PLAYBACKDELTASIZE;
-
-        fread(ReadBuffer, lastchunk, 1, musicfile);
-
-        *ptr = ReadBuffer;
-        *length = lastchunk;
-
-        musictotalremaining -= lastchunk;
-        return;
-    }
-
-    *ptr = NULL;
-    *length = 0;
+    return (ptr);
 }
 
 void S_ChangeMusicWAV(int musicnum, int looping)
@@ -432,9 +394,9 @@ void S_ChangeMusicWAV(int musicnum, int looping)
         MV_Kill(wavhandle);
     }
 
-    if (musicfile != NULL)
+    if (wavfileptr != NULL)
     {
-        fclose(musicfile);
+        free(wavfileptr);
     }
 
     memset(filename, 0, sizeof(filename));
@@ -461,26 +423,24 @@ void S_ChangeMusicWAV(int musicnum, int looping)
 
     sprintf(filename, "MUSIC/%s/mus_%u.raw", subfolder, S_MapMusicCD(musicnum));
 
-    switch (snd_PCMRate)
+    wavfileptr = LoadFile(filename, &length);
+
+    switch(snd_PCMRate)
     {
-    case 0:
+        case 0:
         sample_rate = 11025;
         break;
-    case 1:
+        case 1:
         sample_rate = 22050;
         break;
-    case 2:
+        case 2:
         sample_rate = 44100;
         break;
     }
 
     volume = snd_MusicVolume;
 
-    OpenFile(filename);
-
-    musictotalremaining = musicsize;
-
-    wavhandle = MV_StartDemandFeedPlayback(S_UpdateStreamingPCM, sample_rate, volume, volume, volume, 0);
+    wavhandle = MV_PlayRaw(wavfileptr, length, sample_rate, volume, volume, volume, 0);
 }
 
 void S_CheckWAV(void)

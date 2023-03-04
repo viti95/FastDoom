@@ -26,7 +26,6 @@
 #include "fastmath.h"
 #include "ns_fxm.h"
 
-
 #define RoundFixed(fixedval, bits)             \
     (                                          \
         (                                      \
@@ -250,9 +249,9 @@ void MV_ServiceVoc(
     }
 
     // Initialize buffer
-    // Commented out so that the buffer is always cleared.
-    // This is so the guys at Echo Speech can mix into the
-    // buffer even when no sounds are playing.
+    //Commented out so that the buffer is always cleared.
+    //This is so the guys at Echo Speech can mix into the
+    //buffer even when no sounds are playing.
     if (!MV_BufferEmpty[MV_MixPage])
     {
         ClearBuffer_DW(MV_MixBuffer[MV_MixPage], MV_Silence, MV_BufferSize >> 2);
@@ -315,7 +314,9 @@ void MV_ServiceRightGus(char **ptr, unsigned long *length)
    Controls playback of demand fed data.
 ---------------------------------------------------------------------*/
 
-playbackstatus MV_GetNextDemandFeedBlock(VoiceNode *voice)
+playbackstatus MV_GetNextDemandFeedBlock(
+    VoiceNode *voice)
+
 {
     if (voice->BlockLength > 0)
     {
@@ -343,7 +344,6 @@ playbackstatus MV_GetNextDemandFeedBlock(VoiceNode *voice)
     {
         return (KeepPlaying);
     }
-
     return (NoMoreData);
 }
 
@@ -593,8 +593,7 @@ static void MV_SetVoiceMixMode(
         test |= T_MONO;
     }
 
-    if (MV_SoundCard == UltraSound)
-    {
+    if (MV_SoundCard == UltraSound){
         test |= T_ULTRASOUND;
     }
 
@@ -769,9 +768,9 @@ int MV_StartPlayback(
     // Set the mix buffer variables
     MV_MixPage = 1;
 
-    // JIM
-    //    MV_MixRate = MV_RequestedMixRate;
-    //    return( MV_Ok );
+    //JIM
+    //   MV_MixRate = MV_RequestedMixRate;
+    //   return( MV_Ok );
 
     // Start playback
     switch (MV_SoundCard)
@@ -852,43 +851,43 @@ int MV_StartPlayback(
         break;
     case PC1bit:
         PCSpeaker_BeginBufferedPlayback(MV_MixBuffer[0],
-                                        TotalBufferSize, MV_NumberOfBuffers,
-                                        MV_ServiceVoc);
+                                 TotalBufferSize, MV_NumberOfBuffers,
+                                 MV_ServiceVoc);
         MV_MixRate = FX_MixRate;
         MV_DMAChannel = -1;
         break;
     case PCPWM:
         PCSpeaker_PWM_BeginBufferedPlayback(MV_MixBuffer[0],
-                                            TotalBufferSize, MV_NumberOfBuffers,
-                                            MV_ServiceVoc);
+                                 TotalBufferSize, MV_NumberOfBuffers,
+                                 MV_ServiceVoc);
         MV_MixRate = PCSpeaker_PWM_SampleRate;
         MV_DMAChannel = -1;
         break;
     case CMS:
         CMS_BeginBufferedPlayback(MV_MixBuffer[0],
-                                  TotalBufferSize, MV_NumberOfBuffers,
-                                  MV_ServiceVoc);
+                                 TotalBufferSize, MV_NumberOfBuffers,
+                                 MV_ServiceVoc);
         MV_MixRate = FX_MixRate;
         MV_DMAChannel = -1;
         break;
     case LPTDAC:
         LPT_BeginBufferedPlayback(MV_MixBuffer[0],
-                                  TotalBufferSize, MV_NumberOfBuffers,
-                                  MV_ServiceVoc);
+                                 TotalBufferSize, MV_NumberOfBuffers,
+                                 MV_ServiceVoc);
         MV_MixRate = FX_MixRate;
         MV_DMAChannel = -1;
         break;
     case SoundBlasterDirect:
         SBDM_BeginBufferedPlayback(MV_MixBuffer[0],
-                                   TotalBufferSize, MV_NumberOfBuffers,
-                                   MV_ServiceVoc);
+                                 TotalBufferSize, MV_NumberOfBuffers,
+                                 MV_ServiceVoc);
         MV_MixRate = FX_MixRate;
         MV_DMAChannel = -1;
         break;
     case AdlibFX:
         ADBFX_BeginBufferedPlayback(MV_MixBuffer[0],
-                                    TotalBufferSize, MV_NumberOfBuffers,
-                                    MV_ServiceVoc);
+                                 TotalBufferSize, MV_NumberOfBuffers,
+                                 MV_ServiceVoc);
         MV_MixRate = FX_MixRate;
         MV_DMAChannel = -1;
         break;
@@ -973,52 +972,6 @@ void MV_StopPlayback(
     }
 
     RestoreInterrupts(flags);
-}
-
-/*---------------------------------------------------------------------
-   Function: MV_StartDemandFeedPlayback
-
-   Plays a digitized sound from a user controlled buffering system.
----------------------------------------------------------------------*/
-
-int MV_StartDemandFeedPlayback(
-    void (*function)(char **ptr, unsigned long *length),
-    int rate,
-    int vol,
-    int left,
-    int right,
-    int priority)
-
-{
-    VoiceNode *voice;
-
-    // Request a voice from the voice pool
-    voice = MV_AllocVoice(priority);
-    if (voice == NULL)
-    {
-        return (MV_Error);
-    }
-        
-
-    voice->bits = 8;
-    voice->GetSound = MV_GetNextDemandFeedBlock;
-    voice->NextBlock = NULL;
-    voice->DemandFeed = function;
-    voice->BlockLength = 0;
-    voice->position = 0;
-    voice->sound = NULL;
-    voice->length = 0;
-    voice->BlockLength = 0;
-    voice->Playing = TRUE;
-    voice->next = NULL;
-    voice->prev = NULL;
-    voice->priority = priority;
-
-    MV_SetVoicePitch(voice, rate);
-    MV_SetVoiceVolume(voice, vol, left, right);
-    MV_PlayVoice(voice);
-
-    return (voice->handle);
 }
 
 /*---------------------------------------------------------------------
@@ -1310,15 +1263,15 @@ int MV_Init(
     case TandySoundSource:
         status = SS_Init(soundcard, -1);
         break;
-
+    
     case PC1bit:
         status = PCSpeaker_Init(soundcard);
         break;
-
+    
     case PCPWM:
         status = PCSpeaker_PWM_Init(soundcard);
         break;
-
+    
     case CMS:
         status = CMS_Init(soundcard, -1);
         break;
@@ -1326,7 +1279,7 @@ int MV_Init(
     case LPTDAC:
         status = LPT_Init(soundcard, -1);
         break;
-
+    
     case SoundBlasterDirect:
         status = SBDM_Init(soundcard);
         break;
@@ -1337,6 +1290,7 @@ int MV_Init(
 
     default:
         break;
+
     }
 
     if (status != MV_Ok)
