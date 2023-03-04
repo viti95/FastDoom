@@ -1095,7 +1095,7 @@ byte *I_ZoneBase(int *size)
     segread(&segregs);
     segregs.es = segregs.ds;
     regs.w.ax = 0x500; // get memory info
-    regs.x.edi = meminfo;
+    regs.x.edi = (int)&meminfo;
     int386x(0x31, &regs, &regs, &segregs);
 
     heap = meminfo[0];
