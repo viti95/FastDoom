@@ -18,7 +18,6 @@
 //
 
 #include <string.h>
-#include <strings.h>
 #include <stdio.h>
 #include "options.h"
 #include "i_system.h"
@@ -286,7 +285,7 @@ void R_GenerateLookup(int texnum)
     //  that are covered by more than one patch.
     // Fill in the lump / offset, so columns
     //  with only a single patch are all done.
-    patchcount = (byte *)Z_MallocUnowned(texture->width, PU_STATIC);
+    patchcount = (byte *)alloca(texture->width);
     memset(patchcount, 0, texture->width);
     patch = texture->patches;
 
@@ -328,8 +327,6 @@ void R_GenerateLookup(int texnum)
             texturecompositesize[texnum] += texture->height;
         }
     }
-
-    Z_Free(patchcount);
 }
 
 void GenerateTextureHashTable(void)
@@ -416,7 +413,7 @@ void R_InitTextures(void)
     names = W_CacheLumpName("PNAMES", PU_STATIC);
     nummappatches = *((int *)names);
     name_p = names + 4;
-    patchlookup = Z_MallocUnowned(nummappatches * sizeof(*patchlookup), PU_STATIC);
+    patchlookup = alloca(nummappatches * sizeof(*patchlookup));
 
     for (i = 0; i < nummappatches; i++)
     {
@@ -532,8 +529,6 @@ void R_InitTextures(void)
         texturetranslation[i] = i;
 
     GenerateTextureHashTable();
-
-    Z_Free(patchlookup);
 }
 
 //
@@ -682,7 +677,7 @@ void R_PrecacheLevel(void)
         return;
 
     // Precache flats.
-    flatpresent = Z_MallocUnowned(numflats, PU_STATIC);
+    flatpresent = alloca(numflats);
     memset(flatpresent, 0, numflats);
 
     for (i = 0; i < numsectors; i++)
@@ -704,7 +699,7 @@ void R_PrecacheLevel(void)
     }
 
     // Precache textures.
-    texturepresent = Z_MallocUnowned(numtextures, PU_STATIC);
+    texturepresent = alloca(numtextures);
     memset(texturepresent, 0, numtextures);
 
     for (i = 0; i < numsides; i++)
@@ -763,7 +758,4 @@ void R_PrecacheLevel(void)
             }
         }
     }
-
-    Z_Free(flatpresent);
-    Z_Free(texturepresent);
 }

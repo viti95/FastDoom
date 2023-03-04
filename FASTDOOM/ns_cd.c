@@ -1,5 +1,4 @@
 #include "ns_cd.h"
-#include <stdio.h>
 
 //#define CD_LOG
 
