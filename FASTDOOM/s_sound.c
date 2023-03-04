@@ -54,7 +54,7 @@ extern int snd_SfxDevice;
 extern int snd_DesiredMusicDevice;
 extern int snd_DesiredSfxDevice;
 
-char *ReadBuffer = NULL;
+char ReadBuffer[PLAYBACKDELTASIZE];
 
 int cdlooping = 0;
 int cdmusicnum = 0;
@@ -479,9 +479,6 @@ void S_ChangeMusicWAV(int musicnum, int looping)
     OpenFile(filename);
 
     musictotalremaining = musicsize;
-
-    if (ReadBuffer == NULL)
-        ReadBuffer = Z_MallocUnowned(PLAYBACKDELTASIZE, PU_STATIC);
 
     wavhandle = MV_StartDemandFeedPlayback(S_UpdateStreamingPCM, sample_rate, volume, volume, volume, 0);
 }
