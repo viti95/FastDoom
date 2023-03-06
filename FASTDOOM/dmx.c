@@ -376,6 +376,8 @@ void ASS_Init(int rate, int maxsng, int mdev, int sdev)
     int SbMaxVoices;
     int SbMaxBits;
     int SbMaxChannels;
+    
+    int finalNumChannels = numChannels;
 
     fx_device fx_device;
 
@@ -459,7 +461,10 @@ void ASS_Init(int rate, int maxsng, int mdev, int sdev)
             break;
         }
 
-        status = FX_Init(sound_device, numChannels, 2, 8, sample_rate);
+        if (mdev = snd_WAV)
+            finalNumChannels += 1; // Extra sound channel for PCM music
+
+        status = FX_Init(sound_device, finalNumChannels, 2, 8, sample_rate);
 
         if (status != FX_Ok)
         {
