@@ -389,20 +389,20 @@ void S_ChangeMusicWAV(int musicnum, int looping)
     char filename[80];
     char subfolder[5];
 
-    if (MV_VoicePlaying(wavhandle))
-    {
+    int voicePlaying = MV_VoicePlaying(wavhandle);
+
+    if (wavmusicnum == musicnum && voicePlaying)
+        return;
+    
+    if (voicePlaying)
         MV_Kill(wavhandle);
-    }
 
     if (wavfileptr != NULL)
-    {
         free(wavfileptr);
-    }
 
     memset(filename, 0, sizeof(filename));
     memset(subfolder, 0, sizeof(subfolder));
 
-    wavmusicnum = musicnum;
     wavlooping = looping;
 
     switch (gamemission)
@@ -424,6 +424,7 @@ void S_ChangeMusicWAV(int musicnum, int looping)
     sprintf(filename, "MUSIC/%s/mus_%u.raw", subfolder, S_MapMusicCD(musicnum));
 
     wavfileptr = LoadFile(filename, &length);
+    wavmusicnum = musicnum;
 
     switch(snd_PCMRate)
     {
