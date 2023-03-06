@@ -13,7 +13,7 @@ enum AL_Errors
 //#define AL_DefaultPitchBendRange 2
 #define AL_DefaultPitchBendRange 200
 
-static int ADLIB_PORT;
+extern int ADLIB_PORT;
 
 void AL_SendOutputToPort(int port, int reg, int data);
 void AL_SendOutputToPort_OPL2LPT(int port, int reg, int data);

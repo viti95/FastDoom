@@ -110,7 +110,7 @@ static VOICELIST Voice_Pool;
 
 static CHANNEL Channel[NUM_CHANNELS];
 
-static int ADLIB_PORT = 0x388;
+int ADLIB_PORT = 0x388;
 static int AL_LeftPort = 0x388;
 static int AL_RightPort = 0x388;
 static int AL_Stereo = FALSE;
@@ -213,9 +213,7 @@ void AL_SendOutputToPort(int port, int reg, int data)
    {
       AL_SendOutputToPort_OPL2LPT(port, reg, data);
       return;
-   }
-
-   if (AL_OPL3LPT)
+   } else if (AL_OPL3LPT)
    {
       AL_SendOutputToPort_OPL3LPT(port, reg, data);
       return;
@@ -1219,6 +1217,7 @@ int AL_Init(int soundcard, int Address)
       AL_Stereo = FALSE;
       AL_LeftPort = 0x388;
       AL_RightPort = 0x388;
+      ADLIB_PORT = 0x388;
       break;
    case OPL2LPT:
       AL_OPL3 = FALSE;
