@@ -84,8 +84,10 @@ int MV_RightChannelOffset;
 
 unsigned long RateScale11025 = 0;
 unsigned long RateScale22050 = 0;
+unsigned long RateScale44100 = 0;
 unsigned long FixedPointBufferSize11025 = 0;
 unsigned long FixedPointBufferSize22050 = 0;
+unsigned long FixedPointBufferSize44100 = 0;
 
 unsigned long MV_MixPosition;
 
@@ -546,6 +548,9 @@ void MV_SetVoicePitch(VoiceNode *voice, unsigned long rate)
         voice->RateScale = RateScale22050;
         voice->FixedPointBufferSize = FixedPointBufferSize22050;
         break;
+    case 44100:
+        voice->RateScale = RateScale44100;
+        voice->FixedPointBufferSize = FixedPointBufferSize44100;
     }
 }
 
@@ -898,6 +903,9 @@ int MV_StartPlayback(
 
     RateScale22050 = (22050 * 0x10000) / MV_MixRate;
     FixedPointBufferSize22050 = (RateScale22050 * MixBufferSize) - RateScale22050;
+
+    RateScale44100 = (0xAC440000) / MV_MixRate; // OpenWatcom v2 bug: 44100 * 0x10000 sets wrong value (WTF?)
+    FixedPointBufferSize44100 = (RateScale44100 * MixBufferSize) - RateScale44100;
 
     return (MV_Ok);
 }
