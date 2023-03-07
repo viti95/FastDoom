@@ -1,4 +1,6 @@
+#include <stdio.h>
 #include "ns_cd.h"
+#include "i_system.h"
 
 //#define CD_LOG
 
@@ -882,7 +884,7 @@ int CD_Init(void)
         I_Log("CD_CdromInstalled failed\n");
         #endif
 
-        printf("MSCDEX WAS NOT FOUND!\n");
+        I_Error("MSCDEX WAS NOT FOUND!\n");
         return 0;
     }
     else
@@ -905,7 +907,7 @@ int CD_Init(void)
             I_Log("CD_Init: NO AudioCD tracks available\n");
             #endif
 
-            printf("NO AUDIO-CD TRACKS AVAILABLE!\n");
+            I_Error("NO AUDIO-CD TRACKS AVAILABLE!\n");
             return 0;
         }
 
