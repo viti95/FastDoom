@@ -36,6 +36,10 @@ int MV_Kill(int handle);
 int MV_SetMixMode(int numchannels, int samplebits);
 int MV_StartPlayback(void);
 void MV_StopPlayback(void);
+int MV_StartDemandFeedPlayback(void (*function)(char **ptr, unsigned long *length),
+                               int rate, int vol,
+                               int left, int right,
+                               int priority);
 int MV_PlayRaw(unsigned char *ptr, unsigned long length,
                unsigned long rate, int vol, int left,
                int right, int priority);

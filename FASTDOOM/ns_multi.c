@@ -983,6 +983,52 @@ void MV_StopPlayback(
 }
 
 /*---------------------------------------------------------------------
+   Function: MV_StartDemandFeedPlayback
+
+   Plays a digitized sound from a user controlled buffering system.
+---------------------------------------------------------------------*/
+
+int MV_StartDemandFeedPlayback(
+    void (*function)(char **ptr, unsigned long *length),
+    int rate,
+    int vol,
+    int left,
+    int right,
+    int priority)
+
+{
+    VoiceNode *voice;
+
+    // Request a voice from the voice pool
+    voice = MV_AllocVoice(priority);
+    if (voice == NULL)
+    {
+        return (MV_Error);
+    }
+        
+
+    voice->bits = 8;
+    voice->GetSound = MV_GetNextDemandFeedBlock;
+    voice->NextBlock = NULL;
+    voice->DemandFeed = function;
+    voice->BlockLength = 0;
+    voice->position = 0;
+    voice->sound = NULL;
+    voice->length = 0;
+    voice->BlockLength = 0;
+    voice->Playing = TRUE;
+    voice->next = NULL;
+    voice->prev = NULL;
+    voice->priority = priority;
+
+    MV_SetVoicePitch(voice, rate);
+    MV_SetVoiceVolume(voice, vol, left, right);
+    MV_PlayVoice(voice);
+
+    return (voice->handle);
+}
+
+/*---------------------------------------------------------------------
    Function: MV_PlayRaw
 
    Begin playback of sound data with the given sound levels and
