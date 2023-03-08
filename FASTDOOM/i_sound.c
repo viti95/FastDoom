@@ -87,7 +87,7 @@ int snd_DesiredMusicDevice;
 //
 int I_GetSfxLumpNum(sfxinfo_t *sfx)
 {
-    const char snd_prefixen[] = {'P', 'P', 'A', 'S', 'S', 'S', 'M', 'M', 'M', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'A', 'A'};
+    const char snd_prefixen[] = {'P', 'P', 'A', 'S', 'S', 'S', 'M', 'M', 'M', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'A', 'A', 'M', 'M'};
     char namebuf[9];
     sprintf(namebuf, "D%c%s", snd_prefixen[snd_SfxDevice], sfx->name);
     return W_GetNumForName(namebuf);
