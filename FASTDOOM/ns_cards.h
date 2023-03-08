@@ -16,7 +16,7 @@ typedef enum
    SoundScape,
    UltraSound,
    SoundSource,
-   TandySoundSource,
+   Tandy3Voice,
    PC,
    PC1bit,
    LPTDAC,

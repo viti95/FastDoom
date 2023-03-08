@@ -21,10 +21,11 @@
 #define TRUE (1 == 1)
 #define FALSE (!TRUE)
 
+#define SS_OffCommand 0xC
+
 static int SS_Installed = FALSE;
 
 static int SS_Port = SS_DefaultPort;
-static int SS_OffCommand = 0xc;
 
 static char *SS_BufferStart;
 static char *SS_CurrentBuffer;
@@ -266,16 +267,6 @@ int SS_Init(int soundcard, int port)
         SS_Shutdown();
     }
 
-    if (soundcard == TandySoundSource)
-    {
-        // Tandy
-        SS_OffCommand = 0x0e;
-    }
-    else
-    {
-        // Disney
-        SS_OffCommand = 0x0c;
-    }
 
     if (!SS_DetectSoundSource()){
         if (port != -1)

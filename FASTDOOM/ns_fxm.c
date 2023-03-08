@@ -99,7 +99,6 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
         break;
 
     case SoundSource:
-    case TandySoundSource:
         DeviceStatus = SS_Init(SoundCard, port);
         if (DeviceStatus != SS_Ok)
         {
@@ -287,7 +286,6 @@ int FX_Init(
     case SoundMan16:
     case SoundScape:
     case SoundSource:
-    case TandySoundSource:
     case UltraSound:
     case PC1bit:
     case PCPWM:
@@ -343,7 +341,6 @@ int FX_Shutdown(
     case SoundMan16:
     case SoundScape:
     case SoundSource:
-    case TandySoundSource:
     case UltraSound:
     case PC1bit:
     case PCPWM:
@@ -416,7 +413,6 @@ void FX_SetVolume(
         break;
 
     case SoundSource:
-    case TandySoundSource:
         MV_SetVolume(volume);
         break;
     }

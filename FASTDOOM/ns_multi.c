@@ -697,7 +697,6 @@ int MV_SetMixMode(
         break;
 
     case SoundSource:
-    case TandySoundSource:
     case PC1bit:
     case PCPWM:
     case LPTDAC:
@@ -847,7 +846,6 @@ int MV_StartPlayback(
         break;
 
     case SoundSource:
-    case TandySoundSource:
         SS_BeginBufferedPlayback(MV_MixBuffer[0],
                                  TotalBufferSize, MV_NumberOfBuffers,
                                  MV_ServiceVoc);
@@ -946,7 +944,6 @@ void MV_StopPlayback(
         break;
 
     case SoundSource:
-    case TandySoundSource:
         SS_StopPlayback();
         break;
     case PC1bit:
@@ -1268,7 +1265,6 @@ int MV_Init(
         break;
 
     case SoundSource:
-    case TandySoundSource:
         status = SS_Init(soundcard, -1);
         break;
     
@@ -1400,7 +1396,6 @@ int MV_Shutdown(
         break;
 
     case SoundSource:
-    case TandySoundSource:
         SS_Shutdown();
         break;
     case PC1bit:
