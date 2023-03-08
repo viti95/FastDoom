@@ -46,6 +46,7 @@ file ns_cms.obj
 file ns_lpt.obj
 file ns_sbdm.obj
 file ns_adbfx.obj
+file ns_tandy.obj
 file ns_cd.obj
 file i_debug.obj
 file i_log.obj

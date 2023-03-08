@@ -22,6 +22,7 @@
 #include "ns_lpt.h"
 #include "ns_sbdm.h"
 #include "ns_adbfx.h"
+#include "ns_tandy.h"
 #include "options.h"
 #include "fastmath.h"
 #include "ns_fxm.h"
@@ -894,6 +895,13 @@ int MV_StartPlayback(
         MV_MixRate = FX_MixRate;
         MV_DMAChannel = -1;
         break;
+    case Tandy3Voice:
+        TANDY_BeginBufferedPlayback(MV_MixBuffer[0],
+                                 TotalBufferSize, MV_NumberOfBuffers,
+                                 MV_ServiceVoc);
+        MV_MixRate = FX_MixRate;
+        MV_DMAChannel = -1;
+        break;
     }
 
     RateScale11025 = (11025 * 0x10000) / MV_MixRate;
@@ -959,10 +967,13 @@ void MV_StopPlayback(
         LPT_StopPlayback();
         break;
     case SoundBlasterDirect:
-        SBDM_StopPlayback;
+        SBDM_StopPlayback();
         break;
     case AdlibFX:
-        ADBFX_StopPlayback;
+        ADBFX_StopPlayback();
+        break;
+    case Tandy3Voice:
+        TANDY_StopPlayback();
         break;
     }
 
@@ -1292,6 +1303,10 @@ int MV_Init(
         status = ADBFX_Init(soundcard);
         break;
 
+    case Tandy3Voice:
+        status = TANDY_Init(soundcard);
+        break;
+
     default:
         break;
 
@@ -1415,6 +1430,9 @@ int MV_Shutdown(
         break;
     case AdlibFX:
         ADBFX_Shutdown();
+        break;
+    case Tandy3Voice:
+        TANDY_Shutdown();
         break;
     }
 
