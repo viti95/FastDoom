@@ -91,6 +91,7 @@ int MUSIC_Init(int SoundCard, int Address)
     case LPTDAC:
     case SoundBlasterDirect:
     case AdlibFX:
+    case Tandy3Voice:
     default:
         status = MUSIC_Error;
         break;

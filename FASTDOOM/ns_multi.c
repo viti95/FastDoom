@@ -698,6 +698,7 @@ int MV_SetMixMode(
         break;
 
     case SoundSource:
+    case Tandy3Voice:
     case PC1bit:
     case PCPWM:
     case LPTDAC:
