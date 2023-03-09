@@ -15,6 +15,8 @@
 
 #include "options.h"
 
+#define TANDY_Port 0x2C0
+
 static int TANDY_Installed = 0;
 
 static char *TANDY_BufferStart;
@@ -39,44 +41,60 @@ void (*TANDY_CallBack)(void);
 ---------------------------------------------------------------------*/
 
 const unsigned char TandyLUTdb[256] = {
-    63, 63, 56, 51, 48, 46, 43, 42,
-    40, 39, 38, 36, 35, 34, 34, 33,
-    32, 31, 31, 30, 29, 29, 28, 28,
-    27, 27, 26, 26, 26, 25, 25, 24,
-    24, 24, 23, 23, 23, 22, 22, 22,
-    21, 21, 21, 21, 20, 20, 20, 20,
-    19, 19, 19, 19, 18, 18, 18, 18,
-    18, 17, 17, 17, 17, 17, 16, 16,
-    16, 16, 16, 15, 15, 15, 15, 15,
-    15, 14, 14, 14, 14, 14, 14, 14,
-    13, 13, 13, 13, 13, 13, 13, 12,
-    12, 12, 12, 12, 12, 12, 12, 11,
-    11, 11, 11, 11, 11, 11, 11, 10,
-    10, 10, 10, 10, 10, 10, 10, 10,
-    10, 9, 9, 9, 9, 9, 9, 9, 9,
-    9, 9, 8, 8, 8, 8, 8, 8, 8,
-    8, 8, 8, 8, 7, 7, 7, 7, 7,
-    7, 7, 7, 7, 7, 7, 7, 6, 6,
-    6, 6, 6, 6, 6, 6, 6, 6, 6,
-    6, 6, 5, 5, 5, 5, 5, 5, 5,
-    5, 5, 5, 5, 5, 5, 5, 4, 4,
-    4, 4, 4, 4, 4, 4, 4, 4, 4,
-    4, 4, 4, 4, 4, 3, 3, 3, 3,
-    3, 3, 3, 3, 3, 3, 3, 3, 3,
-    3, 3, 3, 3, 2, 2, 2, 2, 2,
-    2, 2, 2, 2, 2, 2, 2, 2, 2,
-    2, 2, 2, 2, 2, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0};
+    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    1,    1,    1,    1,    1,
+    1,    1,    1,    1,    1,    1,    1,    1,
+    1,    1,    1,    1,    1,    1,    1,    1,
+    1,    1,    1,    1,    1,    1,    1,    1,
+    1,    1,    1,    1,    1,    1,    1,    1,
+    1,    1,    1,    1,    1,    1,    1,    1,
+    1,    1,    1,    1,    1,    1,    1,    1,
+    1,    1,    2,    2,    2,    2,    2,    2,
+    2,    2,    2,    2,    2,    2,    2,    2,
+    2,    2,    2,    2,    2,    2,    2,    2,
+    2,    2,    2,    2,    2,    2,    2,    2,
+    2,    2,    2,    2,    2,    2,    2,    2,
+    2,    3,    3,    3,    3,    3,    3,    3,
+    3,    3,    3,    3,    3,    3,    3,    3,
+    3,    3,    3,    3,    3,    3,    3,    3,
+    3,    3,    3,    3,    3,    4,    4,    4,
+    4,    4,    4,    4,    4,    4,    4,    4,
+    4,    4,    4,    4,    4,    4,    4,    4,
+    5,    5,    5,    5,    5,    5,    5,    5,
+    5,    5,    5,    5,    5,    5,    6,    6,
+    6,    6,    6,    6,    6,    6,    6,    6,
+    7,    7,    7,    7,    7,    7,    7,    8,
+    8,    8,    8,    8,    9,    9,    9,    10,
+    10,    10,    11,    12,    12,    14,    15,    15
+};
+
+static void TANDY_Reset()
+{
+    // Set channel 0 to 125 KHz
+    outp(TANDY_Port, 0x80);
+    outp(TANDY_Port, 0x00);
+
+    // Silence 3 channels + noise
+    outp(TANDY_Port, 0xBF); // Channel 1
+    outp(TANDY_Port, 0xDF); // Channel 2
+    outp(TANDY_Port, 0xFF); // Noise
+    outp(TANDY_Port, 0x9F); // Channel 0
+}
 
 static void TANDY_ServiceInterrupt(task *Task)
 {
-    unsigned char value = TandyLUTdb[(unsigned char)(*TANDY_SoundPtr)];
-
-    // Sound code here
-
-
+    //unsigned char value = TandyLUTdb[(unsigned char)(*TANDY_SoundPtr)];
+    unsigned char value = 15;
+    
+    // Set volume for channel 0
+    outp(TANDY_Port, 0x90 | value);
 
     TANDY_SoundPtr++;
 
@@ -117,7 +135,7 @@ void TANDY_StopPlayback(void)
         TANDY_SoundPlaying = 0;
         TANDY_BufferStart = NULL;
 
-        // Clean soundcard here
+        TANDY_Reset();
     }
 }
 
@@ -173,7 +191,7 @@ int TANDY_Init(int soundcard)
         TANDY_Shutdown();
     }
 
-    // Init here
+    TANDY_Reset();
 
     TANDY_SoundPlaying = 0;
 

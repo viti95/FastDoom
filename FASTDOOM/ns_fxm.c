@@ -298,6 +298,7 @@ int FX_Init(
     case SoundMan16:
     case SoundScape:
     case SoundSource:
+    case Tandy3Voice:
     case UltraSound:
     case PC1bit:
     case PCPWM:
