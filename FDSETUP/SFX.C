@@ -83,7 +83,7 @@ int ChooseFxCard(void)
 		field = DCARD_DISNEY;
 		break;
 
-	case M_TANDYSS:
+	case M_TANDY3VOICE:
 		field = DCARD_TANDY;
 		break;
 
@@ -157,7 +157,7 @@ int ChooseFxCard(void)
 				goto func_exit;
 
 			case DCARD_TANDY:
-				newc.d.card = M_TANDYSS;
+				newc.d.card = M_TANDY3VOICE;
 				newc.d.soundport = -1;
 				newc.d.midiport = -1;
 				goto func_exit;
@@ -959,7 +959,6 @@ int SetupFX(void)
 		break;
 
 	case M_DISNEYSS:
-	case M_TANDYSS:
 		if (ChooseLPTPort(&newc.d) == -1)
 			return (-1);
 		newc.d.rate = 0; // 7KHz
@@ -982,6 +981,7 @@ int SetupFX(void)
 	case M_PAS:
 	case M_SB:
 	case M_WAVE:
+	case M_TANDY3VOICE:
 		ChooseFreq();
 		ChooseNumDig();
 		savefx = TRUE;

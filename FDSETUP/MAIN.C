@@ -43,7 +43,7 @@ char cards[M_LAST][20] = {
 	"Unused",
 	"Unused",
 	"Disney Sound Source",
-	"Tandy Sound Source",
+	"Tandy 3-voice",
 	"PC Speaker (1 bit)",
 	"COVOX",
 	"Sound Blaster DM",
