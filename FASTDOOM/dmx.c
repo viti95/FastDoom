@@ -342,7 +342,7 @@ int ASS_GetSoundCardCode(int sndDevice)
     case snd_DISNEY:
         return SoundSource;
     case snd_TANDY:
-        return TandySoundSource;
+        return Tandy3Voice;
     case snd_PC1BIT:
         return PC1bit;
     case snd_PCPWM:
@@ -420,7 +420,6 @@ void ASS_Init(int rate, int maxsng, int mdev, int sdev)
             printf("ADDR: %03X, IRQ: %u, DMA LOW: %u, DMA HIGH: %u\n", BLASTER_Config.Address, BLASTER_Config.Interrupt, BLASTER_Config.Dma8, BLASTER_Config.Dma16);
             break;
         case SoundSource:
-        case TandySoundSource:
         case LPTDAC:
         case CMS:
             FX_SetupCard(sound_device, &fx_device, dmx_snd_port);

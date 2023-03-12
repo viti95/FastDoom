@@ -41,7 +41,7 @@ void (*ADBFX_CallBack)(void);
    transfer.  Calls the user supplied callback function.
 ---------------------------------------------------------------------*/
 
-const unsigned char LUTdb[256] = {
+const unsigned char AdlibLUTdb[256] = {
     63, 63, 56, 51, 48, 46, 43, 42,
     40, 39, 38, 36, 35, 34, 34, 33,
     32, 31, 31, 30, 29, 29, 28, 28,
@@ -75,7 +75,7 @@ const unsigned char LUTdb[256] = {
 
 static void ADBFX_ServiceInterrupt(task *Task)
 {
-    unsigned char value = LUTdb[(unsigned char)(*ADBFX_SoundPtr)];
+    unsigned char value = AdlibLUTdb[(unsigned char)(*ADBFX_SoundPtr)];
 
     outp(ADLIB_PORT + 1, value);
 

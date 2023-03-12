@@ -22,6 +22,7 @@
 #include "ns_lpt.h"
 #include "ns_sbdm.h"
 #include "ns_adbfx.h"
+#include "ns_tandy.h"
 #include "options.h"
 #include "fastmath.h"
 #include "ns_fxm.h"
@@ -697,7 +698,7 @@ int MV_SetMixMode(
         break;
 
     case SoundSource:
-    case TandySoundSource:
+    case Tandy3Voice:
     case PC1bit:
     case PCPWM:
     case LPTDAC:
@@ -847,7 +848,6 @@ int MV_StartPlayback(
         break;
 
     case SoundSource:
-    case TandySoundSource:
         SS_BeginBufferedPlayback(MV_MixBuffer[0],
                                  TotalBufferSize, MV_NumberOfBuffers,
                                  MV_ServiceVoc);
@@ -891,6 +891,13 @@ int MV_StartPlayback(
         break;
     case AdlibFX:
         ADBFX_BeginBufferedPlayback(MV_MixBuffer[0],
+                                 TotalBufferSize, MV_NumberOfBuffers,
+                                 MV_ServiceVoc);
+        MV_MixRate = FX_MixRate;
+        MV_DMAChannel = -1;
+        break;
+    case Tandy3Voice:
+        TANDY_BeginBufferedPlayback(MV_MixBuffer[0],
                                  TotalBufferSize, MV_NumberOfBuffers,
                                  MV_ServiceVoc);
         MV_MixRate = FX_MixRate;
@@ -946,7 +953,6 @@ void MV_StopPlayback(
         break;
 
     case SoundSource:
-    case TandySoundSource:
         SS_StopPlayback();
         break;
     case PC1bit:
@@ -962,10 +968,13 @@ void MV_StopPlayback(
         LPT_StopPlayback();
         break;
     case SoundBlasterDirect:
-        SBDM_StopPlayback;
+        SBDM_StopPlayback();
         break;
     case AdlibFX:
-        ADBFX_StopPlayback;
+        ADBFX_StopPlayback();
+        break;
+    case Tandy3Voice:
+        TANDY_StopPlayback();
         break;
     }
 
@@ -1268,7 +1277,6 @@ int MV_Init(
         break;
 
     case SoundSource:
-    case TandySoundSource:
         status = SS_Init(soundcard, -1);
         break;
     
@@ -1294,6 +1302,10 @@ int MV_Init(
 
     case AdlibFX:
         status = ADBFX_Init(soundcard);
+        break;
+
+    case Tandy3Voice:
+        status = TANDY_Init(soundcard);
         break;
 
     default:
@@ -1400,7 +1412,6 @@ int MV_Shutdown(
         break;
 
     case SoundSource:
-    case TandySoundSource:
         SS_Shutdown();
         break;
     case PC1bit:
@@ -1420,6 +1431,9 @@ int MV_Shutdown(
         break;
     case AdlibFX:
         ADBFX_Shutdown();
+        break;
+    case Tandy3Voice:
+        TANDY_Shutdown();
         break;
     }
 

@@ -85,13 +85,13 @@ int MUSIC_Init(int SoundCard, int Address)
         break;
 
     case SoundSource:
-    case TandySoundSource:
     case PC:
     case PC1bit:
     case PCPWM:
     case LPTDAC:
     case SoundBlasterDirect:
     case AdlibFX:
+    case Tandy3Voice:
     default:
         status = MUSIC_Error;
         break;

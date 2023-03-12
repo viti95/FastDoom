@@ -15,6 +15,7 @@
 #include "ns_user.h"
 #include "ns_fxm.h"
 #include "ns_adbfx.h"
+#include "ns_tandy.h"
 #include "options.h"
 
 #define TRUE (1 == 1)
@@ -99,7 +100,6 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
         break;
 
     case SoundSource:
-    case TandySoundSource:
         DeviceStatus = SS_Init(SoundCard, port);
         if (DeviceStatus != SS_Ok)
         {
@@ -168,6 +168,17 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
     case AdlibFX:
         DeviceStatus = ADBFX_Init(SoundCard);
         if (DeviceStatus != ADBFX_Ok)
+        {
+            status = FX_Error;
+            break;
+        }
+        device->MaxVoices = 8;
+        device->MaxSampleBits = 8;
+        device->MaxChannels = 1;
+        break;
+    case Tandy3Voice:
+        DeviceStatus = TANDY_Init(SoundCard);
+        if (DeviceStatus != TANDY_Ok)
         {
             status = FX_Error;
             break;
@@ -287,7 +298,7 @@ int FX_Init(
     case SoundMan16:
     case SoundScape:
     case SoundSource:
-    case TandySoundSource:
+    case Tandy3Voice:
     case UltraSound:
     case PC1bit:
     case PCPWM:
@@ -343,7 +354,7 @@ int FX_Shutdown(
     case SoundMan16:
     case SoundScape:
     case SoundSource:
-    case TandySoundSource:
+    case Tandy3Voice:
     case UltraSound:
     case PC1bit:
     case PCPWM:
@@ -416,7 +427,6 @@ void FX_SetVolume(
         break;
 
     case SoundSource:
-    case TandySoundSource:
         MV_SetVolume(volume);
         break;
     }

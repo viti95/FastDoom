@@ -136,7 +136,7 @@ void I_sndArbitrateCards(void)
     adlib = snd_MusicDevice == snd_Adlib || snd_MusicDevice == snd_SB || snd_MusicDevice == snd_PAS;
     oplxlpt = snd_MusicDevice == snd_OPL2LPT || snd_MusicDevice == snd_OPL3LPT;
     midi = snd_MusicDevice == snd_MPU;
-    lpt = snd_SfxDevice == snd_DISNEY || snd_SfxDevice == snd_TANDY || snd_SfxDevice == snd_LPTDAC;
+    lpt = snd_SfxDevice == snd_DISNEY || snd_SfxDevice == snd_LPTDAC;
     cmsfx = snd_SfxDevice == snd_CMS;
     cmsmus = snd_MusicDevice == snd_CMS;
     audiocd = snd_MusicDevice == snd_CD;
