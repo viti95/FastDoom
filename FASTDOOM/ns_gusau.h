@@ -25,7 +25,7 @@ int GUSWAVE_KillAllVoices(void);
 void GUSWAVE_SetVolume(int volume);
 int GUSWAVE_StartDemandFeedPlayback(void (*function)(char **ptr, unsigned long *length), int bits, int rate, int angle);
 void GUSWAVE_SetReverseStereo(int setting);
-int GUSWAVE_Init(int numvoices);
+int GUSWAVE_Init(void);
 void GUSWAVE_Shutdown(void);
 #pragma aux GUSWAVE_Shutdown frame;
 

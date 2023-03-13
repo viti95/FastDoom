@@ -662,9 +662,7 @@ void GUSWAVE_SetReverseStereo(
    Begins playback of digitized sound.
 ---------------------------------------------------------------------*/
 
-static int GUSWAVE_InitVoices(
-    void)
-
+static int GUSWAVE_InitVoices(void)
 {
     int i;
 
@@ -717,9 +715,7 @@ static int GUSWAVE_InitVoices(
    Initializes the Gravis Ultrasound for digitized sound playback.
 ---------------------------------------------------------------------*/
 
-int GUSWAVE_Init(
-    int numvoices)
-
+int GUSWAVE_Init()
 {
     int status;
 
@@ -734,8 +730,7 @@ int GUSWAVE_Init(
         return (GUSWAVE_Error);
     }
 
-    GUSWAVE_MaxVoices = min(numvoices, VOICES);
-    GUSWAVE_MaxVoices = max(GUSWAVE_MaxVoices, 0);
+    GUSWAVE_MaxVoices = 2;
 
     status = GUSWAVE_InitVoices();
     if (status != GUSWAVE_Ok)

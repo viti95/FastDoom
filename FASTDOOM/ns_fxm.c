@@ -52,7 +52,7 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
             break;
         }
 
-        device->MaxVoices = 8;
+        device->MaxVoices = 9;
         BLASTER_GetCardInfo(&device->MaxSampleBits, &device->MaxChannels);
         break;
 
@@ -65,7 +65,7 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
             break;
         }
 
-        device->MaxVoices = 8;
+        device->MaxVoices = 9;
         PAS_GetCardInfo(&device->MaxSampleBits, &device->MaxChannels);
         break;
 
@@ -78,7 +78,7 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
         break;
 
     case SoundScape:
-        device->MaxVoices = 8;
+        device->MaxVoices = 9;
         DeviceStatus = SOUNDSCAPE_GetCardInfo(&device->MaxSampleBits,
                                               &device->MaxChannels);
         if (DeviceStatus != SOUNDSCAPE_Ok)
@@ -88,13 +88,13 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
         break;
 
     case UltraSound:
-        if (GUSWAVE_Init(8) != GUSWAVE_Ok)
+        if (GUSWAVE_Init() != GUSWAVE_Ok)
         {
             status = FX_Error;
             break;
         }
 
-        device->MaxVoices = 8;
+        device->MaxVoices = 9;
         device->MaxSampleBits = 0;
         device->MaxChannels = 0;
         break;
@@ -107,7 +107,7 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
             break;
         }
         SS_Shutdown();
-        device->MaxVoices = 8;
+        device->MaxVoices = 9;
         device->MaxSampleBits = 8;
         device->MaxChannels = 1;
         break;
@@ -118,7 +118,7 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
             status = FX_Error;
             break;
         }
-        device->MaxVoices = 8;
+        device->MaxVoices = 9;
         device->MaxSampleBits = 8;
         device->MaxChannels = 1;
         break;
@@ -129,7 +129,7 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
             status = FX_Error;
             break;
         }
-        device->MaxVoices = 8;
+        device->MaxVoices = 9;
         device->MaxSampleBits = 8;
         device->MaxChannels = 1;
         break;
@@ -140,7 +140,7 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
             status = FX_Error;
             break;
         }
-        device->MaxVoices = 8;
+        device->MaxVoices = 9;
         device->MaxSampleBits = 8;
         device->MaxChannels = 2;
     case LPTDAC:
@@ -150,7 +150,7 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
             status = FX_Error;
             break;
         }
-        device->MaxVoices = 8;
+        device->MaxVoices = 9;
         device->MaxSampleBits = 8;
         device->MaxChannels = 1;
         break;
@@ -161,7 +161,7 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
             status = FX_Error;
             break;
         }
-        device->MaxVoices = 8;
+        device->MaxVoices = 9;
         device->MaxSampleBits = 8;
         device->MaxChannels = 1;
         break;
@@ -172,7 +172,7 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
             status = FX_Error;
             break;
         }
-        device->MaxVoices = 8;
+        device->MaxVoices = 9;
         device->MaxSampleBits = 8;
         device->MaxChannels = 1;
         break;
@@ -183,7 +183,7 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
             status = FX_Error;
             break;
         }
-        device->MaxVoices = 8;
+        device->MaxVoices = 9;
         device->MaxSampleBits = 8;
         device->MaxChannels = 1;
         break;
@@ -230,12 +230,7 @@ int FX_GetBlasterSettings(
    Handles manual setup of the Sound Blaster information.
 ---------------------------------------------------------------------*/
 
-int FX_SetupSoundBlaster(
-    fx_blaster_config blaster,
-    int *MaxVoices,
-    int *MaxSampleBits,
-    int *MaxChannels)
-
+int FX_SetupSoundBlaster(fx_blaster_config blaster)
 {
     int DeviceStatus;
     BLASTER_CONFIG Blaster;
@@ -257,9 +252,6 @@ int FX_SetupSoundBlaster(
     {
         return (FX_Error);
     }
-
-    *MaxVoices = 8;
-    BLASTER_GetCardInfo(MaxSampleBits, MaxChannels);
 
     return (FX_Ok);
 }

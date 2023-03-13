@@ -1253,7 +1253,7 @@ int MV_Init(
     switch (soundcard)
     {
     case UltraSound:
-        status = GUSWAVE_Init(2);
+        status = GUSWAVE_Init();
         break;
 
     case SoundBlaster:

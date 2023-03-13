@@ -371,12 +371,7 @@ int ASS_GetSoundCardCode(int sndDevice)
 void ASS_Init(int rate, int maxsng, int mdev, int sdev)
 {
     int status, music_device, sound_device;
-    unsigned int sample_rate;
-
-    int SbMaxVoices;
-    int SbMaxBits;
-    int SbMaxChannels;
-    
+    unsigned int sample_rate;    
     int finalNumChannels = numChannels;
 
     fx_device fx_device;
@@ -415,7 +410,7 @@ void ASS_Init(int rate, int maxsng, int mdev, int sdev)
         case SoundBlaster:
         case Awe32:
         case SoundBlasterDirect:
-            FX_SetupSoundBlaster(dmx_blaster, (int *)&SbMaxVoices, (int *)&SbMaxBits, (int *)&SbMaxChannels);
+            FX_SetupSoundBlaster(dmx_blaster);
             printf("Sound Blaster DSP %01X.%02X\n", BLASTER_Version >> 8, BLASTER_Version && 7);
             printf("ADDR: %03X, IRQ: %u, DMA LOW: %u, DMA HIGH: %u\n", BLASTER_Config.Address, BLASTER_Config.Interrupt, BLASTER_Config.Dma8, BLASTER_Config.Dma16);
             break;
