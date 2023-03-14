@@ -826,6 +826,8 @@ void D_AddFile(char *file)
 
 void LoadIWAD(int selection)
 {
+    boolean loadError = false;
+
     switch (selection)
     {
     case 49:
@@ -839,7 +841,7 @@ void LoadIWAD(int selection)
         }
         else
         {
-            I_Error("The selected IWAD was not found");
+            loadError = true;
         }
         break;
     case 50:
@@ -853,7 +855,7 @@ void LoadIWAD(int selection)
         }
         else
         {
-            I_Error("The selected IWAD was not found");
+            loadError = true;
         }
         break;
     case 51:
@@ -867,7 +869,7 @@ void LoadIWAD(int selection)
         }
         else
         {
-            I_Error("The selected IWAD was not found");
+            loadError = true;
         }
         break;
     case 52:
@@ -881,7 +883,7 @@ void LoadIWAD(int selection)
         }
         else
         {
-            I_Error("The selected IWAD was not found");
+            loadError = true;
         }
         break;
     case 53:
@@ -895,7 +897,7 @@ void LoadIWAD(int selection)
         }
         else
         {
-            I_Error("The selected IWAD was not found");
+            loadError = true;
         }
         break;
     case 54:
@@ -909,7 +911,7 @@ void LoadIWAD(int selection)
         }
         else
         {
-            I_Error("The selected IWAD was not found");
+            loadError = true;
         }
         break;
     case 55:
@@ -923,7 +925,7 @@ void LoadIWAD(int selection)
         }
         else
         {
-            I_Error("The selected IWAD was not found");
+            loadError = true;
         }
         break;
     case 56:
@@ -937,13 +939,16 @@ void LoadIWAD(int selection)
         }
         else
         {
-            I_Error("The selected IWAD was not found");
+            loadError = true;
         }
         break;
     default:
-        I_Error("The selected IWAD was not found");
+        loadError = true;
         break;
     }
+
+    if (loadError)
+        I_Error("The selected IWAD was not found");
 }
 
 void LoadExternalIWAD(void)
