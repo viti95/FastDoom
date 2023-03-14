@@ -360,7 +360,7 @@ unsigned char *LoadFile(char *filename, int *length)
     unsigned char *ptr;
 
     if ((in = fopen(filename, "rb")) == NULL)
-        I_Error("FILE NOT FOUND");
+        I_Error("File %s not found", filename);
 
     fseek(in, 0, SEEK_END);
     size = ftell(in);
@@ -368,10 +368,10 @@ unsigned char *LoadFile(char *filename, int *length)
 
     ptr = (unsigned char *)malloc(size);
     if (ptr == NULL)
-        I_Error("OUT OF MEMORY");
+        I_Error("Out of memory, cannot load music file %s", filename);
 
     if (fread(ptr, size, 1, in) != 1)
-        I_Error("UNEXPECTED END OF FILE");
+        I_Error("Error loading music file %s", filename);
 
     fclose(in);
 

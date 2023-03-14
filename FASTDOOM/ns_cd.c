@@ -884,7 +884,7 @@ int CD_Init(void)
         I_Log("CD_CdromInstalled failed\n");
         #endif
 
-        I_Error("MSCDEX WAS NOT FOUND!\n");
+        I_Error("MSCDEX was not found\n");
         return 0;
     }
     else
@@ -907,7 +907,7 @@ int CD_Init(void)
             I_Log("CD_Init: NO AudioCD tracks available\n");
             #endif
 
-            I_Error("NO AUDIO-CD TRACKS AVAILABLE!\n");
+            I_Error("No Audio-CD tracks available\n");
             return 0;
         }
 
