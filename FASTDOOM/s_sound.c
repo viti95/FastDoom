@@ -54,10 +54,10 @@ extern int snd_DesiredSfxDevice;
 int cdlooping = 0;
 int cdmusicnum = 0;
 
-int wavhandle;
+int wavhandle = -1;
 int wavmusicnum = 0;
 int wavlooping = 0;
-unsigned char *wavfileptr;
+unsigned char *wavfileptr = NULL;
 
 typedef struct
 {
