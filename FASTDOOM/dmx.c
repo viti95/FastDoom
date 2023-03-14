@@ -217,10 +217,7 @@ void SFX_SetOrigin(int handle, int sep, int vol)
 
     MV_SetVoiceVolume(voice, vol * 2, Div63((254 - sep) * vol), Div63((sep)*vol));
 }
-int GF1_Detect(void)
-{
-    return 0; // FIXME
-}
+
 void GF1_SetMap(void *data, int len)
 {
     FILE *ini = fopen("ULTRAMID.INI", "wb");

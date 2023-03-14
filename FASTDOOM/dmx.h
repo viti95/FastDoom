@@ -28,7 +28,6 @@ int SFX_PlayPatch(void *vdata, int sep, int vol);
 void SFX_StopPatch(int handle);
 int SFX_Playing(int handle);
 void SFX_SetOrigin(int handle, int sep, int vol);
-int GF1_Detect(void);
 void GF1_SetMap(void *data, int len);
 void SB_Detect(void);
 int AL_Detect(void);
