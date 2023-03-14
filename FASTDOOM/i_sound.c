@@ -153,22 +153,15 @@ void I_sndArbitrateCards(void)
     }
     if (gus)
     {
-        if (GF1_Detect())
+        if (gamemode == commercial)
         {
-            printf("GUS isn't responding.\n");
+            dmxlump = W_GetNumForName("DMXGUSC");
         }
         else
         {
-            if (gamemode == commercial)
-            {
-                dmxlump = W_GetNumForName("DMXGUSC");
-            }
-            else
-            {
-                dmxlump = W_GetNumForName("DMXGUS");
-            }
-            GF1_SetMap(W_CacheLumpNum(dmxlump, PU_CACHE), lumpinfo[dmxlump].size);
+            dmxlump = W_GetNumForName("DMXGUS");
         }
+        GF1_SetMap(W_CacheLumpNum(dmxlump, PU_CACHE), lumpinfo[dmxlump].size);
     }
     if (sb)
     {
