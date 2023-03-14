@@ -709,6 +709,7 @@ int MV_SetMixMode(
 
     case CMS:
         MV_MixMode = STEREO_8BIT;
+        break;
     }
 
     MV_Channels = 1;

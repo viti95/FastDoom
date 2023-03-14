@@ -376,9 +376,7 @@ int FX_Shutdown(
    Sets the volume of the current sound device.
 ---------------------------------------------------------------------*/
 
-void FX_SetVolume(
-    int volume)
-
+void FX_SetVolume(int volume)
 {
     int status;
 
@@ -410,15 +408,19 @@ void FX_SetVolume(
     case WaveBlaster:
         break;
 
-    case SoundScape:
-        MV_SetVolume(volume);
-        break;
-
     case UltraSound:
         GUSWAVE_SetVolume(volume);
         break;
 
+    case SoundScape:
     case SoundSource:
+    case Tandy3Voice:
+    case AdlibFX:
+    case PC1bit:
+    case PCPWM:
+    case LPTDAC:
+    case SoundBlasterDirect:
+    case CMS:
         MV_SetVolume(volume);
         break;
     }
