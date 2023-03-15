@@ -15,6 +15,7 @@ Doom port for DOS, based on PCDoom by @nukeykt. The goal of this port is to make
 * Disney Sound Source support
 * COVOX LPT DAC support
 * Adlib OPL2 PCM support
+* Tandy 3-voice PCM support (SN76489)
 * Creative Music System / Game Blaster support
 * Hercules automap support
 * Lot's of optimizations to make the game run faster / smoother
@@ -26,7 +27,6 @@ Doom port for DOS, based on PCDoom by @nukeykt. The goal of this port is to make
 * Removed Y mouse movement (move forward/backwards)
 * Added autorun support (F12 key)
 * Added mono sound support
-* Added low quality sound support (8000Hz instead of 11025Hz). Enabled with "-lowsound" parameter.
 * Replaced DOS/4GW with DOS/32A providing a good speedup!
 * New setup program
 * New video modes (Mode 13h, CGA, EGA, Hercules, Text modes, VESA 2.0)

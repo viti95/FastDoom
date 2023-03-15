@@ -11,7 +11,7 @@
 
  Version
  -------
- 0.9.3
+ 0.9.4
 
  About
  -----
@@ -65,9 +65,10 @@
               ATI Small Wonder
  Sound cards: Sound Blaster, PC Speaker, Disney Sound Source,
               Gravis Ultrasound, Pro Audio Spectrum, COVOX LPT DAC,
-              Creative Music System
+              Creative Music System, Tandy 3-voice
  Music cards: Sound Blaster (OPL2 and OPL3), Adlib, MIDI, Gravis Ultrasound
-              Sound Blaster AWE32, OPL2LPT, OPL3LPT, AudioCD (MSCDEX)
+              Sound Blaster AWE32, OPL2LPT, OPL3LPT, AudioCD (MSCDEX),
+              PCM files
 
  Executables
  -----------
@@ -130,7 +131,6 @@
  -forceHQ => Forces high detail mode (320x200)
  -cga => Fixes text modes for CGA cards
  -pagefix => Fixes text modes (80x50 and 80x100) for newer VGA cards
- -lowsound => Plays all sounds at 8 KHz (lower cpu usage)
  -ram => Allocates all memory available (default only allocates 8 MB)
  -singletics => Disables game throttling (runs at full speed) 
  -reverseStereo => Reverse audio output (left to right and viceversa)
@@ -203,6 +203,40 @@
  
  ViTi95
 
+ Contributors (in no particular order)
+ -------------------------------------
+
+ JNechaevsky
+ RamonUnch
+ PickledDog
+ FrenkelS
+ jsmolina
+ deat322
+ AXDOOMER
+ bnied
+ Tronix286
+ noop0x90
+ DeathEgg
+ CarlosTex
+ FreddoUK
+ maximilien-noal
+ ghderty
+ appiah4
+ Redneckerz
+ javiergutierrezchamorro
+ SpitFire-666
+ Optimus6128
+ Shogun38
+ viciious
+ cher-nov
+ neuralnetworkz
+ Ethaniel-404
+ zokum-no
+ FavoritoHJS
+ 
+ And pretty sure more people I don't remember right now, 
+ if you're not in the list contact me :)
+
  Issues
  ------
  
@@ -210,5 +244,3 @@
  it ASAP!
 
  https://github.com/viti95/FastDoom/issues
-
-                                                                      

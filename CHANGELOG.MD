@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 0.9.4 (15 Mar 2023)
+* PCM music support. Up to 44.1 KHz, 8-bit mono music. For now PCM music is stored in RAM, so more than 16Mb is recommended
+* Tandy 3-voice SN76489 sound support. Sound quality is nowhere near good, but can be improved
+* Sound frequency is now selectable (from 7KHz up to 44.1KHz). Removed "-lowsound" parameter since is not needed anymore
+* Updated PLAYPAL+COLORMAPS for B&W, 4-color and 16-color modes thanks to @deat322 (@Deathz0r). The image quality is much better now on non-256 color modes
+* Fixed issues #95, #133, #134 and #135
+* Made source code buildable again on 8.3 filesystems (DOS)
+* Updated FDSetup program
+* Removed "Tandy Sound Source" sound card. This was the same as Disney Sound Source, but for old Tandy with incompatible parallel port
+
 ## 0.9.3 (16 Jan 2023)
 * AudioCD music support. Custom AudioCD mappings for (Ultimate) Doom, Doom II, TNT and Plutonia. (thanks @theelf for testing and the idea!)
 * Fixed bugs on Hercules automap mode (thanks @Darmok for testing)
