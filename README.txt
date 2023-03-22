@@ -134,7 +134,7 @@
  -ram => Allocates all memory available (default only allocates 8 MB)
  -singletics => Disables game throttling (runs at full speed) 
  -reverseStereo => Reverse audio output (left to right and viceversa)
- -logTimedemo => Saves the timedemo result in the file bench.txt
+ -csv => Saves the timedemo result in the file bench.csv
  -bfg => Enables Doom II BFG edition IWAD support
  -size XX => Forces screen scaling
  -turbo XX => Multiplies player movement speed by 10%

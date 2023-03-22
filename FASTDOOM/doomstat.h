@@ -89,7 +89,7 @@ extern boolean VGADACfix;
 extern boolean videoPageFix;
 #endif
 
-extern boolean logTimedemo;
+extern boolean csv;
 extern boolean disableDemo;
 
 extern boolean uncappedFPS;
@@ -243,6 +243,7 @@ extern int maxammo[NUMAMMO];
 extern char basedefault[13];
 extern char sbkfile[13];
 extern char iwadfile[13];
+extern char demofile[13];
 
 // wipegamestate can be set to -1
 //  to force a wipe on the next draw

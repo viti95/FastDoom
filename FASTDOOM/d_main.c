@@ -129,7 +129,7 @@ boolean VGADACfix = false;
 boolean videoPageFix;
 #endif
 
-boolean logTimedemo;
+boolean csv;
 boolean disableDemo;
 
 boolean uncappedFPS;
@@ -1121,13 +1121,14 @@ unsigned char SelectIBMCGA(void)
 }
 #endif
 
+char demofile[13];
+
 //
 // D_DoomMain
 //
 void D_DoomMain(void)
 {
     int p;
-    char file[256];
     union REGS regs;
 
     p = M_CheckParm("-iwad");
@@ -1218,7 +1219,7 @@ void D_DoomMain(void)
 
     reverseStereo = M_CheckParm("-reverseStereo");
 
-    logTimedemo = M_CheckParm("-logTimedemo");
+    csv = M_CheckParm("-csv");
 
     disableDemo = M_CheckParm("-disabledemo");
 
@@ -1329,8 +1330,8 @@ void D_DoomMain(void)
 
     if (p && p < myargc - 1)
     {
-        sprintf(file, "%s.lmp", myargv[p + 1]);
-        D_AddFile(file);
+        sprintf(demofile, "%s.lmp", myargv[p + 1]);
+        D_AddFile(demofile);
         printf("Playing demo %s.lmp.\n", myargv[p + 1]);
     }
 
@@ -1496,8 +1497,8 @@ void D_DoomMain(void)
     p = M_CheckParm("-loadgame");
     if (p && p < myargc - 1)
     {
-        sprintf(file, SAVEGAMENAME "%c.dsg", myargv[p + 1][0]);
-        G_LoadGame(file);
+        sprintf(demofile, SAVEGAMENAME "%c.dsg", myargv[p + 1][0]);
+        G_LoadGame(demofile);
     }
 
     if (gameaction != ga_loadgame)

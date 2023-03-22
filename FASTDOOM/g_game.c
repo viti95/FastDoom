@@ -1243,12 +1243,63 @@ void G_CheckDemoStatus(void)
 
         resultfps = (35 * 1000 * (unsigned int)gametic) / (unsigned int)realtics;
 
-        if (logTimedemo)
+        if (csv)
         {
-            FILE *logFile = fopen("bench.txt", "a");
+            FILE *logFile = fopen("BENCH.CSV", "a");
             if (logFile)
             {
-                fprintf(logFile, "Timed %i gametics in %u realtics. FPS: %u.%u\n", gametic, realtics, resultfps / 1000, resultfps % 1000);
+                // Detail
+                switch(detailshift){
+                    case 0:
+                    fprintf(logFile, "high;");
+                    break;
+                    case 1:
+                    fprintf(logFile, "low;");
+                    break;
+                    case 2:
+                    fprintf(logFile, "potato;");
+                    break;
+                }
+
+                // Screen size
+                fprintf(logFile, "%i;", screenblocks);
+
+                // Visplanes
+                if (flatSurfaces)
+                    fprintf(logFile, "flatter;");
+                else if (untexturedSurfaces)
+                    fprintf(logFile, "flat;");
+                else
+                    fprintf(logFile, "normal;");
+
+                // Sky
+                if (flatSky)
+                    fprintf(logFile, "flat;");
+                else
+                    fprintf(logFile, "normal;");
+
+                // Objects
+                if (nearSprites)
+                    fprintf(logFile, "near;");
+                else
+                    fprintf(logFile, "normal;");
+
+                // Transparent objects
+                if (flatShadows)
+                    fprintf(logFile, "flat;");
+                else if (saturnShadows)
+                    fprintf(logFile, "saturn;");
+                else
+                    fprintf(logFile, "normal;");
+
+                // IWAD
+                fprintf(logFile, "%s;", iwadfile);
+
+                // Demo
+                fprintf(logFile, "%s;", demofile);
+
+                // Gametics, Realtics, FPS
+                fprintf(logFile, "%i;%u;%u,%u\n", gametic, realtics, resultfps / 1000, resultfps % 1000);
                 fclose(logFile);
             }
         }
