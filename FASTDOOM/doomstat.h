@@ -94,7 +94,6 @@ extern boolean disableDemo;
 
 extern boolean uncappedFPS;
 extern boolean waitVsync;
-extern boolean simpleStatusBar;
 extern boolean debugPort;
 
 // Set if homebrew PWAD stuff has been added.

@@ -134,7 +134,6 @@ boolean disableDemo;
 
 boolean uncappedFPS;
 boolean waitVsync;
-boolean simpleStatusBar;
 boolean debugPort;
 
 boolean singletics = false; // debug flag to cancel adaptiveness
@@ -1411,7 +1410,6 @@ void D_DoomMain(void)
     M_CheckParmOptional("-nomelt", &noMelt);
     M_CheckParmOptional("-uncapped", &uncappedFPS);
     M_CheckParmOptional("-vsync", &waitVsync);
-    M_CheckParmOptional("-simplestatusbar", &simpleStatusBar);
     M_CheckParmOptional("-debugPort", &debugPort);
     M_CheckParmDisable("-normalsurfaces", &flatSurfaces);
     M_CheckParmDisable("-normalsurfaces", &untexturedSurfaces);
@@ -1419,7 +1417,6 @@ void D_DoomMain(void)
     M_CheckParmDisable("-normalshadows", &flatShadows);
     M_CheckParmDisable("-normalshadows", &saturnShadows);
     M_CheckParmDisable("-normalsprites", &nearSprites);
-    M_CheckParmDisable("-normalstatusbar", &simpleStatusBar);
     M_CheckParmDisable("-stereo", &monoSound);
     M_CheckParmDisable("-melt", &noMelt);
     M_CheckParmDisable("-capped", &uncappedFPS);

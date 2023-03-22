@@ -405,26 +405,14 @@ void ST_refreshBackground(void)
 {
 	if (st_statusbaron)
 	{
-		if (simpleStatusBar)
-		{
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-			V_SetRect(ST_BACKGROUND_COLOR, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y, screen0);
-#endif
-#if defined(USE_BACKBUFFER)
-			V_SetRect(ST_BACKGROUND_COLOR, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y, backbuffer);
-#endif
-		}
-		else
-		{
-			V_DrawPatch(ST_X, 0, screen4, sbar);
+		V_DrawPatch(ST_X, 0, screen4, sbar);
 
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-			V_CopyRect(ST_X, 0, screen4, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y, screen0);
+		V_CopyRect(ST_X, 0, screen4, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y, screen0);
 #endif
 #if defined(USE_BACKBUFFER)
-			V_CopyRect(ST_X, 0, screen4, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y, backbuffer);
+		V_CopyRect(ST_X, 0, screen4, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y, backbuffer);
 #endif
-		}
 
 #if defined(USE_BACKBUFFER)
 		updatestate |= I_STATBAR;

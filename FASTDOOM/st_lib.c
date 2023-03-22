@@ -107,24 +107,12 @@ void STlib_drawNum(st_number_t *n, byte refresh)
     // clear the area
     x = n->x - 3 * w;
 
-    if (simpleStatusBar)
-    {
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-        V_SetRect(ST_BACKGROUND_COLOR, w * 3, h, x, n->y, screen0);
+    V_CopyRect(x, n->y - ST_Y, screen4, w * 3, h, x, n->y, screen0);
 #endif
 #if defined(USE_BACKBUFFER)
-        V_SetRect(ST_BACKGROUND_COLOR, w * 3, h, x, n->y, backbuffer);
+    V_CopyRect(x, n->y - ST_Y, screen4, w * 3, h, x, n->y, backbuffer);
 #endif
-    }
-    else
-    {
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-        V_CopyRect(x, n->y - ST_Y, screen4, w * 3, h, x, n->y, screen0);
-#endif
-#if defined(USE_BACKBUFFER)
-        V_CopyRect(x, n->y - ST_Y, screen4, w * 3, h, x, n->y, backbuffer);
-#endif
-    }
 
     // if non-number, do not draw it
     if (num == 1994)
@@ -295,24 +283,12 @@ void STlib_updateMultIcon(st_multicon_t *mi, byte refresh)
             w = mi->p[mi->oldinum]->width;
             h = mi->p[mi->oldinum]->height;
 
-            if (simpleStatusBar)
-            {
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-                V_SetRect(ST_BACKGROUND_COLOR, w, h, x, y, screen0);
+            V_CopyRect(x, y - ST_Y, screen4, w, h, x, y, screen0);
 #endif
 #if defined(USE_BACKBUFFER)
-                V_SetRect(ST_BACKGROUND_COLOR, w, h, x, y, backbuffer);
+            V_CopyRect(x, y - ST_Y, screen4, w, h, x, y, backbuffer);
 #endif
-            }
-            else
-            {
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-                V_CopyRect(x, y - ST_Y, screen4, w, h, x, y, screen0);
-#endif
-#if defined(USE_BACKBUFFER)
-                V_CopyRect(x, y - ST_Y, screen4, w, h, x, y, backbuffer);
-#endif
-            }
         }
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
         V_DrawPatchScreen0(mi->x, mi->y, mi->p[*mi->inum]);
@@ -346,24 +322,12 @@ void STlib_updateBinIcon(st_binicon_t *bi, byte refresh)
 {
     if (*bi->on && refresh)
     {
-        if (simpleStatusBar)
-        {
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-            V_SetRect(ST_BACKGROUND_COLOR, 40, 30, bi->x, bi->y, screen0);
+        V_DrawPatchScreen0(bi->x, bi->y, bi->p);
 #endif
 #if defined(USE_BACKBUFFER)
-            V_SetRect(ST_BACKGROUND_COLOR, 40, 30, bi->x, bi->y, backbuffer);
+        V_DrawPatchDirect(bi->x, bi->y, bi->p);
 #endif
-        }
-        else
-        {
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-            V_DrawPatchScreen0(bi->x, bi->y, bi->p);
-#endif
-#if defined(USE_BACKBUFFER)
-            V_DrawPatchDirect(bi->x, bi->y, bi->p);
-#endif
-        }
 
 #if defined(USE_BACKBUFFER)
         updatestate |= I_STATBAR;
