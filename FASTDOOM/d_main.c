@@ -1225,16 +1225,6 @@ void D_DoomMain(void)
 
     bfgedition = M_CheckParm("-bfg");
 
-    if ((p = M_CheckParm("-size")))
-    {
-        if (p < myargc - 1)
-            forceScreenSize = atoi(myargv[p + 1]);
-        if (forceScreenSize < 3)
-            forceScreenSize = 3;
-        else if (forceScreenSize > 12)
-            forceScreenSize = 12;
-    }
-
     p = M_CheckParm("-sbk");
     if (p)
     {
@@ -1381,6 +1371,18 @@ void D_DoomMain(void)
 
     printf("M_LoadDefaults: Load system defaults.\n");
     M_LoadDefaults(); // load before initing other systems
+
+    if ((p = M_CheckParm("-size")))
+    {
+        if (p < myargc - 1)
+            forceScreenSize = atoi(myargv[p + 1]);
+        if (forceScreenSize < 3)
+            forceScreenSize = 3;
+        else if (forceScreenSize > 12)
+            forceScreenSize = 12;
+
+        screenblocks = forceScreenSize;
+    }
 
     M_CheckParmOptional("-fps", &showFPS);
 

@@ -692,9 +692,6 @@ void R_ExecuteSetViewSize(void)
 
     setsizeneeded = 0;
 
-    if (forceScreenSize)
-        setblocks = forceScreenSize;
-
 #if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA)
     if (setblocks >= 11)
     {
