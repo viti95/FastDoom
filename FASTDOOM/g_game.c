@@ -1265,9 +1265,9 @@ void G_CheckDemoStatus(void)
                 fprintf(logFile, "%i;", screenblocks);
 
                 // Visplanes
-                if (flatSurfaces)
+                if (flatVisplanes)
                     fprintf(logFile, "flatter;");
-                else if (untexturedSurfaces)
+                else if (flatterVisplanes)
                     fprintf(logFile, "flat;");
                 else
                     fprintf(logFile, "normal;");

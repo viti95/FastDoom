@@ -83,8 +83,8 @@ boolean nomonsters;  // checkparm of -nomonsters
 boolean respawnparm; // checkparm of -respawn
 boolean fastparm;    // checkparm of -fast
 
-boolean flatSurfaces;
-boolean untexturedSurfaces;
+boolean flatVisplanes;
+boolean flatterVisplanes;
 boolean flatSky;
 boolean flatShadows;
 boolean saturnShadows;
@@ -1185,9 +1185,9 @@ void D_DoomMain(void)
     respawnparm = M_CheckParm("-respawn");
     fastparm = M_CheckParm("-fast");
 
-    forceHighDetail = M_CheckParm("-forceHQ");
-    forceLowDetail = M_CheckParm("-forceLQ");
-    forcePotatoDetail = M_CheckParm("-forcePQ");
+    forceHighDetail = M_CheckParm("-high");
+    forceLowDetail = M_CheckParm("-low");
+    forcePotatoDetail = M_CheckParm("-potato");
 
 #if defined(TEXT_MODE)
     CGAcard = M_CheckParm("-cga");
@@ -1386,13 +1386,13 @@ void D_DoomMain(void)
 
     M_CheckParmOptional("-fps", &showFPS);
 
-    if (M_CheckParmOptional("-flattersurfaces", &flatSurfaces) && untexturedSurfaces)
+    if (M_CheckParmOptional("-flatterVisplanes", &flatVisplanes) && flatterVisplanes)
     {
-        untexturedSurfaces = 0;
+        flatterVisplanes = 0;
     }
-    if (M_CheckParmOptional("-flatsurfaces", &untexturedSurfaces) && flatSurfaces)
+    if (M_CheckParmOptional("-flatVisplanes", &flatterVisplanes) && flatVisplanes)
     {
-        flatSurfaces = 0;
+        flatVisplanes = 0;
     }
 
     M_CheckParmOptional("-flatsky", &flatSky);
@@ -1412,12 +1412,12 @@ void D_DoomMain(void)
     M_CheckParmOptional("-uncapped", &uncappedFPS);
     M_CheckParmOptional("-vsync", &waitVsync);
     M_CheckParmOptional("-debugPort", &debugPort);
-    M_CheckParmDisable("-normalsurfaces", &flatSurfaces);
-    M_CheckParmDisable("-normalsurfaces", &untexturedSurfaces);
-    M_CheckParmDisable("-normalsky", &flatSky);
-    M_CheckParmDisable("-normalshadows", &flatShadows);
-    M_CheckParmDisable("-normalshadows", &saturnShadows);
-    M_CheckParmDisable("-normalsprites", &nearSprites);
+    M_CheckParmDisable("-defVisplanes", &flatVisplanes);
+    M_CheckParmDisable("-defVisplanes", &flatterVisplanes);
+    M_CheckParmDisable("-defSky", &flatSky);
+    M_CheckParmDisable("-defShadows", &flatShadows);
+    M_CheckParmDisable("-defShadows", &saturnShadows);
+    M_CheckParmDisable("-far", &nearSprites);
     M_CheckParmDisable("-stereo", &monoSound);
     M_CheckParmDisable("-melt", &noMelt);
     M_CheckParmDisable("-capped", &uncappedFPS);

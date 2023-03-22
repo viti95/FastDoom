@@ -33,7 +33,7 @@ Doom port for DOS, based on PCDoom by @nukeykt. The goal of this port is to make
 
 ## DEMO
 
-|        | Doom 1.9 Audio | Doom 1.9 NoAudio | FastDoom 0.2 Audio | FastDoom 0.2 Audio FlatSurfaces | FastDoom 0.2 Audio FlatSurfaces FlatTransparency | FastDoom 0.2 Audio FlatSurfaces Sega Saturn transparency | FastDoom 0.2 NoAudio | FastDoom 0.2 NoAudio FlatSurfaces Sega Saturn transparency |
+|        | Doom 1.9 Audio | Doom 1.9 NoAudio | FastDoom 0.2 Audio | FastDoom 0.2 Audio FlatVisplanes | FastDoom 0.2 Audio FlatVisplanes FlatTransparency | FastDoom 0.2 Audio FlatVisplanes Sega Saturn transparency | FastDoom 0.2 NoAudio | FastDoom 0.2 NoAudio flatVisplanes Sega Saturn transparency |
 |--------|----------------|-------------------|--------------------|----------------------------------|----------------------------------------------------|-----------------------------------------------------------|-----------------------|--------------------------------------------------------------|
 | FPS    | 19.56          | 21.68             | 22.44              | 25.77                            | 25.86                                              | 26.02                                                     | 24.79                 | 29.05                                                        |
 | Gain | 100.00%        | 110.20%           | 114.70%            | 131.70%                          | 132.20%                                            | 133.00%                                                   | 126.74%               | 148.52%                                                      |

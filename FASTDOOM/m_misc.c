@@ -297,8 +297,8 @@ default_t defaults[] =
         {"nomelt", &noMelt, 0},
         {"flatShadows", &flatShadows, 0},
         {"saturnShadows", &saturnShadows, 0},
-        {"untexturedSurfaces", &untexturedSurfaces, 0},
-        {"flatSurfaces", &flatSurfaces, 0},
+        {"flatterVisplanes", &flatterVisplanes, 0},
+        {"flatVisplanes", &flatVisplanes, 0},
         {"vsync", &waitVsync, 0},
 
         {"autorun", &autorun, 0},

@@ -1138,7 +1138,7 @@ void M_DrawDisplay(void)
                                                                             : "HIGH");
 
     V_WriteTextDirect(7, 6, "Visplane rendering:");
-    V_WriteTextDirect(30, 6, (!untexturedSurfaces && !flatSurfaces) ? "FULL" : untexturedSurfaces ? "FLAT"
+    V_WriteTextDirect(30, 6, (!flatterVisplanes && !flatVisplanes) ? "FULL" : flatterVisplanes ? "FLAT"
                                                                                                   : "FLATTER");
 
     V_WriteTextDirect(7, 8, "Sky rendering:");
@@ -1169,7 +1169,7 @@ void M_DrawDisplay(void)
                                                                             : "HIGH");
 
     V_WriteTextDirect(15, 6, "Visplane rendering:");
-    V_WriteTextDirect(45, 6, (!untexturedSurfaces && !flatSurfaces) ? "FULL" : untexturedSurfaces ? "FLAT"
+    V_WriteTextDirect(45, 6, (!flatterVisplanes && !flatVisplanes) ? "FULL" : flatterVisplanes ? "FLAT"
                                                                                                   : "FLATTER");
 
     V_WriteTextDirect(15, 8, "Sky rendering:");
@@ -1200,7 +1200,7 @@ void M_DrawDisplay(void)
                                                                             : "HIGH");
 
     V_WriteTextDirect(15, 13, "Visplane rendering:");
-    V_WriteTextDirect(45, 13, (!untexturedSurfaces && !flatSurfaces) ? "FULL" : untexturedSurfaces ? "FLAT"
+    V_WriteTextDirect(45, 13, (!flatterVisplanes && !flatVisplanes) ? "FULL" : flatterVisplanes ? "FLAT"
                                                                                                    : "FLATTER");
 
     V_WriteTextDirect(15, 17, "Sky rendering:");
@@ -1231,7 +1231,7 @@ void M_DrawDisplay(void)
                                                                         : "HIGH");
 
     M_WriteText(58, 56, "VISPLANE RENDERING:");
-    M_WriteText(214, 56, (!untexturedSurfaces && !flatSurfaces) ? "FULL" : untexturedSurfaces ? "FLAT"
+    M_WriteText(214, 56, (!flatterVisplanes && !flatVisplanes) ? "FULL" : flatterVisplanes ? "FLAT"
                                                                                               : "FLATTER");
 
     M_WriteText(58, 72, "SKY RENDERING:");
@@ -1446,29 +1446,29 @@ void M_ChangeDetail()
 
 void M_ChangeVisplaneDetail()
 {
-    if (!untexturedSurfaces && !flatSurfaces)
+    if (!flatterVisplanes && !flatVisplanes)
     {
-        flatSurfaces = false;
-        untexturedSurfaces = true;
+        flatVisplanes = false;
+        flatterVisplanes = true;
     }
-    else if (untexturedSurfaces)
+    else if (flatterVisplanes)
     {
-        untexturedSurfaces = false;
-        flatSurfaces = true;
+        flatterVisplanes = false;
+        flatVisplanes = true;
     }
     else
     {
-        flatSurfaces = false;
-        untexturedSurfaces = false;
+        flatVisplanes = false;
+        flatterVisplanes = false;
     }
 
     R_SetViewSize(screenblocks, detailLevel);
 
-    if (!untexturedSurfaces && !flatSurfaces)
+    if (!flatterVisplanes && !flatVisplanes)
     {
         players.message = "FULL VISPLANES";
     }
-    else if (untexturedSurfaces)
+    else if (flatterVisplanes)
     {
         players.message = "FLAT VISPLANES";
     }

@@ -118,7 +118,7 @@ void R_MapPlane(int y, int x1)
     ds_x1 = x1;
     ds_y = y;
 
-    if (untexturedSurfaces)
+    if (flatterVisplanes)
     {
         if (planeheight != cachedheight[y])
         {
@@ -201,7 +201,7 @@ void R_ClearPlanes(void)
     lastvisplane = visplanes;
     lastopening = openings;
 
-    if (flatSurfaces || untexturedSurfaces)
+    if (flatVisplanes || flatterVisplanes)
     {
         return;
     }
@@ -408,7 +408,7 @@ void R_DrawPlanes(void)
 // R_DrawPlanes
 // At the end of each frame.
 //
-void R_DrawPlanesFlatSurfaces(void)
+void R_DrawPlanesflatVisplanes(void)
 {
     visplane_t *pl;
 
@@ -592,7 +592,7 @@ void R_DrawPlanesFlatSurfaces(void)
     }
 }
 
-void R_DrawPlanesFlatSurfacesLow(void)
+void R_DrawPlanesflatVisplanesLow(void)
 {
     visplane_t *pl;
 
@@ -696,7 +696,7 @@ void R_DrawPlanesFlatSurfacesLow(void)
     }
 }
 
-void R_DrawPlanesFlatSurfacesPotato(void)
+void R_DrawPlanesflatVisplanesPotato(void)
 {
     visplane_t *pl;
 
@@ -753,7 +753,7 @@ void R_DrawPlanesFlatSurfacesPotato(void)
 }
 
 #if defined(MODE_T8050) || defined(MODE_T8043)
-void R_DrawPlanesFlatSurfacesText8050(void)
+void R_DrawPlanesflatVisplanesText8050(void)
 {
     visplane_t *pl;
 
@@ -809,7 +809,7 @@ void R_DrawPlanesFlatSurfacesText8050(void)
 #endif
 
 #if defined(MODE_T4050)
-void R_DrawPlanesFlatSurfacesText4050(void)
+void R_DrawPlanesflatVisplanesText4050(void)
 {
     visplane_t *pl;
 
@@ -895,7 +895,7 @@ void R_DrawPlanesFlatSurfacesText4050(void)
 #endif
 
 #if defined(MODE_T4025)
-void R_DrawPlanesFlatSurfacesText4025(void)
+void R_DrawPlanesflatVisplanesText4025(void)
 {
     visplane_t *pl;
 
@@ -951,7 +951,7 @@ void R_DrawPlanesFlatSurfacesText4025(void)
 #endif
 
 #if defined(MODE_MDA)
-void R_DrawPlanesFlatSurfacesTextMDA(void)
+void R_DrawPlanesflatVisplanesTextMDA(void)
 {
     visplane_t *pl;
 
@@ -1030,7 +1030,7 @@ void R_DrawPlanesFlatSurfacesTextMDA(void)
 #endif
 
 #if defined(MODE_T8025)
-void R_DrawPlanesFlatSurfacesText8025(void)
+void R_DrawPlanesflatVisplanesText8025(void)
 {
     visplane_t *pl;
 
@@ -1116,7 +1116,7 @@ void R_DrawPlanesFlatSurfacesText8025(void)
 #endif
 
 #if defined(USE_BACKBUFFER)
-void R_DrawPlanesFlatSurfaces_13h(void)
+void R_DrawPlanesflatVisplanes_13h(void)
 {
     visplane_t *pl;
 
@@ -1176,7 +1176,7 @@ void R_DrawPlanesFlatSurfaces_13h(void)
 #endif
 
 #if defined(MODE_VBE2_DIRECT)
-void R_DrawPlanesFlatSurfacesVBE2(void)
+void R_DrawPlanesflatVisplanesVBE2(void)
 {
     visplane_t *pl;
 

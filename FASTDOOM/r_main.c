@@ -753,7 +753,7 @@ void R_ExecuteSetViewSize(void)
 #if defined(MODE_T4050)
     colfunc = basecolfunc = R_DrawColumnText4050;
 
-    if (untexturedSurfaces)
+    if (flatterVisplanes)
     {
         spanfunc = R_DrawSpanFlatText4050;
     }
@@ -777,7 +777,7 @@ void R_ExecuteSetViewSize(void)
 #if defined(MODE_T4025)
     colfunc = basecolfunc = R_DrawColumnText4025;
 
-    if (untexturedSurfaces)
+    if (flatterVisplanes)
     {
         spanfunc = R_DrawSpanFlatText4025;
     }
@@ -801,7 +801,7 @@ void R_ExecuteSetViewSize(void)
 #if defined(MODE_T8025)
     colfunc = basecolfunc = R_DrawColumnText8025;
 
-    if (untexturedSurfaces)
+    if (flatterVisplanes)
     {
         spanfunc = R_DrawSpanFlatText8025;
     }
@@ -834,7 +834,7 @@ void R_ExecuteSetViewSize(void)
 #if defined(MODE_T8050) || defined(MODE_T8043)
     colfunc = basecolfunc = R_DrawColumnText8050;
 
-    if (untexturedSurfaces)
+    if (flatterVisplanes)
     {
         spanfunc = R_DrawSpanFlatText8050;
     }
@@ -862,7 +862,7 @@ void R_ExecuteSetViewSize(void)
     case 0:
         colfunc = basecolfunc = R_DrawColumn;
 
-        if (untexturedSurfaces)
+        if (flatterVisplanes)
             spanfunc = R_DrawSpanFlat;
         else
             spanfunc = R_DrawSpan;
@@ -882,7 +882,7 @@ void R_ExecuteSetViewSize(void)
     case 1:
         colfunc = basecolfunc = R_DrawColumnLow;
 
-        if (untexturedSurfaces)
+        if (flatterVisplanes)
             spanfunc = R_DrawSpanFlatLow;
         else
             spanfunc = R_DrawSpanLow;
@@ -902,7 +902,7 @@ void R_ExecuteSetViewSize(void)
     case 2:
         colfunc = basecolfunc = R_DrawColumnPotato;
 
-        if (untexturedSurfaces)
+        if (flatterVisplanes)
             spanfunc = R_DrawSpanFlatPotato;
         else
             spanfunc = R_DrawSpanPotato;
@@ -924,7 +924,7 @@ void R_ExecuteSetViewSize(void)
 #if defined(USE_BACKBUFFER)
     colfunc = basecolfunc = R_DrawColumn_13h;
 
-    if (untexturedSurfaces)
+    if (flatterVisplanes)
         spanfunc = R_DrawSpanFlat_13h;
     else
         spanfunc = R_DrawSpan_13h;
@@ -945,7 +945,7 @@ void R_ExecuteSetViewSize(void)
 #if defined(MODE_VBE2_DIRECT)
     colfunc = basecolfunc = R_DrawColumnVBE2;
 
-    if (untexturedSurfaces)
+    if (flatterVisplanes)
         spanfunc = R_DrawSpanFlatVBE2;
     else
         spanfunc = R_DrawSpanVBE2;
@@ -1197,59 +1197,59 @@ void R_RenderPlayerView(void)
     NetUpdate();
 
 #if defined(MODE_T4050)
-    if (flatSurfaces)
-        R_DrawPlanesFlatSurfacesText4050();
+    if (flatVisplanes)
+        R_DrawPlanesflatVisplanesText4050();
     else
         R_DrawPlanes();
 #endif
 #if defined(MODE_T4025)
-    if (flatSurfaces)
-        R_DrawPlanesFlatSurfacesText4025();
+    if (flatVisplanes)
+        R_DrawPlanesflatVisplanesText4025();
     else
         R_DrawPlanes();
 #endif
 #if defined(MODE_T8025)
-    if (flatSurfaces)
-        R_DrawPlanesFlatSurfacesText8025();
+    if (flatVisplanes)
+        R_DrawPlanesflatVisplanesText8025();
     else
         R_DrawPlanes();
 #endif
 #if defined(MODE_MDA)
-    R_DrawPlanesFlatSurfacesTextMDA();
+    R_DrawPlanesflatVisplanesTextMDA();
 #endif
 
 #if defined(MODE_T8050) || defined(MODE_T8043)
-    if (flatSurfaces)
-        R_DrawPlanesFlatSurfacesText8050();
+    if (flatVisplanes)
+        R_DrawPlanesflatVisplanesText8050();
     else
         R_DrawPlanes();
 #endif
 #if defined(MODE_Y)
-    if (flatSurfaces)
+    if (flatVisplanes)
         switch (detailshift)
         {
         case 0:
-            R_DrawPlanesFlatSurfaces();
+            R_DrawPlanesflatVisplanes();
             break;
         case 1:
-            R_DrawPlanesFlatSurfacesLow();
+            R_DrawPlanesflatVisplanesLow();
             break;
         case 2:
-            R_DrawPlanesFlatSurfacesPotato();
+            R_DrawPlanesflatVisplanesPotato();
             break;
         }
     else
         R_DrawPlanes();
 #endif
 #if defined(USE_BACKBUFFER)
-    if (flatSurfaces)
-        R_DrawPlanesFlatSurfaces_13h();
+    if (flatVisplanes)
+        R_DrawPlanesflatVisplanes_13h();
     else
         R_DrawPlanes();
 #endif
 #if defined(MODE_VBE2_DIRECT)
-    if (flatSurfaces)
-        R_DrawPlanesFlatSurfacesVBE2();
+    if (flatVisplanes)
+        R_DrawPlanesflatVisplanesVBE2();
     else
         R_DrawPlanes();
 #endif

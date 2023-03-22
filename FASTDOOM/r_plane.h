@@ -35,17 +35,17 @@ void R_ClearPlanes(void);
 void R_MapPlane(int y, int x1);
 
 void R_DrawPlanes(void);
-void R_DrawPlanesFlatSurfaces(void);
-void R_DrawPlanesFlatSurfacesLow(void);
-void R_DrawPlanesFlatSurfacesPotato(void);
-void R_DrawPlanesFlatSurfacesText80100(void);
-void R_DrawPlanesFlatSurfacesText8050(void);
-void R_DrawPlanesFlatSurfacesText8025(void);
-void R_DrawPlanesFlatSurfacesText4025(void);
-void R_DrawPlanesFlatSurfacesText4050(void);
-void R_DrawPlanesFlatSurfacesTextMDA(void);
-void R_DrawPlanesFlatSurfaces_13h(void);
-void R_DrawPlanesFlatSurfacesVBE2(void);
+void R_DrawPlanesflatVisplanes(void);
+void R_DrawPlanesflatVisplanesLow(void);
+void R_DrawPlanesflatVisplanesPotato(void);
+void R_DrawPlanesflatVisplanesText80100(void);
+void R_DrawPlanesflatVisplanesText8050(void);
+void R_DrawPlanesflatVisplanesText8025(void);
+void R_DrawPlanesflatVisplanesText4025(void);
+void R_DrawPlanesflatVisplanesText4050(void);
+void R_DrawPlanesflatVisplanesTextMDA(void);
+void R_DrawPlanesflatVisplanes_13h(void);
+void R_DrawPlanesflatVisplanesVBE2(void);
 void R_DrawSky(visplane_t *pl);
 
 visplane_t * R_FindPlane(fixed_t height, int picnum, int lightlevel);

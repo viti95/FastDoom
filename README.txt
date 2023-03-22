@@ -126,9 +126,9 @@
  -nomonsters => Disables all monsters in game
  -respawn => Forces monsters respawn like in Nightmare mode
  -fast => Forces fast monsters like in Nightmare mode
- -forcePQ => Forces potato detail mode (80x200)
- -forceLQ => Forces low detail mode (160x200)
- -forceHQ => Forces high detail mode (320x200)
+ -potato => Forces potato detail mode (80x200)
+ -low => Forces low detail mode (160x200)
+ -high => Forces high detail mode (320x200)
  -cga => Fixes text modes for CGA cards
  -pagefix => Fixes text modes (80x50 and 80x100) for newer VGA cards
  -ram => Allocates all memory available (default only allocates 8 MB)
@@ -145,9 +145,9 @@
  -episode X => Starts one episode automatically
  -warp XX => Starts a game level
  -fps => Shows in-game frame rate (frames per second)
- -flattersurfaces => Forces visplanes to be rendered as flat colors (depth
+ -flatterVisplanes => Forces visplanes to be rendered as flat colors (depth
                      illumination is enabled)
- -flatsurfaces => Forces visplanes to be rendered as flat colors (depth
+ -flatVisplanes => Forces visplanes to be rendered as flat colors (depth
                   illumination is disabled)
  -flatsky => Renders game skies as a flat color
  -flatshadows => Renders transparent enemies/player/items without fuzzy 
@@ -159,10 +159,10 @@
  -nomelt => Disables melting transition (fast for 386 processors)
  -uncapped => Disables frame rate limit (35 fps)
  -vsync => Forces screen updates synchronized with the VSync
- -normalsurfaces => Disable any optimization on visplanes
- -normalsky => Disable any optimization on skies
- -normalshadows => Disable any optimization on transparent things
- -normalsprites => Disables sprite culling
+ -defVisplanes => Disable any optimization on visplanes
+ -defSky => Disable any optimization on skies
+ -defShadows => Disable any optimization on transparent things
+ -far => Disables sprite culling
  -stereo => Forces stereo sound
  -melt => Enables screen melting transitions
  -capped => Forces 35 fps limit
