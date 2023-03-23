@@ -99,7 +99,7 @@ int I_GetSfxLumpNum(sfxinfo_t *sfx)
 
 void I_sndArbitrateCards(void)
 {
-    byte gus, adlib, sb, midi, ensoniq, lpt, cmsfx, cmsmus, oplxlpt, audiocd;
+    byte gus, adlib, sb, midi, ensoniq, lpt, cmsfx, cmsmus, oplxlptmus, oplxlptsnd, audiocd;
     int dmxlump;
 
     snd_SfxVolume = 127;
@@ -134,7 +134,8 @@ void I_sndArbitrateCards(void)
     sb = snd_SfxDevice == snd_SB || snd_SfxDevice == snd_SBDirect;
     ensoniq = snd_SfxDevice == snd_ENSONIQ;
     adlib = snd_MusicDevice == snd_Adlib || snd_MusicDevice == snd_SB || snd_MusicDevice == snd_PAS;
-    oplxlpt = snd_MusicDevice == snd_OPL2LPT || snd_MusicDevice == snd_OPL3LPT;
+    oplxlptmus = snd_MusicDevice == snd_OPL2LPT || snd_MusicDevice == snd_OPL3LPT;
+    oplxlptsnd = snd_SfxDevice == snd_OPL2LPT || snd_SfxDevice == snd_OPL3LPT;
     midi = snd_MusicDevice == snd_MPU;
     lpt = snd_SfxDevice == snd_DISNEY || snd_SfxDevice == snd_LPTDAC;
     cmsfx = snd_SfxDevice == snd_CMS;
@@ -182,12 +183,17 @@ void I_sndArbitrateCards(void)
         }
     }
 
-    if (oplxlpt)
+    if (oplxlptmus)
     {
         void *genmidi = W_CacheLumpName("GENMIDI", PU_STATIC);
         AL_SetCard(genmidi);
         Z_Free(genmidi);
         OPLxLPT_SetCard(snd_Mport);
+    }
+
+    if (oplxlptsnd)
+    {
+        OPLxLPT_SetCardSnd(snd_Sport);
     }
 
     if (midi)

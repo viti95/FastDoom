@@ -1302,7 +1302,7 @@ int MV_Init(
         break;
 
     case AdlibFX:
-        status = ADBFX_Init(soundcard);
+        status = ADBFX_Init(soundcard, -1);
         break;
 
     case Tandy3Voice:

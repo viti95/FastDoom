@@ -299,6 +299,11 @@ void OPLxLPT_SetCard(int port)
     dmx_mus_port = port;
 }
 
+void OPLxLPT_SetCardSnd(int port)
+{
+    dmx_snd_port = port;
+}
+
 void MPU_SetCard(int port)
 {
     dmx_mus_port = port;

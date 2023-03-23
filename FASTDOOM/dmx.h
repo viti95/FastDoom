@@ -35,6 +35,7 @@ void AL_SetCard(void *data);
 int MPU_Detect(int *port);
 void MPU_SetCard(int port);
 void OPLxLPT_SetCard(int port);
+void OPLxLPT_SetCardSnd(int port);
 void CMS_SetCard(int port);
 void SND_SetPort(int port);
 void ASS_Init(int rate, int maxsng, int mdev, int sdev);

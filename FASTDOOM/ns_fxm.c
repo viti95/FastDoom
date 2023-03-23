@@ -166,7 +166,9 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
         device->MaxChannels = 1;
         break;
     case AdlibFX:
-        DeviceStatus = ADBFX_Init(SoundCard);
+    case OPL2LPT:
+    case OPL3LPT:
+        DeviceStatus = ADBFX_Init(SoundCard, port);
         if (DeviceStatus != ADBFX_Ok)
         {
             status = FX_Error;
