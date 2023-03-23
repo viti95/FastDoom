@@ -24,9 +24,9 @@ if "%1"=="full" goto full_bench
 
 goto error_parameters
 
-echo Executing benchmarks...
-
 :full_bench
+echo Executing full benchmarks...
+
 %2 -potato -size 12 -defVisplanes -defSky -far -defShadows -nofps -nomelt -iwad %3 -timedemo %4 -csv
 %2 -potato -size 11 -defVisplanes -defSky -far -defShadows -nofps -nomelt -iwad %3 -timedemo %4 -csv
 %2 -potato -size 10 -defVisplanes -defSky -far -defShadows -nofps -nomelt -iwad %3 -timedemo %4 -csv
@@ -260,6 +260,7 @@ echo Executing benchmarks...
 goto benchmark_finished
 
 :normal_bench
+echo Executing standard benchmarks...
 %2 -potato -size 10 -defVisplanes -defSky -far -defShadows -nofps -nomelt -iwad %3 -timedemo %4 -csv
 %2 -potato -size 10 -flatVisplanes -defSky -far -defShadows -nofps -nomelt -iwad %3 -timedemo %4 -csv
 %2 -potato -size 10 -flatterVisplanes -defSky -far -defShadows -nofps -nomelt -iwad %3 -timedemo %4 -csv
@@ -274,12 +275,14 @@ goto benchmark_finished
 goto benchmark_finished
 
 :quick_bench
+echo Executing quick benchmarks...
 %2 -potato -size 10 -defVisplanes -defSky -far -defShadows -nofps -nomelt -iwad %3 -timedemo %4 -csv
 %2 -low -size 10 -defVisplanes -defSky -far -defShadows -nofps -nomelt -iwad %3 -timedemo %4 -csv
 %2 -high -size 10 -defVisplanes -defSky -far -defShadows -nofps -nomelt -iwad %3 -timedemo %4 -csv
 goto benchmark_finished
 
 :phil_bench
+echo Executing PhilsComputerLab DOOM benchmarks...
 %2 -high -size 12 -defVisplanes -defSky -far -defShadows -nofps -nomelt -iwad %3 -timedemo %4 -csv
 %2 -low -size 3 -defVisplanes -defSky -far -defShadows -nofps -nomelt -iwad %3 -timedemo %4 -csv
 goto benchmark_finished
