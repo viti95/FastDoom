@@ -76,6 +76,10 @@
 #include "i_pcp.h"
 #endif
 
+#if defined(MODE_SIGMA)
+#include "i_sigma.h"
+#endif
+
 #if defined(MODE_ATI640)
 #include "i_ati.h"
 #endif
@@ -680,6 +684,10 @@ void I_InitGraphics(void)
 
 #if defined(MODE_PCP)
     PCP_InitGraphics();
+#endif
+
+#if defined(MODE_SIGMA)
+    Sigma_InitGraphics();
 #endif
 
 #if defined(MODE_EGA)

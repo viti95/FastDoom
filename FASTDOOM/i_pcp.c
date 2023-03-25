@@ -11,6 +11,7 @@
 #include "tables.h"
 #include "math.h"
 #include "i_system.h"
+#include "i_pcp.h"
 
 #if defined(MODE_PCP)
 
