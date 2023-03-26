@@ -11,9 +11,9 @@
 #include "tables.h"
 #include "math.h"
 #include "i_system.h"
-#include "i_pcp.h"
+#include "i_sigma.h"
 
-#if defined(MODE_PCP)
+#if defined(MODE_SIGMA)
 
 const byte colors[48] = {
     0x00, 0x00, 0x00,
@@ -35,7 +35,8 @@ const byte colors[48] = {
 
 unsigned short lut16colors[14 * 256];
 unsigned short *ptrlut16colors;
-byte vrambuffer[32768];
+byte vrambuffer_p2[32768];
+byte vrambuffer_p3[32768];
 
 void I_ProcessPalette(byte *palette)
 {
@@ -80,12 +81,13 @@ void I_FinishUpdate(void)
 {
     int x;
     unsigned char *vram = (unsigned char *)0xB8000;
-    byte *ptrvrambuffer = vrambuffer;
+    byte *ptrvrambuffer_p2 = vrambuffer_p2;
+    byte *ptrvrambuffer_p3 = vrambuffer_p3;
     unsigned int base = 0;
 
     for (base = 0; base < SCREENHEIGHT * 320;)
     {
-        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++, ptrvrambuffer++)
+        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++, ptrvrambuffer_p2++, ptrvrambuffer_p3++)
         {
             unsigned short color;
             unsigned short finalcolor;
@@ -105,18 +107,22 @@ void I_FinishUpdate(void)
 
             tmp = BYTE0_USHORT(finalcolor);
 
-            if (tmp != *(ptrvrambuffer))
+            if (tmp != *(ptrvrambuffer_p2))
             {
+                outp(0x2DE, 2);
+
                 *(vram) = tmp;
-                *(ptrvrambuffer) = tmp;
+                *(ptrvrambuffer_p2) = tmp;
             }
 
             tmp = BYTE1_USHORT(finalcolor);
 
-            if (tmp != *(ptrvrambuffer + 0x4000))
+            if (tmp != *(ptrvrambuffer_p3))
             {
-                *(vram + 0x4000) = tmp;
-                *(ptrvrambuffer + 0x4000) = tmp;
+                outp(0x2DE, 3);
+
+                *(vram) = tmp;
+                *(ptrvrambuffer_p3) = tmp;
             }
 
             color = ptrlut16colors[backbuffer[base + 320]];
@@ -133,35 +139,65 @@ void I_FinishUpdate(void)
 
             tmp = BYTE0_USHORT(finalcolor);
 
-            if (tmp != *(ptrvrambuffer + 0x2000))
+            if (tmp != *(ptrvrambuffer_p2 + 0x2000))
             {
+                outp(0x2DE, 2);
+
                 *(vram + 0x2000) = tmp;
-                *(ptrvrambuffer + 0x2000) = tmp;
+                *(ptrvrambuffer_p2 + 0x2000) = tmp;
             }
 
             tmp = BYTE1_USHORT(finalcolor);
 
-            if (tmp != *(ptrvrambuffer + 0x6000))
+            if (tmp != *(ptrvrambuffer_p3 + 0x2000))
             {
-                *(vram + 0x6000) = tmp;
-                *(ptrvrambuffer + 0x6000) = tmp;
+                outp(0x2DE, 3);
+
+                *(vram + 0x2000) = tmp;
+                *(ptrvrambuffer_p3 + 0x2000) = tmp;
             }
         }
         base += 320;
     }
 }
 
-void PCP_InitGraphics(void)
+void Sigma_Init(void);
+
+void Sigma_ClearVRAM(void)
 {
-    union REGS regs;
+    unsigned char *vram = (unsigned char *)0xB8000;
+    unsigned int x;
 
-    regs.w.ax = 0x04;
-    int386(0x10, (union REGS *)&regs, &regs);
-    outp(0x3DD, 0x10);
-    pcscreen = destscreen = (byte *)0xB8000;
+    // Clear blue/intensity page
+    outp(0x2DE, 3);
 
-    SetDWords(vrambuffer, 0, 8192);
-    SetDWords(pcscreen, 0, 8192);
+    for (x = 0; x < 16384; x++)
+    {
+        *vram = 0;
+        vram++;
+    }
+
+    *vram = (unsigned char *)0xB8000;
+
+    // Clear red/green page
+    outp(0x2DE, 2);
+
+    for (x = 0; x < 16384; x++)
+    {
+        *vram = 0;
+        vram++;
+    }
+}
+
+void Sigma_InitGraphics(void)
+{
+    // ASM magic
+    Sigma_Init();
+
+    Sigma_ClearVRAM();
+
+    SetDWords(vrambuffer_p2, 0, 8192);
+    SetDWords(vrambuffer_p3, 0, 8192);
 }
 
 #endif
