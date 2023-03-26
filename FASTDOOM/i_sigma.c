@@ -102,10 +102,38 @@ void I_FinishUpdate(void)
 
 void Sigma_Init(void);
 
+void Sigma_ClearVRAM(void)
+{
+    unsigned char *vram = (unsigned char *)0xB8000;
+    unsigned int x;
+
+    // Clear blue/intensity page
+    outp(0x2DE, 3);
+
+    for (x = 0; x < 16384; x++)
+    {
+        *vram = 0;
+        vram++;
+    }
+
+    *vram = (unsigned char *)0xB8000;
+
+    // Clear red/green page
+    outp(0x2DE, 2);
+
+    for (x = 0; x < 16384; x++)
+    {
+        *vram = 0;
+        vram++;
+    }
+}
+
 void Sigma_InitGraphics(void)
 {
     // ASM magic
     Sigma_Init();
+
+    Sigma_ClearVRAM();
 
     // Initialize video buffers
     pcscreen = destscreen = (byte *)0xB8000;

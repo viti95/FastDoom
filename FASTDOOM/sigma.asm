@@ -24,13 +24,6 @@ BITS 32
 CODE_SYM_DEF Sigma_Init
         pushad
 
-        ; get current video mode
-        mov     ah,0fh
-        int     10h
-
-        ; save mode number
-        push    ax
-
         ; set video mode 4 (320x200 - 4 colors)
         mov     ax,4
         int     10h
@@ -66,35 +59,7 @@ CODE_SYM_DEF Sigma_Init
         mov     dl,0d9h
         out     dx,al
 
-        ; clear blue/intensity page
-        mov     dx,2deh
-        mov     al,3
-        out     dx,al
-        ;mov     ax,0b800h
-        ;mov     es,ax
-        ;xor     di,di
-        ;mov     cx,8192
-        ;xor     ax,ax
-        ;rep     stosw
-        mov     dx,2deh
-        mov     al,2
-        out     dx,al
-
-        ; restore mode number
-        pop     ax
-        xor     ah,ah
-
         popad
         ret
-
-        ; red/green page
-        ;mov     dx,2deh
-        ;mov     al,3
-        ;out     dx,al
-
-        ; blue/intensity page
-        ;mov     dx,2deh
-        ;mov     al,3
-        ;out     dx,al
 
 %endif
