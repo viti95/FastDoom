@@ -15,16 +15,28 @@
 
 #if defined(MODE_SIGMA)
 
-byte lut4colors[14 * 256];
-byte *ptrlut4colors;
-
-const byte colors[12] = {
+const byte colors[48] = {
     0x00, 0x00, 0x00,
     0x00, 0x2A, 0x00,
     0x2A, 0x00, 0x00,
-    0x2A, 0x15, 0x00};
+    0x2A, 0x15, 0x00,
+    0x15, 0x15, 0x15,
+    0x15, 0x3F, 0x15,
+    0x3F, 0x15, 0x15,
+    0x3F, 0x3F, 0x15,
+    0x00, 0x00, 0x2A,
+    0x00, 0x2A, 0x2A,
+    0x2A, 0x00, 0x2A,
+    0x2A, 0x2A, 0x2A,
+    0x15, 0x15, 0x3F,
+    0x15, 0x3F, 0x3F,
+    0x3F, 0x15, 0x3F,
+    0x3F, 0x3F, 0x3F};
 
-unsigned short vrambuffer[16384];
+unsigned short lut16colors[14 * 256];
+unsigned short *ptrlut16colors;
+byte vrambuffer_p2[32768];
+byte vrambuffer_p3[32768];
 
 void I_ProcessPalette(byte *palette)
 {
@@ -39,64 +51,113 @@ void I_ProcessPalette(byte *palette)
 
         int bestcolor;
 
+        unsigned short value;
+        unsigned short value2;
+
         r1 = (int)ptr[*palette++];
         g1 = (int)ptr[*palette++];
         b1 = (int)ptr[*palette++];
 
-        bestcolor = GetClosestColor(colors, 4, r1, g1, b1);
+        bestcolor = GetClosestColor(colors, 16, r1, g1, b1);
 
-        lut4colors[i] = bestcolor | bestcolor << 2 | bestcolor << 4 | bestcolor << 6;
+        value = bestcolor & 12;
+        value = value | value >> 2 | value << 2 | value << 4;
+        value <<= 8;
+
+        value2 = bestcolor & 3;
+        value2 = value2 | value2 << 2 | value2 << 4 | value2 << 6;
+        value2;
+
+        lut16colors[i] = value | value2;
     }
 }
 
 void I_SetPalette(int numpalette)
 {
-    ptrlut4colors = lut4colors + numpalette * 256;
+    ptrlut16colors = lut16colors + numpalette * 256;
 }
 
 void I_FinishUpdate(void)
 {
     int x;
     unsigned char *vram = (unsigned char *)0xB8000;
-    unsigned short *ptrvrambuffer = vrambuffer;
+    byte *ptrvrambuffer_p2 = vrambuffer_p2;
+    byte *ptrvrambuffer_p3 = vrambuffer_p3;
     unsigned int base = 0;
 
-    for (base = 0; base < SCREENHEIGHT * 320; base += 320)
+    for (base = 0; base < SCREENHEIGHT * 320;)
     {
-        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++, ptrvrambuffer++)
+        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++, ptrvrambuffer_p2++, ptrvrambuffer_p3++)
         {
             unsigned short color;
-            unsigned short tmpColor;
+            unsigned short finalcolor;
             byte tmp;
 
-            BYTE1_USHORT(tmpColor) = (ptrlut4colors[backbuffer[base]]);
-            BYTE0_USHORT(tmpColor) = (ptrlut4colors[backbuffer[base + 1]]);
-            tmpColor &= 0xC030;
+            color = ptrlut16colors[backbuffer[base]];
+            finalcolor = color & 0xC0C0;
 
-            BYTE1_USHORT(color) = (ptrlut4colors[backbuffer[base + 2]]);
-            BYTE0_USHORT(color) = (ptrlut4colors[backbuffer[base + 3]]);
-            tmpColor |= color & 0x0C03;
+            color = ptrlut16colors[backbuffer[base + 1]];
+            finalcolor |= color & 0x3030;
 
-            if (tmpColor != *(ptrvrambuffer))
+            color = ptrlut16colors[backbuffer[base + 2]];
+            finalcolor |= color & 0x0C0C;
+
+            color = ptrlut16colors[backbuffer[base + 3]];
+            finalcolor |= color & 0x0303;
+
+            tmp = BYTE0_USHORT(finalcolor);
+
+            if (tmp != *(ptrvrambuffer_p2))
             {
-                *(ptrvrambuffer) = tmpColor;
-                *(vram) = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
+                outp(0x2DE, 2);
+
+                *(vram) = tmp;
+                *(ptrvrambuffer_p2) = tmp;
             }
 
-            BYTE1_USHORT(tmpColor) = (ptrlut4colors[backbuffer[base + 320]]);
-            BYTE0_USHORT(tmpColor) = (ptrlut4colors[backbuffer[base + 321]]);
-            tmpColor &= 0xC030;
+            tmp = BYTE1_USHORT(finalcolor);
 
-            BYTE1_USHORT(color) = (ptrlut4colors[backbuffer[base + 322]]);
-            BYTE0_USHORT(color) = (ptrlut4colors[backbuffer[base + 323]]);
-            tmpColor |= color & 0x0C03;
-
-            if (tmpColor != *(ptrvrambuffer + 0x2000))
+            if (tmp != *(ptrvrambuffer_p3))
             {
-                *(ptrvrambuffer + 0x2000) = tmpColor;
-                *(vram + 0x2000) = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
+                outp(0x2DE, 3);
+
+                *(vram) = tmp;
+                *(ptrvrambuffer_p3) = tmp;
+            }
+
+            color = ptrlut16colors[backbuffer[base + 320]];
+            finalcolor = color & 0xC0C0;
+
+            color = ptrlut16colors[backbuffer[base + 321]];
+            finalcolor |= color & 0x3030;
+
+            color = ptrlut16colors[backbuffer[base + 322]];
+            finalcolor |= color & 0x0C0C;
+
+            color = ptrlut16colors[backbuffer[base + 323]];
+            finalcolor |= color & 0x0303;
+
+            tmp = BYTE0_USHORT(finalcolor);
+
+            if (tmp != *(ptrvrambuffer_p2 + 0x2000))
+            {
+                outp(0x2DE, 2);
+
+                *(vram + 0x2000) = tmp;
+                *(ptrvrambuffer_p2 + 0x2000) = tmp;
+            }
+
+            tmp = BYTE1_USHORT(finalcolor);
+
+            if (tmp != *(ptrvrambuffer_p3 + 0x2000))
+            {
+                outp(0x2DE, 3);
+
+                *(vram + 0x2000) = tmp;
+                *(ptrvrambuffer_p3 + 0x2000) = tmp;
             }
         }
+        base += 320;
     }
 }
 
@@ -135,11 +196,8 @@ void Sigma_InitGraphics(void)
 
     Sigma_ClearVRAM();
 
-    // Initialize video buffers
-    pcscreen = destscreen = (byte *)0xB8000;
-
-    SetDWords(vrambuffer, 0, 8192);
-    SetDWords(pcscreen, 0, 8192);
+    SetDWords(vrambuffer_p2, 0, 8192);
+    SetDWords(vrambuffer_p3, 0, 8192);
 }
 
 #endif
