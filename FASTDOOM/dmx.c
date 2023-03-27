@@ -419,6 +419,9 @@ void ASS_Init(int rate, int maxsng, int mdev, int sdev)
         case SoundSource:
         case LPTDAC:
         case CMS:
+        case AdlibFX:
+        case OPL2LPT:
+        case OPL3LPT:
             FX_SetupCard(sound_device, &fx_device, dmx_snd_port);
             break;
         default:

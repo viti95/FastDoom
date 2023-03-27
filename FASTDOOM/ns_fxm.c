@@ -299,6 +299,8 @@ int FX_Init(
     case CMS:
     case LPTDAC:
     case AdlibFX:
+    case OPL2LPT:
+    case OPL3LPT:
     case SoundBlasterDirect:
         devicestatus = MV_Init(SoundCard, FX_MixRate, numvoices, numchannels, samplebits);
         if (devicestatus != MV_Ok)

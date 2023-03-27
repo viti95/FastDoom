@@ -1302,6 +1302,8 @@ int MV_Init(
         break;
 
     case AdlibFX:
+    case OPL2LPT:
+    case OPL3LPT:
         status = ADBFX_Init(soundcard, -1);
         break;
 
