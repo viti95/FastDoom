@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.9.5 (???)
+* Sigma Designs Color 400 support. 320x200 and 16 colors.
+* Added low and potato detail for backbuffered and VBE2 direct modes.
+* Removed FDOOME80.EXE and FDOOMEW1.EXE, not needed with new detail modes. They were also very half-baked, HUD was basically non-readable.
+
 ## 0.9.4 (15 Mar 2023)
 * PCM music support. Up to 44.1 KHz, 8-bit mono music. For now PCM music is stored in RAM, so more than 16Mb is recommended
 * Tandy 3-voice SN76489 sound support. Sound quality is nowhere near good, but can be improved
