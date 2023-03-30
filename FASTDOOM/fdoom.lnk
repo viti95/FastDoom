@@ -81,7 +81,9 @@ file linearl.obj
 file linearp.obj
 file planar.obj
 file planar2.obj
-file vbe2d.obj
+file vbe2dh.obj
+file vbe2dl.obj
+file vbe2dp.obj
 file tables.obj
 file f_finale.obj
 file d_main.obj

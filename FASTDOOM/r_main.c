@@ -984,24 +984,69 @@ void R_ExecuteSetViewSize(void)
 #endif
 
 #if defined(MODE_VBE2_DIRECT)
-    colfunc = basecolfunc = R_DrawColumnVBE2;
+    switch (detailshift)
+    {
+    case 0:
+        colfunc = basecolfunc = R_DrawColumnVBE2;
 
-    if (flatterVisplanes)
-        spanfunc = R_DrawSpanFlatVBE2;
-    else
-        spanfunc = R_DrawSpanVBE2;
+        if (flatterVisplanes)
+            spanfunc = R_DrawSpanFlatVBE2;
+        else
+            spanfunc = R_DrawSpanVBE2;
 
-    if (flatSky)
-        skyfunc = R_DrawSkyFlatVBE2;
-    else
-        skyfunc = R_DrawColumnVBE2;
+        if (flatSky)
+            skyfunc = R_DrawSkyFlatVBE2;
+        else
+            skyfunc = R_DrawColumnVBE2;
 
-    if (flatShadows)
-        fuzzcolfunc = R_DrawFuzzColumnFastVBE2;
-    else if (saturnShadows)
-        fuzzcolfunc = R_DrawFuzzColumnSaturnVBE2;
-    else
-        fuzzcolfunc = R_DrawFuzzColumnVBE2;
+        if (flatShadows)
+            fuzzcolfunc = R_DrawFuzzColumnFastVBE2;
+        else if (saturnShadows)
+            fuzzcolfunc = R_DrawFuzzColumnSaturnVBE2;
+        else
+            fuzzcolfunc = R_DrawFuzzColumnVBE2;
+        break;
+    case 1:
+        colfunc = basecolfunc = R_DrawColumnVBE2;
+
+        if (flatterVisplanes)
+            spanfunc = R_DrawSpanFlatVBE2;
+        else
+            spanfunc = R_DrawSpanVBE2;
+
+        if (flatSky)
+            skyfunc = R_DrawSkyFlatVBE2;
+        else
+            skyfunc = R_DrawColumnVBE2;
+
+        if (flatShadows)
+            fuzzcolfunc = R_DrawFuzzColumnFastVBE2;
+        else if (saturnShadows)
+            fuzzcolfunc = R_DrawFuzzColumnSaturnVBE2;
+        else
+            fuzzcolfunc = R_DrawFuzzColumnVBE2;
+        break;
+    case 2:
+        colfunc = basecolfunc = R_DrawColumnVBE2;
+
+        if (flatterVisplanes)
+            spanfunc = R_DrawSpanFlatVBE2;
+        else
+            spanfunc = R_DrawSpanVBE2;
+
+        if (flatSky)
+            skyfunc = R_DrawSkyFlatVBE2;
+        else
+            skyfunc = R_DrawColumnVBE2;
+
+        if (flatShadows)
+            fuzzcolfunc = R_DrawFuzzColumnFastVBE2;
+        else if (saturnShadows)
+            fuzzcolfunc = R_DrawFuzzColumnSaturnVBE2;
+        else
+            fuzzcolfunc = R_DrawFuzzColumnVBE2;
+        break;
+    }
 #endif
 
     R_InitBuffer(scaledviewwidth, viewheight);
@@ -1298,7 +1343,18 @@ void R_RenderPlayerView(void)
 #endif
 #if defined(MODE_VBE2_DIRECT)
     if (flatVisplanes)
-        R_DrawPlanesFlatVisplanesVBE2();
+        switch (detailshift)
+        {
+        case 0:
+            R_DrawPlanesFlatVisplanesVBE2();
+            break;
+        case 1:
+            R_DrawPlanesFlatVisplanesVBE2();
+            break;
+        case 2:
+            R_DrawPlanesFlatVisplanesVBE2();
+            break;
+        }
     else
         R_DrawPlanes();
 #endif

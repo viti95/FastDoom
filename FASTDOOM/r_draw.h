@@ -132,11 +132,23 @@ void R_DrawFuzzColumnSaturnLowBackbuffer(void);
 void R_DrawFuzzColumnSaturnPotatoBackbuffer(void);
 
 void R_DrawColumnVBE2(void);
+void R_DrawColumnLowVBE2(void);
+void R_DrawColumnPotatoVBE2(void);
 void R_DrawSpanVBE2(void);
+void R_DrawSpanLowVBE2(void);
+void R_DrawSpanPotatoVBE2(void);
 void R_DrawSkyFlatVBE2(void);
+void R_DrawSkyFlatLowVBE2(void);
+void R_DrawSkyFlatPotatoVBE2(void);
 void R_DrawFuzzColumnFastVBE2(void);
+void R_DrawFuzzColumnFastLowVBE2(void);
+void R_DrawFuzzColumnFastPotatoVBE2(void);
 void R_DrawFuzzColumnSaturnVBE2(void);
+void R_DrawFuzzColumnSaturnLowVBE2(void);
+void R_DrawFuzzColumnSaturnPotatoVBE2(void);
 void R_DrawFuzzColumnVBE2(void);
+void R_DrawFuzzColumnLowVBE2(void);
+void R_DrawFuzzColumnPotatoVBE2(void);
 
 void R_VideoErase(unsigned ofs, int count);
 
@@ -155,13 +167,11 @@ extern byte *ds_source;
 // Span blitting for rows, floor/ceiling.
 // No Sepctre effect needed.
 void R_DrawSpan(void);
-void R_DrawSpanFlat(void);
-
-// Low resolution mode, 160x200?
 void R_DrawSpanLow(void);
-void R_DrawSpanFlatLow(void);
-
 void R_DrawSpanPotato(void);
+
+void R_DrawSpanFlat(void);
+void R_DrawSpanFlatLow(void);
 void R_DrawSpanFlatPotato(void);
 
 void R_DrawSpanFlatText80100(void);
@@ -172,6 +182,8 @@ void R_DrawSpanFlatText4050(void);
 void R_DrawSpanFlatTextMDA(void);
 
 void R_DrawSpanFlatVBE2(void);
+void R_DrawSpanFlatLowVBE2(void);
+void R_DrawSpanFlatPotatoVBE2(void);
 
 void R_InitBuffer(int width, int height);
 
