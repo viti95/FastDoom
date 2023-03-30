@@ -197,7 +197,7 @@ CODE_SYM_DEF R_DrawSpanPotatoBackbuffer
 
 %assign LINE 0
 %assign PCOL 0
-%rep SCREENWIDTH
+%rep SCREENWIDTH/4
   %assign PLANE 0
     MAPLABEL LINE:
       %assign LINE LINE+1
@@ -224,6 +224,6 @@ CODE_SYM_DEF R_DrawSpanPotatoBackbuffer
 %assign PCOL PCOL+1
 %endrep
 
-hmap320: ret
+hmap80: ret
 
 %endif
