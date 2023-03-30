@@ -1979,7 +1979,6 @@ void R_DrawFuzzColumnVBE2(void)
 {
     int count;
     byte *dest;
-    fixed_t frac, fracstep;
 
     if (!dc_yl)
         dc_yl = 1;
@@ -2005,7 +2004,6 @@ void R_DrawFuzzColumnLowVBE2(void)
 {
     int count;
     byte *dest;
-    fixed_t frac, fracstep;
 
     if (!dc_yl)
         dc_yl = 1;
@@ -2016,11 +2014,17 @@ void R_DrawFuzzColumnLowVBE2(void)
     if (count < 0)
         return;
 
-    dest = destview + Mul320(dc_yl) + dc_x;
+    dest = destview + Mul320(dc_yl) + (dc_x << 1);
 
     do
     {
-        *dest = colormaps[6 * 256 + dest[fuzzoffset[fuzzpos]]];
+        lighttable_t color;
+
+        color = colormaps[6 * 256 + dest[fuzzoffset[fuzzpos]]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+
         if (++fuzzpos == FUZZTABLE)
             fuzzpos = 0;
         dest += SCREENWIDTH;
@@ -2031,7 +2035,6 @@ void R_DrawFuzzColumnPotatoVBE2(void)
 {
     int count;
     byte *dest;
-    fixed_t frac, fracstep;
 
     if (!dc_yl)
         dc_yl = 1;
@@ -2042,11 +2045,19 @@ void R_DrawFuzzColumnPotatoVBE2(void)
     if (count < 0)
         return;
 
-    dest = destview + Mul320(dc_yl) + dc_x;
+    dest = destview + Mul320(dc_yl) + (dc_x << 2);
 
     do
     {
-        *dest = colormaps[6 * 256 + dest[fuzzoffset[fuzzpos]]];
+        lighttable_t color;
+
+        color = colormaps[6 * 256 + dest[fuzzoffset[fuzzpos]]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+        *(dest + 2) = color;
+        *(dest + 3) = color;
+        
         if (++fuzzpos == FUZZTABLE)
             fuzzpos = 0;
         dest += SCREENWIDTH;
@@ -3200,7 +3211,6 @@ void R_DrawFuzzColumnBackbuffer(void)
 {
     int count;
     byte *dest;
-    fixed_t frac, fracstep;
 
     if (!dc_yl)
         dc_yl = 1;
@@ -3226,7 +3236,6 @@ void R_DrawFuzzColumnLowBackbuffer(void)
 {
     int count;
     byte *dest;
-    fixed_t frac, fracstep;
 
     if (!dc_yl)
         dc_yl = 1;
@@ -3258,7 +3267,6 @@ void R_DrawFuzzColumnPotatoBackbuffer(void)
 {
     int count;
     byte *dest;
-    fixed_t frac, fracstep;
 
     if (!dc_yl)
         dc_yl = 1;
