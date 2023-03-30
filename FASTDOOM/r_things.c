@@ -272,10 +272,10 @@ void R_DrawVisSprite(vissprite_t *vis)
 #if defined(MODE_T4050)
     dc_iscale = abs(vis->xiscale) >> 1;
 #endif
-#if defined(MODE_Y)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     dc_iscale = abs(vis->xiscale) >> detailshift;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA)
     dc_iscale = abs(vis->xiscale);
 #endif
 
@@ -496,10 +496,10 @@ void R_ProjectSprite(mobj_t *thing)
 #if defined(MODE_T4050)
     vis->scale = xscale << 1;
 #endif
-#if defined(MODE_Y)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     vis->scale = xscale << detailshift;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA)
     vis->scale = xscale;
 #endif
 
@@ -551,10 +551,10 @@ void R_ProjectSprite(mobj_t *thing)
 #if defined(MODE_T4050)
         index = xscale >> (LIGHTSCALESHIFT - 1);
 #endif
-#if defined(MODE_Y)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
         index = xscale >> (LIGHTSCALESHIFT - detailshift);
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA)
         index = xscale >> LIGHTSCALESHIFT;
 #endif
 
@@ -638,10 +638,10 @@ void R_DrawPSprite(pspdef_t *psp)
 #if defined(MODE_T4050)
     vis->scale = pspritescale << 1;
 #endif
-#if defined(MODE_Y)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     vis->scale = pspritescale << detailshift;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA)
     vis->scale = pspritescale;
 #endif
 

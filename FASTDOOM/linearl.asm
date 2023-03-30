@@ -55,10 +55,10 @@ scalecalls:
 
 BEGIN_CODE_SECTION
 
-; ================
-; R_DrawColumn_13h
-; ================
-CODE_SYM_DEF R_DrawColumn_13h
+; =========================
+; R_DrawColumnLowBackbuffer
+; =========================
+CODE_SYM_DEF R_DrawColumnLowBackbuffer
   pushad
 
   mov  ebp,[_dc_yh]
@@ -87,7 +87,7 @@ CODE_SYM_DEF R_DrawColumn_13h
 .done:
   popad
   ret
-; R_DrawColumn_13h ends
+; R_DrawColumnLowBackbuffer ends
 
 %macro SCALELABEL 1
   vscale%1
@@ -101,6 +101,7 @@ CODE_SYM_DEF R_DrawColumn_13h
     mov  al,[eax]                       ; translate the color
     mov  ebx,edx
     mov  [edi-(LINE-1)*SCREENWIDTH],al  ; draw a pixel to the buffer
+    mov  [edi-(LINE-1)*SCREENWIDTH+1],al  ; draw a pixel to the buffer
     shr  ebx,25
     %assign LINE LINE-1
 %endrep
@@ -109,6 +110,7 @@ vscale1:
   mov al,[esi+ebx]
   mov al,[eax]
   mov [edi],al
+  mov [edi + 1], al
 
 vscale0:
   ret
@@ -137,7 +139,7 @@ align 4
 
 mapcalls:
   %assign LINE 0
-  %rep SCREENWIDTH+1
+  %rep SCREENWIDTH/2+1
     MAPDEFINE LINE
     %assign LINE LINE+1
   %endrep
@@ -147,10 +149,10 @@ returnpoint: dd 0
 
 CONTINUE_CODE_SECTION
 
-; ==============
-; R_DrawSpan_13h
-; ==============
-CODE_SYM_DEF R_DrawSpan_13h
+; =======================
+; R_DrawSpanLowBackbuffer
+; =======================
+CODE_SYM_DEF R_DrawSpanLowBackbuffer
   pushad
 
   mov     eax,[_ds_x1]
@@ -183,7 +185,7 @@ CODE_SYM_DEF R_DrawSpan_13h
 
   popad
   ret
-; R_DrawSpan_13h ends
+; R_DrawSpanLowBackbuffer ends
 
 %macro MAPLABEL 1
   hmap%1
@@ -191,29 +193,30 @@ CODE_SYM_DEF R_DrawSpan_13h
 
 %assign LINE 0
 %assign PCOL 0
-%rep SCREENWIDTH/4
+%rep SCREENWIDTH/2
   %assign PLANE 0
-  %rep 4
     MAPLABEL LINE:
       %assign LINE LINE+1
-      %if LINE = 320
+      %if LINE = 160
         mov   al,[esi+ebx]           ; get source pixel
         mov   al,[eax]               ; translate color
-        mov   [edi+PLANE+PCOL*4],al  ; write pixel
+        mov   [edi+PLANE+PCOL*2],al  ; write pixel
+        mov   [edi+PLANE+PCOL*2+1],al  ; write pixel
       %else
         mov   al,[esi+ebx]           ; get source pixel
         shld  ebx,ecx,22             ; shift y units in
         mov   al,[eax]               ; translate color
         shld  ebx,ecx,6              ; shift x units in
-        mov   [edi+PLANE+PCOL*4],al  ; write pixel
+        mov   [edi+PLANE+PCOL*2],al  ; write pixel
+        mov   [edi+PLANE+PCOL*2+1],al  ; write pixel
         and   ebx,ebp                ; mask off slop bits
         add   ecx,edx                ; position += step
       %endif
       %assign PLANE PLANE+1
-  %endrep
 %assign PCOL PCOL+1
 %endrep
 
-hmap320: ret
+hmap160: 
+  ret
 
 %endif

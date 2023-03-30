@@ -232,6 +232,59 @@ void R_DrawSkyFlatVBE2(void)
         dest += SCREENWIDTH;
     } while (count--);
 }
+
+void R_DrawSkyFlatLowVBE2(void)
+{
+    int count;
+    unsigned short *dest;
+
+    dest = (unsigned short *)((byte *)destview + Mul320(dc_yl) + (dc_x << 1));
+    count = dc_yh - dc_yl;
+    
+    while (count >= 3)
+    {
+        *(dest) = 220 | 220 << 8;
+        *(dest + SCREENWIDTH / 2) = 220 | 220 << 8;
+        *(dest + 2 * SCREENWIDTH / 2) = 220 | 220 << 8;
+        *(dest + 3 * SCREENWIDTH / 2) = 220 | 220 << 8;
+        dest += 4 * SCREENWIDTH / 2;
+        count -= 4;
+    }
+
+    while (count >= 0)
+    {
+        *(dest) = 220 | 220 << 8;
+        dest += SCREENWIDTH / 2;
+        count--;
+    };
+}
+
+void R_DrawSkyFlatPotatoVBE2(void)
+{
+    int count;
+    unsigned int *dest;
+
+    dest = (unsigned int *)((byte *)destview + Mul320(dc_yl) + (dc_x << 2));
+    count = dc_yh - dc_yl;
+
+    while (count >= 3)
+    {
+        *(dest) = 220 | 220 << 8 | 220 << 16 | 220 << 24;
+        *(dest + SCREENWIDTH / 4) = 220 | 220 << 8 | 220 << 16 | 220 << 24;
+        *(dest + 2 * SCREENWIDTH / 4) = 220 | 220 << 8 | 220 << 16 | 220 << 24;
+        *(dest + 3 * SCREENWIDTH / 4) = 220 | 220 << 8 | 220 << 16 | 220 << 24;
+        dest += 4 * SCREENWIDTH / 4;
+        count -= 4;
+    }
+
+    while (count >= 0)
+    {
+        *(dest) = 220 | 220 << 8 | 220 << 16 | 220 << 24;
+        dest += SCREENWIDTH / 4;
+        count--;
+    };
+}
+
 void R_DrawFuzzColumnFastVBE2(void)
 {
     int count;
@@ -259,6 +312,111 @@ void R_DrawFuzzColumnFastVBE2(void)
         count--;
     };
 }
+
+void R_DrawFuzzColumnFastLowVBE2(void)
+{
+    int count;
+    byte *dest;
+
+    dest = destview + Mul320(dc_yl) + (dc_x << 1);
+
+    count = dc_yh - dc_yl;
+
+    while (count >= 3)
+    {
+        lighttable_t color = colormaps[6 * 256 + dest[0]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+
+        color = colormaps[6 * 256 + dest[SCREENWIDTH]];
+
+        *(dest + SCREENWIDTH) = color;
+        *(dest + SCREENWIDTH + 1) = color;
+
+        color = colormaps[6 * 256 + dest[2 * SCREENWIDTH]];
+
+        *(dest + 2 * SCREENWIDTH) = color;
+        *(dest + 2 * SCREENWIDTH + 1) = color;
+
+        color = colormaps[6 * 256 + dest[3 * SCREENWIDTH]];
+
+        *(dest + 3 * SCREENWIDTH) = color;
+        *(dest + 3 * SCREENWIDTH + 1) = color;
+
+        dest += 4 * SCREENWIDTH;
+        count -= 4;
+    }
+
+    while (count >= 0)
+    {
+        lighttable_t color = colormaps[6 * 256 + dest[0]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+
+        dest += SCREENWIDTH;
+        count--;
+    };
+}
+
+void R_DrawFuzzColumnFastPotatoVBE2(void)
+{
+    int count;
+    byte *dest;
+
+    dest = destview + Mul320(dc_yl) + (dc_x << 2);
+
+    count = dc_yh - dc_yl;
+
+    while (count >= 3)
+    {
+        lighttable_t color = colormaps[6 * 256 + dest[0]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+        *(dest + 2) = color;
+        *(dest + 3) = color;
+
+        color = colormaps[6 * 256 + dest[SCREENWIDTH]];
+
+        *(dest + SCREENWIDTH) = color;
+        *(dest + SCREENWIDTH + 1) = color;
+        *(dest + SCREENWIDTH + 2) = color;
+        *(dest + SCREENWIDTH + 3) = color;
+
+        color = colormaps[6 * 256 + dest[2 * SCREENWIDTH]];
+
+        *(dest + 2 * SCREENWIDTH) = color;
+        *(dest + 2 * SCREENWIDTH + 1) = color;
+        *(dest + 2 * SCREENWIDTH + 2) = color;
+        *(dest + 2 * SCREENWIDTH + 3) = color;
+
+        color = colormaps[6 * 256 + dest[3 * SCREENWIDTH]];
+
+        *(dest + 3 * SCREENWIDTH) = color;
+        *(dest + 3 * SCREENWIDTH + 1) = color;
+        *(dest + 3 * SCREENWIDTH + 2) = color;
+        *(dest + 3 * SCREENWIDTH + 3) = color;
+
+        dest += 4 * SCREENWIDTH;
+        count -= 4;
+    }
+
+    while (count >= 0)
+    {
+        lighttable_t color = colormaps[6 * 256 + dest[0]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+        *(dest + 2) = color;
+        *(dest + 3) = color;
+
+        dest += SCREENWIDTH;
+        count--;
+    };
+}
+
 void R_DrawFuzzColumnSaturnVBE2(void)
 {
     int count;
@@ -308,6 +466,128 @@ void R_DrawFuzzColumnSaturnVBE2(void)
     }
 }
 
+void R_DrawFuzzColumnSaturnLowVBE2(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac;
+    fixed_t fracstep;
+    int initialdrawpos = 0;
+
+    count = (dc_yh - dc_yl) / 2 - 1;
+
+    if (count < 0)
+        return;
+
+    initialdrawpos = dc_yl + dc_x;
+
+    dest = destview + Mul320(dc_yl) + (dc_x << 1);
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    if (initialdrawpos & 1)
+    {
+        dest += SCREENWIDTH;
+        frac += fracstep;
+    }
+
+    fracstep = 2 * fracstep;
+
+    do
+    {
+        lighttable_t color = dc_colormap[dc_source[(frac >> FRACBITS)]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+
+        dest += 2 * SCREENWIDTH;
+        frac += fracstep;
+    } while (count--);
+
+    if ((dc_yh - dc_yl) & 1)
+    {
+        lighttable_t color = dc_colormap[dc_source[(frac >> FRACBITS)]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+    }
+    else
+    {
+        if (!(initialdrawpos & 1))
+        {
+            lighttable_t color = dc_colormap[dc_source[(frac >> FRACBITS)]];
+
+            *(dest) = color;
+            *(dest + 1) = color;
+        }
+    }
+}
+
+void R_DrawFuzzColumnSaturnPotatoVBE2(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac;
+    fixed_t fracstep;
+    int initialdrawpos = 0;
+
+    count = (dc_yh - dc_yl) / 2 - 1;
+
+    if (count < 0)
+        return;
+
+    initialdrawpos = dc_yl + dc_x;
+
+    dest = destview + Mul320(dc_yl) + (dc_x << 2);
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    if (initialdrawpos & 1)
+    {
+        dest += SCREENWIDTH;
+        frac += fracstep;
+    }
+
+    fracstep = 2 * fracstep;
+
+    do
+    {
+        lighttable_t color = dc_colormap[dc_source[(frac >> FRACBITS)]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+        *(dest + 2) = color;
+        *(dest + 3) = color;
+
+        dest += 2 * SCREENWIDTH;
+        frac += fracstep;
+    } while (count--);
+
+    if ((dc_yh - dc_yl) & 1)
+    {
+        lighttable_t color = dc_colormap[dc_source[(frac >> FRACBITS)]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+        *(dest + 2) = color;
+        *(dest + 3) = color;
+    }
+    else
+    {
+        if (!(initialdrawpos & 1))
+        {
+            lighttable_t color = dc_colormap[dc_source[(frac >> FRACBITS)]];
+
+            *(dest) = color;
+            *(dest + 1) = color;
+            *(dest + 2) = color;
+            *(dest + 3) = color;
+        }
+    }
+}
+
 void R_DrawSpanFlatVBE2(void)
 {
     byte *dest;
@@ -329,6 +609,46 @@ void R_DrawSpanFlatVBE2(void)
         SetWords(dest, colorcomp, countp / 2);
     }
 }
+
+void R_DrawSpanFlatLowVBE2(void)
+{
+    byte *dest;
+    int countp;
+
+    unsigned short color = ds_colormap[ds_source[FLATPIXELCOLOR]];
+    color |= color << 8;
+
+    dest = destview + Mul320(ds_y) + (ds_x1 << 1);
+
+    countp = ds_x2 - ds_x1 + 1;
+
+    if (countp & 1)
+    {
+        SetWords(dest, color, countp);
+    }
+    else
+    {
+        unsigned int colorcomp = color << 16 | color;
+        SetDWords(dest, colorcomp, countp / 2);
+    }
+}
+
+void R_DrawSpanFlatPotatoVBE2(void)
+{
+    byte *dest;
+    int countp;
+
+    unsigned int color = ds_colormap[ds_source[FLATPIXELCOLOR]];
+    color |= color << 8;
+    color |= color << 16;
+
+    dest = destview + Mul320(ds_y) + (ds_x1 << 2);
+
+    countp = ds_x2 - ds_x1 + 1;
+
+    SetDWords(dest, color, countp);
+}
+
 #endif
 
 #if defined(MODE_T4050)
@@ -1659,7 +1979,6 @@ void R_DrawFuzzColumnVBE2(void)
 {
     int count;
     byte *dest;
-    fixed_t frac, fracstep;
 
     if (!dc_yl)
         dc_yl = 1;
@@ -1680,6 +1999,71 @@ void R_DrawFuzzColumnVBE2(void)
         dest += SCREENWIDTH;
     } while (count--);
 }
+
+void R_DrawFuzzColumnLowVBE2(void)
+{
+    int count;
+    byte *dest;
+
+    if (!dc_yl)
+        dc_yl = 1;
+    if (dc_yh == viewheight - 1)
+        dc_yh = viewheight - 2;
+
+    count = dc_yh - dc_yl;
+    if (count < 0)
+        return;
+
+    dest = destview + Mul320(dc_yl) + (dc_x << 1);
+
+    do
+    {
+        lighttable_t color;
+
+        color = colormaps[6 * 256 + dest[fuzzoffset[fuzzpos]]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+
+        if (++fuzzpos == FUZZTABLE)
+            fuzzpos = 0;
+        dest += SCREENWIDTH;
+    } while (count--);
+}
+
+void R_DrawFuzzColumnPotatoVBE2(void)
+{
+    int count;
+    byte *dest;
+
+    if (!dc_yl)
+        dc_yl = 1;
+    if (dc_yh == viewheight - 1)
+        dc_yh = viewheight - 2;
+
+    count = dc_yh - dc_yl;
+    if (count < 0)
+        return;
+
+    dest = destview + Mul320(dc_yl) + (dc_x << 2);
+
+    do
+    {
+        lighttable_t color;
+
+        color = colormaps[6 * 256 + dest[fuzzoffset[fuzzpos]]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+        *(dest + 2) = color;
+        *(dest + 3) = color;
+        
+        if (++fuzzpos == FUZZTABLE)
+            fuzzpos = 0;
+        dest += SCREENWIDTH;
+    } while (count--);
+}
+
 #endif
 
 #if defined(MODE_T4050)
@@ -2460,10 +2844,10 @@ void R_InitBuffer(int width, int height)
 #endif
 #endif
 
-        // Column offset. For windows.
+    // Column offset. For windows.
 #if defined(USE_BACKBUFFER)
     for (i = 0; i < width; i++)
-        columnofs[i] = viewwindowx + i;
+        columnofs[i] = (viewwindowx + i) << detailshift;
 #endif
 
 // Same with base row offset.
@@ -2496,7 +2880,6 @@ void R_InitBuffer(int width, int height)
     for (i = 0; i < height; i++)
         ylookup[i] = Mul80(i);
 #endif
-
 }
 
 //
@@ -2746,7 +3129,7 @@ void R_DrawViewBorder(void)
 #endif
 
 #if defined(USE_BACKBUFFER)
-void R_DrawSkyFlat_13h(void)
+void R_DrawSkyFlatBackbuffer(void)
 {
     register int count;
     register byte *dest;
@@ -2772,11 +3155,62 @@ void R_DrawSkyFlat_13h(void)
     };
 }
 
-void R_DrawFuzzColumn_13h(void)
+void R_DrawSkyFlatLowBackbuffer(void)
+{
+    register int count;
+    register unsigned short *dest;
+
+    dest = (unsigned short *)((byte *)ylookup[dc_yl] + columnofs[dc_x]);
+    count = dc_yh - dc_yl;
+
+    while (count >= 3)
+    {
+        *(dest) = 220 | 220 << 8;
+        *(dest + SCREENWIDTH / 2) = 220 | 220 << 8;
+        *(dest + 2 * SCREENWIDTH / 2) = 220 | 220 << 8;
+        *(dest + 3 * SCREENWIDTH / 2) = 220 | 220 << 8;
+        dest += 4 * SCREENWIDTH / 2;
+        count -= 4;
+    }
+
+    while (count >= 0)
+    {
+        *(dest) = 220 | 220 << 8;
+        dest += SCREENWIDTH / 2;
+        count--;
+    };
+}
+
+void R_DrawSkyFlatPotatoBackbuffer(void)
+{
+    register int count;
+    register unsigned int *dest;
+
+    dest = (unsigned int *)((byte *)ylookup[dc_yl] + columnofs[dc_x]);
+    count = dc_yh - dc_yl;
+
+    while (count >= 3)
+    {
+        *(dest) = 220 | 220 << 8 | 220 << 16 | 220 << 24;
+        *(dest + SCREENWIDTH / 4) = 220 | 220 << 8 | 220 << 16 | 220 << 24;
+        *(dest + 2 * SCREENWIDTH / 4) = 220 | 220 << 8 | 220 << 16 | 220 << 24;
+        *(dest + 3 * SCREENWIDTH / 4) = 220 | 220 << 8 | 220 << 16 | 220 << 24;
+        dest += 4 * SCREENWIDTH / 4;
+        count -= 4;
+    }
+
+    while (count >= 0)
+    {
+        *(dest) = 220 | 220 << 8 | 220 << 16 | 220 << 24;
+        dest += SCREENWIDTH / 4;
+        count--;
+    };
+}
+
+void R_DrawFuzzColumnBackbuffer(void)
 {
     int count;
     byte *dest;
-    fixed_t frac, fracstep;
 
     if (!dc_yl)
         dc_yl = 1;
@@ -2798,7 +3232,71 @@ void R_DrawFuzzColumn_13h(void)
     } while (count--);
 }
 
-void R_DrawFuzzColumnFast_13h(void)
+void R_DrawFuzzColumnLowBackbuffer(void)
+{
+    int count;
+    byte *dest;
+
+    if (!dc_yl)
+        dc_yl = 1;
+    if (dc_yh == viewheight - 1)
+        dc_yh = viewheight - 2;
+
+    count = dc_yh - dc_yl;
+    if (count < 0)
+        return;
+
+    dest = ylookup[dc_yl] + columnofs[dc_x];
+
+    do
+    {
+        lighttable_t color;
+
+        color = colormaps[6 * 256 + dest[fuzzoffset[fuzzpos]]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+
+        if (++fuzzpos == FUZZTABLE)
+            fuzzpos = 0;
+        dest += SCREENWIDTH;
+    } while (count--);
+}
+
+void R_DrawFuzzColumnPotatoBackbuffer(void)
+{
+    int count;
+    byte *dest;
+
+    if (!dc_yl)
+        dc_yl = 1;
+    if (dc_yh == viewheight - 1)
+        dc_yh = viewheight - 2;
+
+    count = dc_yh - dc_yl;
+    if (count < 0)
+        return;
+
+    dest = ylookup[dc_yl] + columnofs[dc_x];
+
+    do
+    {
+        lighttable_t color;
+
+        color = colormaps[6 * 256 + dest[fuzzoffset[fuzzpos]]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+        *(dest + 2) = color;
+        *(dest + 3) = color;
+
+        if (++fuzzpos == FUZZTABLE)
+            fuzzpos = 0;
+        dest += SCREENWIDTH;
+    } while (count--);
+}
+
+void R_DrawFuzzColumnFastBackbuffer(void)
 {
     int count;
     byte *dest;
@@ -2826,7 +3324,111 @@ void R_DrawFuzzColumnFast_13h(void)
     };
 }
 
-void R_DrawSpanFlat_13h(void)
+void R_DrawFuzzColumnFastLowBackbuffer(void)
+{
+    int count;
+    byte *dest;
+
+    dest = ylookup[dc_yl] + columnofs[dc_x];
+
+    count = dc_yh - dc_yl;
+
+    while (count >= 3)
+    {
+        lighttable_t color = colormaps[6 * 256 + dest[0]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+
+        color = colormaps[6 * 256 + dest[SCREENWIDTH]];
+
+        *(dest + SCREENWIDTH) = color;
+        *(dest + SCREENWIDTH + 1) = color;
+
+        color = colormaps[6 * 256 + dest[2 * SCREENWIDTH]];
+
+        *(dest + 2 * SCREENWIDTH) = color;
+        *(dest + 2 * SCREENWIDTH + 1) = color;
+
+        color = colormaps[6 * 256 + dest[3 * SCREENWIDTH]];
+
+        *(dest + 3 * SCREENWIDTH) = color;
+        *(dest + 3 * SCREENWIDTH + 1) = color;
+
+        dest += 4 * SCREENWIDTH;
+        count -= 4;
+    }
+
+    while (count >= 0)
+    {
+        lighttable_t color = colormaps[6 * 256 + dest[0]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+
+        dest += SCREENWIDTH;
+        count--;
+    };
+}
+
+void R_DrawFuzzColumnFastPotatoBackbuffer(void)
+{
+    int count;
+    byte *dest;
+
+    dest = ylookup[dc_yl] + columnofs[dc_x];
+
+    count = dc_yh - dc_yl;
+
+    while (count >= 3)
+    {
+        lighttable_t color = colormaps[6 * 256 + dest[0]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+        *(dest + 2) = color;
+        *(dest + 3) = color;
+
+        color = colormaps[6 * 256 + dest[SCREENWIDTH]];
+
+        *(dest + SCREENWIDTH) = color;
+        *(dest + SCREENWIDTH + 1) = color;
+        *(dest + SCREENWIDTH + 2) = color;
+        *(dest + SCREENWIDTH + 3) = color;
+
+        color = colormaps[6 * 256 + dest[2 * SCREENWIDTH]];
+
+        *(dest + 2 * SCREENWIDTH) = color;
+        *(dest + 2 * SCREENWIDTH + 1) = color;
+        *(dest + 2 * SCREENWIDTH + 2) = color;
+        *(dest + 2 * SCREENWIDTH + 3) = color;
+
+        color = colormaps[6 * 256 + dest[3 * SCREENWIDTH]];
+
+        *(dest + 3 * SCREENWIDTH) = color;
+        *(dest + 3 * SCREENWIDTH + 1) = color;
+        *(dest + 3 * SCREENWIDTH + 2) = color;
+        *(dest + 3 * SCREENWIDTH + 3) = color;
+
+        dest += 4 * SCREENWIDTH;
+        count -= 4;
+    }
+
+    while (count >= 0)
+    {
+        lighttable_t color = colormaps[6 * 256 + dest[0]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+        *(dest + 2) = color;
+        *(dest + 3) = color;
+
+        dest += SCREENWIDTH;
+        count--;
+    };
+}
+
+void R_DrawSpanFlatBackbuffer(void)
 {
     byte *dest;
     int countp;
@@ -2848,7 +3450,46 @@ void R_DrawSpanFlat_13h(void)
     }
 }
 
-void R_DrawFuzzColumnSaturn_13h(void)
+void R_DrawSpanFlatLowBackbuffer(void)
+{
+    byte *dest;
+    int countp;
+
+    unsigned short color = ds_colormap[ds_source[FLATPIXELCOLOR]];
+    color |= color << 8;
+
+    dest = ylookup[ds_y] + columnofs[ds_x1];
+
+    countp = ds_x2 - ds_x1 + 1;
+
+    if (countp & 1)
+    {
+        SetWords(dest, color, countp);
+    }
+    else
+    {
+        unsigned int colorcomp = color << 16 | color;
+        SetDWords(dest, colorcomp, countp / 2);
+    }
+}
+
+void R_DrawSpanFlatPotatoBackbuffer(void)
+{
+    byte *dest;
+    int countp;
+
+    unsigned int color = ds_colormap[ds_source[FLATPIXELCOLOR]];
+    color |= color << 8;
+    color |= color << 16;
+
+    dest = ylookup[ds_y] + columnofs[ds_x1];
+
+    countp = ds_x2 - ds_x1 + 1;
+
+    SetDWords(dest, color, countp);
+}
+
+void R_DrawFuzzColumnSaturnBackbuffer(void)
 {
     int count;
     byte *dest;
@@ -2896,4 +3537,127 @@ void R_DrawFuzzColumnSaturn_13h(void)
         }
     }
 }
+
+void R_DrawFuzzColumnSaturnLowBackbuffer(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac;
+    fixed_t fracstep;
+    int initialdrawpos = 0;
+
+    count = (dc_yh - dc_yl) / 2 - 1;
+
+    if (count < 0)
+        return;
+
+    initialdrawpos = dc_yl + dc_x;
+
+    dest = ylookup[dc_yl] + columnofs[dc_x];
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    if (initialdrawpos & 1)
+    {
+        dest += SCREENWIDTH;
+        frac += fracstep;
+    }
+
+    fracstep = 2 * fracstep;
+
+    do
+    {
+        lighttable_t color = dc_colormap[dc_source[(frac >> FRACBITS)]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+
+        dest += 2 * SCREENWIDTH;
+        frac += fracstep;
+    } while (count--);
+
+    if ((dc_yh - dc_yl) & 1)
+    {
+        lighttable_t color = dc_colormap[dc_source[(frac >> FRACBITS)]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+    }
+    else
+    {
+        if (!(initialdrawpos & 1))
+        {
+            lighttable_t color = dc_colormap[dc_source[(frac >> FRACBITS)]];
+
+            *(dest) = color;
+            *(dest + 1) = color;
+        }
+    }
+}
+
+void R_DrawFuzzColumnSaturnPotatoBackbuffer(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac;
+    fixed_t fracstep;
+    int initialdrawpos = 0;
+
+    count = (dc_yh - dc_yl) / 2 - 1;
+
+    if (count < 0)
+        return;
+
+    initialdrawpos = dc_yl + dc_x;
+
+    dest = ylookup[dc_yl] + columnofs[dc_x];
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    if (initialdrawpos & 1)
+    {
+        dest += SCREENWIDTH;
+        frac += fracstep;
+    }
+
+    fracstep = 2 * fracstep;
+
+    do
+    {
+        lighttable_t color = dc_colormap[dc_source[(frac >> FRACBITS)]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+        *(dest + 2) = color;
+        *(dest + 3) = color;
+
+        dest += 2 * SCREENWIDTH;
+        frac += fracstep;
+    } while (count--);
+
+    if ((dc_yh - dc_yl) & 1)
+    {
+        lighttable_t color = dc_colormap[dc_source[(frac >> FRACBITS)]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+        *(dest + 2) = color;
+        *(dest + 3) = color;
+    }
+    else
+    {
+        if (!(initialdrawpos & 1))
+        {
+            lighttable_t color = dc_colormap[dc_source[(frac >> FRACBITS)]];
+
+            *(dest) = color;
+            *(dest + 1) = color;
+            *(dest + 2) = color;
+            *(dest + 3) = color;
+        }
+    }
+}
+
 #endif

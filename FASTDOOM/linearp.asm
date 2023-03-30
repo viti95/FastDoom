@@ -18,10 +18,9 @@
 BITS 32
 %include "macros.inc"
 
-%ifdef MODE_Y
+%ifdef USE_BACKBUFFER
 %include "defs.inc"
 
-extern _destview
 extern _centery
 
 ;============================================================================
@@ -56,21 +55,20 @@ scalecalls:
 
 BEGIN_CODE_SECTION
 
-; ==================
-; R_DrawColumnPotato
-; ==================
-CODE_SYM_DEF R_DrawColumnPotato
+; ============================
+; R_DrawColumnPotatoBackbuffer
+; ============================
+CODE_SYM_DEF R_DrawColumnPotatoBackbuffer
   pushad
 
+  mov  ebx,[_dc_x]
   mov  ebp,[_dc_yh]
+  mov  edi,[_columnofs+ebx*4]
   mov  eax,[_dc_yl]
-  mov  edi,[_ylookup+ebp*4]
+  add  edi,[_ylookup+ebp*4]
   sub  ebp,eax         ; ebp = pixel count
   js   short .done
 
-  add  edi,[_destview]
-  add  edi,[_dc_x]
-
   mov   ecx,[_dc_iscale]
 
   sub   eax,[_centery]
@@ -89,99 +87,7 @@ CODE_SYM_DEF R_DrawColumnPotato
 .done:
   popad
   ret
-; R_DrawColumnPotato ends
-
-; ===============
-; R_DrawColumnLow
-; ===============
-CODE_SYM_DEF R_DrawColumnLow
-  pushad
-
-  mov  ebp,[_dc_yh]
-  mov  ebx,[_dc_yl]
-  mov  edi,[_ylookup+ebp*4]
-  sub  ebp,ebx         ; ebp = pixel count
-  js   short .done
-
-  ; set plane
-  mov  ecx,[_dc_x]
-  add  edi,[_destview]
-  mov  esi, ecx
-  
-  and  cl,1
-  mov  al,3
-  add  cl, cl
-  mov  dx,SC_INDEX+1
-  shl  al,cl
-  out  dx,al
-
-  shr esi,1
-  mov eax, ebx
-  add edi,esi
-
-  mov   ecx,[_dc_iscale]
-
-  sub   eax,[_centery]
-  imul  ecx
-  mov   edx,[_dc_texturemid]
-  shl   ecx,9 ; 7 significant bits, 25 frac
-  add   edx,eax
-  mov   esi,[_dc_source]
-  shl   edx,9 ; 7 significant bits, 25 frac
-  mov   eax,[_dc_colormap]
-
-  xor   ebx,ebx
-  shld  ebx,edx,7
-  call  [scalecalls+4+ebp*4]
-
-.done:
-  popad
-  ret
-; R_DrawColumnLow ends
-
-CODE_SYM_DEF R_DrawColumn
-  pushad
-
-  mov  ebp,[_dc_yh]
-  mov  ebx,[_dc_yl]
-  mov  edi,[_ylookup+ebp*4]
-  sub  ebp,ebx         ; ebp = pixel count
-  js   short .done
-
-  ; set plane
-  mov  ecx,[_dc_x]
-  add  edi,[_destview]
-  mov  esi, ecx
-  
-  and  cl,3
-  mov  dx,SC_INDEX+1
-  mov  al,1
-  shl  al,cl
-  out  dx,al
-
-  shr esi,2
-  mov eax, ebx
-  add edi,esi
-
-  mov   ecx,[_dc_iscale]
-
-  sub   eax,[_centery]
-  imul  ecx
-  mov   edx,[_dc_texturemid]
-  shl   ecx,9 ; 7 significant bits, 25 frac
-  add   edx,eax
-  mov   esi,[_dc_source]
-  shl   edx,9 ; 7 significant bits, 25 frac
-  mov   eax,[_dc_colormap]
-
-  xor   ebx,ebx
-  shld  ebx,edx,7
-  call  [scalecalls+4+ebp*4]
-
-.done:
-  popad
-  ret
-; R_DrawColumn ends
+; R_DrawColumnPotatoBackbuffer ends
 
 %macro SCALELABEL 1
   vscale%1
@@ -194,7 +100,10 @@ CODE_SYM_DEF R_DrawColumn
     add  edx,ecx                        ; calculate next location
     mov  al,[eax]                       ; translate the color
     mov  ebx,edx
-    mov  [edi-(LINE-1)*80],al  ; draw a pixel to the buffer
+    mov  [edi-(LINE-1)*SCREENWIDTH],al  ; draw a pixel to the buffer
+    mov  [edi-(LINE-1)*SCREENWIDTH + 1],al  ; draw a pixel to the buffer
+    mov  [edi-(LINE-1)*SCREENWIDTH + 2],al  ; draw a pixel to the buffer
+    mov  [edi-(LINE-1)*SCREENWIDTH + 3],al  ; draw a pixel to the buffer
     shr  ebx,25
     %assign LINE LINE-1
 %endrep
@@ -203,6 +112,9 @@ vscale1:
   mov al,[esi+ebx]
   mov al,[eax]
   mov [edi],al
+  mov [edi+1],al
+  mov [edi+2],al
+  mov [edi+3],al
 
 vscale0:
   ret
@@ -231,7 +143,7 @@ align 4
 
 mapcalls:
   %assign LINE 0
-  %rep (SCREENWIDTH/4)+1
+  %rep SCREENWIDTH/4+1
     MAPDEFINE LINE
     %assign LINE LINE+1
   %endrep
@@ -241,10 +153,10 @@ returnpoint: dd 0
 
 CONTINUE_CODE_SECTION
 
-; ================
-; R_DrawSpanPotato
-; ================
-CODE_SYM_DEF R_DrawSpanPotato
+; ==========================
+; R_DrawSpanPotatoBackbuffer
+; ==========================
+CODE_SYM_DEF R_DrawSpanPotatoBackbuffer
   pushad
 
   mov     eax,[_ds_x1]
@@ -261,7 +173,7 @@ CODE_SYM_DEF R_DrawSpanPotato
 
   mov     edi,[_ylookup+edi*4]
   mov     eax,[_ds_colormap]
-  add     edi,[_destview]
+  add     edi,[_columnofs]
 
   ; feed the pipeline and jump in
 
@@ -277,7 +189,7 @@ CODE_SYM_DEF R_DrawSpanPotato
 
   popad
   ret
-; R_DrawSpanPotato ends
+; R_DrawSpanPotatoBackbuffer ends
 
 %macro MAPLABEL 1
   hmap%1
@@ -285,26 +197,30 @@ CODE_SYM_DEF R_DrawSpanPotato
 
 %assign LINE 0
 %assign PCOL 0
-%rep SCREENWIDTH/16
+%rep SCREENWIDTH/4
   %assign PLANE 0
-  %rep 4
     MAPLABEL LINE:
       %assign LINE LINE+1
       %if LINE = 80
         mov   al,[esi+ebx]           ; get source pixel
         mov   al,[eax]               ; translate color
         mov   [edi+PLANE+PCOL*4],al  ; write pixel
+        mov   [edi+PLANE+PCOL*4+1],al  ; write pixel
+        mov   [edi+PLANE+PCOL*4+2],al  ; write pixel
+        mov   [edi+PLANE+PCOL*4+3],al  ; write pixel
       %else
         mov   al,[esi+ebx]           ; get source pixel
         shld  ebx,ecx,22             ; shift y units in
         mov   al,[eax]               ; translate color
         shld  ebx,ecx,6              ; shift x units in
         mov   [edi+PLANE+PCOL*4],al  ; write pixel
+        mov   [edi+PLANE+PCOL*4+1],al  ; write pixel
+        mov   [edi+PLANE+PCOL*4+2],al  ; write pixel
+        mov   [edi+PLANE+PCOL*4+3],al  ; write pixel
         and   ebx,ebp                ; mask off slop bits
         add   ecx,edx                ; position += step
       %endif
       %assign PLANE PLANE+1
-  %endrep
 %assign PCOL PCOL+1
 %endrep
 

@@ -98,10 +98,14 @@ GLOBOBJS = &
  i_main.obj &
  i_ibm.obj &
  i_sound.obj &
- linear.obj &
+ linearh.obj &
+ linearl.obj &
+ linearp.obj &
  planar.obj &
  planar2.obj &
- vbe2d.obj &
+ vbe2dh.obj &
+ vbe2dl.obj &
+ vbe2dp.obj &
  tables.obj &
  f_finale.obj &
  d_main.obj &
