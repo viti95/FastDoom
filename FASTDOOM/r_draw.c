@@ -2956,17 +2956,37 @@ void R_DrawFuzzColumnFastLowBackbuffer(void)
 
     while (count >= 3)
     {
-        *(dest) = colormaps[6 * 256 + dest[0]];
-        *(dest + SCREENWIDTH) = colormaps[6 * 256 + dest[SCREENWIDTH]];
-        *(dest + 2 * SCREENWIDTH) = colormaps[6 * 256 + dest[2 * SCREENWIDTH]];
-        *(dest + 3 * SCREENWIDTH) = colormaps[6 * 256 + dest[3 * SCREENWIDTH]];
+        lighttable_t color = colormaps[6 * 256 + dest[0]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+
+        color = colormaps[6 * 256 + dest[SCREENWIDTH]];
+
+        *(dest + SCREENWIDTH) = color;
+        *(dest + SCREENWIDTH + 1) = color;
+        
+        color = colormaps[6 * 256 + dest[2 * SCREENWIDTH]];
+
+        *(dest + 2 * SCREENWIDTH) = color;
+        *(dest + 2 * SCREENWIDTH + 1) = color;
+
+        color = colormaps[6 * 256 + dest[3 * SCREENWIDTH]];
+
+        *(dest + 3 * SCREENWIDTH) = color;
+        *(dest + 3 * SCREENWIDTH + 1) = color;
+
         dest += 4 * SCREENWIDTH;
         count -= 4;
     }
 
     while (count >= 0)
     {
-        *dest = colormaps[6 * 256 + dest[0]];
+        lighttable_t color = colormaps[6 * 256 + dest[0]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+        
         dest += SCREENWIDTH;
         count--;
     };
