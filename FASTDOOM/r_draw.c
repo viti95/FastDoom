@@ -2948,7 +2948,6 @@ void R_DrawFuzzColumnFastLowBackbuffer(void)
 {
     int count;
     byte *dest;
-    fixed_t frac, fracstep;
 
     dest = ylookup[dc_yl] + columnofs[dc_x];
 
@@ -2996,7 +2995,6 @@ void R_DrawFuzzColumnFastPotatoBackbuffer(void)
 {
     int count;
     byte *dest;
-    fixed_t frac, fracstep;
 
     dest = ylookup[dc_yl] + columnofs[dc_x];
 
@@ -3004,17 +3002,47 @@ void R_DrawFuzzColumnFastPotatoBackbuffer(void)
 
     while (count >= 3)
     {
-        *(dest) = colormaps[6 * 256 + dest[0]];
-        *(dest + SCREENWIDTH) = colormaps[6 * 256 + dest[SCREENWIDTH]];
-        *(dest + 2 * SCREENWIDTH) = colormaps[6 * 256 + dest[2 * SCREENWIDTH]];
-        *(dest + 3 * SCREENWIDTH) = colormaps[6 * 256 + dest[3 * SCREENWIDTH]];
+        lighttable_t color = colormaps[6 * 256 + dest[0]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+        *(dest + 2) = color;
+        *(dest + 3) = color;
+
+        color = colormaps[6 * 256 + dest[SCREENWIDTH]];
+
+        *(dest + SCREENWIDTH) = color;
+        *(dest + SCREENWIDTH + 1) = color;
+        *(dest + SCREENWIDTH + 2) = color;
+        *(dest + SCREENWIDTH + 3) = color;
+
+        color = colormaps[6 * 256 + dest[2 * SCREENWIDTH]];
+
+        *(dest + 2 * SCREENWIDTH) = color;
+        *(dest + 2 * SCREENWIDTH + 1) = color;
+        *(dest + 2 * SCREENWIDTH + 2) = color;
+        *(dest + 2 * SCREENWIDTH + 3) = color;
+
+        color = colormaps[6 * 256 + dest[3 * SCREENWIDTH]];
+
+        *(dest + 3 * SCREENWIDTH) = color;
+        *(dest + 3 * SCREENWIDTH + 1) = color;
+        *(dest + 3 * SCREENWIDTH + 2) = color;
+        *(dest + 3 * SCREENWIDTH + 3) = color;
+
         dest += 4 * SCREENWIDTH;
         count -= 4;
     }
 
     while (count >= 0)
     {
-        *dest = colormaps[6 * 256 + dest[0]];
+        lighttable_t color = colormaps[6 * 256 + dest[0]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+        *(dest + 2) = color;
+        *(dest + 3) = color;
+
         dest += SCREENWIDTH;
         count--;
     };
