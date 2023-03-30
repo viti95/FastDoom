@@ -114,8 +114,6 @@
                    Dithering with 16 colors
  * FDOOMMDA.EXE => FastDoom MDA 80x25 text mode. Internal resolution 80x50.
                    Very quick'n'dirty, only Neo can play this mode properly.
- * FDOOME80.EXE => FastDoom EGA 80x200 and 16 colors
- * FDOOMEW1.EXE => FastDoom EGA 160x200 and 16 colors
  * FDOOMCAH.EXE => FastDoom CGA ANSI from Hell (320x100, 16 colors)
  * FDOOM512.EXE => FastDoom CGA "512 color" composite mode (80x100)
  * FDSETUP.EXE  => Utility to setup controls and sound cards
