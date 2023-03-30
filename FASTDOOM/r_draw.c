@@ -236,39 +236,53 @@ void R_DrawSkyFlatVBE2(void)
 void R_DrawSkyFlatLowVBE2(void)
 {
     int count;
-    byte *dest;
-    fixed_t frac, fracstep;
+    unsigned short *dest;
 
+    dest = (unsigned short *)((byte *)destview + Mul320(dc_yl) + (dc_x << 1));
     count = dc_yh - dc_yl;
-    if (count < 0)
-        return;
-
-    dest = destview + Mul320(dc_yl) + dc_x;
-
-    do
+    
+    while (count >= 3)
     {
-        *dest = 220;
-        dest += SCREENWIDTH;
-    } while (count--);
+        *(dest) = 220 | 220 << 8;
+        *(dest + SCREENWIDTH / 2) = 220 | 220 << 8;
+        *(dest + 2 * SCREENWIDTH / 2) = 220 | 220 << 8;
+        *(dest + 3 * SCREENWIDTH / 2) = 220 | 220 << 8;
+        dest += 4 * SCREENWIDTH / 2;
+        count -= 4;
+    }
+
+    while (count >= 0)
+    {
+        *(dest) = 220 | 220 << 8;
+        dest += SCREENWIDTH / 2;
+        count--;
+    };
 }
 
 void R_DrawSkyFlatPotatoVBE2(void)
 {
     int count;
-    byte *dest;
-    fixed_t frac, fracstep;
+    unsigned int *dest;
 
+    dest = (unsigned int *)((byte *)destview + Mul320(dc_yl) + (dc_x << 2));
     count = dc_yh - dc_yl;
-    if (count < 0)
-        return;
 
-    dest = destview + Mul320(dc_yl) + dc_x;
-
-    do
+    while (count >= 3)
     {
-        *dest = 220;
-        dest += SCREENWIDTH;
-    } while (count--);
+        *(dest) = 220 | 220 << 8 | 220 << 16 | 220 << 24;
+        *(dest + SCREENWIDTH / 4) = 220 | 220 << 8 | 220 << 16 | 220 << 24;
+        *(dest + 2 * SCREENWIDTH / 4) = 220 | 220 << 8 | 220 << 16 | 220 << 24;
+        *(dest + 3 * SCREENWIDTH / 4) = 220 | 220 << 8 | 220 << 16 | 220 << 24;
+        dest += 4 * SCREENWIDTH / 4;
+        count -= 4;
+    }
+
+    while (count >= 0)
+    {
+        *(dest) = 220 | 220 << 8 | 220 << 16 | 220 << 24;
+        dest += SCREENWIDTH / 4;
+        count--;
+    };
 }
 
 void R_DrawFuzzColumnFastVBE2(void)
