@@ -44,7 +44,7 @@ void R_DrawPlanesflatVisplanesText8025(void);
 void R_DrawPlanesflatVisplanesText4025(void);
 void R_DrawPlanesflatVisplanesText4050(void);
 void R_DrawPlanesflatVisplanesTextMDA(void);
-void R_DrawPlanesflatVisplanes_13h(void);
+void R_DrawPlanesflatVisplanesBackbuffer(void);
 void R_DrawPlanesflatVisplanesVBE2(void);
 void R_DrawSky(visplane_t *pl);
 

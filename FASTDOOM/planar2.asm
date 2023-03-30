@@ -56,9 +56,9 @@ scalecalls:
 
 BEGIN_CODE_SECTION
 
-; ================
+; ==================
 ; R_DrawColumnPotato
-; ================
+; ==================
 CODE_SYM_DEF R_DrawColumnPotato
   pushad
 
@@ -89,11 +89,11 @@ CODE_SYM_DEF R_DrawColumnPotato
 .done:
   popad
   ret
-; R_DrawColumn_13h ends
+; R_DrawColumnPotato ends
 
-; ================
+; ===============
 ; R_DrawColumnLow
-; ================
+; ===============
 CODE_SYM_DEF R_DrawColumnLow
   pushad
 
@@ -137,7 +137,7 @@ CODE_SYM_DEF R_DrawColumnLow
 .done:
   popad
   ret
-; R_DrawColumn_13h ends
+; R_DrawColumnLow ends
 
 CODE_SYM_DEF R_DrawColumn
   pushad
@@ -181,7 +181,7 @@ CODE_SYM_DEF R_DrawColumn
 .done:
   popad
   ret
-; R_DrawColumn_13h ends
+; R_DrawColumn ends
 
 %macro SCALELABEL 1
   vscale%1
@@ -241,9 +241,9 @@ returnpoint: dd 0
 
 CONTINUE_CODE_SECTION
 
-; ==============
+; ================
 ; R_DrawSpanPotato
-; ==============
+; ================
 CODE_SYM_DEF R_DrawSpanPotato
   pushad
 
@@ -277,7 +277,7 @@ CODE_SYM_DEF R_DrawSpanPotato
 
   popad
   ret
-; R_DrawSpan_13h ends
+; R_DrawSpanPotato ends
 
 %macro MAPLABEL 1
   hmap%1

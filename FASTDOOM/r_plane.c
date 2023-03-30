@@ -1116,7 +1116,7 @@ void R_DrawPlanesflatVisplanesText8025(void)
 #endif
 
 #if defined(USE_BACKBUFFER)
-void R_DrawPlanesflatVisplanes_13h(void)
+void R_DrawPlanesflatVisplanesBackbuffer(void)
 {
     visplane_t *pl;
 

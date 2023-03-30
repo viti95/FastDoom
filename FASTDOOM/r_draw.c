@@ -2746,7 +2746,7 @@ void R_DrawViewBorder(void)
 #endif
 
 #if defined(USE_BACKBUFFER)
-void R_DrawSkyFlat_13h(void)
+void R_DrawSkyFlatBackbuffer(void)
 {
     register int count;
     register byte *dest;
@@ -2772,7 +2772,7 @@ void R_DrawSkyFlat_13h(void)
     };
 }
 
-void R_DrawFuzzColumn_13h(void)
+void R_DrawFuzzColumnBackbuffer(void)
 {
     int count;
     byte *dest;
@@ -2798,7 +2798,7 @@ void R_DrawFuzzColumn_13h(void)
     } while (count--);
 }
 
-void R_DrawFuzzColumnFast_13h(void)
+void R_DrawFuzzColumnFastBackbuffer(void)
 {
     int count;
     byte *dest;
@@ -2826,7 +2826,7 @@ void R_DrawFuzzColumnFast_13h(void)
     };
 }
 
-void R_DrawSpanFlat_13h(void)
+void R_DrawSpanFlatBackbuffer(void)
 {
     byte *dest;
     int countp;
@@ -2848,7 +2848,7 @@ void R_DrawSpanFlat_13h(void)
     }
 }
 
-void R_DrawFuzzColumnSaturn_13h(void)
+void R_DrawFuzzColumnSaturnBackbuffer(void)
 {
     int count;
     byte *dest;

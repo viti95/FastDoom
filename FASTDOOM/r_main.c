@@ -918,24 +918,24 @@ void R_ExecuteSetViewSize(void)
     }
 #endif
 #if defined(USE_BACKBUFFER)
-    colfunc = basecolfunc = R_DrawColumn_13h;
+    colfunc = basecolfunc = R_DrawColumnBackbuffer;
 
     if (flatterVisplanes)
-        spanfunc = R_DrawSpanFlat_13h;
+        spanfunc = R_DrawSpanFlatBackbuffer;
     else
-        spanfunc = R_DrawSpan_13h;
+        spanfunc = R_DrawSpanBackbuffer;
 
     if (flatSky)
-        skyfunc = R_DrawSkyFlat_13h;
+        skyfunc = R_DrawSkyFlatBackbuffer;
     else
-        skyfunc = R_DrawColumn_13h;
+        skyfunc = R_DrawColumnBackbuffer;
 
     if (flatShadows)
-        fuzzcolfunc = R_DrawFuzzColumnFast_13h;
+        fuzzcolfunc = R_DrawFuzzColumnFastBackbuffer;
     else if (saturnShadows)
-        fuzzcolfunc = R_DrawFuzzColumnSaturn_13h;
+        fuzzcolfunc = R_DrawFuzzColumnSaturnBackbuffer;
     else
-        fuzzcolfunc = R_DrawFuzzColumn_13h;
+        fuzzcolfunc = R_DrawFuzzColumnBackbuffer;
 #endif
 
 #if defined(MODE_VBE2_DIRECT)
@@ -1236,7 +1236,7 @@ void R_RenderPlayerView(void)
 #endif
 #if defined(USE_BACKBUFFER)
     if (flatVisplanes)
-        R_DrawPlanesflatVisplanes_13h();
+        R_DrawPlanesflatVisplanesBackbuffer();
     else
         R_DrawPlanes();
 #endif

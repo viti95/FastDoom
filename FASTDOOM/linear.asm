@@ -55,10 +55,10 @@ scalecalls:
 
 BEGIN_CODE_SECTION
 
-; ================
-; R_DrawColumn_13h
-; ================
-CODE_SYM_DEF R_DrawColumn_13h
+; ======================
+; R_DrawColumnBackbuffer
+; ======================
+CODE_SYM_DEF R_DrawColumnBackbuffer
   pushad
 
   mov  ebp,[_dc_yh]
@@ -87,7 +87,7 @@ CODE_SYM_DEF R_DrawColumn_13h
 .done:
   popad
   ret
-; R_DrawColumn_13h ends
+; R_DrawColumnBackbuffer ends
 
 %macro SCALELABEL 1
   vscale%1
@@ -147,10 +147,10 @@ returnpoint: dd 0
 
 CONTINUE_CODE_SECTION
 
-; ==============
-; R_DrawSpan_13h
-; ==============
-CODE_SYM_DEF R_DrawSpan_13h
+; ====================
+; R_DrawSpanBackbuffer
+; ====================
+CODE_SYM_DEF R_DrawSpanBackbuffer
   pushad
 
   mov     eax,[_ds_x1]
@@ -183,7 +183,7 @@ CODE_SYM_DEF R_DrawSpan_13h
 
   popad
   ret
-; R_DrawSpan_13h ends
+; R_DrawSpanBackbuffer ends
 
 %macro MAPLABEL 1
   hmap%1
