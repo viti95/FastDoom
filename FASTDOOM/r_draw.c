@@ -2775,25 +2775,25 @@ void R_DrawSkyFlatBackbuffer(void)
 void R_DrawSkyFlatLowBackbuffer(void)
 {
     register int count;
-    register byte *dest;
+    register unsigned short *dest;
 
-    dest = ylookup[dc_yl] + columnofs[dc_x];
+    dest = (unsigned short *)((byte *)ylookup[dc_yl] + columnofs[dc_x]);
     count = dc_yh - dc_yl;
 
     while (count >= 3)
     {
-        *(dest) = 220;
-        *(dest + SCREENWIDTH) = 220;
-        *(dest + 2 * SCREENWIDTH) = 220;
-        *(dest + 3 * SCREENWIDTH) = 220;
-        dest += 4 * SCREENWIDTH;
+        *(dest) = 220 | 220 << 8;
+        *(dest + SCREENWIDTH / 2) = 220 | 220 << 8;
+        *(dest + 2 * SCREENWIDTH / 2) = 220 | 220 << 8;
+        *(dest + 3 * SCREENWIDTH / 2) = 220 | 220 << 8;
+        dest += 4 * SCREENWIDTH / 2;
         count -= 4;
     }
 
     while (count >= 0)
     {
-        *dest = 220;
-        dest += SCREENWIDTH;
+        *(dest) = 220 | 220 << 8;
+        dest += SCREENWIDTH / 2;
         count--;
     };
 }
