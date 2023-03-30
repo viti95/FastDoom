@@ -2801,40 +2801,25 @@ void R_DrawSkyFlatLowBackbuffer(void)
 void R_DrawSkyFlatPotatoBackbuffer(void)
 {
     register int count;
-    register byte *dest;
+    register unsigned int *dest;
 
-    dest = ylookup[dc_yl] + columnofs[dc_x];
+    dest = (unsigned int *)((byte *)ylookup[dc_yl] + columnofs[dc_x]);
     count = dc_yh - dc_yl;
 
     while (count >= 3)
     {
-        *(dest) = 220;
-        *(dest + 1) = 220;
-        *(dest + 2) = 220;
-        *(dest + 3) = 220;
-        *(dest + SCREENWIDTH) = 220;
-        *(dest + SCREENWIDTH + 1) = 220;
-        *(dest + SCREENWIDTH + 2) = 220;
-        *(dest + SCREENWIDTH + 3) = 220;
-        *(dest + 2 * SCREENWIDTH) = 220;
-        *(dest + 2 * SCREENWIDTH + 1) = 220;
-        *(dest + 2 * SCREENWIDTH + 2) = 220;
-        *(dest + 2 * SCREENWIDTH + 3) = 220;
-        *(dest + 3 * SCREENWIDTH) = 220;
-        *(dest + 3 * SCREENWIDTH + 1) = 220;
-        *(dest + 3 * SCREENWIDTH + 2) = 220;
-        *(dest + 3 * SCREENWIDTH + 3) = 220;
-        dest += 4 * SCREENWIDTH;
+        *(dest) = 220 | 220 << 8 | 220 << 16 | 220 << 24;
+        *(dest + SCREENWIDTH / 4) = 220 | 220 << 8 | 220 << 16 | 220 << 24;
+        *(dest + 2 * SCREENWIDTH / 4) = 220 | 220 << 8 | 220 << 16 | 220 << 24;
+        *(dest + 3 * SCREENWIDTH / 4) = 220 | 220 << 8 | 220 << 16 | 220 << 24;
+        dest += 4 * SCREENWIDTH / 4;
         count -= 4;
     }
 
     while (count >= 0)
     {
-        *(dest) = 220;
-        *(dest + 1) = 220;
-        *(dest + 2) = 220;
-        *(dest + 3) = 220;
-        dest += SCREENWIDTH;
+        *(dest) = 220 | 220 << 8 | 220 << 16 | 220 << 24;
+        dest += SCREENWIDTH / 4;
         count--;
     };
 }
