@@ -143,7 +143,7 @@ align 4
 
 mapcalls:
   %assign LINE 0
-  %rep SCREENWIDTH+1
+  %rep SCREENWIDTH/4+1
     MAPDEFINE LINE
     %assign LINE LINE+1
   %endrep
@@ -197,26 +197,30 @@ CODE_SYM_DEF R_DrawSpanPotatoBackbuffer
 
 %assign LINE 0
 %assign PCOL 0
-%rep SCREENWIDTH/4
+%rep SCREENWIDTH
   %assign PLANE 0
-  %rep 4
     MAPLABEL LINE:
       %assign LINE LINE+1
-      %if LINE = 320
+      %if LINE = 80
         mov   al,[esi+ebx]           ; get source pixel
         mov   al,[eax]               ; translate color
         mov   [edi+PLANE+PCOL*4],al  ; write pixel
+        mov   [edi+PLANE+PCOL*4+1],al  ; write pixel
+        mov   [edi+PLANE+PCOL*4+2],al  ; write pixel
+        mov   [edi+PLANE+PCOL*4+3],al  ; write pixel
       %else
         mov   al,[esi+ebx]           ; get source pixel
         shld  ebx,ecx,22             ; shift y units in
         mov   al,[eax]               ; translate color
         shld  ebx,ecx,6              ; shift x units in
         mov   [edi+PLANE+PCOL*4],al  ; write pixel
+        mov   [edi+PLANE+PCOL*4+1],al  ; write pixel
+        mov   [edi+PLANE+PCOL*4+2],al  ; write pixel
+        mov   [edi+PLANE+PCOL*4+3],al  ; write pixel
         and   ebx,ebp                ; mask off slop bits
         add   ecx,edx                ; position += step
       %endif
       %assign PLANE PLANE+1
-  %endrep
 %assign PCOL PCOL+1
 %endrep
 
