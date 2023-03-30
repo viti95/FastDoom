@@ -1007,44 +1007,44 @@ void R_ExecuteSetViewSize(void)
             fuzzcolfunc = R_DrawFuzzColumnVBE2;
         break;
     case 1:
-        colfunc = basecolfunc = R_DrawColumnVBE2;
+        colfunc = basecolfunc = R_DrawColumnLowVBE2;
 
         if (flatterVisplanes)
-            spanfunc = R_DrawSpanFlatVBE2;
+            spanfunc = R_DrawSpanFlatLowVBE2;
         else
-            spanfunc = R_DrawSpanVBE2;
+            spanfunc = R_DrawSpanLowVBE2;
 
         if (flatSky)
-            skyfunc = R_DrawSkyFlatVBE2;
+            skyfunc = R_DrawSkyFlatLowVBE2;
         else
-            skyfunc = R_DrawColumnVBE2;
+            skyfunc = R_DrawColumnLowVBE2;
 
         if (flatShadows)
-            fuzzcolfunc = R_DrawFuzzColumnFastVBE2;
+            fuzzcolfunc = R_DrawFuzzColumnFastLowVBE2;
         else if (saturnShadows)
-            fuzzcolfunc = R_DrawFuzzColumnSaturnVBE2;
+            fuzzcolfunc = R_DrawFuzzColumnSaturnLowVBE2;
         else
-            fuzzcolfunc = R_DrawFuzzColumnVBE2;
+            fuzzcolfunc = R_DrawFuzzColumnLowVBE2;
         break;
     case 2:
-        colfunc = basecolfunc = R_DrawColumnVBE2;
+        colfunc = basecolfunc = R_DrawColumnPotatoVBE2;
 
         if (flatterVisplanes)
-            spanfunc = R_DrawSpanFlatVBE2;
+            spanfunc = R_DrawSpanFlatPotatoVBE2;
         else
-            spanfunc = R_DrawSpanVBE2;
+            spanfunc = R_DrawSpanPotatoVBE2;
 
         if (flatSky)
-            skyfunc = R_DrawSkyFlatVBE2;
+            skyfunc = R_DrawSkyFlatPotatoVBE2;
         else
-            skyfunc = R_DrawColumnVBE2;
+            skyfunc = R_DrawColumnPotatoVBE2;
 
         if (flatShadows)
-            fuzzcolfunc = R_DrawFuzzColumnFastVBE2;
+            fuzzcolfunc = R_DrawFuzzColumnFastPotatoVBE2;
         else if (saturnShadows)
-            fuzzcolfunc = R_DrawFuzzColumnSaturnVBE2;
+            fuzzcolfunc = R_DrawFuzzColumnSaturnPotatoVBE2;
         else
-            fuzzcolfunc = R_DrawFuzzColumnVBE2;
+            fuzzcolfunc = R_DrawFuzzColumnPotatoVBE2;
         break;
     }
 #endif
@@ -1349,10 +1349,10 @@ void R_RenderPlayerView(void)
             R_DrawPlanesFlatVisplanesVBE2();
             break;
         case 1:
-            R_DrawPlanesFlatVisplanesVBE2();
+            R_DrawPlanesFlatVisplanesLowVBE2();
             break;
         case 2:
-            R_DrawPlanesFlatVisplanesVBE2();
+            R_DrawPlanesFlatVisplanesPotatoVBE2();
             break;
         }
     else

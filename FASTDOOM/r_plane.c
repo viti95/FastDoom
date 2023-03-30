@@ -1339,6 +1339,95 @@ void R_DrawPlanesFlatVisplanesVBE2(void)
         Z_ChangeTag(dc_source, PU_CACHE);
     }
 }
+
+void R_DrawPlanesFlatVisplanesLowVBE2(void)
+{
+    visplane_t *pl;
+
+    int count;
+    byte *dest;
+    lighttable_t color;
+    int x;
+
+    for (pl = visplanes; pl < lastvisplane; pl++)
+    {
+        if (!pl->modified || pl->minx > pl->maxx)
+            continue;
+
+        // sky flat
+        if (pl->picnum == skyflatnum)
+        {
+            R_DrawSky(pl);
+            continue;
+        }
+
+        dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
+
+        color = colormaps[dc_source[FLATPIXELCOLOR]];
+
+        for (x = pl->minx; x <= pl->maxx; x++)
+        {
+            if (pl->top[x] > pl->bottom[x])
+                continue;
+
+            count = pl->bottom[x] - pl->top[x];
+            dest = destview + Mul320(pl->top[x]) + x;
+
+            do
+            {
+                *dest = color;
+                dest += SCREENWIDTH;
+            } while (count--);
+        }
+
+        Z_ChangeTag(dc_source, PU_CACHE);
+    }
+}
+
+void R_DrawPlanesFlatVisplanesPotatoVBE2(void)
+{
+    visplane_t *pl;
+
+    int count;
+    byte *dest;
+    lighttable_t color;
+    int x;
+
+    for (pl = visplanes; pl < lastvisplane; pl++)
+    {
+        if (!pl->modified || pl->minx > pl->maxx)
+            continue;
+
+        // sky flat
+        if (pl->picnum == skyflatnum)
+        {
+            R_DrawSky(pl);
+            continue;
+        }
+
+        dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
+
+        color = colormaps[dc_source[FLATPIXELCOLOR]];
+
+        for (x = pl->minx; x <= pl->maxx; x++)
+        {
+            if (pl->top[x] > pl->bottom[x])
+                continue;
+
+            count = pl->bottom[x] - pl->top[x];
+            dest = destview + Mul320(pl->top[x]) + x;
+
+            do
+            {
+                *dest = color;
+                dest += SCREENWIDTH;
+            } while (count--);
+        }
+
+        Z_ChangeTag(dc_source, PU_CACHE);
+    }
+}
+
 #endif
 
 void R_DrawSky(visplane_t *pl)
