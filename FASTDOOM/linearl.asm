@@ -101,6 +101,7 @@ CODE_SYM_DEF R_DrawColumnLowBackbuffer
     mov  al,[eax]                       ; translate the color
     mov  ebx,edx
     mov  [edi-(LINE-1)*SCREENWIDTH],al  ; draw a pixel to the buffer
+    mov  [edi-(LINE-1)*SCREENWIDTH+1],al  ; draw a pixel to the buffer
     shr  ebx,25
     %assign LINE LINE-1
 %endrep
@@ -109,6 +110,7 @@ vscale1:
   mov al,[esi+ebx]
   mov al,[eax]
   mov [edi],al
+  mov [edi + 1], al
 
 vscale0:
   ret

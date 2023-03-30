@@ -112,6 +112,9 @@ vscale1:
   mov al,[esi+ebx]
   mov al,[eax]
   mov [edi],al
+  mov [edi+1],al
+  mov [edi+2],al
+  mov [edi+3],al
 
 vscale0:
   ret
