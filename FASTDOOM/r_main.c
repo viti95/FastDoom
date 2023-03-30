@@ -531,10 +531,10 @@ fixed_t R_ScaleFromGlobalAngle(angle_t visangle)
 #if defined(MODE_T4050)
     num = FixedMulEDX(projection, sineb) << 1;
 #endif
-#if defined(MODE_Y)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER)
     num = FixedMulEDX(projection, sineb) << detailshift;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT) || defined(MODE_MDA)
     num = FixedMulEDX(projection, sineb);
 #endif
     den = FixedMulEDX(rw_distance, sinea);
@@ -717,7 +717,7 @@ void R_ExecuteSetViewSize(void)
 #endif
 #endif
 
-#if defined(MODE_Y)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER)
     if (forcePotatoDetail || forceLowDetail || forceHighDetail)
     {
         if (forceHighDetail)
@@ -731,11 +731,11 @@ void R_ExecuteSetViewSize(void)
         detailshift = setdetail;
 #endif
 
-#if defined(MODE_Y)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER)
     viewwidth = scaledviewwidth >> detailshift;
     viewwidthhalf = viewwidth / 2;
 #endif
-#if defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_VBE2_DIRECT)
     viewwidth = scaledviewwidth;
     viewwidthhalf = viewwidth / 2;
 #endif
@@ -974,10 +974,10 @@ void R_ExecuteSetViewSize(void)
     pspriteiscaleneg = -pspriteiscale;
 #endif
 
-#if defined(MODE_Y)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER)
     pspriteiscaleshifted = pspriteiscale >> detailshift;
 #endif
-#if defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_VBE2_DIRECT)
     pspriteiscaleshifted = pspriteiscale;
 #endif
 
@@ -993,10 +993,10 @@ void R_ExecuteSetViewSize(void)
 #if defined(MODE_T4050)
         yslope[i] = FixedDiv((viewwidth << 1) / 2 * FRACUNIT, dy);
 #endif
-#if defined(MODE_Y)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER)
         yslope[i] = FixedDiv((viewwidth << detailshift) / 2 * FRACUNIT, dy);
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT) || defined(MODE_MDA)
         yslope[i] = FixedDiv((viewwidth) / 2 * FRACUNIT, dy);
 #endif
     }
@@ -1017,10 +1017,10 @@ void R_ExecuteSetViewSize(void)
 #if defined(MODE_T4050)
             level = startmap - Mul320(j) / (viewwidth << 1) / DISTMAP;
 #endif
-#if defined(MODE_Y)
+#if defined(MODE_Y) || defined(USE_BACKBUFFER)
             level = startmap - Mul320(j) / (viewwidth << detailshift) / DISTMAP;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(USE_BACKBUFFER) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_VBE2_DIRECT) || defined(MODE_MDA)
             level = startmap - Mul320(j) / (viewwidth) / DISTMAP;
 #endif
             if (level < 0)
