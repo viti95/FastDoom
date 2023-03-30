@@ -61,11 +61,12 @@ BEGIN_CODE_SECTION
 CODE_SYM_DEF R_DrawColumnPotatoBackbuffer
   pushad
 
-  mov  ebp,[_dc_yh]
   mov  ebx,[_dc_x]
-  mov  edi,[_ylookup+ebp*4]
+  mov  ebp,[_dc_yh]
+  mov  edi,[_columnofs+ebx*4]
   mov  eax,[_dc_yl]
-  add  edi,[_columnofs+ebx*4]
+  shl  edi, 2
+  add  edi,[_ylookup+ebp*4]
   sub  ebp,eax         ; ebp = pixel count
   js   short .done
 
@@ -101,6 +102,9 @@ CODE_SYM_DEF R_DrawColumnPotatoBackbuffer
     mov  al,[eax]                       ; translate the color
     mov  ebx,edx
     mov  [edi-(LINE-1)*SCREENWIDTH],al  ; draw a pixel to the buffer
+    mov  [edi-(LINE-1)*SCREENWIDTH + 1],al  ; draw a pixel to the buffer
+    mov  [edi-(LINE-1)*SCREENWIDTH + 2],al  ; draw a pixel to the buffer
+    mov  [edi-(LINE-1)*SCREENWIDTH + 3],al  ; draw a pixel to the buffer
     shr  ebx,25
     %assign LINE LINE-1
 %endrep

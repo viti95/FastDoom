@@ -2803,22 +2803,37 @@ void R_DrawSkyFlatPotatoBackbuffer(void)
     register int count;
     register byte *dest;
 
-    dest = ylookup[dc_yl] + columnofs[dc_x];
+    dest = ylookup[dc_yl] + (columnofs[dc_x] << 2);
     count = dc_yh - dc_yl;
 
     while (count >= 3)
     {
         *(dest) = 220;
+        *(dest + 1) = 220;
+        *(dest + 2) = 220;
+        *(dest + 3) = 220;
         *(dest + SCREENWIDTH) = 220;
+        *(dest + SCREENWIDTH + 1) = 220;
+        *(dest + SCREENWIDTH + 2) = 220;
+        *(dest + SCREENWIDTH + 3) = 220;
         *(dest + 2 * SCREENWIDTH) = 220;
+        *(dest + 2 * SCREENWIDTH + 1) = 220;
+        *(dest + 2 * SCREENWIDTH + 2) = 220;
+        *(dest + 2 * SCREENWIDTH + 3) = 220;
         *(dest + 3 * SCREENWIDTH) = 220;
+        *(dest + 3 * SCREENWIDTH + 1) = 220;
+        *(dest + 3 * SCREENWIDTH + 2) = 220;
+        *(dest + 3 * SCREENWIDTH + 3) = 220;
         dest += 4 * SCREENWIDTH;
         count -= 4;
     }
 
     while (count >= 0)
     {
-        *dest = 220;
+        *(dest) = 220;
+        *(dest + 1) = 220;
+        *(dest + 2) = 220;
+        *(dest + 3) = 220;
         dest += SCREENWIDTH;
         count--;
     };
