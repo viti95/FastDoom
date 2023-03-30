@@ -216,6 +216,7 @@ CODE_SYM_DEF R_DrawSpanLowBackbuffer
 %assign PCOL PCOL+1
 %endrep
 
-hmap160: ret
+hmap160: 
+  ret
 
 %endif
