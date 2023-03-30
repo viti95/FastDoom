@@ -52,8 +52,6 @@ GLOBOBJS = &
  i_ega640.obj &
  i_vgaver.obj &
  i_ega320.obj &
- i_ega160.obj &
- i_ega80.obj &
  i_vesa.obj &
  i_cga512.obj &
  i_text.obj &

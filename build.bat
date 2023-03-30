@@ -12,6 +12,7 @@ if "%2"=="fdoomcvb.exe" GOTO mode_cvb
 if "%2"=="fdoome.exe"   GOTO mode_e
 if "%2"=="fdoomhgc.exe" GOTO mode_hgc
 if "%2"=="fdoompcp.exe" GOTO mode_pcp
+if "%2"=="fdoom400.exe" GOTO mode_sigma
 if "%2"=="fdoomt1.exe"  GOTO mode_t1
 if "%2"=="fdoomt12.exe" GOTO mode_t12
 if "%2"=="fdoomt25.exe" GOTO mode_t25
@@ -23,8 +24,6 @@ if "%2"=="fdoomvbd.exe" GOTO mode_vbd
 if "%2"=="fdoomvbr.exe" GOTO mode_vbr
 if "%2"=="fdoom.exe"    GOTO mode_y
 if "%2"=="fdoommda.exe" GOTO mode_mda
-if "%2"=="fdoome80.exe" GOTO mode_e80
-if "%2"=="fdoomew1.exe" GOTO mode_ew1
 if "%2"=="fdoomega.exe" GOTO mode_ega
 if "%2"=="fdoomcah.exe" GOTO mode_cah
 if "%2"=="fdoom512.exe" GOTO mode_512
@@ -95,6 +94,12 @@ set executable=fdoompcp.exe
 set options=-dMODE_PCP
 goto compile
 
+:mode_sigma
+set base=fdoom.exe
+set executable=fdoom400.exe
+set options=-dMODE_SIGMA
+goto compile
+
 :mode_t1
 set base=fdoom.exe
 set executable=fdoomt1.exe
@@ -129,18 +134,6 @@ goto compile
 set base=fdoom.exe
 set executable=fdoomv2.exe
 set options=-dMODE_V2
-goto compile
-
-:mode_e80
-set base=fdoom.exe
-set executable=fdoome80.exe
-set options=-dMODE_EGA80
-goto compile
-
-:mode_ew1
-set base=fdoom.exe
-set executable=fdoomew1.exe
-set options=-dMODE_EGAW1
 goto compile
 
 :mode_ega

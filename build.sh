@@ -21,10 +21,6 @@ elif [ "$target" = "fdoomati.exe" ]; then
   buildopts="-dMODE_ATI640"
   buildtarget="fdoom.exe"
 
-elif [ "$target" = "fdoomew1.exe" ]; then
-  buildopts="-dMODE_EGAW1"
-  buildtarget="fdoom.exe"
-
 elif [ "$target" = "fdoomega.exe" ]; then
   buildopts="-dMODE_EGA"
   buildtarget="fdoom.exe"
@@ -73,6 +69,10 @@ elif [ "$target" = "fdoompcp.exe" ]; then
   buildopts="-dMODE_PCP"
   buildtarget="fdoom.exe"
 
+elif [ "$target" = "fdoom400.exe" ]; then
+  buildopts="-dMODE_SIGMA"
+  buildtarget="fdoom.exe"
+
 elif [ "$target" = "fdoomcvb.exe" ]; then
   buildopts="-dMODE_CVB"
   buildtarget="fdoom.exe"
@@ -91,10 +91,6 @@ elif [ "$target" = "fdoomcah.exe" ]; then
 
 elif [ "$target" = "fdoomv16.exe" ]; then
   buildopts="-dMODE_VGA16"
-  buildtarget="fdoom.exe"
-
-elif [ "$target" = "fdoome80.exe" ]; then
-  buildopts="-dMODE_EGA80"
   buildtarget="fdoom.exe"
 
 elif [ "$target" = "fdoome.exe" ]; then

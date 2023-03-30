@@ -75,14 +75,6 @@ CPU 386
 %define USE_BACKBUFFER
 %endif
 
-%ifdef MODE_EGA80
-%define USE_BACKBUFFER
-%endif
-
-%ifdef MODE_EGAW1
-%define USE_BACKBUFFER
-%endif
-
 %ifdef MODE_EGA
 %define USE_BACKBUFFER
 %endif

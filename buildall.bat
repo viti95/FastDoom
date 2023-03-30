@@ -19,8 +19,7 @@ call build.bat clean fdoomvbd.exe
 call build.bat clean fdoomvbr.exe
 call build.bat clean fdoom.exe
 call build.bat clean fdoommda.exe
-call build.bat clean fdoomew1.exe
-call build.bat clean fdoome80.exe
 call build.bat clean fdoomega.exe
 call build.bat clean fdoomcah.exe
 call build.bat clean fdoom512.exe
+call build.bat clean fdoom400.exe

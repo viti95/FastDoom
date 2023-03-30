@@ -108,14 +108,6 @@
 #include "i_ega320.h"
 #endif
 
-#if defined(MODE_EGAW1)
-#include "i_ega160.h"
-#endif
-
-#if defined(MODE_EGA80)
-#include "i_ega80.h"
-#endif
-
 #if defined(MODE_VBE2)
 #include "i_vga.h"
 #endif
@@ -694,12 +686,6 @@ void I_InitGraphics(void)
     EGA_InitGraphics();
 #endif
 
-#if defined(MODE_EGAW1)
-    EGA_160_InitGraphics();
-#endif
-#if defined(MODE_EGA80)
-    EGA_80_InitGraphics();
-#endif
 #if defined(MODE_EGA640)
     EGA_640_InitGraphics();
 #endif
