@@ -2460,7 +2460,7 @@ void R_InitBuffer(int width, int height)
 #endif
 #endif
 
-        // Column offset. For windows.
+    // Column offset. For windows.
 #if defined(USE_BACKBUFFER)
     for (i = 0; i < width; i++)
         columnofs[i] = (viewwindowx + i) << detailshift;
@@ -2496,7 +2496,6 @@ void R_InitBuffer(int width, int height)
     for (i = 0; i < height; i++)
         ylookup[i] = Mul80(i);
 #endif
-
 }
 
 //
@@ -2964,7 +2963,7 @@ void R_DrawFuzzColumnFastLowBackbuffer(void)
 
         *(dest + SCREENWIDTH) = color;
         *(dest + SCREENWIDTH + 1) = color;
-        
+
         color = colormaps[6 * 256 + dest[2 * SCREENWIDTH]];
 
         *(dest + 2 * SCREENWIDTH) = color;
@@ -2985,7 +2984,7 @@ void R_DrawFuzzColumnFastLowBackbuffer(void)
 
         *(dest) = color;
         *(dest + 1) = color;
-        
+
         dest += SCREENWIDTH;
         count--;
     };
@@ -3188,7 +3187,10 @@ void R_DrawFuzzColumnSaturnLowBackbuffer(void)
 
     do
     {
-        *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
+        lighttable_t color = dc_colormap[dc_source[(frac >> FRACBITS)]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
 
         dest += 2 * SCREENWIDTH;
         frac += fracstep;
@@ -3196,13 +3198,19 @@ void R_DrawFuzzColumnSaturnLowBackbuffer(void)
 
     if ((dc_yh - dc_yl) & 1)
     {
-        *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
+        lighttable_t color = dc_colormap[dc_source[(frac >> FRACBITS)]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
     }
     else
     {
         if (!(initialdrawpos & 1))
         {
-            *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
+            lighttable_t color = dc_colormap[dc_source[(frac >> FRACBITS)]];
+
+            *(dest) = color;
+            *(dest + 1) = color;
         }
     }
 }
@@ -3237,7 +3245,12 @@ void R_DrawFuzzColumnSaturnPotatoBackbuffer(void)
 
     do
     {
-        *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
+        lighttable_t color = dc_colormap[dc_source[(frac >> FRACBITS)]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+        *(dest + 2) = color;
+        *(dest + 3) = color;
 
         dest += 2 * SCREENWIDTH;
         frac += fracstep;
@@ -3245,13 +3258,23 @@ void R_DrawFuzzColumnSaturnPotatoBackbuffer(void)
 
     if ((dc_yh - dc_yl) & 1)
     {
-        *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
+        lighttable_t color = dc_colormap[dc_source[(frac >> FRACBITS)]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+        *(dest + 2) = color;
+        *(dest + 3) = color;
     }
     else
     {
         if (!(initialdrawpos & 1))
         {
-            *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
+            lighttable_t color = dc_colormap[dc_source[(frac >> FRACBITS)]];
+
+            *(dest) = color;
+            *(dest + 1) = color;
+            *(dest + 2) = color;
+            *(dest + 3) = color;
         }
     }
 }
