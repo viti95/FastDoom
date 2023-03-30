@@ -408,7 +408,7 @@ void R_DrawPlanes(void)
 // R_DrawPlanes
 // At the end of each frame.
 //
-void R_DrawPlanesflatVisplanes(void)
+void R_DrawPlanesFlatVisplanes(void)
 {
     visplane_t *pl;
 
@@ -592,7 +592,7 @@ void R_DrawPlanesflatVisplanes(void)
     }
 }
 
-void R_DrawPlanesflatVisplanesLow(void)
+void R_DrawPlanesFlatVisplanesLow(void)
 {
     visplane_t *pl;
 
@@ -696,7 +696,7 @@ void R_DrawPlanesflatVisplanesLow(void)
     }
 }
 
-void R_DrawPlanesflatVisplanesPotato(void)
+void R_DrawPlanesFlatVisplanesPotato(void)
 {
     visplane_t *pl;
 
@@ -753,7 +753,7 @@ void R_DrawPlanesflatVisplanesPotato(void)
 }
 
 #if defined(MODE_T8050) || defined(MODE_T8043)
-void R_DrawPlanesflatVisplanesText8050(void)
+void R_DrawPlanesFlatVisplanesText8050(void)
 {
     visplane_t *pl;
 
@@ -809,7 +809,7 @@ void R_DrawPlanesflatVisplanesText8050(void)
 #endif
 
 #if defined(MODE_T4050)
-void R_DrawPlanesflatVisplanesText4050(void)
+void R_DrawPlanesFlatVisplanesText4050(void)
 {
     visplane_t *pl;
 
@@ -895,7 +895,7 @@ void R_DrawPlanesflatVisplanesText4050(void)
 #endif
 
 #if defined(MODE_T4025)
-void R_DrawPlanesflatVisplanesText4025(void)
+void R_DrawPlanesFlatVisplanesText4025(void)
 {
     visplane_t *pl;
 
@@ -951,7 +951,7 @@ void R_DrawPlanesflatVisplanesText4025(void)
 #endif
 
 #if defined(MODE_MDA)
-void R_DrawPlanesflatVisplanesTextMDA(void)
+void R_DrawPlanesFlatVisplanesTextMDA(void)
 {
     visplane_t *pl;
 
@@ -1030,7 +1030,7 @@ void R_DrawPlanesflatVisplanesTextMDA(void)
 #endif
 
 #if defined(MODE_T8025)
-void R_DrawPlanesflatVisplanesText8025(void)
+void R_DrawPlanesFlatVisplanesText8025(void)
 {
     visplane_t *pl;
 
@@ -1116,7 +1116,7 @@ void R_DrawPlanesflatVisplanesText8025(void)
 #endif
 
 #if defined(USE_BACKBUFFER)
-void R_DrawPlanesflatVisplanesBackbuffer(void)
+void R_DrawPlanesFlatVisplanesBackbuffer(void)
 {
     visplane_t *pl;
 
@@ -1173,10 +1173,127 @@ void R_DrawPlanesflatVisplanesBackbuffer(void)
         Z_ChangeTag(dc_source, PU_CACHE);
     }
 }
+
+void R_DrawPlanesFlatVisplanesLowBackbuffer(void)
+{
+    visplane_t *pl;
+
+    int count;
+    byte *dest;
+    lighttable_t color;
+    int x;
+
+    for (pl = visplanes; pl < lastvisplane; pl++)
+    {
+        if (!pl->modified || pl->minx > pl->maxx)
+            continue;
+
+        // sky flat
+        if (pl->picnum == skyflatnum)
+        {
+            R_DrawSky(pl);
+            continue;
+        }
+
+        dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
+
+        color = colormaps[dc_source[FLATPIXELCOLOR]];
+
+        for (x = pl->minx; x <= pl->maxx; x++)
+        {
+#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CVB) || defined(MODE_EGAW1)
+            if (x & 1)
+            {
+                continue;
+            }
+#endif
+
+#if defined(MODE_EGA80) || defined(MODE_CGA512)
+            if (x & 3)
+            {
+                continue;
+            }
+#endif
+
+            if (pl->top[x] > pl->bottom[x])
+                continue;
+
+            count = pl->bottom[x] - pl->top[x];
+            dest = ylookup[pl->top[x]] + columnofs[x];
+
+            do
+            {
+                *dest = color;
+                dest += SCREENWIDTH;
+            } while (count--);
+        }
+
+        Z_ChangeTag(dc_source, PU_CACHE);
+    }
+}
+
+void R_DrawPlanesFlatVisplanesPotatoBackbuffer(void)
+{
+    visplane_t *pl;
+
+    int count;
+    byte *dest;
+    lighttable_t color;
+    int x;
+
+    for (pl = visplanes; pl < lastvisplane; pl++)
+    {
+        if (!pl->modified || pl->minx > pl->maxx)
+            continue;
+
+        // sky flat
+        if (pl->picnum == skyflatnum)
+        {
+            R_DrawSky(pl);
+            continue;
+        }
+
+        dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
+
+        color = colormaps[dc_source[FLATPIXELCOLOR]];
+
+        for (x = pl->minx; x <= pl->maxx; x++)
+        {
+#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CVB) || defined(MODE_EGAW1)
+            if (x & 1)
+            {
+                continue;
+            }
+#endif
+
+#if defined(MODE_EGA80) || defined(MODE_CGA512)
+            if (x & 3)
+            {
+                continue;
+            }
+#endif
+
+            if (pl->top[x] > pl->bottom[x])
+                continue;
+
+            count = pl->bottom[x] - pl->top[x];
+            dest = ylookup[pl->top[x]] + columnofs[x];
+
+            do
+            {
+                *dest = color;
+                dest += SCREENWIDTH;
+            } while (count--);
+        }
+
+        Z_ChangeTag(dc_source, PU_CACHE);
+    }
+}
+
 #endif
 
 #if defined(MODE_VBE2_DIRECT)
-void R_DrawPlanesflatVisplanesVBE2(void)
+void R_DrawPlanesFlatVisplanesVBE2(void)
 {
     visplane_t *pl;
 

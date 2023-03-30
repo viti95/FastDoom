@@ -918,24 +918,66 @@ void R_ExecuteSetViewSize(void)
     }
 #endif
 #if defined(USE_BACKBUFFER)
-    colfunc = basecolfunc = R_DrawColumnBackbuffer;
+    switch (detailshift)
+    {
+    case 0:
+        colfunc = basecolfunc = R_DrawColumnBackbuffer;
 
-    if (flatterVisplanes)
-        spanfunc = R_DrawSpanFlatBackbuffer;
-    else
-        spanfunc = R_DrawSpanBackbuffer;
+        if (flatterVisplanes)
+            spanfunc = R_DrawSpanFlatBackbuffer;
+        else
+            spanfunc = R_DrawSpanBackbuffer;
 
-    if (flatSky)
-        skyfunc = R_DrawSkyFlatBackbuffer;
-    else
-        skyfunc = R_DrawColumnBackbuffer;
+        if (flatSky)
+            skyfunc = R_DrawSkyFlatBackbuffer;
+        else
+            skyfunc = R_DrawColumnBackbuffer;
 
-    if (flatShadows)
-        fuzzcolfunc = R_DrawFuzzColumnFastBackbuffer;
-    else if (saturnShadows)
-        fuzzcolfunc = R_DrawFuzzColumnSaturnBackbuffer;
-    else
-        fuzzcolfunc = R_DrawFuzzColumnBackbuffer;
+        if (flatShadows)
+            fuzzcolfunc = R_DrawFuzzColumnFastBackbuffer;
+        else if (saturnShadows)
+            fuzzcolfunc = R_DrawFuzzColumnSaturnBackbuffer;
+        else
+            fuzzcolfunc = R_DrawFuzzColumnBackbuffer;
+    case 1:
+        colfunc = basecolfunc = R_DrawColumnLowBackbuffer;
+
+        if (flatterVisplanes)
+            spanfunc = R_DrawSpanFlatLowBackbuffer;
+        else
+            spanfunc = R_DrawSpanLowBackbuffer;
+
+        if (flatSky)
+            skyfunc = R_DrawSkyFlatLowBackbuffer;
+        else
+            skyfunc = R_DrawColumnLowBackbuffer;
+
+        if (flatShadows)
+            fuzzcolfunc = R_DrawFuzzColumnFastLowBackbuffer;
+        else if (saturnShadows)
+            fuzzcolfunc = R_DrawFuzzColumnSaturnLowBackbuffer;
+        else
+            fuzzcolfunc = R_DrawFuzzColumnLowBackbuffer;
+    case 2:
+        colfunc = basecolfunc = R_DrawColumnPotatoBackbuffer;
+
+        if (flatterVisplanes)
+            spanfunc = R_DrawSpanFlatPotatoBackbuffer;
+        else
+            spanfunc = R_DrawSpanPotatoBackbuffer;
+
+        if (flatSky)
+            skyfunc = R_DrawSkyFlatPotatoBackbuffer;
+        else
+            skyfunc = R_DrawColumnPotatoBackbuffer;
+
+        if (flatShadows)
+            fuzzcolfunc = R_DrawFuzzColumnFastPotatoBackbuffer;
+        else if (saturnShadows)
+            fuzzcolfunc = R_DrawFuzzColumnSaturnPotatoBackbuffer;
+        else
+            fuzzcolfunc = R_DrawFuzzColumnPotatoBackbuffer;
+    }
 #endif
 
 #if defined(MODE_VBE2_DIRECT)
@@ -1191,29 +1233,29 @@ void R_RenderPlayerView(void)
 
 #if defined(MODE_T4050)
     if (flatVisplanes)
-        R_DrawPlanesflatVisplanesText4050();
+        R_DrawPlanesFlatVisplanesText4050();
     else
         R_DrawPlanes();
 #endif
 #if defined(MODE_T4025)
     if (flatVisplanes)
-        R_DrawPlanesflatVisplanesText4025();
+        R_DrawPlanesFlatVisplanesText4025();
     else
         R_DrawPlanes();
 #endif
 #if defined(MODE_T8025)
     if (flatVisplanes)
-        R_DrawPlanesflatVisplanesText8025();
+        R_DrawPlanesFlatVisplanesText8025();
     else
         R_DrawPlanes();
 #endif
 #if defined(MODE_MDA)
-    R_DrawPlanesflatVisplanesTextMDA();
+    R_DrawPlanesFlatVisplanesTextMDA();
 #endif
 
 #if defined(MODE_T8050) || defined(MODE_T8043)
     if (flatVisplanes)
-        R_DrawPlanesflatVisplanesText8050();
+        R_DrawPlanesFlatVisplanesText8050();
     else
         R_DrawPlanes();
 #endif
@@ -1222,13 +1264,13 @@ void R_RenderPlayerView(void)
         switch (detailshift)
         {
         case 0:
-            R_DrawPlanesflatVisplanes();
+            R_DrawPlanesFlatVisplanes();
             break;
         case 1:
-            R_DrawPlanesflatVisplanesLow();
+            R_DrawPlanesFlatVisplanesLow();
             break;
         case 2:
-            R_DrawPlanesflatVisplanesPotato();
+            R_DrawPlanesFlatVisplanesPotato();
             break;
         }
     else
@@ -1236,13 +1278,13 @@ void R_RenderPlayerView(void)
 #endif
 #if defined(USE_BACKBUFFER)
     if (flatVisplanes)
-        R_DrawPlanesflatVisplanesBackbuffer();
+        R_DrawPlanesFlatVisplanesBackbuffer();
     else
         R_DrawPlanes();
 #endif
 #if defined(MODE_VBE2_DIRECT)
     if (flatVisplanes)
-        R_DrawPlanesflatVisplanesVBE2();
+        R_DrawPlanesFlatVisplanesVBE2();
     else
         R_DrawPlanes();
 #endif

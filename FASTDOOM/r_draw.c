@@ -2772,7 +2772,111 @@ void R_DrawSkyFlatBackbuffer(void)
     };
 }
 
+void R_DrawSkyFlatLowBackbuffer(void)
+{
+    register int count;
+    register byte *dest;
+
+    dest = ylookup[dc_yl] + columnofs[dc_x];
+    count = dc_yh - dc_yl;
+
+    while (count >= 3)
+    {
+        *(dest) = 220;
+        *(dest + SCREENWIDTH) = 220;
+        *(dest + 2 * SCREENWIDTH) = 220;
+        *(dest + 3 * SCREENWIDTH) = 220;
+        dest += 4 * SCREENWIDTH;
+        count -= 4;
+    }
+
+    while (count >= 0)
+    {
+        *dest = 220;
+        dest += SCREENWIDTH;
+        count--;
+    };
+}
+
+void R_DrawSkyFlatPotatoBackbuffer(void)
+{
+    register int count;
+    register byte *dest;
+
+    dest = ylookup[dc_yl] + columnofs[dc_x];
+    count = dc_yh - dc_yl;
+
+    while (count >= 3)
+    {
+        *(dest) = 220;
+        *(dest + SCREENWIDTH) = 220;
+        *(dest + 2 * SCREENWIDTH) = 220;
+        *(dest + 3 * SCREENWIDTH) = 220;
+        dest += 4 * SCREENWIDTH;
+        count -= 4;
+    }
+
+    while (count >= 0)
+    {
+        *dest = 220;
+        dest += SCREENWIDTH;
+        count--;
+    };
+}
+
 void R_DrawFuzzColumnBackbuffer(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac, fracstep;
+
+    if (!dc_yl)
+        dc_yl = 1;
+    if (dc_yh == viewheight - 1)
+        dc_yh = viewheight - 2;
+
+    count = dc_yh - dc_yl;
+    if (count < 0)
+        return;
+
+    dest = ylookup[dc_yl] + columnofs[dc_x];
+
+    do
+    {
+        *dest = colormaps[6 * 256 + dest[fuzzoffset[fuzzpos]]];
+        if (++fuzzpos == FUZZTABLE)
+            fuzzpos = 0;
+        dest += SCREENWIDTH;
+    } while (count--);
+}
+
+void R_DrawFuzzColumnLowBackbuffer(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac, fracstep;
+
+    if (!dc_yl)
+        dc_yl = 1;
+    if (dc_yh == viewheight - 1)
+        dc_yh = viewheight - 2;
+
+    count = dc_yh - dc_yl;
+    if (count < 0)
+        return;
+
+    dest = ylookup[dc_yl] + columnofs[dc_x];
+
+    do
+    {
+        *dest = colormaps[6 * 256 + dest[fuzzoffset[fuzzpos]]];
+        if (++fuzzpos == FUZZTABLE)
+            fuzzpos = 0;
+        dest += SCREENWIDTH;
+    } while (count--);
+}
+
+void R_DrawFuzzColumnPotatoBackbuffer(void)
 {
     int count;
     byte *dest;
@@ -2826,7 +2930,107 @@ void R_DrawFuzzColumnFastBackbuffer(void)
     };
 }
 
+void R_DrawFuzzColumnFastLowBackbuffer(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac, fracstep;
+
+    dest = ylookup[dc_yl] + columnofs[dc_x];
+
+    count = dc_yh - dc_yl;
+
+    while (count >= 3)
+    {
+        *(dest) = colormaps[6 * 256 + dest[0]];
+        *(dest + SCREENWIDTH) = colormaps[6 * 256 + dest[SCREENWIDTH]];
+        *(dest + 2 * SCREENWIDTH) = colormaps[6 * 256 + dest[2 * SCREENWIDTH]];
+        *(dest + 3 * SCREENWIDTH) = colormaps[6 * 256 + dest[3 * SCREENWIDTH]];
+        dest += 4 * SCREENWIDTH;
+        count -= 4;
+    }
+
+    while (count >= 0)
+    {
+        *dest = colormaps[6 * 256 + dest[0]];
+        dest += SCREENWIDTH;
+        count--;
+    };
+}
+
+void R_DrawFuzzColumnFastPotatoBackbuffer(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac, fracstep;
+
+    dest = ylookup[dc_yl] + columnofs[dc_x];
+
+    count = dc_yh - dc_yl;
+
+    while (count >= 3)
+    {
+        *(dest) = colormaps[6 * 256 + dest[0]];
+        *(dest + SCREENWIDTH) = colormaps[6 * 256 + dest[SCREENWIDTH]];
+        *(dest + 2 * SCREENWIDTH) = colormaps[6 * 256 + dest[2 * SCREENWIDTH]];
+        *(dest + 3 * SCREENWIDTH) = colormaps[6 * 256 + dest[3 * SCREENWIDTH]];
+        dest += 4 * SCREENWIDTH;
+        count -= 4;
+    }
+
+    while (count >= 0)
+    {
+        *dest = colormaps[6 * 256 + dest[0]];
+        dest += SCREENWIDTH;
+        count--;
+    };
+}
+
 void R_DrawSpanFlatBackbuffer(void)
+{
+    byte *dest;
+    int countp;
+
+    lighttable_t color = ds_colormap[ds_source[FLATPIXELCOLOR]];
+
+    dest = ylookup[ds_y] + columnofs[ds_x1];
+
+    countp = ds_x2 - ds_x1 + 1;
+
+    if (countp & 1)
+    {
+        SetBytes(dest, color, countp);
+    }
+    else
+    {
+        unsigned short colorcomp = color << 8 | color;
+        SetWords(dest, colorcomp, countp / 2);
+    }
+}
+
+void R_DrawSpanFlatLowBackbuffer(void)
+{
+    byte *dest;
+    int countp;
+
+    lighttable_t color = ds_colormap[ds_source[FLATPIXELCOLOR]];
+
+    dest = ylookup[ds_y] + columnofs[ds_x1];
+
+    countp = ds_x2 - ds_x1 + 1;
+
+    if (countp & 1)
+    {
+        SetBytes(dest, color, countp);
+    }
+    else
+    {
+        unsigned short colorcomp = color << 8 | color;
+        SetWords(dest, colorcomp, countp / 2);
+    }
+}
+
+void R_DrawSpanFlatPotatoBackbuffer(void)
 {
     byte *dest;
     int countp;
@@ -2896,4 +3100,103 @@ void R_DrawFuzzColumnSaturnBackbuffer(void)
         }
     }
 }
+
+void R_DrawFuzzColumnSaturnLowBackbuffer(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac;
+    fixed_t fracstep;
+    int initialdrawpos = 0;
+
+    count = (dc_yh - dc_yl) / 2 - 1;
+
+    if (count < 0)
+        return;
+
+    initialdrawpos = dc_yl + dc_x;
+
+    dest = ylookup[dc_yl] + columnofs[dc_x];
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    if (initialdrawpos & 1)
+    {
+        dest += SCREENWIDTH;
+        frac += fracstep;
+    }
+
+    fracstep = 2 * fracstep;
+
+    do
+    {
+        *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
+
+        dest += 2 * SCREENWIDTH;
+        frac += fracstep;
+    } while (count--);
+
+    if ((dc_yh - dc_yl) & 1)
+    {
+        *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
+    }
+    else
+    {
+        if (!(initialdrawpos & 1))
+        {
+            *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
+        }
+    }
+}
+
+void R_DrawFuzzColumnSaturnPotatoBackbuffer(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac;
+    fixed_t fracstep;
+    int initialdrawpos = 0;
+
+    count = (dc_yh - dc_yl) / 2 - 1;
+
+    if (count < 0)
+        return;
+
+    initialdrawpos = dc_yl + dc_x;
+
+    dest = ylookup[dc_yl] + columnofs[dc_x];
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    if (initialdrawpos & 1)
+    {
+        dest += SCREENWIDTH;
+        frac += fracstep;
+    }
+
+    fracstep = 2 * fracstep;
+
+    do
+    {
+        *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
+
+        dest += 2 * SCREENWIDTH;
+        frac += fracstep;
+    } while (count--);
+
+    if ((dc_yh - dc_yl) & 1)
+    {
+        *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
+    }
+    else
+    {
+        if (!(initialdrawpos & 1))
+        {
+            *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
+        }
+    }
+}
+
 #endif

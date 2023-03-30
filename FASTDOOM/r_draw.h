@@ -110,12 +110,26 @@ void R_DrawFuzzColumnFastText4050(void);
 void R_DrawFuzzColumnSaturnText4050(void);
 
 void R_DrawColumnBackbuffer(void);
+void R_DrawColumnLowBackbuffer(void);
+void R_DrawColumnPotatoBackbuffer(void);
 void R_DrawSpanBackbuffer(void);
+void R_DrawSpanLowBackbuffer(void);
+void R_DrawSpanPotatoBackbuffer(void);
 void R_DrawFuzzColumnBackbuffer(void);
+void R_DrawFuzzColumnLowBackbuffer(void);
+void R_DrawFuzzColumnPotatoBackbuffer(void);
 void R_DrawFuzzColumnFastBackbuffer(void);
+void R_DrawFuzzColumnFastLowBackbuffer(void);
+void R_DrawFuzzColumnFastPotatoBackbuffer(void);
 void R_DrawSkyFlatBackbuffer(void);
+void R_DrawSkyFlatLowBackbuffer(void);
+void R_DrawSkyFlatPotatoBackbuffer(void);
 void R_DrawSpanFlatBackbuffer(void);
+void R_DrawSpanFlatLowBackbuffer(void);
+void R_DrawSpanFlatPotatoBackbuffer(void);
 void R_DrawFuzzColumnSaturnBackbuffer(void);
+void R_DrawFuzzColumnSaturnLowBackbuffer(void);
+void R_DrawFuzzColumnSaturnPotatoBackbuffer(void);
 
 void R_DrawColumnVBE2(void);
 void R_DrawSpanVBE2(void);
