@@ -3075,7 +3075,8 @@ void R_DrawSpanFlatLowBackbuffer(void)
     byte *dest;
     int countp;
 
-    lighttable_t color = ds_colormap[ds_source[FLATPIXELCOLOR]];
+    unsigned short color = ds_colormap[ds_source[FLATPIXELCOLOR]];
+    color |= color << 8;
 
     dest = ylookup[ds_y] + columnofs[ds_x1];
 
@@ -3083,12 +3084,12 @@ void R_DrawSpanFlatLowBackbuffer(void)
 
     if (countp & 1)
     {
-        SetBytes(dest, color, countp);
+        SetWords(dest, color, countp);
     }
     else
     {
-        unsigned short colorcomp = color << 8 | color;
-        SetWords(dest, colorcomp, countp / 2);
+        unsigned int colorcomp = color << 16 | color;
+        SetDWords(dest, colorcomp, countp / 2);
     }
 }
 
@@ -3097,21 +3098,15 @@ void R_DrawSpanFlatPotatoBackbuffer(void)
     byte *dest;
     int countp;
 
-    lighttable_t color = ds_colormap[ds_source[FLATPIXELCOLOR]];
+    unsigned int color = ds_colormap[ds_source[FLATPIXELCOLOR]];
+    color |= color << 8;
+    color |= color << 16;
 
     dest = ylookup[ds_y] + columnofs[ds_x1];
 
     countp = ds_x2 - ds_x1 + 1;
 
-    if (countp & 1)
-    {
-        SetBytes(dest, color, countp);
-    }
-    else
-    {
-        unsigned short colorcomp = color << 8 | color;
-        SetWords(dest, colorcomp, countp / 2);
-    }
+    SetDWords(dest, color, countp);
 }
 
 void R_DrawFuzzColumnSaturnBackbuffer(void)
