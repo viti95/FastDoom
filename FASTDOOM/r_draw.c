@@ -2847,7 +2847,7 @@ void R_InitBuffer(int width, int height)
     // Column offset. For windows.
 #if defined(USE_BACKBUFFER)
     for (i = 0; i < width; i++)
-        columnofs[i] = (viewwindowx + i) << detailshift;
+        columnofs[i] = viewwindowx + (i << detailshift);
 #endif
 
 // Same with base row offset.
