@@ -2463,7 +2463,7 @@ void R_InitBuffer(int width, int height)
         // Column offset. For windows.
 #if defined(USE_BACKBUFFER)
     for (i = 0; i < width; i++)
-        columnofs[i] = viewwindowx + i;
+        columnofs[i] = (viewwindowx + i) << detailshift;
 #endif
 
 // Same with base row offset.
@@ -2803,7 +2803,7 @@ void R_DrawSkyFlatPotatoBackbuffer(void)
     register int count;
     register byte *dest;
 
-    dest = ylookup[dc_yl] + (columnofs[dc_x] << 2);
+    dest = ylookup[dc_yl] + columnofs[dc_x];
     count = dc_yh - dc_yl;
 
     while (count >= 3)

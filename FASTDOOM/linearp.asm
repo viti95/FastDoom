@@ -65,7 +65,6 @@ CODE_SYM_DEF R_DrawColumnPotatoBackbuffer
   mov  ebp,[_dc_yh]
   mov  edi,[_columnofs+ebx*4]
   mov  eax,[_dc_yl]
-  shl  edi, 2
   add  edi,[_ylookup+ebp*4]
   sub  ebp,eax         ; ebp = pixel count
   js   short .done
