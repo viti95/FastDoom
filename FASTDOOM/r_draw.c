@@ -615,20 +615,21 @@ void R_DrawSpanFlatLowVBE2(void)
     byte *dest;
     int countp;
 
-    lighttable_t color = ds_colormap[ds_source[FLATPIXELCOLOR]];
+    unsigned short color = ds_colormap[ds_source[FLATPIXELCOLOR]];
+    color |= color << 8;
 
-    dest = destview + Mul320(ds_y) + ds_x1;
+    dest = destview + Mul320(ds_y) + (ds_x1 << 1);
 
     countp = ds_x2 - ds_x1 + 1;
 
     if (countp & 1)
     {
-        SetBytes(dest, color, countp);
+        SetWords(dest, color, countp);
     }
     else
     {
-        unsigned short colorcomp = color << 8 | color;
-        SetWords(dest, colorcomp, countp / 2);
+        unsigned int colorcomp = color << 16 | color;
+        SetDWords(dest, colorcomp, countp / 2);
     }
 }
 
@@ -637,21 +638,15 @@ void R_DrawSpanFlatPotatoVBE2(void)
     byte *dest;
     int countp;
 
-    lighttable_t color = ds_colormap[ds_source[FLATPIXELCOLOR]];
+    unsigned int color = ds_colormap[ds_source[FLATPIXELCOLOR]];
+    color |= color << 8;
+    color |= color << 16;
 
-    dest = destview + Mul320(ds_y) + ds_x1;
+    dest = destview + Mul320(ds_y) + (ds_x1 << 2);
 
     countp = ds_x2 - ds_x1 + 1;
 
-    if (countp & 1)
-    {
-        SetBytes(dest, color, countp);
-    }
-    else
-    {
-        unsigned short colorcomp = color << 8 | color;
-        SetWords(dest, colorcomp, countp / 2);
-    }
+    SetDWords(dest, color, countp);
 }
 
 #endif
