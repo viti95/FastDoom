@@ -939,6 +939,7 @@ void R_ExecuteSetViewSize(void)
             fuzzcolfunc = R_DrawFuzzColumnSaturnBackbuffer;
         else
             fuzzcolfunc = R_DrawFuzzColumnBackbuffer;
+        break;
     case 1:
         colfunc = basecolfunc = R_DrawColumnLowBackbuffer;
 
@@ -958,6 +959,7 @@ void R_ExecuteSetViewSize(void)
             fuzzcolfunc = R_DrawFuzzColumnSaturnLowBackbuffer;
         else
             fuzzcolfunc = R_DrawFuzzColumnLowBackbuffer;
+        break;
     case 2:
         colfunc = basecolfunc = R_DrawColumnPotatoBackbuffer;
 
@@ -977,6 +979,7 @@ void R_ExecuteSetViewSize(void)
             fuzzcolfunc = R_DrawFuzzColumnSaturnPotatoBackbuffer;
         else
             fuzzcolfunc = R_DrawFuzzColumnPotatoBackbuffer;
+        break;
     }
 #endif
 
