@@ -1179,8 +1179,8 @@ void R_DrawPlanesFlatVisplanesLowBackbuffer(void)
     visplane_t *pl;
 
     int count;
-    byte *dest;
-    lighttable_t color;
+    unsigned short *dest;
+    unsigned short color;
     int x;
 
     for (pl = visplanes; pl < lastvisplane; pl++)
@@ -1198,6 +1198,7 @@ void R_DrawPlanesFlatVisplanesLowBackbuffer(void)
         dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
 
         color = colormaps[dc_source[FLATPIXELCOLOR]];
+        color |= color << 8;
 
         for (x = pl->minx; x <= pl->maxx; x++)
         {
@@ -1219,12 +1220,12 @@ void R_DrawPlanesFlatVisplanesLowBackbuffer(void)
                 continue;
 
             count = pl->bottom[x] - pl->top[x];
-            dest = ylookup[pl->top[x]] + columnofs[x];
+            dest = (unsigned short *)((byte *)(ylookup[pl->top[x]] + columnofs[x]));
 
             do
             {
-                *dest = color;
-                dest += SCREENWIDTH;
+                *(dest) = color;
+                dest += SCREENWIDTH/2;
             } while (count--);
         }
 
@@ -1237,8 +1238,8 @@ void R_DrawPlanesFlatVisplanesPotatoBackbuffer(void)
     visplane_t *pl;
 
     int count;
-    byte *dest;
-    lighttable_t color;
+    unsigned int *dest;
+    unsigned int color;
     int x;
 
     for (pl = visplanes; pl < lastvisplane; pl++)
@@ -1256,6 +1257,8 @@ void R_DrawPlanesFlatVisplanesPotatoBackbuffer(void)
         dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
 
         color = colormaps[dc_source[FLATPIXELCOLOR]];
+        color |= color << 8;
+        color |= color << 16;
 
         for (x = pl->minx; x <= pl->maxx; x++)
         {
@@ -1277,12 +1280,12 @@ void R_DrawPlanesFlatVisplanesPotatoBackbuffer(void)
                 continue;
 
             count = pl->bottom[x] - pl->top[x];
-            dest = ylookup[pl->top[x]] + columnofs[x];
+            dest = (unsigned int *)((byte *)(ylookup[pl->top[x]] + columnofs[x]));
 
             do
             {
-                *dest = color;
-                dest += SCREENWIDTH;
+                *(dest) = color;
+                dest += SCREENWIDTH/4;
             } while (count--);
         }
 

@@ -1281,7 +1281,18 @@ void R_RenderPlayerView(void)
 #endif
 #if defined(USE_BACKBUFFER)
     if (flatVisplanes)
-        R_DrawPlanesFlatVisplanesBackbuffer();
+        switch (detailshift)
+        {
+        case 0:
+            R_DrawPlanesFlatVisplanesBackbuffer();
+            break;
+        case 1:
+            R_DrawPlanesFlatVisplanesLowBackbuffer();
+            break;
+        case 2:
+            R_DrawPlanesFlatVisplanesPotatoBackbuffer();
+            break;
+        }
     else
         R_DrawPlanes();
 #endif
