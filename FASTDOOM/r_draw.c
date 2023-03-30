@@ -2869,7 +2869,13 @@ void R_DrawFuzzColumnLowBackbuffer(void)
 
     do
     {
-        *dest = colormaps[6 * 256 + dest[fuzzoffset[fuzzpos]]];
+        lighttable_t color;
+
+        color = colormaps[6 * 256 + dest[fuzzoffset[fuzzpos]]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+
         if (++fuzzpos == FUZZTABLE)
             fuzzpos = 0;
         dest += SCREENWIDTH;
@@ -2895,7 +2901,15 @@ void R_DrawFuzzColumnPotatoBackbuffer(void)
 
     do
     {
-        *dest = colormaps[6 * 256 + dest[fuzzoffset[fuzzpos]]];
+        lighttable_t color;
+
+        color = colormaps[6 * 256 + dest[fuzzoffset[fuzzpos]]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+        *(dest + 2) = color;
+        *(dest + 3) = color;
+
         if (++fuzzpos == FUZZTABLE)
             fuzzpos = 0;
         dest += SCREENWIDTH;
