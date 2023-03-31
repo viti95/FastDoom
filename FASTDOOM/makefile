@@ -50,7 +50,6 @@ GLOBOBJS = &
  i_herc.obj &
  i_cgabw.obj &
  i_ega640.obj &
- i_vgaver.obj &
  i_ega320.obj &
  i_vesa.obj &
  i_cga512.obj &
