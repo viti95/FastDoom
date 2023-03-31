@@ -15,7 +15,7 @@
 
 #include "doomstat.h"
 
-#if defined(MODE_13H) || defined(MODE_V2) || defined(MODE_VBE2) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 
 byte processedpalette[14 * 768];
 

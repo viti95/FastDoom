@@ -100,8 +100,6 @@
                    all rendering is done directly onto the video card, the
                    same way Mode Y does. Faster for systems with slow RAM
                    access.
- * FDOOMV2.EXE  => FastDoom Planar 320x350 vertical mode. The base 320x200 
-                   image is centered in the screen, leaving black borders
  * FDOOMPCP.EXE => FastDoom for Plantronics ColorPlus cards. 320x200 and 
                    16 colors!
  * FDOOMCVB.EXE => FastDoom CGA composite mode. 160x200 and 16 colors!

@@ -121,7 +121,7 @@ boolean snowfix;
 boolean HERCmap;
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 boolean VGADACfix = false;
 #endif
 
@@ -1205,7 +1205,7 @@ void D_DoomMain(void)
     HERCmap = M_CheckParm("-hercmap");
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT) || defined(MODE_V2)
+#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
     VGADACfix = M_CheckParm("-fixDAC");
 #endif
 
