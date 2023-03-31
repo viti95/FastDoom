@@ -4,6 +4,7 @@
 * Sigma Designs Color 400 support. 320x200 and 16 colors.
 * Added low and potato detail for backbuffered and VBE2 direct modes.
 * Removed FDOOME80.EXE and FDOOMEW1.EXE, not needed with new detail modes. They were also very half-baked, HUD was basically non-readable.
+* Removed FDOOMV16.EXE, didn't fit properly in the project. Is a cool hack to get VGA 160x200 and 16-colors, but Doom already supports 256 color modes which also are much faster.
 
 ## 0.9.4 (15 Mar 2023)
 * PCM music support. Up to 44.1 KHz, 8-bit mono music. For now PCM music is stored in RAM, so more than 16Mb is recommended
