@@ -1143,7 +1143,7 @@ void R_DrawPlanesFlatVisplanesBackbuffer(void)
 
         for (x = pl->minx; x <= pl->maxx; x++)
         {
-#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CVB)
+#if defined(MODE_CGA16) || defined(MODE_CVB)
             if (x & 1)
             {
                 continue;
@@ -1202,7 +1202,7 @@ void R_DrawPlanesFlatVisplanesLowBackbuffer(void)
 
         for (x = pl->minx; x <= pl->maxx; x++)
         {
-#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CVB)
+#if defined(MODE_CGA16) || defined(MODE_CVB)
             if (x & 1)
             {
                 continue;
@@ -1262,7 +1262,7 @@ void R_DrawPlanesFlatVisplanesPotatoBackbuffer(void)
 
         for (x = pl->minx; x <= pl->maxx; x++)
         {
-#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CVB)
+#if defined(MODE_CGA16) || defined(MODE_CVB)
             if (x & 1)
             {
                 continue;
@@ -1453,7 +1453,7 @@ void R_DrawSky(visplane_t *pl)
 
         for (x = pl->minx; x <= pl->maxx; x++)
         {
-#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CVB)
+#if defined(MODE_CGA16) || defined(MODE_CVB)
             if (x & 1)
             {
                 continue;
@@ -1502,7 +1502,7 @@ void R_DrawSky(visplane_t *pl)
     {
         for (x = pl->minx; x <= pl->maxx; x++)
         {
-#if defined(MODE_VGA16) || defined(MODE_CGA16) || defined(MODE_CVB)
+#if defined(MODE_CGA16) || defined(MODE_CVB)
             if (x & 1)
             {
                 continue;

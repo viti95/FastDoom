@@ -5,7 +5,7 @@
 #define SUPPORTS_HERCULES_AUTOMAP
 #endif
 
-#if defined(MODE_13H) || defined(MODE_ATI640) || defined(MODE_CGA_BW) || defined(MODE_CGA16) || defined(MODE_CGA) || defined(MODE_CVB) || defined(MODE_EGA640) || defined(MODE_HERC) || defined(MODE_PCP) || defined(MODE_VGA16) || defined(MODE_VBE2) || defined(MODE_EGA) || defined(MODE_CGA_AFH) || defined(MODE_CGA512) || defined(MODE_SIGMA)
+#if defined(MODE_13H) || defined(MODE_ATI640) || defined(MODE_CGA_BW) || defined(MODE_CGA16) || defined(MODE_CGA) || defined(MODE_CVB) || defined(MODE_EGA640) || defined(MODE_HERC) || defined(MODE_PCP) || defined(MODE_VBE2) || defined(MODE_EGA) || defined(MODE_CGA_AFH) || defined(MODE_CGA512) || defined(MODE_SIGMA)
 #define USE_BACKBUFFER
 #endif
 

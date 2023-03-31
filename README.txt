@@ -104,7 +104,6 @@
                    16 colors!
  * FDOOMCVB.EXE => FastDoom CGA composite mode. 160x200 and 16 colors!
  * FDOOMC16.EXE => FastDoom CGA 160x100 and 16 colors
- * FDOOMV16.EXE => FastDoom VGA 160x200 and 16 colors
  * FDOOME.EXE   => FastDoom EGA 640x200. Requires a very fast CPU and 16-bit
                    ISA video card (at least). Dithering with 16 colors
  * FDOOMATI.EXE => FastDoom ATI Small Wonder 640x200. Requires a very fast 

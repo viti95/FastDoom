@@ -18,7 +18,6 @@ if "%2"=="fdoomt12.exe" GOTO mode_t12
 if "%2"=="fdoomt25.exe" GOTO mode_t25
 if "%2"=="fdoomt43.exe" GOTO mode_t43
 if "%2"=="fdoomt50.exe" GOTO mode_t50
-if "%2"=="fdoomv16.exe" GOTO mode_v16
 if "%2"=="fdoomvbd.exe" GOTO mode_vbd
 if "%2"=="fdoomvbr.exe" GOTO mode_vbr
 if "%2"=="fdoom.exe"    GOTO mode_y
@@ -133,12 +132,6 @@ goto compile
 set base=fdoom.exe
 set executable=fdoomega.exe
 set options=-dMODE_EGA
-goto compile
-
-:mode_v16
-set base=fdoom.exe
-set executable=fdoomv16.exe
-set options=-dMODE_VGA16
 goto compile
 
 :mode_vbd

@@ -58,10 +58,6 @@
 #include "i_cga16.h"
 #endif
 
-#if defined(MODE_VGA16)
-#include "i_vga16.h"
-#endif
-
 #if defined(MODE_13H)
 #include "i_vga.h"
 #include "i_vga13h.h"
@@ -625,10 +621,6 @@ void I_InitGraphics(void)
 
 #if defined(MODE_CGA16)
     CGA_16_InitGraphics();
-#endif
-
-#if defined(MODE_VGA16)
-    VGA_16_InitGraphics();
 #endif
 
 #if defined(MODE_T4025) || defined(MODE_T4050)

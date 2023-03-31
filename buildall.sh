@@ -24,15 +24,11 @@
 ./build.sh clean
 ./build.sh fdoomvbd.exe
 ./build.sh clean
-./build.sh fdoomv2.exe
-./build.sh clean
 ./build.sh fdoompcp.exe
 ./build.sh clean
 ./build.sh fdoomcvb.exe
 ./build.sh clean
 ./build.sh fdoomc16.exe
-./build.sh clean
-./build.sh fdoomv16.exe
 ./build.sh clean
 ./build.sh fdoome.exe
 ./build.sh clean
