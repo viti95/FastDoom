@@ -96,7 +96,9 @@ CODE_SYM_DEF R_DrawSpan
   mov     edi,[_ds_y]
   mov     [eax], byte OP_RET
 
-  mov     edi,[_ylookup+edi*4]
+  lea     edi,[edi+edi*4]
+  shl     edi,4
+  add     edi,[_ds_x1]
   mov     eax,[_ds_colormap]
   add     edi,[_destview]
 
