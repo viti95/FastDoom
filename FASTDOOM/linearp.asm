@@ -111,10 +111,9 @@ CODE_SYM_DEF R_DrawColumnPotatoBackbuffer
 vscale1:
   mov al,[esi+ebx]
   mov al,[eax]
-  mov [edi],al
-  mov [edi+1],al
-  mov [edi+2],al
-  mov [edi+3],al
+  mov ah,al
+  mov [edi],ax
+  mov [edi+2],ax
 
 vscale0:
   ret
