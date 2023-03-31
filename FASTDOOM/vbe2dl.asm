@@ -108,8 +108,8 @@ CODE_SYM_DEF R_DrawColumnLowVBE2
 vscale1:
   mov  al,[esi+ebx]
   mov  al,[eax]
-  mov  [edi],al
-  mov  [edi + 1],al
+  mov  ah, al
+  mov  [edi],ax
 
 vscale0:
   ret
