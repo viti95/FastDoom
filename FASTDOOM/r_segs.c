@@ -247,15 +247,7 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 				dc_yh = yh;
 				dc_yl = yl;
 
-				#if defined(MODE_CGA16) || defined(MODE_CVB)
-				if ((dc_x & 1) == 0){
-					colfunc();
-				}
-				#elif defined(MODE_CGA512)
-				if ((dc_x & 3) == 0){
-					colfunc();
-				}
-				#elif defined(MODE_MDA)
+				#if defined(MODE_MDA)
 					if (dc_x == x1 || dc_x == x2){
 						R_DrawLineColumnTextMDA();
 					}else{
@@ -413,15 +405,7 @@ void R_RenderSegLoop(void)
 					dc_source = texturecomposite[tex] + ofs;
 				}
 
-				#if defined(MODE_CGA16) || defined(MODE_CVB)
-				if ((dc_x & 1) == 0){
-					colfunc();
-				}
-				#elif defined(MODE_CGA512)
-				if ((dc_x & 3) == 0){
-					colfunc();
-				}
-				#elif defined(MODE_MDA)
+				#if defined(MODE_MDA)
 					if (first == rw_x || rw_x == rw_stopx - 1){
 						R_DrawLineColumnTextMDA();
 					}else{
@@ -475,15 +459,7 @@ void R_RenderSegLoop(void)
 						dc_source = texturecomposite[tex] + ofs;
 					}
 
-					#if defined(MODE_CGA16) || defined(MODE_CVB)
-					if ((dc_x & 1) == 0){
-						colfunc();
-					}
-					#elif defined(MODE_CGA512)
-					if ((dc_x & 3) == 0){
-						colfunc();
-					}
-					#elif defined(MODE_MDA)
+					#if defined(MODE_MDA)
 						if (first == rw_x || rw_x == rw_stopx - 1){
 							R_DrawLineColumnTextMDA();
 						}else{
@@ -541,15 +517,7 @@ void R_RenderSegLoop(void)
 						dc_source = texturecomposite[tex] + ofs;
 					}
 
-					#if defined(MODE_CGA16) || defined(MODE_CVB)
-					if ((dc_x & 1) == 0){
-						colfunc();
-					}
-					#elif defined(MODE_CGA512)
-					if ((dc_x & 3) == 0){
-						colfunc();
-					}
-					#elif defined(MODE_MDA)
+					#if defined(MODE_MDA)
 						if (first == rw_x || rw_x == rw_stopx - 1){
 							R_DrawLineColumnTextMDA();
 						}else{

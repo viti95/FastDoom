@@ -336,17 +336,7 @@ void R_DrawVisSprite(vissprite_t *vis)
             dc_yh = yh;
             dc_yl = yl;
 
-#if defined(MODE_CGA16) || defined(MODE_CVB)
-            if ((dc_x & 1) == 0)
-            {
-                colfunc();
-            }
-#elif defined(MODE_CGA512)
-            if ((dc_x & 3) == 0)
-            {
-                colfunc();
-            }
-#elif defined(MODE_MDA)
+#if defined(MODE_MDA)
             R_DrawSpriteTextMDA();
 #else
             colfunc();

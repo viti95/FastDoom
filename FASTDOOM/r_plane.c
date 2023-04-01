@@ -108,13 +108,6 @@ void R_MapPlane(int y, int x1)
     fixed_t length;
     unsigned index;
 
-#if defined(MODE_CGA16) || defined(MODE_CGA512) || defined(MODE_CGA_AFH)
-    if (y & 1)
-    {
-        return;
-    }
-#endif
-
     ds_x1 = x1;
     ds_y = y;
 
@@ -1143,20 +1136,6 @@ void R_DrawPlanesFlatVisplanesBackbuffer(void)
 
         for (x = pl->minx; x <= pl->maxx; x++)
         {
-#if defined(MODE_CGA16) || defined(MODE_CVB)
-            if (x & 1)
-            {
-                continue;
-            }
-#endif
-
-#if defined(MODE_CGA512)
-            if (x & 3)
-            {
-                continue;
-            }
-#endif
-
             if (pl->top[x] > pl->bottom[x])
                 continue;
 
@@ -1202,20 +1181,6 @@ void R_DrawPlanesFlatVisplanesLowBackbuffer(void)
 
         for (x = pl->minx; x <= pl->maxx; x++)
         {
-#if defined(MODE_CGA16) || defined(MODE_CVB)
-            if (x & 1)
-            {
-                continue;
-            }
-#endif
-
-#if defined(MODE_CGA512)
-            if (x & 3)
-            {
-                continue;
-            }
-#endif
-
             if (pl->top[x] > pl->bottom[x])
                 continue;
 
@@ -1262,20 +1227,6 @@ void R_DrawPlanesFlatVisplanesPotatoBackbuffer(void)
 
         for (x = pl->minx; x <= pl->maxx; x++)
         {
-#if defined(MODE_CGA16) || defined(MODE_CVB)
-            if (x & 1)
-            {
-                continue;
-            }
-#endif
-
-#if defined(MODE_CGA512)
-            if (x & 3)
-            {
-                continue;
-            }
-#endif
-
             if (pl->top[x] > pl->bottom[x])
                 continue;
 
@@ -1453,20 +1404,6 @@ void R_DrawSky(visplane_t *pl)
 
         for (x = pl->minx; x <= pl->maxx; x++)
         {
-#if defined(MODE_CGA16) || defined(MODE_CVB)
-            if (x & 1)
-            {
-                continue;
-            }
-#endif
-
-#if defined(MODE_CGA512)
-            if (x & 3)
-            {
-                continue;
-            }
-#endif
-
             dc_yl = pl->top[x];
             dc_yh = pl->bottom[x];
 
@@ -1502,20 +1439,6 @@ void R_DrawSky(visplane_t *pl)
     {
         for (x = pl->minx; x <= pl->maxx; x++)
         {
-#if defined(MODE_CGA16) || defined(MODE_CVB)
-            if (x & 1)
-            {
-                continue;
-            }
-#endif
-
-#if defined(MODE_CGA512)
-            if (x & 3)
-            {
-                continue;
-            }
-#endif
-
             dc_yl = pl->top[x];
             dc_yh = pl->bottom[x];
 
