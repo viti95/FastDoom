@@ -6,5 +6,4 @@
 #define BYTE2_UINT(value) (((unsigned char *)&value)[2])
 #define BYTE3_UINT(value) (((unsigned char *)&value)[3])
 
-int SQRT(int x);
 int GetClosestColor(byte *colors, int num_colors, int r1, int g1, int b1);

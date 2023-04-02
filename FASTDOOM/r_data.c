@@ -619,23 +619,35 @@ int V_GetPaletteIndex(byte *palette, int r, int g, int b)
     int best, best_diff, diff;
     int i;
 
+    byte *ptrpalette = palette;
+
     best = 0;
     best_diff = INT_MAX;
 
     for (i = 0; i < 256; ++i)
     {
-        diff = (r - palette[3 * i + 0]) * (r - palette[3 * i + 0]) + (g - palette[3 * i + 1]) * (g - palette[3 * i + 1]) + (b - palette[3 * i + 2]) * (b - palette[3 * i + 2]);
+        int diff_r, diff_g, diff_b;
+
+        diff_r = r - ptrpalette[0];
+        diff_r *= diff_r; 
+
+        diff_g = g - ptrpalette[1];
+        diff_g *= diff_g;
+
+        diff_b = b - ptrpalette[2];
+        diff_b *= diff_b;
+
+        diff = diff_r + diff_g + diff_b;
 
         if (diff < best_diff)
         {
             best = i;
             best_diff = diff;
         }
+        else if (diff == 0)
+            return best;
 
-        if (diff == 0)
-        {
-            break;
-        }
+        ptrpalette += 3;
     }
 
     return best;
@@ -645,7 +657,9 @@ int V_GetPaletteIndex(byte *palette, int r, int g, int b)
 
 static void R_InitTintMap(void)
 {
-    // [JN] Generate TINTMAP dynamically.
+    // Check if TINTMAP cache exists
+
+    // Cache TINTMAP doesn't exist, create it
 
     // Compose a default transparent filter map based on PLAYPAL.
     unsigned char *playpal = W_CacheLumpName("PLAYPAL", PU_STATIC);
@@ -653,7 +667,7 @@ static void R_InitTintMap(void)
 
     {
         byte *fg, *bg, blend[3];
-        byte *tp75 = tintmap;
+        byte *tp = tintmap;
         int i, j;
 
         // [crispy] background color
@@ -665,17 +679,17 @@ static void R_InitTintMap(void)
                 // [crispy] shortcut: identical foreground and background
                 if (i == j)
                 {
-                    *tp75++ = i;
+                    *tp++ = i;
                     continue;
                 }
 
                 bg = playpal + 3 * i;
                 fg = playpal + 3 * j;
 
-                blend[r] = (TRANSPARENCY_LEVEL * fg[r] + (100 - TRANSPARENCY_LEVEL) * bg[r]) / 100;
-                blend[g] = (TRANSPARENCY_LEVEL * fg[g] + (100 - TRANSPARENCY_LEVEL) * bg[g]) / 100;
-                blend[b] = (TRANSPARENCY_LEVEL * fg[b] + (100 - TRANSPARENCY_LEVEL) * bg[b]) / 100;
-                *tp75++ = V_GetPaletteIndex(playpal, blend[r], blend[g], blend[b]);
+                blend[r] = Div100(Mul25(fg[r]) + Mul75(bg[r]));
+                blend[g] = Div100(Mul25(fg[g]) + Mul75(bg[g]));
+                blend[b] = Div100(Mul25(fg[b]) + Mul75(bg[b]));
+                *tp++ = V_GetPaletteIndex(playpal, blend[r], blend[g], blend[b]);
             }
         }
     }
