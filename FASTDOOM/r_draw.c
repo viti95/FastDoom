@@ -1041,6 +1041,12 @@ void R_DrawFuzzColumnSaturnText4050(void)
         }
     }
 }
+
+void R_DrawFuzzColumnTransText4050(void)
+{
+
+}
+
 #endif
 
 #if defined(MODE_T4025)
@@ -1180,6 +1186,11 @@ void R_DrawFuzzColumnSaturnText4025(void)
             *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 219;
         }
     }
+}
+
+void R_DrawFuzzColumnTransText4025(void)
+{
+
 }
 #endif
 
@@ -1688,6 +1699,11 @@ void R_DrawFuzzColumnSaturnText8025(void)
         }
     }
 }
+
+void R_DrawFuzzColumnTransText8025(void)
+{
+
+}
 #endif
 
 #if defined(MODE_T8050) || defined(MODE_T8043)
@@ -1738,6 +1754,11 @@ void R_DrawFuzzColumnSaturnText8050(void)
             *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 219;
         }
     }
+}
+
+void R_DrawFuzzColumnTransText8050(void)
+{
+
 }
 #endif
 
