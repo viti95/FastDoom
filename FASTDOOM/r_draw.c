@@ -25,6 +25,7 @@
 #include "i_ibm.h"
 #include "z_zone.h"
 #include "w_wad.h"
+#include "r_data.h"
 
 #include "r_local.h"
 
@@ -240,7 +241,7 @@ void R_DrawSkyFlatLowVBE2(void)
 
     dest = (unsigned short *)((byte *)destview + Mul320(dc_yl) + (dc_x << 1));
     count = dc_yh - dc_yl;
-    
+
     while (count >= 3)
     {
         *(dest) = 220 | 220 << 8;
@@ -1818,9 +1819,7 @@ void R_DrawFuzzColumn(void)
         dest += SCREENWIDTH / 4;
     } while (count--);
 }
-#endif
 
-#if defined(MODE_Y)
 void R_DrawFuzzColumnLow(void)
 {
     register int count;
@@ -1850,9 +1849,7 @@ void R_DrawFuzzColumnLow(void)
         dest += SCREENWIDTH / 4;
     } while (count--);
 }
-#endif
 
-#if defined(MODE_Y)
 void R_DrawFuzzColumnPotato(void)
 {
     register int count;
@@ -2057,7 +2054,7 @@ void R_DrawFuzzColumnPotatoVBE2(void)
         *(dest + 1) = color;
         *(dest + 2) = color;
         *(dest + 3) = color;
-        
+
         if (++fuzzpos == FUZZTABLE)
             fuzzpos = 0;
         dest += SCREENWIDTH;
@@ -2332,9 +2329,37 @@ void R_DrawFuzzColumnSaturn(void)
         }
     }
 }
-#endif
 
-#if defined(MODE_Y)
+void R_DrawFuzzColumnTrans(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac;
+    fixed_t fracstep;
+
+    count = dc_yh - dc_yl + 1;
+
+    if (count <= 0)
+        return;
+
+    outpw(GC_INDEX, GC_READMAP + ((dc_x & 3) << 8));
+    outp(SC_INDEX + 1, 1 << (dc_x & 3));
+
+    dest = destview + Mul80(dc_yl) + (dc_x >> 2);
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    do
+    {
+        *dest = tintmap[(*dest<<8) + dc_colormap[dc_source[(frac>>FRACBITS)&127]]];
+        if (++fuzzpos == FUZZTABLE)
+            fuzzpos = 0;
+        dest += SCREENWIDTH / 4;
+        frac += fracstep;
+    } while (count--);
+}
+
 void R_DrawFuzzColumnSaturnLow(void)
 {
     int count;
@@ -2386,9 +2411,37 @@ void R_DrawFuzzColumnSaturnLow(void)
         }
     }
 }
-#endif
 
-#if defined(MODE_Y)
+void R_DrawFuzzColumnTransLow(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac;
+    fixed_t fracstep;
+
+    count = dc_yh - dc_yl + 1;
+
+    if (count <= 0)
+        return;
+
+    outpw(GC_INDEX, GC_READMAP + ((dc_x & 3) << 8));
+    outp(SC_INDEX + 1, 1 << (dc_x & 3));
+
+    dest = destview + Mul80(dc_yl) + (dc_x >> 2);
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    do
+    {
+        *dest = tintmap[(*dest<<8) + dc_colormap[dc_source[(frac>>FRACBITS)&127]]];
+        if (++fuzzpos == FUZZTABLE)
+            fuzzpos = 0;
+        dest += SCREENWIDTH / 4;
+        frac += fracstep;
+    } while (count--);
+}
+
 void R_DrawFuzzColumnSaturnPotato(void)
 {
     int count;
@@ -2436,6 +2489,36 @@ void R_DrawFuzzColumnSaturnPotato(void)
             *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
         }
     }
+}
+
+void R_DrawFuzzColumnTransPotato(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac;
+    fixed_t fracstep;
+
+    count = dc_yh - dc_yl + 1;
+
+    if (count <= 0)
+        return;
+
+    outpw(GC_INDEX, GC_READMAP + ((dc_x & 3) << 8));
+    outp(SC_INDEX + 1, 1 << (dc_x & 3));
+
+    dest = destview + Mul80(dc_yl) + (dc_x >> 2);
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    do
+    {
+        *dest = tintmap[(*dest<<8) + dc_colormap[dc_source[(frac>>FRACBITS)&127]]];
+        if (++fuzzpos == FUZZTABLE)
+            fuzzpos = 0;
+        dest += SCREENWIDTH / 4;
+        frac += fracstep;
+    } while (count--);
 }
 #endif
 

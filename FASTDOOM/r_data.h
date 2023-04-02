@@ -45,4 +45,6 @@ extern short **texturecolumnlump;
 extern unsigned short **texturecolumnofs;
 extern byte **texturecomposite;
 
+extern byte *tintmap;
+
 #endif

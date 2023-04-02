@@ -31,8 +31,7 @@ int uncappedFPS = 0;
 int flatSky = 0;
 int nearSprites = 0;
 int noMelt = 0;
-int flatShadows = 0;
-int saturnShadows = 0;
+int invisibleRender = 0;
 int flatterVisplanes = 0;
 int flatVisplanes = 0;
 int waitVsync = 0;
@@ -70,8 +69,7 @@ default_t defaults[] =
 		{"flatsky", &flatSky, 0},
 		{"near", &nearSprites, 0},
 		{"nomelt", &noMelt, 0},
-		{"flatShadows", &flatShadows, 0},
-		{"saturnShadows", &saturnShadows, 0},
+		{"invisibleRender", &invisibleRender, 0},
 		{"flatterVisplanes", &flatterVisplanes, 0},
 		{"flatVisplanes", &flatVisplanes, 0},
 		{"vsync", &waitVsync, 0},

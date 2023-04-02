@@ -21,6 +21,7 @@
 #include <strings.h>
 #include <malloc.h>
 #include <stdio.h>
+#include <limits.h>
 #include "options.h"
 #include "i_system.h"
 #include "z_zone.h"
@@ -189,9 +190,10 @@ void R_DrawColumnInCache(column_t *patch,
         if (count > cacheheight - position)
             count = cacheheight - position;
 
-        if (count > 0){
+        if (count > 0)
+        {
             CopyBytes(source, cache + position, count);
-            //memcpy(cache + position, source, count);
+            // memcpy(cache + position, source, count);
         }
 
         patch = (column_t *)((byte *)patch + patch->length + 4);
@@ -463,10 +465,10 @@ void R_InitTextures(void)
     printf("[");
     for (i = 0; i < temp3; i++)
         printf(" ");
-    printf("       ]");
+    printf("        ]");
     for (i = 0; i < temp3; i++)
         printf("\x8");
-    printf("\x8\x8\x8\x8\x8\x8\x8\x8");
+    printf("\x8\x8\x8\x8\x8\x8\x8\x8\x8");
 
     for (i = 0; i < numtextures; i++, directory++)
     {
@@ -493,7 +495,7 @@ void R_InitTextures(void)
         texture->patchcount = mtexture->patchcount;
 
         CopyBytes(mtexture->name, texture->name, sizeof(texture->name));
-        //memcpy(texture->name, mtexture->name, sizeof(texture->name));
+        // memcpy(texture->name, mtexture->name, sizeof(texture->name));
         mpatch = &mtexture->patches[0];
         patch = &texture->patches[0];
 
@@ -596,6 +598,91 @@ void R_InitColormaps(void)
     W_ReadLump(lump, colormaps);
 }
 
+// -----------------------------------------------------------------------------
+// R_InitTintMap
+// [crispy] initialize translucency filter map
+// based in parts on the implementation from boom202s/R_DATA.C:676-787
+// -----------------------------------------------------------------------------
+
+byte *tintmap;
+
+enum
+{
+    r,
+    g,
+    b
+} rgb_t;
+
+// [crispy] copied over from i_video.c
+int V_GetPaletteIndex(byte *palette, int r, int g, int b)
+{
+    int best, best_diff, diff;
+    int i;
+
+    best = 0;
+    best_diff = INT_MAX;
+
+    for (i = 0; i < 256; ++i)
+    {
+        diff = (r - palette[3 * i + 0]) * (r - palette[3 * i + 0]) + (g - palette[3 * i + 1]) * (g - palette[3 * i + 1]) + (b - palette[3 * i + 2]) * (b - palette[3 * i + 2]);
+
+        if (diff < best_diff)
+        {
+            best = i;
+            best_diff = diff;
+        }
+
+        if (diff == 0)
+        {
+            break;
+        }
+    }
+
+    return best;
+}
+
+#define TRANSPARENCY_LEVEL 25
+
+static void R_InitTintMap(void)
+{
+    // [JN] Generate TINTMAP dynamically.
+
+    // Compose a default transparent filter map based on PLAYPAL.
+    unsigned char *playpal = W_CacheLumpName("PLAYPAL", PU_STATIC);
+    tintmap = Z_MallocUnowned(256 * 256, PU_STATIC);
+
+    {
+        byte *fg, *bg, blend[3];
+        byte *tp75 = tintmap;
+        int i, j;
+
+        // [crispy] background color
+        for (i = 0; i < 256; i++)
+        {
+            // [crispy] foreground color
+            for (j = 0; j < 256; j++)
+            {
+                // [crispy] shortcut: identical foreground and background
+                if (i == j)
+                {
+                    *tp75++ = i;
+                    continue;
+                }
+
+                bg = playpal + 3 * i;
+                fg = playpal + 3 * j;
+
+                blend[r] = (TRANSPARENCY_LEVEL * fg[r] + (100 - TRANSPARENCY_LEVEL) * bg[r]) / 100;
+                blend[g] = (TRANSPARENCY_LEVEL * fg[g] + (100 - TRANSPARENCY_LEVEL) * bg[g]) / 100;
+                blend[b] = (TRANSPARENCY_LEVEL * fg[b] + (100 - TRANSPARENCY_LEVEL) * bg[b]) / 100;
+                *tp75++ = V_GetPaletteIndex(playpal, blend[r], blend[g], blend[b]);
+            }
+        }
+    }
+
+    Z_ChangeTag(playpal, PU_CACHE);
+}
+
 //
 // R_InitData
 // Locates all the lumps
@@ -611,6 +698,8 @@ void R_InitData(void)
     R_InitSpriteLumps();
     printf(".");
     R_InitColormaps();
+    printf(".");
+    R_InitTintMap();
 }
 
 //

@@ -1285,12 +1285,21 @@ void G_CheckDemoStatus(void)
                     fprintf(logFile, "normal;");
 
                 // Transparent objects
-                if (flatShadows)
-                    fprintf(logFile, "flat;");
-                else if (saturnShadows)
-                    fprintf(logFile, "saturn;");
-                else
+                switch(invisibleRender)
+                {
+                    case 0:
                     fprintf(logFile, "normal;");
+                    break;
+                    case 1:
+                    fprintf(logFile, "flat;");
+                    break;
+                    case 2:
+                    fprintf(logFile, "saturn;");
+                    break;
+                    case 3:
+                    fprintf(logFile, "translucent;");
+                    break;
+                }
 
                 // IWAD
                 fprintf(logFile, "%s;", iwadfile);

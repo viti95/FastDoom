@@ -86,8 +86,7 @@ boolean fastparm;    // checkparm of -fast
 boolean flatVisplanes;
 boolean flatterVisplanes;
 boolean flatSky;
-boolean flatShadows;
-boolean saturnShadows;
+int invisibleRender;
 boolean showFPS;
 boolean unlimitedRAM;
 boolean nearSprites;
@@ -1396,16 +1395,9 @@ void D_DoomMain(void)
     }
 
     M_CheckParmOptional("-flatsky", &flatSky);
-
-    if (M_CheckParmOptional("-flatshadows", &flatShadows) && saturnShadows)
-    {
-        saturnShadows = 0;
-    }
-
-    if (M_CheckParmOptional("-saturn", &saturnShadows) && flatShadows)
-    {
-        flatShadows = 0;
-    }
+    M_CheckParmOptionalValue("-flatshadows", &invisibleRender, 1);
+    M_CheckParmOptionalValue("-saturn", &invisibleRender, 2);
+    M_CheckParmOptionalValue("-translucent", &invisibleRender, 3);
     M_CheckParmOptional("-mono", &monoSound);
     M_CheckParmOptional("-near", &nearSprites);
     M_CheckParmOptional("-nomelt", &noMelt);
@@ -1415,8 +1407,7 @@ void D_DoomMain(void)
     M_CheckParmDisable("-defVisplanes", &flatVisplanes);
     M_CheckParmDisable("-defVisplanes", &flatterVisplanes);
     M_CheckParmDisable("-defSky", &flatSky);
-    M_CheckParmDisable("-defShadows", &flatShadows);
-    M_CheckParmDisable("-defShadows", &saturnShadows);
+    M_CheckParmDisable("-defShadows", &invisibleRender);
     M_CheckParmDisable("-far", &nearSprites);
     M_CheckParmDisable("-stereo", &monoSound);
     M_CheckParmDisable("-melt", &noMelt);
