@@ -2353,8 +2353,6 @@ void R_DrawFuzzColumnTrans(void)
     do
     {
         *dest = tintmap[(*dest<<8) + dc_colormap[dc_source[(frac>>FRACBITS)&127]]];
-        if (++fuzzpos == FUZZTABLE)
-            fuzzpos = 0;
         dest += SCREENWIDTH / 4;
         frac += fracstep;
     } while (count--);
@@ -2434,8 +2432,6 @@ void R_DrawFuzzColumnTransLow(void)
     do
     {
         *dest = tintmap[(*dest<<8) + dc_colormap[dc_source[(frac>>FRACBITS)&127]]];
-        if (++fuzzpos == FUZZTABLE)
-            fuzzpos = 0;
         dest += SCREENWIDTH / 4;
         frac += fracstep;
     } while (count--);
@@ -2510,8 +2506,6 @@ void R_DrawFuzzColumnTransPotato(void)
     do
     {
         *dest = tintmap[(*dest<<8) + dc_colormap[dc_source[(frac>>FRACBITS)&127]]];
-        if (++fuzzpos == FUZZTABLE)
-            fuzzpos = 0;
         dest += SCREENWIDTH / 4;
         frac += fracstep;
     } while (count--);
@@ -3617,6 +3611,31 @@ void R_DrawFuzzColumnSaturnBackbuffer(void)
     }
 }
 
+void R_DrawFuzzColumnTransBackbuffer(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac;
+    fixed_t fracstep;
+
+    count = dc_yh - dc_yl + 1;
+
+    if (count <= 0)
+        return;
+
+    dest = ylookup[dc_yl] + columnofs[dc_x];
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    do
+    {
+        *dest = tintmap[(*dest<<8) + dc_colormap[dc_source[(frac>>FRACBITS)&127]]];
+        dest += SCREENWIDTH;
+        frac += fracstep;
+    } while (count--);
+}
+
 void R_DrawFuzzColumnSaturnLowBackbuffer(void)
 {
     int count;
@@ -3673,6 +3692,35 @@ void R_DrawFuzzColumnSaturnLowBackbuffer(void)
             *(dest + 1) = color;
         }
     }
+}
+
+void R_DrawFuzzColumnTransLowBackbuffer(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac;
+    fixed_t fracstep;
+
+    count = dc_yh - dc_yl + 1;
+
+    if (count <= 0)
+        return;
+
+    dest = ylookup[dc_yl] + columnofs[dc_x];
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    do
+    {
+        byte color = tintmap[(*dest<<8) + dc_colormap[dc_source[(frac>>FRACBITS)&127]]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+
+        dest += SCREENWIDTH;
+        frac += fracstep;
+    } while (count--);
 }
 
 void R_DrawFuzzColumnSaturnPotatoBackbuffer(void)
@@ -3737,6 +3785,37 @@ void R_DrawFuzzColumnSaturnPotatoBackbuffer(void)
             *(dest + 3) = color;
         }
     }
+}
+
+void R_DrawFuzzColumnTransPotatoBackbuffer(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac;
+    fixed_t fracstep;
+
+    count = dc_yh - dc_yl + 1;
+
+    if (count <= 0)
+        return;
+
+    dest = ylookup[dc_yl] + columnofs[dc_x];
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    do
+    {
+        byte color = tintmap[(*dest<<8) + dc_colormap[dc_source[(frac>>FRACBITS)&127]]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+        *(dest + 2) = color;
+        *(dest + 3) = color;
+
+        dest += SCREENWIDTH;
+        frac += fracstep;
+    } while (count--);
 }
 
 #endif
