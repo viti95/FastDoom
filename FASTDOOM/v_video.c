@@ -515,6 +515,26 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
     w = patch->width;
     for (; col < w; x++, col++, desttop++)
     {
+#if defined(MODE_CGA16) || defined(MODE_CVBS)
+        if (detailshift == 0)
+            if ((int)desttop & 1)
+                continue;
+#endif
+
+#if defined(MODE_CGA512)
+        switch (detailshift)
+        {
+        case 0:
+            if ((int)desttop & 3)
+                continue;
+            break;
+        case 1:
+            if ((int)desttop & 1)
+                continue;
+            break;
+        }
+#endif
+
         column = (column_t *)((byte *)patch + patch->columnofs[col]);
         // Step through the posts in a column
         while (column->topdelta != 0xff)

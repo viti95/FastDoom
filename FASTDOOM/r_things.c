@@ -336,7 +336,30 @@ void R_DrawVisSprite(vissprite_t *vis)
             dc_yh = yh;
             dc_yl = yl;
 
-#if defined(MODE_MDA)
+#if defined(MODE_CGA16) || defined(MODE_CVB)
+            if (detailshift == 0)
+            {
+                if ((dc_x & 1) == 0)
+                    colfunc();
+            }
+            else
+                colfunc();
+#elif defined(MODE_CGA512)
+            switch (detailshift)
+            {
+            case 0:
+                if ((dc_x & 3) == 0)
+                    colfunc();
+                break;
+            case 1:
+                if ((dc_x & 1) == 0)
+                    colfunc();
+                break;
+            default:
+                colfunc();
+                break;
+            }
+#elif defined(MODE_MDA)
             R_DrawSpriteTextMDA();
 #else
             colfunc();

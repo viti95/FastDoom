@@ -121,9 +121,8 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 
 	if (curline->v1->y == curline->v2->y)
 		lightnum--;
-	else
-		if (curline->v1->x == curline->v2->x)
-			lightnum++;
+	else if (curline->v1->x == curline->v2->x)
+		lightnum++;
 
 	// Lightnum between 0 and 15
 	if (lightnum < 0)
@@ -247,15 +246,37 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 				dc_yh = yh;
 				dc_yl = yl;
 
-				#if defined(MODE_MDA)
-					if (dc_x == x1 || dc_x == x2){
-						R_DrawLineColumnTextMDA();
-					}else{
-						R_DrawEmptyColumnTextMDA();
-					}
-				#else
+#if defined(MODE_CGA16) || defined(MODE_CVB)
+				if (detailshift == 0)
+				{
+					if ((dc_x & 1) == 0)
+						colfunc();
+				}
+				else
 					colfunc();
-				#endif
+#elif defined(MODE_CGA512)
+				switch (detailshift)
+				{
+				case 0:
+					if ((dc_x & 3) == 0)
+						colfunc();
+					break;
+				case 1:
+					if ((dc_x & 1) == 0)
+						colfunc();
+					break;
+				default:
+					colfunc();
+					break;
+				}
+#elif defined(MODE_MDA)
+				if (dc_x == x1 || dc_x == x2)
+					R_DrawLineColumnTextMDA();
+				else
+					R_DrawEmptyColumnTextMDA();
+#else
+				colfunc();
+#endif
 
 				col = (column_t *)((byte *)col + col->length + 4);
 			}
@@ -299,11 +320,11 @@ void R_RenderSegLoop(void)
 	int cc_rwx;
 	int fc_rwx;
 
-	#if defined(MODE_MDA)
+#if defined(MODE_MDA)
 	int first = rw_x;
-	#endif
+#endif
 
-	//texturecolumn = 0;				// shut up compiler warning
+	// texturecolumn = 0;				// shut up compiler warning
 
 	for (; rw_x < rw_stopx; rw_x++)
 	{
@@ -405,15 +426,37 @@ void R_RenderSegLoop(void)
 					dc_source = texturecomposite[tex] + ofs;
 				}
 
-				#if defined(MODE_MDA)
-					if (first == rw_x || rw_x == rw_stopx - 1){
-						R_DrawLineColumnTextMDA();
-					}else{
-						R_DrawEmptyColumnTextMDA();
-					}
-				#else
+#if defined(MODE_CGA16) || defined(MODE_CVB)
+				if (detailshift == 0)
+				{
+					if ((dc_x & 1) == 0)
+						colfunc();
+				}
+				else
 					colfunc();
-				#endif
+#elif defined(MODE_CGA512)
+				switch (detailshift)
+				{
+				case 0:
+					if ((dc_x & 3) == 0)
+						colfunc();
+					break;
+				case 1:
+					if ((dc_x & 1) == 0)
+						colfunc();
+					break;
+				default:
+					colfunc();
+					break;
+				}
+#elif defined(MODE_MDA)
+				if (first == rw_x || rw_x == rw_stopx - 1)
+					R_DrawLineColumnTextMDA();
+				else
+					R_DrawEmptyColumnTextMDA();
+#else
+				colfunc();
+#endif
 
 				cc_rwx = viewheight;
 				fc_rwx = -1;
@@ -459,15 +502,37 @@ void R_RenderSegLoop(void)
 						dc_source = texturecomposite[tex] + ofs;
 					}
 
-					#if defined(MODE_MDA)
-						if (first == rw_x || rw_x == rw_stopx - 1){
-							R_DrawLineColumnTextMDA();
-						}else{
-							R_DrawEmptyColumnTextMDA();
-						}
-					#else
+#if defined(MODE_CGA16) || defined(MODE_CVB)
+					if (detailshift == 0)
+					{
+						if ((dc_x & 1) == 0)
+							colfunc();
+					}
+					else
 						colfunc();
-					#endif
+#elif defined(MODE_CGA512)
+					switch (detailshift)
+					{
+					case 0:
+						if ((dc_x & 3) == 0)
+							colfunc();
+						break;
+					case 1:
+						if ((dc_x & 1) == 0)
+							colfunc();
+						break;
+					default:
+						colfunc();
+						break;
+					}
+#elif defined(MODE_MDA)
+					if (first == rw_x || rw_x == rw_stopx - 1)
+						R_DrawLineColumnTextMDA();
+					else
+						R_DrawEmptyColumnTextMDA();
+#else
+					colfunc();
+#endif
 
 					cc_rwx = mid;
 				}
@@ -517,15 +582,37 @@ void R_RenderSegLoop(void)
 						dc_source = texturecomposite[tex] + ofs;
 					}
 
-					#if defined(MODE_MDA)
-						if (first == rw_x || rw_x == rw_stopx - 1){
-							R_DrawLineColumnTextMDA();
-						}else{
-							R_DrawEmptyColumnTextMDA();
-						}
-					#else
+#if defined(MODE_CGA16) || defined(MODE_CVB)
+					if (detailshift == 0)
+					{
+						if ((dc_x & 1) == 0)
+							colfunc();
+					}
+					else
 						colfunc();
-					#endif
+#elif defined(MODE_CGA512)
+					switch (detailshift)
+					{
+					case 0:
+						if ((dc_x & 3) == 0)
+							colfunc();
+						break;
+					case 1:
+						if ((dc_x & 1) == 0)
+							colfunc();
+						break;
+					default:
+						colfunc();
+						break;
+					}
+#elif defined(MODE_MDA)
+					if (first == rw_x || rw_x == rw_stopx - 1)
+						R_DrawLineColumnTextMDA();
+					else
+						R_DrawEmptyColumnTextMDA();
+#else
+					colfunc();
+#endif
 
 					fc_rwx = mid;
 				}
@@ -770,9 +857,8 @@ void R_StoreWallRange(int start,
 
 			if (curline->v1->y == curline->v2->y)
 				lightnum--;
-			else
-				if (curline->v1->x == curline->v2->x)
-					lightnum++;
+			else if (curline->v1->x == curline->v2->x)
+				lightnum++;
 
 			// Lightnum between 0 and 15
 			if (lightnum < 0)
@@ -841,7 +927,7 @@ void R_StoreWallRange(int start,
 	if (((ds_p->silhouette & SIL_TOP) || maskedtexture) && !ds_p->sprtopclip)
 	{
 		CopyWords(ceilingclip + start, lastopening, rw_stopx - start);
-		//memcpy(lastopening, ceilingclip + start, 2 * (rw_stopx - start));
+		// memcpy(lastopening, ceilingclip + start, 2 * (rw_stopx - start));
 		ds_p->sprtopclip = lastopening - start;
 		lastopening += rw_stopx - start;
 	}
@@ -849,7 +935,7 @@ void R_StoreWallRange(int start,
 	if (((ds_p->silhouette & SIL_BOTTOM) || maskedtexture) && !ds_p->sprbottomclip)
 	{
 		CopyWords(floorclip + start, lastopening, rw_stopx - start);
-		//memcpy(lastopening, floorclip + start, 2 * (rw_stopx - start));
+		// memcpy(lastopening, floorclip + start, 2 * (rw_stopx - start));
 		ds_p->sprbottomclip = lastopening - start;
 		lastopening += rw_stopx - start;
 	}
