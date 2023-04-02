@@ -467,6 +467,31 @@ void R_DrawFuzzColumnSaturnVBE2(void)
     }
 }
 
+void R_DrawFuzzColumnTransVBE2(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac;
+    fixed_t fracstep;
+
+    count = dc_yh - dc_yl + 1;
+
+    if (count <= 0)
+        return;
+
+    dest = destview + Mul320(dc_yl) + dc_x;
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    do
+    {
+        *dest = tintmap[(*dest<<8) + dc_colormap[dc_source[(frac>>FRACBITS)&127]]];
+        dest += SCREENWIDTH;
+        frac += fracstep;
+    } while (count--);
+}
+
 void R_DrawFuzzColumnSaturnLowVBE2(void)
 {
     int count;
@@ -523,6 +548,35 @@ void R_DrawFuzzColumnSaturnLowVBE2(void)
             *(dest + 1) = color;
         }
     }
+}
+
+void R_DrawFuzzColumnTransLowVBE2(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac;
+    fixed_t fracstep;
+
+    count = dc_yh - dc_yl + 1;
+
+    if (count <= 0)
+        return;
+
+    dest = destview + Mul320(dc_yl) + (dc_x << 1);
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    do
+    {
+        byte color = tintmap[(*dest<<8) + dc_colormap[dc_source[(frac>>FRACBITS)&127]]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+
+        dest += SCREENWIDTH;
+        frac += fracstep;
+    } while (count--);
 }
 
 void R_DrawFuzzColumnSaturnPotatoVBE2(void)
@@ -587,6 +641,37 @@ void R_DrawFuzzColumnSaturnPotatoVBE2(void)
             *(dest + 3) = color;
         }
     }
+}
+
+void R_DrawFuzzColumnTransPotatoVBE2(void)
+{
+    int count;
+    byte *dest;
+    fixed_t frac;
+    fixed_t fracstep;
+
+    count = dc_yh - dc_yl + 1;
+
+    if (count <= 0)
+        return;
+
+    dest = destview + Mul320(dc_yl) + (dc_x << 2);
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl - centery) * fracstep;
+
+    do
+    {
+        byte color = tintmap[(*dest<<8) + dc_colormap[dc_source[(frac>>FRACBITS)&127]]];
+
+        *(dest) = color;
+        *(dest + 1) = color;
+        *(dest + 2) = color;
+        *(dest + 3) = color;
+
+        dest += SCREENWIDTH;
+        frac += fracstep;
+    } while (count--);
 }
 
 void R_DrawSpanFlatVBE2(void)
