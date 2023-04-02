@@ -2424,10 +2424,9 @@ void R_DrawFuzzColumnTransLow(void)
     if (count <= 0)
         return;
 
-    outpw(GC_INDEX, GC_READMAP + ((dc_x & 3) << 8));
-    outp(SC_INDEX + 1, 1 << (dc_x & 3));
+    outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
 
-    dest = destview + Mul80(dc_yl) + (dc_x >> 2);
+    dest = destview + Mul80(dc_yl) + (dc_x >> 1);
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
@@ -2503,10 +2502,7 @@ void R_DrawFuzzColumnTransPotato(void)
     if (count <= 0)
         return;
 
-    outpw(GC_INDEX, GC_READMAP + ((dc_x & 3) << 8));
-    outp(SC_INDEX + 1, 1 << (dc_x & 3));
-
-    dest = destview + Mul80(dc_yl) + (dc_x >> 2);
+    dest = destview + Mul80(dc_yl) + dc_x;
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
