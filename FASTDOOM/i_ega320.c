@@ -32,7 +32,7 @@ const byte colors[48] = {
     0x3F, 0x3F, 0x15,  // 14
     0x3F, 0x3F, 0x3F}; // 15
 
-byte lut16colors[14 * 256];
+byte lut16colors[14 * 256 * 4];
 byte *ptrlut16colors;
 
 unsigned short lastlatch;
@@ -43,21 +43,82 @@ void I_ProcessPalette(byte *palette)
     int i, j;
     byte *ptr = gammatable[usegamma];
 
-    for (i = 0; i < 14 * 256; i++)
+    for (i = 0; i < 14 * 256 * 4; i += 4, palette += 3)
     {
         int distance;
 
         int r1, g1, b1;
+        int r2, g2, b2;
 
-        int bestcolor;
+        int l;
 
-        r1 = (int)ptr[*palette++];
-        g1 = (int)ptr[*palette++];
-        b1 = (int)ptr[*palette++];
+        int color;
 
-        bestcolor = GetClosestColor(colors, 16, r1, g1, b1);
+        r1 = (int)ptr[*(palette)];
+        g1 = (int)ptr[*(palette + 1)];
+        b1 = (int)ptr[*(palette + 2)];
 
-        lut16colors[i] = bestcolor;
+        l = (r1 * 300) / 1000 + (g1 * 600) / 1000 + (b1 * 100) / 1000;
+
+        r2 = r1 + (0 * (l + r1)) / 1000;
+        if (r2 > 255)
+            r2 = 255;
+
+        g2 = g1 + (0 * (l + g1)) / 1000;
+        if (g2 > 255)
+            g2 = 255;
+
+        b2 = b1 + (0 * (l + b1)) / 1000;
+        if (b2 > 255)
+            b2 = 255;
+
+        color = GetClosestColor(colors, 16, r2, g2, b2);
+        lut16colors[i] = color;
+
+        r2 = r1 + (500 * (l + r1)) / 1000;
+        if (r2 > 255)
+            r2 = 255;
+
+        g2 = g1 + (500 * (l + g1)) / 1000;
+        if (g2 > 255)
+            g2 = 255;
+
+        b2 = b1 + (500 * (l + b1)) / 1000;
+        if (b2 > 255)
+            b2 = 255;
+
+        color = GetClosestColor(colors, 16, r2, g2, b2);
+        lut16colors[i + 1] = color;
+
+        r2 = r1 + (750 * (l + r1)) / 1000;
+        if (r2 > 255)
+            r2 = 255;
+
+        g2 = g1 + (750 * (l + g1)) / 1000;
+        if (g2 > 255)
+            g2 = 255;
+
+        b2 = b1 + (750 * (l + b1)) / 1000;
+        if (b2 > 255)
+            b2 = 255;
+
+        color = GetClosestColor(colors, 16, r2, g2, b2);
+        lut16colors[i + 2] = color;
+
+        r2 = r1 + (250 * (l + r1)) / 1000;
+        if (r2 > 255)
+            r2 = 255;
+
+        g2 = g1 + (250 * (l + g1)) / 1000;
+        if (g2 > 255)
+            g2 = 255;
+
+        b2 = b1 + (250 * (l + b1)) / 1000;
+        if (b2 > 255)
+            b2 = 255;
+
+        color = GetClosestColor(colors, 16, r2, g2, b2);
+        lut16colors[i + 3] = color;
     }
 }
 
@@ -72,12 +133,38 @@ void I_FinishUpdate(void)
     byte *ptrbackbuffer = backbuffer;
     unsigned short *ptrvrambuffer = vrambuffer;
 
+    int counter = 0;
+    int evenodd = 0;
+
     do
     {
-        unsigned short fullvalue = 16 * 16 * 16 * ptrlut16colors[*ptrbackbuffer] +
-                                   16 * 16 * ptrlut16colors[*(ptrbackbuffer + 1)] +
-                                   16 * ptrlut16colors[*(ptrbackbuffer + 2)] +
-                                   ptrlut16colors[*(ptrbackbuffer + 3)];
+        unsigned short fullvalue;
+
+        if (counter == 80)
+        {
+            counter = 0;
+            if (evenodd == 0)
+                evenodd = 1;
+            else
+                evenodd = 0;
+        }
+
+        counter++;
+
+        if (evenodd == 0)
+        {
+            fullvalue = 16 * 16 * 16 * ptrlut16colors[*(ptrbackbuffer)*4] +
+                        16 * 16 * ptrlut16colors[*(ptrbackbuffer + 1) * 4 + 1] +
+                        16 * ptrlut16colors[*(ptrbackbuffer + 2) * 4] +
+                        ptrlut16colors[*(ptrbackbuffer + 3) * 4 + 1];
+        }
+        else
+        {
+            fullvalue = 16 * 16 * 16 * ptrlut16colors[*(ptrbackbuffer)*4 + 2] +
+                        16 * 16 * ptrlut16colors[*(ptrbackbuffer + 1) * 4 + 3] +
+                        16 * ptrlut16colors[*(ptrbackbuffer + 2) * 4 + 2] +
+                        ptrlut16colors[*(ptrbackbuffer + 3) * 4 + 3];
+        }
 
         if (*(ptrvrambuffer) != fullvalue)
         {
