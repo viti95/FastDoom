@@ -32,8 +32,8 @@ const byte colors[48] = {
     0x3F, 0x3F, 0x15,  // 14
     0x3F, 0x3F, 0x3F}; // 15
 
-byte lut16colors[14 * 256];
-byte *ptrlut16colors;
+unsigned short lut16colors[14 * 256];
+unsigned short *ptrlut16colors;
 
 unsigned short lastlatch;
 unsigned short vrambuffer[16000];
@@ -43,20 +43,20 @@ void I_ProcessPalette(byte *palette)
     int i, j;
     byte *ptr = gammatable[usegamma];
 
-    for (i = 0; i < 14 * 256; i++)
+    for (i = 0; i < 14 * 256; i++, palette+=3)
     {
         int distance;
 
         int r1, g1, b1;
 
-        int bestcolor;
+        unsigned short bestcolor;
 
-        r1 = (int)ptr[*palette++];
-        g1 = (int)ptr[*palette++];
-        b1 = (int)ptr[*palette++];
+        r1 = (int)ptr[*(palette)];
+        g1 = (int)ptr[*(palette + 1)];
+        b1 = (int)ptr[*(palette + 2)];
 
         bestcolor = GetClosestColor(colors, 16, r1, g1, b1);
-
+        bestcolor |= bestcolor << 4 | bestcolor << 8 | bestcolor << 12;
         lut16colors[i] = bestcolor;
     }
 }
@@ -74,10 +74,10 @@ void I_FinishUpdate(void)
 
     do
     {
-        unsigned short fullvalue = 16 * 16 * 16 * ptrlut16colors[*ptrbackbuffer] +
-                                   16 * 16 * ptrlut16colors[*(ptrbackbuffer + 1)] +
-                                   16 * ptrlut16colors[*(ptrbackbuffer + 2)] +
-                                   ptrlut16colors[*(ptrbackbuffer + 3)];
+        unsigned short fullvalue = (ptrlut16colors[*ptrbackbuffer] & 0xF000) +
+                                   (ptrlut16colors[*(ptrbackbuffer + 1)] & 0x0F00) +
+                                   (ptrlut16colors[*(ptrbackbuffer + 2)] & 0x00F0) +
+                                   (ptrlut16colors[*(ptrbackbuffer + 3)] & 0x000F);
 
         if (*(ptrvrambuffer) != fullvalue)
         {
