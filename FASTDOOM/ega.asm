@@ -77,9 +77,7 @@ L$4:
 	cmp		ax,[_lastlatch]
 	je		L$5
 	mov		[_lastlatch],ax
-	movzx		eax,ax
-	movzx		eax,byte [0xA3E80 + eax]
-	mov		al,[eax]
+	mov   al,byte [0xA3E80 + eax]
 L$5:
 	mov		[esi],dl
 	jmp		L$3
