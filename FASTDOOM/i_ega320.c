@@ -68,37 +68,33 @@ void I_SetPalette(int numpalette)
 
 void I_FinishUpdate(void)
 {
-    byte *vram = (byte *)0xA0000;
-    byte *ptrbackbuffer = backbuffer;
-    unsigned short *ptrvrambuffer = vrambuffer;
+    unsigned int position = 0;
 
     do
     {
-        unsigned short fullvalue = (ptrlut16colors[*ptrbackbuffer] & 0xF000) +
-                                   (ptrlut16colors[*(ptrbackbuffer + 1)] & 0x0F00) +
-                                   (ptrlut16colors[*(ptrbackbuffer + 2)] & 0x00F0) +
-                                   (ptrlut16colors[*(ptrbackbuffer + 3)] & 0x000F);
+        unsigned short fullvalue = ptrlut16colors[backbuffer[position * 4]] & 0xF000;
+        fullvalue |= ptrlut16colors[backbuffer[position * 4 + 1]] & 0x0F00;
+        fullvalue |= ptrlut16colors[backbuffer[position * 4 + 2]] & 0x00F0;
+        fullvalue |= ptrlut16colors[backbuffer[position * 4 + 3]] & 0x000F;
 
-        if (*(ptrvrambuffer) != fullvalue)
+        if (vrambuffer[position] != fullvalue)
         {
             unsigned short vramlut;
 
-            *(ptrvrambuffer) = fullvalue;
+            vrambuffer[position] = fullvalue;
             vramlut = fullvalue >> 4;
 
             if (lastlatch != vramlut)
             {
                 lastlatch = vramlut;
-                ReadMem((byte *)0xA3E80 + vramlut);
+                ReadMem(((byte *)0xA3E80)[vramlut]);
             }
 
-            *(vram) = fullvalue;
+            ((byte *)0xA0000)[position] = fullvalue;
         }
 
-        vram += 1;
-        ptrbackbuffer += 4;
-        ptrvrambuffer += 1;
-    } while (vram < (byte *)0xA3E80);
+        position++;
+    } while (position < 16000);
 }
 
 void EGA_InitGraphics(void)
