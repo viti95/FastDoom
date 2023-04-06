@@ -124,7 +124,7 @@ void I_ProcessPalette(byte *palette)
 
 void I_SetPalette(int numpalette)
 {
-    ptrlut16colors = lut16colors + numpalette * 256;
+    ptrlut16colors = lut16colors + numpalette * 1024;
 }
 
 void I_FinishUpdate(void)
