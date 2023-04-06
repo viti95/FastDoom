@@ -42,23 +42,19 @@ CODE_SYM_DEF I_FinishUpdate
 	xor		ebx,ebx
   mov   ecx,_backbuffer
 L$2:
-	movzx		eax,byte [ecx]
+  xor   eax,eax
+	mov		al,byte [ecx+3]
 	mov		ebp,[_ptrlut16colors]
 	mov		dx,[ebp+eax*2]
-	movzx		eax,byte [ecx+1]
+	mov   al,byte [ecx+2]
 	mov		di,[ebp+eax*2]
-	and		dx,0f000H
-	and		di,0f00H
-	movzx		eax,byte [ecx+2]
-	or		dx,di
+	mov   al,byte [ecx+1]
+  shrd  dx,di,4
 	mov		di,[ebp+eax*2]
-	movzx		eax,byte [ecx+3]
+	mov   al,byte [ecx]
+  shrd  dx,di,4
 	mov		ax,[ebp+eax*2]
-	and		di,0f0H
-	xor		ah,ah
-	or		dx,di
-	and		al,0fH
-	or		dx,ax
+	shrd  dx,ax,4
 	cmp		dx,[_vrambuffer + ebx]
 	jne		L$4
 L$3:
