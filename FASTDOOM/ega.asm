@@ -39,7 +39,7 @@ CODE_SYM_DEF I_FinishUpdate
 	push		edi
 	push		ebp
 	xor		esi,esi
-	xor		ebx,ebx
+	mov   ebx,_vrambuffer
   mov   ecx,_backbuffer
 L$2:
   xor   eax,eax
@@ -55,7 +55,7 @@ L$2:
   shrd  dx,di,4
 	mov		ax,[ebp+eax*2]
 	shrd  dx,ax,4
-	cmp		dx,[_vrambuffer + ebx]
+	cmp		dx,[ebx]
 	jne		L$4
 L$3:
 	add		ebx,2
@@ -73,7 +73,7 @@ L$3:
 L$4:
 	movzx		eax,dx
 	sar		eax,4
-	mov		[_vrambuffer + ebx],dx
+	mov		[ebx],dx
 	cmp		ax,[_lastlatch]
 	je		L$5
 	mov		[_lastlatch],ax
