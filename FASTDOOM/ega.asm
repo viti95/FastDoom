@@ -38,7 +38,7 @@ CODE_SYM_DEF I_FinishUpdate
 	push		esi
 	push		edi
 	push		ebp
-	xor		esi,esi
+  mov   esi,0xA0000
 	mov   ebx,_vrambuffer
   mov   ecx,_backbuffer
 L$2:
@@ -61,7 +61,7 @@ L$3:
 	add		ebx,2
 	inc		esi
 	add		ecx,4
-	cmp		esi,3e80H
+	cmp		esi,0xA3E80
 	jb		L$2
 	pop		ebp
 	pop		edi
@@ -81,7 +81,7 @@ L$4:
 	movzx		eax,byte [0xA3E80 + eax]
 	mov		al,[eax]
 L$5:
-	mov		[0xA0000 + esi],dl
+	mov		[esi],dl
 	jmp		L$3
 
 %endif
