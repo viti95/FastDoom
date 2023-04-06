@@ -35,9 +35,6 @@ const byte colors[48] = {
 unsigned short lut16colors[14 * 256];
 unsigned short *ptrlut16colors;
 
-unsigned short lastlatch;
-unsigned short vrambuffer[16000];
-
 void I_ProcessPalette(byte *palette)
 {
     int i, j;
@@ -64,37 +61,6 @@ void I_ProcessPalette(byte *palette)
 void I_SetPalette(int numpalette)
 {
     ptrlut16colors = lut16colors + numpalette * 256;
-}
-
-void I_FinishUpdate(void)
-{
-    unsigned int position = 0;
-
-    do
-    {
-        unsigned short fullvalue = ptrlut16colors[backbuffer[position * 4]] & 0xF000;
-        fullvalue |= ptrlut16colors[backbuffer[position * 4 + 1]] & 0x0F00;
-        fullvalue |= ptrlut16colors[backbuffer[position * 4 + 2]] & 0x00F0;
-        fullvalue |= ptrlut16colors[backbuffer[position * 4 + 3]] & 0x000F;
-
-        if (vrambuffer[position] != fullvalue)
-        {
-            unsigned short vramlut;
-
-            vrambuffer[position] = fullvalue;
-            vramlut = fullvalue >> 4;
-
-            if (lastlatch != vramlut)
-            {
-                lastlatch = vramlut;
-                ReadMem(((byte *)0xA3E80)[vramlut]);
-            }
-
-            ((byte *)0xA0000)[position] = fullvalue;
-        }
-
-        position++;
-    } while (position < 16000);
 }
 
 void EGA_InitGraphics(void)
