@@ -69,19 +69,21 @@ L$3:
 	mov		byte  [esi],al
 
 L$4:
-	movzx		eax,byte [_backbuffer + edx + 140H]
-	movzx		ebx,byte  [_backbuffer + edx + 141H]
-	mov		ah,byte  [edi+eax]
-	movzx		ebp,byte  [_backbuffer + edx + 142H]
-	mov		al,byte  [edi+ebx]
-	mov		bl,byte  [edi+ebp]
-	mov		byte  5[esp],bl
-	movzx		ebx,byte  [_backbuffer + edx + 143H]
-	mov		bl,byte  [edi+ebx]
-	mov		byte  4[esp],bl
-	mov		ebx,dword  4[esp]
+	xor		eax,eax
+	xor		ebx,ebx
+	
+	mov		al,[_backbuffer + edx + 320]	
+	mov		bl,[_backbuffer + edx + 321]
+	mov		ah,[edi+eax]
+	mov		al,[edi+ebx]
 	and		eax,0c030H
+
+	movzx	ebp,byte [_backbuffer + edx + 322]
+	mov		bh,[edi+ebp]
+	movzx	ebp,byte [_backbuffer + edx + 323]
+	mov		bl,[edi+ebp]
 	and		ebx,0c03H
+
 	or		eax,ebx
 	cmp		ax,word  4000H[ecx]
 	je		L$5
