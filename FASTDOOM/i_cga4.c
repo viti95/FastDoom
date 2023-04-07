@@ -24,8 +24,6 @@ const byte colors[12] = {
     0x2A, 0x00, 0x00,
     0x2A, 0x15, 0x00};
 
-unsigned short vrambuffer[16384];
-
 void I_ProcessPalette(byte *palette)
 {
     int i, j;
@@ -52,52 +50,6 @@ void I_ProcessPalette(byte *palette)
 void I_SetPalette(int numpalette)
 {
     ptrlut4colors = lut4colors + numpalette * 256;
-}
-
-void I_FinishUpdate(void)
-{
-    int x;
-    unsigned char *vram = (unsigned char *)0xB8000;
-    unsigned short *ptrvrambuffer = vrambuffer;
-    unsigned int base = 0;
-
-    for (base = 0; base < SCREENHEIGHT * 320; base += 320)
-    {
-        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++, ptrvrambuffer++)
-        {
-            unsigned short color;
-            unsigned short tmpColor;
-            byte tmp;
-
-            BYTE1_USHORT(tmpColor) = (ptrlut4colors[backbuffer[base]]);
-            BYTE0_USHORT(tmpColor) = (ptrlut4colors[backbuffer[base + 1]]);
-            tmpColor &= 0xC030;
-
-            BYTE1_USHORT(color) = (ptrlut4colors[backbuffer[base + 2]]);
-            BYTE0_USHORT(color) = (ptrlut4colors[backbuffer[base + 3]]);
-            tmpColor |= color & 0x0C03;
-
-            if (tmpColor != *(ptrvrambuffer))
-            {
-                *(ptrvrambuffer) = tmpColor;
-                *(vram) = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
-            }
-
-            BYTE1_USHORT(tmpColor) = (ptrlut4colors[backbuffer[base + 320]]);
-            BYTE0_USHORT(tmpColor) = (ptrlut4colors[backbuffer[base + 321]]);
-            tmpColor &= 0xC030;
-
-            BYTE1_USHORT(color) = (ptrlut4colors[backbuffer[base + 322]]);
-            BYTE0_USHORT(color) = (ptrlut4colors[backbuffer[base + 323]]);
-            tmpColor |= color & 0x0C03;
-
-            if (tmpColor != *(ptrvrambuffer + 0x2000))
-            {
-                *(ptrvrambuffer + 0x2000) = tmpColor;
-                *(vram + 0x2000) = BYTE0_USHORT(tmpColor) | BYTE1_USHORT(tmpColor);
-            }
-        }
-    }
 }
 
 void CGA_InitGraphics(void)
@@ -138,7 +90,6 @@ void CGA_InitGraphics(void)
 
     pcscreen = destscreen = (byte *)0xB8000;
 
-    SetDWords(vrambuffer, 0, 8192);
     SetDWords(pcscreen, 0, 4096);
 }
 
