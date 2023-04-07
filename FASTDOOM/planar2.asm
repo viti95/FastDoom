@@ -60,7 +60,12 @@ BEGIN_CODE_SECTION
 ; R_DrawColumnPotato
 ; ==================
 CODE_SYM_DEF R_DrawColumnPotato
-  pushad
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		edi
+	push		ebp
 
   mov  ebp,[_dc_yh]
   mov  eax,[_dc_yl]
@@ -87,7 +92,12 @@ CODE_SYM_DEF R_DrawColumnPotato
   call  [scalecalls+4+ebp*4]
 
 .done:
-  popad
+	pop		ebp
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
   ret
 ; R_DrawColumnPotato ends
 
@@ -95,7 +105,12 @@ CODE_SYM_DEF R_DrawColumnPotato
 ; R_DrawColumnLow
 ; ===============
 CODE_SYM_DEF R_DrawColumnLow
-  pushad
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		edi
+	push		ebp
 
   mov  ebp,[_dc_yh]
   mov  ebx,[_dc_yl]
@@ -135,12 +150,22 @@ CODE_SYM_DEF R_DrawColumnLow
   call  [scalecalls+4+ebp*4]
 
 .done:
-  popad
+	pop		ebp
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
   ret
 ; R_DrawColumnLow ends
 
 CODE_SYM_DEF R_DrawColumn
-  pushad
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		edi
+	push		ebp
 
   mov  ebp,[_dc_yh]
   mov  ebx,[_dc_yl]
@@ -179,7 +204,12 @@ CODE_SYM_DEF R_DrawColumn
   call  [scalecalls+4+ebp*4]
 
 .done:
-  popad
+	pop		ebp
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
   ret
 ; R_DrawColumn ends
 
@@ -245,7 +275,12 @@ CONTINUE_CODE_SECTION
 ; R_DrawSpanPotato
 ; ================
 CODE_SYM_DEF R_DrawSpanPotato
-  pushad
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		edi
+	push		ebp
 
   mov     eax,[_ds_x1]
   mov     ebx,[_ds_x2]
@@ -275,7 +310,12 @@ CODE_SYM_DEF R_DrawSpanPotato
   mov     ebx,[returnpoint]
   mov     [ebx],byte OP_MOVAL         ; remove the ret patched in
 
-  popad
+	pop		ebp
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
   ret
 ; R_DrawSpanPotato ends
 

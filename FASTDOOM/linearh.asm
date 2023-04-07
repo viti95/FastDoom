@@ -59,7 +59,12 @@ BEGIN_CODE_SECTION
 ; R_DrawColumnBackbuffer
 ; ======================
 CODE_SYM_DEF R_DrawColumnBackbuffer
-  pushad
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		edi
+	push		ebp
 
   mov  ebp,[_dc_yh]
   mov  ebx,[_dc_x]
@@ -85,7 +90,12 @@ CODE_SYM_DEF R_DrawColumnBackbuffer
   call  [scalecalls+4+ebp*4]
 
 .done:
-  popad
+	pop		ebp
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
   ret
 ; R_DrawColumnBackbuffer ends
 
@@ -151,7 +161,12 @@ CONTINUE_CODE_SECTION
 ; R_DrawSpanBackbuffer
 ; ====================
 CODE_SYM_DEF R_DrawSpanBackbuffer
-  pushad
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		edi
+	push		ebp
 
   mov     eax,[_ds_x1]
   mov     ebx,[_ds_x2]
@@ -181,7 +196,12 @@ CODE_SYM_DEF R_DrawSpanBackbuffer
   mov     ebx,[returnpoint]
   mov     [ebx],byte OP_MOVAL         ; remove the ret patched in
 
-  popad
+	pop		ebp
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
   ret
 ; R_DrawSpanBackbuffer ends
 

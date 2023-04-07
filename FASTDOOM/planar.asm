@@ -44,7 +44,12 @@ BEGIN_CODE_SECTION
 ; horizontal texture mapping, full detail
 ; ===========================================================================
 CODE_SYM_DEF R_DrawSpan
-  pushad
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		edi
+	push		ebp
 
   mov  eax,[_ds_x1]
   mov  [curx],eax
@@ -177,7 +182,12 @@ CODE_SYM_DEF R_DrawSpan
   mov   [frac],ebx  
   jmp   near .hplane
 .hdone:
-  popad
+	pop		ebp
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
   ret
 ; R_DrawSpan ends
 
@@ -187,7 +197,12 @@ CODE_SYM_DEF R_DrawSpan
 ; horizontal texture mapping, 2 columns at once
 ; ===========================================================================
 CODE_SYM_DEF R_DrawSpanLow
-  pushad
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		edi
+	push		ebp
 
   mov  eax,[_ds_x1]
   mov  [curx],eax
@@ -325,7 +340,12 @@ CODE_SYM_DEF R_DrawSpanLow
   mov   [frac],ebx
   jmp   near .lplane
 .ldone:
-  popad
+	pop		ebp
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
   ret
 ; R_DrawSpanLow ends
 

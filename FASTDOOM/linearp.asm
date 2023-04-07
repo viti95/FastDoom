@@ -59,7 +59,12 @@ BEGIN_CODE_SECTION
 ; R_DrawColumnPotatoBackbuffer
 ; ============================
 CODE_SYM_DEF R_DrawColumnPotatoBackbuffer
-  pushad
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		edi
+	push		ebp
 
   mov  ebx,[_dc_x]
   mov  ebp,[_dc_yh]
@@ -85,7 +90,12 @@ CODE_SYM_DEF R_DrawColumnPotatoBackbuffer
   call  [scalecalls+4+ebp*4]
 
 .done:
-  popad
+	pop		ebp
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
   ret
 ; R_DrawColumnPotatoBackbuffer ends
 
@@ -156,7 +166,12 @@ CONTINUE_CODE_SECTION
 ; R_DrawSpanPotatoBackbuffer
 ; ==========================
 CODE_SYM_DEF R_DrawSpanPotatoBackbuffer
-  pushad
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		edi
+	push		ebp
 
   mov     eax,[_ds_x1]
   mov     ebx,[_ds_x2]
@@ -186,7 +201,12 @@ CODE_SYM_DEF R_DrawSpanPotatoBackbuffer
   mov     ebx,[returnpoint]
   mov     [ebx],byte OP_MOVAL         ; remove the ret patched in
 
-  popad
+	pop		ebp
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
   ret
 ; R_DrawSpanPotatoBackbuffer ends
 

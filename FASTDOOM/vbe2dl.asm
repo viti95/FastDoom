@@ -52,7 +52,12 @@ BEGIN_CODE_SECTION
 ;============================================================================
 
 CODE_SYM_DEF R_DrawColumnLowVBE2
-  pushad
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		edi
+	push		ebp
 
   mov  ebp,[_dc_yh]
   mov  ebx,[_dc_x]
@@ -82,7 +87,12 @@ CODE_SYM_DEF R_DrawColumnLowVBE2
   call  [scalecalls+4+ebp*4]
 
 .done:
-  popad
+	pop		ebp
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
   ret
 ; R_DrawColumnLowVBE2 ends
 
@@ -142,7 +152,12 @@ CONTINUE_CODE_SECTION
 ;
 ;============================================================================
 CODE_SYM_DEF R_DrawSpanLowVBE2
-  pushad
+  push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		edi
+	push		ebp
 
   mov  eax,[_ds_x1]
   mov  ebx,[_ds_x2]
@@ -172,7 +187,12 @@ CODE_SYM_DEF R_DrawSpanLowVBE2
   mov  ebx,[returnpoint]
   mov  [ebx],byte OP_MOVAL ; remove the ret patched in
 
-  popad
+	pop		ebp
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
   ret
 ; R_DrawSpanLowVBE2 ends
 
