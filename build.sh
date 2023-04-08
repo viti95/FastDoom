@@ -17,10 +17,6 @@ elif [ "$target" = "fdoomcga.exe" ]; then
   buildopts="-dMODE_CGA"
   buildtarget="fdoom.exe"
 
-elif [ "$target" = "fdoomati.exe" ]; then
-  buildopts="-dMODE_ATI640"
-  buildtarget="fdoom.exe"
-
 elif [ "$target" = "fdoomega.exe" ]; then
   buildopts="-dMODE_EGA"
   buildtarget="fdoom.exe"

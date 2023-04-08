@@ -4,7 +4,6 @@ if "%1"=="" GOTO missing_parameters
 if "%2"=="" GOTO missing_parameters
 
 if "%2"=="fdoom13h.exe" GOTO mode_13h
-if "%2"=="fdoomati.exe" GOTO mode_ati
 if "%2"=="fdoombwc.exe" GOTO mode_bwc
 if "%2"=="fdoomc16.exe" GOTO mode_c16
 if "%2"=="fdoomcga.exe" GOTO mode_cga
@@ -29,12 +28,6 @@ if "%2"=="fdoom512.exe" GOTO mode_512
 set base=fdoom.exe
 set executable=fdoom13h.exe
 set options=-dMODE_13H
-goto compile
-
-:mode_ati
-set base=fdoom.exe
-set executable=fdoomati.exe
-set options=-dMODE_ATI640
 goto compile
 
 :mode_bwc

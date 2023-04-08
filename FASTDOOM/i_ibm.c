@@ -71,10 +71,6 @@
 #include "i_sigma.h"
 #endif
 
-#if defined(MODE_ATI640)
-#include "i_ati.h"
-#endif
-
 #if defined(MODE_CGA)
 #include "i_cga4.h"
 #endif
@@ -665,10 +661,6 @@ void I_InitGraphics(void)
 
 #if defined(MODE_EGA)
     EGA_InitGraphics();
-#endif
-
-#if defined(MODE_ATI640)
-    ATI_640_InitGraphics();
 #endif
 
 #if defined(MODE_CVB)

@@ -27,10 +27,6 @@ CPU 386
 %define USE_BACKBUFFER
 %endif
 
-%ifdef MODE_ATI640
-%define USE_BACKBUFFER
-%endif
-
 %ifdef MODE_CGA_BW
 %define USE_BACKBUFFER
 %endif

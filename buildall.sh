@@ -34,8 +34,6 @@
 ./build.sh clean
 ./build.sh fdoommda.exe
 ./build.sh clean
-./build.sh fdoomati.exe
-./build.sh clean
 ./build.sh fdoomega.exe
 ./build.sh clean
 ./build.sh fdoomcah.exe

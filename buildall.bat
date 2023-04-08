@@ -1,6 +1,5 @@
 @echo off
 call build.bat clean fdoom13h.exe
-call build.bat clean fdoomati.exe
 call build.bat clean fdoombwc.exe
 call build.bat clean fdoomc16.exe
 call build.bat clean fdoomcga.exe
