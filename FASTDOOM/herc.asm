@@ -37,7 +37,7 @@ CODE_SYM_DEF I_FinishUpdate
 	push		esi
 	push		edi
 	push		ebp
-	sub		esp,8
+	sub		esp,4
 	mov		edi,[_ptrlutcolors]
 	xor 	ebx,ebx
 	mov		ebp,_backbuffer
@@ -45,48 +45,61 @@ CODE_SYM_DEF I_FinishUpdate
 L$12:
 	mov		esi, 0x50
 L$13:
-	movzx		ecx,byte [ebp]
-	mov		ecx,dword  [edi+ecx*4]
+	xor		eax,eax
+
+	mov		al,byte [ebp]
+	mov		ecx,[edi+eax*4]
 	and		ecx,80408040H
-	mov		dword  [esp],ecx
-	movzx		ecx,byte [ebp+1]
-	mov		ecx,dword  [edi+ecx*4]
+
+	mov		edx,ecx
+
+	mov		al,byte [ebp+1]
+	mov		ecx,[edi+eax*4]
 	and		ecx,20102010H
-	or		dword  [esp],ecx
-	movzx		ecx,byte [ebp+2]
-	mov		ecx,dword  [edi+ecx*4]
+
+	or		edx,ecx
+
+	mov		al,byte [ebp+2]
+	mov		ecx,[edi+eax*4]
 	and		ecx,8040804H
-	or		dword  [esp],ecx
-	movzx		ecx,byte [ebp+3]
-	mov		ecx,dword  [edi+ecx*4]
+
+	or		edx,ecx
+
+	mov		al,byte [ebp+3]
+	mov		ecx,[edi+eax*4]
 	and		ecx,2010201H
-	or		dword  [esp],ecx
-	mov		cl,byte  [esp]
-	or		cl,byte  1[esp]
-	cmp		cl,byte  [_vrambuffer + ebx]
-	jne		L$18
+
+	or		edx,ecx
+
+	or		dl, dh
+
+	cmp		dl,[_vrambuffer + ebx]
+	je		L$14
+	mov		[0xB0000 + ebx],dl
+	mov		[_vrambuffer + ebx],dl
 L$14:
-	mov		cl,byte  2[esp]
-	or		cl,byte  3[esp]
-	cmp		cl,[_vrambuffer + ebx + 0x2000]
+	shr		edx,16
+	or		dl,dh
+
+	cmp		dl,[_vrambuffer + ebx + 0x2000]
 	je		L$15
-	mov		[0xB0000 + ebx + 0x2000],cl
-	mov		[_vrambuffer + ebx + 0x2000],cl
+	mov		[0xB0000 + ebx + 0x2000],dl
+	mov		[_vrambuffer + ebx + 0x2000],dl
 L$15:
 	movzx		ecx,byte [ebp+320]
-	mov		ecx,dword  [edi+ecx*4]
+	mov		ecx,[edi+ecx*4]
 	and		ecx,80408040H
 	mov		dword  [esp],ecx
 	movzx		ecx,byte [ebp+321]
-	mov		ecx,dword  [edi+ecx*4]
+	mov		ecx,[edi+ecx*4]
 	and		ecx,20102010H
 	or		dword  [esp],ecx
 	movzx		ecx,byte [ebp+322]
-	mov		ecx,dword  [edi+ecx*4]
+	mov		ecx,[edi+ecx*4]
 	and		ecx,8040804H
 	or		dword  [esp],ecx
 	movzx		ecx,byte [ebp+323]
-	mov		ecx,dword  [edi+ecx*4]
+	mov		ecx,[edi+ecx*4]
 	and		ecx,2010201H
 	or		dword  [esp],ecx
 	mov		cl,byte  [esp]
@@ -111,18 +124,13 @@ L$17:
 	add		ebp,140H
 	cmp		ebx,0x1F40
 	jb		L$12
-	add		esp,8
+	add		esp,4
 	pop		ebp
 	pop		edi
 	pop		esi
 	pop		edx
 	pop		ecx
 	pop		ebx
-	ret
-L$18:
-	mov		[0xB0000 + ebx],cl
-	mov		[_vrambuffer + ebx],cl
-	jmp		near  L$14
 	ret
 
 %endif
