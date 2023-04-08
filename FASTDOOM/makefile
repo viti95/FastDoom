@@ -48,6 +48,7 @@ GLOBOBJS = &
  cga4.obj &
  i_cgacvb.obj &
  i_herc.obj &
+ herc.obj &
  i_cgabw.obj &
  i_ega640.obj &
  i_ega320.obj &
