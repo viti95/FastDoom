@@ -37,8 +37,9 @@ CODE_SYM_DEF I_FinishUpdate
 	push		esi
 	push		ebp
 	sub		esp,4
-	mov		ebx,0b8000H
-	mov		ecx,_vrambuffer
+
+	xor 	ebx,ebx
+
 	xor		edx,edx
 L$2:
 	xor		eax,eax
@@ -61,13 +62,13 @@ L$3:
 	mov		si,word [ebp+esi*2]
 	and		esi,303H
 	or		eax,esi
-	cmp		al,byte [ecx]
+	cmp		al,[_vrambuffer + ebx]
 	jne		L$8
 L$4:
-	cmp		ah,byte 4000H[ecx]
+	cmp		ah,[_vrambuffer + ebx + 0x4000]
 	je		L$5
-	mov		byte 4000H[ebx],ah
-	mov		byte 4000H[ecx],ah
+	mov		[0xB8000 + ebx + 0x4000],ah
+	mov		[_vrambuffer + ebx + 0x4000],ah
 L$5:
 	mov		ebp,dword [_ptrlut16colors]
 	movzx		eax,byte [_backbuffer + edx + 320]
@@ -85,20 +86,19 @@ L$5:
 	mov		si,word [ebp+esi*2]
 	and		esi,303H
 	or		eax,esi
-	cmp		al,byte 2000H[ecx]
+	cmp		al,[_vrambuffer + ebx + 0x2000]
 	je		L$6
-	mov		byte 2000H[ebx],al
-	mov		byte 2000H[ecx],al
+	mov		[0xB8000 + ebx + 0x2000],al
+	mov		[_vrambuffer + ebx + 0x2000],al
 L$6:
-	cmp		ah,byte 6000H[ecx]
+	cmp		ah,[_vrambuffer + ebx + 0x6000]
 	je		L$7
-	mov		byte 6000H[ebx],ah
-	mov		byte 6000H[ecx],ah
+	mov		[0xB8000 + ebx + 0x6000],ah
+	mov		[_vrambuffer + ebx + 0x6000],ah
 L$7:
 	inc		dword [esp]
 	add		edx,4
 	inc		ebx
-	inc		ecx
 	cmp		dword [esp],50H
 	jl		L$3
 	add		edx,140H
@@ -112,8 +112,8 @@ L$7:
 	pop		ebx
 	ret
 L$8:
-	mov		byte [ebx],al
-	mov		byte [ecx],al
+	mov		[0xB8000 + ebx],al
+	mov		[_vrambuffer + ebx],al
 	jmp		near L$4
 
 %endif
