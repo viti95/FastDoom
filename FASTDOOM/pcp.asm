@@ -40,27 +40,29 @@ CODE_SYM_DEF I_FinishUpdate
 	xor 	ebx,ebx
 
 	mov		edx,_backbuffer
+	mov		ebp,[_ptrlut16colors]
 L$2:
 	mov		edi, 0x50
 L$3:
-	mov		ebp,[_ptrlut16colors]
-	movzx		eax,byte [edx]
-	movzx		esi,byte [edx + 1]
+	movzx	eax,byte [edx]
+	movzx	esi,byte [edx+1]
 	mov		ax,word [ebp+eax*2]
 	mov		si,word [ebp+esi*2]
 	and		eax,0c0c0H
 	and		esi,3030H
 	or		eax,esi
-	movzx		esi,byte [edx + 2]
+	movzx	esi,byte [edx+2]
 	mov		si,word [ebp+esi*2]
 	and		esi,0c0cH
 	or		eax,esi
-	movzx		esi,byte [edx + 3]
+	movzx	esi,byte [edx+3]
 	mov		si,word [ebp+esi*2]
 	and		esi,303H
 	or		eax,esi
 	cmp		al,[_vrambuffer + ebx]
-	jne		L$8
+	je		L$4
+	mov		[0xB8000 + ebx],al
+	mov		[_vrambuffer + ebx],al
 L$4:
 	cmp		ah,[_vrambuffer + ebx + 0x4000]
 	je		L$5
@@ -68,18 +70,18 @@ L$4:
 	mov		[_vrambuffer + ebx + 0x4000],ah
 L$5:
 	mov		ebp,dword [_ptrlut16colors]
-	movzx	eax,byte [edx + 320]
-	movzx	esi,byte [edx + 321]
+	movzx	eax,byte [edx+320]
+	movzx	esi,byte [edx+321]
 	mov		ax,word [ebp+eax*2]
 	mov		si,word [ebp+esi*2]
 	and		eax,0c0c0H
 	and		esi,3030H
 	or		eax,esi
-	movzx	esi,byte [edx + 322]
+	movzx	esi,byte [edx+322]
 	mov		si,word [ebp+esi*2]
 	and		esi,0c0cH
 	or		eax,esi
-	movzx	esi,byte [edx + 323]
+	movzx	esi,byte [edx+323]
 	mov		si,word [ebp+esi*2]
 	and		esi,303H
 	or		eax,esi
@@ -106,9 +108,5 @@ L$7:
 	pop		ecx
 	pop		ebx
 	ret
-L$8:
-	mov		[0xB8000 + ebx],al
-	mov		[_vrambuffer + ebx],al
-	jmp		near L$4
 
 %endif
