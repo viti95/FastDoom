@@ -45,27 +45,25 @@ CODE_SYM_DEF I_FinishUpdate
 L$12:
 	mov		esi, 0x50
 L$13:
-	mov		al,byte [ebp]
-	mov		ecx,[edi+eax*4]
-	and		ecx,80408040H
+	mov		al,[ebp]
+	mov		edx,[edi+eax*4]
+	and		edx,0x80408040
 
-	mov		edx,ecx
-
-	mov		al,byte [ebp+1]
+	mov		al,[ebp+1]
 	mov		ecx,[edi+eax*4]
-	and		ecx,20102010H
+	and		ecx,0x20102010
 
 	or		edx,ecx
 
-	mov		al,byte [ebp+2]
+	mov		al,[ebp+2]
 	mov		ecx,[edi+eax*4]
-	and		ecx,8040804H
+	and		ecx,0x8040804
 
 	or		edx,ecx
 
-	mov		al,byte [ebp+3]
+	mov		al,[ebp+3]
 	mov		ecx,[edi+eax*4]
-	and		ecx,2010201H
+	and		ecx,0x2010201
 
 	or		edx,ecx
 
@@ -84,27 +82,25 @@ L$14:
 	mov		[0xB0000 + ebx + 0x2000],dl
 	mov		[_vrambuffer + ebx + 0x2000],dl
 L$15:
-	mov		al,byte [ebp+320]
-	mov		ecx,[edi+eax*4]
-	and		ecx,80408040H
+	mov		al,[ebp+320]
+	mov		edx,[edi+eax*4]
+	and		edx,0x80408040
 
-	mov		edx,ecx
-
-	mov		al,byte [ebp+321]
+	mov		al,[ebp+321]
 	mov		ecx,[edi+eax*4]
-	and		ecx,20102010H
+	and		ecx,0x20102010
 
 	or		edx,ecx
 
-	mov		al,byte [ebp+322]
+	mov		al,[ebp+322]
 	mov		ecx,[edi+eax*4]
-	and		ecx,8040804H
+	and		ecx,0x8040804
 
 	or		edx,ecx
 
-	mov		al,byte [ebp+323]
+	mov		al,[ebp+323]
 	mov		ecx,[edi+eax*4]
-	and		ecx,2010201H
+	and		ecx,0x2010201
 
 	or		edx,ecx
 
@@ -123,10 +119,9 @@ L$16:
 	mov		[0xB0000 + ebx + 0x6000],dl
 	mov		[_vrambuffer + ebx + 0x6000],dl
 L$17:
-	dec 	esi
 	add		ebp,4
 	inc		ebx
-	cmp		esi, 0
+	dec		esi
 	ja		L$13
 	add		ebp,140H
 	cmp		ebx,0x1F40
