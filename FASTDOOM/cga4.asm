@@ -22,7 +22,7 @@ BITS 32
 %ifdef MODE_CGA
 
 extern _backbuffer
-extern _lut4colors
+extern _ptrlut4colors
 
 BEGIN_DATA_SECTION
 
@@ -39,7 +39,7 @@ CODE_SYM_DEF I_FinishUpdate
 	push		ebp
 	xor		esi,esi
 	xor		ecx,ecx
-	mov		edi,_lut4colors
+	mov		edi,[_ptrlut4colors]
 	mov 	edx,_backbuffer
 L$2:
 	xor		ebp,ebp
