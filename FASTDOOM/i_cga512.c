@@ -48,7 +48,7 @@ void I_ProcessPalette(byte *palette)
         ptrLUT13 = newCGA13LUT;
     }
 
-    for (i = 0; i < 14 * 256; i++)
+    for (i = 0; i < 14 * 256; i++,palette+=3)
     {
         int distance;
 
@@ -56,9 +56,9 @@ void I_ProcessPalette(byte *palette)
 
         int best_difference = MAXINT;
 
-        r1 = (int)ptr[*palette++];
-        g1 = (int)ptr[*palette++];
-        b1 = (int)ptr[*palette++];
+        r1 = (int)ptr[*(palette)];
+        g1 = (int)ptr[*(palette+1)];
+        b1 = (int)ptr[*(palette+2)];
 
         for (j = 0; j < 256; j++)
         {

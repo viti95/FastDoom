@@ -42,8 +42,6 @@ void I_ProcessPalette(byte *palette)
 
     for (i = 0; i < 14 * 256; i++, palette+=3)
     {
-        int distance;
-
         int r1, g1, b1;
 
         unsigned short bestcolor;

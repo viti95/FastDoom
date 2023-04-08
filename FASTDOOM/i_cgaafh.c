@@ -46,17 +46,15 @@ void I_ProcessPalette(byte *palette)
     int i, j;
     byte *ptr = gammatable[usegamma];
 
-    for (i = 0; i < 14 * 256; i++)
+    for (i = 0; i < 14 * 256; i++,palette+=3)
     {
-        int distance;
-
         int r1, g1, b1;
 
         int bestcolor;
 
-        r1 = (int)ptr[*palette++];
-        g1 = (int)ptr[*palette++];
-        b1 = (int)ptr[*palette++];
+        r1 = (int)ptr[*(palette)];
+        g1 = (int)ptr[*(palette+1)];
+        b1 = (int)ptr[*(palette+2)];
 
         bestcolor = GetClosestColor(colors, 16, r1, g1, b1);
         
