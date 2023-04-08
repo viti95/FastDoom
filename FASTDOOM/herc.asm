@@ -37,16 +37,14 @@ CODE_SYM_DEF I_FinishUpdate
 	push		esi
 	push		edi
 	push		ebp
-	sub		esp,4
 	mov		edi,[_ptrlutcolors]
 	xor 	ebx,ebx
 	mov		ebp,_backbuffer
 	xor		esi,esi
+	xor		eax,eax
 L$12:
 	mov		esi, 0x50
 L$13:
-	xor		eax,eax
-
 	mov		al,byte [ebp]
 	mov		ecx,[edi+eax*4]
 	and		ecx,80408040H
@@ -86,35 +84,44 @@ L$14:
 	mov		[0xB0000 + ebx + 0x2000],dl
 	mov		[_vrambuffer + ebx + 0x2000],dl
 L$15:
-	movzx		ecx,byte [ebp+320]
-	mov		ecx,[edi+ecx*4]
+	mov		al,byte [ebp+320]
+	mov		ecx,[edi+eax*4]
 	and		ecx,80408040H
-	mov		dword  [esp],ecx
-	movzx		ecx,byte [ebp+321]
-	mov		ecx,[edi+ecx*4]
+
+	mov		edx,ecx
+
+	mov		al,byte [ebp+321]
+	mov		ecx,[edi+eax*4]
 	and		ecx,20102010H
-	or		dword  [esp],ecx
-	movzx		ecx,byte [ebp+322]
-	mov		ecx,[edi+ecx*4]
+
+	or		edx,ecx
+
+	mov		al,byte [ebp+322]
+	mov		ecx,[edi+eax*4]
 	and		ecx,8040804H
-	or		dword  [esp],ecx
-	movzx		ecx,byte [ebp+323]
-	mov		ecx,[edi+ecx*4]
+
+	or		edx,ecx
+
+	mov		al,byte [ebp+323]
+	mov		ecx,[edi+eax*4]
 	and		ecx,2010201H
-	or		dword  [esp],ecx
-	mov		cl,byte  [esp]
-	or		cl,byte  1[esp]
-	cmp		cl,[_vrambuffer + ebx + 0x4000]
+
+	or		edx,ecx
+
+	or		dl, dh
+
+	cmp		dl,[_vrambuffer + ebx + 0x4000]
 	je		L$16
-	mov		[0xB0000 + ebx + 0x4000],cl
-	mov		[_vrambuffer + ebx + 0x4000],cl
+	mov		[0xB0000 + ebx + 0x4000],dl
+	mov		[_vrambuffer + ebx + 0x4000],dl
 L$16:
-	mov		cl,byte  2[esp]
-	or		cl,byte  3[esp]
-	cmp		cl,[_vrambuffer + ebx + 0x6000]
+	shr		edx,16
+	or		dl,dh
+
+	cmp		dl,[_vrambuffer + ebx + 0x6000]
 	je		L$17
-	mov		[0xB0000 + ebx + 0x6000],cl
-	mov		[_vrambuffer + ebx + 0x6000],cl
+	mov		[0xB0000 + ebx + 0x6000],dl
+	mov		[_vrambuffer + ebx + 0x6000],dl
 L$17:
 	dec 	esi
 	add		ebp,4
@@ -124,7 +131,6 @@ L$17:
 	add		ebp,140H
 	cmp		ebx,0x1F40
 	jb		L$12
-	add		esp,4
 	pop		ebp
 	pop		edi
 	pop		esi
