@@ -9,7 +9,6 @@ if "%2"=="fdoombwc.exe" GOTO mode_bwc
 if "%2"=="fdoomc16.exe" GOTO mode_c16
 if "%2"=="fdoomcga.exe" GOTO mode_cga
 if "%2"=="fdoomcvb.exe" GOTO mode_cvb
-if "%2"=="fdoome.exe"   GOTO mode_e
 if "%2"=="fdoomhgc.exe" GOTO mode_hgc
 if "%2"=="fdoompcp.exe" GOTO mode_pcp
 if "%2"=="fdoom400.exe" GOTO mode_sigma
@@ -72,12 +71,6 @@ goto compile
 set base=fdoom.exe
 set executable=fdoomcvb.exe
 set options=-dMODE_CVB
-goto compile
-
-:mode_e
-set base=fdoom.exe
-set executable=fdoome.exe
-set options=-dMODE_EGA640
 goto compile
 
 :mode_hgc

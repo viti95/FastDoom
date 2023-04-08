@@ -91,10 +91,6 @@
 #include "i_cgabw.h"
 #endif
 
-#if defined(MODE_EGA640)
-#include "i_ega640.h"
-#endif
-
 #if defined(MODE_EGA)
 #include "i_ega320.h"
 #endif
@@ -671,15 +667,14 @@ void I_InitGraphics(void)
     EGA_InitGraphics();
 #endif
 
-#if defined(MODE_EGA640)
-    EGA_640_InitGraphics();
-#endif
 #if defined(MODE_ATI640)
     ATI_640_InitGraphics();
 #endif
+
 #if defined(MODE_CVB)
     CGA_CVBS_InitGraphics();
 #endif
+
 #if defined(MODE_HERC)
     HERC_InitGraphics();
 #endif
