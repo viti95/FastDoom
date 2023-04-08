@@ -58,6 +58,7 @@ file i_cga16.obj
 file i_vga.obj
 file i_vga13h.obj
 file i_pcp.obj
+file pcp.obj
 file i_sigma.obj
 file sigma.obj
 file i_cga4.obj

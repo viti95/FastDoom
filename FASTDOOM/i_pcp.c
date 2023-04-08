@@ -35,7 +35,6 @@ const byte colors[48] = {
 
 unsigned short lut16colors[14 * 256];
 unsigned short *ptrlut16colors;
-byte vrambuffer[32768];
 
 void I_ProcessPalette(byte *palette)
 {
@@ -74,81 +73,6 @@ void I_SetPalette(int numpalette)
     ptrlut16colors = lut16colors + numpalette * 256;
 }
 
-void I_FinishUpdate(void)
-{
-    int x;
-    unsigned char *vram = (unsigned char *)0xB8000;
-    byte *ptrvrambuffer = vrambuffer;
-    unsigned int base = 0;
-
-    for (base = 0; base < SCREENHEIGHT * 320;)
-    {
-        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++, ptrvrambuffer++)
-        {
-            unsigned short color;
-            unsigned short finalcolor;
-            byte tmp;
-
-            color = ptrlut16colors[backbuffer[base]];
-            finalcolor = color & 0xC0C0;
-
-            color = ptrlut16colors[backbuffer[base + 1]];
-            finalcolor |= color & 0x3030;
-
-            color = ptrlut16colors[backbuffer[base + 2]];
-            finalcolor |= color & 0x0C0C;
-
-            color = ptrlut16colors[backbuffer[base + 3]];
-            finalcolor |= color & 0x0303;
-
-            tmp = BYTE0_USHORT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer))
-            {
-                *(vram) = tmp;
-                *(ptrvrambuffer) = tmp;
-            }
-
-            tmp = BYTE1_USHORT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer + 0x4000))
-            {
-                *(vram + 0x4000) = tmp;
-                *(ptrvrambuffer + 0x4000) = tmp;
-            }
-
-            color = ptrlut16colors[backbuffer[base + 320]];
-            finalcolor = color & 0xC0C0;
-
-            color = ptrlut16colors[backbuffer[base + 321]];
-            finalcolor |= color & 0x3030;
-
-            color = ptrlut16colors[backbuffer[base + 322]];
-            finalcolor |= color & 0x0C0C;
-
-            color = ptrlut16colors[backbuffer[base + 323]];
-            finalcolor |= color & 0x0303;
-
-            tmp = BYTE0_USHORT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer + 0x2000))
-            {
-                *(vram + 0x2000) = tmp;
-                *(ptrvrambuffer + 0x2000) = tmp;
-            }
-
-            tmp = BYTE1_USHORT(finalcolor);
-
-            if (tmp != *(ptrvrambuffer + 0x6000))
-            {
-                *(vram + 0x6000) = tmp;
-                *(ptrvrambuffer + 0x6000) = tmp;
-            }
-        }
-        base += 320;
-    }
-}
-
 void PCP_InitGraphics(void)
 {
     union REGS regs;
@@ -158,7 +82,6 @@ void PCP_InitGraphics(void)
     outp(0x3DD, 0x10);
     pcscreen = destscreen = (byte *)0xB8000;
 
-    SetDWords(vrambuffer, 0, 8192);
     SetDWords(pcscreen, 0, 8192);
 }
 

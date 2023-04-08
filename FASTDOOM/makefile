@@ -41,6 +41,7 @@ GLOBOBJS = &
  i_vga.obj &
  i_vga13h.obj &
  i_pcp.obj &
+ pcp.obj &
  i_sigma.obj &
  sigma.obj &
  i_cga4.obj &
