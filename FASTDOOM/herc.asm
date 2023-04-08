@@ -118,8 +118,8 @@ L$16:
 	mov		[0xB0000 + ebx + 0x6000],dl
 	mov		[_vrambuffer + ebx + 0x6000],dl
 L$17:
-	add		ebp,4
 	inc		ebx
+	add		ebp,4
 	dec		esi
 	ja		L$13
 	add		ebp,140H
