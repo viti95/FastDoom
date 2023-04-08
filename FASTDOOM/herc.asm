@@ -40,7 +40,6 @@ CODE_SYM_DEF I_FinishUpdate
 	mov		edi,[_ptrlutcolors]
 	xor 	ebx,ebx
 	mov		ebp,_backbuffer
-	xor		esi,esi
 	xor		eax,eax
 L$12:
 	mov		esi, 0x50
