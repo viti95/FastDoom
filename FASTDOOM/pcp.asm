@@ -49,24 +49,20 @@ L$2:
 L$3:
 	mov 	dl,[esi]
 	mov		ax,[ebp+edx*2]
-
-	and		eax,0c0c0H
-
 	mov		dl,[esi+1]
+	and		eax,0c0c0H
 	mov		cx,[ebp+edx*2]
 
 	and		ecx,3030H
 
-	or		eax,ecx
-
 	mov		dl,[esi+2]
+	or		eax,ecx
 	mov		cx,[ebp+edx*2]
 
 	and		ecx,0c0cH
 
-	or		eax,ecx
-
 	mov		dl,[esi+3]
+	or		eax,ecx
 	mov		cx,[ebp+edx*2]
 
 	and		ecx,303H
@@ -83,26 +79,23 @@ L$4:
 	mov		[0xB8000 + ebx + 0x4000],ah
 	mov		[_vrambuffer + ebx + 0x4000],ah
 L$5:
-	movzx	eax,byte [esi+320]
-	movzx	ecx,byte [esi+321]
-
-	mov		ax,word [ebp+eax*2]
-	mov		cx,word [ebp+ecx*2]
-
+	mov 	dl,[esi+320]
+	mov		ax,[ebp+edx*2]
+	mov		dl,[esi+321]
 	and		eax,0c0c0H
+	mov		cx,[ebp+edx*2]
+
 	and		ecx,3030H
 
+	mov		dl,[esi+322]
 	or		eax,ecx
-
-	movzx	ecx,byte [esi+322]
-	mov		cx,word [ebp+ecx*2]
+	mov		cx,[ebp+edx*2]
 
 	and		ecx,0c0cH
 
+	mov		dl,[esi+323]
 	or		eax,ecx
-
-	movzx	ecx,byte [esi+323]
-	mov		cx,word [ebp+ecx*2]
+	mov		cx,[ebp+edx*2]
 
 	and		ecx,303H
 
