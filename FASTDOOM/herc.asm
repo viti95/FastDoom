@@ -46,23 +46,22 @@ L$12:
 L$13:
 	mov		al,[ebp]
 	mov		edx,[edi+eax*4]
-	and		edx,0x80408040
-
 	mov		al,[ebp+1]
+	and		edx,0x80408040
 	mov		ecx,[edi+eax*4]
-	and		ecx,0x20102010
-
-	or		edx,ecx
-
 	mov		al,[ebp+2]
+	and		ecx,0x20102010
+	
+	or		edx,ecx
+	
 	mov		ecx,[edi+eax*4]
-	and		ecx,0x8040804
-
+	mov		al,[ebp+3]
+	and		ecx,0x08040804
+	
 	or		edx,ecx
 
-	mov		al,[ebp+3]
 	mov		ecx,[edi+eax*4]
-	and		ecx,0x2010201
+	and		ecx,0x02010201
 
 	or		edx,ecx
 
@@ -83,23 +82,22 @@ L$14:
 L$15:
 	mov		al,[ebp+320]
 	mov		edx,[edi+eax*4]
-	and		edx,0x80408040
-
 	mov		al,[ebp+321]
+	and		edx,0x80408040
 	mov		ecx,[edi+eax*4]
-	and		ecx,0x20102010
-
-	or		edx,ecx
-
 	mov		al,[ebp+322]
+	and		ecx,0x20102010
+	
+	or		edx,ecx
+	
 	mov		ecx,[edi+eax*4]
-	and		ecx,0x8040804
-
+	mov		al,[ebp+323]
+	and		ecx,0x08040804
+	
 	or		edx,ecx
 
-	mov		al,[ebp+323]
 	mov		ecx,[edi+eax*4]
-	and		ecx,0x2010201
+	and		ecx,0x02010201
 
 	or		edx,ecx
 
