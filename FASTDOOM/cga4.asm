@@ -42,7 +42,7 @@ CODE_SYM_DEF I_FinishUpdate
 	mov		edi,[_ptrlut4colors]
 	mov 	edx,_backbuffer
 L$2:
-	xor		ebp,ebp
+	mov		ebp,0x50
 L$3:
 	xor		eax,eax
 	xor		ebx,ebx
@@ -89,11 +89,10 @@ L$4:
 	or		al,ah
 	mov		[0xBA000 + esi],al
 L$5:
-	inc		ebp
-	add		edx,4
 	inc		esi
-	cmp		ebp,50H
-	jl		L$3
+	add		edx,4
+	dec		ebp
+	ja		L$3
 	add		edx,140H
 	cmp		edx,_backbuffer + 0xFA00
 	jb		L$2
