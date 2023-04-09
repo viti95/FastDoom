@@ -15,8 +15,8 @@
 
 #if defined(MODE_CGA_BW)
 
-byte lutcolors[14 * 512];
-byte *ptrlutcolors;
+unsigned short lutcolors[14 * 256];
+unsigned short *ptrlutcolors;
 
 void I_ProcessPalette(byte *palette)
 {
@@ -24,7 +24,7 @@ void I_ProcessPalette(byte *palette)
 
     byte *ptr = gammatable[usegamma];
 
-    for (i = 0; i < 14 * 512; i += 2, palette += 3)
+    for (i = 0; i < 14 * 256; i++, palette += 3)
     {
         int r, g, b;
         int sum;
@@ -35,14 +35,14 @@ void I_ProcessPalette(byte *palette)
 
         sum = r + g + b;
 
-        lutcolors[i] = sum > 19 ? 0xFF : 0x00;
-        lutcolors[i + 1] = sum > 59 ? 0xFF : 0x00;
+        lutcolors[i] = sum > 19 ? 0x8000 : 0x0000;
+        lutcolors[i] |= sum > 59 ? 0x4000 : 0x0000;
     }
 }
 
 void I_SetPalette(int numpalette)
 {
-    ptrlutcolors = lutcolors + numpalette * 512;
+    ptrlutcolors = lutcolors + numpalette * 256;
 }
 
 void CGA_BW_InitGraphics(void)

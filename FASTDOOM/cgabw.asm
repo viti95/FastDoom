@@ -26,7 +26,7 @@ extern _ptrlutcolors
 
 BEGIN_DATA_SECTION
 
-_vrambuffer: times 16384 dw 0
+_vrambuffer: times 16384 db 0
 
 BEGIN_CODE_SECTION
 
@@ -48,54 +48,46 @@ L$7:
 	xor		ecx,ecx
 	mov		ax,[ebp+eax*2]
 	mov		cl,[edx+1]
-	and		eax,8040H
+	shr		ax,14
 	mov		cx,[ebp+ecx*2]
-	and		ecx,2010H
-	or		eax,ecx
+	shld	ax,cx,2
 	xor		ecx,ecx
 	mov		cl,[edx+2]
 	mov		cx,[ebp+ecx*2]
-	and		ecx,804H
-	or		eax,ecx
+	shld	ax,cx,2
 	xor		ecx,ecx
 	mov		cl,[edx+3]
 	mov		cx,[ebp+ecx*2]
-	and		ecx,201H
-	or		eax,ecx
-	cmp		ax,[ebx]
+	shld	ax,cx,2
+	cmp		al,[ebx]
 	je		L$8
-	mov		[ebx],ax
-	or		al,ah
+	mov		[ebx],al
 	mov		[esi],al
 L$8:
 	xor		eax,eax
 	mov		al,[edx+320]
 	xor		ecx,ecx
 	mov		ax,[ebp+eax*2]
+	shr		ax,14
 	mov		cl,[edx+321]
-	and		eax,8040H
 	mov		cx,[ebp+ecx*2]
-	and		ecx,2010H
-	or		eax,ecx
+	shld	ax,cx,2
 	xor		ecx,ecx
 	mov		cl,[edx+322]
 	mov		cx,[ebp+ecx*2]
-	and		ecx,804H
-	or		eax,ecx
+	shld	ax,cx,2
 	xor		ecx,ecx
 	mov		cl,[edx+323]
 	mov		cx,[ebp+ecx*2]
-	and		ecx,201H
-	or		eax,ecx
-	cmp		ax,word 4000H[ebx]
+	shld	ax,cx,2
+	cmp		al,[ebx + 0x2000]
 	je		L$9
-	mov		word 4000H[ebx],ax
-	or		al,ah
-	mov		byte 2000H[esi],al
+	mov		[ebx + 0x2000],al
+	mov		[esi + 0x2000],al
 L$9:
 	inc		esi
 	add		edx,4
-	add		ebx,2
+	inc		ebx
 	dec		edi
 	ja		L$7
 	add		edx,140H
