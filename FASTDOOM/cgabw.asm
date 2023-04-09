@@ -36,62 +36,55 @@ CODE_SYM_DEF I_FinishUpdate
 	push		edx
 	push		esi
 	push		ebp
-	mov		esi,0b8000H
-	mov		ebx,_vrambuffer
 	mov		edx,_backbuffer
 	mov		ebp,[_ptrlutcolors]
+	xor 	esi,esi
+	xor		ebx,ebx
 L$6:
 	mov		edi,50H
 L$7:
 	xor		eax,eax
 	mov		al,[edx]
-	xor		ecx,ecx
+	mov		bl,[edx+1]
 	mov		ax,[ebp+eax*2]
-	mov		cl,[edx+1]
+	mov		cx,[ebp+ebx*2]
 	shr		ax,14
-	mov		cx,[ebp+ecx*2]
 	shld	ax,cx,2
-	xor		ecx,ecx
-	mov		cl,[edx+2]
-	mov		cx,[ebp+ecx*2]
+	mov		bl,[edx+2]
+	mov		cx,[ebp+ebx*2]
 	shld	ax,cx,2
-	xor		ecx,ecx
-	mov		cl,[edx+3]
-	mov		cx,[ebp+ecx*2]
+	mov		bl,[edx+3]
+	mov		cx,[ebp+ebx*2]
 	shld	ax,cx,2
-	cmp		al,[ebx]
+	cmp		al,[_vrambuffer + esi]
 	je		L$8
-	mov		[ebx],al
-	mov		[esi],al
+	mov		[_vrambuffer + esi],al
+	mov		[0xB8000 + esi],al
 L$8:
 	xor		eax,eax
 	mov		al,[edx+320]
-	xor		ecx,ecx
+	mov		bl,[edx+321]
 	mov		ax,[ebp+eax*2]
+	mov		cx,[ebp+ebx*2]
 	shr		ax,14
-	mov		cl,[edx+321]
-	mov		cx,[ebp+ecx*2]
 	shld	ax,cx,2
-	xor		ecx,ecx
-	mov		cl,[edx+322]
-	mov		cx,[ebp+ecx*2]
+	mov		bl,[edx+322]
+	mov		cx,[ebp+ebx*2]
 	shld	ax,cx,2
-	xor		ecx,ecx
-	mov		cl,[edx+323]
-	mov		cx,[ebp+ecx*2]
+	mov		bl,[edx+323]
+	mov		cx,[ebp+ebx*2]
 	shld	ax,cx,2
-	cmp		al,[ebx + 0x2000]
+	cmp		al,[_vrambuffer + esi + 0x2000]
 	je		L$9
-	mov		[ebx + 0x2000],al
-	mov		[esi + 0x2000],al
+	mov		[_vrambuffer + esi + 0x2000],al
+	mov		[0xB8000 + esi + 0x2000],al
 L$9:
 	inc		esi
 	add		edx,4
-	inc		ebx
 	dec		edi
 	ja		L$7
 	add		edx,140H
-	cmp		esi,0b9f40H
+	cmp		esi,0x1F40
 	jb		L$6
 	pop		ebp
 	pop		esi
