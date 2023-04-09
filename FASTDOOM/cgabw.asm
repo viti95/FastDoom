@@ -43,44 +43,48 @@ CODE_SYM_DEF I_FinishUpdate
 L$6:
 	mov		edi,50H
 L$7:
-	movzx		eax,byte [edx]
-	add		eax,eax
-	lea		ecx,[eax+ebp]
-	mov		ax,word [ecx]
-	movzx		ecx,byte 1[edx]
-	mov		cx,word [ebp+ecx*2]
+	xor		eax,eax
+	mov		al,[edx]
+	xor		ecx,ecx
+	mov		ax,[ebp+eax*2]
+	mov		cl,[edx+1]
 	and		eax,8040H
+	mov		cx,[ebp+ecx*2]
 	and		ecx,2010H
 	or		eax,ecx
-	movzx		ecx,byte 2[edx]
-	mov		cx,word [ebp+ecx*2]
+	xor		ecx,ecx
+	mov		cl,[edx+2]
+	mov		cx,[ebp+ecx*2]
 	and		ecx,804H
 	or		eax,ecx
-	movzx		ecx,byte 3[edx]
-	mov		cx,word [ebp+ecx*2]
+	xor		ecx,ecx
+	mov		cl,[edx+3]
+	mov		cx,[ebp+ecx*2]
 	and		ecx,201H
 	or		eax,ecx
-	cmp		ax,word [ebx]
-	jne		L$10
-L$10:
-	mov		word [ebx],ax
+	cmp		ax,[ebx]
+	je		L$8
+	mov		[ebx],ax
 	or		al,ah
-	mov		byte [esi],al
+	mov		[esi],al
 L$8:
-	movzx		ecx,byte 140H[edx]
-	add		ecx,ecx
-	mov		ax,word [ecx+ebp]
-	movzx		ecx,byte 141H[edx]
-	mov		cx,word [ebp+ecx*2]
+	xor		eax,eax
+	mov		al,[edx+320]
+	xor		ecx,ecx
+	mov		ax,[ebp+eax*2]
+	mov		cl,[edx+321]
 	and		eax,8040H
+	mov		cx,[ebp+ecx*2]
 	and		ecx,2010H
 	or		eax,ecx
-	movzx		ecx,byte 142H[edx]
-	mov		cx,word [ebp+ecx*2]
+	xor		ecx,ecx
+	mov		cl,[edx+322]
+	mov		cx,[ebp+ecx*2]
 	and		ecx,804H
 	or		eax,ecx
-	movzx		ecx,byte 143H[edx]
-	mov		cx,word [ebp+ecx*2]
+	xor		ecx,ecx
+	mov		cl,[edx+323]
+	mov		cx,[ebp+ecx*2]
 	and		ecx,201H
 	or		eax,ecx
 	cmp		ax,word 4000H[ebx]
