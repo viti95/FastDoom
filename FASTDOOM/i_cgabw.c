@@ -17,7 +17,6 @@
 
 byte lutcolors[14 * 512];
 byte *ptrlutcolors;
-unsigned short vrambuffer[16384];
 
 void I_ProcessPalette(byte *palette)
 {
@@ -46,63 +45,6 @@ void I_SetPalette(int numpalette)
     ptrlutcolors = lutcolors + numpalette * 512;
 }
 
-void I_FinishUpdate(void)
-{
-    unsigned char *vram = (unsigned char *)0xB8000;
-    unsigned short *ptrvrambuffer = vrambuffer;
-    byte *ptrbackbuffer = backbuffer;
-
-    do
-    {
-        unsigned char x = 80;
-
-        do
-        {
-            unsigned short *ptr;
-            unsigned short finalcolor;
-
-            // Process two pixels at the same time (16-bit)
-            ptr = ptrlutcolors + *(ptrbackbuffer)*2;
-            finalcolor = *ptr & 0x8040;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 1) * 2;
-            finalcolor |= *ptr & 0x2010;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 2) * 2;
-            finalcolor |= *ptr & 0x0804;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 3) * 2;
-            finalcolor |= *ptr & 0x0201;
-
-            if (finalcolor != *ptrvrambuffer)
-            {
-                *ptrvrambuffer = finalcolor;
-                *vram = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor);
-            }
-
-            ptr = ptrlutcolors + *(ptrbackbuffer + 320) * 2;
-            finalcolor = *ptr & 0x8040;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 321) * 2;
-            finalcolor |= *ptr & 0x2010;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 322) * 2;
-            finalcolor |= *ptr & 0x0804;
-            ptr = ptrlutcolors + *(ptrbackbuffer + 323) * 2;
-            finalcolor |= *ptr & 0x0201;
-
-            if (finalcolor != *(ptrvrambuffer + 0x2000))
-            {
-                *(ptrvrambuffer + 0x2000) = finalcolor;
-                *(vram + 0x2000) = BYTE0_USHORT(finalcolor) | BYTE1_USHORT(finalcolor);
-            }
-
-            ptrbackbuffer += 4;
-            ptrvrambuffer++;
-            vram++;
-            x--;
-
-        } while (x > 0);
-
-        ptrbackbuffer += 320;
-    } while (vram < 0xB9F40);
-}
-
 void CGA_BW_InitGraphics(void)
 {
     union REGS regs;
@@ -111,7 +53,6 @@ void CGA_BW_InitGraphics(void)
     int386(0x10, (union REGS *)&regs, &regs);
     pcscreen = destscreen = (byte *)0xB8000;
 
-    SetDWords(vrambuffer, 0, 8192);
     SetDWords(pcscreen, 0, 4096);
 }
 
