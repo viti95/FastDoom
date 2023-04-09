@@ -26,7 +26,12 @@ align 4
 
 CODE_SYM_DEF MV_Mix8BitMono
 ; Two at once
-        pushad
+        push	ebx
+	push	ecx
+	push	edx
+	push	esi
+	push	edi
+	push	ebp
 
         mov     ebp, eax
 
@@ -118,7 +123,12 @@ apatch6:
         mov     [_MV_MixDestination], edi       ; Store the current write position
         mov     [_MV_MixPosition], ebp          ; return position
 exit8M:
-        popad
+        pop	ebp
+	pop	edi
+	pop	esi
+	pop	edx
+	pop	ecx
+	pop	ebx
         ret
 
 
@@ -134,7 +144,13 @@ exit8M:
 ; ecx - number of samples to mix
 
 CODE_SYM_DEF MV_Mix8BitStereo
-        pushad
+        push	ebx
+	push	ecx
+	push	edx
+	push	esi
+	push	edi
+	push	ebp
+
         mov     ebp, eax
 
         mov     esi, ebx ; Source pointer
@@ -224,7 +240,12 @@ bpatch7:
         mov     [_MV_MixPosition], ebp       ; return position
 
 exit8S:
-        popad
+        pop	ebp
+	pop	edi
+	pop	esi
+	pop	edx
+	pop	ecx
+	pop	ebx
         ret
 
 ;================
@@ -239,7 +260,13 @@ exit8S:
 ; ecx - number of samples to mix
 
 CODE_SYM_DEF MV_Mix8BitUltrasound
-        pushad
+        push	ebx
+	push	ecx
+	push	edx
+	push	esi
+	push	edi
+	push	ebp
+        
         mov     ebp, eax
 
         mov     esi, ebx ; Source pointer
@@ -329,5 +356,10 @@ cpatch7:
         mov     [_MV_MixPosition], ebp       ; return position
 
 exit8U:
-        popad
+        pop	ebp
+	pop	edi
+	pop	esi
+	pop	edx
+	pop	ecx
+	pop	ebx
         ret
