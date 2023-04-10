@@ -18,8 +18,6 @@
 
 #include "options.h"
 
-#include "i_log.h"
-
 static int ADBFX_Installed = 0;
 
 static char *ADBFX_BufferStart;
@@ -202,8 +200,6 @@ int ADBFX_Init(int soundcard, int address)
 {
     int i;
 
-    I_Log("ADBFX_Init: %d %d\n", soundcard, address);
-
     if (ADBFX_Installed)
     {
         ADBFX_Shutdown();
@@ -217,8 +213,6 @@ int ADBFX_Init(int soundcard, int address)
     AL_Init(soundcard, address);
 
     AL_Reset();
-
-    I_Log("ADLIB_PORT: %d\n", ADLIB_PORT);
 
     AL_SendOutputToPort(ADLIB_PORT, 0x20, 0x21);
     AL_SendOutputToPort(ADLIB_PORT, 0x60, 0xF0);
@@ -249,8 +243,6 @@ int ADBFX_Init(int soundcard, int address)
     ADBFX_BufferStart = NULL;
 
     ADBFX_Installed = 1;
-
-    I_Log("ADBFX_Init: OK\n");
 
     return (ADBFX_Ok);
 }

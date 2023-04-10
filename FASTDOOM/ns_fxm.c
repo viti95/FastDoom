@@ -17,7 +17,6 @@
 #include "ns_adbfx.h"
 #include "ns_tandy.h"
 #include "options.h"
-#include "i_log.h"
 
 #define TRUE (1 == 1)
 #define FALSE (!TRUE)
@@ -37,8 +36,6 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
 {
     int status;
     int DeviceStatus;
-
-    I_Log("FX_SetupCard: %d %d\n", SoundCard, port);
 
     FX_SoundDevice = SoundCard;
 
@@ -275,8 +272,6 @@ int FX_Init(
 {
     int status;
     int devicestatus;
-
-    I_Log("FX_Init: %d\n", SoundCard);
 
     if (FX_Installed)
     {

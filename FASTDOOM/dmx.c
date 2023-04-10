@@ -36,8 +36,6 @@
 #include "i_system.h"
 #include "i_sound.h"
 
-#include "i_log.h"
-
 typedef struct
 {
     unsigned int length;
@@ -299,13 +297,11 @@ int MPU_Detect(int *port)
 void SetSNDPort(int port)
 {
     dmx_snd_port = port;
-    I_Log("SetSNDPort: %d\n", port);
 }
 
 void SetMUSPort(int port)
 {
     dmx_mus_port = port;
-    I_Log("SetMUSPort: %d\n", port);
 }
 
 int ASS_GetSoundCardCode(int sndDevice)
@@ -362,8 +358,6 @@ void ASS_Init(int rate, int maxsng, int mdev, int sdev)
     int finalNumChannels = numChannels;
 
     fx_device fx_device;
-
-    I_Log("ASS_Init: %d %d\n", mdev, sdev);
 
     if (mdev != snd_none)
     {

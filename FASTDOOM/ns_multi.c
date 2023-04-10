@@ -27,7 +27,6 @@
 #include "fastmath.h"
 #include "ns_fxm.h"
 #include "dmx.h"
-#include "i_log.h"
 
 #define RoundFixed(fixedval, bits)             \
     (                                          \
@@ -1216,8 +1215,6 @@ int MV_Init(
     int status;
     int buffer;
     int index;
-
-    I_Log("MV_Init: %d\n", soundcard);
 
     if (MV_Installed)
     {

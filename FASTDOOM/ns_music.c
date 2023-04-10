@@ -15,7 +15,6 @@
 #include "ns_llm.h"
 #include "ns_user.h"
 #include "options.h"
-#include "i_log.h"
 
 #define TRUE (1 == 1)
 #define FALSE (!TRUE)
@@ -41,8 +40,6 @@ int MUSIC_Init(int SoundCard, int Address)
 {
     int i;
     int status;
-
-    I_Log("MUSIC_Init: %d %d\n", SoundCard, Address);
 
     for (i = 0; i < 128; i++)
     {
