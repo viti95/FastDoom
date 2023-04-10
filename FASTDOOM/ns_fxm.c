@@ -17,6 +17,7 @@
 #include "ns_adbfx.h"
 #include "ns_tandy.h"
 #include "options.h"
+#include "i_log.h"
 
 #define TRUE (1 == 1)
 #define FALSE (!TRUE)
@@ -36,6 +37,8 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
 {
     int status;
     int DeviceStatus;
+
+    I_Log("FX_SetupCard: %d %d\n", SoundCard, port);
 
     FX_SoundDevice = SoundCard;
 
@@ -70,8 +73,6 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
         break;
 
     case GenMidi:
-    case SoundCanvas:
-    case WaveBlaster:
         device->MaxVoices = 0;
         device->MaxSampleBits = 0;
         device->MaxChannels = 0;
@@ -165,7 +166,7 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
         device->MaxSampleBits = 8;
         device->MaxChannels = 1;
         break;
-    case AdlibFX:
+    case Adlib:
     case OPL2LPT:
     case OPL3LPT:
         DeviceStatus = ADBFX_Init(SoundCard, port);
@@ -275,6 +276,8 @@ int FX_Init(
     int status;
     int devicestatus;
 
+    I_Log("FX_Init: %d\n", SoundCard);
+
     if (FX_Installed)
     {
         FX_Shutdown();
@@ -298,7 +301,7 @@ int FX_Init(
     case PCPWM:
     case CMS:
     case LPTDAC:
-    case AdlibFX:
+    case Adlib:
     case OPL2LPT:
     case OPL3LPT:
     case SoundBlasterDirect:
@@ -356,7 +359,9 @@ int FX_Shutdown(
     case PCPWM:
     case CMS:
     case LPTDAC:
-    case AdlibFX:
+    case Adlib:
+    case OPL2LPT:
+    case OPL3LPT:
     case SoundBlasterDirect:
         status = MV_Shutdown();
         if (status != MV_Ok)
@@ -408,8 +413,6 @@ void FX_SetVolume(int volume)
         break;
 
     case GenMidi:
-    case SoundCanvas:
-    case WaveBlaster:
         break;
 
     case UltraSound:
@@ -419,7 +422,9 @@ void FX_SetVolume(int volume)
     case SoundScape:
     case SoundSource:
     case Tandy3Voice:
-    case AdlibFX:
+    case Adlib:
+    case OPL2LPT:
+    case OPL3LPT:
     case PC1bit:
     case PCPWM:
     case LPTDAC:

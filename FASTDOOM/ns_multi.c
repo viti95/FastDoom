@@ -26,6 +26,8 @@
 #include "options.h"
 #include "fastmath.h"
 #include "ns_fxm.h"
+#include "dmx.h"
+#include "i_log.h"
 
 #define RoundFixed(fixedval, bits)             \
     (                                          \
@@ -703,7 +705,9 @@ int MV_SetMixMode(
     case PCPWM:
     case LPTDAC:
     case SoundBlasterDirect:
-    case AdlibFX:
+    case Adlib:
+    case OPL2LPT:
+    case OPL3LPT:
         MV_MixMode = MONO_8BIT;
         break;
 
@@ -890,7 +894,9 @@ int MV_StartPlayback(
         MV_MixRate = FX_MixRate;
         MV_DMAChannel = -1;
         break;
-    case AdlibFX:
+    case Adlib:
+    case OPL2LPT:
+    case OPL3LPT:
         ADBFX_BeginBufferedPlayback(MV_MixBuffer[0],
                                  TotalBufferSize, MV_NumberOfBuffers,
                                  MV_ServiceVoc);
@@ -971,7 +977,9 @@ void MV_StopPlayback(
     case SoundBlasterDirect:
         SBDM_StopPlayback();
         break;
-    case AdlibFX:
+    case Adlib:
+    case OPL2LPT:
+    case OPL3LPT:
         ADBFX_StopPlayback();
         break;
     case Tandy3Voice:
@@ -1209,6 +1217,8 @@ int MV_Init(
     int buffer;
     int index;
 
+    I_Log("MV_Init: %d\n", soundcard);
+
     if (MV_Installed)
     {
         MV_Shutdown();
@@ -1301,10 +1311,10 @@ int MV_Init(
         status = SBDM_Init(soundcard);
         break;
 
-    case AdlibFX:
+    case Adlib:
     case OPL2LPT:
     case OPL3LPT:
-        status = ADBFX_Init(soundcard, -1);
+        status = ADBFX_Init(soundcard, dmx_snd_port);
         break;
 
     case Tandy3Voice:
@@ -1432,7 +1442,9 @@ int MV_Shutdown(
     case SoundBlasterDirect:
         SBDM_Shutdown();
         break;
-    case AdlibFX:
+    case Adlib:
+    case OPL2LPT:
+    case OPL3LPT:
         ADBFX_Shutdown();
         break;
     case Tandy3Voice:

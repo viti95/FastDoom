@@ -15,6 +15,7 @@
 #include "ns_llm.h"
 #include "ns_user.h"
 #include "options.h"
+#include "i_log.h"
 
 #define TRUE (1 == 1)
 #define FALSE (!TRUE)
@@ -41,6 +42,8 @@ int MUSIC_Init(int SoundCard, int Address)
     int i;
     int status;
 
+    I_Log("MUSIC_Init: %d %d\n", SoundCard, Address);
+
     for (i = 0; i < 128; i++)
     {
         MIDI_PatchMap[i] = i;
@@ -61,8 +64,6 @@ int MUSIC_Init(int SoundCard, int Address)
         break;
 
     case GenMidi:
-    case SoundCanvas:
-    case WaveBlaster:
     case SoundScape:
         status = MUSIC_InitMidi(SoundCard, &MUSIC_MidiFunctions, Address);
         break;
@@ -90,7 +91,6 @@ int MUSIC_Init(int SoundCard, int Address)
     case PCPWM:
     case LPTDAC:
     case SoundBlasterDirect:
-    case AdlibFX:
     case Tandy3Voice:
     default:
         status = MUSIC_Error;
@@ -130,15 +130,8 @@ int MUSIC_Shutdown(
         break;
 
     case GenMidi:
-    case SoundCanvas:
     case SoundScape:
         MPU_Reset();
-        break;
-
-    case WaveBlaster:
-        BLASTER_ShutdownWaveBlaster();
-        MPU_Reset();
-        BLASTER_RestoreMidiVolume();
         break;
 
     case Awe32:
@@ -243,8 +236,6 @@ int MUSIC_PlaySong(
     case ProAudioSpectrum:
     case SoundMan16:
     case GenMidi:
-    case SoundCanvas:
-    case WaveBlaster:
     case SoundScape:
     case Awe32:
     case UltraSound:
@@ -382,8 +373,7 @@ int MUSIC_InitMidi(
 
     status = MUSIC_Ok;
 
-    if ((card == WaveBlaster) || (card == SoundCanvas) ||
-        (card == GenMidi))
+    if (card == GenMidi)
     {
         // Setup WaveBlaster Daughterboard clone
         // (ie. SoundCanvas DB, TurtleBeach Rio)
@@ -413,16 +403,6 @@ int MUSIC_InitMidi(
     Funcs->PitchBend = MPU_PitchBend;
     Funcs->SetVolume = NULL;
     Funcs->GetVolume = NULL;
-
-    if (card == WaveBlaster)
-    {
-        if (BLASTER_CardHasMixer())
-        {
-            BLASTER_SaveMidiVolume();
-            Funcs->SetVolume = BLASTER_SetMidiVolume;
-            Funcs->GetVolume = BLASTER_GetMidiVolume;
-        }
-    }
 
     MIDI_SetMidiFuncs(Funcs);
 

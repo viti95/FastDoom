@@ -18,6 +18,8 @@
 
 #include "options.h"
 
+#include "i_log.h"
+
 static int ADBFX_Installed = 0;
 
 static char *ADBFX_BufferStart;
@@ -178,7 +180,7 @@ int ADBFX_BeginBufferedPlayback(
 
     switch (ADBFX_Device)
     {
-        case AdlibFX:
+        case Adlib:
         ADBFX_Timer = TS_ScheduleTask(ADBFX_ServiceInterrupt_ISA, FX_MixRate, 1, NULL);
         break;
         case OPL2LPT:
@@ -205,16 +207,23 @@ int ADBFX_Init(int soundcard, int address)
 {
     int i;
 
+    I_Log("ADBFX_Init: %d %d\n", soundcard, address);
+    
     if (ADBFX_Installed)
     {
         ADBFX_Shutdown();
     }
+
+    if (address <= 0)
+        address = ADLIB_PORT;
 
     ADBFX_Device = soundcard;
 
     AL_Init(soundcard, address);
 
     AL_Reset();
+
+    I_Log("ADLIB_PORT: %d\n", ADLIB_PORT);
 
     AL_SendOutputToPort(ADLIB_PORT, 0x20, 0x21);
     AL_SendOutputToPort(ADLIB_PORT, 0x60, 0xF0);
@@ -245,6 +254,8 @@ int ADBFX_Init(int soundcard, int address)
     ADBFX_BufferStart = NULL;
 
     ADBFX_Installed = 1;
+
+    I_Log("ADBFX_Init: OK\n");
 
     return (ADBFX_Ok);
 }

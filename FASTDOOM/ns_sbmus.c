@@ -1212,7 +1212,6 @@ int AL_Init(int soundcard, int Address)
    switch (soundcard)
    {
    case Adlib:
-   case AdlibFX:
    default:
       AL_OPL3 = FALSE;
       AL_Stereo = FALSE;
