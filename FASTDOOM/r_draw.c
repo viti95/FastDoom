@@ -1044,7 +1044,7 @@ void R_DrawFuzzColumnSaturnText4050(void)
 
 void R_DrawFuzzColumnTransText4050(void)
 {
-
+    R_DrawFuzzColumnText4050();
 }
 
 #endif
@@ -1190,7 +1190,7 @@ void R_DrawFuzzColumnSaturnText4025(void)
 
 void R_DrawFuzzColumnTransText4025(void)
 {
-
+    R_DrawFuzzColumnText4025();
 }
 #endif
 
@@ -1702,7 +1702,7 @@ void R_DrawFuzzColumnSaturnText8025(void)
 
 void R_DrawFuzzColumnTransText8025(void)
 {
-
+    R_DrawFuzzColumnText8025();
 }
 #endif
 
@@ -1758,7 +1758,7 @@ void R_DrawFuzzColumnSaturnText8050(void)
 
 void R_DrawFuzzColumnTransText8050(void)
 {
-
+    R_DrawFuzzColumnText8050();
 }
 #endif
 
