@@ -109,40 +109,22 @@ static void ADBFX_ServiceInterrupt_ISA(task *Task)
 
     outp(ADLIB_PORT + 1, value);
 
-    ADBFX_UpdatePointer();   
+    ADBFX_UpdatePointer();
 }
 
-void AL_FastValueToPort_OPLxLPT(int port, int data)
+static void ADBFX_ServiceInterrupt_OPLxLPT(task *Task)
 {
-   int lpt_data;
-   int lpt_ctrl;
+    int lpt_data = ADLIB_PORT;
+    int lpt_ctrl = ADLIB_PORT + 2;
 
-   lpt_data = port;
-   lpt_ctrl = port + 2;
-
-   /* Set value */
-   outp(lpt_data, data);
-   outp(lpt_ctrl, 12);
-   outp(lpt_ctrl, 8);
-   outp(lpt_ctrl, 12);
-}
-
-static void ADBFX_ServiceInterrupt_OPL2LPT(task *Task)
-{
     unsigned char value = AdlibLUTdb[(unsigned char)(*ADBFX_SoundPtr)];
 
-    AL_FastValueToPort_OPLxLPT(ADLIB_PORT, value);
+    outp(lpt_data, value);
+    outp(lpt_ctrl, 12);
+    outp(lpt_ctrl, 8);
+    outp(lpt_ctrl, 12);
 
-    ADBFX_UpdatePointer();   
-}
-
-static void ADBFX_ServiceInterrupt_OPL3LPT(task *Task)
-{
-    unsigned char value = AdlibLUTdb[(unsigned char)(*ADBFX_SoundPtr)];
-
-    AL_FastValueToPort_OPLxLPT(ADLIB_PORT, value);
-
-    ADBFX_UpdatePointer();   
+    ADBFX_UpdatePointer();
 }
 
 /*---------------------------------------------------------------------
@@ -195,14 +177,12 @@ int ADBFX_BeginBufferedPlayback(
 
     switch (ADBFX_Device)
     {
-        case Adlib:
+    case Adlib:
         ADBFX_Timer = TS_ScheduleTask(ADBFX_ServiceInterrupt_ISA, FX_MixRate, 1, NULL);
         break;
-        case OPL2LPT:
-        ADBFX_Timer = TS_ScheduleTask(ADBFX_ServiceInterrupt_OPL2LPT, FX_MixRate, 1, NULL);
-        break;
-        case OPL3LPT:
-        ADBFX_Timer = TS_ScheduleTask(ADBFX_ServiceInterrupt_OPL3LPT, FX_MixRate, 1, NULL);
+    case OPL2LPT:
+    case OPL3LPT:
+        ADBFX_Timer = TS_ScheduleTask(ADBFX_ServiceInterrupt_OPLxLPT, FX_MixRate, 1, NULL);
         break;
     }
 
@@ -223,7 +203,7 @@ int ADBFX_Init(int soundcard, int address)
     int i;
 
     I_Log("ADBFX_Init: %d %d\n", soundcard, address);
-    
+
     if (ADBFX_Installed)
     {
         ADBFX_Shutdown();
