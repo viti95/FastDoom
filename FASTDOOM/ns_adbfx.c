@@ -112,11 +112,26 @@ static void ADBFX_ServiceInterrupt_ISA(task *Task)
     ADBFX_UpdatePointer();   
 }
 
+void AL_FastValueToPort_OPLxLPT(int port, int data)
+{
+   int lpt_data;
+   int lpt_ctrl;
+
+   lpt_data = port;
+   lpt_ctrl = port + 2;
+
+   /* Set value */
+   outp(lpt_data, data);
+   outp(lpt_ctrl, 12);
+   outp(lpt_ctrl, 8);
+   outp(lpt_ctrl, 12);
+}
+
 static void ADBFX_ServiceInterrupt_OPL2LPT(task *Task)
 {
     unsigned char value = AdlibLUTdb[(unsigned char)(*ADBFX_SoundPtr)];
 
-    AL_SendOutputToPort_OPL2LPT(ADLIB_PORT, 0x40, value);
+    AL_FastValueToPort_OPLxLPT(ADLIB_PORT, value);
 
     ADBFX_UpdatePointer();   
 }
@@ -125,7 +140,7 @@ static void ADBFX_ServiceInterrupt_OPL3LPT(task *Task)
 {
     unsigned char value = AdlibLUTdb[(unsigned char)(*ADBFX_SoundPtr)];
 
-    AL_SendOutputToPort_OPL3LPT(ADLIB_PORT, 0x40, value);
+    AL_FastValueToPort_OPLxLPT(ADLIB_PORT, value);
 
     ADBFX_UpdatePointer();   
 }
