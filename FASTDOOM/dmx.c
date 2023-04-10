@@ -294,24 +294,14 @@ int MPU_Detect(int *port)
     return MPU_Init(*port);
 }
 
-void OPLxLPT_SetCard(int port)
-{
-    dmx_mus_port = port;
-}
-
-void MPU_SetCard(int port)
-{
-    dmx_mus_port = port;
-}
-
-void CMS_SetCard(int port)
-{
-    dmx_mus_port = port;
-}
-
-void SND_SetPort(int port)
+void SetSNDPort(int port)
 {
     dmx_snd_port = port;
+}
+
+void SetMUSPort(int port)
+{
+    dmx_mus_port = port;
 }
 
 int ASS_GetSoundCardCode(int sndDevice)
@@ -334,8 +324,6 @@ int ASS_GetSoundCardCode(int sndDevice)
         return Awe32;
     case snd_ENSONIQ:
         return SoundScape;
-    case snd_CODEC:
-        return -1;
     case snd_DISNEY:
         return SoundSource;
     case snd_TANDY:
@@ -350,8 +338,6 @@ int ASS_GetSoundCardCode(int sndDevice)
         return LPTDAC;
     case snd_SBDirect:
         return SoundBlasterDirect;
-    case snd_AdlibFX:
-        return AdlibFX;
     case snd_OPL2LPT:
         return OPL2LPT;
     case snd_OPL3LPT:
@@ -414,6 +400,9 @@ void ASS_Init(int rate, int maxsng, int mdev, int sdev)
         case SoundSource:
         case LPTDAC:
         case CMS:
+        case Adlib:
+        case OPL2LPT:
+        case OPL3LPT:
             FX_SetupCard(sound_device, &fx_device, dmx_snd_port);
             break;
         default:

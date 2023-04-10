@@ -26,6 +26,7 @@ static int ADBFX_BufferNum = 0;
 static int ADBFX_NumBuffers = 0;
 static int ADBFX_TransferLength = 0;
 static int ADBFX_CurrentLength = 0;
+static int ADBFX_Device = 0;
 
 static char *ADBFX_SoundPtr;
 volatile int ADBFX_SoundPlaying;
@@ -73,12 +74,8 @@ const unsigned char AdlibLUTdb[256] = {
     1, 1, 1, 1, 1, 1, 1, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-static void ADBFX_ServiceInterrupt(task *Task)
+static void ADBFX_UpdatePointer()
 {
-    unsigned char value = AdlibLUTdb[(unsigned char)(*ADBFX_SoundPtr)];
-
-    outp(ADLIB_PORT + 1, value);
-
     ADBFX_SoundPtr++;
 
     ADBFX_CurrentLength--;
@@ -102,6 +99,30 @@ static void ADBFX_ServiceInterrupt(task *Task)
             MV_ServiceVoc();
         }
     }
+}
+
+static void ADBFX_ServiceInterrupt_ISA(task *Task)
+{
+    unsigned char value = AdlibLUTdb[(unsigned char)(*ADBFX_SoundPtr)];
+
+    outp(ADLIB_PORT + 1, value);
+
+    ADBFX_UpdatePointer();
+}
+
+static void ADBFX_ServiceInterrupt_OPLxLPT(task *Task)
+{
+    int lpt_data = ADLIB_PORT;
+    int lpt_ctrl = ADLIB_PORT + 2;
+
+    unsigned char value = AdlibLUTdb[(unsigned char)(*ADBFX_SoundPtr)];
+
+    outp(lpt_data, value);
+    outp(lpt_ctrl, 12);
+    outp(lpt_ctrl, 8);
+    outp(lpt_ctrl, 12);
+
+    ADBFX_UpdatePointer();
 }
 
 /*---------------------------------------------------------------------
@@ -152,7 +173,17 @@ int ADBFX_BeginBufferedPlayback(
 
     ADBFX_SoundPlaying = 1;
 
-    ADBFX_Timer = TS_ScheduleTask(ADBFX_ServiceInterrupt, FX_MixRate, 1, NULL);
+    switch (ADBFX_Device)
+    {
+    case Adlib:
+        ADBFX_Timer = TS_ScheduleTask(ADBFX_ServiceInterrupt_ISA, FX_MixRate, 1, NULL);
+        break;
+    case OPL2LPT:
+    case OPL3LPT:
+        ADBFX_Timer = TS_ScheduleTask(ADBFX_ServiceInterrupt_OPLxLPT, FX_MixRate, 1, NULL);
+        break;
+    }
+
     TS_Dispatch();
 
     return (ADBFX_Ok);
@@ -165,7 +196,7 @@ int ADBFX_BeginBufferedPlayback(
    sounds.
 ---------------------------------------------------------------------*/
 
-int ADBFX_Init(int soundcard)
+int ADBFX_Init(int soundcard, int address)
 {
     int i;
 
@@ -173,6 +204,13 @@ int ADBFX_Init(int soundcard)
     {
         ADBFX_Shutdown();
     }
+
+    if (address <= 0)
+        address = ADLIB_PORT;
+
+    ADBFX_Device = soundcard;
+
+    AL_Init(soundcard, address);
 
     AL_Reset();
 

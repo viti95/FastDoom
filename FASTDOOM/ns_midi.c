@@ -1053,16 +1053,8 @@ static void _MIDI_InitEMIDI(
         type = EMIDI_GeneralMIDI;
         break;
 
-    case SoundCanvas:
-        type = EMIDI_SoundCanvas;
-        break;
-
     case Awe32:
         type = EMIDI_AWE32;
-        break;
-
-    case WaveBlaster:
-        type = EMIDI_WaveBlaster;
         break;
 
     case SoundScape:
