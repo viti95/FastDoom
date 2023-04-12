@@ -876,47 +876,8 @@ static void _MIDI_InitEMIDI(
     int IncludeFound;
     track *Track;
     int tracknum;
-    int type;
     int c1;
     int c2;
-
-    type = EMIDI_GeneralMIDI;
-    switch (MUSIC_SoundDevice)
-    {
-    case SoundBlaster:
-    case OPL3LPT:
-        type = EMIDI_SoundBlaster;
-        break;
-
-    case ProAudioSpectrum:
-        type = EMIDI_ProAudio;
-        break;
-
-    case SoundMan16:
-        type = EMIDI_SoundMan16;
-        break;
-
-    case Adlib:
-    case OPL2LPT:
-        type = EMIDI_Adlib;
-        break;
-
-    case GenMidi:
-        type = EMIDI_GeneralMIDI;
-        break;
-
-    case Awe32:
-        type = EMIDI_AWE32;
-        break;
-
-    case SoundScape:
-        type = EMIDI_Soundscape;
-        break;
-
-    case UltraSound:
-        type = EMIDI_Ultrasound;
-        break;
-    }
 
     _MIDI_ResetTracks();
 
