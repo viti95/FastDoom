@@ -114,7 +114,6 @@ typedef struct
     songcontext context[EMIDI_NUM_CONTEXTS];
 
     char EMIDI_IncludeTrack;
-    char EMIDI_ProgramChange;
     char EMIDI_VolumeChange;
 } track;
 

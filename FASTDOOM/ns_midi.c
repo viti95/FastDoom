@@ -432,10 +432,7 @@ static void _MIDI_ServiceRoutine(task *Task)
                 break;
 
             case MIDI_PROGRAM_CHANGE:
-                if (!Track->EMIDI_ProgramChange)
-                {
                     _MIDI_Funcs->ProgramChange(channel, MIDI_PatchMap[c1 & 0x7f]);
-                }
                 break;
 
             case MIDI_AFTER_TOUCH:
@@ -947,7 +944,6 @@ static void _MIDI_InitEMIDI(
         Track->RunningStatus = 0;
         Track->active = TRUE;
 
-        Track->EMIDI_ProgramChange = FALSE;
         Track->EMIDI_VolumeChange = FALSE;
         Track->EMIDI_IncludeTrack = TRUE;
 
