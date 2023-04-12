@@ -151,7 +151,7 @@ static void _MIDI_ResetTracks(
     {
         ptr->pos = ptr->start;
         ptr->delay = _MIDI_ReadDelta(ptr);
-        ptr->active = ptr->EMIDI_IncludeTrack;
+        ptr->active = TRUE;
         ptr->RunningStatus = 0;
 
         _MIDI_ActiveTracks += ptr->active != 0;
@@ -898,8 +898,6 @@ static void _MIDI_InitEMIDI(
 
         Track->RunningStatus = 0;
         Track->active = TRUE;
-
-        Track->EMIDI_IncludeTrack = TRUE;
 
         while (Track->delay > 0)
         {

@@ -107,10 +107,8 @@ typedef struct
     unsigned char *pos;
 
     long delay;
-    short active;
+    char active;
     short RunningStatus;
-
-    char EMIDI_IncludeTrack;
 } track;
 
 static long _MIDI_ReadNumber(void *from, size_t size);
