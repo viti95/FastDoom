@@ -304,10 +304,7 @@ static int _MIDI_InterpretControllerInfo(
         break;
 
     case MIDI_VOLUME:
-        if (!Track->EMIDI_VolumeChange)
-        {
-            _MIDI_SetChannelVolume(channel, c2);
-        }
+        _MIDI_SetChannelVolume(channel, c2);
         break;
 
     default:
@@ -905,7 +902,6 @@ static void _MIDI_InitEMIDI(
         Track->RunningStatus = 0;
         Track->active = TRUE;
 
-        Track->EMIDI_VolumeChange = FALSE;
         Track->EMIDI_IncludeTrack = TRUE;
 
         memset(Track->context, 0, sizeof(Track->context));

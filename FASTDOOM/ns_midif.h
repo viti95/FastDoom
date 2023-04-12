@@ -114,7 +114,6 @@ typedef struct
     songcontext context[EMIDI_NUM_CONTEXTS];
 
     char EMIDI_IncludeTrack;
-    char EMIDI_VolumeChange;
 } track;
 
 static long _MIDI_ReadNumber(void *from, size_t size);
