@@ -110,9 +110,6 @@ typedef struct
     short active;
     short RunningStatus;
 
-    short currentcontext;
-    songcontext context[EMIDI_NUM_CONTEXTS];
-
     char EMIDI_IncludeTrack;
 } track;
 
