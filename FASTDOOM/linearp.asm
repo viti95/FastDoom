@@ -178,7 +178,7 @@ CODE_SYM_DEF R_DrawSpanPotatoBackbuffer
   mov     eax,[mapcalls+eax*4]
   mov     ecx,[_ds_frac]        ; build composite position
   mov     [callpoint],eax       ; spot to jump into unwound
-  mov     edx,[_ds_step]        ; build composite step
+  mov     ebp,[_ds_step]        ; build composite step
   mov     eax,[mapcalls+4+ebx*4]
   mov     esi,[_ds_source]
   mov     [returnpoint],eax     ; spot to patch a ret at
@@ -186,16 +186,17 @@ CODE_SYM_DEF R_DrawSpanPotatoBackbuffer
   mov     [eax], byte OP_RET
 
   mov     edi,[_ylookup+edi*4]
-  mov     eax,[_ds_colormap]
-  add     edi,[_columnofs]
+
 
   ; feed the pipeline and jump in
 
   shld    ebx,ecx,22  ; shift y units in
-  mov     ebp,0x0FFF  ; used to mask off slop high bits from position
+  mov     eax,[_ds_colormap]
   shld    ebx,ecx,6   ; shift x units in
-  and     ebx,ebp     ; mask off slop bits
-  add     ecx,edx
+  add     edi,[_columnofs]
+  and     ebx,0x0FFF  ; mask off slop bits
+  add     ecx,ebp
+  xor     edx,edx
   call    [callpoint]
 
   mov     ebx,[returnpoint]
@@ -222,21 +223,20 @@ CODE_SYM_DEF R_DrawSpanPotatoBackbuffer
       %assign LINE LINE+1
       %if LINE = 80
         mov   al,[esi+ebx]           ; get source pixel
-        mov   al,[eax]               ; translate color
-        mov   ah,al
-        mov   [edi+PLANE+PCOL*4],ax  ; write pixel
-        mov   [edi+PLANE+PCOL*4+2],ax  ; write pixel
+        mov   dl,[eax]               ; translate color
+        mov   dh,dl
+        mov   [edi+PLANE+PCOL*4],dx  ; write pixel
+        mov   [edi+PLANE+PCOL*4+2],dx  ; write pixel
       %else
         mov   al,[esi+ebx]           ; get source pixel
         shld  ebx,ecx,22             ; shift y units in
-        mov   al,[eax]               ; translate color
+        mov   dl,[eax]               ; translate color
         shld  ebx,ecx,6              ; shift x units in
-        mov   [edi+PLANE+PCOL*4],al  ; write pixel
-        mov   [edi+PLANE+PCOL*4+1],al  ; write pixel
-        mov   [edi+PLANE+PCOL*4+2],al  ; write pixel
-        mov   [edi+PLANE+PCOL*4+3],al  ; write pixel
-        and   ebx,ebp                ; mask off slop bits
-        add   ecx,edx                ; position += step
+        mov   dh,dl
+        mov   [edi+PLANE+PCOL*4],dx  ; write pixel        
+        mov   [edi+PLANE+PCOL*4+2],dx  ; write pixel
+        and   ebx,0x0FFF             ; mask off slop bits
+        add   ecx,ebp                ; position += step
       %endif
       %assign PLANE PLANE+1
 %assign PCOL PCOL+1
