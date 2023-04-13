@@ -211,8 +211,8 @@ CODE_SYM_DEF R_DrawSpanLowVBE2
       %if LINE = 160
         mov   al,[esi+ebx]           ; get source pixel
         mov   al,[eax]               ; translate color
-        mov   [edi+PLANE+PCOL*2],al  ; write pixel
-        mov   [edi+PLANE+PCOL*2+1],al  ; write pixel
+        mov   ah,al
+        mov   [edi+PLANE+PCOL*2],ax  ; write pixel
       %else
         mov   al,[esi+ebx]           ; get source pixel
         shld  ebx,ecx,22             ; shift y units in
