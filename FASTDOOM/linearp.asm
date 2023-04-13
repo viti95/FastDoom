@@ -223,10 +223,9 @@ CODE_SYM_DEF R_DrawSpanPotatoBackbuffer
       %if LINE = 80
         mov   al,[esi+ebx]           ; get source pixel
         mov   al,[eax]               ; translate color
-        mov   [edi+PLANE+PCOL*4],al  ; write pixel
-        mov   [edi+PLANE+PCOL*4+1],al  ; write pixel
-        mov   [edi+PLANE+PCOL*4+2],al  ; write pixel
-        mov   [edi+PLANE+PCOL*4+3],al  ; write pixel
+        mov   ah,al
+        mov   [edi+PLANE+PCOL*4],ax  ; write pixel
+        mov   [edi+PLANE+PCOL*4+2],ax  ; write pixel
       %else
         mov   al,[esi+ebx]           ; get source pixel
         shld  ebx,ecx,22             ; shift y units in
