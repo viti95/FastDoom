@@ -54,53 +54,6 @@
 #define GET_MIDI_CHANNEL(event) ((event)&0xf)
 #define GET_MIDI_COMMAND(event) ((event) >> 4)
 
-#define EMIDI_INFINITE -1
-#define EMIDI_END_LOOP_VALUE 127
-#define EMIDI_ALL_CARDS 127
-#define EMIDI_INCLUDE_TRACK 110
-#define EMIDI_EXCLUDE_TRACK 111
-#define EMIDI_PROGRAM_CHANGE 112
-#define EMIDI_VOLUME_CHANGE 113
-#define EMIDI_CONTEXT_START 114
-#define EMIDI_CONTEXT_END 115
-#define EMIDI_LOOP_START 116
-#define EMIDI_LOOP_END 117
-#define EMIDI_SONG_LOOP_START 118
-#define EMIDI_SONG_LOOP_END 119
-
-#define EMIDI_GeneralMIDI 0
-#define EMIDI_SoundCanvas 1
-#define EMIDI_AWE32 2
-#define EMIDI_WaveBlaster 3
-#define EMIDI_SoundBlaster 4
-#define EMIDI_ProAudio 5
-#define EMIDI_SoundMan16 6
-#define EMIDI_Adlib 7
-#define EMIDI_Soundscape 8
-#define EMIDI_Ultrasound 9
-
-#define EMIDI_AffectsCurrentCard(c, type) \
-    (((c) == EMIDI_ALL_CARDS) || ((c) == (type)))
-
-#define EMIDI_NUM_CONTEXTS 7
-typedef struct
-{
-    unsigned char *pos;
-    unsigned char *loopstart;
-    short loopcount;
-    short RunningStatus;
-    unsigned time;
-    long FPSecondsPerTick;
-    short tick;
-    short beat;
-    short measure;
-    short BeatsPerMeasure;
-    short TicksPerBeat;
-    short TimeBase;
-    long delay;
-    short active;
-} songcontext;
-
 typedef struct
 {
     unsigned char *start;
