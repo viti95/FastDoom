@@ -44,6 +44,5 @@ void MIDI_PauseSong(void);
 void MIDI_StopSong(void);
 int MIDI_PlaySong(unsigned char *song, int loopflag);
 void MIDI_SetTempo(int tempo);
-void MIDI_LoadTimbres(void);
 
 #endif
