@@ -125,7 +125,13 @@ vscale1:
   mov [edi+2],bx
 
 vscale0:
-  jmp done
+	pop		ebp
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+  ret
 
 ;============================================================================
 ; unwound horizontal texture mapping code
