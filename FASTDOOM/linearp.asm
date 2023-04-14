@@ -72,7 +72,7 @@ CODE_SYM_DEF R_DrawColumnPotatoBackbuffer
   mov  eax,[_dc_yl]
   add  edi,[_ylookup+ebp*4]
   sub  ebp,eax         ; ebp = pixel count
-  js   short done
+  js   near .done
 
   mov   ecx,[_dc_iscale]
 
@@ -87,7 +87,7 @@ CODE_SYM_DEF R_DrawColumnPotatoBackbuffer
 
   jmp  [scalecalls+4+ebp*4]
 
-done:
+.done:
 	pop		ebp
 	pop		edi
 	pop		esi
