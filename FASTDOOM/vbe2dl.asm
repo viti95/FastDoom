@@ -65,7 +65,7 @@ CODE_SYM_DEF R_DrawColumnLowVBE2
   shl  ebx,1
   lea  edi,[ebp+ebp*4]
   sub  ebp,eax ; ebp = pixel count
-  js   short .done
+  js   near .done
 
   shl  edi,6
   add  edi,ebx
@@ -82,8 +82,6 @@ CODE_SYM_DEF R_DrawColumnLowVBE2
   shl   edx,9 ; 7 significant bits, 25 frac
   mov   eax,[_dc_colormap]
 
-  xor   ebx,ebx
-  shld  ebx,edx,7 ; get address of first location
   jmp  [scalecalls+4+ebp*4]
 
 .done:
@@ -105,21 +103,23 @@ CODE_SYM_DEF R_DrawColumnLowVBE2
 %assign LINE SCREENHEIGHT
 %rep SCREENHEIGHT-1
   SCALELABEL LINE:
-    mov  al,[esi+ebx]                    ; get source pixel
-    add  edx,ecx                         ; calculate next location
-    mov  al,[eax]                        ; translate the color
-    mov  ebx,edx
-    mov  [edi-(LINE-1)*SCREENWIDTH],al   ; draw a pixel to the buffer
-    mov  [edi-(LINE-1)*SCREENWIDTH+1],al   ; draw a pixel to the buffer
-    shr  ebx,25
+    xor  ebp,ebp
+    shld ebp,edx,7
+    mov  al,[esi+ebp]                   ; get source pixel
+    add  edx,ecx                        ; calculate next location
+    mov  bl,[eax]                       ; translate the color
+    mov  bh,bl
+    mov  [edi-(LINE-1)*SCREENWIDTH],bx  ; draw a pixel to the buffer
     %assign LINE LINE-1
 %endrep
 
 vscale1:
-  mov  al,[esi+ebx]
-  mov  al,[eax]
-  mov  ah, al
-  mov  [edi],ax
+  xor  ebp,ebp
+  shld ebp,edx,7
+  mov al,[esi+ebp]
+  mov al,[eax]
+  mov ah, al
+  mov [edi],ax
 
 vscale0:
 	pop		ebp
