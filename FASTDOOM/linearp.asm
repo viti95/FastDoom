@@ -72,7 +72,7 @@ CODE_SYM_DEF R_DrawColumnPotatoBackbuffer
   mov  eax,[_dc_yl]
   add  edi,[_ylookup+ebp*4]
   sub  ebp,eax         ; ebp = pixel count
-  js   short .done
+  js   short done
 
   mov   ecx,[_dc_iscale]
 
@@ -85,11 +85,9 @@ CODE_SYM_DEF R_DrawColumnPotatoBackbuffer
   shl   edx,9 ; 7 significant bits, 25 frac
   mov   eax,[_dc_colormap]
 
-  xor   ebx,ebx
-  shld  ebx,edx,7
-  call  [scalecalls+4+ebp*4]
+  jmp  [scalecalls+4+ebp*4]
 
-.done:
+done:
 	pop		ebp
 	pop		edi
 	pop		esi
@@ -106,27 +104,28 @@ CODE_SYM_DEF R_DrawColumnPotatoBackbuffer
 %assign LINE SCREENHEIGHT
 %rep SCREENHEIGHT-1
   SCALELABEL LINE:
-    mov  al,[esi+ebx]                   ; get source pixel
+    xor  ebp,ebp
+    shld ebp,edx,7
+    mov  al,[esi+ebp]                   ; get source pixel
     add  edx,ecx                        ; calculate next location
-    mov  al,[eax]                       ; translate the color
-    mov  ebx,edx
-    mov  [edi-(LINE-1)*SCREENWIDTH],al  ; draw a pixel to the buffer
-    mov  [edi-(LINE-1)*SCREENWIDTH + 1],al  ; draw a pixel to the buffer
-    mov  [edi-(LINE-1)*SCREENWIDTH + 2],al  ; draw a pixel to the buffer
-    mov  [edi-(LINE-1)*SCREENWIDTH + 3],al  ; draw a pixel to the buffer
-    shr  ebx,25
+    mov  bl,[eax]                       ; translate the color
+    mov  bh,bl
+    mov  [edi-(LINE-1)*SCREENWIDTH],bx  ; draw a pixel to the buffer
+    mov  [edi-(LINE-1)*SCREENWIDTH + 2],bx  ; draw a pixel to the buffer
     %assign LINE LINE-1
 %endrep
 
 vscale1:
-  mov al,[esi+ebx]
-  mov al,[eax]
-  mov ah,al
-  mov [edi],ax
-  mov [edi+2],ax
+  xor  ebp,ebp
+  shld ebp,edx,7
+  mov al,[esi+ebp]
+  mov bl,[eax]
+  mov bh,bl
+  mov [edi],bx
+  mov [edi+2],bx
 
 vscale0:
-  ret
+  jmp done
 
 ;============================================================================
 ; unwound horizontal texture mapping code
