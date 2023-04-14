@@ -89,7 +89,7 @@ CODE_SYM_DEF R_DrawColumnPotato
 
   xor   ebx,ebx
   shld  ebx,edx,7
-  call  [scalecalls+4+ebp*4]
+  jmp  [scalecalls+4+ebp*4]
 
 .done:
 	pop		ebp
@@ -147,7 +147,7 @@ CODE_SYM_DEF R_DrawColumnLow
 
   xor   ebx,ebx
   shld  ebx,edx,7
-  call  [scalecalls+4+ebp*4]
+  jmp  [scalecalls+4+ebp*4]
 
 .done:
 	pop		ebp
@@ -171,7 +171,7 @@ CODE_SYM_DEF R_DrawColumn
   mov  ebx,[_dc_yl]
   mov  edi,[_ylookup+ebp*4]
   sub  ebp,ebx         ; ebp = pixel count
-  js   short .done
+  js   short done
 
   ; set plane
   mov  ecx,[_dc_x]
@@ -201,9 +201,9 @@ CODE_SYM_DEF R_DrawColumn
 
   xor   ebx,ebx
   shld  ebx,edx,7
-  call  [scalecalls+4+ebp*4]
+  jmp  [scalecalls+4+ebp*4]
 
-.done:
+done:
 	pop		ebp
 	pop		edi
 	pop		esi
@@ -235,7 +235,7 @@ vscale1:
   mov [edi],al
 
 vscale0:
-  ret
+  jmp done
 
 ;============================================================================
 ; unwound horizontal texture mapping code
