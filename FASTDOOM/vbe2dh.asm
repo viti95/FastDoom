@@ -83,7 +83,7 @@ CODE_SYM_DEF R_DrawColumnVBE2
 
   xor   ebx,ebx
   shld  ebx,edx,7 ; get address of first location
-  call  [scalecalls+4+ebp*4]
+  jmp  [scalecalls+4+ebp*4]
 
 .done:
 	pop		ebp
@@ -119,6 +119,12 @@ vscale1:
   mov  [edi],al
 
 vscale0:
+	pop		ebp
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
   ret
 
 CONTINUE_DATA_SECTION
