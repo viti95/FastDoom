@@ -106,10 +106,10 @@ CODE_SYM_DEF R_DrawColumnVBE2
   SCALELABEL LINE:
     mov  al,[esi+ebx]                    ; get source pixel
     add  edx,ecx                         ; calculate next location
-    mov  al,[eax]                        ; translate the color
-    mov  ebx,edx
+    mov  al,[eax]                        ; translate the color    
+    xor  ebx,ebx
     mov  [edi-(LINE-1)*SCREENWIDTH],al   ; draw a pixel to the buffer
-    shr  ebx,25
+    shld ebx,edx,7
     %assign LINE LINE-1
 %endrep
 
