@@ -193,9 +193,9 @@ CODE_SYM_DEF R_DrawSpanPotatoVBE2
   call  [callpoint]
 
   mov  ebx,[returnpoint]
+  pop		ebp
   mov  [ebx],byte OP_MOVAL ; remove the ret patched in
 
-	pop		ebp
 	pop		edi
 	pop		esi
 	pop		edx
