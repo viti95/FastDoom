@@ -118,13 +118,13 @@ vscale1:
   xor  ebp,ebp
   shld ebp,edx,7
   mov al,[esi+ebp]
+  pop	ebp
   mov bl,[eax]
   mov bh,bl
   mov [edi],bx
   mov [edi+2],bx
 
 vscale0:
-	pop		ebp
 	pop		edi
 	pop		esi
 	pop		edx

@@ -115,11 +115,11 @@ CODE_SYM_DEF R_DrawColumnVBE2
 
 vscale1:
   mov  al,[esi+ebx]
+  pop	 ebp
   mov  al,[eax]
   mov  [edi],al
 
 vscale0:
-	pop		ebp
 	pop		edi
 	pop		esi
 	pop		edx
