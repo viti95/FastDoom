@@ -60,18 +60,17 @@ CODE_SYM_DEF R_DrawColumnPotatoVBE2
 	push		ecx
 
   mov  ebp,[_dc_yh]
-  mov  ebx,[_dc_x]
   mov  eax,[_dc_yl]
-  shl  ebx,2
   lea  edi,[ebp+ebp*4]
   sub  ebp,eax ; ebp = pixel count
   js   near .done
 
+  mov  ebx,[_dc_x]
+  mov  ecx,[_dc_iscale]
+  shl  ebx,2
   shl  edi,6
   add  edi,ebx
   add  edi,[_destview]
-
-  mov  ecx,[_dc_iscale]
 
   sub   eax,[_centery]
   imul  ecx

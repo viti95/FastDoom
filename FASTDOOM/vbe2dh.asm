@@ -60,17 +60,16 @@ CODE_SYM_DEF R_DrawColumnVBE2
 	push		ebp
 
   mov  ebp,[_dc_yh]
-  mov  ebx,[_dc_x]
   mov  eax,[_dc_yl]
   lea  edi,[ebp+ebp*4]
   sub  ebp,eax ; ebp = pixel count
-  js   short .done
+  js   near .done
 
+  mov  ebx,[_dc_x]
   shl  edi,6
+  mov  ecx,[_dc_iscale]
   add  edi,ebx
   add  edi,[_destview]
-
-  mov  ecx,[_dc_iscale]
 
   sub   eax,[_centery]
   imul  ecx
