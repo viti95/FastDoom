@@ -59,12 +59,12 @@ BEGIN_CODE_SECTION
 ; R_DrawColumnLowBackbuffer
 ; =========================
 CODE_SYM_DEF R_DrawColumnLowBackbuffer
-	push		ebx
-	push		ecx
-	push		edx
-	push		esi
 	push		edi
+	push		esi
+	push		edx
 	push		ebp
+  push		ebx
+	push		ecx
 
   mov  ebp,[_dc_yh]
   mov  ebx,[_dc_x]
@@ -88,12 +88,12 @@ CODE_SYM_DEF R_DrawColumnLowBackbuffer
   jmp  [scalecalls+4+ebp*4]
 
 .done:
-	pop		ebp
-	pop		edi
-	pop		esi
-	pop		edx
 	pop		ecx
 	pop		ebx
+  pop	  ebp
+	pop		edx
+	pop		esi
+	pop		edi
   ret
 ; R_DrawColumnLowBackbuffer ends
 
@@ -116,19 +116,19 @@ CODE_SYM_DEF R_DrawColumnLowBackbuffer
 
 vscale1:
   xor  ebp,ebp
+  pop	 ecx
   shld ebp,edx,7
+  pop	ebx
   mov al,[esi+ebp]
   pop	ebp
   mov al,[eax]
+  pop	edx
   mov ah, al
+  pop	esi
   mov [edi],ax
 
 vscale0:
 	pop		edi
-	pop		esi
-	pop		edx
-	pop		ecx
-	pop		ebx
   ret
 
 ;============================================================================
