@@ -59,12 +59,12 @@ BEGIN_CODE_SECTION
 ; R_DrawColumnPotatoBackbuffer
 ; ============================
 CODE_SYM_DEF R_DrawColumnPotatoBackbuffer
-	push		ebx
-	push		ecx
-	push		edx
-	push		esi
 	push		edi
+	push		esi
+	push		edx
 	push		ebp
+  push		ebx
+	push		ecx
 
   mov  ebx,[_dc_x]
   mov  ebp,[_dc_yh]
@@ -88,12 +88,12 @@ CODE_SYM_DEF R_DrawColumnPotatoBackbuffer
   jmp  [scalecalls+4+ebp*4]
 
 .done:
-	pop		ebp
-	pop		edi
-	pop		esi
-	pop		edx
 	pop		ecx
 	pop		ebx
+  pop	  ebp
+	pop		edx
+	pop		esi
+	pop		edi
   ret
 ; R_DrawColumnPotatoBackbuffer ends
 
@@ -117,20 +117,20 @@ CODE_SYM_DEF R_DrawColumnPotatoBackbuffer
 
 vscale1:
   xor  ebp,ebp
+  pop	ecx
   shld ebp,edx,7
+  pop	ebx
   mov al,[esi+ebp]
   pop	ebp
-  mov bl,[eax]
-  mov bh,bl
-  mov [edi],bx
-  mov [edi+2],bx
+  mov al,[eax]
+  pop	edx
+  mov ah,al
+  pop	esi
+  mov [edi],ax
+  mov [edi+2],ax
 
 vscale0:
 	pop		edi
-	pop		esi
-	pop		edx
-	pop		ecx
-	pop		ebx
   ret
 
 ;============================================================================

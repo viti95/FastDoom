@@ -52,12 +52,12 @@ BEGIN_CODE_SECTION
 ;============================================================================
 
 CODE_SYM_DEF R_DrawColumnPotatoVBE2
+	push		edi
+	push		esi
+	push		edx
+	push		ebp
   push		ebx
 	push		ecx
-	push		edx
-	push		esi
-	push		edi
-	push		ebp
 
   mov  ebp,[_dc_yh]
   mov  ebx,[_dc_x]
@@ -85,12 +85,12 @@ CODE_SYM_DEF R_DrawColumnPotatoVBE2
   jmp  [scalecalls+4+ebp*4]
 
 .done:
-	pop		ebp
-	pop		edi
-	pop		esi
-	pop		edx
 	pop		ecx
 	pop		ebx
+  pop	  ebp
+	pop		edx
+	pop		esi
+	pop		edi
   ret
 ; R_DrawColumnPotatoVBE2 ends
 
@@ -116,20 +116,20 @@ CODE_SYM_DEF R_DrawColumnPotatoVBE2
 
 vscale1:
   xor  ebp,ebp
+  pop	ecx
   shld ebp,edx,7
+  pop	ebx
   mov al,[esi+ebp]
   pop	ebp
-  mov bl,[eax]
-  mov bh,bl
-  mov [edi],bx
-  mov [edi+2],bx
+  mov al,[eax]
+  pop	edx
+  mov ah,al
+  pop	esi
+  mov [edi],ax
+  mov [edi+2],ax
 
 vscale0:
 	pop		edi
-	pop		esi
-	pop		edx
-	pop		ecx
-	pop		ebx
   ret
 
 CONTINUE_DATA_SECTION
