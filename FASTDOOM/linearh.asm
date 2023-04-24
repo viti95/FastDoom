@@ -59,11 +59,11 @@ BEGIN_CODE_SECTION
 ; R_DrawColumnBackbuffer
 ; ======================
 CODE_SYM_DEF R_DrawColumnBackbuffer
+	push		edi
 	push		ebx
 	push		ecx
 	push		edx
 	push		esi
-	push		edi
 	push		ebp
 
   mov  ebp,[_dc_yh]
@@ -91,11 +91,11 @@ CODE_SYM_DEF R_DrawColumnBackbuffer
 
 .done:
 	pop		ebp
-	pop		edi
 	pop		esi
 	pop		edx
 	pop		ecx
 	pop		ebx
+  pop		edi
   ret
 ; R_DrawColumnBackbuffer ends
 
@@ -116,17 +116,17 @@ CODE_SYM_DEF R_DrawColumnBackbuffer
 %endrep
 
 vscale1:
-  mov al,[esi+ebx]
   pop	ebp
+  mov al,[esi+ebx]
+  pop	esi
   mov al,[eax]
+  pop	edx
   mov [edi],al
 
 vscale0:
-	pop		edi
-	pop		esi
-	pop		edx
 	pop		ecx
 	pop		ebx
+  pop		edi
   ret
 
 ;============================================================================

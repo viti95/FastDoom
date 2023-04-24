@@ -52,11 +52,11 @@ BEGIN_CODE_SECTION
 ;============================================================================
 
 CODE_SYM_DEF R_DrawColumnVBE2
-	push		ebx
+	push		edi
+  push		ebx
 	push		ecx
 	push		edx
 	push		esi
-	push		edi
 	push		ebp
 
   mov  ebp,[_dc_yh]
@@ -87,11 +87,11 @@ CODE_SYM_DEF R_DrawColumnVBE2
 
 .done:
 	pop		ebp
-	pop		edi
 	pop		esi
 	pop		edx
 	pop		ecx
 	pop		ebx
+  pop		edi
   ret
 ; R_DrawColumnVBE2 ends
 
@@ -114,17 +114,17 @@ CODE_SYM_DEF R_DrawColumnVBE2
 %endrep
 
 vscale1:
-  mov  al,[esi+ebx]
   pop	 ebp
+  mov  al,[esi+ebx]
+  pop	 esi
   mov  al,[eax]
+  pop	 edx
   mov  [edi],al
 
 vscale0:
-	pop		edi
-	pop		esi
-	pop		edx
 	pop		ecx
 	pop		ebx
+  pop		edi
   ret
 
 CONTINUE_DATA_SECTION
