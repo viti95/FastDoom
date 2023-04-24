@@ -66,15 +66,15 @@ CODE_SYM_DEF R_DrawColumnPotatoBackbuffer
   push		ebx
 	push		ecx
 
-  mov  ebx,[_dc_x]
   mov  ebp,[_dc_yh]
-  mov  edi,[_columnofs+ebx*4]
   mov  eax,[_dc_yl]
-  add  edi,[_ylookup+ebp*4]
+  mov  edi,[_ylookup+ebp*4]
   sub  ebp,eax         ; ebp = pixel count
-  js   near .done
+  js   short .done
 
-  mov   ecx,[_dc_iscale]
+  mov  ebx,[_dc_x]
+  mov  ecx,[_dc_iscale]
+  add  edi,[_columnofs+ebx*4]
 
   sub   eax,[_centery]
   imul  ecx
