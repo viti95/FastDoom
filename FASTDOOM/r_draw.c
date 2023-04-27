@@ -474,7 +474,7 @@ void R_DrawFuzzColumnTransVBE2(void)
     fixed_t frac;
     fixed_t fracstep;
 
-    count = dc_yh - dc_yl + 1;
+    count = dc_yh - dc_yl;
 
     if (count <= 0)
         return;
@@ -557,7 +557,7 @@ void R_DrawFuzzColumnTransLowVBE2(void)
     fixed_t frac;
     fixed_t fracstep;
 
-    count = dc_yh - dc_yl + 1;
+    count = dc_yh - dc_yl;
 
     if (count <= 0)
         return;
@@ -650,7 +650,7 @@ void R_DrawFuzzColumnTransPotatoVBE2(void)
     fixed_t frac;
     fixed_t fracstep;
 
-    count = dc_yh - dc_yl + 1;
+    count = dc_yh - dc_yl;
 
     if (count <= 0)
         return;
@@ -2443,7 +2443,7 @@ void R_DrawFuzzColumnTrans(void)
     fixed_t frac;
     fixed_t fracstep;
 
-    count = dc_yh - dc_yl + 1;
+    count = dc_yh - dc_yl;
 
     if (count <= 0)
         return;
@@ -2523,7 +2523,7 @@ void R_DrawFuzzColumnTransLow(void)
     fixed_t frac;
     fixed_t fracstep;
 
-    count = dc_yh - dc_yl + 1;
+    count = dc_yh - dc_yl;
 
     if (count <= 0)
         return;
@@ -2599,7 +2599,7 @@ void R_DrawFuzzColumnTransPotato(void)
     fixed_t frac;
     fixed_t fracstep;
 
-    count = dc_yh - dc_yl + 1;
+    count = dc_yh - dc_yl;
 
     if (count <= 0)
         return;
@@ -3724,7 +3724,7 @@ void R_DrawFuzzColumnTransBackbuffer(void)
     fixed_t frac;
     fixed_t fracstep;
 
-    count = dc_yh - dc_yl + 1;
+    count = dc_yh - dc_yl;
 
     if (count <= 0)
         return;
@@ -3807,7 +3807,7 @@ void R_DrawFuzzColumnTransLowBackbuffer(void)
     fixed_t frac;
     fixed_t fracstep;
 
-    count = dc_yh - dc_yl + 1;
+    count = dc_yh - dc_yl;
 
     if (count <= 0)
         return;
@@ -3900,7 +3900,7 @@ void R_DrawFuzzColumnTransPotatoBackbuffer(void)
     fixed_t frac;
     fixed_t fracstep;
 
-    count = dc_yh - dc_yl + 1;
+    count = dc_yh - dc_yl;
 
     if (count <= 0)
         return;
