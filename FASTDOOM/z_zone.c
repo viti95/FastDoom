@@ -162,6 +162,12 @@ void *Z_Malloc(int size, byte tag, void *user)
 
     do
     {
+        if (rover == start)
+        {
+            // scanned all the way around the list
+            I_Error ("Z_Malloc: failed on allocation of %i Kb", size >> 10);
+        }
+
         if (rover->user)
         {
             if (rover->tag < PU_PURGELEVEL)
@@ -246,6 +252,12 @@ void *Z_MallocUnowned(int size, byte tag)
 
     do
     {
+        if (rover == start)
+        {
+            // scanned all the way around the list
+            I_Error ("Z_Malloc: failed on allocation of %i Kb", size >> 10);
+        }
+
         if (rover->user)
         {
             if (rover->tag < PU_PURGELEVEL)
