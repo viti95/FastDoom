@@ -88,7 +88,6 @@ boolean flatterVisplanes;
 boolean flatSky;
 int invisibleRender;
 boolean showFPS;
-boolean unlimitedRAM;
 boolean nearSprites;
 boolean monoSound;
 boolean noMelt;
@@ -1215,8 +1214,6 @@ void D_DoomMain(void)
 #if defined(TEXT_MODE)
     videoPageFix = M_CheckParm("-pagefix");
 #endif
-
-    unlimitedRAM = M_CheckParm("-ram");
 
     singletics = M_CheckParm("-singletics");
 

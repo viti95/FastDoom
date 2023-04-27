@@ -48,7 +48,6 @@ extern boolean flatterVisplanes;
 extern boolean flatSky;
 extern int invisibleRender;
 extern boolean showFPS;
-extern boolean unlimitedRAM;
 extern boolean nearSprites;
 extern boolean monoSound;
 extern boolean noMelt;

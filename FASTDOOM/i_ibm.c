@@ -1070,10 +1070,6 @@ byte *I_ZoneBase(int *size)
     do
     {
         heap -= 0x60000; // leave 384kb alone
-        if (heap > 0x800000 && !unlimitedRAM)
-        {
-            heap = 0x800000;
-        }
         ptr = malloc(heap);
     } while (!ptr);
 
