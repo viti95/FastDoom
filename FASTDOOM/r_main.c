@@ -73,7 +73,7 @@ angle_t viewangle;
 fixed_t viewcos;
 fixed_t viewsin;
 
-// 0 = high, 1 = low
+// 0 = high, 1 = low, 2 = potato
 int detailshift;
 
 // The viewangletox[viewangle + FINEANGLES/4] lookup
@@ -763,60 +763,82 @@ void R_ExecuteSetViewSize(void)
     else
         skyfunc = R_DrawColumnText4050;
 
-    if (flatShadows)
-        fuzzcolfunc = R_DrawFuzzColumnFastText4050;
-    else if (saturnShadows)
-        fuzzcolfunc = R_DrawFuzzColumnSaturnText4050;
-    else
+    switch (invisibleRender)
+    {
+    case 0:
         fuzzcolfunc = R_DrawFuzzColumnText4050;
+        break;
+    case 1:
+        fuzzcolfunc = R_DrawFuzzColumnFastText4050;
+        break;
+    case 2:
+        fuzzcolfunc = R_DrawFuzzColumnSaturnText4050;
+        break;
+    case 3:
+        fuzzcolfunc = R_DrawFuzzColumnTransText4050;
+        break;
+    }
+
 #endif
 #if defined(MODE_T4025)
     colfunc = basecolfunc = R_DrawColumnText4025;
 
     if (flatterVisplanes)
-    {
         spanfunc = R_DrawSpanFlatText4025;
-    }
     else
-    {
         spanfunc = R_DrawSpanText4025;
-    }
 
     if (flatSky)
         skyfunc = R_DrawSkyFlatText4025;
     else
         skyfunc = R_DrawColumnText4025;
 
-    if (flatShadows)
-        fuzzcolfunc = R_DrawFuzzColumnFastText4025;
-    else if (saturnShadows)
-        fuzzcolfunc = R_DrawFuzzColumnSaturnText4025;
-    else
+    switch (invisibleRender)
+    {
+    case 0:
         fuzzcolfunc = R_DrawFuzzColumnText4025;
+        break;
+    case 1:
+        fuzzcolfunc = R_DrawFuzzColumnFastText4025;
+        break;
+    case 2:
+        fuzzcolfunc = R_DrawFuzzColumnSaturnText4025;
+        break;
+    case 3:
+        fuzzcolfunc = R_DrawFuzzColumnTransText4025;
+        break;
+    }
+
 #endif
 #if defined(MODE_T8025)
     colfunc = basecolfunc = R_DrawColumnText8025;
 
     if (flatterVisplanes)
-    {
         spanfunc = R_DrawSpanFlatText8025;
-    }
     else
-    {
         spanfunc = R_DrawSpanText8025;
-    }
 
     if (flatSky)
         skyfunc = R_DrawSkyFlatText8025;
     else
         skyfunc = R_DrawColumnText8025;
 
-    if (flatShadows)
-        fuzzcolfunc = R_DrawFuzzColumnFastText8025;
-    else if (saturnShadows)
-        fuzzcolfunc = R_DrawFuzzColumnSaturnText8025;
-    else
+    switch (invisibleRender)
+    {
+    case 0:
         fuzzcolfunc = R_DrawFuzzColumnText8025;
+        break;
+    case 1:
+        fuzzcolfunc = R_DrawFuzzColumnFastText8025;
+        break;
+    case 2:
+        fuzzcolfunc = R_DrawFuzzColumnSaturnText8025;
+        break;
+    case 3:
+        fuzzcolfunc = R_DrawFuzzColumnTransText8025;
+        break;
+    }
+
 #endif
 #if defined(MODE_MDA)
     colfunc = basecolfunc = R_DrawLineColumnTextMDA;
@@ -831,25 +853,31 @@ void R_ExecuteSetViewSize(void)
     colfunc = basecolfunc = R_DrawColumnText8050;
 
     if (flatterVisplanes)
-    {
         spanfunc = R_DrawSpanFlatText8050;
-    }
     else
-    {
         spanfunc = R_DrawSpanText8050;
-    }
 
     if (flatSky)
         skyfunc = R_DrawSkyFlatText8050;
     else
         skyfunc = R_DrawColumnText8050;
 
-    if (flatShadows)
-        fuzzcolfunc = R_DrawFuzzColumnFastText8050;
-    else if (saturnShadows)
-        fuzzcolfunc = R_DrawFuzzColumnSaturnText8050;
-    else
+    switch (invisibleRender)
+    {
+    case 0:
         fuzzcolfunc = R_DrawFuzzColumnText8050;
+        break;
+    case 1:
+        fuzzcolfunc = R_DrawFuzzColumnFastText8050;
+        break;
+    case 2:
+        fuzzcolfunc = R_DrawFuzzColumnSaturnText8050;
+        break;
+    case 3:
+        fuzzcolfunc = R_DrawFuzzColumnTransText8050;
+        break;
+    }
+
 #endif
 
 #if defined(MODE_Y)
@@ -868,12 +896,22 @@ void R_ExecuteSetViewSize(void)
         else
             skyfunc = R_DrawColumn;
 
-        if (flatShadows)
-            fuzzcolfunc = R_DrawFuzzColumnFast;
-        else if (saturnShadows)
-            fuzzcolfunc = R_DrawFuzzColumnSaturn;
-        else
+        switch (invisibleRender)
+        {
+        case 0:
             fuzzcolfunc = R_DrawFuzzColumn;
+            break;
+        case 1:
+            fuzzcolfunc = R_DrawFuzzColumnFast;
+            break;
+        case 2:
+            fuzzcolfunc = R_DrawFuzzColumnSaturn;
+            break;
+        case 3:
+            fuzzcolfunc = R_DrawFuzzColumnTrans;
+            break;
+        }
+
         break;
     case 1:
         colfunc = basecolfunc = R_DrawColumnLow;
@@ -888,12 +926,22 @@ void R_ExecuteSetViewSize(void)
         else
             skyfunc = R_DrawColumnLow;
 
-        if (flatShadows)
-            fuzzcolfunc = R_DrawFuzzColumnFastLow;
-        else if (saturnShadows)
-            fuzzcolfunc = R_DrawFuzzColumnSaturnLow;
-        else
+        switch (invisibleRender)
+        {
+        case 0:
             fuzzcolfunc = R_DrawFuzzColumnLow;
+            break;
+        case 1:
+            fuzzcolfunc = R_DrawFuzzColumnFastLow;
+            break;
+        case 2:
+            fuzzcolfunc = R_DrawFuzzColumnSaturnLow;
+            break;
+        case 3:
+            fuzzcolfunc = R_DrawFuzzColumnTransLow;
+            break;
+        }
+
         break;
     case 2:
         colfunc = basecolfunc = R_DrawColumnPotato;
@@ -908,12 +956,22 @@ void R_ExecuteSetViewSize(void)
         else
             skyfunc = R_DrawColumnPotato;
 
-        if (flatShadows)
-            fuzzcolfunc = R_DrawFuzzColumnFastPotato;
-        else if (saturnShadows)
-            fuzzcolfunc = R_DrawFuzzColumnSaturnPotato;
-        else
+        switch (invisibleRender)
+        {
+        case 0:
             fuzzcolfunc = R_DrawFuzzColumnPotato;
+            break;
+        case 1:
+            fuzzcolfunc = R_DrawFuzzColumnFastPotato;
+            break;
+        case 2:
+            fuzzcolfunc = R_DrawFuzzColumnSaturnPotato;
+            break;
+        case 3:
+            fuzzcolfunc = R_DrawFuzzColumnTransPotato;
+            break;
+        }
+
         break;
     }
 #endif
@@ -933,12 +991,22 @@ void R_ExecuteSetViewSize(void)
         else
             skyfunc = R_DrawColumnBackbuffer;
 
-        if (flatShadows)
-            fuzzcolfunc = R_DrawFuzzColumnFastBackbuffer;
-        else if (saturnShadows)
-            fuzzcolfunc = R_DrawFuzzColumnSaturnBackbuffer;
-        else
+        switch (invisibleRender)
+        {
+        case 0:
             fuzzcolfunc = R_DrawFuzzColumnBackbuffer;
+            break;
+        case 1:
+            fuzzcolfunc = R_DrawFuzzColumnFastBackbuffer;
+            break;
+        case 2:
+            fuzzcolfunc = R_DrawFuzzColumnSaturnBackbuffer;
+            break;
+        case 3:
+            fuzzcolfunc = R_DrawFuzzColumnTransBackbuffer;
+            break;
+        }
+
         break;
     case 1:
         colfunc = basecolfunc = R_DrawColumnLowBackbuffer;
@@ -953,12 +1021,22 @@ void R_ExecuteSetViewSize(void)
         else
             skyfunc = R_DrawColumnLowBackbuffer;
 
-        if (flatShadows)
-            fuzzcolfunc = R_DrawFuzzColumnFastLowBackbuffer;
-        else if (saturnShadows)
-            fuzzcolfunc = R_DrawFuzzColumnSaturnLowBackbuffer;
-        else
+        switch (invisibleRender)
+        {
+        case 0:
             fuzzcolfunc = R_DrawFuzzColumnLowBackbuffer;
+            break;
+        case 1:
+            fuzzcolfunc = R_DrawFuzzColumnFastLowBackbuffer;
+            break;
+        case 2:
+            fuzzcolfunc = R_DrawFuzzColumnSaturnLowBackbuffer;
+            break;
+        case 3:
+            fuzzcolfunc = R_DrawFuzzColumnTransLowBackbuffer;
+            break;
+        }
+
         break;
     case 2:
         colfunc = basecolfunc = R_DrawColumnPotatoBackbuffer;
@@ -973,12 +1051,22 @@ void R_ExecuteSetViewSize(void)
         else
             skyfunc = R_DrawColumnPotatoBackbuffer;
 
-        if (flatShadows)
-            fuzzcolfunc = R_DrawFuzzColumnFastPotatoBackbuffer;
-        else if (saturnShadows)
-            fuzzcolfunc = R_DrawFuzzColumnSaturnPotatoBackbuffer;
-        else
+        switch (invisibleRender)
+        {
+        case 0:
             fuzzcolfunc = R_DrawFuzzColumnPotatoBackbuffer;
+            break;
+        case 1:
+            fuzzcolfunc = R_DrawFuzzColumnFastPotatoBackbuffer;
+            break;
+        case 2:
+            fuzzcolfunc = R_DrawFuzzColumnSaturnPotatoBackbuffer;
+            break;
+        case 3:
+            fuzzcolfunc = R_DrawFuzzColumnTransPotatoBackbuffer;
+            break;
+        }
+
         break;
     }
 #endif
@@ -999,12 +1087,22 @@ void R_ExecuteSetViewSize(void)
         else
             skyfunc = R_DrawColumnVBE2;
 
-        if (flatShadows)
-            fuzzcolfunc = R_DrawFuzzColumnFastVBE2;
-        else if (saturnShadows)
-            fuzzcolfunc = R_DrawFuzzColumnSaturnVBE2;
-        else
+        switch (invisibleRender)
+        {
+        case 0:
             fuzzcolfunc = R_DrawFuzzColumnVBE2;
+            break;
+        case 1:
+            fuzzcolfunc = R_DrawFuzzColumnFastVBE2;
+            break;
+        case 2:
+            fuzzcolfunc = R_DrawFuzzColumnSaturnVBE2;
+            break;
+        case 3:
+            fuzzcolfunc = R_DrawFuzzColumnTransVBE2;
+            break;
+        }
+
         break;
     case 1:
         colfunc = basecolfunc = R_DrawColumnLowVBE2;
@@ -1019,12 +1117,22 @@ void R_ExecuteSetViewSize(void)
         else
             skyfunc = R_DrawColumnLowVBE2;
 
-        if (flatShadows)
-            fuzzcolfunc = R_DrawFuzzColumnFastLowVBE2;
-        else if (saturnShadows)
-            fuzzcolfunc = R_DrawFuzzColumnSaturnLowVBE2;
-        else
+        switch (invisibleRender)
+        {
+        case 0:
             fuzzcolfunc = R_DrawFuzzColumnLowVBE2;
+            break;
+        case 1:
+            fuzzcolfunc = R_DrawFuzzColumnFastLowVBE2;
+            break;
+        case 2:
+            fuzzcolfunc = R_DrawFuzzColumnSaturnLowVBE2;
+            break;
+        case 3:
+            fuzzcolfunc = R_DrawFuzzColumnTransLowVBE2;
+            break;
+        }
+
         break;
     case 2:
         colfunc = basecolfunc = R_DrawColumnPotatoVBE2;
@@ -1039,12 +1147,22 @@ void R_ExecuteSetViewSize(void)
         else
             skyfunc = R_DrawColumnPotatoVBE2;
 
-        if (flatShadows)
-            fuzzcolfunc = R_DrawFuzzColumnFastPotatoVBE2;
-        else if (saturnShadows)
-            fuzzcolfunc = R_DrawFuzzColumnSaturnPotatoVBE2;
-        else
+        switch (invisibleRender)
+        {
+        case 0:
             fuzzcolfunc = R_DrawFuzzColumnPotatoVBE2;
+            break;
+        case 1:
+            fuzzcolfunc = R_DrawFuzzColumnFastPotatoVBE2;
+            break;
+        case 2:
+            fuzzcolfunc = R_DrawFuzzColumnSaturnPotatoVBE2;
+            break;
+        case 3:
+            fuzzcolfunc = R_DrawFuzzColumnTransPotatoVBE2;
+            break;
+        }
+
         break;
     }
 #endif

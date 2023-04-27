@@ -46,8 +46,7 @@ extern boolean fastparm;    // checkparm of -fast
 extern boolean flatVisplanes;
 extern boolean flatterVisplanes;
 extern boolean flatSky;
-extern boolean flatShadows;
-extern boolean saturnShadows;
+extern int invisibleRender;
 extern boolean showFPS;
 extern boolean unlimitedRAM;
 extern boolean nearSprites;

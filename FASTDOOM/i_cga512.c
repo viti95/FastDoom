@@ -11,7 +11,7 @@
 #include "v_video.h"
 #include "tables.h"
 #include "math.h"
-#include "i_system.h" 
+#include "i_system.h"
 #include "d_main.h"
 
 #if defined(MODE_CGA512)
@@ -84,10 +84,7 @@ void I_ProcessPalette(byte *palette)
                 lut256colors[i] = value;
                 break;
             }
-
-            distance = SQRT(distance);
-
-            if (best_difference > distance)
+            else if (best_difference > distance)
             {
                 best_difference = distance;
                 value = (j & 0x0F) << 12 | (j & 0xF0) << 4 | 0x55;
@@ -121,10 +118,7 @@ void I_ProcessPalette(byte *palette)
                     lut256colors[i] = value;
                     break;
                 }
-
-                distance = SQRT(distance);
-
-                if (best_difference > distance)
+                else if (best_difference > distance)
                 {
                     best_difference = distance;
                     value = (j & 0x0F) << 12 | (j & 0xF0) << 4 | 0x13;

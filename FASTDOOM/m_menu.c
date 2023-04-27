@@ -1139,14 +1139,27 @@ void M_DrawDisplay(void)
 
     V_WriteTextDirect(7, 6, "Visplane rendering:");
     V_WriteTextDirect(30, 6, (!flatterVisplanes && !flatVisplanes) ? "FULL" : flatterVisplanes ? "FLAT"
-                                                                                                  : "FLATTER");
+                                                                                               : "FLATTER");
 
     V_WriteTextDirect(7, 8, "Sky rendering:");
     V_WriteTextDirect(30, 8, flatSky ? "FLAT" : "FULL");
 
     V_WriteTextDirect(7, 10, "Invisible rendering:");
-    V_WriteTextDirect(30, 10, (!saturnShadows && !flatShadows) ? "FUZZY" : flatShadows ? "FLAT"
-                                                                                       : "SEGA SATURN");
+    switch (invisibleRender)
+    {
+    case 0:
+        V_WriteTextDirect(30, 10, "FUZZY");
+        break;
+    case 1:
+        V_WriteTextDirect(30, 10, "FLAT");
+        break;
+    case 2:
+        V_WriteTextDirect(30, 10, "SEGA SATURN");
+        break;
+    case 3:
+        V_WriteTextDirect(30, 10, "TRANSLUCENT");
+        break;
+    }
 
     V_WriteTextDirect(7, 12, "Show FPS:");
     V_WriteTextDirect(30, 12, showFPS ? "ON" : "OFF");
@@ -1170,14 +1183,27 @@ void M_DrawDisplay(void)
 
     V_WriteTextDirect(15, 6, "Visplane rendering:");
     V_WriteTextDirect(45, 6, (!flatterVisplanes && !flatVisplanes) ? "FULL" : flatterVisplanes ? "FLAT"
-                                                                                                  : "FLATTER");
+                                                                                               : "FLATTER");
 
     V_WriteTextDirect(15, 8, "Sky rendering:");
     V_WriteTextDirect(45, 8, flatSky ? "FLAT" : "FULL");
 
     V_WriteTextDirect(15, 10, "Invisible rendering:");
-    V_WriteTextDirect(45, 10, (!saturnShadows && !flatShadows) ? "FUZZY" : flatShadows ? "FLAT"
-                                                                                       : "SEGA SATURN");
+    switch (invisibleRender)
+    {
+    case 0:
+        V_WriteTextDirect(45, 10, "FUZZY");
+        break;
+    case 1:
+        V_WriteTextDirect(45, 10, "FLAT");
+        break;
+    case 2:
+        V_WriteTextDirect(45, 10, "SEGA SATURN");
+        break;
+    case 3:
+        V_WriteTextDirect(45, 10, "TRANSLUCENT");
+        break;
+    }
 
     V_WriteTextDirect(15, 12, "Show FPS:");
     V_WriteTextDirect(45, 12, showFPS ? "ON" : "OFF");
@@ -1201,14 +1227,27 @@ void M_DrawDisplay(void)
 
     V_WriteTextDirect(15, 13, "Visplane rendering:");
     V_WriteTextDirect(45, 13, (!flatterVisplanes && !flatVisplanes) ? "FULL" : flatterVisplanes ? "FLAT"
-                                                                                                   : "FLATTER");
+                                                                                                : "FLATTER");
 
     V_WriteTextDirect(15, 17, "Sky rendering:");
     V_WriteTextDirect(45, 17, flatSky ? "FLAT" : "FULL");
 
     V_WriteTextDirect(15, 21, "Invisible rendering:");
-    V_WriteTextDirect(45, 21, (!saturnShadows && !flatShadows) ? "FUZZY" : flatShadows ? "FLAT"
-                                                                                       : "SEGA SATURN");
+    switch (invisibleRender)
+    {
+    case 0:
+        V_WriteTextDirect(45, 21, "FUZZY");
+        break;
+    case 1:
+        V_WriteTextDirect(45, 21, "FLAT");
+        break;
+    case 2:
+        V_WriteTextDirect(45, 21, "SEGA SATURN");
+        break;
+    case 3:
+        V_WriteTextDirect(45, 21, "TRANSLUCENT");
+        break;
+    }
 
     V_WriteTextDirect(15, 25, "Show FPS:");
     V_WriteTextDirect(45, 25, showFPS ? "ON" : "OFF");
@@ -1232,14 +1271,27 @@ void M_DrawDisplay(void)
 
     M_WriteText(58, 56, "VISPLANE RENDERING:");
     M_WriteText(214, 56, (!flatterVisplanes && !flatVisplanes) ? "FULL" : flatterVisplanes ? "FLAT"
-                                                                                              : "FLATTER");
+                                                                                           : "FLATTER");
 
     M_WriteText(58, 72, "SKY RENDERING:");
     M_WriteText(214, 72, flatSky ? "FLAT" : "FULL");
 
     M_WriteText(58, 88, "INVISIBLE RENDERING:");
-    M_WriteText(214, 88, (!saturnShadows && !flatShadows) ? "FUZZY" : flatShadows ? "FLAT"
-                                                                                  : "SEGA SATURN");
+    switch (invisibleRender)
+    {
+    case 0:
+        M_WriteText(214, 88, "FUZZY");
+        break;
+    case 1:
+        M_WriteText(214, 88, "FLAT");
+        break;
+    case 2:
+        M_WriteText(214, 88, "SEGA SATURN");
+        break;
+    case 3:
+        M_WriteText(214, 88, "TRANSLUCENT");
+        break;
+    }
 
     M_WriteText(58, 104, "SHOW FPS:");
     M_WriteText(214, 104, showFPS ? "ON" : "OFF");
@@ -1510,35 +1562,32 @@ void M_ChangeSkyDetail()
 
 void M_ChangeInvisibleDetail()
 {
-    if (!flatShadows && !saturnShadows)
-    {
-        saturnShadows = false;
-        flatShadows = true;
-    }
-    else if (flatShadows)
-    {
-        flatShadows = false;
-        saturnShadows = true;
-    }
+    invisibleRender++;
+
+    if (invisibleRender == 4)
+        invisibleRender = 0;
+
+    if (invisibleRender == 3)
+        R_InitTintMap();
     else
-    {
-        flatShadows = false;
-        saturnShadows = false;
-    }
+        R_CleanupTintMap();
 
     R_SetViewSize(screenblocks, detailLevel);
 
-    if (!flatShadows && !saturnShadows)
+    switch(invisibleRender)
     {
+        case 0:
         players.message = "FULL INVISIBILITY";
-    }
-    else if (flatShadows)
-    {
+        break;
+        case 1:
         players.message = "FLAT INVISIBILITY";
-    }
-    else
-    {
+        break;
+        case 2:
         players.message = "SEGA SATURN INVISIBILITY";
+        break;
+        case 3:
+        players.message = "TRANSLUCENT INVISIBILITY";
+        break;
     }
 }
 

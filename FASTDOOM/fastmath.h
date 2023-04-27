@@ -252,6 +252,18 @@ int Div100(int value);
     "sar ecx, 31", \
     "sub edx, ecx" parm[ecx] value[edx] modify exact[eax ecx edx]
 
+int Mul25(int value);
+#pragma aux Mul25 = \
+    "lea     eax, [eax+eax*4]", \
+    "lea     eax, [eax+eax*4]" parm[eax] value[eax] modify exact[eax]
+
+int Mul75(int value);
+#pragma aux Mul75 = \
+    "lea     edx, [eax+eax*8]", \
+    "lea     edx, [eax+edx*4]", \
+    "add     edx, edx", \
+    "add     eax, edx" parm[eax] value[eax] modify exact[eax edx]
+
 int Div255(int value);
 #pragma aux Div255 = \
     "mov edx, -2139062143", \

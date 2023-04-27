@@ -88,6 +88,21 @@ int M_CheckParmOptional(char *check, int *variable)
     return 0;
 }
 
+int M_CheckParmOptionalValue(char *check, int *variable, int value)
+{
+    int i;
+
+    for (i = 1; i < myargc; i++)
+    {
+        if (!strcasecmp(check, myargv[i])){
+            *variable = value;
+            return 1;
+        }            
+    }
+    
+    return 0;
+}
+
 int M_CheckParmDisable(char *check, int *variable)
 {
     int i;
@@ -295,8 +310,7 @@ default_t defaults[] =
         {"flatsky", &flatSky, 0},
         {"near", &nearSprites, 0},
         {"nomelt", &noMelt, 0},
-        {"flatShadows", &flatShadows, 0},
-        {"saturnShadows", &saturnShadows, 0},
+        {"invisibleRender", &invisibleRender, 0},
         {"flatterVisplanes", &flatterVisplanes, 0},
         {"flatVisplanes", &flatVisplanes, 0},
         {"vsync", &waitVsync, 0},

@@ -21,6 +21,7 @@
 #include <strings.h>
 #include <malloc.h>
 #include <stdio.h>
+#include <limits.h>
 #include "options.h"
 #include "i_system.h"
 #include "z_zone.h"
@@ -189,9 +190,10 @@ void R_DrawColumnInCache(column_t *patch,
         if (count > cacheheight - position)
             count = cacheheight - position;
 
-        if (count > 0){
+        if (count > 0)
+        {
             CopyBytes(source, cache + position, count);
-            //memcpy(cache + position, source, count);
+            // memcpy(cache + position, source, count);
         }
 
         patch = (column_t *)((byte *)patch + patch->length + 4);
@@ -463,10 +465,10 @@ void R_InitTextures(void)
     printf("[");
     for (i = 0; i < temp3; i++)
         printf(" ");
-    printf("       ]");
+    printf("        ]");
     for (i = 0; i < temp3; i++)
         printf("\x8");
-    printf("\x8\x8\x8\x8\x8\x8\x8\x8");
+    printf("\x8\x8\x8\x8\x8\x8\x8\x8\x8");
 
     for (i = 0; i < numtextures; i++, directory++)
     {
@@ -493,7 +495,7 @@ void R_InitTextures(void)
         texture->patchcount = mtexture->patchcount;
 
         CopyBytes(mtexture->name, texture->name, sizeof(texture->name));
-        //memcpy(texture->name, mtexture->name, sizeof(texture->name));
+        // memcpy(texture->name, mtexture->name, sizeof(texture->name));
         mpatch = &mtexture->patches[0];
         patch = &texture->patches[0];
 
@@ -596,6 +598,114 @@ void R_InitColormaps(void)
     W_ReadLump(lump, colormaps);
 }
 
+// -----------------------------------------------------------------------------
+// R_InitTintMap
+// [crispy] initialize translucency filter map
+// based in parts on the implementation from boom202s/R_DATA.C:676-787
+// -----------------------------------------------------------------------------
+
+byte *tintmap = NULL;
+
+enum
+{
+    r,
+    g,
+    b
+} rgb_t;
+
+// [crispy] copied over from i_video.c
+int V_GetPaletteIndex(byte *palette, int r, int g, int b)
+{
+    int best, best_diff, diff;
+    int i;
+
+    byte *ptrpalette = palette;
+
+    best = 0;
+    best_diff = INT_MAX;
+
+    for (i = 0; i < 256; ++i)
+    {
+        int diff_r, diff_g, diff_b;
+
+        diff_r = r - ptrpalette[0];
+        diff_r *= diff_r; 
+
+        diff_g = g - ptrpalette[1];
+        diff_g *= diff_g;
+
+        diff_b = b - ptrpalette[2];
+        diff_b *= diff_b;
+
+        diff = diff_r + diff_g + diff_b;
+
+        if (diff < best_diff)
+        {
+            best = i;
+            best_diff = diff;
+        }
+        else if (diff == 0)
+            return best;
+
+        ptrpalette += 3;
+    }
+
+    return best;
+}
+
+#define TRANSPARENCY_LEVEL 25
+
+void R_InitTintMap(void)
+{
+    // Compose a default transparent filter map based on PLAYPAL.
+    unsigned char *playpal = W_CacheLumpName("PLAYPAL", PU_STATIC);
+
+    if (tintmap != NULL)
+        return; // tintmap already created
+
+    tintmap = Z_MallocUnowned(256 * 256, PU_STATIC);
+
+    {
+        byte *fg, *bg, blend[3];
+        byte *tp = tintmap;
+        int i, j;
+
+        // [crispy] background color
+        for (i = 0; i < 256; i++)
+        {
+            // [crispy] foreground color
+            for (j = 0; j < 256; j++)
+            {
+                // [crispy] shortcut: identical foreground and background
+                if (i == j)
+                {
+                    *tp++ = i;
+                    continue;
+                }
+
+                bg = playpal + 3 * i;
+                fg = playpal + 3 * j;
+
+                blend[r] = Div100(Mul25(fg[r]) + Mul75(bg[r]));
+                blend[g] = Div100(Mul25(fg[g]) + Mul75(bg[g]));
+                blend[b] = Div100(Mul25(fg[b]) + Mul75(bg[b]));
+                *tp++ = V_GetPaletteIndex(playpal, blend[r], blend[g], blend[b]);
+            }
+        }
+    }
+
+    Z_ChangeTag(playpal, PU_CACHE);
+}
+
+void R_CleanupTintMap(void)
+{
+    if (tintmap != NULL)
+    {
+        Z_Free(tintmap);
+        tintmap = NULL;
+    }
+}
+
 //
 // R_InitData
 // Locates all the lumps
@@ -611,6 +721,9 @@ void R_InitData(void)
     R_InitSpriteLumps();
     printf(".");
     R_InitColormaps();
+    printf(".");
+    if (invisibleRender == 3)
+        R_InitTintMap();
 }
 
 //
