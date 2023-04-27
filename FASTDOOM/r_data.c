@@ -604,7 +604,7 @@ void R_InitColormaps(void)
 // based in parts on the implementation from boom202s/R_DATA.C:676-787
 // -----------------------------------------------------------------------------
 
-byte *tintmap;
+byte *tintmap = NULL;
 
 enum
 {
@@ -655,14 +655,14 @@ int V_GetPaletteIndex(byte *palette, int r, int g, int b)
 
 #define TRANSPARENCY_LEVEL 25
 
-static void R_InitTintMap(void)
+void R_InitTintMap(void)
 {
-    // Check if TINTMAP cache exists
-
-    // Cache TINTMAP doesn't exist, create it
-
     // Compose a default transparent filter map based on PLAYPAL.
     unsigned char *playpal = W_CacheLumpName("PLAYPAL", PU_STATIC);
+
+    if (tintmap != NULL)
+        return; // tintmap already created
+
     tintmap = Z_MallocUnowned(256 * 256, PU_STATIC);
 
     {
@@ -697,6 +697,15 @@ static void R_InitTintMap(void)
     Z_ChangeTag(playpal, PU_CACHE);
 }
 
+void R_CleanupTintMap(void)
+{
+    if (tintmap != NULL)
+    {
+        Z_Free(tintmap);
+        tintmap = NULL;
+    }
+}
+
 //
 // R_InitData
 // Locates all the lumps
@@ -713,7 +722,8 @@ void R_InitData(void)
     printf(".");
     R_InitColormaps();
     printf(".");
-    R_InitTintMap();
+    if (invisibleRender == 3)
+        R_InitTintMap();
 }
 
 //

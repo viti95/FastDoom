@@ -28,6 +28,8 @@ void R_GenerateComposite(int texnum);
 
 // I/O, setting up the stuff.
 void R_InitData(void);
+void R_InitTintMap(void);
+void R_CleanupTintMap(void);
 void R_PrecacheLevel(void);
 
 // Retrieval.

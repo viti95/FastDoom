@@ -1567,6 +1567,11 @@ void M_ChangeInvisibleDetail()
     if (invisibleRender == 4)
         invisibleRender = 0;
 
+    if (invisibleRender == 3)
+        R_InitTintMap();
+    else
+        R_CleanupTintMap();
+
     R_SetViewSize(screenblocks, detailLevel);
 
     switch(invisibleRender)
