@@ -10,8 +10,6 @@
 #define DEFAULTPATH "C:\\DOOMDATA"
 #define SAVENAME "FDOOMSV%d.DSG"
 
-#define S_NONE "None"
-#define S_PCSP "PC Speaker"
 #define S_CON1 "Keyboard only"
 #define S_CON2 "Keyboard + Mouse"
 
@@ -31,18 +29,14 @@ typedef enum
 	M_SB,
 	M_PAS,
 	M_GUS,
-	M_WAVE,
-	M_CANVAS,
 	M_GMIDI,
 	M_SBAWE32,
-	M_UNUSED1,
-	M_UNUSED2,
+	M_ENSONIQ,
 	M_DISNEYSS,
 	M_TANDY3VOICE,
 	M_PC1BIT,
 	M_COVOX,
 	M_SBDIRECT,
-	M_ADBFX,
 	M_PCPWM,
 	M_CMS,
 	M_OPL2LPT,

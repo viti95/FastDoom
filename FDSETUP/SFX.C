@@ -6,15 +6,18 @@
 enum
 {
 	DCARD_GUS,
+	DCARD_ENSONIQ,
 	DCARD_PAS,
 	DCARD_SB,
 	DCARD_PC,
 	DCARD_DISNEY,
 	DCARD_TANDY,
+	DCARD_OPL2LPT,
+	DCARD_OPL3LPT,
 	DCARD_PC1BIT,
 	DCARD_COVOX,
 	DCARD_SBDIRECT,
-	DCARD_ADBFX,
+	DCARD_ADLIB,
 	DCARD_PCPWM,
 	DCARD_CMS,
 	DCARD_NONE,
@@ -23,19 +26,22 @@ enum
 
 item_t idcarditems[] =
 	{
-		{DCARD_GUS, 27, 6, 25, -1, -1},
-		{DCARD_PAS, 27, 7, 25, -1, -1},
-		{DCARD_SB, 27, 8, 25, -1, -1},
-		{DCARD_PC, 27, 9, 25, -1, -1},
-		{DCARD_DISNEY, 27, 10, 25, -1, -1},
-		{DCARD_TANDY, 27, 11, 25, -1, -1},
-		{DCARD_PC1BIT, 27, 12, 25, -1, -1},
-		{DCARD_COVOX, 27, 13, 25, -1, -1},
-		{DCARD_SBDIRECT, 27, 14, 25, -1, -1},
-		{DCARD_ADBFX, 27, 15, 25, -1, -1},
-		{DCARD_PCPWM, 27, 16, 25, -1, -1},
-		{DCARD_CMS, 27, 17, 25, -1, -1},
-		{DCARD_NONE, 27, 18, 25, -1, -1}
+		{DCARD_GUS, 27, 4, 25, -1, -1},
+		{DCARD_ENSONIQ, 27, 5, 25, -1, -1},
+		{DCARD_PAS, 27, 6, 25, -1, -1},
+		{DCARD_SB, 27, 7, 25, -1, -1},
+		{DCARD_PC, 27, 8, 25, -1, -1},
+		{DCARD_DISNEY, 27, 9, 25, -1, -1},
+		{DCARD_TANDY, 27, 10, 25, -1, -1},
+		{DCARD_OPL2LPT, 27, 11, 25, -1, -1},
+		{DCARD_OPL3LPT, 27, 12, 25, -1, -1},
+		{DCARD_PC1BIT, 27, 13, 25, -1, -1},
+		{DCARD_COVOX, 27, 14, 25, -1, -1},
+		{DCARD_SBDIRECT, 27, 15, 25, -1, -1},
+		{DCARD_ADLIB, 27, 16, 25, -1, -1},
+		{DCARD_PCPWM, 27, 17, 25, -1, -1},
+		{DCARD_CMS, 27, 18, 25, -1, -1},
+		{DCARD_NONE, 27, 19, 25, -1, -1}
 	};
 
 menu_t idcardmenu =
@@ -75,10 +81,6 @@ int ChooseFxCard(void)
 		field = DCARD_PAS;
 		break;
 
-	case M_WAVE:
-		field = DCARD_SB;
-		break;
-
 	case M_DISNEYSS:
 		field = DCARD_DISNEY;
 		break;
@@ -91,8 +93,8 @@ int ChooseFxCard(void)
 		field = DCARD_PC1BIT;
 		break;
 
-	case M_ADBFX:
-		field = DCARD_ADBFX;
+	case M_ADLIB:
+		field = DCARD_ADLIB;
 		break;
 	
 	case M_PCPWM:
@@ -109,6 +111,18 @@ int ChooseFxCard(void)
 
 	case M_SBDIRECT:
 		field = DCARD_SBDIRECT;
+		break;
+
+	case M_ENSONIQ:
+		field = DCARD_ENSONIQ;
+		break;
+	
+	case M_OPL2LPT:
+		field = DCARD_OPL2LPT;
+		break;
+	
+	case M_OPL3LPT:
+		field = DCARD_OPL3LPT;
 		break;
 	}
 
@@ -168,8 +182,8 @@ int ChooseFxCard(void)
 				newc.d.midiport = -1;
 				goto func_exit;
 
-			case DCARD_ADBFX:
-				newc.d.card = M_ADBFX;
+			case DCARD_ADLIB:
+				newc.d.card = M_ADLIB;
 				newc.d.soundport = -1;
 				newc.d.midiport = -1;
 				goto func_exit;
@@ -182,7 +196,7 @@ int ChooseFxCard(void)
 
 			case DCARD_CMS:
 				newc.d.card = M_CMS;
-				newc.d.soundport = 0x220;
+				newc.d.soundport = -1;
 				newc.d.midiport = -1;
 				goto func_exit;
 
@@ -194,6 +208,24 @@ int ChooseFxCard(void)
 
 			case DCARD_SBDIRECT:
 				newc.d.card = M_SBDIRECT;
+				newc.d.soundport = -1;
+				newc.d.midiport = -1;
+				goto func_exit;
+
+			case DCARD_ENSONIQ:
+				newc.d.card = M_ENSONIQ;
+				newc.d.soundport = -1;
+				newc.d.midiport = -1;
+				goto func_exit;
+
+			case DCARD_OPL2LPT:
+				newc.d.card = M_OPL2LPT;
+				newc.d.soundport = -1;
+				newc.d.midiport = -1;
+				goto func_exit;
+
+			case DCARD_OPL3LPT:
+				newc.d.card = M_OPL3LPT;
 				newc.d.soundport = -1;
 				newc.d.midiport = -1;
 				goto func_exit;
@@ -950,9 +982,6 @@ int SetupFX(void)
 	default:
 	case M_NONE:
 	case M_PC:
-	case M_ADLIB:
-	case M_OPL2LPT:
-	case M_OPL3LPT:
 	case M_CD:
 	case M_WAV:
 		savefx = FALSE;
@@ -967,6 +996,8 @@ int SetupFX(void)
 		break;
 
 	case M_COVOX:
+	case M_OPL2LPT:
+	case M_OPL3LPT:
 		if (ChooseLPTPort(&newc.d) == -1)
 			return (-1);
 		ChooseFreq();
@@ -975,13 +1006,13 @@ int SetupFX(void)
 		break;
 
 	case M_PC1BIT:
-	case M_ADBFX:
+	case M_ADLIB:
 	case M_SBDIRECT:
 	case M_GUS:
 	case M_PAS:
 	case M_SB:
-	case M_WAVE:
 	case M_TANDY3VOICE:
+	case M_ENSONIQ:
 		ChooseFreq();
 		ChooseNumDig();
 		savefx = TRUE;
@@ -1001,13 +1032,6 @@ int SetupFX(void)
 		savefx = TRUE;
 		break;
 		
-	case M_CANVAS:
-		newc.d.midiport = 0x330;
-		if (ChooseMidiPort(&newc.d) == -1)
-			return (-1);
-		savefx = TRUE;
-		break;
-
 	case M_GMIDI:
 		if (ChooseMidiPort(&newc.d) == -1)
 			return (-1);

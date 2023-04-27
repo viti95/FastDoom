@@ -189,9 +189,8 @@ func_exit:
 enum
 {
 	MCARD_GMIDI,
+	MCARD_ENSONIQ,
 	MCARD_SBAWE32,
-	MCARD_CANVAS,
-	MCARD_WAVE,
 	MCARD_GUS,
 	MCARD_PAS,
 	MCARD_SB,
@@ -208,19 +207,18 @@ enum
 item_t mcarditems[] =
 	{
 		{MCARD_GMIDI, 26, 6, 28, -1, -1},
-		{MCARD_SBAWE32, 26, 7, 28, -1, -1},
-		{MCARD_CANVAS, 26, 8, 28, -1, -1},
-		{MCARD_WAVE, 26, 9, 28, -1, -1},
-		{MCARD_GUS, 26, 10, 28, -1, -1},
-		{MCARD_PAS, 26, 11, 28, -1, -1},
-		{MCARD_SB, 26, 12, 28, -1, -1},
-		{MCARD_ADLIB, 26, 13, 28, -1, -1},
-		{MCARD_OPL2LPT, 26, 14, 28, -1, -1},
-		{MCARD_OPL3LPT, 26, 15, 28, -1, -1},
-		{MCARD_CMS, 26, 16, 28, -1, -1},
-		{MCARD_CD, 26, 17, 28, -1, -1},
-		{MCARD_WAV, 26, 18, 28, -1, -1},
-		{MCARD_NONE, 26, 19, 28, -1, -1}};
+		{MCARD_ENSONIQ, 26, 7, 28, -1, -1},
+		{MCARD_SBAWE32, 26, 8, 28, -1, -1},
+		{MCARD_GUS, 26, 9, 28, -1, -1},
+		{MCARD_PAS, 26, 10, 28, -1, -1},
+		{MCARD_SB, 26, 11, 28, -1, -1},
+		{MCARD_ADLIB, 26, 12, 28, -1, -1},
+		{MCARD_OPL2LPT, 26, 13, 28, -1, -1},
+		{MCARD_OPL3LPT, 26, 14, 28, -1, -1},
+		{MCARD_CMS, 26, 15, 28, -1, -1},
+		{MCARD_CD, 26, 16, 28, -1, -1},
+		{MCARD_WAV, 26, 17, 28, -1, -1},
+		{MCARD_NONE, 26, 18, 28, -1, -1}};
 
 menu_t mcardmenu =
 	{
@@ -254,6 +252,10 @@ int ChooseMusicCard(void) // RETURN: 0 = OK, -1 == ABORT
 		field = MCARD_OPL3LPT;
 		break;
 
+	case M_ENSONIQ:
+		field = MCARD_ENSONIQ;
+		break;
+
 	case M_CMS:
 		field = MCARD_CMS;
 		break;
@@ -276,14 +278,6 @@ int ChooseMusicCard(void) // RETURN: 0 = OK, -1 == ABORT
 
 	case M_SB:
 		field = MCARD_SB;
-		break;
-
-	case M_WAVE:
-		field = MCARD_WAVE;
-		break;
-
-	case M_CANVAS:
-		field = MCARD_CANVAS;
 		break;
 
 	case M_SBAWE32:
@@ -325,16 +319,6 @@ int ChooseMusicCard(void) // RETURN: 0 = OK, -1 == ABORT
 				newc.m.soundport = -1;
 				goto func_exit;
 
-			case MCARD_CANVAS:
-				newc.m.card = M_CANVAS;
-				newc.m.soundport = -1;
-				goto func_exit;
-
-			case MCARD_WAVE:
-				newc.m.card = M_WAVE;
-				newc.m.soundport = -1;
-				goto func_exit;
-
 			case MCARD_SB:
 				newc.m.card = M_SB;
 				goto func_exit;
@@ -351,6 +335,12 @@ int ChooseMusicCard(void) // RETURN: 0 = OK, -1 == ABORT
 
 			case MCARD_ADLIB:
 				newc.m.card = M_ADLIB;
+				newc.m.soundport = -1;
+				newc.m.midiport = -1;
+				goto func_exit;
+
+			case MCARD_ENSONIQ:
+				newc.m.card = M_ENSONIQ;
 				newc.m.soundport = -1;
 				newc.m.midiport = -1;
 				goto func_exit;
@@ -732,30 +722,14 @@ int SetupMusic(void)
 	case M_CD:
 	case M_PAS:
 	case M_GUS:
+	case M_ENSONIQ:
+	case M_SBAWE32:
 	case M_SB:
 		savemusic = TRUE;
 		break;
 
 	case M_WAV:
 		if (ChoosePCMFreqMusic(&newc.m) == -1)
-			return (-1);
-		savemusic = TRUE;
-		break;
-
-	case M_WAVE:
-		if (ChooseMidiPort(&newc.m) == -1)
-			return (-1);
-		savemusic = TRUE;
-		break;
-
-	case M_SBAWE32:
-		newc.m.midiport = 0x620;
-		savemusic = TRUE;
-		break;
-
-	case M_CANVAS:
-		newc.m.midiport = 0x330;
-		if (ChooseMidiPort(&newc.m) == -1)
 			return (-1);
 		savemusic = TRUE;
 		break;
