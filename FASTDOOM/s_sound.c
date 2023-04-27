@@ -366,9 +366,7 @@ unsigned char *LoadFile(char *filename, int *length)
     size = ftell(in);
     fseek(in, 0, SEEK_SET);
 
-    ptr = (unsigned char *)Z_MallocUnowned(size, PU_STATIC);
-    if (ptr == NULL)
-        I_Error("Out of memory, cannot load music file %s", filename);
+    ptr = (unsigned char *)Z_MallocUnowned(size, PU_MUSIC);
 
     if (fread(ptr, size, 1, in) != 1)
         I_Error("Error loading music file %s", filename);
