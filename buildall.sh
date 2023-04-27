@@ -1,6 +1,6 @@
 #!/bin/bash
 
-./rm fdoom*.exe
+./rm FDOOM*.EXE
 ./build.sh clean
 ./build.sh fdoom.exe
 ./build.sh clean
