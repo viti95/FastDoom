@@ -834,6 +834,7 @@ void LoadIWAD(int selection)
             complevel = COMPLEVEL_DOOM;
             gamemode = shareware;
             gamemission = doom;
+            strcpy(iwadfile, "doom1.wad");
             D_AddFile("doom1.wad");
             return;
         }
@@ -848,6 +849,7 @@ void LoadIWAD(int selection)
             complevel = COMPLEVEL_DOOM;
             gamemode = registered;
             gamemission = doom;
+            strcpy(iwadfile, "doom.wad");
             D_AddFile("doom.wad");
             return;
         }
@@ -862,6 +864,7 @@ void LoadIWAD(int selection)
             complevel = COMPLEVEL_ULTIMATE_DOOM;
             gamemode = retail;
             gamemission = doom;
+            strcpy(iwadfile, "doomu.wad");
             D_AddFile("doomu.wad");
             return;
         }
@@ -876,6 +879,7 @@ void LoadIWAD(int selection)
             complevel = COMPLEVEL_DOOM;
             gamemode = commercial;
             gamemission = doom2;
+            strcpy(iwadfile, "doom2.wad");
             D_AddFile("doom2.wad");
             return;
         }
@@ -890,6 +894,7 @@ void LoadIWAD(int selection)
             complevel = COMPLEVEL_FINAL_DOOM;
             gamemode = commercial;
             gamemission = pack_plut;
+            strcpy(iwadfile, "plutonia.wad");
             D_AddFile("plutonia.wad");
             return;
         }
@@ -904,6 +909,7 @@ void LoadIWAD(int selection)
             complevel = COMPLEVEL_FINAL_DOOM;
             gamemode = commercial;
             gamemission = pack_tnt;
+            strcpy(iwadfile, "tnt.wad");
             D_AddFile("tnt.wad");
             return;
         }
@@ -918,6 +924,7 @@ void LoadIWAD(int selection)
             complevel = COMPLEVEL_ULTIMATE_DOOM;
             gamemode = retail;
             gamemission = doom;
+            strcpy(iwadfile, "freedm1.wad");
             D_AddFile("freedm1.wad");
             return;
         }
@@ -932,6 +939,7 @@ void LoadIWAD(int selection)
             complevel = COMPLEVEL_DOOM;
             gamemode = commercial;
             gamemission = doom2;
+            strcpy(iwadfile, "freedm2.wad");
             D_AddFile("freedm2.wad");
             return;
         }

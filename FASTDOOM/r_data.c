@@ -653,19 +653,60 @@ int V_GetPaletteIndex(byte *palette, int r, int g, int b)
     return best;
 }
 
-#define TRANSPARENCY_LEVEL 25
+unsigned char tintmapcachefile[13];
 
-void R_InitTintMap(void)
+int R_ReadTintMapFile(void) {
+
+    int bytes_read;
+    FILE *file = fopen(tintmapcachefile, "rb");
+
+    if (file == NULL)
+        return -1;
+
+    bytes_read = fread(tintmap, sizeof(char), 256 * 256, file);
+    fclose(file);
+
+    return bytes_read;
+}
+
+void R_WriteTintMapFile(void) {
+    FILE *file = fopen(tintmapcachefile, "wb");
+
+    if (file == NULL) {
+        I_Error("Error creating file %s", tintmapcachefile);
+    }
+
+    if (fwrite(tintmap, 256 * 256, 1, file) != 1) {
+        I_Error("Error writing to file %s", tintmapcachefile);
+    }
+
+    fclose(file);
+}
+
+void R_GetTintMapCacheFileName(void)
 {
-    // Compose a default transparent filter map based on PLAYPAL.
-    unsigned char *playpal = W_CacheLumpName("PLAYPAL", PU_STATIC);
+    int length = strlen(iwadfile);
 
-    if (tintmap != NULL)
-        return; // tintmap already created
+    memcpy(tintmapcachefile, iwadfile, 13);
+
+    tintmapcachefile[length-3] = 'T';
+    tintmapcachefile[length-2] = 'C';
+    tintmapcachefile[length-1] = 'F';
+}
+
+void R_LoadOrCreateTintMapFile(void)
+{
+    int fileread;
 
     tintmap = Z_MallocUnowned(256 * 256, PU_STATIC);
 
+    fileread = R_ReadTintMapFile();
+
+    // Create TintMap and Cache file if it doesn't exist. Takes some time on a 386.
+    if (fileread == -1)
     {
+        // Compose a default transparent filter map based on PLAYPAL.
+        unsigned char *playpal = W_CacheLumpName("PLAYPAL", PU_STATIC);
         byte *fg, *bg, blend[3];
         byte *tp = tintmap;
         int i, j;
@@ -692,9 +733,25 @@ void R_InitTintMap(void)
                 *tp++ = V_GetPaletteIndex(playpal, blend[r], blend[g], blend[b]);
             }
         }
+
+        Z_ChangeTag(playpal, PU_CACHE);
+
+        // Save tintmap to cache file
+        R_WriteTintMapFile();
+
     }
 
-    Z_ChangeTag(playpal, PU_CACHE);
+}
+
+void R_InitTintMap(void)
+{
+
+    if (tintmap != NULL)
+        return; // tintmap already created
+
+    R_GetTintMapCacheFileName();
+
+    R_LoadOrCreateTintMapFile();
 }
 
 void R_CleanupTintMap(void)
