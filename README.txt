@@ -19,6 +19,8 @@
  FastDoom is a Doom port for DOS, based on PCDoom by @nukeykt. The goal of
  this port is to make it as fast as posible for 386/486 personal computers
 
+ https://github.com/viti95/FastDoom
+
  Motivation
  ----------
  
@@ -39,7 +41,8 @@
  RAM:        4 MB (the executable runs even with less RAM, but it's 
              possible to see random crashes due to low RAM)
  Video card: Any ISA 8-bit Hercules, CGA, EGA or VGA video card. For cool
-             graphics a fast VGA video card is recommended
+             graphics a fast VGA video card is recommended. Also MDA,
+             Plantronics Colorplus and Sigma Color 400 cards are supported
  Controls:   Keyboard (mouse recommended)
 
  Supported WADS
@@ -61,32 +64,27 @@
  ------------------
  
  CPU: Any x86 processor that supports 32 bit i386 instruction set
- Video cards: MDA, Hercules, CGA, EGA, VGA, Plantronics ColorPlus, 
-              ATI Small Wonder
+ Video cards: MDA, Hercules, CGA, EGA, VGA, Plantronics ColorPlus
+              Sigma Color 400
  Sound cards: Sound Blaster, PC Speaker, Disney Sound Source,
               Gravis Ultrasound, Pro Audio Spectrum, COVOX LPT DAC,
-              Creative Music System, Tandy 3-voice
+              Creative Music System, Tandy 3-voice, OPL2LPT,
+              OPL3LPT, Ensoniq Soundscape, Adlib
  Music cards: Sound Blaster (OPL2 and OPL3), Adlib, MIDI, Gravis Ultrasound
               Sound Blaster AWE32, OPL2LPT, OPL3LPT, AudioCD (MSCDEX),
-              PCM files
+              PCM music (through sound card), Ensoniq Soundscape
 
  Executables
  -----------
 
  * FDOOM.EXE    => FastDoom Mode Y, same as Vanilla Doom. Requires a VGA
                    video card
- * FDOOM13H.EXE => FastDoom Mode 13h, same as Heretic / Hexen. Only supports
-                   high detail mode. Smoother with fast machines.
- * FDOOMCGA.EXE => FastDoom 320x200 4 color CGA. Ugly. Very ugly. Requires
-                   a fast CPU.
- * FDOOMEGA.EXE => FastDoom 320x200 16 color EGA. Requires a very fast CPU.
-                   ISA 8-bit EGA cards are usually very slow, so don't
-                   expect this to run well (10 fps)
- * FDOOMBWC.EXE => FastDoom 640x200 monochrome CGA. Requires a fast CPU.
-                   Uses ordered dithering 2x2. Internal resolution 320x200.
- * FDOOMHGC.EXE => FastDoom 640x400 monochrome Hercules. Requires a fast
-                   CPU. Also uses ordered dithering 2x2. Internal resolution
-                   320x200
+ * FDOOM13H.EXE => FastDoom Mode 13h, same as Heretic / Hexen. Also works
+                   with MCGA video cards.
+ * FDOOMCGA.EXE => FastDoom 320x200 4 color CGA.
+ * FDOOMEGA.EXE => FastDoom 320x200 16 color EGA.
+ * FDOOMBWC.EXE => FastDoom 640x200 monochrome CGA.
+ * FDOOMHGC.EXE => FastDoom 640x400 monochrome Hercules.
  * FDOOMT1.EXE  => FastDoom 40x25 16 colors text mode
  * FDOOMT12.EXE => FastDoom 40x25 16 colors text mode (virtual resolution of
                    40x50)
@@ -95,20 +93,21 @@
  * FDOOMT50.EXE => FastDoom 80x50 16 colors text mode
  * FDOOMT43.EXE => FastDoom 80x43 16 colors text mode (only EGA cards)
  * FDOOMVBR.EXE => FastDoom for VBE 2.0 cards. Uses real mode (default, and
-                   more compatible). If you use UniVBE use this version
+                   more compatible).
  * FDOOMVBD.EXE => FastDoom for VBE 2.0 cards with LFB (triple buffered),
                    all rendering is done directly onto the video card, the
-                   same way Mode Y does. Faster for systems with slow RAM
-                   access.
+                   same way Mode Y does.
  * FDOOMPCP.EXE => FastDoom for Plantronics ColorPlus cards. 320x200 and 
-                   16 colors!
- * FDOOMCVB.EXE => FastDoom CGA composite mode. 160x200 and 16 colors!
+                   16 colors.
+ * FDOOMCVB.EXE => FastDoom CGA composite mode. 160x200 and 16 colors.
  * FDOOMC16.EXE => FastDoom CGA 160x100 and 16 colors
  * FDOOMMDA.EXE => FastDoom MDA 80x25 text mode. Internal resolution 80x50.
                    Very quick'n'dirty, only Neo can play this mode properly.
  * FDOOMCAH.EXE => FastDoom CGA ANSI from Hell (320x100, 16 colors)
  * FDOOM512.EXE => FastDoom CGA "512 color" composite mode (80x100)
+ * FDOOM400.EXE => FastDoom Sigma Color 400 (320x200, 16 colors)
  * FDSETUP.EXE  => Utility to setup controls and sound cards
+ * BENCH.BAT    => Scripted benchmark, instructions are included in the script
 
  Command line parameters
  -----------------------
@@ -170,7 +169,7 @@
  -debugPort => Shows FPS via the debug port (0x80)
  -fixDAC => Fixes palette corruption with VGA cards
  -hercmap => Enable Hercules automap (requires dual video card setup)
- -snow => Fix for snow on IBM CGA cards in modes 160x100 16-color
+ -snow => Fix for snow on IBM CGA cards
  -palette1 => Choose the black-cyan-magenta-white palette on mode
               CGA 320x200 4-color
  -complevel X => Force any compatibility level. Supported
@@ -185,6 +184,18 @@
  ------------------------
  * Gravis UltraSound cards require IRQ to be 7 or less, otherwise those
    cards won't work. This is a limitation of the Apogee Sound System.
+ * Some executables will show snow issues on IBM CGA cards even if "-snow"
+   parameter is used. This is due to technical limitations.
+
+ PCM Music format
+ ----------------
+
+ PCM Music format is unsigned 8-bit PCM, and supports 11025, 22050 or 
+ 44100 Hz frequencies. Folders used for music are these:
+ * Doom:     \MUSIC\DOOM1\MUS_*.RAW
+ * Doom2:    \MUSIC\DOOM2\MUS_*.RAW
+ * Plutonia: \MUSIC\PLUTONIA\MUS_*.RAW
+ * TNT:      \MUSIC\TNT\MUS_*.RAW
 
  Author
  ------

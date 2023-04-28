@@ -9,18 +9,22 @@ Doom port for DOS, based on PCDoom by @nukeykt. The goal of this port is to make
 * Added option to render Spectres and invisible objects like real transparent objects (harder to see, a little faster to render)
 * Added option to render sky as a flat fixed color
 * Added option to render Spectre and invisible objects like the Sega Saturn port did
+* Added option to render Spectre and invisible objects like Heretic/Hexen
 * New option to show only objects that are not far away from the player. All the enemies are still rendered as they're important
 * PC Speaker uses all sounds available (just for fun!)
 * New mode for PC Speaker (digitized sound!)
 * Disney Sound Source support
 * COVOX LPT DAC support
 * Adlib OPL2 PCM support
+* OPL2LPT and OPL3LPT support
 * Tandy 3-voice PCM support (SN76489)
 * Creative Music System / Game Blaster support
+* Audio-CD music support
+* PCM music support (through sound fx device)
 * Hercules automap support
 * Lot's of optimizations to make the game run faster / smoother
 * Removed low memory limit (may cause crashes with low RAM)
-* NEW DETAIL LEVEL: POTATO. It renders the full scene with a quarter width resolution (max 80x200). 8-bit and 16-bit ISA video cards can play the game full screen much better!! My Western Digital Paradise PVGA1A ISA (1989) can render the game at a constant >25 fps with a 486DX-50
+* New detail level: Potato. It renders the full scene with a quarter width resolution (max 80x200). Much faster rendering, specially on 386 cpu's and slow 8-bit VGA ISA cards.
 * New option to allow more than 8Mb of memory allocation. Enabled with "-ram"
 * Removed network gaming support
 * Removed joystick support
@@ -29,7 +33,7 @@ Doom port for DOS, based on PCDoom by @nukeykt. The goal of this port is to make
 * Added mono sound support
 * Replaced DOS/4GW with DOS/32A providing a good speedup!
 * New setup program
-* New video modes (Mode 13h, CGA, EGA, Hercules, Text modes, VESA 2.0)
+* New video modes (Mode 13h, MDA, CGA, EGA, Hercules, Text modes, VESA 2.0, Plantronics Colorplus, Sigma Color 400)
 
 ## DEMO
 

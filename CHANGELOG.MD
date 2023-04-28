@@ -1,10 +1,33 @@
 # CHANGELOG
 
-## 0.9.5 (???)
-* Sigma Designs Color 400 support. 320x200 and 16 colors.
-* Added low and potato detail for backbuffered and VBE2 direct modes.
-* Removed FDOOME80.EXE and FDOOMEW1.EXE, not needed with new detail modes. They were also very half-baked, HUD was basically non-readable.
-* Removed FDOOMV16.EXE, didn't fit properly in the project. Is a cool hack to get VGA 160x200 and 16-colors, but Doom already supports 256 color modes which also are much faster.
+## 0.9.5 (28 Apr 2023)
+* Sigma Designs Color 400 support. 320x200 and 16 colors. Tested only in 86Box, as I cannot make my card work on my 386/486 PCs.
+* Added low and potato detail for backbuffered and VBE2 direct modes
+* Removed FDOOME80.EXE and FDOOMEW1.EXE, not needed with new detail modes. They were also very half-baked, HUD was basically non-readable
+* Removed FDOOMV16.EXE, didn't fit properly in the project. Is a cool hack to get VGA 160x200 and 16-colors, but Doom already supports 256 color modes which also are much faster
+* Removed FastDoom VGA vertical mode. Started as a joke, and I don't feel it matches the project spirit. If people want's it back, I'll reconsider it.
+* Speed up CGA, EGA, Plantronics and Hercules video modes by optimizing in ASM the backbuffer->VRAM copy routines
+* Better benchmarking options, now FastDoom is able to generate CSV data (easier to import in Excel)
+* Added BENCH.BAT script. This script makes easier to benchmark FastDoom. How to use it:
+    * bench.bat {type} {exe} {iwad} {lmp}
+    * {type}:  {phil, quick, normal, full}
+        * {phil}: Same benchmarks as define by PhilsComputerLab DOOM benchmark
+        * {quick}: Full screen + HUD, tests potato, low and high detail modes
+        * {normal}: Full screen + HUD, tests potato, low and high detail modes, and different visplane rendering modes
+        * {full}: Multiple screen sizes, tests all detail settings (will take a long time if the system is slow)
+    * {exe}:  {fdoom.exe, fdoom13h.exe, ...}
+    * {iwad}:  {doom1.wad, doomu.wad, doom2.wad, ...}
+    * {lmp}:  {demo1, demo2, ...}
+    * Example: bench.bat phil fdoom.exe doom1.wad demo3
+    * Results are stored in the file "bench.csv"
+* New invisible object rendering mode, now it's possible to use Heretic/Hexen translucency for objects. Cached tintmap files are stored in binary .TCF files. This rendering method only looks great on 256-color modes.
+* Sound FX support for OPL2LPT and OPL3LPT devices.
+* Enabled Ensoniq Soundscape music and sound FX devices. Not tested as I don't have one of these devices.
+* Renamed multiple command line arguments. Take a look at the README.TXT to see what has changed.
+* Fixed issue #139
+* Removed "-simplestatusbar" command line parameter. Performance difference was pretty much none, and looked terribly bad.
+* Cleanup unused Extended MIDI support from Apogee Sound System.
+* Small optimizations for rendering code
 
 ## 0.9.4 (15 Mar 2023)
 * PCM music support. Up to 44.1 KHz, 8-bit mono music. For now PCM music is stored in RAM, so more than 16Mb is recommended
