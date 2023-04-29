@@ -14,7 +14,7 @@ If "%3"=="" goto error_parameters
 If "%4"=="" goto error_parameters
 
 if exist bench.csv goto bypass
-echo detail;size;visplanes;sky;objects;transparent_columns;iwad;demo;gametics;realtics;fps > bench.csv
+echo executable;detail;size;visplanes;sky;objects;transparent_columns;iwad;demo;gametics;realtics;fps > bench.csv
 
 :bypass
 if "%1"=="phil" goto phil_bench

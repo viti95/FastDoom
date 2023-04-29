@@ -1248,6 +1248,9 @@ void G_CheckDemoStatus(void)
             FILE *logFile = fopen("BENCH.CSV", "a");
             if (logFile)
             {
+                // Executable
+                fprintf(logFile, "%s;", myargv[0]);
+
                 // Detail
                 switch(detailshift){
                     case 0:
