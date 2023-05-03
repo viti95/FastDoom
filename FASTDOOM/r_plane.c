@@ -116,7 +116,7 @@ void R_MapPlane(int y, int x1)
     ds_x1 = x1;
     ds_y = y;
 
-    if (flatterVisplanes)
+    if (visplaneRender == 1)
     {
         if (planeheight != cachedheight[y])
         {
@@ -199,10 +199,8 @@ void R_ClearPlanes(void)
     lastvisplane = visplanes;
     lastopening = openings;
 
-    if (flatVisplanes || flatterVisplanes)
-    {
+    if (visplaneRender > 0)
         return;
-    }
 
     // texture calculation
     SetDWords(cachedheight, 0, sizeof(cachedheight) / 4);
@@ -406,7 +404,7 @@ void R_DrawPlanes(void)
 // R_DrawPlanes
 // At the end of each frame.
 //
-void R_DrawPlanesFlatVisplanes(void)
+void R_DrawPlanesFlatter(void)
 {
     visplane_t *pl;
 
@@ -590,7 +588,7 @@ void R_DrawPlanesFlatVisplanes(void)
     }
 }
 
-void R_DrawPlanesFlatVisplanesLow(void)
+void R_DrawPlanesFlatterLow(void)
 {
     visplane_t *pl;
 
@@ -694,7 +692,7 @@ void R_DrawPlanesFlatVisplanesLow(void)
     }
 }
 
-void R_DrawPlanesFlatVisplanesPotato(void)
+void R_DrawPlanesFlatterPotato(void)
 {
     visplane_t *pl;
 
@@ -751,7 +749,7 @@ void R_DrawPlanesFlatVisplanesPotato(void)
 }
 
 #if defined(MODE_T8050) || defined(MODE_T8043)
-void R_DrawPlanesFlatVisplanesText8050(void)
+void R_DrawPlanesFlatterText8050(void)
 {
     visplane_t *pl;
 
@@ -807,7 +805,7 @@ void R_DrawPlanesFlatVisplanesText8050(void)
 #endif
 
 #if defined(MODE_T4050)
-void R_DrawPlanesFlatVisplanesText4050(void)
+void R_DrawPlanesFlatterText4050(void)
 {
     visplane_t *pl;
 
@@ -893,7 +891,7 @@ void R_DrawPlanesFlatVisplanesText4050(void)
 #endif
 
 #if defined(MODE_T4025)
-void R_DrawPlanesFlatVisplanesText4025(void)
+void R_DrawPlanesFlatterText4025(void)
 {
     visplane_t *pl;
 
@@ -949,7 +947,7 @@ void R_DrawPlanesFlatVisplanesText4025(void)
 #endif
 
 #if defined(MODE_MDA)
-void R_DrawPlanesFlatVisplanesTextMDA(void)
+void R_DrawPlanesFlatterTextMDA(void)
 {
     visplane_t *pl;
 
@@ -1028,7 +1026,7 @@ void R_DrawPlanesFlatVisplanesTextMDA(void)
 #endif
 
 #if defined(MODE_T8025)
-void R_DrawPlanesFlatVisplanesText8025(void)
+void R_DrawPlanesFlatterText8025(void)
 {
     visplane_t *pl;
 
@@ -1114,7 +1112,7 @@ void R_DrawPlanesFlatVisplanesText8025(void)
 #endif
 
 #if defined(USE_BACKBUFFER)
-void R_DrawPlanesFlatVisplanesBackbuffer(void)
+void R_DrawPlanesFlatterBackbuffer(void)
 {
     visplane_t *pl;
 
@@ -1168,7 +1166,7 @@ void R_DrawPlanesFlatVisplanesBackbuffer(void)
     }
 }
 
-void R_DrawPlanesFlatVisplanesLowBackbuffer(void)
+void R_DrawPlanesFlatterLowBackbuffer(void)
 {
     visplane_t *pl;
 
@@ -1218,7 +1216,7 @@ void R_DrawPlanesFlatVisplanesLowBackbuffer(void)
     }
 }
 
-void R_DrawPlanesFlatVisplanesPotatoBackbuffer(void)
+void R_DrawPlanesFlatterPotatoBackbuffer(void)
 {
     visplane_t *pl;
 
@@ -1267,7 +1265,7 @@ void R_DrawPlanesFlatVisplanesPotatoBackbuffer(void)
 #endif
 
 #if defined(MODE_VBE2_DIRECT)
-void R_DrawPlanesFlatVisplanesVBE2(void)
+void R_DrawPlanesFlatterVBE2(void)
 {
     visplane_t *pl;
 
@@ -1311,7 +1309,7 @@ void R_DrawPlanesFlatVisplanesVBE2(void)
     }
 }
 
-void R_DrawPlanesFlatVisplanesLowVBE2(void)
+void R_DrawPlanesFlatterLowVBE2(void)
 {
     visplane_t *pl;
 
@@ -1356,7 +1354,7 @@ void R_DrawPlanesFlatVisplanesLowVBE2(void)
     }
 }
 
-void R_DrawPlanesFlatVisplanesPotatoVBE2(void)
+void R_DrawPlanesFlatterPotatoVBE2(void)
 {
     visplane_t *pl;
 

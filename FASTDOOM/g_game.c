@@ -1268,13 +1268,19 @@ void G_CheckDemoStatus(void)
                 fprintf(logFile, "%i;", screenblocks);
 
                 // Visplanes
-                if (flatVisplanes)
-                    fprintf(logFile, "flatter;");
-                else if (flatterVisplanes)
-                    fprintf(logFile, "flat;");
-                else
+                switch (visplaneRender)
+                {
+                    case 0:
                     fprintf(logFile, "normal;");
-
+                    break;
+                    case 1:
+                    fprintf(logFile, "flat;");
+                    break;
+                    case 2:
+                    fprintf(logFile, "flatter;");
+                    break;
+                }
+                
                 // Sky
                 if (flatSky)
                     fprintf(logFile, "flat;");

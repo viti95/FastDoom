@@ -749,7 +749,7 @@ void R_ExecuteSetViewSize(void)
 #if defined(MODE_T4050)
     colfunc = basecolfunc = R_DrawColumnText4050;
 
-    if (flatterVisplanes)
+    if (visplaneRender == 1)
     {
         spanfunc = R_DrawSpanFlatText4050;
     }
@@ -783,7 +783,7 @@ void R_ExecuteSetViewSize(void)
 #if defined(MODE_T4025)
     colfunc = basecolfunc = R_DrawColumnText4025;
 
-    if (flatterVisplanes)
+    if (visplaneRender == 1)
         spanfunc = R_DrawSpanFlatText4025;
     else
         spanfunc = R_DrawSpanText4025;
@@ -813,7 +813,7 @@ void R_ExecuteSetViewSize(void)
 #if defined(MODE_T8025)
     colfunc = basecolfunc = R_DrawColumnText8025;
 
-    if (flatterVisplanes)
+    if (visplaneRender == 1)
         spanfunc = R_DrawSpanFlatText8025;
     else
         spanfunc = R_DrawSpanText8025;
@@ -852,7 +852,7 @@ void R_ExecuteSetViewSize(void)
 #if defined(MODE_T8050) || defined(MODE_T8043)
     colfunc = basecolfunc = R_DrawColumnText8050;
 
-    if (flatterVisplanes)
+    if (visplaneRender == 1)
         spanfunc = R_DrawSpanFlatText8050;
     else
         spanfunc = R_DrawSpanText8050;
@@ -886,7 +886,7 @@ void R_ExecuteSetViewSize(void)
     case 0:
         colfunc = basecolfunc = R_DrawColumn;
 
-        if (flatterVisplanes)
+        if (visplaneRender == 1)
             spanfunc = R_DrawSpanFlat;
         else
             spanfunc = R_DrawSpan;
@@ -916,7 +916,7 @@ void R_ExecuteSetViewSize(void)
     case 1:
         colfunc = basecolfunc = R_DrawColumnLow;
 
-        if (flatterVisplanes)
+        if (visplaneRender == 1)
             spanfunc = R_DrawSpanFlatLow;
         else
             spanfunc = R_DrawSpanLow;
@@ -946,7 +946,7 @@ void R_ExecuteSetViewSize(void)
     case 2:
         colfunc = basecolfunc = R_DrawColumnPotato;
 
-        if (flatterVisplanes)
+        if (visplaneRender == 1)
             spanfunc = R_DrawSpanFlatPotato;
         else
             spanfunc = R_DrawSpanPotato;
@@ -981,7 +981,7 @@ void R_ExecuteSetViewSize(void)
     case 0:
         colfunc = basecolfunc = R_DrawColumnBackbuffer;
 
-        if (flatterVisplanes)
+        if (visplaneRender == 1)
             spanfunc = R_DrawSpanFlatBackbuffer;
         else
             spanfunc = R_DrawSpanBackbuffer;
@@ -1011,7 +1011,7 @@ void R_ExecuteSetViewSize(void)
     case 1:
         colfunc = basecolfunc = R_DrawColumnLowBackbuffer;
 
-        if (flatterVisplanes)
+        if (visplaneRender == 1)
             spanfunc = R_DrawSpanFlatLowBackbuffer;
         else
             spanfunc = R_DrawSpanLowBackbuffer;
@@ -1041,7 +1041,7 @@ void R_ExecuteSetViewSize(void)
     case 2:
         colfunc = basecolfunc = R_DrawColumnPotatoBackbuffer;
 
-        if (flatterVisplanes)
+        if (visplaneRender == 1)
             spanfunc = R_DrawSpanFlatPotatoBackbuffer;
         else
             spanfunc = R_DrawSpanPotatoBackbuffer;
@@ -1077,7 +1077,7 @@ void R_ExecuteSetViewSize(void)
     case 0:
         colfunc = basecolfunc = R_DrawColumnVBE2;
 
-        if (flatterVisplanes)
+        if (visplaneRender == 1)
             spanfunc = R_DrawSpanFlatVBE2;
         else
             spanfunc = R_DrawSpanVBE2;
@@ -1107,7 +1107,7 @@ void R_ExecuteSetViewSize(void)
     case 1:
         colfunc = basecolfunc = R_DrawColumnLowVBE2;
 
-        if (flatterVisplanes)
+        if (visplaneRender == 1)
             spanfunc = R_DrawSpanFlatLowVBE2;
         else
             spanfunc = R_DrawSpanLowVBE2;
@@ -1137,7 +1137,7 @@ void R_ExecuteSetViewSize(void)
     case 2:
         colfunc = basecolfunc = R_DrawColumnPotatoVBE2;
 
-        if (flatterVisplanes)
+        if (visplaneRender == 1)
             spanfunc = R_DrawSpanFlatPotatoVBE2;
         else
             spanfunc = R_DrawSpanPotatoVBE2;
@@ -1398,79 +1398,79 @@ void R_RenderPlayerView(void)
     NetUpdate();
 
 #if defined(MODE_T4050)
-    if (flatVisplanes)
-        R_DrawPlanesFlatVisplanesText4050();
+    if (visplaneRender == 2)
+        R_DrawPlanesFlatterText4050();
     else
         R_DrawPlanes();
 #endif
 #if defined(MODE_T4025)
-    if (flatVisplanes)
-        R_DrawPlanesFlatVisplanesText4025();
+    if (visplaneRender == 2)
+        R_DrawPlanesFlatterText4025();
     else
         R_DrawPlanes();
 #endif
 #if defined(MODE_T8025)
-    if (flatVisplanes)
-        R_DrawPlanesFlatVisplanesText8025();
+    if (visplaneRender == 2)
+        R_DrawPlanesFlatterText8025();
     else
         R_DrawPlanes();
 #endif
 #if defined(MODE_MDA)
-    R_DrawPlanesFlatVisplanesTextMDA();
+    R_DrawPlanesFlatterTextMDA();
 #endif
 
 #if defined(MODE_T8050) || defined(MODE_T8043)
-    if (flatVisplanes)
-        R_DrawPlanesFlatVisplanesText8050();
+    if (visplaneRender == 2)
+        R_DrawPlanesFlatterText8050();
     else
         R_DrawPlanes();
 #endif
 #if defined(MODE_Y)
-    if (flatVisplanes)
+    if (visplaneRender == 2)
         switch (detailshift)
         {
         case 0:
-            R_DrawPlanesFlatVisplanes();
+            R_DrawPlanesFlatter();
             break;
         case 1:
-            R_DrawPlanesFlatVisplanesLow();
+            R_DrawPlanesFlatterLow();
             break;
         case 2:
-            R_DrawPlanesFlatVisplanesPotato();
+            R_DrawPlanesFlatterPotato();
             break;
         }
     else
         R_DrawPlanes();
 #endif
 #if defined(USE_BACKBUFFER)
-    if (flatVisplanes)
+    if (visplaneRender == 2)
         switch (detailshift)
         {
         case 0:
-            R_DrawPlanesFlatVisplanesBackbuffer();
+            R_DrawPlanesFlatterBackbuffer();
             break;
         case 1:
-            R_DrawPlanesFlatVisplanesLowBackbuffer();
+            R_DrawPlanesFlatterLowBackbuffer();
             break;
         case 2:
-            R_DrawPlanesFlatVisplanesPotatoBackbuffer();
+            R_DrawPlanesFlatterPotatoBackbuffer();
             break;
         }
     else
         R_DrawPlanes();
 #endif
 #if defined(MODE_VBE2_DIRECT)
-    if (flatVisplanes)
+    if (visplaneRender == 2)
         switch (detailshift)
         {
         case 0:
-            R_DrawPlanesFlatVisplanesVBE2();
+            R_DrawPlanesFlatterVBE2();
             break;
         case 1:
-            R_DrawPlanesFlatVisplanesLowVBE2();
+            R_DrawPlanesFlatterLowVBE2();
             break;
         case 2:
-            R_DrawPlanesFlatVisplanesPotatoVBE2();
+            R_DrawPlanesFlatterPotatoVBE2();
             break;
         }
     else

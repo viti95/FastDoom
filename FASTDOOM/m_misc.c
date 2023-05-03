@@ -311,8 +311,7 @@ default_t defaults[] =
         {"near", &nearSprites, 0},
         {"nomelt", &noMelt, 0},
         {"invisibleRender", &invisibleRender, 0},
-        {"flatterVisplanes", &flatterVisplanes, 0},
-        {"flatVisplanes", &flatVisplanes, 0},
+        {"visplaneRender", &visplaneRender, 0},
         {"vsync", &waitVsync, 0},
 
         {"autorun", &autorun, 0},

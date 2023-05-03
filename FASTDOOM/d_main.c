@@ -83,10 +83,9 @@ boolean nomonsters;  // checkparm of -nomonsters
 boolean respawnparm; // checkparm of -respawn
 boolean fastparm;    // checkparm of -fast
 
-boolean flatVisplanes;
-boolean flatterVisplanes;
 boolean flatSky;
 int invisibleRender;
+int visplaneRender;
 boolean showFPS;
 boolean unlimitedRAM;
 boolean nearSprites;
@@ -1389,14 +1388,8 @@ void D_DoomMain(void)
 
     M_CheckParmOptional("-fps", &showFPS);
 
-    if (M_CheckParmOptional("-flatterVisplanes", &flatVisplanes) && flatterVisplanes)
-    {
-        flatterVisplanes = 0;
-    }
-    if (M_CheckParmOptional("-flatVisplanes", &flatterVisplanes) && flatVisplanes)
-    {
-        flatVisplanes = 0;
-    }
+    M_CheckParmOptionalValue("-flatVisplanes", &visplaneRender, 1);
+    M_CheckParmOptionalValue("-flatterVisplanes", &visplaneRender, 2);
 
     M_CheckParmOptional("-flatsky", &flatSky);
     M_CheckParmOptionalValue("-flatshadows", &invisibleRender, 1);
@@ -1408,8 +1401,7 @@ void D_DoomMain(void)
     M_CheckParmOptional("-uncapped", &uncappedFPS);
     M_CheckParmOptional("-vsync", &waitVsync);
     M_CheckParmOptional("-debugPort", &debugPort);
-    M_CheckParmDisable("-defVisplanes", &flatVisplanes);
-    M_CheckParmDisable("-defVisplanes", &flatterVisplanes);
+    M_CheckParmDisable("-defVisplanes", &visplaneRender);
     M_CheckParmDisable("-defSky", &flatSky);
     M_CheckParmDisable("-defShadows", &invisibleRender);
     M_CheckParmDisable("-far", &nearSprites);

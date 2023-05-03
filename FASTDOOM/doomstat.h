@@ -43,10 +43,9 @@ extern boolean nomonsters;  // checkparm of -nomonsters
 extern boolean respawnparm; // checkparm of -respawn
 extern boolean fastparm;    // checkparm of -fast
 
-extern boolean flatVisplanes;
-extern boolean flatterVisplanes;
 extern boolean flatSky;
 extern int invisibleRender;
+extern int visplaneRender;
 extern boolean showFPS;
 extern boolean unlimitedRAM;
 extern boolean nearSprites;
