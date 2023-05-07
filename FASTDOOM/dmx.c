@@ -346,6 +346,8 @@ int ASS_GetSoundCardCode(int sndDevice)
         return AudioCD;
     case snd_WAV:
         return FileWAV;
+    case snd_SBMIDI:
+        return SBMIDI;
     default:
         return -1;
     }

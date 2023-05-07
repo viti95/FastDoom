@@ -107,7 +107,8 @@ int I_GetSfxLumpNum(sfxinfo_t *sfx)
         'S',     //snd_OPL2LPT
         'S',     //snd_OPL3LPT
         'S',     //snd_CD
-        'S'      //snd_WAV
+        'S',     //snd_WAV
+        'S'      //snd_SBMIDI
     };
     char namebuf[9];
 
@@ -148,7 +149,7 @@ void I_sndArbitrateCards(void)
     // figure out what i've got to initialize
     //
     gus = snd_MusicDevice == snd_GUS || snd_SfxDevice == snd_GUS;
-    sb = snd_SfxDevice == snd_SB || snd_SfxDevice == snd_SBDirect;
+    sb = snd_SfxDevice == snd_SB || snd_SfxDevice == snd_SBDirect || snd_MusicDevice == snd_SBMIDI;
     ensoniq = snd_SfxDevice == snd_ENSONIQ;
     adlib = snd_MusicDevice == snd_Adlib || snd_MusicDevice == snd_SB || snd_MusicDevice == snd_PAS;
     oplxlptmus = snd_MusicDevice == snd_OPL2LPT || snd_MusicDevice == snd_OPL3LPT;

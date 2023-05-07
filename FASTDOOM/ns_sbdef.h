@@ -42,7 +42,6 @@
 #define DSP_Version201 0x0201
 #define DSP_Version3xx 0x0300
 #define DSP_Version4xx 0x0400
-#define DSP_SB16Version DSP_Version4xx
 
 #define DSP_MaxNormalRate 22000
 #define DSP_MaxHighSpeedRate 44000
@@ -69,6 +68,7 @@
 #define DSP_GetVersion 0xE1
 #define DSP_Reset 0xFFFF
 #define DSP_DirectDAC 0x10
+#define DSP_MIDIWritePoll 0x38
 
 #define DSP_SignedBit 0x10
 #define DSP_StereoBit 0x20
