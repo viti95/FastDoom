@@ -21,10 +21,6 @@
 #define MIDI_MONO_MODE_ON 0x7E
 #define MIDI_ALL_NOTES_OFF 0x7B
 
-//unsigned SBMIDI_Delay = 500;
-//unsigned SBMIDI_Delay = 5000;
-unsigned SBMIDI_Delay = 0x5000;
-
 /*---------------------------------------------------------------------
    Function: SBMIDI_SendMidi
 
@@ -161,12 +157,6 @@ int SBMIDI_Init()
     int status;
     int count;
     char *ptr;
-
-    ptr = USER_GetText("MPUDELAY");
-    if (ptr != NULL)
-    {
-        SBMIDI_Delay = (unsigned)atol(ptr);
-    }
 
     SBMIDI_Reset();
 
