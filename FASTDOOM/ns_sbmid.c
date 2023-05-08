@@ -123,42 +123,25 @@ void SBMIDI_PitchBend(int channel, int lsb, int msb)
 }
 
 /*---------------------------------------------------------------------
-   Function: SBMIDI_SendCommand
-
-   Sends a command to the MPU401 card.
----------------------------------------------------------------------*/
-
-void SBMIDI_SendCommand(int data)
-{
-    BLASTER_WriteDSP(DSP_MIDIWritePoll);
-    BLASTER_WriteDSP(data);
-}
-
-/*---------------------------------------------------------------------
    Function: SBMIDI_Reset
 
-   Resets the MPU401 card.
+   Resets the music card.
 ---------------------------------------------------------------------*/
 
 int SBMIDI_Reset(void)
 {
-    SBMIDI_SendCommand(SBMIDI_CmdReset);
-    return (SBMIDI_Ok);
+    SBMIDI_SendMidi(SBMIDI_CmdReset);
+    return SBMIDI_Ok;
 }
 
 /*---------------------------------------------------------------------
    Function: SBMIDI_Init
 
-   Detects and initializes the MPU401 card.
+   Detects and initializes the music card.
 ---------------------------------------------------------------------*/
 
 int SBMIDI_Init()
 {
-    int status;
-    int count;
-    char *ptr;
-
     SBMIDI_Reset();
-
     return SBMIDI_Ok;
 }
