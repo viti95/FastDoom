@@ -55,16 +55,19 @@ void R_DrawSkyFlatLow(void);
 // The Spectre/Invisibility effect.
 void R_DrawFuzzColumn(void);
 void R_DrawFuzzColumnSaturn(void);
+void R_DrawFuzzColumnFlatSaturn(void);
 void R_DrawFuzzColumnFast(void);
 void R_DrawFuzzColumnTrans(void);
 
 void R_DrawFuzzColumnLow(void);
 void R_DrawFuzzColumnSaturnLow(void);
+void R_DrawFuzzColumnFlatSaturnLow(void);
 void R_DrawFuzzColumnFastLow(void);
 void R_DrawFuzzColumnTransLow(void);
 
 void R_DrawFuzzColumnPotato(void);
 void R_DrawFuzzColumnSaturnPotato(void);
+void R_DrawFuzzColumnFlatSaturnPotato(void);
 void R_DrawFuzzColumnFastPotato(void);
 void R_DrawFuzzColumnTransPotato(void);
 
@@ -74,6 +77,7 @@ void R_DrawSkyFlatPotato(void);
 void R_DrawColumnText8050(void);
 void R_DrawFuzzColumnText8050(void);
 void R_DrawFuzzColumnSaturnText8050(void);
+void R_DrawFuzzColumnFlatSaturnText8050(void);
 void R_DrawSkyFlatText8050(void);
 void R_DrawSpanText8050(void);
 void R_DrawFuzzColumnFastText8050(void);
@@ -91,6 +95,7 @@ void R_DrawSkyFlatText8025(void);
 void R_DrawFuzzColumnText8025(void);
 void R_DrawFuzzColumnFastText8025(void);
 void R_DrawFuzzColumnSaturnText8025(void);
+void R_DrawFuzzColumnFlatSaturnText8025(void);
 void R_DrawFuzzColumnTransText8025(void);
 
 void R_DrawColumnText4025(void);
@@ -99,6 +104,7 @@ void R_DrawSkyFlatText4025(void);
 void R_DrawFuzzColumnText4025(void);
 void R_DrawFuzzColumnFastText4025(void);
 void R_DrawFuzzColumnSaturnText4025(void);
+void R_DrawFuzzColumnFlatSaturnText4025(void);
 void R_DrawFuzzColumnTransText4025(void);
 
 void R_DrawColumnText4050(void);
@@ -107,6 +113,7 @@ void R_DrawSkyFlatText4050(void);
 void R_DrawFuzzColumnText4050(void);
 void R_DrawFuzzColumnFastText4050(void);
 void R_DrawFuzzColumnSaturnText4050(void);
+void R_DrawFuzzColumnFlatSaturnText4050(void);
 void R_DrawFuzzColumnTransText4050(void);
 
 void R_DrawColumnBackbuffer(void);
@@ -130,6 +137,9 @@ void R_DrawSpanFlatPotatoBackbuffer(void);
 void R_DrawFuzzColumnSaturnBackbuffer(void);
 void R_DrawFuzzColumnSaturnLowBackbuffer(void);
 void R_DrawFuzzColumnSaturnPotatoBackbuffer(void);
+void R_DrawFuzzColumnFlatSaturnBackbuffer(void);
+void R_DrawFuzzColumnFlatSaturnLowBackbuffer(void);
+void R_DrawFuzzColumnFlatSaturnPotatoBackbuffer(void);
 void R_DrawFuzzColumnTransBackbuffer(void);
 void R_DrawFuzzColumnTransLowBackbuffer(void);
 void R_DrawFuzzColumnTransPotatoBackbuffer(void);
@@ -149,6 +159,9 @@ void R_DrawFuzzColumnFastPotatoVBE2(void);
 void R_DrawFuzzColumnSaturnVBE2(void);
 void R_DrawFuzzColumnSaturnLowVBE2(void);
 void R_DrawFuzzColumnSaturnPotatoVBE2(void);
+void R_DrawFuzzColumnFlatSaturnVBE2(void);
+void R_DrawFuzzColumnFlatSaturnLowVBE2(void);
+void R_DrawFuzzColumnFlatSaturnPotatoVBE2(void);
 void R_DrawFuzzColumnVBE2(void);
 void R_DrawFuzzColumnLowVBE2(void);
 void R_DrawFuzzColumnPotatoVBE2(void);

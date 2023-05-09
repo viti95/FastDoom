@@ -1393,8 +1393,9 @@ void D_DoomMain(void)
 
     M_CheckParmOptional("-flatsky", &flatSky);
     M_CheckParmOptionalValue("-flatshadows", &invisibleRender, 1);
-    M_CheckParmOptionalValue("-saturn", &invisibleRender, 2);
-    M_CheckParmOptionalValue("-translucent", &invisibleRender, 3);
+    M_CheckParmOptionalValue("-flatsaturn", &invisibleRender, 2);
+    M_CheckParmOptionalValue("-saturn", &invisibleRender, 3);
+    M_CheckParmOptionalValue("-translucent", &invisibleRender, 4);
     M_CheckParmOptional("-mono", &monoSound);
     M_CheckParmOptional("-near", &nearSprites);
     M_CheckParmOptional("-nomelt", &noMelt);

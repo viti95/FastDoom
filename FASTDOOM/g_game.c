@@ -1303,9 +1303,12 @@ void G_CheckDemoStatus(void)
                     fprintf(logFile, "flat;");
                     break;
                     case 2:
-                    fprintf(logFile, "saturn;");
+                    fprintf(logFile, "flatsaturn;");
                     break;
                     case 3:
+                    fprintf(logFile, "saturn;");
+                    break;
+                    case 4:
                     fprintf(logFile, "translucent;");
                     break;
                 }

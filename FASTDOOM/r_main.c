@@ -772,9 +772,12 @@ void R_ExecuteSetViewSize(void)
         fuzzcolfunc = R_DrawFuzzColumnFastText4050;
         break;
     case 2:
-        fuzzcolfunc = R_DrawFuzzColumnSaturnText4050;
+        fuzzcolfunc = R_DrawFuzzColumnFlatSaturnText4050;
         break;
     case 3:
+        fuzzcolfunc = R_DrawFuzzColumnSaturnText4050;
+        break;
+    case 4:
         fuzzcolfunc = R_DrawFuzzColumnTransText4050;
         break;
     }
@@ -802,9 +805,12 @@ void R_ExecuteSetViewSize(void)
         fuzzcolfunc = R_DrawFuzzColumnFastText4025;
         break;
     case 2:
-        fuzzcolfunc = R_DrawFuzzColumnSaturnText4025;
+        fuzzcolfunc = R_DrawFuzzColumnFlatSaturnText4025;
         break;
     case 3:
+        fuzzcolfunc = R_DrawFuzzColumnSaturnText4025;
+        break;
+    case 4:
         fuzzcolfunc = R_DrawFuzzColumnTransText4025;
         break;
     }
@@ -832,9 +838,12 @@ void R_ExecuteSetViewSize(void)
         fuzzcolfunc = R_DrawFuzzColumnFastText8025;
         break;
     case 2:
-        fuzzcolfunc = R_DrawFuzzColumnSaturnText8025;
+        fuzzcolfunc = R_DrawFuzzColumnFlatSaturnText8025;
         break;
     case 3:
+        fuzzcolfunc = R_DrawFuzzColumnSaturnText8025;
+        break;
+    case 4:
         fuzzcolfunc = R_DrawFuzzColumnTransText8025;
         break;
     }
@@ -871,9 +880,12 @@ void R_ExecuteSetViewSize(void)
         fuzzcolfunc = R_DrawFuzzColumnFastText8050;
         break;
     case 2:
-        fuzzcolfunc = R_DrawFuzzColumnSaturnText8050;
+        fuzzcolfunc = R_DrawFuzzColumnFlatSaturnText8050;
         break;
     case 3:
+        fuzzcolfunc = R_DrawFuzzColumnSaturnText8050;
+        break;
+    case 4:
         fuzzcolfunc = R_DrawFuzzColumnTransText8050;
         break;
     }
@@ -905,9 +917,12 @@ void R_ExecuteSetViewSize(void)
             fuzzcolfunc = R_DrawFuzzColumnFast;
             break;
         case 2:
-            fuzzcolfunc = R_DrawFuzzColumnSaturn;
+            fuzzcolfunc = R_DrawFuzzColumnFlatSaturn;
             break;
         case 3:
+            fuzzcolfunc = R_DrawFuzzColumnSaturn;
+            break;
+        case 4:
             fuzzcolfunc = R_DrawFuzzColumnTrans;
             break;
         }
@@ -935,9 +950,12 @@ void R_ExecuteSetViewSize(void)
             fuzzcolfunc = R_DrawFuzzColumnFastLow;
             break;
         case 2:
-            fuzzcolfunc = R_DrawFuzzColumnSaturnLow;
+            fuzzcolfunc = R_DrawFuzzColumnFlatSaturnLow;
             break;
         case 3:
+            fuzzcolfunc = R_DrawFuzzColumnSaturnLow;
+            break;
+        case 4:
             fuzzcolfunc = R_DrawFuzzColumnTransLow;
             break;
         }
@@ -965,9 +983,12 @@ void R_ExecuteSetViewSize(void)
             fuzzcolfunc = R_DrawFuzzColumnFastPotato;
             break;
         case 2:
-            fuzzcolfunc = R_DrawFuzzColumnSaturnPotato;
+            fuzzcolfunc = R_DrawFuzzColumnFlatSaturnPotato;
             break;
         case 3:
+            fuzzcolfunc = R_DrawFuzzColumnSaturnPotato;
+            break;
+        case 4:
             fuzzcolfunc = R_DrawFuzzColumnTransPotato;
             break;
         }
@@ -1000,9 +1021,12 @@ void R_ExecuteSetViewSize(void)
             fuzzcolfunc = R_DrawFuzzColumnFastBackbuffer;
             break;
         case 2:
-            fuzzcolfunc = R_DrawFuzzColumnSaturnBackbuffer;
+            fuzzcolfunc = R_DrawFuzzColumnFlatSaturnBackbuffer;
             break;
         case 3:
+            fuzzcolfunc = R_DrawFuzzColumnSaturnBackbuffer;
+            break;
+        case 4:
             fuzzcolfunc = R_DrawFuzzColumnTransBackbuffer;
             break;
         }
@@ -1030,9 +1054,12 @@ void R_ExecuteSetViewSize(void)
             fuzzcolfunc = R_DrawFuzzColumnFastLowBackbuffer;
             break;
         case 2:
-            fuzzcolfunc = R_DrawFuzzColumnSaturnLowBackbuffer;
+            fuzzcolfunc = R_DrawFuzzColumnFlatSaturnLowBackbuffer;
             break;
         case 3:
+            fuzzcolfunc = R_DrawFuzzColumnSaturnLowBackbuffer;
+            break;
+        case 4:
             fuzzcolfunc = R_DrawFuzzColumnTransLowBackbuffer;
             break;
         }
@@ -1060,9 +1087,12 @@ void R_ExecuteSetViewSize(void)
             fuzzcolfunc = R_DrawFuzzColumnFastPotatoBackbuffer;
             break;
         case 2:
-            fuzzcolfunc = R_DrawFuzzColumnSaturnPotatoBackbuffer;
+            fuzzcolfunc = R_DrawFuzzColumnFlatSaturnPotatoBackbuffer;
             break;
         case 3:
+            fuzzcolfunc = R_DrawFuzzColumnSaturnPotatoBackbuffer;
+            break;
+        case 4:
             fuzzcolfunc = R_DrawFuzzColumnTransPotatoBackbuffer;
             break;
         }
@@ -1096,9 +1126,12 @@ void R_ExecuteSetViewSize(void)
             fuzzcolfunc = R_DrawFuzzColumnFastVBE2;
             break;
         case 2:
-            fuzzcolfunc = R_DrawFuzzColumnSaturnVBE2;
+            fuzzcolfunc = R_DrawFuzzColumnFlatSaturnVBE2;
             break;
         case 3:
+            fuzzcolfunc = R_DrawFuzzColumnSaturnVBE2;
+            break;
+        case 4:
             fuzzcolfunc = R_DrawFuzzColumnTransVBE2;
             break;
         }
@@ -1126,9 +1159,12 @@ void R_ExecuteSetViewSize(void)
             fuzzcolfunc = R_DrawFuzzColumnFastLowVBE2;
             break;
         case 2:
-            fuzzcolfunc = R_DrawFuzzColumnSaturnLowVBE2;
+            fuzzcolfunc = R_DrawFuzzColumnFlatSaturnLowVBE2;
             break;
         case 3:
+            fuzzcolfunc = R_DrawFuzzColumnSaturnLowVBE2;
+            break;
+        case 4:
             fuzzcolfunc = R_DrawFuzzColumnTransLowVBE2;
             break;
         }
@@ -1156,9 +1192,12 @@ void R_ExecuteSetViewSize(void)
             fuzzcolfunc = R_DrawFuzzColumnFastPotatoVBE2;
             break;
         case 2:
-            fuzzcolfunc = R_DrawFuzzColumnSaturnPotatoVBE2;
+            fuzzcolfunc = R_DrawFuzzColumnFlatSaturnPotatoVBE2;
             break;
         case 3:
+            fuzzcolfunc = R_DrawFuzzColumnSaturnPotatoVBE2;
+            break;
+        case 4:
             fuzzcolfunc = R_DrawFuzzColumnTransPotatoVBE2;
             break;
         }

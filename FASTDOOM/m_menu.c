@@ -1154,9 +1154,12 @@ void M_DrawDisplay(void)
         V_WriteTextDirect(30, 10, "FLAT");
         break;
     case 2:
-        V_WriteTextDirect(30, 10, "SEGA SATURN");
+        V_WriteTextDirect(30, 10, "FLAT SEGA SATURN");
         break;
     case 3:
+        V_WriteTextDirect(30, 10, "SEGA SATURN");
+        break;
+    case 4:
         V_WriteTextDirect(30, 10, "TRANSLUCENT");
         break;
     }
@@ -1198,9 +1201,12 @@ void M_DrawDisplay(void)
         V_WriteTextDirect(45, 10, "FLAT");
         break;
     case 2:
-        V_WriteTextDirect(45, 10, "SEGA SATURN");
+        V_WriteTextDirect(45, 10, "FLAT SEGA SATURN");
         break;
     case 3:
+        V_WriteTextDirect(45, 10, "SEGA SATURN");
+        break;
+    case 4:
         V_WriteTextDirect(45, 10, "TRANSLUCENT");
         break;
     }
@@ -1242,9 +1248,12 @@ void M_DrawDisplay(void)
         V_WriteTextDirect(45, 21, "FLAT");
         break;
     case 2:
-        V_WriteTextDirect(45, 21, "SEGA SATURN");
+        V_WriteTextDirect(45, 21, "FLAT SEGA SATURN");
         break;
     case 3:
+        V_WriteTextDirect(45, 21, "SEGA SATURN");
+        break;
+    case 4:
         V_WriteTextDirect(45, 21, "TRANSLUCENT");
         break;
     }
@@ -1286,9 +1295,12 @@ void M_DrawDisplay(void)
         M_WriteText(214, 88, "FLAT");
         break;
     case 2:
-        M_WriteText(214, 88, "SEGA SATURN");
+        M_WriteText(214, 88, "FLAT SEGA SATURN");
         break;
     case 3:
+        M_WriteText(214, 88, "SEGA SATURN");
+        break;
+    case 4:
         M_WriteText(214, 88, "TRANSLUCENT");
         break;
     }
@@ -1553,10 +1565,10 @@ void M_ChangeInvisibleDetail()
 {
     invisibleRender++;
 
-    if (invisibleRender == 4)
+    if (invisibleRender == 5)
         invisibleRender = 0;
 
-    if (invisibleRender == 3)
+    if (invisibleRender == 4)
         R_InitTintMap();
     else
         R_CleanupTintMap();
@@ -1572,9 +1584,12 @@ void M_ChangeInvisibleDetail()
         players.message = "FLAT INVISIBILITY";
         break;
         case 2:
-        players.message = "SEGA SATURN INVISIBILITY";
+        players.message = "FLAT SEGA SATURN INVISIBILITY";
         break;
         case 3:
+        players.message = "SEGA SATURN INVISIBILITY";
+        break;
+        case 4:
         players.message = "TRANSLUCENT INVISIBILITY";
         break;
     }
