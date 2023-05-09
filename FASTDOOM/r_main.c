@@ -769,7 +769,7 @@ void R_ExecuteSetViewSize(void)
         fuzzcolfunc = R_DrawFuzzColumnText4050;
         break;
     case 1:
-        fuzzcolfunc = R_DrawFuzzColumnFastText4050;
+        fuzzcolfunc = R_DrawFuzzColumnFlatText4050;
         break;
     case 2:
         fuzzcolfunc = R_DrawFuzzColumnFlatSaturnText4050;
@@ -802,7 +802,7 @@ void R_ExecuteSetViewSize(void)
         fuzzcolfunc = R_DrawFuzzColumnText4025;
         break;
     case 1:
-        fuzzcolfunc = R_DrawFuzzColumnFastText4025;
+        fuzzcolfunc = R_DrawFuzzColumnFlatText4025;
         break;
     case 2:
         fuzzcolfunc = R_DrawFuzzColumnFlatSaturnText4025;
@@ -835,7 +835,7 @@ void R_ExecuteSetViewSize(void)
         fuzzcolfunc = R_DrawFuzzColumnText8025;
         break;
     case 1:
-        fuzzcolfunc = R_DrawFuzzColumnFastText8025;
+        fuzzcolfunc = R_DrawFuzzColumnFlatText8025;
         break;
     case 2:
         fuzzcolfunc = R_DrawFuzzColumnFlatSaturnText8025;
@@ -877,7 +877,7 @@ void R_ExecuteSetViewSize(void)
         fuzzcolfunc = R_DrawFuzzColumnText8050;
         break;
     case 1:
-        fuzzcolfunc = R_DrawFuzzColumnFastText8050;
+        fuzzcolfunc = R_DrawFuzzColumnFlatText8050;
         break;
     case 2:
         fuzzcolfunc = R_DrawFuzzColumnFlatSaturnText8050;
@@ -914,7 +914,7 @@ void R_ExecuteSetViewSize(void)
             fuzzcolfunc = R_DrawFuzzColumn;
             break;
         case 1:
-            fuzzcolfunc = R_DrawFuzzColumnFast;
+            fuzzcolfunc = R_DrawFuzzColumnFlat;
             break;
         case 2:
             fuzzcolfunc = R_DrawFuzzColumnFlatSaturn;
@@ -947,7 +947,7 @@ void R_ExecuteSetViewSize(void)
             fuzzcolfunc = R_DrawFuzzColumnLow;
             break;
         case 1:
-            fuzzcolfunc = R_DrawFuzzColumnFastLow;
+            fuzzcolfunc = R_DrawFuzzColumnFlatLow;
             break;
         case 2:
             fuzzcolfunc = R_DrawFuzzColumnFlatSaturnLow;
@@ -980,7 +980,7 @@ void R_ExecuteSetViewSize(void)
             fuzzcolfunc = R_DrawFuzzColumnPotato;
             break;
         case 1:
-            fuzzcolfunc = R_DrawFuzzColumnFastPotato;
+            fuzzcolfunc = R_DrawFuzzColumnFlatPotato;
             break;
         case 2:
             fuzzcolfunc = R_DrawFuzzColumnFlatSaturnPotato;
@@ -1018,7 +1018,7 @@ void R_ExecuteSetViewSize(void)
             fuzzcolfunc = R_DrawFuzzColumnBackbuffer;
             break;
         case 1:
-            fuzzcolfunc = R_DrawFuzzColumnFastBackbuffer;
+            fuzzcolfunc = R_DrawFuzzColumnFlatBackbuffer;
             break;
         case 2:
             fuzzcolfunc = R_DrawFuzzColumnFlatSaturnBackbuffer;
@@ -1051,7 +1051,7 @@ void R_ExecuteSetViewSize(void)
             fuzzcolfunc = R_DrawFuzzColumnLowBackbuffer;
             break;
         case 1:
-            fuzzcolfunc = R_DrawFuzzColumnFastLowBackbuffer;
+            fuzzcolfunc = R_DrawFuzzColumnFlatLowBackbuffer;
             break;
         case 2:
             fuzzcolfunc = R_DrawFuzzColumnFlatSaturnLowBackbuffer;
@@ -1084,7 +1084,7 @@ void R_ExecuteSetViewSize(void)
             fuzzcolfunc = R_DrawFuzzColumnPotatoBackbuffer;
             break;
         case 1:
-            fuzzcolfunc = R_DrawFuzzColumnFastPotatoBackbuffer;
+            fuzzcolfunc = R_DrawFuzzColumnFlatPotatoBackbuffer;
             break;
         case 2:
             fuzzcolfunc = R_DrawFuzzColumnFlatSaturnPotatoBackbuffer;
@@ -1123,7 +1123,7 @@ void R_ExecuteSetViewSize(void)
             fuzzcolfunc = R_DrawFuzzColumnVBE2;
             break;
         case 1:
-            fuzzcolfunc = R_DrawFuzzColumnFastVBE2;
+            fuzzcolfunc = R_DrawFuzzColumnFlatVBE2;
             break;
         case 2:
             fuzzcolfunc = R_DrawFuzzColumnFlatSaturnVBE2;
@@ -1156,7 +1156,7 @@ void R_ExecuteSetViewSize(void)
             fuzzcolfunc = R_DrawFuzzColumnLowVBE2;
             break;
         case 1:
-            fuzzcolfunc = R_DrawFuzzColumnFastLowVBE2;
+            fuzzcolfunc = R_DrawFuzzColumnFlatLowVBE2;
             break;
         case 2:
             fuzzcolfunc = R_DrawFuzzColumnFlatSaturnLowVBE2;
@@ -1189,7 +1189,7 @@ void R_ExecuteSetViewSize(void)
             fuzzcolfunc = R_DrawFuzzColumnPotatoVBE2;
             break;
         case 1:
-            fuzzcolfunc = R_DrawFuzzColumnFastPotatoVBE2;
+            fuzzcolfunc = R_DrawFuzzColumnFlatPotatoVBE2;
             break;
         case 2:
             fuzzcolfunc = R_DrawFuzzColumnFlatSaturnPotatoVBE2;

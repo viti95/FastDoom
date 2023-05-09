@@ -286,7 +286,7 @@ void R_DrawSkyFlatPotatoVBE2(void)
     };
 }
 
-void R_DrawFuzzColumnFastVBE2(void)
+void R_DrawFuzzColumnFlatVBE2(void)
 {
     int count;
     byte *dest;
@@ -314,7 +314,7 @@ void R_DrawFuzzColumnFastVBE2(void)
     };
 }
 
-void R_DrawFuzzColumnFastLowVBE2(void)
+void R_DrawFuzzColumnFlatLowVBE2(void)
 {
     int count;
     byte *dest;
@@ -361,7 +361,7 @@ void R_DrawFuzzColumnFastLowVBE2(void)
     };
 }
 
-void R_DrawFuzzColumnFastPotatoVBE2(void)
+void R_DrawFuzzColumnFlatPotatoVBE2(void)
 {
     int count;
     byte *dest;
@@ -1015,7 +1015,7 @@ void R_DrawSkyFlatText4050(void)
         *dest = vmem | 6 << 8 | 223;
     }
 }
-void R_DrawFuzzColumnFastText4050(void)
+void R_DrawFuzzColumnFlatText4050(void)
 {
     register int count;
     unsigned short *dest;
@@ -1323,7 +1323,7 @@ void R_DrawSkyFlatText4025(void)
         dest += 40;
     } while (dest <= count);
 }
-void R_DrawFuzzColumnFastText4025(void)
+void R_DrawFuzzColumnFlatText4025(void)
 {
     int count;
     unsigned short *dest;
@@ -2139,7 +2139,7 @@ void R_DrawFuzzColumnTransText8050(void)
 #endif
 
 #if defined(MODE_T8025)
-void R_DrawFuzzColumnFastText8025(void)
+void R_DrawFuzzColumnFlatText8025(void)
 {
     register int count;
     unsigned short *dest;
@@ -2186,7 +2186,7 @@ void R_DrawFuzzColumnFastText8025(void)
 #endif
 
 #if defined(MODE_T8050) || defined(MODE_T8043)
-void R_DrawFuzzColumnFastText8050(void)
+void R_DrawFuzzColumnFlatText8050(void)
 {
     int count;
     unsigned short *dest;
@@ -2361,7 +2361,7 @@ void R_DrawFuzzColumnPotato(void)
 #endif
 
 #if defined(MODE_Y)
-void R_DrawFuzzColumnFast(void)
+void R_DrawFuzzColumnFlat(void)
 {
     register int count;
     register byte *dest;
@@ -2393,7 +2393,7 @@ void R_DrawFuzzColumnFast(void)
 #endif
 
 #if defined(MODE_Y)
-void R_DrawFuzzColumnFastLow(void)
+void R_DrawFuzzColumnFlatLow(void)
 {
     register int count;
     register byte *dest;
@@ -2425,7 +2425,7 @@ void R_DrawFuzzColumnFastLow(void)
 #endif
 
 #if defined(MODE_Y)
-void R_DrawFuzzColumnFastPotato(void)
+void R_DrawFuzzColumnFlatPotato(void)
 {
     register int count;
     register byte *dest;
@@ -3973,7 +3973,7 @@ void R_DrawFuzzColumnPotatoBackbuffer(void)
     } while (count--);
 }
 
-void R_DrawFuzzColumnFastBackbuffer(void)
+void R_DrawFuzzColumnFlatBackbuffer(void)
 {
     int count;
     byte *dest;
@@ -4001,7 +4001,7 @@ void R_DrawFuzzColumnFastBackbuffer(void)
     };
 }
 
-void R_DrawFuzzColumnFastLowBackbuffer(void)
+void R_DrawFuzzColumnFlatLowBackbuffer(void)
 {
     int count;
     byte *dest;
@@ -4048,7 +4048,7 @@ void R_DrawFuzzColumnFastLowBackbuffer(void)
     };
 }
 
-void R_DrawFuzzColumnFastPotatoBackbuffer(void)
+void R_DrawFuzzColumnFlatPotatoBackbuffer(void)
 {
     int count;
     byte *dest;
