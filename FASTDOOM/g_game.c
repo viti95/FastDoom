@@ -1317,12 +1317,12 @@ void G_CheckDemoStatus(void)
                 fprintf(logFile, "%s;", demofile);
 
                 // Gametics, Realtics, FPS
-                fprintf(logFile, "%i;%u;%u,%u\n", gametic, realtics, resultfps / 1000, resultfps % 1000);
+                fprintf(logFile, "%i;%u;%u,%.3u\n", gametic, realtics, resultfps / 1000, resultfps % 1000);
                 fclose(logFile);
             }
         }
 
-        I_Error("Timed %i gametics in %u realtics. FPS: %u.%u", gametic, realtics, resultfps / 1000, resultfps % 1000);
+        I_Error("Timed %i gametics in %u realtics. FPS: %u.%.3u", gametic, realtics, resultfps / 1000, resultfps % 1000);
     }
 
     if (demoplayback)
