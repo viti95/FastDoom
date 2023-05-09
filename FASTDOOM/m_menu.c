@@ -1154,10 +1154,10 @@ void M_DrawDisplay(void)
         V_WriteTextDirect(30, 10, "FLAT");
         break;
     case 2:
-        V_WriteTextDirect(30, 10, "FLAT SEGA SATURN");
+        V_WriteTextDirect(30, 10, "FLAT SATURN");
         break;
     case 3:
-        V_WriteTextDirect(30, 10, "SEGA SATURN");
+        V_WriteTextDirect(30, 10, "SATURN");
         break;
     case 4:
         V_WriteTextDirect(30, 10, "TRANSLUCENT");
@@ -1201,10 +1201,10 @@ void M_DrawDisplay(void)
         V_WriteTextDirect(45, 10, "FLAT");
         break;
     case 2:
-        V_WriteTextDirect(45, 10, "FLAT SEGA SATURN");
+        V_WriteTextDirect(45, 10, "FLAT SATURN");
         break;
     case 3:
-        V_WriteTextDirect(45, 10, "SEGA SATURN");
+        V_WriteTextDirect(45, 10, "SATURN");
         break;
     case 4:
         V_WriteTextDirect(45, 10, "TRANSLUCENT");
@@ -1248,10 +1248,10 @@ void M_DrawDisplay(void)
         V_WriteTextDirect(45, 21, "FLAT");
         break;
     case 2:
-        V_WriteTextDirect(45, 21, "FLAT SEGA SATURN");
+        V_WriteTextDirect(45, 21, "FLAT SATURN");
         break;
     case 3:
-        V_WriteTextDirect(45, 21, "SEGA SATURN");
+        V_WriteTextDirect(45, 21, "SATURN");
         break;
     case 4:
         V_WriteTextDirect(45, 21, "TRANSLUCENT");
@@ -1295,10 +1295,10 @@ void M_DrawDisplay(void)
         M_WriteText(214, 88, "FLAT");
         break;
     case 2:
-        M_WriteText(214, 88, "FLAT SEGA SATURN");
+        M_WriteText(214, 88, "FLAT SATURN");
         break;
     case 3:
-        M_WriteText(214, 88, "SEGA SATURN");
+        M_WriteText(214, 88, "SATURN");
         break;
     case 4:
         M_WriteText(214, 88, "TRANSLUCENT");
