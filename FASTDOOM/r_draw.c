@@ -553,23 +553,19 @@ void R_DrawFuzzColumnFlatSaturnLowVBE2(void)
 
     do
     {
-        *(dest) = 0;
-        *(dest + 1) = 0;
-
+        *((unsigned short *)dest) = 0;
         dest += 2 * SCREENWIDTH;
     } while (count--);
 
     if ((dc_yh - dc_yl) & 1)
     {
-        *(dest) = 0;
-        *(dest + 1) = 0;
+        *((unsigned short *)dest) = 0;
     }
     else
     {
         if (!(initialdrawpos & 1))
         {
-            *(dest) = 0;
-            *(dest + 1) = 0;
+            *((unsigned short *)dest) = 0;
         }
     }
 }
@@ -683,29 +679,19 @@ void R_DrawFuzzColumnFlatSaturnPotatoVBE2(void)
 
     do
     {
-        *(dest) = 0;
-        *(dest + 1) = 0;
-        *(dest + 2) = 0;
-        *(dest + 3) = 0;
-
+        *((unsigned int *)dest) = 0;
         dest += 2 * SCREENWIDTH;
     } while (count--);
 
     if ((dc_yh - dc_yl) & 1)
     {
-        *(dest) = 0;
-        *(dest + 1) = 0;
-        *(dest + 2) = 0;
-        *(dest + 3) = 0;
+        *((unsigned int *)dest) = 0;
     }
     else
     {
         if (!(initialdrawpos & 1))
         {
-            *(dest) = 0;
-            *(dest + 1) = 0;
-            *(dest + 2) = 0;
-            *(dest + 3) = 0;
+            *((unsigned int *)dest) = 0;
         }
     }
 }
@@ -1111,7 +1097,7 @@ void R_DrawFuzzColumnFlatSaturnText4050(void)
             vmem = *dest;
 
             vmem = vmem & 0x0F00;
-            *dest = vmem | 0 << 12 | 223;
+            *dest = vmem | 223;
 
             dest += 40;
         } while (count--);
@@ -1120,7 +1106,7 @@ void R_DrawFuzzColumnFlatSaturnText4050(void)
         {
             vmem = *dest;
             vmem = vmem & 0x0F00;
-            *dest = vmem | 0 << 12 | 223;
+            *dest = vmem | 223;
         }
         else
         {
@@ -1128,7 +1114,7 @@ void R_DrawFuzzColumnFlatSaturnText4050(void)
             {
                 vmem = *dest;
                 vmem = vmem & 0x0F00;
-                *dest = vmem | 0 << 12 | 223;
+                *dest = vmem | 223;
             }
         }
     }
@@ -1139,7 +1125,7 @@ void R_DrawFuzzColumnFlatSaturnText4050(void)
             vmem = *dest;
 
             vmem = vmem & 0xF000;
-            *dest = vmem | 0 << 8 | 223;
+            *dest = vmem | 223;
 
             dest += 40;
         } while (count--);
@@ -1148,7 +1134,7 @@ void R_DrawFuzzColumnFlatSaturnText4050(void)
         {
             vmem = *dest;
             vmem = vmem & 0xF000;
-            *dest = vmem | 0 << 8 | 223;
+            *dest = vmem | 223;
         }
         else
         {
@@ -1156,7 +1142,7 @@ void R_DrawFuzzColumnFlatSaturnText4050(void)
             {
                 vmem = *dest;
                 vmem = vmem & 0xF000;
-                *dest = vmem | 0 << 8 | 223;
+                *dest = vmem | 223;
             }
         }
     }
@@ -1382,20 +1368,20 @@ void R_DrawFuzzColumnFlatSaturnText4025(void)
 
     do
     {
-        *dest = 0 | 219;
+        *dest = 219;
 
         dest += 80;
     } while (count--);
 
     if ((dc_yh - dc_yl) & 1)
     {
-        *dest = 0 | 219;
+        *dest = 219;
     }
     else
     {
         if (!(initialdrawpos & 1))
         {
-            *dest = 0 | 219;
+            *dest = 219;
         }
     }
 }
@@ -1899,7 +1885,7 @@ void R_DrawFuzzColumnFlatSaturnText8025(void)
             vmem = *dest;
 
             vmem = vmem & 0x0F00;
-            *dest = vmem | 0 << 12 | 223;
+            *dest = vmem | 223;
 
             dest += 80;
         } while (count--);
@@ -1908,7 +1894,7 @@ void R_DrawFuzzColumnFlatSaturnText8025(void)
         {
             vmem = *dest;
             vmem = vmem & 0x0F00;
-            *dest = vmem | 0 << 12 | 223;
+            *dest = vmem | 223;
         }
         else
         {
@@ -1916,7 +1902,7 @@ void R_DrawFuzzColumnFlatSaturnText8025(void)
             {
                 vmem = *dest;
                 vmem = vmem & 0x0F00;
-                *dest = vmem | 0 << 12 | 223;
+                *dest = vmem | 223;
             }
         }
     }
@@ -1927,7 +1913,7 @@ void R_DrawFuzzColumnFlatSaturnText8025(void)
             vmem = *dest;
 
             vmem = vmem & 0xF000;
-            *dest = vmem | 0 << 8 | 223;
+            *dest = vmem | 223;
 
             dest += 80;
         } while (count--);
@@ -1936,7 +1922,7 @@ void R_DrawFuzzColumnFlatSaturnText8025(void)
         {
             vmem = *dest;
             vmem = vmem & 0xF000;
-            *dest = vmem | 0 << 8 | 223;
+            *dest = vmem | 223;
         }
         else
         {
@@ -1944,7 +1930,7 @@ void R_DrawFuzzColumnFlatSaturnText8025(void)
             {
                 vmem = *dest;
                 vmem = vmem & 0xF000;
-                *dest = vmem | 0 << 8 | 223;
+                *dest = vmem | 223;
             }
         }
     }
@@ -2080,20 +2066,19 @@ void R_DrawFuzzColumnFlatSaturnText8050(void)
 
     do
     {
-        *dest = 0 << 8 | 219;
-
+        *dest = 219;
         dest += 160;
     } while (count--);
 
     if ((dc_yh - dc_yl) & 1)
     {
-        *dest = 0 << 8 | 219;
+        *dest = 219;
     }
     else
     {
         if (!(initialdrawpos & 1))
         {
-            *dest = 0 << 8 | 219;
+            *dest = 219;
         }
     }
 }
@@ -4316,23 +4301,19 @@ void R_DrawFuzzColumnFlatSaturnLowBackbuffer(void)
 
     do
     {
-        *(dest) = 0;
-        *(dest + 1) = 0;
-
+        *((unsigned short *)dest) = 0;
         dest += 2 * SCREENWIDTH;
     } while (count--);
 
     if ((dc_yh - dc_yl) & 1)
     {
-        *(dest) = 0;
-        *(dest + 1) = 0;
+        *((unsigned short *)dest) = 0;
     }
     else
     {
         if (!(initialdrawpos & 1))
         {
-            *(dest) = 0;
-            *(dest + 1) = 0;
+            *((unsigned short *)dest) = 0;
         }
     }
 }
@@ -4446,29 +4427,19 @@ void R_DrawFuzzColumnFlatSaturnPotatoBackbuffer(void)
 
     do
     {
-        *(dest) = 0;
-        *(dest + 1) = 0;
-        *(dest + 2) = 0;
-        *(dest + 3) = 0;
-
+        *((unsigned int *)dest) = 0;
         dest += 2 * SCREENWIDTH;
     } while (count--);
 
     if ((dc_yh - dc_yl) & 1)
     {
-        *(dest) = 0;
-        *(dest + 1) = 0;
-        *(dest + 2) = 0;
-        *(dest + 3) = 0;
+        *((unsigned int *)dest) = 0;
     }
     else
     {
         if (!(initialdrawpos & 1))
         {
-            *(dest) = 0;
-            *(dest + 1) = 0;
-            *(dest + 2) = 0;
-            *(dest + 3) = 0;
+            *((unsigned int *)dest) = 0;
         }
     }
 }
