@@ -22,7 +22,7 @@ int mouseSensitivity = 4;
 int showMessages = 1;
 int sfxVolume = 15;
 int musicVolume = 15;
-int detailLevel = 1;
+int detailLevel = 0;
 int screenblocks = 10;
 int usegamma = 0;
 

@@ -1134,7 +1134,7 @@ void M_DrawDisplay(void)
     V_WriteTextDirect(30, 2, waitVsync ? "ON" : "OFF");
 
     V_WriteTextDirect(7, 4, "Detail level:");
-    V_WriteTextDirect(30, 4, detailLevel == 2 ? "POTATO" : detailLevel == 1 ? "LOW"
+    V_WriteTextDirect(30, 4, detailLevel == DETAIL_POTATO ? "POTATO" : detailLevel == DETAIL_LOW ? "LOW"
                                                                             : "HIGH");
 
     V_WriteTextDirect(7, 6, "Visplane rendering:");
@@ -1181,7 +1181,7 @@ void M_DrawDisplay(void)
     V_WriteTextDirect(45, 2, waitVsync ? "ON" : "OFF");
 
     V_WriteTextDirect(15, 4, "Detail level:");
-    V_WriteTextDirect(45, 4, detailLevel == 2 ? "POTATO" : detailLevel == 1 ? "LOW"
+    V_WriteTextDirect(45, 4, detailLevel == DETAIL_POTATO ? "POTATO" : detailLevel == DETAIL_LOW ? "LOW"
                                                                             : "HIGH");
 
     V_WriteTextDirect(15, 6, "Visplane rendering:");
@@ -1228,7 +1228,7 @@ void M_DrawDisplay(void)
     V_WriteTextDirect(45, 5, waitVsync ? "ON" : "OFF");
 
     V_WriteTextDirect(15, 9, "Detail level:");
-    V_WriteTextDirect(45, 9, detailLevel == 2 ? "POTATO" : detailLevel == 1 ? "LOW"
+    V_WriteTextDirect(45, 9, detailLevel == DETAIL_POTATO ? "POTATO" : detailLevel == DETAIL_LOW ? "LOW"
                                                                             : "HIGH");
 
     V_WriteTextDirect(15, 13, "Visplane rendering:");
@@ -1275,7 +1275,7 @@ void M_DrawDisplay(void)
     M_WriteText(214, 24, waitVsync ? "ON" : "OFF");
 
     M_WriteText(58, 40, "DETAIL LEVEL:");
-    M_WriteText(214, 40, detailLevel == 2 ? "POTATO" : detailLevel == 1 ? "LOW"
+    M_WriteText(214, 40, detailLevel == DETAIL_POTATO ? "POTATO" : detailLevel == DETAIL_LOW ? "LOW"
                                                                         : "HIGH");
 
     M_WriteText(58, 56, "VISPLANE RENDERING:");
