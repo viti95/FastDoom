@@ -1253,13 +1253,13 @@ void G_CheckDemoStatus(void)
 
                 // Detail
                 switch(detailshift){
-                    case 0:
+                    case DETAIL_HIGH:
                     fprintf(logFile, "high;");
                     break;
-                    case 1:
+                    case DETAIL_LOW:
                     fprintf(logFile, "low;");
                     break;
-                    case 2:
+                    case DETAIL_POTATO:
                     fprintf(logFile, "potato;");
                     break;
                 }

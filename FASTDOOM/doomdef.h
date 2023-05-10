@@ -246,4 +246,12 @@ typedef enum
     NUM_VISPLANESRENDER
 } invisiblerender_t;
 
+typedef enum
+{
+    DETAIL_HIGH,
+    DETAIL_LOW,
+    DETAIL_POTATO,
+    NUM_DETAIL
+} detail_t;
+
 #endif // __DOOMDEF__

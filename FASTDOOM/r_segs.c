@@ -247,7 +247,7 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 				dc_yl = yl;
 
 #if defined(MODE_CGA16) || defined(MODE_CVB)
-				if (detailshift == 0)
+				if (detailshift == DETAIL_HIGH)
 				{
 					if ((dc_x & 1) == 0)
 						colfunc();
@@ -257,11 +257,11 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 #elif defined(MODE_CGA512)
 				switch (detailshift)
 				{
-				case 0:
+				case DETAIL_HIGH:
 					if ((dc_x & 3) == 0)
 						colfunc();
 					break;
-				case 1:
+				case DETAIL_LOW:
 					if ((dc_x & 1) == 0)
 						colfunc();
 					break;
@@ -427,7 +427,7 @@ void R_RenderSegLoop(void)
 				}
 
 #if defined(MODE_CGA16) || defined(MODE_CVB)
-				if (detailshift == 0)
+				if (detailshift == DETAIL_HIGH)
 				{
 					if ((dc_x & 1) == 0)
 						colfunc();
@@ -437,11 +437,11 @@ void R_RenderSegLoop(void)
 #elif defined(MODE_CGA512)
 				switch (detailshift)
 				{
-				case 0:
+				case DETAIL_HIGH:
 					if ((dc_x & 3) == 0)
 						colfunc();
 					break;
-				case 1:
+				case DETAIL_LOW:
 					if ((dc_x & 1) == 0)
 						colfunc();
 					break;
@@ -503,7 +503,7 @@ void R_RenderSegLoop(void)
 					}
 
 #if defined(MODE_CGA16) || defined(MODE_CVB)
-					if (detailshift == 0)
+					if (detailshift == DETAIL_HIGH)
 					{
 						if ((dc_x & 1) == 0)
 							colfunc();
@@ -513,11 +513,11 @@ void R_RenderSegLoop(void)
 #elif defined(MODE_CGA512)
 					switch (detailshift)
 					{
-					case 0:
+					case DETAIL_HIGH:
 						if ((dc_x & 3) == 0)
 							colfunc();
 						break;
-					case 1:
+					case DETAIL_LOW:
 						if ((dc_x & 1) == 0)
 							colfunc();
 						break;
@@ -583,7 +583,7 @@ void R_RenderSegLoop(void)
 					}
 
 #if defined(MODE_CGA16) || defined(MODE_CVB)
-					if (detailshift == 0)
+					if (detailshift == DETAIL_HIGH)
 					{
 						if ((dc_x & 1) == 0)
 							colfunc();
@@ -593,11 +593,11 @@ void R_RenderSegLoop(void)
 #elif defined(MODE_CGA512)
 					switch (detailshift)
 					{
-					case 0:
+					case DETAIL_HIGH:
 						if ((dc_x & 3) == 0)
 							colfunc();
 						break;
-					case 1:
+					case DETAIL_LOW:
 						if ((dc_x & 1) == 0)
 							colfunc();
 						break;

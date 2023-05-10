@@ -516,7 +516,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
     for (; col < w; x++, col++, desttop++)
     {
 #if defined(MODE_CGA16) || defined(MODE_CVBS)
-        if (detailshift == 0)
+        if (detailshift == DETAIL_HIGH)
             if ((int)desttop & 1)
                 continue;
 #endif
@@ -524,11 +524,11 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
 #if defined(MODE_CGA512)
         switch (detailshift)
         {
-        case 0:
+        case DETAIL_HIGH:
             if ((int)desttop & 3)
                 continue;
             break;
-        case 1:
+        case DETAIL_LOW:
             if ((int)desttop & 1)
                 continue;
             break;

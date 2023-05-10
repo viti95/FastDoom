@@ -1489,20 +1489,20 @@ void M_ChangeDetail()
 {
     detailLevel++;
 
-    if (detailLevel == 3)
-        detailLevel = 0;
+    if (detailLevel == NUM_DETAIL)
+        detailLevel = DETAIL_HIGH;
 
     R_SetViewSize(screenblocks, detailLevel);
 
     switch (detailLevel)
     {
-    case 0:
+    case DETAIL_HIGH:
         players.message = DETAILHI;
         break;
-    case 1:
+    case DETAIL_LOW:
         players.message = DETAILLO;
         break;
-    case 2:
+    case DETAIL_POTATO:
         players.message = DETAILPO;
         break;
     }
@@ -1513,7 +1513,7 @@ void M_ChangeVisplaneDetail()
     visplaneRender++;
 
     if (visplaneRender == NUM_VISPLANESRENDER)
-        visplaneRender = 0;
+        visplaneRender = VISPLANES_NORMAL;
 
     R_SetViewSize(screenblocks, detailLevel);
 
@@ -1566,7 +1566,7 @@ void M_ChangeInvisibleDetail()
     invisibleRender++;
 
     if (invisibleRender == NUM_INVISIBLERENDER)
-        invisibleRender = 0;
+        invisibleRender = INVISIBLE_NORMAL;
 
     if (invisibleRender == INVISIBLE_TRANSLUCENT)
         R_InitTintMap();

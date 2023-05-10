@@ -721,11 +721,11 @@ void R_ExecuteSetViewSize(void)
     if (forcePotatoDetail || forceLowDetail || forceHighDetail)
     {
         if (forceHighDetail)
-            detailshift = 0;
+            detailshift = DETAIL_HIGH;
         else if (forceLowDetail)
-            detailshift = 1;
+            detailshift = DETAIL_LOW;
         else
-            detailshift = 2;
+            detailshift = DETAIL_POTATO;
     }
     else
         detailshift = setdetail;
@@ -895,7 +895,7 @@ void R_ExecuteSetViewSize(void)
 #if defined(MODE_Y)
     switch (detailshift)
     {
-    case 0:
+    case DETAIL_HIGH:
         colfunc = basecolfunc = R_DrawColumn;
 
         if (visplaneRender == VISPLANES_FLAT)
@@ -928,7 +928,7 @@ void R_ExecuteSetViewSize(void)
         }
 
         break;
-    case 1:
+    case DETAIL_LOW:
         colfunc = basecolfunc = R_DrawColumnLow;
 
         if (visplaneRender == VISPLANES_FLAT)
@@ -961,7 +961,7 @@ void R_ExecuteSetViewSize(void)
         }
 
         break;
-    case 2:
+    case DETAIL_POTATO:
         colfunc = basecolfunc = R_DrawColumnPotato;
 
         if (visplaneRender == VISPLANES_FLAT)
@@ -999,7 +999,7 @@ void R_ExecuteSetViewSize(void)
 #if defined(USE_BACKBUFFER)
     switch (detailshift)
     {
-    case 0:
+    case DETAIL_HIGH:
         colfunc = basecolfunc = R_DrawColumnBackbuffer;
 
         if (visplaneRender == VISPLANES_FLAT)
@@ -1032,7 +1032,7 @@ void R_ExecuteSetViewSize(void)
         }
 
         break;
-    case 1:
+    case DETAIL_LOW:
         colfunc = basecolfunc = R_DrawColumnLowBackbuffer;
 
         if (visplaneRender == VISPLANES_FLAT)
@@ -1065,7 +1065,7 @@ void R_ExecuteSetViewSize(void)
         }
 
         break;
-    case 2:
+    case DETAIL_POTATO:
         colfunc = basecolfunc = R_DrawColumnPotatoBackbuffer;
 
         if (visplaneRender == VISPLANES_FLAT)
@@ -1104,7 +1104,7 @@ void R_ExecuteSetViewSize(void)
 #if defined(MODE_VBE2_DIRECT)
     switch (detailshift)
     {
-    case 0:
+    case DETAIL_HIGH:
         colfunc = basecolfunc = R_DrawColumnVBE2;
 
         if (visplaneRender == VISPLANES_FLAT)
@@ -1137,7 +1137,7 @@ void R_ExecuteSetViewSize(void)
         }
 
         break;
-    case 1:
+    case DETAIL_LOW:
         colfunc = basecolfunc = R_DrawColumnLowVBE2;
 
         if (visplaneRender == VISPLANES_FLAT)
@@ -1170,7 +1170,7 @@ void R_ExecuteSetViewSize(void)
         }
 
         break;
-    case 2:
+    case DETAIL_POTATO:
         colfunc = basecolfunc = R_DrawColumnPotatoVBE2;
 
         if (visplaneRender == VISPLANES_FLAT)
@@ -1424,7 +1424,7 @@ void R_RenderPlayerView(void)
 
 // Set potato mode VGA plane
 #if defined(MODE_Y)
-    if (detailshift == 2)
+    if (detailshift == DETAIL_POTATO)
     {
         outp(SC_INDEX + 1, 15);
     }
@@ -1468,13 +1468,13 @@ void R_RenderPlayerView(void)
     if (visplaneRender == VISPLANES_FLATTER)
         switch (detailshift)
         {
-        case 0:
+        case DETAIL_HIGH:
             R_DrawPlanesFlatter();
             break;
-        case 1:
+        case DETAIL_LOW:
             R_DrawPlanesFlatterLow();
             break;
-        case 2:
+        case DETAIL_POTATO:
             R_DrawPlanesFlatterPotato();
             break;
         }
@@ -1485,13 +1485,13 @@ void R_RenderPlayerView(void)
     if (visplaneRender == VISPLANES_FLATTER)
         switch (detailshift)
         {
-        case 0:
+        case DETAIL_HIGH:
             R_DrawPlanesFlatterBackbuffer();
             break;
-        case 1:
+        case DETAIL_LOW:
             R_DrawPlanesFlatterLowBackbuffer();
             break;
-        case 2:
+        case DETAIL_POTATO:
             R_DrawPlanesFlatterPotatoBackbuffer();
             break;
         }
@@ -1502,13 +1502,13 @@ void R_RenderPlayerView(void)
     if (visplaneRender == VISPLANES_FLATTER)
         switch (detailshift)
         {
-        case 0:
+        case DETAIL_HIGH:
             R_DrawPlanesFlatterVBE2();
             break;
-        case 1:
+        case DETAIL_LOW:
             R_DrawPlanesFlatterLowVBE2();
             break;
-        case 2:
+        case DETAIL_POTATO:
             R_DrawPlanesFlatterPotatoVBE2();
             break;
         }

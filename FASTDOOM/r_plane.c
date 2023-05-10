@@ -1423,7 +1423,7 @@ void R_DrawSky(visplane_t *pl)
         for (x = pl->minx; x <= pl->maxx; x++)
         {
 #if defined(MODE_CGA16) || defined(MODE_CVB)
-            if (detailshift == 0)
+            if (detailshift == DETAIL_HIGH)
                 if (x & 1)
                     continue;
 #endif
@@ -1431,11 +1431,11 @@ void R_DrawSky(visplane_t *pl)
 #if defined(MODE_CGA512)
             switch (detailshift)
             {
-            case 0:
+            case DETAIL_HIGH:
                 if (x & 3)
                     continue;
                 break;
-            case 1:
+            case DETAIL_LOW:
                 if (x & 1)
                     continue;
                 break;
@@ -1478,7 +1478,7 @@ void R_DrawSky(visplane_t *pl)
         for (x = pl->minx; x <= pl->maxx; x++)
         {
 #if defined(MODE_CGA16) || defined(MODE_CVB)
-            if (detailshift == 0)
+            if (detailshift == DETAIL_HIGH)
                 if (x & 1)
                     continue;
 #endif
@@ -1486,11 +1486,11 @@ void R_DrawSky(visplane_t *pl)
 #if defined(MODE_CGA512)
             switch (detailshift)
             {
-            case 0:
+            case DETAIL_HIGH:
                 if (x & 3)
                     continue;
                 break;
-            case 1:
+            case DETAIL_LOW:
                 if (x & 1)
                     continue;
                 break;
