@@ -27,9 +27,6 @@ typedef struct
     unsigned int tick;
 } songposition;
 
-#define MUSIC_LoopSong (1 == 1)
-#define MUSIC_PlayOnce (!MUSIC_LoopSong)
-
 int MUSIC_Init(int SoundCard, int Address);
 int MUSIC_Shutdown(void);
 void MUSIC_SetVolume(int volume);
