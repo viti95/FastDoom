@@ -1138,7 +1138,7 @@ void M_DrawDisplay(void)
                                                                             : "HIGH");
 
     V_WriteTextDirect(7, 6, "Visplane rendering:");
-    V_WriteTextDirect(30, 6, (visplaneRender == 0) ? "FULL" : (visplaneRender == 1) ? "FLAT"
+    V_WriteTextDirect(30, 6, (visplaneRender == VISPLANES_NORMAL) ? "FULL" : (visplaneRender == VISPLANES_FLAT) ? "FLAT"
                                                                                                : "FLATTER");
 
     V_WriteTextDirect(7, 8, "Sky rendering:");
@@ -1185,7 +1185,7 @@ void M_DrawDisplay(void)
                                                                             : "HIGH");
 
     V_WriteTextDirect(15, 6, "Visplane rendering:");
-    V_WriteTextDirect(45, 6, (visplaneRender == 0) ? "FULL" : (visplaneRender == 1) ? "FLAT"
+    V_WriteTextDirect(45, 6, (visplaneRender == VISPLANES_NORMAL) ? "FULL" : (visplaneRender == VISPLANES_FLAT) ? "FLAT"
                                                                                                : "FLATTER");
 
     V_WriteTextDirect(15, 8, "Sky rendering:");
@@ -1232,7 +1232,7 @@ void M_DrawDisplay(void)
                                                                             : "HIGH");
 
     V_WriteTextDirect(15, 13, "Visplane rendering:");
-    V_WriteTextDirect(45, 13, (visplaneRender == 0) ? "FULL" : (visplaneRender == 1) ? "FLAT"
+    V_WriteTextDirect(45, 13, (visplaneRender == VISPLANES_NORMAL) ? "FULL" : (visplaneRender == VISPLANES_FLAT) ? "FLAT"
                                                                                                 : "FLATTER");
 
     V_WriteTextDirect(15, 17, "Sky rendering:");
@@ -1279,7 +1279,7 @@ void M_DrawDisplay(void)
                                                                         : "HIGH");
 
     M_WriteText(58, 56, "VISPLANE RENDERING:");
-    M_WriteText(214, 56, (visplaneRender == 0) ? "FULL" : (visplaneRender == 1) ? "FLAT"
+    M_WriteText(214, 56, (visplaneRender == VISPLANES_NORMAL) ? "FULL" : (visplaneRender == VISPLANES_FLAT) ? "FLAT"
                                                                                            : "FLATTER");
 
     M_WriteText(58, 72, "SKY RENDERING:");
@@ -1512,20 +1512,20 @@ void M_ChangeVisplaneDetail()
 {
     visplaneRender++;
 
-    if (visplaneRender > 2)
+    if (visplaneRender == NUM_VISPLANESRENDER)
         visplaneRender = 0;
 
     R_SetViewSize(screenblocks, detailLevel);
 
     switch (visplaneRender)
     {
-        case 0:
+        case VISPLANES_NORMAL:
         players.message = "FULL VISPLANES";
         break;
-        case 1:
+        case VISPLANES_FLAT:
         players.message = "FLAT VISPLANES";
         break;
-        case 2:
+        case VISPLANES_FLATTER:
         players.message = "FLATTER VISPLANES";
         break;
     }

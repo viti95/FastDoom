@@ -238,4 +238,12 @@ typedef enum
     NUM_INVISIBLERENDER
 } invisiblerender_t;
 
+typedef enum
+{
+    VISPLANES_NORMAL,
+    VISPLANES_FLAT,
+    VISPLANES_FLATTER,
+    NUM_VISPLANESRENDER
+} invisiblerender_t;
+
 #endif // __DOOMDEF__

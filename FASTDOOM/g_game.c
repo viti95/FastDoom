@@ -1270,13 +1270,13 @@ void G_CheckDemoStatus(void)
                 // Visplanes
                 switch (visplaneRender)
                 {
-                    case 0:
+                    case VISPLANES_NORMAL:
                     fprintf(logFile, "normal;");
                     break;
-                    case 1:
+                    case VISPLANES_FLAT:
                     fprintf(logFile, "flat;");
                     break;
-                    case 2:
+                    case VISPLANES_FLATTER:
                     fprintf(logFile, "flatter;");
                     break;
                 }

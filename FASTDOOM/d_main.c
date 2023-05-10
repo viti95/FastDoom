@@ -1388,8 +1388,8 @@ void D_DoomMain(void)
 
     M_CheckParmOptional("-fps", &showFPS);
 
-    M_CheckParmOptionalValue("-flatVisplanes", &visplaneRender, 1);
-    M_CheckParmOptionalValue("-flatterVisplanes", &visplaneRender, 2);
+    M_CheckParmOptionalValue("-flatVisplanes", &visplaneRender, VISPLANES_FLAT);
+    M_CheckParmOptionalValue("-flatterVisplanes", &visplaneRender, VISPLANES_FLATTER);
 
     M_CheckParmOptional("-flatsky", &flatSky);
     M_CheckParmOptionalValue("-flatshadows", &invisibleRender, INVISIBLE_FLAT);

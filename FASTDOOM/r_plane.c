@@ -116,7 +116,7 @@ void R_MapPlane(int y, int x1)
     ds_x1 = x1;
     ds_y = y;
 
-    if (visplaneRender == 1)
+    if (visplaneRender == VISPLANES_FLAT)
     {
         if (planeheight != cachedheight[y])
         {
@@ -199,7 +199,7 @@ void R_ClearPlanes(void)
     lastvisplane = visplanes;
     lastopening = openings;
 
-    if (visplaneRender > 0)
+    if (visplaneRender > VISPLANES_NORMAL)
         return;
 
     // texture calculation

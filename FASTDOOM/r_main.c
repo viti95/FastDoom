@@ -749,7 +749,7 @@ void R_ExecuteSetViewSize(void)
 #if defined(MODE_T4050)
     colfunc = basecolfunc = R_DrawColumnText4050;
 
-    if (visplaneRender == 1)
+    if (visplaneRender == VISPLANES_FLAT)
     {
         spanfunc = R_DrawSpanFlatText4050;
     }
@@ -786,7 +786,7 @@ void R_ExecuteSetViewSize(void)
 #if defined(MODE_T4025)
     colfunc = basecolfunc = R_DrawColumnText4025;
 
-    if (visplaneRender == 1)
+    if (visplaneRender == VISPLANES_FLAT)
         spanfunc = R_DrawSpanFlatText4025;
     else
         spanfunc = R_DrawSpanText4025;
@@ -819,7 +819,7 @@ void R_ExecuteSetViewSize(void)
 #if defined(MODE_T8025)
     colfunc = basecolfunc = R_DrawColumnText8025;
 
-    if (visplaneRender == 1)
+    if (visplaneRender == VISPLANES_FLAT)
         spanfunc = R_DrawSpanFlatText8025;
     else
         spanfunc = R_DrawSpanText8025;
@@ -861,7 +861,7 @@ void R_ExecuteSetViewSize(void)
 #if defined(MODE_T8050) || defined(MODE_T8043)
     colfunc = basecolfunc = R_DrawColumnText8050;
 
-    if (visplaneRender == 1)
+    if (visplaneRender == VISPLANES_FLAT)
         spanfunc = R_DrawSpanFlatText8050;
     else
         spanfunc = R_DrawSpanText8050;
@@ -898,7 +898,7 @@ void R_ExecuteSetViewSize(void)
     case 0:
         colfunc = basecolfunc = R_DrawColumn;
 
-        if (visplaneRender == 1)
+        if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlat;
         else
             spanfunc = R_DrawSpan;
@@ -931,7 +931,7 @@ void R_ExecuteSetViewSize(void)
     case 1:
         colfunc = basecolfunc = R_DrawColumnLow;
 
-        if (visplaneRender == 1)
+        if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlatLow;
         else
             spanfunc = R_DrawSpanLow;
@@ -964,7 +964,7 @@ void R_ExecuteSetViewSize(void)
     case 2:
         colfunc = basecolfunc = R_DrawColumnPotato;
 
-        if (visplaneRender == 1)
+        if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlatPotato;
         else
             spanfunc = R_DrawSpanPotato;
@@ -1002,7 +1002,7 @@ void R_ExecuteSetViewSize(void)
     case 0:
         colfunc = basecolfunc = R_DrawColumnBackbuffer;
 
-        if (visplaneRender == 1)
+        if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlatBackbuffer;
         else
             spanfunc = R_DrawSpanBackbuffer;
@@ -1035,7 +1035,7 @@ void R_ExecuteSetViewSize(void)
     case 1:
         colfunc = basecolfunc = R_DrawColumnLowBackbuffer;
 
-        if (visplaneRender == 1)
+        if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlatLowBackbuffer;
         else
             spanfunc = R_DrawSpanLowBackbuffer;
@@ -1068,7 +1068,7 @@ void R_ExecuteSetViewSize(void)
     case 2:
         colfunc = basecolfunc = R_DrawColumnPotatoBackbuffer;
 
-        if (visplaneRender == 1)
+        if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlatPotatoBackbuffer;
         else
             spanfunc = R_DrawSpanPotatoBackbuffer;
@@ -1107,7 +1107,7 @@ void R_ExecuteSetViewSize(void)
     case 0:
         colfunc = basecolfunc = R_DrawColumnVBE2;
 
-        if (visplaneRender == 1)
+        if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlatVBE2;
         else
             spanfunc = R_DrawSpanVBE2;
@@ -1140,7 +1140,7 @@ void R_ExecuteSetViewSize(void)
     case 1:
         colfunc = basecolfunc = R_DrawColumnLowVBE2;
 
-        if (visplaneRender == 1)
+        if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlatLowVBE2;
         else
             spanfunc = R_DrawSpanLowVBE2;
@@ -1173,7 +1173,7 @@ void R_ExecuteSetViewSize(void)
     case 2:
         colfunc = basecolfunc = R_DrawColumnPotatoVBE2;
 
-        if (visplaneRender == 1)
+        if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlatPotatoVBE2;
         else
             spanfunc = R_DrawSpanPotatoVBE2;
@@ -1437,19 +1437,19 @@ void R_RenderPlayerView(void)
     NetUpdate();
 
 #if defined(MODE_T4050)
-    if (visplaneRender == 2)
+    if (visplaneRender == VISPLANES_FLATTER)
         R_DrawPlanesFlatterText4050();
     else
         R_DrawPlanes();
 #endif
 #if defined(MODE_T4025)
-    if (visplaneRender == 2)
+    if (visplaneRender == VISPLANES_FLATTER)
         R_DrawPlanesFlatterText4025();
     else
         R_DrawPlanes();
 #endif
 #if defined(MODE_T8025)
-    if (visplaneRender == 2)
+    if (visplaneRender == VISPLANES_FLATTER)
         R_DrawPlanesFlatterText8025();
     else
         R_DrawPlanes();
@@ -1459,13 +1459,13 @@ void R_RenderPlayerView(void)
 #endif
 
 #if defined(MODE_T8050) || defined(MODE_T8043)
-    if (visplaneRender == 2)
+    if (visplaneRender == VISPLANES_FLATTER)
         R_DrawPlanesFlatterText8050();
     else
         R_DrawPlanes();
 #endif
 #if defined(MODE_Y)
-    if (visplaneRender == 2)
+    if (visplaneRender == VISPLANES_FLATTER)
         switch (detailshift)
         {
         case 0:
@@ -1482,7 +1482,7 @@ void R_RenderPlayerView(void)
         R_DrawPlanes();
 #endif
 #if defined(USE_BACKBUFFER)
-    if (visplaneRender == 2)
+    if (visplaneRender == VISPLANES_FLATTER)
         switch (detailshift)
         {
         case 0:
@@ -1499,7 +1499,7 @@ void R_RenderPlayerView(void)
         R_DrawPlanes();
 #endif
 #if defined(MODE_VBE2_DIRECT)
-    if (visplaneRender == 2)
+    if (visplaneRender == VISPLANES_FLATTER)
         switch (detailshift)
         {
         case 0:
