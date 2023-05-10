@@ -87,14 +87,18 @@ int snd_DesiredMusicDevice;
 //
 int I_GetSfxLumpNum(sfxinfo_t *sfx)
 {
-    char namebuf[9];
-
     if (snd_SfxDevice > snd_PC)
-        sprintf(namebuf, "DS%s", sfx->name);
+    {
+        char namebuf[9] = "DS";
+        strcpy(namebuf+2, sfx->name);
+        return W_GetNumForName(namebuf);
+    }
     else
-        sprintf(namebuf, "DP%s", sfx->name);
-
-    return W_GetNumForName(namebuf);
+    {
+        char namebuf[9] = "DP";
+        strcpy(namebuf+2, sfx->name);
+        return W_GetNumForName(namebuf);
+    }
 }
 
 //
