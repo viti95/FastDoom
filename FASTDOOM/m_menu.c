@@ -1147,19 +1147,19 @@ void M_DrawDisplay(void)
     V_WriteTextDirect(7, 10, "Invisible rendering:");
     switch (invisibleRender)
     {
-    case 0:
+    case INVISIBLE_NORMAL:
         V_WriteTextDirect(30, 10, "FUZZY");
         break;
-    case 1:
+    case INVISIBLE_FLAT:
         V_WriteTextDirect(30, 10, "FLAT");
         break;
-    case 2:
+    case INVISIBLE_FLAT_SATURN:
         V_WriteTextDirect(30, 10, "FLAT SATURN");
         break;
-    case 3:
+    case INVISIBLE_SATURN:
         V_WriteTextDirect(30, 10, "SATURN");
         break;
-    case 4:
+    case INVISIBLE_TRANSLUCENT:
         V_WriteTextDirect(30, 10, "TRANSLUCENT");
         break;
     }
@@ -1194,19 +1194,19 @@ void M_DrawDisplay(void)
     V_WriteTextDirect(15, 10, "Invisible rendering:");
     switch (invisibleRender)
     {
-    case 0:
+    case INVISIBLE_NORMAL:
         V_WriteTextDirect(45, 10, "FUZZY");
         break;
-    case 1:
+    case INVISIBLE_FLAT:
         V_WriteTextDirect(45, 10, "FLAT");
         break;
-    case 2:
+    case INVISIBLE_FLAT_SATURN:
         V_WriteTextDirect(45, 10, "FLAT SATURN");
         break;
-    case 3:
+    case INVISIBLE_SATURN:
         V_WriteTextDirect(45, 10, "SATURN");
         break;
-    case 4:
+    case INVISIBLE_TRANSLUCENT:
         V_WriteTextDirect(45, 10, "TRANSLUCENT");
         break;
     }
@@ -1241,19 +1241,19 @@ void M_DrawDisplay(void)
     V_WriteTextDirect(15, 21, "Invisible rendering:");
     switch (invisibleRender)
     {
-    case 0:
+    case INVISIBLE_NORMAL:
         V_WriteTextDirect(45, 21, "FUZZY");
         break;
-    case 1:
+    case INVISIBLE_FLAT:
         V_WriteTextDirect(45, 21, "FLAT");
         break;
-    case 2:
+    case INVISIBLE_FLAT_SATURN:
         V_WriteTextDirect(45, 21, "FLAT SATURN");
         break;
-    case 3:
+    case INVISIBLE_SATURN:
         V_WriteTextDirect(45, 21, "SATURN");
         break;
-    case 4:
+    case INVISIBLE_TRANSLUCENT:
         V_WriteTextDirect(45, 21, "TRANSLUCENT");
         break;
     }
@@ -1288,19 +1288,19 @@ void M_DrawDisplay(void)
     M_WriteText(58, 88, "INVISIBLE RENDERING:");
     switch (invisibleRender)
     {
-    case 0:
+    case INVISIBLE_NORMAL:
         M_WriteText(214, 88, "FUZZY");
         break;
-    case 1:
+    case INVISIBLE_FLAT:
         M_WriteText(214, 88, "FLAT");
         break;
-    case 2:
+    case INVISIBLE_FLAT_SATURN:
         M_WriteText(214, 88, "FLAT SATURN");
         break;
-    case 3:
+    case INVISIBLE_SATURN:
         M_WriteText(214, 88, "SATURN");
         break;
-    case 4:
+    case INVISIBLE_TRANSLUCENT:
         M_WriteText(214, 88, "TRANSLUCENT");
         break;
     }
@@ -1565,10 +1565,10 @@ void M_ChangeInvisibleDetail()
 {
     invisibleRender++;
 
-    if (invisibleRender == 5)
+    if (invisibleRender == NUM_INVISIBLERENDER)
         invisibleRender = 0;
 
-    if (invisibleRender == 4)
+    if (invisibleRender == INVISIBLE_TRANSLUCENT)
         R_InitTintMap();
     else
         R_CleanupTintMap();
@@ -1577,19 +1577,19 @@ void M_ChangeInvisibleDetail()
 
     switch(invisibleRender)
     {
-        case 0:
+        case INVISIBLE_NORMAL:
         players.message = "FULL INVISIBILITY";
         break;
-        case 1:
+        case INVISIBLE_FLAT:
         players.message = "FLAT INVISIBILITY";
         break;
-        case 2:
+        case INVISIBLE_FLAT_SATURN:
         players.message = "FLAT SEGA SATURN INVISIBILITY";
         break;
-        case 3:
+        case INVISIBLE_SATURN:
         players.message = "SEGA SATURN INVISIBILITY";
         break;
-        case 4:
+        case INVISIBLE_TRANSLUCENT:
         players.message = "TRANSLUCENT INVISIBILITY";
         break;
     }

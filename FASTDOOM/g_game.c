@@ -1296,19 +1296,19 @@ void G_CheckDemoStatus(void)
                 // Transparent objects
                 switch(invisibleRender)
                 {
-                    case 0:
+                    case INVISIBLE_NORMAL:
                     fprintf(logFile, "normal;");
                     break;
-                    case 1:
+                    case INVISIBLE_FLAT:
                     fprintf(logFile, "flat;");
                     break;
-                    case 2:
+                    case INVISIBLE_FLAT_SATURN:
                     fprintf(logFile, "flatsaturn;");
                     break;
-                    case 3:
+                    case INVISIBLE_SATURN:
                     fprintf(logFile, "saturn;");
                     break;
-                    case 4:
+                    case INVISIBLE_TRANSLUCENT:
                     fprintf(logFile, "translucent;");
                     break;
                 }

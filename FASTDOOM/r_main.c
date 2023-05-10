@@ -765,19 +765,19 @@ void R_ExecuteSetViewSize(void)
 
     switch (invisibleRender)
     {
-    case 0:
+    case INVISIBLE_NORMAL:
         fuzzcolfunc = R_DrawFuzzColumnText4050;
         break;
-    case 1:
+    case INVISIBLE_FLAT:
         fuzzcolfunc = R_DrawFuzzColumnFlatText4050;
         break;
-    case 2:
+    case INVISIBLE_FLAT_SATURN:
         fuzzcolfunc = R_DrawFuzzColumnFlatSaturnText4050;
         break;
-    case 3:
+    case INVISIBLE_SATURN:
         fuzzcolfunc = R_DrawFuzzColumnSaturnText4050;
         break;
-    case 4:
+    case INVISIBLE_TRANSLUCENT:
         fuzzcolfunc = R_DrawFuzzColumnTransText4050;
         break;
     }
@@ -798,19 +798,19 @@ void R_ExecuteSetViewSize(void)
 
     switch (invisibleRender)
     {
-    case 0:
+    case INVISIBLE_NORMAL:
         fuzzcolfunc = R_DrawFuzzColumnText4025;
         break;
-    case 1:
+    case INVISIBLE_FLAT:
         fuzzcolfunc = R_DrawFuzzColumnFlatText4025;
         break;
-    case 2:
+    case INVISIBLE_FLAT_SATURN:
         fuzzcolfunc = R_DrawFuzzColumnFlatSaturnText4025;
         break;
-    case 3:
+    case INVISIBLE_SATURN:
         fuzzcolfunc = R_DrawFuzzColumnSaturnText4025;
         break;
-    case 4:
+    case INVISIBLE_TRANSLUCENT:
         fuzzcolfunc = R_DrawFuzzColumnTransText4025;
         break;
     }
@@ -831,19 +831,19 @@ void R_ExecuteSetViewSize(void)
 
     switch (invisibleRender)
     {
-    case 0:
+    case INVISIBLE_NORMAL:
         fuzzcolfunc = R_DrawFuzzColumnText8025;
         break;
-    case 1:
+    case INVISIBLE_FLAT:
         fuzzcolfunc = R_DrawFuzzColumnFlatText8025;
         break;
-    case 2:
+    case INVISIBLE_FLAT_SATURN:
         fuzzcolfunc = R_DrawFuzzColumnFlatSaturnText8025;
         break;
-    case 3:
+    case INVISIBLE_SATURN:
         fuzzcolfunc = R_DrawFuzzColumnSaturnText8025;
         break;
-    case 4:
+    case INVISIBLE_TRANSLUCENT:
         fuzzcolfunc = R_DrawFuzzColumnTransText8025;
         break;
     }
@@ -873,19 +873,19 @@ void R_ExecuteSetViewSize(void)
 
     switch (invisibleRender)
     {
-    case 0:
+    case INVISIBLE_NORMAL:
         fuzzcolfunc = R_DrawFuzzColumnText8050;
         break;
-    case 1:
+    case INVISIBLE_FLAT:
         fuzzcolfunc = R_DrawFuzzColumnFlatText8050;
         break;
-    case 2:
+    case INVISIBLE_FLAT_SATURN:
         fuzzcolfunc = R_DrawFuzzColumnFlatSaturnText8050;
         break;
-    case 3:
+    case INVISIBLE_SATURN:
         fuzzcolfunc = R_DrawFuzzColumnSaturnText8050;
         break;
-    case 4:
+    case INVISIBLE_TRANSLUCENT:
         fuzzcolfunc = R_DrawFuzzColumnTransText8050;
         break;
     }
@@ -910,19 +910,19 @@ void R_ExecuteSetViewSize(void)
 
         switch (invisibleRender)
         {
-        case 0:
+        case INVISIBLE_NORMAL:
             fuzzcolfunc = R_DrawFuzzColumn;
             break;
-        case 1:
+        case INVISIBLE_FLAT:
             fuzzcolfunc = R_DrawFuzzColumnFlat;
             break;
-        case 2:
+        case INVISIBLE_FLAT_SATURN:
             fuzzcolfunc = R_DrawFuzzColumnFlatSaturn;
             break;
-        case 3:
+        case INVISIBLE_SATURN:
             fuzzcolfunc = R_DrawFuzzColumnSaturn;
             break;
-        case 4:
+        case INVISIBLE_TRANSLUCENT:
             fuzzcolfunc = R_DrawFuzzColumnTrans;
             break;
         }
@@ -943,19 +943,19 @@ void R_ExecuteSetViewSize(void)
 
         switch (invisibleRender)
         {
-        case 0:
+        case INVISIBLE_NORMAL:
             fuzzcolfunc = R_DrawFuzzColumnLow;
             break;
-        case 1:
+        case INVISIBLE_FLAT:
             fuzzcolfunc = R_DrawFuzzColumnFlatLow;
             break;
-        case 2:
+        case INVISIBLE_FLAT_SATURN:
             fuzzcolfunc = R_DrawFuzzColumnFlatSaturnLow;
             break;
-        case 3:
+        case INVISIBLE_SATURN:
             fuzzcolfunc = R_DrawFuzzColumnSaturnLow;
             break;
-        case 4:
+        case INVISIBLE_TRANSLUCENT:
             fuzzcolfunc = R_DrawFuzzColumnTransLow;
             break;
         }
@@ -976,19 +976,19 @@ void R_ExecuteSetViewSize(void)
 
         switch (invisibleRender)
         {
-        case 0:
+        case INVISIBLE_NORMAL:
             fuzzcolfunc = R_DrawFuzzColumnPotato;
             break;
-        case 1:
+        case INVISIBLE_FLAT:
             fuzzcolfunc = R_DrawFuzzColumnFlatPotato;
             break;
-        case 2:
+        case INVISIBLE_FLAT_SATURN:
             fuzzcolfunc = R_DrawFuzzColumnFlatSaturnPotato;
             break;
-        case 3:
+        case INVISIBLE_SATURN:
             fuzzcolfunc = R_DrawFuzzColumnSaturnPotato;
             break;
-        case 4:
+        case INVISIBLE_TRANSLUCENT:
             fuzzcolfunc = R_DrawFuzzColumnTransPotato;
             break;
         }
@@ -1014,19 +1014,19 @@ void R_ExecuteSetViewSize(void)
 
         switch (invisibleRender)
         {
-        case 0:
+        case INVISIBLE_NORMAL:
             fuzzcolfunc = R_DrawFuzzColumnBackbuffer;
             break;
-        case 1:
+        case INVISIBLE_FLAT:
             fuzzcolfunc = R_DrawFuzzColumnFlatBackbuffer;
             break;
-        case 2:
+        case INVISIBLE_FLAT_SATURN:
             fuzzcolfunc = R_DrawFuzzColumnFlatSaturnBackbuffer;
             break;
-        case 3:
+        case INVISIBLE_SATURN:
             fuzzcolfunc = R_DrawFuzzColumnSaturnBackbuffer;
             break;
-        case 4:
+        case INVISIBLE_TRANSLUCENT:
             fuzzcolfunc = R_DrawFuzzColumnTransBackbuffer;
             break;
         }
@@ -1047,19 +1047,19 @@ void R_ExecuteSetViewSize(void)
 
         switch (invisibleRender)
         {
-        case 0:
+        case INVISIBLE_NORMAL:
             fuzzcolfunc = R_DrawFuzzColumnLowBackbuffer;
             break;
-        case 1:
+        case INVISIBLE_FLAT:
             fuzzcolfunc = R_DrawFuzzColumnFlatLowBackbuffer;
             break;
-        case 2:
+        case INVISIBLE_FLAT_SATURN:
             fuzzcolfunc = R_DrawFuzzColumnFlatSaturnLowBackbuffer;
             break;
-        case 3:
+        case INVISIBLE_SATURN:
             fuzzcolfunc = R_DrawFuzzColumnSaturnLowBackbuffer;
             break;
-        case 4:
+        case INVISIBLE_TRANSLUCENT:
             fuzzcolfunc = R_DrawFuzzColumnTransLowBackbuffer;
             break;
         }
@@ -1080,19 +1080,19 @@ void R_ExecuteSetViewSize(void)
 
         switch (invisibleRender)
         {
-        case 0:
+        case INVISIBLE_NORMAL:
             fuzzcolfunc = R_DrawFuzzColumnPotatoBackbuffer;
             break;
-        case 1:
+        case INVISIBLE_FLAT:
             fuzzcolfunc = R_DrawFuzzColumnFlatPotatoBackbuffer;
             break;
-        case 2:
+        case INVISIBLE_FLAT_SATURN:
             fuzzcolfunc = R_DrawFuzzColumnFlatSaturnPotatoBackbuffer;
             break;
-        case 3:
+        case INVISIBLE_SATURN:
             fuzzcolfunc = R_DrawFuzzColumnSaturnPotatoBackbuffer;
             break;
-        case 4:
+        case INVISIBLE_TRANSLUCENT:
             fuzzcolfunc = R_DrawFuzzColumnTransPotatoBackbuffer;
             break;
         }
@@ -1119,19 +1119,19 @@ void R_ExecuteSetViewSize(void)
 
         switch (invisibleRender)
         {
-        case 0:
+        case INVISIBLE_NORMAL:
             fuzzcolfunc = R_DrawFuzzColumnVBE2;
             break;
-        case 1:
+        case INVISIBLE_FLAT:
             fuzzcolfunc = R_DrawFuzzColumnFlatVBE2;
             break;
-        case 2:
+        case INVISIBLE_FLAT_SATURN:
             fuzzcolfunc = R_DrawFuzzColumnFlatSaturnVBE2;
             break;
-        case 3:
+        case INVISIBLE_SATURN:
             fuzzcolfunc = R_DrawFuzzColumnSaturnVBE2;
             break;
-        case 4:
+        case INVISIBLE_TRANSLUCENT:
             fuzzcolfunc = R_DrawFuzzColumnTransVBE2;
             break;
         }
@@ -1152,19 +1152,19 @@ void R_ExecuteSetViewSize(void)
 
         switch (invisibleRender)
         {
-        case 0:
+        case INVISIBLE_NORMAL:
             fuzzcolfunc = R_DrawFuzzColumnLowVBE2;
             break;
-        case 1:
+        case INVISIBLE_FLAT:
             fuzzcolfunc = R_DrawFuzzColumnFlatLowVBE2;
             break;
-        case 2:
+        case INVISIBLE_FLAT_SATURN:
             fuzzcolfunc = R_DrawFuzzColumnFlatSaturnLowVBE2;
             break;
-        case 3:
+        case INVISIBLE_SATURN:
             fuzzcolfunc = R_DrawFuzzColumnSaturnLowVBE2;
             break;
-        case 4:
+        case INVISIBLE_TRANSLUCENT:
             fuzzcolfunc = R_DrawFuzzColumnTransLowVBE2;
             break;
         }
@@ -1185,19 +1185,19 @@ void R_ExecuteSetViewSize(void)
 
         switch (invisibleRender)
         {
-        case 0:
+        case INVISIBLE_NORMAL:
             fuzzcolfunc = R_DrawFuzzColumnPotatoVBE2;
             break;
-        case 1:
+        case INVISIBLE_FLAT:
             fuzzcolfunc = R_DrawFuzzColumnFlatPotatoVBE2;
             break;
-        case 2:
+        case INVISIBLE_FLAT_SATURN:
             fuzzcolfunc = R_DrawFuzzColumnFlatSaturnPotatoVBE2;
             break;
-        case 3:
+        case INVISIBLE_SATURN:
             fuzzcolfunc = R_DrawFuzzColumnSaturnPotatoVBE2;
             break;
-        case 4:
+        case INVISIBLE_TRANSLUCENT:
             fuzzcolfunc = R_DrawFuzzColumnTransPotatoVBE2;
             break;
         }

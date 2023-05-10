@@ -779,7 +779,7 @@ void R_InitData(void)
     printf(".");
     R_InitColormaps();
     printf(".");
-    if (invisibleRender == 4)
+    if (invisibleRender == INVISIBLE_TRANSLUCENT)
         R_InitTintMap();
 }
 

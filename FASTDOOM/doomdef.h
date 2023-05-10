@@ -228,4 +228,14 @@ typedef enum
 
 #define KEY_LALT KEY_RALT
 
+typedef enum
+{
+    INVISIBLE_NORMAL,
+    INVISIBLE_FLAT,
+    INVISIBLE_FLAT_SATURN,
+    INVISIBLE_SATURN,
+    INVISIBLE_TRANSLUCENT,
+    NUM_INVISIBLERENDER
+} invisiblerender_t;
+
 #endif // __DOOMDEF__

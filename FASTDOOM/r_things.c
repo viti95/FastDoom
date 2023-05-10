@@ -264,7 +264,7 @@ void R_DrawVisSprite(vissprite_t *vis)
     if (!dc_colormap)
     {
         // NULL colormap = shadow draw
-        if (invisibleRender >= 3)
+        if (invisibleRender >= INVISIBLE_SATURN)
             dc_colormap = colormaps;
         colfunc = fuzzcolfunc;
     }
