@@ -310,7 +310,7 @@ void HU_Start(void)
 
 void HU_Drawer(void)
 {
-    static char str[32], *f;
+    static char str[16];
 
     HUlib_drawSText(&w_message);
 
@@ -340,9 +340,26 @@ void HU_Drawer(void)
         }
         else
         {
-            sprintf(str, "%u.%u", fps / 10, fps % 10);
+            //sprintf(str, "%u.%u", fps / 10, fps % 10);
+            //f = str;
+            char *f;
+            int fpswhole, fpsfrac, tmp;
+            fpswhole = Div10(fps);
+            fpsfrac  = fps - Mul10(fpswhole);
+            f = str + sizeof(str) - 1;
+            *f-- = '\0'; // NULL terminate
+            *f-- = '0' + fpsfrac; // Decimal digit
+            *f = '.' ; // dot
+            // Manual simple unsigned itoa for the whole part
+            while(1)
+            {
+                tmp = Div10(fpswhole);
+                *--f = '0' + fpswhole - Mul10(tmp);
+                if(tmp == 0)
+                    break;
+                fpswhole = tmp;
+            }
             HUlib_clearTextLine(&w_fps);
-            f = str;
             while (*f)
             {
                 HUlib_addCharToTextLine(&w_fps, *(f++));
