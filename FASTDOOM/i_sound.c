@@ -87,31 +87,13 @@ int snd_DesiredMusicDevice;
 //
 int I_GetSfxLumpNum(sfxinfo_t *sfx)
 {
-    const char snd_prefixen[] = {
-        'P',     //snd_none
-        'P',     //snd_PC
-        'S',     //snd_Adlib
-        'S',     //snd_SB
-        'S',     //snd_PAS
-        'S',     //snd_GUS
-        'S',     //snd_MPU
-        'S',     //snd_AWE
-        'S',     //snd_ENSONIQ
-        'S',     //snd_DISNEY
-        'S',     //snd_TANDY
-        'S',     //snd_PC1BIT
-        'S',     //snd_LPTDAC
-        'S',     //snd_SBDirect
-        'S',     //snd_PCPWM
-        'S',     //snd_CMS
-        'S',     //snd_OPL2LPT
-        'S',     //snd_OPL3LPT
-        'S',     //snd_CD
-        'S'      //snd_WAV
-    };
     char namebuf[9];
 
-    sprintf(namebuf, "D%c%s", snd_prefixen[snd_SfxDevice], sfx->name);
+    if (snd_SfxDevice > snd_PC)
+        sprintf(namebuf, "DS%s", sfx->name);
+    else
+        sprintf(namebuf, "DP%s", sfx->name);
+
     return W_GetNumForName(namebuf);
 }
 
