@@ -225,6 +225,39 @@ echo Executing full benchmarks...
 %2 -high -size 4 -defVisplanes -defSky -far -flatshadows -nofps -nomelt -iwad %3 -timedemo %4 -csv
 %2 -high -size 3 -defVisplanes -defSky -far -flatshadows -nofps -nomelt -iwad %3 -timedemo %4 -csv
 
+%2 -potato -size 12 -defVisplanes -defSky -far -flatsaturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -potato -size 11 -defVisplanes -defSky -far -flatsaturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -potato -size 10 -defVisplanes -defSky -far -flatsaturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -potato -size 9 -defVisplanes -defSky -far -flatsaturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -potato -size 8 -defVisplanes -defSky -far -flatsaturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -potato -size 7 -defVisplanes -defSky -far -flatsaturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -potato -size 6 -defVisplanes -defSky -far -flatsaturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -potato -size 5 -defVisplanes -defSky -far -flatsaturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -potato -size 4 -defVisplanes -defSky -far -flatsaturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -potato -size 3 -defVisplanes -defSky -far -flatsaturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
+
+%2 -low -size 12 -defVisplanes -defSky -far -flatsaturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -low -size 11 -defVisplanes -defSky -far -flatsaturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -low -size 10 -defVisplanes -defSky -far -flatsaturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -low -size 9 -defVisplanes -defSky -far -flatsaturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -low -size 8 -defVisplanes -defSky -far -flatsaturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -low -size 7 -defVisplanes -defSky -far -flatsaturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -low -size 6 -defVisplanes -defSky -far -flatsaturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -low -size 5 -defVisplanes -defSky -far -flatsaturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -low -size 4 -defVisplanes -defSky -far -flatsaturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -low -size 3 -defVisplanes -defSky -far -flatsaturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
+
+%2 -high -size 12 -defVisplanes -defSky -far -flatsaturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -high -size 11 -defVisplanes -defSky -far -flatsaturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -high -size 10 -defVisplanes -defSky -far -flatsaturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -high -size 9 -defVisplanes -defSky -far -flatsaturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -high -size 8 -defVisplanes -defSky -far -flatsaturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -high -size 7 -defVisplanes -defSky -far -flatsaturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -high -size 6 -defVisplanes -defSky -far -flatsaturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -high -size 5 -defVisplanes -defSky -far -flatsaturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -high -size 4 -defVisplanes -defSky -far -flatsaturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -high -size 3 -defVisplanes -defSky -far -flatsaturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
+
 %2 -potato -size 12 -defVisplanes -defSky -far -saturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
 %2 -potato -size 11 -defVisplanes -defSky -far -saturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
 %2 -potato -size 10 -defVisplanes -defSky -far -saturn -nofps -nomelt -iwad %3 -timedemo %4 -csv
