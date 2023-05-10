@@ -141,11 +141,13 @@
  -flatsky => Renders game skies as a flat color
  -flatshadows => Renders transparent enemies/player/items without fuzzy 
                  transparency
+ -flatsaturn => Renders transparent enemies/player/items with a half-tone
+            black pattern
  -saturn => Renders transparent enemies/player/items with a half-tone
             pattern
  -mono => Forces audio to be mono only
  -near => Renders close items only
- -nomelt => Disables melting transition (fast for 386 processors)
+ -nomelt => Disables melting transition (for 386 processors)
  -uncapped => Disables frame rate limit (35 fps)
  -vsync => Forces screen updates synchronized with the VSync
  -defVisplanes => Disable any optimization on visplanes
