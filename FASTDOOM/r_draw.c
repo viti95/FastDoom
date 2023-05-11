@@ -422,18 +422,18 @@ void R_DrawFuzzColumnFlatSaturnVBE2(void)
 {
     int count;
     byte *dest;
-    int initialdrawpos = 0;
+    int initialdrawpos;
 
     count = (dc_yh - dc_yl) / 2 - 1;
 
     if (count < 0)
         return;
 
-    initialdrawpos = dc_yl + dc_x;
+    initialdrawpos = (dc_yl + dc_x) & 1;
 
     dest = destview + Mul320(dc_yl) + dc_x;
 
-    if (initialdrawpos & 1)
+    if (initialdrawpos)
     {
         dest += SCREENWIDTH;
     }
@@ -450,7 +450,7 @@ void R_DrawFuzzColumnFlatSaturnVBE2(void)
     }
     else
     {
-        if (!(initialdrawpos & 1))
+        if (!(initialdrawpos))
         {
             *dest = 0;
         }
@@ -463,21 +463,21 @@ void R_DrawFuzzColumnSaturnVBE2(void)
     byte *dest;
     fixed_t frac;
     fixed_t fracstep;
-    int initialdrawpos = 0;
+    int initialdrawpos;
 
     count = (dc_yh - dc_yl) / 2 - 1;
 
     if (count < 0)
         return;
 
-    initialdrawpos = dc_yl + dc_x;
+    initialdrawpos = (dc_yl + dc_x) & 1;
 
     dest = destview + Mul320(dc_yl) + dc_x;
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
 
-    if (initialdrawpos & 1)
+    if (initialdrawpos)
     {
         dest += SCREENWIDTH;
         frac += fracstep;
@@ -499,7 +499,7 @@ void R_DrawFuzzColumnSaturnVBE2(void)
     }
     else
     {
-        if (!(initialdrawpos & 1))
+        if (!(initialdrawpos))
         {
             *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
         }
@@ -535,18 +535,18 @@ void R_DrawFuzzColumnFlatSaturnLowVBE2(void)
 {
     int count;
     byte *dest;
-    int initialdrawpos = 0;
+    int initialdrawpos;
 
     count = (dc_yh - dc_yl) / 2 - 1;
 
     if (count < 0)
         return;
 
-    initialdrawpos = dc_yl + dc_x;
+    initialdrawpos = (dc_yl + dc_x) & 1;
 
     dest = destview + Mul320(dc_yl) + (dc_x << 1);
 
-    if (initialdrawpos & 1)
+    if (initialdrawpos)
     {
         dest += SCREENWIDTH;
     }
@@ -563,7 +563,7 @@ void R_DrawFuzzColumnFlatSaturnLowVBE2(void)
     }
     else
     {
-        if (!(initialdrawpos & 1))
+        if (!(initialdrawpos))
         {
             *((unsigned short *)dest) = 0;
         }
@@ -576,21 +576,21 @@ void R_DrawFuzzColumnSaturnLowVBE2(void)
     byte *dest;
     fixed_t frac;
     fixed_t fracstep;
-    int initialdrawpos = 0;
+    int initialdrawpos;
 
     count = (dc_yh - dc_yl) / 2 - 1;
 
     if (count < 0)
         return;
 
-    initialdrawpos = dc_yl + dc_x;
+    initialdrawpos = (dc_yl + dc_x) & 1;
 
     dest = destview + Mul320(dc_yl) + (dc_x << 1);
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
 
-    if (initialdrawpos & 1)
+    if (initialdrawpos)
     {
         dest += SCREENWIDTH;
         frac += fracstep;
@@ -618,7 +618,7 @@ void R_DrawFuzzColumnSaturnLowVBE2(void)
     }
     else
     {
-        if (!(initialdrawpos & 1))
+        if (!(initialdrawpos))
         {
             lighttable_t color = dc_colormap[dc_source[(frac >> FRACBITS)]];
 
@@ -661,18 +661,18 @@ void R_DrawFuzzColumnFlatSaturnPotatoVBE2(void)
 {
     int count;
     byte *dest;
-    int initialdrawpos = 0;
+    int initialdrawpos;
 
     count = (dc_yh - dc_yl) / 2 - 1;
 
     if (count < 0)
         return;
 
-    initialdrawpos = dc_yl + dc_x;
+    initialdrawpos = (dc_yl + dc_x) & 1;
 
     dest = destview + Mul320(dc_yl) + (dc_x << 2);
 
-    if (initialdrawpos & 1)
+    if (initialdrawpos)
     {
         dest += SCREENWIDTH;
     }
@@ -689,7 +689,7 @@ void R_DrawFuzzColumnFlatSaturnPotatoVBE2(void)
     }
     else
     {
-        if (!(initialdrawpos & 1))
+        if (!(initialdrawpos))
         {
             *((unsigned int *)dest) = 0;
         }
@@ -702,21 +702,21 @@ void R_DrawFuzzColumnSaturnPotatoVBE2(void)
     byte *dest;
     fixed_t frac;
     fixed_t fracstep;
-    int initialdrawpos = 0;
+    int initialdrawpos;
 
     count = (dc_yh - dc_yl) / 2 - 1;
 
     if (count < 0)
         return;
 
-    initialdrawpos = dc_yl + dc_x;
+    initialdrawpos = (dc_yl + dc_x) & 1;
 
     dest = destview + Mul320(dc_yl) + (dc_x << 2);
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
 
-    if (initialdrawpos & 1)
+    if (initialdrawpos)
     {
         dest += SCREENWIDTH;
         frac += fracstep;
@@ -748,7 +748,7 @@ void R_DrawFuzzColumnSaturnPotatoVBE2(void)
     }
     else
     {
-        if (!(initialdrawpos & 1))
+        if (!(initialdrawpos))
         {
             lighttable_t color = dc_colormap[dc_source[(frac >> FRACBITS)]];
 
@@ -1066,18 +1066,18 @@ void R_DrawFuzzColumnFlatSaturnText4050(void)
     unsigned short *dest;
     byte odd;
     unsigned short vmem;
-    int initialdrawpos = 0;
+    int initialdrawpos;
 
     count = (dc_yh - dc_yl) / 2 - 1;
 
     if (count < 0)
         return;
 
-    initialdrawpos = dc_yl + dc_x;
+    initialdrawpos = (dc_yl + dc_x) & 1;
     odd = dc_yl & 1;
     dest = textdestscreen + Mul40(dc_yl / 2) + dc_x;
 
-    if (initialdrawpos & 1)
+    if (initialdrawpos)
     {
         if (odd)
         {
@@ -1110,7 +1110,7 @@ void R_DrawFuzzColumnFlatSaturnText4050(void)
         }
         else
         {
-            if (!(initialdrawpos & 1))
+            if (!(initialdrawpos))
             {
                 vmem = *dest;
                 vmem = vmem & 0x0F00;
@@ -1138,7 +1138,7 @@ void R_DrawFuzzColumnFlatSaturnText4050(void)
         }
         else
         {
-            if (!(initialdrawpos & 1))
+            if (!(initialdrawpos))
             {
                 vmem = *dest;
                 vmem = vmem & 0xF000;
@@ -1156,21 +1156,21 @@ void R_DrawFuzzColumnSaturnText4050(void)
     unsigned short *dest;
     byte odd;
     unsigned short vmem;
-    int initialdrawpos = 0;
+    int initialdrawpos;
 
     count = (dc_yh - dc_yl) / 2 - 1;
 
     if (count < 0)
         return;
 
-    initialdrawpos = dc_yl + dc_x;
+    initialdrawpos = (dc_yl + dc_x) & 1;
     odd = dc_yl & 1;
     dest = textdestscreen + Mul40(dc_yl / 2) + dc_x;
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
 
-    if (initialdrawpos & 1)
+    if (initialdrawpos)
     {
         if (odd)
         {
@@ -1208,7 +1208,7 @@ void R_DrawFuzzColumnSaturnText4050(void)
         }
         else
         {
-            if (!(initialdrawpos & 1))
+            if (!(initialdrawpos))
             {
                 vmem = *dest;
                 vmem = vmem & 0x0F00;
@@ -1238,7 +1238,7 @@ void R_DrawFuzzColumnSaturnText4050(void)
         }
         else
         {
-            if (!(initialdrawpos & 1))
+            if (!(initialdrawpos))
             {
                 vmem = *dest;
                 vmem = vmem & 0xF000;
@@ -1350,18 +1350,18 @@ void R_DrawFuzzColumnFlatSaturnText4025(void)
 {
     int count;
     unsigned short *dest;
-    int initialdrawpos = 0;
+    int initialdrawpos;
 
     count = (dc_yh - dc_yl) / 2 - 1;
 
     if (count < 0)
         return;
 
-    initialdrawpos = dc_yl + dc_x;
+    initialdrawpos = (dc_yl + dc_x) & 1;
 
     dest = textdestscreen + Mul40(dc_yl) + dc_x;
 
-    if (initialdrawpos & 1)
+    if (initialdrawpos)
     {
         dest += 40;
     }
@@ -1379,7 +1379,7 @@ void R_DrawFuzzColumnFlatSaturnText4025(void)
     }
     else
     {
-        if (!(initialdrawpos & 1))
+        if (!(initialdrawpos))
         {
             *dest = 219;
         }
@@ -1392,21 +1392,21 @@ void R_DrawFuzzColumnSaturnText4025(void)
     unsigned short *dest;
     fixed_t frac;
     fixed_t fracstep;
-    int initialdrawpos = 0;
+    int initialdrawpos;
 
     count = (dc_yh - dc_yl) / 2 - 1;
 
     if (count < 0)
         return;
 
-    initialdrawpos = dc_yl + dc_x;
+    initialdrawpos = (dc_yl + dc_x) & 1;
 
     dest = textdestscreen + Mul40(dc_yl) + dc_x;
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
 
-    if (initialdrawpos & 1)
+    if (initialdrawpos)
     {
         dest += 40;
         frac += fracstep;
@@ -1428,7 +1428,7 @@ void R_DrawFuzzColumnSaturnText4025(void)
     }
     else
     {
-        if (!(initialdrawpos & 1))
+        if (!(initialdrawpos))
         {
             *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 219;
         }
@@ -1854,18 +1854,18 @@ void R_DrawFuzzColumnFlatSaturnText8025(void)
     unsigned short *dest;
     byte odd;
     unsigned short vmem;
-    int initialdrawpos = 0;
+    int initialdrawpos;
 
     count = (dc_yh - dc_yl) / 2 - 1;
 
     if (count < 0)
         return;
 
-    initialdrawpos = dc_yl + dc_x;
+    initialdrawpos = (dc_yl + dc_x) & 1;
     odd = dc_yl & 1;
     dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
 
-    if (initialdrawpos & 1)
+    if (initialdrawpos)
     {
         if (odd)
         {
@@ -1898,7 +1898,7 @@ void R_DrawFuzzColumnFlatSaturnText8025(void)
         }
         else
         {
-            if (!(initialdrawpos & 1))
+            if (!(initialdrawpos))
             {
                 vmem = *dest;
                 vmem = vmem & 0x0F00;
@@ -1926,7 +1926,7 @@ void R_DrawFuzzColumnFlatSaturnText8025(void)
         }
         else
         {
-            if (!(initialdrawpos & 1))
+            if (!(initialdrawpos))
             {
                 vmem = *dest;
                 vmem = vmem & 0xF000;
@@ -1944,21 +1944,21 @@ void R_DrawFuzzColumnSaturnText8025(void)
     unsigned short *dest;
     byte odd;
     unsigned short vmem;
-    int initialdrawpos = 0;
+    int initialdrawpos;
 
     count = (dc_yh - dc_yl) / 2 - 1;
 
     if (count < 0)
         return;
 
-    initialdrawpos = dc_yl + dc_x;
+    initialdrawpos = (dc_yl + dc_x) & 1;
     odd = dc_yl & 1;
     dest = textdestscreen + Mul80(dc_yl / 2) + dc_x;
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
 
-    if (initialdrawpos & 1)
+    if (initialdrawpos)
     {
         if (odd)
         {
@@ -1996,7 +1996,7 @@ void R_DrawFuzzColumnSaturnText8025(void)
         }
         else
         {
-            if (!(initialdrawpos & 1))
+            if (!(initialdrawpos))
             {
                 vmem = *dest;
                 vmem = vmem & 0x0F00;
@@ -2026,7 +2026,7 @@ void R_DrawFuzzColumnSaturnText8025(void)
         }
         else
         {
-            if (!(initialdrawpos & 1))
+            if (!(initialdrawpos))
             {
                 vmem = *dest;
                 vmem = vmem & 0xF000;
@@ -2048,18 +2048,18 @@ void R_DrawFuzzColumnFlatSaturnText8050(void)
 {
     int count;
     unsigned short *dest;
-    int initialdrawpos = 0;
+    int initialdrawpos;
 
     count = (dc_yh - dc_yl) / 2 - 1;
 
     if (count < 0)
         return;
 
-    initialdrawpos = dc_yl + dc_x;
+    initialdrawpos = (dc_yl + dc_x) & 1;
 
     dest = textdestscreen + Mul80(dc_yl) + dc_x;
 
-    if (initialdrawpos & 1)
+    if (initialdrawpos)
     {
         dest += 80;
     }
@@ -2076,7 +2076,7 @@ void R_DrawFuzzColumnFlatSaturnText8050(void)
     }
     else
     {
-        if (!(initialdrawpos & 1))
+        if (!(initialdrawpos))
         {
             *dest = 219;
         }
@@ -2089,21 +2089,21 @@ void R_DrawFuzzColumnSaturnText8050(void)
     unsigned short *dest;
     fixed_t frac;
     fixed_t fracstep;
-    int initialdrawpos = 0;
+    int initialdrawpos;
 
     count = (dc_yh - dc_yl) / 2 - 1;
 
     if (count < 0)
         return;
 
-    initialdrawpos = dc_yl + dc_x;
+    initialdrawpos = (dc_yl + dc_x) & 1;
 
     dest = textdestscreen + Mul80(dc_yl) + dc_x;
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
 
-    if (initialdrawpos & 1)
+    if (initialdrawpos)
     {
         dest += 80;
         frac += fracstep;
@@ -2125,7 +2125,7 @@ void R_DrawFuzzColumnSaturnText8050(void)
     }
     else
     {
-        if (!(initialdrawpos & 1))
+        if (!(initialdrawpos))
         {
             *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 219;
         }
@@ -2767,7 +2767,7 @@ void R_DrawFuzzColumnFlatSaturn(void)
 {
     int count;
     byte *dest;
-    int initialdrawpos = 0;
+    int initialdrawpos;
 
     count = (dc_yh - dc_yl) / 2 - 1;
 
@@ -2776,11 +2776,11 @@ void R_DrawFuzzColumnFlatSaturn(void)
 
     outp(SC_INDEX + 1, 1 << (dc_x & 3));
 
-    initialdrawpos = dc_yl + dc_x;
+    initialdrawpos = (dc_yl + dc_x) & 1;
 
     dest = destview + Mul80(dc_yl) + (dc_x >> 2);
 
-    if (initialdrawpos & 1)
+    if (initialdrawpos)
     {
         dest += SCREENWIDTH / 4;
     }
@@ -2797,7 +2797,7 @@ void R_DrawFuzzColumnFlatSaturn(void)
     }
     else
     {
-        if (!(initialdrawpos & 1))
+        if (!(initialdrawpos))
         {
             *dest = 0;
         }
@@ -2810,7 +2810,7 @@ void R_DrawFuzzColumnSaturn(void)
     byte *dest;
     fixed_t frac;
     fixed_t fracstep;
-    int initialdrawpos = 0;
+    int initialdrawpos;
 
     count = (dc_yh - dc_yl) / 2 - 1;
 
@@ -2819,14 +2819,14 @@ void R_DrawFuzzColumnSaturn(void)
 
     outp(SC_INDEX + 1, 1 << (dc_x & 3));
 
-    initialdrawpos = dc_yl + dc_x;
+    initialdrawpos = (dc_yl + dc_x) & 1;
 
     dest = destview + Mul80(dc_yl) + (dc_x >> 2);
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
 
-    if (initialdrawpos & 1)
+    if (initialdrawpos)
     {
         dest += SCREENWIDTH / 4;
         frac += fracstep;
@@ -2847,7 +2847,7 @@ void R_DrawFuzzColumnSaturn(void)
     }
     else
     {
-        if (!(initialdrawpos & 1))
+        if (!(initialdrawpos))
         {
             *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
         }
@@ -2886,7 +2886,7 @@ void R_DrawFuzzColumnFlatSaturnLow(void)
 {
     int count;
     byte *dest;
-    int initialdrawpos = 0;
+    int initialdrawpos;
 
     count = (dc_yh - dc_yl) / 2 - 1;
 
@@ -2895,11 +2895,11 @@ void R_DrawFuzzColumnFlatSaturnLow(void)
 
     outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
 
-    initialdrawpos = dc_yl + dc_x;
+    initialdrawpos = (dc_yl + dc_x) & 1;
 
     dest = destview + Mul80(dc_yl) + (dc_x >> 1);
 
-    if (initialdrawpos & 1)
+    if (initialdrawpos)
     {
         dest += SCREENWIDTH / 4;
     }
@@ -2916,7 +2916,7 @@ void R_DrawFuzzColumnFlatSaturnLow(void)
     }
     else
     {
-        if (!(initialdrawpos & 1))
+        if (!(initialdrawpos))
         {
             *dest = 0;
         }
@@ -2929,7 +2929,7 @@ void R_DrawFuzzColumnSaturnLow(void)
     byte *dest;
     fixed_t frac;
     fixed_t fracstep;
-    int initialdrawpos = 0;
+    int initialdrawpos;
 
     count = (dc_yh - dc_yl) / 2 - 1;
 
@@ -2938,14 +2938,14 @@ void R_DrawFuzzColumnSaturnLow(void)
 
     outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
 
-    initialdrawpos = dc_yl + dc_x;
+    initialdrawpos = (dc_yl + dc_x) & 1;
 
     dest = destview + Mul80(dc_yl) + (dc_x >> 1);
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
 
-    if (initialdrawpos & 1)
+    if (initialdrawpos)
     {
         dest += SCREENWIDTH / 4;
         frac += fracstep;
@@ -2968,7 +2968,7 @@ void R_DrawFuzzColumnSaturnLow(void)
     }
     else
     {
-        if (!(initialdrawpos & 1))
+        if (!(initialdrawpos))
         {
             *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
         }
@@ -3006,18 +3006,18 @@ void R_DrawFuzzColumnFlatSaturnPotato(void)
 {
     int count;
     byte *dest;
-    int initialdrawpos = 0;
+    int initialdrawpos;
 
     count = (dc_yh - dc_yl) / 2 - 1;
 
     if (count < 0)
         return;
 
-    initialdrawpos = dc_yl + dc_x;
+    initialdrawpos = (dc_yl + dc_x) & 1;
 
     dest = destview + Mul80(dc_yl) + dc_x;
 
-    if (initialdrawpos & 1)
+    if (initialdrawpos)
     {
         dest += SCREENWIDTH / 4;
     }
@@ -3034,7 +3034,7 @@ void R_DrawFuzzColumnFlatSaturnPotato(void)
     }
     else
     {
-        if (!(initialdrawpos & 1))
+        if (!(initialdrawpos))
         {
             *dest = 0;
         }
@@ -3047,21 +3047,21 @@ void R_DrawFuzzColumnSaturnPotato(void)
     byte *dest;
     fixed_t frac;
     fixed_t fracstep;
-    int initialdrawpos = 0;
+    int initialdrawpos;
 
     count = (dc_yh - dc_yl) / 2 - 1;
 
     if (count < 0)
         return;
 
-    initialdrawpos = dc_yl + dc_x;
+    initialdrawpos = (dc_yl + dc_x) & 1;
 
     dest = destview + Mul80(dc_yl) + dc_x;
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
 
-    if (initialdrawpos & 1)
+    if (initialdrawpos)
     {
         dest += SCREENWIDTH / 4;
         frac += fracstep;
@@ -3083,7 +3083,7 @@ void R_DrawFuzzColumnSaturnPotato(void)
     }
     else
     {
-        if (!(initialdrawpos & 1))
+        if (!(initialdrawpos))
         {
             *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
         }
@@ -4170,18 +4170,18 @@ void R_DrawFuzzColumnFlatSaturnBackbuffer(void)
 {
     int count;
     byte *dest;
-    int initialdrawpos = 0;
+    int initialdrawpos;
 
     count = (dc_yh - dc_yl) / 2 - 1;
 
     if (count < 0)
         return;
 
-    initialdrawpos = dc_yl + dc_x;
+    initialdrawpos = (dc_yl + dc_x) & 1;
 
     dest = ylookup[dc_yl] + columnofs[dc_x];
 
-    if (initialdrawpos & 1)
+    if (initialdrawpos)
     {
         dest += SCREENWIDTH;
     }
@@ -4198,7 +4198,7 @@ void R_DrawFuzzColumnFlatSaturnBackbuffer(void)
     }
     else
     {
-        if (!(initialdrawpos & 1))
+        if (!(initialdrawpos))
         {
             *dest = 0;
         }
@@ -4211,21 +4211,21 @@ void R_DrawFuzzColumnSaturnBackbuffer(void)
     byte *dest;
     fixed_t frac;
     fixed_t fracstep;
-    int initialdrawpos = 0;
+    int initialdrawpos;
 
     count = (dc_yh - dc_yl) / 2 - 1;
 
     if (count < 0)
         return;
 
-    initialdrawpos = dc_yl + dc_x;
+    initialdrawpos = (dc_yl + dc_x) & 1;
 
     dest = ylookup[dc_yl] + columnofs[dc_x];
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
 
-    if (initialdrawpos & 1)
+    if (initialdrawpos)
     {
         dest += SCREENWIDTH;
         frac += fracstep;
@@ -4247,7 +4247,7 @@ void R_DrawFuzzColumnSaturnBackbuffer(void)
     }
     else
     {
-        if (!(initialdrawpos & 1))
+        if (!(initialdrawpos))
         {
             *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
         }
@@ -4283,18 +4283,18 @@ void R_DrawFuzzColumnFlatSaturnLowBackbuffer(void)
 {
     int count;
     byte *dest;
-    int initialdrawpos = 0;
+    int initialdrawpos;
 
     count = (dc_yh - dc_yl) / 2 - 1;
 
     if (count < 0)
         return;
 
-    initialdrawpos = dc_yl + dc_x;
+    initialdrawpos = (dc_yl + dc_x) & 1;
 
     dest = ylookup[dc_yl] + columnofs[dc_x];
 
-    if (initialdrawpos & 1)
+    if (initialdrawpos)
     {
         dest += SCREENWIDTH;
     }
@@ -4311,7 +4311,7 @@ void R_DrawFuzzColumnFlatSaturnLowBackbuffer(void)
     }
     else
     {
-        if (!(initialdrawpos & 1))
+        if (!(initialdrawpos))
         {
             *((unsigned short *)dest) = 0;
         }
@@ -4324,21 +4324,21 @@ void R_DrawFuzzColumnSaturnLowBackbuffer(void)
     byte *dest;
     fixed_t frac;
     fixed_t fracstep;
-    int initialdrawpos = 0;
+    int initialdrawpos;
 
     count = (dc_yh - dc_yl) / 2 - 1;
 
     if (count < 0)
         return;
 
-    initialdrawpos = dc_yl + dc_x;
+    initialdrawpos = (dc_yl + dc_x) & 1;
 
     dest = ylookup[dc_yl] + columnofs[dc_x];
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
 
-    if (initialdrawpos & 1)
+    if (initialdrawpos)
     {
         dest += SCREENWIDTH;
         frac += fracstep;
@@ -4366,7 +4366,7 @@ void R_DrawFuzzColumnSaturnLowBackbuffer(void)
     }
     else
     {
-        if (!(initialdrawpos & 1))
+        if (!(initialdrawpos))
         {
             lighttable_t color = dc_colormap[dc_source[(frac >> FRACBITS)]];
 
@@ -4409,18 +4409,18 @@ void R_DrawFuzzColumnFlatSaturnPotatoBackbuffer(void)
 {
     int count;
     byte *dest;
-    int initialdrawpos = 0;
+    int initialdrawpos;
 
     count = (dc_yh - dc_yl) / 2 - 1;
 
     if (count < 0)
         return;
 
-    initialdrawpos = dc_yl + dc_x;
+    initialdrawpos = (dc_yl + dc_x) & 1;
 
     dest = ylookup[dc_yl] + columnofs[dc_x];
 
-    if (initialdrawpos & 1)
+    if (initialdrawpos)
     {
         dest += SCREENWIDTH;
     }
@@ -4437,7 +4437,7 @@ void R_DrawFuzzColumnFlatSaturnPotatoBackbuffer(void)
     }
     else
     {
-        if (!(initialdrawpos & 1))
+        if (!(initialdrawpos))
         {
             *((unsigned int *)dest) = 0;
         }
@@ -4450,21 +4450,21 @@ void R_DrawFuzzColumnSaturnPotatoBackbuffer(void)
     byte *dest;
     fixed_t frac;
     fixed_t fracstep;
-    int initialdrawpos = 0;
+    int initialdrawpos;
 
     count = (dc_yh - dc_yl) / 2 - 1;
 
     if (count < 0)
         return;
 
-    initialdrawpos = dc_yl + dc_x;
+    initialdrawpos = (dc_yl + dc_x) & 1;
 
     dest = ylookup[dc_yl] + columnofs[dc_x];
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
 
-    if (initialdrawpos & 1)
+    if (initialdrawpos)
     {
         dest += SCREENWIDTH;
         frac += fracstep;
@@ -4496,7 +4496,7 @@ void R_DrawFuzzColumnSaturnPotatoBackbuffer(void)
     }
     else
     {
-        if (!(initialdrawpos & 1))
+        if (!(initialdrawpos))
         {
             lighttable_t color = dc_colormap[dc_source[(frac >> FRACBITS)]];
 
