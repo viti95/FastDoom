@@ -45,6 +45,7 @@ typedef enum
     snd_OPL3LPT,
     snd_CD,
     snd_WAV,
+    snd_SBMIDI,
     NUM_SCARDS
 } cardenum_t;
 

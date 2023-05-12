@@ -25,6 +25,7 @@ typedef enum
    OPL3LPT,
    AudioCD,
    FileWAV,
+   SBMIDI,
    NumSoundCards
 } soundcardnames;
 

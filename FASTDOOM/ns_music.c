@@ -7,6 +7,7 @@
 #include "ns_sbmus.h"
 #include "ns_pas16.h"
 #include "ns_sb.h"
+#include "ns_sbmid.h"
 #include "ns_gusmi.h"
 #include "ns_mp401.h"
 #include "ns_awe32.h"
@@ -63,6 +64,10 @@ int MUSIC_Init(int SoundCard, int Address)
     case GenMidi:
     case SoundScape:
         status = MUSIC_InitMidi(SoundCard, &MUSIC_MidiFunctions, Address);
+        break;
+
+    case SBMIDI:
+        status = MUSIC_InitSBMIDI(&MUSIC_MidiFunctions, Address);
         break;
 
     case Awe32:
@@ -129,6 +134,10 @@ int MUSIC_Shutdown(
     case GenMidi:
     case SoundScape:
         MPU_Reset();
+        break;
+
+    case SBMIDI:
+        SBMIDI_Reset();
         break;
 
     case Awe32:
@@ -234,6 +243,7 @@ int MUSIC_PlaySong(
     case SoundMan16:
     case GenMidi:
     case SoundScape:
+    case SBMIDI:
     case Awe32:
     case UltraSound:
     case CMS:
@@ -398,6 +408,31 @@ int MUSIC_InitMidi(
     Funcs->ProgramChange = MPU_ProgramChange;
     Funcs->ChannelAftertouch = MPU_ChannelAftertouch;
     Funcs->PitchBend = MPU_PitchBend;
+    Funcs->SetVolume = NULL;
+    Funcs->GetVolume = NULL;
+
+    MIDI_SetMidiFuncs(Funcs);
+
+    return (status);
+}
+
+int MUSIC_InitSBMIDI(
+    midifuncs *Funcs,
+    int Address)
+{
+    int status;
+
+    status = MUSIC_Ok;
+
+    SBMIDI_Init();
+
+    Funcs->NoteOff = SBMIDI_NoteOff;
+    Funcs->NoteOn = SBMIDI_NoteOn;
+    Funcs->PolyAftertouch = SBMIDI_PolyAftertouch;
+    Funcs->ControlChange = SBMIDI_ControlChange;
+    Funcs->ProgramChange = SBMIDI_ProgramChange;
+    Funcs->ChannelAftertouch = SBMIDI_ChannelAftertouch;
+    Funcs->PitchBend = SBMIDI_PitchBend;
     Funcs->SetVolume = NULL;
     Funcs->GetVolume = NULL;
 

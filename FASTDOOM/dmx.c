@@ -346,6 +346,8 @@ int ASS_GetSoundCardCode(int sndDevice)
         return AudioCD;
     case snd_WAV:
         return FileWAV;
+    case snd_SBMIDI:
+        return SBMIDI;
     default:
         return -1;
     }
@@ -364,6 +366,12 @@ void ASS_Init(int rate, int maxsng, int mdev, int sdev)
         status = MUSIC_Ok;
 
         music_device = ASS_GetSoundCardCode(mdev);
+
+        if (mdev == snd_SBMIDI)
+        {
+            FX_GetBlasterSettings(&dmx_blaster);
+            FX_SetupSoundBlaster(dmx_blaster);
+        }
 
         status = MUSIC_Init(music_device, dmx_mus_port);
 
