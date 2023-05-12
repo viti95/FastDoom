@@ -367,6 +367,12 @@ void ASS_Init(int rate, int maxsng, int mdev, int sdev)
 
         music_device = ASS_GetSoundCardCode(mdev);
 
+        if (mdev == snd_SBMIDI)
+        {
+            FX_GetBlasterSettings(&dmx_blaster);
+            FX_SetupSoundBlaster(dmx_blaster);
+        }
+
         status = MUSIC_Init(music_device, dmx_mus_port);
 
         if (status != MUSIC_Ok)
