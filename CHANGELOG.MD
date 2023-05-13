@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 0.9.6 (13 May 2023)
+* Add executable filename to benchmark (CSV)
+* Fix wrong fps display if 0XX after decimal point (@RamonUnch #145)
+* New invisible column renderer: Flat Sega Saturn (@RamonUnch idea)
+* Small code optimizations
+* Sound Blaster MIDI support (for Sound Blaster 1.0, 1.5, 2.0, Pro 1.0 and Pro 2.0)
+
 ## 0.9.5 (28 Apr 2023)
 * Sigma Designs Color 400 support. 320x200 and 16 colors. Tested only in 86Box, as I cannot make my card work on my 386/486 PCs.
 * Added low and potato detail for backbuffered and VBE2 direct modes
