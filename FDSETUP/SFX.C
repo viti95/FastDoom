@@ -984,6 +984,7 @@ int SetupFX(void)
 	case M_PC:
 	case M_CD:
 	case M_WAV:
+	case M_SBMIDI:
 		savefx = FALSE;
 		break;
 

@@ -36,7 +36,7 @@ char cards[M_LAST][20] = {
 	"Sound Blaster",
 	"Pro Audio Spectrum",
 	"Gravis Ultra Sound",
-	"General Midi",
+	"General MIDI",
 	"Sound Blaster AWE32",
 	"Ensoniq Soundscape",
 	"Disney Sound Source",
@@ -49,7 +49,8 @@ char cards[M_LAST][20] = {
 	"OPL2LPT",
 	"OPL3LPT",
 	"Audio-CD",
-	"PCM"
+	"PCM",
+	"Sound Blaster MIDI"
 	};
 
 char controls[C_LAST][20] = {

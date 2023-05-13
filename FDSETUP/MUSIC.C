@@ -200,6 +200,7 @@ enum
 	MCARD_CMS,
 	MCARD_CD,
 	MCARD_WAV,
+	MCARD_SBMIDI,
 	MCARD_NONE,
 	MCARD_MAX
 };
@@ -218,7 +219,8 @@ item_t mcarditems[] =
 		{MCARD_CMS, 26, 15, 28, -1, -1},
 		{MCARD_CD, 26, 16, 28, -1, -1},
 		{MCARD_WAV, 26, 17, 28, -1, -1},
-		{MCARD_NONE, 26, 18, 28, -1, -1}};
+		{MCARD_SBMIDI, 26, 18, 28, -1, -1},
+		{MCARD_NONE, 26, 19, 28, -1, -1}};
 
 menu_t mcardmenu =
 	{
@@ -266,6 +268,10 @@ int ChooseMusicCard(void) // RETURN: 0 = OK, -1 == ABORT
 
 	case M_WAV:
 		field = MCARD_WAV;
+		break;
+
+	case M_SBMIDI:
+		field = MCARD_SBMIDI;
 		break;
 
 	case M_PAS:
@@ -369,6 +375,11 @@ int ChooseMusicCard(void) // RETURN: 0 = OK, -1 == ABORT
 				newc.m.card = M_WAV;
 				newc.m.midiport = -1;
 				newc.m.pcmrate = 0;
+				goto func_exit;
+
+			case MCARD_SBMIDI:
+				newc.m.card = M_SBMIDI;
+				newc.m.midiport = -1;
 				goto func_exit;
 
 			case MCARD_NONE:
@@ -725,6 +736,7 @@ int SetupMusic(void)
 	case M_ENSONIQ:
 	case M_SBAWE32:
 	case M_SB:
+	case M_SBMIDI:
 		savemusic = TRUE;
 		break;
 
