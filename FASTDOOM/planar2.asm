@@ -171,7 +171,7 @@ CODE_SYM_DEF R_DrawColumn
   mov  ebx,[_dc_yl]
   mov  edi,[_ylookup+ebp*4]
   sub  ebp,ebx         ; ebp = pixel count
-  js   short done
+  js   .done
 
   ; set plane
   mov  ecx,[_dc_x]
@@ -192,18 +192,37 @@ CODE_SYM_DEF R_DrawColumn
 
   sub   eax,[_centery]
   imul  ecx
+
+  mov   esi,[_dc_source]
+
+  ; EVEN/ODD ?
+  test ebp,1
+  jne .odd
+
+.even:
+  mov   ebx,[_dc_texturemid]
+  shl   ecx,9 ; 7 significant bits, 25 frac
+  add   ebx,eax
+  shl   ebx,9 ; 7 significant bits, 25 frac
+
+  mov  edx,ebx
+  shr  edx,25 ; get address of first location
+
+  mov  eax,[_dc_colormap]
+  jmp  [scalecalls+4+ebp*4]
+
+.odd:
   mov   edx,[_dc_texturemid]
   shl   ecx,9 ; 7 significant bits, 25 frac
   add   edx,eax
-  mov   esi,[_dc_source]
   shl   edx,9 ; 7 significant bits, 25 frac
-  mov   eax,[_dc_colormap]
 
   mov  ebx,edx
   shr  ebx,25 ; get address of first location
+  mov  eax,[_dc_colormap]
   jmp  [scalecalls+4+ebp*4]
 
-done:
+.done:
 	pop		ebp
 	pop		esi
 	pop		edx
@@ -220,18 +239,25 @@ done:
 %assign LINE SCREENHEIGHT
 %rep SCREENHEIGHT-1
   SCALELABEL LINE:
-    mov  al,[esi+ebx]                   ; get source pixel
-    add  edx,ecx                        ; calculate next location
-    mov  al,[eax]                       ; translate the color
-    mov  ebx,edx
-    shr  ebx,25
-    mov  [edi-(LINE-1)*80],al           ; draw a pixel to the buffer
+    %if LINE % 2 = 1
+      mov  al,[esi+edx]                   ; get source pixel
+      lea  edx, [ebx+ecx]                 ; 386:2cc, 486:1cc
+      shr  ebx, 25                        ; 386:3cc, 486:2cc
+      mov  al,[eax]                       ; translate the color
+      mov  [edi-(LINE-1)*80],al           ; draw a pixel to the buffer
+    %else
+      mov  al,[esi+ebx]                   ; get source pixel
+      lea  ebx, [edx+ecx]                 ; 386:2cc, 486:1cc
+      shr  edx, 25                        ; 386:3cc, 486:2cc
+      mov  al,[eax]                       ; translate the color
+      mov  [edi-(LINE-1)*80],al           ; draw a pixel to the buffer
+    %endif
     %assign LINE LINE-1
 %endrep
 
 vscale1:
 	pop	ebp
-  mov al,[esi+ebx]
+  mov al,[esi+edx]
   pop	esi
   mov al,[eax]
   pop	edx
