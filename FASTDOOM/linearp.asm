@@ -104,8 +104,8 @@ CODE_SYM_DEF R_DrawColumnPotatoBackbuffer
 %assign LINE SCREENHEIGHT
 %rep SCREENHEIGHT-1
   SCALELABEL LINE:
-    xor  ebp,ebp
-    shld ebp,edx,7
+    mov  ebp,edx
+    shr  ebp,25
     mov  al,[esi+ebp]                   ; get source pixel
     add  edx,ecx                        ; calculate next location
     mov  bl,[eax]                       ; translate the color
@@ -116,9 +116,9 @@ CODE_SYM_DEF R_DrawColumnPotatoBackbuffer
 %endrep
 
 vscale1:
-  xor  ebp,ebp
+  mov  ebp,edx
   pop	ecx
-  shld ebp,edx,7
+  shr  ebp,25
   pop	ebx
   mov al,[esi+ebp]
   pop	ebp

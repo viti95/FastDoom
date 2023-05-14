@@ -80,8 +80,8 @@ CODE_SYM_DEF R_DrawColumnVBE2
   shl   edx,9 ; 7 significant bits, 25 frac
   mov   eax,[_dc_colormap]
 
-  xor   ebx,ebx
-  shld  ebx,edx,7 ; get address of first location
+  mov  ebx,edx
+  shr  ebx,25 ; get address of first location
   jmp  [scalecalls+4+ebp*4]
 
 .done:
