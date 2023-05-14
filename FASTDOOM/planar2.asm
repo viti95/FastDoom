@@ -204,16 +204,17 @@ CODE_SYM_DEF R_DrawColumn
 
   mov   esi,[_dc_source]
 
+  shl   ecx,9 ; 7 significant bits, 25 frac
+
   ; EVEN/ODD ?
   test ebp,1
   jne .odd
 
 .even:
   mov   ebx,[_dc_texturemid]
-  shl   ecx,9 ; 7 significant bits, 25 frac
+
   add   ebx,eax
   shl   ebx,9 ; 7 significant bits, 25 frac
-
   mov  edx,ebx
   shr  edx,25 ; get address of first location
 
@@ -222,7 +223,6 @@ CODE_SYM_DEF R_DrawColumn
 
 .odd:
   mov   edx,[_dc_texturemid]
-  shl   ecx,9 ; 7 significant bits, 25 frac
   add   edx,eax
   shl   edx,9 ; 7 significant bits, 25 frac
 
