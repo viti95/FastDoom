@@ -159,6 +159,15 @@ CODE_SYM_DEF R_DrawColumnLow
   ret
 ; R_DrawColumnLow ends
 
+hdone:
+	pop		ebp
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+  pop		edi
+  ret
+
 CODE_SYM_DEF R_DrawColumn
 	push		edi
 	push		ebx
@@ -171,7 +180,7 @@ CODE_SYM_DEF R_DrawColumn
   mov  ebx,[_dc_yl]
   mov  edi,[_ylookup+ebp*4]
   sub  ebp,ebx         ; ebp = pixel count
-  js   .done
+  js   near hdone
 
   ; set plane
   mov  ecx,[_dc_x]
@@ -221,15 +230,6 @@ CODE_SYM_DEF R_DrawColumn
   shr  ebx,25 ; get address of first location
   mov  eax,[_dc_colormap]
   jmp  [scalecalls+4+ebp*4]
-
-.done:
-	pop		ebp
-	pop		esi
-	pop		edx
-	pop		ecx
-	pop		ebx
-  pop		edi
-  ret
 ; R_DrawColumn ends
 
 %macro SCALELABEL 1
@@ -242,14 +242,14 @@ CODE_SYM_DEF R_DrawColumn
     %if LINE % 2 = 1
       mov  al,[esi+edx]                   ; get source pixel
       lea  edx, [ebx+ecx]                 ; 386:2cc, 486:1cc
-      shr  ebx, 25                        ; 386:3cc, 486:2cc
       mov  al,[eax]                       ; translate the color
+      shr  ebx, 25                        ; 386:3cc, 486:2cc
       mov  [edi-(LINE-1)*80],al           ; draw a pixel to the buffer
     %else
       mov  al,[esi+ebx]                   ; get source pixel
       lea  ebx, [edx+ecx]                 ; 386:2cc, 486:1cc
+      mov  al,[eax]                       ; translate the colorç
       shr  edx, 25                        ; 386:3cc, 486:2cc
-      mov  al,[eax]                       ; translate the color
       mov  [edi-(LINE-1)*80],al           ; draw a pixel to the buffer
     %endif
     %assign LINE LINE-1
