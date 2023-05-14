@@ -106,9 +106,9 @@ CODE_SYM_DEF R_DrawColumnVBE2
     mov  al,[esi+ebx]                    ; get source pixel
     add  edx,ecx                         ; calculate next location
     mov  al,[eax]                        ; translate the color    
-    xor  ebx,ebx
+    mov  ebx,edx
+    shr  ebx,25
     mov  [edi-(LINE-1)*SCREENWIDTH],al   ; draw a pixel to the buffer
-    shld ebx,edx,7
     %assign LINE LINE-1
 %endrep
 
