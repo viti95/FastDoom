@@ -41,6 +41,8 @@ extern _centery
 
 BEGIN_DATA_SECTION
 
+  jumpaddress:   dd 0
+
 %macro SCALEDEFINE 1
   dd vscale%1
 %endmacro
@@ -84,7 +86,9 @@ CODE_SYM_DEF R_DrawColumnPotato
   js   near pdone
 
   add  edi,[_destview]
+  mov esi, [scalecalls+4+ebp*4]
   add  edi,[_dc_x]
+  mov [jumpaddress], esi
 
   mov   ecx,[_dc_iscale]
 
@@ -101,24 +105,23 @@ CODE_SYM_DEF R_DrawColumnPotato
 
 .even:
   mov   ebx,[_dc_texturemid]
-
   add   ebx,eax
   shl   ebx,9 ; 7 significant bits, 25 frac
   mov  edx,ebx
   shr  edx,25 ; get address of first location
 
   mov  eax,[_dc_colormap]
-  jmp  [scalecalls+4+ebp*4]
+  jmp  [jumpaddress]
 
 .odd:
   mov   edx,[_dc_texturemid]
   add   edx,eax
   shl   edx,9 ; 7 significant bits, 25 frac
-
   mov  ebx,edx
   shr  ebx,25 ; get address of first location
+
   mov  eax,[_dc_colormap]
-  jmp  [scalecalls+4+ebp*4]
+  jmp  [jumpaddress]
 ; R_DrawColumnPotato ends
 
 ldone:
@@ -168,6 +171,9 @@ CODE_SYM_DEF R_DrawColumnLow
   sub   eax,[_centery]
   imul  ecx
 
+  mov esi, [scalecalls+4+ebp*4]
+  mov [jumpaddress], esi
+
   mov   esi,[_dc_source]
 
   shl   ecx,9 ; 7 significant bits, 25 frac
@@ -178,24 +184,23 @@ CODE_SYM_DEF R_DrawColumnLow
 
 .even:
   mov   ebx,[_dc_texturemid]
-
   add   ebx,eax
   shl   ebx,9 ; 7 significant bits, 25 frac
   mov  edx,ebx
   shr  edx,25 ; get address of first location
 
   mov  eax,[_dc_colormap]
-  jmp  [scalecalls+4+ebp*4]
+  jmp  [jumpaddress]
 
 .odd:
   mov   edx,[_dc_texturemid]
   add   edx,eax
   shl   edx,9 ; 7 significant bits, 25 frac
-
   mov  ebx,edx
   shr  ebx,25 ; get address of first location
+  
   mov  eax,[_dc_colormap]
-  jmp  [scalecalls+4+ebp*4]
+  jmp  [jumpaddress]
 ; R_DrawColumnLow ends
 
 hdone:
@@ -241,6 +246,9 @@ CODE_SYM_DEF R_DrawColumn
   sub   eax,[_centery]
   imul  ecx
 
+  mov esi, [scalecalls+4+ebp*4]
+  mov [jumpaddress], esi
+
   mov   esi,[_dc_source]
 
   shl   ecx,9 ; 7 significant bits, 25 frac
@@ -251,24 +259,23 @@ CODE_SYM_DEF R_DrawColumn
 
 .even:
   mov   ebx,[_dc_texturemid]
-
   add   ebx,eax
   shl   ebx,9 ; 7 significant bits, 25 frac
   mov  edx,ebx
   shr  edx,25 ; get address of first location
 
   mov  eax,[_dc_colormap]
-  jmp  [scalecalls+4+ebp*4]
+  jmp  [jumpaddress]
 
 .odd:
   mov   edx,[_dc_texturemid]
   add   edx,eax
   shl   edx,9 ; 7 significant bits, 25 frac
-
   mov  ebx,edx
   shr  ebx,25 ; get address of first location
+
   mov  eax,[_dc_colormap]
-  jmp  [scalecalls+4+ebp*4]
+  jmp  [jumpaddress]
 ; R_DrawColumn ends
 
 %macro SCALELABEL 1
