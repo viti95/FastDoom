@@ -104,12 +104,10 @@ CODE_SYM_DEF R_DrawColumnPotato
 
   add   ebx,eax
   shl   ebx,9 ; 7 significant bits, 25 frac
-  mov  edx,ebx
-  shr  edx,25 ; get address of first location
 
   lea  edx,[ebx+ecx]
   shr  ebx, 25
-  
+
   mov  eax,[_dc_colormap]
   jmp  [scalecalls+4+ebp*4]
 
@@ -117,9 +115,6 @@ CODE_SYM_DEF R_DrawColumnPotato
   mov   edx,[_dc_texturemid]
   add   edx,eax
   shl   edx,9 ; 7 significant bits, 25 frac
-
-  mov  ebx,edx
-  shr  ebx,25 ; get address of first location
 
   lea  ebx,[edx+ecx]
   shr  edx,25
@@ -188,8 +183,6 @@ CODE_SYM_DEF R_DrawColumnLow
 
   add   ebx,eax
   shl   ebx,9 ; 7 significant bits, 25 frac
-  mov  edx,ebx
-  shr  edx,25 ; get address of first location
 
   lea  edx,[ebx+ecx]
   shr  ebx, 25
@@ -201,9 +194,6 @@ CODE_SYM_DEF R_DrawColumnLow
   mov   edx,[_dc_texturemid]
   add   edx,eax
   shl   edx,9 ; 7 significant bits, 25 frac
-
-  mov  ebx,edx
-  shr  ebx,25 ; get address of first location
 
   lea  ebx,[edx+ecx]
   shr  edx,25
@@ -268,8 +258,6 @@ CODE_SYM_DEF R_DrawColumn
 
   add   ebx,eax
   shl   ebx,9 ; 7 significant bits, 25 frac
-  mov  edx,ebx
-  shr  edx,25 ; get address of first location
 
   lea  edx,[ebx+ecx]
   shr  ebx, 25
@@ -281,9 +269,6 @@ CODE_SYM_DEF R_DrawColumn
   mov   edx,[_dc_texturemid]
   add   edx,eax
   shl   edx,9 ; 7 significant bits, 25 frac
-
-  mov  ebx,edx
-  shr  ebx,25 ; get address of first location
 
   lea  ebx,[edx+ecx]
   shr  edx,25
