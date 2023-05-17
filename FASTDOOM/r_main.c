@@ -892,21 +892,48 @@ void R_ExecuteSetViewSize(void)
     switch (detailshift)
     {
     case DETAIL_HIGH:
-        colfunc = basecolfunc = R_DrawColumn;
+        switch(selectedCPU)
+        {
+            case INTEL_386SX:
+            case INTEL_386DX:
+            case CYRIX_486:
+                colfunc = basecolfunc = R_DrawColumnCyrix;
+                break;
+            default:
+                colfunc = basecolfunc = R_DrawColumn;
+                break;
+        }
 
         if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlat;
         else
-            if (selectedCPU == INTEL_386SX)
-                spanfunc = R_DrawSpan386SX;
-            else
-                spanfunc = R_DrawSpan;
+            switch(selectedCPU)
+            {
+                case INTEL_386SX:
+                case INTEL_386DX:
+                case CYRIX_486:
+                    spanfunc = R_DrawSpan386SX;
+                    break;
+                default:
+                    spanfunc = R_DrawSpan;
+                    break;
+            }
 
         if (flatSky)
             skyfunc = R_DrawSkyFlat;
         else
-            skyfunc = R_DrawColumn;
-
+            switch(selectedCPU)
+            {
+                case INTEL_386SX:
+                case INTEL_386DX:
+                case CYRIX_486:
+                    skyfunc = R_DrawColumnCyrix;
+                    break;
+                default:
+                    skyfunc = R_DrawColumn;
+                    break;
+            }
+            
         switch (invisibleRender)
         {
         case INVISIBLE_NORMAL:
@@ -928,20 +955,47 @@ void R_ExecuteSetViewSize(void)
 
         break;
     case DETAIL_LOW:
-        colfunc = basecolfunc = R_DrawColumnLow;
+        switch(selectedCPU)
+        {
+            case INTEL_386SX:
+            case INTEL_386DX:
+            case CYRIX_486:
+                colfunc = basecolfunc = R_DrawColumnLowCyrix;
+                break;
+            default:
+                colfunc = basecolfunc = R_DrawColumnLow;
+                break;
+        }
 
         if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlatLow;
         else
-            if (selectedCPU == INTEL_386SX)
-                spanfunc = R_DrawSpanLow386SX;
-            else
-                spanfunc = R_DrawSpanLow;
+            switch(selectedCPU)
+            {
+                case INTEL_386SX:
+                case INTEL_386DX:
+                case CYRIX_486:
+                    spanfunc = R_DrawSpanLow386SX;
+                    break;
+                default:
+                    spanfunc = R_DrawSpanLow;
+                    break;
+            }
 
         if (flatSky)
             skyfunc = R_DrawSkyFlatLow;
         else
-            skyfunc = R_DrawColumnLow;
+            switch(selectedCPU)
+            {
+                case INTEL_386SX:
+                case INTEL_386DX:
+                case CYRIX_486:
+                    skyfunc = R_DrawColumnLowCyrix;
+                    break;
+                default:
+                    skyfunc = R_DrawColumnLow;
+                    break;
+            }
 
         switch (invisibleRender)
         {
@@ -964,7 +1018,17 @@ void R_ExecuteSetViewSize(void)
 
         break;
     case DETAIL_POTATO:
-        colfunc = basecolfunc = R_DrawColumnPotato;
+        switch(selectedCPU)
+        {
+            case INTEL_386SX:
+            case INTEL_386DX:
+            case CYRIX_486:
+                colfunc = basecolfunc = R_DrawColumnPotatoCyrix;
+                break;
+            default:
+                colfunc = basecolfunc = R_DrawColumnPotato;
+                break;
+        }
 
         if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlatPotato;
@@ -974,7 +1038,17 @@ void R_ExecuteSetViewSize(void)
         if (flatSky)
             skyfunc = R_DrawSkyFlatPotato;
         else
-            skyfunc = R_DrawColumnPotato;
+            switch(selectedCPU)
+            {
+                case INTEL_386SX:
+                case INTEL_386DX:
+                case CYRIX_486:
+                    skyfunc = R_DrawColumnPotatoCyrix;
+                    break;
+                default:
+                    skyfunc = R_DrawColumnPotato;
+                    break;
+            }
 
         switch (invisibleRender)
         {
