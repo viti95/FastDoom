@@ -107,6 +107,9 @@ CODE_SYM_DEF R_DrawColumnPotato
   mov  edx,ebx
   shr  edx,25 ; get address of first location
 
+  lea  edx,[ebx+ecx]
+  shr  ebx, 25
+  
   mov  eax,[_dc_colormap]
   jmp  [scalecalls+4+ebp*4]
 
@@ -117,6 +120,10 @@ CODE_SYM_DEF R_DrawColumnPotato
 
   mov  ebx,edx
   shr  ebx,25 ; get address of first location
+
+  lea  ebx,[edx+ecx]
+  shr  edx,25
+
   mov  eax,[_dc_colormap]
   jmp  [scalecalls+4+ebp*4]
 ; R_DrawColumnPotato ends
@@ -184,6 +191,9 @@ CODE_SYM_DEF R_DrawColumnLow
   mov  edx,ebx
   shr  edx,25 ; get address of first location
 
+  lea  edx,[ebx+ecx]
+  shr  ebx, 25
+
   mov  eax,[_dc_colormap]
   jmp  [scalecalls+4+ebp*4]
 
@@ -194,6 +204,10 @@ CODE_SYM_DEF R_DrawColumnLow
 
   mov  ebx,edx
   shr  ebx,25 ; get address of first location
+
+  lea  ebx,[edx+ecx]
+  shr  edx,25
+
   mov  eax,[_dc_colormap]
   jmp  [scalecalls+4+ebp*4]
 ; R_DrawColumnLow ends
