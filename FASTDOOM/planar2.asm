@@ -105,10 +105,11 @@ CODE_SYM_DEF R_DrawColumnPotato
   add   ebx,eax
   shl   ebx,9 ; 7 significant bits, 25 frac
 
+  mov  eax,[_dc_colormap]
+
   lea  edx,[ebx+ecx]
   shr  ebx, 25
 
-  mov  eax,[_dc_colormap]
   jmp  [scalecalls+4+ebp*4]
 
 .odd:
@@ -116,10 +117,11 @@ CODE_SYM_DEF R_DrawColumnPotato
   add   edx,eax
   shl   edx,9 ; 7 significant bits, 25 frac
 
+  mov  eax,[_dc_colormap]
+
   lea  ebx,[edx+ecx]
   shr  edx,25
 
-  mov  eax,[_dc_colormap]
   jmp  [scalecalls+4+ebp*4]
 ; R_DrawColumnPotato ends
 
@@ -184,10 +186,11 @@ CODE_SYM_DEF R_DrawColumnLow
   add   ebx,eax
   shl   ebx,9 ; 7 significant bits, 25 frac
 
+  mov  eax,[_dc_colormap]
+
   lea  edx,[ebx+ecx]
   shr  ebx, 25
 
-  mov  eax,[_dc_colormap]
   jmp  [scalecalls+4+ebp*4]
 
 .odd:
@@ -195,10 +198,11 @@ CODE_SYM_DEF R_DrawColumnLow
   add   edx,eax
   shl   edx,9 ; 7 significant bits, 25 frac
 
+  mov  eax,[_dc_colormap]
+
   lea  ebx,[edx+ecx]
   shr  edx,25
-
-  mov  eax,[_dc_colormap]
+  
   jmp  [scalecalls+4+ebp*4]
 ; R_DrawColumnLow ends
 
@@ -259,10 +263,11 @@ CODE_SYM_DEF R_DrawColumn
   add   ebx,eax
   shl   ebx,9 ; 7 significant bits, 25 frac
 
+  mov  eax,[_dc_colormap]
+
   lea  edx,[ebx+ecx]
   shr  ebx, 25
 
-  mov  eax,[_dc_colormap]
   jmp  [scalecalls+4+ebp*4]
 
 .odd:
@@ -270,10 +275,11 @@ CODE_SYM_DEF R_DrawColumn
   add   edx,eax
   shl   edx,9 ; 7 significant bits, 25 frac
 
+  mov  eax,[_dc_colormap]
+
   lea  ebx,[edx+ecx]
   shr  edx,25
 
-  mov  eax,[_dc_colormap]
   jmp  [scalecalls+4+ebp*4]
 ; R_DrawColumn ends
 
