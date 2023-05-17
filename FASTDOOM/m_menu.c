@@ -196,6 +196,7 @@ void M_SfxVol(int choice);
 void M_MusicVol(int choice);
 void M_ChangeDetail();
 void M_ChangeVisplaneDetail();
+void M_ChangeCPU();
 void M_ChangeVsync();
 void M_ChangeSkyDetail();
 void M_ChangeInvisibleDetail();
@@ -333,7 +334,8 @@ menu_t NewDef =
 #define spriteculling 6
 #define melting 7
 #define uncappedfps 8
-#define display_end 9
+#define cpu 9
+#define display_end 10
 
 #define endgame 0
 #define messages 1
@@ -375,7 +377,8 @@ menuitem_t DisplayMenu[] =
         {1, "", "", M_ChangeShowFPS, 'f'},
         {1, "", "", M_ChangeSpriteCulling, 'c'},
         {1, "", "", M_ChangeMelting, 'm'},
-        {1, "", "", M_ChangeUncappedFPS, 'u'}};
+        {1, "", "", M_ChangeUncappedFPS, 'u'},
+        {1, "", "", M_ChangeCPU, 'p'}};
 
 menu_t DisplayDef =
     {
@@ -383,7 +386,7 @@ menu_t DisplayDef =
         &OptionsDef,
         DisplayMenu,
         M_DrawDisplay,
-        60, 21,
+        60, 9,
         0};
 
 //
@@ -1271,51 +1274,71 @@ void M_DrawDisplay(void)
     V_WriteTextDirect(45, 37, uncappedFPS ? "ON" : "OFF");
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-    M_WriteText(58, 24, "VSYNC:");
-    M_WriteText(214, 24, waitVsync ? "ON" : "OFF");
+    M_WriteText(58, 12, "VSYNC:");
+    M_WriteText(214, 12, waitVsync ? "ON" : "OFF");
 
-    M_WriteText(58, 40, "DETAIL LEVEL:");
-    M_WriteText(214, 40, detailLevel == DETAIL_POTATO ? "POTATO" : detailLevel == DETAIL_LOW ? "LOW"
+    M_WriteText(58, 28, "DETAIL LEVEL:");
+    M_WriteText(214, 28, detailLevel == DETAIL_POTATO ? "POTATO" : detailLevel == DETAIL_LOW ? "LOW"
                                                                         : "HIGH");
 
-    M_WriteText(58, 56, "VISPLANE RENDERING:");
-    M_WriteText(214, 56, (visplaneRender == VISPLANES_NORMAL) ? "FULL" : (visplaneRender == VISPLANES_FLAT) ? "FLAT"
+    M_WriteText(58, 44, "VISPLANE RENDERING:");
+    M_WriteText(214, 44, (visplaneRender == VISPLANES_NORMAL) ? "FULL" : (visplaneRender == VISPLANES_FLAT) ? "FLAT"
                                                                                            : "FLATTER");
 
-    M_WriteText(58, 72, "SKY RENDERING:");
-    M_WriteText(214, 72, flatSky ? "FLAT" : "FULL");
+    M_WriteText(58, 60, "SKY RENDERING:");
+    M_WriteText(214, 60, flatSky ? "FLAT" : "FULL");
 
-    M_WriteText(58, 88, "INVISIBLE RENDERING:");
+    M_WriteText(58, 76, "INVISIBLE RENDERING:");
     switch (invisibleRender)
     {
     case INVISIBLE_NORMAL:
-        M_WriteText(214, 88, "FUZZY");
+        M_WriteText(214, 76, "FUZZY");
         break;
     case INVISIBLE_FLAT:
-        M_WriteText(214, 88, "FLAT");
+        M_WriteText(214, 76, "FLAT");
         break;
     case INVISIBLE_FLAT_SATURN:
-        M_WriteText(214, 88, "FLAT SATURN");
+        M_WriteText(214, 76, "FLAT SATURN");
         break;
     case INVISIBLE_SATURN:
-        M_WriteText(214, 88, "SATURN");
+        M_WriteText(214, 76, "SATURN");
         break;
     case INVISIBLE_TRANSLUCENT:
-        M_WriteText(214, 88, "TRANSLUCENT");
+        M_WriteText(214, 76, "TRANSLUCENT");
         break;
     }
 
-    M_WriteText(58, 104, "SHOW FPS:");
-    M_WriteText(214, 104, showFPS ? "ON" : "OFF");
+    M_WriteText(58, 92, "SHOW FPS:");
+    M_WriteText(214, 92, showFPS ? "ON" : "OFF");
 
-    M_WriteText(58, 120, "SPRITE CULLING:");
-    M_WriteText(214, 120, nearSprites ? "ON" : "OFF");
+    M_WriteText(58, 108, "SPRITE CULLING:");
+    M_WriteText(214, 108, nearSprites ? "ON" : "OFF");
 
-    M_WriteText(58, 136, "MELTING LOAD EFFECT:");
-    M_WriteText(214, 136, noMelt ? "OFF" : "ON");
+    M_WriteText(58, 124, "MELTING LOAD EFFECT:");
+    M_WriteText(214, 124, noMelt ? "OFF" : "ON");
 
-    M_WriteText(58, 152, "UNCAPPED FRAMERATE:");
-    M_WriteText(214, 152, uncappedFPS ? "ON" : "OFF");
+    M_WriteText(58, 140, "UNCAPPED FRAMERATE:");
+    M_WriteText(214, 140, uncappedFPS ? "ON" : "OFF");
+
+    M_WriteText(58, 156, "CPU RENDERER:");
+    switch(selectedCPU)
+    {
+        case INTEL_386SX:
+        M_WriteText(214, 156, "INTEL 386SX");
+        break;
+        case INTEL_386DX:
+        M_WriteText(214, 156, "INTEL 386DX");
+        break;
+        case INTEL_486:
+        M_WriteText(214, 156, "INTEL 486");
+        break;
+        case CYRIX_486:
+        M_WriteText(214, 156, "CYRIX 486");
+        break;
+        case UMC_GREEN_486:
+        M_WriteText(214, 156, "UMC 486");
+        break;
+    }
 #endif
 }
 
@@ -1558,6 +1581,35 @@ void M_ChangeSkyDetail()
     else
     {
         players.message = "FULL SKY";
+    }
+}
+
+void M_ChangeCPU()
+{
+    selectedCPU++;
+
+    if (selectedCPU == NUM_CPU)
+        selectedCPU = 0;
+
+    R_ExecuteSetViewSize();
+
+    switch(selectedCPU)
+    {
+        case INTEL_386SX:
+        players.message = "INTEL 386SX";
+        break;
+        case INTEL_386DX:
+        players.message = "INTEL 386DX";
+        break;
+        case INTEL_486:
+        players.message = "INTEL 486";
+        break;
+        case CYRIX_486:
+        players.message = "CYRIX 486";
+        break;
+        case UMC_GREEN_486:
+        players.message = "UMC GREEN 486";
+        break;
     }
 }
 

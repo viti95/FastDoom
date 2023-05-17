@@ -254,4 +254,14 @@ typedef enum
     NUM_DETAIL
 } detail_t;
 
+typedef enum
+{
+    INTEL_386SX,
+    INTEL_386DX,
+    INTEL_486,
+    CYRIX_486,
+    UMC_GREEN_486,
+    NUM_CPU
+} cpu_t;
+
 #endif // __DOOMDEF__

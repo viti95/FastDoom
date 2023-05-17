@@ -46,6 +46,7 @@ extern boolean fastparm;    // checkparm of -fast
 extern boolean flatSky;
 extern int invisibleRender;
 extern int visplaneRender;
+extern int selectedCPU;
 extern boolean showFPS;
 extern boolean unlimitedRAM;
 extern boolean nearSprites;

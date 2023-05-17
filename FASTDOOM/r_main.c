@@ -750,13 +750,9 @@ void R_ExecuteSetViewSize(void)
     colfunc = basecolfunc = R_DrawColumnText4050;
 
     if (visplaneRender == VISPLANES_FLAT)
-    {
         spanfunc = R_DrawSpanFlatText4050;
-    }
     else
-    {
         spanfunc = R_DrawSpanText4050;
-    }
 
     if (flatSky)
         skyfunc = R_DrawSkyFlatText4050;
@@ -901,7 +897,10 @@ void R_ExecuteSetViewSize(void)
         if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlat;
         else
-            spanfunc = R_DrawSpan;
+            if (selectedCPU == INTEL_386SX)
+                spanfunc = R_DrawSpan386SX;
+            else
+                spanfunc = R_DrawSpan;
 
         if (flatSky)
             skyfunc = R_DrawSkyFlat;
@@ -934,7 +933,10 @@ void R_ExecuteSetViewSize(void)
         if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlatLow;
         else
-            spanfunc = R_DrawSpanLow;
+            if (selectedCPU == INTEL_386SX)
+                spanfunc = R_DrawSpanLow386SX;
+            else
+                spanfunc = R_DrawSpanLow;
 
         if (flatSky)
             skyfunc = R_DrawSkyFlatLow;

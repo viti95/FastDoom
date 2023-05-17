@@ -86,6 +86,7 @@ boolean fastparm;    // checkparm of -fast
 boolean flatSky;
 int invisibleRender;
 int visplaneRender;
+int selectedCPU;
 boolean showFPS;
 boolean unlimitedRAM;
 boolean nearSprites;
@@ -1396,6 +1397,11 @@ void D_DoomMain(void)
     M_CheckParmOptionalValue("-flatsaturn", &invisibleRender, INVISIBLE_FLAT_SATURN);
     M_CheckParmOptionalValue("-saturn", &invisibleRender, INVISIBLE_SATURN);
     M_CheckParmOptionalValue("-translucent", &invisibleRender, INVISIBLE_TRANSLUCENT);
+    M_CheckParmOptionalValue("-umc486", &selectedCPU, UMC_GREEN_486);
+    M_CheckParmOptionalValue("-intel486", &selectedCPU, INTEL_486);
+    M_CheckParmOptionalValue("-cyrix486", &selectedCPU, CYRIX_486);
+    M_CheckParmOptionalValue("-386dx", &selectedCPU, INTEL_386DX);
+    M_CheckParmOptionalValue("-386sx", &selectedCPU, INTEL_386SX);
     M_CheckParmOptional("-mono", &monoSound);
     M_CheckParmOptional("-near", &nearSprites);
     M_CheckParmOptional("-nomelt", &noMelt);

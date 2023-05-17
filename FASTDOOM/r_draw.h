@@ -186,7 +186,9 @@ extern byte *ds_source;
 // Span blitting for rows, floor/ceiling.
 // No Sepctre effect needed.
 void R_DrawSpan(void);
+void R_DrawSpan386SX(void);
 void R_DrawSpanLow(void);
+void R_DrawSpanLow386SX(void);
 void R_DrawSpanPotato(void);
 
 void R_DrawSpanFlat(void);
