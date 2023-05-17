@@ -34,7 +34,6 @@ fracpstep:  dd 0
 curx:       dd 0
 curpx:      dd 0
 endpx:      dd 0
-loopcount:  dd 0
 
 BEGIN_CODE_SECTION
 
@@ -214,6 +213,9 @@ CODE_SYM_DEF R_DrawSpanLow386SX
 	push		edi
 	push		ebp
 
+  mov   [.lpatchESP1+2],esp
+  mov   [.lpatchESP2+2],esp
+
   mov  eax,[_ds_x1]
   mov  [curx],eax
   mov  ebx,eax
@@ -267,7 +269,9 @@ CODE_SYM_DEF R_DrawSpanLow386SX
   inc   eax
   sub   eax,ebx
   js    .ldoneplane
-  mov   [loopcount],eax
+  
+  sub   esp,eax
+
   mov   esi,[_ds_source]
   mov   eax,[_ds_colormap]
   mov   edi,[dest]
@@ -296,8 +300,11 @@ CODE_SYM_DEF R_DrawSpanLow386SX
   mov   al,[esi+ecx]
   mov   bl,[esi+edx]
   mov   dl,[eax]
-  test  [loopcount],dword -1
-  jnz   short .ldoubleloop
+
+.lpatchESP1:
+  cmp   esp, 0x12345678
+
+  jnae  short .ldoubleloop
   jmp   short .lchecklast
 .lfillone:
   mov   ebp,cr2
@@ -326,10 +333,12 @@ CODE_SYM_DEF R_DrawSpanLow386SX
   add   ebp,0x12345678 ; runtime patched
   mov   al,[esi+ecx]
   and   edx,0x00000FFF
-  dec   dword [loopcount]
   mov   bl,[esi+edx]
-  mov   dl,[eax]
-  jnz   short .ldoubleloop
+  inc   esp
+  mov   dl,[eax]  
+.lpatchESP2:
+  cmp   esp, 0x12345678
+  jl    short .ldoubleloop
 .lchecklast:
   test  [endpx],dword 1
   jnz   short .ldoneplane
