@@ -50,6 +50,9 @@ CODE_SYM_DEF R_DrawSpan386SX
 	push		edi
 	push		ebp
 
+  mov   [.hpatchESP1+2],esp
+  mov   [.hpatchESP2+2],esp
+
   mov  eax,[_ds_x1]
   mov  [curx],eax
   mov  ebx,eax
@@ -98,7 +101,9 @@ CODE_SYM_DEF R_DrawSpan386SX
   inc   eax
   sub   eax,ebx
   js   .hdoneplane
-  mov   [loopcount],eax
+  
+  sub   esp,eax
+
   mov   esi,[_ds_source]
   mov   eax,[_ds_colormap]
   mov   edi,[dest]
@@ -127,8 +132,11 @@ CODE_SYM_DEF R_DrawSpan386SX
   mov   al,[esi+ecx]
   mov   bl,[esi+edx]
   mov   dl,[eax]
-  test  [loopcount],dword -1
-  jnz   short .hdoubleloop
+
+.hpatchESP1:
+  cmp   esp, 0x12345678
+
+  jnae   short .hdoubleloop
   jmp   short .hchecklast
 .hfillone:  
   mov   ebp,cr2
@@ -158,9 +166,11 @@ CODE_SYM_DEF R_DrawSpan386SX
   and   edx,0x00000FFF
   mov   al,[esi+ecx]
   mov   bl,[esi+edx]
-  dec   dword [loopcount]
-  mov   dl,[eax]
-  jnz   short .hdoubleloop
+  inc   esp
+  mov   dl,[eax]  
+.hpatchESP2:
+  cmp   esp, 0x12345678
+  jl   short .hdoubleloop
 .hchecklast:
   test  [endpx],dword 1
   jnz   short .hdoneplane
@@ -181,6 +191,7 @@ CODE_SYM_DEF R_DrawSpan386SX
   mov   cr2,ebx  
   jmp   near .hplane
 .hdone:
+  mov  esp,[.hpatchESP1+2]
 	pop		ebp
 	pop		edi
 	pop		esi
