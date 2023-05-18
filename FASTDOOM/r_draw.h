@@ -193,6 +193,7 @@ void R_DrawSpan386SX(void);
 void R_DrawSpanLow(void);
 void R_DrawSpanLow386SX(void);
 void R_DrawSpanPotato(void);
+void R_DrawSpanPotato386SX(void);
 
 void R_DrawSpanFlat(void);
 void R_DrawSpanFlatLow(void);

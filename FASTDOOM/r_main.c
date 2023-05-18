@@ -1033,7 +1033,17 @@ void R_ExecuteSetViewSize(void)
         if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlatPotato;
         else
-            spanfunc = R_DrawSpanPotato;
+            switch(selectedCPU)
+            {
+                case INTEL_386SX:
+                case INTEL_386DX:
+                case CYRIX_486:
+                    spanfunc = R_DrawSpanPotato386SX;
+                    break;
+                default:
+                    spanfunc = R_DrawSpanPotato;
+                    break;
+            }
 
         if (flatSky)
             skyfunc = R_DrawSkyFlatPotato;
