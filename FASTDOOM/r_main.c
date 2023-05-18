@@ -894,13 +894,11 @@ void R_ExecuteSetViewSize(void)
     case DETAIL_HIGH:
         switch(selectedCPU)
         {
-            case INTEL_386SX:
-            case INTEL_386DX:
-            case CYRIX_486:
-                colfunc = basecolfunc = R_DrawColumnCyrix;
+            case UMC_GREEN_486:
+                colfunc = basecolfunc = R_DrawColumn;
                 break;
             default:
-                colfunc = basecolfunc = R_DrawColumn;
+                colfunc = basecolfunc = R_DrawColumnCyrix;
                 break;
         }
 
@@ -924,13 +922,11 @@ void R_ExecuteSetViewSize(void)
         else
             switch(selectedCPU)
             {
-                case INTEL_386SX:
-                case INTEL_386DX:
-                case CYRIX_486:
-                    skyfunc = R_DrawColumnCyrix;
+                case UMC_GREEN_486:
+                    skyfunc = R_DrawColumn;
                     break;
                 default:
-                    skyfunc = R_DrawColumn;
+                    skyfunc = R_DrawColumnCyrix;
                     break;
             }
             
@@ -957,13 +953,11 @@ void R_ExecuteSetViewSize(void)
     case DETAIL_LOW:
         switch(selectedCPU)
         {
-            case INTEL_386SX:
-            case INTEL_386DX:
-            case CYRIX_486:
-                colfunc = basecolfunc = R_DrawColumnLowCyrix;
+            case UMC_GREEN_486:
+                colfunc = basecolfunc = R_DrawColumnLow;
                 break;
             default:
-                colfunc = basecolfunc = R_DrawColumnLow;
+                colfunc = basecolfunc = R_DrawColumnLowCyrix;
                 break;
         }
 
@@ -987,13 +981,11 @@ void R_ExecuteSetViewSize(void)
         else
             switch(selectedCPU)
             {
-                case INTEL_386SX:
-                case INTEL_386DX:
-                case CYRIX_486:
-                    skyfunc = R_DrawColumnLowCyrix;
+                case UMC_GREEN_486:
+                    skyfunc = R_DrawColumnLow;
                     break;
                 default:
-                    skyfunc = R_DrawColumnLow;
+                    skyfunc = R_DrawColumnLowCyrix;
                     break;
             }
 
@@ -1020,13 +1012,11 @@ void R_ExecuteSetViewSize(void)
     case DETAIL_POTATO:
         switch(selectedCPU)
         {
-            case INTEL_386SX:
-            case INTEL_386DX:
-            case CYRIX_486:
-                colfunc = basecolfunc = R_DrawColumnPotatoCyrix;
+            case UMC_GREEN_486:
+                colfunc = basecolfunc = R_DrawColumnPotato;
                 break;
             default:
-                colfunc = basecolfunc = R_DrawColumnPotato;
+                colfunc = basecolfunc = R_DrawColumnPotatoCyrix;
                 break;
         }
 
@@ -1050,13 +1040,11 @@ void R_ExecuteSetViewSize(void)
         else
             switch(selectedCPU)
             {
-                case INTEL_386SX:
-                case INTEL_386DX:
-                case CYRIX_486:
-                    skyfunc = R_DrawColumnPotatoCyrix;
+                case UMC_GREEN_486:
+                    skyfunc = R_DrawColumnPotato;
                     break;
                 default:
-                    skyfunc = R_DrawColumnPotato;
+                    skyfunc = R_DrawColumnPotatoCyrix;
                     break;
             }
 
