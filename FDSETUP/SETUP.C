@@ -242,9 +242,15 @@ int CheckParm(char *string)
 
 void main(int argc, char *argv[])
 {
+	union REGS reg;
+
 	myargv = argv;
 	myargc = argc;
 
-	mono = CheckParm("-mono");
+	reg.h.ah=0x0F;
+	int86(0x10,&reg,&reg);
+
+	mono = reg.h.al == 7;
+
 	StartUp();
 }
