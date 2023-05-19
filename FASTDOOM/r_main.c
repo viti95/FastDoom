@@ -913,6 +913,7 @@ void R_ExecuteSetViewSize(void)
                 case INTEL_386SX:
                 case INTEL_386DX:
                 case CYRIX_486:
+                case UMC_GREEN_486:
                     spanfunc = R_DrawSpan386SX;
                     break;
                 default:
@@ -978,6 +979,7 @@ void R_ExecuteSetViewSize(void)
                 case INTEL_386SX:
                 case INTEL_386DX:
                 case CYRIX_486:
+                case UMC_GREEN_486:
                     spanfunc = R_DrawSpanLow386SX;
                     break;
                 default:
@@ -1043,6 +1045,7 @@ void R_ExecuteSetViewSize(void)
                 case INTEL_386SX:
                 case INTEL_386DX:
                 case CYRIX_486:
+                case UMC_GREEN_486:
                     spanfunc = R_DrawSpanPotato386SX;
                     break;
                 default:
