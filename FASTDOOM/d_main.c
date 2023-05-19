@@ -1402,6 +1402,9 @@ void D_DoomMain(void)
     M_CheckParmOptionalValue("-cyrix486", &selectedCPU, CYRIX_486);
     M_CheckParmOptionalValue("-386dx", &selectedCPU, INTEL_386DX);
     M_CheckParmOptionalValue("-386sx", &selectedCPU, INTEL_386SX);
+    M_CheckParmOptionalValue("-cyrix5x86", &selectedCPU, CYRIX_5X86);
+    M_CheckParmOptionalValue("-k5", &selectedCPU, AMD_K5);
+    M_CheckParmOptionalValue("-pentium", &selectedCPU, INTEL_PENTIUM);
     M_CheckParmOptional("-mono", &monoSound);
     M_CheckParmOptional("-near", &nearSprites);
     M_CheckParmOptional("-nomelt", &noMelt);

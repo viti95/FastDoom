@@ -261,6 +261,9 @@ typedef enum
     INTEL_486,
     CYRIX_486,
     UMC_GREEN_486,
+    CYRIX_5X86,
+    AMD_K5,
+    INTEL_PENTIUM,
     NUM_CPU
 } cpu_t;
 

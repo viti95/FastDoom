@@ -1138,11 +1138,11 @@ void M_DrawDisplay(void)
 
     V_WriteTextDirect(7, 4, "Detail level:");
     V_WriteTextDirect(30, 4, detailLevel == DETAIL_POTATO ? "POTATO" : detailLevel == DETAIL_LOW ? "LOW"
-                                                                            : "HIGH");
+                                                                                                 : "HIGH");
 
     V_WriteTextDirect(7, 6, "Visplane rendering:");
     V_WriteTextDirect(30, 6, (visplaneRender == VISPLANES_NORMAL) ? "FULL" : (visplaneRender == VISPLANES_FLAT) ? "FLAT"
-                                                                                               : "FLATTER");
+                                                                                                                : "FLATTER");
 
     V_WriteTextDirect(7, 8, "Sky rendering:");
     V_WriteTextDirect(30, 8, flatSky ? "FLAT" : "FULL");
@@ -1185,11 +1185,11 @@ void M_DrawDisplay(void)
 
     V_WriteTextDirect(15, 4, "Detail level:");
     V_WriteTextDirect(45, 4, detailLevel == DETAIL_POTATO ? "POTATO" : detailLevel == DETAIL_LOW ? "LOW"
-                                                                            : "HIGH");
+                                                                                                 : "HIGH");
 
     V_WriteTextDirect(15, 6, "Visplane rendering:");
     V_WriteTextDirect(45, 6, (visplaneRender == VISPLANES_NORMAL) ? "FULL" : (visplaneRender == VISPLANES_FLAT) ? "FLAT"
-                                                                                               : "FLATTER");
+                                                                                                                : "FLATTER");
 
     V_WriteTextDirect(15, 8, "Sky rendering:");
     V_WriteTextDirect(45, 8, flatSky ? "FLAT" : "FULL");
@@ -1232,11 +1232,11 @@ void M_DrawDisplay(void)
 
     V_WriteTextDirect(15, 9, "Detail level:");
     V_WriteTextDirect(45, 9, detailLevel == DETAIL_POTATO ? "POTATO" : detailLevel == DETAIL_LOW ? "LOW"
-                                                                            : "HIGH");
+                                                                                                 : "HIGH");
 
     V_WriteTextDirect(15, 13, "Visplane rendering:");
     V_WriteTextDirect(45, 13, (visplaneRender == VISPLANES_NORMAL) ? "FULL" : (visplaneRender == VISPLANES_FLAT) ? "FLAT"
-                                                                                                : "FLATTER");
+                                                                                                                 : "FLATTER");
 
     V_WriteTextDirect(15, 17, "Sky rendering:");
     V_WriteTextDirect(45, 17, flatSky ? "FLAT" : "FULL");
@@ -1279,11 +1279,11 @@ void M_DrawDisplay(void)
 
     M_WriteText(58, 28, "DETAIL LEVEL:");
     M_WriteText(214, 28, detailLevel == DETAIL_POTATO ? "POTATO" : detailLevel == DETAIL_LOW ? "LOW"
-                                                                        : "HIGH");
+                                                                                             : "HIGH");
 
     M_WriteText(58, 44, "VISPLANE RENDERING:");
     M_WriteText(214, 44, (visplaneRender == VISPLANES_NORMAL) ? "FULL" : (visplaneRender == VISPLANES_FLAT) ? "FLAT"
-                                                                                           : "FLATTER");
+                                                                                                            : "FLATTER");
 
     M_WriteText(58, 60, "SKY RENDERING:");
     M_WriteText(214, 60, flatSky ? "FLAT" : "FULL");
@@ -1321,22 +1321,31 @@ void M_DrawDisplay(void)
     M_WriteText(214, 140, uncappedFPS ? "ON" : "OFF");
 
     M_WriteText(58, 156, "CPU RENDERER:");
-    switch(selectedCPU)
+    switch (selectedCPU)
     {
-        case INTEL_386SX:
+    case INTEL_386SX:
         M_WriteText(214, 156, "INTEL 386SX");
         break;
-        case INTEL_386DX:
+    case INTEL_386DX:
         M_WriteText(214, 156, "INTEL 386DX");
         break;
-        case INTEL_486:
+    case INTEL_486:
         M_WriteText(214, 156, "INTEL 486");
         break;
-        case CYRIX_486:
+    case CYRIX_486:
         M_WriteText(214, 156, "CYRIX 486");
         break;
-        case UMC_GREEN_486:
+    case UMC_GREEN_486:
         M_WriteText(214, 156, "UMC 486");
+        break;
+    case CYRIX_5X86:
+        M_WriteText(214, 156, "CYRIX 5X86");
+        break;
+    case AMD_K5:
+        M_WriteText(214, 156, "AMD K5");
+        break;
+    case INTEL_PENTIUM:
+        M_WriteText(214, 156, "INTEL PENTIUM");
         break;
     }
 #endif
@@ -1542,13 +1551,13 @@ void M_ChangeVisplaneDetail()
 
     switch (visplaneRender)
     {
-        case VISPLANES_NORMAL:
+    case VISPLANES_NORMAL:
         players.message = "FULL VISPLANES";
         break;
-        case VISPLANES_FLAT:
+    case VISPLANES_FLAT:
         players.message = "FLAT VISPLANES";
         break;
-        case VISPLANES_FLATTER:
+    case VISPLANES_FLATTER:
         players.message = "FLATTER VISPLANES";
         break;
     }
@@ -1593,22 +1602,31 @@ void M_ChangeCPU()
 
     R_ExecuteSetViewSize();
 
-    switch(selectedCPU)
+    switch (selectedCPU)
     {
-        case INTEL_386SX:
+    case INTEL_386SX:
         players.message = "INTEL 386SX";
         break;
-        case INTEL_386DX:
+    case INTEL_386DX:
         players.message = "INTEL 386DX";
         break;
-        case INTEL_486:
+    case INTEL_486:
         players.message = "INTEL 486";
         break;
-        case CYRIX_486:
+    case CYRIX_486:
         players.message = "CYRIX 486";
         break;
-        case UMC_GREEN_486:
+    case UMC_GREEN_486:
         players.message = "UMC GREEN 486";
+        break;
+    case CYRIX_5X86:
+        players.message = "CYRIX 5X86";
+        break;
+    case AMD_K5:
+        players.message = "AMD K5";
+        break;
+    case INTEL_PENTIUM:
+        players.message = "INTEL PENTIUM";
         break;
     }
 }
@@ -1627,21 +1645,21 @@ void M_ChangeInvisibleDetail()
 
     R_SetViewSize(screenblocks, detailLevel);
 
-    switch(invisibleRender)
+    switch (invisibleRender)
     {
-        case INVISIBLE_NORMAL:
+    case INVISIBLE_NORMAL:
         players.message = "FULL INVISIBILITY";
         break;
-        case INVISIBLE_FLAT:
+    case INVISIBLE_FLAT:
         players.message = "FLAT INVISIBILITY";
         break;
-        case INVISIBLE_FLAT_SATURN:
+    case INVISIBLE_FLAT_SATURN:
         players.message = "FLAT SEGA SATURN INVISIBILITY";
         break;
-        case INVISIBLE_SATURN:
+    case INVISIBLE_SATURN:
         players.message = "SEGA SATURN INVISIBILITY";
         break;
-        case INVISIBLE_TRANSLUCENT:
+    case INVISIBLE_TRANSLUCENT:
         players.message = "TRANSLUCENT INVISIBILITY";
         break;
     }

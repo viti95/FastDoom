@@ -895,6 +895,9 @@ void R_ExecuteSetViewSize(void)
         switch(selectedCPU)
         {
             case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K5:
+            case INTEL_PENTIUM:
                 colfunc = basecolfunc = R_DrawColumn;
                 break;
             default:
@@ -923,6 +926,9 @@ void R_ExecuteSetViewSize(void)
             switch(selectedCPU)
             {
                 case UMC_GREEN_486:
+                case CYRIX_5X86:
+                case AMD_K5:
+                case INTEL_PENTIUM:
                     skyfunc = R_DrawColumn;
                     break;
                 default:
@@ -954,6 +960,9 @@ void R_ExecuteSetViewSize(void)
         switch(selectedCPU)
         {
             case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K5:
+            case INTEL_PENTIUM:
                 colfunc = basecolfunc = R_DrawColumnLow;
                 break;
             default:
@@ -982,6 +991,9 @@ void R_ExecuteSetViewSize(void)
             switch(selectedCPU)
             {
                 case UMC_GREEN_486:
+                case CYRIX_5X86:
+                case AMD_K5:
+                case INTEL_PENTIUM:
                     skyfunc = R_DrawColumnLow;
                     break;
                 default:
@@ -1013,6 +1025,9 @@ void R_ExecuteSetViewSize(void)
         switch(selectedCPU)
         {
             case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K5:
+            case INTEL_PENTIUM:
                 colfunc = basecolfunc = R_DrawColumnPotato;
                 break;
             default:
@@ -1041,6 +1056,9 @@ void R_ExecuteSetViewSize(void)
             switch(selectedCPU)
             {
                 case UMC_GREEN_486:
+                case CYRIX_5X86:
+                case AMD_K5:
+                case INTEL_PENTIUM:
                     skyfunc = R_DrawColumnPotato;
                     break;
                 default:
