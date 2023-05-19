@@ -47,11 +47,11 @@ extern byte **ylookup;
 // Hook in assembler or system specific BLT
 //  here.
 
+void R_DrawColumnFastLEA(void);
 void R_DrawColumn(void);
-void R_DrawColumnCyrix(void);
 void R_DrawSkyFlat(void);
+void R_DrawColumnLowFastLEA(void);
 void R_DrawColumnLow(void);
-void R_DrawColumnLowCyrix(void);
 void R_DrawSkyFlatLow(void);
 
 // The Spectre/Invisibility effect.
@@ -73,8 +73,8 @@ void R_DrawFuzzColumnFlatSaturnPotato(void);
 void R_DrawFuzzColumnFlatPotato(void);
 void R_DrawFuzzColumnTransPotato(void);
 
+void R_DrawColumnPotatoFastLEA(void);
 void R_DrawColumnPotato(void);
-void R_DrawColumnPotatoCyrix(void);
 void R_DrawSkyFlatPotato(void);
 
 void R_DrawColumnText8050(void);

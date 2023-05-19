@@ -69,7 +69,7 @@ pdone:
 ; ==================
 ; R_DrawColumnPotato
 ; ==================
-CODE_SYM_DEF R_DrawColumnPotato
+CODE_SYM_DEF R_DrawColumnPotatoFastLEA
 	push		edi
   push		ebx
 	push		ecx
@@ -137,7 +137,7 @@ ldone:
 ; ===============
 ; R_DrawColumnLow
 ; ===============
-CODE_SYM_DEF R_DrawColumnLow
+CODE_SYM_DEF R_DrawColumnLowFastLEA
   push		edi
   push		ebx
 	push		ecx
@@ -215,7 +215,7 @@ hdone:
   pop		edi
   ret
 
-CODE_SYM_DEF R_DrawColumn
+CODE_SYM_DEF R_DrawColumnFastLEA
 	push		edi
 	push		ebx
 	push		ecx

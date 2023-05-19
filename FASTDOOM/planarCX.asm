@@ -59,7 +59,7 @@ BEGIN_CODE_SECTION
 ; ==================
 ; R_DrawColumnPotato
 ; ==================
-CODE_SYM_DEF R_DrawColumnPotatoCyrix
+CODE_SYM_DEF R_DrawColumnPotato
 	push		edi
   push		ebx
 	push		ecx
@@ -104,7 +104,7 @@ CODE_SYM_DEF R_DrawColumnPotatoCyrix
 ; ===============
 ; R_DrawColumnLow
 ; ===============
-CODE_SYM_DEF R_DrawColumnLowCyrix
+CODE_SYM_DEF R_DrawColumnLow
   push		edi
   push		ebx
 	push		ecx
@@ -159,7 +159,7 @@ CODE_SYM_DEF R_DrawColumnLowCyrix
   ret
 ; R_DrawColumnLow ends
 
-CODE_SYM_DEF R_DrawColumnCyrix
+CODE_SYM_DEF R_DrawColumn
 	push		edi
 	push		ebx
 	push		ecx

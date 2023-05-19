@@ -898,10 +898,10 @@ void R_ExecuteSetViewSize(void)
             case CYRIX_5X86:
             case AMD_K5:
             case INTEL_PENTIUM:
-                colfunc = basecolfunc = R_DrawColumn;
+                colfunc = basecolfunc = R_DrawColumnFastLEA;
                 break;
             default:
-                colfunc = basecolfunc = R_DrawColumnCyrix;
+                colfunc = basecolfunc = R_DrawColumn;
                 break;
         }
 
@@ -930,10 +930,10 @@ void R_ExecuteSetViewSize(void)
                 case CYRIX_5X86:
                 case AMD_K5:
                 case INTEL_PENTIUM:
-                    skyfunc = R_DrawColumn;
+                    skyfunc = R_DrawColumnFastLEA;
                     break;
                 default:
-                    skyfunc = R_DrawColumnCyrix;
+                    skyfunc = R_DrawColumn;
                     break;
             }
             
@@ -964,10 +964,10 @@ void R_ExecuteSetViewSize(void)
             case CYRIX_5X86:
             case AMD_K5:
             case INTEL_PENTIUM:
-                colfunc = basecolfunc = R_DrawColumnLow;
+                colfunc = basecolfunc = R_DrawColumnLowFastLEA;
                 break;
             default:
-                colfunc = basecolfunc = R_DrawColumnLowCyrix;
+                colfunc = basecolfunc = R_DrawColumnLow;
                 break;
         }
 
@@ -996,10 +996,10 @@ void R_ExecuteSetViewSize(void)
                 case CYRIX_5X86:
                 case AMD_K5:
                 case INTEL_PENTIUM:
-                    skyfunc = R_DrawColumnLow;
+                    skyfunc = R_DrawColumnLowFastLEA;
                     break;
                 default:
-                    skyfunc = R_DrawColumnLowCyrix;
+                    skyfunc = R_DrawColumnLow;
                     break;
             }
 
@@ -1030,10 +1030,10 @@ void R_ExecuteSetViewSize(void)
             case CYRIX_5X86:
             case AMD_K5:
             case INTEL_PENTIUM:
-                colfunc = basecolfunc = R_DrawColumnPotato;
+                colfunc = basecolfunc = R_DrawColumnPotatoFastLEA;
                 break;
             default:
-                colfunc = basecolfunc = R_DrawColumnPotatoCyrix;
+                colfunc = basecolfunc = R_DrawColumnPotato;
                 break;
         }
 
@@ -1062,10 +1062,10 @@ void R_ExecuteSetViewSize(void)
                 case CYRIX_5X86:
                 case AMD_K5:
                 case INTEL_PENTIUM:
-                    skyfunc = R_DrawColumnPotato;
+                    skyfunc = R_DrawColumnPotatoFastLEA;
                     break;
                 default:
-                    skyfunc = R_DrawColumnPotatoCyrix;
+                    skyfunc = R_DrawColumnPotato;
                     break;
             }
 
