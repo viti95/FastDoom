@@ -355,7 +355,7 @@ CODE_SYM_DEF R_DrawSpanFlatPotato
 	push		edi
 	mov		eax,[_ds_source]
   xor   ebx,ebx
-  mov   bl,[eax+0x74A]        ;FLATPIXELCOLOR
+  mov   bl,[eax+0x73A]        ;FLATPIXELCOLOR
 	mov		eax,[_ds_colormap]
   mov		ecx,[_ds_x2]
   mov		edi,[_ds_x1]
