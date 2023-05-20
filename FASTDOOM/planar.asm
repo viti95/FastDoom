@@ -355,13 +355,14 @@ CODE_SYM_DEF R_DrawSpanFlatPotato
 	push		edx
 	push		edi
 	mov		eax,[_ds_source]
-	movzx		edi,byte 73aH[eax]
+  xor   ebx,ebx
+  mov   bl,[eax+0x74A]
 	mov		eax,[_ds_colormap]
-	mov		dl,byte [edi+eax]
+	mov		edi,[_destview]
+	mov		bl,byte [ebx+eax]
 	mov		eax,[_ds_y]
 	lea		eax,[eax+eax*4]
 	shl		eax,4
-	mov		edi,[_destview]
 	add		eax,edi
 	mov		edi,[_ds_x1]
 	add		edi,eax
@@ -371,7 +372,7 @@ CODE_SYM_DEF R_DrawSpanFlatPotato
 	test		al,1
 	je		.evenodd
 	mov		ecx,eax
-	mov		al,dl
+	mov		al,bl
 	rep stosb
 	pop		edi
 	pop		edx
@@ -379,12 +380,8 @@ CODE_SYM_DEF R_DrawSpanFlatPotato
 	pop		ebx
 	ret
 .evenodd:
-	xor		dh,dh
-	mov		ebx,edx
-	shl		ebx,8
-	or		ebx,edx
+  mov   bh,bl
 	cdq
-	sub		eax,edx
 	sar		eax,1
 	mov		ecx,eax
 	mov		eax,ebx
