@@ -360,11 +360,11 @@ CODE_SYM_DEF R_DrawSpanFlatPotato
   mov		edi,[_ds_x1]
 	mov		al,byte [ebx+eax]
   mov		ebx,[_ds_y]
-  and   eax,0xFF
   add		edi,[_destview]
   mov		ecx,[_ds_x2]
   add   edi,[_ylookup+ebx*4]
 	sub		ecx,[_ds_x1]
+  and   eax,0xFF
 	inc		ecx
 	test  cl,1
 	je		.writewords
