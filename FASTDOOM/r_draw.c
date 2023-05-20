@@ -525,7 +525,7 @@ void R_DrawFuzzColumnTransVBE2(void)
 
     do
     {
-        *dest = tintmap[(*dest<<8) + dc_colormap[dc_source[(frac>>FRACBITS)&127]]];
+        *dest = tintmap[(*dest << 8) + dc_colormap[dc_source[(frac >> FRACBITS) & 127]]];
         dest += SCREENWIDTH;
         frac += fracstep;
     } while (count--);
@@ -647,7 +647,7 @@ void R_DrawFuzzColumnTransLowVBE2(void)
 
     do
     {
-        byte color = tintmap[(*dest<<8) + dc_colormap[dc_source[(frac>>FRACBITS)&127]]];
+        byte color = tintmap[(*dest << 8) + dc_colormap[dc_source[(frac >> FRACBITS) & 127]]];
 
         *(dest) = color;
         *(dest + 1) = color;
@@ -779,7 +779,7 @@ void R_DrawFuzzColumnTransPotatoVBE2(void)
 
     do
     {
-        byte color = tintmap[(*dest<<8) + dc_colormap[dc_source[(frac>>FRACBITS)&127]]];
+        byte color = tintmap[(*dest << 8) + dc_colormap[dc_source[(frac >> FRACBITS) & 127]]];
 
         *(dest) = color;
         *(dest + 1) = color;
@@ -832,7 +832,7 @@ void R_DrawSpanFlatLowVBE2(void)
     if (countp & 1)
     {
         *((unsigned short *)dest) = color;
-        dest+=2;
+        dest += 2;
         countp--;
     }
 
@@ -2884,7 +2884,7 @@ void R_DrawFuzzColumnTrans(void)
 
     do
     {
-        *dest = tintmap[(*dest<<8) + dc_colormap[dc_source[(frac>>FRACBITS)&127]]];
+        *dest = tintmap[(*dest << 8) + dc_colormap[dc_source[(frac >> FRACBITS) & 127]]];
         dest += SCREENWIDTH / 4;
         frac += fracstep;
     } while (count--);
@@ -3004,7 +3004,7 @@ void R_DrawFuzzColumnTransLow(void)
 
     do
     {
-        *dest = tintmap[(*dest<<8) + dc_colormap[dc_source[(frac>>FRACBITS)&127]]];
+        *dest = tintmap[(*dest << 8) + dc_colormap[dc_source[(frac >> FRACBITS) & 127]]];
         dest += SCREENWIDTH / 4;
         frac += fracstep;
     } while (count--);
@@ -3117,7 +3117,7 @@ void R_DrawFuzzColumnTransPotato(void)
 
     do
     {
-        *dest = tintmap[(*dest<<8) + dc_colormap[dc_source[(frac>>FRACBITS)&127]]];
+        *dest = tintmap[(*dest << 8) + dc_colormap[dc_source[(frac >> FRACBITS) & 127]]];
         dest += SCREENWIDTH / 4;
         frac += fracstep;
     } while (count--);
@@ -4110,12 +4110,16 @@ void R_DrawSpanFlatBackbuffer(void)
 
     if (countp & 1)
     {
-        SetBytes(dest, color, countp);
+        *(dest) = color;
+        dest++;
+        countp--;
     }
-    else
+
+    if (countp > 0)
     {
         unsigned short colorcomp = color << 8 | color;
-        SetWords(dest, colorcomp, countp / 2);
+        countp /= 2;
+        SetWords(dest, colorcomp, countp);
     }
 }
 
@@ -4133,12 +4137,16 @@ void R_DrawSpanFlatLowBackbuffer(void)
 
     if (countp & 1)
     {
-        SetWords(dest, color, countp);
+        *((unsigned short *)dest) = color;
+        dest += 2;
+        countp--;
     }
-    else
+
+    if (countp > 0)
     {
         unsigned int colorcomp = color << 16 | color;
-        SetDWords(dest, colorcomp, countp / 2);
+        countp /= 2;
+        SetDWords(dest, colorcomp, countp);
     }
 }
 
@@ -4265,7 +4273,7 @@ void R_DrawFuzzColumnTransBackbuffer(void)
 
     do
     {
-        *dest = tintmap[(*dest<<8) + dc_colormap[dc_source[(frac>>FRACBITS)&127]]];
+        *dest = tintmap[(*dest << 8) + dc_colormap[dc_source[(frac >> FRACBITS) & 127]]];
         dest += SCREENWIDTH;
         frac += fracstep;
     } while (count--);
@@ -4387,7 +4395,7 @@ void R_DrawFuzzColumnTransLowBackbuffer(void)
 
     do
     {
-        byte color = tintmap[(*dest<<8) + dc_colormap[dc_source[(frac>>FRACBITS)&127]]];
+        byte color = tintmap[(*dest << 8) + dc_colormap[dc_source[(frac >> FRACBITS) & 127]]];
 
         *(dest) = color;
         *(dest + 1) = color;
@@ -4519,7 +4527,7 @@ void R_DrawFuzzColumnTransPotatoBackbuffer(void)
 
     do
     {
-        byte color = tintmap[(*dest<<8) + dc_colormap[dc_source[(frac>>FRACBITS)&127]]];
+        byte color = tintmap[(*dest << 8) + dc_colormap[dc_source[(frac >> FRACBITS) & 127]]];
 
         *(dest) = color;
         *(dest + 1) = color;
