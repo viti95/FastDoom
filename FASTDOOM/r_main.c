@@ -1100,7 +1100,18 @@ void R_ExecuteSetViewSize(void)
         if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlatBackbuffer;
         else
-            spanfunc = R_DrawSpanBackbuffer;
+            switch(selectedCPU)
+            {
+                case INTEL_386SX:
+                case INTEL_386DX:
+                case CYRIX_486:
+                case UMC_GREEN_486:
+                    spanfunc = R_DrawSpanBackbuffer386SX;
+                    break;
+                default:
+                    spanfunc = R_DrawSpanBackbuffer;
+                    break;
+            }
 
         if (flatSky)
             skyfunc = R_DrawSkyFlatBackbuffer;
@@ -1133,7 +1144,18 @@ void R_ExecuteSetViewSize(void)
         if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlatLowBackbuffer;
         else
-            spanfunc = R_DrawSpanLowBackbuffer;
+            switch(selectedCPU)
+            {
+                case INTEL_386SX:
+                case INTEL_386DX:
+                case CYRIX_486:
+                case UMC_GREEN_486:
+                    spanfunc = R_DrawSpanLowBackbuffer386SX;
+                    break;
+                default:
+                    spanfunc = R_DrawSpanLowBackbuffer;
+                    break;
+            }
 
         if (flatSky)
             skyfunc = R_DrawSkyFlatLowBackbuffer;
@@ -1166,7 +1188,18 @@ void R_ExecuteSetViewSize(void)
         if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlatPotatoBackbuffer;
         else
-            spanfunc = R_DrawSpanPotatoBackbuffer;
+            switch(selectedCPU)
+            {
+                case INTEL_386SX:
+                case INTEL_386DX:
+                case CYRIX_486:
+                case UMC_GREEN_486:
+                    spanfunc = R_DrawSpanPotatoBackbuffer386SX;
+                    break;
+                default:
+                    spanfunc = R_DrawSpanPotatoBackbuffer;
+                    break;
+            }
 
         if (flatSky)
             skyfunc = R_DrawSkyFlatPotatoBackbuffer;
@@ -1205,7 +1238,18 @@ void R_ExecuteSetViewSize(void)
         if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlatVBE2;
         else
-            spanfunc = R_DrawSpanVBE2;
+            switch(selectedCPU)
+            {
+                case INTEL_386SX:
+                case INTEL_386DX:
+                case CYRIX_486:
+                case UMC_GREEN_486:
+                    spanfunc = R_DrawSpanVBE2_386SX;
+                    break;
+                default:
+                    spanfunc = R_DrawSpanVBE2;
+                    break;
+            }
 
         if (flatSky)
             skyfunc = R_DrawSkyFlatVBE2;
@@ -1238,7 +1282,18 @@ void R_ExecuteSetViewSize(void)
         if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlatLowVBE2;
         else
-            spanfunc = R_DrawSpanLowVBE2;
+            switch(selectedCPU)
+            {
+                case INTEL_386SX:
+                case INTEL_386DX:
+                case CYRIX_486:
+                case UMC_GREEN_486:
+                    spanfunc = R_DrawSpanLowVBE2_386SX;
+                    break;
+                default:
+                    spanfunc = R_DrawSpanLowVBE2;
+                    break;
+            }
 
         if (flatSky)
             skyfunc = R_DrawSkyFlatLowVBE2;
@@ -1271,7 +1326,18 @@ void R_ExecuteSetViewSize(void)
         if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlatPotatoVBE2;
         else
-            spanfunc = R_DrawSpanPotatoVBE2;
+            switch(selectedCPU)
+            {
+                case INTEL_386SX:
+                case INTEL_386DX:
+                case CYRIX_486:
+                case UMC_GREEN_486:
+                    spanfunc = R_DrawSpanPotatoVBE2_386SX;
+                    break;
+                default:
+                    spanfunc = R_DrawSpanPotatoVBE2;
+                    break;
+            }
 
         if (flatSky)
             skyfunc = R_DrawSkyFlatPotatoVBE2;
