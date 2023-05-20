@@ -352,42 +352,32 @@ CODE_SYM_DEF R_DrawSpanLow
 CODE_SYM_DEF R_DrawSpanFlatPotato
 	push		ebx
 	push		ecx
-	push		edx
 	push		edi
 	mov		eax,[_ds_source]
   xor   ebx,ebx
-  mov   bl,[eax+0x74A]
+  mov   bl,[eax+0x74A]        ;FLATPIXELCOLOR
 	mov		eax,[_ds_colormap]
-	mov		edi,[_destview]
-	mov		bl,byte [ebx+eax]
-	mov		eax,[_ds_y]
-	lea		eax,[eax+eax*4]
-	shl		eax,4
-	add		eax,edi
-	mov		edi,[_ds_x1]
-	add		edi,eax
-	mov		eax,[_ds_x2]
-	sub		eax,[_ds_x1]
-	inc		eax
-	test		al,1
+  mov		edi,[_ds_x1]
+	mov		al,byte [ebx+eax]
+  mov		ebx,[_ds_y]
+  and   eax,0xFF
+  add		edi,[_destview]
+  mov		ecx,[_ds_x2]
+  add   edi,[_ylookup+ebx*4]
+	sub		ecx,[_ds_x1]
+	inc		ecx
+	test  cl,1
 	je		.evenodd
-	mov		ecx,eax
-	mov		al,bl
 	rep stosb
 	pop		edi
-	pop		edx
 	pop		ecx
 	pop		ebx
 	ret
 .evenodd:
-  mov   bh,bl
-	cdq
-	sar		eax,1
-	mov		ecx,eax
-	mov		eax,ebx
+  mov   ah,al
+	sar		ecx,1
 	rep stosw
 	pop		edi
-	pop		edx
 	pop		ecx
 	pop		ebx
 	ret
