@@ -349,4 +349,50 @@ CODE_SYM_DEF R_DrawSpanLow
   ret
 ; R_DrawSpanLow ends
 
+CODE_SYM_DEF R_DrawSpanFlatPotato
+	push		ebx
+	push		ecx
+	push		edx
+	push		edi
+	mov		eax,[_ds_source]
+	movzx		edi,byte 73aH[eax]
+	mov		eax,[_ds_colormap]
+	mov		dl,byte [edi+eax]
+	mov		eax,[_ds_y]
+	lea		eax,[eax+eax*4]
+	shl		eax,4
+	mov		edi,[_destview]
+	add		eax,edi
+	mov		edi,[_ds_x1]
+	add		edi,eax
+	mov		eax,[_ds_x2]
+	sub		eax,[_ds_x1]
+	inc		eax
+	test		al,1
+	je		.evenodd
+	mov		ecx,eax
+	mov		al,dl
+	rep stosb
+	pop		edi
+	pop		edx
+	pop		ecx
+	pop		ebx
+	ret
+.evenodd:
+	xor		dh,dh
+	mov		ebx,edx
+	shl		ebx,8
+	or		ebx,edx
+	cdq
+	sub		eax,edx
+	sar		eax,1
+	mov		ecx,eax
+	mov		eax,ebx
+	rep stosw
+	pop		edi
+	pop		edx
+	pop		ecx
+	pop		ebx
+	ret
+
 %endif

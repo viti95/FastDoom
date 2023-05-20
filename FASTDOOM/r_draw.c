@@ -3370,30 +3370,6 @@ void R_DrawSpanFlatLow(void)
 }
 #endif
 
-#if defined(MODE_Y)
-void R_DrawSpanFlatPotato(void)
-{
-    int countp;
-    byte *dest;
-
-    lighttable_t color = ds_colormap[ds_source[FLATPIXELCOLOR]];
-
-    dest = destview + Mul80(ds_y) + ds_x1;
-
-    countp = ds_x2 - ds_x1 + 1;
-
-    if (countp & 1)
-    {
-        SetBytes(dest, color, countp);
-    }
-    else
-    {
-        unsigned short colorcomp = color << 8 | color;
-        SetWords(dest, colorcomp, countp / 2);
-    }
-}
-#endif
-
 #if defined(MODE_T8050) || defined(MODE_T8043)
 void R_DrawSpanFlatText8050(void)
 {
