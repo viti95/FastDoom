@@ -831,12 +831,16 @@ void R_DrawSpanFlatLowVBE2(void)
 
     if (countp & 1)
     {
-        SetWords(dest, color, countp);
+        *((unsigned short *)dest) = color;
+        dest+=2;
+        countp--;
     }
-    else
+
+    if (countp > 0)
     {
         unsigned int colorcomp = color << 16 | color;
-        SetDWords(dest, colorcomp, countp / 2);
+        countp /= 2;
+        SetDWords(dest, colorcomp, countp);
     }
 }
 
