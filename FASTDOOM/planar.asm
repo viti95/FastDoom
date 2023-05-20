@@ -357,14 +357,14 @@ CODE_SYM_DEF R_DrawSpanFlatPotato
   xor   ebx,ebx
   mov   bl,[eax+0x74A]        ;FLATPIXELCOLOR
 	mov		eax,[_ds_colormap]
+  mov		ecx,[_ds_x2]
   mov		edi,[_ds_x1]
+  sub   ecx,edi
 	mov		al,byte [ebx+eax]
   mov		ebx,[_ds_y]
   add		edi,[_destview]
-  mov		ecx,[_ds_x2]
-  add   edi,[_ylookup+ebx*4]
-	sub		ecx,[_ds_x1]
   and   eax,0xFF
+  add   edi,[_ylookup+ebx*4]
 	inc		ecx
 	test  cl,1
 	je		.writewords
