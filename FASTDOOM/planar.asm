@@ -367,16 +367,16 @@ CODE_SYM_DEF R_DrawSpanFlatPotato
 	sub		ecx,[_ds_x1]
 	inc		ecx
 	test  cl,1
-	je		.evenodd
-	rep stosb
-	pop		edi
-	pop		ecx
-	pop		ebx
-	ret
-.evenodd:
+	je		.writewords
+  mov   [edi],al
+  inc   edi
+  dec   ecx
+  jz    .done
+.writewords:
   mov   ah,al
 	sar		ecx,1
 	rep stosw
+.done:
 	pop		edi
 	pop		ecx
 	pop		ebx
