@@ -3319,12 +3319,16 @@ void R_DrawSpanFlatLow(void)
 
         if (countp & 1)
         {
-            SetBytes(dest, color, countp);
+            *(dest) = color;
+            dest++;
+            countp--;
         }
-        else
+
+        if (countp > 0)
         {
             unsigned short colorcomp = color << 8 | color;
-            SetWords(dest, colorcomp, countp / 2);
+            countp /= 2;
+            SetWords(dest, colorcomp, countp);
         }
     }
 
