@@ -47,8 +47,10 @@ extern byte **ylookup;
 // Hook in assembler or system specific BLT
 //  here.
 
+void R_DrawColumnFastLEA(void);
 void R_DrawColumn(void);
 void R_DrawSkyFlat(void);
+void R_DrawColumnLowFastLEA(void);
 void R_DrawColumnLow(void);
 void R_DrawSkyFlatLow(void);
 
@@ -71,6 +73,7 @@ void R_DrawFuzzColumnFlatSaturnPotato(void);
 void R_DrawFuzzColumnFlatPotato(void);
 void R_DrawFuzzColumnTransPotato(void);
 
+void R_DrawColumnPotatoFastLEA(void);
 void R_DrawColumnPotato(void);
 void R_DrawSkyFlatPotato(void);
 
@@ -186,8 +189,11 @@ extern byte *ds_source;
 // Span blitting for rows, floor/ceiling.
 // No Sepctre effect needed.
 void R_DrawSpan(void);
+void R_DrawSpan386SX(void);
 void R_DrawSpanLow(void);
+void R_DrawSpanLow386SX(void);
 void R_DrawSpanPotato(void);
+void R_DrawSpanPotato386SX(void);
 
 void R_DrawSpanFlat(void);
 void R_DrawSpanFlatLow(void);
