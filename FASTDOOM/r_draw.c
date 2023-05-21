@@ -3766,7 +3766,18 @@ void R_VideoErase(unsigned ofs, int count)
 
     if (background_buffer)
     {
-        CopyBytes(background_buffer + ofs, backbuffer + ofs, count);
+        if (count & 1)
+        {
+            *(background_buffer + ofs) = *(backbuffer + ofs);
+            ofs++;
+            count--;
+        }
+
+        if (count > 0)
+        {
+            CopyWords(background_buffer + ofs, backbuffer + ofs, count / 2);
+        }
+        
     }
 }
 #endif
