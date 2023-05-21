@@ -3720,7 +3720,19 @@ void R_VideoErase(unsigned ofs, int count)
 
     dest = destscreen + ofs;
     source = pcscreen + 320 * 200 * 3 + ofs; // Page 3
-    CopyBytes(source, dest, count);
+
+    if (count & 1)
+    {
+        *(dest) = *(source);
+        dest++;
+        source++;
+        count--;
+    }
+
+    if (count > 0)
+    {
+        CopyWords(source, dest, count / 2);
+    }
 }
 #endif
 
