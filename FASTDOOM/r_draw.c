@@ -3685,7 +3685,7 @@ void R_FillBackScreen(void)
 
 #if defined(MODE_VBE2_DIRECT)
     dest = pcscreen + 3 * 320 * 200;
-    CopyBytes(screen1, dest, (SCREENHEIGHT - SBARHEIGHT) * SCREENWIDTH);
+    CopyDWords(screen1, dest, (SCREENHEIGHT - SBARHEIGHT) * SCREENWIDTH / 4);
 #endif
 
 #if defined(MODE_Y)
