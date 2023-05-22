@@ -128,6 +128,9 @@ void R_DrawSpanPotatoBackbuffer(void);
 void R_DrawSpanBackbuffer386SX(void);
 void R_DrawSpanLowBackbuffer386SX(void);
 void R_DrawSpanPotatoBackbuffer386SX(void);
+void R_DrawSpanBackbufferCyrix(void);
+void R_DrawSpanLowBackbufferCyrix(void);
+void R_DrawSpanPotatoBackbufferCyrix(void);
 void R_DrawFuzzColumnBackbuffer(void);
 void R_DrawFuzzColumnLowBackbuffer(void);
 void R_DrawFuzzColumnPotatoBackbuffer(void);
@@ -159,6 +162,9 @@ void R_DrawSpanPotatoVBE2(void);
 void R_DrawSpanVBE2_386SX(void);
 void R_DrawSpanLowVBE2_386SX(void);
 void R_DrawSpanPotatoVBE2_386SX(void);
+void R_DrawSpanVBE2_Cyrix(void);
+void R_DrawSpanLowVBE2_Cyrix(void);
+void R_DrawSpanPotatoVBE2_Cyrix(void);
 void R_DrawSkyFlatVBE2(void);
 void R_DrawSkyFlatLowVBE2(void);
 void R_DrawSkyFlatPotatoVBE2(void);
@@ -195,11 +201,14 @@ extern byte *ds_source;
 // Span blitting for rows, floor/ceiling.
 // No Sepctre effect needed.
 void R_DrawSpan(void);
-void R_DrawSpan386SX(void);
 void R_DrawSpanLow(void);
-void R_DrawSpanLow386SX(void);
 void R_DrawSpanPotato(void);
+void R_DrawSpan386SX(void);
+void R_DrawSpanLow386SX(void);
 void R_DrawSpanPotato386SX(void);
+void R_DrawSpanCyrix(void);
+void R_DrawSpanLowCyrix(void);
+void R_DrawSpanPotatoCyrix(void);
 
 void R_DrawSpanFlat(void);
 void R_DrawSpanFlatLow(void);
