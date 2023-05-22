@@ -96,11 +96,27 @@ void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int de
     src = srcscrn + Mul320(srcy) + srcx;
     dest = destscrn + Mul320(desty) + destx;
 
-    for (; height > 0; height--)
+    if (width & 1)
     {
-        CopyBytes(src, dest, width);
-        src += SCREENWIDTH;
-        dest += SCREENWIDTH;
+        for (; height > 0; height--)
+        {
+            *(dest) = *(src);
+            src++;
+            dest++;
+            
+            CopyWords(src, dest, width / 2);
+            src += SCREENWIDTH - 1;
+            dest += SCREENWIDTH - 1;
+        }
+    }
+    else
+    {
+        for (; height > 0; height--)
+        {
+            CopyWords(src, dest, width / 2);
+            src += SCREENWIDTH;
+            dest += SCREENWIDTH;
+        }
     }
 }
 
