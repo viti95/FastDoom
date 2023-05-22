@@ -99,40 +99,8 @@ void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int de
     for (; height > 0; height--)
     {
         CopyBytes(src, dest, width);
-        // memcpy(dest, src, width);
         src += SCREENWIDTH;
         dest += SCREENWIDTH;
-    }
-}
-
-void V_SetRect(byte color, int width, int height, int destx, int desty, byte *destscrn)
-{
-    byte *dest;
-
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-    V_MarkRect(destx, desty, width, height);
-#endif
-
-    dest = destscrn + Mul320(desty) + destx;
-
-    if (width & 1)
-    {
-        for (; height > 0; height--)
-        {
-            SetBytes(dest, color, width);
-            dest += SCREENWIDTH;
-        }
-    }
-    else
-    {
-        unsigned short colorcomp = color << 8 | color;
-        int widthcomp = width / 2;
-
-        for (; height > 0; height--)
-        {
-            SetWords(dest, colorcomp, widthcomp);
-            dest += SCREENWIDTH;
-        }
     }
 }
 
