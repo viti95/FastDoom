@@ -86,7 +86,7 @@ file linearp.obj
 file linearpSX.obj
 file planar.obj
 file planar2.obj
-file planarCX.obj
+file planarKN.obj
 file planarSX.obj
 file vbe2dh.obj
 file vbe2dhSX.obj
