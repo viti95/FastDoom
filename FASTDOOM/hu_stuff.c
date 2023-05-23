@@ -348,7 +348,7 @@ void HU_Drawer(void)
     break;
     case DEBUG_PORT_2D_FPS:
     {
-        int outfps = fps >> FRACBITS;
+        int outfps = Div10(fps);
         int outval = 0;
         unsigned int counter = 0;
 
@@ -365,11 +365,11 @@ void HU_Drawer(void)
             counter += 4;
         }
         outp(0x80, outval);
-        break;
     }
+    break;
     case DEBUG_PORT_4D_FPS:
     {
-        int outfps = fps >> FRACBITS;
+        int outfps = Div10(fps);
         int outval = 0;
         unsigned int counter = 0;
 
@@ -388,8 +388,9 @@ void HU_Drawer(void)
         }
         outp(0x80, outval);
         outp(0x80, 0x00);
-        break;
+        
     }
+    break;
     }
 
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
