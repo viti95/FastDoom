@@ -373,10 +373,10 @@ void HU_Drawer(void)
         int outval = 0;
         unsigned int counter = 0;
 
-        if (outfps > 99)
+        if (outfps > 9999)
         {
             outp(0x80, 0x99);
-            outp(0x80, 0x00);
+            outp(0x80, 0x99);
             return;
         }
 
@@ -387,7 +387,7 @@ void HU_Drawer(void)
             counter += 4;
         }
         outp(0x80, outval);
-        outp(0x80, 0x00);
+        outp(0x80, outval >> 8);
         
     }
     break;
