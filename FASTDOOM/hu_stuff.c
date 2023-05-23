@@ -361,7 +361,7 @@ void HU_Drawer(void)
         while (outfps)
         {
             outval |= (outfps % 10) << counter;
-            outfps /= 10;
+            outfps = Div10(outfps);
             counter += 4;
         }
         outp(0x80, outval);
@@ -383,7 +383,7 @@ void HU_Drawer(void)
         while (outfps)
         {
             outval |= (outfps % 10) << counter;
-            outfps /= 10;
+            outfps = Div10(outfps);
             counter += 4;
         }
         outp(0x80, outval);
