@@ -117,6 +117,8 @@ subsector_t *
 R_PointInSubsector(fixed_t x,
                    fixed_t y);
 
+void R_ExecuteSetViewSize(void);
+
 //
 // REFRESH - the actual rendering functions.
 //

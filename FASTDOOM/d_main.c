@@ -57,6 +57,7 @@
 
 #include "p_setup.h"
 #include "r_local.h"
+#include "r_main.h"
 
 #include "d_main.h"
 
@@ -87,7 +88,7 @@ boolean flatSky;
 int invisibleRender;
 int visplaneRender;
 int selectedCPU;
-boolean showFPS;
+int showFPS;
 boolean unlimitedRAM;
 boolean nearSprites;
 boolean monoSound;
@@ -133,7 +134,6 @@ boolean disableDemo;
 
 boolean uncappedFPS;
 boolean waitVsync;
-boolean debugPort;
 
 boolean singletics = false; // debug flag to cancel adaptiveness
 
@@ -212,8 +212,6 @@ void D_ProcessEvents(void)
 gamestate_t wipegamestate = GS_DEMOSCREEN;
 extern byte setsizeneeded;
 extern int showMessages;
-
-void R_ExecuteSetViewSize(void);
 
 void D_Display(void)
 {
@@ -1387,7 +1385,7 @@ void D_DoomMain(void)
         screenblocks = forceScreenSize;
     }
 
-    M_CheckParmOptional("-fps", &showFPS);
+    
 
     M_CheckParmOptionalValue("-flatVisplanes", &visplaneRender, VISPLANES_FLAT);
     M_CheckParmOptionalValue("-flatterVisplanes", &visplaneRender, VISPLANES_FLATTER);
@@ -1405,12 +1403,14 @@ void D_DoomMain(void)
     M_CheckParmOptionalValue("-cyrix5x86", &selectedCPU, CYRIX_5X86);
     M_CheckParmOptionalValue("-k5", &selectedCPU, AMD_K5);
     M_CheckParmOptionalValue("-pentium", &selectedCPU, INTEL_PENTIUM);
+    M_CheckParmOptionalValue("-fps", &showFPS, SHOW_FPS);
+    M_CheckParmOptionalValue("-debugPort2", &showFPS, DEBUG_PORT_2D_FPS);
+    M_CheckParmOptionalValue("-debugPort4", &showFPS, DEBUG_PORT_4D_FPS);
     M_CheckParmOptional("-mono", &monoSound);
     M_CheckParmOptional("-near", &nearSprites);
     M_CheckParmOptional("-nomelt", &noMelt);
     M_CheckParmOptional("-uncapped", &uncappedFPS);
     M_CheckParmOptional("-vsync", &waitVsync);
-    M_CheckParmOptional("-debugPort", &debugPort);
     M_CheckParmDisable("-defVisplanes", &visplaneRender);
     M_CheckParmDisable("-defSky", &flatSky);
     M_CheckParmDisable("-defShadows", &invisibleRender);

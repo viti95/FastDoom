@@ -314,61 +314,82 @@ void HU_Drawer(void)
 
     HUlib_drawSText(&w_message);
 
-    if (showFPS)
+    switch (showFPS)
     {
-        if (debugPort)
+    case SHOW_FPS:
+    {
+        char *f;
+        int fpswhole, fpsfrac, tmp;
+        fpswhole = Div10(fps);
+        fpsfrac = fps - Mul10(fpswhole);
+        f = str + sizeof(str) - 1;
+        *f-- = '\0';          // NULL terminate
+        *f-- = '0' + fpsfrac; // Decimal digit
+        *f = '.';             // dot
+        // Manual simple unsigned itoa for the whole part
+        while (1)
         {
-            int outfps = fps >> FRACBITS;
-            int outval = 0;
-            unsigned int counter = 0;
-
-            if (outfps > 99)
-            {
-                outp(0x80, 0x99);
-                outp(0x80, 0x00);
-                return;
-            }
-
-            while (outfps)
-            {
-                outval |= (outfps % 10) << counter;
-                outfps /= 10;
-                counter += 4;
-            }
-            outp(0x80, outval);
-            outp(0x80, 0x00);
+            tmp = Div10(fpswhole);
+            *--f = '0' + fpswhole - Mul10(tmp);
+            if (tmp == 0)
+                break;
+            fpswhole = tmp;
         }
-        else
+        HUlib_clearTextLine(&w_fps);
+        while (*f)
         {
-            //sprintf(str, "%u.%u", fps / 10, fps % 10);
-            //f = str;
-            char *f;
-            int fpswhole, fpsfrac, tmp;
-            fpswhole = Div10(fps);
-            fpsfrac  = fps - Mul10(fpswhole);
-            f = str + sizeof(str) - 1;
-            *f-- = '\0'; // NULL terminate
-            *f-- = '0' + fpsfrac; // Decimal digit
-            *f = '.' ; // dot
-            // Manual simple unsigned itoa for the whole part
-            while(1)
-            {
-                tmp = Div10(fpswhole);
-                *--f = '0' + fpswhole - Mul10(tmp);
-                if(tmp == 0)
-                    break;
-                fpswhole = tmp;
-            }
-            HUlib_clearTextLine(&w_fps);
-            while (*f)
-            {
-                HUlib_addCharToTextLine(&w_fps, *(f++));
-            }
-            HUlib_drawTextLine(&w_fps);
+            HUlib_addCharToTextLine(&w_fps, *(f++));
+        }
+        HUlib_drawTextLine(&w_fps);
 #if defined(USE_BACKBUFFER)
-            updatestate |= I_MESSAGES;
+        updatestate |= I_MESSAGES;
 #endif
+    }
+    break;
+    case DEBUG_PORT_2D_FPS:
+    {
+        int outfps = fps >> FRACBITS;
+        int outval = 0;
+        unsigned int counter = 0;
+
+        if (outfps > 99)
+        {
+            outp(0x80, 0x99);
+            return;
         }
+
+        while (outfps)
+        {
+            outval |= (outfps % 10) << counter;
+            outfps /= 10;
+            counter += 4;
+        }
+        outp(0x80, outval);
+        break;
+    }
+    case DEBUG_PORT_4D_FPS:
+    {
+        int outfps = fps >> FRACBITS;
+        int outval = 0;
+        unsigned int counter = 0;
+
+        if (outfps > 99)
+        {
+            outp(0x80, 0x99);
+            outp(0x80, 0x00);
+            return;
+        }
+
+        while (outfps)
+        {
+            outval |= (outfps % 10) << counter;
+            outfps /= 10;
+            counter += 4;
+        }
+        outp(0x80, outval);
+        outp(0x80, 0x00);
+        break;
+    }
     }
 
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)

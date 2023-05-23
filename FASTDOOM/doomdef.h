@@ -267,4 +267,13 @@ typedef enum
     NUM_CPU
 } cpu_t;
 
+typedef enum
+{
+    NO_FPS,
+    SHOW_FPS,
+    DEBUG_PORT_2D_FPS,
+    DEBUG_PORT_4D_FPS,
+    NUM_FPS
+} fps_t;
+
 #endif // __DOOMDEF__

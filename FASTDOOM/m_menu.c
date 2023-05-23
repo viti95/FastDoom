@@ -36,6 +36,7 @@
 #include "w_wad.h"
 
 #include "r_local.h"
+#include "r_main.h"
 
 #include "hu_stuff.h"
 
@@ -1168,7 +1169,21 @@ void M_DrawDisplay(void)
     }
 
     V_WriteTextDirect(7, 12, "Show FPS:");
-    V_WriteTextDirect(30, 12, showFPS ? "ON" : "OFF");
+    switch (showFPS)
+    {
+    case NO_FPS:
+        V_WriteTextDirect(30, 12, "OFF");
+        break;
+    case SHOW_FPS:
+        V_WriteTextDirect(30, 12, "SCREEN");
+        break;
+    case DEBUG_PORT_2D_FPS:
+        V_WriteTextDirect(30, 12, "DEBUG 2 DIGITS");
+        break;
+    case DEBUG_PORT_4D_FPS:
+        V_WriteTextDirect(30, 12, "DEBUG 4 DIGITS");
+        break;
+    }
 
     V_WriteTextDirect(7, 14, "Sprite culling:");
     V_WriteTextDirect(30, 14, nearSprites ? "ON" : "OFF");
@@ -1215,7 +1230,21 @@ void M_DrawDisplay(void)
     }
 
     V_WriteTextDirect(15, 12, "Show FPS:");
-    V_WriteTextDirect(45, 12, showFPS ? "ON" : "OFF");
+    switch (showFPS)
+    {
+    case NO_FPS:
+        V_WriteTextDirect(45, 12, "OFF");
+        break;
+    case SHOW_FPS:
+        V_WriteTextDirect(45, 12, "SCREEN");
+        break;
+    case DEBUG_PORT_2D_FPS:
+        V_WriteTextDirect(45, 12, "DEBUG CARD 2N");
+        break;
+    case DEBUG_PORT_4D_FPS:
+        V_WriteTextDirect(45, 12, "DEBUG CARD 4N");
+        break;
+    }
 
     V_WriteTextDirect(15, 14, "Sprite culling:");
     V_WriteTextDirect(45, 14, nearSprites ? "ON" : "OFF");
@@ -1262,7 +1291,21 @@ void M_DrawDisplay(void)
     }
 
     V_WriteTextDirect(15, 25, "Show FPS:");
-    V_WriteTextDirect(45, 25, showFPS ? "ON" : "OFF");
+    switch (showFPS)
+    {
+    case NO_FPS:
+        V_WriteTextDirect(45, 25, "OFF");
+        break;
+    case SHOW_FPS:
+        V_WriteTextDirect(45, 25, "SCREEN");
+        break;
+    case DEBUG_PORT_2D_FPS:
+        V_WriteTextDirect(45, 25, "DEBUG CARD 2N");
+        break;
+    case DEBUG_PORT_4D_FPS:
+        V_WriteTextDirect(45, 25, "DEBUG CARD 4N");
+        break;
+    }
 
     V_WriteTextDirect(15, 29, "Sprite culling:");
     V_WriteTextDirect(45, 29, nearSprites ? "ON" : "OFF");
@@ -1309,7 +1352,21 @@ void M_DrawDisplay(void)
     }
 
     M_WriteText(58, 92, "SHOW FPS:");
-    M_WriteText(214, 92, showFPS ? "ON" : "OFF");
+    switch (showFPS)
+    {
+    case NO_FPS:
+        M_WriteText(214, 92, "OFF");
+        break;
+    case SHOW_FPS:
+        M_WriteText(214, 92, "SCREEN");
+        break;
+    case DEBUG_PORT_2D_FPS:
+        M_WriteText(214, 92, "DEBUG CARD 2N");
+        break;
+    case DEBUG_PORT_4D_FPS:
+        M_WriteText(214, 92, "DEBUG CARD 4N");
+        break;
+    }
 
     M_WriteText(58, 108, "SPRITE CULLING:");
     M_WriteText(214, 108, nearSprites ? "ON" : "OFF");
@@ -1667,7 +1724,26 @@ void M_ChangeInvisibleDetail()
 
 void M_ChangeShowFPS()
 {
-    showFPS = !showFPS;
+    showFPS++;
+
+    if (showFPS == NUM_FPS)
+        showFPS = 0;
+
+    switch (showFPS)
+    {
+    case NO_FPS:
+        players.message = "NO FPS";
+        break;
+    case SHOW_FPS:
+        players.message = "ON SCREEN FPS";
+        break;
+    case DEBUG_PORT_2D_FPS:
+        players.message = "DEBUG CARD (2 DIGITS) FPS";
+        break;
+    case DEBUG_PORT_4D_FPS:
+        players.message = "DEBUG CARD (4 DIGITS) FPS";
+        break;
+    }
 }
 
 void M_ChangeSpriteCulling()

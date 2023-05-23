@@ -30,6 +30,7 @@
 #include "m_misc.h"
 #include "m_menu.h"
 #include "i_system.h"
+#include "r_main.h"
 
 #include "p_setup.h"
 #include "p_saveg.h"
@@ -797,7 +798,6 @@ void G_DoWorldDone(void)
 // Can be called by the startup code or the menu task.
 //
 extern byte setsizeneeded;
-void R_ExecuteSetViewSize(void);
 
 char savename[256];
 

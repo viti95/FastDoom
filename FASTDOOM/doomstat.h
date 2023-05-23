@@ -47,7 +47,7 @@ extern boolean flatSky;
 extern int invisibleRender;
 extern int visplaneRender;
 extern int selectedCPU;
-extern boolean showFPS;
+extern int showFPS;
 extern boolean unlimitedRAM;
 extern boolean nearSprites;
 extern boolean monoSound;
@@ -93,7 +93,6 @@ extern boolean disableDemo;
 
 extern boolean uncappedFPS;
 extern boolean waitVsync;
-extern boolean debugPort;
 
 // Set if homebrew PWAD stuff has been added.
 extern boolean modifiedgame;
