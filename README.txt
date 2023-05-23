@@ -168,7 +168,8 @@
  -nomusic => Disables music
  -config XX => Loads an alternative configuration file 
  -disabledemo => Disables defered demos
- -debugPort => Shows FPS via the debug port (0x80)
+ -debugPort2 => Shows FPS via debug card (2 digits, port 0x80)
+ -debugPort4 => Shows FPS via debug card (4 digits, port 0x80)
  -fixDAC => Fixes palette corruption with VGA cards
  -hercmap => Enable Hercules automap (requires dual video card setup)
  -snow => Fix for snow on IBM CGA cards
