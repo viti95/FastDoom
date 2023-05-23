@@ -1178,10 +1178,10 @@ void M_DrawDisplay(void)
         V_WriteTextDirect(30, 12, "SCREEN");
         break;
     case DEBUG_PORT_2D_FPS:
-        V_WriteTextDirect(30, 12, "DEBUG 2 DIGITS");
+        V_WriteTextDirect(30, 12, "DEBUG CARD 2N");
         break;
     case DEBUG_PORT_4D_FPS:
-        V_WriteTextDirect(30, 12, "DEBUG 4 DIGITS");
+        V_WriteTextDirect(30, 12, "DEBUG CARD 4N");
         break;
     }
 
