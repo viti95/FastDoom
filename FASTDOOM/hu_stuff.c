@@ -308,96 +308,98 @@ void HU_Start(void)
         HUlib_addCharToTextLine(&w_title, *(s++));
 }
 
-int lastoutfps = 0;
+void HU_DrawScreenFPS(void)
+{
+    static char str[16];
+    char *f;
+    int fpswhole, fpsfrac, tmp;
+    fpswhole = Div10(fps);
+    fpsfrac = fps - Mul10(fpswhole);
+    f = str + sizeof(str) - 1;
+    *f-- = '\0';          // NULL terminate
+    *f-- = '0' + fpsfrac; // Decimal digit
+    *f = '.';             // dot
+    // Manual simple unsigned itoa for the whole part
+    while (1)
+    {
+        tmp = Div10(fpswhole);
+        *--f = '0' + fpswhole - Mul10(tmp);
+        if (tmp == 0)
+            break;
+        fpswhole = tmp;
+    }
+    HUlib_clearTextLine(&w_fps);
+    while (*f)
+    {
+        HUlib_addCharToTextLine(&w_fps, *(f++));
+    }
+    HUlib_drawTextLine(&w_fps);
+#if defined(USE_BACKBUFFER)
+    updatestate |= I_MESSAGES;
+#endif
+}
+
+void HU_DrawDebugCard2DigitsFPS(void)
+{
+    unsigned int outfps = fps / 10;
+    unsigned int outval = 0;
+    unsigned int counter = 0;
+
+    if (outfps > 99)
+        outfps = 99;
+
+    while (outfps)
+    {
+        outval |= (outfps % 10) << counter;
+        outfps /= 10;
+        counter += 4;
+    }
+
+    outp(0x80, outval & 255);
+}
+
+void HU_DrawDebugCard4DigitsFPS(void)
+{
+    unsigned int outfps = fps / 10;
+    unsigned int outval = 0;
+    unsigned int counter = 0;
+
+    if (outfps > 9999)
+        outfps = 9999;
+
+    while (outfps)
+    {
+        outval |= (outfps % 10) << counter;
+        outfps /= 10;
+        counter += 4;
+    }
+    outp(0x80, outval & 255);
+    outp(0x80, (outval >> 8) & 255);
+}
 
 void HU_Drawer(void)
 {
-    static char str[16];
-
     HUlib_drawSText(&w_message);
 
     switch (showFPS)
     {
-    case SHOW_FPS:
-    {
-        char *f;
-        int fpswhole, fpsfrac, tmp;
-        fpswhole = Div10(fps);
-        fpsfrac = fps - Mul10(fpswhole);
-        f = str + sizeof(str) - 1;
-        *f-- = '\0';          // NULL terminate
-        *f-- = '0' + fpsfrac; // Decimal digit
-        *f = '.';             // dot
-        // Manual simple unsigned itoa for the whole part
-        while (1)
-        {
-            tmp = Div10(fpswhole);
-            *--f = '0' + fpswhole - Mul10(tmp);
-            if (tmp == 0)
-                break;
-            fpswhole = tmp;
-        }
-        HUlib_clearTextLine(&w_fps);
-        while (*f)
-        {
-            HUlib_addCharToTextLine(&w_fps, *(f++));
-        }
-        HUlib_drawTextLine(&w_fps);
-#if defined(USE_BACKBUFFER)
-        updatestate |= I_MESSAGES;
-#endif
-    }
-    break;
+    case SCREEN_FPS:
+        HU_DrawScreenFPS();
+        break;
     case DEBUG_CARD_2D_FPS:
-    {
-        int outfps = fps / 10;
-
-        if (outfps > 99)
-            outfps = 99;
-
-        if (lastoutfps != outfps)
-        {
-            int outval = 0;
-            unsigned int counter = 0;
-
-            lastoutfps = outfps;
-
-            while (outfps)
-            {
-                outval |= (outfps % 10) << counter;
-                outfps /= 10;
-                counter += 4;
-            }
-
-            outp(0x80, outval);
-        }
-    }
-    break;
+        HU_DrawDebugCard2DigitsFPS();
+        break;
     case DEBUG_CARD_4D_FPS:
-    {
-        int outfps = fps / 10;
-
-        if (outfps > 9999)
-            outfps = 9999;
-
-        if (lastoutfps != outfps)
-        {
-            int outval = 0;
-            unsigned int counter = 0;
-
-            lastoutfps = outfps;
-
-            while (outfps)
-            {
-                outval |= (outfps % 10) << counter;
-                outfps /= 10;
-                counter += 4;
-            }
-            outp(0x80, outval);
-            outp(0x80, outval >> 8);
-        }
-    }
-    break;
+        HU_DrawDebugCard4DigitsFPS();
+        break;
+    case SCREEN_DC2D_FPS:
+        HU_DrawScreenFPS();
+        HU_DrawDebugCard2DigitsFPS();
+        break;
+    case SCREEN_DC4D_FPS:
+        HU_DrawScreenFPS();
+        HU_DrawDebugCard4DigitsFPS();
+        break;
     }
 
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)

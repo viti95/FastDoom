@@ -1403,7 +1403,7 @@ void D_DoomMain(void)
     M_CheckParmOptionalValue("-cyrix5x86", &selectedCPU, CYRIX_5X86);
     M_CheckParmOptionalValue("-k5", &selectedCPU, AMD_K5);
     M_CheckParmOptionalValue("-pentium", &selectedCPU, INTEL_PENTIUM);
-    M_CheckParmOptionalValue("-fps", &showFPS, SHOW_FPS);
+    M_CheckParmOptionalValue("-fps", &showFPS, SCREEN_FPS);
     M_CheckParmOptionalValue("-debugCard2", &showFPS, DEBUG_CARD_2D_FPS);
     M_CheckParmOptionalValue("-debugCard4", &showFPS, DEBUG_CARD_4D_FPS);
     M_CheckParmOptional("-mono", &monoSound);

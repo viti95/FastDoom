@@ -189,12 +189,21 @@
    cards won't work. This is a limitation of the Apogee Sound System.
  * Some executables will show snow issues on IBM CGA cards even if "-snow"
    parameter is used. This is due to technical limitations.
+ * Showing FPS on a debug card can show weird values if a Sound Blaster
+   card is used, and can cause sound issues. This is due to port 0x80 
+   being also used for DMA transfers.
 
  PCM Music format
  ----------------
 
  PCM Music format is unsigned 8-bit PCM, and supports 11025, 22050 or 
- 44100 Hz frequencies. Folders used for music are these:
+ 44100 Hz frequencies. 
+ 
+ Use SOX to convert files to RAW format, for example:
+
+ sox D_E1M1.ogg -r 44100 -e unsigned -b 8 -c 1 MUS_1.RAW
+ 
+ Folders used for music are these:
  * Doom:     \MUSIC\DOOM1\MUS_*.RAW
  * Doom2:    \MUSIC\DOOM2\MUS_*.RAW
  * Plutonia: \MUSIC\PLUTONIA\MUS_*.RAW
