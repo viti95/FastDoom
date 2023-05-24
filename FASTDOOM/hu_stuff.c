@@ -350,7 +350,7 @@ void HU_Drawer(void)
     break;
     case DEBUG_CARD_2D_FPS:
     {
-        int outfps = Div10(fps);
+        int outfps = fps / 10;
 
         if (outfps > 99)
             outfps = 99;
@@ -365,7 +365,7 @@ void HU_Drawer(void)
             while (outfps)
             {
                 outval |= (outfps % 10) << counter;
-                outfps = Div10(outfps);
+                outfps /= 10;
                 counter += 4;
             }
 
@@ -375,7 +375,7 @@ void HU_Drawer(void)
     break;
     case DEBUG_CARD_4D_FPS:
     {
-        int outfps = Div10(fps);
+        int outfps = fps / 10;
 
         if (outfps > 9999)
             outfps = 9999;
@@ -390,7 +390,7 @@ void HU_Drawer(void)
             while (outfps)
             {
                 outval |= (outfps % 10) << counter;
-                outfps = Div10(outfps);
+                outfps /= 10;
                 counter += 4;
             }
             outp(0x80, outval);

@@ -43,6 +43,8 @@
 // HEADS UP TEXT
 //
 
+extern int lastoutfps;
+
 void HU_Init(void);
 void HU_Start(void);
 void HU_Ticker(void);

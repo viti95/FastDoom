@@ -1738,9 +1738,11 @@ void M_ChangeShowFPS()
         players.message = "ON SCREEN FPS";
         break;
     case DEBUG_CARD_2D_FPS:
+        lastoutfps = 0;
         players.message = "DEBUG CARD (2 DIGITS) FPS";
         break;
     case DEBUG_CARD_4D_FPS:
+        lastoutfps = 0;
         players.message = "DEBUG CARD (4 DIGITS) FPS";
         break;
     }
