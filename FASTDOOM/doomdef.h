@@ -271,8 +271,8 @@ typedef enum
 {
     NO_FPS,
     SHOW_FPS,
-    DEBUG_PORT_2D_FPS,
-    DEBUG_PORT_4D_FPS,
+    DEBUG_CARD_2D_FPS,
+    DEBUG_CARD_4D_FPS,
     NUM_FPS
 } fps_t;
 

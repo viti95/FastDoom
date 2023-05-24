@@ -1177,10 +1177,10 @@ void M_DrawDisplay(void)
     case SHOW_FPS:
         V_WriteTextDirect(30, 12, "SCREEN");
         break;
-    case DEBUG_PORT_2D_FPS:
+    case DEBUG_CARD_2D_FPS:
         V_WriteTextDirect(30, 12, "DEBUG CARD 2N");
         break;
-    case DEBUG_PORT_4D_FPS:
+    case DEBUG_CARD_4D_FPS:
         V_WriteTextDirect(30, 12, "DEBUG CARD 4N");
         break;
     }
@@ -1238,10 +1238,10 @@ void M_DrawDisplay(void)
     case SHOW_FPS:
         V_WriteTextDirect(45, 12, "SCREEN");
         break;
-    case DEBUG_PORT_2D_FPS:
+    case DEBUG_CARD_2D_FPS:
         V_WriteTextDirect(45, 12, "DEBUG CARD 2N");
         break;
-    case DEBUG_PORT_4D_FPS:
+    case DEBUG_CARD_4D_FPS:
         V_WriteTextDirect(45, 12, "DEBUG CARD 4N");
         break;
     }
@@ -1299,10 +1299,10 @@ void M_DrawDisplay(void)
     case SHOW_FPS:
         V_WriteTextDirect(45, 25, "SCREEN");
         break;
-    case DEBUG_PORT_2D_FPS:
+    case DEBUG_CARD_2D_FPS:
         V_WriteTextDirect(45, 25, "DEBUG CARD 2N");
         break;
-    case DEBUG_PORT_4D_FPS:
+    case DEBUG_CARD_4D_FPS:
         V_WriteTextDirect(45, 25, "DEBUG CARD 4N");
         break;
     }
@@ -1360,10 +1360,10 @@ void M_DrawDisplay(void)
     case SHOW_FPS:
         M_WriteText(214, 92, "SCREEN");
         break;
-    case DEBUG_PORT_2D_FPS:
+    case DEBUG_CARD_2D_FPS:
         M_WriteText(214, 92, "DEBUG CARD 2N");
         break;
-    case DEBUG_PORT_4D_FPS:
+    case DEBUG_CARD_4D_FPS:
         M_WriteText(214, 92, "DEBUG CARD 4N");
         break;
     }
@@ -1737,10 +1737,10 @@ void M_ChangeShowFPS()
     case SHOW_FPS:
         players.message = "ON SCREEN FPS";
         break;
-    case DEBUG_PORT_2D_FPS:
+    case DEBUG_CARD_2D_FPS:
         players.message = "DEBUG CARD (2 DIGITS) FPS";
         break;
-    case DEBUG_PORT_4D_FPS:
+    case DEBUG_CARD_4D_FPS:
         players.message = "DEBUG CARD (4 DIGITS) FPS";
         break;
     }

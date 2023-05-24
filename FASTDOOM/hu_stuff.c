@@ -308,6 +308,8 @@ void HU_Start(void)
         HUlib_addCharToTextLine(&w_title, *(s++));
 }
 
+int lastoutfps = 0;
+
 void HU_Drawer(void)
 {
     static char str[16];
@@ -346,49 +348,54 @@ void HU_Drawer(void)
 #endif
     }
     break;
-    case DEBUG_PORT_2D_FPS:
+    case DEBUG_CARD_2D_FPS:
     {
         int outfps = Div10(fps);
-        int outval = 0;
-        unsigned int counter = 0;
 
         if (outfps > 99)
-        {
-            outp(0x80, 0x99);
-            return;
-        }
+            outfps = 99;
 
-        while (outfps)
+        if (lastoutfps != outfps)
         {
-            outval |= (outfps % 10) << counter;
-            outfps = Div10(outfps);
-            counter += 4;
+            int outval = 0;
+            unsigned int counter = 0;
+
+            lastoutfps = outfps;
+
+            while (outfps)
+            {
+                outval |= (outfps % 10) << counter;
+                outfps = Div10(outfps);
+                counter += 4;
+            }
+
+            outp(0x80, outval);
         }
-        outp(0x80, outval);
     }
     break;
-    case DEBUG_PORT_4D_FPS:
+    case DEBUG_CARD_4D_FPS:
     {
         int outfps = Div10(fps);
-        int outval = 0;
-        unsigned int counter = 0;
 
         if (outfps > 9999)
-        {
-            outp(0x80, 0x99);
-            outp(0x80, 0x99);
-            return;
-        }
+            outfps = 9999;
 
-        while (outfps)
+        if (lastoutfps != outfps)
         {
-            outval |= (outfps % 10) << counter;
-            outfps = Div10(outfps);
-            counter += 4;
+            int outval = 0;
+            unsigned int counter = 0;
+
+            lastoutfps = outfps;
+
+            while (outfps)
+            {
+                outval |= (outfps % 10) << counter;
+                outfps = Div10(outfps);
+                counter += 4;
+            }
+            outp(0x80, outval);
+            outp(0x80, outval >> 8);
         }
-        outp(0x80, outval);
-        outp(0x80, outval >> 8);
-        
     }
     break;
     }
