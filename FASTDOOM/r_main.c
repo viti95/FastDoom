@@ -892,53 +892,53 @@ void R_ExecuteSetViewSize(void)
     switch (detailshift)
     {
     case DETAIL_HIGH:
-        switch(selectedCPU)
+        switch (selectedCPU)
         {
-            case UMC_GREEN_486:
-            case CYRIX_5X86:
-            case AMD_K5:
-            case INTEL_PENTIUM:
-                colfunc = basecolfunc = R_DrawColumnFastLEA;
-                break;
-            default:
-                colfunc = basecolfunc = R_DrawColumn;
-                break;
+        case UMC_GREEN_486:
+        case CYRIX_5X86:
+        case AMD_K5:
+        case INTEL_PENTIUM:
+            colfunc = basecolfunc = R_DrawColumnFastLEA;
+            break;
+        default:
+            colfunc = basecolfunc = R_DrawColumn;
+            break;
         }
 
         if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlat;
         else
-            switch(selectedCPU)
+            switch (selectedCPU)
             {
-                case INTEL_386SX:
-                case INTEL_386DX:
-                case UMC_GREEN_486:
-                    spanfunc = R_DrawSpan386SX;
-                    break;
-                case CYRIX_486:
-                    spanfunc = R_DrawSpanCyrix;
-                    break;
-                default:
-                    spanfunc = R_DrawSpan;
-                    break;
+            case INTEL_386SX:
+            case INTEL_386DX:
+            case UMC_GREEN_486:
+                spanfunc = R_DrawSpan386SX;
+                break;
+            case CYRIX_486:
+                spanfunc = R_DrawSpanCyrix;
+                break;
+            default:
+                spanfunc = R_DrawSpan;
+                break;
             }
 
         if (flatSky)
             skyfunc = R_DrawSkyFlat;
         else
-            switch(selectedCPU)
+            switch (selectedCPU)
             {
-                case UMC_GREEN_486:
-                case CYRIX_5X86:
-                case AMD_K5:
-                case INTEL_PENTIUM:
-                    skyfunc = R_DrawColumnFastLEA;
-                    break;
-                default:
-                    skyfunc = R_DrawColumn;
-                    break;
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K5:
+            case INTEL_PENTIUM:
+                skyfunc = R_DrawColumnFastLEA;
+                break;
+            default:
+                skyfunc = R_DrawColumn;
+                break;
             }
-            
+
         switch (invisibleRender)
         {
         case INVISIBLE_NORMAL:
@@ -960,51 +960,51 @@ void R_ExecuteSetViewSize(void)
 
         break;
     case DETAIL_LOW:
-        switch(selectedCPU)
+        switch (selectedCPU)
         {
-            case UMC_GREEN_486:
-            case CYRIX_5X86:
-            case AMD_K5:
-            case INTEL_PENTIUM:
-                colfunc = basecolfunc = R_DrawColumnLowFastLEA;
-                break;
-            default:
-                colfunc = basecolfunc = R_DrawColumnLow;
-                break;
+        case UMC_GREEN_486:
+        case CYRIX_5X86:
+        case AMD_K5:
+        case INTEL_PENTIUM:
+            colfunc = basecolfunc = R_DrawColumnLowFastLEA;
+            break;
+        default:
+            colfunc = basecolfunc = R_DrawColumnLow;
+            break;
         }
 
         if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlatLow;
         else
-            switch(selectedCPU)
+            switch (selectedCPU)
             {
-                case INTEL_386SX:
-                case INTEL_386DX:
-                case UMC_GREEN_486:
-                    spanfunc = R_DrawSpanLow386SX;
-                    break;
-                case CYRIX_486:
-                    spanfunc = R_DrawSpanLowCyrix;
-                    break;
-                default:
-                    spanfunc = R_DrawSpanLow;
-                    break;
+            case INTEL_386SX:
+            case INTEL_386DX:
+            case UMC_GREEN_486:
+                spanfunc = R_DrawSpanLow386SX;
+                break;
+            case CYRIX_486:
+                spanfunc = R_DrawSpanLowCyrix;
+                break;
+            default:
+                spanfunc = R_DrawSpanLow;
+                break;
             }
 
         if (flatSky)
             skyfunc = R_DrawSkyFlatLow;
         else
-            switch(selectedCPU)
+            switch (selectedCPU)
             {
-                case UMC_GREEN_486:
-                case CYRIX_5X86:
-                case AMD_K5:
-                case INTEL_PENTIUM:
-                    skyfunc = R_DrawColumnLowFastLEA;
-                    break;
-                default:
-                    skyfunc = R_DrawColumnLow;
-                    break;
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K5:
+            case INTEL_PENTIUM:
+                skyfunc = R_DrawColumnLowFastLEA;
+                break;
+            default:
+                skyfunc = R_DrawColumnLow;
+                break;
             }
 
         switch (invisibleRender)
@@ -1028,51 +1028,51 @@ void R_ExecuteSetViewSize(void)
 
         break;
     case DETAIL_POTATO:
-        switch(selectedCPU)
+        switch (selectedCPU)
         {
-            case UMC_GREEN_486:
-            case CYRIX_5X86:
-            case AMD_K5:
-            case INTEL_PENTIUM:
-                colfunc = basecolfunc = R_DrawColumnPotatoFastLEA;
-                break;
-            default:
-                colfunc = basecolfunc = R_DrawColumnPotato;
-                break;
+        case UMC_GREEN_486:
+        case CYRIX_5X86:
+        case AMD_K5:
+        case INTEL_PENTIUM:
+            colfunc = basecolfunc = R_DrawColumnPotatoFastLEA;
+            break;
+        default:
+            colfunc = basecolfunc = R_DrawColumnPotato;
+            break;
         }
 
         if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlatPotato;
         else
-            switch(selectedCPU)
+            switch (selectedCPU)
             {
-                case INTEL_386SX:
-                case INTEL_386DX:
-                case UMC_GREEN_486:
-                    spanfunc = R_DrawSpanPotato386SX;
-                    break;
-                case CYRIX_486:
-                    spanfunc = R_DrawSpanPotatoCyrix;
-                    break;
-                default:
-                    spanfunc = R_DrawSpanPotato;
-                    break;
+            case INTEL_386SX:
+            case INTEL_386DX:
+            case UMC_GREEN_486:
+                spanfunc = R_DrawSpanPotato386SX;
+                break;
+            case CYRIX_486:
+                spanfunc = R_DrawSpanPotatoCyrix;
+                break;
+            default:
+                spanfunc = R_DrawSpanPotato;
+                break;
             }
 
         if (flatSky)
             skyfunc = R_DrawSkyFlatPotato;
         else
-            switch(selectedCPU)
+            switch (selectedCPU)
             {
-                case UMC_GREEN_486:
-                case CYRIX_5X86:
-                case AMD_K5:
-                case INTEL_PENTIUM:
-                    skyfunc = R_DrawColumnPotatoFastLEA;
-                    break;
-                default:
-                    skyfunc = R_DrawColumnPotato;
-                    break;
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K5:
+            case INTEL_PENTIUM:
+                skyfunc = R_DrawColumnPotatoFastLEA;
+                break;
+            default:
+                skyfunc = R_DrawColumnPotato;
+                break;
             }
 
         switch (invisibleRender)
@@ -1101,30 +1101,52 @@ void R_ExecuteSetViewSize(void)
     switch (detailshift)
     {
     case DETAIL_HIGH:
-        colfunc = basecolfunc = R_DrawColumnBackbuffer;
+        switch (selectedCPU)
+        {
+        case UMC_GREEN_486:
+        case CYRIX_5X86:
+        case AMD_K5:
+        case INTEL_PENTIUM:
+            colfunc = basecolfunc = R_DrawColumnBackbufferFastLEA;
+            break;
+        default:
+            colfunc = basecolfunc = R_DrawColumnBackbuffer;
+            break;
+        }
 
         if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlatBackbuffer;
         else
-            switch(selectedCPU)
+            switch (selectedCPU)
             {
-                case INTEL_386SX:
-                case INTEL_386DX:
-                case UMC_GREEN_486:
-                    spanfunc = R_DrawSpanBackbuffer386SX;
-                    break;
-                case CYRIX_486:
-                    spanfunc = R_DrawSpanBackbufferCyrix;
-                    break;
-                default:
-                    spanfunc = R_DrawSpanBackbuffer;
-                    break;
+            case INTEL_386SX:
+            case INTEL_386DX:
+            case UMC_GREEN_486:
+                spanfunc = R_DrawSpanBackbuffer386SX;
+                break;
+            case CYRIX_486:
+                spanfunc = R_DrawSpanBackbufferCyrix;
+                break;
+            default:
+                spanfunc = R_DrawSpanBackbuffer;
+                break;
             }
 
         if (flatSky)
             skyfunc = R_DrawSkyFlatBackbuffer;
         else
-            skyfunc = R_DrawColumnBackbuffer;
+            switch (selectedCPU)
+            {
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K5:
+            case INTEL_PENTIUM:
+                skyfunc = R_DrawColumnBackbufferFastLEA;
+                break;
+            default:
+                skyfunc = R_DrawColumnBackbuffer;
+                break;
+            }
 
         switch (invisibleRender)
         {
@@ -1152,19 +1174,19 @@ void R_ExecuteSetViewSize(void)
         if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlatLowBackbuffer;
         else
-            switch(selectedCPU)
+            switch (selectedCPU)
             {
-                case INTEL_386SX:
-                case INTEL_386DX:
-                case UMC_GREEN_486:
-                    spanfunc = R_DrawSpanLowBackbuffer386SX;
-                    break;
-                case CYRIX_486:
-                    spanfunc = R_DrawSpanLowBackbufferCyrix;
-                    break;
-                default:
-                    spanfunc = R_DrawSpanLowBackbuffer;
-                    break;
+            case INTEL_386SX:
+            case INTEL_386DX:
+            case UMC_GREEN_486:
+                spanfunc = R_DrawSpanLowBackbuffer386SX;
+                break;
+            case CYRIX_486:
+                spanfunc = R_DrawSpanLowBackbufferCyrix;
+                break;
+            default:
+                spanfunc = R_DrawSpanLowBackbuffer;
+                break;
             }
 
         if (flatSky)
@@ -1198,19 +1220,19 @@ void R_ExecuteSetViewSize(void)
         if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlatPotatoBackbuffer;
         else
-            switch(selectedCPU)
+            switch (selectedCPU)
             {
-                case INTEL_386SX:
-                case INTEL_386DX:
-                case UMC_GREEN_486:
-                    spanfunc = R_DrawSpanPotatoBackbuffer386SX;
-                    break;
-                case CYRIX_486:
-                    spanfunc = R_DrawSpanPotatoBackbufferCyrix;
-                    break;
-                default:
-                    spanfunc = R_DrawSpanPotatoBackbuffer;
-                    break;
+            case INTEL_386SX:
+            case INTEL_386DX:
+            case UMC_GREEN_486:
+                spanfunc = R_DrawSpanPotatoBackbuffer386SX;
+                break;
+            case CYRIX_486:
+                spanfunc = R_DrawSpanPotatoBackbufferCyrix;
+                break;
+            default:
+                spanfunc = R_DrawSpanPotatoBackbuffer;
+                break;
             }
 
         if (flatSky)
@@ -1250,19 +1272,19 @@ void R_ExecuteSetViewSize(void)
         if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlatVBE2;
         else
-            switch(selectedCPU)
+            switch (selectedCPU)
             {
-                case INTEL_386SX:
-                case INTEL_386DX:
-                case UMC_GREEN_486:
-                    spanfunc = R_DrawSpanVBE2_386SX;
-                    break;
-                case CYRIX_486:
-                    spanfunc = R_DrawSpanVBE2_Cyrix;
-                    break;
-                default:
-                    spanfunc = R_DrawSpanVBE2;
-                    break;
+            case INTEL_386SX:
+            case INTEL_386DX:
+            case UMC_GREEN_486:
+                spanfunc = R_DrawSpanVBE2_386SX;
+                break;
+            case CYRIX_486:
+                spanfunc = R_DrawSpanVBE2_Cyrix;
+                break;
+            default:
+                spanfunc = R_DrawSpanVBE2;
+                break;
             }
 
         if (flatSky)
@@ -1296,19 +1318,19 @@ void R_ExecuteSetViewSize(void)
         if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlatLowVBE2;
         else
-            switch(selectedCPU)
+            switch (selectedCPU)
             {
-                case INTEL_386SX:
-                case INTEL_386DX:
-                case UMC_GREEN_486:
-                    spanfunc = R_DrawSpanLowVBE2_386SX;
-                    break;
-                case CYRIX_486:
-                    spanfunc = R_DrawSpanLowVBE2_Cyrix;
-                    break;
-                default:
-                    spanfunc = R_DrawSpanLowVBE2;
-                    break;
+            case INTEL_386SX:
+            case INTEL_386DX:
+            case UMC_GREEN_486:
+                spanfunc = R_DrawSpanLowVBE2_386SX;
+                break;
+            case CYRIX_486:
+                spanfunc = R_DrawSpanLowVBE2_Cyrix;
+                break;
+            default:
+                spanfunc = R_DrawSpanLowVBE2;
+                break;
             }
 
         if (flatSky)
@@ -1342,19 +1364,19 @@ void R_ExecuteSetViewSize(void)
         if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlatPotatoVBE2;
         else
-            switch(selectedCPU)
+            switch (selectedCPU)
             {
-                case INTEL_386SX:
-                case INTEL_386DX:
-                case UMC_GREEN_486:
-                    spanfunc = R_DrawSpanPotatoVBE2_386SX;
-                    break;
-                case CYRIX_486:
-                    spanfunc = R_DrawSpanPotatoVBE2_Cyrix;
-                    break;
-                default:
-                    spanfunc = R_DrawSpanPotatoVBE2;
-                    break;
+            case INTEL_386SX:
+            case INTEL_386DX:
+            case UMC_GREEN_486:
+                spanfunc = R_DrawSpanPotatoVBE2_386SX;
+                break;
+            case CYRIX_486:
+                spanfunc = R_DrawSpanPotatoVBE2_Cyrix;
+                break;
+            default:
+                spanfunc = R_DrawSpanPotatoVBE2;
+                break;
             }
 
         if (flatSky)

@@ -99,6 +99,7 @@ GLOBOBJS = &
  i_ibm.obj &
  i_sound.obj &
  linearh.obj &
+ linearhKN.obj &
  linearhSX.obj &
  linearhCX.obj &
  linearl.obj &
