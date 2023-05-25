@@ -55,10 +55,10 @@ scalecalls:
 
 BEGIN_CODE_SECTION
 
-; ======================
-; R_DrawColumnBackbuffer
-; ======================
-CODE_SYM_DEF R_DrawColumnBackbufferFastLEA
+; =========================
+; R_DrawColumnLowBackbuffer
+; =========================
+CODE_SYM_DEF R_DrawColumnLowBackbufferFastLEA
 	push		edi
 	push		ebx
 	push		ecx
@@ -111,7 +111,8 @@ CODE_SYM_DEF R_DrawColumnBackbufferFastLEA
   shr  edx,25
 
   jmp  [scalecalls+4+ebp*4]
-  
+; R_DrawColumn ends
+
 .done:
 	pop		ebp
 	pop		esi
@@ -120,7 +121,7 @@ CODE_SYM_DEF R_DrawColumnBackbufferFastLEA
 	pop		ebx
   pop		edi
   ret
-; R_DrawColumnBackbuffer ends
+; R_DrawColumnLowBackbuffer ends
 
 %macro SCALELABEL 1
   vscale%1
@@ -134,29 +135,32 @@ CODE_SYM_DEF R_DrawColumnBackbufferFastLEA
       lea  edx,[ebx+ecx]                  ; 386:2cc, 486:1cc
       mov  al,[eax]                       ; translate the color
       shr  ebx, 25                        ; 386:3cc, 486:2cc
-      mov  [edi-(LINE-1)*SCREENWIDTH],al           ; draw a pixel to the buffer
+      mov  [edi-(LINE-1)*SCREENWIDTH],al  ; draw a pixel to the buffer
+      mov  [edi-(LINE-1)*SCREENWIDTH+1],al  ; draw a pixel to the buffer
     %else
       mov  al,[esi+ebx]                   ; get source pixel
       lea  ebx,[edx+ecx]                  ; 386:2cc, 486:1cc
       mov  al,[eax]                       ; translate the color
       shr  edx, 25                        ; 386:3cc, 486:2cc
-      mov  [edi-(LINE-1)*SCREENWIDTH],al           ; draw a pixel to the buffer
+      mov  [edi-(LINE-1)*SCREENWIDTH],al  ; draw a pixel to the buffer
+      mov  [edi-(LINE-1)*SCREENWIDTH+1],al  ; draw a pixel to the buffer
     %endif
     %assign LINE LINE-1
 %endrep
 
 vscale1:
-  pop	ebp
+	pop	ebp
   mov al,[esi+ebx]
   pop	esi
   mov al,[eax]
   pop	edx
   mov [edi],al
+  mov [edi+1],al
 
 vscale0:
-	pop		ecx
-	pop		ebx
-  pop		edi
+	pop	ecx
+	pop	ebx
+  pop	edi
   ret
 
 %endif

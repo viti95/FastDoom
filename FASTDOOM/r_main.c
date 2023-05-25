@@ -1169,7 +1169,18 @@ void R_ExecuteSetViewSize(void)
 
         break;
     case DETAIL_LOW:
-        colfunc = basecolfunc = R_DrawColumnLowBackbuffer;
+        switch (selectedCPU)
+        {
+        case UMC_GREEN_486:
+        case CYRIX_5X86:
+        case AMD_K5:
+        case INTEL_PENTIUM:
+            colfunc = basecolfunc = R_DrawColumnLowBackbufferFastLEA;
+            break;
+        default:
+            colfunc = basecolfunc = R_DrawColumnLowBackbuffer;
+            break;
+        }
 
         if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlatLowBackbuffer;
@@ -1192,7 +1203,18 @@ void R_ExecuteSetViewSize(void)
         if (flatSky)
             skyfunc = R_DrawSkyFlatLowBackbuffer;
         else
-            skyfunc = R_DrawColumnLowBackbuffer;
+            switch (selectedCPU)
+            {
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K5:
+            case INTEL_PENTIUM:
+                skyfunc = R_DrawColumnLowBackbufferFastLEA;
+                break;
+            default:
+                skyfunc = R_DrawColumnLowBackbuffer;
+                break;
+            }
 
         switch (invisibleRender)
         {

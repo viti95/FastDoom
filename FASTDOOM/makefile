@@ -103,6 +103,7 @@ GLOBOBJS = &
  linearhSX.obj &
  linearhCX.obj &
  linearl.obj &
+ linearlKN.obj &
  linearlSX.obj &
  linearlCX.obj &
  linearp.obj &
