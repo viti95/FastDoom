@@ -7,6 +7,7 @@
 #include "ns_sb.h"
 #include "ns_sbdef.h"
 #include "options.h"
+#include "ns_inter.h"
 
 #define MIDI_NOTE_OFF 0x80
 #define MIDI_NOTE_ON 0x90
@@ -29,8 +30,12 @@
 
 void SBMIDI_SendMidi(int data)
 {
+    unsigned flags;
+
+    flags = DisableInterrupts();
     BLASTER_WriteDSP(DSP_MIDIWritePoll);
     BLASTER_WriteDSP(data);
+    RestoreInterrupts(flags);
 }
 
 /*---------------------------------------------------------------------
