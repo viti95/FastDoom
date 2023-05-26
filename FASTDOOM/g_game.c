@@ -496,7 +496,7 @@ void G_Ticker(void)
     cmd = &players.cmd;
 
     CopyBytes(&localcmds[buf], cmd, sizeof(ticcmd_t));
-    //memcpy(cmd, &localcmds[buf], sizeof(ticcmd_t));
+    // memcpy(cmd, &localcmds[buf], sizeof(ticcmd_t));
 
     if (demoplayback)
         G_ReadDemoTiccmd(cmd);
@@ -897,12 +897,12 @@ void G_DoSaveGame(void)
     save_p = savebuffer;
 
     CopyBytes(description, save_p, SAVESTRINGSIZE);
-    //memcpy(save_p, description, SAVESTRINGSIZE);
+    // memcpy(save_p, description, SAVESTRINGSIZE);
     save_p += SAVESTRINGSIZE;
     SetBytes(name2, 0, sizeof(name2));
     sprintf(name2, "version %i", VERSION);
     CopyBytes(name2, save_p, VERSIONSIZE);
-    //memcpy(save_p, name2, VERSIONSIZE);
+    // memcpy(save_p, name2, VERSIONSIZE);
     save_p += VERSIONSIZE;
 
     *save_p++ = gameskill;
@@ -964,7 +964,7 @@ void G_DoNewGame(void)
     demoplayback = 0;
     respawnparm = false;
     fastparm = false;
-    //nomonsters = false;
+    // nomonsters = false;
     G_InitNew(d_skill, d_episode, d_map);
     gameaction = ga_nothing;
 }
@@ -1222,14 +1222,14 @@ void G_TimeDemo(char *name)
     gameaction = ga_playdemo;
 }
 
-/* 
-=================== 
-= 
-= G_CheckDemoStatus 
-= 
-= Called after a death or level completion to allow demos to be cleaned up 
-= Returns true if a new demo loop action will take place 
-=================== 
+/*
+===================
+=
+= G_CheckDemoStatus
+=
+= Called after a death or level completion to allow demos to be cleaned up
+= Returns true if a new demo loop action will take place
+===================
 */
 
 void G_CheckDemoStatus(void)
@@ -1251,15 +1251,45 @@ void G_CheckDemoStatus(void)
                 // Executable
                 fprintf(logFile, "%s;", myargv[0]);
 
+                // Architecture
+                switch (selectedCPU)
+                {
+                case INTEL_386SX:
+                    fprintf(logFile, "386sx;");
+                    break;
+                case INTEL_386DX:
+                    fprintf(logFile, "386dx;");
+                    break;
+                case INTEL_486:
+                    fprintf(logFile, "intel486;");
+                    break;
+                case INTEL_PENTIUM:
+                    fprintf(logFile, "pentium;");
+                    break;
+                case CYRIX_486:
+                    fprintf(logFile, "cyrix486;");
+                    break;
+                case CYRIX_5X86:
+                    fprintf(logFile, "cyrix5x86;");
+                    break;
+                case UMC_GREEN_486:
+                    fprintf(logFile, "umc486;");
+                    break;
+                case AMD_K5:
+                    fprintf(logFile, "k5;");
+                    break;
+                }
+
                 // Detail
-                switch(detailshift){
-                    case DETAIL_HIGH:
+                switch (detailshift)
+                {
+                case DETAIL_HIGH:
                     fprintf(logFile, "high;");
                     break;
-                    case DETAIL_LOW:
+                case DETAIL_LOW:
                     fprintf(logFile, "low;");
                     break;
-                    case DETAIL_POTATO:
+                case DETAIL_POTATO:
                     fprintf(logFile, "potato;");
                     break;
                 }
@@ -1270,17 +1300,17 @@ void G_CheckDemoStatus(void)
                 // Visplanes
                 switch (visplaneRender)
                 {
-                    case VISPLANES_NORMAL:
+                case VISPLANES_NORMAL:
                     fprintf(logFile, "normal;");
                     break;
-                    case VISPLANES_FLAT:
+                case VISPLANES_FLAT:
                     fprintf(logFile, "flat;");
                     break;
-                    case VISPLANES_FLATTER:
+                case VISPLANES_FLATTER:
                     fprintf(logFile, "flatter;");
                     break;
                 }
-                
+
                 // Sky
                 if (flatSky)
                     fprintf(logFile, "flat;");
@@ -1294,21 +1324,21 @@ void G_CheckDemoStatus(void)
                     fprintf(logFile, "normal;");
 
                 // Transparent objects
-                switch(invisibleRender)
+                switch (invisibleRender)
                 {
-                    case INVISIBLE_NORMAL:
+                case INVISIBLE_NORMAL:
                     fprintf(logFile, "normal;");
                     break;
-                    case INVISIBLE_FLAT:
+                case INVISIBLE_FLAT:
                     fprintf(logFile, "flat;");
                     break;
-                    case INVISIBLE_FLAT_SATURN:
+                case INVISIBLE_FLAT_SATURN:
                     fprintf(logFile, "flatsaturn;");
                     break;
-                    case INVISIBLE_SATURN:
+                case INVISIBLE_SATURN:
                     fprintf(logFile, "saturn;");
                     break;
-                    case INVISIBLE_TRANSLUCENT:
+                case INVISIBLE_TRANSLUCENT:
                     fprintf(logFile, "translucent;");
                     break;
                 }

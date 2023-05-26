@@ -14,13 +14,14 @@ If "%3"=="" goto error_parameters
 If "%4"=="" goto error_parameters
 
 if exist bench.csv goto bypass
-echo executable;detail;size;visplanes;sky;objects;transparent_columns;iwad;demo;gametics;realtics;fps > bench.csv
+echo executable;arch;detail;size;visplanes;sky;objects;transparent_columns;iwad;demo;gametics;realtics;fps > bench.csv
 
 :bypass
 if "%1"=="phil" goto phil_bench
 if "%1"=="quick" goto quick_bench
 if "%1"=="normal" goto normal_bench
 if "%1"=="full" goto full_bench
+if "%1"=="arch" goto arch_bench
 
 goto error_parameters
 
@@ -353,11 +354,23 @@ echo Executing PhilsComputerLab DOOM benchmarks...
 %2 -low -size 3 -defVisplanes -defSky -far -defShadows -nofps -nomelt -iwad %3 -timedemo %4 -csv
 goto benchmark_finished
 
+:arch_bench
+echo Executing Architectural benchmarks...
+%2 -high -size 10 -386sx -defVisplanes -defSky -far -defShadows -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -high -size 10 -386dx -defVisplanes -defSky -far -defShadows -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -high -size 10 -cyrix486 -defVisplanes -defSky -far -defShadows -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -high -size 10 -intel486 -defVisplanes -defSky -far -defShadows -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -high -size 10 -umc486 -defVisplanes -defSky -far -defShadows -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -high -size 10 -cyrix5x86 -defVisplanes -defSky -far -defShadows -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -high -size 10 -k5 -defVisplanes -defSky -far -defShadows -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -high -size 10 -pentium -defVisplanes -defSky -far -defShadows -nofps -nomelt -iwad %3 -timedemo %4 -csv
+goto benchmark_finished
+
 :error_parameters
 echo #                                                                       #
 echo #    Usage:  bench.bat [type] [exe] [iwad] [lmp]                        #
 echo #                                                                       #
-echo #   [type]:  [phil, quick, normal, full]                                #
+echo #   [type]:  [phil, quick, normal, full, arch]                          #
 echo #    [exe]:  [fdoom.exe, fdoom13h.exe, ...]                             #
 echo #   [iwad]:  [doom1.wad, doomu.wad, doom2.wad, ...]                     #
 echo #    [lmp]:  [demo1, demo2, ...]                                        #
