@@ -1266,6 +1266,9 @@ void G_CheckDemoStatus(void)
                 case INTEL_PENTIUM:
                     fprintf(logFile, "pentium;");
                     break;
+                case CYRIX_386DLC:
+                    fprintf(logFile, "cyrix386;");
+                    break;
                 case CYRIX_486:
                     fprintf(logFile, "cyrix486;");
                     break;

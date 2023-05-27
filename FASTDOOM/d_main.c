@@ -1397,6 +1397,7 @@ void D_DoomMain(void)
     M_CheckParmOptionalValue("-translucent", &invisibleRender, INVISIBLE_TRANSLUCENT);
     M_CheckParmOptionalValue("-umc486", &selectedCPU, UMC_GREEN_486);
     M_CheckParmOptionalValue("-intel486", &selectedCPU, INTEL_486);
+    M_CheckParmOptionalValue("-cyrix386", &selectedCPU, CYRIX_386DLC);
     M_CheckParmOptionalValue("-cyrix486", &selectedCPU, CYRIX_486);
     M_CheckParmOptionalValue("-386dx", &selectedCPU, INTEL_386DX);
     M_CheckParmOptionalValue("-386sx", &selectedCPU, INTEL_386SX);

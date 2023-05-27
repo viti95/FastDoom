@@ -895,6 +895,7 @@ void R_ExecuteSetViewSize(void)
         switch (selectedCPU)
         {
         case UMC_GREEN_486:
+        case CYRIX_486:
         case CYRIX_5X86:
         case AMD_K5:
             colfunc = basecolfunc = R_DrawColumnFastLEA;
@@ -912,6 +913,7 @@ void R_ExecuteSetViewSize(void)
             case INTEL_386SX:
             case INTEL_386DX:
             case UMC_GREEN_486:
+            case CYRIX_386DLC:
             case CYRIX_486:
                 spanfunc = R_DrawSpan386SX;
                 break;
@@ -926,6 +928,7 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case UMC_GREEN_486:
+            case CYRIX_486:
             case CYRIX_5X86:
             case AMD_K5:
                 skyfunc = R_DrawColumnFastLEA;
@@ -959,6 +962,7 @@ void R_ExecuteSetViewSize(void)
         switch (selectedCPU)
         {
         case UMC_GREEN_486:
+        case CYRIX_486:
         case CYRIX_5X86:
         case AMD_K5:
             colfunc = basecolfunc = R_DrawColumnLowFastLEA;
@@ -976,6 +980,7 @@ void R_ExecuteSetViewSize(void)
             case INTEL_386SX:
             case INTEL_386DX:
             case UMC_GREEN_486:
+            case CYRIX_386DLC:
             case CYRIX_486:
                 spanfunc = R_DrawSpanLow386SX;
                 break;
@@ -990,6 +995,7 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case UMC_GREEN_486:
+            case CYRIX_486:
             case CYRIX_5X86:
             case AMD_K5:
                 skyfunc = R_DrawColumnLowFastLEA;
@@ -1023,6 +1029,7 @@ void R_ExecuteSetViewSize(void)
         switch (selectedCPU)
         {
         case UMC_GREEN_486:
+        case CYRIX_486:
         case CYRIX_5X86:
         case AMD_K5:
             colfunc = basecolfunc = R_DrawColumnPotatoFastLEA;
@@ -1040,6 +1047,7 @@ void R_ExecuteSetViewSize(void)
             case INTEL_386SX:
             case INTEL_386DX:
             case UMC_GREEN_486:
+            case CYRIX_386DLC:
             case CYRIX_486:
                 spanfunc = R_DrawSpanPotato386SX;
                 break;
@@ -1054,6 +1062,7 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case UMC_GREEN_486:
+            case CYRIX_486:
             case CYRIX_5X86:
             case AMD_K5:
                 skyfunc = R_DrawColumnPotatoFastLEA;
@@ -1092,6 +1101,7 @@ void R_ExecuteSetViewSize(void)
         switch (selectedCPU)
         {
         case UMC_GREEN_486:
+        case CYRIX_486:
         case CYRIX_5X86:
         case AMD_K5:
             colfunc = basecolfunc = R_DrawColumnBackbufferFastLEA;
@@ -1109,6 +1119,7 @@ void R_ExecuteSetViewSize(void)
             case INTEL_386SX:
             case INTEL_386DX:
             case UMC_GREEN_486:
+            case CYRIX_386DLC:
             case CYRIX_486:
                 spanfunc = R_DrawSpanBackbuffer386SX;
                 break;
@@ -1123,6 +1134,7 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case UMC_GREEN_486:
+            case CYRIX_486:
             case CYRIX_5X86:
             case AMD_K5:
                 skyfunc = R_DrawColumnBackbufferFastLEA;
@@ -1156,6 +1168,7 @@ void R_ExecuteSetViewSize(void)
         switch (selectedCPU)
         {
         case UMC_GREEN_486:
+        case CYRIX_486:
         case CYRIX_5X86:
         case AMD_K5:
             colfunc = basecolfunc = R_DrawColumnLowBackbufferFastLEA;
@@ -1173,6 +1186,7 @@ void R_ExecuteSetViewSize(void)
             case INTEL_386SX:
             case INTEL_386DX:
             case UMC_GREEN_486:
+            case CYRIX_386DLC:
             case CYRIX_486:
                 spanfunc = R_DrawSpanLowBackbuffer386SX;
                 break;
@@ -1187,6 +1201,7 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case UMC_GREEN_486:
+            case CYRIX_486:
             case CYRIX_5X86:
             case AMD_K5:
                 skyfunc = R_DrawColumnLowBackbufferFastLEA;
@@ -1227,6 +1242,7 @@ void R_ExecuteSetViewSize(void)
             case INTEL_386SX:
             case INTEL_386DX:
             case UMC_GREEN_486:
+            case CYRIX_386DLC:
             case CYRIX_486:
                 spanfunc = R_DrawSpanPotatoBackbuffer386SX;
                 break;
@@ -1277,6 +1293,7 @@ void R_ExecuteSetViewSize(void)
             case INTEL_386SX:
             case INTEL_386DX:
             case UMC_GREEN_486:
+            case CYRIX_386DLC:
             case CYRIX_486:
                 spanfunc = R_DrawSpanVBE2_386SX;
                 break;
@@ -1321,6 +1338,7 @@ void R_ExecuteSetViewSize(void)
             case INTEL_386SX:
             case INTEL_386DX:
             case UMC_GREEN_486:
+            case CYRIX_386DLC:
             case CYRIX_486:
                 spanfunc = R_DrawSpanLowVBE2_386SX;
                 break;
@@ -1365,6 +1383,7 @@ void R_ExecuteSetViewSize(void)
             case INTEL_386SX:
             case INTEL_386DX:
             case UMC_GREEN_486:
+            case CYRIX_386DLC:
             case CYRIX_486:
                 spanfunc = R_DrawSpanPotatoVBE2_386SX;
                 break;

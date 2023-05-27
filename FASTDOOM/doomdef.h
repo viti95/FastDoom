@@ -259,6 +259,7 @@ typedef enum
     INTEL_386SX,
     INTEL_386DX,
     INTEL_486,
+    CYRIX_386DLC,
     CYRIX_486,
     UMC_GREEN_486,
     CYRIX_5X86,

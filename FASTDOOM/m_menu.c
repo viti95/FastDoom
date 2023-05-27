@@ -1413,6 +1413,9 @@ void M_DrawDisplay(void)
     case INTEL_486:
         M_WriteText(214, 156, "INTEL 486");
         break;
+    case CYRIX_386DLC:
+        M_WriteText(214, 156, "CYRIX 386DLC");
+        break;
     case CYRIX_486:
         M_WriteText(214, 156, "CYRIX 486");
         break;
@@ -1693,6 +1696,9 @@ void M_ChangeCPU()
         break;
     case INTEL_486:
         players.message = "INTEL 486";
+        break;
+    case CYRIX_386DLC:
+        players.message = "CYRIX 386DLC";
         break;
     case CYRIX_486:
         players.message = "CYRIX 486";
