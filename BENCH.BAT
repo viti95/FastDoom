@@ -358,6 +358,7 @@ goto benchmark_finished
 echo Executing Architectural benchmarks...
 %2 -high -size 10 -386sx -defVisplanes -defSky -far -defShadows -nofps -nomelt -iwad %3 -timedemo %4 -csv
 %2 -high -size 10 -386dx -defVisplanes -defSky -far -defShadows -nofps -nomelt -iwad %3 -timedemo %4 -csv
+%2 -high -size 10 -cyrix386 -defVisplanes -defSky -far -defShadows -nofps -nomelt -iwad %3 -timedemo %4 -csv
 %2 -high -size 10 -cyrix486 -defVisplanes -defSky -far -defShadows -nofps -nomelt -iwad %3 -timedemo %4 -csv
 %2 -high -size 10 -intel486 -defVisplanes -defSky -far -defShadows -nofps -nomelt -iwad %3 -timedemo %4 -csv
 %2 -high -size 10 -umc486 -defVisplanes -defSky -far -defShadows -nofps -nomelt -iwad %3 -timedemo %4 -csv
