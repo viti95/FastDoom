@@ -897,7 +897,6 @@ void R_ExecuteSetViewSize(void)
         case UMC_GREEN_486:
         case CYRIX_5X86:
         case AMD_K5:
-        case INTEL_PENTIUM:
             colfunc = basecolfunc = R_DrawColumnFastLEA;
             break;
         default:
@@ -929,7 +928,6 @@ void R_ExecuteSetViewSize(void)
             case UMC_GREEN_486:
             case CYRIX_5X86:
             case AMD_K5:
-            case INTEL_PENTIUM:
                 skyfunc = R_DrawColumnFastLEA;
                 break;
             default:
@@ -963,7 +961,6 @@ void R_ExecuteSetViewSize(void)
         case UMC_GREEN_486:
         case CYRIX_5X86:
         case AMD_K5:
-        case INTEL_PENTIUM:
             colfunc = basecolfunc = R_DrawColumnLowFastLEA;
             break;
         default:
@@ -995,7 +992,6 @@ void R_ExecuteSetViewSize(void)
             case UMC_GREEN_486:
             case CYRIX_5X86:
             case AMD_K5:
-            case INTEL_PENTIUM:
                 skyfunc = R_DrawColumnLowFastLEA;
                 break;
             default:
@@ -1029,7 +1025,6 @@ void R_ExecuteSetViewSize(void)
         case UMC_GREEN_486:
         case CYRIX_5X86:
         case AMD_K5:
-        case INTEL_PENTIUM:
             colfunc = basecolfunc = R_DrawColumnPotatoFastLEA;
             break;
         default:
@@ -1061,7 +1056,6 @@ void R_ExecuteSetViewSize(void)
             case UMC_GREEN_486:
             case CYRIX_5X86:
             case AMD_K5:
-            case INTEL_PENTIUM:
                 skyfunc = R_DrawColumnPotatoFastLEA;
                 break;
             default:
@@ -1100,7 +1094,6 @@ void R_ExecuteSetViewSize(void)
         case UMC_GREEN_486:
         case CYRIX_5X86:
         case AMD_K5:
-        case INTEL_PENTIUM:
             colfunc = basecolfunc = R_DrawColumnBackbufferFastLEA;
             break;
         default:
@@ -1132,7 +1125,6 @@ void R_ExecuteSetViewSize(void)
             case UMC_GREEN_486:
             case CYRIX_5X86:
             case AMD_K5:
-            case INTEL_PENTIUM:
                 skyfunc = R_DrawColumnBackbufferFastLEA;
                 break;
             default:
@@ -1166,7 +1158,6 @@ void R_ExecuteSetViewSize(void)
         case UMC_GREEN_486:
         case CYRIX_5X86:
         case AMD_K5:
-        case INTEL_PENTIUM:
             colfunc = basecolfunc = R_DrawColumnLowBackbufferFastLEA;
             break;
         default:
@@ -1198,7 +1189,6 @@ void R_ExecuteSetViewSize(void)
             case UMC_GREEN_486:
             case CYRIX_5X86:
             case AMD_K5:
-            case INTEL_PENTIUM:
                 skyfunc = R_DrawColumnLowBackbufferFastLEA;
                 break;
             default:
