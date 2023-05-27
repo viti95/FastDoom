@@ -150,9 +150,6 @@ typedef struct
     // if status = 2,
     //   choice=0:leftarrow,1:rightarrow
     void (*routine)(int choice);
-
-    // hotkey in menu
-    char alphaKey;
 } menuitem_t;
 
 typedef struct menu_s
@@ -253,12 +250,12 @@ void M_StartMessage(char *string, void *routine, byte input);
 
 menuitem_t MainMenu[] =
     {
-        {1, "M_NGAME", "New game", M_NewGame, 'n'},
-        {1, "M_OPTION", "Options", M_Options, 'o'},
-        {1, "M_LOADG", "Load game", M_LoadGame, 'l'},
-        {1, "M_SAVEG", "Save game", M_SaveGame, 's'},
-        {1, "M_RDTHIS", "Read this!", M_ReadThis, 'r'},
-        {1, "M_QUITG", "Quit game", M_QuitDOOM, 'q'}};
+        {1, "M_NGAME", "New game", M_NewGame},
+        {1, "M_OPTION", "Options", M_Options},
+        {1, "M_LOADG", "Load game", M_LoadGame},
+        {1, "M_SAVEG", "Save game", M_SaveGame},
+        {1, "M_RDTHIS", "Read this!", M_ReadThis},
+        {1, "M_QUITG", "Quit game", M_QuitDOOM}};
 
 menu_t MainDef =
     {
@@ -280,10 +277,10 @@ menu_t MainDef =
 
 menuitem_t EpisodeMenu[] =
     {
-        {1, "M_EPI1", "Knee-Deep in the Dead", M_Episode, 'k'},
-        {1, "M_EPI2", "The Shores of Hell", M_Episode, 't'},
-        {1, "M_EPI3", "Inferno", M_Episode, 'i'},
-        {1, "M_EPI4", "Thy Flesh Consumed", M_Episode, 't'}};
+        {1, "M_EPI1", "Knee-Deep in the Dead", M_Episode},
+        {1, "M_EPI2", "The Shores of Hell", M_Episode},
+        {1, "M_EPI3", "Inferno", M_Episode},
+        {1, "M_EPI4", "Thy Flesh Consumed", M_Episode}};
 
 menu_t EpiDef =
     {
@@ -307,11 +304,11 @@ menu_t EpiDef =
 
 menuitem_t NewGameMenu[] =
     {
-        {1, "M_JKILL", "I'm too young to die", M_ChooseSkill, 'i'},
-        {1, "M_ROUGH", "Hey, not too rough", M_ChooseSkill, 'h'},
-        {1, "M_HURT", "Hurt me plenty", M_ChooseSkill, 'h'},
-        {1, "M_ULTRA", "Ultra-violence", M_ChooseSkill, 'u'},
-        {1, "M_NMARE", "NIGHTMARE!", M_ChooseSkill, 'n'}};
+        {1, "M_JKILL", "I'm too young to die", M_ChooseSkill},
+        {1, "M_ROUGH", "Hey, not too rough", M_ChooseSkill},
+        {1, "M_HURT", "Hurt me plenty", M_ChooseSkill},
+        {1, "M_ULTRA", "Ultra-violence", M_ChooseSkill},
+        {1, "M_NMARE", "NIGHTMARE!", M_ChooseSkill}};
 
 menu_t NewDef =
     {
@@ -350,14 +347,14 @@ menu_t NewDef =
 
 menuitem_t OptionsMenu[] =
     {
-        {1, "M_ENDGAM", "End game", M_EndGame, 'e'},
-        {1, "M_MESSG", "Messages:", M_ChangeMessages, 'm'},
-        {1, "M_DISP", "Display", M_Display, 'd'},
-        {2, "M_SCRNSZ", "Screen size", M_SizeDisplay, 's'},
-        {-1, "", "", 0},
-        {2, "M_MSENS", "Mouse sensitivity", M_ChangeSensitivity, 'm'},
-        {-1, "", "", 0},
-        {1, "M_SVOL", "Sound volume", M_Sound, 's'}};
+        {1, "M_ENDGAM", "End game", M_EndGame},
+        {1, "M_MESSG", "Messages:", M_ChangeMessages},
+        {1, "M_DISP", "Display", M_Display},
+        {2, "M_SCRNSZ", "Screen size", M_SizeDisplay},
+        {-1, "", ""},
+        {2, "M_MSENS", "Mouse sensitivity", M_ChangeSensitivity},
+        {-1, "", ""},
+        {1, "M_SVOL", "Sound volume", M_Sound}};
 
 menu_t OptionsDef =
     {
@@ -370,16 +367,16 @@ menu_t OptionsDef =
 
 menuitem_t DisplayMenu[] =
     {
-        {1, "", "", M_ChangeVsync, 's'},
-        {1, "", "", M_ChangeDetail, 'g'},
-        {1, "", "", M_ChangeVisplaneDetail, 'v'},
-        {1, "", "", M_ChangeSkyDetail, 's'},
-        {1, "", "", M_ChangeInvisibleDetail, 'i'},
-        {1, "", "", M_ChangeShowFPS, 'f'},
-        {1, "", "", M_ChangeSpriteCulling, 'c'},
-        {1, "", "", M_ChangeMelting, 'm'},
-        {1, "", "", M_ChangeUncappedFPS, 'u'},
-        {1, "", "", M_ChangeCPU, 'p'}};
+        {1, "", "", M_ChangeVsync},
+        {1, "", "", M_ChangeDetail},
+        {1, "", "", M_ChangeVisplaneDetail},
+        {1, "", "", M_ChangeSkyDetail},
+        {1, "", "", M_ChangeInvisibleDetail},
+        {1, "", "", M_ChangeShowFPS},
+        {1, "", "", M_ChangeSpriteCulling},
+        {1, "", "", M_ChangeMelting},
+        {1, "", "", M_ChangeUncappedFPS},
+        {1, "", "", M_ChangeCPU}};
 
 menu_t DisplayDef =
     {
@@ -398,7 +395,7 @@ menu_t DisplayDef =
 
 menuitem_t ReadMenu1[] =
     {
-        {1, "", "", M_ReadThis2, 0}};
+        {1, "", "", M_ReadThis2}};
 
 menu_t ReadDef1 =
     {
@@ -414,7 +411,7 @@ menu_t ReadDef1 =
 
 menuitem_t ReadMenu2[] =
     {
-        {1, "", "", M_FinishReadThis, 0}};
+        {1, "", "", M_FinishReadThis}};
 
 menu_t ReadDef2 =
     {
@@ -437,11 +434,11 @@ menu_t ReadDef2 =
 
 menuitem_t SoundMenu[] =
     {
-        {2, "M_SFXVOL", "SFX volume", M_SfxVol, 's'},
-        {-1, "", "", 0},
-        {2, "M_MUSVOL", "Music volume", M_MusicVol, 'm'},
-        {-1, "", "", 0},
-        {1, "", "", M_ChangeMono, 'c'}};
+        {2, "M_SFXVOL", "SFX volume", M_SfxVol},
+        {-1, "", ""},
+        {2, "M_MUSVOL", "Music volume", M_MusicVol},
+        {-1, "", ""},
+        {1, "", "", M_ChangeMono}};
 
 menu_t SoundDef =
     {
@@ -465,12 +462,12 @@ menu_t SoundDef =
 
 menuitem_t LoadMenu[] =
     {
-        {1, "", "", M_LoadSelect, '1'},
-        {1, "", "", M_LoadSelect, '2'},
-        {1, "", "", M_LoadSelect, '3'},
-        {1, "", "", M_LoadSelect, '4'},
-        {1, "", "", M_LoadSelect, '5'},
-        {1, "", "", M_LoadSelect, '6'}};
+        {1, "", "", M_LoadSelect},
+        {1, "", "", M_LoadSelect},
+        {1, "", "", M_LoadSelect},
+        {1, "", "", M_LoadSelect},
+        {1, "", "", M_LoadSelect},
+        {1, "", "", M_LoadSelect}};
 
 menu_t LoadDef =
     {
@@ -486,12 +483,12 @@ menu_t LoadDef =
 //
 menuitem_t SaveMenu[] =
     {
-        {1, "", "", M_SaveSelect, '1'},
-        {1, "", "", M_SaveSelect, '2'},
-        {1, "", "", M_SaveSelect, '3'},
-        {1, "", "", M_SaveSelect, '4'},
-        {1, "", "", M_SaveSelect, '5'},
-        {1, "", "", M_SaveSelect, '6'}};
+        {1, "", "", M_SaveSelect},
+        {1, "", "", M_SaveSelect},
+        {1, "", "", M_SaveSelect},
+        {1, "", "", M_SaveSelect},
+        {1, "", "", M_SaveSelect},
+        {1, "", "", M_SaveSelect}};
 
 menu_t SaveDef =
     {
@@ -2304,23 +2301,6 @@ byte M_Responder(void)
             S_StartSound(NULL, sfx_swtchn);
         }
         return 1;
-
-    default:
-        for (i = itemOn + 1; i < currentMenu->numitems; i++)
-            if (currentMenu->menuitems[i].alphaKey == ch)
-            {
-                itemOn = i;
-                S_StartSound(NULL, sfx_pstop);
-                return 1;
-            }
-        for (i = 0; i <= itemOn; i++)
-            if (currentMenu->menuitems[i].alphaKey == ch)
-            {
-                itemOn = i;
-                S_StartSound(NULL, sfx_pstop);
-                return 1;
-            }
-        break;
     }
 
     return 0;
