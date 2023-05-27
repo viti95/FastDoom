@@ -1447,8 +1447,6 @@ void M_Display(int choice)
 //
 void M_ChangeMessages(int choice)
 {
-    // warning: unused parameter `int choice'
-    choice = 0;
     showMessages = 1 - showMessages;
 
     if (!showMessages)
@@ -1474,7 +1472,6 @@ void M_EndGameResponse(int ch)
 
 void M_EndGame(int choice)
 {
-    choice = 0;
     if (!usergame)
     {
         S_StartSound(NULL, sfx_oof);
@@ -1489,8 +1486,6 @@ void M_EndGame(int choice)
 //
 void M_ReadThis(int choice)
 {
-    choice = 0;
-
     switch (gamemode)
     {
     case shareware:
@@ -1508,13 +1503,11 @@ void M_ReadThis(int choice)
 
 void M_ReadThis2(int choice)
 {
-    choice = 0;
     M_SetupNextMenu(&ReadDef2);
 }
 
 void M_FinishReadThis(int choice)
 {
-    choice = 0;
     M_SetupNextMenu(&MainDef);
 }
 
