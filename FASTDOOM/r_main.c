@@ -913,10 +913,8 @@ void R_ExecuteSetViewSize(void)
             case INTEL_386SX:
             case INTEL_386DX:
             case UMC_GREEN_486:
-                spanfunc = R_DrawSpan386SX;
-                break;
             case CYRIX_486:
-                spanfunc = R_DrawSpanCyrix;
+                spanfunc = R_DrawSpan386SX;
                 break;
             default:
                 spanfunc = R_DrawSpan;
@@ -981,10 +979,8 @@ void R_ExecuteSetViewSize(void)
             case INTEL_386SX:
             case INTEL_386DX:
             case UMC_GREEN_486:
-                spanfunc = R_DrawSpanLow386SX;
-                break;
             case CYRIX_486:
-                spanfunc = R_DrawSpanLowCyrix;
+                spanfunc = R_DrawSpanLow386SX;
                 break;
             default:
                 spanfunc = R_DrawSpanLow;
@@ -1049,10 +1045,8 @@ void R_ExecuteSetViewSize(void)
             case INTEL_386SX:
             case INTEL_386DX:
             case UMC_GREEN_486:
-                spanfunc = R_DrawSpanPotato386SX;
-                break;
             case CYRIX_486:
-                spanfunc = R_DrawSpanPotatoCyrix;
+                spanfunc = R_DrawSpanPotato386SX;
                 break;
             default:
                 spanfunc = R_DrawSpanPotato;
@@ -1122,10 +1116,8 @@ void R_ExecuteSetViewSize(void)
             case INTEL_386SX:
             case INTEL_386DX:
             case UMC_GREEN_486:
-                spanfunc = R_DrawSpanBackbuffer386SX;
-                break;
             case CYRIX_486:
-                spanfunc = R_DrawSpanBackbufferCyrix;
+                spanfunc = R_DrawSpanBackbuffer386SX;
                 break;
             default:
                 spanfunc = R_DrawSpanBackbuffer;
@@ -1190,10 +1182,8 @@ void R_ExecuteSetViewSize(void)
             case INTEL_386SX:
             case INTEL_386DX:
             case UMC_GREEN_486:
-                spanfunc = R_DrawSpanLowBackbuffer386SX;
-                break;
             case CYRIX_486:
-                spanfunc = R_DrawSpanLowBackbufferCyrix;
+                spanfunc = R_DrawSpanLowBackbuffer386SX;
                 break;
             default:
                 spanfunc = R_DrawSpanLowBackbuffer;
@@ -1247,10 +1237,8 @@ void R_ExecuteSetViewSize(void)
             case INTEL_386SX:
             case INTEL_386DX:
             case UMC_GREEN_486:
-                spanfunc = R_DrawSpanPotatoBackbuffer386SX;
-                break;
             case CYRIX_486:
-                spanfunc = R_DrawSpanPotatoBackbufferCyrix;
+                spanfunc = R_DrawSpanPotatoBackbuffer386SX;
                 break;
             default:
                 spanfunc = R_DrawSpanPotatoBackbuffer;
@@ -1299,10 +1287,8 @@ void R_ExecuteSetViewSize(void)
             case INTEL_386SX:
             case INTEL_386DX:
             case UMC_GREEN_486:
-                spanfunc = R_DrawSpanVBE2_386SX;
-                break;
             case CYRIX_486:
-                spanfunc = R_DrawSpanVBE2_Cyrix;
+                spanfunc = R_DrawSpanVBE2_386SX;
                 break;
             default:
                 spanfunc = R_DrawSpanVBE2;
@@ -1345,10 +1331,8 @@ void R_ExecuteSetViewSize(void)
             case INTEL_386SX:
             case INTEL_386DX:
             case UMC_GREEN_486:
-                spanfunc = R_DrawSpanLowVBE2_386SX;
-                break;
             case CYRIX_486:
-                spanfunc = R_DrawSpanLowVBE2_Cyrix;
+                spanfunc = R_DrawSpanLowVBE2_386SX;
                 break;
             default:
                 spanfunc = R_DrawSpanLowVBE2;
@@ -1391,10 +1375,8 @@ void R_ExecuteSetViewSize(void)
             case INTEL_386SX:
             case INTEL_386DX:
             case UMC_GREEN_486:
-                spanfunc = R_DrawSpanPotatoVBE2_386SX;
-                break;
             case CYRIX_486:
-                spanfunc = R_DrawSpanPotatoVBE2_Cyrix;
+                spanfunc = R_DrawSpanPotatoVBE2_386SX;
                 break;
             default:
                 spanfunc = R_DrawSpanPotatoVBE2;

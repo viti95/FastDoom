@@ -101,28 +101,21 @@ GLOBOBJS = &
  linearh.obj &
  linearhKN.obj &
  linearhSX.obj &
- linearhCX.obj &
  linearl.obj &
  linearlKN.obj &
  linearlSX.obj &
- linearlCX.obj &
  linearp.obj &
  linearpSX.obj &
- linearpCX.obj &
  planar.obj &
  planar2.obj &
  planarKN.obj &
  planarSX.obj &
- planarCX.obj &
  vbe2dh.obj &
  vbe2dhSX.obj &
- vbe2dhCX.obj &
  vbe2dl.obj &
  vbe2dlSX.obj &
- vbe2dlCX.obj &
  vbe2dp.obj &
  vbe2dpSX.obj &
- vbe2dpCX.obj &
  tables.obj &
  f_finale.obj &
  d_main.obj &
