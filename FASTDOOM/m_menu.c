@@ -192,16 +192,16 @@ void M_ChangeMessages(int choice);
 void M_ChangeSensitivity(int choice);
 void M_SfxVol(int choice);
 void M_MusicVol(int choice);
-void M_ChangeDetail();
-void M_ChangeVisplaneDetail();
-void M_ChangeCPU();
-void M_ChangeVsync();
-void M_ChangeSkyDetail();
-void M_ChangeInvisibleDetail();
-void M_ChangeShowFPS();
-void M_ChangeSpriteCulling();
-void M_ChangeMelting();
-void M_ChangeUncappedFPS();
+void M_ChangeDetail(int choice);
+void M_ChangeVisplaneDetail(int choice);
+void M_ChangeCPU(int choice);
+void M_ChangeVsync(int choice);
+void M_ChangeSkyDetail(int choice);
+void M_ChangeInvisibleDetail(int choice);
+void M_ChangeShowFPS(int choice);
+void M_ChangeSpriteCulling(int choice);
+void M_ChangeMelting(int choice);
+void M_ChangeUncappedFPS(int choice);
 void M_ChangeMono();
 void M_SizeDisplay(int choice);
 void M_StartGame(int choice);
@@ -367,16 +367,16 @@ menu_t OptionsDef =
 
 menuitem_t DisplayMenu[] =
     {
-        {1, "", "", M_ChangeVsync},
-        {1, "", "", M_ChangeDetail},
-        {1, "", "", M_ChangeVisplaneDetail},
-        {1, "", "", M_ChangeSkyDetail},
-        {1, "", "", M_ChangeInvisibleDetail},
-        {1, "", "", M_ChangeShowFPS},
-        {1, "", "", M_ChangeSpriteCulling},
-        {1, "", "", M_ChangeMelting},
-        {1, "", "", M_ChangeUncappedFPS},
-        {1, "", "", M_ChangeCPU}};
+        {2, "", "", M_ChangeVsync},
+        {2, "", "", M_ChangeDetail},
+        {2, "", "", M_ChangeVisplaneDetail},
+        {2, "", "", M_ChangeSkyDetail},
+        {2, "", "", M_ChangeInvisibleDetail},
+        {2, "", "", M_ChangeShowFPS},
+        {2, "", "", M_ChangeSpriteCulling},
+        {2, "", "", M_ChangeMelting},
+        {2, "", "", M_ChangeUncappedFPS},
+        {2, "", "", M_ChangeCPU}};
 
 menu_t DisplayDef =
     {
@@ -1598,7 +1598,7 @@ void M_ChangeSensitivity(int choice)
     }
 }
 
-void M_ChangeDetail()
+void M_ChangeDetail(int choice)
 {
     detailLevel++;
 
@@ -1621,7 +1621,7 @@ void M_ChangeDetail()
     }
 }
 
-void M_ChangeVisplaneDetail()
+void M_ChangeVisplaneDetail(int choice)
 {
     visplaneRender++;
 
@@ -1644,7 +1644,7 @@ void M_ChangeVisplaneDetail()
     }
 }
 
-void M_ChangeVsync()
+void M_ChangeVsync(int choice)
 {
     waitVsync = !waitVsync;
 
@@ -1658,7 +1658,7 @@ void M_ChangeVsync()
     }
 }
 
-void M_ChangeSkyDetail()
+void M_ChangeSkyDetail(int choice)
 {
     flatSky = !flatSky;
 
@@ -1674,7 +1674,7 @@ void M_ChangeSkyDetail()
     }
 }
 
-void M_ChangeCPU()
+void M_ChangeCPU(int choice)
 {
     selectedCPU++;
 
@@ -1715,7 +1715,7 @@ void M_ChangeCPU()
     }
 }
 
-void M_ChangeInvisibleDetail()
+void M_ChangeInvisibleDetail(int choice)
 {
     invisibleRender++;
 
@@ -1749,7 +1749,7 @@ void M_ChangeInvisibleDetail()
     }
 }
 
-void M_ChangeShowFPS()
+void M_ChangeShowFPS(int choice)
 {
     showFPS++;
 
@@ -1779,7 +1779,7 @@ void M_ChangeShowFPS()
     }
 }
 
-void M_ChangeSpriteCulling()
+void M_ChangeSpriteCulling(int choice)
 {
     nearSprites = !nearSprites;
 
@@ -1793,7 +1793,7 @@ void M_ChangeSpriteCulling()
     }
 }
 
-void M_ChangeMelting()
+void M_ChangeMelting(int choice)
 {
     noMelt = !noMelt;
 
@@ -1807,7 +1807,7 @@ void M_ChangeMelting()
     }
 }
 
-void M_ChangeUncappedFPS()
+void M_ChangeUncappedFPS(int choice)
 {
     uncappedFPS = !uncappedFPS;
 
@@ -2146,7 +2146,7 @@ byte M_Responder(void)
             return 1;
 
         case KEY_F5: // Detail toggle
-            M_ChangeDetail();
+            M_ChangeDetail(1);
             S_StartSound(NULL, sfx_swtchn);
             return 1;
 
