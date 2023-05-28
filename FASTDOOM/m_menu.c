@@ -1593,10 +1593,21 @@ void M_ChangeSensitivity(int choice)
 
 void M_ChangeDetail(int choice)
 {
-    detailLevel++;
+    switch (choice)
+    {
+    case 0:
+        detailLevel--;
 
-    if (detailLevel == NUM_DETAIL)
-        detailLevel = DETAIL_HIGH;
+        if (detailLevel == -1)
+            detailLevel = DETAIL_POTATO;
+        break;
+    case 1:
+        detailLevel++;
+
+        if (detailLevel == NUM_DETAIL)
+            detailLevel = DETAIL_HIGH;
+        break;
+    }
 
     R_SetViewSize(screenblocks, detailLevel);
 
@@ -1616,10 +1627,21 @@ void M_ChangeDetail(int choice)
 
 void M_ChangeVisplaneDetail(int choice)
 {
-    visplaneRender++;
+    switch (choice)
+    {
+    case 0:
+        visplaneRender--;
 
-    if (visplaneRender == NUM_VISPLANESRENDER)
-        visplaneRender = VISPLANES_NORMAL;
+        if (visplaneRender == -1)
+            visplaneRender = VISPLANES_FLATTER;
+        break;
+    case 1:
+        visplaneRender++;
+
+        if (visplaneRender == NUM_VISPLANESRENDER)
+            visplaneRender = VISPLANES_NORMAL;
+        break;
+    }
 
     R_SetViewSize(screenblocks, detailLevel);
 
@@ -1669,10 +1691,22 @@ void M_ChangeSkyDetail(int choice)
 
 void M_ChangeCPU(int choice)
 {
-    selectedCPU++;
+    switch (choice)
+    {
+    case 0:
+        selectedCPU--;
 
-    if (selectedCPU == NUM_CPU)
-        selectedCPU = 0;
+        if (selectedCPU == -1)
+            selectedCPU = INTEL_PENTIUM;
+        break;
+    case 1:
+
+        selectedCPU++;
+
+        if (selectedCPU == NUM_CPU)
+            selectedCPU = INTEL_386SX;
+        break;
+    }
 
     R_ExecuteSetViewSize();
 
@@ -1710,10 +1744,20 @@ void M_ChangeCPU(int choice)
 
 void M_ChangeInvisibleDetail(int choice)
 {
-    invisibleRender++;
+    switch (choice)
+    {
+    case 0:
+        invisibleRender--;
 
-    if (invisibleRender == NUM_INVISIBLERENDER)
-        invisibleRender = INVISIBLE_NORMAL;
+        if (invisibleRender == -1)
+            invisibleRender = INVISIBLE_TRANSLUCENT;
+        break;
+    case 1:
+        invisibleRender++;
+
+        if (invisibleRender == NUM_INVISIBLERENDER)
+            invisibleRender = INVISIBLE_NORMAL;
+    }
 
     if (invisibleRender == INVISIBLE_TRANSLUCENT)
         R_InitTintMap();
@@ -1744,10 +1788,20 @@ void M_ChangeInvisibleDetail(int choice)
 
 void M_ChangeShowFPS(int choice)
 {
-    showFPS++;
+    switch (choice)
+    {
+    case 0:
+        showFPS--;
 
-    if (showFPS == NUM_FPS)
-        showFPS = 0;
+        if (showFPS == -1)
+            showFPS = SCREEN_DC4D_FPS;
+        break;
+    case 1:
+        showFPS++;
+
+        if (showFPS == NUM_FPS)
+            showFPS = NO_FPS;
+    }
 
     switch (showFPS)
     {
