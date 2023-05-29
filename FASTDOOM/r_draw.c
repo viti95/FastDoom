@@ -2280,7 +2280,7 @@ int fuzzoffset[FUZZTABLE] =
 int fuzzpos = 0;
 
 #if defined(MODE_Y)
-void R_DrawFuzzColumn(void)
+/*void R_DrawFuzzColumn(void)
 {
     register int count;
     register byte *dest;
@@ -2365,7 +2365,7 @@ void R_DrawFuzzColumnPotato(void)
             fuzzpos = 0;
         dest += SCREENWIDTH / 4;
     } while (count--);
-}
+}*/
 #endif
 
 #if defined(MODE_Y)
