@@ -260,9 +260,9 @@ done:
   inc   esi
 	mov   cl,[ebp+edi-(LINE-1)*80]
 	mov		dl,[ecx+ebx+0x600]
-	mov		[edi-(LINE-1)*80],dl
+	cmp   esi,0x32
+  mov		[edi-(LINE-1)*80],dl
 
-  cmp   esi,0x32
   JMPTESTFUZZPOSDEFINE LINE
   xor   esi,esi
 
@@ -276,14 +276,14 @@ vscale1:
 	inc   esi
   mov   cl,[ebp+edi-(LINE-1)*80]
 	mov		dl,[ecx+ebx+0x600]
-	mov		[edi-(LINE-1)*80],dl
+	cmp   esi,0x32
+  mov		[edi-(LINE-1)*80],dl
   
-  cmp esi,0x32
-  jne testfuzzpos1
-  xor esi,esi
+  jne   testfuzzpos1
+  xor   esi,esi
 
 testfuzzpos1:
-  mov   [_fuzzpos],esi
+  mov [_fuzzpos],esi
 	pop	ebp
   pop	esi
   pop	edx
