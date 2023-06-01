@@ -24,6 +24,7 @@ BITS 32
 
 extern _destview
 extern _centery
+extern _viewheight
 
 ;============================================================================
 ; unwound vertical scaling code
@@ -168,8 +169,26 @@ CODE_SYM_DEF R_DrawFuzzColumn
 	push		esi
 	push		ebp
 
+  mov  eax,[_viewheight]
+  dec  eax
+
   mov  ebp,[_dc_yh]
+
+  cmp  eax,ebp
+  jne  dc_yhOK
+
+  dec  eax
+  mov  ebp,eax
+
+dc_yhOK:
   mov  ebx,[_dc_yl]
+
+  test ebx,ebx
+  jne dc_ylOK
+
+  mov  ebx,1
+
+dc_ylOK:
   mov  edi,[_ylookup+ebp*4]
   sub  ebp,ebx         ; ebp = pixel count
   js   short done
