@@ -227,6 +227,7 @@ dc_ylOK:
 
   mov ebx,[_colormaps]
   mov	esi,[_fuzzpos]
+  mov eax,_fuzzoffset
 
   jmp  [scalecalls+4+ebp*4]
 
@@ -256,7 +257,7 @@ done:
 %rep SCREENHEIGHT-1
   SCALELABEL LINE:
 
-  mov		ebp,[_fuzzoffset+esi*4]
+  mov		ebp,[eax+esi*4]
   inc   esi
 	mov   cl,[ebp+edi-(LINE-1)*80]
 	mov		dl,[ecx+ebx+0x600]
@@ -272,7 +273,7 @@ done:
 
 vscale1:
 
-  mov		ebp,[_fuzzoffset+esi*4]
+  mov		ebp,[eax+esi*4]
 	inc   esi
   mov   cl,[ebp+edi-(LINE-1)*80]
 	mov		dl,[ecx+ebx+0x600]
