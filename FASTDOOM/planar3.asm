@@ -50,6 +50,10 @@ BEGIN_DATA_SECTION
   dd vscale%1
 %endmacro
 
+%macro TESTFUZZPOSDEFINE 1
+  dd testfuzzpos%1
+%endmacro
+
 align 4
 
 scalecalls:
@@ -240,16 +244,29 @@ done:
   vscale%1
 %endmacro
 
+%macro TESTFUZZPOSDEFINE 1
+  testfuzzpos%1
+%endmacro
+
+%macro JMPTESTFUZZPOSDEFINE 1
+  jne testfuzzpos%1
+%endmacro
+
 %assign LINE SCREENHEIGHT
 %rep SCREENHEIGHT-1
   SCALELABEL LINE:
 
-	mov		ebp,[_fuzzoffset+esi*4]
+  mov		ebp,[_fuzzoffset+esi*4]
   inc   esi
 	mov   cl,[ebp+edi-(LINE-1)*80]
 	mov		dl,[ecx+ebx+0x600]
 	mov		[edi-(LINE-1)*80],dl
 
+  cmp   esi,0x32
+  JMPTESTFUZZPOSDEFINE LINE
+  xor   esi,esi
+
+  TESTFUZZPOSDEFINE LINE:
   %assign LINE LINE-1
 %endrep
 
@@ -260,8 +277,13 @@ vscale1:
   mov   cl,[ebp+edi-(LINE-1)*80]
 	mov		dl,[ecx+ebx+0x600]
 	mov		[edi-(LINE-1)*80],dl
-  mov   [_fuzzpos],esi
+  
+  cmp esi,0x32
+  jne testfuzzpos1
+  xor esi,esi
 
+testfuzzpos1:
+  mov   [_fuzzpos],esi
 	pop	ebp
   pop	esi
   pop	edx
