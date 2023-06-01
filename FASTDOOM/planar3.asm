@@ -25,6 +25,9 @@ BITS 32
 extern _destview
 extern _centery
 extern _viewheight
+extern _fuzzoffset
+extern _fuzzpos
+extern _colormaps
 
 ;============================================================================
 ; unwound vertical scaling code
@@ -193,11 +196,19 @@ dc_ylOK:
   sub  ebp,ebx         ; ebp = pixel count
   js   short done
 
-  ; set plane
-  mov  ecx,[_dc_x]
-  add  edi,[_destview]
-  mov  esi, ecx
-  
+  mov ecx,[_dc_x]
+  add edi,[_destview]
+  mov esi,ecx
+
+  ; outpw(GC_INDEX, GC_READMAP + ((dc_x & 3) << 8));
+  mov eax,ecx
+	and	eax,3
+	shl	eax,8
+	mov	dx,0x3CE
+	add	eax,4
+	out	dx,ax
+
+  ; outp(SC_INDEX + 1, 1 << (dc_x & 3));
   and  cl,3
   mov  dx,SC_INDEX+1
   mov  al,1
@@ -205,22 +216,13 @@ dc_ylOK:
   out  dx,al
 
   shr esi,2
-  mov eax, ebx
   add edi,esi
 
-  mov   ecx,[_dc_iscale]
+  xor ecx,ecx
 
-  sub   eax,[_centery]
-  imul  ecx
-  mov   edx,[_dc_texturemid]
-  shl   ecx,9 ; 7 significant bits, 25 frac
-  add   edx,eax
-  mov   esi,[_dc_source]
-  shl   edx,9 ; 7 significant bits, 25 frac
-  mov   eax,[_dc_colormap]
+  mov ebx,[_colormaps]
+  mov	esi,[_fuzzpos]
 
-  mov  ebx,edx
-  shr  ebx,25 ; get address of first location
   jmp  [scalecalls+4+ebp*4]
 
 done:
@@ -240,22 +242,28 @@ done:
 %assign LINE SCREENHEIGHT
 %rep SCREENHEIGHT-1
   SCALELABEL LINE:
-    mov  al,[esi+ebx]                   ; get source pixel
-    add  edx,ecx                        ; calculate next location
-    mov  al,[eax]                       ; translate the color
-    mov  ebx,edx
-    shr  ebx,25
-    mov  [edi-(LINE-1)*80],al           ; draw a pixel to the buffer
-    %assign LINE LINE-1
+
+	mov		ebp,[_fuzzoffset+esi*4]
+  inc   esi
+	mov   cl,byte [ebp+edi-(LINE-1)*80]
+	mov		dl,[ecx+ebx+0x600]
+	mov		[edi-(LINE-1)*80],dl
+
+  %assign LINE LINE-1
 %endrep
 
 vscale1:
+
+  mov		ebp,[_fuzzoffset+esi*4]
+	inc   esi
+  mov   cl,byte [ebp+edi-(LINE-1)*80]
+	mov		dl,[ecx+ebx+0x600]
+	mov		[edi-(LINE-1)*80],dl
+  mov   [_fuzzpos],esi
+
 	pop	ebp
-  mov al,[esi+ebx]
   pop	esi
-  mov al,[eax]
   pop	edx
-  mov [edi],al
 
 vscale0:
 	pop	ecx
