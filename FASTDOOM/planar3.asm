@@ -161,22 +161,23 @@ dc_ylOKL:
   add edi,[_destview]
   mov esi,ecx
 
-  ; outpw(GC_INDEX, GC_READMAP + ((dc_x & 3) << 8));
+  ; outpw(GC_INDEX, GC_READMAP + ((dc_x & 1) << 9));
   mov eax,ecx
-	and	eax,3
-	shl	eax,8
+	and	eax,1
+	shl	eax,9
 	mov	dx,0x3CE
 	add	eax,4
 	out	dx,ax
 
-  ; outp(SC_INDEX + 1, 1 << (dc_x & 3));
-  and  cl,3
+  ; outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
+  and  cl,1
+  mov  al,3
+  add  cl, cl
   mov  dx,SC_INDEX+1
-  mov  al,1
   shl  al,cl
   out  dx,al
 
-  shr esi,2
+  shr esi,1
   add edi,esi
 
   xor ecx,ecx
