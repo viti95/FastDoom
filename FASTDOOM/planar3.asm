@@ -70,37 +70,49 @@ BEGIN_CODE_SECTION
 ; ==================
 CODE_SYM_DEF R_DrawFuzzColumnPotato
 	push		edi
-  push		ebx
+	push		ebx
 	push		ecx
 	push		edx
 	push		esi
 	push		ebp
 
+  mov  eax,[_viewheight]
+  dec  eax
+
   mov  ebp,[_dc_yh]
-  mov  eax,[_dc_yl]
+
+  cmp  eax,ebp
+  jne  dc_yhOKP
+
+  dec  eax
+  mov  ebp,eax
+
+dc_yhOKP:
+  mov  ebx,[_dc_yl]
+
+  test ebx,ebx
+  jne dc_ylOKP
+
+  mov  ebx,1
+
+dc_ylOKP:
   mov  edi,[_ylookup+ebp*4]
-  sub  ebp,eax         ; ebp = pixel count
-  js   short .done
+  sub  ebp,ebx         ; ebp = pixel count
+  js   .pdone
 
-  add  edi,[_destview]
-  add  edi,[_dc_x]
+  add edi,[_destview]
+  add edi,[_dc_x]
 
-  mov   ecx,[_dc_iscale]
+  xor ecx,ecx
+  xor edx,edx
 
-  sub   eax,[_centery]
-  imul  ecx
-  mov   edx,[_dc_texturemid]
-  shl   ecx,9 ; 7 significant bits, 25 frac
-  add   edx,eax
-  mov   esi,[_dc_source]
-  shl   edx,9 ; 7 significant bits, 25 frac
-  mov   eax,[_dc_colormap]
+  mov ebx,[_colormaps]
+  mov	esi,[_fuzzpos]
+  mov eax,_fuzzoffset
 
-  xor   ebx,ebx
-  shld  ebx,edx,7
   jmp  [scalecalls+4+ebp*4]
 
-.done:
+.pdone:
 	pop		ebp
 	pop		esi
 	pop		edx
@@ -114,51 +126,69 @@ CODE_SYM_DEF R_DrawFuzzColumnPotato
 ; R_DrawColumnLow
 ; ===============
 CODE_SYM_DEF R_DrawFuzzColumnLow
-  push		edi
-  push		ebx
+	push		edi
+	push		ebx
 	push		ecx
 	push		edx
 	push		esi
 	push		ebp
 
+  mov  eax,[_viewheight]
+  dec  eax
+
   mov  ebp,[_dc_yh]
+
+  cmp  eax,ebp
+  jne  dc_yhOKL
+
+  dec  eax
+  mov  ebp,eax
+
+dc_yhOKL:
   mov  ebx,[_dc_yl]
+
+  test ebx,ebx
+  jne dc_ylOKL
+
+  mov  ebx,1
+
+dc_ylOKL:
   mov  edi,[_ylookup+ebp*4]
   sub  ebp,ebx         ; ebp = pixel count
-  js   short .done
+  js   .ldone
 
-  ; set plane
-  mov  ecx,[_dc_x]
-  add  edi,[_destview]
-  mov  esi, ecx
-  
-  and  cl,1
-  mov  al,3
-  add  cl, cl
+  mov ecx,[_dc_x]
+  add edi,[_destview]
+  mov esi,ecx
+
+  ; outpw(GC_INDEX, GC_READMAP + ((dc_x & 3) << 8));
+  mov eax,ecx
+	and	eax,3
+	shl	eax,8
+	mov	dx,0x3CE
+	add	eax,4
+	out	dx,ax
+
+  ; outp(SC_INDEX + 1, 1 << (dc_x & 3));
+  and  cl,3
   mov  dx,SC_INDEX+1
+  mov  al,1
   shl  al,cl
   out  dx,al
 
-  shr esi,1
-  mov eax, ebx
+  shr esi,2
   add edi,esi
 
-  mov   ecx,[_dc_iscale]
+  xor ecx,ecx
+  xor edx,edx
 
-  sub   eax,[_centery]
-  imul  ecx
-  mov   edx,[_dc_texturemid]
-  shl   ecx,9 ; 7 significant bits, 25 frac
-  add   edx,eax
-  mov   esi,[_dc_source]
-  shl   edx,9 ; 7 significant bits, 25 frac
-  mov   eax,[_dc_colormap]
+  mov ebx,[_colormaps]
+  mov	esi,[_fuzzpos]
+  mov eax,_fuzzoffset
 
-  xor   ebx,ebx
-  shld  ebx,edx,7
   jmp  [scalecalls+4+ebp*4]
 
-.done:
+.ldone:
 	pop		ebp
 	pop		esi
 	pop		edx
