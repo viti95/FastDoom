@@ -219,6 +219,7 @@ dc_ylOK:
   add edi,esi
 
   xor ecx,ecx
+  xor edx,edx
 
   mov ebx,[_colormaps]
   mov	esi,[_fuzzpos]
@@ -245,7 +246,7 @@ done:
 
 	mov		ebp,[_fuzzoffset+esi*4]
   inc   esi
-	mov   cl,byte [ebp+edi-(LINE-1)*80]
+	mov   cl,[ebp+edi-(LINE-1)*80]
 	mov		dl,[ecx+ebx+0x600]
 	mov		[edi-(LINE-1)*80],dl
 
@@ -256,7 +257,7 @@ vscale1:
 
   mov		ebp,[_fuzzoffset+esi*4]
 	inc   esi
-  mov   cl,byte [ebp+edi-(LINE-1)*80]
+  mov   cl,[ebp+edi-(LINE-1)*80]
 	mov		dl,[ecx+ebx+0x600]
 	mov		[edi-(LINE-1)*80],dl
   mov   [_fuzzpos],esi
