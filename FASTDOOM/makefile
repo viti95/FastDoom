@@ -109,6 +109,7 @@ GLOBOBJS = &
  planar.obj &
  planar2.obj &
  planar3.obj &
+ planar4.obj &
  planarKN.obj &
  planarSX.obj &
  vbe2dh.obj &
