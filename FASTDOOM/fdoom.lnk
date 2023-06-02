@@ -80,14 +80,17 @@ file math.obj
 file i_sound.obj
 file linearh.obj
 file linearh2.obj
+file linearh3.obj
 file linearhKN.obj
 file linearhSX.obj
 file linearl.obj
 file linearl2.obj
+file linearl3.obj
 file linearlKN.obj
 file linearlSX.obj
 file linearp.obj
 file linearp2.obj
+file linearp3.obj
 file linearpSX.obj
 file planar.obj
 file planar2.obj
