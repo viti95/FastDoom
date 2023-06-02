@@ -119,6 +119,7 @@ GLOBOBJS = &
  vbe2dl2.obj &
  vbe2dlSX.obj &
  vbe2dp.obj &
+ vbe2dp2.obj &
  vbe2dpSX.obj &
  tables.obj &
  f_finale.obj &

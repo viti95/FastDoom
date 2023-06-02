@@ -99,6 +99,7 @@ file vbe2dl.obj
 file vbe2dl2.obj
 file vbe2dlSX.obj
 file vbe2dp.obj
+file vbe2dp2.obj
 file vbe2dpSX.obj
 file tables.obj
 file f_finale.obj
