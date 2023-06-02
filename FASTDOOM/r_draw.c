@@ -2280,37 +2280,6 @@ int fuzzoffset[FUZZTABLE] =
 int fuzzpos = 0;
 
 #if defined(MODE_VBE2_DIRECT)
-void R_DrawFuzzColumnLowVBE2(void)
-{
-    int count;
-    byte *dest;
-
-    if (!dc_yl)
-        dc_yl = 1;
-    if (dc_yh == viewheight - 1)
-        dc_yh = viewheight - 2;
-
-    count = dc_yh - dc_yl;
-    if (count < 0)
-        return;
-
-    dest = destview + Mul320(dc_yl) + (dc_x << 1);
-
-    do
-    {
-        lighttable_t color;
-
-        color = colormaps[6 * 256 + dest[fuzzoffset[fuzzpos]]];
-
-        *(dest) = color;
-        *(dest + 1) = color;
-
-        if (++fuzzpos == FUZZTABLE)
-            fuzzpos = 0;
-        dest += SCREENWIDTH;
-    } while (count--);
-}
-
 void R_DrawFuzzColumnPotatoVBE2(void)
 {
     int count;
