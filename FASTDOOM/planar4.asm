@@ -77,8 +77,7 @@ CODE_SYM_DEF R_DrawFuzzColumnFlatPotato
   add edi,[_destview]
   add edi,[_dc_x]
 
-  xor ecx,ecx
-  xor edx,edx
+  xor eax,eax
 
   mov ebx,[_colormaps]
   add ebx,0x600
@@ -135,8 +134,7 @@ CODE_SYM_DEF R_DrawFuzzColumnFlatLow
   shr esi,1
   add edi,esi
 
-  xor ecx,ecx
-  xor edx,edx
+  xor eax,eax
 
   mov ebx,[_colormaps]
   add ebx,0x600
@@ -189,8 +187,7 @@ CODE_SYM_DEF R_DrawFuzzColumnFlat
   shr esi,2
   add edi,esi
 
-  xor ecx,ecx
-  xor edx,edx
+  xor eax,eax
 
   mov ebx,[_colormaps]
   add ebx,0x600
@@ -215,20 +212,20 @@ done:
 %rep SCREENHEIGHT-1
   SCALELABEL LINE:
 
-	mov   cl,[edi-(LINE-1)*80]
-	mov		dl,[ecx+ebx]
-  mov		[edi-(LINE-1)*80],dl
+	mov   al,[edi-(LINE-1)*80]
+	mov		al,[eax+ebx]
+  mov		[edi-(LINE-1)*80],al
 
   %assign LINE LINE-1
 %endrep
 
 vscale1:
 
-  mov   cl,[edi-(LINE-1)*80]
+  mov   al,[edi-(LINE-1)*80]
 	pop	ebp
-	mov		dl,[ecx+ebx]
+	mov		al,[eax+ebx]
   pop	esi
-  mov		[edi-(LINE-1)*80],dl
+  mov		[edi-(LINE-1)*80],al
   pop	edx
 
 vscale0:
