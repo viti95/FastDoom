@@ -102,13 +102,13 @@ dc_ylOKP:
   add edi,[_destview]
   add edi,[_dc_x]
 
-  xor ecx,ecx
-  xor edx,edx
+  xor eax,eax
 
-  mov ebx,[_colormaps]
-  mov	esi,[_fuzzpos]
-  add ebx,0x600  
-  mov eax,_fuzzoffset
+  mov esi,[_colormaps]
+  mov	ecx,[_fuzzpos]
+  add esi,0x600
+  mov edx,_fuzzoffset
+  mov ebx,0x32
 
   jmp  [scalecalls+4+ebp*4]
 
@@ -180,13 +180,13 @@ dc_ylOKL:
   shr esi,1
   add edi,esi
 
-  xor ecx,ecx
-  xor edx,edx
+  xor eax,eax
 
-  mov ebx,[_colormaps]
-  mov	esi,[_fuzzpos]
-  add ebx,0x600
-  mov eax,_fuzzoffset
+  mov esi,[_colormaps]
+  mov	ecx,[_fuzzpos]
+  add esi,0x600
+  mov edx,_fuzzoffset
+  mov ebx,0x32
 
   jmp  [scalecalls+4+ebp*4]
 
@@ -254,13 +254,13 @@ dc_ylOK:
   shr esi,2
   add edi,esi
 
-  xor ecx,ecx
-  xor edx,edx
+  xor eax,eax
 
-  mov ebx,[_colormaps]
-  mov	esi,[_fuzzpos]
-  add ebx,0x600
-  mov eax,_fuzzoffset
+  mov esi,[_colormaps]
+  mov	ecx,[_fuzzpos]
+  add esi,0x600
+  mov edx,_fuzzoffset
+  mov ebx,0x32
 
   jmp  [scalecalls+4+ebp*4]
 
@@ -290,15 +290,15 @@ done:
 %rep SCREENHEIGHT-1
   SCALELABEL LINE:
 
-  mov		ebp,[eax+esi*4]
-  inc   esi
-	mov   cl,[ebp+edi-(LINE-1)*80]
-  cmp   si,0x32
-	mov		dl,[ecx+ebx]
-  mov		[edi-(LINE-1)*80],dl
+  mov		ebp,[edx+ecx*4]
+  inc   ecx
+	mov   al,[ebp+edi-(LINE-1)*80]
+  cmp   cl,bl
+	mov		al,[eax+esi]
+  mov		[edi-(LINE-1)*80],al
 
   JMPTESTFUZZPOSDEFINE LINE
-  xor   esi,esi
+  xor   ecx,ecx
 
   TESTFUZZPOSDEFINE LINE:
   %assign LINE LINE-1
@@ -306,18 +306,18 @@ done:
 
 vscale1:
 
-  mov		ebp,[eax+esi*4]
-	inc   esi
-  mov   cl,[ebp+edi-(LINE-1)*80]
-  cmp   si,0x32
-	mov		dl,[ecx+ebx]
-  mov		[edi-(LINE-1)*80],dl
+  mov		ebp,[edx+ecx*4]
+	inc   ecx
+  mov   al,[ebp+edi-(LINE-1)*80]
+  cmp   cl,bl
+	mov		al,[eax+esi]
+  mov		[edi-(LINE-1)*80],al
   
   jne   testfuzzpos1
-  xor   esi,esi
+  xor   ecx,ecx
 
 testfuzzpos1:
-  mov [_fuzzpos],esi
+  mov [_fuzzpos],ecx
 	pop	ebp
   pop	esi
   pop	edx
