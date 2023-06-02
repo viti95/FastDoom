@@ -1,11 +1,24 @@
 ;
-; DESCRIPTION: Assembly texture mapping routines for VESA modes
+; Copyright (C) 1993-1996 Id Software, Inc.
+; Copyright (C) 1993-2008 Raven Software
+;
+; This program is free software; you can redistribute it and/or
+; modify it under the terms of the GNU General Public License
+; as published by the Free Software Foundation; either version 2
+; of the License, or (at your option) any later version.
+;
+; This program is distributed in the hope that it will be useful,
+; but WITHOUT ANY WARRANTY; without even the implied warranty of
+; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+; GNU General Public License for more details.
+;
+; DESCRIPTION: Assembly texture mapping routines for linear VGA mode
 ;
 
 BITS 32
 %include "macros.inc"
 
-%ifdef MODE_VBE2_DIRECT
+%ifdef USE_BACKBUFFER
 %include "defs.inc"
 
 extern _destview
@@ -48,17 +61,12 @@ scalecalls:
   %assign LINE LINE+1
   %endrep
 
-;============================================================================
-
 BEGIN_CODE_SECTION
 
-;============================================================================
-;
-; R_DrawColumn
-;
-;============================================================================
-
-CODE_SYM_DEF R_DrawFuzzColumnVBE2
+; ============================
+; R_DrawColumnPotatoBackbuffer
+; ============================
+CODE_SYM_DEF R_DrawFuzzColumnPotatoBackbuffer
 	push		edi
 	push		ebx
 	push		ecx
@@ -86,21 +94,20 @@ dc_yhOK:
   mov  eax,1
 
 dc_ylOK:
-  lea  edi,[ebp+ebp*4]
-  sub  ebp,eax ; ebp = pixel count
-  js   near .done
+  mov  edi,[_ylookup+ebp*4]
+  sub  ebp,eax         ; ebp = pixel count
+  js   short .done
 
-  shl  edi,6
-  add  edi,[_dc_x]
-  add  edi,[_destview]
+  mov  ebx,[_dc_x]
+  add  edi,[_columnofs+ebx*4]
 
   xor eax,eax
+  xor ebx,ebx
 
   mov esi,[_colormaps]
   mov	ecx,[_fuzzpos]
   add esi,0x600
   mov edx,_fuzzoffset
-  mov ebx,0x32
 
   jmp  [scalecalls+4+ebp*4]
 
@@ -112,9 +119,7 @@ dc_ylOK:
 	pop		ebx
   pop		edi
   ret
-; R_DrawColumnVBE2 ends
-
-;============ HIGH DETAIL ============
+; R_DrawColumnPotatoBackbuffer ends
 
 %macro SCALELABEL 1
   vscale%1
@@ -135,9 +140,11 @@ dc_ylOK:
   mov		ebp,[edx+ecx*4]
   inc   ecx
 	mov   al,[ebp+edi-(LINE-1)*320]
-  cmp   cl,bl
-	mov		al,[eax+esi]
-  mov		[edi-(LINE-1)*320],al
+  cmp   cl,0x32
+	mov		bl,[eax+esi]
+  mov   bh,bl
+  mov		[edi-(LINE-1)*320],bx
+  mov		[edi-(LINE-1)*320+2],bx
 
   JMPTESTFUZZPOSDEFINE LINE
   xor   ecx,ecx
@@ -151,9 +158,11 @@ vscale1:
   mov		ebp,[edx+ecx*4]
 	inc   ecx
   mov   al,[ebp+edi-(LINE-1)*320]
-  cmp   cl,bl
-	mov		al,[eax+esi]
-  mov		[edi-(LINE-1)*320],al
+  cmp   cl,0x32
+	mov		bl,[eax+esi]
+  mov   bh,bl
+  mov		[edi-(LINE-1)*320],bx
+  mov		[edi-(LINE-1)*320+2],bx
   
   jne   testfuzzpos1
   xor   ecx,ecx
