@@ -48,6 +48,7 @@ extern int invisibleRender;
 extern int visplaneRender;
 extern int selectedCPU;
 extern int showFPS;
+extern int debugCardPort;
 extern boolean unlimitedRAM;
 extern boolean nearSprites;
 extern boolean monoSound;

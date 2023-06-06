@@ -355,7 +355,7 @@ void HU_DrawDebugCard2DigitsFPS(void)
         counter += 4;
     }
 
-    outp(0x80, outval & 255);
+    outp(debugCardPort, outval & 255);
 }
 
 void HU_DrawDebugCard4DigitsFPS(void)
@@ -363,6 +363,7 @@ void HU_DrawDebugCard4DigitsFPS(void)
     unsigned int outfps = fps / 10;
     unsigned int outval = 0;
     unsigned int counter = 0;
+    int port = debugCardPort;
 
     if (outfps > 9999)
         outfps = 9999;
@@ -373,8 +374,9 @@ void HU_DrawDebugCard4DigitsFPS(void)
         outfps /= 10;
         counter += 4;
     }
-    outp(0x80, outval & 255);
-    outp(0x80, (outval >> 8) & 255);
+    outp(port, outval & 255);
+    inp(port);
+    outp(port, (outval >> 8) & 255);
 }
 
 void HU_Drawer(void)

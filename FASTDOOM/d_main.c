@@ -89,6 +89,7 @@ int invisibleRender;
 int visplaneRender;
 int selectedCPU;
 int showFPS;
+int debugCardPort;
 boolean unlimitedRAM;
 boolean nearSprites;
 boolean monoSound;
