@@ -90,6 +90,7 @@ int visplaneRender;
 int selectedCPU;
 int showFPS;
 int debugCardPort;
+boolean debugCardReverse;
 boolean unlimitedRAM;
 boolean nearSprites;
 boolean monoSound;

@@ -28,6 +28,7 @@ int usegamma = 0;
 
 int showFPS = 0;
 int debugCardPort = 0x80;
+int debugCardReverse = 0;
 int uncappedFPS = 0;
 int flatSky = 0;
 int nearSprites = 0;
@@ -66,6 +67,7 @@ default_t defaults[] =
 
 		{"showfps", &showFPS, 0},
 		{"debugCardPort", &debugCardPort, 0x80},
+		{"debugCardReverse", &debugCardReverse, 0},
 		{"uncapped", &uncappedFPS, 0},
 		{"flatsky", &flatSky, 0},
 		{"near", &nearSprites, 0},

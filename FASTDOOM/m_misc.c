@@ -307,6 +307,7 @@ default_t defaults[] =
         {"detaillevel", &detailLevel, 0},
         {"showfps", &showFPS, 0},
         {"debugCardPort", &debugCardPort, 0x80},
+        {"debugCardReverse", &debugCardReverse, 0},
         {"uncapped", &uncappedFPS, 0},
         {"flatsky", &flatSky, 0},
         {"near", &nearSprites, 0},

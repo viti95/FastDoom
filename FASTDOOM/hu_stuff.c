@@ -374,9 +374,25 @@ void HU_DrawDebugCard4DigitsFPS(void)
         outfps /= 10;
         counter += 4;
     }
-    outp(port, outval & 255);
-    inp(port);
-    outp(port, (outval >> 8) & 255);
+
+    if (debugCardReverse)
+    {
+        outp(port, (outval >> 8) & 255);
+        inp(port);
+        inp(port);
+        inp(port);
+        inp(port);
+        outp(port, outval & 255);
+    }
+    else
+    {
+        outp(port, outval & 255);
+        inp(port);
+        inp(port);
+        inp(port);
+        inp(port);
+        outp(port, (outval >> 8) & 255);
+    }
 }
 
 void HU_Drawer(void)
