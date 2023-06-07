@@ -163,8 +163,8 @@ vscale1:
   xor   ecx,ecx
 
 testfuzzpos1:
-  mov [_fuzzpos],ecx
 	pop	ebp
+  mov [_fuzzpos],ecx
   pop	esi
   pop	edx
 
