@@ -220,14 +220,13 @@ done:
 %endrep
 
 vscale1:
-
+  pop	  ebp
   mov   al,[edi-(LINE-1)*80]
-	pop	ebp
+  pop	  esi
 	mov		al,[eax+ebx]
-  pop	esi
+  pop	  edx
   mov		[edi-(LINE-1)*80],al
-  pop	edx
-
+  
 vscale0:
 	pop	ecx
 	pop	ebx
