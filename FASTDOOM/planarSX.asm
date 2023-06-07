@@ -150,8 +150,8 @@ CODE_SYM_DEF R_DrawSpan386SX
   mov   [edi],dl
   jmp   short .hdoneplane
 .hdoubleloop:
-  shld  ecx,ebp,22
   mov   dh,[ebx]
+  shld  ecx,ebp,22
   shld  ecx,ebp,6
 .hpatch1:
   add   ebp,0x12345678 ; runtime patched
@@ -319,8 +319,8 @@ CODE_SYM_DEF R_DrawSpanLow386SX
   mov   [edi],dl
   jmp   short .ldoneplane
 .ldoubleloop:
-  shld  ecx,ebp,22
   mov   dh,[ebx]
+  shld  ecx,ebp,22
   shld  ecx,ebp,6
 .lpatch1:
   add   ebp,0x12345678 ; runtime patched
