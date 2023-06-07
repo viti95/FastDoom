@@ -101,22 +101,21 @@ apatch2:
 apatch3:
         mov     eax, [eax + edx + 0x12345678]   ; mix first sample + harsh clip new sample
         mov     dl, byte [edi + 1]              ; get current sample from destination
-        mov     [edi], al                       ; write new sample to destination        
-        inc     edi                             ; move destination to second sample
+        mov     [edi], al                       ; write new sample to destination
 apatch4:
         mov     ebx, [ebx + edx + 0x12345678]   ; mix second sample + harsh clip new sample
         mov     eax, ebp                        ; begin calculating third sample
-        mov     [edi], bl                       ; write new sample to destination
+        mov     [edi + 1], bl                   ; write new sample to destination
         shr     eax, 16                         ; finish calculation for third sample        
 apatch5:
         add     ebp, 0x12345678                 ; advance frac pointer
-        movzx   eax, byte [esi+eax]              ; get third sample
+        movzx   eax, byte [esi+eax]             ; get third sample
         mov     ebx, ebp                        ; begin calculating fourth sample
         shr     ebx, 16                         ; finish calculation for fourth sample
 apatch6:
         add     ebp, 0x12345678                 ; advance frac pointer
-        movzx   ebx, byte [esi+ebx]              ; get fourth sample
-        inc     edi                             ; move destination to third sample
+        movzx   ebx, byte [esi+ebx]             ; get fourth sample
+        add     edi, 2                          ; move destination to third sample
         dec     ecx                             ; decrement count
         jnz     short mix8Mloop                 ; loop
 
