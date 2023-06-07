@@ -221,10 +221,10 @@ done:
 %assign LINE SCREENHEIGHT
 %rep SCREENHEIGHT-1
   SCALELABEL LINE:
-    mov  al,[esi+ebx]                   ; get source pixel
     add  edx,ecx                        ; calculate next location
-    mov  al,[eax]                       ; translate the color
+    mov  al,[esi+ebx]                   ; get source pixel
     mov  ebx,edx
+    mov  al,[eax]                       ; translate the color
     shr  ebx,25
     mov  [edi-(LINE-1)*80],al           ; draw a pixel to the buffer
     %assign LINE LINE-1
