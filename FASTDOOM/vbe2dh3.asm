@@ -69,10 +69,8 @@ CODE_SYM_DEF R_DrawFuzzColumnFlatVBE2
   add  edi,[_dc_x]
   add  edi,[_destview]
 
-  xor eax,eax
-
-  mov ebx,[_colormaps]
-  add ebx,0x600
+  mov eax,[_colormaps]
+  add eax,0x600
 
   jmp  [scalecalls+4+ebp*4]
 
@@ -97,21 +95,20 @@ CODE_SYM_DEF R_DrawFuzzColumnFlatVBE2
   SCALELABEL LINE:
 
 	mov   al,[edi-(LINE-1)*320]
-	mov		al,[eax+ebx]
+	mov		al,[eax]
   mov		[edi-(LINE-1)*320],al
 
   %assign LINE LINE-1
 %endrep
 
 vscale1:
-
-  mov   al,[edi-(LINE-1)*320]
 	pop	ebp
-	mov		al,[eax+ebx]
+  mov   al,[edi-(LINE-1)*320]
   pop	esi
-  mov		[edi-(LINE-1)*320],al
+	mov		al,[eax]
   pop	edx
-
+  mov		[edi-(LINE-1)*320],al
+  
 vscale0:
 	pop	ecx
 	pop	ebx
