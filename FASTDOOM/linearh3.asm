@@ -76,10 +76,8 @@ CODE_SYM_DEF R_DrawFuzzColumnFlatBackbuffer
   mov  ebx,[_dc_x]
   add  edi,[_columnofs+ebx*4]
 
-  xor eax,eax
-
-  mov ebx,[_colormaps]
-  add ebx,0x600
+  mov eax,[_colormaps]
+  add eax,0x600
 
   jmp  [scalecalls+4+ebp*4]
 
@@ -102,7 +100,7 @@ CODE_SYM_DEF R_DrawFuzzColumnFlatBackbuffer
   SCALELABEL LINE:
 
 	mov   al,[edi-(LINE-1)*320]
-	mov		al,[eax+ebx]
+	mov		al,[eax]
   mov		[edi-(LINE-1)*320],al
 
   %assign LINE LINE-1
@@ -112,7 +110,7 @@ vscale1:
 
   mov   al,[edi-(LINE-1)*320]
 	pop	ebp
-	mov		al,[eax+ebx]
+	mov		al,[eax]
   pop	esi
   mov		[edi-(LINE-1)*320],al
   pop	edx
