@@ -75,12 +75,9 @@ CODE_SYM_DEF R_DrawFuzzColumnFlatPotato
   js   .pdone
 
   add edi,[_destview]
+  mov eax,[_colormaps]
   add edi,[_dc_x]
-
-  xor eax,eax
-
-  mov ebx,[_colormaps]
-  add ebx,0x600
+  add eax,0x600
 
   jmp  [scalecalls+4+ebp*4]
 
@@ -132,12 +129,9 @@ CODE_SYM_DEF R_DrawFuzzColumnFlatLow
   out  dx,al
 
   shr esi,1
+  mov eax,[_colormaps]
   add edi,esi
-
-  xor eax,eax
-
-  mov ebx,[_colormaps]
-  add ebx,0x600
+  add eax,0x600
 
   jmp  [scalecalls+4+ebp*4]
 
@@ -185,12 +179,9 @@ CODE_SYM_DEF R_DrawFuzzColumnFlat
   out  dx,al
 
   shr esi,2
+  mov eax,[_colormaps]
   add edi,esi
-
-  xor eax,eax
-
-  mov ebx,[_colormaps]
-  add ebx,0x600
+  add eax,0x600
 
   jmp  [scalecalls+4+ebp*4]
 
@@ -213,7 +204,7 @@ done:
   SCALELABEL LINE:
 
 	mov   al,[edi-(LINE-1)*80]
-	mov		al,[eax+ebx]
+	mov		al,[eax]
   mov		[edi-(LINE-1)*80],al
 
   %assign LINE LINE-1
@@ -223,7 +214,7 @@ vscale1:
   pop	  ebp
   mov   al,[edi-(LINE-1)*80]
   pop	  esi
-	mov		al,[eax+ebx]
+	mov		al,[eax]
   pop	  edx
   mov		[edi-(LINE-1)*80],al
   
