@@ -23,8 +23,8 @@ BITS 32
 
 extern _destview
 extern _viewheight
-extern _fuzzoffset
-extern _fuzzpos
+extern _fuzzoffsetinverse
+extern _fuzzposinverse
 extern _colormaps
 
 ;============================================================================
@@ -46,10 +46,6 @@ BEGIN_DATA_SECTION
 
 %macro SCALEDEFINE 1
   dd vscale%1
-%endmacro
-
-%macro TESTFUZZPOSDEFINE 1
-  dd testfuzzpos%1
 %endmacro
 
 align 4
@@ -99,15 +95,13 @@ dc_ylOK:
   js   short .done
 
   mov  ebx,[_dc_x]
+  mov eax,[_colormaps]
   add  edi,[_columnofs+ebx*4]
-
-  xor eax,eax
   xor ebx,ebx
-
-  mov esi,[_colormaps]
-  mov	ecx,[_fuzzpos]
-  add esi,0x600
-  mov edx,_fuzzoffset
+  mov	ecx,[_fuzzposinverse]
+  add eax,0x600
+  mov edx,_fuzzoffsetinverse
+  mov esi,50
 
   jmp  [scalecalls+4+ebp*4]
 
@@ -134,46 +128,29 @@ dc_ylOK:
 %endmacro
 
 %assign LINE SCREENHEIGHT
-%rep SCREENHEIGHT-1
+%rep SCREENHEIGHT
   SCALELABEL LINE:
 
   mov		ebp,[edx+ecx*4]
-  inc   ecx
 	mov   al,[ebp+edi-(LINE-1)*320]
-  cmp   cl,0x32
-	mov		bl,[eax+esi]
+  dec   ecx
+	mov		bl,[eax]
   mov   bh,bl
   mov		[edi-(LINE-1)*320],bx
   mov		[edi-(LINE-1)*320+2],bx
 
   JMPTESTFUZZPOSDEFINE LINE
-  xor   ecx,ecx
+  mov   ecx,esi
 
   TESTFUZZPOSDEFINE LINE:
   %assign LINE LINE-1
 %endrep
 
-vscale1:
-
-  mov		ebp,[edx+ecx*4]
-	inc   ecx
-  mov   al,[ebp+edi-(LINE-1)*320]
-  cmp   cl,0x32
-	mov		bl,[eax+esi]
-  mov   bh,bl
-  mov		[edi-(LINE-1)*320],bx
-  mov		[edi-(LINE-1)*320+2],bx
-  
-  jne   testfuzzpos1
-  xor   ecx,ecx
-
-testfuzzpos1:
-	pop	ebp
-  mov [_fuzzpos],ecx
+vscale0:
+  pop	ebp
+  mov [_fuzzposinverse],ecx
   pop	esi
   pop	edx
-
-vscale0:
 	pop	ecx
 	pop	ebx
   pop	edi
