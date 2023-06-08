@@ -96,9 +96,8 @@ dc_ylOKP:
   js   .pdone
 
   add edi,[_destview]
-  add edi,[_dc_x]
-
   mov eax,[_colormaps]
+  add edi,[_dc_x]
   mov	ecx,[_fuzzposinverse]
   add eax,0x600
   mov edx,_fuzzoffsetinverse
@@ -172,9 +171,8 @@ dc_ylOKL:
   out  dx,al
 
   shr esi,1
-  add edi,esi
-
   mov eax,[_colormaps]
+  add edi,esi
   mov	ecx,[_fuzzposinverse]
   add eax,0x600
   mov edx,_fuzzoffsetinverse
@@ -244,9 +242,8 @@ dc_ylOK:
   out  dx,al
 
   shr esi,2
-  add edi,esi
-
   mov eax,[_colormaps]
+  add edi,esi
   mov	ecx,[_fuzzposinverse]
   add eax,0x600
   mov edx,_fuzzoffsetinverse
