@@ -2135,16 +2135,6 @@ void R_DrawSpanText8050(void)
 #define FUZZOFF (SCREENWIDTH)
 #endif
 
-int fuzzoffset[FUZZTABLE] =
-    {
-        FUZZOFF, -FUZZOFF, FUZZOFF, -FUZZOFF, FUZZOFF, FUZZOFF, -FUZZOFF,
-        FUZZOFF, FUZZOFF, -FUZZOFF, FUZZOFF, FUZZOFF, FUZZOFF, -FUZZOFF,
-        FUZZOFF, FUZZOFF, FUZZOFF, -FUZZOFF, -FUZZOFF, -FUZZOFF, -FUZZOFF,
-        FUZZOFF, -FUZZOFF, -FUZZOFF, FUZZOFF, FUZZOFF, FUZZOFF, FUZZOFF, -FUZZOFF,
-        FUZZOFF, -FUZZOFF, FUZZOFF, FUZZOFF, -FUZZOFF, -FUZZOFF, FUZZOFF,
-        FUZZOFF, -FUZZOFF, -FUZZOFF, -FUZZOFF, -FUZZOFF, FUZZOFF, FUZZOFF,
-        FUZZOFF, FUZZOFF, -FUZZOFF, FUZZOFF, FUZZOFF, -FUZZOFF, FUZZOFF};
-
 int fuzzoffsetinverse[FUZZTABLE] =
     {
         FUZZOFF, -FUZZOFF, FUZZOFF, FUZZOFF, -FUZZOFF, FUZZOFF, FUZZOFF,
@@ -2155,7 +2145,6 @@ int fuzzoffsetinverse[FUZZTABLE] =
         FUZZOFF, FUZZOFF, FUZZOFF, FUZZOFF, -FUZZOFF, FUZZOFF, -FUZZOFF,
         FUZZOFF, FUZZOFF, FUZZOFF, -FUZZOFF, FUZZOFF, -FUZZOFF, FUZZOFF};
 
-int fuzzpos = 0;
 int fuzzposinverse = FUZZTABLE;
 
 #if defined(MODE_T4050)
@@ -2180,7 +2169,7 @@ void R_DrawFuzzColumnText4050(void)
         {
             local_color = vmem & 0xF000;
 
-            if (fuzzoffset[fuzzpos] > 0)
+            if (fuzzoffsetinverse[fuzzposinverse] > 0)
             {
                 if (local_color >= 0x8000)
                 {
@@ -2204,7 +2193,7 @@ void R_DrawFuzzColumnText4050(void)
         {
             local_color = vmem & 0x0F00;
 
-            if (fuzzoffset[fuzzpos] > 0)
+            if (fuzzoffsetinverse[fuzzposinverse] > 0)
             {
                 if (local_color >= 0x800)
                 {
@@ -2224,8 +2213,8 @@ void R_DrawFuzzColumnText4050(void)
             odd = 1;
         }
 
-        if (++fuzzpos == FUZZTABLE)
-            fuzzpos = 0;
+        if (--fuzzposinverse == 0)
+            fuzzposinverse = FUZZTABLE;
 
     } while (count--);
 }
@@ -2245,7 +2234,7 @@ void R_DrawFuzzColumnText4025(void)
     {
         vmem = *dest & 0x0F00;
 
-        if (fuzzoffset[fuzzpos] > 0)
+        if (fuzzoffsetinverse[fuzzposinverse] > 0)
         {
             if (vmem >= 0x800)
                 vmem -= 0x800;
@@ -2258,8 +2247,8 @@ void R_DrawFuzzColumnText4025(void)
 
         *dest = vmem | 219;
 
-        if (++fuzzpos == FUZZTABLE)
-            fuzzpos = 0;
+        if (--fuzzposinverse == 0)
+            fuzzposinverse = FUZZTABLE;
 
         dest += 40;
     } while (dest <= count);
@@ -2288,7 +2277,7 @@ void R_DrawFuzzColumnText8025(void)
         {
             local_color = vmem & 0xF000;
 
-            if (fuzzoffset[fuzzpos] > 0)
+            if (fuzzoffsetinverse[fuzzposinverse] > 0)
             {
                 if (local_color >= 0x8000)
                 {
@@ -2312,7 +2301,7 @@ void R_DrawFuzzColumnText8025(void)
         {
             local_color = vmem & 0x0F00;
 
-            if (fuzzoffset[fuzzpos] > 0)
+            if (fuzzoffsetinverse[fuzzposinverse] > 0)
             {
                 if (local_color >= 0x800)
                 {
@@ -2332,8 +2321,8 @@ void R_DrawFuzzColumnText8025(void)
             odd = 1;
         }
 
-        if (++fuzzpos == FUZZTABLE)
-            fuzzpos = 0;
+        if (--fuzzposinverse == 0)
+            fuzzposinverse = FUZZTABLE;
 
     } while (count--);
 }
@@ -2353,7 +2342,7 @@ void R_DrawFuzzColumnText8050(void)
     {
         vmem = *dest & 0x0F00;
 
-        if (fuzzoffset[fuzzpos] > 0)
+        if (fuzzoffsetinverse[fuzzposinverse] > 0)
         {
             if (vmem >= 0x800)
                 vmem -= 0x800;
@@ -2366,8 +2355,8 @@ void R_DrawFuzzColumnText8050(void)
 
         *dest = vmem | 219;
 
-        if (++fuzzpos == FUZZTABLE)
-            fuzzpos = 0;
+        if (--fuzzposinverse == 0)
+            fuzzposinverse = FUZZTABLE;
 
         dest += 80;
     } while (dest <= count);
