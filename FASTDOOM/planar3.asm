@@ -83,22 +83,20 @@ CODE_SYM_DEF R_DrawFuzzColumnPotato
   mov  ebp,eax
 
 dc_yhOKP:
-  mov  ebx,[_dc_yl]
+  mov  eax,[_dc_yl]
 
-  test ebx,ebx
+  test eax,eax
   jne dc_ylOKP
 
-  mov  ebx,1
+  mov  eax,1
 
 dc_ylOKP:
   mov  edi,[_ylookup+ebp*4]
-  sub  ebp,ebx         ; ebp = pixel count
+  sub  ebp,eax         ; ebp = pixel count
   js   .pdone
 
   add edi,[_destview]
   add edi,[_dc_x]
-
-  xor eax,eax
 
   mov eax,[_colormaps]
   mov	ecx,[_fuzzposinverse]
@@ -141,16 +139,16 @@ CODE_SYM_DEF R_DrawFuzzColumnLow
   mov  ebp,eax
 
 dc_yhOKL:
-  mov  ebx,[_dc_yl]
+  mov  eax,[_dc_yl]
 
-  test ebx,ebx
+  test eax,eax
   jne dc_ylOKL
 
-  mov  ebx,1
+  mov  eax,1
 
 dc_ylOKL:
   mov  edi,[_ylookup+ebp*4]
-  sub  ebp,ebx         ; ebp = pixel count
+  sub  ebp,eax         ; ebp = pixel count
   js   .ldone
 
   mov ecx,[_dc_x]
@@ -175,8 +173,6 @@ dc_ylOKL:
 
   shr esi,1
   add edi,esi
-
-  xor eax,eax
 
   mov eax,[_colormaps]
   mov	ecx,[_fuzzposinverse]
@@ -216,16 +212,16 @@ CODE_SYM_DEF R_DrawFuzzColumn
   mov  ebp,eax
 
 dc_yhOK:
-  mov  ebx,[_dc_yl]
+  mov  eax,[_dc_yl]
 
-  test ebx,ebx
+  test eax,eax
   jne dc_ylOK
 
-  mov  ebx,1
+  mov  eax,1
 
 dc_ylOK:
   mov  edi,[_ylookup+ebp*4]
-  sub  ebp,ebx         ; ebp = pixel count
+  sub  ebp,eax         ; ebp = pixel count
   js   short done
 
   mov ecx,[_dc_x]
@@ -249,8 +245,6 @@ dc_ylOK:
 
   shr esi,2
   add edi,esi
-
-  xor eax,eax
 
   mov eax,[_colormaps]
   mov	ecx,[_fuzzposinverse]
