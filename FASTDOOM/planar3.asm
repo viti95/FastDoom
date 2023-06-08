@@ -278,8 +278,8 @@ done:
   SCALELABEL LINE:
 
   mov		ebp,[edx+ecx*4]
-  dec   ecx
 	mov   al,[edi+ebp-(LINE-1)*80]
+  dec   ecx
 	mov		al,[eax]
   mov		[edi-(LINE-1)*80],al
 
