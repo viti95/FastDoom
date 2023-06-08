@@ -270,7 +270,7 @@ done:
 %endmacro
 
 %macro JMPTESTFUZZPOSDEFINE 1
-  jnz testfuzzpos%1
+  jne testfuzzpos%1
 %endmacro
 
 %assign LINE SCREENHEIGHT
