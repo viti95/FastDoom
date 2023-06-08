@@ -49,10 +49,6 @@ BEGIN_DATA_SECTION
   dd vscale%1
 %endmacro
 
-%macro TESTFUZZPOSDEFINE 1
-  dd testfuzzpos%1
-%endmacro
-
 align 4
 
 scalecalls:
