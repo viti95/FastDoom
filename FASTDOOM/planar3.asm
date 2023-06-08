@@ -24,8 +24,8 @@ BITS 32
 
 extern _destview
 extern _viewheight
-extern _fuzzoffset
-extern _fuzzpos
+extern _fuzzoffsetinverse
+extern _fuzzposinverse
 extern _colormaps
 
 ;============================================================================
@@ -105,10 +105,10 @@ dc_ylOKP:
   xor eax,eax
 
   mov esi,[_colormaps]
-  mov	ecx,[_fuzzpos]
+  mov	ecx,[_fuzzposinverse]
   add esi,0x600
-  mov edx,_fuzzoffset
-  mov ebx,0x32
+  mov edx,_fuzzoffsetinverse
+  mov ebx,50
 
   jmp  [scalecalls+4+ebp*4]
 
@@ -183,10 +183,10 @@ dc_ylOKL:
   xor eax,eax
 
   mov esi,[_colormaps]
-  mov	ecx,[_fuzzpos]
+  mov	ecx,[_fuzzposinverse]
   add esi,0x600
-  mov edx,_fuzzoffset
-  mov ebx,0x32
+  mov edx,_fuzzoffsetinverse
+  mov ebx,50
 
   jmp  [scalecalls+4+ebp*4]
 
@@ -257,10 +257,10 @@ dc_ylOK:
   xor eax,eax
 
   mov esi,[_colormaps]
-  mov	ecx,[_fuzzpos]
+  mov	ecx,[_fuzzposinverse]
   add esi,0x600
-  mov edx,_fuzzoffset
-  mov ebx,0x32
+  mov edx,_fuzzoffsetinverse
+  mov ebx,50
 
   jmp  [scalecalls+4+ebp*4]
 
@@ -283,46 +283,31 @@ done:
 %endmacro
 
 %macro JMPTESTFUZZPOSDEFINE 1
-  jne testfuzzpos%1
+  jnz testfuzzpos%1
 %endmacro
 
 %assign LINE SCREENHEIGHT
-%rep SCREENHEIGHT-1
+%rep SCREENHEIGHT
   SCALELABEL LINE:
 
   mov		ebp,[edx+ecx*4]
-  inc   ecx
-	mov   al,[ebp+edi-(LINE-1)*80]
-  cmp   cl,bl
-	mov		al,[eax+esi]
+  dec   ecx
+	mov   al,[edi+ebp-(LINE-1)*80]
+	mov		al,[esi+eax]
   mov		[edi-(LINE-1)*80],al
 
   JMPTESTFUZZPOSDEFINE LINE
-  xor   ecx,ecx
+  mov   ecx,ebx
 
   TESTFUZZPOSDEFINE LINE:
   %assign LINE LINE-1
 %endrep
 
-vscale1:
-
-  mov		ebp,[edx+ecx*4]
-	inc   ecx
-  mov   al,[ebp+edi-(LINE-1)*80]
-  cmp   cl,bl
-	mov		al,[eax+esi]
-  mov		[edi-(LINE-1)*80],al
-  
-  jne   testfuzzpos1
-  xor   ecx,ecx
-
-testfuzzpos1:
+vscale0:
 	pop	ebp
-  mov [_fuzzpos],ecx
+  mov [_fuzzposinverse],ecx
   pop	esi
   pop	edx
-
-vscale0:
 	pop	ecx
 	pop	ebx
   pop	edi
