@@ -100,9 +100,9 @@ dc_ylOKP:
 
   xor eax,eax
 
-  mov esi,[_colormaps]
+  mov eax,[_colormaps]
   mov	ecx,[_fuzzposinverse]
-  add esi,0x600
+  add eax,0x600
   mov edx,_fuzzoffsetinverse
   mov ebx,50
 
@@ -178,9 +178,9 @@ dc_ylOKL:
 
   xor eax,eax
 
-  mov esi,[_colormaps]
+  mov eax,[_colormaps]
   mov	ecx,[_fuzzposinverse]
-  add esi,0x600
+  add eax,0x600
   mov edx,_fuzzoffsetinverse
   mov ebx,50
 
@@ -252,9 +252,9 @@ dc_ylOK:
 
   xor eax,eax
 
-  mov esi,[_colormaps]
+  mov eax,[_colormaps]
   mov	ecx,[_fuzzposinverse]
-  add esi,0x600
+  add eax,0x600
   mov edx,_fuzzoffsetinverse
   mov ebx,50
 
@@ -289,7 +289,7 @@ done:
   mov		ebp,[edx+ecx*4]
   dec   ecx
 	mov   al,[edi+ebp-(LINE-1)*80]
-	mov		al,[esi+eax]
+	mov		al,[eax]
   mov		[edi-(LINE-1)*80],al
 
   JMPTESTFUZZPOSDEFINE LINE
