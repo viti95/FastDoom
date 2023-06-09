@@ -895,7 +895,6 @@ void R_ExecuteSetViewSize(void)
         switch (selectedCPU)
         {
         case UMC_GREEN_486:
-        case CYRIX_486:
         case CYRIX_5X86:
         case AMD_K5:
             colfunc = basecolfunc = R_DrawColumnFastLEA;
@@ -928,7 +927,6 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case UMC_GREEN_486:
-            case CYRIX_486:
             case CYRIX_5X86:
             case AMD_K5:
                 skyfunc = R_DrawColumnFastLEA;
@@ -962,7 +960,6 @@ void R_ExecuteSetViewSize(void)
         switch (selectedCPU)
         {
         case UMC_GREEN_486:
-        case CYRIX_486:
         case CYRIX_5X86:
         case AMD_K5:
             colfunc = basecolfunc = R_DrawColumnLowFastLEA;
@@ -995,7 +992,6 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case UMC_GREEN_486:
-            case CYRIX_486:
             case CYRIX_5X86:
             case AMD_K5:
                 skyfunc = R_DrawColumnLowFastLEA;
@@ -1029,7 +1025,6 @@ void R_ExecuteSetViewSize(void)
         switch (selectedCPU)
         {
         case UMC_GREEN_486:
-        case CYRIX_486:
         case CYRIX_5X86:
         case AMD_K5:
             colfunc = basecolfunc = R_DrawColumnPotatoFastLEA;
@@ -1062,7 +1057,6 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case UMC_GREEN_486:
-            case CYRIX_486:
             case CYRIX_5X86:
             case AMD_K5:
                 skyfunc = R_DrawColumnPotatoFastLEA;
@@ -1101,7 +1095,6 @@ void R_ExecuteSetViewSize(void)
         switch (selectedCPU)
         {
         case UMC_GREEN_486:
-        case CYRIX_486:
         case CYRIX_5X86:
         case AMD_K5:
             colfunc = basecolfunc = R_DrawColumnBackbufferFastLEA;
@@ -1134,7 +1127,6 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case UMC_GREEN_486:
-            case CYRIX_486:
             case CYRIX_5X86:
             case AMD_K5:
                 skyfunc = R_DrawColumnBackbufferFastLEA;
@@ -1168,7 +1160,6 @@ void R_ExecuteSetViewSize(void)
         switch (selectedCPU)
         {
         case UMC_GREEN_486:
-        case CYRIX_486:
         case CYRIX_5X86:
         case AMD_K5:
             colfunc = basecolfunc = R_DrawColumnLowBackbufferFastLEA;
@@ -1201,7 +1192,6 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case UMC_GREEN_486:
-            case CYRIX_486:
             case CYRIX_5X86:
             case AMD_K5:
                 skyfunc = R_DrawColumnLowBackbufferFastLEA;
