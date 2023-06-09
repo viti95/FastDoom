@@ -41,6 +41,7 @@ typedef enum
 	M_CMS,
 	M_OPL2LPT,
 	M_OPL3LPT,
+	M_OPL3,
 	M_CD,
 	M_WAV,
 	M_SBMIDI,

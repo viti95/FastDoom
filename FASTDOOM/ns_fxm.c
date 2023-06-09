@@ -167,6 +167,7 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
     case Adlib:
     case OPL2LPT:
     case OPL3LPT:
+    case OPL3:
         DeviceStatus = ADBFX_Init(SoundCard, port);
         if (DeviceStatus != ADBFX_Ok)
         {
@@ -300,6 +301,7 @@ int FX_Init(
     case Adlib:
     case OPL2LPT:
     case OPL3LPT:
+    case OPL3:
     case SoundBlasterDirect:
         devicestatus = MV_Init(SoundCard, FX_MixRate, numvoices, numchannels, samplebits);
         if (devicestatus != MV_Ok)
@@ -358,6 +360,7 @@ int FX_Shutdown(
     case Adlib:
     case OPL2LPT:
     case OPL3LPT:
+    case OPL3:
     case SoundBlasterDirect:
         status = MV_Shutdown();
         if (status != MV_Ok)
@@ -422,6 +425,7 @@ void FX_SetVolume(int volume)
     case Adlib:
     case OPL2LPT:
     case OPL3LPT:
+    case OPL3:
     case PC1bit:
     case PCPWM:
     case LPTDAC:

@@ -43,6 +43,7 @@ typedef enum
     snd_CMS,
     snd_OPL2LPT,
     snd_OPL3LPT,
+    snd_OPL3,
     snd_CD,
     snd_WAV,
     snd_SBMIDI,

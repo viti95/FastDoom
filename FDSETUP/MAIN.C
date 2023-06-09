@@ -48,6 +48,7 @@ char cards[M_LAST][20] = {
 	"C/MS (Game Blaster)",
 	"OPL2LPT",
 	"OPL3LPT",
+	"OPL3",
 	"Audio-CD",
 	"PCM",
 	"Sound Blaster MIDI"

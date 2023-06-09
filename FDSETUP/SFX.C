@@ -14,6 +14,7 @@ enum
 	DCARD_TANDY,
 	DCARD_OPL2LPT,
 	DCARD_OPL3LPT,
+	DCARD_OPL3,
 	DCARD_PC1BIT,
 	DCARD_COVOX,
 	DCARD_SBDIRECT,
@@ -35,13 +36,14 @@ item_t idcarditems[] =
 		{DCARD_TANDY, 27, 10, 25, -1, -1},
 		{DCARD_OPL2LPT, 27, 11, 25, -1, -1},
 		{DCARD_OPL3LPT, 27, 12, 25, -1, -1},
-		{DCARD_PC1BIT, 27, 13, 25, -1, -1},
-		{DCARD_COVOX, 27, 14, 25, -1, -1},
-		{DCARD_SBDIRECT, 27, 15, 25, -1, -1},
-		{DCARD_ADLIB, 27, 16, 25, -1, -1},
-		{DCARD_PCPWM, 27, 17, 25, -1, -1},
-		{DCARD_CMS, 27, 18, 25, -1, -1},
-		{DCARD_NONE, 27, 19, 25, -1, -1}
+		{DCARD_OPL3, 27, 13, 25, -1, -1},
+		{DCARD_PC1BIT, 27, 14, 25, -1, -1},
+		{DCARD_COVOX, 27, 15, 25, -1, -1},
+		{DCARD_SBDIRECT, 27, 16, 25, -1, -1},
+		{DCARD_ADLIB, 27, 17, 25, -1, -1},
+		{DCARD_PCPWM, 27, 18, 25, -1, -1},
+		{DCARD_CMS, 27, 19, 25, -1, -1},
+		{DCARD_NONE, 27, 20, 25, -1, -1}
 	};
 
 menu_t idcardmenu =
@@ -123,6 +125,10 @@ int ChooseFxCard(void)
 	
 	case M_OPL3LPT:
 		field = DCARD_OPL3LPT;
+		break;
+	
+	case M_OPL3:
+		field = DCARD_OPL3;
 		break;
 	}
 
@@ -226,6 +232,12 @@ int ChooseFxCard(void)
 
 			case DCARD_OPL3LPT:
 				newc.d.card = M_OPL3LPT;
+				newc.d.soundport = -1;
+				newc.d.midiport = -1;
+				goto func_exit;
+
+			case DCARD_OPL3:
+				newc.d.card = M_OPL3;
 				newc.d.soundport = -1;
 				newc.d.midiport = -1;
 				goto func_exit;
@@ -1008,6 +1020,7 @@ int SetupFX(void)
 
 	case M_PC1BIT:
 	case M_ADLIB:
+	case M_OPL3:
 	case M_SBDIRECT:
 	case M_GUS:
 	case M_PAS:

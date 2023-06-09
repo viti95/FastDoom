@@ -176,6 +176,7 @@ int ADBFX_BeginBufferedPlayback(
     switch (ADBFX_Device)
     {
     case Adlib:
+    case OPL3:
         ADBFX_Timer = TS_ScheduleTask(ADBFX_ServiceInterrupt_ISA, FX_MixRate, 1, NULL);
         break;
     case OPL2LPT:

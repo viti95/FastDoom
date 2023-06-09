@@ -1235,6 +1235,13 @@ int AL_Init(int soundcard, int Address)
       AL_OPL3LPT = TRUE;
       ADLIB_PORT = Address;
       break;
+   case OPL3:
+      AL_OPL3 = TRUE;
+      AL_Stereo = TRUE;
+      AL_LeftPort = 0x388;
+      AL_RightPort = 0x388;
+      ADLIB_PORT = 0x388;
+      break;
    case ProAudioSpectrum:
    case SoundMan16:
       AL_OPL3 = TRUE;

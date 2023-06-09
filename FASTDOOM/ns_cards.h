@@ -23,6 +23,7 @@ typedef enum
    CMS,
    OPL2LPT,
    OPL3LPT,
+   OPL3,
    AudioCD,
    FileWAV,
    SBMIDI,

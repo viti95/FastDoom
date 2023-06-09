@@ -342,6 +342,8 @@ int ASS_GetSoundCardCode(int sndDevice)
         return OPL2LPT;
     case snd_OPL3LPT:
         return OPL3LPT;
+    case snd_OPL3:
+        return OPL3;
     case snd_CD:
         return AudioCD;
     case snd_WAV:
@@ -411,6 +413,7 @@ void ASS_Init(int rate, int maxsng, int mdev, int sdev)
         case Adlib:
         case OPL2LPT:
         case OPL3LPT:
+        case OPL3:
             FX_SetupCard(sound_device, &fx_device, dmx_snd_port);
             break;
         default:

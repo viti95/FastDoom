@@ -707,6 +707,7 @@ int MV_SetMixMode(
     case Adlib:
     case OPL2LPT:
     case OPL3LPT:
+    case OPL3:
         MV_MixMode = MONO_8BIT;
         break;
 
@@ -896,6 +897,7 @@ int MV_StartPlayback(
     case Adlib:
     case OPL2LPT:
     case OPL3LPT:
+    case OPL3:
         ADBFX_BeginBufferedPlayback(MV_MixBuffer[0],
                                  TotalBufferSize, MV_NumberOfBuffers,
                                  MV_ServiceVoc);
@@ -979,6 +981,7 @@ void MV_StopPlayback(
     case Adlib:
     case OPL2LPT:
     case OPL3LPT:
+    case OPL3:
         ADBFX_StopPlayback();
         break;
     case Tandy3Voice:
@@ -1311,6 +1314,7 @@ int MV_Init(
     case Adlib:
     case OPL2LPT:
     case OPL3LPT:
+    case OPL3:
         status = ADBFX_Init(soundcard, dmx_snd_port);
         break;
 
@@ -1442,6 +1446,7 @@ int MV_Shutdown(
     case Adlib:
     case OPL2LPT:
     case OPL3LPT:
+    case OPL3:
         ADBFX_Shutdown();
         break;
     case Tandy3Voice:
