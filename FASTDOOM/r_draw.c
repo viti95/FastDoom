@@ -2145,7 +2145,7 @@ int fuzzoffsetinverse[FUZZTABLE] =
         FUZZOFF, FUZZOFF, FUZZOFF, FUZZOFF, -FUZZOFF, FUZZOFF, -FUZZOFF,
         FUZZOFF, FUZZOFF, FUZZOFF, -FUZZOFF, FUZZOFF, -FUZZOFF, FUZZOFF};
 
-int fuzzposinverse = FUZZTABLE;
+int fuzzposinverse = FUZZTABLE-1;
 
 #if defined(MODE_T4050)
 void R_DrawFuzzColumnText4050(void)

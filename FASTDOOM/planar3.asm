@@ -101,7 +101,7 @@ dc_ylOKP:
   mov	ecx,[_fuzzposinverse]
   add eax,0x600
   mov edx,_fuzzoffsetinverse
-  mov ebx,50
+  mov ebx,49
 
   jmp  [scalecalls+4+ebp*4]
 
@@ -176,7 +176,7 @@ dc_ylOKL:
   mov	ecx,[_fuzzposinverse]
   add eax,0x600
   mov edx,_fuzzoffsetinverse
-  mov ebx,50
+  mov ebx,49
 
   jmp  [scalecalls+4+ebp*4]
 
@@ -247,7 +247,7 @@ dc_ylOK:
   mov	ecx,[_fuzzposinverse]
   add eax,0x600
   mov edx,_fuzzoffsetinverse
-  mov ebx,50
+  mov ebx,49
 
   jmp  [scalecalls+4+ebp*4]
 
@@ -276,17 +276,14 @@ done:
 %assign LINE SCREENHEIGHT
 %rep SCREENHEIGHT
   SCALELABEL LINE:
-
   mov		ebp,[edx+ecx*4]
 	mov   al,[edi+ebp-(LINE-1)*80]
   dec   ecx
 	mov		al,[eax]
-  mov		[edi-(LINE-1)*80],al
-
   JMPTESTFUZZPOSDEFINE LINE
   mov   ecx,ebx
-
   TESTFUZZPOSDEFINE LINE:
+  mov		[edi-(LINE-1)*80],al
   %assign LINE LINE-1
 %endrep
 
