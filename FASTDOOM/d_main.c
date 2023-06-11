@@ -1389,21 +1389,21 @@ void D_DoomMain(void)
 
     
 
-    M_CheckParmOptionalValue("-flatVisplanes", &visplaneRender, VISPLANES_FLAT);
-    M_CheckParmOptionalValue("-flatterVisplanes", &visplaneRender, VISPLANES_FLATTER);
+    M_CheckParmOptionalValue("-flatSpan", &visplaneRender, VISPLANES_FLAT);
+    M_CheckParmOptionalValue("-flatterSpan", &visplaneRender, VISPLANES_FLATTER);
 
     M_CheckParmOptional("-flatsky", &flatSky);
-    M_CheckParmOptionalValue("-flatshadows", &invisibleRender, INVISIBLE_FLAT);
+    M_CheckParmOptionalValue("-flatInv", &invisibleRender, INVISIBLE_FLAT);
     M_CheckParmOptionalValue("-flatsaturn", &invisibleRender, INVISIBLE_FLAT_SATURN);
     M_CheckParmOptionalValue("-saturn", &invisibleRender, INVISIBLE_SATURN);
     M_CheckParmOptionalValue("-translucent", &invisibleRender, INVISIBLE_TRANSLUCENT);
     M_CheckParmOptionalValue("-umc486", &selectedCPU, UMC_GREEN_486);
-    M_CheckParmOptionalValue("-intel486", &selectedCPU, INTEL_486);
-    M_CheckParmOptionalValue("-cyrix386", &selectedCPU, CYRIX_386DLC);
-    M_CheckParmOptionalValue("-cyrix486", &selectedCPU, CYRIX_486);
+    M_CheckParmOptionalValue("-i486", &selectedCPU, INTEL_486);
+    M_CheckParmOptionalValue("-cy386", &selectedCPU, CYRIX_386DLC);
+    M_CheckParmOptionalValue("-cy486", &selectedCPU, CYRIX_486);
     M_CheckParmOptionalValue("-386dx", &selectedCPU, INTEL_386DX);
     M_CheckParmOptionalValue("-386sx", &selectedCPU, INTEL_386SX);
-    M_CheckParmOptionalValue("-cyrix5x86", &selectedCPU, CYRIX_5X86);
+    M_CheckParmOptionalValue("-cy5x86", &selectedCPU, CYRIX_5X86);
     M_CheckParmOptionalValue("-k5", &selectedCPU, AMD_K5);
     M_CheckParmOptionalValue("-pentium", &selectedCPU, INTEL_PENTIUM);
     M_CheckParmOptionalValue("-fps", &showFPS, SCREEN_FPS);
@@ -1414,9 +1414,9 @@ void D_DoomMain(void)
     M_CheckParmOptional("-nomelt", &noMelt);
     M_CheckParmOptional("-uncapped", &uncappedFPS);
     M_CheckParmOptional("-vsync", &waitVsync);
-    M_CheckParmDisable("-defVisplanes", &visplaneRender);
+    M_CheckParmDisable("-defSpan", &visplaneRender);
     M_CheckParmDisable("-defSky", &flatSky);
-    M_CheckParmDisable("-defShadows", &invisibleRender);
+    M_CheckParmDisable("-defInv", &invisibleRender);
     M_CheckParmDisable("-far", &nearSprites);
     M_CheckParmDisable("-stereo", &monoSound);
     M_CheckParmDisable("-melt", &noMelt);

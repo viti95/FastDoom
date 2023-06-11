@@ -134,12 +134,12 @@
  -episode X => Starts one episode automatically
  -warp XX => Starts a game level
  -fps => Shows in-game frame rate (frames per second)
- -flatterVisplanes => Forces visplanes to be rendered as flat colors (depth
+ -flatterSpan => Forces visplanes to be rendered as flat colors (depth
                      illumination is enabled)
- -flatVisplanes => Forces visplanes to be rendered as flat colors (depth
+ -flatSpan => Forces visplanes to be rendered as flat colors (depth
                   illumination is disabled)
  -flatsky => Renders game skies as a flat color
- -flatshadows => Renders transparent enemies/player/items without fuzzy 
+ -flatInv => Renders transparent enemies/player/items without fuzzy 
                  transparency
  -flatsaturn => Renders transparent enemies/player/items with a half-tone
             black pattern
@@ -150,9 +150,9 @@
  -nomelt => Disables melting transition (for 386 processors)
  -uncapped => Disables frame rate limit (35 fps)
  -vsync => Forces screen updates synchronized with the VSync
- -defVisplanes => Disable any optimization on visplanes
+ -defSpan => Disable any optimization on visplanes
  -defSky => Disable any optimization on skies
- -defShadows => Disable any optimization on transparent things
+ -defInv => Disable any optimization on transparent things
  -far => Disables sprite culling
  -stereo => Forces stereo sound
  -melt => Enables screen melting transitions
