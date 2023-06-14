@@ -114,15 +114,14 @@ CODE_SYM_DEF R_DrawFuzzColumnFlatLow
 
   ; outpw(GC_INDEX, GC_READMAP + ((dc_x & 1) << 9));
   and ecx,1
-  mov eax,ecx
-	shl	eax,9
-	mov	dx,0x3CE
-	add	eax,4
+  add ecx,ecx
+  mov al,4
+  mov	dx,0x3CE
+  mov ah,cl
 	out	dx,ax
 
   ; outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
   mov  al,3
-  add  cl,cl
   mov  dx,SC_INDEX+1
   shl  al,cl
   out  dx,al
