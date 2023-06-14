@@ -227,18 +227,16 @@ dc_ylOK:
   mov esi,ecx
 
   ; outpw(GC_INDEX, GC_READMAP + ((dc_x & 3) << 8));
-  mov eax,ecx
-	and	eax,3
-	shl	eax,8
-	mov	dx,0x3CE
-	add	eax,4
+  mov al,4
+  and cl,3
+  mov	dx,0x3CE
+  mov ah,cl
 	out	dx,ax
 
   ; outp(SC_INDEX + 1, 1 << (dc_x & 3));
-  and  cl,3
-  mov  dx,SC_INDEX+1
   mov  al,1
   shl  al,cl
+  mov  dx,SC_INDEX+1
   out  dx,al
 
   shr esi,2
