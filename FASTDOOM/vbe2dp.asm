@@ -67,7 +67,8 @@ CODE_SYM_DEF R_DrawColumnPotatoVBE2
 
   mov  ebx,[_dc_x]
   mov  ecx,[_dc_iscale]
-  shl  ebx,2
+  lea  ebx,[ebx*4]
+  ;shl  ebx,2
   shl  edi,6
   add  edi,ebx
   add  edi,[_destview]

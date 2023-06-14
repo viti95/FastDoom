@@ -67,7 +67,8 @@ CODE_SYM_DEF R_DrawFuzzColumnFlatPotatoVBE2
 
   mov  eax,[_dc_x]
   shl  edi,6
-  shl  eax,2
+  lea  eax,[eax*4]
+  ;shl  eax,2
   add  edi,[_destview]
   add  edi,eax
   

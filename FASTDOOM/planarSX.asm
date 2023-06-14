@@ -67,7 +67,8 @@ CODE_SYM_DEF R_DrawSpan386SX
   add  edi,eax
   mov  ebx,[_ds_step]
   add  edi,[_destview]
-  shl   ebx,2
+  lea  ebx,[ebx*4]
+  ;shl   ebx,2
   mov  [dest],edi
   mov   [fracpstep],ebx
   mov   eax,.hpatch1+2
