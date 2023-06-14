@@ -67,7 +67,6 @@ CODE_SYM_DEF R_DrawSpan
   mov  ebx,[_ds_step]
   add  edi,[_destview]
   lea  ebx,[ebx*4]
-  ;shl   ebx,2
   mov  [dest],edi
   mov   [fracpstep],ebx
   mov   eax,.hpatch1+2
@@ -234,8 +233,8 @@ CODE_SYM_DEF R_DrawSpanLow
   mov   ecx,[curplane]
 .lplane:
   mov   al,3
+  add   cl,cl
   mov   dx,SC_INDEX+1
-  shl   al,cl
   shl   al,cl
   out   dx,al
   mov   eax,[_ds_x2]
