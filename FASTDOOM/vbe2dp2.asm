@@ -92,13 +92,11 @@ dc_ylOK:
 
   mov  eax,[_dc_x]
   shl  edi,6
-  shl  eax,2
-  add  edi,[_destview]
-  add  edi,eax
-  
   xor ebx,ebx
-
+  lea  edi,[edi+eax*4]
   mov eax,[_colormaps]
+  add  edi,[_destview]
+  
   mov	ecx,[_fuzzposinverse]
   add eax,0x600
   mov edx,_fuzzoffsetinverse
