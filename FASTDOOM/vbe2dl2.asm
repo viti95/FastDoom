@@ -86,18 +86,16 @@ dc_ylOK:
   sub  ebp,eax ; ebp = pixel count
   js   near .done
 
-  mov  eax,[_dc_x]
   shl  edi,6
-  shl  eax,1
-  add  edi,[_destview]
-  add  edi,eax
-  
+  mov  eax,[_dc_x]
+  mov	ecx,[_fuzzposinverse]
+  lea  edi,[edi+eax*2]
   xor ebx,ebx
+  add  edi,[_destview]
 
   mov eax,[_colormaps]
-  mov	ecx,[_fuzzposinverse]
-  add eax,0x600
   mov edx,_fuzzoffsetinverse
+  add eax,0x600
   mov esi,49
 
   jmp  [scalecalls+4+ebp*4]
