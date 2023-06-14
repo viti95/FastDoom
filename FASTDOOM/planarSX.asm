@@ -60,6 +60,7 @@ CODE_SYM_DEF R_DrawSpan386SX
   mov  [endplane],ebx
   mov  ebp,[_ds_y]
   mov  [curplane],ebx
+  mov  ecx,ebx
   lea  edi,[ebp+ebp*4]
   mov  ebx,[_ds_frac]
   shl  edi,4
@@ -74,7 +75,6 @@ CODE_SYM_DEF R_DrawSpan386SX
   mov   [eax],ebx
   mov   eax,.hpatch2+2
   mov   [eax],ebx
-  mov   ecx,[curplane]
 .hplane:
   mov   al,1
   shl   al,cl
@@ -222,6 +222,7 @@ CODE_SYM_DEF R_DrawSpanLow386SX
   and  ebx,1
   mov  [endplane],ebx
   mov  [curplane],ebx
+  mov  ecx,ebx
   shr  eax,1
   mov  ebp,[_ds_y]
   lea  edi,[ebp+ebp*4]
@@ -242,7 +243,6 @@ CODE_SYM_DEF R_DrawSpanLow386SX
   mov   [eax],ebx
   mov   eax,.lpatch2+2
   mov   [eax],ebx
-  mov   ecx,[curplane]
 .lplane:
   mov   al,3
   add   cl,cl
