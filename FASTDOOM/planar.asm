@@ -124,16 +124,14 @@ CODE_SYM_DEF R_DrawColumnLow
   add  edi,[_destview]
   mov  esi, ecx
   
-  and  cl,1
-  mov  al,3
-  add  cl, cl
-  mov  dx,SC_INDEX+1
-  shl  al,cl
-  out  dx,al
-
-  shr esi,1
-  mov eax, ebx
+  and   ecx,1
+  shr   esi,1
+  lea   eax,[ecx+ecx*8+3]
+  mov   dx,SC_INDEX+1
   add edi,esi
+  out   dx,al
+
+  mov eax, ebx
 
   mov   ecx,[_dc_iscale]
 
