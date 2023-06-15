@@ -55,7 +55,7 @@ L$2:
   shrd  dx,di,4
 	mov		ax,[ebp+eax*2]
 	shrd  dx,ax,4
-	cmp		dx,[ebx]
+	cmp		[ebx],dx
 	jne		L$4
 L$3:
 	add		ebx,2
@@ -74,7 +74,7 @@ L$4:
 	mov   ax,dx
 	shr		ax,4
 	mov		[ebx],dx
-	cmp		ax,[_lastlatch]
+	cmp		[_lastlatch],ax
 	je		L$5
 	mov		[_lastlatch],ax
 	mov   al,byte [0xA3E80 + eax]

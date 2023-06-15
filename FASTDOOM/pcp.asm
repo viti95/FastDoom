@@ -69,12 +69,12 @@ L$3:
 
 	or		eax,ecx
 
-	cmp		al,[_vrambuffer + ebx]
+	cmp		[_vrambuffer + ebx],al
 	je		L$4
 	mov		[0xB8000 + ebx],al
 	mov		[_vrambuffer + ebx],al
 L$4:
-	cmp		ah,[_vrambuffer + ebx + 0x4000]
+	cmp		[_vrambuffer + ebx + 0x4000],ah
 	je		L$5
 	mov		[0xB8000 + ebx + 0x4000],ah
 	mov		[_vrambuffer + ebx + 0x4000],ah
@@ -101,12 +101,12 @@ L$5:
 
 	or		eax,ecx
 
-	cmp		al,[_vrambuffer + ebx + 0x2000]
+	cmp		[_vrambuffer + ebx + 0x2000],al
 	je		L$6
 	mov		[0xB8000 + ebx + 0x2000],al
 	mov		[_vrambuffer + ebx + 0x2000],al
 L$6:
-	cmp		ah,[_vrambuffer + ebx + 0x6000]
+	cmp		[_vrambuffer + ebx + 0x6000],ah
 	je		L$7
 	mov		[0xB8000 + ebx + 0x6000],ah
 	mov		[_vrambuffer + ebx + 0x6000],ah

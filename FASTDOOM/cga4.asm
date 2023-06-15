@@ -60,7 +60,7 @@ L$3:
 	and		ebx,0c03H
 
 	or		eax,ebx
-	cmp		ax,[_vrambuffer + esi*2]
+	cmp		[_vrambuffer + esi*2],ax
 	je		L$4
 	mov		[_vrambuffer + esi*2],ax
 	or		al,ah
@@ -83,7 +83,7 @@ L$4:
 	and		ebx,0c03H
 
 	or		eax,ebx
-	cmp		ax,[_vrambuffer + esi*2 + 0x4000]
+	cmp		[_vrambuffer + esi*2 + 0x4000],ax
 	je		L$5
 	mov		[_vrambuffer + esi*2 + 0x4000],ax
 	or		al,ah
