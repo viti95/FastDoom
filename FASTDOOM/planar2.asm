@@ -229,10 +229,8 @@ CODE_SYM_DEF R_DrawSpanLow
   mov   eax,.lpatch2+2
   mov   [eax],ebx
 .lplane:
-  mov   al,3
-  add   cl,cl
   mov   dx,SC_INDEX+1
-  shl   al,cl
+  lea   eax,[ecx+ecx*8+3]
   out   dx,al
   mov   eax,[_ds_x2]
   cmp   [curx],eax
