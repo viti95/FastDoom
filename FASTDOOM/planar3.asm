@@ -140,12 +140,9 @@ CODE_SYM_DEF R_DrawFuzzColumnLow
 dc_yhOKL:
   mov  eax,[_dc_yl]
 
-  test eax,eax
-  jne dc_ylOKL
+  cmp  eax,1
+  adc  eax,0
 
-  mov  eax,1
-
-dc_ylOKL:
   mov  edi,[_ylookup+ebp*4]
   sub  ebp,eax         ; ebp = pixel count
   js   .ldone
