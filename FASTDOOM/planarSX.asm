@@ -326,8 +326,8 @@ CODE_SYM_DEF R_DrawSpanLow386SX
   shld  edx,ebp,6
 .lpatch2:
   add   ebp,0x12345678 ; runtime patched
-  mov   al,[esi+ecx]
   and   edx,0x00000FFF
+  mov   al,[esi+ecx]
   mov   bl,[esi+edx]
   inc   esp
   mov   dl,[eax]  
