@@ -126,18 +126,14 @@ CODE_SYM_DEF R_DrawFuzzColumnLow
 	push		esi
 	push		ebp
 
-  mov  eax,[_viewheight]
-  dec  eax
-
   mov  ebp,[_dc_yh]
+  mov  eax,[_viewheight]
+  
+  sub  eax,ebp
+  xor  eax,1
+  cmp  eax,1
+  sbb  ebp,0
 
-  cmp  eax,ebp
-  jne  dc_yhOKL
-
-  dec  eax
-  mov  ebp,eax
-
-dc_yhOKL:
   mov  eax,[_dc_yl]
 
   cmp  eax,1
