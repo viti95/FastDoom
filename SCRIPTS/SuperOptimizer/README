@@ -1,0 +1,194 @@
+
+			GNU SUPEROPTIMIZER
+
+The superoptimizer is a function sequence generator that uses an exhaustive
+generate-and-test approach to finding the shortest instruction sequence for
+a given function.  You have to tell the superoptimizer which function and
+which CPU you want to generate code for, and how many instructions you can
+accept.
+
+The superoptimizer can't generate very long sequences, unless you have a
+very fast computer or very much spare time.  The time complexity of the used
+algorithm is approximately
+
+	     2n
+	O(m n  )
+
+where m is the number of available instructions on the architecture and n is
+the shortest sequence for the goal function.  The practical sequence length
+limit depends on the target architecture and goal function arity; In most
+cases it is about 5, but for a rich instruction set as the HPPA it is just
+4.  The longest sequence ever generated was for the MC68020 and 7
+instructions long.  It took several weeks to generate it...
+
+The superoptimizer can't guarantee that it finds the best possible
+instruction sequences for all possible goal functions.  For example, it
+doesn't even try to include immediate constants (other that -1, 0, +1, and
+the smallest negative and biggest positive numbers) in the sequences.
+
+Other reasons why not optimal sequences might be found is that not all
+instructions are included, not even in their register-only form.  Also, some
+instructions included might not be correctly simulated.  If you encounter
+any of these problems, please report them to the address below.
+
+WARNING!  The generated sequences might be incorrect with a very small
+probability.  Always make sure a sequence is correct before using it.  So
+far, I have never encountered any incorrect sequences.  If you find one,
+please let me know about it!
+
+Having said this, note that the superoptimizer practically always finds
+optimal and correct sequences for functions that depend on registers only.
+
+
+			USAGE INSTRUCTIONS
+
+The superoptimizer supports these CPUs: SPARC v7, Motorola 68000, 68020, and
+88000, IBM POWER and PowerPC, AMD 29000, Intel x86 and 960 1.0 and 1.1,
+Pyramid, DEC Alpha, HP PA-RISC, and Hitachi SH.  SGI Mips is not supported,
+since it doesn't have instructions whose use in non-obvious.  Some new
+instructions, like the Intel P6 and Sparc v9 conditional moves are not
+supported.
+
+You need an ANSI C compiler, for example GCC, to compile the superoptimizer.
+Type
+
+	make CPU=-D<cpuname> superopt
+
+where <cpuname> is one of SPARC, MC68000, MC68020, M88000, POWER, POWERPC,
+AM29K, I386, I960 (for i960 1.0), I960B (for I960B 1.1), PYR, ALPHA, HPPA,
+or SH.  The compilation might take a long time and use up a lot of memory,
+especially for HPPA.
+
+You can also build all superoptimizers by typing:
+
+	make all
+
+This will create superopt-sparc, superopt-power, etc.
+
+There are also install targets, use `make install' to install a single
+superoptimizer and `make install-all' to install all of them.
+
+To run the superoptimizer, type
+
+	superopt -f<goal-function> | -all  [-assembly] [-max-cost n]
+	   [-shifts] [-extracts] [-no-carry-insns] [-extra-cost n]
+
+and wait until the found instructions sequences are printed.  For example,
+
+	superopt -flts0 -as
+
+will print all sequences computing the statement
+
+	{ r = (signed_word) v0 < 0; }.
+
+See below for some examples of possible goal functions.
+
+By default, the superoptimizer doesn't try all immediate shift counts.  To
+enable all shift counts, pass -shifts as a command line option.  To enable
+all bit field extracts, use -extracts.
+
+			OPTIONS
+
+The `-f' option has always to be defined to tell the superoptimizer for
+which function it should try to to find an instruction sequence.  See below
+for possible function names.
+
+Option names may be abbreviated.
+
+-assembly
+	Output assembly suitable to feed the assembler instead of pseudo-
+	code suitable for humans.
+
+-max-cost n
+	Limit the `cost' of the instruction sequence to n.  May be used to
+	stop the search if no instruction sequence of that length or
+	shorter is found.  By default this is 4.
+
+-extra-cost n
+	Search for sequences n more expensive than the cheapest found
+	sequence.  Default is 0 meaning that only the cheapest sequence(s)
+	are printed.
+
+-no-carry-insns
+	Don't use instructions that use the carry flag.  This might be
+	desirable on RISCs to simplify instruction scheduling.
+
+-shifts
+	Include all shift counts supported by the target architecture in
+	the search.  This slows down the search considerably.
+
+-extracts
+	Include all bit field extracts supported by the target architecture
+	in the search.  This slows down the search considerably.
+
+-f<goal-function-name>
+	
+	where <goal-function-name> is one of eq, ne, les, ges, lts, gts,
+	leu, geu, ltu, gtu, eq0, ne0, les0, ges0, lts0, gts0, neq, nne,
+	nles, nges, nlts, ngts, nleu, ngeu, nltu, ngtu, neq0, nne0, nles0,
+	nges0, nlts0, ngts0, maxs, mins, maxu, minu, sgn, abs, nabs, gray,
+	or gray2, etc, etc.
+
+	eq, ne, les, etc, computes the C expression "a == b", "a != b", "a
+	<= b", etc, where the operation codes ending in `s' indicates
+	signed comparison; `u` indicates unsigned comparison.
+
+	eq0,... computes "a == 0", ...
+
+	The `n' before the names means that the corresponding function
+	value is negated, e.g. nlt is the C expression "-(a < b)".
+
+	maxs, mins, maxu, minu are binary (i.e. two argument) signed
+	respectively unsigned max and min.
+
+	sgn is the unary sign function; -1 for negative, 0 for zero, and +1
+	for positive arguments.
+
+	abs and nabs are absolute value and negative absolute value,
+	respectively.
+
+	For a complete list of goal function and their definitions, look in
+	the file goal.def.  You can easily add your own goal functions to
+	that file.  After having added a new function, you have to recompile
+	the superoptimizer.
+
+
+		READING SUPEROPTIMIZER OUTPUT
+
+The superoptimizer by default outputs sequences in high-level language like
+syntax.  For example, this is the output for M88000/abs:
+
+1:	r1:=arith_shift_right(r0,0x1f)
+	r2:=add_co(r1,r0)
+	r3:=xor(r2,r1)
+2:	r1:=arith_shift_right(r0,0x1f)
+	r2:=add(r1,r0)
+	r3:=xor(r2,r1)
+3:	r1:=arith_shift_right(r0,0x1f)
+	r2:=xor(r1,r0)
+	r3:=adc_co(r2,r1)
+
+r1:=arith_shift_right(r0,0x1f) means "shift r0 right 31 steps
+arithmetically and put the result in r1".  add_co is "add and set carry".
+adc_co is the subtraction instruction found on most RISCs, i.e. "add with
+complement and set carry".  This may seem dumb, but there is an important
+difference in the way carry is set after an addition-with-complement and a
+subtraction.  The suffixes "_ci" and "_cio" means respectively that carry
+is input but not affected, and that carry is both input and generated.
+
+The interesting value is always the value computed by the last instruction.
+
+
+		*********************************
+
+Please send comments, improvements and new ports to tege@gnu.ai.mit.edu.
+
+The GNU superoptimizer was written by Torbjorn Granlund (currently with
+Cygnus Support).  Tom Wood (at the time with Data General, now at Motorola)
+made major improvements, like the clean way to describe goal functions and
+internal instructions.  The original superoptimizer idea is due to Henry
+Massalin.
+
+The GNU superoptimizer and it's application for tuning GCC are described in
+the proceedings of the ACM SIGPLAN conference on Programming Language
+Design an Implementation (PLDI), 1992.

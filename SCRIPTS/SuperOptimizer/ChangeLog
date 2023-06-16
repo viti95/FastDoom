@@ -1,0 +1,751 @@
+Sat Jun  3 01:28:17 1995  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* superopt.c (random_word): Delete unused variable tot_bits.
+
+Thu Jun  1 04:05:25 1995  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* superopt.c (init_random_word): Make state1 have char type.
+	Use random() on alpha, since srand48 doesn't work there.
+
+Wed May 31 17:08:12 1995  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* superopt.c (test_operands): Add -3, -2, 3, 30, 31, 32, 63, 64.
+	(random_word): Return small numbers with high probability.
+
+Sat May 27 18:32:03 1995  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* superopt.c (N_RANDOM_TEST_OPERANDS): Set to 25000.
+	(random_word): Rewrite.
+	(RANDOM): New macro, internal to random_word.
+
+	* goal.def (DBL_SHIFT_LO, DBL_SHIFT_LO_TRUNC): Arity is 2.
+
+Wed May 24 07:40:49 1995  Torbjorn Granlund  <tege@phydeaux.cygnus.com>
+
+	* superopt.c (N_RANDOM_TEST_OPERANDS): New macro.
+	(init_test_sets): Use N_RANDOM_TEST_OPERANDS.
+	Also, zero n_words when in declarator.
+	(random_word): Conditionally complement x before loop.
+
+	* synth.def (synth_skip): Loop over dr also for unary operations.
+	* superopt.c (recurse): Delete inline declaration.
+
+Tue May 23 01:35:16 1995  Torbjorn Granlund  <tege@rtl.cygnus.com>
+
+	* goal.def: Add *_SEL goals.
+
+Mon May 22 23:00:31 1995  Torbjorn Granlund  <tege@rtl.cygnus.com>
+
+	* Makefile (*.res rules): Use "./" when running superoptimizers.
+	Delete spurious tab after rule.
+	(ALL_MACHINES): Put hppa last.
+
+Thu May 18 22:36:58 1995  Torbjorn Granlund  <tege@rtl.cygnus.com>
+
+	* synth.def (I960 synth): Break out conditional add and subtract
+	instructions into separate loops, and get the pruning conditions
+	right.
+
+	* synth.def (ALPHA synth): Try CMOVcc with (1) as 2:nd operand.
+	* synth.def (ALPHA synth): Read v every time before executing
+        CMOVcc.  Also, don't do CMOVcc with any immediate 1:st operands.
+	(I960 synth): Likewise, but for ADDO_cc_960 and SUBO_cc_960.
+	* run_program.def: Read v every time before executing ADDO_cc_960
+        and SUBO_cc_960.
+
+	* superopt.c (ALPHA output_assembly): Fix typo in CMPLEU and CMPLTU.
+
+	* synth.def (I960 synth): Pass CY_0 in insn that sets cc to 100b.
+
+Wed May 17 09:19:13 1995  Torbjorn Granlund  <tege@adder.cygnus.com>
+
+	* synth.def (I960 synth): Use CRECURSE_2OP for CHKBIT.
+	* superopt.c (I960 output_assembly): Output two operands for CHKBIT.
+
+	* superopt.c (output_assembly): Use new PERFORM_CONCMPx_960
+	name here too.
+
+Tue May 16 00:07:12 1995  Torbjorn Granlund  <tege@rtl.cygnus.com>
+
+	* superopt.c (main_synth): Print C code for goal sequence before
+	outputtting the sequences.
+	(all functions): Print to stdout, not stderr, unless an error occured.
+
+	* superopt.h (PERFORM_CONCMPx_960): New name for
+        PERFORM_CONCMPx_NO_960.  Rewrite, they were completely wrong.
+	* synth.def, run_program.def, insn.def:
+	Use new name PERFORM_CONCMPx_960.
+
+	* synth.def (I960 synth): Delete I960_1_1 condition on CONCMPcc.
+
+	* Makefile: For i960 build, pass -DI960_1_1.
+
+	* superopt.c (recurse):  Change test of HPPA to HAS_NULLIFICATION
+	in search for goal_value in values array.  Also compare v to
+	goal_value, since it is not yet stored in values array.
+
+	* superopt.h, synth.def: Handle i960 1.1 instructions specifically.
+	(POWER): Fix typo testing for POWERPC.
+
+Mon May 15 23:49:56 1995  Torbjorn Granlund  <tege@rtl.cygnus.com>
+
+	* synth.def (I960 synth): Fix typos for CONCMPcc instructions.
+	Try SELcc, CONCMPcc, ADDOcc, SUBOcc with immediate arguments.
+	Try LSHUFTR_NT with op1 being 1.
+
+Mon May 15 19:10:36 1995  Torbjorn Granlund  <tege@adder.cygnus.com>
+
+	* synth.def (I960 synth): Pass correct prune hint for SELcc.
+	Try SELcc with immediate 0 and 1.
+
+Mon May 15 10:28:20 1995  Torbjorn Granlund  <tege@cygnus.com>
+
+	* superopt.c (init_random_word): New function.
+	(main_synth): Call init_random_word.
+
+	* Update copyright headers.
+
+	* superopt.c: Use "assembly", not "assembler" consistently.
+	(main): Default maxmax_cost to 4 (was 5).
+
+Sun May 14 12:24:44 1995  Torbjorn Granlund  <tege@rtl.cygnus.com>
+
+	* insn.def: Add `<' and `=' as instruction classes.
+	(test_sequence): Use new sequences for suppresion of destination
+	register printing.
+
+	* Fold in i960 port.  All files affected.
+
+	* superopt.h (PERFORM_LSHIFT*): Cast r1 to unsigned_word,
+	not signed_word.
+
+	* superopt.c (recurse): In loop to find goal value when the last insn
+	is nullified, loop from 0, not from goal_function_arity.
+
+Sat May 13 12:00:46 1995  Torbjorn Granlund  <tege@rtl.cygnus.com>
+
+	* synth.def: New file, move all synth functions here.
+
+	* superopt.c: Include synth.def twice, once for generating non-leaf
+	synth functions, once for generating leaf synth functions, with
+	different definitions of the various RECURSE macros.
+	(SYNTH): New macro.
+	(recurse): Use SYNTH.
+	(main_synth): Likewise.
+	(recurse_last): New function, called by the leaf synth variants.
+
+Sun May  7 11:46:50 1995  Torbjorn Granlund  <tege@rtl.cygnus.com>
+
+	* superopt.c (HPPA synth): Split into several smaller functions.
+	(synth_nonskip, synth_condskip, synth_skip): New functions.
+
+Sat May  6 10:35:25 1995  Torbjorn Granlund  <tege@rtl.cygnus.com>
+
+	* superopt.c (ALL synth): Split extract-of-1 and extract-of-2 into
+	separate loops; make latter loops terminate at BITS_PER_WORD-2.
+	(ALL synth): Delete SHIFTS and EXTRACTS macros; use run-time
+	conditionals instead.
+	(flag_shifts, flag_extracts): New variables.
+	(main): Set new variables.
+	* superopt.h (SHIFTS): Delete.
+
+Wed May  3 15:35:23 1995  Torbjorn Granlund  <tege@rtl.cygnus.com>
+
+	* superopt.c (HPPA synth): Do comiclr with -1 and 1, not just 0.
+	(output_assembler, PYR): Handle rsubw in ADC_CO case.
+
+Tue May  2 21:09:37 1995  Torbjorn Granlund  <tege@rtl.cygnus.com>
+
+	* superopt.h (EXTRA_SEQUENCE_TESTS, SH): Only detect non-zero immediate
+	values.  Also allow sequences that twice (or more) demand the *same*
+	variable to be allocated to r0.
+
+Tue May  2 10:39:22 1995  Torbjorn Granlund  <tege@adder.cygnus.com>
+
+	* superopt.c (PA_RECURSE): Don't increment N_VALUES unconditionally;
+	make it depend in if D equals N_VALUES.
+
+Mon May  1 23:04:17 1995  Torbjorn Granlund  <tege@chestnut.cygnus.com>
+
+	* superopt.h (word typedefs):
+	Use long long also when _LONGLONG is defined.
+
+Mon May  1 17:59:11 1995  Torbjorn Granlund  <tege@adder.cygnus.com>
+
+	* superopt.c (output_assembler, POWER): For SUB, use INS_SUBF
+	when not immediate operand.
+	(INS_SUBF): New #define.
+
+Mon May  1 09:17:25 1995  Torbjorn Granlund  <tege@rtl.cygnus.com>
+
+	* superopt.c (main): Use exit instead of return consistently.
+	(output_assembler, HPPA): Handle EXT[SU][12]_S and ROTATEL_S.
+
+Sun Apr 30 00:14:14 1995  Torbjorn Granlund  <tege@rtl.cygnus.com>
+
+	* superopt.c (output_assembler, ALPHA, case ADD): Cast immediate
+	value to int.
+
+	* superopt.c (RISC synth): Try COPY of registers for ALPHA.
+
+	* superopt.c (HPPA synth): Also COPY 0 (it might be nullified).
+	(HPPA synth): Correct several typos for COPY_S variants.
+
+	* superopt.h (PSTR): Define as appropriate.
+	* superopt.c (print_operand): New function.  Use PSTR.
+	(test_sequence): Move operand printing code to print_operand.
+
+	* superopt.c (RISC synth): Try COPY of immediates also for ALPHA.
+	(output_assembler, ALPHA): Handle COPY.
+	(RISC synth): Don't do cmpltu(r,0) or cmpleu(0,r) or cmplt(r,0).
+
+	* superopt.h (TRUNC_CNT): Use % instead of & for portability.
+	(inline): Define to empty also if DEBUG.
+
+	* superopt.c (synth): Add TIMING stuff to all variants of synth.
+	Also, make type of time_start agree with type of cputime().
+
+Sat Apr 29 09:32:58 1995  Torbjorn Granlund  <tege@rtl.cygnus.com>
+
+	* longlong.h (C umul_ppmm): Use UWtype, not USItype for temps.
+	(udiv_qrnnd): For cases implemented with call to __udiv_qrnnd,
+	protect with new symbol LONGLONG_STANDALONE.
+
+	* goal.def (CLEAR_LSB): Fix typo.
+
+	* longlong.h: Replace with version from GNU MP.
+	* superopt.h: Set up #defines for new longlong.h.
+
+Sat Apr 29 01:43:25 1995  Torbjorn Granlund  <tege@phydeaux.cygnus.com>
+
+	* superopt.h (FF1_CHECK): Delete.
+	(PERFORM_FF1): Don't use FF1_CHECK.
+	(PERFORM_CLZ): Rewrite to handle 64 bit words.
+	(PERFORM_FFS): Use BITS_PER_WORD, not the constant 32.
+
+	* superopt.c (main): When printing list of goals, terminate with \n.
+
+	* superopt.c (RISC synth): Try ADD with immediate -1.
+	(output_assembler, ALPHA): Handle ADD with negative s2.
+
+	* goal.def: Delete redundant goal divide_by_minus_2e31.
+
+Fri Apr 28 11:39:51 1995  Torbjorn Granlund  <tege@adder.cygnus.com>
+
+	* superopt.c (HPPA synth): In code protected by #if EXTRACTS,
+	loop to 30, not 31.
+	(RISC synth): Likewise.
+	(output_assembler, HPPA): Handle EXT[SU][12].
+
+Thu Apr 27 10:46:24 1995  Torbjorn Granlund  <tege@rtl.cygnus.com>
+
+	* run_program.def (run_program): Use memset, not bzero.
+
+	* superopt.c (output_assembler, HPPA): Handle COPY_S.
+	Rearrange code for plain COPY.  Enable unconditionally nullifying
+	shift/rotate/extract.
+	(HPPA synth): Delete spurious duplicate code within #if SHIFTS
+	in the conditional-nullify block.  Delete spurious 0-ary and copy code
+	in the same block.  Add systematically missing _S to
+	shift/rotate/extract instruction names in unconditional-nullify block;
+	Correct and enable 0-ary instructions and variants of COPY_S.
+
+	* superopt.h (PERFORM_ROTATEL): Check TRUNC_CNT(r2), not plain r2.
+	(PERFORM_ROTATEL_S): Likewise.
+
+	* superopt.h (PERFORM_COPY_S): Define.
+	(PERFORM_*SHIFT*_S, PERFORM_ROTATEL_S, PERFORM_EXT*_S): Define
+	* insn.def: Corresponding changes.
+	* run_program.def: Corresponding changes.
+
+Tue Apr 25 18:58:26 1995  Torbjorn Granlund  <tege@adder.cygnus.com>
+
+	* Makefile (superopt): Depend on HDRS.
+	(HDRS): Add many missing included files.
+	(superopt-*): Depend on HDRS.
+	(superopt.o): Delete rule.
+	(superopt): Depend on SRCS, not OBJS.  Corresponding change to rule.
+
+Sat Apr 22 18:51:59 1995  Torbjorn Granlund  <tege@adder.cygnus.com>
+
+	* Makefile (FILES): Add ChangeLog (again).
+
+	* superopt.c (CISC synth): Handle all immediate counts for MC68020
+	(if -DSHIFTS), not just 31.
+
+Wed Mar 15 09:20:46 1995  Michael Meissner  <meissner@tiktok.cygnus.com>
+
+	* Makefile (CFLAGS): Add new macro MACHINE to override the machine
+	desired.
+	(superopt): New alternate name for gso.
+	(install): New rule.
+	(all, install-all): New rule to build superopt for all of the
+	supported machines.
+
+	* superopt.h (POWEPC): Define if _ARCH_PPC is defined.
+	(I386): Also check __i386__.
+
+	* superopt.c (random_word): Eliminate inline, since it was
+	previously declared without it.
+	(output_assembler): For PowerPC, use PowerPC instruction names,
+	rather than Power.  Abort if Power only instructions used.
+	(test_sequence): Print newline between patterns if -nl.
+	(main): Recognize -nl switch.  If unknown switch, print a usage
+	message, including all supported goal functions.
+
+Sun Nov 13 22:59:42 1994  Torbjorn Granlund  (tege@tiny.cygnus.com)
+
+	* superopt.c (CISC synth): Use SHIFTS macro here too, just like in
+	RISC synth.
+	* superopt.h (SHIFTS): Make sure it is defined to 1 or 0.
+
+Tue Nov  8 01:33:40 1994  Torbjorn Granlund  (tege@tiny.cygnus.com)
+
+	* superopt.c (synth): Add missing SH conditional for "subc rx,ry"...
+	(synth): Generate "add rx,ry" and "sub rx,ry" for SH...
+
+	superopt.c (synth): Fix several SH-specific typos with prune hint
+	setting.
+
+	* superopt.h (EXTRA_SEQUENCE_TESTS): New macro; define for SH.
+	* superopt.c (test_sequence): Use EXTRA_SEQUENCE_TESTS.
+
+	* superopt.c (CISC synth): Generate ext[su].[bw], dt, swap.w, xtrct,
+	and tst rx,ry for SH.
+	(output_assembler): Print them.
+	superopt.h: Handle immediates 0xff and 0xffff.
+	(init_immediates): Initialize `values' with new immediates.
+
+	superopt.c (synth): Shifts with count > 1 doesn't set T on the SH.
+	(output_assembler, SH): Add support for carry-free shifts.
+
+	* All files (EXTS8, EXTS16, CYAND, DECR_CYEQ, MERGE16): New opcodes.
+
+Sat Nov  5 13:21:11 1994  Torbjorn Granlund  (tege@tiny.cygnus.com)
+
+	* superopt.c (synth): Use ASHIFTR_CON for POWER consistently,
+	never use ASHIFTR.
+
+	superopt.c (synth): Delete ROTATEXL_CIO with count BITS_PER_WORD-1.
+	(synth): Try ROTATEXR_CIO with count 1.
+	superopt.h (PERFORM_ROTATEXR_CIO): New definition.
+	(PERFORM_ROTATEXL_CIO): Rewrite.
+	(PERFORM_ROTATEL_CIO): Make sure we use logical shifts.
+	(PERFORM_ROTATER_CIO): New definition.
+	insn.def, run_program.def: Add new instructions.
+	(output_assembler, M68000): Handle rotate right instructions.
+
+	* superopt.c (random_word): Use mrand48 for __svr4__.
+	(operand_names): Merge I386 and PYR.
+	(output_assembler, I386, ADD): Output "decl" here...
+	(output_assembler, I386, SUB): ...not here.
+
+	(synth): Bump shift cost for I386 from 2 to 1.
+	(synth): Merge I386 shift patterns that now became identical to
+	other patterns.
+
+	(CISC synth): Don't try ROTATEXL_CIO with count 1; ADD_CIO performs
+	the very same operation.
+
+	* insn.def (CPEQ): Use 'c' for commutative.
+	(CPNEQ, CMPEQ): Likewise.
+	(COMCY): This is not a binary operation; use class 'x'.
+
+	* superopt.c (main): Print target information for -v.
+	* superopt.h (TARGET_STRING): New #define.
+
+	* Ported to Hitatchi SH.  Most files affected.
+
+Sun Jul 17 04:34:49 1994  Torbjorn Granlund  (tege@tiny.cygnus.com)
+
+	* superopt.c (HPPA synth): Fix typos for shifting conditionalized on
+	SHIFTS.
+
+	* Makefile (FILES): Include ChangeLog.
+
+Thu Jun 16 19:41:10 1994  Torbjorn Granlund  (tege@adder.cygnus.com)
+
+	* superopt.c (output_assembler, I386, case AND_RC):
+	Fix typo in condition for andb.
+	(case IOR_RC): Likewise.
+	(case XOR_RC): Likewise.
+	(CISC synth): Try "movl $0,d" for I386.
+
+Sun Jan 30 22:35:02 1994  Torbjorn Granlund  (tege@adder.cygnus.com)
+
+	* superopt.c (ffs_internal): Initialize ci to silent compiler
+	warning.
+	* superopt.c (header): Declare random_word.
+
+Sat Oct 16 21:21:51 1993  Torbjorn Granlund  (tege@adder.cygnus.com)
+
+	* superopt.c (CISC synth): Fix typo, MC68020 was M68020.
+
+Mon Jul 12 20:37:12 1993  Torbjorn Granlund  (tege@pde.nada.kth.se)
+
+	* superopt.c (CISC synth): Try BSF86 for I386.
+	* superopt.h, run_program.def, insn.def: Add defs for BSF86.
+
+Fri May 28 11:59:43 1993  Torbjorn Granlund  (tege@pde.nada.kth.se)
+
+	* superopt.c (RISC synth): Try subf on POWERPC.
+	(output_assembler)[POWER]: Handle subf.
+
+Mon May 24 09:46:56 1993  Torbjorn Granlund  (tege@pde.nada.kth.se)
+
+	* All files: Conditionalize on POWER, not RS6000.
+	* superopt.h: Add handling of POWERPC.
+	* superopt.c: Exclude ABS, NABS, DOZ if POWERPC.
+
+Sun Feb 21 14:21:20 1993  Torbjorn Granlund  (tege@pde.nada.kth.se)
+
+	* superopt.h (struct insn_t): Make opcode field wider at expense of
+	other fields.
+
+	* superopt.c (HPPA synth): Make pruning less agressive after
+	nullifying insn.
+	* run_program.def: Special case for N_INSNS == 0.
+
+	* superopt.c (ALPHA synth, CMOV*): Move pruning test inside DR loop.
+	Add condition (DR != LAST_DEST).
+
+	* superopt.c (outside of functions): Declare malloc and realloc.
+	* Ported to HP-PA.  Most files affected.
+
+Thu Feb 18 21:23:17 1993  Torbjorn Granlund  (tege@pde.nada.kth.se)
+
+	* superopt.h (VALUE_MIN_SIGNED): Make it work for non 32-bit
+	computers.
+	(VALUE_MAX_SIGNED): Likewise.
+	(__immediate_val): Use VALUE_MIN_SIGNED and VALUE_MAX_SIGNED.
+
+Mon Feb 15 11:41:16 1993  Torbjorn Granlund  (tege@cyklop.nada.kth.se)
+
+	* version.h: Now 2.2.
+
+	* superopt.c (operand_names): Define constants up to 63 for ALPHA.
+	(operand_names): Remove ...0,0,0... as array filler.
+
+	* superopt.h (BITS_PER_WORD): Conditionalize on ALPHA.
+	(unsigned_word, signed_word): Define depending on BITS_PER_WORD and
+	compiler.
+
+Sun Feb 14 20:25:05 1993  Torbjorn Granlund  (tege@cyklop.nada.kth.se)
+
+	* superopt.c (output_assembler): Define Alpha asm syntax.
+	* run_program.def: Special code for CMOVxx.
+
+Sat Feb 13 01:10:06 1993  Torbjorn Granlund  (tege@cyklop.nada.kth.se)
+
+	* Ported to Alpha.  Most files affected.
+
+Sat Jan  2 15:50:40 1993  Torbjorn Granlund  (tege@sics.se)
+
+	* superopt.h (PERFORM_FFS): New macro.
+	* superopt.c (ffs_internal): New function.
+	* goal.def (FFS): Use ffs_internal.
+
+	* superopt.c (output_assembler)[I386]: Fix typo, %s -> %d, two
+	places.
+
+Thu Dec 17 13:58:33 1992  Torbjorn Granlund  (tege@sics.se)
+
+	* superopt.c (output_assembler)[RS6000,AM29K]: Handle CLZ.
+
+Sat Dec 12 15:40:05 1992  Torbjorn Granlund  (tege@sics.se)
+
+	* version.h: Now 2.1.
+
+	* Makefile (dist): Make sed command more robust.
+
+	* superopt.h: Handle MC68000 and MC68020, not M68000.
+	* superopt.h: Define M68000 #if MC68000 || MC68020.
+	* superopt.h (SHIFT_COST): Define.  For MC68000 it's depends on
+	count.
+	* superopt.c (CISC synth): Use SHIFT_COST for all shifting on
+	MC68000.
+	* superopt.c (CISC synth): Try logical operation with #1.
+	* superopt.c (output_assembler)[M68000 AND,IOR,XOR]: Output
+	operation with small immediates using word (w) suffix.
+	* superopt.c (output_assembler)[I386 AND,IOR,XOR]: Likewise.
+
+	* superopt.c (output_assembler)[M88000 ADC_CI]: Output subu.ci, not
+	subu.co.
+
+	* superopt.c (RISC synth)[0-ary instructions]: Major enhancements.
+
+	Next 3 from Paul Eggert:
+	* goal.def (DIVIDE_BY_MINUS_2e31): New name flo DIVIDE_BY_2e31,
+	better describing the operation.
+	* goal.def (DEF_GOAL for GRAY, GRAY2, DIVIDE_BY_MINUS_2e31): Avoid
+	overflow by shifting -1 instead of 1.
+	* superopt.h (__immediate_val): Avoid overflow by casting 1 to word.
+	overflow.)
+
+	* superopt.c (timings): New name for 'time'.  (Clashed with defs in
+	<time.h>).
+
+	* superopt.c (recurse): Assign sequence[n_insn] using constructor
+	#if __GNUC__.  (Gives better code.)
+
+	* superopt.c: Update comments.
+
+	* superopt.c (ARITH_BITS #define): Remove.  (Not used any more.)
+
+	* superopt.c (cputime): #if USG, use clock() instead of getrusage.
+
+	* superopt.c (init_test_sets): Remove #ifdef UDIV_WITH_SDIV code.
+	(Obsolete.)
+
+Wed Dec  9 14:58:17 1992  Torbjorn Granlund  (tege@sics.se)
+
+	* superopt.c (init_test_sets): Remove unused label 'next'.
+
+	* superopt.c (CISC synth, I386, PYR)[COPY 0 => v]: Cost is 1.
+	Pass n_values for s1,s2,d operands.  (Bug fix.)
+
+	* superopt.c (RISC synth, SPARC)[r1 + 1 - cy]: Try this, with and
+	without generating carry out.  (Bug fix.)
+
+	* superopt.h: Define __CLOBBER_CC and __AND_CLOBBER_CC.
+	(sparc asm PERFORM macros): Use __CLOBBER_CC.  (Bug fixes.)
+
+Sat Nov 28 13:50:09 1992  Torbjorn Granlund  (tege@sics.se)
+
+	* version.h: Now 2.0.
+
+	* superopt.c (init_test_sets): Remove code inside UDIV_WITH_SDIV
+	conditional.
+
+	* superopt.c (output_assembler): Output pyramid assembler.
+	Output MUL for all CPUs that have it.
+	* superopt.c (CISC synth): Fix many pyramid-related errors.
+	* superopt.c (random_word): #ifdef hpux, use mrand48.
+
+	* superopt.h, superopt.c (synth), insn.def, run_program.def:
+	UMULWIDEN_LO => MUL, PERFORM_UMULWIDEN_LO => PERFORM_MUL.
+	* superopt.h (PERFORM_MUL): Simply use (r1 * r2), don't call
+	umul_ppmm.
+	* superopt.h: Define all PERFORM_* macros unconditionally.
+	* insn.def: Remove #ifdef DM conditionals.
+	* goal.def (UMULH): New goal.
+	* goal.def: Remove #ifdef DM conditionals.  Include some goals only
+	with GCC.  Switch off division goals due to domain problems.
+	* run_program.def: Remove #ifdef DM conditionals.
+
+	* superopt.c (synth): Try shifts by 16, #if SHIFT16.
+
+	* superopt.h: Include longlong.h unconditionally.
+
+	* Makefile (FILES): Add longlong.h.
+	(dist): Rewrite to have tar file creating a directory.
+
+Tue Jul 28 15:05:09 1992  Torbjorn Granlund  (tege@sics.se)
+
+	* goel.def: Add new goals for signed division.
+
+	* Makefile: Create superopt-VERSION.tar.Z.
+
+	* version.h: New file.
+	* superopt.c: Include "version.h".
+	* superopt.c (main): Handle `-version' option.
+
+	* superopt.c (main): Better error messages.
+
+	* superopt.c (main): Move initialization of goal_function to handle
+	empty command lines.
+
+	* superopt.c: Add timing per recursion level #ifdef TIMING.
+
+Thu Jun 25 20:10:23 1992  Torbjorn Granlund  (tege@sics.se)
+
+	* superopt.c (test_sequence): Remove STATISTICS.
+	(recurse): Put it here.
+
+	* superopt.c (random_word): Back to random.
+
+	* superopt.c (recurse): Make it static.
+
+	* superopt.c (RISC synth): Don't copy 0 on sparc and 88k.
+
+Fri Jun 12 17:16:54 1992  Tom Wood  (wood@gen-rtx.rtp.dg.com)
+
+	* superopt.c (test_sequence): Make n_test_operands const to avoid
+	re-computation.
+
+Thu Jun 11 23:23:26 1992  Torbjorn Granlund  (tege@sics.se)
+
+	* Version 1.91.
+
+	* superopt.c (main): Check argc before calling atoi.
+
+Thu Jun 11 20:38:20 1992  Tom Wood  (wood@gen-rtx.rtp.dg.com)
+
+	* goal.def: New file.
+	* superopt.[ch]: Use goal.def.
+
+Thu Jun 11 19:19:37 1992  Torbjorn Granlund  (tege@sics.se)
+
+	* Version 1.90.
+
+Thu Jun 11 10:38:20 1992  Tom Wood  (wood@gen-rtx.rtp.dg.com)
+
+	* insn.def: New file.
+	* superopt.[ch]: Use insn.def.
+
+	* superopt.c (output_assembler, m88k COPY): Specify use of r0 and
+	print small constants right.
+
+	* superopt.c (synth): Correct indentation.
+
+	* superopt.c (main): Add -all option to run thorough all know goal
+	functions.  This can be done quickly with -max-cost 2.
+
+	* superopt.h (IMMEDIATE_VAL): Evaluate sparse values properly.
+
+	* superopt.h (PERFORM_ADD_CIO, PERFORM_ADC_CIO): Operand 0 is
+	written before the inputs are read.
+
+	* superopt.h (PERFORM_CMPPAR): Add m88110 bits and don't check
+	with the native cmp instruction.
+
+Thu Jun 11 02:37:01 1992  Torbjorn Granlund  (tege@sics.se)
+
+	* Version 1.16.
+
+	* superopt.h: Hack PERFORM_{CLZ,FF1} to be faster.
+	* superopt.c (clz_tab): Corresponding changes.
+	* superopt.c (ff1_tab): New table for PERFORM_FF1.
+
+	* superopt.c (RISC synth): Try ADD_CI(x,x).
+
+	* superopt.c (main_synth): Always pass NO_PRUNE to synth.
+
+	* superopt.c (output_assembler): Generalize "cmp" output.
+
+	* superopt.c (synth): Rename cy_in to ci, and cy_out to co.
+
+	* superopt.h (sparc asm): Clobber "cc".
+	* superopt.h: Include asm iff USE_ASM is defined.  Off by default.
+
+Wed Jun 10 15:40:45 1992  Tom Wood  (wood@gen-rtx.rtp.dg.com)
+
+	* superopt.c (output_assembler): Fix typos in 88k assembler.
+	* superopt.c (operand_names): Make the constant names agree with
+	the new values.
+
+	* run_program.def (run_program): Have this return the value of the
+	carry flag or -1 if the flag was never set.
+	* superopt.h: run_program now returns an int.
+	* superopt.c (main_synth): Allow the specification of an initial
+	sequence of instructions and provide an example sequence.
+
+	* superopt.h (PERFORM_FF1, PERFORM_CMPPAR): When running native,
+	compare the native instruction's output to the generic
+	computation.
+
+Thu Jun 10 02:00:22 1992  Torbjorn Granlund  (tege@sics.se)
+
+	* Version 1.15.
+
+	* Add for CLZ, CTZ, and 88k's FF0, FF1, EXT*, and CMPPAR.
+	* superopt.[ch]: Rewrite handling of immediates to allow arbitrary
+	shifts.
+
+Sat Jun  6 20:04:03 1992  Torbjorn Granlund  (tege@sics.se)
+
+	* Version 1.14.
+
+	* superopt.c: 88k subu.c* and addu.c* insn were incorrectly asumed
+	to accept immediate values.
+
+Wed Apr  1 22:03:04 1992  Torbjorn Granlund  (tege@sics.se)
+
+	* superopt.[ch], run_program.def: ROTATEXL_CIO, new name for
+	ROTATEXL_CO.
+	* superopt.c: Only use ROTATEXL_CIO when carry is defined.
+
+	* superopt.c (test_sequence): Add some values to test_operands
+	vector.
+	* superopt.c (RISC synth): Try add of immediate 1.
+	* superopt.[ch]: Add new goals for GS paper.
+
+Thu Mar  5 05:56:12 1992  Torbjorn Granlund  (tege@sics.se)
+
+	* superopt.[ch], run_program.def: Ported to pyramid.  Added
+	<LOGICAL>_CC internal insns.
+
+Fri Feb 14 23:19:11 1992  Torbjorn Granlund  (tege@sics.se)
+
+	* superopt.c (output_assembler M88100): Handle negative values for
+	ADD_CIO, by outputting subu.
+	* superopt.c (RISC synth): Fix comment add ADD_CIO (..., -1).
+
+Thu Dec 12 21:54:14 1991  Torbjorn Granlund  (tege@sics.se)
+
+	* superopt.c (test_sequence): Add comments.
+
+Tue Dec 10 21:37:01 1991  Torbjorn Granlund  (tege@sics.se)
+
+	* superopt.c (main_synth): Make nested for loops have different
+	induction variables...
+
+Thu Dec  5 19:33:40 1991  Torbjorn Granlund  (tege@sics.se)
+
+	* superopt.c (output_assembler several places): Cast IMMEDIATE_VAL
+	to signed_word when comparing to zero.
+
+Wed Nov 13 21:20:11 1991  Torbjorn Granlund  (tege@sics.se)
+
+	* superopt.c (main_synth): Hack to generate the initial random
+	arguments such that the goal function take a value != 0.
+
+Mon Nov 11 11:41:50 1991  Torbjorn Granlund  (tege@sics.se)
+
+	* superopt.c (output_assembler RS6000 and M88000):  Handle (op1 & 1).
+	* superopt.c (RISC synth): Try (op1 & 1) on all machines.
+
+Sat Nov  2 16:24:35 1991  Torbjorn Granlund  (tege@sics.se)
+
+	* superopt.c (RISC synth): Try 29k CPXX insns with immediate 0.
+
+	* superopt.c (test_sequence): Output small negative operands in
+	decimal.
+
+Fri Oct 25 01:01:54 1991  Torbjorn Granlund  (tege@sics.se)
+
+	* superopt.c (test_sequence): Test with VALUE_MAX_SIGNED too.
+
+	* superopt.c (CISC synth): Try CMP operation for VALUE_MAX_SIGNED
+	and VALUE_MIN_SIGNED on '386.
+
+	* superopt.c, superopt.h, run_program.def: Add new operation
+	ROTATEXL_CO.  Try it for CISCs.
+	* ROTATEL new name for ROTATE.
+
+	* superopt.c (output_assembler I386): Fix syntax for if statement.
+
+	* superopt.h (PERFORM_*SHIFT*, PERFORM_ROTATE*): Truncate shift
+	counts with BITS_PER_WORD.
+	* superopt.h (TRUNC_CNT): New macro for shift count truncation.
+
+	* superopt.c (output_assembler M68000 COPY): Output "moveq" for
+	negative numbers as intended, by casting operands to signed_word.
+
+	* superopt.c (RISC synth): Try SUB for two regs even on M88000.
+
+	* superopt.c (RISC synth, CISC synth): Try rotate and shift
+	instruction with count 1.
+	* superopt.c (output_assembler): Output rotate instructions.
+
+	* superopt.c, superopt.h, run_program.def: Add new operation
+	"ASHIFTR_CON" for RS/6000 arithmetic right shifts.  (The
+	arithmetic shift insns used to be incorrectly described as not
+	affecting carry.)
+
+Local Variables:
+mode: indented-text
+left-margin: 8
+fill-column: 76
+version-control: never
+End:

@@ -1,0 +1,367 @@
+/* This file contains the definitions and documentation for the instructions
+   used in the Superoptimizer.
+
+   Copyright (C) 1992, 1994, 1995 Free Software Foundation, Inc.
+
+   This program is free software; you can redistribute it and/or modify it
+   under the terms of the GNU General Public License as published by the
+   Free Software Foundation; either version 2, or (at your option) any
+   later version.
+
+   This program is distributed in the hope that it will be useful, but
+   WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
+
+   You should have received a copy of the GNU General Public License along
+   with this program; see the file COPYING.  If not, write to the Free
+   Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
+
+/* The fields in the cpp macro call "DEF_INSN()" are:
+
+   1. The internal name of the instruction.
+
+   2. The class of the instruction.  These are stored in the insn_class
+   array and are accessed via the GET_INSN_CLASS macro.  They are defined
+   as  follows:
+
+     "1" an rtx code for a unary arithmetic expression (e.g, ABSVAL, CLZ)
+     "c" an rtx code for a commutative binary operation (e.g,  ADD, XOR)
+     "2" an rtx code for a non-commutative binary operation (e.g., SUB, CMP)
+     "<" an rtx code for a non-commutative binary instruction that only
+	 writes to the condition code
+     "=" an rtx code for a commutative binary instruction that only writes
+	 to the condition code
+     "x" everything else
+
+   3. The printed name of the instruction.
+
+   */
+
+/* Arithmetic insns.  d = r1 + r2 [+ cy] */
+DEF_INSN (ADD,		'b', "add")
+DEF_INSN (ADD_CI,	'b', "add_ci")
+DEF_INSN (ADD_CO,	'b', "add_co")
+DEF_INSN (ADD_CIO,	'b', "add_cio")
+/* Arithmetic insns.  d = r1 - r2 [- cy] */
+DEF_INSN (SUB,		'2', "sub")
+DEF_INSN (SUB_CI,	'2', "sub_ci")
+DEF_INSN (SUB_CO,	'2', "sub_co")
+DEF_INSN (SUB_CIO,	'2', "sub_cio")
+/* Arithmetic insns.  d = r1 + ~r2 + cy/1 */
+DEF_INSN (ADC_CI,	'2', "adc_ci")
+DEF_INSN (ADC_CO,	'2', "adc_co")
+DEF_INSN (ADC_CIO,	'2', "adc_cio")
+/* Arithmetic insns.  d = r1 + ~r2  */
+DEF_INSN (ADDCMPL,	'2', "addcmpl")
+
+/* Logical insns that don't affect the carry flag.  */
+DEF_INSN (AND,		'b', "and")
+DEF_INSN (IOR,		'b', "ior")
+DEF_INSN (XOR,		'b', "xor")
+DEF_INSN (ANDC,		'2', "andc")
+DEF_INSN (IORC,		'2', "iorc")
+DEF_INSN (EQV,		'2', "eqv")
+DEF_INSN (NAND,		'b', "nand")
+DEF_INSN (NOR,		'b', "nor")
+
+/* Logical insns that reset the carry flag.  */
+DEF_INSN (AND_RC,	'b', "and_rc")
+DEF_INSN (IOR_RC,	'b', "ior_rc")
+DEF_INSN (XOR_RC,	'b', "xor_rc")
+DEF_INSN (ANDC_RC,	'2', "andc_rc")
+DEF_INSN (IORC_RC,	'2', "iorc_rc")
+DEF_INSN (EQV_RC,	'2', "eqv_rc")
+DEF_INSN (NAND_RC,	'b', "nand_rc")
+DEF_INSN (NOR_RC,	'b', "nor_rc")
+
+/* Logical insns that clobber the carry flag.  */
+DEF_INSN (AND_CC,	'b', "and_cc")
+DEF_INSN (IOR_CC,	'b', "ior_cc")
+DEF_INSN (XOR_CC,	'b', "xor_cc")
+DEF_INSN (ANDC_CC,	'2', "andc_cc")
+DEF_INSN (IORC_CC,	'2', "iorc_cc")
+DEF_INSN (EQV_CC,	'2', "eqv_cc")
+DEF_INSN (NAND_CC,	'b', "nand_cc")
+DEF_INSN (NOR_CC,	'b', "nor_cc")
+
+/* Bit shift and count.  */
+DEF_INSN (LSHIFTR,	'2', "log_shift_right")
+DEF_INSN (ASHIFTR,	'2', "arith_shift_right")
+DEF_INSN (SHIFTL,	'2', "shift_left")
+DEF_INSN (LSHIFTR_CO,	'2', "log_shift_right_co")
+DEF_INSN (ASHIFTR_CO,	'2', "arith_shift_right_co")
+DEF_INSN (SHIFTL_CO,	'2', "shift_left_co")
+DEF_INSN (ROTATEL,	'2', "rotate_left")
+DEF_INSN (ROTATEL_CO,	'2', "rotate_left_co")
+DEF_INSN (ROTATER_CO,	'2', "rotate_right_co")
+
+/* Rotate thru carry.  */
+DEF_INSN (ROTATEXL_CIO,	'2', "rotate_thru_carry_left_co")
+DEF_INSN (ROTATEXR_CIO,	'2', "rotate_thru_carry_right_co")
+
+/* Shift arithmetic right instruction and set carry iff the shifted
+   operand is negative and any bit shifted out is 1.  */
+DEF_INSN (ASHIFTR_CON,	'2', "arith_shift_right_set_carry_if_neg_and_nzbit_lost")
+
+/* Extract.  */
+DEF_INSN (EXTS1,	'2', "exts1")
+DEF_INSN (EXTS2,	'2', "exts2")
+DEF_INSN (EXTS8,	'2', "exts8")
+DEF_INSN (EXTS16,	'2', "exts16")
+DEF_INSN (EXTU1,	'2', "extu1")
+DEF_INSN (EXTU2,	'2', "extu2")
+
+/* Count leading/trailing zero instructions.  */
+DEF_INSN (CLZ,		'1', "clz")
+DEF_INSN (CTZ,		'1', "ctz")
+DEF_INSN (FF1,		'1', "ff1")
+DEF_INSN (FF0,		'1', "ff0")
+DEF_INSN (BSF86,	'1', "bsf86")
+
+DEF_INSN (ABSVAL,	'1', "abs")
+DEF_INSN (NABSVAL,	'1', "nabs")
+DEF_INSN (CMP,		'<', "cmp")
+
+/* 29k CMP instructions.  */
+DEF_INSN (CPEQ,		'c', "cpeq")
+DEF_INSN (CPGE,		'2', "cpge")
+DEF_INSN (CPGEU,	'2', "cpgeu")
+DEF_INSN (CPGT,		'2', "cpgt")
+DEF_INSN (CPGTU,	'2', "cpgtu")
+DEF_INSN (CPLE,		'2', "cple")
+DEF_INSN (CPLEU,	'2', "cpleu")
+DEF_INSN (CPLT,		'2', "cplt")
+DEF_INSN (CPLTU,	'2', "cpltu")
+DEF_INSN (CPNEQ,	'c', "cpneq")
+
+/* Alpha CMP instructions.  */
+DEF_INSN (CMPEQ,	'c', "cmpeq")
+DEF_INSN (CMPLE,	'2', "cmple")
+DEF_INSN (CMPLEU,	'2', "cmpleu")
+DEF_INSN (CMPLT,	'2', "cmplt")
+DEF_INSN (CMPLTU,	'2', "cmpltu")
+
+/* 88100 CMP instruction.  */
+DEF_INSN (CMPPAR,	'2', "cmppar")
+
+/* SH CMP instructions.  */
+DEF_INSN (CYEQ,		'=', "cyeq")
+DEF_INSN (CYGTU,	'<', "cygtu")
+DEF_INSN (CYGEU,	'<', "cygeu")
+DEF_INSN (CYGTS,	'<', "cygts")
+DEF_INSN (CYGES,	'<', "cyges")
+DEF_INSN (CYAND,	'=', "cyand")
+
+/* SH specific instruction.  */
+DEF_INSN (MERGE16,	'2', "merge16")
+DEF_INSN (DECR_CYEQ,	'2', "decr_cyeq")
+
+/* Difference-or-zero (rs6000) */
+DEF_INSN (DOZ,		'2', "difference_or_zero")
+
+DEF_INSN (COPY,		'1', "copy")
+DEF_INSN (EXCHANGE,	'2', "exchange")
+
+/* Set, clear, complement carry */
+DEF_INSN (SETCY,	'x', "set_cy")
+DEF_INSN (CLRCY,	'x', "clear_cy")
+DEF_INSN (COMCY,	'x', "complement_cy")
+
+/* Alpha conditional move */
+DEF_INSN (CMOVEQ,	'2', "cmoveq")
+DEF_INSN (CMOVNE,	'2', "cmovne")
+DEF_INSN (CMOVLT,	'2', "cmovlt")
+DEF_INSN (CMOVGE,	'2', "cmovge")
+DEF_INSN (CMOVLE,	'2', "cmovle")
+DEF_INSN (CMOVGT,	'2', "cmovgt")
+
+DEF_INSN (INVDIV,	'2', "invdiv")
+DEF_INSN (INVMOD,	'2', "invmod")
+DEF_INSN (UMULWIDEN_HI,	'2', "umulwiden_hi")
+DEF_INSN (MUL,		'2', "mul")
+
+#if UDIV_WITH_SDIV
+DEF_INSN (SDIV,		'2', "sdiv")
+#endif
+
+DEF_INSN (ADD_SEQ,	'2', "add_seq")
+DEF_INSN (ADD_SNE,	'2', "add_sne")
+DEF_INSN (ADD_SLTS,	'2', "add_slts")
+DEF_INSN (ADD_SGES,	'2', "add_sges")
+DEF_INSN (ADD_SLES,	'2', "add_sles")
+DEF_INSN (ADD_SGTS,	'2', "add_sgts")
+DEF_INSN (ADD_SLTU,	'2', "add_sltu")
+DEF_INSN (ADD_SGEU,	'2', "add_sgeu")
+DEF_INSN (ADD_SLEU,	'2', "add_sleu")
+DEF_INSN (ADD_SGTU,	'2', "add_sgtu")
+DEF_INSN (ADD_SOVS,	'2', "add_sovs")
+DEF_INSN (ADD_SNVS,	'2', "add_snvs")
+DEF_INSN (ADD_SODD,	'2', "add_sodd")
+DEF_INSN (ADD_SEVN,	'2', "add_sevn")
+DEF_INSN (ADD_S,	'2', "add_s")
+DEF_INSN (ADD_CIO_SEQ,	'2', "add_cio_seq")
+DEF_INSN (ADD_CIO_SNE,	'2', "add_cio_sne")
+DEF_INSN (ADD_CIO_SLTU,	'2', "add_cio_sltu")
+DEF_INSN (ADD_CIO_SGEU,	'2', "add_cio_sgeu")
+DEF_INSN (ADD_CIO_SLEU,	'2', "add_cio_sleu")
+DEF_INSN (ADD_CIO_SGTU,	'2', "add_cio_sgtu")
+DEF_INSN (ADD_CIO_SODD,	'2', "add_cio_sodd")
+DEF_INSN (ADD_CIO_SEVN,	'2', "add_cio_sevn")
+DEF_INSN (ADD_CIO_S,	'2', "add_cio_s")
+DEF_INSN (ADD_CO_SEQ,	'2', "add_co_seq")
+DEF_INSN (ADD_CO_SNE,	'2', "add_co_sne")
+DEF_INSN (ADD_CO_SLTU,	'2', "add_co_sltu")
+DEF_INSN (ADD_CO_SGEU,	'2', "add_co_sgeu")
+DEF_INSN (ADD_CO_SLEU,	'2', "add_co_sleu")
+DEF_INSN (ADD_CO_SGTU,	'2', "add_co_sgtu")
+DEF_INSN (ADD_CO_SODD,	'2', "add_co_sodd")
+DEF_INSN (ADD_CO_SEVN,	'2', "add_co_sevn")
+DEF_INSN (ADD_CO_S,	'2', "add_co_s")
+
+DEF_INSN (SUB_SEQ,	'2', "sub_seq")
+DEF_INSN (SUB_SNE,	'2', "sub_sne")
+DEF_INSN (SUB_SLTS,	'2', "sub_slts")
+DEF_INSN (SUB_SGES,	'2', "sub_sges")
+DEF_INSN (SUB_SLES,	'2', "sub_sles")
+DEF_INSN (SUB_SGTS,	'2', "sub_sgts")
+DEF_INSN (SUB_SODD,	'2', "sub_sodd")
+DEF_INSN (SUB_SEVN,	'2', "sub_sevn")
+DEF_INSN (SUB_S,	'2', "sub_s")
+
+DEF_INSN (ADC_CIO_SEQ,	'2', "adc_cio_seq")
+DEF_INSN (ADC_CIO_SNE,	'2', "adc_cio_sne")
+DEF_INSN (ADC_CIO_SLTU,	'2', "adc_cio_sltu")
+DEF_INSN (ADC_CIO_SGEU,	'2', "adc_cio_sgeu")
+DEF_INSN (ADC_CIO_SLEU,	'2', "adc_cio_sleu")
+DEF_INSN (ADC_CIO_SGTU,	'2', "adc_cio_sgtu")
+DEF_INSN (ADC_CIO_SODD,	'2', "adc_cio_sodd")
+DEF_INSN (ADC_CIO_SEVN,	'2', "adc_cio_sevn")
+DEF_INSN (ADC_CIO_S,	'2', "adc_cio_s")
+DEF_INSN (ADC_CO_SEQ,	'2', "adc_co_seq")
+DEF_INSN (ADC_CO_SNE,	'2', "adc_co_sne")
+DEF_INSN (ADC_CO_SLTU,	'2', "adc_co_sltu")
+DEF_INSN (ADC_CO_SGEU,	'2', "adc_co_sgeu")
+DEF_INSN (ADC_CO_SLEU,	'2', "adc_co_sleu")
+DEF_INSN (ADC_CO_SGTU,	'2', "adc_co_sgtu")
+DEF_INSN (ADC_CO_SODD,	'2', "adc_co_sodd")
+DEF_INSN (ADC_CO_SEVN,	'2', "adc_co_sevn")
+DEF_INSN (ADC_CO_S,	'2', "adc_co_s")
+
+DEF_INSN (COMCLR_SEQ,	'2', "comclr_seq")
+DEF_INSN (COMCLR_SNE,	'2', "comclr_sne")
+DEF_INSN (COMCLR_SLTS,	'2', "comclr_slts")
+DEF_INSN (COMCLR_SGES,	'2', "comclr_sges")
+DEF_INSN (COMCLR_SLES,	'2', "comclr_sles")
+DEF_INSN (COMCLR_SGTS,	'2', "comclr_sgts")
+DEF_INSN (COMCLR_SLTU,	'2', "comclr_sltu")
+DEF_INSN (COMCLR_SGEU,	'2', "comclr_sgeu")
+DEF_INSN (COMCLR_SLEU,	'2', "comclr_sleu")
+DEF_INSN (COMCLR_SGTU,	'2', "comclr_sgtu")
+DEF_INSN (COMCLR_SODD,	'2', "comclr_sodd")
+DEF_INSN (COMCLR_SEVN,	'2', "comclr_sevn")
+/* DEF_INSN (COMCLR_S,	'2', "comclr_s") */
+
+DEF_INSN (AND_SEQ,	'2', "and_seq")
+DEF_INSN (AND_SNE,	'2', "and_sne")
+DEF_INSN (AND_SLTS,	'2', "and_slts")
+DEF_INSN (AND_SGES,	'2', "and_sges")
+DEF_INSN (AND_SLES,	'2', "and_sles")
+DEF_INSN (AND_SGTS,	'2', "and_sgts")
+DEF_INSN (AND_SODD,	'2', "and_sodd")
+DEF_INSN (AND_SEVN,	'2', "and_sevn")
+DEF_INSN (AND_S,	'2', "and_s")
+DEF_INSN (IOR_SEQ,	'2', "ior_seq")
+DEF_INSN (IOR_SNE,	'2', "ior_sne")
+DEF_INSN (IOR_SLTS,	'2', "ior_slts")
+DEF_INSN (IOR_SGES,	'2', "ior_sges")
+DEF_INSN (IOR_SLES,	'2', "ior_sles")
+DEF_INSN (IOR_SGTS,	'2', "ior_sgts")
+DEF_INSN (IOR_SODD,	'2', "ior_sodd")
+DEF_INSN (IOR_SEVN,	'2', "ior_sevn")
+DEF_INSN (IOR_S,	'2', "ior_s")
+DEF_INSN (XOR_SEQ,	'2', "xor_seq")
+DEF_INSN (XOR_SNE,	'2', "xor_sne")
+DEF_INSN (XOR_SLTS,	'2', "xor_slts")
+DEF_INSN (XOR_SGES,	'2', "xor_sges")
+DEF_INSN (XOR_SLES,	'2', "xor_sles")
+DEF_INSN (XOR_SGTS,	'2', "xor_sgts")
+DEF_INSN (XOR_SODD,	'2', "xor_sodd")
+DEF_INSN (XOR_SEVN,	'2', "xor_sevn")
+DEF_INSN (XOR_S,	'2', "xor_s")
+DEF_INSN (ANDC_SEQ,	'2', "andc_seq")
+DEF_INSN (ANDC_SNE,	'2', "andc_sne")
+DEF_INSN (ANDC_SLTS,	'2', "andc_slts")
+DEF_INSN (ANDC_SGES,	'2', "andc_sges")
+DEF_INSN (ANDC_SLES,	'2', "andc_sles")
+DEF_INSN (ANDC_SGTS,	'2', "andc_sgts")
+DEF_INSN (ANDC_SODD,	'2', "andc_sodd")
+DEF_INSN (ANDC_SEVN,	'2', "andc_sevn")
+DEF_INSN (ANDC_S,	'2', "andc_s")
+
+/* Bit shift and count.  */
+DEF_INSN (LSHIFTR_S,	'2', "log_shift_right_s")
+DEF_INSN (ASHIFTR_S,	'2', "arith_shift_right_s")
+DEF_INSN (SHIFTL_S,	'2', "shift_left_s")
+DEF_INSN (ROTATEL_S,	'2', "rotate_left_s")
+
+/* Extract.  */
+DEF_INSN (EXTS1_S,	'2', "exts1_s")
+DEF_INSN (EXTS2_S,	'2', "exts2_s")
+DEF_INSN (EXTS8_S,	'2', "exts8_s")
+DEF_INSN (EXTS16_S,	'2', "exts16_s")
+DEF_INSN (EXTU1_S,	'2', "extu1_s")
+DEF_INSN (EXTU2_S,	'2', "extu2_s")
+
+DEF_INSN (COPY_S,	'1', "copy_s")
+
+
+/* Inte 960 specific instructions.  */
+DEF_INSN (ADDC_960,	'2', "addc_960")
+DEF_INSN (SUBC_960,	'2', "subc_960")
+
+DEF_INSN (SEL_NO_960,	'2', "sel_no_960")
+DEF_INSN (SEL_G_960,	'2', "sel_g_960")
+DEF_INSN (SEL_E_960,	'2', "sel_e_960")
+DEF_INSN (SEL_GE_960,	'2', "sel_ge_960")
+DEF_INSN (SEL_L_960,	'2', "sel_l_960")
+DEF_INSN (SEL_NE_960,	'2', "sel_ne_960")
+DEF_INSN (SEL_LE_960,	'2', "sel_le_960")
+DEF_INSN (SEL_O_960,	'2', "sel_o_960")
+
+DEF_INSN (CONCMPO_960,	'<', "concmpo_960")
+DEF_INSN (CONCMPI_960,	'<', "concmpi_960")
+DEF_INSN (CMPO_960,	'<', "cmpo_960")
+DEF_INSN (CMPI_960,	'<', "cmpi_960")
+DEF_INSN (SHIFTL_NT,	'2', "shiftl_nt")
+DEF_INSN (LSHIFTR_NT,	'2', "lshiftr_nt")
+DEF_INSN (ASHIFTR_NT,	'2', "ashiftr_nt")
+DEF_INSN (ADDO_NO_960,	'2', "addo_no_960")
+DEF_INSN (ADDO_G_960,	'2', "addo_g_960")
+DEF_INSN (ADDO_E_960,	'2', "addo_e_960")
+DEF_INSN (ADDO_GE_960,	'2', "addo_ge_960")
+DEF_INSN (ADDO_L_960,	'2', "addo_l_960")
+DEF_INSN (ADDO_NE_960,	'2', "addo_ne_960")
+DEF_INSN (ADDO_LE_960,	'2', "addo_le_960")
+DEF_INSN (ADDO_O_960,	'2', "addo_o_960")
+DEF_INSN (SUBO_NO_960,	'2', "subo_no_960")
+DEF_INSN (SUBO_G_960,	'2', "subo_g_960")
+DEF_INSN (SUBO_E_960,	'2', "subo_e_960")
+DEF_INSN (SUBO_GE_960,	'2', "subo_ge_960")
+DEF_INSN (SUBO_L_960,	'2', "subo_l_960")
+DEF_INSN (SUBO_NE_960,	'2', "subo_ne_960")
+DEF_INSN (SUBO_LE_960,	'2', "subo_le_960")
+DEF_INSN (SUBO_O_960,	'2', "subo_o_960")
+
+DEF_INSN (ALTERBIT,	'2', "alterbit")
+DEF_INSN (SETBIT,	'2', "setbit")
+DEF_INSN (CLRBIT,	'2', "clrbit")
+DEF_INSN (CHKBIT,	'<', "chkbit")
+DEF_INSN (NOTBIT,	'2', "notbit")
+
+/*
+Local variables:
+mode:c
+version-control: t
+End:
+*/
