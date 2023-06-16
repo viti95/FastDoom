@@ -23,7 +23,7 @@ BITS 32
 %include "defs.inc"
 
 extern _destview
-extern _viewheight
+extern _viewheightminusone
 extern _fuzzoffsetinverse
 extern _fuzzposinverse
 extern _colormaps
@@ -72,18 +72,17 @@ CODE_SYM_DEF R_DrawFuzzColumnPotato
 	push		ebp
 
   mov  ebp,[_dc_yh]
-  mov  eax,[_viewheight]
+  mov  eax,[_viewheightminusone]
   
-  sub  eax,ebp
-  xor  eax,1
-  cmp  eax,1
+  xor  eax,ebp
+  sub  eax,1
   sbb  ebp,0
 
   mov  eax,[_dc_yl]
 
   cmp  eax,1
   adc  eax,0
-  
+
   mov  edi,[_ylookup+ebp*4]
   sub  ebp,eax         ; ebp = pixel count
   js   .pdone
@@ -120,11 +119,10 @@ CODE_SYM_DEF R_DrawFuzzColumnLow
 	push		ebp
 
   mov  ebp,[_dc_yh]
-  mov  eax,[_viewheight]
+  mov  eax,[_viewheightminusone]
   
-  sub  eax,ebp
-  xor  eax,1
-  cmp  eax,1
+  xor  eax,ebp
+  sub  eax,1
   sbb  ebp,0
 
   mov  eax,[_dc_yl]
@@ -183,11 +181,10 @@ CODE_SYM_DEF R_DrawFuzzColumn
 	push		ebp
 
   mov  ebp,[_dc_yh]
-  mov  eax,[_viewheight]
+  mov  eax,[_viewheightminusone]
   
-  sub  eax,ebp
-  xor  eax,1
-  cmp  eax,1
+  xor  eax,ebp
+  sub  eax,1
   sbb  ebp,0
 
   mov  eax,[_dc_yl]
