@@ -63,15 +63,14 @@ L$2:
 	shld  	dx,cx,4
 	cmp		[ebx],dx
 	je		L$3
-L$4:
 	mov   	cx,dx
 	shr		cx,4
 	mov		[ebx],dx
 	cmp		[_lastlatch],cx
-	je		L$5
+	je		L$4
 	mov		[_lastlatch],cx
 	mov   	al,byte [0xA3E80 + ecx]
-L$5:
+L$4:
 	mov		[esi],dl
 L$3:
 	cmp		esi,0xA3E80-1
