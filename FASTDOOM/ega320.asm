@@ -44,8 +44,9 @@ CODE_SYM_DEF I_FinishUpdate
   	mov		esi,0xA0000-1
 	mov   	ebx,_vrambuffer-2
   	mov   	edi,_backbuffer
+	xor   	eax,eax
+	xor   	ecx,ecx
 L$2:
-  	xor   	eax,eax
 	mov		al,byte [edi]
 	add		ebx,2
 	mov		dl,[ebp+eax]
@@ -57,19 +58,19 @@ L$2:
 	mov		ch,[ebp+eax]
 	mov   	al,byte [edi+3]
   	shld  	dx,cx,4
-	mov		ah,[ebp+eax]
+	mov		ch,[ebp+eax]
 	add		edi,4
-	shld  	dx,ax,4
+	shld  	dx,cx,4
 	cmp		[ebx],dx
 	je		L$3
 L$4:
-	mov   	ax,dx
-	shr		ax,4
+	mov   	cx,dx
+	shr		cx,4
 	mov		[ebx],dx
-	cmp		[_lastlatch],ax
+	cmp		[_lastlatch],cx
 	je		L$5
-	mov		[_lastlatch],ax
-	mov   	al,byte [0xA3E80 + eax]
+	mov		[_lastlatch],cx
+	mov   	al,byte [0xA3E80 + ecx]
 L$5:
 	mov		[esi],dl
 L$3:
