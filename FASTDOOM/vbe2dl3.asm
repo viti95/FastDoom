@@ -65,15 +65,12 @@ CODE_SYM_DEF R_DrawFuzzColumnFlatLowVBE2
   sub  ebp,eax ; ebp = pixel count
   js   near .done
 
-  mov  eax,[_dc_x]
   shl  edi,6
-  shl  eax,1
-  add  edi,[_destview]
-  add  edi,eax
-  
+  mov  eax,[_dc_x]
   xor ecx,ecx
-
+  lea  edi,[edi+eax*2]
   mov eax,[_colormaps]
+  add  edi,[_destview]
   add eax,0x600
 
   jmp  [scalecalls+4+ebp*4]

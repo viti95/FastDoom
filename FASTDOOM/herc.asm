@@ -67,7 +67,7 @@ L$13:
 
 	or		dl, dh
 
-	cmp		dl,[_vrambuffer + ebx]
+	cmp		[_vrambuffer + ebx],dl
 	je		L$14
 	mov		[0xB0000 + ebx],dl
 	mov		[_vrambuffer + ebx],dl
@@ -75,7 +75,7 @@ L$14:
 	shr		edx,16
 	or		dl,dh
 
-	cmp		dl,[_vrambuffer + ebx + 0x2000]
+	cmp		[_vrambuffer + ebx + 0x2000],dl
 	je		L$15
 	mov		[0xB0000 + ebx + 0x2000],dl
 	mov		[_vrambuffer + ebx + 0x2000],dl
@@ -103,7 +103,7 @@ L$15:
 
 	or		dl, dh
 
-	cmp		dl,[_vrambuffer + ebx + 0x4000]
+	cmp		[_vrambuffer + ebx + 0x4000],dl
 	je		L$16
 	mov		[0xB0000 + ebx + 0x4000],dl
 	mov		[_vrambuffer + ebx + 0x4000],dl
@@ -111,7 +111,7 @@ L$16:
 	shr		edx,16
 	or		dl,dh
 
-	cmp		dl,[_vrambuffer + ebx + 0x6000]
+	cmp		[_vrambuffer + ebx + 0x6000],dl
 	je		L$17
 	mov		[0xB0000 + ebx + 0x6000],dl
 	mov		[_vrambuffer + ebx + 0x6000],dl

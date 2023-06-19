@@ -170,6 +170,7 @@ extern struct ev_s *current_ev;
 extern int viewwindowx;
 extern int viewwindowy;
 extern int viewheight;
+extern int viewheightminusone;
 extern int viewheightshift;
 extern int viewheightopt;
 extern int viewheight32;

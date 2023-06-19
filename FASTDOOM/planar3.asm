@@ -23,7 +23,7 @@ BITS 32
 %include "defs.inc"
 
 extern _destview
-extern _viewheight
+extern _viewheightminusone
 extern _fuzzoffsetinverse
 extern _fuzzposinverse
 extern _colormaps
@@ -71,26 +71,18 @@ CODE_SYM_DEF R_DrawFuzzColumnPotato
 	push		esi
 	push		ebp
 
-  mov  eax,[_viewheight]
-  dec  eax
-
   mov  ebp,[_dc_yh]
+  mov  eax,[_viewheightminusone]
+  
+  xor  eax,ebp
+  sub  eax,1
+  sbb  ebp,0
 
-  cmp  eax,ebp
-  jne  dc_yhOKP
-
-  dec  eax
-  mov  ebp,eax
-
-dc_yhOKP:
   mov  eax,[_dc_yl]
 
-  test eax,eax
-  jne dc_ylOKP
+  cmp  eax,1
+  adc  eax,0
 
-  mov  eax,1
-
-dc_ylOKP:
   mov  edi,[_ylookup+ebp*4]
   sub  ebp,eax         ; ebp = pixel count
   js   .pdone
@@ -126,26 +118,18 @@ CODE_SYM_DEF R_DrawFuzzColumnLow
 	push		esi
 	push		ebp
 
-  mov  eax,[_viewheight]
-  dec  eax
-
   mov  ebp,[_dc_yh]
+  mov  eax,[_viewheightminusone]
+  
+  xor  eax,ebp
+  sub  eax,1
+  sbb  ebp,0
 
-  cmp  eax,ebp
-  jne  dc_yhOKL
-
-  dec  eax
-  mov  ebp,eax
-
-dc_yhOKL:
   mov  eax,[_dc_yl]
 
-  test eax,eax
-  jne dc_ylOKL
+  cmp  eax,1
+  adc  eax,0
 
-  mov  eax,1
-
-dc_ylOKL:
   mov  edi,[_ylookup+ebp*4]
   sub  ebp,eax         ; ebp = pixel count
   js   .ldone
@@ -155,17 +139,15 @@ dc_ylOKL:
   mov esi,ecx
 
   ; outpw(GC_INDEX, GC_READMAP + ((dc_x & 1) << 9));
-  mov eax,ecx
-	and	eax,1
-	shl	eax,9
-	mov	dx,0x3CE
-	add	eax,4
+  and ecx,1
+  add ecx,ecx
+  mov al,4
+  mov	dx,0x3CE
+  mov ah,cl
 	out	dx,ax
 
   ; outp(SC_INDEX + 1, 3 << ((dc_x & 1) << 1));
-  and  cl,1
   mov  al,3
-  add  cl, cl
   mov  dx,SC_INDEX+1
   shl  al,cl
   out  dx,al
@@ -198,26 +180,18 @@ CODE_SYM_DEF R_DrawFuzzColumn
 	push		esi
 	push		ebp
 
-  mov  eax,[_viewheight]
-  dec  eax
-
   mov  ebp,[_dc_yh]
+  mov  eax,[_viewheightminusone]
+  
+  xor  eax,ebp
+  sub  eax,1
+  sbb  ebp,0
 
-  cmp  eax,ebp
-  jne  dc_yhOK
-
-  dec  eax
-  mov  ebp,eax
-
-dc_yhOK:
   mov  eax,[_dc_yl]
 
-  test eax,eax
-  jne dc_ylOK
+  cmp  eax,1
+  adc  eax,0
 
-  mov  eax,1
-
-dc_ylOK:
   mov  edi,[_ylookup+ebp*4]
   sub  ebp,eax         ; ebp = pixel count
   js   short done
@@ -227,18 +201,16 @@ dc_ylOK:
   mov esi,ecx
 
   ; outpw(GC_INDEX, GC_READMAP + ((dc_x & 3) << 8));
-  mov eax,ecx
-	and	eax,3
-	shl	eax,8
-	mov	dx,0x3CE
-	add	eax,4
+  mov al,4
+  and cl,3
+  mov	dx,0x3CE
+  mov ah,cl
 	out	dx,ax
 
   ; outp(SC_INDEX + 1, 1 << (dc_x & 3));
-  and  cl,3
-  mov  dx,SC_INDEX+1
   mov  al,1
   shl  al,cl
+  mov  dx,SC_INDEX+1
   out  dx,al
 
   shr esi,2

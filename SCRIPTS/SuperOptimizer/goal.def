@@ -1,0 +1,46 @@
+/* This file contains the definitions and documentation for the goal functions
+   used in the Superoptimizer.
+
+   Copyright (C) 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
+
+   This program is free software; you can redistribute it and/or modify it
+   under the terms of the GNU General Public License as published by the
+   Free Software Foundation; either version 2, or (at your option) any
+   later version.
+
+   This program is distributed in the hope that it will be useful, but
+   WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
+
+   You should have received a copy of the GNU General Public License along
+   with this program; see the file COPYING.  If not, write to the Free
+   Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
+
+/* The fields in the cpp macro call "DEF_GOAL()" are:
+
+   1. The internal name of the goal function.
+
+   2. The number of input operands.
+
+   3. The printed name of the instruction.
+
+   4. C code that implements the function.
+
+   */
+
+DEF_GOAL (FASTDOOM_HP, 1, "fastdoomHP", { r = 1 << (v0 & 3); })
+DEF_GOAL (FASTDOOM_LP, 1, "fastdoomLP", { r = 3 << ((v0 & 1) << 1); })
+DEF_GOAL (FASTDOOM_F_1C, 1, "fastdoomF1C", { r = v0 == 0 ? 1 : v0; })
+DEF_GOAL (FASTDOOM_F_2C, 2, "fastdoomF2C", { r = v0 == v1 - 1 ? v1 - 2 : v0; })
+DEF_GOAL (FASTDOOM_F_2Cb, 2, "fastdoomF2Cb", { r = v1 == v0 ? v0 - 1 : v1; })
+DEF_GOAL (FASTDOOM_F_INC, 1, "fastdoomFINC", { r = v0 == 48 ? 0 : (v0 + 1); })
+DEF_GOAL (FASTDOOM_HP2, 2, "fastdoomHP2", { r = v1 + (((v0 + 1) & 3) != 0); })
+DEF_GOAL (FASTDOOM_LP2, 2, "fastdoomLP2", { r = v1 + (((v0 + 1) & 1) != 0); })
+
+/*
+Local variables:
+mode:c
+version-control: t
+End:
+*/

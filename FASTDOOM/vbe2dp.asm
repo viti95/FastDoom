@@ -66,13 +66,12 @@ CODE_SYM_DEF R_DrawColumnPotatoVBE2
   js   near .done
 
   mov  ebx,[_dc_x]
-  mov  ecx,[_dc_iscale]
-  shl  ebx,2
   shl  edi,6
-  add  edi,ebx
+  mov  ecx,[_dc_iscale]
+  lea  edi,[edi+ebx*4]
+  sub  eax,[_centery]
   add  edi,[_destview]
 
-  sub   eax,[_centery]
   imul  ecx
   mov   edx,[_dc_texturemid]
   shl   ecx,9 ; 7 significant bits, 25 frac

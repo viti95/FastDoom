@@ -1,0 +1,694 @@
+/* Superoptimizer -- execute a instruction sequence to in order to
+   test it's correctness.
+
+   Copyright (C) 1991, 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
+
+   This program is free software; you can redistribute it and/or modify it
+   under the terms of the GNU General Public License as published by the
+   Free Software Foundation; either version 2, or (at your option) any
+   later version.
+
+   This program is distributed in the hope that it will be useful, but
+   WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
+
+   You should have received a copy of the GNU General Public License along
+   with this program; see the file COPYING.  If not, write to the Free
+   Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
+
+int
+#if HAS_NULLIFICATION
+run_program(insn_t *sequence, int n_insns, word *regs, int arity)
+#else
+run_program(insn_t *sequence, int n_insns, word *regs)
+#endif
+{
+  int pc;
+  insn_t insn;
+  word v, r1, r2;
+  int co, ci = -1;			/* Combine co and ci into cy?  */
+#if HAS_NULLIFICATION
+  int nullify_flag = 0;
+  char reg_defined[0x100];
+  int i;
+#endif
+
+  if (n_insns == 0)
+    return ci;
+
+#if HAS_NULLIFICATION
+  memset (reg_defined, 0, 0x100);
+
+  for (i = 0; i < arity; i++)
+    reg_defined[i] = 1;
+  /* The immediate values should be considered `defined'.  */
+  for (i = -1; i < BITS_PER_WORD; i++)
+    reg_defined[0x20 + i] = 1;
+  reg_defined[0x20 - 2] = 1;
+  reg_defined[0x20 - 3] = 1;
+  reg_defined[0x20 - 4] = 1;
+  reg_defined[0x20 - 5] = 1;
+#endif
+
+  for (pc = 0; pc < n_insns; pc++)
+    {
+      insn = sequence[pc];
+
+#if HAS_NULLIFICATION
+      if (nullify_flag)
+	{
+	  nullify_flag = 0;
+	  continue;
+	}
+
+      /* Check if the source operands has become defined.  */
+      if (!reg_defined[insn.s1] || !reg_defined[insn.s2])
+	return -2;
+#endif
+
+      r1 = regs[insn.s1];
+      r2 = regs[insn.s2];
+
+      switch (insn.opcode)
+	{
+	default:
+	  fprintf(stderr,
+		  "internal error: undefined instruction generated\n");
+	  abort();
+
+	case COPY:	PERFORM_COPY(v, co, r1, ci); break;
+	case EXCHANGE:
+	  regs[insn.s1] = r2;
+	  regs[insn.s2] = r1;
+	  continue;
+
+	case ADD:	PERFORM_ADD(v, co, r1, r2, ci); break;
+	case ADD_CI:	PERFORM_ADD_CI(v, co, r1, r2, ci); break;
+	case ADD_CO:	PERFORM_ADD_CO(v, co, r1, r2, ci); break;
+	case ADD_CIO:	PERFORM_ADD_CIO(v, co, r1, r2, ci); break;
+
+	case SUB:	PERFORM_SUB(v, co, r1, r2, ci); break;
+	case SUB_CI:	PERFORM_SUB_CI(v, co, r1, r2, ci); break;
+	case SUB_CO:	PERFORM_SUB_CO(v, co, r1, r2, ci); break;
+	case SUB_CIO:	PERFORM_SUB_CIO(v, co, r1, r2, ci); break;
+
+	case ADC_CI:	PERFORM_ADC_CI(v, co, r1, r2, ci); break;
+	case ADC_CO:	PERFORM_ADC_CO(v, co, r1, r2, ci); break;
+	case ADC_CIO:	PERFORM_ADC_CIO(v, co, r1, r2, ci); break;
+
+	case ADDCMPL:	PERFORM_ADDCMPL(v, co, r1, r2, ci); break;
+
+	case CMP:	PERFORM_CMP(v, co, r1, r2, ci); break;
+	case CMPPAR:	PERFORM_CMPPAR(v, co, r1, r2, ci); break;
+
+	case AND:	PERFORM_AND(v, co, r1, r2, ci); break;
+	case IOR:	PERFORM_IOR(v, co, r1, r2, ci); break;
+	case XOR:	PERFORM_XOR(v, co, r1, r2, ci); break;
+	case ANDC:	PERFORM_ANDC(v, co, r1, r2, ci); break;
+	case IORC:	PERFORM_IORC(v, co, r1, r2, ci); break;
+	case EQV:	PERFORM_EQV(v, co, r1, r2, ci); break;
+	case NAND:	PERFORM_NAND(v, co, r1, r2, ci); break;
+	case NOR:	PERFORM_NOR(v, co, r1, r2, ci); break;
+
+	case AND_RC:	PERFORM_AND_RC(v, co, r1, r2, ci); break;
+	case IOR_RC:	PERFORM_IOR_RC(v, co, r1, r2, ci); break;
+	case XOR_RC:	PERFORM_XOR_RC(v, co, r1, r2, ci); break;
+	case ANDC_RC:	PERFORM_ANDC_RC(v, co, r1, r2, ci); break;
+	case IORC_RC:	PERFORM_IORC_RC(v, co, r1, r2, ci); break;
+	case EQV_RC:	PERFORM_EQV_RC(v, co, r1, r2, ci); break;
+	case NAND_RC:	PERFORM_NAND_RC(v, co, r1, r2, ci); break;
+	case NOR_RC:	PERFORM_NOR_RC(v, co, r1, r2, ci); break;
+
+	case AND_CC:	PERFORM_AND_CC(v, co, r1, r2, ci); break;
+	case IOR_CC:	PERFORM_IOR_CC(v, co, r1, r2, ci); break;
+	case XOR_CC:	PERFORM_XOR_CC(v, co, r1, r2, ci); break;
+	case ANDC_CC:	PERFORM_ANDC_CC(v, co, r1, r2, ci); break;
+	case IORC_CC:	PERFORM_IORC_CC(v, co, r1, r2, ci); break;
+	case EQV_CC:	PERFORM_EQV_CC(v, co, r1, r2, ci); break;
+	case NAND_CC:	PERFORM_NAND_CC(v, co, r1, r2, ci); break;
+	case NOR_CC:	PERFORM_NOR_CC(v, co, r1, r2, ci); break;
+
+	case LSHIFTR:	PERFORM_LSHIFTR(v, co, r1, r2, ci); break;
+	case ASHIFTR:	PERFORM_ASHIFTR(v, co, r1, r2, ci); break;
+	case SHIFTL:	PERFORM_SHIFTL(v, co, r1, r2, ci); break;
+	case ROTATEL:	PERFORM_ROTATEL(v, co, r1, r2, ci); break;
+	case LSHIFTR_CO:PERFORM_LSHIFTR_CO(v, co, r1, r2, ci); break;
+	case ASHIFTR_CO:PERFORM_ASHIFTR_CO(v, co, r1, r2, ci); break;
+	case SHIFTL_CO:	PERFORM_SHIFTL_CO(v, co, r1, r2, ci); break;
+	case ROTATEL_CO:PERFORM_ROTATEL_CO(v, co, r1, r2, ci); break;
+	case ROTATER_CO:PERFORM_ROTATER_CO(v, co, r1, r2, ci); break;
+	case ROTATEXL_CIO:PERFORM_ROTATEXL_CIO(v, co, r1, r2, ci); break;
+	case ROTATEXR_CIO:PERFORM_ROTATEXR_CIO(v, co, r1, r2, ci); break;
+	case ASHIFTR_CON:PERFORM_ASHIFTR_CON(v, co, r1, r2, ci); break;
+
+	case EXTS1:	PERFORM_EXTS1(v, co, r1, r2, ci); break;
+	case EXTS2:	PERFORM_EXTS2(v, co, r1, r2, ci); break;
+	case EXTS8:	PERFORM_EXTS8(v, co, r1, r2, ci); break;
+	case EXTS16:	PERFORM_EXTS16(v, co, r1, r2, ci); break;
+	case EXTU1:	PERFORM_EXTU1(v, co, r1, r2, ci); break;
+	case EXTU2:	PERFORM_EXTU2(v, co, r1, r2, ci); break;
+
+	case CLZ:	PERFORM_CLZ(v, co, r1, ci); break;
+	case CTZ:	PERFORM_CTZ(v, co, r1, ci); break;
+	case FF1:	PERFORM_FF1(v, co, r1, ci); break;
+	case FF0:	PERFORM_FF0(v, co, r1, ci); break;
+	case BSF86:	PERFORM_BSF86(v, co, r1, ci); break;
+
+	case ABSVAL:	PERFORM_ABSVAL(v, co, r1, ci); break;
+	case NABSVAL:	PERFORM_NABSVAL(v, co, r1, ci); break;
+
+	case DOZ:	PERFORM_DOZ(v, co, r1, r2, ci); break;
+	case SETCY:	co = 1; break;
+	case CLRCY:	co = 0; break;
+	case COMCY:	co = ci ^ 1; break;
+
+	case CPEQ:	PERFORM_CPEQ(v, co, r1, r2, ci); break;
+	case CPGE:	PERFORM_CPGE(v, co, r1, r2, ci); break;
+	case CPGEU:	PERFORM_CPGEU(v, co, r1, r2, ci); break;
+	case CPGT:	PERFORM_CPGT(v, co, r1, r2, ci); break;
+	case CPGTU:	PERFORM_CPGTU(v, co, r1, r2, ci); break;
+	case CPLE:	PERFORM_CPLE(v, co, r1, r2, ci); break;
+	case CPLEU:	PERFORM_CPLEU(v, co, r1, r2, ci); break;
+	case CPLT:	PERFORM_CPLT(v, co, r1, r2, ci); break;
+	case CPLTU:	PERFORM_CPLTU(v, co, r1, r2, ci); break;
+	case CPNEQ:	PERFORM_CPNEQ(v, co, r1, r2, ci); break;
+
+	case CMPEQ:	PERFORM_CMPEQ(v, co, r1, r2, ci); break;
+	case CMPLE:	PERFORM_CMPLE(v, co, r1, r2, ci); break;
+	case CMPLEU:	PERFORM_CMPLEU(v, co, r1, r2, ci); break;
+	case CMPLT:	PERFORM_CMPLT(v, co, r1, r2, ci); break;
+	case CMPLTU:	PERFORM_CMPLTU(v, co, r1, r2, ci); break;
+
+	case CYEQ:	PERFORM_CYEQ(v, co, r1, r2, ci); break;
+	case CYGES:	PERFORM_CYGES(v, co, r1, r2, ci); break;
+	case CYGEU:	PERFORM_CYGEU(v, co, r1, r2, ci); break;
+	case CYGTS:	PERFORM_CYGTS(v, co, r1, r2, ci); break;
+	case CYGTU:	PERFORM_CYGTU(v, co, r1, r2, ci); break;
+	case CYAND:	PERFORM_CYAND(v, co, r1, r2, ci); break;
+
+	case MERGE16:	PERFORM_MERGE16(v, co, r1, r2, ci); break;
+	case DECR_CYEQ:	PERFORM_DECR_CYEQ(v, co, r1, r2, ci); break;
+
+	case CMOVEQ:
+	  v = regs[insn.d];
+	  PERFORM_CMOVEQ(v, co, r1, r2, ci);
+	  break;
+	case CMOVNE:
+	  v = regs[insn.d];
+	  PERFORM_CMOVNE(v, co, r1, r2, ci);
+	  break;
+	case CMOVLT:
+	  v = regs[insn.d];
+	  PERFORM_CMOVLT(v, co, r1, r2, ci);
+	  break;
+	case CMOVGE:
+	  v = regs[insn.d];
+	  PERFORM_CMOVGE(v, co, r1, r2, ci);
+	  break;
+	case CMOVLE:
+	  v = regs[insn.d];
+	  PERFORM_CMOVLE(v, co, r1, r2, ci);
+	  break;
+	case CMOVGT:
+	  v = regs[insn.d];
+	  PERFORM_CMOVGT(v, co, r1, r2, ci);
+	  break;
+
+	case MUL:	PERFORM_MUL(v, co, r1, r2, ci); break;
+	case UMULWIDEN_HI: PERFORM_UMULWIDEN_HI(v, co, r1, r2, ci); break;
+	case INVDIV: PERFORM_INVDIV(v, co, r1, ci); break;
+	case INVMOD: PERFORM_INVMOD(v, co, r1, ci); break;
+
+#if HAS_NULLIFICATION
+	case ADD_SEQ:
+	  PERFORM_ADD_SEQ(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_SNE:
+	  PERFORM_ADD_SNE(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_SLTS:
+	  PERFORM_ADD_SLTS(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_SGES:
+	  PERFORM_ADD_SGES(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_SLES:
+	  PERFORM_ADD_SLES(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_SGTS:
+	  PERFORM_ADD_SGTS(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_SLTU:
+	  PERFORM_ADD_SLTU(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_SGEU:
+	  PERFORM_ADD_SGEU(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_SLEU:
+	  PERFORM_ADD_SLEU(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_SGTU:
+	  PERFORM_ADD_SGTU(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_SOVS:
+	  PERFORM_ADD_SOVS(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_SNVS:
+	  PERFORM_ADD_SNVS(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_SODD:
+	  PERFORM_ADD_SODD(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_SEVN:
+	  PERFORM_ADD_SEVN(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_S:
+	  PERFORM_ADD_S(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_CIO_SEQ:
+	  PERFORM_ADD_CIO_SEQ(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_CIO_SNE:
+	  PERFORM_ADD_CIO_SNE(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_CIO_SLTU:
+	  PERFORM_ADD_CIO_SLTU(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_CIO_SGEU:
+	  PERFORM_ADD_CIO_SGEU(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_CIO_SLEU:
+	  PERFORM_ADD_CIO_SLEU(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_CIO_SGTU:
+	  PERFORM_ADD_CIO_SGTU(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_CIO_SODD:
+	  PERFORM_ADD_CIO_SODD(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_CIO_SEVN:
+	  PERFORM_ADD_CIO_SEVN(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_CIO_S:
+	  PERFORM_ADD_CIO_S(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_CO_SEQ:
+	  PERFORM_ADD_CO_SEQ(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_CO_SNE:
+	  PERFORM_ADD_CO_SNE(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_CO_SLTU:
+	  PERFORM_ADD_CO_SLTU(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_CO_SGEU:
+	  PERFORM_ADD_CO_SGEU(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_CO_SLEU:
+	  PERFORM_ADD_CO_SLEU(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_CO_SGTU:
+	  PERFORM_ADD_CO_SGTU(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_CO_SODD:
+	  PERFORM_ADD_CO_SODD(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_CO_SEVN:
+	  PERFORM_ADD_CO_SEVN(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADD_CO_S:
+	  PERFORM_ADD_CO_S(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case SUB_SEQ:
+	  PERFORM_SUB_SEQ(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case SUB_SNE:
+	  PERFORM_SUB_SNE(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case SUB_SLTS:
+	  PERFORM_SUB_SLTS(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case SUB_SGES:
+	  PERFORM_SUB_SGES(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case SUB_SLES:
+	  PERFORM_SUB_SLES(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case SUB_SGTS:
+	  PERFORM_SUB_SGTS(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case SUB_SODD:
+	  PERFORM_SUB_SODD(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case SUB_SEVN:
+	  PERFORM_SUB_SEVN(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case SUB_S:
+	  PERFORM_SUB_S(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADC_CIO_SEQ:
+	  PERFORM_ADC_CIO_SEQ(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADC_CIO_SNE:
+	  PERFORM_ADC_CIO_SNE(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADC_CIO_SLTU:
+	  PERFORM_ADC_CIO_SLTU(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADC_CIO_SGEU:
+	  PERFORM_ADC_CIO_SGEU(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADC_CIO_SLEU:
+	  PERFORM_ADC_CIO_SLEU(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADC_CIO_SGTU:
+	  PERFORM_ADC_CIO_SGTU(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADC_CIO_SODD:
+	  PERFORM_ADC_CIO_SODD(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADC_CIO_SEVN:
+	  PERFORM_ADC_CIO_SEVN(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADC_CIO_S:
+	  PERFORM_ADC_CIO_S(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADC_CO_SEQ:
+	  PERFORM_ADC_CO_SEQ(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADC_CO_SNE:
+	  PERFORM_ADC_CO_SNE(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADC_CO_SLTU:
+	  PERFORM_ADC_CO_SLTU(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADC_CO_SGEU:
+	  PERFORM_ADC_CO_SGEU(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADC_CO_SLEU:
+	  PERFORM_ADC_CO_SLEU(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADC_CO_SGTU:
+	  PERFORM_ADC_CO_SGTU(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADC_CO_SODD:
+	  PERFORM_ADC_CO_SODD(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADC_CO_SEVN:
+	  PERFORM_ADC_CO_SEVN(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ADC_CO_S:
+	  PERFORM_ADC_CO_S(v, co, nullify_flag, r1, r2, ci);
+	  break;
+
+	case COMCLR_SEQ:
+	  PERFORM_COMCLR_SEQ(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case COMCLR_SNE:
+	  PERFORM_COMCLR_SNE(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case COMCLR_SLTS:
+	  PERFORM_COMCLR_SLTS(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case COMCLR_SGES:
+	  PERFORM_COMCLR_SGES(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case COMCLR_SLES:
+	  PERFORM_COMCLR_SLES(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case COMCLR_SGTS:
+	  PERFORM_COMCLR_SGTS(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case COMCLR_SLTU:
+	  PERFORM_COMCLR_SLTU(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case COMCLR_SGEU:
+	  PERFORM_COMCLR_SGEU(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case COMCLR_SLEU:
+	  PERFORM_COMCLR_SLEU(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case COMCLR_SGTU:
+	  PERFORM_COMCLR_SGTU(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case COMCLR_SODD:
+	  PERFORM_COMCLR_SODD(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case COMCLR_SEVN:
+	  PERFORM_COMCLR_SEVN(v, co, nullify_flag, r1, r2, ci);
+	  break;
+
+	case AND_SEQ:
+	  PERFORM_AND_SEQ(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case AND_SNE:
+	  PERFORM_AND_SNE(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case AND_SLTS:
+	  PERFORM_AND_SLTS(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case AND_SGES:
+	  PERFORM_AND_SGES(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case AND_SLES:
+	  PERFORM_AND_SLES(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case AND_SGTS:
+	  PERFORM_AND_SGTS(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case AND_SODD:
+	  PERFORM_AND_SODD(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case AND_SEVN:
+	  PERFORM_AND_SEVN(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case AND_S:
+	  PERFORM_AND_S(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case IOR_SEQ:
+	  PERFORM_IOR_SEQ(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case IOR_SNE:
+	  PERFORM_IOR_SNE(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case IOR_SLTS:
+	  PERFORM_IOR_SLTS(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case IOR_SGES:
+	  PERFORM_IOR_SGES(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case IOR_SLES:
+	  PERFORM_IOR_SLES(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case IOR_SGTS:
+	  PERFORM_IOR_SGTS(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case IOR_SODD:
+	  PERFORM_IOR_SODD(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case IOR_SEVN:
+	  PERFORM_IOR_SEVN(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case IOR_S:
+	  PERFORM_IOR_S(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case XOR_SEQ:
+	  PERFORM_XOR_SEQ(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case XOR_SNE:
+	  PERFORM_XOR_SNE(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case XOR_SLTS:
+	  PERFORM_XOR_SLTS(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case XOR_SGES:
+	  PERFORM_XOR_SGES(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case XOR_SLES:
+	  PERFORM_XOR_SLES(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case XOR_SGTS:
+	  PERFORM_XOR_SGTS(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case XOR_SODD:
+	  PERFORM_XOR_SODD(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case XOR_SEVN:
+	  PERFORM_XOR_SEVN(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case XOR_S:
+	  PERFORM_XOR_S(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ANDC_SEQ:
+	  PERFORM_ANDC_SEQ(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ANDC_SNE:
+	  PERFORM_ANDC_SNE(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ANDC_SLTS:
+	  PERFORM_ANDC_SLTS(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ANDC_SGES:
+	  PERFORM_ANDC_SGES(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ANDC_SLES:
+	  PERFORM_ANDC_SLES(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ANDC_SGTS:
+	  PERFORM_ANDC_SGTS(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ANDC_SODD:
+	  PERFORM_ANDC_SODD(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ANDC_SEVN:
+	  PERFORM_ANDC_SEVN(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ANDC_S:
+	  PERFORM_ANDC_S(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case LSHIFTR_S:
+	  PERFORM_LSHIFTR_S(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ASHIFTR_S:
+	  PERFORM_ASHIFTR_S(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case SHIFTL_S:
+	  PERFORM_SHIFTL_S(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case ROTATEL_S:
+	  PERFORM_ROTATEL_S(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case EXTS1_S:
+	  PERFORM_EXTS1_S(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case EXTS2_S:
+	  PERFORM_EXTS2_S(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case EXTS8_S:
+	  PERFORM_EXTS8_S(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case EXTS16_S:
+	  PERFORM_EXTS16_S(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case EXTU1_S:
+	  PERFORM_EXTU1_S(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case EXTU2_S:
+	  PERFORM_EXTU2_S(v, co, nullify_flag, r1, r2, ci);
+	  break;
+	case COPY_S:
+	  PERFORM_COPY_S(v, co, nullify_flag, r1, ci);
+	  break;
+
+#endif /* HAS_NULLIFICATION */
+
+	case ADDC_960:		PERFORM_ADDC_960(v, co, r1, r2, ci); break;
+	case SUBC_960:		PERFORM_SUBC_960(v, co, r1, r2, ci); break;
+	case SEL_NO_960:	PERFORM_SEL_NO_960(v, co, r1, r2, ci); break;
+	case SEL_G_960:		PERFORM_SEL_G_960(v, co, r1, r2, ci); break;
+	case SEL_E_960:		PERFORM_SEL_E_960(v, co, r1, r2, ci); break;
+	case SEL_GE_960:	PERFORM_SEL_GE_960(v, co, r1, r2, ci); break;
+	case SEL_L_960:		PERFORM_SEL_L_960(v, co, r1, r2, ci); break;
+	case SEL_NE_960:	PERFORM_SEL_NE_960(v, co, r1, r2, ci); break;
+	case SEL_LE_960:	PERFORM_SEL_LE_960(v, co, r1, r2, ci); break;
+	case SEL_O_960:		PERFORM_SEL_O_960(v, co, r1, r2, ci); break;
+	case CONCMPO_960:	PERFORM_CONCMPO_960(v, co, r1, r2, ci); break;
+	case CONCMPI_960:	PERFORM_CONCMPI_960(v, co, r1, r2, ci); break;
+	case CMPO_960:		PERFORM_CMPO_960(v, co, r1, r2, ci); break;
+	case CMPI_960:		PERFORM_CMPI_960(v, co, r1, r2, ci); break;
+	case SHIFTL_NT:		PERFORM_SHIFTL_NT(v, co, r1, r2, ci); break;
+	case LSHIFTR_NT:	PERFORM_LSHIFTR_NT(v, co, r1, r2, ci); break;
+	case ASHIFTR_NT:	PERFORM_ASHIFTR_NT(v, co, r1, r2, ci); break;
+	case ADDO_NO_960:
+	  v = regs[insn.d];
+	  PERFORM_ADDO_NO_960(v, co, r1, r2, ci);
+	  break;
+	case ADDO_G_960:
+	  v = regs[insn.d];
+	  PERFORM_ADDO_G_960(v, co, r1, r2, ci);
+	  break;
+	case ADDO_E_960:
+	  v = regs[insn.d];
+	  PERFORM_ADDO_E_960(v, co, r1, r2, ci);
+	  break;
+	case ADDO_GE_960:
+	  v = regs[insn.d];
+	  PERFORM_ADDO_GE_960(v, co, r1, r2, ci);
+	  break;
+	case ADDO_L_960:
+	  v = regs[insn.d];
+	  PERFORM_ADDO_L_960(v, co, r1, r2, ci);
+	  break;
+	case ADDO_NE_960:
+	  v = regs[insn.d];
+	  PERFORM_ADDO_NE_960(v, co, r1, r2, ci);
+	  break;
+	case ADDO_LE_960:
+	  v = regs[insn.d];
+	  PERFORM_ADDO_LE_960(v, co, r1, r2, ci);
+	  break;
+	case ADDO_O_960:
+	  v = regs[insn.d];
+	  PERFORM_ADDO_O_960(v, co, r1, r2, ci);
+	  break;
+	case SUBO_NO_960:
+	  v = regs[insn.d];
+	  PERFORM_SUBO_NO_960(v, co, r1, r2, ci);
+	  break;
+	case SUBO_G_960:
+	  v = regs[insn.d];
+	  PERFORM_SUBO_G_960(v, co, r1, r2, ci);
+	  break;
+	case SUBO_E_960:
+	  v = regs[insn.d];
+	  PERFORM_SUBO_E_960(v, co, r1, r2, ci);
+	  break;
+	case SUBO_GE_960:
+	  v = regs[insn.d];
+	  PERFORM_SUBO_GE_960(v, co, r1, r2, ci);
+	  break;
+	case SUBO_L_960:
+	  v = regs[insn.d];
+	  PERFORM_SUBO_L_960(v, co, r1, r2, ci);
+	  break;
+	case SUBO_NE_960:
+	  v = regs[insn.d];
+	  PERFORM_SUBO_NE_960(v, co, r1, r2, ci);
+	  break;
+	case SUBO_LE_960:
+	  v = regs[insn.d];
+	  PERFORM_SUBO_LE_960(v, co, r1, r2, ci);
+	  break;
+	case SUBO_O_960:
+	  v = regs[insn.d];
+	  PERFORM_SUBO_O_960(v, co, r1, r2, ci);
+	  break;
+
+	case ALTERBIT:		PERFORM_ALTERBIT(v, co, r1, r2, ci); break;
+	case SETBIT:		PERFORM_SETBIT(v, co, r1, r2, ci); break;
+	case CLRBIT:		PERFORM_CLRBIT(v, co, r1, r2, ci); break;
+	case CHKBIT:		PERFORM_CHKBIT(v, co, r1, r2, ci); break;
+	case NOTBIT:		PERFORM_NOTBIT(v, co, r1, r2, ci); break;
+
+#ifdef UDIV_WITH_SDIV
+	case SDIV: PERFORM_SDIV(v, co, r1, r2, ci); break;
+#endif
+	}
+
+#if HAS_NULLIFICATION
+      reg_defined[insn.d] = 1;
+#endif
+      /* Store result.  */
+      regs[insn.d] = v;
+      ci = co;
+    }
+
+#if HAS_NULLIFICATION
+  /* Check if the destination has become defined for the current arguments.  */
+  if (!reg_defined[insn.d])
+    return -2;
+#endif
+
+  return ci;
+}

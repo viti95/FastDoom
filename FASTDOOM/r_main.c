@@ -697,6 +697,7 @@ void R_ExecuteSetViewSize(void)
     {
         scaledviewwidth = SCREENWIDTH;
         viewheight = SCREENHEIGHT;
+        viewheightminusone = SCREENHEIGHT - 1;
         viewheightshift = SCREENHEIGHT << FRACBITS;
         viewheightopt = (SCREENHEIGHT << FRACBITS) - SCREENHEIGHT;
         viewheight32 = SCREENHEIGHT << 16 | SCREENHEIGHT;
@@ -706,6 +707,7 @@ void R_ExecuteSetViewSize(void)
     {
         scaledviewwidth = setblocks * 32;
         viewheight = (setblocks * 168 / 10) & ~7;
+        viewheightminusone = viewheight - 1;
         viewheightshift = viewheight << FRACBITS;
         viewheightopt = (viewheight << FRACBITS) - viewheight;
         viewheight32 = viewheight << 16 | viewheight;

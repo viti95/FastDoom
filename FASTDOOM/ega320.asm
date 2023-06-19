@@ -82,6 +82,4 @@ L$3:
 	pop		ecx
 	pop		ebx
 	ret
-
-
 %endif

@@ -59,21 +59,21 @@ CODE_SYM_DEF R_DrawSpan
   mov  [endplane],ebx
   mov  ebp,[_ds_y]
   mov  [curplane],ebx
+  mov  ecx,ebx
   lea  edi,[ebp+ebp*4]
   mov  ebx,[_ds_frac]
-  shl  edi,4
+  add  edi,edi
   mov  [frac],ebx
-  add  edi,eax
+  lea  edi,[eax+edi*8]
   mov  ebx,[_ds_step]
   add  edi,[_destview]
-  shl   ebx,2
+  lea  ebx,[ebx*4]
   mov  [dest],edi
   mov   [fracpstep],ebx
   mov   eax,.hpatch1+2
   mov   [eax],ebx
   mov   eax,.hpatch2+2
   mov   [eax],ebx
-  mov   ecx,[curplane]
 .hplane:
   mov   al,1
   shl   al,cl
@@ -210,32 +210,27 @@ CODE_SYM_DEF R_DrawSpanLow
   and  ebx,1
   mov  [endplane],ebx
   mov  [curplane],ebx
-  shr  eax,1
+  mov  ecx,ebx
   mov  ebp,[_ds_y]
+  shr  eax,1
   lea  edi,[ebp+ebp*4]
-  shl  edi,4
-  add  edi,eax
+  mov  ebx,[_ds_frac]
+  add  edi,edi
+  mov  [frac],ebx
+  lea  edi,[eax+edi*8]
+  mov  ebx,[_ds_step]
   add  edi,[_destview]
+  add   ebx, ebx
   mov  [dest],edi
 
-  mov  ebx,[_ds_frac]
-
-  mov  [frac],ebx
-
-  mov  ebx,[_ds_step]
-
-  add   ebx, ebx
   mov   [fracpstep],ebx
   mov   eax,.lpatch1+2
   mov   [eax],ebx
   mov   eax,.lpatch2+2
   mov   [eax],ebx
-  mov   ecx,[curplane]
 .lplane:
-  mov   al,3
   mov   dx,SC_INDEX+1
-  shl   al,cl
-  shl   al,cl
+  lea   eax,[ecx+ecx*8+3]
   out   dx,al
   mov   eax,[_ds_x2]
   cmp   [curx],eax

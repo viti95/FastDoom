@@ -1,0 +1,158 @@
+* For the 960, we often see sequences "chkbit;concmp" where the chkbit is
+  just used to unconditionally clear bit 2 of Ac.cc.  We might want to prune
+  the variants of chkbit to decrease the number of printed sequences.
+
+* For the 960, we pass the prune hints based on bit 1 of the Ac.cc.  This
+  might lead to undesirable pruning.
+
+* For the 960 and Alpha, we let conditionally executed instructions like
+  ADDO_cc_960, SUBO_cc_960, and CMOVEcc overwrite an existing register.
+  This is OK, but we should also write to a new register, since several
+  conditional adds and subtracts with different conditions and the same
+  destination register might make the result well-defined anyway.
+
+* When we have conditional execution (HPPA, i960, Alpha, Sparc9, Coldfire,
+  etc) we have to make sure we prune instruction 3 carefully in this
+  situation:
+
+	insn1
+	insn2 is conditionally executed
+	insn3
+
+  Depending on the flag settings of insn1 and insn2, the correct set of
+  insn3 to try is tricky.  Now, we might prune too much.
+
+* Later 29k models have additional logical ops.  Add them!
+
+* add_co(a,a) and shiftl_co(a,1) are identical.  Affects m68k, x86, pyr, etc.
+
+* For goal functions with the same arity, the exact same computations are
+  made in synth.  This suggests that we could search for many goal functions
+  in parallel instead of serially.  We could maintain an array of goal
+  values, one for each goal.  Instead of simply comparing the last generated
+  value to goal_value, we would loop through a goal_values[] array, and call
+  test_sequence for each goal that matches.  This would speed up searches by
+  as much as a factor of 10.
+
+* Adding the bsfl instruction revealed a deficiency: We can't deal with
+  instructions that give an undefined result for some inputs.  This is so
+  because the sequences might fail to work only when the undefined result
+  happen to become a certain value.  To cope with this, we have to make
+  test_sequence try lots of values, but it can only do that if it knows
+  about these instructions.
+
+  A cleaner way would be to add a valid bit to each computed value.
+
+* Now we require equality between a computed goal value and a computed
+  result.  Permit fuzzier function, like "something negative".  E.g., a
+  fuzzy sgn function might be useful.
+
+* Most importantly: Generalize the class of possible goal functions.  Allow
+  them to be any mapping from a vector of words to another vector of words,
+  each of arbitrary length.
+
+  To make it fast, record after each instruction if it generates a value
+  that is in (the vector) goal_value, and prune a sequence if it has not
+  produced N-M requested values when M more instructions are allowed [N the
+  number of words in goal_value].
+
+  We should split `synth'.  The leaf search `synth' function could be
+  written like currently, but with the leaf-test "if (allowed_cost > 0)"
+  removed.  The non-leaf `synth' need to loop and look for the generated
+  value in goal_value.  To avoid massive code replication, we have to put
+  the synth function in a separate file, and play with cpp and #include.
+
+  Make sure to handle the case were you find all values before the last
+  instruction.  This might be non-trivial!  We know that we have to use the
+  value from the ultimate instruction, otherwise we would have found this
+  sequence before.  Problem is, we will either have to loop and look for
+  the value in goal_value, or, probably much better, just accept the
+  sequence.
+
+* Add -test-on-cpu option triggering a mechanism for testing the generated
+  sequences on the real hardware.  That would help debug the simulation
+  code.
+
+* I'd like to have a means to define that a goal function is not defined
+  for all possible input values.  An extra parameter, ALLOWED_ARGUMENTS, to
+  DEF_GOAL could take care of that.
+
+  Also I'd like the user to have the possibility to add a list of immediate
+  values to try for each goal function.  For example, 31 and 32 could be
+  useful for ffs.
+
+* Make it possible to handle more immediate values, for example by putting
+  them in the immediate_val array.
+
+* Interpret goal functions so the user doesn't need to recompile.
+  Interpretation would make goal function evaluation slower than it is now,
+  but goal function evaluation is not critical.
+
+* Add code to algebraically prove that generated sequences are correct.
+
+* Add bsrl/bsfl and bfffo to CISC synth.
+
+* Check that PERFORM_CLZ works like RS/6000's cntlz and 29k's clz.  Is it
+  ok for input == 0?
+
+* A major speed improvement would be to make independent insn have a
+  canonical order.  Consider `gts' on the SPARC.  This is probably not very
+  hard, if insns are enumerated in some clever way and loop variables are
+  passed down.  A very simple but potentially quite powerful mechanism: If
+  the putative instruction doesn't depend on the last instruction, compare
+  the putative instruction's opcode with the last instruction's opcode, and
+  proceed iff, say, the < relation holds.
+
+  After an instruction that sets carry (and there is another instruction
+  with the same effect apart from that it doesn't affect carry), the
+  generated carry has to be used.  [Fix this with a reservation vector
+  --allow both making and deleting a reservation.  Make reservation when
+  carry is generated and delete it when it is used.]  The leaf instructions
+  have to input carry if an unused carry is pending.
+
+  Make sure all computed values are used by subsequent instructions.  For
+  example, if we have just two more values to compute and three yet unused
+  values, the last two instructions have to restrict their input operands.
+
+* Efficient pruning of sequences not using generated resources:
+
+  Each generated instruction should record it's computed 'resources' in a
+  list of unused resources.  (A written register is such a resource, and the
+  carry flag is such a resource.)  When a resource is used by an
+  instruction, it's removed from the data base.
+
+  At each recursion, we check that the unused resources can be consumed
+  with the allowed number of instructions.  If not, we back-track.
+
+  Beware: A resource is not 'consumed' when it has been used.  I have seen
+  optimal sequences that uses a generated carry more than once.
+
+* Shift 32 steps on 68k is well-defined.  LSHIFTR_CO can be used to zero a
+  word and simultaneously move the sign bit to the X flag, ASHIFTR_CO can
+  be used to propagate the sign bit to the whole word and to the X flag.
+  Useful?
+
+* Model the exact timing, i.e., instruction overlap, superscalar issue,
+  etc.  Requires modelling the CPU internal function units.
+
+* `386: bt, clc, cmc, cdq[0->1], lea, shld, shrd, stc.
+
+* Make the instruction description cleaner.  Something of this kind would
+  be great:
+
+  88k:
+	{ADD,		"addu		%d{r},%1{r,0},%2{r,[0-FFFF]}"},
+	{ADD_CI,	"addu.ci	%d{r},%1{r,0},%2{r,[0-FFFF]}"},
+	...
+
+  sparc:
+	{ADD,		"add		%1{r,0},%2{r,[-1000,+FFF]},%d{r}"},
+	{ADD_CI,	"addx		%1{r,0},%2{r,[-1000,+FFF]},%d{r}"},
+	...
+
+  We would need a tool to extract the information and generate a 'synth'
+  function.  (That instruction description format would be useful to
+  assemblers, disassemblers, and simulators too.)
+
+* Include a 'synth' function for several targets in one gso binary.  Have a
+  command line option -t<target> select which one to use.

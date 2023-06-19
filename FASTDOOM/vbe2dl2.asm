@@ -9,7 +9,7 @@ BITS 32
 %include "defs.inc"
 
 extern _destview
-extern _viewheight
+extern _viewheightminusone
 extern _fuzzoffsetinverse
 extern _fuzzposinverse
 extern _colormaps
@@ -62,42 +62,32 @@ CODE_SYM_DEF R_DrawFuzzColumnLowVBE2
 	push		esi
 	push		ebp
 
-  mov  eax,[_viewheight]
-  dec  eax
-
   mov  ebp,[_dc_yh]
+  mov  eax,[_viewheightminusone]
+  
+  xor  eax,ebp
+  sub  eax,1
+  sbb  ebp,0
 
-  cmp  eax,ebp
-  jne  dc_yhOK
-
-  dec  eax
-  mov  ebp,eax
-
-dc_yhOK:
   mov  eax,[_dc_yl]
 
-  test eax,eax
-  jne dc_ylOK
-
-  mov  eax,1
-
-dc_ylOK:
+  cmp  eax,1
+  adc  eax,0
+  
   lea  edi,[ebp+ebp*4]
   sub  ebp,eax ; ebp = pixel count
   js   near .done
 
-  mov  eax,[_dc_x]
   shl  edi,6
-  shl  eax,1
-  add  edi,[_destview]
-  add  edi,eax
-  
+  mov  eax,[_dc_x]
+  mov	ecx,[_fuzzposinverse]
+  lea  edi,[edi+eax*2]
   xor ebx,ebx
+  add  edi,[_destview]
 
   mov eax,[_colormaps]
-  mov	ecx,[_fuzzposinverse]
-  add eax,0x600
   mov edx,_fuzzoffsetinverse
+  add eax,0x600
   mov esi,49
 
   jmp  [scalecalls+4+ebp*4]

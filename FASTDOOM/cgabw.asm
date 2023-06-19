@@ -56,7 +56,7 @@ L$7:
 	mov		bl,[edx+3]
 	mov		cx,[ebp+ebx*2]
 	shld	ax,cx,2
-	cmp		al,[_vrambuffer + esi]
+	cmp		[_vrambuffer + esi],al
 	je		L$8
 	mov		[_vrambuffer + esi],al
 	mov		[0xB8000 + esi],al
@@ -74,7 +74,7 @@ L$8:
 	mov		bl,[edx+323]
 	mov		cx,[ebp+ebx*2]
 	shld	ax,cx,2
-	cmp		al,[_vrambuffer + esi + 0x2000]
+	cmp		[_vrambuffer + esi + 0x2000],al
 	je		L$9
 	mov		[_vrambuffer + esi + 0x2000],al
 	mov		[0xB8000 + esi + 0x2000],al

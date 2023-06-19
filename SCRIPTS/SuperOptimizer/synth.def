@@ -1,0 +1,4094 @@
+
+/* Recursively investigate all possible instruction sequences for the
+   current target.
+
+   SEQUENCE contains the instructions defined so far.
+
+   N_INSNS is the number of instructions, including the one we will
+   generate this time, in SEQUENCE.
+
+   VALUES contains the values in register 0..N_VALUES.
+
+   N_VALUES is the number of registers that have been assigned values by
+   the insns so far.
+
+   GOAL_VALUE is the value we aim at, when the sequence is ready.
+
+   ALLOWED_COST is the maximum allowed cost of the remaining sequence.
+
+   CY_IN is the carry flag.  It is negative if no instruction has yet
+   defined it (this to pruning the search tree), and otherwise takes the
+   values 0 or 1 according to the conventions of the current target.
+
+   PRUNE_HINT contains flags to assist pruning of the search tree.  */
+
+#if SPARC || POWER || M88000 || AM29K || ALPHA
+void
+MAKENAME(synth) (insn_t *sequence,
+		 int n_insns,
+		 word *values,
+		 int n_values,
+		 word goal_value,
+		 int allowed_cost,
+		 int ci,
+		 int prune_hint)
+{
+  int s1, s2;
+  word v, r1, r2;
+  int co;
+  int last_dest;
+
+#ifdef TIMING
+  unsigned long time_start = cputime();
+#endif
+
+  if (n_insns > 0)
+    last_dest = sequence[n_insns - 1].d;
+  else
+    last_dest = -1;
+
+  /* Binary operations with carry-in.  */
+  if (ci >= 0 && flag_use_carry)
+    {
+      for (s1 = n_values - 1; s1 >= 0; s1--)
+	{
+	  r1 = values[s1];
+	  for (s2 = s1 - 1; s2 >= 0; s2--)
+	    {
+	      r2 = values[s2];
+
+	      if (allowed_cost <= 1 && (prune_hint & CY_JUST_SET) == 0)
+		{
+		  /* We are in a leaf node.  CY was not set (to 0, 1 or to
+		     a data dependent value) by the previous insn.
+
+		     So one of the input operands has to be the result
+		     operand of the previous insn for that insn to be
+		     meaningful.  */
+		  if (last_dest >= 0 && s1 != last_dest && s2 != last_dest)
+		    continue;
+		}
+
+#if SPARC || POWER || M88000 || AM29K
+	      /* sparc:		addxcc
+		 rs6000:	ae
+		 m88000:	addu.cio
+		 am29k:		addc */
+	      PERFORM_ADD_CIO(v, co, r1, r2, ci);
+	      RECURSE(ADD_CIO, s1, s2, CY_JUST_SET);
+#endif
+#if SPARC || M88000
+	      /* sparc:		addx
+		 m88000:	addu.ci */
+	      PERFORM_ADD_CI(v, co, r1, r2, ci);
+	      RECURSE(ADD_CI, s1, s2, prune_hint & ~CY_JUST_SET);
+#endif
+#if SPARC
+	      /* sparc:		subxcc */
+	      PERFORM_SUB_CIO(v, co, r1, r2, ci);
+	      RECURSE(SUB_CIO, s1, s2, CY_JUST_SET);
+	      PERFORM_SUB_CIO(v, co, r2, r1, ci);
+	      RECURSE(SUB_CIO, s2, s1, CY_JUST_SET);
+#endif
+#if SPARC
+	      /* sparc:		subx */
+	      PERFORM_SUB_CI(v, co, r1, r2, ci);
+	      RECURSE(SUB_CI, s1, s2, prune_hint & ~CY_JUST_SET);
+	      PERFORM_SUB_CI(v, co, r2, r1, ci);
+	      RECURSE(SUB_CI, s2, s1, prune_hint & ~CY_JUST_SET);
+#endif
+#if POWER || M88000 || AM29K
+	      /* rs6000:	sfe
+		 m88000:	subu.cio
+		 am29k:		subc */
+	      PERFORM_ADC_CIO(v, co, r1, r2, ci);
+	      RECURSE(ADC_CIO, s1, s2, CY_JUST_SET);
+	      PERFORM_ADC_CIO(v, co, r2, r1, ci);
+	      RECURSE(ADC_CIO, s2, s1, CY_JUST_SET);
+#endif
+#if M88000
+	      /* m88000:	subu.ci */
+	      PERFORM_ADC_CI(v, co, r1, r2, ci);
+	      RECURSE(ADC_CI, s1, s2, prune_hint & ~CY_JUST_SET);
+	      PERFORM_ADC_CI(v, co, r2, r1, ci);
+	      RECURSE(ADC_CI, s2, s1, prune_hint & ~CY_JUST_SET);
+#endif
+	    }
+	}
+    }
+
+  /* Binary operations without carry-in.  */
+  for (s1 = n_values - 1; s1 >= 0; s1--)
+    {
+      r1 = values[s1];
+      for (s2 = s1 - 1; s2 >= 0; s2--)
+	{
+	  r2 = values[s2];
+
+	  if (allowed_cost <= 1)
+	    {
+	      /* We are in a leaf node.
+
+		 So one of the input operands has to be the result operand
+		 of the previous insn for that insn to be meaningful.  */
+	      if (last_dest >= 0 && s1 != last_dest && s2 != last_dest)
+		continue;
+	    }
+
+#ifdef DM
+	  PERFORM_UMULWIDEN_HI(v, co, r1, r2, ci);
+	  RECURSE(UMULWIDEN_HI, s1, s2, prune_hint & ~CY_JUST_SET);
+#endif
+#if defined (DM) || defined (MM)
+	  PERFORM_MUL(v, co, r1, r2, ci);
+	  RECURSE(MUL, s1, s2, prune_hint & ~CY_JUST_SET);
+#endif
+#ifdef UDIV_WITH_SDIV
+	  PERFORM_SDIV (v, co, r1, r2, ci);
+	  RECURSE(SDIV, s1, s2, prune_hint & ~CY_JUST_SET);
+#endif
+#if SPARC || POWER || M88000 || AM29K
+	  /* sparc:	addcc
+	     rs6000:	a
+	     m88000:	addu.co
+	     am29k:	add */
+	  PERFORM_ADD_CO(v, co, r1, r2, ci);
+	  RECURSE(ADD_CO, s1, s2, CY_JUST_SET);
+#endif
+#if SPARC || POWER || M88000 || ALPHA
+	  /* sparc:	add
+	     rs6000:	cax
+	     m88000:	addu
+	     alpha:	addq */
+	  PERFORM_ADD(v, co, r1, r2, ci);
+	  RECURSE(ADD, s1, s2, prune_hint & ~CY_JUST_SET);
+#endif
+#if SPARC
+	  /* sparc:	subcc */
+	  PERFORM_SUB_CO(v, co, r1, r2, ci);
+	  RECURSE(SUB_CO, s1, s2, CY_JUST_SET);
+	  PERFORM_SUB_CO(v, co, r2, r1, ci);
+	  RECURSE(SUB_CO, s2, s1, CY_JUST_SET);
+#endif
+#if SPARC || POWERPC || M88000 || ALPHA
+	  /* sparc:	sub
+	     powerpc:	subf
+	     m88000:	subu
+	     alpha:	subq */
+	  PERFORM_SUB(v, co, r1, r2, ci);
+	  RECURSE(SUB, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_SUB(v, co, r2, r1, ci);
+	  RECURSE(SUB, s2, s1, prune_hint & ~CY_JUST_SET);
+#endif
+#if POWER || M88000 || AM29K
+	  /* rs6000:	sf
+	     m88000:	subu.co
+	     am29k:	sub */
+	  PERFORM_ADC_CO(v, co, r1, r2, ci);
+	  RECURSE(ADC_CO, s1, s2, CY_JUST_SET);
+	  PERFORM_ADC_CO(v, co, r2, r1, ci);
+	  RECURSE(ADC_CO, s2, s1, CY_JUST_SET);
+#endif
+#if SPARC || POWER || M88000 || AM29K || ALPHA
+	  PERFORM_AND(v, co, r1, r2, ci);
+	  RECURSE(AND, s1, s2, prune_hint & ~CY_JUST_SET);
+
+	  PERFORM_IOR(v, co, r1, r2, ci);
+	  RECURSE(IOR, s1, s2, prune_hint & ~CY_JUST_SET);
+
+	  PERFORM_XOR(v, co, r1, r2, ci);
+	  RECURSE(XOR, s1, s2, prune_hint & ~CY_JUST_SET);
+
+	  PERFORM_ANDC(v, co, r1, r2, ci);
+	  RECURSE(ANDC, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_ANDC(v, co, r2, r1, ci);
+	  RECURSE(ANDC, s2, s1, prune_hint & ~CY_JUST_SET);
+#endif
+#if SPARC || POWER || M88000 || ALPHA
+	  PERFORM_IORC(v, co, r1, r2, ci);
+	  RECURSE(IORC, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_IORC(v, co, r2, r1, ci);
+	  RECURSE(IORC, s2, s1, prune_hint & ~CY_JUST_SET);
+#endif
+#if SPARC || POWER || M88000 || AM29K || ALPHA
+	  PERFORM_EQV(v, co, r1, r2, ci);
+	  RECURSE(EQV, s1, s2, prune_hint & ~CY_JUST_SET);
+#endif
+#if POWER || AM29K
+	  PERFORM_NAND(v, co, r1, r2, ci);
+	  RECURSE(NAND, s1, s2, prune_hint & ~CY_JUST_SET);
+
+	  PERFORM_NOR(v, co, r1, r2, ci);
+	  RECURSE(NOR, s1, s2, prune_hint & ~CY_JUST_SET);
+#endif
+#if POWER && !defined (POWERPC)
+	  PERFORM_DOZ(v, co, r1, r2, ci);
+	  RECURSE(DOZ, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_DOZ(v, co, r2, r1, ci);
+	  RECURSE(DOZ, s2, s1, prune_hint & ~CY_JUST_SET);
+#endif
+#if AM29K
+	  PERFORM_CPEQ(v, co, r1, r2, ci);
+	  RECURSE(CPEQ, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_CPGE(v, co, r1, r2, ci);
+	  RECURSE(CPGE, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_CPGEU(v, co, r1, r2, ci);
+	  RECURSE(CPGEU, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_CPGT(v, co, r1, r2, ci);
+	  RECURSE(CPGT, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_CPGTU(v, co, r1, r2, ci);
+	  RECURSE(CPGTU, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_CPLE(v, co, r1, r2, ci);
+	  RECURSE(CPLE, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_CPLEU(v, co, r1, r2, ci);
+	  RECURSE(CPLEU, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_CPLT(v, co, r1, r2, ci);
+	  RECURSE(CPLT, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_CPLTU(v, co, r1, r2, ci);
+	  RECURSE(CPLTU, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_CPNEQ(v, co, r1, r2, ci);
+	  RECURSE(CPNEQ, s1, s2, prune_hint & ~CY_JUST_SET);
+#endif
+#if ALPHA
+	  PERFORM_CMPEQ(v, co, r1, r2, ci);
+	  RECURSE(CMPEQ, s1, s2, prune_hint & ~CY_JUST_SET);
+
+	  PERFORM_CMPLE(v, co, r1, r2, ci);
+	  RECURSE(CMPLE, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_CMPLE(v, co, r2, r1, ci);
+	  RECURSE(CMPLE, s2, s1, prune_hint & ~CY_JUST_SET);
+
+	  PERFORM_CMPLEU(v, co, r1, r2, ci);
+	  RECURSE(CMPLEU, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_CMPLEU(v, co, r2, r1, ci);
+	  RECURSE(CMPLEU, s2, s1, prune_hint & ~CY_JUST_SET);
+
+	  PERFORM_CMPLT(v, co, r1, r2, ci);
+	  RECURSE(CMPLT, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_CMPLT(v, co, r2, r1, ci);
+	  RECURSE(CMPLT, s2, s1, prune_hint & ~CY_JUST_SET);
+
+	  PERFORM_CMPLTU(v, co, r1, r2, ci);
+	  RECURSE(CMPLTU, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_CMPLTU(v, co, r2, r1, ci);
+	  RECURSE(CMPLTU, s2, s1, prune_hint & ~CY_JUST_SET);
+#endif
+#if M88000
+	  PERFORM_CMPPAR (v, co, r1, r2, ci);
+	  RECURSE(CMPPAR, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_CMPPAR (v, co, r2, r1, ci);
+	  RECURSE(CMPPAR, s2, s1, prune_hint & ~CY_JUST_SET);
+#endif
+#if SPARC || POWER || AM29K || ALPHA
+	  /* ??? Does POWER really have shifts that truncate the count?  */
+	  /* ??? Should add these to other synth variants!! */
+	  PERFORM_SHIFTL (v, co, r1, r2, ci);
+	  RECURSE(SHIFTL, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_SHIFTL (v, co, r2, r1, ci);
+	  RECURSE(SHIFTL, s2, s1, prune_hint & ~CY_JUST_SET);
+
+	  PERFORM_LSHIFTR (v, co, r1, r2, ci);
+	  RECURSE(LSHIFTR, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_LSHIFTR (v, co, r2, r1, ci);
+	  RECURSE(LSHIFTR, s2, s1, prune_hint & ~CY_JUST_SET);
+#endif
+#if SPARC || AM29K || ALPHA
+	  PERFORM_ASHIFTR (v, co, r1, r2, ci);
+	  RECURSE(ASHIFTR, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_ASHIFTR (v, co, r2, r1, ci);
+	  RECURSE(ASHIFTR, s2, s1, prune_hint & ~CY_JUST_SET);
+#endif
+#if POWER
+	  PERFORM_ASHIFTR_CON (v, co, r1, r2, ci);
+	  RECURSE(ASHIFTR_CON, s1, s2, CY_JUST_SET);
+	  PERFORM_ASHIFTR_CON (v, co, r2, r1, ci);
+	  RECURSE(ASHIFTR_CON, s2, s1, CY_JUST_SET);
+#endif
+	}
+    }
+
+  /* Unary operations with carry-in.  */
+  if (ci >= 0 && flag_use_carry)
+    {
+      for (s1 = n_values - 1; s1 >= 0; s1--)
+	{
+	  r1 = values[s1];
+
+	  if (allowed_cost <= 1 && (prune_hint & CY_JUST_SET) == 0)
+	    {
+	      /* We are in a leaf node and CY was not set (to 1 or to a
+		 data dependent value) by the previous insn.
+
+		 The input operand has to be the result operand of the
+		 previous insn for that insn to be meaningful.  */
+	      if (last_dest >= 0 && s1 != last_dest)
+		continue;
+	    }
+
+#if SPARC || POWER || M88000 || AM29K
+	  /* d,cy = 2*r1 + cy
+	     sparc:	addxcc	s1,s1,d
+	     rs6000:	ae	d,s1,s1
+	     m88000:	addu.cio d,s1,s1
+	     am29k:		addc	d,s1,s1 */
+	  PERFORM_ADD_CIO(v, co, r1, r1, ci);
+	  RECURSE(ADD_CIO, s1, s1, CY_JUST_SET);
+#endif
+#if SPARC || M88000
+	  /* d = 2*r1 + cy
+	     sparc:	addx	s1,s1,d
+	     m88000:	addu.ci	d,s1,s1  */
+	  PERFORM_ADD_CI(v, co, r1, r1, ci);
+	  RECURSE(ADD_CI, s1, s1, prune_hint & ~CY_JUST_SET);
+#endif
+#if SPARC || POWER || M88000 || AM29K
+	  /* d,cy = r1 + cy - 1
+	     sparc:	addxcc	s1,-1,d
+	     rs6000:	ame	d,s1
+	     m88000:	subu.cio d,s1,r0
+	     am29k:	subc	d,s1,0 */
+	  PERFORM_ADD_CIO(v, co, r1, VALUE(-1), ci);
+	  RECURSE(ADD_CIO, s1, CNST(-1), CY_JUST_SET);
+#endif
+#if SPARC || POWER || M88000 || AM29K
+	  /* d,cy = r1 + cy
+	     sparc:	addxcc	s1,0,d
+	     rs6000:	aze	d,s1
+	     m88000:	addu.cio d,s1,r0
+	     am29k:	addc	d,s1,0 */
+	  PERFORM_ADD_CIO(v, co, r1, VALUE(0), ci);
+	  RECURSE(ADD_CIO, s1, CNST(0), CY_JUST_SET);
+#endif
+#if SPARC
+	  /* d,cy = 0 - r1 - cy
+	     sparc:	subxcc	%g0,s1,d */
+	  PERFORM_SUB_CIO(v, co, VALUE(0), r1, ci);
+	  RECURSE(SUB_CIO, CNST(0), s1, CY_JUST_SET);
+#endif
+#if SPARC
+	  /* d = r1 + 1 - cy
+	     sparc:	subx	s1,-1,d */
+	  PERFORM_SUB_CI(v, co, r1, VALUE(-1), ci);
+	  RECURSE(SUB_CI, s1, CNST(-1), prune_hint & ~CY_JUST_SET);
+#endif
+#if SPARC
+	  /* d,cy = r1 + 1 - cy
+	     sparc:	subxcc	s1,-1,d */
+	  PERFORM_SUB_CIO(v, co, r1, VALUE(-1), ci);
+	  RECURSE(SUB_CIO, s1, CNST(-1), CY_JUST_SET);
+#endif
+#if POWER
+	  /* d,cy = -1 + ~r1 + cy
+	     rs6000:	sfme	d,s1 */
+	  PERFORM_ADC_CIO(v, co, VALUE(-1), r1, ci);
+	  RECURSE(ADC_CIO, CNST(-1), s1, CY_JUST_SET);
+#endif
+#if POWER || M88000 || AM29K
+	  /* d,cy = ~r1 + cy
+	     m88000:	subu.cio d,r0,s1
+	     rs6000:	sfze	d,s1
+	     am29k:	subrc	d,s1,0 */
+	  PERFORM_ADC_CIO(v, co, VALUE(0), r1, ci);
+	  RECURSE(ADC_CIO, CNST(0), s1, CY_JUST_SET);
+#endif
+	}
+    }
+
+  /* Unary operations without carry-in.  */
+  for (s1 = n_values - 1; s1 >= 0; s1--)
+    {
+      r1 = values[s1];
+
+      if (allowed_cost <= 1)
+	{
+	  /* We are in a leaf node.
+
+	     The input operand has to be the result operand of the
+	     previous insns for that insn to be meaningful.  */
+	  if (last_dest >= 0 && s1 != last_dest)
+	    continue;
+	}
+
+#ifdef DM
+      PERFORM_INVDIV(v, co, r1, ci);
+      RECURSE(INVDIV, s1, 0, prune_hint & ~CY_JUST_SET);
+
+      PERFORM_INVMOD(v, co, r1, ci);
+      RECURSE(INVMOD, s1, 0, prune_hint & ~CY_JUST_SET);
+#endif
+#if SPARC || POWER || M88000 || AM29K
+      /* d,cy = 2*r1
+	 sparc:		addcc	s1,s1,d
+	 rs6000:	a	d,s1,s1
+	 m88000:	addu.co	d,s1,s1
+	 am29k:		add	d,s1,s1 */
+      PERFORM_ADD_CO(v, co, r1, r1, ci);
+      RECURSE(ADD_CO, s1, s1, CY_JUST_SET);
+#endif
+#if SPARC || POWER || M88000 || AM29K || ALPHA
+      /* d = r1 & 1
+	 sparc:		and	s1,1,d
+	 rs6000:	rlinm	d,s1,0,31,31
+	 m88000:	mask	d,s1,1
+	 am29k:		and	d,s1,1
+	 alpha:		and	s1,1,d */
+      PERFORM_AND(v, co, r1, VALUE(1), ci);
+      RECURSE(AND, s1, CNST(1), prune_hint & ~CY_JUST_SET);
+#endif
+#if POWER || M88000
+      /* d = r1 & 0x80000000
+	 rs6000:	rlinm	d,s1,0,0,0
+	 m88000:	mask.u	d,s1,0x8000 */
+      PERFORM_AND(v, co, r1, VALUE_MIN_SIGNED, ci);
+      RECURSE(AND, s1, CNST_0x80000000, prune_hint & ~CY_JUST_SET);
+
+      /* d = r1 & 0x7fffffff
+	 rs6000:	rlinm	d,s1,0,1,31
+	 m88000:	and.u	d,s1,0x7fff */
+      PERFORM_AND(v, co, r1, VALUE_MAX_SIGNED, ci);
+      RECURSE(AND, s1, CNST_0x7FFFFFFF, prune_hint & ~CY_JUST_SET);
+#endif
+#if POWER || M88000
+      PERFORM_XOR(v, co, r1, VALUE_MIN_SIGNED, ci);
+      RECURSE(XOR, s1, CNST_0x80000000, prune_hint & ~CY_JUST_SET);
+
+      PERFORM_IOR(v, co, r1, VALUE_MIN_SIGNED, ci);
+      RECURSE(IOR, s1, CNST_0x80000000, prune_hint & ~CY_JUST_SET);
+#endif
+#if SPARC || POWER || M88000 || AM29K || ALPHA
+      /* d = r1 ^ 1
+	 sparc:		xor	s1,1,d
+	 rs6000:	xoril	d,s1,1
+	 m88000:	xor	d,s1,1
+	 am29k:		xor	d,s1,1
+	 alpha:		xor	s1,1,d */
+      PERFORM_XOR(v, co, r1, VALUE(1), ci);
+      RECURSE(XOR, s1, CNST(1), prune_hint & ~CY_JUST_SET);
+#endif
+#if SPARC || POWER || M88000 || AM29K || ALPHA
+      /* d = ~r1
+	 sparc:		xnor	%g0,s1,d
+	 rs6000:	nand	d,s1,s1
+	 m88000:	xor.c	d,s1,r0
+	 am29k:		nand	d,s1,s1
+	 alpha:		ornot	$31,s1,d */
+      PERFORM_SUB(v, co, VALUE(-1), r1, ci);
+      RECURSE(SUB, CNST(-1), s1, prune_hint & ~CY_JUST_SET);
+#endif
+#if POWER
+      /* d,cy = -1 + ~r1 + 1 (i.e. one's complement and set carry.)
+	 rs6000:	sfi	d,s1,-1 */
+      PERFORM_ADC_CO(v, co, VALUE(-1), r1, ci);
+      RECURSE(ADC_CO, CNST(-1), s1, CY_JUST_SET | CY_1);
+#endif
+#if SPARC || POWER || AM29K
+      /* d,cy = r1 + 1
+	 sparc:		addcc	s1,1,d
+	 rs6000:	ai	d,s1,1
+	 am29k:		add	d,s1,1 */
+      PERFORM_ADD_CO(v, co, r1, VALUE(1), ci);
+      RECURSE(ADD_CO, s1, CNST(1), CY_JUST_SET);
+#endif
+#if SPARC || POWER || M88000 || ALPHA
+      /* d = r1 + 1
+	 sparc:		add	s1,1,d
+	 rs6000:	cal	d,1(s1)
+	 m88000:	addu	d,s1,1
+	 alpha:		addq	s1,1,d */
+      PERFORM_ADD(v, co, r1, VALUE(1), ci);
+      RECURSE(ADD, s1, CNST(1), prune_hint & ~CY_JUST_SET);
+#endif
+#if 0 && POWER /* This has the same effect as a "xoriu". */
+      /* d = r1 + 0x80000000
+	 rs6000:	cau	d,s1,0x8000 */
+      PERFORM_ADD(v, co, r1, VALUE_MIN_SIGNED, ci);
+      RECURSE(ADD, s1, CNST_0x80000000, CY_JUST_SET);
+#endif
+#if SPARC || POWER || AM29K /* not M88000 */
+      /* d,cy = r1 + -1
+	 sparc:		addcc	s1,-1,d
+	 rs6000:	ai	d,s1,-1
+	 am29k:		sub	d,s1,1 */
+      PERFORM_ADD_CO(v, co, r1, VALUE(-1), ci);
+      RECURSE(ADD_CO, s1, CNST(-1), CY_JUST_SET);
+#endif
+#if SPARC || POWER || M88000 || ALPHA
+      /* d = r1 + -1
+	 sparc:		sub	s1,1,d
+	 rs6000:	cal	d,-1(s1)
+	 m88000:	subu	d,s1,1
+	 alpha:		subq	s1,1,d */
+      PERFORM_ADD(v, co, r1, VALUE(-1), ci);
+      RECURSE(ADD, s1, CNST(-1), prune_hint & ~CY_JUST_SET);
+#endif
+#if SPARC
+      /* d,cy = r1 - 1. [This isn't redundant, in spite we add -1 above.]
+	 sparc:		subcc	s1,1,d */
+      PERFORM_SUB_CO(v, co, r1, VALUE(1), ci);
+      RECURSE(SUB_CO, s1, CNST(1), CY_JUST_SET);
+#endif
+#if SPARC
+      /* d,cy = -r1
+	 sparc:		subcc	%g0,s1,d */
+      PERFORM_SUB_CO(v, co, VALUE(0), r1, ci);
+      RECURSE(SUB_CO, CNST(0), s1, CY_JUST_SET);
+#endif
+#if SPARC || POWER || M88000 || ALPHA
+      /* d = -r1
+	 sparc:		sub	%g0,s1,d
+	 rs6000:	neg	d,s1
+	 m88000:	subu	d,r0,s1
+	 alpha:		subq	$31,s1,d */
+      PERFORM_SUB(v, co, VALUE(0), r1, ci);
+      RECURSE(SUB, CNST(0), s1, prune_hint & ~CY_JUST_SET);
+#endif
+#if POWER || M88000 || AM29K
+      /* d,cy = -r1
+	 rs6000:	sf	d,s1,0
+	 m88000:	subu.co	d,r0,s1
+	 am29k:		subr	d,s1,0 */
+      PERFORM_ADC_CO(v, co, VALUE(0), r1, ci);
+      RECURSE(ADC_CO, CNST(0), s1, CY_JUST_SET);
+#endif
+#if POWER && !defined (POWERPC)
+      /* d = abs(r1)
+	 rs6000:	abs	d,s1 */
+      PERFORM_ABSVAL(v, co, r1, ci);
+      RECURSE(ABSVAL, s1, 0, prune_hint & ~CY_JUST_SET);
+
+      /* d = -abs(r1)
+	 rs6000:	nabs	d,s1 */
+      PERFORM_NABSVAL(v, co, r1, ci);
+      RECURSE(NABSVAL, s1, 0, prune_hint & ~CY_JUST_SET);
+#endif
+#if POWER && !defined (POWERPC)
+      PERFORM_DOZ(v, co, VALUE(0), r1, ci);
+      RECURSE(DOZ, CNST(0), s1, prune_hint & ~CY_JUST_SET);
+      PERFORM_DOZ(v, co, VALUE(-1), r1, ci);
+      RECURSE(DOZ, CNST(-1), s1, prune_hint & ~CY_JUST_SET);
+#endif
+      {
+	int cnt;
+	for (cnt = 1; cnt < BITS_PER_WORD; cnt += (flag_shifts ? 1 : BITS_PER_WORD - 2))
+	  {
+#if SPARC || POWER || M88000 || AM29K || ALPHA
+	    PERFORM_LSHIFTR(v, co, r1, VALUE(cnt), ci);
+	    RECURSE(LSHIFTR, s1, CNST(cnt), prune_hint & ~CY_JUST_SET);
+#endif
+#if SPARC || M88000 || AM29K || ALPHA
+	    PERFORM_ASHIFTR(v, co, r1, VALUE(cnt), ci);
+	    RECURSE(ASHIFTR, s1, CNST(cnt), prune_hint & ~CY_JUST_SET);
+#endif
+#if POWER
+	    PERFORM_ASHIFTR_CON(v, co, r1, VALUE(cnt), ci);
+	    RECURSE(ASHIFTR_CON, s1, CNST(cnt), CY_JUST_SET);
+#endif
+#if SPARC || POWER || M88000 || AM29K || ALPHA
+	    PERFORM_SHIFTL(v, co, r1, VALUE(cnt), ci);
+	    RECURSE(SHIFTL, s1, CNST(cnt), prune_hint & ~CY_JUST_SET);
+#endif
+#if POWER || M88000
+	    PERFORM_ROTATEL(v, co, r1, VALUE(cnt), ci);
+	    RECURSE(ROTATEL, s1, CNST(cnt), prune_hint & ~CY_JUST_SET);
+#endif
+	  }
+      }
+
+#if M88000
+      if (flag_extracts)
+	{
+	  int cnt;
+	  /* Loop to 30, not 31, since 31 would generate operations
+	     identical to shifts by 31.  */
+	  for (cnt = 1; cnt < BITS_PER_WORD - 1; cnt++)
+	    {
+	      PERFORM_EXTS1(v, co, r1, VALUE(cnt), ci);
+	      RECURSE(EXTS1, s1, CNST(cnt), prune_hint & ~CY_JUST_SET);
+	      PERFORM_EXTU1(v, co, r1, VALUE(cnt), ci);
+	      RECURSE(EXTU1, s1, CNST(cnt), prune_hint & ~CY_JUST_SET);
+	    }
+	  /* Loop to 29, not 31, since 30 and 31 would generate operations
+	     identical to shifts by 30 and 31.  */
+	  for (cnt = 1; cnt < BITS_PER_WORD - 2; cnt++)
+	    {
+	      PERFORM_EXTS2(v, co, r1, VALUE(cnt), ci);
+	      RECURSE(EXTS2, s1, CNST(cnt), prune_hint & ~CY_JUST_SET);
+	      PERFORM_EXTU2(v, co, r1, VALUE(cnt), ci);
+	      RECURSE(EXTU2, s1, CNST(cnt), prune_hint & ~CY_JUST_SET);
+	    }
+	}
+#endif
+#if AM29K
+      PERFORM_CPEQ(v, co, r1, VALUE(0), ci);
+      RECURSE(CPEQ, s1, CNST(0), prune_hint & ~CY_JUST_SET);
+      PERFORM_CPGE(v, co, r1, VALUE(0), ci);
+      RECURSE(CPGE, s1, CNST(0), prune_hint & ~CY_JUST_SET);
+      PERFORM_CPGEU(v, co, r1, VALUE(0), ci);
+      RECURSE(CPGEU, s1, CNST(0), prune_hint & ~CY_JUST_SET);
+      PERFORM_CPGT(v, co, r1, VALUE(0), ci);
+      RECURSE(CPGT, s1, CNST(0), prune_hint & ~CY_JUST_SET);
+      PERFORM_CPGTU(v, co, r1, VALUE(0), ci);
+      RECURSE(CPGTU, s1, CNST(0), prune_hint & ~CY_JUST_SET);
+      PERFORM_CPLE(v, co, r1, VALUE(0), ci);
+      RECURSE(CPLE, s1, CNST(0), prune_hint & ~CY_JUST_SET);
+      PERFORM_CPLEU(v, co, r1, VALUE(0), ci);
+      RECURSE(CPLEU, s1, CNST(0), prune_hint & ~CY_JUST_SET);
+      PERFORM_CPLT(v, co, r1, VALUE(0), ci);
+      RECURSE(CPLT, s1, CNST(0), prune_hint & ~CY_JUST_SET);
+      PERFORM_CPLTU(v, co, r1, VALUE(0), ci);
+      RECURSE(CPLTU, s1, CNST(0), prune_hint & ~CY_JUST_SET);
+      PERFORM_CPNEQ(v, co, r1, VALUE(0), ci);
+      RECURSE(CPNEQ, s1, CNST(0), prune_hint & ~CY_JUST_SET);
+#endif
+#if ALPHA
+      PERFORM_CMPEQ(v, co, r1, VALUE(0), ci);
+      RECURSE(CMPEQ, s1, CNST(0), prune_hint & ~CY_JUST_SET);
+
+      PERFORM_CMPLE(v, co, r1, VALUE(0), ci);
+      RECURSE(CMPLE, s1, CNST(0), prune_hint & ~CY_JUST_SET);
+      PERFORM_CMPLE(v, co, VALUE(0), r1, ci);
+      RECURSE(CMPLE, CNST(0), s1, prune_hint & ~CY_JUST_SET);
+
+      PERFORM_CMPLEU(v, co, r1, VALUE(0), ci);
+      RECURSE(CMPLEU, s1, CNST(0), prune_hint & ~CY_JUST_SET);
+/*    PERFORM_CMPLEU(v, co, VALUE(0), r1, ci);	== 1		*/
+/*    RECURSE(CMPLEU, CNST(0), s1, prune_hint & ~CY_JUST_SET);	*/
+
+/*    PERFORM_CMPLT(v, co, r1, VALUE(0), ci);	== srl r,63,d	*/
+/*    RECURSE(CMPLT, s1, CNST(0), prune_hint & ~CY_JUST_SET);	*/
+      PERFORM_CMPLT(v, co, VALUE(0), r1, ci);
+      RECURSE(CMPLT, CNST(0), s1, prune_hint & ~CY_JUST_SET);
+
+/*    PERFORM_CMPLTU(v, co, r1, VALUE(0), ci);	== 0		*/
+/*    RECURSE(CMPLTU, s1, CNST(0), prune_hint & ~CY_JUST_SET);	*/
+      PERFORM_CMPLTU(v, co, VALUE(0), r1, ci);
+      RECURSE(CMPLTU, CNST(0), s1, prune_hint & ~CY_JUST_SET);
+#endif
+#if POWER || AM29K
+      PERFORM_CLZ(v, co, r1, ci);
+      RECURSE(CLZ, s1, 0, prune_hint & ~CY_JUST_SET);
+#endif
+#if M88000
+      PERFORM_FF1(v, co, r1, ci);
+      RECURSE(FF1, s1, 0, prune_hint & ~CY_JUST_SET);
+#endif
+#if M88000
+      PERFORM_CMPPAR (v, co, r1, VALUE(0), ci);
+      RECURSE(CMPPAR, s1, CNST(0), prune_hint & ~CY_JUST_SET);
+      PERFORM_CMPPAR (v, co, VALUE(0), r1, ci);
+      RECURSE(CMPPAR, CNST(0), s1, prune_hint & ~CY_JUST_SET);
+#endif
+#if ALPHA	/* Copy register->register because of cmov.  */
+      /* d = r1
+	 alpha:		bis	r1,r1,d */
+      PERFORM_COPY(v, co, r1, ci);
+      RECURSE(COPY, s1, 0, prune_hint & ~CY_JUST_SET);
+#endif
+    }
+
+#if ALPHA
+  /* Alpha conditional move instructions need special treatment.  We let all
+     other instructions assign the next higher-numbered register, but we
+     can't do that here since cmov insns leave the register unchanged if the
+     instruction condition is not satisfied.  Instead we let the cmov
+     instructions non-deterministically overwrite all already-defined
+     registers.  */
+  for (s1 = n_values - 1; s1 >= 0; s1--)
+    {
+      r1 = values[s1];
+      for (s2 = s1 - 1; s2 >= 0; s2--)
+	{
+	  int dr;
+	  r2 = values[s2];
+
+	  for (dr = n_values - 1; dr >= 0; dr--)
+	    {
+	      if (allowed_cost <= 1)
+		{
+		  /* We are in a leaf node.  */
+
+		  /* One of the input operands has to be the result operand
+		     of the previous insn for that insn to be meaningful.
+		     For CMOVE, we have to consider the destination as an input
+		     operand, since its result is not dying here.   */
+		  if (last_dest >= 0
+		      && s1 != last_dest && s2 != last_dest && dr != last_dest)
+		    continue;
+		}
+
+	      v = values[dr];
+	      PERFORM_CMOVEQ (v, co, r1, r2, ci);
+	      CRECURSE_2OP(CMOVEQ, dr, s1, s2, 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_CMOVEQ (v, co, r2, r1, ci);
+	      CRECURSE_2OP(CMOVEQ, dr, s2, s1, 1, prune_hint & ~CY_JUST_SET);
+
+	      v = values[dr];
+	      PERFORM_CMOVNE (v, co, r1, r2, ci);
+	      CRECURSE_2OP(CMOVNE, dr, s1, s2, 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_CMOVNE (v, co, r2, r1, ci);
+	      CRECURSE_2OP(CMOVNE, dr, s2, s1, 1, prune_hint & ~CY_JUST_SET);
+
+	      v = values[dr];
+	      PERFORM_CMOVLT (v, co, r1, r2, ci);
+	      CRECURSE_2OP(CMOVLT, dr, s1, s2, 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_CMOVLT (v, co, r2, r1, ci);
+	      CRECURSE_2OP(CMOVLT, dr, s2, s1, 1, prune_hint & ~CY_JUST_SET);
+
+	      v = values[dr];
+	      PERFORM_CMOVGE (v, co, r1, r2, ci);
+	      CRECURSE_2OP(CMOVGE, dr, s1, s2, 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_CMOVGE (v, co, r2, r1, ci);
+	      CRECURSE_2OP(CMOVGE, dr, s2, s1, 1, prune_hint & ~CY_JUST_SET);
+
+	      v = values[dr];
+	      PERFORM_CMOVLE (v, co, r1, r2, ci);
+	      CRECURSE_2OP(CMOVLE, dr, s1, s2, 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_CMOVLE (v, co, r2, r1, ci);
+	      CRECURSE_2OP(CMOVLE, dr, s2, s1, 1, prune_hint & ~CY_JUST_SET);
+
+	      v = values[dr];
+	      PERFORM_CMOVGT (v, co, r1, r2, ci);
+	      CRECURSE_2OP(CMOVGT, dr, s1, s2, 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_CMOVGT (v, co, r2, r1, ci);
+	      CRECURSE_2OP(CMOVGT, dr, s2, s1, 1, prune_hint & ~CY_JUST_SET);
+	    }
+	}
+    }
+
+  for (s1 = n_values - 1; s1 >= 0; s1--)
+    {
+      int dr;
+      r1 = values[s1];
+
+      for (dr = n_values - 1; dr >= 0; dr--)
+	{
+	  if (allowed_cost <= 1)
+	    {
+	      /* We are in a leaf node.
+
+		 The input operand has to be the result operand of the
+		 previous insns for that insn to be meaningful.
+		 For CMOVE, we have to consider the destination as an input
+		 operand, since its result is not dying here.   */
+	      if (last_dest >= 0 && s1 != last_dest && dr != last_dest)
+		continue;
+	    }
+
+	  v = values[dr];
+	  PERFORM_CMOVEQ (v, co, r1, VALUE(0), ci);
+	  CRECURSE_2OP(CMOVEQ, dr, s1, CNST(0), 1, prune_hint & ~CY_JUST_SET);
+	  v = values[dr];
+	  PERFORM_CMOVNE (v, co, r1, VALUE(0), ci);
+	  CRECURSE_2OP(CMOVNE, dr, s1, CNST(0), 1, prune_hint & ~CY_JUST_SET);
+	  v = values[dr];
+	  PERFORM_CMOVLT (v, co, r1, VALUE(0), ci);
+	  CRECURSE_2OP(CMOVLT, dr, s1, CNST(0), 1, prune_hint & ~CY_JUST_SET);
+	  v = values[dr];
+	  PERFORM_CMOVGE (v, co, r1, VALUE(0), ci);
+	  CRECURSE_2OP(CMOVGE, dr, s1, CNST(0), 1, prune_hint & ~CY_JUST_SET);
+	  v = values[dr];
+	  PERFORM_CMOVLE (v, co, r1, VALUE(0), ci);
+	  CRECURSE_2OP(CMOVLE, dr, s1, CNST(0), 1, prune_hint & ~CY_JUST_SET);
+	  v = values[dr];
+	  PERFORM_CMOVGT (v, co, r1, VALUE(0), ci);
+	  CRECURSE_2OP(CMOVGT, dr, s1, CNST(0), 1, prune_hint & ~CY_JUST_SET);
+
+	  v = values[dr];
+	  PERFORM_CMOVEQ (v, co, r1, VALUE(1), ci);
+	  CRECURSE_2OP(CMOVEQ, dr, s1, CNST(1), 1, prune_hint & ~CY_JUST_SET);
+	  v = values[dr];
+	  PERFORM_CMOVNE (v, co, r1, VALUE(1), ci);
+	  CRECURSE_2OP(CMOVNE, dr, s1, CNST(1), 1, prune_hint & ~CY_JUST_SET);
+	  v = values[dr];
+	  PERFORM_CMOVLT (v, co, r1, VALUE(1), ci);
+	  CRECURSE_2OP(CMOVLT, dr, s1, CNST(1), 1, prune_hint & ~CY_JUST_SET);
+	  v = values[dr];
+	  PERFORM_CMOVGE (v, co, r1, VALUE(1), ci);
+	  CRECURSE_2OP(CMOVGE, dr, s1, CNST(1), 1, prune_hint & ~CY_JUST_SET);
+	  v = values[dr];
+	  PERFORM_CMOVLE (v, co, r1, VALUE(1), ci);
+	  CRECURSE_2OP(CMOVLE, dr, s1, CNST(1), 1, prune_hint & ~CY_JUST_SET);
+	  v = values[dr];
+	  PERFORM_CMOVGT (v, co, r1, VALUE(1), ci);
+	  CRECURSE_2OP(CMOVGT, dr, s1, CNST(1), 1, prune_hint & ~CY_JUST_SET);
+	}
+    }
+#endif /* ALPHA */
+
+  /* 0-ary instructions, just dependent on carry.  */
+  if (ci >= 0 && flag_use_carry
+      && (allowed_cost <= 1 ? ((prune_hint & CY_JUST_SET) != 0) : 1))
+    {
+      /* We don't do "0 - 1 - cy" or "0 + 1 + cy" here.  It would
+	 probably give very few new sequences. */
+#if SPARC || M88000
+      /* d = cy.
+	 sparc:		addx	%g0,0,d
+	 m88000:	addu.ci d,r0,r0 */
+      PERFORM_ADD_CI(v, co, VALUE(0), VALUE(0), ci);
+      RECURSE(ADD_CI, CNST(0), CNST(0), prune_hint & ~CY_JUST_SET);
+#endif
+#if SPARC || M88000
+      /* d = cy, cy = 0.
+	 sparc:		addxcc	%g0,0,d
+	 m88000:	addu.cio d,r0,r0 */
+      PERFORM_ADD_CIO(v, co, VALUE(0), VALUE(0), ci);
+      RECURSE(ADD_CIO, CNST(0), CNST(0), CY_JUST_SET | CY_0);
+#endif
+#if SPARC
+      /* Using SUB_CIO instead would make no difference.
+	 It'd just set carry to it's old value.  */
+      /* d = -cy.
+	 sparc:		subx	%g0,0,d */
+      PERFORM_SUB_CI(v, co, VALUE(0), VALUE(0), ci);
+      RECURSE(SUB_CI, CNST(0), CNST(0), prune_hint & ~CY_JUST_SET);
+#endif
+#if SPARC
+      /* d = 1 - cy.
+	 sparc:		subx	%g0,-1,d */
+      PERFORM_SUB_CI(v, co, VALUE(0), VALUE(-1), ci);
+      RECURSE(SUB_CI, CNST(0), CNST(-1), CY_JUST_SET | CY_1);
+#endif
+#if SPARC
+      /* d = 1 - cy, cy = 1.
+	 sparc:		subxcc	%g0,-1,d */
+      PERFORM_SUB_CIO(v, co, VALUE(0), VALUE(-1), ci);
+      RECURSE(SUB_CIO, CNST(0), CNST(-1), CY_JUST_SET | CY_1);
+#endif
+#if SPARC
+      /* Using ADD_CIO instead would make no difference.
+	 It'd just set carry to it's old value.  */
+      /* d = -1 + cy.
+	 sparc:		addx	%g0,-1,d */
+      PERFORM_ADD_CI(v, co, VALUE(0), VALUE(-1), ci);
+      RECURSE(ADD_CI, CNST(0), CNST(-1), prune_hint & ~CY_JUST_SET);
+#endif
+#if POWER || AM29K /* Use subu.ci on 88k instead with same result */
+      /* d = -1 + cy, cy = cy
+	 rs6000:	sfe	d,d,d
+	 am29k:		subc	d,d,d */
+      PERFORM_ADC_CIO(v, co, VALUE(0), VALUE(0), ci);
+      RECURSE(ADC_CIO, n_values, n_values, prune_hint & ~CY_JUST_SET);
+#endif
+#if M88000
+      /* d = -1 + cy
+	 m88000:	subu.ci	d,r0,r0 */
+      PERFORM_ADC_CI(v, co, VALUE(0), VALUE(0), ci);
+      RECURSE(ADC_CI, CNST(0), CNST(0), prune_hint & ~CY_JUST_SET);
+#endif
+    }
+
+  /* Move instructions.
+     Don't do this if we are just permitted to do one more instruction.  */
+  if (allowed_cost > 1)
+    {
+#if SPARC || POWER || M88000 || AM29K
+      /* d = 0x80000000
+	 sparc:		sethi	%hi(0x80000000),d
+	 rs6000:	liu	d,0x8000
+	 m88000:	or.u	d,r0,0x8000
+	 am29k:		cpeq	d,gr1,gr1 */
+      PERFORM_COPY(v, co, VALUE_MIN_SIGNED, ci);
+      RECURSE(COPY, CNST_0x80000000, 0, prune_hint & ~CY_JUST_SET);
+#endif
+#if SPARC || POWER || M88000 || AM29K || ALPHA
+      /* d = -1
+	 sparc:		mov	-1,d
+	 rs6000:	lil	d,-1
+	 m88000:	subu	d,r0,1
+	 am29k:		constn	d,1
+	 alpha:		lda	d,-1 */
+      PERFORM_COPY(v, co, VALUE(-1), ci);
+      RECURSE(COPY, CNST(-1), 0, prune_hint & ~CY_JUST_SET);
+      /* d = 1
+	 sparc:		mov	1,d
+	 rs6000:	lil	d,1
+	 m88000:	addu	d,r0,1
+	 am29k:		const	d,1
+	 alpha:		lda	d,1 */
+      PERFORM_COPY(v, co, VALUE(1), ci);
+      RECURSE(COPY, CNST(1), 0, prune_hint & ~CY_JUST_SET);
+#endif
+#if POWER || AM29K || ALPHA	/* Sparc and 88k should not need this.
+				   Alpha can use it because of cmov.  */
+      /* d = 0
+	 rs6000:	lil	d,0
+	 am29k:		const	d,0
+	 alpha:		lda	d,0 */
+      PERFORM_COPY(v, co, VALUE(0), ci);
+      RECURSE(COPY, CNST(0), 0, prune_hint & ~CY_JUST_SET);
+#endif
+#if M88000
+      /* d = 0x7fffffff
+	 m88000:	set	d,r0,31<0> */
+      PERFORM_COPY(v, co, VALUE_MAX_SIGNED, ci);
+      RECURSE(COPY, CNST_0x7FFFFFFF, 0, prune_hint & ~CY_JUST_SET);
+#endif
+    }
+
+#ifdef TIMING
+  timings[allowed_cost] += cputime() - time_start;
+#endif
+}
+#endif
+
+#if HPPA
+/* Missing insns:
+   * IOR,imm,s1,d using depi
+   * addil,0x80000000,s2,d for complementing msb
+   * Several (signed) completer variants for add/sub
+   * All completer variants for shift/copy/???
+   Ideas:
+   * After nuv, nvz, etc, we should pass CY_1; after other
+     conditions we should pass CY_0.
+   * When CY_0 or CY_1 are set (even if not CY_JUST_SET),
+     we should prune some carry-inputting insns
+     (also for other archs).
+   */
+void
+MAKENAME(synth) (insn_t *sequence,
+		 int n_insns,
+		 word *values,
+		 int n_values,
+		 word goal_value,
+		 int allowed_cost,
+		 int ci,
+		 int prune_hint,
+		 int nullify_flag_in)
+{
+#ifdef TIMING
+  unsigned long time_start = cputime();
+#endif
+
+  /* FIRSTLY EVERYTHING WITHOUT SKIP.  */
+  MAKENAME (synth_nonskip) (sequence, n_insns, values, n_values, goal_value,
+			    allowed_cost, ci, prune_hint, nullify_flag_in);
+
+#if !MAKE_LEAF
+  /* SECONDLY EVERYTHING WITH CONDITIONAL SKIP.  */
+  /* Don't skip if end of sequence...! */
+  if (allowed_cost > 1)
+    synth_condskip (sequence, n_insns, values, n_values, goal_value,
+		    allowed_cost, ci, prune_hint, nullify_flag_in);
+
+  /* THIRDLY EVERYTHING WITH UNCONDITIONAL SKIP.  */
+  /* Don't do this if allowed_cost doesn't permit one more insn,
+     otherwise we would nullify a non-existing insn.
+     Also don't do this if the previous insn was not a nullifying
+     insn, because if it was not, the next instruction would never
+     be executed.  */
+  if (allowed_cost > 1 && (prune_hint & NULLIFYING_INSN))
+    synth_skip (sequence, n_insns, values, n_values, goal_value, allowed_cost,
+		ci, prune_hint, nullify_flag_in);
+#endif
+
+#ifdef TIMING
+  timings[allowed_cost] += cputime() - time_start;
+#endif
+}
+
+void
+MAKENAME(synth_nonskip) (insn_t *sequence,
+			 int n_insns,
+			 word *values,
+			 int n_values,
+			 word goal_value,
+			 int allowed_cost,
+			 int ci,
+			 int prune_hint,
+			 int nullify_flag_in)
+{
+  int s1, s2;
+  word v, r1, r2;
+  int co;
+  int last_dest;
+  int dr, dr_lim;
+  int nullify_flag;
+
+  if (n_insns > 0)
+    last_dest = sequence[n_insns - 1].d;
+  else
+    last_dest = -1;
+
+  /* Binary operations with carry-in.  */
+  if (ci >= 0 && flag_use_carry)
+    {
+      for (s1 = n_values - 1; s1 >= 0; s1--)
+	{
+	  r1 = values[s1];
+	  for (s2 = s1 - 1; s2 >= 0; s2--)
+	    {
+	      r2 = values[s2];
+
+	      if (allowed_cost <= 1 && (prune_hint & (CY_JUST_SET | NULLIFYING_INSN)) == 0)
+		{
+		  /* We are in a leaf node.  CY was not set (to 0, 1 or to
+		     a data dependent value) by the previous insn, nor was
+		     the N (nullification) bit.
+		     So one of the input operands has to be the result
+		     operand of the previous insn for that insn to be
+		     meaningful.  */
+		  if (last_dest >= 0 && s1 != last_dest && s2 != last_dest)
+		    continue;
+		}
+
+	      dr_lim = prune_hint & NULLIFYING_INSN ? 0 : n_values;
+	      for (dr = n_values; dr >= dr_lim; dr--)
+		{
+		  /* hppa:		addc */
+		  if (!nullify_flag_in) PERFORM_ADD_CIO(v, co, r1, r2, ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(ADD_CIO, dr, s1, s2, CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+
+		  /* hppa:		subb */
+		  if (!nullify_flag_in) PERFORM_ADC_CIO(v, co, r1, r2, ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(ADC_CIO, dr, s1, s2, CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+		  if (!nullify_flag_in) PERFORM_ADC_CIO(v, co, r2, r1, ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(ADC_CIO, dr, s2, s1, CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+		}
+	    }
+	}
+    }
+
+  /* Binary operations without carry-in.  */
+  for (s1 = n_values - 1; s1 >= 0; s1--)
+    {
+      r1 = values[s1];
+      for (s2 = s1 - 1; s2 >= 0; s2--)
+	{
+	  r2 = values[s2];
+
+	  if (allowed_cost <= 1 && (prune_hint & NULLIFYING_INSN) == 0)
+	    {
+	      /* We are in a leaf node.  The N (nullification) bit was not
+		 set by the previous insn.
+		 So one of the input operands has to be the result operand
+		 of the previous insn for that insn to be meaningful.  */
+	      if (last_dest >= 0 && s1 != last_dest && s2 != last_dest)
+		continue;
+	    }
+
+	  dr_lim = prune_hint & NULLIFYING_INSN ? 0 : n_values;
+	  for (dr = n_values; dr >= dr_lim; dr--)
+	    {
+	      /* hppa:	add */
+	      if (!nullify_flag_in) PERFORM_ADD_CO(v, co, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CO, dr, s1, s2, CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+
+	      /* hppa:	addl */
+	      if (!nullify_flag_in) PERFORM_ADD(v, co, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD, dr, s1, s2, prune_hint & ~CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+
+	      /* hppa:	uaddcm */
+	      if (!nullify_flag_in) PERFORM_ADDCMPL(v, co, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADDCMPL, dr, s1, s2, prune_hint & ~CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+	      if (!nullify_flag_in) PERFORM_ADDCMPL(v, co, r2, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADDCMPL, dr, s2, s1, prune_hint & ~CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+
+	      /* hppa:	sub */
+	      if (!nullify_flag_in) PERFORM_ADC_CO(v, co, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADC_CO, dr, s1, s2, CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+	      if (!nullify_flag_in) PERFORM_ADC_CO(v, co, r2, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADC_CO, dr, s2, s1, CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+
+	      /* hppa:	and */
+	      if (!nullify_flag_in) PERFORM_AND(v, co, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(AND, dr, s1, s2, prune_hint & ~CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+
+	      /* hppa:	or */
+	      if (!nullify_flag_in) PERFORM_IOR(v, co, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(IOR, dr, s1, s2, prune_hint & ~CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+
+	      /* hppa:	xor */
+	      if (!nullify_flag_in) PERFORM_XOR(v, co, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(XOR, dr, s1, s2, prune_hint & ~CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+
+	      /* hppa:	andcm */
+	      if (!nullify_flag_in) PERFORM_ANDC(v, co, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ANDC, dr, s1, s2, prune_hint & ~CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+	      if (!nullify_flag_in) PERFORM_ANDC(v, co, r2, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ANDC, dr, s2, s1, prune_hint & ~CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+	    }
+	}
+    }
+
+  /* Unary operations with carry-in.  */
+  if (ci >= 0 && flag_use_carry)
+    {
+      for (s1 = n_values - 1; s1 >= 0; s1--)
+	{
+	  r1 = values[s1];
+
+	  if (allowed_cost <= 1 && (prune_hint & (CY_JUST_SET | NULLIFYING_INSN)) == 0)
+	    {
+	      /* We are in a leaf node.  CY was not set (to 0, 1 or to
+		 a data dependent value) by the previous insn, nor was
+		 the N (nullification) bit.
+		 The input operand has to be the result operand of the
+		 previous insn for that insn to be meaningful.  */
+	      if (last_dest >= 0 && s1 != last_dest)
+		continue;
+	    }
+
+	  dr_lim = prune_hint & NULLIFYING_INSN ? 0 : n_values;
+	  for (dr = n_values; dr >= dr_lim; dr--)
+	    {
+	      /* d,cy = 2*r1 + cy
+		 hppa:	addc	s1,s1,d */
+	      if (!nullify_flag_in) PERFORM_ADD_CIO(v, co, r1, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CIO, dr, s1, s1, CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+
+	      /* d,cy = r1 + cy - 1
+		 hppa:	subb	s1,r0,d */
+	      if (!nullify_flag_in) PERFORM_ADD_CIO(v, co, r1, VALUE(-1), ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CIO, dr, s1, CNST(-1), CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+
+	      /* d,cy = r1 + cy
+		 hppa:	addc	s1,r0,d */
+	      if (!nullify_flag_in) PERFORM_ADD_CIO(v, co, r1, VALUE(0), ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CIO, dr, s1, CNST(0), CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+
+	      /* d,cy = ~r1 + cy
+		 hppa:	subb	r0,s1,d */
+	      if (!nullify_flag_in) PERFORM_ADC_CIO(v, co, VALUE(0), r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADC_CIO, dr, CNST(0), s1, CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+	    }
+	}
+    }
+
+  /* Unary operations without carry-in.  */
+  for (s1 = n_values - 1; s1 >= 0; s1--)
+    {
+      r1 = values[s1];
+
+      if (allowed_cost <= 1 && (prune_hint & NULLIFYING_INSN) == 0)
+	{
+	  /* We are in a leaf node.  The N (nullification) bit was not
+	     set by the previous insn.
+	     The input operand has to be the result operand of the
+	     previous insns for that insn to be meaningful.  */
+	  if (last_dest >= 0 && s1 != last_dest)
+	    continue;
+	}
+
+      dr_lim = prune_hint & NULLIFYING_INSN ? 0 : n_values;
+      for (dr = n_values; dr >= dr_lim; dr--)
+	{
+	  /* d,cy = 2*r1
+	     hppa:		add	s1,s1,d */
+	  if (!nullify_flag_in) PERFORM_ADD_CO(v, co, r1, r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CO, dr, s1, s1, CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+	  /* d = r1 & 1
+	     hppa:		extru	s1,31,1,d */
+	  if (!nullify_flag_in) PERFORM_AND(v, co, r1, VALUE(1), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(AND, dr, s1, CNST(1), prune_hint & ~CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+	  /* d = r1 & 0x7fffffff
+	     hppa:		extru	s1,31,31,d */
+	  if (!nullify_flag_in) PERFORM_AND(v, co, r1, VALUE_MAX_SIGNED, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(AND, dr, s1, CNST_0x7FFFFFFF, prune_hint & ~CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+	  /* d = ~r1
+	     hppa:		andcm	r0,s1,d */
+	  if (!nullify_flag_in) PERFORM_SUB(v, co, VALUE(-1), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(SUB, dr, CNST(-1), s1, prune_hint & ~CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+	  /* d,cy = -1 + ~r1 + 1 (i.e. one's complement and set carry.)
+	     hppa:	subi	-1,s1,d */
+	  if (!nullify_flag_in) PERFORM_ADC_CO(v, co, VALUE(-1), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADC_CO, dr, CNST(-1), s1, (CY_JUST_SET | CY_1) & ~NULLIFYING_INSN, NOT_NULLIFY);
+	  /* d,cy = r1 + 1
+	     hppa:		addi	1,s1,d */
+	  if (!nullify_flag_in) PERFORM_ADD_CO(v, co, r1, VALUE(1), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CO, dr, s1, CNST(1), CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+	  /* d = r1 + 1
+	     hppa:		ldo	1(s1),d */
+	  if (!nullify_flag_in) PERFORM_ADD(v, co, r1, VALUE(1), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD, dr, s1, CNST(1), prune_hint & ~CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+	  /* d,cy = r1 + -1
+	     hppa:		addi	-1,s1,d */
+	  if (!nullify_flag_in) PERFORM_ADD_CO(v, co, r1, VALUE(-1), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CO, dr, s1, CNST(-1), CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+	  /* d = r1 - 1
+	     hppa:		ldo	-1(s1),d */
+	  if (!nullify_flag_in) PERFORM_ADD(v, co, r1, VALUE(-1), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD, dr, s1, CNST(-1), prune_hint & ~CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+	  /* d,cy = -r1
+	     hppa:		subi	0,s1,d */
+	  if (!nullify_flag_in) PERFORM_ADC_CO(v, co, VALUE(0), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADC_CO, dr, CNST(0), s1, CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+
+	  {
+	    int cnt;
+	    for (cnt = 1; cnt < BITS_PER_WORD; cnt += (flag_shifts ? 1 : BITS_PER_WORD - 2))
+	      {
+		if (!nullify_flag_in) PERFORM_LSHIFTR(v, co, r1, VALUE(cnt), ci);
+		else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		PA_RECURSE(LSHIFTR, dr, s1, CNST(cnt), prune_hint & ~CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+
+		if (!nullify_flag_in) PERFORM_ASHIFTR(v, co, r1, VALUE(cnt), ci);
+		else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		PA_RECURSE(ASHIFTR, dr, s1, CNST(cnt), prune_hint & ~CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+
+		if (!nullify_flag_in) PERFORM_SHIFTL(v, co, r1, VALUE(cnt), ci);
+		else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		PA_RECURSE(SHIFTL, dr, s1, CNST(cnt), prune_hint & ~CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+
+		if (!nullify_flag_in) PERFORM_ROTATEL(v, co, r1, VALUE(cnt), ci);
+		else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		PA_RECURSE(ROTATEL, dr, s1, CNST(cnt), prune_hint & ~CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+	      }
+	  }
+
+	  if (flag_extracts)
+	    {
+	      int cnt;
+	      /* Loop to 30, not 31, since 31 would generate operations
+		 identical to shifts by 31.  */
+	      for (cnt = 1; cnt < BITS_PER_WORD - 1; cnt++)
+		{
+		  if (!nullify_flag_in) PERFORM_EXTS1(v, co, r1, VALUE(cnt), ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(EXTS1, dr, s1, CNST(cnt), prune_hint & ~CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+		  if (!nullify_flag_in) PERFORM_EXTU1(v, co, r1, VALUE(cnt), ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(EXTU1, dr, s1, CNST(cnt), prune_hint & ~CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+		}
+	      /* Loop to 29, not 31, since 30 and 31 would generate operations
+		 identical to shifts by 30 and 31.  */
+	      for (cnt = 1; cnt < BITS_PER_WORD - 2; cnt++)
+		{
+		  if (!nullify_flag_in) PERFORM_EXTS2(v, co, r1, VALUE(cnt), ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(EXTS2, dr, s1, CNST(cnt), prune_hint & ~CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+		  if (!nullify_flag_in) PERFORM_EXTU2(v, co, r1, VALUE(cnt), ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(EXTU2, dr, s1, CNST(cnt), prune_hint & ~CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+		}
+	    }
+	}
+    }
+
+  /* 0-ary instructions, just dependent on carry.  */
+  if (ci >= 0 && flag_use_carry
+      && (allowed_cost <= 1 ? ((prune_hint & (CY_JUST_SET | NULLIFYING_INSN)) != 0) : 1))
+    {
+      dr_lim = prune_hint & NULLIFYING_INSN ? 0 : n_values;
+      for (dr = n_values; dr >= dr_lim; dr--)
+	{
+	  /* We don't do "0 - 1 - cy" or "0 + 1 + cy" here.  It would
+	     probably give very few new sequences. */
+	  /* d = cy, cy = 0.
+	     hppa:		addc	r0,r0,d */
+	  if (!nullify_flag_in) PERFORM_ADD_CIO(v, co, VALUE(0), VALUE(0), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CIO, dr, CNST(0), CNST(0), (CY_JUST_SET | CY_0) & ~NULLIFYING_INSN, NOT_NULLIFY);
+	  /* d = -1 + cy, cy = cy
+	     hppa:		subb	d,d,d */
+	  if (!nullify_flag_in) PERFORM_ADC_CIO(v, co, VALUE(0), VALUE(0), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADC_CIO, dr, n_values, n_values, prune_hint & ~CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+	}
+    }
+
+  /* Move instructions.
+     Don't do this if we are just permitted to do one more instruction,
+     unless we might be nullified.  */
+  if (allowed_cost > 1 || (prune_hint & NULLIFYING_INSN))
+    {
+      dr_lim = prune_hint & NULLIFYING_INSN ? 0 : n_values;
+      for (dr = n_values; dr >= dr_lim; dr--)
+	{
+	  /* d = 0x80000000
+	     hppa:		ldil	l'0x80000000,d */
+	  if (!nullify_flag_in) PERFORM_COPY(v, co, VALUE_MIN_SIGNED, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COPY, dr, CNST_0x80000000, 0, prune_hint & ~CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+	  /* d = -1
+	     hppa:		ldi	-1,d */
+	  if (!nullify_flag_in) PERFORM_COPY(v, co, VALUE(-1), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COPY, dr, CNST(-1), 0, prune_hint & ~CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+	  /* d = 1
+	     hppa:		ldi	1,d */
+	  if (!nullify_flag_in) PERFORM_COPY(v, co, VALUE(1), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COPY, dr, CNST(1), 0, prune_hint & ~CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+	  /* d = 0
+	     hppa:		ldi	0,d */
+	  if (!nullify_flag_in) PERFORM_COPY(v, co, VALUE(0), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COPY, dr, CNST(0), 0, prune_hint & ~CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+	  /* d = 0x7fffffff
+	     hppa:		zdepi	-1,31,31,d */
+	  if (!nullify_flag_in) PERFORM_COPY(v, co, VALUE_MAX_SIGNED, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COPY, dr, CNST_0x7FFFFFFF, 0, prune_hint & ~CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+	}
+    }
+  /* Copy register->register if we might be nullified.  */
+  if (prune_hint & NULLIFYING_INSN)
+    {
+      for (s1 = n_values - 1; s1 >= 0; s1--)
+	{
+	  r1 = values[s1];
+	  for (dr = n_values - 1; dr >= 0; dr--)
+	    {
+	      if (!nullify_flag_in) PERFORM_COPY(v, co, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(COPY, dr, s1, 0, prune_hint & ~CY_JUST_SET & ~NULLIFYING_INSN, NOT_NULLIFY);
+	    }
+	}
+    }
+}
+
+#if !MAKE_LEAF
+void
+synth_condskip (insn_t *sequence,
+		int n_insns,
+		word *values,
+		int n_values,
+		word goal_value,
+		int allowed_cost,
+		int ci,
+		int prune_hint,
+		int nullify_flag_in)
+{
+  int s1, s2;
+  word v, r1, r2;
+  int co;
+  int last_dest;
+  int dr, dr_lim;
+  int nullify_flag;
+
+  if (n_insns > 0)
+    last_dest = sequence[n_insns - 1].d;
+  else
+    last_dest = -1;
+
+  /* Binary operations with carry-in.  */
+  if (ci >= 0 && flag_use_carry)
+    {
+      for (s1 = n_values - 1; s1 >= 0; s1--)
+	{
+	  r1 = values[s1];
+	  for (s2 = s1 - 1; s2 >= 0; s2--)
+	    {
+	      r2 = values[s2];
+	      dr_lim = prune_hint & NULLIFYING_INSN ? 0 : n_values;
+	      for (dr = n_values; dr >= dr_lim; dr--)
+		{
+		  /* hppa:		addc */
+		  if (!nullify_flag_in) PERFORM_ADD_CIO_SEQ(v, co, nullify_flag, r1, r2, ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(ADD_CIO_SEQ, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+		  if (!nullify_flag_in) PERFORM_ADD_CIO_SNE(v, co, nullify_flag, r1, r2, ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(ADD_CIO_SNE, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+		  if (!nullify_flag_in) PERFORM_ADD_CIO_SLTU(v, co, nullify_flag, r1, r2, ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(ADD_CIO_SLTU, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+		  if (!nullify_flag_in) PERFORM_ADD_CIO_SGEU(v, co, nullify_flag, r1, r2, ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(ADD_CIO_SGEU, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+		  if (!nullify_flag_in) PERFORM_ADD_CIO_SLEU(v, co, nullify_flag, r1, r2, ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(ADD_CIO_SLEU, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+		  if (!nullify_flag_in) PERFORM_ADD_CIO_SGTU(v, co, nullify_flag, r1, r2, ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(ADD_CIO_SGTU, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+		  if (!nullify_flag_in) PERFORM_ADD_CIO_SODD(v, co, nullify_flag, r1, r2, ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(ADD_CIO_SODD, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+		  if (!nullify_flag_in) PERFORM_ADD_CIO_SEVN(v, co, nullify_flag, r1, r2, ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(ADD_CIO_SEVN, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+
+		  /* hppa:		subb */
+		  if (!nullify_flag_in) PERFORM_ADC_CIO_SEQ(v, co, nullify_flag, r1, r2, ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(ADC_CIO_SEQ, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+		  if (!nullify_flag_in) PERFORM_ADC_CIO_SNE(v, co, nullify_flag, r1, r2, ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(ADC_CIO_SNE, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+		  if (!nullify_flag_in) PERFORM_ADC_CIO_SLTU(v, co, nullify_flag, r1, r2, ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(ADC_CIO_SLTU, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+		  if (!nullify_flag_in) PERFORM_ADC_CIO_SGEU(v, co, nullify_flag, r1, r2, ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(ADC_CIO_SGEU, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+		  if (!nullify_flag_in) PERFORM_ADC_CIO_SLEU(v, co, nullify_flag, r1, r2, ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(ADC_CIO_SLEU, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+		  if (!nullify_flag_in) PERFORM_ADC_CIO_SGTU(v, co, nullify_flag, r1, r2, ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(ADC_CIO_SGTU, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+		  if (!nullify_flag_in) PERFORM_ADC_CIO_SODD(v, co, nullify_flag, r1, r2, ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(ADC_CIO_SODD, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+		  if (!nullify_flag_in) PERFORM_ADC_CIO_SEVN(v, co, nullify_flag, r1, r2, ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(ADC_CIO_SEVN, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+
+		  if (!nullify_flag_in) PERFORM_ADC_CIO_SEQ(v, co, nullify_flag, r2, r1, ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(ADC_CIO_SEQ, dr, s2, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+		  if (!nullify_flag_in) PERFORM_ADC_CIO_SNE(v, co, nullify_flag, r2, r1, ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(ADC_CIO_SNE, dr, s2, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+		  if (!nullify_flag_in) PERFORM_ADC_CIO_SLTU(v, co, nullify_flag, r2, r1, ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(ADC_CIO_SLTU, dr, s2, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+		  if (!nullify_flag_in) PERFORM_ADC_CIO_SGEU(v, co, nullify_flag, r2, r1, ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(ADC_CIO_SGEU, dr, s2, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+		  if (!nullify_flag_in) PERFORM_ADC_CIO_SLEU(v, co, nullify_flag, r2, r1, ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(ADC_CIO_SLEU, dr, s2, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+		  if (!nullify_flag_in) PERFORM_ADC_CIO_SGTU(v, co, nullify_flag, r2, r1, ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(ADC_CIO_SGTU, dr, s2, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+		  if (!nullify_flag_in) PERFORM_ADC_CIO_SODD(v, co, nullify_flag, r2, r1, ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(ADC_CIO_SODD, dr, s2, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+		  if (!nullify_flag_in) PERFORM_ADC_CIO_SEVN(v, co, nullify_flag, r2, r1, ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(ADC_CIO_SEVN, dr, s2, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+		}
+	    }
+	}
+    }
+
+  /* Binary operations without carry-in.  */
+  for (s1 = n_values - 1; s1 >= 0; s1--)
+    {
+      r1 = values[s1];
+      for (s2 = s1 - 1; s2 >= 0; s2--)
+	{
+	  r2 = values[s2];
+	  dr_lim = prune_hint & NULLIFYING_INSN ? 0 : n_values;
+	  for (dr = n_values; dr >= dr_lim; dr--)
+	    {
+	      /* hppa:	add */
+	      if (!nullify_flag_in) PERFORM_ADD_CO_SEQ(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CO_SEQ, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_CO_SNE(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CO_SNE, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_CO_SLTU(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CO_SLTU, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_CO_SGEU(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CO_SGEU, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_CO_SLEU(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CO_SLEU, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_CO_SGTU(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CO_SGTU, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_CO_SODD(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CO_SODD, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_CO_SEVN(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CO_SEVN, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+
+	      /* hppa:	addl */
+	      if (!nullify_flag_in) PERFORM_ADD_SEQ(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_SEQ, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_SNE(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_SNE, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_SLTU(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_SLTU, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_SGEU(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_SGEU, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_SLEU(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_SLEU, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_SGTU(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_SGTU, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_SOVS(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_SOVS, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_SNVS(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_SNVS, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_SODD(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_SODD, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_SEVN(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_SEVN, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+
+	      /* hppa:	sub */
+	      if (!nullify_flag_in) PERFORM_ADC_CO_SEQ(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADC_CO_SEQ, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADC_CO_SNE(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADC_CO_SNE, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADC_CO_SLTU(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADC_CO_SLTU, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADC_CO_SGEU(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADC_CO_SGEU, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADC_CO_SLEU(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADC_CO_SLEU, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADC_CO_SGTU(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADC_CO_SGTU, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADC_CO_SODD(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADC_CO_SODD, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADC_CO_SEVN(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADC_CO_SEVN, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+
+	      if (!nullify_flag_in) PERFORM_ADC_CO_SEQ(v, co, nullify_flag, r2, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADC_CO_SEQ, dr, s2, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADC_CO_SNE(v, co, nullify_flag, r2, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADC_CO_SNE, dr, s2, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADC_CO_SLTU(v, co, nullify_flag, r2, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADC_CO_SLTU, dr, s2, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADC_CO_SGEU(v, co, nullify_flag, r2, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADC_CO_SGEU, dr, s2, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADC_CO_SLEU(v, co, nullify_flag, r2, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADC_CO_SLEU, dr, s2, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADC_CO_SGTU(v, co, nullify_flag, r2, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADC_CO_SGTU, dr, s2, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADC_CO_SODD(v, co, nullify_flag, r2, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADC_CO_SODD, dr, s2, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADC_CO_SEVN(v, co, nullify_flag, r2, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADC_CO_SEVN, dr, s2, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+
+	      /* hppa:	and */
+	      if (!nullify_flag_in) PERFORM_AND_SEQ(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(AND_SEQ, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_AND_SNE(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(AND_SNE, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_AND_SLTS(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(AND_SLTS, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_AND_SGES(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(AND_SGES, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_AND_SLES(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(AND_SLES, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_AND_SGTS(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(AND_SGTS, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_AND_SODD(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(AND_SODD, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_AND_SEVN(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(AND_SEVN, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+
+	      /* hppa:	or */
+	      if (!nullify_flag_in) PERFORM_IOR_SEQ(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(IOR_SEQ, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_IOR_SNE(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(IOR_SNE, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_IOR_SLTS(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(IOR_SLTS, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_IOR_SGES(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(IOR_SGES, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_IOR_SLES(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(IOR_SLES, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_IOR_SGTS(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(IOR_SGTS, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_IOR_SODD(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(IOR_SODD, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_IOR_SEVN(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(IOR_SEVN, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+
+	      /* hppa:	xor */
+	      if (!nullify_flag_in) PERFORM_XOR_SEQ(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(XOR_SEQ, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_XOR_SNE(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(XOR_SNE, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_XOR_SLTS(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(XOR_SLTS, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_XOR_SGES(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(XOR_SGES, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_XOR_SLES(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(XOR_SLES, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_XOR_SGTS(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(XOR_SGTS, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_XOR_SODD(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(XOR_SODD, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_XOR_SEVN(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(XOR_SEVN, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+
+	      /* hppa:	andcm */
+	      if (!nullify_flag_in) PERFORM_ANDC_SEQ(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ANDC_SEQ, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ANDC_SNE(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ANDC_SNE, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ANDC_SLTS(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ANDC_SLTS, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ANDC_SGES(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ANDC_SGES, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ANDC_SLES(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ANDC_SLES, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ANDC_SGTS(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ANDC_SGTS, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ANDC_SODD(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ANDC_SODD, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ANDC_SEVN(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ANDC_SEVN, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ANDC_SEQ(v, co, nullify_flag, r2, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ANDC_SEQ, dr, s2, s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ANDC_SNE(v, co, nullify_flag, r2, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ANDC_SNE, dr, s2, s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ANDC_SLTS(v, co, nullify_flag, r2, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ANDC_SLTS, dr, s2, s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ANDC_SGES(v, co, nullify_flag, r2, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ANDC_SGES, dr, s2, s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ANDC_SLES(v, co, nullify_flag, r2, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ANDC_SLES, dr, s2, s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ANDC_SGTS(v, co, nullify_flag, r2, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ANDC_SGTS, dr, s2, s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ANDC_SODD(v, co, nullify_flag, r2, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ANDC_SODD, dr, s2, s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ANDC_SEVN(v, co, nullify_flag, r2, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ANDC_SEVN, dr, s2, s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+
+	      /* comclr instructions.  We don't commute the operands here,
+		 since e.g. r1<r2 is the same as r2>r1.  */
+	      /* hppa:	comclr,= */
+	      if (!nullify_flag_in) PERFORM_COMCLR_SEQ(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(COMCLR_SEQ, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      /* hppa:	comclr,<> */
+	      if (!nullify_flag_in) PERFORM_COMCLR_SNE(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(COMCLR_SNE, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      /* hppa:	comclr,< */
+	      if (!nullify_flag_in) PERFORM_COMCLR_SLTS(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(COMCLR_SLTS, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      /* hppa:	comclr,>= */
+	      if (!nullify_flag_in) PERFORM_COMCLR_SGES(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(COMCLR_SGES, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      /* hppa:	comclr,<= */
+	      if (!nullify_flag_in) PERFORM_COMCLR_SLES(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(COMCLR_SLES, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      /* hppa:	comclr,> */
+	      if (!nullify_flag_in) PERFORM_COMCLR_SGTS(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(COMCLR_SGTS, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      /* hppa:	comclr,<< */
+	      if (!nullify_flag_in) PERFORM_COMCLR_SLTU(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(COMCLR_SLTU, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      /* hppa:	comclr,>>= */
+	      if (!nullify_flag_in) PERFORM_COMCLR_SGEU(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(COMCLR_SGEU, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      /* hppa:	comclr,<<= */
+	      if (!nullify_flag_in) PERFORM_COMCLR_SLEU(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(COMCLR_SLEU, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      /* hppa:	comclr,>> */
+	      if (!nullify_flag_in) PERFORM_COMCLR_SGTU(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(COMCLR_SGTU, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+#if LATER
+	      /* Do we need both commutations here??? */
+	      /* hppa:	comclr,sv */
+	      if (!nullify_flag_in) PERFORM_COMCLR_SOVS(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(COMCLR_SOVS, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_COMCLR_SOVS(v, co, nullify_flag, r2, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(COMCLR_SOVS, dr, s2, s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+
+	      /* hppa:	comclr,nsv */
+	      if (!nullify_flag_in) PERFORM_COMCLR_SNVS(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(COMCLR_SNVS, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_COMCLR_SNVS(v, co, nullify_flag, r2, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(COMCLR_SNVS, dr, s2, s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+#endif
+	      /* hppa:	comclr,od */
+	      if (!nullify_flag_in) PERFORM_COMCLR_SODD(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(COMCLR_SODD, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      /* hppa:	comclr,ev */
+	      if (!nullify_flag_in) PERFORM_COMCLR_SEVN(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(COMCLR_SEVN, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	    }
+	}
+    }
+
+  /* Unary operations with carry-in.  */
+  if (ci >= 0 && flag_use_carry)
+    {
+      for (s1 = n_values - 1; s1 >= 0; s1--)
+	{
+	  r1 = values[s1];
+	  dr_lim = prune_hint & NULLIFYING_INSN ? 0 : n_values;
+	  for (dr = n_values; dr >= dr_lim; dr--)
+	    {
+	      /* d,cy = 2*r1 + cy
+		 hppa:	addc	s1,s1,d */
+	      if (!nullify_flag_in) PERFORM_ADD_CIO_SEQ(v, co, nullify_flag, r1, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CIO_SEQ, dr, s1, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_CIO_SNE(v, co, nullify_flag, r1, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CIO_SNE, dr, s1, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_CIO_SLTU(v, co, nullify_flag, r1, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CIO_SLTU, dr, s1, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_CIO_SGEU(v, co, nullify_flag, r1, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CIO_SGEU, dr, s1, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_CIO_SLEU(v, co, nullify_flag, r1, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CIO_SLEU, dr, s1, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_CIO_SGTU(v, co, nullify_flag, r1, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CIO_SGTU, dr, s1, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_CIO_SODD(v, co, nullify_flag, r1, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CIO_SODD, dr, s1, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_CIO_SEVN(v, co, nullify_flag, r1, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CIO_SEVN, dr, s1, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+
+	      /* d,cy = r1 + cy - 1
+		 hppa:	subb	s1,r0,d */
+	      if (!nullify_flag_in) PERFORM_ADD_CIO_SEQ(v, co, nullify_flag, r1, VALUE(-1), ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CIO_SEQ, dr, s1, CNST(-1), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_CIO_SNE(v, co, nullify_flag, r1, VALUE(-1), ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CIO_SNE, dr, s1, CNST(-1), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_CIO_SLTU(v, co, nullify_flag, r1, VALUE(-1), ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CIO_SLTU, dr, s1, CNST(-1), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_CIO_SGEU(v, co, nullify_flag, r1, VALUE(-1), ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CIO_SGEU, dr, s1, CNST(-1), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_CIO_SLEU(v, co, nullify_flag, r1, VALUE(-1), ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CIO_SLEU, dr, s1, CNST(-1), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_CIO_SGTU(v, co, nullify_flag, r1, VALUE(-1), ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CIO_SGTU, dr, s1, CNST(-1), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_CIO_SODD(v, co, nullify_flag, r1, VALUE(-1), ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CIO_SODD, dr, s1, CNST(-1), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_CIO_SEVN(v, co, nullify_flag, r1, VALUE(-1), ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CIO_SEVN, dr, s1, CNST(-1), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+
+	      /* d,cy = r1 + cy
+		 hppa:	addc	s1,r0,d */
+	      if (!nullify_flag_in) PERFORM_ADD_CIO_SEQ(v, co, nullify_flag, r1, VALUE(0), ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CIO_SEQ, dr, s1, CNST(0), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_CIO_SNE(v, co, nullify_flag, r1, VALUE(0), ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CIO_SNE, dr, s1, CNST(0), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_CIO_SLTU(v, co, nullify_flag, r1, VALUE(0), ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CIO_SLTU, dr, s1, CNST(0), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_CIO_SGEU(v, co, nullify_flag, r1, VALUE(0), ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CIO_SGEU, dr, s1, CNST(0), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_CIO_SLEU(v, co, nullify_flag, r1, VALUE(0), ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CIO_SLEU, dr, s1, CNST(0), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_CIO_SGTU(v, co, nullify_flag, r1, VALUE(0), ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CIO_SGTU, dr, s1, CNST(0), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_CIO_SODD(v, co, nullify_flag, r1, VALUE(0), ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CIO_SODD, dr, s1, CNST(0), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADD_CIO_SEVN(v, co, nullify_flag, r1, VALUE(0), ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CIO_SEVN, dr, s1, CNST(0), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+
+	      /* d,cy = ~r1 + cy
+		 hppa:	subb	r0,s1,d */
+	      if (!nullify_flag_in) PERFORM_ADC_CIO_SEQ(v, co, nullify_flag, VALUE(0), r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADC_CIO_SEQ, dr, CNST(0), s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADC_CIO_SNE(v, co, nullify_flag, VALUE(0), r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADC_CIO_SNE, dr, CNST(0), s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADC_CIO_SLTU(v, co, nullify_flag, VALUE(0), r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADC_CIO_SLTU, dr, CNST(0), s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADC_CIO_SGEU(v, co, nullify_flag, VALUE(0), r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADC_CIO_SGEU, dr, CNST(0), s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADC_CIO_SLEU(v, co, nullify_flag, VALUE(0), r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADC_CIO_SLEU, dr, CNST(0), s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADC_CIO_SGTU(v, co, nullify_flag, VALUE(0), r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADC_CIO_SGTU, dr, CNST(0), s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADC_CIO_SODD(v, co, nullify_flag, VALUE(0), r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADC_CIO_SODD, dr, CNST(0), s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADC_CIO_SEVN(v, co, nullify_flag, VALUE(0), r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADC_CIO_SEVN, dr, CNST(0), s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	    }
+	}
+    }
+
+  /* Unary operations without carry-in.  */
+  for (s1 = n_values - 1; s1 >= 0; s1--)
+    {
+      r1 = values[s1];
+      dr_lim = prune_hint & NULLIFYING_INSN ? 0 : n_values;
+      for (dr = n_values; dr >= dr_lim; dr--)
+	{
+	  /* d,cy = 2*r1
+	     hppa:		add	s1,s1,d */
+	  if (!nullify_flag_in) PERFORM_ADD_CO_SEQ(v, co, nullify_flag, r1, r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CO_SEQ, dr, s1, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADD_CO_SNE(v, co, nullify_flag, r1, r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CO_SNE, dr, s1, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADD_CO_SLTU(v, co, nullify_flag, r1, r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CO_SLTU, dr, s1, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADD_CO_SGEU(v, co, nullify_flag, r1, r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CO_SGEU, dr, s1, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADD_CO_SLEU(v, co, nullify_flag, r1, r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CO_SLEU, dr, s1, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADD_CO_SGTU(v, co, nullify_flag, r1, r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CO_SGTU, dr, s1, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADD_CO_SODD(v, co, nullify_flag, r1, r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CO_SODD, dr, s1, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADD_CO_SEVN(v, co, nullify_flag, r1, r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CO_SEVN, dr, s1, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+
+	  /* d = r1 & 1
+	     hppa:		extru	s1,31,1,d */
+	  if (!nullify_flag_in) PERFORM_AND_SEQ(v, co, nullify_flag, r1, VALUE(1), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(AND_SEQ, dr, s1, CNST(1), (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_AND_SNE(v, co, nullify_flag, r1, VALUE(1), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(AND_SNE, dr, s1, CNST(1), (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  /* All other conditions are trivial (or repetitions). */
+
+	  /* d = r1 & 0x7fffffff
+	     hppa:		extru	s1,31,31,d */
+	  if (!nullify_flag_in) PERFORM_AND_SEQ(v, co, nullify_flag, r1, VALUE_MAX_SIGNED, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(AND_SEQ, dr, s1, CNST_0x7FFFFFFF, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_AND_SNE(v, co, nullify_flag, r1, VALUE_MAX_SIGNED, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(AND_SNE, dr, s1, CNST_0x7FFFFFFF, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_AND_SODD(v, co, nullify_flag, r1, VALUE_MAX_SIGNED, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(AND_SODD, dr, s1, CNST_0x7FFFFFFF, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_AND_SEVN(v, co, nullify_flag, r1, VALUE_MAX_SIGNED, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(AND_SEVN, dr, s1, CNST_0x7FFFFFFF, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  /* All other conditions are trivial (or repetitions). */
+
+	  /* d = ~r1
+	     hppa:		andcm	r0,s1,d */
+	  if (!nullify_flag_in) PERFORM_SUB_SEQ(v, co, nullify_flag, VALUE(-1), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(SUB_SEQ, dr, CNST(-1), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_SUB_SNE(v, co, nullify_flag, VALUE(-1), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(SUB_SNE, dr, CNST(-1), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_SUB_SLTS(v, co, nullify_flag, VALUE(-1), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(SUB_SLTS, dr, CNST(-1), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_SUB_SGES(v, co, nullify_flag, VALUE(-1), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(SUB_SGES, dr, CNST(-1), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_SUB_SLES(v, co, nullify_flag, VALUE(-1), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(SUB_SLES, dr, CNST(-1), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_SUB_SGTS(v, co, nullify_flag, VALUE(-1), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(SUB_SGTS, dr, CNST(-1), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_SUB_SODD(v, co, nullify_flag, VALUE(-1), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(SUB_SODD, dr, CNST(-1), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_SUB_SEVN(v, co, nullify_flag, VALUE(-1), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(SUB_SEVN, dr, CNST(-1), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+
+	  /* d,cy = -1 + ~r1 + 1 (i.e. one's complement and set carry.);
+	     hppa:	subi	-1,s1,d */
+	  if (!nullify_flag_in) PERFORM_ADC_CO_SEQ(v, co, nullify_flag, VALUE(-1), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADC_CO_SEQ, dr, CNST(-1), s1, CY_JUST_SET | CY_1 | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADC_CO_SNE(v, co, nullify_flag, VALUE(-1), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADC_CO_SNE, dr, CNST(-1), s1, CY_JUST_SET | CY_1 | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADC_CO_SLTU(v, co, nullify_flag, VALUE(-1), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADC_CO_SLTU, dr, CNST(-1), s1, CY_JUST_SET | CY_1 | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADC_CO_SGEU(v, co, nullify_flag, VALUE(-1), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADC_CO_SGEU, dr, CNST(-1), s1, CY_JUST_SET | CY_1 | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADC_CO_SLEU(v, co, nullify_flag, VALUE(-1), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADC_CO_SLEU, dr, CNST(-1), s1, CY_JUST_SET | CY_1 | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADC_CO_SGTU(v, co, nullify_flag, VALUE(-1), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADC_CO_SGTU, dr, CNST(-1), s1, CY_JUST_SET | CY_1 | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADC_CO_SODD(v, co, nullify_flag, VALUE(-1), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADC_CO_SODD, dr, CNST(-1), s1, CY_JUST_SET | CY_1 | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADC_CO_SEVN(v, co, nullify_flag, VALUE(-1), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADC_CO_SEVN, dr, CNST(-1), s1, CY_JUST_SET | CY_1 | NULLIFYING_INSN, nullify_flag);
+
+	  /* d,cy = r1 + 1
+	     hppa:		addi	1,s1,d */
+	  if (!nullify_flag_in) PERFORM_ADD_CO_SEQ(v, co, nullify_flag, r1, VALUE(1), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CO_SEQ, dr, s1, CNST(1), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADD_CO_SNE(v, co, nullify_flag, r1, VALUE(1), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CO_SNE, dr, s1, CNST(1), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADD_CO_SLTU(v, co, nullify_flag, r1, VALUE(1), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CO_SLTU, dr, s1, CNST(1), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADD_CO_SGEU(v, co, nullify_flag, r1, VALUE(1), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CO_SGEU, dr, s1, CNST(1), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADD_CO_SLEU(v, co, nullify_flag, r1, VALUE(1), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CO_SLEU, dr, s1, CNST(1), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADD_CO_SGTU(v, co, nullify_flag, r1, VALUE(1), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CO_SGTU, dr, s1, CNST(1), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADD_CO_SODD(v, co, nullify_flag, r1, VALUE(1), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CO_SODD, dr, s1, CNST(1), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADD_CO_SEVN(v, co, nullify_flag, r1, VALUE(1), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CO_SEVN, dr, s1, CNST(1), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+
+	  /* d,cy = r1 + -1
+	     hppa:		addi	-1,s1,d */
+	  if (!nullify_flag_in) PERFORM_ADD_CO_SEQ(v, co, nullify_flag, r1, VALUE(-1), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CO_SEQ, dr, s1, CNST(-1), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADD_CO_SNE(v, co, nullify_flag, r1, VALUE(-1), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CO_SNE, dr, s1, CNST(-1), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADD_CO_SLTU(v, co, nullify_flag, r1, VALUE(-1), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CO_SLTU, dr, s1, CNST(-1), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADD_CO_SGEU(v, co, nullify_flag, r1, VALUE(-1), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CO_SGEU, dr, s1, CNST(-1), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADD_CO_SLEU(v, co, nullify_flag, r1, VALUE(-1), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CO_SLEU, dr, s1, CNST(-1), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADD_CO_SGTU(v, co, nullify_flag, r1, VALUE(-1), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CO_SGTU, dr, s1, CNST(-1), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADD_CO_SODD(v, co, nullify_flag, r1, VALUE(-1), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CO_SODD, dr, s1, CNST(-1), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADD_CO_SEVN(v, co, nullify_flag, r1, VALUE(-1), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CO_SEVN, dr, s1, CNST(-1), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+
+	  /* d,cy = -r1
+	     hppa:		subi	0,s1,d */
+	  if (!nullify_flag_in) PERFORM_ADC_CO_SEQ(v, co, nullify_flag, VALUE(0), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADC_CO_SEQ, dr, CNST(0), s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADC_CO_SNE(v, co, nullify_flag, VALUE(0), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADC_CO_SNE, dr, CNST(0), s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADC_CO_SLTU(v, co, nullify_flag, VALUE(0), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADC_CO_SLTU, dr, CNST(0), s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADC_CO_SGEU(v, co, nullify_flag, VALUE(0), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADC_CO_SGEU, dr, CNST(0), s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADC_CO_SLEU(v, co, nullify_flag, VALUE(0), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADC_CO_SLEU, dr, CNST(0), s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADC_CO_SGTU(v, co, nullify_flag, VALUE(0), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADC_CO_SGTU, dr, CNST(0), s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADC_CO_SODD(v, co, nullify_flag, VALUE(0), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADC_CO_SODD, dr, CNST(0), s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_ADC_CO_SEVN(v, co, nullify_flag, VALUE(0), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADC_CO_SEVN, dr, CNST(0), s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+
+	  /* comiclr instructions.  We don't commute the operands here,
+	     since e.g. r1<r2 is the same as r2>r1.  */
+	  /* with 0 */
+	  /* hppa:	comclr,= */
+	  if (!nullify_flag_in) PERFORM_COMCLR_SEQ(v, co, nullify_flag, VALUE(0), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COMCLR_SEQ, dr, CNST(0), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  /* hppa:	comclr,<> */
+	  if (!nullify_flag_in) PERFORM_COMCLR_SNE(v, co, nullify_flag, VALUE(0), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COMCLR_SNE, dr, CNST(0), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  /* hppa:	comclr,< */
+	  if (!nullify_flag_in) PERFORM_COMCLR_SLTS(v, co, nullify_flag, VALUE(0), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COMCLR_SLTS, dr, CNST(0), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  /* hppa:	comclr,>= */
+	  if (!nullify_flag_in) PERFORM_COMCLR_SGES(v, co, nullify_flag, VALUE(0), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COMCLR_SGES, dr, CNST(0), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  /* hppa:	comclr,<= */
+	  if (!nullify_flag_in) PERFORM_COMCLR_SLES(v, co, nullify_flag, VALUE(0), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COMCLR_SLES, dr, CNST(0), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  /* hppa:	comclr,> */
+	  if (!nullify_flag_in) PERFORM_COMCLR_SGTS(v, co, nullify_flag, VALUE(0), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COMCLR_SGTS, dr, CNST(0), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  /* hppa:	comclr,<< */
+	  if (!nullify_flag_in) PERFORM_COMCLR_SLTU(v, co, nullify_flag, VALUE(0), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COMCLR_SLTU, dr, CNST(0), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  /* hppa:	comclr,>>= */
+	  if (!nullify_flag_in) PERFORM_COMCLR_SGEU(v, co, nullify_flag, VALUE(0), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COMCLR_SGEU, dr, CNST(0), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  /* hppa:	comclr,<<= */
+	  if (!nullify_flag_in) PERFORM_COMCLR_SLEU(v, co, nullify_flag, VALUE(0), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COMCLR_SLEU, dr, CNST(0), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  /* hppa:	comclr,>> */
+	  if (!nullify_flag_in) PERFORM_COMCLR_SGTU(v, co, nullify_flag, VALUE(0), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COMCLR_SGTU, dr, CNST(0), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+
+	  /* with -1 */
+	  /* hppa:	comclr,= */
+	  if (!nullify_flag_in) PERFORM_COMCLR_SEQ(v, co, nullify_flag, VALUE(-1), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COMCLR_SEQ, dr, CNST(-1), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  /* hppa:	comclr,<> */
+	  if (!nullify_flag_in) PERFORM_COMCLR_SNE(v, co, nullify_flag, VALUE(-1), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COMCLR_SNE, dr, CNST(-1), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  /* hppa:	comclr,< -1,r,d == comclr,<= 0,r,d */
+	  /* hppa:	comclr,>= -1,r,d == comclr,> 0,r,d */
+	  /* hppa:	comclr,<= -1,r,d */
+	  if (!nullify_flag_in) PERFORM_COMCLR_SLES(v, co, nullify_flag, VALUE(-1), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COMCLR_SLES, dr, CNST(-1), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  /* hppa:	comclr,> -1,r,d */
+	  if (!nullify_flag_in) PERFORM_COMCLR_SGTS(v, co, nullify_flag, VALUE(-1), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COMCLR_SGTS, dr, CNST(-1), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  /* hppa:	comclr,<< -1,r,d is never true */
+	  /* hppa:	comclr,>>= -1,r,d is always true */
+	  /* hppa:	comclr,<<= -1,r,d == comclr,= -1,r,d */
+	  /* hppa:	comclr,>> -1,r,d == comclr,<> -1,r,d*/
+
+	  /* with 1 */
+	  /* hppa:	comclr,= */
+	  if (!nullify_flag_in) PERFORM_COMCLR_SEQ(v, co, nullify_flag, VALUE(1), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COMCLR_SEQ, dr, CNST(1), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  /* hppa:	comclr,<> */
+	  if (!nullify_flag_in) PERFORM_COMCLR_SNE(v, co, nullify_flag, VALUE(1), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COMCLR_SNE, dr, CNST(1), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  /* hppa:	comclr,< 1,r,d */
+	  if (!nullify_flag_in) PERFORM_COMCLR_SLTS(v, co, nullify_flag, VALUE(1), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COMCLR_SLTS, dr, CNST(1), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  /* hppa:	comclr,>= 1,r,d */
+	  if (!nullify_flag_in) PERFORM_COMCLR_SGES(v, co, nullify_flag, VALUE(1), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COMCLR_SGES, dr, CNST(1), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  /* hppa:	comclr,<= 1,r,d == comclr,< 0,r,d */
+	  /* hppa:	comclr,> 1,r,d == comclr,>= 0,r,d */
+	  /* hppa:	comclr,<< 1,r,d */
+	  if (!nullify_flag_in) PERFORM_COMCLR_SLTU(v, co, nullify_flag, VALUE(1), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COMCLR_SLTU, dr, CNST(1), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  /* hppa:	comclr,>>= 1,r,d */
+	  if (!nullify_flag_in) PERFORM_COMCLR_SGEU(v, co, nullify_flag, VALUE(1), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COMCLR_SGEU, dr, CNST(1), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  /* hppa:	comclr,<<= 1,r,d == comclr,<< 0,r,d */
+	  /* hppa:	comclr,>> 1,r,d == comclr,>>= 0,r,d */
+#if LATER
+	  /* Do we need both commutations here??? */
+	  /* hppa:	comclr,sv */
+	  if (!nullify_flag_in) PERFORM_COMCLR_SOVS(v, co, nullify_flag, VALUE(0), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COMCLR_SOVS, dr, CNST(0), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_COMCLR_SOVS(v, co, nullify_flag, VALUE(0), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COMCLR_SOVS, dr, CNST(0), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+
+	  /* hppa:	comclr,nsv */
+	  if (!nullify_flag_in) PERFORM_COMCLR_SNVS(v, co, nullify_flag, VALUE(0), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COMCLR_SNVS, dr, CNST(0), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  if (!nullify_flag_in) PERFORM_COMCLR_SNVS(v, co, nullify_flag, VALUE(0), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COMCLR_SNVS, dr, CNST(0), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+#endif
+	  /* hppa:	comclr,od */
+	  if (!nullify_flag_in) PERFORM_COMCLR_SODD(v, co, nullify_flag, VALUE(0), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COMCLR_SODD, dr, CNST(0), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	  /* hppa:	comclr,ev */
+	  if (!nullify_flag_in) PERFORM_COMCLR_SEVN(v, co, nullify_flag, VALUE(0), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COMCLR_SEVN, dr, CNST(0), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	}
+    }
+}
+
+void
+synth_skip (insn_t *sequence,
+	    int n_insns,
+	    word *values,
+	    int n_values,
+	    word goal_value,
+	    int allowed_cost,
+	    int ci,
+	    int prune_hint,
+	    int nullify_flag_in)
+{
+  int s1, s2;
+  word v, r1, r2;
+  int co;
+  int last_dest;
+  int dr;
+  int nullify_flag;
+
+  if (n_insns > 0)
+    last_dest = sequence[n_insns - 1].d;
+  else
+    last_dest = -1;
+
+  /* Binary operations with carry-in.  */
+  if (ci >= 0 && flag_use_carry)
+    {
+      for (s1 = n_values - 1; s1 >= 0; s1--)
+	{
+	  r1 = values[s1];
+	  for (s2 = s1 - 1; s2 >= 0; s2--)
+	    {
+	      r2 = values[s2];
+	      for (dr = n_values; dr >= 0; dr--)
+		{
+		  /* hppa:		addc */
+		  if (!nullify_flag_in) PERFORM_ADD_CIO_S(v, co, nullify_flag, r1, r2, ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(ADD_CIO_S, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+
+		  /* hppa:		subb */
+		  if (!nullify_flag_in) PERFORM_ADC_CIO_S(v, co, nullify_flag, r1, r2, ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(ADC_CIO_S, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+
+		  if (!nullify_flag_in) PERFORM_ADC_CIO_S(v, co, nullify_flag, r2, r1, ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(ADC_CIO_S, dr, s2, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+		}
+	    }
+	}
+    }
+
+  /* Binary operations without carry-in.  */
+  for (s1 = n_values - 1; s1 >= 0; s1--)
+    {
+      r1 = values[s1];
+      for (s2 = s1 - 1; s2 >= 0; s2--)
+	{
+	  r2 = values[s2];
+	  for (dr = n_values; dr >= 0; dr--)
+	    {
+	      /* hppa:	add */
+	      if (!nullify_flag_in) PERFORM_ADD_CO_S(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CO_S, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+
+	      /* hppa:	addl */
+	      if (!nullify_flag_in) PERFORM_ADD_S(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_S, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+
+	      /* hppa:	sub */
+	      if (!nullify_flag_in) PERFORM_ADC_CO_S(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADC_CO_S, dr, s1, s2, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	      if (!nullify_flag_in) PERFORM_ADC_CO_S(v, co, nullify_flag, r2, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADC_CO_S, dr, s2, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+
+	      /* hppa:	and */
+	      if (!nullify_flag_in) PERFORM_AND_S(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(AND_S, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+
+	      /* hppa:	or */
+	      if (!nullify_flag_in) PERFORM_IOR_S(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(IOR_S, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+
+	      /* hppa:	xor */
+	      if (!nullify_flag_in) PERFORM_XOR_S(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(XOR_S, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+
+	      /* hppa:	andcm */
+	      if (!nullify_flag_in) PERFORM_ANDC_S(v, co, nullify_flag, r1, r2, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ANDC_S, dr, s1, s2, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+
+	      if (!nullify_flag_in) PERFORM_ANDC_S(v, co, nullify_flag, r2, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ANDC_S, dr, s2, s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	    }
+	}
+    }
+
+  /* Unary operations with carry-in.  */
+  if (ci >= 0 && flag_use_carry)
+    {
+      for (s1 = n_values - 1; s1 >= 0; s1--)
+	{
+	  r1 = values[s1];
+	  for (dr = n_values; dr >= 0; dr--)
+	    {
+	      /* d,cy = 2*r1 + cy
+		 hppa:	addc	s1,s1,d */
+	      if (!nullify_flag_in) PERFORM_ADD_CIO_S(v, co, nullify_flag, r1, r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CIO_S, dr, s1, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+
+	      /* d,cy = r1 + cy - 1
+		 hppa:	subb	s1,r0,d */
+	      if (!nullify_flag_in) PERFORM_ADD_CIO_S(v, co, nullify_flag, r1, VALUE(-1), ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CIO_S, dr, s1, CNST(-1), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+
+	      /* d,cy = r1 + cy
+		 hppa:	addc	s1,r0,d */
+	      if (!nullify_flag_in) PERFORM_ADD_CIO_S(v, co, nullify_flag, r1, VALUE(0), ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADD_CIO_S, dr, s1, CNST(0), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+
+	      /* d,cy = ~r1 + cy
+		 hppa:	subb	r0,s1,d */
+	      if (!nullify_flag_in) PERFORM_ADC_CIO_S(v, co, nullify_flag, VALUE(0), r1, ci);
+	      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	      PA_RECURSE(ADC_CIO_S, dr, CNST(0), s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+	    }
+	}
+    }
+
+  /* Unary operations without carry-in.  */
+  for (s1 = n_values - 1; s1 >= 0; s1--)
+    {
+      r1 = values[s1];
+      for (dr = n_values; dr >= 0; dr--)
+	{
+	  /* d,cy = 2*r1
+	     hppa:		add	s1,s1,d */
+	  if (!nullify_flag_in) PERFORM_ADD_CO_S(v, co, nullify_flag, r1, r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CO_S, dr, s1, s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+
+	  /* d = r1 & 1
+	     hppa:		extru	s1,31,1,d */
+	  if (!nullify_flag_in) PERFORM_AND_S(v, co, nullify_flag, r1, VALUE(1), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(AND_S, dr, s1, CNST(1), (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+
+	  /* d = r1 & 0x7fffffff
+	     hppa:		extru	s1,31,31,d */
+	  if (!nullify_flag_in) PERFORM_AND_S(v, co, nullify_flag, r1, VALUE_MAX_SIGNED, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(AND_S, dr, s1, CNST_0x7FFFFFFF, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+
+	  /* d = ~r1
+	     hppa:		andcm	r0,s1,d */
+	  if (!nullify_flag_in) PERFORM_SUB_S(v, co, nullify_flag, VALUE(-1), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(SUB_S, dr, CNST(-1), s1, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+
+	  /* d,cy = -1 + ~r1 + 1 (i.e. one's complement and set carry.)
+	     hppa:	subi	-1,s1,d */
+	  if (!nullify_flag_in) PERFORM_ADC_CO_S(v, co, nullify_flag, VALUE(-1), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADC_CO_S, dr, CNST(-1), s1, CY_JUST_SET | CY_1 | NULLIFYING_INSN, nullify_flag);
+
+	  /* d,cy = r1 + 1
+	     hppa:		addi	1,s1,d */
+	  if (!nullify_flag_in) PERFORM_ADD_CO_S(v, co, nullify_flag, r1, VALUE(1), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CO_S, dr, s1, CNST(1), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+
+	  /* d,cy = r1 + -1
+	     hppa:		addi	-1,s1,d */
+	  if (!nullify_flag_in) PERFORM_ADD_CO_S(v, co, nullify_flag, r1, VALUE(-1), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CO_S, dr, s1, CNST(-1), CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+
+	  /* d,cy = -r1
+	     hppa:		subi	0,s1,d */
+	  if (!nullify_flag_in) PERFORM_ADC_CO_S(v, co, nullify_flag, VALUE(0), r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADC_CO_S, dr, CNST(0), s1, CY_JUST_SET | NULLIFYING_INSN, nullify_flag);
+
+	  {
+	    int cnt;
+	    for (cnt = 1; cnt < BITS_PER_WORD; cnt += (flag_shifts ? 1 : BITS_PER_WORD - 2))
+	      {
+		if (!nullify_flag_in) PERFORM_LSHIFTR_S(v, co, nullify_flag, r1, VALUE(cnt), ci);
+		else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		PA_RECURSE(LSHIFTR_S, dr, s1, CNST(cnt), (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+
+		if (!nullify_flag_in) PERFORM_ASHIFTR_S(v, co, nullify_flag, r1, VALUE(cnt), ci);
+		else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		PA_RECURSE(ASHIFTR_S, dr, s1, CNST(cnt), (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+
+		if (!nullify_flag_in) PERFORM_SHIFTL_S(v, co, nullify_flag, r1, VALUE(cnt), ci);
+		else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		PA_RECURSE(SHIFTL_S, dr, s1, CNST(cnt), (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+
+		if (!nullify_flag_in) PERFORM_ROTATEL_S(v, co, nullify_flag, r1, VALUE(cnt), ci);
+		else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		PA_RECURSE(ROTATEL_S, dr, s1, CNST(cnt), (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	      }
+	  }
+
+	  if (flag_extracts)
+	    {
+	      int cnt;
+	      /* Loop to 30, not 31, since 31 would generate operations
+		 identical to shifts by 31.  */
+	      for (cnt = 1; cnt < BITS_PER_WORD - 1; cnt++)
+		{
+		  if (!nullify_flag_in) PERFORM_EXTS1_S(v, co, nullify_flag, r1, VALUE(cnt), ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(EXTS1_S, dr, s1, CNST(cnt), (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+		  if (!nullify_flag_in) PERFORM_EXTU1_S(v, co, nullify_flag, r1, VALUE(cnt), ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(EXTU1_S, dr, s1, CNST(cnt), (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+		}
+	      /* Loop to 29, not 31, since 30 and 31 would generate operations
+		 identical to shifts by 30 and 31.  */
+	      for (cnt = 1; cnt < BITS_PER_WORD - 2; cnt++)
+		{
+		  if (!nullify_flag_in) PERFORM_EXTS2_S(v, co, nullify_flag, r1, VALUE(cnt), ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(EXTS2_S, dr, s1, CNST(cnt), (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+		  if (!nullify_flag_in) PERFORM_EXTU2_S(v, co, nullify_flag, r1, VALUE(cnt), ci);
+		  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+		  PA_RECURSE(EXTU2_S, dr, s1, CNST(cnt), (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+		}
+	    }
+
+	  /* Copy register->register since we might be nullified.  */
+	  if (!nullify_flag_in) PERFORM_COPY_S(v, co, nullify_flag, r1, ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(COPY_S, dr, s1, 0, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	}
+    }
+
+  /* 0-ary instructions, just dependent on carry.  */
+  if (ci >= 0 && flag_use_carry)
+    {
+      for (dr = n_values; dr >= 0; dr--)
+	{
+	  /* We don't do "0 - 1 - cy" or "0 + 1 + cy" here.  It would
+	     probably give very few new sequences. */
+	  /* d = cy, cy = 0.
+	     hppa:		addc	r0,r0,d */
+	  if (!nullify_flag_in) PERFORM_ADD_CIO_S(v, co, nullify_flag, VALUE(0), VALUE(0), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADD_CIO_S, dr, CNST(0), CNST(0), CY_JUST_SET | CY_0 | NULLIFYING_INSN, nullify_flag);
+	  /* d = -1 + cy, cy = cy
+	     hppa:		subb	d,d,d */
+	  if (!nullify_flag_in) PERFORM_ADC_CIO_S(v, co, nullify_flag, VALUE(0), VALUE(0), ci);
+	  else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+	  PA_RECURSE(ADC_CIO_S, dr, n_values, n_values, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+	}
+    }
+
+  for (dr = n_values; dr >= 0; dr--)
+    {
+      /* Move instructions.  */
+      /* d = 0x80000000
+	 hppa:		zdepi,tr	1,0,1,d */
+      if (!nullify_flag_in) PERFORM_COPY_S(v, co, nullify_flag, VALUE_MIN_SIGNED, ci);
+      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+      PA_RECURSE(COPY_S, dr, CNST_0x80000000, 0, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+      /* d = -1
+	 hppa:		addi,tr		-1,r0,d */
+      if (!nullify_flag_in) PERFORM_COPY_S(v, co, nullify_flag, VALUE(-1), ci);
+      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+      PA_RECURSE(COPY_S, dr, CNST(-1), 0, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+      /* d = 1
+	 hppa:		addi,tr		1,r0,d */
+      if (!nullify_flag_in) PERFORM_COPY_S(v, co, nullify_flag, VALUE(1), ci);
+      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+      PA_RECURSE(COPY_S, dr, CNST(1), 0, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+      /* d = 0
+	 hppa:		addi,tr		0,r0,d */
+      if (!nullify_flag_in) PERFORM_COPY_S(v, co, nullify_flag, VALUE(0), ci);
+      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+      PA_RECURSE(COPY_S, dr, CNST(0), 0, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+      /* d = 0x7fffffff
+	 hppa:		zdepi,tr	-1,31,31,d */
+      if (!nullify_flag_in) PERFORM_COPY_S(v, co, nullify_flag, VALUE_MAX_SIGNED, ci);
+      else PERFORM_NULLIFIED(v, co, nullify_flag, ci);
+      PA_RECURSE(COPY_S, dr, CNST_0x7FFFFFFF, 0, (prune_hint & ~CY_JUST_SET) | NULLIFYING_INSN, nullify_flag);
+    }
+}
+#endif /* !MAKE_LEAF */
+#endif /* HPPA */
+
+#if M68000 || I386 || PYR || SH
+void
+MAKENAME (synth) (insn_t *sequence,
+		  int n_insns,
+		  word *values,
+		  int n_values,
+		  word goal_value,
+		  int allowed_cost,
+		  int ci,
+		  int prune_hint)
+{
+  int s1, s2;
+  word v, r1, r2;
+  int co;
+  int last_dest;
+
+#ifdef TIMING
+  unsigned long time_start = cputime();
+#endif
+
+  if (n_insns > 0)
+    last_dest = sequence[n_insns - 1].d;
+  else
+    last_dest = -1;
+
+  /* Binary operations with carry-in.  */
+  if (ci >= 0
+#if !SH /* We have to clear carry for addc, subc, and negc */
+      && (prune_hint & CY_0) == 0
+#endif
+      && flag_use_carry)
+    {
+      for (s1 = n_values - 1; s1 >= 0; s1--)
+	{
+	  r1 = values[s1];
+	  for (s2 = n_values - 1; s2 >= 0; s2--)
+	    {
+	      r2 = values[s2];
+
+	      if (allowed_cost <= 1 && (prune_hint & CY_JUST_SET) == 0)
+		{
+		  /* We are in a leaf node.  CY was not set (to 1 or to a
+		     data dependent value) by the previous insn.
+
+		     So one of the input operands has to be the result
+		     operand of the previous insn for that insn to be
+		     meaningful.  */
+		  if (last_dest >= 0 && s1 != last_dest && s2 != last_dest)
+		    continue;
+		}
+
+#if M68000 || I386 || PYR || SH
+	      /* m68000:	addx
+		 i80386:	adc
+		 pyramid:	addwc
+		 sh:		addc */
+	      PERFORM_ADD_CIO(v, co, r1, r2, ci);
+	      CRECURSE_2OP(ADD_CIO, s1, s1, s2, 1, CY_JUST_SET);
+#endif
+#if M68000 || I386 || SH
+	      if (s1 != s2)
+		{
+		  /* m68000:	subx
+		     i80386:	sbb
+		     sh:	subc */
+		  PERFORM_SUB_CIO(v, co, r1, r2, ci);
+		  CRECURSE_2OP(SUB_CIO, s1, s1, s2, 1, CY_JUST_SET);
+		}
+#endif
+#if PYR
+	      if (s1 != s2)
+		{
+		  /* pyramid:	subwb */
+		  PERFORM_ADC_CIO(v, co, r1, r2, ci);
+		  CRECURSE_2OP(ADC_CIO, s1, s1, s2, 1, CY_JUST_SET);
+		}
+#endif
+	    }
+	}
+    }
+
+  /* Binary operations without carry-in.  */
+  for (s1 = n_values - 1; s1 >= 0; s1--)
+    {
+      r1 = values[s1];
+      for (s2 = n_values - 1; s2 >= 0; s2--)
+	{
+	  r2 = values[s2];
+
+	  if (allowed_cost <= 1)
+	    {
+	      /* We are in a leaf node.
+
+		 So one of the input operands has to be the result operand
+		 of the previous insn for that insn to be meaningful.  */
+	      if (last_dest >= 0 && s1 != last_dest && s2 != last_dest)
+		continue;
+	    }
+
+#if SH
+	  /* sh:	add */
+	  PERFORM_ADD(v, co, r1, r2, ci);
+	  CRECURSE_2OP(ADD, s1, s1, s2, 1, prune_hint & ~CY_JUST_SET);
+#endif
+#if M68000 || I386 || PYR
+	  /* m68000:	add
+	     i80386:	add
+	     pyramid:	addw */
+	  PERFORM_ADD_CO(v, co, r1, r2, ci);
+	  CRECURSE_2OP(ADD_CO, s1, s1, s2, 1, CY_JUST_SET);
+#endif
+	  if (s1 != s2)
+	    {
+#if SH
+	  /* sh:	sub */
+	  PERFORM_SUB(v, co, r1, r2, ci);
+	  CRECURSE_2OP(SUB, s1, s1, s2, 1, prune_hint & ~CY_JUST_SET);
+#endif
+#if M68000 || I386
+	      /* m68000:	sub
+		 i80386:	sub */
+	      PERFORM_SUB_CO(v, co, r1, r2, ci);
+	      CRECURSE_2OP(SUB_CO, s1, s1, s2, 1, CY_JUST_SET);
+#endif
+#if PYR
+	      /* pyramid:	subw */
+	      PERFORM_ADC_CO(v, co, r1, r2, ci);
+	      CRECURSE_2OP(ADC_CO, s1, s1, s2, 1, CY_JUST_SET);
+#endif
+#if M68000 || SH
+	      PERFORM_AND(v, co, r1, r2, ci);
+	      CRECURSE_2OP(AND, s1, s1, s2, 1, prune_hint & ~CY_JUST_SET);
+
+	      PERFORM_IOR(v, co, r1, r2, ci);
+	      CRECURSE_2OP(IOR, s1, s1, s2, 1, prune_hint & ~CY_JUST_SET);
+
+	      PERFORM_XOR(v, co, r1, r2, ci);
+	      CRECURSE_2OP(XOR, s1, s1, s2, 1, prune_hint & ~CY_JUST_SET);
+#endif
+#if I386
+	      PERFORM_AND_RC(v, co, r1, r2, ci);
+	      CRECURSE_2OP(AND_RC, s1, s1, s2, 1, CY_JUST_SET | CY_0);
+
+	      PERFORM_IOR_RC(v, co, r1, r2, ci);
+	      CRECURSE_2OP(IOR_RC, s1, s1, s2, 1, CY_JUST_SET | CY_0);
+
+	      PERFORM_XOR_RC(v, co, r1, r2, ci);
+	      CRECURSE_2OP(XOR_RC, s1, s1, s2, 1, CY_JUST_SET | CY_0);
+#endif
+#if PYR
+	      PERFORM_AND_CC(v, co, r1, r2, ci);
+	      CRECURSE_2OP(AND_CC, s1, s1, s2, 1, 0);
+
+	      PERFORM_ANDC_CC(v, co, r1, r2, ci);
+	      CRECURSE_2OP(ANDC_CC, s1, s1, s2, 1, 0);
+
+	      PERFORM_IOR_CC(v, co, r1, r2, ci);
+	      CRECURSE_2OP(IOR_CC, s1, s1, s2, 1, 0);
+
+	      PERFORM_XOR_CC(v, co, r1, r2, ci);
+	      CRECURSE_2OP(XOR_CC, s1, s1, s2, 1, 0);
+#endif
+#if I386
+	      PERFORM_CMP(v, co, r1, r2, ci);
+	      /* kludge: lie that the result is written to
+		 register <n_values>. */
+	      CRECURSE_2OP(CMP, n_values, s1, s2, 1, CY_JUST_SET);
+#endif
+#if SH
+	      /* kludge: lie that the result is written to
+		 register <n_values>. */
+	      PERFORM_CYGTU(v, co, r1, r2, ci);
+	      CRECURSE_2OP(CYGTU, n_values, s1, s2, 1, CY_JUST_SET);
+	      PERFORM_CYGEU(v, co, r1, r2, ci);
+	      CRECURSE_2OP(CYGEU, n_values, s1, s2, 1, CY_JUST_SET);
+	      PERFORM_CYGTS(v, co, r1, r2, ci);
+	      CRECURSE_2OP(CYGTS, n_values, s1, s2, 1, CY_JUST_SET);
+	      PERFORM_CYGES(v, co, r1, r2, ci);
+	      CRECURSE_2OP(CYGES, n_values, s1, s2, 1, CY_JUST_SET);
+	      /* These are commutative, we don't want to try both variants.  */
+	      if (s1 < s2)
+		{
+		  PERFORM_CYEQ(v, co, r1, r2, ci);
+		  CRECURSE_2OP(CYEQ, n_values, s1, s2, 1, CY_JUST_SET);
+
+		  /* sh:	tst	s2,s1 */
+		  PERFORM_CYAND(v, co, r1, r2, ci);
+		  CRECURSE_2OP(CYAND, n_values, s1, s2, 1, CY_JUST_SET);
+		}
+
+	      PERFORM_MERGE16(v, co, r1, r2, ci);
+	      CRECURSE_2OP(MERGE16, s1, s1, s2, 1, prune_hint & ~CY_JUST_SET);
+#endif
+	    }
+#if M68000 || I386 || PYR
+	  /* Exchange registers.  An ugly kludge.  */
+	  if (s1 < s2)
+	    {
+	      values[s2] = r1;
+	      /* Assign r2 to v to make `recurse' and rely on `recurse'
+		 to handle the writing of it to the values array.  */
+	      v = r2;
+	      CRECURSE_2OP(EXCHANGE, s1, s1, s2, 1, prune_hint & ~CY_JUST_SET);
+	      values[s2] = r2;
+	    }
+#endif
+	}
+    }
+
+  /* Unary operations with carry-in.  */
+  if (ci >= 0
+#if !SH /* We have to clear carry for addc, subc, and negc */
+      && (prune_hint & CY_0) == 0
+#endif
+      && flag_use_carry)
+    {
+      for (s1 = n_values - 1; s1 >= 0; s1--)
+	{
+	  r1 = values[s1];
+
+	  if (allowed_cost <= 1 && (prune_hint & CY_JUST_SET) == 0)
+	    {
+	      /* We are in a leaf node and CY was not set (to 1 or to a
+		 data dependent value) by the previous insn.
+
+		 The input operand has to be the result operand of the
+		 previous insn for that insn to be meaningful.  */
+	      if (last_dest >= 0 && s1 != last_dest)
+		continue;
+	    }
+
+#if I386 || PYR
+	  /* d,cy = r1 + 1 + cy
+	     i80386:	adc	1,d
+	     pyramid:	addwc	$1,d */
+	  PERFORM_ADD_CIO(v, co, r1, VALUE(1), ci);
+	  CRECURSE_2OP(ADD_CIO, s1, s1, CNST(1), 1, CY_JUST_SET);
+#endif
+#if I386
+	  /* d,cy = r1 - 1 - cy
+	     i80386:	sbb	1,d */
+	  PERFORM_SUB_CIO(v, co, r1, VALUE(1), ci);
+	  CRECURSE_2OP(SUB_CIO, s1, s1, CNST(1), 1, CY_JUST_SET);
+#endif
+#if PYR
+	  /* d,cy = r1 + (-2) + cy
+	     pyramid:	subwb	$1,d */
+	  PERFORM_ADC_CIO(v, co, r1, VALUE(1), ci);
+	  CRECURSE_2OP(ADC_CIO, s1, s1, CNST(1), 1, CY_JUST_SET);
+#endif
+#if I386 || PYR
+	  /* d,cy = r1 + (-1) + cy
+	     i80386:	adc	-1,d
+	     pyramid:	addwc	$-1,d */
+	  PERFORM_ADD_CIO(v, co, r1, VALUE(-1), ci);
+	  CRECURSE_2OP(ADD_CIO, s1, s1, CNST(-1), 1, CY_JUST_SET);
+#endif
+#if I386
+	  /* d,cy = r1 - -1 - cy
+	     i80386:	sbb	-1,d */
+	  PERFORM_SUB_CIO(v, co, r1, VALUE(-1), ci);
+	  CRECURSE_2OP(SUB_CIO, s1, s1, CNST(-1), 1, CY_JUST_SET);
+#endif
+#if PYR
+	  /* d,cy = r1 + cy	[or if you prefer, r1 + 0 + cy]
+	     pyramid:	subwb	$-1,d */
+	  PERFORM_ADC_CIO(v, co, r1, VALUE(-1), ci);
+	  CRECURSE_2OP(ADC_CIO, s1, s1, CNST(-1), 1, CY_JUST_SET);
+#endif
+#if I386 || PYR
+	  /* d,cy = r1 + cy
+	     i80386:	adc	0,d
+	     pyramid:	addwc	$0,d */
+	  PERFORM_ADD_CIO(v, co, r1, VALUE(0), ci);
+	  CRECURSE_2OP(ADD_CIO, s1, s1, CNST(0), 1, CY_JUST_SET);
+#endif
+#if I386
+	  /* d,cy = r1 - cy
+	     i80386:	sbb	0,d */
+	  PERFORM_SUB_CIO(v, co, r1, VALUE(0), ci);
+	  CRECURSE_2OP(SUB_CIO, s1, s1, CNST(0), 1, CY_JUST_SET);
+#endif
+#if PYR
+	  /* d,cy = r1 + (-1) + cy
+	     pyramid:	subwb	$0,d */
+	  PERFORM_ADC_CIO(v, co, r1, VALUE(0), ci);
+	  CRECURSE_2OP(ADC_CIO, s1, s1, CNST(0), 1, CY_JUST_SET);
+#endif
+#if M68000
+	  /* d,cy = 0 - r1 - cy
+	     m68000:	negx	d */
+	  PERFORM_SUB_CIO(v, co, VALUE(0), r1, ci);
+	  CRECURSE_2OP(SUB_CIO, s1, CNST(0), s1, 1, CY_JUST_SET);
+#endif
+#if SH
+	  /* d,cy = 0 - r1 - cy
+	     sh:	negc	s1,d */
+	  PERFORM_SUB_CIO(v, co, VALUE(0), r1, ci);
+	  CRECURSE_NEW(SUB_CIO, n_values, CNST(0), s1, 1, CY_JUST_SET);
+#endif
+#if (M68000 || I386 || SH) && 0		/* same effect as ADD_CIO d,d */
+	  PERFORM_ROTATEXL_CIO(v, co, r1, VALUE(1), ci);
+	  CRECURSE_2OP(ROTATEXL_CIO, s1, s1, CNST(1), SHIFT_COST(1), CY_JUST_SET);
+#endif
+#if M68000 || I386 || SH
+	  PERFORM_ROTATEXR_CIO(v, co, r1, VALUE(1), ci);
+	  CRECURSE_2OP(ROTATEXR_CIO, s1, s1, CNST(1), SHIFT_COST(1), CY_JUST_SET);
+#endif
+	}
+    }
+
+  /* Unary operations without carry-in.  */
+  for (s1 = n_values - 1; s1 >= 0; s1--)
+    {
+      r1 = values[s1];
+
+      if (allowed_cost <= 1)
+	{
+	  /* We are in a leaf node.
+
+	     The input operand has to be the result operand of the
+	     previous insns for that insn to be meaningful.  */
+	  if (last_dest >= 0 && s1 != last_dest)
+	    continue;
+	}
+      else
+	{
+	  /* Certain instructions should not terminate a sequence.  So we
+	     only generate them in non-leaf nodes.  */
+#if M68000 || I386 || PYR || SH
+	  /* d = r1
+	     m68000:	move	s1,d
+	     i80386:	move	s1,d
+	     pyramid:	movw	s1,d
+	     sh:	mov	s1,d */
+	  PERFORM_COPY(v, co, r1, ci);
+	  CRECURSE_NEW(COPY, n_values, s1, CNST(0), 1, prune_hint & ~CY_JUST_SET);
+#endif
+#if I386
+	  /* cmp kludge: lie that the result is written to register
+	     <n_values>. */
+
+	  /* i80386:	cmp	-1,s1 */
+	  PERFORM_CMP(v, co, r1, VALUE(-1), ci);
+	  CRECURSE_2OP(CMP, n_values, s1, CNST(-1), 1, CY_JUST_SET);
+
+	  /* i80386:	cmp	1,s1 */
+	  PERFORM_CMP(v, co, r1, VALUE(1), ci);
+	  CRECURSE_2OP(CMP, n_values, s1, CNST(1), 1, CY_JUST_SET);
+
+	  /* i80386:	cmp	0x7fffffff,s1 */
+	  PERFORM_CMP(v, co, r1, VALUE_MAX_SIGNED, ci);
+	  CRECURSE_2OP(CMP, n_values, s1, CNST_0x7FFFFFFF, 2, CY_JUST_SET);
+
+	  /* i80386:	cmp	0x80000000,s1 */
+	  PERFORM_CMP(v, co, r1, VALUE_MIN_SIGNED, ci);
+	  CRECURSE_2OP(CMP, n_values, s1, CNST_0x80000000, 2, CY_JUST_SET);
+#endif
+#if SH
+	  /* kludge: lie that the result is written to register <n_values>. */
+	  PERFORM_CYGTS(v, co, r1, VALUE(0), ci);
+	  CRECURSE_2OP(CYGTS, n_values, s1, CNST(0), 1, CY_JUST_SET);
+	  PERFORM_CYGES(v, co, r1, VALUE(0), ci);
+	  CRECURSE_2OP(CYGES, n_values, s1, CNST(0), 1, CY_JUST_SET);
+	  PERFORM_CYEQ(v, co, r1, VALUE(0), ci);
+	  CRECURSE_2OP(CYEQ, n_values, s1, CNST(0), 1, CY_JUST_SET);
+#endif
+	}
+
+#if I386 || PYR
+      {
+	int cnt;
+	for (cnt = 1; cnt < BITS_PER_WORD; cnt += (flag_shifts ? 1 : BITS_PER_WORD - 2))
+	  {
+	    PERFORM_LSHIFTR_CO(v, co, r1, VALUE(cnt), ci);
+	    CRECURSE_2OP(LSHIFTR_CO, s1, s1, CNST(cnt), SHIFT_COST(cnt), CY_JUST_SET);
+
+	    PERFORM_ASHIFTR_CO(v, co, r1, VALUE(cnt), ci);
+	    CRECURSE_2OP(ASHIFTR_CO, s1, s1, CNST(cnt), SHIFT_COST(cnt), CY_JUST_SET);
+
+	    PERFORM_SHIFTL_CO(v, co, r1, VALUE(cnt), ci);
+	    CRECURSE_2OP(SHIFTL_CO, s1, s1, CNST(cnt), SHIFT_COST(cnt), CY_JUST_SET);
+
+#if !PYR   /* Pyramids's rotlw and rotrw clobber cy */
+	    PERFORM_ROTATER_CO(v, co, r1, VALUE(cnt), ci);
+	    CRECURSE_2OP(ROTATER_CO, s1, s1, CNST(cnt), SHIFT_COST(cnt), CY_JUST_SET);
+
+	    PERFORM_ROTATEL_CO(v, co, r1, VALUE(cnt), ci);
+	    CRECURSE_2OP(ROTATEL_CO, s1, s1, CNST(cnt), SHIFT_COST(cnt), CY_JUST_SET);
+#endif
+	  }
+      }
+#endif
+#if MC68020			/* don't do this for plain 68000 */
+      {
+	int cnt;
+	for (cnt = 1; cnt <= 8; cnt += (flag_shifts ? 1 : BITS_PER_WORD - 2))
+	  {
+	    PERFORM_LSHIFTR_CO(v, co, r1, VALUE(cnt), ci);
+	    CRECURSE_2OP(LSHIFTR_CO, s1, s1, CNST(cnt), SHIFT_COST(cnt), CY_JUST_SET);
+
+	    PERFORM_ASHIFTR_CO(v, co, r1, VALUE(cnt), ci);
+	    CRECURSE_2OP(ASHIFTR_CO, s1, s1, CNST(cnt), SHIFT_COST(cnt), CY_JUST_SET);
+
+	    PERFORM_SHIFTL_CO(v, co, r1, VALUE(cnt), ci);
+	    CRECURSE_2OP(SHIFTL_CO, s1, s1, CNST(cnt), SHIFT_COST(cnt), CY_JUST_SET);
+
+	    PERFORM_ROTATER_CO(v, co, r1, VALUE(cnt), ci);
+	    CRECURSE_2OP(ROTATER_CO, s1, s1, CNST(cnt), SHIFT_COST(cnt), CY_JUST_SET);
+
+	    PERFORM_ROTATEL_CO(v, co, r1, VALUE(cnt), ci);
+	    CRECURSE_2OP(ROTATEL_CO, s1, s1, CNST(cnt), SHIFT_COST(cnt), CY_JUST_SET);
+	  }
+      }
+#endif
+#if (M68000 && !MC68020) || SH
+      PERFORM_LSHIFTR_CO(v, co, r1, VALUE(1), ci);
+      CRECURSE_2OP(LSHIFTR_CO, s1, s1, CNST(1), SHIFT_COST(1), CY_JUST_SET);
+
+      PERFORM_ASHIFTR_CO(v, co, r1, VALUE(1), ci);
+      CRECURSE_2OP(ASHIFTR_CO, s1, s1, CNST(1), SHIFT_COST(1), CY_JUST_SET);
+
+      PERFORM_SHIFTL_CO(v, co, r1, VALUE(1), ci);
+      CRECURSE_2OP(SHIFTL_CO, s1, s1, CNST(1), SHIFT_COST(1), CY_JUST_SET);
+
+      PERFORM_ROTATEL_CO(v, co, r1, VALUE(1), ci);
+      CRECURSE_2OP(ROTATEL_CO, s1, s1, CNST(1), SHIFT_COST(1), CY_JUST_SET);
+
+      PERFORM_ROTATER_CO(v, co, r1, VALUE(1), ci);
+      CRECURSE_2OP(ROTATER_CO, s1, s1, CNST(1), SHIFT_COST(1), CY_JUST_SET);
+#endif
+#if SH
+      PERFORM_LSHIFTR(v, co, r1, VALUE(2), ci);
+      CRECURSE_2OP(LSHIFTR, s1, s1, CNST(2), SHIFT_COST(2), prune_hint & ~CY_JUST_SET);
+
+      PERFORM_SHIFTL(v, co, r1, VALUE(2), ci);
+      CRECURSE_2OP(SHIFTL, s1, s1, CNST(2), SHIFT_COST(2), prune_hint & ~CY_JUST_SET);
+
+      PERFORM_LSHIFTR(v, co, r1, VALUE(8), ci);
+      CRECURSE_2OP(LSHIFTR, s1, s1, CNST(8), SHIFT_COST(8), prune_hint & ~CY_JUST_SET);
+
+      PERFORM_SHIFTL(v, co, r1, VALUE(8), ci);
+      CRECURSE_2OP(SHIFTL, s1, s1, CNST(8), SHIFT_COST(8), prune_hint & ~CY_JUST_SET);
+
+      PERFORM_LSHIFTR(v, co, r1, VALUE(16), ci);
+      CRECURSE_2OP(LSHIFTR, s1, s1, CNST(16), SHIFT_COST(16), prune_hint & ~CY_JUST_SET);
+
+      PERFORM_SHIFTL(v, co, r1, VALUE(16), ci);
+      CRECURSE_2OP(SHIFTL, s1, s1, CNST(16), SHIFT_COST(16), prune_hint & ~CY_JUST_SET);
+      /* sh:	swap.w %s1,d */
+      PERFORM_ROTATEL(v, co, r1, VALUE(16), ci);
+      CRECURSE_NEW(ROTATEL, n_values, s1, CNST(16), SHIFT_COST(16), prune_hint & ~CY_JUST_SET);
+#endif
+#if M68000 || SH
+      /* m68000:	andw	#1,d
+         sh:		and	#1,d */
+      PERFORM_AND(v, co, r1, VALUE(1), ci);
+      CRECURSE_2OP(AND, s1, s1, CNST(1), 1, prune_hint & ~CY_JUST_SET);
+#endif
+#if SH
+      /* sh:		extu.w	s1,d */
+      PERFORM_AND(v, co, r1, VALUE(0xFFFF), ci);
+      CRECURSE_NEW(AND, n_values, s1, CNST_0xFFFF, 1, prune_hint & ~CY_JUST_SET);
+      /* sh:		extu.b	s1,d */
+      PERFORM_AND(v, co, r1, VALUE(0xFF), ci);
+      CRECURSE_NEW(AND, n_values, s1, CNST_0xFF, 1, prune_hint & ~CY_JUST_SET);
+      /* sh:		exts.w	s1,d */
+      PERFORM_EXTS16(v, co, r1, VALUE(0), ci);
+      CRECURSE_NEW(EXTS16, n_values, s1, CNST(0), 1, prune_hint & ~CY_JUST_SET);
+      /* sh:		exts.b	s1,d */
+      PERFORM_EXTS8(v, co, r1, VALUE(0), ci);
+      CRECURSE_NEW(EXTS8, n_values, s1, CNST(0), 1, prune_hint & ~CY_JUST_SET);
+#endif
+#if M68000
+      PERFORM_AND(v, co, r1, VALUE_MIN_SIGNED, ci);
+      CRECURSE_2OP(AND, s1, s1, CNST_0x80000000, 2, prune_hint & ~CY_JUST_SET);
+
+      PERFORM_IOR(v, co, r1, VALUE_MIN_SIGNED, ci);
+      CRECURSE_2OP(IOR, s1, s1, CNST_0x80000000, 2, prune_hint & ~CY_JUST_SET);
+#endif
+#if M68000 || SH
+      /* d = r1 ^ 1
+	 m68000:	eorw	#1,d
+	 sh:		xor	#1,d */
+      PERFORM_XOR(v, co, r1, VALUE(1), ci);
+      CRECURSE_2OP(XOR, s1, s1, CNST(1), 1, prune_hint & ~CY_JUST_SET);
+#endif
+#if M68000
+      PERFORM_XOR(v, co, r1, VALUE_MIN_SIGNED, ci);
+      CRECURSE_2OP(XOR, s1, s1, CNST_0x80000000, 2, prune_hint & ~CY_JUST_SET);
+#endif
+#if I386
+      /* i80386:	andb	$1,d */
+      PERFORM_AND_RC(v, co, r1, VALUE(1), ci);
+      CRECURSE_2OP(AND_RC, s1, s1, CNST(1), 1, CY_JUST_SET | CY_0);
+
+      PERFORM_AND_RC(v, co, r1, VALUE_MIN_SIGNED, ci);
+      CRECURSE_2OP(AND_RC, s1, s1, CNST_0x80000000, 2, CY_JUST_SET | CY_0);
+
+      PERFORM_IOR_RC(v, co, r1, VALUE_MIN_SIGNED, ci);
+      CRECURSE_2OP(IOR_RC, s1, s1, CNST_0x80000000, 2, CY_JUST_SET | CY_0);
+      /* i80386:	xorb	$1,d */
+      PERFORM_XOR_RC(v, co, r1, VALUE(1), ci);
+      CRECURSE_2OP(XOR_RC, s1, s1, CNST(1), 1, CY_JUST_SET | CY_0);
+
+      PERFORM_XOR_RC(v, co, r1, VALUE_MIN_SIGNED, ci);
+      CRECURSE_2OP(XOR_RC, s1, s1, CNST_0x80000000, 2, CY_JUST_SET | CY_0);
+#endif
+#if PYR
+      PERFORM_AND_CC(v, co, r1, VALUE(1), ci);
+      CRECURSE_2OP(AND_CC, s1, s1, CNST(1), 1, 0);
+
+      PERFORM_AND_CC(v, co, r1, VALUE_MIN_SIGNED, ci);
+      CRECURSE_2OP(AND_CC, s1, s1, CNST_0x80000000, 2, 0);
+
+      PERFORM_IOR_CC(v, co, r1, VALUE_MIN_SIGNED, ci);
+      CRECURSE_2OP(IOR_CC, s1, s1, CNST_0x80000000, 2, 0);
+
+      /* d = r1 ^ 1
+	 pyramid:	xorw	$1,d */
+      PERFORM_XOR_CC(v, co, r1, VALUE(1), ci);
+      CRECURSE_2OP(XOR_CC, s1, s1, CNST(1), 1, 0);
+
+      PERFORM_XOR_CC(v, co, r1, VALUE_MIN_SIGNED, ci);
+      CRECURSE_2OP(XOR_CC, s1, s1, CNST_0x80000000, 2, 0);
+#endif
+#if M68000 || I386
+      /* d = ~r1
+	 m68000:	not	d
+	 i80386:	not	d */
+      PERFORM_SUB(v, co, VALUE(-1), r1, ci);
+      CRECURSE_2OP(SUB, s1, CNST(-1), s1, 1, prune_hint & ~CY_JUST_SET);
+#endif
+#if SH
+      /* d = ~r1
+	 sh:		not	s1,d */
+      PERFORM_SUB(v, co, VALUE(-1), r1, ci);
+      CRECURSE_NEW(SUB, n_values, CNST(-1), s1, 1, prune_hint & ~CY_JUST_SET);
+#endif
+#if PYR
+      /* d = ~r1
+	 pyramid:	mcomw	s1,d */
+      /* We need a new insn: SUB_CC, for Subtract and Clobber Carry.  */
+#endif
+#if I386 || SH
+      /* d = r1 + 1
+	 i80386:	inc	d
+	 sh:		add	#1,d */
+      PERFORM_ADD(v, co, r1, VALUE(1), ci);
+      CRECURSE_2OP(ADD, s1, s1, CNST(1), 2, prune_hint & ~CY_JUST_SET);
+#endif
+#if PYR
+      /* d = r1 + 1
+	 pyramid:	mova	1(s1),d */
+      PERFORM_ADD(v, co, r1, VALUE(1), ci);
+      RECURSE(ADD, s1, CNST(1), prune_hint & ~CY_JUST_SET);
+#endif
+#if I386 || SH
+      /* d = r1 - 1
+	 i80386:	dec	d
+	 sh:		add	#-1,d */
+      PERFORM_ADD(v, co, r1, VALUE(-1), ci);
+      CRECURSE_2OP(ADD, s1, s1, CNST(-1), 1, prune_hint & ~CY_JUST_SET);
+#endif
+#if PYR
+      /* d = r1 - 1
+	 pyramid:	mova	-1(s1),d */
+      PERFORM_ADD(v, co, r1, VALUE(-1), ci);
+      RECURSE(ADD, s1, CNST(-1), prune_hint & ~CY_JUST_SET);
+#endif
+#if M68000 || I386 || PYR
+      /* d,cy = r1 + 1
+	 m68000:	addq	1,d
+	 i80386:	add	1,d [short immediate form]
+	 pyramid:	addw	$1,d */
+      PERFORM_ADD_CO(v, co, r1, VALUE(1), ci);
+      CRECURSE_2OP(ADD_CO, s1, s1, CNST(1), 1, CY_JUST_SET);
+#endif
+#if M68000 || I386
+      /* d,cy = r1 - 1
+	 m68000:	subq	1,d
+	 i80386:	sub	1,d [short immediate form] */
+      PERFORM_SUB_CO(v, co, r1, VALUE(1), ci);
+      CRECURSE_2OP(SUB_CO, s1, s1, CNST(1), 1, CY_JUST_SET);
+#endif
+#if PYR && 0			/* same effect as addw $-1,d */
+      /* d,cy = r1 + (-1)
+	 pyramid:	subw	1,d */
+      PERFORM_ADC_CO(v, co, r1, VALUE(1), ci);
+      CRECURSE_2OP(ADC_CO, s1, s1, CNST(1), 1, CY_JUST_SET);
+#endif
+#if M68000
+      /* d,cy = r1 + (-1)
+	 m68000:	add	-1,d */
+      PERFORM_ADD_CO(v, co, r1, VALUE(-1), ci);
+      CRECURSE_2OP(ADD_CO, s1, s1, CNST(-1), 2, CY_JUST_SET);
+#endif
+#if I386 || PYR
+      /* d,cy = r1 + (-1)
+	 i80386:	add	-1,d
+	 pyramid:	addw	$-1,d */
+      PERFORM_ADD_CO(v, co, r1, VALUE(-1), ci);
+      CRECURSE_2OP(ADD_CO, s1, s1, CNST(-1), 1, CY_JUST_SET);
+#endif
+#if M68000
+      /* d,cy = r1 - (-1)
+	 m68000:	sub	-1,d */
+      PERFORM_SUB_CO(v, co, r1, VALUE(-1), ci);
+      CRECURSE_2OP(SUB_CO, s1, s1, CNST(-1), 2, CY_JUST_SET);
+#endif
+#if I386
+      /* d,cy = r1 - (-1)
+	 i80386:	sub	-1,d */
+      PERFORM_SUB_CO(v, co, r1, VALUE(-1), ci);
+      CRECURSE_2OP(SUB_CO, s1, s1, CNST(-1), 1, CY_JUST_SET);
+#endif
+#if M68000 || I386
+      /* d,cy = -r1
+	 m68000:	neg	d
+	 i80386:	neg	d */
+      PERFORM_SUB_CO(v, co, VALUE(0), r1, ci);
+      CRECURSE_2OP(SUB_CO, s1, CNST(0), s1, 1, CY_JUST_SET);
+#endif
+#if SH
+      /* d = 0 - r1 - cy
+	 sh:		neg	d */
+      PERFORM_SUB(v, co, VALUE(0), r1, ci);
+      CRECURSE_NEW(SUB, n_values, CNST(0), s1, 1, prune_hint & ~CY_JUST_SET);
+#endif
+#if PYR
+      /* d,cy = 0 + (-r1)
+	 pyramid:	rsubw	$0,d */
+      PERFORM_ADC_CO(v, co, VALUE(0), r1, ci);
+      CRECURSE_2OP(ADC_CO, s1, CNST(0), s1, 1, CY_JUST_SET);
+#endif
+#if I386
+      PERFORM_BSF86(v, co, r1, ci);
+      CRECURSE_NEW(BSF86, n_values, s1, CNST(0), 1, prune_hint & ~CY_JUST_SET);
+#endif
+#if SH
+      /* Avoid silly sequences...  */
+      if (allowed_cost > 1)
+	{
+	  PERFORM_DECR_CYEQ(v, co, r1, VALUE(1), ci);
+	  CRECURSE_2OP(DECR_CYEQ, s1, s1, CNST(1), 1, CY_JUST_SET);
+	}
+#endif
+    }
+
+#if MC68020			/* don't do this for plain 68000 */
+  /* kludge for immediate shift on 68k */
+  if (last_dest >= 0 && last_dest == n_values - 1
+      && values[last_dest] > 8		/* bogus, should use VALUE(..) */
+      && values[last_dest] < 32		/* bogus, should use VALUE(..) */
+      && sequence[n_insns - 1].opcode == COPY)
+    {
+      for (s1 = n_values - 2; s1 >= 0; s1--)
+	{
+	  r1 = values[s1];
+
+	  PERFORM_LSHIFTR_CO(v, co, r1, values[last_dest], ci);
+	  CRECURSE_2OP(LSHIFTR_CO, s1, s1, last_dest, 1, CY_JUST_SET);
+
+	  PERFORM_ASHIFTR_CO(v, co, r1, values[last_dest], ci);
+	  CRECURSE_2OP(ASHIFTR_CO, s1, s1, last_dest, 1, CY_JUST_SET);
+
+	  PERFORM_SHIFTL_CO(v, co, r1, values[last_dest], ci);
+	  CRECURSE_2OP(SHIFTL_CO, s1, s1, last_dest, 1, CY_JUST_SET);
+
+	  PERFORM_ROTATEL_CO(v, co, r1, values[last_dest], ci);
+	  CRECURSE_2OP(ROTATEL_CO, s1, s1, last_dest, 1, CY_JUST_SET);
+
+	  PERFORM_ROTATER_CO(v, co, r1, values[last_dest], ci);
+	  CRECURSE_2OP(ROTATER_CO, s1, s1, last_dest, 1, CY_JUST_SET);
+	}
+    }
+#endif
+
+  /* Instructions that write to a new register and just depend on carry.  */
+  if (ci >= 0
+#if !SH /* We have to clear carry for addc, subc, and negc */
+      && (prune_hint & CY_0) == 0
+#endif
+      && flag_use_carry
+      && (allowed_cost <= 1 ? ((prune_hint & CY_JUST_SET) != 0) : 1))
+    {
+#if SH
+      /* d = cy, cy = cy
+	 sh:		movt	d */
+      PERFORM_ADD_CI(v, co, VALUE(0), VALUE(0), ci);
+      CRECURSE_NEW(ADD_CI, n_values, CNST(0), CNST(0), 1, prune_hint & ~CY_JUST_SET);
+#endif
+#if M68000 || I386 || SH
+      /* d = -cy, cy = cy
+	 m68000:	subx	d,d
+	 i80386:	sbb	d,d
+	 sh:		subc	d,d */
+      PERFORM_SUB_CIO(v, co, VALUE(0), VALUE(0), ci);
+      CRECURSE_NEW(SUB_CIO, n_values, n_values, n_values, 1, prune_hint & ~CY_JUST_SET);
+#endif
+#if PYR
+      /* d = -1 + cy, cy = cy
+	 pyramid:	subwb	d,d */
+      PERFORM_ADC_CIO(v, co, VALUE(0), VALUE(0), ci);
+      CRECURSE_NEW(ADC_CIO, n_values, n_values, n_values, 1, prune_hint & ~CY_JUST_SET);
+#endif
+#if I386 /* slow on m68000 */
+/* ??? make new section for this, and conditionalize it on allowed_cost > 1 ??? */
+      /* i80386:	cmc */
+      co = ci ^ 1;
+      CRECURSE_2OP(COMCY, n_values, n_values, n_values, 1, CY_JUST_SET);
+#endif
+    }
+
+  /* Move instructions and instructions that just set carry.
+     Don't do this if we are just permitted to do one more instruction.  */
+  if (allowed_cost > 1)
+    {
+#if M68000 || I386 || PYR || SH
+      /* d = 0
+	 m68000:	moveq	0,d
+	 i80386:	movl	$0,d
+	 pyramid:	movw	0,d
+	 sh:		mov	#0,d */
+      PERFORM_COPY(v, co, VALUE(0), ci);
+      CRECURSE_NEW(COPY, n_values, CNST(0), CNST(0), 1, prune_hint & ~CY_JUST_SET);
+#endif
+#if M68000 || I386
+      /* d = 0, cy = 0
+	 m68000:	sub	d,d
+	 i80386:	sub	d,d */
+      PERFORM_SUB_CO(v, co, r1, r1, ci);
+      CRECURSE_NEW(SUB_CO, n_values, n_values, n_values, 1, CY_JUST_SET | CY_0);
+#endif
+#if PYR
+      /* d = 0, cy = 0
+	 pyramid:	subw	d,d */
+      PERFORM_ADC_CO(v, co, r1, r1, ci);
+      CRECURSE_NEW(ADC_CO, n_values, n_values, n_values, 1, CY_JUST_SET | CY_0);
+#endif
+#if MC68020		/* used for shifting, don't do this for plain 68000 */
+      /* d = 31
+	 m68000:	moveq	31,d */
+      PERFORM_COPY(v, co, VALUE(BITS_PER_WORD-1), ci);
+      CRECURSE_NEW(COPY, n_values, CNST(BITS_PER_WORD-1), CNST(0), 1, prune_hint & ~CY_JUST_SET);
+#endif
+#if MC68020		/* used for shifting, don't do this for plain 68000 */
+      if (flag_shifts)
+	{
+	  int cnt;
+	  for (cnt = 9; cnt <= 30; cnt++)	/* 31 handled above */
+	    {
+	      /* d = <cnt>
+		 m68000:	moveq	<cnt>,d */
+	      PERFORM_COPY(v, co, VALUE(cnt), ci);
+	      CRECURSE_NEW(COPY, n_values, CNST(cnt), CNST(0), 1, prune_hint & ~CY_JUST_SET);
+	    }
+	}
+#endif
+#if M68000 || PYR || SH
+      /* d = 1
+	 m68000:	moveq	1,d
+	 pyramid:	movw	$1,d
+	 sh:		mov	#1,d */
+      PERFORM_COPY(v, co, VALUE(1), ci);
+      CRECURSE_NEW(COPY, n_values, CNST(1), CNST(0), 1,  prune_hint & ~CY_JUST_SET);
+      /* d = -1
+	 m68000:	moveq	-1,d
+	 pyramid:	movw	$-1,d
+	 sh:		mov	#-1,d */
+      PERFORM_COPY(v, co, VALUE(-1), ci);
+      CRECURSE_NEW(COPY, n_values, CNST(-1), CNST(0), 1, prune_hint & ~CY_JUST_SET);
+#endif
+#if M68000 || I386 || PYR	/* these cost 2 cost units */
+      /* d = 0x80000000 */
+      PERFORM_COPY(v, co, VALUE_MIN_SIGNED, ci);
+      CRECURSE_NEW(COPY, n_values, CNST_0x80000000, CNST(0), 2, prune_hint & ~CY_JUST_SET);
+
+      /* d = 0x7fffffff */
+      PERFORM_COPY(v, co, VALUE_MAX_SIGNED, ci);
+      CRECURSE_NEW(COPY, n_values, CNST_0x7FFFFFFF, CNST(0), 2, prune_hint & ~CY_JUST_SET);
+#endif
+#if SH
+      /* sh:	sett */
+      co = 1;
+      CRECURSE_2OP(SETCY, n_values, n_values, n_values, 1, CY_JUST_SET | CY_1);
+      /* sh:	clrt */
+      co = 0;
+      CRECURSE_2OP(CLRCY, n_values, n_values, n_values, 1, CY_JUST_SET | CY_0);
+#endif
+    }
+#ifdef TIMING
+  timings[allowed_cost] += cputime() - time_start;
+#endif
+}
+#endif
+
+#if I960
+/* Missing insns:
+ * cmpdeco, cmpinco, cmpdeci and cmpinci.  How are conditions set?  Signed
+   or unsigned?
+ * All i960 insns accept small immediate values.  Try more cases, like lhs of
+   shifts with rhs a register, etc.
+ */
+void
+MAKENAME(synth) (insn_t *sequence,
+		 int n_insns,
+		 word *values,
+		 int n_values,
+		 word goal_value,
+		 int allowed_cost,
+		 int ci,
+		 int prune_hint)
+{
+  int s1, s2;
+  word v, r1, r2;
+  int co;
+  int last_dest;
+
+#ifdef TIMING
+  unsigned long time_start = cputime();
+#endif
+
+  if (n_insns > 0)
+    last_dest = sequence[n_insns - 1].d;
+  else
+    last_dest = -1;
+
+/* Summary of interesting i960 instructions:
+	    Jx clocks  cc-in  cc-out
+move		1	-	-
+addo		1	-	-
+addc		1	-c-	0cc
+subo		1	-	-
+subc		1	-c-	0cc
+not		1	-	-
+and		1	-	-
+andnot,notand	1	-	-
+or		1	-	-
+ornot,notor	1	-	-
+nand		1	-	-
+nor		1	-	-
+xor		1	-	-
+xnor		1	-	-
+
+extract		7	-	-
+rotate		1	-	-
+shlo		1	-	-
+shro		1	-	-
+shri		1	-	-
+shrdi		6	-	-
+
+alterbit	1	-c-	-
+setbit		1	-	-
+clrbit		1	-	-
+chkbit		1	-	-c-
+notbit		1	-	-
+scanbit		5	-	-
+spanbit		6	-	-
+
+cmpdeco		1	-	ccc
+cmpinco		1	-	ccc
+cmpi		1	-	ccc
+cmpo		1	-	ccc
+testCC		4	ccc	-
+
+Conditionally:
+selCC		1	ccc	-
+addoCC		1	ccc	-
+suboCC		1	ccc	-
+concmpi		1	c--	ccc
+concmpo		1	c--	ccc
+*/
+
+  /* Binary operations with carry-in.  */
+  if (ci >= 0 && flag_use_carry)
+    {
+      for (s1 = n_values - 1; s1 >= 0; s1--)
+	{
+	  r1 = values[s1];
+	  for (s2 = s1 - 1; s2 >= 0; s2--)
+	    {
+	      int dr;
+	      r2 = values[s2];
+
+	      if (allowed_cost <= 1 && (prune_hint & CY_JUST_SET) == 0)
+		{
+		  /* We are in a leaf node.  CY was not set (to 0, 1 or to
+		     a data dependent value) by the previous insn.  Therefore,
+		     one of the input operands has to be the result operand of
+		     the previous insn for that insn to be meaningful.  */
+		  if (last_dest >= 0 && s1 != last_dest && s2 != last_dest)
+		    continue;
+		}
+
+	      /* i960:		addc */
+	      PERFORM_ADDC_960(v, co, r1, r2, ci);
+	      RECURSE(ADDC_960, s1, s2, CY_JUST_SET);
+	      /* i960:		subc */
+	      PERFORM_SUBC_960(v, co, r1, r2, ci);
+	      RECURSE(SUBC_960, s1, s2, CY_JUST_SET);
+	      PERFORM_SUBC_960(v, co, r2, r1, ci);
+	      RECURSE(SUBC_960, s2, s1, CY_JUST_SET);
+#if I960B
+	      /* i960:		selCC r1,r2,d */
+	      PERFORM_SEL_NO_960(v, co, r1, r2, ci);
+	      RECURSE(SEL_NO_960, s1, s2, prune_hint & ~CY_JUST_SET);
+	      PERFORM_SEL_G_960(v, co, r1, r2, ci);
+	      RECURSE(SEL_G_960, s1, s2, prune_hint & ~CY_JUST_SET);
+	      PERFORM_SEL_E_960(v, co, r1, r2, ci);
+	      RECURSE(SEL_E_960, s1, s2, prune_hint & ~CY_JUST_SET);
+	      PERFORM_SEL_GE_960(v, co, r1, r2, ci);
+	      RECURSE(SEL_GE_960, s1, s2, prune_hint & ~CY_JUST_SET);
+	      PERFORM_SEL_L_960(v, co, r1, r2, ci);
+	      RECURSE(SEL_L_960, s1, s2, prune_hint & ~CY_JUST_SET);
+	      PERFORM_SEL_NE_960(v, co, r1, r2, ci);
+	      RECURSE(SEL_NE_960, s1, s2, prune_hint & ~CY_JUST_SET);
+	      PERFORM_SEL_LE_960(v, co, r1, r2, ci);
+	      RECURSE(SEL_LE_960, s1, s2, prune_hint & ~CY_JUST_SET);
+	      PERFORM_SEL_O_960(v, co, r1, r2, ci);
+	      RECURSE(SEL_O_960, s1, s2, prune_hint & ~CY_JUST_SET);
+#endif
+	      /* i960:		concmpoCC r1,r2 */
+	      PERFORM_CONCMPO_960(v, co, r1, r2, ci);
+	      CRECURSE_2OP(CONCMPO_960, n_values, s1, s2, 1, CY_JUST_SET);
+	      /* i960:		concmpoCC r2,r1 */
+	      PERFORM_CONCMPO_960(v, co, r2, r1, ci);
+	      CRECURSE_2OP(CONCMPO_960, n_values, s2, s1, 1, CY_JUST_SET);
+	      /* i960:		concmpiCC r1,r2 */
+	      PERFORM_CONCMPI_960(v, co, r1, r2, ci);
+	      CRECURSE_2OP(CONCMPI_960, n_values, s1, s2, 1, CY_JUST_SET);
+	      /* i960:		concmpiCC r2,r1 */
+	      PERFORM_CONCMPI_960(v, co, r2, r1, ci);
+	      CRECURSE_2OP(CONCMPI_960, n_values, s2, s1, 1, CY_JUST_SET);
+	    }
+	}
+    }
+
+#if I960B
+  /* Binary conditionally executed operations with carry-in.  */
+  if (ci >= 0 && flag_use_carry)
+    {
+      for (s1 = n_values - 1; s1 >= 0; s1--)
+	{
+	  r1 = values[s1];
+	  for (s2 = s1 - 1; s2 >= 0; s2--)
+	    {
+	      int dr;
+	      r2 = values[s2];
+	      /* I960 conditional add and subtract instructions need special
+		 treatment.  We let all other instructions assign the next
+		 higher-numbered register, but we can't do that here since
+		 these insns leave the register unchanged if the instruction
+		 condition is not satisfied.  Instead we let these instructions
+		 non-deterministically overwrite all already-defined
+		 registers.  */
+	      for (dr = n_values - 1; dr >= 0; dr--)
+		{
+		  if (allowed_cost <= 1 && (prune_hint & CY_JUST_SET) == 0)
+		    {
+		      /* We are in a leaf node and CY was not set (to 1 or to
+			 a data dependent value) by the previous insn.  One of
+			 the input operands has to be the result operand of
+			 the previous insn for that insn to be meaningful.
+			 For these instructions, we have to consider the
+			 destination as an input operand, since its result is
+			 not dying here.  */
+		      if (last_dest >= 0 && dr != last_dest
+			  && s1 != last_dest && s2 != last_dest)
+			continue;
+		    }
+
+		  /* i960:		addoCC r1,r2 */
+		  v = values[dr];
+		  PERFORM_ADDO_NO_960(v, co, r1, r2, ci);
+		  CRECURSE_2OP(ADDO_NO_960, dr, s1, s2, 1, prune_hint & ~CY_JUST_SET);
+		  v = values[dr];
+		  PERFORM_ADDO_G_960(v, co, r1, r2, ci);
+		  CRECURSE_2OP(ADDO_G_960, dr, s1, s2, 1, prune_hint & ~CY_JUST_SET);
+		  v = values[dr];
+		  PERFORM_ADDO_E_960(v, co, r1, r2, ci);
+		  CRECURSE_2OP(ADDO_E_960, dr, s1, s2, 1, prune_hint & ~CY_JUST_SET);
+		  v = values[dr];
+		  PERFORM_ADDO_GE_960(v, co, r1, r2, ci);
+		  CRECURSE_2OP(ADDO_GE_960, dr, s1, s2, 1, prune_hint & ~CY_JUST_SET);
+		  v = values[dr];
+		  PERFORM_ADDO_L_960(v, co, r1, r2, ci);
+		  CRECURSE_2OP(ADDO_L_960, dr, s1, s2, 1, prune_hint & ~CY_JUST_SET);
+		  v = values[dr];
+		  PERFORM_ADDO_NE_960(v, co, r1, r2, ci);
+		  CRECURSE_2OP(ADDO_NE_960, dr, s1, s2, 1, prune_hint & ~CY_JUST_SET);
+		  v = values[dr];
+		  PERFORM_ADDO_LE_960(v, co, r1, r2, ci);
+		  CRECURSE_2OP(ADDO_LE_960, dr, s1, s2, 1, prune_hint & ~CY_JUST_SET);
+		  v = values[dr];
+		  PERFORM_ADDO_O_960(v, co, r1, r2, ci);
+		  CRECURSE_2OP(ADDO_O_960, dr, s1, s2, 1, prune_hint & ~CY_JUST_SET);
+
+		  /* i960:		suboCC r2,r1 */
+		  v = values[dr];
+		  PERFORM_SUBO_NO_960(v, co, r1, r2, ci);
+		  CRECURSE_2OP(SUBO_NO_960, dr, s1, s2, 1, prune_hint & ~CY_JUST_SET);
+		  v = values[dr];
+		  PERFORM_SUBO_G_960(v, co, r1, r2, ci);
+		  CRECURSE_2OP(SUBO_G_960, dr, s1, s2, 1, prune_hint & ~CY_JUST_SET);
+		  v = values[dr];
+		  PERFORM_SUBO_E_960(v, co, r1, r2, ci);
+		  CRECURSE_2OP(SUBO_E_960, dr, s1, s2, 1, prune_hint & ~CY_JUST_SET);
+		  v = values[dr];
+		  PERFORM_SUBO_GE_960(v, co, r1, r2, ci);
+		  CRECURSE_2OP(SUBO_GE_960, dr, s1, s2, 1, prune_hint & ~CY_JUST_SET);
+		  v = values[dr];
+		  PERFORM_SUBO_L_960(v, co, r1, r2, ci);
+		  CRECURSE_2OP(SUBO_L_960, dr, s1, s2, 1, prune_hint & ~CY_JUST_SET);
+		  v = values[dr];
+		  PERFORM_SUBO_NE_960(v, co, r1, r2, ci);
+		  CRECURSE_2OP(SUBO_NE_960, dr, s1, s2, 1, prune_hint & ~CY_JUST_SET);
+		  v = values[dr];
+		  PERFORM_SUBO_LE_960(v, co, r1, r2, ci);
+		  CRECURSE_2OP(SUBO_LE_960, dr, s1, s2, 1, prune_hint & ~CY_JUST_SET);
+		  v = values[dr];
+		  PERFORM_SUBO_O_960(v, co, r1, r2, ci);
+		  CRECURSE_2OP(SUBO_O_960, dr, s1, s2, 1, prune_hint & ~CY_JUST_SET);
+
+		  /* i960:		suboCC r1,r2 */
+		  v = values[dr];
+		  PERFORM_SUBO_NO_960(v, co, r2, r1, ci);
+		  CRECURSE_2OP(SUBO_NO_960, dr, s2, s1, 1, prune_hint & ~CY_JUST_SET);
+		  v = values[dr];
+		  PERFORM_SUBO_G_960(v, co, r2, r1, ci);
+		  CRECURSE_2OP(SUBO_G_960, dr, s2, s1, 1, prune_hint & ~CY_JUST_SET);
+		  v = values[dr];
+		  PERFORM_SUBO_E_960(v, co, r2, r1, ci);
+		  CRECURSE_2OP(SUBO_E_960, dr, s2, s1, 1, prune_hint & ~CY_JUST_SET);
+		  v = values[dr];
+		  PERFORM_SUBO_GE_960(v, co, r2, r1, ci);
+		  CRECURSE_2OP(SUBO_GE_960, dr, s2, s1, 1, prune_hint & ~CY_JUST_SET);
+		  v = values[dr];
+		  PERFORM_SUBO_L_960(v, co, r2, r1, ci);
+		  CRECURSE_2OP(SUBO_L_960, dr, s2, s1, 1, prune_hint & ~CY_JUST_SET);
+		  v = values[dr];
+		  PERFORM_SUBO_NE_960(v, co, r2, r1, ci);
+		  CRECURSE_2OP(SUBO_NE_960, dr, s2, s1, 1, prune_hint & ~CY_JUST_SET);
+		  v = values[dr];
+		  PERFORM_SUBO_LE_960(v, co, r2, r1, ci);
+		  CRECURSE_2OP(SUBO_LE_960, dr, s2, s1, 1, prune_hint & ~CY_JUST_SET);
+		  v = values[dr];
+		  PERFORM_SUBO_O_960(v, co, r2, r1, ci);
+		  CRECURSE_2OP(SUBO_O_960, dr, s2, s1, 1, prune_hint & ~CY_JUST_SET);
+		}
+	    }
+	}
+    }
+#endif
+
+  /* Binary operations without carry-in.  */
+  for (s1 = n_values - 1; s1 >= 0; s1--)
+    {
+      r1 = values[s1];
+      for (s2 = s1 - 1; s2 >= 0; s2--)
+	{
+	  r2 = values[s2];
+
+	  if (allowed_cost <= 1)
+	    {
+	      /* We are in a leaf node.  One of the input operands has to be
+		 the result operand of the previous insn for that insn to be
+		 meaningful.  */
+	      if (last_dest >= 0 && s1 != last_dest && s2 != last_dest)
+		continue;
+	    }
+
+	  /* i960:	cmpo */
+	  PERFORM_CMPO_960(v, co, r1, r2, ci);
+	  CRECURSE_2OP(CMPO_960, n_values, s1, s2, 1, CY_JUST_SET);
+	  PERFORM_CMPO_960(v, co, r2, r1, ci);
+	  CRECURSE_2OP(CMPO_960, n_values, s2, s1, 1, CY_JUST_SET);
+	  /* i960:	cmpi */
+	  PERFORM_CMPI_960(v, co, r1, r2, ci);
+	  CRECURSE_2OP(CMPI_960, n_values, s1, s2, 1, CY_JUST_SET);
+	  PERFORM_CMPI_960(v, co, r2, r1, ci);
+	  CRECURSE_2OP(CMPI_960, n_values, s2, s1, 1, CY_JUST_SET);
+
+	  /* i960:	addo */
+	  PERFORM_ADD(v, co, r1, r2, ci);
+	  RECURSE(ADD, s1, s2, prune_hint & ~CY_JUST_SET);
+	  /* i960:	subo */
+	  PERFORM_SUB(v, co, r1, r2, ci);
+	  RECURSE(SUB, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_SUB(v, co, r2, r1, ci);
+	  RECURSE(SUB, s2, s1, prune_hint & ~CY_JUST_SET);
+
+	  PERFORM_AND(v, co, r1, r2, ci);
+	  RECURSE(AND, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_IOR(v, co, r1, r2, ci);
+	  RECURSE(IOR, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_XOR(v, co, r1, r2, ci);
+	  RECURSE(XOR, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_ANDC(v, co, r1, r2, ci);
+	  RECURSE(ANDC, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_ANDC(v, co, r2, r1, ci);
+	  RECURSE(ANDC, s2, s1, prune_hint & ~CY_JUST_SET);
+	  PERFORM_IORC(v, co, r1, r2, ci);
+	  RECURSE(IORC, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_IORC(v, co, r2, r1, ci);
+	  RECURSE(IORC, s2, s1, prune_hint & ~CY_JUST_SET);
+	  PERFORM_EQV(v, co, r1, r2, ci);
+	  RECURSE(EQV, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_NAND(v, co, r1, r2, ci);
+	  RECURSE(NAND, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_NOR(v, co, r1, r2, ci);
+	  RECURSE(NOR, s1, s2, prune_hint & ~CY_JUST_SET);
+
+	  PERFORM_SHIFTL_NT (v, co, r1, r2, ci);
+	  RECURSE(SHIFTL_NT, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_SHIFTL_NT (v, co, r2, r1, ci);
+	  RECURSE(SHIFTL_NT, s2, s1, prune_hint & ~CY_JUST_SET);
+
+	  PERFORM_LSHIFTR_NT (v, co, r1, r2, ci);
+	  RECURSE(LSHIFTR_NT, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_LSHIFTR_NT (v, co, r2, r1, ci);
+	  RECURSE(LSHIFTR_NT, s2, s1, prune_hint & ~CY_JUST_SET);
+
+	  PERFORM_ASHIFTR_NT (v, co, r1, r2, ci);
+	  RECURSE(ASHIFTR_NT, s1, s2, prune_hint & ~CY_JUST_SET);
+	  PERFORM_ASHIFTR_NT (v, co, r2, r1, ci);
+	  RECURSE(ASHIFTR_NT, s2, s1, prune_hint & ~CY_JUST_SET);
+	}
+    }
+
+  /* Unary operations with carry-in.  */
+  if (ci >= 0 && flag_use_carry)
+    {
+      for (s1 = n_values - 1; s1 >= 0; s1--)
+	{
+	  int dr;
+	  r1 = values[s1];
+
+	  if (allowed_cost <= 1 && (prune_hint & CY_JUST_SET) == 0)
+	    {
+	      /* We are in a leaf node and CY was not set (to 1 or to a
+		 data dependent value) by the previous insn.  Therefore,
+		 the input operand has to be the result operand of the
+		 previous insn for that insn to be meaningful.  */
+	      if (last_dest >= 0 && s1 != last_dest)
+		continue;
+	    }
+
+	  /* d,cy = 2*r1 + cy
+	     i960:	addc	s1,s1,d */
+	  PERFORM_ADDC_960(v, co, r1, r1, ci);
+	  RECURSE(ADDC_960, s1, s1, CY_JUST_SET);
+	  /* d,cy = r1 + cy - 1
+	     i960:	subc	r0,s1,d */
+	  PERFORM_ADDC_960(v, co, r1, VALUE(-1), ci);
+	  RECURSE(ADDC_960, s1, CNST(-1), CY_JUST_SET);
+	  /* d,cy = r1 + cy
+	     i960:	addc	s1,0,d */
+	  PERFORM_ADDC_960(v, co, r1, VALUE(0), ci);
+	  RECURSE(ADDC_960, s1, CNST(0), CY_JUST_SET);
+	  /* d,cy = ~r1 + cy
+	     i960:	subc	s1,0,d */
+	  PERFORM_SUBC_960(v, co, VALUE(0), r1, ci);
+	  RECURSE(SUBC_960, CNST(0), s1, CY_JUST_SET);
+#if I960B
+	  /* i960:		selCC r1,0,d */
+	  PERFORM_SEL_NO_960(v, co, r1, VALUE(0), ci);
+	  RECURSE(SEL_NO_960, s1, CNST(0), prune_hint & ~CY_JUST_SET);
+	  PERFORM_SEL_G_960(v, co, r1, VALUE(0), ci);
+	  RECURSE(SEL_G_960, s1, CNST(0), prune_hint & ~CY_JUST_SET);
+	  PERFORM_SEL_E_960(v, co, r1, VALUE(0), ci);
+	  RECURSE(SEL_E_960, s1, CNST(0), prune_hint & ~CY_JUST_SET);
+	  PERFORM_SEL_GE_960(v, co, r1, VALUE(0), ci);
+	  RECURSE(SEL_GE_960, s1, CNST(0), prune_hint & ~CY_JUST_SET);
+	  PERFORM_SEL_L_960(v, co, r1, VALUE(0), ci);
+	  RECURSE(SEL_L_960, s1, CNST(0), prune_hint & ~CY_JUST_SET);
+	  PERFORM_SEL_NE_960(v, co, r1, VALUE(0), ci);
+	  RECURSE(SEL_NE_960, s1, CNST(0), prune_hint & ~CY_JUST_SET);
+	  PERFORM_SEL_LE_960(v, co, r1, VALUE(0), ci);
+	  RECURSE(SEL_LE_960, s1, CNST(0), prune_hint & ~CY_JUST_SET);
+	  PERFORM_SEL_O_960(v, co, r1, VALUE(0), ci);
+	  RECURSE(SEL_O_960, s1, CNST(0), prune_hint & ~CY_JUST_SET);
+
+	  /* i960:		selCC r1,1,d */
+	  PERFORM_SEL_NO_960(v, co, r1, VALUE(1), ci);
+	  RECURSE(SEL_NO_960, s1, CNST(1), prune_hint & ~CY_JUST_SET);
+	  PERFORM_SEL_G_960(v, co, r1, VALUE(1), ci);
+	  RECURSE(SEL_G_960, s1, CNST(1), prune_hint & ~CY_JUST_SET);
+	  PERFORM_SEL_E_960(v, co, r1, VALUE(1), ci);
+	  RECURSE(SEL_E_960, s1, CNST(1), prune_hint & ~CY_JUST_SET);
+	  PERFORM_SEL_GE_960(v, co, r1, VALUE(1), ci);
+	  RECURSE(SEL_GE_960, s1, CNST(1), prune_hint & ~CY_JUST_SET);
+	  PERFORM_SEL_L_960(v, co, r1, VALUE(1), ci);
+	  RECURSE(SEL_L_960, s1, CNST(1), prune_hint & ~CY_JUST_SET);
+	  PERFORM_SEL_NE_960(v, co, r1, VALUE(1), ci);
+	  RECURSE(SEL_NE_960, s1, CNST(1), prune_hint & ~CY_JUST_SET);
+	  PERFORM_SEL_LE_960(v, co, r1, VALUE(1), ci);
+	  RECURSE(SEL_LE_960, s1, CNST(1), prune_hint & ~CY_JUST_SET);
+	  PERFORM_SEL_O_960(v, co, r1, VALUE(1), ci);
+	  RECURSE(SEL_O_960, s1, CNST(1), prune_hint & ~CY_JUST_SET);
+#endif
+	  /* i960:		concmpoCC r1,r2 */
+	  PERFORM_CONCMPO_960(v, co, r1, VALUE(0), ci);
+	  CRECURSE_2OP(CONCMPO_960, n_values, s1, CNST(0), 1, CY_JUST_SET);
+	  /* i960:		concmpoCC r2,r1 */
+	  PERFORM_CONCMPO_960(v, co, VALUE(0), r1, ci);
+	  CRECURSE_2OP(CONCMPO_960, n_values, CNST(0), s1, 1, CY_JUST_SET);
+	  /* i960:		concmpiCC r1,r2 */
+	  PERFORM_CONCMPI_960(v, co, r1, VALUE(0), ci);
+	  CRECURSE_2OP(CONCMPI_960, n_values, s1, CNST(0), 1, CY_JUST_SET);
+	  /* i960:		concmpiCC r2,r1 */
+	  PERFORM_CONCMPI_960(v, co, VALUE(0), r1, ci);
+	  CRECURSE_2OP(CONCMPI_960, n_values, CNST(0), s1, 1, CY_JUST_SET);
+
+	  /* i960:		concmpoCC r1,r2 */
+	  PERFORM_CONCMPO_960(v, co, r1, VALUE(1), ci);
+	  CRECURSE_2OP(CONCMPO_960, n_values, s1, CNST(1), 1, CY_JUST_SET);
+	  /* i960:		concmpoCC r2,r1 */
+	  PERFORM_CONCMPO_960(v, co, VALUE(1), r1, ci);
+	  CRECURSE_2OP(CONCMPO_960, n_values, CNST(1), s1, 1, CY_JUST_SET);
+	  /* i960:		concmpiCC r1,r2 */
+	  PERFORM_CONCMPI_960(v, co, r1, VALUE(1), ci);
+	  CRECURSE_2OP(CONCMPI_960, n_values, s1, CNST(1), 1, CY_JUST_SET);
+	  /* i960:		concmpiCC r2,r1 */
+	  PERFORM_CONCMPI_960(v, co, VALUE(1), r1, ci);
+	  CRECURSE_2OP(CONCMPI_960, n_values, CNST(1), s1, 1, CY_JUST_SET);
+	  {
+	    int cnt;
+	    for (cnt = 0; cnt < BITS_PER_WORD; cnt += (flag_shifts ? 1 : BITS_PER_WORD - 1))
+	      {
+		PERFORM_ALTERBIT(v, co, r1, VALUE(cnt), ci);
+		RECURSE(ALTERBIT, s1, CNST(cnt), prune_hint & ~CY_JUST_SET);
+	      }
+	  }
+	}
+    }
+
+#if I960B
+  /* Unary conditionally executed operations with carry-in.  */
+  if (ci >= 0 && flag_use_carry)
+    {
+      for (s1 = n_values - 1; s1 >= 0; s1--)
+	{
+	  int dr;
+	  r1 = values[s1];
+
+	  /* I960 conditional add and subtract instructions need special
+	     treatment.  See comment above.  */
+	  for (dr = n_values - 1; dr >= 0; dr--)
+	    {
+	      if (allowed_cost <= 1 && (prune_hint & CY_JUST_SET) == 0)
+		{
+		  /* We are in a leaf node and CY was not set (to 1 or to a
+		     data dependent value) by the previous insn.  Therefore
+		     one of the input operands has to be the result operand of
+		     the previous insn for that insn to be meaningful.
+		     For these instructions, we have to consider the
+		     destination as an input operand, since its result is
+		     not dying here.  */
+		  if (last_dest >= 0 && s1 != last_dest && dr != last_dest)
+		    continue;
+		}
+
+	      /* i960:		addoCC r1,1,d */
+	      v = values[dr];
+	      PERFORM_ADDO_NO_960(v, co, r1, VALUE(1), ci);
+	      CRECURSE_2OP(ADDO_NO_960, dr, s1, CNST(1), 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_ADDO_G_960(v, co, r1, VALUE(1), ci);
+	      CRECURSE_2OP(ADDO_G_960, dr, s1, CNST(1), 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_ADDO_E_960(v, co, r1, VALUE(1), ci);
+	      CRECURSE_2OP(ADDO_E_960, dr, s1, CNST(1), 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_ADDO_GE_960(v, co, r1, VALUE(1), ci);
+	      CRECURSE_2OP(ADDO_GE_960, dr, s1, CNST(1), 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_ADDO_L_960(v, co, r1, VALUE(1), ci);
+	      CRECURSE_2OP(ADDO_L_960, dr, s1, CNST(1), 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_ADDO_NE_960(v, co, r1, VALUE(1), ci);
+	      CRECURSE_2OP(ADDO_NE_960, dr, s1, CNST(1), 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_ADDO_LE_960(v, co, r1, VALUE(1), ci);
+	      CRECURSE_2OP(ADDO_LE_960, dr, s1, CNST(1), 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_ADDO_O_960(v, co, r1, VALUE(1), ci);
+	      CRECURSE_2OP(ADDO_O_960, dr, s1, CNST(1), 1, prune_hint & ~CY_JUST_SET);
+
+	      /* i960:		suboCC 1,r1,d */
+	      v = values[dr];
+	      PERFORM_SUBO_NO_960(v, co, r1, VALUE(1), ci);
+	      CRECURSE_2OP(SUBO_NO_960, dr, s1, CNST(1), 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_SUBO_G_960(v, co, r1, VALUE(1), ci);
+	      CRECURSE_2OP(SUBO_G_960, dr, s1, CNST(1), 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_SUBO_E_960(v, co, r1, VALUE(1), ci);
+	      CRECURSE_2OP(SUBO_E_960, dr, s1, CNST(1), 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_SUBO_GE_960(v, co, r1, VALUE(1), ci);
+	      CRECURSE_2OP(SUBO_GE_960, dr, s1, CNST(1), 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_SUBO_L_960(v, co, r1, VALUE(1), ci);
+	      CRECURSE_2OP(SUBO_L_960, dr, s1, CNST(1), 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_SUBO_NE_960(v, co, r1, VALUE(1), ci);
+	      CRECURSE_2OP(SUBO_NE_960, dr, s1, CNST(1), 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_SUBO_LE_960(v, co, r1, VALUE(1), ci);
+	      CRECURSE_2OP(SUBO_LE_960, dr, s1, CNST(1), 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_SUBO_O_960(v, co, r1, VALUE(1), ci);
+	      CRECURSE_2OP(SUBO_O_960, dr, s1, CNST(1), 1, prune_hint & ~CY_JUST_SET);
+
+	      /* i960:		suboCC r1,1,d */
+	      v = values[dr];
+	      PERFORM_SUBO_NO_960(v, co, VALUE(1), r1, ci);
+	      CRECURSE_2OP(SUBO_NO_960, dr, CNST(1), s1, 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_SUBO_G_960(v, co, VALUE(1), r1, ci);
+	      CRECURSE_2OP(SUBO_G_960, dr, CNST(1), s1, 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_SUBO_E_960(v, co, VALUE(1), r1, ci);
+	      CRECURSE_2OP(SUBO_E_960, dr, CNST(1), s1, 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_SUBO_GE_960(v, co, VALUE(1), r1, ci);
+	      CRECURSE_2OP(SUBO_GE_960, dr, CNST(1), s1, 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_SUBO_L_960(v, co, VALUE(1), r1, ci);
+	      CRECURSE_2OP(SUBO_L_960, dr, CNST(1), s1, 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_SUBO_NE_960(v, co, VALUE(1), r1, ci);
+	      CRECURSE_2OP(SUBO_NE_960, dr, CNST(1), s1, 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_SUBO_LE_960(v, co, VALUE(1), r1, ci);
+	      CRECURSE_2OP(SUBO_LE_960, dr, CNST(1), s1, 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_SUBO_O_960(v, co, VALUE(1), r1, ci);
+	      CRECURSE_2OP(SUBO_O_960, dr, CNST(1), s1, 1, prune_hint & ~CY_JUST_SET);
+
+	      /* i960:		suboCC r1,0,d */
+	      v = values[dr];
+	      PERFORM_SUBO_NO_960(v, co, VALUE(0), r1, ci);
+	      CRECURSE_2OP(SUBO_NO_960, dr, CNST(0), s1, 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_SUBO_G_960(v, co, VALUE(0), r1, ci);
+	      CRECURSE_2OP(SUBO_G_960, dr, CNST(0), s1, 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_SUBO_E_960(v, co, VALUE(0), r1, ci);
+	      CRECURSE_2OP(SUBO_E_960, dr, CNST(0), s1, 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_SUBO_GE_960(v, co, VALUE(0), r1, ci);
+	      CRECURSE_2OP(SUBO_GE_960, dr, CNST(0), s1, 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_SUBO_L_960(v, co, VALUE(0), r1, ci);
+	      CRECURSE_2OP(SUBO_L_960, dr, CNST(0), s1, 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_SUBO_NE_960(v, co, VALUE(0), r1, ci);
+	      CRECURSE_2OP(SUBO_NE_960, dr, CNST(0), s1, 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_SUBO_LE_960(v, co, VALUE(0), r1, ci);
+	      CRECURSE_2OP(SUBO_LE_960, dr, CNST(0), s1, 1, prune_hint & ~CY_JUST_SET);
+	      v = values[dr];
+	      PERFORM_SUBO_O_960(v, co, VALUE(0), r1, ci);
+	      CRECURSE_2OP(SUBO_O_960, dr, CNST(0), s1, 1, prune_hint & ~CY_JUST_SET);
+	    }
+	}
+    }
+#endif
+
+  /* Unary operations without carry-in.  */
+  for (s1 = n_values - 1; s1 >= 0; s1--)
+    {
+      r1 = values[s1];
+
+      if (allowed_cost <= 1)
+	{
+	  /* We are in a leaf node.  The input operand has to be the result
+	     operand of the previous insns for that insn to be meaningful.  */
+	  if (last_dest >= 0 && s1 != last_dest)
+	    continue;
+	}
+
+      /* i960:	cmpo */
+      PERFORM_CMPO_960(v, co, r1, VALUE(0), ci);
+      CRECURSE_2OP(CMPO_960, n_values, s1, CNST(0), 1, CY_JUST_SET);
+      PERFORM_CMPO_960(v, co, VALUE(0), r1, ci);
+      CRECURSE_2OP(CMPO_960, n_values, CNST(0), s1, 1, CY_JUST_SET);
+      /* i960:	cmpi */
+      PERFORM_CMPI_960(v, co, r1, VALUE(0), ci);
+      CRECURSE_2OP(CMPI_960, n_values, s1, CNST(0), 1, CY_JUST_SET);
+      PERFORM_CMPI_960(v, co, VALUE(0), r1, ci);
+      CRECURSE_2OP(CMPI_960, n_values, CNST(0), s1, 1, CY_JUST_SET);
+
+      /* i960:	cmpo */
+      PERFORM_CMPO_960(v, co, r1, VALUE(1), ci);
+      CRECURSE_2OP(CMPO_960, n_values, s1, CNST(1), 1, CY_JUST_SET);
+      PERFORM_CMPO_960(v, co, VALUE(1), r1, ci);
+      CRECURSE_2OP(CMPO_960, n_values, CNST(1), s1, 1, CY_JUST_SET);
+      /* i960:	cmpi */
+      PERFORM_CMPI_960(v, co, r1, VALUE(1), ci);
+      CRECURSE_2OP(CMPI_960, n_values, s1, CNST(1), 1, CY_JUST_SET);
+      PERFORM_CMPI_960(v, co, VALUE(1), r1, ci);
+      CRECURSE_2OP(CMPI_960, n_values, CNST(1), s1, 1, CY_JUST_SET);
+
+      /* d = r1 & 1
+	 i960:		and	s1,1,d */
+      PERFORM_AND(v, co, r1, VALUE(1), ci);
+      RECURSE(AND, s1, CNST(1), prune_hint & ~CY_JUST_SET);
+
+      /* d = r1 ^ 1
+	 i960:		xor	s1,1,d */
+      PERFORM_XOR(v, co, r1, VALUE(1), ci);
+      RECURSE(XOR, s1, CNST(1), prune_hint & ~CY_JUST_SET);
+      /* d = ~r1
+	 i960:		not	s1,d */
+      PERFORM_SUB(v, co, VALUE(-1), r1, ci);
+      RECURSE(SUB, CNST(-1), s1, prune_hint & ~CY_JUST_SET);
+      /* d = r1 + 1
+	 i960:		add	s1,1,d */
+      PERFORM_ADD(v, co, r1, VALUE(1), ci);
+      RECURSE(ADD, s1, CNST(1), prune_hint & ~CY_JUST_SET);
+      /* d = r1 + -1
+	 i960:		sub	1,s1,d */
+      PERFORM_ADD(v, co, r1, VALUE(-1), ci);
+      RECURSE(ADD, s1, CNST(-1), prune_hint & ~CY_JUST_SET);
+      /* d = -r1
+	 i960:		sub	s1,0,d */
+      PERFORM_SUB(v, co, VALUE(0), r1, ci);
+      RECURSE(SUB, CNST(0), s1, prune_hint & ~CY_JUST_SET);
+
+      PERFORM_LSHIFTR_NT (v, co, VALUE(1), r1, ci);
+      RECURSE(LSHIFTR_NT, CNST(1), s1, prune_hint & ~CY_JUST_SET);
+
+      {
+	int cnt;
+	for (cnt = 1; cnt < BITS_PER_WORD; cnt += (flag_shifts ? 1 : BITS_PER_WORD - 2))
+	  {
+	    PERFORM_LSHIFTR(v, co, r1, VALUE(cnt), ci);
+	    RECURSE(LSHIFTR, s1, CNST(cnt), prune_hint & ~CY_JUST_SET);
+
+	    PERFORM_ASHIFTR(v, co, r1, VALUE(cnt), ci);
+	    RECURSE(ASHIFTR, s1, CNST(cnt), prune_hint & ~CY_JUST_SET);
+
+	    PERFORM_SHIFTL(v, co, r1, VALUE(cnt), ci);
+	    RECURSE(SHIFTL, s1, CNST(cnt), prune_hint & ~CY_JUST_SET);
+
+	    PERFORM_ROTATEL(v, co, r1, VALUE(cnt), ci);
+	    RECURSE(ROTATEL, s1, CNST(cnt), prune_hint & ~CY_JUST_SET);
+	  }
+	for (cnt = 0; cnt < BITS_PER_WORD; cnt += (flag_shifts ? 1 : BITS_PER_WORD - 1))
+	  {
+	    PERFORM_SETBIT(v, co, r1, VALUE(cnt), ci);
+	    RECURSE(SETBIT, s1, CNST(cnt), prune_hint & ~CY_JUST_SET);
+
+	    PERFORM_CLRBIT(v, co, r1, VALUE(cnt), ci);
+	    RECURSE(CLRBIT, s1, CNST(cnt), prune_hint & ~CY_JUST_SET);
+
+	    PERFORM_CHKBIT(v, co, r1, VALUE(cnt), ci);
+	    CRECURSE_2OP(CHKBIT, n_values, s1, CNST(cnt), 1, CY_JUST_SET);
+	  }
+      }
+
+      /* Copy register->register because of conditional insns.  */
+      /* d = 0
+	 alpha:		bis	r1,r1,d */
+      PERFORM_COPY(v, co, r1, ci);
+      RECURSE(COPY, s1, 0, prune_hint & ~CY_JUST_SET);
+    }
+
+  /* 0-ary instructions, just dependent on carry.  */
+  if (ci >= 0 && flag_use_carry
+      && (allowed_cost <= 1 ? ((prune_hint & CY_JUST_SET) != 0) : 1))
+    {
+      /* We don't do "0 - 1 - cy" or "0 + 1 + cy" here.  It would
+	 probably give very few new sequences. */
+      /* d = cy, cy = 0.
+	 i960:		addc	0,0,d */
+      PERFORM_ADDC_960(v, co, VALUE(0), VALUE(0), ci);
+      RECURSE(ADDC_960, CNST(0), CNST(0), CY_JUST_SET | CY_0);
+      /* d = -1 + cy, cy = cy
+	 i960:		subc	0,0,d */
+      PERFORM_SUBC_960(v, co, VALUE(0), VALUE(0), ci);
+      RECURSE(SUBC_960, CNST(0), CNST(0), prune_hint & ~CY_JUST_SET);
+
+#if I960B
+      /* i960:		selCC 1,0,d */
+      PERFORM_SEL_NO_960(v, co, VALUE(1), VALUE(0), ci);
+      RECURSE(SEL_NO_960, CNST(1), CNST(0), prune_hint & ~CY_JUST_SET);
+      PERFORM_SEL_G_960(v, co, VALUE(1), VALUE(0), ci);
+      RECURSE(SEL_G_960, CNST(1), CNST(0), prune_hint & ~CY_JUST_SET);
+      PERFORM_SEL_E_960(v, co, VALUE(1), VALUE(0), ci);
+      RECURSE(SEL_E_960, CNST(1), CNST(0), prune_hint & ~CY_JUST_SET);
+      PERFORM_SEL_GE_960(v, co, VALUE(1), VALUE(0), ci);
+      RECURSE(SEL_GE_960, CNST(1), CNST(0), prune_hint & ~CY_JUST_SET);
+      PERFORM_SEL_L_960(v, co, VALUE(1), VALUE(0), ci);
+      RECURSE(SEL_L_960, CNST(1), CNST(0), prune_hint & ~CY_JUST_SET);
+      PERFORM_SEL_NE_960(v, co, VALUE(1), VALUE(0), ci);
+      RECURSE(SEL_NE_960, CNST(1), CNST(0), prune_hint & ~CY_JUST_SET);
+      PERFORM_SEL_LE_960(v, co, VALUE(1), VALUE(0), ci);
+      RECURSE(SEL_LE_960, CNST(1), CNST(0), prune_hint & ~CY_JUST_SET);
+      PERFORM_SEL_O_960(v, co, VALUE(1), VALUE(0), ci);
+      RECURSE(SEL_O_960, CNST(1), CNST(0), prune_hint & ~CY_JUST_SET);
+#endif
+    }
+
+  /* Move instructions.
+     Don't do this if we are just permitted to do one more instruction.  */
+  if (allowed_cost > 1)
+    {
+      /* d = 0x80000000
+	 i960:		setbit	31,0,d */
+      PERFORM_COPY(v, co, VALUE_MIN_SIGNED, ci);
+      RECURSE(COPY, CNST_0x80000000, 0, prune_hint & ~CY_JUST_SET);
+      /* d = -1
+	 i960:		subo	1,0,d */
+      PERFORM_COPY(v, co, VALUE(-1), ci);
+      RECURSE(COPY, CNST(-1), 0, prune_hint & ~CY_JUST_SET);
+      /* d = 1
+	 i960:		mov	1,d */
+      PERFORM_COPY(v, co, VALUE(1), ci);
+      RECURSE(COPY, CNST(1), 0, prune_hint & ~CY_JUST_SET);
+      /* d = 0
+	 i960:		move	0,d */
+      PERFORM_COPY(v, co, VALUE(0), ci);
+      RECURSE(COPY, CNST(0), 0, prune_hint & ~CY_JUST_SET);
+		 
+      /* cy = 100b */
+      PERFORM_CMPO_960(v, co, VALUE(0), VALUE(1), ci);
+      CRECURSE_2OP(CMPO_960, n_values, CNST(0), CNST(1), 1, CY_JUST_SET | CY_0);
+    }
+
+#ifdef TIMING
+  timings[allowed_cost] += cputime() - time_start;
+#endif
+}
+#endif

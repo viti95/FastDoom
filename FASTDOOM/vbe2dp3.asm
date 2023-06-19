@@ -67,12 +67,10 @@ CODE_SYM_DEF R_DrawFuzzColumnFlatPotatoVBE2
 
   mov  eax,[_dc_x]
   shl  edi,6
-  shl  eax,2
+  xor  ecx,ecx
+  lea  edi,[edi+eax*4]
   add  edi,[_destview]
-  add  edi,eax
   
-  xor ecx,ecx
-
   mov eax,[_colormaps]
   add eax,0x600
 
