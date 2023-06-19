@@ -58,6 +58,7 @@ L$2:
 	mov   	al,byte [edi+3]
   	shld  	dx,cx,4
 	mov		ah,[ebp+eax]
+	add		edi,4
 	shld  	dx,ax,4
 	cmp		[ebx],dx
 	je		L$3
@@ -72,7 +73,6 @@ L$4:
 L$5:
 	mov		[esi],dl
 L$3:
-	add		edi,4
 	cmp		esi,0xA3E80-1
 	jb		L$2
 	pop		ebp
