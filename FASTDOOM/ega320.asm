@@ -40,29 +40,29 @@ CODE_SYM_DEF I_FinishUpdate
 	push	esi
 	push	edi
 	push	ebp
-  	mov		ebx,[_ptrlut16colors]
+  	mov		ebp,[_ptrlut16colors]
   	mov		esi,0xA0000
-	mov   	ebp,_vrambuffer
+	mov   	ebx,_vrambuffer
   	mov   	edi,_backbuffer
 L$2:
   	xor   	eax,eax
 	mov		al,byte [edi]
-	mov		dl,[ebx+eax]
+	mov		dl,[ebp+eax]
 	mov   	al,byte [edi+1]
-	mov		ch,[ebx+eax]
+	mov		ch,[ebp+eax]
 	mov   	al,byte [edi+2]
   	shld  	dx,cx,4
-	mov		ch,[ebx+eax]
+	mov		ch,[ebp+eax]
 	mov   	al,byte [edi+3]
   	shld  	dx,cx,4
-	mov		ah,[ebx+eax]
+	mov		ah,[ebp+eax]
 	shld  	dx,ax,4
-	cmp		[ebp],dx
+	cmp		[ebx],dx
 	je		L$3
 L$4:
 	mov   	ax,dx
-	mov		[ebp],ax
 	shr		ax,4
+	mov		[ebx],dx
 	cmp		[_lastlatch],ax
 	je		L$5
 	mov		[_lastlatch],ax
@@ -70,7 +70,7 @@ L$4:
 L$5:
 	mov		[esi],dl
 L$3:
-	add		ebp,2
+	add		ebx,2
 	inc		esi
 	add		edi,4
 	cmp		esi,0xA3E80
