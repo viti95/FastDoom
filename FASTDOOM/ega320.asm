@@ -40,41 +40,51 @@ CODE_SYM_DEF I_FinishUpdate
 	push	esi
 	push	edi
 	push	ebp
-  	mov		ebp,[_ptrlut16colors]
+  	mov		eax,[_ptrlut16colors]
+	mov		[patch1+2],eax
+	mov		[patch2+2],eax
+	mov		[patch3+2],eax
+	mov		[patch4+2],eax
   	mov		esi,0xA0000-1
 	mov   	ebx,_vrambuffer-2
-  	mov   	edi,_backbuffer
+  	mov   	ebp,_backbuffer
 	xor   	eax,eax
+	mov		di,[_lastlatch]
 	xor   	ecx,ecx
 L$2:
-	mov		al,byte [edi]
+	mov		al,byte [ebp]
 	add		ebx,2
-	mov		dl,[ebp+eax]
-	mov   	al,byte [edi+1]
+patch1:
+	mov		dl,[0xDEADBEEF+eax]
+	mov   	al,byte [ebp+1]
 	inc		esi
-	mov		ch,[ebp+eax]
-	mov   	al,byte [edi+2]
+patch2:
+	mov		ch,[0xDEADBEEF+eax]
+	mov   	al,byte [ebp+2]
   	shld  	dx,cx,4
-	mov		ch,[ebp+eax]
-	mov   	al,byte [edi+3]
+patch3:
+	mov		ch,[0xDEADBEEF+eax]
+	mov   	al,byte [ebp+3]
   	shld  	dx,cx,4
-	mov		ch,[ebp+eax]
-	add		edi,4
+patch4:
+	mov		ch,[0xDEADBEEF+eax]
+	add		ebp,4
 	shld  	dx,cx,4
 	cmp		[ebx],dx
 	je		L$3
 	mov   	cx,dx
 	shr		cx,4
 	mov		[ebx],dx
-	cmp		[_lastlatch],cx
+	cmp		di,cx
 	je		L$4
-	mov		[_lastlatch],cx
+	mov		di,cx
 	mov   	al,byte [0xA3E80 + ecx]
 L$4:
 	mov		[esi],dl
 L$3:
 	cmp		esi,0xA3E80-1
 	jb		L$2
+	mov		[_lastlatch],di
 	pop		ebp
 	pop		edi
 	pop		esi
