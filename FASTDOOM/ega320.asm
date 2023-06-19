@@ -26,41 +26,53 @@ extern _ptrlut16colors
 
 BEGIN_DATA_SECTION
 
+align 4
+
 _lastlatch:   dw 0
 _vrambuffer: times 16000 dw 0
 
 BEGIN_CODE_SECTION
 
 CODE_SYM_DEF I_FinishUpdate
-	push		ebx
-	push		ecx
-	push		edx
-	push		esi
-	push		edi
-	push		ebp
-  mov		ebp,[_ptrlut16colors]
-  mov   esi,0xA0000
-	mov   ebx,_vrambuffer
-  mov   ecx,_backbuffer
+	push	ebx
+	push	ecx
+	push	edx
+	push	esi
+	push	edi
+	push	ebp
+  	mov		ebp,[_ptrlut16colors]
+  	mov		esi,0xA0000
+	mov   	ebx,_vrambuffer
+  	mov   	edi,_backbuffer
 L$2:
-  xor   eax,eax
-	mov		al,byte [ecx+3]
-	mov		dx,[ebp+eax*2]
-	mov   al,byte [ecx+2]
-	mov		di,[ebp+eax*2]
-	mov   al,byte [ecx+1]
-  shrd  dx,di,4
-	mov		di,[ebp+eax*2]
-	mov   al,byte [ecx]
-  shrd  dx,di,4
-	mov		ax,[ebp+eax*2]
-	shrd  dx,ax,4
-	cmp		dx,[ebx]
-	jne		L$4
+  	xor   	eax,eax
+	mov		al,byte [edi]
+	mov		dl,[ebp+eax]
+	mov   	al,byte [edi+1]
+	mov		ch,[ebp+eax]
+	mov   	al,byte [edi+2]
+  	shld  	dx,cx,4
+	mov		ch,[ebp+eax]
+	mov   	al,byte [edi+3]
+  	shld  	dx,cx,4
+	mov		ah,[ebp+eax]
+	shld  	dx,ax,4
+	cmp		[ebx],dx
+	je		L$3
+L$4:
+	mov   	ax,dx
+	shr		ax,4
+	mov		[ebx],dx
+	cmp		[_lastlatch],ax
+	je		L$5
+	mov		[_lastlatch],ax
+	mov   	al,byte [0xA3E80 + eax]
+L$5:
+	mov		[esi],dl
 L$3:
 	add		ebx,2
 	inc		esi
-	add		ecx,4
+	add		edi,4
 	cmp		esi,0xA3E80
 	jb		L$2
 	pop		ebp
@@ -70,16 +82,6 @@ L$3:
 	pop		ecx
 	pop		ebx
 	ret
-L$4:
-	mov   ax,dx
-	shr		ax,4
-	mov		[ebx],dx
-	cmp		ax,[_lastlatch]
-	je		L$5
-	mov		[_lastlatch],ax
-	mov   al,byte [0xA3E80 + eax]
-L$5:
-	mov		[esi],dl
-	jmp		L$3
+
 
 %endif

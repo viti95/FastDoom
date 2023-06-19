@@ -32,8 +32,8 @@ const byte colors[48] = {
     0x3F, 0x3F, 0x15,  // 14
     0x3F, 0x3F, 0x3F}; // 15
 
-unsigned short lut16colors[14 * 256];
-unsigned short *ptrlut16colors;
+unsigned char lut16colors[14 * 256];
+unsigned char *ptrlut16colors;
 
 void I_ProcessPalette(byte *palette)
 {
@@ -44,14 +44,14 @@ void I_ProcessPalette(byte *palette)
     {
         int r1, g1, b1;
 
-        unsigned short bestcolor;
+        unsigned char bestcolor;
 
         r1 = (int)ptr[*(palette)];
         g1 = (int)ptr[*(palette + 1)];
         b1 = (int)ptr[*(palette + 2)];
 
         bestcolor = GetClosestColor(colors, 16, r1, g1, b1);
-        bestcolor |= bestcolor << 4 | bestcolor << 8 | bestcolor << 12;
+        bestcolor |= bestcolor << 4;
         lut16colors[i] = bestcolor;
     }
 }
