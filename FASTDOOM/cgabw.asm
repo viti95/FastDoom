@@ -46,15 +46,14 @@ L$7:
 	xor		eax,eax
 	mov		al,[edx]
 	mov		bl,[edx+1]
-	mov		ax,[ebp+eax*2]
-	mov		cx,[ebp+ebx*2]
-	shr		ax,14
+	mov		al,[ebp+eax]
+	mov		ch,[ebp+ebx]
 	shld	ax,cx,2
 	mov		bl,[edx+2]
-	mov		cx,[ebp+ebx*2]
+	mov		ch,[ebp+ebx]
 	shld	ax,cx,2
 	mov		bl,[edx+3]
-	mov		cx,[ebp+ebx*2]
+	mov		ch,[ebp+ebx]
 	shld	ax,cx,2
 	cmp		[_vrambuffer + esi],al
 	je		L$8
@@ -64,15 +63,14 @@ L$8:
 	xor		eax,eax
 	mov		al,[edx+320]
 	mov		bl,[edx+321]
-	mov		ax,[ebp+eax*2]
-	mov		cx,[ebp+ebx*2]
-	shr		ax,14
+	mov		al,[ebp+eax]
+	mov		ch,[ebp+ebx]
 	shld	ax,cx,2
 	mov		bl,[edx+322]
-	mov		cx,[ebp+ebx*2]
+	mov		ch,[ebp+ebx]
 	shld	ax,cx,2
 	mov		bl,[edx+323]
-	mov		cx,[ebp+ebx*2]
+	mov		ch,[ebp+ebx]
 	shld	ax,cx,2
 	cmp		[_vrambuffer + esi + 0x2000],al
 	je		L$9

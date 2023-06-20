@@ -15,8 +15,8 @@
 
 #if defined(MODE_CGA_BW)
 
-unsigned short lutcolors[14 * 256];
-unsigned short *ptrlutcolors;
+unsigned char lutcolors[14 * 256];
+unsigned char *ptrlutcolors;
 
 void I_ProcessPalette(byte *palette)
 {
@@ -35,8 +35,8 @@ void I_ProcessPalette(byte *palette)
 
         sum = r + g + b;
 
-        lutcolors[i] = sum > 19 ? 0x8000 : 0x0000;
-        lutcolors[i] |= sum > 59 ? 0x4000 : 0x0000;
+        lutcolors[i] = sum > 19 ? 0xAA : 0x00;
+        lutcolors[i] |= sum > 59 ? 0x55 : 0x00;
     }
 }
 
