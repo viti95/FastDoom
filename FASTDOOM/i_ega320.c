@@ -32,13 +32,15 @@ const byte colors[48] = {
     0x3F, 0x3F, 0x15,  // 14
     0x3F, 0x3F, 0x3F}; // 15
 
-unsigned char lut16colors[14 * 256];
+unsigned char lut16colors[14 * 256 + 255];
 unsigned char *ptrlut16colors;
 
 void I_ProcessPalette(byte *palette)
 {
     int i, j;
     byte *ptr = gammatable[usegamma];
+
+    ptrlut16colors = (byte *)(((int)lut16colors + 255) & ~0xff);
 
     for (i = 0; i < 14 * 256; i++, palette+=3)
     {
@@ -52,13 +54,13 @@ void I_ProcessPalette(byte *palette)
 
         bestcolor = GetClosestColor(colors, 16, r1, g1, b1);
         bestcolor |= bestcolor << 4;
-        lut16colors[i] = bestcolor;
+        ptrlut16colors[i] = bestcolor;
     }
 }
 
 void I_SetPalette(int numpalette)
 {
-    ptrlut16colors = lut16colors + numpalette * 256;
+    ptrlut16colors = (byte *)(((int)lut16colors + 255 + numpalette * 256) & ~0xff);
 }
 
 void EGA_InitGraphics(void)
