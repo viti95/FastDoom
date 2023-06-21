@@ -2802,7 +2802,19 @@ void R_DrawSpanFlat(void)
     {
         outp(SC_INDEX + 1, 15);
         dest += dsa_x1;
-        SetBytes(dest, color, count);
+
+        if (count & 1)
+        {
+            *(dest) = color;
+            dest++;
+            count--;
+        }
+
+        if (count > 0)
+        {
+            unsigned short colorcomp = color << 8 | color;
+            SetWords(dest, colorcomp, count / 2);
+        }
     }
 }
 #endif
