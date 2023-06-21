@@ -2851,7 +2851,7 @@ void R_DrawSpanFlatLow(void)
     if (dsm_x1 != 0)
     {
         // Fill first block
-        outp(SC_INDEX + 1, lutl[dsm_x1]);
+        outp(SC_INDEX + 1, 12);
         *(dest + dsa_x1) = color;
 
         dsa_x1++;
@@ -2861,7 +2861,7 @@ void R_DrawSpanFlatLow(void)
     if (dsm_x2 != 1)
     {
         // Fill last block
-        outp(SC_INDEX + 1, lutl[dsm_x2]);
+        outp(SC_INDEX + 1, 3);
         *(dest + dsa_x2) = color;
 
         dsa_x2--;
