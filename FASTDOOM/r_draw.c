@@ -2744,15 +2744,15 @@ fixed_t ds_step;
 byte *ds_source;
 
 #if defined(MODE_Y)
+int lut[4] = {1, 3, 7, 0};
+int luti[4] = {0, 14, 12, 8};
+int lutx2[4] = {1, 3, 7, 15};
+int lutx1[4] = {15, 14, 12, 8};
+
 void R_DrawSpanFlat(void)
 {
     lighttable_t color = ds_colormap[ds_source[FLATPIXELCOLOR]];
     byte *dest = (int)destview + Mul80(ds_y);
-    int lut[4] = {1, 3, 7, 0};
-    int luti[4] = {0, 14, 12, 8};
-
-    int lutx2[4] = {1, 3, 7, 15};
-    int lutx1[4] = {15, 14, 12, 8};
 
     int dsm_x1;
     int dsm_x2;
