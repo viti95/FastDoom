@@ -2818,10 +2818,7 @@ void R_DrawSpanFlat(void)
 #endif
 
 #if defined(MODE_Y)
-int lutl[2] = {3, 0};
-int lutil[2] = {0, 12};
-int lutx2l[2] = {3, 0};
-int lutx1l[2] = {0, 12};
+int lutl[2] = {3, 12};
 
 void R_DrawSpanFlatLow(void)
 {
@@ -2844,7 +2841,7 @@ void R_DrawSpanFlatLow(void)
     // Single address, we can mask and do a single write to VRAM
     if (dsa_x1 == dsa_x2)
     {
-        int mask = lutx1l[dsm_x1] & lutx2l[dsm_x2];
+        int mask = lutl[dsm_x1] | lutl[dsm_x2];
         outp(SC_INDEX + 1, mask);
         *(dest + dsa_x1) = color;
         return;
@@ -2854,7 +2851,7 @@ void R_DrawSpanFlatLow(void)
     if (dsm_x1 != 0)
     {
         // Fill first block
-        outp(SC_INDEX + 1, lutil[dsm_x1]);
+        outp(SC_INDEX + 1, lutl[dsm_x1]);
         *(dest + dsa_x1) = color;
 
         dsa_x1++;
