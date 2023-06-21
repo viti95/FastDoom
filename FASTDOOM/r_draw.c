@@ -2752,7 +2752,7 @@ void R_DrawSpanFlat(void)
     int luti[4] = {0, 14, 12, 8};
 
     int lutx2[4] = {1, 3, 7, 15};
-    int lutx1[4] = {15, 14, 12, 10};
+    int lutx1[4] = {15, 14, 12, 8};
 
     int dsm_x1;
     int dsm_x2;
