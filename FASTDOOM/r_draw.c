@@ -2818,8 +2818,6 @@ void R_DrawSpanFlat(void)
 #endif
 
 #if defined(MODE_Y)
-int lutl[2] = {3, 12};
-
 void R_DrawSpanFlatLow(void)
 {
     lighttable_t color = ds_colormap[ds_source[FLATPIXELCOLOR]];
@@ -2841,7 +2839,7 @@ void R_DrawSpanFlatLow(void)
     // Single address, we can mask and do a single write to VRAM
     if (dsa_x1 == dsa_x2)
     {
-        int mask = lutl[dsm_x1] | lutl[dsm_x2];
+        int mask = (3 + 9*dsm_x1) | (3 + 9*dsm_x2);
         outp(SC_INDEX + 1, mask);
         *(dest + dsa_x1) = color;
         return;
