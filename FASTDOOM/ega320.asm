@@ -23,6 +23,8 @@ BITS 32
 
 extern _backbuffer
 extern _ptrlut16colors
+extern _lut16colors
+extern _numpalette
 
 BEGIN_DATA_SECTION
 
@@ -32,6 +34,12 @@ _lastlatch:   dw 0
 _vrambuffer: times 16000 dw 0
 
 BEGIN_CODE_SECTION
+
+CODE_SYM_DEF I_SetPalette
+	shl		eax,8
+	add		eax,(_lut16colors+0xff)
+	mov		[_ptrlut16colors],eax
+	ret
 
 CODE_SYM_DEF I_FinishUpdate
 	push	ebx

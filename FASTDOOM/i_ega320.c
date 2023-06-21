@@ -58,11 +58,6 @@ void I_ProcessPalette(byte *palette)
     }
 }
 
-void I_SetPalette(int numpalette)
-{
-    ptrlut16colors = (byte *)(((int)lut16colors + 255 + numpalette * 256) & ~0xff);
-}
-
 void EGA_InitGraphics(void)
 {
     union REGS regs;
