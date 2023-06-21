@@ -2744,8 +2744,6 @@ fixed_t ds_step;
 byte *ds_source;
 
 #if defined(MODE_Y)
-int lut[4] = {1, 3, 7, 0};
-int luti[4] = {0, 14, 12, 8};
 int lutx2[4] = {1, 3, 7, 15};
 int lutx1[4] = {15, 14, 12, 8};
 
@@ -2780,7 +2778,7 @@ void R_DrawSpanFlat(void)
     if (dsm_x1 != 0)
     {
         // Fill first block
-        outp(SC_INDEX + 1, luti[dsm_x1]);
+        outp(SC_INDEX + 1, lutx1[dsm_x1]);
         *(dest + dsa_x1) = color;
 
         dsa_x1++;
@@ -2790,7 +2788,7 @@ void R_DrawSpanFlat(void)
     if (dsm_x2 != 3)
     {
         // Fill last block
-        outp(SC_INDEX + 1, lut[dsm_x2]);
+        outp(SC_INDEX + 1, lutx2[dsm_x2]);
         *(dest + dsa_x2) = color;
 
         dsa_x2--;
