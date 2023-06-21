@@ -349,19 +349,18 @@ CODE_SYM_DEF R_DrawSpanFlatPotato
 	push		ecx
 	push		edi
 	mov		eax,[_ds_source]
-  xor   ebx,ebx
+  mov   ebx,[_ds_colormap]
   mov   bl,[eax+0x73A]        ;FLATPIXELCOLOR
-	mov		eax,[_ds_colormap]
   mov		ecx,[_ds_x2]
   mov		edi,[_ds_x1]
   sub   ecx,edi
-	mov		al,byte [ebx+eax]
+	mov		al,byte [ebx]
   mov		ebx,[_ds_y]
   add		edi,[_destview]
   and   eax,0xFF
   add   edi,[_ylookup+ebx*4]
 	inc		ecx
-	test  cl,1
+	test  ecx,1
 	je		.writewords
   mov   [edi],al
   inc   edi
