@@ -2820,99 +2820,77 @@ void R_DrawSpanFlat(void)
 #endif
 
 #if defined(MODE_Y)
+int lutl[2] = {3, 0};
+int lutil[2] = {0, 12};
+int lutx2l[2] = {3, 0};
+int lutx1l[2] = {0, 12};
+
 void R_DrawSpanFlatLow(void)
 {
-    register byte *dest;
-    int dsp_x1;
-    int dsp_x2;
-    register int countp;
+    lighttable_t color = ds_colormap[ds_source[FLATPIXELCOLOR]];
+    byte *dest = (int)destview + Mul80(ds_y);
 
-    int first_plane, last_plane;
-    int medium_planes;
-    int total_pixels;
+    int dsm_x1;
+    int dsm_x2;
+    int dsa_x1;
+    int dsa_x2;
 
-    lighttable_t color;
-    int origin_y;
+    int count;
 
-    total_pixels = ds_x2 - ds_x1;
+    dsa_x1 = ds_x1 / 2;
+    dsm_x1 = ds_x1 % 2;
 
-    color = ds_colormap[ds_source[FLATPIXELCOLOR]];
-    origin_y = (int)destview + Mul80(ds_y);
+    dsa_x2 = ds_x2 / 2;
+    dsm_x2 = ds_x2 % 2;
 
-    first_plane = ds_x1 & 1;
-    last_plane = (ds_x2 + 1) & 1;
-    medium_planes = (total_pixels - first_plane - last_plane) / 2;
-
-    if (medium_planes > 0)
+    // Single address, we can mask and do a single write to VRAM
+    if (dsa_x1 == dsa_x2)
     {
-        int dsm_x1;
-        int dsm_x2;
+        int mask = lutx1l[dsm_x1] & lutx2l[dsm_x2];
+        outp(SC_INDEX + 1, mask);
+        *(dest + dsa_x1) = color;
+        return;
+    }
 
+    // Check if first address is a complete block, if not, write that first block
+    if (dsm_x1 != 0)
+    {
+        // Fill first block
+        outp(SC_INDEX + 1, lutil[dsm_x1]);
+        *(dest + dsa_x1) = color;
+
+        dsa_x1++;
+    }
+
+    // Check if last address is a complete block, if not, write that last block
+    if (dsm_x2 != 1)
+    {
+        // Fill last block
+        outp(SC_INDEX + 1, lutl[dsm_x2]);
+        *(dest + dsa_x2) = color;
+
+        dsa_x2--;
+    }
+
+    count = dsa_x2 - dsa_x1 + 1;
+
+    if (count > 0)
+    {
         outp(SC_INDEX + 1, 15);
+        dest += dsa_x1;
 
-        // Quad pixel mode
-        dsm_x1 = ds_x1 / 2;
-        dsm_x1 += first_plane != 0;
-
-        dsm_x2 = ds_x2 / 2;
-        dsm_x2 -= last_plane != 0;
-
-        dest = (byte *)origin_y + dsm_x1;
-        countp = dsm_x2 - dsm_x1 + 1;
-
-        if (countp & 1)
+        if (count & 1)
         {
             *(dest) = color;
             dest++;
-            countp--;
+            count--;
         }
 
-        if (countp > 0)
+        if (count > 0)
         {
             unsigned short colorcomp = color << 8 | color;
-            countp /= 2;
-            SetWords(dest, colorcomp, countp);
+            SetWords(dest, colorcomp, count / 2);
         }
-    }
-
-    dsp_x1 = (ds_x1) / 2;
-    dsp_x1 += dsp_x1 * 2 < ds_x1;
-
-    dsp_x2 = (ds_x2) / 2;
-
-    if (dsp_x2 > dsp_x1)
-    {
-        outp(SC_INDEX + 1, 3 << 0);
-        dest = (byte *)origin_y + dsp_x1;
-        *dest = color;
-        dest = (byte *)origin_y + dsp_x2;
-        *dest = color;
-    }
-    else if (dsp_x2 == dsp_x1)
-    {
-        outp(SC_INDEX + 1, 3 << 0);
-        dest = (byte *)origin_y + dsp_x1;
-        *dest = color;
-    }
-
-    dsp_x1 = (ds_x1 - 1) / 2;
-    dsp_x1 += dsp_x1 * 2 < ds_x1 - 1;
-
-    dsp_x2 = (ds_x2 - 1) / 2;
-
-    if (dsp_x2 > dsp_x1)
-    {
-        outp(SC_INDEX + 1, 3 << 2);
-        dest = (byte *)origin_y + dsp_x1;
-        *dest = color;
-        dest = (byte *)origin_y + dsp_x2;
-        *dest = color;
-    }
-    else if (dsp_x2 == dsp_x1)
-    {
-        outp(SC_INDEX + 1, 3 << 2);
-        dest = (byte *)origin_y + dsp_x1;
-        *dest = color;
     }
 }
 #endif
