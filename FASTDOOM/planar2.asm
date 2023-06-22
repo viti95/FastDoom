@@ -374,13 +374,8 @@ CODE_SYM_DEF R_DrawSpanFlatLow
 	mov		ebx,eax
 	mov		eax,dword [_ds_x2]
   mov   ebp,eax
-	sar		eax,1fH
-	xor		ebp,eax
-	sub		ebp,eax
 	and		ebp,1
-	xor		ebp,eax
 	lea		esi,[edi+ecx]
-	sub		ebp,eax
 	cmp		ecx,ebx
 	je		L$68
 	cmp		dword [esp],0
