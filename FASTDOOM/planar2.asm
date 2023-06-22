@@ -446,10 +446,10 @@ L$63:
 	add		edi,ecx
 	test		bl,1
 	je		L$64
-	inc		edi
 	mov		al,byte 4[esp]
 	dec		ebx
-	mov		byte -1[edi],al
+	mov		byte [edi],al
+  inc		edi
 L$64:
 	test		ebx,ebx
 	jbe		L$60
