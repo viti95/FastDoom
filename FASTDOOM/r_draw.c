@@ -2744,7 +2744,7 @@ fixed_t ds_step;
 byte *ds_source;
 
 #if defined(MODE_Y)
-int lutx2[4] = {1, 3, 7, 15};
+/*int lutx2[4] = {1, 3, 7, 15};
 int lutx1[4] = {15, 14, 12, 8};
 
 void R_DrawSpanFlat(void)
@@ -2814,7 +2814,7 @@ void R_DrawSpanFlat(void)
             SetWords(dest, colorcomp, count / 2);
         }
     }
-}
+}*/
 #endif
 
 #if defined(MODE_T8050) || defined(MODE_T8043)

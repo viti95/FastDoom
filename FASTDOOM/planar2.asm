@@ -26,6 +26,8 @@ extern _destview
 extern _centery
 
 BEGIN_DATA_SECTION
+lutx2:      dd 1,3,7,15
+lutx1:      dd 15,14,12,8
 
 dest:       dd 0
 endplane:   dd 0
@@ -343,6 +345,130 @@ CODE_SYM_DEF R_DrawSpanLow
 	pop		ebx
   ret
 ; R_DrawSpanLow ends
+
+CODE_SYM_DEF R_DrawSpanFlat
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		edi
+	push		ebp
+	sub		esp,8
+	mov		eax,dword [_ds_source]
+	mov		ecx,dword [_ds_colormap]
+	movzx		eax,byte 73aH[eax]
+	mov		al,byte [ecx+eax]
+	mov		byte 4[esp],al
+	mov		eax,dword [_ds_y]
+	lea		eax,[eax+eax*4]
+	shl		eax,4
+	mov		edi,dword [_destview]
+	add		edi,eax
+	mov		eax,dword [_ds_x1]
+	cdq
+	shl		edx,2
+	sbb		eax,edx
+	sar		eax,2
+	mov		ecx,eax
+	mov		eax,dword [_ds_x1]
+	mov		ebx,dword [_ds_x1]
+	sar		eax,1fH
+	xor		ebx,eax
+	sub		ebx,eax
+	and		ebx,3
+	xor		ebx,eax
+	sub		ebx,eax
+	mov		eax,dword [_ds_x2]
+	cdq
+	shl		edx,2
+	sbb		eax,edx
+	sar		eax,2
+	mov		dword [esp],ebx
+	mov		ebx,eax
+	mov		eax,dword [_ds_x2]
+	mov		ebp,dword [_ds_x2]
+	sar		eax,1fH
+	xor		ebp,eax
+	sub		ebp,eax
+	and		ebp,3
+	xor		ebp,eax
+	sub		ebp,eax
+	mov		eax,dword [esp]
+	lea		esi,[edi+ecx]
+	shl		eax,2
+	cmp		ecx,ebx
+	je		L$61
+	cmp		dword [esp],0
+	jne		L$62
+L$58:
+	cmp		ebp,3
+	je		L$59
+	mov		edx,3c5H
+	mov		eax,dword lutx2[ebp*4]
+	out		dx,al
+	lea		eax,[edi+ebx]
+	mov		dl,byte 4[esp]
+	dec		ebx
+	mov		byte [eax],dl
+L$59:
+	sub		ebx,ecx
+	inc		ebx
+	test		ebx,ebx
+	ja		L$63
+L$60:
+	add		esp,8
+	pop		ebp
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+	ret
+L$61:
+	mov		eax,dword lutx1[eax]
+	mov		edx,3c5H
+	and		eax,dword lutx2[ebp*4]
+	out		dx,al
+	mov		al,byte 4[esp]
+	mov		byte [esi],al
+	jmp		L$60
+L$62:
+	mov		edx,3c5H
+	mov		eax,dword lutx1[eax]
+	out		dx,al
+	mov		al,byte 4[esp]
+	inc		ecx
+	mov		byte [esi],al
+	jmp		L$58
+L$63:
+	mov		al,0fH
+	mov		edx,3c5H
+	out		dx,al
+	add		edi,ecx
+	test		bl,1
+	je		L$64
+	inc		edi
+	mov		al,byte 4[esp]
+	dec		ebx
+	mov		byte -1[edi],al
+L$64:
+	test		ebx,ebx
+	jbe		L$60
+	movzx		ax,byte 4[esp]
+	mov		ecx,eax
+	shl		ecx,8
+	or		eax,ecx
+	mov		ecx,ebx
+	shr		ecx,1
+	rep stosw
+	add		esp,8
+	pop		ebp
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+	ret
 
 CODE_SYM_DEF R_DrawSpanFlatLow
 	push	ebx
