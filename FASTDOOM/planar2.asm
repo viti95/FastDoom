@@ -428,7 +428,6 @@ L$70:
 L$71:
 	test	ebx,ebx
 	jle		L$72
-  xor   eax,eax
   mov   al, byte 4[esp]
   sar   ebx,1
   mov   ah,al
