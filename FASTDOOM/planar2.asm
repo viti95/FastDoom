@@ -364,15 +364,14 @@ CODE_SYM_DEF R_DrawSpanFlat
 	shl		edi,4
 	add		edi,dword [_destview]
 	mov		ecx,dword [_ds_x1]
-	mov		ebx,ecx
+	mov		eax,ecx
   shr   ecx,2
-	and		ebx,3
-  mov		dword [esp],ebx
+	and		eax,3
 	mov		ebp,dword [_ds_x2]
   mov   ebx,ebp
 	sar   ebx,2
 	and		ebp,3
-	mov		eax,dword [esp]
+	mov		dword [esp],eax
 	lea		esi,[edi+ecx]
 	shl		eax,2
 	cmp		ecx,ebx
