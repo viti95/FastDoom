@@ -345,12 +345,12 @@ CODE_SYM_DEF R_DrawSpanLow
 ; R_DrawSpanLow ends
 
 CODE_SYM_DEF R_DrawSpanFlatLow
-	push		ebx
-	push		ecx
-	push		edx
-	push		esi
-	push		edi
-	push		ebp
+	push	ebx
+	push	ecx
+	push	edx
+	push	esi
+	push	edi
+	push	ebp
 	sub		esp,8
   mov		eax,[_ds_source]
   mov   ebx,[_ds_colormap]
@@ -388,17 +388,7 @@ L$65:
 L$66:
 	sub		ebx,ecx
 	inc		ebx
-	test		ebx,ebx
 	jg		L$70
-L$67:
-	add		esp,8
-	pop		ebp
-	pop		edi
-	pop		esi
-	pop		edx
-	pop		ecx
-	pop		ebx
-	ret
 L$68:
 	mov		eax,dword [esp]
 	lea		ecx,[ebp+ebp*8+3]
@@ -408,7 +398,14 @@ L$68:
 	out		dx,al
 	mov		al,byte 4[esp]
 	mov		byte [esi],al
-	jmp		L$67
+	add		esp,8
+	pop		ebp
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+	ret
 L$69:
 	mov		al,0cH
 	mov		edx,3c5H
@@ -422,21 +419,22 @@ L$70:
 	mov		edx,3c5H
 	out		dx,al
 	add		edi,ecx
-	test		bl,1
+	test	bl,1
 	je		L$71
 	mov		al,byte 4[esp]
 	dec		ebx
 	mov		byte [edi],al
   inc		edi
 L$71:
-	test		ebx,ebx
-	jle		L$67
+	test	ebx,ebx
+	jle		L$72
   xor   eax,eax
   mov   al, byte 4[esp]
   sar   ebx,1
   mov   ah,al
   mov   ecx,ebx
 	rep stosw
+L$72:
 	add		esp,8
 	pop		ebp
 	pop		edi
