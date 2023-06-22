@@ -391,7 +391,13 @@ L$59:
 	sub		ebx,ecx
 	inc		ebx
 	ja		L$63
-L$60:
+L$61:
+	mov		al,byte lutx1[eax]
+	mov		edx,3c5H
+	and		al,byte lutx2[ebp]
+	out		dx,al
+	mov		al,byte 4[esp]
+	mov		byte [esi],al
 	add		esp,8
 	pop		ebp
 	pop		edi
@@ -400,14 +406,6 @@ L$60:
 	pop		ecx
 	pop		ebx
 	ret
-L$61:
-	mov		al,byte lutx1[eax]
-	mov		edx,3c5H
-	and		al,byte lutx2[ebp]
-	out		dx,al
-	mov		al,byte 4[esp]
-	mov		byte [esi],al
-	jmp		L$60
 L$62:
 	mov		edx,3c5H
 	mov		al,byte lutx1[eax]
@@ -435,6 +433,7 @@ L$64:
   mov   ah,al
 	shr		ecx,1
 	rep stosw
+L$60:
 	add		esp,8
 	pop		ebp
 	pop		edi
