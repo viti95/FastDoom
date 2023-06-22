@@ -360,10 +360,9 @@ CODE_SYM_DEF R_DrawSpanFlat
   mov   al,byte [ecx]
 	mov		byte 4[esp],al
 	mov		eax,dword [_ds_y]
-	lea		eax,[eax+eax*4]
-	shl		eax,4
-	mov		edi,dword [_destview]
-	add		edi,eax
+	lea		edi,[eax+eax*4]
+	shl		edi,4
+	add		edi,dword [_destview]
 	mov		eax,dword [_ds_x1]
 	cdq
 	shl		edx,2
