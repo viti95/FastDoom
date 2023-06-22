@@ -358,26 +358,17 @@ CODE_SYM_DEF R_DrawSpanFlatLow
 	mov		al,byte [ecx+eax]
 	mov		byte 4[esp],al
 	mov		eax,dword [_ds_y]
+  mov		edi,dword [_destview]
 	lea		eax,[eax+eax*4]
 	shl		eax,4
-	mov		edi,dword [_destview]
 	add		edi,eax
 	mov		eax,dword [_ds_x1]
-	cdq
-	sub		eax,edx
 	sar		eax,1
 	mov		ecx,eax
 	mov		eax,dword [_ds_x1]
 	mov		ebx,eax
-	sar		eax,1fH
-	xor		ebx,eax
-	sub		ebx,eax
-	and		ebx,1
-	xor		ebx,eax
-	sub		ebx,eax
+	and   ebx,1
 	mov		eax,dword [_ds_x2]
-	cdq
-	sub		eax,edx
 	sar		eax,1
 	mov		dword [esp],ebx
 	mov		ebx,eax
