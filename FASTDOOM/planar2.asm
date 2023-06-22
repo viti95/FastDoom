@@ -347,12 +347,12 @@ CODE_SYM_DEF R_DrawSpanLow
 ; R_DrawSpanLow ends
 
 CODE_SYM_DEF R_DrawSpanFlat
-	push		ebx
-	push		ecx
-	push		edx
-	push		esi
-	push		edi
-	push		ebp
+	push	ebx
+	push	ecx
+	push	edx
+	push	esi
+	push	edi
+	push	ebp
 	sub		esp,8
   mov		eax,[_ds_source]
   mov   ecx,[_ds_colormap]
@@ -364,34 +364,19 @@ CODE_SYM_DEF R_DrawSpanFlat
 	shl		edi,4
 	add		edi,dword [_destview]
 	mov		eax,dword [_ds_x1]
-	cdq
-	shl		edx,2
-	sbb		eax,edx
-	sar		eax,2
 	mov		ecx,eax
-	mov		eax,dword [_ds_x1]
+  shr   ecx,2
   mov   ebx,eax
-	sar		eax,1fH
-	xor		ebx,eax
-	sub		ebx,eax
 	and		ebx,3
-	xor		ebx,eax
-	sub		ebx,eax
-	mov		eax,dword [_ds_x2]
-	cdq
-	shl		edx,2
-	sbb		eax,edx
-	sar		eax,2
-	mov		dword [esp],ebx
-	mov		ebx,eax
+  mov		dword [esp],ebx
 	mov		eax,dword [_ds_x2]
   mov   ebp,eax
-	sar		eax,1fH
-	xor		ebp,eax
-	sub		ebp,eax
+	cdq
+	shl		edx,2
+	sbb		eax,edx
+	sar		eax,2
+	mov		ebx,eax
 	and		ebp,3
-	xor		ebp,eax
-	sub		ebp,eax
 	mov		eax,dword [esp]
 	lea		esi,[edi+ecx]
 	shl		eax,2
@@ -444,14 +429,14 @@ L$63:
 	mov		edx,3c5H
 	out		dx,al
 	add		edi,ecx
-	test		bl,1
+	test	bl,1
 	je		L$64
 	mov		al,byte 4[esp]
 	dec		ebx
 	mov		byte [edi],al
   inc		edi
 L$64:
-	test		ebx,ebx
+	test	ebx,ebx
 	jbe		L$60
 	movzx		ax,byte 4[esp]
   mov   ah,al
