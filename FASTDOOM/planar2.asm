@@ -375,7 +375,7 @@ CODE_SYM_DEF R_DrawSpanFlat
 	lea		esi,[edi+ecx]
 	cmp		ecx,ebx
 	je		L$61
-	cmp		dword [esp],0
+	cmp		eax,0
 	jne		L$62
 L$58:
 	cmp		ebp,3
