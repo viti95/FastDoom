@@ -425,23 +425,17 @@ L$70:
 	add		edi,ecx
 	test		bl,1
 	je		L$71
-	inc		edi
 	mov		al,byte 4[esp]
 	dec		ebx
-	mov		byte -1[edi],al
+	mov		byte [edi],al
+  inc		edi
 L$71:
 	test		ebx,ebx
 	jle		L$67
 	movzx		ax,byte 4[esp]
-	mov		esi,eax
-	shl		esi,8
-	or		esi,eax
-	mov		eax,ebx
-	cdq
-	sub		eax,edx
-	sar		eax,1
-	mov		ecx,eax
-	mov		eax,esi
+  mov   ah,al
+  sar   ebx,1
+  mov   ecx,ebx
 	rep stosw
 	add		esp,8
 	pop		ebp
