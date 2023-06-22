@@ -371,10 +371,7 @@ CODE_SYM_DEF R_DrawSpanFlat
   mov		dword [esp],ebx
 	mov		eax,dword [_ds_x2]
   mov   ebp,eax
-	cdq
-	shl		edx,2
-	sbb		eax,edx
-	sar		eax,2
+	sar   eax,2
 	mov		ebx,eax
 	and		ebp,3
 	mov		eax,dword [esp]
@@ -438,7 +435,7 @@ L$63:
 L$64:
 	test	ebx,ebx
 	jbe		L$60
-	movzx		ax,byte 4[esp]
+	mov   al,byte 4[esp]
   mov   ah,al
 	mov		ecx,ebx
 	shr		ecx,1
