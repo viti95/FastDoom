@@ -354,10 +354,10 @@ CODE_SYM_DEF R_DrawSpanFlat
 	push		edi
 	push		ebp
 	sub		esp,8
-	mov		eax,dword [_ds_source]
-	mov		ecx,dword [_ds_colormap]
-	movzx		eax,byte 73aH[eax]
-	mov		al,byte [ecx+eax]
+  mov		eax,[_ds_source]
+  mov   ecx,[_ds_colormap]
+  mov   cl,[eax+0x73A]        ;FLATPIXELCOLOR
+  mov   al,byte [ecx]
 	mov		byte 4[esp],al
 	mov		eax,dword [_ds_y]
 	lea		eax,[eax+eax*4]
@@ -371,7 +371,7 @@ CODE_SYM_DEF R_DrawSpanFlat
 	sar		eax,2
 	mov		ecx,eax
 	mov		eax,dword [_ds_x1]
-	mov		ebx,dword [_ds_x1]
+  mov   ebx,eax
 	sar		eax,1fH
 	xor		ebx,eax
 	sub		ebx,eax
@@ -386,7 +386,7 @@ CODE_SYM_DEF R_DrawSpanFlat
 	mov		dword [esp],ebx
 	mov		ebx,eax
 	mov		eax,dword [_ds_x2]
-	mov		ebp,dword [_ds_x2]
+  mov   ebp,eax
 	sar		eax,1fH
 	xor		ebp,eax
 	sub		ebp,eax
