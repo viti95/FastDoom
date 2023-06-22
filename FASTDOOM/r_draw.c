@@ -2818,7 +2818,7 @@ void R_DrawSpanFlat(void)
 #endif
 
 #if defined(MODE_Y)
-void R_DrawSpanFlatLow(void)
+/*void R_DrawSpanFlatLow(void)
 {
     lighttable_t color = ds_colormap[ds_source[FLATPIXELCOLOR]];
     byte *dest = (int)destview + Mul80(ds_y);
@@ -2885,7 +2885,7 @@ void R_DrawSpanFlatLow(void)
             SetWords(dest, colorcomp, count / 2);
         }
     }
-}
+}*/
 #endif
 
 #if defined(MODE_T8050) || defined(MODE_T8043)

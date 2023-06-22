@@ -344,6 +344,134 @@ CODE_SYM_DEF R_DrawSpanLow
   ret
 ; R_DrawSpanLow ends
 
+CODE_SYM_DEF R_DrawSpanFlatLow
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		edi
+	push		ebp
+	sub		esp,8
+	mov		eax,dword [_ds_source]
+	mov		ecx,dword [_ds_colormap]
+	movzx		eax,byte 73aH[eax]
+	mov		al,byte [ecx+eax]
+	mov		byte 4[esp],al
+	mov		eax,dword [_ds_y]
+	lea		eax,[eax+eax*4]
+	shl		eax,4
+	mov		edi,dword [_destview]
+	add		edi,eax
+	mov		eax,dword [_ds_x1]
+	cdq
+	sub		eax,edx
+	sar		eax,1
+	mov		ecx,eax
+	mov		eax,dword [_ds_x1]
+	mov		ebx,dword [_ds_x1]
+	sar		eax,1fH
+	xor		ebx,eax
+	sub		ebx,eax
+	and		ebx,1
+	xor		ebx,eax
+	sub		ebx,eax
+	mov		eax,dword [_ds_x2]
+	cdq
+	sub		eax,edx
+	sar		eax,1
+	mov		dword [esp],ebx
+	mov		ebx,eax
+	mov		eax,dword [_ds_x2]
+	mov		ebp,dword [_ds_x2]
+	sar		eax,1fH
+	xor		ebp,eax
+	sub		ebp,eax
+	and		ebp,1
+	xor		ebp,eax
+	lea		esi,[edi+ecx]
+	sub		ebp,eax
+	cmp		ecx,ebx
+	je		L$68
+	cmp		dword [esp],0
+	jne		L$69
+L$65:
+	cmp		ebp,1
+	je		L$66
+	mov		al,3
+	mov		edx,3c5H
+	out		dx,al
+	lea		eax,[edi+ebx]
+	mov		dl,byte 4[esp]
+	dec		ebx
+	mov		byte [eax],dl
+L$66:
+	sub		ebx,ecx
+	inc		ebx
+	test		ebx,ebx
+	jg		L$70
+L$67:
+	add		esp,8
+	pop		ebp
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+	ret
+L$68:
+	mov		eax,dword [esp]
+	lea		ecx,[ebp+ebp*8]
+	lea		eax,[eax+eax*8]
+	add		ecx,3
+	add		eax,3
+	mov		edx,3c5H
+	or		eax,ecx
+	out		dx,al
+	mov		al,byte 4[esp]
+	mov		byte [esi],al
+	jmp		L$67
+L$69:
+	mov		al,0cH
+	mov		edx,3c5H
+	out		dx,al
+	mov		al,byte 4[esp]
+	inc		ecx
+	mov		byte [esi],al
+	jmp		L$65
+L$70:
+	mov		al,0fH
+	mov		edx,3c5H
+	out		dx,al
+	add		edi,ecx
+	test		bl,1
+	je		L$71
+	inc		edi
+	mov		al,byte 4[esp]
+	dec		ebx
+	mov		byte -1[edi],al
+L$71:
+	test		ebx,ebx
+	jle		L$67
+	movzx		ax,byte 4[esp]
+	mov		esi,eax
+	shl		esi,8
+	or		esi,eax
+	mov		eax,ebx
+	cdq
+	sub		eax,edx
+	sar		eax,1
+	mov		ecx,eax
+	mov		eax,esi
+	rep stosw
+	add		esp,8
+	pop		ebp
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+	ret
+
 CODE_SYM_DEF R_DrawSpanFlatPotato
 	push		ebx
 	push		ecx
