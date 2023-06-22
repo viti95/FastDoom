@@ -362,19 +362,15 @@ CODE_SYM_DEF R_DrawSpanFlatLow
 	lea		eax,[eax+eax*4]
 	shl		eax,4
 	add		edi,eax
-	mov		eax,dword [_ds_x1]
-	sar		eax,1
-	mov		ecx,eax
-	mov		eax,dword [_ds_x1]
-	mov		ebx,eax
+	mov		ecx,dword [_ds_x1]
+  mov   ebx,ecx
+	sar		ecx,1
 	and   ebx,1
-	mov		eax,dword [_ds_x2]
-	sar		eax,1
-	mov		dword [esp],ebx
-	mov		ebx,eax
-	mov		eax,dword [_ds_x2]
-  mov   ebp,eax
-	and		ebp,1
+  mov		dword [esp],ebx
+	mov		ebx,dword [_ds_x2]
+  mov   ebp,ebx
+  and   ebp,1
+	sar		ebx,1
 	lea		esi,[edi+ecx]
 	cmp		ecx,ebx
 	je		L$68
