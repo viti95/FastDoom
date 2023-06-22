@@ -463,7 +463,7 @@ CODE_SYM_DEF R_DrawSpanFlatLow
 	shl		edi,4
 	add		edi,[_destview]
   and   ebx,1
-  mov		dword [esp],ebx
+  mov		eax,ebx
 	mov		ebx,dword [_ds_x2]
   mov   ebp,ebx
   and   ebp,1
@@ -471,7 +471,7 @@ CODE_SYM_DEF R_DrawSpanFlatLow
 	lea		esi,[edi+ecx]
 	cmp		ecx,ebx
 	je		L$68
-	cmp		dword [esp],0
+	cmp		eax,0
 	jne		L$69
 L$65:
 	cmp		ebp,1
@@ -488,7 +488,6 @@ L$66:
 	inc		ebx
 	jg		L$70
 L$68:
-	mov		eax,dword [esp]
 	lea		ecx,[ebp+ebp*8+3]
 	lea		eax,[eax+eax*8+3]
 	mov		edx,3c5H
