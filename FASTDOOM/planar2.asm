@@ -454,9 +454,7 @@ L$64:
 	test		ebx,ebx
 	jbe		L$60
 	movzx		ax,byte 4[esp]
-	mov		ecx,eax
-	shl		ecx,8
-	or		eax,ecx
+  mov   ah,al
 	mov		ecx,ebx
 	shr		ecx,1
 	rep stosw
