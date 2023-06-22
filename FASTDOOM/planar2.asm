@@ -406,8 +406,8 @@ L$61:
 	pop		ebx
 	ret
 L$62:
-	mov		edx,3c5H
 	mov		al,byte lutx1[eax]
+  mov		edx,3c5H
 	out		dx,al
 	mov		al,byte 4[esp]
 	inc		ecx
