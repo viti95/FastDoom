@@ -2752,12 +2752,12 @@ void R_DrawSpanFlat(void)
     lighttable_t color = ds_colormap[ds_source[FLATPIXELCOLOR]];
     byte *dest = (int)destview + Mul80(ds_y);
 
-    int dsm_x1;
-    int dsm_x2;
-    int dsa_x1;
-    int dsa_x2;
+    unsigned int dsm_x1;
+    unsigned int dsm_x2;
+    unsigned int dsa_x1;
+    unsigned int dsa_x2;
 
-    int count;
+    unsigned int count;
 
     dsa_x1 = ds_x1 / 4;
     dsm_x1 = ds_x1 % 4;
@@ -2768,7 +2768,7 @@ void R_DrawSpanFlat(void)
     // Single address, we can mask and do a single write to VRAM
     if (dsa_x1 == dsa_x2)
     {
-        int mask = lutx1[dsm_x1] & lutx2[dsm_x2];
+        unsigned int mask = lutx1[dsm_x1] & lutx2[dsm_x2];
         outp(SC_INDEX + 1, mask);
         *(dest + dsa_x1) = color;
         return;
@@ -2815,77 +2815,6 @@ void R_DrawSpanFlat(void)
         }
     }
 }
-#endif
-
-#if defined(MODE_Y)
-/*void R_DrawSpanFlatLow(void)
-{
-    lighttable_t color = ds_colormap[ds_source[FLATPIXELCOLOR]];
-    byte *dest = (int)destview + Mul80(ds_y);
-
-    int dsm_x1;
-    int dsm_x2;
-    int dsa_x1;
-    int dsa_x2;
-
-    int count;
-
-    dsa_x1 = ds_x1 / 2;
-    dsm_x1 = ds_x1 % 2;
-
-    dsa_x2 = ds_x2 / 2;
-    dsm_x2 = ds_x2 % 2;
-
-    // Single address, we can mask and do a single write to VRAM
-    if (dsa_x1 == dsa_x2)
-    {
-        int mask = (3 + 9*dsm_x1) | (3 + 9*dsm_x2);
-        outp(SC_INDEX + 1, mask);
-        *(dest + dsa_x1) = color;
-        return;
-    }
-
-    // Check if first address is a complete block, if not, write that first block
-    if (dsm_x1 != 0)
-    {
-        // Fill first block
-        outp(SC_INDEX + 1, 12);
-        *(dest + dsa_x1) = color;
-
-        dsa_x1++;
-    }
-
-    // Check if last address is a complete block, if not, write that last block
-    if (dsm_x2 != 1)
-    {
-        // Fill last block
-        outp(SC_INDEX + 1, 3);
-        *(dest + dsa_x2) = color;
-
-        dsa_x2--;
-    }
-
-    count = dsa_x2 - dsa_x1 + 1;
-
-    if (count > 0)
-    {
-        outp(SC_INDEX + 1, 15);
-        dest += dsa_x1;
-
-        if (count & 1)
-        {
-            *(dest) = color;
-            dest++;
-            count--;
-        }
-
-        if (count > 0)
-        {
-            unsigned short colorcomp = color << 8 | color;
-            SetWords(dest, colorcomp, count / 2);
-        }
-    }
-}*/
 #endif
 
 #if defined(MODE_T8050) || defined(MODE_T8043)
