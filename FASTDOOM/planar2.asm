@@ -432,9 +432,10 @@ L$70:
 L$71:
 	test		ebx,ebx
 	jle		L$67
-	movzx		ax,byte 4[esp]
-  mov   ah,al
+  xor   eax,eax
+  mov   al, byte 4[esp]
   sar   ebx,1
+  mov   ah,al
   mov   ecx,ebx
 	rep stosw
 	add		esp,8
