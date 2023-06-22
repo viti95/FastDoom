@@ -368,7 +368,7 @@ CODE_SYM_DEF R_DrawSpanFlatLow
 	sar		eax,1
 	mov		ecx,eax
 	mov		eax,dword [_ds_x1]
-	mov		ebx,dword [_ds_x1]
+	mov		ebx,eax
 	sar		eax,1fH
 	xor		ebx,eax
 	sub		ebx,eax
@@ -382,7 +382,7 @@ CODE_SYM_DEF R_DrawSpanFlatLow
 	mov		dword [esp],ebx
 	mov		ebx,eax
 	mov		eax,dword [_ds_x2]
-	mov		ebp,dword [_ds_x2]
+  mov   ebp,eax
 	sar		eax,1fH
 	xor		ebp,eax
 	sub		ebp,eax
@@ -420,10 +420,8 @@ L$67:
 	ret
 L$68:
 	mov		eax,dword [esp]
-	lea		ecx,[ebp+ebp*8]
-	lea		eax,[eax+eax*8]
-	add		ecx,3
-	add		eax,3
+	lea		ecx,[ebp+ebp*8+3]
+	lea		eax,[eax+eax*8+3]
 	mov		edx,3c5H
 	or		eax,ecx
 	out		dx,al
