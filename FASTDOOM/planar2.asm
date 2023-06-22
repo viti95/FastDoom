@@ -358,16 +358,16 @@ CODE_SYM_DEF R_DrawSpanFlat
   mov   ecx,[_ds_colormap]
   mov   cl,[eax+0x73A]        ;FLATPIXELCOLOR
   mov   al,byte [ecx]
+  mov		ecx,dword [_ds_x1]
 	mov		byte 4[esp],al
 	mov		eax,dword [_ds_y]
+	mov		ebp,dword [_ds_x2]
 	lea		edi,[eax+eax*4]
 	shl		edi,4
 	add		edi,dword [_destview]
-	mov		ecx,dword [_ds_x1]
 	mov		eax,ecx
   shr   ecx,2
 	and		eax,3
-	mov		ebp,dword [_ds_x2]
   mov   ebx,ebp
 	sar   ebx,2
 	and		ebp,3
