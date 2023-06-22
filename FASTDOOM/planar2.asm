@@ -363,16 +363,14 @@ CODE_SYM_DEF R_DrawSpanFlat
 	lea		edi,[eax+eax*4]
 	shl		edi,4
 	add		edi,dword [_destview]
-	mov		eax,dword [_ds_x1]
-	mov		ecx,eax
+	mov		ecx,dword [_ds_x1]
+	mov		ebx,ecx
   shr   ecx,2
-  mov   ebx,eax
 	and		ebx,3
   mov		dword [esp],ebx
-	mov		eax,dword [_ds_x2]
-  mov   ebp,eax
-	sar   eax,2
-	mov		ebx,eax
+	mov		ebp,dword [_ds_x2]
+  mov   ebx,ebp
+	sar   ebx,2
 	and		ebp,3
 	mov		eax,dword [esp]
 	lea		esi,[edi+ecx]
@@ -394,7 +392,6 @@ L$58:
 L$59:
 	sub		ebx,ecx
 	inc		ebx
-	test		ebx,ebx
 	ja		L$63
 L$60:
 	add		esp,8
@@ -436,8 +433,8 @@ L$64:
 	test	ebx,ebx
 	jbe		L$60
 	mov   al,byte 4[esp]
+  mov		ecx,ebx
   mov   ah,al
-	mov		ecx,ebx
 	shr		ecx,1
 	rep stosw
 	add		esp,8
