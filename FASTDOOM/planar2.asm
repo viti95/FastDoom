@@ -371,7 +371,6 @@ CODE_SYM_DEF R_DrawSpanFlat
   mov   ebx,ebp
 	sar   ebx,2
 	and		ebp,3
-	mov		dword [esp],eax
 	lea		esi,[edi+ecx]
 	cmp		ecx,ebx
 	je		L$61
