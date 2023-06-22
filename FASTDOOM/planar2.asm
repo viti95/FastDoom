@@ -26,8 +26,8 @@ extern _destview
 extern _centery
 
 BEGIN_DATA_SECTION
-lutx2:      dd 1,3,7,15
-lutx1:      dd 15,14,12,8
+lutx2:      db 1,3,7,15
+lutx1:      db 15,14,12,8
 
 dest:       dd 0
 endplane:   dd 0
@@ -373,7 +373,6 @@ CODE_SYM_DEF R_DrawSpanFlat
 	and		ebp,3
 	mov		dword [esp],eax
 	lea		esi,[edi+ecx]
-	shl		eax,2
 	cmp		ecx,ebx
 	je		L$61
 	cmp		dword [esp],0
@@ -382,7 +381,7 @@ L$58:
 	cmp		ebp,3
 	je		L$59
 	mov		edx,3c5H
-	mov		eax,dword lutx2[ebp*4]
+	mov		al,byte lutx2[ebp]
 	out		dx,al
 	lea		eax,[edi+ebx]
 	mov		dl,byte 4[esp]
@@ -402,16 +401,16 @@ L$60:
 	pop		ebx
 	ret
 L$61:
-	mov		eax,dword lutx1[eax]
+	mov		al,byte lutx1[eax]
 	mov		edx,3c5H
-	and		eax,dword lutx2[ebp*4]
+	and		al,byte lutx2[ebp]
 	out		dx,al
 	mov		al,byte 4[esp]
 	mov		byte [esi],al
 	jmp		L$60
 L$62:
 	mov		edx,3c5H
-	mov		eax,dword lutx1[eax]
+	mov		al,byte lutx1[eax]
 	out		dx,al
 	mov		al,byte 4[esp]
 	inc		ecx
