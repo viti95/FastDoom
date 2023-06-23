@@ -487,14 +487,7 @@ L$66:
 	sub		ebx,ecx
 	inc		ebx
 	jg		L$70
-L$68:
-	lea		ecx,[ebp+ebp*8+3]
-	lea		eax,[eax+eax*8+3]
-	mov		edx,3c5H
-	or		eax,ecx
-	out		dx,al
-	mov		al,byte 4[esp]
-	mov		byte [esi],al
+L$67:
 	add		esp,8
 	pop		ebp
 	pop		edi
@@ -503,6 +496,15 @@ L$68:
 	pop		ecx
 	pop		ebx
 	ret
+L$68:
+	lea		ecx,[ebp+ebp*8+3]
+	lea		eax,[eax+eax*8+3]
+	mov		edx,3c5H
+	or		eax,ecx
+	out		dx,al
+	mov		al,byte 4[esp]
+	mov		byte [esi],al
+	jmp		L$67
 L$69:
 	mov		al,0cH
 	mov		edx,3c5H
