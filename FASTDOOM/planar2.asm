@@ -357,6 +357,7 @@ CODE_SYM_DEF R_DrawSpanFlat
   mov		eax,[_ds_source]
   mov   ecx,[_ds_colormap]
   mov   cl,[eax+0x73A]        ;FLATPIXELCOLOR
+  mov		edx,3c5H
   mov   al,byte [ecx]
   mov		ecx,dword [_ds_x1]
 	mov		byte 4[esp],al
@@ -379,13 +380,12 @@ CODE_SYM_DEF R_DrawSpanFlat
 L$58:
 	cmp		ebp,3
 	je		L$59
-	mov		edx,3c5H
 	mov		al,byte lutx2[ebp]
 	out		dx,al
-	lea		eax,[edi+ebx]
-	mov		dl,byte 4[esp]
+	lea		esi,[edi+ebx]
+	mov		al,byte 4[esp]
 	dec		ebx
-	mov		byte [eax],dl
+	mov		byte [esi],al
 L$59:
 	sub		ebx,ecx
 	inc		ebx
@@ -401,7 +401,6 @@ L$60:
 	ret
 L$61:
 	mov		al,byte lutx1[eax]
-	mov		edx,3c5H
 	and		al,byte lutx2[ebp]
 	out		dx,al
 	mov		al,byte 4[esp]
@@ -409,7 +408,6 @@ L$61:
 	jmp		L$60
 L$62:
 	mov		al,byte lutx1[eax]
-  mov		edx,3c5H
 	out		dx,al
 	mov		al,byte 4[esp]
 	inc		ecx
@@ -417,7 +415,6 @@ L$62:
 	jmp		L$58
 L$63:
 	mov		al,0fH
-	mov		edx,3c5H
 	out		dx,al
 	add		edi,ecx
 	test	bl,1
