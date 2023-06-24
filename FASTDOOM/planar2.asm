@@ -464,6 +464,7 @@ CODE_SYM_DEF R_DrawSpanFlatLow
   mov		eax,ebx
 	mov		ebx,dword [_ds_x2]
   mov   ebp,ebx
+  mov		edx,3c5H
   and   ebp,1
 	sar		ebx,1
 	lea		esi,[edi+ecx]
@@ -475,12 +476,11 @@ L$65:
 	cmp		ebp,1
 	je		L$66
 	mov		al,3
-	mov		edx,3c5H
 	out		dx,al
-	lea		eax,[edi+ebx]
-	mov		dl,byte 4[esp]
+	lea		esi,[edi+ebx]
+	mov		al,byte 4[esp]
 	dec		ebx
-	mov		byte [eax],dl
+	mov		byte [esi],al
 L$66:
 	sub		ebx,ecx
 	inc		ebx
@@ -497,7 +497,6 @@ L$67:
 L$68:
 	lea		ecx,[ebp+ebp*8+3]
 	lea		eax,[eax+eax*8+3]
-	mov		edx,3c5H
 	or		eax,ecx
 	out		dx,al
 	mov		al,byte 4[esp]
@@ -505,7 +504,6 @@ L$68:
 	jmp		L$67
 L$69:
 	mov		al,0cH
-	mov		edx,3c5H
 	out		dx,al
 	mov		al,byte 4[esp]
 	inc		ecx
@@ -513,9 +511,8 @@ L$69:
 	jmp		L$65
 L$70:
 	mov		al,0fH
-	mov		edx,3c5H
-	out		dx,al
 	add		edi,ecx
+	out		dx,al
 	test	bl,1
 	je		L$71
 	mov		al,byte 4[esp]
