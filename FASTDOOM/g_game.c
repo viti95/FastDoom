@@ -1358,7 +1358,19 @@ void G_CheckDemoStatus(void)
             }
         }
 
-        I_Error("Timed %i gametics in %u realtics. FPS: %u.%.3u", gametic, realtics, resultfps / 1000, resultfps % 1000);
+        if (benchmark)
+        {
+            benchmark = 0;
+            timingdemo = 0;
+            singletics = false;
+
+            gameaction = ga_nothing;
+            gamestate = GS_DEMOSCREEN;
+        }
+        else
+        {
+            I_Error("Timed %i gametics in %u realtics. FPS: %u.%.3u", gametic, realtics, resultfps / 1000, resultfps % 1000);
+        }
     }
 
     if (demoplayback)

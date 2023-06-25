@@ -348,7 +348,7 @@ menu_t NewDef =
 #define mousesens 5
 #define option_empty2 6
 #define soundvol 7
-#define benchmark 8
+#define benchmark_option 8
 #define opt_end 9
 
 menuitem_t OptionsMenu[] =
@@ -1014,6 +1014,7 @@ char demo3name[6] = "demo3";
 void M_BenchmarkDemo1(int choice)
 {
     menuactive = 0;
+    benchmark = 1;
     G_TimeDemo(demo1name);
     D_DoomLoop(); // never returns
 }
@@ -1021,6 +1022,7 @@ void M_BenchmarkDemo1(int choice)
 void M_BenchmarkDemo2(int choice)
 {
     menuactive = 0;
+    benchmark = 1;
     G_TimeDemo(demo2name);
     D_DoomLoop(); // never returns
 }
@@ -1028,6 +1030,7 @@ void M_BenchmarkDemo2(int choice)
 void M_BenchmarkDemo3(int choice)
 {
     menuactive = 0;
+    benchmark = 1;
     G_TimeDemo(demo3name);
     D_DoomLoop(); // never returns
 }
@@ -1206,7 +1209,7 @@ void M_DrawOptions(void)
     V_DrawPatchDirect(OptionsDef.x + 120, OptionsDef.y + LINEHEIGHT * messages, W_CacheLumpName((char *)msgNames[showMessages], PU_CACHE));
     M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (mousesens + 1), 10, mouseSensitivity);
     M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (scrnsize + 1), 10, screenSize);
-    M_WriteText(OptionsDef.x + 1, OptionsDef.y + LINEHEIGHT * benchmark + 4, "BENCHMARK");
+    M_WriteText(OptionsDef.x + 1, OptionsDef.y + LINEHEIGHT * benchmark_option + 4, "BENCHMARK");
 #endif
 }
 

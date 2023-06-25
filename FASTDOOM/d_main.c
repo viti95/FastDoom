@@ -138,6 +138,7 @@ boolean uncappedFPS;
 boolean waitVsync;
 
 boolean singletics = false; // debug flag to cancel adaptiveness
+boolean benchmark = false;
 
 extern int sfxVolume;
 extern int musicVolume;
