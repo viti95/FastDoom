@@ -30,6 +30,7 @@ int MUSIC_InitFM(int card, midifuncs *Funcs, int Address);
 int MUSIC_InitMidi(int card, midifuncs *Funcs, int Address);
 int MUSIC_InitGUS(midifuncs *Funcs);
 int MUSIC_InitCMS(midifuncs *Funcs, int Address);
+int MUSIC_InitSBMIDI(midifuncs *Funcs,int Address);
 
 /*---------------------------------------------------------------------
    Function: MUSIC_Init
