@@ -1050,6 +1050,7 @@ void M_DrawBenchmarkResult(void)
     V_WriteTextDirect(20, 30, "DEMO3");
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+    M_WriteText(100, 40, "RESULT");
     M_WriteText(62, 68, "Gametics:");
     M_WriteText(62, 84, "Realtics:");
     M_WriteText(100, 100, "FPS:");
@@ -1064,16 +1065,12 @@ void M_DrawBenchmarkResult(void)
 #endif
 }
 
-char demo1name[6] = "demo1";
-char demo2name[6] = "demo2";
-char demo3name[6] = "demo3";
-
 void M_BenchmarkDemo1(int choice)
 {
     menuactive = 0;
     benchmark = 1;
     benchmark_finished = false;
-    G_TimeDemo(demo1name);
+    G_TimeDemo("demo1");
     D_DoomLoop(); // never returns
     M_StartControlPanel();
     itemOn = 0;
@@ -1085,7 +1082,7 @@ void M_BenchmarkDemo2(int choice)
     menuactive = 0;
     benchmark = 1;
     benchmark_finished = false;
-    G_TimeDemo(demo2name);
+    G_TimeDemo("demo2");
     D_DoomLoop(); // never returns
     M_StartControlPanel();
     itemOn = 0;
@@ -1097,7 +1094,7 @@ void M_BenchmarkDemo3(int choice)
     menuactive = 0;
     benchmark = 1;
     benchmark_finished = false;
-    G_TimeDemo(demo3name);
+    G_TimeDemo("demo3");
     D_DoomLoop(); // never returns
     M_StartControlPanel();
     itemOn = 0;
