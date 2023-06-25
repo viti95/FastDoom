@@ -1071,6 +1071,7 @@ void M_BenchmarkDemo1(int choice)
     benchmark = 1;
     benchmark_finished = false;
     G_TimeDemo("demo1");
+    benchmark_starttic = gametic;
     D_DoomLoop(); // never returns
     M_StartControlPanel();
     itemOn = 0;
@@ -1083,6 +1084,7 @@ void M_BenchmarkDemo2(int choice)
     benchmark = 1;
     benchmark_finished = false;
     G_TimeDemo("demo2");
+    benchmark_starttic = gametic;
     D_DoomLoop(); // never returns
     M_StartControlPanel();
     itemOn = 0;
@@ -1095,6 +1097,7 @@ void M_BenchmarkDemo3(int choice)
     benchmark = 1;
     benchmark_finished = false;
     G_TimeDemo("demo3");
+    benchmark_starttic = gametic;
     D_DoomLoop(); // never returns
     M_StartControlPanel();
     itemOn = 0;

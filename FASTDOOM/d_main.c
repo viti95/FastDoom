@@ -143,6 +143,7 @@ boolean benchmark_finished = false;
 unsigned int benchmark_realtics = 0;
 unsigned int benchmark_gametics = 0;
 unsigned int benchmark_resultfps = 0;
+unsigned int benchmark_starttic = 0;
 
 extern int sfxVolume;
 extern int musicVolume;

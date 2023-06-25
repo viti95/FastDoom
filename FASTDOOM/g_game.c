@@ -1239,10 +1239,18 @@ void G_CheckDemoStatus(void)
 
     if (timingdemo)
     {
-        realtics = ticcount - starttime;
-
-        resultfps = (35 * 1000 * (unsigned int)gametic) / (unsigned int)realtics;
-
+        if (benchmark)
+        {
+            benchmark_realtics = ticcount - benchmark_starttic;
+            benchmark_gametics = gametic - benchmark_starttic;
+            benchmark_resultfps = (35 * 1000 * (unsigned int)benchmark_gametics) / (unsigned int)benchmark_realtics;
+        }
+        else
+        {
+            realtics = ticcount - starttime;
+            resultfps = (35 * 1000 * (unsigned int)gametic) / (unsigned int)realtics;
+        }
+        
         if (csv)
         {
             FILE *logFile = fopen("BENCH.CSV", "a");
@@ -1368,9 +1376,6 @@ void G_CheckDemoStatus(void)
             gamestate = GS_DEMOSCREEN;
 
             benchmark_finished = true;
-            benchmark_resultfps = resultfps;
-            benchmark_gametics = gametic;
-            benchmark_realtics = realtics;
         }
         else
         {
