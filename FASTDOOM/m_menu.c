@@ -211,6 +211,7 @@ void M_Display(int choice);
 void M_BenchmarkDemo1(int choice);
 void M_BenchmarkDemo2(int choice);
 void M_BenchmarkDemo3(int choice);
+void M_DoNothing(int choice);
 
 void M_FinishReadThis(int choice);
 void M_LoadSelect(int choice);
@@ -228,6 +229,7 @@ void M_DrawEpisode(void);
 void M_DrawOptions(void);
 void M_DrawSound(void);
 void M_DrawBenchmark(void);
+void M_DrawBenchmarkResult(void);
 void M_DrawDisplay(void);
 void M_DrawLoad(void);
 void M_DrawSave(void);
@@ -469,6 +471,11 @@ menuitem_t BenchmarkMenu[] =
         {1, "", "DEMO3", M_BenchmarkDemo3}
     };
 
+menuitem_t BenchmarkResultMenu[] =
+    {
+        {1, "", "", M_DoNothing}
+    };
+
 menu_t BenchmarkDef =
     {
         benchmark_end,
@@ -476,6 +483,15 @@ menu_t BenchmarkDef =
         BenchmarkMenu,
         M_DrawBenchmark,
         80, 64,
+        0};
+
+menu_t BenchmarkResultDef =
+    {
+        1,
+        &OptionsDef,
+        BenchmarkResultMenu,
+        M_DrawBenchmarkResult,
+        70, 64,
         0};
 
 //
@@ -1007,6 +1023,47 @@ void M_DrawBenchmark(void)
 #endif
 }
 
+char strRealtics[21];
+char strGametics[21];
+char strFPS[21];
+
+void M_DoNothing(int choice)
+{
+    menuactive = 0;
+}
+
+void M_DrawBenchmarkResult(void)
+{
+#if defined(MODE_T4025) || defined(MODE_T4050)
+    V_WriteTextDirect(10, 12, "DEMO1");
+    V_WriteTextDirect(10, 13, "DEMO2");
+    V_WriteTextDirect(10, 14, "DEMO3");
+#endif
+#if defined(MODE_T8025) || defined(MODE_MDA)
+    V_WriteTextDirect(20, 12, "DEMO1");
+    V_WriteTextDirect(20, 13, "DEMO2");
+    V_WriteTextDirect(20, 14, "DEMO3");
+#endif
+#if defined(MODE_T8050) || defined(MODE_T8043)
+    V_WriteTextDirect(20, 28, "DEMO1");
+    V_WriteTextDirect(20, 29, "DEMO2");
+    V_WriteTextDirect(20, 30, "DEMO3");
+#endif
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+    M_WriteText(62, 68, "Gametics:");
+    M_WriteText(62, 84, "Realtics:");
+    M_WriteText(100, 100, "FPS:");
+
+    sprintf(strGametics, "%u", benchmark_gametics);
+    sprintf(strRealtics, "%u", benchmark_realtics);
+    sprintf(strFPS, "%u.%.3u", benchmark_resultfps / 1000, benchmark_resultfps % 1000);
+
+    M_WriteText(142, 68, strGametics);
+    M_WriteText(142, 84, strRealtics);
+    M_WriteText(142, 100, strFPS);
+#endif
+}
+
 char demo1name[6] = "demo1";
 char demo2name[6] = "demo2";
 char demo3name[6] = "demo3";
@@ -1019,7 +1076,7 @@ void M_BenchmarkDemo1(int choice)
     G_TimeDemo(demo1name);
     D_DoomLoop(); // never returns
     M_StartControlPanel();
-    currentMenu = &BenchmarkDef;
+    currentMenu = &BenchmarkResultDef;
 }
 
 void M_BenchmarkDemo2(int choice)
@@ -1030,7 +1087,7 @@ void M_BenchmarkDemo2(int choice)
     G_TimeDemo(demo2name);
     D_DoomLoop(); // never returns
     M_StartControlPanel();
-    currentMenu = &BenchmarkDef;
+    currentMenu = &BenchmarkResultDef;
 }
 
 void M_BenchmarkDemo3(int choice)
@@ -1041,7 +1098,7 @@ void M_BenchmarkDemo3(int choice)
     G_TimeDemo(demo3name);
     D_DoomLoop(); // never returns
     M_StartControlPanel();
-    currentMenu = &BenchmarkDef;
+    currentMenu = &BenchmarkResultDef;
 }
 
 void M_Benchmark(int choice)

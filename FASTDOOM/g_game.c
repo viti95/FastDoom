@@ -1368,6 +1368,9 @@ void G_CheckDemoStatus(void)
             gamestate = GS_DEMOSCREEN;
 
             benchmark_finished = true;
+            benchmark_resultfps = resultfps;
+            benchmark_gametics = gametic;
+            benchmark_realtics = realtics;
         }
         else
         {
