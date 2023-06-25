@@ -190,6 +190,7 @@ void M_QuitDOOM(int choice);
 
 void M_ChangeMessages(int choice);
 void M_ChangeSensitivity(int choice);
+void M_Benchmark(int choice);
 void M_SfxVol(int choice);
 void M_MusicVol(int choice);
 void M_ChangeDetail(int choice);
@@ -207,6 +208,9 @@ void M_SizeDisplay(int choice);
 void M_StartGame(int choice);
 void M_Sound(int choice);
 void M_Display(int choice);
+void M_BenchmarkDemo1(int choice);
+void M_BenchmarkDemo2(int choice);
+void M_BenchmarkDemo3(int choice);
 
 void M_FinishReadThis(int choice);
 void M_LoadSelect(int choice);
@@ -223,6 +227,7 @@ void M_DrawNewGame(void);
 void M_DrawEpisode(void);
 void M_DrawOptions(void);
 void M_DrawSound(void);
+void M_DrawBenchmark(void);
 void M_DrawDisplay(void);
 void M_DrawLoad(void);
 void M_DrawSave(void);
@@ -343,7 +348,8 @@ menu_t NewDef =
 #define mousesens 5
 #define option_empty2 6
 #define soundvol 7
-#define opt_end 8
+#define benchmark 8
+#define opt_end 9
 
 menuitem_t OptionsMenu[] =
     {
@@ -354,7 +360,9 @@ menuitem_t OptionsMenu[] =
         {-1, "", ""},
         {2, "M_MSENS", "Mouse sensitivity", M_ChangeSensitivity},
         {-1, "", ""},
-        {1, "M_SVOL", "Sound volume", M_Sound}};
+        {1, "M_SVOL", "Sound volume", M_Sound},
+        {1, "", "Benchmark", M_Benchmark}
+        };
 
 menu_t OptionsDef =
     {
@@ -362,7 +370,7 @@ menu_t OptionsDef =
         &MainDef,
         OptionsMenu,
         M_DrawOptions,
-        60, 37,
+        60, 24,
         0};
 
 menuitem_t DisplayMenu[] =
@@ -432,6 +440,11 @@ menu_t ReadDef2 =
 #define monosound 4
 #define sound_end 5
 
+#define benchmark_demo1 0
+#define benchmark_demo2 1
+#define benchmark_demo3 2
+#define benchmark_end 3
+
 menuitem_t SoundMenu[] =
     {
         {2, "M_SFXVOL", "SFX volume", M_SfxVol},
@@ -446,6 +459,22 @@ menu_t SoundDef =
         &OptionsDef,
         SoundMenu,
         M_DrawSound,
+        80, 64,
+        0};
+
+menuitem_t BenchmarkMenu[] =
+    {
+        {1, "", "DEMO1", M_BenchmarkDemo1},
+        {1, "", "DEMO2", M_BenchmarkDemo2},
+        {1, "", "DEMO3", M_BenchmarkDemo3}
+    };
+
+menu_t BenchmarkDef =
+    {
+        benchmark_end,
+        &OptionsDef,
+        BenchmarkMenu,
+        M_DrawBenchmark,
         80, 64,
         0};
 
@@ -954,6 +983,50 @@ void M_Sound(int choice)
     M_SetupNextMenu(&SoundDef);
 }
 
+void M_DrawBenchmark(void)
+{
+#if defined(MODE_T4025) || defined(MODE_T4050)
+    V_WriteTextDirect(10, 12, "DEMO1");
+    V_WriteTextDirect(10, 13, "DEMO2");
+    V_WriteTextDirect(10, 14, "DEMO3");
+#endif
+#if defined(MODE_T8025) || defined(MODE_MDA)
+    V_WriteTextDirect(20, 12, "DEMO1");
+    V_WriteTextDirect(20, 13, "DEMO2");
+    V_WriteTextDirect(20, 14, "DEMO3");
+#endif
+#if defined(MODE_T8050) || defined(MODE_T8043)
+    V_WriteTextDirect(20, 28, "DEMO1");
+    V_WriteTextDirect(20, 29, "DEMO2");
+    V_WriteTextDirect(20, 30, "DEMO3");
+#endif
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+    M_WriteText(82, 68, "DEMO1");
+    M_WriteText(82, 84, "DEMO2");
+    M_WriteText(82, 100, "DEMO3");
+#endif
+}
+
+void M_BenchmarkDemo1(int choice)
+{
+
+}
+
+void M_BenchmarkDemo2(int choice)
+{
+
+}
+
+void M_BenchmarkDemo3(int choice)
+{
+    
+}
+
+void M_Benchmark(int choice)
+{
+    M_SetupNextMenu(&BenchmarkDef);
+}
+
 void M_SfxVol(int choice)
 {
     switch (choice)
@@ -1119,10 +1192,11 @@ void M_DrawOptions(void)
     M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (scrnsize + 1)) / 4, 10, screenSize);
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-    V_DrawPatchDirect(108, 15, W_CacheLumpName("M_OPTTTL", PU_CACHE));
+    V_DrawPatchDirect(108, 2, W_CacheLumpName("M_OPTTTL", PU_CACHE));
     V_DrawPatchDirect(OptionsDef.x + 120, OptionsDef.y + LINEHEIGHT * messages, W_CacheLumpName((char *)msgNames[showMessages], PU_CACHE));
     M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (mousesens + 1), 10, mouseSensitivity);
     M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (scrnsize + 1), 10, screenSize);
+    M_WriteText(OptionsDef.x + 1, OptionsDef.y + LINEHEIGHT * benchmark + 4, "BENCHMARK");
 #endif
 }
 
