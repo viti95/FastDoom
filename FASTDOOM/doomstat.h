@@ -255,6 +255,7 @@ extern int mouseSensitivity;
 // debug flag to cancel adaptiveness
 extern boolean singletics;
 extern boolean benchmark;
+extern boolean benchmark_finished;
 
 // Needed to store the number of the dummy sky flat.
 // Used for rendering,

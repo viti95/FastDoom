@@ -1366,6 +1366,8 @@ void G_CheckDemoStatus(void)
 
             gameaction = ga_nothing;
             gamestate = GS_DEMOSCREEN;
+
+            benchmark_finished = true;
         }
         else
         {

@@ -139,6 +139,7 @@ boolean waitVsync;
 
 boolean singletics = false; // debug flag to cancel adaptiveness
 boolean benchmark = false;
+boolean benchmark_finished = false;
 
 extern int sfxVolume;
 extern int musicVolume;
@@ -512,6 +513,9 @@ void D_DoomLoop(void)
             G_Ticker();
             gametic++;
             maketic++;
+
+            if (benchmark_finished)
+                return;
         }
         else
         {

@@ -1015,24 +1015,33 @@ void M_BenchmarkDemo1(int choice)
 {
     menuactive = 0;
     benchmark = 1;
+    benchmark_finished = false;
     G_TimeDemo(demo1name);
     D_DoomLoop(); // never returns
+    M_StartControlPanel();
+    currentMenu = &BenchmarkDef;
 }
 
 void M_BenchmarkDemo2(int choice)
 {
     menuactive = 0;
     benchmark = 1;
+    benchmark_finished = false;
     G_TimeDemo(demo2name);
     D_DoomLoop(); // never returns
+    M_StartControlPanel();
+    currentMenu = &BenchmarkDef;
 }
 
 void M_BenchmarkDemo3(int choice)
 {
     menuactive = 0;
     benchmark = 1;
+    benchmark_finished = false;
     G_TimeDemo(demo3name);
     D_DoomLoop(); // never returns
+    M_StartControlPanel();
+    currentMenu = &BenchmarkDef;
 }
 
 void M_Benchmark(int choice)
