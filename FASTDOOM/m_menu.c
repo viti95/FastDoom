@@ -491,7 +491,7 @@ menu_t BenchmarkResultDef =
         &OptionsDef,
         BenchmarkResultMenu,
         M_DrawBenchmarkResult,
-        70, 64,
+        60, 64,
         0};
 
 //
@@ -1029,7 +1029,7 @@ char strFPS[21];
 
 void M_DoNothing(int choice)
 {
-    menuactive = 0;
+    M_SetupNextMenu(&OptionsDef);
 }
 
 void M_DrawBenchmarkResult(void)
@@ -1076,6 +1076,7 @@ void M_BenchmarkDemo1(int choice)
     G_TimeDemo(demo1name);
     D_DoomLoop(); // never returns
     M_StartControlPanel();
+    itemOn = 0;
     currentMenu = &BenchmarkResultDef;
 }
 
@@ -1087,6 +1088,7 @@ void M_BenchmarkDemo2(int choice)
     G_TimeDemo(demo2name);
     D_DoomLoop(); // never returns
     M_StartControlPanel();
+    itemOn = 0;
     currentMenu = &BenchmarkResultDef;
 }
 
@@ -1098,6 +1100,7 @@ void M_BenchmarkDemo3(int choice)
     G_TimeDemo(demo3name);
     D_DoomLoop(); // never returns
     M_StartControlPanel();
+    itemOn = 0;
     currentMenu = &BenchmarkResultDef;
 }
 
