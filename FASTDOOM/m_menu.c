@@ -1007,19 +1007,29 @@ void M_DrawBenchmark(void)
 #endif
 }
 
+char demo1name[6] = "demo1";
+char demo2name[6] = "demo2";
+char demo3name[6] = "demo3";
+
 void M_BenchmarkDemo1(int choice)
 {
-
+    menuactive = 0;
+    G_TimeDemo(demo1name);
+    D_DoomLoop(); // never returns
 }
 
 void M_BenchmarkDemo2(int choice)
 {
-
+    menuactive = 0;
+    G_TimeDemo(demo2name);
+    D_DoomLoop(); // never returns
 }
 
 void M_BenchmarkDemo3(int choice)
 {
-    
+    menuactive = 0;
+    G_TimeDemo(demo3name);
+    D_DoomLoop(); // never returns
 }
 
 void M_Benchmark(int choice)
