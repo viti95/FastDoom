@@ -1241,7 +1241,7 @@ void G_CheckDemoStatus(void)
     {
         if (benchmark)
         {
-            benchmark_realtics = ticcount - benchmark_starttic;
+            benchmark_realtics = ticcount - starttime;
             benchmark_gametics = gametic - benchmark_starttic;
             benchmark_resultfps = (35 * 1000 * (unsigned int)benchmark_gametics) / (unsigned int)benchmark_realtics;
         }
