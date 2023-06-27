@@ -519,7 +519,9 @@ void D_DoomLoop(void)
             maketic++;
 
             if (benchmark_finished)
-                return;
+            {
+                M_FinishBenchmark();
+            }
         }
         else
         {

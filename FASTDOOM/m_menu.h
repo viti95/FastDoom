@@ -50,6 +50,7 @@ void M_Init(void);
 // Called by intro code to force menu up upon a keypress,
 // does nothing if menu is already up.
 void M_StartControlPanel(void);
+void M_FinishBenchmark(void);
 
 void M_WriteText(int x, int y, char *string);
 

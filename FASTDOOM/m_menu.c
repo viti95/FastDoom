@@ -1029,6 +1029,7 @@ char strFPS[21];
 
 void M_DoNothing(int choice)
 {
+    benchmark_finished = false;
     M_SetupNextMenu(&OptionsDef);
 }
 
@@ -1072,11 +1073,6 @@ void M_BenchmarkDemo1(int choice)
     benchmark_finished = false;
     G_TimeDemo("demo1");
     benchmark_starttic = gametic;
-    R_SetViewSize(screenblocks, detailLevel);
-    D_DoomLoop(); // never returns
-    M_StartControlPanel();
-    itemOn = 0;
-    currentMenu = &BenchmarkResultDef;
 }
 
 void M_BenchmarkDemo2(int choice)
@@ -1086,11 +1082,6 @@ void M_BenchmarkDemo2(int choice)
     benchmark_finished = false;
     G_TimeDemo("demo2");
     benchmark_starttic = gametic;
-    R_SetViewSize(screenblocks, detailLevel);
-    D_DoomLoop(); // never returns
-    M_StartControlPanel();
-    itemOn = 0;
-    currentMenu = &BenchmarkResultDef;
 }
 
 void M_BenchmarkDemo3(int choice)
@@ -1100,11 +1091,6 @@ void M_BenchmarkDemo3(int choice)
     benchmark_finished = false;
     G_TimeDemo("demo3");
     benchmark_starttic = gametic;
-    R_SetViewSize(screenblocks, detailLevel);
-    D_DoomLoop(); // never returns
-    M_StartControlPanel();
-    itemOn = 0;
-    currentMenu = &BenchmarkResultDef;
 }
 
 void M_Benchmark(int choice)
@@ -2620,6 +2606,13 @@ void M_StartControlPanel(void)
     menuactive = 1;
     currentMenu = &MainDef;       // JDC
     itemOn = currentMenu->lastOn; // JDC
+}
+
+void M_FinishBenchmark(void)
+{
+    M_StartControlPanel();
+    itemOn = 0;
+    currentMenu = &BenchmarkResultDef;
 }
 
 //
