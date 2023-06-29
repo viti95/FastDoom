@@ -211,7 +211,7 @@ void M_Display(int choice);
 void M_BenchmarkDemo1(int choice);
 void M_BenchmarkDemo2(int choice);
 void M_BenchmarkDemo3(int choice);
-void M_DoNothing(int choice);
+void M_ReturnToOptions(int choice);
 
 void M_FinishReadThis(int choice);
 void M_LoadSelect(int choice);
@@ -473,7 +473,7 @@ menuitem_t BenchmarkMenu[] =
 
 menuitem_t BenchmarkResultMenu[] =
     {
-        {1, "", "", M_DoNothing}
+        {1, "", "", M_ReturnToOptions}
     };
 
 menu_t BenchmarkDef =
@@ -482,7 +482,7 @@ menu_t BenchmarkDef =
         &OptionsDef,
         BenchmarkMenu,
         M_DrawBenchmark,
-        80, 64,
+        80, 96,
         0};
 
 menu_t BenchmarkResultDef =
@@ -1017,9 +1017,22 @@ void M_DrawBenchmark(void)
     V_WriteTextDirect(20, 30, "DEMO3");
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-    M_WriteText(82, 68, "DEMO1");
-    M_WriteText(82, 84, "DEMO2");
-    M_WriteText(82, 100, "DEMO3");
+    M_WriteText(82, 20, "===========================");
+    M_WriteText(82, 36, "=  BENCHMARK MENU  =");
+    M_WriteText(82, 52, "===========================");
+
+    M_WriteText(82, 84, "TYPE:");
+
+    switch(benchmark_type)
+    {
+        case BENCHMARK_SINGLE:
+            M_WriteText(128, 84, "PHIL'S");
+            break;
+    }
+
+    M_WriteText(82, 100, "DEMO1");
+    M_WriteText(82, 116, "DEMO2");
+    M_WriteText(82, 132, "DEMO3");
 #endif
 }
 
@@ -1027,7 +1040,7 @@ char strRealtics[21];
 char strGametics[21];
 char strFPS[21];
 
-void M_DoNothing(int choice)
+void M_ReturnToOptions(int choice)
 {
     benchmark_finished = false;
     M_SetupNextMenu(&OptionsDef);
