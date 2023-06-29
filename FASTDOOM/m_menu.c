@@ -212,6 +212,7 @@ void M_BenchmarkDemo1(int choice);
 void M_BenchmarkDemo2(int choice);
 void M_BenchmarkDemo3(int choice);
 void M_ReturnToOptions(int choice);
+void M_ChangeBenchmarkType(int choice);
 
 void M_FinishReadThis(int choice);
 void M_LoadSelect(int choice);
@@ -442,10 +443,11 @@ menu_t ReadDef2 =
 #define monosound 4
 #define sound_end 5
 
-#define benchmark_demo1 0
-#define benchmark_demo2 1
-#define benchmark_demo3 2
-#define benchmark_end 3
+#define benchmark_select  0
+#define benchmark_demo1   1
+#define benchmark_demo2   2
+#define benchmark_demo3   3
+#define benchmark_end     4
 
 menuitem_t SoundMenu[] =
     {
@@ -466,6 +468,7 @@ menu_t SoundDef =
 
 menuitem_t BenchmarkMenu[] =
     {
+        {2, "", "", M_ChangeBenchmarkType},
         {1, "", "DEMO1", M_BenchmarkDemo1},
         {1, "", "DEMO2", M_BenchmarkDemo2},
         {1, "", "DEMO3", M_BenchmarkDemo3}
@@ -482,7 +485,7 @@ menu_t BenchmarkDef =
         &OptionsDef,
         BenchmarkMenu,
         M_DrawBenchmark,
-        80, 96,
+        80, 80,
         0};
 
 menu_t BenchmarkResultDef =
@@ -1026,7 +1029,22 @@ void M_DrawBenchmark(void)
     switch(benchmark_type)
     {
         case BENCHMARK_SINGLE:
+            M_WriteText(128, 84, "SINGLE");
+            break;
+        case BENCHMARK_NORMAL:
+            M_WriteText(128, 84, "NORMAL");
+            break;
+        case BENCHMARK_ARCH:
+            M_WriteText(128, 84, "ARCH");
+            break;
+        case BENCHMARK_FULL:
+            M_WriteText(128, 84, "FULL");
+            break;
+        case BENCHMARK_PHILS:
             M_WriteText(128, 84, "PHIL'S");
+            break;
+        case BENCHMARK_QUICK:
+            M_WriteText(128, 84, "QUICK");
             break;
     }
 
@@ -1077,6 +1095,25 @@ void M_DrawBenchmarkResult(void)
     M_WriteText(142, 84, strRealtics);
     M_WriteText(142, 100, strFPS);
 #endif
+}
+
+void M_ChangeBenchmarkType(int choice)
+{
+    switch (choice)
+    {
+    case 0:
+        benchmark_type--;
+
+        if (benchmark_type == -1)
+            benchmark_type = BENCHMARK_ARCH;
+        break;
+    case 1:
+        benchmark_type++;
+
+        if (benchmark_type == NUM_BENCHMARK)
+            benchmark_type = BENCHMARK_SINGLE;
+        break;
+    }
 }
 
 void M_BenchmarkDemo1(int choice)
