@@ -231,6 +231,7 @@ void M_DrawOptions(void);
 void M_DrawSound(void);
 void M_DrawBenchmark(void);
 void M_DrawBenchmarkResult(void);
+void M_DrawBenchmarkCSV(void);
 void M_DrawDisplay(void);
 void M_DrawLoad(void);
 void M_DrawSave(void);
@@ -364,8 +365,7 @@ menuitem_t OptionsMenu[] =
         {2, "M_MSENS", "Mouse sensitivity", M_ChangeSensitivity},
         {-1, "", ""},
         {1, "M_SVOL", "Sound volume", M_Sound},
-        {1, "", "Benchmark", M_Benchmark}
-        };
+        {1, "", "Benchmark", M_Benchmark}};
 
 menu_t OptionsDef =
     {
@@ -443,11 +443,11 @@ menu_t ReadDef2 =
 #define monosound 4
 #define sound_end 5
 
-#define benchmark_select  0
-#define benchmark_demo1   1
-#define benchmark_demo2   2
-#define benchmark_demo3   3
-#define benchmark_end     4
+#define benchmark_select 0
+#define benchmark_demo1 1
+#define benchmark_demo2 2
+#define benchmark_demo3 3
+#define benchmark_end 4
 
 menuitem_t SoundMenu[] =
     {
@@ -471,13 +471,11 @@ menuitem_t BenchmarkMenu[] =
         {2, "", "", M_ChangeBenchmarkType},
         {1, "", "DEMO1", M_BenchmarkDemo1},
         {1, "", "DEMO2", M_BenchmarkDemo2},
-        {1, "", "DEMO3", M_BenchmarkDemo3}
-    };
+        {1, "", "DEMO3", M_BenchmarkDemo3}};
 
 menuitem_t BenchmarkResultMenu[] =
     {
-        {1, "", "", M_ReturnToOptions}
-    };
+        {1, "", "", M_ReturnToOptions}};
 
 menu_t BenchmarkDef =
     {
@@ -494,6 +492,15 @@ menu_t BenchmarkResultDef =
         &OptionsDef,
         BenchmarkResultMenu,
         M_DrawBenchmarkResult,
+        60, 64,
+        0};
+
+menu_t BenchmarkCSVDef =
+    {
+        1,
+        &OptionsDef,
+        BenchmarkResultMenu,
+        M_DrawBenchmarkCSV,
         60, 64,
         0};
 
@@ -1026,26 +1033,26 @@ void M_DrawBenchmark(void)
 
     M_WriteText(82, 84, "TYPE:");
 
-    switch(benchmark_type)
+    switch (benchmark_type)
     {
-        case BENCHMARK_SINGLE:
-            M_WriteText(128, 84, "SINGLE");
-            break;
-        case BENCHMARK_NORMAL:
-            M_WriteText(128, 84, "NORMAL");
-            break;
-        case BENCHMARK_ARCH:
-            M_WriteText(128, 84, "ARCH");
-            break;
-        case BENCHMARK_FULL:
-            M_WriteText(128, 84, "FULL");
-            break;
-        case BENCHMARK_PHILS:
-            M_WriteText(128, 84, "PHIL'S");
-            break;
-        case BENCHMARK_QUICK:
-            M_WriteText(128, 84, "QUICK");
-            break;
+    case BENCHMARK_SINGLE:
+        M_WriteText(128, 84, "SINGLE");
+        break;
+    case BENCHMARK_NORMAL:
+        M_WriteText(128, 84, "NORMAL");
+        break;
+    case BENCHMARK_ARCH:
+        M_WriteText(128, 84, "ARCH");
+        break;
+    case BENCHMARK_FULL:
+        M_WriteText(128, 84, "FULL");
+        break;
+    case BENCHMARK_PHILS:
+        M_WriteText(128, 84, "PHIL'S");
+        break;
+    case BENCHMARK_QUICK:
+        M_WriteText(128, 84, "QUICK");
+        break;
     }
 
     M_WriteText(82, 100, "DEMO1");
@@ -1060,6 +1067,7 @@ char strFPS[21];
 
 void M_ReturnToOptions(int choice)
 {
+    benchmark = false;
     benchmark_finished = false;
     M_SetupNextMenu(&OptionsDef);
 }
@@ -1097,6 +1105,22 @@ void M_DrawBenchmarkResult(void)
 #endif
 }
 
+void M_DrawBenchmarkCSV(void)
+{
+#if defined(MODE_T4025) || defined(MODE_T4050)
+
+#endif
+#if defined(MODE_T8025) || defined(MODE_MDA)
+
+#endif
+#if defined(MODE_T8050) || defined(MODE_T8043)
+
+#endif
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+    M_WriteText(62, 68, "Results saved on file BENCH.CSV");
+#endif
+}
+
 void M_ChangeBenchmarkType(int choice)
 {
     switch (choice)
@@ -1119,7 +1143,7 @@ void M_ChangeBenchmarkType(int choice)
 void M_BenchmarkDemo1(int choice)
 {
     menuactive = 0;
-    benchmark = 1;
+    benchmark = true;
     benchmark_finished = false;
     G_TimeDemo("demo1");
     benchmark_starttic = gametic;
@@ -1128,7 +1152,7 @@ void M_BenchmarkDemo1(int choice)
 void M_BenchmarkDemo2(int choice)
 {
     menuactive = 0;
-    benchmark = 1;
+    benchmark = true;
     benchmark_finished = false;
     G_TimeDemo("demo2");
     benchmark_starttic = gametic;
@@ -1137,7 +1161,7 @@ void M_BenchmarkDemo2(int choice)
 void M_BenchmarkDemo3(int choice)
 {
     menuactive = 0;
-    benchmark = 1;
+    benchmark = true;
     benchmark_finished = false;
     G_TimeDemo("demo3");
     benchmark_starttic = gametic;
@@ -2658,11 +2682,51 @@ void M_StartControlPanel(void)
     itemOn = currentMenu->lastOn; // JDC
 }
 
-void M_FinishBenchmark(void)
+#define BENCHMARK_PHILS_LAST 2
+
+void M_ShowBenchmarkCSVMessage(void)
 {
     M_StartControlPanel();
     itemOn = 0;
-    currentMenu = &BenchmarkResultDef;
+    currentMenu = &BenchmarkCSVDef;
+}
+
+void M_FinishBenchmark(void)
+{
+    switch (benchmark_type)
+    {
+    case BENCHMARK_SINGLE:
+        M_StartControlPanel();
+        itemOn = 0;
+        currentMenu = &BenchmarkResultDef;
+        break;
+
+    case BENCHMARK_ARCH:
+        benchmark_number++;
+        break;
+
+    case BENCHMARK_FULL:
+        benchmark_number++;
+        break;
+
+    case BENCHMARK_NORMAL:
+        benchmark_number++;
+        break;
+
+    case BENCHMARK_PHILS:
+        benchmark_number++;
+        if (benchmark_number == BENCHMARK_PHILS_LAST)
+            M_ShowBenchmarkCSVMessage();
+        else
+        {
+            M_BenchmarkDemo3(0);
+        }
+        break;
+
+    case BENCHMARK_QUICK:
+        benchmark_number++;
+        break;
+    }
 }
 
 //

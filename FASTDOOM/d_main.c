@@ -145,6 +145,7 @@ unsigned int benchmark_gametics = 0;
 unsigned int benchmark_resultfps = 0;
 unsigned int benchmark_starttic = 0;
 unsigned int benchmark_type = BENCHMARK_SINGLE;
+unsigned int benchmark_number = 0;
 
 extern int sfxVolume;
 extern int musicVolume;
@@ -600,7 +601,8 @@ void D_PageDrawer(void)
 //
 void D_AdvanceDemo(void)
 {
-    advancedemo = 1;
+    if (!benchmark)
+        advancedemo = 1;
 }
 
 //
@@ -609,6 +611,9 @@ void D_AdvanceDemo(void)
 //
 void D_DoAdvanceDemo(void)
 {
+    if (benchmark)
+        return;
+
     players.playerstate = PST_LIVE; // not reborn
     advancedemo = 0;
     usergame = 0; // no save / end game here

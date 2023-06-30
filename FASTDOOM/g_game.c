@@ -1368,12 +1368,8 @@ void G_CheckDemoStatus(void)
 
         if (benchmark)
         {
-            benchmark = 0;
             timingdemo = 0;
             singletics = false;
-
-            gameaction = ga_nothing;
-            gamestate = GS_DEMOSCREEN;
 
             benchmark_finished = true;
         }
