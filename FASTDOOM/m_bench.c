@@ -246,22 +246,44 @@ void M_UpdateSettingsNormal(void)
     switch (benchmark_number)
     {
     case 0:
-        break;
-    case 1:
-        break;
-    case 2:
+        M_SetCSV(true);
+        M_SetCPU(INTEL_486);
+        M_SetSkyDetail(false);
+        M_SetSpriteCulling(false);
+        M_SetInvisibleDetail(INVISIBLE_NORMAL);
+        M_SetShowFPS(false);
+        M_SetMelting(true);
+        M_SetSizeDisplay(7);
+
+        //%2 -potato -size 10 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
+        M_SetDetail(DETAIL_POTATO);
+        M_SetVisplaneDetail(VISPLANES_NORMAL);
         break;
     case 3:
-        break;
-    case 4:
-        break;
-    case 5:
+        //%2 -low -size 10 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
+        M_SetDetail(DETAIL_LOW);
+        M_SetVisplaneDetail(VISPLANES_NORMAL);
         break;
     case 6:
+        //%2 -high -size 10 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
+        M_SetDetail(DETAIL_HIGH);
+        M_SetVisplaneDetail(VISPLANES_NORMAL);
         break;
+    case 1:
+    case 4:
     case 7:
+        //%2 -potato -size 10 -flatSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
+        //%2 -low -size 10 -flatSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
+        //%2 -high -size 10 -flatSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
+        M_SetVisplaneDetail(VISPLANES_FLAT);
         break;
+    case 2:
+    case 5:
     case 8:
+        //%2 -potato -size 10 -flatterSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
+        //%2 -low -size 10 -flatterSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
+        //%2 -high -size 10 -flatterSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
+        M_SetVisplaneDetail(VISPLANES_FLATTER);
         break;
     }
 }
