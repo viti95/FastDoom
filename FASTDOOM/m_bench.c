@@ -194,22 +194,49 @@ void M_UpdateSettingsArch(void)
     switch (benchmark_number)
     {
     case 0:
+        M_SetCSV(true);
+        M_SetVisplaneDetail(VISPLANES_NORMAL);
+        M_SetSkyDetail(false);
+        M_SetSpriteCulling(false);
+        M_SetInvisibleDetail(INVISIBLE_NORMAL);
+        M_SetShowFPS(false);
+        M_SetMelting(true);
+        M_SetSizeDisplay(7);
+
+        // %2 -high -size 10 -386sx -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
+        M_SetCPU(INTEL_386SX);
         break;
     case 1:
+        // %2 -high -size 10 -386dx -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
+        M_SetCPU(INTEL_386DX);
         break;
     case 2:
+        // %2 -high -size 10 -cy386 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
+        M_SetCPU(CYRIX_386DLC);
         break;
     case 3:
+        // %2 -high -size 10 -cy486 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
+        M_SetCPU(CYRIX_486);
         break;
     case 4:
+        // %2 -high -size 10 -i486 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
+        M_SetCPU(INTEL_486);
         break;
     case 5:
+        // %2 -high -size 10 -umc486 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
+        M_SetCPU(UMC_GREEN_486);
         break;
     case 6:
+        // %2 -high -size 10 -cy5x86 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
+        M_SetCPU(CYRIX_5X86);
         break;
     case 7:
+        // %2 -high -size 10 -k5 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
+        M_SetCPU(AMD_K5);
         break;
-    case 180:
+    case 8:
+        // %2 -high -size 10 -pentium -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
+        M_SetCPU(INTEL_PENTIUM);
         break;
     }
 }
@@ -234,7 +261,7 @@ void M_UpdateSettingsNormal(void)
         break;
     case 7:
         break;
-    case 180:
+    case 8:
         break;
     }
 }
