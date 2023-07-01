@@ -1045,9 +1045,6 @@ void M_DrawBenchmark(void)
     case BENCHMARK_ARCH:
         M_WriteText(128, 84, "ARCH");
         break;
-    case BENCHMARK_FULL:
-        M_WriteText(128, 84, "FULL");
-        break;
     case BENCHMARK_PHILS:
         M_WriteText(128, 84, "PHIL'S");
         break;
@@ -2705,7 +2702,6 @@ void M_StartControlPanel(void)
 #define BENCHMARK_QUICK_LAST 3
 #define BENCHMARK_NORMAL_LAST 9
 #define BENCHMARK_ARCH_LAST 9
-#define BENCHMARK_FULL_LAST 270
 
 void M_ShowBenchmarkCSVMessage(void)
 {
@@ -2727,19 +2723,6 @@ void M_FinishBenchmark(void)
     case BENCHMARK_ARCH:
         benchmark_number++;
         if (benchmark_number == BENCHMARK_ARCH_LAST)
-        {
-            benchmark_number = 0;
-            M_ShowBenchmarkCSVMessage();
-        }
-        else
-        {
-            M_BenchmarkRunDemo();
-        }
-        break;
-
-    case BENCHMARK_FULL:
-        benchmark_number++;
-        if (benchmark_number == BENCHMARK_FULL_LAST)
         {
             benchmark_number = 0;
             M_ShowBenchmarkCSVMessage();
