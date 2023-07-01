@@ -2683,6 +2683,10 @@ void M_StartControlPanel(void)
 }
 
 #define BENCHMARK_PHILS_LAST 2
+#define BENCHMARK_QUICK_LAST 3
+#define BENCHMARK_NORMAL_LAST 9
+#define BENCHMARK_ARCH_LAST 9
+#define BENCHMARK_FULL_LAST 270
 
 void M_ShowBenchmarkCSVMessage(void)
 {
@@ -2703,14 +2707,41 @@ void M_FinishBenchmark(void)
 
     case BENCHMARK_ARCH:
         benchmark_number++;
+        if (benchmark_number == BENCHMARK_ARCH_LAST)
+        {
+            benchmark_number = 0;
+            M_ShowBenchmarkCSVMessage();
+        }
+        else
+        {
+            M_BenchmarkDemo3(0);
+        }
         break;
 
     case BENCHMARK_FULL:
         benchmark_number++;
+        if (benchmark_number == BENCHMARK_FULL_LAST)
+        {
+            benchmark_number = 0;
+            M_ShowBenchmarkCSVMessage();
+        }
+        else
+        {
+            M_BenchmarkDemo3(0);
+        }
         break;
 
     case BENCHMARK_NORMAL:
         benchmark_number++;
+        if (benchmark_number == BENCHMARK_NORMAL_LAST)
+        {
+            benchmark_number = 0;
+            M_ShowBenchmarkCSVMessage();
+        }
+        else
+        {
+            M_BenchmarkDemo3(0);
+        }
         break;
 
     case BENCHMARK_PHILS:
@@ -2728,6 +2759,15 @@ void M_FinishBenchmark(void)
 
     case BENCHMARK_QUICK:
         benchmark_number++;
+        if (benchmark_number == BENCHMARK_QUICK_LAST)
+        {
+            benchmark_number = 0;
+            M_ShowBenchmarkCSVMessage();
+        }
+        else
+        {
+            M_BenchmarkDemo3(0);
+        }
         break;
     }
 }
