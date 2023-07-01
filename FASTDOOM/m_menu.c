@@ -1168,18 +1168,21 @@ void M_BenchmarkRunDemo(void)
 void M_BenchmarkDemo1(int choice)
 {
     benchmark_demo = 1;
+    sprintf(demofile, "demo1.lmp");
     M_BenchmarkRunDemo();
 }
 
 void M_BenchmarkDemo2(int choice)
 {
     benchmark_demo = 2;
+    sprintf(demofile, "demo2.lmp");
     M_BenchmarkRunDemo();
 }
 
 void M_BenchmarkDemo3(int choice)
 {
     benchmark_demo = 3;
+    sprintf(demofile, "demo3.lmp");
     M_BenchmarkRunDemo();
 }
 

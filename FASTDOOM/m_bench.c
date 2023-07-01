@@ -136,8 +136,6 @@ void M_SetCSV(boolean value)
 
 void M_UpdateSettingsPhils(void)
 {
-
-
     switch (benchmark_number)
     {
     case 0:
