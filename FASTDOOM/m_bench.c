@@ -140,26 +140,22 @@ void M_UpdateSettingsPhils(void)
     {
     case 0:
         M_SetCSV(true);
-        // %2 -high -size 12 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
-        M_SetDetail(DETAIL_HIGH);
-        M_SetSizeDisplay(9);
+        M_SetCPU(INTEL_486);
         M_SetVisplaneDetail(VISPLANES_NORMAL);
         M_SetSkyDetail(false);
         M_SetSpriteCulling(false);
         M_SetInvisibleDetail(INVISIBLE_NORMAL);
         M_SetShowFPS(false);
         M_SetMelting(true);
+
+        // %2 -high -size 12 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
+        M_SetDetail(DETAIL_HIGH);
+        M_SetSizeDisplay(9);
         break;
     case 1:
         // %2 -low -size 3 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
         M_SetDetail(DETAIL_LOW);
         M_SetSizeDisplay(0);
-        M_SetVisplaneDetail(VISPLANES_NORMAL);
-        M_SetSkyDetail(false);
-        M_SetSpriteCulling(false);
-        M_SetInvisibleDetail(INVISIBLE_NORMAL);
-        M_SetShowFPS(0);
-        M_SetMelting(true);
         break;
     }
 }
@@ -169,10 +165,26 @@ void M_UpdateSettingsQuick(void)
     switch (benchmark_number)
     {
     case 0:
+        M_SetCSV(true);
+        M_SetCPU(INTEL_486);
+        M_SetVisplaneDetail(VISPLANES_NORMAL);
+        M_SetSkyDetail(false);
+        M_SetSpriteCulling(false);
+        M_SetInvisibleDetail(INVISIBLE_NORMAL);
+        M_SetShowFPS(false);
+        M_SetMelting(true);
+        M_SetSizeDisplay(7);
+
+        // %2 -potato -size 10 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
+        M_SetDetail(DETAIL_POTATO);
         break;
     case 1:
+        // %2 -low -size 10 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
+        M_SetDetail(DETAIL_LOW);
         break;
     case 2:
+        // %2 -high -size 10 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
+        M_SetDetail(DETAIL_HIGH);
         break;
     }
 }
