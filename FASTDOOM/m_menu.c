@@ -2716,7 +2716,10 @@ void M_FinishBenchmark(void)
     case BENCHMARK_PHILS:
         benchmark_number++;
         if (benchmark_number == BENCHMARK_PHILS_LAST)
+        {
+            benchmark_number = 0;
             M_ShowBenchmarkCSVMessage();
+        }
         else
         {
             M_BenchmarkDemo3(0);
