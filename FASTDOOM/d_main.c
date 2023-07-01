@@ -146,6 +146,7 @@ unsigned int benchmark_resultfps = 0;
 unsigned int benchmark_starttic = 0;
 unsigned int benchmark_type = BENCHMARK_SINGLE;
 unsigned int benchmark_number = 0;
+unsigned int benchmark_demo = 0;
 
 extern int sfxVolume;
 extern int musicVolume;

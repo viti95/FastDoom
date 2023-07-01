@@ -52,6 +52,7 @@
 #include "sounds.h"
 
 #include "m_menu.h"
+#include "m_bench.h"
 
 #include "options.h"
 
@@ -1140,31 +1141,46 @@ void M_ChangeBenchmarkType(int choice)
     }
 }
 
-void M_BenchmarkDemo1(int choice)
+void M_BenchmarkRunDemo(void)
 {
     menuactive = 0;
     benchmark = true;
     benchmark_finished = false;
-    G_TimeDemo("demo1");
+
+    M_UpdateSettings();
+
+    switch(benchmark_demo)
+    {
+        case 1:
+        G_TimeDemo("demo1");
+        break;
+        case 2:
+        G_TimeDemo("demo2");
+        break;
+        case 3:
+        G_TimeDemo("demo3");
+        break;
+    }
+    
     benchmark_starttic = gametic;
+}
+
+void M_BenchmarkDemo1(int choice)
+{
+    benchmark_demo = 1;
+    M_BenchmarkRunDemo();
 }
 
 void M_BenchmarkDemo2(int choice)
 {
-    menuactive = 0;
-    benchmark = true;
-    benchmark_finished = false;
-    G_TimeDemo("demo2");
-    benchmark_starttic = gametic;
+    benchmark_demo = 2;
+    M_BenchmarkRunDemo();
 }
 
 void M_BenchmarkDemo3(int choice)
 {
-    menuactive = 0;
-    benchmark = true;
-    benchmark_finished = false;
-    G_TimeDemo("demo3");
-    benchmark_starttic = gametic;
+    benchmark_demo = 3;
+    M_BenchmarkRunDemo();
 }
 
 void M_Benchmark(int choice)
@@ -2714,7 +2730,7 @@ void M_FinishBenchmark(void)
         }
         else
         {
-            M_BenchmarkDemo3(0);
+            M_BenchmarkRunDemo();
         }
         break;
 
@@ -2727,7 +2743,7 @@ void M_FinishBenchmark(void)
         }
         else
         {
-            M_BenchmarkDemo3(0);
+            M_BenchmarkRunDemo();
         }
         break;
 
@@ -2740,7 +2756,7 @@ void M_FinishBenchmark(void)
         }
         else
         {
-            M_BenchmarkDemo3(0);
+            M_BenchmarkRunDemo();
         }
         break;
 
@@ -2753,7 +2769,7 @@ void M_FinishBenchmark(void)
         }
         else
         {
-            M_BenchmarkDemo3(0);
+            M_BenchmarkRunDemo();
         }
         break;
 
@@ -2766,7 +2782,7 @@ void M_FinishBenchmark(void)
         }
         else
         {
-            M_BenchmarkDemo3(0);
+            M_BenchmarkRunDemo();
         }
         break;
     }
