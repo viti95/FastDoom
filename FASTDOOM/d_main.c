@@ -146,7 +146,6 @@ unsigned int benchmark_resultfps = 0;
 unsigned int benchmark_starttic = 0;
 unsigned int benchmark_type = BENCHMARK_SINGLE;
 unsigned int benchmark_number = 0;
-unsigned int benchmark_demo = 0;
 
 extern int sfxVolume;
 extern int musicVolume;
@@ -1242,6 +1241,25 @@ void D_DoomMain(void)
 
     csv = M_CheckParm("-csv");
 
+    p = M_CheckParm("-benchmark");
+
+    if(p)
+    {
+        benchmark = true;
+
+        sprintf(demofile, "%s", myargv[p + 2]);
+        D_AddFile(demofile);
+
+        if(!strcmp(myargv[p + 1], "phils"))
+            benchmark_type = BENCHMARK_PHILS;
+        if(!strcmp(myargv[p + 1], "quick"))
+            benchmark_type = BENCHMARK_QUICK;
+        if(!strcmp(myargv[p + 1], "normal"))
+            benchmark_type = BENCHMARK_NORMAL;
+        if(!strcmp(myargv[p + 1], "arch"))
+            benchmark_type = BENCHMARK_ARCH;
+    }   
+
     disableDemo = M_CheckParm("-disabledemo");
 
     bfgedition = M_CheckParm("-bfg");
@@ -1512,6 +1530,14 @@ void D_DoomMain(void)
         D_DoomLoop(); // never returns
     }
 
+    p = M_CheckParm("-benchmark");
+    if (p)
+    {
+        D_StartTitle();
+        M_BenchmarkRunDemo();
+        D_DoomLoop();
+    }
+    
     p = M_CheckParm("-loadgame");
     if (p && p < myargc - 1)
     {

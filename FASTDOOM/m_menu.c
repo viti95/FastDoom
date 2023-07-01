@@ -1146,40 +1146,26 @@ void M_BenchmarkRunDemo(void)
 
     M_UpdateSettings();
 
-    switch(benchmark_demo)
-    {
-        case 1:
-        G_TimeDemo("demo1");
-        break;
-        case 2:
-        G_TimeDemo("demo2");
-        break;
-        case 3:
-        G_TimeDemo("demo3");
-        break;
-    }
-    
+    G_TimeDemo(demofile);
+
     benchmark_starttic = gametic;
 }
 
 void M_BenchmarkDemo1(int choice)
 {
-    benchmark_demo = 1;
-    sprintf(demofile, "demo1.lmp");
+    sprintf(demofile, "demo1");
     M_BenchmarkRunDemo();
 }
 
 void M_BenchmarkDemo2(int choice)
 {
-    benchmark_demo = 2;
-    sprintf(demofile, "demo2.lmp");
+    sprintf(demofile, "demo2");
     M_BenchmarkRunDemo();
 }
 
 void M_BenchmarkDemo3(int choice)
 {
-    benchmark_demo = 3;
-    sprintf(demofile, "demo3.lmp");
+    sprintf(demofile, "demo3");
     M_BenchmarkRunDemo();
 }
 
