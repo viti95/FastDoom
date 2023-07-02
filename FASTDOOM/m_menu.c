@@ -1194,13 +1194,13 @@ void M_DrawBenchmarkResult(void)
 void M_DrawBenchmarkCSV(void)
 {
 #if defined(MODE_T4025) || defined(MODE_T4050)
-
+    V_WriteTextDirect(6, 8, "Results saved on file BENCH.CSV");
 #endif
 #if defined(MODE_T8025) || defined(MODE_MDA)
-
+    V_WriteTextDirect(15, 8, "Results saved on file BENCH.CSV");
 #endif
 #if defined(MODE_T8050) || defined(MODE_T8043)
-
+    V_WriteTextDirect(15, 16, "Results saved on file BENCH.CSV");
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     M_WriteText(62, 68, "Results saved on file BENCH.CSV");
