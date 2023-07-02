@@ -1023,9 +1023,34 @@ void M_DrawBenchmark(void)
     V_WriteTextDirect(20, 14, "DEMO3");
 #endif
 #if defined(MODE_T8050) || defined(MODE_T8043)
-    V_WriteTextDirect(20, 28, "DEMO1");
-    V_WriteTextDirect(20, 29, "DEMO2");
-    V_WriteTextDirect(20, 30, "DEMO3");
+    V_WriteTextDirect(20, 14, "===========================");
+    V_WriteTextDirect(20, 16, "=     BENCHMARK  MENU     =");
+    V_WriteTextDirect(20, 18, "===========================");
+
+    V_WriteTextDirect(20, 20, "Type:");
+
+    switch (benchmark_type)
+    {
+    case BENCHMARK_SINGLE:
+        V_WriteTextDirect(26, 20, "SINGLE");
+        break;
+    case BENCHMARK_NORMAL:
+        V_WriteTextDirect(26, 20, "NORMAL");
+        break;
+    case BENCHMARK_ARCH:
+        V_WriteTextDirect(26, 20, "ARCH");
+        break;
+    case BENCHMARK_PHILS:
+        V_WriteTextDirect(26, 20, "PHIL'S");
+        break;
+    case BENCHMARK_QUICK:
+        V_WriteTextDirect(26, 20, "QUICK");
+        break;
+    }
+
+    V_WriteTextDirect(20, 24, "DEMO1");
+    V_WriteTextDirect(20, 28, "DEMO2");
+    V_WriteTextDirect(20, 32, "DEMO3");
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     M_WriteText(82, 20, "===========================");
@@ -1333,10 +1358,11 @@ void M_DrawOptions(void)
     M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (scrnsize + 1)) / 8, 10, screenSize);
 #endif
 #if defined(MODE_T8050) || defined(MODE_T8043)
-    V_WriteTextDirect(27, 6, "OPTIONS");
+    V_WriteTextDirect(30, 4, "OPTIONS");
     V_WriteTextDirect((OptionsDef.x + 120) / 6, (OptionsDef.y + LINEHEIGHT * messages) / 4, showMessages == 0 ? "OFF" : "ON");
     M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (mousesens + 1)) / 4, 10, mouseSensitivity);
     M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (scrnsize + 1)) / 4, 10, screenSize);
+    V_WriteTextDirect(15, 38, "Benchmark");
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     V_DrawPatchDirect(108, 2, W_CacheLumpName("M_OPTTTL", PU_CACHE));
