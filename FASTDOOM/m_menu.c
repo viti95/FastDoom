@@ -1149,33 +1149,44 @@ void M_ReturnToOptions(int choice)
 
 void M_DrawBenchmarkResult(void)
 {
-#if defined(MODE_T4025) || defined(MODE_T4050)
-    V_WriteTextDirect(10, 12, "DEMO1");
-    V_WriteTextDirect(10, 13, "DEMO2");
-    V_WriteTextDirect(10, 14, "DEMO3");
-#endif
-#if defined(MODE_T8025) || defined(MODE_MDA)
-    V_WriteTextDirect(20, 12, "DEMO1");
-    V_WriteTextDirect(20, 13, "DEMO2");
-    V_WriteTextDirect(20, 14, "DEMO3");
-#endif
-#if defined(MODE_T8050) || defined(MODE_T8043)
-    V_WriteTextDirect(20, 28, "DEMO1");
-    V_WriteTextDirect(20, 29, "DEMO2");
-    V_WriteTextDirect(20, 30, "DEMO3");
-#endif
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-    M_WriteText(100, 40, "RESULT");
-    M_WriteText(62, 68, "Gametics:");
-    M_WriteText(62, 84, "Realtics:");
-    M_WriteText(100, 100, "FPS:");
-
     sprintf(strGametics, "%u", benchmark_gametics);
     sprintf(strRealtics, "%u", benchmark_realtics);
     sprintf(strFPS, "%u.%.3u", benchmark_resultfps / 1000, benchmark_resultfps % 1000);
 
+#if defined(MODE_T4025) || defined(MODE_T4050)
+    V_WriteTextDirect(10, 6, "RESULT");
+    V_WriteTextDirect(7, 8, "Gametics:");
+    V_WriteTextDirect(17, 8, strGametics);
+    V_WriteTextDirect(7, 10, "Realtics:");
+    V_WriteTextDirect(17, 10, strRealtics);
+    V_WriteTextDirect(12, 12, "FPS:");
+    V_WriteTextDirect(17, 12, strFPS);
+#endif
+#if defined(MODE_T8025) || defined(MODE_MDA)
+    V_WriteTextDirect(20, 6, "RESULT");
+    V_WriteTextDirect(15, 8, "Gametics:");
+    V_WriteTextDirect(25, 8, strGametics);
+    V_WriteTextDirect(15, 10, "Realtics:");
+    V_WriteTextDirect(25, 10, strRealtics);
+    V_WriteTextDirect(20, 12, "FPS:");
+    V_WriteTextDirect(25, 12, strFPS);
+#endif
+#if defined(MODE_T8050) || defined(MODE_T8043)
+    V_WriteTextDirect(20, 14, "RESULT");
+    V_WriteTextDirect(15, 16, "Gametics:");
+    V_WriteTextDirect(25, 16, strGametics);
+    V_WriteTextDirect(15, 18, "Realtics:");
+    V_WriteTextDirect(25, 18, strRealtics);
+    V_WriteTextDirect(20, 20, "FPS:");
+    V_WriteTextDirect(25, 20, strFPS);
+#endif
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+    M_WriteText(100, 40, "RESULT");
+    M_WriteText(62, 68, "Gametics:");
     M_WriteText(142, 68, strGametics);
+    M_WriteText(62, 84, "Realtics:");
     M_WriteText(142, 84, strRealtics);
+    M_WriteText(100, 100, "FPS:");
     M_WriteText(142, 100, strFPS);
 #endif
 }
