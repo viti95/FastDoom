@@ -1013,18 +1013,70 @@ void M_Sound(int choice)
 void M_DrawBenchmark(void)
 {
 #if defined(MODE_T4025) || defined(MODE_T4050)
+    V_WriteTextDirect(10, 6, "===========================");
+    V_WriteTextDirect(10, 7, "=     BENCHMARK  MENU     =");
+    V_WriteTextDirect(10, 8, "===========================");
+
+    V_WriteTextDirect(10, 10, "Type:");
+
+    switch (benchmark_type)
+    {
+    case BENCHMARK_SINGLE:
+        V_WriteTextDirect(16, 10, "SINGLE");
+        break;
+    case BENCHMARK_NORMAL:
+        V_WriteTextDirect(16, 10, "NORMAL");
+        break;
+    case BENCHMARK_ARCH:
+        V_WriteTextDirect(16, 10, "ARCH");
+        break;
+    case BENCHMARK_PHILS:
+        V_WriteTextDirect(16, 10, "PHIL'S");
+        break;
+    case BENCHMARK_QUICK:
+        V_WriteTextDirect(16, 10, "QUICK");
+        break;
+    }
+
     V_WriteTextDirect(10, 12, "DEMO1");
-    V_WriteTextDirect(10, 13, "DEMO2");
-    V_WriteTextDirect(10, 14, "DEMO3");
+    V_WriteTextDirect(10, 14, "DEMO2");
+    V_WriteTextDirect(10, 16, "DEMO3");
 #endif
 #if defined(MODE_T8025) || defined(MODE_MDA)
+    V_WriteTextDirect(20, 6, "===========================");
+    V_WriteTextDirect(20, 7, "=     BENCHMARK  MENU     =");
+    V_WriteTextDirect(20, 8, "===========================");
+
+    V_WriteTextDirect(20, 10, "Type:");
+
+    switch (benchmark_type)
+    {
+    case BENCHMARK_SINGLE:
+        V_WriteTextDirect(26, 10, "SINGLE");
+        break;
+    case BENCHMARK_NORMAL:
+        V_WriteTextDirect(26, 10, "NORMAL");
+        break;
+    case BENCHMARK_ARCH:
+        V_WriteTextDirect(26, 10, "ARCH");
+        break;
+    case BENCHMARK_PHILS:
+        V_WriteTextDirect(26, 10, "PHIL'S");
+        break;
+    case BENCHMARK_QUICK:
+        V_WriteTextDirect(26, 10, "QUICK");
+        break;
+    }
+
     V_WriteTextDirect(20, 12, "DEMO1");
-    V_WriteTextDirect(20, 13, "DEMO2");
-    V_WriteTextDirect(20, 14, "DEMO3");
+    V_WriteTextDirect(20, 14, "DEMO2");
+    V_WriteTextDirect(20, 16, "DEMO3");
 #endif
 #if defined(MODE_T8050) || defined(MODE_T8043)
     V_WriteTextDirect(20, 14, "===========================");
+    V_WriteTextDirect(20, 15, "=                         =");
     V_WriteTextDirect(20, 16, "=     BENCHMARK  MENU     =");
+    V_WriteTextDirect(20, 17, "=                         =");
     V_WriteTextDirect(20, 18, "===========================");
 
     V_WriteTextDirect(20, 20, "Type:");
@@ -1346,16 +1398,18 @@ const char msgNames[2][9] = {"M_MSGOFF", "M_MSGON"};
 void M_DrawOptions(void)
 {
 #if defined(MODE_T4025) || defined(MODE_T4050)
-    V_WriteTextDirect(13, 2, "OPTIONS");
+    V_WriteTextDirect(13, 1, "OPTIONS");
     V_WriteTextDirect((OptionsDef.x + 120) / 8, (OptionsDef.y + LINEHEIGHT * messages) / 8, showMessages == 0 ? "OFF" : "ON");
     M_DrawThermoText(OptionsDef.x / 8, (OptionsDef.y + LINEHEIGHT * (mousesens + 1)) / 8, 10, mouseSensitivity);
     M_DrawThermoText(OptionsDef.x / 8, (OptionsDef.y + LINEHEIGHT * (scrnsize + 1)) / 8, 10, screenSize);
+    V_WriteTextDirect(7, 19, "Benchmark");
 #endif
 #if defined(MODE_T8025) || defined(MODE_MDA)
-    V_WriteTextDirect(27, 2, "OPTIONS");
+    V_WriteTextDirect(30, 1, "OPTIONS");
     V_WriteTextDirect((OptionsDef.x + 120) / 6, (OptionsDef.y + LINEHEIGHT * messages) / 8, showMessages == 0 ? "OFF" : "ON");
     M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (mousesens + 1)) / 8, 10, mouseSensitivity);
     M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (scrnsize + 1)) / 8, 10, screenSize);
+    V_WriteTextDirect(15, 19, "Benchmark");
 #endif
 #if defined(MODE_T8050) || defined(MODE_T8043)
     V_WriteTextDirect(30, 4, "OPTIONS");
