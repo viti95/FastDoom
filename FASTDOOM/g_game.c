@@ -1235,16 +1235,13 @@ void G_TimeDemo(char *name)
 void G_CreateCSV(void)
 {
     FILE *fptr;
-    if (fptr = fopen("BENCH.CSV","r")!=NULL) // if file does not exist, create it
-    {
-        fclose(fptr);
-    }
-    else
+    if (fptr = fopen("BENCH.CSV","r")==NULL) // if file does not exist, create it
     {
         fptr = fopen("BENCH.CSV", "w+");
         fprintf(fptr, "executable;arch;detail;size;visplanes;sky;objects;transparent_columns;iwad;demo;gametics;realtics;fps\n");
         fclose(fptr);
     }
+    fclose(fptr);
 }
 
 void G_SaveCSVResult(unsigned int realtics, unsigned int resultfps)
