@@ -62,7 +62,6 @@ void I_ProcessPalette(byte *palette)
 
         value2 = bestcolor & 3;
         value2 = value2 | value2 << 2 | value2 << 4 | value2 << 6;
-        value2;
 
         lut16colors[i] = value | value2;
     }
