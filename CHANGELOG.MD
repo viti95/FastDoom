@@ -5,12 +5,13 @@
 * Optimized flat visplane rendering (handcrafted ASM)
 * Optimized column rendering for some CPUs (Ken Silverman)
 * Upgrade FPS display, now it's possible to show FPS on-screen and on a debug card at the same time
+* Debug card port is now selectable on fdoom.cfg file. Full support for 4 digit debug cards.
 * Fixed issue #148. Now it's possible to use SB-MIDI and Sound Blaster Direct Mode without crashing
 * Upgrade display menu, now it's possible to select options using left/right keys (previous/next)
 * Optimized fuzz column redering (handcrafted ASM)
 * Optimized fuzz flat column rendering (handcrafted ASM)
 * Optimized backbuffered non-VGA modes. EGA 320x200 16-color mode should be much faster now
-* New in-game menu for benchmarks. Now it's possible to execute multiple benchmarks without reloading the game.
+* New in-game menu for benchmarks. Now it's possible to execute multiple benchmarks without reloading the game
 
 ## 0.9.6 (13 May 2023)
 * Add executable filename to benchmark (CSV)
