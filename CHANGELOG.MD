@@ -12,6 +12,7 @@
 * Optimized fuzz flat column rendering (handcrafted ASM)
 * Optimized backbuffered non-VGA modes. EGA 320x200 16-color mode should be much faster now
 * New in-game menu for benchmarks. Now it's possible to execute multiple benchmarks without reloading the game
+* Automatically detect MDA/Hercules video card in FDSetup
 
 ## 0.9.6 (13 May 2023)
 * Add executable filename to benchmark (CSV)
