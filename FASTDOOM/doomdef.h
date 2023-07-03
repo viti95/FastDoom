@@ -279,4 +279,14 @@ typedef enum
     NUM_FPS
 } fps_t;
 
+typedef enum
+{
+    BENCHMARK_SINGLE,
+    BENCHMARK_PHILS,
+    BENCHMARK_QUICK,
+    BENCHMARK_NORMAL,
+    BENCHMARK_ARCH,
+    NUM_BENCHMARK
+} benchmark_t;
+
 #endif // __DOOMDEF__

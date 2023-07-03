@@ -52,6 +52,7 @@
 #include "sounds.h"
 
 #include "m_menu.h"
+#include "m_bench.h"
 
 #include "options.h"
 
@@ -190,6 +191,7 @@ void M_QuitDOOM(int choice);
 
 void M_ChangeMessages(int choice);
 void M_ChangeSensitivity(int choice);
+void M_Benchmark(int choice);
 void M_SfxVol(int choice);
 void M_MusicVol(int choice);
 void M_ChangeDetail(int choice);
@@ -207,6 +209,11 @@ void M_SizeDisplay(int choice);
 void M_StartGame(int choice);
 void M_Sound(int choice);
 void M_Display(int choice);
+void M_BenchmarkDemo1(int choice);
+void M_BenchmarkDemo2(int choice);
+void M_BenchmarkDemo3(int choice);
+void M_ReturnToOptions(int choice);
+void M_ChangeBenchmarkType(int choice);
 
 void M_FinishReadThis(int choice);
 void M_LoadSelect(int choice);
@@ -223,6 +230,9 @@ void M_DrawNewGame(void);
 void M_DrawEpisode(void);
 void M_DrawOptions(void);
 void M_DrawSound(void);
+void M_DrawBenchmark(void);
+void M_DrawBenchmarkResult(void);
+void M_DrawBenchmarkCSV(void);
 void M_DrawDisplay(void);
 void M_DrawLoad(void);
 void M_DrawSave(void);
@@ -343,7 +353,8 @@ menu_t NewDef =
 #define mousesens 5
 #define option_empty2 6
 #define soundvol 7
-#define opt_end 8
+#define benchmark_option 8
+#define opt_end 9
 
 menuitem_t OptionsMenu[] =
     {
@@ -354,7 +365,8 @@ menuitem_t OptionsMenu[] =
         {-1, "", ""},
         {2, "M_MSENS", "Mouse sensitivity", M_ChangeSensitivity},
         {-1, "", ""},
-        {1, "M_SVOL", "Sound volume", M_Sound}};
+        {1, "M_SVOL", "Sound volume", M_Sound},
+        {1, "", "Benchmark", M_Benchmark}};
 
 menu_t OptionsDef =
     {
@@ -362,7 +374,7 @@ menu_t OptionsDef =
         &MainDef,
         OptionsMenu,
         M_DrawOptions,
-        60, 37,
+        60, 24,
         0};
 
 menuitem_t DisplayMenu[] =
@@ -432,6 +444,12 @@ menu_t ReadDef2 =
 #define monosound 4
 #define sound_end 5
 
+#define benchmark_select 0
+#define benchmark_demo1 1
+#define benchmark_demo2 2
+#define benchmark_demo3 3
+#define benchmark_end 4
+
 menuitem_t SoundMenu[] =
     {
         {2, "M_SFXVOL", "SFX volume", M_SfxVol},
@@ -447,6 +465,44 @@ menu_t SoundDef =
         SoundMenu,
         M_DrawSound,
         80, 64,
+        0};
+
+menuitem_t BenchmarkMenu[] =
+    {
+        {2, "", "", M_ChangeBenchmarkType},
+        {1, "", "DEMO1", M_BenchmarkDemo1},
+        {1, "", "DEMO2", M_BenchmarkDemo2},
+        {1, "", "DEMO3", M_BenchmarkDemo3}};
+
+menuitem_t BenchmarkResultMenu[] =
+    {
+        {1, "", "", M_ReturnToOptions}};
+
+menu_t BenchmarkDef =
+    {
+        benchmark_end,
+        &OptionsDef,
+        BenchmarkMenu,
+        M_DrawBenchmark,
+        80, 80,
+        0};
+
+menu_t BenchmarkResultDef =
+    {
+        1,
+        &OptionsDef,
+        BenchmarkResultMenu,
+        M_DrawBenchmarkResult,
+        60, 64,
+        0};
+
+menu_t BenchmarkCSVDef =
+    {
+        1,
+        &OptionsDef,
+        BenchmarkResultMenu,
+        M_DrawBenchmarkCSV,
+        60, 64,
         0};
 
 //
@@ -954,6 +1010,258 @@ void M_Sound(int choice)
     M_SetupNextMenu(&SoundDef);
 }
 
+void M_DrawBenchmark(void)
+{
+#if defined(MODE_T4025) || defined(MODE_T4050)
+    V_WriteTextDirect(10, 6, "===========================");
+    V_WriteTextDirect(10, 7, "=     BENCHMARK  MENU     =");
+    V_WriteTextDirect(10, 8, "===========================");
+
+    V_WriteTextDirect(10, 10, "Type:");
+
+    switch (benchmark_type)
+    {
+    case BENCHMARK_SINGLE:
+        V_WriteTextDirect(16, 10, "SINGLE");
+        break;
+    case BENCHMARK_NORMAL:
+        V_WriteTextDirect(16, 10, "NORMAL");
+        break;
+    case BENCHMARK_ARCH:
+        V_WriteTextDirect(16, 10, "ARCH");
+        break;
+    case BENCHMARK_PHILS:
+        V_WriteTextDirect(16, 10, "PHIL'S");
+        break;
+    case BENCHMARK_QUICK:
+        V_WriteTextDirect(16, 10, "QUICK");
+        break;
+    }
+
+    V_WriteTextDirect(10, 12, "DEMO1");
+    V_WriteTextDirect(10, 14, "DEMO2");
+    V_WriteTextDirect(10, 16, "DEMO3");
+#endif
+#if defined(MODE_T8025) || defined(MODE_MDA)
+    V_WriteTextDirect(20, 6, "===========================");
+    V_WriteTextDirect(20, 7, "=     BENCHMARK  MENU     =");
+    V_WriteTextDirect(20, 8, "===========================");
+
+    V_WriteTextDirect(20, 10, "Type:");
+
+    switch (benchmark_type)
+    {
+    case BENCHMARK_SINGLE:
+        V_WriteTextDirect(26, 10, "SINGLE");
+        break;
+    case BENCHMARK_NORMAL:
+        V_WriteTextDirect(26, 10, "NORMAL");
+        break;
+    case BENCHMARK_ARCH:
+        V_WriteTextDirect(26, 10, "ARCH");
+        break;
+    case BENCHMARK_PHILS:
+        V_WriteTextDirect(26, 10, "PHIL'S");
+        break;
+    case BENCHMARK_QUICK:
+        V_WriteTextDirect(26, 10, "QUICK");
+        break;
+    }
+
+    V_WriteTextDirect(20, 12, "DEMO1");
+    V_WriteTextDirect(20, 14, "DEMO2");
+    V_WriteTextDirect(20, 16, "DEMO3");
+#endif
+#if defined(MODE_T8050) || defined(MODE_T8043)
+    V_WriteTextDirect(20, 14, "===========================");
+    V_WriteTextDirect(20, 15, "=                         =");
+    V_WriteTextDirect(20, 16, "=     BENCHMARK  MENU     =");
+    V_WriteTextDirect(20, 17, "=                         =");
+    V_WriteTextDirect(20, 18, "===========================");
+
+    V_WriteTextDirect(20, 20, "Type:");
+
+    switch (benchmark_type)
+    {
+    case BENCHMARK_SINGLE:
+        V_WriteTextDirect(26, 20, "SINGLE");
+        break;
+    case BENCHMARK_NORMAL:
+        V_WriteTextDirect(26, 20, "NORMAL");
+        break;
+    case BENCHMARK_ARCH:
+        V_WriteTextDirect(26, 20, "ARCH");
+        break;
+    case BENCHMARK_PHILS:
+        V_WriteTextDirect(26, 20, "PHIL'S");
+        break;
+    case BENCHMARK_QUICK:
+        V_WriteTextDirect(26, 20, "QUICK");
+        break;
+    }
+
+    V_WriteTextDirect(20, 24, "DEMO1");
+    V_WriteTextDirect(20, 28, "DEMO2");
+    V_WriteTextDirect(20, 32, "DEMO3");
+#endif
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+    M_WriteText(82, 20, "===========================");
+    M_WriteText(82, 36, "=  BENCHMARK MENU  =");
+    M_WriteText(82, 52, "===========================");
+
+    M_WriteText(82, 84, "TYPE:");
+
+    switch (benchmark_type)
+    {
+    case BENCHMARK_SINGLE:
+        M_WriteText(128, 84, "SINGLE");
+        break;
+    case BENCHMARK_NORMAL:
+        M_WriteText(128, 84, "NORMAL");
+        break;
+    case BENCHMARK_ARCH:
+        M_WriteText(128, 84, "ARCH");
+        break;
+    case BENCHMARK_PHILS:
+        M_WriteText(128, 84, "PHIL'S");
+        break;
+    case BENCHMARK_QUICK:
+        M_WriteText(128, 84, "QUICK");
+        break;
+    }
+
+    M_WriteText(82, 100, "DEMO1");
+    M_WriteText(82, 116, "DEMO2");
+    M_WriteText(82, 132, "DEMO3");
+#endif
+}
+
+char strRealtics[21];
+char strGametics[21];
+char strFPS[21];
+
+void M_ReturnToOptions(int choice)
+{
+    benchmark = false;
+    benchmark_finished = false;
+    M_SetupNextMenu(&OptionsDef);
+}
+
+void M_DrawBenchmarkResult(void)
+{
+    sprintf(strGametics, "%u", benchmark_gametics);
+    sprintf(strRealtics, "%u", benchmark_realtics);
+    sprintf(strFPS, "%u.%.3u", benchmark_resultfps / 1000, benchmark_resultfps % 1000);
+
+#if defined(MODE_T4025) || defined(MODE_T4050)
+    V_WriteTextDirect(10, 6, "RESULT");
+    V_WriteTextDirect(7, 8, "Gametics:");
+    V_WriteTextDirect(17, 8, strGametics);
+    V_WriteTextDirect(7, 10, "Realtics:");
+    V_WriteTextDirect(17, 10, strRealtics);
+    V_WriteTextDirect(12, 12, "FPS:");
+    V_WriteTextDirect(17, 12, strFPS);
+#endif
+#if defined(MODE_T8025) || defined(MODE_MDA)
+    V_WriteTextDirect(20, 6, "RESULT");
+    V_WriteTextDirect(15, 8, "Gametics:");
+    V_WriteTextDirect(25, 8, strGametics);
+    V_WriteTextDirect(15, 10, "Realtics:");
+    V_WriteTextDirect(25, 10, strRealtics);
+    V_WriteTextDirect(20, 12, "FPS:");
+    V_WriteTextDirect(25, 12, strFPS);
+#endif
+#if defined(MODE_T8050) || defined(MODE_T8043)
+    V_WriteTextDirect(20, 14, "RESULT");
+    V_WriteTextDirect(15, 16, "Gametics:");
+    V_WriteTextDirect(25, 16, strGametics);
+    V_WriteTextDirect(15, 18, "Realtics:");
+    V_WriteTextDirect(25, 18, strRealtics);
+    V_WriteTextDirect(20, 20, "FPS:");
+    V_WriteTextDirect(25, 20, strFPS);
+#endif
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+    M_WriteText(100, 40, "RESULT");
+    M_WriteText(62, 68, "Gametics:");
+    M_WriteText(142, 68, strGametics);
+    M_WriteText(62, 84, "Realtics:");
+    M_WriteText(142, 84, strRealtics);
+    M_WriteText(100, 100, "FPS:");
+    M_WriteText(142, 100, strFPS);
+#endif
+}
+
+void M_DrawBenchmarkCSV(void)
+{
+#if defined(MODE_T4025) || defined(MODE_T4050)
+    V_WriteTextDirect(6, 8, "Results saved on file BENCH.CSV");
+#endif
+#if defined(MODE_T8025) || defined(MODE_MDA)
+    V_WriteTextDirect(15, 8, "Results saved on file BENCH.CSV");
+#endif
+#if defined(MODE_T8050) || defined(MODE_T8043)
+    V_WriteTextDirect(15, 16, "Results saved on file BENCH.CSV");
+#endif
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+    M_WriteText(62, 68, "Results saved on file BENCH.CSV");
+#endif
+}
+
+void M_ChangeBenchmarkType(int choice)
+{
+    switch (choice)
+    {
+    case 0:
+        benchmark_type--;
+
+        if (benchmark_type == -1)
+            benchmark_type = BENCHMARK_ARCH;
+        break;
+    case 1:
+        benchmark_type++;
+
+        if (benchmark_type == NUM_BENCHMARK)
+            benchmark_type = BENCHMARK_SINGLE;
+        break;
+    }
+}
+
+void M_BenchmarkRunDemo(void)
+{
+    menuactive = 0;
+    benchmark = true;
+    benchmark_finished = false;
+
+    M_UpdateSettings();
+
+    G_TimeDemo(demofile);
+
+    benchmark_starttic = gametic;
+}
+
+void M_BenchmarkDemo1(int choice)
+{
+    sprintf(demofile, "demo1");
+    M_BenchmarkRunDemo();
+}
+
+void M_BenchmarkDemo2(int choice)
+{
+    sprintf(demofile, "demo2");
+    M_BenchmarkRunDemo();
+}
+
+void M_BenchmarkDemo3(int choice)
+{
+    sprintf(demofile, "demo3");
+    M_BenchmarkRunDemo();
+}
+
+void M_Benchmark(int choice)
+{
+    M_SetupNextMenu(&BenchmarkDef);
+}
+
 void M_SfxVol(int choice)
 {
     switch (choice)
@@ -1101,28 +1409,32 @@ const char msgNames[2][9] = {"M_MSGOFF", "M_MSGON"};
 void M_DrawOptions(void)
 {
 #if defined(MODE_T4025) || defined(MODE_T4050)
-    V_WriteTextDirect(13, 2, "OPTIONS");
+    V_WriteTextDirect(13, 1, "OPTIONS");
     V_WriteTextDirect((OptionsDef.x + 120) / 8, (OptionsDef.y + LINEHEIGHT * messages) / 8, showMessages == 0 ? "OFF" : "ON");
     M_DrawThermoText(OptionsDef.x / 8, (OptionsDef.y + LINEHEIGHT * (mousesens + 1)) / 8, 10, mouseSensitivity);
     M_DrawThermoText(OptionsDef.x / 8, (OptionsDef.y + LINEHEIGHT * (scrnsize + 1)) / 8, 10, screenSize);
+    V_WriteTextDirect(7, 19, "Benchmark");
 #endif
 #if defined(MODE_T8025) || defined(MODE_MDA)
-    V_WriteTextDirect(27, 2, "OPTIONS");
+    V_WriteTextDirect(30, 1, "OPTIONS");
     V_WriteTextDirect((OptionsDef.x + 120) / 6, (OptionsDef.y + LINEHEIGHT * messages) / 8, showMessages == 0 ? "OFF" : "ON");
     M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (mousesens + 1)) / 8, 10, mouseSensitivity);
     M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (scrnsize + 1)) / 8, 10, screenSize);
+    V_WriteTextDirect(15, 19, "Benchmark");
 #endif
 #if defined(MODE_T8050) || defined(MODE_T8043)
-    V_WriteTextDirect(27, 6, "OPTIONS");
+    V_WriteTextDirect(30, 4, "OPTIONS");
     V_WriteTextDirect((OptionsDef.x + 120) / 6, (OptionsDef.y + LINEHEIGHT * messages) / 4, showMessages == 0 ? "OFF" : "ON");
     M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (mousesens + 1)) / 4, 10, mouseSensitivity);
     M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (scrnsize + 1)) / 4, 10, screenSize);
+    V_WriteTextDirect(15, 38, "Benchmark");
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-    V_DrawPatchDirect(108, 15, W_CacheLumpName("M_OPTTTL", PU_CACHE));
+    V_DrawPatchDirect(108, 2, W_CacheLumpName("M_OPTTTL", PU_CACHE));
     V_DrawPatchDirect(OptionsDef.x + 120, OptionsDef.y + LINEHEIGHT * messages, W_CacheLumpName((char *)msgNames[showMessages], PU_CACHE));
     M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (mousesens + 1), 10, mouseSensitivity);
     M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (scrnsize + 1), 10, screenSize);
+    M_WriteText(OptionsDef.x + 1, OptionsDef.y + LINEHEIGHT * benchmark_option + 4, "BENCHMARK");
 #endif
 }
 
@@ -2461,6 +2773,82 @@ void M_StartControlPanel(void)
     menuactive = 1;
     currentMenu = &MainDef;       // JDC
     itemOn = currentMenu->lastOn; // JDC
+}
+
+#define BENCHMARK_PHILS_LAST 2
+#define BENCHMARK_QUICK_LAST 3
+#define BENCHMARK_NORMAL_LAST 9
+#define BENCHMARK_ARCH_LAST 9
+
+void M_ShowBenchmarkCSVMessage(void)
+{
+    M_StartControlPanel();
+    itemOn = 0;
+    currentMenu = &BenchmarkCSVDef;
+}
+
+void M_FinishBenchmark(void)
+{
+    switch (benchmark_type)
+    {
+    case BENCHMARK_SINGLE:
+        M_StartControlPanel();
+        itemOn = 0;
+        currentMenu = &BenchmarkResultDef;
+        break;
+
+    case BENCHMARK_ARCH:
+        benchmark_number++;
+        if (benchmark_number == BENCHMARK_ARCH_LAST)
+        {
+            benchmark_number = 0;
+            M_ShowBenchmarkCSVMessage();
+        }
+        else
+        {
+            M_BenchmarkRunDemo();
+        }
+        break;
+
+    case BENCHMARK_NORMAL:
+        benchmark_number++;
+        if (benchmark_number == BENCHMARK_NORMAL_LAST)
+        {
+            benchmark_number = 0;
+            M_ShowBenchmarkCSVMessage();
+        }
+        else
+        {
+            M_BenchmarkRunDemo();
+        }
+        break;
+
+    case BENCHMARK_PHILS:
+        benchmark_number++;
+        if (benchmark_number == BENCHMARK_PHILS_LAST)
+        {
+            benchmark_number = 0;
+            M_ShowBenchmarkCSVMessage();
+        }
+        else
+        {
+            M_BenchmarkRunDemo();
+        }
+        break;
+
+    case BENCHMARK_QUICK:
+        benchmark_number++;
+        if (benchmark_number == BENCHMARK_QUICK_LAST)
+        {
+            benchmark_number = 0;
+            M_ShowBenchmarkCSVMessage();
+        }
+        else
+        {
+            M_BenchmarkRunDemo();
+        }
+        break;
+    }
 }
 
 //

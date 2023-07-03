@@ -136,6 +136,7 @@ GLOBOBJS = &
  d_net.obj &
  g_game.obj &
  m_menu.obj &
+ m_bench.obj &
  m_misc.obj &
  am_map.obj &
  p_ceilng.obj &

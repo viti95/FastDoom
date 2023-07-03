@@ -116,6 +116,7 @@ file d_main.obj
 file d_net.obj
 file g_game.obj
 file m_menu.obj
+file m_bench.obj
 file m_misc.obj
 file am_map.obj
 file p_ceilng.obj

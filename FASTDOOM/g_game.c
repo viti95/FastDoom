@@ -1232,6 +1232,133 @@ void G_TimeDemo(char *name)
 ===================
 */
 
+void G_CreateCSV(void)
+{
+    FILE *fptr;
+    if (fptr = fopen("BENCH.CSV","r")==NULL) // if file does not exist, create it
+    {
+        fptr = fopen("BENCH.CSV", "w+");
+        fprintf(fptr, "executable;arch;detail;size;visplanes;sky;objects;transparent_columns;iwad;demo;gametics;realtics;fps\n");
+        fclose(fptr);
+    }
+    fclose(fptr);
+}
+
+void G_SaveCSVResult(unsigned int realtics, unsigned int resultfps)
+{
+    FILE *logFile = fopen("BENCH.CSV", "a");
+    if (logFile)
+    {
+        // Executable
+        fprintf(logFile, "%s;", myargv[0]);
+
+        // Architecture
+        switch (selectedCPU)
+        {
+        case INTEL_386SX:
+            fprintf(logFile, "386sx;");
+            break;
+        case INTEL_386DX:
+            fprintf(logFile, "386dx;");
+            break;
+        case INTEL_486:
+            fprintf(logFile, "intel486;");
+            break;
+        case INTEL_PENTIUM:
+            fprintf(logFile, "pentium;");
+            break;
+        case CYRIX_386DLC:
+            fprintf(logFile, "cyrix386;");
+            break;
+        case CYRIX_486:
+            fprintf(logFile, "cyrix486;");
+            break;
+        case CYRIX_5X86:
+            fprintf(logFile, "cyrix5x86;");
+            break;
+        case UMC_GREEN_486:
+            fprintf(logFile, "umc486;");
+            break;
+        case AMD_K5:
+            fprintf(logFile, "k5;");
+            break;
+        }
+
+        // Detail
+        switch (detailshift)
+        {
+        case DETAIL_HIGH:
+            fprintf(logFile, "high;");
+            break;
+        case DETAIL_LOW:
+            fprintf(logFile, "low;");
+            break;
+        case DETAIL_POTATO:
+            fprintf(logFile, "potato;");
+            break;
+        }
+
+        // Screen size
+        fprintf(logFile, "%i;", screenblocks);
+
+        // Visplanes
+        switch (visplaneRender)
+        {
+        case VISPLANES_NORMAL:
+            fprintf(logFile, "normal;");
+            break;
+        case VISPLANES_FLAT:
+            fprintf(logFile, "flat;");
+            break;
+        case VISPLANES_FLATTER:
+            fprintf(logFile, "flatter;");
+            break;
+        }
+
+        // Sky
+        if (flatSky)
+            fprintf(logFile, "flat;");
+        else
+            fprintf(logFile, "normal;");
+
+        // Objects
+        if (nearSprites)
+            fprintf(logFile, "near;");
+        else
+            fprintf(logFile, "normal;");
+
+        // Transparent objects
+        switch (invisibleRender)
+        {
+        case INVISIBLE_NORMAL:
+            fprintf(logFile, "normal;");
+            break;
+        case INVISIBLE_FLAT:
+            fprintf(logFile, "flat;");
+            break;
+        case INVISIBLE_FLAT_SATURN:
+            fprintf(logFile, "flatsaturn;");
+            break;
+        case INVISIBLE_SATURN:
+            fprintf(logFile, "saturn;");
+            break;
+        case INVISIBLE_TRANSLUCENT:
+            fprintf(logFile, "translucent;");
+            break;
+        }
+
+        // IWAD
+        fprintf(logFile, "%s;", iwadfile);
+
+        // Demo
+        fprintf(logFile, "%s;", demofile);
+
+        // Gametics, Realtics, FPS
+        fprintf(logFile, "%i;%u;%u,%.3u\n", gametic, realtics, resultfps / 1000, resultfps % 1000);
+        fclose(logFile);
+    }
+}
+
 void G_CheckDemoStatus(void)
 {
     unsigned int realtics;
@@ -1239,126 +1366,37 @@ void G_CheckDemoStatus(void)
 
     if (timingdemo)
     {
-        realtics = ticcount - starttime;
-
-        resultfps = (35 * 1000 * (unsigned int)gametic) / (unsigned int)realtics;
+        if (benchmark)
+        {
+            benchmark_realtics = ticcount - starttime;
+            benchmark_gametics = gametic - benchmark_starttic;
+            benchmark_resultfps = (35 * 1000 * (unsigned int)benchmark_gametics) / (unsigned int)benchmark_realtics;
+            realtics = benchmark_realtics;
+            resultfps = benchmark_resultfps;
+        }
+        else
+        {
+            realtics = ticcount - starttime;
+            resultfps = (35 * 1000 * (unsigned int)gametic) / (unsigned int)realtics;
+        }
 
         if (csv)
         {
-            FILE *logFile = fopen("BENCH.CSV", "a");
-            if (logFile)
-            {
-                // Executable
-                fprintf(logFile, "%s;", myargv[0]);
-
-                // Architecture
-                switch (selectedCPU)
-                {
-                case INTEL_386SX:
-                    fprintf(logFile, "386sx;");
-                    break;
-                case INTEL_386DX:
-                    fprintf(logFile, "386dx;");
-                    break;
-                case INTEL_486:
-                    fprintf(logFile, "intel486;");
-                    break;
-                case INTEL_PENTIUM:
-                    fprintf(logFile, "pentium;");
-                    break;
-                case CYRIX_386DLC:
-                    fprintf(logFile, "cyrix386;");
-                    break;
-                case CYRIX_486:
-                    fprintf(logFile, "cyrix486;");
-                    break;
-                case CYRIX_5X86:
-                    fprintf(logFile, "cyrix5x86;");
-                    break;
-                case UMC_GREEN_486:
-                    fprintf(logFile, "umc486;");
-                    break;
-                case AMD_K5:
-                    fprintf(logFile, "k5;");
-                    break;
-                }
-
-                // Detail
-                switch (detailshift)
-                {
-                case DETAIL_HIGH:
-                    fprintf(logFile, "high;");
-                    break;
-                case DETAIL_LOW:
-                    fprintf(logFile, "low;");
-                    break;
-                case DETAIL_POTATO:
-                    fprintf(logFile, "potato;");
-                    break;
-                }
-
-                // Screen size
-                fprintf(logFile, "%i;", screenblocks);
-
-                // Visplanes
-                switch (visplaneRender)
-                {
-                case VISPLANES_NORMAL:
-                    fprintf(logFile, "normal;");
-                    break;
-                case VISPLANES_FLAT:
-                    fprintf(logFile, "flat;");
-                    break;
-                case VISPLANES_FLATTER:
-                    fprintf(logFile, "flatter;");
-                    break;
-                }
-
-                // Sky
-                if (flatSky)
-                    fprintf(logFile, "flat;");
-                else
-                    fprintf(logFile, "normal;");
-
-                // Objects
-                if (nearSprites)
-                    fprintf(logFile, "near;");
-                else
-                    fprintf(logFile, "normal;");
-
-                // Transparent objects
-                switch (invisibleRender)
-                {
-                case INVISIBLE_NORMAL:
-                    fprintf(logFile, "normal;");
-                    break;
-                case INVISIBLE_FLAT:
-                    fprintf(logFile, "flat;");
-                    break;
-                case INVISIBLE_FLAT_SATURN:
-                    fprintf(logFile, "flatsaturn;");
-                    break;
-                case INVISIBLE_SATURN:
-                    fprintf(logFile, "saturn;");
-                    break;
-                case INVISIBLE_TRANSLUCENT:
-                    fprintf(logFile, "translucent;");
-                    break;
-                }
-
-                // IWAD
-                fprintf(logFile, "%s;", iwadfile);
-
-                // Demo
-                fprintf(logFile, "%s;", demofile);
-
-                // Gametics, Realtics, FPS
-                fprintf(logFile, "%i;%u;%u,%.3u\n", gametic, realtics, resultfps / 1000, resultfps % 1000);
-                fclose(logFile);
-            }
+            G_CreateCSV();
+            G_SaveCSVResult(realtics, resultfps);
         }
 
-        I_Error("Timed %i gametics in %u realtics. FPS: %u.%.3u", gametic, realtics, resultfps / 1000, resultfps % 1000);
+        if (benchmark)
+        {
+            timingdemo = 0;
+            singletics = false;
+
+            benchmark_finished = true;
+        }
+        else
+        {
+            I_Error("Timed %i gametics in %u realtics. FPS: %u.%.3u", gametic, realtics, resultfps / 1000, resultfps % 1000);
+        }
     }
 
     if (demoplayback)
