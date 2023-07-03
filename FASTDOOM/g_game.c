@@ -1238,7 +1238,7 @@ void G_CreateCSV(void)
     if (fptr = fopen("BENCH.CSV","r")==NULL) // if file does not exist, create it
     {
         fptr = fopen("BENCH.CSV", "w+");
-        fprintf(fptr, "executable;arch;detail;size;visplanes;sky;objects;transparent_columns;iwad;demo;gametics;realtics;fps\n");
+        fprintf(fptr, "executable,arch,detail,size,visplanes,sky,objects,transparent_columns,iwad,demo,gametics,realtics,fps\n");
         fclose(fptr);
     }
     fclose(fptr);
@@ -1250,37 +1250,37 @@ void G_SaveCSVResult(unsigned int realtics, unsigned int resultfps)
     if (logFile)
     {
         // Executable
-        fprintf(logFile, "%s;", myargv[0]);
+        fprintf(logFile, "%s,", myargv[0]);
 
         // Architecture
         switch (selectedCPU)
         {
         case INTEL_386SX:
-            fprintf(logFile, "386sx;");
+            fprintf(logFile, "386sx,");
             break;
         case INTEL_386DX:
-            fprintf(logFile, "386dx;");
+            fprintf(logFile, "386dx,");
             break;
         case INTEL_486:
-            fprintf(logFile, "intel486;");
+            fprintf(logFile, "intel486,");
             break;
         case INTEL_PENTIUM:
-            fprintf(logFile, "pentium;");
+            fprintf(logFile, "pentium,");
             break;
         case CYRIX_386DLC:
-            fprintf(logFile, "cyrix386;");
+            fprintf(logFile, "cyrix386,");
             break;
         case CYRIX_486:
-            fprintf(logFile, "cyrix486;");
+            fprintf(logFile, "cyrix486,");
             break;
         case CYRIX_5X86:
-            fprintf(logFile, "cyrix5x86;");
+            fprintf(logFile, "cyrix5x86,");
             break;
         case UMC_GREEN_486:
-            fprintf(logFile, "umc486;");
+            fprintf(logFile, "umc486,");
             break;
         case AMD_K5:
-            fprintf(logFile, "k5;");
+            fprintf(logFile, "k5,");
             break;
         }
 
@@ -1288,73 +1288,73 @@ void G_SaveCSVResult(unsigned int realtics, unsigned int resultfps)
         switch (detailshift)
         {
         case DETAIL_HIGH:
-            fprintf(logFile, "high;");
+            fprintf(logFile, "high,");
             break;
         case DETAIL_LOW:
-            fprintf(logFile, "low;");
+            fprintf(logFile, "low,");
             break;
         case DETAIL_POTATO:
-            fprintf(logFile, "potato;");
+            fprintf(logFile, "potato,");
             break;
         }
 
         // Screen size
-        fprintf(logFile, "%i;", screenblocks);
+        fprintf(logFile, "%i,", screenblocks);
 
         // Visplanes
         switch (visplaneRender)
         {
         case VISPLANES_NORMAL:
-            fprintf(logFile, "normal;");
+            fprintf(logFile, "normal,");
             break;
         case VISPLANES_FLAT:
-            fprintf(logFile, "flat;");
+            fprintf(logFile, "flat,");
             break;
         case VISPLANES_FLATTER:
-            fprintf(logFile, "flatter;");
+            fprintf(logFile, "flatter,");
             break;
         }
 
         // Sky
         if (flatSky)
-            fprintf(logFile, "flat;");
+            fprintf(logFile, "flat,");
         else
-            fprintf(logFile, "normal;");
+            fprintf(logFile, "normal,");
 
         // Objects
         if (nearSprites)
-            fprintf(logFile, "near;");
+            fprintf(logFile, "near,");
         else
-            fprintf(logFile, "normal;");
+            fprintf(logFile, "normal,");
 
         // Transparent objects
         switch (invisibleRender)
         {
         case INVISIBLE_NORMAL:
-            fprintf(logFile, "normal;");
+            fprintf(logFile, "normal,");
             break;
         case INVISIBLE_FLAT:
-            fprintf(logFile, "flat;");
+            fprintf(logFile, "flat,");
             break;
         case INVISIBLE_FLAT_SATURN:
-            fprintf(logFile, "flatsaturn;");
+            fprintf(logFile, "flatsaturn,");
             break;
         case INVISIBLE_SATURN:
-            fprintf(logFile, "saturn;");
+            fprintf(logFile, "saturn,");
             break;
         case INVISIBLE_TRANSLUCENT:
-            fprintf(logFile, "translucent;");
+            fprintf(logFile, "translucent,");
             break;
         }
 
         // IWAD
-        fprintf(logFile, "%s;", iwadfile);
+        fprintf(logFile, "%s,", iwadfile);
 
         // Demo
-        fprintf(logFile, "%s;", demofile);
+        fprintf(logFile, "%s,", demofile);
 
         // Gametics, Realtics, FPS
-        fprintf(logFile, "%i;%u;%u,%.3u\n", gametic, realtics, resultfps / 1000, resultfps % 1000);
+        fprintf(logFile, "%i,%u,%u.%.3u\n", gametic, realtics, resultfps / 1000, resultfps % 1000);
         fclose(logFile);
     }
 }
