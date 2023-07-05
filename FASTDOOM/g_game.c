@@ -1232,13 +1232,16 @@ void G_TimeDemo(char *name)
 ===================
 */
 
+#define CSV_COLUMN ","
+#define CSV_DECIMAL "."
+
 void G_CreateCSV(void)
 {
     FILE *fptr;
     if (fptr = fopen("BENCH.CSV","r")==NULL) // if file does not exist, create it
     {
         fptr = fopen("BENCH.CSV", "w+");
-        fprintf(fptr, "executable,arch,detail,size,visplanes,sky,objects,transparent_columns,iwad,demo,gametics,realtics,fps\n");
+        fprintf(fptr, "executable"CSV_COLUMN"arch"CSV_COLUMN"detail"CSV_COLUMN"size"CSV_COLUMN"visplanes"CSV_COLUMN"sky"CSV_COLUMN"objects"CSV_COLUMN"transparent_columns"CSV_COLUMN"iwad"CSV_COLUMN"demo"CSV_COLUMN"gametics"CSV_COLUMN"realtics"CSV_COLUMN"fps\n");
         fclose(fptr);
     }
     fclose(fptr);
@@ -1250,37 +1253,37 @@ void G_SaveCSVResult(unsigned int realtics, unsigned int resultfps)
     if (logFile)
     {
         // Executable
-        fprintf(logFile, "%s,", myargv[0]);
+        fprintf(logFile, "%s"CSV_COLUMN, myargv[0]);
 
         // Architecture
         switch (selectedCPU)
         {
         case INTEL_386SX:
-            fprintf(logFile, "386sx,");
+            fprintf(logFile, "386sx"CSV_COLUMN);
             break;
         case INTEL_386DX:
-            fprintf(logFile, "386dx,");
+            fprintf(logFile, "386dx"CSV_COLUMN);
             break;
         case INTEL_486:
-            fprintf(logFile, "intel486,");
+            fprintf(logFile, "intel486"CSV_COLUMN);
             break;
         case INTEL_PENTIUM:
-            fprintf(logFile, "pentium,");
+            fprintf(logFile, "pentium"CSV_COLUMN);
             break;
         case CYRIX_386DLC:
-            fprintf(logFile, "cyrix386,");
+            fprintf(logFile, "cyrix386"CSV_COLUMN);
             break;
         case CYRIX_486:
-            fprintf(logFile, "cyrix486,");
+            fprintf(logFile, "cyrix486"CSV_COLUMN);
             break;
         case CYRIX_5X86:
-            fprintf(logFile, "cyrix5x86,");
+            fprintf(logFile, "cyrix5x86"CSV_COLUMN);
             break;
         case UMC_GREEN_486:
-            fprintf(logFile, "umc486,");
+            fprintf(logFile, "umc486"CSV_COLUMN);
             break;
         case AMD_K5:
-            fprintf(logFile, "k5,");
+            fprintf(logFile, "k5"CSV_COLUMN);
             break;
         }
 
@@ -1288,73 +1291,73 @@ void G_SaveCSVResult(unsigned int realtics, unsigned int resultfps)
         switch (detailshift)
         {
         case DETAIL_HIGH:
-            fprintf(logFile, "high,");
+            fprintf(logFile, "high"CSV_COLUMN);
             break;
         case DETAIL_LOW:
-            fprintf(logFile, "low,");
+            fprintf(logFile, "low"CSV_COLUMN);
             break;
         case DETAIL_POTATO:
-            fprintf(logFile, "potato,");
+            fprintf(logFile, "potato"CSV_COLUMN);
             break;
         }
 
         // Screen size
-        fprintf(logFile, "%i,", screenblocks);
+        fprintf(logFile, "%i"CSV_COLUMN, screenblocks);
 
         // Visplanes
         switch (visplaneRender)
         {
         case VISPLANES_NORMAL:
-            fprintf(logFile, "normal,");
+            fprintf(logFile, "normal"CSV_COLUMN);
             break;
         case VISPLANES_FLAT:
-            fprintf(logFile, "flat,");
+            fprintf(logFile, "flat"CSV_COLUMN);
             break;
         case VISPLANES_FLATTER:
-            fprintf(logFile, "flatter,");
+            fprintf(logFile, "flatter"CSV_COLUMN);
             break;
         }
 
         // Sky
         if (flatSky)
-            fprintf(logFile, "flat,");
+            fprintf(logFile, "flat"CSV_COLUMN);
         else
-            fprintf(logFile, "normal,");
+            fprintf(logFile, "normal"CSV_COLUMN);
 
         // Objects
         if (nearSprites)
-            fprintf(logFile, "near,");
+            fprintf(logFile, "near"CSV_COLUMN);
         else
-            fprintf(logFile, "normal,");
+            fprintf(logFile, "normal"CSV_COLUMN);
 
         // Transparent objects
         switch (invisibleRender)
         {
         case INVISIBLE_NORMAL:
-            fprintf(logFile, "normal,");
+            fprintf(logFile, "normal"CSV_COLUMN);
             break;
         case INVISIBLE_FLAT:
-            fprintf(logFile, "flat,");
+            fprintf(logFile, "flat"CSV_COLUMN);
             break;
         case INVISIBLE_FLAT_SATURN:
-            fprintf(logFile, "flatsaturn,");
+            fprintf(logFile, "flatsaturn"CSV_COLUMN);
             break;
         case INVISIBLE_SATURN:
-            fprintf(logFile, "saturn,");
+            fprintf(logFile, "saturn"CSV_COLUMN);
             break;
         case INVISIBLE_TRANSLUCENT:
-            fprintf(logFile, "translucent,");
+            fprintf(logFile, "translucent"CSV_COLUMN);
             break;
         }
 
         // IWAD
-        fprintf(logFile, "%s,", iwadfile);
+        fprintf(logFile, "%s"CSV_COLUMN, iwadfile);
 
         // Demo
-        fprintf(logFile, "%s,", demofile);
+        fprintf(logFile, "%s"CSV_COLUMN, demofile);
 
         // Gametics, Realtics, FPS
-        fprintf(logFile, "%i,%u,%u.%.3u\n", gametic, realtics, resultfps / 1000, resultfps % 1000);
+        fprintf(logFile, "%i"CSV_COLUMN"%u"CSV_COLUMN"%u"CSV_DECIMAL"%.3u\n", gametic, realtics, resultfps / 1000, resultfps % 1000);
         fclose(logFile);
     }
 }
