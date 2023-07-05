@@ -1191,22 +1191,24 @@ void M_DrawBenchmarkResult(void)
 #endif
 }
 
+#define CSV_MESSAGE "Results saved on file BENCH.CSV"
+
 void M_DrawBenchmarkCSV(void)
 {
     if (benchmark_commandline)
-        I_Error("Results saved on file BENCH.CSV");
+        I_Error(CSV_MESSAGE);
 
 #if defined(MODE_T4025) || defined(MODE_T4050)
-    V_WriteTextDirect(6, 8, "Results saved on file BENCH.CSV");
+    V_WriteTextDirect(6, 8, CSV_MESSAGE);
 #endif
 #if defined(MODE_T8025) || defined(MODE_MDA)
-    V_WriteTextDirect(15, 8, "Results saved on file BENCH.CSV");
+    V_WriteTextDirect(15, 8, CSV_MESSAGE);
 #endif
 #if defined(MODE_T8050) || defined(MODE_T8043)
-    V_WriteTextDirect(15, 16, "Results saved on file BENCH.CSV");
+    V_WriteTextDirect(15, 16, CSV_MESSAGE);
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-    M_WriteText(62, 68, "Results saved on file BENCH.CSV");
+    M_WriteText(62, 68, CSV_MESSAGE);
 #endif
 }
 
