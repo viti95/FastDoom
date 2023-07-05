@@ -111,7 +111,7 @@ void M_SetSpriteCulling(boolean value)
     nearSprites = value;
 }
 
-void M_SetMelting(boolean value)
+void M_SetNoMelting(boolean value)
 {
     noMelt = value;
 }
@@ -146,7 +146,7 @@ void M_UpdateSettingsPhils(void)
         M_SetSpriteCulling(false);
         M_SetInvisibleDetail(INVISIBLE_NORMAL);
         M_SetShowFPS(false);
-        M_SetMelting(true);
+        M_SetNoMelting(false);
 
         // %2 -high -size 12 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
         M_SetDetail(DETAIL_HIGH);
@@ -172,7 +172,7 @@ void M_UpdateSettingsQuick(void)
         M_SetSpriteCulling(false);
         M_SetInvisibleDetail(INVISIBLE_NORMAL);
         M_SetShowFPS(false);
-        M_SetMelting(true);
+        M_SetNoMelting(true);
         M_SetSizeDisplay(7);
 
         // %2 -potato -size 10 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
@@ -200,7 +200,7 @@ void M_UpdateSettingsArch(void)
         M_SetSpriteCulling(false);
         M_SetInvisibleDetail(INVISIBLE_NORMAL);
         M_SetShowFPS(false);
-        M_SetMelting(true);
+        M_SetNoMelting(true);
         M_SetSizeDisplay(7);
 
         // %2 -high -size 10 -386sx -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
@@ -252,7 +252,7 @@ void M_UpdateSettingsNormal(void)
         M_SetSpriteCulling(false);
         M_SetInvisibleDetail(INVISIBLE_NORMAL);
         M_SetShowFPS(false);
-        M_SetMelting(true);
+        M_SetNoMelting(true);
         M_SetSizeDisplay(7);
 
         //%2 -potato -size 10 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
