@@ -256,6 +256,7 @@ extern int mouseSensitivity;
 extern boolean singletics;
 extern boolean benchmark;
 extern boolean benchmark_finished;
+extern boolean benchmark_commandline;
 extern unsigned int benchmark_resultfps;
 extern unsigned int benchmark_gametics;
 extern unsigned int benchmark_realtics;

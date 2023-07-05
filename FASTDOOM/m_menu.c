@@ -1193,6 +1193,9 @@ void M_DrawBenchmarkResult(void)
 
 void M_DrawBenchmarkCSV(void)
 {
+    if (benchmark_commandline)
+        I_Error("Results saved on file BENCH.CSV");
+
 #if defined(MODE_T4025) || defined(MODE_T4050)
     V_WriteTextDirect(6, 8, "Results saved on file BENCH.CSV");
 #endif

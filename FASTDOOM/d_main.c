@@ -140,6 +140,7 @@ boolean waitVsync;
 boolean singletics = false; // debug flag to cancel adaptiveness
 boolean benchmark = false;
 boolean benchmark_finished = false;
+boolean benchmark_commandline = false;
 unsigned int benchmark_realtics = 0;
 unsigned int benchmark_gametics = 0;
 unsigned int benchmark_resultfps = 0;
@@ -1246,6 +1247,7 @@ void D_DoomMain(void)
     if(p)
     {
         benchmark = true;
+        benchmark_commandline = true;
 
         sprintf(demofile, "%s", myargv[p + 2]);
         D_AddFile(demofile);
