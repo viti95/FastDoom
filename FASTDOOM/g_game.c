@@ -1234,13 +1234,14 @@ void G_TimeDemo(char *name)
 
 #define CSV_COLUMN ","
 #define CSV_DECIMAL "."
+#define CSV_FILE "BENCH.CSV"
 
 void G_CreateCSV(void)
 {
     FILE *fptr;
-    if (fptr = fopen("BENCH.CSV","r")==NULL) // if file does not exist, create it
+    if (fptr = fopen(CSV_FILE,"r")==NULL) // if file does not exist, create it
     {
-        fptr = fopen("BENCH.CSV", "w+");
+        fptr = fopen(CSV_FILE, "w+");
         fprintf(fptr, "executable"CSV_COLUMN"arch"CSV_COLUMN"detail"CSV_COLUMN"size"CSV_COLUMN"visplanes"CSV_COLUMN"sky"CSV_COLUMN"objects"CSV_COLUMN"transparent_columns"CSV_COLUMN"iwad"CSV_COLUMN"demo"CSV_COLUMN"gametics"CSV_COLUMN"realtics"CSV_COLUMN"fps\n");
         fclose(fptr);
     }
@@ -1249,7 +1250,7 @@ void G_CreateCSV(void)
 
 void G_SaveCSVResult(unsigned int realtics, unsigned int resultfps)
 {
-    FILE *logFile = fopen("BENCH.CSV", "a");
+    FILE *logFile = fopen(CSV_FILE, "a");
     if (logFile)
     {
         // Executable
