@@ -1259,47 +1259,51 @@ void G_SaveCSVResult(unsigned int realtics, unsigned int resultfps)
         switch (selectedCPU)
         {
         case INTEL_386SX:
-            fprintf(logFile, "386sx"CSV_COLUMN);
+            fprintf(logFile, "386sx");
             break;
         case INTEL_386DX:
-            fprintf(logFile, "386dx"CSV_COLUMN);
+            fprintf(logFile, "386dx");
             break;
         case INTEL_486:
-            fprintf(logFile, "intel486"CSV_COLUMN);
+            fprintf(logFile, "intel486");
             break;
         case INTEL_PENTIUM:
-            fprintf(logFile, "pentium"CSV_COLUMN);
+            fprintf(logFile, "pentium");
             break;
         case CYRIX_386DLC:
-            fprintf(logFile, "cyrix386"CSV_COLUMN);
+            fprintf(logFile, "cyrix386");
             break;
         case CYRIX_486:
-            fprintf(logFile, "cyrix486"CSV_COLUMN);
+            fprintf(logFile, "cyrix486");
             break;
         case CYRIX_5X86:
-            fprintf(logFile, "cyrix5x86"CSV_COLUMN);
+            fprintf(logFile, "cyrix5x86");
             break;
         case UMC_GREEN_486:
-            fprintf(logFile, "umc486"CSV_COLUMN);
+            fprintf(logFile, "umc486");
             break;
         case AMD_K5:
-            fprintf(logFile, "k5"CSV_COLUMN);
+            fprintf(logFile, "k5");
             break;
         }
+
+        fprintf(logFile, CSV_COLUMN);
 
         // Detail
         switch (detailshift)
         {
         case DETAIL_HIGH:
-            fprintf(logFile, "high"CSV_COLUMN);
+            fprintf(logFile, "high");
             break;
         case DETAIL_LOW:
-            fprintf(logFile, "low"CSV_COLUMN);
+            fprintf(logFile, "low");
             break;
         case DETAIL_POTATO:
-            fprintf(logFile, "potato"CSV_COLUMN);
+            fprintf(logFile, "potato");
             break;
         }
+
+        fprintf(logFile, CSV_COLUMN);
 
         // Screen size
         fprintf(logFile, "%i"CSV_COLUMN, screenblocks);
@@ -1308,47 +1312,55 @@ void G_SaveCSVResult(unsigned int realtics, unsigned int resultfps)
         switch (visplaneRender)
         {
         case VISPLANES_NORMAL:
-            fprintf(logFile, "normal"CSV_COLUMN);
+            fprintf(logFile, "normal");
             break;
         case VISPLANES_FLAT:
-            fprintf(logFile, "flat"CSV_COLUMN);
+            fprintf(logFile, "flat");
             break;
         case VISPLANES_FLATTER:
-            fprintf(logFile, "flatter"CSV_COLUMN);
+            fprintf(logFile, "flatter");
             break;
         }
 
+        fprintf(logFile, CSV_COLUMN);
+
         // Sky
         if (flatSky)
-            fprintf(logFile, "flat"CSV_COLUMN);
+            fprintf(logFile, "flat");
         else
-            fprintf(logFile, "normal"CSV_COLUMN);
+            fprintf(logFile, "normal");
+
+        fprintf(logFile, CSV_COLUMN);
 
         // Objects
         if (nearSprites)
-            fprintf(logFile, "near"CSV_COLUMN);
+            fprintf(logFile, "near");
         else
-            fprintf(logFile, "normal"CSV_COLUMN);
+            fprintf(logFile, "normal");
+
+        fprintf(logFile, CSV_COLUMN);
 
         // Transparent objects
         switch (invisibleRender)
         {
         case INVISIBLE_NORMAL:
-            fprintf(logFile, "normal"CSV_COLUMN);
+            fprintf(logFile, "normal");
             break;
         case INVISIBLE_FLAT:
-            fprintf(logFile, "flat"CSV_COLUMN);
+            fprintf(logFile, "flat");
             break;
         case INVISIBLE_FLAT_SATURN:
-            fprintf(logFile, "flatsaturn"CSV_COLUMN);
+            fprintf(logFile, "flatsaturn");
             break;
         case INVISIBLE_SATURN:
-            fprintf(logFile, "saturn"CSV_COLUMN);
+            fprintf(logFile, "saturn");
             break;
         case INVISIBLE_TRANSLUCENT:
-            fprintf(logFile, "translucent"CSV_COLUMN);
+            fprintf(logFile, "translucent");
             break;
         }
+
+        fprintf(logFile, CSV_COLUMN);
 
         // IWAD
         fprintf(logFile, "%s"CSV_COLUMN, iwadfile);
