@@ -54,4 +54,6 @@ void M_FinishBenchmark(void);
 
 void M_WriteText(int x, int y, char *string);
 
+void M_BenchmarkRunDemo(void);
+
 #endif
