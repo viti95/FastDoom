@@ -1415,7 +1415,7 @@ void G_CheckDemoStatus(void)
                 unsigned int onepercentlow_fps = 0;
                 unsigned int fix_start = 0;
                 
-                I_Log("Total frametimes: %u\n", frametime_position);
+                //I_Log("Total frametimes: %u\n", frametime_position);
 
                 // Sort array (higher values are worse)
                 for (i = 0; i < frametime_position; i++)
@@ -1431,32 +1431,32 @@ void G_CheckDemoStatus(void)
                     }
                 }
 
-                for (i = 0; i < frametime_position; i++)
+                /*for (i = 0; i < frametime_position; i++)
                 {
                     I_Log("[%u]: %u\n", i, frametime[i]);
-                }
+                }*/
 
                 fix_start = frametime_position - benchmark_gametics + 1;
 
                 frametime_position /= 100; // 1% Low
 
-                I_Log("1 percent low: %u\n", frametime_position);
+                //I_Log("1 percent low: %u\n", frametime_position);
 
                 for (i = fix_start; i < frametime_position + fix_start; i++) // Omit first frame (load data)
                 {
                     onepercentlow_ms += frametime[i];
                 }
 
-                I_Log("Total 1 percent low: %u\n", onepercentlow_ms);
+                //I_Log("Total 1 percent low: %u\n", onepercentlow_ms);
 
                 onepercentlow_ms *= 1000;
                 onepercentlow_ms /= frametime_position; // Average ms 1% low
 
-                I_Log("Average 1 percent low: %u\n", onepercentlow_ms);
+                //I_Log("Average 1 percent low: %u\n", onepercentlow_ms);
 
                 onepercentlow_fps = 1000000000u / onepercentlow_ms;
 
-                I_Log("Average 1 percent low FPS: %u\n", onepercentlow_fps);
+                //I_Log("Average 1 percent low FPS: %u\n", onepercentlow_fps);
 
                 G_SaveCSVResult(realtics, resultfps, onepercentlow_fps);
 
