@@ -66,6 +66,8 @@
 
 #include "options.h"
 
+#include "i_log.h"
+
 #define SAVEGAMESIZE 0x2c000
 #define SAVESTRINGSIZE 24
 
@@ -1239,7 +1241,8 @@ void G_TimeDemo(char *name)
 void G_CreateCSV(void)
 {
     FILE *fptr;
-    if (fptr = fopen(CSV_FILE, "r") == NULL) // if file does not exist, create it
+    fptr = fopen(CSV_FILE, "r");
+    if (fptr == NULL) // if file does not exist, create it
     {
         fptr = fopen(CSV_FILE, "w+");
         fprintf(fptr, "executable" CSV_COLUMN "arch" CSV_COLUMN "detail" CSV_COLUMN "size" CSV_COLUMN "visplanes" CSV_COLUMN "sky" CSV_COLUMN "objects" CSV_COLUMN "transparent_columns" CSV_COLUMN "iwad" CSV_COLUMN "demo" CSV_COLUMN "gametics" CSV_COLUMN "realtics" CSV_COLUMN "fps" CSV_COLUMN "onepercentlow\n");
@@ -1410,7 +1413,9 @@ void G_CheckDemoStatus(void)
                 unsigned int temp;
                 unsigned int onepercentlow_ms = 0;
                 unsigned int onepercentlow_fps = 0;
+                unsigned int fix_start = 0;
                 
+                I_Log("Total frametimes: %u\n", frametime_position);
 
                 // Sort array (higher values are worse)
                 for (i = 0; i < frametime_position; i++)
@@ -1426,19 +1431,34 @@ void G_CheckDemoStatus(void)
                     }
                 }
 
+                for (i = 0; i < frametime_position; i++)
+                {
+                    I_Log("[%u]: %u\n", i, frametime[i]);
+                }
+
+                fix_start = frametime_position - benchmark_gametics + 1;
+
                 frametime_position /= 100; // 1% Low
 
-                for (i = 0; i < frametime_position; i++)
+                I_Log("1 percent low: %u\n", frametime_position);
+
+                for (i = fix_start; i < frametime_position + fix_start; i++) // Omit first frame (load data)
                 {
                     onepercentlow_ms += frametime[i];
                 }
 
+                I_Log("Total 1 percent low: %u\n", onepercentlow_ms);
+
                 onepercentlow_ms *= 1000;
                 onepercentlow_ms /= frametime_position; // Average ms 1% low
 
+                I_Log("Average 1 percent low: %u\n", onepercentlow_ms);
+
                 onepercentlow_fps = 1000000000u / onepercentlow_ms;
 
-                G_SaveCSVResult(realtics, resultfps, onepercentlow_ms);
+                I_Log("Average 1 percent low FPS: %u\n", onepercentlow_fps);
+
+                G_SaveCSVResult(realtics, resultfps, onepercentlow_fps);
 
                 // Cleanup frametimes
                 frametime_position = 0;
