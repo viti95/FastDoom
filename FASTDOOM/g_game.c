@@ -1239,22 +1239,22 @@ void G_TimeDemo(char *name)
 void G_CreateCSV(void)
 {
     FILE *fptr;
-    if (fptr = fopen(CSV_FILE,"r")==NULL) // if file does not exist, create it
+    if (fptr = fopen(CSV_FILE, "r") == NULL) // if file does not exist, create it
     {
         fptr = fopen(CSV_FILE, "w+");
-        fprintf(fptr, "executable"CSV_COLUMN"arch"CSV_COLUMN"detail"CSV_COLUMN"size"CSV_COLUMN"visplanes"CSV_COLUMN"sky"CSV_COLUMN"objects"CSV_COLUMN"transparent_columns"CSV_COLUMN"iwad"CSV_COLUMN"demo"CSV_COLUMN"gametics"CSV_COLUMN"realtics"CSV_COLUMN"fps\n");
+        fprintf(fptr, "executable" CSV_COLUMN "arch" CSV_COLUMN "detail" CSV_COLUMN "size" CSV_COLUMN "visplanes" CSV_COLUMN "sky" CSV_COLUMN "objects" CSV_COLUMN "transparent_columns" CSV_COLUMN "iwad" CSV_COLUMN "demo" CSV_COLUMN "gametics" CSV_COLUMN "realtics" CSV_COLUMN "fps" CSV_COLUMN "onepercentlow\n");
         fclose(fptr);
     }
     fclose(fptr);
 }
 
-void G_SaveCSVResult(unsigned int realtics, unsigned int resultfps)
+void G_SaveCSVResult(unsigned int realtics, unsigned int resultfps, unsigned int onepercentlow)
 {
     FILE *logFile = fopen(CSV_FILE, "a");
     if (logFile)
     {
         // Executable
-        fprintf(logFile, "%s"CSV_COLUMN, myargv[0]);
+        fprintf(logFile, "%s" CSV_COLUMN, myargv[0]);
 
         // Architecture
         switch (selectedCPU)
@@ -1307,7 +1307,7 @@ void G_SaveCSVResult(unsigned int realtics, unsigned int resultfps)
         fprintf(logFile, CSV_COLUMN);
 
         // Screen size
-        fprintf(logFile, "%i"CSV_COLUMN, screenblocks);
+        fprintf(logFile, "%i" CSV_COLUMN, screenblocks);
 
         // Visplanes
         switch (visplaneRender)
@@ -1364,13 +1364,17 @@ void G_SaveCSVResult(unsigned int realtics, unsigned int resultfps)
         fprintf(logFile, CSV_COLUMN);
 
         // IWAD
-        fprintf(logFile, "%s"CSV_COLUMN, iwadfile);
+        fprintf(logFile, "%s" CSV_COLUMN, iwadfile);
 
         // Demo
-        fprintf(logFile, "%s"CSV_COLUMN, demofile);
+        fprintf(logFile, "%s" CSV_COLUMN, demofile);
 
         // Gametics, Realtics, FPS
-        fprintf(logFile, "%i"CSV_COLUMN"%u"CSV_COLUMN"%u"CSV_DECIMAL"%.3u\n", gametic, realtics, resultfps / 1000, resultfps % 1000);
+        fprintf(logFile, "%i" CSV_COLUMN "%u" CSV_COLUMN "%u" CSV_DECIMAL "%.3u" CSV_COLUMN, gametic, realtics, resultfps / 1000, resultfps % 1000);
+
+        // One percent low FPS
+        fprintf(logFile, "%u" CSV_DECIMAL "%.3u\n", onepercentlow / 1000, onepercentlow % 1000);
+
         fclose(logFile);
     }
 }
@@ -1399,7 +1403,55 @@ void G_CheckDemoStatus(void)
         if (csv)
         {
             G_CreateCSV();
-            G_SaveCSVResult(realtics, resultfps);
+
+            if (benchmark_advanced)
+            {
+                unsigned int i, j;
+                unsigned int temp;
+                unsigned int onepercentlow_ms = 0;
+                unsigned int onepercentlow_fps = 0;
+                
+
+                // Sort array (higher values are worse)
+                for (i = 0; i < frametime_position; i++)
+                {
+                    for (j = i + 1; j < frametime_position; j++)
+                    {
+                        if (frametime[i] < frametime[j])
+                        {
+                            temp = frametime[i];
+                            frametime[i] = frametime[j];
+                            frametime[j] = temp;
+                        }
+                    }
+                }
+
+                frametime_position /= 100; // 1% Low
+
+                for (i = 0; i < frametime_position; i++)
+                {
+                    onepercentlow_ms += frametime[i];
+                }
+
+                onepercentlow_ms *= 1000;
+                onepercentlow_ms /= frametime_position; // Average ms 1% low
+
+                onepercentlow_fps = 1000000000u / onepercentlow_ms;
+
+                G_SaveCSVResult(realtics, resultfps, onepercentlow_ms);
+
+                // Cleanup frametimes
+                frametime_position = 0;
+                
+                for (i = 0; i < 20000; i++)
+                {
+                    frametime[i] = 0;
+                }
+            }
+            else
+            {
+                G_SaveCSVResult(realtics, resultfps, 0);
+            }
         }
 
         if (benchmark)

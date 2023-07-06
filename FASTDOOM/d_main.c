@@ -81,6 +81,7 @@
 //  calls I_GetTime, and I_StartTic
 //
 void D_DoomLoop(void);
+void D_DoomLoopBenchmark(void);
 
 char *wadfiles[MAXWADFILES];
 
@@ -151,6 +152,7 @@ unsigned int benchmark_resultfps = 0;
 unsigned int benchmark_starttic = 0;
 unsigned int benchmark_type = BENCHMARK_SINGLE;
 unsigned int benchmark_number = 0;
+boolean benchmark_advanced = 0;
 
 extern int sfxVolume;
 extern int musicVolume;
@@ -503,14 +505,11 @@ void D_Display(void)
 //
 extern byte demorecording;
 
-char testarray[6];
-unsigned short position = 0;
-unsigned short timingarray[20000];
+unsigned int frametime_position = 0;
+unsigned int *frametime;
 
 void D_DoomLoop(void)
 {
-    unsigned long long start_time, end_time;
-
     if (demorecording)
         G_BeginRecording();
 
@@ -518,8 +517,6 @@ void D_DoomLoop(void)
 
     while (1)
     {
-        start_time = mscount;
-
         // process one or more tics
         if (singletics)
         {
@@ -557,16 +554,57 @@ void D_DoomLoop(void)
 
         // Update display, next frame, with current state.
         D_Display();
+    }
+}
+
+void D_DoomLoopBenchmark(void)
+{
+    unsigned int start_time, end_time;
+
+    if (demorecording)
+        G_BeginRecording();
+
+    I_InitGraphics();
+
+    while (1)
+    {
+        start_time = mscount;
+
+        // process one or more tics
+        I_StartTic();
+        D_ProcessEvents();
+        G_BuildTiccmd(&localcmds[maketic & (BACKUPTICS - 1)]);
+        if (advancedemo)
+            D_DoAdvanceDemo();
+        M_Ticker();
+        G_Ticker();
+        gametic++;
+        maketic++;
+
+        if (benchmark_finished)
+        {
+            M_FinishBenchmark();
+        }
+
+        S_UpdateSounds(); // move positional sounds
+
+        switch (snd_MusicDevice) // check music track (looping)
+        {
+            case snd_CD:
+                S_CheckCD();
+                break;
+            case snd_WAV:
+                S_CheckWAV();
+                break;
+        }
+
+        // Update display, next frame, with current state.
+        D_Display();
 
         end_time = mscount - start_time;
 
-        timingarray[position] = end_time;
-
-        sprintf(testarray, "%hu\n", timingarray[position]);
-
-        position++;
-
-        I_Printf(testarray);
+        frametime[frametime_position] = end_time;
+        frametime_position++;
     }
 }
 
@@ -1264,6 +1302,8 @@ void D_DoomMain(void)
 
     csv = M_CheckParm("-csv");
 
+    benchmark_advanced = M_CheckParm("-advanced");
+
     p = M_CheckParm("-benchmark");
 
     if(p)
@@ -1559,9 +1599,27 @@ void D_DoomMain(void)
     {
         D_StartTitle();
         M_BenchmarkRunDemo();
-        D_DoomLoop();
+
+        if(benchmark_advanced)
+        {
+            unsigned int i;
+            frametime = (unsigned int *)Z_MallocUnowned(20000 * sizeof(unsigned int), PU_STATIC);
+            
+            for (i = 0; i < 20000; i++)
+            {
+                frametime[i] = 0;
+            }
+
+            frametime_position = 0;
+
+            D_DoomLoopBenchmark();
+        }
+        else
+        {
+            D_DoomLoop();
+        }
     }
-    
+
     p = M_CheckParm("-loadgame");
     if (p && p < myargc - 1)
     {

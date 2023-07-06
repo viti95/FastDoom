@@ -235,7 +235,7 @@ extern int usemouse;
 byte mousepresent;
 
 unsigned int ticcount;
-unsigned long long mscount;
+unsigned int mscount;
 unsigned int fps;
 
 // REGS stuff used for int calls

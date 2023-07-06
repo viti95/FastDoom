@@ -146,7 +146,7 @@ void M_UpdateSettingsPhils(void)
         M_SetSpriteCulling(false);
         M_SetInvisibleDetail(INVISIBLE_NORMAL);
         M_SetShowFPS(false);
-        M_SetNoMelting(false);
+        M_SetNoMelting(true);
 
         // %2 -high -size 12 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
         M_SetDetail(DETAIL_HIGH);

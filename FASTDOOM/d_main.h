@@ -34,6 +34,11 @@ void D_AddFile(char *file);
 //
 void D_DoomMain(void);
 void D_DoomLoop(void);
+void D_DoomLoopBenchmark(void);
+
+extern unsigned int frametime_position;
+extern unsigned int *frametime;
+
 
 // Called by IO functions when input is detected.
 void D_PostEvent(event_t *ev);

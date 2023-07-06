@@ -263,6 +263,7 @@ extern unsigned int benchmark_realtics;
 extern unsigned int benchmark_starttic;
 extern unsigned int benchmark_type;
 extern unsigned int benchmark_number;
+extern boolean benchmark_advanced;
 
 // Needed to store the number of the dummy sky flat.
 // Used for rendering,

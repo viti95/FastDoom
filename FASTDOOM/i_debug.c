@@ -8,7 +8,7 @@
 #define COLS 80
 #define ROWS 25
 
-#define DEBUG_ENABLED 1
+#define DEBUG_ENABLED 0
 
 #if (DEBUG_ENABLED == 1)
 unsigned short *Scrn = (unsigned short *)0xB0000;
