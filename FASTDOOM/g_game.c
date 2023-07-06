@@ -66,7 +66,7 @@
 
 #include "options.h"
 
-#include "i_log.h"
+//#include "i_log.h"
 
 #define SAVEGAMESIZE 0x2c000
 #define SAVESTRINGSIZE 24
@@ -1400,6 +1400,9 @@ void G_CreateFrametime(void)
 void G_SaveFrametimeResult(unsigned int start, unsigned int count)
 {
     FILE *logFile = fopen(FRAMETIME_FILE, "a");
+
+    //I_Log("start %u, count %u\n", start, count);
+
     if (logFile)
     {
         unsigned int counter = 0;
@@ -1452,7 +1455,7 @@ void G_CheckDemoStatus(void)
                 fix_start = frametime_position - benchmark_gametics + 1;
 
                 G_CreateFrametime();
-                G_SaveFrametimeResult(fix_start, frametime_position - fix_start);
+                G_SaveFrametimeResult(fix_start - 1, frametime_position);
 
                 //I_Log("Total frametimes: %u\n", frametime_position);
 
