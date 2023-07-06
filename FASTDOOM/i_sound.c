@@ -46,12 +46,16 @@
 //
 
 task *tsm_task;
+task *tsm_ms_task;
 
 void I_StartupTimer(void)
 {
     printf("I_StartupTimer()\n");
     // installs master timer.  Must be done before StartupTimer()!
     tsm_task = TS_ScheduleTask(I_TimerISR, 35, 1, NULL);
+    TS_Dispatch();
+    
+    tsm_ms_task = TS_ScheduleTask(I_TimerMS, 1000, 1, NULL);
     TS_Dispatch();
 }
 

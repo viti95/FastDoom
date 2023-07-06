@@ -67,6 +67,10 @@
 
 #include "options.h"
 
+#include <stdio.h>
+#include <sys/timeb.h>
+#include "i_debug.h"
+
 //
 // D-DoomLoop()
 // Not a globally visible function,
@@ -499,8 +503,14 @@ void D_Display(void)
 //
 extern byte demorecording;
 
+char testarray[6];
+unsigned short position = 0;
+unsigned short timingarray[20000];
+
 void D_DoomLoop(void)
 {
+    unsigned long long start_time, end_time;
+
     if (demorecording)
         G_BeginRecording();
 
@@ -508,6 +518,8 @@ void D_DoomLoop(void)
 
     while (1)
     {
+        start_time = mscount;
+
         // process one or more tics
         if (singletics)
         {
@@ -545,6 +557,16 @@ void D_DoomLoop(void)
 
         // Update display, next frame, with current state.
         D_Display();
+
+        end_time = mscount - start_time;
+
+        timingarray[position] = end_time;
+
+        sprintf(testarray, "%hu\n", timingarray[position]);
+
+        position++;
+
+        I_Printf(testarray);
     }
 }
 
