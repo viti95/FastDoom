@@ -975,7 +975,6 @@ void I_StartupDPMI(void)
 //
 void I_Init(void)
 {
-    int p;
     printf("I_StartupDPMI\n");
     I_StartupDPMI();
     printf("I_StartupMouse\n");
