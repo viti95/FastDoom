@@ -38,7 +38,7 @@ goto benchmark_finished_advanced
 
 :error_parameters
 echo.   #                                                                        #
-echo.   #    Usage:  bench.bat [type] [exe] [iwad] [lmp]                         #
+echo.   #    Usage:  bench.bat [type] [exe] [iwad] [lmp] [option]                #
 echo.   #                                                                        #
 echo.   #   [type]:  [phils, quick, normal, arch]                                #
 echo.   #    [exe]:  [fdoom.exe, fdoom13h.exe, ...]                              #
