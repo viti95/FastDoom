@@ -1499,7 +1499,7 @@ void G_CheckDemoStatus(void)
                 onepercentlow_fps = 1000000000u / onepercentlow_ms;
 
                 // Calculate 0.1% low frametimes
-                dotonepercentlow_num = frametime_position / 1000; // 1% Low
+                dotonepercentlow_num = frametime_position / 1000; // 0.1% Low
 
                 if (dotonepercentlow_num == 0)
                     dotonepercentlow_num++;
@@ -1510,7 +1510,7 @@ void G_CheckDemoStatus(void)
                 }
 
                 dotonepercentlow_ms *= 1000;
-                dotonepercentlow_ms /= dotonepercentlow_num; // Average ms 1% low
+                dotonepercentlow_ms /= dotonepercentlow_num; // Average ms 0.1% low
                 dotonepercentlow_fps = 1000000000u / dotonepercentlow_ms;
 
                 G_SaveCSVResult(gametics, realtics, resultfps, onepercentlow_fps, dotonepercentlow_fps);
