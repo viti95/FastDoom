@@ -145,6 +145,8 @@
             black pattern
  -saturn => Renders transparent enemies/player/items with a half-tone
             pattern
+ -translucent => Renders transparent enemies/player/items using real 
+                 transparency
  -mono => Forces audio to be mono only
  -near => Renders close items only
  -nomelt => Disables melting transition (for 386 processors)
@@ -182,6 +184,20 @@
                  4 - Final Doom
  -iwad X => Load an IWAD file
  -sbk X => Load a SBK soundfont for AWE32/AWE64 soundcards
+ -benchmark XX YY => Run multiple benchmarks from command line
+      XX => Benchmark type. Available: phils, quick, normal, arch
+      YY => Demo
+ -advanced => Run frametime analysis on benchmarks. Only works with
+      command line parameter "-benchmark"
+ -umc486 => Use UMC Green 486 codepath
+ -i486 => Use Intel 486 codepath
+ -cy386 => Use 386SLC/386DLC codepath
+ -cy486 => Use Cyrix Cx486 codepath
+ -386dx => Use Intel 386DX codepath
+ -386sx => Use Intel 386SX codepath
+ -cy5x86 => Use Cyrix 5x86 codepath
+ -k5 => Use AMD K5 codepath
+ -pentium => Use Intel Pentium codepath
  
  Limitations / Known bugs
  ------------------------
@@ -244,6 +260,7 @@
  Ethaniel-404
  zokum-no
  FavoritoHJS
+ rasz_pl
  
  And pretty sure more people I don't remember right now, 
  if you're not in the list contact me :)
