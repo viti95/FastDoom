@@ -13,6 +13,8 @@
 * Optimized backbuffered non-VGA modes. EGA 320x200 16-color mode should be much faster now
 * New in-game menu for benchmarks. Now it's possible to execute multiple benchmarks without reloading the game
 * Automatically detect MDA/Hercules video card in FDSetup
+* Updated bench.bat (new in-game benchmark options)
+* New advanced benchmark, which stores frametimes on file ftime.csv. Also calculates 1% low and 0.1% low frametimes, which are saved on bench.csv file. Now you will be able to create videos like Digital Foundry :D
 
 ## 0.9.6 (13 May 2023)
 * Add executable filename to benchmark (CSV)
