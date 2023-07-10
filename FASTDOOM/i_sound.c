@@ -54,6 +54,12 @@ void I_StartupTimer(void)
     // installs master timer.  Must be done before StartupTimer()!
     tsm_task = TS_ScheduleTask(I_TimerISR, 35, 1, NULL);
     TS_Dispatch();
+    
+    if (benchmark_advanced)
+    {
+        tsm_ms_task = TS_ScheduleTask(I_TimerMS, 1000, 1, NULL);
+        TS_Dispatch();
+    }
 }
 
 void I_ShutdownTimer(void)
