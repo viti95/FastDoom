@@ -235,7 +235,6 @@ extern int usemouse;
 byte mousepresent;
 
 unsigned int ticcount;
-unsigned int mscount;
 unsigned int fps;
 
 // REGS stuff used for int calls
@@ -818,11 +817,6 @@ void I_StartTic(void)
 void I_TimerISR(task *task)
 {
     ticcount++;
-}
-
-void I_TimerMS(task *task)
-{
-    mscount++;
 }
 
 //

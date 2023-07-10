@@ -4,7 +4,6 @@
 #include "options.h"
 
 extern unsigned int ticcount;
-extern unsigned int mscount;
 extern unsigned int fps;
 
 extern unsigned short *currentscreen;
@@ -20,4 +19,3 @@ extern int updatestate;
 #define I_FULLSCRN	8
 
 extern void I_TimerISR(task *task);
-extern void I_TimerMS(task *task);
