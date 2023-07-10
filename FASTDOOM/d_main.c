@@ -557,9 +557,6 @@ void D_DoomLoopBenchmark(void)
 {
     unsigned int start_time, end_time;
 
-    if (demorecording)
-        G_BeginRecording();
-
     I_InitGraphics();
 
     while (1)
