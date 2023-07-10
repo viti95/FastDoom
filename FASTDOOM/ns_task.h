@@ -25,6 +25,7 @@ typedef struct task
 // and within interrupts.
 
 extern volatile int TS_InInterrupt;
+extern unsigned long TaskServiceCountTotal;
 
 void TS_Shutdown(void);
 task *TS_ScheduleTask(void (*Function)(task *), int rate,

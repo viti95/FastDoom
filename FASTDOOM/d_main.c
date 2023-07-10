@@ -67,9 +67,8 @@
 
 #include "options.h"
 
-#include <stdio.h>
-#include <sys/timeb.h>
-#include "i_debug.h"
+#include "i_log.h"
+#include "ns_inter.h"
 
 //
 // D-DoomLoop()
@@ -559,7 +558,7 @@ void D_DoomLoop(void)
 
 void D_DoomLoopBenchmark(void)
 {
-    unsigned int start_time, end_time;
+    unsigned long start_time, end_time;
 
     if (demorecording)
         G_BeginRecording();
@@ -568,7 +567,7 @@ void D_DoomLoopBenchmark(void)
 
     while (1)
     {
-        start_time = mscount;
+        start_time = TaskServiceCountTotal;
 
         // process one or more tics
         I_StartTic();
@@ -601,7 +600,12 @@ void D_DoomLoopBenchmark(void)
         // Update display, next frame, with current state.
         D_Display();
 
-        end_time = mscount - start_time;
+        end_time = TaskServiceCountTotal;
+
+        if (end_time < start_time)
+            end_time = start_time - end_time;
+        else
+            end_time -= start_time;
 
         frametime[frametime_position] = end_time;
         frametime_position++;

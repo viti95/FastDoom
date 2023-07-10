@@ -59,6 +59,7 @@ static void(__interrupt __far *OldInt8)(void);
 
 static volatile long TaskServiceRate = 0x10000L;
 static volatile long TaskServiceCount = 0;
+unsigned long TaskServiceCountTotal = 0;
 
 #ifndef NOINTS
 static volatile int TS_TimesInInterrupt;
@@ -228,6 +229,7 @@ static void __interrupt __far TS_ServiceSchedule(void)
     SetStack(oldStackSelector, oldStackPointer);
 #endif
 
+    TaskServiceCountTotal += TaskServiceRate;
     TaskServiceCount += TaskServiceRate;
     if (TaskServiceCount > 0xffffL)
     {
@@ -248,7 +250,10 @@ static void __interrupt __far TS_ServiceScheduleIntEnabled(void)
     task *next;
 
     TS_TimesInInterrupt++;
+
+    TaskServiceCountTotal += TaskServiceRate;
     TaskServiceCount += TaskServiceRate;
+    
     if (TaskServiceCount > 0xffffL)
     {
         TaskServiceCount &= 0xffff;
