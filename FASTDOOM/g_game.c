@@ -1245,13 +1245,13 @@ void G_CreateCSV(void)
     if (fptr == NULL) // if file does not exist, create it
     {
         fptr = fopen(CSV_FILE, "w+");
-        fprintf(fptr, "executable" CSV_COLUMN "arch" CSV_COLUMN "detail" CSV_COLUMN "size" CSV_COLUMN "visplanes" CSV_COLUMN "sky" CSV_COLUMN "objects" CSV_COLUMN "transparent_columns" CSV_COLUMN "iwad" CSV_COLUMN "demo" CSV_COLUMN "gametics" CSV_COLUMN "realtics" CSV_COLUMN "fps" CSV_COLUMN "onepercentlow\n");
+        fprintf(fptr, "executable" CSV_COLUMN "arch" CSV_COLUMN "detail" CSV_COLUMN "size" CSV_COLUMN "visplanes" CSV_COLUMN "sky" CSV_COLUMN "objects" CSV_COLUMN "transparent_columns" CSV_COLUMN "iwad" CSV_COLUMN "demo" CSV_COLUMN "gametics" CSV_COLUMN "realtics" CSV_COLUMN "fps" CSV_COLUMN "onepercentlow" CSV_COLUMN "dotonepercentlow\n");
         fclose(fptr);
     }
     fclose(fptr);
 }
 
-void G_SaveCSVResult(unsigned int realtics, unsigned int resultfps, unsigned int onepercentlow)
+void G_SaveCSVResult(unsigned int realtics, unsigned int resultfps, unsigned int onepercentlow, unsigned int dotonepercentlow)
 {
     FILE *logFile = fopen(CSV_FILE, "a");
     if (logFile)
@@ -1375,8 +1375,11 @@ void G_SaveCSVResult(unsigned int realtics, unsigned int resultfps, unsigned int
         // Gametics, Realtics, FPS
         fprintf(logFile, "%i" CSV_COLUMN "%u" CSV_COLUMN "%u" CSV_DECIMAL "%.3u" CSV_COLUMN, gametic, realtics, resultfps / 1000, resultfps % 1000);
 
-        // One percent low FPS
-        fprintf(logFile, "%u" CSV_DECIMAL "%.3u\n", onepercentlow / 1000, onepercentlow % 1000);
+        // 1% low FPS
+        fprintf(logFile, "%u" CSV_DECIMAL "%.3u" CSV_COLUMN, onepercentlow / 1000, onepercentlow % 1000);
+        
+        // 0.1% low FPS
+        fprintf(logFile, "%u" CSV_DECIMAL "%.3u\n", dotonepercentlow / 1000, dotonepercentlow % 1000);
 
         fclose(logFile);
     }
@@ -1450,14 +1453,17 @@ void G_CheckDemoStatus(void)
                 unsigned int onepercentlow_ms = 0;
                 unsigned int onepercentlow_fps = 0;
                 unsigned int onepercentlow_num = 0;
+
+                unsigned int dotonepercentlow_ms = 0;
+                unsigned int dotonepercentlow_fps = 0;
+                unsigned int dotonepercentlow_num = 0;
+
                 unsigned int fix_start = 0;
 
                 fix_start = frametime_position - benchmark_gametics + 1;
 
                 G_CreateFrametime();
                 G_SaveFrametimeResult(fix_start - 1, frametime_position);
-
-                //I_Log("Total frametimes: %u\n", frametime_position);
 
                 // Sort array (higher values are worse)
                 for (i = 0; i < frametime_position; i++)
@@ -1473,32 +1479,38 @@ void G_CheckDemoStatus(void)
                     }
                 }
 
-                /*for (i = 0; i < frametime_position; i++)
-                {
-                    I_Log("[%u]: %u\n", i, frametime[i]);
-                }*/
+                // Calculate 1% low frametimes
 
                 onepercentlow_num = frametime_position / 100; // 1% Low
 
-                //I_Log("1 percent low: %u\n", frametime_position);
+                if (onepercentlow_num == 0)
+                    onepercentlow_num++;
 
                 for (i = fix_start; i < onepercentlow_num + fix_start; i++) // Omit first frame (load data)
                 {
                     onepercentlow_ms += frametime[i];
                 }
 
-                //I_Log("Total 1 percent low: %u\n", onepercentlow_ms);
-
                 onepercentlow_ms *= 1000;
                 onepercentlow_ms /= onepercentlow_num; // Average ms 1% low
-
-                //I_Log("Average 1 percent low: %u\n", onepercentlow_ms);
-
                 onepercentlow_fps = 1000000000u / onepercentlow_ms;
 
-                //I_Log("Average 1 percent low FPS: %u\n", onepercentlow_fps);
+                // Calculate 0.1% low frametimes
+                dotonepercentlow_num = frametime_position / 1000; // 1% Low
 
-                G_SaveCSVResult(realtics, resultfps, onepercentlow_fps);
+                if (dotonepercentlow_num == 0)
+                    dotonepercentlow_num++;
+
+                for (i = fix_start; i < dotonepercentlow_num + fix_start; i++) // Omit first frame (load data)
+                {
+                    dotonepercentlow_ms += frametime[i];
+                }
+
+                dotonepercentlow_ms *= 1000;
+                dotonepercentlow_ms /= dotonepercentlow_num; // Average ms 1% low
+                dotonepercentlow_fps = 1000000000u / dotonepercentlow_ms;
+
+                G_SaveCSVResult(realtics, resultfps, onepercentlow_fps, dotonepercentlow_fps);
 
                 // Cleanup frametimes
                 frametime_position = 0;
@@ -1510,7 +1522,7 @@ void G_CheckDemoStatus(void)
             }
             else
             {
-                G_SaveCSVResult(realtics, resultfps, 0);
+                G_SaveCSVResult(realtics, resultfps, 0, 0);
             }
         }
 
