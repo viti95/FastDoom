@@ -67,10 +67,6 @@
 
 #include "options.h"
 
-#include <stdio.h>
-#include <sys/timeb.h>
-#include "i_debug.h"
-
 //
 // D-DoomLoop()
 // Not a globally visible function,
