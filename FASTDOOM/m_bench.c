@@ -296,7 +296,7 @@ int M_CheckValue(char *check, char *compare)
 {
     I_Log("Check: %s, Compare %s\n", check, compare);
 
-    if (!strcasecmp(check, compare))
+    if (strcasecmp(check, compare) == 0)
         return 1;
 
     return 0;
@@ -342,29 +342,41 @@ void M_ChangeValueFile(unsigned int position, char *token)
         if (M_CheckValue(token, "flat"))
             M_SetSkyDetail(true);
         break;
-    // Sprites
+    // Invisible
     case 4:
+        if (M_CheckValue(token, "default"))
+            M_SetInvisibleDetail(INVISIBLE_NORMAL);
+        if (M_CheckValue(token, "saturn"))
+            M_SetInvisibleDetail(INVISIBLE_SATURN);
+        if (M_CheckValue(token, "flatsaturn"))
+            M_SetInvisibleDetail(INVISIBLE_FLAT_SATURN);
+        if (M_CheckValue(token, "translucent"))
+            M_SetInvisibleDetail(INVISIBLE_TRANSLUCENT);
+        if (M_CheckValue(token, "flat"))
+            M_SetInvisibleDetail(INVISIBLE_FLAT);
+    // Sprites
+    case 5:
         if (M_CheckValue(token, "far"))
             M_SetSpriteCulling(false);
         if (M_CheckValue(token, "near"))
             M_SetSpriteCulling(true);
         break;
     // Show FPS
-    case 5:
+    case 6:
         if (M_CheckValue(token, "nofps"))
             M_SetShowFPS(false);
         if (M_CheckValue(token, "fps"))
             M_SetShowFPS(true);
         break;
     // Melting
-    case 6:
+    case 7:
         if (M_CheckValue(token, "nomelt"))
             M_SetNoMelting(true);
         if (M_CheckValue(token, "melt"))
             M_SetNoMelting(false);
         break;
     // CPU
-    case 7:
+    case 8:
         if (M_CheckValue(token, "386sx"))
             M_SetCPU(INTEL_386SX);
         if (M_CheckValue(token, "386dx"))
