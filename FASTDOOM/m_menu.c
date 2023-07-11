@@ -2797,9 +2797,17 @@ void M_FinishBenchmark(void)
     switch (benchmark_type)
     {
     case BENCHMARK_SINGLE:
-        M_StartControlPanel();
-        itemOn = 0;
-        currentMenu = &BenchmarkResultDef;
+        if (benchmark_commandline)
+        {
+            benchmark_number = 0;
+            M_ShowBenchmarkCSVMessage();
+        }
+        else
+        {
+            M_StartControlPanel();
+            itemOn = 0;
+            currentMenu = &BenchmarkResultDef;
+        }
         break;
 
     case BENCHMARK_ARCH:

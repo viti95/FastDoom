@@ -1315,6 +1315,12 @@ void D_DoomMain(void)
             benchmark_type = BENCHMARK_NORMAL;
         if(!strcmp(myargv[p + 1], "arch"))
             benchmark_type = BENCHMARK_ARCH;
+        if(!strcmp(myargv[p + 1], "single"))
+        {
+            csv = 1;
+            benchmark_type = BENCHMARK_SINGLE;
+        }
+            
     }   
 
     disableDemo = M_CheckParm("-disabledemo");
