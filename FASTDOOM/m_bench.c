@@ -136,32 +136,6 @@ void M_SetCSV(boolean value)
     csv = value;
 }
 
-void M_UpdateSettingsPhils(void)
-{
-    switch (benchmark_number)
-    {
-    case 0:
-        M_SetCSV(true);
-        M_SetCPU(INTEL_486);
-        M_SetVisplaneDetail(VISPLANES_NORMAL);
-        M_SetSkyDetail(false);
-        M_SetSpriteCulling(false);
-        M_SetInvisibleDetail(INVISIBLE_NORMAL);
-        M_SetShowFPS(false);
-        M_SetNoMelting(true);
-
-        // %2 -high -size 12 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
-        M_SetDetail(DETAIL_HIGH);
-        M_SetSizeDisplay(9);
-        break;
-    case 1:
-        // %2 -low -size 3 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
-        M_SetDetail(DETAIL_LOW);
-        M_SetSizeDisplay(0);
-        break;
-    }
-}
-
 void M_UpdateSettingsQuick(void)
 {
     switch (benchmark_number)
@@ -446,9 +420,6 @@ void M_UpdateSettings(void)
 {
     switch (benchmark_type)
     {
-    case BENCHMARK_PHILS:
-        M_UpdateSettingsPhils();
-        break;
     case BENCHMARK_QUICK:
         M_UpdateSettingsQuick();
         break;
@@ -458,6 +429,7 @@ void M_UpdateSettings(void)
     case BENCHMARK_NORMAL:
         M_UpdateSettingsNormal();
         break;
+    case BENCHMARK_PHILS:
     case BENCHMARK_FILE:
         M_UpdateSettingsFile();
         break;

@@ -1231,6 +1231,14 @@ void M_ChangeBenchmarkType(int choice)
             benchmark_type = BENCHMARK_SINGLE;
         break;
     }
+
+    switch(benchmark_type)
+    {
+        case BENCHMARK_PHILS:
+        sprintf(benchmark_file, "phils.bnc");
+        benchmark_total = D_FileGetFirstInteger(benchmark_file);
+        break;
+    }
 }
 
 void M_BenchmarkRunDemo(void)
@@ -2782,7 +2790,6 @@ void M_StartControlPanel(void)
     itemOn = currentMenu->lastOn; // JDC
 }
 
-#define BENCHMARK_PHILS_LAST 2
 #define BENCHMARK_QUICK_LAST 3
 #define BENCHMARK_NORMAL_LAST 9
 #define BENCHMARK_ARCH_LAST 9
@@ -2838,18 +2845,6 @@ void M_FinishBenchmark(void)
         }
         break;
 
-    case BENCHMARK_PHILS:
-        benchmark_number++;
-        if (benchmark_number == BENCHMARK_PHILS_LAST)
-        {
-            benchmark_number = 0;
-            M_ShowBenchmarkCSVMessage();
-        }
-        else
-        {
-            M_BenchmarkRunDemo();
-        }
-        break;
 
     case BENCHMARK_QUICK:
         benchmark_number++;
@@ -2864,6 +2859,7 @@ void M_FinishBenchmark(void)
         }
         break;
 
+    case BENCHMARK_PHILS:
     case BENCHMARK_FILE:
         benchmark_number++;
 

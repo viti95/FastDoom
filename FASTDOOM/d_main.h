@@ -25,6 +25,7 @@
 extern char *wadfiles[MAXWADFILES];
 
 void D_AddFile(char *file);
+int D_FileGetFirstInteger(const char* filename);
 
 //
 // D_DoomMain()
