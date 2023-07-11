@@ -18,6 +18,7 @@
 //
 
 #include <string.h>
+#include <strings.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
@@ -53,6 +54,8 @@
 #include "m_bench.h"
 
 #include "options.h"
+
+#include "i_log.h"
 
 extern int detailLevel;
 extern int screenblocks;
@@ -288,8 +291,98 @@ void M_UpdateSettingsNormal(void)
     }
 }
 
+#define FILE_SEPARATOR ","
+
+int M_CheckValue(char *check, char *compare)
+{
+    I_Log("Check: %s, Compare %s\n", check, compare);
+
+    if (!strcasecmp(check, compare))
+        return 1;
+
+    return 0;
+}
+
+void M_ChangeValueFile(unsigned int position, char* token)
+{
+    I_Log("Benchmark change value: %u, %s\n", position, token);
+
+    switch(position)
+    {
+        case 0:
+            if (M_CheckValue(token, "high"))
+                M_SetDetail(DETAIL_HIGH);
+            if (M_CheckValue(token, "low"))
+                M_SetDetail(DETAIL_LOW);
+            if (M_CheckValue(token, "potato"))
+                M_SetDetail(DETAIL_POTATO);
+        break;
+        case 1:
+        break;
+        case 2:
+        break;
+        case 3:
+        break;
+        case 4:
+        break;
+        case 5:
+        break;
+        case 6:
+        break;
+        case 7:
+        break;
+    }
+}
+
+void M_ParseBenchmarkLine(char* line) {
+    unsigned int count = 0;
+    char* token = strtok(line, FILE_SEPARATOR);
+    while (token != NULL) {
+        I_Log("Benchmark Token: %s\n", token);
+        M_ChangeValueFile(count, token);
+        token = strtok(NULL, FILE_SEPARATOR);
+        count++;
+    }
+}
+
+int M_ProcessBenchmarkFile(const char* filename, int lineNumber) {
+
+    char buffer[1024];
+    int currentLine = 0;
+
+    FILE* file = fopen(filename, "r");
+
+    if (file == NULL) {
+        I_Log("Benchmark read file error\n");
+        return 0;
+    }
+
+    fgets(buffer, sizeof(buffer), file); // Skip first line
+
+    while (fgets(buffer, sizeof(buffer), file) != NULL) {
+        if (currentLine == lineNumber) {
+            I_Log("Benchmark Parse line: %d\n", currentLine);
+            M_ParseBenchmarkLine(buffer);
+            break;
+        }
+        currentLine++;
+    }
+
+    fclose(file);
+
+    return 1;
+}
+
+void M_UpdateSettingsFile(void)
+{
+    I_Log("Benchmark update from file\n");
+    M_ProcessBenchmarkFile(benchmark_file, benchmark_number);
+}
+
 void M_UpdateSettings(void)
 {
+    I_Log("Benchmark update settings\n");
+
     switch (benchmark_type)
     {
     case BENCHMARK_PHILS:
@@ -303,6 +396,9 @@ void M_UpdateSettings(void)
         break;
     case BENCHMARK_NORMAL:
         M_UpdateSettingsNormal();
+        break;
+    case BENCHMARK_FILE:
+        M_UpdateSettingsFile();
         break;
     }
 }

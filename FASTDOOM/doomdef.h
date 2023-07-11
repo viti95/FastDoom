@@ -286,6 +286,7 @@ typedef enum
     BENCHMARK_QUICK,
     BENCHMARK_NORMAL,
     BENCHMARK_ARCH,
+    BENCHMARK_FILE,
     NUM_BENCHMARK
 } benchmark_t;
 

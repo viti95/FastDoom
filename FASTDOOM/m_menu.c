@@ -56,6 +56,8 @@
 
 #include "options.h"
 
+#include "i_log.h"
+
 extern patch_t *hu_font[HU_FONTSIZE];
 extern byte message_dontfuckwithme;
 
@@ -2852,6 +2854,22 @@ void M_FinishBenchmark(void)
     case BENCHMARK_QUICK:
         benchmark_number++;
         if (benchmark_number == BENCHMARK_QUICK_LAST)
+        {
+            benchmark_number = 0;
+            M_ShowBenchmarkCSVMessage();
+        }
+        else
+        {
+            M_BenchmarkRunDemo();
+        }
+        break;
+
+    case BENCHMARK_FILE:
+        benchmark_number++;
+
+        I_Log("Benchmark current number: %u\n", benchmark_number);
+
+        if (benchmark_number == benchmark_total)
         {
             benchmark_number = 0;
             M_ShowBenchmarkCSVMessage();

@@ -67,6 +67,8 @@
 
 #include "options.h"
 
+#include "i_log.h"
+
 //
 // D-DoomLoop()
 // Not a globally visible function,
@@ -149,6 +151,8 @@ unsigned int benchmark_starttic = 0;
 unsigned int benchmark_type = BENCHMARK_SINGLE;
 unsigned int benchmark_number = 0;
 boolean benchmark_advanced = 0;
+char benchmark_file[13];
+int benchmark_total = 0;
 
 extern int sfxVolume;
 extern int musicVolume;
@@ -1201,6 +1205,25 @@ unsigned char SelectIBMCGA(void)
 
 char demofile[13];
 
+int D_FileGetFirstInteger(const char* filename) {
+    char buffer[1024];
+    int firstInteger = -1;
+    
+    FILE* file = fopen(filename, "r");
+    
+    if (file == NULL)
+        return -1;
+    
+    if (fgets(buffer, sizeof(buffer), file) != NULL) {
+        if (sscanf(buffer, "%u", &firstInteger) != 1) {
+            firstInteger = -1;
+        }
+    }
+
+    fclose(file);
+    return firstInteger;
+}
+
 //
 // D_DoomMain
 //
@@ -1315,6 +1338,18 @@ void D_DoomMain(void)
             benchmark_type = BENCHMARK_NORMAL;
         if(!strcmp(myargv[p + 1], "arch"))
             benchmark_type = BENCHMARK_ARCH;
+        if(!strcmp(myargv[p + 1], "file"))
+        {
+            // Get number of benchmarks
+            csv = 1;
+            benchmark_total = D_FileGetFirstInteger(myargv[p + 3]);
+            benchmark_type = BENCHMARK_FILE;
+            sprintf(benchmark_file, "%s", myargv[p + 3]);
+
+            I_Log("Benchmark total: %d\n", benchmark_total);
+            I_Log("Benchmark type: %u\n", benchmark_type);
+            I_Log("Benchmark file: %s\n", benchmark_file);
+        }
         if(!strcmp(myargv[p + 1], "single"))
         {
             csv = 1;
