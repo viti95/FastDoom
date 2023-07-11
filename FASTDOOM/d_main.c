@@ -1326,32 +1326,19 @@ void D_DoomMain(void)
     {
         benchmark = true;
         benchmark_commandline = true;
+        csv = 1;
 
         sprintf(demofile, "%s", myargv[p + 2]);
         D_AddFile(demofile);
 
-        if(!strcmp(myargv[p + 1], "phils"))
-            benchmark_type = BENCHMARK_PHILS;
-        if(!strcmp(myargv[p + 1], "quick"))
-            benchmark_type = BENCHMARK_QUICK;
-        if(!strcmp(myargv[p + 1], "normal"))
-            benchmark_type = BENCHMARK_NORMAL;
-        if(!strcmp(myargv[p + 1], "arch"))
-            benchmark_type = BENCHMARK_ARCH;
         if(!strcmp(myargv[p + 1], "file"))
         {
-            // Get number of benchmarks
-            csv = 1;
             benchmark_total = D_FileGetFirstInteger(myargv[p + 3]);
             benchmark_type = BENCHMARK_FILE;
             sprintf(benchmark_file, "%s", myargv[p + 3]);
         }
         if(!strcmp(myargv[p + 1], "single"))
-        {
-            csv = 1;
             benchmark_type = BENCHMARK_SINGLE;
-        }
-            
     }   
 
     disableDemo = M_CheckParm("-disabledemo");

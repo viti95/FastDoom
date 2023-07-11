@@ -1232,10 +1232,22 @@ void M_ChangeBenchmarkType(int choice)
         break;
     }
 
-    switch(benchmark_type)
+    switch (benchmark_type)
     {
-        case BENCHMARK_PHILS:
+    case BENCHMARK_PHILS:
         sprintf(benchmark_file, "phils.bnc");
+        benchmark_total = D_FileGetFirstInteger(benchmark_file);
+        break;
+    case BENCHMARK_ARCH:
+        sprintf(benchmark_file, "arch.bnc");
+        benchmark_total = D_FileGetFirstInteger(benchmark_file);
+        break;
+    case BENCHMARK_NORMAL:
+        sprintf(benchmark_file, "normal.bnc");
+        benchmark_total = D_FileGetFirstInteger(benchmark_file);
+        break;
+    case BENCHMARK_QUICK:
+        sprintf(benchmark_file, "quick.bnc");
         benchmark_total = D_FileGetFirstInteger(benchmark_file);
         break;
     }
@@ -2792,7 +2804,6 @@ void M_StartControlPanel(void)
 
 #define BENCHMARK_QUICK_LAST 3
 #define BENCHMARK_NORMAL_LAST 9
-#define BENCHMARK_ARCH_LAST 9
 
 void M_ShowBenchmarkCSVMessage(void)
 {
@@ -2819,46 +2830,9 @@ void M_FinishBenchmark(void)
         }
         break;
 
-    case BENCHMARK_ARCH:
-        benchmark_number++;
-        if (benchmark_number == BENCHMARK_ARCH_LAST)
-        {
-            benchmark_number = 0;
-            M_ShowBenchmarkCSVMessage();
-        }
-        else
-        {
-            M_BenchmarkRunDemo();
-        }
-        break;
-
-    case BENCHMARK_NORMAL:
-        benchmark_number++;
-        if (benchmark_number == BENCHMARK_NORMAL_LAST)
-        {
-            benchmark_number = 0;
-            M_ShowBenchmarkCSVMessage();
-        }
-        else
-        {
-            M_BenchmarkRunDemo();
-        }
-        break;
-
-
     case BENCHMARK_QUICK:
-        benchmark_number++;
-        if (benchmark_number == BENCHMARK_QUICK_LAST)
-        {
-            benchmark_number = 0;
-            M_ShowBenchmarkCSVMessage();
-        }
-        else
-        {
-            M_BenchmarkRunDemo();
-        }
-        break;
-
+    case BENCHMARK_NORMAL:
+    case BENCHMARK_ARCH:
     case BENCHMARK_PHILS:
     case BENCHMARK_FILE:
         benchmark_number++;

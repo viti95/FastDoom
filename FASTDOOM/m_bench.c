@@ -136,134 +136,6 @@ void M_SetCSV(boolean value)
     csv = value;
 }
 
-void M_UpdateSettingsQuick(void)
-{
-    switch (benchmark_number)
-    {
-    case 0:
-        M_SetCSV(true);
-        M_SetCPU(INTEL_486);
-        M_SetVisplaneDetail(VISPLANES_NORMAL);
-        M_SetSkyDetail(false);
-        M_SetSpriteCulling(false);
-        M_SetInvisibleDetail(INVISIBLE_NORMAL);
-        M_SetShowFPS(false);
-        M_SetNoMelting(true);
-        M_SetSizeDisplay(7);
-
-        // %2 -potato -size 10 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
-        M_SetDetail(DETAIL_POTATO);
-        break;
-    case 1:
-        // %2 -low -size 10 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
-        M_SetDetail(DETAIL_LOW);
-        break;
-    case 2:
-        // %2 -high -size 10 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
-        M_SetDetail(DETAIL_HIGH);
-        break;
-    }
-}
-
-void M_UpdateSettingsArch(void)
-{
-    switch (benchmark_number)
-    {
-    case 0:
-        M_SetCSV(true);
-        M_SetVisplaneDetail(VISPLANES_NORMAL);
-        M_SetSkyDetail(false);
-        M_SetSpriteCulling(false);
-        M_SetInvisibleDetail(INVISIBLE_NORMAL);
-        M_SetShowFPS(false);
-        M_SetNoMelting(true);
-        M_SetSizeDisplay(7);
-
-        // %2 -high -size 10 -386sx -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
-        M_SetCPU(INTEL_386SX);
-        break;
-    case 1:
-        // %2 -high -size 10 -386dx -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
-        M_SetCPU(INTEL_386DX);
-        break;
-    case 2:
-        // %2 -high -size 10 -cy386 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
-        M_SetCPU(CYRIX_386DLC);
-        break;
-    case 3:
-        // %2 -high -size 10 -cy486 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
-        M_SetCPU(CYRIX_486);
-        break;
-    case 4:
-        // %2 -high -size 10 -i486 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
-        M_SetCPU(INTEL_486);
-        break;
-    case 5:
-        // %2 -high -size 10 -umc486 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
-        M_SetCPU(UMC_GREEN_486);
-        break;
-    case 6:
-        // %2 -high -size 10 -cy5x86 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
-        M_SetCPU(CYRIX_5X86);
-        break;
-    case 7:
-        // %2 -high -size 10 -k5 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
-        M_SetCPU(AMD_K5);
-        break;
-    case 8:
-        // %2 -high -size 10 -pentium -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
-        M_SetCPU(INTEL_PENTIUM);
-        break;
-    }
-}
-
-void M_UpdateSettingsNormal(void)
-{
-    switch (benchmark_number)
-    {
-    case 0:
-        M_SetCSV(true);
-        M_SetCPU(INTEL_486);
-        M_SetSkyDetail(false);
-        M_SetSpriteCulling(false);
-        M_SetInvisibleDetail(INVISIBLE_NORMAL);
-        M_SetShowFPS(false);
-        M_SetNoMelting(true);
-        M_SetSizeDisplay(7);
-
-        //%2 -potato -size 10 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
-        M_SetDetail(DETAIL_POTATO);
-        M_SetVisplaneDetail(VISPLANES_NORMAL);
-        break;
-    case 3:
-        //%2 -low -size 10 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
-        M_SetDetail(DETAIL_LOW);
-        M_SetVisplaneDetail(VISPLANES_NORMAL);
-        break;
-    case 6:
-        //%2 -high -size 10 -defSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
-        M_SetDetail(DETAIL_HIGH);
-        M_SetVisplaneDetail(VISPLANES_NORMAL);
-        break;
-    case 1:
-    case 4:
-    case 7:
-        //%2 -potato -size 10 -flatSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
-        //%2 -low -size 10 -flatSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
-        //%2 -high -size 10 -flatSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
-        M_SetVisplaneDetail(VISPLANES_FLAT);
-        break;
-    case 2:
-    case 5:
-    case 8:
-        //%2 -potato -size 10 -flatterSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
-        //%2 -low -size 10 -flatterSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
-        //%2 -high -size 10 -flatterSpan -defSky -far -defInv -nofps -nomelt -iwad %3 -timedemo %4 -csv
-        M_SetVisplaneDetail(VISPLANES_FLATTER);
-        break;
-    }
-}
-
 #define FILE_SEPARATOR ","
 
 int M_CheckValue(char *check, char *compare)
@@ -421,14 +293,8 @@ void M_UpdateSettings(void)
     switch (benchmark_type)
     {
     case BENCHMARK_QUICK:
-        M_UpdateSettingsQuick();
-        break;
-    case BENCHMARK_ARCH:
-        M_UpdateSettingsArch();
-        break;
     case BENCHMARK_NORMAL:
-        M_UpdateSettingsNormal();
-        break;
+    case BENCHMARK_ARCH:
     case BENCHMARK_PHILS:
     case BENCHMARK_FILE:
         M_UpdateSettingsFile();
