@@ -68,7 +68,6 @@ void M_SetDetail(int value)
     R_SetViewSize(screenblocks, detailLevel);
 }
 
-
 void M_SetVisplaneDetail(int value)
 {
     visplaneRender = value;
@@ -303,41 +302,49 @@ int M_CheckValue(char *check, char *compare)
     return 0;
 }
 
-void M_ChangeValueFile(unsigned int position, char* token)
+int M_GetNumericValue(char *value)
+{
+    return strtoul(value, NULL, 0);
+}
+
+void M_ChangeValueFile(unsigned int position, char *token)
 {
     I_Log("Benchmark change value: %u, %s\n", position, token);
 
-    switch(position)
+    switch (position)
     {
-        case 0:
-            if (M_CheckValue(token, "high"))
-                M_SetDetail(DETAIL_HIGH);
-            if (M_CheckValue(token, "low"))
-                M_SetDetail(DETAIL_LOW);
-            if (M_CheckValue(token, "potato"))
-                M_SetDetail(DETAIL_POTATO);
+    case 0:
+        if (M_CheckValue(token, "high"))
+            M_SetDetail(DETAIL_HIGH);
+        if (M_CheckValue(token, "low"))
+            M_SetDetail(DETAIL_LOW);
+        if (M_CheckValue(token, "potato"))
+            M_SetDetail(DETAIL_POTATO);
         break;
-        case 1:
+    case 1:
+        M_SetSizeDisplay(M_GetNumericValue(token));
         break;
-        case 2:
+    case 2:
         break;
-        case 3:
+    case 3:
         break;
-        case 4:
+    case 4:
         break;
-        case 5:
+    case 5:
         break;
-        case 6:
+    case 6:
         break;
-        case 7:
+    case 7:
         break;
     }
 }
 
-void M_ParseBenchmarkLine(char* line) {
+void M_ParseBenchmarkLine(char *line)
+{
     unsigned int count = 0;
-    char* token = strtok(line, FILE_SEPARATOR);
-    while (token != NULL) {
+    char *token = strtok(line, FILE_SEPARATOR);
+    while (token != NULL)
+    {
         I_Log("Benchmark Token: %s\n", token);
         M_ChangeValueFile(count, token);
         token = strtok(NULL, FILE_SEPARATOR);
@@ -345,22 +352,26 @@ void M_ParseBenchmarkLine(char* line) {
     }
 }
 
-int M_ProcessBenchmarkFile(const char* filename, int lineNumber) {
+int M_ProcessBenchmarkFile(const char *filename, int lineNumber)
+{
 
     char buffer[1024];
     int currentLine = 0;
 
-    FILE* file = fopen(filename, "r");
+    FILE *file = fopen(filename, "r");
 
-    if (file == NULL) {
+    if (file == NULL)
+    {
         I_Log("Benchmark read file error\n");
         return 0;
     }
 
     fgets(buffer, sizeof(buffer), file); // Skip first line
 
-    while (fgets(buffer, sizeof(buffer), file) != NULL) {
-        if (currentLine == lineNumber) {
+    while (fgets(buffer, sizeof(buffer), file) != NULL)
+    {
+        if (currentLine == lineNumber)
+        {
             I_Log("Benchmark Parse line: %d\n", currentLine);
             M_ParseBenchmarkLine(buffer);
             break;
