@@ -1404,8 +1404,6 @@ void G_SaveFrametimeResult(unsigned int start, unsigned int count)
 {
     FILE *logFile = fopen(FRAMETIME_FILE, "a");
 
-    //I_Log("start %u, count %u\n", start, count);
-
     if (logFile)
     {
         unsigned int counter = 0;

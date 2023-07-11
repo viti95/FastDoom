@@ -2867,8 +2867,6 @@ void M_FinishBenchmark(void)
     case BENCHMARK_FILE:
         benchmark_number++;
 
-        I_Log("Benchmark current number: %u\n", benchmark_number);
-
         if (benchmark_number == benchmark_total)
         {
             benchmark_number = 0;

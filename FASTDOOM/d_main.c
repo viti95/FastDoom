@@ -1345,10 +1345,6 @@ void D_DoomMain(void)
             benchmark_total = D_FileGetFirstInteger(myargv[p + 3]);
             benchmark_type = BENCHMARK_FILE;
             sprintf(benchmark_file, "%s", myargv[p + 3]);
-
-            I_Log("Benchmark total: %d\n", benchmark_total);
-            I_Log("Benchmark type: %u\n", benchmark_type);
-            I_Log("Benchmark file: %s\n", benchmark_file);
         }
         if(!strcmp(myargv[p + 1], "single"))
         {

@@ -294,8 +294,6 @@ void M_UpdateSettingsNormal(void)
 
 int M_CheckValue(char *check, char *compare)
 {
-    I_Log("Check: %s, Compare %s\n", check, compare);
-
     if (strcasecmp(check, compare) == 0)
         return 1;
 
@@ -309,8 +307,6 @@ int M_GetNumericValue(char *value)
 
 void M_ChangeValueFile(unsigned int position, char *token)
 {
-    I_Log("Benchmark change value: %u, %s\n", position, token);
-
     switch (position)
     {
     // Detail
@@ -405,7 +401,6 @@ void M_ParseBenchmarkLine(char *line)
     char *token = strtok(line, FILE_SEPARATOR);
     while (token != NULL)
     {
-        I_Log("Benchmark Token: %s\n", token);
         M_ChangeValueFile(count, token);
         token = strtok(NULL, FILE_SEPARATOR);
         count++;
@@ -422,7 +417,6 @@ int M_ProcessBenchmarkFile(const char *filename, int lineNumber)
 
     if (file == NULL)
     {
-        I_Log("Benchmark read file error\n");
         return 0;
     }
 
@@ -432,7 +426,6 @@ int M_ProcessBenchmarkFile(const char *filename, int lineNumber)
     {
         if (currentLine == lineNumber)
         {
-            I_Log("Benchmark Parse line: %d\n", currentLine);
             M_ParseBenchmarkLine(buffer);
             break;
         }
@@ -446,14 +439,11 @@ int M_ProcessBenchmarkFile(const char *filename, int lineNumber)
 
 void M_UpdateSettingsFile(void)
 {
-    I_Log("Benchmark update from file\n");
     M_ProcessBenchmarkFile(benchmark_file, benchmark_number);
 }
 
 void M_UpdateSettings(void)
 {
-    I_Log("Benchmark update settings\n");
-
     switch (benchmark_type)
     {
     case BENCHMARK_PHILS:

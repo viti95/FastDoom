@@ -2,7 +2,7 @@
 
 #define LOG_ENABLED 1
 
-#if (LOG_ENABLED == 1)
+#if (LOG_ENABLED == 0)
 
 void I_Log(const char *format, ...)
 {
