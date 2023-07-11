@@ -313,6 +313,7 @@ void M_ChangeValueFile(unsigned int position, char *token)
 
     switch (position)
     {
+    // Detail
     case 0:
         if (M_CheckValue(token, "high"))
             M_SetDetail(DETAIL_HIGH);
@@ -321,20 +322,67 @@ void M_ChangeValueFile(unsigned int position, char *token)
         if (M_CheckValue(token, "potato"))
             M_SetDetail(DETAIL_POTATO);
         break;
+    // Size
     case 1:
         M_SetSizeDisplay(M_GetNumericValue(token));
         break;
+    // Visplanes
     case 2:
+        if (M_CheckValue(token, "default"))
+            M_SetVisplaneDetail(VISPLANES_NORMAL);
+        if (M_CheckValue(token, "flat"))
+            M_SetVisplaneDetail(VISPLANES_FLAT);
+        if (M_CheckValue(token, "flatter"))
+            M_SetVisplaneDetail(VISPLANES_FLATTER);
         break;
+    // Sky
     case 3:
+        if (M_CheckValue(token, "default"))
+            M_SetSkyDetail(false);
+        if (M_CheckValue(token, "flat"))
+            M_SetSkyDetail(true);
         break;
+    // Sprites
     case 4:
+        if (M_CheckValue(token, "far"))
+            M_SetSpriteCulling(false);
+        if (M_CheckValue(token, "near"))
+            M_SetSpriteCulling(true);
         break;
+    // Show FPS
     case 5:
+        if (M_CheckValue(token, "nofps"))
+            M_SetShowFPS(false);
+        if (M_CheckValue(token, "fps"))
+            M_SetShowFPS(true);
         break;
+    // Melting
     case 6:
+        if (M_CheckValue(token, "nomelt"))
+            M_SetNoMelting(true);
+        if (M_CheckValue(token, "melt"))
+            M_SetNoMelting(false);
         break;
+    // CPU
     case 7:
+        if (M_CheckValue(token, "386sx"))
+            M_SetCPU(INTEL_386SX);
+        if (M_CheckValue(token, "386dx"))
+            M_SetCPU(INTEL_386DX);
+        if (M_CheckValue(token, "i486"))
+            M_SetCPU(INTEL_486);
+        if (M_CheckValue(token, "pentium"))
+            M_SetCPU(INTEL_PENTIUM);
+        if (M_CheckValue(token, "k5"))
+            M_SetCPU(AMD_K5);
+        if (M_CheckValue(token, "cy386"))
+            M_SetCPU(CYRIX_386DLC);
+        if (M_CheckValue(token, "cy486"))
+            M_SetCPU(CYRIX_486);
+        if (M_CheckValue(token, "cy5x86"))
+            M_SetCPU(CYRIX_5X86);
+        if (M_CheckValue(token, "umc486"))
+            M_SetCPU(UMC_GREEN_486);
         break;
     }
 }
