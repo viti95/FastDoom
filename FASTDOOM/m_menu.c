@@ -1227,7 +1227,7 @@ void M_ChangeBenchmarkType(int choice)
     case 1:
         benchmark_type++;
 
-        if (benchmark_type == NUM_BENCHMARK)
+        if (benchmark_type == BENCHMARK_FILE)
             benchmark_type = BENCHMARK_SINGLE;
         break;
     }
