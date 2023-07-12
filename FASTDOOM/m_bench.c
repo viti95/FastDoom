@@ -89,6 +89,7 @@ void M_SetCPU(int value)
 {
     selectedCPU = value;
     R_ExecuteSetViewSize();
+    R_SetViewSize(screenblocks, detailLevel);
 }
 
 void M_SetInvisibleDetail(int value)
