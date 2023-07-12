@@ -1224,6 +1224,28 @@ int D_FileGetFirstInteger(const char* filename) {
     return firstInteger;
 }
 
+void D_GetListBenchFiles(void) {
+    struct find_t ffblk;
+    char buscar[100];
+    char path[100];
+
+    strcpy(path, "BENCH");
+    strcat(path, "\\*.*");
+
+    if (_dos_findfirst(path, _A_ARCH, &ffblk) == 0) {
+        do {
+            if (!(ffblk.attrib & _A_SUBDIR)) {
+                if (strstr(ffblk.name, "BNC") != NULL) {
+                    strcpy(buscar, "BENCH");
+                    strcat(buscar, "\\");
+                    strcat(buscar, ffblk.name);
+                    I_Log("%s\n", buscar);
+                }
+            }
+        } while (_dos_findnext(&ffblk) == 0);
+    }
+}
+
 //
 // D_DoomMain
 //
@@ -1240,6 +1262,9 @@ void D_DoomMain(void)
     }
 
     IdentifyVersion();
+
+    // Get benchmark files
+    D_GetListBenchFiles();
 
 #if defined(MODE_CGA512)
     CGAmodel = SelectIBMCGA();
