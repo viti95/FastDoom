@@ -1238,22 +1238,22 @@ void M_ChangeBenchmarkType(int choice)
         csv = 0;
         break;
     case BENCHMARK_PHILS:
-        sprintf(benchmark_file, "phils.bnc");
+        sprintf(benchmark_file, "bench\\phils.bnc");
         benchmark_total = D_FileGetFirstInteger(benchmark_file);
         csv = 1;
         break;
     case BENCHMARK_ARCH:
-        sprintf(benchmark_file, "arch.bnc");
+        sprintf(benchmark_file, "bench\\arch.bnc");
         benchmark_total = D_FileGetFirstInteger(benchmark_file);
         csv = 1;
         break;
     case BENCHMARK_NORMAL:
-        sprintf(benchmark_file, "normal.bnc");
+        sprintf(benchmark_file, "bench\\normal.bnc");
         benchmark_total = D_FileGetFirstInteger(benchmark_file);
         csv = 1;
         break;
     case BENCHMARK_QUICK:
-        sprintf(benchmark_file, "quick.bnc");
+        sprintf(benchmark_file, "bench\\quick.bnc");
         benchmark_total = D_FileGetFirstInteger(benchmark_file);
         csv = 1;
         break;

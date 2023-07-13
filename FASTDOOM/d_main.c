@@ -151,8 +151,9 @@ unsigned int benchmark_starttic = 0;
 unsigned int benchmark_type = BENCHMARK_SINGLE;
 unsigned int benchmark_number = 0;
 boolean benchmark_advanced = 0;
-char benchmark_file[13];
+char benchmark_file[20];
 int benchmark_total = 0;
+char *benchmark_files[];
 
 extern int sfxVolume;
 extern int musicVolume;
@@ -1227,12 +1228,8 @@ int D_FileGetFirstInteger(const char* filename) {
 void D_GetListBenchFiles(void) {
     struct find_t ffblk;
     char buscar[100];
-    char path[100];
 
-    strcpy(path, "BENCH");
-    strcat(path, "\\*.*");
-
-    if (_dos_findfirst(path, _A_ARCH, &ffblk) == 0) {
+    if (_dos_findfirst("BENCH\\*.*", _A_ARCH, &ffblk) == 0) {
         do {
             if (!(ffblk.attrib & _A_SUBDIR)) {
                 if (strstr(ffblk.name, "BNC") != NULL) {
