@@ -1021,23 +1021,13 @@ void M_DrawBenchmark(void)
 
     V_WriteTextDirect(10, 10, "Type:");
 
-    switch (benchmark_type)
+    if (benchmark_type == 0)
     {
-    case BENCHMARK_SINGLE:
         V_WriteTextDirect(16, 10, "SINGLE");
-        break;
-    case BENCHMARK_NORMAL:
-        V_WriteTextDirect(16, 10, "NORMAL");
-        break;
-    case BENCHMARK_ARCH:
-        V_WriteTextDirect(16, 10, "ARCH");
-        break;
-    case BENCHMARK_PHILS:
-        V_WriteTextDirect(16, 10, "PHIL'S");
-        break;
-    case BENCHMARK_QUICK:
-        V_WriteTextDirect(16, 10, "QUICK");
-        break;
+    }
+    else
+    {
+        V_WriteTextDirect(16, 10, benchmark_files[benchmark_type - 1]);
     }
 
     V_WriteTextDirect(10, 12, "DEMO1");
@@ -1051,23 +1041,13 @@ void M_DrawBenchmark(void)
 
     V_WriteTextDirect(20, 10, "Type:");
 
-    switch (benchmark_type)
+    if (benchmark_type == 0)
     {
-    case BENCHMARK_SINGLE:
         V_WriteTextDirect(26, 10, "SINGLE");
-        break;
-    case BENCHMARK_NORMAL:
-        V_WriteTextDirect(26, 10, "NORMAL");
-        break;
-    case BENCHMARK_ARCH:
-        V_WriteTextDirect(26, 10, "ARCH");
-        break;
-    case BENCHMARK_PHILS:
-        V_WriteTextDirect(26, 10, "PHIL'S");
-        break;
-    case BENCHMARK_QUICK:
-        V_WriteTextDirect(26, 10, "QUICK");
-        break;
+    }
+    else
+    {
+        V_WriteTextDirect(26, 10, benchmark_files[benchmark_type - 1]);
     }
 
     V_WriteTextDirect(20, 12, "DEMO1");
@@ -1083,23 +1063,13 @@ void M_DrawBenchmark(void)
 
     V_WriteTextDirect(20, 20, "Type:");
 
-    switch (benchmark_type)
+    if (benchmark_type == 0)
     {
-    case BENCHMARK_SINGLE:
         V_WriteTextDirect(26, 20, "SINGLE");
-        break;
-    case BENCHMARK_NORMAL:
-        V_WriteTextDirect(26, 20, "NORMAL");
-        break;
-    case BENCHMARK_ARCH:
-        V_WriteTextDirect(26, 20, "ARCH");
-        break;
-    case BENCHMARK_PHILS:
-        V_WriteTextDirect(26, 20, "PHIL'S");
-        break;
-    case BENCHMARK_QUICK:
-        V_WriteTextDirect(26, 20, "QUICK");
-        break;
+    }
+    else
+    {
+        V_WriteTextDirect(26, 20, benchmark_files[benchmark_type - 1]);
     }
 
     V_WriteTextDirect(20, 24, "DEMO1");
@@ -1113,23 +1083,13 @@ void M_DrawBenchmark(void)
 
     M_WriteText(82, 84, "TYPE:");
 
-    switch (benchmark_type)
+    if (benchmark_type == 0)
     {
-    case BENCHMARK_SINGLE:
         M_WriteText(128, 84, "SINGLE");
-        break;
-    case BENCHMARK_NORMAL:
-        M_WriteText(128, 84, "NORMAL");
-        break;
-    case BENCHMARK_ARCH:
-        M_WriteText(128, 84, "ARCH");
-        break;
-    case BENCHMARK_PHILS:
-        M_WriteText(128, 84, "PHIL'S");
-        break;
-    case BENCHMARK_QUICK:
-        M_WriteText(128, 84, "QUICK");
-        break;
+    }
+    else
+    {
+        M_WriteText(128, 84, benchmark_files[benchmark_type - 1]);
     }
 
     M_WriteText(82, 100, "DEMO1");
@@ -1222,41 +1182,25 @@ void M_ChangeBenchmarkType(int choice)
         benchmark_type--;
 
         if (benchmark_type == -1)
-            benchmark_type = BENCHMARK_ARCH;
+            benchmark_type = benchmark_files_num;
         break;
     case 1:
         benchmark_type++;
 
-        if (benchmark_type == BENCHMARK_FILE)
-            benchmark_type = BENCHMARK_SINGLE;
+        if (benchmark_type == benchmark_files_num + 1)
+            benchmark_type = 0;
         break;
     }
 
-    switch (benchmark_type)
+    if (benchmark_type == 0)
     {
-    case BENCHMARK_SINGLE:
         csv = 0;
-        break;
-    case BENCHMARK_PHILS:
-        sprintf(benchmark_file, "bench\\phils.bnc");
+    }
+    else
+    {
+        sprintf(benchmark_file, benchmark_files[benchmark_type - 1]);
         benchmark_total = D_FileGetFirstInteger(benchmark_file);
         csv = 1;
-        break;
-    case BENCHMARK_ARCH:
-        sprintf(benchmark_file, "bench\\arch.bnc");
-        benchmark_total = D_FileGetFirstInteger(benchmark_file);
-        csv = 1;
-        break;
-    case BENCHMARK_NORMAL:
-        sprintf(benchmark_file, "bench\\normal.bnc");
-        benchmark_total = D_FileGetFirstInteger(benchmark_file);
-        csv = 1;
-        break;
-    case BENCHMARK_QUICK:
-        sprintf(benchmark_file, "bench\\quick.bnc");
-        benchmark_total = D_FileGetFirstInteger(benchmark_file);
-        csv = 1;
-        break;
     }
 }
 
@@ -2821,9 +2765,8 @@ void M_ShowBenchmarkCSVMessage(void)
 
 void M_FinishBenchmark(void)
 {
-    switch (benchmark_type)
+    if (benchmark_type == 0)
     {
-    case BENCHMARK_SINGLE:
         if (benchmark_commandline)
         {
             benchmark_number = 0;
@@ -2835,13 +2778,9 @@ void M_FinishBenchmark(void)
             itemOn = 0;
             currentMenu = &BenchmarkResultDef;
         }
-        break;
-
-    case BENCHMARK_QUICK:
-    case BENCHMARK_NORMAL:
-    case BENCHMARK_ARCH:
-    case BENCHMARK_PHILS:
-    case BENCHMARK_FILE:
+    }
+    else
+    {
         benchmark_number++;
 
         if (benchmark_number == benchmark_total)
@@ -2853,7 +2792,6 @@ void M_FinishBenchmark(void)
         {
             M_BenchmarkRunDemo();
         }
-        break;
     }
 }
 

@@ -291,14 +291,6 @@ void M_UpdateSettingsFile(void)
 
 void M_UpdateSettings(void)
 {
-    switch (benchmark_type)
-    {
-    case BENCHMARK_QUICK:
-    case BENCHMARK_NORMAL:
-    case BENCHMARK_ARCH:
-    case BENCHMARK_PHILS:
-    case BENCHMARK_FILE:
+    if (benchmark_type > 0)
         M_UpdateSettingsFile();
-        break;
-    }
 }

@@ -148,12 +148,13 @@ unsigned int benchmark_realtics = 0;
 unsigned int benchmark_gametics = 0;
 unsigned int benchmark_resultfps = 0;
 unsigned int benchmark_starttic = 0;
-unsigned int benchmark_type = BENCHMARK_SINGLE;
+unsigned int benchmark_type = 0;
 unsigned int benchmark_number = 0;
 boolean benchmark_advanced = 0;
 char benchmark_file[20];
 int benchmark_total = 0;
 char **benchmark_files;
+unsigned int benchmark_files_num = 0;
 
 extern int sfxVolume;
 extern int musicVolume;
@@ -1240,6 +1241,7 @@ void D_GetListBenchFiles(void) {
     //I_Log("Total: %u\n", count);
 
     // Reserve memory for pointers
+    benchmark_files_num = count;
     benchmark_files = malloc(count * sizeof(char *));
 
     count = 0;
@@ -1373,11 +1375,11 @@ void D_DoomMain(void)
         if(!strcmp(myargv[p + 1], "file"))
         {
             benchmark_total = D_FileGetFirstInteger(myargv[p + 3]);
-            benchmark_type = BENCHMARK_FILE;
+            benchmark_type = 1;
             sprintf(benchmark_file, "%s", myargv[p + 3]);
         }
         if(!strcmp(myargv[p + 1], "single"))
-            benchmark_type = BENCHMARK_SINGLE;
+            benchmark_type = 0;
     }   
 
     disableDemo = M_CheckParm("-disabledemo");

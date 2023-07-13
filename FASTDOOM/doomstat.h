@@ -266,6 +266,8 @@ extern unsigned int benchmark_number;
 extern boolean benchmark_advanced;
 extern char benchmark_file[20];
 extern int benchmark_total;
+extern char **benchmark_files;
+extern unsigned int benchmark_files_num;
 
 // Needed to store the number of the dummy sky flat.
 // Used for rendering,
