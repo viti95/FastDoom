@@ -1242,7 +1242,7 @@ void D_GetListBenchFiles(void) {
 
     // Reserve memory for pointers
     benchmark_files_num = count;
-    benchmark_files = malloc(count * sizeof(char *));
+    benchmark_files = Z_MallocUnowned(count * sizeof(char *), PU_STATIC);
 
     count = 0;
 
@@ -1253,7 +1253,7 @@ void D_GetListBenchFiles(void) {
                 strcpy(search, "BENCH\\");
                 strcat(search, ffblk.name);
                 //I_Log("%s\n", search);
-                benchmark_files[count] = malloc(20 * sizeof(char));
+                benchmark_files[count] = Z_MallocUnowned(20 * sizeof(char), PU_STATIC);
                 strcpy(benchmark_files[count], search);
                 //I_Log("Benchmark_files[%u]: %s\n", count, benchmark_files[count]);
                 count++;
@@ -1278,9 +1278,6 @@ void D_DoomMain(void)
     }
 
     IdentifyVersion();
-
-    // Get benchmark files
-    D_GetListBenchFiles();
 
 #if defined(MODE_CGA512)
     CGAmodel = SelectIBMCGA();
@@ -1588,6 +1585,9 @@ void D_DoomMain(void)
 
     printf("Z_Init: Init zone memory allocation daemon. \n");
     Z_Init();
+
+    // Get benchmark files
+    D_GetListBenchFiles();
 
     printf("W_Init: Init WADfiles.\n");
     W_InitMultipleFiles(wadfiles);
