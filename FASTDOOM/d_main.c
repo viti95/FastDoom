@@ -153,7 +153,7 @@ unsigned int benchmark_number = 0;
 boolean benchmark_advanced = 0;
 char benchmark_file[20];
 int benchmark_total = 0;
-char *benchmark_files[];
+char **benchmark_files;
 
 extern int sfxVolume;
 extern int musicVolume;
@@ -1231,24 +1231,30 @@ void D_GetListBenchFiles(void) {
     unsigned int count = 0;
 
     // Get count
-    if (_dos_findfirst("BENCH\\*.*", _A_ARCH, &ffblk) == 0) {
+    if (_dos_findfirst("BENCH\\*.BNC", _A_ARCH, &ffblk) == 0) {
         do {
             count++;
         } while (_dos_findnext(&ffblk) == 0);
     }
 
-    I_Log("Total: %u\n", count);
+    //I_Log("Total: %u\n", count);
+
+    // Reserve memory for pointers
+    benchmark_files = malloc(count * sizeof(char *));
+
+    count = 0;
 
     // Read files
-    if (_dos_findfirst("BENCH\\*.*", _A_ARCH, &ffblk) == 0) {
+    if (_dos_findfirst("BENCH\\*.BNC", _A_ARCH, &ffblk) == 0) {
         do {
-            count++;
             if (!(ffblk.attrib & _A_SUBDIR)) {
-                if (strstr(ffblk.name, "BNC") != NULL) {
-                    strcpy(search, "BENCH\\");
-                    strcat(search, ffblk.name);
-                    I_Log("%s\n", search);
-                }
+                strcpy(search, "BENCH\\");
+                strcat(search, ffblk.name);
+                //I_Log("%s\n", search);
+                benchmark_files[count] = malloc(20 * sizeof(char));
+                strcpy(benchmark_files[count], search);
+                //I_Log("Benchmark_files[%u]: %s\n", count, benchmark_files[count]);
+                count++;
             }
         } while (_dos_findnext(&ffblk) == 0);
     }
