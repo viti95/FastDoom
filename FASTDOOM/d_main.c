@@ -1227,16 +1227,27 @@ int D_FileGetFirstInteger(const char* filename) {
 
 void D_GetListBenchFiles(void) {
     struct find_t ffblk;
-    char buscar[100];
+    char search[20];
+    unsigned int count = 0;
 
+    // Get count
     if (_dos_findfirst("BENCH\\*.*", _A_ARCH, &ffblk) == 0) {
         do {
+            count++;
+        } while (_dos_findnext(&ffblk) == 0);
+    }
+
+    I_Log("Total: %u\n", count);
+
+    // Read files
+    if (_dos_findfirst("BENCH\\*.*", _A_ARCH, &ffblk) == 0) {
+        do {
+            count++;
             if (!(ffblk.attrib & _A_SUBDIR)) {
                 if (strstr(ffblk.name, "BNC") != NULL) {
-                    strcpy(buscar, "BENCH");
-                    strcat(buscar, "\\");
-                    strcat(buscar, ffblk.name);
-                    I_Log("%s\n", buscar);
+                    strcpy(search, "BENCH\\");
+                    strcat(search, ffblk.name);
+                    I_Log("%s\n", search);
                 }
             }
         } while (_dos_findnext(&ffblk) == 0);
