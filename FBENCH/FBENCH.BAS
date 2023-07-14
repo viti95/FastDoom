@@ -87,7 +87,7 @@ Next
 print 
 Input "     Please select one: ", inputVal
 
-benchmark_selection = ".\BENCH\" + benchmark_files(ValInt(inputVal))
+benchmark_selection = "BENCH\" + benchmark_files(ValInt(inputVal))
 
 cleanScreen()
 
@@ -170,5 +170,6 @@ Dim f As Integer
 f = FreeFile
 
 Open "bench2.bat" For Output As #f
-Put #f, , benchmark_executable + " " + arguments
+Put #f, , lcase(benchmark_executable + " " + arguments)
+Put #f, , !"\n"
 Close
