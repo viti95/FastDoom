@@ -155,6 +155,7 @@ char benchmark_file[20];
 int benchmark_total = 0;
 char **benchmark_files;
 unsigned int benchmark_files_num = 0;
+unsigned int benchmark_total_tics = 0;
 
 extern int sfxVolume;
 extern int musicVolume;
@@ -1659,23 +1660,9 @@ void D_DoomMain(void)
         M_BenchmarkRunDemo();
 
         if(benchmark_advanced)
-        {
-            unsigned int i;
-            frametime = (unsigned int *)Z_MallocUnowned(20000 * sizeof(unsigned int), PU_STATIC);
-            
-            for (i = 0; i < 20000; i++)
-            {
-                frametime[i] = 0;
-            }
-
-            frametime_position = 0;
-
             D_DoomLoopBenchmark();
-        }
         else
-        {
             D_DoomLoop();
-        }
     }
 
     p = M_CheckParm("-loadgame");

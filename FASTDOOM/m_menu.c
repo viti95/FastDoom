@@ -1212,6 +1212,24 @@ void M_BenchmarkRunDemo(void)
 
     M_UpdateSettings();
 
+    if (benchmark_advanced && frametime == NULL)
+    {
+        unsigned int i;
+
+        // Get tics from demo
+        benchmark_total_tics = G_GetDemoTicks(demofile) + 10;
+
+        // Alloc memory for frametimes
+        frametime = (unsigned int *)Z_MallocUnowned(benchmark_total_tics * sizeof(unsigned int), PU_STATIC);
+            
+        for (i = 0; i < benchmark_total_tics; i++)
+        {
+            frametime[i] = 0;
+        }
+
+        frametime_position = 0;
+    }
+
     G_TimeDemo(demofile);
 
     benchmark_starttic = gametic;

@@ -66,10 +66,11 @@
 
 #include "options.h"
 
-//#include "i_log.h"
+#include "i_log.h"
 
 #define SAVEGAMESIZE 0x2c000
 #define SAVESTRINGSIZE 24
+#define DEMOMARKER 0x80
 
 void G_CheckDemoStatus(void);
 void G_ReadDemoTiccmd(ticcmd_t *cmd);
@@ -1086,7 +1087,6 @@ void G_InitNew(skill_t skill,
 //
 // DEMO RECORDING
 //
-#define DEMOMARKER 0x80
 
 void G_ReadDemoTiccmd(ticcmd_t *cmd)
 {
@@ -1177,6 +1177,42 @@ void G_DeferedPlayDemo(char *name)
         defdemoname = name;
         gameaction = ga_playdemo;
     }
+}
+
+unsigned int G_GetDemoTicks(char *demofile)
+{
+    unsigned int count;
+
+    demobuffer = demo_p = W_CacheLumpName(demofile, PU_STATIC);
+    
+    // G_DoPlayDemo
+    *demo_p++;
+    *demo_p++;
+    *demo_p++;
+    *demo_p++;
+    *demo_p++;
+    *demo_p++;
+    *demo_p++;
+    *demo_p++;
+    *demo_p++;
+    *demo_p++;
+    *demo_p++;
+    *demo_p++;
+    *demo_p++;
+
+    // Loop CMD ticks
+    while(*demo_p != DEMOMARKER)
+    {
+        count++;
+        *demo_p++;
+        *demo_p++;
+        *demo_p++;
+        *demo_p++;
+    }
+
+    Z_ChangeTag(demobuffer, PU_CACHE);
+
+    return count;
 }
 
 void G_DoPlayDemo(void)
@@ -1516,7 +1552,7 @@ void G_CheckDemoStatus(void)
                 // Cleanup frametimes
                 frametime_position = 0;
                 
-                for (i = 0; i < 20000; i++)
+                for (i = 0; i < benchmark_total_tics; i++)
                 {
                     frametime[i] = 0;
                 }

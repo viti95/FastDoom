@@ -60,4 +60,6 @@ void G_WorldDone(void);
 void G_Ticker(void);
 void G_Responder(void);
 
+unsigned int G_GetDemoTicks(char *demofile);
+
 #endif
