@@ -31,7 +31,7 @@ WEND
 
 cleanScreen()
 
-print "     Please select an IWAD"
+print "     Choose an IWAD"
 print
 
 count = 0
@@ -52,17 +52,17 @@ count = 0
 
 For position As Integer = LBound(benchmark_wads) To UBound(benchmark_wads)
     count += 1
-    Print "     " + Str(count) + ": " + benchmark_wads(position)
+    Print "     " + Str(count) + ") " + benchmark_wads(position)
 Next
 
 print 
-Input "     Please select one: ", inputVal
+Input "     Please enter option: ", inputVal
 
 benchmark_wad = benchmark_wads(ValInt(inputVal))
 
 cleanScreen()
 
-print "     Please select a benchmark"
+print "     Choose a benchmark"
 print
 
 count = 0
@@ -81,26 +81,24 @@ count = 0
 
 For position As Integer = LBound(benchmark_files) To UBound(benchmark_files)
     count += 1
-    Print "     " + Str(count) + ": " + benchmark_files(position)
+    Print "     " + Str(count) + ") " + benchmark_files(position)
 Next
 
 print 
-Input "     Please select one: ", inputVal
+Input "     Please enter option: ", inputVal
 
 benchmark_selection = "BENCH\" + benchmark_files(ValInt(inputVal))
 
 cleanScreen()
 
-print "     Now select a demo file:"
+print "     Choose a demo file (or type any demo you want)"
 print
-print "     1: DEMO1"
-print "     2: DEMO2"
-print "     3: DEMO3"
-print "     4: DEMO4"
-print
-print "     or type any demo you want"
+print "     1) DEMO1"
+print "     2) DEMO2"
+print "     3) DEMO3"
+print "     4) DEMO4"
 print 
-Input "     Please select one: ", inputVal
+Input "     Please enter option: ", inputVal
 
 if inputVal = "1" then
     benchmark_demo = "demo1"
@@ -116,7 +114,7 @@ endif
 
 cleanScreen()
 
-print "     Now select a FastDoom executable:"
+print "     Choose a FastDoom executable"
 print
 
 count = 0
@@ -134,22 +132,22 @@ count = 0
 
 For position As Integer = LBound(benchmark_executables) To UBound(benchmark_executables)
     count += 1
-    Print "     " + Str(count) + ": " + benchmark_executables(position)
+    Print "     " + Str(count) + ") " + benchmark_executables(position)
 Next
 
 print 
-Input "     Please select one: ", inputVal
+Input "     Please enter option: ", inputVal
 
 benchmark_executable = benchmark_executables(ValInt(inputVal))
 
 cleanScreen()
 
-print "     Please select additional options"
+print "     Choose additional options"
 print
-print "     A: Advanced benchmark (frametimes)"
+print "     A) Advanced benchmark (frametimes)"
 print
 
-input "     Please select one: ", inputVal
+input "     Please enter option: ", inputVal
 
 if inputVal = "A" or inputVal = "a" then
     benchmark_options = "-advanced"
