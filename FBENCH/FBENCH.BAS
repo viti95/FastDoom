@@ -25,6 +25,10 @@ sub cleanScreen()
     
 end sub
 
+'Flush keyboard
+WHILE INKEY$ <> ""
+WEND
+
 cleanScreen()
 
 print "     Please select an IWAD"
@@ -136,7 +140,7 @@ Next
 print 
 Input "     Please select one: ", inputVal
 
-benchmark_executable = ".\" + benchmark_executables(ValInt(inputVal))
+benchmark_executable = benchmark_executables(ValInt(inputVal))
 
 cleanScreen()
 
@@ -166,7 +170,5 @@ Dim f As Integer
 f = FreeFile
 
 Open "bench2.bat" For Output As #f
-Put #f, , "@echo off"
-Put #f, , !"\n"
 Put #f, , benchmark_executable + " " + arguments
 Close
