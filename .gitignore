@@ -13,3 +13,12 @@
 
 #VSCODE
 .vscode/*
+
+#FREEBASIC
+FBASIC/*
+
+#UPX
+UPX/*
+
+#CWSDPMI
+CWSDPMI/*
