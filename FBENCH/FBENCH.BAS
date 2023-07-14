@@ -6,6 +6,8 @@ Dim benchmark_demo as String
 Dim benchmark_files() As String
 Dim benchmark_executables() as String
 Dim benchmark_executable as String
+Dim benchmark_wads() as String
+Dim benchmark_wad as String
 Dim benchmark_options as String
 
 Dim inputVal As String
@@ -25,6 +27,37 @@ end sub
 
 cleanScreen()
 
+print "     Please select an IWAD"
+print
+
+count = 0
+
+filename = Dir(".\*.WAD")
+Do While Len( filename ) > 0
+
+    if InStr(filename, "MODE") = 0 then
+        count += 1
+        ReDim preserve benchmark_wads(1 To count) As String
+        benchmark_wads(count) = filename
+    endif
+
+    filename = Dir( )
+Loop
+
+count = 0
+
+For position As Integer = LBound(benchmark_wads) To UBound(benchmark_wads)
+    count += 1
+    Print "     " + Str(count) + ": " + benchmark_wads(position)
+Next
+
+print 
+Input "     Please select one: ", inputVal
+
+benchmark_wad = benchmark_wads(ValInt(inputVal))
+
+cleanScreen()
+
 print "     Please select a benchmark"
 print
 
@@ -33,7 +66,6 @@ count = 0
 filename = Dir(".\BENCH\*.BNC")
 Do While Len( filename ) > 0
     count += 1
-    'Print filename
 
     ReDim preserve benchmark_files(1 To count) As String
     benchmark_files(count) = filename
@@ -115,14 +147,14 @@ print
 
 input "     Please select one: ", inputVal
 
-if inputVal = "A" then
+if inputVal = "A" or inputVal = "a" then
     benchmark_options = "-advanced"
 else
     benchmark_options = ""
 endif
 
 Dim arguments as String
-arguments = "-benchmark file " + benchmark_demo + " " + benchmark_selection + " " + benchmark_options
+arguments = "-iwad " + benchmark_wad + " -benchmark file " + benchmark_demo + " " + benchmark_selection + " " + benchmark_options
 
 'print benchmark_executable + " " + arguments
 
