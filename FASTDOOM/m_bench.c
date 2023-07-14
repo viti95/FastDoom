@@ -137,7 +137,7 @@ void M_SetCSV(boolean value)
     csv = value;
 }
 
-#define FILE_SEPARATOR ","
+#define FILE_SEPARATOR ",\n"
 
 int M_CheckValue(char *check, char *compare)
 {
@@ -256,7 +256,6 @@ void M_ParseBenchmarkLine(char *line)
 
 int M_ProcessBenchmarkFile(const char *filename, int lineNumber)
 {
-
     char buffer[1024];
     int currentLine = 0;
 

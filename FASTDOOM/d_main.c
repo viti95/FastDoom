@@ -1239,8 +1239,6 @@ void D_GetListBenchFiles(void) {
         } while (_dos_findnext(&ffblk) == 0);
     }
 
-    //I_Log("Total: %u\n", count);
-
     // Reserve memory for pointers
     benchmark_files_num = count;
     benchmark_files = Z_MallocUnowned(count * sizeof(char *), PU_STATIC);
@@ -1253,10 +1251,8 @@ void D_GetListBenchFiles(void) {
             if (!(ffblk.attrib & _A_SUBDIR)) {
                 strcpy(search, "BENCH\\");
                 strcat(search, ffblk.name);
-                //I_Log("%s\n", search);
                 benchmark_files[count] = Z_MallocUnowned(20 * sizeof(char), PU_STATIC);
                 strcpy(benchmark_files[count], search);
-                //I_Log("Benchmark_files[%u]: %s\n", count, benchmark_files[count]);
                 count++;
             }
         } while (_dos_findnext(&ffblk) == 0);
