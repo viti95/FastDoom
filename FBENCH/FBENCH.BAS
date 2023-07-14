@@ -173,3 +173,5 @@ Open "bench2.bat" For Output As #f
 Put #f, , lcase(benchmark_executable + " " + arguments)
 Put #f, , !"\n"
 Close
+
+cls
