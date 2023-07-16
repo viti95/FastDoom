@@ -148,11 +148,6 @@ END IF
 DIM arguments AS STRING
 arguments = "-iwad " + benchmarkWad + " -benchmark file " + benchmarkDemo + " " + benchmarkSelection + " " + benchmarkOptions
 
-'print benchmarkExecutable + " " + arguments
-
-'Run FDOOM.EXE crashes with a page fault (¿?)
-'run(benchmarkExecutable, arguments)
-
 DIM text AS STRING
 
 text = LCASE$(benchmarkExecutable + " " + arguments)
