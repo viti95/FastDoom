@@ -1,175 +1,176 @@
-Dim filename As String
-Dim count As UINTEGER
+DECLARE SUB cleanScreen ()
+DIM filename AS STRING
+DIM count AS INTEGER
 
-Dim benchmark_selection as String
-Dim benchmark_demo as String
-Dim benchmark_files() As String
-Dim benchmark_executables() as String
-Dim benchmark_executable as String
-Dim benchmark_wads() as String
-Dim benchmark_wad as String
-Dim benchmark_options as String
+DIM benchmarkSelection AS STRING
+DIM benchmarkDemo AS STRING
+DIM benchmarkFiles(1 TO 255) AS STRING
+DIM benchmarkFilesTotal AS INTEGER
+DIM benchmarkExecutables(1 TO 255) AS STRING
+DIM benchmarkExecutablesTotal AS INTEGER
+DIM benchmarkExecutable AS STRING
+DIM benchmarkWads(1 TO 255) AS STRING
+DIM benchmarkWadsTotal AS INTEGER
+DIM benchmarkWad AS STRING
+DIM benchmarkOptions AS STRING
 
-Dim inputVal As String
-
-sub cleanScreen()
-	cls
-
-    print
-    print "   ##########################################################################"
-    print "   #                                                                        #"
-    print "   #                           FASTDOOM BENCHMARK                           #"
-    print "   #                                                                        #"
-    print "   ##########################################################################"
-    print
-    
-end sub
+DIM inputVal AS STRING
+Dim route as String
 
 'Flush keyboard
 WHILE INKEY$ <> ""
 WEND
 
-cleanScreen()
+CALL cleanScreen
 
-print "     Choose an IWAD"
-print
-
-count = 0
-
-filename = Dir(".\*.WAD")
-Do While Len( filename ) > 0
-
-    if InStr(filename, "MODE") = 0 then
-        count += 1
-        ReDim preserve benchmark_wads(1 To count) As String
-        benchmark_wads(count) = filename
-    endif
-
-    filename = Dir( )
-Loop
+PRINT "     Choose an IWAD"
+PRINT
 
 count = 0
 
-For position As Integer = LBound(benchmark_wads) To UBound(benchmark_wads)
-    count += 1
-    Print "     " + Str(count) + ") " + benchmark_wads(position)
-Next
+route = "\*.WAD"
 
-print 
-Input "     Please enter option: ", inputVal
+filename = DIR$(route)
+DO WHILE LEN(filename) > 0
 
-benchmark_wad = benchmark_wads(ValInt(inputVal))
+    IF INSTR(filename, "MODE") = 0 THEN
+	count = count + 1
+	benchmarkWads(count) = filename
+    END IF
 
-cleanScreen()
+    filename = DIR$
+LOOP
 
-print "     Choose a benchmark"
-print
+benchmarkWadsTotal = count
 
-count = 0
+FOR position = 1 TO benchmarkWadsTotal
+    PRINT "     " + STR$(position) + ") " + benchmarkWads(position)
+NEXT
 
-filename = Dir(".\BENCH\*.BNC")
-Do While Len( filename ) > 0
-    count += 1
+PRINT
+INPUT "     Please enter option: ", inputVal
 
-    ReDim preserve benchmark_files(1 To count) As String
-    benchmark_files(count) = filename
+benchmarkWad = benchmarkWads(VAL(inputVal))
 
-    filename = Dir( )
-Loop
+CALL cleanScreen
 
-count = 0
-
-For position As Integer = LBound(benchmark_files) To UBound(benchmark_files)
-    count += 1
-    Print "     " + Str(count) + ") " + benchmark_files(position)
-Next
-
-print 
-Input "     Please enter option: ", inputVal
-
-benchmark_selection = "BENCH\" + benchmark_files(ValInt(inputVal))
-
-cleanScreen()
-
-print "     Choose a demo file (or type any demo you want)"
-print
-print "     1) DEMO1"
-print "     2) DEMO2"
-print "     3) DEMO3"
-print "     4) DEMO4"
-print 
-Input "     Please enter option: ", inputVal
-
-if inputVal = "1" then
-    benchmark_demo = "demo1"
-elseif inputVal = "2" then
-    benchmark_demo = "demo2"
-elseif inputVal = "3" then
-    benchmark_demo = "demo3"
-elseif inputVal = "4" then
-    benchmark_demo = "demo4"
-else
-    benchmark_demo = inputVal
-endif
-
-cleanScreen()
-
-print "     Choose a FastDoom executable"
-print
+PRINT "     Choose a benchmark"
+PRINT
 
 count = 0
 
-filename = Dir(".\FDOOM*.EXE")
-Do While Len( filename ) > 0
-    count += 1
-    ReDim preserve benchmark_executables(1 To count) As String
-    benchmark_executables(count) = filename
 
-    filename = Dir( )
-Loop
+route = "\BENCH\*.BNC"
+
+filename = DIR$(route)
+DO WHILE LEN(filename) > 0
+    count = count + 1
+    benchmarkFiles(count) = filename
+    filename = DIR$
+LOOP
+
+benchmarkFilesTotal = count
+
+FOR position = 1 TO benchmarkFilesTotal
+    PRINT "     " + STR$(position) + ") " + benchmarkFiles(position)
+NEXT
+
+PRINT
+INPUT "     Please enter option: ", inputVal
+
+benchmarkSelection = "BENCH\" + benchmarkFiles(VAL(inputVal))
+
+CALL cleanScreen
+
+PRINT "     Choose a demo file (or type any demo you want)"
+PRINT
+PRINT "      1) DEMO1"
+PRINT "      2) DEMO2"
+PRINT "      3) DEMO3"
+PRINT "      4) DEMO4"
+PRINT
+INPUT "     Please enter option: ", inputVal
+
+IF inputVal = "1" THEN
+    benchmarkDemo = "demo1"
+ELSEIF inputVal = "2" THEN
+    benchmarkDemo = "demo2"
+ELSEIF inputVal = "3" THEN
+    benchmarkDemo = "demo3"
+ELSEIF inputVal = "4" THEN
+    benchmarkDemo = "demo4"
+ELSE
+    benchmarkDemo = inputVal
+END IF
+
+CALL cleanScreen
+
+PRINT "     Choose a FastDoom executable"
+PRINT
 
 count = 0
 
-For position As Integer = LBound(benchmark_executables) To UBound(benchmark_executables)
-    count += 1
-    Print "     " + Str(count) + ") " + benchmark_executables(position)
-Next
+route = "\FDOOM*.EXE"
 
-print 
-Input "     Please enter option: ", inputVal
+filename = DIR$(route)
+DO WHILE LEN(filename) > 0
+    count = count + 1
+    benchmarkExecutables(count) = filename
+    filename = DIR$
+LOOP
 
-benchmark_executable = benchmark_executables(ValInt(inputVal))
+benchmarkExecutablesTotal = count
 
-cleanScreen()
+FOR position = 1 TO benchmarkExecutablesTotal
+    PRINT "     " + STR$(position) + ") " + benchmarkExecutables(position)
+NEXT
 
-print "     Choose additional options"
-print
-print "     A) Advanced benchmark (frametimes)"
-print
+PRINT
+INPUT "     Please enter option: ", inputVal
 
-input "     Please enter option: ", inputVal
+benchmarkExecutable = benchmarkExecutables(VAL(inputVal))
 
-if inputVal = "A" or inputVal = "a" then
-    benchmark_options = "-advanced"
-else
-    benchmark_options = ""
-endif
+CALL cleanScreen
 
-Dim arguments as String
-arguments = "-iwad " + benchmark_wad + " -benchmark file " + benchmark_demo + " " + benchmark_selection + " " + benchmark_options
+PRINT "     Choose additional options"
+PRINT
+PRINT "      A) Advanced benchmark (frametimes)"
+PRINT
 
-'print benchmark_executable + " " + arguments
+INPUT "     Please enter option: ", inputVal
+
+IF inputVal = "A" OR inputVal = "a" THEN
+    benchmarkOptions = "-advanced"
+ELSE
+    benchmarkOptions = ""
+END IF
+
+DIM arguments AS STRING
+arguments = "-iwad " + benchmarkWad + " -benchmark file " + benchmarkDemo + " " + benchmarkSelection + " " + benchmarkOptions
+
+'print benchmarkExecutable + " " + arguments
 
 'Run FDOOM.EXE crashes with a page fault (¿?)
-'run(benchmark_executable, arguments)
+'run(benchmarkExecutable, arguments)
 
-Dim f As Integer
+DIM text AS STRING
 
-f = FreeFile
+text = LCASE$(benchmarkExecutable + " " + arguments)
 
-Open "bench2.bat" For Output As #f
-Put #f, , lcase(benchmark_executable + " " + arguments)
-Put #f, , !"\n"
-Close
+OPEN "BENCH2.BAT" FOR OUTPUT AS #1
+PRINT #1, text
+CLOSE
 
-cls
+CLS
+
+SUB cleanScreen
+	CLS
+
+    PRINT
+    PRINT "   ##########################################################################"
+    PRINT "   #                                                                        #"
+    PRINT "   #                           FASTDOOM BENCHMARK                           #"
+    PRINT "   #                                                                        #"
+    PRINT "   ##########################################################################"
+    PRINT  
+END SUB
