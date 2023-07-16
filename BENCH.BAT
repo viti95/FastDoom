@@ -1,4 +1,4 @@
 @echo off
 
-fbench.exe
+fdbench.exe
 bench2.bat

@@ -1,11 +1,11 @@
 # CHANGELOG
 
-## 0.9.7 (?? ??? ????)
+## 0.9.7 (16 Jul 2023)
 * Add CPU selection for different render paths
 * Optimized flat visplane rendering (handcrafted ASM)
 * Optimized column rendering for some CPUs (Ken Silverman)
 * Upgrade FPS display, now it's possible to show FPS on-screen and on a debug card at the same time
-* Debug card port is now selectable on fdoom.cfg file. Full support for 4 digit debug cards.
+* Debug card port is now selectable on fdoom.cfg file. Full support for 4 digit debug cards
 * Fixed issue #148. Now it's possible to use SB-MIDI and Sound Blaster Direct Mode without crashing
 * Upgrade display menu, now it's possible to select options using left/right keys (previous/next)
 * Optimized fuzz column redering (handcrafted ASM)
@@ -13,8 +13,12 @@
 * Optimized backbuffered non-VGA modes. EGA 320x200 16-color mode should be much faster now
 * New in-game menu for benchmarks. Now it's possible to execute multiple benchmarks without reloading the game
 * Automatically detect MDA/Hercules video card in FDSetup
-* Updated bench.bat (new in-game benchmark options)
+* Updated bench.bat (new in-game benchmark options). Also new FDBench executable to make easier to launch benchmarks from commmandline (FDBENCH.EXE)
 * New advanced benchmark, which stores frametimes on file ftime.csv. Also calculates 1% low and 0.1% low frametimes, which are saved on bench.csv file. Now you will be able to create videos like Digital Foundry :D
+* New commandline parameter to execute benchmarks:
+    * Single benchmark with current parameters: -benchmark single [demofile] [-advanced]
+    * Multiple benchmark: -benchmark file [demofile] [benchmarkfile] [-advanced]
+    * [-advanced] is optional (frametimes)
 
 ## 0.9.6 (13 May 2023)
 * Add executable filename to benchmark (CSV)

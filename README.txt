@@ -107,6 +107,7 @@
  * FDOOM512.EXE => FastDoom CGA "512 color" composite mode (80x100)
  * FDOOM400.EXE => FastDoom Sigma Color 400 (320x200, 16 colors)
  * FDSETUP.EXE  => Utility to setup controls and sound cards
+ * FDBENCH.EXE  => Utility to make benchmarks easier to execute
  * BENCH.BAT    => Scripted benchmark, instructions are included in the script
 
  Command line parameters
@@ -135,12 +136,12 @@
  -warp XX => Starts a game level
  -fps => Shows in-game frame rate (frames per second)
  -flatterSpan => Forces visplanes to be rendered as flat colors (depth
-                     illumination is enabled)
+                 illumination is enabled)
  -flatSpan => Forces visplanes to be rendered as flat colors (depth
-                  illumination is disabled)
+              illumination is disabled)
  -flatsky => Renders game skies as a flat color
  -flatInv => Renders transparent enemies/player/items without fuzzy 
-                 transparency
+             transparency
  -flatsaturn => Renders transparent enemies/player/items with a half-tone
             black pattern
  -saturn => Renders transparent enemies/player/items with a half-tone
@@ -184,11 +185,12 @@
                  4 - Final Doom
  -iwad X => Load an IWAD file
  -sbk X => Load a SBK soundfont for AWE32/AWE64 soundcards
- -benchmark XX YY => Run multiple benchmarks from command line
-      XX => Benchmark type. Available: phils, quick, normal, arch
-      YY => Demo
+ -benchmark file XX YY => Run multiple XX demo benchmarks, using
+                          configuration benchmark YY
+ -benchmark single XX => Run XX demo benchmark and save results 
+                         in a CSV file
  -advanced => Run frametime analysis on benchmarks. Only works with
-      command line parameter "-benchmark"
+              command line parameter "-benchmark"
  -umc486 => Use UMC Green 486 codepath
  -i486 => Use Intel 486 codepath
  -cy386 => Use 386SLC/386DLC codepath
