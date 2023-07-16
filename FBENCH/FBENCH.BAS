@@ -28,7 +28,7 @@ PRINT
 
 count = 0
 
-route = "\*.WAD"
+route = "*.WAD"
 
 filename = DIR$(route)
 DO WHILE LEN(filename) > 0
@@ -60,7 +60,7 @@ PRINT
 count = 0
 
 
-route = "\BENCH\*.BNC"
+route = "BENCH\*.BNC"
 
 filename = DIR$(route)
 DO WHILE LEN(filename) > 0
@@ -110,7 +110,7 @@ PRINT
 
 count = 0
 
-route = "\FDOOM*.EXE"
+route = "FDOOM*.EXE"
 
 filename = DIR$(route)
 DO WHILE LEN(filename) > 0
