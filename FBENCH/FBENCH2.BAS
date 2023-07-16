@@ -84,10 +84,10 @@ CALL cleanScreen
 
 PRINT "     Choose a demo file (or type any demo you want)"
 PRINT
-PRINT "     1) DEMO1"
-PRINT "     2) DEMO2"
-PRINT "     3) DEMO3"
-PRINT "     4) DEMO4"
+PRINT "      1) DEMO1"
+PRINT "      2) DEMO2"
+PRINT "      3) DEMO3"
+PRINT "      4) DEMO4"
 PRINT
 INPUT "     Please enter option: ", inputVal
 
@@ -134,7 +134,7 @@ CALL cleanScreen
 
 PRINT "     Choose additional options"
 PRINT
-PRINT "     A) Advanced benchmark (frametimes)"
+PRINT "      A) Advanced benchmark (frametimes)"
 PRINT
 
 INPUT "     Please enter option: ", inputVal
