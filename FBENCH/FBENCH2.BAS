@@ -162,9 +162,9 @@ newLine = CHR$(10)
 
 text = LCASE$(benchmarkExecutable + " " + arguments)
 
-OPEN "bench2.bat" FOR OUTPUT AS #f
-PUT #f, , text
-PUT #f, , newLine
+OPEN "bench2.bat" FOR OUTPUT AS f
+WRITE f, text
+WRITE f, newLine
 CLOSE
 
 CLS
@@ -178,7 +178,5 @@ SUB cleanScreen
     PRINT "   #                           FASTDOOM BENCHMARK                           #"
     PRINT "   #                                                                        #"
     PRINT "   ##########################################################################"
-    PRINT
-    
+    PRINT  
 END SUB
-
