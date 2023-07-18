@@ -15,7 +15,7 @@
 
 #if defined(MODE_CGA)
 
-byte lut4colors[14 * 256];
+byte lut4colors[14 * 256 + 255];
 byte *ptrlut4colors;
 
 const byte colors[12] = {
@@ -29,6 +29,8 @@ void I_ProcessPalette(byte *palette)
     int i, j;
     byte *ptr = gammatable[usegamma];
 
+    ptrlut4colors = (byte *)(((int)lut4colors + 255) & ~0xff);
+
     for (i = 0; i < 14 * 256; i++, palette += 3)
     {
         unsigned int r1, g1, b1;
@@ -40,13 +42,8 @@ void I_ProcessPalette(byte *palette)
 
         bestcolor = GetClosestColor(colors, 4, r1, g1, b1);
 
-        lut4colors[i] = bestcolor | bestcolor << 2 | bestcolor << 4 | bestcolor << 6;
+        ptrlut4colors[i] = bestcolor | bestcolor << 2 | bestcolor << 4 | bestcolor << 6;
     }
-}
-
-void I_SetPalette(int numpalette)
-{
-    ptrlut4colors = lut4colors + numpalette * 256;
 }
 
 void CGA_InitGraphics(void)
