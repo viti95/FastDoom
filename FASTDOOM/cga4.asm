@@ -28,7 +28,7 @@ extern _numpalette
 
 BEGIN_DATA_SECTION
 
-_vrambuffer: times 16384 dw 0
+_vrambuffer: times 16384 db 0
 
 BEGIN_CODE_SECTION
 
@@ -70,10 +70,11 @@ L$3:
 	and		ebx,0c03H
 
 	or		eax,ebx
-	cmp		[_vrambuffer + esi*2],ax
-	je		L$4
-	mov		[_vrambuffer + esi*2],ax
 	or		al,ah
+	cmp		[_vrambuffer + esi],al
+	je		L$4
+	mov		[_vrambuffer + esi],al
+	
 	mov		[0xB8000 + esi],al
 
 L$4:
@@ -91,10 +92,11 @@ L$4:
 	and		ebx,0c03H
 
 	or		eax,ebx
-	cmp		[_vrambuffer + esi*2 + 0x4000],ax
-	je		L$5
-	mov		[_vrambuffer + esi*2 + 0x4000],ax
 	or		al,ah
+	cmp		[_vrambuffer + esi + 0x2000],al
+	je		L$5
+	mov		[_vrambuffer + esi + 0x2000],al
+	
 	mov		[0xBA000 + esi],al
 L$5:
 	inc		esi
