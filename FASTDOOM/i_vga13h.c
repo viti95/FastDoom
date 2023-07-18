@@ -18,11 +18,31 @@
 
 #if defined(MODE_13H)
 
+byte vrambuffer[320*200];
+
+void I_CopyLine(unsigned int position, unsigned int count)
+{
+    unsigned int i = 0;
+
+    for (i = 0; i < count; i++)
+    {
+        byte value = backbuffer[position];
+
+        if (value != vrambuffer[position])
+        {
+            vrambuffer[position] = value;
+            pcscreen[position] = value;
+        }
+
+        position++;
+    }
+}
+
 void I_FinishUpdate(void)
 {
     if (updatestate & I_FULLSCRN)
     {
-        CopyDWords(backbuffer, pcscreen, SCREENHEIGHT * SCREENWIDTH / 4);
+        I_CopyLine(0, SCREENHEIGHT * SCREENWIDTH);
         updatestate = I_NOUPDATE; // clear out all draw types
     }
     if (updatestate & I_FULLVIEW)
@@ -32,7 +52,7 @@ void I_FinishUpdate(void)
             int i;
             for (i = 0; i < endscreen; i += SCREENWIDTH)
             {
-                CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
+                I_CopyLine(i, SCREENWIDTH);
             }
             updatestate &= ~(I_FULLVIEW | I_MESSAGES);
         }
@@ -41,19 +61,19 @@ void I_FinishUpdate(void)
             int i;
             for (i = startscreen; i < endscreen; i += SCREENWIDTH)
             {
-                CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
+                I_CopyLine(i, SCREENWIDTH);
             }
             updatestate &= ~I_FULLVIEW;
         }
     }
     if (updatestate & I_STATBAR)
     {
-        CopyDWords(backbuffer + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), pcscreen + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), SCREENWIDTH * SBARHEIGHT / 4);
+        I_CopyLine(SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), SCREENWIDTH * SBARHEIGHT);
         updatestate &= ~I_STATBAR;
     }
     if (updatestate & I_MESSAGES)
     {
-        CopyDWords(backbuffer, pcscreen, (SCREENWIDTH * 28) / 4);
+        I_CopyLine(0, SCREENWIDTH * 28);
         updatestate &= ~I_MESSAGES;
     }
 }
