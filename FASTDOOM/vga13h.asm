@@ -33,32 +33,31 @@ BEGIN_CODE_SECTION
 
 CODE_SYM_DEF I_CopyLine
 	push	ecx
-	mov		ecx,edx
 L$1:
-	mov		edx,_backbuffer[eax]
-	cmp		_vrambuffer[eax],dl
+	mov		ecx,_backbuffer[eax]
+	cmp		_vrambuffer[eax],cl
 	je		L$2
-	mov		_vrambuffer[eax],dl
-	mov		0xa0000[eax],dl
+	mov		_vrambuffer[eax],cl
+	mov		0xa0000[eax],cl
 L$2:
-	cmp		_vrambuffer[eax+1],dh
+	cmp		_vrambuffer[eax+1],ch
 	je		L$3
-	mov		_vrambuffer[eax+1],dh
-	mov		0xa0000[eax+1],dh
+	mov		_vrambuffer[eax+1],ch
+	mov		0xa0000[eax+1],ch
 L$3:
-	shr		edx,16
-	cmp		_vrambuffer[eax+2],dl
+	shr		ecx,16
+	cmp		_vrambuffer[eax+2],cl
 	je		L$4
-	mov		_vrambuffer[eax+2],dl
-	mov		0xa0000[eax+2],dl
+	mov		_vrambuffer[eax+2],cl
+	mov		0xa0000[eax+2],cl
 L$4:
-	cmp		_vrambuffer[eax+3],dh
+	cmp		_vrambuffer[eax+3],ch
 	je		L$5
-	mov		_vrambuffer[eax+3],dh
-	mov		0xa0000[eax+3],dh
+	mov		_vrambuffer[eax+3],ch
+	mov		0xa0000[eax+3],ch
 L$5:
 	add		eax,4
-	cmp		eax,ecx
+	cmp		eax,edx
 	jb		L$1
 	pop		ecx
 	ret
