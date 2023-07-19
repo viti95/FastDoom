@@ -37,13 +37,10 @@ CODE_SYM_DEF I_CopyLine
 L$1:
 	mov		dl,_backbuffer[eax]
 	cmp		dl,_vrambuffer[eax]
-	jne		L$3
-	inc		eax
-	cmp		eax,ecx
-	jb		L$1
-L$3:
+	je		L$3
 	mov		_vrambuffer[eax],dl
 	mov		0xa0000[eax],dl
+L$3:
 	inc		eax
 	cmp		eax,ecx
 	jb		L$1
