@@ -151,7 +151,6 @@
  -mono => Forces audio to be mono only
  -near => Renders close items only
  -nomelt => Disables melting transition (for 386 processors)
- -uncapped => Disables frame rate limit (35 fps)
  -vsync => Forces screen updates synchronized with the VSync
  -defSpan => Disable any optimization on visplanes
  -defSky => Disable any optimization on skies
@@ -159,7 +158,6 @@
  -far => Disables sprite culling
  -stereo => Forces stereo sound
  -melt => Enables screen melting transitions
- -capped => Forces 35 fps limit
  -novsync => Disables VSync
  -nofps => Hides fps ingame
  -record => Stores a demo lump containing player actions ingame
