@@ -22,19 +22,17 @@ byte vrambuffer[320*200];
 
 void I_CopyLine(unsigned int position, unsigned int count)
 {
-    unsigned int i = 0;
+    count += position;
 
-    for (i = 0; i < count; i++)
+    for (; position < count; position++)
     {
         byte value = backbuffer[position];
 
         if (value != vrambuffer[position])
         {
             vrambuffer[position] = value;
-            pcscreen[position] = value;
+            ((byte *)0xA0000)[position] = value;
         }
-
-        position++;
     }
 }
 
