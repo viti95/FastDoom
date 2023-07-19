@@ -32,10 +32,8 @@ _vrambuffer: times 64000 db 0
 BEGIN_CODE_SECTION
 
 CODE_SYM_DEF I_CopyLine
-	push		ecx
+	push	ecx
 	mov		ecx,edx
-	cmp		eax,edx
-	jae		L$2
 L$1:
 	mov		dl,_backbuffer[eax]
 	cmp		dl,_vrambuffer[eax]
@@ -43,9 +41,6 @@ L$1:
 	inc		eax
 	cmp		eax,ecx
 	jb		L$1
-L$2:
-	pop		ecx
-	ret
 L$3:
 	mov		_vrambuffer[eax],dl
 	mov		0xa0000[eax],dl
