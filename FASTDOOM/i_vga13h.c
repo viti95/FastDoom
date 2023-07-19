@@ -13,28 +13,11 @@
 #include "i_system.h"
 #include "doomstat.h"
 #include "m_menu.h"
+#include "i_vga13h.h"
 
 #define SBARHEIGHT 32
 
 #if defined(MODE_13H)
-
-byte vrambuffer[320*200];
-
-void I_CopyLine(unsigned int position, unsigned int count)
-{
-    count += position;
-
-    for (; position < count; position++)
-    {
-        byte value = backbuffer[position];
-
-        if (value != vrambuffer[position])
-        {
-            vrambuffer[position] = value;
-            ((byte *)0xA0000)[position] = value;
-        }
-    }
-}
 
 void I_FinishUpdate(void)
 {
@@ -50,7 +33,7 @@ void I_FinishUpdate(void)
             int i;
             for (i = 0; i < endscreen; i += SCREENWIDTH)
             {
-                I_CopyLine(i, SCREENWIDTH);
+                I_CopyLine(i, SCREENWIDTH + i);
             }
             updatestate &= ~(I_FULLVIEW | I_MESSAGES);
         }
@@ -59,14 +42,14 @@ void I_FinishUpdate(void)
             int i;
             for (i = startscreen; i < endscreen; i += SCREENWIDTH)
             {
-                I_CopyLine(i, SCREENWIDTH);
+                I_CopyLine(i, SCREENWIDTH + i);
             }
             updatestate &= ~I_FULLVIEW;
         }
     }
     if (updatestate & I_STATBAR)
     {
-        I_CopyLine(SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), SCREENWIDTH * SBARHEIGHT);
+        I_CopyLine(SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), SCREENWIDTH * SBARHEIGHT + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT));
         updatestate &= ~I_STATBAR;
     }
     if (updatestate & I_MESSAGES)
