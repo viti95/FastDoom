@@ -36,23 +36,23 @@ CODE_SYM_DEF I_CopyLine
 	mov		ecx,edx
 L$1:
 	mov		edx,_backbuffer[eax]
-	cmp		dl,_vrambuffer[eax]
+	cmp		_vrambuffer[eax],dl
 	je		L$2
 	mov		_vrambuffer[eax],dl
 	mov		0xa0000[eax],dl
 L$2:
-	cmp		dh,_vrambuffer[eax+1]
+	cmp		_vrambuffer[eax+1],dh
 	je		L$3
 	mov		_vrambuffer[eax+1],dh
 	mov		0xa0000[eax+1],dh
 L$3:
 	shr		edx,16
-	cmp		dl,_vrambuffer[eax+2]
+	cmp		_vrambuffer[eax+2],dl
 	je		L$4
 	mov		_vrambuffer[eax+2],dl
 	mov		0xa0000[eax+2],dl
 L$4:
-	cmp		dh,_vrambuffer[eax+3]
+	cmp		_vrambuffer[eax+3],dh
 	je		L$5
 	mov		_vrambuffer[eax+3],dh
 	mov		0xa0000[eax+3],dh
