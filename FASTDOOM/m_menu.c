@@ -205,7 +205,7 @@ void M_ChangeInvisibleDetail(int choice);
 void M_ChangeShowFPS(int choice);
 void M_ChangeSpriteCulling(int choice);
 void M_ChangeMelting(int choice);
-void M_ChangeUncappedFPS(int choice);
+void M_ChangeBusSpeed(int choice);
 void M_ChangeMono();
 void M_SizeDisplay(int choice);
 void M_StartGame(int choice);
@@ -344,7 +344,7 @@ menu_t NewDef =
 #define showfps 5
 #define spriteculling 6
 #define melting 7
-#define uncappedfps 8
+#define bus_speed 8
 #define cpu 9
 #define display_end 10
 
@@ -390,7 +390,7 @@ menuitem_t DisplayMenu[] =
         {2, "", "", M_ChangeShowFPS},
         {2, "", "", M_ChangeSpriteCulling},
         {2, "", "", M_ChangeMelting},
-        {2, "", "", M_ChangeUncappedFPS},
+        {2, "", "", M_ChangeBusSpeed},
         {2, "", "", M_ChangeCPU}};
 
 menu_t DisplayDef =
@@ -1515,8 +1515,8 @@ void M_DrawDisplay(void)
     V_WriteTextDirect(6, 15, "Melting load effect:");
     V_WriteTextDirect(27, 15, noMelt ? "OFF" : "ON");
 
-    V_WriteTextDirect(6, 17, "Uncapped framerate:");
-    V_WriteTextDirect(27, 17, uncappedFPS ? "ON" : "OFF");
+    V_WriteTextDirect(6, 17, "Bus speed:");
+    V_WriteTextDirect(27, 17, busSpeed ? "Slow" : "Fast");
 
     V_WriteTextDirect(6, 19, "CPU renderer:");
     switch (selectedCPU)
@@ -1614,8 +1614,8 @@ void M_DrawDisplay(void)
     V_WriteTextDirect(15, 15, "Melting load effect:");
     V_WriteTextDirect(45, 15, noMelt ? "OFF" : "ON");
 
-    V_WriteTextDirect(15, 17, "Uncapped framerate:");
-    V_WriteTextDirect(45, 17, uncappedFPS ? "ON" : "OFF");
+    V_WriteTextDirect(15, 17, "Bus speed:");
+    V_WriteTextDirect(45, 17, busSpeed ? "Slow" : "Fast");
 
     V_WriteTextDirect(15, 19, "CPU renderer:");
     switch (selectedCPU)
@@ -1713,8 +1713,8 @@ void M_DrawDisplay(void)
     V_WriteTextDirect(15, 30, "Melting load effect:");
     V_WriteTextDirect(45, 30, noMelt ? "OFF" : "ON");
 
-    V_WriteTextDirect(15, 34, "Uncapped framerate:");
-    V_WriteTextDirect(45, 34, uncappedFPS ? "ON" : "OFF");
+    V_WriteTextDirect(15, 34, "Bus speed:");
+    V_WriteTextDirect(45, 34, busSpeed ? "Slow" : "Fast");
 
     V_WriteTextDirect(15, 38, "CPU renderer:");
     switch (selectedCPU)
@@ -1812,8 +1812,8 @@ void M_DrawDisplay(void)
     M_WriteText(58, 124, "MELTING LOAD EFFECT:");
     M_WriteText(214, 124, noMelt ? "OFF" : "ON");
 
-    M_WriteText(58, 140, "UNCAPPED FRAMERATE:");
-    M_WriteText(214, 140, uncappedFPS ? "ON" : "OFF");
+    M_WriteText(58, 140, "BUS SPEED:");
+    M_WriteText(214, 140, busSpeed ? "SLOW" : "FAST");
 
     M_WriteText(58, 156, "CPU RENDERER:");
     switch (selectedCPU)
@@ -2271,17 +2271,17 @@ void M_ChangeMelting(int choice)
     }
 }
 
-void M_ChangeUncappedFPS(int choice)
+void M_ChangeBusSpeed(int choice)
 {
-    uncappedFPS = !uncappedFPS;
+    busSpeed = !busSpeed;
 
-    if (uncappedFPS)
+    if (busSpeed)
     {
-        players.message = "UNCAPPED FRAMERATE ON";
+        players.message = "SLOW BUS";
     }
     else
     {
-        players.message = "35 FPS LIMIT ON";
+        players.message = "FAST BUS";
     }
 }
 

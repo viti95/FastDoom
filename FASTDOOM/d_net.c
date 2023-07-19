@@ -147,11 +147,6 @@ void TryRunTics(void)
 			M_Ticker();
 			return;
 		}
-
-		// Render interpolated frames
-		if (uncappedFPS){
-			D_Display();
-		}
 	}
 
 	// run the count dics

@@ -93,7 +93,7 @@ extern boolean videoPageFix;
 extern boolean csv;
 extern boolean disableDemo;
 
-extern boolean uncappedFPS;
+extern boolean busSpeed;
 extern boolean waitVsync;
 
 // Set if homebrew PWAD stuff has been added.

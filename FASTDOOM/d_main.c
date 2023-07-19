@@ -137,7 +137,7 @@ boolean videoPageFix;
 boolean csv;
 boolean disableDemo;
 
-boolean uncappedFPS;
+boolean busSpeed;
 boolean waitVsync;
 
 boolean singletics = false; // debug flag to cancel adaptiveness
@@ -458,7 +458,14 @@ void D_Display(void)
             I_WaitSingleVBL();
 #endif
 
+#if defined(MODE_13H)
+        if (busSpeed)
+            I_FinishUpdateDifferential();
+        else
+            I_FinishUpdateDirect();
+#else
         I_FinishUpdate(); // page flip or blit buffer
+#endif
 
         if (showFPS)
             I_CalculateFPS();
@@ -495,7 +502,14 @@ void D_Display(void)
             I_WaitSingleVBL();
 #endif
 
+#if defined(MODE_13H)
+        if (busSpeed)
+            I_FinishUpdateDifferential();
+        else
+            I_FinishUpdateDirect();
+#else
         I_FinishUpdate(); // page flip or blit buffer
+#endif
 
         if (showFPS)
             I_CalculateFPS();
@@ -1564,7 +1578,7 @@ void D_DoomMain(void)
     M_CheckParmOptional("-mono", &monoSound);
     M_CheckParmOptional("-near", &nearSprites);
     M_CheckParmOptional("-nomelt", &noMelt);
-    M_CheckParmOptional("-uncapped", &uncappedFPS);
+    M_CheckParmOptional("-slowbus", &busSpeed);
     M_CheckParmOptional("-vsync", &waitVsync);
     M_CheckParmDisable("-defSpan", &visplaneRender);
     M_CheckParmDisable("-defSky", &flatSky);
@@ -1572,7 +1586,7 @@ void D_DoomMain(void)
     M_CheckParmDisable("-far", &nearSprites);
     M_CheckParmDisable("-stereo", &monoSound);
     M_CheckParmDisable("-melt", &noMelt);
-    M_CheckParmDisable("-capped", &uncappedFPS);
+    M_CheckParmDisable("-fastbus", &busSpeed);
     M_CheckParmDisable("-novsync", &waitVsync);
     M_CheckParmDisable("-nofps", &showFPS);
 

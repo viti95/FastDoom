@@ -119,9 +119,9 @@ void M_SetNoMelting(boolean value)
     noMelt = value;
 }
 
-void M_SetUncappedFPS(boolean value)
+void M_SetBusSpeed(boolean value)
 {
-    uncappedFPS = value;
+    busSpeed = value;
 }
 
 void M_SetSizeDisplay(int value)
@@ -239,6 +239,12 @@ void M_ChangeValueFile(unsigned int position, char *token)
         if (M_CheckValue(token, "umc486"))
             M_SetCPU(UMC_GREEN_486);
         break;
+    // Bus Speed
+    case 9:
+        if (M_CheckValue(token, "slow"))
+            M_SetBusSpeed(1);
+        if (M_CheckValue(token, "fast"))
+            M_SetBusSpeed(0);
     }
 }
 
