@@ -2117,7 +2117,7 @@ void M_ChangeCPU(int choice)
 
     R_ExecuteSetViewSize();
 #if defined(MODE_13H)
-    I_UpdateCopyLineFunc();
+    I_UpdateFinishFunc();
 #endif
 
     switch (selectedCPU)
@@ -2255,7 +2255,7 @@ void M_ChangeBusSpeed(int choice)
     busSpeed = !busSpeed;
 
 #if defined(MODE_13H)
-    I_UpdateCopyLineFunc();
+    I_UpdateFinishFunc();
 #endif
 
     players.message = busSpeed ? "SLOW BUS" : "FAST BUS";

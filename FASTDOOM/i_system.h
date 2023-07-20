@@ -50,6 +50,7 @@ void I_Quit(void);
 // Allocates from low memory under dos,
 // just mallocs under unix
 byte *I_AllocLow(int length);
+int I_GetCPUModel(void);
 
 void I_Error(char *error, ...);
 

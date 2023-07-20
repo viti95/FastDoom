@@ -96,7 +96,7 @@ void M_SetCPU(int value)
     R_SetViewSize(screenblocks, detailLevel);
 
 #if defined(MODE_13H)
-    I_UpdateCopyLineFunc();
+    I_UpdateFinishFunc();
 #endif
 }
 
@@ -132,7 +132,7 @@ void M_SetBusSpeed(boolean value)
     busSpeed = value;
 
 #if defined(MODE_13H)
-    I_UpdateCopyLineFunc();
+    I_UpdateFinishFunc();
 #endif
 }
 

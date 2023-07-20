@@ -69,6 +69,10 @@
 
 #include "i_log.h"
 
+#if defined(MODE_13H)
+#include "i_vga13h.h"
+#endif
+
 //
 // D-DoomLoop()
 // Not a globally visible function,
@@ -459,10 +463,7 @@ void D_Display(void)
 #endif
 
 #if defined(MODE_13H)
-        if (busSpeed)
-            I_FinishUpdateDifferential();
-        else
-            I_FinishUpdateDirect();
+        finishfunc();
 #else
         I_FinishUpdate(); // page flip or blit buffer
 #endif
@@ -503,10 +504,7 @@ void D_Display(void)
 #endif
 
 #if defined(MODE_13H)
-        if (busSpeed)
-            I_FinishUpdateDifferential();
-        else
-            I_FinishUpdateDirect();
+        finishfunc();
 #else
         I_FinishUpdate(); // page flip or blit buffer
 #endif

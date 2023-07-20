@@ -50,6 +50,8 @@
 
 #include "math.h"
 
+#include "i_log.h"
+
 #if defined(MODE_CGA_AFH)
 #include "i_cgaafh.h"
 #endif
@@ -985,7 +987,7 @@ void I_Init(void)
     I_StartupSound();
 
 #if defined(MODE_13H)
-    I_UpdateCopyLineFunc();
+    I_UpdateFinishFunc();
 #endif
 }
 
@@ -1128,4 +1130,14 @@ void DPMIInt(int i)
     regs.x.edi = (unsigned)&dpmiregs;
     segregs.es = segregs.ds;
     int386x(DPMI_INT, &regs, &regs, &segregs);
+}
+
+int I_GetCPUModel(void)
+{
+    int result;
+    union REGS r;
+    r.x.eax = 0x0400; // DPMI get version
+    int386(0x31, &r, &r);
+    result = (r.x.ecx & 0xff) * 100 + 86; // Returns: 386,486,586,686
+    return result;
 }
