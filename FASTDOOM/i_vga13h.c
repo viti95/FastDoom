@@ -21,10 +21,19 @@ void (*finishfunc)(void);
 
 #if defined(MODE_13H)
 
+extern byte vrambuffer[320*200];
+
+void I_CleanupVRAMbuffer(void)
+{
+    SetDWords(vrambuffer, 0, 320 * 200 / 4);
+}
+
 void I_UpdateFinishFunc(void)
 {
     if (busSpeed)
     {
+        I_CleanupVRAMbuffer();
+
         if (I_GetCPUModel() == 386)
         {
             // Avoid crashes of using 486 code on 386 processors (BSWAP)

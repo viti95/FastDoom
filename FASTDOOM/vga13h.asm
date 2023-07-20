@@ -22,6 +22,7 @@ BITS 32
 %ifdef MODE_13H
 
 extern _backbuffer
+global _vrambuffer
 
 BEGIN_DATA_SECTION
 
