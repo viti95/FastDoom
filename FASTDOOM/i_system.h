@@ -90,8 +90,10 @@ void I_SetPalette(int numpalette);
 void I_UpdateNoBlit(void);
 #endif
 void I_FinishUpdate(void);
+#if defined(MODE_13H)
 void I_FinishUpdateDifferential(void);
 void I_FinishUpdateDirect(void);
+#endif
 void I_CalculateFPS(void);
 
 // Wait for vertical retrace or pause a bit.

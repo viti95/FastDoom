@@ -58,6 +58,10 @@
 
 #include "i_log.h"
 
+#if defined(MODE_13H)
+#include "i_vga13h.h"
+#endif
+
 extern patch_t *hu_font[HU_FONTSIZE];
 extern byte message_dontfuckwithme;
 
@@ -2080,14 +2084,7 @@ void M_ChangeVsync(int choice)
 {
     waitVsync = !waitVsync;
 
-    if (waitVsync)
-    {
-        players.message = "VSYNC ENABLED";
-    }
-    else
-    {
-        players.message = "VSYNC DISABLED";
-    }
+    players.message = waitVsync ? "VSYNC ENABLED" : "VSYNC DISABLED";
 }
 
 void M_ChangeSkyDetail(int choice)
@@ -2096,14 +2093,7 @@ void M_ChangeSkyDetail(int choice)
 
     R_SetViewSize(screenblocks, detailLevel);
 
-    if (flatSky)
-    {
-        players.message = "FLAT COLOR SKY";
-    }
-    else
-    {
-        players.message = "FULL SKY";
-    }
+    players.message = flatSky ? "FLAT COLOR SKY" : "FULL SKY";
 }
 
 void M_ChangeCPU(int choice)
@@ -2126,6 +2116,9 @@ void M_ChangeCPU(int choice)
     }
 
     R_ExecuteSetViewSize();
+#if defined(MODE_13H)
+    I_UpdateCopyLineFunc();
+#endif
 
     switch (selectedCPU)
     {
@@ -2247,56 +2240,32 @@ void M_ChangeSpriteCulling(int choice)
 {
     nearSprites = !nearSprites;
 
-    if (nearSprites)
-    {
-        players.message = "SPRITE CULLING ON";
-    }
-    else
-    {
-        players.message = "SPRITE CULLING OFF";
-    }
+    players.message = nearSprites ? "SPRITE CULLING ON" : "SPRITE CULLING OFF";
 }
 
 void M_ChangeMelting(int choice)
 {
     noMelt = !noMelt;
 
-    if (noMelt)
-    {
-        players.message = "MELTING SCREEN LOAD EFFECT OFF";
-    }
-    else
-    {
-        players.message = "MELTING SCREEN LOAD EFFECT ON";
-    }
+    players.message = noMelt ? "MELTING SCREEN LOAD EFFECT OFF" : "MELTING SCREEN LOAD EFFECT ON";
 }
 
 void M_ChangeBusSpeed(int choice)
 {
     busSpeed = !busSpeed;
 
-    if (busSpeed)
-    {
-        players.message = "SLOW BUS";
-    }
-    else
-    {
-        players.message = "FAST BUS";
-    }
+#if defined(MODE_13H)
+    I_UpdateCopyLineFunc();
+#endif
+
+    players.message = busSpeed ? "SLOW BUS" : "FAST BUS";
 }
 
 void M_ChangeMono()
 {
     monoSound = !monoSound;
 
-    if (monoSound)
-    {
-        players.message = "MONO SOUND";
-    }
-    else
-    {
-        players.message = "STEREO SOUND";
-    }
+    players.message = monoSound ? "MONO SOUND" : "STEREO SOUND";
 }
 
 void M_SizeDisplay(int choice)

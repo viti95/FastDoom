@@ -983,6 +983,10 @@ void I_Init(void)
     I_StartupKeyboard();
     printf("I_StartupSound\n");
     I_StartupSound();
+
+#if defined(MODE_13H)
+    I_UpdateCopyLineFunc();
+#endif
 }
 
 //

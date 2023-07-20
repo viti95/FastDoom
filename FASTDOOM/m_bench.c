@@ -57,6 +57,10 @@
 
 #include "i_log.h"
 
+#if defined(MODE_13H)
+#include "i_vga13h.h"
+#endif
+
 extern int detailLevel;
 extern int screenblocks;
 extern int screenblocks;
@@ -90,6 +94,10 @@ void M_SetCPU(int value)
     selectedCPU = value;
     R_ExecuteSetViewSize();
     R_SetViewSize(screenblocks, detailLevel);
+
+#if defined(MODE_13H)
+    I_UpdateCopyLineFunc();
+#endif
 }
 
 void M_SetInvisibleDetail(int value)
@@ -122,6 +130,10 @@ void M_SetNoMelting(boolean value)
 void M_SetBusSpeed(boolean value)
 {
     busSpeed = value;
+
+#if defined(MODE_13H)
+    I_UpdateCopyLineFunc();
+#endif
 }
 
 void M_SetSizeDisplay(int value)

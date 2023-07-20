@@ -17,13 +17,23 @@
 
 #define SBARHEIGHT 32
 
+void (*copylinefunc)(unsigned int position, unsigned int count);
+
 #if defined(MODE_13H)
+
+void I_UpdateCopyLineFunc(void)
+{
+    if (selectedCPU >= INTEL_486)
+        copylinefunc = I_CopyLine486;
+    else
+        copylinefunc = I_CopyLine;
+}
 
 void I_FinishUpdateDifferential(void)
 {
     if (updatestate & I_FULLSCRN)
     {
-        I_CopyLine(0, SCREENHEIGHT * SCREENWIDTH);
+        copylinefunc(0, SCREENHEIGHT * SCREENWIDTH);
         updatestate = I_NOUPDATE; // clear out all draw types
     }
     if (updatestate & I_FULLVIEW)
@@ -33,7 +43,7 @@ void I_FinishUpdateDifferential(void)
             int i;
             for (i = 0; i < endscreen; i += SCREENWIDTH)
             {
-                I_CopyLine(i, SCREENWIDTH + i);
+                copylinefunc(i, SCREENWIDTH + i);
             }
             updatestate &= ~(I_FULLVIEW | I_MESSAGES);
         }
@@ -42,19 +52,19 @@ void I_FinishUpdateDifferential(void)
             int i;
             for (i = startscreen; i < endscreen; i += SCREENWIDTH)
             {
-                I_CopyLine(i, SCREENWIDTH + i);
+                copylinefunc(i, SCREENWIDTH + i);
             }
             updatestate &= ~I_FULLVIEW;
         }
     }
     if (updatestate & I_STATBAR)
     {
-        I_CopyLine(SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), SCREENWIDTH * SBARHEIGHT + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT));
+        copylinefunc(SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), SCREENWIDTH * SBARHEIGHT + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT));
         updatestate &= ~I_STATBAR;
     }
     if (updatestate & I_MESSAGES)
     {
-        I_CopyLine(0, SCREENWIDTH * 28);
+        copylinefunc(0, SCREENWIDTH * 28);
         updatestate &= ~I_MESSAGES;
     }
 }
