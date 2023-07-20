@@ -31,7 +31,7 @@ _vrambuffer: times 64000 db 0
 
 BEGIN_CODE_SECTION
 
-CODE_SYM_DEF I_CopyLine
+CODE_SYM_DEF I_CopyLine386
 	push	ecx
 .L$1:
 	mov		ecx,_backbuffer[eax]
