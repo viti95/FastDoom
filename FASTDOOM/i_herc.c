@@ -12,11 +12,29 @@
 #include "tables.h"
 #include "math.h"
 #include "i_system.h"
+#include "i_herc.h"
 
 #if defined(MODE_HERC)
 
+void (*finishfunc)(void);
+
 byte lutcolors[14 * 1024];
 byte *ptrlutcolors;
+
+void I_UpdateFinishFunc(void)
+{
+    if (I_GetCPUModel() == 386)
+    {
+        // Avoid crashes of using 486 code on 386 processors (BSWAP)
+        finishfunc = I_FinishUpdate386;
+        return;
+    }
+
+    if (selectedCPU >= INTEL_486)
+        finishfunc = I_FinishUpdate486;
+    else
+        finishfunc = I_FinishUpdate386;
+}
 
 void I_ProcessPalette(byte *palette)
 {

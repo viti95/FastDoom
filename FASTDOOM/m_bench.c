@@ -95,7 +95,7 @@ void M_SetCPU(int value)
     R_ExecuteSetViewSize();
     R_SetViewSize(screenblocks, detailLevel);
 
-#if defined(MODE_13H)
+#if defined(MODE_13H) || defined(MODE_HERC)
     I_UpdateFinishFunc();
 #endif
 }
@@ -131,7 +131,7 @@ void M_SetBusSpeed(boolean value)
 {
     busSpeed = value;
 
-#if defined(MODE_13H)
+#if defined(MODE_13H) || defined(MODE_HERC)
     I_UpdateFinishFunc();
 #endif
 }

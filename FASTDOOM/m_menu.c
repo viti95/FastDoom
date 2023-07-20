@@ -2116,7 +2116,7 @@ void M_ChangeCPU(int choice)
     }
 
     R_ExecuteSetViewSize();
-#if defined(MODE_13H)
+#if defined(MODE_13H) || defined(MODE_HERC)
     I_UpdateFinishFunc();
 #endif
 
@@ -2254,7 +2254,7 @@ void M_ChangeBusSpeed(int choice)
 {
     busSpeed = !busSpeed;
 
-#if defined(MODE_13H)
+#if defined(MODE_13H) || defined(MODE_HERC)
     I_UpdateFinishFunc();
 #endif
 

@@ -986,7 +986,7 @@ void I_Init(void)
     printf("I_StartupSound\n");
     I_StartupSound();
 
-#if defined(MODE_13H)
+#if defined(MODE_13H) || defined(MODE_HERC)
     I_UpdateFinishFunc();
 #endif
 }

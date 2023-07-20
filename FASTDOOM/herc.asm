@@ -30,7 +30,7 @@ _vrambuffer: times 32768 db 0
 
 BEGIN_CODE_SECTION
 
-CODE_SYM_DEF I_FinishUpdate
+CODE_SYM_DEF I_FinishUpdate386
 	push		ebx
 	push		ecx
 	push		edx

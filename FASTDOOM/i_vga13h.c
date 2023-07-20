@@ -17,9 +17,9 @@
 
 #define SBARHEIGHT 32
 
-void (*finishfunc)(void);
-
 #if defined(MODE_13H)
+
+void (*finishfunc)(void);
 
 extern byte vrambuffer[320*200];
 

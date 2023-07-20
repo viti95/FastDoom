@@ -73,6 +73,10 @@
 #include "i_vga13h.h"
 #endif
 
+#if defined(MODE_HERC)
+#include "i_vga13h.h"
+#endif
+
 //
 // D-DoomLoop()
 // Not a globally visible function,
@@ -462,7 +466,7 @@ void D_Display(void)
             I_WaitSingleVBL();
 #endif
 
-#if defined(MODE_13H)
+#if defined(MODE_13H) || defined(MODE_HERC)
         finishfunc();
 #else
         I_FinishUpdate(); // page flip or blit buffer
@@ -503,7 +507,7 @@ void D_Display(void)
             I_WaitSingleVBL();
 #endif
 
-#if defined(MODE_13H)
+#if defined(MODE_13H) || defined(MODE_HERC)
         finishfunc();
 #else
         I_FinishUpdate(); // page flip or blit buffer
