@@ -1458,6 +1458,7 @@ void D_DoomMain(void)
         D_DrawTitle(title, 4, 7);
 
     printf("\nFastDoom version " FDOOMVERSION "\n");
+    printf("CPU class detected: %d\n", I_GetCPUModel());
     printf("P_Init: Checking cmd-line parameters...\n");
 
     // turbo option
