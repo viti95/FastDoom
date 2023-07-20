@@ -33,32 +33,63 @@ BEGIN_CODE_SECTION
 
 CODE_SYM_DEF I_CopyLine
 	push	ecx
-L$1:
+.L$1:
 	mov		ecx,_backbuffer[eax]
 	cmp		_vrambuffer[eax],cl
-	je		L$2
+	je		.L$2
 	mov		_vrambuffer[eax],cl
 	mov		0xa0000[eax],cl
-L$2:
+.L$2:
 	cmp		_vrambuffer[eax+1],ch
-	je		L$3
+	je		.L$3
 	mov		_vrambuffer[eax+1],ch
 	mov		0xa0000[eax+1],ch
-L$3:
+.L$3:
 	shr		ecx,16
 	cmp		_vrambuffer[eax+2],cl
-	je		L$4
+	je		.L$4
 	mov		_vrambuffer[eax+2],cl
 	mov		0xa0000[eax+2],cl
-L$4:
+.L$4:
 	cmp		_vrambuffer[eax+3],ch
-	je		L$5
+	je		.L$5
 	mov		_vrambuffer[eax+3],ch
 	mov		0xa0000[eax+3],ch
-L$5:
+.L$5:
 	add		eax,4
 	cmp		eax,edx
-	jb		L$1
+	jb		.L$1
+	pop		ecx
+	ret
+
+CODE_SYM_DEF I_CopyLine486
+	push	ecx
+.L$1:
+	mov		ecx,_backbuffer[eax]
+	cmp		_vrambuffer[eax],cl
+	je		.L$2
+	mov		_vrambuffer[eax],cl
+	mov		0xa0000[eax],cl
+.L$2:
+	cmp		_vrambuffer[eax+1],ch
+	je		.L$3
+	mov		_vrambuffer[eax+1],ch
+	mov		0xa0000[eax+1],ch
+.L$3:
+	bswap	ecx
+	cmp		_vrambuffer[eax+2],ch
+	je		.L$4
+	mov		_vrambuffer[eax+2],ch
+	mov		0xa0000[eax+2],ch
+.L$4:
+	cmp		_vrambuffer[eax+3],cl
+	je		.L$5
+	mov		_vrambuffer[eax+3],cl
+	mov		0xa0000[eax+3],cl
+.L$5:
+	add		eax,4
+	cmp		eax,edx
+	jb		.L$1
 	pop		ecx
 	ret
 %endif
