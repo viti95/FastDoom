@@ -53,33 +53,32 @@ CODE_SYM_DEF I_FinishUpdate
   	mov   	ebp,_backbuffer
 	mov		eax,[_ptrlut16colors]
 	mov		di,[_lastlatch]
-	xor   	ecx,ecx
+	xor		edx,edx
 L$2:
 	mov		al,byte [ebp]
 	add		ebx,2
-	mov		dl,[eax]
+	mov		dh,[eax]
 	mov   	al,byte [ebp+1]
 	inc		esi
 	mov		ch,[eax]
 	mov   	al,byte [ebp+2]
-  	shld  	dx,cx,4
-	mov		ch,[eax]
-	mov   	al,byte [ebp+3]
-  	shld  	dx,cx,4
-	mov		ch,[eax]
 	add		ebp,4
-	shld  	dx,cx,4
+	mov		dl,[eax]
+	mov   	al,byte [ebp-1]
+	and		dx, 0xF0F0
+	mov		cl,[eax]
+	and		cx, 0x0F0F
+	or		edx,ecx
 	cmp		[ebx],dx
 	je		L$3
-	mov   	cx,dx
-	shr		cx,4
 	mov		[ebx],dx
-	cmp		di,cx
+	shr		dx,4
+	cmp		di,dx
 	je		L$4
-	mov		di,cx
-	mov   	al,byte [0xA3E80 + ecx]
+	mov		di,dx
+	mov   	al,byte [0xA3E80 + edx]
 L$4:
-	mov		[esi],dl
+	mov		[esi],cl
 L$3:
 	cmp		esi,0xA3E80-1
 	jb		L$2
