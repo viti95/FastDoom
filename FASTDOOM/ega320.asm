@@ -24,7 +24,6 @@ BITS 32
 extern _backbuffer
 extern _ptrlut16colors
 extern _lut16colors
-extern _numpalette
 
 BEGIN_DATA_SECTION
 
