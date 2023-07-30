@@ -47,8 +47,6 @@ CODE_SYM_DEF I_FinishUpdate
 
 	mov		edx,[_ptrlut4colors]
 	xor		esi,esi
-	xor		eax,eax
-	xor		ebx,ebx
 	mov 	edi,_backbuffer
 	mov		ecx,edx
 	
@@ -65,15 +63,14 @@ L$3:
 	mov		bh,[edx]
 	mov		bl,[ecx]
 	
-	and		eax,0c030H
-	and		ebx,0c03H
+	and		ax,0c030H
+	and		bx,0c03H
 
 	or		eax,ebx
 	or		al,ah
 	cmp		[_vrambuffer + esi],al
 	je		L$4
 	mov		[_vrambuffer + esi],al
-	
 	mov		[0xB8000 + esi],al
 
 L$4:
@@ -87,15 +84,14 @@ L$4:
 	mov		bh,[edx]
 	mov		bl,[ecx]
 	
-	and		eax,0c030H
-	and		ebx,0c03H
+	and		ax,0c030H
+	and		bx,0c03H
 
 	or		eax,ebx
 	or		al,ah
 	cmp		[_vrambuffer + esi + 0x2000],al
 	je		L$5
 	mov		[_vrambuffer + esi + 0x2000],al
-	
 	mov		[0xBA000 + esi],al
 L$5:
 	inc		esi
