@@ -40,43 +40,45 @@ CODE_SYM_DEF I_SetPalette
 CODE_SYM_DEF I_FinishUpdate
 	push		ebx
 	push		ecx
-	push		edx
+	push		ebp
 	push		esi
-	mov		edx,_backbuffer
+	push		edx
+	push		edi
+	mov		ebp,_backbuffer
 	mov		eax,[_ptrlutcolors]
+	mov		edx,eax
 	xor 	esi,esi
-	xor		ebx,ebx
 L$6:
 	mov		edi,50H
 L$7:
-	mov		al,[edx]
+	mov		al,[ebp]
+	mov		dl,[ebp+1]
 	mov		bh,[eax]
-	mov		al,[edx+1]
-	mov		ch,[eax]
-	mov		al,[edx+2]
+	mov		ch,[edx]
+	mov		al,[ebp+2]
+	mov		dl,[ebp+3]
 	mov		bl,[eax]
-	mov		al,[edx+3]
-	mov		cl,[eax]
+	mov		cl,[edx]
 	and		bx, 0xC00C
 	and 	cx, 0x3003
-	or		bx,cx
+	or		ebx,ecx
 	or		bl,bh
 	cmp		[_vrambuffer + esi],bl
 	je		L$8
 	mov		[_vrambuffer + esi],bl
 	mov		[0xB8000 + esi],bl
 L$8:
-	mov		al,[edx+320]
+	mov		al,[ebp+320]
+	mov		dl,[ebp+321]
 	mov		bh,[eax]
-	mov		al,[edx+321]
-	mov		ch,[eax]
-	mov		al,[edx+322]
+	mov		ch,[edx]
+	mov		al,[ebp+322]
+	mov		dl,[ebp+323]
 	mov		bl,[eax]
-	mov		al,[edx+323]
-	mov		cl,[eax]
+	mov		cl,[edx]
 	and		bx, 0xC00C
 	and 	cx, 0x3003
-	or		bx,cx
+	or		ebx,ecx
 	or		bl,bh
 	cmp		[_vrambuffer + esi + 0x2000],bl
 	je		L$9
@@ -84,14 +86,16 @@ L$8:
 	mov		[0xB8000 + esi + 0x2000],bl
 L$9:
 	inc		esi
-	add		edx,4
+	add		ebp,4
 	dec		edi
 	ja		L$7
-	add		edx,140H
+	add		ebp,140H
 	cmp		esi,0x1F40
 	jb		L$6
-	pop		esi
+	pop		edi
 	pop		edx
+	pop		esi
+	pop		ebp
 	pop		ecx
 	pop		ebx
 	ret
