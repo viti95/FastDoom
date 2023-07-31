@@ -51,22 +51,22 @@ L$3:
 	inc		ebx
 	mov		ax,[ebp+edx*2]
 	mov		dl,[esi+1]
-	and		eax,0c0c0H
+	and		ax,0xC0C0
 	mov		cx,[ebp+edx*2]
 
-	and		ecx,3030H
+	and		cx,0x3030
 
 	mov		dl,[esi+2]
 	or		eax,ecx
 	mov		cx,[ebp+edx*2]
 
-	and		ecx,0c0cH
+	and		cx,0x0C0C
 
 	mov		dl,[esi+3]
 	or		eax,ecx
 	mov		cx,[ebp+edx*2]
 
-	and		ecx,303H
+	and		cx,0x0303
 
 	or		eax,ecx
 
@@ -83,22 +83,22 @@ L$5:
 	mov 	dl,[esi+320]
 	mov		ax,[ebp+edx*2]
 	mov		dl,[esi+321]
-	and		eax,0c0c0H
+	and		ax,0xC0C0
 	mov		cx,[ebp+edx*2]
 
-	and		ecx,3030H
+	and		cx,0x3030
 
 	mov		dl,[esi+322]
 	or		eax,ecx
 	mov		cx,[ebp+edx*2]
 
-	and		ecx,0c0cH
+	and		cx,0x0C0C
 
 	mov		dl,[esi+323]
 	or		eax,ecx
 	mov		cx,[ebp+edx*2]
 
-	and		ecx,303H
+	and		cx,0x0303
 
 	or		eax,ecx
 
