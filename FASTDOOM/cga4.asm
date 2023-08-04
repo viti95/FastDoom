@@ -99,7 +99,7 @@ L$5:
 	dec		ebp
 	ja		L$3
 	add		edi,140H
-	cmp		edi,_backbuffer + 0xFA00
+	cmp		si,0x1F40
 	jb		L$2
 	pop		ebp
 	pop		edx
