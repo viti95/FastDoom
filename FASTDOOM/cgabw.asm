@@ -90,7 +90,7 @@ L$9:
 	dec		edi
 	ja		L$7
 	add		ebp,140H
-	cmp		esi,0x1F40
+	cmp		si,0x1F40
 	jb		L$6
 	pop		edi
 	pop		edx
