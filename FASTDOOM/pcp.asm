@@ -116,7 +116,7 @@ L$7:
 	dec		edi
 	ja		L$3
 	add		esi,140H
-	cmp		esi,_backbuffer + 0x0FA00
+	cmp		bx,0x1F40
 	jb		L$2
 	pop		ebp
 	pop		esi
