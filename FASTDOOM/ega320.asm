@@ -79,7 +79,7 @@ L$2:
 L$4:
 	mov		[esi],cl
 L$3:
-	cmp		esi,0xA3E80-1
+	cmp		si,0x3E80-1
 	jb		L$2
 	mov		[_lastlatch],di
 	pop		ebp
