@@ -121,7 +121,7 @@ CODE_SYM_DEF I_FinishUpdate386
 	dec		esi
 	ja		.L$13
 	add		ebp,140H
-	cmp		ebx,0x1F40
+	cmp		bx,0x1F40
 	jb		.L$12
 	pop		ebp
 	pop		edi
@@ -222,7 +222,7 @@ CODE_SYM_DEF I_FinishUpdate486
 	dec		esi
 	ja		.L$13
 	add		ebp,140H
-	cmp		ebx,0x1F40
+	cmp		bx,0x1F40
 	jb		.L$12
 	pop		ebp
 	pop		edi
