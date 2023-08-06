@@ -114,10 +114,7 @@ void I_WaitCGA(void);
     "mov dx, 0x3DA", \
     "wdn: in al, dx", \
     "test al, 0x01", \
-    "jz wdn", \
-    "wdr: in al, dx", \
-    "test al, 0x01", \
-    "jz wdr" modify [al dx]
+    "jz wdn", modify [al dx]
 
 void I_DisableCGABlink(void);
 #pragma aux I_DisableCGABlink = \   
