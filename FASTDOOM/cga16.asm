@@ -76,10 +76,6 @@ CODE_SYM_DEF CGA_16_DrawBackbuffer_Snow
 	in		al,dx
 	test	al,1
 	jz		.WDN1
-.WDR1:
-	in		al,dx
-	test	al,1
-	jz		.WDR1
 
 	mov		[0xB8001 + esi],bh
 	mov		[_vrambuffer + esi],bh
@@ -92,10 +88,6 @@ CODE_SYM_DEF CGA_16_DrawBackbuffer_Snow
 	in		al,dx
 	test	al,1
 	jz		.WDN2
-.WDR2:
-	in		al,dx
-	test	al,1
-	jz		.WDR2
 
 	mov		[0xB8001 + esi + 2],bl
 	mov		[_vrambuffer + esi + 2],bl
