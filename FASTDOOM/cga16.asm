@@ -104,10 +104,10 @@ CODE_SYM_DEF CGA_16_DrawBackbuffer_Snow
 	add		edi,8
 	dec		ebp
 	jne		.L$11
-	mov		ebp,40
+	mov		bp,40
 	add		edi,0x140
 .L$11:
-	cmp		esi,0x3E7F
+	cmp		si,0x3E7F
 	jb		.L$9
 	pop		ebp
 	pop		edi
@@ -158,10 +158,10 @@ CODE_SYM_DEF CGA_16_DrawBackbuffer
 	add		edi,8
 	dec		ebp
 	jne		.L$11
-	mov		ebp,40
+	mov		bp,40
 	add		edi,0x140
 .L$11:
-	cmp		esi,0x3E7F
+	cmp		si,0x3E7F
 	jb		.L$9
 	pop		ebp
 	pop		edi
