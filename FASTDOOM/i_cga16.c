@@ -13,11 +13,15 @@
 #include "i_system.h"
 #include "doomstat.h"
 
+#include "i_cga16.h"
+
 #if defined(MODE_CGA16)
 
-byte lut16colors[14 * 256];
+byte lut16colors[14 * 256 + 255];
 byte *ptrlut16colors;
-byte vrambuffer[16384];
+/*byte vrambuffer[16384];*/
+
+extern byte vrambuffer[16000];
 
 const byte colors[48] = {
     0x00, 0x00, 0x00,  // 0
@@ -42,26 +46,31 @@ void I_ProcessPalette(byte *palette)
     int i, j;
     byte *ptr = gammatable[usegamma];
 
+    ptrlut16colors = (byte *)(((int)lut16colors + 255) & ~0xff);
+
     for (i = 0; i < 14 * 256; i++,palette+=3)
     {
-        int r1, g1, b1;
+        unsigned int r1, g1, b1;
+        unsigned int bestcolor;
 
         r1 = (int)ptr[*(palette)];
         g1 = (int)ptr[*(palette+1)];
         b1 = (int)ptr[*(palette+2)];
 
-        lut16colors[i] = GetClosestColor(colors, 16, r1, g1, b1);
+        bestcolor = GetClosestColor(colors, 16, r1, g1, b1);
+
+        ptrlut16colors[i] = bestcolor | bestcolor << 4;
     }
 }
 
-void I_SetPalette(int numpalette)
+/*void I_SetPalette(int numpalette)
 {
     ptrlut16colors = lut16colors + numpalette * 256;
-}
+}*/
 
 void CGA_16_DrawBackbuffer_Snow(void)
 {
-    unsigned char *vram = (unsigned char *)0xB8001;
+    /*unsigned char *vram = (unsigned char *)0xB8001;
     unsigned char line = 80;
     byte *ptrbackbuffer = backbuffer;
     byte *ptrvrambuffer = vrambuffer;
@@ -87,10 +96,10 @@ void CGA_16_DrawBackbuffer_Snow(void)
             line = 80;
             ptrbackbuffer += 320;
         }
-    } while (vram < (unsigned char *)0xBBE80);
+    } while (vram < (unsigned char *)0xBBE80);*/
 }
 
-void CGA_16_DrawBackbuffer(void)
+/*void CGA_16_DrawBackbuffer(void)
 {
     unsigned char *vram = (unsigned char *)0xB8001;
     unsigned char line = 80;
@@ -118,7 +127,7 @@ void CGA_16_DrawBackbuffer(void)
             ptrbackbuffer += 320;
         }
     } while (vram < (unsigned char *)0xBBE80);
-}
+}*/
 
 void I_FinishUpdate(void)
 {
@@ -184,7 +193,7 @@ void CGA_16_InitGraphics(void)
 
     /* init buffers */
 
-    SetDWords(vrambuffer, 0, 4096);
+    SetDWords(vrambuffer, 0, 4000);
 
     for (i = 0; i < 16000; i += 2)
     {
