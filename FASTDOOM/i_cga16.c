@@ -19,7 +19,6 @@
 
 byte lut16colors[14 * 256 + 255];
 byte *ptrlut16colors;
-/*byte vrambuffer[16384];*/
 
 extern byte vrambuffer[16000];
 
@@ -62,72 +61,6 @@ void I_ProcessPalette(byte *palette)
         ptrlut16colors[i] = bestcolor | bestcolor << 4;
     }
 }
-
-/*void I_SetPalette(int numpalette)
-{
-    ptrlut16colors = lut16colors + numpalette * 256;
-}*/
-
-void CGA_16_DrawBackbuffer_Snow(void)
-{
-    /*unsigned char *vram = (unsigned char *)0xB8001;
-    unsigned char line = 80;
-    byte *ptrbackbuffer = backbuffer;
-    byte *ptrvrambuffer = vrambuffer;
-
-    do
-    {
-        unsigned char tmp = ptrlut16colors[*ptrbackbuffer] << 4 | ptrlut16colors[*(ptrbackbuffer + 2)];
-
-        if (tmp != *ptrvrambuffer)
-        {
-            I_WaitCGA();
-            *vram = tmp;
-            *ptrvrambuffer = tmp;
-        }
-
-        vram += 2;
-        ptrvrambuffer += 2;
-        ptrbackbuffer += 4;
-
-        line--;
-        if (line == 0)
-        {
-            line = 80;
-            ptrbackbuffer += 320;
-        }
-    } while (vram < (unsigned char *)0xBBE80);*/
-}
-
-/*void CGA_16_DrawBackbuffer(void)
-{
-    unsigned char *vram = (unsigned char *)0xB8001;
-    unsigned char line = 80;
-    byte *ptrbackbuffer = backbuffer;
-    byte *ptrvrambuffer = vrambuffer;
-
-    do
-    {
-        unsigned char tmp = ptrlut16colors[*ptrbackbuffer] << 4 | ptrlut16colors[*(ptrbackbuffer + 2)];
-
-        if (tmp != *ptrvrambuffer)
-        {
-            *vram = tmp;
-            *ptrvrambuffer = tmp;
-        }
-
-        vram += 2;
-        ptrvrambuffer += 2;
-        ptrbackbuffer += 4;
-
-        line--;
-        if (line == 0)
-        {
-            line = 80;
-            ptrbackbuffer += 320;
-        }
-    } while (vram < (unsigned char *)0xBBE80);
-}*/
 
 void I_FinishUpdate(void)
 {

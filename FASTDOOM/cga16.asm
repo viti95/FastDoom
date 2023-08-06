@@ -38,7 +38,7 @@ CODE_SYM_DEF I_SetPalette
 	mov		[_ptrlut16colors],eax
 	ret
 
-CODE_SYM_DEF CGA_16_DrawBackbuffer
+CODE_SYM_DEF CGA_16_DrawBackbuffer_Snow
 	push		ebx
 	push		ecx
 	push		edx
@@ -49,8 +49,9 @@ CODE_SYM_DEF CGA_16_DrawBackbuffer
 	mov		eax,[_ptrlut16colors]
 	mov		ebp,40
 	mov		edi,_backbuffer
+	mov		dx,0x3DA
 	xor		esi,esi
-L$9:
+.L$9:
 	mov		al,[edi]
 	mov		bh,[eax]
 	
@@ -68,24 +69,100 @@ L$9:
 	or		ebx,ecx
 
 	cmp		[_vrambuffer + esi],bh
-	je		L$13
+	je		.L$13
+
+	;I_WaitCGA();
+.WDN1:
+	in		al,dx
+	test	al,1
+	jz		.WDN1
+.WDR1:
+	in		al,dx
+	test	al,1
+	jz		.WDR1
+
 	mov		[0xB8001 + esi],bh
 	mov		[_vrambuffer + esi],bh
-L$13:
+.L$13:
 	cmp		[_vrambuffer + esi + 2],bl
-	je		L$10
+	je		.L$10
+
+	;I_WaitCGA();
+.WDN2:
+	in		al,dx
+	test	al,1
+	jz		.WDN2
+.WDR2:
+	in		al,dx
+	test	al,1
+	jz		.WDR2
+
 	mov		[0xB8001 + esi + 2],bl
 	mov		[_vrambuffer + esi + 2],bl
-L$10:
+.L$10:
 	add		esi,4
 	add		edi,8
 	dec		ebp
-	jne		L$11
+	jne		.L$11
 	mov		ebp,40
 	add		edi,0x140
-L$11:
+.L$11:
 	cmp		esi,0x3E7F
-	jb		L$9
+	jb		.L$9
+	pop		ebp
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+	ret
+
+CODE_SYM_DEF CGA_16_DrawBackbuffer
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		edi
+	push		ebp
+
+	mov		eax,[_ptrlut16colors]
+	mov		edx,eax
+	mov		ebp,40
+	mov		edi,_backbuffer
+	xor		esi,esi
+.L$9:
+	mov		al,[edi]
+	mov		dl,[edi+2]
+	mov		bh,[eax]
+	mov		ch,[edx]
+	mov		al,[edi+4]
+	mov		dl,[edi+6]
+	mov		bl,[eax]
+	mov		cl,[edx]
+
+	and		bx,0xF0F0
+	and		cx,0x0F0F
+	or		ebx,ecx
+
+	cmp		[_vrambuffer + esi],bh
+	je		.L$13
+	mov		[0xB8001 + esi],bh
+	mov		[_vrambuffer + esi],bh
+.L$13:
+	cmp		[_vrambuffer + esi + 2],bl
+	je		.L$10
+	mov		[0xB8001 + esi + 2],bl
+	mov		[_vrambuffer + esi + 2],bl
+.L$10:
+	add		esi,4
+	add		edi,8
+	dec		ebp
+	jne		.L$11
+	mov		ebp,40
+	add		edi,0x140
+.L$11:
+	cmp		esi,0x3E7F
+	jb		.L$9
 	pop		ebp
 	pop		edi
 	pop		esi
