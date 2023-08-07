@@ -36,6 +36,63 @@ CODE_SYM_DEF I_SetPalette
 	ret
 
 CODE_SYM_DEF CGA_AFH_DrawBackbuffer_Snow
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		edi
+	
+	mov		eax,[_ptrlut16colors]
+	mov		edi,_backbuffer
+	xor		esi,esi
+	xor		ebx,ebx
+	xor		ecx,ecx
+	mov		ebp,80
+	mov		dx,0x3DA
+
+.START:
+	mov		al,[edi]
+	mov		cl,[eax]
+	mov		al,[edi+1]
+	mov		bl,[eax]
+
+	mov		al,[edi+2]
+	mov		ch,[eax]
+	mov		al,[edi+3]
+	mov		bh,[eax]
+
+	and		cx,0x0F0F
+	and		bx,0xF0F0
+	or		ebx,ecx
+
+	cmp		[_vrambuffer + esi],bx
+	je 		.NEXT
+
+	mov		cx,[_ansifromhellLUT + ebx*2]
+	mov		[_vrambuffer + esi],bx
+
+	;I_WaitCGA();
+.WDN:
+	in		al,dx
+	test	al,1
+	jz		.WDN
+
+	mov		[0xB8000 + esi],cx
+	
+.NEXT:
+	add		esi,2
+	add		edi,4
+	dec		ebp
+	jnz		.START
+	mov		bp,80
+	add		edi,320
+	cmp		si,16000
+	jne		.START
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
 	ret
 
 CODE_SYM_DEF CGA_AFH_DrawBackbuffer
