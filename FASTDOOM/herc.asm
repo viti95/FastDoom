@@ -30,7 +30,7 @@ _vrambuffer: times 32768 db 0
 
 BEGIN_CODE_SECTION
 
-CODE_SYM_DEF I_FinishUpdate386
+CODE_SYM_DEF I_FinishUpdate
 	push		ebx
 	push		ecx
 	push		edx
@@ -38,190 +38,75 @@ CODE_SYM_DEF I_FinishUpdate386
 	push		edi
 	push		ebp
 	mov		edi,[_ptrlutcolors]
-	mov		ebx,-1
+	xor		ebx,ebx
 	mov		ebp,_backbuffer
 	xor		eax,eax
 .L$12:
 	mov		esi, 0x50
 .L$13:
+
 	mov		al,[ebp]
-	inc		ebx
-	mov		edx,[edi+eax*4]
+	mov		dx,[edi+eax*2]
+
 	mov		al,[ebp+1]
-	and		edx,0x80408040
-	mov		ecx,[edi+eax*4]
+	mov		cx,[edi+eax*2]
+
+	lea		edx,[edx*4+ecx]
+
 	mov		al,[ebp+2]
-	and		ecx,0x20102010
-	
-	or		edx,ecx
-	
-	mov		ecx,[edi+eax*4]
+	mov		cx,[edi+eax*2]
+
+	lea		edx,[edx*4+ecx]
+
 	mov		al,[ebp+3]
-	and		ecx,0x08040804
-	
-	or		edx,ecx
+	mov		cx,[edi+eax*2]
 
-	mov		ecx,[edi+eax*4]
-	and		ecx,0x02010201
+	lea		edx,[edx*4+ecx]
 
-	or		edx,ecx
-
-	or		dl, dh
-
-	cmp		[_vrambuffer + ebx],dl
+	cmp		[_vrambuffer + ebx],dh
 	je		.L$14
-	mov		[0xB0000 + ebx],dl
-	mov		[_vrambuffer + ebx],dl
+	mov		[0xB0000 + ebx],dh
+	mov		[_vrambuffer + ebx],dh
 .L$14:
-	shr		edx,16
-	or		dl,dh
-
 	cmp		[_vrambuffer + ebx + 0x2000],dl
 	je		.L$15
 	mov		[0xB0000 + ebx + 0x2000],dl
 	mov		[_vrambuffer + ebx + 0x2000],dl
 .L$15:
+
 	mov		al,[ebp+320]
-	mov		edx,[edi+eax*4]
+	mov		dx,[edi+eax*2]
+
 	mov		al,[ebp+321]
-	and		edx,0x80408040
-	mov		ecx,[edi+eax*4]
+	mov		cx,[edi+eax*2]
+
+	lea		edx,[edx*4+ecx]
+
 	mov		al,[ebp+322]
-	and		ecx,0x20102010
-	
-	or		edx,ecx
-	
-	mov		ecx,[edi+eax*4]
+	mov		cx,[edi+eax*2]
+
+	lea		edx,[edx*4+ecx]
+
 	mov		al,[ebp+323]
-	and		ecx,0x08040804
-	
-	or		edx,ecx
+	mov		cx,[edi+eax*2]
 
-	mov		ecx,[edi+eax*4]
-	and		ecx,0x02010201
+	lea		edx,[edx*4+ecx]
 
-	or		edx,ecx
-
-	or		dl, dh
-
-	cmp		[_vrambuffer + ebx + 0x4000],dl
+	cmp		[_vrambuffer + ebx + 0x4000],dh
 	je		.L$16
-	mov		[0xB0000 + ebx + 0x4000],dl
-	mov		[_vrambuffer + ebx + 0x4000],dl
+	mov		[0xB0000 + ebx + 0x4000],dh
+	mov		[_vrambuffer + ebx + 0x4000],dh
 .L$16:
-	shr		edx,16
-	or		dl,dh
-
 	cmp		[_vrambuffer + ebx + 0x6000],dl
 	je		.L$17
 	mov		[0xB0000 + ebx + 0x6000],dl
 	mov		[_vrambuffer + ebx + 0x6000],dl
 .L$17:
-	add		ebp,4
-	dec		esi
-	ja		.L$13
-	add		ebp,140H
-	cmp		bx,0x1F40
-	jb		.L$12
-	pop		ebp
-	pop		edi
-	pop		esi
-	pop		edx
-	pop		ecx
-	pop		ebx
-	ret
-
-CODE_SYM_DEF I_FinishUpdate486
-	push		ebx
-	push		ecx
-	push		edx
-	push		esi
-	push		edi
-	push		ebp
-	mov		edi,[_ptrlutcolors]
-	mov		ebx,-1
-	mov		ebp,_backbuffer
-	xor		eax,eax
-.L$12:
-	mov		esi, 0x50
-.L$13:
-	mov		al,[ebp]
 	inc		ebx
-	mov		edx,[edi+eax*4]
-	mov		al,[ebp+1]
-	and		edx,0x80408040
-	mov		ecx,[edi+eax*4]
-	mov		al,[ebp+2]
-	and		ecx,0x20102010
-	
-	or		edx,ecx
-	
-	mov		ecx,[edi+eax*4]
-	mov		al,[ebp+3]
-	and		ecx,0x08040804
-	
-	or		edx,ecx
-
-	mov		ecx,[edi+eax*4]
-	and		ecx,0x02010201
-
-	or		edx,ecx
-
-	or		dl, dh
-
-	cmp		[_vrambuffer + ebx],dl
-	je		.L$14
-	mov		[0xB0000 + ebx],dl
-	mov		[_vrambuffer + ebx],dl
-.L$14:
-	bswap	edx
-	or		dl,dh
-
-	cmp		[_vrambuffer + ebx + 0x2000],dl
-	je		.L$15
-	mov		[0xB0000 + ebx + 0x2000],dl
-	mov		[_vrambuffer + ebx + 0x2000],dl
-.L$15:
-	mov		al,[ebp+320]
-	mov		edx,[edi+eax*4]
-	mov		al,[ebp+321]
-	and		edx,0x80408040
-	mov		ecx,[edi+eax*4]
-	mov		al,[ebp+322]
-	and		ecx,0x20102010
-	
-	or		edx,ecx
-	
-	mov		ecx,[edi+eax*4]
-	mov		al,[ebp+323]
-	and		ecx,0x08040804
-	
-	or		edx,ecx
-
-	mov		ecx,[edi+eax*4]
-	and		ecx,0x02010201
-
-	or		edx,ecx
-
-	or		dl, dh
-
-	cmp		[_vrambuffer + ebx + 0x4000],dl
-	je		.L$16
-	mov		[0xB0000 + ebx + 0x4000],dl
-	mov		[_vrambuffer + ebx + 0x4000],dl
-.L$16:
-	bswap	edx
-	or		dl,dh
-
-	cmp		[_vrambuffer + ebx + 0x6000],dl
-	je		.L$17
-	mov		[0xB0000 + ebx + 0x6000],dl
-	mov		[_vrambuffer + ebx + 0x6000],dl
-.L$17:
 	add		ebp,4
 	dec		esi
 	ja		.L$13
-	add		ebp,140H
+	add		ebp,320
 	cmp		bx,0x1F40
 	jb		.L$12
 	pop		ebp

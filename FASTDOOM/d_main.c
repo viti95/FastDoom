@@ -466,7 +466,7 @@ void D_Display(void)
             I_WaitSingleVBL();
 #endif
 
-#if defined(MODE_13H) || defined(MODE_HERC)
+#if defined(MODE_13H)
         finishfunc();
 #else
         I_FinishUpdate(); // page flip or blit buffer
@@ -507,7 +507,7 @@ void D_Display(void)
             I_WaitSingleVBL();
 #endif
 
-#if defined(MODE_13H) || defined(MODE_HERC)
+#if defined(MODE_13H)
         finishfunc();
 #else
         I_FinishUpdate(); // page flip or blit buffer

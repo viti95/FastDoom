@@ -16,25 +16,8 @@
 
 #if defined(MODE_HERC)
 
-void (*finishfunc)(void);
-
-byte lutcolors[14 * 1024];
-byte *ptrlutcolors;
-
-void I_UpdateFinishFunc(void)
-{
-    if (I_GetCPUModel() == 386)
-    {
-        // Avoid crashes of using 486 code on 386 processors (BSWAP)
-        finishfunc = I_FinishUpdate386;
-        return;
-    }
-
-    if (selectedCPU >= INTEL_486)
-        finishfunc = I_FinishUpdate486;
-    else
-        finishfunc = I_FinishUpdate386;
-}
+unsigned short lutcolors[14 * 256];
+unsigned short *ptrlutcolors;
 
 void I_ProcessPalette(byte *palette)
 {
@@ -42,10 +25,12 @@ void I_ProcessPalette(byte *palette)
 
     byte *ptr = gammatable[usegamma];
 
-    for (i = 0; i < 14 * 1024; i += 4, palette += 3)
+    for (i = 0; i < 14 * 256; i++, palette += 3)
     {
         int r, g, b;
         int sum;
+
+        unsigned short value = 0x0000;
 
         r = (int)ptr[*palette];
         g = (int)ptr[*(palette + 1)];
@@ -53,16 +38,18 @@ void I_ProcessPalette(byte *palette)
 
         sum = r + g + b;
 
-        lutcolors[i] = sum > 19 ? 0xFF : 0x00;
-        lutcolors[i + 1] = sum > 59 ? 0xFF : 0x00;
-        lutcolors[i + 2] = sum > 79 ? 0xFF : 0x00;
-        lutcolors[i + 3] = sum > 39 ? 0xFF : 0x00;
+        value = sum > 19 ? 0x0200 : 0x0000;
+        value |= sum > 59 ? 0x0100 : 0x0000;
+        value |= sum > 79 ? 0x0002 : 0x0000;
+        value |= sum > 39 ? 0x0001 : 0x0000;
+
+        lutcolors[i] = value;
     }
 }
 
 void I_SetPalette(int numpalette)
 {
-    ptrlutcolors = lutcolors + numpalette * 1024;
+    ptrlutcolors = lutcolors + numpalette * 256;
 }
 
 void HERC_InitGraphics(void)
