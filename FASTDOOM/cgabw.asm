@@ -40,62 +40,94 @@ CODE_SYM_DEF I_SetPalette
 CODE_SYM_DEF I_FinishUpdate
 	push		ebx
 	push		ecx
-	push		ebp
+	push		edi
 	push		esi
 	push		edx
-	push		edi
-	mov		ebp,_backbuffer
-	mov		eax,[_ptrlutcolors]
-	mov		edx,eax
-	xor 	esi,esi
-L$6:
-	mov		edi,50H
-L$7:
-	mov		al,[ebp]
-	mov		dl,[ebp+1]
-	mov		bh,[eax]
+	push		ebp
+
+	mov		edx,[_ptrlutcolors]
+	xor		esi,esi
+	mov 	edi,_backbuffer
+	xor		ecx,ecx
+	mov		ebx,edx
+
+L$2:
+	mov		ebp,40
+L$3:
+	mov		dl,[edi]
+	mov		bl,[edi+4]
+	mov		ah,[edx]
+	mov		dl,[edi+1]
+	mov		al,[ebx]
+	mov		bl,[edi+5]
 	mov		ch,[edx]
-	mov		al,[ebp+2]
-	mov		dl,[ebp+3]
-	mov		bl,[eax]
-	mov		cl,[edx]
-	and		bx, 0xC00C
-	and 	cx, 0x3003
-	or		ebx,ecx
-	or		bl,bh
-	cmp		[_vrambuffer + esi],bl
-	je		L$8
-	mov		[_vrambuffer + esi],bl
-	mov		[0xB8000 + esi],bl
-L$8:
-	mov		al,[ebp+320]
-	mov		dl,[ebp+321]
-	mov		bh,[eax]
+	mov		dl,[edi+2]
+	mov		cl,[ebx]
+	mov		bl,[edi+6]
+	lea		eax,[eax*4 + ecx]
 	mov		ch,[edx]
-	mov		al,[ebp+322]
-	mov		dl,[ebp+323]
-	mov		bl,[eax]
-	mov		cl,[edx]
-	and		bx, 0xC00C
-	and 	cx, 0x3003
-	or		ebx,ecx
-	or		bl,bh
-	cmp		[_vrambuffer + esi + 0x2000],bl
-	je		L$9
-	mov		[_vrambuffer + esi + 0x2000],bl
-	mov		[0xB8000 + esi + 0x2000],bl
-L$9:
-	inc		esi
-	add		ebp,4
-	dec		edi
-	ja		L$7
-	add		ebp,140H
+	mov		dl,[edi+3]
+	mov		cl,[ebx]
+	mov		bl,[edi+7]
+	lea		eax,[eax*4 + ecx]
+	mov		ch,[edx]
+	mov		cl,[ebx]
+	lea		eax,[eax*4 + ecx]
+
+	cmp		[_vrambuffer + esi],ah
+	je		L$10
+	mov		[_vrambuffer + esi],ah
+	mov		[0xB8000 + esi],ah
+
+L$10:
+	cmp		[_vrambuffer + esi + 1],al
+	je		L$4
+	mov		[_vrambuffer + esi + 1],al
+	mov		[0xB8000 + esi + 1],al
+
+L$4:
+	mov		dl,[edi+320]
+	mov		bl,[edi+324]
+	mov		ah,[edx]
+	mov		dl,[edi+321]
+	mov		al,[ebx]
+	mov		bl,[edi+325]
+	mov		ch,[edx]
+	mov		dl,[edi+322]
+	mov		cl,[ebx]
+	mov		bl,[edi+326]
+	lea		eax,[eax*4 + ecx]
+	mov		ch,[edx]
+	mov		dl,[edi+323]
+	mov		cl,[ebx]
+	mov		bl,[edi+327]
+	lea		eax,[eax*4 + ecx]
+	mov		ch,[edx]
+	mov		cl,[ebx]
+	lea		eax,[eax*4 + ecx]
+
+	cmp		[_vrambuffer + esi + 0x2000],ah
+	je		L$11
+	mov		[_vrambuffer + esi + 0x2000],ah
+	mov		[0xBA000 + esi],ah
+
+L$11:
+	cmp		[_vrambuffer + esi + 0x2000 + 1],al
+	je		L$5
+	mov		[_vrambuffer + esi + 0x2000 + 1],al
+	mov		[0xBA000 + esi + 1],al
+L$5:
+	add		esi,2
+	add		edi,8
+	dec		ebp
+	ja		L$3
+	add		edi,140H
 	cmp		si,0x1F40
-	jb		L$6
-	pop		edi
+	jb		L$2
+	pop		ebp
 	pop		edx
 	pop		esi
-	pop		ebp
+	pop		edi
 	pop		ecx
 	pop		ebx
 	ret
