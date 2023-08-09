@@ -56,12 +56,8 @@ void I_ProcessPalette(byte *palette)
 
         bestcolor = GetClosestColor(colors, 16, r1, g1, b1);
 
-        value = bestcolor & 12;
-        value = value | value >> 2 | value << 2 | value << 4;
-        value <<= 8;
-
+        value = (bestcolor & 12) << 6;
         value2 = bestcolor & 3;
-        value2 = value2 | value2 << 2 | value2 << 4 | value2 << 6;
 
         lut16colors[i] = value | value2;
     }
