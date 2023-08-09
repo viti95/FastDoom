@@ -42,7 +42,7 @@ void I_ProcessPalette(byte *palette)
 
         bestcolor = GetClosestColor(colors, 4, r1, g1, b1);
 
-        ptrlut4colors[i] = bestcolor | bestcolor << 2 | bestcolor << 4 | bestcolor << 6;
+        ptrlut4colors[i] = bestcolor;
     }
 }
 

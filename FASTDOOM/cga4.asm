@@ -48,26 +48,29 @@ CODE_SYM_DEF I_FinishUpdate
 	mov		edx,[_ptrlut4colors]
 	xor		esi,esi
 	mov 	edi,_backbuffer
-	mov		ecx,edx
+	xor		ecx,ecx
 	
 L$2:
 	mov		ebp,0x50
 L$3:
 	mov		dl,[edi]	
-	mov		cl,[edi+1]
-	mov		ah,[edx]
-	mov		al,[ecx]
+	mov		al,[edx]
+
+	mov		dl,[edi+1]
+	mov		cl,[edx]
+
+	lea		eax,[eax*4 + ecx]
 
 	mov		dl,[edi+2]
-	mov		cl,[edi+3]
-	mov		bh,[edx]
-	mov		bl,[ecx]
+	mov		cl,[edx]
 	
-	and		ax,0c030H
-	and		bx,0c03H
+	lea		eax,[eax*4 + ecx]
 
-	or		eax,ebx
-	or		al,ah
+	mov		dl,[edi+3]
+	mov		cl,[edx]
+	
+	lea		eax,[eax*4 + ecx]
+
 	cmp		[_vrambuffer + esi],al
 	je		L$4
 	mov		[_vrambuffer + esi],al
@@ -75,20 +78,23 @@ L$3:
 
 L$4:
 	mov		dl,[edi+320]	
-	mov		cl,[edi+321]
-	mov		ah,[edx]
-	mov		al,[ecx]
+	mov		al,[edx]
+
+	mov		dl,[edi+321]
+	mov		cl,[edx]
+
+	lea		eax,[eax*4 + ecx]
 
 	mov		dl,[edi+322]
-	mov		cl,[edi+323]
-	mov		bh,[edx]
-	mov		bl,[ecx]
+	mov		cl,[edx]
 	
-	and		ax,0c030H
-	and		bx,0c03H
+	lea		eax,[eax*4 + ecx]
 
-	or		eax,ebx
-	or		al,ah
+	mov		dl,[edi+323]
+	mov		cl,[edx]
+	
+	lea		eax,[eax*4 + ecx]
+
 	cmp		[_vrambuffer + esi + 0x2000],al
 	je		L$5
 	mov		[_vrambuffer + esi + 0x2000],al
