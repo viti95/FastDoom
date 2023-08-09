@@ -51,7 +51,7 @@ CODE_SYM_DEF I_FinishUpdate
 	xor		ecx,ecx
 	
 L$2:
-	mov		ebp,0x50
+	mov		ebp,40
 L$3:
 	mov		dl,[edi]	
 	mov		al,[edx]
@@ -70,11 +70,37 @@ L$3:
 	mov		cl,[edx]
 	
 	lea		eax,[eax*4 + ecx]
+	
+	mov		dl,[edi+4]	
+	mov		cl,[edx]
 
-	cmp		[_vrambuffer + esi],al
+	lea		eax,[eax*4 + ecx]
+
+	mov		dl,[edi+5]
+	mov		cl,[edx]
+
+	lea		eax,[eax*4 + ecx]
+
+	mov		dl,[edi+6]
+	mov		cl,[edx]
+	
+	lea		eax,[eax*4 + ecx]
+
+	mov		dl,[edi+7]
+	mov		cl,[edx]
+	
+	lea		eax,[eax*4 + ecx]
+
+	cmp		[_vrambuffer + esi],ah
+	je		L$10
+	mov		[_vrambuffer + esi],ah
+	mov		[0xB8000 + esi],ah
+
+L$10:
+	cmp		[_vrambuffer + esi + 1],al
 	je		L$4
-	mov		[_vrambuffer + esi],al
-	mov		[0xB8000 + esi],al
+	mov		[_vrambuffer + esi + 1],al
+	mov		[0xB8000 + esi + 1],al
 
 L$4:
 	mov		dl,[edi+320]	
@@ -94,14 +120,41 @@ L$4:
 	mov		cl,[edx]
 	
 	lea		eax,[eax*4 + ecx]
+	
+	mov		dl,[edi+324]	
+	mov		cl,[edx]
 
-	cmp		[_vrambuffer + esi + 0x2000],al
+	lea		eax,[eax*4 + ecx]
+
+	mov		dl,[edi+325]
+	mov		cl,[edx]
+
+	lea		eax,[eax*4 + ecx]
+
+	mov		dl,[edi+326]
+	mov		cl,[edx]
+	
+	lea		eax,[eax*4 + ecx]
+
+	mov		dl,[edi+327]
+	mov		cl,[edx]
+	
+	lea		eax,[eax*4 + ecx]
+
+	cmp		[_vrambuffer + esi + 0x2000],ah
+	je		L$11
+	mov		[_vrambuffer + esi + 0x2000],ah
+	mov		[0xBA000 + esi],ah
+
+L$11:
+	cmp		[_vrambuffer + esi + 0x2000 + 1],al
 	je		L$5
-	mov		[_vrambuffer + esi + 0x2000],al
-	mov		[0xBA000 + esi],al
+	mov		[_vrambuffer + esi + 0x2000 + 1],al
+	mov		[0xBA000 + esi + 1],al
+
 L$5:
-	inc		esi
-	add		edi,4
+	add		esi,2
+	add		edi,8
 	dec		ebp
 	ja		L$3
 	add		edi,140H
