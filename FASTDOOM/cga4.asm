@@ -49,48 +49,95 @@ CODE_SYM_DEF I_FinishUpdate
 	xor		esi,esi
 	mov 	edi,_backbuffer
 	xor		ecx,ecx
-	mov		ebx,edx
 
 L$2:
-	mov		ebp,0x50
+	mov		ebp,40
 L$3:
 	mov		dl,[edi]
-	mov		bl,[edi+1]
+	mov		ah,[edx]
+
+	mov		dl,[edi+4]
 	mov		al,[edx]
-	mov		cl,[ebx]
-	mov		dl,[edi+2]
-	lea		eax,[eax*4 + ecx]
+
+	mov		dl,[edi+1]
+	mov		ch,[edx]
+
+	mov		dl,[edi+5]
 	mov		cl,[edx]
-	mov		bl,[edi+3]
-	lea		eax,[eax*4 + ecx]
-	mov		cl,[ebx]
+
 	lea		eax,[eax*4 + ecx]
 
-	cmp		[_vrambuffer + esi],al
+	mov		dl,[edi+2]
+	mov		ch,[edx]
+
+	mov		dl,[edi+6]
+	mov		cl,[edx]
+
+	lea		eax,[eax*4 + ecx]
+
+	mov		dl,[edi+3]
+	mov		ch,[edx]
+
+	mov		dl,[edi+7]
+	mov		cl,[edx]
+
+	lea		eax,[eax*4 + ecx]
+
+	cmp		[_vrambuffer + esi],ah
+	je		L$10
+	mov		[_vrambuffer + esi],ah
+	mov		[0xB8000 + esi],ah
+
+L$10:
+	cmp		[_vrambuffer + esi + 1],al
 	je		L$4
-	mov		[_vrambuffer + esi],al
-	mov		[0xB8000 + esi],al
+	mov		[_vrambuffer + esi + 1],al
+	mov		[0xB8000 + esi + 1],al
 
 L$4:
 	mov		dl,[edi+320]
-	mov		bl,[edi+321]
+	mov		ah,[edx]
+
+	mov		dl,[edi+324]
 	mov		al,[edx]
-	mov		cl,[ebx]
-	mov		dl,[edi+322]
-	lea		eax,[eax*4 + ecx]
+
+	mov		dl,[edi+321]
+	mov		ch,[edx]
+
+	mov		dl,[edi+325]
 	mov		cl,[edx]
-	mov		bl,[edi+323]
-	lea		eax,[eax*4 + ecx]
-	mov		cl,[ebx]
+
 	lea		eax,[eax*4 + ecx]
 
-	cmp		[_vrambuffer + esi + 0x2000],al
+	mov		dl,[edi+322]
+	mov		ch,[edx]
+
+	mov		dl,[edi+326]
+	mov		cl,[edx]
+
+	lea		eax,[eax*4 + ecx]
+
+	mov		dl,[edi+323]
+	mov		ch,[edx]
+
+	mov		dl,[edi+327]
+	mov		cl,[edx]
+
+	lea		eax,[eax*4 + ecx]
+
+	cmp		[_vrambuffer + esi + 0x2000],ah
+	je		L$11
+	mov		[_vrambuffer + esi + 0x2000],ah
+	mov		[0xBA000 + esi],ah
+
+L$11:
+	cmp		[_vrambuffer + esi + 0x2000 + 1],al
 	je		L$5
-	mov		[_vrambuffer + esi + 0x2000],al
-	mov		[0xBA000 + esi],al
+	mov		[_vrambuffer + esi + 0x2000 + 1],al
+	mov		[0xBA000 + esi + 1],al
 L$5:
-	inc		esi
-	add		edi,4
+	add		esi,2
+	add		edi,8
 	dec		ebp
 	ja		L$3
 	add		edi,140H
