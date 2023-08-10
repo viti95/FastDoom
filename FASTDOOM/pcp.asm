@@ -52,15 +52,11 @@ L$3:
 	mov		ax,[ebp+edx*2]
 	mov		dl,[esi+1]
 	mov		cx,[ebp+edx*2]
-
-	lea		eax,[eax*4 + ecx]
-
 	mov		dl,[esi+2]
-	mov		cx,[ebp+edx*2]
-
 	lea		eax,[eax*4 + ecx]
-
+	mov		cx,[ebp+edx*2]
 	mov		dl,[esi+3]
+	lea		eax,[eax*4 + ecx]
 	mov		cx,[ebp+edx*2]
 
 	lea		eax,[eax*4 + ecx]
@@ -79,17 +75,12 @@ L$5:
 	mov		ax,[ebp+edx*2]
 	mov		dl,[esi+321]
 	mov		cx,[ebp+edx*2]
-
-	lea		eax,[eax*4 + ecx]
-
 	mov		dl,[esi+322]
-	mov		cx,[ebp+edx*2]
-
 	lea		eax,[eax*4 + ecx]
-
-	mov		dl,[esi+323]
 	mov		cx,[ebp+edx*2]
-
+	mov		dl,[esi+323]
+	lea		eax,[eax*4 + ecx]
+	mov		cx,[ebp+edx*2]
 	lea		eax,[eax*4 + ecx]
 
 	cmp		[_vrambuffer + ebx + 0x2000],al
