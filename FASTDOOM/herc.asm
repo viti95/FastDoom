@@ -49,15 +49,15 @@ BEGIN_CODE_SECTION
 
 	lea		edx,[edx*4+ecx]
 
-	cmp		[_vrambuffer + ebx + %1],dh
+	cmp		[_vrambuffer + esi + %1],dh
 	je		%%L$14
-	mov		[0xB0000 + ebx + %1],dh
-	mov		[_vrambuffer + ebx + %1],dh
+	mov		[0xB0000 + esi + %1],dh
+	mov		[_vrambuffer + esi + %1],dh
 %%L$14:
-	cmp		[_vrambuffer + ebx + 0x2000 + %1],dl
+	cmp		[_vrambuffer + esi + 0x2000 + %1],dl
 	je		%%L$15
-	mov		[0xB0000 + ebx + 0x2000 + %1],dl
-	mov		[_vrambuffer + ebx + 0x2000 + %1],dl
+	mov		[0xB0000 + esi + 0x2000 + %1],dl
+	mov		[_vrambuffer + esi + 0x2000 + %1],dl
 %%L$15:
 
 	mov		al,[ebp + (%1 * 4) + 320]
@@ -78,31 +78,31 @@ BEGIN_CODE_SECTION
 
 	lea		edx,[edx*4+ecx]
 
-	cmp		[_vrambuffer + ebx + 0x4000 + %1],dh
+	cmp		[_vrambuffer + esi + 0x4000 + %1],dh
 	je		%%L$16
-	mov		[0xB0000 + ebx + 0x4000 + %1],dh
-	mov		[_vrambuffer + ebx + 0x4000 + %1],dh
+	mov		[0xB0000 + esi + 0x4000 + %1],dh
+	mov		[_vrambuffer + esi + 0x4000 + %1],dh
 %%L$16:
-	cmp		[_vrambuffer + ebx + 0x6000 + %1],dl
+	cmp		[_vrambuffer + esi + 0x6000 + %1],dl
 	je		%%L$17
-	mov		[0xB0000 + ebx + 0x6000 + %1],dl
-	mov		[_vrambuffer + ebx + 0x6000 + %1],dl
+	mov		[0xB0000 + esi + 0x6000 + %1],dl
+	mov		[_vrambuffer + esi + 0x6000 + %1],dl
 %%L$17:
 %endmacro
 
 CODE_SYM_DEF I_FinishUpdate
-	push		ebx
+	push		esi
 	push		ecx
 	push		edx
-	push		esi
+	push		ebx
 	push		edi
 	push		ebp
 	mov		edi,[_ptrlutcolors]
-	xor		ebx,ebx
+	xor		esi,esi
 	mov		ebp,_backbuffer
 	xor		eax,eax
 
-.L$12:
+.SCANLINE:
 
 	%assign POSITION 0
 	%rep 80
@@ -110,16 +110,16 @@ CODE_SYM_DEF I_FinishUpdate
 	%assign POSITION POSITION+1
 	%endrep
 
-	add		ebx,80
+	add		esi,80
 	add		ebp,640
-	cmp		bx,0x1F40
-	jb		.L$12
+	cmp		si,0x1F40
+	jb		.SCANLINE
 	pop		ebp
 	pop		edi
-	pop		esi
+	pop		ebx
 	pop		edx
 	pop		ecx
-	pop		ebx
+	pop		esi
 	ret
 
 %endif
