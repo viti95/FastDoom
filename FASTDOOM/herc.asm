@@ -32,21 +32,15 @@ BEGIN_CODE_SECTION
 
 %macro PIXEL 1
 	mov		al,[ebp + (%1 * 4) + 0]
+	mov		bl,[ebp + (%1 * 4) + 1]
 	mov		dx,[edi+eax*2]
-
-	mov		al,[ebp + (%1 * 4) + 1]
-	mov		cx,[edi+eax*2]
-
-	lea		edx,[edx*4+ecx]
-
+	mov		cx,[edi+ebx*2]
 	mov		al,[ebp + (%1 * 4) + 2]
-	mov		cx,[edi+eax*2]
-
 	lea		edx,[edx*4+ecx]
-
-	mov		al,[ebp + (%1 * 4) + 3]
 	mov		cx,[edi+eax*2]
-
+	mov		bl,[ebp + (%1 * 4) + 3]
+	lea		edx,[edx*4+ecx]
+	mov		cx,[edi+ebx*2]
 	lea		edx,[edx*4+ecx]
 
 	cmp		[_vrambuffer + esi + %1],dh
@@ -61,21 +55,15 @@ BEGIN_CODE_SECTION
 %%L$15:
 
 	mov		al,[ebp + (%1 * 4) + 320]
+	mov		bl,[ebp + (%1 * 4) + 321]
 	mov		dx,[edi+eax*2]
-
-	mov		al,[ebp + (%1 * 4) + 321]
-	mov		cx,[edi+eax*2]
-
-	lea		edx,[edx*4+ecx]
-
+	mov		cx,[edi+ebx*2]
 	mov		al,[ebp + (%1 * 4) + 322]
-	mov		cx,[edi+eax*2]
-
 	lea		edx,[edx*4+ecx]
-
-	mov		al,[ebp + (%1 * 4) + 323]
 	mov		cx,[edi+eax*2]
-
+	mov		bl,[ebp + (%1 * 4) + 323]
+	lea		edx,[edx*4+ecx]
+	mov		cx,[edi+ebx*2]
 	lea		edx,[edx*4+ecx]
 
 	cmp		[_vrambuffer + esi + 0x4000 + %1],dh
@@ -101,6 +89,7 @@ CODE_SYM_DEF I_FinishUpdate
 	xor		esi,esi
 	mov		ebp,_backbuffer
 	xor		eax,eax
+	xor		ebx,ebx
 
 .SCANLINE:
 
