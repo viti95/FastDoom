@@ -37,6 +37,72 @@ CODE_SYM_DEF I_SetPalette
 	mov		[_ptrlut4colors],eax
 	ret
 
+%macro PIXEL 1
+	mov		dl,[edi + (%1 * 4) + 0]
+	mov		bl,[edi + (%1 * 4) + 4]
+	mov		ah,[edx]
+	mov		dl,[edi + (%1 * 4) + 1]
+	mov		al,[ebx]
+	mov		bl,[edi + (%1 * 4) + 5]
+	mov		ch,[edx]
+	mov		dl,[edi + (%1 * 4) + 2]
+	mov		cl,[ebx]
+	mov		bl,[edi + (%1 * 4) + 6]
+	lea		eax,[eax*4 + ecx]
+	mov		ch,[edx]
+	mov		dl,[edi + (%1 * 4) + 3]
+	mov		cl,[ebx]
+	mov		bl,[edi + (%1 * 4) + 7]
+	lea		eax,[eax*4 + ecx]
+	mov		ch,[edx]
+	mov		cl,[ebx]
+	lea		eax,[eax*4 + ecx]
+
+	cmp		[_vrambuffer + esi + %1],ah
+	je		%%L$10
+	mov		[_vrambuffer + esi + %1],ah
+	mov		[0xB8000 + esi + %1],ah
+
+%%L$10:
+	cmp		[_vrambuffer + esi + %1 + 1],al
+	je		%%L$4
+	mov		[_vrambuffer + esi + %1 + 1],al
+	mov		[0xB8000 + esi + %1 + 1],al
+
+%%L$4:
+	mov		dl,[edi + (%1 * 4) + 320]
+	mov		bl,[edi + (%1 * 4) + 324]
+	mov		ah,[edx]
+	mov		dl,[edi + (%1 * 4) + 321]
+	mov		al,[ebx]
+	mov		bl,[edi + (%1 * 4) + 325]
+	mov		ch,[edx]
+	mov		dl,[edi + (%1 * 4) + 322]
+	mov		cl,[ebx]
+	mov		bl,[edi + (%1 * 4) + 326]
+	lea		eax,[eax*4 + ecx]
+	mov		ch,[edx]
+	mov		dl,[edi + (%1 * 4) + 323]
+	mov		cl,[ebx]
+	mov		bl,[edi + (%1 * 4) + 327]
+	lea		eax,[eax*4 + ecx]
+	mov		ch,[edx]
+	mov		cl,[ebx]
+	lea		eax,[eax*4 + ecx]
+
+	cmp		[_vrambuffer + esi + 0x2000 + %1],ah
+	je		%%L$11
+	mov		[_vrambuffer + esi + 0x2000 + %1],ah
+	mov		[0xBA000 + esi + %1],ah
+
+%%L$11:
+	cmp		[_vrambuffer + esi + 0x2000 + %1 + 1],al
+	je		%%L$5
+	mov		[_vrambuffer + esi + 0x2000 + %1 + 1],al
+	mov		[0xBA000 + esi + %1 + 1],al
+%%L$5:
+%endmacro
+
 CODE_SYM_DEF I_FinishUpdate
 	push		ebx
 	push		ecx
@@ -51,79 +117,18 @@ CODE_SYM_DEF I_FinishUpdate
 	xor		ecx,ecx
 	mov		ebx,edx
 
-L$2:
-	mov		ebp,40
-L$3:
-	mov		dl,[edi]
-	mov		bl,[edi+4]
-	mov		ah,[edx]
-	mov		dl,[edi+1]
-	mov		al,[ebx]
-	mov		bl,[edi+5]
-	mov		ch,[edx]
-	mov		dl,[edi+2]
-	mov		cl,[ebx]
-	mov		bl,[edi+6]
-	lea		eax,[eax*4 + ecx]
-	mov		ch,[edx]
-	mov		dl,[edi+3]
-	mov		cl,[ebx]
-	mov		bl,[edi+7]
-	lea		eax,[eax*4 + ecx]
-	mov		ch,[edx]
-	mov		cl,[ebx]
-	lea		eax,[eax*4 + ecx]
+.SCANLINE:
 
-	cmp		[_vrambuffer + esi],ah
-	je		L$10
-	mov		[_vrambuffer + esi],ah
-	mov		[0xB8000 + esi],ah
+	%assign POSITION 0
+	%rep 40
+		PIXEL POSITION
+	%assign POSITION POSITION+2
+	%endrep
 
-L$10:
-	cmp		[_vrambuffer + esi + 1],al
-	je		L$4
-	mov		[_vrambuffer + esi + 1],al
-	mov		[0xB8000 + esi + 1],al
-
-L$4:
-	mov		dl,[edi+320]
-	mov		bl,[edi+324]
-	mov		ah,[edx]
-	mov		dl,[edi+321]
-	mov		al,[ebx]
-	mov		bl,[edi+325]
-	mov		ch,[edx]
-	mov		dl,[edi+322]
-	mov		cl,[ebx]
-	mov		bl,[edi+326]
-	lea		eax,[eax*4 + ecx]
-	mov		ch,[edx]
-	mov		dl,[edi+323]
-	mov		cl,[ebx]
-	mov		bl,[edi+327]
-	lea		eax,[eax*4 + ecx]
-	mov		ch,[edx]
-	mov		cl,[ebx]
-	lea		eax,[eax*4 + ecx]
-
-	cmp		[_vrambuffer + esi + 0x2000],ah
-	je		L$11
-	mov		[_vrambuffer + esi + 0x2000],ah
-	mov		[0xBA000 + esi],ah
-
-L$11:
-	cmp		[_vrambuffer + esi + 0x2000 + 1],al
-	je		L$5
-	mov		[_vrambuffer + esi + 0x2000 + 1],al
-	mov		[0xBA000 + esi + 1],al
-L$5:
-	add		esi,2
-	add		edi,8
-	dec		ebp
-	ja		L$3
-	add		edi,140H
+	add		esi,80
+	add		edi,640
 	cmp		si,0x1F40
-	jb		L$2
+	jb		.SCANLINE
 	pop		ebp
 	pop		edx
 	pop		esi
