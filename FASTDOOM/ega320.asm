@@ -29,12 +29,16 @@ BEGIN_DATA_SECTION
 
 align 4
 
-_vrambufferR: times 8000 db 0
-_vrambufferG: times 8000 db 0
-_vrambufferB: times 8000 db 0
-_vrambufferI: times 8000 db 0
+_lastlatch:   dw 0
+_vrambuffer: times 16000 dw 0
 
 BEGIN_CODE_SECTION
+
+CODE_SYM_DEF I_SetPalette
+	shl		eax,8
+	add		eax,(_lut16colors+0xff)
+	mov		[_ptrlut16colors],eax
+	ret
 
 CODE_SYM_DEF I_FinishUpdate
 	push	ebx
@@ -43,105 +47,41 @@ CODE_SYM_DEF I_FinishUpdate
 	push	esi
 	push	edi
 	push	ebp
-	
+  	mov		esi,0xA0000-1
+	mov   	ebx,_vrambuffer-2
   	mov   	ebp,_backbuffer
-	mov		edi,[_ptrlut16colors]
-	xor		esi,esi
-	mov		edx,0x3C5
-	xor		eax,eax
-	
-start:
-	mov		al,[ebp]
-	mov		ecx,[edi + eax*4]
-
-	mov		al,[ebp+1]
-	mov		ebx,[edi + eax*4]
-
-	lea		ecx,[ecx*2 + ebx]
-
-	mov		al,[ebp+2]
-	mov		ebx,[edi + eax*4]
-
-	lea		ecx,[ecx*2 + ebx]
-
-	mov		al,[ebp+3]
-	mov		ebx,[edi + eax*4]
-
-	lea		ecx,[ecx*2 + ebx]
-
-	mov		al,[ebp+4]
-	mov		ebx,[edi + eax*4]
-
-	lea		ecx,[ecx*2 + ebx]
-
-	mov		al,[ebp+5]
-	mov		ebx,[edi + eax*4]
-
-	lea		ecx,[ecx*2 + ebx]
-
-	mov		al,[ebp+6]
-	mov		ebx,[edi + eax*4]
-
-	lea		ecx,[ecx*2 + ebx]
-
-	mov		al,[ebp+7]
-	mov		ebx,[edi + eax*4]
-
-	lea		ecx,[ecx*2 + ebx]
-
-	cmp		[_vrambufferR + esi],cl
-	je		nextR
-
-	mov		[_vrambufferR + esi],cl
-
-	mov		al,8
-	out		dx,al
-
-	mov		[0xA0000 + esi],cl
-
-nextR:
-	cmp		[_vrambufferG + esi],ch
-	je		nextG
-
-	mov		[_vrambufferG + esi],ch
-
-	mov		al,4
-	out		dx,al
-
-	mov		[0xA0000 + esi],ch
-
-nextG:
-
-	shr		ecx,16
-	
-	cmp		[_vrambufferB + esi],cl
-	je		nextB
-
-	mov		[_vrambufferB + esi],cl
-
-	mov		al,2
-	out		dx,al
-
-	mov		[0xA0000 + esi],cl
-
-nextB:
-	cmp		[_vrambufferI + esi],ch
-	je		nextI
-
-	mov		[_vrambufferI + esi],ch
-
-	mov		al,1
-	out		dx,al
-
-	mov		[0xA0000 + esi],ch
-
-nextI:
-
+	mov		eax,[_ptrlut16colors]
+	mov		di,[_lastlatch]
+	xor		edx,edx
+L$2:
+	mov		al,byte [ebp]
+	add		ebx,2
+	mov		dh,[eax]
+	mov   	al,byte [ebp+1]
 	inc		esi
-	add		ebp,8
-	cmp		esi,8000
-	jne		start
-
+	mov		ch,[eax]
+	mov   	al,byte [ebp+2]
+	add		ebp,4
+	mov		dl,[eax]
+	mov   	al,byte [ebp-1]
+	and		dx, 0xF0F0
+	mov		cl,[eax]
+	and		cx, 0x0F0F
+	or		edx,ecx
+	cmp		[ebx],dx
+	je		L$3
+	mov		[ebx],dx
+	shr		dx,4
+	cmp		di,dx
+	je		L$4
+	mov		di,dx
+	mov   	al,byte [0xA3E80 + edx]
+L$4:
+	mov		[esi],cl
+L$3:
+	cmp		si,0x3E80-1
+	jb		L$2
+	mov		[_lastlatch],di
 	pop		ebp
 	pop		edi
 	pop		esi
