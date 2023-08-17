@@ -55,61 +55,43 @@ L$2:
 	mov		ebp,20
 L$3:
 	mov		dl,[edi+8]
+	mov		bl,[edi+9]
 	mov		ah,[edx]
-
-	mov		bl,[edi+12]
-	mov		al,[ebx]
-
-	shl		eax,16
-	
-	mov		dl,[edi+0]
-	mov		ah,[edx]
-
-	mov		bl,[edi+4]
-	mov		al,[ebx]
-
-	mov		dl,[edi+9]
-	mov		ch,[edx]
-
+	mov		ch,[ebx]
+	mov		dl,[edi+12]
 	mov		bl,[edi+13]
+	mov		al,[edx]
 	mov		cl,[ebx]
-
+	shl		eax,16
 	shl		ecx,16
-
-	mov		dl,[edi+1]
-	mov		ch,[edx]
-
+	mov		dl,[edi+0]
+	mov		bl,[edi+1]
+	mov		ah,[edx]
+	mov		ch,[ebx]
+	mov		dl,[edi+4]
 	mov		bl,[edi+5]
+	mov		al,[edx]
 	mov		cl,[ebx]
-
-	lea		eax,[eax*4 + ecx]
-
 	mov		dl,[edi+10]
-	mov		ch,[edx]
-	mov		bl,[edi+14]
-	mov		cl,[ebx]
-
-	shl		ecx,16
-
-	mov		dl,[edi+2]
-	mov		ch,[edx]
-	mov		bl,[edi+6]
-	mov		cl,[ebx]
-
 	lea		eax,[eax*4 + ecx]
-
-	mov		dl,[edi+11]
+	mov		bl,[edi+14]
 	mov		ch,[edx]
-	mov		bl,[edi+15]
+	mov		dl,[edi+2]
 	mov		cl,[ebx]
-
+	mov		bl,[edi+6]
 	shl		ecx,16
-
-	mov		dl,[edi+3]
 	mov		ch,[edx]
-	mov		bl,[edi+7]
+	mov		dl,[edi+11]
 	mov		cl,[ebx]
-
+	mov		bl,[edi+15]
+	lea		eax,[eax*4 + ecx]
+	mov		ch,[edx]
+	mov		dl,[edi+3]
+	mov		cl,[ebx]
+	mov		bl,[edi+7]
+	shl		ecx,16
+	mov		ch,[edx]
+	mov		cl,[ebx]
 	lea		eax,[eax*4 + ecx]
 
 	cmp		[_vrambuffer + esi],ah
@@ -138,63 +120,44 @@ L$11:
 	mov		[0xB8000 + esi + 3],al
 
 L$5:
-
 	mov		dl,[edi+320+8]
+	mov		bl,[edi+320+9]
 	mov		ah,[edx]
-
-	mov		bl,[edi+320+12]
-	mov		al,[ebx]
-
-	shl		eax,16
-	
-	mov		dl,[edi+320+0]
-	mov		ah,[edx]
-
-	mov		bl,[edi+320+4]
-	mov		al,[ebx]
-
-	mov		dl,[edi+320+9]
-	mov		ch,[edx]
-
+	mov		ch,[ebx]
+	mov		dl,[edi+320+12]
 	mov		bl,[edi+320+13]
+	mov		al,[edx]
 	mov		cl,[ebx]
-
+	shl		eax,16
 	shl		ecx,16
-
-	mov		dl,[edi+320+1]
-	mov		ch,[edx]
-
+	mov		dl,[edi+320+0]
+	mov		bl,[edi+320+1]
+	mov		ah,[edx]
+	mov		ch,[ebx]
+	mov		dl,[edi+320+4]
 	mov		bl,[edi+320+5]
+	mov		al,[edx]
 	mov		cl,[ebx]
-
-	lea		eax,[eax*4 + ecx]
-
 	mov		dl,[edi+320+10]
-	mov		ch,[edx]
-	mov		bl,[edi+320+14]
-	mov		cl,[ebx]
-
-	shl		ecx,16
-
-	mov		dl,[edi+320+2]
-	mov		ch,[edx]
-	mov		bl,[edi+320+6]
-	mov		cl,[ebx]
-
 	lea		eax,[eax*4 + ecx]
-
-	mov		dl,[edi+320+11]
+	mov		bl,[edi+320+14]
 	mov		ch,[edx]
-	mov		bl,[edi+320+15]
+	mov		dl,[edi+320+2]
 	mov		cl,[ebx]
-
+	mov		bl,[edi+320+6]
 	shl		ecx,16
-
-	mov		dl,[edi+320+3]
 	mov		ch,[edx]
-	mov		bl,[edi+320+7]
+	mov		dl,[edi+320+11]
 	mov		cl,[ebx]
-
+	mov		bl,[edi+320+15]
+	lea		eax,[eax*4 + ecx]
+	mov		ch,[edx]
+	mov		dl,[edi+320+3]
+	mov		cl,[ebx]
+	mov		bl,[edi+320+7]
+	shl		ecx,16
+	mov		ch,[edx]
+	mov		cl,[ebx]
 	lea		eax,[eax*4 + ecx]
 
 	cmp		[_vrambuffer + esi + 0x2000],ah
