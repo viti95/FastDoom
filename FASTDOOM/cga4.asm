@@ -48,7 +48,6 @@ CODE_SYM_DEF I_FinishUpdate
 	mov		edx,[_ptrlut4colors]
 	xor		esi,esi
 	mov 	edi,_backbuffer
-	xor		ecx,ecx
 	mov		ebx,edx
 
 L$2:
