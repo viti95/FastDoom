@@ -105,7 +105,7 @@ L$10:
 	mov		[0xB8000 + esi + 1],al
 
 L$4:
-	shr 	eax,16
+	bswap 	eax
 
 	cmp		[_vrambuffer + esi + 2],ah
 	je		L$11
@@ -173,7 +173,7 @@ L$20:
 	mov		[0xB8000 + esi + 0x2000 + 1],al
 
 L$24:
-	shr 	eax,16
+	bswap 	eax
 
 	cmp		[_vrambuffer + esi + 0x2000 + 2],ah
 	je		L$21
