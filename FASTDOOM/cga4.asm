@@ -46,12 +46,16 @@ CODE_SYM_DEF I_FinishUpdate
 	push		ebp
 
 	mov		edx,[_ptrlut4colors]
-	xor		esi,esi
 	mov 	edi,_backbuffer
 	mov		ebx,edx
 
+	mov		esi,_vrambuffer
+	mov		ebp,0xB8000
+
+	mov   [patchESP+2],esp
+
 L$2:
-	mov		ebp,20
+	sub		esp,20
 L$3:
 	mov		dl,[edi+8]
 	mov		bl,[edi+9]
@@ -93,30 +97,30 @@ L$3:
 	mov		cl,[ebx]
 	lea		eax,[eax*4 + ecx]
 
-	cmp		[_vrambuffer + esi],ah
+	cmp		[esi],ah
 	je		L$10
-	mov		[_vrambuffer + esi],ah
-	mov		[0xB8000 + esi],ah
+	mov		[esi],ah
+	mov		[ebp],ah
 
 L$10:
-	cmp		[_vrambuffer + esi + 1],al
+	cmp		[esi + 1],al
 	je		L$4
-	mov		[_vrambuffer + esi + 1],al
-	mov		[0xB8000 + esi + 1],al
+	mov		[esi + 1],al
+	mov		[ebp + 1],al
 
 L$4:
 	bswap 	eax
 
-	cmp		[_vrambuffer + esi + 2],ah
+	cmp		[esi + 2],ah
 	je		L$11
-	mov		[_vrambuffer + esi + 2],ah
-	mov		[0xB8000 + esi + 2],ah
+	mov		[esi + 2],ah
+	mov		[ebp + 2],ah
 
 L$11:
-	cmp		[_vrambuffer + esi + 3],al
+	cmp		[esi + 3],al
 	je		L$5
-	mov		[_vrambuffer + esi + 3],al
-	mov		[0xB8000 + esi + 3],al
+	mov		[esi + 3],al
+	mov		[ebp + 3],al
 
 L$5:
 	add		edi,320
@@ -158,41 +162,51 @@ L$5:
 	mov		bl,[edi+7]
 	bswap 	ecx
 	mov		ch,[edx]
+	add		esi,0x2000
 	mov		cl,[ebx]
+	add		ebp,0x2000
 	lea		eax,[eax*4 + ecx]
 
-	cmp		[_vrambuffer + esi + 0x2000],ah
+	sub		edi,304
+
+	cmp		[esi],ah
 	je		L$20
-	mov		[_vrambuffer + esi + 0x2000],ah
-	mov		[0xB8000 + esi + 0x2000],ah
+	mov		[esi],ah
+	mov		[ebp],ah
 
 L$20:
-	cmp		[_vrambuffer + esi + 0x2000 + 1],al
+	cmp		[esi + 1],al
 	je		L$24
-	mov		[_vrambuffer + esi + 0x2000 + 1],al
-	mov		[0xB8000 + esi + 0x2000 + 1],al
+	mov		[esi + 1],al
+	mov		[ebp + 1],al
 
 L$24:
 	bswap 	eax
 
-	cmp		[_vrambuffer + esi + 0x2000 + 2],ah
+	inc		esp
+
+	cmp		[esi + 2],ah
 	je		L$21
-	mov		[_vrambuffer + esi + 0x2000 + 2],ah
-	mov		[0xB8000 + esi + 0x2000 + 2],ah
+	mov		[esi + 2],ah
+	mov		[ebp + 2],ah
 
 L$21:
-	cmp		[_vrambuffer + esi + 0x2000 + 3],al
+	cmp		[esi + 3],al
 	je		L$25
-	mov		[_vrambuffer + esi + 0x2000 + 3],al
-	mov		[0xB8000 + esi + 0x2000 + 3],al
+	mov		[esi + 3],al
+	mov		[ebp + 3],al
 
 L$25:
-	add		esi,4
-	sub		edi,304
-	dec		ebp
-	ja		L$3
-	add		edi,140H
-	cmp		si,0x1F40
+
+	sub		esi,0x1FFC
+	sub		ebp,0x1FFC
+
+patchESP:
+  	cmp		esp, 0x12345678
+
+	jne		L$3
+	add		edi,320
+	cmp		bp,0x9F40
 	jb		L$2
 	pop		ebp
 	pop		edx
