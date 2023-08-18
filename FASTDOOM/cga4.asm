@@ -61,8 +61,8 @@ L$3:
 	mov		bl,[edi+13]
 	mov		al,[edx]
 	mov		cl,[ebx]
-	shl		eax,16
-	shl		ecx,16
+	bswap 	eax
+	bswap 	ecx
 	mov		dl,[edi+0]
 	mov		bl,[edi+1]
 	mov		ah,[edx]
@@ -78,7 +78,7 @@ L$3:
 	mov		dl,[edi+2]
 	mov		cl,[ebx]
 	mov		bl,[edi+6]
-	shl		ecx,16
+	bswap 	ecx
 	mov		ch,[edx]
 	mov		dl,[edi+11]
 	mov		cl,[ebx]
@@ -88,7 +88,7 @@ L$3:
 	mov		dl,[edi+3]
 	mov		cl,[ebx]
 	mov		bl,[edi+7]
-	shl		ecx,16
+	bswap 	ecx
 	mov		ch,[edx]
 	mov		cl,[ebx]
 	lea		eax,[eax*4 + ecx]
@@ -129,8 +129,8 @@ L$5:
 	mov		bl,[edi+13]
 	mov		al,[edx]
 	mov		cl,[ebx]
-	shl		eax,16
-	shl		ecx,16
+	bswap 	eax
+	bswap 	ecx
 	mov		dl,[edi+0]
 	mov		bl,[edi+1]
 	mov		ah,[edx]
@@ -146,7 +146,7 @@ L$5:
 	mov		dl,[edi+2]
 	mov		cl,[ebx]
 	mov		bl,[edi+6]
-	shl		ecx,16
+	bswap 	ecx
 	mov		ch,[edx]
 	mov		dl,[edi+11]
 	mov		cl,[ebx]
@@ -156,7 +156,7 @@ L$5:
 	mov		dl,[edi+3]
 	mov		cl,[ebx]
 	mov		bl,[edi+7]
-	shl		ecx,16
+	bswap 	ecx
 	mov		ch,[edx]
 	mov		cl,[ebx]
 	lea		eax,[eax*4 + ecx]
