@@ -65,6 +65,14 @@ https://user-images.githubusercontent.com/8323882/147228550-bf93cc50-3c92-4a7a-b
 4) Open setup.ide project in Borland C++ IDE
 5) Build the project
 
+## Contributors
+
+This project exists thanks to all the people who contribute.
+
+<a href="https://github.com/acheong08/ChatGPT/graphs/contributors">
+<img src="https://contrib.rocks/image?repo=viti95/fastdoom" />
+</a>
+
 ## Contributing
 
 Feel free to add issues or pull requests here on GitHub. I cannot guarantee that I will accept your changes, but feel free to fork the repo and make changes as you see fit. Thanks!
