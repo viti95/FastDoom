@@ -45,11 +45,13 @@ extern _colormaps
 
 BEGIN_DATA_SECTION
 
+align 4
+
+_rndtable: dd 0x00000050, 0xFFFFFFB0
+
 %macro SCALEDEFINE 1
   dd vscale%1
 %endmacro
-
-align 4
 
 scalecalls:
   %assign LINE 0
@@ -213,13 +215,19 @@ CODE_SYM_DEF R_DrawFuzzColumn
   mov  dx,SC_INDEX+1
   out  dx,al
 
+  ; set randomizer port
+  ;mov edx,0x3D4
+  ;mov eax,0x11
+  ;out dx,al
+
+  ;mov edx,0x3D5
+  mov edx,0x40
+  ;mov edx,0x125
+
   shr esi,2
-  mov eax,[_colormaps]
+  mov ecx,[_colormaps]
   add edi,esi
-  mov	ecx,[_fuzzposinverse]
-  add eax,0x600
-  mov edx,_fuzzoffsetinverse
-  mov ebx,49
+  add ecx,0x600
 
   jmp  [scalecalls+4+ebp*4]
 
@@ -237,31 +245,27 @@ done:
   vscale%1
 %endmacro
 
-%macro TESTFUZZPOSDEFINE 1
-  testfuzzpos%1
-%endmacro
-
-%macro JMPTESTFUZZPOSDEFINE 1
-  jne testfuzzpos%1
-%endmacro
-
 %assign LINE SCREENHEIGHT
 %rep SCREENHEIGHT
   SCALELABEL LINE:
-  mov		ebp,[edx+ecx*4]
-	mov   al,[edi+ebp-(LINE-1)*80]
-  dec   ecx
-	mov		al,[eax]
-  JMPTESTFUZZPOSDEFINE LINE
-  mov   ecx,ebx
-  TESTFUZZPOSDEFINE LINE:
-  mov		[edi-(LINE-1)*80],al
+  in    al,dx               ; Read port                                     ->  6 cycles (386),  8 cycles (486)
+
+  xor   ebp,eax             ; XOR with random unused register, set PF flag  ->  2 cycles (386),  1 cycles (486)
+  lahf                      ; Get flags (PF -> AH)                          ->  2 cycles (386),  3 cycles (486)
+  mov   al,ah               ; Move flags to lower register (AH -> AL)       ->  2 cycles (386),  1 cycles (486)
+  and   eax,0x4             ; Use PF as pointer to the random table values  ->  2 cycles (386),  1 cycles (486)
+
+  mov   ebx,[_rndtable+eax] ; +80 or -80 depending on PF                    ->  4 cycles (386),  1 cycles (486)
+                            ;                                           TOTAL: 18 cycles (386), 15 cycles (486)
+
+	mov   cl,[edi+ebx-(LINE-1)*80]
+	mov		cl,[ecx]
+  mov		[edi-(LINE-1)*80],cl
   %assign LINE LINE-1
 %endrep
 
 vscale0:
 	pop	ebp
-  mov [_fuzzposinverse],ecx
   pop	esi
   pop	edx
 	pop	ecx
