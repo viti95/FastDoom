@@ -220,7 +220,6 @@ CODE_SYM_DEF R_DrawFuzzColumn
 
   mov edx,0x40
   in  al,dx
-  add ebx,eax
   
   jmp  [scalecalls+4+ebp*4]
 
