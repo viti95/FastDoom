@@ -252,16 +252,15 @@ done:
 %assign LINE SCREENHEIGHT
 %rep SCREENHEIGHT
   SCALELABEL LINE:
+  shr  eax,5
+  and  eax,0x20
+  lea  eax,[eax*4+eax+0xFFFFFFB0-(LINE-1)*80]
 
-  shr eax,5
-  and eax,0x20
-  lea eax,[eax*4+eax+0xFFFFFFB0-(LINE-1)*80]
-
-	mov   cl,[edi+eax]
+	mov  cl,[edi+eax]
   adc  eax,ebx
-	mov		cl,[ecx]
+	mov	 cl,[ecx]
   adc  ebx,eax
-  mov		[edi-(LINE-1)*80],cl
+  mov	 [edi-(LINE-1)*80],cl
   %assign LINE LINE-1
 %endrep
 
