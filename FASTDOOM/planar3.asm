@@ -47,8 +47,6 @@ BEGIN_DATA_SECTION
 
 align 4
 
-_rndtable: dd 0x00000050, 0xFFFFFFB0
-
 %macro SCALEDEFINE 1
   dd vscale%1
 %endmacro
@@ -252,13 +250,14 @@ done:
 
   xor   ebp,eax             ; XOR with random unused register, set PF flag  ->  2 cycles (386),  1 cycles (486)
   lahf                      ; Get flags (PF -> AH)                          ->  2 cycles (386),  3 cycles (486)
-  mov   al,ah               ; Move flags to lower register (AH -> AL)       ->  2 cycles (386),  1 cycles (486)
-  and   eax,0x4             ; Use PF as pointer to the random table values  ->  2 cycles (386),  1 cycles (486)
 
-  mov   ebx,[_rndtable+eax] ; +80 or -80 depending on PF                    ->  4 cycles (386),  1 cycles (486)
-                            ;                                           TOTAL: 18 cycles (386), 15 cycles (486)
+  shr eax,5                 ; 3 cycles (386),  2 cycles (486)
+  and eax,0x20              ; 2 cycles (386),  1 cycles (486)
+  lea eax,[eax*4+eax+0xFFFFFFB0-(LINE-1)*80] ; 2 cycles (386),  2 cycles (486)
 
-	mov   cl,[edi+ebx-(LINE-1)*80]
+  ;TOTAL: 17 cycles (386), 17 cycles (486)
+
+	mov   cl,[edi+eax]
 	mov		cl,[ecx]
   mov		[edi-(LINE-1)*80],cl
   %assign LINE LINE-1
