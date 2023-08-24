@@ -166,9 +166,6 @@ CODE_SYM_DEF R_DrawFuzzColumnLow
   adc eax,ebx
   adc ebx,eax
 
-  adc eax,ebx
-  adc ebx,eax
-
   jmp  [scalecalls+4+ebp*4]
 
 .ldone:
