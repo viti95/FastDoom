@@ -222,6 +222,9 @@ CODE_SYM_DEF R_DrawFuzzColumn
   in  al,dx
   add ebx,eax
   lahf
+
+  adc  eax,ebx
+  adc  ebx,eax
   
   jmp  [scalecalls+4+ebp*4]
 
@@ -243,15 +246,14 @@ done:
 %rep SCREENHEIGHT
   SCALELABEL LINE:
 
-  adc  eax,ebx
-  adc  ebx,eax
- 
   shr eax,5
   and eax,0x20
   lea eax,[eax*4+eax+0xFFFFFFB0-(LINE-1)*80]
 
 	mov   cl,[edi+eax]
+  adc  eax,ebx
 	mov		cl,[ecx]
+  adc  ebx,eax
   mov		[edi-(LINE-1)*80],cl
   %assign LINE LINE-1
 %endrep
