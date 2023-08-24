@@ -88,17 +88,15 @@ CODE_SYM_DEF R_DrawFuzzColumnPotato
   js   .pdone
 
   add edi,[_destview]  
-  mov ecx,[_colormaps]
-  add edi,[_dc_x]
-  add ecx,0x600
-
   mov edx,0x40
+  mov ecx,[_colormaps]
   in  al,dx
+  add edi,[_dc_x]
   add ebx,eax
   lahf
-
-  adc  eax,ebx
-  adc  ebx,eax
+  add ecx,0x600
+  adc eax,ebx
+  adc ebx,eax
 
   jmp  [scalecalls+4+ebp*4]
 
@@ -158,17 +156,18 @@ CODE_SYM_DEF R_DrawFuzzColumnLow
   out  dx,al
 
   shr esi,1
-  mov ecx,[_colormaps]
-  add edi,esi
-  add ecx,0x600
-
   mov edx,0x40
+  mov ecx,[_colormaps]
   in  al,dx
+  add edi,esi
   add ebx,eax
   lahf
+  add ecx,0x600
+  adc eax,ebx
+  adc ebx,eax
 
-  adc  eax,ebx
-  adc  ebx,eax
+  adc eax,ebx
+  adc ebx,eax
 
   jmp  [scalecalls+4+ebp*4]
 
@@ -224,17 +223,15 @@ CODE_SYM_DEF R_DrawFuzzColumn
   out  dx,al
 
   shr esi,2
-  mov ecx,[_colormaps]
-  add edi,esi
-  add ecx,0x600
-
   mov edx,0x40
+  mov ecx,[_colormaps]
   in  al,dx
+  add edi,esi
   add ebx,eax
   lahf
-
-  adc  eax,ebx
-  adc  ebx,eax
+  add ecx,0x600
+  adc eax,ebx
+  adc ebx,eax
   
   jmp  [scalecalls+4+ebp*4]
 
