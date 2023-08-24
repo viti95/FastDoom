@@ -213,20 +213,15 @@ CODE_SYM_DEF R_DrawFuzzColumn
   mov  dx,SC_INDEX+1
   out  dx,al
 
-  ; set randomizer port
-  ;mov edx,0x3D4
-  ;mov eax,0x11
-  ;out dx,al
-
-  ;mov edx,0x3D5
-  mov edx,0x40
-  ;mov edx,0x125
-
   shr esi,2
   mov ecx,[_colormaps]
   add edi,esi
   add ecx,0x600
 
+  mov edx,0x40
+  in  al,dx
+  add ebx,eax
+  
   jmp  [scalecalls+4+ebp*4]
 
 done:
@@ -246,16 +241,14 @@ done:
 %assign LINE SCREENHEIGHT
 %rep SCREENHEIGHT
   SCALELABEL LINE:
-  in    al,dx               ; Read port                                     ->  6 cycles (386),  8 cycles (486)
 
-  xor   ebp,eax             ; XOR with random unused register, set PF flag  ->  2 cycles (386),  1 cycles (486)
-  lahf                      ; Get flags (PF -> AH)                          ->  2 cycles (386),  3 cycles (486)
-
-  shr eax,5                 ; 3 cycles (386),  2 cycles (486)
-  and eax,0x20              ; 2 cycles (386),  1 cycles (486)
-  lea eax,[eax*4+eax+0xFFFFFFB0-(LINE-1)*80] ; 2 cycles (386),  2 cycles (486)
-
-  ;TOTAL: 17 cycles (386), 17 cycles (486)
+  add ebx,eax
+  inc ebx
+  lahf
+ 
+  shr eax,5
+  and eax,0x20
+  lea eax,[eax*4+eax+0xFFFFFFB0-(LINE-1)*80]
 
 	mov   cl,[edi+eax]
 	mov		cl,[ecx]
