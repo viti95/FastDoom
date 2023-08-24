@@ -153,12 +153,17 @@ CODE_SYM_DEF R_DrawFuzzColumnLow
   out  dx,al
 
   shr esi,1
-  mov eax,[_colormaps]
+  mov ecx,[_colormaps]
   add edi,esi
-  mov	ecx,[_fuzzposinverse]
-  add eax,0x600
-  mov edx,_fuzzoffsetinverse
-  mov ebx,49
+  add ecx,0x600
+
+  mov edx,0x40
+  in  al,dx
+  add ebx,eax
+  lahf
+
+  adc  eax,ebx
+  adc  ebx,eax
 
   jmp  [scalecalls+4+ebp*4]
 
