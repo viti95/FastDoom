@@ -87,13 +87,18 @@ CODE_SYM_DEF R_DrawFuzzColumnPotato
   sub  ebp,eax         ; ebp = pixel count
   js   .pdone
 
-  add edi,[_destview]
-  mov eax,[_colormaps]
+  add edi,[_destview]  
+  mov ecx,[_colormaps]
   add edi,[_dc_x]
-  mov	ecx,[_fuzzposinverse]
-  add eax,0x600
-  mov edx,_fuzzoffsetinverse
-  mov ebx,49
+  add ecx,0x600
+
+  mov edx,0x40
+  in  al,dx
+  add ebx,eax
+  lahf
+
+  adc  eax,ebx
+  adc  ebx,eax
 
   jmp  [scalecalls+4+ebp*4]
 
