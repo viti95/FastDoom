@@ -86,6 +86,7 @@ CODE_SYM_DEF I_FinishUpdate
 	mov	ebp,[_ptrlut16colors]
 
 	xor	ebx,ebx
+        xor     eax,eax
 
         mov     dx,0x2DE
 
@@ -94,50 +95,50 @@ CODE_SYM_DEF I_FinishUpdate
 L$2:
 	sub     esp,80
 L$3:
-	mov 	bl,[esi]
-	mov	ax,[ebp+ebx*2]
-	mov	bl,[esi+1]
-	mov	cx,[ebp+ebx*2]
-	mov	bl,[esi+2]
-	lea	eax,[eax*4 + ecx]
-	mov	cx,[ebp+ebx*2]
-	mov	bl,[esi+3]
-	lea	eax,[eax*4 + ecx]
-	mov	cx,[ebp+ebx*2]
+	mov 	al,[esi]
+	mov	bx,[ebp+eax*2]
+	mov	al,[esi+1]
+	mov	cx,[ebp+eax*2]
+	mov	al,[esi+2]
+	lea	ebx,[ebx*4 + ecx]
+	mov	cx,[ebp+eax*2]
+	mov	al,[esi+3]
+	lea	ebx,[ebx*4 + ecx]
+	mov	cx,[ebp+eax*2]
 
-	lea	eax,[eax*4 + ecx]
+	lea	ebx,[ebx*4 + ecx]
 
-	cmp	[_vrambuffer_p2 + edi],al
+	cmp	[_vrambuffer_p2 + edi],bl
 	je	L$4
-	mov	[0xB8000 + edi],al
-	mov	[_vrambuffer_p2 + edi],al
+	mov	[0xB8000 + edi],bl
+	mov	[_vrambuffer_p2 + edi],bl
 L$4:
-	cmp	[_vrambuffer_p3 + edi],ah
+	cmp	[_vrambuffer_p3 + edi],bh
 	je	L$5
-	mov	[0xB8000 + edi],ah
-	mov	[_vrambuffer_p3 + edi],ah
+	mov	[0xB8000 + edi],bh
+	mov	[_vrambuffer_p3 + edi],bh
 L$5:
-	mov 	bl,[esi+320]
-	mov	ax,[ebp+ebx*2]
-	mov	bl,[esi+321]
-	mov	cx,[ebp+ebx*2]
-	mov	bl,[esi+322]
-	lea	eax,[eax*4 + ecx]
-	mov	cx,[ebp+ebx*2]
-	mov	bl,[esi+323]
-	lea	eax,[eax*4 + ecx]
-	mov	cx,[ebp+ebx*2]
-	lea	eax,[eax*4 + ecx]
+	mov 	al,[esi+320]
+	mov	bx,[ebp+eax*2]
+	mov	al,[esi+321]
+	mov	cx,[ebp+eax*2]
+	mov	al,[esi+322]
+	lea	ebx,[ebx*4 + ecx]
+	mov	cx,[ebp+eax*2]
+	mov	al,[esi+323]
+	lea	ebx,[ebx*4 + ecx]
+	mov	cx,[ebp+eax*2]
+	lea	ebx,[ebx*4 + ecx]
 
-	cmp	[_vrambuffer_p2 + edi + 0x2000],al
+	cmp	[_vrambuffer_p2 + edi + 0x2000],bl
 	je	L$6
-	mov	[0xB8000 + edi + 0x2000],al
-	mov	[_vrambuffer_p2 + edi + 0x2000],al
+	mov	[0xB8000 + edi + 0x2000],bl
+	mov	[_vrambuffer_p2 + edi + 0x2000],bl
 L$6:
-	cmp	[_vrambuffer_p3 + edi + 0x2000],ah
+	cmp	[_vrambuffer_p3 + edi + 0x2000],bh
 	je	L$7
-	mov	[0xB8000 + edi + 0x2000],ah
-	mov	[_vrambuffer_p3 + edi + 0x2000],ah
+	mov	[0xB8000 + edi + 0x2000],bh
+	mov	[_vrambuffer_p3 + edi + 0x2000],bh
 L$7:
         inc	edi
 	add	esi,4
