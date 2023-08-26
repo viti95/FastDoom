@@ -36,18 +36,19 @@ CODE_SYM_DEF I_FinishUpdate
 	push	edx
 	push	esi
 	push	edi
+	push	ebp
 
 	xor		esi,esi
 
 	mov		ecx,_backbuffer
+	mov		ebp,[_ptrlut256colors]
 	
 L$20:
 	mov		ebx,0x50
 L$21:
 	movzx	edx,byte [ecx]
-	mov		eax,[_ptrlut256colors]
 	add		edx,edx
-	mov		di,[edx+eax]
+	mov		di,[edx+ebp]
 	cmp		di,[_vrambuffer+esi]
 	je		L$14
 	mov		[_vrambuffer+esi],di
@@ -65,6 +66,8 @@ L$14:
 	add		ecx,0x140
 	cmp		si,0x3E80
 	jb		L$20
+
+	pop		ebp
 	pop		edi
 	pop		esi
 	pop		edx
