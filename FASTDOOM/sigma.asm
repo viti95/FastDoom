@@ -26,8 +26,8 @@ extern _ptrlut16colors
 
 BEGIN_DATA_SECTION
 
-_vrambuffer_p2: times 32768 db 0
-_vrambuffer_p3: times 32768 db 0
+_vrambuffer_p2: times 16384 db 0
+_vrambuffer_p3: times 16384 db 0
 
 BEGIN_CODE_SECTION
 
