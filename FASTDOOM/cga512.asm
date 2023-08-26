@@ -50,9 +50,9 @@ L$20:
 	mov		bl,0x50
 L$21:
 	mov		al,byte [edi]
-	add		edi,0x4
-	mov		cx,[eax*2+ebp]
 	add		esi,0x2
+	mov		cx,[eax*2+ebp]
+	add		edi,0x4
 	cmp		[_vrambuffer+esi-2],cx
 	je		L$14
 	mov		[_vrambuffer+esi-2],cx
