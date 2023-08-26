@@ -68,6 +68,7 @@ file sigma.obj
 file i_cga4.obj
 file cga4.obj
 file i_cgacvb.obj
+file cgacvb.obj
 file i_herc.obj
 file herc.obj
 file i_cgabw.obj

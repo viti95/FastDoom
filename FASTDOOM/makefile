@@ -50,6 +50,7 @@ GLOBOBJS = &
  i_cga4.obj &
  cga4.obj &
  i_cgacvb.obj &
+ cgacvb.obj &
  i_herc.obj &
  herc.obj &
  i_cgabw.obj &

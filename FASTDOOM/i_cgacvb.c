@@ -53,7 +53,6 @@ const byte colors[48] = { // standard IBM CGA
 
 byte lut16colors[14 * 256];
 byte *ptrlut16colors;
-byte vrambuffer[16384];
 
 void I_ProcessPalette(byte *palette)
 {
@@ -81,7 +80,7 @@ void I_SetPalette(int numpalette)
     ptrlut16colors = lut16colors + numpalette * 256;
 }
 
-void I_FinishUpdate(void)
+/*void I_FinishUpdate(void)
 {
     unsigned char *vram = (unsigned char *)0xB8000;
     unsigned short base = 0;
@@ -131,7 +130,7 @@ void I_FinishUpdate(void)
         vram -= 0x2000;
         ptrvrambuffer -= 0x2000;
     }
-}
+}*/
 
 void CGA_CVBS_InitGraphics(void)
 {
@@ -142,7 +141,6 @@ void CGA_CVBS_InitGraphics(void)
     outp(0x3D8, 0x1A); // Enable color burst
     pcscreen = destscreen = (byte *)0xB8000;
 
-    SetDWords(vrambuffer, 0, 4096);
     SetDWords(pcscreen, 0, 4096);
 }
 
