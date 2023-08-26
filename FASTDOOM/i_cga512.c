@@ -27,7 +27,6 @@ const unsigned char newCGA13LUT[768] = {
 
 unsigned short lut256colors[14 * 256];
 unsigned short *ptrlut256colors;
-unsigned short vrambuffer[8000];
 
 void I_ProcessPalette(byte *palette)
 {
