@@ -42,20 +42,21 @@ CODE_SYM_DEF I_FinishUpdate
 
 	mov		ecx,_backbuffer
 	mov		ebp,[_ptrlut256colors]
+	mov		dx,0x03da
+
+	xor		eax,eax
 	
 L$20:
 	mov		ebx,0x50
 L$21:
-	movzx	edx,byte [ecx]
-	add		edx,edx
-	mov		di,[edx+ebp]
+	mov		al,byte [ecx]
+	mov		di,[eax*2+ebp]
 	cmp		di,[_vrambuffer+esi]
 	je		L$14
 	mov		[_vrambuffer+esi],di
-	mov		dx,0x03da
 L$17:
 	in		al,dx
-	test	al,0x01
+	test	al,0x1
 	je		L$17
 	mov		[0xB8000+esi],di
 L$14:
