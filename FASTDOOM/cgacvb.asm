@@ -37,8 +37,8 @@ CODE_SYM_DEF I_FinishUpdate
 	push		esi
 	push		edi
 	push		ebp
-	sub		esp,0x00000014
-	mov		edx,0x000b8000
+	sub		esp,0x14
+	mov		edx,0xB8000
 	mov		eax,_vrambuffer
 	xor		ebx,ebx
 L$2:
@@ -54,19 +54,19 @@ L$3:
 	mov		cl,[esi+ebp]
 	mov		0x8[esp],cl
 	mov		cl,0x10[esp]
-	shl		cl,0x04
+	shl		cl,0x4
 	or		cl,0x8[esp]
 	cmp		cl,[eax]
 	jne		L$7
 L$4:
 	inc		ch
-	add		ebx,0x00000004
+	add		ebx,0x4
 	inc		edx
 	inc		eax
 	cmp		ch,0x50
 	jb		L$3
-	add		edx,0x00001fb0
-	add		eax,0x00001fb0
+	add		edx,0x1FB0
+	add		eax,0x1FB0
 	xor		ch,ch
 	lea		eax,[eax]
 L$5:
@@ -82,7 +82,7 @@ L$5:
 	mov		cl,[edi+esi]
 	mov		0x4[esp],cl
 	mov		cl,0xc[esp]
-	shl		cl,0x04
+	shl		cl,0x4
 	or		cl,0x4[esp]
 	cmp		cl,[eax]
 	je		L$6
@@ -90,16 +90,16 @@ L$5:
 	mov		[eax],cl
 L$6:
 	inc		ch
-	add		ebx,0x00000004
+	add		ebx,0x4
 	inc		edx
 	inc		eax
 	cmp		ch,0x50
 	jb		L$5
-	sub		edx,0x00002000
-	sub		eax,0x00002000
-	cmp		bx,0xfa00
+	sub		edx,0x2000
+	sub		eax,0x2000
+	cmp		bx,0xFA00
 	jb		L$2
-	add		esp,0x00000014
+	add		esp,0x14
 	pop		ebp
 	pop		edi
 	pop		esi
