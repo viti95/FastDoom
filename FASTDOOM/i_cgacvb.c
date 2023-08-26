@@ -51,13 +51,15 @@ const byte colors[48] = { // standard IBM CGA
     0x07, 0x32, 0x3f,
     0x3f, 0x3f, 0x3f};*/
 
-byte lut16colors[14 * 256];
+byte lut16colors[14 * 256 + 255];
 byte *ptrlut16colors;
 
 void I_ProcessPalette(byte *palette)
 {
     int i, j;
     byte *ptr = gammatable[usegamma];
+
+    ptrlut16colors = (byte *)(((int)lut16colors + 255) & ~0xff);
 
     for (i = 0; i < 14 * 256; i++,palette+=3)
     {
@@ -71,14 +73,14 @@ void I_ProcessPalette(byte *palette)
 
         bestcolor = GetClosestColor(colors, 16, r1, g1, b1);
 
-        lut16colors[i] = bestcolor;
+        ptrlut16colors[i] = bestcolor | bestcolor << 4;
     }
 }
 
-void I_SetPalette(int numpalette)
+/*void I_SetPalette(int numpalette)
 {
     ptrlut16colors = lut16colors + numpalette * 256;
-}
+}*/
 
 /*void I_FinishUpdate(void)
 {
