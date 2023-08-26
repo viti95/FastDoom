@@ -36,8 +36,8 @@ CODE_SYM_DEF I_FinishUpdate
 	push	edx
 	push	esi
 	push	edi
-	sub		esp,0x00000004
-	mov		esi,0x000b8000
+	sub		esp,0x4
+	mov		esi,0xB8000
 	mov		ecx,_backbuffer
 	mov		ebx,_vrambuffer
 	mov		byte [esp],0x50
@@ -47,26 +47,7 @@ L$13:
 	add		edx,edx
 	mov		di,[edx+eax]
 	cmp		di,[ebx]
-	jne		L$16
-L$14:
-	add		esi,0x00000002
-	add		ebx,0x00000002
-	add		ecx,0x00000004
-	dec		byte [esp]
-	jne		L$15
-	mov		byte [esp],0x50
-	add		ecx,0x00000140
-L$15:
-	cmp		esi,0x000bbe80
-	jb		L$13
-	add		esp,0x00000004
-	pop		edi
-	pop		esi
-	pop		edx
-	pop		ecx
-	pop		ebx
-	ret
-L$16:
+	je		L$14
 	mov		[ebx],di
 	mov		dx,0x03da
 L$17:
@@ -74,6 +55,24 @@ L$17:
 	test	al,0x01
 	je		L$17
 	mov		[esi],di
-	jmp		L$14
+L$14:
+	add		esi,0x2
+	add		ebx,0x2
+	add		ecx,0x4
+	dec		byte [esp]
+	jne		L$15
+	mov		byte [esp],0x50
+	add		ecx,0x140
+L$15:
+	cmp		esi,0xBBE80
+	jb		L$13
+	add		esp,0x4
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+	ret
+
 
 %endif
