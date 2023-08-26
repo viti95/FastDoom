@@ -47,25 +47,25 @@ CODE_SYM_DEF I_FinishUpdate
 	xor		eax,eax
 	
 L$20:
-	mov		ebx,0x50
+	mov		bl,0x50
 L$21:
 	mov		al,byte [edi]
 	add		edi,0x4
 	mov		cx,[eax*2+ebp]
-	cmp		[_vrambuffer+esi],cx
+	add		esi,0x2
+	cmp		[_vrambuffer+esi-2],cx
 	je		L$14
-	mov		[_vrambuffer+esi],cx
+	mov		[_vrambuffer+esi-2],cx
 L$17:
 	in		al,dx
 	test	al,0x1
 	je		L$17
-	mov		[0xB8000+esi],cx
+	mov		[0xB8000+esi-2],cx
 L$14:
-	add		esi,0x2
-	dec		ebx
+	dec		bl
 	jne		L$21
 	add		edi,0x140
-	cmp		si,0x3E80
+	cmp		si,0x3E80-2
 	jb		L$20
 
 	pop		ebp
