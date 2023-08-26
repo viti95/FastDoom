@@ -110,11 +110,17 @@ L$3:
 
 	cmp	[_vrambuffer_p2 + edi],bl
 	je	L$4
+        mov     al,2
+        out     dx,al
+
 	mov	[0xB8000 + edi],bl
 	mov	[_vrambuffer_p2 + edi],bl
 L$4:
 	cmp	[_vrambuffer_p3 + edi],bh
 	je	L$5
+        mov     al,3
+        out     dx,al
+
 	mov	[0xB8000 + edi],bh
 	mov	[_vrambuffer_p3 + edi],bh
 L$5:
@@ -132,11 +138,17 @@ L$5:
 
 	cmp	[_vrambuffer_p2 + edi + 0x2000],bl
 	je	L$6
+        mov     al,2
+        out     dx,al
+
 	mov	[0xB8000 + edi + 0x2000],bl
 	mov	[_vrambuffer_p2 + edi + 0x2000],bl
 L$6:
 	cmp	[_vrambuffer_p3 + edi + 0x2000],bh
 	je	L$7
+        mov     al,3
+        out     dx,al
+
 	mov	[0xB8000 + edi + 0x2000],bh
 	mov	[_vrambuffer_p3 + edi + 0x2000],bh
 L$7:
