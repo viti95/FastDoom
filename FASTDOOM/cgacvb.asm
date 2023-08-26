@@ -43,7 +43,6 @@ CODE_SYM_DEF I_FinishUpdate
 	xor		ebx,ebx
 L$2:
 	xor		ch,ch
-	nop
 L$3:
 	movzx		esi,bx
 	mov		ebp,[_ptrlut16colors]
@@ -57,7 +56,10 @@ L$3:
 	shl		cl,0x4
 	or		cl,0x8[esp]
 	cmp		cl,[eax]
-	jne		L$7
+	je		L$4
+L$7:
+	mov		[edx],cl
+	mov		[eax],cl
 L$4:
 	inc		ch
 	add		ebx,0x4
@@ -107,9 +109,5 @@ L$6:
 	pop		ecx
 	pop		ebx
 	ret
-L$7:
-	mov		[edx],cl
-	mov		[eax],cl
-	jmp		L$4
 
 %endif
