@@ -54,27 +54,24 @@ CODE_SYM_DEF I_FinishUpdate
 
 	xor		edi,edi
 
+	mov		edx,eax
+
 start:
 	mov		ebp,40
 
 twoScanlines:
 	
 	mov		al,[esi]
+	mov		dl,[esi+4]
 	mov		ch,[eax]
-
-	mov		al,[esi+4]
-	mov		cl,[eax]
-
-	and		cx,0xF0F0
-
 	mov		al,[esi+2]
+	mov		cl,[edx]
 	mov		bh,[eax]
-
-	mov		al,[esi+6]
-	mov		bl,[eax]
+	mov		dl,[esi+6]
+	and		cx,0xF0F0
+	mov		bl,[edx]
 
 	and		bx,0x0F0F
-
 	or		ecx,ebx
 
 	cmp		[_vrambuffer+edi],ch
@@ -92,21 +89,16 @@ lowECX:
 secondScanline:
 
 	mov		al,[esi+320]
+	mov		dl,[esi+4+320]
 	mov		ch,[eax]
-
-	mov		al,[esi+4+320]
-	mov		cl,[eax]
-
-	and		cx,0xF0F0
-
 	mov		al,[esi+2+320]
+	mov		cl,[edx]
 	mov		bh,[eax]
-
-	mov		al,[esi+6+320]
-	mov		bl,[eax]
+	mov		dl,[esi+6+320]
+	and		cx,0xF0F0
+	mov		bl,[edx]
 
 	and		bx,0x0F0F
-
 	or		ecx,ebx
 
 	cmp		[_vrambuffer+edi+0x2000],ch
