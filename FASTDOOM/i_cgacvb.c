@@ -77,63 +77,6 @@ void I_ProcessPalette(byte *palette)
     }
 }
 
-/*void I_SetPalette(int numpalette)
-{
-    ptrlut16colors = lut16colors + numpalette * 256;
-}*/
-
-/*void I_FinishUpdate(void)
-{
-    unsigned char *vram = (unsigned char *)0xB8000;
-    unsigned short base = 0;
-    byte *ptrvrambuffer = vrambuffer;
-
-    for (base = 0; base < SCREENHEIGHT * 320;)
-    {
-        unsigned char x;
-
-        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++, ptrvrambuffer++)
-        {
-            unsigned char color0, color1;
-            byte tmp;
-
-            color0 = ptrlut16colors[backbuffer[base]];
-            color1 = ptrlut16colors[backbuffer[base + 2]];
-
-            tmp = color0 << 4 | color1;
-
-            if (tmp != *(ptrvrambuffer))
-            {
-                *(vram) = tmp;
-                *(ptrvrambuffer) = tmp;
-            }
-        }
-
-        vram += 0x1FB0;
-        ptrvrambuffer += 0x1FB0;
-
-        for (x = 0; x < SCREENWIDTH / 4; x++, base += 4, vram++, ptrvrambuffer++)
-        {
-            unsigned char color0, color1;
-            byte tmp;
-
-            color0 = ptrlut16colors[backbuffer[base]];
-            color1 = ptrlut16colors[backbuffer[base + 2]];
-
-            tmp = color0 << 4 | color1;
-
-            if (tmp != *(ptrvrambuffer))
-            {
-                *(vram) = tmp;
-                *(ptrvrambuffer) = tmp;
-            }
-        }
-
-        vram -= 0x2000;
-        ptrvrambuffer -= 0x2000;
-    }
-}*/
-
 void CGA_CVBS_InitGraphics(void)
 {
     union REGS regs;
