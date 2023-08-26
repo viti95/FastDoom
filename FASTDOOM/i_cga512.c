@@ -134,37 +134,6 @@ void I_SetPalette(int numpalette)
     ptrlut256colors = lut256colors + numpalette * 256;
 }
 
-/*void I_FinishUpdate(void)
-{
-    unsigned short *vram = (unsigned short *)0xB8000;
-    byte *ptrbackbuffer = backbuffer;
-    unsigned short *ptrvrambuffer = vrambuffer;
-    unsigned char line = 80;
-
-    do
-    {
-        unsigned short tmp = ptrlut256colors[*ptrbackbuffer];
-
-        if (*ptrvrambuffer != tmp)
-        {
-            *ptrvrambuffer = tmp;
-            I_WaitCGA();
-            *vram = tmp;
-        }
-
-        vram += 1;
-        ptrvrambuffer += 1;
-        ptrbackbuffer += 4;
-
-        line--;
-        if (line == 0)
-        {
-            line = 80;
-            ptrbackbuffer += 320;
-        }
-    } while (vram < (unsigned short *)0xBBE80);
-}*/
-
 void CGA_512_InitGraphics(void)
 {
     union REGS regs;
