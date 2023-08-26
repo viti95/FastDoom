@@ -40,8 +40,10 @@ CODE_SYM_DEF I_FinishUpdate
 	xor		esi,esi
 
 	mov		ecx,_backbuffer
+	
+L$20:
 	mov		ebx,0x50
-L$13:
+L$21:
 	movzx	edx,byte [ecx]
 	mov		eax,[_ptrlut256colors]
 	add		edx,edx
@@ -59,12 +61,10 @@ L$14:
 	add		esi,0x2
 	add		ecx,0x4
 	dec		ebx
-	jne		L$15
-	mov		ebx,0x50
+	jne		L$21
 	add		ecx,0x140
-L$15:
 	cmp		si,0x3E80
-	jb		L$13
+	jb		L$20
 	pop		edi
 	pop		esi
 	pop		edx
