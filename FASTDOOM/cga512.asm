@@ -40,7 +40,7 @@ CODE_SYM_DEF I_FinishUpdate
 
 	xor		esi,esi
 
-	mov		ecx,_backbuffer
+	mov		edi,_backbuffer
 	mov		ebp,[_ptrlut256colors]
 	mov		dx,0x03da
 
@@ -49,22 +49,22 @@ CODE_SYM_DEF I_FinishUpdate
 L$20:
 	mov		ebx,0x50
 L$21:
-	mov		al,byte [ecx]
-	mov		di,[eax*2+ebp]
-	cmp		di,[_vrambuffer+esi]
+	mov		al,byte [edi]
+	mov		cx,[eax*2+ebp]
+	cmp		cx,[_vrambuffer+esi]
 	je		L$14
-	mov		[_vrambuffer+esi],di
+	mov		[_vrambuffer+esi],cx
 L$17:
 	in		al,dx
 	test	al,0x1
 	je		L$17
-	mov		[0xB8000+esi],di
+	mov		[0xB8000+esi],cx
 L$14:
 	add		esi,0x2
-	add		ecx,0x4
+	add		edi,0x4
 	dec		ebx
 	jne		L$21
-	add		ecx,0x140
+	add		edi,0x140
 	cmp		si,0x3E80
 	jb		L$20
 
