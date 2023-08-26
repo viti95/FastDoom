@@ -134,7 +134,7 @@ void I_SetPalette(int numpalette)
     ptrlut256colors = lut256colors + numpalette * 256;
 }
 
-void I_FinishUpdate(void)
+/*void I_FinishUpdate(void)
 {
     unsigned short *vram = (unsigned short *)0xB8000;
     byte *ptrbackbuffer = backbuffer;
@@ -163,7 +163,7 @@ void I_FinishUpdate(void)
             ptrbackbuffer += 320;
         }
     } while (vram < (unsigned short *)0xBBE80);
-}
+}*/
 
 void CGA_512_InitGraphics(void)
 {
