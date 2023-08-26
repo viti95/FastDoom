@@ -35,8 +35,6 @@ const byte colors[48] = {
 
 unsigned short lut16colors[14 * 256];
 unsigned short *ptrlut16colors;
-byte vrambuffer_p2[32768];
-byte vrambuffer_p3[32768];
 
 void I_ProcessPalette(byte *palette)
 {
@@ -58,13 +56,8 @@ void I_ProcessPalette(byte *palette)
 
         bestcolor = GetClosestColor(colors, 16, r1, g1, b1);
 
-        value = bestcolor & 12;
-        value = value | value >> 2 | value << 2 | value << 4;
-        value <<= 8;
-
+        value = (bestcolor & 12) << 6;
         value2 = bestcolor & 3;
-        value2 = value2 | value2 << 2 | value2 << 4 | value2 << 6;
-        value2;
 
         lut16colors[i] = value | value2;
     }
@@ -75,7 +68,7 @@ void I_SetPalette(int numpalette)
     ptrlut16colors = lut16colors + numpalette * 256;
 }
 
-void I_FinishUpdate(void)
+/*void I_FinishUpdate(void)
 {
     int x;
     unsigned char *vram = (unsigned char *)0xB8000;
@@ -157,7 +150,7 @@ void I_FinishUpdate(void)
         }
         base += 320;
     }
-}
+}*/
 
 void Sigma_Init(void);
 
@@ -193,9 +186,6 @@ void Sigma_InitGraphics(void)
     Sigma_Init();
 
     Sigma_ClearVRAM();
-
-    SetDWords(vrambuffer_p2, 0, 8192);
-    SetDWords(vrambuffer_p3, 0, 8192);
 }
 
 #endif

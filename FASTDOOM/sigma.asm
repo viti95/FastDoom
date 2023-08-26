@@ -21,6 +21,16 @@ BITS 32
 
 %ifdef MODE_SIGMA
 
+extern _backbuffer
+extern _ptrlut16colors
+
+BEGIN_DATA_SECTION
+
+_vrambuffer_p2: times 32768 db 0
+_vrambuffer_p3: times 32768 db 0
+
+BEGIN_CODE_SECTION
+
 CODE_SYM_DEF Sigma_Init
         pushad
 
@@ -61,5 +71,92 @@ CODE_SYM_DEF Sigma_Init
 
         popad
         ret
+
+CODE_SYM_DEF I_FinishUpdate
+	push	ebx
+	push	ecx
+	push	edx
+	push	esi
+	push	ebp
+        push    edi
+
+	xor     edi,edi
+
+	mov	esi,_backbuffer
+	mov	ebp,[_ptrlut16colors]
+
+	xor	ebx,ebx
+
+        mov     dx,0x2DE
+
+        mov     [patchESP+2],esp
+
+L$2:
+	sub     esp,80
+L$3:
+	mov 	bl,[esi]
+	mov	ax,[ebp+ebx*2]
+	mov	bl,[esi+1]
+	mov	cx,[ebp+ebx*2]
+	mov	bl,[esi+2]
+	lea	eax,[eax*4 + ecx]
+	mov	cx,[ebp+ebx*2]
+	mov	bl,[esi+3]
+	lea	eax,[eax*4 + ecx]
+	mov	cx,[ebp+ebx*2]
+
+	lea	eax,[eax*4 + ecx]
+
+	cmp	[_vrambuffer_p2 + edi],al
+	je	L$4
+	mov	[0xB8000 + edi],al
+	mov	[_vrambuffer_p2 + edi],al
+L$4:
+	cmp	[_vrambuffer_p3 + edi],ah
+	je	L$5
+	mov	[0xB8000 + edi],ah
+	mov	[_vrambuffer_p3 + edi],ah
+L$5:
+	mov 	bl,[esi+320]
+	mov	ax,[ebp+ebx*2]
+	mov	bl,[esi+321]
+	mov	cx,[ebp+ebx*2]
+	mov	bl,[esi+322]
+	lea	eax,[eax*4 + ecx]
+	mov	cx,[ebp+ebx*2]
+	mov	bl,[esi+323]
+	lea	eax,[eax*4 + ecx]
+	mov	cx,[ebp+ebx*2]
+	lea	eax,[eax*4 + ecx]
+
+	cmp	[_vrambuffer_p2 + edi + 0x2000],al
+	je	L$6
+	mov	[0xB8000 + edi + 0x2000],al
+	mov	[_vrambuffer_p2 + edi + 0x2000],al
+L$6:
+	cmp	[_vrambuffer_p3 + edi + 0x2000],ah
+	je	L$7
+	mov	[0xB8000 + edi + 0x2000],ah
+	mov	[_vrambuffer_p3 + edi + 0x2000],ah
+L$7:
+        inc	edi
+	add	esi,4
+
+        inc	esp
+patchESP:
+  	cmp	esp, 0x12345678
+	jne	L$3
+
+	add	esi,140H
+	cmp	di,0x1F40
+	jb	L$2
+
+        pop     edi
+	pop	ebp
+	pop	esi
+	pop	edx
+	pop	ecx
+	pop	ebx
+	ret
 
 %endif
