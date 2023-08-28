@@ -32,45 +32,45 @@ _vrambuffer_p3: times 16384 db 0
 BEGIN_CODE_SECTION
 
 CODE_SYM_DEF Sigma_Init
-        pushad
+	pushad
 
-        ; set video mode 4 (320x200 - 4 colors)
-        mov     ax,4
-        int     10h
+	; set video mode 4 (320x200 - 4 colors)
+	mov     ax,4
+	int     10h
 
-        ; initialize palette
-        mov     dx,2dah
-        in      al,dx
-        and     al,0e0h
-        or      al,0dh
-        dec     dx
-        out     dx,al
-        push    ax
-        mov     dl,0deh
-        mov     bl,0fh
-        mov     cx,16
-        mov     al,bl
+	; initialize palette
+	mov     dx,2dah
+	in      al,dx
+	and     al,0e0h
+	or      al,0dh
+	dec     dx
+	out     dx,al
+	push    ax
+	mov     dl,0deh
+	mov     bl,0fh
+	mov     cx,16
+	mov     al,bl
 .ploop:
-        out     dx,al
-        add     bl,10h
-        sub     bl,01h
-        mov     al,bl
-        mov     ah,al
-        and     ax,07f8h
-        shr     ah,1
-        jnc     .zero
-        or      ah,4
+	out     dx,al
+	add     bl,10h
+	sub     bl,01h
+	mov     al,bl
+	mov     ah,al
+	and     ax,07f8h
+	shr     ah,1
+	jnc     .zero
+	or      ah,4
 .zero:  
-        or      al,ah
-        loop    .ploop
+	or      al,ah
+	loop    .ploop
 
-        pop     ax
-        and     al,0feh
-        mov     dl,0d9h
-        out     dx,al
+	pop     ax
+	and     al,0feh
+	mov     dl,0d9h
+	out     dx,al
 
-        popad
-        ret
+	popad
+	ret
 
 CODE_SYM_DEF I_FinishUpdate
 	push	ebx
@@ -78,98 +78,97 @@ CODE_SYM_DEF I_FinishUpdate
 	push	edx
 	push	esi
 	push	ebp
-        push    edi
+	push    edi
 
 	xor     edi,edi
 
-	mov	esi,_backbuffer
-	mov	ebp,[_ptrlut16colors]
+	mov		esi,_backbuffer
+	mov		ebp,[_ptrlut16colors]
 
-	xor	ebx,ebx
-        xor     eax,eax
+	xor     eax,eax
 
-        mov     dx,0x2DE
+	mov     dx,0x2DE
 
-        mov     [patchESP+2],esp
+	mov     [patchESP+2],esp
 
 L$2:
 	sub     esp,80
 L$3:
 	mov 	al,[esi]
-	mov	bx,[ebp+eax*2]
-	mov	al,[esi+1]
-	mov	cx,[ebp+eax*2]
-	mov	al,[esi+2]
-	lea	ebx,[ebx*4 + ecx]
-	mov	cx,[ebp+eax*2]
-	mov	al,[esi+3]
-	lea	ebx,[ebx*4 + ecx]
-	mov	cx,[ebp+eax*2]
+	mov		bx,[ebp+eax*2]
+	mov		al,[esi+1]
+	mov		cx,[ebp+eax*2]
+	mov		al,[esi+2]
+	lea		ebx,[ebx*4+ecx]
+	mov		cx,[ebp+eax*2]
+	mov		al,[esi+3]
+	lea		ebx,[ebx*4+ecx]
+	mov		cx,[ebp+eax*2]
 
-	lea	ebx,[ebx*4 + ecx]
+	lea		ebx,[ebx*4+ecx]
 
-	cmp	[_vrambuffer_p2 + edi],bl
-	je	L$4
-        mov     al,2
-        out     dx,al
+	cmp		[_vrambuffer_p2+edi],bl
+	je		L$4
+    mov     al,2
+    out     dx,al
 
-	mov	[0xB8000 + edi],bl
-	mov	[_vrambuffer_p2 + edi],bl
+	mov		[0xB8000+edi],bl
+	mov		[_vrambuffer_p2+edi],bl
 L$4:
-	cmp	[_vrambuffer_p3 + edi],bh
-	je	L$5
-        mov     al,3
-        out     dx,al
+	cmp		[_vrambuffer_p3+edi],bh
+	je		L$5
+	mov     al,3
+	out     dx,al
 
-	mov	[0xB8000 + edi],bh
-	mov	[_vrambuffer_p3 + edi],bh
+	mov		[0xB8000+edi],bh
+	mov		[_vrambuffer_p3+edi],bh
 L$5:
 	mov 	al,[esi+320]
-	mov	bx,[ebp+eax*2]
-	mov	al,[esi+321]
-	mov	cx,[ebp+eax*2]
-	mov	al,[esi+322]
-	lea	ebx,[ebx*4 + ecx]
-	mov	cx,[ebp+eax*2]
-	mov	al,[esi+323]
-	lea	ebx,[ebx*4 + ecx]
-	mov	cx,[ebp+eax*2]
-	lea	ebx,[ebx*4 + ecx]
+	mov		bx,[ebp+eax*2]
+	mov		al,[esi+321]
+	mov		cx,[ebp+eax*2]
+	mov		al,[esi+322]
+	lea		ebx,[ebx*4+ecx]
+	mov		cx,[ebp+eax*2]
+	mov		al,[esi+323]
+	lea		ebx,[ebx*4+ecx]
+	mov		cx,[ebp+eax*2]
+	lea		ebx,[ebx*4+ecx]
 
-	cmp	[_vrambuffer_p2 + edi + 0x2000],bl
-	je	L$6
-        mov     al,2
-        out     dx,al
+	cmp		[_vrambuffer_p2+edi+0x2000],bl
+	je		L$6
+	mov     al,2
+	out     dx,al
 
-	mov	[0xB8000 + edi + 0x2000],bl
-	mov	[_vrambuffer_p2 + edi + 0x2000],bl
+	mov		[0xB8000+edi+0x2000],bl
+	mov		[_vrambuffer_p2+edi+0x2000],bl
 L$6:
-	cmp	[_vrambuffer_p3 + edi + 0x2000],bh
-	je	L$7
-        mov     al,3
-        out     dx,al
+	cmp		[_vrambuffer_p3+edi+0x2000],bh
+	je		L$7
+	mov     al,3
+	out     dx,al
 
-	mov	[0xB8000 + edi + 0x2000],bh
-	mov	[_vrambuffer_p3 + edi + 0x2000],bh
+	mov		[0xB8000+edi+0x2000],bh
+	mov		[_vrambuffer_p3+edi+0x2000],bh
 L$7:
-        inc	edi
-	add	esi,4
+	inc		esp
+	inc		edi
+	add		esi,4
 
-        inc	esp
 patchESP:
-  	cmp	esp, 0x12345678
-	jne	L$3
+  	cmp		esp,0x12345678
+	jne		L$3
 
-	add	esi,140H
-	cmp	di,0x1F40
-	jb	L$2
+	add		esi,320
+	cmp		di,0x1F40
+	jb		L$2
 
-        pop     edi
-	pop	ebp
-	pop	esi
-	pop	edx
-	pop	ecx
-	pop	ebx
+	pop     edi
+	pop		ebp
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
 	ret
 
 %endif
