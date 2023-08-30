@@ -369,8 +369,19 @@ void ASS_Init(int rate, int maxsng, int mdev, int sdev)
 
         if (mdev == snd_SBMIDI)
         {
-            FX_GetBlasterSettings(&dmx_blaster);
-            FX_SetupSoundBlaster(dmx_blaster);
+            status = FX_GetBlasterSettings(&dmx_blaster);
+
+            if (status != FX_Ok)
+            {
+                I_Error("Error getting BLASTER settings: %i", status);
+            }
+
+            status = FX_SetupSoundBlaster(dmx_blaster);
+
+            if (status != FX_Ok)
+            {
+                I_Error("Error setup Music device: %i", status);
+            }
         }
 
         status = MUSIC_Init(music_device, dmx_mus_port);
