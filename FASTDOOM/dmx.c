@@ -395,7 +395,7 @@ void ASS_Init(int rate, int maxsng, int mdev, int sdev)
         switch (sound_device)
         {
         case PC:
-            PCFX_Init();
+            status = PCFX_Init();
             PCFX_SetTotalVolume(255);
             return;
         case SoundBlaster:
@@ -411,11 +411,16 @@ void ASS_Init(int rate, int maxsng, int mdev, int sdev)
         case Adlib:
         case OPL2LPT:
         case OPL3LPT:
-            FX_SetupCard(sound_device, &fx_device, dmx_snd_port);
+            status = FX_SetupCard(sound_device, &fx_device, dmx_snd_port);
             break;
         default:
-            FX_SetupCard(sound_device, &fx_device, -1);
+            status = FX_SetupCard(sound_device, &fx_device, -1);
             break;
+        }
+
+        if (status != FX_Ok)
+        {
+            I_Error("Error setup Sound device: %i", status);
         }
 
         switch(snd_Rate)
