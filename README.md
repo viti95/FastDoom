@@ -69,7 +69,7 @@ https://user-images.githubusercontent.com/8323882/147228550-bf93cc50-3c92-4a7a-b
 
 This project exists thanks to all the people who contribute.
 
-<a href="https://github.com/acheong08/ChatGPT/graphs/contributors">
+<a href="https://github.com/viti95/FastDoom/graphs/contributors">
 <img src="https://contrib.rocks/image?repo=viti95/fastdoom" />
 </a>
 
