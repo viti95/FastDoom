@@ -2,8 +2,8 @@
 
 ## 0.9.8 (XX Sep 2023)
 * Add DEMO4 to benchmark menu
-* Optimized all non-VGA modes
-* Replace uncapped fps setting with new bus speed setting. Uncapped fps will come later when frame interpolation works properly. This allows to select fast or slow bus.
+* Optimized all non-VGA modes (ASM)
+* Replace uncapped fps setting with new bus speed setting. This option is only useful for 8-bit ISA cards on mode 13h.
 * Added CPU class detection (386, 486, 586...) to avoid crashes if some render codepath uses non-available instructions
 * Additional sound card initialization checks to avoid crashes at startup
 ## 0.9.7 (16 Jul 2023)
