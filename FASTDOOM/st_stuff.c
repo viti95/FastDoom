@@ -346,13 +346,6 @@ unsigned char cheat_ammonokey_seq[] =
 		'i', 'd', 'f', 'a', 0xff // idfa
 };
 
-// Smashing Pumpkins Into Samml Piles Of Putried Debris.
-unsigned char cheat_noclip_seq[] =
-	{
-		'i', 'd', 's', 'p', 'i', // idspispopd
-		's', 'p', 'o', 'p', 'd', 0xff};
-
-//
 unsigned char cheat_commercial_noclip_seq[] =
 	{
 		'i', 'd', 'c', 'l', 'i', 'p', 0xff // idclip
@@ -379,7 +372,6 @@ cheatseq_t cheat_mus = {cheat_mus_seq, 0};
 cheatseq_t cheat_god = {cheat_god_seq, 0};
 cheatseq_t cheat_ammo = {cheat_ammo_seq, 0};
 cheatseq_t cheat_ammonokey = {cheat_ammonokey_seq, 0};
-cheatseq_t cheat_noclip = {cheat_noclip_seq, 0};
 cheatseq_t cheat_commercial_noclip = {cheat_commercial_noclip_seq, 0};
 
 cheatseq_t cheat_powerup[7] =
@@ -512,7 +504,7 @@ void ST_Responder(event_t *ev)
 						S_ChangeMusic(musnum, true);
 				}
 			}
-			else if (cht_CheckCheat(&cheat_noclip) || cht_CheckCheat(&cheat_commercial_noclip))
+			else if (cht_CheckCheat(&cheat_commercial_noclip))
 			{
 				players.cheats ^= CF_NOCLIP;
 
