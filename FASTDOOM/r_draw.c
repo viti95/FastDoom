@@ -115,6 +115,7 @@ byte *background_buffer = 0;
 // Source is the top of the column to scale.
 //
 lighttable_t *dc_colormap;
+unsigned char dc_color;
 int dc_x;
 int dc_yl;
 int dc_yh;
@@ -2482,6 +2483,27 @@ void R_DrawFuzzColumnTrans(void)
         *dest = tintmap[(*dest << 8) + dc_colormap[dc_source[(frac >> FRACBITS) & 127]]];
         dest += SCREENWIDTH / 4;
         frac += fracstep;
+    } while (count--);
+}
+
+void R_DrawColumnFlat(void)
+{
+    int count;
+    byte *dest;
+
+    count = dc_yh - dc_yl;
+
+    if (count <= 0)
+        return;
+
+    outp(SC_INDEX + 1, 1 << (dc_x & 3));
+
+    dest = destview + Mul80(dc_yl) + (dc_x >> 2);
+
+    do
+    {
+        *dest = dc_color;
+        dest += SCREENWIDTH / 4;
     } while (count--);
 }
 

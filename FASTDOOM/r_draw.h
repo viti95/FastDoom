@@ -22,6 +22,7 @@
 #define FLATPIXELCOLOR 1850
 
 extern lighttable_t *dc_colormap;
+extern unsigned char dc_color;
 extern int dc_x;
 extern int dc_yl;
 extern int dc_yh;
@@ -49,6 +50,7 @@ extern byte **ylookup;
 
 void R_DrawColumnFastLEA(void);
 void R_DrawColumn(void);
+void R_DrawColumnFlat(void);
 void R_DrawSkyFlat(void);
 void R_DrawColumnLowFastLEA(void);
 void R_DrawColumnLow(void);
