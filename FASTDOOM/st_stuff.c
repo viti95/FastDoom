@@ -366,7 +366,7 @@ unsigned char cheat_powerup_seq[7][10] =
 		{'i', 'd', 'b', 'e', 'h', 'o', 'l', 'd', 'r', 0xff}, // beholdr
 		{'i', 'd', 'b', 'e', 'h', 'o', 'l', 'd', 'a', 0xff}, // beholda
 		{'i', 'd', 'b', 'e', 'h', 'o', 'l', 'd', 'l', 0xff}, // beholdl
-		{'i', 'd', 'b', 'e', 'h', 'o', 'l', 'd', 'd', 0xff}	 // beholdd
+		{'i', 'd', 'b', 'e', 'h', 'o', 'l', 'd', 0xff}	 // beholdd
 };
 
 unsigned char cheat_clev_seq[] =
