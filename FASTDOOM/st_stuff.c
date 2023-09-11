@@ -351,15 +351,9 @@ unsigned char cheat_commercial_noclip_seq[] =
 		'i', 'd', 'c', 'l', 'i', 'p', 0xff // idclip
 };
 
-unsigned char cheat_powerup_seq[7][10] =
+unsigned char cheat_powerup_seq[] =
 	{
-		{'i', 'd', 'b', 'e', 'h', 'o', 'l', 'd', 'v', 0xff}, // beholdv
-		{'i', 'd', 'b', 'e', 'h', 'o', 'l', 'd', 's', 0xff}, // beholds
-		{'i', 'd', 'b', 'e', 'h', 'o', 'l', 'd', 'i', 0xff}, // beholdi
-		{'i', 'd', 'b', 'e', 'h', 'o', 'l', 'd', 'r', 0xff}, // beholdr
-		{'i', 'd', 'b', 'e', 'h', 'o', 'l', 'd', 'a', 0xff}, // beholda
-		{'i', 'd', 'b', 'e', 'h', 'o', 'l', 'd', 'l', 0xff}, // beholdl
-		{'i', 'd', 'b', 'e', 'h', 'o', 'l', 'd', 0xff}		 // beholdd
+		'i', 'd', 'b', 'e', 'h', 'o', 'l', 'd', 1, 0, 0xff // behold
 };
 
 unsigned char cheat_clev_seq[] =
@@ -373,17 +367,7 @@ cheatseq_t cheat_god = {cheat_god_seq, 0};
 cheatseq_t cheat_ammo = {cheat_ammo_seq, 0};
 cheatseq_t cheat_ammonokey = {cheat_ammonokey_seq, 0};
 cheatseq_t cheat_commercial_noclip = {cheat_commercial_noclip_seq, 0};
-
-cheatseq_t cheat_powerup[7] =
-	{
-		{cheat_powerup_seq[0], 0},
-		{cheat_powerup_seq[1], 0},
-		{cheat_powerup_seq[2], 0},
-		{cheat_powerup_seq[3], 0},
-		{cheat_powerup_seq[4], 0},
-		{cheat_powerup_seq[5], 0},
-		{cheat_powerup_seq[6], 0}};
-
+cheatseq_t cheat_powerup = {cheat_powerup_seq, 0};
 cheatseq_t cheat_choppers = {cheat_choppers_seq, 0};
 cheatseq_t cheat_clev = {cheat_clev_seq, 0};
 
@@ -513,27 +497,47 @@ void ST_Responder(event_t *ev)
 				else
 					players.message = STSTR_NCOFF;
 			}
-
-			// 'behold?' power-up cheats
-			for (i = 0; i < 6; i++)
+			// 'behold' power-up menu
+			else if (cht_CheckCheat(&cheat_powerup))
 			{
-				if (cht_CheckCheat(&cheat_powerup[i]))
+				char buf[2];
+				int position = -1;
+
+				cht_GetParam(&cheat_powerup, buf);
+
+				switch (buf[0])
 				{
-					if (!players.powers[i])
-						P_NotGivePower(i);
+				case 'v':
+					position = 0;
+					break;
+				case 's':
+					position = 1;
+					break;
+				case 'i':
+					position = 2;
+					break;
+				case 'r':
+					position = 3;
+					break;
+				case 'a':
+					position = 4;
+					break;
+				case 'l':
+					position = 5;
+					break;
+				}
+
+				if (position != -1)
+				{
+					if (!players.powers[position])
+						P_NotGivePower(position);
 					else if (i != pw_strength)
-						players.powers[i] = 1;
+						players.powers[position] = 1;
 					else
-						players.powers[i] = 0;
+						players.powers[position] = 0;
 
 					players.message = STSTR_BEHOLDX;
 				}
-			}
-
-			// 'behold' power-up menu
-			if (cht_CheckCheat(&cheat_powerup[6]))
-			{
-				players.message = STSTR_BEHOLD;
 			}
 			// 'choppers' invulnerability & chainsaw
 			else if (cht_CheckCheat(&cheat_choppers))
