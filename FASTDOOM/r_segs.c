@@ -275,7 +275,7 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 				else
 					R_DrawEmptyColumnTextMDA();
 #else
-				colfunc();
+				R_DrawColumnFlat();
 #endif
 
 				col = (column_t *)((byte *)col + col->length + 4);
