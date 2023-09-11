@@ -22,5 +22,7 @@ version=$(echo "$versionstring" | awk -F'"' '{print $2}')
 rm FastDoom_$version.zip
 
 cd PKG
-zip -r -9 ../FastDoom_$version.zip .
+7zz a -r -mx9 ../FastDoom_$version.zip .
 cd ..
+
+rm -rf PKG
