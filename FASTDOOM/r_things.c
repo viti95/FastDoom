@@ -857,7 +857,7 @@ void R_DrawSprite(vissprite_t *spr)
             // masked mid texture?
             if (ds->maskedtexturecol)
             {
-                dc_color = texturetranslation[ds->curline->sidedef->midtexture];;
+                dc_color = ds->curline->sidedef->midtexture;
                 R_RenderMaskedSegRange(ds, r1, r2);
             }
             // seg is behind sprite
@@ -904,7 +904,7 @@ void R_DrawMasked(void)
     for (ds = ds_p - 1; ds >= drawsegs; ds--)
         if (ds->maskedtexturecol)
         {
-            dc_color = texturetranslation[ds->curline->sidedef->midtexture];;
+            dc_color = ds->curline->sidedef->midtexture;
             R_RenderMaskedSegRange(ds, ds->x1, ds->x2);
         }
 
