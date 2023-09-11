@@ -573,7 +573,7 @@ byte AM_Responder(void)
 		default:
 			rc = 0;
 		}
-		if (cht_CheckCheat(&cheat_amap))
+		if (gameskill != sk_nightmare && cht_CheckCheat(&cheat_amap))
 		{
 			rc = 0;
 
