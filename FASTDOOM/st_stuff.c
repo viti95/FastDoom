@@ -366,7 +366,7 @@ unsigned char cheat_powerup_seq[7][10] =
 		{'i', 'd', 'b', 'e', 'h', 'o', 'l', 'd', 'r', 0xff}, // beholdr
 		{'i', 'd', 'b', 'e', 'h', 'o', 'l', 'd', 'a', 0xff}, // beholda
 		{'i', 'd', 'b', 'e', 'h', 'o', 'l', 'd', 'l', 0xff}, // beholdl
-		{'i', 'd', 'b', 'e', 'h', 'o', 'l', 'd', 0xff}	 // beholdd
+		{'i', 'd', 'b', 'e', 'h', 'o', 'l', 'd', 0xff}		 // beholdd
 };
 
 unsigned char cheat_clev_seq[] =
@@ -550,44 +550,43 @@ void ST_Responder(event_t *ev)
 				players.powers[pw_invulnerability] = true;
 				players.message = STSTR_CHOPPERS;
 			}
-		}
-
-		// 'clev' change-level cheat
-		if (cht_CheckCheat(&cheat_clev))
-		{
-			char buf[3];
-			int epsd;
-			int map;
-
-			cht_GetParam(&cheat_clev, buf);
-
-			if (gamemode == commercial)
+			// 'clev' change-level cheat
+			else if (cht_CheckCheat(&cheat_clev))
 			{
-				epsd = 0;
-				map = 10 * (buf[0] - '0') + buf[1] - '0';
+				char buf[3];
+				int epsd;
+				int map;
+
+				cht_GetParam(&cheat_clev, buf);
+
+				if (gamemode == commercial)
+				{
+					epsd = 0;
+					map = 10 * (buf[0] - '0') + buf[1] - '0';
+				}
+				else
+				{
+					epsd = buf[0] - '0';
+					map = buf[1] - '0';
+				}
+
+				// Ohmygod - this is not going to work.
+				if ((gamemode == retail) && ((epsd > 4) || (map > 9)))
+					return;
+
+				if ((gamemode == registered) && ((epsd > 3) || (map > 9)))
+					return;
+
+				if ((gamemode == shareware) && ((epsd > 1) || (map > 9)))
+					return;
+
+				if ((gamemode == commercial) && ((epsd > 1) || (map > 32)))
+					return;
+
+				// So be it.
+				players.message = STSTR_CLEV;
+				G_DeferedInitNew(gameskill, epsd, map);
 			}
-			else
-			{
-				epsd = buf[0] - '0';
-				map = buf[1] - '0';
-			}
-
-			// Ohmygod - this is not going to work.
-			if ((gamemode == retail) && ((epsd > 4) || (map > 9)))
-				return;
-
-			if ((gamemode == registered) && ((epsd > 3) || (map > 9)))
-				return;
-
-			if ((gamemode == shareware) && ((epsd > 1) || (map > 9)))
-				return;
-
-			if ((gamemode == commercial) && ((epsd > 1) || (map > 32)))
-				return;
-
-			// So be it.
-			players.message = STSTR_CLEV;
-			G_DeferedInitNew(gameskill, epsd, map);
 		}
 	}
 }
