@@ -31,7 +31,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #ifndef ANSILIBS
-#include <conio.h>
+# include <conio.h>
 #endif
 
 #include "waddir.h"
@@ -43,6 +43,7 @@
 
 /***************************** Prototypes *********************************/
 
-void rebuild(char *newname);
+void
+rebuild(char * newname);
 
-#endif
+#endif // ifndef __WADMERGE_H_INCLUDED__

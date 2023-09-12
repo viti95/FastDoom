@@ -29,15 +29,17 @@
 #include <stdio.h>
 #include <stdarg.h>
 #ifdef ANSILIBS
-#define SIGNOFP SIGFPE
+# define SIGNOFP SIGFPE
 #else
-#include <pc.h>
+# include <pc.h>
 #endif
 #include <signal.h>
 
 /***************************** Prototypes *********************************/
 
-void errorexit(char *s, ...);
-void sig_func(int signalnum);
+void
+errorexit(char * s, ...);
+void
+sig_func(int signalnum);
 
-#endif
+#endif // ifndef __ERRORS_H_INCLUDED__

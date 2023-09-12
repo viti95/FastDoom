@@ -9,7 +9,7 @@
 *.MAP
 *.OBJ
 *.SYM
-
+*.o
 
 #VSCODE
 .vscode/*

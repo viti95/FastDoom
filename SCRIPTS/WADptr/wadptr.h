@@ -27,7 +27,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #ifndef ANSILIBS
-#include <conio.h>
+# include <conio.h>
 #endif
 #include <stdarg.h>
 #include <string.h>
@@ -42,19 +42,19 @@
 
 /** MAIN.C **/
 
-#define VERSION "2.4"
+#define VERSION    "2.4"
 
-#define HELP 0
-#define COMPRESS 1
+#define HELP       0
+#define COMPRESS   1
 #define UNCOMPRESS 2
-#define LIST 3
+#define LIST       3
 
 /****************************** GLOBALS ************************************/
 
 /** MAIN.C **/
 
 extern int g_argc; /* global cmd-line list */
-extern char **g_argv;
+extern char ** g_argv;
 extern char wadname[256];
 extern char filespec[256]; /* -tweak file name */
 extern int allowpack;      /* level packing on */
@@ -66,44 +66,62 @@ extern int allowfastdoom;  /* remove not needed lumps on FastDoom */
 
 /** MAIN.C **/
 
-int parsecmdline();
-int openwad();
-void doaction();
-void eachwad(char *filespec);
+int
+parsecmdline();
+int
+openwad();
+void
+doaction();
+void
+eachwad(char * filespec);
 
-void help();
-void compress();
-void uncompress();
-void list_entries();
+void
+help();
+void
+compress();
+void
+uncompress();
+void
+list_entries();
 
-char *find_filename(char *s);
-int filecmp(char *filename, char *templaten);
-void *__crt0_glob_function(); /* needed to disable globbing(expansion of */
-                              /* wildcards on the command line) */
-int iwad_warning();
+char *
+find_filename(char * s);
+int
+filecmp(char * filename, char * templaten);
+void *
+__crt0_glob_function(); /* needed to disable globbing(expansion of */
+                        /* wildcards on the command line) */
+int
+iwad_warning();
 
-int findperc(int before, int after);
+int
+findperc(int before, int after);
 
-extern const char *pwad_name;
-extern const char *iwad_name;
+extern const char * pwad_name;
+extern const char * iwad_name;
 
 #ifdef ANSILIBS
-int wherex(void);
-int wherey(void);
-int gotoxy(int x, int y);
+int
+wherex(void);
+int
+wherey(void);
+int
+gotoxy(int x, int y);
 #endif
 
 #ifdef NORMALUNIX
-#define DIRSEP "/"
-#define EXTSEP "."
-#define CURDIR "."
+# define DIRSEP "/"
+# define EXTSEP "."
+# define CURDIR "."
 #else
-#define DIRSEP "\\"
-#define EXTSEP "."
-#define CURDIR "."
+# define DIRSEP "\\"
+# define EXTSEP "."
+# define CURDIR "."
 #endif
 
-#define READ_SHORT(p) (short)((p)[0] | ((p)[1] << 8))
-#define READ_LONG(p) (long)((p)[0] | ((p)[1] << 8) | ((p)[2] << 16) | ((p)[3] << 24))
+#define READ_SHORT(p)     (short) ((p)[0] | ((p)[1] << 8))
+#define READ_LONG(p)      (long) ((p)[0] | ((p)[1] << 8) | ((p)[2] << 16) | ((p)[3] << 24))
 #define WRITE_SHORT(p, s) (p)[0] = (s) & 0xff, (p)[1] = ((s) >> 8) & 0xff
-#define WRITE_LONG(p, l) (p)[0] = (l) & 0xff, (p)[1] = ((l) >> 8) & 0xff, (p)[2] = ((l) >> 16) & 0xff, (p)[3] = ((l) >> 24) & 0xff
+#define WRITE_LONG(p, l) \
+	(p)[0] = (l) & 0xff, (p)[1] = ((l) >> 8) & 0xff, (p)[2] = ((l) >> 16) & 0xff, \
+	(p)[3] = ((l) >> 24) & 0xff
