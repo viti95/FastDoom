@@ -276,6 +276,10 @@ void compress()
                 removeentry("WIP2");
                 removeentry("WIP3");
                 removeentry("WIP4");
+                removeentry("WIBP1");
+                removeentry("WIBP2");
+                removeentry("WIBP3");
+                removeentry("WIBP4");
                 removeentry("STFB0");
                 removeentry("STFB1");
                 removeentry("STFB2");
@@ -284,6 +288,16 @@ void compress()
                 removeentry("STPB1");
                 removeentry("STPB2");
                 removeentry("STPB3");
+                removeentry("STDISK");
+                removeentry("STCDROM");
+                removeentry("WIOSTS");
+                removeentry("WIOSTF");
+                removeentry("WIMSTAR");
+                removeentry("WIMINUS");
+                removeentry("WISUCKS");
+                removeentry("WIFRGS");
+                removeentry("WIKILRS");
+                removeentry("WIVCTMS");
         }
 
         for (count = 0; count < numentries; count++)
