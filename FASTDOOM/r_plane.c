@@ -30,7 +30,6 @@
 #include "doomstat.h"
 
 #include "r_local.h"
-#include "r_sky.h"
 #include "r_data.h"
 #include "r_draw.h"
 
@@ -41,6 +40,7 @@
 #include "sizeopt.h"
 
 #define SC_INDEX 0x3C4
+#define ANGLETOSKYSHIFT 22
 
 //
 // opening
@@ -214,6 +214,9 @@ void R_ClearPlanes(void)
     basexscale = ((abs(optCosine) >> 14) >= centerxfrac) ? ((optCosine ^ centerxfrac) >> 31) ^ MAXINT : FixedDiv2(optCosine, centerxfrac);
     baseyscale = -(((abs(optSine) >> 14) >= centerxfrac) ? ((optSine ^ centerxfrac) >> 31) ^ MAXINT : FixedDiv2(optSine, centerxfrac));
 }
+
+short skyflatnum;
+short skytexture;
 
 //
 // R_FindPlane

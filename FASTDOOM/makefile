@@ -167,7 +167,6 @@ GLOBOBJS = &
  r_data.obj &
  r_draw.obj &
  r_main.obj &
- r_sky.obj &
  r_plane.obj &
  r_segs.obj &
  r_things.obj &

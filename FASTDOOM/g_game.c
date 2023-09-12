@@ -58,7 +58,6 @@
 
 // SKY handling - still the wrong place.
 #include "r_data.h"
-#include "r_sky.h"
 
 #include "g_game.h"
 

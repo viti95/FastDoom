@@ -33,7 +33,6 @@
 #include "p_local.h"
 
 #include "doomstat.h"
-#include "r_sky.h"
 
 #include <alloca.h>
 

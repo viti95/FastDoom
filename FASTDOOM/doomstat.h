@@ -274,6 +274,7 @@ extern unsigned int benchmark_total_tics;
 // Used for rendering,
 //  as well as tracking projectiles etc.
 extern short skyflatnum;
+extern short skytexture;
 
 extern ticcmd_t localcmds[BACKUPTICS];
 

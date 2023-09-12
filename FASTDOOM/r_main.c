@@ -30,7 +30,6 @@
 #include "m_misc.h"
 
 #include "r_local.h"
-#include "r_sky.h"
 
 #include "std_func.h"
 
@@ -1484,6 +1483,8 @@ void R_ExecuteSetViewSize(void)
 //
 extern int detailLevel;
 
+#define SKYFLATNAME "F_SKY1"
+
 void R_Init(void)
 {
     R_InitData();
@@ -1494,7 +1495,7 @@ void R_Init(void)
     printf(".");
     R_InitLightTables();
     printf(".");
-    R_InitSkyMap();
+    skyflatnum = R_FlatNumForName(SKYFLATNAME);
     printf(".");
 }
 

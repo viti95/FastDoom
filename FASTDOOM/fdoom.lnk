@@ -147,7 +147,6 @@ file r_bsp.obj
 file r_data.obj
 file r_draw.obj
 file r_main.obj
-file r_sky.obj
 file r_plane.obj
 file r_segs.obj
 file r_things.obj
