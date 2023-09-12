@@ -294,7 +294,6 @@ void compress()
                 removeentry("WIOSTF");
                 removeentry("WIMSTAR");
                 removeentry("WIMINUS");
-                removeentry("WISUCKS");
                 removeentry("WIFRGS");
                 removeentry("WIKILRS");
                 removeentry("WIVCTMS");
