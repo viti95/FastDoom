@@ -37,10 +37,11 @@ char **g_argv;
 char filespec[256] = ""; /* file spec on command line eg. *.wad */
 char wadname[256] = "";  /* WAD file name */
 static char outputwad[256] = "";
-int action;          /* list, compress */
-int allowpack = 1;   /* level packing on */
-int allowsquash = 1; /* picture squashing on */
-int allowmerge = 1;  /* lump merging on */
+int action;            /* list, compress */
+int allowpack = 1;     /* level packing on */
+int allowsquash = 1;   /* picture squashing on */
+int allowmerge = 1;    /* lump merging on */
+int allowfastdoom = 1; /* remove not needed lumps on FastDoom */
 
 const char *pwad_name = "PWAD";
 const char *iwad_name = "IWAD";
@@ -104,6 +105,8 @@ int parsecmdline()
                         allowsquash = 0;
                 if (!strcmp(g_argv[count], "-nopack"))
                         allowpack = 0;
+                if (!strcmp(g_argv[count], "-nofastdoom"))
+                        allowfastdoom = 0;
 
                 if (g_argv[count][0] != '-')
                         if (!strcmp(filespec, ""))

@@ -60,6 +60,7 @@ extern char filespec[256]; /* -tweak file name */
 extern int allowpack;      /* level packing on */
 extern int allowsquash;    /* picture squashing on */
 extern int allowmerge;     /* lump merging on */
+extern int allowfastdoom;  /* remove not needed lumps on FastDoom */
 
 /******************************* PROTOTYPES ********************************/
 
