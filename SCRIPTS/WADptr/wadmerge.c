@@ -113,9 +113,6 @@ int suggest()
 
 void rebuild(char *newname)
 {
-       /*int num_suggest=0, count2;
-       char tempstr[5];
-       char a;*/
        int count;
        char *tempchar;
        FILE *newwad;
