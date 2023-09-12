@@ -1,16 +1,16 @@
 /**************************************************************************
- *                  The WADPTR project : LUMPS.C                          *
- *                      Header file for LUMPS.C                           *
- *                                                                        *
- *            Functions for compressing individual lumps                  *
- *                                                                        *
- * P_* : Sidedef packing extension routines. Combines sidedefs which are  *
- *       identical in a level, and shares them between multiple linedefs  *
- *                                                                        *
- * S_* : Graphic squashing routines. Combines identical columns in        *
- *       graphic lumps to make them smaller                               *
- *                                                                        *
- **************************************************************************/
+*                  The WADPTR project : LUMPS.C                          *
+*                      Header file for LUMPS.C                           *
+*                                                                        *
+*            Functions for compressing individual lumps                  *
+*                                                                        *
+* P_* : Sidedef packing extension routines. Combines sidedefs which are  *
+*       identical in a level, and shares them between multiple linedefs  *
+*                                                                        *
+* S_* : Graphic squashing routines. Combines identical columns in        *
+*       graphic lumps to make them smaller                               *
+*                                                                        *
+**************************************************************************/
 
 #ifndef __LUMPS_H_INCLUDED__
 #define __LUMPS_H_INCLUDED__
@@ -42,23 +42,23 @@ int s_isgraphic(char *s);
 
 typedef struct
 {
-    short xoffset;
-    short yoffset;
-    char upper[8];
-    char middle[8];
-    char lower[8];
-    unsigned short sector_ref;
+	short xoffset;
+	short yoffset;
+	char upper[8];
+	char middle[8];
+	char lower[8];
+	unsigned short sector_ref;
 } sidedef_t;
 
 typedef struct
 {
-    unsigned short vertex1;
-    unsigned short vertex2;
-    unsigned short flags;
-    unsigned short types;
-    unsigned short tag;
-    unsigned short sidedef1;
-    unsigned short sidedef2;
+	unsigned short vertex1;
+	unsigned short vertex2;
+	unsigned short flags;
+	unsigned short types;
+	unsigned short tag;
+	unsigned short sidedef1;
+	unsigned short sidedef2;
 } linedef_t;
 
 #define NO_SIDEDEF ((unsigned short)-1)

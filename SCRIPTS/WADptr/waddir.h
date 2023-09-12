@@ -1,9 +1,9 @@
 /**************************************************************************
- *                     WAD loading and saving routines                    *
- *                                                                        *
- * WAD loading and reading routines: by me, me, me!                       *
- *                                                                        *
- **************************************************************************/
+*                     WAD loading and saving routines                    *
+*                                                                        *
+* WAD loading and reading routines: by me, me, me!                       *
+*                                                                        *
+**************************************************************************/
 
 #ifndef __WADDIR_H_INCLUDED__
 #define __WADDIR_H_INCLUDED__
@@ -21,18 +21,18 @@
 
 typedef enum
 {
-      IWAD,
-      PWAD,
-      NONWAD
+	IWAD,
+	PWAD,
+	NONWAD
 } wadtype;
 
 /*************************** Structs *************************************/
 
 typedef struct
 {
-      long offset;
-      long length;
-      char name[8];
+	long offset;
+	long length;
+	char name[8];
 } entry_t;
 
 /* portable structure IO (see lumps.h) */
