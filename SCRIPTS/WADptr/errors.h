@@ -29,7 +29,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #ifdef ANSILIBS
-#define SIGNOFP	SIGFPE
+#define SIGNOFP SIGFPE
 #else
 #include <pc.h>
 #endif

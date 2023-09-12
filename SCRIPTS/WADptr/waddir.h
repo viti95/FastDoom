@@ -10,8 +10,8 @@
 
 /*************************** Includes *************************************/
 
-#include<stdio.h>
-#include<stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "errors.h"
 
@@ -30,16 +30,16 @@ typedef enum
 
 typedef struct
 {
-        long offset;
-        long length;
-        char name[8];
+      long offset;
+      long length;
+      char name[8];
 } entry_t;
 
 /* portable structure IO (see lumps.h) */
-#define ENTRY_OFF	0
-#define ENTRY_LEN	4
-#define ENTRY_NAME	8
-#define ENTRY_SIZE	16
+#define ENTRY_OFF 0
+#define ENTRY_LEN 4
+#define ENTRY_NAME 8
+#define ENTRY_SIZE 16
 
 /*************************** Prototypes ***********************************/
 
@@ -70,7 +70,7 @@ int findlevelsize(char *s);
 /** WADDIR.C **/
 
 extern FILE *wadfp;
-extern union REGS r;       /*how am I supposed to twiddle any frobs without this? :) */
+extern union REGS r; /*how am I supposed to twiddle any frobs without this? :) */
 extern char picentry[8];
 extern long numentries, diroffset;
 extern entry_t wadentry[MAXENTRIES];

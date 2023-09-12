@@ -46,4 +46,3 @@
 void rebuild(char *newname);
 
 #endif
-
