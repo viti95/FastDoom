@@ -235,14 +235,14 @@ void help()
             "\n"
             "Usage:  WADPTR inputwad [outputwad] options\n"
             "\n"
-            " -c        :   Compress WAD\n"
-            " -l        :   List WAD\n"
-            " -o <file> :   Write output WAD to <file>\n"
-            " -h        :   Help\n"
-            "\n"
-            " -nomerge  :   Disable lump merging\n"
-            " -nosquash :   Disable graphic squashing\n"
-            " -nopack   :   Disable sidedef packing\n");
+            " -c         :   Compress WAD\n"
+            " -l         :   List WAD\n"
+            " -o <file>  :   Write output WAD to <file>\n"
+            " -h         :   Help\n"
+            " -nomerge   :   Disable lump merging\n"
+            " -nosquash  :   Disable graphic squashing\n"
+            " -nofastdoom:   Disable specific FastDoom optimizations\n"
+            " -nopack    :   Disable sidedef packing\n");
 }
 
 /* Compress a WAD **********************************************************/
