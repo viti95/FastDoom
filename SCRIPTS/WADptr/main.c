@@ -255,12 +255,6 @@ void compress()
         int written = 0; /* if 0:write 1:been written 2:write silently */
         char *temp, resname[10], a[50];
 
-        if (wad == IWAD)
-        {
-                if (!iwad_warning())
-                        return;
-        }
-
         wadsize = diroffset + (ENTRY_SIZE * numentries); /* find wad size */
 
         fstream = fopen(tempwad_name, "wb+");
@@ -334,7 +328,6 @@ void compress()
                         {
                                 /* write the pre-packed sidedef entry */
                                 wadentry[count].offset = ftell(fstream);
-                                /*fwrite(p_sidedefres,wadentry[count].length,1,fstream);*/
                                 writesidedefs((sidedef_t *)p_sidedefres, wadentry[count].length, fstream);
                                 free(p_sidedefres); /* sidedefs no longer needed */
                                 written = 1;        /* now written */
@@ -343,7 +336,6 @@ void compress()
                         {
                                 /* write the pre-packed linedef entry */
                                 wadentry[count].offset = ftell(fstream);
-                                /*fwrite(p_linedefres,wadentry[count].length,1,fstream);*/
                                 writelinedefs((linedef_t *)p_linedefres, wadentry[count].length, fstream);
                                 free(p_linedefres);
                                 written = 1; /* now written */
@@ -387,8 +379,7 @@ void compress()
                                 printf("(0%%), done.\n");
                 }
         }
-        diroffset = ftell(fstream);                              /* update the directory location */
-        /*fwrite(wadentry,numentries,sizeof(entry_t),fstream);*/ /*write dir */
+        diroffset = ftell(fstream); /* update the directory location */
         writewaddir(fstream);
         writewadheader(fstream);
 
@@ -520,8 +511,7 @@ void list_entries()
 
 /* Break a filename into filename and extension ***************************/
 
-char *
-find_filename(char *s)
+char *find_filename(char *s)
 {
         char *tempstr, *backstr;
 
@@ -614,8 +604,7 @@ int filecmp(char *filename, char *templaten)
 
 /* Removes command line globbing ******************************************/
 
-void *
-__crt0_glob_function()
+void *__crt0_glob_function()
 {
         return 0;
 }
@@ -631,30 +620,6 @@ int findperc(int before, int after)
         perc = 1 - (((double)after) / before);
 
         return (int)(100 * perc);
-}
-
-/* Warning not to change IWAD **********************************************/
-
-int iwad_warning()
-{
-        char tempchar;
-
-        printf("Are you sure you want to change the main IWAD?");
-        fflush(stdout);
-        while (1)
-        {
-                tempchar = fgetc(stdin);
-                if ((tempchar == 'Y') || (tempchar == 'y'))
-                {
-                        printf("\n");
-                        return 1;
-                }
-                if ((tempchar == 'N') || (tempchar == 'n'))
-                {
-                        printf("\n");
-                        return 0;
-                }
-        }
 }
 
 #ifdef ANSILIBS
