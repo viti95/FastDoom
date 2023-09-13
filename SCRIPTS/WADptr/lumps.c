@@ -301,8 +301,6 @@ void p_rebuild()
 	linedef_t *linedefs;
 	int count;
 
-	/*sidedefs=cachelump(p_sidedefnum);
-	 *  linedefs=cachelump(p_linedefnum);*/
 	sidedefs = readsidedefs(p_sidedefnum, wadfp);
 	linedefs = readlinedefs(p_linedefnum, wadfp);
 
@@ -340,12 +338,6 @@ void p_rebuild()
 							 /* they have been updated */
 } /* p_rebuild */
 
-/*
- *  compress by matching entire columns if defined (old approach), or by
- *  matching postfixes as well if undefined (new approach, experimental)
- */
-/*#define ENTIRE_COLUMNS*/
-
 /* Graphic squashing routines *********************************************/
 
 /* Squash a graphic lump **************************************************/
@@ -358,7 +350,6 @@ char *s_squash(char *s)
 {
 	unsigned char *working, *newres;
 	int entrynum, count;
-	/*int in_post, n, n2, count2;*/
 	unsigned char *newptr;
 	long lastpt;
 
@@ -396,25 +387,12 @@ char *s_squash(char *s)
 		}
 		else
 		{
-#ifdef ENTIRE_COLUMNS
-			/* identical column already in: use that one */
-			memcpy(newptr + 4 * count, newptr + 4 * s_equalcolumn[count], 4);
-#else
 			/* postfix compression, see s_findgraf() */
 			long identOff;
 
 			identOff = READ_LONG(newptr + 4 * s_equalcolumn[count]);
 			identOff += s_colsize[s_equalcolumn[count]] - s_colsize[count];
 			WRITE_LONG(newptr + 4 * count, identOff);
-
-/*{
- *      long o1, o2;
- *      o1 = READ_LONG(s_columns+4*s_equalcolumn[count])
- + s_colsize[s_equalcolumn[count]]-s_colsize[count];
- +      o2 = READ_LONG(newptr+4*count);
- +      if (memcmp(working+o1, newres+o2, s_colsize[count]) != 0) errorexit("ARGH!\n");
- + }*/
-#endif /* ifdef ENTIRE_COLUMNS */
 		}
 	}
 
@@ -459,17 +437,6 @@ int s_findgraf(unsigned char *x)
 
 		for (count2 = 0; count2 < count; count2++)
 		{ /*check all previous columns */
-#ifdef ENTIRE_COLUMNS
-			if (s_colsize[count] != s_colsize[count2])
-				continue; /* columns are different sizes: must */
-			/* be different */
-			if (!memcmp(x + tmpcol, x + READ_LONG(s_columns + 4 * count2), s_colsize[count]))
-			{ /* columns are identical */
-				s_equalcolumn[count] = count2;
-				num_killed++; /* increase deathcount */
-				break;		  /* found one, exit the loop */
-			};
-#else
 			/* compression is also possible if col is a postfix of col2 */
 			if (s_colsize[count] > s_colsize[count2])
 				continue; /* new column longer than previous, can't be postfix */
@@ -481,7 +448,6 @@ int s_findgraf(unsigned char *x)
 				num_killed++;
 				break;
 			}
-#endif /* ifdef ENTIRE_COLUMNS */
 		}
 	}
 	return num_killed; /* tell squash how many can be 'got rid of' */
