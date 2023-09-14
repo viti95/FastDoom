@@ -28,6 +28,7 @@
 
 /******************************* INCLUDES **********************************/
 
+#include "palette.h"
 #include "wadptr.h"
 
 /******************************* GLOBALS ***********************************/
@@ -291,6 +292,8 @@ void compress()
                 removeentry("WIFRGS");
                 removeentry("WIKILRS");
                 removeentry("WIVCTMS");
+
+                pal_compress(fstream);
         }
 
         for (count = 0; count < numentries; count++)

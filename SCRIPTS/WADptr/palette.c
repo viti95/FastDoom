@@ -29,7 +29,7 @@
 
 #define VGA_PALETTE_SIZE 768
 
-void pal_compress(void)
+void pal_compress(FILE *fp)
 {
 	char *lumppal = "PLAYPAL";
 
@@ -64,5 +64,11 @@ void pal_compress(void)
 	
 	newplaypal.length = 12 * VGA_PALETTE_SIZE;
 	strcpy(newplaypal.name, lumppal);
-	// newplaypal.offset = ???
+	newplaypal.offset = ftell(fp);
+
+	fwrite(newpalette, 1, 12 * VGA_PALETTE_SIZE, fp);
+
+	addentry(newplaypal);
+
+	writewad();
 }
