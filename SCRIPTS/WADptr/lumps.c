@@ -223,8 +223,6 @@ void p_dopack(sidedef_t *sidedefs)
 {
 	int count, count2;
 
-	/*sidedef_t *newsidedef;*/
-
 	p_newsidedef = malloc(wadentry[p_sidedefnum].length * 10);
 	if (!p_newsidedef)
 	{
@@ -251,8 +249,7 @@ void p_dopack(sidedef_t *sidedefs)
 		}
 		for (count2 = 0; count2 < p_newnum; count2++)
 		{ /* check previous */
-			if (!memcmp(&p_newsidedef[count2],
-						&sidedefs[count], sizeof(sidedef_t)))
+			if (!memcmp(&p_newsidedef[count2], &sidedefs[count], sizeof(sidedef_t)))
 			{ /* they are identical: this one can be removed */
 				p_movedto[count] = count2;
 				break;

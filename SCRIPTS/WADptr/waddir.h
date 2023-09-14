@@ -46,7 +46,9 @@ typedef struct
 int readwad();
 void writewad();
 char *convert_string8(entry_t entry);
+char *convert_string8_lumpname(char *lumpname);
 entry_t findinfo(char *entrytofind);
+void addentry(entry_t entry);
 void removeentry(char *lumpname);
 int entry_exist(char *entrytofind);
 void *cachelump(int entrynum);

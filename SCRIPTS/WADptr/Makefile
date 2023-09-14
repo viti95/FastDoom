@@ -13,13 +13,10 @@ WIMPLIBPATH	= scsi::5.$.vice1_1.src.arch.riscos.wimplib
 
 
 # Objects for Unix / DOS
-OBJECTSO	= main.o waddir.o errors.o wadmerge.o lumps.o
-# Objects for RISC OS
-OOBJECTS	= o.main o.waddir o.errors o.wadmerge o.lumps
+OBJECTSO	= main.o waddir.o errors.o wadmerge.o palette.o lumps.o
 
 # default
 OBJECTS		= $(OBJECTSO)
-
 
 DOSFLAGS	= CC=gcc EXECUTABLE=wadptr.exe DELETE=del CFLAGS=-O3
 
@@ -60,6 +57,9 @@ lumps.o : lumps.c lumps.h waddir.h errors.h
 
 wadmerge.o : wadmerge.c wadmerge.h waddir.h errors.h
 	$(CC) $(CFLAGS) -c wadmerge.c
+
+palette.o : palette.c palette.h waddir.h errors.h
+	$(CC) $(CFLAGS) -c palette.c
 
 ########## Functions ############
 

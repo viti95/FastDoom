@@ -227,6 +227,21 @@ entry_t findinfo(char *entrytofind)
 	return entry;
 }
 
+/* Adds an entry to the WAD ************************************************/
+
+void addentry(entry_t entry)
+{
+	char buffer[10];
+
+	strcpy(buffer, convert_string8(entry)); /* copying to temp does have a */
+	if (entry_exist(buffer) != -1)			/* point, incidentally. */
+		printf("\tWarning! Resource %s already exists!\n",
+			   convert_string8(entry));
+	memcpy(&wadentry[numentries], &entry, sizeof(entry_t));
+	numentries++;
+	writewad();
+}
+
 /* Removes an entry from the WAD ************************************************/
 
 void removeentry(char *lumpname)
