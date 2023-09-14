@@ -263,8 +263,6 @@ void removeentry(char *lumpname)
 	}
 
 	numentries--;
-
-	writewad();
 }
 
 /* Load a lump to memory **************************************************/

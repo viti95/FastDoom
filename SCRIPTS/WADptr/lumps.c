@@ -644,8 +644,7 @@ int writelinedefs(linedef_t *lines, int bytes, FILE *fp)
 	return 0;
 }
 
-sidedef_t *
-readsidedefs(int lumpnum, FILE *fp)
+sidedef_t *readsidedefs(int lumpnum, FILE *fp)
 {
 	sidedef_t *sides;
 	int i, numsides, validbytes;

@@ -35,9 +35,9 @@ void pal_compress(FILE *fp)
 
 	int entrynum;
 	unsigned char *working;
-	int i,j;
-	int posold = 0;
-	int posnew = 0;
+	unsigned int i,j;
+	unsigned int posold = 0;
+	unsigned int posnew = 0;
 	unsigned char newpalette[12 * VGA_PALETTE_SIZE];
 	entry_t newplaypal;
 
@@ -46,7 +46,7 @@ void pal_compress(FILE *fp)
 
 	for (i = 0; i < 14; i++)
 	{
-		if (i == 1 || i == 9) // Omit palettes 1 and 9
+		if ((i == 1) || (i == 9))
 		{
 			posold += VGA_PALETTE_SIZE;
 			continue;
@@ -69,6 +69,4 @@ void pal_compress(FILE *fp)
 	fwrite(newpalette, 1, 12 * VGA_PALETTE_SIZE, fp);
 
 	addentry(newplaypal);
-
-	writewad();
 }
