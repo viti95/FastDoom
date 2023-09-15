@@ -15,7 +15,7 @@
 
 #if defined(MODE_CGA_BW)
 
-unsigned char lutcolors[14 * 256 + 255];
+unsigned char lutcolors[12 * 256 + 255];
 unsigned char *ptrlutcolors;
 
 void I_ProcessPalette(byte *palette)
@@ -26,7 +26,7 @@ void I_ProcessPalette(byte *palette)
 
     ptrlutcolors = (byte *)(((int)lutcolors + 255) & ~0xff);
 
-    for (i = 0; i < 14 * 256; i++, palette += 3)
+    for (i = 0; i < 12 * 256; i++, palette += 3)
     {
         int r, g, b;
         int sum;

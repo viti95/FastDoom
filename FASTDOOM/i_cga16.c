@@ -17,7 +17,7 @@
 
 #if defined(MODE_CGA16)
 
-byte lut16colors[14 * 256 + 255];
+byte lut16colors[12 * 256 + 255];
 byte *ptrlut16colors;
 
 extern byte vrambuffer[16000];
@@ -47,7 +47,7 @@ void I_ProcessPalette(byte *palette)
 
     ptrlut16colors = (byte *)(((int)lut16colors + 255) & ~0xff);
 
-    for (i = 0; i < 14 * 256; i++,palette+=3)
+    for (i = 0; i < 12 * 256; i++, palette+=3)
     {
         unsigned int r1, g1, b1;
         unsigned int bestcolor;

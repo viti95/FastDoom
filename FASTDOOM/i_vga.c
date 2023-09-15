@@ -17,7 +17,7 @@
 
 #if defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 
-byte processedpalette[14 * 768];
+byte processedpalette[12 * 768];
 
 // Test VGA REP OUTSB capability
 void VGA_TestFastSetPalette(void)
@@ -60,7 +60,7 @@ void I_ProcessPalette(byte *palette)
 
     byte *ptr = gammatable[usegamma];
 
-    for (i = 0; i < 14 * 768; i += 4, palette += 4)
+    for (i = 0; i < 12 * 768; i += 4, palette += 4)
     {
         processedpalette[i] = ptr[*palette];
         processedpalette[i + 1] = ptr[*(palette + 1)];

@@ -836,7 +836,7 @@ void ST_doPaletteStuff(void)
 		if (palette > NUMBONUSPALS - 1)
 			palette = NUMBONUSPALS - 1;
 
-		palette += STARTBONUSPALS - 2;
+		palette += STARTBONUSPALS - 1;
 	}
 	else if (players.powers[pw_ironfeet] > 4 * 32 || players.powers[pw_ironfeet] & 8)
 		palette = RADIATIONPAL - 2;

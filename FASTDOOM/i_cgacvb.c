@@ -51,7 +51,7 @@ const byte colors[48] = { // standard IBM CGA
     0x07, 0x32, 0x3f,
     0x3f, 0x3f, 0x3f};*/
 
-byte lut16colors[14 * 256 + 255];
+byte lut16colors[12 * 256 + 255];
 byte *ptrlut16colors;
 
 void I_ProcessPalette(byte *palette)
@@ -61,7 +61,7 @@ void I_ProcessPalette(byte *palette)
 
     ptrlut16colors = (byte *)(((int)lut16colors + 255) & ~0xff);
 
-    for (i = 0; i < 14 * 256; i++,palette+=3)
+    for (i = 0; i < 12 * 256; i++, palette+=3)
     {
         int r1, g1, b1;
 
