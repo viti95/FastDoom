@@ -41,15 +41,10 @@ int suggest()
 	int count, count2, linkcnt = 0;
 	short *links; /* possible links */
 	char *check1, *check2;
-	int px, py;
-	int perctime = 20;
 	int maxlinks = MAXLINKS;
 
 	if ((links = (short *)malloc(2 * maxlinks * sizeof(short))) == NULL)
 		errorexit("suggest: couldn't alloc memory for links!\n");
-
-	px = wherex();
-	py = wherey(); /* for % count */
 
 	/* find similar entries */
 	for (count = 0; count < numentries; count++)
@@ -91,17 +86,7 @@ int suggest()
 		free(check1); /* free back both lumps */
 		free(check2);
 
-		perctime--; /* % count */
-		if (!perctime)
-		{
-			gotoxy(px, py);
-			printf("%i%%", (50 * count) / linkcnt);
-			fflush(stdout);
-			perctime = 50;
-		}
 	}
-	gotoxy(px, py);
-
 	free(links);
 
 	return 0;
@@ -115,7 +100,6 @@ void rebuild(char *newname)
 	char *tempchar;
 	FILE *newwad;
 	long along = 0, filepos;
-	int nextperc = 50, px, py;
 
 	/* first run suggest mode to find how to make it smaller */
 	suggest();
@@ -128,9 +112,6 @@ void rebuild(char *newname)
 	fwrite(iwad_name, 1, 4, newwad); /* temp header */
 	fwrite(&along, 4, 1, newwad);
 	fwrite(&along, 4, 1, newwad);
-
-	px = wherex();
-	py = wherey(); /* for % count */
 
 	for (count = 0; count < numentries; count++)
 	{ /* add each entry in turn */
@@ -149,23 +130,10 @@ void rebuild(char *newname)
 			wadentry[count].offset = filepos; /* update the wad directory */
 											  /* with new lump location */
 		}
-		nextperc--; /* % count */
-		if (!nextperc)
-		{
-			gotoxy(px, py);
-			printf("%ld%%", 50 + (count * 50) / numentries);
-			fflush(stdout);
-			nextperc = 50;
-		}
 	}
 	diroffset = ftell(newwad); /* write the wad directory */
 	writewaddir(newwad);
 	writewadheader(newwad);
 
 	fclose(newwad); /* close the new wad */
-
-	gotoxy(px, py);
-	printf("         ");
-	fflush(stdout); /* remove % count */
-	gotoxy(px, py);
 } /* rebuild */

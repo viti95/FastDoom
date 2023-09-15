@@ -81,8 +81,6 @@ int filecmp(char *filename, char *templaten);
 void *__crt0_glob_function(); /* needed to disable globbing(expansion of */
 						/* wildcards on the command line) */
 
-int findperc(int before, int after);
-
 extern const char *pwad_name;
 extern const char *iwad_name;
 

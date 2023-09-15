@@ -235,18 +235,6 @@ void p_dopack(sidedef_t *sidedefs)
 	p_newnum = 0;
 	for (count = 0; count < p_num_sidedefs; count++)
 	{ /* each sidedef in turn */
-		if ((count % 100) == 0)
-		{
-			/* time for a percent-done update */
-			int x, y;
-			x = wherex();
-			y = wherey();
-			double c = count;
-			double p = p_num_sidedefs;
-			printf("%%%.0f  ", 100 * (c * c + c) / (p * p + p));
-			fflush(stdout);
-			gotoxy(x, y);
-		}
 		for (count2 = 0; count2 < p_newnum; count2++)
 		{ /* check previous */
 			if (!memcmp(&p_newsidedef[count2], &sidedefs[count], sizeof(sidedef_t)))

@@ -267,6 +267,8 @@ void compress()
 
         if (allowfastdoom)
         {
+                printf("Applying FastDoom optimizations... ");
+
                 removeentry("WIP1");
                 removeentry("WIP2");
                 removeentry("WIP3");
@@ -294,7 +296,11 @@ void compress()
                 removeentry("WIVCTMS");
 
                 pal_compress(fstream);
+
+                printf("done\n"); /* all done! */
         }
+
+        printf("Packing and squashing... ");
 
         char *lumppal = "PLAYPAL";
         int palnum = entry_exist(convert_string8_lumpname(lumppal));
@@ -313,9 +319,7 @@ void compress()
                                                                    /* resource name */
                 written = 0;                                       /* reset written */
                 if (!islevelentry(resname))
-                { /* hide individual level entries */
-                        printf("Adding: %s       ", resname);
-                        fflush(stdout);
+                {
                 }
                 else
                 {
@@ -326,16 +330,7 @@ void compress()
                 { /* sidedef packing disabling */
                         if (islevel(count))
                         { /* level name */
-                                printf("\tPacking ");
-                                fflush(stdout);
-                                findshrink = findlevelsize(resname);
-
                                 p_pack(resname); /* pack the level */
-
-                                findshrink = findperc(findshrink, /* % shrunk */
-                                                      findlevelsize(resname));
-                                printf("(%i%%), done.\n", findshrink);
-
                                 written = 2; /* silently write this lump (if any) */
                         }
                         if (!strcmp(resname, "SIDEDEFS"))
@@ -360,37 +355,24 @@ void compress()
                 { /* squash disabling */
                         if (s_isgraphic(resname))
                         { /* graphic */
-                                printf("\tSquashing ");
-                                fflush(stdout);
-                                findshrink = wadentry[count].length;
-
                                 temp = s_squash(resname);                /* get the squashed graphic */
                                 wadentry[count].offset = ftell(fstream); /*update dir */
                                                                          /* write it */
                                 fwrite(temp, wadentry[count].length, 1, fstream);
 
                                 free(temp); /* graphic no longer needed: free it */
-                                /* % shrink  */
-                                findshrink = findperc(findshrink, wadentry[count].length);
-                                printf("(%i%%), done.\n", findshrink);
+
                                 written = 1; /* now written */
                         }
                 }
 
                 if ((written == 0) || (written == 2))
                 { /* write or silently */
-                        if (written == 0)
-                        { /* only if not silent */
-                                printf("\tStoring ");
-                                fflush(stdout);
-                        }
                         temp = cachelump(count);                 /* get the lump */
                         wadentry[count].offset = ftell(fstream); /*update dir */
                         /* write lump */
                         fwrite(temp, wadentry[count].length, 1, fstream);
                         free(temp);       /* now free the lump */
-                        if (written == 0) /* always 0% */
-                                printf("(0%%), done.\n");
                 }
         }
         diroffset = ftell(fstream); /* update the directory location */
@@ -400,11 +382,12 @@ void compress()
         fclose(fstream);
         fclose(wadfp);
 
+        printf("done\n"); /* all done! */
+
         if (allowmerge)
         {
                 wadfp = fopen(tempwad_name, "rb+"); /* reload the temp file as the wad */
-                printf("\nMerging identical lumps.. ");
-                fflush(stdout);
+                printf("Merging identical lumps... ");
 
                 if (outputwad[0] == 0)
                 {
@@ -416,7 +399,8 @@ void compress()
                 {
                         rebuild(outputwad);
                 }
-                printf("done.\n"); /* all done! */
+                printf("done\n"); /* all done! */
+
                 fclose(wadfp);
                 remove(tempwad_name); /* delete the temp file */
         }
@@ -435,9 +419,14 @@ void compress()
 
         wadfp = fopen(wadname, "rb+"); /* so there is something to close */
 
-        findshrink = findperc(wadsize, diroffset + (numentries * ENTRY_SIZE));
+        long originalsize = wadsize / 1024;
+        long newsize = (diroffset + (numentries * ENTRY_SIZE)) / 1024;
 
-        printf("*** %s is %i%% smaller ***\n", wadname, findshrink);
+        long percentage = ((originalsize * 100) / newsize) - 100;
+
+        printf("\nOriginal WAD size: %ld Kb\n", originalsize);
+        printf("Optimized WAD size: %ld Kb\n", newsize);
+        printf("\n%s is %ld%% smaller\n", wadname, percentage);
 } /* compress */
 
 /* List WAD entries ********************************************************/
@@ -624,17 +613,6 @@ void *__crt0_glob_function()
 }
 
 /************************** Misc. functions ********************************/
-
-/* Find how much smaller something is: returns a percentage ****************/
-
-int findperc(int before, int after)
-{
-        double perc;
-
-        perc = 1 - (((double)after) / before);
-
-        return (int)(100 * perc);
-}
 
 #ifdef ANSILIBS
 int wherex(void)
