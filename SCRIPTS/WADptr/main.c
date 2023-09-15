@@ -296,8 +296,19 @@ void compress()
                 pal_compress(fstream);
         }
 
+        char *lumppal = "PLAYPAL";
+        int palnum = entry_exist(convert_string8_lumpname(lumppal));
+
         for (count = 0; count < numentries; count++)
-        {                                                          /* add each wad entry in turn */
+        {
+                if (allowfastdoom)
+                {
+                        if (count == palnum)
+                        {
+                                continue;
+                        }
+                }
+                                                                          /* add each wad entry in turn */
                 strcpy(resname, convert_string8(wadentry[count])); /* find */
                                                                    /* resource name */
                 written = 0;                                       /* reset written */

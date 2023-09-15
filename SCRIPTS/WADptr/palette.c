@@ -60,13 +60,8 @@ void pal_compress(FILE *fp)
 		}
 	}
 
-	removeentry(lumppal);
-	
-	newplaypal.length = 12 * VGA_PALETTE_SIZE;
-	strcpy(newplaypal.name, lumppal);
-	newplaypal.offset = ftell(fp);
+	wadentry[entrynum].length = 12 * VGA_PALETTE_SIZE;
+	wadentry[entrynum].offset = ftell(fp);
 
 	fwrite(newpalette, 1, 12 * VGA_PALETTE_SIZE, fp);
-
-	addentry(newplaypal);
 }

@@ -239,7 +239,6 @@ void addentry(entry_t entry)
 			   convert_string8(entry));
 	memcpy(&wadentry[numentries], &entry, sizeof(entry_t));
 	numentries++;
-	writewad();
 }
 
 /* Removes an entry from the WAD ************************************************/
@@ -258,9 +257,7 @@ void removeentry(char *lumpname)
 	}
 
 	for (c = numentry; c < numentries - 1; c++)
-	{
 		wadentry[c] = wadentry[c + 1];
-	}
 
 	numentries--;
 }
@@ -279,7 +276,7 @@ void *cachelump(int entrynum)
 	}
 
 	fseek(wadfp, wadentry[entrynum].offset, SEEK_SET);
-	fread(working, wadentry[entrynum].length, 1, wadfp);
+	fread(working, 1, wadentry[entrynum].length, wadfp);
 
 	return working;
 }
