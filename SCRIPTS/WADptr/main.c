@@ -89,9 +89,6 @@ int parsecmdline()
                 if ((!strcmp(g_argv[count], "-help")) || (!strcmp(g_argv[count], "-h")))
                         action = HELP;
 
-                if ((!strcmp(g_argv[count], "-list")) || (!strcmp(g_argv[count], "-l")))
-                        action = LIST;
-
                 if ((!strcmp(g_argv[count], "-compress")) || (!strcmp(g_argv[count], "-c")))
                         action = COMPRESS;
 
@@ -202,10 +199,6 @@ void doaction()
                 help();
                 break;
 
-        case LIST:
-                list_entries();
-                break;
-
         case COMPRESS:
                 compress();
                 break;
@@ -223,7 +216,6 @@ void help()
             "Usage:  WADPTR inputwad [outputwad] options\n"
             "\n"
             " -c         :   Compress WAD\n"
-            " -l         :   List WAD\n"
             " -o <file>  :   Write output WAD to <file>\n"
             " -h         :   Help\n");
 }
@@ -383,87 +375,6 @@ void compress()
         printf("Optimized WAD size: %ld Kb\n", newsize);
         printf("\n%s is %ld%% smaller\n", wadname, percentage);
 } /* compress */
-
-/* List WAD entries ********************************************************/
-
-void list_entries()
-{
-        int count, count2;
-        int ypos;
-        char resname[10];
-
-        printf(
-            " Number Length  Offset          Method      Name        Shared\n"
-            " ------ ------  ------          ------      ----        ------\n");
-
-        for (count = 0; count < numentries; count++)
-        {
-                strcpy(resname, convert_string8(wadentry[count]));
-                if (islevelentry(resname))
-                        continue;
-                ypos = wherey();
-
-                /* wad entry number */
-                printf(" %i  \t", count + 1);
-
-                /* size */
-                if (islevel(count))
-                { /* the whole level not just the id lump */
-                        printf("%i\t", findlevelsize(resname));
-                }
-                else
-                { /*not a level, doesn't matter */
-                        printf("%ld\t", wadentry[count].length);
-                }
-
-                /* file offset */
-                printf("0x%08lx     \t", wadentry[count].offset);
-
-                /* compression method */
-                if (islevel(count))
-                { /* this is a level */
-                        if (p_ispacked(resname))
-                                printf("Packed      "); /* packed */
-                        else
-                                printf("Unpacked    "); /* not */
-                }
-                else
-                {
-                        if (s_isgraphic(resname))
-                        { /* this is a graphic */
-                                if (s_is_squashed(resname))
-                                        printf("Squashed    "); /* squashed */
-                                else
-                                        printf("Unsquashed  "); /* not */
-                        }
-                        else
-                        { /* ordinary lump w/no compression */
-                                printf("Stored      ");
-                        }
-                }
-
-                /* resource name */
-                printf("%s%s\t", resname, (strlen(resname) < 4) ? "\t" : "");
-
-                /* shared resource */
-                if (wadentry[count].length == 0)
-                {
-                        printf("No\n");
-                        continue;
-                }
-                for (count2 = 0; count2 < count; count2++)
-                { /* same offset + size */
-                        if ((wadentry[count2].offset == wadentry[count].offset) &&
-                            (wadentry[count2].length == wadentry[count].length))
-                        {
-                                printf("%s\n", convert_string8(wadentry[count2]));
-                                break;
-                        }
-                }
-                if (count2 == count)    /* no identical lumps if it */
-                        printf("No\n"); /* reached the last one */
-        }
-} /* list_entries */
 
 /*********************** Wildcard Functions *******************************/
 

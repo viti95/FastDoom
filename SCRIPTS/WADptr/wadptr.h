@@ -69,8 +69,6 @@ void eachwad(char *filespec);
 
 void help();
 void compress();
-void uncompress();
-void list_entries();
 
 char *find_filename(char *s);
 int filecmp(char *filename, char *templaten);
