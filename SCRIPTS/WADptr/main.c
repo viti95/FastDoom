@@ -38,11 +38,7 @@ char **g_argv;
 char filespec[256] = ""; /* file spec on command line eg. *.wad */
 char wadname[256] = "";  /* WAD file name */
 static char outputwad[256] = "";
-int action;            /* list, compress */
-int allowpack = 1;     /* level packing on */
-int allowsquash = 1;   /* picture squashing on */
-int allowmerge = 1;    /* lump merging on */
-int allowfastdoom = 1; /* remove not needed lumps on FastDoom */
+int action; /* list, compress */
 
 const char *pwad_name = "PWAD";
 const char *iwad_name = "IWAD";
@@ -98,16 +94,6 @@ int parsecmdline()
 
                 if ((!strcmp(g_argv[count], "-compress")) || (!strcmp(g_argv[count], "-c")))
                         action = COMPRESS;
-
-                /* specific disabling */
-                if (!strcmp(g_argv[count], "-nomerge"))
-                        allowmerge = 0;
-                if (!strcmp(g_argv[count], "-nosquash"))
-                        allowsquash = 0;
-                if (!strcmp(g_argv[count], "-nopack"))
-                        allowpack = 0;
-                if (!strcmp(g_argv[count], "-nofastdoom"))
-                        allowfastdoom = 0;
 
                 if (g_argv[count][0] != '-')
                 {
@@ -239,11 +225,7 @@ void help()
             " -c         :   Compress WAD\n"
             " -l         :   List WAD\n"
             " -o <file>  :   Write output WAD to <file>\n"
-            " -h         :   Help\n"
-            " -nomerge   :   Disable lump merging\n"
-            " -nosquash  :   Disable graphic squashing\n"
-            " -nofastdoom:   Disable specific FastDoom optimizations\n"
-            " -nopack    :   Disable sidedef packing\n");
+            " -h         :   Help\n");
 }
 
 /* Compress a WAD **********************************************************/
@@ -265,40 +247,37 @@ void compress()
         memset(a, 0, 12);
         fwrite(a, 12, 1, fstream); /* temp header. */
 
-        if (allowfastdoom)
-        {
-                printf("Applying FastDoom optimizations... ");
+        printf("Applying FastDoom optimizations... ");
 
-                removeentry("WIP1");
-                removeentry("WIP2");
-                removeentry("WIP3");
-                removeentry("WIP4");
-                removeentry("WIBP1");
-                removeentry("WIBP2");
-                removeentry("WIBP3");
-                removeentry("WIBP4");
-                removeentry("STFB0");
-                removeentry("STFB1");
-                removeentry("STFB2");
-                removeentry("STFB3");
-                removeentry("STPB0");
-                removeentry("STPB1");
-                removeentry("STPB2");
-                removeentry("STPB3");
-                removeentry("STDISK");
-                removeentry("STCDROM");
-                removeentry("WIOSTS");
-                removeentry("WIOSTF");
-                removeentry("WIMSTAR");
-                removeentry("WIMINUS");
-                removeentry("WIFRGS");
-                removeentry("WIKILRS");
-                removeentry("WIVCTMS");
+        removeentry("WIP1");
+        removeentry("WIP2");
+        removeentry("WIP3");
+        removeentry("WIP4");
+        removeentry("WIBP1");
+        removeentry("WIBP2");
+        removeentry("WIBP3");
+        removeentry("WIBP4");
+        removeentry("STFB0");
+        removeentry("STFB1");
+        removeentry("STFB2");
+        removeentry("STFB3");
+        removeentry("STPB0");
+        removeentry("STPB1");
+        removeentry("STPB2");
+        removeentry("STPB3");
+        removeentry("STDISK");
+        removeentry("STCDROM");
+        removeentry("WIOSTS");
+        removeentry("WIOSTF");
+        removeentry("WIMSTAR");
+        removeentry("WIMINUS");
+        removeentry("WIFRGS");
+        removeentry("WIKILRS");
+        removeentry("WIVCTMS");
 
-                pal_compress(fstream);
+        pal_compress(fstream);
 
-                printf("done\n"); /* all done! */
-        }
+        printf("done\n"); /* all done! */
 
         printf("Packing and squashing... ");
 
@@ -307,14 +286,9 @@ void compress()
 
         for (count = 0; count < numentries; count++)
         {
-                if (allowfastdoom)
-                {
-                        if (count == palnum)
-                        {
-                                continue;
-                        }
-                }
-                                                                          /* add each wad entry in turn */
+                if (count == palnum)
+                        continue;
+                /* add each wad entry in turn */
                 strcpy(resname, convert_string8(wadentry[count])); /* find */
                                                                    /* resource name */
                 written = 0;                                       /* reset written */
@@ -326,53 +300,49 @@ void compress()
                         written = 2; /* silently write entry: level entry */
                 }
 
-                if (allowpack)
-                { /* sidedef packing disabling */
-                        if (islevel(count))
-                        { /* level name */
-                                p_pack(resname); /* pack the level */
-                                written = 2; /* silently write this lump (if any) */
-                        }
-                        if (!strcmp(resname, "SIDEDEFS"))
-                        {
-                                /* write the pre-packed sidedef entry */
-                                wadentry[count].offset = ftell(fstream);
-                                writesidedefs((sidedef_t *)p_sidedefres, wadentry[count].length, fstream);
-                                free(p_sidedefres); /* sidedefs no longer needed */
-                                written = 1;        /* now written */
-                        }
-                        if (!strcmp(resname, "LINEDEFS"))
-                        {
-                                /* write the pre-packed linedef entry */
-                                wadentry[count].offset = ftell(fstream);
-                                writelinedefs((linedef_t *)p_linedefres, wadentry[count].length, fstream);
-                                free(p_linedefres);
-                                written = 1; /* now written */
-                        }
+                /* sidedef packing disabling */
+                if (islevel(count))
+                {                        /* level name */
+                        p_pack(resname); /* pack the level */
+                        written = 2;     /* silently write this lump (if any) */
+                }
+                if (!strcmp(resname, "SIDEDEFS"))
+                {
+                        /* write the pre-packed sidedef entry */
+                        wadentry[count].offset = ftell(fstream);
+                        writesidedefs((sidedef_t *)p_sidedefres, wadentry[count].length, fstream);
+                        free(p_sidedefres); /* sidedefs no longer needed */
+                        written = 1;        /* now written */
+                }
+                if (!strcmp(resname, "LINEDEFS"))
+                {
+                        /* write the pre-packed linedef entry */
+                        wadentry[count].offset = ftell(fstream);
+                        writelinedefs((linedef_t *)p_linedefres, wadentry[count].length, fstream);
+                        free(p_linedefres);
+                        written = 1; /* now written */
                 }
 
-                if (allowsquash)
-                { /* squash disabling */
-                        if (s_isgraphic(resname))
-                        { /* graphic */
-                                temp = s_squash(resname);                /* get the squashed graphic */
-                                wadentry[count].offset = ftell(fstream); /*update dir */
-                                                                         /* write it */
-                                fwrite(temp, wadentry[count].length, 1, fstream);
+                /* squash disabling */
+                if (s_isgraphic(resname))
+                {                                                /* graphic */
+                        temp = s_squash(resname);                /* get the squashed graphic */
+                        wadentry[count].offset = ftell(fstream); /*update dir */
+                                                                 /* write it */
+                        fwrite(temp, wadentry[count].length, 1, fstream);
 
-                                free(temp); /* graphic no longer needed: free it */
+                        free(temp); /* graphic no longer needed: free it */
 
-                                written = 1; /* now written */
-                        }
+                        written = 1; /* now written */
                 }
 
                 if ((written == 0) || (written == 2))
-                { /* write or silently */
+                {                                                /* write or silently */
                         temp = cachelump(count);                 /* get the lump */
                         wadentry[count].offset = ftell(fstream); /*update dir */
                         /* write lump */
                         fwrite(temp, wadentry[count].length, 1, fstream);
-                        free(temp);       /* now free the lump */
+                        free(temp); /* now free the lump */
                 }
         }
         diroffset = ftell(fstream); /* update the directory location */
@@ -384,38 +354,23 @@ void compress()
 
         printf("done\n"); /* all done! */
 
-        if (allowmerge)
+        wadfp = fopen(tempwad_name, "rb+"); /* reload the temp file as the wad */
+        printf("Merging identical lumps... ");
+
+        if (outputwad[0] == 0)
         {
-                wadfp = fopen(tempwad_name, "rb+"); /* reload the temp file as the wad */
-                printf("Merging identical lumps... ");
-
-                if (outputwad[0] == 0)
-                {
-                        remove(wadname);  /* delete the old wad */
-                        rebuild(wadname); /* run rebuild() to remove identical lumps: */
-                                          /* rebuild them back to the original filename */
-                }
-                else
-                {
-                        rebuild(outputwad);
-                }
-                printf("done\n"); /* all done! */
-
-                fclose(wadfp);
-                remove(tempwad_name); /* delete the temp file */
+                remove(wadname);  /* delete the old wad */
+                rebuild(wadname); /* run rebuild() to remove identical lumps: */
+                                  /* rebuild them back to the original filename */
         }
         else
         {
-                if (outputwad[0] == 0)
-                {
-                        remove(wadname);
-                        rename(tempwad_name, wadname);
-                }
-                else
-                {
-                        rename(tempwad_name, outputwad);
-                }
+                rebuild(outputwad);
         }
+        printf("done\n"); /* all done! */
+
+        fclose(wadfp);
+        remove(tempwad_name); /* delete the temp file */
 
         wadfp = fopen(wadname, "rb+"); /* so there is something to close */
 

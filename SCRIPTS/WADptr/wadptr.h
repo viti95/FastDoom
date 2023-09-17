@@ -57,10 +57,6 @@ extern int g_argc; /* global cmd-line list */
 extern char **g_argv;
 extern char wadname[256];
 extern char filespec[256]; /* -tweak file name */
-extern int allowpack;	   /* level packing on */
-extern int allowsquash;	   /* picture squashing on */
-extern int allowmerge;	   /* lump merging on */
-extern int allowfastdoom;  /* remove not needed lumps on FastDoom */
 
 /******************************* PROTOTYPES ********************************/
 
@@ -79,7 +75,7 @@ void list_entries();
 char *find_filename(char *s);
 int filecmp(char *filename, char *templaten);
 void *__crt0_glob_function(); /* needed to disable globbing(expansion of */
-						/* wildcards on the command line) */
+							  /* wildcards on the command line) */
 
 extern const char *pwad_name;
 extern const char *iwad_name;
