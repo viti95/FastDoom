@@ -284,10 +284,8 @@ void compress()
                 strcpy(resname, convert_string8(wadentry[count])); /* find */
                                                                    /* resource name */
                 written = 0;                                       /* reset written */
-                if (!islevelentry(resname))
-                {
-                }
-                else
+                
+                if (islevelentry(resname))
                 {
                         written = 2; /* silently write entry: level entry */
                 }
