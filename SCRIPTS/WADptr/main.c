@@ -284,7 +284,7 @@ void compress()
                 strcpy(resname, convert_string8(wadentry[count])); /* find */
                                                                    /* resource name */
                 written = 0;                                       /* reset written */
-                
+
                 if (islevelentry(resname))
                 {
                         written = 2; /* silently write entry: level entry */
@@ -315,15 +315,31 @@ void compress()
 
                 /* squash disabling */
                 if (s_isgraphic(resname))
-                {                                                /* graphic */
-                        temp = s_squash(resname);                /* get the squashed graphic */
-                        wadentry[count].offset = ftell(fstream); /*update dir */
-                                                                 /* write it */
-                        fwrite(temp, wadentry[count].length, 1, fstream);
+                {                                 /* graphic */
+                        temp = s_squash(resname); /* get the squashed graphic */
 
-                        free(temp); /* graphic no longer needed: free it */
+                        if (s_width == 320 && s_height == 200)
+                        {
+                                wadentry[count].length = 64000;
+                                wadentry[count].offset = ftell(fstream); /*update dir */
+                                                                         /* write it */
+                                                                         
+                                fwrite(temp, wadentry[count].length, 1, fstream);
 
-                        written = 1; /* now written */
+                                free(temp); /* graphic no longer needed: free it */
+
+                                written = 1; /* now written */
+                        }
+                        else
+                        {
+                                wadentry[count].offset = ftell(fstream); /*update dir */
+                                                                         /* write it */
+                                fwrite(temp, wadentry[count].length, 1, fstream);
+
+                                free(temp); /* graphic no longer needed: free it */
+
+                                written = 1; /* now written */
+                        }
                 }
 
                 if ((written == 0) || (written == 2))

@@ -373,6 +373,31 @@ char *s_squash(char *s)
 	if ((long)working == -1)
 		errorexit("squash: Couldn't find %s\n", s);
 
+	s_width = READ_SHORT(working);
+	s_height = READ_SHORT(working + 2);
+	s_loffset = READ_SHORT(working + 4);
+	s_toffset = READ_SHORT(working + 6);
+	s_columns = (unsigned char *)(working + 8);
+
+	if (s_width == 320 && s_height == 200)
+	{
+		// FastDoom optimization (reduce as full vram image, 4 planes of 8000 bytes)
+		unsigned char *newimage;
+		int i, j;
+
+		newimage = malloc(64000);
+
+		for (i = 0; i < s_width; i++)
+		{
+			long columnsize = READ_LONG(s_columns + 4 * i);
+
+			for (j = 0; j < s_height; j++)
+				newimage[i + j * s_width] = working[columnsize + j];
+		}
+
+		return (char *)newimage;
+	}
+
 	if (!s_findgraf(working))
 		return (char *)working; /* find posts to be killed */
 
@@ -426,15 +451,7 @@ char *s_squash(char *s)
 int s_findgraf(unsigned char *x)
 {
 	int count, count2;
-	/*int entrynum;*/ /* entry number in wad */
 	int num_killed = 0;
-
-	s_width = READ_SHORT(x);
-	s_height = READ_SHORT(x + 2);
-	s_loffset = READ_SHORT(x + 4);
-	s_toffset = READ_SHORT(x + 6);
-
-	s_columns = (unsigned char *)(x + 8);
 
 	for (count = 0; count < s_width; count++)
 	{ /* each column in turn */
@@ -480,44 +497,6 @@ int s_find_colsize(unsigned char *col1)
 		count = count + col1[count + 1] + 4; /* jump to the beginning of the next */
 											 /* post */
 	}
-}
-
-/* Find if a graphic is squashed *******************************************/
-
-int s_is_squashed(char *s)
-{
-	int entrynum;
-	char *pic;
-	int count, count2;
-
-	entrynum = entry_exist(s);
-	if (entrynum == -1)
-		errorexit("is_squashed: %s does not exist!\n", s);
-	pic = cachelump(entrynum); /* cache the lump */
-
-	s_width = READ_SHORT(pic); /* find lump info */
-	s_height = READ_SHORT(pic + 2);
-	s_loffset = READ_SHORT(pic + 4);
-	s_toffset = READ_SHORT(pic + 6);
-
-	s_columns = (unsigned char *)(pic + 8); /* find the column locations */
-
-	for (count = 0; count < s_width; count++)
-	{ /* each column */
-		long tmpcol;
-
-		tmpcol = READ_LONG(s_columns + 4 * count);
-		for (count2 = 0; count2 < count; count2++)
-		{ /* every previous column */
-			if (tmpcol == READ_LONG(s_columns + 4 * count2))
-			{ /* these columns have the same lump location */
-				free(pic);
-				return true; /* it is squashed */
-			}
-		}
-	}
-	free(pic);
-	return false; /* it cant be : no 2 columns have the same lump location */
 }
 
 /* Is this a graphic ? *****************************************************/

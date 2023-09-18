@@ -183,6 +183,13 @@ void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
 #endif
 
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+
+void V_DrawPatchFull(unsigned char *graphic)
+{
+    V_MarkRect(0, 0, 320, 200);
+    CopyDWords(graphic, screen0, 320 * 200 / 4);
+}
+
 void V_DrawPatchScreen0(int x, int y, patch_t *patch)
 {
 

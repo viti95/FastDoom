@@ -27,6 +27,7 @@
 
 extern char *p_linedefres; /* the new linedef resource */
 extern char *p_sidedefres; /* the new sidedef resource */
+extern short s_height, s_width, s_loffset, s_toffset; /* picture width, height etc. */
 
 /***************************** Prototypes *********************************/
 
@@ -34,7 +35,6 @@ void p_pack(char *levelname);
 int p_ispacked(char *s);
 
 char *s_squash(char *s);
-int s_is_squashed(char *s);
 int s_isgraphic(char *s);
 
 /******************************* Structs **********************************/
