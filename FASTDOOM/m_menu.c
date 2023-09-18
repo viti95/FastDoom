@@ -910,7 +910,7 @@ void M_DrawReadThis1(void)
     V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-    V_DrawPatchDirect(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+    V_DrawPatchFullDirect(W_CacheLumpName("HELP2", PU_CACHE));
 #endif
 }
 
@@ -940,7 +940,7 @@ void M_DrawReadThis2(void)
     V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-    V_DrawPatchDirect(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
+    V_DrawPatchFullDirect(W_CacheLumpName("HELP1", PU_CACHE));
 #endif
 }
 
@@ -967,7 +967,7 @@ void M_DrawReadThisRetail(void)
     V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("HELP", PU_CACHE));
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-    V_DrawPatchDirect(0, 0, W_CacheLumpName("HELP", PU_CACHE));
+    V_DrawPatchFullDirect(W_CacheLumpName("HELP", PU_CACHE));
 #endif
 }
 

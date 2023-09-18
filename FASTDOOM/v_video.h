@@ -67,9 +67,10 @@ void V_Init(void);
 void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int destx, int desty, byte *destscrn);
 
 void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch);
-void V_DrawPatchFull(unsigned char *graphic);
+void V_DrawPatchFullScreen0(unsigned char *graphic);
 void V_DrawPatchScreen0(int x, int y, patch_t *patch);
 void V_DrawPatchDirect(int x, int y, patch_t *patch);
+void V_DrawPatchFullDirect(unsigned char *graphic);
 void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch);
 
 void V_DrawPatchDirectText4050(int x, int y, patch_t *patch);

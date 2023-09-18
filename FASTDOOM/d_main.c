@@ -665,7 +665,7 @@ void D_PageDrawer(void)
     V_DrawPatchDirectText8050(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-    V_DrawPatchFull(W_CacheLumpName(pagename, PU_CACHE));
+    V_DrawPatchFullScreen0(W_CacheLumpName(pagename, PU_CACHE));
 #endif
 #if defined(USE_BACKBUFFER)
     V_DrawPatchDirect(0, 0, W_CacheLumpName(pagename, PU_CACHE));

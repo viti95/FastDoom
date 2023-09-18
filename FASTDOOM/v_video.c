@@ -184,7 +184,7 @@ void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
 
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 
-void V_DrawPatchFull(unsigned char *graphic)
+void V_DrawPatchFullScreen0(unsigned char *graphic)
 {
     V_MarkRect(0, 0, 320, 200);
     CopyDWords(graphic, screen0, 320 * 200 / 4);
@@ -428,6 +428,22 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
 #endif
 
 #if defined(MODE_Y)
+
+void V_DrawPatchFullDirect(unsigned char *graphic)
+{
+    int i, j;
+
+    for (i = 0; i < 200; i++)
+    {
+        for (j = 0; j < 320; j++)
+        {
+            outp(SC_INDEX + 1, 1 << (j & 3));
+
+            destscreen[(i * 80) + (j / 4)] = graphic[(i * 320) + j];
+        }
+    }
+}
+
 void V_DrawPatchDirect(int x, int y, patch_t *patch)
 {
     int count;
