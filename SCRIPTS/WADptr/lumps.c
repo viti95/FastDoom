@@ -387,12 +387,36 @@ char *s_squash(char *s)
 
 		newimage = malloc(64000);
 
-		for (i = 0; i < s_width; i++)
+		for (j = 0; j < s_width; j++)
 		{
-			long columnsize = READ_LONG(s_columns + 4 * i);
+			long pointer = READ_LONG(s_columns + 4 * j);
 
-			for (j = 0; j < s_height; j++)
-				newimage[i + j * s_width] = working[columnsize + j];
+			do
+			{
+				int row;
+				int postHeight;
+
+				row = working[pointer];
+
+				if (row != 255 && (postHeight = working[++pointer]) != 255)
+				{
+					pointer++; // unused value
+
+					for (int i = 0; i < postHeight; i++)
+					{
+						if (row + i < s_height && pointer < wadentry[entrynum].length - 1)
+						{
+							newimage[((row + i) * s_width) + j] = working[++pointer];
+						}
+					}
+
+					pointer++; // unused value
+				}
+				else
+				{
+					break;
+				}
+			} while (pointer < wadentry[entrynum].length - 1 && working[++pointer] != 255);
 		}
 
 		return (char *)newimage;
