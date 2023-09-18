@@ -1313,7 +1313,8 @@ void WI_loadData(void)
 
 	// background
 	bg = W_CacheLumpName(name, PU_CACHE);
-	V_DrawPatch(0, 0, screen1, bg);
+
+    CopyDWords(bg, screen1, 320 * 200 / 4);
 #endif
 
 	if (gamemode == commercial)
