@@ -555,6 +555,40 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
 #endif
 
 #if defined(USE_BACKBUFFER)
+
+void V_DrawPatchFullDirect(unsigned char *graphic)
+{
+#if defined(MODE_CGA16)
+    // 160x100
+    int i, j;
+
+    for (i = 0; i < 200 * 320; i += 2 * 320)
+    {
+        for (j = 0; j < 320; j += 2)
+        {
+            backbuffer[i + j] = graphic[i + j];
+        }
+    }
+        
+#elif defined(MODE_CVBS)
+    // 160x200
+    int i;
+
+    for (i = 0; i < 320 * 200; i += 2)
+        backbuffer[i] = graphic[i];
+
+#elif defined(MODE_CGA512)
+    // 80x200
+    int i;
+
+    for (i = 0; i < 320 * 200; i += 4)
+        backbuffer[i] = graphic[i];
+
+#else
+    CopyDWords(graphic, backbuffer, 320 * 200 / 4);
+#endif    
+}
+
 void V_DrawPatchDirect(int x, int y, patch_t *patch)
 {
     int count;
@@ -574,9 +608,8 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
     for (; col < w; x++, col++, desttop++)
     {
 #if defined(MODE_CGA16) || defined(MODE_CVBS)
-        if (detailshift == DETAIL_HIGH)
-            if ((int)desttop & 1)
-                continue;
+    if ((int)desttop & 1)
+        continue;
 #endif
 
 #if defined(MODE_CGA512)
