@@ -475,24 +475,3 @@ void *__crt0_glob_function()
 {
         return 0;
 }
-
-/************************** Misc. functions ********************************/
-
-#ifdef ANSILIBS
-int wherex(void)
-{
-        return 0;
-}
-
-int wherey(void)
-{
-        return 0;
-}
-
-int gotoxy(int x, int y)
-{
-        printf("                \r");
-        return 0;
-}
-
-#endif /* ifdef ANSILIBS */

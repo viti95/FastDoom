@@ -78,12 +78,6 @@ void *__crt0_glob_function(); /* needed to disable globbing(expansion of */
 extern const char *pwad_name;
 extern const char *iwad_name;
 
-#ifdef ANSILIBS
-int wherex(void);
-int wherey(void);
-int gotoxy(int x, int y);
-#endif
-
 #ifdef NORMALUNIX
 #define DIRSEP "/"
 #define EXTSEP "."

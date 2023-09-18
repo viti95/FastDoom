@@ -33,12 +33,6 @@ void errorexit(char *s, ...)
 
 	va_start(args, s);
 
-#ifndef ANSILIBS
-	sound(640); /* thanks to the deu authors! */
-	delay(100);
-	nosound();
-#endif
-
 	vfprintf(stderr, s, args);
 
 	exit(0xff);
