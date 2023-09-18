@@ -433,14 +433,37 @@ void V_DrawPatchFullDirect(unsigned char *graphic)
 {
     int i, j;
 
+    byte *dest = destscreen;
+    byte *src = graphic;
+
     for (i = 0; i < 200 * 80; i += 80)
     {
-        for (j = 0; j < 320; j++)
+        outp(SC_INDEX + 1, 1 << (0 & 3));
+        for (j = 0; j < 80; j++)
         {
-            outp(SC_INDEX + 1, 1 << (j & 3));
-
-            destscreen[i + (j / 4)] = graphic[(i * 4) + j];
+            dest[j] = src[j * 4];
         }
+
+        outp(SC_INDEX + 1, 1 << (1 & 3));
+        for (j = 0; j < 80; j++)
+        {
+            dest[j] = src[j * 4 + 1];
+        }
+
+        outp(SC_INDEX + 1, 1 << (2 & 3));
+        for (j = 0; j < 80; j++)
+        {
+            dest[j] = src[j * 4 + 2];
+        }
+
+        outp(SC_INDEX + 1, 1 << (3 & 3));
+        for (j = 0; j < 80; j++)
+        {
+            dest[j] = src[j * 4 + 3];
+        }
+
+        dest += 80;
+        src += 320;
     }
 }
 
