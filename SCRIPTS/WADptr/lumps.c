@@ -44,7 +44,7 @@ enum
 /****************************** PROTOTYPES ********************************/
 
 void p_findinfo();
-void p_dopack();
+void p_dopack(sidedef_t *sidedefs, linedef_t *linedefs);
 void p_update();
 void p_buildlinedefs(linedef_t *linedefs);
 void p_rebuild();
@@ -99,7 +99,7 @@ void p_pack(char *levelname)
 
 	p_findinfo(); /* find what's needed */
 
-	p_dopack(sidedefs); /* pack the sidedefs in memory */
+	p_dopack(sidedefs, linedefs); /* pack the sidedefs in memory */
 
 	p_buildlinedefs(linedefs); /* update linedefs + save to *??res */
 
@@ -219,7 +219,27 @@ void p_findinfo()
 
 /* Actually pack the sidedefs *******************************************/
 
-void p_dopack(sidedef_t *sidedefs)
+int is_linedef_type48(int sidedefnum, linedef_t *linedefs)
+{
+	int count;
+
+	for (count = 0; count < p_num_linedefs; count++)
+	{
+		if (linedefs[count].types == 48)
+		{
+
+			if (linedefs[count].sidedef1 == sidedefnum)
+				return 1;
+
+			if (linedefs[count].sidedef2 == sidedefnum)
+				return 1;
+		}
+	}
+
+	return 0;
+}
+
+void p_dopack(sidedef_t *sidedefs, linedef_t *linedefs)
 {
 	int count, count2;
 
@@ -238,9 +258,16 @@ void p_dopack(sidedef_t *sidedefs)
 		for (count2 = 0; count2 < p_newnum; count2++)
 		{ /* check previous */
 			if (!memcmp(&p_newsidedef[count2], &sidedefs[count], sizeof(sidedef_t)))
-			{ /* they are identical: this one can be removed */
-				p_movedto[count] = count2;
-				break;
+			{
+				int optimize = !is_linedef_type48(count, linedefs);
+
+				/* do not optimize sidedefs associated to type 48 linedefs */
+				if (optimize)
+				{
+					/* they are identical: this one can be removed */
+					p_movedto[count] = count2;
+					break;
+				}
 			}
 		}
 		/* a sidedef like this does not yet exist: add one */
