@@ -318,7 +318,10 @@ void compress()
                 {                                 /* graphic */
                         temp = s_squash(resname); /* get the squashed graphic */
 
-                        if (s_width == 320 && s_height == 200)
+                        int is_PFUB1 = strcmp(resname, "PFUB1") == 0;
+	                int is_PFUB2 = strcmp(resname, "PFUB2") == 0;
+
+                        if (s_width == 320 && s_height == 200 && !(is_PFUB1 || is_PFUB2))
                         {
                                 wadentry[count].length = 64000;
                                 wadentry[count].offset = ftell(fstream); /*update dir */

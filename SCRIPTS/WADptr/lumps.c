@@ -379,7 +379,10 @@ char *s_squash(char *s)
 	s_toffset = READ_SHORT(working + 6);
 	s_columns = (unsigned char *)(working + 8);
 
-	if (s_width == 320 && s_height == 200)
+	int is_PFUB1 = strcmp(s, "PFUB1") == 0;
+	int is_PFUB2 = strcmp(s, "PFUB2") == 0;
+
+	if ((s_width == 320) && (s_height == 200) && !(is_PFUB1 || is_PFUB2))
 	{
 		// FastDoom optimization (reduce as full vram image, 4 planes of 8000 bytes)
 		unsigned char *newimage;
