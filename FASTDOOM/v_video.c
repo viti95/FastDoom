@@ -103,7 +103,7 @@ void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int de
             *(dest) = *(src);
             src++;
             dest++;
-            
+
             CopyWords(src, dest, width / 2);
             src += SCREENWIDTH - 1;
             dest += SCREENWIDTH - 1;
@@ -436,27 +436,55 @@ void V_DrawPatchFullDirect(unsigned char *graphic)
     byte *dest = destscreen;
     byte *src = graphic;
 
+    outp(SC_INDEX + 1, 1 << (0 & 3));
+
     for (i = 0; i < 200 * 80; i += 80)
     {
-        outp(SC_INDEX + 1, 1 << (0 & 3));
         for (j = 0; j < 80; j++)
         {
             dest[j] = src[j * 4];
         }
 
-        outp(SC_INDEX + 1, 1 << (1 & 3));
+        dest += 80;
+        src += 320;
+    }
+
+    dest = destscreen;
+    src = graphic;
+
+    outp(SC_INDEX + 1, 1 << (1 & 3));
+    for (i = 0; i < 200 * 80; i += 80)
+    {
         for (j = 0; j < 80; j++)
         {
             dest[j] = src[j * 4 + 1];
         }
 
-        outp(SC_INDEX + 1, 1 << (2 & 3));
+        dest += 80;
+        src += 320;
+    }
+
+    dest = destscreen;
+    src = graphic;
+
+    outp(SC_INDEX + 1, 1 << (2 & 3));
+    for (i = 0; i < 200 * 80; i += 80)
+    {
         for (j = 0; j < 80; j++)
         {
             dest[j] = src[j * 4 + 2];
         }
 
-        outp(SC_INDEX + 1, 1 << (3 & 3));
+        dest += 80;
+        src += 320;
+    }
+
+    dest = destscreen;
+    src = graphic;
+
+    outp(SC_INDEX + 1, 1 << (3 & 3));
+    for (i = 0; i < 200 * 80; i += 80)
+    {
         for (j = 0; j < 80; j++)
         {
             dest[j] = src[j * 4 + 3];
