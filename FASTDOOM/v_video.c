@@ -391,6 +391,11 @@ void V_WriteCharDirect(int x, int y, unsigned char c)
 // Draws directly to the screen on the pc.
 //
 #if defined(MODE_VBE2_DIRECT)
+void V_DrawPatchFullDirect(unsigned char *graphic)
+{
+    CopyDWords(graphic, destscreen, 320 * 200 / 4);
+}
+
 void V_DrawPatchDirect(int x, int y, patch_t *patch)
 {
     int count;
