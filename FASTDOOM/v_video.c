@@ -947,6 +947,23 @@ void V_DrawPatchDirectText8025(int x, int y, patch_t *patch)
 #endif
 
 #if defined(MODE_MDA)
+void V_DrawPatchFullDirectTextMDA(unsigned char *graphic)
+{
+    // 80x25
+    int i, j;
+
+    for (i = 0; i < 200 * 320; i += 4 * 320)
+    {
+        for (j = 0; j < 320; j += 4)
+        {
+            unsigned char color = graphic[i + j];
+            unsigned short value = 0x07 << 8 | color;
+
+            textdestscreen[i / 32 + j / 4] = value;
+        }
+    }
+}
+
 void V_DrawPatchDirectTextMDA(int x, int y, patch_t *patch)
 {
     int count;
