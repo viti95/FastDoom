@@ -745,7 +745,7 @@ void F_CastDrawer(void)
 	V_DrawPatchFullScreen0(W_CacheLumpName("BOSSBACK", PU_CACHE));
 #endif
 #if defined(USE_BACKBUFFER)
-	V_DrawPatchDirect(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
+	V_DrawPatchFullDirect(W_CacheLumpName("BOSSBACK", PU_CACHE));
 #endif
 
 	F_CastPrint(castorder[castnum].name);
@@ -1270,7 +1270,7 @@ void F_Drawer(void)
 				V_DrawPatchFullScreen0(W_CacheLumpName("HELP2", PU_CACHE));
 #endif
 #if defined(USE_BACKBUFFER)
-				V_DrawPatchDirect(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+				V_DrawPatchFullDirect(W_CacheLumpName("HELP2", PU_CACHE));
 #endif
 			}
 			else
@@ -1297,7 +1297,7 @@ void F_Drawer(void)
 				V_DrawPatchFullScreen0(W_CacheLumpName("CREDIT", PU_CACHE));
 #endif
 #if defined(USE_BACKBUFFER)
-				V_DrawPatchDirect(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
+				V_DrawPatchFullDirect(W_CacheLumpName("CREDIT", PU_CACHE));
 #endif
 			}
 
@@ -1325,7 +1325,7 @@ void F_Drawer(void)
 			V_DrawPatchFullScreen0(W_CacheLumpName("VICTORY2", PU_CACHE));
 #endif
 #if defined(USE_BACKBUFFER)
-			V_DrawPatchDirect(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
+			V_DrawPatchFullDirect(W_CacheLumpName("VICTORY2", PU_CACHE));
 #endif
 			break;
 		case 3:
@@ -1359,7 +1359,7 @@ void F_Drawer(void)
 			V_DrawPatchFullScreen0(W_CacheLumpName("ENDPIC", PU_CACHE));
 #endif
 #if defined(USE_BACKBUFFER)
-			V_DrawPatchDirect(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
+			V_DrawPatchFullDirect(W_CacheLumpName("ENDPIC", PU_CACHE));
 #endif
 			break;
 		}

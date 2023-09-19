@@ -668,7 +668,7 @@ void D_PageDrawer(void)
     V_DrawPatchFullScreen0(W_CacheLumpName(pagename, PU_CACHE));
 #endif
 #if defined(USE_BACKBUFFER)
-    V_DrawPatchDirect(0, 0, W_CacheLumpName(pagename, PU_CACHE));
+    V_DrawPatchFullDirect(W_CacheLumpName(pagename, PU_CACHE));
 #endif
 }
 
