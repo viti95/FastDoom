@@ -891,23 +891,23 @@ void M_DrawReadThis1(void)
     inhelpscreens = 1;
 
 #if defined(MODE_T4025)
-    V_DrawPatchDirectText4025(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+    V_DrawPatchFullDirectText4025(W_CacheLumpName("HELP2", PU_CACHE));
 #endif
 
 #if defined(MODE_T4050)
-    V_DrawPatchDirectText4050(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+    V_DrawPatchFullDirectText4050(W_CacheLumpName("HELP2", PU_CACHE));
 #endif
 #if defined(MODE_T8025)
-    V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+    V_DrawPatchFullDirectText8025(W_CacheLumpName("HELP2", PU_CACHE));
 #endif
 #if defined(MODE_MDA)
-    V_DrawPatchDirectTextMDA(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+    V_DrawPatchFullDirectTextMDA(W_CacheLumpName("HELP2", PU_CACHE));
 #endif
 #if defined(MODE_T8043)
-    V_DrawPatchDirectText8043(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+    V_DrawPatchFullDirectText8043(W_CacheLumpName("HELP2", PU_CACHE));
 #endif
 #if defined(MODE_T8050)
-    V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+    V_DrawPatchFullDirectText8050(W_CacheLumpName("HELP2", PU_CACHE));
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     V_DrawPatchFullDirect(W_CacheLumpName("HELP2", PU_CACHE));
@@ -922,22 +922,22 @@ void M_DrawReadThis2(void)
     inhelpscreens = 1;
 
 #if defined(MODE_T4025)
-    V_DrawPatchDirectText4025(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
+    V_DrawPatchFullDirectText4025(W_CacheLumpName("HELP1", PU_CACHE));
 #endif
 #if defined(MODE_T4050)
-    V_DrawPatchDirectText4050(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
+    V_DrawPatchFullDirectText4050(W_CacheLumpName("HELP1", PU_CACHE));
 #endif
 #if defined(MODE_T8025)
-    V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
+    V_DrawPatchFullDirectText8025(W_CacheLumpName("HELP1", PU_CACHE));
 #endif
 #if defined(MODE_MDA)
-    V_DrawPatchDirectTextMDA(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
+    V_DrawPatchFullDirectTextMDA(W_CacheLumpName("HELP1", PU_CACHE));
 #endif
 #if defined(MODE_T8043)
-    V_DrawPatchDirectText8043(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
+    V_DrawPatchFullDirectText8043(W_CacheLumpName("HELP1", PU_CACHE));
 #endif
 #if defined(MODE_T8050)
-    V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("HELP1", PU_CACHE));
+    V_DrawPatchFullDirectText8050(W_CacheLumpName("HELP1", PU_CACHE));
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     V_DrawPatchFullDirect(W_CacheLumpName("HELP1", PU_CACHE));
@@ -949,22 +949,22 @@ void M_DrawReadThisRetail(void)
     inhelpscreens = 1;
 
 #if defined(MODE_T4025)
-    V_DrawPatchDirectText4025(0, 0, W_CacheLumpName("HELP", PU_CACHE));
+    V_DrawPatchFullDirectText4025(W_CacheLumpName("HELP", PU_CACHE));
 #endif
 #if defined(MODE_T4050)
-    V_DrawPatchDirectText4050(0, 0, W_CacheLumpName("HELP", PU_CACHE));
+    V_DrawPatchFullDirectText4050(W_CacheLumpName("HELP", PU_CACHE));
 #endif
 #if defined(MODE_T8025)
-    V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("HELP", PU_CACHE));
+    V_DrawPatchFullDirectText8025(W_CacheLumpName("HELP", PU_CACHE));
 #endif
 #if defined(MODE_MDA)
-    V_DrawPatchDirectTextMDA(0, 0, W_CacheLumpName("HELP", PU_CACHE));
+    V_DrawPatchFullDirectTextMDA(W_CacheLumpName("HELP", PU_CACHE));
 #endif
 #if defined(MODE_T8043)
-    V_DrawPatchDirectText8043(0, 0, W_CacheLumpName("HELP", PU_CACHE));
+    V_DrawPatchFullDirectText8043(W_CacheLumpName("HELP", PU_CACHE));
 #endif
 #if defined(MODE_T8050)
-    V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("HELP", PU_CACHE));
+    V_DrawPatchFullDirectText8050(W_CacheLumpName("HELP", PU_CACHE));
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     V_DrawPatchFullDirect(W_CacheLumpName("HELP", PU_CACHE));

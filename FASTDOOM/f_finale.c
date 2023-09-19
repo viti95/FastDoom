@@ -788,22 +788,22 @@ void F_CastDrawerText(void)
 
 // erase the entire screen to a background
 #if defined(MODE_T4050)
-	V_DrawPatchDirectText4050(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
+	V_DrawPatchFullDirectText4050(W_CacheLumpName("BOSSBACK", PU_CACHE));
 #endif
 #if defined(MODE_T4025)
-	V_DrawPatchDirectText4025(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
+	V_DrawPatchFullDirectText4025(W_CacheLumpName("BOSSBACK", PU_CACHE));
 #endif
 #if defined(MODE_T8025)
-	V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
+	V_DrawPatchFullDirectText8025(W_CacheLumpName("BOSSBACK", PU_CACHE));
 #endif
 #if defined(MODE_MDA)
-	V_DrawPatchDirectTextMDA(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
+	V_DrawPatchFullDirectTextMDA(W_CacheLumpName("BOSSBACK", PU_CACHE));
 #endif
 #if defined(MODE_T8043)
-	V_DrawPatchDirectText8043(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
+	V_DrawPatchFullDirectText8043(W_CacheLumpName("BOSSBACK", PU_CACHE));
 #endif
 #if defined(MODE_T8050)
-	V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
+	V_DrawPatchFullDirectText8050(W_CacheLumpName("BOSSBACK", PU_CACHE));
 #endif
 
 #if defined(MODE_T4025) || defined(MODE_T4050)
@@ -1249,22 +1249,22 @@ void F_Drawer(void)
 			if (gamemode == shareware)
 			{
 #if defined(MODE_T4025)
-				V_DrawPatchDirectText4025(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+				V_DrawPatchFullDirectText4025(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 #endif
 #if defined(MODE_T4050)
-				V_DrawPatchDirectText4050(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+				V_DrawPatchFullDirectText4050(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 #endif
 #if defined(MODE_T8025)
-				V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+				V_DrawPatchFullDirectText8025(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 #endif
 #if defined(MODE_MDA)
-				V_DrawPatchDirectTextMDA(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+				V_DrawPatchFullDirectTextMDA(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 #endif
 #if defined(MODE_T8043)
-				V_DrawPatchDirectText8043(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+				V_DrawPatchFullDirectText8043(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 #endif
 #if defined(MODE_T8050)
-				V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
+				V_DrawPatchFullDirectText8050(W_CacheLumpName("HELP2", PU_CACHE));
 #endif
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 				V_DrawPatchFullScreen0(W_CacheLumpName("HELP2", PU_CACHE));
@@ -1276,22 +1276,22 @@ void F_Drawer(void)
 			else
 			{
 #if defined(MODE_T4025)
-				V_DrawPatchDirectText4025(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
+				V_DrawPatchFullDirectText4025(W_CacheLumpName("CREDIT", PU_CACHE));
 #endif
 #if defined(MODE_T4050)
-				V_DrawPatchDirectText4050(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
+				V_DrawPatchFullDirectText4050(W_CacheLumpName("CREDIT", PU_CACHE));
 #endif
 #if defined(MODE_T8025)
-				V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
+				V_DrawPatchFullDirectText8025(W_CacheLumpName("CREDIT", PU_CACHE));
 #endif
 #if defined(MODE_MDA)
-				V_DrawPatchDirectTextMDA(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
+				V_DrawPatchFullDirectTextMDA(W_CacheLumpName("CREDIT", PU_CACHE));
 #endif
 #if defined(MODE_T8043)
-				V_DrawPatchDirectText8043(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
+				V_DrawPatchFullDirectText8043(W_CacheLumpName("CREDIT", PU_CACHE));
 #endif
 #if defined(MODE_T8050)
-				V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
+				V_DrawPatchFullDirectText8050(W_CacheLumpName("CREDIT", PU_CACHE));
 #endif
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 				V_DrawPatchFullScreen0(W_CacheLumpName("CREDIT", PU_CACHE));
@@ -1304,22 +1304,22 @@ void F_Drawer(void)
 			break;
 		case 2:
 #if defined(MODE_T4025)
-			V_DrawPatchDirectText4025(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
+			V_DrawPatchFullDirectText4025(W_CacheLumpName("VICTORY2", PU_CACHE));
 #endif
 #if defined(MODE_T4050)
-			V_DrawPatchDirectText4050(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
+			V_DrawPatchFullDirectText4050(W_CacheLumpName("VICTORY2", PU_CACHE));
 #endif
 #if defined(MODE_T8025)
-			V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
+			V_DrawPatchFullDirectText8025(W_CacheLumpName("VICTORY2", PU_CACHE));
 #endif
 #if defined(MODE_MDA)
-			V_DrawPatchDirectTextMDA(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
+			V_DrawPatchFullDirectTextMDA(W_CacheLumpName("VICTORY2", PU_CACHE));
 #endif
 #if defined(MODE_T8043)
-			V_DrawPatchDirectText8043(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
+			V_DrawPatchFullDirectText8043(W_CacheLumpName("VICTORY2", PU_CACHE));
 #endif
 #if defined(MODE_T8050)
-			V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
+			V_DrawPatchFullDirectText8050(W_CacheLumpName("VICTORY2", PU_CACHE));
 #endif
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 			V_DrawPatchFullScreen0(W_CacheLumpName("VICTORY2", PU_CACHE));
@@ -1338,22 +1338,22 @@ void F_Drawer(void)
 			break;
 		case 4:
 #if defined(MODE_T4025)
-			V_DrawPatchDirectText4025(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
+			V_DrawPatchFullDirectText4025(W_CacheLumpName("ENDPIC", PU_CACHE));
 #endif
 #if defined(MODE_T4050)
-			V_DrawPatchDirectText4050(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
+			V_DrawPatchFullDirectText4050(W_CacheLumpName("ENDPIC", PU_CACHE));
 #endif
 #if defined(MODE_T8025)
-			V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
+			V_DrawPatchFullDirectText8025(W_CacheLumpName("ENDPIC", PU_CACHE));
 #endif
 #if defined(MODE_MDA)
-			V_DrawPatchDirectTextMDA(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
+			V_DrawPatchFullDirectTextMDA(W_CacheLumpName("ENDPIC", PU_CACHE));
 #endif
 #if defined(MODE_T8043)
-			V_DrawPatchDirectText8043(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
+			V_DrawPatchFullDirectText8043(W_CacheLumpName("ENDPIC", PU_CACHE));
 #endif
 #if defined(MODE_T8050)
-			V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
+			V_DrawPatchFullDirectText8050(W_CacheLumpName("ENDPIC", PU_CACHE));
 #endif
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 			V_DrawPatchFullScreen0(W_CacheLumpName("ENDPIC", PU_CACHE));
