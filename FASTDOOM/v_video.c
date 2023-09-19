@@ -952,7 +952,7 @@ void V_DrawPatchFullDirectTextMDA(unsigned char *graphic)
     // 80x25
     int i, j;
 
-    for (i = 0; i < 200 * 320; i += 4 * 320)
+    for (i = 0; i < 200 * 320; i += 8 * 320)
     {
         for (j = 0; j < 320; j += 4)
         {
