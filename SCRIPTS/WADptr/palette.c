@@ -52,9 +52,12 @@ void pal_compress(FILE *fp)
 			continue;
 		}
 			
-		memcpy(newpalette + posnew, working + posold, VGA_PALETTE_SIZE);
-		posnew += VGA_PALETTE_SIZE;
-		posold += VGA_PALETTE_SIZE;
+		for (j = 0; j < VGA_PALETTE_SIZE; j++)
+		{
+			newpalette[posnew] = working[posold];
+			posnew++;
+			posold++;
+		}
 	}
 
 	wadentry[entrynum].length = 12 * VGA_PALETTE_SIZE;
