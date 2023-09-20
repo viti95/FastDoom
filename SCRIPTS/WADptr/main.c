@@ -268,6 +268,8 @@ void compress()
         removeentry("WIVCTMS");
         removeentry("HELP");
         removeentry("HELP1");
+        removeentry("DSITMBK");
+        removeentry("DSTINK");
 
         pal_compress(fstream);
         colormap_compress(fstream);
