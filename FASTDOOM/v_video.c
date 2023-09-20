@@ -909,8 +909,8 @@ void V_DrawPatchFullDirectText8025(unsigned char *graphic)
     {
         for (j = 0; j < 80; j++)
         {
-            unsigned char color1 = ptrlut16colors[graphic[(i * 8) * 320 + (j * 4)]];
-            unsigned char color2 = ptrlut16colors[graphic[(i * 8 + 4) * 320 + (j * 4)]];
+            unsigned char color1 = ptrlut16colors[graphic[(i * 8 * 320) + (j * 4)]];
+            unsigned char color2 = ptrlut16colors[graphic[(i * 8 * 320) + (j * 4) + (4 * 320)]];
 
             unsigned short value = (color1 << 8) | (color2 << 12) | 223;
 
