@@ -208,5 +208,4 @@ sfxinfo_t S_sfx[] =
         {"KEENDT", false, 70, 0},
         {"SKEACT", false, 70, 0},
         {"SKESIT", false, 70, 0},
-        {"SKEATK", false, 70, 0},
-        {"RADIO", false, 60, 0}};
+        {"SKEATK", false, 70, 0}};
