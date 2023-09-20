@@ -168,8 +168,6 @@ unsigned int benchmark_total_tics = 0;
 extern int sfxVolume;
 extern int musicVolume;
 
-extern byte inhelpscreens;
-
 unsigned char complevel = 0;
 
 skill_t startskill;
@@ -245,7 +243,6 @@ void D_Display(void)
 {
     static byte viewactivestate = 0;
     static byte menuactivestate = 0;
-    static byte inhelpscreensstate = 0;
     static byte fullscreen = 0;
     static gamestate_t oldgamestate = -1;
     static int borderdrawcount;
@@ -304,7 +301,7 @@ void D_Display(void)
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
         if (!automapactive || (automapactive && !fullscreen))
         {
-            redrawsbar = wipe || (viewheight != 200 && fullscreen) || (inhelpscreensstate && !inhelpscreens); // just put away the help screen
+            redrawsbar = wipe || (viewheight != 200 && fullscreen); // just put away the help screen
             ST_Drawer(screenblocks, redrawsbar);
         }
 #endif
@@ -398,7 +395,6 @@ void D_Display(void)
 
     menuactivestate = menuactive;
     viewactivestate = viewactive;
-    inhelpscreensstate = inhelpscreens;
     oldgamestate = wipegamestate = gamestate;
 
     // draw pause pic

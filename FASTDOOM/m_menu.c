@@ -132,7 +132,6 @@ int saveCharIndex; // which char we're editing
 // old save description before edit
 char saveOldString[SAVESTRINGSIZE];
 
-byte inhelpscreens;
 byte menuactive;
 
 #define SKULLXOFF -32
@@ -190,9 +189,7 @@ void M_ChooseSkill(int choice);
 void M_LoadGame(int choice);
 void M_SaveGame(int choice);
 void M_Options(int choice);
-void M_EndGame(int choice);
-void M_ReadThis(int choice);
-void M_ReadThis2(int choice);
+void M_EndGame(int choice); 
 void M_QuitDOOM(int choice);
 
 void M_ChangeMessages(int choice);
@@ -222,7 +219,6 @@ void M_BenchmarkDemo4(int choice);
 void M_ReturnToOptions(int choice);
 void M_ChangeBenchmarkType(int choice);
 
-void M_FinishReadThis(int choice);
 void M_LoadSelect(int choice);
 void M_SaveSelect(int choice);
 void M_ReadSaveStrings(void);
@@ -230,9 +226,6 @@ void M_QuickSave(void);
 void M_QuickLoad(void);
 
 void M_DrawMainMenu(void);
-void M_DrawReadThis1(void);
-void M_DrawReadThis2(void);
-void M_DrawReadThisRetail(void);
 void M_DrawNewGame(void);
 void M_DrawEpisode(void);
 void M_DrawOptions(void);
@@ -261,9 +254,8 @@ void M_StartMessage(char *string, void *routine, byte input);
 #define options 1
 #define loadgame 2
 #define savegame 3
-#define readthis 4
-#define quitdoom 5
-#define main_end 6
+#define quitdoom 4
+#define main_end 5
 
 menuitem_t MainMenu[] =
     {
@@ -271,7 +263,6 @@ menuitem_t MainMenu[] =
         {1, "M_OPTION", "Options", M_Options},
         {1, "M_LOADG", "Load game", M_LoadGame},
         {1, "M_SAVEG", "Save game", M_SaveGame},
-        {1, "M_RDTHIS", "Read this!", M_ReadThis},
         {1, "M_QUITG", "Quit game", M_QuitDOOM}};
 
 menu_t MainDef =
@@ -404,41 +395,6 @@ menu_t DisplayDef =
         DisplayMenu,
         M_DrawDisplay,
         60, 9,
-        0};
-
-//
-// Read This! MENU 1 & 2
-//
-#define rdthsempty1 0
-#define read1_end 1
-
-menuitem_t ReadMenu1[] =
-    {
-        {1, "", "", M_ReadThis2}};
-
-menu_t ReadDef1 =
-    {
-        read1_end,
-        &MainDef,
-        ReadMenu1,
-        M_DrawReadThis1,
-        280, 185,
-        0};
-
-#define rdthsempty2 0
-#define read2_end 1
-
-menuitem_t ReadMenu2[] =
-    {
-        {1, "", "", M_FinishReadThis}};
-
-menu_t ReadDef2 =
-    {
-        read2_end,
-        &ReadDef1,
-        ReadMenu2,
-        M_DrawReadThis2,
-        330, 175,
         0};
 
 //
@@ -883,95 +839,6 @@ void M_QuickLoad(void)
 }
 
 //
-// Read This Menus
-// Had a "quick hack to fix romero bug"
-//
-void M_DrawReadThis1(void)
-{
-    inhelpscreens = 1;
-
-#if defined(MODE_T4025)
-    V_DrawPatchFullDirectText4025(W_CacheLumpName("HELP2", PU_CACHE));
-#endif
-
-#if defined(MODE_T4050)
-    V_DrawPatchFullDirectText4050(W_CacheLumpName("HELP2", PU_CACHE));
-#endif
-#if defined(MODE_T8025)
-    V_DrawPatchFullDirectText8025(W_CacheLumpName("HELP2", PU_CACHE));
-#endif
-#if defined(MODE_MDA)
-    V_DrawPatchFullDirectTextMDA(W_CacheLumpName("HELP2", PU_CACHE));
-#endif
-#if defined(MODE_T8043)
-    V_DrawPatchFullDirectText8043(W_CacheLumpName("HELP2", PU_CACHE));
-#endif
-#if defined(MODE_T8050)
-    V_DrawPatchFullDirectText8050(W_CacheLumpName("HELP2", PU_CACHE));
-#endif
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-    V_DrawPatchFullDirect(W_CacheLumpName("HELP2", PU_CACHE));
-#endif
-}
-
-//
-// Read This Menus - optional second page.
-//
-void M_DrawReadThis2(void)
-{
-    inhelpscreens = 1;
-
-#if defined(MODE_T4025)
-    V_DrawPatchFullDirectText4025(W_CacheLumpName("HELP1", PU_CACHE));
-#endif
-#if defined(MODE_T4050)
-    V_DrawPatchFullDirectText4050(W_CacheLumpName("HELP1", PU_CACHE));
-#endif
-#if defined(MODE_T8025)
-    V_DrawPatchFullDirectText8025(W_CacheLumpName("HELP1", PU_CACHE));
-#endif
-#if defined(MODE_MDA)
-    V_DrawPatchFullDirectTextMDA(W_CacheLumpName("HELP1", PU_CACHE));
-#endif
-#if defined(MODE_T8043)
-    V_DrawPatchFullDirectText8043(W_CacheLumpName("HELP1", PU_CACHE));
-#endif
-#if defined(MODE_T8050)
-    V_DrawPatchFullDirectText8050(W_CacheLumpName("HELP1", PU_CACHE));
-#endif
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-    V_DrawPatchFullDirect(W_CacheLumpName("HELP1", PU_CACHE));
-#endif
-}
-
-void M_DrawReadThisRetail(void)
-{
-    inhelpscreens = 1;
-
-#if defined(MODE_T4025)
-    V_DrawPatchFullDirectText4025(W_CacheLumpName("HELP", PU_CACHE));
-#endif
-#if defined(MODE_T4050)
-    V_DrawPatchFullDirectText4050(W_CacheLumpName("HELP", PU_CACHE));
-#endif
-#if defined(MODE_T8025)
-    V_DrawPatchFullDirectText8025(W_CacheLumpName("HELP", PU_CACHE));
-#endif
-#if defined(MODE_MDA)
-    V_DrawPatchFullDirectTextMDA(W_CacheLumpName("HELP", PU_CACHE));
-#endif
-#if defined(MODE_T8043)
-    V_DrawPatchFullDirectText8043(W_CacheLumpName("HELP", PU_CACHE));
-#endif
-#if defined(MODE_T8050)
-    V_DrawPatchFullDirectText8050(W_CacheLumpName("HELP", PU_CACHE));
-#endif
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-    V_DrawPatchFullDirect(W_CacheLumpName("HELP", PU_CACHE));
-#endif
-}
-
-//
 // Change Sfx & Music volumes
 //
 void M_DrawSound(void)
@@ -1406,7 +1273,6 @@ void M_Episode(int choice)
     if (gamemode == shareware && choice)
     {
         M_StartMessage(SWSTRING, NULL, 0);
-        M_SetupNextMenu(&ReadDef1);
         return;
     }
 
@@ -1900,36 +1766,6 @@ void M_EndGame(int choice)
     }
 
     M_StartMessage(ENDGAME, M_EndGameResponse, 1);
-}
-
-//
-// M_ReadThis
-//
-void M_ReadThis(int choice)
-{
-    switch (gamemode)
-    {
-    case shareware:
-    case registered:
-        M_SetupNextMenu(&ReadDef1);
-        break;
-    case retail:
-        M_SetupNextMenu(&ReadDef2);
-        break;
-    case commercial:
-        M_SetupNextMenu(&ReadDef2);
-        break;
-    }
-}
-
-void M_ReadThis2(int choice)
-{
-    M_SetupNextMenu(&ReadDef2);
-}
-
-void M_FinishReadThis(int choice)
-{
-    M_SetupNextMenu(&MainDef);
 }
 
 //
@@ -2547,18 +2383,6 @@ byte M_Responder(void)
             S_StartSound(NULL, sfx_stnmov);
             return 1;
 
-        case KEY_F1: // Help key
-            M_StartControlPanel();
-
-            if (gamemode == retail)
-                currentMenu = &ReadDef2;
-            else
-                currentMenu = &ReadDef1;
-
-            itemOn = 0;
-            S_StartSound(NULL, sfx_swtchn);
-            return 1;
-
         case KEY_F2: // Save
             M_StartControlPanel();
             S_StartSound(NULL, sfx_swtchn);
@@ -2809,8 +2633,6 @@ void M_Drawer(void)
     char string[40];
     int start;
 
-    inhelpscreens = 0;
-
     // Horiz. & Vertically center string and print it.
     if (messageToPrint)
     {
@@ -2937,16 +2759,4 @@ void M_Init(void)
     messageString = NULL;
     messageLastMenuActive = menuactive;
     quickSaveSlot = -1;
-
-    if (gamemode == commercial)
-    {
-        MainMenu[readthis] = MainMenu[quitdoom];
-        MainDef.numitems--;
-        MainDef.y += 8;
-        NewDef.prevMenu = &MainDef;
-        ReadDef1.routine = M_DrawReadThisRetail;
-        ReadDef1.x = 330;
-        ReadDef1.y = 165;
-        ReadMenu1[0].routine = M_FinishReadThis;
-    }
 }
