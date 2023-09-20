@@ -838,6 +838,23 @@ void V_DrawPatchDirectText4050(int x, int y, patch_t *patch)
 #endif
 
 #if defined(MODE_T4025)
+void V_DrawPatchFullDirectText4025(unsigned char *graphic)
+{
+    // 40x25
+    int i, j;
+
+    for (i = 0; i < 200 * 320; i += 8 * 320)
+    {
+        for (j = 0; j < 320; j += 8)
+        {
+            unsigned char color = ptrlut16colors[graphic[i + j]];
+            unsigned short value = (color << 8) | 219;
+
+            textdestscreen[i / 64 + j / 8] = value;
+        }
+    }
+}
+
 void V_DrawPatchDirectText4025(int x, int y, patch_t *patch)
 {
     int count;
