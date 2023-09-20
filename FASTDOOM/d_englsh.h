@@ -51,8 +51,21 @@
     "this is the shareware version of doom.\n\n" \
     "you need to order the entire trilogy.\n\n" PRESSKEY
 
-#define FASTDOOMHELP                        \
-    "fastdoom " FDOOMVERSION
+#define FASTDOOMHELP                            \
+    "fastdoom " FDOOMVERSION " by ViTi95\n\n"             \
+    "thanks to all contributors:\n\n"           \
+    "JNechaevsky    RamonUnch    PickledDog\n"  \
+    "jsmolina    deat322    FrenkelS\n"         \
+    "AXDOOMER    FavoritoHJS    Tronix286\n"    \
+    "DeathEgg    CarlosTex    noop0x90\n"       \
+    "FreddoUK    maximilien-noal    appiah4\n"  \
+    "ghderty    Redneckerz\n"                   \
+    "SpitFire-666    Optimus6128    viciious\n" \
+    "Shogun38    cher-nov    neuralnetworkz\n"  \
+    "Ethaniel-404    zokum-no    rasz_pl\n"     \
+    "bnied    javiergutierrezchamorro\n\n"      \
+    "and to the DoomWorld / Vogons communities\n\n" \
+    "enjoy it, Bonepie"
 
 #define MSGOFF "Messages OFF"
 #define MSGON "Messages ON"
