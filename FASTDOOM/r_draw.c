@@ -37,6 +37,10 @@
 
 #include "sizeopt.h"
 
+#if defined(TEXT_MODE)
+#include "i_text.h"
+#endif
+
 // status bar height at bottom of screen
 #define SBARHEIGHT 32
 
@@ -1598,7 +1602,7 @@ void R_DrawColumnText8050(void)
 
     do
     {
-        *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 219;
+        *dest = ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 219;
         dest += 80;
         frac += fracstep;
     } while (dest <= count);
@@ -2117,7 +2121,7 @@ void R_DrawSpanText8050(void)
         ytemp = ytemp & 4032;
         xtemp = position >> 26;
         spot = xtemp | ytemp;
-        *dest++ = colormap[source[spot]] << 8 | 219;
+        *dest++ = ptrlut16colors[colormap[source[spot]]] << 8 | 219;
         position += step;
     } while (dest <= countp);
 }
