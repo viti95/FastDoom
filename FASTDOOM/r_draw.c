@@ -760,7 +760,7 @@ void R_DrawColumnText4050(void)
         if (odd)
         {
             vmem = vmem & 0x0F00;
-            *dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 12 | 223;
+            *dest = vmem | ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 12 | 223;
 
             odd = 0;
             dest += 40;
@@ -769,7 +769,7 @@ void R_DrawColumnText4050(void)
         else
         {
             vmem = vmem & 0xF000;
-            *dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 223;
+            *dest = vmem | ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 223;
             return;
         }
 
@@ -783,9 +783,9 @@ void R_DrawColumnText4050(void)
     {
         unsigned short firstcolor, secondcolor;
 
-        firstcolor = dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8;
+        firstcolor = ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8;
         frac += fracstep;
-        secondcolor = dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 12;
+        secondcolor = ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 12;
 
         *dest = firstcolor | secondcolor | 223;
         dest += 40;
@@ -798,7 +798,7 @@ void R_DrawColumnText4050(void)
     {
         vmem = *dest;
         vmem = vmem & 0xF000;
-        *dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 223;
+        *dest = vmem | ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 223;
     }
 }
 void R_DrawSpanText4050(void)
@@ -840,7 +840,7 @@ void R_DrawSpanText4050(void)
 
         vmem = *dest;
         vmem = vmem & vmem_filter;
-        *dest++ = vmem | ds_colormap[ds_source[spot]] << shift | 223;
+        *dest++ = vmem | ptrlut16colors[ds_colormap[ds_source[spot]]] << shift | 223;
 
         position += step;
     } while (dest <= countp);
@@ -1074,7 +1074,7 @@ void R_DrawFuzzColumnSaturnText4050(void)
             vmem = *dest;
 
             vmem = vmem & 0x0F00;
-            *dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 12 | 223;
+            *dest = vmem | ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 12 | 223;
 
             dest += 40;
 
@@ -1085,7 +1085,7 @@ void R_DrawFuzzColumnSaturnText4050(void)
         {
             vmem = *dest;
             vmem = vmem & 0x0F00;
-            *dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 12 | 223;
+            *dest = vmem | ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 12 | 223;
         }
         else
         {
@@ -1093,7 +1093,7 @@ void R_DrawFuzzColumnSaturnText4050(void)
             {
                 vmem = *dest;
                 vmem = vmem & 0x0F00;
-                *dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 12 | 223;
+                *dest = vmem | ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 12 | 223;
             }
         }
     }
@@ -1104,7 +1104,7 @@ void R_DrawFuzzColumnSaturnText4050(void)
             vmem = *dest;
 
             vmem = vmem & 0xF000;
-            *dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 223;
+            *dest = vmem | ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 223;
 
             dest += 40;
 
@@ -1115,7 +1115,7 @@ void R_DrawFuzzColumnSaturnText4050(void)
         {
             vmem = *dest;
             vmem = vmem & 0xF000;
-            *dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 223;
+            *dest = vmem | ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 223;
         }
         else
         {
@@ -1123,7 +1123,7 @@ void R_DrawFuzzColumnSaturnText4050(void)
             {
                 vmem = *dest;
                 vmem = vmem & 0xF000;
-                *dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 223;
+                *dest = vmem | ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 223;
             }
         }
     }
@@ -1152,7 +1152,7 @@ void R_DrawColumnText4025(void)
 
     do
     {
-        *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 219;
+        *dest = ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 219;
         dest += 40;
         frac += fracstep;
     } while (dest <= count);
@@ -1163,8 +1163,6 @@ void R_DrawSpanText4025(void)
     unsigned position;
     unsigned step;
     unsigned short *dest;
-    byte *source;
-    byte *colormap;
 
     dest = textdestscreen + Mul40(ds_y);
     countp = dest + ds_x2;
@@ -1172,9 +1170,6 @@ void R_DrawSpanText4025(void)
 
     position = ds_frac;
     step = ds_step;
-
-    source = ds_source;
-    colormap = ds_colormap;
 
     do
     {
@@ -1186,7 +1181,7 @@ void R_DrawSpanText4025(void)
         ytemp = ytemp & 4032;
         xtemp = position >> 26;
         spot = xtemp | ytemp;
-        *dest++ = colormap[source[spot]] << 8 | 219;
+        *dest++ = ptrlut16colors[ds_colormap[ds_source[spot]]] << 8 | 219;
         position += step;
     } while (dest <= countp);
 }
@@ -1297,7 +1292,7 @@ void R_DrawFuzzColumnSaturnText4025(void)
 
     do
     {
-        *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 219;
+        *dest = ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 219;
 
         dest += 80;
         frac += fracstep;
@@ -1305,13 +1300,13 @@ void R_DrawFuzzColumnSaturnText4025(void)
 
     if ((dc_yh - dc_yl) & 1)
     {
-        *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 219;
+        *dest = ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 219;
     }
     else
     {
         if (!(initialdrawpos))
         {
-            *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 219;
+            *dest = ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 219;
         }
     }
 }
@@ -1496,7 +1491,7 @@ void R_DrawColumnText8025(void)
         if (odd)
         {
             vmem = vmem & 0x0F00;
-            *dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 12 | 223;
+            *dest = vmem | ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 12 | 223;
 
             odd = 0;
             dest += 80;
@@ -1505,7 +1500,7 @@ void R_DrawColumnText8025(void)
         else
         {
             vmem = vmem & 0xF000;
-            *dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 223;
+            *dest = vmem | ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 223;
             return;
         }
 
@@ -1519,9 +1514,9 @@ void R_DrawColumnText8025(void)
     {
         unsigned short firstcolor, secondcolor;
 
-        firstcolor = dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8;
+        firstcolor = ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8;
         frac += fracstep;
-        secondcolor = dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 12;
+        secondcolor = ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 12;
 
         *dest = firstcolor | secondcolor | 223;
         dest += 80;
@@ -1534,7 +1529,7 @@ void R_DrawColumnText8025(void)
     {
         vmem = *dest;
         vmem = vmem & 0xF000;
-        *dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 223;
+        *dest = vmem | ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 223;
     }
 }
 #endif
@@ -1579,7 +1574,7 @@ void R_DrawSpanText8025(void)
 
         vmem = *dest;
         vmem = vmem & vmem_filter;
-        *dest++ = vmem | ds_colormap[ds_source[spot]] << shift | 223;
+        *dest++ = vmem | ptrlut16colors[ds_colormap[ds_source[spot]]] << shift | 223;
 
         position += step;
     } while (dest <= countp);
@@ -1862,7 +1857,7 @@ void R_DrawFuzzColumnSaturnText8025(void)
             vmem = *dest;
 
             vmem = vmem & 0x0F00;
-            *dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 12 | 223;
+            *dest = vmem | ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 12 | 223;
 
             dest += 80;
 
@@ -1873,7 +1868,7 @@ void R_DrawFuzzColumnSaturnText8025(void)
         {
             vmem = *dest;
             vmem = vmem & 0x0F00;
-            *dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 12 | 223;
+            *dest = vmem | ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 12 | 223;
         }
         else
         {
@@ -1881,7 +1876,7 @@ void R_DrawFuzzColumnSaturnText8025(void)
             {
                 vmem = *dest;
                 vmem = vmem & 0x0F00;
-                *dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 12 | 223;
+                *dest = vmem | ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 12 | 223;
             }
         }
     }
@@ -1892,7 +1887,7 @@ void R_DrawFuzzColumnSaturnText8025(void)
             vmem = *dest;
 
             vmem = vmem & 0xF000;
-            *dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 223;
+            *dest = vmem | ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 223;
 
             dest += 80;
 
@@ -1903,7 +1898,7 @@ void R_DrawFuzzColumnSaturnText8025(void)
         {
             vmem = *dest;
             vmem = vmem & 0xF000;
-            *dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 223;
+            *dest = vmem | ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 223;
         }
         else
         {
@@ -1911,7 +1906,7 @@ void R_DrawFuzzColumnSaturnText8025(void)
             {
                 vmem = *dest;
                 vmem = vmem & 0xF000;
-                *dest = vmem | dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 223;
+                *dest = vmem | ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 223;
             }
         }
     }
@@ -1994,7 +1989,7 @@ void R_DrawFuzzColumnSaturnText8050(void)
 
     do
     {
-        *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 219;
+        *dest = ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 219;
 
         dest += 160;
         frac += fracstep;
@@ -2002,13 +1997,13 @@ void R_DrawFuzzColumnSaturnText8050(void)
 
     if ((dc_yh - dc_yl) & 1)
     {
-        *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 219;
+        *dest = ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 219;
     }
     else
     {
         if (!(initialdrawpos))
         {
-            *dest = dc_colormap[dc_source[(frac >> FRACBITS) & 127]] << 8 | 219;
+            *dest = ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 219;
         }
     }
 }
@@ -2098,8 +2093,6 @@ void R_DrawSpanText8050(void)
     unsigned position;
     unsigned step;
     unsigned short *dest;
-    byte *source;
-    byte *colormap;
 
     dest = textdestscreen + Mul80(ds_y);
     countp = dest + ds_x2;
@@ -2107,9 +2100,6 @@ void R_DrawSpanText8050(void)
 
     position = ds_frac;
     step = ds_step;
-
-    source = ds_source;
-    colormap = ds_colormap;
 
     do
     {
@@ -2121,7 +2111,7 @@ void R_DrawSpanText8050(void)
         ytemp = ytemp & 4032;
         xtemp = position >> 26;
         spot = xtemp | ytemp;
-        *dest++ = ptrlut16colors[colormap[source[spot]]] << 8 | 219;
+        *dest++ = ptrlut16colors[ds_colormap[ds_source[spot]]] << 8 | 219;
         position += step;
     } while (dest <= countp);
 }
