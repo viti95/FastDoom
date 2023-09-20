@@ -28,6 +28,7 @@
 #include "palette.h"
 
 #define VGA_PALETTE_SIZE 768
+#define COLORMAP_ENTRY_SIZE 256
 
 void pal_compress(FILE *fp)
 {
@@ -39,7 +40,6 @@ void pal_compress(FILE *fp)
 	unsigned int posold = 0;
 	unsigned int posnew = 0;
 	unsigned char newpalette[12 * VGA_PALETTE_SIZE];
-	entry_t newplaypal;
 
 	entrynum = entry_exist(convert_string8_lumpname(lumppal));
 	working = cachelump(entrynum);
@@ -64,4 +64,26 @@ void pal_compress(FILE *fp)
 	wadentry[entrynum].offset = ftell(fp);
 
 	fwrite(newpalette, 1, 12 * VGA_PALETTE_SIZE, fp);
+}
+
+void colormap_compress(FILE *fp)
+{
+	char *colormap = "COLORMAP";
+
+	int entrynum;
+	unsigned char *working;
+	unsigned int i,j;
+	unsigned int posold = 0;
+	unsigned int posnew = 0;
+	unsigned char newcolormap[33 * COLORMAP_ENTRY_SIZE];
+
+	entrynum = entry_exist(convert_string8_lumpname(colormap));
+	working = cachelump(entrynum);
+
+	memcpy(newcolormap, working, 33 * COLORMAP_ENTRY_SIZE);
+
+	wadentry[entrynum].length = 33 * COLORMAP_ENTRY_SIZE;
+	wadentry[entrynum].offset = ftell(fp);
+
+	fwrite(newcolormap, 1, 33 * COLORMAP_ENTRY_SIZE, fp);
 }

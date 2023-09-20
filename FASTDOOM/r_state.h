@@ -37,7 +37,7 @@ extern fixed_t *spritewidth;
 extern fixed_t *spriteoffset;
 extern fixed_t *spritetopoffset;
 
-extern lighttable_t datacolormaps[34 * 256 + 255];
+extern lighttable_t datacolormaps[33 * 256 + 255];
 extern lighttable_t *colormaps;
 
 extern int viewwidth;

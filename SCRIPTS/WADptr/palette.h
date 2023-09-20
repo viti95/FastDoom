@@ -40,5 +40,6 @@
 /***************************** Prototypes *********************************/
 
 void pal_compress(FILE *fp);
+void colormap_compress(FILE *fp);
 
 #endif // ifndef __PALETTE_H_INCLUDED__

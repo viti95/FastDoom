@@ -270,6 +270,7 @@ void compress()
         removeentry("HELP1");
 
         pal_compress(fstream);
+        colormap_compress(fstream);
 
         printf("done\n"); /* all done! */
 
@@ -278,10 +279,14 @@ void compress()
         char *lumppal = "PLAYPAL";
         int palnum = entry_exist(convert_string8_lumpname(lumppal));
 
+        char *lumpcolormap = "COLORMAP";
+        int colormapnum = entry_exist(convert_string8_lumpname(lumpcolormap));
+
         for (count = 0; count < numentries; count++)
         {
-                if (count == palnum)
+                if (count == palnum || count == colormapnum)
                         continue;
+                        
                 /* add each wad entry in turn */
                 strcpy(resname, convert_string8(wadentry[count])); /* find */
                                                                    /* resource name */
