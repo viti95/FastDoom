@@ -779,17 +779,21 @@ void V_DrawPatchFullDirectText4050(unsigned char *graphic)
     // 40x50
     int i, j;
 
+    unsigned short *vram = textdestscreen;
+
     for (i = 0; i < 25; i++)
     {
         for (j = 0; j < 40; j++)
         {
-            unsigned char color1 = ptrlut16colors[graphic[(i * 8 * 320) + (j * 8)]];
-            unsigned char color2 = ptrlut16colors[graphic[(i * 8 * 320) + (j * 8) + (4 * 320)]];
+            unsigned char color1 = ptrlut16colors[*(graphic)];
+            unsigned char color2 = ptrlut16colors[*(graphic + 4 * 320)];
 
-            unsigned short value = (color1 << 8) | (color2 << 12) | 223;
+            *vram = (color1 << 8) | (color2 << 12) | 223;
 
-            textdestscreen[(i * 40) + j] = value;
+            vram++;
+            graphic += 8;
         }
+        graphic += 2240;
     }
 }
 
