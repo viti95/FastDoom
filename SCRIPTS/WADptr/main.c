@@ -266,6 +266,8 @@ void compress()
         removeentry("WIFRGS");
         removeentry("WIKILRS");
         removeentry("WIVCTMS");
+        removeentry("HELP");
+        removeentry("HELP1");
 
         pal_compress(fstream);
 
