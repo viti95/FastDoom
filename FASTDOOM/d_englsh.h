@@ -27,12 +27,6 @@
 //
 
 //
-// D_Main.C
-//
-#define D_DEVSTR "Development mode ON.\n"
-#define D_CDROM "CD-ROM Version: default.cfg from c:\\doomdata\n"
-
-//
 //	M_Menu.C
 //
 #define PRESSKEY "press a key."

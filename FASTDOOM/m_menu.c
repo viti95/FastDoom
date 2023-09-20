@@ -2387,6 +2387,7 @@ byte M_Responder(void)
 
         case KEY_F1: // FastDoom key
             M_StartMessage(FASTDOOMHELP, NULL, 0);
+            S_StartSound(NULL, sfx_oof);
             return 1;
 
         case KEY_F2: // Save
