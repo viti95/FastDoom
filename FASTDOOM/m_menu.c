@@ -58,6 +58,8 @@
 
 #include "i_log.h"
 
+#include "version.h"
+
 #if defined(MODE_13H)
 #include "i_vga13h.h"
 #endif
@@ -2381,6 +2383,10 @@ byte M_Responder(void)
 #endif
             M_SizeDisplay(1);
             S_StartSound(NULL, sfx_stnmov);
+            return 1;
+
+        case KEY_F1: // FastDoom key
+            M_StartMessage(FASTDOOMHELP, NULL, 0);
             return 1;
 
         case KEY_F2: // Save

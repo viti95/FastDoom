@@ -20,6 +20,8 @@
 #ifndef __D_ENGLSH__
 #define __D_ENGLSH__
 
+#include "version.h"
+
 //
 //	Printed strings for translation
 //
@@ -48,6 +50,9 @@
 #define SWSTRING                                 \
     "this is the shareware version of doom.\n\n" \
     "you need to order the entire trilogy.\n\n" PRESSKEY
+
+#define FASTDOOMHELP                        \
+    "fastdoom " FDOOMVERSION
 
 #define MSGOFF "Messages OFF"
 #define MSGON "Messages ON"
