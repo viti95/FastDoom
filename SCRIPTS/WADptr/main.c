@@ -271,6 +271,8 @@ void compress()
         removeentry("DSITMBK");
         removeentry("DSTINK");
         removeentry("DSRADIO");
+        removeentry("DSSKLDTH");
+        removeentry("DPSKLDTH");
 
         pal_compress(fstream);
         colormap_compress(fstream);

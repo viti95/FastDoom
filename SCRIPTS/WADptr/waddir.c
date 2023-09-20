@@ -252,7 +252,7 @@ void removeentry(char *lumpname)
 
 	if (numentry == -1)
 	{
-		printf("\tWarning! Resource %s doesn't exist!\n", lumpname);
+		//printf("\tWarning! Resource %s doesn't exist!\n", lumpname);
 		return;
 	}
 

@@ -169,7 +169,6 @@ sfxinfo_t S_sfx[] =
         {"BGDTH2", false, 70, 0},
         {"SGTDTH", false, 70, 0},
         {"CACDTH", false, 70, 0},
-        {"SKLDTH", false, 70, 0},
         {"BRSDTH", false, 32, 0},
         {"CYBDTH", false, 32, 0},
         {"SPIDTH", false, 32, 0},
