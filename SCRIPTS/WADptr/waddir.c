@@ -257,7 +257,11 @@ void removeentry(char *lumpname)
 	}
 
 	for (c = numentry; c < numentries - 1; c++)
-		wadentry[c] = wadentry[c + 1];
+	{
+		memcpy(&wadentry[c], &wadentry[c+1], sizeof(entry_t));
+	}
+
+	memset(&wadentry[numentries-1], 0, sizeof(entry_t));
 
 	numentries--;
 }
