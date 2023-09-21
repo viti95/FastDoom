@@ -248,7 +248,7 @@ void removeentry(char *lumpname)
 	int numentry;
 	int c;
 
-	numentry = entry_exist(convert_string8_lumpname(lumpname));
+	numentry = entry_exist(lumpname);
 
 	if (numentry == -1)
 	{

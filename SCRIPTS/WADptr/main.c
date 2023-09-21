@@ -282,25 +282,23 @@ void compress()
         printf("Packing and squashing... ");
 
         char *lumppal = "PLAYPAL";
-        int palnum = entry_exist(convert_string8_lumpname(lumppal));
+        int palnum = entry_exist(lumppal);
 
         char *lumpcolormap = "COLORMAP";
-        int colormapnum = entry_exist(convert_string8_lumpname(lumpcolormap));
+        int colormapnum = entry_exist(lumpcolormap);
 
         for (count = 0; count < numentries; count++)
         {
-                if (count == palnum || count == colormapnum)
-                        continue;
-                        
                 /* add each wad entry in turn */
                 strcpy(resname, convert_string8(wadentry[count])); /* find */
                                                                    /* resource name */
                 written = 0;                                       /* reset written */
 
+                if (count == palnum || count == colormapnum) /* PALETTE / COLORMAP already written */
+                        written = 1;
+
                 if (islevelentry(resname))
-                {
                         written = 2; /* silently write entry: level entry */
-                }
 
                 /* sidedef packing disabling */
                 if (islevel(count))
@@ -331,30 +329,19 @@ void compress()
                         temp = s_squash(resname); /* get the squashed graphic */
 
                         int is_PFUB1 = strcmp(resname, "PFUB1") == 0;
-	                int is_PFUB2 = strcmp(resname, "PFUB2") == 0;
+                        int is_PFUB2 = strcmp(resname, "PFUB2") == 0;
 
                         if (s_width == 320 && s_height == 200 && !(is_PFUB1 || is_PFUB2))
-                        {
                                 wadentry[count].length = 64000;
-                                wadentry[count].offset = ftell(fstream); /*update dir */
-                                                                         /* write it */
-                                                                         
-                                fwrite(temp, wadentry[count].length, 1, fstream);
 
-                                free(temp); /* graphic no longer needed: free it */
+                        wadentry[count].offset = ftell(fstream); /*update dir */
+                                                                 /* write it */
 
-                                written = 1; /* now written */
-                        }
-                        else
-                        {
-                                wadentry[count].offset = ftell(fstream); /*update dir */
-                                                                         /* write it */
-                                fwrite(temp, wadentry[count].length, 1, fstream);
+                        fwrite(temp, wadentry[count].length, 1, fstream);
 
-                                free(temp); /* graphic no longer needed: free it */
+                        free(temp); /* graphic no longer needed: free it */
 
-                                written = 1; /* now written */
-                        }
+                        written = 1; /* now written */
                 }
 
                 if ((written == 0) || (written == 2))
@@ -388,6 +375,7 @@ void compress()
         {
                 rebuild(outputwad);
         }
+
         printf("done\n"); /* all done! */
 
         fclose(wadfp);

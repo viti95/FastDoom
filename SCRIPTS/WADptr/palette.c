@@ -41,7 +41,7 @@ void pal_compress(FILE *fp)
 	unsigned int posnew = 0;
 	unsigned char newpalette[12 * VGA_PALETTE_SIZE];
 
-	entrynum = entry_exist(convert_string8_lumpname(lumppal));
+	entrynum = entry_exist(lumppal);
 	working = cachelump(entrynum);
 
 	for (i = 0; i < 14; i++)
@@ -77,7 +77,7 @@ void colormap_compress(FILE *fp)
 	unsigned int posnew = 0;
 	unsigned char newcolormap[33 * COLORMAP_ENTRY_SIZE];
 
-	entrynum = entry_exist(convert_string8_lumpname(colormap));
+	entrynum = entry_exist(colormap);
 	working = cachelump(entrynum);
 
 	memcpy(newcolormap, working, 33 * COLORMAP_ENTRY_SIZE);
