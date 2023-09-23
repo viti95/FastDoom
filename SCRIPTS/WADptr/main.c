@@ -386,14 +386,15 @@ void compress()
 
         wadfp = fopen(wadname, "rb+"); /* so there is something to close */
 
-        long originalsize = wadsize / 1024;
-        long newsize = (diroffset + (numentries * ENTRY_SIZE)) / 1024;
+        long originalsize = wadsize;
+        printf("\nOriginal WAD size: %ld Kb\n", originalsize / 1024);
 
-        long percentage = ((originalsize * 100) / newsize) - 100;
+        long newsize = (diroffset + (numentries * ENTRY_SIZE));
+        printf("Optimized WAD size: %ld Kb\n", newsize / 1024);
 
-        printf("\nOriginal WAD size: %ld Kb\n", originalsize);
-        printf("Optimized WAD size: %ld Kb\n", newsize);
-        printf("\n%s is ~%ld%% smaller\n", wadname, percentage);
+
+        double percentage = (((double)originalsize * 100.0) / (double)newsize) - 100.0;
+        printf("\n%s is %.2f%% smaller\n", wadname, percentage);
 } /* compress */
 
 /*********************** Wildcard Functions *******************************/
