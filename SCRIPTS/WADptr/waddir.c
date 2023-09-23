@@ -280,6 +280,11 @@ void *cachelump(int entrynum)
 	return working;
 }
 
+void gotolump(int entrynum, long offset)
+{
+	fseek(wadfp, wadentry[entrynum].offset + offset, SEEK_SET);
+}
+
 /* Copy a WAD ( make a backup ) *******************************************/
 
 void copywad(char *newfile)

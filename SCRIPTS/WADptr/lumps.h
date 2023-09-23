@@ -28,6 +28,8 @@
 extern char *p_linedefres; /* the new linedef resource */
 extern char *p_sidedefres; /* the new sidedef resource */
 extern short s_height, s_width, s_loffset, s_toffset; /* picture width, height etc. */
+extern unsigned char *s_columns;					   /* the location of each column in the lump */
+extern long s_colsize[400];						   /* the length(in bytes) of each column */
 
 /***************************** Prototypes *********************************/
 

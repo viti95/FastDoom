@@ -316,27 +316,3 @@ void STlib_initBinIcon(st_binicon_t *b,
     b->on = on;
     b->p = i;
 }
-
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-void STlib_updateBinIcon(st_binicon_t *bi, byte refresh)
-{
-    if (*bi->on && refresh)
-    {
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-        V_DrawPatchScreen0(bi->x, bi->y, bi->p);
-#endif
-#if defined(USE_BACKBUFFER)
-        V_DrawPatchDirect(bi->x, bi->y, bi->p);
-#endif
-
-#if defined(USE_BACKBUFFER)
-        updatestate |= I_STATBAR;
-#endif
-    }
-}
-
-void STlib_updateBinIcon_Direct(st_binicon_t *bi)
-{
-    V_DrawPatchDirect(bi->x, bi->y, bi->p);
-}
-#endif

@@ -276,6 +276,9 @@ void compress()
 
         pal_compress(fstream);
         colormap_compress(fstream);
+        statusbar_merge(fstream);
+
+        removeentry("STARMS");
 
         printf("done\n"); /* all done! */
 

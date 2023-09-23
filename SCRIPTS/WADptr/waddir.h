@@ -52,6 +52,7 @@ void addentry(entry_t entry);
 void removeentry(char *lumpname);
 int entry_exist(char *entrytofind);
 void *cachelump(int entrynum);
+void gotolump(int entrynum, long offset);
 void copywad(char *newfile);
 
 int readwadheader(FILE *fp);
