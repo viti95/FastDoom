@@ -390,7 +390,7 @@ void compress()
 
         printf("\nOriginal WAD size: %ld Kb\n", originalsize);
         printf("Optimized WAD size: %ld Kb\n", newsize);
-        printf("\n%s is %ld%% smaller\n", wadname, percentage);
+        printf("\n%s is ~%ld%% smaller\n", wadname, percentage);
 } /* compress */
 
 /*********************** Wildcard Functions *******************************/
