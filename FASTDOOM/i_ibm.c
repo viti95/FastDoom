@@ -288,11 +288,25 @@ void I_UpdateBox(int x, int y, int w, int h)
     dest = destscreen + offset;
     source = screen0 + offset;
 
-    for (i = y; i < y + h; i++)
+    if (w & 1)
     {
-        CopyBytes(source, dest, w);
-        dest += 320;
-        source += 320;
+        for (i = y; i < y + h; i++)
+        {
+            CopyBytes(source, dest, w);
+            dest += 320;
+            source += 320;
+        }
+    }
+    else
+    {
+        w /= 2;
+
+        for (i = y; i < y + h; i++)
+        {
+            CopyWords(source, dest, w);
+            dest += 320;
+            source += 320;
+        }
     }
 }
 
