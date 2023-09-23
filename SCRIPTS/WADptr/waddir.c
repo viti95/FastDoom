@@ -250,16 +250,15 @@ void removeentry(char *lumpname)
 
 	numentry = entry_exist(lumpname);
 
-	if (numentry == -1)
+	while(numentry != -1)
 	{
-		//printf("\tWarning! Resource %s doesn't exist!\n", lumpname);
-		return;
-	}
-
-	for (c = numentry; c < numentries - 1; c++)
+		for (c = numentry; c < numentries - 1; c++)
 		wadentry[c] = wadentry[c + 1];
 
-	numentries--;
+		numentries--;
+
+		numentry = entry_exist(lumpname);
+	}
 }
 
 /* Load a lump to memory **************************************************/
