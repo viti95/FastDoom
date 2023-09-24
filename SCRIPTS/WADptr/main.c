@@ -392,8 +392,7 @@ void compress()
         long newsize = (diroffset + (numentries * ENTRY_SIZE));
         printf("Optimized WAD size: %ld Kb\n", newsize / 1024);
 
-
-        double percentage = (((double)originalsize * 100.0) / (double)newsize) - 100.0;
+        double percentage = 100 - ((double)newsize / (double)originalsize) * 100;
         printf("\n%s is %.2f%% smaller\n", wadname, percentage);
 } /* compress */
 
