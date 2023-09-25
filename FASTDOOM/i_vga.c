@@ -71,16 +71,16 @@ void I_ProcessPalette(byte *palette)
 
 void I_SetPalette(int numpalette)
 {
-    int i;
     int pos = Mul768(numpalette);
-
-    outp(PEL_WRITE_ADR, 0);
 
     if (VGADACfix)
     {
+        int i;
         byte *ptrprocessedpalette = processedpalette + pos;
 
         I_WaitSingleVBL();
+
+        outp(PEL_WRITE_ADR, 0);
 
         for (i = 0; i < 768; i += 4)
         {
@@ -93,6 +93,7 @@ void I_SetPalette(int numpalette)
     }
     else
     {
+        outp(PEL_WRITE_ADR, 0);
         OutString(PEL_DATA, ((unsigned char *)processedpalette) + pos, 768);
     }
 }
