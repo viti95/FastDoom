@@ -26,7 +26,6 @@ void VGA_TestFastSetPalette(void)
     {
         byte test_palette[768];
         unsigned short x;
-        byte y;
 
         // Initialize test palette
         for (x = 0; x < 768; x++)
