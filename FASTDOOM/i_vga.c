@@ -79,6 +79,9 @@ void I_SetPalette(int numpalette)
     if (VGADACfix)
     {
         byte *ptrprocessedpalette = processedpalette + pos;
+
+        I_WaitSingleVBL();
+
         for (i = 0; i < 768; i += 4)
         {
             outp(PEL_DATA, *(ptrprocessedpalette));
