@@ -152,12 +152,10 @@ int Mul70(int value);
 
 int Mul47000(int value);
 #pragma aux Mul47000 = \
-    "lea eax, [edx+edx]", \
-    "add eax, edx", \
+    "lea eax, [edx+edx*2]", \
     "lea eax, [edx+eax*4]", \
     "lea eax, [eax+eax*8]", \
-    "add eax, eax", \
-    "add eax, edx", \
+    "lea eax, [edx+eax*2]", \
     "lea eax, [eax+eax*4]", \
     "lea eax, [eax+eax*4]", \
     "shl eax, 3" parm[edx] value[eax] modify exact[eax edx]
