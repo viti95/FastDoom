@@ -327,11 +327,6 @@ void OutString(unsigned short Port, unsigned char *addr, int c);
     parm [dx] [si] [cx] nomemory \
     modify exact [si cx] nomemory;
 
-void ReadMem(unsigned char *memptr);
-#pragma aux ReadMem = \
-    "mov al, [eax]" \
-    parm[eax] modify exact[eax]
-
 unsigned char InByte60h(void);
 #pragma aux InByte60h = \
     "in al, 0x60" \
