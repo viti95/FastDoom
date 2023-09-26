@@ -265,21 +265,11 @@ int Div70(int value);
 
 int Div84(int value);
 #pragma aux Div84 = \
-    "mov edx, 818089009", \
-    "mov eax, ecx", \
-    "imul edx", \
+    "mov eax, 0x030C30C31", \
+    "imul ecx", \
     "sar edx, 4", \
-    "sar ecx, 31", \
-    "sub edx, ecx" parm[ecx] value[edx] modify exact[eax ecx edx]
-
-int Div96(int value);
-#pragma aux Div96 = \
-    "mov edx, 715827883", \
-    "mov eax, ecx", \
-    "imul edx", \
-    "sar edx, 4", \
-    "sar ecx, 31", \
-    "sub edx, ecx" parm[ecx] value[edx] modify exact[eax ecx edx]
+    "shr ecx, 31", \
+    "add edx, ecx" parm[ecx] value[edx] modify exact[eax ecx edx]
 
 void CopyBytes(void *src, void *dest, int num_bytes);
 #pragma aux CopyBytes = \
