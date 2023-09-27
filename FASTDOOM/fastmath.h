@@ -199,13 +199,12 @@ int Div101(int value);
 
 int Div35(int value);
 #pragma aux Div35 = \
-    "mov edx, -368140053", \
-    "mov eax, ecx", \
-    "imul edx", \
+    "mov eax, 0x0EA0EA0EB", \
+    "imul ecx", \
     "add edx, ecx", \
     "sar edx, 5", \
-    "sar ecx, 31", \
-    "sub edx, ecx" parm[ecx] value[edx] modify exact[eax ecx edx]
+    "shr ecx, 31", \
+    "add edx, ecx" parm[ecx] value[edx] modify exact[eax ecx edx]
 
 int DivSKULLSPEED(int value);
 #pragma aux DivSKULLSPEED = \
@@ -217,12 +216,11 @@ int DivSKULLSPEED(int value);
 
 int Div100(int value);
 #pragma aux Div100 = \
-    "mov edx, 1374389535", \
-    "mov eax, ecx", \
-    "imul edx", \
+    "mov eax, 0x051EB851F", \
+    "imul ecx", \
     "sar edx, 5", \
-    "sar ecx, 31", \
-    "sub edx, ecx" parm[ecx] value[edx] modify exact[eax ecx edx]
+    "shr ecx, 31", \
+    "add edx, ecx" parm[ecx] value[edx] modify exact[eax ecx edx]
 
 int Mul25(int value);
 #pragma aux Mul25 = \
@@ -238,30 +236,27 @@ int Mul75(int value);
 
 int Div255(int value);
 #pragma aux Div255 = \
-    "mov edx, -2139062143", \
-    "mov eax, ecx", \
-    "imul edx", \
+    "mov eax, 0x080808081", \
+    "imul ecx", \
     "add edx, ecx", \
     "sar edx, 7", \
-    "sar ecx, 31", \
-    "sub edx, ecx" parm[ecx] value[edx] modify exact[eax ecx edx]
+    "shr ecx, 31", \
+    "add edx, ecx" parm[ecx] value[edx] modify exact[eax ecx edx]
 
 unsigned long Div51200(unsigned long value);
 #pragma aux Div51200 = \
-    "mov ecx, 1374389535", \
-    "mov eax, edx", \
+    "mov eax, 0x051EB851F", \
     "mul ecx", \
-    "shr edx, 14" parm[edx] value[edx] modify exact[eax ecx edx]
+    "shr edx, 14" parm[ecx] value[edx] modify exact[eax ecx edx]
 
 int Div70(int value);
 #pragma aux Div70 = \
-    "mov edx, -368140053", \
-    "mov eax, ecx", \
-    "imul edx", \
+    "mov eax, 0x0EA0EA0EB", \
+    "imul ecx", \
     "add edx, ecx", \
     "sar edx, 6", \
-    "sar ecx, 31", \
-    "sub edx, ecx" parm[ecx] value[edx] modify exact[eax ecx edx]
+    "shr ecx, 31", \
+    "add edx, ecx" parm[ecx] value[edx] modify exact[eax ecx edx]
 
 int Div84(int value);
 #pragma aux Div84 = \
