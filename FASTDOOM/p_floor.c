@@ -30,6 +30,10 @@
 // Data.
 #include "sounds.h"
 
+#define getSide(currentSector, line, side) (&sides[(sectors[currentSector].lines[line])->sidenum[side]])
+#define getSector(currentSector, line, side) (sides[(sectors[currentSector].lines[line])->sidenum[side]].sector)
+#define twoSided(sector, line) ((sectors[sector].lines[line])->flags & ML_TWOSIDED)
+
 //
 // FLOORS
 //

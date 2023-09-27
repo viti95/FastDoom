@@ -171,49 +171,6 @@ void P_InitPicAnims(void)
 }
 
 //
-// UTILITIES
-//
-
-//
-// getSide()
-// Will return a side_t*
-//  given the number of the current sector,
-//  the line number, and the side (0/1) that you want.
-//
-side_t *
-getSide(int currentSector,
-		int line,
-		int side)
-{
-	return &sides[(sectors[currentSector].lines[line])->sidenum[side]];
-}
-
-//
-// getSector()
-// Will return a sector_t*
-//  given the number of the current sector,
-//  the line number and the side (0/1) that you want.
-//
-sector_t *
-getSector(int currentSector,
-		  int line,
-		  int side)
-{
-	return sides[(sectors[currentSector].lines[line])->sidenum[side]].sector;
-}
-
-//
-// twoSided()
-// Given the sector number and the line number,
-//  it will tell you whether the line is two-sided or not.
-//
-int twoSided(int sector,
-			 int line)
-{
-	return (sectors[sector].lines[line])->flags & ML_TWOSIDED;
-}
-
-//
 // getNextSector()
 // Return sector_t * of sector next to current.
 // NULL if not two-sided line
