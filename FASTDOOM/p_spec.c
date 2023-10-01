@@ -241,24 +241,24 @@ fixed_t P_FindHighestFloorSurrounding(sector_t *sec)
 //
 // P_FindNextHighestFloor
 //
-fixed_t P_FindNextHighestFloor(sector_t *sec, int currentheight)
+fixed_t P_FindNextHighestFloor(sector_t *sec)
 {
 	sector_t *other;
 	short i;
 
 	for (i = 0; i < sec->linecount; i++)
 		if ((other = getNextSector(sec->lines[i], sec)) &&
-			other->floorheight > currentheight)
+			other->floorheight > sec->floorheight)
 		{
-			int height = other->floorheight;
+			fixed_t height = other->floorheight;
 			while (++i < sec->linecount)
 				if ((other = getNextSector(sec->lines[i], sec)) &&
 					other->floorheight < height &&
-					other->floorheight > currentheight)
+					other->floorheight > sec->floorheight)
 					height = other->floorheight;
 			return height;
 		}
-	return currentheight;
+	return sec->floorheight;
 }
 
 //
