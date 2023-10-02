@@ -586,7 +586,7 @@ void P_KillMobj(mobj_t *target)
 	else
 		P_NotSetMobjState(target, target->info->deathstate);
 
-	target->tics -= P_Random & 3;
+	target->tics -= P_Random_And3;
 
 	if (target->tics < 1)
 		target->tics = 1;
@@ -664,7 +664,7 @@ void P_DamageMobj(mobj_t *target,
 		thrust = Mul819200(damage) / target->info->mass;
 
 		// make fall forwards sometimes
-		if (damage < 40 && damage > target->health && target->z - inflictor->z > 64 * FRACUNIT && (P_Random & 1))
+		if (damage < 40 && damage > target->health && target->z - inflictor->z > 64 * FRACUNIT && (P_Random_And1))
 		{
 			ang += ANG180;
 			thrust *= 4;

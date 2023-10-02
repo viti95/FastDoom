@@ -548,7 +548,7 @@ void A_FirePlasma(player_t *player,
 {
     players.ammo[weaponinfo[players.readyweapon].ammo]--;
 
-    P_SetPsprite(ps_flash, weaponinfo[players.readyweapon].flashstate + (P_Random & 1));
+    P_SetPsprite(ps_flash, weaponinfo[players.readyweapon].flashstate + (P_Random_And1));
 
     P_SpawnPlayerMissile(MT_PLASMA);
 }

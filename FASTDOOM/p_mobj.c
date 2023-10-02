@@ -82,7 +82,7 @@ void P_ExplodeMissile(mobj_t *mo)
 
     P_NotSetMobjState(mo, mobjinfo[mo->type].deathstate);
 
-    mo->tics -= P_Random & 3;
+    mo->tics -= P_Random_And3;
 
     if (mo->tics < 1)
         mo->tics = 1;
@@ -411,7 +411,7 @@ void P_MobjThinker(mobj_t *mobj)
 
         mobj->movecount++;
 
-        if (mobj->movecount < 12 * 35 || (leveltime & 31) || P_Random > 4)
+        if (mobj->movecount < 12 * 35 || (leveltime & 31) || P_Random_MoreThan4)
             return;
 
         P_NightmareRespawn(mobj);
@@ -701,7 +701,7 @@ void P_SpawnPuff(fixed_t x,
 
     th = P_SpawnMobj(x, y, z, MT_PUFF);
     th->momz = FRACUNIT;
-    th->tics -= P_Random & 3;
+    th->tics -= P_Random_And3;
 
     if (th->tics < 1)
         th->tics = 1;
@@ -724,7 +724,7 @@ void P_SpawnBlood(fixed_t x,
     z += ((P_Random - P_Random) << 10);
     th = P_SpawnMobj(x, y, z, MT_BLOOD);
     th->momz = FRACUNIT * 2;
-    th->tics -= P_Random & 3;
+    th->tics -= P_Random_And3;
 
     if (th->tics < 1)
         th->tics = 1;
@@ -742,7 +742,7 @@ void P_SpawnBlood(fixed_t x,
 //
 void P_CheckMissileSpawn(mobj_t *th)
 {
-    th->tics -= P_Random & 3;
+    th->tics -= P_Random_And3;
     if (th->tics < 1)
         th->tics = 1;
 

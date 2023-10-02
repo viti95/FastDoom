@@ -330,7 +330,7 @@ byte P_TryWalk(mobj_t *actor)
         return 0;
     }
 
-    actor->movecount = P_Random & 15;
+    actor->movecount = P_Random_And15;
     return 1;
 }
 
@@ -384,7 +384,7 @@ void P_NewChaseDir(mobj_t *actor)
     }
 
     // try other directions
-    if (P_Random > 200 || abs(deltay) > abs(deltax))
+    if (P_Random_MoreThan200 || abs(deltay) > abs(deltax))
     {
         tdir = d[1];
         d[1] = d[2];
@@ -434,7 +434,7 @@ void P_NewChaseDir(mobj_t *actor)
     }
 
     // randomly determine direction of search
-    if (P_Random & 1)
+    if (P_Random_And1)
     {
         for (tdir = DI_EAST; tdir <= DI_SOUTHEAST; tdir++)
         {
@@ -599,7 +599,8 @@ seeyou:
         case sfx_posit1:
         case sfx_posit2:
         case sfx_posit3:
-            pos = P_Random & 3;
+            pos = P_Random_And3;
+            // OPTIMIZE: Optimize directly on the P_Random table
             if (pos == 3)
                 pos = 0;
             sound = sfx_posit1 + pos;
@@ -607,7 +608,7 @@ seeyou:
 
         case sfx_bgsit1:
         case sfx_bgsit2:
-            sound = sfx_bgsit1 + (P_Random & 1);
+            sound = sfx_bgsit1 + (P_Random_And1);
             break;
 
         default:
@@ -714,7 +715,7 @@ nomissile:
     }
 
     // make active sound
-    if (actor->info->activesound && P_Random < 3)
+    if (actor->info->activesound && P_Random_LessThan3)
     {
         S_StartSound(actor, actor->info->activesound);
     }
@@ -812,7 +813,7 @@ void A_CPosRefire(mobj_t *actor)
     // keep firing unless target got out of sight
     A_FaceTarget(actor);
 
-    if (P_Random < 40)
+    if (P_Random_LessThan40)
         return;
 
     if (!actor->target || actor->target->health <= 0 || !P_CheckSight(actor, actor->target))
@@ -824,7 +825,7 @@ void A_SpidRefire(mobj_t *actor)
     // keep firing unless target got out of sight
     A_FaceTarget(actor);
 
-    if (P_Random < 10)
+    if (P_Random_LessThan10)
         return;
 
     if (!actor->target || actor->target->health <= 0 || !P_CheckSight(actor, actor->target))
@@ -970,7 +971,7 @@ void A_Tracer(mobj_t *actor)
                      actor->z, MT_SMOKE);
 
     th->momz = FRACUNIT;
-    th->tics -= P_Random & 3;
+    th->tics -= P_Random_And3;
     if (th->tics < 1)
         th->tics = 1;
 
@@ -1504,7 +1505,8 @@ void A_Scream(mobj_t *actor)
     case sfx_podth1:
     case sfx_podth2:
     case sfx_podth3:
-        pos = P_Random & 3;
+        pos = P_Random_And3;
+        // OPTIMIZE: Optimize directly on the P_Random table
         if (pos == 3)
             pos = 0;
         sound = sfx_podth1 + pos;
@@ -1512,7 +1514,7 @@ void A_Scream(mobj_t *actor)
 
     case sfx_bgdth1:
     case sfx_bgdth2:
-        sound = sfx_bgdth1 + (P_Random & 1);
+        sound = sfx_bgdth1 + (P_Random_And1);
         break;
 
     default:
@@ -1804,7 +1806,7 @@ void A_BrainScream(mobj_t *mo)
 
         P_NotSetMobjState(th, S_BRAINEXPLODE1);
 
-        th->tics -= P_Random & 7;
+        th->tics -= P_Random_And7;
         if (th->tics < 1)
             th->tics = 1;
     }
@@ -1827,7 +1829,7 @@ void A_BrainExplode(mobj_t *mo)
 
     P_NotSetMobjState(th, S_BRAINEXPLODE1);
 
-    th->tics -= P_Random & 7;
+    th->tics -= P_Random_And7;
     if (th->tics < 1)
         th->tics = 1;
 }
