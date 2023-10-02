@@ -101,7 +101,7 @@ void wipe_initMelt()
     // setup initial column positions
     // (y<0 => not ready to scroll yet)
     y = (int *)Z_MallocUnowned(SCREENWIDTH * sizeof(int), PU_STATIC);
-    y[0] = -(M_Random & 15);
+    y[0] = -(M_Random_And15);
     for (i = 1; i < SCREENWIDTH; i++)
     {
         y[i] = y[i - 1] + M_Random_Mod3_Minus1;

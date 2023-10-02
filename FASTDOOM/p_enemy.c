@@ -592,18 +592,13 @@ seeyou:
     if (actor->info->seesound)
     {
         int sound;
-        int pos;
 
         switch (actor->info->seesound)
         {
         case sfx_posit1:
         case sfx_posit2:
         case sfx_posit3:
-            pos = P_Random_And3;
-            // OPTIMIZE: Optimize directly on the P_Random table
-            if (pos == 3)
-                pos = 0;
-            sound = sfx_posit1 + pos;
+            sound = sfx_posit1 + (P_Random_And3_Chg3is0);
             break;
 
         case sfx_bgsit1:
@@ -1495,7 +1490,6 @@ void A_PainDie(mobj_t *actor)
 void A_Scream(mobj_t *actor)
 {
     int sound;
-    int pos;
 
     switch (actor->info->deathsound)
     {
@@ -1505,11 +1499,7 @@ void A_Scream(mobj_t *actor)
     case sfx_podth1:
     case sfx_podth2:
     case sfx_podth3:
-        pos = P_Random_And3;
-        // OPTIMIZE: Optimize directly on the P_Random table
-        if (pos == 3)
-            pos = 0;
-        sound = sfx_podth1 + pos;
+        sound = sfx_podth1 + (P_Random_And3_Chg3is0);
         break;
 
     case sfx_bgdth1:

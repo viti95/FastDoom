@@ -14,6 +14,7 @@ extern byte rndtableAnd7Plus1[256];
 extern byte rndtableAnd1[256];
 extern byte rndtableAnd15[256];
 extern byte rndtableAnd3[256];
+extern byte rndtableAnd3Chg3is0[256];
 extern byte rndtableAnd7[256];
 extern byte rndtableLessThan10[256];
 extern byte rndtableLessThan3[256];
@@ -30,6 +31,8 @@ extern byte prndindex;
 // from a lookup table.
 #define M_Random rndtable[++rndindex]
 #define M_Random_Mod3_Minus1 rndtableMod3Minus1[++rndindex]
+#define M_Random_And3_Chg3is0 rndtableAnd3Chg3is0[++rndindex]
+#define M_Random_And15 rndtableAnd15[++rndindex]
 
 // As M_Random, but used only by the play simulation.
 #define P_Random rndtable[++prndindex]
@@ -41,6 +44,7 @@ extern byte prndindex;
 #define P_Random_And1 rndtableAnd1[++prndindex]
 #define P_Random_And15 rndtableAnd15[++prndindex]
 #define P_Random_And3 rndtableAnd3[++prndindex]
+#define P_Random_And3_Chg3is0 rndtableAnd3Chg3is0[++prndindex]
 #define P_Random_And7 rndtableAnd7[++prndindex]
 #define P_Random_LessThan10 rndtableLessThan10[++prndindex]
 #define P_Random_LessThan3 rndtableLessThan3[++prndindex]

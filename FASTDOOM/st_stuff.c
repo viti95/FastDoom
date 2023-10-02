@@ -609,8 +609,7 @@ void ST_updateFaceWidget(void)
 	static int lastattackdown = -1;
 	static int priority = 0;
 	byte doevilgrin;
-	int pos;
-
+	
 	// if (priority < 10)
 	//{
 	//  dead
@@ -745,10 +744,7 @@ void ST_updateFaceWidget(void)
 	// look left or look right if the facecount has timed out
 	if (!st_facecount)
 	{
-		pos = st_randomnumber & 3;
-		if (pos == 3)
-			pos = 0;
-		st_faceindex = ST_calcPainOffset() + pos;
+		st_faceindex = ST_calcPainOffset() + st_randomnumber;
 		st_facecount = ST_STRAIGHTFACECOUNT;
 		priority = 0;
 	}
@@ -786,7 +782,7 @@ void ST_updateWidgets(void)
 
 void ST_Ticker(void)
 {
-	st_randomnumber = M_Random;
+	st_randomnumber = M_Random_And3_Chg3is0;
 	ST_updateWidgets();
 	st_oldhealth = players.health;
 }
