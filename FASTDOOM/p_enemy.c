@@ -854,7 +854,7 @@ void A_TroopAttack(mobj_t *actor)
     if (P_CheckMeleeRange(actor))
     {
         S_StartSound(actor, sfx_claw);
-        damage = P_Random_And7_Plus1 * 3;
+        damage = P_Random_And7_Plus1_Mul3;
         P_DamageMobj(actor->target, actor, actor, damage);
         return;
     }
@@ -873,7 +873,7 @@ void A_SargAttack(mobj_t *actor)
     A_FaceTarget(actor);
     if (P_CheckMeleeRange(actor))
     {
-        damage = P_Random_Mul2_Mod10_Plus1 * 2;
+        damage = P_Random_Mul4_Mod10_Plus1;
         P_DamageMobj(actor->target, actor, actor, damage);
     }
 }
@@ -916,7 +916,7 @@ void A_BruisAttack(mobj_t *actor)
     if (P_CheckMeleeRange(actor))
     {
         S_StartSound(actor, sfx_claw);
-        damage = Mul10(P_Random_And7_Plus1);
+        damage = (P_Random_And7_Plus1_Mul10);
         P_DamageMobj(actor->target, actor, actor, damage);
         return;
     }
@@ -1043,7 +1043,7 @@ void A_SkelFist(mobj_t *actor)
 
     if (P_CheckMeleeRange(actor))
     {
-        damage = P_Random_Mul2_Mod10_Plus1 * 3;
+        damage = P_Random_Mul6_Mod10_Plus1;
         S_StartSound(actor, sfx_skepch);
         P_DamageMobj(actor->target, actor, actor, damage);
     }
