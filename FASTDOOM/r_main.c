@@ -145,8 +145,6 @@ byte R_PointOnSegSide(fixed_t x,
     return right >= left;
 }
 
-#define SlopeDiv(num, den) ((den < 512) ? SLOPERANGE : min((num << 3) / (den >> 8), SLOPERANGE))
-
 //
 // R_PointToAngle
 // To get a global angle from cartesian coordinates,
