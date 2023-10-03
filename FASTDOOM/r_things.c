@@ -900,7 +900,7 @@ void R_DrawMasked(void)
     // render any remaining masked mid textures
     for (ds = ds_p - 1; ds >= drawsegs; ds--)
         if (ds->maskedtexturecol)
-            R_RenderMaskedSegRange(ds, ds->x1, ds->x2);
+            R_RenderMaskedSegRange2(ds);
 
     R_DrawPlayerSprites();
 }
