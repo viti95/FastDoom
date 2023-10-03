@@ -677,12 +677,12 @@ void R_StoreWallRange(int start,
 	rw_stopx = stop + 1;
 
 	// calculate scale at both ends and step
-	ds_p->scale1 = rw_scale = R_ScaleFromGlobalAngle(viewangle + xtoviewangle[start]);
+	ds_p->scale1 = rw_scale = R_ScaleFromGlobalAngle(start);
 
 	if (stop > start)
 	{
 		// VITI95: OPTIMIZE
-		ds_p->scale2 = R_ScaleFromGlobalAngle(viewangle + xtoviewangle[stop]);
+		ds_p->scale2 = R_ScaleFromGlobalAngle(stop);
 		ds_p->scalestep = rw_scalestep = (ds_p->scale2 - rw_scale) / (stop - start);
 	}
 	else

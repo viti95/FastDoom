@@ -511,7 +511,7 @@ fixed_t R_PointToDist(fixed_t x, fixed_t y)
 //  at the given angle.
 // rw_distance must be calculated first.
 //
-fixed_t R_ScaleFromGlobalAngle(angle_t visangle)
+fixed_t R_ScaleFromGlobalAngle(int position)
 {
     fixed_t scale;
     int anglea;
@@ -520,13 +520,18 @@ fixed_t R_ScaleFromGlobalAngle(angle_t visangle)
     int sineb;
     fixed_t num;
     int den;
+    angle_t visangle;
 
-    anglea = ANG90 + (visangle - viewangle);
-    angleb = ANG90 + (visangle - rw_normalangle);
+    visangle = xtoviewangle[position];
+
+    anglea = ANG90 + visangle;
+    angleb = anglea + viewangle - rw_normalangle;
+    anglea >>= ANGLETOFINESHIFT;
+    angleb >>= ANGLETOFINESHIFT;
 
     // both sines are allways positive
-    sinea = finesine[anglea >> ANGLETOFINESHIFT];
-    sineb = finesine[angleb >> ANGLETOFINESHIFT];
+    sinea = finesine[anglea];
+    sineb = finesine[angleb];
 #if defined(MODE_T4050)
     num = FixedMulEDX(projection, sineb) << 1;
 #endif
