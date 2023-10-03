@@ -844,7 +844,7 @@ void R_StoreWallRange(int start,
 			rw_offset = -rw_offset;
 
 		rw_offset += sidedef->textureoffset + curline->offset;
-		rw_centerangle = ANG90 + viewangle - rw_normalangle;
+		rw_centerangle = viewangle90 - rw_normalangle;
 
 		// calculate light table
 		//  use different light tables

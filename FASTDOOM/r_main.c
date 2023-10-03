@@ -68,6 +68,7 @@ fixed_t viewys;
 fixed_t viewz;
 
 angle_t viewangle;
+angle_t viewangle90;
 
 fixed_t viewcos;
 fixed_t viewsin;
@@ -85,6 +86,7 @@ int viewangletox[FINEANGLES / 2];
 // to the lowest viewangle that maps back to x ranges
 // from clipangle to -clipangle.
 angle_t xtoviewangle[SCREENWIDTH + 1];
+angle_t xtoviewangle90[SCREENWIDTH + 1];
 
 fixed_t *finecosine = &finesine[FINEANGLES / 4];
 
@@ -520,11 +522,8 @@ fixed_t R_ScaleFromGlobalAngle(int position)
     int sineb;
     fixed_t num;
     int den;
-    angle_t visangle;
 
-    visangle = xtoviewangle[position];
-
-    anglea = ANG90 + visangle;
+    anglea = xtoviewangle90[position];
     angleb = anglea + viewangle - rw_normalangle;
     anglea >>= ANGLETOFINESHIFT;
     angleb >>= ANGLETOFINESHIFT;
@@ -604,7 +603,8 @@ void R_InitTextureMapping(void)
         i = 0;
         while (viewangletox[i] > x)
             i++;
-        xtoviewangle[x] = (i << ANGLETOFINESHIFT) - ANG90;
+        xtoviewangle90[x] = (i << ANGLETOFINESHIFT);
+        xtoviewangle[x] = xtoviewangle90[x] - ANG90;
     }
 
     // Take out the fencepost cases from viewangletox.
@@ -1588,6 +1588,7 @@ void R_SetupFrame(void)
     viewyneg = -viewy;
     viewys = viewy >> FRACBITS;
     viewangle = (players_mo)->angle;
+    viewangle90 = viewangle + ANG90;
     extralight = players.extralight;
 
     viewz = players.viewz;

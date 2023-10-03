@@ -96,9 +96,11 @@ extern fixed_t viewys;
 extern fixed_t viewz;
 
 extern angle_t viewangle;
+extern angle_t viewangle90;
 
 extern int viewangletox[FINEANGLES / 2];
 extern angle_t xtoviewangle[SCREENWIDTH + 1];
+extern angle_t xtoviewangle90[SCREENWIDTH + 1];
 
 extern fixed_t rw_distance;
 extern angle_t rw_normalangle;
