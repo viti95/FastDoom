@@ -44,7 +44,7 @@ void T_FireFlicker(fireflicker_t *flick)
     if (--flick->count)
         return;
 
-    amount = (P_Random_And3) * 16;
+    amount = (P_Random_And3_Mul16);
 
     if (flick->sector->lightlevel - amount < flick->minlight)
         flick->sector->lightlevel = flick->minlight;
