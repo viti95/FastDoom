@@ -828,10 +828,13 @@ void D_SetCursorPosition(int column, int row)
     int386(0x10, &regs, &regs);
 }
 
+//      print title for every printed line
+char title[128];
+
 //
 // D_DrawTitle
 //
-void D_DrawTitle(char *string, int fc, int bc)
+void D_DrawTitle(int fc)
 {
     union REGS regs;
     byte color;
@@ -840,7 +843,7 @@ void D_DrawTitle(char *string, int fc, int bc)
     int i;
 
     // Calculate text color
-    color = (bc << 4) | fc;
+    color = (7 << 4) | fc;
 
     // Get column position
     column = D_GetCursorColumn();
@@ -848,11 +851,11 @@ void D_DrawTitle(char *string, int fc, int bc)
     // Get row position
     row = D_GetCursorRow();
 
-    for (i = 0; i < strlen(string); i++)
+    for (i = 0; i < strlen(title); i++)
     {
         // Set character
         regs.h.ah = 9;
-        regs.h.al = string[i];
+        regs.h.al = title[i];
         regs.w.cx = 1;
         regs.h.bl = color;
         regs.h.bh = 0;
@@ -866,9 +869,6 @@ void D_DrawTitle(char *string, int fc, int bc)
         D_SetCursorPosition(column, row);
     }
 }
-
-//      print title for every printed line
-char title[128];
 
 //
 // D_RedrawTitle
@@ -887,9 +887,9 @@ void D_RedrawTitle(void)
 
     // Draw title
     if (complevel >= COMPLEVEL_ULTIMATE_DOOM)
-        D_DrawTitle(title, 8, 7);
+        D_DrawTitle(8);
     else
-        D_DrawTitle(title, 4, 7);
+        D_DrawTitle(4);
 
     // Restore old cursor pos
     D_SetCursorPosition(column, row);
@@ -1453,9 +1453,9 @@ void D_DoomMain(void)
     regs.w.ax = 3;
     int386(0x10, &regs, &regs);
     if (complevel >= COMPLEVEL_ULTIMATE_DOOM)
-        D_DrawTitle(title, 8, 7);
+        D_DrawTitle(8);
     else
-        D_DrawTitle(title, 4, 7);
+        D_DrawTitle(4);
 
     printf("\nFastDoom version " FDOOMVERSION "\n");
     printf("CPU class detected: %d\n", I_GetCPUModel());
