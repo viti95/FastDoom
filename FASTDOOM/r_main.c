@@ -1609,7 +1609,7 @@ void R_ExecuteSetViewSize(void)
     for (i = 0; i < viewwidth; i++)
     {
         cosadj = abs(finecosine[xtoviewangle[i] >> ANGLETOFINESHIFT]);
-        distscale[i] = FixedDiv(FRACUNIT, cosadj);
+        distscale[i] = (4 >= cosadj) ? (65536 ^ cosadj >> 31) ^ MAXINT : FixedDiv65536(cosadj);
     }
 
     // Calculate the light levels to use

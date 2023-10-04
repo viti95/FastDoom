@@ -288,7 +288,7 @@ void AM_restoreScaleAndLoc(void)
 
 	// Change the scaling multipliers
 	scale_mtof = FixedDiv(SCREENWIDTH << FRACBITS, m_w);
-	scale_ftom = FixedDiv(FRACUNIT, scale_mtof);
+	scale_ftom = (4 >= scale_mtof) ? (65536 ^ scale_mtof >> 31) ^ MAXINT : FixedDiv65536(scale_mtof);
 }
 
 //
@@ -398,7 +398,7 @@ void AM_LevelInit(void)
 	scale_mtof = FixedDiv(min_scale_mtof, (int)(0.7 * FRACUNIT));
 	if (scale_mtof > MAXSCALEMTOF)
 		scale_mtof = min_scale_mtof;
-	scale_ftom = FixedDiv(FRACUNIT, scale_mtof);
+	scale_ftom = (4 >= scale_mtof) ? (65536 ^ scale_mtof >> 31) ^ MAXINT : FixedDiv65536(scale_mtof);
 }
 
 //
@@ -464,7 +464,8 @@ void AM_Start(void)
 void AM_minOutWindowScale(void)
 {
 	scale_mtof = min_scale_mtof;
-	scale_ftom = FixedDiv(FRACUNIT, scale_mtof);
+	scale_ftom = (4 >= scale_mtof) ? (65536 ^ scale_mtof >> 31) ^ MAXINT : FixedDiv65536(scale_mtof);
+	
 	AM_activateNewScale();
 }
 
@@ -474,7 +475,9 @@ void AM_minOutWindowScale(void)
 void AM_maxOutWindowScale(void)
 {
 	scale_mtof = MAXSCALEMTOF;
-	scale_ftom = FixedDiv(FRACUNIT, MAXSCALEMTOF);
+	// TODO: Optimize, this is an static value
+	scale_ftom = (4 >= MAXSCALEMTOF) ? (65536 ^ MAXSCALEMTOF >> 31) ^ MAXINT : FixedDiv65536(MAXSCALEMTOF);
+
 	AM_activateNewScale();
 }
 
@@ -622,7 +625,7 @@ void AM_changeWindowScale(void)
 
 	// Change the scaling multipliers
 	scale_mtof = FixedMul(scale_mtof, mtof_zoommul);
-	scale_ftom = FixedDiv(FRACUNIT, scale_mtof);
+	scale_ftom = (4 >= scale_mtof) ? (65536 ^ scale_mtof >> 31) ^ MAXINT : FixedDiv65536(scale_mtof);
 
 	if (scale_mtof < min_scale_mtof)
 		AM_minOutWindowScale();
