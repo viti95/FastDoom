@@ -197,6 +197,7 @@ void P_XYMovement(mobj_t *mo)
         //mo->momx = FixedMul(mo->momx, FRICTION);
         //mo->momy = FixedMul(mo->momy, FRICTION);
 
+        // TODO: Optimize ASM multiplication
         mo->momx = (mo->momx * 29) >> 5;
         mo->momy = (mo->momy * 29) >> 5;
     }
