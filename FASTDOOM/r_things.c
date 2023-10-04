@@ -429,6 +429,7 @@ void R_ProjectSprite(mobj_t *thing)
     if (abs(tx) > (tz << 2))
         return;
 
+    // TODO: Precalculate
     xscale = FixedDiv(projection, tz);
 
     // decide which patch to use for sprite relative to player
