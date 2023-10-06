@@ -74,25 +74,6 @@ void T_VerticalDoor(vldoor_t *door)
 		}
 		break;
 
-	case 2:
-		//  INITIAL WAIT
-		if (!--door->topcountdown)
-		{
-			switch (door->type)
-			{
-			case raiseIn5Mins:
-				door->direction = 1;
-				door->type = normal;
-				S_StartSound((mobj_t *)&door->sector->soundorg,
-							 sfx_doropn);
-				break;
-
-			default:
-				break;
-			}
-		}
-		break;
-
 	case -1:
 		// DOWN
 		res = T_MovePlane(door->sector,
@@ -486,33 +467,4 @@ void P_SpawnDoorCloseIn30(sector_t *sec)
 	door->type = normal;
 	door->speed = VDOORSPEED;
 	door->topcountdown = 30 * 35;
-}
-
-//
-// Spawn a door that opens after 5 minutes
-//
-void P_SpawnDoorRaiseIn5Mins(sector_t *sec,
-							 int secnum)
-{
-	vldoor_t *door;
-
-	door = Z_MallocUnowned(sizeof(*door), PU_LEVSPEC);
-
-	thinkercap.prev->next = &door->thinker;
-	door->thinker.next = &thinkercap;
-	door->thinker.prev = thinkercap.prev;
-	thinkercap.prev = &door->thinker;
-
-	sec->specialdata = door;
-	sec->special = 0;
-
-	door->thinker.function.acp1 = (actionf_p1)T_VerticalDoor;
-	door->sector = sec;
-	door->direction = 2;
-	door->type = raiseIn5Mins;
-	door->speed = VDOORSPEED;
-	door->topheight = P_FindLowestCeilingSurrounding(sec);
-	door->topheight -= 4 * FRACUNIT;
-	door->topwait = VDOORWAIT;
-	door->topcountdown = 5 * 60 * 35;
 }
