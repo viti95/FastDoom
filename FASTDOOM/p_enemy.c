@@ -732,7 +732,11 @@ void A_FaceTarget(mobj_t *actor)
                                    actor->target->y);
 
     if (actor->target->flags & MF_SHADOW)
-        actor->angle += (P_Random - P_Random) << 21;
+    {
+        actor->angle += (P_Random_Minus_P_Random) << 21;
+        prndindex += 2;
+    }
+        
 }
 
 //
@@ -752,7 +756,8 @@ void A_PosAttack(mobj_t *actor)
     slope = P_AimLineAttack(actor, angle, MISSILERANGE);
 
     S_StartSound(actor, sfx_pistol);
-    angle += (P_Random - P_Random) << 20;
+    angle += (P_Random_Minus_P_Random) << 20;
+    prndindex += 2;
     damage = P_Random_Mul3_Mod5_Plus1;
     P_LineAttack(actor, angle, MISSILERANGE, slope, damage);
 }
@@ -772,13 +777,16 @@ void A_SPosAttack(mobj_t *actor)
     bangle = actor->angle;
     slope = P_AimLineAttack(actor, bangle, MISSILERANGE);
 
-    angle = bangle + ((P_Random - P_Random) << 20);
+    angle = bangle + ((P_Random_Minus_P_Random) << 20);
+    prndindex += 2;
     damage = P_Random_Mul3_Mod5_Plus1;
     P_LineAttack(actor, angle, MISSILERANGE, slope, damage);
-    angle = bangle + ((P_Random - P_Random) << 20);
+    angle = bangle + ((P_Random_Minus_P_Random) << 20);
+    prndindex += 2;
     damage = P_Random_Mul3_Mod5_Plus1;
     P_LineAttack(actor, angle, MISSILERANGE, slope, damage);
-    angle = bangle + ((P_Random - P_Random) << 20);
+    angle = bangle + ((P_Random_Minus_P_Random) << 20);
+    prndindex += 2;
     damage = P_Random_Mul3_Mod5_Plus1;
     P_LineAttack(actor, angle, MISSILERANGE, slope, damage);
 }
@@ -798,7 +806,8 @@ void A_CPosAttack(mobj_t *actor)
     bangle = actor->angle;
     slope = P_AimLineAttack(actor, bangle, MISSILERANGE);
 
-    angle = bangle + ((P_Random - P_Random) << 20);
+    angle = bangle + ((P_Random_Minus_P_Random) << 20);
+    prndindex += 2;
     damage = P_Random_Mul3_Mod5_Plus1;
     P_LineAttack(actor, angle, MISSILERANGE, slope, damage);
 }
@@ -1811,7 +1820,8 @@ void A_BrainExplode(mobj_t *mo)
     int z;
     mobj_t *th;
 
-    x = mo->x + (P_Random - P_Random) * 2048;
+    x = mo->x + (P_Random_Minus_P_Random) << 11;
+    prndindex += 2;
     y = mo->y;
     z = 128 + P_Random * 2 * FRACUNIT;
     th = P_SpawnMobj(x, y, z, MT_ROCKET);

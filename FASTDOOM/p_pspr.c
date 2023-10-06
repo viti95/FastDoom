@@ -460,7 +460,8 @@ void A_Punch(player_t *player,
         damage = Mul10(damage);
 
     angle = players_mo->angle;
-    angle += (P_Random - P_Random) << 18;
+    angle += (P_Random_Minus_P_Random) << 18;
+    prndindex += 2;
     slope = P_AimLineAttack(players_mo, angle, MELEERANGE);
     P_LineAttack(players_mo, angle, MELEERANGE, slope, damage);
 
@@ -487,7 +488,8 @@ void A_Saw(player_t *player,
 
     damage = P_Random_Mul2_Mod10_Plus1;
     angle = players_mo->angle;
-    angle += (P_Random - P_Random) << 18;
+    angle += (P_Random_Minus_P_Random) << 18;
+    prndindex += 2;
 
     // use meleerange + 1 se the puff doesn't skip the flash
     slope = P_AimLineAttack(players_mo, angle, MELEERANGE + 1);
@@ -592,7 +594,11 @@ void P_GunShot(boolean accurate)
     angle = players_mo->angle;
 
     if (!accurate)
-        angle += (P_Random - P_Random) << 18;
+    {
+        angle += (P_Random_Minus_P_Random) << 18;
+        prndindex += 2;
+    }
+        
 
     P_LineAttack(players_mo, angle, MISSILERANGE, bulletslope, damage);
 }
@@ -659,10 +665,17 @@ void A_FireShotgun2(player_t *player,
 
     for (i = 0; i < 20; i++)
     {
+        int randomValue;
+
         damage = P_Random_Mul5_Mod3_Plus1;
         angle = players_mo->angle;
-        angle += (P_Random - P_Random) << 19;
-        P_LineAttack(players_mo, angle, MISSILERANGE, bulletslope + ((P_Random - P_Random) << 5), damage);
+        angle += (P_Random_Minus_P_Random) << 19;
+        prndindex += 2;
+
+        randomValue = (P_Random_Minus_P_Random);
+        prndindex += 2;
+
+        P_LineAttack(players_mo, angle, MISSILERANGE, bulletslope + (randomValue << 5), damage);
     }
 }
 

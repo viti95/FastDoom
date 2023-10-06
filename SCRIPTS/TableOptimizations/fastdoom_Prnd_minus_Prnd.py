@@ -23,8 +23,10 @@ print("[", end='')
 for x in range(256):
     value = array_random[(x+1)%256] - array_random[(x+2)%256]
     #print("Position {}, first value {}, second value {}, result {}".format(x, (x+1)%256, (x+2)%256, value))
-    hex_value = '{:08X}'.format(((value + (1 << 32)) % (1 << 32)))
-    print(f"0x{hex_value}", end='')
+    #hex_value = '{:08X}'.format(((value + (1 << 32)) % (1 << 32)))
+    #print(f"0x{hex_value}", end='')
+    
+    print(value,end='')
     if x != 255:
         print(",", end='')
 

@@ -1312,8 +1312,10 @@ byte PIT_ChangeSector(mobj_t *thing)
                          thing->y,
                          thing->z + thing->height / 2, MT_BLOOD);
 
-        mo->momx = (P_Random - P_Random) << 12;
-        mo->momy = (P_Random - P_Random) << 12;
+        mo->momx = (P_Random_Minus_P_Random) << 12;
+        prndindex += 2;
+        mo->momy = (P_Random_Minus_P_Random) << 12;
+        prndindex += 2;
     }
 
     // keep checking (crush other things)

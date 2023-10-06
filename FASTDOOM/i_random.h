@@ -27,6 +27,7 @@ extern byte rndtableMoreThan4[256];
 extern byte rndtableAnd7Plus1Mul3[256];
 extern byte rndtableAnd7Plus1Mul10[256];
 extern byte rndtableAnd3Mul16[256];
+extern int rndtableMinusPRandom[256];
 extern byte rndindex;
 extern byte prndindex;
 
@@ -62,3 +63,4 @@ extern byte prndindex;
 #define P_Random_LessThan5 rndtableLessThan5[++prndindex]
 #define P_Random_MoreThan200 rndtableMoreThan200[++prndindex]
 #define P_Random_MoreThan4 rndtableMoreThan4[++prndindex]
+#define P_Random_Minus_P_Random rndtableMinusPRandom[prndindex]
