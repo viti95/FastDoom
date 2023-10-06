@@ -273,6 +273,8 @@ void compress()
         removeentry("DSRADIO");
         removeentry("DSSKLDTH");
         removeentry("DPSKLDTH");
+        removeentry("M_SGTTL");
+        removeentry("M_LGTTL");
 
         pal_compress(fstream);
         colormap_compress(fstream);
