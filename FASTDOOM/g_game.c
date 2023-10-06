@@ -145,7 +145,7 @@ int mousebforward;
 
 fixed_t forwardmove[2] = {0x19, 0x32};
 fixed_t sidemove[2] = {0x18, 0x28};
-fixed_t angleturn[3] = {640, 1280, 320}; // + slow turn
+fixed_t angleturn[3] = {640 << 16, 1280 << 16, 320 << 16}; // + slow turn
 
 #define SLOWTURNTICS 6
 
@@ -280,7 +280,7 @@ void G_BuildTiccmd(ticcmd_t *cmd)
     if (strafe)
         side += mousex * 2;
     else
-        cmd->angleturn -= mousex * 0x8;
+        cmd->angleturn -= mousex << 19;
 
     mousex = 0;
 
@@ -1097,7 +1097,7 @@ void G_ReadDemoTiccmd(ticcmd_t *cmd)
     }
     cmd->forwardmove = ((signed char)*demo_p++);
     cmd->sidemove = ((signed char)*demo_p++);
-    cmd->angleturn = ((unsigned char)*demo_p++) << 8;
+    cmd->angleturn = ((unsigned char)*demo_p++) << (8+16);
     cmd->buttons = (unsigned char)*demo_p++;
 }
 
@@ -1107,7 +1107,7 @@ void G_WriteDemoTiccmd(ticcmd_t *cmd)
         G_CheckDemoStatus();
     *demo_p++ = cmd->forwardmove;
     *demo_p++ = cmd->sidemove;
-    *demo_p++ = (cmd->angleturn + 128) >> 8;
+    *demo_p++ = (cmd->angleturn + 128) >> (8+16);
     *demo_p++ = cmd->buttons;
     demo_p -= 4;
     if (demo_p > demoend - 16)

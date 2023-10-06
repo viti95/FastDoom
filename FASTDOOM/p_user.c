@@ -123,7 +123,7 @@ void P_MovePlayer(void)
 
 	cmd = &players.cmd;
 
-	players_mo->angle += (cmd->angleturn << 16);
+	players_mo->angle += cmd->angleturn;
 
 	// Do not let the player control movement
 	//  if not onground.

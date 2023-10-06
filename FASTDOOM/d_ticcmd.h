@@ -29,7 +29,7 @@ typedef struct
 {
     char forwardmove;  // *2048 for move
     char sidemove;     // *2048 for move
-    short angleturn;   // <<16 for angle delta
+    int angleturn;   // <<16 for angle delta
     byte buttons;
 } ticcmd_t;
 
