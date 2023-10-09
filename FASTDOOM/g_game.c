@@ -184,7 +184,7 @@ void G_BuildTiccmd(ticcmd_t *cmd)
     int forward;
     int side;
 
-    SetBytes(cmd, 0, sizeof(*cmd));
+    SetBytes(cmd, 0, sizeof(ticcmd_t));
 
     strafe = gamekeydown[key_strafe] || mousebuttons[mousebstrafe];
     speed = !autorun ^ !gamekeydown[key_speed];
@@ -410,13 +410,11 @@ void G_Responder(void)
             sendpause = 1;
             return;
         }
-        if (current_ev->data1 < NUMKEYS)
-            gamekeydown[current_ev->data1] = 1;
+        gamekeydown[current_ev->data1] = 1;
         return; // eat key down events
 
     case ev_keyup:
-        if (current_ev->data1 < NUMKEYS)
-            gamekeydown[current_ev->data1] = 0;
+        gamekeydown[current_ev->data1] = 0;
         return; // always let key up events filter down
 
     case ev_mouse:
