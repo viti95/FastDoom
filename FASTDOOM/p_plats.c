@@ -139,7 +139,7 @@ int EV_DoPlat(line_t *line,
 		break;
 	}
 
-	while ((secnum = P_FindSectorFromLineTag(line, secnum)) >= 0)
+	while ((secnum = P_FindSectorFromLineTag(line->tag, secnum)) >= 0)
 	{
 		sec = &sectors[secnum];
 

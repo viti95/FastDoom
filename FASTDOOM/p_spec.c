@@ -176,8 +176,7 @@ void P_InitPicAnims(void)
 // NULL if not two-sided line
 //
 sector_t *
-getNextSector(line_t *line,
-			  sector_t *sec)
+getNextSector(line_t *line, sector_t *sec)
 {
 	if (!(line->flags & ML_TWOSIDED))
 		return NULL;
@@ -314,12 +313,12 @@ fixed_t P_FindHighestCeilingSurrounding(sector_t *sec)
 // RETURN NEXT SECTOR # THAT LINE TAG REFERS TO
 //
 
-int P_FindSectorFromLineTag(line_t *line, int start)
+int P_FindSectorFromLineTag(short tag, int start)
 {
 	int i;
 
 	for (i = start + 1; i < numsectors; i++)
-		if (sectors[i].tag == line->tag)
+		if (sectors[i].tag == tag)
 			return i;
 
 	return -1;
@@ -328,15 +327,14 @@ int P_FindSectorFromLineTag(line_t *line, int start)
 //
 // Find minimum light from an adjacent sector
 //
-int P_FindMinSurroundingLight(sector_t *sector,
-							  int max)
+int P_FindMinSurroundingLight(sector_t *sector)
 {
 	short i;
 	int min;
 	line_t *line;
 	sector_t *check;
 
-	min = max;
+	min = sector->lightlevel;
 	for (i = 0; i < sector->linecount; i++)
 	{
 		line = sector->lines[i];
@@ -1009,7 +1007,7 @@ int EV_DoDonut(line_t *line)
 
 	secnum = -1;
 	rtn = 0;
-	while ((secnum = P_FindSectorFromLineTag(line, secnum)) >= 0)
+	while ((secnum = P_FindSectorFromLineTag(line->tag, secnum)) >= 0)
 	{
 		s1 = &sectors[secnum];
 

@@ -53,11 +53,9 @@ P_FindNextHighestFloor(sector_t *sec);
 fixed_t P_FindLowestCeilingSurrounding(sector_t *sec);
 fixed_t P_FindHighestCeilingSurrounding(sector_t *sec);
 
-int P_FindSectorFromLineTag(line_t *line,
-                            int start);
+int P_FindSectorFromLineTag(short tag, int start);
 
-int P_FindMinSurroundingLight(sector_t *sector,
-                              int max);
+int P_FindMinSurroundingLight(sector_t *sector);
 
 sector_t *
 getNextSector(line_t *line,
@@ -101,7 +99,6 @@ typedef struct
     int minlight;
     int maxlight;
     int darktime;
-    int brighttime;
 
 } strobe_t;
 

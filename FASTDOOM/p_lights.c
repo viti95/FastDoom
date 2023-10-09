@@ -75,7 +75,7 @@ void P_SpawnFireFlicker(sector_t *sector)
     flick->thinker.function.acp1 = (actionf_p1)T_FireFlicker;
     flick->sector = sector;
     flick->maxlight = sector->lightlevel;
-    flick->minlight = P_FindMinSurroundingLight(sector, sector->lightlevel) + 16;
+    flick->minlight = P_FindMinSurroundingLight(sector) + 16;
     flick->count = 4;
 }
 
@@ -127,7 +127,7 @@ void P_SpawnLightFlash(sector_t *sector)
     flash->sector = sector;
     flash->maxlight = sector->lightlevel;
 
-    flash->minlight = P_FindMinSurroundingLight(sector, sector->lightlevel);
+    flash->minlight = P_FindMinSurroundingLight(sector);
     flash->maxtime = 64;
     flash->mintime = 7;
     flash->count = (P_Random & flash->maxtime) + 1;
@@ -148,7 +148,7 @@ void T_StrobeFlash(strobe_t *flash)
     if (flash->sector->lightlevel == flash->minlight)
     {
         flash->sector->lightlevel = flash->maxlight;
-        flash->count = flash->brighttime;
+        flash->count = STROBEBRIGHT;
     }
     else
     {
@@ -177,10 +177,9 @@ void P_SpawnStrobeFlash(sector_t *sector,
 
     flash->sector = sector;
     flash->darktime = fastOrSlow;
-    flash->brighttime = STROBEBRIGHT;
     flash->thinker.function.acp1 = (actionf_p1)T_StrobeFlash;
     flash->maxlight = sector->lightlevel;
-    flash->minlight = P_FindMinSurroundingLight(sector, sector->lightlevel);
+    flash->minlight = P_FindMinSurroundingLight(sector);
 
     if (flash->minlight == flash->maxlight)
         flash->minlight = 0;
@@ -203,7 +202,7 @@ void EV_StartLightStrobing(line_t *line)
     sector_t *sec;
 
     secnum = -1;
-    while ((secnum = P_FindSectorFromLineTag(line, secnum)) >= 0)
+    while ((secnum = P_FindSectorFromLineTag(line->tag, secnum)) >= 0)
     {
         sec = &sectors[secnum];
         if (sec->specialdata)
@@ -223,7 +222,7 @@ void EV_TurnTagLightsOff(line_t *line)
     // search sectors for those with same tag as activating line
 
     // killough 10/98: replaced inefficient search with fast search
-    for (j = -1; (j = P_FindSectorFromLineTag(line, j)) >= 0;)
+    for (j = -1; (j = P_FindSectorFromLineTag(line->tag, j)) >= 0;)
     {
         sector_t *sector = sectors + j, *tsec;
         short i; 
@@ -245,7 +244,7 @@ void EV_LightTurnOn(line_t *line, int bright)
     // search all sectors for ones with same tag as activating line
 
     // killough 10/98: replace inefficient search with fast search
-    for (i = -1; (i = P_FindSectorFromLineTag(line, i)) >= 0;)
+    for (i = -1; (i = P_FindSectorFromLineTag(line->tag, i)) >= 0;)
     {
         sector_t *temp, *sector = sectors + i;
         short j; 
@@ -305,7 +304,7 @@ void P_SpawnGlowingLight(sector_t *sector)
     thinkercap.prev = &g->thinker;
 
     g->sector = sector;
-    g->minlight = P_FindMinSurroundingLight(sector, sector->lightlevel);
+    g->minlight = P_FindMinSurroundingLight(sector);
     g->maxlight = sector->lightlevel;
     g->thinker.function.acp1 = (actionf_p1)T_Glow;
     g->direction = -1;

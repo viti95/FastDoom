@@ -228,7 +228,7 @@ int EV_DoFloor(line_t *line,
 
 	secnum = -1;
 	rtn = 0;
-	while ((secnum = P_FindSectorFromLineTag(line, secnum)) >= 0)
+	while ((secnum = P_FindSectorFromLineTag(line->tag, secnum)) >= 0)
 	{
 		sec = &sectors[secnum];
 
@@ -422,7 +422,7 @@ int EV_BuildStairs(line_t *line,
 
 	secnum = -1;
 	rtn = 0;
-	while ((secnum = P_FindSectorFromLineTag(line, secnum)) >= 0)
+	while ((secnum = P_FindSectorFromLineTag(line->tag, secnum)) >= 0)
 	{
 		sec = &sectors[secnum];
 
