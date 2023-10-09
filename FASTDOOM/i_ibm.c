@@ -802,24 +802,8 @@ void I_StartTic(void)
         ev.type = (k & 0x80) != 0;
         k &= 0x7f;
 
-        switch (k)
-        {
-        case SC_UPARROW:
-            ev.data1 = KEY_UPARROW;
-            break;
-        case SC_DOWNARROW:
-            ev.data1 = KEY_DOWNARROW;
-            break;
-        case SC_LEFTARROW:
-            ev.data1 = KEY_LEFTARROW;
-            break;
-        case SC_RIGHTARROW:
-            ev.data1 = KEY_RIGHTARROW;
-            break;
-        default:
-            ev.data1 = scantokey[k];
-            break;
-        }
+        ev.data1 = scantokey[k];
+
         D_PostEvent(&ev);
     }
 }
