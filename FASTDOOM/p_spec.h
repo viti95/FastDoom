@@ -99,7 +99,7 @@ typedef struct
     int minlight;
     int maxlight;
     int darktime;
-
+    int brighttime;
 } strobe_t;
 
 typedef struct
