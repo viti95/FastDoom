@@ -139,13 +139,13 @@ int mousebfire;
 int mousebstrafe;
 int mousebforward;
 
-#define MAXPLMOVE (forwardmove[1])
+#define MAXPLMOVE (0x32 << 11)
 
 #define TURBOTHRESHOLD 0x32
 
-fixed_t forwardmove[2] = {0x19, 0x32};
-fixed_t sidemove[2] = {0x18, 0x28};
-fixed_t angleturn[3] = {640, 1280, 320}; // + slow turn
+fixed_t forwardmove[2] = {0x19 << 11, 0x32 << 11};
+fixed_t sidemove[2] = {0x18 << 11, 0x28 << 11};
+fixed_t angleturn[3] = {640 << 16, 1280 << 16, 320 << 16}; // + slow turn
 
 #define SLOWTURNTICS 6
 
@@ -278,9 +278,9 @@ void G_BuildTiccmd(ticcmd_t *cmd)
     }
 
     if (strafe)
-        side += mousex * 2;
+        side += mousex << 12;
     else
-        cmd->angleturn -= mousex * 0x8;
+        cmd->angleturn -= mousex << 19;
 
     mousex = 0;
 
@@ -1092,9 +1092,9 @@ void G_ReadDemoTiccmd(ticcmd_t *cmd)
         G_CheckDemoStatus();
         return;
     }
-    cmd->forwardmove = ((signed char)*demo_p++);
-    cmd->sidemove = ((signed char)*demo_p++);
-    cmd->angleturn = ((unsigned char)*demo_p++) << 8;
+    cmd->forwardmove = ((signed char)*demo_p++) << 11;
+    cmd->sidemove = ((signed char)*demo_p++) << 11;
+    cmd->angleturn = ((unsigned char)*demo_p++) << (8+16);
     cmd->buttons = (unsigned char)*demo_p++;
 }
 
@@ -1102,9 +1102,9 @@ void G_WriteDemoTiccmd(ticcmd_t *cmd)
 {
     if (gamekeydown['q']) // press q to end demo recording
         G_CheckDemoStatus();
-    *demo_p++ = cmd->forwardmove;
-    *demo_p++ = cmd->sidemove;
-    *demo_p++ = (cmd->angleturn + 128) >> 8;
+    *demo_p++ = cmd->forwardmove >> 11;
+    *demo_p++ = cmd->sidemove >> 11;
+    *demo_p++ = (cmd->angleturn + 128) >> (8+16);
     *demo_p++ = cmd->buttons;
     demo_p -= 4;
     if (demo_p > demoend - 16)

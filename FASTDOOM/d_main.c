@@ -1461,26 +1461,6 @@ void D_DoomMain(void)
     printf("CPU class detected: %d\n", I_GetCPUModel());
     printf("P_Init: Checking cmd-line parameters...\n");
 
-    // turbo option
-    if ((p = M_CheckParm("-turbo")))
-    {
-        int scale = 200;
-        extern int forwardmove[2];
-        extern int sidemove[2];
-
-        if (p < myargc - 1)
-            scale = atoi(myargv[p + 1]);
-        if (scale < 10)
-            scale = 10;
-        else if (scale > 400)
-            scale = 400;
-        printf("turbo scale: %i%%\n", scale);
-        forwardmove[0] = forwardmove[0] * scale / 100;
-        forwardmove[1] = forwardmove[1] * scale / 100;
-        sidemove[0] = sidemove[0] * scale / 100;
-        sidemove[1] = sidemove[1] * scale / 100;
-    }
-
     p = M_CheckParm("-file");
     if (p)
     {

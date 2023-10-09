@@ -123,7 +123,7 @@ void P_MovePlayer(void)
 
 	cmd = &players.cmd;
 
-	players_mo->angle += (cmd->angleturn << 16);
+	players_mo->angle += cmd->angleturn;
 
 	// Do not let the player control movement
 	//  if not onground.
@@ -132,10 +132,10 @@ void P_MovePlayer(void)
 	if (onground)
 	{
 		if (cmd->forwardmove)
-			P_Thrust(players_mo->angle, cmd->forwardmove * 2048);
+			P_Thrust(players_mo->angle, cmd->forwardmove);
 
 		if (cmd->sidemove)
-			P_Thrust(players_mo->angle - ANG90, cmd->sidemove * 2048);
+			P_Thrust(players_mo->angle - ANG90, cmd->sidemove);
 	}
 
 	if ((cmd->forwardmove || cmd->sidemove) && players_mo->state == &states[S_PLAY])
@@ -215,7 +215,7 @@ void P_PlayerThink(void)
 	if (players_mo->flags & MF_JUSTATTACKED)
 	{
 		cmd->angleturn = 0;
-		cmd->forwardmove = 0xc800 / 512;
+		cmd->forwardmove = (0xc800 / 512) << 11;
 		cmd->sidemove = 0;
 		players_mo->flags &= ~MF_JUSTATTACKED;
 	}
