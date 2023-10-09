@@ -194,7 +194,6 @@ void T_MoveFloor(floormove_t *floor)
 			case donutRaise:
 				floor->sector->special = floor->newspecial;
 				floor->sector->floorpic = floor->texture;
-			default:
 				break;
 			}
 		}
@@ -205,7 +204,6 @@ void T_MoveFloor(floormove_t *floor)
 			case lowerAndChange:
 				floor->sector->special = floor->newspecial;
 				floor->sector->floorpic = floor->texture;
-			default:
 				break;
 			}
 		}
@@ -245,7 +243,7 @@ int EV_DoFloor(line_t *line,
 		thinkercap.prev->next = &floor->thinker;
 		floor->thinker.next = &thinkercap;
 		floor->thinker.prev = thinkercap.prev;
-    	thinkercap.prev = &floor->thinker;
+		thinkercap.prev = &floor->thinker;
 
 		sec->specialdata = floor;
 		floor->thinker.function.acp1 = (actionf_p1)T_MoveFloor;
@@ -338,7 +336,7 @@ int EV_DoFloor(line_t *line,
 		case raiseToTexture:
 		{
 			int minsize = MAXINT;
-			
+
 			floor->direction = 1;
 			floor->sector = sec;
 			floor->speed = FLOORSPEED;
@@ -395,8 +393,6 @@ int EV_DoFloor(line_t *line,
 					}
 				}
 			}
-		default:
-			break;
 		}
 	}
 	return rtn;
@@ -441,7 +437,7 @@ int EV_BuildStairs(line_t *line,
 		thinkercap.prev->next = &floor->thinker;
 		floor->thinker.next = &thinkercap;
 		floor->thinker.prev = thinkercap.prev;
-    	thinkercap.prev = &floor->thinker;
+		thinkercap.prev = &floor->thinker;
 
 		sec->specialdata = floor;
 		floor->thinker.function.acp1 = (actionf_p1)T_MoveFloor;
@@ -499,7 +495,7 @@ int EV_BuildStairs(line_t *line,
 				thinkercap.prev->next = &floor->thinker;
 				floor->thinker.next = &thinkercap;
 				floor->thinker.prev = thinkercap.prev;
-   			 	thinkercap.prev = &floor->thinker;
+				thinkercap.prev = &floor->thinker;
 
 				sec->specialdata = floor;
 				floor->thinker.function.acp1 = (actionf_p1)T_MoveFloor;

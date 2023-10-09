@@ -426,9 +426,6 @@ void G_Responder(void)
         mousebuttons[2] = current_ev->data1 & 4;
         mousex = Div10(current_ev->data2 * (mouseSensitivity + 5));
         return; // eat events
-
-    default:
-        break;
     }
 
     return;

@@ -1318,9 +1318,6 @@ int MV_Init(
         status = TANDY_Init(soundcard);
         break;
 
-    default:
-        break;
-
     }
 
     if (status != MV_Ok)

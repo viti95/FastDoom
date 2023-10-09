@@ -312,10 +312,7 @@ int FX_Init(
         status = FX_Error;
     }
 
-    if (status != FX_Ok)
-    {
-    }
-    else
+    if (status == FX_Ok)
     {
         FX_Installed = TRUE;
     }

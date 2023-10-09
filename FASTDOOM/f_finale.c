@@ -146,9 +146,6 @@ void F_StartFinale(void)
 				finaleflat = "RROCK19";
 				F_LoadFinaleText("INTER\\P6.TXT");
 				break;
-			default:
-				// Ouch.
-				break;
 			}
 		}
 		else if (gamemission == pack_tnt)
@@ -178,9 +175,6 @@ void F_StartFinale(void)
 			case 31:
 				finaleflat = "RROCK19";
 				F_LoadFinaleText("INTER\\T6.TXT");
-				break;
-			default:
-				// Ouch.
 				break;
 			}
 		}
@@ -240,9 +234,6 @@ void F_StartFinale(void)
 		case 4:
 			finaleflat = "MFLR8_3";
 			F_LoadFinaleText("INTER\\E4.TXT");
-			break;
-		default:
-			// Ouch.
 			break;
 		}
 		finalemusic = mus_victor;

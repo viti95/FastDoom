@@ -67,9 +67,6 @@ void T_VerticalDoor(vldoor_t *door)
 				S_StartSound((mobj_t *)&door->sector->soundorg,
 							 sfx_doropn);
 				break;
-
-			default:
-				break;
 			}
 		}
 		break;
@@ -101,9 +98,6 @@ void T_VerticalDoor(vldoor_t *door)
 			case close30ThenOpen:
 				door->direction = 0;
 				door->topcountdown = 35 * 30;
-				break;
-
-			default:
 				break;
 			}
 		}
@@ -146,9 +140,6 @@ void T_VerticalDoor(vldoor_t *door)
 			case open:
 				door->sector->specialdata = NULL;
 				door->thinker.function.acv = (actionf_v)(-1); // unlink and free
-				break;
-
-			default:
 				break;
 			}
 		}
@@ -283,9 +274,6 @@ int EV_DoDoor(line_t *line, vldoor_e type)
 			if (door->topheight != sec->ceilingheight)
 				S_StartSound((mobj_t *)&door->sector->soundorg,
 							 sfx_doropn);
-			break;
-
-		default:
 			break;
 		}
 	}

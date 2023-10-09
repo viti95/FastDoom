@@ -439,9 +439,6 @@ static void _MIDI_ServiceRoutine(task *Task)
             case MIDI_PITCH_BEND:
                 _MIDI_Funcs->PitchBend(channel, c1, c2);
                 break;
-
-            default:
-                break;
             }
 
             Track->delay = _MIDI_ReadDelta(Track);

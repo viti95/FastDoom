@@ -382,10 +382,6 @@ void P_CrossSpecialLine(int linenum, byte side, mobj_t *thing)
 		case MT_HEADSHOT:
 		case MT_BRUISERSHOT:
 			return;
-			break;
-
-		default:
-			break;
 		}
 
 		ok = 0;

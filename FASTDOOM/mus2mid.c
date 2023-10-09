@@ -610,7 +610,6 @@ byte mus2mid(FILE *musinput, FILE *midioutput)
 
             default:
                 return 1;
-                break;
             }
 
             if (eventdescriptor & 0x80)

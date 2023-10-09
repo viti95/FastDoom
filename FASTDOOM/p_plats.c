@@ -87,9 +87,6 @@ void T_PlatRaise(plat_t *plat)
 				case raiseToNearestAndChange:
 					P_RemoveActivePlat(plat);
 					break;
-
-				default:
-					break;
 				}
 			}
 		}
@@ -115,8 +112,6 @@ void T_PlatRaise(plat_t *plat)
 				plat->status = down;
 			S_StartSound((mobj_t *)&plat->sector->soundorg, sfx_pstart);
 		}
-	case in_stasis:
-		break;
 	}
 }
 
@@ -141,9 +136,6 @@ int EV_DoPlat(line_t *line,
 	{
 	case perpetualRaise:
 		P_ActivateInStasis(line->tag);
-		break;
-
-	default:
 		break;
 	}
 

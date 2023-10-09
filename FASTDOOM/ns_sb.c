@@ -1246,10 +1246,6 @@ int BLASTER_GetEnv(
         case BlasterEnv_EmuAddress:
             sscanf(Blaster, "%x", &Config->Emu);
             break;
-        default:
-            // Skip the offending data
-            // sscanf( Blaster, "%*s" );
-            break;
         }
 
         while (isxdigit(*Blaster))

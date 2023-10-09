@@ -46,9 +46,6 @@ void T_MoveCeiling(ceiling_t *ceiling)
 
 	switch (ceiling->direction)
 	{
-	case 0:
-		// IN STASIS
-		break;
 	case 1:
 		// UP
 		res = T_MovePlane(ceiling->sector,
@@ -84,9 +81,6 @@ void T_MoveCeiling(ceiling_t *ceiling)
 			case fastCrushAndRaise:
 			case crushAndRaise:
 				ceiling->direction = -1;
-				break;
-
-			default:
 				break;
 			}
 		}
@@ -128,9 +122,6 @@ void T_MoveCeiling(ceiling_t *ceiling)
 			case lowerToFloor:
 				P_RemoveActiveCeiling(ceiling);
 				break;
-
-			default:
-				break;
 			}
 		}
 		else // ( res != pastdest )
@@ -143,9 +134,6 @@ void T_MoveCeiling(ceiling_t *ceiling)
 				case crushAndRaise:
 				case lowerAndCrush:
 					ceiling->speed = CEILSPEED / 8;
-					break;
-
-				default:
 					break;
 				}
 			}
@@ -176,7 +164,6 @@ int EV_DoCeiling(line_t *line,
 	case silentCrushAndRaise:
 	case crushAndRaise:
 		P_ActivateInStasisCeiling(line);
-	default:
 		break;
 	}
 

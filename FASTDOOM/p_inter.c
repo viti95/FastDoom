@@ -117,8 +117,6 @@ byte P_GiveAmmo(ammotype_t ammo, int num)
 		{
 			players.pendingweapon = wp_missile;
 		}
-	default:
-		break;
 	}
 
 	return 1;
@@ -319,42 +317,36 @@ void P_TouchSpecialThing(mobj_t *special, mobj_t *toucher)
 			players.message = GOTBLUECARD;
 		P_GiveCard(it_bluecard);
 		break;
-		return;
 
 	case SPR_YKEY:
 		if (!players.cards[it_yellowcard])
 			players.message = GOTYELWCARD;
 		P_GiveCard(it_yellowcard);
 		break;
-		return;
 
 	case SPR_RKEY:
 		if (!players.cards[it_redcard])
 			players.message = GOTREDCARD;
 		P_GiveCard(it_redcard);
 		break;
-		return;
 
 	case SPR_BSKU:
 		if (!players.cards[it_blueskull])
 			players.message = GOTBLUESKUL;
 		P_GiveCard(it_blueskull);
 		break;
-		return;
 
 	case SPR_YSKU:
 		if (!players.cards[it_yellowskull])
 			players.message = GOTYELWSKUL;
 		P_GiveCard(it_yellowskull);
 		break;
-		return;
 
 	case SPR_RSKU:
 		if (!players.cards[it_redskull])
 			players.message = GOTREDSKULL;
 		P_GiveCard(it_redskull);
 		break;
-		return;
 
 		// medikits, heals
 	case SPR_STIM:

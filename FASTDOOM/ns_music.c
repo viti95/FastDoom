@@ -260,7 +260,6 @@ int MUSIC_PlaySong(
     case PC:
     default:
         return (MUSIC_Warning);
-        break;
     }
 
     return (MUSIC_Ok);
