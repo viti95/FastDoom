@@ -103,7 +103,6 @@ int starttime;       // for comparative timing purposes
 
 byte viewactive;
 
-boolean playeringame;
 player_t players;
 mobj_t *players_mo;
 
@@ -831,7 +830,7 @@ void G_DoLoadGame(void)
     gameskill = *save_p++;
     gameepisode = *save_p++;
     gamemap = *save_p++;
-    playeringame = *save_p++;
+    *save_p++;
     *save_p++;
     *save_p++;
     *save_p++;
@@ -1232,7 +1231,7 @@ void G_DoPlayDemo(void)
     nomonsters = *demo_p++;
     *demo_p++;
 
-    playeringame = *demo_p++;
+    *demo_p++;
     *demo_p++;
     *demo_p++;
     *demo_p++;

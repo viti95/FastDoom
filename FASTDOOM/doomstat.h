@@ -225,9 +225,6 @@ extern int gametic;
 extern player_t players;
 extern mobj_t *players_mo;
 
-// Alive? Disconnected?
-extern boolean playeringame;
-
 // Intermission stats.
 // Parameters for world map / intermission.
 extern wbstartstruct_t wminfo;

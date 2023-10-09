@@ -97,7 +97,6 @@ void NetUpdate(void)
 void D_CheckNetGame(void)
 {
 	maketic = 0;
-	playeringame = true;
 }
 
 //
