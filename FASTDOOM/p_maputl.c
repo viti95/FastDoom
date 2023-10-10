@@ -147,7 +147,7 @@ byte P_PointOnDivlineSide(fixed_t x,
 
     // try to quickly decide by looking at sign bits
     if ((line->dy ^ line->dx ^ dx ^ dy) & 0x80000000)
-        return ((line->dy ^ dx) & 0x80000000) != 0;
+        return ROLAND1(line->dy ^ dx);
 
     left = FixedMulEDX(line->dy >> 8, dx >> 8);
     right = FixedMulEDX(dy >> 8, line->dx >> 8);
