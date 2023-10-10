@@ -62,6 +62,11 @@ fixed_t FixedDiv65536(fixed_t b);
     "xor eax,eax", \
     "idiv ebx" parm[ebx] value[eax] modify exact[eax edx]
 
+byte ROLAND1(int value);
+#pragma aux ROLAND1 = \
+    "rol eax, 1", \
+    "and eax, 1" parm[eax] value[al] modify exact[eax]
+
 int Mul20(int value);
 #pragma aux Mul20 = \
     "lea eax, [eax+eax*4]", \

@@ -1659,65 +1659,39 @@ void R_Init(void)
 //
 // R_PointInSubsector
 //
-subsector_t *
-R_PointInSubsector(fixed_t x,
-                   fixed_t y)
+subsector_t * R_PointInSubsector(fixed_t x, fixed_t y)
 {
-    node_t *node;
-    byte side;
-    int nodenum;
-    fixed_t dx;
-    fixed_t dy;
-    fixed_t left;
-    fixed_t right;
-
-    nodenum = firstnode;
+    int nodenum = firstnode;
 
     while (!(nodenum & NF_SUBSECTOR))
-    {
-        node = &nodes[nodenum];
+    {        
+        node_t *node = &nodes[nodenum];
+        byte side;
 
         if (!node->dx)
         {
-            if (x <= node->x)
-            {
-                side = node->dy > 0;
-            }
-            else
-            {
-                side = node->dy < 0;
-            }
+            side = (x <= node->x) ? (node->dy > 0) : (node->dy < 0);
+        }
+        else if (!node->dy)
+        {
+            side = (y <= node->y) ? (node->dx < 0) : (node->dx > 0);
         }
         else
         {
-            if (!node->dy)
+            fixed_t dx = (x - node->x);
+            fixed_t dy = (y - node->y);
+
+            // Try to quickly decide by looking at sign bits.
+            if ((node->dy ^ node->dx ^ dx ^ dy) & 0x80000000)
             {
-                if (y <= node->y)
-                {
-                    side = node->dx < 0;
-                }
-                else
-                {
-                    side = node->dx > 0;
-                }
+                side = ROLAND1(node->dy ^ dx);
             }
             else
             {
-                dx = (x - node->x);
-                dy = (y - node->y);
+                fixed_t left = FixedMulEDX(node->dys, dx);
+                fixed_t right = FixedMulEDX(dy, node->dxs);
 
-                // Try to quickly decide by looking at sign bits.
-                if ((node->dy ^ node->dx ^ dx ^ dy) & 0x80000000)
-                {
-                    side = ((node->dy ^ dx) & 0x80000000) != 0;
-                }
-                else
-                {
-                    left = FixedMulEDX(node->dys, dx);
-                    right = FixedMulEDX(dy, node->dxs);
-
-                    side = right >= left;
-                }
+                side = right >= left;
             }
         }
 
