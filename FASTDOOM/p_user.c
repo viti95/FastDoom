@@ -204,12 +204,6 @@ void P_PlayerThink(void)
 	ticcmd_t *cmd;
 	weapontype_t newweapon;
 
-	// fixme: do this in the cheat code
-	if (players.cheats & CF_NOCLIP)
-		players_mo->flags |= MF_NOCLIP;
-	else
-		players_mo->flags &= ~MF_NOCLIP;
-
 	// chain saw run forward
 	cmd = &players.cmd;
 	if (players_mo->flags & MF_JUSTATTACKED)

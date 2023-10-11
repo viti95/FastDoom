@@ -488,6 +488,8 @@ void ST_Responder(event_t *ev)
 					players.message = STSTR_NCON;
 				else
 					players.message = STSTR_NCOFF;
+
+				players_mo->flags ^= MF_NOCLIP;
 			}
 			// 'behold' power-up menu
 			else if (cht_CheckCheat(&cheat_powerup))
