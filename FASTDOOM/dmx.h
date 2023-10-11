@@ -38,7 +38,7 @@ void AL_SetCard(void *data);
 int MPU_Detect(int *port);
 void SetSNDPort(int port);
 void SetMUSPort(int port);
-void ASS_Init(int rate, int maxsng, int mdev, int sdev);
+void ASS_Init(int rate, int mdev, int sdev);
 void ASS_DeInit(void);
 void WAV_PlayMode(int channels, int samplerate);
 int CODEC_Detect(int *a, int *b);

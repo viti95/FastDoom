@@ -290,7 +290,7 @@ void I_StartupSound(void)
     //
     printf("  calling ASS_Init\n");
 
-    ASS_Init(SND_TICRATE, SND_MAXSONGS, snd_MusicDevice, snd_SfxDevice);
+    ASS_Init(SND_TICRATE, snd_MusicDevice, snd_SfxDevice);
 }
 //
 // I_ShutdownSound

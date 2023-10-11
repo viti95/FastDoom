@@ -21,7 +21,6 @@
 #define __I_SOUND__
 
 #define SND_TICRATE 140      // tic rate for updating sound
-#define SND_MAXSONGS 40      // max number of songs in game
 
 typedef enum
 {
