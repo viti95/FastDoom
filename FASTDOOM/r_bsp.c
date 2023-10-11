@@ -487,7 +487,6 @@ void R_RenderBSPNode(int bspnum)
         {
             byte side;
             fixed_t dx, dy;
-            fixed_t left, right;
 
             if (sp == MAX_BSP_DEPTH)
                 break;
@@ -498,10 +497,18 @@ void R_RenderBSPNode(int bspnum)
             dx = (viewxs - bsp->xs);
             dy = (viewys - bsp->ys);
 
-            left = (bsp->dys) * (dx);
-            right = (dy) * (bsp->dxs);
+            // Try to quickly decide by looking at sign bits.
+            if ((bsp->dys ^ bsp->dxs ^ dx ^ dy) & 0x80000000)
+            {
+                side = ROLAND1(bsp->dys ^ dx);
+            }
+            else
+            {
+                fixed_t left = (bsp->dys) * (dx);
+                fixed_t right = (dy) * (bsp->dxs);
 
-            side = right >= left;
+                side = right >= left;
+            }
 
             stack_bsp[sp] = bspnum;
             stack_side[sp] = side ^ 1;

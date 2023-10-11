@@ -353,7 +353,7 @@ int ASS_GetSoundCardCode(int sndDevice)
     }
 }
 
-void ASS_Init(int rate, int maxsng, int mdev, int sdev)
+void ASS_Init(int rate, int mdev, int sdev)
 {
     int status, music_device, sound_device;
     unsigned int sample_rate;    
