@@ -235,7 +235,7 @@ byte PIT_CheckThing(mobj_t *thing)
     // check for skulls slamming into things
     if (tmthing->flags & MF_SKULLFLY)
     {
-        damage = (P_Random_And7_Plus1) * tmthing->info->damage;
+        damage = (P_Random_And7_Plus1)*tmthing->info->damage;
 
         P_DamageMobj(thing, tmthing, tmthing, damage);
 
@@ -277,7 +277,7 @@ byte PIT_CheckThing(mobj_t *thing)
         }
 
         // damage / explode
-        damage = (P_Random_And7_Plus1) * tmthing->info->damage;
+        damage = (P_Random_And7_Plus1)*tmthing->info->damage;
         P_DamageMobj(thing, tmthing, tmthing->target, damage);
 
         // don't traverse any more
@@ -446,11 +446,12 @@ byte P_TryMove(mobj_t *thing, fixed_t x, fixed_t y)
         {
             // see if the line was crossed
             ld = spechit[numspechit];
-            side = P_PointOnLineSide(thing->x, thing->y, ld);
-            oldside = P_PointOnLineSide(oldx, oldy, ld);
-            if (side != oldside)
+
+            if (ld->special)
             {
-                if (ld->special)
+                side = P_PointOnLineSide(thing->x, thing->y, ld);
+                oldside = P_PointOnLineSide(oldx, oldy, ld);
+                if (side != oldside)
                     P_CrossSpecialLine(ld - lines, oldside, thing);
             }
         }
@@ -773,7 +774,7 @@ byte PTR_AimTraverse(intercept_t *in)
         if (li->frontsector->floorheight != li->backsector->floorheight)
         {
             opt = openbottom - shootz;
-            //slope = FixedDiv(opt, dist);
+            // slope = FixedDiv(opt, dist);
             slope = ((abs(opt) >> 14) >= dist) ? ((opt ^ dist) >> 31) ^ MAXINT : FixedDiv2(opt, dist);
             if (slope > bottomslope)
                 bottomslope = slope;
@@ -782,7 +783,7 @@ byte PTR_AimTraverse(intercept_t *in)
         if (li->frontsector->ceilingheight != li->backsector->ceilingheight)
         {
             opt = opentop - shootz;
-            //slope = FixedDiv(opt, dist);
+            // slope = FixedDiv(opt, dist);
             slope = ((abs(opt) >> 14) >= dist) ? ((opt ^ dist) >> 31) ^ MAXINT : FixedDiv2(opt, dist);
             if (slope < topslope)
                 topslope = slope;
@@ -815,14 +816,14 @@ byte PTR_AimTraverse(intercept_t *in)
     }
 
     opt = th->z + th->height - shootz;
-    //thingtopslope = FixedDiv(th->z + th->height - shootz, dist);
+    // thingtopslope = FixedDiv(th->z + th->height - shootz, dist);
     thingtopslope = ((abs(opt) >> 14) >= dist) ? ((opt ^ dist) >> 31) ^ MAXINT : FixedDiv2(opt, dist);
 
     if (thingtopslope < bottomslope)
         return 1; // shot over the thing
 
     opt = opt - th->height;
-    //thingbottomslope = FixedDiv(opt, dist);
+    // thingbottomslope = FixedDiv(opt, dist);
     thingbottomslope = ((abs(opt) >> 14) >= dist) ? ((opt ^ dist) >> 31) ^ MAXINT : FixedDiv2(opt, dist);
 
     if (thingbottomslope > topslope)
@@ -891,7 +892,7 @@ byte PTR_ShootTraverse(intercept_t *in)
         if (li->frontsector->floorheight != li->backsector->floorheight)
         {
             opt = openbottom - shootz;
-            //slope = FixedDiv(openbottom - shootz, dist);
+            // slope = FixedDiv(openbottom - shootz, dist);
             slope = ((abs(opt) >> 14) >= dist) ? ((opt ^ dist) >> 31) ^ MAXINT : FixedDiv2(opt, dist);
             if (slope > aimslope)
                 goto hitline;
@@ -900,7 +901,7 @@ byte PTR_ShootTraverse(intercept_t *in)
         if (li->frontsector->ceilingheight != li->backsector->ceilingheight)
         {
             opt = opentop - shootz;
-            //slope = FixedDiv(opentop - shootz, dist);
+            // slope = FixedDiv(opentop - shootz, dist);
             slope = ((abs(opt) >> 14) >= dist) ? ((opt ^ dist) >> 31) ^ MAXINT : FixedDiv2(opt, dist);
             if (slope < aimslope)
                 goto hitline;
@@ -964,14 +965,14 @@ byte PTR_ShootTraverse(intercept_t *in)
     }
 
     opt = th->z + th->height - shootz;
-    //thingtopslope = FixedDiv(th->z + th->height - shootz, dist);
+    // thingtopslope = FixedDiv(th->z + th->height - shootz, dist);
     thingtopslope = ((abs(opt) >> 14) >= dist) ? ((opt ^ dist) >> 31) ^ MAXINT : FixedDiv2(opt, dist);
 
     if (thingtopslope < aimslope)
         return 1; // shot over the thing
 
     opt = opt - th->height;
-    //thingbottomslope = FixedDiv(th->z - shootz, dist);
+    // thingbottomslope = FixedDiv(th->z - shootz, dist);
     thingbottomslope = ((abs(opt) >> 14) >= dist) ? ((opt ^ dist) >> 31) ^ MAXINT : FixedDiv2(opt, dist);
 
     if (thingbottomslope > aimslope)
@@ -1136,7 +1137,7 @@ byte PTR_UseTraverse(intercept_t *in)
     }
 
     side = P_PointOnLineSide(players_mo->x, players_mo->y, in->d.line);
-    
+
     P_UseSpecialLine(players_mo, in->d.line, side);
 
     // can't use for than one special line in a row
