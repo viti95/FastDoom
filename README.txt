@@ -113,7 +113,6 @@
  Command line parameters
  -----------------------
 
- -nomonsters => Disables all monsters in game
  -respawn => Forces monsters respawn like in Nightmare mode
  -fast => Forces fast monsters like in Nightmare mode
  -potato => Forces potato detail mode (80x200)

@@ -960,7 +960,6 @@ void G_DoNewGame(void)
     demoplayback = 0;
     respawnparm = false;
     fastparm = false;
-    // nomonsters = false;
     G_InitNew(d_skill, d_episode, d_map);
     gameaction = ga_nothing;
 }
@@ -1148,7 +1147,7 @@ void G_BeginRecording(void)
     *demo_p++ = false;
     *demo_p++ = respawnparm;
     *demo_p++ = fastparm;
-    *demo_p++ = nomonsters;
+    *demo_p++ = 0;
     *demo_p++ = 0;
 
     *demo_p++ = true;
@@ -1226,7 +1225,7 @@ void G_DoPlayDemo(void)
     *demo_p++;
     respawnparm = *demo_p++;
     fastparm = *demo_p++;
-    nomonsters = *demo_p++;
+    *demo_p++;
     *demo_p++;
 
     *demo_p++;
@@ -1578,7 +1577,6 @@ void G_CheckDemoStatus(void)
         demoplayback = 0;
         respawnparm = false;
         fastparm = false;
-        nomonsters = false;
         D_AdvanceDemo();
         return;
     }

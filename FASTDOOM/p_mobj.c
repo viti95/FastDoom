@@ -649,12 +649,6 @@ void P_SpawnMapThing(mapthing_t *mthing)
         if (mthing->type == mobjinfo[i].doomednum)
             break;
 
-    // don't spawn any monsters if -nomonsters
-    if (nomonsters && (i == MT_SKULL || (mobjinfo[i].flags & MF_COUNTKILL)))
-    {
-        return;
-    }
-
     // spawn it
     x = mthing->x << FRACBITS;
     y = mthing->y << FRACBITS;

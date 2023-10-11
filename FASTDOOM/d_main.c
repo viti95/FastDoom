@@ -91,7 +91,6 @@ void D_DoomLoopBenchmark(void);
 
 char *wadfiles[MAXWADFILES];
 
-boolean nomonsters;  // checkparm of -nomonsters
 boolean respawnparm; // checkparm of -respawn
 boolean fastparm;    // checkparm of -fast
 
@@ -1325,7 +1324,6 @@ void D_DoomMain(void)
     setbuf(stdout, NULL);
     modifiedgame = false;
 
-    nomonsters = M_CheckParm("-nomonsters");
     respawnparm = M_CheckParm("-respawn");
     fastparm = M_CheckParm("-fast");
 
