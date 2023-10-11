@@ -5,7 +5,8 @@
 * Disabled all cheats in Nightmare
 * Removed IDSPIDPOPD cheat (IDCLIP is still available)
 * Fixed snow while setting palette on slow VGA cards (via -fixDAC)
-*
+* Removed -nomonsters and -turbo command line parameters
+
 
 ## 0.9.8 (01 Sep 2023)
 * Add DEMO4 to benchmark menu
