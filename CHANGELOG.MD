@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 0.9.9 (?? ??? ????)
+* Multiple optimizations (C, ASM) and code cleanup
+* Disabled all cheats in Nightmare
+* Removed IDSPIDPOPD cheat (IDCLIP is still available)
+* Fixed snow while setting palette on slow VGA cards (via -fixDAC)
+*
+
 ## 0.9.8 (01 Sep 2023)
 * Add DEMO4 to benchmark menu
 * Optimized all non-VGA modes (ASM)
