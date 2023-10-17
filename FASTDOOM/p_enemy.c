@@ -1152,6 +1152,11 @@ void A_VileChase(mobj_t *actor)
         yl = (viletryy - bmaporgy - MAXRADIUS * 2) >> MAPBLOCKSHIFT;
         yh = (viletryy - bmaporgy + MAXRADIUS * 2) >> MAPBLOCKSHIFT;
 
+        if (xl < 0) xl = 0;
+        if (yl < 0) yl = 0;
+        if (xh >= bmapwidth) xh = bmapwidth - 1;
+        if (yh >= bmapheight) yh = bmapheight - 1;
+
         for (bx = xl; bx <= xh; bx++)
         {
             for (by = yl; by <= yh; by++)
@@ -1159,7 +1164,7 @@ void A_VileChase(mobj_t *actor)
                 // Call PIT_VileCheck to check
                 // whether object is a corpse
                 // that canbe raised.
-                if (P_NotBlockThingsIterator(bx, by, PIT_VileCheck))
+                if (P_NotBlockThingsIterator2(bx, by, PIT_VileCheck))
                 {
                     // got one!
                     temp = actor->target;

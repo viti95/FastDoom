@@ -140,9 +140,14 @@ byte P_TeleportMove(mobj_t *thing, fixed_t x, fixed_t y)
     yl = (tmbbox[BOXBOTTOM] - bmaporgy - MAXRADIUS) >> MAPBLOCKSHIFT;
     yh = (tmbbox[BOXTOP] - bmaporgy + MAXRADIUS) >> MAPBLOCKSHIFT;
 
+    if (xl < 0) xl = 0;
+    if (yl < 0) yl = 0;
+    if (xh >= bmapwidth) xh = bmapwidth - 1;
+    if (yh >= bmapheight) yh = bmapheight - 1;
+
     for (bx = xl; bx <= xh; bx++)
         for (by = yl; by <= yh; by++)
-            if (P_NotBlockThingsIterator(bx, by, PIT_StompThing))
+            if (P_NotBlockThingsIterator2(bx, by, PIT_StompThing))
                 return 0;
 
     // the move is ok,
@@ -373,9 +378,14 @@ byte P_NotCheckPosition(mobj_t *thing, fixed_t x, fixed_t y)
     yl = (tmbbox[BOXBOTTOM] - bmaporgy - MAXRADIUS) >> MAPBLOCKSHIFT;
     yh = (tmbbox[BOXTOP] - bmaporgy + MAXRADIUS) >> MAPBLOCKSHIFT;
 
+    if (xl < 0) xl = 0;
+    if (yl < 0) yl = 0;
+    if (xh >= bmapwidth) xh = bmapwidth - 1;
+    if (yh >= bmapheight) yh = bmapheight - 1;
+
     for (bx = xl; bx <= xh; bx++)
         for (by = yl; by <= yh; by++)
-            if (P_NotBlockThingsIterator(bx, by, PIT_CheckThing))
+            if (P_NotBlockThingsIterator2(bx, by, PIT_CheckThing))
                 return 1;
 
     // check lines
@@ -1240,9 +1250,14 @@ void P_RadiusAttack(mobj_t *spot,
     bombsource = source;
     bombdamage = damage;
 
+    if (xl < 0) xl = 0;
+    if (yl < 0) yl = 0;
+    if (xh >= bmapwidth) xh = bmapwidth - 1;
+    if (yh >= bmapheight) yh = bmapheight - 1;
+
     for (y = yl; y <= yh; y++)
         for (x = xl; x <= xh; x++)
-            P_NotBlockThingsIterator(x, y, PIT_RadiusAttack);
+            P_NotBlockThingsIterator2(x, y, PIT_RadiusAttack);
 }
 
 //
@@ -1330,14 +1345,25 @@ byte P_ChangeSector(sector_t *sector, byte crunch)
 {
     int x;
     int y;
+    int xl, yl, xh, yh;
 
     nofit = 0;
     crushchange = crunch;
 
+    xl = sector->blockbox[BOXLEFT];
+    xh = sector->blockbox[BOXRIGHT];
+    yl = sector->blockbox[BOXBOTTOM];
+    yh = sector->blockbox[BOXTOP];
+
+    if (xl < 0) xl = 0;
+    if (yl < 0) yl = 0;
+    if (xh >= bmapwidth) xh = bmapwidth - 1;
+    if (yh >= bmapheight) yh = bmapheight - 1;
+
     // re-check heights for all things near the moving sector
-    for (x = sector->blockbox[BOXLEFT]; x <= sector->blockbox[BOXRIGHT]; x++)
-        for (y = sector->blockbox[BOXBOTTOM]; y <= sector->blockbox[BOXTOP]; y++)
-            P_NotBlockThingsIterator(x, y, PIT_ChangeSector);
+    for (x = xl; x <= xh; x++)
+        for (y = yl; y <= yh; y++)
+            P_NotBlockThingsIterator2(x, y, PIT_ChangeSector);
 
     return nofit;
 }

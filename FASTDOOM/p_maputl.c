@@ -399,6 +399,18 @@ byte P_NotBlockThingsIterator(int x, int y, byte (*func)(mobj_t *))
     return 0;
 }
 
+byte P_NotBlockThingsIterator2(int x, int y, byte (*func)(mobj_t *))
+{
+    mobj_t *mobj;
+
+    for (mobj = blocklinks[bmapwidthmuls[y] + x]; mobj; mobj = mobj->bnext)
+    {
+        if (!func(mobj))
+            return 1;
+    }
+    return 0;
+}
+
 //
 // INTERCEPT ROUTINES
 //
