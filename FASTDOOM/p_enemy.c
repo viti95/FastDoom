@@ -76,8 +76,6 @@ void A_Fall(mobj_t *actor);
 // sound blocking lines cut off traversal.
 //
 
-mobj_t *soundtarget;
-
 void P_RecursiveSound(sector_t *sec, byte soundblocks)
 {
     short i;
@@ -92,7 +90,7 @@ void P_RecursiveSound(sector_t *sec, byte soundblocks)
 
     sec->validcount = validcount;
     sec->soundtraversed = soundblocks + 1;
-    sec->soundtarget = soundtarget;
+    sec->soundtarget = players_mo;
 
     for (i = 0; i < sec->linecount; i++)
     {
@@ -125,11 +123,10 @@ void P_RecursiveSound(sector_t *sec, byte soundblocks)
 // If a monster yells at a player,
 // it will alert other monsters to the player.
 //
-void P_NoiseAlert(mobj_t *target, mobj_t *emmiter)
+void P_NoiseAlert()
 {
-    soundtarget = target;
     validcount++;
-    P_RecursiveSound(emmiter->subsector->sector, 0);
+    P_RecursiveSound(players_mo->subsector->sector, 0);
 }
 
 //

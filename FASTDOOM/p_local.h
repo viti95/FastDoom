@@ -104,7 +104,7 @@ void P_SpawnPlayerMissile(byte type);
 //
 // P_ENEMY
 //
-void P_NoiseAlert(mobj_t *target, mobj_t *emmiter);
+void P_NoiseAlert();
 
 //
 // P_MAPUTL
