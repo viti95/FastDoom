@@ -394,9 +394,14 @@ byte P_NotCheckPosition(mobj_t *thing, fixed_t x, fixed_t y)
     yl = (tmbbox[BOXBOTTOM] - bmaporgy) >> MAPBLOCKSHIFT;
     yh = (tmbbox[BOXTOP] - bmaporgy) >> MAPBLOCKSHIFT;
 
+    if (xl < 0) xl = 0;
+    if (yl < 0) yl = 0;
+    if (xh >= bmapwidth) xh = bmapwidth - 1;
+    if (yh >= bmapheight) yh = bmapheight - 1;
+
     for (bx = xl; bx <= xh; bx++)
         for (by = yl; by <= yh; by++)
-            if (P_NotBlockLinesIterator(bx, by, PIT_CheckLine))
+            if (P_NotBlockLinesIterator2(bx, by, PIT_CheckLine))
                 return 1;
 
     return 0;

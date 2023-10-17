@@ -381,6 +381,30 @@ byte P_NotBlockLinesIterator(int x, int y, byte (*func)(line_t *))
     return 0; // everything was checked
 }
 
+byte P_NotBlockLinesIterator2(int x, int y, byte (*func)(line_t *))
+{
+    int offset;
+    short *list;
+    line_t *ld;
+
+    offset = bmapwidthmuls[y] + x;
+    offset = *(blockmap + offset);
+
+    for (list = blockmaplump + offset; *list != -1; list++)
+    {
+        ld = &lines[*list];
+
+        if (ld->validcount == validcount)
+            continue; // line has already been checked
+
+        ld->validcount = validcount;
+
+        if (!func(ld))
+            return 1;
+    }
+    return 0; // everything was checked
+}
+
 //
 // P_BlockThingsIterator
 //

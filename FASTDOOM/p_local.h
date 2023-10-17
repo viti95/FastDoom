@@ -149,6 +149,7 @@ extern fixed_t lowfloor;
 void P_LineOpening(line_t *linedef);
 
 byte P_NotBlockLinesIterator(int x, int y, byte (*func)(line_t *));
+byte P_NotBlockLinesIterator2(int x, int y, byte (*func)(line_t *));
 byte P_NotBlockThingsIterator(int x, int y, byte (*func)(mobj_t *));
 byte P_NotBlockThingsIterator2(int x, int y, byte (*func)(mobj_t *));
 
