@@ -230,6 +230,9 @@ void P_DamageMobj(mobj_t *target,
                   mobj_t *source,
                   int damage);
 
+void P_DamageMobj2(mobj_t *target,
+                  int damage);
+
 //
 // P_SPEC
 //

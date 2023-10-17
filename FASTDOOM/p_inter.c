@@ -736,3 +736,82 @@ void P_DamageMobj(mobj_t *target,
 			P_NotSetMobjState(target, target->info->seestate);
 	}
 }
+
+void P_DamageMobj2(mobj_t *target, int damage)
+{
+	unsigned ang;
+	int saved;
+	player_t *player;
+	fixed_t thrust;
+	int temp;
+
+	if (!(target->flags & MF_SHOOTABLE) || target->health <= 0)
+		return; // shouldn't happen...
+
+	if (target->flags & MF_SKULLFLY)
+	{
+		target->momx = target->momy = target->momz = 0;
+	}
+
+	player = target->player;
+	damage >>= player && gameskill == sk_baby; // take half damage in trainer mode
+
+	// player specific
+	if (player)
+	{
+		// end of game hell hack
+		if (target->subsector->sector->special == 11 && damage >= target->health)
+		{
+			damage = target->health - 1;
+		}
+
+		// Below certain threshold,
+		// ignore damage in GOD mode, or with INVUL power.
+		if (damage < 1000 && ((player->cheats & CF_GODMODE) || player->powers[pw_invulnerability]))
+		{
+			return;
+		}
+
+		if (player->armortype)
+		{
+			if (player->armortype == 1)
+				saved = Div3(damage);
+			else
+				saved = damage / 2;
+
+			if (player->armorpoints <= saved)
+			{
+				// armor is used up
+				saved = player->armorpoints;
+				player->armortype = 0;
+			}
+			player->armorpoints -= saved;
+			damage -= saved;
+		}
+		player->health -= damage; // mirror mobj health here for Dave
+		if (player->health < 0)
+			player->health = 0;
+
+		player->attacker = NULL;
+		player->damagecount += damage; // add damage after armor / invuln
+
+		if (player->damagecount > 100)
+			player->damagecount = 100; // teleport stomp does 10k points...
+	}
+
+	// do the damage
+	target->health -= damage;
+	if (target->health <= 0)
+	{
+		P_KillMobj(target);
+		return;
+	}
+
+	if ((P_Random < target->info->painchance) && !(target->flags & MF_SKULLFLY))
+	{
+		target->flags |= MF_JUSTHIT; // fight back!
+		P_NotSetMobjState(target, target->info->painstate);
+	}
+
+	target->reactiontime = 0; // we're awake now...
+}

@@ -881,14 +881,14 @@ void P_PlayerInSpecialSector(void)
 		// HELLSLIME DAMAGE
 		if (!players.powers[pw_ironfeet])
 			if (!(leveltime & 0x1f))
-				P_DamageMobj(players_mo, NULL, NULL, 10);
+				P_DamageMobj2(players_mo, 10);
 		break;
 
 	case 7:
 		// NUKAGE DAMAGE
 		if (!players.powers[pw_ironfeet])
 			if (!(leveltime & 0x1f))
-				P_DamageMobj(players_mo, NULL, NULL, 5);
+				P_DamageMobj2(players_mo, 5);
 		break;
 
 	case 4:
@@ -896,7 +896,7 @@ void P_PlayerInSpecialSector(void)
 		if (!players.powers[pw_ironfeet] || (P_Random_LessThan5))
 		{
 			if (!(leveltime & 0x1f))
-				P_DamageMobj(players_mo, NULL, NULL, 20);
+				P_DamageMobj2(players_mo, 20);
 		}
 		break;
 
@@ -911,7 +911,7 @@ void P_PlayerInSpecialSector(void)
 		players.cheats &= ~CF_GODMODE;
 
 		if (!(leveltime & 0x1f))
-			P_DamageMobj(players_mo, NULL, NULL, 20);
+			P_DamageMobj2(players_mo, 20);
 
 		if (players.health <= 10)
 			G_ExitLevel();
