@@ -162,9 +162,9 @@ void P_LoadSegs(int lump)
         li->shiftdx = li->dx >> FRACBITS;
         li->shiftdy = li->dy >> FRACBITS;
         
-        if (curline->v1->y == curline->v2->y)
+        if (li->v1->y == li->v2->y)
     		li->lightnum = -1;
-    	else if (curline->v1->x == curline->v2->x)
+    	else if (li->v1->x == li->v2->x)
 	    	li->lightnum = 1;
         else
             li->lightnum = 0;
