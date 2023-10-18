@@ -119,27 +119,24 @@ byte R_PointOnSegSide(fixed_t x,
     lx = line->v1->x;
     ly = line->v1->y;
 
-    ldx = line->v2->x - lx;
-    ldy = line->v2->y - ly;
-
-    if (!ldx)
+    if (!line->dx)
     {
-        return (x <= lx) ^ (ldy <= 0);
+        return (x <= lx) ^ (line->cmpdy);
     }
-    if (!ldy)
+    if (!line->dy)
     {
-        return (y <= ly) ^ (ldx >= 0);
+        return (y <= ly) ^ (line->cmpdx);
     }
 
     dx = (x - lx);
     dy = (y - ly);
 
     // Try to quickly decide by looking at sign bits.
-    if ((ldy ^ ldx ^ dx ^ dy) & 0x80000000)
-        return ((ldy ^ dx) & 0x80000000) != 0;
+    if ((line->xordxdy ^ dx ^ dy) & 0x80000000)
+        return ((line->dy ^ dx) & 0x80000000) != 0;
 
-    left = FixedMulEDX(ldy >> FRACBITS, dx);
-    right = FixedMulEDX(dy, ldx >> FRACBITS);
+    left = FixedMulEDX(line->shiftdy, dx);
+    right = FixedMulEDX(dy, line->shiftdy);
 
     // returns 0/1 front/back side
     return right >= left;

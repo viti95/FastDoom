@@ -154,7 +154,13 @@ void P_LoadSegs(int lump)
     {
         li->v1 = &vertexes[ml->v1];
         li->v2 = &vertexes[ml->v2];
-
+        li->dx = li->v2->x - li->v1->x;
+        li->dy = li->v2->y - li->v1->y;
+        li->cmpdx = li->dx >= 0;
+        li->cmpdy = li->dy <= 0;
+        li->xordxdy = li->dx ^ li->dy;
+        li->shiftdx = li->dx >> FRACBITS;
+        li->shiftdy = li->dy >> FRACBITS;
         li->angle = ml->angle << 16;
         li->offset = ml->offset << 16;
         linedef = ml->linedef;
