@@ -398,7 +398,11 @@ byte R_CheckBBox(fixed_t *bspcoord)
         if (tspan >= span)
             return 0;
 
-        angle1 = clipangle;
+        angle1 = (clipangle + ANG90) >> ANGLETOFINESHIFT;
+    }
+    else
+    {
+        angle1 = (angle1 + ANG90) >> ANGLETOFINESHIFT;
     }
     tspan = clipangle - angle2;
     if (tspan > fieldofview)
@@ -409,14 +413,18 @@ byte R_CheckBBox(fixed_t *bspcoord)
         if (tspan >= span)
             return 0;
 
-        angle2 = clipangleneg;
+        angle2 = (clipangleneg + ANG90) >> ANGLETOFINESHIFT;
+    }
+    else
+    {
+        angle2 = (angle2 + ANG90) >> ANGLETOFINESHIFT;
     }
 
     // Find the first clippost
     //  that touches the source post
     //  (adjacent pixels are touching).
-    angle1 = (angle1 + ANG90) >> ANGLETOFINESHIFT;
-    angle2 = (angle2 + ANG90) >> ANGLETOFINESHIFT;
+   
+    
     sx1 = viewangletox[angle1];
     sx2 = viewangletox[angle2];
 
