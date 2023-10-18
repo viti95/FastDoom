@@ -161,6 +161,14 @@ void P_LoadSegs(int lump)
         li->xordxdy = li->dx ^ li->dy;
         li->shiftdx = li->dx >> FRACBITS;
         li->shiftdy = li->dy >> FRACBITS;
+        
+        if (curline->v1->y == curline->v2->y)
+    		li->lightnum = -1;
+    	else if (curline->v1->x == curline->v2->x)
+	    	li->lightnum = 1;
+        else
+            li->lightnum = 0;
+
         li->angle = ml->angle << 16;
         li->offset = ml->offset << 16;
         linedef = ml->linedef;
