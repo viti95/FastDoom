@@ -625,7 +625,6 @@ void P_DamageMobj(mobj_t *target,
 				  mobj_t *source,
 				  int damage)
 {
-	unsigned ang;
 	int saved;
 	player_t *player;
 	fixed_t thrust;
@@ -647,7 +646,7 @@ void P_DamageMobj(mobj_t *target,
 	// thus kick away unless using the chainsaw.
 	if (inflictor && !(target->flags & MF_NOCLIP) && (!source || !source->player || source->player->readyweapon != wp_chainsaw))
 	{
-		ang = R_PointToAngle2(inflictor->x,
+		unsigned ang = R_PointToAngle2Shift(inflictor->x,
 							  inflictor->y,
 							  target->x,
 							  target->y);
@@ -658,11 +657,10 @@ void P_DamageMobj(mobj_t *target,
 		// make fall forwards sometimes
 		if (damage < 40 && damage > target->health && target->z - inflictor->z > 64 * FRACUNIT && (P_Random_And1))
 		{
-			ang += ANG180;
+			ang += (ANG180 >> ANGLETOFINESHIFT);
 			thrust *= 4;
 		}
 
-		ang >>= ANGLETOFINESHIFT;
 		target->momx += FixedMul(thrust, finecosine[ang]);
 		target->momy += FixedMul(thrust, finesine[ang]);
 	}
