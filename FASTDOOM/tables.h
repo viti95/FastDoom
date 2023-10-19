@@ -41,6 +41,7 @@
 
 // 0x100000000 to 0x2000
 #define ANGLETOFINESHIFT 19
+#define AFS 19
 
 // Effective size is 10240.
 extern fixed_t finesine[5 * FINEANGLES / 4];
@@ -67,6 +68,7 @@ typedef unsigned angle_t;
 // The +1 size is to handle the case when x==y
 //  without additional checking.
 extern const angle_t tantoangle[SLOPERANGE + 1];
+extern const angle_t tantoangleshift[SLOPERANGE + 1];
 
 extern const byte gammatable[5][256];
 
