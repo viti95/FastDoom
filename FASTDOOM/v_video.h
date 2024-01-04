@@ -67,10 +67,8 @@ void V_Init(void);
 void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int destx, int desty, byte *destscrn);
 
 void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch);
-void V_DrawPatchFullScreen0(unsigned char *graphic);
 void V_DrawPatchScreen0(int x, int y, patch_t *patch);
 void V_DrawPatchDirect(int x, int y, patch_t *patch);
-void V_DrawPatchFullDirect(unsigned char *graphic);
 void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch);
 
 void V_DrawPatchDirectText4050(int x, int y, patch_t *patch);
@@ -79,13 +77,6 @@ void V_DrawPatchDirectText8025(int x, int y, patch_t *patch);
 void V_DrawPatchDirectText8043(int x, int y, patch_t *patch);
 void V_DrawPatchDirectText8050(int x, int y, patch_t *patch);
 void V_DrawPatchDirectTextMDA(int x, int y, patch_t *patch);
-
-void V_DrawPatchFullDirectText4050(unsigned char *graphic);
-void V_DrawPatchFullDirectText4025(unsigned char *graphic);
-void V_DrawPatchFullDirectText8025(unsigned char *graphic);
-void V_DrawPatchFullDirectText8043(unsigned char *graphic);
-void V_DrawPatchFullDirectText8050(unsigned char *graphic);
-void V_DrawPatchFullDirectTextMDA(unsigned char *graphic);
 
 void V_WriteTextDirect(int x, int y, char *string);
 void V_WriteCharDirect(int x, int y, unsigned char c);

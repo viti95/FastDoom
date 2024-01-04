@@ -138,6 +138,8 @@
 // Weapon pos.
 #define ST_ARMSX 111
 #define ST_ARMSY 172
+#define ST_ARMSBGX 104
+#define ST_ARMSBGY 168
 #define ST_ARMSXSPACE 12
 #define ST_ARMSYSPACE 10
 
@@ -266,6 +268,9 @@ static patch_t *keys[NUMCARDS];
 // face status patches
 static patch_t *faces[ST_NUMFACES];
 
+// main bar right
+static patch_t *armsbg;
+
 // weapon ownership patches
 static patch_t *arms[6][2];
 
@@ -274,6 +279,9 @@ static st_number_t w_ready;
 
 // health widget
 static st_percent_t w_health;
+
+// arms background
+static st_binicon_t w_armsbg;
 
 // weapon ownership widgets
 static st_multicon_t w_arms[6];
@@ -817,7 +825,7 @@ void ST_doPaletteStuff(void)
 		if (palette > NUMREDPALS - 1)
 			palette = NUMREDPALS - 1;
 
-		palette += STARTREDPALS - 1;
+		palette += STARTREDPALS;
 	}
 	else if (players.bonuscount)
 	{
@@ -826,10 +834,10 @@ void ST_doPaletteStuff(void)
 		if (palette > NUMBONUSPALS - 1)
 			palette = NUMBONUSPALS - 1;
 
-		palette += STARTBONUSPALS - 1;
+		palette += STARTBONUSPALS;
 	}
 	else if (players.powers[pw_ironfeet] > 4 * 32 || players.powers[pw_ironfeet] & 8)
-		palette = RADIATIONPAL - 2;
+		palette = RADIATIONPAL;
 	else
 		palette = 0;
 
@@ -1286,6 +1294,8 @@ void ST_drawWidgets(byte refresh)
 	STlib_updatePercent(&w_health, refresh);
 	STlib_updatePercent(&w_armor, refresh);
 
+	STlib_updateBinIcon(&w_armsbg, refresh);
+
 	STlib_updateMultIcon(&w_arms[0], refresh);
 	STlib_updateMultIcon(&w_arms[1], refresh);
 	STlib_updateMultIcon(&w_arms[2], refresh);
@@ -1381,6 +1391,9 @@ void ST_loadGraphics(void)
 		sprintf(namebuf, "STKEYS%d", i);
 		keys[i] = (patch_t *)W_CacheLumpName(namebuf, PU_STATIC);
 	}
+
+	// arms background
+	armsbg = (patch_t *)W_CacheLumpName("STARMS", PU_STATIC);
 
 	// arms ownership widgets
 	for (i = 0; i < 6; i++)
@@ -1534,6 +1547,13 @@ void ST_createWidgets(void)
 					  &players.health,
 					  &st_statusbaron,
 					  tallpercent);
+
+	// arms background
+	STlib_initBinIcon(&w_armsbg,
+					  ST_ARMSBGX,
+					  ST_ARMSBGY,
+					  armsbg,
+					  &st_statusbaron);
 
 	// weapons owned
 	STlib_initMultIcon(&w_arms[0],

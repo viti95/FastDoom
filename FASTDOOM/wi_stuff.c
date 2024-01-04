@@ -336,22 +336,22 @@ byte *screen1;
 void WI_slamBackground(void)
 {
 #if defined(MODE_T4025)
-	V_DrawPatchFullDirectText4025(W_CacheLumpName(bgname, PU_CACHE));
+	V_DrawPatchDirectText4025(0, 0, W_CacheLumpName(bgname, PU_CACHE));
 #endif
 #if defined(MODE_T4050)
-	V_DrawPatchFullDirectText4050(W_CacheLumpName(bgname, PU_CACHE));
+	V_DrawPatchDirectText4050(0, 0, W_CacheLumpName(bgname, PU_CACHE));
 #endif
 #if defined(MODE_T8025)
-	V_DrawPatchFullDirectText8025(W_CacheLumpName(bgname, PU_CACHE));
+	V_DrawPatchDirectText8025(0, 0, W_CacheLumpName(bgname, PU_CACHE));
 #endif
 #if defined(MODE_MDA)
-	V_DrawPatchFullDirectTextMDA(W_CacheLumpName(bgname, PU_CACHE));
+	V_DrawPatchDirectTextMDA(0, 0, W_CacheLumpName(bgname, PU_CACHE));
 #endif
 #if defined(MODE_T8043)
-	V_DrawPatchFullDirectText8043(W_CacheLumpName(bgname, PU_CACHE));
+	V_DrawPatchDirectText8043(0, 0, W_CacheLumpName(bgname, PU_CACHE));
 #endif
 #if defined(MODE_T8050)
-	V_DrawPatchFullDirectText8050(W_CacheLumpName(bgname, PU_CACHE));
+	V_DrawPatchDirectText8050(0, 0, W_CacheLumpName(bgname, PU_CACHE));
 #endif
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 	CopyDWords(screen1, screen0, (SCREENWIDTH * SCREENHEIGHT) / 4);
@@ -1313,8 +1313,7 @@ void WI_loadData(void)
 
 	// background
 	bg = W_CacheLumpName(name, PU_CACHE);
-
-    CopyDWords(bg, screen1, 320 * 200 / 4);
+	V_DrawPatch(0, 0, screen1, bg);
 #endif
 
 	if (gamemode == commercial)

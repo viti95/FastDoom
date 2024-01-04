@@ -142,7 +142,7 @@ fixed_t *spritewidth;
 fixed_t *spriteoffset;
 fixed_t *spritetopoffset;
 
-lighttable_t datacolormaps[33 * 256 + 255];
+lighttable_t datacolormaps[34 * 256 + 255];
 lighttable_t *colormaps = datacolormaps;
 
 //

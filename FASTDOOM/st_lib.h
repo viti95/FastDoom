@@ -148,6 +148,10 @@ void STlib_updateMultIcon_Direct(st_multicon_t *mi);
 // Binary Icon widget routines
 
 void STlib_initBinIcon(st_binicon_t *b, int x, int y, patch_t *i, byte *on);
+
+void STlib_updateBinIcon(st_binicon_t *bi, byte refresh);
+void STlib_updateBinIcon_Direct(st_binicon_t *bi);
+
 void STlib_drawNumText(st_number_t *n, int x, int y);
 
 #endif

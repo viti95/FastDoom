@@ -16,7 +16,7 @@
 
 #if defined(MODE_HERC)
 
-unsigned short lutcolors[12 * 256];
+unsigned short lutcolors[14 * 256];
 unsigned short *ptrlutcolors;
 
 void I_ProcessPalette(byte *palette)
@@ -25,7 +25,7 @@ void I_ProcessPalette(byte *palette)
 
     byte *ptr = gammatable[usegamma];
 
-    for (i = 0; i < 12 * 256; i++, palette += 3)
+    for (i = 0; i < 14 * 256; i++, palette += 3)
     {
         int r, g, b;
         int sum;

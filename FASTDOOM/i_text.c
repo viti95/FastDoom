@@ -34,7 +34,7 @@ const byte colors[48] = {
     0x3F, 0x3F, 0x15,  // 14
     0x3F, 0x3F, 0x3F}; // 15
 
-byte lut16colors[12 * 256];
+byte lut16colors[14 * 256];
 byte *ptrlut16colors;
 
 unsigned short *textdestscreen = (unsigned short *)0xB8000;
@@ -134,7 +134,7 @@ void I_ProcessPalette(byte *palette)
     int i, j;
     byte *ptr = gammatable[usegamma];
 
-    for (i = 0; i < 12 * 256; i++, palette+=3)
+    for (i = 0; i < 14 * 256; i++, palette+=3)
     {
         int r1, g1, b1;
 

@@ -642,28 +642,28 @@ void D_PageTicker(void)
 void D_PageDrawer(void)
 {
 #if defined(MODE_T4050)
-    V_DrawPatchFullDirectText4050(W_CacheLumpName(pagename, PU_CACHE));
+    V_DrawPatchDirectText4050(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
 #if defined(MODE_T4025)
-    V_DrawPatchFullDirectText4025(W_CacheLumpName(pagename, PU_CACHE));
+    V_DrawPatchDirectText4025(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
 #if defined(MODE_T8025)
-    V_DrawPatchFullDirectText8025(W_CacheLumpName(pagename, PU_CACHE));
+    V_DrawPatchDirectText8025(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
 #if defined(MODE_MDA)
-    V_DrawPatchFullDirectTextMDA(W_CacheLumpName(pagename, PU_CACHE));
+    V_DrawPatchDirectTextMDA(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
 #if defined(MODE_T8043)
-    V_DrawPatchFullDirectText8043(W_CacheLumpName(pagename, PU_CACHE));
+    V_DrawPatchDirectText8043(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
 #if defined(MODE_T8050)
-    V_DrawPatchFullDirectText8050(W_CacheLumpName(pagename, PU_CACHE));
+    V_DrawPatchDirectText8050(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-    V_DrawPatchFullScreen0(W_CacheLumpName(pagename, PU_CACHE));
+    V_DrawPatchScreen0(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
 #if defined(USE_BACKBUFFER)
-    V_DrawPatchFullDirect(W_CacheLumpName(pagename, PU_CACHE));
+    V_DrawPatchDirect(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 #endif
 }
 

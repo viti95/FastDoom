@@ -10,6 +10,8 @@
 *.OBJ
 *.SYM
 *.o
+*.bak
+*.BAK
 
 #VSCODE
 .vscode/*

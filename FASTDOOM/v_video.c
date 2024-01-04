@@ -183,13 +183,6 @@ void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
 #endif
 
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-
-void V_DrawPatchFullScreen0(unsigned char *graphic)
-{
-    V_MarkRect(0, 0, 320, 200);
-    CopyDWords(graphic, screen0, 320 * 200 / 4);
-}
-
 void V_DrawPatchScreen0(int x, int y, patch_t *patch)
 {
 
@@ -391,11 +384,6 @@ void V_WriteCharDirect(int x, int y, unsigned char c)
 // Draws directly to the screen on the pc.
 //
 #if defined(MODE_VBE2_DIRECT)
-void V_DrawPatchFullDirect(unsigned char *graphic)
-{
-    CopyDWords(graphic, destscreen, 320 * 200 / 4);
-}
-
 void V_DrawPatchDirect(int x, int y, patch_t *patch)
 {
     int count;
@@ -433,73 +421,6 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
 #endif
 
 #if defined(MODE_Y)
-
-void V_DrawPatchFullDirect(unsigned char *graphic)
-{
-    int i, j;
-
-    byte *dest = destscreen;
-    byte *src = graphic;
-
-    outp(SC_INDEX + 1, 1 << (0 & 3));
-
-    for (i = 0; i < 200 * 80; i += 80)
-    {
-        for (j = 0; j < 80; j++)
-        {
-            dest[j] = src[j * 4];
-        }
-
-        dest += 80;
-        src += 320;
-    }
-
-    dest = destscreen;
-    src = graphic;
-
-    outp(SC_INDEX + 1, 1 << (1 & 3));
-    for (i = 0; i < 200 * 80; i += 80)
-    {
-        for (j = 0; j < 80; j++)
-        {
-            dest[j] = src[j * 4 + 1];
-        }
-
-        dest += 80;
-        src += 320;
-    }
-
-    dest = destscreen;
-    src = graphic;
-
-    outp(SC_INDEX + 1, 1 << (2 & 3));
-    for (i = 0; i < 200 * 80; i += 80)
-    {
-        for (j = 0; j < 80; j++)
-        {
-            dest[j] = src[j * 4 + 2];
-        }
-
-        dest += 80;
-        src += 320;
-    }
-
-    dest = destscreen;
-    src = graphic;
-
-    outp(SC_INDEX + 1, 1 << (3 & 3));
-    for (i = 0; i < 200 * 80; i += 80)
-    {
-        for (j = 0; j < 80; j++)
-        {
-            dest[j] = src[j * 4 + 3];
-        }
-
-        dest += 80;
-        src += 320;
-    }
-}
-
 void V_DrawPatchDirect(int x, int y, patch_t *patch)
 {
     int count;
@@ -560,40 +481,6 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
 #endif
 
 #if defined(USE_BACKBUFFER)
-
-void V_DrawPatchFullDirect(unsigned char *graphic)
-{
-#if defined(MODE_CGA16)
-    // 160x100
-    int i, j;
-
-    for (i = 0; i < 200 * 320; i += 2 * 320)
-    {
-        for (j = 0; j < 320; j += 2)
-        {
-            backbuffer[i + j] = graphic[i + j];
-        }
-    }
-        
-#elif defined(MODE_CVBS)
-    // 160x200
-    int i;
-
-    for (i = 0; i < 320 * 200; i += 2)
-        backbuffer[i] = graphic[i];
-
-#elif defined(MODE_CGA512)
-    // 80x200
-    int i;
-
-    for (i = 0; i < 320 * 200; i += 4)
-        backbuffer[i] = graphic[i];
-
-#else
-    CopyDWords(graphic, backbuffer, 320 * 200 / 4);
-#endif    
-}
-
 void V_DrawPatchDirect(int x, int y, patch_t *patch)
 {
     int count;
@@ -650,23 +537,6 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
 #endif
 
 #if defined(MODE_T8043)
-void V_DrawPatchFullDirectText8043(unsigned char *graphic)
-{
-    // 80x43
-    int i, j;
-
-    for (i = 0; i < 200 * 320; i += 4 * 320)
-    {
-        for (j = 0; j < 320; j += 4)
-        {
-            unsigned char color = ptrlut16colors[graphic[i + j]];
-            unsigned short value = (color << 8) | 219;
-
-            textdestscreen[i / 16 + j / 4] = value;
-        }
-    }
-}
-
 void V_DrawPatchDirectText8043(int x, int y, patch_t *patch)
 {
     int count;
@@ -712,23 +582,6 @@ void V_DrawPatchDirectText8043(int x, int y, patch_t *patch)
 #endif
 
 #if defined(MODE_T8050)
-void V_DrawPatchFullDirectText8050(unsigned char *graphic)
-{
-    // 80x50
-    int i, j;
-
-    for (i = 0; i < 200 * 320; i += 4 * 320)
-    {
-        for (j = 0; j < 320; j += 4)
-        {
-            unsigned char color = ptrlut16colors[graphic[i + j]];
-            unsigned short value = (color << 8) | 219;
-
-            textdestscreen[i / 16 + j / 4] = value;
-        }
-    }
-}
-
 void V_DrawPatchDirectText8050(int x, int y, patch_t *patch)
 {
     int count;
@@ -774,29 +627,6 @@ void V_DrawPatchDirectText8050(int x, int y, patch_t *patch)
 #endif
 
 #if defined(MODE_T4050)
-void V_DrawPatchFullDirectText4050(unsigned char *graphic)
-{
-    // 40x50
-    int i, j;
-
-    unsigned short *vram = textdestscreen;
-
-    for (i = 0; i < 25; i++)
-    {
-        for (j = 0; j < 40; j++)
-        {
-            unsigned char color1 = ptrlut16colors[*(graphic)];
-            unsigned char color2 = ptrlut16colors[*(graphic + 4 * 320)];
-
-            *vram = (color1 << 8) | (color2 << 12) | 223;
-
-            vram++;
-            graphic += 8;
-        }
-        graphic += 2240;
-    }
-}
-
 void V_DrawPatchDirectText4050(int x, int y, patch_t *patch)
 {
     int count;
@@ -861,23 +691,6 @@ void V_DrawPatchDirectText4050(int x, int y, patch_t *patch)
 #endif
 
 #if defined(MODE_T4025)
-void V_DrawPatchFullDirectText4025(unsigned char *graphic)
-{
-    // 40x25
-    int i, j;
-
-    for (i = 0; i < 200 * 320; i += 8 * 320)
-    {
-        for (j = 0; j < 320; j += 8)
-        {
-            unsigned char color = ptrlut16colors[graphic[i + j]];
-            unsigned short value = (color << 8) | 219;
-
-            textdestscreen[i / 64 + j / 8] = value;
-        }
-    }
-}
-
 void V_DrawPatchDirectText4025(int x, int y, patch_t *patch)
 {
     int count;
@@ -923,25 +736,6 @@ void V_DrawPatchDirectText4025(int x, int y, patch_t *patch)
 #endif
 
 #if defined(MODE_T8025)
-void V_DrawPatchFullDirectText8025(unsigned char *graphic)
-{
-    // 80x25
-    int i, j;
-
-    for (i = 0; i < 25; i++)
-    {
-        for (j = 0; j < 80; j++)
-        {
-            unsigned char color1 = ptrlut16colors[graphic[(i * 8 * 320) + (j * 4)]];
-            unsigned char color2 = ptrlut16colors[graphic[(i * 8 * 320) + (j * 4) + (4 * 320)]];
-
-            unsigned short value = (color1 << 8) | (color2 << 12) | 223;
-
-            textdestscreen[(i * 80) + j] = value;
-        }
-    }
-}
-
 void V_DrawPatchDirectText8025(int x, int y, patch_t *patch)
 {
     int count;
@@ -1006,23 +800,6 @@ void V_DrawPatchDirectText8025(int x, int y, patch_t *patch)
 #endif
 
 #if defined(MODE_MDA)
-void V_DrawPatchFullDirectTextMDA(unsigned char *graphic)
-{
-    // 80x25
-    int i, j;
-
-    for (i = 0; i < 200 * 320; i += 8 * 320)
-    {
-        for (j = 0; j < 320; j += 4)
-        {
-            unsigned char color = graphic[i + j];
-            unsigned short value = 0x07 << 8 | color;
-
-            textdestscreen[i / 32 + j / 4] = value;
-        }
-    }
-}
-
 void V_DrawPatchDirectTextMDA(int x, int y, patch_t *patch)
 {
     int count;

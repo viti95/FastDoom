@@ -2,7 +2,7 @@
 
 #if defined(TEXT_MODE)
 
-extern byte lut16colors[12 * 256];
+extern byte lut16colors[14 * 256];
 extern byte *ptrlut16colors;
 
 void TEXT_40x25_InitGraphics(void);

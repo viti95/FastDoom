@@ -15,7 +15,7 @@
 
 #if defined(MODE_CGA)
 
-byte lut4colors[12 * 256 + 255];
+byte lut4colors[14 * 256 + 255];
 byte *ptrlut4colors;
 
 const byte colors[12] = {
@@ -31,7 +31,7 @@ void I_ProcessPalette(byte *palette)
 
     ptrlut4colors = (byte *)(((int)lut4colors + 255) & ~0xff);
 
-    for (i = 0; i < 12 * 256; i++, palette += 3)
+    for (i = 0; i < 14 * 256; i++, palette += 3)
     {
         unsigned int r1, g1, b1;
         unsigned int bestcolor;
