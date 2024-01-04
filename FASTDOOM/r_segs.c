@@ -465,7 +465,7 @@ void R_RenderMaskedSegRange2(drawseg_t *ds)
 					break;
 				}
 #elif defined(MODE_MDA)
-				if (dc_x == x1 || dc_x == x2)
+				if (dc_x == ds->x1 || dc_x == ds->x2)
 					R_DrawLineColumnTextMDA();
 				else
 					R_DrawEmptyColumnTextMDA();
