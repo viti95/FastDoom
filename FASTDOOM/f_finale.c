@@ -367,12 +367,7 @@ void F_TextWrite(void)
 		w = hu_font[c]->width;
 		if (cx + w > SCREENWIDTH)
 			break;
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-		V_DrawPatchScreen0(cx, cy, hu_font[c]);
-#endif
-#if defined(USE_BACKBUFFER)
-		V_DrawPatchDirect(cx, cy, hu_font[c]);
-#endif
+    V_DrawPatchModeCentered(cy, cx, hu_font[c]);
 		cx += w;
 	}
 }
@@ -708,12 +703,7 @@ void F_CastPrint(char *text)
 		}
 
 		w = hu_font[c]->width;
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-		V_DrawPatchScreen0(cx, 180, hu_font[c]);
-#endif
-#if defined(USE_BACKBUFFER)
-		V_DrawPatchDirect(cx, 180, hu_font[c]);
-#endif
+    V_DrawPatchModeCentered(cx, 180, hu_font[c]);
 		cx += w;
 	}
 }
@@ -732,12 +722,7 @@ void F_CastDrawer(void)
 	patch_t *patch;
 
 // erase the entire screen to a background
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-	V_DrawPatchScreen0(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
-#endif
-#if defined(USE_BACKBUFFER)
-	V_DrawPatchDirect(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
-#endif
+  V_DrawPatchModeCentered(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
 
 	F_CastPrint(castorder[castnum].name);
 
@@ -750,21 +735,11 @@ void F_CastDrawer(void)
 	patch = W_CacheLumpNum(lump + firstspritelump, PU_CACHE);
 	if (flip)
 	{
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-		V_DrawPatchFlippedScreen0(160, 170, patch);
-#endif
-#if defined(USE_BACKBUFFER)
-		V_DrawPatchDirect(160, 170, patch);
-#endif
+    V_DrawPatchFlippedModeCentered(160, 170, patch);
 	}
 	else
 	{
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-		V_DrawPatchScreen0(160, 170, patch);
-#endif
-#if defined(USE_BACKBUFFER)
-		V_DrawPatchDirect(160, 170, patch);
-#endif
+    V_DrawPatchModeCentered(160, 170, patch);
 	}
 }
 #endif
@@ -859,7 +834,7 @@ void F_DrawPatchCol(int x, patch_t *patch, int col)
 	while (column->topdelta != 0xff)
 	{
 		source = (byte *)column + 3;
-		dest = desttop + Mul320(column->topdelta);
+		dest = desttop + MulScreenWidth(column->topdelta);
 		count = column->length;
 
 		while (count--)
@@ -1178,12 +1153,7 @@ void F_BunnyScroll(void)
 		return;
 	if (finalecount < 1180)
 	{
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-		V_DrawPatchScreen0((SCREENWIDTH - 13 * 8) / 2, (SCREENHEIGHT - 8 * 8) / 2, W_CacheLumpName("END0", PU_CACHE));
-#endif
-#if defined(USE_BACKBUFFER)
-		V_DrawPatchDirect((SCREENWIDTH - 13 * 8) / 2, (SCREENHEIGHT - 8 * 8) / 2, W_CacheLumpName("END0", PU_CACHE));
-#endif
+    V_DrawPatchModeCentered((SCALED_SCREENWIDTH - 13 * 8) / 2, (SCALED_SCREENHEIGHT - 8 * 8) / 2, W_CacheLumpName("END0", PU_CACHE), 0);
 		laststage = 0;
 		return;
 	}
@@ -1198,12 +1168,7 @@ void F_BunnyScroll(void)
 	}
 
 	sprintf(name, "END%i", stage);
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-	V_DrawPatchScreen0((SCREENWIDTH - 13 * 8) / 2, (SCREENHEIGHT - 8 * 8) / 2, W_CacheLumpName(name, PU_CACHE));
-#endif
-#if defined(USE_BACKBUFFER)
-	V_DrawPatchDirect((SCREENWIDTH - 13 * 8) / 2, (SCREENHEIGHT - 8 * 8) / 2, W_CacheLumpName(name, PU_CACHE));
-#endif
+  V_DrawPatchModeCentered((SCALED_SCREENWIDTH - 13 * 8) / 2, (SCALED_SCREENHEIGHT - 8 * 8) / 2, W_CacheLumpName(name, PU_CACHE));
 }
 #endif
 
@@ -1239,85 +1204,15 @@ void F_Drawer(void)
 		case 1:
 			if (gamemode == shareware)
 			{
-#if defined(MODE_T4025)
-				V_DrawPatchDirectText4025(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
-#endif
-#if defined(MODE_T4050)
-				V_DrawPatchDirectText4050(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
-#endif
-#if defined(MODE_T8025)
-				V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
-#endif
-#if defined(MODE_MDA)
-				V_DrawPatchDirectTextMDA(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
-#endif
-#if defined(MODE_T8043)
-				V_DrawPatchDirectText8043(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
-#endif
-#if defined(MODE_T8050)
-				V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
-#endif
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-				V_DrawPatchScreen0(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
-#endif
-#if defined(USE_BACKBUFFER)
-				V_DrawPatchDirect(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
-#endif
+        V_DrawPatchModeCentered(0, 0, W_CacheLumpName("HELP2", PU_CACHE), 0);
 			}
 			else
 			{
-#if defined(MODE_T4025)
-				V_DrawPatchDirectText4025(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
-#endif
-#if defined(MODE_T4050)
-				V_DrawPatchDirectText4050(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
-#endif
-#if defined(MODE_T8025)
-				V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
-#endif
-#if defined(MODE_MDA)
-				V_DrawPatchDirectTextMDA(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
-#endif
-#if defined(MODE_T8043)
-				V_DrawPatchDirectText8043(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
-#endif
-#if defined(MODE_T8050)
-				V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
-#endif
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-				V_DrawPatchScreen0(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
-#endif
-#if defined(USE_BACKBUFFER)
-				V_DrawPatchDirect(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
-#endif
+        V_DrawPatchModeCentered(0, 0, W_CacheLumpName("CREDIT", PU_CACHE), 0);
 			}
-
 			break;
 		case 2:
-#if defined(MODE_T4025)
-			V_DrawPatchDirectText4025(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
-#endif
-#if defined(MODE_T4050)
-			V_DrawPatchDirectText4050(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
-#endif
-#if defined(MODE_T8025)
-			V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
-#endif
-#if defined(MODE_MDA)
-			V_DrawPatchDirectTextMDA(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
-#endif
-#if defined(MODE_T8043)
-			V_DrawPatchDirectText8043(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
-#endif
-#if defined(MODE_T8050)
-			V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
-#endif
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-			V_DrawPatchScreen0(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
-#endif
-#if defined(USE_BACKBUFFER)
-			V_DrawPatchDirect(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
-#endif
+      V_DrawPatchModeCentered(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE), 0);
 			break;
 		case 3:
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
@@ -1328,30 +1223,7 @@ void F_Drawer(void)
 #endif
 			break;
 		case 4:
-#if defined(MODE_T4025)
-			V_DrawPatchDirectText4025(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
-#endif
-#if defined(MODE_T4050)
-			V_DrawPatchDirectText4050(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
-#endif
-#if defined(MODE_T8025)
-			V_DrawPatchDirectText8025(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
-#endif
-#if defined(MODE_MDA)
-			V_DrawPatchDirectTextMDA(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
-#endif
-#if defined(MODE_T8043)
-			V_DrawPatchDirectText8043(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
-#endif
-#if defined(MODE_T8050)
-			V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
-#endif
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-			V_DrawPatchScreen0(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
-#endif
-#if defined(USE_BACKBUFFER)
-			V_DrawPatchDirect(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
-#endif
+      V_DrawPatchModeCentered(0, 0, W_CacheLumpName("END0", PU_CACHE), 0);
 			break;
 		}
 	}

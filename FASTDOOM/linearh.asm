@@ -221,7 +221,7 @@ CODE_SYM_DEF R_DrawSpanBackbuffer
   %assign PLANE 0
     MAPLABEL LINE:
       %assign LINE LINE+1
-      %if LINE = 320
+      %if LINE = SCREENWIDTH
         mov   al,[esi+ebx]           ; get source pixel
         mov   al,[eax]               ; translate color
         mov   [edi+PLANE+PCOL],al  ; write pixel
@@ -238,6 +238,7 @@ CODE_SYM_DEF R_DrawSpanBackbuffer
 %assign PCOL PCOL+1
 %endrep
 
-hmap320: ret
+MAPLABEL LINE:
+  ret
 
 %endif

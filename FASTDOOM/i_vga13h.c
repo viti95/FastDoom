@@ -15,17 +15,16 @@
 #include "m_menu.h"
 #include "i_vga13h.h"
 
-#define SBARHEIGHT 32
 
 #if defined(MODE_13H)
 
 void (*finishfunc)(void);
 
-extern byte vrambuffer[320*200];
+extern byte vrambuffer[SCREENWIDTH*SCREENHEIGHT];
 
 void I_CleanupVRAMbuffer(void)
 {
-    SetDWords(vrambuffer, 0, 320 * 200 / 4);
+    SetDWords(vrambuffer, 0, SCREENWIDTH * SCREENHEIGHT / 4);
 }
 
 void I_UpdateFinishFunc(void)

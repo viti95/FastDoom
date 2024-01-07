@@ -73,12 +73,12 @@ CODE_SYM_DEF R_DrawFuzzColumnVBE2
 
   cmp  eax,1
   adc  eax,0
-  
-  lea  edi,[ebp+ebp*4]
+
+  MulScreenWidthStart edi, ebp
   sub  ebp,eax ; ebp = pixel count
   js   near .done
 
-  shl  edi,6
+  MulScreenWidthEnd edi
   add  edi,[_dc_x]
   add  edi,[_destview]
 
@@ -120,13 +120,13 @@ CODE_SYM_DEF R_DrawFuzzColumnVBE2
 %rep SCREENHEIGHT
   SCALELABEL LINE:
   mov		ebp,[edx+ecx*4]
-	mov   al,[ebp+edi-(LINE-1)*320]
+	mov   al,[ebp+edi-(LINE-1)*SCREENWIDTH]
   dec   ecx
 	mov		al,[eax]
   JMPTESTFUZZPOSDEFINE LINE
   mov   ecx,ebx
   TESTFUZZPOSDEFINE LINE:
-  mov		[edi-(LINE-1)*320],al
+  mov		[edi-(LINE-1)*SCREENWIDTH],al
   %assign LINE LINE-1
 %endrep
 

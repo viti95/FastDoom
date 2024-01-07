@@ -113,7 +113,7 @@ CODE_SYM_DEF R_DrawSpanLowBackbuffer386SX
   %assign PLANE 0
     MAPLABEL LINE:
       %assign LINE LINE+1
-      %if LINE = 160
+      %if LINE = SCREENWIDTH/2
         mov   al,[esi+ebx]           ; get source pixel
         mov   dl,[eax]               ; translate color
         mov   dh,dl
@@ -132,7 +132,7 @@ CODE_SYM_DEF R_DrawSpanLowBackbuffer386SX
 %assign PCOL PCOL+1
 %endrep
 
-hmap160: 
+MAPLABEL LINE:
   ret
 
 %endif

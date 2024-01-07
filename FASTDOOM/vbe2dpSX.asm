@@ -57,9 +57,9 @@ CODE_SYM_DEF R_DrawSpanPotatoVBE2_386SX
 
   mov  edx,[_ds_y]
   mov  eax,[_ds_colormap]
-  lea  edi,[edx+edx*4]
+  MulScreenWidthStart edi,edx
   shld  ebx,ecx,22      ; shift y units in
-  shl  edi,6
+  MulScreenWidthEnd edi
   add  edi,[_destview]
   shld  ebx,ecx,6       ; shift x units in
   xor     edx,edx
@@ -93,7 +93,7 @@ CODE_SYM_DEF R_DrawSpanPotatoVBE2_386SX
   %assign PLANE 0
     MAPLABEL LINE:
       %assign LINE LINE+1
-      %if LINE = 80
+      %if LINE = SCREENWIDTH/4
         mov   al,[esi+ebx]           ; get source pixel
         mov   al,[eax]               ; translate color
         mov   ah,al
@@ -114,6 +114,6 @@ CODE_SYM_DEF R_DrawSpanPotatoVBE2_386SX
 %assign PCOL PCOL+1
 %endrep
 
-hmap80: ret
+MAPLABEL LINE:
 
 %endif

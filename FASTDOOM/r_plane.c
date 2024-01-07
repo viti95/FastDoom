@@ -109,15 +109,15 @@ void R_MapPlane(int y, int x1)
     fixed_t distance;
     fixed_t length;
     unsigned index;
-
+    if (y == PIXELCOORD_MAX)
+        return;
 #if defined(MODE_CGA16) || defined(MODE_CGA512) || defined(MODE_CGA_AFH)
     if (y & 1)
         return;
 #endif
-
+    BOUNDS_CHECK(x1, y);
     ds_x1 = x1;
     ds_y = y;
-
     if (visplaneRender == VISPLANES_FLAT)
     {
         if (planeheight != cachedheight[y])
@@ -292,7 +292,7 @@ visplane_t *R_CheckPlane(visplane_t *pl, int start, int stop)
         intrh = stop;
     }
 
-    for (x = intrl; x <= intrh && pl->top[x] == 0xff; x++) // dropoff overflow
+    for (x = intrl; x <= intrh && pl->top[x] == PIXELCOORD_MAX; x++) // dropoff overflow
         ;
 
     if (x > intrh)
@@ -328,7 +328,7 @@ void R_DrawPlanes(void)
 {
     visplane_t *pl;
     int light;
-    int x;
+    int x, i;
     int stop;
     int angle;
 
@@ -337,8 +337,7 @@ void R_DrawPlanes(void)
     int tex;
     int col;
 
-    byte t1, b1, t2, b2;
-
+    pixelcoord_t t1, b1, t2, b2;
     for (pl = visplanes; pl < lastvisplane; pl++)
     {
         if (!pl->modified || pl->minx > pl->maxx)
@@ -364,8 +363,8 @@ void R_DrawPlanes(void)
         else
             planezlight = zlight[light];
 
-        pl->top[pl->maxx + 1] = 0xff;
-        pl->top[pl->minx - 1] = 0xff;
+        pl->top[pl->maxx + 1] = PIXELCOORD_MAX;
+        pl->top[pl->minx - 1] = PIXELCOORD_MAX;
 
         stop = pl->maxx + 1;
 
@@ -447,7 +446,7 @@ void R_DrawPlanesFlatter(void)
 
             count = pl->bottom[x] - pl->top[x];
 
-            dest = destview + Mul80(pl->top[x]) + (x >> 2);
+            dest = destview + MulScreenWidthQuarter(pl->top[x]) + (x >> 2);
 
             while (count >= 3)
             {
@@ -487,7 +486,7 @@ void R_DrawPlanesFlatter(void)
 
             count = pl->bottom[x] - pl->top[x];
 
-            dest = destview + Mul80(pl->top[x]) + (x >> 2);
+            dest = destview + MulScreenWidthQuarter(pl->top[x]) + (x >> 2);
 
             while (count >= 3)
             {
@@ -527,7 +526,7 @@ void R_DrawPlanesFlatter(void)
 
             count = pl->bottom[x] - pl->top[x];
 
-            dest = destview + Mul80(pl->top[x]) + (x >> 2);
+            dest = destview + MulScreenWidthQuarter(pl->top[x]) + (x >> 2);
 
             while (count >= 3)
             {
@@ -567,7 +566,7 @@ void R_DrawPlanesFlatter(void)
 
             count = pl->bottom[x] - pl->top[x];
 
-            dest = destview + Mul80(pl->top[x]) + (x >> 2);
+            dest = destview + MulScreenWidthQuarter(pl->top[x]) + (x >> 2);
 
             while (count >= 3)
             {
@@ -631,7 +630,7 @@ void R_DrawPlanesFlatterLow(void)
 
             count = pl->bottom[x] - pl->top[x];
 
-            dest = destview + Mul80(pl->top[x]) + (x >> 1);
+            dest = destview + MulScreenWidthQuarter(pl->top[x]) + (x >> 1);
 
             while (count >= 3)
             {
@@ -671,7 +670,7 @@ void R_DrawPlanesFlatterLow(void)
 
             count = pl->bottom[x] - pl->top[x];
 
-            dest = destview + Mul80(pl->top[x]) + (x >> 1);
+            dest = destview + MulScreenWidthQuarter(pl->top[x]) + (x >> 1);
 
             while (count >= 3)
             {
@@ -729,7 +728,7 @@ void R_DrawPlanesFlatterPotato(void)
 
             count = pl->bottom[x] - pl->top[x];
 
-            dest = destview + Mul80(pl->top[x]) + x;
+            dest = destview + MulScreenWidthQuarter(pl->top[x]) + x;
 
             while (count >= 3)
             {
@@ -1301,7 +1300,7 @@ void R_DrawPlanesFlatterVBE2(void)
                 continue;
 
             count = pl->bottom[x] - pl->top[x];
-            dest = destview + Mul320(pl->top[x]) + x;
+            dest = destview + MulScreenWidth(pl->top[x]) + x;
 
             do
             {
@@ -1346,7 +1345,7 @@ void R_DrawPlanesFlatterLowVBE2(void)
                 continue;
 
             count = pl->bottom[x] - pl->top[x];
-            dest = (unsigned short *)((byte *)(destview + Mul320(pl->top[x]) + (x << 1)));
+            dest = (unsigned short *)((byte *)(destview + MulScreenWidth(pl->top[x]) + (x << 1)));
 
             do
             {
@@ -1392,7 +1391,7 @@ void R_DrawPlanesFlatterPotatoVBE2(void)
                 continue;
 
             count = pl->bottom[x] - pl->top[x];
-            dest = (unsigned int *)((byte *)(destview + Mul320(pl->top[x]) + (x << 2)));
+            dest = (unsigned int *)((byte *)(destview + MulScreenWidth(pl->top[x]) + (x << 2)));
 
             do
             {
@@ -1407,6 +1406,15 @@ void R_DrawPlanesFlatterPotatoVBE2(void)
 
 #endif
 
+#if defined(ASPECTRATIO16x10)
+#define SKY_SCALE 100
+#elif defined(ASPECTRATIO4x3)
+#define SKY_SCALE 80
+#elif defined(ASPECTRATIO5x4)
+#define SKY_SCALE 75
+#endif
+
+
 void R_DrawSky(visplane_t *pl)
 {
     int angle;
@@ -1420,7 +1428,7 @@ void R_DrawSky(visplane_t *pl)
 
     if (!flatSky)
     {
-        dc_iscale = pspriteiscaleshifted;
+        dc_iscale = (pspriteiscaleshifted * SKY_SCALE) / 100;
 
         dc_colormap = fixedcolormap ? fixedcolormap : colormaps;
         dc_texturemid = 100 * FRACUNIT;

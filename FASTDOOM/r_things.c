@@ -40,7 +40,16 @@
 #define SC_INDEX 0x3C4
 
 #define MINZ (FRACUNIT * 4)
+// If we are 4x5 aspect ratio
+#if defined(ASPECTRATIO4x3)
+#define BASEYCENTER 80
+#elif defined(ASPECTRATIO16x10)
 #define BASEYCENTER 100
+#elif defined(ASPECTRATIO5x4)
+#define BASEYCENTER 70
+#else
+#error "Unknown aspect ratio"
+#endif
 
 #define INITIAL_SPRITES 128
 
@@ -333,7 +342,7 @@ void R_DrawVisSprite(vissprite_t *vis)
 
             dc_source = (byte *)column + 3;
             dc_texturemid = basetexturemid - (column->topdelta << FRACBITS);
-
+            BOUNDS_CHECK(yh, yl);
             dc_yh = yh;
             dc_yl = yl;
 

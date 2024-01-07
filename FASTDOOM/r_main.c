@@ -861,18 +861,25 @@ void R_ExecuteSetViewSize(void)
     }
     else
     {
-        scaledviewwidth = setblocks * 32;
-        viewheight = (setblocks * 168 / 10) & ~7;
+        // Since (SCREENWDITH / 10) may have a remainder, check 10 explcitly
+        if (setblocks == 10) {
+            scaledviewwidth = SCREENWIDTH;
+        } else {
+            scaledviewwidth = setblocks * (SCREENWIDTH / 10);
+            // Stay multiple of 4
+            scaledviewwidth &=~0x3;
+        }
+        viewheight = (setblocks * (SCREENHEIGHT - SBARHEIGHT) / 10) & ~7;
         viewheightminusone = viewheight - 1;
         viewheightshift = viewheight << FRACBITS;
         viewheightopt = (viewheight << FRACBITS) - viewheight;
         viewheight32 = viewheight << 16 | viewheight;
         automapheight = SCREENHEIGHT - 32;
     }
+#endif
 
 #if defined(MODE_13H) || defined(MODE_VBE2)
-    endscreen = Mul320(viewwindowy + viewheight);
-#endif
+    endscreen = MulScreenWidth(viewwindowy + viewheight);
 #endif
 
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
@@ -1574,8 +1581,8 @@ void R_ExecuteSetViewSize(void)
 
     // psprite scales
 #if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA)
-    pspritescale = FRACUNIT * viewwidth / SCREENWIDTH;
-    pspriteiscale = FRACUNIT * SCREENWIDTH / viewwidth;
+    pspritescale = FRACUNIT * viewwidth / 320;
+    pspriteiscale = FRACUNIT * 320 / viewwidth;
     pspriteiscaleneg = -pspriteiscale;
 #endif
 
@@ -1617,13 +1624,13 @@ void R_ExecuteSetViewSize(void)
         for (j = 0; j < MAXLIGHTSCALE; j++)
         {
 #if defined(MODE_T4050)
-            level = startmap - Mul320(j) / (viewwidth << 1) / DISTMAP;
+            level = startmap - MulScreenWidth(j) / (viewwidth << 1) / DISTMAP;
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-            level = startmap - Mul320(j) / (viewwidth << detailshift) / DISTMAP;
+            level = startmap - MulScreenWidth(j) / (viewwidth << detailshift) / DISTMAP;
 #endif
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA)
-            level = startmap - Mul320(j) / (viewwidth) / DISTMAP;
+            level = startmap - MulScreenWidth(j) / (viewwidth) / DISTMAP;
 #endif
             if (level < 0)
                 level = 0;
@@ -1748,11 +1755,11 @@ void R_SetupFrame(void)
     validcount++;
 
 #if defined(MODE_VBE2_DIRECT)
-    destview = destscreen + Mul320(viewwindowy) + viewwindowx;
+    destview = destscreen + MulScreenWidth(viewwindowy) + viewwindowx;
 #endif
 
 #if defined(MODE_Y)
-    destview = destscreen + Mul80(viewwindowy) + (viewwindowx >> 2);
+    destview = destscreen + MulScreenWidthQuarter(viewwindowy) + (viewwindowx >> 2);
 #endif
 }
 

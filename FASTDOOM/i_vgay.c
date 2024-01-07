@@ -22,7 +22,6 @@
 #define CRTC_MODE 23
 #define GC_READMAP 4
 
-#define SBARHEIGHT 32
 
 #if defined(MODE_Y)
 

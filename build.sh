@@ -11,7 +11,7 @@ shift 1
 
 if [ "$target" = "fdoom.exe" ]; then
   buildopts="-dMODE_Y"
-  
+
 elif [ "$target" = "fdoomcga.exe" ]; then
   buildopts="-dMODE_CGA"
 
@@ -44,6 +44,51 @@ elif [ "$target" = "fdoomvbr.exe" ]; then
 
 elif [ "$target" = "fdoomvbd.exe" ]; then
   buildopts="-dMODE_VBE2_DIRECT"
+
+elif [ "$target" = "fdm240r.exe" ]; then
+  buildopts="-dMODE_VBE2 -dSCREENWIDTH=320 -dSCREENHEIGHT=240"
+
+elif [ "$target" = "fdm384r.exe" ]; then
+  buildopts="-dMODE_VBE2 -dSCREENWIDTH=512 -dSCREENHEIGHT=384"
+
+elif [ "$target" = "fdm400r.exe" ]; then
+  buildopts="-dMODE_VBE2 -dSCREENWIDTH=640 -dSCREENHEIGHT=400"
+
+elif [ "$target" = "fdm480r.exe" ]; then
+  buildopts="-dMODE_VBE2 -dSCREENWIDTH=640 -dSCREENHEIGHT=480"
+
+elif [ "$target" = "fdm600r.exe" ]; then
+  buildopts="-dMODE_VBE2 -dSCREENWIDTH=800 -dSCREENHEIGHT=600"
+
+elif [ "$target" = "fdm768r.exe" ]; then
+  buildopts="-dMODE_VBE2 -dSCREENWIDTH=1024 -dSCREENHEIGHT=768"
+
+elif [ "$target" = "fdm1024r.exe" ]; then
+  buildopts="-dMODE_VBE2 -dSCREENWIDTH=1280 -dSCREENHEIGHT=1024"
+
+elif [ "$target" = "fdoomvbd.exe" ]; then
+  buildopts="-dMODE_VBE2_DIRECT"
+
+elif [ "$target" = "fdm240d.exe" ]; then
+  buildopts="-dMODE_VBE2_DIRECT -dSCREENWIDTH=320 -dSCREENHEIGHT=240"
+
+elif [ "$target" = "fdm384d.exe" ]; then
+  buildopts="-dMODE_VBE2_DIRECT -dSCREENWIDTH=512 -dSCREENHEIGHT=384"
+
+elif [ "$target" = "fdm400d.exe" ]; then
+  buildopts="-dMODE_VBE2_DIRECT -dSCREENWIDTH=640 -dSCREENHEIGHT=400"
+
+elif [ "$target" = "fdm480d.exe" ]; then
+  buildopts="-dMODE_VBE2_DIRECT -dSCREENWIDTH=640 -dSCREENHEIGHT=480"
+
+elif [ "$target" = "fdm600d.exe" ]; then
+  buildopts="-dMODE_VBE2_DIRECT -dSCREENWIDTH=800 -dSCREENHEIGHT=600"
+
+elif [ "$target" = "fdm768d.exe" ]; then
+  buildopts="-dMODE_VBE2_DIRECT -dSCREENWIDTH=1024 -dSCREENHEIGHT=768"
+
+elif [ "$target" = "fdm1024d.exe" ]; then
+  buildopts="-dMODE_VBE2_DIRECT -dSCREENWIDTH=1280 -dSCREENHEIGHT=1024"
 
 elif [ "$target" = "fdoompcp.exe" ]; then
   buildopts="-dMODE_PCP"

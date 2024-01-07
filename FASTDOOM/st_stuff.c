@@ -108,8 +108,8 @@
 #define ST_GODFACE (ST_NUMPAINFACES * ST_FACESTRIDE)
 #define ST_DEADFACE (ST_GODFACE + 1)
 
-#define ST_FACESX 143
-#define ST_FACESY 168
+#define ST_FACESX CENTERING_OFFSET_X + 143
+#define ST_FACESY SCALED_SCREENHEIGHT-32
 
 #define ST_EVILGRINCOUNT (2 * TICRATE)
 #define ST_STRAIGHTFACECOUNT (TICRATE / 2)
@@ -129,111 +129,114 @@
 
 // AMMO number pos.
 #define ST_AMMOWIDTH 3
-#define ST_AMMOX 44
-#define ST_AMMOY 171
+#define ST_AMMOX CENTERING_OFFSET_X + 44
+#define ST_AMMOY SCALED_SCREENHEIGHT-29
 
 // HEALTH number pos.
 #define ST_HEALTHWIDTH 3
-#define ST_HEALTHX 90
-#define ST_HEALTHY 171
+#define ST_HEALTHX CENTERING_OFFSET_X + 90
+#define ST_HEALTHY SCALED_SCREENHEIGHT-29
 
-// Weapon pos.
-#define ST_ARMSX 111
-#define ST_ARMSY 172
-#define ST_ARMSBGX 104
-#define ST_ARMSBGY 168
+
+#define ST_ARMSX CENTERING_OFFSET_X + 111
+#define ST_ARMSY SCALED_SCREENHEIGHT-28
+#define ST_ARMSBGX CENTERING_OFFSET_X + 104
+#define ST_ARMSBGY SCALED_SCREENHEIGHT-32
 #define ST_ARMSXSPACE 12
 #define ST_ARMSYSPACE 10
 
 // ARMOR number pos.
 #define ST_ARMORWIDTH 3
-#define ST_ARMORX 221
-#define ST_ARMORY 171
+#define ST_ARMORX CENTERING_OFFSET_X + 221
+#define ST_ARMORY SCALED_SCREENHEIGHT-29
 
 // Key icon positions.
-#define ST_KEY0WIDTH 8
-#define ST_KEY0HEIGHT 5
-#define ST_KEY0X 239
-#define ST_KEY0Y 171
+#define ST_KEY0WIDTH (8)
+#define ST_KEY0HEIGHT (5)
+#define ST_KEY0X CENTERING_OFFSET_X + 239
+#define ST_KEY0Y SCALED_SCREENHEIGHT-29
 #define ST_KEY1WIDTH ST_KEY0WIDTH
-#define ST_KEY1X 239
-#define ST_KEY1Y 181
+#define ST_KEY1X CENTERING_OFFSET_X + 239
+#define ST_KEY1Y SCALED_SCREENHEIGHT-19
 #define ST_KEY2WIDTH ST_KEY0WIDTH
-#define ST_KEY2X 239
-#define ST_KEY2Y 191
+#define ST_KEY2X CENTERING_OFFSET_X + 239
+#define ST_KEY2Y SCALED_SCREENHEIGHT-9
 
 // Ammunition counter.
-#define ST_AMMO0WIDTH 3
-#define ST_AMMO0HEIGHT 6
-#define ST_AMMO0X 288
-#define ST_AMMO0Y 173
+#define ST_AMMO0WIDTH (3)
+#define ST_AMMO0HEIGHT (6)
+#define ST_AMMO0X CENTERING_OFFSET_X + 288
+#define ST_AMMO0Y SCALED_SCREENHEIGHT-28
 #define ST_AMMO1WIDTH ST_AMMO0WIDTH
-#define ST_AMMO1X 288
-#define ST_AMMO1Y 179
+#define ST_AMMO1X CENTERING_OFFSET_X + 288
+#define ST_AMMO1Y SCALED_SCREENHEIGHT-21
 #define ST_AMMO2WIDTH ST_AMMO0WIDTH
-#define ST_AMMO2X 288
-#define ST_AMMO2Y 191
+#define ST_AMMO2X CENTERING_OFFSET_X + 288
+#define ST_AMMO2Y SCALED_SCREENHEIGHT-9
 #define ST_AMMO3WIDTH ST_AMMO0WIDTH
-#define ST_AMMO3X 288
-#define ST_AMMO3Y 185
+#define ST_AMMO3X CENTERING_OFFSET_X + 288
+#define ST_AMMO3Y SCALED_SCREENHEIGHT-15
 
 // Indicate maximum ammunition.
 // Only needed because backpack exists.
-#define ST_MAXAMMO0WIDTH 3
-#define ST_MAXAMMO0HEIGHT 5
-#define ST_MAXAMMO0X 314
-#define ST_MAXAMMO0Y 173
-#define ST_MAXAMMO1WIDTH ST_MAXAMMO0WIDTH
-#define ST_MAXAMMO1X 314
-#define ST_MAXAMMO1Y 179
-#define ST_MAXAMMO2WIDTH ST_MAXAMMO0WIDTH
-#define ST_MAXAMMO2X 314
-#define ST_MAXAMMO2Y 191
-#define ST_MAXAMMO3WIDTH ST_MAXAMMO0WIDTH
-#define ST_MAXAMMO3X 314
-#define ST_MAXAMMO3Y 185
+#define ST_MAXAMMO0WIDTH (3)
+#define ST_MAXAMMO0HEIGHT (5)
+#define ST_MAXAMMO0X CENTERING_OFFSET_X + 314
+#define ST_MAXAMMO0Y SCALED_SCREENHEIGHT-27
 
+#define ST_MAXAMMO1WIDTH ST_MAXAMMO0WIDTH
+#define ST_MAXAMMO1X CENTERING_OFFSET_X + 314
+#define ST_MAXAMMO1Y SCALED_SCREENHEIGHT-21
+#define ST_MAXAMMO2WIDTH ST_MAXAMMO0WIDTH
+#define ST_MAXAMMO2X CENTERING_OFFSET_X + 314
+#define ST_MAXAMMO2Y SCALED_SCREENHEIGHT-9
+#define ST_MAXAMMO3WIDTH ST_MAXAMMO0WIDTH
+#define ST_MAXAMMO3X CENTERING_OFFSET_X + 314
+#define ST_MAXAMMO3Y SCALED_SCREENHEIGHT-15
+
+// Looks like these are no longer used
+/*
 // pistol
-#define ST_WEAPON0X 110
-#define ST_WEAPON0Y 172
+#define ST_WEAPON0X CENTERING_OFFSET_X + 110
+#define ST_WEAPON0Y (SCREENWIDTH + 12 * SCREENMUL)
 
 // shotgun
-#define ST_WEAPON1X 122
+#define ST_WEAPON1X CENTERING_OFFSET_X + 122
 #define ST_WEAPON1Y 172
 
 // chain gun
-#define ST_WEAPON2X 134
+#define ST_WEAPON2X CENTERING_OFFSET_X + 134
 #define ST_WEAPON2Y 172
 
 // missile launcher
-#define ST_WEAPON3X 110
+#define ST_WEAPON3X CENTERING_OFFSET_X + 110
 #define ST_WEAPON3Y 181
 
 // plasma gun
-#define ST_WEAPON4X 122
+#define ST_WEAPON4X CENTERING_OFFSET_X + 122
 #define ST_WEAPON4Y 181
 
 // bfg
-#define ST_WEAPON5X 134
+#define ST_WEAPON5X CENTERING_OFFSET_X + 134
 #define ST_WEAPON5Y 181
 
 // WPNS title
-#define ST_WPNSX 109
+#define ST_WPNSX CENTERING_OFFSET_X + 109
 #define ST_WPNSY 191
 
 // DETH title
-#define ST_DETHX 109
+#define ST_DETHX CENTERING_OFFSET_X + 109
 #define ST_DETHY 191
 
 // Incoming messages window location
-#define ST_MSGTEXTX 0
+#define ST_MSGTEXTX CENTERING_OFFSET_X + 0
 #define ST_MSGTEXTY 0
 // Dimensions given in characters.
 #define ST_MSGWIDTH 52
 // Or shall I say, in lines?
 #define ST_MSGHEIGHT 1
 
-#define ST_OUTTEXTX 0
+#define ST_OUTTEXTX CENTERING_OFFSET_X + 0
 #define ST_OUTTEXTY 6
 
 // Width, in characters again.
@@ -243,6 +246,7 @@
 
 #define ST_MAPTITLEY 0
 #define ST_MAPHEIGHT 1
+*/
 
 // ST_Start() has just been called
 static byte st_firsttime;
@@ -381,15 +385,39 @@ void ST_Stop(void);
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void ST_refreshBackground(void)
 {
-	if (st_statusbaron)
-	{
-		V_DrawPatch(ST_X, 0, screen4, sbar);
+ if (st_statusbaron)
+ {
+  if (CENTERING_OFFSET_X) {
+    // We need to draw the border texture around the space surrounding the
+    // status bar.
+    unsigned char* src;
+    byte* dest = screen4;
+    int y, x;
+    if (gamemode != commercial)
+      src = W_CacheLumpName("FLOOR7_2", PU_CACHE);
+    else
+      src = W_CacheLumpName("GRNROCK", PU_CACHE);
+    for (y = 0; y < SBARHEIGHT; y++) {
+      for (x = 0; x < SCREENWIDTH-63; x += 64) {
+        CopyDWords(src + (((y + (SCREENHEIGHT - SBARHEIGHT)) & 63) << 6), dest, 16);
+        dest += 64;
+      }
+      // Copy the remaining, assuming we can copy 4 bytes at a time.
+      ASSERT((SCREENWIDTH & 0x3) == 0);
+      CopyDWords(src + (((y + (SCREENHEIGHT - SBARHEIGHT)) & 63) << 6), dest, SCREENWIDTH % 64 / 4);
+      dest += SCREENWIDTH % 64;
+    }
+    // Copy the remaining part of the border texture
 
+  }
+   V_DrawPatch(CENTERING_OFFSET_X, 0, screen4, sbar);
+
+   // Copy the entire width of the status bar, which is SCALED_SCREENWIDTH
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-		V_CopyRect(ST_X, 0, screen4, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y, screen0);
+		V_CopyRect(0, 0, screen4, SCALED_SCREENWIDTH, ST_HEIGHT, 0, ST_Y, screen0);
 #endif
 #if defined(USE_BACKBUFFER)
-		V_CopyRect(ST_X, 0, screen4, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y, backbuffer);
+		V_CopyRect(0, 0, screen4, SCALED_SCREENWIDTH, ST_HEIGHT, 0, ST_Y, backbuffer);
 #endif
 
 #if defined(USE_BACKBUFFER)
@@ -1471,8 +1499,8 @@ void ST_createWidgets_mini(void)
 {
 	// ready weapon ammo
 	STlib_initNum(&w_ready,
-				  270,
-				  170,
+				  SCALED_SCREENWIDTH - 50,
+				  SCALED_SCREENHEIGHT - 30,
 				  shortnum,
 				  &players.ammo[weaponinfo[players.readyweapon].ammo],
 				  &st_statusbaron);
@@ -1482,46 +1510,46 @@ void ST_createWidgets_mini(void)
 
 	// health percentage
 	STlib_initNum(&(w_health.n),
-				  270,
-				  180,
+				  SCALED_SCREENWIDTH - 50,
+				  SCALED_SCREENHEIGHT - 20,
 				  shortnum,
 				  &players.health,
 				  &st_statusbaron);
 
 	// faces
 	STlib_initMultIcon(&w_faces,
-					   285,
-					   165,
+					   SCALED_SCREENWIDTH - 35,
+					   SCALED_SCREENHEIGHT - 35,
 					   faces,
 					   &st_faceindex,
 					   &st_statusbaron);
 
 	// armor percentage - should be colored later
 	STlib_initNum(&(w_armor.n),
-				  270,
-				  190,
+				  SCALED_SCREENWIDTH - 50,
+				  SCALED_SCREENHEIGHT - 10,
 				  shortnum,
 				  &players.armorpoints,
 				  &st_statusbaron);
 
 	// keyboxes 0-2
 	STlib_initMultIcon(&w_keyboxes[0],
-					   275,
-					   169,
+					   SCALED_SCREENWIDTH - 45,
+					   SCALED_SCREENHEIGHT - 31,
 					   keys,
 					   &keyboxes[0],
 					   &st_statusbaron);
 
 	STlib_initMultIcon(&w_keyboxes[1],
-					   275,
-					   179,
+					   SCALED_SCREENWIDTH - 45,
+					   SCALED_SCREENHEIGHT - 21,
 					   keys,
 					   &keyboxes[1],
 					   &st_statusbaron);
 
 	STlib_initMultIcon(&w_keyboxes[2],
-					   275,
-					   189,
+					   SCALED_SCREENWIDTH - 45,
+					   SCALED_SCREENHEIGHT - 11,
 					   keys,
 					   &keyboxes[2],
 					   &st_statusbaron);

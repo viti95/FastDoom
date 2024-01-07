@@ -127,7 +127,6 @@
 //
 
 #define DPMI_INT 0x31
-#define SBARHEIGHT 32
 
 //
 // Code
@@ -283,7 +282,7 @@ void I_UpdateBox(int x, int y, int w, int h)
     byte *dest;
     byte *source;
     int i;
-    int offset = Mul320(y) + x;
+    int offset = MulScreenWidth(y) + x;
 
     dest = destscreen + offset;
     source = screen0 + offset;
@@ -293,8 +292,8 @@ void I_UpdateBox(int x, int y, int w, int h)
         for (i = y; i < y + h; i++)
         {
             CopyBytes(source, dest, w);
-            dest += 320;
-            source += 320;
+            dest += SCREENWIDTH;
+            source += SCREENWIDTH;
         }
     }
     else
@@ -304,8 +303,8 @@ void I_UpdateBox(int x, int y, int w, int h)
         for (i = y; i < y + h; i++)
         {
             CopyWords(source, dest, w);
-            dest += 320;
-            source += 320;
+            dest += SCREENWIDTH;
+            source += SCREENWIDTH;
         }
     }
 }
@@ -315,7 +314,7 @@ void I_UpdateBoxTransparent(int x, int y, int w, int h)
     byte *dest;
     byte *source;
     int i;
-    int offset = Mul320(y) + x;
+    int offset = MulScreenWidth(y) + x;
 
     dest = destscreen + offset;
     source = screen0 + offset;
@@ -330,8 +329,8 @@ void I_UpdateBoxTransparent(int x, int y, int w, int h)
             }
         }
 
-        dest += 320;
-        source += 320;
+        dest += SCREENWIDTH;
+        source += SCREENWIDTH;
     }
 }
 #endif
@@ -351,7 +350,7 @@ void I_UpdateBox(int x, int y, int w, int h)
     sp_x2 = (x + w) / 8;
     count = sp_x2 - sp_x1 + 1;
     step = SCREENWIDTH - count * 8;
-    offset = Mul320(y) + sp_x1 * 8;
+    offset = MulScreenWidth(y) + sp_x1 * 8;
     poffset = offset / 4;
     pstep = step / 4;
 
@@ -427,7 +426,7 @@ void I_UpdateBoxTransparent(int x, int y, int w, int h)
     sp_x2 = (x + w) / 8;
     count = sp_x2 - sp_x1 + 1;
     step = SCREENWIDTH - count * 8;
-    offset = Mul320(y) + sp_x1 * 8;
+    offset = MulScreenWidth(y) + sp_x1 * 8;
     poffset = offset / 4;
     pstep = step / 4;
 

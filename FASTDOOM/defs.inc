@@ -15,10 +15,29 @@
 ;
 
 SCREEN        equ 0xA0000
-SCREENWIDTH   equ 320
-SCREENHEIGHT  equ 200
-PLANEWIDTH    equ 80
-PLANESIZE     equ 80*200
+
+%ifndef SCREENWIDTH
+%define SCREENWIDTH   320
+%define SCREENHEIGHT  200
+%endif
+
+%include "fastmath.inc"
+
+; Multiplcation macros are split into two parts because we can apply
+; pipelining optimizations by placing operations between the two parts.
+%macro MulScreenWidthStart 2
+MulStart SCREENWIDTH, %1, %2
+%endmacro
+
+%macro MulScreenWidthEnd 1
+MulEnd SCREENWIDTH, %1
+%endmacro
+
+PLANEWIDTH    equ SCREENWIDTH/4
+;PLANEWIDTH    equ 80
+;PLANEHEIGHT   equ 120 ; Not sure why this was 120 at some point
+
+PLANESIZE     equ PLANEWIDTH*SCREENHEIGHT
 
 PEL_WRITE_ADR  equ 0x3C8
 PEL_DATA       equ 0x3C9

@@ -37,6 +37,17 @@
 
 #define MAXDRAWSEGS 256
 
+
+// For low res modes, use bytes to save space, otherwise use shorts for
+// coordinates and offsets.
+#ifdef HI_RES
+typedef unsigned short pixelcoord_t;
+#define PIXELCOORD_MAX 0xFFFF
+#else
+typedef byte pixelcoord_t;
+#define PIXELCOORD_MAX 0xFF
+#endif
+
 //
 // INTERNAL MAP TYPES
 //  used by play and refresh
@@ -107,7 +118,7 @@ typedef struct
     // thinker_t for reversable actions
     void *specialdata;
 
-    short linecount;
+    pixelcoord_t linecount;
     struct line_s **lines; // [linecount] size
 
 } sector_t;
@@ -421,11 +432,11 @@ typedef struct
     byte pad1;
     // Here lies the rub for all
     //  dynamic resize/change of resolution.
-    byte top[SCREENWIDTH];
+    pixelcoord_t top[SCREENWIDTH];
     byte pad2;
     byte pad3;
     // See above.
-    byte bottom[SCREENWIDTH];
+    pixelcoord_t bottom[SCREENWIDTH];
     byte pad4;
 
 } visplane_t;
