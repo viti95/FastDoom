@@ -1690,6 +1690,9 @@ void M_DrawDisplay(void)
     M_WriteText(58, 156, "CPU RENDERER:");
     switch (selectedCPU)
     {
+    case AUTO_CPU:
+        M_WriteText(214, 156, "AUTODETECT");
+        break;
     case INTEL_386SX:
         M_WriteText(214, 156, "INTEL 386SX");
         break;

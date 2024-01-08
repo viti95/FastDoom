@@ -332,7 +332,8 @@ typedef enum
 
 typedef enum
 {
-    INTEL_386SX,
+    AUTO_CPU = -1,
+    INTEL_386SX = 0,
     INTEL_386DX,
     CYRIX_386DLC,
     CYRIX_486,

@@ -848,6 +848,24 @@ void R_ExecuteSetViewSize(void)
 
     setsizeneeded = 0;
 
+    // TODO Add more granular detection
+    if (selectedCPU == AUTO_CPU) {
+      switch(I_GetCPUModel()) {
+        case 386:
+          selectedCPU = INTEL_386SX;
+          break;
+        case 486:
+          selectedCPU = INTEL_486;
+          break;
+        case 586:
+        case 686:
+          selectedCPU = INTEL_PENTIUM;
+          break;
+        default:
+          selectedCPU = INTEL_386SX;
+          break;
+      }
+    }
 #if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA)
     if (setblocks >= 11)
     {
