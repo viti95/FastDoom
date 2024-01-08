@@ -1,4 +1,42 @@
 #!/bin/bash
+#!/bin/sh
+set -e
+
+# CHeck for wmake
+if [[ $(which wmake) ]]; then
+  echo "wmake found"
+else
+  echo "wmake not found, is it installed and did you source env.sh?"
+  exit 1
+fi
+
+# Check for nasm
+if [[ $(which nasm) ]] ; then
+  echo "nasm found"
+else
+  echo "nasm not found, is it installed?"
+  exit 1
+fi
+
+USE_GNU_MAKE=0
+# Check for gnu make
+if [[ $(which make) ]]; then
+  # Check that it's actually gnu
+  if [[ $(make --version | grep "GNU Make") ]]; then
+    USE_GNU_MAKE=1
+    echo "GNU make found"
+  else
+    echo "Not GNU Make? What platform are you on?"
+    sleep 1
+  fi
+  USE_GNU_MAKE=1
+  echo "GNU make found"
+else
+  echo "GNU make not found, builds will be much slower"
+  sleep 1
+  exit 1
+fi
+
 
 if [ $# -lt 1 ]; then
   echo "Usage: $0 target.exe [buildopts]"
@@ -126,9 +164,56 @@ else
 
 fi
 
+if [[ "$DEBUG_ENABLED" -eq 1 ]]; then
+  echo "Enabling debug symbols, traceable stack frames, and debug logging/checks"
+  wccbuildopts="$buildopts -d2 -of+ -dDEBUG_ENABLED=1"
+  nasmbuildopts="-g -dDEBUG_ENABLED=1"
+fi
+
+make_gnu() {
+  make -j $(nproc) -f Makefile.gnu fdoom.exe EXTERNOPT="$buildopts $@" NASMOPT="$nasmbuildopts" WCCOPTS="$wccbuildopts"
+}
+
+make_watcom() {
+  wmake fdoom.exe EXTERNOPT="$buildopts $@" NASMOPT="$nasmbuildopts" WCCOPTS="$wccbuildopts"
+}
+
+
 cd FASTDOOM
-wmake fdoom.exe EXTERNOPT="$buildopts $@"
+set +e
+if [ "$USE_GNU_MAKE" -eq 1 ]; then
+  make_gnu
+  if [ $? -ne 0 ]; then
+    echo "GNU make build failed, trying Watcom for more readable output..."
+    sleep 1
+    make_watcom
+    if [ $? -ne 0 ]; then
+      echo "Build failed."
+      exit 1
+    else
+      echo "wmake build succeeded but GNU make didnt. Check GNU output?"
+    fi
+  fi
+else
+  make_watcom
+  if [ $? -ne 0 ]; then
+    echo "Build failed"
+    exit 1
+  fi
+fi
 yes | cp -rf fdoom.exe "../${target^^}"
+
+# Copy corresponding .map file if it exists and debug enabled
+if [[ "$DEBUG_ENABLED" -eq 1 ]]; then
+  echo "Copying map file"
+  mapfile="fdoom.map"
+  echo $mapfile
+  targetmap="${target%.*}.map"
+  echo $targetmap
+  if [ -f "$mapfile" ]; then
+    yes | cp -rf "$mapfile" "../${targetmap^^}"
+  fi
+fi
 cd ..
 echo "RIP AND TEAR"
 exit 0

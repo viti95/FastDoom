@@ -24,16 +24,18 @@
 # --------------------------------------------------------------------------
 
 # Build options for 486DX/SX
-#CCOPTS = $(EXTERNOPT) -omaxtnrih -ol+ -oe=32 -zp4 -4r -ei -j -zq -zc
+#CCOPTS = $(EXTERNOPT) -omaxtnrih -ol+ -oe=32 -zp4 -4r -ei -j -zq -zc $(WCCOPTS)
 
 # Build options for 386DX/SX
-CCOPTS = $(EXTERNOPT) -omaxtnrih -ol+ -oe=32 -zp4 -3r -ei -j -zq -zc
+CCOPTS = $(EXTERNOPT) -omaxtnrih -ol+ -oe=32 -zp4 -3r -ei -j -zq -zc $(WCCOPTS)
 
 # Build options for Pentium
-#CCOPTS = $(EXTERNOPT) -omaxtnrih -ol+ -oe=32 -zp4 -5r -ei -j -zq -zc
+#CCOPTS = $(EXTERNOPT) -omaxtnrih -ol+ -oe=32 -zp4 -5r -ei -j -zq -zc $(WCCOPTS)
 
 # Build options for profiling (Pentium required)
-#CCOPTS = $(EXTERNOPT) -omaxtnrih -ol+ -oe=32 -zp4 -5r -ei -j -zq -zc -et
+#CCOPTS = $(EXTERNOPT) -omaxtnrih -ol+ -oe=32 -zp4 -5r -ei -j -zq -zc -et $(WCCOPTS)
+
+NASMOPTS = $(EXTERNOPT) $(NASMOPT)
 
 GLOBOBJS = &
  i_cgaafh.obj &
@@ -193,7 +195,7 @@ fdoom.exe : $(GLOBOBJS)
  wcc386 $(CCOPTS) -fo=$[*.obj $[*.c
 
 .asm.obj :
- nasm $(EXTERNOPT) -Oxv -f obj -o $[*.obj $[*.asm
+ nasm $(NASMOPTS) -Oxv -f obj -o $[*.obj $[*.asm
 
 !ifndef __LINUX__
 DELCMD = del
@@ -212,4 +214,4 @@ clean : .SYMBOLIC
  $(DELCMD) *.ERR
  $(DELCMD) *.OBJ
  $(DELCMD) *.SYM
- 
+
