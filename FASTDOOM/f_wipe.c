@@ -28,6 +28,8 @@
 
 #include "doomdef.h"
 
+#include "i_debug.h"
+
 #include "f_wipe.h"
 
 #include <conio.h>

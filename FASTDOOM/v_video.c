@@ -29,6 +29,7 @@
 #include "m_misc.h"
 
 #include "v_video.h"
+#include "i_debug.h"
 
 #if defined(TEXT_MODE)
 #include "i_text.h"
@@ -120,11 +121,13 @@ void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int de
     }
 }
 
+
 //
 // V_DrawPatch
 // Masks a column based masked pic to the screen.
 //
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#include "i_debug.h"
 void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
 {
 

@@ -57,6 +57,8 @@
 
 #include "m_menu.h"
 
+#include "i_debug.h"
+
 //
 // STATUS BAR DATA
 //

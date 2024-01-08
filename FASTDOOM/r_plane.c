@@ -23,6 +23,7 @@
 #include "options.h"
 #include "i_system.h"
 #include "i_ibm.h"
+#include "i_debug.h"
 #include "z_zone.h"
 #include "w_wad.h"
 
@@ -36,6 +37,7 @@
 #include "std_func.h"
 
 #include <conio.h>
+#include "i_debug.h"
 
 #include "sizeopt.h"
 

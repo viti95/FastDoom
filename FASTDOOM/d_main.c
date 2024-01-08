@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <conio.h>
+#include "i_debug.h"
 #include <dos.h>
 #include <io.h>
 #include "version.h"
@@ -1457,6 +1458,10 @@ void D_DoomMain(void)
 
     printf("\nFastDoom version " FDOOMVERSION "\n");
     printf("CPU class detected: %d\n", I_GetCPUModel());
+#if DEBUG_ENABLED == 1
+    printf("I_DebugInit: Debugging enabled, loading symbols and initializing channels...\n");
+    I_DebugInit();
+#endif
     printf("P_Init: Checking cmd-line parameters...\n");
 
     p = M_CheckParm("-file");

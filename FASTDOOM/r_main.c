@@ -26,7 +26,7 @@
 #include "doomdef.h"
 #include "doomstat.h"
 #include "d_net.h"
-
+#include "i_debug.h"
 #include "m_misc.h"
 
 #include "r_local.h"
@@ -1633,6 +1633,17 @@ void R_ExecuteSetViewSize(void)
             scalelight[i][j] = colormaps + level * 256;
         }
     }
+    // I put this here so I could see which functions were having rendering
+    // problems. Leaving it here for demonstration purposes.
+#if (DEBUG_ENABLED==1)
+    I_Printf("R_InitData: %s", "test");
+    I_Printf("Render Functions:\n");
+    I_Printf("\tcolfunc: %s\n", I_LookupSymbolName(colfunc));
+    I_Printf("\tbasecolfunc: %s\n", I_LookupSymbolName(basecolfunc));
+    I_Printf("\tfuzzcolfunc: %s\n", I_LookupSymbolName(fuzzcolfunc));
+    I_Printf("\tspanfunc: %s\n", I_LookupSymbolName(spanfunc));
+    I_Printf("\tskyfunc: %s\n", I_LookupSymbolName(skyfunc));
+#endif
 }
 
 //

@@ -23,6 +23,7 @@
 #include "doomstat.h"
 
 #include "i_system.h"
+#include "i_debug.h"
 #include "z_zone.h"
 #include "w_wad.h"
 

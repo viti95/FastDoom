@@ -26,6 +26,7 @@
 #include "z_zone.h"
 #include "w_wad.h"
 #include "r_data.h"
+#include "i_debug.h"
 
 #include "r_local.h"
 
