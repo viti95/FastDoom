@@ -24,6 +24,9 @@ elif [ "$target" = "fdoombwc.exe" ]; then
 elif [ "$target" = "fdoomhgc.exe" ]; then
   buildopts="-dMODE_HERC"
 
+elif [ "$target" = "fdoominc.exe" ]; then
+  buildopts="-dMODE_INCOLOR"
+
 elif [ "$target" = "fdoomt1.exe" ]; then
   buildopts="-dMODE_T4025"
 
