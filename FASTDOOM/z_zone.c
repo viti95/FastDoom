@@ -160,8 +160,17 @@ void *Z_Malloc(int size, byte tag, void *user)
     rover = base;
     start = base->prev;
 
-    do
+    while(1)
     {
+        if (base->size >= size && !base->user) {
+          // Found a free block of sufficient size
+          break;
+        }
+        if (rover->next == start)
+        {
+            // scanned all the way around the list
+            I_Error("Z_Malloc: failed on allocation of %i bytes", size);
+        }
         if (rover->user)
         {
             if (rover->tag < PU_PURGELEVEL)
@@ -183,7 +192,7 @@ void *Z_Malloc(int size, byte tag, void *user)
         }
         else
             rover = rover->next;
-    } while (base->user || base->size < size);
+    }
 
     // found a block big enough
     extra = base->size - size;
@@ -244,8 +253,17 @@ void *Z_MallocUnowned(int size, byte tag)
     rover = base;
     start = base->prev;
 
-    do
+    while(1)
     {
+        if (base->size >= size && !base->user) {
+          // Found a free block of sufficient size
+          break;
+        }
+        if (rover->next == start)
+        {
+            // scanned all the way around the list
+            I_Error("Z_Malloc: failed on allocation of %i bytes", size);
+        }
         if (rover->user)
         {
             if (rover->tag < PU_PURGELEVEL)
@@ -267,7 +285,7 @@ void *Z_MallocUnowned(int size, byte tag)
         }
         else
             rover = rover->next;
-    } while (base->user || base->size < size);
+    };
 
     // found a block big enough
     extra = base->size - size;
