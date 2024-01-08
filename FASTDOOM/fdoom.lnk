@@ -70,6 +70,7 @@ file i_cgacvb.obj
 file cgacvb.obj
 file i_herc.obj
 file herc.obj
+file i_incolor.obj
 file i_cgabw.obj
 file cgabw.obj
 file i_ega320.obj

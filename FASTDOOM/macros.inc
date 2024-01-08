@@ -47,6 +47,10 @@ CPU 486
 %define USE_BACKBUFFER
 %endif
 
+%ifdef MODE_INCOLOR
+%define USE_BACKBUFFER
+%endif
+
 %ifdef MODE_PCP
 %define USE_BACKBUFFER
 %endif
