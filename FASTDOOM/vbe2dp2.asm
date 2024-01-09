@@ -77,13 +77,13 @@ CODE_SYM_DEF R_DrawFuzzColumnPotatoVBE2
 
   cmp  eax,1
   adc  eax,0
-  
-  lea  edi,[ebp+ebp*4]
+
+  MulScreenWidthStart edi, ebp
   sub  ebp,eax ; ebp = pixel count
   js   near .done
 
   mov  eax,[_dc_x]
-  shl  edi,6
+  MulScreenWidthEnd edi
   xor ebx,ebx
   lea  edi,[edi+eax*4]
   mov eax,[_colormaps]
@@ -124,15 +124,15 @@ CODE_SYM_DEF R_DrawFuzzColumnPotatoVBE2
 %rep SCREENHEIGHT
   SCALELABEL LINE:
   mov		ebp,[edx+ecx*4]
-	mov   al,[ebp+edi-(LINE-1)*320]
+	mov   al,[ebp+edi-(LINE-1)*SCREENWIDTH]
   dec   ecx
 	mov		bl,[eax]
   JMPTESTFUZZPOSDEFINE LINE
   mov   ecx,esi
   TESTFUZZPOSDEFINE LINE:
   mov   bh,bl
-  mov		[edi-(LINE-1)*320],bx
-  mov		[edi-(LINE-1)*320+2],bx
+  mov		[edi-(LINE-1)*SCREENWIDTH],bx
+  mov		[edi-(LINE-1)*SCREENWIDTH+2],bx
   %assign LINE LINE-1
 %endrep
 

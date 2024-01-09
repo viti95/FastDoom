@@ -123,12 +123,7 @@ void STlib_drawNum(st_number_t *n, byte refresh)
     // in the special case of 0, you draw 0
     if (!num)
     {
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-        V_DrawPatchScreen0(x - w, n->y, n->p[0]);
-#endif
-#if defined(USE_BACKBUFFER)
-        V_DrawPatchDirect(x - w, n->y, n->p[0]);
-#endif
+        V_DrawPatchMode(x - w, n->y, n->p[0]);
         return;
     }
 
@@ -139,12 +134,7 @@ void STlib_drawNum(st_number_t *n, byte refresh)
 
         num = Div10(num);
         x -= w;
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-        V_DrawPatchScreen0(x, n->y, n->p[original - Mul10(num)]);
-#endif
-#if defined(USE_BACKBUFFER)
-        V_DrawPatchDirect(x, n->y, n->p[original - Mul10(num)]);
-#endif
+        V_DrawPatchMode(x, n->y, n->p[original - Mul10(num)]);
     } while (num);
 }
 
@@ -220,12 +210,7 @@ void STlib_updatePercent(st_percent_t *per, int refresh)
 {
     if (refresh && *per->n.on)
     {
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-        V_DrawPatchScreen0(per->n.x, per->n.y, per->p);
-#endif
-#if defined(USE_BACKBUFFER)
-        V_DrawPatchDirect(per->n.x, per->n.y, per->p);
-#endif
+        V_DrawPatchMode(per->n.x, per->n.y, per->p);
     }
 
     STlib_updateNum(&per->n, refresh);
@@ -290,12 +275,7 @@ void STlib_updateMultIcon(st_multicon_t *mi, byte refresh)
             V_CopyRect(x, y - ST_Y, screen4, w, h, x, y, backbuffer);
 #endif
         }
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-        V_DrawPatchScreen0(mi->x, mi->y, mi->p[*mi->inum]);
-#endif
-#if defined(USE_BACKBUFFER)
-        V_DrawPatchDirect(mi->x, mi->y, mi->p[*mi->inum]);
-#endif
+        V_DrawPatchMode(mi->x, mi->y, mi->p[*mi->inum]);
         mi->oldinum = *mi->inum;
 
 #if defined(USE_BACKBUFFER)
@@ -322,12 +302,7 @@ void STlib_updateBinIcon(st_binicon_t *bi, byte refresh)
 {
     if (*bi->on && refresh)
     {
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-        V_DrawPatchScreen0(bi->x, bi->y, bi->p);
-#endif
-#if defined(USE_BACKBUFFER)
-        V_DrawPatchDirect(bi->x, bi->y, bi->p);
-#endif
+        V_DrawPatchMode(bi->x, bi->y, bi->p);
 
 #if defined(USE_BACKBUFFER)
         updatestate |= I_STATBAR;

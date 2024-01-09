@@ -26,7 +26,7 @@
 #include "doomdef.h"
 #include "doomstat.h"
 #include "d_net.h"
-
+#include "i_debug.h"
 #include "m_misc.h"
 
 #include "r_local.h"
@@ -848,6 +848,24 @@ void R_ExecuteSetViewSize(void)
 
     setsizeneeded = 0;
 
+    // TODO Add more granular detection
+    if (selectedCPU == AUTO_CPU) {
+      switch(I_GetCPUModel()) {
+        case 386:
+          selectedCPU = INTEL_386SX;
+          break;
+        case 486:
+          selectedCPU = INTEL_486;
+          break;
+        case 586:
+        case 686:
+          selectedCPU = INTEL_PENTIUM;
+          break;
+        default:
+          selectedCPU = INTEL_386SX;
+          break;
+      }
+    }
 #if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA)
     if (setblocks >= 11)
     {
@@ -861,18 +879,25 @@ void R_ExecuteSetViewSize(void)
     }
     else
     {
-        scaledviewwidth = setblocks * 32;
-        viewheight = (setblocks * 168 / 10) & ~7;
+        // Since (SCREENWDITH / 10) may have a remainder, check 10 explcitly
+        if (setblocks == 10) {
+            scaledviewwidth = SCREENWIDTH;
+        } else {
+            scaledviewwidth = setblocks * (SCREENWIDTH / 10);
+            // Stay multiple of 4
+            scaledviewwidth &=~0x3;
+        }
+        viewheight = (setblocks * (SCREENHEIGHT - SBARHEIGHT) / 10) & ~7;
         viewheightminusone = viewheight - 1;
         viewheightshift = viewheight << FRACBITS;
         viewheightopt = (viewheight << FRACBITS) - viewheight;
         viewheight32 = viewheight << 16 | viewheight;
         automapheight = SCREENHEIGHT - 32;
     }
+#endif
 
 #if defined(MODE_13H) || defined(MODE_VBE2)
-    endscreen = Mul320(viewwindowy + viewheight);
-#endif
+    endscreen = MulScreenWidth(viewwindowy + viewheight);
 #endif
 
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
@@ -1574,8 +1599,8 @@ void R_ExecuteSetViewSize(void)
 
     // psprite scales
 #if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA)
-    pspritescale = FRACUNIT * viewwidth / SCREENWIDTH;
-    pspriteiscale = FRACUNIT * SCREENWIDTH / viewwidth;
+    pspritescale = FRACUNIT * viewwidth / 320;
+    pspriteiscale = FRACUNIT * 320 / viewwidth;
     pspriteiscaleneg = -pspriteiscale;
 #endif
 
@@ -1617,13 +1642,13 @@ void R_ExecuteSetViewSize(void)
         for (j = 0; j < MAXLIGHTSCALE; j++)
         {
 #if defined(MODE_T4050)
-            level = startmap - Mul320(j) / (viewwidth << 1) / DISTMAP;
+            level = startmap - MulScreenWidth(j) / (viewwidth << 1) / DISTMAP;
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-            level = startmap - Mul320(j) / (viewwidth << detailshift) / DISTMAP;
+            level = startmap - MulScreenWidth(j) / (viewwidth << detailshift) / DISTMAP;
 #endif
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA)
-            level = startmap - Mul320(j) / (viewwidth) / DISTMAP;
+            level = startmap - MulScreenWidth(j) / (viewwidth) / DISTMAP;
 #endif
             if (level < 0)
                 level = 0;
@@ -1633,6 +1658,17 @@ void R_ExecuteSetViewSize(void)
             scalelight[i][j] = colormaps + level * 256;
         }
     }
+    // I put this here so I could see which functions were having rendering
+    // problems. Leaving it here for demonstration purposes.
+#if (DEBUG_ENABLED==1)
+    I_Printf("R_InitData: %s", "test");
+    I_Printf("Render Functions:\n");
+    I_Printf("\tcolfunc: %s\n", I_LookupSymbolName(colfunc));
+    I_Printf("\tbasecolfunc: %s\n", I_LookupSymbolName(basecolfunc));
+    I_Printf("\tfuzzcolfunc: %s\n", I_LookupSymbolName(fuzzcolfunc));
+    I_Printf("\tspanfunc: %s\n", I_LookupSymbolName(spanfunc));
+    I_Printf("\tskyfunc: %s\n", I_LookupSymbolName(skyfunc));
+#endif
 }
 
 //
@@ -1737,11 +1773,11 @@ void R_SetupFrame(void)
     validcount++;
 
 #if defined(MODE_VBE2_DIRECT)
-    destview = destscreen + Mul320(viewwindowy) + viewwindowx;
+    destview = destscreen + MulScreenWidth(viewwindowy) + viewwindowx;
 #endif
 
 #if defined(MODE_Y)
-    destview = destscreen + Mul80(viewwindowy) + (viewwindowx >> 2);
+    destview = destscreen + MulScreenWidthQuarter(viewwindowy) + (viewwindowx >> 2);
 #endif
 }
 

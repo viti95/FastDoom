@@ -1,44 +1,19 @@
 #!/bin/bash
+set -e
 
-./rm FDOOM*.EXE
-./build.sh clean
-./build.sh fdoom.exe
-./build.sh clean
-./build.sh fdoomcga.exe
-./build.sh clean
-./build.sh fdoombwc.exe
-./build.sh clean
-./build.sh fdoomhgc.exe
-./build.sh clean
-./build.sh fdoomt1.exe
-./build.sh clean
-./build.sh fdoomt12.exe
-./build.sh clean
-./build.sh fdoomt25.exe
-./build.sh clean
-./build.sh fdoomt43.exe
-./build.sh clean
-./build.sh fdoomt50.exe
-./build.sh clean
-./build.sh fdoomvbr.exe
-./build.sh clean
-./build.sh fdoomvbd.exe
-./build.sh clean
-./build.sh fdoompcp.exe
-./build.sh clean
-./build.sh fdoomcvb.exe
-./build.sh clean
-./build.sh fdoomc16.exe
-./build.sh clean
-./build.sh fdoom13h.exe
-./build.sh clean
-./build.sh fdoommda.exe
-./build.sh clean
-./build.sh fdoomega.exe
-./build.sh clean
-./build.sh fdoomcah.exe
-./build.sh clean
-./build.sh fdoom512.exe
-./build.sh clean
-./build.sh fdoom400.exe
+
+build_list=$(grep -oP '"\$target" = "\K\w*.exe(?=")' build.sh)
+
+
+build() {
+  ./build.sh clean
+  ./build.sh $1
+}
+
+rm FDOOM*.EXE FDOOM*.MAP|| true
+for target in $build_list;
+do
+  build $target
+done
+
 ./stub.sh

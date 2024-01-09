@@ -315,7 +315,7 @@ default_t defaults[] =
         {"nomelt", &noMelt, 0},
         {"invisibleRender", &invisibleRender, 0},
         {"visplaneRender", &visplaneRender, 0},
-        {"selectedCPU", &selectedCPU, 0},
+        {"selectedCPU", &selectedCPU, -1 /* Means automatically detect */},
         {"vsync", &waitVsync, 0},
 
         {"autorun", &autorun, 0},

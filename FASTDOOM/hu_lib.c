@@ -156,11 +156,14 @@ void HUlib_eraseTextLine(hu_textline_t *l)
     if (!automapactive && viewwindowx && l->needsupdate)
 #endif
     {
+        // The text coordinates are in scaled pixels, so we need to
+        // scale them back to normal pixels for the erase.
         lh = l->f[0]->height + 1;
-        for (y = l->y, yoffset = Mul320(y); y < l->y + lh; y++, yoffset += SCREENWIDTH)
+        for (y = l->y * PIXEL_SCALING, yoffset = MulScreenWidth(y); y < (l->y + lh) * PIXEL_SCALING; y++, yoffset += SCREENWIDTH)
         {
-            if (y < viewwindowy || y >= viewwindowy + viewheight)
+            if (y < viewwindowy || y >= (viewwindowy + viewheight)) {
                 R_VideoErase(yoffset, SCREENWIDTH); // erase entire line
+            }
             else
             {
                 R_VideoErase(yoffset, viewwindowx);                           // erase left border

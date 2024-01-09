@@ -931,11 +931,11 @@ void AM_drawFline(fline_t *fl, int color)
 	register int d;
 
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-#define PUTDOT(xx, yy, cc) screen0[Mul320(yy) + (xx)] = (cc)
+#define PUTDOT(xx, yy, cc) screen0[MulScreenWidth(yy) + (xx)] = (cc)
 #endif
 
 #if defined(USE_BACKBUFFER)
-#define PUTDOT(xx, yy, cc) backbuffer[Mul320(yy) + (xx)] = (cc)
+#define PUTDOT(xx, yy, cc) backbuffer[MulScreenWidth(yy) + (xx)] = (cc)
 #endif
 
 	dx = fl->b.x - fl->a.x;

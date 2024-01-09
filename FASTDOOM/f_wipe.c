@@ -28,6 +28,8 @@
 
 #include "doomdef.h"
 
+#include "i_debug.h"
+
 #include "f_wipe.h"
 
 #include <conio.h>
@@ -50,32 +52,40 @@ static byte go = 0;
 byte *screen2;
 byte *screen3;
 
+
 void wipe_shittyColMajorXform(short *array)
 {
-    unsigned char y;
+    pixelcoord_t y;
     short *ptrarray = array;
     short *dest = (short *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
-
-    for (y = 0; y < SCREENHEIGHT; y++, dest -= 31999)
+    for (y = 0; y < SCREENHEIGHT; y++, dest -= ((SCREENHEIGHT * 8) * (SCREENWIDTH/16)) - 1)
     {
-        unsigned char x;
+        pixelcoord_t x;
 
-        for (x = 0; x < SCREENWIDTH / 16; x++, dest += 1600, ptrarray += 8)
+        for (x = 0; x < SCREENWIDTH / 16; x++, dest += (SCREENHEIGHT * 8), ptrarray += 8)
         {
             *dest = ptrarray[0];
-            *(dest + 200) = ptrarray[1];
-            *(dest + 400) = ptrarray[2];
-            *(dest + 600) = ptrarray[3];
-            *(dest + 800) = ptrarray[4];
-            *(dest + 1000) = ptrarray[5];
-            *(dest + 1200) = ptrarray[6];
-            *(dest + 1400) = ptrarray[7];
+            *(dest + SCREENHEIGHT) = ptrarray[1];
+            *(dest + SCREENHEIGHT * 2) = ptrarray[2];
+            *(dest + SCREENHEIGHT * 3) = ptrarray[3];
+            *(dest + SCREENHEIGHT * 4) = ptrarray[4];
+            *(dest + SCREENHEIGHT * 5) = ptrarray[5];
+            *(dest + SCREENHEIGHT * 6) = ptrarray[6];
+            *(dest + SCREENHEIGHT * 7) = ptrarray[7];
         }
     }
+    dest -= SCREENHEIGHT;
 
-    dest -= 200;
+    //The above implementation is equivalent to this, but presumably faster
+    /*
+    for(y = 0; y < SCREENHEIGHT; y++)
+    {
+        for(x = 0; x < SCREENWIDTH / 2; x++)
+        {
+            dest[x * SCREENHEIGHT + y] = ptrarray[x + y * SCREENWIDTH/2];
+        }
+    }*/
     CopyDWords(dest, array, (SCREENWIDTH * SCREENHEIGHT) / 4);
-
     Z_Free(dest);
 }
 
@@ -114,16 +124,17 @@ void wipe_initMelt()
 
 byte wipe_doMelt(int ticks)
 {
-    unsigned char i;
-    unsigned short i200;
+    int i;
+    unsigned int i_screen_height;
     byte done = 1;
 
     if (noMelt)
         return 1;
-
+    // This make it go about the same speed on all resolutions
+    ticks *= (SCREENHEIGHT / 200);
     while (ticks--)
     {
-        for (i = 0, i200 = 0; i < SCREENWIDTH / 2; i++, i200 += 200)
+        for (i = 0, i_screen_height = 0; i < SCREENWIDTH / 2; i++, i_screen_height += SCREENHEIGHT)
         {
             int y_val = y[i];
             if (y_val < 0)
@@ -140,12 +151,12 @@ byte wipe_doMelt(int ticks)
                 dy = (y_val < 16) ? y_val + 1 : 8;
                 if (dy >= SCREENHEIGHT - y_val)
                     dy = SCREENHEIGHT - y_val;
-                s = &((short *)screen3)[i200 + y_val];
+                s = &((short *)screen3)[i_screen_height + y_val];
                 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-                d = &((short *)screen0)[Mul160(y_val) + i];
+                d = &((short *)screen0)[MulScreenWidthHalf(y_val) + i];
                 #endif
                 #if defined(USE_BACKBUFFER)
-                d = &((short *)backbuffer)[Mul160(y_val) + i];
+                d = &((short *)backbuffer)[MulScreenWidthHalf(y_val) + i];
                 #endif
                 for (j = dy; j; j--)
                 {
@@ -153,12 +164,12 @@ byte wipe_doMelt(int ticks)
                     idx += SCREENWIDTH / 2;
                 }
                 y_val += dy;
-                s = &((short *)screen2)[i200];
+                s = &((short *)screen2)[i_screen_height];
                 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-                d = &((short *)screen0)[Mul160(y_val) + i];
+                d = &((short *)screen0)[MulScreenWidthHalf(y_val) + i];
                 #endif
                 #if defined(USE_BACKBUFFER)
-                d = &((short *)backbuffer)[Mul160(y_val) + i];
+                d = &((short *)backbuffer)[MulScreenWidthHalf(y_val) + i];
                 #endif
                 idx = 0;
                 for (j = SCREENHEIGHT - y_val; j; j--)

@@ -29,6 +29,7 @@
 #include "m_misc.h"
 
 #include "v_video.h"
+#include "i_debug.h"
 
 #if defined(TEXT_MODE)
 #include "i_text.h"
@@ -39,7 +40,11 @@ byte screen0[SCREENWIDTH * SCREENHEIGHT];
 #endif
 
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-byte screen4[SCREENWIDTH * 32];
+byte screen4[SCREENWIDTH * SBARHEIGHT];
+#if PIXEL_SCALING!=1 && PIXEL_SCALING!=2
+#error "PIXEL_SCALING must be 1 or 2"
+#endif
+
 #endif
 
 #if defined(USE_BACKBUFFER)
@@ -76,6 +81,8 @@ int usegamma;
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 void V_MarkRect(int x, int y, int width, int height)
 {
+    BOUNDS_CHECK(x, y);
+    BOUNDS_CHECK(x + width - 1, y + height - 1);
     M_AddToBox(dirtybox, x, y);
     M_AddToBox(dirtybox, x + width - 1, y + height - 1);
 }
@@ -88,13 +95,27 @@ void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int de
 {
     byte *src;
     byte *dest;
+    // The buffers are pixel doubled in hi-res mode
+#if PIXEL_SCALING==2
+    srcx *= 2;
+    srcy *= 2;
+    destx *= 2;
+    desty *= 2;
+    width *= 2;
+    height *= 2;
+#endif
+    BOUNDS_CHECK(srcx, srcy);
+    BOUNDS_CHECK(srcx + width - 1, srcy + height - 1);
+    BOUNDS_CHECK(destx, desty);
+    BOUNDS_CHECK(destx + width - 1, desty + height - 1);
 
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
     V_MarkRect(destx, desty, width, height);
 #endif
 
-    src = srcscrn + Mul320(srcy) + srcx;
-    dest = destscrn + Mul320(desty) + destx;
+    src = srcscrn + MulScreenWidth(srcy) + srcx;
+    dest = destscrn + MulScreenWidth(desty) + destx;
+
 
     if (width & 1)
     {
@@ -120,11 +141,13 @@ void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int de
     }
 }
 
+
 //
 // V_DrawPatch
 // Masks a column based masked pic to the screen.
 //
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#include "i_debug.h"
 void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
 {
 
@@ -135,11 +158,116 @@ void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
     byte *dest;
     byte *source;
     int w;
+    SCALED_BOUNDS_CHECK(x, y);
+    y -= patch->topoffset;
+    x -= patch->leftoffset;
+    SCALED_BOUNDS_CHECK(x, y);
 
+    desttop = scrn + MulScreenWidth(y * PIXEL_SCALING) + x * PIXEL_SCALING;
+
+    w = patch->width;
+    for (; col < w; x++, col++, desttop+=PIXEL_SCALING)
+    {
+        column = (column_t *)((byte *)patch + patch->columnofs[col]);
+
+        // step through the posts in a column
+        while (column->topdelta != 0xff)
+        {
+            register const byte *source = (byte *)column + 3;
+            register byte *dest = desttop + MulScreenWidth(column->topdelta * PIXEL_SCALING);
+            register int count = column->length;
+            register byte s0, s1;
+#if PIXEL_SCALING==1
+            if ((count -= 4) >= 0)
+                do
+                {
+                    s0 = source[0];
+                    s1 = source[1];
+                    dest[0] = s0;
+                    dest[1] = s1;
+                    dest[SCREENWIDTH] = s1;
+                    dest += SCREENWIDTH * 2;
+                    s0 = source[2];
+                    s1 = source[3];
+                    dest[0] = s0;
+                    dest[1] = s1;
+                    dest[SCREENWIDTH] = s1;
+                    dest += SCREENWIDTH * 2;
+                    source += 4;
+                } while ((count -= 4) >= 0);
+            if (count += 4)
+                do
+                {
+                    *dest = *source++;
+                    dest += SCREENWIDTH;
+                } while (--count);
+#elif PIXEL_SCALING==2
+              if ((count -= 4) >= 0)
+                  do {
+                      s0 = source[0];
+                      s1 = source[1];
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s1;
+                      dest[1] = s1;
+                      dest += SCREENWIDTH;
+                      dest[0] = s1;
+                      dest[1] = s1;
+                      dest += SCREENWIDTH;
+                      s0 = source[2];
+                      s1 = source[3];
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s1;
+                      dest[1] = s1;
+                      dest += SCREENWIDTH;
+                      dest[0] = s1;
+                      dest[1] = s1;
+                      dest += SCREENWIDTH;
+                      source += 4;
+                  } while ((count -= 4) >= 0);
+              if (count += 4)
+                  do
+                  {
+                      byte s0 = *source++;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest += SCREENWIDTH;
+                  } while (--count);
+#endif
+            column = (column_t *)(source + 1);
+        }
+    }
+}
+#endif
+
+#if PIXEL_SCALING!=1
+void V_DrawPatchNativeRes(int x, int y, byte *scrn, patch_t *patch)
+{
+
+    int count;
+    int col = 0;
+    column_t *column;
+    byte *desttop;
+    byte *dest;
+    byte *source;
+    int w;
+    BOUNDS_CHECK(x, y);
     y -= patch->topoffset;
     x -= patch->leftoffset;
 
-    desttop = scrn + Mul320(y) + x;
+    desttop = scrn + MulScreenWidth(y) + x;
 
     w = patch->width;
 
@@ -151,24 +279,25 @@ void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
         while (column->topdelta != 0xff)
         {
             register const byte *source = (byte *)column + 3;
-            register byte *dest = desttop + Mul320(column->topdelta);
+            register byte *dest = desttop + MulScreenWidth(column->topdelta);
             register int count = column->length;
-
+            register byte s0, s1;
             if ((count -= 4) >= 0)
                 do
                 {
-                    register byte s0, s1;
                     s0 = source[0];
                     s1 = source[1];
                     dest[0] = s0;
+                    dest[1] = s1;
                     dest[SCREENWIDTH] = s1;
                     dest += SCREENWIDTH * 2;
                     s0 = source[2];
                     s1 = source[3];
-                    source += 4;
                     dest[0] = s0;
+                    dest[1] = s1;
                     dest[SCREENWIDTH] = s1;
                     dest += SCREENWIDTH * 2;
+                    source += 4;
                 } while ((count -= 4) >= 0);
             if (count += 4)
                 do
@@ -185,25 +314,24 @@ void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 void V_DrawPatchScreen0(int x, int y, patch_t *patch)
 {
-
     int count;
     int col = 0;
     column_t *column;
     byte *desttop;
     byte *dest;
     byte *source;
-    int w;
-
+    int w, i;
+    SCALED_BOUNDS_CHECK(x, y);
     y -= patch->topoffset;
     x -= patch->leftoffset;
+    SCALED_BOUNDS_CHECK(x, y);
+    V_MarkRect(x * PIXEL_SCALING, y * PIXEL_SCALING, patch->width * PIXEL_SCALING, patch->height * PIXEL_SCALING);
 
-    V_MarkRect(x, y, patch->width, patch->height);
-
-    desttop = screen0 + Mul320(y) + x;
+     desttop = screen0 + MulScreenWidth(y * PIXEL_SCALING) + x * PIXEL_SCALING;
 
     w = patch->width;
 
-    for (; col < w; x++, col++, desttop++)
+    for (; col < w; x++, col++, desttop+=PIXEL_SCALING)
     {
         column = (column_t *)((byte *)patch + patch->columnofs[col]);
 
@@ -211,13 +339,13 @@ void V_DrawPatchScreen0(int x, int y, patch_t *patch)
         while (column->topdelta != 0xff)
         {
             register const byte *source = (byte *)column + 3;
-            register byte *dest = desttop + Mul320(column->topdelta);
+            register byte *dest = desttop + MulScreenWidth(column->topdelta * PIXEL_SCALING);
             register int count = column->length;
-
+            register byte s0, s1;
+#if PIXEL_SCALING==1
             if ((count -= 4) >= 0)
                 do
                 {
-                    register byte s0, s1;
                     s0 = source[0];
                     s1 = source[1];
                     dest[0] = s0;
@@ -225,10 +353,10 @@ void V_DrawPatchScreen0(int x, int y, patch_t *patch)
                     dest += SCREENWIDTH * 2;
                     s0 = source[2];
                     s1 = source[3];
-                    source += 4;
                     dest[0] = s0;
                     dest[SCREENWIDTH] = s1;
                     dest += SCREENWIDTH * 2;
+                    source += 4;
                 } while ((count -= 4) >= 0);
             if (count += 4)
                 do
@@ -236,6 +364,52 @@ void V_DrawPatchScreen0(int x, int y, patch_t *patch)
                     *dest = *source++;
                     dest += SCREENWIDTH;
                 } while (--count);
+#elif PIXEL_SCALING==2 // HI_RES
+              if ((count -= 4) >= 0)
+                  do {
+                      s0 = source[0];
+                      s1 = source[1];
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s1;
+                      dest[1] = s1;
+                      dest += SCREENWIDTH;
+                      dest[0] = s1;
+                      dest[1] = s1;
+                      dest += SCREENWIDTH;
+                      s0 = source[2];
+                      s1 = source[3];
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s1;
+                      dest[1] = s1;
+                      dest += SCREENWIDTH;
+                      dest[0] = s1;
+                      dest[1] = s1;
+                      dest += SCREENWIDTH;
+                      source += 4;
+                  } while ((count -= 4) >= 0);
+              if (count += 4)
+                  do
+                  {
+                      s0 = *source;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest += SCREENWIDTH;
+                      source++;
+                  } while (--count);
+#endif
             column = (column_t *)(source + 1);
         }
     }
@@ -258,18 +432,18 @@ void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
     byte *dest;
     byte *source;
     int w;
-
+    BOUNDS_CHECK(x, y);
     y -= patch->topoffset;
     x -= patch->leftoffset;
 
-    V_MarkRect(x, y, patch->width, patch->height);
+    V_MarkRect(x * PIXEL_SCALING, y * PIXEL_SCALING, patch->width * PIXEL_SCALING, patch->height * PIXEL_SCALING);
 
     col = 0;
-    desttop = screen0 + Mul320(y) + x;
+    desttop = screen0 + MulScreenWidth(y * PIXEL_SCALING) + x * PIXEL_SCALING;
 
     w = patch->width;
 
-    for (; col < w; x++, col++, desttop++)
+    for (; col < w; x++, col++, desttop+=PIXEL_SCALING)
     {
         column = (column_t *)((byte *)patch + patch->columnofs[w - 1 - col]);
 
@@ -277,14 +451,27 @@ void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
         while (column->topdelta != 0xff)
         {
             source = (byte *)column + 3;
-            dest = desttop + Mul320(column->topdelta);
+            dest = desttop + MulScreenWidth(column->topdelta * PIXEL_SCALING);
             count = column->length;
 
+#if PIXEL_SCALING==1
             while (count--)
             {
                 *dest = *source++;
                 dest += SCREENWIDTH;
             }
+#elif PIXEL_SCALING==2
+            while (count--)
+            {
+                register byte s = *source++;
+                dest[0] = s;
+                dest[1] = s;
+                dest += SCREENWIDTH;
+                dest[0] = s;
+                dest[1] = s;
+                dest += SCREENWIDTH;
+            }
+#endif
             column = (column_t *)((byte *)column + column->length + 4);
         }
     }
@@ -398,22 +585,35 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
     x -= patch->leftoffset;
 
     col = 0;
-    desttop = destscreen + Mul320(y) + x;
+    desttop = destscreen + MulScreenWidth(y * PIXEL_SCALING) + x * PIXEL_SCALING;
     w = patch->width;
-    for (; col < w; x++, col++, desttop++)
+    for (; col < w; x++, col++, desttop+=PIXEL_SCALING)
     {
         column = (column_t *)((byte *)patch + patch->columnofs[col]);
         // Step through the posts in a column
         while (column->topdelta != 0xff)
         {
             source = (byte *)column + 3;
-            dest = desttop + Mul320(column->topdelta);
+            dest = desttop + MulScreenWidth(column->topdelta * PIXEL_SCALING);
             count = column->length;
+#if PIXEL_SCALING==1
             while (count--)
             {
                 *dest = *source++;
                 dest += SCREENWIDTH;
             }
+#elif PIXEL_SCALING==2
+            while (count--)
+            {
+                register byte s = *source++;
+                dest[0] = s;
+                dest[1] = s;
+                dest += SCREENWIDTH;
+                dest[0] = s;
+                dest[1] = s;
+                dest += SCREENWIDTH;
+            }
+#endif
             column = (column_t *)((byte *)column + column->length + 4);
         }
     }
@@ -430,7 +630,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
     byte *dest;
     byte *source;
     int w;
-
+    BOUNDS_CHECK(x, y);
     y -= patch->topoffset;
     x -= patch->leftoffset;
 
@@ -495,9 +695,9 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
     x -= patch->leftoffset;
 
     col = 0;
-    desttop = backbuffer + Mul320(y) + x;
+    desttop = backbuffer + MulScreenWidth(y * PIXEL_SCALING) + x * PIXEL_SCALING;
     w = patch->width;
-    for (; col < w; x++, col++, desttop++)
+    for (; col < w; x++, col++, desttop+=PIXEL_SCALING)
     {
 #if defined(MODE_CGA16) || defined(MODE_CVBS)
     if ((int)desttop & 1)
@@ -523,13 +723,26 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
         while (column->topdelta != 0xff)
         {
             source = (byte *)column + 3;
-            dest = desttop + Mul320(column->topdelta);
+            dest = desttop + MulScreenWidth(column->topdelta * PIXEL_SCALING);
             count = column->length;
+#if PIXEL_SCALING==1
             while (count--)
             {
                 *dest = *source++;
                 dest += SCREENWIDTH;
             }
+#elif PIXEL_SCALING==2
+            while (count--)
+            {
+                register byte s = *source++;
+                dest[0] = s;
+                dest[1] = s;
+                dest += SCREENWIDTH;
+                dest[0] = s;
+                dest[1] = s;
+                dest += SCREENWIDTH;
+            }
+#endif
             column = (column_t *)((byte *)column + column->length + 4);
         }
     }

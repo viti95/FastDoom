@@ -87,6 +87,36 @@ int Mul320(int value);
     "lea eax, [eax+eax*4]", \
     "shl eax, 6" parm[eax] value[eax] modify exact[eax]
 
+int Mul640(int value);
+#pragma aux Mul640 = \
+    "lea eax, [eax+eax*4]", \
+    "shl eax, 7" parm[eax] value[eax] modify exact[eax]
+
+int Mul1280(int value);
+#pragma aux Mul1280 = \
+    "lea eax, [eax+eax*4]", \
+    "shl eax, 8" parm[eax] value[eax] modify exact[eax]
+
+int Mul64(int value);
+#pragma aux Mul64 = \
+    "shl eax, 6" parm[eax] value[eax] modify exact[eax]
+
+int Mul128(int value);
+#pragma aux Mul128 = \
+    "shl eax, 7" parm[eax] value[eax] modify exact[eax]
+
+int Mul256(int value);
+#pragma aux Mul256 = \
+    "shl eax, 8" parm[eax] value[eax] modify exact[eax]
+
+int Mul512(int value);
+#pragma aux Mul512 = \
+    "shl eax, 9" parm[eax] value[eax] modify exact[eax]
+
+int Mul1024(int value);
+#pragma aux Mul1024 = \
+    "shl eax, 10" parm[eax] value[eax] modify exact[eax]
+
 int Mul10(int value);
 #pragma aux Mul10 = \
     "lea eax, [eax+eax*4]", \
@@ -102,6 +132,24 @@ int Mul100(int value);
     "lea eax, [eax+eax*4]", \
     "lea eax, [eax+eax*4]", \
     "lea eax, [eax*4]" parm[eax] value[eax] modify exact[eax]
+
+int Mul200(int value);
+#pragma aux Mul200 = \
+    "lea eax, [eax+eax*4]", \
+    "lea eax, [eax+eax*4]", \
+    "shl eax, 3" parm[eax] value[eax] modify exact[eax]
+
+int Mul400(int value);
+#pragma aux Mul400 = \
+    "lea eax, [eax+eax*4]", \
+    "lea eax, [eax+eax*4]", \
+    "shl eax, 4" parm[eax] value[eax] modify exact[eax]
+
+int Mul800(int value);
+#pragma aux Mul800 = \
+    "lea eax, [eax+eax*4]", \
+    "lea eax, [eax+eax*4]", \
+    "shl eax, 5" parm[eax] value[eax] modify exact[eax]
 
 unsigned short USMul100(unsigned short value);
 #pragma aux USMul100 = \

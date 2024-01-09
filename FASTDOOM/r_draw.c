@@ -26,6 +26,7 @@
 #include "z_zone.h"
 #include "w_wad.h"
 #include "r_data.h"
+#include "i_debug.h"
 
 #include "r_local.h"
 
@@ -40,9 +41,6 @@
 #if defined(TEXT_MODE)
 #include "i_text.h"
 #endif
-
-// status bar height at bottom of screen
-#define SBARHEIGHT 32
 
 //
 // All drawing to the view buffer is accomplished in this file.
@@ -230,7 +228,7 @@ void R_DrawSkyFlatVBE2(void)
     if (count < 0)
         return;
 
-    dest = destview + Mul320(dc_yl) + dc_x;
+    dest = destview + MulScreenWidth(dc_yl) + dc_x;
 
     do
     {
@@ -244,7 +242,7 @@ void R_DrawSkyFlatLowVBE2(void)
     int count;
     unsigned short *dest;
 
-    dest = (unsigned short *)((byte *)destview + Mul320(dc_yl) + (dc_x << 1));
+    dest = (unsigned short *)((byte *)destview + MulScreenWidth(dc_yl) + (dc_x << 1));
     count = dc_yh - dc_yl;
 
     while (count >= 3)
@@ -270,7 +268,7 @@ void R_DrawSkyFlatPotatoVBE2(void)
     int count;
     unsigned int *dest;
 
-    dest = (unsigned int *)((byte *)destview + Mul320(dc_yl) + (dc_x << 2));
+    dest = (unsigned int *)((byte *)destview + MulScreenWidth(dc_yl) + (dc_x << 2));
     count = dc_yh - dc_yl;
 
     while (count >= 3)
@@ -304,7 +302,7 @@ void R_DrawFuzzColumnFlatSaturnVBE2(void)
 
     initialdrawpos = (dc_yl + dc_x) & 1;
 
-    dest = destview + Mul320(dc_yl) + dc_x;
+    dest = destview + MulScreenWidth(dc_yl) + dc_x;
 
     if (initialdrawpos)
     {
@@ -345,7 +343,7 @@ void R_DrawFuzzColumnSaturnVBE2(void)
 
     initialdrawpos = (dc_yl + dc_x) & 1;
 
-    dest = destview + Mul320(dc_yl) + dc_x;
+    dest = destview + MulScreenWidth(dc_yl) + dc_x;
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
@@ -391,7 +389,7 @@ void R_DrawFuzzColumnTransVBE2(void)
     if (count <= 0)
         return;
 
-    dest = destview + Mul320(dc_yl) + dc_x;
+    dest = destview + MulScreenWidth(dc_yl) + dc_x;
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
@@ -417,7 +415,7 @@ void R_DrawFuzzColumnFlatSaturnLowVBE2(void)
 
     initialdrawpos = (dc_yl + dc_x) & 1;
 
-    dest = destview + Mul320(dc_yl) + (dc_x << 1);
+    dest = destview + MulScreenWidth(dc_yl) + (dc_x << 1);
 
     if (initialdrawpos)
     {
@@ -458,7 +456,7 @@ void R_DrawFuzzColumnSaturnLowVBE2(void)
 
     initialdrawpos = (dc_yl + dc_x) & 1;
 
-    dest = destview + Mul320(dc_yl) + (dc_x << 1);
+    dest = destview + MulScreenWidth(dc_yl) + (dc_x << 1);
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
@@ -513,7 +511,7 @@ void R_DrawFuzzColumnTransLowVBE2(void)
     if (count <= 0)
         return;
 
-    dest = destview + Mul320(dc_yl) + (dc_x << 1);
+    dest = destview + MulScreenWidth(dc_yl) + (dc_x << 1);
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
@@ -543,7 +541,7 @@ void R_DrawFuzzColumnFlatSaturnPotatoVBE2(void)
 
     initialdrawpos = (dc_yl + dc_x) & 1;
 
-    dest = destview + Mul320(dc_yl) + (dc_x << 2);
+    dest = destview + MulScreenWidth(dc_yl) + (dc_x << 2);
 
     if (initialdrawpos)
     {
@@ -584,7 +582,7 @@ void R_DrawFuzzColumnSaturnPotatoVBE2(void)
 
     initialdrawpos = (dc_yl + dc_x) & 1;
 
-    dest = destview + Mul320(dc_yl) + (dc_x << 2);
+    dest = destview + MulScreenWidth(dc_yl) + (dc_x << 2);
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
@@ -645,7 +643,7 @@ void R_DrawFuzzColumnTransPotatoVBE2(void)
     if (count <= 0)
         return;
 
-    dest = destview + Mul320(dc_yl) + (dc_x << 2);
+    dest = destview + MulScreenWidth(dc_yl) + (dc_x << 2);
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
@@ -671,7 +669,7 @@ void R_DrawSpanFlatVBE2(void)
 
     lighttable_t color = ds_colormap[ds_source[FLATPIXELCOLOR]];
 
-    dest = destview + Mul320(ds_y) + ds_x1;
+    dest = destview + MulScreenWidth(ds_y) + ds_x1;
 
     countp = ds_x2 - ds_x1 + 1;
 
@@ -698,7 +696,7 @@ void R_DrawSpanFlatLowVBE2(void)
     unsigned short color = ds_colormap[ds_source[FLATPIXELCOLOR]];
     color |= color << 8;
 
-    dest = destview + Mul320(ds_y) + (ds_x1 << 1);
+    dest = destview + MulScreenWidth(ds_y) + (ds_x1 << 1);
 
     countp = ds_x2 - ds_x1 + 1;
 
@@ -726,7 +724,7 @@ void R_DrawSpanFlatPotatoVBE2(void)
     color |= color << 8;
     color |= color << 16;
 
-    dest = destview + Mul320(ds_y) + (ds_x1 << 2);
+    dest = destview + MulScreenWidth(ds_y) + (ds_x1 << 2);
 
     countp = ds_x2 - ds_x1 + 1;
 
@@ -2934,7 +2932,7 @@ void R_InitBuffer(int width, int height)
     viewwindowx = (SCREENWIDTH - width) >> 1;
 
 #if defined(MODE_13H) || defined(MODE_VBE2)
-    startscreen = Mul320(viewwindowy) + viewwindowx;
+    startscreen = MulScreenWidth(viewwindowy) + viewwindowx;
 #endif
 #endif
 
@@ -2952,7 +2950,7 @@ void R_InitBuffer(int width, int height)
 
 #if defined(MODE_13H) || defined(MODE_VBE2)
         startscreen = viewwindowx;
-        endscreen = Mul320(viewheight);
+        endscreen = MulScreenWidth(viewheight);
 #endif
     }
     else
@@ -2960,15 +2958,15 @@ void R_InitBuffer(int width, int height)
         viewwindowy = (SCREENHEIGHT - SBARHEIGHT - height) >> 1;
 
 #if defined(MODE_13H) || defined(MODE_VBE2)
-        startscreen = Mul320(viewwindowy) + viewwindowx;
-        endscreen = Mul320(viewwindowy + viewheight);
+        startscreen = MulScreenWidth(viewwindowy) + viewwindowx;
+        endscreen = MulScreenWidth(viewwindowy + viewheight);
 #endif
     }
 #endif
 
 #if defined(USE_BACKBUFFER)
     for (i = 0; i < height; i++)
-        ylookup[i] = backbuffer + Mul320(i + viewwindowy);
+        ylookup[i] = backbuffer + MulScreenWidth(i + viewwindowy);
 #endif
 #if defined(MODE_Y)
     for (i = 0; i < height; i++)
@@ -3002,7 +3000,7 @@ void R_FillBackScreen(void)
     char *name;
 
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-    if (scaledviewwidth == 320)
+    if (scaledviewwidth == SCREENWIDTH)
         return;
 #endif
 
@@ -3034,11 +3032,13 @@ void R_FillBackScreen(void)
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
     screen1 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
     dest = screen1;
+#define TARGET_SURFACE screen1
 #endif
 #if defined(USE_BACKBUFFER)
     dest = background_buffer;
+#define TARGET_SURFACE background_buffer
 #endif
-
+    // Deal with screen width not being a multiple of 64
     for (y = 0; y < SCREENHEIGHT - SBARHEIGHT; y++)
     {
         for (x = 0; x < SCREENWIDTH / 64; x++)
@@ -3046,70 +3046,46 @@ void R_FillBackScreen(void)
             CopyDWords(src + ((y & 63) << 6), dest, 16);
             dest += 64;
         }
+        // Correct for underdraw
+        CopyDWords(src + ((y & 63) << 6), dest, (SCREENWIDTH % 64) / 4);
+        dest += (SCREENWIDTH % 64);
+
     }
+    // Draw beveled edge.
+    //I_Printf("Drawing bev404eled edge: %d %d %d %d\n", viewwindowx, viewwindowy, scaledviewwidth, viewheight);
 
     patch = W_CacheLumpName("BRDR_T", PU_CACHE);
 
     for (x = 0; x < scaledviewwidth; x += 8)
     {
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-        V_DrawPatch(viewwindowx + x, viewwindowy - 8, screen1, patch);
-#endif
-#if defined(USE_BACKBUFFER)
-        V_DrawPatch(viewwindowx + x, viewwindowy - 8, background_buffer, patch);
-#endif
+        V_DrawPatchNativeRes(viewwindowx + x, viewwindowy - 8, TARGET_SURFACE, patch);
     }
 
     patch = W_CacheLumpName("BRDR_B", PU_CACHE);
 
     for (x = 0; x < scaledviewwidth; x += 8)
     {
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-        V_DrawPatch(viewwindowx + x, viewwindowy + viewheight, screen1, patch);
-#endif
-#if defined(USE_BACKBUFFER)
-        V_DrawPatch(viewwindowx + x, viewwindowy + viewheight, background_buffer, patch);
-#endif
+        V_DrawPatchNativeRes(viewwindowx + x, viewwindowy + viewheight, TARGET_SURFACE, patch);
     }
     patch = W_CacheLumpName("BRDR_L", PU_CACHE);
 
     for (y = 0; y < viewheight; y += 8)
     {
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-        V_DrawPatch(viewwindowx - 8, viewwindowy + y, screen1, patch);
-#endif
-#if defined(USE_BACKBUFFER)
-        V_DrawPatch(viewwindowx - 8, viewwindowy + y, background_buffer, patch);
-#endif
+        V_DrawPatchNativeRes(viewwindowx - 8, viewwindowy + y, TARGET_SURFACE, patch);
     }
     patch = W_CacheLumpName("BRDR_R", PU_CACHE);
 
     for (y = 0; y < viewheight; y += 8)
     {
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-        V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + y, screen1, patch);
-#endif
-#if defined(USE_BACKBUFFER)
-        V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + y, background_buffer, patch);
-#endif
+        V_DrawPatchNativeRes(viewwindowx + scaledviewwidth, viewwindowy + y, TARGET_SURFACE, patch);
     }
 
-    // Draw beveled edge.
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-    V_DrawPatch(viewwindowx - 8, viewwindowy - 8, screen1, W_CacheLumpName("BRDR_TL", PU_CACHE));
-    V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy - 8, screen1, W_CacheLumpName("BRDR_TR", PU_CACHE));
-    V_DrawPatch(viewwindowx - 8, viewwindowy + viewheight, screen1, W_CacheLumpName("BRDR_BL", PU_CACHE));
-    V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + viewheight, screen1, W_CacheLumpName("BRDR_BR", PU_CACHE));
-#endif
-#if defined(USE_BACKBUFFER)
-    V_DrawPatch(viewwindowx - 8, viewwindowy - 8, background_buffer, W_CacheLumpName("BRDR_TL", PU_CACHE));
-    V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy - 8, background_buffer, W_CacheLumpName("BRDR_TR", PU_CACHE));
-    V_DrawPatch(viewwindowx - 8, viewwindowy + viewheight, background_buffer, W_CacheLumpName("BRDR_BL", PU_CACHE));
-    V_DrawPatch(viewwindowx + scaledviewwidth, viewwindowy + viewheight, background_buffer, W_CacheLumpName("BRDR_BR", PU_CACHE));
-#endif
-
+    V_DrawPatchNativeRes(viewwindowx - 8, viewwindowy - 8, TARGET_SURFACE, W_CacheLumpName("BRDR_TL", PU_CACHE));
+    V_DrawPatchNativeRes(viewwindowx + scaledviewwidth, viewwindowy - 8, TARGET_SURFACE, W_CacheLumpName("BRDR_TR", PU_CACHE));
+    V_DrawPatchNativeRes(viewwindowx - 8, viewwindowy + viewheight, TARGET_SURFACE, W_CacheLumpName("BRDR_BL", PU_CACHE));
+    V_DrawPatchNativeRes(viewwindowx + scaledviewwidth, viewwindowy + viewheight, TARGET_SURFACE, W_CacheLumpName("BRDR_BR", PU_CACHE));
 #if defined(MODE_VBE2_DIRECT)
-    dest = pcscreen + 3 * 320 * 200;
+    dest = pcscreen + 3 * SCREENWIDTH * SCREENHEIGHT;
     CopyDWords(screen1, dest, (SCREENHEIGHT - SBARHEIGHT) * SCREENWIDTH / 4);
 #endif
 
@@ -3142,9 +3118,9 @@ void R_VideoErase(unsigned ofs, int count)
 {
     byte *dest;
     byte *source;
-
+    ASSERT((ofs + count) <= SCREENWIDTH * SCREENHEIGHT);
     dest = destscreen + ofs;
-    source = pcscreen + 320 * 200 * 3 + ofs; // Page 3
+    source = pcscreen + SCREENWIDTH * SCREENHEIGHT * 3 + ofs; // Page 3
 
     if (count & 1)
     {
@@ -3167,6 +3143,7 @@ void R_VideoErase(unsigned ofs, int count)
     byte *dest;
     byte *source;
     int countp;
+    ASSERT((ofs + count) <= SCREENWIDTH * SCREENHEIGHT);
 
     outp(SC_INDEX + 1, 15);
     outp(GC_INDEX, GC_MODE);
@@ -3183,11 +3160,13 @@ void R_VideoErase(unsigned ofs, int count)
 #if defined(USE_BACKBUFFER)
 void R_VideoErase(unsigned ofs, int count)
 {
+   // The erase function is called using
     // LFB copy.
     // This might not be a good idea if memcpy
     //  is not optiomal, e.g. byte by byte on
     //  a 32bit CPU, as GNU GCC/Linux libc did
     //  at one point.
+    ASSERT((ofs + count) <= SCREENWIDTH * SCREENHEIGHT);
 
     if (background_buffer)
     {
@@ -3202,7 +3181,7 @@ void R_VideoErase(unsigned ofs, int count)
         {
             CopyWords(background_buffer + ofs, backbuffer + ofs, count / 2);
         }
-        
+
     }
 }
 #endif
@@ -3227,14 +3206,14 @@ void R_DrawViewBorder(void)
     side = (SCREENWIDTH - scaledviewwidth) / 2;
 
     // copy top and one line of left side
-    R_VideoErase(0, Mul320(top) + side);
+    R_VideoErase(0, MulScreenWidth(top) + side);
 
     // copy one line of right side and bottom
-    ofs = Mul320(viewheight + top) - side;
-    R_VideoErase(ofs, Mul320(top) + side);
+    ofs = MulScreenWidth(viewheight + top) - side;
+    R_VideoErase(ofs, MulScreenWidth(top) + side);
 
     // copy sides using wraparound
-    ofs = Mul320(top) + SCREENWIDTH - side;
+    ofs = MulScreenWidth(top) + SCREENWIDTH - side;
     side <<= 1;
 
     for (i = 1; i < viewheight; i++)

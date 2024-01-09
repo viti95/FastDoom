@@ -113,7 +113,7 @@ CODE_SYM_DEF R_DrawSpanPotatoBackbuffer386SX
   %assign PLANE 0
     MAPLABEL LINE:
       %assign LINE LINE+1
-      %if LINE = 80
+      %if LINE = SCREENWIDTH/4
         mov   al,[esi+ebx]           ; get source pixel
         mov   dl,[eax]               ; translate color
         mov   dh,dl
@@ -125,7 +125,7 @@ CODE_SYM_DEF R_DrawSpanPotatoBackbuffer386SX
         mov   dl,[eax]               ; translate color
         shld  ebx,ecx,6              ; shift x units in
         mov   dh,dl
-        mov   [edi+PLANE+PCOL*4],dx  ; write pixel        
+        mov   [edi+PLANE+PCOL*4],dx  ; write pixel
         mov   [edi+PLANE+PCOL*4+2],dx  ; write pixel
         and   ebx,0x0FFF             ; mask off slop bits
         add   ecx,ebp                ; position += step
@@ -134,6 +134,6 @@ CODE_SYM_DEF R_DrawSpanPotatoBackbuffer386SX
 %assign PCOL PCOL+1
 %endrep
 
-hmap80: ret
+MAPLABEL LINE: ret
 
 %endif

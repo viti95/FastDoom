@@ -101,23 +101,23 @@ CODE_SYM_DEF R_DrawFuzzColumnFlatLowBackbuffer
 %rep SCREENHEIGHT-1
   SCALELABEL LINE:
 
-	mov   al,[edi-(LINE-1)*320]
+	mov   al,[edi-(LINE-1)*SCREENWIDTH]
 	mov		cl,[eax]
   mov   ch,cl
-  mov		[edi-(LINE-1)*320],cx
+  mov		[edi-(LINE-1)*SCREENWIDTH],cx
 
   %assign LINE LINE-1
 %endrep
 
 vscale1:
 
-  mov   al,[edi-(LINE-1)*320]
+  mov   al,[edi-(LINE-1)*SCREENWIDTH]
 	pop	ebp
 	mov		cl,[eax]
   pop	esi
   mov   ch,cl
   pop	edx
-  mov		[edi-(LINE-1)*320],cx
+  mov		[edi-(LINE-1)*SCREENWIDTH],cx
 
 vscale0:
 	pop	ecx

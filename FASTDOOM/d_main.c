@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <conio.h>
+#include "i_debug.h"
 #include <dos.h>
 #include <io.h>
 #include "version.h"
@@ -300,12 +301,12 @@ void D_Display(void)
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
         if (!automapactive || (automapactive && !fullscreen))
         {
-            redrawsbar = wipe || (viewheight != 200 && fullscreen); // just put away the help screen
+            redrawsbar = wipe || (viewheight != SCREENHEIGHT && fullscreen); // just put away the help screen
             ST_Drawer(screenblocks, redrawsbar);
         }
 #endif
 
-        fullscreen = viewheight == 200;
+        fullscreen = viewheight == SCREENHEIGHT;
         break;
 
     case GS_INTERMISSION:
@@ -374,9 +375,9 @@ void D_Display(void)
 #else
         && !automapactive
 #endif
-        
+
 #endif
-        && scaledviewwidth != 320)
+        && scaledviewwidth != SCREENWIDTH)
     {
         if (menuactive || menuactivestate || !viewactivestate)
             borderdrawcount = 3;
@@ -641,30 +642,7 @@ void D_PageTicker(void)
 //
 void D_PageDrawer(void)
 {
-#if defined(MODE_T4050)
-    V_DrawPatchDirectText4050(0, 0, W_CacheLumpName(pagename, PU_CACHE));
-#endif
-#if defined(MODE_T4025)
-    V_DrawPatchDirectText4025(0, 0, W_CacheLumpName(pagename, PU_CACHE));
-#endif
-#if defined(MODE_T8025)
-    V_DrawPatchDirectText8025(0, 0, W_CacheLumpName(pagename, PU_CACHE));
-#endif
-#if defined(MODE_MDA)
-    V_DrawPatchDirectTextMDA(0, 0, W_CacheLumpName(pagename, PU_CACHE));
-#endif
-#if defined(MODE_T8043)
-    V_DrawPatchDirectText8043(0, 0, W_CacheLumpName(pagename, PU_CACHE));
-#endif
-#if defined(MODE_T8050)
-    V_DrawPatchDirectText8050(0, 0, W_CacheLumpName(pagename, PU_CACHE));
-#endif
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-    V_DrawPatchScreen0(0, 0, W_CacheLumpName(pagename, PU_CACHE));
-#endif
-#if defined(USE_BACKBUFFER)
-    V_DrawPatchDirect(0, 0, W_CacheLumpName(pagename, PU_CACHE));
-#endif
+    V_DrawPatchModeCentered(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 }
 
 //
@@ -1222,12 +1200,12 @@ char demofile[13];
 int D_FileGetFirstInteger(const char* filename) {
     char buffer[1024];
     int firstInteger = -1;
-    
+
     FILE* file = fopen(filename, "r");
-    
+
     if (file == NULL)
         return -1;
-    
+
     if (fgets(buffer, sizeof(buffer), file) != NULL) {
         if (sscanf(buffer, "%u", &firstInteger) != 1) {
             firstInteger = -1;
@@ -1384,7 +1362,7 @@ void D_DoomMain(void)
         }
         if(!strcmp(myargv[p + 1], "single"))
             benchmark_type = 0;
-    }   
+    }
 
     disableDemo = M_CheckParm("-disabledemo");
 
@@ -1457,6 +1435,10 @@ void D_DoomMain(void)
 
     printf("\nFastDoom version " FDOOMVERSION "\n");
     printf("CPU class detected: %d\n", I_GetCPUModel());
+#if DEBUG_ENABLED == 1
+    printf("I_DebugInit: Debugging enabled, loading symbols and initializing channels...\n");
+    I_DebugInit();
+#endif
     printf("P_Init: Checking cmd-line parameters...\n");
 
     p = M_CheckParm("-file");
@@ -1530,7 +1512,7 @@ void D_DoomMain(void)
         screenblocks = forceScreenSize;
     }
 
-    
+
 
     M_CheckParmOptionalValue("-flatSpan", &visplaneRender, VISPLANES_FLAT);
     M_CheckParmOptionalValue("-flatterSpan", &visplaneRender, VISPLANES_FLATTER);

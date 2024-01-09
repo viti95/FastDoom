@@ -191,7 +191,7 @@ void M_ChooseSkill(int choice);
 void M_LoadGame(int choice);
 void M_SaveGame(int choice);
 void M_Options(int choice);
-void M_EndGame(int choice); 
+void M_EndGame(int choice);
 void M_QuitDOOM(int choice);
 
 void M_ChangeMessages(int choice);
@@ -567,7 +567,7 @@ void M_DrawLoad(void)
     V_WriteTextDirect(18, 7, "LOAD GAME");
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-    V_DrawPatchDirect(72, 28, W_CacheLumpName("M_LOADG", PU_CACHE));
+    V_DrawPatchDirectCentered(72, 28, W_CacheLumpName("M_LOADG", PU_CACHE));
 #endif
 
     for (i = 0; i < load_end; i++)
@@ -608,15 +608,15 @@ void M_DrawSaveLoadBorder(int x, int y)
 {
     int i;
 
-    V_DrawPatchDirect(x - 8, y + 7, W_CacheLumpName("M_LSLEFT", PU_CACHE));
+    V_DrawPatchDirectCentered(x - 8, y + 7, W_CacheLumpName("M_LSLEFT", PU_CACHE));
 
     for (i = 0; i < 24; i++)
     {
-        V_DrawPatchDirect(x, y + 7, W_CacheLumpName("M_LSCNTR", PU_CACHE));
+        V_DrawPatchDirectCentered(x, y + 7, W_CacheLumpName("M_LSCNTR", PU_CACHE));
         x += 8;
     }
 
-    V_DrawPatchDirect(x, y + 7, W_CacheLumpName("M_LSRGHT", PU_CACHE));
+    V_DrawPatchDirectCentered(x, y + 7, W_CacheLumpName("M_LSRGHT", PU_CACHE));
 }
 #endif
 
@@ -684,7 +684,7 @@ void M_DrawSave(void)
     V_WriteTextDirect(18, 7, "SAVE GAME");
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-    V_DrawPatchDirect(72, 28, W_CacheLumpName("M_SAVEG", PU_CACHE));
+    V_DrawPatchDirectCentered(72, 28, W_CacheLumpName("M_SAVEG", PU_CACHE));
 #endif
 
     for (i = 0; i < load_end; i++)
@@ -873,7 +873,7 @@ void M_DrawSound(void)
     V_WriteTextDirect(40, 32, monoSound ? "ON" : "OFF");
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-    V_DrawPatchDirect(60, 38, W_CacheLumpName("M_SVOL", PU_CACHE));
+    V_DrawPatchDirectCentered(60, 38, W_CacheLumpName("M_SVOL", PU_CACHE));
 
     M_DrawThermo(SoundDef.x, SoundDef.y + LINEHEIGHT * (sfx_vol + 1), 16, sfxVolume);
     M_DrawThermo(SoundDef.x, SoundDef.y + LINEHEIGHT * (music_vol + 1), 16, musicVolume);
@@ -1101,7 +1101,7 @@ void M_BenchmarkRunDemo(void)
 
         // Alloc memory for frametimes
         frametime = (unsigned int *)Z_MallocUnowned(benchmark_total_tics * sizeof(unsigned int), PU_STATIC);
-            
+
         for (i = 0; i < benchmark_total_tics; i++)
         {
             frametime[i] = 0;
@@ -1193,7 +1193,7 @@ void M_DrawMainMenu(void)
     V_WriteTextDirect(23, 10, "DOOM");
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-    V_DrawPatchDirect(94, 2, W_CacheLumpName("M_DOOM", PU_CACHE));
+    V_DrawPatchDirectCentered(94, 2, W_CacheLumpName("M_DOOM", PU_CACHE));
 #endif
 }
 
@@ -1215,8 +1215,8 @@ void M_DrawNewGame(void)
     V_WriteTextDirect(13, 9, "Choose skill level:");
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-    V_DrawPatchDirect(96, 14, W_CacheLumpName("M_NEWG", PU_CACHE));
-    V_DrawPatchDirect(54, 38, W_CacheLumpName("M_SKILL", PU_CACHE));
+    V_DrawPatchDirectCentered(96, 14, W_CacheLumpName("M_NEWG", PU_CACHE));
+    V_DrawPatchDirectCentered(54, 38, W_CacheLumpName("M_SKILL", PU_CACHE));
 #endif
 }
 
@@ -1245,7 +1245,7 @@ void M_DrawEpisode(void)
     V_WriteTextDirect(27, 9, "WHICH EPISODE?");
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-    V_DrawPatchDirect(54, 38, W_CacheLumpName("M_EPISOD", PU_CACHE));
+    V_DrawPatchDirectCentered(54, 38, W_CacheLumpName("M_EPISOD", PU_CACHE));
 #endif
 }
 
@@ -1311,8 +1311,8 @@ void M_DrawOptions(void)
     V_WriteTextDirect(15, 38, "Benchmark");
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-    V_DrawPatchDirect(108, 2, W_CacheLumpName("M_OPTTTL", PU_CACHE));
-    V_DrawPatchDirect(OptionsDef.x + 120, OptionsDef.y + LINEHEIGHT * messages, W_CacheLumpName((char *)msgNames[showMessages], PU_CACHE));
+    V_DrawPatchDirectCentered(108, 2, W_CacheLumpName("M_OPTTTL", PU_CACHE));
+    V_DrawPatchDirectCentered(OptionsDef.x + 120, OptionsDef.y + LINEHEIGHT * messages, W_CacheLumpName((char *)msgNames[showMessages], PU_CACHE));
     M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (mousesens + 1), 10, mouseSensitivity);
     M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (scrnsize + 1), 10, screenSize);
     M_WriteText(OptionsDef.x + 1, OptionsDef.y + LINEHEIGHT * benchmark_option + 4, "BENCHMARK");
@@ -1321,7 +1321,7 @@ void M_DrawOptions(void)
 
 void M_DrawDisplay(void)
 {
-    // V_DrawPatchDirect(54, 15, 0, W_CacheLumpName("M_DISOPT", PU_CACHE));
+    // V_DrawPatchDirectCentered(54, 15, 0, W_CacheLumpName("M_DISOPT", PU_CACHE));
 
 #if defined(MODE_T4025) || defined(MODE_T4050)
     V_WriteTextDirect(6, 1, "VSync:");
@@ -1690,6 +1690,9 @@ void M_DrawDisplay(void)
     M_WriteText(58, 156, "CPU RENDERER:");
     switch (selectedCPU)
     {
+    case AUTO_CPU:
+        M_WriteText(214, 156, "AUTODETECT");
+        break;
     case INTEL_386SX:
         M_WriteText(214, 156, "INTEL 386SX");
         break;
@@ -2137,18 +2140,17 @@ void M_DrawThermo(int x, int y, int thermWidth, int thermDot)
 {
     int xx;
     int i;
-
     xx = x;
-    V_DrawPatchDirect(xx, y, W_CacheLumpName("M_THERML", PU_CACHE));
+    V_DrawPatchDirectCentered(xx, y, W_CacheLumpName("M_THERML", PU_CACHE));
     xx += 8;
     for (i = 0; i < thermWidth; i++)
     {
-        V_DrawPatchDirect(xx, y, W_CacheLumpName("M_THERMM", PU_CACHE));
+        V_DrawPatchDirectCentered(xx, y, W_CacheLumpName("M_THERMM", PU_CACHE));
         xx += 8;
     }
-    V_DrawPatchDirect(xx, y, W_CacheLumpName("M_THERMR", PU_CACHE));
+    V_DrawPatchDirectCentered(xx, y, W_CacheLumpName("M_THERMR", PU_CACHE));
 
-    V_DrawPatchDirect((x + 8) + thermDot * 8, y, W_CacheLumpName("M_THERMO", PU_CACHE));
+    V_DrawPatchDirectCentered((x + 8) + thermDot * 8, y, W_CacheLumpName("M_THERMO", PU_CACHE));
 }
 #endif
 
@@ -2271,7 +2273,7 @@ void M_WriteText(int x, int y, char *string)
         w = hu_font[c]->width;
         if (cx + w > SCREENWIDTH)
             break;
-        V_DrawPatchDirect(cx, cy, hu_font[c]);
+        V_DrawPatchDirectCentered(cx, cy, hu_font[c]);
         cx += w;
     }
 }
@@ -2717,7 +2719,7 @@ void M_Drawer(void)
             V_WriteTextDirect(x / 4, y / 4, currentMenu->menuitems[i].text);
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-            V_DrawPatchDirect(x, y, W_CacheLumpName(currentMenu->menuitems[i].name, PU_CACHE));
+            V_DrawPatchDirectCentered(x,  y, W_CacheLumpName(currentMenu->menuitems[i].name, PU_CACHE));
 #endif
         }
 
@@ -2735,7 +2737,7 @@ void M_Drawer(void)
     V_WriteCharDirect(currentMenu->x / 4 - 3, currentMenu->y / 4 + itemOn * 4, whichSkull + 1);
 #endif
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-    V_DrawPatchDirect(x + SKULLXOFF, currentMenu->y - 5 + itemOn * LINEHEIGHT, W_CacheLumpName(skullName[whichSkull], PU_CACHE));
+    V_DrawPatchDirectCentered(x + SKULLXOFF, currentMenu->y - 5 + itemOn * LINEHEIGHT, W_CacheLumpName(skullName[whichSkull], PU_CACHE));
 #endif
 }
 

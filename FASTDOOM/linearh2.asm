@@ -122,13 +122,13 @@ CODE_SYM_DEF R_DrawFuzzColumnBackbuffer
 %rep SCREENHEIGHT
   SCALELABEL LINE:
   mov		ebp,[edx+ecx*4]
-	mov   al,[ebp+edi-(LINE-1)*320]
+	mov   al,[ebp+edi-(LINE-1)*SCREENWIDTH]
   dec   ecx
 	mov		al,[eax]
   JMPTESTFUZZPOSDEFINE LINE
   mov   ecx,ebx
   TESTFUZZPOSDEFINE LINE:
-  mov		[edi-(LINE-1)*320],al
+  mov		[edi-(LINE-1)*SCREENWIDTH],al
   %assign LINE LINE-1
 %endrep
 

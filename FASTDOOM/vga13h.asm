@@ -28,7 +28,7 @@ BEGIN_DATA_SECTION
 
 align 4
 
-_vrambuffer: times 64000 db 0
+_vrambuffer: times 320 * 200 db 0
 
 BEGIN_CODE_SECTION
 

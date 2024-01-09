@@ -55,26 +55,102 @@ typedef enum
   none
 } gamemission_t;
 
-//
-// For resize of screen, at start of game.
-// It will not work dynamically, see visplanes.
-//
-#define BASE_WIDTH 320
-
-// It is educational but futile to change this
-//  scaling e.g. to 2. Drawing of status bar,
-//  menues etc. is tied to the scale implied
-//  by the graphics.
-#define SCREEN_MUL 1
-#define INV_ASPECT_RATIO 0.625 // 0.75, ideally
 
 // Defines suck. C sucks.
 // C++ might sucks for OOP, but it sure is a better C.
 // So there.
+// If we don't override the screen resolution, use the ubiqitous 320x200
+#if !defined(SCREENWIDTH) || !defined(SCREENHEIGHT)
 #define SCREENWIDTH 320
 //SCREEN_MUL*BASE_WIDTH //320
 #define SCREENHEIGHT 200
-//(int)(SCREEN_MUL*BASE_WIDTH*INV_ASPECT_RATIO) //200
+#endif // !defined(SCREENWIDTH) || !defined(SCREENHEIGHT)
+
+#if !defined(REFRESHRATE)
+// 0 means do not override the refresh rate
+// (use the default for the screen mode)
+// Only VESA modes are affected by this setting
+#define REFRESHRATE 0
+#endif // !defined(REFRESH)
+
+#if SCREENWIDTH == 320 && (SCREENHEIGHT == 200 || SCREENHEIGHT == 240)
+#define MulScreenWidth(x) Mul320(x)
+#define MulScreenWidthHalf(x) Mul160(x)
+#define MulScreenWidthQuarter(x) Mul80(x)
+#define MulScreenWidthEighth(x) Mul40(x)
+#if SCREENHEIGHT == 200
+#define ASPECTRATIO16x10
+#elif SCREENHEIGHT == 240
+#define ASPECTRATIO4x3
+#endif
+
+#elif SCREENWIDTH == 512 && SCREENHEIGHT == 384
+#define MulScreenWidth(x) Mul512(x)
+#define MulScreenWidthHalf(x) Mul256(x)
+#define MulScreenWidthQuarter(x) Mul128(x)
+#define MulScreenWidthEighth(x) Mul64(x)
+#define ASPECTRATIO4x3
+#define HI_RES
+#define PIXEL_SCALING 1
+
+#elif SCREENWIDTH == 640 && (SCREENHEIGHT == 400 || SCREENHEIGHT == 480)
+#define MulScreenWidth(x) Mul640(x)
+#define MulScreenWidthHalf(x) Mul320(x)
+#define MulScreenWidthQuarter(x) Mul160(x)
+#define MulScreenWidthEighth(x) Mul80(x)
+#define HI_RES
+#if SCREENHEIGHT == 400
+#define ASPECTRATIO16x10
+#elif SCREENHEIGHT == 480
+#define ASPECTRATIO4x3
+#endif
+
+#elif SCREENWIDTH == 800 && SCREENHEIGHT == 600
+#define MulScreenWidth(x) Mul800(x)
+#define MulScreenWidthHalf(x) Mul400(x)
+#define MulScreenWidthQuarter(x) Mul200(x)
+#define MulScreenWidthEighth(x) Mul100(x)
+#define ASPECTRATIO4x3
+#define HI_RES
+
+#elif SCREENWIDTH == 1024 && SCREENHEIGHT == 768
+#define MulScreenWidth(x) Mul1024(x)
+#define MulScreenWidthHalf(x) Mul512(x)
+#define MulScreenWidthQuarter(x) Mul256(x)
+#define MulScreenWidthEighth(x) Mul128(x)
+#define ASPECTRATIO4x3
+#define HI_RES
+
+#elif SCREENWIDTH == 1280 && SCREENHEIGHT == 1024
+#define MulScreenWidth(x) Mul1280(x)
+#define MulScreenWidthHalf(x) Mul640(x)
+#define MulScreenWidthQuarter(x) Mul320(x)
+#define MulScreenWidthEighth(x) Mul160(x)
+#define ASPECTRATIO5x4
+#define HI_RES
+#else
+#error "Defined Screen Resolution is not supported"
+#endif
+
+#ifdef HI_RES
+// By default we scale the screen by 2x to make it look better
+#ifndef PIXEL_SCALING
+#define PIXEL_SCALING 2
+#endif
+#else
+#define PIXEL_SCALING 1
+#endif
+#define SCALED_SCREENWIDTH (SCREENWIDTH / PIXEL_SCALING)
+#define SCALED_SCREENHEIGHT (SCREENHEIGHT / PIXEL_SCALING)
+#define SBARHEIGHT (32 * PIXEL_SCALING)
+#define SBARWIDTH (320 * PIXEL_SCALING)
+// Fcor screen resolution that don't scale perfectly, we need a centering
+// offset to make sure the menu/ui/etc. is centered on the screen.
+// Evertything is based on 320x200 which is the native positioning of
+// everything.
+// Note that this gets reduced to a constant at compile time
+#define CENTERING_OFFSET_X ((SCALED_SCREENWIDTH-320) / 2)
+#define CENTERING_OFFSET_Y ((SCALED_SCREENHEIGHT-200) / 2)
 
 // The maximum number of players, multiplayer/networking.
 #define MAXPLAYERS 4
@@ -256,7 +332,8 @@ typedef enum
 
 typedef enum
 {
-    INTEL_386SX,
+    AUTO_CPU = -1,
+    INTEL_386SX = 0,
     INTEL_386DX,
     CYRIX_386DLC,
     CYRIX_486,

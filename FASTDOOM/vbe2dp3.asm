@@ -61,12 +61,12 @@ CODE_SYM_DEF R_DrawFuzzColumnFlatPotatoVBE2
 
   mov  ebp,[_dc_yh]
   mov  eax,[_dc_yl]
-  lea  edi,[ebp+ebp*4]
+  MulScreenWidthStart edi, ebp
   sub  ebp,eax ; ebp = pixel count
   js   near .done
 
   mov  eax,[_dc_x]
-  shl  edi,6
+  MulScreenWidthEnd edi
   xor  ecx,ecx
   lea  edi,[edi+eax*4]
   add  edi,[_destview]
@@ -96,25 +96,25 @@ CODE_SYM_DEF R_DrawFuzzColumnFlatPotatoVBE2
 %rep SCREENHEIGHT-1
   SCALELABEL LINE:
 
-	mov   al,[edi-(LINE-1)*320]
+	mov   al,[edi-(LINE-1)*SCREENWIDTH]
 	mov		cl,[eax]
   mov   ch,cl
-  mov		[edi-(LINE-1)*320],cx
-  mov		[edi-(LINE-1)*320+2],cx
+  mov		[edi-(LINE-1)*SCREENWIDTH],cx
+  mov		[edi-(LINE-1)*SCREENWIDTH+2],cx
 
   %assign LINE LINE-1
 %endrep
 
 vscale1:
-  mov   al,[edi-(LINE-1)*320]
+  mov   al,[edi-(LINE-1)*SCREENWIDTH]
 	pop	ebp
 	mov		cl,[eax]
   pop	esi
   mov   ch,cl
   pop	edx
-  mov		[edi-(LINE-1)*320],cx
-  mov		[edi-(LINE-1)*320+2],cx
-  
+  mov		[edi-(LINE-1)*SCREENWIDTH],cx
+  mov		[edi-(LINE-1)*SCREENWIDTH+2],cx
+
 vscale0:
 	pop	ecx
 	pop	ebx

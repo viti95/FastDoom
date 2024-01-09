@@ -61,12 +61,12 @@ CODE_SYM_DEF R_DrawColumnVBE2
 
   mov  ebp,[_dc_yh]
   mov  eax,[_dc_yl]
-  lea  edi,[ebp+ebp*4]
+  MulScreenWidthStart edi, ebp
   sub  ebp,eax ; ebp = pixel count
   js   near .done
 
   mov  ebx,[_dc_x]
-  shl  edi,6
+  MulScreenWidthEnd edi
   mov  ecx,[_dc_iscale]
   add  edi,ebx
   add  edi,[_destview]
@@ -174,15 +174,15 @@ CODE_SYM_DEF R_DrawSpanVBE2
 
   mov  ebp,[_ds_y]
   mov  eax,[_ds_colormap]
-  lea  edi,[ebp+ebp*4]
+  MulScreenWidthStart edi, ebp
   shld  ebx,ecx,22      ; shift y units in
-  shl  edi,6
+  MulScreenWidthEnd edi
   mov   ebp,0x0FFF  ; used to mask off slop high bits from position
   add  edi,[_destview]
   shld  ebx,ecx,6       ; shift x units in
   and   ebx,ebp         ; mask off slop bits
   add   ecx,edx
-  
+
   ; feed the pipeline and jump in
   call  [callpoint]
 
@@ -211,7 +211,7 @@ CODE_SYM_DEF R_DrawSpanVBE2
   %rep 4
     MAPLABEL LINE:
       %assign LINE LINE+1
-      %if LINE = 320
+      %if LINE = SCREENWIDTH/4
         mov   al,[esi+ebx]           ; get source pixel
         mov   al,[eax]               ; translate color
         mov   [edi+PLANE+PCOL*4],al  ; write pixel
@@ -229,7 +229,7 @@ CODE_SYM_DEF R_DrawSpanVBE2
 %assign PCOL PCOL+1
 %endrep
 
-hmap320:
+MAPLABEL LINE:
   ret
 
 %endif
