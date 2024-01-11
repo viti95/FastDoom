@@ -17,6 +17,7 @@
 #include "ns_adbfx.h"
 #include "ns_tandy.h"
 #include "options.h"
+#include "doomstat.h"
 
 #define TRUE (1 == 1)
 #define FALSE (!TRUE)
@@ -46,7 +47,7 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
     case SoundBlaster:
     case Awe32:
         DeviceStatus = BLASTER_Init();
-        if (DeviceStatus != BLASTER_Ok)
+        if (DeviceStatus != BLASTER_Ok && !ignoreSoundChecks)
         {
             status = FX_Error;
             break;
@@ -59,7 +60,7 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
     case ProAudioSpectrum:
     case SoundMan16:
         DeviceStatus = PAS_Init();
-        if (DeviceStatus != PAS_Ok)
+        if (DeviceStatus != PAS_Ok && !ignoreSoundChecks)
         {
             status = FX_Error;
             break;
@@ -80,14 +81,14 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
         device->MaxVoices = 9;
         DeviceStatus = SOUNDSCAPE_GetCardInfo(&device->MaxSampleBits,
                                               &device->MaxChannels);
-        if (DeviceStatus != SOUNDSCAPE_Ok)
+        if (DeviceStatus != SOUNDSCAPE_Ok && !ignoreSoundChecks)
         {
             status = FX_Error;
         }
         break;
 
     case UltraSound:
-        if (GUSWAVE_Init() != GUSWAVE_Ok)
+        if (GUSWAVE_Init() != GUSWAVE_Ok && !ignoreSoundChecks)
         {
             status = FX_Error;
             break;
@@ -100,7 +101,7 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
 
     case SoundSource:
         DeviceStatus = SS_Init(SoundCard, port);
-        if (DeviceStatus != SS_Ok)
+        if (DeviceStatus != SS_Ok && !ignoreSoundChecks)
         {
             status = FX_Error;
             break;
@@ -112,7 +113,7 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
         break;
     case PC1bit:
         DeviceStatus = PCSpeaker_Init(SoundCard);
-        if (DeviceStatus != PCSpeaker_Ok)
+        if (DeviceStatus != PCSpeaker_Ok && !ignoreSoundChecks)
         {
             status = FX_Error;
             break;
@@ -123,7 +124,7 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
         break;
     case PCPWM:
         DeviceStatus = PCSpeaker_PWM_Init(SoundCard);
-        if (DeviceStatus != PCSpeaker_PWM_Ok)
+        if (DeviceStatus != PCSpeaker_PWM_Ok && !ignoreSoundChecks)
         {
             status = FX_Error;
             break;
@@ -134,7 +135,7 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
         break;
     case CMS:
         DeviceStatus = CMS_Init(SoundCard, port);
-        if (DeviceStatus != CMS_Ok)
+        if (DeviceStatus != CMS_Ok && !ignoreSoundChecks)
         {
             status = FX_Error;
             break;
@@ -144,7 +145,7 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
         device->MaxChannels = 2;
     case LPTDAC:
         DeviceStatus = LPT_Init(SoundCard, port);
-        if (DeviceStatus != LPT_Ok)
+        if (DeviceStatus != LPT_Ok && !ignoreSoundChecks)
         {
             status = FX_Error;
             break;
@@ -155,7 +156,7 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
         break;
     case SoundBlasterDirect:
         DeviceStatus = SBDM_Init(SoundCard);
-        if (DeviceStatus != SBDM_Ok)
+        if (DeviceStatus != SBDM_Ok && !ignoreSoundChecks)
         {
             status = FX_Error;
             break;
@@ -168,7 +169,7 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
     case OPL2LPT:
     case OPL3LPT:
         DeviceStatus = ADBFX_Init(SoundCard, port);
-        if (DeviceStatus != ADBFX_Ok)
+        if (DeviceStatus != ADBFX_Ok && !ignoreSoundChecks)
         {
             status = FX_Error;
             break;
@@ -179,7 +180,7 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
         break;
     case Tandy3Voice:
         DeviceStatus = TANDY_Init(SoundCard);
-        if (DeviceStatus != TANDY_Ok)
+        if (DeviceStatus != TANDY_Ok && !ignoreSoundChecks)
         {
             status = FX_Error;
             break;
@@ -249,7 +250,7 @@ int FX_SetupSoundBlaster(fx_blaster_config blaster)
     BLASTER_SetCardSettings(Blaster);
 
     DeviceStatus = BLASTER_Init();
-    if (DeviceStatus != BLASTER_Ok)
+    if (DeviceStatus != BLASTER_Ok && !ignoreSoundChecks)
     {
         return (FX_Error);
     }
@@ -302,7 +303,7 @@ int FX_Init(
     case OPL3LPT:
     case SoundBlasterDirect:
         devicestatus = MV_Init(SoundCard, FX_MixRate, numvoices, numchannels, samplebits);
-        if (devicestatus != MV_Ok)
+        if (devicestatus != MV_Ok && !ignoreSoundChecks)
         {
             status = FX_Error;
         }

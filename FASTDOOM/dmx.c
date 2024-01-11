@@ -233,11 +233,6 @@ void SB_Detect(void)
     FX_GetBlasterSettings(&dmx_blaster);
 }
 
-int AL_Detect(void)
-{
-    return !AL_DetectFM();
-}
-
 void AL_SetCard(void *data)
 {
     unsigned char *cdata;

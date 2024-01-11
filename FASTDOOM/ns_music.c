@@ -16,6 +16,7 @@
 #include "ns_llm.h"
 #include "ns_user.h"
 #include "options.h"
+#include "doomstat.h"
 
 #define TRUE (1 == 1)
 #define FALSE (!TRUE)
@@ -307,7 +308,7 @@ int MUSIC_InitFM(int card, midifuncs *Funcs, int Address)
 
     status = MIDI_Ok;
 
-    if (card != OPL2LPT && card != OPL3LPT)
+    if (card != OPL2LPT && card != OPL3LPT && !ignoreSoundChecks)
     {
         if (!AL_DetectFM())
         {

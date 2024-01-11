@@ -182,16 +182,9 @@ void I_sndArbitrateCards(void)
 
     if (adlib)
     {
-        if (AL_Detect())
-        {
-            printf("Adlib isn't responding.\n");
-        }
-        else
-        {
-            void *genmidi = W_CacheLumpName("GENMIDI", PU_STATIC);
-            AL_SetCard(genmidi);
-            Z_Free(genmidi);
-        }
+        void *genmidi = W_CacheLumpName("GENMIDI", PU_STATIC);
+        AL_SetCard(genmidi);
+        Z_Free(genmidi);
     }
 
     if (oplxlptmus)

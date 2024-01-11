@@ -18,7 +18,6 @@
 extern int dmx_mus_port;
 extern int dmx_snd_port;
 
-int AL_DetectFM(void);
 int MPU_Init(int addr);
 int GUS_Init(void);
 void GUS_Shutdown(void);
@@ -33,7 +32,6 @@ int SFX_Playing(int handle);
 void SFX_SetOrigin(int handle, int sep, int vol);
 void GF1_SetMap(void *data, int len);
 void SB_Detect(void);
-int AL_Detect(void);
 void AL_SetCard(void *data);
 int MPU_Detect(int *port);
 void SetSNDPort(int port);

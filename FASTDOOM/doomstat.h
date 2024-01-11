@@ -89,6 +89,8 @@ extern boolean VGADACfix;
 extern boolean videoPageFix;
 #endif
 
+extern boolean ignoreSoundChecks;
+
 extern boolean csv;
 extern boolean disableDemo;
 

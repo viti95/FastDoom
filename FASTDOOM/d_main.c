@@ -142,6 +142,8 @@ boolean VGADACfix = false;
 boolean videoPageFix;
 #endif
 
+boolean ignoreSoundChecks;
+
 boolean csv;
 boolean disableDemo;
 
@@ -1332,6 +1334,8 @@ void D_DoomMain(void)
 #if defined(TEXT_MODE)
     videoPageFix = M_CheckParm("-pagefix");
 #endif
+
+    ignoreSoundChecks = M_CheckParm("-forceSound");
 
     unlimitedRAM = M_CheckParm("-ram");
 
