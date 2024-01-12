@@ -8,6 +8,7 @@ mkdir PKG
 
 cp *.TCF PKG/
 cp FDOOM*.EXE PKG/
+cp FDM*.EXE PKG/
 cp WAD/*.WAD PKG/
 cp README.txt PKG/
 cp synthgs.sbk PKG/
