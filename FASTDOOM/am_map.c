@@ -1258,32 +1258,32 @@ void AM_Drawer(void)
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 		if (transparentmap)
 		{
-			SetDWords(screen0, TRANSPARENTPIXELDWORD, Mul80(automapheight)); // Clear automap frame buffer
+			SetDWords(screen0, TRANSPARENTPIXELDWORD, MulScreenWidthQuarter(automapheight)); // Clear automap frame buffer
 		}
 		else
 		{
-			SetDWords(screen0, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
+			SetDWords(screen0, BACKGROUND, MulScreenWidthQuarter(automapheight)); // Clear automap frame buffer
 		}
 #endif
 #if defined(USE_BACKBUFFER)
 		if (!transparentmap)
-			SetDWords(backbuffer, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
+			SetDWords(backbuffer, BACKGROUND, MulScreenWidthQuarter(automapheight)); // Clear automap frame buffer
 #endif
 	}
 #else
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 	if (transparentmap)
 	{
-		SetDWords(screen0, TRANSPARENTPIXELDWORD, Mul80(automapheight)); // Clear automap frame buffer
+		SetDWords(screen0, TRANSPARENTPIXELDWORD, MulScreenWidthQuarter(automapheight)); // Clear automap frame buffer
 	}
 	else
 	{
-		SetDWords(screen0, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
+		SetDWords(screen0, BACKGROUND, MulScreenWidthQuarter(automapheight)); // Clear automap frame buffer
 	}
 #endif
 #if defined(USE_BACKBUFFER)
 	if (!transparentmap)
-		SetDWords(backbuffer, BACKGROUND, Mul80(automapheight)); // Clear automap frame buffer
+		SetDWords(backbuffer, BACKGROUND, MulScreenWidthQuarter(automapheight)); // Clear automap frame buffer
 #endif
 #endif
 
