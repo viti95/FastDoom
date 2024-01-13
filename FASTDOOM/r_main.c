@@ -892,7 +892,7 @@ void R_ExecuteSetViewSize(void)
         viewheightshift = viewheight << FRACBITS;
         viewheightopt = (viewheight << FRACBITS) - viewheight;
         viewheight32 = viewheight << 16 | viewheight;
-        automapheight = SCREENHEIGHT - (32 * PIXEL_SCALING);
+        automapheight = SCREENHEIGHT - SBARHEIGHT;
     }
 #endif
 
