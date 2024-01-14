@@ -202,6 +202,15 @@ void VBE_SetDisplayStart_Y(short y)
   RMIRQ10();
 }
 
+void VBE_SetBank(short bank)
+{
+  PrepareRegisters();
+  RMI.EAX = 0x00004f05;
+  RMI.EBX = 0;
+  RMI.EDX = bank;
+  RMIRQ10();
+}
+
 void setbiosmode(unsigned short c);
 #pragma aux setbiosmode = "int 0x10" parm[ax] modify[eax ebx ecx edx esi edi];
 
@@ -321,93 +330,117 @@ void VBE2_InitGraphics(void)
   // Get VBE modes
   for (mode = 0; vbeinfo.VideoModePtr[mode] != 0xffff; mode++)
   {
-      VBE_Mode_Information(vbeinfo.VideoModePtr[mode], &vbemode);
-      if (vbemode.XResolution == SCREENWIDTH && vbemode.YResolution == SCREENHEIGHT && vbemode.BitsPerPixel == 8)
-      {
-          vesavideomode = vbeinfo.VideoModePtr[mode];
-          vesalinear = VBE_IsModeLinear(vesavideomode);
-      }
+    VBE_Mode_Information(vbeinfo.VideoModePtr[mode], &vbemode);
+    if (vbemode.XResolution == SCREENWIDTH && vbemode.YResolution == SCREENHEIGHT && vbemode.BitsPerPixel == 8)
+    {
+      vesavideomode = vbeinfo.VideoModePtr[mode];
+      vesalinear = VBE_IsModeLinear(vesavideomode);
+    }
   }
 
   // If a VESA compatible mode is found, use it!
   if (vesavideomode != 0xFFFF)
   {
-      if (REFRESHRATE != 0)
+    if (REFRESHRATE != 0)
+    {
+      if (vbeinfo.vbeVersion.hi >= 3)
       {
-          if (vbeinfo.vbeVersion.hi >= 3)
-          {
-            I_Error("VBE 3.0 available, but custom refresh rates not supported yet!");
-          }
-          else
-          {
-            I_Error("VBE 3.0 required for custom refresh rates! Current version: %i.%i", vbeinfo.vbeVersion.hi, vbeinfo.vbeVersion.lo);
-          }
-      }
-#if defined(MODE_VBE2_DIRECT)
-      // CHeck for available offscreen memory for double buffering
-      if (vesamemory < SCREENWIDTH * SCREENHEIGHT * 3 / 1024)
-      {
-          I_Error("Not enough VRAM for triple buffering! (%i KB required, have %i KB)", SCREENWIDTH * SCREENHEIGHT * 3 / 1024, vesamemory);
-      }
-#endif
-      VBE_SetMode(vesavideomode, vesalinear, 1);
-
-      if (vesalinear == 1)
-      {
-          pcscreen = destscreen = (void*)VBE_GetVideoPtr(vesavideomode);
+        I_Error("VBE 3.0 available, but custom refresh rates not supported yet!");
       }
       else
       {
-          pcscreen = destscreen = (void*)0xA0000;
+        I_Error("VBE 3.0 required for custom refresh rates! Current version: %i.%i", vbeinfo.vbeVersion.hi, vbeinfo.vbeVersion.lo);
       }
+    }
+#if defined(MODE_VBE2_DIRECT)
+    // CHeck for available offscreen memory for double buffering
+    if (vesamemory < SCREENWIDTH * SCREENHEIGHT * 3 / 1024)
+    {
+      I_Error("Not enough VRAM for triple buffering! (%i KB required, have %i KB)", SCREENWIDTH * SCREENHEIGHT * 3 / 1024, vesamemory);
+    }
+#endif
+    VBE_SetMode(vesavideomode, vesalinear, 1);
 
-      // Force 6 bits resolution per color
-      VBE_SetDACWidth(6);
+    if (vesalinear == 1)
+    {
+      pcscreen = destscreen = (void *)VBE_GetVideoPtr(vesavideomode);
+    }
+    else
+    {
+      pcscreen = destscreen = (void *)0xA0000;
+    }
+
+    // Force 6 bits resolution per color
+    VBE_SetDACWidth(6);
   }
   else
   {
-      I_Error("Compatible VESA 2.0 video mode not found! (%ix%i 8bpp required)", SCREENWIDTH, SCREENHEIGHT);
+    I_Error("Compatible VESA 2.0 video mode not found! (%ix%i 8bpp required)", SCREENWIDTH, SCREENHEIGHT);
   }
 }
 
 #if defined(MODE_VBE2)
 void I_FinishUpdate(void)
 {
-  if (updatestate & I_FULLSCRN)
+  if (pcscreen == (void *)0xA0000)
   {
-    CopyDWords(backbuffer, pcscreen, SCREENHEIGHT * SCREENWIDTH / 4);
-    updatestate = I_NOUPDATE; // clear out all draw types
-  }
-  if (updatestate & I_FULLVIEW)
-  {
-    if (updatestate & I_MESSAGES && screenblocks > 7)
+    // Banked
+    int num_banks = (SCREENHEIGHT * SCREENWIDTH) / (64 * 1024); //64Kb blocks
+    int last_bank_size = (SCREENHEIGHT * SCREENWIDTH) - (num_banks * 64 * 1024);
+    int i = 0;
+
+    for (i = 0; i < num_banks; i++)
     {
-      int i;
-      for (i = 0; i < endscreen; i += SCREENWIDTH)
-      {
-        CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
-      }
-      updatestate &= ~(I_FULLVIEW | I_MESSAGES);
+      VBE_SetBank(i);
+      CopyDWords(backbuffer + ((64 * 1024) * i), pcscreen, 64 * 1024 / 4);
     }
-    else
+
+    if (last_bank_size > 0)
     {
-      int i;
-      for (i = startscreen; i < endscreen; i += SCREENWIDTH)
-      {
-        CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
-      }
-      updatestate &= ~I_FULLVIEW;
+      VBE_SetBank(num_banks);
+      CopyBytes(backbuffer + (num_banks * 64 * 1024), pcscreen, last_bank_size);
     }
   }
-  if (updatestate & I_STATBAR)
+  else
   {
-    CopyDWords(backbuffer + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), pcscreen + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), SCREENWIDTH * SBARHEIGHT / 4);
-    updatestate &= ~I_STATBAR;
-  }
-  if (updatestate & I_MESSAGES)
-  {
-    CopyDWords(backbuffer, pcscreen, (SCREENWIDTH * 28) / 4);
-    updatestate &= ~I_MESSAGES;
+    // Linear
+
+    if (updatestate & I_FULLSCRN)
+    {
+      CopyDWords(backbuffer, pcscreen, SCREENHEIGHT * SCREENWIDTH / 4);
+      updatestate = I_NOUPDATE; // clear out all draw types
+    }
+    if (updatestate & I_FULLVIEW)
+    {
+      if (updatestate & I_MESSAGES && screenblocks > 7)
+      {
+        int i;
+        for (i = 0; i < endscreen; i += SCREENWIDTH)
+        {
+          CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
+        }
+        updatestate &= ~(I_FULLVIEW | I_MESSAGES);
+      }
+      else
+      {
+        int i;
+        for (i = startscreen; i < endscreen; i += SCREENWIDTH)
+        {
+          CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
+        }
+        updatestate &= ~I_FULLVIEW;
+      }
+    }
+    if (updatestate & I_STATBAR)
+    {
+      CopyDWords(backbuffer + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), pcscreen + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), SCREENWIDTH * SBARHEIGHT / 4);
+      updatestate &= ~I_STATBAR;
+    }
+    if (updatestate & I_MESSAGES)
+    {
+      CopyDWords(backbuffer, pcscreen, (SCREENWIDTH * 28) / 4);
+      updatestate &= ~I_MESSAGES;
+    }
   }
 }
 #endif
@@ -417,7 +450,7 @@ short page = 0;
 
 void I_FinishUpdate(void)
 {
-   VBE_SetDisplayStart_Y(page);
+  VBE_SetDisplayStart_Y(page);
   if (page == SCREENHEIGHT * 2)
   {
     page = 0;
@@ -428,7 +461,6 @@ void I_FinishUpdate(void)
     page += SCREENHEIGHT;
     destscreen += SCREENWIDTH * SCREENHEIGHT;
   }
-
 }
 #endif
 
