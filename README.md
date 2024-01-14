@@ -73,6 +73,11 @@ This project exists thanks to all the people who contribute.
 <img src="https://contrib.rocks/image?repo=viti95/fastdoom" />
 </a>
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=viti95/FastDoom&type=Date)](https://star-history.com/#viti95/FastDoom&Date)
+
+
 ## Contributing
 
 Feel free to add issues or pull requests here on GitHub. I cannot guarantee that I will accept your changes, but feel free to fork the repo and make changes as you see fit. Thanks!
