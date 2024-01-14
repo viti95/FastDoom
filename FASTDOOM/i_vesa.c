@@ -372,6 +372,12 @@ void VBE2_InitGraphics(void)
 
     // Force 6 bits resolution per color
     VBE_SetDACWidth(6);
+
+    // Initialize VRAM
+  #if defined(MODE_VBE2_DIRECT)
+    VBE_SetDisplayStart_Y(0);
+    SetDWords(pcscreen, 0, SCREENWIDTH * SCREENHEIGHT * 3 / 4);
+  #endif
   }
   else
   {
