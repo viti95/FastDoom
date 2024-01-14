@@ -181,8 +181,6 @@ static int cheating = 0;
 static int grid = 0;
 int transparentmap = 0;
 
-static int leveljuststarted = 1; // kluge until AM_LevelInit() is called
-
 byte automapactive = 0;
 
 static mpoint_t m_paninc;	 // how far the window pans each tic (map coords)
@@ -392,8 +390,6 @@ void AM_initVariables(void)
 //
 void AM_LevelInit(void)
 {
-	leveljuststarted = 0;
-
 	AM_findMinMaxBoundaries();
 	scale_mtof = FixedDiv(min_scale_mtof, (int)(0.7 * FRACUNIT));
 	if (scale_mtof > MAXSCALEMTOF)
