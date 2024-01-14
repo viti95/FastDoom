@@ -398,7 +398,7 @@ void I_FinishUpdate(void)
 
 #if LAST_BANK_SIZE > 0
     VBE_SetBank(NUM_BANKS);
-    CopyBytes(backbuffer + (NUM_BANKS * 64 * 1024), (void *)0xA0000, LAST_BANK_SIZE);
+    CopyDWords(backbuffer + (NUM_BANKS * 64 * 1024), (void *)0xA0000, LAST_BANK_SIZE / 4);
 #endif
   }
   else
