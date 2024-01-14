@@ -47,7 +47,7 @@
 #define HU_TITLET (mapnamest[gamemap - 1])
 #define HU_TITLEHEIGHT 1
 #define HU_TITLEX 0
-#define HU_TITLEY (167 - hu_font[0]->height)
+#define HU_TITLEY (SCALED_SCREENHEIGHT - SCALED_SBARHEIGHT - hu_font[0]->height)
 
 #define HU_INPUTTOGGLE 't'
 #define HU_INPUTX HU_MSGX

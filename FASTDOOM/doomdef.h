@@ -144,6 +144,9 @@ typedef enum
 #define SCALED_SCREENHEIGHT (SCREENHEIGHT / PIXEL_SCALING)
 #define SBARHEIGHT (32 * PIXEL_SCALING)
 #define SBARWIDTH (320 * PIXEL_SCALING)
+#define SCALED_SBARHEIGHT (SBARHEIGHT / PIXEL_SCALING)
+#define SCALED_SBARWIDTH (SBARWIDTH / PIXEL_SCALING)
+
 // Fcor screen resolution that don't scale perfectly, we need a centering
 // offset to make sure the menu/ui/etc. is centered on the screen.
 // Evertything is based on 320x200 which is the native positioning of
