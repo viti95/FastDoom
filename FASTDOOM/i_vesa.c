@@ -379,27 +379,27 @@ void VBE2_InitGraphics(void)
   }
 }
 
+#define NUM_BANKS ((SCREENHEIGHT * SCREENWIDTH) / (64 * 1024))
+#define LAST_BANK_SIZE ((SCREENHEIGHT * SCREENWIDTH) - (NUM_BANKS * 64 * 1024))
+
 #if defined(MODE_VBE2)
 void I_FinishUpdate(void)
 {
   if (pcscreen == (void *)0xA0000)
   {
     // Banked
-    int num_banks = (SCREENHEIGHT * SCREENWIDTH) / (64 * 1024); //64Kb blocks
-    int last_bank_size = (SCREENHEIGHT * SCREENWIDTH) - (num_banks * 64 * 1024);
     int i = 0;
 
-    for (i = 0; i < num_banks; i++)
+    for (i = 0; i < NUM_BANKS; i++)
     {
       VBE_SetBank(i);
-      CopyDWords(backbuffer + ((64 * 1024) * i), pcscreen, 64 * 1024 / 4);
+      CopyDWords(backbuffer + ((64 * 1024) * i), (void *)0xA0000, 64 * 1024 / 4);
     }
 
-    if (last_bank_size > 0)
-    {
-      VBE_SetBank(num_banks);
-      CopyBytes(backbuffer + (num_banks * 64 * 1024), pcscreen, last_bank_size);
-    }
+#if LAST_BANK_SIZE > 0
+    VBE_SetBank(NUM_BANKS);
+    CopyBytes(backbuffer + (NUM_BANKS * 64 * 1024), (void *)0xA0000, LAST_BANK_SIZE);
+#endif
   }
   else
   {
