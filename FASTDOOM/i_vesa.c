@@ -375,6 +375,15 @@ void VBE2_InitGraphics(void)
 
     
 #if defined(MODE_VBE2_DIRECT)
+    // Check banked video modes that don't fit on the 64 Kb window
+    if (pcscreen == (void *)0xA0000)
+    {
+      if (SCREENWIDTH * SCREENHEIGHT > 65536)
+      {
+        I_Error("Image doesn't fit in the 64Kb window (%i KB required)", SCREENWIDTH * SCREENHEIGHT / 1024);
+      }
+    }
+
     // Initialize VRAM
     if (pcscreen == (void *)0xA0000)
     {
