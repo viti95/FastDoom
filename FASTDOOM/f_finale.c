@@ -367,7 +367,7 @@ void F_TextWrite(void)
 		w = hu_font[c]->width;
 		if (cx + w > SCREENWIDTH)
 			break;
-    V_DrawPatchModeCentered(cy, cx, hu_font[c]);
+    V_DrawPatchModeCentered(cx, cy, hu_font[c]);
 		cx += w;
 	}
 }
