@@ -373,11 +373,28 @@ void VBE2_InitGraphics(void)
     // Force 6 bits resolution per color
     VBE_SetDACWidth(6);
 
+    
+#if defined(MODE_VBE2_DIRECT)
     // Initialize VRAM
-  #if defined(MODE_VBE2_DIRECT)
-    VBE_SetDisplayStart_Y(0);
-    SetDWords(pcscreen, 0, SCREENWIDTH * SCREENHEIGHT * 3 / 4);
-  #endif
+    if (pcscreen == (void *)0xA0000)
+    {
+      // Banked
+      VBE_SetDisplayStart_Y(0);
+
+      VBE_SetBank(0);
+      SetDWords((void *)0xA0000, 0, 65536 / 4);
+      VBE_SetBank(1);
+      SetDWords((void *)0xA0000, 0, 65536 / 4);
+      VBE_SetBank(2);
+      SetDWords((void *)0xA0000, 0, 65536 / 4);
+
+    }else{
+      // LFB
+      VBE_SetDisplayStart_Y(0);
+      SetDWords(pcscreen, 0, SCREENWIDTH * SCREENHEIGHT * 3 / 4);
+    }
+    
+#endif
   }
   else
   {
@@ -453,19 +470,45 @@ void I_FinishUpdate(void)
 
 #if defined(MODE_VBE2_DIRECT)
 short page = 0;
+short bank = 0;
 
 void I_FinishUpdate(void)
 {
-  VBE_SetDisplayStart_Y(page);
-  if (page == SCREENHEIGHT * 2)
+  if (pcscreen == (void *)0xA0000)
   {
-    page = 0;
-    destscreen -= 2 * SCREENWIDTH * SCREENHEIGHT;
+    // This only works on 320x200 resolution (64000kb per screen)
+
+    switch(bank)
+    {
+        case 2:
+          bank = 0;
+          VBE_SetDisplayStart(256, 204);
+          break;
+        case 0:
+          bank++;
+          VBE_SetDisplayStart(192, 409);
+          break;
+        case 1:
+          bank++;
+          VBE_SetDisplayStart(0, 0);
+          break;
+    }
+
+    VBE_SetBank(bank);
   }
   else
   {
-    page += SCREENHEIGHT;
-    destscreen += SCREENWIDTH * SCREENHEIGHT;
+    VBE_SetDisplayStart_Y(page);
+    if (page == SCREENHEIGHT * 2)
+    {
+      page = 0;
+      destscreen -= 2 * SCREENWIDTH * SCREENHEIGHT;
+    }
+    else
+    {
+      page += SCREENHEIGHT;
+      destscreen += SCREENWIDTH * SCREENHEIGHT;
+    }
   }
 }
 #endif
