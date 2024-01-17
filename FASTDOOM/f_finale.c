@@ -1153,7 +1153,7 @@ void F_BunnyScroll(void)
 		return;
 	if (finalecount < 1180)
 	{
-    V_DrawPatchModeCentered((SCALED_SCREENWIDTH - 13 * 8) / 2, (SCALED_SCREENHEIGHT - 8 * 8) / 2, W_CacheLumpName("END0", PU_CACHE), 0);
+    	V_DrawPatchModeCentered((SCALED_SCREENWIDTH - 13 * 8) / 2, (SCALED_SCREENHEIGHT - 8 * 8) / 2, W_CacheLumpName("END0", PU_CACHE), 0);
 		laststage = 0;
 		return;
 	}
@@ -1212,7 +1212,7 @@ void F_Drawer(void)
 			}
 			break;
 		case 2:
-      V_DrawPatchModeCentered(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE), 0);
+      		V_DrawPatchModeCentered(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE), 0);
 			break;
 		case 3:
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
@@ -1223,7 +1223,7 @@ void F_Drawer(void)
 #endif
 			break;
 		case 4:
-      V_DrawPatchModeCentered(0, 0, W_CacheLumpName("END0", PU_CACHE), 0);
+      		V_DrawPatchModeCentered(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE), 0);
 			break;
 		}
 	}
