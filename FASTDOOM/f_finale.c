@@ -257,10 +257,9 @@ byte F_Responder(void)
 //
 void F_Ticker(void)
 {
-	int i;
-
+	
 	// check for skipping
-	if ((gamemode == commercial) && (finalecount > 50))
+	if ((gamemode == commercial) && (finalecount > 35))
 	{
 		// go on to the next level
 		if (players.cmd.buttons)
@@ -284,7 +283,7 @@ void F_Ticker(void)
 	if (gamemode == commercial)
 		return;
 
-	if (!finalestage && finalecount > strlen(finaletext) * TEXTSPEED + TEXTWAIT)
+	if (!finalestage && ((finalecount > strlen(finaletext) * TEXTSPEED + TEXTWAIT) || ((finalecount > 35) && players.cmd.buttons)))
 	{
 		finalecount = 0;
 		finalestage = 1;
