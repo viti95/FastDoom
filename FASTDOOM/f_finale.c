@@ -324,15 +324,16 @@ void F_TextWrite(void)
 
 	for (y = 0; y < SCREENHEIGHT; y++)
 	{
+		byte *srcptr = src + ((y & 63) << 6);
+
 		for (x = 0; x < SCREENWIDTH / 64; x++)
 		{
-			CopyDWords(src + ((y & 63) << 6), dest, 16);
-			// memcpy(dest, src + ((y & 63) << 6), 64);
+			CopyDWords(srcptr, dest, 16);
 			dest += 64;
 		}
 
 #if SCREENWIDTH % 64 > 0
-		CopyDWords(src + ((y & 63) << 6), dest, (SCREENWIDTH % 64) / 4);
+		CopyDWords(srcptr, dest, (SCREENWIDTH % 64) / 4);
 		dest += (SCREENWIDTH % 64);
 #endif
 	}
