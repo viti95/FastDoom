@@ -330,6 +330,11 @@ void F_TextWrite(void)
 			// memcpy(dest, src + ((y & 63) << 6), 64);
 			dest += 64;
 		}
+
+#if SCREENWIDTH % 64 > 0
+		CopyDWords(src + ((y & 63) << 6), dest, (SCREENWIDTH % 64) / 4);
+		dest += (SCREENWIDTH % 64);
+#endif
 	}
 
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
