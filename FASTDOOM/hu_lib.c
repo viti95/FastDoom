@@ -158,7 +158,7 @@ void HUlib_eraseTextLine(hu_textline_t *l)
     {
         // The text coordinates are in scaled pixels, so we need to
         // scale them back to normal pixels for the erase.
-        lh = l->f[0]->height + 1;
+        lh = l->f[0]->height;
         for (y = l->y * PIXEL_SCALING, yoffset = MulScreenWidth(y); y < (l->y + lh) * PIXEL_SCALING; y++, yoffset += SCREENWIDTH)
         {
             if (y < viewwindowy || y >= (viewwindowy + viewheight)) {
