@@ -1158,7 +1158,7 @@ void F_BunnyScroll(void)
 		return;
 	if (finalecount < 1180)
 	{
-    	V_DrawPatchModeCentered((SCALED_SCREENWIDTH - 13 * 8) / 2, (SCALED_SCREENHEIGHT - 8 * 8) / 2, W_CacheLumpName("END0", PU_CACHE), 0);
+    	V_DrawPatchModeCentered((ORIGINAL_SCREENWIDTH - 13 * 8) / 2, (ORIGINAL_SCREENHEIGHT - 8 * 8) / 2, W_CacheLumpName("END0", PU_CACHE), 0);
 		laststage = 0;
 		return;
 	}
@@ -1173,7 +1173,7 @@ void F_BunnyScroll(void)
 	}
 
 	sprintf(name, "END%i", stage);
-  V_DrawPatchModeCentered((SCALED_SCREENWIDTH - 13 * 8) / 2, (SCALED_SCREENHEIGHT - 8 * 8) / 2, W_CacheLumpName(name, PU_CACHE));
+  V_DrawPatchModeCentered((ORIGINAL_SCREENWIDTH - 13 * 8) / 2, (ORIGINAL_SCREENHEIGHT - 8 * 8) / 2, W_CacheLumpName(name, PU_CACHE));
 }
 #endif
 

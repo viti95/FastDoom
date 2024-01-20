@@ -55,6 +55,8 @@ typedef enum
   none
 } gamemission_t;
 
+#define ORIGINAL_SCREENWIDTH 320
+#define ORIGINAL_SCREENHEIGHT 200
 
 // Defines suck. C sucks.
 // C++ might sucks for OOP, but it sure is a better C.
