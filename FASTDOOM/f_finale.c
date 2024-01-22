@@ -1146,7 +1146,7 @@ void F_BunnyScroll(void)
 	else if (scrolled < 0)
 		scrolled = 0;
 
-	for (x = 0; x < SCREENWIDTH; x++)
+	for (x = 0; x < ORIGINAL_SCREENWIDTH; x++)
 	{
 		if (x + scrolled < 320)
 			F_DrawPatchCol(x, p1, x + scrolled);
