@@ -829,23 +829,33 @@ void F_DrawPatchCol(int x, patch_t *patch, int col)
 	column = (column_t *)((byte *)patch + patch->columnofs[col]);
 
 #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-	desttop = screen0 + x;
+	desttop = screen0 + (x * PIXEL_SCALING);
 #endif
 #if defined(USE_BACKBUFFER)
-	desttop = backbuffer + x;
+	desttop = backbuffer + (x * PIXEL_SCALING);
 #endif
 
 	// step through the posts in a column
 	while (column->topdelta != 0xff)
 	{
 		source = (byte *)column + 3;
-		dest = desttop + MulScreenWidth(column->topdelta);
+		dest = desttop + MulScreenWidth(column->topdelta * PIXEL_SCALING);
 		count = column->length;
 
 		while (count--)
 		{
+#if PIXEL_SCALING==1
 			*dest = *source++;
 			dest += SCREENWIDTH;
+#elif PIXEL_SCALING==2
+			byte s0 = *source;
+			*dest = s0;
+			*(dest + 1) = s0;
+			*(dest + SCREENWIDTH) = s0;
+			*(dest + SCREENWIDTH + 1) = s0;
+			source++;
+			dest += 2 * SCREENWIDTH;
+#endif
 		}
 		column = (column_t *)((byte *)column + column->length + 4);
 	}
