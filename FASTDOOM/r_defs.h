@@ -40,7 +40,7 @@
 
 // For low res modes, use bytes to save space, otherwise use shorts for
 // coordinates and offsets.
-#ifdef HI_RES
+#if PIXEL_SCALING > 1
 typedef unsigned short pixelcoord_t;
 #define PIXELCOORD_MAX 0xFFFF
 #else

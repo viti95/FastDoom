@@ -41,8 +41,8 @@ byte screen0[SCREENWIDTH * SCREENHEIGHT];
 
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 byte screen4[SCREENWIDTH * SBARHEIGHT];
-#if PIXEL_SCALING!=1 && PIXEL_SCALING!=2
-#error "PIXEL_SCALING must be 1 or 2"
+#if PIXEL_SCALING!=1 && PIXEL_SCALING!=2 && PIXEL_SCALING!=4
+#error "PIXEL_SCALING must be 1, 2 or 4"
 #endif
 
 #endif
@@ -364,7 +364,7 @@ void V_DrawPatchScreen0(int x, int y, patch_t *patch)
                     *dest = *source++;
                     dest += SCREENWIDTH;
                 } while (--count);
-#elif PIXEL_SCALING==2 // HI_RES
+#elif PIXEL_SCALING==2
               if ((count -= 4) >= 0)
                   do {
                       s0 = source[0];
@@ -471,6 +471,31 @@ void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
                 dest[1] = s;
                 dest += SCREENWIDTH;
             }
+#elif PIXEL_SCALING==4
+            while (count--)
+            {
+                register byte s = *source++;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
+                dest[3] = s;
+                dest += SCREENWIDTH;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
+                dest[3] = s;
+                dest += SCREENWIDTH;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
+                dest[3] = s;
+                dest += SCREENWIDTH;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
+                dest[3] = s;
+                dest += SCREENWIDTH;
+            }                         
 #endif
             column = (column_t *)((byte *)column + column->length + 4);
         }
@@ -613,6 +638,31 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
                 dest[1] = s;
                 dest += SCREENWIDTH;
             }
+#elif PIXEL_SCALING==4
+            while (count--)
+            {
+                register byte s = *source++;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
+                dest[3] = s;
+                dest += SCREENWIDTH;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
+                dest[3] = s;
+                dest += SCREENWIDTH;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
+                dest[3] = s;
+                dest += SCREENWIDTH;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
+                dest[3] = s;
+                dest += SCREENWIDTH;
+            }
 #endif
             column = (column_t *)((byte *)column + column->length + 4);
         }
@@ -740,6 +790,31 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
                 dest += SCREENWIDTH;
                 dest[0] = s;
                 dest[1] = s;
+                dest += SCREENWIDTH;
+            }
+#elif PIXEL_SCALING==4
+while (count--)
+            {
+                register byte s = *source++;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
+                dest[3] = s;
+                dest += SCREENWIDTH;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
+                dest[3] = s;
+                dest += SCREENWIDTH;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
+                dest[3] = s;
+                dest += SCREENWIDTH;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
+                dest[3] = s;
                 dest += SCREENWIDTH;
             }
 #endif
