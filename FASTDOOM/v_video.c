@@ -407,13 +407,11 @@ void V_DrawPatchNativeRes(int x, int y, byte *scrn, patch_t *patch)
                     s0 = source[0];
                     s1 = source[1];
                     dest[0] = s0;
-                    dest[1] = s1;
                     dest[SCREENWIDTH] = s1;
                     dest += SCREENWIDTH * 2;
                     s0 = source[2];
                     s1 = source[3];
                     dest[0] = s0;
-                    dest[1] = s1;
                     dest[SCREENWIDTH] = s1;
                     dest += SCREENWIDTH * 2;
                     source += 4;
