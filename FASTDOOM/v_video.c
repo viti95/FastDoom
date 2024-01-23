@@ -103,6 +103,13 @@ void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int de
     desty *= 2;
     width *= 2;
     height *= 2;
+#elif PIXEL_SCALING==4
+    srcx *= 4;
+    srcy *= 4;
+    destx *= 4;
+    desty *= 4;
+    width *= 4;
+    height *= 4;
 #endif
     BOUNDS_CHECK(srcx, srcy);
     BOUNDS_CHECK(srcx + width - 1, srcy + height - 1);
@@ -184,13 +191,11 @@ void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
                     s0 = source[0];
                     s1 = source[1];
                     dest[0] = s0;
-                    dest[1] = s1;
                     dest[SCREENWIDTH] = s1;
                     dest += SCREENWIDTH * 2;
                     s0 = source[2];
                     s1 = source[3];
                     dest[0] = s0;
-                    dest[1] = s1;
                     dest[SCREENWIDTH] = s1;
                     dest += SCREENWIDTH * 2;
                     source += 4;
@@ -243,6 +248,120 @@ void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
                       dest += SCREENWIDTH;
                       dest[0] = s0;
                       dest[1] = s0;
+                      dest += SCREENWIDTH;
+                  } while (--count);
+#elif PIXEL_SCALING==4
+              if ((count -= 4) >= 0)
+                  do {
+                      s0 = source[0];
+                      s1 = source[1];
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest[2] = s0;
+                      dest[3] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest[2] = s0;
+                      dest[3] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest[2] = s0;
+                      dest[3] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest[2] = s0;
+                      dest[3] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s1;
+                      dest[1] = s1;
+                      dest[2] = s1;
+                      dest[3] = s1;
+                      dest += SCREENWIDTH;
+                      dest[0] = s1;
+                      dest[1] = s1;
+                      dest[2] = s1;
+                      dest[3] = s1;
+                      dest += SCREENWIDTH;
+                      dest[0] = s1;
+                      dest[1] = s1;
+                      dest[2] = s1;
+                      dest[3] = s1;
+                      dest += SCREENWIDTH;
+                      dest[0] = s1;
+                      dest[1] = s1;
+                      dest[2] = s1;
+                      dest[3] = s1;
+                      dest += SCREENWIDTH;
+                      s0 = source[2];
+                      s1 = source[3];
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest[2] = s0;
+                      dest[3] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest[2] = s0;
+                      dest[3] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest[2] = s0;
+                      dest[3] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest[2] = s0;
+                      dest[3] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s1;
+                      dest[1] = s1;
+                      dest[2] = s1;
+                      dest[3] = s1;
+                      dest += SCREENWIDTH;
+                      dest[0] = s1;
+                      dest[1] = s1;
+                      dest[2] = s1;
+                      dest[3] = s1;
+                      dest += SCREENWIDTH;
+                      dest[0] = s1;
+                      dest[1] = s1;
+                      dest[2] = s1;
+                      dest[3] = s1;
+                      dest += SCREENWIDTH;
+                      dest[0] = s1;
+                      dest[1] = s1;
+                      dest[2] = s1;
+                      dest[3] = s1;
+                      dest += SCREENWIDTH;
+                      source += 4;
+                  } while ((count -= 4) >= 0);
+              if (count += 4)
+                  do
+                  {
+                      byte s0 = *source++;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest[2] = s0;
+                      dest[3] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest[2] = s0;
+                      dest[3] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest[2] = s0;
+                      dest[3] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest[2] = s0;
+                      dest[3] = s0;
                       dest += SCREENWIDTH;
                   } while (--count);
 #endif
@@ -793,7 +912,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
                 dest += SCREENWIDTH;
             }
 #elif PIXEL_SCALING==4
-while (count--)
+            while (count--)
             {
                 register byte s = *source++;
                 dest[0] = s;
