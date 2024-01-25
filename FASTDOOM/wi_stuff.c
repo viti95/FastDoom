@@ -1257,7 +1257,7 @@ void WI_loadData(void)
 
 	// background
 	bg = W_CacheLumpName(name, PU_CACHE);
-#if CENTERING_OFFSET_X != 0
+#if CENTERING_OFFSET_X != 0 || CENTERING_OFFSET_Y != 0
   // Fill screen with black
   SetDWords(screen1, 0, SCREENWIDTH * SCREENHEIGHT / 4);
 #endif
