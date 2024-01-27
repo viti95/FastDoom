@@ -132,16 +132,9 @@ typedef enum
 #if SCREENHEIGHT == 800
 #define ASPECTRATIO16x10
 #elif SCREENHEIGHT == 1024
-#define ASPECTRATIO4x3
+#define ASPECTRATIO5x4
 #endif
 
-#elif SCREENWIDTH == 1280 && SCREENHEIGHT == 1024
-#define MulScreenWidth(x) Mul1280(x)
-#define MulScreenWidthHalf(x) Mul640(x)
-#define MulScreenWidthQuarter(x) Mul320(x)
-#define MulScreenWidthEighth(x) Mul160(x)
-#define PIXEL_SCALING 4
-#define ASPECTRATIO5x4
 #else
 #error "Defined Screen Resolution is not supported"
 #endif
