@@ -101,6 +101,9 @@ elif [ "$target" = "fdm600r.exe" ]; then
 elif [ "$target" = "fdm768r.exe" ]; then
   buildopts="-dMODE_VBE2 -dSCREENWIDTH=1024 -dSCREENHEIGHT=768"
 
+elif [ "$target" = "fdm800r.exe" ]; then
+  buildopts="-dMODE_VBE2 -dSCREENWIDTH=1280 -dSCREENHEIGHT=800"
+
 elif [ "$target" = "fdm1024r.exe" ]; then
   buildopts="-dMODE_VBE2 -dSCREENWIDTH=1280 -dSCREENHEIGHT=1024"
 
@@ -124,6 +127,9 @@ elif [ "$target" = "fdm600d.exe" ]; then
 
 elif [ "$target" = "fdm768d.exe" ]; then
   buildopts="-dMODE_VBE2_DIRECT -dSCREENWIDTH=1024 -dSCREENHEIGHT=768"
+
+  elif [ "$target" = "fdm800d.exe" ]; then
+  buildopts="-dMODE_VBE2_DIRECT -dSCREENWIDTH=1280 -dSCREENHEIGHT=800"
 
 elif [ "$target" = "fdm1024d.exe" ]; then
   buildopts="-dMODE_VBE2_DIRECT -dSCREENWIDTH=1280 -dSCREENHEIGHT=1024"
