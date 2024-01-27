@@ -41,8 +41,8 @@ byte screen0[SCREENWIDTH * SCREENHEIGHT];
 
 #if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 byte screen4[SCREENWIDTH * SBARHEIGHT];
-#if PIXEL_SCALING!=1 && PIXEL_SCALING!=2 && PIXEL_SCALING!=4
-#error "PIXEL_SCALING must be 1, 2 or 4"
+#if PIXEL_SCALING!=1 && PIXEL_SCALING!=2 && PIXEL_SCALING!=3 && PIXEL_SCALING!=4
+#error "PIXEL_SCALING must be 1, 2, 3 or 4"
 #endif
 
 #endif
@@ -103,6 +103,13 @@ void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int de
     desty *= 2;
     width *= 2;
     height *= 2;
+#elif PIXEL_SCALING==3
+    srcx *= 3;
+    srcy *= 3;
+    destx *= 3;
+    desty *= 3;
+    width *= 3;
+    height *= 3;
 #elif PIXEL_SCALING==4
     srcx *= 4;
     srcy *= 4;
@@ -248,6 +255,80 @@ void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
                       dest += SCREENWIDTH;
                       dest[0] = s0;
                       dest[1] = s0;
+                      dest += SCREENWIDTH;
+                  } while (--count);
+#elif PIXEL_SCALING==3
+              if ((count -= 4) >= 0)
+                  do {
+                      s0 = source[0];
+                      s1 = source[1];
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest[2] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest[2] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest[2] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s1;
+                      dest[1] = s1;
+                      dest[2] = s1;
+                      dest += SCREENWIDTH;
+                      dest[0] = s1;
+                      dest[1] = s1;
+                      dest[2] = s1;
+                      dest += SCREENWIDTH;
+                      dest[0] = s1;
+                      dest[1] = s1;
+                      dest[2] = s1;
+                      dest += SCREENWIDTH;
+                      s0 = source[2];
+                      s1 = source[3];
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest[2] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest[2] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest[2] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s1;
+                      dest[1] = s1;
+                      dest[2] = s1;
+                      dest += SCREENWIDTH;
+                      dest[0] = s1;
+                      dest[1] = s1;
+                      dest[2] = s1;
+                      dest += SCREENWIDTH;
+                      dest[0] = s1;
+                      dest[1] = s1;
+                      dest[2] = s1;
+                      dest += SCREENWIDTH;
+                      source += 4;
+                  } while ((count -= 4) >= 0);
+              if (count += 4)
+                  do
+                  {
+                      byte s0 = *source++;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest[2] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest[2] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest[2] = s0;
                       dest += SCREENWIDTH;
                   } while (--count);
 #elif PIXEL_SCALING==4
@@ -526,6 +607,80 @@ void V_DrawPatchScreen0(int x, int y, patch_t *patch)
                       dest += SCREENWIDTH;
                       source++;
                   } while (--count);
+#elif PIXEL_SCALING==3
+              if ((count -= 4) >= 0)
+                  do {
+                      s0 = source[0];
+                      s1 = source[1];
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest[2] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest[2] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest[2] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s1;
+                      dest[1] = s1;
+                      dest[2] = s1;
+                      dest += SCREENWIDTH;
+                      dest[0] = s1;
+                      dest[1] = s1;
+                      dest[2] = s1;
+                      dest += SCREENWIDTH;
+                      dest[0] = s1;
+                      dest[1] = s1;
+                      dest[2] = s1;
+                      dest += SCREENWIDTH;
+                      s0 = source[2];
+                      s1 = source[3];
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest[2] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest[2] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest[2] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s1;
+                      dest[1] = s1;
+                      dest[2] = s1;
+                      dest += SCREENWIDTH;
+                      dest[0] = s1;
+                      dest[1] = s1;
+                      dest[2] = s1;
+                      dest += SCREENWIDTH;
+                      dest[0] = s1;
+                      dest[1] = s1;
+                      dest[2] = s1;
+                      dest += SCREENWIDTH;
+                      source += 4;
+                  } while ((count -= 4) >= 0);
+              if (count += 4)
+                  do
+                  {
+                      byte s0 = *source++;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest[2] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest[2] = s0;
+                      dest += SCREENWIDTH;
+                      dest[0] = s0;
+                      dest[1] = s0;
+                      dest[2] = s0;
+                      dest += SCREENWIDTH;
+                  } while (--count);
 #elif PIXEL_SCALING==4
               if ((count -= 4) >= 0)
                   do {
@@ -702,6 +857,23 @@ void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
                 dest[1] = s;
                 dest += SCREENWIDTH;
             }
+#elif PIXEL_SCALING==3
+            while (count--)
+            {
+                register byte s = *source++;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
+                dest += SCREENWIDTH;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
+                dest += SCREENWIDTH;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
+                dest += SCREENWIDTH;
+            }        
 #elif PIXEL_SCALING==4
             while (count--)
             {
@@ -869,6 +1041,23 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
                 dest[1] = s;
                 dest += SCREENWIDTH;
             }
+#elif PIXEL_SCALING==3
+            while (count--)
+            {
+                register byte s = *source++;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
+                dest += SCREENWIDTH;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
+                dest += SCREENWIDTH;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
+                dest += SCREENWIDTH;
+            }
 #elif PIXEL_SCALING==4
             while (count--)
             {
@@ -1021,6 +1210,23 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
                 dest += SCREENWIDTH;
                 dest[0] = s;
                 dest[1] = s;
+                dest += SCREENWIDTH;
+            }
+#elif PIXEL_SCALING==3
+            while (count--)
+            {
+                register byte s = *source++;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
+                dest += SCREENWIDTH;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
+                dest += SCREENWIDTH;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
                 dest += SCREENWIDTH;
             }
 #elif PIXEL_SCALING==4

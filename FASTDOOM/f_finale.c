@@ -855,6 +855,19 @@ void F_DrawPatchCol(int x, patch_t *patch, int col)
 			*(dest + SCREENWIDTH + 1) = s0;
 			source++;
 			dest += 2 * SCREENWIDTH;
+#elif PIXEL_SCALING==3
+			byte s0 = *source;
+			*dest = s0;
+			*(dest + 1) = s0;
+			*(dest + 2) = s0;
+			*(dest + SCREENWIDTH) = s0;
+			*(dest + SCREENWIDTH + 1) = s0;
+			*(dest + SCREENWIDTH + 2) = s0;
+			*(dest + 2*SCREENWIDTH) = s0;
+			*(dest + 2*SCREENWIDTH + 1) = s0;
+			*(dest + 2*SCREENWIDTH + 2) = s0;
+			source++;
+			dest += 3 * SCREENWIDTH;
 #elif PIXEL_SCALING==4
 			byte s0 = *source;
 			*dest = s0;
