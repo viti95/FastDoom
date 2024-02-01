@@ -60,7 +60,7 @@ void I_DebugShutdown(void);
       I_Backtrace("Assertion failure at %s:%i\n", __FILE__, __LINE__);         \
     }
 #else
-#define ASSERT(x) do {} while(0)
+#define ASSERT(x)
 #endif
 
 #endif // __I_DEBUG_H__
