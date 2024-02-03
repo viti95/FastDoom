@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "ns_usrho.h"
 #include "options.h"
+#include "z_zone.h"
 
 int USRHOOKS_GetMem(
     void **ptr,
@@ -9,7 +10,7 @@ int USRHOOKS_GetMem(
 {
    void *memory;
 
-   memory = malloc(size);
+   memory = Z_MallocUnowned(size, PU_STATIC);
    if (memory == NULL)
    {
       return (USRHOOKS_Error);
@@ -29,7 +30,7 @@ int USRHOOKS_FreeMem(
       return (USRHOOKS_Error);
    }
 
-   free(ptr);
+   Z_Free(ptr);
 
    return (USRHOOKS_Ok);
 }

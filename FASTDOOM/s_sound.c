@@ -366,7 +366,7 @@ unsigned char *LoadFile(char *filename, int *length)
     size = ftell(in);
     fseek(in, 0, SEEK_SET);
 
-    ptr = (unsigned char *)malloc(size);
+    ptr = (unsigned char *)Z_MallocUnowned(size, PU_STATIC);
     if (ptr == NULL)
         I_Error("Out of memory, cannot load music file %s", filename);
 
@@ -398,7 +398,7 @@ void S_ChangeMusicWAV(int musicnum, int looping)
         MV_Kill(wavhandle);
 
     if (wavfileptr != NULL)
-        free(wavfileptr);
+        Z_Free(wavfileptr);
 
     memset(filename, 0, sizeof(filename));
     memset(subfolder, 0, sizeof(subfolder));

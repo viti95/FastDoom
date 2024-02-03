@@ -414,7 +414,7 @@ void M_LoadDefaults(void)
                     // get a string default
                     isstring = 1;
                     len = strlen(strparm);
-                    newstring = (char *)malloc(len);
+                    newstring = (char *)Z_MallocUnowned(len, PU_STATIC);
                     strparm[len - 1] = 0;
                     strcpy(newstring, strparm + 1);
                 }

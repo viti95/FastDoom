@@ -102,7 +102,6 @@ int selectedCPU;
 int showFPS;
 int debugCardPort;
 boolean debugCardReverse;
-boolean unlimitedRAM;
 boolean nearSprites;
 boolean monoSound;
 boolean noMelt;
@@ -1104,7 +1103,6 @@ void IdentifyVersion(void)
         return;
     }
 
-    printf("\nFastDoom version " FDOOMVERSION "\n");
     printf("\nPlease select the IWAD you want to play:\n\n");
 
     if (!access("doom1.wad", R_OK))
@@ -1258,6 +1256,9 @@ void D_DoomMain(void)
     int p;
     union REGS regs;
 
+    printf("\nFastDoom version " FDOOMVERSION "\n\n");
+    Z_Init();
+
     p = M_CheckParm("-iwad");
     if (p)
     {
@@ -1336,8 +1337,6 @@ void D_DoomMain(void)
 #endif
 
     ignoreSoundChecks = M_CheckParm("-forceSound");
-
-    unlimitedRAM = M_CheckParm("-ram");
 
     singletics = M_CheckParm("-singletics");
 
@@ -1516,11 +1515,8 @@ void D_DoomMain(void)
         screenblocks = forceScreenSize;
     }
 
-
-
     M_CheckParmOptionalValue("-flatSpan", &visplaneRender, VISPLANES_FLAT);
     M_CheckParmOptionalValue("-flatterSpan", &visplaneRender, VISPLANES_FLATTER);
-
     M_CheckParmOptional("-flatsky", &flatSky);
     M_CheckParmOptionalValue("-flatInv", &invisibleRender, INVISIBLE_FLAT);
     M_CheckParmOptionalValue("-flatsaturn", &invisibleRender, INVISIBLE_FLAT_SATURN);
@@ -1556,9 +1552,6 @@ void D_DoomMain(void)
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA)
     noMelt = 1;
 #endif
-
-    printf("Z_Init: Init zone memory allocation daemon. \n");
-    Z_Init();
 
     // Get benchmark files
     D_GetListBenchFiles();

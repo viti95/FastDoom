@@ -11,9 +11,24 @@
 #include "ns_llm.h"
 #include "options.h"
 #include "fastmath.h"
+#include "z_zone.h"
 
 #define TRUE (1 == 1)
 #define FALSE (!TRUE)
+
+typedef struct
+{
+    unsigned char SAVEK[2];
+    unsigned char Level[2];
+    unsigned char Env1[2];
+    unsigned char Env2[2];
+    unsigned char Wave[2];
+    unsigned char Feedback;
+    signed char Transpose;
+    signed char Velocity;
+} TIMBRE;
+
+TIMBRE *ADLIB_TimbreBank;
 
 static unsigned OctavePitch[MAX_OCTAVE + 1] =
     {
@@ -1296,6 +1311,8 @@ void AL_RegisterTimbreBank(
 
 {
    int i;
+
+   ADLIB_TimbreBank = Z_MallocUnowned(sizeof(TIMBRE) * 256, PU_STATIC);
 
    for (i = 0; i < 256; i++)
    {

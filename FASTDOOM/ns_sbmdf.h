@@ -127,20 +127,6 @@ typedef struct
     short PitchBendHundreds;
 } CHANNEL;
 
-typedef struct
-{
-    unsigned char SAVEK[2];
-    unsigned char Level[2];
-    unsigned char Env1[2];
-    unsigned char Env2[2];
-    unsigned char Wave[2];
-    unsigned char Feedback;
-    signed char Transpose;
-    signed char Velocity;
-} TIMBRE;
-
-extern TIMBRE ADLIB_TimbreBank[256];
-
 static void AL_ResetVoices(void);
 static void AL_CalcPitchInfo(void);
 static void AL_SetVoiceTimbre(int voice);

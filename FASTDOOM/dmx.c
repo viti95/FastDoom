@@ -35,6 +35,7 @@
 #include "options.h"
 #include "i_system.h"
 #include "i_sound.h"
+#include "z_zone.h"
 
 typedef struct
 {
@@ -72,7 +73,7 @@ int MUS_RegisterSong(void *data)
     len = ((unsigned short *)data)[2] + ((unsigned short *)data)[3];
     if (mid_data)
     {
-        free(mid_data);
+        Z_Free(mid_data);
     }
     if (memcmp(data, "MThd", 4))
     {
@@ -110,7 +111,7 @@ int MUS_RegisterSong(void *data)
         fseek(mid, 0, SEEK_END);
         midlen = ftell(mid);
         rewind(mid);
-        mid_data = malloc(midlen);
+        mid_data = Z_MallocUnowned(midlen, PU_STATIC);
         if (!mid_data)
         {
             fclose(mid);
@@ -239,7 +240,7 @@ void AL_SetCard(void *data)
     unsigned char *tmb;
     int i;
     cdata = (unsigned char *)data;
-    tmb = malloc(13 * 256);
+    tmb = Z_MallocUnowned(13 * 256, PU_STATIC);
     if (!tmb)
     {
         return;
@@ -278,7 +279,7 @@ void AL_SetCard(void *data)
         tmb[(i + 35) * 13 + 12] = 0;
     }
     AL_RegisterTimbreBank(tmb);
-    free(tmb);
+    Z_Free(tmb);
 }
 int MPU_Detect(int *port)
 {
@@ -485,7 +486,7 @@ void ASS_DeInit(void)
     remove("ULTRAMID.INI");
     if (mid_data)
     {
-        free(mid_data);
+        Z_Free(mid_data);
     }
 }
 

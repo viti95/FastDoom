@@ -1073,19 +1073,15 @@ byte *I_ZoneBase(int *size)
     int386x(0x31, &regs, &regs, &segregs);
 
     heap = meminfo[0];
-    printf("DPMI memory: %d Kb", heap >> 10);
+    printf("Available DPMI memory: %d Kb\n", heap >> 10);
 
     do
     {
         heap -= 0x60000; // leave 384kb alone
-        if (heap > 0x800000 && !unlimitedRAM)
-        {
-            heap = 0x800000;
-        }
         ptr = malloc(heap);
     } while (!ptr);
 
-    printf(", %d Kb allocated for zone\n", heap >> 10);
+    printf("Zone memory: %d Kb\n", heap >> 10);
 
     *size = heap;
     return ptr;

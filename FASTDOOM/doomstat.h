@@ -49,7 +49,6 @@ extern int selectedCPU;
 extern int showFPS;
 extern int debugCardPort;
 extern boolean debugCardReverse;
-extern boolean unlimitedRAM;
 extern boolean nearSprites;
 extern boolean monoSound;
 extern boolean noMelt;

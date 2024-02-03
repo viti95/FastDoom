@@ -79,7 +79,6 @@ GLOBOBJS = \
  ns_sbmid.obj \
  ns_pas16.obj \
  ns_mix.obj \
- ns_gmtbr.obj \
  ns_scape.obj \
  ns_awe32.obj \
  ns_dsney.obj \
