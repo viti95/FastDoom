@@ -288,7 +288,7 @@ void R_GenerateLookup(int texnum)
     //  that are covered by more than one patch.
     // Fill in the lump / offset, so columns
     //  with only a single patch are all done.
-    patchcount = (byte *)alloca(texture->width);
+    patchcount = (byte *)Z_MallocUnowned(texture->width, PU_STATIC);
     memset(patchcount, 0, texture->width);
     patch = texture->patches;
 
@@ -330,6 +330,8 @@ void R_GenerateLookup(int texnum)
             texturecompositesize[texnum] += texture->height;
         }
     }
+
+    Z_Free(patchcount);
 }
 
 void GenerateTextureHashTable(void)
@@ -416,7 +418,7 @@ void R_InitTextures(void)
     names = W_CacheLumpName("PNAMES", PU_STATIC);
     nummappatches = *((int *)names);
     name_p = names + 4;
-    patchlookup = alloca(nummappatches * sizeof(*patchlookup));
+    patchlookup = Z_MallocUnowned(nummappatches * sizeof(*patchlookup), PU_STATIC);
 
     for (i = 0; i < nummappatches; i++)
     {
@@ -532,6 +534,8 @@ void R_InitTextures(void)
         texturetranslation[i] = i;
 
     GenerateTextureHashTable();
+
+    Z_Free(patchlookup);
 }
 
 //
@@ -848,7 +852,7 @@ void R_PrecacheLevel(void)
         return;
 
     // Precache flats.
-    flatpresent = alloca(numflats);
+    flatpresent = Z_MallocUnowned(numflats, PU_STATIC);
     memset(flatpresent, 0, numflats);
 
     for (i = 0; i < numsectors; i++)
@@ -870,7 +874,7 @@ void R_PrecacheLevel(void)
     }
 
     // Precache textures.
-    texturepresent = alloca(numtextures);
+    texturepresent = Z_MallocUnowned(numtextures, PU_STATIC);
     memset(texturepresent, 0, numtextures);
 
     for (i = 0; i < numsides; i++)
@@ -929,4 +933,7 @@ void R_PrecacheLevel(void)
             }
         }
     }
+
+    Z_Free(flatpresent);
+    Z_Free(texturepresent);
 }
