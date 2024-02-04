@@ -25,17 +25,11 @@
 #include "options.h"
 #include "i_system.h"
 #include "z_zone.h"
-
 #include "w_wad.h"
-
 #include "doomdef.h"
 #include "r_local.h"
 #include "p_local.h"
-
 #include "doomstat.h"
-
-#include <alloca.h>
-
 #include "r_data.h"
 
 //

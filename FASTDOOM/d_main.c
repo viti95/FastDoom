@@ -884,7 +884,7 @@ void D_AddFile(char *file)
     for (numwadfiles = 0; wadfiles[numwadfiles]; numwadfiles++)
         ;
 
-    newfile = malloc(strlen(file) + 1);
+    newfile = Z_MallocUnowned(strlen(file) + 1, PU_STATIC);
     strcpy(newfile, file);
 
     wadfiles[numwadfiles] = newfile;
