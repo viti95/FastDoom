@@ -97,6 +97,7 @@ void W_AddFile(char *filename)
     int length;
     int startlump;
     filelump_t *fileinfo;
+    filelump_t *fileinfoptr = NULL;
     filelump_t singleinfo;
     int storehandle;
 
@@ -137,7 +138,8 @@ void W_AddFile(char *filename)
             modifiedgame = true;
         }
         length = header.numlumps * sizeof(filelump_t);
-        fileinfo = alloca(length);
+        fileinfoptr = Z_MallocUnowned(length, PU_STATIC);
+        fileinfo = fileinfoptr;
         lseek(handle, header.infotableofs, SEEK_SET);
         read(handle, fileinfo, length);
         numlumps += header.numlumps;
@@ -160,6 +162,9 @@ void W_AddFile(char *filename)
 
     if (reloadname)
         close(handle);
+
+    if (fileinfoptr != NULL)
+        Z_Free(fileinfoptr);
 }
 
 //
@@ -190,7 +195,7 @@ void W_InitMultipleFiles(char **filenames)
 
     // set up caching
     size = numlumps * sizeof(*lumpcache);
-    lumpcache = malloc(size);
+    lumpcache = Z_MallocUnowned(size, PU_STATIC);
 
     memset(lumpcache, 0, size);
 
