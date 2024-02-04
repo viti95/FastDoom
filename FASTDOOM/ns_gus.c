@@ -9,6 +9,7 @@
 #include "ns_gusmi.h"
 #include "ns_gusau.h"
 #include "ns_gusdf.h"
+#include "i_ibm.h"
 #include "options.h"
 
 // size of DMA buffer for patch loading
@@ -24,33 +25,6 @@ extern int GUSWAVE_Installed;
 
 unsigned long GUS_TotalMemory;
 int GUS_MemConfig;
-
-/*---------------------------------------------------------------------
-   Function: D32DosMemAlloc
-
-   Allocate a block of Conventional memory.
----------------------------------------------------------------------*/
-
-void *D32DosMemAlloc(
-    unsigned size)
-
-{
-    union REGS r;
-
-    // DPMI allocate DOS memory
-    r.x.eax = 0x0100;
-
-    // Number of paragraphs requested
-    r.x.ebx = (size + 15) >> 4;
-    int386(0x31, &r, &r);
-    if (r.x.cflag)
-    {
-        // Failed
-        return (NULL);
-    }
-
-    return ((void *)((r.x.eax & 0xFFFF) << 4));
-}
 
 /*---------------------------------------------------------------------
    Function: GUS_Init
@@ -82,7 +56,7 @@ int GUS_Init(
 
     if (!HoldBufferAllocated)
     {
-        GUS_HoldBuffer.vptr = D32DosMemAlloc(DMABUFFSIZE);
+        GUS_HoldBuffer.vptr = I_DosMemAlloc(DMABUFFSIZE);
         if (GUS_HoldBuffer.vptr == NULL)
         {
             return (GUS_Error);

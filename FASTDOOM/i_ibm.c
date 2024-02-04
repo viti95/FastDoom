@@ -1087,6 +1087,28 @@ byte *I_ZoneBase(int *size)
     return ptr;
 }
 
+void *I_DosMemAlloc(unsigned long size)
+{
+    union REGS Regs;
+
+    // DPMI allocate DOS memory
+    Regs.x.eax = 0x0100;
+
+    // Number of paragraphs requested
+    Regs.x.ebx = (size + 15) >> 4;
+
+    int386(0x31, &Regs, &Regs);
+
+    if (Regs.x.cflag != 0)
+    {
+        // Failed
+        return ((unsigned long)0);
+    }
+
+    return ((void *)((Regs.x.eax & 0xFFFF) << 4));
+}
+
+
 //
 // I_AllocLow
 //

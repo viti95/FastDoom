@@ -9,6 +9,7 @@
 #include "ns_awe32.h"
 #include "options.h"
 #include "doomstat.h"
+#include "z_zone.h"
 
 /*  DSP defines  */
 #define MPU_ACK_OK 0xfe
@@ -244,7 +245,7 @@ static void LoadSBK(void)
     
     /* setup SoundFont preset objects */
     fseek(fp, spSound.preset_seek, SEEK_SET);
-    pPresets[0] = (char*) malloc((unsigned) spSound.preset_read_size);
+    pPresets[0] = (char*) Z_MallocUnowned((unsigned) spSound.preset_read_size, PU_STATIC);
     fread(pPresets[0], 1, (unsigned) spSound.preset_read_size, fp);
     spSound.presets = pPresets[0];
     if (awe32SetPresets(&spSound)) {
@@ -353,7 +354,7 @@ void AWE32_Shutdown(
     /* free allocated memory */
     awe32ReleaseAllBanks(&spSound);
     for (i=0; i<spSound.total_banks; i++)
-        if (pPresets[i]) free(pPresets[i]);
+        if (pPresets[i]) Z_Free(pPresets[i]);
 
     ShutdownMPU();
     awe32Terminate();

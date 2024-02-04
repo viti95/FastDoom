@@ -34,6 +34,5 @@ void GUS_Shutdown(void);
 #pragma aux GUS_Shutdown frame;
 int GUSMIDI_Init(void);
 void GUSMIDI_Shutdown(void);
-void *D32DosMemAlloc(unsigned size);
 
 #endif

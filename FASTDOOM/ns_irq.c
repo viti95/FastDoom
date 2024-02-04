@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "ns_irq.h"
 #include "options.h"
+#include "i_ibm.h"
 
 #define D32RealSeg(P) ((((unsigned long)(P)) >> 4) & 0xFFFF)
 #define D32RealOff(P) (((unsigned long)(P)) & 0xF)
@@ -42,27 +43,6 @@ static unsigned short IRQ_ProtectedModeSelector;
 
 static union REGS Regs;
 static struct SREGS SegRegs;
-
-static void *D32DosMemAlloc(
-    unsigned long size)
-
-{
-    // DPMI allocate DOS memory
-    Regs.x.eax = 0x0100;
-
-    // Number of paragraphs requested
-    Regs.x.ebx = (size + 15) >> 4;
-
-    int386(0x31, &Regs, &Regs);
-
-    if (Regs.x.cflag != 0)
-    {
-        // Failed
-        return ((unsigned long)0);
-    }
-
-    return ((void *)((Regs.x.eax & 0xFFFF) << 4));
-}
 
 // Intermediary function: DPMI calls this, making it
 // easier to write in C
@@ -164,7 +144,7 @@ int IRQ_SetVector(int vector, void(__interrupt __far *function)(void))
     if (IRQ_RealModeCode == NULL)
     {
         // Allocate 6 bytes of low memory for real mode interrupt handler
-        IRQ_RealModeCode = D32DosMemAlloc(6);
+        IRQ_RealModeCode = I_DosMemAlloc(6);
         if (IRQ_RealModeCode == NULL)
         {
             // Free callback
