@@ -1,7 +1,6 @@
 #define TRUE (1 == 1)
 #define FALSE (!TRUE)
 
-#define LOCKMEMORY
 #define NOINTS
 
 #include <stdlib.h>
@@ -13,14 +12,6 @@
 #include "ns_task.h"
 #include "options.h"
 #include "fastmath.h"
-
-#ifdef USESTACK
-#include "ns_dpmi.h"
-#endif
-#ifdef LOCKMEMORY
-#include "ns_dpmi.h"
-#endif
-
 #include "ns_usrho.h"
 
 typedef struct
@@ -32,19 +23,6 @@ typedef struct
 /*---------------------------------------------------------------------
    Global variables
 ---------------------------------------------------------------------*/
-
-#ifdef USESTACK
-
-// adequate stack size
-#define kStackSize 2048
-
-static unsigned short StackSelector = NULL;
-static unsigned long StackPointer;
-
-static unsigned short oldStackSelector;
-static unsigned long oldStackPointer;
-
-#endif
 
 static task HeadTask;
 static task *TaskList = &HeadTask;
@@ -190,14 +168,6 @@ static void __interrupt __far TS_ServiceSchedule(void)
 
     TS_InInterrupt = TRUE;
 
-#ifdef USESTACK
-    // save stack
-    GetStack(&oldStackSelector, &oldStackPointer);
-
-    // set our stack
-    SetStack(StackSelector, StackPointer);
-#endif
-
     ptr = TaskList->next;
     while (ptr != TaskList)
     {
@@ -216,11 +186,6 @@ static void __interrupt __far TS_ServiceSchedule(void)
         }
         ptr = next;
     }
-
-#ifdef USESTACK
-    // restore stack
-    SetStack(oldStackSelector, oldStackPointer);
-#endif
 
     TaskServiceCount += TaskServiceRate;
     if (TaskServiceCount > 0xffffL)
@@ -259,14 +224,6 @@ static void __interrupt __far TS_ServiceScheduleIntEnabled(void)
     TS_InInterrupt = TRUE;
     _enable();
 
-#ifdef USESTACK
-    // save stack
-    GetStack(&oldStackSelector, &oldStackPointer);
-
-    // set our stack
-    SetStack(StackSelector, StackPointer);
-#endif
-
     while (TS_TimesInInterrupt)
     {
         ptr = TaskList->next;
@@ -290,78 +247,8 @@ static void __interrupt __far TS_ServiceScheduleIntEnabled(void)
 
     _disable();
 
-#ifdef USESTACK
-    // restore stack
-    SetStack(oldStackSelector, oldStackPointer);
-#endif
-
     TS_InInterrupt = FALSE;
 }
-#endif
-
-#ifdef USESTACK
-
-/*---------------------------------------------------------------------
-   Function: allocateTimerStack
-
-   Allocate a block of memory from conventional (low) memory and return
-   the selector (which can go directly into a segment register) of the
-   memory block or 0 if an error occured.
----------------------------------------------------------------------*/
-
-static unsigned short allocateTimerStack(
-    unsigned short size)
-
-{
-    union REGS regs;
-
-    // clear all registers
-    memset(&regs, 0, sizeof(regs));
-
-    // DPMI allocate conventional memory
-    regs.w.ax = 0x100;
-
-    // size in paragraphs
-    regs.w.bx = (size + 15) / 16;
-
-    int386(0x31, &regs, &regs);
-    if (!regs.w.cflag)
-    {
-        // DPMI call returns selector in dx
-        // (ax contains real mode segment
-        // which is ignored here)
-
-        return (regs.w.dx);
-    }
-
-    // Couldn't allocate memory.
-    return (NULL);
-}
-
-/*---------------------------------------------------------------------
-   Function: deallocateTimerStack
-
-   Deallocate a block of conventional (low) memory given a selector to
-   it.  Assumes the block was allocated with DPMI function 0x100.
----------------------------------------------------------------------*/
-
-static void deallocateTimerStack(
-    unsigned short selector)
-
-{
-    union REGS regs;
-
-    if (selector != NULL)
-    {
-        // clear all registers
-        memset(&regs, 0, sizeof(regs));
-
-        regs.w.ax = 0x101;
-        regs.w.dx = selector;
-        int386(0x31, &regs, &regs);
-    }
-}
-
 #endif
 
 /*---------------------------------------------------------------------
@@ -376,20 +263,6 @@ static int TS_Startup(
 {
     if (!TS_Installed)
     {
-
-#ifdef USESTACK
-
-        StackSelector = allocateTimerStack(kStackSize);
-        if (StackSelector == NULL)
-        {
-            return (TASK_Error);
-        }
-
-        // Leave a little room at top of stack just for the hell of it...
-        StackPointer = kStackSize - sizeof(long);
-
-#endif
-
         //static const task *TaskList = &HeadTask;
         TaskList->next = TaskList;
         TaskList->prev = TaskList;
@@ -431,13 +304,6 @@ void TS_Shutdown(
         TS_SetClockSpeed(0);
 
         _dos_setvect(0x08, OldInt8);
-
-#ifdef USESTACK
-
-        deallocateTimerStack(StackSelector);
-        StackSelector = NULL;
-
-#endif
 
         // Set Date and Time from CMOS
         //      RestoreRealTimeClock();

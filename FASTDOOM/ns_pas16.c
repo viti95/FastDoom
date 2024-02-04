@@ -331,22 +331,9 @@ void interrupt far PAS_ServiceInterrupt(
     void)
 
 {
-#ifdef USESTACK
-   // save stack
-   GetStack(&oldStackSelector, &oldStackPointer);
-
-   // set our stack
-   SetStack(StackSelector, StackPointer);
-#endif
-
    irqstatus = PAS_Read(InterruptStatus);
    if ((irqstatus & SampleBufferInterruptFlag) == 0)
    {
-#ifdef USESTACK
-      // restore stack
-      SetStack(oldStackSelector, oldStackPointer);
-#endif
-
       _chain_intr(PAS_OldInt);
    }
 
@@ -374,10 +361,6 @@ void interrupt far PAS_ServiceInterrupt(
       MV_ServiceVoc();
    }
 
-#ifdef USESTACK
-   // restore stack
-   SetStack(oldStackSelector, oldStackPointer);
-#endif
 }
 
 /*---------------------------------------------------------------------

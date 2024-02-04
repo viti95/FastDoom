@@ -172,13 +172,6 @@ void __interrupt __far BLASTER_ServiceInterrupt(
     void)
 
 {
-#ifdef USESTACK
-    // save stack
-    GetStack(&oldStackSelector, &oldStackPointer);
-
-    // set our stack
-    SetStack(StackSelector, StackPointer);
-#endif
 
     // Acknowledge interrupt
     // Check if this is this an SB16 or newer
@@ -201,11 +194,6 @@ void __interrupt __far BLASTER_ServiceInterrupt(
         }
         else
         {
-#ifdef USESTACK
-            // restore stack
-            SetStack(oldStackSelector, oldStackPointer);
-#endif
-
             // Wasn't our interrupt.  Call the old one.
             _chain_intr(BLASTER_OldInt);
         }
@@ -238,11 +226,6 @@ void __interrupt __far BLASTER_ServiceInterrupt(
     {
         MV_ServiceVoc();
     }
-
-#ifdef USESTACK
-    // restore stack
-    SetStack(oldStackSelector, oldStackPointer);
-#endif
 
     // send EOI to Interrupt Controller
     if (BLASTER_Config.Interrupt > 7)
