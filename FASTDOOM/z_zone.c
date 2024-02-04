@@ -160,11 +160,12 @@ void *Z_Malloc(int size, byte tag, void *user)
     rover = base;
     start = base->prev;
 
-    while(1)
+    while (1)
     {
-        if (base->size >= size && !base->user) {
-          // Found a free block of sufficient size
-          break;
+        if (base->size >= size && !base->user)
+        {
+            // Found a free block of sufficient size
+            break;
         }
         if (rover->next == start)
         {
@@ -253,11 +254,12 @@ void *Z_MallocUnowned(int size, byte tag)
     rover = base;
     start = base->prev;
 
-    while(1)
+    while (1)
     {
-        if (base->size >= size && !base->user) {
-          // Found a free block of sufficient size
-          break;
+        if (base->size >= size && !base->user)
+        {
+            // Found a free block of sufficient size
+            break;
         }
         if (rover->next == start)
         {
@@ -314,6 +316,18 @@ void *Z_MallocUnowned(int size, byte tag)
     mainzone->rover = base->next;
 
     return (void *)((byte *)base + sizeof(memblock_t));
+}
+
+void *Z_ReallocUnowned(void *ptr, int n, byte tag)
+{
+    void *p = Z_MallocUnowned(n, tag);
+    if (ptr)
+    {
+        memblock_t *block = (memblock_t *)((byte *)ptr - MINFRAGMENT);
+        memcpy(p, ptr, n <= block->size ? n : block->size);
+        Z_Free(ptr);
+    }
+    return p;
 }
 
 //
