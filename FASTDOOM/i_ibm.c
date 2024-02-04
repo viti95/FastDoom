@@ -1077,7 +1077,7 @@ byte *I_ZoneBase(int *size)
 
     do
     {
-        heap -= 0x60000; // leave 384kb alone
+        heap -= 0x10000; // leave 64kb alone
         ptr = malloc(heap);
     } while (!ptr);
 
