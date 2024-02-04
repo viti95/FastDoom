@@ -3,7 +3,6 @@
 
 #define LOCKMEMORY
 #define NOINTS
-#define USE_USRHOOKS
 
 #include <stdlib.h>
 #include <dos.h>
@@ -22,12 +21,7 @@
 #include "ns_dpmi.h"
 #endif
 
-#ifdef USE_USRHOOKS
 #include "ns_usrho.h"
-#define FreeMem(ptr) USRHOOKS_FreeMem((ptr))
-#else
-#define FreeMem(ptr) free((ptr))
-#endif
 
 typedef struct
 {
@@ -112,7 +106,7 @@ static void TS_FreeTaskList(void)
     while (node != TaskList)
     {
         next = node->next;
-        FreeMem(node);
+        USRHOOKS_FreeMem(node);
         node = next;
     }
 
@@ -463,28 +457,22 @@ task *TS_ScheduleTask(
     int rate,
     int priority,
     void *data)
-
 {
     task *ptr;
 
-#ifdef USE_USRHOOKS
     int status;
 
     ptr = NULL;
 
     status = USRHOOKS_GetMem((void **)&ptr, sizeof(task));
     if (status == USRHOOKS_Ok)
-#else
-    ptr = malloc(sizeof(task));
-    if (ptr != NULL)
-#endif
     {
         if (!TS_Installed)
         {
             status = TS_Startup();
             if (status != TASK_Ok)
             {
-                FreeMem(ptr);
+                USRHOOKS_FreeMem(ptr);
                 return (NULL);
             }
         }
@@ -541,7 +529,7 @@ int TS_Terminate(
             LL_RemoveNode(NodeToRemove, next, prev);
             NodeToRemove->next = NULL;
             NodeToRemove->prev = NULL;
-            FreeMem(NodeToRemove);
+            USRHOOKS_FreeMem(NodeToRemove);
 
             TS_SetTimerToMaxTaskRate();
 
