@@ -1077,8 +1077,8 @@ byte *I_ZoneBase(int *size)
 
     do
     {
-        heap -= 0x10000; // leave 64kb alone
         ptr = malloc(heap);
+        if (!ptr) heap -= 0x400; // try again with 1Kb less
     } while (!ptr);
 
     printf("Zone memory: %d Kb\n", heap >> 10);
