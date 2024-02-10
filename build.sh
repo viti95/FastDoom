@@ -2,7 +2,7 @@
 #!/bin/sh
 set -e
 
-# CHeck for wmake
+# Check for wmake
 if [[ $(which wmake) ]]; then
   echo "wmake found"
 else
@@ -27,16 +27,10 @@ if [[ $(which make) ]]; then
     echo "GNU make found"
   else
     echo "Not GNU Make? What platform are you on?"
-    sleep 1
   fi
-  USE_GNU_MAKE=1
-  echo "GNU make found"
 else
   echo "GNU make not found, builds will be much slower"
-  sleep 1
-  exit 1
 fi
-
 
 if [ $# -lt 1 ]; then
   echo "Usage: $0 target.exe [buildopts]"
