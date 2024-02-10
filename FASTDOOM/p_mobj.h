@@ -210,6 +210,13 @@ typedef struct mobj_s
     byte sprite; // used to find patch_t and flip value
     int frame;          // might be ORed with FF_FULLBRIGHT
 
+    // The following is used for interpolation frames.
+    fixed_t prevx;
+    fixed_t prevy;
+    fixed_t prevz;
+    angle_t prevangle;
+
+
     // Interaction info, by BLOCKMAP.
     // Links in blocks (if needed).
     struct mobj_s *bnext;

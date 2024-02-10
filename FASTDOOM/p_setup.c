@@ -219,7 +219,9 @@ void P_LoadSectors(int lump)
     for (i = 0; i < numsectors; i++, ss++, ms++)
     {
         ss->floorheight = ms->floorheight << FRACBITS;
+        ss->prevfloorheight = ss->floorheight;
         ss->ceilingheight = ms->ceilingheight << FRACBITS;
+        ss->prevceilingheight = ss->ceilingheight;
         ss->floorpic = R_FlatNumForName(ms->floorpic);
         ss->ceilingpic = R_FlatNumForName(ms->ceilingpic);
         ss->lightlevel = ms->lightlevel;

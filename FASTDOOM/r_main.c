@@ -76,6 +76,11 @@ fixed_t viewsin;
 // 0 = high, 1 = low, 2 = potato
 int detailshift;
 
+
+
+fixed_t interpolationweight;
+unsigned int lastframetime; // This is in unites of 1/560th of a second
+
 // The viewangletox[viewangle + FINEANGLES/4] lookup
 // maps the visible view angles to screen X coordinates,
 // flattening the arc to a flat projection plane.
@@ -2869,16 +2874,37 @@ void R_SetupFrame(void)
 {
     int i;
 
-    viewx = (players_mo)->x;
+    if (uncappedFPS)
+    {
+      signed angle_diff = (players_mo)->angle - (players_mo)->prevangle;
+      signed angle_offset;
+      // Perform frame interpolation. gameticstart is the ticcount_hr
+      // of the last gametic
+      unsigned int new_frametime = ticcount_hr;
+      unsigned int frametime = new_frametime - lastframetime;
+      lastframetime = new_frametime;
+      interpolationweight = (ticcount_hr - gameticstart + frametime) << 12;
+      if (interpolationweight > 0x10000) {
+        interpolationweight = 0x10000;
+      }
+      // Adjust the weight by the last frame time
+      viewx = FixedInterpolate(players_mo->prevx, players_mo->x, interpolationweight);
+      viewy = FixedInterpolate(players_mo->prevy, players_mo->y, interpolationweight);
+      viewangle = (players_mo)->prevangle + ((((signed)(players_mo)->angle - (signed)(players_mo)->prevangle) * ((signed)(interpolationweight>>12)) / 16));
+      viewz = FixedInterpolate(players.prevviewz, players.viewz, interpolationweight);
+    } else {
+      // No interpolation
+      viewx = (players_mo)->x;
+      viewy = (players_mo)->y;
+      viewangle = (players_mo)->angle;
+      viewz = players.viewz;
+    }
     viewxs = viewx >> FRACBITS;
-    viewy = (players_mo)->y;
     viewyneg = -viewy;
     viewys = viewy >> FRACBITS;
-    viewangle = (players_mo)->angle;
     viewangle90 = viewangle + ANG90;
     extralight = players.extralight;
 
-    viewz = players.viewz;
 
     viewsin = finesine[viewangle >> ANGLETOFINESHIFT];
     viewcos = finecosine[viewangle >> ANGLETOFINESHIFT];

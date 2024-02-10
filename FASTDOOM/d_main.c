@@ -109,6 +109,7 @@ boolean debugCardReverse;
 boolean nearSprites;
 boolean monoSound;
 boolean noMelt;
+boolean uncappedFPS;
 
 boolean reverseStereo;
 
@@ -592,7 +593,7 @@ void D_DoomLoopBenchmark(void)
     while (1)
     {
         frame_ticcount = ticcount;
-        start_time = mscount;
+        start_time = ticcount;
 
         // process one or more tics
         I_StartTic();
@@ -625,7 +626,10 @@ void D_DoomLoopBenchmark(void)
         // Update display, next frame, with current state.
         D_Display();
 
-        end_time = mscount - start_time;
+        end_time = ticcount_hr - start_time;
+        // Scale the endtime due to the 560Hz timer
+        // (1000 / 560) == (25 / 14)
+        end_time = (end_time * 25) / 14;
 
         frametime[frametime_position] = end_time;
         frametime_position++;
@@ -1368,7 +1372,7 @@ void D_DoomMain(void)
         char *dest = iwadfile;
 
         memset(iwadfile, 0, sizeof(iwadfile));
-        
+
         while (*src != '\0')
         {
             *dest = tolower((unsigned char)*src);
@@ -1659,6 +1663,7 @@ void D_DoomMain(void)
     M_CheckParmOptional("-nomelt", &noMelt);
     M_CheckParmOptional("-slowbus", &busSpeed);
     M_CheckParmOptional("-vsync", &waitVsync);
+    M_CheckParmOptional("-uncapped", &uncappedFPS);
     M_CheckParmDisable("-defSpan", &visplaneRender);
     M_CheckParmDisable("-defWall", &wallRender);
     M_CheckParmDisable("-defSprite", &spriteRender);
@@ -1770,4 +1775,32 @@ void D_DoomMain(void)
     }
 
     D_DoomLoop(); // never returns
+}
+
+
+// Goes through all m_objs and sectors and copies the current position to the previous position
+// This is called in TryRunTics when uncappedFPS is enabled
+// TODO performance impact analysis. Can we avoid this on untouched things?
+void D_SetupInterpolation(void)
+{
+    int i;
+    gameticstart = ticcount_hr;
+    for (i = 0; i < numsectors; i++)
+    {
+      mobj_t *thing;
+      sector_t *sector = &sectors[i];
+      sector->prevfloorheight = sector->floorheight;
+      sector->prevceilingheight = sector->ceilingheight;
+      // For each thing in the sector
+      for (thing = sector->thinglist; thing; thing = thing->snext)
+      {
+        thing->prevx = thing->x;
+        thing->prevy = thing->y;
+        thing->prevz = thing->z;
+        // With interpolation, this is only used for player view. There is
+        // no smooth animation for rotation of sprites.
+        thing->prevangle = thing->angle;
+      }
+    }
+    players.prevviewz = players.viewz;
 }

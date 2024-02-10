@@ -98,6 +98,7 @@ extern boolean disableDemo;
 
 extern boolean busSpeed;
 extern boolean waitVsync;
+extern boolean uncappedFPS;
 
 // Set if homebrew PWAD stuff has been added.
 extern boolean modifiedgame;
@@ -226,6 +227,7 @@ extern gamestate_t gamestate;
 //  WAD, partly set at startup time.
 
 extern int gametic;
+extern unsigned int gameticstart;
 
 // Bookkeeping on players - state.
 extern player_t players;

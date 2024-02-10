@@ -1,6 +1,6 @@
 // Comment this out to indicate debugging is configured!
 // Uncomment after reviewing the options. TODO - .gitignore?
-#define DEBUG_UNCONFIGURED
+ #define DEBUG_UNCONFIGURED
 
 // Enables bounds checking for screen coordinates.
 // This will die and show a backtrace if the coordinates are out of bounds.

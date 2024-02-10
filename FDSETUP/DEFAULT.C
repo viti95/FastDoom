@@ -30,6 +30,7 @@ int showFPS = 0;
 int debugCardPort = 0x80;
 int debugCardReverse = 0;
 int busSpeed = 0;
+int uncappedFPS = 0;
 int flatSky = 0;
 int nearSprites = 0;
 int noMelt = 0;
@@ -72,6 +73,7 @@ default_t defaults[] =
 		{"debugCardPort", &debugCardPort, 0x80},
 		{"debugCardReverse", &debugCardReverse, 0},
 		{"busSpeed", &busSpeed, 0},
+    {"uncappedFPS", &uncappedFPS, 0},
 		{"flatsky", &flatSky, 0},
 		{"near", &nearSprites, 0},
 		{"nomelt", &noMelt, 0},

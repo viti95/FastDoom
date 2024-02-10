@@ -91,6 +91,10 @@ typedef struct
 {
     fixed_t floorheight;
     fixed_t ceilingheight;
+    // Used for interpolation since there are lots of animations (doors, lifts, etc.)
+    // which use these fields.
+    fixed_t prevfloorheight;
+    fixed_t prevceilingheight;
     short floorpic;
     short ceilingpic;
     short lightlevel;
