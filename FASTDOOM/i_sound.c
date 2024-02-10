@@ -52,14 +52,12 @@ void I_StartupTimer(void)
 {
     printf("I_StartupTimer()\n");
     // installs master timer.  Must be done before StartupTimer()!
-    tsm_task = TS_ScheduleTask(I_TimerISR, 35, 1, NULL);
+    // We have a high resolution timer in order to have frame interpolation
+    // for > 35 fps. Note that the game tics are fixed to 35, which is
+    // 1/16th of the 560Hz timer.
+    tsm_task = TS_ScheduleTask(I_TimerISR, 560, 1, NULL);
     TS_Dispatch();
-    
-    if (benchmark_advanced)
-    {
-        tsm_ms_task = TS_ScheduleTask(I_TimerMS, 1000, 1, NULL);
-        TS_Dispatch();
-    }
+
 }
 
 void I_ShutdownTimer(void)

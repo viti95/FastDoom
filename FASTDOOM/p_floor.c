@@ -21,7 +21,7 @@
 #include "z_zone.h"
 #include "doomdef.h"
 #include "p_local.h"
-
+#include "i_debug.h"
 #include "s_sound.h"
 
 // State.

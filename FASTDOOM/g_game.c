@@ -107,6 +107,8 @@ player_t players;
 mobj_t *players_mo;
 
 int gametic;
+unsigned int gameticstart; // Timer counter for start of gametic, used for
+                            // frame interpolation
 int totalkills, totalitems, totalsecret; // for intermission
 
 char demoname[32];
@@ -1176,7 +1178,7 @@ unsigned int G_GetDemoTicks(char *demofile)
     unsigned int count;
 
     demobuffer = demo_p = W_CacheLumpName(demofile, PU_STATIC);
-    
+
     // G_DoPlayDemo
     *demo_p++;
     *demo_p++;
@@ -1405,7 +1407,7 @@ void G_SaveCSVResult(unsigned int gametics, unsigned int realtics, unsigned int 
 
         // 1% low FPS
         fprintf(logFile, "%u" CSV_DECIMAL "%.3u" CSV_COLUMN, onepercentlow / 1000, onepercentlow % 1000);
-        
+
         // 0.1% low FPS
         fprintf(logFile, "%u" CSV_DECIMAL "%.3u\n", dotonepercentlow / 1000, dotonepercentlow % 1000);
 
@@ -1543,7 +1545,7 @@ void G_CheckDemoStatus(void)
 
                 // Cleanup frametimes
                 frametime_position = 0;
-                
+
                 for (i = 0; i < benchmark_total_tics; i++)
                 {
                     frametime[i] = 0;

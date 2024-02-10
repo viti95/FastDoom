@@ -82,9 +82,9 @@ int M_CheckParmOptional(char *check, int *variable)
         if (!strcasecmp(check, myargv[i])){
             *variable = i;
             return 1;
-        }            
+        }
     }
-    
+
     return 0;
 }
 
@@ -97,9 +97,9 @@ int M_CheckParmOptionalValue(char *check, int *variable, int value)
         if (!strcasecmp(check, myargv[i])){
             *variable = value;
             return 1;
-        }            
+        }
     }
-    
+
     return 0;
 }
 
@@ -113,7 +113,7 @@ int M_CheckParmDisable(char *check, int *variable)
             *variable = 0;
             return 1;
         }
-            
+
     }
 
     return 0;
@@ -129,7 +129,7 @@ void M_AddToBox(fixed_t *box, fixed_t x, fixed_t y)
 
     if (box[BOXBOTTOM] > y)
         box[BOXBOTTOM] = y;
-    else 
+    else
         if (box[BOXTOP] < y)
             box[BOXTOP] = y;
 }
@@ -310,6 +310,7 @@ default_t defaults[] =
         {"debugCardPort", &debugCardPort, 0x80},
         {"debugCardReverse", &debugCardReverse, 0},
         {"busSpeed", &busSpeed, 0},
+        {"uncapped", &uncappedFPS, 0},
         {"flatsky", &flatSky, 0},
         {"near", &nearSprites, 0},
         {"nomelt", &noMelt, 0},

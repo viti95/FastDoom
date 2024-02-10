@@ -136,6 +136,12 @@ void M_SetBusSpeed(boolean value)
 #endif
 }
 
+void M_SetUncapped(boolean value)
+{
+    uncappedFPS = value;
+    I_SetHrTimerEnabled(uncappedFPS);
+}
+
 void M_SetSizeDisplay(int value)
 {
     screenSize = value;

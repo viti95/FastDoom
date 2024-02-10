@@ -357,7 +357,7 @@ void P_NightmareRespawn(mobj_t *mobj)
 
     // VITI95: OPTIMIZE
     mo->angle = ANG45 * (mthing->angle / 45);
-
+    mo->prevangle = mo->angle;
     if (mthing->options & MTF_AMBUSH)
         mo->flags |= MF_AMBUSH;
 
@@ -457,6 +457,8 @@ P_SpawnMobj(fixed_t x, fixed_t y, fixed_t z, byte type)
     mobj->info = info;
     mobj->x = x;
     mobj->y = y;
+    mobj->prevx = x;
+    mobj->prevy = y;
     mobj->radius = info->radius;
     mobj->height = info->height;
     mobj->flags = info->flags;
@@ -488,7 +490,7 @@ P_SpawnMobj(fixed_t x, fixed_t y, fixed_t z, byte type)
         mobj->z = mobj->ceilingz - mobj->info->height;
     else
         mobj->z = z;
-
+    mobj->prevz = mobj->z;
     if (mobj->type < MT_MISC0)
     {
         mobj->thinker.function.acp1 = (actionf_p1)P_MobjThinker;
@@ -571,6 +573,7 @@ void P_SpawnPlayer(mapthing_t *mthing)
 
     // VITI95: OPTIMIZE
     mobj->angle = ANG45 * (mthing->angle / 45);
+    mobj->prevangle = mobj->angle;
     mobj->player = p;
     mobj->health = p->health;
 
@@ -666,9 +669,10 @@ void P_SpawnMapThing(mapthing_t *mthing)
 
     totalkills += (mobj->flags & MF_COUNTKILL) != 0;
     totalitems += (mobj->flags & MF_COUNTITEM) != 0;
-    
+
     // VITI95: OPTIMIZE
     mobj->angle = ANG45 * (mthing->angle / 45);
+    mobj->prevangle = mobj->angle;
     if (mthing->options & MTF_AMBUSH)
         mobj->flags |= MF_AMBUSH;
 }
@@ -847,6 +851,7 @@ void P_SpawnPlayerMissile(byte type)
 
     th->target = players_mo;
     th->angle = an;
+    th->prevangle = an;
 
     an >>= ANGLETOFINESHIFT;
 
