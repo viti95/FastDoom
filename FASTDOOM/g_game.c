@@ -449,6 +449,11 @@ void G_Ticker(void)
     int buf;
     ticcmd_t *cmd;
 
+    if (uncappedFPS) {
+      // Setup the interpolation state
+      D_SetupInterpolation();
+    }
+
     // do player reborns if needed
     if (players.playerstate == PST_REBORN)
         G_DoReborn(0);

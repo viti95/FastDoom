@@ -19,5 +19,7 @@ extern int updatestate;
 #define I_MESSAGES	4
 #define I_FULLSCRN	8
 
-extern void I_TimerISR(task *task);
-extern void I_TimerMS(task *task);
+void I_StartupTimer(void);
+void I_ShutdownTimer(void);
+void I_SetHrTimerEnabled(boolean enabled);
+
