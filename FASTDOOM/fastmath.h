@@ -365,6 +365,10 @@ int Div84(int value);
     "shr ecx, 31", \
     "add edx, ecx" parm[ecx] value[edx] modify exact[eax ecx edx]
 
+int Div128(int value);
+#pragma aux Div128 = \
+    "shr eax, 7" parm[eax] value[eax] modify exact[eax]
+
 void CopyBytes(void *src, void *dest, int num_bytes);
 #pragma aux CopyBytes = \
     "rep movsb" \

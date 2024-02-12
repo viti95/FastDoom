@@ -125,6 +125,7 @@ typedef struct
     short linecount;
     struct line_s **lines; // [linecount] size
 
+    byte _pad[36]; // padding to align to 128 bytes
 } sector_t;
 
 //
