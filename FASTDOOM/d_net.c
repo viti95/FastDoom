@@ -150,10 +150,6 @@ void TryRunTics(void)
 			D_Display();
 		}
 	}
-	if (uncappedFPS) {
-		// Copy the current frame state before we update the game state
-		D_SetupInterpolation();
-	}
 	// run the count dics
 	while (counts--)
 	{
