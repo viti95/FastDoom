@@ -1705,6 +1705,7 @@ void D_DoomMain(void)
     M_CheckParmDisable("-melt", &noMelt);
     M_CheckParmDisable("-fastbus", &busSpeed);
     M_CheckParmDisable("-novsync", &waitVsync);
+    M_CheckParmDisable("-capped", &uncappedFPS);
     M_CheckParmDisable("-nofps", &showFPS);
 
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA)
