@@ -580,7 +580,9 @@ void D_DoomLoopBenchmark(void)
     unsigned int start_time, end_time;
 
     I_InitGraphics();
-
+    I_SetHrTimerEnabled(1); // Enable the 560Hz timer for doing frametime
+                            // recording
+                            // TODO rdtsc for later CPUs?
     while (1)
     {
         start_time = ticcount_hr;
