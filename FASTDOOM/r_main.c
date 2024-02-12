@@ -2876,18 +2876,6 @@ void R_SetupFrame(void)
 
     if (uncappedFPS)
     {
-      signed angle_diff = (players_mo)->angle - (players_mo)->prevangle;
-      signed angle_offset;
-      // Perform frame interpolation. gameticstart is the ticcount_hr
-      // of the last gametic
-      unsigned int new_frametime = ticcount_hr;
-      unsigned int frametime = new_frametime - lastframetime;
-      lastframetime = new_frametime;
-      interpolationweight = (ticcount_hr - gameticstart + frametime) << 12;
-      if (interpolationweight > 0x10000) {
-        interpolationweight = 0x10000;
-      }
-      // Adjust the weight by the last frame time
       viewx = FixedInterpolate(players_mo->prevx, players_mo->x, interpolationweight);
       viewy = FixedInterpolate(players_mo->prevy, players_mo->y, interpolationweight);
       viewangle = (players_mo)->prevangle + ((((signed)(players_mo)->angle - (signed)(players_mo)->prevangle) * ((signed)(interpolationweight>>12)) / 16));

@@ -55,7 +55,9 @@ void D_PageDrawer(void);
 void D_AdvanceDemo(void);
 void D_StartTitle(void);
 
-void D_Display(void);
+// Returns whether a frame was drawn in the case that interpolation is enabled
+// (uncappedFPS) and we would overshoot the target time.
+int D_Display(void);
 
 #if defined(MODE_CGA512)
 enum CGA_MODEL

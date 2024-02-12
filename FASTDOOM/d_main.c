@@ -249,7 +249,10 @@ gamestate_t wipegamestate = GS_DEMOSCREEN;
 extern byte setsizeneeded;
 extern int showMessages;
 
-void D_Display(void)
+// Returns whether a frame was drawn. This is used to determine whether to
+// generate a gametic in interpolation mode because we can't deliver
+// a frame in time before we need to generate the next gametic
+int D_Display(void)
 {
     static byte viewactivestate = 0;
     static byte menuactivestate = 0;
@@ -262,6 +265,30 @@ void D_Display(void)
     boolean done;
     boolean wipe;
     boolean redrawsbar;
+
+    // Setup interpolation weight
+    if (uncappedFPS) {
+      // Perform frame interpolation. gameticstart is the ticcount_hr
+      // of the last gametic
+      unsigned int new_frametime = ticcount_hr;
+      unsigned int frametime = new_frametime - lastframetime;
+      //I_Printf("frametime: %d\n", frametime);
+      // We are less than 35 fps, don't interpolate
+      // Recall that frametime is in units of 1/560th of a second
+      if (frametime > 16) {
+        interpolationweight = 0x10000;
+      } else {
+        unsigned int current_time_in_frame = ticcount_hr - gameticstart;
+        interpolationweight = (current_time_in_frame + frametime) << 12;
+        //I_Printf("interpolationweight: %p\n", interpolationweight);
+        // If we are larger than 0x10000, we refuse to run, we need a
+        // gametic
+        if (interpolationweight > 0x10000) {
+          return false;
+        }
+      }
+      lastframetime = new_frametime;
+    }
 
     // change the view size if needed
     if (setsizeneeded)
@@ -481,7 +508,7 @@ void D_Display(void)
         if (showFPS)
             I_CalculateFPS();
 
-        return;
+        return true;
     }
 
 // wipe update
@@ -523,6 +550,7 @@ void D_Display(void)
             I_CalculateFPS();
     } while (!done);
 #endif
+    return true;
 }
 
 //
@@ -1780,13 +1808,10 @@ void D_DoomMain(void)
 }
 
 
-// Goes through all m_objs and sectors and copies the current position to the previous position
-// This is called in TryRunTics when uncappedFPS is enabled
-// TODO performance impact analysis. Can we avoid this on untouched things?
 void D_SetupInterpolation(void)
 {
     int i;
-    gameticstart = ticcount_hr;
+    //I_Printf("D_SetupInterpolation: Setting up interpolation.\n");
     for (i = 0; i < numsectors; i++)
     {
       mobj_t *thing;
