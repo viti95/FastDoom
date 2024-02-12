@@ -451,7 +451,9 @@ void G_Ticker(void)
 
     if (uncappedFPS) {
       // Setup the interpolation state
+      // At the beginng of every game tic
       D_SetupInterpolation();
+      gameticstart+=16; //35 fps interval
     }
 
     // do player reborns if needed

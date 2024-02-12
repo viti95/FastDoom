@@ -146,8 +146,17 @@ void TryRunTics(void)
 			M_Ticker();
 			return;
 		}
-		if (uncappedFPS) {
-			D_Display();
+		if (uncappedFPS)
+		{
+			if (!D_Display()) {
+				// We don't have time to draw the interpolated, so we need to skip
+				// straight to the next tic.
+				// Note that D_Display in interpolation mode is doing timing
+				// measurements so even though we are fast forwarding here,
+				// everyhting will be in sync.
+				maketic = gametic + counts;
+				break;
+			}
 		}
 	}
 	// run the count dics
