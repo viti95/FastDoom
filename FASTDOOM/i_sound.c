@@ -41,34 +41,6 @@
 
 #include "ns_cd.h"
 
-//
-// I_StartupTimer
-//
-
-task *tsm_task;
-task *tsm_ms_task;
-
-void I_StartupTimer(void)
-{
-    printf("I_StartupTimer()\n");
-    // installs master timer.  Must be done before StartupTimer()!
-    // We have a high resolution timer in order to have frame interpolation
-    // for > 35 fps. Note that the game tics are fixed to 35, which is
-    // 1/16th of the 560Hz timer.
-    tsm_task = TS_ScheduleTask(I_TimerISR, 560, 1, NULL);
-    TS_Dispatch();
-
-}
-
-void I_ShutdownTimer(void)
-{
-    if (tsm_task)
-    {
-        TS_Terminate(tsm_task);
-    }
-    tsm_task = NULL;
-    TS_Shutdown();
-}
 
 //
 // Sound header & data
@@ -278,10 +250,6 @@ void I_sndArbitrateCards(void)
 //
 void I_StartupSound(void)
 {
-    //
-    // inits sound library timer stuff
-    //
-    I_StartupTimer();
 
     //
     // pick the sound cards i'm going to use

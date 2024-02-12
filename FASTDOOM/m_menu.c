@@ -2160,10 +2160,12 @@ void M_ChangeBusSpeed(int choice)
     players.message = busSpeed ? "SLOW BUS" : "FAST BUS";
 }
 
+void I_SetHrTimerEnabled(int enabled);
+
 void M_ChangeUncappedFPS(int choice)
 {
     uncappedFPS = !uncappedFPS;
-
+    I_SetHrTimerEnabled(uncappedFPS);
     players.message = uncappedFPS ? "UNCAPPED FPS" : "CAPPED FPS";
 }
 
