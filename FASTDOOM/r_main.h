@@ -52,8 +52,6 @@ extern int validcount;
 // When interpolation is enabled (uncappedFPS), this is the weight of the
 // current frame. It is 1.0 (IE 0x10000) when the frame is not interpolated.
 extern fixed_t interpolationweight;
-// The HR timer value of the last frame, used to calculate the interpolation
-extern unsigned int lastframetime;
 
 //
 // Lighting LUT.

@@ -66,6 +66,7 @@
 #include "options.h"
 
 #include "i_log.h"
+#include "i_debug.h"
 
 #define SAVEGAMESIZE 0x2c000
 #define SAVESTRINGSIZE 24
@@ -107,8 +108,6 @@ player_t players;
 mobj_t *players_mo;
 
 int gametic;
-unsigned int gameticstart; // Timer counter for start of gametic, used for
-                            // frame interpolation
 int totalkills, totalitems, totalsecret; // for intermission
 
 char demoname[32];
@@ -448,13 +447,6 @@ void G_Ticker(void)
     int i;
     int buf;
     ticcmd_t *cmd;
-
-    if (uncappedFPS) {
-      // Setup the interpolation state
-      // At the beginng of every game tic
-      D_SetupInterpolation();
-      gameticstart+=16; //35 fps interval
-    }
 
     // do player reborns if needed
     if (players.playerstate == PST_REBORN)

@@ -34,4 +34,4 @@
 // will be outputted to the other enabled debug outputs.
 #define DEBUG_SHOW_BACKTRACE_ON_SCREEN 0
 // Whether to quit the game when a backtrace is requested.
-#define DEBUG_DIE_ON_BACKTRACE 0
+#define DEBUG_DIE_ON_BACKTRACE 1
