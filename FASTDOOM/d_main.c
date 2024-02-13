@@ -249,10 +249,11 @@ gamestate_t wipegamestate = GS_DEMOSCREEN;
 extern byte setsizeneeded;
 extern int showMessages;
 
+
 // Returns whether a frame was drawn. This is used to determine whether to
 // generate a gametic in interpolation mode because we can't deliver
 // a frame in time before we need to generate the next gametic
-int D_Display(void)
+void D_Display(void)
 {
     static byte viewactivestate = 0;
     static byte menuactivestate = 0;
@@ -266,29 +267,6 @@ int D_Display(void)
     boolean wipe;
     boolean redrawsbar;
 
-    // Setup interpolation weight
-    if (uncappedFPS) {
-      // Perform frame interpolation. gameticstart is the ticcount_hr
-      // of the last gametic
-      unsigned int new_frametime = ticcount_hr;
-      unsigned int frametime = new_frametime - lastframetime;
-      //I_Printf("frametime: %d\n", frametime);
-      // We are less than 35 fps, don't interpolate
-      // Recall that frametime is in units of 1/560th of a second
-      if (frametime > 16) {
-        interpolationweight = 0x10000;
-      } else {
-        unsigned int current_time_in_frame = ticcount_hr - gameticstart;
-        interpolationweight = (current_time_in_frame + frametime) << 12;
-        //I_Printf("interpolationweight: %p\n", interpolationweight);
-        // If we are larger than 0x10000, we refuse to run, we need a
-        // gametic
-        if (interpolationweight > 0x10000) {
-          return false;
-        }
-      }
-      lastframetime = new_frametime;
-    }
 
     // change the view size if needed
     if (setsizeneeded)
@@ -508,7 +486,7 @@ int D_Display(void)
         if (showFPS)
             I_CalculateFPS();
 
-        return true;
+        return;
     }
 
 // wipe update
@@ -550,7 +528,6 @@ int D_Display(void)
             I_CalculateFPS();
     } while (!done);
 #endif
-    return true;
 }
 
 //
@@ -575,6 +552,12 @@ void D_DoomLoop(void)
         // process one or more tics
         if (singletics)
         {
+            if (uncappedFPS) {
+               // This allows us to benchmark the impact of the interpolation
+               // logic on the render code
+               D_SetupInterpolation();
+               interpolationweight = 0x1000;
+            }
             I_StartTic();
             D_ProcessEvents();
             G_BuildTiccmd(&localcmds[maketic & (BACKUPTICS - 1)]);
@@ -606,9 +589,14 @@ void D_DoomLoop(void)
             S_CheckWAV();
             break;
         }
-
         // Update display, next frame, with current state.
-        D_Display();
+        // If we are in uncapped mode, TryRunTics handles all
+        // frame updates since they may be interpolated. However,
+        // with singletics we don't invoke TryRunTics and so we
+        // need to update the display here.
+        if (!uncappedFPS || singletics) {
+          D_Display();
+        }
     }
 }
 
@@ -625,6 +613,11 @@ void D_DoomLoopBenchmark(void)
         frame_ticcount = ticcount;
         start_time = ticcount;
 
+        if (uncappedFPS)
+        {
+            D_SetupInterpolation();
+            interpolationweight = 0x1000;
+        }
         // process one or more tics
         I_StartTic();
         D_ProcessEvents();

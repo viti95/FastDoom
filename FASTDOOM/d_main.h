@@ -55,9 +55,7 @@ void D_PageDrawer(void);
 void D_AdvanceDemo(void);
 void D_StartTitle(void);
 
-// Returns whether a frame was drawn in the case that interpolation is enabled
-// (uncappedFPS) and we would overshoot the target time.
-int D_Display(void);
+void D_Display(void);
 
 #if defined(MODE_CGA512)
 enum CGA_MODEL
@@ -67,7 +65,7 @@ enum CGA_MODEL
 };
 #endif
 
-// Called by TryRunTics when uncappedFPS is set to copy animation state
+// Called before G_Ticker when uncappedFPS is set to copy animation state
 // so that we can interpolate between tics
 void D_SetupInterpolation(void);
 #endif

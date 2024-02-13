@@ -227,7 +227,6 @@ extern gamestate_t gamestate;
 //  WAD, partly set at startup time.
 
 extern int gametic;
-extern unsigned int gameticstart;
 
 // Bookkeeping on players - state.
 extern player_t players;

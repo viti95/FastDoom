@@ -37,6 +37,7 @@
 #include "s_sound.h"
 
 #include "doomstat.h"
+#include "i_debug.h"
 
 void P_SpawnMapThing(mapthing_t *mthing);
 
@@ -580,6 +581,7 @@ void P_SetupLevel(int episode,
     // Initial height of PointOfView
     // will be set by player think.
     players.viewz = 1;
+    players.prevviewz = 1;
 
     // Make sure all sounds are stopped before Z_FreeTags.
     S_Start();

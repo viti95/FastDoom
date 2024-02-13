@@ -68,6 +68,10 @@
 #include "i_file.h"
 #include "i_debug.h"
 
+#include "i_log.h"
+#include "i_debug.h"
+
+#define SAVEGAMESIZE 0x2c000
 #define SAVESTRINGSIZE 24
 #define DEMOMARKER 0x80
 
@@ -107,8 +111,6 @@ player_t players;
 mobj_t *players_mo;
 
 int gametic;
-unsigned int gameticstart; // Timer counter for start of gametic, used for
-                            // frame interpolation
 int totalkills, totalitems, totalsecret; // for intermission
 
 char demoname[32];
@@ -448,13 +450,6 @@ void G_Ticker(void)
     int i;
     int buf;
     ticcmd_t *cmd;
-
-    if (uncappedFPS) {
-      // Setup the interpolation state
-      // At the beginng of every game tic
-      D_SetupInterpolation();
-      gameticstart+=16; //35 fps interval
-    }
 
     // do player reborns if needed
     if (players.playerstate == PST_REBORN)
@@ -888,9 +883,9 @@ void G_SaveGame(int slot,
 int G_CalculateSaveGameSize(void)
 {
     thinker_t *th;
-    int i;    
+    int i;
     int savesize = 0;
-    
+
     // G_DoSaveGame
     savesize += SAVESTRINGSIZE;
     savesize += VERSIONSIZE;
@@ -903,7 +898,7 @@ int G_CalculateSaveGameSize(void)
     // P_ArchiveWorld
     savesize += numsectors * 14;
     savesize += numlines * (6 + (2 * 10));
-    
+
     // P_ArchiveThinkers
     for (th = thinkercap.next; th != &thinkercap; th = th->next)
     {
@@ -915,7 +910,7 @@ int G_CalculateSaveGameSize(void)
 		}
     }
     savesize += 1;
-    
+
     // P_ArchiveSpecials
     for (th = thinkercap.next; th != &thinkercap; th = th->next)
 	{

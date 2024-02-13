@@ -79,7 +79,6 @@ int detailshift;
 
 
 fixed_t interpolationweight;
-unsigned int lastframetime; // This is in unites of 1/560th of a second
 
 // The viewangletox[viewangle + FINEANGLES/4] lookup
 // maps the visible view angles to screen X coordinates,
