@@ -4,6 +4,7 @@
 #define LOCKMEMORY
 #define NOINTS
 #define USE_USRHOOKS
+#define USESTACK
 
 #include <stdlib.h>
 #include <dos.h>
@@ -50,6 +51,9 @@ static unsigned long StackPointer;
 static unsigned short oldStackSelector;
 static unsigned long oldStackPointer;
 
+extern  unsigned short  GetDS( void );
+#pragma aux GetDS = \
+        "mov    ax,ds" value[ax]
 #endif
 
 static task HeadTask;
@@ -310,62 +314,26 @@ static void __interrupt __far TS_ServiceScheduleIntEnabled(void)
 /*---------------------------------------------------------------------
    Function: allocateTimerStack
 
-   Allocate a block of memory from conventional (low) memory and return
-   the selector (which can go directly into a segment register) of the
-   memory block or 0 if an error occured.
+   Allocate a block of protected mode memory which can be accessed by DS selector.
 ---------------------------------------------------------------------*/
 
-static unsigned short allocateTimerStack(
+static unsigned long allocateTimerStack(
     unsigned short size)
 
 {
-    union REGS regs;
-
-    // clear all registers
-    memset(&regs, 0, sizeof(regs));
-
-    // DPMI allocate conventional memory
-    regs.w.ax = 0x100;
-
-    // size in paragraphs
-    regs.w.bx = (size + 15) / 16;
-
-    int386(0x31, &regs, &regs);
-    if (!regs.w.cflag)
-    {
-        // DPMI call returns selector in dx
-        // (ax contains real mode segment
-        // which is ignored here)
-
-        return (regs.w.dx);
-    }
-
-    // Couldn't allocate memory.
-    return (NULL);
+    return (unsigned long)malloc(size);
 }
 
 /*---------------------------------------------------------------------
    Function: deallocateTimerStack
 
-   Deallocate a block of conventional (low) memory given a selector to
-   it.  Assumes the block was allocated with DPMI function 0x100.
 ---------------------------------------------------------------------*/
 
 static void deallocateTimerStack(
-    unsigned short selector)
+    unsigned long pointer)
 
 {
-    union REGS regs;
-
-    if (selector != NULL)
-    {
-        // clear all registers
-        memset(&regs, 0, sizeof(regs));
-
-        regs.w.ax = 0x101;
-        regs.w.dx = selector;
-        int386(0x31, &regs, &regs);
-    }
+    free((void*)pointer);
 }
 
 #endif
@@ -385,15 +353,19 @@ static int TS_Startup(
 
 #ifdef USESTACK
 
-        StackSelector = allocateTimerStack(kStackSize);
-        if (StackSelector == NULL)
+        StackPointer = allocateTimerStack(kStackSize);
+        if (StackPointer == 0)
         {
             return (TASK_Error);
         }
 
         // Leave a little room at top of stack just for the hell of it...
-        StackPointer = kStackSize - sizeof(long);
+        StackPointer += kStackSize - sizeof(long);
 
+        //SS=DS so it's still FLAT during interrupts, and be safe for watcom to generate optimized code using EBP to access static/global vars.
+        //this is essential when DPMI interfaces are provided by a DPMI host rather than DOS32A,
+        //as a DPMI host will provide another stack making SS != DS.
+        StackSelector = GetDS();
 #endif
 
         //static const task *TaskList = &HeadTask;
@@ -440,7 +412,7 @@ void TS_Shutdown(
 
 #ifdef USESTACK
 
-        deallocateTimerStack(StackSelector);
+        deallocateTimerStack(StackPointer - (kStackSize-sizeof(long)));
         StackSelector = NULL;
 
 #endif
