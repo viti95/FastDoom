@@ -556,7 +556,7 @@ void D_DoomLoop(void)
                // This allows us to benchmark the impact of the interpolation
                // logic on the render code
                D_SetupInterpolation();
-               interpolationweight = 0x1000;
+               interpolation_weight = 0x10000;
             }
             I_StartTic();
             D_ProcessEvents();
@@ -616,7 +616,7 @@ void D_DoomLoopBenchmark(void)
         if (uncappedFPS)
         {
             D_SetupInterpolation();
-            interpolationweight = 0x1000;
+            interpolation_weight = 0x10000;
         }
         // process one or more tics
         I_StartTic();

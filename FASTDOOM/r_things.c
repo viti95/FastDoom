@@ -1105,9 +1105,9 @@ void R_ProjectSprite(mobj_t *thing)
 
     if (uncappedFPS) {
       // Interpolate the position of the thing
-      x = FixedInterpolate(thing->prevx, thing->x, interpolationweight);
-      y = FixedInterpolate(thing->prevy, thing->y, interpolationweight);
-      z = FixedInterpolate(thing->prevz, thing->z, interpolationweight);
+      x = FixedInterpolate(thing->prevx, thing->x, interpolation_weight);
+      y = FixedInterpolate(thing->prevy, thing->y, interpolation_weight);
+      z = FixedInterpolate(thing->prevz, thing->z, interpolation_weight);
     } else {
       x = thing->x;
       y = thing->y;

@@ -334,6 +334,10 @@ extern gamestate_t wipegamestate;
 
 void G_DoLoadLevel(void)
 {
+    // Reset interpolation state to values that will force no interpolation
+    // on the first tick
+    interpolation_weight = 0x10000;
+    frametime_hrticks = 17;
     // DOOM determines the sky texture to be used
     // depending on the current episode, and the game version.
     if (gamemode == commercial)

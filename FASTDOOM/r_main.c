@@ -78,7 +78,8 @@ int detailshift;
 
 
 
-fixed_t interpolationweight;
+fixed_t interpolation_weight = 0x10000;
+unsigned frametime_hrticks = 17;
 
 // The viewangletox[viewangle + FINEANGLES/4] lookup
 // maps the visible view angles to screen X coordinates,
@@ -2875,10 +2876,11 @@ void R_SetupFrame(void)
 
     if (uncappedFPS)
     {
-      viewx = FixedInterpolate(players_mo->prevx, players_mo->x, interpolationweight);
-      viewy = FixedInterpolate(players_mo->prevy, players_mo->y, interpolationweight);
-      viewangle = (players_mo)->prevangle + ((((signed)(players_mo)->angle - (signed)(players_mo)->prevangle) * ((signed)(interpolationweight>>12)) / 16));
-      viewz = FixedInterpolate(players.prevviewz, players.viewz, interpolationweight);
+      viewx = FixedInterpolate(players_mo->prevx, players_mo->x, interpolation_weight);
+      viewy = FixedInterpolate(players_mo->prevy, players_mo->y, interpolation_weight);
+      viewangle = (players_mo)->prevangle + ((((signed)(players_mo)->angle - (signed)(players_mo)->prevangle) * ((signed)(interpolation_weight>>12)) / 16));
+      viewz = FixedInterpolate(players.prevviewz, players.viewz, interpolation_weight);
+      I_Printf("interpolation_weight: %p, viewz: %p, prevviewz: %p\n", interpolation_weight, players.viewz, players.prevviewz);
     } else {
       // No interpolation
       viewx = (players_mo)->x;

@@ -22,6 +22,7 @@
 #include "d_event.h"
 #include "options.h"
 #include "p_local.h"
+#include "i_debug.h"
 
 #include "doomstat.h"
 
