@@ -168,7 +168,7 @@ void TryRunTicsCapped(void)
 		counts = 1;
 
 	// wait for new tics if needed
-	while (maketic < gametic + counts || uncappedFPS)
+	while (maketic < gametic + counts)
 	{
 		NetUpdate();
 
@@ -207,27 +207,19 @@ int ProcessInterpolationAndTics(void) {
 		goto render_frame;
 	}
 	last_ts = new_ts;
-	// If any gametics have elapsed since our last run let's process them.
-	if (gametics_elapsed > 0) {
-		ticks_ran = gametics_elapsed;
-		while (gametics_elapsed--) {
-			RunTickUncapped();
-		}
-	}
-	if (frametime > 16) {
+	if (frametime_hrticks > 16) {
 		// We are too slow to really interpolate frames
-		if (interpolationweight != 0x10000) {
+		if (interpolation_weight != 0x10000) {
 			// We need to reset the interpolation weight
 			// to 0x10000 (1.0) but let's not do it immediately
-			// becasue that creates a visual artifact
+			// becasue that creates a hitchting
 			// We should tell people that if they are near 35 fps in performance,
 			// they should just run in vsync or capped mode
-			interpolationweight += 0x1000;
-			if (interpolationweight >= 0x10000) {
-				interpolationweight = 0x10000;
+			interpolation_weight += 0x1000;
+			if (interpolation_weight >= 0x10000) {
+				interpolation_weight = 0x10000;
 			}
 		}
-		goto render_frame;
 	} else {
 		// Now let's process the interpolation weight
 		// First figure out where we are in the current gametic
@@ -235,36 +227,40 @@ int ProcessInterpolationAndTics(void) {
 		// dispatch, so that the lower 4 bits correspond to between
 		// gametics
 		int current_time_in_gametic = new_ts & 0xf;
-		// Where will we be in the next frame Use our last frametime
+		// Where will we be in the next frame Use our last frametime_hrticks
 		// to guesstimate
-		int next_time_in_gametic = current_time_in_gametic + frametime;
+		int next_time_in_gametic = current_time_in_gametic + frametime_hrticks;
 		// If we are going to be in the next gametic, then we will have to
 		// run the next gametic to do the next interpolation
 		if (next_time_in_gametic > 16) {
-			ticks_ran += 1;
-			RunTickUncapped();
-			// Adjust the last_ts to the beggining of the next
-			// gametic so that we account for running this one early
-			// when calculating gametics_elapsed
-			last_ts += 16 - current_time_in_gametic;
-			// Now move the next_time_in_gametic back to the current gametic
+			// Since we need the next gametic "early" let's just pretend it's
+			// already elapsed
+			gametics_elapsed++;
+			// move the next_time_in_gametic back to the current gametic
 			// since it's been processed
 			next_time_in_gametic -= 16;
+			// Adjust the last_ts to the beggining of the next
+			// gametic so that we account for running this one early
+			// when calculating the next gametics_elapsed
+			last_ts += 16 - current_time_in_gametic;
 		}
-		// OK we are safely in the current gametic, convert our time to a
-		// fixed point number used by the interpolation routine
-		interpolationweight = (next_time_in_gametic) << 12;
-		ASSERT(interpolationweight <= 0x10000 && interpolationweight >= 0);
+		interpolation_weight = (next_time_in_gametic) << 12;
+		ASSERT(interpolation_weight <= 0x10000 && interpolation_weight >= 0);
 	}
 render_frame:
+  ticks_ran = gametics_elapsed;
+	// If any gametics have elapsed process them
+	while (gametics_elapsed--) {
+		RunTickUncapped();
+	}
 	{
-		// Render the frame, recording the frametime for the
+		// Render the frame, recording the frametime_hrticks for the
 		// interpolation of the next frame
 		int last_framets = ticcount_hr;
 		int new_framets;
 		D_Display();
 		new_framets = ticcount_hr;
-		frametime = new_framets - last_framets;
+		frametime_hrticks = new_framets - last_framets;
 	}
 	return ticks_ran;
 }
