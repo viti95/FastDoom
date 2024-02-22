@@ -56,14 +56,22 @@ void NetUpdate(void)
 	int nowtime;
 	int newtics;
 	int i;
-
+	int delta;
 	// check time
 	nowtime = ticcount;
 	newtics = nowtime - gametime;
+	if (newtics > 1) {
+		newtics = 1;
+	}
 	gametime = nowtime;
-
-	if (newtics <= 0) // nothing new to update
+	if (newtics <= 0) {
 		return;
+	}
+	delta = maketic - gametic;
+	if (delta < 0) {
+		maketic = gametic;
+	}
+	//I_Printf("maketics: %d, gametic: %d, newtics: %d, delta: %d\n", maketic, gametic, newtics, delta);
 
 	if (skiptics <= newtics)
 	{
@@ -112,24 +120,6 @@ void RunTick(void)
 		G_Ticker();
 		gametic++;
 		NetUpdate(); // check for new console commands
-}
-
-void RunTickUncapped(void)
-{
-		// TODO (dougvj) I am not sure how to handle the events here, it seems like
-		// doing it asynchronously like the TryRunTics causes buffering issues
-		// May just have to tell people to not use uncapped mode for low
-		// performance systems
-		I_StartTic();
-		D_ProcessEvents();
-		G_BuildTiccmd(&localcmds[maketic & (BACKUPTICS-1)]);
-		if (advancedemo)
-			D_DoAdvanceDemo();
-		M_Ticker();
-		D_SetupInterpolation();
-		G_Ticker();
-		gametic++;
-		maketic = gametic + 1;
 }
 
 //
@@ -186,21 +176,26 @@ void TryRunTicsCapped(void)
 	}
 }
 
+
 // Returns the number of tics that ran. Renders interpolated frames between
 // ticks if our rendering is fast enough
 int ProcessInterpolationAndTics(void) {
 	int ticks_ran = 0;
 	// First get the time between the last run and the current run
 	static int last_ts = 0;
-	static int frametime = 0;
+	// Assume the first frametime_hrticks
 	unsigned int new_ts = ticcount_hr;
+	int gametics_elapsed, time_elapsed_since_last_process;
+	if (last_ts == 0) {
+		last_ts = new_ts;
+	}
 	// See how many gametics should have elapsed (quantized to 16) ticks,
 	// since our hr timer is 1/560 and /16 is 1/35
-	int gametics_elapsed = (new_ts >> 4) - (last_ts >> 4);
-	int time_elapsed_since_last_process = new_ts - last_ts;
-	//I_Printf("last_ts: %d\n", last_ts);
-	//I_Printf("new_ts: %d\n", new_ts);
-	//I_Printf("time_elapsed_since_last_process: %d\n", time_elapsed_since_last_process);
+	gametics_elapsed = (new_ts >> 4) - (last_ts >> 4);
+	if (gametics_elapsed < 0) {
+		gametics_elapsed = 0;
+	}
+	time_elapsed_since_last_process = new_ts - last_ts;
 	if (time_elapsed_since_last_process <= 0) {
 		// Don't bother calculating anything new just rerender the
 		// previous frame. If we are hitting this then we are > 560 fps
@@ -236,6 +231,10 @@ int ProcessInterpolationAndTics(void) {
 			// Since we need the next gametic "early" let's just pretend it's
 			// already elapsed
 			gametics_elapsed++;
+			// Adjust the NetUpdate code
+			// TODO I suspect this is not quite correct
+			gametime--;
+			maketic--;
 			// move the next_time_in_gametic back to the current gametic
 			// since it's been processed
 			next_time_in_gametic -= 16;
@@ -248,10 +247,15 @@ int ProcessInterpolationAndTics(void) {
 		ASSERT(interpolation_weight <= 0x10000 && interpolation_weight >= 0);
 	}
 render_frame:
-  ticks_ran = gametics_elapsed;
+	ticks_ran = gametics_elapsed;
+	/*if (gametics_elapsed > 0) {
+		I_Printf("gametics_elapsed: %d\n", gametics_elapsed);
+	}*/
 	// If any gametics have elapsed process them
 	while (gametics_elapsed--) {
-		RunTickUncapped();
+		NetUpdate();
+		D_SetupInterpolation();
+		RunTick();
 	}
 	{
 		// Render the frame, recording the frametime_hrticks for the
@@ -272,9 +276,10 @@ void TryRunTicsUncapped(void)
 	int counts;
 	while(1) {
 		counts = ProcessInterpolationAndTics();
+		NetUpdate();
 		if (counts > 0) {
 			// IF we ran any tics, we need to break to handle sound etc
-			break;
+			return;
 		}
 	}
 }

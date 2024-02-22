@@ -2880,7 +2880,6 @@ void R_SetupFrame(void)
       viewy = FixedInterpolate(players_mo->prevy, players_mo->y, interpolation_weight);
       viewangle = (players_mo)->prevangle + ((((signed)(players_mo)->angle - (signed)(players_mo)->prevangle) * ((signed)(interpolation_weight>>12)) / 16));
       viewz = FixedInterpolate(players.prevviewz, players.viewz, interpolation_weight);
-      I_Printf("interpolation_weight: %p, viewz: %p, prevviewz: %p\n", interpolation_weight, players.viewz, players.prevviewz);
     } else {
       // No interpolation
       viewx = (players_mo)->x;
