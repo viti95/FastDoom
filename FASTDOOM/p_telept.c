@@ -92,8 +92,10 @@ int EV_Teleport(line_t *line, byte side, mobj_t *thing)
 					thing->z = thing->floorz;
 				}
 
-				if (thing->player)
+				if (thing->player) {
 					thing->player->viewz = thing->z + thing->player->viewheight;
+					thing->player->prevviewz = thing->player->viewz;
+				}
 
 				// spawn teleport fog at source and destination
 				fog = P_SpawnMobj(oldx, oldy, oldz, MT_TFOG);

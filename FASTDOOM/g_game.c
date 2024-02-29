@@ -66,6 +66,7 @@
 #include "options.h"
 
 #include "i_log.h"
+#include "i_debug.h"
 
 #define SAVEGAMESIZE 0x2c000
 #define SAVESTRINGSIZE 24
@@ -330,6 +331,10 @@ extern gamestate_t wipegamestate;
 
 void G_DoLoadLevel(void)
 {
+    // Reset interpolation state to values that will force no interpolation
+    // on the first tick
+    interpolation_weight = 0x10000;
+    frametime_hrticks = 17;
     // DOOM determines the sky texture to be used
     // depending on the current episode, and the game version.
     if (gamemode == commercial)
@@ -1176,7 +1181,7 @@ unsigned int G_GetDemoTicks(char *demofile)
     unsigned int count;
 
     demobuffer = demo_p = W_CacheLumpName(demofile, PU_STATIC);
-    
+
     // G_DoPlayDemo
     *demo_p++;
     *demo_p++;
@@ -1405,7 +1410,7 @@ void G_SaveCSVResult(unsigned int gametics, unsigned int realtics, unsigned int 
 
         // 1% low FPS
         fprintf(logFile, "%u" CSV_DECIMAL "%.3u" CSV_COLUMN, onepercentlow / 1000, onepercentlow % 1000);
-        
+
         // 0.1% low FPS
         fprintf(logFile, "%u" CSV_DECIMAL "%.3u\n", dotonepercentlow / 1000, dotonepercentlow % 1000);
 
@@ -1543,7 +1548,7 @@ void G_CheckDemoStatus(void)
 
                 // Cleanup frametimes
                 frametime_position = 0;
-                
+
                 for (i = 0; i < benchmark_total_tics; i++)
                 {
                     frametime[i] = 0;

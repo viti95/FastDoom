@@ -49,6 +49,12 @@ extern fixed_t projection;
 
 extern int validcount;
 
+// When interpolation is enabled (uncappedFPS), this is the weight of the
+// current frame. It is 1.0 (IE 0x10000) when the frame is not interpolated.
+extern fixed_t interpolation_weight;
+// The last frame render time in units of 1/560ths of a second
+extern unsigned frametime_hrticks;
+
 //
 // Lighting LUT.
 // Used for z-depth cuing per column/row,

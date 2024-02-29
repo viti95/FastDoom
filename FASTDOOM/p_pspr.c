@@ -469,6 +469,7 @@ void A_Punch(player_t *player,
     if (linetarget)
     {
         S_StartSound(players_mo, sfx_punch);
+        players_mo->prevangle = players_mo->angle;
         players_mo->angle = R_PointToAngle2(players_mo->x,
                                             players_mo->y,
                                             linetarget->x,
@@ -501,7 +502,7 @@ void A_Saw(player_t *player,
         return;
     }
     S_StartSound(players_mo, sfx_sawhit);
-
+    players_mo->prevangle = players_mo->angle;
     // turn to face target
     angle = R_PointToAngle2(players_mo->x, players_mo->y,
                             linetarget->x, linetarget->y);

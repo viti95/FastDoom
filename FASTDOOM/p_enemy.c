@@ -220,7 +220,7 @@ byte P_NotMove(mobj_t *actor)
 
     // warning: 'catch', 'throw', and 'try'
     // are all C++ reserved words
-    
+
     fixed_t optSpeed;
 
     switch (actor->movedir)
@@ -644,7 +644,7 @@ void A_Chase(mobj_t *actor)
     if (actor->movedir < 8)
     {
         int delta;
-        
+
         actor->angle &= (7 << 29);
         delta = actor->angle - (((int)actor->movedir) << 29);
 
@@ -733,7 +733,7 @@ void A_FaceTarget(mobj_t *actor)
         actor->angle += (P_Random_Minus_P_Random) << 21;
         prndindex += 2;
     }
-        
+
 }
 
 //

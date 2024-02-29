@@ -22,6 +22,7 @@
 #include "d_event.h"
 #include "options.h"
 #include "p_local.h"
+#include "i_debug.h"
 
 #include "doomstat.h"
 
@@ -69,7 +70,6 @@ void P_CalcHeight(void)
 	players.bob >>= 2;
 	if (players.bob > MAXBOB)
 		players.bob = MAXBOB;
-
 	if (!onground)
 	{
 		players.viewz = players_mo->z + VIEWHEIGHT;
@@ -122,7 +122,6 @@ void P_MovePlayer(void)
 	ticcmd_t *cmd;
 
 	cmd = &players.cmd;
-
 	players_mo->angle += cmd->angleturn;
 
 	// Do not let the player control movement
@@ -176,7 +175,6 @@ void P_DeathThink(void)
 								players.attacker->y);
 
 		delta = angle - players_mo->angle;
-
 		if (delta < ANG5 || delta > (unsigned)-ANG5)
 		{
 			// Looking at killer,
