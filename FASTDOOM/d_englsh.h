@@ -57,6 +57,7 @@
     "SpitFire-666    Optimus6128    viciious\n" \
     "Shogun38    cher-nov    neuralnetworkz\n"  \
     "Ethaniel-404    zokum-no    rasz_pl\n"     \
+    "Doug Johnson    crazii     Mikolaj Feliks\n" \
     "bnied    javiergutierrezchamorro\n\n"      \
     "and to the DoomWorld / Vogons communities\n\n" \
     "enjoy it, Bonepie"
