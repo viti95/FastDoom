@@ -178,7 +178,6 @@ int GUSMIDI_LoadPatch(
    int ret;
    unsigned char *wave_buff;
    struct patchinfo patchi;
-   int status;
 
    prog = PatchMap[prognum][GUS_MemConfig];
 
@@ -202,11 +201,7 @@ int GUSMIDI_LoadPatch(
       return (GUS_Error);
    }
 
-   status = USRHOOKS_GetMem((void **)&wave_buff, 1024); // 1024 bytes
-   if (status != USRHOOKS_Ok)
-   {
-      return (GUS_Error);
-   }
+   USRHOOKS_GetMem((void **)&wave_buff, 1024); // 1024 bytes
 
    ret = gf1_load_patch(text, &patchi, &Patch[prog], &GUS_HoldBuffer, DMABUFFSIZE, (unsigned char *)wave_buff, PATCH_LOAD_8_BIT);
 

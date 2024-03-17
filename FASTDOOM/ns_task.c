@@ -21,7 +21,6 @@
 #endif
 
 #include "ns_usrho.h"
-#define FreeMem(ptr) USRHOOKS_FreeMem((ptr))
 
 typedef struct
 {
@@ -105,7 +104,7 @@ static void TS_FreeTaskList(void)
     while (node != TaskList)
     {
         next = node->next;
-        FreeMem(node);
+        USRHOOKS_FreeMem(node);
         node = next;
     }
 
@@ -412,28 +411,27 @@ task *TS_ScheduleTask(
 
     ptr = NULL;
 
-    status = USRHOOKS_GetMem((void **)&ptr, sizeof(task));
-    if (status == USRHOOKS_Ok)
+    USRHOOKS_GetMem((void **)&ptr, sizeof(task));
+
+    if (!TS_Installed)
     {
-        if (!TS_Installed)
+        status = TS_Startup();
+        if (status != TASK_Ok)
         {
-            status = TS_Startup();
-            if (status != TASK_Ok)
-            {
-                FreeMem(ptr);
-                return (NULL);
-            }
+            USRHOOKS_FreeMem(ptr);
+            return (NULL);
         }
-
-        ptr->TaskService = Function;
-        ptr->data = data;
-        ptr->rate = TS_SetTimer(rate);
-        ptr->count = 0;
-        ptr->priority = priority;
-        ptr->active = FALSE;
-
-        TS_AddTask(ptr);
     }
+
+    ptr->TaskService = Function;
+    ptr->data = data;
+    ptr->rate = TS_SetTimer(rate);
+    ptr->count = 0;
+    ptr->priority = priority;
+    ptr->active = FALSE;
+
+    TS_AddTask(ptr);
+    
 
     return (ptr);
 }
@@ -477,7 +475,7 @@ int TS_Terminate(
             LL_RemoveNode(NodeToRemove, next, prev);
             NodeToRemove->next = NULL;
             NodeToRemove->prev = NULL;
-            FreeMem(NodeToRemove);
+            USRHOOKS_FreeMem(NodeToRemove);
 
             TS_SetTimerToMaxTaskRate();
 

@@ -1222,11 +1222,7 @@ int MV_Init(
     }
 
     MV_TotalMemory = Voices * sizeof(VoiceNode) + sizeof(HARSH_CLIP_TABLE_8);
-    status = USRHOOKS_GetMem((void **)&ptr, MV_TotalMemory);
-    if (status != USRHOOKS_Ok)
-    {
-        return (MV_Error);
-    }
+    USRHOOKS_GetMem((void **)&ptr, MV_TotalMemory);
 
     MV_Voices = (VoiceNode *)ptr;
     MV_HarshClipTable = ptr + (MV_TotalMemory - sizeof(HARSH_CLIP_TABLE_8));

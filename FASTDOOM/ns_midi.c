@@ -729,7 +729,6 @@ int MIDI_PlaySong(
     long tracklength;
     track *CurrentTrack;
     unsigned char *ptr;
-    int status;
 
     if (_MIDI_SongLoaded)
     {
@@ -774,11 +773,7 @@ int MIDI_PlaySong(
     }
 
     _MIDI_TrackMemSize = _MIDI_NumTracks * sizeof(track);
-    status = USRHOOKS_GetMem((void **)&_MIDI_TrackPtr, _MIDI_TrackMemSize);
-    if (status != USRHOOKS_Ok)
-    {
-        return (MIDI_NoMemory);
-    }
+    USRHOOKS_GetMem((void **)&_MIDI_TrackPtr, _MIDI_TrackMemSize);
 
     CurrentTrack = _MIDI_TrackPtr;
     numtracks = _MIDI_NumTracks;
