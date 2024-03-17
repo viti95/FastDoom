@@ -3,8 +3,6 @@
 
 #define LOCKMEMORY
 #define NOINTS
-#define USE_USRHOOKS
-#define USESTACK
 
 #include <stdlib.h>
 #include <dos.h>
@@ -15,20 +13,15 @@
 #include "ns_task.h"
 #include "options.h"
 #include "fastmath.h"
-
-#ifdef USESTACK
 #include "ns_dpmi.h"
-#endif
+#include "z_zone.h"
+
 #ifdef LOCKMEMORY
 #include "ns_dpmi.h"
 #endif
 
-#ifdef USE_USRHOOKS
 #include "ns_usrho.h"
 #define FreeMem(ptr) USRHOOKS_FreeMem((ptr))
-#else
-#define FreeMem(ptr) free((ptr))
-#endif
 
 typedef struct
 {
@@ -39,9 +32,6 @@ typedef struct
 /*---------------------------------------------------------------------
    Global variables
 ---------------------------------------------------------------------*/
-
-#ifdef USESTACK
-
 // adequate stack size
 #define kStackSize 2048
 
@@ -54,7 +44,6 @@ static unsigned long oldStackPointer;
 extern  unsigned short  GetDS( void );
 #pragma aux GetDS = \
         "mov    ax,ds" value[ax]
-#endif
 
 static task HeadTask;
 static task *TaskList = &HeadTask;
@@ -200,13 +189,11 @@ static void __interrupt __far TS_ServiceSchedule(void)
 
     TS_InInterrupt = TRUE;
 
-#ifdef USESTACK
     // save stack
     GetStack(&oldStackSelector, &oldStackPointer);
 
     // set our stack
     SetStack(StackSelector, StackPointer);
-#endif
 
     ptr = TaskList->next;
     while (ptr != TaskList)
@@ -227,10 +214,8 @@ static void __interrupt __far TS_ServiceSchedule(void)
         ptr = next;
     }
 
-#ifdef USESTACK
     // restore stack
     SetStack(oldStackSelector, oldStackPointer);
-#endif
 
     TaskServiceCount += TaskServiceRate;
     if (TaskServiceCount > 0xffffL)
@@ -269,13 +254,11 @@ static void __interrupt __far TS_ServiceScheduleIntEnabled(void)
     TS_InInterrupt = TRUE;
     _enable();
 
-#ifdef USESTACK
     // save stack
     GetStack(&oldStackSelector, &oldStackPointer);
 
     // set our stack
     SetStack(StackSelector, StackPointer);
-#endif
 
     while (TS_TimesInInterrupt)
     {
@@ -300,16 +283,12 @@ static void __interrupt __far TS_ServiceScheduleIntEnabled(void)
 
     _disable();
 
-#ifdef USESTACK
     // restore stack
     SetStack(oldStackSelector, oldStackPointer);
-#endif
 
     TS_InInterrupt = FALSE;
 }
 #endif
-
-#ifdef USESTACK
 
 /*---------------------------------------------------------------------
    Function: allocateTimerStack
@@ -321,7 +300,7 @@ static unsigned long allocateTimerStack(
     unsigned short size)
 
 {
-    return (unsigned long)malloc(size);
+    return (unsigned long)Z_MallocUnowned(size, PU_STATIC);
 }
 
 /*---------------------------------------------------------------------
@@ -333,10 +312,8 @@ static void deallocateTimerStack(
     unsigned long pointer)
 
 {
-    free((void*)pointer);
+    Z_Free((void*)pointer);
 }
-
-#endif
 
 /*---------------------------------------------------------------------
    Function: TS_Startup
@@ -351,8 +328,6 @@ static int TS_Startup(
     if (!TS_Installed)
     {
 
-#ifdef USESTACK
-
         StackPointer = allocateTimerStack(kStackSize);
         if (StackPointer == 0)
         {
@@ -366,7 +341,6 @@ static int TS_Startup(
         //this is essential when DPMI interfaces are provided by a DPMI host rather than DOS32A,
         //as a DPMI host will provide another stack making SS != DS.
         StackSelector = GetDS();
-#endif
 
         //static const task *TaskList = &HeadTask;
         TaskList->next = TaskList;
@@ -410,12 +384,8 @@ void TS_Shutdown(
 
         _dos_setvect(0x08, OldInt8);
 
-#ifdef USESTACK
-
         deallocateTimerStack(StackPointer - (kStackSize-sizeof(long)));
         StackSelector = NULL;
-
-#endif
 
         // Set Date and Time from CMOS
         //      RestoreRealTimeClock();
@@ -438,18 +408,12 @@ task *TS_ScheduleTask(
 
 {
     task *ptr;
-
-#ifdef USE_USRHOOKS
     int status;
 
     ptr = NULL;
 
     status = USRHOOKS_GetMem((void **)&ptr, sizeof(task));
     if (status == USRHOOKS_Ok)
-#else
-    ptr = malloc(sizeof(task));
-    if (ptr != NULL)
-#endif
     {
         if (!TS_Installed)
         {
