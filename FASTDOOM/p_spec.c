@@ -890,7 +890,8 @@ void P_PlayerInSpecialSector(void)
 			if (!(leveltime & 0x1f))
 				P_DamageMobj2(players_mo, 5);
 		break;
-
+	case 16:
+		// SUPER HELLSLIME DAMAGE
 	case 4:
 		// STROBE HURT
 		if (!players.powers[pw_ironfeet] || (P_Random_LessThan5))
