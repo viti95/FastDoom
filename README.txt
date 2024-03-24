@@ -222,10 +222,10 @@
    card is used, and can cause sound issues. This is due to port 0x80 
    being also used for DMA transfers.
 
- PCM Music format
+ PCM music format
  ----------------
 
- PCM Music format is unsigned 8-bit PCM, and supports 11025, 22050 or 
+ PCM music format is unsigned 8-bit PCM, and supports 11025, 22050 or 
  44100 Hz frequencies. 
  
  Use SOX to convert files to RAW format, for example:
@@ -238,7 +238,7 @@
  * TNT:      \MUSIC\TNT\MUS_*.RAW
  * Plutonia: \MUSIC\PLUTONIA\MUS_*.RAW
 
- PCM Music / Audio-CD tracks numbers
+ PCM music / Audio-CD tracks numbers
  -----------------------------------
 
  Doom Shareware / Doom / Ultimate Doom
