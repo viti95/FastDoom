@@ -15,7 +15,6 @@
 * Removed OpenWatcom IDE files (obsolete, not used)
 * Upgraded build scripts, much faster compile times on Linux
 
-
 ## 0.9.8 (01 Sep 2023)
 * Add DEMO4 to benchmark menu
 * Optimized all non-VGA modes (ASM)
