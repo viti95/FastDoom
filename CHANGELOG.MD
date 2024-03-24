@@ -6,6 +6,14 @@
 * Removed IDSPIDPOPD cheat (IDCLIP is still available)
 * Fixed snow while setting palette on slow VGA cards (via -fixDAC)
 * Removed -nomonsters and -turbo command line parameters
+* Native higher resolution modes available (thanks to Doug Johnson). New supported resolutions: 320x240, 512x384, 640x400, 640x480, 800x600, 1024x768, 1280x800, 1280x1024
+* Fixed SBEMU support (thanks to Crazii)
+* Refactored memory allocation, now all RAM available is used by default. Removed -ram command line parameter
+* Better debugging and automatic CPU detection by Doug Johnson
+* Source code has 8.3 file format again (thanks to efliks)
+* VESA backbuffered modes now work on video cards without LFB
+* Removed OpenWatcom IDE files (obsolete, not used)
+* Upgraded build scripts, much faster compile times on Linux
 
 
 ## 0.9.8 (01 Sep 2023)

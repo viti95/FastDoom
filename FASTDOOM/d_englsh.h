@@ -60,7 +60,7 @@
     "Doug Johnson    crazii     Mikolaj Feliks\n" \
     "bnied    javiergutierrezchamorro\n\n"      \
     "and to the DoomWorld / Vogons communities\n\n" \
-    "enjoy it, Bonepie"
+    "rip and tear, Bonepie"
 
 #define MSGOFF "Messages OFF"
 #define MSGON "Messages ON"
