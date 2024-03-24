@@ -259,8 +259,7 @@
  14: mus_e2m6
  15: mus_e2m7, mus_e3m7
  16: mus_e2m8
- 17: mus_e2m9
- 17: mus_e3m1
+ 17: mus_e2m9, mus_e3m1
  18: mus_e3m2
  19: mus_e3m3
  20: mus_e3m8
