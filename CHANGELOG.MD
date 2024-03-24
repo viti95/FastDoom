@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 0.9.9 (?? ??? ????)
+## 0.9.9 (24 Mar 2024)
 * Multiple optimizations (C, ASM) and code cleanup
 * Disabled all cheats in Nightmare
 * Removed IDSPIDPOPD cheat (IDCLIP is still available)
