@@ -235,8 +235,118 @@
  Folders used for music are these:
  * Doom:     \MUSIC\DOOM1\MUS_*.RAW
  * Doom2:    \MUSIC\DOOM2\MUS_*.RAW
- * Plutonia: \MUSIC\PLUTONIA\MUS_*.RAW
  * TNT:      \MUSIC\TNT\MUS_*.RAW
+ * Plutonia: \MUSIC\PLUTONIA\MUS_*.RAW
+
+ PCM Music / Audio-CD tracks numbers
+ -----------------------------------
+
+ Doom Shareware / Doom / Ultimate Doom
+
+ 1: mus_e1m1
+ 2: mus_e1m2
+ 3: mus_e1m3
+ 4: mus_e1m4
+ 5: mus_e1m5
+ 6: mus_e1m6, mus_e3m6
+ 7: mus_e1m7, mus_e2m5, mus_e3m5
+ 8: mus_e1m8, mus_e3m4
+ 9: mus_e1m9, mus_e3m9
+ 10: mus_e2m1
+ 11: mus_e2m2
+ 12: mus_e2m3, mus_inter
+ 13: mus_e2m4
+ 14: mus_e2m6
+ 15: mus_e2m7, mus_e3m7
+ 16: mus_e2m8
+ 17: mus_e2m9
+ 17: mus_e3m1
+ 18: mus_e3m2
+ 19: mus_e3m3
+ 20: mus_e3m8
+ 21: mus_intro, mus_introa
+ 22: mus_bunny
+ 23: mus_victor
+
+ Doom 2
+
+ 1: mus_runnin - MAP1, mus_stlks2 - MAP11, mus_runni2 - MAP15
+ 2: mus_stalks - MAP2, mus_stlks3 - MAP17
+ 3: mus_countd - MAP3, mus_count2 - MAP21
+ 4: mus_betwee - MAP4
+ 5: mus_doom - MAP5, mus_doom2 - MAP13
+ 6: mus_the_da - MAP6, mus_theda2 - MAP12, mus_theda3 - MAP24
+ 7: mus_shawn - MAP7, mus_shawn2 - MAP19, mus_shawn3 - MAP29
+ 8: mus_ddtblu - MAP8, mus_ddtbl2 - MAP14, mus_ddtbl3 - MAP22
+ 9: mus_in_cit - MAP9
+ 10: mus_dead - MAP10, mus_dead2 - MAP16
+ 11: mus_romero - MAP18, mus_romer2 - MAP27
+ 12: mus_messag - MAP20, mus_messg2 - MAP26
+ 13: mus_ampie - MAP23
+ 14: mus_adrian - MAP25
+ 15: mus_tense - MAP28
+ 16: mus_openin - MAP30
+ 17: mus_evil - MAP31
+ 18: mus_ultima - MAP32
+ 19: mus_read_m
+ 20: mus_dm2ttl
+ 21: mus_dm2int
+
+ TNT: Evilution
+
+ 1: mus_runnin - MAP1, mus_in_cit - MAP9
+ 2: mus_stalks - MAP2, mus_runni2 - MAP15
+ 3: mus_countd - MAP3
+ 4: mus_betwee - MAP4, mus_doom2 - MAP13, mus_shawn3 - MAP29
+ 5: mus_doom - MAP5, mus_stlks3 - MAP17
+ 6: mus_the_da - MAP6
+ 7: mus_shawn - MAP7
+ 8: mus_ddtblu - MAP8, mus_romer2 - MAP27, mus_openin - MAP30
+ 9: mus_dead - MAP10, mus_romero - MAP18
+ 10: mus_stlks2 - MAP11
+ 11: mus_theda2 - MAP12
+ 12: mus_ddtbl2 - MAP14
+ 13: mus_dead2 - MAP16, mus_messg2 - MAP26
+ 14: mus_shawn2 - MAP19
+ 15: mus_messag - MAP20
+ 16: mus_count2 - MAP21, mus_ultima - MAP32
+ 17: mus_ddtbl3 - MAP22, mus_tense - MAP28
+ 18: mus_ampie - MAP23
+ 19: mus_theda3 - MAP24
+ 20: mus_adrian - MAP25
+ 21: mus_evil - MAP31, mus_dm2int
+ 22: mus_read_m
+ 23: mus_dm2ttl
+
+ The Plutonia Experiment
+
+ 1: mus_runnin - MAP1
+ 2: mus_stalks - MAP2
+ 3: mus_countd - MAP3
+ 4: mus_betwee - MAP4
+ 5: mus_doom - MAP5
+ 6: mus_the_da - MAP6, mus_evil - MAP31
+ 7: mus_shawn - MAP7, mus_romer2 - MAP27
+ 8: mus_ddtblu - MAP8, mus_tense - MAP28
+ 9: mus_in_cit - MAP9
+ 10: mus_dead - MAP10, mus_romero - MAP18
+ 11: mus_stlks2 - MAP11
+ 12: mus_theda2 - MAP12
+ 13: mus_doom2 - MAP13
+ 14: mus_ddtbl2 - MAP14, mus_ultima - MAP32
+ 15: mus_runni2 - MAP15
+ 16: mus_dead2 - MAP16
+ 17: mus_stlks3 - MAP17, mus_shawn3 - MAP29
+ 18: mus_shawn2 - MAP19
+ 19: mus_messag - MAP20, mus_messg2 - MAP26
+ 20: mus_count2 - MAP21, mus_read_m
+ 21: mus_ddtbl3 - MAP22
+ 22: mus_ampie - MAP23
+ 23: mus_theda3 - MAP24
+ 24: mus_adrian - MAP25
+ 25: mus_openin - MAP30
+ 26: mus_dm2ttl
+ 27: mus_dm2int
 
  Author
  ------
