@@ -13,7 +13,7 @@
 * Source code has 8.3 file format again (thanks to efliks)
 * VESA backbuffered modes now work on video cards without LFB
 * Removed OpenWatcom IDE files (obsolete, not used)
-* Upgraded build scripts, much faster compile times on Linux
+* Upgraded build scripts, much faster compile times on Linux (again, thanks to Doug Johnson)
 
 ## 0.9.8 (01 Sep 2023)
 * Add DEMO4 to benchmark menu
