@@ -1338,8 +1338,6 @@ void D_DoomMain(void)
 
     ignoreSoundChecks = M_CheckParm("-forceSound");
 
-    singletics = M_CheckParm("-singletics");
-
     reverseStereo = M_CheckParm("-reverseStereo");
 
     csv = M_CheckParm("-csv");

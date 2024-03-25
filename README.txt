@@ -136,7 +136,6 @@
  -high => Forces high detail mode (320x200)
  -cga => Fixes text modes for CGA cards
  -pagefix => Fixes text modes (80x50 and 80x100) for newer VGA cards
- -singletics => Disables game throttling (runs at full speed) 
  -reverseStereo => Reverse audio output (left to right and viceversa)
  -csv => Saves the timedemo result in the file bench.csv
  -bfg => Enables Doom II BFG edition IWAD support
