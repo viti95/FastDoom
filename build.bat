@@ -9,6 +9,7 @@ if "%2"=="fdoomc16.exe" GOTO mode_c16
 if "%2"=="fdoomcga.exe" GOTO mode_cga
 if "%2"=="fdoomcvb.exe" GOTO mode_cvb
 if "%2"=="fdoomhgc.exe" GOTO mode_hgc
+if "%2"=="fdoominc.exe" GOTO mode_incolor
 if "%2"=="fdoompcp.exe" GOTO mode_pcp
 if "%2"=="fdoom400.exe" GOTO mode_sigma
 if "%2"=="fdoomt1.exe"  GOTO mode_t1
@@ -70,6 +71,12 @@ goto compile
 set base=fdoom.exe
 set executable=fdoomhgc.exe
 set options=-dMODE_HERC
+goto compile
+
+:mode_incolor
+set base=fdoom.exe
+set executable=fdoominc.exe
+set options=-dMODE_INCOLOR
 goto compile
 
 :mode_pcp

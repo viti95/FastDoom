@@ -1812,7 +1812,7 @@ void M_QuitResponse(int ch)
     else
         S_StartSound(NULL, quitsounds[(gametic >> 2) & 7]);
 
-#if !defined(MODE_HERC) && !defined(MODE_MDA)
+#if !defined(MODE_HERC) && !defined(MODE_MDA) && !defined(MODE_INCOLOR)
     do
     {
         I_WaitSingleVBL();

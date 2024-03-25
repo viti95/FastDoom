@@ -85,6 +85,10 @@
 #include "i_herc.h"
 #endif
 
+#if defined(MODE_INCOLOR)
+#include "i_incolor.h"
+#endif
+
 #if defined(MODE_CGA_BW)
 #include "i_cgabw.h"
 #endif
@@ -687,6 +691,10 @@ void I_InitGraphics(void)
     HERC_InitGraphics();
 #endif
 
+#if defined(MODE_INCOLOR)
+    InColor_InitGraphics();
+#endif
+
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
     VBE2_InitGraphics();
 #endif
@@ -706,6 +714,10 @@ void I_ShutdownGraphics(void)
 {
 #if defined(MODE_HERC)
     HERC_ShutdownGraphics();
+#endif
+
+#if defined(MODE_INCOLOR)
+    InColor_ShutdownGraphics();
 #endif
 
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
@@ -1038,7 +1050,7 @@ void I_Quit(void)
     M_SaveDefaults();
     scr = (byte *)W_CacheLumpName("ENDOOM", PU_CACHE);
     I_Shutdown();
-#if defined(MODE_HERC) || defined(MODE_MDA)
+#if defined(MODE_HERC) || defined(MODE_MDA) || defined(MODE_INCOLOR)
     CopyDWords(scr, (void *)0xb0000, (80 * 25 * 2) / 4);
 #else
     CopyDWords(scr, (void *)0xb8000, (80 * 25 * 2) / 4);

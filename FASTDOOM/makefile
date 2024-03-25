@@ -55,6 +55,7 @@ GLOBOBJS = &
  cgacvb.obj &
  i_herc.obj &
  herc.obj &
+ i_incolor.obj &
  i_cgabw.obj &
  cgabw.obj &
  i_ega320.obj &
