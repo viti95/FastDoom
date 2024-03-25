@@ -118,7 +118,7 @@ typedef struct
     // thinker_t for reversable actions
     void *specialdata;
 
-    pixelcoord_t linecount;
+    short linecount;
     struct line_s **lines; // [linecount] size
 
 } sector_t;
