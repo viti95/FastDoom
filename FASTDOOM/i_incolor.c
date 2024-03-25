@@ -266,7 +266,7 @@ void I_FinishUpdate(void)
 
 void InColor_InitGraphics(void)
 {
-    unsigned char palette_init[16] = {0, 1, 2, 3, 4, 5, 20, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+    unsigned char palette_init[16] = {0, 1, 2, 3, 4, 5, 20, 7, 56, 57, 58, 59, 60, 61, 62, 63};
     byte Graph_720x350[12] = {0x35,0x2d,0x2e,0x07,0x5b,0x02,0x57,0x57,0x02,0x03,0x00,0x00};
     int i;
 
