@@ -16,11 +16,8 @@
 #VSCODE
 .vscode/*
 
-#FREEBASIC
-FBASIC/*
-
 #UPX
 UPX/*
 
-#CWSDPMI
-CWSDPMI/*
+#Gravis Ultrasound
+ULTRASND/*
