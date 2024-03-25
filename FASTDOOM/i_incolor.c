@@ -268,7 +268,7 @@ void InColor_InitGraphics(void)
 {
     unsigned char palette_init[16] = {0, 1, 2, 3, 4, 5, 20, 7, 56, 57, 58, 59, 60, 61, 62, 63};
     byte Graph_720x350[12] = {0x35,0x2d,0x2e,0x07,0x5b,0x02,0x57,0x57,0x02,0x03,0x00,0x00};
-    int i;
+    int i, j;
 
     // Set card mode
     outp(CONFIG_PORT, half);
@@ -302,6 +302,25 @@ void InColor_InitGraphics(void)
 
     outp(INDEX_REG, R_W_CONTROL_REG);
     outp(INDEX_REG + 1, clear_if_equal+write_mode_0+care_all);
+
+    // Init VRAM
+
+    outp(INDEX_REG, R_W_COLOR_REG);
+    outp(INDEX_REG + 1, 0);
+
+    outp(INDEX_REG, PLANE_MASK_REG);
+    outp(INDEX_REG + 1, display_all);
+
+    for (i = 0; i < 348/4; i++)
+    {
+        for (j = 0; j < 720/8; j++)
+        {
+            pcscreen[90*i+j]        = 0;
+            pcscreen[90*i+j+0x2000] = 0;
+            pcscreen[90*i+j+0x4000] = 0;
+            pcscreen[90*i+j+0x6000] = 0;
+        }
+    }
 }
 
 void InColor_ShutdownGraphics(void)
