@@ -196,10 +196,10 @@ void I_FinishUpdate(void)
     {
         for (j = 0; j < 320/8; j++)
         {
-            pcscreen[90*i+j]        = ptr_plane_intensity[j];
-            pcscreen[90*i+j+0x2000] = ptr_plane_intensity[40+j];
-            pcscreen[90*i+j+0x4000] = ptr_plane_intensity[80+j];
-            pcscreen[90*i+j+0x6000] = ptr_plane_intensity[120+j];
+            pcscreen[90*(i+18)+j]        = ptr_plane_intensity[j];
+            pcscreen[90*(i+18)+j+0x2000] = ptr_plane_intensity[40+j];
+            pcscreen[90*(i+18)+j+0x4000] = ptr_plane_intensity[80+j];
+            pcscreen[90*(i+18)+j+0x6000] = ptr_plane_intensity[120+j];
         }
 
         ptr_plane_intensity += 160;
@@ -215,10 +215,10 @@ void I_FinishUpdate(void)
     {
         for (j = 0; j < 320/8; j++)
         {
-            pcscreen[90*i+j]        = ptr_plane_blue[j];
-            pcscreen[90*i+j+0x2000] = ptr_plane_blue[40+j];
-            pcscreen[90*i+j+0x4000] = ptr_plane_blue[80+j];
-            pcscreen[90*i+j+0x6000] = ptr_plane_blue[120+j];
+            pcscreen[90*(i+18)+j]        = ptr_plane_blue[j];
+            pcscreen[90*(i+18)+j+0x2000] = ptr_plane_blue[40+j];
+            pcscreen[90*(i+18)+j+0x4000] = ptr_plane_blue[80+j];
+            pcscreen[90*(i+18)+j+0x6000] = ptr_plane_blue[120+j];
         }
 
         ptr_plane_blue += 160;
@@ -234,10 +234,10 @@ void I_FinishUpdate(void)
     {
         for (j = 0; j < 320/8; j++)
         {
-            pcscreen[90*i+j]        = ptr_plane_green[j];
-            pcscreen[90*i+j+0x2000] = ptr_plane_green[40+j];
-            pcscreen[90*i+j+0x4000] = ptr_plane_green[80+j];
-            pcscreen[90*i+j+0x6000] = ptr_plane_green[120+j];
+            pcscreen[90*(i+18)+j]        = ptr_plane_green[j];
+            pcscreen[90*(i+18)+j+0x2000] = ptr_plane_green[40+j];
+            pcscreen[90*(i+18)+j+0x4000] = ptr_plane_green[80+j];
+            pcscreen[90*(i+18)+j+0x6000] = ptr_plane_green[120+j];
         }
 
         ptr_plane_green += 160;
@@ -253,10 +253,10 @@ void I_FinishUpdate(void)
     {
         for (j = 0; j < 320/8; j++)
         {
-            pcscreen[90*i+j]        = ptr_plane_red[j];
-            pcscreen[90*i+j+0x2000] = ptr_plane_red[40+j];
-            pcscreen[90*i+j+0x4000] = ptr_plane_red[80+j];
-            pcscreen[90*i+j+0x6000] = ptr_plane_red[120+j];
+            pcscreen[90*(i+18)+j]        = ptr_plane_red[j];
+            pcscreen[90*(i+18)+j+0x2000] = ptr_plane_red[40+j];
+            pcscreen[90*(i+18)+j+0x4000] = ptr_plane_red[80+j];
+            pcscreen[90*(i+18)+j+0x6000] = ptr_plane_red[120+j];
         }
 
         ptr_plane_red += 160;
