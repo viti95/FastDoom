@@ -145,6 +145,10 @@ void I_FinishUpdate(void)
     byte plane_blue[SCREENWIDTH * SCREENHEIGHT / 8];
     byte plane_intensity[SCREENWIDTH * SCREENHEIGHT / 8];
 
+    byte *ptr_plane_blue = plane_blue;
+
+    int i,j;
+
     int x, y;
     unsigned int base = 0;
     unsigned int plane_position = 0;
@@ -173,21 +177,20 @@ void I_FinishUpdate(void)
     }
 
     // Copy each bitplane
-    //outp(0x3C4, 0x2);
-    //outp(0x3C5, 1 << (3 & 0x03));
-    CopyDWords(plane_red, pcscreen, SCREENWIDTH * SCREENHEIGHT / 8);
 
-    //outp(0x3C4, 0x2);
-    //outp(0x3C5, 1 << (2 & 0x03));
-    CopyDWords(plane_green, pcscreen, SCREENWIDTH * SCREENHEIGHT / 8);
+    for (i = 0; i < 200/4; i++)
+    {
+        for (j = 0; j < 320/8; j++)
+        {
+            pcscreen[90*i+j]        = ptr_plane_blue[j];
+            pcscreen[90*i+j+0x2000] = ptr_plane_blue[40+j];
+            pcscreen[90*i+j+0x4000] = ptr_plane_blue[80+j];
+            pcscreen[90*i+j+0x6000] = ptr_plane_blue[120+j];
+        }
 
-    //outp(0x3C4, 0x2);
-    //outp(0x3C5, 1 << (1 & 0x03));
-    CopyDWords(plane_blue, pcscreen, SCREENWIDTH * SCREENHEIGHT / 8);
+        ptr_plane_blue += 160;
+    }
 
-    //outp(0x3C4, 0x2);
-    //outp(0x3C5, 1 << (0 & 0x03));
-    CopyDWords(plane_intensity, pcscreen, SCREENWIDTH * SCREENHEIGHT / 8);
 }
 
 void InColor_InitGraphics(void)
