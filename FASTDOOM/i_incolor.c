@@ -187,22 +187,22 @@ void I_FinishUpdate(void)
     // FREEZE_3 -> INTENSITY ?
 
     outp(INDEX_REG, R_W_COLOR_REG);
-    outp(INDEX_REG + 1, 4);
+    outp(INDEX_REG + 1, 1);
 
     outp(INDEX_REG, PLANE_MASK_REG);
-    outp(INDEX_REG + 1, freeze_0+freeze_1+freeze_3+display_all);
+    outp(INDEX_REG + 1, freeze_1+freeze_2+freeze_3+display_all);
 
     for (i = 0; i < 200/4; i++)
     {
         for (j = 0; j < 320/8; j++)
         {
-            pcscreen[90*i+j]        = ptr_plane_red[j];
-            pcscreen[90*i+j+0x2000] = ptr_plane_red[40+j];
-            pcscreen[90*i+j+0x4000] = ptr_plane_red[80+j];
-            pcscreen[90*i+j+0x6000] = ptr_plane_red[120+j];
+            pcscreen[90*i+j]        = ptr_plane_intensity[j];
+            pcscreen[90*i+j+0x2000] = ptr_plane_intensity[40+j];
+            pcscreen[90*i+j+0x4000] = ptr_plane_intensity[80+j];
+            pcscreen[90*i+j+0x6000] = ptr_plane_intensity[120+j];
         }
 
-        ptr_plane_red += 160;
+        ptr_plane_intensity += 160;
     }
 
     outp(INDEX_REG, R_W_COLOR_REG);
@@ -210,25 +210,6 @@ void I_FinishUpdate(void)
 
     outp(INDEX_REG, PLANE_MASK_REG);
     outp(INDEX_REG + 1, freeze_0+freeze_2+freeze_3+display_all);
-
-    for (i = 0; i < 200/4; i++)
-    {
-        for (j = 0; j < 320/8; j++)
-        {
-            pcscreen[90*i+j]        = ptr_plane_green[j];
-            pcscreen[90*i+j+0x2000] = ptr_plane_green[40+j];
-            pcscreen[90*i+j+0x4000] = ptr_plane_green[80+j];
-            pcscreen[90*i+j+0x6000] = ptr_plane_green[120+j];
-        }
-
-        ptr_plane_green += 160;
-    }
-
-    outp(INDEX_REG, R_W_COLOR_REG);
-    outp(INDEX_REG + 1, 1);
-
-    outp(INDEX_REG, PLANE_MASK_REG);
-    outp(INDEX_REG + 1, freeze_1+freeze_2+freeze_3+display_all);
 
     for (i = 0; i < 200/4; i++)
     {
@@ -244,7 +225,26 @@ void I_FinishUpdate(void)
     }
 
     outp(INDEX_REG, R_W_COLOR_REG);
-    outp(INDEX_REG + 1, 0);
+    outp(INDEX_REG + 1, 4);
+
+    outp(INDEX_REG, PLANE_MASK_REG);
+    outp(INDEX_REG + 1, freeze_0+freeze_1+freeze_3+display_all);
+
+    for (i = 0; i < 200/4; i++)
+    {
+        for (j = 0; j < 320/8; j++)
+        {
+            pcscreen[90*i+j]        = ptr_plane_green[j];
+            pcscreen[90*i+j+0x2000] = ptr_plane_green[40+j];
+            pcscreen[90*i+j+0x4000] = ptr_plane_green[80+j];
+            pcscreen[90*i+j+0x6000] = ptr_plane_green[120+j];
+        }
+
+        ptr_plane_green += 160;
+    }
+
+    outp(INDEX_REG, R_W_COLOR_REG);
+    outp(INDEX_REG + 1, 8);
 
     outp(INDEX_REG, PLANE_MASK_REG);
     outp(INDEX_REG + 1, freeze_0+freeze_1+freeze_2+display_all);
@@ -253,13 +253,13 @@ void I_FinishUpdate(void)
     {
         for (j = 0; j < 320/8; j++)
         {
-            pcscreen[90*i+j]        = ptr_plane_intensity[j];
-            pcscreen[90*i+j+0x2000] = ptr_plane_intensity[40+j];
-            pcscreen[90*i+j+0x4000] = ptr_plane_intensity[80+j];
-            pcscreen[90*i+j+0x6000] = ptr_plane_intensity[120+j];
+            pcscreen[90*i+j]        = ptr_plane_red[j];
+            pcscreen[90*i+j+0x2000] = ptr_plane_red[40+j];
+            pcscreen[90*i+j+0x4000] = ptr_plane_red[80+j];
+            pcscreen[90*i+j+0x6000] = ptr_plane_red[120+j];
         }
 
-        ptr_plane_intensity += 160;
+        ptr_plane_red += 160;
     }
 
 }
