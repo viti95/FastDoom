@@ -187,14 +187,14 @@ void I_FinishUpdate(void)
     outp(INDEX_REG, PLANE_MASK_REG);
     outp(INDEX_REG + 1, freeze_1+freeze_2+freeze_3+display_all);
 
-    for (i = 0; i < 200/4; i++)
+    for (i = 18; i < 200/4 + 18; i++)
     {
         for (j = 0; j < 320/8; j++)
         {
-            pcscreen[90*(i+18)+j+25]        = ptr_plane_intensity[j];
-            pcscreen[90*(i+18)+j+0x2000+25] = ptr_plane_intensity[40+j];
-            pcscreen[90*(i+18)+j+0x4000+25] = ptr_plane_intensity[80+j];
-            pcscreen[90*(i+18)+j+0x6000+25] = ptr_plane_intensity[120+j];
+            pcscreen[90*(i)+j+25]        = ptr_plane_intensity[j];
+            pcscreen[90*(i)+j+0x2000+25] = ptr_plane_intensity[40+j];
+            pcscreen[90*(i)+j+0x4000+25] = ptr_plane_intensity[80+j];
+            pcscreen[90*(i)+j+0x6000+25] = ptr_plane_intensity[120+j];
         }
 
         ptr_plane_intensity += 160;
@@ -206,14 +206,14 @@ void I_FinishUpdate(void)
     outp(INDEX_REG, PLANE_MASK_REG);
     outp(INDEX_REG + 1, freeze_0+freeze_2+freeze_3+display_all);
 
-    for (i = 0; i < 200/4; i++)
+    for (i = 18; i < 200/4 + 18; i++)
     {
         for (j = 0; j < 320/8; j++)
         {
-            pcscreen[90*(i+18)+j+25]        = ptr_plane_blue[j];
-            pcscreen[90*(i+18)+j+0x2000+25] = ptr_plane_blue[40+j];
-            pcscreen[90*(i+18)+j+0x4000+25] = ptr_plane_blue[80+j];
-            pcscreen[90*(i+18)+j+0x6000+25] = ptr_plane_blue[120+j];
+            pcscreen[90*(i)+j+25]        = ptr_plane_blue[j];
+            pcscreen[90*(i)+j+0x2000+25] = ptr_plane_blue[40+j];
+            pcscreen[90*(i)+j+0x4000+25] = ptr_plane_blue[80+j];
+            pcscreen[90*(i)+j+0x6000+25] = ptr_plane_blue[120+j];
         }
 
         ptr_plane_blue += 160;
@@ -225,14 +225,14 @@ void I_FinishUpdate(void)
     outp(INDEX_REG, PLANE_MASK_REG);
     outp(INDEX_REG + 1, freeze_0+freeze_1+freeze_3+display_all);
 
-    for (i = 0; i < 200/4; i++)
+    for (i = 18; i < 200/4 + 18; i++)
     {
         for (j = 0; j < 320/8; j++)
         {
-            pcscreen[90*(i+18)+j+25]        = ptr_plane_green[j];
-            pcscreen[90*(i+18)+j+0x2000+25] = ptr_plane_green[40+j];
-            pcscreen[90*(i+18)+j+0x4000+25] = ptr_plane_green[80+j];
-            pcscreen[90*(i+18)+j+0x6000+25] = ptr_plane_green[120+j];
+            pcscreen[90*(i)+j+25]        = ptr_plane_green[j];
+            pcscreen[90*(i)+j+0x2000+25] = ptr_plane_green[40+j];
+            pcscreen[90*(i)+j+0x4000+25] = ptr_plane_green[80+j];
+            pcscreen[90*(i)+j+0x6000+25] = ptr_plane_green[120+j];
         }
 
         ptr_plane_green += 160;
@@ -244,14 +244,14 @@ void I_FinishUpdate(void)
     outp(INDEX_REG, PLANE_MASK_REG);
     outp(INDEX_REG + 1, freeze_0+freeze_1+freeze_2+display_all);
 
-    for (i = 0; i < 200/4; i++)
+    for (i = 18; i < 200/4 + 18; i++)
     {
         for (j = 0; j < 320/8; j++)
         {
-            pcscreen[90*(i+18)+j+25]        = ptr_plane_red[j];
-            pcscreen[90*(i+18)+j+0x2000+25] = ptr_plane_red[40+j];
-            pcscreen[90*(i+18)+j+0x4000+25] = ptr_plane_red[80+j];
-            pcscreen[90*(i+18)+j+0x6000+25] = ptr_plane_red[120+j];
+            pcscreen[90*(i)+j+25]        = ptr_plane_red[j];
+            pcscreen[90*(i)+j+0x2000+25] = ptr_plane_red[40+j];
+            pcscreen[90*(i)+j+0x4000+25] = ptr_plane_red[80+j];
+            pcscreen[90*(i)+j+0x6000+25] = ptr_plane_red[120+j];
         }
 
         ptr_plane_red += 160;
