@@ -291,8 +291,6 @@ void InColor_InitGraphics(void)
 
     pcscreen = destscreen = (byte *)0xB0000;
 
-    //SetDWords(pcscreen, 0, 8192);
-
     outp(DMC_PORT, grph + screen_on);
 
     outp(INDEX_REG, R_W_CONTROL_REG);
@@ -306,16 +304,8 @@ void InColor_InitGraphics(void)
     outp(INDEX_REG, PLANE_MASK_REG);
     outp(INDEX_REG + 1, display_all);
 
-    for (i = 0; i < 348/4; i++)
-    {
-        for (j = 0; j < 720/8; j++)
-        {
-            pcscreen[90*i+j]        = 0;
-            pcscreen[90*i+j+0x2000] = 0;
-            pcscreen[90*i+j+0x4000] = 0;
-            pcscreen[90*i+j+0x6000] = 0;
-        }
-    }
+    SetDWords(pcscreen, 0, 8192);
+
 }
 
 void InColor_ShutdownGraphics(void)
