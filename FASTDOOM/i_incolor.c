@@ -160,14 +160,14 @@ void I_FinishUpdate(void)
 
     for (y = 0; y < SCREENHEIGHT; y++){
         for (x = 0; x < SCREENWIDTH / 8; x++){
-            unsigned char color0 = lut16colors[backbuffer[base]];
-            unsigned char color1 = lut16colors[backbuffer[base + 1]];
-            unsigned char color2 = lut16colors[backbuffer[base + 2]];
-            unsigned char color3 = lut16colors[backbuffer[base + 3]];
-            unsigned char color4 = lut16colors[backbuffer[base + 4]];
-            unsigned char color5 = lut16colors[backbuffer[base + 5]];
-            unsigned char color6 = lut16colors[backbuffer[base + 6]];
-            unsigned char color7 = lut16colors[backbuffer[base + 7]];
+            unsigned char color0 = ptrlut16colors[backbuffer[base]];
+            unsigned char color1 = ptrlut16colors[backbuffer[base + 1]];
+            unsigned char color2 = ptrlut16colors[backbuffer[base + 2]];
+            unsigned char color3 = ptrlut16colors[backbuffer[base + 3]];
+            unsigned char color4 = ptrlut16colors[backbuffer[base + 4]];
+            unsigned char color5 = ptrlut16colors[backbuffer[base + 5]];
+            unsigned char color6 = ptrlut16colors[backbuffer[base + 6]];
+            unsigned char color7 = ptrlut16colors[backbuffer[base + 7]];
 
             plane_red[plane_position] = ((color0 >> 3) & 1) << 7 | ((color1 >> 3) & 1) << 6 | ((color2 >> 3) & 1) << 5 | ((color3 >> 3) & 1) << 4 | ((color4 >> 3) & 1) << 3 | ((color5 >> 3) & 1) << 2 | ((color6 >> 3) & 1) << 1 | ((color7 >> 3) & 1);
             plane_green[plane_position] = ((color0 >> 2) & 1) << 7 | ((color1 >> 2) & 1) << 6 | ((color2 >> 2) & 1) << 5 | ((color3 >> 2) & 1) << 4 | ((color4 >> 2) & 1) << 3 | ((color5 >> 2) & 1) << 2 | ((color6 >> 2) & 1) << 1 | ((color7 >> 2) & 1);
