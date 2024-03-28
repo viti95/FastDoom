@@ -1718,7 +1718,7 @@ subsector_t * R_PointInSubsector(fixed_t x, fixed_t y)
             fixed_t dy = (y - node->y);
 
             // Try to quickly decide by looking at sign bits.
-            if ((node->dy ^ node->dx ^ dx ^ dy) & 0x80000000)
+            if ((node->dyXORdx ^ dx ^ dy) & 0x80000000)
             {
                 side = ROLAND1(node->dy ^ dx);
             }
