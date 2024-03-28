@@ -252,6 +252,10 @@ typedef struct
     fixed_t dy;
     fixed_t dxs;
     fixed_t dys;
+    byte dxlt0;
+    byte dxgt0;
+    byte dylt0;
+    byte dygt0;
 
     // Bounding box for each child.
     fixed_t bbox[2][4];

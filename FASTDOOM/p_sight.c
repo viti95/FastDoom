@@ -202,14 +202,14 @@ byte P_CrossBSPNode(int bspnum)
         strace.x == bsp->x ? 
             0 : 
             strace.x <= bsp->x ? 
-                bsp->dy > 0 : 
-                bsp->dy < 0 : 
+                bsp->dygt0 : 
+                bsp->dylt0 : 
             !bsp->dy ? 
                 strace.x == bsp->y ? 
                     0 : 
                     strace.y <= bsp->y ? 
-                        bsp->dx < 0 : 
-                        bsp->dx > 0 : 
+                        bsp->dxlt0 : 
+                        bsp->dxgt0 : 
                     (right = ((strace.y - bsp->y) >> FRACBITS) * (bsp->dxs)) < (left = ((strace.x - bsp->x) >> FRACBITS) * (bsp->dys)) ? 
                         0 : 
                         right != left;
@@ -222,14 +222,14 @@ byte P_CrossBSPNode(int bspnum)
         t2x == bsp->x ? 
             2 : 
             t2x <= bsp->x ? 
-                bsp->dy > 0 : 
-                bsp->dy < 0 : 
+                bsp->dygt0 : 
+                bsp->dylt0 : 
                 !bsp->dy ? 
                     t2x == bsp->y ? 
                         2 : 
                         t2y <= bsp->y ? 
-                            bsp->dx < 0 : 
-                            bsp->dx > 0 : 
+                            bsp->dxlt0 : 
+                            bsp->dxgt0 : 
                             (right = ((t2y - bsp->y) >> FRACBITS) * (bsp->dxs)) < (left = ((t2x - bsp->x) >> FRACBITS) * (bsp->dys)) ? 
                                 0 :
                                 (right == left) + 1;
