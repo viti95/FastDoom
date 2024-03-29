@@ -506,7 +506,7 @@ void R_RenderBSPNode(int bspnum)
             dy = (viewys - bsp->ys);
 
             // Try to quickly decide by looking at sign bits.
-            if ((bsp->dys ^ bsp->dxs ^ dx ^ dy) & 0x80000000)
+            if ((bsp->dysXORdxs ^ dx ^ dy) & 0x80000000)
             {
                 side = ROLAND1(bsp->dys ^ dx);
             }

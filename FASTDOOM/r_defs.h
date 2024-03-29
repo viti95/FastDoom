@@ -270,6 +270,7 @@ typedef struct
     byte dylt0;
     byte dygt0;
     fixed_t dyXORdx;
+    fixed_t dysXORdxs;
 
     // Bounding box for each child.
     fixed_t bbox[2][4];

@@ -284,6 +284,7 @@ void P_LoadNodes(int lump)
         no->dygt0 = no->dy > 0;
 
         no->dyXORdx = no->dy ^ no->dx;
+        no->dysXORdxs = no->dys ^ no->dxs;
         
         for (j = 0; j < 2; j++)
         {
