@@ -233,7 +233,9 @@ typedef struct
 
     fixed_t shiftdx;
     fixed_t shiftdy;
-    
+
+    int lightnum;
+
     fixed_t offset;
 
     angle_t angle;

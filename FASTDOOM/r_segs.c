@@ -116,12 +116,7 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 	backsector = curline->backsector;
 	texnum = texturetranslation[curline->sidedef->midtexture];
 
-	lightnum = (frontsector->lightlevel >> LIGHTSEGSHIFT) + extralight;
-
-	if (curline->v1->y == curline->v2->y)
-		lightnum--;
-	else if (curline->v1->x == curline->v2->x)
-		lightnum++;
+	lightnum = (frontsector->lightlevel >> LIGHTSEGSHIFT) + extralight + curline->lightnum;
 
 	// Lightnum between 0 and 15
 	if (lightnum < 0)
@@ -312,12 +307,7 @@ void R_RenderMaskedSegRange2(drawseg_t *ds)
 	backsector = curline->backsector;
 	texnum = texturetranslation[curline->sidedef->midtexture];
 
-	lightnum = (frontsector->lightlevel >> LIGHTSEGSHIFT) + extralight;
-
-	if (curline->v1->y == curline->v2->y)
-		lightnum--;
-	else if (curline->v1->x == curline->v2->x)
-		lightnum++;
+	lightnum = (frontsector->lightlevel >> LIGHTSEGSHIFT) + extralight + curline->lightnum;
 
 	// Lightnum between 0 and 15
 	if (lightnum < 0)
@@ -1048,12 +1038,7 @@ void R_StoreWallRange(int start,
 		// OPTIMIZE: get rid of LIGHTSEGSHIFT globally
 		if (!fixedcolormap)
 		{
-			lightnum = (frontsector->lightlevel >> LIGHTSEGSHIFT) + extralight;
-
-			if (curline->v1->y == curline->v2->y)
-				lightnum--;
-			else if (curline->v1->x == curline->v2->x)
-				lightnum++;
+			lightnum = (frontsector->lightlevel >> LIGHTSEGSHIFT) + extralight + curline->lightnum;
 
 			// Lightnum between 0 and 15
 			if (lightnum < 0)
