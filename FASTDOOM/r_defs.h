@@ -223,6 +223,17 @@ typedef struct
     vertex_t *v1;
     vertex_t *v2;
 
+    fixed_t dx;
+    fixed_t dy;
+
+    unsigned char cmpdx;
+    unsigned char cmpdy;
+
+    fixed_t xordxdy;
+
+    fixed_t shiftdx;
+    fixed_t shiftdy;
+    
     fixed_t offset;
 
     angle_t angle;
