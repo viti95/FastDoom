@@ -115,9 +115,17 @@ void I_FinishUpdate(void)
 
         for(i = 0; i < 320*240/4; i++)
         {
-            pcscreen[i] = backbuffer[4*i+plane];
+            destscreen[i] = backbuffer[4*i+plane];
         }
     }
+
+    outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
+
+    // Next plane
+    if (destscreen == (byte *)0xA9600)
+        destscreen = (byte *)0xA0000;
+    else
+        destscreen += 0x4B00;
 }
 
 #endif
