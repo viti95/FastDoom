@@ -101,6 +101,8 @@ void VGA_X_InitGraphics(void)
 
     outp(CRTC_INDEX, V_BLANK_END);
     outp(CRTC_INDEX + 1, 0x06);
+
+    outp(SC_INDEX, MAP_MASK); 
 }
 
 void I_FinishUpdate(void)
@@ -108,32 +110,28 @@ void I_FinishUpdate(void)
     unsigned char plane;
     unsigned short i;
 
-    outp(SC_INDEX, MAP_MASK); /* select plane 0 */
-    outp(SC_DATA, 1 << (0 & 3));
+    outp(SC_DATA, 1 << (0 & 3)); /* select plane 0 */
 
     for(i = 0; i < 320*240/4; i++)
     {
         destscreen[i] = backbuffer[4*i];
     }
 
-    outp(SC_INDEX, MAP_MASK); /* select plane 1 */
-    outp(SC_DATA, 1 << (1 & 3));
+    outp(SC_DATA, 1 << (1 & 3)); /* select plane 1 */
 
     for(i = 0; i < 320*240/4; i++)
     {
         destscreen[i] = backbuffer[4*i+1];
     }
 
-    outp(SC_INDEX, MAP_MASK); /* select plane 2 */
-    outp(SC_DATA, 1 << (2 & 3));
+    outp(SC_DATA, 1 << (2 & 3)); /* select plane 2 */
 
     for(i = 0; i < 320*240/4; i++)
     {
         destscreen[i] = backbuffer[4*i+2];
     }
 
-    outp(SC_INDEX, MAP_MASK); /* select plane 3 */
-    outp(SC_DATA, 1 << (3 & 3));
+    outp(SC_DATA, 1 << (3 & 3)); /* select plane 3 */
 
     for(i = 0; i < 320*240/4; i++)
     {
