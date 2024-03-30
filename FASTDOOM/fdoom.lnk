@@ -81,6 +81,7 @@ file cga512.obj
 file i_text.obj
 file i_mda.obj
 file i_vgay.obj
+file i_vgax.obj
 file math.obj
 file i_sound.obj
 file linearh.obj

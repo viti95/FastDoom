@@ -31,6 +31,10 @@ CPU 486
 %define USE_BACKBUFFER
 %endif
 
+%ifdef MODE_X
+%define USE_BACKBUFFER
+%endif
+
 %ifdef MODE_CGA16
 %define USE_BACKBUFFER
 %endif

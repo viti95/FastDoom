@@ -97,6 +97,11 @@
 #include "i_ega320.h"
 #endif
 
+#if defined(MODE_X)
+#include "i_vgax.h"
+#include "i_vga.h"
+#endif
+
 #if defined(MODE_VBE2)
 #include "i_vga.h"
 #endif
@@ -655,6 +660,10 @@ void I_InitGraphics(void)
     VGA_Y_InitGraphics();
 #endif
 
+#if defined(MODE_X)
+    VGA_X_InitGraphics();
+#endif
+
 #if defined(MODE_13H)
     VGA_13H_InitGraphics();
 #endif
@@ -699,7 +708,7 @@ void I_InitGraphics(void)
     VBE2_InitGraphics();
 #endif
 
-#if defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_Y) || defined(MODE_X) || defined(MODE_VBE2_DIRECT)
     VGA_TestFastSetPalette();
 #endif
 
