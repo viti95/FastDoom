@@ -108,15 +108,36 @@ void I_FinishUpdate(void)
     unsigned char plane;
     unsigned short i;
 
-    for (plane = 0; plane < 4; plane++)
-    {
-        outp(SC_INDEX, MAP_MASK); /* select plane */
-        outp(SC_DATA, 1 << (plane & 3));
+    outp(SC_INDEX, MAP_MASK); /* select plane 0 */
+    outp(SC_DATA, 1 << (0 & 3));
 
-        for(i = 0; i < 320*240/4; i++)
-        {
-            destscreen[i] = backbuffer[4*i+plane];
-        }
+    for(i = 0; i < 320*240/4; i++)
+    {
+        destscreen[i] = backbuffer[4*i];
+    }
+
+    outp(SC_INDEX, MAP_MASK); /* select plane 1 */
+    outp(SC_DATA, 1 << (1 & 3));
+
+    for(i = 0; i < 320*240/4; i++)
+    {
+        destscreen[i] = backbuffer[4*i+1];
+    }
+
+    outp(SC_INDEX, MAP_MASK); /* select plane 2 */
+    outp(SC_DATA, 1 << (2 & 3));
+
+    for(i = 0; i < 320*240/4; i++)
+    {
+        destscreen[i] = backbuffer[4*i+2];
+    }
+
+    outp(SC_INDEX, MAP_MASK); /* select plane 3 */
+    outp(SC_DATA, 1 << (3 & 3));
+
+    for(i = 0; i < 320*240/4; i++)
+    {
+        destscreen[i] = backbuffer[4*i+3];
     }
 
     outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
