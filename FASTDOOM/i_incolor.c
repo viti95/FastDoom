@@ -160,14 +160,14 @@ void I_FinishUpdate(void)
 
     for (y = 0; y < SCREENHEIGHT; y++){
         for (x = 0; x < SCREENWIDTH / 8; x++){
-            unsigned char color0 = lut16colors[backbuffer[base]];
-            unsigned char color1 = lut16colors[backbuffer[base + 1]];
-            unsigned char color2 = lut16colors[backbuffer[base + 2]];
-            unsigned char color3 = lut16colors[backbuffer[base + 3]];
-            unsigned char color4 = lut16colors[backbuffer[base + 4]];
-            unsigned char color5 = lut16colors[backbuffer[base + 5]];
-            unsigned char color6 = lut16colors[backbuffer[base + 6]];
-            unsigned char color7 = lut16colors[backbuffer[base + 7]];
+            unsigned char color0 = ptrlut16colors[backbuffer[base]];
+            unsigned char color1 = ptrlut16colors[backbuffer[base + 1]];
+            unsigned char color2 = ptrlut16colors[backbuffer[base + 2]];
+            unsigned char color3 = ptrlut16colors[backbuffer[base + 3]];
+            unsigned char color4 = ptrlut16colors[backbuffer[base + 4]];
+            unsigned char color5 = ptrlut16colors[backbuffer[base + 5]];
+            unsigned char color6 = ptrlut16colors[backbuffer[base + 6]];
+            unsigned char color7 = ptrlut16colors[backbuffer[base + 7]];
 
             plane_red[plane_position] = ((color0 >> 3) & 1) << 7 | ((color1 >> 3) & 1) << 6 | ((color2 >> 3) & 1) << 5 | ((color3 >> 3) & 1) << 4 | ((color4 >> 3) & 1) << 3 | ((color5 >> 3) & 1) << 2 | ((color6 >> 3) & 1) << 1 | ((color7 >> 3) & 1);
             plane_green[plane_position] = ((color0 >> 2) & 1) << 7 | ((color1 >> 2) & 1) << 6 | ((color2 >> 2) & 1) << 5 | ((color3 >> 2) & 1) << 4 | ((color4 >> 2) & 1) << 3 | ((color5 >> 2) & 1) << 2 | ((color6 >> 2) & 1) << 1 | ((color7 >> 2) & 1);
@@ -187,14 +187,14 @@ void I_FinishUpdate(void)
     outp(INDEX_REG, PLANE_MASK_REG);
     outp(INDEX_REG + 1, freeze_1+freeze_2+freeze_3+display_all);
 
-    for (i = 0; i < 200/4; i++)
+    for (i = 90*18 + 25; i < 90*(200/4 + 18) + 25; i += 90)
     {
         for (j = 0; j < 320/8; j++)
         {
-            pcscreen[90*(i+18)+j+25]        = ptr_plane_intensity[j];
-            pcscreen[90*(i+18)+j+0x2000+25] = ptr_plane_intensity[40+j];
-            pcscreen[90*(i+18)+j+0x4000+25] = ptr_plane_intensity[80+j];
-            pcscreen[90*(i+18)+j+0x6000+25] = ptr_plane_intensity[120+j];
+            pcscreen[i+j]        = ptr_plane_intensity[j];
+            pcscreen[i+j+0x2000] = ptr_plane_intensity[40+j];
+            pcscreen[i+j+0x4000] = ptr_plane_intensity[80+j];
+            pcscreen[i+j+0x6000] = ptr_plane_intensity[120+j];
         }
 
         ptr_plane_intensity += 160;
@@ -206,14 +206,14 @@ void I_FinishUpdate(void)
     outp(INDEX_REG, PLANE_MASK_REG);
     outp(INDEX_REG + 1, freeze_0+freeze_2+freeze_3+display_all);
 
-    for (i = 0; i < 200/4; i++)
+    for (i = 90*18 + 25; i < 90*(200/4 + 18) + 25; i += 90)
     {
         for (j = 0; j < 320/8; j++)
         {
-            pcscreen[90*(i+18)+j+25]        = ptr_plane_blue[j];
-            pcscreen[90*(i+18)+j+0x2000+25] = ptr_plane_blue[40+j];
-            pcscreen[90*(i+18)+j+0x4000+25] = ptr_plane_blue[80+j];
-            pcscreen[90*(i+18)+j+0x6000+25] = ptr_plane_blue[120+j];
+            pcscreen[i+j]        = ptr_plane_blue[j];
+            pcscreen[i+j+0x2000] = ptr_plane_blue[40+j];
+            pcscreen[i+j+0x4000] = ptr_plane_blue[80+j];
+            pcscreen[i+j+0x6000] = ptr_plane_blue[120+j];
         }
 
         ptr_plane_blue += 160;
@@ -225,14 +225,14 @@ void I_FinishUpdate(void)
     outp(INDEX_REG, PLANE_MASK_REG);
     outp(INDEX_REG + 1, freeze_0+freeze_1+freeze_3+display_all);
 
-    for (i = 0; i < 200/4; i++)
+    for (i = 90*18 + 25; i < 90*(200/4 + 18) + 25; i += 90)
     {
         for (j = 0; j < 320/8; j++)
         {
-            pcscreen[90*(i+18)+j+25]        = ptr_plane_green[j];
-            pcscreen[90*(i+18)+j+0x2000+25] = ptr_plane_green[40+j];
-            pcscreen[90*(i+18)+j+0x4000+25] = ptr_plane_green[80+j];
-            pcscreen[90*(i+18)+j+0x6000+25] = ptr_plane_green[120+j];
+            pcscreen[i+j]        = ptr_plane_green[j];
+            pcscreen[i+j+0x2000] = ptr_plane_green[40+j];
+            pcscreen[i+j+0x4000] = ptr_plane_green[80+j];
+            pcscreen[i+j+0x6000] = ptr_plane_green[120+j];
         }
 
         ptr_plane_green += 160;
@@ -244,14 +244,14 @@ void I_FinishUpdate(void)
     outp(INDEX_REG, PLANE_MASK_REG);
     outp(INDEX_REG + 1, freeze_0+freeze_1+freeze_2+display_all);
 
-    for (i = 0; i < 200/4; i++)
+    for (i = 90*18 + 25; i < 90*(200/4 + 18) + 25; i += 90)
     {
         for (j = 0; j < 320/8; j++)
         {
-            pcscreen[90*(i+18)+j+25]        = ptr_plane_red[j];
-            pcscreen[90*(i+18)+j+0x2000+25] = ptr_plane_red[40+j];
-            pcscreen[90*(i+18)+j+0x4000+25] = ptr_plane_red[80+j];
-            pcscreen[90*(i+18)+j+0x6000+25] = ptr_plane_red[120+j];
+            pcscreen[i+j]        = ptr_plane_red[j];
+            pcscreen[i+j+0x2000] = ptr_plane_red[40+j];
+            pcscreen[i+j+0x4000] = ptr_plane_red[80+j];
+            pcscreen[i+j+0x6000] = ptr_plane_red[120+j];
         }
 
         ptr_plane_red += 160;
@@ -291,8 +291,6 @@ void InColor_InitGraphics(void)
 
     pcscreen = destscreen = (byte *)0xB0000;
 
-    //SetDWords(pcscreen, 0, 8192);
-
     outp(DMC_PORT, grph + screen_on);
 
     outp(INDEX_REG, R_W_CONTROL_REG);
@@ -306,16 +304,8 @@ void InColor_InitGraphics(void)
     outp(INDEX_REG, PLANE_MASK_REG);
     outp(INDEX_REG + 1, display_all);
 
-    for (i = 0; i < 348/4; i++)
-    {
-        for (j = 0; j < 720/8; j++)
-        {
-            pcscreen[90*i+j]        = 0;
-            pcscreen[90*i+j+0x2000] = 0;
-            pcscreen[90*i+j+0x4000] = 0;
-            pcscreen[90*i+j+0x6000] = 0;
-        }
-    }
+    SetDWords(pcscreen, 0, 8192);
+
 }
 
 void InColor_ShutdownGraphics(void)
