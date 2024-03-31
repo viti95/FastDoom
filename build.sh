@@ -167,15 +167,29 @@ else
 
 fi
 
-debug=false
+doclean=false
 for param in "$@"; do
     if [ "$param" = "-debug" ]; then
-        debug=true
+        doclean=true
         break
     fi
 done
 
-if [ "$debug" = "true" ]; then
+if [ "$doclean" = "true" ]; then
+  cd FASTDOOM
+  wmake clean
+  cd ..
+fi
+
+dodebug=false
+for param in "$@"; do
+    if [ "$param" = "-debug" ]; then
+        dodebug=true
+        break
+    fi
+done
+
+if [ "$dodebug" = "true" ]; then
   echo "Enabling debug symbols, traceable stack frames, and debug logging/checks"
   wccbuildopts="$buildopts -d2 -of+ -dDEBUG_ENABLED=1"
   nasmbuildopts="-g -dDEBUG_ENABLED=1"
@@ -215,7 +229,7 @@ fi
 yes | cp -rf fdoom.exe "../${target^^}"
 
 # Copy corresponding .map file if it exists and debug enabled
-if [ "$debug" = "true" ]; then
+if [ "$dodebug" = "true" ]; then
   echo "Copying map file"
   mapfile="fdoom.map"
   echo $mapfile
@@ -227,15 +241,15 @@ if [ "$debug" = "true" ]; then
 fi
 cd ..
 
-stub=false
+dostub=false
 for param in "$@"; do
     if [ "$param" = "-stub" ]; then
-        stub=true
+        dostub=true
         break
     fi
 done
 
-if [ "$stub" = "true" ]; then
+if [ "$dostub" = "true" ]; then
   ./stub.sh $target
 fi
 
