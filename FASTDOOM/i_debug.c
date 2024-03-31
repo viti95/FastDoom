@@ -11,11 +11,9 @@
 #include "i_system.h"
 #include "i_debug.h"
 
-#define COLOURS 0xFF
+#define COLOURS 0x1A
 #define COLS 80
 #define ROWS 25
-
-
 
 #if (DEBUG_ENABLED == 1)
 
@@ -26,7 +24,6 @@ void I_Putchar(byte c);
 #if (DEBUG_MDA_ENABLED == 1)
 unsigned short *Scrn = (unsigned short *)0xB0000;
 int Curx, Cury = 0;
-
 
 void I_Clear()
 {
