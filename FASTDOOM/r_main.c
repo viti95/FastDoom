@@ -689,7 +689,7 @@ fixed_t R_ScaleFromGlobalAngle(int position)
 #if defined(MODE_T4050)
     num = FixedMulEDX(projection, sineb) << 1;
 #endif
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     num = FixedMulEDX(projection, sineb) << detailshift;
 #endif
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA)
@@ -900,7 +900,7 @@ void R_ExecuteSetViewSize(void)
     endscreen = MulScreenWidth(viewwindowy + viewheight);
 #endif
 
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     if (forcePotatoDetail || forceLowDetail || forceHighDetail)
     {
         if (forceHighDetail)
@@ -914,7 +914,7 @@ void R_ExecuteSetViewSize(void)
         detailshift = setdetail;
 #endif
 
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     viewwidth = scaledviewwidth >> detailshift;
     viewwidthhalf = viewwidth / 2;
 #endif
@@ -1071,7 +1071,7 @@ void R_ExecuteSetViewSize(void)
 
 #endif
 
-#if defined(MODE_Y)
+#if defined(MODE_X) || defined(MODE_Y)
     switch (detailshift)
     {
     case DETAIL_HIGH:
@@ -1604,7 +1604,7 @@ void R_ExecuteSetViewSize(void)
     pspriteiscaleneg = -pspriteiscale;
 #endif
 
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     pspriteiscaleshifted = pspriteiscale >> detailshift;
 #endif
 
@@ -1620,7 +1620,7 @@ void R_ExecuteSetViewSize(void)
 #if defined(MODE_T4050)
         yslope[i] = FixedDiv((viewwidth << 1) / 2 * FRACUNIT, dy);
 #endif
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
         yslope[i] = FixedDiv((viewwidth << detailshift) / 2 * FRACUNIT, dy);
 #endif
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA)
@@ -1644,7 +1644,7 @@ void R_ExecuteSetViewSize(void)
 #if defined(MODE_T4050)
             level = startmap - MulScreenWidth(j) / (viewwidth << 1) / DISTMAP;
 #endif
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
             level = startmap - MulScreenWidth(j) / (viewwidth << detailshift) / DISTMAP;
 #endif
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA)
@@ -1776,7 +1776,7 @@ void R_SetupFrame(void)
     destview = destscreen + MulScreenWidth(viewwindowy) + viewwindowx;
 #endif
 
-#if defined(MODE_Y)
+#if defined(MODE_X) || defined(MODE_Y)
     destview = destscreen + MulScreenWidthQuarter(viewwindowy) + (viewwindowx >> 2);
 #endif
 }
@@ -1798,7 +1798,7 @@ void R_RenderPlayerView(void)
     NetUpdate();
 
 // Set potato mode VGA plane
-#if defined(MODE_Y)
+#if defined(MODE_X) || defined(MODE_Y)
     if (detailshift == DETAIL_POTATO)
     {
         outp(SC_INDEX + 1, 15);
@@ -1839,7 +1839,7 @@ void R_RenderPlayerView(void)
     else
         R_DrawPlanes();
 #endif
-#if defined(MODE_Y)
+#if defined(MODE_X) || defined(MODE_Y)
     if (visplaneRender == VISPLANES_FLATTER)
         switch (detailshift)
         {

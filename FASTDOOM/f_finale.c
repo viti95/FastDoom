@@ -112,7 +112,7 @@ void F_StartFinale(void)
 	gameaction = ga_nothing;
 	gamestate = GS_FINALE;
 	viewactive = 0;
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 	automapactive = 0;
 #endif
 
@@ -300,7 +300,7 @@ void F_Ticker(void)
 #include "hu_stuff.h"
 extern patch_t *hu_font[HU_FONTSIZE];
 
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void F_TextWrite(void)
 {
 	byte *src;
@@ -315,7 +315,7 @@ void F_TextWrite(void)
 
 	// erase the entire screen to a tiled background
 	src = W_CacheLumpName(finaleflat, PU_CACHE);
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 	dest = screen0;
 #endif
 #if defined(USE_BACKBUFFER)
@@ -338,7 +338,7 @@ void F_TextWrite(void)
 #endif
 	}
 
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 	V_MarkRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
 #endif
 
@@ -663,7 +663,7 @@ byte F_CastResponder(void)
 	return 1;
 }
 
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void F_CastPrint(char *text)
 {
 	char *ch;
@@ -717,7 +717,7 @@ void F_CastPrint(char *text)
 //
 // F_CastDrawer
 //
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void F_CastDrawer(void)
 {
 	spritedef_t *sprdef;
@@ -817,7 +817,7 @@ void F_CastDrawerText(void)
 }
 #endif
 
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void F_DrawPatchCol(int x, patch_t *patch, int col)
 {
 	column_t *column;
@@ -828,7 +828,7 @@ void F_DrawPatchCol(int x, patch_t *patch, int col)
 
 	column = (column_t *)((byte *)patch + patch->columnofs[col]);
 
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 	desttop = screen0 + ((CENTERING_OFFSET_X + x) * PIXEL_SCALING) + MulScreenWidth(CENTERING_OFFSET_Y * PIXEL_SCALING);
 #endif
 #if defined(USE_BACKBUFFER)
@@ -1164,7 +1164,7 @@ void F_BunnyScrollText(void)
 //
 // F_BunnyScroll
 //
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void F_BunnyScroll(void)
 {
 	int scrolled;
@@ -1178,7 +1178,7 @@ void F_BunnyScroll(void)
 	p1 = W_CacheLumpName("PFUB2", PU_LEVEL);
 	p2 = W_CacheLumpName("PFUB1", PU_LEVEL);
 
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 	V_MarkRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
 #endif
 
@@ -1227,7 +1227,7 @@ void F_Drawer(void)
 {
 	if (finalestage == 2)
 	{
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 		F_CastDrawer();
 #endif
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA)
@@ -1241,7 +1241,7 @@ void F_Drawer(void)
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA)
 		F_TextWriteText();
 #endif
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 		F_TextWrite();
 #endif
 	}
@@ -1263,7 +1263,7 @@ void F_Drawer(void)
       		V_DrawPatchModeCentered(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE), 0);
 			break;
 		case 3:
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 			F_BunnyScroll();
 #endif
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050)

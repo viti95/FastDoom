@@ -80,7 +80,7 @@ extern boolean snowfix;
 extern boolean HERCmap;
 #endif
 
-#if defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 extern boolean VGADACfix;
 #endif
 

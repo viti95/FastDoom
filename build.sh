@@ -44,6 +44,9 @@ shift 1
 if [ "$target" = "fdoom.exe" ]; then
   buildopts="-dMODE_Y"
 
+elif [ "$target" = "fdoomx.exe" ]; then
+  buildopts="-dMODE_X -dSCREENWIDTH=320 -dSCREENHEIGHT=240"
+
 elif [ "$target" = "fdoomcga.exe" ]; then
   buildopts="-dMODE_CGA"
 

@@ -65,6 +65,7 @@ GLOBOBJS = \
  i_text.obj \
  i_mda.obj \
  i_vgay.obj \
+ i_vgax.obj \
  i_incolor.obj \
  math.obj \
  ns_dpmi.obj \

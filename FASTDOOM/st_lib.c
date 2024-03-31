@@ -80,7 +80,7 @@ void STlib_drawNumText(st_number_t *n, int x, int y)
 }
 #endif
 
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void STlib_drawNum(st_number_t *n, byte refresh)
 {
     int num = *n->num;
@@ -107,7 +107,7 @@ void STlib_drawNum(st_number_t *n, byte refresh)
     // clear the area
     x = n->x - 3 * w;
 
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
     V_CopyRect(x, n->y - ST_Y, screen4, w * 3, h, x, n->y, screen0);
 #endif
 #if defined(USE_BACKBUFFER)
@@ -179,7 +179,7 @@ void STlib_drawNum_Direct(st_number_t *n)
 }
 #endif
 
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void STlib_updateNum(st_number_t *n, byte refresh)
 {
     if (*n->on)
@@ -205,7 +205,7 @@ void STlib_initPercent(st_percent_t *p,
     p->p = percent;
 }
 
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void STlib_updatePercent(st_percent_t *per, int refresh)
 {
     if (refresh && *per->n.on)
@@ -238,7 +238,7 @@ void STlib_initMultIcon(st_multicon_t *i,
     i->p = il;
 }
 
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void STlib_updateMultIcon_Direct(st_multicon_t *mi)
 {
     int w;
@@ -268,7 +268,7 @@ void STlib_updateMultIcon(st_multicon_t *mi, byte refresh)
             w = mi->p[mi->oldinum]->width;
             h = mi->p[mi->oldinum]->height;
 
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
             V_CopyRect(x, y - ST_Y, screen4, w, h, x, y, screen0);
 #endif
 #if defined(USE_BACKBUFFER)
@@ -297,7 +297,7 @@ void STlib_initBinIcon(st_binicon_t *b,
     b->p = i;
 }
 
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void STlib_updateBinIcon(st_binicon_t *bi, byte refresh)
 {
     if (*bi->on && refresh)

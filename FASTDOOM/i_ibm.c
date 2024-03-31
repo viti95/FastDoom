@@ -101,8 +101,13 @@
 #include "i_vga.h"
 #endif
 
-#if defined(MODE_Y)
+#if defined(MODE_X)
 #include "i_vgay.h"
+#include "i_vga.h"
+#endif
+
+#if defined(MODE_X)
+#include "i_vgax.h"
 #include "i_vga.h"
 #endif
 
@@ -339,7 +344,7 @@ void I_UpdateBoxTransparent(int x, int y, int w, int h)
 }
 #endif
 
-#if defined(MODE_Y)
+#if defined(MODE_X) || defined(MODE_Y)
 void I_UpdateBox(int x, int y, int w, int h)
 {
     int i, j, k, count;
@@ -464,7 +469,7 @@ void I_UpdateBoxTransparent(int x, int y, int w, int h)
 //
 // I_UpdateNoBlit
 //
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 int olddb[2][4];
 void I_UpdateNoBlit(void)
 {
@@ -655,6 +660,10 @@ void I_InitGraphics(void)
     VGA_Y_InitGraphics();
 #endif
 
+#if defined(MODE_X)
+    VGA_X_InitGraphics();
+#endif
+
 #if defined(MODE_13H)
     VGA_13H_InitGraphics();
 #endif
@@ -699,7 +708,7 @@ void I_InitGraphics(void)
     VBE2_InitGraphics();
 #endif
 
-#if defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
     VGA_TestFastSetPalette();
 #endif
 

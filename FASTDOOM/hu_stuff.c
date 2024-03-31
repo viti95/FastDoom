@@ -239,7 +239,7 @@ char *mapnamest[] = // TNT WAD map names.
         THUSTR_31,
         THUSTR_32};
 
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void HU_Init(void)
 {
 
@@ -421,7 +421,7 @@ void HU_Drawer(void)
         break;
     }
 
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     if (automapactive)
         HUlib_drawTextLine(&w_title);
 #endif

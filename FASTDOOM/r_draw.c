@@ -75,7 +75,7 @@ int columnofs[SCREENWIDTH];
 byte *ylookup[SCREENHEIGHT];
 #endif
 
-#if defined(MODE_Y)
+#if defined(MODE_X) || defined(MODE_Y)
 byte *ylookup[SCREENHEIGHT];
 #endif
 
@@ -126,7 +126,7 @@ fixed_t dc_texturemid;
 // first pixel in a column (possibly virtual)
 byte *dc_source;
 
-#if defined(MODE_Y)
+#if defined(MODE_X) || defined(MODE_Y)
 void R_DrawSkyFlat(void)
 {
     register int count;
@@ -157,7 +157,7 @@ void R_DrawSkyFlat(void)
 }
 #endif
 
-#if defined(MODE_Y)
+#if defined(MODE_X) || defined(MODE_Y)
 void R_DrawSkyFlatLow(void)
 {
     register int count;
@@ -188,7 +188,7 @@ void R_DrawSkyFlatLow(void)
 }
 #endif
 
-#if defined(MODE_Y)
+#if defined(MODE_X) || defined(MODE_Y)
 void R_DrawSkyFlatPotato(void)
 {
     register int count;
@@ -2120,7 +2120,7 @@ void R_DrawSpanText8050(void)
 //
 #define FUZZTABLE 50
 
-#if defined(MODE_Y) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA)
 #define FUZZOFF (SCREENWIDTH / 4)
 #endif
 
@@ -2356,7 +2356,7 @@ void R_DrawFuzzColumnText8050(void)
 }
 #endif
 
-#if defined(MODE_Y)
+#if defined(MODE_X) || defined(MODE_Y)
 
 void R_DrawFuzzColumnFlatSaturn(void)
 {
@@ -2735,7 +2735,7 @@ fixed_t ds_step;
 // start of a 64*64 tile image
 byte *ds_source;
 
-#if defined(MODE_Y)
+#if defined(MODE_X) || defined(MODE_Y)
 /*int lutx2[4] = {1, 3, 7, 15};
 int lutx1[4] = {15, 14, 12, 8};
 
@@ -2928,7 +2928,7 @@ void R_InitBuffer(int width, int height)
     //  e.g. smaller view windows
     //  with border and/or status bar.
 
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     viewwindowx = (SCREENWIDTH - width) >> 1;
 
 #if defined(MODE_13H) || defined(MODE_VBE2)
@@ -2943,7 +2943,7 @@ void R_InitBuffer(int width, int height)
 #endif
 
 // Same with base row offset.
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     if (width == SCREENWIDTH)
     {
         viewwindowy = 0;
@@ -2968,7 +2968,7 @@ void R_InitBuffer(int width, int height)
     for (i = 0; i < height; i++)
         ylookup[i] = backbuffer + MulScreenWidth(i + viewwindowy);
 #endif
-#if defined(MODE_Y)
+#if defined(MODE_X) || defined(MODE_Y)
     for (i = 0; i < height; i++)
         ylookup[i] = Mul80(i);
 #endif
@@ -2980,7 +2980,7 @@ void R_InitBuffer(int width, int height)
 //  for variable screen sizes
 // Also draws a beveled edge.
 //
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void R_FillBackScreen(void)
 {
     byte *src;
@@ -2999,7 +2999,7 @@ void R_FillBackScreen(void)
 
     char *name;
 
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
     if (scaledviewwidth == SCREENWIDTH)
         return;
 #endif
@@ -3029,7 +3029,7 @@ void R_FillBackScreen(void)
 
     src = W_CacheLumpName(name, PU_CACHE);
 
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
     screen1 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
     dest = screen1;
 #define TARGET_SURFACE screen1
@@ -3089,6 +3089,21 @@ void R_FillBackScreen(void)
     CopyDWords(screen1, dest, (SCREENHEIGHT - SBARHEIGHT) * SCREENWIDTH / 4);
 #endif
 
+#if defined(MODE_X)
+    for (i = 0; i < 4; i++)
+    {
+        outp(SC_INDEX + 1, 1 << i);
+
+        dest = (byte *)0xAE100;
+        src = screen1 + i;
+        do
+        {
+            *dest++ = *src;
+            src += 4;
+        } while (dest != (byte *)(0xAE100 + (SCREENHEIGHT - SBARHEIGHT) * SCREENWIDTH / 4));
+    }
+#endif
+
 #if defined(MODE_Y)
     for (i = 0; i < 4; i++)
     {
@@ -3104,7 +3119,7 @@ void R_FillBackScreen(void)
     }
 #endif
 
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
     Z_Free(screen1);
 #endif
 }
@@ -3134,6 +3149,26 @@ void R_VideoErase(unsigned ofs, int count)
     {
         CopyWords(source, dest, count / 2);
     }
+}
+#endif
+
+#if defined(MODE_X)
+void R_VideoErase(unsigned ofs, int count)
+{
+    byte *dest;
+    byte *source;
+    int countp;
+    ASSERT((ofs + count) <= SCREENWIDTH * SCREENHEIGHT);
+
+    outp(SC_INDEX + 1, 15);
+    outp(GC_INDEX, GC_MODE);
+    outp(GC_INDEX + 1, inp(GC_INDEX + 1) | 1);
+    dest = destscreen + (ofs >> 2);
+    source = (byte *)0xAE100 + (ofs >> 2);
+    countp = count / 4;
+    CopyBytes(source, dest, countp);
+
+    outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~1);
 }
 #endif
 
@@ -3191,7 +3226,7 @@ void R_VideoErase(unsigned ofs, int count)
 // Draws the border around the view
 //  for different size windows?
 //
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void R_DrawViewBorder(void)
 {
     int top;

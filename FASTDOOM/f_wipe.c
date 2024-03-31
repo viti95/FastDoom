@@ -96,7 +96,7 @@ void wipe_initMelt()
     int i;
 
     // copy start screen to main screen
-    #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+    #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
     CopyDWords(screen2, screen0, (SCREENWIDTH * SCREENHEIGHT) / 4);
     #endif
     #if defined(USE_BACKBUFFER)
@@ -152,7 +152,7 @@ byte wipe_doMelt(int ticks)
                 if (dy >= SCREENHEIGHT - y_val)
                     dy = SCREENHEIGHT - y_val;
                 s = &((short *)screen3)[i_screen_height + y_val];
-                #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+                #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
                 d = &((short *)screen0)[MulScreenWidthHalf(y_val) + i];
                 #endif
                 #if defined(USE_BACKBUFFER)
@@ -165,7 +165,7 @@ byte wipe_doMelt(int ticks)
                 }
                 y_val += dy;
                 s = &((short *)screen2)[i_screen_height];
-                #if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+                #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
                 d = &((short *)screen0)[MulScreenWidthHalf(y_val) + i];
                 #endif
                 #if defined(USE_BACKBUFFER)
@@ -197,7 +197,7 @@ void wipe_exitMelt()
 // wipe_ReadScreen
 // Reads the screen currently displayed into a linear buffer.
 //
-#if defined(MODE_Y)
+#if defined(MODE_X) || defined(MODE_Y)
 void wipe_ReadScreen(byte *scr)
 {
     int j;
@@ -312,7 +312,7 @@ void wipe_ReadScreen(byte *scr)
 }
 #endif
 
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void wipe_StartScreen()
 {
     screen2 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
@@ -320,7 +320,7 @@ void wipe_StartScreen()
 }
 #endif
 
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void wipe_EndScreen()
 {
     screen3 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
@@ -328,7 +328,7 @@ void wipe_EndScreen()
 }
 #endif
 
-#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 int wipe_ScreenWipe(int ticks)
 {
     // initial stuff
@@ -339,7 +339,7 @@ int wipe_ScreenWipe(int ticks)
     }
 
     // do a piece of wipe-in
-#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
     V_MarkRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
 #endif
 
