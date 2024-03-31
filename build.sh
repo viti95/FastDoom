@@ -169,7 +169,7 @@ fi
 
 doclean=false
 for param in "$@"; do
-    if [ "$param" = "-debug" ]; then
+    if [ "$param" = "-clean" ]; then
         doclean=true
         break
     fi
