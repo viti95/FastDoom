@@ -167,7 +167,15 @@ else
 
 fi
 
-if [[ "$DEBUG_ENABLED" -eq 1 ]]; then
+debug=false
+for param in "$@"; do
+    if [ "$param" = "-debug" ]; then
+        debug=true
+        break
+    fi
+done
+
+if [ "$debug" = "true" ]; then
   echo "Enabling debug symbols, traceable stack frames, and debug logging/checks"
   wccbuildopts="$buildopts -d2 -of+ -dDEBUG_ENABLED=1"
   nasmbuildopts="-g -dDEBUG_ENABLED=1"
@@ -207,7 +215,7 @@ fi
 yes | cp -rf fdoom.exe "../${target^^}"
 
 # Copy corresponding .map file if it exists and debug enabled
-if [[ "$DEBUG_ENABLED" -eq 1 ]]; then
+if [ "$debug" = "true" ]; then
   echo "Copying map file"
   mapfile="fdoom.map"
   echo $mapfile
@@ -218,5 +226,18 @@ if [[ "$DEBUG_ENABLED" -eq 1 ]]; then
   fi
 fi
 cd ..
+
+stub=false
+for param in "$@"; do
+    if [ "$param" = "-stub" ]; then
+        stub=true
+        break
+    fi
+done
+
+if [ "$stub" = "true" ]; then
+  ./stub.sh $target
+fi
+
 echo "RIP AND TEAR"
 exit 0
