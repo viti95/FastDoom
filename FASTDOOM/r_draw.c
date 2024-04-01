@@ -3172,7 +3172,7 @@ void R_VideoErase(unsigned ofs, int count)
     {
         if (count & 1)
         {
-            *(background_buffer + ofs) = *(backbuffer + ofs);
+            *(backbuffer + ofs) = *(background_buffer + ofs);
             ofs++;
             count--;
         }
