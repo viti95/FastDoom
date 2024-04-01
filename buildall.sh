@@ -6,8 +6,7 @@ build_list=$(grep -oP '"\$target" = "\K\w*.exe(?=")' build.sh)
 
 
 build() {
-  ./build.sh clean
-  ./build.sh $1
+  ./build.sh $1 -clean
 }
 
 rm FDOOM*.EXE FDOOM*.MAP|| true
