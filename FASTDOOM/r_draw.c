@@ -85,7 +85,7 @@ byte **ylookup;
 
 int automapheight;
 
-#if defined(USE_BACKBUFFER)
+#if defined(USE_BACKBUFFER) || defined(MODE_X)
 byte *background_buffer = 0;
 #endif
 
@@ -2999,12 +2999,12 @@ void R_FillBackScreen(void)
 
     char *name;
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
     if (scaledviewwidth == SCREENWIDTH)
         return;
 #endif
 
-#if defined(USE_BACKBUFFER)
+#if defined(USE_BACKBUFFER) || defined(MODE_X)
     if (scaledviewwidth == SCREENWIDTH)
     {
         if (background_buffer)
@@ -3029,12 +3029,12 @@ void R_FillBackScreen(void)
 
     src = W_CacheLumpName(name, PU_CACHE);
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
     screen1 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
     dest = screen1;
 #define TARGET_SURFACE screen1
 #endif
-#if defined(USE_BACKBUFFER)
+#if defined(USE_BACKBUFFER) || defined(MODE_X)
     dest = background_buffer;
 #define TARGET_SURFACE background_buffer
 #endif
@@ -3052,7 +3052,7 @@ void R_FillBackScreen(void)
 
     }
     // Draw beveled edge.
-    //I_Printf("Drawing bev404eled edge: %d %d %d %d\n", viewwindowx, viewwindowy, scaledviewwidth, viewheight);
+    //I_Printf("Drawing beveled edge: %d %d %d %d\n", viewwindowx, viewwindowy, scaledviewwidth, viewheight);
 
     patch = W_CacheLumpName("BRDR_T", PU_CACHE);
 
@@ -3089,21 +3089,6 @@ void R_FillBackScreen(void)
     CopyDWords(screen1, dest, (SCREENHEIGHT - SBARHEIGHT) * SCREENWIDTH / 4);
 #endif
 
-#if defined(MODE_X)
-    for (i = 0; i < 4; i++)
-    {
-        outp(SC_INDEX + 1, 1 << i);
-
-        dest = (byte *)0xAE100;
-        src = screen1 + i;
-        do
-        {
-            *dest++ = *src;
-            src += 4;
-        } while (dest != (byte *)(0xAE100 + (SCREENHEIGHT - SBARHEIGHT) * SCREENWIDTH / 4));
-    }
-#endif
-
 #if defined(MODE_Y)
     for (i = 0; i < 4; i++)
     {
@@ -3119,7 +3104,7 @@ void R_FillBackScreen(void)
     }
 #endif
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
     Z_Free(screen1);
 #endif
 }
@@ -3156,19 +3141,27 @@ void R_VideoErase(unsigned ofs, int count)
 void R_VideoErase(unsigned ofs, int count)
 {
     byte *dest;
-    byte *source;
-    int countp;
-    ASSERT((ofs + count) <= SCREENWIDTH * SCREENHEIGHT);
+    byte *src;
+    int i;
 
-    outp(SC_INDEX + 1, 15);
-    outp(GC_INDEX, GC_MODE);
-    outp(GC_INDEX + 1, inp(GC_INDEX + 1) | 1);
-    dest = destscreen + (ofs >> 2);
-    source = (byte *)0xAE100 + (ofs >> 2);
-    countp = count / 4;
-    CopyBytes(source, dest, countp);
+    if (background_buffer)
+    {
+        for (i = 0; i < 4; i++)
+        {
+            int countp = (count / 4);
 
-    outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~1);
+            outp(SC_INDEX + 1, 1 << i);
+
+            dest = destscreen + (ofs >> 2);
+            src = background_buffer + ofs + i;
+            do
+            {
+                *dest++ = *src;
+                src += 4;
+                countp--;
+            } while (countp);
+        }
+    }
 }
 #endif
 
