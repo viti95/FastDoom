@@ -1,5 +1,5 @@
 # FastDOOM
-Doom port for DOS, based on PCDoom by @nukeykt. The goal of this port is to make it as fast as posible for 386/486 personal computers.
+Doom port for DOS, based on PCDoom by @nukeykt. The goal of this port is to make it as fast as possible for 386/486 personal computers.
 
 ## FastDOOM vs Original
 
