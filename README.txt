@@ -11,7 +11,7 @@
 
  Version
  -------
- 0.9.9
+ 0.9.9b
 
  About
  -----
@@ -65,7 +65,7 @@
  
  CPU: Any x86 processor that supports 32 bit i386 instruction set
  Video cards: MDA, Hercules, CGA, EGA, VGA, Plantronics ColorPlus
-              Sigma Color 400
+              Sigma Color 400, Hercules InColor
  Sound cards: Sound Blaster, PC Speaker, Disney Sound Source,
               Gravis Ultrasound, Pro Audio Spectrum, COVOX LPT DAC,
               Creative Music System, Tandy 3-voice, OPL2LPT,
@@ -78,9 +78,11 @@
  -----------
 
  * FDOOM.EXE    => FastDoom Mode Y, same as Vanilla Doom. Requires a VGA
-                   video card
+                   video card.
+ * FDOOMX.EXE   => FastDoom Mode X, 320x240 resolution.
  * FDOOM13H.EXE => FastDoom Mode 13h, same as Heretic / Hexen. Also works
                    with MCGA video cards.
+ * FDOOMINC.EXE => FastDoom 320x200 Hercules InColor mode (16 colors)
  * FDOOMCGA.EXE => FastDoom 320x200 4 color CGA.
  * FDOOMEGA.EXE => FastDoom 320x200 16 color EGA.
  * FDOOMBWC.EXE => FastDoom 640x200 monochrome CGA.
