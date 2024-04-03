@@ -353,10 +353,10 @@ void VBE2_InitGraphics(void)
       }
     }
 #if defined(MODE_VBE2_DIRECT)
-    // CHeck for available offscreen memory for double buffering
-    if (vesamemory < SCREENWIDTH * SCREENHEIGHT * 3 / 1024)
+    // CHeck for available offscreen memory for tripple buffering + border on fourth vram buffer
+    if (vesamemory < SCREENWIDTH * SCREENHEIGHT * 4 / 1024)
     {
-      I_Error("Not enough VRAM for triple buffering! (%i KB required, have %i KB)", SCREENWIDTH * SCREENHEIGHT * 3 / 1024, vesamemory);
+      I_Error("Not enough VRAM for triple buffering! (%i KB required, have %i KB)", SCREENWIDTH * SCREENHEIGHT * 4 / 1024, vesamemory);
     }
 #endif
     VBE_SetMode(vesavideomode, vesalinear, 1);
