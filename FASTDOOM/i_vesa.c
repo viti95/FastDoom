@@ -76,16 +76,6 @@ static union REGS regs;
 static struct SREGS sregs;
 
 /*
- * Some informations 'bout the last mode which was set
- * These informations are required to compensate some differencies
- * between the normal and direct PM calling methods
- */
-
-static signed short vbelastbank = -1;
-static unsigned long BytesPerScanline;
-static unsigned char BitsPerPixel;
-
-/*
  *  This function pointers will be initialized after you called
  *  VBE_Init. It'll be set to the realmode or protected mode call
  *  code
@@ -138,17 +128,23 @@ void DPMI_UNMAP_PHYSICAL(void *p)
   int386x(0x31, &regs, &regs, &sregs);
 }
 
+#define MEMORY_LIMIT (128*64*1024)
+
 void *DPMI_MAP_PHYSICAL(void *p, unsigned long size)
 {
+  // Limit memory to 8Mb, mapping 16Mb crashes
+  if (size > MEMORY_LIMIT)
+    size = MEMORY_LIMIT;
+
   /* DPMI call 800h map physical memory*/
   PrepareRegisters();
   regs.w.ax = 0x0800;
   regs.w.bx = (unsigned short)(((unsigned long)p) >> 16);
   regs.w.cx = (unsigned short)(((unsigned long)p) & 0xffff);
-  regs.w.si = (unsigned short)(((unsigned long)size) >> 16);
-  regs.w.di = (unsigned short)(((unsigned long)size) & 0xffff);
+  regs.w.si = (unsigned short)(size >> 16);
+  regs.w.di = (unsigned short)(size & 0xffff);
   int386x(0x31, &regs, &regs, &sregs);
-  return (void *)((regs.w.bx << 16) + regs.w.cx);
+  return (void *)(((unsigned long)regs.w.bx << 16) | regs.w.cx);
 }
 
 void VBE_Controller_Information(struct VBE_VbeInfoBlock *a)
@@ -174,12 +170,9 @@ int VBE_IsModeLinear(short Mode)
   {
     return 1;
   }
-#ifdef DISABLE_LFB
-  return 0;
-#else
+
   VBE_Mode_Information(Mode, &a);
   return ((a.ModeAttributes & 128) == 128);
-#endif
 }
 
 void VBE_SetDisplayStart(short x, short y)
@@ -243,8 +236,6 @@ void VBE_SetMode(short Mode, int linear, int clear)
 
   // get the current mode-info block and set some parameters...
   VBE_Mode_Information(Mode, &a);
-  BytesPerScanline = a.BytesPerScanline;
-  BitsPerPixel = a.BitsPerPixel;
 }
 
 char *VBE_GetVideoPtr(short mode)
@@ -261,7 +252,7 @@ char *VBE_GetVideoPtr(short mode)
     LastPhysicalMapping = NULL;
   }
   LastPhysicalMapping = DPMI_MAP_PHYSICAL((void *)ModeInfo.PhysBasePtr,
-                                          (long)(VBE_Controller_Info_Pointer->TotalMemory) * 64 * 1024);
+                                          ((unsigned long)VBE_Controller_Info_Pointer->TotalMemory) * 64 * 1024);
   return (char *)LastPhysicalMapping;
 }
 
@@ -315,7 +306,7 @@ static struct VBE_VbeInfoBlock vbeinfo;
 static struct VBE_ModeInfoBlock vbemode;
 unsigned short vesavideomode = 0xFFFF;
 int vesalinear = -1;
-int vesamemory = -1;
+unsigned long vesamemory = -1;
 char *vesavideoptr;
 
 void VBE2_InitGraphics(void)
@@ -326,7 +317,7 @@ void VBE2_InitGraphics(void)
 
   // Get VBE info
   VBE_Controller_Information(&vbeinfo);
-  vesamemory = vbeinfo.TotalMemory * 64;
+  vesamemory = ((unsigned long)vbeinfo.TotalMemory) * 64;
   // Get VBE modes
   for (mode = 0; vbeinfo.VideoModePtr[mode] != 0xffff; mode++)
   {
@@ -353,10 +344,10 @@ void VBE2_InitGraphics(void)
       }
     }
 #if defined(MODE_VBE2_DIRECT)
-    // CHeck for available offscreen memory for tripple buffering + border on fourth vram buffer
+    // Check for available offscreen memory for tripple buffering + border on fourth vram buffer
     if (vesamemory < SCREENWIDTH * SCREENHEIGHT * 4 / 1024)
     {
-      I_Error("Not enough VRAM for triple buffering! (%i KB required, have %i KB)", SCREENWIDTH * SCREENHEIGHT * 4 / 1024, vesamemory);
+      I_Error("Not enough VRAM for triple buffering! (%i KB required, have %lu KB)", SCREENWIDTH * SCREENHEIGHT * 4 / 1024, vesamemory);
     }
 #endif
     VBE_SetMode(vesavideomode, vesalinear, 1);

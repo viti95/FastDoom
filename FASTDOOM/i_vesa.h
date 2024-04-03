@@ -30,9 +30,6 @@
 /* Disables the Proteted Mode Extensions (buggy on some cards (e.g. matrox)) */
 #define DISABLE_PM_EXTENSIONS
 
-/* Disables the Linar Frame Buffer */
-// #define DISABLE_LFB
-
 /* Enables Debugging Option */
 //#define DEBUG_VESA
 
