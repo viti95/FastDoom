@@ -2,10 +2,10 @@
 
 ## 0.9.9b (03 Apr 2024)
 * Hercules InColor support
-* Mode-X 320x240 mode support (great for old laptos without VESA support and 640x480 display)
+* Mode-X 320x240 mode support (great for old laptops without VESA support and 640x480 display)
 * Fixed MDA debug, now text don't blink all the time
 * Fixed issue #183, random crashes on low-res executables
-* Fixed issue #62, cards with more than 8Mb crashed on VESA modes
+* Fixed issue #62, videocards with more than 8Mb crashed on VESA modes
 * Removed "-singletics" commandline parameter. It was only used for debugging purposes.
 * Upgraded build scripts
 * Removed MS-DOS/Windows build scripts. Those were pretty much outdated, and all tooling now is Linux based. It's possible to build FastDoom on Windows using WSL2.
