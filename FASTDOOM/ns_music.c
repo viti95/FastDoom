@@ -8,6 +8,7 @@
 #include "ns_pas16.h"
 #include "ns_sb.h"
 #include "ns_sbmid.h"
+#include "ns_rs232.h"
 #include "ns_gusmi.h"
 #include "ns_mp401.h"
 #include "ns_awe32.h"
@@ -32,6 +33,7 @@ int MUSIC_InitMidi(int card, midifuncs *Funcs, int Address);
 int MUSIC_InitGUS(midifuncs *Funcs);
 int MUSIC_InitCMS(midifuncs *Funcs, int Address);
 int MUSIC_InitSBMIDI(midifuncs *Funcs,int Address);
+int MUSIC_InitRS232MIDI(midifuncs *Funcs,int Address);
 
 /*---------------------------------------------------------------------
    Function: MUSIC_Init
@@ -70,6 +72,10 @@ int MUSIC_Init(int SoundCard, int Address)
 
     case SBMIDI:
         status = MUSIC_InitSBMIDI(&MUSIC_MidiFunctions, Address);
+        break;
+
+    case RS232MIDI:
+        status = MUSIC_InitRS232MIDI(&MUSIC_MidiFunctions, Address);
         break;
 
     case Awe32:
@@ -140,6 +146,10 @@ int MUSIC_Shutdown(
 
     case SBMIDI:
         SBMIDI_Reset();
+        break;
+
+    case RS232MIDI:
+        RS232_Reset();
         break;
 
     case Awe32:
@@ -246,6 +256,7 @@ int MUSIC_PlaySong(
     case GenMidi:
     case SoundScape:
     case SBMIDI:
+    case RS232MIDI:
     case Awe32:
     case UltraSound:
     case CMS:
@@ -434,6 +445,31 @@ int MUSIC_InitSBMIDI(
     Funcs->ProgramChange = SBMIDI_ProgramChange;
     Funcs->ChannelAftertouch = SBMIDI_ChannelAftertouch;
     Funcs->PitchBend = SBMIDI_PitchBend;
+    Funcs->SetVolume = NULL;
+    Funcs->GetVolume = NULL;
+
+    MIDI_SetMidiFuncs(Funcs);
+
+    return (status);
+}
+
+int MUSIC_InitRS232MIDI(
+    midifuncs *Funcs,
+    int Address)
+{
+    int status;
+
+    status = MUSIC_Ok;
+
+    RS232_Init();
+
+    Funcs->NoteOff = RS232_NoteOff;
+    Funcs->NoteOn = RS232_NoteOn;
+    Funcs->PolyAftertouch = RS232_PolyAftertouch;
+    Funcs->ControlChange = RS232_ControlChange;
+    Funcs->ProgramChange = RS232_ProgramChange;
+    Funcs->ChannelAftertouch = RS232_ChannelAftertouch;
+    Funcs->PitchBend = RS232_PitchBend;
     Funcs->SetVolume = NULL;
     Funcs->GetVolume = NULL;
 

@@ -27,6 +27,7 @@ file ns_mp401.obj
 file ns_sb.obj
 file ns_sbmus.obj
 file ns_sbmid.obj
+file ns_rs232.obj
 file ns_pas16.obj
 file ns_mix.obj
 file ns_scape.obj

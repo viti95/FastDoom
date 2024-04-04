@@ -45,6 +45,7 @@ typedef enum
     snd_CD,
     snd_WAV,
     snd_SBMIDI,
+    snd_RS232MIDI,
     NUM_SCARDS
 } cardenum_t;
 

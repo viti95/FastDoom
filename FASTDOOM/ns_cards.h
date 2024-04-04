@@ -26,6 +26,7 @@ typedef enum
    AudioCD,
    FileWAV,
    SBMIDI,
+   RS232MIDI,
    NumSoundCards
 } soundcardnames;
 
