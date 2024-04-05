@@ -461,7 +461,7 @@ int MUSIC_InitRS232MIDI(
 
     status = MUSIC_Ok;
 
-    RS232_Init();
+    RS232_Init(Address);
 
     Funcs->NoteOff = RS232_NoteOff;
     Funcs->NoteOn = RS232_NoteOn;

@@ -114,7 +114,7 @@ int I_GetSfxLumpNum(sfxinfo_t *sfx)
 
 void I_sndArbitrateCards(void)
 {
-    byte gus, adlib, adlibfx, sb, midi, ensoniq, lpt, cmsfx, cmsmus, oplxlptmus, oplxlptsnd, audiocd;
+    byte gus, adlib, adlibfx, sb, midi, ensoniq, lpt, cmsfx, cmsmus, oplxlptmus, oplxlptsnd, audiocd, rs232midi;
     int dmxlump;
 
     snd_SfxVolume = 127;
@@ -152,6 +152,7 @@ void I_sndArbitrateCards(void)
     cmsmus = snd_MusicDevice == snd_CMS;
     audiocd = snd_MusicDevice == snd_CD;
     adlibfx = snd_SfxDevice == snd_Adlib;
+    rs232midi = snd_MusicDevice == snd_RS232MIDI;
 
     //
     // initialize whatever i've got
@@ -210,6 +211,11 @@ void I_sndArbitrateCards(void)
         {
             SetMUSPort(snd_Mport);
         }
+    }
+
+    if(rs232midi)
+    {
+        SetMUSPort(snd_Mport);
     }
 
     if (lpt)

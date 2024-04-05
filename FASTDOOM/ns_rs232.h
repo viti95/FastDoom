@@ -27,7 +27,7 @@ void RS232_SendCommand(int data);
 void RS232_SendMidi(int data);
 int RS232_Reset(void);
 int RS232_EnterUART(void);
-int RS232_Init();
+int RS232_Init(int addr);
 void RS232_ResetMidi(void);
 void RS232_NoteOff(int channel, int key, int velocity);
 void RS232_NoteOn(int channel, int key, int velocity);

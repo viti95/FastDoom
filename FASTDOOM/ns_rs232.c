@@ -152,8 +152,10 @@ int RS232_Reset()
    Detects and initializes the music card.
 ---------------------------------------------------------------------*/
 
-int RS232_Init()
+int RS232_Init(int addr)
 {
+    RS232_BaseAddr = addr;
+
     RS232_Reset();
     return RS232_Ok;
 }
