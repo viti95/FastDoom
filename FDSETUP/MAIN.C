@@ -50,7 +50,8 @@ char cards[M_LAST][20] = {
 	"OPL3LPT",
 	"Audio-CD",
 	"PCM",
-	"Sound Blaster MIDI"
+	"Sound Blaster MIDI",
+	"Serial MIDI"
 	};
 
 char controls[C_LAST][20] = {

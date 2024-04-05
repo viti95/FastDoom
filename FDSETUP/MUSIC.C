@@ -183,6 +183,104 @@ func_exit:
 	return (rval);
 }
 
+enum
+{
+	COM1,
+	COM2,
+	COM3,
+	COM4,
+	COM_MAX
+};
+
+item_t comportitems[] =
+	{
+		{COM1, 32, 6, 13, -1, -1},
+		{COM2, 32, 7, 13, -1, -1},
+		{COM3, 32, 8, 13, -1, -1},
+		{COM4, 32, 9, 13, -1, -1}};
+
+menu_t comportmenu =
+	{
+		&midiportitems[0],
+		COM1,
+		COM_MAX,
+		0x7f};
+
+int ChooseCOMPort(DMXCARD *card)
+{
+	short field;
+	short key;
+	int rval = 0;
+
+	SaveScreen();
+	DrawPup(&comport);
+
+	// DEFAULT FIELD ========================================
+
+	switch (card->midiport)
+	{
+	default:
+	case 0x3F8:
+		field = COM1;
+		break;
+
+	case 0x2F8:
+		field = COM2;
+		break;
+
+	case 0x3E8:
+		field = COM3;
+		break;
+
+	case 0x2E8:
+		field = COM4;
+		break;
+	}
+
+	while (1)
+	{
+		SetupMenu(&comportmenu);
+		field = GetMenuInput();
+		key = menukey;
+		switch (key)
+		{
+		case KEY_ESC:
+			rval = -1;
+			goto func_exit;
+
+		case KEY_ENTER:
+		case KEY_F10:
+			switch (field)
+			{
+			case COM1:
+				card->midiport = 0x3F8;
+				goto func_exit;
+
+			case COM2:
+				card->midiport = 0x2F8;
+				goto func_exit;
+
+			case COM3:
+				card->midiport = 0x3E8;
+				goto func_exit;
+
+			case COM4:
+				card->midiport = 0x2E8;
+				goto func_exit;
+
+			default:
+				break;
+			}
+			break;
+		}
+	}
+
+func_exit:
+
+	RestoreScreen();
+	return (rval);
+}
+
 //
 // Menu for choosing Music Card
 //
@@ -201,6 +299,7 @@ enum
 	MCARD_CD,
 	MCARD_WAV,
 	MCARD_SBMIDI,
+	MCARD_RS232MIDI,
 	MCARD_NONE,
 	MCARD_MAX
 };
@@ -220,7 +319,8 @@ item_t mcarditems[] =
 		{MCARD_CD, 26, 16, 28, -1, -1},
 		{MCARD_WAV, 26, 17, 28, -1, -1},
 		{MCARD_SBMIDI, 26, 18, 28, -1, -1},
-		{MCARD_NONE, 26, 19, 28, -1, -1}};
+		{MCARD_RS232MIDI, 26, 19, 28, -1, -1},
+		{MCARD_NONE, 26, 20, 28, -1, -1}};
 
 menu_t mcardmenu =
 	{
@@ -272,6 +372,10 @@ int ChooseMusicCard(void) // RETURN: 0 = OK, -1 == ABORT
 
 	case M_SBMIDI:
 		field = MCARD_SBMIDI;
+		break;
+
+	case M_RS232MIDI:
+		field = MCARD_RS232MIDI;
 		break;
 
 	case M_PAS:
@@ -380,6 +484,11 @@ int ChooseMusicCard(void) // RETURN: 0 = OK, -1 == ABORT
 			case MCARD_SBMIDI:
 				newc.m.card = M_SBMIDI;
 				newc.m.midiport = -1;
+				goto func_exit;
+
+			case MCARD_RS232MIDI:
+				newc.m.card = M_RS232MIDI;
+				newc.m.soundport = -1;
 				goto func_exit;
 
 			case MCARD_NONE:
@@ -748,6 +857,12 @@ int SetupMusic(void)
 
 	case M_GMIDI:
 		if (ChooseMidiPort(&newc.m) == -1)
+			return (-1);
+		savemusic = TRUE;
+		break;
+
+	case M_RS232MIDI:
+		if (ChooseCOMPort(&newc.m) == -1)
 			return (-1);
 		savemusic = TRUE;
 		break;

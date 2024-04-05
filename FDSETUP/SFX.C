@@ -985,6 +985,8 @@ int SetupFX(void)
 	case M_CD:
 	case M_WAV:
 	case M_SBMIDI:
+	case M_RS232MIDI:
+	case M_GMIDI:
 		savefx = FALSE;
 		break;
 
@@ -1033,11 +1035,6 @@ int SetupFX(void)
 		savefx = TRUE;
 		break;
 		
-	case M_GMIDI:
-		if (ChooseMidiPort(&newc.d) == -1)
-			return (-1);
-		savefx = TRUE;
-		break;
 	}
 	return 0;
 }

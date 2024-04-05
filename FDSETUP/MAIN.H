@@ -44,6 +44,7 @@ typedef enum
 	M_CD,
 	M_WAV,
 	M_SBMIDI,
+	M_RS232MIDI,
 	M_LAST
 } SCARD;
 
@@ -166,6 +167,7 @@ int QuitAndSave(void);
 // MUSIC.C
 int SetupMusic(void);
 int ChooseMidiPort(DMXCARD *card);
+int ChooseCOMPort(DMXCARD *card);
 
 // SFX.C
 int SetupFX(void);
