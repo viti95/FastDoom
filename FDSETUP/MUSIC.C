@@ -194,14 +194,14 @@ enum
 
 item_t comportitems[] =
 	{
-		{COM1, 32, 6, 13, -1, -1},
-		{COM2, 32, 7, 13, -1, -1},
-		{COM3, 32, 8, 13, -1, -1},
-		{COM4, 32, 9, 13, -1, -1}};
+		{COM1, 32, 6, 14, -1, -1},
+		{COM2, 32, 7, 14, -1, -1},
+		{COM3, 32, 8, 14, -1, -1},
+		{COM4, 32, 9, 14, -1, -1}};
 
 menu_t comportmenu =
 	{
-		&midiportitems[0],
+		&comportitems[0],
 		COM1,
 		COM_MAX,
 		0x7f};
