@@ -20,8 +20,9 @@
 #define MIDI_MONO_MODE_ON 0x7E
 #define MIDI_ALL_NOTES_OFF 0x7B
 
-#define SERIAL_BASE_IO 0x3F8
 #define SERIAL_BAUD_RATE 38400
+
+int RS232_BaseAddr = RS232_DefaultAddress;
 
 /*---------------------------------------------------------------------
    Function: RS232_SendMidi
@@ -39,9 +40,9 @@ void RS232_SendMidi(int data)
     // Yuck, busy wait. Install an interrupt with DPMI?
     do
     {
-        status = inp(SERIAL_BASE_IO + 5);
+        status = inp(RS232_BaseAddr + 5);
     } while ((status & 0x20) == 0);
-    outp(SERIAL_BASE_IO, data);
+    outp(RS232_BaseAddr, data);
 
     RestoreInterrupts(flags);
 }
@@ -137,11 +138,11 @@ void RS232_PitchBend(int channel, int lsb, int msb)
 
 int RS232_Reset()
 {
-    outp(SERIAL_BASE_IO + 1, 0x00);                      // Disable all interrupts
-    outp(SERIAL_BASE_IO + 3, 0x80);                      // Enable the baud rate divisor
-    outp(SERIAL_BASE_IO + 0, 115200 / SERIAL_BAUD_RATE); // Set the baud rate
-    outp(SERIAL_BASE_IO + 1, 0x00);                      // Hi byte
-    outp(SERIAL_BASE_IO + 3, 0x03);                      // 8 bits, no parity, one stop bit
+    outp(RS232_BaseAddr + 1, 0x00);                      // Disable all interrupts
+    outp(RS232_BaseAddr + 3, 0x80);                      // Enable the baud rate divisor
+    outp(RS232_BaseAddr + 0, 115200 / SERIAL_BAUD_RATE); // Set the baud rate
+    outp(RS232_BaseAddr + 1, 0x00);                      // Hi byte
+    outp(RS232_BaseAddr + 3, 0x03);                      // 8 bits, no parity, one stop bit
     return RS232_Ok;
 }
 

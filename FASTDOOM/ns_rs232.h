@@ -1,7 +1,7 @@
 #ifndef __RS232_H
 #define __RS232_H
 
-#define RS232_DefaultAddress 0x220
+#define RS232_DefaultAddress 0x3F8
 
 enum RS232_ERRORS
 {
