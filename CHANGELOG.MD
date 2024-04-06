@@ -2,6 +2,7 @@
 
 ## 0.9.9c (?? ??? ????)
 * Serial MIDI support (fixed baudrate 38400, COM1 through COM4 selectable)
+* Fixed 512x384 VESA modes
 
 ## 0.9.9b (03 Apr 2024)
 * Hercules InColor support
