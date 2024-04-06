@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 0.9.9c (?? ??? ????)
+* Serial MIDI support (fixed baudrate 38400, COM1 through COM4 selectable)
+
 ## 0.9.9b (03 Apr 2024)
 * Hercules InColor support
 * Mode-X 320x240 mode support (great for old laptops without VESA support and 640x480 display)

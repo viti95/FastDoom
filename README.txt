@@ -11,7 +11,7 @@
 
  Version
  -------
- 0.9.9b
+ 0.9.9c
 
  About
  -----
@@ -73,6 +73,7 @@
  Music cards: Sound Blaster (OPL2 and OPL3), Adlib, MIDI, Gravis Ultrasound
               Sound Blaster AWE32, OPL2LPT, OPL3LPT, AudioCD (MSCDEX),
               PCM music (through sound card), Ensoniq Soundscape
+              Serial MIDI
 
  Executables
  -----------
