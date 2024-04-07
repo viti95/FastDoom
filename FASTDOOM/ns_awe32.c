@@ -18,13 +18,8 @@
 
 static int wSBCBaseAddx; /* Sound Blaster base address */
 static int wEMUBaseAddx; /* EMU8000 subsystem base address */
-static int wMpuBaseAddx; /* MPU401 base address */
 
 static unsigned short NoteFlags[128];
-
-/*  macros  */
-#define SBCPort(x) ((x) + wSBCBaseAddx)
-#define MPUPort(x) ((x) + wMpuBaseAddx)
 
 static SOUND_PACKET spSound =
     {
@@ -164,33 +159,6 @@ void AWE32_PitchBend(
     RestoreES(temp);
 }
 
-static void ShutdownMPU(
-    void)
-
-{
-    volatile DWORD dwCount;
-
-    for (dwCount = 0; dwCount < 0x2000; dwCount++)
-        ;
-    dwCount = 0x2000;
-    while (dwCount && inp(MPUPort(1)) & 0x40)
-        --dwCount;
-    outp(MPUPort(1), MPU_RESET_CMD);
-    for (dwCount = 0; dwCount < 0x2000; dwCount++)
-        ;
-    inp(MPUPort(0));
-
-    for (dwCount = 0; dwCount < 0x2000; dwCount++)
-        ;
-    dwCount = 0x2000;
-    while (dwCount && inp(MPUPort(1)) & 0x40)
-        --dwCount;
-    outp(MPUPort(1), MPU_RESET_CMD);
-    for (dwCount = 0; dwCount < 0x2000; dwCount++)
-        ;
-    inp(MPUPort(0));
-}
-
 static void LoadSBK(void)
 {
     int i;
@@ -274,7 +242,6 @@ int AWE32_Init(void)
 
     wSBCBaseAddx = 0x220;
     wEMUBaseAddx = 0x620;
-    wMpuBaseAddx = 0x330;
 
     status = BLASTER_GetCardSettings(&Blaster);
     if (status != BLASTER_Ok)
@@ -290,12 +257,6 @@ int AWE32_Init(void)
     if (wSBCBaseAddx == UNDEFINED)
     {
         wSBCBaseAddx = 0x220;
-    }
-
-    wMpuBaseAddx = Blaster.Midi;
-    if (wMpuBaseAddx == UNDEFINED)
-    {
-        wMpuBaseAddx = 0x330;
     }
 
     wEMUBaseAddx = Blaster.Emu;
@@ -325,7 +286,6 @@ int AWE32_Init(void)
 
     if (status != DPMI_Ok)
     {
-        ShutdownMPU();
         awe32Terminate();
         return (AWE32_Error);
     }
@@ -356,6 +316,5 @@ void AWE32_Shutdown(
     for (i=0; i<spSound.total_banks; i++)
         if (pPresets[i]) Z_Free(pPresets[i]);
 
-    ShutdownMPU();
     awe32Terminate();
 }
