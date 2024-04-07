@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 0.9.9c (?? ??? ????)
+## 0.9.9c (07 Apr 2024)
 * Serial MIDI support (fixed baudrate 38400, COM1 through COM4 selectable)
 * Fixed 512x384 VESA modes
 
