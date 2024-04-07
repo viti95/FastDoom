@@ -887,7 +887,12 @@ void R_ExecuteSetViewSize(void)
             // Stay multiple of 4
             scaledviewwidth &=~0x3;
         }
-        viewheight = (setblocks * (SCREENHEIGHT - SBARHEIGHT) / 10) & ~7;
+
+        if (setblocks == 10)
+            viewheight = SCREENHEIGHT - SBARHEIGHT;
+        else
+            viewheight = ((setblocks * (SCREENHEIGHT - SBARHEIGHT)) / 10) & ~7;
+
         viewheightminusone = viewheight - 1;
         viewheightshift = viewheight << FRACBITS;
         viewheightopt = (viewheight << FRACBITS) - viewheight;
