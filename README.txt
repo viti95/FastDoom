@@ -11,7 +11,7 @@
 
  Version
  -------
- 0.9.9c
+ 0.9.9d
 
  About
  -----
@@ -111,6 +111,8 @@
  * FDOOM400.EXE => FastDoom Sigma Color 400 (320x200, 16 colors)
  * FDM240R.EXE  => FastDoom VESA 320x240 backbuffered mode
  * FDM240D.EXE  => FastDoom VESA 320x240 direct rendering mode
+ * FDM300R.EXE  => FastDoom VESA 400x300 backbuffered mode
+ * FDM300D.EXE  => FastDoom VESA 400x300 direct rendering mode
  * FDM384R.EXE  => FastDoom VESA 512x384 backbuffered mode
  * FDM384D.EXE  => FastDoom VESA 512x384 direct rendering mode
  * FDM400R.EXE  => FastDoom VESA 640x400 backbuffered mode
