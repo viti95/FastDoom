@@ -86,6 +86,9 @@ elif [ "$target" = "fdoomvbd.exe" ]; then
 elif [ "$target" = "fdm240r.exe" ]; then
   buildopts="-dMODE_VBE2 -dSCREENWIDTH=320 -dSCREENHEIGHT=240"
 
+elif [ "$target" = "fdm300r.exe" ]; then
+  buildopts="-dMODE_VBE2 -dSCREENWIDTH=400 -dSCREENHEIGHT=300"
+
 elif [ "$target" = "fdm384r.exe" ]; then
   buildopts="-dMODE_VBE2 -dSCREENWIDTH=512 -dSCREENHEIGHT=384"
 

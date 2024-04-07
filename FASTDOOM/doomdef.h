@@ -87,6 +87,15 @@ typedef enum
 #define ASPECTRATIO4x3
 #endif
 
+#elif SCREENWIDTH == 400 && SCREENHEIGHT == 300
+#define MulScreenWidth(x) Mul400(x)
+#define MulScreenWidthHalf(x) Mul200(x)
+#define MulScreenWidthQuarter(x) Mul100(x)
+#define MulScreenWidthEighth(x) Mul50(x)
+#define ASPECTRATIO4x3
+#define PIXEL_SCALING 1
+
+
 #elif SCREENWIDTH == 512 && SCREENHEIGHT == 384
 #define MulScreenWidth(x) Mul512(x)
 #define MulScreenWidthHalf(x) Mul256(x)
