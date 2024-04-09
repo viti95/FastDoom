@@ -65,7 +65,6 @@
 
 #include "options.h"
 
-#include "i_log.h"
 
 #define SAVEGAMESIZE 0x2c000
 #define SAVESTRINGSIZE 24

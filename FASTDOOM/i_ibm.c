@@ -50,7 +50,6 @@
 
 #include "math.h"
 
-#include "i_log.h"
 
 #if defined(MODE_CGA_AFH)
 #include "i_cgaafh.h"

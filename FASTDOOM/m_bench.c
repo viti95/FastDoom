@@ -55,8 +55,6 @@
 
 #include "options.h"
 
-#include "i_log.h"
-
 #if defined(MODE_13H)
 #include "i_vga13h.h"
 #endif

@@ -56,8 +56,6 @@
 
 #include "options.h"
 
-#include "i_log.h"
-
 #include "version.h"
 
 #if defined(MODE_13H)
