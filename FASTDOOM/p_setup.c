@@ -346,6 +346,8 @@ void P_LoadLineDefs(int lump)
     {
         ld->flags = mld->flags;
         ld->twoSided = ld->flags & ML_TWOSIDED;
+        ld->dontPegBottom = ld->flags & ML_DONTPEGBOTTOM;
+		ld->dontPegTop = ld->flags & ML_DONTPEGTOP;
         ld->special = mld->special;
         ld->tag = mld->tag;
         v1 = ld->v1 = &vertexes[mld->v1];

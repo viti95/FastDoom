@@ -95,7 +95,7 @@ void P_RecursiveSound(sector_t *sec, byte soundblocks)
     for (i = 0; i < sec->linecount; i++)
     {
         check = sec->lines[i];
-        if (!(check->flags & ML_TWOSIDED))
+        if (!(check->twoSided))
             continue;
 
         P_LineOpening(check);

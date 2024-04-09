@@ -166,6 +166,8 @@ void P_UnArchiveWorld(void)
 	{
 		li->flags = *get++;
 		li->twoSided = li->flags & ML_TWOSIDED;
+		li->dontPegBottom = li->flags & ML_DONTPEGBOTTOM;
+		li->dontPegTop = li->flags & ML_DONTPEGTOP;
 		li->special = *get++;
 		li->tag = *get++;
 		for (j = 0; j < 2; j++)

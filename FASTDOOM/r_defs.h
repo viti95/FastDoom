@@ -183,6 +183,8 @@ typedef struct line_s
 
     // Precalculated flags
     byte twoSided;
+    byte dontPegBottom;
+    byte dontPegTop;
 
     // Visual appearance: SideDefs.
     //  sidenum[1] will be -1 if one sided

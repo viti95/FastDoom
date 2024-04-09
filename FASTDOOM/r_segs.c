@@ -139,7 +139,7 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 	mceilingclip = ds->sprtopclip;
 
 	// find positioning
-	if (curline->linedef->flags & ML_DONTPEGBOTTOM)
+	if (curline->linedef->dontPegBottom)
 	{
 		dc_texturemid = frontsector->floorheight > backsector->floorheight
 							? frontsector->floorheight
@@ -335,7 +335,7 @@ void R_RenderMaskedSegRange2(drawseg_t *ds)
 	mceilingclip = ds->sprtopclip;
 
 	// find positioning
-	if (curline->linedef->flags & ML_DONTPEGBOTTOM)
+	if (curline->linedef->dontPegBottom)
 	{
 		dc_texturemid = frontsector->floorheight > backsector->floorheight
 							? frontsector->floorheight
@@ -900,7 +900,7 @@ void R_StoreWallRange(int start,
 		midtexture = texturetranslation[sidedef->midtexture];
 		// a single sided line is terminal, so it must mark ends
 		markfloor = markceiling = 1;
-		if (linedef->flags & ML_DONTPEGBOTTOM)
+		if (linedef->dontPegBottom)
 		{
 			vtop = frontsector->floorheight +
 				   textureheight[sidedef->midtexture];
@@ -984,7 +984,7 @@ void R_StoreWallRange(int start,
 		{
 			// top texture
 			toptexture = texturetranslation[sidedef->toptexture];
-			if (linedef->flags & ML_DONTPEGTOP)
+			if (linedef->dontPegTop)
 			{
 				// top of texture at top
 				rw_toptexturemid = worldtop;
@@ -1002,7 +1002,7 @@ void R_StoreWallRange(int start,
 			// bottom texture
 			bottomtexture = texturetranslation[sidedef->bottomtexture];
 
-			if (linedef->flags & ML_DONTPEGBOTTOM)
+			if (linedef->dontPegBottom)
 			{
 				// bottom of texture at bottom
 				// top of texture at top
