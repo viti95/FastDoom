@@ -58,7 +58,7 @@ byte P_CrossSubsector(int num)
     fixed_t openbottom;
     vertex_t *v1;
     vertex_t *v2;
-    fixed_t frac;
+    fixed_t frac, absfrac;
     fixed_t slope;
 
     fixed_t opt;
@@ -161,6 +161,7 @@ byte P_CrossSubsector(int num)
         if (numIV == 0)
         {
             frac = 0;
+            absfrac = 0;
         }
         else
         {
@@ -169,10 +170,12 @@ byte P_CrossSubsector(int num)
             if (denIV == 0)
             {
                 frac = 0;
+                absfrac = 0;
             }
             else
             {
                 frac = FixedDiv(numIV, denIV);
+                absfrac = abs(frac);
             }
         }
 
@@ -180,7 +183,7 @@ byte P_CrossSubsector(int num)
         {
             opt = openbottom - sightzstart;
             // slope = FixedDiv(openbottom - sightzstart, frac);
-            slope = ((abs(opt) >> 14) >= abs(frac)) ? ((opt ^ frac) >> 31) ^ MAXINT : FixedDiv2(opt, frac);
+            slope = ((abs(opt) >> 14) >= absfrac) ? ((opt ^ frac) >> 31) ^ MAXINT : FixedDiv2(opt, frac);
             if (bottomslope < slope)
                 bottomslope = slope;
         }
@@ -189,7 +192,7 @@ byte P_CrossSubsector(int num)
         {
             opt = opentop - sightzstart;
             // slope = FixedDiv(opentop - sightzstart, frac);
-            slope = ((abs(opt) >> 14) >= abs(frac)) ? ((opt ^ frac) >> 31) ^ MAXINT : FixedDiv2(opt, frac);
+            slope = ((abs(opt) >> 14) >= absfrac) ? ((opt ^ frac) >> 31) ^ MAXINT : FixedDiv2(opt, frac);
             if (topslope > slope)
                 topslope = slope;
         }
