@@ -228,8 +228,7 @@ byte P_CrossBSPNode(int bspnum)
                                                                                                                                                                               : bsp->dy < 0
            : !bsp->dy                                                                                                           ? strace.x == bsp->y ? 0 : strace.y <= bsp->y ? bsp->dx < 0
                                                                                                                                                                               : bsp->dx > 0
-           : (right = ((strace.y - bsp->y) >> FRACBITS) * (bsp->dxs)) < (left = ((strace.x - bsp->x) >> FRACBITS) * (bsp->dys)) ? 0
-                                                                                                                                : right != left;
+           : (((strace.y - bsp->y) >> FRACBITS) * (bsp->dxs)) > (((strace.x - bsp->x) >> FRACBITS) * (bsp->dys));
 
     // cross the starting side
     if (!P_CrossBSPNode(bsp->children[side]))
