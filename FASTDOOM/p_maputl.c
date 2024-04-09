@@ -170,12 +170,47 @@ P_InterceptVector(divline_t *v2,
     fixed_t num;
     fixed_t den;
 
+    num = FixedMulEDX((v1->x - v2->x) >> 8, v1->dy) + FixedMulEDX((v2->y - v1->y) >> 8, v1->dx);
+
+    if (num == 0)
+    {
+        return 0;
+    }
+
     den = FixedMulEDX(v2->dx, v1->dy >> 8) - FixedMulEDX(v2->dy, v1->dx >> 8);
 
     if (den == 0)
+    {
         return 0;
+    }
 
-    num = FixedMulEDX((v1->x - v2->x) >> 8, v1->dy) + FixedMulEDX((v2->y - v1->y) >> 8, v1->dx);
+    frac = FixedDiv(num, den);
+
+    return frac;
+}
+
+fixed_t
+P_InterceptVector2(divline_t *v2,
+                  line_t *v1)
+{
+    fixed_t frac;
+    fixed_t num;
+    fixed_t den;
+
+    num = FixedMulEDX((v1->v1->x - v2->x) >> 8, v1->dy) + FixedMulEDX((v2->y - v1->v1->y) >> 8, v1->dx);
+
+    if (num == 0)
+    {
+        return 0;
+    }
+
+    den = FixedMulEDX(v2->dx, v1->dy8s) - FixedMulEDX(v2->dy, v1->dx8s);
+
+    if (den == 0)
+    {
+        return 0;
+    }
+        
     frac = FixedDiv(num, den);
 
     return frac;
@@ -477,11 +512,7 @@ byte PIT_AddLineIntercepts(line_t *ld)
 
     // hit the line
     // P_MakeDivline
-    dl.x = ld->v1->x;
-    dl.y = ld->v1->y;
-    dl.dx = ld->dx;
-    dl.dy = ld->dy;
-    frac = P_InterceptVector(&trace, &dl);
+    frac = P_InterceptVector2(&trace, ld);
 
     if (frac < 0)
         return 1; // behind source

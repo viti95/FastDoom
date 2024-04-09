@@ -172,6 +172,10 @@ typedef struct line_s
     fixed_t dxs;
     fixed_t dys;
 
+    // Precalculated 8 shift dx - dy
+    fixed_t dx8s;
+    fixed_t dy8s;
+
     // Animation related.
     short flags;
     short special;

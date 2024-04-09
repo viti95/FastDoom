@@ -351,9 +351,11 @@ void P_LoadLineDefs(int lump)
         v2 = ld->v2 = &vertexes[mld->v2];
         ld->dx = v2->x - v1->x;
         ld->dxs = ld->dx >> FRACBITS;
+        ld->dx8s = ld->dx >> 8;
         ld->dy = v2->y - v1->y;
         ld->dys = ld->dy >> FRACBITS;
-        
+        ld->dy8s = ld->dy >> 8;
+
         if (!ld->dx)
             ld->slopetype = ST_VERTICAL;
         else if (!ld->dy)

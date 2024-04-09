@@ -139,6 +139,7 @@ fixed_t P_AproxDistance(fixed_t dx, fixed_t dy);
 byte P_PointOnLineSide(fixed_t x, fixed_t y, line_t *line);
 byte P_PointOnDivlineSide(fixed_t x, fixed_t y, divline_t *line);
 fixed_t P_InterceptVector(divline_t *v2, divline_t *v1);
+fixed_t P_InterceptVector2(divline_t *v2, line_t *v1);
 byte P_BoxOnLineSide(fixed_t *tmbox, line_t *ld);
 
 extern fixed_t opentop;
