@@ -3,6 +3,7 @@
 ## 0.9.9d (?? ??? ????)
 * VESA 400x300 modes support
 * Fixed issue #181 (FastDoom crashes on exit when using AWE32 music device + SoftMPU)
+* Multiple optimizations (C)
 * Added option debug to file to standard debugging code
 
 ## 0.9.9c (07 Apr 2024)
