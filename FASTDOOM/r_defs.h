@@ -181,6 +181,9 @@ typedef struct line_s
     short special;
     short tag;
 
+    // Precalculated flags
+    byte twoSided;
+
     // Visual appearance: SideDefs.
     //  sidenum[1] will be -1 if one sided
     short sidenum[2];

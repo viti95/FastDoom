@@ -165,6 +165,7 @@ void P_UnArchiveWorld(void)
 	for (i = 0, li = lines; i < numlines; i++, li++)
 	{
 		li->flags = *get++;
+		li->twoSided = li->flags & ML_TWOSIDED;
 		li->special = *get++;
 		li->tag = *get++;
 		for (j = 0; j < 2; j++)

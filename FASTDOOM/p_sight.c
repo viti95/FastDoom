@@ -127,7 +127,7 @@ byte P_CrossSubsector(int num)
 
         // stop because it is not two sided anyway
         // might do this after updating validcount?
-        if (!(line->flags & ML_TWOSIDED))
+        if (!(line->twoSided))
             return 0;
 
         // crosses a two sided line

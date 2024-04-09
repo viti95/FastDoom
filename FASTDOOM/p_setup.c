@@ -163,7 +163,7 @@ void P_LoadSegs(int lump)
         side = ml->side;
         li->sidedef = &sides[ldef->sidenum[side]];
         li->frontsector = sides[ldef->sidenum[side]].sector;
-        if (ldef->flags & ML_TWOSIDED)
+        if (ldef->twoSided)
             li->backsector = sides[ldef->sidenum[side ^ 1]].sector;
         else
             li->backsector = 0;
@@ -345,6 +345,7 @@ void P_LoadLineDefs(int lump)
     for (i = 0; i < numlines; i++, mld++, ld++)
     {
         ld->flags = mld->flags;
+        ld->twoSided = ld->flags & ML_TWOSIDED;
         ld->special = mld->special;
         ld->tag = mld->tag;
         v1 = ld->v1 = &vertexes[mld->v1];

@@ -32,7 +32,7 @@
 
 #define getSide(currentSector, line, side) (&sides[(sectors[currentSector].lines[line])->sidenum[side]])
 #define getSector(currentSector, line, side) (sides[(sectors[currentSector].lines[line])->sidenum[side]].sector)
-#define twoSided(sector, line) ((sectors[sector].lines[line])->flags & ML_TWOSIDED)
+#define twoSided(sector, line) ((sectors[sector].lines[line])->twoSided)
 
 //
 // FLOORS
@@ -468,7 +468,7 @@ int EV_BuildStairs(line_t *line,
 			ok = 0;
 			for (i = 0; i < sec->linecount; i++)
 			{
-				if (!((sec->lines[i])->flags & ML_TWOSIDED))
+				if (!((sec->lines[i])->twoSided))
 					continue;
 
 				tsec = (sec->lines[i])->frontsector;

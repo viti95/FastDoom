@@ -586,7 +586,7 @@ byte PTR_SlideTraverse(intercept_t *in)
 
     li = in->d.line;
 
-    if (!(li->flags & ML_TWOSIDED))
+    if (!(li->twoSided))
     {
         if (P_PointOnLineSide(slidemo->x, slidemo->y, li))
         {
@@ -759,7 +759,7 @@ byte PTR_AimTraverse(intercept_t *in)
     {
         li = in->d.line;
 
-        if (!(li->flags & ML_TWOSIDED))
+        if (!(li->twoSided))
             return 0; // stop
 
         // Crosses a two sided line.
@@ -885,7 +885,7 @@ byte PTR_ShootTraverse(intercept_t *in)
         if (li->special)
             P_ShootSpecialLine(shootthing, li);
 
-        if (!(li->flags & ML_TWOSIDED))
+        if (!(li->twoSided))
             goto hitline;
 
         // crosses a two sided line
