@@ -19,6 +19,12 @@
 
 int debug_to_screen = 0;
 
+#if (DEBUG_FILE_ENABLED == 1)
+
+FILE *f_log;
+
+#endif
+
 void I_Putchar(byte c);
 
 #if (DEBUG_MDA_ENABLED == 1)
@@ -106,6 +112,10 @@ void I_Putchar(byte c)
       outp(DEBUG_SERIAL_BASE_IO, c);
     }
 #endif
+    // Output to text file
+#if (DEBUG_FILE_ENABLED == 1)
+    fputc(c, f_log);
+#endif
     if (debug_to_screen) {
         putchar(c);
     }
@@ -175,6 +185,10 @@ void I_Printf(const char *format, ...)
             }
         }
     }
+
+#if (DEBUG_FILE_ENABLED == 1)
+    fflush(f_log);
+#endif
 }
 
 static int FramePtr(void);
@@ -421,13 +435,16 @@ const char *I_LookupSymbolName(void* addr) {
 }
 
 void I_DebugInit(void) {
-#if DEBUG_SERIAL_ENABLED==1
+#if (DEBUG_SERIAL_ENABLED == 1)
     outp(DEBUG_SERIAL_BASE_IO + 1, 0x00); // Disable all interrupts
     outp(DEBUG_SERIAL_BASE_IO + 3, 0x80); // Enable the baud rate divisor
     outp(DEBUG_SERIAL_BASE_IO + 0, 115200 / DEBUG_SERIAL_BAUD); // Set the baud rate
     outp(DEBUG_SERIAL_BASE_IO + 1, 0x00); // Hi byte
     outp(DEBUG_SERIAL_BASE_IO + 3, 0x03); // 8 bits, no parity, one stop bit
     I_Printf("Serial debug port initialized\n");
+#endif
+#if (DEBUG_FILE_ENABLED == 1)
+    f_log = fopen("fdoom.log", "a");
 #endif
     I_Printf("Reading symbol table from map file\n");
     ReadMapFile(&modules, &num_modules, &symbols, &num_symbols);

@@ -2,6 +2,8 @@
 
 // #define BOCHS_DEBUG_ENABLED 1
 
+// #define DEBUG_FILE_ENABLED 1
+
 // #define DEBUG_SERIAL_ENABLED 1
 // #define DEBUG_SERIAL_BASE_IO 0x3F8
 // #define DEBUG_SERIAL_BAUD 38400
