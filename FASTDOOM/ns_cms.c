@@ -19,20 +19,7 @@
 //#define CMS_DEBUG
 
 #ifdef CMS_DEBUG
-#include <stdio.h>
-#include <stdarg.h>
-
-static void debug_log(const char *fmt, ...)
-{
-   FILE *f_log;
-   va_list ap;
-
-	f_log = fopen("cmslog.log", "a");
-	va_start(ap, fmt);
-        vfprintf(f_log, fmt, ap);
-	va_end(ap);
-        fclose(f_log);
-}
+#include "i_debug.h"
 #endif
 
 static int CMS_Installed = 0;
@@ -395,7 +382,7 @@ int CMS_MIDI_Init(int port)
     CMS_Port = port;
 
 #ifdef CMS_DEBUG_X
-    debug_log("CMS_MIDI_Init port= %i (CMS_Port = %i)\r\n",port,CMS_Port);
+    I_Printf("CMS_MIDI_Init port= %i (CMS_Port = %i)\r\n",port,CMS_Port);
 #endif
 
     CMS_Reset();
@@ -456,7 +443,7 @@ void CMS_NoteOff(int channel, int key, int velocity)
     	if(voice==MAX_CMS_CHANNELS)
     	{
 #ifdef CMS_DEBUG
-		debug_log("not found Ch=%u,note=%u\n",channel & 0xFF,key & 0xFF);
+		I_Printf("not found Ch=%u,note=%u\n",channel & 0xFF,key & 0xFF);
 #endif
     		return;
     	}
@@ -489,14 +476,14 @@ void CMS_NoteOn(int channel, int key, int velocity)
   int pitch;
 
 #ifdef CMS_DEBUG
-    debug_log("CMS_NoteOn channel=%i;key=%i;velocity=%i\r\n",channel,key,velocity);
+    I_Printf("CMS_NoteOn channel=%i;key=%i;velocity=%i\r\n",channel,key,velocity);
 #endif
   if (channel == 9)
   {
     if (velocity != 0)
        {
 #ifdef CMS_DEBUG
-       debug_log("DRUM ON note= %u\n",note);
+       I_Printf("DRUM ON note= %u\n",note);
 #endif
 	CMS_SetRegister(CMS_Port+2, 0x19, 0x84); // envelope: single dacay
 	switch (key) {
@@ -582,10 +569,10 @@ void CMS_NoteOn(int channel, int key, int velocity)
 		unsigned char min_prior = cms_synth[0].priority;
 
 #ifdef CMS_DEBUG
-	debug_log("out of voice. NotePriority=%u\n",NotePriority);
+	I_Printf("out of voice. NotePriority=%u\n",NotePriority);
     		for (i=0; i<MAX_CMS_CHANNELS; i++)
-		  debug_log("%u ",cms_synth[i].priority);
-	debug_log("\n");	
+		  I_Printf("%u ",cms_synth[i].priority);
+	I_Printf("\n");	
 #endif
 		// find note with min prioryty
 		voice = 0;
@@ -605,10 +592,10 @@ void CMS_NoteOn(int channel, int key, int velocity)
 		if (NotePriority != 0) NotePriority--;
 
 #ifdef CMS_DEBUG
-	debug_log("find low priority voice %u, NotePriority=%u\n",voice,NotePriority);
+	I_Printf("find low priority voice %u, NotePriority=%u\n",voice,NotePriority);
     		for (i=0; i<MAX_CMS_CHANNELS; i++)
-		  debug_log("%u ",cms_synth[i].priority);
-	debug_log("\n");	
+		  I_Printf("%u ",cms_synth[i].priority);
+	I_Printf("\n");	
 #endif
   	}
 
