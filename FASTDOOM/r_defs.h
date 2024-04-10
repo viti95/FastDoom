@@ -176,6 +176,8 @@ typedef struct line_s
     fixed_t dx8s;
     fixed_t dy8s;
 
+    angle_t ptoangle00;
+
     // Animation related.
     short flags;
     short special;

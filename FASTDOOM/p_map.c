@@ -556,7 +556,7 @@ void P_HitSlideLine(line_t *ld)
     }
 
     side = P_PointOnLineSide(slidemo->x, slidemo->y, ld);
-    lineangle = R_PointToAngle00(ld->dx, ld->dy);
+    lineangle = ld->ptoangle00;
 
     if (side)
         lineangle += ANG180;

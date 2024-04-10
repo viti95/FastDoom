@@ -358,6 +358,7 @@ void P_LoadLineDefs(int lump)
         ld->dy = v2->y - v1->y;
         ld->dys = ld->dy >> FRACBITS;
         ld->dy8s = ld->dy >> 8;
+        ld->ptoangle00 = R_PointToAngle00(ld->dx, ld->dy);
 
         if (!ld->dx)
             ld->slopetype = ST_VERTICAL;
