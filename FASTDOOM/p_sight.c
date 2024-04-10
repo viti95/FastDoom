@@ -92,15 +92,14 @@ byte P_CrossSubsector(int num)
              : !strace.dy                                                                                                                                 ? v1->x == strace.y ? 2 : v1->y <= strace.y ? strace.dx < 0
                                                                                                                                                                                                       : strace.dx > 0
              : (right = ((v1->y - strace.y) >> FRACBITS) * (strace.dx >> FRACBITS)) < (left = ((v1->x - strace.x) >> FRACBITS) * (strace.dy >> FRACBITS)) ? 0
-             : right == left                                                                                                                              ? 2
-                                                                                                                                                          : 1;
+                                                                                                                                                          : (2 - (right != left));
+
         s2 = !strace.dx                                                                                                                                   ? v2->x == strace.x ? 2 : v2->x <= strace.x ? strace.dy > 0
                                                                                                                                                                                                       : strace.dy < 0
              : !strace.dy                                                                                                                                 ? v2->x == strace.y ? 2 : v2->y <= strace.y ? strace.dx < 0
                                                                                                                                                                                                       : strace.dx > 0
              : (right = ((v2->y - strace.y) >> FRACBITS) * (strace.dx >> FRACBITS)) < (left = ((v2->x - strace.x) >> FRACBITS) * (strace.dy >> FRACBITS)) ? 0
-             : right == left                                                                                                                              ? 2
-                                                                                                                                                          : 1;
+                                                                                                                                                          : (2 - (right != left));
 
         // line isn't crossed?
         if (s1 == s2)
@@ -111,15 +110,14 @@ byte P_CrossSubsector(int num)
              : !line->dy                                                                                                                                ? strace.x == v1->y ? 2 : strace.y <= v1->y ? line->dx < 0
                                                                                                                                                                                                     : line->dx > 0
              : (right = ((strace.y - v1->y) >> FRACBITS) * (line->dx >> FRACBITS)) < (left = ((strace.x - v1->x) >> FRACBITS) * (line->dy >> FRACBITS)) ? 0
-             : right == left                                                                                                                            ? 2
-                                                                                                                                                        : 1;
+                                                                                                                                                        : (2 - (right != left));
+
         s2 = !line->dx                                                                                                                        ? t2x == v1->x ? 2 : t2x <= v1->x ? line->dy > 0
                                                                                                                                                                                 : line->dy < 0
              : !line->dy                                                                                                                      ? t2x == v1->y ? 2 : t2y <= v1->y ? line->dx < 0
                                                                                                                                                                                 : line->dx > 0
              : (right = ((t2y - v1->y) >> FRACBITS) * (line->dx >> FRACBITS)) < (left = ((t2x - v1->x) >> FRACBITS) * (line->dy >> FRACBITS)) ? 0
-             : right == left                                                                                                                  ? 2
-                                                                                                                                              : 1;
+                                                                                                                                              : (2 - (right != left));
 
         // line isn't crossed?
         if (s1 == s2)
@@ -227,11 +225,11 @@ byte P_CrossBSPNode(int bspnum)
     bsp = &nodes[bspnum];
 
     // decide which side the start point is on
-    side = !bsp->dx                                                                                                             ? strace.x == bsp->x ? 0 : strace.x <= bsp->x ? bsp->dy > 0
-                                                                                                                                                                              : bsp->dy < 0
-           : !bsp->dy                                                                                                           ? strace.x == bsp->y ? 0 : strace.y <= bsp->y ? bsp->dx < 0
-                                                                                                                                                                              : bsp->dx > 0
-           : (((strace.y - bsp->y) >> FRACBITS) * (bsp->dxs)) > (((strace.x - bsp->x) >> FRACBITS) * (bsp->dys));
+    side = !bsp->dx   ? strace.x == bsp->x ? 0 : strace.x <= bsp->x ? bsp->dy > 0
+                                                                    : bsp->dy < 0
+           : !bsp->dy ? strace.x == bsp->y ? 0 : strace.y <= bsp->y ? bsp->dx < 0
+                                                                    : bsp->dx > 0
+                      : (((strace.y - bsp->y) >> FRACBITS) * (bsp->dxs)) > (((strace.x - bsp->x) >> FRACBITS) * (bsp->dys));
 
     // cross the starting side
     if (!P_CrossBSPNode(bsp->children[side]))
