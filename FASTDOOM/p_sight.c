@@ -227,11 +227,11 @@ byte P_CrossBSPNode(int bspnum)
     bsp = &nodes[bspnum];
 
     // decide which side the start point is on
-    side = !bsp->dx                                                                                                             ? strace.x == bsp->x ? 0 : strace.x <= bsp->x ? bsp->dy > 0
-                                                                                                                                                                              : bsp->dy < 0
-           : !bsp->dy                                                                                                           ? strace.x == bsp->y ? 0 : strace.y <= bsp->y ? bsp->dx < 0
-                                                                                                                                                                              : bsp->dx > 0
-           : (((strace.y - bsp->y) >> FRACBITS) * (bsp->dxs)) > (((strace.x - bsp->x) >> FRACBITS) * (bsp->dys));
+    side = !bsp->dx   ? strace.x == bsp->x ? 0 : strace.x <= bsp->x ? bsp->dy > 0
+                                                                    : bsp->dy < 0
+           : !bsp->dy ? strace.x == bsp->y ? 0 : strace.y <= bsp->y ? bsp->dx < 0
+                                                                    : bsp->dx > 0
+                      : (((strace.y - bsp->y) >> FRACBITS) * (bsp->dxs)) > (((strace.x - bsp->x) >> FRACBITS) * (bsp->dys));
 
     // cross the starting side
     if (!P_CrossBSPNode(bsp->children[side]))
@@ -242,7 +242,8 @@ byte P_CrossBSPNode(int bspnum)
                 : !bsp->dy                                                                                                 ? t2x == bsp->y ? 2 : t2y <= bsp->y ? bsp->dx < 0
                                                                                                                                                                : bsp->dx > 0
                 : (right = ((t2y - bsp->y) >> FRACBITS) * (bsp->dxs)) < (left = ((t2x - bsp->x) >> FRACBITS) * (bsp->dys)) ? 0
-                                                                                                                           : (right == left) + 1;
+                : right == left                                                                                            ? 2
+                                                                                                                           : 1;
 
     // the partition plane is crossed here
     if (side == calc_side)
