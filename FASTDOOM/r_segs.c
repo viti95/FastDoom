@@ -860,7 +860,7 @@ void R_StoreWallRange(int start,
 	linedef->flags |= ML_MAPPED;
 
 	// calculate rw_distance for scale calculation
-	rw_normalangle = curline->angle + ANG90;
+	rw_normalangle = curline->angle;
 	offsetangle = abs(rw_normalangle - rw_angle1);
 
 	distangle = ANG90 - offsetangle;
