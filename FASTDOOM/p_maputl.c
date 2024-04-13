@@ -74,53 +74,6 @@ byte P_PointOnLineSide(fixed_t x, fixed_t y, line_t *line)
 }
 
 //
-// P_BoxOnLineSide
-// Considers the line to be infinite
-// Returns side 0 or 1, 2 if box crosses the line.
-//
-byte P_BoxOnLineSide(fixed_t *tmbox,
-                     line_t *ld)
-{
-    byte p1;
-    byte p2;
-    byte optCmp;
-
-    switch (ld->slopetype)
-    {
-    case ST_HORIZONTAL:
-        p1 = tmbox[BOXTOP] > ld->v1->y;
-        p2 = tmbox[BOXBOTTOM] > ld->v1->y;
-        optCmp = ld->dx < 0;
-        p1 ^= optCmp;
-        p2 ^= optCmp;
-        break;
-
-    case ST_VERTICAL:
-        p1 = tmbox[BOXRIGHT] < ld->v1->x;
-        p2 = tmbox[BOXLEFT] < ld->v1->x;
-        optCmp = ld->dx < 0;
-        p1 ^= optCmp;
-        p2 ^= optCmp;
-        break;
-
-    case ST_POSITIVE:
-        p1 = P_PointOnLineSide(tmbox[BOXLEFT], tmbox[BOXTOP], ld);
-        p2 = P_PointOnLineSide(tmbox[BOXRIGHT], tmbox[BOXBOTTOM], ld);
-        break;
-
-    case ST_NEGATIVE:
-        p1 = P_PointOnLineSide(tmbox[BOXRIGHT], tmbox[BOXTOP], ld);
-        p2 = P_PointOnLineSide(tmbox[BOXLEFT], tmbox[BOXBOTTOM], ld);
-        break;
-    }
-
-    if (p1 == p2)
-        return p1;
-
-    return 2;
-}
-
-//
 // P_PointOnDivlineSide
 // Returns 0 or 1.
 //
@@ -399,30 +352,6 @@ byte P_NotBlockLinesIterator(int x, int y, byte (*func)(line_t *))
 
     offset = bmapwidthmuls[y] + x;
 
-    offset = *(blockmap + offset);
-
-    for (list = blockmaplump + offset; *list != -1; list++)
-    {
-        ld = &lines[*list];
-
-        if (ld->validcount == validcount)
-            continue; // line has already been checked
-
-        ld->validcount = validcount;
-
-        if (!func(ld))
-            return 1;
-    }
-    return 0; // everything was checked
-}
-
-byte P_NotBlockLinesIterator2(int x, int y, byte (*func)(line_t *))
-{
-    int offset;
-    short *list;
-    line_t *ld;
-
-    offset = bmapwidthmuls[y] + x;
     offset = *(blockmap + offset);
 
     for (list = blockmaplump + offset; *list != -1; list++)
