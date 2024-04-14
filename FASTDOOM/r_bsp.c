@@ -244,6 +244,9 @@ void R_AddLine(seg_t *line)
     angle1 = R_PointToAngle(line->v1->x, line->v1->y);
     angle2 = R_PointToAngle(line->v2->x, line->v2->y);
 
+    if (angle1 == angle2)
+        return;
+
     // Clip to view edges.
     // OPTIMIZE: make constant out of 2*clipangle (FIELDOFVIEW).
     span = angle1 - angle2;
@@ -287,7 +290,7 @@ void R_AddLine(seg_t *line)
     x2 = viewangletox[angle2];
 
     // Does not cross a pixel?
-    if (x1 == x2)
+    if (x1 >= x2)
         return;
 
     backsector = line->backsector;
