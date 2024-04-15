@@ -55,22 +55,24 @@ byte P_PointOnLineSide(fixed_t x, fixed_t y, line_t *line)
     fixed_t left;
     fixed_t right;
 
-    if (!line->dx)
+    switch (line->slopetype)
     {
+    case ST_VERTICAL:
         return (x <= line->v1->x) ^ (line->dy <= 0);
-    }
-    if (!line->dy)
-    {
+        break;
+    case ST_HORIZONTAL:
         return (y <= line->v1->y) ^ (line->dx >= 0);
+        break;
+    default:
+        dx = (x - line->v1->x);
+        dy = (y - line->v1->y);
+
+        left = FixedMulEDX(line->dys, dx);
+        right = FixedMulEDX(dy, line->dxs);
+
+        return right >= left;
+        break;
     }
-
-    dx = (x - line->v1->x);
-    dy = (y - line->v1->y);
-
-    left = FixedMulEDX(line->dys, dx);
-    right = FixedMulEDX(dy, line->dxs);
-
-    return right >= left;
 }
 
 //
@@ -144,7 +146,7 @@ P_InterceptVector(divline_t *v2,
 
 fixed_t
 P_InterceptVector2(divline_t *v2,
-                  line_t *v1)
+                   line_t *v1)
 {
     fixed_t frac;
     fixed_t num;
@@ -163,7 +165,7 @@ P_InterceptVector2(divline_t *v2,
     {
         return 0;
     }
-        
+
     frac = FixedDiv(num, den);
 
     return frac;
@@ -322,7 +324,7 @@ void P_SetThingPositionSubsector(mobj_t *thing, subsector_t *ss)
 
 void P_SetThingPosition(mobj_t *thing)
 {
-    P_SetThingPositionSubsector(thing, R_PointInSubsector(thing->x,thing->y));
+    P_SetThingPositionSubsector(thing, R_PointInSubsector(thing->x, thing->y));
 }
 
 //
