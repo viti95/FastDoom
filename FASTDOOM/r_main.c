@@ -1711,11 +1711,11 @@ subsector_t * R_PointInSubsector(fixed_t x, fixed_t y)
 
         if (!node->dx)
         {
-            side = (x <= node->x) ? (node->dy > 0) : (node->dy < 0);
+            side = (x > node->x) ^ (node->dyGT0);
         }
         else if (!node->dy)
         {
-            side = (y <= node->y) ? (node->dx < 0) : (node->dx > 0);
+            side = (y > node->y) ^ (node->dxLT0);
         }
         else
         {

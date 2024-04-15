@@ -176,6 +176,9 @@ typedef struct line_s
     fixed_t dx8s;
     fixed_t dy8s;
 
+    byte dyGT0;
+    byte dxLT0;
+
     // Animation related.
     short flags;
     short special;
@@ -261,7 +264,9 @@ typedef struct
     fixed_t dy;
     fixed_t dxs;
     fixed_t dys;
-
+    byte dyGT0;
+    byte dxLT0;
+    
     // Bounding box for each child.
     fixed_t bbox[2][4];
 

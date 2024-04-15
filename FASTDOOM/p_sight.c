@@ -106,18 +106,14 @@ byte P_CrossSubsector(int num)
         if (s1 == s2)
             continue;
 
-        s1 = !line->dx                                                                                                                                  ? strace.x == v1->x ? 2 : strace.x <= v1->x ? line->dy > 0
-                                                                                                                                                                                                    : line->dy < 0
-             : !line->dy                                                                                                                                ? strace.x == v1->y ? 2 : strace.y <= v1->y ? line->dx < 0
-                                                                                                                                                                                                    : line->dx > 0
-             : (right = ((strace.y - v1->y) >> FRACBITS) * (line->dx >> FRACBITS)) < (left = ((strace.x - v1->x) >> FRACBITS) * (line->dy >> FRACBITS)) ? 0
+        s1 = !line->dx                                                                                                                                  ? strace.x == v1->x ? 2 : (strace.x > v1->x) ^ (line->dyGT0)
+             : !line->dy                                                                                                                                ? strace.x == v1->y ? 2 : (strace.y > v1->y) ^ (line->dxLT0)
+             : (right = ((strace.y - v1->y) >> FRACBITS) * (line->dxs)) < (left = ((strace.x - v1->x) >> FRACBITS) * (line->dys)) ? 0
              : right == left                                                                                                                            ? 2
                                                                                                                                                         : 1;
-        s2 = !line->dx                                                                                                                        ? t2x == v1->x ? 2 : t2x <= v1->x ? line->dy > 0
-                                                                                                                                                                                : line->dy < 0
-             : !line->dy                                                                                                                      ? t2x == v1->y ? 2 : t2y <= v1->y ? line->dx < 0
-                                                                                                                                                                                : line->dx > 0
-             : (right = ((t2y - v1->y) >> FRACBITS) * (line->dx >> FRACBITS)) < (left = ((t2x - v1->x) >> FRACBITS) * (line->dy >> FRACBITS)) ? 0
+        s2 = !line->dx                                                                                                                        ? t2x == v1->x ? 2 : (t2x > v1->x) ^ (line->dyGT0)
+             : !line->dy                                                                                                                      ? t2x == v1->y ? 2 : (t2y > v1->y) ^ (line->dxLT0)
+             : (right = ((t2y - v1->y) >> FRACBITS) * (line->dxs)) < (left = ((t2x - v1->x) >> FRACBITS) * (line->dys)) ? 0
              : right == left                                                                                                                  ? 2
                                                                                                                                               : 1;
 
