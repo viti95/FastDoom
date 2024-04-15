@@ -115,6 +115,9 @@ typedef struct
     fixed_t y;
     fixed_t dx;
     fixed_t dy;
+    
+    byte dyGT0;
+    byte dxLT0;
 
 } divline_t;
 
