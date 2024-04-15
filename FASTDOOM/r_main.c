@@ -1708,32 +1708,33 @@ subsector_t * R_PointInSubsector(fixed_t x, fixed_t y)
     {        
         node_t *node = &nodes[nodenum];
         byte side;
+        fixed_t dx, dy;
 
-        if (!node->dx)
+        switch(node->dxySelector)
         {
-            side = (x > node->x) ^ (node->dyGT0);
-        }
-        else if (!node->dy)
-        {
-            side = (y > node->y) ^ (node->dxLT0);
-        }
-        else
-        {
-            fixed_t dx = (x - node->x);
-            fixed_t dy = (y - node->y);
+            case 0:
+                side = (x > node->x) ^ (node->dyGT0);
+                break;
+            case 1:
+                side = (y > node->y) ^ (node->dxLT0);
+                break;
+            default:
+                dx = (x - node->x);
+                dy = (y - node->y);
 
-            // Try to quickly decide by looking at sign bits.
-            if ((node->dy ^ node->dx ^ dx ^ dy) & 0x80000000)
-            {
-                side = ROLAND1(node->dy ^ dx);
-            }
-            else
-            {
-                fixed_t left = FixedMulEDX(node->dys, dx);
-                fixed_t right = FixedMulEDX(dy, node->dxs);
+                // Try to quickly decide by looking at sign bits.
+                if ((node->dy ^ node->dx ^ dx ^ dy) & 0x80000000)
+                {
+                    side = ROLAND1(node->dy ^ dx);
+                }
+                else
+                {
+                    fixed_t left = FixedMulEDX(node->dys, dx);
+                    fixed_t right = FixedMulEDX(dy, node->dxs);
 
-                side = right >= left;
-            }
+                    side = right >= left;
+                }
+                break;
         }
 
         nodenum = node->children[side];

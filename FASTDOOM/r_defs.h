@@ -264,6 +264,7 @@ typedef struct
     fixed_t dy;
     fixed_t dxs;
     fixed_t dys;
+    byte dxySelector;
     byte dyGT0;
     byte dxLT0;
     

@@ -265,6 +265,13 @@ void P_LoadNodes(int lump)
         no->dyGT0 = no->dy > 0;
         no->dxLT0 = no->dx < 0;
         
+        if (!no->dx)
+            no->dxySelector = 0;
+        else if (!no->dy)
+            no->dxySelector = 1;
+        else
+            no->dxySelector = 2;
+        
         for (j = 0; j < 2; j++)
         {
             no->children[j] = mn->children[j];
