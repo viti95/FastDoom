@@ -85,26 +85,27 @@ byte P_PointOnDivlineSide(fixed_t x,
     fixed_t left;
     fixed_t right;
 
-    if (!line->dx)
+    switch (line->type)
     {
-        return (x <= line->x) ^ (line->dy <= 0);
+    case 0:
+        return (x <= line->x) ? (line->dy > 0) : (line->dy < 0);
+
+    case 1:
+        return (y <= line->y) ? (line->dx < 0) : (line->dx > 0);
+
+    default:
+        dx = (x - line->x);
+        dy = (y - line->y);
+
+        // try to quickly decide by looking at sign bits
+        if ((line->dy ^ line->dx ^ dx ^ dy) & 0x80000000)
+            return ROLAND1(line->dy ^ dx);
+
+        left = FixedMulEDX(line->dy >> 8, dx >> 8);
+        right = FixedMulEDX(dy >> 8, line->dx >> 8);
+
+        return right >= left;
     }
-    if (!line->dy)
-    {
-        return (y <= line->y) ^ (line->dx >= 0);
-    }
-
-    dx = (x - line->x);
-    dy = (y - line->y);
-
-    // try to quickly decide by looking at sign bits
-    if ((line->dy ^ line->dx ^ dx ^ dy) & 0x80000000)
-        return ROLAND1(line->dy ^ dx);
-
-    left = FixedMulEDX(line->dy >> 8, dx >> 8);
-    right = FixedMulEDX(dy >> 8, line->dx >> 8);
-
-    return right >= left;
 }
 
 //
@@ -421,7 +422,6 @@ byte PIT_AddLineIntercepts(line_t *ld)
     byte s1;
     byte s2;
     fixed_t frac;
-    divline_t dl;
 
     // avoid precision problems with two routines
     if (trace.dx > FRACUNIT * 16 || trace.dy > FRACUNIT * 16 || trace.dx < -FRACUNIT * 16 || trace.dy < -FRACUNIT * 16)
@@ -595,6 +595,13 @@ void P_PathTraverseLI(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2)
     trace.dx = x2 - x1;
     trace.dy = y2 - y1;
 
+    if (!trace.dx)
+        trace.type = 0;
+    else if (!trace.dy)
+        trace.type = 1;
+    else
+        trace.type = 2;
+
     x1 -= bmaporgx;
     y1 -= bmaporgy;
     xt1 = x1 >> MAPBLOCKSHIFT;
@@ -728,6 +735,13 @@ void P_PathTraverseLITH(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2)
     trace.y = y1;
     trace.dx = x2 - x1;
     trace.dy = y2 - y1;
+
+    if (!trace.dx)
+        trace.type = 0;
+    else if (!trace.dy)
+        trace.type = 1;
+    else
+        trace.type = 2;
 
     x1 -= bmaporgx;
     y1 -= bmaporgy;

@@ -87,20 +87,29 @@ byte P_CrossSubsector(int num)
         v1 = line->v1;
         v2 = line->v2;
 
-        s1 = !strace.dx                                                                                                                                   ? v1->x == strace.x ? 2 : v1->x <= strace.x ? strace.dy > 0
-                                                                                                                                                                                                      : strace.dy < 0
-             : !strace.dy                                                                                                                                 ? v1->x == strace.y ? 2 : v1->y <= strace.y ? strace.dx < 0
-                                                                                                                                                                                                      : strace.dx > 0
-             : (right = ((v1->y - strace.y) >> FRACBITS) * (strace.dx >> FRACBITS)) < (left = ((v1->x - strace.x) >> FRACBITS) * (strace.dy >> FRACBITS)) ? 0
-             : right == left                                                                                                                              ? 2
-                                                                                                                                                          : 1;
-        s2 = !strace.dx                                                                                                                                   ? v2->x == strace.x ? 2 : v2->x <= strace.x ? strace.dy > 0
-                                                                                                                                                                                                      : strace.dy < 0
-             : !strace.dy                                                                                                                                 ? v2->x == strace.y ? 2 : v2->y <= strace.y ? strace.dx < 0
-                                                                                                                                                                                                      : strace.dx > 0
-             : (right = ((v2->y - strace.y) >> FRACBITS) * (strace.dx >> FRACBITS)) < (left = ((v2->x - strace.x) >> FRACBITS) * (strace.dy >> FRACBITS)) ? 0
-             : right == left                                                                                                                              ? 2
-                                                                                                                                                          : 1;
+        switch (strace.type)
+        {
+        case 0:
+            s1 = v1->x == strace.x ? 2 : v1->x <= strace.x ? strace.dy > 0
+                                                           : strace.dy < 0;
+            s2 = v2->x == strace.x ? 2 : v2->x <= strace.x ? strace.dy > 0
+                                                           : strace.dy < 0;
+            break;
+        case 1:
+            s1 = v1->x == strace.y ? 2 : v1->y <= strace.y ? strace.dx < 0
+                                                           : strace.dx > 0;
+            s2 = v2->x == strace.y ? 2 : v2->y <= strace.y ? strace.dx < 0
+                                                           : strace.dx > 0;
+            break;
+        default:
+            s1 = (right = ((v1->y - strace.y) >> FRACBITS) * (strace.dx >> FRACBITS)) < (left = ((v1->x - strace.x) >> FRACBITS) * (strace.dy >> FRACBITS)) ? 0
+                 : right == left                                                                                                                            ? 2
+                                                                                                                                                            : 1;
+            s2 = (right = ((v2->y - strace.y) >> FRACBITS) * (strace.dx >> FRACBITS)) < (left = ((v2->x - strace.x) >> FRACBITS) * (strace.dy >> FRACBITS)) ? 0
+                 : right == left                                                                                                                            ? 2
+                                                                                                                                                            : 1;
+            break;
+        }
 
         // line isn't crossed?
         if (s1 == s2)
@@ -328,6 +337,13 @@ byte P_CheckSight(mobj_t *t1, mobj_t *t2)
     strace.y = t1->y;
     t2y = t2->y;
     strace.dy = t2y - t1->y;
+
+    if (!strace.dx)
+        strace.type = 0;
+    else if (!strace.dx)
+        strace.type = 1;
+    else
+        strace.type = 2;
 
     // the head node is the last node output
     return P_CrossBSPNode(firstnode);
