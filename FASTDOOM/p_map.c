@@ -169,12 +169,61 @@ byte P_TeleportMove(mobj_t *thing, fixed_t x, fixed_t y)
 //
 
 //
+// P_BoxOnLineSide
+// Considers the line to be infinite
+// Returns side 0 or 1, 2 if box crosses the line.
+//
+byte P_BoxOnLineSide(line_t *ld)
+{
+    byte p1;
+    byte p2;
+    byte optCmp;
+    fixed_t val;
+
+    switch (ld->slopetype)
+    {
+    case ST_HORIZONTAL:
+        val = ld->v1->y;
+        p1 = tmbbox[BOXTOP] > val;
+        p2 = tmbbox[BOXBOTTOM] > val;
+        optCmp = ld->dx < 0;
+        p1 ^= optCmp;
+        p2 ^= optCmp;
+        break;
+
+    case ST_VERTICAL:
+        val = ld->v1->x;
+        p1 = tmbbox[BOXRIGHT] < val;
+        p2 = tmbbox[BOXLEFT] < val;
+        optCmp = ld->dx < 0;
+        p1 ^= optCmp;
+        p2 ^= optCmp;
+        break;
+
+    case ST_POSITIVE:
+        p1 = P_PointOnLineSide(tmbbox[BOXLEFT], tmbbox[BOXTOP], ld);
+        p2 = P_PointOnLineSide(tmbbox[BOXRIGHT], tmbbox[BOXBOTTOM], ld);
+        break;
+
+    case ST_NEGATIVE:
+        p1 = P_PointOnLineSide(tmbbox[BOXRIGHT], tmbbox[BOXTOP], ld);
+        p2 = P_PointOnLineSide(tmbbox[BOXLEFT], tmbbox[BOXBOTTOM], ld);
+        break;
+    }
+
+    if (p1 == p2)
+        return p1;
+
+    return 2;
+}
+
+//
 // PIT_CheckLine
 // Adjusts tmfloorz and tmceilingz as lines are contacted
 //
 byte PIT_CheckLine(line_t *ld)
 {
-    if (tmbbox[BOXRIGHT] <= ld->bbox[BOXLEFT] || tmbbox[BOXLEFT] >= ld->bbox[BOXRIGHT] || tmbbox[BOXTOP] <= ld->bbox[BOXBOTTOM] || tmbbox[BOXBOTTOM] >= ld->bbox[BOXTOP] || P_BoxOnLineSide(tmbbox, ld) != 2)
+    if (tmbbox[BOXRIGHT] <= ld->bbox[BOXLEFT] || tmbbox[BOXLEFT] >= ld->bbox[BOXRIGHT] || tmbbox[BOXTOP] <= ld->bbox[BOXBOTTOM] || tmbbox[BOXBOTTOM] >= ld->bbox[BOXTOP] || P_BoxOnLineSide(ld) != 2)
         return 1;
 
     // A line has been hit
@@ -307,6 +356,30 @@ byte PIT_CheckThing(mobj_t *thing)
 //
 // MOVEMENT CLIPPING
 //
+
+byte P_NotBlockLinesIterator2(int x, int y, byte (*func)(line_t *))
+{
+    int offset;
+    short *list;
+    line_t *ld;
+
+    offset = bmapwidthmuls[y] + x;
+    offset = *(blockmap + offset);
+
+    for (list = blockmaplump + offset; *list != -1; list++)
+    {
+        ld = &lines[*list];
+
+        if (ld->validcount == validcount)
+            continue; // line has already been checked
+
+        ld->validcount = validcount;
+
+        if (!func(ld))
+            return 1;
+    }
+    return 0; // everything was checked
+}
 
 //
 // P_CheckPosition
