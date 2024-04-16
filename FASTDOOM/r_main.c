@@ -849,22 +849,24 @@ void R_ExecuteSetViewSize(void)
     setsizeneeded = 0;
 
     // TODO Add more granular detection
-    if (selectedCPU == AUTO_CPU) {
-      switch(I_GetCPUModel()) {
+    if (selectedCPU == AUTO_CPU)
+    {
+        switch (I_GetCPUModel())
+        {
         case 386:
-          selectedCPU = INTEL_386SX;
-          break;
+            selectedCPU = INTEL_386SX;
+            break;
         case 486:
-          selectedCPU = INTEL_486;
-          break;
+            selectedCPU = INTEL_486;
+            break;
         case 586:
         case 686:
-          selectedCPU = INTEL_PENTIUM;
-          break;
+            selectedCPU = INTEL_PENTIUM;
+            break;
         default:
-          selectedCPU = INTEL_386SX;
-          break;
-      }
+            selectedCPU = INTEL_386SX;
+            break;
+        }
     }
 #if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA)
     if (setblocks >= 11)
@@ -880,12 +882,15 @@ void R_ExecuteSetViewSize(void)
     else
     {
         // Since (SCREENWDITH / 10) may have a remainder, check 10 explcitly
-        if (setblocks == 10) {
+        if (setblocks == 10)
+        {
             scaledviewwidth = SCREENWIDTH;
-        } else {
+        }
+        else
+        {
             scaledviewwidth = setblocks * (SCREENWIDTH / 10);
             // Stay multiple of 4
-            scaledviewwidth &=~0x3;
+            scaledviewwidth &= ~0x3;
         }
 
         if (setblocks == 10)
@@ -1665,7 +1670,7 @@ void R_ExecuteSetViewSize(void)
     }
     // I put this here so I could see which functions were having rendering
     // problems. Leaving it here for demonstration purposes.
-#if (DEBUG_ENABLED==1)
+#if (DEBUG_ENABLED == 1)
     I_Printf("R_InitData: %s", "test");
     I_Printf("Render Functions:\n");
     I_Printf("\tcolfunc: %s\n", I_LookupSymbolName(colfunc));
@@ -1700,27 +1705,27 @@ void R_Init(void)
 //
 // R_PointInSubsector
 //
-subsector_t * R_PointInSubsector(fixed_t x, fixed_t y)
+subsector_t *R_PointInSubsector(fixed_t x, fixed_t y)
 {
     int nodenum = firstnode;
 
     while (!(nodenum & NF_SUBSECTOR))
-    {        
+    {
         node_t *node = &nodes[nodenum];
         byte side;
+        fixed_t dx, dy;
 
-        if (!node->dx)
+        switch (node->type)
         {
+        case 0:
             side = (x <= node->x) ? (node->dy > 0) : (node->dy < 0);
-        }
-        else if (!node->dy)
-        {
+            break;
+        case 1:
             side = (y <= node->y) ? (node->dx < 0) : (node->dx > 0);
-        }
-        else
-        {
-            fixed_t dx = (x - node->x);
-            fixed_t dy = (y - node->y);
+            break;
+        default:
+            dx = (x - node->x);
+            dy = (y - node->y);
 
             // Try to quickly decide by looking at sign bits.
             if ((node->dy ^ node->dx ^ dx ^ dy) & 0x80000000)
@@ -1729,11 +1734,12 @@ subsector_t * R_PointInSubsector(fixed_t x, fixed_t y)
             }
             else
             {
-                fixed_t left = FixedMulEDX(node->dys, dx);
-                fixed_t right = FixedMulEDX(dy, node->dxs);
+                fixed_t left = FixedMulEDX(node->dy >> FRACBITS, dx);
+                fixed_t right = FixedMulEDX(dy, node->dx >> FRACBITS);
 
                 side = right >= left;
             }
+            break;
         }
 
         nodenum = node->children[side];

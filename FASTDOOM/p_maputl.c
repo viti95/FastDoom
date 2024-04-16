@@ -156,7 +156,7 @@ P_InterceptVector2(divline_t *v2,
         return 0;
     }
 
-    den = FixedMulEDX(v2->dx, v1->dy8s) - FixedMulEDX(v2->dy, v1->dx8s);
+    den = FixedMulEDX(v2->dx, v1->dy >> 8) - FixedMulEDX(v2->dy, v1->dx >> 8);
 
     if (den == 0)
     {
