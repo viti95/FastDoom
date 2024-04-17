@@ -56,12 +56,17 @@ void LoadSamples()
     int bank;
     long sampsize;
 
+    spSound.bank_no = 0;
+    spSound.total_banks = 0;
+    spSound.banksizes = lBankSizes;
+
     for (i = 1; i < NUMSFX; i++)
     {
         unsigned int rate;
         unsigned long sampsize;
         unsigned char *data;
         unsigned long total = 0;
+        int result;
         char namebuf[9] = "DS";
 
         printf("Load sample: %u\n", i);
@@ -98,7 +103,13 @@ void LoadSamples()
         lBankSizes[bank] += 160;
         spSound.total_patch_ram -= lBankSizes[bank];
         spSound.total_banks += 1;
-        awe32DefineBankSizes(&spSound);
+        result = awe32DefineBankSizes(&spSound);
+
+        if (result != 0)
+        {
+            I_Error("AWE32: Cant define bank sizes, total banks: %u", spSound.total_banks);
+        }
+
 
         printf("OK\n");
 
@@ -152,7 +163,7 @@ void LoadSamples()
 int AWE32SND_Init(void)
 {
     int status;
-    int i;
+    unsigned int i;
     BLASTER_CONFIG Blaster;
 
     wSBCBaseAddx = 0x220;
@@ -221,6 +232,8 @@ int AWE32SND_Init(void)
 
     for (i = 1; i < NUMSFX; i++)
     {
+        printf("Playing sample in bank %u\n", i);
+
         awe32Controller(15, 0, i);
         awe32ProgramChange(15, 0);
         awe32NoteOn(15, 60, 127);

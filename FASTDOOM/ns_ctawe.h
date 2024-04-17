@@ -1,7 +1,7 @@
 #ifndef _CTAWEAPI
 #define _CTAWEAPI
 
-#define MAXBANKS 64 /* maximum number of banks */
+#define MAXBANKS 128 /* maximum number of banks */
 #define MAXNRPN 32  /* maximum number of NRPN */
 
 #if defined(__FLAT__) || defined(DOS386)
