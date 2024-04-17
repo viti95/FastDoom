@@ -84,6 +84,7 @@ GLOBOBJS = &
  ns_mix.obj &
  ns_scape.obj &
  ns_awe32.obj &
+ ns_awe32snd.obj &
  ns_dsney.obj &
  ns_usrho.obj &
  ns_gusmi.obj &

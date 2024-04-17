@@ -16,6 +16,7 @@
 #include "ns_fxm.h"
 #include "ns_adbfx.h"
 #include "ns_tandy.h"
+#include "ns_awe32snd.h"
 #include "options.h"
 #include "doomstat.h"
 
@@ -45,7 +46,6 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
     switch (SoundCard)
     {
     case SoundBlaster:
-    case Awe32:
         DeviceStatus = BLASTER_Init();
         if (DeviceStatus != BLASTER_Ok && !ignoreSoundChecks)
         {
@@ -55,6 +55,17 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
 
         device->MaxVoices = 9;
         BLASTER_GetCardInfo(&device->MaxSampleBits, &device->MaxChannels);
+        break;
+
+    case Awe32:
+        DeviceStatus = AWE32SND_Init();
+        if (DeviceStatus != AWE32SND_Ok && !ignoreSoundChecks)
+        {
+            status = FX_Error;
+            break;
+        }
+
+        device->MaxVoices = 9;
         break;
 
     case ProAudioSpectrum:
