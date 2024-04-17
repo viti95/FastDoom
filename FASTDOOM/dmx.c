@@ -408,7 +408,6 @@ void ASS_Init(int rate, int mdev, int sdev)
             PCFX_SetTotalVolume(255);
             return;
         case SoundBlaster:
-        case Awe32:
         case SoundBlasterDirect:
             status = FX_SetupSoundBlaster(dmx_blaster);
             printf("Sound Blaster DSP %01X.%02X\n", BLASTER_Version >> 8, BLASTER_Version && 7);
@@ -420,6 +419,7 @@ void ASS_Init(int rate, int mdev, int sdev)
         case Adlib:
         case OPL2LPT:
         case OPL3LPT:
+        case Awe32:
             status = FX_SetupCard(sound_device, &fx_device, dmx_snd_port);
             break;
         default:
