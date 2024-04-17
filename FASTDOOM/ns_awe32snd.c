@@ -56,7 +56,7 @@ void LoadSamples()
     int bank;
     long sampsize;
 
-    for (i = 1; i < 3; i++)
+    for (i = 1; i < NUMSFX; i++)
     {
         unsigned int rate;
         unsigned long sampsize;
@@ -128,13 +128,6 @@ void LoadSamples()
 
         printf("Stream the raw PCM samples...");
         /* stream the raw PCM samples */
-        /*wpWave.data = Packet;
-        do
-        {
-            memcpy(Packet, data, PACKETSIZE);
-            data += PACKETSIZE;
-        } while (!awe32WPStreamWave(&wpWave));*/
-
         for (j=0; j<wpWave.no_wave_packets; j++) {
             memcpy(Packet2, data, PACKETSIZE);
             data += PACKETSIZE;
@@ -159,6 +152,7 @@ void LoadSamples()
 int AWE32SND_Init(void)
 {
     int status;
+    int i;
     BLASTER_CONFIG Blaster;
 
     wSBCBaseAddx = 0x220;
@@ -225,9 +219,14 @@ int AWE32SND_Init(void)
 
     // Testing! Play some audios
 
-    awe32Controller(15, 0, 2);
-    awe32ProgramChange(15, 0);
-    awe32NoteOn(15, 60, 127);
+    for (i = 1; i < NUMSFX; i++)
+    {
+        awe32Controller(15, 0, i);
+        awe32ProgramChange(15, 0);
+        awe32NoteOn(15, 60, 127);
+
+        delay(1000);
+    }
 
     return (AWE32SND_Ok);
 }
