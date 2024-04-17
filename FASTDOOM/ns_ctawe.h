@@ -99,7 +99,6 @@ typedef struct
     SHORT tag;             /* Must be 0x100 or 0x101 */
     SHORT preset_size;     /* Preset table of this size is required */
     SHORT no_wave_packets; /* Number of packets of Wave sample to stream. */
-    LONG reserved;
 
     SHORT bank_no;         /* bank number */
     char FAR *data;        /* Address of packet of size PACKETSIZE */

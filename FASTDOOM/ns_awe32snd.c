@@ -28,7 +28,7 @@ static LONG lBankSizes[MAXBANKS] =
     {
         0};
 
-static char Packet[PACKETSIZE] = {0};
+static char Packet2[PACKETSIZE] = {0};
 
 unsigned SetES(void);
 #pragma aux SetES = \
@@ -52,11 +52,11 @@ WAVE_PACKET wpWave          = {0};
 
 void LoadSamples()
 {
-    unsigned int i;
+    unsigned int i, j;
     int bank;
     long sampsize;
 
-    for (i = 1; i < NUMSFX; i++)
+    for (i = 1; i < 3; i++)
     {
         unsigned int rate;
         unsigned long sampsize;
@@ -106,15 +106,15 @@ void LoadSamples()
         printf("Setup WAVE_PACKET...");
         wpWave.tag = 0x101;
         wpWave.bank_no = (short)bank;
-        wpWave.data = Packet;
         wpWave.sample_size = sampsize;
         wpWave.samples_per_sec = rate;
         wpWave.bits_per_sample = 8;
         wpWave.no_channels = 1;
         wpWave.looping = 0;
         wpWave.startloop = 0;
-        wpWave.endloop = wpWave.sample_size;
+        wpWave.endloop = sampsize;
         wpWave.release = 0;
+        wpWave.data = Packet2;
         printf("OK\n");
 
 
@@ -128,17 +128,19 @@ void LoadSamples()
 
         printf("Stream the raw PCM samples...");
         /* stream the raw PCM samples */
-        wpWave.data = Packet;
+        /*wpWave.data = Packet;
         do
-            /*if (total >= PACKETSIZE)
-            {
-                memcpy(Packet, data, PACKETSIZE);
-                total += PACKETSIZE;
-            }else{
-                memcpy(Packet, data, total);
-            }*/
+        {
             memcpy(Packet, data, PACKETSIZE);
-        while (!awe32WPStreamWave(&wpWave));
+            data += PACKETSIZE;
+        } while (!awe32WPStreamWave(&wpWave));*/
+
+        for (j=0; j<wpWave.no_wave_packets; j++) {
+            memcpy(Packet2, data, PACKETSIZE);
+            data += PACKETSIZE;
+            awe32WPStreamWave(&wpWave);
+        }
+
         printf("OK\n");
 
         printf("Build SoundFont preset objects...");
@@ -223,7 +225,7 @@ int AWE32SND_Init(void)
 
     // Testing! Play some audios
 
-    awe32Controller(15, 0, (WORD) 1);
+    awe32Controller(15, 0, 2);
     awe32ProgramChange(15, 0);
     awe32NoteOn(15, 60, 127);
 
