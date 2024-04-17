@@ -52,7 +52,7 @@ WAVE_PACKET wpWave          = {0};
 
 void LoadSamples()
 {
-    int i;
+    unsigned int i;
     int bank;
     long sampsize;
 
@@ -63,17 +63,25 @@ void LoadSamples()
         unsigned char *data;
         unsigned long total = 0;
         char namebuf[9] = "DS";
+
+        printf("Load sample: %u\n", i);
         
         strcpy(namebuf+2, S_sfx[i].name);
+
+        printf("Sample name: %s\n", namebuf);
 
         data = W_CacheLumpName(namebuf, PU_STATIC);
 
         rate = (data[3] << 8) | data[2];
 
+        printf("Sample rate: %u\n", rate);
+
         sampsize = (data[7] << 24) | (data[6] << 16) | (data[5] << 8) | data[4];
         if (sampsize <= 48)
             continue;
         sampsize -= 32;
+
+        printf("Sample size: %u\n", sampsize);
 
         data += 24;
 
@@ -83,6 +91,8 @@ void LoadSamples()
         }
 
         /* allocate patch ram */
+
+        printf("Allocate patch ram...");
         bank = spSound.total_banks;
         lBankSizes[bank] = sampsize * 2;
         lBankSizes[bank] += 160;
@@ -90,7 +100,10 @@ void LoadSamples()
         spSound.total_banks += 1;
         awe32DefineBankSizes(&spSound);
 
+        printf("OK\n");
+
         /* setup WAVE_PACKET */
+        printf("Setup WAVE_PACKET...");
         wpWave.tag = 0x101;
         wpWave.bank_no = (short)bank;
         wpWave.data = Packet;
@@ -102,26 +115,33 @@ void LoadSamples()
         wpWave.startloop = 0;
         wpWave.endloop = wpWave.sample_size;
         wpWave.release = 0;
+        printf("OK\n");
 
+
+        printf("Load WAV...");
         /* request to load WAV */
         if (awe32WPLoadRequest(&wpWave))
         {
             I_Error("AWE32: Request to load %s failed\n", namebuf);
         }
+        printf("OK\n");
 
+        printf("Stream the raw PCM samples...");
         /* stream the raw PCM samples */
         wpWave.data = Packet;
         do
-            if (total >= PACKETSIZE)
+            /*if (total >= PACKETSIZE)
             {
                 memcpy(Packet, data, PACKETSIZE);
                 total += PACKETSIZE;
             }else{
                 memcpy(Packet, data, total);
-            }
-                
+            }*/
+            memcpy(Packet, data, PACKETSIZE);
         while (!awe32WPStreamWave(&wpWave));
+        printf("OK\n");
 
+        printf("Build SoundFont preset objects...");
         /* build SoundFont preset objects */
         pPresets[bank] = (char *)Z_MallocUnowned(wpWave.preset_size, PU_STATIC);
         wpWave.presets = pPresets[bank];
@@ -129,6 +149,8 @@ void LoadSamples()
         {
             I_Error("AWE32: Cannot build SoundFont preset objects\n");
         }
+        printf("OK\n");
+
     }
 }
 
@@ -151,12 +173,18 @@ int AWE32SND_Init(void)
     }
 
     wSBCBaseAddx = Blaster.Address;
+
+    printf("wSBCBaseAddx %u\n", Blaster.Address);
+
     if (wSBCBaseAddx == UNDEFINED)
     {
         wSBCBaseAddx = 0x220;
     }
 
     wEMUBaseAddx = Blaster.Emu;
+
+    printf("Blaster.Emu %u\n", Blaster.Emu);
+
     if (wEMUBaseAddx <= 0)
     {
         wEMUBaseAddx = wSBCBaseAddx + 0x400;
