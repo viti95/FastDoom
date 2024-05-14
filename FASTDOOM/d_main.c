@@ -131,7 +131,7 @@ boolean snowfix;
 boolean HERCmap;
 #endif
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 boolean VGADACfix = false;
 #endif
 
@@ -264,14 +264,14 @@ void D_Display(void)
     if (gamestate != wipegamestate && !noMelt)
     {
         wipe = true;
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
         wipe_StartScreen();
 #endif
     }
     else
         wipe = false;
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     if (gamestate == GS_LEVEL && gametic)
         HU_Erase();
 #endif
@@ -282,7 +282,7 @@ void D_Display(void)
     case GS_LEVEL:
         if (!gametic)
             break;
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
         if (automapactive)
         {
             // [crispy] update automap while playing
@@ -297,7 +297,7 @@ void D_Display(void)
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA)
         ST_doPaletteStuff();
 #endif
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
         if (!automapactive || (automapactive && !fullscreen))
         {
             redrawsbar = wipe || (viewheight != SCREENHEIGHT && fullscreen); // just put away the help screen
@@ -331,7 +331,7 @@ void D_Display(void)
     }
 
     // draw buffered stuff to screen
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT)
     I_UpdateNoBlit();
 #endif
 
@@ -339,7 +339,7 @@ void D_Display(void)
 
     if (gamestate == GS_LEVEL && gametic)
     {
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
         if (!automapactive)
 #endif
             R_RenderPlayerView();
@@ -360,14 +360,14 @@ void D_Display(void)
     if (gamestate == GS_LEVEL && oldgamestate != GS_LEVEL)
     {
         viewactivestate = 0; // view was not active
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
         R_FillBackScreen(); // draw the pattern into the back screen
 #endif
     }
 
     // see if the border needs to be updated to the screen
     if (gamestate == GS_LEVEL
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 
 #ifdef SUPPORTS_HERCULES_AUTOMAP
         && (!automapactive || (automapactive && HERCmap))
@@ -382,7 +382,7 @@ void D_Display(void)
             borderdrawcount = 3;
         if (borderdrawcount)
         {
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
             R_DrawViewBorder(); // erase old menu stuff
 #endif
 #if defined(USE_BACKBUFFER)
@@ -399,7 +399,7 @@ void D_Display(void)
     // draw pause pic
     if (paused)
     {
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
         if (automapactive)
             y = 4;
         else
@@ -418,7 +418,7 @@ void D_Display(void)
         V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 2, "PAUSE");
 #endif
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
         V_DrawPatchDirect(viewwindowx + (scaledviewwidth - 68) / 2, y, W_CacheLumpName("M_PAUSE", PU_CACHE));
 #endif
     }
@@ -426,7 +426,7 @@ void D_Display(void)
     // menus go directly to the screen
     M_Drawer(); // menu is drawn even on top of everything
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     if (screenblocks == 11 && gamestate == GS_LEVEL)
     {
         ST_DrawerMini();
@@ -474,13 +474,13 @@ void D_Display(void)
     }
 
 // wipe update
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     wipe_EndScreen();
 #endif
 
     wipestart = ticcount - 1;
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     do
     {
         do
@@ -489,7 +489,7 @@ void D_Display(void)
         } while (!tics);
         wipestart = ticcount;
         done = wipe_ScreenWipe(tics);
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT)
         I_UpdateNoBlit();
 #endif
         M_Drawer(); // menu is drawn even on top of wipes
@@ -1326,7 +1326,7 @@ void D_DoomMain(void)
     HERCmap = M_CheckParm("-hercmap");
 #endif
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
     VGADACfix = M_CheckParm("-fixDAC");
 #endif
 
@@ -1579,13 +1579,13 @@ void D_DoomMain(void)
     D_RedrawTitle();
     S_Init(sfxVolume * 8, musicVolume * 17);
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     printf("HU_Init: Setting up heads up display.\n");
     D_RedrawTitle();
     HU_Init();
 #endif
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     printf("ST_Init: Init status bar.\n");
     D_RedrawTitle();
     ST_Init();

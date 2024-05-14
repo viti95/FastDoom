@@ -389,7 +389,7 @@ void G_Responder(void)
     if (gamestate == GS_LEVEL)
     {
         ST_Responder(current_ev); // status window ate it
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
         if (AM_Responder())
             return; // automap ate it
 #endif
@@ -524,7 +524,7 @@ void G_Ticker(void)
     case GS_LEVEL:
         P_Ticker();
         ST_Ticker();
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
         AM_Ticker();
 #endif
         HU_Ticker();
@@ -657,7 +657,7 @@ void G_DoCompleted(void)
 
     G_PlayerFinishLevel(); // take away cards and stuff
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     if (automapactive)
         AM_Stop();
 #endif
@@ -744,7 +744,7 @@ void G_DoCompleted(void)
 
     gamestate = GS_INTERMISSION;
     viewactive = 0;
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     automapactive = 0;
 #endif
 
@@ -857,7 +857,7 @@ void G_DoLoadGame(void)
         R_ExecuteSetViewSize();
 
 // draw the pattern into the back screen
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     R_FillBackScreen();
 #endif
 }
@@ -930,7 +930,7 @@ void G_DoSaveGame(void)
     Z_Free(savebuffer);
 
 // draw the pattern into the back screen
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     R_FillBackScreen();
 #endif
 }
@@ -1036,7 +1036,7 @@ void G_InitNew(skill_t skill,
     usergame = 1; // will be set false if a demo
     paused = 0;
     demoplayback = 0;
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     automapactive = 0;
 #endif
     viewactive = 1;

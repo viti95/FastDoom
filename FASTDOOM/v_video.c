@@ -35,11 +35,11 @@
 #include "i_text.h"
 #endif
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT)
 byte screen0[SCREENWIDTH * SCREENHEIGHT];
 #endif
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 byte screen4[SCREENWIDTH * SBARHEIGHT];
 #if PIXEL_SCALING!=1 && PIXEL_SCALING!=2 && PIXEL_SCALING!=3 && PIXEL_SCALING!=4
 #error "PIXEL_SCALING must be 1, 2, 3 or 4"
@@ -51,7 +51,7 @@ byte screen4[SCREENWIDTH * SBARHEIGHT];
 byte backbuffer[SCREENWIDTH * SCREENHEIGHT];
 #endif
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT)
 int dirtybox[4];
 #endif
 
@@ -78,7 +78,7 @@ int usegamma;
 //
 // V_MarkRect
 //
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT)
 void V_MarkRect(int x, int y, int width, int height)
 {
     BOUNDS_CHECK(x, y);
@@ -123,7 +123,7 @@ void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int de
     BOUNDS_CHECK(destx, desty);
     BOUNDS_CHECK(destx + width - 1, desty + height - 1);
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT)
     V_MarkRect(destx, desty, width, height);
 #endif
 
@@ -160,7 +160,7 @@ void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int de
 // V_DrawPatch
 // Masks a column based masked pic to the screen.
 //
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 #include "i_debug.h"
 void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
 {
@@ -509,7 +509,7 @@ void V_DrawPatchNativeRes(int x, int y, byte *scrn, patch_t *patch)
 }
 #endif
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT)
 void V_DrawPatchScreen0(int x, int y, patch_t *patch)
 {
     int count;
@@ -807,7 +807,7 @@ void V_DrawPatchScreen0(int x, int y, patch_t *patch)
 // Masks a column based masked pic to the screen.
 // Flips horizontally, e.g. to mirror face.
 //
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT)
 void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
 {
 
@@ -1090,7 +1090,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
 }
 #endif
 
-#if defined(MODE_X) || defined(MODE_Y)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF)
 void V_DrawPatchDirect(int x, int y, patch_t *patch)
 {
     int count;

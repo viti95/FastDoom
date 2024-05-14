@@ -561,7 +561,7 @@ void P_KillMobj(mobj_t *target)
 		target->player->playerstate = PST_DEAD;
 		P_DropWeapon();
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 		if (target->player == &players && automapactive)
 		{
 			// don't die in auto map,

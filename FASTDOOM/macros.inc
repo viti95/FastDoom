@@ -27,6 +27,10 @@ CPU 486
 %define MODE_Y
 %endif
 
+%ifdef MODE_Y_HALF
+%define MODE_Y
+%endif
+
 %ifdef MODE_13H
 %define USE_BACKBUFFER
 %endif

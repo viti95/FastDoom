@@ -254,7 +254,7 @@ static byte st_firsttime;
 // whether left-side main status bar is active
 static byte st_statusbaron;
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 // main bar left
 static patch_t *sbar;
 #endif
@@ -382,7 +382,7 @@ cheatseq_t cheat_clev = {cheat_clev_seq, 0};
 //
 void ST_Stop(void);
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void ST_refreshBackground(void)
 {
  if (st_statusbaron)
@@ -413,7 +413,7 @@ void ST_refreshBackground(void)
    V_DrawPatch(CENTERING_OFFSET_X, 0, screen4, sbar);
 
    // Copy the entire width of the status bar, which is SCALED_SCREENWIDTH
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT)
 		V_CopyRect(0, 0, screen4, SCALED_SCREENWIDTH, ST_HEIGHT, 0, ST_Y, screen0);
 #endif
 #if defined(USE_BACKBUFFER)
@@ -1302,7 +1302,7 @@ void ST_DrawerText8050()
 }
 #endif
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void ST_drawWidgets(byte refresh)
 {
 	int i;
@@ -1341,7 +1341,7 @@ void ST_drawWidgets(byte refresh)
 }
 #endif
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void ST_Drawer(byte screenblocks, byte refresh)
 {
 
@@ -1391,7 +1391,7 @@ void ST_DrawerMini()
 }
 #endif
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void ST_loadGraphics(void)
 {
 
@@ -1465,7 +1465,7 @@ void ST_loadGraphics(void)
 }
 #endif
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void ST_loadData(void)
 {
 	ST_loadGraphics();
@@ -1751,7 +1751,7 @@ void ST_Stop(void)
 	st_stopped = 1;
 }
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void ST_Init(void)
 {
 	ST_loadData();

@@ -39,11 +39,11 @@
 // Screen 0 is the screen updated by I_Update screen.
 // Screen 1 is an extra buffer.
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT)
 extern byte screen0[SCREENWIDTH * SCREENHEIGHT];
 #endif
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 // Note must be screenwdith because the draw functions assume this.
 // We can also expand the staus bar with this to go the full width.
 extern byte screen4[SCREENWIDTH * SBARHEIGHT];
@@ -57,7 +57,7 @@ extern byte backbuffer[SCREENWIDTH * SCREENHEIGHT];
 extern unsigned short backbuffer[80 * 25];
 #endif
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT)
 extern int dirtybox[4];
 #endif
 
@@ -111,14 +111,14 @@ void V_DrawPatchDirectTextMDA(int x, int y, patch_t *patch);
 #define V_DrawPatchMode V_DrawPatchDirectTextMDA
 #endif
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
 void V_DrawPatchDirect(int x, int y, patch_t *patch);
 #define V_DrawPatchDirectCentered(x, y, patch) \
   V_DrawPatchDirect(CENTERING_OFFSET_X + (x), CENTERING_OFFSET_Y + (y), patch)
 void V_DrawPatchFlippedDirect(int x, int y, patch_t *patch);
 #endif
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT)
 void V_DrawPatchScreen0(int x, int y, patch_t *patch);
 void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch);
 #define V_DrawPatchMode V_DrawPatchScreen0
@@ -144,7 +144,7 @@ void V_WriteCharDirect(int x, int y, unsigned char c);
 void V_WriteTextColorDirect(int x, int y, char *string, unsigned short color);
 void V_WriteCharColorDirect(int x, int y, unsigned char c, unsigned short color);
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT)
 void V_MarkRect(int x, int y, int width, int height);
 #endif
 

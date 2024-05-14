@@ -926,7 +926,7 @@ void AM_drawFline(fline_t *fl, int color)
 	register int ay;
 	register int d;
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT)
 #define PUTDOT(xx, yy, cc) screen0[MulScreenWidth(yy) + (xx)] = (cc)
 #endif
 
@@ -1251,7 +1251,7 @@ void AM_Drawer(void)
 	}
 	else
 	{
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT)
 		if (transparentmap)
 		{
 			SetDWords(screen0, TRANSPARENTPIXELDWORD, MulScreenWidthQuarter(automapheight)); // Clear automap frame buffer
@@ -1267,7 +1267,7 @@ void AM_Drawer(void)
 #endif
 	}
 #else
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT)
 	if (transparentmap)
 	{
 		SetDWords(screen0, TRANSPARENTPIXELDWORD, MulScreenWidthQuarter(automapheight)); // Clear automap frame buffer
@@ -1330,12 +1330,12 @@ void AM_Drawer(void)
 #endif
 
 #ifdef SUPPORTS_HERCULES_AUTOMAP
-	#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+	#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT)
 		if(!HERCmap)
 			V_MarkRect(0, 0, SCREENWIDTH, automapheight);
 	#endif
 #else
-	#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
+	#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT)
 		V_MarkRect(0, 0, SCREENWIDTH, automapheight);
 	#endif
 #endif

@@ -75,7 +75,15 @@ typedef enum
 #define REFRESHRATE 0
 #endif // !defined(REFRESH)
 
-#if SCREENWIDTH == 320 && (SCREENHEIGHT == 200 || SCREENHEIGHT == 240)
+#if SCREENWIDTH == 320 && SCREENHEIGHT == 100
+#define MulScreenWidth(x) Mul320(x)
+#define MulScreenWidthHalf(x) Mul160(x)
+#define MulScreenWidthQuarter(x) Mul80(x)
+#define MulScreenWidthEighth(x) Mul40(x)
+#define PIXEL_SCALING 1
+#define ASPECTRATIO16x10
+
+#elif SCREENWIDTH == 320 && (SCREENHEIGHT == 200 || SCREENHEIGHT == 240)
 #define MulScreenWidth(x) Mul320(x)
 #define MulScreenWidthHalf(x) Mul160(x)
 #define MulScreenWidthQuarter(x) Mul80(x)
