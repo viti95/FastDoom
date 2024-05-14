@@ -1090,7 +1090,69 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
 }
 #endif
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF)
+#if defined(MODE_Y_HALF)
+void V_DrawPatchDirect(int x, int y, patch_t *patch)
+{
+    int count;
+    int col;
+    column_t *column;
+    byte *desttop;
+    byte *dest;
+    byte *source;
+    int w;
+    BOUNDS_CHECK(x, y);
+    y -= patch->topoffset;
+    x -= patch->leftoffset;
+
+    desttop = destscreen + Mul80(y) + (x >> 2);
+
+    w = patch->width;
+    for (col = 0; col < w; col++)
+    {
+        outp(SC_INDEX + 1, 1 << (x & 3));
+        column = (column_t *)((byte *)patch + patch->columnofs[col]);
+
+        // step through the posts in a column
+
+        while (column->topdelta != 0xff)
+        {
+            register const byte *source = (byte *)column + 3;
+            register byte *dest = desttop + Mul80(column->topdelta / 2);
+            register int count = column->length;
+
+            if ((count -= 4) >= 0)
+                do
+                {
+                    register byte s0, s1;
+                    s0 = source[0];
+                    dest[0] = s0;
+                    dest += SCREENWIDTH / 4;
+                    s0 = source[2];
+                    source += 4;
+                    dest[0] = s0;
+                    dest += SCREENWIDTH / 4;
+                } while ((count -= 4) >= 0);
+            if (count += 4)
+                do
+                {
+                    if (count % 2 == 0)
+                    {
+                        *dest = *source;
+                        dest += SCREENWIDTH / 4;
+                    }
+
+                    source++;
+
+                } while (--count);
+            column = (column_t *)(source + 1);
+        }
+
+        desttop += ((++x) & 3) == 0; // go to next byte, not next plane
+    }
+}
+#endif
+
+#if defined(MODE_X) || defined(MODE_Y)
 void V_DrawPatchDirect(int x, int y, patch_t *patch)
 {
     int count;
