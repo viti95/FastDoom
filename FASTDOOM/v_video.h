@@ -111,10 +111,17 @@ void V_DrawPatchDirectTextMDA(int x, int y, patch_t *patch);
 #define V_DrawPatchMode V_DrawPatchDirectTextMDA
 #endif
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
 void V_DrawPatchDirect(int x, int y, patch_t *patch);
 #define V_DrawPatchDirectCentered(x, y, patch) \
   V_DrawPatchDirect(CENTERING_OFFSET_X + (x), CENTERING_OFFSET_Y + (y), patch)
+void V_DrawPatchFlippedDirect(int x, int y, patch_t *patch);
+#endif
+
+#if defined(MODE_Y_HALF)
+void V_DrawPatchDirect(int x, int y, patch_t *patch);
+#define V_DrawPatchDirectCentered(x, y, patch) \
+  V_DrawPatchDirect(CENTERING_OFFSET_X + (x), CENTERING_OFFSET_Y + (y/2), patch)
 void V_DrawPatchFlippedDirect(int x, int y, patch_t *patch);
 #endif
 
