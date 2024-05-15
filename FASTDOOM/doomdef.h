@@ -55,9 +55,6 @@ typedef enum
   none
 } gamemission_t;
 
-#define ORIGINAL_SCREENWIDTH 320
-#define ORIGINAL_SCREENHEIGHT 200
-
 // Defines suck. C sucks.
 // C++ might sucks for OOP, but it sure is a better C.
 // So there.
@@ -156,6 +153,8 @@ typedef enum
 #error "Defined Screen Resolution is not supported"
 #endif
 
+#define ORIGINAL_SCREENWIDTH 320
+#define ORIGINAL_SCREENHEIGHT 200
 #define SCALED_SCREENWIDTH (SCREENWIDTH / PIXEL_SCALING)
 #define SCALED_SCREENHEIGHT (SCREENHEIGHT / PIXEL_SCALING)
 #define SBARHEIGHT (32 * PIXEL_SCALING)
@@ -163,13 +162,19 @@ typedef enum
 #define SCALED_SBARHEIGHT (SBARHEIGHT / PIXEL_SCALING)
 #define SCALED_SBARWIDTH (SBARWIDTH / PIXEL_SCALING)
 
-// Fcor screen resolution that don't scale perfectly, we need a centering
+// For screen resolution that don't scale perfectly, we need a centering
 // offset to make sure the menu/ui/etc. is centered on the screen.
 // Evertything is based on 320x200 which is the native positioning of
 // everything.
 // Note that this gets reduced to a constant at compile time
-#define CENTERING_OFFSET_X ((SCALED_SCREENWIDTH-320) / 2)
-#define CENTERING_OFFSET_Y ((SCALED_SCREENHEIGHT-200) / 2)
+#define CENTERING_OFFSET_X ((SCALED_SCREENWIDTH-ORIGINAL_SCREENWIDTH) / 2)
+
+#if SCREENHEIGHT < ORIGINAL_SCREENHEIGHT
+#define CENTERING_OFFSET_Y 0
+#else
+#define CENTERING_OFFSET_Y ((SCALED_SCREENHEIGHT-ORIGINAL_SCREENHEIGHT) / 2)
+#endif
+
 
 // The maximum number of players, multiplayer/networking.
 #define MAXPLAYERS 4
