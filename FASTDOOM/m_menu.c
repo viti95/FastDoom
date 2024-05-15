@@ -591,9 +591,13 @@ void M_DrawLoad(void)
         V_WriteCharDirect(LoadDef.x / 4 + 24, (LoadDef.y + LINEHEIGHT * i) / 4, '|');
         M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 4);
 #endif
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
         M_DrawSaveLoadBorder(LoadDef.x, LoadDef.y + LINEHEIGHT * i);
         M_WriteText(LoadDef.x, LoadDef.y + LINEHEIGHT * i, savegamestrings[i]);
+#endif
+#if defined(MODE_Y_HALF)
+        M_DrawSaveLoadBorder(LoadDef.x, (LoadDef.y/2) + 8 + 8 * i);
+        M_WriteText(LoadDef.x, LoadDef.y + 5 + LINEHEIGHT * i, savegamestrings[i]);
 #endif
     }
 }
@@ -708,9 +712,13 @@ void M_DrawSave(void)
         V_WriteCharDirect(LoadDef.x / 4 + 24, (LoadDef.y + LINEHEIGHT * i) / 4, '|');
         M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 4);
 #endif
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
         M_DrawSaveLoadBorder(LoadDef.x, LoadDef.y + LINEHEIGHT * i);
         M_WriteText(LoadDef.x, LoadDef.y + LINEHEIGHT * i, savegamestrings[i]);
+#endif
+#if defined(MODE_Y_HALF)
+        M_DrawSaveLoadBorder(LoadDef.x, (LoadDef.y/2) + 8 + 8 * i);
+        M_WriteText(LoadDef.x, LoadDef.y + 5 + LINEHEIGHT * i, savegamestrings[i]);
 #endif
     }
 
@@ -725,10 +733,15 @@ void M_DrawSave(void)
 #if defined(MODE_T8050) || defined(MODE_T8043)
         V_WriteTextDirect((LoadDef.x / 4) + strlen(savegamestrings[saveSlot]), (LoadDef.y + LINEHEIGHT * saveSlot) / 4, "_");
 #endif
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
         i = M_StringWidth(savegamestrings[saveSlot]);
         M_WriteText(LoadDef.x + i, LoadDef.y + LINEHEIGHT * saveSlot, "_");
 #endif
+#if defined(MODE_Y_HALF)
+        i = M_StringWidth(savegamestrings[saveSlot]);
+        M_WriteText(LoadDef.x + i, LoadDef.y + 5 + LINEHEIGHT * saveSlot, "_");
+#endif
+
     }
 }
 
