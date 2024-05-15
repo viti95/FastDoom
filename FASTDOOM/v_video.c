@@ -509,7 +509,68 @@ void V_DrawPatchNativeRes(int x, int y, byte *scrn, patch_t *patch)
 }
 #endif
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_Y_HALF)
+void V_DrawPatchScreen0(int x, int y, patch_t *patch)
+{
+    int count;
+    int col = 0;
+    column_t *column;
+    byte *desttop;
+    byte *dest;
+    byte *source;
+    int w, i;
+    SCALED_BOUNDS_CHECK(x, y);
+    y -= patch->topoffset;
+    x -= patch->leftoffset;
+    SCALED_BOUNDS_CHECK(x, y);
+    V_MarkRect(x * PIXEL_SCALING, y * PIXEL_SCALING, patch->width * PIXEL_SCALING, patch->height * PIXEL_SCALING);
+
+    desttop = screen0 + MulScreenWidth(y * PIXEL_SCALING) + x * PIXEL_SCALING;
+
+    w = patch->width;
+
+    for (; col < w; x++, col++, desttop+=PIXEL_SCALING)
+    {
+        column = (column_t *)((byte *)patch + patch->columnofs[col]);
+
+        // step through the posts in a column
+        while (column->topdelta != 0xff)
+        {
+            register const byte *source = (byte *)column + 3;
+            register byte *dest = desttop + MulScreenWidth(column->topdelta / 2);
+            register int count = column->length;
+            register byte s0, s1;
+
+            if ((count -= 4) >= 0)
+                do
+                {
+                    s0 = source[0];
+                    dest[0] = s0;
+                    dest += SCREENWIDTH;
+                    s0 = source[2];
+                    dest[0] = s0;
+                    dest += SCREENWIDTH;
+                    source += 4;
+                } while ((count -= 4) >= 0);
+            if (count += 4)
+                do
+                {
+                    if (count % 2 == 0){
+                        *dest = *source;
+                        dest += SCREENWIDTH;
+                    }
+
+                    source++;
+
+                } while (--count);
+
+            column = (column_t *)(source + 1);
+        }
+    }
+}
+#endif
+
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 void V_DrawPatchScreen0(int x, int y, patch_t *patch)
 {
     int count;
