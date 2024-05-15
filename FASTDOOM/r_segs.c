@@ -105,8 +105,6 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 	int tex;
 	int column;
 
-	fixed_t basespryscale;
-
 	// Calculate light table.
 	// Use different light tables
 	//   for horizontal / vertical / diagonal. Diagonal?
@@ -132,9 +130,8 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 		walllights = scalelight[lightnum];
 
 	maskedtexturecol = ds->maskedtexturecol;
-
 	rw_scalestep = ds->scalestep;
-	spryscale = basespryscale = ds->scale1 + (x1 - ds->x1) * rw_scalestep;
+	spryscale = ds->scale1 + (x1 - ds->x1) * rw_scalestep;
 	mfloorclip = ds->sprbottomclip;
 	mceilingclip = ds->sprtopclip;
 
@@ -301,8 +298,6 @@ void R_RenderMaskedSegRange2(drawseg_t *ds)
 	int tex;
 	int column;
 
-	fixed_t basespryscale;
-
 	// Calculate light table.
 	// Use different light tables
 	//   for horizontal / vertical / diagonal. Diagonal?
@@ -330,7 +325,7 @@ void R_RenderMaskedSegRange2(drawseg_t *ds)
 	maskedtexturecol = ds->maskedtexturecol;
 
 	rw_scalestep = ds->scalestep;
-	spryscale = basespryscale = ds->scale1;
+	spryscale = ds->scale1;
 	mfloorclip = ds->sprbottomclip;
 	mceilingclip = ds->sprtopclip;
 
