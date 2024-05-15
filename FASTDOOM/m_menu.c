@@ -596,7 +596,7 @@ void M_DrawLoad(void)
         M_WriteText(LoadDef.x, LoadDef.y + LINEHEIGHT * i, savegamestrings[i]);
 #endif
 #if defined(MODE_Y_HALF)
-        M_DrawSaveLoadBorder(LoadDef.x, (LoadDef.y/2) + 8 + 8 * i);
+        M_DrawSaveLoadBorder(LoadDef.x, (LoadDef.y/2) + 1 + 8 * i);
         M_WriteText(LoadDef.x, LoadDef.y + 5 + LINEHEIGHT * i, savegamestrings[i]);
 #endif
     }
@@ -717,7 +717,7 @@ void M_DrawSave(void)
         M_WriteText(LoadDef.x, LoadDef.y + LINEHEIGHT * i, savegamestrings[i]);
 #endif
 #if defined(MODE_Y_HALF)
-        M_DrawSaveLoadBorder(LoadDef.x, (LoadDef.y/2) + 8 + 8 * i);
+        M_DrawSaveLoadBorder(LoadDef.x, (LoadDef.y/2) + 1 + 8 * i);
         M_WriteText(LoadDef.x, LoadDef.y + 5 + LINEHEIGHT * i, savegamestrings[i]);
 #endif
     }
