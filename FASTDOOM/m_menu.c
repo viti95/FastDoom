@@ -1308,11 +1308,19 @@ void M_DrawOptions(void)
     M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (scrnsize + 1)) / 4, 10, screenSize);
     V_WriteTextDirect(15, 38, "Benchmark");
 #endif
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     V_DrawPatchDirectCentered(108, 2, W_CacheLumpName("M_OPTTTL", PU_CACHE));
     V_DrawPatchDirectCentered(OptionsDef.x + 120, OptionsDef.y + LINEHEIGHT * messages, W_CacheLumpName((char *)msgNames[showMessages], PU_CACHE));
     M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (mousesens + 1), 10, mouseSensitivity);
     M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (scrnsize + 1), 10, screenSize);
+    M_WriteText(OptionsDef.x + 1, OptionsDef.y + LINEHEIGHT * benchmark_option + 4, "BENCHMARK");
+#endif
+
+#if defined(MODE_Y_HALF)
+    V_DrawPatchDirectCentered(108, 2, W_CacheLumpName("M_OPTTTL", PU_CACHE));
+    V_DrawPatchDirectCentered(OptionsDef.x + 120, (OptionsDef.y/2) + 12, W_CacheLumpName((char *)msgNames[showMessages], PU_CACHE));
+    M_DrawThermo(OptionsDef.x, (OptionsDef.y/2) - 1 + LINEHEIGHT * (mousesens + 2), 10, mouseSensitivity);
+    M_DrawThermo(OptionsDef.x, (OptionsDef.y/2) - 1 + LINEHEIGHT * (scrnsize + 2), 10, screenSize);
     M_WriteText(OptionsDef.x + 1, OptionsDef.y + LINEHEIGHT * benchmark_option + 4, "BENCHMARK");
 #endif
 }
