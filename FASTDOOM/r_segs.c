@@ -861,10 +861,6 @@ void R_StoreWallRange(int start,
 	distangle = ANG90 - offsetangle;
 	hyp = R_PointToDist(curline->v1->x, curline->v1->y);
 
-#if defined(MODE_Y_HALF)
-	hyp *= 2;
-#endif
-
 	rw_distance = FixedMulEDX(hyp, finesine[distangle >> ANGLETOFINESHIFT]);
 
 	ds_p->x1 = rw_x = start;

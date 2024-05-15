@@ -689,8 +689,12 @@ fixed_t R_ScaleFromGlobalAngle(int position)
 #if defined(MODE_T4050)
     num = FixedMulEDX(projection, sineb) << 1;
 #endif
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     num = FixedMulEDX(projection, sineb) << detailshift;
+#endif
+#if defined(MODE_Y_HALF)
+    num = FixedMulEDX(projection, sineb) << detailshift;
+    num /= 2;
 #endif
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA)
     num = FixedMulEDX(projection, sineb);
