@@ -1495,6 +1495,67 @@ void ST_initData(void)
 	STlib_init();
 }
 
+#if defined(MODE_Y_HALF)
+void ST_createWidgets_mini(void)
+{
+	// ready weapon ammo
+	STlib_initNum(&w_ready,
+				  SCALED_SCREENWIDTH - 50,
+				  SCALED_SCREENHEIGHT - 30/2,
+				  shortnum,
+				  &players.ammo[weaponinfo[players.readyweapon].ammo],
+				  &st_statusbaron);
+
+	// the last weapon type
+	w_ready.data = players.readyweapon;
+
+	// health percentage
+	STlib_initNum(&(w_health.n),
+				  SCALED_SCREENWIDTH - 50,
+				  SCALED_SCREENHEIGHT - 20/2,
+				  shortnum,
+				  &players.health,
+				  &st_statusbaron);
+
+	// faces
+	STlib_initMultIcon(&w_faces,
+					   SCALED_SCREENWIDTH - 35,
+					   SCALED_SCREENHEIGHT - 35/2,
+					   faces,
+					   &st_faceindex,
+					   &st_statusbaron);
+
+	// armor percentage - should be colored later
+	STlib_initNum(&(w_armor.n),
+				  SCALED_SCREENWIDTH - 50,
+				  SCALED_SCREENHEIGHT - 10/2,
+				  shortnum,
+				  &players.armorpoints,
+				  &st_statusbaron);
+
+	// keyboxes 0-2
+	STlib_initMultIcon(&w_keyboxes[0],
+					   SCALED_SCREENWIDTH - 45,
+					   SCALED_SCREENHEIGHT - 31/2,
+					   keys,
+					   &keyboxes[0],
+					   &st_statusbaron);
+
+	STlib_initMultIcon(&w_keyboxes[1],
+					   SCALED_SCREENWIDTH - 45,
+					   SCALED_SCREENHEIGHT - 21/2,
+					   keys,
+					   &keyboxes[1],
+					   &st_statusbaron);
+
+	STlib_initMultIcon(&w_keyboxes[2],
+					   SCALED_SCREENWIDTH - 45,
+					   SCALED_SCREENHEIGHT - 11/2,
+					   keys,
+					   &keyboxes[2],
+					   &st_statusbaron);
+}
+#else
 void ST_createWidgets_mini(void)
 {
 	// ready weapon ammo
@@ -1554,6 +1615,7 @@ void ST_createWidgets_mini(void)
 					   &keyboxes[2],
 					   &st_statusbaron);
 }
+#endif
 
 void ST_createWidgets(void)
 {
