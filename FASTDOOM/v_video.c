@@ -520,7 +520,7 @@ void V_DrawPatchScreen0(int x, int y, patch_t *patch)
     byte *source;
     int w, i;
     SCALED_BOUNDS_CHECK(x, y);
-    y -= patch->topoffset;
+    y -= (patch->topoffset / 2);
     x -= patch->leftoffset;
     SCALED_BOUNDS_CHECK(x, y);
     V_MarkRect(x * PIXEL_SCALING, y * PIXEL_SCALING, patch->width * PIXEL_SCALING, patch->height * PIXEL_SCALING);
@@ -1162,7 +1162,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
     byte *source;
     int w;
     BOUNDS_CHECK(x, y);
-    y -= patch->topoffset;
+    y -= (patch->topoffset / 2);
     x -= patch->leftoffset;
 
     desttop = destscreen + Mul80(y) + (x >> 2);
