@@ -1060,7 +1060,7 @@ void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
             dest = desttop + MulScreenWidth(column->topdelta / 2);
             count = column->length;
 
-            while (count)
+            while (count > 0)
             {
                 *dest = *source;
                 dest += SCREENWIDTH;

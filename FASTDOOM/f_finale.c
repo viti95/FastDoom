@@ -372,7 +372,13 @@ void F_TextWrite(void)
 		w = hu_font[c]->width;
 		if (cx + w > SCREENWIDTH)
 			break;
-    V_DrawPatchModeCentered(cx, cy, hu_font[c]);
+
+		#if defined(MODE_Y_HALF)
+			V_DrawPatchModeCentered(cx, cy / 2, hu_font[c]);
+		#else
+			V_DrawPatchModeCentered(cx, cy, hu_font[c]);
+		#endif
+    
 		cx += w;
 	}
 }
@@ -708,7 +714,12 @@ void F_CastPrint(char *text)
 		}
 
 		w = hu_font[c]->width;
-    V_DrawPatchModeCentered(cx, 180, hu_font[c]);
+#if defined(MODE_Y_HALF)
+	V_DrawPatchModeCentered(cx, 180 / 2, hu_font[c]);
+#else
+	V_DrawPatchModeCentered(cx, 180, hu_font[c]);
+#endif
+    
 		cx += w;
 	}
 }
@@ -726,8 +737,8 @@ void F_CastDrawer(void)
 	byte flip;
 	patch_t *patch;
 
-// erase the entire screen to a background
-  V_DrawPatchModeCentered(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
+	// erase the entire screen to a background
+  	V_DrawPatchModeCentered(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
 
 	F_CastPrint(castorder[castnum].name);
 
@@ -740,11 +751,21 @@ void F_CastDrawer(void)
 	patch = W_CacheLumpNum(lump + firstspritelump, PU_CACHE);
 	if (flip)
 	{
-    V_DrawPatchFlippedModeCentered(160, 170, patch);
+#if defined(MODE_Y_HALF)
+		V_DrawPatchFlippedModeCentered(160, 170 / 2, patch);
+#else
+		V_DrawPatchFlippedModeCentered(160, 170, patch);
+#endif
+    	
 	}
 	else
 	{
-    V_DrawPatchModeCentered(160, 170, patch);
+#if defined(MODE_Y_HALF)
+		V_DrawPatchModeCentered(160, 170 / 2, patch);
+#else
+		V_DrawPatchModeCentered(160, 170, patch);
+#endif
+    	
 	}
 }
 #endif
@@ -817,7 +838,7 @@ void F_CastDrawerText(void)
 }
 #endif
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void F_DrawPatchCol(int x, patch_t *patch, int col)
 {
 	column_t *column;
@@ -828,7 +849,7 @@ void F_DrawPatchCol(int x, patch_t *patch, int col)
 
 	column = (column_t *)((byte *)patch + patch->columnofs[col]);
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 	desttop = screen0 + ((CENTERING_OFFSET_X + x) * PIXEL_SCALING) + MulScreenWidth(CENTERING_OFFSET_Y * PIXEL_SCALING);
 #endif
 #if defined(USE_BACKBUFFER)
@@ -889,6 +910,39 @@ void F_DrawPatchCol(int x, patch_t *patch, int col)
 			source++;
 			dest += 4 * SCREENWIDTH;
 #endif
+		}
+		column = (column_t *)((byte *)column + column->length + 4);
+	}
+}
+#endif
+
+#if defined(MODE_Y_HALF)
+void F_DrawPatchCol(int x, patch_t *patch, int col)
+{
+	column_t *column;
+	byte *source;
+	byte *dest;
+	byte *desttop;
+	int count;
+
+	column = (column_t *)((byte *)patch + patch->columnofs[col]);
+
+	desttop = screen0 + ((CENTERING_OFFSET_X + x) * PIXEL_SCALING) + MulScreenWidth(CENTERING_OFFSET_Y * PIXEL_SCALING);
+
+	// step through the posts in a column
+	while (column->topdelta != 0xff)
+	{
+		source = (byte *)column + 3;
+		dest = desttop + MulScreenWidth(column->topdelta / 2);
+		count = column->length;
+
+		while (count > 0)
+		{
+			*dest = *source;
+			dest += SCREENWIDTH;
+
+			source += 2;
+			count -= 2;
 		}
 		column = (column_t *)((byte *)column + column->length + 4);
 	}
@@ -1201,8 +1255,12 @@ void F_BunnyScroll(void)
 		return;
 	if (finalecount < 1180)
 	{
-    	V_DrawPatchModeCentered((ORIGINAL_SCREENWIDTH - 13 * 8) / 2, (ORIGINAL_SCREENHEIGHT - 8 * 8) / 2, W_CacheLumpName("END0", PU_CACHE), 0);
-		laststage = 0;
+#if defined(MODE_Y_HALF)
+		V_DrawPatchModeCentered((ORIGINAL_SCREENWIDTH - 13 * 8) / 2, (ORIGINAL_SCREENHEIGHT - 8 * 8) / 4, W_CacheLumpName("END0", PU_CACHE), 0);
+#else
+		V_DrawPatchModeCentered((ORIGINAL_SCREENWIDTH - 13 * 8) / 2, (ORIGINAL_SCREENHEIGHT - 8 * 8) / 2, W_CacheLumpName("END0", PU_CACHE), 0);
+#endif
+    	laststage = 0;
 		return;
 	}
 
@@ -1216,7 +1274,13 @@ void F_BunnyScroll(void)
 	}
 
 	sprintf(name, "END%i", stage);
-  V_DrawPatchModeCentered((ORIGINAL_SCREENWIDTH - 13 * 8) / 2, (ORIGINAL_SCREENHEIGHT - 8 * 8) / 2, W_CacheLumpName(name, PU_CACHE));
+
+#if defined(MODE_Y_HALF)
+	V_DrawPatchModeCentered((ORIGINAL_SCREENWIDTH - 13 * 8) / 2, (ORIGINAL_SCREENHEIGHT - 8 * 8) / 4, W_CacheLumpName(name, PU_CACHE));
+#else
+	V_DrawPatchModeCentered((ORIGINAL_SCREENWIDTH - 13 * 8) / 2, (ORIGINAL_SCREENHEIGHT - 8 * 8) / 2, W_CacheLumpName(name, PU_CACHE));
+#endif
+  	
 }
 #endif
 
@@ -1252,11 +1316,11 @@ void F_Drawer(void)
 		case 1:
 			if (gamemode == shareware)
 			{
-        V_DrawPatchModeCentered(0, 0, W_CacheLumpName("HELP2", PU_CACHE), 0);
+        		V_DrawPatchModeCentered(0, 0, W_CacheLumpName("HELP2", PU_CACHE), 0);
 			}
 			else
 			{
-        V_DrawPatchModeCentered(0, 0, W_CacheLumpName("CREDIT", PU_CACHE), 0);
+        		V_DrawPatchModeCentered(0, 0, W_CacheLumpName("CREDIT", PU_CACHE), 0);
 			}
 			break;
 		case 2:
