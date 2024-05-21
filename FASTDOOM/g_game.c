@@ -65,8 +65,6 @@
 
 #include "options.h"
 
-
-#define SAVEGAMESIZE 0x2c000
 #define SAVESTRINGSIZE 24
 #define DEMOMARKER 0x80
 
@@ -875,6 +873,116 @@ void G_SaveGame(int slot,
     sendsave = 1;
 }
 
+int G_CalculateSaveGameSize(void)
+{
+    thinker_t *th;
+    int i;    
+    int savesize = 0;
+    
+    // G_DoSaveGame
+    savesize += SAVESTRINGSIZE;
+    savesize += VERSIONSIZE;
+    savesize += 11;
+
+    // P_ArchivePlayers
+    savesize += 3; // PADSAVEP
+    savesize += sizeof(player_t);
+
+    // P_ArchiveWorld
+    savesize += numsectors * 14;
+    savesize += numlines * (6 + (2 * 10));
+    
+    // P_ArchiveThinkers
+    for (th = thinkercap.next; th != &thinkercap; th = th->next)
+    {
+        if (th->function.acp1 == (actionf_p1)P_MobjThinker || th->function.acp1 == (actionf_p1)P_MobjBrainlessThinker || th->function.acp1 == (actionf_p1)P_MobjTicklessThinker)
+		{
+            savesize += 1;
+            savesize += 3; // PADSAVEP
+            savesize += sizeof(mobj_t);
+		}
+    }
+    savesize += 1;
+    
+    // P_ArchiveSpecials
+    for (th = thinkercap.next; th != &thinkercap; th = th->next)
+	{
+        if (th->function.acv == (actionf_v)NULL)
+		{
+			for (i = 0; i < MAXCEILINGS; i++)
+				if (activeceilings[i] == (ceiling_t *)th)
+					break;
+
+			if (i < MAXCEILINGS)
+			{
+                savesize += 1;
+                savesize += 3; // PADSAVEP
+                savesize += sizeof(ceiling_t);
+			}
+			continue;
+		}
+
+		if (th->function.acp1 == (actionf_p1)T_MoveCeiling)
+		{
+            savesize += 1;
+            savesize += 3; // PADSAVEP
+            savesize += sizeof(ceiling_t);
+            continue;
+		}
+
+		if (th->function.acp1 == (actionf_p1)T_VerticalDoor)
+		{
+            savesize += 1;
+            savesize += 3; // PADSAVEP
+            savesize += sizeof(vldoor_t);
+            continue;
+		}
+
+		if (th->function.acp1 == (actionf_p1)T_MoveFloor)
+		{
+            savesize += 1;
+            savesize += 3; // PADSAVEP
+            savesize += sizeof(floormove_t);
+			continue;
+		}
+
+		if (th->function.acp1 == (actionf_p1)T_PlatRaise)
+		{
+            savesize += 1;
+            savesize += 3; // PADSAVEP
+            savesize += sizeof(plat_t);
+			continue;
+		}
+
+		if (th->function.acp1 == (actionf_p1)T_LightFlash)
+		{
+            savesize += 1;
+            savesize += 3; // PADSAVEP
+            savesize += sizeof(lightflash_t);
+			continue;
+		}
+
+		if (th->function.acp1 == (actionf_p1)T_StrobeFlash)
+		{
+            savesize += 1;
+            savesize += 3; // PADSAVEP
+            savesize += sizeof(strobe_t);
+			continue;
+		}
+
+		if (th->function.acp1 == (actionf_p1)T_Glow)
+		{
+            savesize += 1;
+            savesize += 3; // PADSAVEP
+            savesize += sizeof(glow_t);
+			continue;
+		}
+    }
+
+    savesize += 1;
+    return savesize;
+}
+
 void G_DoSaveGame(void)
 {
     char name[100];
@@ -884,20 +992,23 @@ void G_DoSaveGame(void)
     int i;
     byte *savebuffer;
 
+    int requiredmemsize;
+
     sprintf(name, SAVEGAMENAME "%d.dsg", savegameslot);
     description = savedescription;
 
-    savebuffer = (byte *)Z_MallocUnowned(SAVEGAMESIZE, PU_STATIC);
+    requiredmemsize = G_CalculateSaveGameSize();
+
+    savebuffer = (byte *)Z_MallocUnowned(requiredmemsize, PU_STATIC);
 
     save_p = savebuffer;
 
     CopyBytes(description, save_p, SAVESTRINGSIZE);
-    // memcpy(save_p, description, SAVESTRINGSIZE);
     save_p += SAVESTRINGSIZE;
+
     SetBytes(name2, 0, sizeof(name2));
     sprintf(name2, "version %i", VERSION);
     CopyBytes(name2, save_p, VERSIONSIZE);
-    // memcpy(save_p, name2, VERSIONSIZE);
     save_p += VERSIONSIZE;
 
     *save_p++ = gameskill;
@@ -919,8 +1030,10 @@ void G_DoSaveGame(void)
     *save_p++ = 0x1d; // consistancy marker
 
     length = save_p - savebuffer;
-    if (length > SAVEGAMESIZE)
+
+    if (length > requiredmemsize)
         I_Error("Savegame buffer overrun");
+
     M_WriteFile(name, savebuffer, length);
     gameaction = ga_nothing;
     savedescription[0] = 0;
