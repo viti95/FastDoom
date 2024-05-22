@@ -3089,7 +3089,7 @@ void R_FillBackScreen(void)
     CopyDWords(screen1, dest, (SCREENHEIGHT - SBARHEIGHT) * SCREENWIDTH / 4);
 #endif
 
-#if defined(MODE_Y) || defined(MODE_Y_HALF)
+#if defined(MODE_Y)
     for (i = 0; i < 4; i++)
     {
         outp(SC_INDEX + 1, 1 << i);
@@ -3101,6 +3101,21 @@ void R_FillBackScreen(void)
             *dest++ = *src;
             src += 4;
         } while (dest != (byte *)(0xac000 + (SCREENHEIGHT - SBARHEIGHT) * SCREENWIDTH / 4));
+    }
+#endif
+
+#if defined(MODE_Y_HALF)
+    for (i = 0; i < 4; i++)
+    {
+        outp(SC_INDEX + 1, 1 << i);
+
+        dest = (byte *)0xA6000;
+        src = screen1 + i;
+        do
+        {
+            *dest++ = *src;
+            src += 4;
+        } while (dest != (byte *)(0xA6000 + (SCREENHEIGHT - SBARHEIGHT) * SCREENWIDTH / 4));
     }
 #endif
 
@@ -3165,7 +3180,7 @@ void R_VideoErase(unsigned ofs, int count)
 }
 #endif
 
-#if defined(MODE_Y) || defined(MODE_Y_HALF)
+#if defined(MODE_Y)
 void R_VideoErase(unsigned ofs, int count)
 {
     byte *dest;
@@ -3178,6 +3193,26 @@ void R_VideoErase(unsigned ofs, int count)
     outp(GC_INDEX + 1, inp(GC_INDEX + 1) | 1);
     dest = destscreen + (ofs >> 2);
     source = (byte *)0xac000 + (ofs >> 2);
+    countp = count / 4;
+    CopyBytes(source, dest, countp);
+
+    outp(GC_INDEX + 1, inp(GC_INDEX + 1) & ~1);
+}
+#endif
+
+#if defined(MODE_Y_HALF)
+void R_VideoErase(unsigned ofs, int count)
+{
+    byte *dest;
+    byte *source;
+    int countp;
+    ASSERT((ofs + count) <= SCREENWIDTH * SCREENHEIGHT);
+
+    outp(SC_INDEX + 1, 15);
+    outp(GC_INDEX, GC_MODE);
+    outp(GC_INDEX + 1, inp(GC_INDEX + 1) | 1);
+    dest = destscreen + (ofs >> 2);
+    source = (byte *)0xA6000 + (ofs >> 2);
     countp = count / 4;
     CopyBytes(source, dest, countp);
 

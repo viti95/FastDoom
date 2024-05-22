@@ -1617,6 +1617,171 @@ void ST_createWidgets_mini(void)
 }
 #endif
 
+#if defined(MODE_Y_HALF)
+void ST_createWidgets(void)
+{
+
+	// ready weapon ammo
+	STlib_initNum(&w_ready,
+				  ST_AMMOX,
+				  85,
+				  tallnum,
+				  &players.ammo[weaponinfo[players.readyweapon].ammo],
+				  &st_statusbaron);
+
+	// the last weapon type
+	w_ready.data = players.readyweapon;
+
+	// health percentage
+	STlib_initPercent(&w_health,
+					  ST_HEALTHX,
+					  85,
+					  tallnum,
+					  &players.health,
+					  &st_statusbaron,
+					  tallpercent);
+
+	// arms background
+	STlib_initBinIcon(&w_armsbg,
+					  ST_ARMSBGX,
+					  84,
+					  armsbg,
+					  &st_statusbaron);
+
+	// weapons owned
+	STlib_initMultIcon(&w_arms[0],
+					   ST_ARMSX,
+					   86,
+					   arms[0], (int *)&players.weaponowned[1],
+					   &st_statusbaron);
+
+	STlib_initMultIcon(&w_arms[1],
+					   ST_ARMSX + ST_ARMSXSPACE,
+					   86,
+					   arms[1], (int *)&players.weaponowned[2],
+					   &st_statusbaron);
+
+	STlib_initMultIcon(&w_arms[2],
+					   ST_ARMSX + 2 * ST_ARMSXSPACE,
+					   86,
+					   arms[2], (int *)&players.weaponowned[3],
+					   &st_statusbaron);
+
+	STlib_initMultIcon(&w_arms[3],
+					   ST_ARMSX,
+					   86 + 5,
+					   arms[3], (int *)&players.weaponowned[4],
+					   &st_statusbaron);
+
+	STlib_initMultIcon(&w_arms[4],
+					   ST_ARMSX + ST_ARMSXSPACE,
+					   86 + 5,
+					   arms[4], (int *)&players.weaponowned[5],
+					   &st_statusbaron);
+
+	STlib_initMultIcon(&w_arms[5],
+					   ST_ARMSX + 2 * ST_ARMSXSPACE,
+					   86 + 5,
+					   arms[5], (int *)&players.weaponowned[6],
+					   &st_statusbaron);
+
+	// faces
+	STlib_initMultIcon(&w_faces,
+					   ST_FACESX,
+					   84,
+					   faces,
+					   &st_faceindex,
+					   &st_statusbaron);
+
+	// armor percentage - should be colored later
+	STlib_initPercent(&w_armor,
+					  ST_ARMORX,
+					  86,
+					  tallnum,
+					  &players.armorpoints,
+					  &st_statusbaron, tallpercent);
+
+	// keyboxes 0-2
+	STlib_initMultIcon(&w_keyboxes[0],
+					   ST_KEY0X,
+					   86,
+					   keys,
+					   &keyboxes[0],
+					   &st_statusbaron);
+
+	STlib_initMultIcon(&w_keyboxes[1],
+					   ST_KEY1X,
+					   91,
+					   keys,
+					   &keyboxes[1],
+					   &st_statusbaron);
+
+	STlib_initMultIcon(&w_keyboxes[2],
+					   ST_KEY2X,
+					   96,
+					   keys,
+					   &keyboxes[2],
+					   &st_statusbaron);
+
+	// ammo count (all four kinds)
+	STlib_initNum(&w_ammo[0],
+				  ST_AMMO0X,
+				  87,
+				  shortnum,
+				  &players.ammo[0],
+				  &st_statusbaron);
+
+	STlib_initNum(&w_ammo[1],
+				  ST_AMMO1X,
+				  90,
+				  shortnum,
+				  &players.ammo[1],
+				  &st_statusbaron);
+
+	STlib_initNum(&w_ammo[2],
+				  ST_AMMO2X,
+				  96,
+				  shortnum,
+				  &players.ammo[2],
+				  &st_statusbaron);
+
+	STlib_initNum(&w_ammo[3],
+				  ST_AMMO3X,
+				  93,
+				  shortnum,
+				  &players.ammo[3],
+				  &st_statusbaron);
+
+	// max ammo count (all four kinds)
+	STlib_initNum(&w_maxammo[0],
+				  ST_MAXAMMO0X,
+				  87,
+				  shortnum,
+				  &players.maxammo[0],
+				  &st_statusbaron);
+
+	STlib_initNum(&w_maxammo[1],
+				  ST_MAXAMMO1X,
+				  90,
+				  shortnum,
+				  &players.maxammo[1],
+				  &st_statusbaron);
+
+	STlib_initNum(&w_maxammo[2],
+				  ST_MAXAMMO2X,
+				  96,
+				  shortnum,
+				  &players.maxammo[2],
+				  &st_statusbaron);
+
+	STlib_initNum(&w_maxammo[3],
+				  ST_MAXAMMO3X,
+				  93,
+				  shortnum,
+				  &players.maxammo[3],
+				  &st_statusbaron);
+}
+#else
 void ST_createWidgets(void)
 {
 
@@ -1780,6 +1945,7 @@ void ST_createWidgets(void)
 				  &players.maxammo[3],
 				  &st_statusbaron);
 }
+#endif
 
 static byte st_stopped = 1;
 
