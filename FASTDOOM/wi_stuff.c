@@ -409,8 +409,11 @@ void WI_drawLF(void)
 #if defined(MODE_T8050) || defined(MODE_T8043)
 	V_WriteTextDirect((320 - lnames[wbs->last]->width) / 8, y / 4, titlecurrent);
 #endif
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
-  V_DrawPatchModeCentered((320 - lnames[wbs->last]->width) / 2, y, lnames[wbs->last]);
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
+  	V_DrawPatchModeCentered((320 - lnames[wbs->last]->width) / 2, y, lnames[wbs->last]);
+#endif
+#if defined(MODE_Y_HALF)
+	V_DrawPatchModeCentered((320 - lnames[wbs->last]->width) / 2, y / 2, lnames[wbs->last]);
 #endif
 	// draw "Finished!"
 	y += (5 * lnames[wbs->last]->height) / 4;
@@ -424,8 +427,11 @@ void WI_drawLF(void)
 #if defined(MODE_T8050) || defined(MODE_T8043)
 	V_WriteTextDirect((320 - finished->width) / 8, y / 4, "FINISHED");
 #endif
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
-  V_DrawPatchModeCentered((320 - finished->width) / 2, y, finished);
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
+  	V_DrawPatchModeCentered((320 - finished->width) / 2, y, finished);
+#endif
+#if defined(MODE_Y_HALF)
+  	V_DrawPatchModeCentered((320 - finished->width) / 2, y / 2, finished);
 #endif
 }
 
@@ -474,8 +480,11 @@ void WI_drawEL(void)
 #if defined(MODE_T8050) || defined(MODE_T8043)
 	V_WriteTextDirect((320 - entering->width) / 8, y / 4, "ENTERING");
 #endif
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
-  V_DrawPatchModeCentered((320 - entering->width) / 2, y, entering);
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
+  	V_DrawPatchModeCentered((320 - entering->width) / 2, y, entering);
+#endif
+#if defined(MODE_Y_HALF)
+  	V_DrawPatchModeCentered((320 - entering->width) / 2, y / 2, entering);
 #endif
 
 	// draw level
@@ -490,8 +499,11 @@ void WI_drawEL(void)
 #if defined(MODE_T8050) || defined(MODE_T8043)
 	V_WriteTextDirect((320 - lnames[wbs->next]->width) / 8, y / 4, titlenext);
 #endif
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
-  V_DrawPatchModeCentered((320 - lnames[wbs->next]->width) / 2, y, lnames[wbs->next]);
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
+  	V_DrawPatchModeCentered((320 - lnames[wbs->next]->width) / 2, y, lnames[wbs->next]);
+#endif
+#if defined(MODE_Y_HALF)
+  	V_DrawPatchModeCentered((320 - lnames[wbs->next]->width) / 2, y / 2, lnames[wbs->next]);
 #endif
 }
 
@@ -526,7 +538,11 @@ void WI_drawOnLnode(int n, patch_t *c[])
 
 	if (fits && i < 2)
 	{
-    V_DrawPatchModeCentered(lnodes[wbs->epsd][n].x, lnodes[wbs->epsd][n].y, c[i]);
+#if defined(MODE_Y_HALF)
+		V_DrawPatchModeCentered(lnodes[wbs->epsd][n].x, lnodes[wbs->epsd][n].y / 2, c[i]);
+#else
+		V_DrawPatchModeCentered(lnodes[wbs->epsd][n].x, lnodes[wbs->epsd][n].y, c[i]);
+#endif
 	}
 }
 #endif
@@ -614,8 +630,11 @@ void WI_drawAnimatedBack(void)
 
 		if (a->ctr >= 0)
 		{
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
       V_DrawPatchModeCentered(a->loc.x, a->loc.y, a->p[a->ctr]);
+#endif
+#if defined(MODE_Y_HALF)
+      V_DrawPatchModeCentered(a->loc.x, a->loc.y / 2, a->p[a->ctr]);
 #endif
 		}
 	}
@@ -673,15 +692,21 @@ int WI_drawNumTwoDigits(int x, int y, int n)
 	original = n;
 	n = Div10(n);
 	x -= fontwidth;
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
 	V_DrawPatchModeCentered(x, y, num[original - Mul10(n)]);
+#endif
+#if defined(MODE_Y_HALF)
+	V_DrawPatchModeCentered(x, y / 2, num[original - Mul10(n)]);
 #endif
 
 	original = n;
 	n = Div10(n);
 	x -= fontwidth;
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
 	V_DrawPatchModeCentered(x, y, num[original - Mul10(n)]);
+#endif
+#if defined(MODE_Y_HALF)
+	V_DrawPatchModeCentered(x, y / 2, num[original - Mul10(n)]);
 #endif
 
 	return x;
@@ -705,8 +730,11 @@ int WI_drawNum(int x, int y, int n)
 
 		n = Div10(n);
 		x -= fontwidth;
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
 		V_DrawPatchModeCentered(x, y, num[original - Mul10(n)]);
+#endif
+#if defined(MODE_Y_HALF)
+		V_DrawPatchModeCentered(x, y / 2, num[original - Mul10(n)]);
 #endif
 	} while (n);
 
@@ -735,8 +763,12 @@ void WI_drawPercent(int x, int y, int p)
 	sprintf(strnum, "%i%%", p);
 	V_WriteTextDirect(x / 2, y / 4 - 1, strnum);
 #endif
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
-  V_DrawPatchModeCentered(x, y, percent);
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
+  	V_DrawPatchModeCentered(x, y, percent);
+	WI_drawNum(x, y, p);
+#endif
+#if defined(MODE_Y_HALF)
+  	V_DrawPatchModeCentered(x, y / 2, percent);
 	WI_drawNum(x, y, p);
 #endif
 }
@@ -779,8 +811,11 @@ void WI_drawTime(int x,
 #if defined(MODE_T8050) || defined(MODE_T8043)
 				V_WriteTextDirect(x / 4, y / 4, ":");
 #endif
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
 				V_DrawPatchModeCentered(x, y, colon);
+#endif
+#if defined(MODE_Y_HALF)
+				V_DrawPatchModeCentered(x, y / 2, colon);
 #endif
 			}
 		} while (t / div);
@@ -788,8 +823,11 @@ void WI_drawTime(int x,
 	else
 	{
 		// "sucks"
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
 		V_DrawPatchModeCentered(x - sucks->width, y, sucks);
+#endif
+#if defined(MODE_Y_HALF)
+		V_DrawPatchModeCentered(x - sucks->width, y / 2, sucks);
 #endif
 	}
 }
@@ -1098,8 +1136,11 @@ void WI_drawStats(void)
 #if defined(MODE_T8050) || defined(MODE_T8043)
 	V_WriteTextDirect(SP_STATSX / 2, SP_STATSY / 4, "KILLS:");
 #endif
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
 	V_DrawPatchModeCentered(SP_STATSX, SP_STATSY, kills);
+#endif
+#if defined(MODE_Y_HALF)
+	V_DrawPatchModeCentered(SP_STATSX, SP_STATSY / 2, kills);
 #endif
 
 	WI_drawPercent(320 - SP_STATSX, SP_STATSY, cnt_kills);
@@ -1113,8 +1154,11 @@ void WI_drawStats(void)
 #if defined(MODE_T8050) || defined(MODE_T8043)
 	V_WriteTextDirect(SP_STATSX / 2, (SP_STATSY + lh) / 4, "ITEMS:");
 #endif
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
 	V_DrawPatchModeCentered(SP_STATSX, SP_STATSY + lh, items);
+#endif
+#if defined(MODE_Y_HALF)
+	V_DrawPatchModeCentered(SP_STATSX, (SP_STATSY + lh) / 2, items);
 #endif
 
 	WI_drawPercent(320 - SP_STATSX, SP_STATSY + lh, cnt_items);
@@ -1128,8 +1172,11 @@ void WI_drawStats(void)
 #if defined(MODE_T8050) || defined(MODE_T8043)
 	V_WriteTextDirect(SP_STATSX / 2, (SP_STATSY + 2 * lh) / 4, "SECRET:");
 #endif
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
 	V_DrawPatchModeCentered(SP_STATSX, SP_STATSY + 2 * lh, sp_secret);
+#endif
+#if defined(MODE_Y_HALF)
+	V_DrawPatchModeCentered(SP_STATSX, (SP_STATSY + 2 * lh) / 2, sp_secret);
 #endif
 	WI_drawPercent(320 - SP_STATSX, SP_STATSY + 2 * lh, cnt_secret);
 
@@ -1142,8 +1189,11 @@ void WI_drawStats(void)
 #if defined(MODE_T8050) || defined(MODE_T8043)
 	V_WriteTextDirect(SP_TIMEX / 2, SP_TIMEY / 4, "TIME:");
 #endif
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
 	V_DrawPatchModeCentered(SP_TIMEX, SP_TIMEY, time);
+#endif
+#if defined(MODE_Y_HALF)
+	V_DrawPatchModeCentered(SP_TIMEX, SP_TIMEY / 2, time);
 #endif
 	WI_drawTime(160 - SP_TIMEX, SP_TIMEY, cnt_time);
 
@@ -1158,8 +1208,11 @@ void WI_drawStats(void)
 #if defined(MODE_T8050) || defined(MODE_T8043)
 		V_WriteTextDirect((160 + SP_TIMEX) / 4, SP_TIMEY / 4, "PAR:");
 #endif
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
-    V_DrawPatchModeCentered(160 + SP_TIMEX, SP_TIMEY, par);
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
+   		V_DrawPatchModeCentered(160 + SP_TIMEX, SP_TIMEY, par);
+#endif
+#if defined(MODE_Y_HALF)
+   		V_DrawPatchModeCentered(160 + SP_TIMEX, SP_TIMEY / 2, par);
 #endif
 		WI_drawTime(320 - SP_TIMEX, SP_TIMEY, cnt_par);
 	}
