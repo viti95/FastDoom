@@ -131,7 +131,12 @@ byte wipe_doMelt(int ticks)
     if (noMelt)
         return 1;
     // This make it go about the same speed on all resolutions
+#if defined(MODE_Y_HALF)
+    ticks *= 1;
+#else
     ticks *= (SCREENHEIGHT / 200);
+#endif
+    
     while (ticks--)
     {
         for (i = 0, i_screen_height = 0; i < SCREENWIDTH / 2; i++, i_screen_height += SCREENHEIGHT)
