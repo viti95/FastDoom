@@ -507,7 +507,7 @@ void WI_drawEL(void)
 #endif
 }
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void WI_drawOnLnode(int n, patch_t *c[])
 {
 
@@ -538,11 +538,43 @@ void WI_drawOnLnode(int n, patch_t *c[])
 
 	if (fits && i < 2)
 	{
-#if defined(MODE_Y_HALF)
-		V_DrawPatchModeCentered(lnodes[wbs->epsd][n].x, lnodes[wbs->epsd][n].y / 2, c[i]);
-#else
 		V_DrawPatchModeCentered(lnodes[wbs->epsd][n].x, lnodes[wbs->epsd][n].y, c[i]);
+	}
+}
 #endif
+
+#if defined(MODE_Y_HALF)
+void WI_drawOnLnode(int n, patch_t *c[])
+{
+
+	int i;
+	int left;
+	int top;
+	int right;
+	int bottom;
+	byte fits = 0;
+
+	i = 0;
+	do
+	{
+		left = lnodes[wbs->epsd][n].x - c[i]->leftoffset;
+		top = (lnodes[wbs->epsd][n].y - c[i]->topoffset) / 2;
+		right = left + c[i]->width;
+		bottom = top + (c[i]->height / 2);
+
+		if (left >= 0 && right < 320 && top >= 0 && bottom < SCALED_SCREENHEIGHT)
+		{
+			fits = 1;
+		}
+		else
+		{
+			i++;
+		}
+	} while (!fits && i != 2);
+
+	if (fits && i < 2)
+	{
+		V_DrawPatchModeCentered(lnodes[wbs->epsd][n].x, lnodes[wbs->epsd][n].y / 2, c[i]);
 	}
 }
 #endif
