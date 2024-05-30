@@ -1,11 +1,12 @@
 # CHANGELOG
 
-## 0.9.9d (?? ??? ????)
+## 0.9.9d (30 May 2024)
 * VESA 400x300 modes support
 * Fixed issue #181 (FastDoom crashes on exit when using AWE32 music device + SoftMPU)
 * Multiple optimizations (C)
-* Added option debug to file to standard debugging code
 * New VGA 320x100 executable. Uses same direct rendering method as vanilla Doom, but with half height resolution. High detail resolution is 320x100, low detail 160x100 and potato detail 80x100. Recommended for slow 386 cpu's with VGA cards. 2D elements also have half height resolution, so text is pretty much unreadable (unless someone creates a WAD with optimized fonts for this mode)
+* Fixed issue #192 (Save game buffer overflow). Now saving on MAP24 of Hell Revealed doesn't crash. Thanks @deat322 for finding this issue.
+* Added debug to file support for debugging (only for developers)
 
 ## 0.9.9c (07 Apr 2024)
 * Serial MIDI support (fixed baudrate 38400, COM1 through COM4 selectable)
