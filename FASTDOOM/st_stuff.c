@@ -1624,7 +1624,7 @@ void ST_createWidgets(void)
 	// faces
 	STlib_initMultIcon(&w_faces,
 					   ST_FACESX,
-					   84,
+					   85,
 					   faces,
 					   &st_faceindex,
 					   &st_statusbaron);
