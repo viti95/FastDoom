@@ -5,6 +5,7 @@
 * Fixed issue #181 (FastDoom crashes on exit when using AWE32 music device + SoftMPU)
 * Multiple optimizations (C)
 * Added option debug to file to standard debugging code
+* New VGA 320x100 executable. Uses same direct rendering method as vanilla Doom, but with half height resolution. High detail resolution is 320x100, low detail 160x100 and potato detail 80x100. Recommended for slow 386 cpu's with VGA cards. 2D elements also have half height resolution, so text is pretty much unreadable (unless someone creates a WAD with optimized fonts for this mode)
 
 ## 0.9.9c (07 Apr 2024)
 * Serial MIDI support (fixed baudrate 38400, COM1 through COM4 selectable)
