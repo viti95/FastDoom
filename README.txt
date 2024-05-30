@@ -81,6 +81,7 @@
  * FDOOM.EXE    => FastDoom Mode Y, same as Vanilla Doom. Requires a VGA
                    video card.
  * FDOOMX.EXE   => FastDoom Mode X, 320x240 resolution.
+ * FDOOMH.EXE   => FastDoom Mode Y half height, 320x100 resolution.
  * FDOOM13H.EXE => FastDoom Mode 13h, same as Heretic / Hexen. Also works
                    with MCGA video cards.
  * FDOOMINC.EXE => FastDoom 320x200 Hercules InColor mode (16 colors)
