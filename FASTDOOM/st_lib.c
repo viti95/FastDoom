@@ -107,8 +107,11 @@ void STlib_drawNum(st_number_t *n, byte refresh)
     // clear the area
     x = n->x - 3 * w;
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
     V_CopyRect(x, n->y - ST_Y, screen4, w * 3, h, x, n->y, screen0);
+#endif
+#if defined(MODE_Y_HALF)
+    V_CopyRect(x, n->y - ST_Y, screen4, w * 3, h / 2, x, n->y, screen0);
 #endif
 #if defined(USE_BACKBUFFER)
     V_CopyRect(x, n->y - ST_Y, screen4, w * 3, h, x, n->y, backbuffer);
@@ -268,8 +271,11 @@ void STlib_updateMultIcon(st_multicon_t *mi, byte refresh)
             w = mi->p[mi->oldinum]->width;
             h = mi->p[mi->oldinum]->height;
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
             V_CopyRect(x, y - ST_Y, screen4, w, h, x, y, screen0);
+#endif
+#if defined(MODE_Y_HALF)
+            V_CopyRect(x, y - ST_Y, screen4, w, h / 2, x, y, screen0);
 #endif
 #if defined(USE_BACKBUFFER)
             V_CopyRect(x, y - ST_Y, screen4, w, h, x, y, backbuffer);
