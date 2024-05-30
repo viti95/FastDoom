@@ -3054,6 +3054,38 @@ void R_FillBackScreen(void)
     // Draw beveled edge.
     //I_Printf("Drawing beveled edge: %d %d %d %d\n", viewwindowx, viewwindowy, scaledviewwidth, viewheight);
 
+#if defined(MODE_Y_HALF)
+    patch = W_CacheLumpName("BRDR_T", PU_CACHE);
+
+    for (x = 0; x < scaledviewwidth; x += 8)
+    {
+        V_DrawPatchNativeRes(viewwindowx + x, viewwindowy - 3, TARGET_SURFACE, patch);
+    }
+
+    patch = W_CacheLumpName("BRDR_B", PU_CACHE);
+
+    for (x = 0; x < scaledviewwidth; x += 8)
+    {
+        V_DrawPatchNativeRes(viewwindowx + x, viewwindowy + viewheight, TARGET_SURFACE, patch);
+    }
+    patch = W_CacheLumpName("BRDR_L", PU_CACHE);
+
+    for (y = 0; y < viewheight; y += 4)
+    {
+        V_DrawPatchNativeRes(viewwindowx - 8, viewwindowy + y, TARGET_SURFACE, patch);
+    }
+    patch = W_CacheLumpName("BRDR_R", PU_CACHE);
+
+    for (y = 0; y < viewheight; y += 4)
+    {
+        V_DrawPatchNativeRes(viewwindowx + scaledviewwidth, viewwindowy + y, TARGET_SURFACE, patch);
+    }
+
+    V_DrawPatchNativeRes(viewwindowx - 8, viewwindowy - 3, TARGET_SURFACE, W_CacheLumpName("BRDR_TL", PU_CACHE));
+    V_DrawPatchNativeRes(viewwindowx + scaledviewwidth, viewwindowy - 3, TARGET_SURFACE, W_CacheLumpName("BRDR_TR", PU_CACHE));
+    V_DrawPatchNativeRes(viewwindowx - 8, viewwindowy + viewheight, TARGET_SURFACE, W_CacheLumpName("BRDR_BL", PU_CACHE));
+    V_DrawPatchNativeRes(viewwindowx + scaledviewwidth, viewwindowy + viewheight, TARGET_SURFACE, W_CacheLumpName("BRDR_BR", PU_CACHE));
+#else
     patch = W_CacheLumpName("BRDR_T", PU_CACHE);
 
     for (x = 0; x < scaledviewwidth; x += 8)
@@ -3084,6 +3116,8 @@ void R_FillBackScreen(void)
     V_DrawPatchNativeRes(viewwindowx + scaledviewwidth, viewwindowy - 8, TARGET_SURFACE, W_CacheLumpName("BRDR_TR", PU_CACHE));
     V_DrawPatchNativeRes(viewwindowx - 8, viewwindowy + viewheight, TARGET_SURFACE, W_CacheLumpName("BRDR_BL", PU_CACHE));
     V_DrawPatchNativeRes(viewwindowx + scaledviewwidth, viewwindowy + viewheight, TARGET_SURFACE, W_CacheLumpName("BRDR_BR", PU_CACHE));
+#endif
+
 #if defined(MODE_VBE2_DIRECT)
     dest = pcscreen + 3 * SCREENWIDTH * SCREENHEIGHT;
     CopyDWords(screen1, dest, (SCREENHEIGHT - SBARHEIGHT) * SCREENWIDTH / 4);
