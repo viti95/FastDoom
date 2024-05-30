@@ -2,7 +2,7 @@
 
 ## 0.9.9d (30 May 2024)
 * VESA 400x300 modes support
-* Fixed issue #181 (FastDoom crashes on exit when using AWE32 music device + SoftMPU)
+* Fixed issue #181 (FastDoom crashes on exit when using AWE32 music device + SoftMPU). Thanks @TheElf01 for finding this issue.
 * Multiple optimizations (C)
 * New VGA 320x100 executable. Uses same direct rendering method as vanilla Doom, but with half height resolution. High detail resolution is 320x100, low detail 160x100 and potato detail 80x100. Recommended for slow 386 cpu's with VGA cards. 2D elements also have half height resolution, so text is pretty much unreadable (unless someone creates a WAD with optimized fonts for this mode)
 * Fixed issue #192 (Save game buffer overflow). Now saving on MAP24 of Hell Revealed doesn't crash. Thanks @deat322 for finding this issue.
