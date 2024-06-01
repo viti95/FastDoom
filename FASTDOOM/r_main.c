@@ -1662,13 +1662,13 @@ void R_ExecuteSetViewSize(void)
         for (j = 0; j < MAXLIGHTSCALE; j++)
         {
 #if defined(MODE_T4050)
-            level = startmap - Mul320(j) / (viewwidth << 1) / DISTMAP;
+            level = startmap - MulScreenWidth(j) / (viewwidth << 1) / DISTMAP;
 #endif
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-            level = startmap - Mul320(j) / (viewwidth << detailshift) / DISTMAP;
+            level = startmap - MulScreenWidth(j) / (viewwidth << detailshift) / DISTMAP;
 #endif
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA)
-            level = startmap - Mul320(j) / (viewwidth) / DISTMAP;
+            level = startmap - MulScreenWidth(j) / (viewwidth) / DISTMAP;
 #endif
             if (level < 0)
                 level = 0;
