@@ -30,7 +30,6 @@ lutx2:      db 1,3,7,15
 lutx1:      db 15,14,12,8
 
 dest:       dd 0
-endplane:   dd 0
 curplane:   dd 0
 frac:       dd 0
 fracpstep:  dd 0
