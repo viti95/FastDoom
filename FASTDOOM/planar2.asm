@@ -58,7 +58,10 @@ CODE_SYM_DEF R_DrawSpan
   mov  ebx,eax
   and  ebx,3
   shr  eax,2
-  mov  [endplane],ebx
+
+  mov   ecx,.hskip+2
+  mov   [ecx],ebx
+
   mov  ebp,[_ds_y]
   mov  [curplane],ebx
   mov  ecx,ebx
@@ -175,7 +178,7 @@ CODE_SYM_DEF R_DrawSpan
   jnz   short .hskip
   inc   dword [dest]
 .hskip:
-  cmp   [endplane],ecx
+  cmp   ecx,0x12345678
   jz    short .hdone
   mov   ebx,[frac]
   mov   [curplane],ecx
@@ -210,7 +213,10 @@ CODE_SYM_DEF R_DrawSpanLow
   mov  [curx],eax
   mov  ebx,eax
   and  ebx,1
-  mov  [endplane],ebx
+
+  mov   ecx,.lskip+2
+  mov   [ecx],ebx
+
   mov  [curplane],ebx
   mov  ecx,ebx
   mov  ebp,[_ds_y]
@@ -328,7 +334,7 @@ CODE_SYM_DEF R_DrawSpanLow
   jnz   short .lskip
   inc   dword [dest]
 .lskip:
-  cmp   [endplane],ecx
+  cmp   ecx,0x12345678
   jz    short .ldone
   mov   ebx,[frac]
   mov   [curplane],ecx
@@ -375,7 +381,7 @@ CODE_SYM_DEF R_DrawSpanFlat
 	lea		esi,[edi+ecx]
 	cmp		ecx,ebx
 	je		L$61
-	cmp		eax,0
+	test  eax,eax
 	jne		L$62
 L$58:
 	cmp		ebp,3
@@ -470,14 +476,14 @@ CODE_SYM_DEF R_DrawSpanFlatLow
 	lea		esi,[edi+ecx]
 	cmp		ecx,ebx
 	je		L$68
-	cmp		eax,0
+	test  eax,eax
 	jne		L$69
 L$65:
 	cmp		ebp,1
 	je		L$66
 	mov		al,3
-	out		dx,al
 	lea		esi,[edi+ebx]
+	out		dx,al
 	mov		al,byte 4[esp]
 	dec		ebx
 	mov		byte [esi],al

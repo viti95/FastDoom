@@ -28,7 +28,6 @@ extern _centery
 BEGIN_DATA_SECTION
 
 dest:       dd 0
-endplane:   dd 0
 curplane:   dd 0
 fracpstep:  dd 0
 curx:       dd 0
@@ -57,7 +56,10 @@ CODE_SYM_DEF R_DrawSpan386SX
   mov  ebx,eax
   and  ebx,3
   shr  eax,2
-  mov  [endplane],ebx
+  
+  mov   ecx,.hskip+2
+  mov   [ecx],ebx
+
   mov  ebp,[_ds_y]
   mov  [curplane],ebx
   mov  ecx,ebx
@@ -181,7 +183,7 @@ CODE_SYM_DEF R_DrawSpan386SX
   jnz   short .hskip
   inc   dword [dest]
 .hskip:
-  cmp   [endplane],ecx
+  cmp   ecx,0x12345678
   jz    short .hdone
   mov   ebx,cr2
   mov   [curplane],ecx
@@ -220,7 +222,10 @@ CODE_SYM_DEF R_DrawSpanLow386SX
   mov  [curx],eax
   mov  ebx,eax
   and  ebx,1
-  mov  [endplane],ebx
+
+  mov   ecx,.lskip+2
+  mov   [ecx],ebx
+
   mov  [curplane],ebx
   mov  ecx,ebx
   mov  ebp,[_ds_y]
@@ -345,7 +350,7 @@ CODE_SYM_DEF R_DrawSpanLow386SX
   jnz   short .lskip
   inc   dword [dest]
 .lskip:
-  cmp   [endplane],ecx
+  cmp   ecx,0x12345678
   jz    short .ldone
   mov   ebx,cr2
   mov   [curplane],ecx
