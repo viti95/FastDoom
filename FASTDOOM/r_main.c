@@ -87,6 +87,7 @@ int viewangletox[FINEANGLES / 2];
 // from clipangle to -clipangle.
 angle_t xtoviewangle[SCREENWIDTH + 1];
 angle_t xtoviewangle90[SCREENWIDTH + 1];
+fixed_t sinextoviewangle90[SCREENWIDTH + 1];
 
 fixed_t *finecosine = &finesine[FINEANGLES / 4];
 
@@ -671,20 +672,18 @@ fixed_t R_PointToDist(fixed_t x, fixed_t y)
 fixed_t R_ScaleFromGlobalAngle(int position)
 {
     fixed_t scale;
-    int anglea;
     int angleb;
     int sinea;
     int sineb;
     fixed_t num;
     int den;
 
-    anglea = xtoviewangle90[position];
-    angleb = anglea + viewangle - rw_normalangle;
-    anglea >>= ANGLETOFINESHIFT;
+    // both sines are allways positive
+    sinea = sinextoviewangle90[position];
+
+    angleb = xtoviewangle90[position] + viewangle - rw_normalangle;
     angleb >>= ANGLETOFINESHIFT;
 
-    // both sines are allways positive
-    sinea = finesine[anglea];
     sineb = finesine[angleb];
 #if defined(MODE_T4050)
     num = FixedMulEDX(projection, sineb) << 1;
@@ -763,6 +762,7 @@ void R_InitTextureMapping(void)
         while (viewangletox[i] > x)
             i++;
         xtoviewangle90[x] = (i << ANGLETOFINESHIFT);
+        sinextoviewangle90[x] = finesine[xtoviewangle90[x] >> ANGLETOFINESHIFT];
         xtoviewangle[x] = xtoviewangle90[x] - ANG90;
     }
 
