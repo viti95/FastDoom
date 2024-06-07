@@ -633,6 +633,8 @@ R_PointToAngle00(fixed_t x2,
     return 0;
 }
 
+fixed_t lutsineangle[SLOPERANGE + 1];
+
 fixed_t R_PointToDist(fixed_t x, fixed_t y)
 {
     int angle;
@@ -651,12 +653,7 @@ fixed_t R_PointToDist(fixed_t x, fixed_t y)
         dy = temp_var;
     }
 
-    // angle = (tantoangle[FixedDiv(dy, dx) >> DBITS] + ANG90) >> ANGLETOFINESHIFT;
-    angle = (tantoangle[((dy >> 14 >= dx) ? ((dy ^ dx) >> 31) ^ MAXINT : FixedDiv2(dy, dx)) >> DBITS] + ANG90) >> ANGLETOFINESHIFT;
-
-    // use as cosine
-    // dist = FixedDiv(dx, finesine[angle]);
-    temp = finesine[angle];
+    temp = lutsineangle[((dy >> 14 >= dx) ? ((dy ^ dx) >> 31) ^ MAXINT : FixedDiv2(dy, dx)) >> DBITS];
     dist = ((dx >> 14) >= abs(temp)) ? ((dx ^ temp) >> 31) ^ MAXINT : FixedDiv2(dx, temp);
 
     return dist;
@@ -773,6 +770,13 @@ void R_InitTextureMapping(void)
             viewangletox[i] = 0;
         else if (viewangletox[i] == viewwidth + 1)
             viewangletox[i] = viewwidth;
+    }
+
+    // Initialize LUT angle sine
+    for (i = 0; i < SLOPERANGE + 1; i++)
+    {
+        int angle = (tantoangle[i] + ANG90) >> ANGLETOFINESHIFT;
+        lutsineangle[i] = finesine[angle];
     }
 }
 
