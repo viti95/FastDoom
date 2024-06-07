@@ -654,7 +654,7 @@ fixed_t R_PointToDist(fixed_t x, fixed_t y)
     }
 
     if (dy >> 14 >= dx) {
-        return 0;
+        return 65535;
     } else {
         temp = lutsineangle[FixedDivDBITS(dy, dx)];
         dist = ((dx >> 14) >= abs(temp)) ? ((dx ^ temp) >> 31) ^ MAXINT : FixedDiv2(dx, temp);
