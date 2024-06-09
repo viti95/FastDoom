@@ -65,7 +65,7 @@ void P_CalcHeight(void)
 	// Note: a LUT allows for effects
 	//  like a ramp with low health.
 
-	players.bob = FixedMulEDX(players_mo->momx, players_mo->momx) + FixedMulEDX(players_mo->momy, players_mo->momy);
+	players.bob = FixedMulSquare(players_mo->momx) + FixedMulSquare(players_mo->momy);
 	players.bob >>= 2;
 	if (players.bob > MAXBOB)
 		players.bob = MAXBOB;

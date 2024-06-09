@@ -48,6 +48,11 @@ fixed_t FixedMulEDX(fixed_t a, fixed_t b);
     "imul edx",        \
     "shrd eax,edx,16" parm[eax][edx] value[eax] modify exact[eax edx]
 
+fixed_t FixedMulSquare(fixed_t a);
+#pragma aux FixedMulSquare = \
+    "imul eax",        \
+    "shrd eax,edx,16" parm[eax] value[eax] modify exact[eax edx]
+
 fixed_t FixedMulHStep(fixed_t a, fixed_t b);
 #pragma aux FixedMulHStep = \
     "imul edx",             \
