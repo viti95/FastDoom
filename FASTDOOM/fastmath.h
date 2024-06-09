@@ -75,7 +75,7 @@ fixed_t FixedDiv2(fixed_t a, fixed_t b);
 
 fixed_t FixedDivDBITS(fixed_t a, fixed_t b);
 #pragma aux FixedDivDBITS =        \
-    "cdq",                     \
+    "xor edx,edx",                 \
     "shld edx,eax,11", \
     "shl eax,11",      \
     "idiv ebx" parm[eax][ebx] value[eax] modify exact[eax edx]

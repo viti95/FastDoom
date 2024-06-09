@@ -182,7 +182,7 @@ R_PointToAngle(fixed_t x,
                     return 536870912;
                 else
                 {
-                    tempDivision = (y << 3) / (x >> 8);
+                    tempDivision = FixedDivDBITS(y, x);
                     if (tempDivision < SLOPERANGE)
                         return tantoangle[tempDivision];
                     else
@@ -196,7 +196,7 @@ R_PointToAngle(fixed_t x,
                     return ANG90 - 1 - 536870912;
                 else
                 {
-                    tempDivision = (x << 3) / (y >> 8);
+                    tempDivision = FixedDivDBITS(x, y);
                     if (tempDivision < SLOPERANGE)
                         return ANG90 - 1 - tantoangle[tempDivision];
                     else
@@ -216,7 +216,7 @@ R_PointToAngle(fixed_t x,
                     return -536870912;
                 else
                 {
-                    tempDivision = (y << 3) / (x >> 8);
+                    tempDivision = FixedDivDBITS(y, x);
                     if (tempDivision < SLOPERANGE)
                         return -tantoangle[tempDivision];
                     else
@@ -230,7 +230,7 @@ R_PointToAngle(fixed_t x,
                     return ANG270 + 536870912;
                 else
                 {
-                    tempDivision = (x << 3) / (y >> 8);
+                    tempDivision = FixedDivDBITS(x, y);
                     if (tempDivision < SLOPERANGE)
                         return ANG270 + tantoangle[tempDivision];
                     else
@@ -254,7 +254,7 @@ R_PointToAngle(fixed_t x,
                     return ANG180 - 1 - 536870912;
                 else
                 {
-                    tempDivision = (y << 3) / (x >> 8);
+                    tempDivision = FixedDivDBITS(y, x);
                     if (tempDivision < SLOPERANGE)
                         return ANG180 - 1 - tantoangle[tempDivision];
                     else
@@ -268,7 +268,7 @@ R_PointToAngle(fixed_t x,
                     return ANG90 + 536870912;
                 else
                 {
-                    tempDivision = (x << 3) / (y >> 8);
+                    tempDivision = FixedDivDBITS(x, y);
                     if (tempDivision < SLOPERANGE)
                         return ANG90 + tantoangle[tempDivision];
                     else
@@ -288,7 +288,7 @@ R_PointToAngle(fixed_t x,
                     return ANG180 + 536870912;
                 else
                 {
-                    tempDivision = (y << 3) / (x >> 8);
+                    tempDivision = FixedDivDBITS(y, x);
                     if (tempDivision < SLOPERANGE)
                         return ANG180 + tantoangle[tempDivision];
                     else
@@ -302,7 +302,7 @@ R_PointToAngle(fixed_t x,
                     return ANG270 - 1 - 536870912;
                 else
                 {
-                    tempDivision = (x << 3) / (y >> 8);
+                    tempDivision = FixedDivDBITS(x, y);
                     if (tempDivision < SLOPERANGE)
                         return ANG270 - 1 - tantoangle[tempDivision];
                     else
