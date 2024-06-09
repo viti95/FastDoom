@@ -48,6 +48,18 @@ fixed_t FixedMulEDX(fixed_t a, fixed_t b);
     "imul edx",        \
     "shrd eax,edx,16" parm[eax][edx] value[eax] modify exact[eax edx]
 
+fixed_t FixedMulHStep(fixed_t a, fixed_t b);
+#pragma aux FixedMulHStep = \
+    "imul edx",             \
+    "shrd eax,edx,6"        \
+    "xor ax,ax"       parm[eax][edx] value[eax] modify exact[eax edx]
+
+fixed_t FixedMulLStep(fixed_t a, fixed_t b);
+#pragma aux FixedMulLStep = \
+    "imul edx",             \
+    "shrd eax,edx,22"        \
+    "and eax,0xFFFF"       parm[eax][edx] value[eax] modify exact[eax edx]
+
 #define FixedDiv(a,b) (((abs(a) >> 14) >= abs(b)) ? (((a) ^ (b)) >> 31) ^ MAXINT : FixedDiv2(a, b))
 fixed_t FixedDiv2(fixed_t a, fixed_t b);
 #pragma aux FixedDiv2 =        \
