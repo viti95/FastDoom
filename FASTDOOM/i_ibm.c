@@ -1104,10 +1104,12 @@ byte *I_ZoneBase(int *size)
     heap = meminfo[0];
     printf("Available DPMI memory: %d Kb\n", heap >> 10);
 
+    heap -= 0x2000; // leave 8kb free
+
     do
     {
         ptr = malloc(heap);
-        if (!ptr) heap -= 0x400; // try again with 1Kb less
+        if (!ptr) heap -= 0x2000; // try again with 8Kb less
     } while (!ptr);
 
     printf("Zone memory: %d Kb\n", heap >> 10);

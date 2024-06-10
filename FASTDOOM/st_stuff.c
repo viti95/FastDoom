@@ -155,7 +155,7 @@
 // Ammunition counter.
 #define ST_AMMO0WIDTH (3)
 #define ST_AMMO0X CENTERING_OFFSET_X + 288
-#define ST_AMMO0Y SCALED_SCREENHEIGHT - 28
+#define ST_AMMO0Y SCALED_SCREENHEIGHT - 27
 #define ST_AMMO1WIDTH ST_AMMO0WIDTH
 #define ST_AMMO1X CENTERING_OFFSET_X + 288
 #define ST_AMMO1Y SCALED_SCREENHEIGHT - 21
@@ -1560,7 +1560,7 @@ void ST_createWidgets(void)
 	// ready weapon ammo
 	STlib_initNum(&w_ready,
 				  ST_AMMOX,
-				  85,
+				  86,
 				  tallnum,
 				  &players.ammo[weaponinfo[players.readyweapon].ammo],
 				  &st_statusbaron);
@@ -1571,7 +1571,7 @@ void ST_createWidgets(void)
 	// health percentage
 	STlib_initPercent(&w_health,
 					  ST_HEALTHX,
-					  85,
+					  86,
 					  tallnum,
 					  &players.health,
 					  &st_statusbaron,
