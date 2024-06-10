@@ -529,8 +529,7 @@ void R_ProjectSprite(mobj_t *thing)
     vis->scale = xscale << detailshift;
 #endif
 #if defined(MODE_Y_HALF)
-    vis->scale = xscale << detailshift;
-    vis->scale /= 2;
+    vis->scale = (xscale << detailshift) / 2;
 #endif
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA)
     vis->scale = xscale;
