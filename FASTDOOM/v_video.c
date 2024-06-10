@@ -1435,10 +1435,9 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
                 register byte s = *source++;
                 dest[0] = s;
                 dest[1] = s;
-                dest += SCREENWIDTH;
-                dest[0] = s;
-                dest[1] = s;
-                dest += SCREENWIDTH;
+                dest[SCREENWIDTH] = s;
+                dest[SCREENWIDTH + 1] = s;
+                dest += 2 * SCREENWIDTH;
             }
 #elif PIXEL_SCALING==3
             while (count--)
@@ -1447,15 +1446,13 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
                 dest[0] = s;
                 dest[1] = s;
                 dest[2] = s;
-                dest += SCREENWIDTH;
-                dest[0] = s;
-                dest[1] = s;
-                dest[2] = s;
-                dest += SCREENWIDTH;
-                dest[0] = s;
-                dest[1] = s;
-                dest[2] = s;
-                dest += SCREENWIDTH;
+                dest[SCREENWIDTH] = s;
+                dest[SCREENWIDTH + 1] = s;
+                dest[SCREENWIDTH + 2] = s;
+                dest[2 * SCREENWIDTH] = s;
+                dest[2 * SCREENWIDTH + 1] = s;
+                dest[2 * SCREENWIDTH + 2] = s;
+                dest += 3 * SCREENWIDTH;
             }
 #elif PIXEL_SCALING==4
             while (count--)
@@ -1465,22 +1462,19 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
                 dest[1] = s;
                 dest[2] = s;
                 dest[3] = s;
-                dest += SCREENWIDTH;
-                dest[0] = s;
-                dest[1] = s;
-                dest[2] = s;
-                dest[3] = s;
-                dest += SCREENWIDTH;
-                dest[0] = s;
-                dest[1] = s;
-                dest[2] = s;
-                dest[3] = s;
-                dest += SCREENWIDTH;
-                dest[0] = s;
-                dest[1] = s;
-                dest[2] = s;
-                dest[3] = s;
-                dest += SCREENWIDTH;
+                dest[SCREENWIDTH] = s;
+                dest[SCREENWIDTH + 1] = s;
+                dest[SCREENWIDTH + 2] = s;
+                dest[SCREENWIDTH + 3] = s;
+                dest[2 * SCREENWIDTH] = s;
+                dest[2 * SCREENWIDTH + 1] = s;
+                dest[2 * SCREENWIDTH + 2] = s;
+                dest[2 * SCREENWIDTH + 3] = s;
+                dest[3 * SCREENWIDTH] = s;
+                dest[3 * SCREENWIDTH + 1] = s;
+                dest[3 * SCREENWIDTH + 2] = s;
+                dest[3 * SCREENWIDTH + 3] = s;
+                dest += 4 * SCREENWIDTH;
             }
 #endif
             column = (column_t *)((byte *)column + column->length + 4);
