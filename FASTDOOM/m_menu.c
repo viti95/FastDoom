@@ -1331,7 +1331,7 @@ void M_DrawOptions(void)
 
 #if defined(MODE_Y_HALF)
     V_DrawPatchDirectCentered(108, 2, W_CacheLumpName("M_OPTTTL", PU_CACHE));
-    V_DrawPatchDirectCentered(OptionsDef.x + 120, (OptionsDef.y/2) + 12, W_CacheLumpName((char *)msgNames[showMessages], PU_CACHE));
+    V_DrawPatchDirectCentered(OptionsDef.x + 120, (OptionsDef.y/2) + 16, W_CacheLumpName((char *)msgNames[showMessages], PU_CACHE));
     M_DrawThermo(OptionsDef.x, (OptionsDef.y/2) - 1 + LINEHEIGHT * (mousesens + 2), 10, mouseSensitivity);
     M_DrawThermo(OptionsDef.x, (OptionsDef.y/2) - 1 + LINEHEIGHT * (scrnsize + 2), 10, screenSize);
     M_WriteText(OptionsDef.x + 1, OptionsDef.y + LINEHEIGHT * benchmark_option + 4, "BENCHMARK");
