@@ -693,8 +693,7 @@ fixed_t R_ScaleFromGlobalAngle(int position)
     num = FixedMulEDX(projection, sineb) << detailshift;
 #endif
 #if defined(MODE_Y_HALF)
-    num = FixedMulEDX(projection, sineb) << detailshift;
-    num /= 2;
+    num = FixedMulEDXHalf(projection, sineb) << detailshift;
 #endif
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA)
     num = FixedMulEDX(projection, sineb);
