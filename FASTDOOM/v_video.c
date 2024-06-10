@@ -544,11 +544,10 @@ void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
                 do
                 {
                     s0 = source[0];
+                    s1 = source[2];
                     dest[0] = s0;
-                    dest += SCREENWIDTH;
-                    s0 = source[2];
-                    dest[0] = s0;
-                    dest += SCREENWIDTH;
+                    dest[SCREENWIDTH] = s1;
+                    dest += 2 * SCREENWIDTH;
                     source += 4;
                 } while ((count -= 4) >= 0);
             if (count += 4)
@@ -605,11 +604,10 @@ void V_DrawPatchScreen0(int x, int y, patch_t *patch)
                 do
                 {
                     s0 = source[0];
+                    s1 = source[2];
                     dest[0] = s0;
-                    dest += SCREENWIDTH;
-                    s0 = source[2];
-                    dest[0] = s0;
-                    dest += SCREENWIDTH;
+                    dest[SCREENWIDTH] = s1;
+                    dest += 2 * SCREENWIDTH;
                     source += 4;
                 } while ((count -= 4) >= 0);
             if (count += 4)
