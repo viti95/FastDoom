@@ -1292,12 +1292,11 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
                 {
                     register byte s0, s1;
                     s0 = source[0];
+                    s1 = source[2];
                     dest[0] = s0;
-                    dest += SCREENWIDTH / 4;
-                    s0 = source[2];
+                    dest[SCREENWIDTH / 4] = s1;
+                    dest += SCREENWIDTH / 2;
                     source += 4;
-                    dest[0] = s0;
-                    dest += SCREENWIDTH / 4;
                 } while ((count -= 4) >= 0);
             if (count += 4)
                 do
