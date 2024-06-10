@@ -671,12 +671,8 @@ void R_DrawPSprite(pspdef_t *psp)
 #if defined(MODE_T4050)
     vis->scale = pspritescale << 1;
 #endif
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT) || defined(MODE_Y_HALF)
     vis->scale = pspritescaleds;
-#endif
-#if defined(MODE_Y_HALF)
-    vis->scale = pspritescaleds;
-    vis->scale /= 2;
 #endif
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA)
     vis->scale = pspritescale;
