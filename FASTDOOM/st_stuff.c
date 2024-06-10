@@ -1560,7 +1560,7 @@ void ST_createWidgets(void)
 	// ready weapon ammo
 	STlib_initNum(&w_ready,
 				  ST_AMMOX,
-				  85,
+				  86,
 				  tallnum,
 				  &players.ammo[weaponinfo[players.readyweapon].ammo],
 				  &st_statusbaron);
@@ -1571,7 +1571,7 @@ void ST_createWidgets(void)
 	// health percentage
 	STlib_initPercent(&w_health,
 					  ST_HEALTHX,
-					  85,
+					  86,
 					  tallnum,
 					  &players.health,
 					  &st_statusbaron,
