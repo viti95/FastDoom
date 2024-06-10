@@ -1653,8 +1653,7 @@ void R_ExecuteSetViewSize(void)
 #endif
 
 #if defined(MODE_Y_HALF)
-        yslope[i] = FixedDiv((viewwidth << detailshift) / 2 * FRACUNIT, dy);
-        yslope[i] /= 2;
+        yslope[i] = FixedDiv((viewwidth << detailshift) / 4 * FRACUNIT, dy);
 #endif
 
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA)
