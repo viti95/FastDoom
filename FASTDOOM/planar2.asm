@@ -679,6 +679,7 @@ CODE_SYM_DEF R_DrawSpanPotato
 %assign PCOL PCOL+1
 %endrep
 
-hmap80: ret
+MAPLABEL LINE:
+  ret
 
 %endif

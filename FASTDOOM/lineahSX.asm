@@ -129,6 +129,7 @@ CODE_SYM_DEF R_DrawSpanBackbuffer386SX
 %assign PCOL PCOL+1
 %endrep
 
-MAPLABEL LINE: ret
+MAPLABEL LINE: 
+  ret
 
 %endif

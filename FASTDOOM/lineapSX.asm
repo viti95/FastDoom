@@ -134,6 +134,7 @@ CODE_SYM_DEF R_DrawSpanPotatoBackbuffer386SX
 %assign PCOL PCOL+1
 %endrep
 
-MAPLABEL LINE: ret
+MAPLABEL LINE: 
+  ret
 
 %endif
