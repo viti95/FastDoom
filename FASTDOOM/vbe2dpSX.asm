@@ -115,5 +115,6 @@ CODE_SYM_DEF R_DrawSpanPotatoVBE2_386SX
 %endrep
 
 MAPLABEL LINE:
+  ret
 
 %endif

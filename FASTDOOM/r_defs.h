@@ -436,15 +436,15 @@ typedef struct
 
     // leave pads for [minx-1]/[maxx+1]
 
-    byte pad1;
+    pixelcoord_t pad1;
     // Here lies the rub for all
     //  dynamic resize/change of resolution.
     pixelcoord_t top[SCREENWIDTH];
-    byte pad2;
-    byte pad3;
+    pixelcoord_t pad2;
+    pixelcoord_t pad3;
     // See above.
     pixelcoord_t bottom[SCREENWIDTH];
-    byte pad4;
+    pixelcoord_t pad4;
 
 } visplane_t;
 
