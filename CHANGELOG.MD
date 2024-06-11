@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.9.9e (?? ??? ????)
+* Fixed diminished lightning issues on high resolution VESA modes
+* Fixed some 2D status bar and menus misalignements
+* Fixed rendering corruption on VESA 386SX codepath
+* Fixed MS-DOS 7 crash #187
+
 ## 0.9.9d (30 May 2024)
 * VESA 400x300 modes support
 * Fixed issue #181 (FastDoom crashes on exit when using AWE32 music device + SoftMPU). Thanks @TheElf01 for finding this issue.
