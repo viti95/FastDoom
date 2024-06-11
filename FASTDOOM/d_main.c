@@ -1300,6 +1300,10 @@ void D_DoomMain(void)
     D_AddFile("mode4.wad");
 #endif
 
+#if defined(MODE_Y_HALF)
+    D_AddFile("fonth.wad");
+#endif
+
     setvbuf(stdout, NULL, _IONBF, 0);
     modifiedgame = false;
 
