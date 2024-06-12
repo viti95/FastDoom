@@ -1300,7 +1300,7 @@ void D_DoomMain(void)
     D_AddFile("mode4.wad");
 #endif
 
-#if defined(MODE_Y_HALF)
+#if defined(MODE_Y_HALF) || defined(MODE_CGA_AFH)
     D_AddFile("fonth.wad");
 #endif
 
