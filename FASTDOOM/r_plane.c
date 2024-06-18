@@ -139,8 +139,8 @@ void R_MapPlane(int y, int x1)
             cachedheight[y] = planeheight;
             distance = cacheddistance[y] = FixedMulEDX(planeheight, yslope[y]);
 
-            step = ((FixedMulEDX(distance, basexscale) << 10) & 0xFFFF0000);
-            step |= ((FixedMulEDX(distance, baseyscale) >> 6) & 0xFFFF);
+            step = FixedMulHStep(distance, basexscale);
+            step |= FixedMulLStep(distance, baseyscale);
             ds_step = step;
             cachedstep[y] = step;
         }
@@ -160,12 +160,12 @@ void R_MapPlane(int y, int x1)
         ds_colormap = fixedcolormap;
     else
     {
-        index = distance >> LIGHTZSHIFT;
-
-        if (index >= MAXLIGHTZ)
-            index = MAXLIGHTZ - 1;
-
-        ds_colormap = planezlight[index];
+        if (distance >= (MAXLIGHTZ << LIGHTZSHIFT))
+        {
+            ds_colormap = planezlight[MAXLIGHTZ - 1];
+        } else {
+            ds_colormap = planezlight[distance >> LIGHTZSHIFT];
+        }
     }
 
     // high or low detail

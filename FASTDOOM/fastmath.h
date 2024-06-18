@@ -48,12 +48,41 @@ fixed_t FixedMulEDX(fixed_t a, fixed_t b);
     "imul edx",        \
     "shrd eax,edx,16" parm[eax][edx] value[eax] modify exact[eax edx]
 
+fixed_t FixedMulEDXHalf(fixed_t a, fixed_t b);
+#pragma aux FixedMulEDXHalf = \
+    "imul edx",        \
+    "shrd eax,edx,17" parm[eax][edx] value[eax] modify exact[eax edx]
+
+fixed_t FixedMulSquare(fixed_t a);
+#pragma aux FixedMulSquare = \
+    "imul eax",        \
+    "shrd eax,edx,16" parm[eax] value[eax] modify exact[eax edx]
+
+fixed_t FixedMulHStep(fixed_t a, fixed_t b);
+#pragma aux FixedMulHStep = \
+    "imul edx",             \
+    "shrd eax,edx,6"        \
+    "xor ax,ax"       parm[eax][edx] value[eax] modify exact[eax edx]
+
+fixed_t FixedMulLStep(fixed_t a, fixed_t b);
+#pragma aux FixedMulLStep = \
+    "imul edx",             \
+    "shrd eax,edx,22"        \
+    "and eax,0xFFFF"       parm[eax][edx] value[eax] modify exact[eax edx]
+
 #define FixedDiv(a,b) (((abs(a) >> 14) >= abs(b)) ? (((a) ^ (b)) >> 31) ^ MAXINT : FixedDiv2(a, b))
 fixed_t FixedDiv2(fixed_t a, fixed_t b);
 #pragma aux FixedDiv2 =        \
     "cdq",                     \
     "shld edx,eax,16", \
     "shl eax,16",      \
+    "idiv ebx" parm[eax][ebx] value[eax] modify exact[eax edx]
+
+fixed_t FixedDivDBITS(fixed_t a, fixed_t b);
+#pragma aux FixedDivDBITS =        \
+    "mov edx,eax",                 \
+    "shl eax,11",      \
+    "shr edx,21",      \
     "idiv ebx" parm[eax][ebx] value[eax] modify exact[eax edx]
 
 fixed_t FixedDiv65536(fixed_t b);

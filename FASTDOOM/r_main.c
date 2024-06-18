@@ -87,6 +87,7 @@ int viewangletox[FINEANGLES / 2];
 // from clipangle to -clipangle.
 angle_t xtoviewangle[SCREENWIDTH + 1];
 angle_t xtoviewangle90[SCREENWIDTH + 1];
+fixed_t sinextoviewangle90[SCREENWIDTH + 1];
 
 fixed_t *finecosine = &finesine[FINEANGLES / 4];
 
@@ -181,7 +182,7 @@ R_PointToAngle(fixed_t x,
                     return 536870912;
                 else
                 {
-                    tempDivision = (y << 3) / (x >> 8);
+                    tempDivision = FixedDivDBITS(y, x);
                     if (tempDivision < SLOPERANGE)
                         return tantoangle[tempDivision];
                     else
@@ -195,7 +196,7 @@ R_PointToAngle(fixed_t x,
                     return ANG90 - 1 - 536870912;
                 else
                 {
-                    tempDivision = (x << 3) / (y >> 8);
+                    tempDivision = FixedDivDBITS(x, y);
                     if (tempDivision < SLOPERANGE)
                         return ANG90 - 1 - tantoangle[tempDivision];
                     else
@@ -215,7 +216,7 @@ R_PointToAngle(fixed_t x,
                     return -536870912;
                 else
                 {
-                    tempDivision = (y << 3) / (x >> 8);
+                    tempDivision = FixedDivDBITS(y, x);
                     if (tempDivision < SLOPERANGE)
                         return -tantoangle[tempDivision];
                     else
@@ -229,7 +230,7 @@ R_PointToAngle(fixed_t x,
                     return ANG270 + 536870912;
                 else
                 {
-                    tempDivision = (x << 3) / (y >> 8);
+                    tempDivision = FixedDivDBITS(x, y);
                     if (tempDivision < SLOPERANGE)
                         return ANG270 + tantoangle[tempDivision];
                     else
@@ -253,7 +254,7 @@ R_PointToAngle(fixed_t x,
                     return ANG180 - 1 - 536870912;
                 else
                 {
-                    tempDivision = (y << 3) / (x >> 8);
+                    tempDivision = FixedDivDBITS(y, x);
                     if (tempDivision < SLOPERANGE)
                         return ANG180 - 1 - tantoangle[tempDivision];
                     else
@@ -267,7 +268,7 @@ R_PointToAngle(fixed_t x,
                     return ANG90 + 536870912;
                 else
                 {
-                    tempDivision = (x << 3) / (y >> 8);
+                    tempDivision = FixedDivDBITS(x, y);
                     if (tempDivision < SLOPERANGE)
                         return ANG90 + tantoangle[tempDivision];
                     else
@@ -287,7 +288,7 @@ R_PointToAngle(fixed_t x,
                     return ANG180 + 536870912;
                 else
                 {
-                    tempDivision = (y << 3) / (x >> 8);
+                    tempDivision = FixedDivDBITS(y, x);
                     if (tempDivision < SLOPERANGE)
                         return ANG180 + tantoangle[tempDivision];
                     else
@@ -301,7 +302,7 @@ R_PointToAngle(fixed_t x,
                     return ANG270 - 1 - 536870912;
                 else
                 {
-                    tempDivision = (x << 3) / (y >> 8);
+                    tempDivision = FixedDivDBITS(x, y);
                     if (tempDivision < SLOPERANGE)
                         return ANG270 - 1 - tantoangle[tempDivision];
                     else
@@ -632,6 +633,8 @@ R_PointToAngle00(fixed_t x2,
     return 0;
 }
 
+fixed_t lutsineangle[SLOPERANGE + 1];
+
 fixed_t R_PointToDist(fixed_t x, fixed_t y)
 {
     int angle;
@@ -650,13 +653,12 @@ fixed_t R_PointToDist(fixed_t x, fixed_t y)
         dy = temp_var;
     }
 
-    // angle = (tantoangle[FixedDiv(dy, dx) >> DBITS] + ANG90) >> ANGLETOFINESHIFT;
-    angle = (tantoangle[((dy >> 14 >= dx) ? ((dy ^ dx) >> 31) ^ MAXINT : FixedDiv2(dy, dx)) >> DBITS] + ANG90) >> ANGLETOFINESHIFT;
-
-    // use as cosine
-    // dist = FixedDiv(dx, finesine[angle]);
-    temp = finesine[angle];
-    dist = ((dx >> 14) >= abs(temp)) ? ((dx ^ temp) >> 31) ^ MAXINT : FixedDiv2(dx, temp);
+    if (dy >> 14 >= dx) {
+        return 0;
+    } else {
+        temp = lutsineangle[FixedDivDBITS(dy, dx)];
+        dist = ((dx >> 14) >= temp) ? ((dx ^ temp) >> 31) ^ MAXINT : FixedDiv2(dx, temp);
+    }
 
     return dist;
 }
@@ -671,20 +673,18 @@ fixed_t R_PointToDist(fixed_t x, fixed_t y)
 fixed_t R_ScaleFromGlobalAngle(int position)
 {
     fixed_t scale;
-    int anglea;
     int angleb;
     int sinea;
     int sineb;
     fixed_t num;
     int den;
 
-    anglea = xtoviewangle90[position];
-    angleb = anglea + viewangle - rw_normalangle;
-    anglea >>= ANGLETOFINESHIFT;
+    // both sines are allways positive
+    sinea = sinextoviewangle90[position];
+
+    angleb = xtoviewangle90[position] + viewangle - rw_normalangle;
     angleb >>= ANGLETOFINESHIFT;
 
-    // both sines are allways positive
-    sinea = finesine[anglea];
     sineb = finesine[angleb];
 #if defined(MODE_T4050)
     num = FixedMulEDX(projection, sineb) << 1;
@@ -693,8 +693,7 @@ fixed_t R_ScaleFromGlobalAngle(int position)
     num = FixedMulEDX(projection, sineb) << detailshift;
 #endif
 #if defined(MODE_Y_HALF)
-    num = FixedMulEDX(projection, sineb) << detailshift;
-    num /= 2;
+    num = FixedMulEDXHalf(projection, sineb) << detailshift;
 #endif
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA)
     num = FixedMulEDX(projection, sineb);
@@ -763,6 +762,7 @@ void R_InitTextureMapping(void)
         while (viewangletox[i] > x)
             i++;
         xtoviewangle90[x] = (i << ANGLETOFINESHIFT);
+        sinextoviewangle90[x] = finesine[xtoviewangle90[x] >> ANGLETOFINESHIFT];
         xtoviewangle[x] = xtoviewangle90[x] - ANG90;
     }
 
@@ -773,6 +773,13 @@ void R_InitTextureMapping(void)
             viewangletox[i] = 0;
         else if (viewangletox[i] == viewwidth + 1)
             viewangletox[i] = viewwidth;
+    }
+
+    // Initialize LUT angle sine
+    for (i = 0; i < SLOPERANGE + 1; i++)
+    {
+        int angle = (tantoangle[i] + ANG90) >> ANGLETOFINESHIFT;
+        lutsineangle[i] = finesine[angle];
     }
 }
 
@@ -1614,6 +1621,12 @@ void R_ExecuteSetViewSize(void)
     // psprite scales
 #if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA)
     pspritescale = FRACUNIT * viewwidth / 320;
+#if defined(MODE_Y_HALF)
+    pspritescaleds = (pspritescale << detailshift) / 2;
+#else
+    pspritescaleds = pspritescale << detailshift;
+#endif
+    
     pspriteiscale = FRACUNIT * 320 / viewwidth;
     pspriteiscaleneg = -pspriteiscale;
 #endif
@@ -1639,8 +1652,7 @@ void R_ExecuteSetViewSize(void)
 #endif
 
 #if defined(MODE_Y_HALF)
-        yslope[i] = FixedDiv((viewwidth << detailshift) / 2 * FRACUNIT, dy);
-        yslope[i] /= 2;
+        yslope[i] = FixedDiv((viewwidth << detailshift) / 4 * FRACUNIT, dy);
 #endif
 
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA)

@@ -67,6 +67,7 @@ typedef unsigned angle_t;
 // The +1 size is to handle the case when x==y
 //  without additional checking.
 extern const angle_t tantoangle[SLOPERANGE + 1];
+extern fixed_t lutsineangle[SLOPERANGE + 1];
 
 extern const byte gammatable[5][256];
 
