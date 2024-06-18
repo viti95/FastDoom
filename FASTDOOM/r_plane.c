@@ -160,12 +160,12 @@ void R_MapPlane(int y, int x1)
         ds_colormap = fixedcolormap;
     else
     {
-        index = distance >> LIGHTZSHIFT;
-
-        if (index >= MAXLIGHTZ)
-            index = MAXLIGHTZ - 1;
-
-        ds_colormap = planezlight[index];
+        if (distance >= (MAXLIGHTZ << LIGHTZSHIFT))
+        {
+            ds_colormap = planezlight[MAXLIGHTZ - 1];
+        } else {
+            ds_colormap = planezlight[distance >> LIGHTZSHIFT];
+        }
     }
 
     // high or low detail
