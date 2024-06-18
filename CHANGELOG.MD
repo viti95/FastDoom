@@ -1,10 +1,12 @@
 # CHANGELOG
 
-## 0.9.9e (?? ??? ????)
+## 0.9.9e (18 Jun 2024)
 * Fixed diminished lightning issues on high resolution VESA modes
 * Fixed some 2D status bar and menus misalignements
 * Fixed rendering corruption on VESA 386SX codepath
 * Fixed MS-DOS 7 crash #187
+* New fonts for 320x100 resultion modes (half height)
+* Optimizations (C)
 
 ## 0.9.9d (30 May 2024)
 * VESA 400x300 modes support
