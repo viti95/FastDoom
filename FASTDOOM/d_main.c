@@ -1300,7 +1300,11 @@ void D_DoomMain(void)
     D_AddFile("mode4.wad");
 #endif
 
-    setbuf(stdout, NULL);
+#if defined(MODE_Y_HALF) || defined(MODE_CGA_AFH)
+    D_AddFile("fonth.wad");
+#endif
+
+    setvbuf(stdout, NULL, _IONBF, 0);
     modifiedgame = false;
 
     respawnparm = M_CheckParm("-respawn");
