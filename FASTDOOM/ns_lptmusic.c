@@ -44,6 +44,39 @@ void LPTMIDI_SendMidi(int data)
     } while ((status & 0x20) == 0);
     outp(LPTMIDI_BaseAddr, data);
 
+    /*
+        _asm
+        {
+                        mov     bx,msg
+                        mov     cx,len
+                        add     cx,bx
+                        mov     dx,midi.parallelport
+                        inc     dx
+                        inc     dx
+        NextByte:       cmp     bx,cx
+                        je      End
+                        mov     al,03h
+                        out     dx,al
+                        dec     dx
+                        dec     dx
+                        mov     al,[bx]
+                        out     dx,al
+                        inc     dx
+                        inc     dx
+                        mov     al,07h
+                        out     dx,al
+                        in      al,dx                   ; Delay 3.5 microseconds
+                        in      al,dx
+                        in      al,dx
+                        in      al,dx
+                        in      al,dx
+                        in      al,dx
+                        inc     bx
+                        jmp     NextByte
+        End:
+        }
+    */
+
     RestoreInterrupts(flags);
 }
 
