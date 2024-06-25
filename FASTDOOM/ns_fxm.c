@@ -73,6 +73,7 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
     case GenMidi:
     case SBMIDI:
     case RS232MIDI:
+    case LPTMIDI:
         device->MaxVoices = 0;
         device->MaxSampleBits = 0;
         device->MaxChannels = 0;
@@ -410,6 +411,7 @@ void FX_SetVolume(int volume)
     case GenMidi:
     case SBMIDI:
     case RS232MIDI:
+    case LPTMIDI:
         break;
 
     case UltraSound:
