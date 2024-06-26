@@ -28,7 +28,6 @@ void LPTMIDI_SendMidi(int data);
 int LPTMIDI_Reset(void);
 int LPTMIDI_EnterUART(void);
 int LPTMIDI_Init(int addr);
-void LPTMIDI_ResetMidi(void);
 void LPTMIDI_NoteOff(int channel, int key, int velocity);
 void LPTMIDI_NoteOn(int channel, int key, int velocity);
 void LPTMIDI_PolyAftertouch(int channel, int key, int pressure);

@@ -28,7 +28,6 @@ void MPU_SendMidi(int data);
 int MPU_Reset(void);
 int MPU_EnterUART(void);
 int MPU_Init(int addr);
-void MPU_ResetMidi(void);
 void MPU_NoteOff(int channel, int key, int velocity);
 void MPU_NoteOn(int channel, int key, int velocity);
 void MPU_PolyAftertouch(int channel, int key, int pressure);
