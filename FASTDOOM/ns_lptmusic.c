@@ -20,8 +20,6 @@
 #define MIDI_MONO_MODE_ON 0x7E
 #define MIDI_ALL_NOTES_OFF 0x7B
 
-#define SERIAL_BAUD_RATE 38400
-
 int LPTMIDI_BaseAddr = LPTMIDI_DefaultAddress;
 
 /*---------------------------------------------------------------------
@@ -48,6 +46,31 @@ void LPTMIDI_SendMidi(int data)
     inp(LPTMIDI_BaseAddr + 2);
     inp(LPTMIDI_BaseAddr + 2);
     inp(LPTMIDI_BaseAddr + 2);
+
+    RestoreInterrupts(flags);
+}
+
+void LPTMIDI_SendCommand(int data)
+{
+    unsigned flags;
+    int status;
+
+    flags = DisableInterrupts();
+
+    outp(LPTMIDI_BaseAddr + 2, 0x02);
+    outp(LPTMIDI_BaseAddr, data);
+    outp(LPTMIDI_BaseAddr + 2, 0x06);
+
+    /* Delay 3.5 microseconds */
+    inp(LPTMIDI_BaseAddr + 2);
+    inp(LPTMIDI_BaseAddr + 2);
+    inp(LPTMIDI_BaseAddr + 2);
+    inp(LPTMIDI_BaseAddr + 2);
+    inp(LPTMIDI_BaseAddr + 2);
+    inp(LPTMIDI_BaseAddr + 2);
+
+    outp(LPTMIDI_BaseAddr + 2, 0x0F);
+    outp(LPTMIDI_BaseAddr + 2, 0x07);
 
     RestoreInterrupts(flags);
 }
@@ -143,11 +166,9 @@ void LPTMIDI_PitchBend(int channel, int lsb, int msb)
 
 int LPTMIDI_Reset()
 {
-    outp(LPTMIDI_BaseAddr + 1, 0x00);                      // Disable all interrupts
-    outp(LPTMIDI_BaseAddr + 3, 0x80);                      // Enable the baud rate divisor
-    outp(LPTMIDI_BaseAddr + 0, 115200 / SERIAL_BAUD_RATE); // Set the baud rate
-    outp(LPTMIDI_BaseAddr + 1, 0x00);                      // Hi byte
-    outp(LPTMIDI_BaseAddr + 3, 0x03);                      // 8 bits, no parity, one stop bit
+    // Output "Reset" command via Command port
+    LPTMIDI_SendCommand(LPTMIDI_CmdReset);
+
     return LPTMIDI_Ok;
 }
 
