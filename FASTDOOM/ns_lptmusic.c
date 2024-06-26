@@ -37,45 +37,17 @@ void LPTMIDI_SendMidi(int data)
 
     flags = DisableInterrupts();
 
-    // Yuck, busy wait. Install an interrupt with DPMI?
-    do
-    {
-        status = inp(LPTMIDI_BaseAddr + 5);
-    } while ((status & 0x20) == 0);
+    outp(LPTMIDI_BaseAddr + 2, 0x03);
     outp(LPTMIDI_BaseAddr, data);
+    outp(LPTMIDI_BaseAddr + 2, 0x07);
 
-    /*
-        _asm
-        {
-                        mov     bx,msg
-                        mov     cx,len
-                        add     cx,bx
-                        mov     dx,midi.parallelport
-                        inc     dx
-                        inc     dx
-        NextByte:       cmp     bx,cx
-                        je      End
-                        mov     al,03h
-                        out     dx,al
-                        dec     dx
-                        dec     dx
-                        mov     al,[bx]
-                        out     dx,al
-                        inc     dx
-                        inc     dx
-                        mov     al,07h
-                        out     dx,al
-                        in      al,dx                   ; Delay 3.5 microseconds
-                        in      al,dx
-                        in      al,dx
-                        in      al,dx
-                        in      al,dx
-                        in      al,dx
-                        inc     bx
-                        jmp     NextByte
-        End:
-        }
-    */
+    /* Delay 3.5 microseconds */
+    inp(LPTMIDI_BaseAddr + 2);
+    inp(LPTMIDI_BaseAddr + 2);
+    inp(LPTMIDI_BaseAddr + 2);
+    inp(LPTMIDI_BaseAddr + 2);
+    inp(LPTMIDI_BaseAddr + 2);
+    inp(LPTMIDI_BaseAddr + 2);
 
     RestoreInterrupts(flags);
 }
