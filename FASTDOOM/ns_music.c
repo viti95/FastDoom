@@ -9,6 +9,7 @@
 #include "ns_sb.h"
 #include "ns_sbmid.h"
 #include "ns_rs232.h"
+#include "ns_lptmusic.h"
 #include "ns_gusmi.h"
 #include "ns_mp401.h"
 #include "ns_awe32.h"
@@ -34,6 +35,7 @@ int MUSIC_InitGUS(midifuncs *Funcs);
 int MUSIC_InitCMS(midifuncs *Funcs, int Address);
 int MUSIC_InitSBMIDI(midifuncs *Funcs,int Address);
 int MUSIC_InitRS232MIDI(midifuncs *Funcs,int Address);
+int MUSIC_InitLPTMIDI(midifuncs *Funcs,int Address);
 
 /*---------------------------------------------------------------------
    Function: MUSIC_Init
@@ -76,6 +78,10 @@ int MUSIC_Init(int SoundCard, int Address)
 
     case RS232MIDI:
         status = MUSIC_InitRS232MIDI(&MUSIC_MidiFunctions, Address);
+        break;
+
+    case LPTMIDI:
+        status = MUSIC_InitLPTMIDI(&MUSIC_MidiFunctions, Address);
         break;
 
     case Awe32:
@@ -150,6 +156,10 @@ int MUSIC_Shutdown(
 
     case RS232MIDI:
         RS232_Reset();
+        break;
+
+    case LPTMIDI:
+        LPTMIDI_Reset();
         break;
 
     case Awe32:
@@ -257,6 +267,7 @@ int MUSIC_PlaySong(
     case SoundScape:
     case SBMIDI:
     case RS232MIDI:
+    case LPTMIDI:
     case Awe32:
     case UltraSound:
     case CMS:
@@ -470,6 +481,31 @@ int MUSIC_InitRS232MIDI(
     Funcs->ProgramChange = RS232_ProgramChange;
     Funcs->ChannelAftertouch = RS232_ChannelAftertouch;
     Funcs->PitchBend = RS232_PitchBend;
+    Funcs->SetVolume = NULL;
+    Funcs->GetVolume = NULL;
+
+    MIDI_SetMidiFuncs(Funcs);
+
+    return (status);
+}
+
+int MUSIC_InitLPTMIDI(
+    midifuncs *Funcs,
+    int Address)
+{
+    int status;
+
+    status = MUSIC_Ok;
+
+    LPTMIDI_Init(Address);
+
+    Funcs->NoteOff = LPTMIDI_NoteOff;
+    Funcs->NoteOn = LPTMIDI_NoteOn;
+    Funcs->PolyAftertouch = LPTMIDI_PolyAftertouch;
+    Funcs->ControlChange = LPTMIDI_ControlChange;
+    Funcs->ProgramChange = LPTMIDI_ProgramChange;
+    Funcs->ChannelAftertouch = LPTMIDI_ChannelAftertouch;
+    Funcs->PitchBend = LPTMIDI_PitchBend;
     Funcs->SetVolume = NULL;
     Funcs->GetVolume = NULL;
 

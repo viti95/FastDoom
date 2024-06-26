@@ -27,6 +27,7 @@ typedef enum
    FileWAV,
    SBMIDI,
    RS232MIDI,
+   LPTMIDI,
    NumSoundCards
 } soundcardnames;
 

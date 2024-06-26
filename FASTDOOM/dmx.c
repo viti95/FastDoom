@@ -346,6 +346,8 @@ int ASS_GetSoundCardCode(int sndDevice)
         return SBMIDI;
     case snd_RS232MIDI:
         return RS232MIDI;
+    case snd_LPTMIDI:
+        return LPTMIDI;
     default:
         return -1;
     }

@@ -28,7 +28,6 @@ void SBMIDI_SendMidi(int data);
 int SBMIDI_Reset(void);
 int SBMIDI_EnterUART(void);
 int SBMIDI_Init();
-void SBMIDI_ResetMidi(void);
 void SBMIDI_NoteOff(int channel, int key, int velocity);
 void SBMIDI_NoteOn(int channel, int key, int velocity);
 void SBMIDI_PolyAftertouch(int channel, int key, int pressure);

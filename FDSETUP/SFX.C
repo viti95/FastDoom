@@ -986,6 +986,7 @@ int SetupFX(void)
 	case M_WAV:
 	case M_SBMIDI:
 	case M_RS232MIDI:
+	case M_LPTMIDI:
 	case M_GMIDI:
 		savefx = FALSE;
 		break;
