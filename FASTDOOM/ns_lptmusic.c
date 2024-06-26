@@ -172,6 +172,13 @@ int LPTMIDI_Reset()
     return LPTMIDI_Ok;
 }
 
+int LPTMIDI_EnterUART()
+{
+    LPTMIDI_SendCommand(LPTMIDI_CmdEnterUART);
+
+    return LPTMIDI_Ok;
+}
+
 /*---------------------------------------------------------------------
    Function: LPTMIDI_Init
 
@@ -183,5 +190,8 @@ int LPTMIDI_Init(int addr)
     LPTMIDI_BaseAddr = addr;
 
     LPTMIDI_Reset();
+
+    LPTMIDI_EnterUART();
+
     return LPTMIDI_Ok;
 }
