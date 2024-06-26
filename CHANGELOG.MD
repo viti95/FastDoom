@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 0.9.9f (?? ??? ????)
+* Dreamblaster S2P support (MIDI through LPT)
+
 ## 0.9.9e (18 Jun 2024)
 * Fixed diminished lightning issues on high resolution VESA modes
 * Fixed some 2D status bar and menus misalignements
