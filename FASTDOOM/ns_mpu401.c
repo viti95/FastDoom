@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "ns_dpmi.h"
 #include "ns_user.h"
-#include "ns_mp401.h"
+#include "ns_mpu401.h"
 #include "options.h"
 
 #define MIDI_NOTE_OFF 0x80

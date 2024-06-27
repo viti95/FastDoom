@@ -11,7 +11,7 @@
 #include "ns_rs232.h"
 #include "ns_lptmusic.h"
 #include "ns_gusmi.h"
-#include "ns_mp401.h"
+#include "ns_mpu401.h"
 #include "ns_awe32.h"
 #include "ns_cms.h"
 #include "ns_scape.h"
