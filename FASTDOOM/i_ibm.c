@@ -1102,6 +1102,10 @@ byte *I_ZoneBase(int *size)
     int386x(0x31, &regs, &regs, &segregs);
 
     heap = meminfo[0];
+    // magic number: limit memory
+    if (heap > 32768000) {
+        heap = 32768000;
+    }
     printf("Available DPMI memory: %d Kb\n", heap >> 10);
 
     heap -= 0x4000; // leave 16kb free
