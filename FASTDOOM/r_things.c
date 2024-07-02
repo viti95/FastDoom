@@ -277,7 +277,7 @@ void R_DrawVisSprite(vissprite_t *vis)
         // NULL colormap = shadow draw
         if (invisibleRender >= INVISIBLE_SATURN)
             dc_colormap = colormaps;
-        colfunc = fuzzcolfunc;
+        spritefunc = fuzzcolfunc;
     }
 
 #if defined(MODE_T4050)
@@ -358,29 +358,29 @@ void R_DrawVisSprite(vissprite_t *vis)
             if (detailshift == DETAIL_HIGH)
             {
                 if ((dc_x & 1) == 0)
-                    colfunc();
+                    spritefunc();
             }
             else
-                colfunc();
+                spritefunc();
 #elif defined(MODE_CGA512)
             switch (detailshift)
             {
             case DETAIL_HIGH:
                 if ((dc_x & 3) == 0)
-                    colfunc();
+                    spritefunc();
                 break;
             case DETAIL_LOW:
                 if ((dc_x & 1) == 0)
-                    colfunc();
+                    spritefunc();
                 break;
             default:
-                colfunc();
+                spritefunc();
                 break;
             }
 #elif defined(MODE_MDA)
             R_DrawSpriteTextMDA();
 #else
-            colfunc();
+            spritefunc();
 #endif
 
             column = (column_t *)((byte *)column + column->length + 4);
@@ -391,7 +391,7 @@ void R_DrawVisSprite(vissprite_t *vis)
         frac += vis->xiscale;
     } while (dc_x <= vis->x2);
 
-    colfunc = basecolfunc;
+    spritefunc = basecolfunc;
 }
 
 //
