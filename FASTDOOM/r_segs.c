@@ -114,6 +114,23 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 	backsector = curline->backsector;
 	texnum = texturetranslation[curline->sidedef->midtexture];
 
+	lump = texturecolumnlump[texnum][0];
+	ofs = texturecolumnofs[texnum][0] - 3;
+
+	if (lump > 0)
+	{
+		col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
+	}
+	else
+	{
+		if (!texturecomposite[texnum])
+			R_GenerateComposite(texnum);
+
+		col = (column_t *)(texturecomposite[texnum] + ofs);
+	}
+
+	dc_color = ((byte *)col + 3)[0];
+
 	lightnum = (frontsector->lightlevel >> LIGHTSEGSHIFT) + extralight;
 
 	if (curline->v1->y == curline->v2->y)
@@ -309,6 +326,23 @@ void R_RenderMaskedSegRange2(drawseg_t *ds)
 	frontsector = curline->frontsector;
 	backsector = curline->backsector;
 	texnum = texturetranslation[curline->sidedef->midtexture];
+
+	lump = texturecolumnlump[texnum][0];
+	ofs = texturecolumnofs[texnum][0] - 3;
+
+	if (lump > 0)
+	{
+		col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
+	}
+	else
+	{
+		if (!texturecomposite[texnum])
+			R_GenerateComposite(texnum);
+
+		col = (column_t *)(texturecomposite[texnum] + ofs);
+	}
+
+	dc_color = ((byte *)col + 3)[0];
 
 	lightnum = (frontsector->lightlevel >> LIGHTSEGSHIFT) + extralight;
 
@@ -521,6 +555,31 @@ void R_RenderSegLoop(void)
 #endif
 
 	// texturecolumn = 0;				// shut up compiler warning
+
+	if (midtexture) {
+		tex = midtexture;
+	} else if (toptexture) {
+		tex = toptexture;
+	} else {
+		tex = bottomtexture;
+	}
+
+	lump = texturecolumnlump[tex][0];
+	ofs = texturecolumnofs[tex][0] - 3;
+
+	if (lump > 0)
+	{
+		col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
+	}
+	else
+	{
+		if (!texturecomposite[tex])
+			R_GenerateComposite(tex);
+
+		col = (column_t *)(texturecomposite[tex] + ofs);
+	}
+
+	dc_color = ((byte *)col + 3)[0];
 
 	for (; rw_x < rw_stopx; rw_x++)
 	{

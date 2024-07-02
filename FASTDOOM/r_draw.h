@@ -30,6 +30,7 @@ extern fixed_t dc_texturemid;
 
 // first pixel in a column
 extern byte *dc_source;
+extern byte *dc_color;
 
 extern int columnofs[SCREENWIDTH];
 
@@ -46,6 +47,10 @@ extern byte **ylookup;
 // The span blitting interface.
 // Hook in assembler or system specific BLT
 //  here.
+
+void R_DrawColumnFlat(void);
+void R_DrawColumnFlatLow(void);
+void R_DrawColumnFlatPotato(void);
 
 void R_DrawColumnFastLEA(void);
 void R_DrawColumn(void);

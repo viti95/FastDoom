@@ -1104,7 +1104,7 @@ void R_ExecuteSetViewSize(void)
             colfunc = basecolfunc = R_DrawColumnFastLEA;
             break;
         default:
-            colfunc = basecolfunc = R_DrawColumn;
+            colfunc = basecolfunc = R_DrawColumnFlat;
             break;
         }
 
@@ -1169,7 +1169,7 @@ void R_ExecuteSetViewSize(void)
             colfunc = basecolfunc = R_DrawColumnLowFastLEA;
             break;
         default:
-            colfunc = basecolfunc = R_DrawColumnLow;
+            colfunc = basecolfunc = R_DrawColumnFlatLow;
             break;
         }
 
@@ -1234,7 +1234,7 @@ void R_ExecuteSetViewSize(void)
             colfunc = basecolfunc = R_DrawColumnPotatoFastLEA;
             break;
         default:
-            colfunc = basecolfunc = R_DrawColumnPotato;
+            colfunc = basecolfunc = R_DrawColumnFlatPotato;
             break;
         }
 

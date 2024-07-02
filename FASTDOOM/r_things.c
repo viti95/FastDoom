@@ -299,6 +299,9 @@ void R_DrawVisSprite(vissprite_t *vis)
     spryscale = vis->scale;
     sprtopscreen = centeryfrac - FixedMul(dc_texturemid, spryscale);
 
+    column = (column_t *)((byte *)patch + patch->columnofs[0]);
+    dc_color = ((byte *)column + 3)[0];
+
     dc_x = vis->x1;
     do
     {

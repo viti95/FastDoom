@@ -50,6 +50,7 @@ OP_MOVAL    equ 0x8A
 OP_MOVDEST  equ 0x88
 
 extern _dc_colormap
+extern _dc_color
 extern _dc_x
 extern _dc_yl
 extern _dc_yh

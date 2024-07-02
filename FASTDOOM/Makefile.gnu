@@ -126,6 +126,7 @@ GLOBOBJS = \
  planar2.obj \
  planar3.obj \
  planar4.obj \
+ planar5.obj \
  planarKN.obj \
  planarSX.obj \
  vbe2dh.obj \
