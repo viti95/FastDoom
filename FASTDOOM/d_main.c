@@ -1258,7 +1258,7 @@ void D_DoomMain(void)
 
     printf("\nFastDoom version " FDOOMVERSION "\n\n");
     limitram = M_CheckParm("-limitram");
-    if (limitram) {
+    if (limitram && heap > 32768000) {
         printf("\nLimiting RAM for larger systems... ");
     }
 
