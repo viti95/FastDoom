@@ -1340,7 +1340,7 @@ void M_DrawOptions(void)
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void M_DrawDisplayItem(int item, int position)
 {
-    int y = (position + 1) * 16;
+    int y = 12 + position * 16;
 
     switch (item)
     {
