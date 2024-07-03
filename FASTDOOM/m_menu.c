@@ -596,7 +596,7 @@ void M_DrawLoad(void)
         M_WriteText(LoadDef.x, LoadDef.y + LINEHEIGHT * i, savegamestrings[i]);
 #endif
 #if defined(MODE_Y_HALF)
-        M_DrawSaveLoadBorder(LoadDef.x, (LoadDef.y/2) + 1 + 8 * i);
+        M_DrawSaveLoadBorder(LoadDef.x, (LoadDef.y / 2) + 1 + 8 * i);
         M_WriteText(LoadDef.x, LoadDef.y + 5 + LINEHEIGHT * i, savegamestrings[i]);
 #endif
     }
@@ -717,7 +717,7 @@ void M_DrawSave(void)
         M_WriteText(LoadDef.x, LoadDef.y + LINEHEIGHT * i, savegamestrings[i]);
 #endif
 #if defined(MODE_Y_HALF)
-        M_DrawSaveLoadBorder(LoadDef.x, (LoadDef.y/2) + 1 + 8 * i);
+        M_DrawSaveLoadBorder(LoadDef.x, (LoadDef.y / 2) + 1 + 8 * i);
         M_WriteText(LoadDef.x, LoadDef.y + 5 + LINEHEIGHT * i, savegamestrings[i]);
 #endif
     }
@@ -741,7 +741,6 @@ void M_DrawSave(void)
         i = M_StringWidth(savegamestrings[saveSlot]);
         M_WriteText(LoadDef.x + i, LoadDef.y + 5 + LINEHEIGHT * saveSlot, "_");
 #endif
-
     }
 }
 
@@ -1331,16 +1330,158 @@ void M_DrawOptions(void)
 
 #if defined(MODE_Y_HALF)
     V_DrawPatchDirectCentered(108, 2, W_CacheLumpName("M_OPTTTL", PU_CACHE));
-    V_DrawPatchDirectCentered(OptionsDef.x + 120, (OptionsDef.y/2) + 16, W_CacheLumpName((char *)msgNames[showMessages], PU_CACHE));
-    M_DrawThermo(OptionsDef.x, (OptionsDef.y/2) - 1 + LINEHEIGHT * (mousesens + 2), 10, mouseSensitivity);
-    M_DrawThermo(OptionsDef.x, (OptionsDef.y/2) - 1 + LINEHEIGHT * (scrnsize + 2), 10, screenSize);
+    V_DrawPatchDirectCentered(OptionsDef.x + 120, (OptionsDef.y / 2) + 16, W_CacheLumpName((char *)msgNames[showMessages], PU_CACHE));
+    M_DrawThermo(OptionsDef.x, (OptionsDef.y / 2) - 1 + LINEHEIGHT * (mousesens + 2), 10, mouseSensitivity);
+    M_DrawThermo(OptionsDef.x, (OptionsDef.y / 2) - 1 + LINEHEIGHT * (scrnsize + 2), 10, screenSize);
     M_WriteText(OptionsDef.x + 1, OptionsDef.y + LINEHEIGHT * benchmark_option + 4, "BENCHMARK");
 #endif
 }
 
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+void M_DrawDisplayItem(int item, int position)
+{
+    int y = (position + 1) * 16;
+
+    switch (item)
+    {
+    case 0:
+        M_WriteText(58, y, "VSYNC:");
+        M_WriteText(214, y, waitVsync ? "ON" : "OFF");
+        break;
+    case 1:
+        M_WriteText(58, y, "DETAIL LEVEL:");
+        M_WriteText(214, y, detailLevel == DETAIL_POTATO ? "POTATO" : detailLevel == DETAIL_LOW ? "LOW"
+                                                                                                 : "HIGH");
+        break;
+    case 2:
+        M_WriteText(58, y, "VISPLANE RENDERING:");
+        M_WriteText(214, y, (visplaneRender == VISPLANES_NORMAL) ? "FULL" : (visplaneRender == VISPLANES_FLAT) ? "FLAT"
+                                                                                                                : "FLATTER");
+        break;
+    case 3:
+        M_WriteText(58, y, "SKY RENDERING:");
+        M_WriteText(214, y, flatSky ? "FLAT" : "FULL");
+        break;
+    case 4:
+        M_WriteText(58, y, "INVISIBLE RENDERING:");
+        switch (invisibleRender)
+        {
+        case INVISIBLE_NORMAL:
+            M_WriteText(214, y, "FUZZY");
+            break;
+        case INVISIBLE_FLAT:
+            M_WriteText(214, y, "FLAT");
+            break;
+        case INVISIBLE_FLAT_SATURN:
+            M_WriteText(214, y, "FLAT SATURN");
+            break;
+        case INVISIBLE_SATURN:
+            M_WriteText(214, y, "SATURN");
+            break;
+        case INVISIBLE_TRANSLUCENT:
+            M_WriteText(214, y, "TRANSLUCENT");
+            break;
+        }
+        break;
+    case 5:
+        M_WriteText(58, y, "SHOW FPS:");
+        switch (showFPS)
+        {
+        case NO_FPS:
+            M_WriteText(214, y, "OFF");
+            break;
+        case SCREEN_FPS:
+            M_WriteText(214, y, "SCREEN");
+            break;
+        case DEBUG_CARD_2D_FPS:
+            M_WriteText(214, y, "DEBUG CARD 2N");
+            break;
+        case DEBUG_CARD_4D_FPS:
+            M_WriteText(214, y, "DEBUG CARD 4N");
+            break;
+        case SCREEN_DC2D_FPS:
+            M_WriteText(214, y, "SCREEN + DC2N");
+            break;
+        case SCREEN_DC4D_FPS:
+            M_WriteText(214, y, "SCREEN + DC4N");
+            break;
+        }
+        break;
+    case 6:
+        M_WriteText(58, y, "SPRITE CULLING:");
+        M_WriteText(214, y, nearSprites ? "ON" : "OFF");
+        break;
+    case 7:
+        M_WriteText(58, y, "MELTING LOAD EFFECT:");
+        M_WriteText(214, y, noMelt ? "OFF" : "ON");
+        break;
+    case 8:
+        M_WriteText(58, y, "BUS SPEED:");
+        M_WriteText(214, y, busSpeed ? "SLOW" : "FAST");
+        break;
+    case 9:
+        M_WriteText(58, y, "CPU RENDERER:");
+        switch (selectedCPU)
+        {
+        case AUTO_CPU:
+            M_WriteText(214, y, "AUTODETECT");
+            break;
+        case INTEL_386SX:
+            M_WriteText(214, y, "INTEL 386SX");
+            break;
+        case INTEL_386DX:
+            M_WriteText(214, y, "INTEL 386DX");
+            break;
+        case INTEL_486:
+            M_WriteText(214, y, "INTEL 486");
+            break;
+        case CYRIX_386DLC:
+            M_WriteText(214, y, "CYRIX 386DLC");
+            break;
+        case CYRIX_486:
+            M_WriteText(214, y, "CYRIX 486");
+            break;
+        case UMC_GREEN_486:
+            M_WriteText(214, y, "UMC 486");
+            break;
+        case CYRIX_5X86:
+            M_WriteText(214, y, "CYRIX 5X86");
+            break;
+        case AMD_K5:
+            M_WriteText(214, y, "AMD K5");
+            break;
+        case INTEL_PENTIUM:
+            M_WriteText(214, y, "INTEL PENTIUM");
+            break;
+        }
+        break;
+    } 
+}
+#endif
+
 void M_DrawDisplay(void)
 {
-    // V_DrawPatchDirectCentered(54, 15, 0, W_CacheLumpName("M_DISOPT", PU_CACHE));
+    int i, j;
+    int itemMin = itemOn - (display_end / 2);
+    int itemMax = itemOn + (display_end / 2);
+
+    if (itemMin < 0)
+    {
+
+        itemMin = 0;
+        itemMax = itemMin + display_end;
+    }
+    else if (itemMax > display_end)
+    {
+
+        itemMax = display_end;
+        itemMin = itemMax - display_end;
+    }
+
+    for (i = itemMin, j = 0; i < itemMax; i++, j++)
+    {
+        M_DrawDisplayItem(i, j);
+    }
 
 #if defined(MODE_T4025) || defined(MODE_T4050)
     V_WriteTextDirect(6, 1, "VSync:");
@@ -1636,108 +1777,6 @@ void M_DrawDisplay(void)
         break;
     case INTEL_PENTIUM:
         V_WriteTextDirect(45, 38, "INTEL PENTIUM");
-        break;
-    }
-#endif
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-    M_WriteText(58, 12, "VSYNC:");
-    M_WriteText(214, 12, waitVsync ? "ON" : "OFF");
-
-    M_WriteText(58, 28, "DETAIL LEVEL:");
-    M_WriteText(214, 28, detailLevel == DETAIL_POTATO ? "POTATO" : detailLevel == DETAIL_LOW ? "LOW"
-                                                                                             : "HIGH");
-
-    M_WriteText(58, 44, "VISPLANE RENDERING:");
-    M_WriteText(214, 44, (visplaneRender == VISPLANES_NORMAL) ? "FULL" : (visplaneRender == VISPLANES_FLAT) ? "FLAT"
-                                                                                                            : "FLATTER");
-
-    M_WriteText(58, 60, "SKY RENDERING:");
-    M_WriteText(214, 60, flatSky ? "FLAT" : "FULL");
-
-    M_WriteText(58, 76, "INVISIBLE RENDERING:");
-    switch (invisibleRender)
-    {
-    case INVISIBLE_NORMAL:
-        M_WriteText(214, 76, "FUZZY");
-        break;
-    case INVISIBLE_FLAT:
-        M_WriteText(214, 76, "FLAT");
-        break;
-    case INVISIBLE_FLAT_SATURN:
-        M_WriteText(214, 76, "FLAT SATURN");
-        break;
-    case INVISIBLE_SATURN:
-        M_WriteText(214, 76, "SATURN");
-        break;
-    case INVISIBLE_TRANSLUCENT:
-        M_WriteText(214, 76, "TRANSLUCENT");
-        break;
-    }
-
-    M_WriteText(58, 92, "SHOW FPS:");
-    switch (showFPS)
-    {
-    case NO_FPS:
-        M_WriteText(214, 92, "OFF");
-        break;
-    case SCREEN_FPS:
-        M_WriteText(214, 92, "SCREEN");
-        break;
-    case DEBUG_CARD_2D_FPS:
-        M_WriteText(214, 92, "DEBUG CARD 2N");
-        break;
-    case DEBUG_CARD_4D_FPS:
-        M_WriteText(214, 92, "DEBUG CARD 4N");
-        break;
-    case SCREEN_DC2D_FPS:
-        M_WriteText(214, 92, "SCREEN + DC2N");
-        break;
-    case SCREEN_DC4D_FPS:
-        M_WriteText(214, 92, "SCREEN + DC4N");
-        break;
-    }
-
-    M_WriteText(58, 108, "SPRITE CULLING:");
-    M_WriteText(214, 108, nearSprites ? "ON" : "OFF");
-
-    M_WriteText(58, 124, "MELTING LOAD EFFECT:");
-    M_WriteText(214, 124, noMelt ? "OFF" : "ON");
-
-    M_WriteText(58, 140, "BUS SPEED:");
-    M_WriteText(214, 140, busSpeed ? "SLOW" : "FAST");
-
-    M_WriteText(58, 156, "CPU RENDERER:");
-    switch (selectedCPU)
-    {
-    case AUTO_CPU:
-        M_WriteText(214, 156, "AUTODETECT");
-        break;
-    case INTEL_386SX:
-        M_WriteText(214, 156, "INTEL 386SX");
-        break;
-    case INTEL_386DX:
-        M_WriteText(214, 156, "INTEL 386DX");
-        break;
-    case INTEL_486:
-        M_WriteText(214, 156, "INTEL 486");
-        break;
-    case CYRIX_386DLC:
-        M_WriteText(214, 156, "CYRIX 386DLC");
-        break;
-    case CYRIX_486:
-        M_WriteText(214, 156, "CYRIX 486");
-        break;
-    case UMC_GREEN_486:
-        M_WriteText(214, 156, "UMC 486");
-        break;
-    case CYRIX_5X86:
-        M_WriteText(214, 156, "CYRIX 5X86");
-        break;
-    case AMD_K5:
-        M_WriteText(214, 156, "AMD K5");
-        break;
-    case INTEL_PENTIUM:
-        M_WriteText(214, 156, "INTEL PENTIUM");
         break;
     }
 #endif
@@ -2738,7 +2777,7 @@ void M_Drawer(void)
             V_WriteTextDirect(x / 4, y / 4, currentMenu->menuitems[i].text);
 #endif
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-            V_DrawPatchDirectCentered(x,  y, W_CacheLumpName(currentMenu->menuitems[i].name, PU_CACHE));
+            V_DrawPatchDirectCentered(x, y, W_CacheLumpName(currentMenu->menuitems[i].name, PU_CACHE));
 #endif
         }
 
@@ -2759,7 +2798,7 @@ void M_Drawer(void)
     V_DrawPatchDirectCentered(x + SKULLXOFF, currentMenu->y - 5 + itemOn * LINEHEIGHT, W_CacheLumpName(skullName[whichSkull], PU_CACHE));
 #endif
 #if defined(MODE_Y_HALF)
-    V_DrawPatchDirectCentered(x + SKULLXOFF, (currentMenu->y/2) - 2 + itemOn * LINEHEIGHT, W_CacheLumpName(skullName[whichSkull], PU_CACHE));
+    V_DrawPatchDirectCentered(x + SKULLXOFF, (currentMenu->y / 2) - 2 + itemOn * LINEHEIGHT, W_CacheLumpName(skullName[whichSkull], PU_CACHE));
 #endif
 }
 
