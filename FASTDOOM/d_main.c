@@ -93,6 +93,8 @@ char *wadfiles[MAXWADFILES];
 boolean respawnparm; // checkparm of -respawn
 boolean fastparm;    // checkparm of -fast
 
+boolean limitram; // checkparm of -limitram
+
 boolean flatSky;
 int invisibleRender;
 int visplaneRender;
@@ -1255,6 +1257,11 @@ void D_DoomMain(void)
     union REGS regs;
 
     printf("\nFastDoom version " FDOOMVERSION "\n\n");
+    limitram = M_CheckParm("-limitram");
+    if (limitram) {
+        printf("\nLimiting RAM for larger systems... ");
+    }
+
     Z_Init();
 
     p = M_CheckParm("-iwad");

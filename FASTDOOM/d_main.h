@@ -39,6 +39,7 @@ void D_DoomLoopBenchmark(void);
 
 extern unsigned int frametime_position;
 extern unsigned int *frametime;
+extern boolean limitram;
 
 
 // Called by IO functions when input is detected.
