@@ -1344,25 +1344,25 @@ void M_DrawDisplayItem(int item, int position)
 
     switch (item)
     {
-    case 0:
+    case vsync:
         M_WriteText(58, y, "VSYNC:");
         M_WriteText(214, y, waitVsync ? "ON" : "OFF");
         break;
-    case 1:
+    case detail:
         M_WriteText(58, y, "DETAIL LEVEL:");
         M_WriteText(214, y, detailLevel == DETAIL_POTATO ? "POTATO" : detailLevel == DETAIL_LOW ? "LOW"
                                                                                                  : "HIGH");
         break;
-    case 2:
+    case visplanes:
         M_WriteText(58, y, "VISPLANE RENDERING:");
         M_WriteText(214, y, (visplaneRender == VISPLANES_NORMAL) ? "FULL" : (visplaneRender == VISPLANES_FLAT) ? "FLAT"
                                                                                                                 : "FLATTER");
         break;
-    case 3:
+    case sky:
         M_WriteText(58, y, "SKY RENDERING:");
         M_WriteText(214, y, flatSky ? "FLAT" : "FULL");
         break;
-    case 4:
+    case invisible:
         M_WriteText(58, y, "INVISIBLE RENDERING:");
         switch (invisibleRender)
         {
@@ -1383,7 +1383,7 @@ void M_DrawDisplayItem(int item, int position)
             break;
         }
         break;
-    case 5:
+    case showfps:
         M_WriteText(58, y, "SHOW FPS:");
         switch (showFPS)
         {
@@ -1407,19 +1407,19 @@ void M_DrawDisplayItem(int item, int position)
             break;
         }
         break;
-    case 6:
+    case spriteculling:
         M_WriteText(58, y, "SPRITE CULLING:");
         M_WriteText(214, y, nearSprites ? "ON" : "OFF");
         break;
-    case 7:
+    case melting:
         M_WriteText(58, y, "MELTING LOAD EFFECT:");
         M_WriteText(214, y, noMelt ? "OFF" : "ON");
         break;
-    case 8:
+    case bus_speed:
         M_WriteText(58, y, "BUS SPEED:");
         M_WriteText(214, y, busSpeed ? "SLOW" : "FAST");
         break;
-    case 9:
+    case cpu:
         M_WriteText(58, y, "CPU RENDERER:");
         switch (selectedCPU)
         {
