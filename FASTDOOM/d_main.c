@@ -96,6 +96,8 @@ boolean fastparm;    // checkparm of -fast
 boolean flatSky;
 int invisibleRender;
 int visplaneRender;
+int wallRender;
+int spriteRender;
 int selectedCPU;
 int showFPS;
 int debugCardPort;
@@ -1517,6 +1519,10 @@ void D_DoomMain(void)
 
     M_CheckParmOptionalValue("-flatSpan", &visplaneRender, VISPLANES_FLAT);
     M_CheckParmOptionalValue("-flatterSpan", &visplaneRender, VISPLANES_FLATTER);
+    M_CheckParmOptionalValue("-flatWall", &wallRender, WALL_FLAT);
+    M_CheckParmOptionalValue("-flatterWall", &wallRender, WALL_FLATTER);
+    M_CheckParmOptionalValue("-flatSprite", &spriteRender, SPRITE_FLAT);
+    M_CheckParmOptionalValue("-flatterSprites", &spriteRender, SPRITE_FLATTER);
     M_CheckParmOptional("-flatsky", &flatSky);
     M_CheckParmOptionalValue("-flatInv", &invisibleRender, INVISIBLE_FLAT);
     M_CheckParmOptionalValue("-flatsaturn", &invisibleRender, INVISIBLE_FLAT_SATURN);
@@ -1540,6 +1546,8 @@ void D_DoomMain(void)
     M_CheckParmOptional("-slowbus", &busSpeed);
     M_CheckParmOptional("-vsync", &waitVsync);
     M_CheckParmDisable("-defSpan", &visplaneRender);
+    M_CheckParmDisable("-defWall", &wallRender);
+    M_CheckParmDisable("-defSprite", &spriteRender);
     M_CheckParmDisable("-defSky", &flatSky);
     M_CheckParmDisable("-defInv", &invisibleRender);
     M_CheckParmDisable("-far", &nearSprites);

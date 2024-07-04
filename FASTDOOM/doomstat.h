@@ -45,6 +45,8 @@ extern boolean fastparm;    // checkparm of -fast
 extern boolean flatSky;
 extern int invisibleRender;
 extern int visplaneRender;
+extern int wallRender;
+extern int spriteRender;
 extern int selectedCPU;
 extern int showFPS;
 extern int debugCardPort;

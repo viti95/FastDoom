@@ -199,6 +199,8 @@ void M_SfxVol(int choice);
 void M_MusicVol(int choice);
 void M_ChangeDetail(int choice);
 void M_ChangeVisplaneDetail(int choice);
+void M_ChangeWallDetail(int choice);
+void M_ChangeSpriteDetail(int choice);
 void M_ChangeCPU(int choice);
 void M_ChangeVsync(int choice);
 void M_ChangeSkyDetail(int choice);
@@ -382,8 +384,8 @@ menuitem_t DisplayMenu[] =
         {2, "", "", M_ChangeVsync},
         {2, "", "", M_ChangeDetail},
         {2, "", "", M_ChangeVisplaneDetail},
-        {2, "", "", M_ChangeSkyDetail},
-        {2, "", "", M_ChangeSkyDetail},
+        {2, "", "", M_ChangeWallDetail},
+        {2, "", "", M_ChangeSpriteDetail},
         {2, "", "", M_ChangeSkyDetail},
         {2, "", "", M_ChangeInvisibleDetail},
         {2, "", "", M_ChangeShowFPS},
@@ -1364,12 +1366,14 @@ void M_DrawDisplayItem(int item, int position)
         break;
     case columns:
         M_WriteText(58, y, "WALL RENDERING:");
-        M_WriteText(214, y, flatSky ? "FLAT" : "FULL");
+        M_WriteText(214, y, (wallRender == WALL_NORMAL) ? "FULL" : (wallRender == WALL_FLAT) ? "FLAT"
+                                                                                                               : "FLATTER");
         break;
 
     case sprites:
         M_WriteText(58, y, "SPRITE RENDERING:");
-        M_WriteText(214, y, flatSky ? "FLAT" : "FULL");
+        M_WriteText(214, y, (spriteRender == SPRITE_NORMAL) ? "FULL" : (spriteRender == SPRITE_FLAT) ? "FLAT"
+                                                                                                               : "FLATTER");
         break;
 
     case sky:
@@ -1990,6 +1994,74 @@ void M_ChangeVisplaneDetail(int choice)
         players.message = "FLAT VISPLANES";
         break;
     case VISPLANES_FLATTER:
+        players.message = "FLATTER VISPLANES";
+        break;
+    }
+}
+
+void M_ChangeWallDetail(int choice)
+{
+    switch (choice)
+    {
+    case 0:
+        wallRender--;
+
+        if (wallRender == -1)
+            wallRender = WALL_FLATTER;
+        break;
+    case 1:
+        wallRender++;
+
+        if (wallRender == NUM_WALLRENDER)
+            wallRender = WALL_NORMAL;
+        break;
+    }
+
+    R_SetViewSize(screenblocks, detailLevel);
+
+    switch (wallRender)
+    {
+    case WALL_NORMAL:
+        players.message = "FULL VISPLANES";
+        break;
+    case WALL_FLAT:
+        players.message = "FLAT VISPLANES";
+        break;
+    case WALL_FLATTER:
+        players.message = "FLATTER VISPLANES";
+        break;
+    }
+}
+
+void M_ChangeSpriteDetail(int choice)
+{
+    switch (choice)
+    {
+    case 0:
+        spriteRender--;
+
+        if (spriteRender == -1)
+            spriteRender = SPRITE_FLATTER;
+        break;
+    case 1:
+        spriteRender++;
+
+        if (spriteRender == NUM_SPRITERENDER)
+            spriteRender = SPRITE_NORMAL;
+        break;
+    }
+
+    R_SetViewSize(screenblocks, detailLevel);
+
+    switch (spriteRender)
+    {
+    case SPRITE_NORMAL:
+        players.message = "FULL VISPLANES";
+        break;
+    case SPRITE_FLAT:
+        players.message = "FLAT VISPLANES";
+        break;
+    case SPRITE_FLATTER:
         players.message = "FLATTER VISPLANES";
         break;
     }
@@ -2803,17 +2875,11 @@ void M_Drawer(void)
     if (currentMenu == &DisplayDef)
     {
         if (itemOn - (MAX_ITEMS_DRAWN / 2) < 0)
-        {
             V_DrawPatchDirectCentered(x + SKULLXOFF, currentMenu->y - 5 + itemOn * LINEHEIGHT, W_CacheLumpName(skullName[whichSkull], PU_CACHE));
-        }
         else if (itemOn + (MAX_ITEMS_DRAWN / 2) > display_end)
-        {
             V_DrawPatchDirectCentered(x + SKULLXOFF, currentMenu->y - 5 + (itemOn - (display_end - MAX_ITEMS_DRAWN)) * LINEHEIGHT, W_CacheLumpName(skullName[whichSkull], PU_CACHE));
-        }
         else
-        {
             V_DrawPatchDirectCentered(x + SKULLXOFF, currentMenu->y - 5 + (MAX_ITEMS_DRAWN / 2) * LINEHEIGHT, W_CacheLumpName(skullName[whichSkull], PU_CACHE));
-        }
     }
     else
     {

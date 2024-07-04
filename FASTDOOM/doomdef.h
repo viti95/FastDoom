@@ -350,7 +350,23 @@ typedef enum
     VISPLANES_FLAT,
     VISPLANES_FLATTER,
     NUM_VISPLANESRENDER
-} invisiblerender_t;
+} visplanerender_t;
+
+typedef enum
+{
+    WALL_NORMAL,
+    WALL_FLAT,
+    WALL_FLATTER,
+    NUM_WALLRENDER
+} wallrender_t;
+
+typedef enum
+{
+    SPRITE_NORMAL,
+    SPRITE_FLAT,
+    SPRITE_FLATTER,
+    NUM_SPRITERENDER
+} spriterender_t;
 
 typedef enum
 {
