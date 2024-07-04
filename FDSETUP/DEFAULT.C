@@ -35,6 +35,8 @@ int nearSprites = 0;
 int noMelt = 0;
 int invisibleRender = 0;
 int visplaneRender = 0;
+int wallRender = 0;
+int spriteRender = 0;
 int waitVsync = 0;
 int monoSound = 0;
 int autorun = 0;
@@ -74,6 +76,8 @@ default_t defaults[] =
 		{"nomelt", &noMelt, 0},
 		{"invisibleRender", &invisibleRender, 0},
 		{"visplaneRender", &visplaneRender, 0},
+		{"wallRender", &wallRender, 0},
+        {"spriteRender", &spriteRender, 0},
 		{"vsync", &waitVsync, 0},
 
 		{"autorun", &autorun, 0},
