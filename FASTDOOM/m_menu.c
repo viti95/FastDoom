@@ -175,7 +175,7 @@ byte whichSkull;        // which skull to draw
 
 // graphic name of skulls
 // warning: initializer-string for array of chars is too long
-char skullName[2][/*8*/ 9] = {"M_SKULL1", "M_SKULL2"};
+char skullName[2][9] = {"M_SKULL1", "M_SKULL2"};
 
 // current menudef
 menu_t *currentMenu;
@@ -334,14 +334,16 @@ menu_t NewDef =
 #define vsync 0
 #define detail 1
 #define visplanes 2
-#define sky 3
-#define invisible 4
-#define showfps 5
-#define spriteculling 6
-#define melting 7
-#define bus_speed 8
-#define cpu 9
-#define display_end 10
+#define columns 3
+#define sprites 4
+#define sky 5
+#define invisible 6
+#define showfps 7
+#define spriteculling 8
+#define melting 9
+#define bus_speed 10
+#define cpu 11
+#define display_end 12
 
 #define endgame 0
 #define messages 1
@@ -380,6 +382,8 @@ menuitem_t DisplayMenu[] =
         {2, "", "", M_ChangeVsync},
         {2, "", "", M_ChangeDetail},
         {2, "", "", M_ChangeVisplaneDetail},
+        {2, "", "", M_ChangeSkyDetail},
+        {2, "", "", M_ChangeSkyDetail},
         {2, "", "", M_ChangeSkyDetail},
         {2, "", "", M_ChangeInvisibleDetail},
         {2, "", "", M_ChangeShowFPS},
@@ -1351,13 +1355,23 @@ void M_DrawDisplayItem(int item, int position)
     case detail:
         M_WriteText(58, y, "DETAIL LEVEL:");
         M_WriteText(214, y, detailLevel == DETAIL_POTATO ? "POTATO" : detailLevel == DETAIL_LOW ? "LOW"
-                                                                                                 : "HIGH");
+                                                                                                : "HIGH");
         break;
     case visplanes:
         M_WriteText(58, y, "VISPLANE RENDERING:");
         M_WriteText(214, y, (visplaneRender == VISPLANES_NORMAL) ? "FULL" : (visplaneRender == VISPLANES_FLAT) ? "FLAT"
-                                                                                                                : "FLATTER");
+                                                                                                               : "FLATTER");
         break;
+    case columns:
+        M_WriteText(58, y, "WALL RENDERING:");
+        M_WriteText(214, y, flatSky ? "FLAT" : "FULL");
+        break;
+
+    case sprites:
+        M_WriteText(58, y, "SPRITE RENDERING:");
+        M_WriteText(214, y, flatSky ? "FLAT" : "FULL");
+        break;
+
     case sky:
         M_WriteText(58, y, "SKY RENDERING:");
         M_WriteText(214, y, flatSky ? "FLAT" : "FULL");
@@ -1455,27 +1469,29 @@ void M_DrawDisplayItem(int item, int position)
             break;
         }
         break;
-    } 
+    }
 }
 #endif
+
+#define MAX_ITEMS_DRAWN 10
 
 void M_DrawDisplay(void)
 {
     int i, j;
-    int itemMin = itemOn - (display_end / 2);
-    int itemMax = itemOn + (display_end / 2);
+    int itemMin = itemOn - (MAX_ITEMS_DRAWN / 2);
+    int itemMax = itemOn + (MAX_ITEMS_DRAWN / 2);
 
     if (itemMin < 0)
     {
 
         itemMin = 0;
-        itemMax = itemMin + display_end;
+        itemMax = itemMin + MAX_ITEMS_DRAWN;
     }
     else if (itemMax > display_end)
     {
 
         itemMax = display_end;
-        itemMin = itemMax - display_end;
+        itemMin = itemMax - MAX_ITEMS_DRAWN;
     }
 
     for (i = itemMin, j = 0; i < itemMax; i++, j++)
@@ -2784,22 +2800,41 @@ void M_Drawer(void)
         y += LINEHEIGHT;
     }
 
+    if (currentMenu == &DisplayDef)
+    {
+        if (itemOn - (MAX_ITEMS_DRAWN / 2) < 0)
+        {
+            V_DrawPatchDirectCentered(x + SKULLXOFF, currentMenu->y - 5 + itemOn * LINEHEIGHT, W_CacheLumpName(skullName[whichSkull], PU_CACHE));
+        }
+        else if (itemOn + (MAX_ITEMS_DRAWN / 2) > display_end)
+        {
+            V_DrawPatchDirectCentered(x + SKULLXOFF, currentMenu->y - 5 + (itemOn - (display_end - MAX_ITEMS_DRAWN)) * LINEHEIGHT, W_CacheLumpName(skullName[whichSkull], PU_CACHE));
+        }
+        else
+        {
+            V_DrawPatchDirectCentered(x + SKULLXOFF, currentMenu->y - 5 + (MAX_ITEMS_DRAWN / 2) * LINEHEIGHT, W_CacheLumpName(skullName[whichSkull], PU_CACHE));
+        }
+    }
+    else
+    {
+
 // DRAW SKULL
 #if defined(MODE_T4025) || defined(MODE_T4050)
-    V_WriteCharDirect(currentMenu->x / 8 - 3, currentMenu->y / 8 + itemOn * 2, whichSkull + 1);
+        V_WriteCharDirect(currentMenu->x / 8 - 3, currentMenu->y / 8 + itemOn * 2, whichSkull + 1);
 #endif
 #if defined(MODE_T8025) || defined(MODE_MDA)
-    V_WriteCharDirect(currentMenu->x / 4 - 3, currentMenu->y / 8 + itemOn * 2, whichSkull + 1);
+        V_WriteCharDirect(currentMenu->x / 4 - 3, currentMenu->y / 8 + itemOn * 2, whichSkull + 1);
 #endif
 #if defined(MODE_T8050) || defined(MODE_T8043)
-    V_WriteCharDirect(currentMenu->x / 4 - 3, currentMenu->y / 4 + itemOn * 4, whichSkull + 1);
+        V_WriteCharDirect(currentMenu->x / 4 - 3, currentMenu->y / 4 + itemOn * 4, whichSkull + 1);
 #endif
 #if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-    V_DrawPatchDirectCentered(x + SKULLXOFF, currentMenu->y - 5 + itemOn * LINEHEIGHT, W_CacheLumpName(skullName[whichSkull], PU_CACHE));
+        V_DrawPatchDirectCentered(x + SKULLXOFF, currentMenu->y - 5 + itemOn * LINEHEIGHT, W_CacheLumpName(skullName[whichSkull], PU_CACHE));
 #endif
 #if defined(MODE_Y_HALF)
-    V_DrawPatchDirectCentered(x + SKULLXOFF, (currentMenu->y / 2) - 2 + itemOn * LINEHEIGHT, W_CacheLumpName(skullName[whichSkull], PU_CACHE));
+        V_DrawPatchDirectCentered(x + SKULLXOFF, (currentMenu->y / 2) - 2 + itemOn * LINEHEIGHT, W_CacheLumpName(skullName[whichSkull], PU_CACHE));
 #endif
+    }
 }
 
 //
