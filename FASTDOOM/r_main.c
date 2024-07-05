@@ -1097,16 +1097,44 @@ void R_ExecuteSetViewSize(void)
     switch (detailshift)
     {
     case DETAIL_HIGH:
-        switch (selectedCPU)
-        {
-        case UMC_GREEN_486:
-        case CYRIX_5X86:
-        case AMD_K5:
-            colfunc = spritefunc = basecolfunc = R_DrawColumnFastLEA;
+
+        switch (wallRender){
+            case WALL_NORMAL:
+                switch (selectedCPU)
+                {
+                case UMC_GREEN_486:
+                case CYRIX_5X86:
+                case AMD_K5:
+                    colfunc = R_DrawColumnFastLEA;
+                    break;
+                default:
+                    colfunc = R_DrawColumn;
+                    break;
+                }
             break;
-        default:
-            colfunc = R_DrawColumnFlat;
-            spritefunc = basecolfunc = R_DrawColumn;
+            case WALL_FLAT:
+            case WALL_FLATTER:
+                colfunc = R_DrawColumnFlat;
+            break;
+        }
+
+        switch (spriteRender){
+            case SPRITE_NORMAL:
+                switch (selectedCPU)
+                {
+                case UMC_GREEN_486:
+                case CYRIX_5X86:
+                case AMD_K5:
+                    spritefunc = basecolfunc = R_DrawColumnFastLEA;
+                    break;
+                default:
+                    spritefunc = basecolfunc = R_DrawColumn;
+                    break;
+                }
+            break;
+            case SPRITE_FLAT:
+            case SPRITE_FLATTER:
+                spritefunc = basecolfunc = R_DrawColumnFlat;
             break;
         }
 
@@ -1163,16 +1191,44 @@ void R_ExecuteSetViewSize(void)
 
         break;
     case DETAIL_LOW:
-        switch (selectedCPU)
-        {
-        case UMC_GREEN_486:
-        case CYRIX_5X86:
-        case AMD_K5:
-            colfunc = spritefunc = basecolfunc = R_DrawColumnLowFastLEA;
+
+        switch (wallRender){
+            case WALL_NORMAL:
+                switch (selectedCPU)
+                {
+                case UMC_GREEN_486:
+                case CYRIX_5X86:
+                case AMD_K5:
+                    colfunc = R_DrawColumnLowFastLEA;
+                    break;
+                default:
+                    colfunc = R_DrawColumnLow;
+                    break;
+                }
             break;
-        default:
-            colfunc = R_DrawColumnFlatLow;
-            spritefunc = basecolfunc = R_DrawColumnLow;
+            case WALL_FLAT:
+            case WALL_FLATTER:
+                colfunc = R_DrawColumnFlatLow;
+            break;
+        }
+
+        switch (spriteRender){
+            case SPRITE_NORMAL:
+                switch (selectedCPU)
+                {
+                case UMC_GREEN_486:
+                case CYRIX_5X86:
+                case AMD_K5:
+                    spritefunc = basecolfunc = R_DrawColumnLowFastLEA;
+                    break;
+                default:
+                    spritefunc = basecolfunc = R_DrawColumnLow;
+                    break;
+                }
+            break;
+            case SPRITE_FLAT:
+            case SPRITE_FLATTER:
+                spritefunc = basecolfunc = R_DrawColumnFlatLow;
             break;
         }
 
@@ -1229,16 +1285,44 @@ void R_ExecuteSetViewSize(void)
 
         break;
     case DETAIL_POTATO:
-        switch (selectedCPU)
-        {
-        case UMC_GREEN_486:
-        case CYRIX_5X86:
-        case AMD_K5:
-            colfunc = spritefunc = basecolfunc = R_DrawColumnPotatoFastLEA;
+
+        switch (wallRender){
+            case WALL_NORMAL:
+                switch (selectedCPU)
+                {
+                case UMC_GREEN_486:
+                case CYRIX_5X86:
+                case AMD_K5:
+                    colfunc = R_DrawColumnPotatoFastLEA;
+                    break;
+                default:
+                    colfunc = R_DrawColumnPotato;
+                    break;
+                }
             break;
-        default:
-            colfunc = R_DrawColumnFlatPotato;
-            spritefunc = basecolfunc = R_DrawColumnPotato;
+            case WALL_FLAT:
+            case WALL_FLATTER:
+                colfunc = R_DrawColumnFlatPotato;
+            break;
+        }
+
+        switch (spriteRender){
+            case SPRITE_NORMAL:
+                switch (selectedCPU)
+                {
+                case UMC_GREEN_486:
+                case CYRIX_5X86:
+                case AMD_K5:
+                    spritefunc = basecolfunc = R_DrawColumnPotatoFastLEA;
+                    break;
+                default:
+                    spritefunc = basecolfunc = R_DrawColumnPotato;
+                    break;
+                }
+            break;
+            case SPRITE_FLAT:
+            case SPRITE_FLATTER:
+                spritefunc = basecolfunc = R_DrawColumnFlatPotato;
             break;
         }
 

@@ -2022,13 +2022,13 @@ void M_ChangeWallDetail(int choice)
     switch (wallRender)
     {
     case WALL_NORMAL:
-        players.message = "FULL VISPLANES";
+        players.message = "FULL WALLS";
         break;
     case WALL_FLAT:
-        players.message = "FLAT VISPLANES";
+        players.message = "FLAT WALLS";
         break;
     case WALL_FLATTER:
-        players.message = "FLATTER VISPLANES";
+        players.message = "FLATTER WALLS";
         break;
     }
 }
@@ -2056,13 +2056,13 @@ void M_ChangeSpriteDetail(int choice)
     switch (spriteRender)
     {
     case SPRITE_NORMAL:
-        players.message = "FULL VISPLANES";
+        players.message = "FULL SPRITES";
         break;
     case SPRITE_FLAT:
-        players.message = "FLAT VISPLANES";
+        players.message = "FLAT SPRITES";
         break;
     case SPRITE_FLATTER:
-        players.message = "FLATTER VISPLANES";
+        players.message = "FLATTER SPRITES";
         break;
     }
 }
