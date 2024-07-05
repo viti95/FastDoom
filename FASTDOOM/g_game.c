@@ -1385,7 +1385,7 @@ void G_CreateCSV(void)
     if (fptr == NULL) // if file does not exist, create it
     {
         fptr = fopen(CSV_FILE, "w+");
-        fprintf(fptr, "executable" CSV_COLUMN "arch" CSV_COLUMN "detail" CSV_COLUMN "size" CSV_COLUMN "visplanes" CSV_COLUMN "sky" CSV_COLUMN "objects" CSV_COLUMN "transparent_columns" CSV_COLUMN "iwad" CSV_COLUMN "demo" CSV_COLUMN "gametics" CSV_COLUMN "realtics" CSV_COLUMN "fps" CSV_COLUMN "onepercentlow" CSV_COLUMN "dotonepercentlow\n");
+        fprintf(fptr, "executable" CSV_COLUMN "arch" CSV_COLUMN "detail" CSV_COLUMN "size" CSV_COLUMN "visplanes" CSV_COLUMN "walls" CSV_COLUMN "sprites" CSV_COLUMN "sky" CSV_COLUMN "objects" CSV_COLUMN "transparent_columns" CSV_COLUMN "iwad" CSV_COLUMN "demo" CSV_COLUMN "gametics" CSV_COLUMN "realtics" CSV_COLUMN "fps" CSV_COLUMN "onepercentlow" CSV_COLUMN "dotonepercentlow\n");
         fclose(fptr);
     }
     fclose(fptr);
@@ -1462,6 +1462,38 @@ void G_SaveCSVResult(unsigned int gametics, unsigned int realtics, unsigned int 
             fprintf(logFile, "flat");
             break;
         case VISPLANES_FLATTER:
+            fprintf(logFile, "flatter");
+            break;
+        }
+
+        fprintf(logFile, CSV_COLUMN);
+
+        // Walls
+        switch (wallRender)
+        {
+        case WALL_NORMAL:
+            fprintf(logFile, "normal");
+            break;
+        case WALL_FLAT:
+            fprintf(logFile, "flat");
+            break;
+        case WALL_FLATTER:
+            fprintf(logFile, "flatter");
+            break;
+        }
+
+        fprintf(logFile, CSV_COLUMN);
+
+        // Sprites
+        switch (spriteRender)
+        {
+        case SPRITE_NORMAL:
+            fprintf(logFile, "normal");
+            break;
+        case SPRITE_FLAT:
+            fprintf(logFile, "flat");
+            break;
+        case SPRITE_FLATTER:
             fprintf(logFile, "flatter");
             break;
         }
