@@ -126,8 +126,7 @@ fixed_t dc_texturemid;
 // first pixel in a column (possibly virtual)
 byte *dc_source;
 
-byte direct_color = 0;
-byte *dc_color = &direct_color;
+byte dc_color = 0;
 
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF)
 void R_DrawSkyFlat(void)

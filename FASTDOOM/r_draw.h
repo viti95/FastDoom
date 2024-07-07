@@ -30,7 +30,7 @@ extern fixed_t dc_texturemid;
 
 // first pixel in a column
 extern byte *dc_source;
-extern byte *dc_color;
+extern byte dc_color;
 
 extern int columnofs[SCREENWIDTH];
 
