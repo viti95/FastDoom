@@ -1101,6 +1101,8 @@ void R_ExecuteSetViewSize(void)
         switch (wallRender){
             case WALL_NORMAL:
                 renderSegLoop = R_RenderSegLoop;
+                renderMaskedSegRange = R_RenderMaskedSegRange;
+                renderMaskedSegRange2 = R_RenderMaskedSegRange2;
                 switch (selectedCPU)
                 {
                 case UMC_GREEN_486:
@@ -1115,10 +1117,14 @@ void R_ExecuteSetViewSize(void)
             break;
             case WALL_FLAT:
                 renderSegLoop = R_RenderSegLoopFlat;
+                renderMaskedSegRange = R_RenderMaskedSegRangeFlat;
+                renderMaskedSegRange2 = R_RenderMaskedSegRange2Flat;
                 colfunc = R_DrawColumnFlat;
             break;
             case WALL_FLATTER:
                 renderSegLoop = R_RenderSegLoopFlatter;
+                renderMaskedSegRange = R_RenderMaskedSegRangeFlatter;
+                renderMaskedSegRange2 = R_RenderMaskedSegRange2Flatter;
                 colfunc = R_DrawColumnFlat;
             break;
         }
@@ -1200,6 +1206,8 @@ void R_ExecuteSetViewSize(void)
         switch (wallRender){
             case WALL_NORMAL:
                 renderSegLoop = R_RenderSegLoop;
+                renderMaskedSegRange = R_RenderMaskedSegRange;
+                renderMaskedSegRange2 = R_RenderMaskedSegRange2;
                 switch (selectedCPU)
                 {
                 case UMC_GREEN_486:
@@ -1214,10 +1222,14 @@ void R_ExecuteSetViewSize(void)
             break;
             case WALL_FLAT:
                 renderSegLoop = R_RenderSegLoopFlat;
+                renderMaskedSegRange = R_RenderMaskedSegRangeFlat;
+                renderMaskedSegRange2 = R_RenderMaskedSegRange2Flat;
                 colfunc = R_DrawColumnFlatLow;
             break;
             case WALL_FLATTER:
                 renderSegLoop = R_RenderSegLoopFlatter;
+                renderMaskedSegRange = R_RenderMaskedSegRangeFlatter;
+                renderMaskedSegRange2 = R_RenderMaskedSegRange2Flatter;
                 colfunc = R_DrawColumnFlatLow;
             break;
         }
@@ -1299,6 +1311,8 @@ void R_ExecuteSetViewSize(void)
         switch (wallRender){
             case WALL_NORMAL:
                 renderSegLoop = R_RenderSegLoop;
+                renderMaskedSegRange = R_RenderMaskedSegRange;
+                renderMaskedSegRange2 = R_RenderMaskedSegRange2;
                 switch (selectedCPU)
                 {
                 case UMC_GREEN_486:
@@ -1313,10 +1327,14 @@ void R_ExecuteSetViewSize(void)
             break;
             case WALL_FLAT:
                 renderSegLoop = R_RenderSegLoopFlat;
+                renderMaskedSegRange = R_RenderMaskedSegRangeFlat;
+                renderMaskedSegRange2 = R_RenderMaskedSegRange2Flat;
                 colfunc = R_DrawColumnFlatPotato;
             break;
             case WALL_FLATTER:
                 renderSegLoop = R_RenderSegLoopFlatter;
+                renderMaskedSegRange = R_RenderMaskedSegRangeFlatter;
+                renderMaskedSegRange2 = R_RenderMaskedSegRange2Flatter;
                 colfunc = R_DrawColumnFlatPotato;
             break;
         }

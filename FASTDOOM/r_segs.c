@@ -314,6 +314,450 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 	} while (dc_x <= x2);
 }
 
+void R_RenderMaskedSegRangeFlat(drawseg_t *ds,
+							int x1,
+							int x2)
+{
+	unsigned index;
+	column_t *col;
+	int lightnum;
+	int texnum;
+
+	int lump;
+	int ofs;
+	int tex;
+	int column;
+
+	byte *firstPixel;
+	byte color;
+
+	// Calculate light table.
+	// Use different light tables
+	//   for horizontal / vertical / diagonal. Diagonal?
+	// OPTIMIZE: get rid of LIGHTSEGSHIFT globally
+	curline = ds->curline;
+	frontsector = curline->frontsector;
+	backsector = curline->backsector;
+	texnum = texturetranslation[curline->sidedef->midtexture];
+
+	lump = texturecolumnlump[texnum][0];
+	ofs = texturecolumnofs[texnum][0] - 3;
+
+	if (lump > 0)
+	{
+		firstPixel = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
+	}
+	else
+	{
+		if (!texturecomposite[texnum])
+			R_GenerateComposite(texnum);
+
+		firstPixel = texturecomposite[texnum] + ofs;
+	}
+
+	color = *(firstPixel + 3);
+	dc_color = color;
+
+	lightnum = (frontsector->lightlevel >> LIGHTSEGSHIFT) + extralight;
+
+	if (curline->v1->y == curline->v2->y)
+		lightnum--;
+	else if (curline->v1->x == curline->v2->x)
+		lightnum++;
+
+	// Lightnum between 0 and 15
+	if (lightnum < 0)
+		walllights = scalelight[0];
+	else if (lightnum > LIGHTLEVELS - 1)
+		walllights = scalelight[LIGHTLEVELS - 1];
+	else
+		walllights = scalelight[lightnum];
+
+	maskedtexturecol = ds->maskedtexturecol;
+	rw_scalestep = ds->scalestep;
+	spryscale = ds->scale1 + (x1 - ds->x1) * rw_scalestep;
+	mfloorclip = ds->sprbottomclip;
+	mceilingclip = ds->sprtopclip;
+
+	// find positioning
+	if (curline->linedef->dontPegBottom)
+	{
+		dc_texturemid = frontsector->floorheight > backsector->floorheight
+							? frontsector->floorheight
+							: backsector->floorheight;
+		dc_texturemid = dc_texturemid + textureheight[texnum] - viewz;
+	}
+	else
+	{
+		dc_texturemid = frontsector->ceilingheight < backsector->ceilingheight
+							? frontsector->ceilingheight
+							: backsector->ceilingheight;
+		dc_texturemid = dc_texturemid - viewz;
+	}
+	dc_texturemid += curline->sidedef->rowoffset;
+
+	if (fixedcolormap){
+		dc_colormap = fixedcolormap;
+		dc_color = dc_colormap[color];
+	}
+		
+
+	dc_x = x1;
+	do
+	{
+		// calculate lighting
+		if (maskedtexturecol[dc_x] != MAXSHORT)
+		{
+			int topscreen;
+			int bottomscreen;
+			fixed_t basetexturemid;
+
+			int yl, yh;
+			short mfc_x, mcc_x;
+
+			if (!fixedcolormap)
+			{
+				index = spryscale >> LIGHTSCALESHIFT;
+#if PIXEL_SCALING != 1
+				index /= PIXEL_SCALING;
+#endif
+
+				if (index >= MAXLIGHTSCALE)
+					index = MAXLIGHTSCALE - 1;
+
+				dc_colormap = walllights[index];
+				dc_color = dc_colormap[color];
+			}
+
+			sprtopscreen = centeryfrac - FixedMulEDX(spryscale, dc_texturemid);
+
+			// VITI95: OPTIMIZE
+			dc_iscale = 0xffffffffu / (unsigned)spryscale;
+
+			// draw the texture
+
+			tex = texnum;
+			column = maskedtexturecol[dc_x];
+			column &= texturewidthmask[tex];
+			lump = texturecolumnlump[tex][column];
+			ofs = texturecolumnofs[tex][column] - 3;
+
+			if (lump > 0)
+			{
+				col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
+			}
+			else
+			{
+				if (!texturecomposite[tex])
+					R_GenerateComposite(tex);
+
+				col = (column_t *)(texturecomposite[tex] + ofs);
+			}
+
+			basetexturemid = dc_texturemid;
+			mfc_x = mfloorclip[dc_x];
+			mcc_x = mceilingclip[dc_x];
+
+			for (; col->topdelta != 0xff;)
+			{
+				// calculate unclipped screen coordinates
+				//  for post
+				topscreen = sprtopscreen + spryscale * col->topdelta;
+				bottomscreen = topscreen + spryscale * col->length;
+
+				yh = (bottomscreen - 1) >> FRACBITS;
+
+				if (yh >= mfc_x)
+					yh = mfc_x - 1;
+
+				if (yh >= viewheight)
+				{
+					col = (column_t *)((byte *)col + col->length + 4);
+					continue;
+				}
+
+				yl = (topscreen + FRACUNIT - 1) >> FRACBITS;
+
+				if (yl <= mcc_x)
+					yl = mcc_x + 1;
+
+				if (yl > yh)
+				{
+					col = (column_t *)((byte *)col + col->length + 4);
+					continue;
+				}
+
+				dc_source = (byte *)col + 3;
+				dc_texturemid = basetexturemid - (col->topdelta << FRACBITS);
+
+				dc_yh = yh;
+				dc_yl = yl;
+
+#if defined(MODE_CGA16) || defined(MODE_CVB)
+				if (detailshift == DETAIL_HIGH)
+				{
+					if ((dc_x & 1) == 0)
+						colfunc();
+				}
+				else
+					colfunc();
+#elif defined(MODE_CGA512)
+				switch (detailshift)
+				{
+				case DETAIL_HIGH:
+					if ((dc_x & 3) == 0)
+						colfunc();
+					break;
+				case DETAIL_LOW:
+					if ((dc_x & 1) == 0)
+						colfunc();
+					break;
+				default:
+					colfunc();
+					break;
+				}
+#elif defined(MODE_MDA)
+				if (dc_x == x1 || dc_x == x2)
+					R_DrawLineColumnTextMDA();
+				else
+					R_DrawEmptyColumnTextMDA();
+#else
+				colfunc();
+#endif
+
+				col = (column_t *)((byte *)col + col->length + 4);
+			}
+
+			dc_texturemid = basetexturemid;
+
+			maskedtexturecol[dc_x] = MAXSHORT;
+		}
+		spryscale += rw_scalestep;
+		dc_x++;
+	} while (dc_x <= x2);
+}
+
+void R_RenderMaskedSegRangeFlatter(drawseg_t *ds,
+							int x1,
+							int x2)
+{
+	unsigned index;
+	column_t *col;
+	int lightnum;
+	int texnum;
+
+	int lump;
+	int ofs;
+	int tex;
+	int column;
+
+	byte *firstPixel;
+	byte color;
+
+	// Calculate light table.
+	// Use different light tables
+	//   for horizontal / vertical / diagonal. Diagonal?
+	// OPTIMIZE: get rid of LIGHTSEGSHIFT globally
+	curline = ds->curline;
+	frontsector = curline->frontsector;
+	backsector = curline->backsector;
+	texnum = texturetranslation[curline->sidedef->midtexture];
+
+	lump = texturecolumnlump[texnum][0];
+	ofs = texturecolumnofs[texnum][0] - 3;
+
+	if (lump > 0)
+	{
+		firstPixel = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
+	}
+	else
+	{
+		if (!texturecomposite[texnum])
+			R_GenerateComposite(texnum);
+
+		firstPixel = texturecomposite[texnum] + ofs;
+	}
+
+	color = *(firstPixel + 3);
+	dc_color = color;
+
+	lightnum = (frontsector->lightlevel >> LIGHTSEGSHIFT) + extralight;
+
+	if (curline->v1->y == curline->v2->y)
+		lightnum--;
+	else if (curline->v1->x == curline->v2->x)
+		lightnum++;
+
+	// Lightnum between 0 and 15
+	if (lightnum < 0)
+		walllights = scalelight[0];
+	else if (lightnum > LIGHTLEVELS - 1)
+		walllights = scalelight[LIGHTLEVELS - 1];
+	else
+		walllights = scalelight[lightnum];
+
+	maskedtexturecol = ds->maskedtexturecol;
+	rw_scalestep = ds->scalestep;
+	spryscale = ds->scale1 + (x1 - ds->x1) * rw_scalestep;
+	mfloorclip = ds->sprbottomclip;
+	mceilingclip = ds->sprtopclip;
+
+	// find positioning
+	if (curline->linedef->dontPegBottom)
+	{
+		dc_texturemid = frontsector->floorheight > backsector->floorheight
+							? frontsector->floorheight
+							: backsector->floorheight;
+		dc_texturemid = dc_texturemid + textureheight[texnum] - viewz;
+	}
+	else
+	{
+		dc_texturemid = frontsector->ceilingheight < backsector->ceilingheight
+							? frontsector->ceilingheight
+							: backsector->ceilingheight;
+		dc_texturemid = dc_texturemid - viewz;
+	}
+	dc_texturemid += curline->sidedef->rowoffset;
+
+	if (fixedcolormap){
+		dc_colormap = fixedcolormap;
+	}
+		
+
+	dc_x = x1;
+	do
+	{
+		// calculate lighting
+		if (maskedtexturecol[dc_x] != MAXSHORT)
+		{
+			int topscreen;
+			int bottomscreen;
+			fixed_t basetexturemid;
+
+			int yl, yh;
+			short mfc_x, mcc_x;
+
+			if (!fixedcolormap)
+			{
+				index = spryscale >> LIGHTSCALESHIFT;
+#if PIXEL_SCALING != 1
+				index /= PIXEL_SCALING;
+#endif
+
+				if (index >= MAXLIGHTSCALE)
+					index = MAXLIGHTSCALE - 1;
+
+				dc_colormap = walllights[index];
+			}
+
+			sprtopscreen = centeryfrac - FixedMulEDX(spryscale, dc_texturemid);
+
+			// VITI95: OPTIMIZE
+			dc_iscale = 0xffffffffu / (unsigned)spryscale;
+
+			// draw the texture
+
+			tex = texnum;
+			column = maskedtexturecol[dc_x];
+			column &= texturewidthmask[tex];
+			lump = texturecolumnlump[tex][column];
+			ofs = texturecolumnofs[tex][column] - 3;
+
+			if (lump > 0)
+			{
+				col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
+			}
+			else
+			{
+				if (!texturecomposite[tex])
+					R_GenerateComposite(tex);
+
+				col = (column_t *)(texturecomposite[tex] + ofs);
+			}
+
+			basetexturemid = dc_texturemid;
+			mfc_x = mfloorclip[dc_x];
+			mcc_x = mceilingclip[dc_x];
+
+			for (; col->topdelta != 0xff;)
+			{
+				// calculate unclipped screen coordinates
+				//  for post
+				topscreen = sprtopscreen + spryscale * col->topdelta;
+				bottomscreen = topscreen + spryscale * col->length;
+
+				yh = (bottomscreen - 1) >> FRACBITS;
+
+				if (yh >= mfc_x)
+					yh = mfc_x - 1;
+
+				if (yh >= viewheight)
+				{
+					col = (column_t *)((byte *)col + col->length + 4);
+					continue;
+				}
+
+				yl = (topscreen + FRACUNIT - 1) >> FRACBITS;
+
+				if (yl <= mcc_x)
+					yl = mcc_x + 1;
+
+				if (yl > yh)
+				{
+					col = (column_t *)((byte *)col + col->length + 4);
+					continue;
+				}
+
+				dc_source = (byte *)col + 3;
+				dc_texturemid = basetexturemid - (col->topdelta << FRACBITS);
+
+				dc_yh = yh;
+				dc_yl = yl;
+
+#if defined(MODE_CGA16) || defined(MODE_CVB)
+				if (detailshift == DETAIL_HIGH)
+				{
+					if ((dc_x & 1) == 0)
+						colfunc();
+				}
+				else
+					colfunc();
+#elif defined(MODE_CGA512)
+				switch (detailshift)
+				{
+				case DETAIL_HIGH:
+					if ((dc_x & 3) == 0)
+						colfunc();
+					break;
+				case DETAIL_LOW:
+					if ((dc_x & 1) == 0)
+						colfunc();
+					break;
+				default:
+					colfunc();
+					break;
+				}
+#elif defined(MODE_MDA)
+				if (dc_x == x1 || dc_x == x2)
+					R_DrawLineColumnTextMDA();
+				else
+					R_DrawEmptyColumnTextMDA();
+#else
+				colfunc();
+#endif
+
+				col = (column_t *)((byte *)col + col->length + 4);
+			}
+
+			dc_texturemid = basetexturemid;
+
+			maskedtexturecol[dc_x] = MAXSHORT;
+		}
+		spryscale += rw_scalestep;
+		dc_x++;
+	} while (dc_x <= x2);
+}
+
 void R_RenderMaskedSegRange2(drawseg_t *ds)
 {
 	unsigned index;
@@ -537,6 +981,450 @@ void R_RenderMaskedSegRange2(drawseg_t *ds)
 	} while (dc_x <= ds->x2);
 }
 
+void R_RenderMaskedSegRange2Flat(drawseg_t *ds)
+{
+	unsigned index;
+	column_t *col;
+	int lightnum;
+	int texnum;
+
+	int lump;
+	int ofs;
+	int tex;
+	int column;
+
+	byte *firstPixel;
+	byte color;
+
+	// Calculate light table.
+	// Use different light tables
+	//   for horizontal / vertical / diagonal. Diagonal?
+	// OPTIMIZE: get rid of LIGHTSEGSHIFT globally
+	curline = ds->curline;
+	frontsector = curline->frontsector;
+	backsector = curline->backsector;
+	texnum = texturetranslation[curline->sidedef->midtexture];
+
+	lump = texturecolumnlump[texnum][0];
+	ofs = texturecolumnofs[texnum][0] - 3;
+
+	if (lump > 0)
+	{
+		firstPixel = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
+	}
+	else
+	{
+		if (!texturecomposite[texnum])
+			R_GenerateComposite(texnum);
+
+		firstPixel = texturecomposite[texnum] + ofs;
+	}
+
+	color = *(firstPixel + 3);
+	dc_color = color;
+
+	lightnum = (frontsector->lightlevel >> LIGHTSEGSHIFT) + extralight;
+
+	if (curline->v1->y == curline->v2->y)
+		lightnum--;
+	else if (curline->v1->x == curline->v2->x)
+		lightnum++;
+
+	// Lightnum between 0 and 15
+	if (lightnum < 0)
+		walllights = scalelight[0];
+	else if (lightnum > LIGHTLEVELS - 1)
+		walllights = scalelight[LIGHTLEVELS - 1];
+	else
+		walllights = scalelight[lightnum];
+
+	maskedtexturecol = ds->maskedtexturecol;
+
+	rw_scalestep = ds->scalestep;
+	spryscale = ds->scale1;
+	mfloorclip = ds->sprbottomclip;
+	mceilingclip = ds->sprtopclip;
+
+	// find positioning
+	if (curline->linedef->dontPegBottom)
+	{
+		dc_texturemid = frontsector->floorheight > backsector->floorheight
+							? frontsector->floorheight
+							: backsector->floorheight;
+		dc_texturemid = dc_texturemid + textureheight[texnum] - viewz;
+	}
+	else
+	{
+		dc_texturemid = frontsector->ceilingheight < backsector->ceilingheight
+							? frontsector->ceilingheight
+							: backsector->ceilingheight;
+		dc_texturemid = dc_texturemid - viewz;
+	}
+	dc_texturemid += curline->sidedef->rowoffset;
+
+	if (fixedcolormap)
+	{
+		dc_colormap = fixedcolormap;
+		dc_color = dc_colormap[color];
+	}
+		
+
+	dc_x = ds->x1;
+	do
+	{
+		// calculate lighting
+		if (maskedtexturecol[dc_x] != MAXSHORT)
+		{
+			int topscreen;
+			int bottomscreen;
+			fixed_t basetexturemid;
+
+			int yl, yh;
+			short mfc_x, mcc_x;
+
+			if (!fixedcolormap)
+			{
+				index = spryscale >> LIGHTSCALESHIFT;
+#if PIXEL_SCALING != 1
+				index /= PIXEL_SCALING;
+#endif
+
+				if (index >= MAXLIGHTSCALE)
+					index = MAXLIGHTSCALE - 1;
+
+				dc_colormap = walllights[index];
+				dc_color = dc_colormap[color];
+			}
+
+			sprtopscreen = centeryfrac - FixedMulEDX(spryscale, dc_texturemid);
+
+			// VITI95: OPTIMIZE
+			dc_iscale = 0xffffffffu / (unsigned)spryscale;
+
+			// draw the texture
+
+			tex = texnum;
+			column = maskedtexturecol[dc_x];
+			column &= texturewidthmask[tex];
+			lump = texturecolumnlump[tex][column];
+			ofs = texturecolumnofs[tex][column] - 3;
+
+			if (lump > 0)
+			{
+				col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
+			}
+			else
+			{
+				if (!texturecomposite[tex])
+					R_GenerateComposite(tex);
+
+				col = (column_t *)(texturecomposite[tex] + ofs);
+			}
+
+			basetexturemid = dc_texturemid;
+			mfc_x = mfloorclip[dc_x];
+			mcc_x = mceilingclip[dc_x];
+
+			for (; col->topdelta != 0xff;)
+			{
+				// calculate unclipped screen coordinates
+				//  for post
+				topscreen = sprtopscreen + spryscale * col->topdelta;
+				bottomscreen = topscreen + spryscale * col->length;
+
+				yh = (bottomscreen - 1) >> FRACBITS;
+
+				if (yh >= mfc_x)
+					yh = mfc_x - 1;
+
+				if (yh >= viewheight)
+				{
+					col = (column_t *)((byte *)col + col->length + 4);
+					continue;
+				}
+
+				yl = (topscreen + FRACUNIT - 1) >> FRACBITS;
+
+				if (yl <= mcc_x)
+					yl = mcc_x + 1;
+
+				if (yl > yh)
+				{
+					col = (column_t *)((byte *)col + col->length + 4);
+					continue;
+				}
+
+				dc_source = (byte *)col + 3;
+				dc_texturemid = basetexturemid - (col->topdelta << FRACBITS);
+
+				dc_yh = yh;
+				dc_yl = yl;
+
+#if defined(MODE_CGA16) || defined(MODE_CVB)
+				if (detailshift == DETAIL_HIGH)
+				{
+					if ((dc_x & 1) == 0)
+						colfunc();
+				}
+				else
+					colfunc();
+#elif defined(MODE_CGA512)
+				switch (detailshift)
+				{
+				case DETAIL_HIGH:
+					if ((dc_x & 3) == 0)
+						colfunc();
+					break;
+				case DETAIL_LOW:
+					if ((dc_x & 1) == 0)
+						colfunc();
+					break;
+				default:
+					colfunc();
+					break;
+				}
+#elif defined(MODE_MDA)
+				if (dc_x == ds->x1 || dc_x == ds->x2)
+					R_DrawLineColumnTextMDA();
+				else
+					R_DrawEmptyColumnTextMDA();
+#else
+				colfunc();
+#endif
+
+				col = (column_t *)((byte *)col + col->length + 4);
+			}
+
+			dc_texturemid = basetexturemid;
+
+			maskedtexturecol[dc_x] = MAXSHORT;
+		}
+		spryscale += rw_scalestep;
+		dc_x++;
+	} while (dc_x <= ds->x2);
+}
+
+void R_RenderMaskedSegRange2Flatter(drawseg_t *ds)
+{
+	unsigned index;
+	column_t *col;
+	int lightnum;
+	int texnum;
+
+	int lump;
+	int ofs;
+	int tex;
+	int column;
+
+	byte *firstPixel;
+	byte color;
+
+	// Calculate light table.
+	// Use different light tables
+	//   for horizontal / vertical / diagonal. Diagonal?
+	// OPTIMIZE: get rid of LIGHTSEGSHIFT globally
+	curline = ds->curline;
+	frontsector = curline->frontsector;
+	backsector = curline->backsector;
+	texnum = texturetranslation[curline->sidedef->midtexture];
+
+	lump = texturecolumnlump[texnum][0];
+	ofs = texturecolumnofs[texnum][0] - 3;
+
+	if (lump > 0)
+	{
+		firstPixel = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
+	}
+	else
+	{
+		if (!texturecomposite[texnum])
+			R_GenerateComposite(texnum);
+
+		firstPixel = texturecomposite[texnum] + ofs;
+	}
+
+	color = *(firstPixel + 3);
+	dc_color = color;
+
+	lightnum = (frontsector->lightlevel >> LIGHTSEGSHIFT) + extralight;
+
+	if (curline->v1->y == curline->v2->y)
+		lightnum--;
+	else if (curline->v1->x == curline->v2->x)
+		lightnum++;
+
+	// Lightnum between 0 and 15
+	if (lightnum < 0)
+		walllights = scalelight[0];
+	else if (lightnum > LIGHTLEVELS - 1)
+		walllights = scalelight[LIGHTLEVELS - 1];
+	else
+		walllights = scalelight[lightnum];
+
+	maskedtexturecol = ds->maskedtexturecol;
+
+	rw_scalestep = ds->scalestep;
+	spryscale = ds->scale1;
+	mfloorclip = ds->sprbottomclip;
+	mceilingclip = ds->sprtopclip;
+
+	// find positioning
+	if (curline->linedef->dontPegBottom)
+	{
+		dc_texturemid = frontsector->floorheight > backsector->floorheight
+							? frontsector->floorheight
+							: backsector->floorheight;
+		dc_texturemid = dc_texturemid + textureheight[texnum] - viewz;
+	}
+	else
+	{
+		dc_texturemid = frontsector->ceilingheight < backsector->ceilingheight
+							? frontsector->ceilingheight
+							: backsector->ceilingheight;
+		dc_texturemid = dc_texturemid - viewz;
+	}
+	dc_texturemid += curline->sidedef->rowoffset;
+
+	if (fixedcolormap)
+	{
+		dc_colormap = fixedcolormap;
+	}
+		
+
+	dc_x = ds->x1;
+	do
+	{
+		// calculate lighting
+		if (maskedtexturecol[dc_x] != MAXSHORT)
+		{
+			int topscreen;
+			int bottomscreen;
+			fixed_t basetexturemid;
+
+			int yl, yh;
+			short mfc_x, mcc_x;
+
+			if (!fixedcolormap)
+			{
+				index = spryscale >> LIGHTSCALESHIFT;
+#if PIXEL_SCALING != 1
+				index /= PIXEL_SCALING;
+#endif
+
+				if (index >= MAXLIGHTSCALE)
+					index = MAXLIGHTSCALE - 1;
+
+				dc_colormap = walllights[index];
+			}
+
+			sprtopscreen = centeryfrac - FixedMulEDX(spryscale, dc_texturemid);
+
+			// VITI95: OPTIMIZE
+			dc_iscale = 0xffffffffu / (unsigned)spryscale;
+
+			// draw the texture
+
+			tex = texnum;
+			column = maskedtexturecol[dc_x];
+			column &= texturewidthmask[tex];
+			lump = texturecolumnlump[tex][column];
+			ofs = texturecolumnofs[tex][column] - 3;
+
+			if (lump > 0)
+			{
+				col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
+			}
+			else
+			{
+				if (!texturecomposite[tex])
+					R_GenerateComposite(tex);
+
+				col = (column_t *)(texturecomposite[tex] + ofs);
+			}
+
+			basetexturemid = dc_texturemid;
+			mfc_x = mfloorclip[dc_x];
+			mcc_x = mceilingclip[dc_x];
+
+			for (; col->topdelta != 0xff;)
+			{
+				// calculate unclipped screen coordinates
+				//  for post
+				topscreen = sprtopscreen + spryscale * col->topdelta;
+				bottomscreen = topscreen + spryscale * col->length;
+
+				yh = (bottomscreen - 1) >> FRACBITS;
+
+				if (yh >= mfc_x)
+					yh = mfc_x - 1;
+
+				if (yh >= viewheight)
+				{
+					col = (column_t *)((byte *)col + col->length + 4);
+					continue;
+				}
+
+				yl = (topscreen + FRACUNIT - 1) >> FRACBITS;
+
+				if (yl <= mcc_x)
+					yl = mcc_x + 1;
+
+				if (yl > yh)
+				{
+					col = (column_t *)((byte *)col + col->length + 4);
+					continue;
+				}
+
+				dc_source = (byte *)col + 3;
+				dc_texturemid = basetexturemid - (col->topdelta << FRACBITS);
+
+				dc_yh = yh;
+				dc_yl = yl;
+
+#if defined(MODE_CGA16) || defined(MODE_CVB)
+				if (detailshift == DETAIL_HIGH)
+				{
+					if ((dc_x & 1) == 0)
+						colfunc();
+				}
+				else
+					colfunc();
+#elif defined(MODE_CGA512)
+				switch (detailshift)
+				{
+				case DETAIL_HIGH:
+					if ((dc_x & 3) == 0)
+						colfunc();
+					break;
+				case DETAIL_LOW:
+					if ((dc_x & 1) == 0)
+						colfunc();
+					break;
+				default:
+					colfunc();
+					break;
+				}
+#elif defined(MODE_MDA)
+				if (dc_x == ds->x1 || dc_x == ds->x2)
+					R_DrawLineColumnTextMDA();
+				else
+					R_DrawEmptyColumnTextMDA();
+#else
+				colfunc();
+#endif
+
+				col = (column_t *)((byte *)col + col->length + 4);
+			}
+
+			dc_texturemid = basetexturemid;
+
+			maskedtexturecol[dc_x] = MAXSHORT;
+		}
+		spryscale += rw_scalestep;
+		dc_x++;
+	} while (dc_x <= ds->x2);
+}
+
 //
 // R_RenderSegLoop
 // Draws zero, one, or two textures (and possibly a masked
@@ -549,6 +1437,8 @@ void R_RenderMaskedSegRange2(drawseg_t *ds)
 #define HEIGHTUNIT (1 << HEIGHTBITS)
 
 void (*renderSegLoop)(void);
+void (*renderMaskedSegRange)(drawseg_t *ds, int x1, int x2);
+void (*renderMaskedSegRange2)(drawseg_t *ds);
 
 void R_RenderSegLoop(void)
 {

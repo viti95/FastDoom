@@ -878,7 +878,7 @@ void R_DrawSprite(vissprite_t *spr)
         {
             // masked mid texture?
             if (ds->maskedtexturecol)
-                R_RenderMaskedSegRange(ds, r1, r2);
+                renderMaskedSegRange(ds, r1, r2);
             // seg is behind sprite
             continue;
         }
@@ -922,7 +922,7 @@ void R_DrawMasked(void)
     // render any remaining masked mid textures
     for (ds = ds_p - 1; ds >= drawsegs; ds--)
         if (ds->maskedtexturecol)
-            R_RenderMaskedSegRange2(ds);
+            renderMaskedSegRange2(ds);
 
     R_DrawPlayerSprites();
 }
