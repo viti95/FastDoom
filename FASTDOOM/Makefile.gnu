@@ -111,16 +111,19 @@ GLOBOBJS = \
  linearh.obj \
  linearh2.obj \
  linearh3.obj \
+ linearh4.obj \
  lineahKN.obj \
  lineahSX.obj \
  linearl.obj \
  linearl2.obj \
  linearl3.obj \
+ linearl4.obj \
  linealKN.obj \
  linealSX.obj \
  linearp.obj \
  linearp2.obj \
  linearp3.obj \
+ linearp4.obj \
  lineapSX.obj \
  planar.obj \
  planar2.obj \

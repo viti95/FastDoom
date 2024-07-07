@@ -654,9 +654,12 @@ fixed_t R_PointToDist(fixed_t x, fixed_t y)
         dy = temp_var;
     }
 
-    if (dy >> 14 >= dx) {
+    if (dy >> 14 >= dx)
+    {
         return 0;
-    } else {
+    }
+    else
+    {
         temp = lutsineangle[FixedDivDBITS(dy, dx)];
         dist = ((dx >> 14) >= temp) ? ((dx ^ temp) >> 31) ^ MAXINT : FixedDiv2(dx, temp);
     }
@@ -1098,59 +1101,61 @@ void R_ExecuteSetViewSize(void)
     {
     case DETAIL_HIGH:
 
-        switch (wallRender){
-            case WALL_NORMAL:
-                renderSegLoop = R_RenderSegLoop;
-                renderMaskedSegRange = R_RenderMaskedSegRange;
-                renderMaskedSegRange2 = R_RenderMaskedSegRange2;
-                switch (selectedCPU)
-                {
-                case UMC_GREEN_486:
-                case CYRIX_5X86:
-                case AMD_K5:
-                    colfunc = R_DrawColumnFastLEA;
-                    break;
-                default:
-                    colfunc = R_DrawColumn;
-                    break;
-                }
+        switch (wallRender)
+        {
+        case WALL_NORMAL:
+            renderSegLoop = R_RenderSegLoop;
+            renderMaskedSegRange = R_RenderMaskedSegRange;
+            renderMaskedSegRange2 = R_RenderMaskedSegRange2;
+            switch (selectedCPU)
+            {
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K5:
+                colfunc = R_DrawColumnFastLEA;
+                break;
+            default:
+                colfunc = R_DrawColumn;
+                break;
+            }
             break;
-            case WALL_FLAT:
-                renderSegLoop = R_RenderSegLoopFlat;
-                renderMaskedSegRange = R_RenderMaskedSegRangeFlat;
-                renderMaskedSegRange2 = R_RenderMaskedSegRange2Flat;
-                colfunc = R_DrawColumnFlat;
+        case WALL_FLAT:
+            renderSegLoop = R_RenderSegLoopFlat;
+            renderMaskedSegRange = R_RenderMaskedSegRangeFlat;
+            renderMaskedSegRange2 = R_RenderMaskedSegRange2Flat;
+            colfunc = R_DrawColumnFlat;
             break;
-            case WALL_FLATTER:
-                renderSegLoop = R_RenderSegLoopFlatter;
-                renderMaskedSegRange = R_RenderMaskedSegRangeFlatter;
-                renderMaskedSegRange2 = R_RenderMaskedSegRange2Flatter;
-                colfunc = R_DrawColumnFlat;
+        case WALL_FLATTER:
+            renderSegLoop = R_RenderSegLoopFlatter;
+            renderMaskedSegRange = R_RenderMaskedSegRangeFlatter;
+            renderMaskedSegRange2 = R_RenderMaskedSegRange2Flatter;
+            colfunc = R_DrawColumnFlat;
             break;
         }
 
-        switch (spriteRender){
-            case SPRITE_NORMAL:
-                drawVisSprite = R_DrawVisSprite;
-                switch (selectedCPU)
-                {
-                case UMC_GREEN_486:
-                case CYRIX_5X86:
-                case AMD_K5:
-                    spritefunc = basecolfunc = R_DrawColumnFastLEA;
-                    break;
-                default:
-                    spritefunc = basecolfunc = R_DrawColumn;
-                    break;
-                }
+        switch (spriteRender)
+        {
+        case SPRITE_NORMAL:
+            drawVisSprite = R_DrawVisSprite;
+            switch (selectedCPU)
+            {
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K5:
+                spritefunc = basecolfunc = R_DrawColumnFastLEA;
+                break;
+            default:
+                spritefunc = basecolfunc = R_DrawColumn;
+                break;
+            }
             break;
-            case SPRITE_FLAT:
-                drawVisSprite = R_DrawVisSpriteFlat;
-                spritefunc = basecolfunc = R_DrawColumnFlat;
+        case SPRITE_FLAT:
+            drawVisSprite = R_DrawVisSpriteFlat;
+            spritefunc = basecolfunc = R_DrawColumnFlat;
             break;
-            case SPRITE_FLATTER:
-                drawVisSprite = R_DrawVisSpriteFlatter;
-                spritefunc = basecolfunc = R_DrawColumnFlat;
+        case SPRITE_FLATTER:
+            drawVisSprite = R_DrawVisSpriteFlatter;
+            spritefunc = basecolfunc = R_DrawColumnFlat;
             break;
         }
 
@@ -1208,59 +1213,61 @@ void R_ExecuteSetViewSize(void)
         break;
     case DETAIL_LOW:
 
-        switch (wallRender){
-            case WALL_NORMAL:
-                renderSegLoop = R_RenderSegLoop;
-                renderMaskedSegRange = R_RenderMaskedSegRange;
-                renderMaskedSegRange2 = R_RenderMaskedSegRange2;
-                switch (selectedCPU)
-                {
-                case UMC_GREEN_486:
-                case CYRIX_5X86:
-                case AMD_K5:
-                    colfunc = R_DrawColumnLowFastLEA;
-                    break;
-                default:
-                    colfunc = R_DrawColumnLow;
-                    break;
-                }
+        switch (wallRender)
+        {
+        case WALL_NORMAL:
+            renderSegLoop = R_RenderSegLoop;
+            renderMaskedSegRange = R_RenderMaskedSegRange;
+            renderMaskedSegRange2 = R_RenderMaskedSegRange2;
+            switch (selectedCPU)
+            {
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K5:
+                colfunc = R_DrawColumnLowFastLEA;
+                break;
+            default:
+                colfunc = R_DrawColumnLow;
+                break;
+            }
             break;
-            case WALL_FLAT:
-                renderSegLoop = R_RenderSegLoopFlat;
-                renderMaskedSegRange = R_RenderMaskedSegRangeFlat;
-                renderMaskedSegRange2 = R_RenderMaskedSegRange2Flat;
-                colfunc = R_DrawColumnFlatLow;
+        case WALL_FLAT:
+            renderSegLoop = R_RenderSegLoopFlat;
+            renderMaskedSegRange = R_RenderMaskedSegRangeFlat;
+            renderMaskedSegRange2 = R_RenderMaskedSegRange2Flat;
+            colfunc = R_DrawColumnFlatLow;
             break;
-            case WALL_FLATTER:
-                renderSegLoop = R_RenderSegLoopFlatter;
-                renderMaskedSegRange = R_RenderMaskedSegRangeFlatter;
-                renderMaskedSegRange2 = R_RenderMaskedSegRange2Flatter;
-                colfunc = R_DrawColumnFlatLow;
+        case WALL_FLATTER:
+            renderSegLoop = R_RenderSegLoopFlatter;
+            renderMaskedSegRange = R_RenderMaskedSegRangeFlatter;
+            renderMaskedSegRange2 = R_RenderMaskedSegRange2Flatter;
+            colfunc = R_DrawColumnFlatLow;
             break;
         }
 
-        switch (spriteRender){
-            case SPRITE_NORMAL:
-                drawVisSprite = R_DrawVisSprite;
-                switch (selectedCPU)
-                {
-                case UMC_GREEN_486:
-                case CYRIX_5X86:
-                case AMD_K5:
-                    spritefunc = basecolfunc = R_DrawColumnLowFastLEA;
-                    break;
-                default:
-                    spritefunc = basecolfunc = R_DrawColumnLow;
-                    break;
-                }
+        switch (spriteRender)
+        {
+        case SPRITE_NORMAL:
+            drawVisSprite = R_DrawVisSprite;
+            switch (selectedCPU)
+            {
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K5:
+                spritefunc = basecolfunc = R_DrawColumnLowFastLEA;
+                break;
+            default:
+                spritefunc = basecolfunc = R_DrawColumnLow;
+                break;
+            }
             break;
-            case SPRITE_FLAT:
-                drawVisSprite = R_DrawVisSpriteFlat;
-                spritefunc = basecolfunc = R_DrawColumnFlatLow;
+        case SPRITE_FLAT:
+            drawVisSprite = R_DrawVisSpriteFlat;
+            spritefunc = basecolfunc = R_DrawColumnFlatLow;
             break;
-            case SPRITE_FLATTER:
-                drawVisSprite = R_DrawVisSpriteFlatter;
-                spritefunc = basecolfunc = R_DrawColumnFlatLow;
+        case SPRITE_FLATTER:
+            drawVisSprite = R_DrawVisSpriteFlatter;
+            spritefunc = basecolfunc = R_DrawColumnFlatLow;
             break;
         }
 
@@ -1318,59 +1325,61 @@ void R_ExecuteSetViewSize(void)
         break;
     case DETAIL_POTATO:
 
-        switch (wallRender){
-            case WALL_NORMAL:
-                renderSegLoop = R_RenderSegLoop;
-                renderMaskedSegRange = R_RenderMaskedSegRange;
-                renderMaskedSegRange2 = R_RenderMaskedSegRange2;
-                switch (selectedCPU)
-                {
-                case UMC_GREEN_486:
-                case CYRIX_5X86:
-                case AMD_K5:
-                    colfunc = R_DrawColumnPotatoFastLEA;
-                    break;
-                default:
-                    colfunc = R_DrawColumnPotato;
-                    break;
-                }
+        switch (wallRender)
+        {
+        case WALL_NORMAL:
+            renderSegLoop = R_RenderSegLoop;
+            renderMaskedSegRange = R_RenderMaskedSegRange;
+            renderMaskedSegRange2 = R_RenderMaskedSegRange2;
+            switch (selectedCPU)
+            {
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K5:
+                colfunc = R_DrawColumnPotatoFastLEA;
+                break;
+            default:
+                colfunc = R_DrawColumnPotato;
+                break;
+            }
             break;
-            case WALL_FLAT:
-                renderSegLoop = R_RenderSegLoopFlat;
-                renderMaskedSegRange = R_RenderMaskedSegRangeFlat;
-                renderMaskedSegRange2 = R_RenderMaskedSegRange2Flat;
-                colfunc = R_DrawColumnFlatPotato;
+        case WALL_FLAT:
+            renderSegLoop = R_RenderSegLoopFlat;
+            renderMaskedSegRange = R_RenderMaskedSegRangeFlat;
+            renderMaskedSegRange2 = R_RenderMaskedSegRange2Flat;
+            colfunc = R_DrawColumnFlatPotato;
             break;
-            case WALL_FLATTER:
-                renderSegLoop = R_RenderSegLoopFlatter;
-                renderMaskedSegRange = R_RenderMaskedSegRangeFlatter;
-                renderMaskedSegRange2 = R_RenderMaskedSegRange2Flatter;
-                colfunc = R_DrawColumnFlatPotato;
+        case WALL_FLATTER:
+            renderSegLoop = R_RenderSegLoopFlatter;
+            renderMaskedSegRange = R_RenderMaskedSegRangeFlatter;
+            renderMaskedSegRange2 = R_RenderMaskedSegRange2Flatter;
+            colfunc = R_DrawColumnFlatPotato;
             break;
         }
 
-        switch (spriteRender){
-            case SPRITE_NORMAL:
-                drawVisSprite = R_DrawVisSprite;
-                switch (selectedCPU)
-                {
-                case UMC_GREEN_486:
-                case CYRIX_5X86:
-                case AMD_K5:
-                    spritefunc = basecolfunc = R_DrawColumnPotatoFastLEA;
-                    break;
-                default:
-                    spritefunc = basecolfunc = R_DrawColumnPotato;
-                    break;
-                }
+        switch (spriteRender)
+        {
+        case SPRITE_NORMAL:
+            drawVisSprite = R_DrawVisSprite;
+            switch (selectedCPU)
+            {
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K5:
+                spritefunc = basecolfunc = R_DrawColumnPotatoFastLEA;
+                break;
+            default:
+                spritefunc = basecolfunc = R_DrawColumnPotato;
+                break;
+            }
             break;
-            case SPRITE_FLAT:
-                drawVisSprite = R_DrawVisSpriteFlat;
-                spritefunc = basecolfunc = R_DrawColumnFlatPotato;
+        case SPRITE_FLAT:
+            drawVisSprite = R_DrawVisSpriteFlat;
+            spritefunc = basecolfunc = R_DrawColumnFlatPotato;
             break;
-            case SPRITE_FLATTER:
-                drawVisSprite = R_DrawVisSpriteFlatter;
-                spritefunc = basecolfunc = R_DrawColumnFlatPotato;
+        case SPRITE_FLATTER:
+            drawVisSprite = R_DrawVisSpriteFlatter;
+            spritefunc = basecolfunc = R_DrawColumnFlatPotato;
             break;
         }
 
@@ -1432,15 +1441,61 @@ void R_ExecuteSetViewSize(void)
     switch (detailshift)
     {
     case DETAIL_HIGH:
-        switch (selectedCPU)
+        switch (wallRender)
         {
-        case UMC_GREEN_486:
-        case CYRIX_5X86:
-        case AMD_K5:
-            colfunc = spritefunc = basecolfunc = R_DrawColumnBackbufferFastLEA;
+        case WALL_NORMAL:
+            renderSegLoop = R_RenderSegLoop;
+            renderMaskedSegRange = R_RenderMaskedSegRange;
+            renderMaskedSegRange2 = R_RenderMaskedSegRange2;
+            switch (selectedCPU)
+            {
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K5:
+                colfunc = R_DrawColumnBackbufferFastLEA;
+                break;
+            default:
+                colfunc = R_DrawColumnBackbuffer;
+                break;
+            }
             break;
-        default:
-            colfunc = spritefunc = basecolfunc = R_DrawColumnBackbuffer;
+        case WALL_FLAT:
+            renderSegLoop = R_RenderSegLoopFlat;
+            renderMaskedSegRange = R_RenderMaskedSegRangeFlat;
+            renderMaskedSegRange2 = R_RenderMaskedSegRange2Flat;
+            colfunc = R_DrawColumnBackbufferFlat;
+            break;
+        case WALL_FLATTER:
+            renderSegLoop = R_RenderSegLoopFlatter;
+            renderMaskedSegRange = R_RenderMaskedSegRangeFlatter;
+            renderMaskedSegRange2 = R_RenderMaskedSegRange2Flatter;
+            colfunc = R_DrawColumnBackbufferFlat;
+            break;
+        }
+
+        switch (spriteRender)
+        {
+        case SPRITE_NORMAL:
+            drawVisSprite = R_DrawVisSprite;
+            switch (selectedCPU)
+            {
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K5:
+                spritefunc = basecolfunc = R_DrawColumnBackbufferFastLEA;
+                break;
+            default:
+                spritefunc = basecolfunc = R_DrawColumnBackbuffer;
+                break;
+            }
+            break;
+        case SPRITE_FLAT:
+            drawVisSprite = R_DrawVisSpriteFlat;
+            spritefunc = basecolfunc = R_DrawColumnBackbufferFlat;
+            break;
+        case SPRITE_FLATTER:
+            drawVisSprite = R_DrawVisSpriteFlatter;
+            spritefunc = basecolfunc = R_DrawColumnBackbufferFlat;
             break;
         }
 
@@ -1497,15 +1552,61 @@ void R_ExecuteSetViewSize(void)
 
         break;
     case DETAIL_LOW:
-        switch (selectedCPU)
+        switch (wallRender)
         {
-        case UMC_GREEN_486:
-        case CYRIX_5X86:
-        case AMD_K5:
-            colfunc = spritefunc = basecolfunc = R_DrawColumnLowBackbufferFastLEA;
+        case WALL_NORMAL:
+            renderSegLoop = R_RenderSegLoop;
+            renderMaskedSegRange = R_RenderMaskedSegRange;
+            renderMaskedSegRange2 = R_RenderMaskedSegRange2;
+            switch (selectedCPU)
+            {
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K5:
+                colfunc = R_DrawColumnLowBackbufferFastLEA;
+                break;
+            default:
+                colfunc = R_DrawColumnLowBackbuffer;
+                break;
+            }
             break;
-        default:
-            colfunc = spritefunc = basecolfunc = R_DrawColumnLowBackbuffer;
+        case WALL_FLAT:
+            renderSegLoop = R_RenderSegLoopFlat;
+            renderMaskedSegRange = R_RenderMaskedSegRangeFlat;
+            renderMaskedSegRange2 = R_RenderMaskedSegRange2Flat;
+            colfunc = R_DrawColumnLowBackbufferFlat;
+            break;
+        case WALL_FLATTER:
+            renderSegLoop = R_RenderSegLoopFlatter;
+            renderMaskedSegRange = R_RenderMaskedSegRangeFlatter;
+            renderMaskedSegRange2 = R_RenderMaskedSegRange2Flatter;
+            colfunc = R_DrawColumnLowBackbufferFlat;
+            break;
+        }
+
+        switch (spriteRender)
+        {
+        case SPRITE_NORMAL:
+            drawVisSprite = R_DrawVisSprite;
+            switch (selectedCPU)
+            {
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K5:
+                spritefunc = basecolfunc = R_DrawColumnLowBackbufferFastLEA;
+                break;
+            default:
+                spritefunc = basecolfunc = R_DrawColumnLowBackbuffer;
+                break;
+            }
+            break;
+        case SPRITE_FLAT:
+            drawVisSprite = R_DrawVisSpriteFlat;
+            spritefunc = basecolfunc = R_DrawColumnLowBackbufferFlat;
+            break;
+        case SPRITE_FLATTER:
+            drawVisSprite = R_DrawVisSpriteFlatter;
+            spritefunc = basecolfunc = R_DrawColumnLowBackbufferFlat;
             break;
         }
 
@@ -1562,7 +1663,43 @@ void R_ExecuteSetViewSize(void)
 
         break;
     case DETAIL_POTATO:
-        colfunc = spritefunc = basecolfunc = R_DrawColumnPotatoBackbuffer;
+        switch (wallRender)
+        {
+        case WALL_NORMAL:
+            renderSegLoop = R_RenderSegLoop;
+            renderMaskedSegRange = R_RenderMaskedSegRange;
+            renderMaskedSegRange2 = R_RenderMaskedSegRange2;
+            colfunc = R_DrawColumnPotatoBackbuffer;
+            break;
+        case WALL_FLAT:
+            renderSegLoop = R_RenderSegLoopFlat;
+            renderMaskedSegRange = R_RenderMaskedSegRangeFlat;
+            renderMaskedSegRange2 = R_RenderMaskedSegRange2Flat;
+            colfunc = R_DrawColumnPotatoBackbufferFlat;
+            break;
+        case WALL_FLATTER:
+            renderSegLoop = R_RenderSegLoopFlatter;
+            renderMaskedSegRange = R_RenderMaskedSegRangeFlatter;
+            renderMaskedSegRange2 = R_RenderMaskedSegRange2Flatter;
+            colfunc = R_DrawColumnPotatoBackbufferFlat;
+            break;
+        }
+
+        switch (spriteRender)
+        {
+        case SPRITE_NORMAL:
+            drawVisSprite = R_DrawVisSprite;
+            spritefunc = basecolfunc = R_DrawColumnPotatoBackbuffer;
+            break;
+        case SPRITE_FLAT:
+            drawVisSprite = R_DrawVisSpriteFlat;
+            spritefunc = basecolfunc = R_DrawColumnPotatoBackbufferFlat;
+            break;
+        case SPRITE_FLATTER:
+            drawVisSprite = R_DrawVisSpriteFlatter;
+            spritefunc = basecolfunc = R_DrawColumnPotatoBackbufferFlat;
+            break;
+        }
 
         if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlatPotatoBackbuffer;
@@ -1762,7 +1899,7 @@ void R_ExecuteSetViewSize(void)
 #else
     pspritescaleds = pspritescale << detailshift;
 #endif
-    
+
     pspriteiscale = FRACUNIT * 320 / viewwidth;
     pspriteiscaleneg = -pspriteiscale;
 #endif
