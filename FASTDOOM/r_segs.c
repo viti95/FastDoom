@@ -1372,20 +1372,8 @@ void R_RenderSegLoopFlatter(void)
 			angle = (rw_centerangle + xtoviewangle[rw_x]) >> ANGLETOFINESHIFT;
 			texturecolumn = rw_offset - FixedMulEDX(finetangent[angle], rw_distance);
 			texturecolumn >>= FRACBITS;
-			// calculate lighting
-			index = rw_scale >> LIGHTSCALESHIFT;
-#if PIXEL_SCALING != 1
-				index /= PIXEL_SCALING;
-#endif
 
-			if (index >= MAXLIGHTSCALE)
-				index = MAXLIGHTSCALE - 1;
-
-			dc_colormap = walllights[index];
 			dc_x = rw_x;
-
-			// VITI95: OPTIMIZE
-			dc_iscale = 0xffffffffu / (unsigned)rw_scale;
 		}
 
 		// draw the wall tiers
@@ -1627,7 +1615,6 @@ void R_RenderSegLoopFlatter(void)
 			}
 		}
 
-		rw_scale += rw_scalestep;
 		topfrac -= topstep;
 		bottomfrac -= bottomstep;
 
