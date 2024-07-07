@@ -770,9 +770,6 @@ void R_RenderMaskedSegRange2(drawseg_t *ds)
 	int tex;
 	int column;
 
-	byte *firstPixel;
-	byte color;
-
 	// Calculate light table.
 	// Use different light tables
 	//   for horizontal / vertical / diagonal. Diagonal?
@@ -781,24 +778,6 @@ void R_RenderMaskedSegRange2(drawseg_t *ds)
 	frontsector = curline->frontsector;
 	backsector = curline->backsector;
 	texnum = texturetranslation[curline->sidedef->midtexture];
-
-	lump = texturecolumnlump[texnum][0];
-	ofs = texturecolumnofs[texnum][0] - 3;
-
-	if (lump > 0)
-	{
-		firstPixel = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
-	}
-	else
-	{
-		if (!texturecomposite[texnum])
-			R_GenerateComposite(texnum);
-
-		firstPixel = texturecomposite[texnum] + ofs;
-	}
-
-	color = *(firstPixel + 3);
-	dc_color = color;
 
 	lightnum = (frontsector->lightlevel >> LIGHTSEGSHIFT) + extralight;
 
@@ -842,7 +821,6 @@ void R_RenderMaskedSegRange2(drawseg_t *ds)
 	if (fixedcolormap)
 	{
 		dc_colormap = fixedcolormap;
-		dc_color = dc_colormap[color];
 	}
 		
 
@@ -870,7 +848,6 @@ void R_RenderMaskedSegRange2(drawseg_t *ds)
 					index = MAXLIGHTSCALE - 1;
 
 				dc_colormap = walllights[index];
-				dc_color = dc_colormap[color];
 			}
 
 			sprtopscreen = centeryfrac - FixedMulEDX(spryscale, dc_texturemid);
