@@ -1337,7 +1337,6 @@ void R_RenderMaskedSegRange2Flatter(drawseg_t *ds)
 					continue;
 				}
 
-				dc_source = (byte *)col + 3;
 				dc_texturemid = basetexturemid - (col->topdelta << FRACBITS);
 
 				dc_yh = yh;
