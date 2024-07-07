@@ -154,7 +154,6 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 
 	if (fixedcolormap){
 		dc_colormap = fixedcolormap;
-		dc_color = dc_colormap[color];
 	}
 		
 
