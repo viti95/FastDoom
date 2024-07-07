@@ -135,14 +135,17 @@ GLOBOBJS = \
  vbe2dh.obj \
  vbe2dh2.obj \
  vbe2dh3.obj \
+ vbe2dh4.obj \
  vbe2dhSX.obj \
  vbe2dl.obj \
  vbe2dl2.obj \
  vbe2dl3.obj \
+ vbe2dl4.obj \
  vbe2dlSX.obj \
  vbe2dp.obj \
  vbe2dp2.obj \
  vbe2dp3.obj \
+ vbe2dp4.obj \
  vbe2dpSX.obj \
  tables.obj \
  f_finale.obj \
