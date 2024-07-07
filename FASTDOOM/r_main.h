@@ -93,6 +93,8 @@ extern void (*spanfunc)(void);
 extern void (*skyfunc)(void);
 extern void (*spritefunc)(void);
 
+extern void (*renderSegLoop)(void);
+
 //
 // Utility functions.
 byte R_PointOnSegSide(fixed_t x,

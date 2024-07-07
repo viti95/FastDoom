@@ -548,7 +548,352 @@ void R_RenderMaskedSegRange2(drawseg_t *ds)
 #define HEIGHTBITS 12
 #define HEIGHTUNIT (1 << HEIGHTBITS)
 
+void (*renderSegLoop)(void);
+
 void R_RenderSegLoop(void)
+{
+	angle_t angle;
+	unsigned index;
+	int yl;
+	int yh;
+	int mid;
+	fixed_t texturecolumn;
+	int top;
+	int bottom;
+
+	int lump;
+	int ofs;
+	int tex;
+	int col;
+
+	int cc_rwx;
+	int fc_rwx;
+
+#if defined(MODE_MDA)
+	int first = rw_x;
+#endif
+
+	// texturecolumn = 0;				// shut up compiler warning
+
+	for (; rw_x < rw_stopx; rw_x++)
+	{
+		cc_rwx = ceilingclip[rw_x];
+		fc_rwx = floorclip[rw_x];
+
+		// mark floor / ceiling areas
+		yl = (topfrac + HEIGHTUNIT - 1) >> HEIGHTBITS;
+
+		// no space above wall?
+		if (yl < cc_rwx + 1)
+			yl = cc_rwx + 1;
+
+		if (markceiling)
+		{
+			top = cc_rwx + 1;
+			bottom = yl - 1;
+
+			if (bottom >= fc_rwx)
+				bottom = fc_rwx - 1;
+
+			if (top <= bottom)
+			{
+				ceilingplane->top[rw_x] = top;
+				ceilingplane->bottom[rw_x] = bottom;
+				ceilingplane->modified = 1;
+			}
+		}
+
+		yh = bottomfrac >> HEIGHTBITS;
+
+		if (yh >= fc_rwx)
+			yh = fc_rwx - 1;
+
+		if (markfloor)
+		{
+			top = yh + 1;
+			bottom = fc_rwx - 1;
+			if (top <= cc_rwx)
+				top = cc_rwx + 1;
+			if (top <= bottom)
+			{
+				floorplane->top[rw_x] = top;
+				floorplane->bottom[rw_x] = bottom;
+				floorplane->modified = 1;
+			}
+		}
+
+		// texturecolumn and lighting are independent of wall tiers
+		if (segtextured)
+		{
+			// calculate texture offset
+			angle = (rw_centerangle + xtoviewangle[rw_x]) >> ANGLETOFINESHIFT;
+			texturecolumn = rw_offset - FixedMulEDX(finetangent[angle], rw_distance);
+			texturecolumn >>= FRACBITS;
+			// calculate lighting
+			index = rw_scale >> LIGHTSCALESHIFT;
+#if PIXEL_SCALING != 1
+				index /= PIXEL_SCALING;
+#endif
+
+			if (index >= MAXLIGHTSCALE)
+				index = MAXLIGHTSCALE - 1;
+
+			dc_colormap = walllights[index];
+			dc_x = rw_x;
+
+			// VITI95: OPTIMIZE
+			dc_iscale = 0xffffffffu / (unsigned)rw_scale;
+		}
+
+		// draw the wall tiers
+		if (midtexture)
+		{
+			if (yl > yh)
+			{
+				cc_rwx = viewheight;
+				fc_rwx = -1;
+			}
+			else
+			{
+				// single sided line
+				dc_yl = yl;
+				dc_yh = yh;
+				dc_texturemid = rw_midtexturemid;
+
+				tex = midtexture;
+				col = texturecolumn;
+				col &= texturewidthmask[tex];
+				lump = texturecolumnlump[tex][col];
+				ofs = texturecolumnofs[tex][col];
+
+				if (lump > 0)
+				{
+					dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
+				}
+				else
+				{
+					if (!texturecomposite[tex])
+						R_GenerateComposite(tex);
+
+					dc_source = texturecomposite[tex] + ofs;
+				}
+
+#if defined(MODE_CGA16) || defined(MODE_CVB)
+				if (detailshift == DETAIL_HIGH)
+				{
+					if ((dc_x & 1) == 0)
+						colfunc();
+				}
+				else
+					colfunc();
+#elif defined(MODE_CGA512)
+				switch (detailshift)
+				{
+				case DETAIL_HIGH:
+					if ((dc_x & 3) == 0)
+						colfunc();
+					break;
+				case DETAIL_LOW:
+					if ((dc_x & 1) == 0)
+						colfunc();
+					break;
+				default:
+					colfunc();
+					break;
+				}
+#elif defined(MODE_MDA)
+				if (first == rw_x || rw_x == rw_stopx - 1)
+					R_DrawLineColumnTextMDA();
+				else
+					R_DrawEmptyColumnTextMDA();
+#else
+				colfunc();
+#endif
+
+				cc_rwx = viewheight;
+				fc_rwx = -1;
+			}
+		}
+		else
+		{
+			// two sided line
+			if (toptexture)
+			{
+				// top wall
+				mid = pixhigh >> HEIGHTBITS;
+				pixhigh -= pixhighstep;
+
+				if (mid >= fc_rwx)
+					mid = fc_rwx - 1;
+
+				if (mid < yl)
+				{
+					cc_rwx = yl - 1;
+				}
+				else
+				{
+					dc_yl = yl;
+					dc_yh = mid;
+					dc_texturemid = rw_toptexturemid;
+
+					tex = toptexture;
+					col = texturecolumn;
+					col &= texturewidthmask[tex];
+					lump = texturecolumnlump[tex][col];
+					ofs = texturecolumnofs[tex][col];
+
+					if (lump > 0)
+					{
+						dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
+					}
+					else
+					{
+						if (!texturecomposite[tex])
+							R_GenerateComposite(tex);
+
+						dc_source = texturecomposite[tex] + ofs;
+					}
+
+#if defined(MODE_CGA16) || defined(MODE_CVB)
+					if (detailshift == DETAIL_HIGH)
+					{
+						if ((dc_x & 1) == 0)
+							colfunc();
+					}
+					else
+						colfunc();
+#elif defined(MODE_CGA512)
+					switch (detailshift)
+					{
+					case DETAIL_HIGH:
+						if ((dc_x & 3) == 0)
+							colfunc();
+						break;
+					case DETAIL_LOW:
+						if ((dc_x & 1) == 0)
+							colfunc();
+						break;
+					default:
+						colfunc();
+						break;
+					}
+#elif defined(MODE_MDA)
+					if (first == rw_x || rw_x == rw_stopx - 1)
+						R_DrawLineColumnTextMDA();
+					else
+						R_DrawEmptyColumnTextMDA();
+#else
+					colfunc();
+#endif
+
+					cc_rwx = mid;
+				}
+			}
+			else
+			{
+				// no top wall
+				if (markceiling)
+					cc_rwx = yl - 1;
+			}
+
+			if (bottomtexture)
+			{
+				// bottom wall
+				mid = (pixlow + HEIGHTUNIT - 1) >> HEIGHTBITS;
+				pixlow -= pixlowstep;
+
+				// no space above wall?
+				if (mid <= cc_rwx)
+					mid = cc_rwx + 1;
+
+				if (mid > yh)
+				{
+					fc_rwx = yh + 1;
+				}
+				else
+				{
+					dc_yl = mid;
+					dc_yh = yh;
+					dc_texturemid = rw_bottomtexturemid;
+
+					tex = bottomtexture;
+					col = texturecolumn;
+					col &= texturewidthmask[tex];
+					lump = texturecolumnlump[tex][col];
+					ofs = texturecolumnofs[tex][col];
+
+					if (lump > 0)
+					{
+						dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
+					}
+					else
+					{
+						if (!texturecomposite[tex])
+							R_GenerateComposite(tex);
+
+						dc_source = texturecomposite[tex] + ofs;
+					}
+
+#if defined(MODE_CGA16) || defined(MODE_CVB)
+					if (detailshift == DETAIL_HIGH)
+					{
+						if ((dc_x & 1) == 0)
+							colfunc();
+					}
+					else
+						colfunc();
+#elif defined(MODE_CGA512)
+					switch (detailshift)
+					{
+					case DETAIL_HIGH:
+						if ((dc_x & 3) == 0)
+							colfunc();
+						break;
+					case DETAIL_LOW:
+						if ((dc_x & 1) == 0)
+							colfunc();
+						break;
+					default:
+						colfunc();
+						break;
+					}
+#elif defined(MODE_MDA)
+					if (first == rw_x || rw_x == rw_stopx - 1)
+						R_DrawLineColumnTextMDA();
+					else
+						R_DrawEmptyColumnTextMDA();
+#else
+					colfunc();
+#endif
+
+					fc_rwx = mid;
+				}
+			}
+			else
+			{
+				// no bottom wall
+				if (markfloor)
+					fc_rwx = yh + 1;
+			}
+
+			if (maskedtexture)
+			{
+				// save texturecol
+				//  for backdrawing of masked mid texture
+				maskedtexturecol[rw_x] = texturecolumn;
+			}
+		}
+
+		rw_scale += rw_scalestep;
+		topfrac -= topstep;
+		bottomfrac -= bottomstep;
+
+		ceilingclip[rw_x] = cc_rwx;
+		floorclip[rw_x] = fc_rwx;
+	}
+}
+
+void R_RenderSegLoopFlat(void)
 {
 	angle_t angle;
 	unsigned index;
@@ -667,6 +1012,376 @@ void R_RenderSegLoop(void)
 
 			dc_colormap = walllights[index];
 			dc_color = dc_colormap[color];
+			dc_x = rw_x;
+
+			// VITI95: OPTIMIZE
+			dc_iscale = 0xffffffffu / (unsigned)rw_scale;
+		}
+
+		// draw the wall tiers
+		if (midtexture)
+		{
+			if (yl > yh)
+			{
+				cc_rwx = viewheight;
+				fc_rwx = -1;
+			}
+			else
+			{
+				// single sided line
+				dc_yl = yl;
+				dc_yh = yh;
+				dc_texturemid = rw_midtexturemid;
+
+				tex = midtexture;
+				col = texturecolumn;
+				col &= texturewidthmask[tex];
+				lump = texturecolumnlump[tex][col];
+				ofs = texturecolumnofs[tex][col];
+
+				if (lump > 0)
+				{
+					dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
+				}
+				else
+				{
+					if (!texturecomposite[tex])
+						R_GenerateComposite(tex);
+
+					dc_source = texturecomposite[tex] + ofs;
+				}
+
+#if defined(MODE_CGA16) || defined(MODE_CVB)
+				if (detailshift == DETAIL_HIGH)
+				{
+					if ((dc_x & 1) == 0)
+						colfunc();
+				}
+				else
+					colfunc();
+#elif defined(MODE_CGA512)
+				switch (detailshift)
+				{
+				case DETAIL_HIGH:
+					if ((dc_x & 3) == 0)
+						colfunc();
+					break;
+				case DETAIL_LOW:
+					if ((dc_x & 1) == 0)
+						colfunc();
+					break;
+				default:
+					colfunc();
+					break;
+				}
+#elif defined(MODE_MDA)
+				if (first == rw_x || rw_x == rw_stopx - 1)
+					R_DrawLineColumnTextMDA();
+				else
+					R_DrawEmptyColumnTextMDA();
+#else
+				colfunc();
+#endif
+
+				cc_rwx = viewheight;
+				fc_rwx = -1;
+			}
+		}
+		else
+		{
+			// two sided line
+			if (toptexture)
+			{
+				// top wall
+				mid = pixhigh >> HEIGHTBITS;
+				pixhigh -= pixhighstep;
+
+				if (mid >= fc_rwx)
+					mid = fc_rwx - 1;
+
+				if (mid < yl)
+				{
+					cc_rwx = yl - 1;
+				}
+				else
+				{
+					dc_yl = yl;
+					dc_yh = mid;
+					dc_texturemid = rw_toptexturemid;
+
+					tex = toptexture;
+					col = texturecolumn;
+					col &= texturewidthmask[tex];
+					lump = texturecolumnlump[tex][col];
+					ofs = texturecolumnofs[tex][col];
+
+					if (lump > 0)
+					{
+						dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
+					}
+					else
+					{
+						if (!texturecomposite[tex])
+							R_GenerateComposite(tex);
+
+						dc_source = texturecomposite[tex] + ofs;
+					}
+
+#if defined(MODE_CGA16) || defined(MODE_CVB)
+					if (detailshift == DETAIL_HIGH)
+					{
+						if ((dc_x & 1) == 0)
+							colfunc();
+					}
+					else
+						colfunc();
+#elif defined(MODE_CGA512)
+					switch (detailshift)
+					{
+					case DETAIL_HIGH:
+						if ((dc_x & 3) == 0)
+							colfunc();
+						break;
+					case DETAIL_LOW:
+						if ((dc_x & 1) == 0)
+							colfunc();
+						break;
+					default:
+						colfunc();
+						break;
+					}
+#elif defined(MODE_MDA)
+					if (first == rw_x || rw_x == rw_stopx - 1)
+						R_DrawLineColumnTextMDA();
+					else
+						R_DrawEmptyColumnTextMDA();
+#else
+					colfunc();
+#endif
+
+					cc_rwx = mid;
+				}
+			}
+			else
+			{
+				// no top wall
+				if (markceiling)
+					cc_rwx = yl - 1;
+			}
+
+			if (bottomtexture)
+			{
+				// bottom wall
+				mid = (pixlow + HEIGHTUNIT - 1) >> HEIGHTBITS;
+				pixlow -= pixlowstep;
+
+				// no space above wall?
+				if (mid <= cc_rwx)
+					mid = cc_rwx + 1;
+
+				if (mid > yh)
+				{
+					fc_rwx = yh + 1;
+				}
+				else
+				{
+					dc_yl = mid;
+					dc_yh = yh;
+					dc_texturemid = rw_bottomtexturemid;
+
+					tex = bottomtexture;
+					col = texturecolumn;
+					col &= texturewidthmask[tex];
+					lump = texturecolumnlump[tex][col];
+					ofs = texturecolumnofs[tex][col];
+
+					if (lump > 0)
+					{
+						dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
+					}
+					else
+					{
+						if (!texturecomposite[tex])
+							R_GenerateComposite(tex);
+
+						dc_source = texturecomposite[tex] + ofs;
+					}
+
+#if defined(MODE_CGA16) || defined(MODE_CVB)
+					if (detailshift == DETAIL_HIGH)
+					{
+						if ((dc_x & 1) == 0)
+							colfunc();
+					}
+					else
+						colfunc();
+#elif defined(MODE_CGA512)
+					switch (detailshift)
+					{
+					case DETAIL_HIGH:
+						if ((dc_x & 3) == 0)
+							colfunc();
+						break;
+					case DETAIL_LOW:
+						if ((dc_x & 1) == 0)
+							colfunc();
+						break;
+					default:
+						colfunc();
+						break;
+					}
+#elif defined(MODE_MDA)
+					if (first == rw_x || rw_x == rw_stopx - 1)
+						R_DrawLineColumnTextMDA();
+					else
+						R_DrawEmptyColumnTextMDA();
+#else
+					colfunc();
+#endif
+
+					fc_rwx = mid;
+				}
+			}
+			else
+			{
+				// no bottom wall
+				if (markfloor)
+					fc_rwx = yh + 1;
+			}
+
+			if (maskedtexture)
+			{
+				// save texturecol
+				//  for backdrawing of masked mid texture
+				maskedtexturecol[rw_x] = texturecolumn;
+			}
+		}
+
+		rw_scale += rw_scalestep;
+		topfrac -= topstep;
+		bottomfrac -= bottomstep;
+
+		ceilingclip[rw_x] = cc_rwx;
+		floorclip[rw_x] = fc_rwx;
+	}
+}
+
+void R_RenderSegLoopFlatter(void)
+{
+	angle_t angle;
+	unsigned index;
+	int yl;
+	int yh;
+	int mid;
+	fixed_t texturecolumn;
+	int top;
+	int bottom;
+
+	int lump;
+	int ofs;
+	int tex;
+	int col;
+
+	int cc_rwx;
+	int fc_rwx;
+
+	byte *firstPixel;
+
+#if defined(MODE_MDA)
+	int first = rw_x;
+#endif
+
+	// texturecolumn = 0;				// shut up compiler warning
+
+	if (midtexture) {
+		tex = midtexture;
+	} else if (toptexture) {
+		tex = toptexture;
+	} else {
+		tex = bottomtexture;
+	}
+
+	lump = texturecolumnlump[tex][0];
+	ofs = texturecolumnofs[tex][0] - 3;
+
+	if (lump > 0)
+	{
+		firstPixel = ((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
+	}
+	else
+	{
+		if (!texturecomposite[tex])
+			R_GenerateComposite(tex);
+
+		firstPixel = (texturecomposite[tex] + ofs);
+	}
+
+	dc_color = *(firstPixel + 3);
+
+	for (; rw_x < rw_stopx; rw_x++)
+	{
+		cc_rwx = ceilingclip[rw_x];
+		fc_rwx = floorclip[rw_x];
+
+		// mark floor / ceiling areas
+		yl = (topfrac + HEIGHTUNIT - 1) >> HEIGHTBITS;
+
+		// no space above wall?
+		if (yl < cc_rwx + 1)
+			yl = cc_rwx + 1;
+
+		if (markceiling)
+		{
+			top = cc_rwx + 1;
+			bottom = yl - 1;
+
+			if (bottom >= fc_rwx)
+				bottom = fc_rwx - 1;
+
+			if (top <= bottom)
+			{
+				ceilingplane->top[rw_x] = top;
+				ceilingplane->bottom[rw_x] = bottom;
+				ceilingplane->modified = 1;
+			}
+		}
+
+		yh = bottomfrac >> HEIGHTBITS;
+
+		if (yh >= fc_rwx)
+			yh = fc_rwx - 1;
+
+		if (markfloor)
+		{
+			top = yh + 1;
+			bottom = fc_rwx - 1;
+			if (top <= cc_rwx)
+				top = cc_rwx + 1;
+			if (top <= bottom)
+			{
+				floorplane->top[rw_x] = top;
+				floorplane->bottom[rw_x] = bottom;
+				floorplane->modified = 1;
+			}
+		}
+
+		// texturecolumn and lighting are independent of wall tiers
+		if (segtextured)
+		{
+			// calculate texture offset
+			angle = (rw_centerangle + xtoviewangle[rw_x]) >> ANGLETOFINESHIFT;
+			texturecolumn = rw_offset - FixedMulEDX(finetangent[angle], rw_distance);
+			texturecolumn >>= FRACBITS;
+			// calculate lighting
+			index = rw_scale >> LIGHTSCALESHIFT;
+#if PIXEL_SCALING != 1
+				index /= PIXEL_SCALING;
+#endif
+
+			if (index >= MAXLIGHTSCALE)
+				index = MAXLIGHTSCALE - 1;
+
+			dc_colormap = walllights[index];
 			dc_x = rw_x;
 
 			// VITI95: OPTIMIZE
@@ -1202,7 +1917,7 @@ void R_StoreWallRange(int start,
 	if (markfloor)
 		floorplane = R_CheckPlane(floorplane, rw_x, rw_stopx - 1);
 
-	R_RenderSegLoop();
+	renderSegLoop();
 
 	// save sprite clipping info
 	if (((ds_p->silhouette & SIL_TOP) || maskedtexture) && !ds_p->sprtopclip)

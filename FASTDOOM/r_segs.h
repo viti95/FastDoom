@@ -22,4 +22,8 @@
 void R_RenderMaskedSegRange(drawseg_t *ds, int x1, int x2);
 void R_RenderMaskedSegRange2(drawseg_t *ds);
 
+extern void R_RenderSegLoop(void);
+extern void R_RenderSegLoopFlat(void);
+extern void R_RenderSegLoopFlatter(void);
+
 #endif
