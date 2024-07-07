@@ -1389,25 +1389,6 @@ void R_RenderSegLoopFlatter(void)
 				// single sided line
 				dc_yl = yl;
 				dc_yh = yh;
-				dc_texturemid = rw_midtexturemid;
-
-				tex = midtexture;
-				col = texturecolumn;
-				col &= texturewidthmask[tex];
-				lump = texturecolumnlump[tex][col];
-				ofs = texturecolumnofs[tex][col];
-
-				if (lump > 0)
-				{
-					dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
-				}
-				else
-				{
-					if (!texturecomposite[tex])
-						R_GenerateComposite(tex);
-
-					dc_source = texturecomposite[tex] + ofs;
-				}
 
 #if defined(MODE_CGA16) || defined(MODE_CVB)
 				if (detailshift == DETAIL_HIGH)
@@ -1465,25 +1446,6 @@ void R_RenderSegLoopFlatter(void)
 				{
 					dc_yl = yl;
 					dc_yh = mid;
-					dc_texturemid = rw_toptexturemid;
-
-					tex = toptexture;
-					col = texturecolumn;
-					col &= texturewidthmask[tex];
-					lump = texturecolumnlump[tex][col];
-					ofs = texturecolumnofs[tex][col];
-
-					if (lump > 0)
-					{
-						dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
-					}
-					else
-					{
-						if (!texturecomposite[tex])
-							R_GenerateComposite(tex);
-
-						dc_source = texturecomposite[tex] + ofs;
-					}
 
 #if defined(MODE_CGA16) || defined(MODE_CVB)
 					if (detailshift == DETAIL_HIGH)
@@ -1545,25 +1507,6 @@ void R_RenderSegLoopFlatter(void)
 				{
 					dc_yl = mid;
 					dc_yh = yh;
-					dc_texturemid = rw_bottomtexturemid;
-
-					tex = bottomtexture;
-					col = texturecolumn;
-					col &= texturewidthmask[tex];
-					lump = texturecolumnlump[tex][col];
-					ofs = texturecolumnofs[tex][col];
-
-					if (lump > 0)
-					{
-						dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
-					}
-					else
-					{
-						if (!texturecomposite[tex])
-							R_GenerateComposite(tex);
-
-						dc_source = texturecomposite[tex] + ofs;
-					}
 
 #if defined(MODE_CGA16) || defined(MODE_CVB)
 					if (detailshift == DETAIL_HIGH)
