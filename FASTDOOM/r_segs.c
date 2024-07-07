@@ -1308,6 +1308,7 @@ void R_RenderMaskedSegRange2Flatter(drawseg_t *ds)
 void (*renderSegLoop)(void);
 void (*renderMaskedSegRange)(drawseg_t *ds, int x1, int x2);
 void (*renderMaskedSegRange2)(drawseg_t *ds);
+void (*drawVisSprite)(vissprite_t *vis);
 
 void R_RenderSegLoop(void)
 {

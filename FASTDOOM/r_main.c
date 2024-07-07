@@ -1131,6 +1131,7 @@ void R_ExecuteSetViewSize(void)
 
         switch (spriteRender){
             case SPRITE_NORMAL:
+                drawVisSprite = R_DrawVisSprite;
                 switch (selectedCPU)
                 {
                 case UMC_GREEN_486:
@@ -1144,7 +1145,11 @@ void R_ExecuteSetViewSize(void)
                 }
             break;
             case SPRITE_FLAT:
+                drawVisSprite = R_DrawVisSpriteFlat;
+                spritefunc = basecolfunc = R_DrawColumnFlat;
+            break;
             case SPRITE_FLATTER:
+                drawVisSprite = R_DrawVisSpriteFlatter;
                 spritefunc = basecolfunc = R_DrawColumnFlat;
             break;
         }
@@ -1236,6 +1241,7 @@ void R_ExecuteSetViewSize(void)
 
         switch (spriteRender){
             case SPRITE_NORMAL:
+                drawVisSprite = R_DrawVisSprite;
                 switch (selectedCPU)
                 {
                 case UMC_GREEN_486:
@@ -1249,7 +1255,11 @@ void R_ExecuteSetViewSize(void)
                 }
             break;
             case SPRITE_FLAT:
+                drawVisSprite = R_DrawVisSpriteFlat;
+                spritefunc = basecolfunc = R_DrawColumnFlatLow;
+            break;
             case SPRITE_FLATTER:
+                drawVisSprite = R_DrawVisSpriteFlatter;
                 spritefunc = basecolfunc = R_DrawColumnFlatLow;
             break;
         }
@@ -1341,6 +1351,7 @@ void R_ExecuteSetViewSize(void)
 
         switch (spriteRender){
             case SPRITE_NORMAL:
+                drawVisSprite = R_DrawVisSprite;
                 switch (selectedCPU)
                 {
                 case UMC_GREEN_486:
@@ -1354,7 +1365,11 @@ void R_ExecuteSetViewSize(void)
                 }
             break;
             case SPRITE_FLAT:
+                drawVisSprite = R_DrawVisSpriteFlat;
+                spritefunc = basecolfunc = R_DrawColumnFlatPotato;
+            break;
             case SPRITE_FLATTER:
+                drawVisSprite = R_DrawVisSpriteFlatter;
                 spritefunc = basecolfunc = R_DrawColumnFlatPotato;
             break;
         }

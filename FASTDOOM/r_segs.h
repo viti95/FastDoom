@@ -19,9 +19,6 @@
 #ifndef __R_SEGS__
 #define __R_SEGS__
 
-void R_RenderMaskedSegRange(drawseg_t *ds, int x1, int x2);
-void R_RenderMaskedSegRange2(drawseg_t *ds);
-
 extern void R_RenderSegLoop(void);
 extern void R_RenderSegLoopFlat(void);
 extern void R_RenderSegLoopFlatter(void);
@@ -34,5 +31,8 @@ extern void R_RenderMaskedSegRange2(drawseg_t *ds);
 extern void R_RenderMaskedSegRange2Flat(drawseg_t *ds);
 extern void R_RenderMaskedSegRange2Flatter(drawseg_t *ds);
 
+extern void R_DrawVisSprite(vissprite_t *vis);
+extern void R_DrawVisSpriteFlat(vissprite_t *vis);
+extern void R_DrawVisSpriteFlatter(vissprite_t *vis);
 
 #endif
