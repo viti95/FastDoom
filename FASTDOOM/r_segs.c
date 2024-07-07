@@ -431,9 +431,6 @@ void R_RenderMaskedSegRangeFlat(drawseg_t *ds,
 
 			sprtopscreen = centeryfrac - FixedMulEDX(spryscale, dc_texturemid);
 
-			// VITI95: OPTIMIZE
-			dc_iscale = 0xffffffffu / (unsigned)spryscale;
-
 			// draw the texture
 
 			tex = texnum;
@@ -487,7 +484,6 @@ void R_RenderMaskedSegRangeFlat(drawseg_t *ds,
 					continue;
 				}
 
-				dc_source = (byte *)col + 3;
 				dc_texturemid = basetexturemid - (col->topdelta << FRACBITS);
 
 				dc_yh = yh;
@@ -581,21 +577,6 @@ void R_RenderMaskedSegRangeFlatter(drawseg_t *ds,
 	color = *(firstPixel + 3);
 	dc_color = color;
 
-	lightnum = (frontsector->lightlevel >> LIGHTSEGSHIFT) + extralight;
-
-	if (curline->v1->y == curline->v2->y)
-		lightnum--;
-	else if (curline->v1->x == curline->v2->x)
-		lightnum++;
-
-	// Lightnum between 0 and 15
-	if (lightnum < 0)
-		walllights = scalelight[0];
-	else if (lightnum > LIGHTLEVELS - 1)
-		walllights = scalelight[LIGHTLEVELS - 1];
-	else
-		walllights = scalelight[lightnum];
-
 	maskedtexturecol = ds->maskedtexturecol;
 	rw_scalestep = ds->scalestep;
 	spryscale = ds->scale1 + (x1 - ds->x1) * rw_scalestep;
@@ -619,11 +600,6 @@ void R_RenderMaskedSegRangeFlatter(drawseg_t *ds,
 	}
 	dc_texturemid += curline->sidedef->rowoffset;
 
-	if (fixedcolormap){
-		dc_colormap = fixedcolormap;
-	}
-		
-
 	dc_x = x1;
 	do
 	{
@@ -637,23 +613,7 @@ void R_RenderMaskedSegRangeFlatter(drawseg_t *ds,
 			int yl, yh;
 			short mfc_x, mcc_x;
 
-			if (!fixedcolormap)
-			{
-				index = spryscale >> LIGHTSCALESHIFT;
-#if PIXEL_SCALING != 1
-				index /= PIXEL_SCALING;
-#endif
-
-				if (index >= MAXLIGHTSCALE)
-					index = MAXLIGHTSCALE - 1;
-
-				dc_colormap = walllights[index];
-			}
-
 			sprtopscreen = centeryfrac - FixedMulEDX(spryscale, dc_texturemid);
-
-			// VITI95: OPTIMIZE
-			dc_iscale = 0xffffffffu / (unsigned)spryscale;
 
 			// draw the texture
 
@@ -708,7 +668,6 @@ void R_RenderMaskedSegRangeFlatter(drawseg_t *ds,
 					continue;
 				}
 
-				dc_source = (byte *)col + 3;
 				dc_texturemid = basetexturemid - (col->topdelta << FRACBITS);
 
 				dc_yh = yh;
@@ -1044,7 +1003,6 @@ void R_RenderMaskedSegRange2Flat(drawseg_t *ds)
 		dc_colormap = fixedcolormap;
 		dc_color = dc_colormap[color];
 	}
-		
 
 	dc_x = ds->x1;
 	do
@@ -1074,9 +1032,6 @@ void R_RenderMaskedSegRange2Flat(drawseg_t *ds)
 			}
 
 			sprtopscreen = centeryfrac - FixedMulEDX(spryscale, dc_texturemid);
-
-			// VITI95: OPTIMIZE
-			dc_iscale = 0xffffffffu / (unsigned)spryscale;
 
 			// draw the texture
 
@@ -1131,7 +1086,6 @@ void R_RenderMaskedSegRange2Flat(drawseg_t *ds)
 					continue;
 				}
 
-				dc_source = (byte *)col + 3;
 				dc_texturemid = basetexturemid - (col->topdelta << FRACBITS);
 
 				dc_yh = yh;
