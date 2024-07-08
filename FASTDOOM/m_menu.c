@@ -1367,13 +1367,13 @@ void M_DrawDisplayItem(int item, int position)
     case columns:
         M_WriteText(58, y, "WALL RENDERING:");
         M_WriteText(214, y, (wallRender == WALL_NORMAL) ? "FULL" : (wallRender == WALL_FLAT) ? "FLAT"
-                                                                                                               : "FLATTER");
+                                                                                             : "FLATTER");
         break;
 
     case sprites:
         M_WriteText(58, y, "SPRITE RENDERING:");
         M_WriteText(214, y, (spriteRender == SPRITE_NORMAL) ? "FULL" : (spriteRender == SPRITE_FLAT) ? "FLAT"
-                                                                                                               : "FLATTER");
+                                                                                                     : "FLATTER");
         break;
 
     case sky:
@@ -1491,23 +1491,23 @@ void M_DrawDisplayItem(int item, int position)
     case detail:
         V_WriteTextDirect(15, y, "DETAIL LEVEL:");
         V_WriteTextDirect(45, y, detailLevel == DETAIL_POTATO ? "POTATO" : detailLevel == DETAIL_LOW ? "LOW"
-                                                                                                : "HIGH");
+                                                                                                     : "HIGH");
         break;
     case visplanes:
         V_WriteTextDirect(15, y, "VISPLANE RENDERING:");
         V_WriteTextDirect(45, y, (visplaneRender == VISPLANES_NORMAL) ? "FULL" : (visplaneRender == VISPLANES_FLAT) ? "FLAT"
-                                                                                                               : "FLATTER");
+                                                                                                                    : "FLATTER");
         break;
     case columns:
         V_WriteTextDirect(15, y, "WALL RENDERING:");
         V_WriteTextDirect(45, y, (wallRender == WALL_NORMAL) ? "FULL" : (wallRender == WALL_FLAT) ? "FLAT"
-                                                                                                               : "FLATTER");
+                                                                                                  : "FLATTER");
         break;
 
     case sprites:
         V_WriteTextDirect(15, y, "SPRITE RENDERING:");
         V_WriteTextDirect(45, y, (spriteRender == SPRITE_NORMAL) ? "FULL" : (spriteRender == SPRITE_FLAT) ? "FLAT"
-                                                                                                               : "FLATTER");
+                                                                                                          : "FLATTER");
         break;
 
     case sky:
@@ -1611,7 +1611,6 @@ void M_DrawDisplayItem(int item, int position)
 }
 #endif
 
-
 #if defined(MODE_T8025) || defined(MODE_MDA)
 void M_DrawDisplayItem(int item, int position)
 {
@@ -1626,23 +1625,23 @@ void M_DrawDisplayItem(int item, int position)
     case detail:
         V_WriteTextDirect(15, y, "DETAIL LEVEL:");
         V_WriteTextDirect(45, y, detailLevel == DETAIL_POTATO ? "POTATO" : detailLevel == DETAIL_LOW ? "LOW"
-                                                                                                : "HIGH");
+                                                                                                     : "HIGH");
         break;
     case visplanes:
         V_WriteTextDirect(15, y, "VISPLANE RENDERING:");
         V_WriteTextDirect(45, y, (visplaneRender == VISPLANES_NORMAL) ? "FULL" : (visplaneRender == VISPLANES_FLAT) ? "FLAT"
-                                                                                                               : "FLATTER");
+                                                                                                                    : "FLATTER");
         break;
     case columns:
         V_WriteTextDirect(15, y, "WALL RENDERING:");
         V_WriteTextDirect(45, y, (wallRender == WALL_NORMAL) ? "FULL" : (wallRender == WALL_FLAT) ? "FLAT"
-                                                                                                               : "FLATTER");
+                                                                                                  : "FLATTER");
         break;
 
     case sprites:
         V_WriteTextDirect(15, y, "SPRITE RENDERING:");
         V_WriteTextDirect(45, y, (spriteRender == SPRITE_NORMAL) ? "FULL" : (spriteRender == SPRITE_FLAT) ? "FLAT"
-                                                                                                               : "FLATTER");
+                                                                                                          : "FLATTER");
         break;
 
     case sky:
@@ -1760,23 +1759,23 @@ void M_DrawDisplayItem(int item, int position)
     case detail:
         V_WriteTextDirect(6, y, "DETAIL LEVEL:");
         V_WriteTextDirect(27, y, detailLevel == DETAIL_POTATO ? "POTATO" : detailLevel == DETAIL_LOW ? "LOW"
-                                                                                                : "HIGH");
+                                                                                                     : "HIGH");
         break;
     case visplanes:
         V_WriteTextDirect(6, y, "VISPLANE RENDERING:");
         V_WriteTextDirect(27, y, (visplaneRender == VISPLANES_NORMAL) ? "FULL" : (visplaneRender == VISPLANES_FLAT) ? "FLAT"
-                                                                                                               : "FLATTER");
+                                                                                                                    : "FLATTER");
         break;
     case columns:
         V_WriteTextDirect(6, y, "WALL RENDERING:");
         V_WriteTextDirect(27, y, (wallRender == WALL_NORMAL) ? "FULL" : (wallRender == WALL_FLAT) ? "FLAT"
-                                                                                                               : "FLATTER");
+                                                                                                  : "FLATTER");
         break;
 
     case sprites:
         V_WriteTextDirect(6, y, "SPRITE RENDERING:");
         V_WriteTextDirect(27, y, (spriteRender == SPRITE_NORMAL) ? "FULL" : (spriteRender == SPRITE_FLAT) ? "FLAT"
-                                                                                                               : "FLATTER");
+                                                                                                          : "FLATTER");
         break;
 
     case sky:
@@ -2994,6 +2993,30 @@ void M_Drawer(void)
             V_DrawPatchDirectCentered(x + SKULLXOFF, (currentMenu->y / 2) - 2 + (itemOn - (display_end - MAX_ITEMS_DRAWN)) * LINEHEIGHT, W_CacheLumpName(skullName[whichSkull], PU_CACHE));
         else
             V_DrawPatchDirectCentered(x + SKULLXOFF, (currentMenu->y / 2) - 2 + (MAX_ITEMS_DRAWN / 2) * LINEHEIGHT, W_CacheLumpName(skullName[whichSkull], PU_CACHE));
+#endif
+#if defined(MODE_T4025) || defined(MODE_T4050)
+        if (itemOn - (MAX_ITEMS_DRAWN / 2) < 0)
+            V_WriteCharDirect(currentMenu->x / 8 - 3, currentMenu->y / 8 + itemOn * 2, whichSkull + 1);
+        else if (itemOn + (MAX_ITEMS_DRAWN / 2) > display_end)
+            V_WriteCharDirect(currentMenu->x / 8 - 3, currentMenu->y / 8 + (itemOn - (display_end - MAX_ITEMS_DRAWN)) * 2, whichSkull + 1);
+        else
+            V_WriteCharDirect(currentMenu->x / 8 - 3, currentMenu->y / 8 + (MAX_ITEMS_DRAWN / 2) * 2, whichSkull + 1);
+#endif
+#if defined(MODE_T8025) || defined(MODE_MDA)
+        if (itemOn - (MAX_ITEMS_DRAWN / 2) < 0)
+            V_WriteCharDirect(currentMenu->x / 4 - 3, currentMenu->y / 8 + itemOn * 2, whichSkull + 1);
+        else if (itemOn + (MAX_ITEMS_DRAWN / 2) > display_end)
+            V_WriteCharDirect(currentMenu->x / 4 - 3, currentMenu->y / 8 + (itemOn - (display_end - MAX_ITEMS_DRAWN)) * 2, whichSkull + 1);
+        else
+            V_WriteCharDirect(currentMenu->x / 4 - 3, currentMenu->y / 8 + (MAX_ITEMS_DRAWN / 2) * 2, whichSkull + 1);
+#endif
+#if defined(MODE_T8050) || defined(MODE_T8043)
+        if (itemOn - (MAX_ITEMS_DRAWN / 2) < 0)
+            V_WriteCharDirect(currentMenu->x / 4 - 3, currentMenu->y / 4 + itemOn * 4, whichSkull + 1);
+        else if (itemOn + (MAX_ITEMS_DRAWN / 2) > display_end)
+            V_WriteCharDirect(currentMenu->x / 4 - 3, currentMenu->y / 4 + (itemOn - (display_end - MAX_ITEMS_DRAWN)) * 4, whichSkull + 1);
+        else
+            V_WriteCharDirect(currentMenu->x / 4 - 3, currentMenu->y / 4 + (MAX_ITEMS_DRAWN / 2) * 4, whichSkull + 1);
 #endif
     }
     else
