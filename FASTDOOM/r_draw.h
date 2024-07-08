@@ -56,6 +56,10 @@ void R_DrawColumnBackbufferFlat(void);
 void R_DrawColumnLowBackbufferFlat(void);
 void R_DrawColumnPotatoBackbufferFlat(void);
 
+void R_DrawColumnVBE2Flat(void);
+void R_DrawColumnLowVBE2Flat(void);
+void R_DrawColumnPotatoVBE2Flat(void);
+
 void R_DrawColumnFastLEA(void);
 void R_DrawColumn(void);
 void R_DrawSkyFlat(void);

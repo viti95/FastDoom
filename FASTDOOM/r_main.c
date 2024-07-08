@@ -1750,7 +1750,44 @@ void R_ExecuteSetViewSize(void)
     switch (detailshift)
     {
     case DETAIL_HIGH:
-        colfunc = spritefunc = basecolfunc = R_DrawColumnVBE2;
+
+        switch (wallRender)
+        {
+        case WALL_NORMAL:
+            renderSegLoop = R_RenderSegLoop;
+            renderMaskedSegRange = R_RenderMaskedSegRange;
+            renderMaskedSegRange2 = R_RenderMaskedSegRange2;
+            colfunc = R_DrawColumnVBE2;
+            break;
+        case WALL_FLAT:
+            renderSegLoop = R_RenderSegLoopFlat;
+            renderMaskedSegRange = R_RenderMaskedSegRangeFlat;
+            renderMaskedSegRange2 = R_RenderMaskedSegRange2Flat;
+            colfunc = R_DrawColumnVBE2Flat;
+            break;
+        case WALL_FLATTER:
+            renderSegLoop = R_RenderSegLoopFlatter;
+            renderMaskedSegRange = R_RenderMaskedSegRangeFlatter;
+            renderMaskedSegRange2 = R_RenderMaskedSegRange2Flatter;
+            colfunc = R_DrawColumnVBE2Flat;
+            break;
+        }
+
+        switch (spriteRender)
+        {
+        case SPRITE_NORMAL:
+            drawVisSprite = R_DrawVisSprite;
+            spritefunc = basecolfunc = R_DrawColumnVBE2;
+            break;
+        case SPRITE_FLAT:
+            drawVisSprite = R_DrawVisSpriteFlat;
+            spritefunc = basecolfunc = R_DrawColumnVBE2Flat;
+            break;
+        case SPRITE_FLATTER:
+            drawVisSprite = R_DrawVisSpriteFlatter;
+            spritefunc = basecolfunc = R_DrawColumnVBE2Flat;
+            break;
+        }
 
         if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlatVBE2;
@@ -1795,8 +1832,43 @@ void R_ExecuteSetViewSize(void)
 
         break;
     case DETAIL_LOW:
-        colfunc = spritefunc = basecolfunc = R_DrawColumnLowVBE2;
+        switch (wallRender)
+        {
+        case WALL_NORMAL:
+            renderSegLoop = R_RenderSegLoop;
+            renderMaskedSegRange = R_RenderMaskedSegRange;
+            renderMaskedSegRange2 = R_RenderMaskedSegRange2;
+            colfunc = R_DrawColumnLowVBE2;
+            break;
+        case WALL_FLAT:
+            renderSegLoop = R_RenderSegLoopFlat;
+            renderMaskedSegRange = R_RenderMaskedSegRangeFlat;
+            renderMaskedSegRange2 = R_RenderMaskedSegRange2Flat;
+            colfunc = R_DrawColumnLowVBE2Flat;
+            break;
+        case WALL_FLATTER:
+            renderSegLoop = R_RenderSegLoopFlatter;
+            renderMaskedSegRange = R_RenderMaskedSegRangeFlatter;
+            renderMaskedSegRange2 = R_RenderMaskedSegRange2Flatter;
+            colfunc = R_DrawColumnLowVBE2Flat;
+            break;
+        }
 
+        switch (spriteRender)
+        {
+        case SPRITE_NORMAL:
+            drawVisSprite = R_DrawVisSprite;
+            spritefunc = basecolfunc = R_DrawColumnLowVBE2;
+            break;
+        case SPRITE_FLAT:
+            drawVisSprite = R_DrawVisSpriteFlat;
+            spritefunc = basecolfunc = R_DrawColumnLowVBE2Flat;
+            break;
+        case SPRITE_FLATTER:
+            drawVisSprite = R_DrawVisSpriteFlatter;
+            spritefunc = basecolfunc = R_DrawColumnLowVBE2Flat;
+            break;
+        }
         if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlatLowVBE2;
         else
@@ -1840,7 +1912,43 @@ void R_ExecuteSetViewSize(void)
 
         break;
     case DETAIL_POTATO:
-        colfunc = spritefunc = basecolfunc = R_DrawColumnPotatoVBE2;
+        switch (wallRender)
+        {
+        case WALL_NORMAL:
+            renderSegLoop = R_RenderSegLoop;
+            renderMaskedSegRange = R_RenderMaskedSegRange;
+            renderMaskedSegRange2 = R_RenderMaskedSegRange2;
+            colfunc = R_DrawColumnPotatoVBE2;
+            break;
+        case WALL_FLAT:
+            renderSegLoop = R_RenderSegLoopFlat;
+            renderMaskedSegRange = R_RenderMaskedSegRangeFlat;
+            renderMaskedSegRange2 = R_RenderMaskedSegRange2Flat;
+            colfunc = R_DrawColumnPotatoVBE2Flat;
+            break;
+        case WALL_FLATTER:
+            renderSegLoop = R_RenderSegLoopFlatter;
+            renderMaskedSegRange = R_RenderMaskedSegRangeFlatter;
+            renderMaskedSegRange2 = R_RenderMaskedSegRange2Flatter;
+            colfunc = R_DrawColumnPotatoVBE2Flat;
+            break;
+        }
+
+        switch (spriteRender)
+        {
+        case SPRITE_NORMAL:
+            drawVisSprite = R_DrawVisSprite;
+            spritefunc = basecolfunc = R_DrawColumnPotatoVBE2;
+            break;
+        case SPRITE_FLAT:
+            drawVisSprite = R_DrawVisSpriteFlat;
+            spritefunc = basecolfunc = R_DrawColumnPotatoVBE2Flat;
+            break;
+        case SPRITE_FLATTER:
+            drawVisSprite = R_DrawVisSpriteFlatter;
+            spritefunc = basecolfunc = R_DrawColumnPotatoVBE2Flat;
+            break;
+        }
 
         if (visplaneRender == VISPLANES_FLAT)
             spanfunc = R_DrawSpanFlatPotatoVBE2;
