@@ -2874,12 +2874,22 @@ void M_Drawer(void)
 
     if (currentMenu == &DisplayDef)
     {
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
         if (itemOn - (MAX_ITEMS_DRAWN / 2) < 0)
             V_DrawPatchDirectCentered(x + SKULLXOFF, currentMenu->y - 5 + itemOn * LINEHEIGHT, W_CacheLumpName(skullName[whichSkull], PU_CACHE));
         else if (itemOn + (MAX_ITEMS_DRAWN / 2) > display_end)
             V_DrawPatchDirectCentered(x + SKULLXOFF, currentMenu->y - 5 + (itemOn - (display_end - MAX_ITEMS_DRAWN)) * LINEHEIGHT, W_CacheLumpName(skullName[whichSkull], PU_CACHE));
         else
             V_DrawPatchDirectCentered(x + SKULLXOFF, currentMenu->y - 5 + (MAX_ITEMS_DRAWN / 2) * LINEHEIGHT, W_CacheLumpName(skullName[whichSkull], PU_CACHE));
+#endif
+#if defined(MODE_Y_HALF)
+        if (itemOn - (MAX_ITEMS_DRAWN / 2) < 0)
+            V_DrawPatchDirectCentered(x + SKULLXOFF, (currentMenu->y / 2) - 2 + itemOn * LINEHEIGHT, W_CacheLumpName(skullName[whichSkull], PU_CACHE));
+        else if (itemOn + (MAX_ITEMS_DRAWN / 2) > display_end)
+            V_DrawPatchDirectCentered(x + SKULLXOFF, (currentMenu->y / 2) - 2 + (itemOn - (display_end - MAX_ITEMS_DRAWN)) * LINEHEIGHT, W_CacheLumpName(skullName[whichSkull], PU_CACHE));
+        else
+            V_DrawPatchDirectCentered(x + SKULLXOFF, (currentMenu->y / 2) - 2 + (MAX_ITEMS_DRAWN / 2) * LINEHEIGHT, W_CacheLumpName(skullName[whichSkull], PU_CACHE));
+#endif
     }
     else
     {
