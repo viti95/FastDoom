@@ -1611,6 +1611,140 @@ void M_DrawDisplayItem(int item, int position)
 }
 #endif
 
+#if defined(MODE_T8025) || defined(MODE_MDA)
+void M_DrawDisplayItem(int item, int position)
+{
+    int y = 1 + position * 2;
+
+    switch (item)
+    {
+    case vsync:
+        V_WriteTextDirect(15, y, "VSYNC:");
+        V_WriteTextDirect(45, y, waitVsync ? "ON" : "OFF");
+        break;
+    case detail:
+        V_WriteTextDirect(15, y, "DETAIL LEVEL:");
+        V_WriteTextDirect(45, y, detailLevel == DETAIL_POTATO ? "POTATO" : detailLevel == DETAIL_LOW ? "LOW"
+                                                                                                : "HIGH");
+        break;
+    case visplanes:
+        V_WriteTextDirect(15, y, "VISPLANE RENDERING:");
+        V_WriteTextDirect(45, y, (visplaneRender == VISPLANES_NORMAL) ? "FULL" : (visplaneRender == VISPLANES_FLAT) ? "FLAT"
+                                                                                                               : "FLATTER");
+        break;
+    case columns:
+        V_WriteTextDirect(15, y, "WALL RENDERING:");
+        V_WriteTextDirect(45, y, (wallRender == WALL_NORMAL) ? "FULL" : (wallRender == WALL_FLAT) ? "FLAT"
+                                                                                                               : "FLATTER");
+        break;
+
+    case sprites:
+        V_WriteTextDirect(15, y, "SPRITE RENDERING:");
+        V_WriteTextDirect(45, y, (spriteRender == SPRITE_NORMAL) ? "FULL" : (spriteRender == SPRITE_FLAT) ? "FLAT"
+                                                                                                               : "FLATTER");
+        break;
+
+    case sky:
+        V_WriteTextDirect(15, y, "SKY RENDERING:");
+        V_WriteTextDirect(45, y, flatSky ? "FLAT" : "FULL");
+        break;
+    case invisible:
+        V_WriteTextDirect(15, y, "INVISIBLE RENDERING:");
+        switch (invisibleRender)
+        {
+        case INVISIBLE_NORMAL:
+            V_WriteTextDirect(45, y, "FUZZY");
+            break;
+        case INVISIBLE_FLAT:
+            V_WriteTextDirect(45, y, "FLAT");
+            break;
+        case INVISIBLE_FLAT_SATURN:
+            V_WriteTextDirect(45, y, "FLAT SATURN");
+            break;
+        case INVISIBLE_SATURN:
+            V_WriteTextDirect(45, y, "SATURN");
+            break;
+        case INVISIBLE_TRANSLUCENT:
+            V_WriteTextDirect(45, y, "TRANSLUCENT");
+            break;
+        }
+        break;
+    case showfps:
+        V_WriteTextDirect(15, y, "SHOW FPS:");
+        switch (showFPS)
+        {
+        case NO_FPS:
+            V_WriteTextDirect(45, y, "OFF");
+            break;
+        case SCREEN_FPS:
+            V_WriteTextDirect(45, y, "SCREEN");
+            break;
+        case DEBUG_CARD_2D_FPS:
+            V_WriteTextDirect(45, y, "DEBUG CARD 2N");
+            break;
+        case DEBUG_CARD_4D_FPS:
+            V_WriteTextDirect(45, y, "DEBUG CARD 4N");
+            break;
+        case SCREEN_DC2D_FPS:
+            V_WriteTextDirect(45, y, "SCREEN + DC2N");
+            break;
+        case SCREEN_DC4D_FPS:
+            V_WriteTextDirect(45, y, "SCREEN + DC4N");
+            break;
+        }
+        break;
+    case spriteculling:
+        V_WriteTextDirect(15, y, "SPRITE CULLING:");
+        V_WriteTextDirect(45, y, nearSprites ? "ON" : "OFF");
+        break;
+    case melting:
+        V_WriteTextDirect(15, y, "MELTING LOAD EFFECT:");
+        V_WriteTextDirect(45, y, noMelt ? "OFF" : "ON");
+        break;
+    case bus_speed:
+        V_WriteTextDirect(15, y, "BUS SPEED:");
+        V_WriteTextDirect(45, y, busSpeed ? "SLOW" : "FAST");
+        break;
+    case cpu:
+        V_WriteTextDirect(15, y, "CPU RENDERER:");
+        switch (selectedCPU)
+        {
+        case AUTO_CPU:
+            V_WriteTextDirect(45, y, "AUTODETECT");
+            break;
+        case INTEL_386SX:
+            V_WriteTextDirect(45, y, "INTEL 386SX");
+            break;
+        case INTEL_386DX:
+            V_WriteTextDirect(45, y, "INTEL 386DX");
+            break;
+        case INTEL_486:
+            V_WriteTextDirect(45, y, "INTEL 486");
+            break;
+        case CYRIX_386DLC:
+            V_WriteTextDirect(45, y, "CYRIX 386DLC");
+            break;
+        case CYRIX_486:
+            V_WriteTextDirect(45, y, "CYRIX 486");
+            break;
+        case UMC_GREEN_486:
+            V_WriteTextDirect(45, y, "UMC 486");
+            break;
+        case CYRIX_5X86:
+            V_WriteTextDirect(45, y, "CYRIX 5X86");
+            break;
+        case AMD_K5:
+            V_WriteTextDirect(45, y, "AMD K5");
+            break;
+        case INTEL_PENTIUM:
+            V_WriteTextDirect(45, y, "INTEL PENTIUM");
+            break;
+        }
+        break;
+    }
+}
+#endif
+
 #define MAX_ITEMS_DRAWN 10
 
 void M_DrawDisplay(void)
@@ -1733,105 +1867,6 @@ void M_DrawDisplay(void)
         break;
     case INTEL_PENTIUM:
         V_WriteTextDirect(27, 19, "INTEL PENTIUM");
-        break;
-    }
-#endif
-#if defined(MODE_T8025) || defined(MODE_MDA)
-    V_WriteTextDirect(15, 1, "VSync:");
-    V_WriteTextDirect(45, 1, waitVsync ? "ON" : "OFF");
-
-    V_WriteTextDirect(15, 3, "Detail level:");
-    V_WriteTextDirect(45, 3, detailLevel == DETAIL_POTATO ? "POTATO" : detailLevel == DETAIL_LOW ? "LOW"
-                                                                                                 : "HIGH");
-
-    V_WriteTextDirect(15, 5, "Visplane rendering:");
-    V_WriteTextDirect(45, 5, (visplaneRender == VISPLANES_NORMAL) ? "FULL" : (visplaneRender == VISPLANES_FLAT) ? "FLAT"
-                                                                                                                : "FLATTER");
-
-    V_WriteTextDirect(15, 7, "Sky rendering:");
-    V_WriteTextDirect(45, 7, flatSky ? "FLAT" : "FULL");
-
-    V_WriteTextDirect(15, 9, "Invisible rendering:");
-    switch (invisibleRender)
-    {
-    case INVISIBLE_NORMAL:
-        V_WriteTextDirect(45, 9, "FUZZY");
-        break;
-    case INVISIBLE_FLAT:
-        V_WriteTextDirect(45, 9, "FLAT");
-        break;
-    case INVISIBLE_FLAT_SATURN:
-        V_WriteTextDirect(45, 9, "FLAT SATURN");
-        break;
-    case INVISIBLE_SATURN:
-        V_WriteTextDirect(45, 9, "SATURN");
-        break;
-    case INVISIBLE_TRANSLUCENT:
-        V_WriteTextDirect(45, 9, "TRANSLUCENT");
-        break;
-    }
-
-    V_WriteTextDirect(15, 11, "Show FPS:");
-    switch (showFPS)
-    {
-    case NO_FPS:
-        V_WriteTextDirect(45, 11, "OFF");
-        break;
-    case SCREEN_FPS:
-        V_WriteTextDirect(45, 11, "SCREEN");
-        break;
-    case DEBUG_CARD_2D_FPS:
-        V_WriteTextDirect(45, 11, "DEBUG CARD 2N");
-        break;
-    case DEBUG_CARD_4D_FPS:
-        V_WriteTextDirect(45, 11, "DEBUG CARD 4N");
-        break;
-    case SCREEN_DC2D_FPS:
-        V_WriteTextDirect(45, 11, "SCREEN + DC2N");
-        break;
-    case SCREEN_DC4D_FPS:
-        V_WriteTextDirect(45, 11, "SCREEN + DC4N");
-        break;
-    }
-
-    V_WriteTextDirect(15, 13, "Sprite culling:");
-    V_WriteTextDirect(45, 13, nearSprites ? "ON" : "OFF");
-
-    V_WriteTextDirect(15, 15, "Melting load effect:");
-    V_WriteTextDirect(45, 15, noMelt ? "OFF" : "ON");
-
-    V_WriteTextDirect(15, 17, "Bus speed:");
-    V_WriteTextDirect(45, 17, busSpeed ? "Slow" : "Fast");
-
-    V_WriteTextDirect(15, 19, "CPU renderer:");
-    switch (selectedCPU)
-    {
-    case INTEL_386SX:
-        V_WriteTextDirect(45, 19, "INTEL 386SX");
-        break;
-    case INTEL_386DX:
-        V_WriteTextDirect(45, 19, "INTEL 386DX");
-        break;
-    case INTEL_486:
-        V_WriteTextDirect(45, 19, "INTEL 486");
-        break;
-    case CYRIX_386DLC:
-        V_WriteTextDirect(45, 19, "CYRIX 386DLC");
-        break;
-    case CYRIX_486:
-        V_WriteTextDirect(45, 19, "CYRIX 486");
-        break;
-    case UMC_GREEN_486:
-        V_WriteTextDirect(45, 19, "UMC 486");
-        break;
-    case CYRIX_5X86:
-        V_WriteTextDirect(45, 19, "CYRIX 5X86");
-        break;
-    case AMD_K5:
-        V_WriteTextDirect(45, 19, "AMD K5");
-        break;
-    case INTEL_PENTIUM:
-        V_WriteTextDirect(45, 19, "INTEL PENTIUM");
         break;
     }
 #endif
