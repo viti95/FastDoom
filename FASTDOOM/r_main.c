@@ -1095,7 +1095,28 @@ void R_ExecuteSetViewSize(void)
     fuzzcolfunc = R_DrawLineColumnTextMDA;
 #endif
 #if defined(MODE_T8050) || defined(MODE_T8043)
-    colfunc = spritefunc = basecolfunc = R_DrawColumnText8050;
+
+    switch (wallRender)
+    {
+    case WALL_NORMAL:
+        colfunc = R_DrawColumnText8050;
+        break;
+    case WALL_FLAT:
+    case WALL_FLATTER:
+        colfunc = R_DrawColumnText8050Flat;
+        break;
+    }
+
+    switch (spriteRender)
+    {
+    case SPRITE_NORMAL:
+        spritefunc = basecolfunc = R_DrawColumnText8050;
+        break;
+    case SPRITE_FLAT:
+    case SPRITE_FLATTER:
+        spritefunc = basecolfunc = R_DrawColumnText8050Flat;
+        break;
+    }
 
     if (visplaneRender == VISPLANES_FLAT)
         spanfunc = R_DrawSpanFlatText8050;
@@ -1149,8 +1170,6 @@ void R_ExecuteSetViewSize(void)
             }
             break;
         case WALL_FLAT:
-            colfunc = R_DrawColumnFlat;
-            break;
         case WALL_FLATTER:
             colfunc = R_DrawColumnFlat;
             break;
@@ -1172,8 +1191,6 @@ void R_ExecuteSetViewSize(void)
             }
             break;
         case SPRITE_FLAT:
-            spritefunc = basecolfunc = R_DrawColumnFlat;
-            break;
         case SPRITE_FLATTER:
             spritefunc = basecolfunc = R_DrawColumnFlat;
             break;
@@ -1249,8 +1266,6 @@ void R_ExecuteSetViewSize(void)
             }
             break;
         case WALL_FLAT:
-            colfunc = R_DrawColumnFlatLow;
-            break;
         case WALL_FLATTER:
             colfunc = R_DrawColumnFlatLow;
             break;
@@ -1272,8 +1287,6 @@ void R_ExecuteSetViewSize(void)
             }
             break;
         case SPRITE_FLAT:
-            spritefunc = basecolfunc = R_DrawColumnFlatLow;
-            break;
         case SPRITE_FLATTER:
             spritefunc = basecolfunc = R_DrawColumnFlatLow;
             break;
@@ -1349,8 +1362,6 @@ void R_ExecuteSetViewSize(void)
             }
             break;
         case WALL_FLAT:
-            colfunc = R_DrawColumnFlatPotato;
-            break;
         case WALL_FLATTER:
             colfunc = R_DrawColumnFlatPotato;
             break;
@@ -1372,8 +1383,6 @@ void R_ExecuteSetViewSize(void)
             }
             break;
         case SPRITE_FLAT:
-            spritefunc = basecolfunc = R_DrawColumnFlatPotato;
-            break;
         case SPRITE_FLATTER:
             spritefunc = basecolfunc = R_DrawColumnFlatPotato;
             break;
@@ -1453,8 +1462,6 @@ void R_ExecuteSetViewSize(void)
             }
             break;
         case WALL_FLAT:
-            colfunc = R_DrawColumnBackbufferFlat;
-            break;
         case WALL_FLATTER:
             colfunc = R_DrawColumnBackbufferFlat;
             break;
@@ -1476,8 +1483,6 @@ void R_ExecuteSetViewSize(void)
             }
             break;
         case SPRITE_FLAT:
-            spritefunc = basecolfunc = R_DrawColumnBackbufferFlat;
-            break;
         case SPRITE_FLATTER:
             spritefunc = basecolfunc = R_DrawColumnBackbufferFlat;
             break;
@@ -1552,8 +1557,6 @@ void R_ExecuteSetViewSize(void)
             }
             break;
         case WALL_FLAT:
-            colfunc = R_DrawColumnLowBackbufferFlat;
-            break;
         case WALL_FLATTER:
             colfunc = R_DrawColumnLowBackbufferFlat;
             break;
@@ -1575,8 +1578,6 @@ void R_ExecuteSetViewSize(void)
             }
             break;
         case SPRITE_FLAT:
-            spritefunc = basecolfunc = R_DrawColumnLowBackbufferFlat;
-            break;
         case SPRITE_FLATTER:
             spritefunc = basecolfunc = R_DrawColumnLowBackbufferFlat;
             break;
@@ -1641,8 +1642,6 @@ void R_ExecuteSetViewSize(void)
             colfunc = R_DrawColumnPotatoBackbuffer;
             break;
         case WALL_FLAT:
-            colfunc = R_DrawColumnPotatoBackbufferFlat;
-            break;
         case WALL_FLATTER:
             colfunc = R_DrawColumnPotatoBackbufferFlat;
             break;
@@ -1654,8 +1653,6 @@ void R_ExecuteSetViewSize(void)
             spritefunc = basecolfunc = R_DrawColumnPotatoBackbuffer;
             break;
         case SPRITE_FLAT:
-            spritefunc = basecolfunc = R_DrawColumnPotatoBackbufferFlat;
-            break;
         case SPRITE_FLATTER:
             spritefunc = basecolfunc = R_DrawColumnPotatoBackbufferFlat;
             break;
@@ -1717,8 +1714,6 @@ void R_ExecuteSetViewSize(void)
             colfunc = R_DrawColumnVBE2;
             break;
         case WALL_FLAT:
-            colfunc = R_DrawColumnVBE2Flat;
-            break;
         case WALL_FLATTER:
             colfunc = R_DrawColumnVBE2Flat;
             break;
@@ -1730,8 +1725,6 @@ void R_ExecuteSetViewSize(void)
             spritefunc = basecolfunc = R_DrawColumnVBE2;
             break;
         case SPRITE_FLAT:
-            spritefunc = basecolfunc = R_DrawColumnVBE2Flat;
-            break;
         case SPRITE_FLATTER:
             spritefunc = basecolfunc = R_DrawColumnVBE2Flat;
             break;
@@ -1786,8 +1779,6 @@ void R_ExecuteSetViewSize(void)
             colfunc = R_DrawColumnLowVBE2;
             break;
         case WALL_FLAT:
-            colfunc = R_DrawColumnLowVBE2Flat;
-            break;
         case WALL_FLATTER:
             colfunc = R_DrawColumnLowVBE2Flat;
             break;
@@ -1799,8 +1790,6 @@ void R_ExecuteSetViewSize(void)
             spritefunc = basecolfunc = R_DrawColumnLowVBE2;
             break;
         case SPRITE_FLAT:
-            spritefunc = basecolfunc = R_DrawColumnLowVBE2Flat;
-            break;
         case SPRITE_FLATTER:
             spritefunc = basecolfunc = R_DrawColumnLowVBE2Flat;
             break;
@@ -1854,8 +1843,6 @@ void R_ExecuteSetViewSize(void)
             colfunc = R_DrawColumnPotatoVBE2;
             break;
         case WALL_FLAT:
-            colfunc = R_DrawColumnPotatoVBE2Flat;
-            break;
         case WALL_FLATTER:
             colfunc = R_DrawColumnPotatoVBE2Flat;
             break;
@@ -1867,8 +1854,6 @@ void R_ExecuteSetViewSize(void)
             spritefunc = basecolfunc = R_DrawColumnPotatoVBE2;
             break;
         case SPRITE_FLAT:
-            spritefunc = basecolfunc = R_DrawColumnPotatoVBE2Flat;
-            break;
         case SPRITE_FLATTER:
             spritefunc = basecolfunc = R_DrawColumnPotatoVBE2Flat;
             break;

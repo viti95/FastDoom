@@ -1602,6 +1602,24 @@ void R_DrawColumnText8050(void)
         frac += fracstep;
     } while (dest <= count);
 }
+
+void R_DrawColumnText8050Flat(void)
+{
+    int count;
+    unsigned short *dest;
+    unsigned short color;
+
+    dest = textdestscreen + Mul80(dc_yl) + dc_x;
+    count = dest + Mul80(dc_yh - dc_yl);
+
+    color = ptrlut16colors[dc_color] << 8 | 219;
+
+    do
+    {
+        *dest = color;
+        dest += 80;
+    } while (dest <= count);
+}
 #endif
 
 #if defined(MODE_T8050) || defined(MODE_T8043)

@@ -91,6 +91,7 @@ void R_DrawColumnPotato(void);
 void R_DrawSkyFlatPotato(void);
 
 void R_DrawColumnText8050(void);
+void R_DrawColumnText8050Flat(void);
 void R_DrawFuzzColumnText8050(void);
 void R_DrawFuzzColumnSaturnText8050(void);
 void R_DrawFuzzColumnFlatSaturnText8050(void);
