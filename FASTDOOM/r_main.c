@@ -987,7 +987,28 @@ void R_ExecuteSetViewSize(void)
     }
 
 #if defined(MODE_T4050)
-    colfunc = spritefunc = basecolfunc = R_DrawColumnText4050;
+
+    switch (wallRender)
+    {
+    case WALL_NORMAL:
+        colfunc = R_DrawColumnText4050;
+        break;
+    case WALL_FLAT:
+    case WALL_FLATTER:
+        colfunc = R_DrawColumnText4050Flat;
+        break;
+    }
+
+    switch (spriteRender)
+    {
+    case SPRITE_NORMAL:
+        spritefunc = basecolfunc = R_DrawColumnText4050;
+        break;
+    case SPRITE_FLAT:
+    case SPRITE_FLATTER:
+        spritefunc = basecolfunc = R_DrawColumnText4050Flat;
+        break;
+    }
 
     if (visplaneRender == VISPLANES_FLAT)
         spanfunc = R_DrawSpanFlatText4050;

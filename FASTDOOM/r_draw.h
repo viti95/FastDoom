@@ -126,6 +126,7 @@ void R_DrawFuzzColumnFlatSaturnText4025(void);
 void R_DrawFuzzColumnTransText4025(void);
 
 void R_DrawColumnText4050(void);
+void R_DrawColumnText4050Flat(void);
 void R_DrawSpanText4050(void);
 void R_DrawSkyFlatText4050(void);
 void R_DrawFuzzColumnText4050(void);

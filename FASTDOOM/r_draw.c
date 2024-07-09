@@ -801,6 +801,69 @@ void R_DrawColumnText4050(void)
         *dest = vmem | ptrlut16colors[dc_colormap[dc_source[(frac >> FRACBITS) & 127]]] << 8 | 223;
     }
 }
+
+void R_DrawColumnText4050Flat(void)
+{
+    int count;
+    int countblock;
+    unsigned short *dest;
+    byte odd;
+    unsigned short vmem;
+
+    unsigned short color12;
+    unsigned short color8;
+    unsigned short color;
+
+    odd = dc_yl & 1;
+    dest = textdestscreen + Mul40(dc_yl / 2) + dc_x;
+    count = dc_yh - dc_yl;
+
+    color12 = ptrlut16colors[dc_color] << 12 | 223;
+    color8 = ptrlut16colors[dc_color] << 8 | 223;
+
+    if (count >= 1 && odd || count == 0)
+    {
+        vmem = *dest;
+
+        if (odd)
+        {
+            vmem = vmem & 0x0F00;
+            *dest = vmem | color12;
+
+            odd = 0;
+            dest += 40;
+        }
+        else
+        {
+            vmem = vmem & 0xF000;
+            *dest = vmem | color8;
+            return;
+        }
+
+        count--;
+    }
+
+    countblock = (count + 1) / 2;
+    count -= countblock * 2;
+
+    color = (ptrlut16colors[dc_color] << 8) | (ptrlut16colors[dc_color] << 12) | 223;
+
+    while (countblock)
+    {
+        *dest = color;
+        dest += 40;
+
+        countblock--;
+    }
+
+    if (count >= 0 && !odd)
+    {
+        vmem = *dest;
+        vmem = vmem & 0xF000;
+        *dest = vmem | color8;
+    }
+}
+
 void R_DrawSpanText4050(void)
 {
     int spot;
