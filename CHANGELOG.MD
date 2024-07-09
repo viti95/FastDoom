@@ -2,6 +2,8 @@
 
 ## 0.9.9f (?? ??? ????)
 * Dreamblaster S2P support (MIDI through LPT)
+* New rendering options, now it's possible to draw walls and sprites untextured (single color)
+* Update display options menu, scroll it's available so it's possible to add as many options as wanted
 
 ## 0.9.9e (18 Jun 2024)
 * Fixed diminished lightning issues on high resolution VESA modes
