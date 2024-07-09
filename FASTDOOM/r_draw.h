@@ -107,6 +107,7 @@ void R_DrawSkyTextMDA(void);
 void R_DrawSpriteTextMDA(void);
 
 void R_DrawColumnText8025(void);
+void R_DrawColumnText8025Flat(void);
 void R_DrawSpanText8025(void);
 void R_DrawSkyFlatText8025(void);
 void R_DrawFuzzColumnText8025(void);
