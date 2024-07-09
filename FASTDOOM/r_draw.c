@@ -1157,6 +1157,23 @@ void R_DrawColumnText4025(void)
         frac += fracstep;
     } while (dest <= count);
 }
+void R_DrawColumnText4025Flat(void)
+{
+    int count;
+    unsigned short *dest;
+    unsigned short color;
+
+    dest = textdestscreen + Mul40(dc_yl) + dc_x;
+    count = dest + Mul40(dc_yh - dc_yl);
+
+    color = ptrlut16colors[dc_color] << 8 | 219;
+
+    do
+    {
+        *dest = color;
+        dest += 40;
+    } while (dest <= count);
+}
 void R_DrawSpanText4025(void)
 {
     int countp;
