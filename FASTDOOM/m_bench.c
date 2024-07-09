@@ -76,6 +76,18 @@ void M_SetVisplaneDetail(int value)
     R_SetViewSize(screenblocks, detailLevel);
 }
 
+void M_SetWallDetail(int value)
+{
+    wallRender = value;
+    R_SetViewSize(screenblocks, detailLevel);
+}
+
+void M_SetSpriteDetail(int value)
+{
+    spriteRender = value;
+    R_SetViewSize(screenblocks, detailLevel);
+}
+
 void M_SetVsync(boolean value)
 {
     waitVsync = value;
@@ -188,15 +200,33 @@ void M_ChangeValueFile(unsigned int position, char *token)
         if (M_CheckValue(token, "flatter"))
             M_SetVisplaneDetail(VISPLANES_FLATTER);
         break;
-    // Sky
+    // Walls
     case 3:
+        if (M_CheckValue(token, "default"))
+            M_SetWallDetail(WALL_NORMAL);
+        if (M_CheckValue(token, "flat"))
+            M_SetWallDetail(WALL_FLAT);
+        if (M_CheckValue(token, "flatter"))
+            M_SetWallDetail(WALL_FLATTER);
+        break;
+    // Sprites
+    case 4:
+        if (M_CheckValue(token, "default"))
+            M_SetSpriteDetail(SPRITE_NORMAL);
+        if (M_CheckValue(token, "flat"))
+            M_SetSpriteDetail(SPRITE_FLAT);
+        if (M_CheckValue(token, "flatter"))
+            M_SetSpriteDetail(SPRITE_FLATTER);
+        break;
+    // Sky
+    case 5:
         if (M_CheckValue(token, "default"))
             M_SetSkyDetail(false);
         if (M_CheckValue(token, "flat"))
             M_SetSkyDetail(true);
         break;
     // Invisible
-    case 4:
+    case 6:
         if (M_CheckValue(token, "default"))
             M_SetInvisibleDetail(INVISIBLE_NORMAL);
         if (M_CheckValue(token, "saturn"))
@@ -208,28 +238,28 @@ void M_ChangeValueFile(unsigned int position, char *token)
         if (M_CheckValue(token, "flat"))
             M_SetInvisibleDetail(INVISIBLE_FLAT);
     // Sprites
-    case 5:
+    case 7:
         if (M_CheckValue(token, "far"))
             M_SetSpriteCulling(false);
         if (M_CheckValue(token, "near"))
             M_SetSpriteCulling(true);
         break;
     // Show FPS
-    case 6:
+    case 8:
         if (M_CheckValue(token, "nofps"))
             M_SetShowFPS(false);
         if (M_CheckValue(token, "fps"))
             M_SetShowFPS(true);
         break;
     // Melting
-    case 7:
+    case 9:
         if (M_CheckValue(token, "nomelt"))
             M_SetNoMelting(true);
         if (M_CheckValue(token, "melt"))
             M_SetNoMelting(false);
         break;
     // CPU
-    case 8:
+    case 10:
         if (M_CheckValue(token, "386sx"))
             M_SetCPU(INTEL_386SX);
         if (M_CheckValue(token, "386dx"))
@@ -250,7 +280,7 @@ void M_ChangeValueFile(unsigned int position, char *token)
             M_SetCPU(UMC_GREEN_486);
         break;
     // Bus Speed
-    case 9:
+    case 11:
         if (M_CheckValue(token, "slow"))
             M_SetBusSpeed(1);
         if (M_CheckValue(token, "fast"))
