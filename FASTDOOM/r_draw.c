@@ -1400,8 +1400,6 @@ void R_DrawFuzzColumnTransText4025(void)
 #if defined(MODE_MDA)
 void R_DrawLineColumnTextMDA(void)
 {
-    fixed_t frac;
-    fixed_t fracstep;
     int count;
     int countblock;
     unsigned short *dest;
@@ -1433,8 +1431,6 @@ void R_DrawLineColumnTextMDA(void)
 
     while (countblock)
     {
-        unsigned short firstcolor, secondcolor;
-
         *dest = 0x0F << 8 | 0xDB;
         dest += 80;
 
