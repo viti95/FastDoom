@@ -1309,6 +1309,9 @@ void (*renderSegLoop)(void);
 void (*renderMaskedSegRange)(drawseg_t *ds, int x1, int x2);
 void (*renderMaskedSegRange2)(drawseg_t *ds);
 void (*drawVisSprite)(vissprite_t *vis);
+void (*drawPlanes)(void);
+void (*mapPlane)(int y, int x1);
+void (*clearPlanes)(void);
 
 void R_RenderSegLoop(void)
 {

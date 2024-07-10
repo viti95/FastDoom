@@ -97,6 +97,11 @@ extern void (*renderSegLoop)(void);
 extern void (*renderMaskedSegRange)(drawseg_t *ds, int x1, int x2);
 extern void (*renderMaskedSegRange2)(drawseg_t *ds);
 extern void (*drawVisSprite)(vissprite_t *vis);
+extern void (*mapPlane)(int y, int x1);
+
+extern void (*drawPlanes)(void);
+extern void (*mapPlane)(int y, int x1);
+extern void (*clearPlanes)(void);
 
 //
 // Utility functions.

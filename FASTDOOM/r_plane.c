@@ -118,42 +118,70 @@ void R_MapPlane(int y, int x1)
     BOUNDS_CHECK(x1, y);
     ds_x1 = x1;
     ds_y = y;
-    if (visplaneRender == VISPLANES_FLAT)
+
+    if (planeheight != cachedheight[y])
     {
-        if (planeheight != cachedheight[y])
-        {
-            cachedheight[y] = planeheight;
-            distance = cacheddistance[y] = FixedMulEDX(planeheight, yslope[y]);
-        }
-        else
-        {
-            distance = cacheddistance[y];
-        }
+        fixed_t step;
+
+        cachedheight[y] = planeheight;
+        distance = cacheddistance[y] = FixedMulEDX(planeheight, yslope[y]);
+
+        step = FixedMulHStep(distance, basexscale);
+        step |= FixedMulLStep(distance, baseyscale);
+        ds_step = step;
+        cachedstep[y] = step;
     }
     else
     {
-        if (planeheight != cachedheight[y])
+        distance = cacheddistance[y];
+        ds_step = cachedstep[y];
+    }
+
+    angle = (viewangle + xtoviewangle[x1]) >> ANGLETOFINESHIFT;
+    length = FixedMul(distance, distscale[x1]);
+
+    ds_frac = (((viewx + FixedMul(finecosine[angle], length)) << 10) & 0xFFFF0000) | (((viewyneg - FixedMul(finesine[angle], length)) >> 6) & 0xFFFF);
+
+    if (fixedcolormap)
+        ds_colormap = fixedcolormap;
+    else
+    {
+        if (distance >= (MAXLIGHTZ << LIGHTZSHIFT))
         {
-            fixed_t step;
-
-            cachedheight[y] = planeheight;
-            distance = cacheddistance[y] = FixedMulEDX(planeheight, yslope[y]);
-
-            step = FixedMulHStep(distance, basexscale);
-            step |= FixedMulLStep(distance, baseyscale);
-            ds_step = step;
-            cachedstep[y] = step;
+            ds_colormap = planezlight[MAXLIGHTZ - 1];
+        } else {
+            ds_colormap = planezlight[distance >> LIGHTZSHIFT];
         }
-        else
-        {
-            distance = cacheddistance[y];
-            ds_step = cachedstep[y];
-        }
+    }
 
-        angle = (viewangle + xtoviewangle[x1]) >> ANGLETOFINESHIFT;
-        length = FixedMul(distance, distscale[x1]);
+    // high or low detail
+    spanfunc();
+}
 
-        ds_frac = (((viewx + FixedMul(finecosine[angle], length)) << 10) & 0xFFFF0000) | (((viewyneg - FixedMul(finesine[angle], length)) >> 6) & 0xFFFF);
+void R_MapPlaneFlat(int y, int x1)
+{
+    angle_t angle;
+    fixed_t distance;
+    fixed_t length;
+    unsigned index;
+    if (y == PIXELCOORD_MAX)
+        return;
+#if defined(MODE_CGA16) || defined(MODE_CGA512) || defined(MODE_CGA_AFH)
+    if (y & 1)
+        return;
+#endif
+    BOUNDS_CHECK(x1, y);
+    ds_x1 = x1;
+    ds_y = y;
+
+    if (planeheight != cachedheight[y])
+    {
+        cachedheight[y] = planeheight;
+        distance = cacheddistance[y] = FixedMulEDX(planeheight, yslope[y]);
+    }
+    else
+    {
+        distance = cacheddistance[y];
     }
 
     if (fixedcolormap)
@@ -201,9 +229,6 @@ void R_ClearPlanes(void)
     lastvisplane = visplanes;
     lastopening = openings;
 
-    if (visplaneRender > VISPLANES_NORMAL)
-        return;
-
     // texture calculation
     SetDWords(cachedheight, 0, sizeof(cachedheight) / 4);
 
@@ -215,6 +240,32 @@ void R_ClearPlanes(void)
     optSine = finesine[angle];
     basexscale = ((abs(optCosine) >> 14) >= centerxfrac) ? ((optCosine ^ centerxfrac) >> 31) ^ MAXINT : FixedDiv2(optCosine, centerxfrac);
     baseyscale = -(((abs(optSine) >> 14) >= centerxfrac) ? ((optSine ^ centerxfrac) >> 31) ^ MAXINT : FixedDiv2(optSine, centerxfrac));
+}
+
+void R_ClearPlanesFlat(void) 
+{
+    int i;
+    angle_t angle;
+    fixed_t optCosine, optSine;
+
+    int *floorclipint = (int *)floorclip;
+    int *ceilingclipint = (int *)ceilingclip;
+
+    // opening / clipping determination
+    for (i = 0; i < viewwidthhalf; i += 4)
+    {
+        floorclipint[i] = viewheight32;
+        ceilingclipint[i] = -1;
+        floorclipint[i + 1] = viewheight32;
+        ceilingclipint[i + 1] = -1;
+        floorclipint[i + 2] = viewheight32;
+        ceilingclipint[i + 2] = -1;
+        floorclipint[i + 3] = viewheight32;
+        ceilingclipint[i + 3] = -1;
+    }
+
+    lastvisplane = visplanes;
+    lastopening = openings;
 }
 
 short skyflatnum;
@@ -379,12 +430,12 @@ void R_DrawPlanes(void)
 
             while (t1 < t2 && t1 <= b1)
             {
-                R_MapPlane(t1, spanstart[t1]);
+                mapPlane(t1, spanstart[t1]);
                 t1++;
             }
             while (b1 > b2 && b1 >= t1)
             {
-                R_MapPlane(b1, spanstart[b1]);
+                mapPlane(b1, spanstart[b1]);
                 b1--;
             }
 
