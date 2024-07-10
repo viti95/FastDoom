@@ -291,6 +291,24 @@ void * W_CacheLumpNum(int lump, byte tag)
     return ptr;
 }
 
+void * W_CacheLumpNumCache(int lump)
+{
+    byte *ptr = lumpcache[lump];
+
+    if (!ptr)
+    {
+        // read the lump in
+        ptr = Z_Malloc(W_LumpLength(lump), PU_CACHE, &lumpcache[lump]);
+        W_ReadLump(lump, ptr);
+    }
+    else
+    {
+        Z_ChangeTag(ptr, PU_CACHE);
+    }
+
+    return ptr;
+}
+
 // Generate a hash table for fast lookups
 
 void W_GenerateHashTable(void)

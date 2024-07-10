@@ -175,7 +175,7 @@ void I_sndArbitrateCards(void)
         {
             dmxlump = W_GetNumForName("DMXGUS");
         }
-        GF1_SetMap(W_CacheLumpNum(dmxlump, PU_CACHE), lumpinfo[dmxlump].size);
+        GF1_SetMap(W_CacheLumpNumCache(dmxlump), lumpinfo[dmxlump].size);
     }
     if (sb)
     {

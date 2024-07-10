@@ -1473,7 +1473,7 @@ void R_DrawSky(visplane_t *pl)
 
             if (lump > 0)
             {
-                dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
+                dc_source = (byte *)W_CacheLumpNumCache(lump) + ofs;
             }
             else
             {

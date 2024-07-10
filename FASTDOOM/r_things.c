@@ -268,7 +268,7 @@ void R_DrawVisSprite(vissprite_t *vis)
     fixed_t fracstep;
     fixed_t nextfrac;
 
-    patch = W_CacheLumpNum(vis->patch + firstspritelump, PU_CACHE);
+    patch = W_CacheLumpNumCache(vis->patch + firstspritelump);
 
     dc_colormap = vis->colormap;
 
@@ -400,7 +400,7 @@ void R_DrawVisSpriteFlat(vissprite_t *vis)
     fixed_t fracstep;
     fixed_t nextfrac;
 
-    patch = W_CacheLumpNum(vis->patch + firstspritelump, PU_CACHE);
+    patch = W_CacheLumpNumCache(vis->patch + firstspritelump);
 
     dc_colormap = vis->colormap;
 
@@ -535,7 +535,7 @@ void R_DrawVisSpriteFlatter(vissprite_t *vis)
     fixed_t fracstep;
     fixed_t nextfrac;
 
-    patch = W_CacheLumpNum(vis->patch + firstspritelump, PU_CACHE);
+    patch = W_CacheLumpNumCache(vis->patch + firstspritelump);
 
     dc_colormap = vis->colormap;
 

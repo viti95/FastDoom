@@ -65,8 +65,10 @@ short W_GetNumForName(char *name);
 void W_ReadLump(int lump, void *dest);
 
 void *W_CacheLumpNum(int lump, byte tag);
+void *W_CacheLumpNumCache(int lump);
 
 #define W_CacheLumpName(name, tag) W_CacheLumpNum(W_GetNumForName((name)), (tag))
+#define W_CacheLumpNameCache(name) W_CacheLumpNumCache(W_GetNumForName((name)))
 
 void W_GenerateHashTable(void);
 

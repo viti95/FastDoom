@@ -748,7 +748,7 @@ void F_CastDrawer(void)
 	lump = sprframe->lump[0];
 	flip = sprframe->flip[0];
 
-	patch = W_CacheLumpNum(lump + firstspritelump, PU_CACHE);
+	patch = W_CacheLumpNumCache(lump + firstspritelump);
 	if (flip)
 	{
 #if defined(MODE_Y_HALF)
@@ -816,7 +816,7 @@ void F_CastDrawerText(void)
 	sprframe = &sprdef->spriteframes[caststate->frame & FF_FRAMEMASK];
 	lump = sprframe->lump[0];
 
-	patch = W_CacheLumpNum(lump + firstspritelump, PU_CACHE);
+	patch = W_CacheLumpNumCache(lump + firstspritelump);
 #if defined(MODE_T4050)
 	V_DrawPatchDirectText4050(160, 170, patch);
 #endif

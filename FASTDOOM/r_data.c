@@ -225,7 +225,7 @@ void R_GenerateComposite(int texnum)
 
     for (i = 0, patch = texture->patches; i < texture->patchcount; i++, patch++)
     {
-        realpatch = W_CacheLumpNum(patch->patch, PU_CACHE);
+        realpatch = W_CacheLumpNumCache(patch->patch);
         x1 = patch->originx;
         x2 = x1 + realpatch->width;
 
@@ -290,7 +290,7 @@ void R_GenerateLookup(int texnum)
          i < texture->patchcount;
          i++, patch++)
     {
-        realpatch = W_CacheLumpNum(patch->patch, PU_CACHE);
+        realpatch = W_CacheLumpNumCache(patch->patch);
         x1 = patch->originx;
         x2 = x1 + realpatch->width;
 
@@ -574,7 +574,7 @@ void R_InitSpriteLumps(void)
         if (!(i & 63))
             printf(".");
 
-        patch = W_CacheLumpNum(firstspritelump + i, PU_CACHE);
+        patch = W_CacheLumpNumCache(firstspritelump + i);
         spritewidth[i] = patch->width << FRACBITS;
         spriteoffset[i] = patch->leftoffset << FRACBITS;
         spritetopoffset[i] = patch->topoffset << FRACBITS;
@@ -863,7 +863,7 @@ void R_PrecacheLevel(void)
         {
             lump = firstflat + i;
             flatmemory += lumpinfo[lump].size;
-            W_CacheLumpNum(lump, PU_CACHE);
+            W_CacheLumpNumCache(lump);
         }
     }
 
@@ -899,7 +899,7 @@ void R_PrecacheLevel(void)
         for (j = 0; j < texture->patchcount; j++)
         {
             lump = texture->patches[j].patch;
-            W_CacheLumpNum(lump, PU_CACHE);
+            W_CacheLumpNumCache(lump);
         }
     }
 
@@ -923,7 +923,7 @@ void R_PrecacheLevel(void)
             for (k = 0; k < 8; k++)
             {
                 lump = firstspritelump + sf->lump[k];
-                W_CacheLumpNum(lump, PU_CACHE);
+                W_CacheLumpNumCache(lump);
             }
         }
     }

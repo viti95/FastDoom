@@ -198,7 +198,7 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 
 			if (lump > 0)
 			{
-				col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
+				col = (column_t *)((byte *)W_CacheLumpNumCache(lump) + ofs);
 			}
 			else
 			{
@@ -322,7 +322,7 @@ void R_RenderMaskedSegRangeFlat(drawseg_t *ds,
 
 	if (lump > 0)
 	{
-		firstPixel = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
+		firstPixel = (byte *)W_CacheLumpNumCache(lump) + ofs;
 	}
 	else
 	{
@@ -418,7 +418,7 @@ void R_RenderMaskedSegRangeFlat(drawseg_t *ds,
 
 			if (lump > 0)
 			{
-				col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
+				col = (column_t *)((byte *)W_CacheLumpNumCache(lump) + ofs);
 			}
 			else
 			{
@@ -541,7 +541,7 @@ void R_RenderMaskedSegRangeFlatter(drawseg_t *ds,
 
 	if (lump > 0)
 	{
-		firstPixel = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
+		firstPixel = (byte *)W_CacheLumpNumCache(lump) + ofs;
 	}
 	else
 	{
@@ -602,7 +602,7 @@ void R_RenderMaskedSegRangeFlatter(drawseg_t *ds,
 
 			if (lump > 0)
 			{
-				col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
+				col = (column_t *)((byte *)W_CacheLumpNumCache(lump) + ofs);
 			}
 			else
 			{
@@ -801,7 +801,7 @@ void R_RenderMaskedSegRange2(drawseg_t *ds)
 
 			if (lump > 0)
 			{
-				col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
+				col = (column_t *)((byte *)W_CacheLumpNumCache(lump) + ofs);
 			}
 			else
 			{
@@ -923,7 +923,7 @@ void R_RenderMaskedSegRange2Flat(drawseg_t *ds)
 
 	if (lump > 0)
 	{
-		firstPixel = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
+		firstPixel = (byte *)W_CacheLumpNumCache(lump) + ofs;
 	}
 	else
 	{
@@ -1020,7 +1020,7 @@ void R_RenderMaskedSegRange2Flat(drawseg_t *ds)
 
 			if (lump > 0)
 			{
-				col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
+				col = (column_t *)((byte *)W_CacheLumpNumCache(lump) + ofs);
 			}
 			else
 			{
@@ -1141,7 +1141,7 @@ void R_RenderMaskedSegRange2Flatter(drawseg_t *ds)
 
 	if (lump > 0)
 	{
-		firstPixel = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
+		firstPixel = (byte *)W_CacheLumpNumCache(lump) + ofs;
 	}
 	else
 	{
@@ -1202,7 +1202,7 @@ void R_RenderMaskedSegRange2Flatter(drawseg_t *ds)
 
 			if (lump > 0)
 			{
-				col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
+				col = (column_t *)((byte *)W_CacheLumpNumCache(lump) + ofs);
 			}
 			else
 			{
@@ -1428,7 +1428,7 @@ void R_RenderSegLoop(void)
 
 				if (lump > 0)
 				{
-					dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
+					dc_source = (byte *)W_CacheLumpNumCache(lump) + ofs;
 				}
 				else
 				{
@@ -1504,7 +1504,7 @@ void R_RenderSegLoop(void)
 
 					if (lump > 0)
 					{
-						dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
+						dc_source = (byte *)W_CacheLumpNumCache(lump) + ofs;
 					}
 					else
 					{
@@ -1584,7 +1584,7 @@ void R_RenderSegLoop(void)
 
 					if (lump > 0)
 					{
-						dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
+						dc_source = (byte *)W_CacheLumpNumCache(lump) + ofs;
 					}
 					else
 					{
@@ -1694,7 +1694,7 @@ void R_RenderSegLoopFlat(void)
 
 	if (lump > 0)
 	{
-		firstPixel = ((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
+		firstPixel = ((byte *)W_CacheLumpNumCache(lump) + ofs);
 	}
 	else
 	{
@@ -2006,7 +2006,7 @@ void R_RenderSegLoopFlatter(void)
 
 	if (lump > 0)
 	{
-		firstPixel = ((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
+		firstPixel = ((byte *)W_CacheLumpNumCache(lump) + ofs);
 	}
 	else
 	{
