@@ -1010,10 +1010,25 @@ void R_ExecuteSetViewSize(void)
         break;
     }
 
-    if (visplaneRender == VISPLANES_FLAT)
-        spanfunc = R_DrawSpanFlatText4050;
-    else
+    switch (visplaneRender)
+    {
+    case VISPLANES_NORMAL:
+        drawPlanes = R_DrawPlanes;
+        mapPlane = R_MapPlane;
+        clearPlanes = R_ClearPlanes;
         spanfunc = R_DrawSpanText4050;
+        break;
+    case VISPLANES_FLAT:
+        drawPlanes = R_DrawPlanes;
+        mapPlane = R_MapPlaneFlat;
+        clearPlanes = R_ClearPlanesFlat;
+        spanfunc = R_DrawSpanFlatText4050;
+        break;
+    case VISPLANES_FLATTER:
+        clearPlanes = R_ClearPlanesFlat;
+        drawPlanes = R_DrawPlanesFlatterText4050;
+        break;
+    }
 
     if (flatSky)
         skyfunc = R_DrawSkyFlatText4050;
@@ -1041,7 +1056,7 @@ void R_ExecuteSetViewSize(void)
 
 #endif
 #if defined(MODE_T4025)
-    
+
     switch (wallRender)
     {
     case WALL_NORMAL:
@@ -1064,10 +1079,25 @@ void R_ExecuteSetViewSize(void)
         break;
     }
 
-    if (visplaneRender == VISPLANES_FLAT)
-        spanfunc = R_DrawSpanFlatText4025;
-    else
+    switch (visplaneRender)
+    {
+    case VISPLANES_NORMAL:
+        drawPlanes = R_DrawPlanes;
+        mapPlane = R_MapPlane;
+        clearPlanes = R_ClearPlanes;
         spanfunc = R_DrawSpanText4025;
+        break;
+    case VISPLANES_FLAT:
+        drawPlanes = R_DrawPlanes;
+        mapPlane = R_MapPlaneFlat;
+        clearPlanes = R_ClearPlanesFlat;
+        spanfunc = R_DrawSpanFlatText4025;
+        break;
+    case VISPLANES_FLATTER:
+        clearPlanes = R_ClearPlanesFlat;
+        drawPlanes = R_DrawPlanesFlatterText4025;
+        break;
+    }
 
     if (flatSky)
         skyfunc = R_DrawSkyFlatText4025;
@@ -1117,10 +1147,25 @@ void R_ExecuteSetViewSize(void)
         break;
     }
 
-    if (visplaneRender == VISPLANES_FLAT)
-        spanfunc = R_DrawSpanFlatText8025;
-    else
+    switch (visplaneRender)
+    {
+    case VISPLANES_NORMAL:
+        drawPlanes = R_DrawPlanes;
+        mapPlane = R_MapPlane;
+        clearPlanes = R_ClearPlanes;
         spanfunc = R_DrawSpanText8025;
+        break;
+    case VISPLANES_FLAT:
+        drawPlanes = R_DrawPlanes;
+        mapPlane = R_MapPlaneFlat;
+        clearPlanes = R_ClearPlanesFlat;
+        spanfunc = R_DrawSpanFlatText8025;
+        break;
+    case VISPLANES_FLATTER:
+        clearPlanes = R_ClearPlanesFlat;
+        drawPlanes = R_DrawPlanesFlatterText8025;
+        break;
+    }
 
     if (flatSky)
         skyfunc = R_DrawSkyFlatText8025;
@@ -1148,6 +1193,10 @@ void R_ExecuteSetViewSize(void)
 
 #endif
 #if defined(MODE_MDA)
+
+    drawPlanes = R_DrawPlanesFlatterTextMDA;
+    mapPlane = R_MapPlaneFlat;
+    clearPlanes = R_ClearPlanesFlat;
     colfunc = spritefunc = basecolfunc = R_DrawLineColumnTextMDA;
 
     spanfunc = R_DrawSpanTextMDA;
@@ -1180,10 +1229,25 @@ void R_ExecuteSetViewSize(void)
         break;
     }
 
-    if (visplaneRender == VISPLANES_FLAT)
-        spanfunc = R_DrawSpanFlatText8050;
-    else
+    switch (visplaneRender)
+    {
+    case VISPLANES_NORMAL:
+        drawPlanes = R_DrawPlanes;
+        mapPlane = R_MapPlane;
+        clearPlanes = R_ClearPlanes;
         spanfunc = R_DrawSpanText8050;
+        break;
+    case VISPLANES_FLAT:
+        drawPlanes = R_DrawPlanes;
+        mapPlane = R_MapPlaneFlat;
+        clearPlanes = R_ClearPlanesFlat;
+        spanfunc = R_DrawSpanFlatText8050;
+        break;
+    case VISPLANES_FLATTER:
+        clearPlanes = R_ClearPlanesFlat;
+        drawPlanes = R_DrawPlanesFlatterText8050;
+        break;
+    }
 
     if (flatSky)
         skyfunc = R_DrawSkyFlatText8050;
@@ -1258,9 +1322,12 @@ void R_ExecuteSetViewSize(void)
             break;
         }
 
-        if (visplaneRender == VISPLANES_FLAT)
-            spanfunc = R_DrawSpanFlat;
-        else
+        switch (visplaneRender)
+        {
+        case VISPLANES_NORMAL:
+            drawPlanes = R_DrawPlanes;
+            mapPlane = R_MapPlane;
+            clearPlanes = R_ClearPlanes;
             switch (selectedCPU)
             {
             case INTEL_386SX:
@@ -1274,6 +1341,18 @@ void R_ExecuteSetViewSize(void)
                 spanfunc = R_DrawSpan;
                 break;
             }
+            break;
+        case VISPLANES_FLAT:
+            drawPlanes = R_DrawPlanes;
+            mapPlane = R_MapPlaneFlat;
+            clearPlanes = R_ClearPlanesFlat;
+            spanfunc = R_DrawSpanFlat;
+            break;
+        case VISPLANES_FLATTER:
+            clearPlanes = R_ClearPlanesFlat;
+            drawPlanes = R_DrawPlanesFlatter;
+            break;
+        }
 
         if (flatSky)
             skyfunc = R_DrawSkyFlat;
@@ -1354,9 +1433,12 @@ void R_ExecuteSetViewSize(void)
             break;
         }
 
-        if (visplaneRender == VISPLANES_FLAT)
-            spanfunc = R_DrawSpanFlatLow;
-        else
+        switch (visplaneRender)
+        {
+        case VISPLANES_NORMAL:
+            drawPlanes = R_DrawPlanes;
+            mapPlane = R_MapPlane;
+            clearPlanes = R_ClearPlanes;
             switch (selectedCPU)
             {
             case INTEL_386SX:
@@ -1370,6 +1452,18 @@ void R_ExecuteSetViewSize(void)
                 spanfunc = R_DrawSpanLow;
                 break;
             }
+            break;
+        case VISPLANES_FLAT:
+            drawPlanes = R_DrawPlanes;
+            mapPlane = R_MapPlaneFlat;
+            clearPlanes = R_ClearPlanesFlat;
+            spanfunc = R_DrawSpanFlatLow;
+            break;
+        case VISPLANES_FLATTER:
+            clearPlanes = R_ClearPlanesFlat;
+            drawPlanes = R_DrawPlanesFlatterLow;
+            break;
+        }
 
         if (flatSky)
             skyfunc = R_DrawSkyFlatLow;
@@ -1450,9 +1544,12 @@ void R_ExecuteSetViewSize(void)
             break;
         }
 
-        if (visplaneRender == VISPLANES_FLAT)
-            spanfunc = R_DrawSpanFlatPotato;
-        else
+        switch (visplaneRender)
+        {
+        case VISPLANES_NORMAL:
+            drawPlanes = R_DrawPlanes;
+            mapPlane = R_MapPlane;
+            clearPlanes = R_ClearPlanes;
             switch (selectedCPU)
             {
             case INTEL_386SX:
@@ -1466,6 +1563,18 @@ void R_ExecuteSetViewSize(void)
                 spanfunc = R_DrawSpanPotato;
                 break;
             }
+            break;
+        case VISPLANES_FLAT:
+            drawPlanes = R_DrawPlanes;
+            mapPlane = R_MapPlaneFlat;
+            clearPlanes = R_ClearPlanesFlat;
+            spanfunc = R_DrawSpanFlatPotato;
+            break;
+        case VISPLANES_FLATTER:
+            clearPlanes = R_ClearPlanesFlat;
+            drawPlanes = R_DrawPlanesFlatterPotato;
+            break;
+        }
 
         if (flatSky)
             skyfunc = R_DrawSkyFlatPotato;
@@ -1550,9 +1659,12 @@ void R_ExecuteSetViewSize(void)
             break;
         }
 
-        if (visplaneRender == VISPLANES_FLAT)
-            spanfunc = R_DrawSpanFlatBackbuffer;
-        else
+        switch (visplaneRender)
+        {
+        case VISPLANES_NORMAL:
+            drawPlanes = R_DrawPlanes;
+            mapPlane = R_MapPlane;
+            clearPlanes = R_ClearPlanes;
             switch (selectedCPU)
             {
             case INTEL_386SX:
@@ -1566,6 +1678,18 @@ void R_ExecuteSetViewSize(void)
                 spanfunc = R_DrawSpanBackbuffer;
                 break;
             }
+            break;
+        case VISPLANES_FLAT:
+            drawPlanes = R_DrawPlanes;
+            mapPlane = R_MapPlaneFlat;
+            clearPlanes = R_ClearPlanesFlat;
+            spanfunc = R_DrawSpanFlatBackbuffer;
+            break;
+        case VISPLANES_FLATTER:
+            clearPlanes = R_ClearPlanesFlat;
+            drawPlanes = R_DrawPlanesFlatterBackbuffer;
+            break;
+        }
 
         if (flatSky)
             skyfunc = R_DrawSkyFlatBackbuffer;
@@ -1645,9 +1769,12 @@ void R_ExecuteSetViewSize(void)
             break;
         }
 
-        if (visplaneRender == VISPLANES_FLAT)
-            spanfunc = R_DrawSpanFlatLowBackbuffer;
-        else
+        switch (visplaneRender)
+        {
+        case VISPLANES_NORMAL:
+            drawPlanes = R_DrawPlanes;
+            mapPlane = R_MapPlane;
+            clearPlanes = R_ClearPlanes;
             switch (selectedCPU)
             {
             case INTEL_386SX:
@@ -1661,6 +1788,18 @@ void R_ExecuteSetViewSize(void)
                 spanfunc = R_DrawSpanLowBackbuffer;
                 break;
             }
+            break;
+        case VISPLANES_FLAT:
+            drawPlanes = R_DrawPlanes;
+            mapPlane = R_MapPlaneFlat;
+            clearPlanes = R_ClearPlanesFlat;
+            spanfunc = R_DrawSpanFlatLowBackbuffer;
+            break;
+        case VISPLANES_FLATTER:
+            clearPlanes = R_ClearPlanesFlat;
+            drawPlanes = R_DrawPlanesFlatterLowBackbuffer;
+            break;
+        }
 
         if (flatSky)
             skyfunc = R_DrawSkyFlatLowBackbuffer;
@@ -1720,9 +1859,12 @@ void R_ExecuteSetViewSize(void)
             break;
         }
 
-        if (visplaneRender == VISPLANES_FLAT)
-            spanfunc = R_DrawSpanFlatPotatoBackbuffer;
-        else
+        switch (visplaneRender)
+        {
+        case VISPLANES_NORMAL:
+            drawPlanes = R_DrawPlanes;
+            mapPlane = R_MapPlane;
+            clearPlanes = R_ClearPlanes;
             switch (selectedCPU)
             {
             case INTEL_386SX:
@@ -1736,6 +1878,18 @@ void R_ExecuteSetViewSize(void)
                 spanfunc = R_DrawSpanPotatoBackbuffer;
                 break;
             }
+            break;
+        case VISPLANES_FLAT:
+            drawPlanes = R_DrawPlanes;
+            mapPlane = R_MapPlaneFlat;
+            clearPlanes = R_ClearPlanesFlat;
+            spanfunc = R_DrawSpanFlatPotatoBackbuffer;
+            break;
+        case VISPLANES_FLATTER:
+            clearPlanes = R_ClearPlanesFlat;
+            drawPlanes = R_DrawPlanesFlatterPotatoBackbuffer;
+            break;
+        }
 
         if (flatSky)
             skyfunc = R_DrawSkyFlatPotatoBackbuffer;
@@ -1792,9 +1946,12 @@ void R_ExecuteSetViewSize(void)
             break;
         }
 
-        if (visplaneRender == VISPLANES_FLAT)
-            spanfunc = R_DrawSpanFlatVBE2;
-        else
+        switch (visplaneRender)
+        {
+        case VISPLANES_NORMAL:
+            drawPlanes = R_DrawPlanes;
+            mapPlane = R_MapPlane;
+            clearPlanes = R_ClearPlanes;
             switch (selectedCPU)
             {
             case INTEL_386SX:
@@ -1808,6 +1965,18 @@ void R_ExecuteSetViewSize(void)
                 spanfunc = R_DrawSpanVBE2;
                 break;
             }
+            break;
+        case VISPLANES_FLAT:
+            drawPlanes = R_DrawPlanes;
+            mapPlane = R_MapPlaneFlat;
+            clearPlanes = R_ClearPlanesFlat;
+            spanfunc = R_DrawSpanFlatVBE2;
+            break;
+        case VISPLANES_FLATTER:
+            clearPlanes = R_ClearPlanesFlat;
+            drawPlanes = R_DrawPlanesFlatterVBE2;
+            break;
+        }
 
         if (flatSky)
             skyfunc = R_DrawSkyFlatVBE2;
@@ -1856,9 +2025,13 @@ void R_ExecuteSetViewSize(void)
             spritefunc = basecolfunc = R_DrawColumnLowVBE2Flat;
             break;
         }
-        if (visplaneRender == VISPLANES_FLAT)
-            spanfunc = R_DrawSpanFlatLowVBE2;
-        else
+
+        switch (visplaneRender)
+        {
+        case VISPLANES_NORMAL:
+            drawPlanes = R_DrawPlanes;
+            mapPlane = R_MapPlane;
+            clearPlanes = R_ClearPlanes;
             switch (selectedCPU)
             {
             case INTEL_386SX:
@@ -1872,6 +2045,18 @@ void R_ExecuteSetViewSize(void)
                 spanfunc = R_DrawSpanLowVBE2;
                 break;
             }
+            break;
+        case VISPLANES_FLAT:
+            drawPlanes = R_DrawPlanes;
+            mapPlane = R_MapPlaneFlat;
+            clearPlanes = R_ClearPlanesFlat;
+            spanfunc = R_DrawSpanFlatLowVBE2;
+            break;
+        case VISPLANES_FLATTER:
+            clearPlanes = R_ClearPlanesFlat;
+            drawPlanes = R_DrawPlanesFlatterLowVBE2;
+            break;
+        }
 
         if (flatSky)
             skyfunc = R_DrawSkyFlatLowVBE2;
@@ -1921,9 +2106,12 @@ void R_ExecuteSetViewSize(void)
             break;
         }
 
-        if (visplaneRender == VISPLANES_FLAT)
-            spanfunc = R_DrawSpanFlatPotatoVBE2;
-        else
+        switch (visplaneRender)
+        {
+        case VISPLANES_NORMAL:
+            drawPlanes = R_DrawPlanes;
+            mapPlane = R_MapPlane;
+            clearPlanes = R_ClearPlanes;
             switch (selectedCPU)
             {
             case INTEL_386SX:
@@ -1937,6 +2125,18 @@ void R_ExecuteSetViewSize(void)
                 spanfunc = R_DrawSpanPotatoVBE2;
                 break;
             }
+            break;
+        case VISPLANES_FLAT:
+            drawPlanes = R_DrawPlanes;
+            mapPlane = R_MapPlaneFlat;
+            clearPlanes = R_ClearPlanesFlat;
+            spanfunc = R_DrawSpanFlatPotatoVBE2;
+            break;
+        case VISPLANES_FLATTER:
+            clearPlanes = R_ClearPlanesFlat;
+            drawPlanes = R_DrawPlanesFlatterPotatoVBE2;
+            break;
+        }
 
         if (flatSky)
             skyfunc = R_DrawSkyFlatPotatoVBE2;
@@ -2176,7 +2376,7 @@ void R_RenderPlayerView(void)
     // Clear buffers.
     R_ClearClipSegs();
     R_ClearDrawSegs();
-    R_ClearPlanes();
+    clearPlanes();
     R_ClearSprites();
 
     // check for new console commands.
@@ -2196,85 +2396,7 @@ void R_RenderPlayerView(void)
     // Check for new console commands.
     NetUpdate();
 
-#if defined(MODE_T4050)
-    if (visplaneRender == VISPLANES_FLATTER)
-        R_DrawPlanesFlatterText4050();
-    else
-        R_DrawPlanes();
-#endif
-#if defined(MODE_T4025)
-    if (visplaneRender == VISPLANES_FLATTER)
-        R_DrawPlanesFlatterText4025();
-    else
-        R_DrawPlanes();
-#endif
-#if defined(MODE_T8025)
-    if (visplaneRender == VISPLANES_FLATTER)
-        R_DrawPlanesFlatterText8025();
-    else
-        R_DrawPlanes();
-#endif
-#if defined(MODE_MDA)
-    R_DrawPlanesFlatterTextMDA();
-#endif
-
-#if defined(MODE_T8050) || defined(MODE_T8043)
-    if (visplaneRender == VISPLANES_FLATTER)
-        R_DrawPlanesFlatterText8050();
-    else
-        R_DrawPlanes();
-#endif
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF)
-    if (visplaneRender == VISPLANES_FLATTER)
-        switch (detailshift)
-        {
-        case DETAIL_HIGH:
-            R_DrawPlanesFlatter();
-            break;
-        case DETAIL_LOW:
-            R_DrawPlanesFlatterLow();
-            break;
-        case DETAIL_POTATO:
-            R_DrawPlanesFlatterPotato();
-            break;
-        }
-    else
-        R_DrawPlanes();
-#endif
-#if defined(USE_BACKBUFFER)
-    if (visplaneRender == VISPLANES_FLATTER)
-        switch (detailshift)
-        {
-        case DETAIL_HIGH:
-            R_DrawPlanesFlatterBackbuffer();
-            break;
-        case DETAIL_LOW:
-            R_DrawPlanesFlatterLowBackbuffer();
-            break;
-        case DETAIL_POTATO:
-            R_DrawPlanesFlatterPotatoBackbuffer();
-            break;
-        }
-    else
-        R_DrawPlanes();
-#endif
-#if defined(MODE_VBE2_DIRECT)
-    if (visplaneRender == VISPLANES_FLATTER)
-        switch (detailshift)
-        {
-        case DETAIL_HIGH:
-            R_DrawPlanesFlatterVBE2();
-            break;
-        case DETAIL_LOW:
-            R_DrawPlanesFlatterLowVBE2();
-            break;
-        case DETAIL_POTATO:
-            R_DrawPlanesFlatterPotatoVBE2();
-            break;
-        }
-    else
-        R_DrawPlanes();
-#endif
+    drawPlanes();
 
     // Check for new console commands.
     NetUpdate();

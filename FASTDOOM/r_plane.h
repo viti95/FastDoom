@@ -31,8 +31,10 @@ extern fixed_t yslope[SCREENHEIGHT];
 extern fixed_t distscale[SCREENWIDTH];
 
 void R_ClearPlanes(void);
+void R_ClearPlanesFlat(void);
 
 void R_MapPlane(int y, int x1);
+void R_MapPlaneFlat(int y, int x1);
 
 void R_DrawPlanes(void);
 void R_DrawPlanesFlatter(void);
@@ -48,6 +50,8 @@ void R_DrawPlanesFlatterBackbuffer(void);
 void R_DrawPlanesFlatterLowBackbuffer(void);
 void R_DrawPlanesFlatterPotatoBackbuffer(void);
 void R_DrawPlanesFlatterVBE2(void);
+void R_DrawPlanesFlatterLowVBE2(void);
+void R_DrawPlanesFlatterPotatoVBE2(void);
 void R_DrawSky(visplane_t *pl);
 
 visplane_t * R_FindPlane(fixed_t height, int picnum, int lightlevel);
