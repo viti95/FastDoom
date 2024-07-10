@@ -902,7 +902,7 @@ void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
     y -= patch->topoffset;
     x -= patch->leftoffset;
 
-    V_MarkRect(x * PIXEL_SCALING, y * PIXEL_SCALING, patch->width * PIXEL_SCALING, patch->height / 2);
+    V_MarkRect(x * PIXEL_SCALING, y * PIXEL_SCALING, patch->width * PIXEL_SCALING, patch->height * PIXEL_SCALING);
 
     col = 0;
     desttop = screen0 + MulScreenWidth(y * PIXEL_SCALING) + x * PIXEL_SCALING;
@@ -1001,7 +1001,7 @@ void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
     y -= (patch->topoffset / 2);
     x -= patch->leftoffset;
 
-    V_MarkRect(x * PIXEL_SCALING, y * PIXEL_SCALING, patch->width * PIXEL_SCALING, patch->height * PIXEL_SCALING);
+    V_MarkRect(x * PIXEL_SCALING, y * PIXEL_SCALING, patch->width * PIXEL_SCALING, patch->height / 2);
 
     col = 0;
     desttop = screen0 + MulScreenWidth(y * PIXEL_SCALING) + x * PIXEL_SCALING;
