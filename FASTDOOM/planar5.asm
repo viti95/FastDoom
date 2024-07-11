@@ -62,16 +62,14 @@ BEGIN_CODE_SECTION
 ; ==================
 CODE_SYM_DEF R_DrawColumnFlatPotato
 	push		edi
-  push		ebx
 	push		ecx
 	push		edx
 	push		esi
 	push		ebp
 
   mov  ebp,[_dc_yh]
-  mov  eax,[_dc_yl]
   mov  edi,[_ylookup+ebp*4]
-  sub  ebp,eax         ; ebp = pixel count
+  sub  ebp,[_dc_yl]         ; ebp = pixel count
   js   short .done
 
   add  edi,[_destview]
@@ -86,7 +84,6 @@ CODE_SYM_DEF R_DrawColumnFlatPotato
 	pop		esi
 	pop		edx
 	pop		ecx
-	pop		ebx
   pop		edi
   ret
 ; R_DrawColumnPotato ends
@@ -96,16 +93,14 @@ CODE_SYM_DEF R_DrawColumnFlatPotato
 ; ===============
 CODE_SYM_DEF R_DrawColumnFlatLow
   push		edi
-  push		ebx
 	push		ecx
 	push		edx
 	push		esi
 	push		ebp
 
   mov  ebp,[_dc_yh]
-  mov  ebx,[_dc_yl]
   mov  edi,[_ylookup+ebp*4]
-  sub  ebp,ebx         ; ebp = pixel count
+  sub  ebp,[_dc_yl]         ; ebp = pixel count
   js   short .done
 
   ; set plane
@@ -129,7 +124,6 @@ CODE_SYM_DEF R_DrawColumnFlatLow
 	pop		esi
 	pop		edx
 	pop		ecx
-	pop		ebx
   pop		edi
   ret
 ; R_DrawColumnLow ends
@@ -139,16 +133,14 @@ CODE_SYM_DEF R_DrawColumnFlatLow
 ; ===============
 CODE_SYM_DEF R_DrawColumnPlaneFlatLow
   push		edi
-  push		ebx
 	push		ecx
 	push		edx
 	push		esi
 	push		ebp
 
   mov  ebp,[_dc_yh]
-  mov  ebx,[_dc_yl]
   mov  edi,[_ylookup+ebp*4]
-  sub  ebp,ebx         ; ebp = pixel count
+  sub  ebp,[_dc_yl]         ; ebp = pixel count
   js   short .done
 
   ; set plane
@@ -166,23 +158,20 @@ CODE_SYM_DEF R_DrawColumnPlaneFlatLow
 	pop		esi
 	pop		edx
 	pop		ecx
-	pop		ebx
   pop		edi
   ret
 ; R_DrawColumnLow ends
 
 CODE_SYM_DEF R_DrawColumnFlat
 	push		edi
-	push		ebx
 	push		ecx
 	push		edx
 	push		esi
 	push		ebp
 
   mov  ebp,[_dc_yh]
-  mov  ebx,[_dc_yl]
   mov  edi,[_ylookup+ebp*4]
-  sub  ebp,ebx         ; ebp = pixel count
+  sub  ebp,[_dc_yl]         ; ebp = pixel count
   js   short .done
 
   ; set plane
@@ -195,7 +184,7 @@ CODE_SYM_DEF R_DrawColumnFlat
   mov  al,1
   shr  esi,2
   shl  al,cl
-  add edi,esi
+  add  edi,esi
   out  dx,al
 
   mov  eax,[_dc_color]
@@ -207,23 +196,20 @@ CODE_SYM_DEF R_DrawColumnFlat
 	pop		esi
 	pop		edx
 	pop		ecx
-	pop		ebx
   pop		edi
   ret
 ; R_DrawColumn ends
 
 CODE_SYM_DEF R_DrawColumnPlaneFlat
 	push		edi
-	push		ebx
 	push		ecx
 	push		edx
 	push		esi
 	push		ebp
 
   mov  ebp,[_dc_yh]
-  mov  ebx,[_dc_yl]
   mov  edi,[_ylookup+ebp*4]
-  sub  ebp,ebx         ; ebp = pixel count
+  sub  ebp,[_dc_yl]         ; ebp = pixel count
   js   short .done
 
   ; set plane
@@ -241,7 +227,6 @@ CODE_SYM_DEF R_DrawColumnPlaneFlat
 	pop		esi
 	pop		edx
 	pop		ecx
-	pop		ebx
   pop		edi
   ret
 ; R_DrawColumn ends
@@ -265,7 +250,6 @@ vscale1:
 
 vscale0:
 	pop	ecx
-	pop	ebx
   pop	edi
   ret
 
