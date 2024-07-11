@@ -291,6 +291,45 @@ void * W_CacheLumpNum(int lump, byte tag)
     return ptr;
 }
 
+/*void * W_CacheLumpNumCache(int lump);
+#pragma aux W_CacheLumpNumCache = \
+    "push		ebx" \
+    "push		ecx" \
+    "push		edx" \
+    "push		esi" \
+    "mov		esi,eax" \
+    "mov		ebx,eax" \
+    "mov		eax,lumpcache" \
+    "shl		ebx,0x02" \
+    "add		ebx,eax" \
+    "mov		ecx,[ebx]" \
+    "test		ecx,ecx" \
+    "je		    notfound" \
+    "mov		byte ptr -0xc[ecx],0x65" \
+    "mov		eax,ecx" \
+    "pop		esi" \
+    "pop		edx" \
+    "pop		ecx" \
+    "pop		ebx" \
+    "ret" \
+    "notfound:  imul eax,esi,0x00000018" \
+    "mov		ecx,lumpinfo" \
+    "mov		edx,0x00000065" \
+    "mov		eax,0x10[ecx+eax]" \
+    "call		Z_Malloc" \
+    "mov		ecx,eax" \
+    "mov		edx,eax" \
+    "mov		eax,esi" \
+    "call		W_ReadLump" \
+    "mov		eax,ecx" \
+    "pop		esi" \
+    "pop		edx" \
+    "pop		ecx" \
+    "pop		ebx" \
+    "ret" parm[eax] value[eax] modify exact[eax];
+
+void *(*fixfunc)(int lump) = W_CacheLumpNumCache;*/
+
 void * W_CacheLumpNumCache(int lump)
 {
     byte *ptr = lumpcache[lump];
