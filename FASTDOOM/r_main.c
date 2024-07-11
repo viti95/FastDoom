@@ -1351,6 +1351,7 @@ void R_ExecuteSetViewSize(void)
         case VISPLANES_FLATTER:
             clearPlanes = R_ClearPlanesFlat;
             drawPlanes = R_DrawPlanesFlatter;
+            spanfunc = R_DrawColumnPlaneFlat;
             break;
         }
 
@@ -1462,6 +1463,7 @@ void R_ExecuteSetViewSize(void)
         case VISPLANES_FLATTER:
             clearPlanes = R_ClearPlanesFlat;
             drawPlanes = R_DrawPlanesFlatterLow;
+            spanfunc = R_DrawColumnPlaneFlatLow;
             break;
         }
 
@@ -1573,6 +1575,7 @@ void R_ExecuteSetViewSize(void)
         case VISPLANES_FLATTER:
             clearPlanes = R_ClearPlanesFlat;
             drawPlanes = R_DrawPlanesFlatterPotato;
+            spanfunc = R_DrawColumnFlatPotato;
             break;
         }
 

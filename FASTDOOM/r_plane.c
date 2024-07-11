@@ -160,9 +160,7 @@ void R_MapPlane(int y, int x1)
 
 void R_MapPlaneFlat(int y, int x1)
 {
-    angle_t angle;
     fixed_t distance;
-    fixed_t length;
     unsigned index;
     if (y == PIXELCOORD_MAX)
         return;
@@ -245,9 +243,6 @@ void R_ClearPlanes(void)
 void R_ClearPlanesFlat(void) 
 {
     int i;
-    angle_t angle;
-    fixed_t optCosine, optSine;
-
     int *floorclipint = (int *)floorclip;
     int *ceilingclipint = (int *)ceilingclip;
 
@@ -482,7 +477,7 @@ void R_DrawPlanesFlatter(void)
 
         dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
 
-        color = colormaps[dc_source[FLATPIXELCOLOR]];
+        dc_color = colormaps[dc_source[FLATPIXELCOLOR]];
 
         x = pl->minx;
         outp(SC_INDEX + 1, 1 << (x & 3));
@@ -495,26 +490,11 @@ void R_DrawPlanesFlatter(void)
                 continue;
             }
 
-            count = pl->bottom[x] - pl->top[x];
+            dc_yh = pl->bottom[x];
+            dc_yl = pl->top[x];
+            dc_x = x;
 
-            dest = destview + MulScreenWidthQuarter(pl->top[x]) + (x >> 2);
-
-            while (count >= 3)
-            {
-                *(dest) = color;
-                *(dest + SCREENWIDTH / 4) = color;
-                *(dest + SCREENWIDTH / 2) = color;
-                *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
-                dest += SCREENWIDTH;
-                count -= 4;
-            }
-
-            while (count >= 0)
-            {
-                *dest = color;
-                dest += SCREENWIDTH / 4;
-                count--;
-            };
+            spanfunc();
 
             x += 4;
         } while (x <= pl->maxx);
@@ -535,26 +515,11 @@ void R_DrawPlanesFlatter(void)
                 continue;
             }
 
-            count = pl->bottom[x] - pl->top[x];
+            dc_yh = pl->bottom[x];
+            dc_yl = pl->top[x];
+            dc_x = x;
 
-            dest = destview + MulScreenWidthQuarter(pl->top[x]) + (x >> 2);
-
-            while (count >= 3)
-            {
-                *(dest) = color;
-                *(dest + SCREENWIDTH / 4) = color;
-                *(dest + SCREENWIDTH / 2) = color;
-                *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
-                dest += SCREENWIDTH;
-                count -= 4;
-            }
-
-            while (count >= 0)
-            {
-                *dest = color;
-                dest += SCREENWIDTH / 4;
-                count--;
-            };
+            spanfunc();
 
             x += 4;
         } while (x <= pl->maxx);
@@ -575,26 +540,11 @@ void R_DrawPlanesFlatter(void)
                 continue;
             }
 
-            count = pl->bottom[x] - pl->top[x];
+            dc_yh = pl->bottom[x];
+            dc_yl = pl->top[x];
+            dc_x = x;
 
-            dest = destview + MulScreenWidthQuarter(pl->top[x]) + (x >> 2);
-
-            while (count >= 3)
-            {
-                *(dest) = color;
-                *(dest + SCREENWIDTH / 4) = color;
-                *(dest + SCREENWIDTH / 2) = color;
-                *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
-                dest += SCREENWIDTH;
-                count -= 4;
-            }
-
-            while (count >= 0)
-            {
-                *dest = color;
-                dest += SCREENWIDTH / 4;
-                count--;
-            };
+            spanfunc();
 
             x += 4;
         } while (x <= pl->maxx);
@@ -615,26 +565,11 @@ void R_DrawPlanesFlatter(void)
                 continue;
             }
 
-            count = pl->bottom[x] - pl->top[x];
+            dc_yh = pl->bottom[x];
+            dc_yl = pl->top[x];
+            dc_x = x;
 
-            dest = destview + MulScreenWidthQuarter(pl->top[x]) + (x >> 2);
-
-            while (count >= 3)
-            {
-                *(dest) = color;
-                *(dest + SCREENWIDTH / 4) = color;
-                *(dest + SCREENWIDTH / 2) = color;
-                *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
-                dest += SCREENWIDTH;
-                count -= 4;
-            }
-
-            while (count >= 0)
-            {
-                *dest = color;
-                dest += SCREENWIDTH / 4;
-                count--;
-            };
+            spanfunc();
 
             x += 4;
         } while (x <= pl->maxx);
@@ -666,7 +601,7 @@ void R_DrawPlanesFlatterLow(void)
 
         dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
 
-        color = colormaps[dc_source[FLATPIXELCOLOR]];
+        dc_color = colormaps[dc_source[FLATPIXELCOLOR]];
         // Plane 0
         x = pl->minx;
         outp(SC_INDEX + 1, 3 << ((x & 1) << 1));
@@ -679,26 +614,11 @@ void R_DrawPlanesFlatterLow(void)
                 continue;
             }
 
-            count = pl->bottom[x] - pl->top[x];
+            dc_yh = pl->bottom[x];
+            dc_yl = pl->top[x];
+            dc_x = x;
 
-            dest = destview + MulScreenWidthQuarter(pl->top[x]) + (x >> 1);
-
-            while (count >= 3)
-            {
-                *(dest) = color;
-                *(dest + SCREENWIDTH / 4) = color;
-                *(dest + SCREENWIDTH / 2) = color;
-                *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
-                dest += SCREENWIDTH;
-                count -= 4;
-            }
-
-            while (count >= 0)
-            {
-                *dest = color;
-                dest += SCREENWIDTH / 4;
-                count--;
-            };
+            spanfunc();
 
             x += 2;
         } while (x <= pl->maxx);
@@ -719,26 +639,11 @@ void R_DrawPlanesFlatterLow(void)
                 continue;
             }
 
-            count = pl->bottom[x] - pl->top[x];
+            dc_yh = pl->bottom[x];
+            dc_yl = pl->top[x];
+            dc_x = x;
 
-            dest = destview + MulScreenWidthQuarter(pl->top[x]) + (x >> 1);
-
-            while (count >= 3)
-            {
-                *(dest) = color;
-                *(dest + SCREENWIDTH / 4) = color;
-                *(dest + SCREENWIDTH / 2) = color;
-                *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
-                dest += SCREENWIDTH;
-                count -= 4;
-            }
-
-            while (count >= 0)
-            {
-                *dest = color;
-                dest += SCREENWIDTH / 4;
-                count--;
-            };
+            spanfunc();
 
             x += 2;
         } while (x <= pl->maxx);
@@ -770,33 +675,18 @@ void R_DrawPlanesFlatterPotato(void)
 
         dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
 
-        color = colormaps[dc_source[FLATPIXELCOLOR]];
+        dc_color = colormaps[dc_source[FLATPIXELCOLOR]];
 
         for (x = pl->minx; x <= pl->maxx; x++)
         {
             if (pl->top[x] > pl->bottom[x])
                 continue;
 
-            count = pl->bottom[x] - pl->top[x];
+            dc_yh = pl->bottom[x];
+            dc_yl = pl->top[x];
+            dc_x = x;
 
-            dest = destview + MulScreenWidthQuarter(pl->top[x]) + x;
-
-            while (count >= 3)
-            {
-                *(dest) = color;
-                *(dest + SCREENWIDTH / 4) = color;
-                *(dest + SCREENWIDTH / 2) = color;
-                *(dest + SCREENWIDTH / 4 + SCREENWIDTH / 2) = color;
-                dest += SCREENWIDTH;
-                count -= 4;
-            }
-
-            while (count >= 0)
-            {
-                *dest = color;
-                dest += SCREENWIDTH / 4;
-                count--;
-            };
+            spanfunc();
         }
 
         Z_ChangeTag(dc_source, PU_CACHE);

@@ -134,6 +134,43 @@ CODE_SYM_DEF R_DrawColumnFlatLow
   ret
 ; R_DrawColumnLow ends
 
+; ===============
+; R_DrawColumnLow
+; ===============
+CODE_SYM_DEF R_DrawColumnPlaneFlatLow
+  push		edi
+  push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		ebp
+
+  mov  ebp,[_dc_yh]
+  mov  ebx,[_dc_yl]
+  mov  edi,[_ylookup+ebp*4]
+  sub  ebp,ebx         ; ebp = pixel count
+  js   short .done
+
+  ; set plane
+  mov  ecx,[_dc_x]
+  add  edi,[_destview]
+  shr  ecx,1
+  add  edi,ecx
+
+  mov  eax,[_dc_color]
+
+  jmp  [scalecalls+4+ebp*4]
+
+.done:
+	pop		ebp
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+  pop		edi
+  ret
+; R_DrawColumnLow ends
+
 CODE_SYM_DEF R_DrawColumnFlat
 	push		edi
 	push		ebx
@@ -146,7 +183,7 @@ CODE_SYM_DEF R_DrawColumnFlat
   mov  ebx,[_dc_yl]
   mov  edi,[_ylookup+ebp*4]
   sub  ebp,ebx         ; ebp = pixel count
-  js   short done
+  js   short .done
 
   ; set plane
   mov  ecx,[_dc_x]
@@ -165,7 +202,41 @@ CODE_SYM_DEF R_DrawColumnFlat
 
   jmp  [scalecalls+4+ebp*4]
 
-done:
+.done:
+	pop		ebp
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+  pop		edi
+  ret
+; R_DrawColumn ends
+
+CODE_SYM_DEF R_DrawColumnPlaneFlat
+	push		edi
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		ebp
+
+  mov  ebp,[_dc_yh]
+  mov  ebx,[_dc_yl]
+  mov  edi,[_ylookup+ebp*4]
+  sub  ebp,ebx         ; ebp = pixel count
+  js   short .done
+
+  ; set plane
+  mov  ecx,[_dc_x]
+  add  edi,[_destview]
+  shr  ecx,2
+  add  edi,ecx
+
+  mov  eax,[_dc_color]
+
+  jmp  [scalecalls+4+ebp*4]
+
+.done:
 	pop		ebp
 	pop		esi
 	pop		edx
