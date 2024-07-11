@@ -54,15 +54,11 @@ BEGIN_CODE_SECTION
 CODE_SYM_DEF R_DrawColumnVBE2Flat
 	push		edi
   push		ebx
-	push		ecx
-	push		edx
-	push		esi
 	push		ebp
 
   mov  ebp,[_dc_yh]
-  mov  eax,[_dc_yl]
   MulScreenWidthStart edi, ebp
-  sub  ebp,eax ; ebp = pixel count
+  sub  ebp,[_dc_yl] ; ebp = pixel count
   js   near .done
 
   mov  ebx,[_dc_x]
@@ -76,9 +72,6 @@ CODE_SYM_DEF R_DrawColumnVBE2Flat
 
 .done:
 	pop		ebp
-	pop		esi
-	pop		edx
-	pop		ecx
 	pop		ebx
   pop		edi
   ret
@@ -99,12 +92,9 @@ CODE_SYM_DEF R_DrawColumnVBE2Flat
 
 vscale1:
   pop	 ebp
-  pop	 esi
   mov  [edi],al
-  pop	 edx
 
 vscale0:
-	pop		ecx
 	pop		ebx
   pop		edi
   ret

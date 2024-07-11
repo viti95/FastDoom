@@ -53,16 +53,13 @@ BEGIN_CODE_SECTION
 
 CODE_SYM_DEF R_DrawColumnPotatoVBE2Flat
 	push		edi
-	push		esi
 	push		edx
 	push		ebp
   push		ebx
-	push		ecx
 
   mov  ebp,[_dc_yh]
-  mov  eax,[_dc_yl]
   MulScreenWidthStart edi, ebp
-  sub  ebp,eax ; ebp = pixel count
+  sub  ebp,[_dc_yl] ; ebp = pixel count
   js   near .done
 
   mov  al,[_dc_color]
@@ -78,11 +75,9 @@ CODE_SYM_DEF R_DrawColumnPotatoVBE2Flat
   jmp  [scalecalls+4+ebp*4]
 
 .done:
-	pop		ecx
 	pop		ebx
   pop	  ebp
 	pop		edx
-	pop		esi
 	pop		edi
   ret
 ; R_DrawColumnPotatoVBE2 ends
@@ -101,12 +96,10 @@ CODE_SYM_DEF R_DrawColumnPotatoVBE2Flat
 %endrep
 
 vscale1:
-  pop	ecx
   pop	ebx
   pop	ebp
   pop	edx
   mov [edi],eax
-  pop	esi
 
 vscale0:
 	pop		edi
