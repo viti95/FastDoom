@@ -61,9 +61,6 @@ BEGIN_CODE_SECTION
 CODE_SYM_DEF R_DrawColumnBackbufferFlat
 	push		edi
 	push		ebx
-	push		ecx
-	push		edx
-	push		esi
 	push		ebp
 
   mov  ebp,[_dc_yh]
@@ -81,9 +78,6 @@ CODE_SYM_DEF R_DrawColumnBackbufferFlat
 
 .done:
 	pop		ebp
-	pop		esi
-	pop		edx
-	pop		ecx
 	pop		ebx
   pop		edi
   ret
@@ -102,12 +96,9 @@ CODE_SYM_DEF R_DrawColumnBackbufferFlat
 
 vscale1:
   pop	ebp
-  pop	esi
   mov [edi],al
-  pop	edx
 
 vscale0:
-	pop		ecx
 	pop		ebx
   pop		edi
   ret
