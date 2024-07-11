@@ -64,9 +64,8 @@ CODE_SYM_DEF R_DrawColumnBackbufferFlat
 	push		ebp
 
   mov  ebp,[_dc_yh]
-  mov  eax,[_dc_yl]
   mov  edi,[_ylookup+ebp*4]
-  sub  ebp,eax         ; ebp = pixel count
+  sub  ebp,[_dc_yl]         ; ebp = pixel count
   js   short .done
 
   mov  ebx,[_dc_x]

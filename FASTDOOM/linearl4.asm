@@ -60,16 +60,12 @@ BEGIN_CODE_SECTION
 ; =========================
 CODE_SYM_DEF R_DrawColumnLowBackbufferFlat
 	push		edi
-	push		esi
-	push		edx
 	push		ebp
   push		ebx
-	push		ecx
 
   mov  ebp,[_dc_yh]
-  mov  eax,[_dc_yl]
   mov  edi,[_ylookup+ebp*4]
-  sub  ebp,eax         ; ebp = pixel count
+  sub  ebp,[_dc_yl]         ; ebp = pixel count
   js   short .done
 
   mov  al,[_dc_color]
@@ -80,11 +76,8 @@ CODE_SYM_DEF R_DrawColumnLowBackbufferFlat
   jmp  [scalecalls+4+ebp*4]
 
 .done:
-	pop		ecx
 	pop		ebx
   pop	  ebp
-	pop		edx
-	pop		esi
 	pop		edi
   ret
 ; R_DrawColumnLowBackbuffer ends
@@ -101,11 +94,8 @@ CODE_SYM_DEF R_DrawColumnLowBackbufferFlat
 %endrep
 
 vscale1:
-  pop	ecx
   pop	ebx
   pop	ebp
-  pop	edx
-  pop	esi
   mov [edi],ax
 
 vscale0:
