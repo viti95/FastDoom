@@ -1063,7 +1063,7 @@ void R_DrawPlanesFlatterBackbuffer(void)
 
     int count;
     byte *dest;
-    lighttable_t color;
+    byte color;
     int x;
 
     for (pl = visplanes; pl < lastvisplane; pl++)
@@ -1080,7 +1080,7 @@ void R_DrawPlanesFlatterBackbuffer(void)
 
         dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
 
-        color = colormaps[dc_source[FLATPIXELCOLOR]];
+        dc_color = colormaps[dc_source[FLATPIXELCOLOR]];
 
         for (x = pl->minx; x <= pl->maxx; x++)
         {
@@ -1097,14 +1097,11 @@ void R_DrawPlanesFlatterBackbuffer(void)
             if (pl->top[x] > pl->bottom[x])
                 continue;
 
-            count = pl->bottom[x] - pl->top[x];
-            dest = ylookup[pl->top[x]] + columnofs[x];
+            dc_yh = pl->bottom[x];
+            dc_yl = pl->top[x];
+            dc_x = x;
 
-            do
-            {
-                *dest = color;
-                dest += SCREENWIDTH;
-            } while (count--);
+            spanfunc();
         }
 
         Z_ChangeTag(dc_source, PU_CACHE);
@@ -1117,7 +1114,7 @@ void R_DrawPlanesFlatterLowBackbuffer(void)
 
     int count;
     unsigned short *dest;
-    unsigned short color;
+    byte color;
     int x;
 
     for (pl = visplanes; pl < lastvisplane; pl++)
@@ -1134,9 +1131,8 @@ void R_DrawPlanesFlatterLowBackbuffer(void)
 
         dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
 
-        color = colormaps[dc_source[FLATPIXELCOLOR]];
-        color |= color << 8;
-
+        dc_color = colormaps[dc_source[FLATPIXELCOLOR]];
+        
         for (x = pl->minx; x <= pl->maxx; x++)
         {
 #if defined(MODE_CGA512)
@@ -1147,14 +1143,11 @@ void R_DrawPlanesFlatterLowBackbuffer(void)
             if (pl->top[x] > pl->bottom[x])
                 continue;
 
-            count = pl->bottom[x] - pl->top[x];
-            dest = (unsigned short *)((byte *)(ylookup[pl->top[x]] + columnofs[x]));
+            dc_yh = pl->bottom[x];
+            dc_yl = pl->top[x];
+            dc_x = x;
 
-            do
-            {
-                *(dest) = color;
-                dest += SCREENWIDTH / 2;
-            } while (count--);
+            spanfunc();
         }
 
         Z_ChangeTag(dc_source, PU_CACHE);
@@ -1167,7 +1160,7 @@ void R_DrawPlanesFlatterPotatoBackbuffer(void)
 
     int count;
     unsigned int *dest;
-    unsigned int color;
+    byte color;
     int x;
 
     for (pl = visplanes; pl < lastvisplane; pl++)
@@ -1184,23 +1177,18 @@ void R_DrawPlanesFlatterPotatoBackbuffer(void)
 
         dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
 
-        color = colormaps[dc_source[FLATPIXELCOLOR]];
-        color |= color << 8;
-        color |= color << 16;
+        dc_color = colormaps[dc_source[FLATPIXELCOLOR]];
 
         for (x = pl->minx; x <= pl->maxx; x++)
         {
             if (pl->top[x] > pl->bottom[x])
                 continue;
 
-            count = pl->bottom[x] - pl->top[x];
-            dest = (unsigned int *)((byte *)(ylookup[pl->top[x]] + columnofs[x]));
+            dc_yh = pl->bottom[x];
+            dc_yl = pl->top[x];
+            dc_x = x;
 
-            do
-            {
-                *(dest) = color;
-                dest += SCREENWIDTH / 4;
-            } while (count--);
+            spanfunc();
         }
 
         Z_ChangeTag(dc_source, PU_CACHE);

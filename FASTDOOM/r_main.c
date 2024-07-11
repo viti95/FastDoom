@@ -1691,6 +1691,7 @@ void R_ExecuteSetViewSize(void)
         case VISPLANES_FLATTER:
             clearPlanes = R_ClearPlanesFlat;
             drawPlanes = R_DrawPlanesFlatterBackbuffer;
+            spanfunc = R_DrawColumnBackbufferFlat;
             break;
         }
 
@@ -1801,6 +1802,7 @@ void R_ExecuteSetViewSize(void)
         case VISPLANES_FLATTER:
             clearPlanes = R_ClearPlanesFlat;
             drawPlanes = R_DrawPlanesFlatterLowBackbuffer;
+            spanfunc = R_DrawColumnLowBackbufferFlat;
             break;
         }
 
@@ -1891,6 +1893,7 @@ void R_ExecuteSetViewSize(void)
         case VISPLANES_FLATTER:
             clearPlanes = R_ClearPlanesFlat;
             drawPlanes = R_DrawPlanesFlatterPotatoBackbuffer;
+            spanfunc = spanfunc = R_DrawColumnPotatoBackbufferFlat;;
             break;
         }
 
