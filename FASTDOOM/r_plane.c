@@ -1204,7 +1204,7 @@ void R_DrawPlanesFlatterVBE2(void)
 
     int count;
     byte *dest;
-    lighttable_t color;
+    byte color;
     int x;
 
     for (pl = visplanes; pl < lastvisplane; pl++)
@@ -1221,118 +1221,23 @@ void R_DrawPlanesFlatterVBE2(void)
 
         dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
 
-        color = colormaps[dc_source[FLATPIXELCOLOR]];
+        dc_color = colormaps[dc_source[FLATPIXELCOLOR]];
 
         for (x = pl->minx; x <= pl->maxx; x++)
         {
             if (pl->top[x] > pl->bottom[x])
                 continue;
 
-            count = pl->bottom[x] - pl->top[x];
-            dest = destview + MulScreenWidth(pl->top[x]) + x;
+            dc_yh = pl->bottom[x];
+            dc_yl = pl->top[x];
+            dc_x = x;
 
-            do
-            {
-                *dest = color;
-                dest += SCREENWIDTH;
-            } while (count--);
+            spanfunc();
         }
 
         Z_ChangeTag(dc_source, PU_CACHE);
     }
 }
-
-void R_DrawPlanesFlatterLowVBE2(void)
-{
-    visplane_t *pl;
-
-    int count;
-    unsigned short *dest;
-    unsigned short color;
-    int x;
-
-    for (pl = visplanes; pl < lastvisplane; pl++)
-    {
-        if (!pl->modified || pl->minx > pl->maxx)
-            continue;
-
-        // sky flat
-        if (pl->picnum == skyflatnum)
-        {
-            R_DrawSky(pl);
-            continue;
-        }
-
-        dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
-
-        color = colormaps[dc_source[FLATPIXELCOLOR]];
-        color |= color << 8;
-
-        for (x = pl->minx; x <= pl->maxx; x++)
-        {
-            if (pl->top[x] > pl->bottom[x])
-                continue;
-
-            count = pl->bottom[x] - pl->top[x];
-            dest = (unsigned short *)((byte *)(destview + MulScreenWidth(pl->top[x]) + (x << 1)));
-
-            do
-            {
-                *dest = color;
-                dest += SCREENWIDTH / 2;
-            } while (count--);
-        }
-
-        Z_ChangeTag(dc_source, PU_CACHE);
-    }
-}
-
-void R_DrawPlanesFlatterPotatoVBE2(void)
-{
-    visplane_t *pl;
-
-    int count;
-    unsigned int *dest;
-    unsigned int color;
-    int x;
-
-    for (pl = visplanes; pl < lastvisplane; pl++)
-    {
-        if (!pl->modified || pl->minx > pl->maxx)
-            continue;
-
-        // sky flat
-        if (pl->picnum == skyflatnum)
-        {
-            R_DrawSky(pl);
-            continue;
-        }
-
-        dc_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
-
-        color = colormaps[dc_source[FLATPIXELCOLOR]];
-        color |= color << 8;
-        color |= color << 16;
-
-        for (x = pl->minx; x <= pl->maxx; x++)
-        {
-            if (pl->top[x] > pl->bottom[x])
-                continue;
-
-            count = pl->bottom[x] - pl->top[x];
-            dest = (unsigned int *)((byte *)(destview + MulScreenWidth(pl->top[x]) + (x << 2)));
-
-            do
-            {
-                *dest = color;
-                dest += SCREENWIDTH / 4;
-            } while (count--);
-        }
-
-        Z_ChangeTag(dc_source, PU_CACHE);
-    }
-}
-
 #endif
 
 #if defined(ASPECTRATIO16x10)

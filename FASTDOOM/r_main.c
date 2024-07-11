@@ -1981,6 +1981,7 @@ void R_ExecuteSetViewSize(void)
         case VISPLANES_FLATTER:
             clearPlanes = R_ClearPlanesFlat;
             drawPlanes = R_DrawPlanesFlatterVBE2;
+            spanfunc = R_DrawColumnVBE2Flat;
             break;
         }
 
@@ -2060,7 +2061,8 @@ void R_ExecuteSetViewSize(void)
             break;
         case VISPLANES_FLATTER:
             clearPlanes = R_ClearPlanesFlat;
-            drawPlanes = R_DrawPlanesFlatterLowVBE2;
+            drawPlanes = R_DrawPlanesFlatterVBE2;
+            spanfunc = R_DrawColumnLowVBE2Flat;
             break;
         }
 
@@ -2140,7 +2142,8 @@ void R_ExecuteSetViewSize(void)
             break;
         case VISPLANES_FLATTER:
             clearPlanes = R_ClearPlanesFlat;
-            drawPlanes = R_DrawPlanesFlatterPotatoVBE2;
+            drawPlanes = R_DrawPlanesFlatterVBE2;
+            spanfunc = R_DrawColumnPotatoVBE2Flat;
             break;
         }
 
