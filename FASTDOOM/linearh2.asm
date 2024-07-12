@@ -67,7 +67,6 @@ CODE_SYM_DEF R_DrawFuzzColumnBackbuffer
 	push		ebx
 	push		ecx
 	push		edx
-	push		esi
 	push		ebp
 
   mov  ebp,[_dc_yh]
@@ -98,7 +97,6 @@ CODE_SYM_DEF R_DrawFuzzColumnBackbuffer
 
 .done:
 	pop		ebp
-	pop		esi
 	pop		edx
 	pop		ecx
 	pop		ebx
@@ -135,7 +133,6 @@ CODE_SYM_DEF R_DrawFuzzColumnBackbuffer
 vscale0:
   pop	ebp
   mov [_fuzzposinverse],ecx
-  pop	esi
   pop	edx
 	pop	ecx
 	pop	ebx

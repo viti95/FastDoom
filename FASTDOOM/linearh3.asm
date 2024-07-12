@@ -64,7 +64,6 @@ CODE_SYM_DEF R_DrawFuzzColumnFlatBackbuffer
 	push		ebx
 	push		ecx
 	push		edx
-	push		esi
 	push		ebp
 
   mov  ebp,[_dc_yh]
@@ -83,7 +82,6 @@ CODE_SYM_DEF R_DrawFuzzColumnFlatBackbuffer
 
 .done:
 	pop		ebp
-	pop		esi
 	pop		edx
 	pop		ecx
 	pop		ebx
@@ -111,10 +109,9 @@ vscale1:
   mov   al,[edi-(LINE-1)*SCREENWIDTH]
 	pop	ebp
 	mov		al,[eax]
-  pop	esi
-  mov		[edi-(LINE-1)*SCREENWIDTH],al
   pop	edx
-
+  mov		[edi-(LINE-1)*SCREENWIDTH],al
+  
 vscale0:
 	pop	ecx
 	pop	ebx
