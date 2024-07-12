@@ -56,7 +56,6 @@ CODE_SYM_DEF R_DrawFuzzColumnFlatVBE2
 	push		ebx
 	push		ecx
 	push		edx
-	push		esi
 	push		ebp
 
   mov  ebp,[_dc_yh]
@@ -77,7 +76,6 @@ CODE_SYM_DEF R_DrawFuzzColumnFlatVBE2
 
 .done:
 	pop		ebp
-	pop		esi
 	pop		edx
 	pop		ecx
 	pop		ebx
@@ -105,13 +103,12 @@ CODE_SYM_DEF R_DrawFuzzColumnFlatVBE2
 vscale1:
 	pop	ebp
   mov   al,[edi-(LINE-1)*SCREENWIDTH]
-  pop	esi
-	mov		al,[eax]
-  pop	edx
+	pop	edx
+  mov		al,[eax]
+  pop	ecx
   mov		[edi-(LINE-1)*SCREENWIDTH],al
 
 vscale0:
-	pop	ecx
 	pop	ebx
   pop	edi
   ret

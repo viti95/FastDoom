@@ -59,7 +59,6 @@ CODE_SYM_DEF R_DrawFuzzColumnVBE2
 	push		ebx
 	push		ecx
 	push		edx
-	push		esi
 	push		ebp
 
   mov  ebp,[_dc_yh]
@@ -94,7 +93,6 @@ CODE_SYM_DEF R_DrawFuzzColumnVBE2
 
 .done:
 	pop		ebp
-	pop		esi
 	pop		edx
 	pop		ecx
 	pop		ebx
@@ -133,7 +131,6 @@ CODE_SYM_DEF R_DrawFuzzColumnVBE2
 vscale0:
   pop	ebp
   mov [_fuzzposinverse],ecx
-  pop	esi
   pop	edx
 	pop	ecx
 	pop	ebx
