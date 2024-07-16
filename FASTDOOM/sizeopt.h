@@ -22,6 +22,7 @@
 #define pspriteiscale 524288
 #define pspriteiscaleneg -524288
 #define pspriteiscaleshifted 524288
+#define pspriteiscaleshifted_sky 524288
 #endif
 
 #if defined(MODE_T4050)
@@ -45,6 +46,7 @@
 #define pspriteiscale 524288
 #define pspriteiscaleneg -524288
 #define pspriteiscaleshifted 262144
+#define pspriteiscaleshifted_sky 262144
 #endif
 
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_MDA)
@@ -68,6 +70,7 @@
 #define pspriteiscale 262144
 #define pspriteiscaleneg -262144
 #define pspriteiscaleshifted 262144
+#define pspriteiscaleshifted_sky 262144
 #endif
 
 #if defined(MODE_T8043)
@@ -91,6 +94,7 @@
 #define pspriteiscale 262144
 #define pspriteiscaleneg -262144
 #define pspriteiscaleshifted 262144
+#define pspriteiscaleshifted_sky 262144
 #endif
 
 #endif

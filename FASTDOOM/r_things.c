@@ -77,6 +77,7 @@ fixed_t pspritescale;
 fixed_t pspriteiscale;
 fixed_t pspriteiscaleneg;
 fixed_t pspriteiscaleshifted;
+fixed_t pspriteiscaleshifted_sky;
 fixed_t pspritescaleds;
 #endif
 

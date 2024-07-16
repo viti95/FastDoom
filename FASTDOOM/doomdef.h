@@ -181,6 +181,13 @@ typedef enum
 #define CENTERING_OFFSET_Y ((SCALED_SCREENHEIGHT-ORIGINAL_SCREENHEIGHT) / 2)
 #endif
 
+#if defined(ASPECTRATIO16x10)
+#define SKY_SCALE 100
+#elif defined(ASPECTRATIO4x3)
+#define SKY_SCALE 80
+#elif defined(ASPECTRATIO5x4)
+#define SKY_SCALE 75
+#endif
 
 // The maximum number of players, multiplayer/networking.
 #define MAXPLAYERS 4

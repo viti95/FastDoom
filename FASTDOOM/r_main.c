@@ -2273,6 +2273,7 @@ void R_ExecuteSetViewSize(void)
 
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     pspriteiscaleshifted = pspriteiscale >> detailshift;
+    pspriteiscaleshifted_sky = (pspriteiscaleshifted * SKY_SCALE) / 100;
 #endif
 
     // thing clipping

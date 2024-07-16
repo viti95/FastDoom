@@ -1218,14 +1218,6 @@ void R_DrawPlanesFlatterVBE2(void)
 }
 #endif
 
-#if defined(ASPECTRATIO16x10)
-#define SKY_SCALE 100
-#elif defined(ASPECTRATIO4x3)
-#define SKY_SCALE 80
-#elif defined(ASPECTRATIO5x4)
-#define SKY_SCALE 75
-#endif
-
 void R_DrawSky(visplane_t *pl)
 {
     int angle;
@@ -1237,7 +1229,7 @@ void R_DrawSky(visplane_t *pl)
 
     int x;
 
-    dc_iscale = (pspriteiscaleshifted * SKY_SCALE) / 100;
+    dc_iscale = pspriteiscaleshifted_sky;
 
     dc_colormap = fixedcolormap ? fixedcolormap : colormaps;
     dc_texturemid = 100 * FRACUNIT;
