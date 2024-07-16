@@ -1357,8 +1357,8 @@ void R_ExecuteSetViewSize(void)
 
         if (flatSky)
         {
-            drawSky = R_DrawSkyFlat;
-            skyfunc = R_DrawColumnFlat;
+            drawSky = R_DrawSkyFlatPlanar;
+            skyfunc = R_DrawColumnPlaneFlat;
         }
         else
         {

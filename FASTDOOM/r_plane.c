@@ -1297,6 +1297,115 @@ void R_DrawSky(visplane_t *pl)
     }
 }
 
+void R_DrawSkyFlatPlanar(visplane_t *pl)
+{
+    byte color;
+    int x;
+    byte *source;
+
+    dc_color = 220;
+
+    x = pl->minx;
+
+    if (x > pl->maxx)
+        return;
+
+    outp(SC_INDEX + 1, 1 << (x & 3));
+
+    do
+    {
+        if (pl->top[x] > pl->bottom[x])
+        {
+            x += 4;
+            continue;
+        }
+
+        dc_yh = pl->bottom[x];
+        dc_yl = pl->top[x];
+        dc_x = x;
+
+        skyfunc();
+
+        x += 4;
+    } while (x <= pl->maxx);
+
+    // Plane 1
+    x = pl->minx + 1;
+
+    if (x > pl->maxx)
+        return;
+
+    outp(SC_INDEX + 1, 1 << (x & 3));
+
+    do
+    {
+        if (pl->top[x] > pl->bottom[x])
+        {
+            x += 4;
+            continue;
+        }
+
+        dc_yh = pl->bottom[x];
+        dc_yl = pl->top[x];
+        dc_x = x;
+
+        skyfunc();
+
+        x += 4;
+    } while (x <= pl->maxx);
+
+    // Plane 2
+    x = pl->minx + 2;
+
+    if (x > pl->maxx)
+        return;
+
+    outp(SC_INDEX + 1, 1 << (x & 3));
+
+    do
+    {
+        if (pl->top[x] > pl->bottom[x])
+        {
+            x += 4;
+            continue;
+        }
+
+        dc_yh = pl->bottom[x];
+        dc_yl = pl->top[x];
+        dc_x = x;
+
+        skyfunc();
+
+        x += 4;
+    } while (x <= pl->maxx);
+
+    // Plane 3
+    x = pl->minx + 3;
+
+    if (x > pl->maxx)
+        return;
+
+    outp(SC_INDEX + 1, 1 << (x & 3));
+
+    do
+    {
+        if (pl->top[x] > pl->bottom[x])
+        {
+            x += 4;
+            continue;
+        }
+
+        dc_yh = pl->bottom[x];
+        dc_yl = pl->top[x];
+        dc_x = x;
+
+        skyfunc();
+
+        x += 4;
+    } while (x <= pl->maxx);
+
+}
+
 void R_DrawSkyFlat(visplane_t *pl)
 {
     int angle;
