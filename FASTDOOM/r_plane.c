@@ -1465,13 +1465,6 @@ void R_DrawSkyFlatPlanarLow(visplane_t *pl)
 
 void R_DrawSkyFlat(visplane_t *pl)
 {
-    int angle;
-
-    int lump;
-    int ofs;
-    int tex;
-    int col;
-
     int x;
 
     dc_color = 220;
