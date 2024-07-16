@@ -65,10 +65,8 @@ void R_DrawColumnPotatoVBE2Flat(void);
 
 void R_DrawColumnFastLEA(void);
 void R_DrawColumn(void);
-void R_DrawSkyFlat(void);
 void R_DrawColumnLowFastLEA(void);
 void R_DrawColumnLow(void);
-void R_DrawSkyFlatLow(void);
 
 // The Spectre/Invisibility effect.
 void R_DrawFuzzColumn(void);
@@ -91,7 +89,6 @@ void R_DrawFuzzColumnTransPotato(void);
 
 void R_DrawColumnPotatoFastLEA(void);
 void R_DrawColumnPotato(void);
-void R_DrawSkyFlatPotato(void);
 
 void R_DrawColumnText8050(void);
 void R_DrawColumnText8050Flat(void);

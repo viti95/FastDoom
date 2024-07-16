@@ -396,7 +396,7 @@ void R_DrawPlanes(void)
         // sky flat
         if (pl->picnum == skyflatnum)
         {
-            R_DrawSky(pl);
+            drawSky(pl);
             continue;
         }
 
@@ -474,7 +474,7 @@ void R_DrawPlanesFlatter(void)
         // sky flat
         if (pl->picnum == skyflatnum)
         {
-            R_DrawSky(pl);
+            drawSky(pl);
             continue;
         }
 
@@ -595,7 +595,7 @@ void R_DrawPlanesFlatterLow(void)
         // sky flat
         if (pl->picnum == skyflatnum)
         {
-            R_DrawSky(pl);
+            drawSky(pl);
             continue;
         }
 
@@ -666,7 +666,7 @@ void R_DrawPlanesFlatterPotato(void)
         // sky flat
         if (pl->picnum == skyflatnum)
         {
-            R_DrawSky(pl);
+            drawSky(pl);
             continue;
         }
 
@@ -707,7 +707,7 @@ void R_DrawPlanesFlatterText8050(void)
         // sky flat
         if (pl->picnum == skyflatnum)
         {
-            R_DrawSky(pl);
+            drawSky(pl);
             continue;
         }
 
@@ -766,7 +766,7 @@ void R_DrawPlanesFlatterText4050(void)
         // sky flat
         if (pl->picnum == skyflatnum)
         {
-            R_DrawSky(pl);
+            drawSky(pl);
             continue;
         }
 
@@ -847,7 +847,7 @@ void R_DrawPlanesFlatterText4025(void)
         // sky flat
         if (pl->picnum == skyflatnum)
         {
-            R_DrawSky(pl);
+            drawSky(pl);
             continue;
         }
 
@@ -905,7 +905,7 @@ void R_DrawPlanesFlatterTextMDA(void)
         // sky flat
         if (pl->picnum == skyflatnum)
         {
-            R_DrawSky(pl);
+            drawSky(pl);
             continue;
         }
 
@@ -984,7 +984,7 @@ void R_DrawPlanesFlatterText8025(void)
         // sky flat
         if (pl->picnum == skyflatnum)
         {
-            R_DrawSky(pl);
+            drawSky(pl);
             continue;
         }
 
@@ -1063,7 +1063,7 @@ void R_DrawPlanesFlatterBackbuffer(void)
         // sky flat
         if (pl->picnum == skyflatnum)
         {
-            R_DrawSky(pl);
+            drawSky(pl);
             continue;
         }
 
@@ -1111,7 +1111,7 @@ void R_DrawPlanesFlatterLowBackbuffer(void)
         // sky flat
         if (pl->picnum == skyflatnum)
         {
-            R_DrawSky(pl);
+            drawSky(pl);
             continue;
         }
 
@@ -1154,7 +1154,7 @@ void R_DrawPlanesFlatterPotatoBackbuffer(void)
         // sky flat
         if (pl->picnum == skyflatnum)
         {
-            R_DrawSky(pl);
+            drawSky(pl);
             continue;
         }
 
@@ -1195,7 +1195,7 @@ void R_DrawPlanesFlatterVBE2(void)
         // sky flat
         if (pl->picnum == skyflatnum)
         {
-            R_DrawSky(pl);
+            drawSky(pl);
             continue;
         }
 
@@ -1237,99 +1237,108 @@ void R_DrawSky(visplane_t *pl)
 
     int x;
 
-    if (!flatSky)
+    dc_iscale = (pspriteiscaleshifted * SKY_SCALE) / 100;
+
+    dc_colormap = fixedcolormap ? fixedcolormap : colormaps;
+    dc_texturemid = 100 * FRACUNIT;
+
+    tex = skytexture;
+
+    for (x = pl->minx; x <= pl->maxx; x++)
     {
-        dc_iscale = (pspriteiscaleshifted * SKY_SCALE) / 100;
-
-        dc_colormap = fixedcolormap ? fixedcolormap : colormaps;
-        dc_texturemid = 100 * FRACUNIT;
-
-        for (x = pl->minx; x <= pl->maxx; x++)
-        {
 #if defined(MODE_CGA16) || defined(MODE_CVB)
-            if (detailshift == DETAIL_HIGH)
-                if (x & 1)
-                    continue;
+        if (detailshift == DETAIL_HIGH)
+            if (x & 1)
+                continue;
 #endif
 
 #if defined(MODE_CGA512)
-            switch (detailshift)
-            {
-            case DETAIL_HIGH:
-                if (x & 3)
-                    continue;
-                break;
-            case DETAIL_LOW:
-                if (x & 1)
-                    continue;
-                break;
-            }
+        switch (detailshift)
+        {
+        case DETAIL_HIGH:
+            if (x & 3)
+                continue;
+            break;
+        case DETAIL_LOW:
+            if (x & 1)
+                continue;
+            break;
+        }
 #endif
 
-            dc_yl = pl->top[x];
-            dc_yh = pl->bottom[x];
+        dc_yl = pl->top[x];
+        dc_yh = pl->bottom[x];
 
-            if (dc_yl > dc_yh)
-                continue;
+        if (dc_yl > dc_yh)
+            continue;
 
-            dc_x = x;
+        dc_x = x;
 
-            angle = (viewangle + xtoviewangle[x]) >> ANGLETOSKYSHIFT;
+        angle = (viewangle + xtoviewangle[x]) >> ANGLETOSKYSHIFT;
 
-            tex = skytexture;
-            col = angle;
-            col &= texturewidthmask[tex];
-            lump = texturecolumnlump[tex][col];
-            ofs = texturecolumnofs[tex][col];
+        col = angle;
+        col &= texturewidthmask[tex];
+        lump = texturecolumnlump[tex][col];
+        ofs = texturecolumnofs[tex][col];
 
-            if (lump > 0)
-            {
-                dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
-            }
-            else
-            {
-                if (!texturecomposite[tex])
-                    R_GenerateComposite(tex);
-
-                dc_source = texturecomposite[tex] + ofs;
-            }
-
-            skyfunc();
+        if (lump > 0)
+        {
+            dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
         }
+        else
+        {
+            if (!texturecomposite[tex])
+                R_GenerateComposite(tex);
+
+            dc_source = texturecomposite[tex] + ofs;
+        }
+
+        skyfunc();
     }
-    else
+}
+
+void R_DrawSkyFlat(visplane_t *pl)
+{
+    int angle;
+
+    int lump;
+    int ofs;
+    int tex;
+    int col;
+
+    int x;
+
+    dc_color = 220;
+
+    for (x = pl->minx; x <= pl->maxx; x++)
     {
-        for (x = pl->minx; x <= pl->maxx; x++)
-        {
 #if defined(MODE_CGA16) || defined(MODE_CVB)
-            if (detailshift == DETAIL_HIGH)
-                if (x & 1)
-                    continue;
+        if (detailshift == DETAIL_HIGH)
+            if (x & 1)
+                continue;
 #endif
 
 #if defined(MODE_CGA512)
-            switch (detailshift)
-            {
-            case DETAIL_HIGH:
-                if (x & 3)
-                    continue;
-                break;
-            case DETAIL_LOW:
-                if (x & 1)
-                    continue;
-                break;
-            }
+        switch (detailshift)
+        {
+        case DETAIL_HIGH:
+            if (x & 3)
+                continue;
+            break;
+        case DETAIL_LOW:
+            if (x & 1)
+                continue;
+            break;
+        }
 #endif
 
-            dc_yl = pl->top[x];
-            dc_yh = pl->bottom[x];
+        dc_yl = pl->top[x];
+        dc_yh = pl->bottom[x];
 
-            if (dc_yl > dc_yh)
-                continue;
+        if (dc_yl > dc_yh)
+            continue;
+        dc_x = x;
 
-            dc_x = x;
-
-            skyfunc();
-        }
+        skyfunc();
     }
 }

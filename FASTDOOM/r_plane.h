@@ -51,6 +51,7 @@ void R_DrawPlanesFlatterLowBackbuffer(void);
 void R_DrawPlanesFlatterPotatoBackbuffer(void);
 void R_DrawPlanesFlatterVBE2(void);
 void R_DrawSky(visplane_t *pl);
+void R_DrawSkyFlat(visplane_t *pl);
 
 visplane_t * R_FindPlane(fixed_t height, int picnum, int lightlevel);
 visplane_t * R_CheckPlane(visplane_t *pl, int start, int stop);

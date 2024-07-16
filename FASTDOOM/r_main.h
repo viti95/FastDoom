@@ -103,6 +103,8 @@ extern void (*drawPlanes)(void);
 extern void (*mapPlane)(int y, int x1);
 extern void (*clearPlanes)(void);
 
+extern void (*drawSky)(visplane_t *pl);
+
 //
 // Utility functions.
 byte R_PointOnSegSide(fixed_t x,

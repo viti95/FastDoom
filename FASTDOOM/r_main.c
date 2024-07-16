@@ -1356,8 +1356,13 @@ void R_ExecuteSetViewSize(void)
         }
 
         if (flatSky)
-            skyfunc = R_DrawSkyFlat;
+        {
+            drawSky = R_DrawSkyFlat;
+            skyfunc = R_DrawColumnFlat;
+        }
         else
+        {
+            drawSky = R_DrawSky;
             switch (selectedCPU)
             {
             case UMC_GREEN_486:
@@ -1369,6 +1374,7 @@ void R_ExecuteSetViewSize(void)
                 skyfunc = R_DrawColumn;
                 break;
             }
+        }
 
         switch (invisibleRender)
         {
@@ -1468,8 +1474,13 @@ void R_ExecuteSetViewSize(void)
         }
 
         if (flatSky)
-            skyfunc = R_DrawSkyFlatLow;
+        {
+            drawSky = R_DrawSkyFlat;
+            skyfunc = R_DrawColumnFlatLow;
+        }
         else
+        {
+            drawSky = R_DrawSky;
             switch (selectedCPU)
             {
             case UMC_GREEN_486:
@@ -1481,6 +1492,7 @@ void R_ExecuteSetViewSize(void)
                 skyfunc = R_DrawColumnLow;
                 break;
             }
+        }
 
         switch (invisibleRender)
         {
@@ -1580,8 +1592,13 @@ void R_ExecuteSetViewSize(void)
         }
 
         if (flatSky)
-            skyfunc = R_DrawSkyFlatPotato;
+        {
+            drawSky = R_DrawSkyFlat;
+            skyfunc = R_DrawColumnFlatPotato;
+        }
         else
+        {
+            drawSky = R_DrawSky;
             switch (selectedCPU)
             {
             case UMC_GREEN_486:
@@ -1593,6 +1610,7 @@ void R_ExecuteSetViewSize(void)
                 skyfunc = R_DrawColumnPotato;
                 break;
             }
+        }
 
         switch (invisibleRender)
         {
