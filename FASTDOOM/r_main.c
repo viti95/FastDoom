@@ -2022,9 +2022,15 @@ void R_ExecuteSetViewSize(void)
         }
 
         if (flatSky)
-            skyfunc = R_DrawSkyFlatVBE2;
+        {
+            drawSky = R_DrawSkyFlat;
+            skyfunc = R_DrawColumnVBE2Flat;
+        }
         else
+        {
+            drawSky = R_DrawSky;
             skyfunc = R_DrawColumnVBE2;
+        }
 
         switch (invisibleRender)
         {
@@ -2103,9 +2109,15 @@ void R_ExecuteSetViewSize(void)
         }
 
         if (flatSky)
-            skyfunc = R_DrawSkyFlatLowVBE2;
+        {
+            drawSky = R_DrawSkyFlat;
+            skyfunc = R_DrawColumnLowVBE2Flat;
+        }
         else
+        {
+            drawSky = R_DrawSky;
             skyfunc = R_DrawColumnLowVBE2;
+        }
 
         switch (invisibleRender)
         {
@@ -2184,9 +2196,15 @@ void R_ExecuteSetViewSize(void)
         }
 
         if (flatSky)
-            skyfunc = R_DrawSkyFlatPotatoVBE2;
+        {
+            drawSky = R_DrawSkyFlat;
+            skyfunc = R_DrawColumnPotatoVBE2Flat;
+        }
         else
+        {
+            drawSky = R_DrawSky;
             skyfunc = R_DrawColumnPotatoVBE2;
+        }
 
         switch (invisibleRender)
         {
