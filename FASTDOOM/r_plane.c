@@ -1406,6 +1406,63 @@ void R_DrawSkyFlatPlanar(visplane_t *pl)
 
 }
 
+void R_DrawSkyFlatPlanarLow(visplane_t *pl)
+{
+    byte color;
+    int x;
+    byte *source;
+
+    dc_color = 220;
+
+    // Plane 0
+    x = pl->minx;
+    outp(SC_INDEX + 1, 3 << ((x & 1) << 1));
+
+    do
+    {
+        if (pl->top[x] > pl->bottom[x])
+        {
+            x += 2;
+            continue;
+        }
+
+        dc_yh = pl->bottom[x];
+        dc_yl = pl->top[x];
+        dc_x = x;
+
+        spanfunc();
+
+        x += 2;
+    } while (x <= pl->maxx);
+
+    // Plane 1
+    x = pl->minx + 1;
+
+    if (x > pl->maxx)
+        return;
+
+    outp(SC_INDEX + 1, 3 << ((x & 1) << 1));
+
+    do
+    {
+        if (pl->top[x] > pl->bottom[x])
+        {
+            x += 2;
+            continue;
+        }
+
+        dc_yh = pl->bottom[x];
+        dc_yl = pl->top[x];
+        dc_x = x;
+
+        spanfunc();
+
+        x += 2;
+    } while (x <= pl->maxx);
+
+}
+
+
 void R_DrawSkyFlat(visplane_t *pl)
 {
     int angle;
