@@ -1031,9 +1031,15 @@ void R_ExecuteSetViewSize(void)
     }
 
     if (flatSky)
+    {
+        drawSky = R_DrawSkyFlat;
         skyfunc = R_DrawSkyFlatText4050;
+    }
     else
+    {
+        drawSky = R_DrawSky;
         skyfunc = R_DrawColumnText4050;
+    }
 
     switch (invisibleRender)
     {
@@ -1100,9 +1106,15 @@ void R_ExecuteSetViewSize(void)
     }
 
     if (flatSky)
+    {
+        drawSky = R_DrawSkyFlat;
         skyfunc = R_DrawSkyFlatText4025;
+    }
     else
+    {
+        drawSky = R_DrawSky;
         skyfunc = R_DrawColumnText4025;
+    }
 
     switch (invisibleRender)
     {
@@ -1168,9 +1180,15 @@ void R_ExecuteSetViewSize(void)
     }
 
     if (flatSky)
+    {
+        drawSky = R_DrawSkyFlat;
         skyfunc = R_DrawSkyFlatText8025;
+    }
     else
+    {
+        drawSky = R_DrawSky;
         skyfunc = R_DrawColumnText8025;
+    }
 
     switch (invisibleRender)
     {
@@ -1201,6 +1219,7 @@ void R_ExecuteSetViewSize(void)
 
     spanfunc = R_DrawSpanTextMDA;
 
+    drawSky = R_DrawSkyFlat;
     skyfunc = R_DrawSkyTextMDA;
 
     fuzzcolfunc = R_DrawLineColumnTextMDA;
@@ -1250,9 +1269,15 @@ void R_ExecuteSetViewSize(void)
     }
 
     if (flatSky)
+    {
+        drawSky = R_DrawSkyFlat;
         skyfunc = R_DrawSkyFlatText8050;
+    }
     else
+    {
+        drawSky = R_DrawSky;
         skyfunc = R_DrawColumnText8050;
+    }
 
     switch (invisibleRender)
     {
