@@ -23,6 +23,8 @@ extern void R_RenderSegLoop(void);
 extern void R_RenderSegLoopFlat(void);
 extern void R_RenderSegLoopFlatter(void);
 
+extern void R_RenderSegLoopPlanar(void);
+
 extern void R_RenderMaskedSegRange(drawseg_t *ds, int x1, int x2);
 extern void R_RenderMaskedSegRangeFlat(drawseg_t *ds, int x1, int x2);
 extern void R_RenderMaskedSegRangeFlatter(drawseg_t *ds, int x1, int x2);

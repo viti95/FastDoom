@@ -957,7 +957,7 @@ void R_ExecuteSetViewSize(void)
     switch (wallRender)
     {
     case WALL_NORMAL:
-        renderSegLoop = R_RenderSegLoop;
+        renderSegLoop = R_RenderSegLoopPlanar;
         renderMaskedSegRange = R_RenderMaskedSegRange;
         renderMaskedSegRange2 = R_RenderMaskedSegRange2;
         break;
@@ -1316,7 +1316,7 @@ void R_ExecuteSetViewSize(void)
                 colfunc = R_DrawColumnFastLEA;
                 break;
             default:
-                colfunc = R_DrawColumn;
+                colfunc = R_DrawColumnPlane;
                 break;
             }
             break;

@@ -65,6 +65,7 @@ void R_DrawColumnPotatoVBE2Flat(void);
 
 void R_DrawColumnFastLEA(void);
 void R_DrawColumn(void);
+void R_DrawColumnPlane(void);
 void R_DrawColumnLowFastLEA(void);
 void R_DrawColumnLow(void);
 

@@ -170,7 +170,7 @@ CODE_SYM_DEF R_DrawColumn
   mov  ebx,[_dc_yl]
   mov  edi,[_ylookup+ebp*4]
   sub  ebp,ebx         ; ebp = pixel count
-  js   short done
+  js   short .done
 
   ; set plane
   mov  ecx,[_dc_x]
@@ -202,7 +202,55 @@ CODE_SYM_DEF R_DrawColumn
   shr  ebx,25 ; get address of first location
   jmp  [scalecalls+4+ebp*4]
 
-done:
+.done:
+	pop		ebp
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+  pop		edi
+  ret
+; R_DrawColumn ends
+
+CODE_SYM_DEF R_DrawColumnPlane
+	push		edi
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		ebp
+
+  mov  ebp,[_dc_yh]
+  mov  ebx,[_dc_yl]
+  mov  edi,[_ylookup+ebp*4]
+  sub  ebp,ebx         ; ebp = pixel count
+  js   short .done
+
+  ; set plane
+  mov  ecx,[_dc_x]
+  add  edi,[_destview]
+  mov  esi, ecx
+  
+  shr esi,2
+  mov eax, ebx
+  add edi,esi
+
+  mov   ecx,[_dc_iscale]
+
+  sub   eax,[_centery]
+  imul  ecx
+  mov   edx,[_dc_texturemid]
+  shl   ecx,9 ; 7 significant bits, 25 frac
+  add   edx,eax
+  mov   esi,[_dc_source]
+  shl   edx,9 ; 7 significant bits, 25 frac
+  mov   eax,[_dc_colormap]
+
+  mov  ebx,edx
+  shr  ebx,25 ; get address of first location
+  jmp  [scalecalls+4+ebp*4]
+
+.done:
 	pop		ebp
 	pop		esi
 	pop		edx
