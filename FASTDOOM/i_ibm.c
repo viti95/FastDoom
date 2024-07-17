@@ -1103,13 +1103,14 @@ byte *I_ZoneBase(int *size)
 
     heap = meminfo[0];
 
-    if (limitram && limitram <= heap) {
-        heap = limitram * 1000;
-    }
     printf("\nAvailable DPMI memory: %d Kb\n", heap >> 10);
 
-    if (freeram && (heap - freeram) > 0) {
-        heap -= freeram * 1000; // leave N free ram
+    if (limitram && limitram <= heap) {
+        heap = limitram * 1024;
+    } else if (freeram && (heap - freeram) > 0) {
+        heap -= freeram * 1024; // leave N free ram
+    } else {
+        heap -= 0x20000; // Leave 128Kb free by default
     }
 
     do

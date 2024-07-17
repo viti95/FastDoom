@@ -1264,7 +1264,6 @@ void D_DoomMain(void)
     {
         if (p < myargc - 1) {
             limitram = atoi(myargv[p + 1]);
-            printf("\nLimiting max used RAM... ");
         }
     }
 
@@ -1273,7 +1272,6 @@ void D_DoomMain(void)
     {
         if (p < myargc - 1) {
             freeram = atoi(myargv[p + 1]);
-            printf("\nLeaving free RAM");
         }
     }
 
