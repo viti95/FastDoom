@@ -402,7 +402,7 @@ void R_DrawPlanes(void)
 
         // regular flat
 
-        ds_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_STATIC);
+        ds_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_CACHE);
         planeheight = abs(pl->height - viewz);
         light = (pl->lightlevel >> LIGHTSEGSHIFT) + extralight;
 
@@ -449,8 +449,6 @@ void R_DrawPlanes(void)
                 b2--;
             }
         }
-
-        Z_ChangeTag(ds_source, PU_CACHE);
     }
 }
 
@@ -1422,7 +1420,7 @@ void R_DrawSkyFlatPlanarLow(visplane_t *pl)
         dc_yl = pl->top[x];
         dc_x = x;
 
-        spanfunc();
+        skyfunc();
 
         x += 2;
     } while (x <= pl->maxx);
@@ -1447,7 +1445,7 @@ void R_DrawSkyFlatPlanarLow(visplane_t *pl)
         dc_yl = pl->top[x];
         dc_x = x;
 
-        spanfunc();
+        skyfunc();
 
         x += 2;
     } while (x <= pl->maxx);
