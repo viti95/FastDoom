@@ -1686,18 +1686,18 @@ void R_RenderSegLoopPlanar(void)
 
 	for (i = 0; i < 4; i++)
 	{
-		rw_x = rw_x_orig + i;
+		rw_x = rw_x_orig;
 
 		if (rw_x > rw_stopx)
 			return;
 
 		outp(SC_INDEX + 1, 1 << (rw_x & 3));
 
-		rw_scale = rw_scale_orig + (i * rw_scalestep);
-		topfrac = topfrac_orig - (i * topstep);
-		bottomfrac = bottomfrac_orig - (i * bottomstep);
-		pixlow = pixlow_orig - (i * pixlowstep);
-		pixhigh = pixhigh_orig - (i * pixhighstep);
+		rw_scale = rw_scale_orig;
+		topfrac = topfrac_orig;
+		bottomfrac = bottomfrac_orig;
+		pixlow = pixlow_orig;
+		pixhigh = pixhigh_orig;
 
 		for (; rw_x < rw_stopx; rw_x += 4)
 		{
@@ -1920,6 +1920,14 @@ void R_RenderSegLoopPlanar(void)
 			ceilingclip[rw_x] = cc_rwx;
 			floorclip[rw_x] = fc_rwx;
 		}
+
+		rw_x_orig++;
+		rw_scale_orig += rw_scalestep;
+		topfrac_orig -= topstep;
+		bottomfrac_orig -= bottomstep;
+		pixlow_orig -= pixlowstep;
+		pixhigh_orig -= pixhighstep;
+
 	}
 }
 
