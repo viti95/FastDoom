@@ -216,6 +216,8 @@
  -cy5x86 => Use Cyrix 5x86 codepath
  -k5 => Use AMD K5 codepath
  -pentium => Use Intel Pentium codepath
+ -limitram 32768 => Limit maximum memory to 32MB
+ -freeram 128 => Leaves 128 KB free
  
  Limitations / Known bugs
  ------------------------
