@@ -399,6 +399,17 @@ void OutString(unsigned short Port, unsigned char *addr, int c);
     parm [dx] [si] [cx] nomemory \
     modify exact [si cx] nomemory;
 
+void FastPaletteOut(unsigned char *addr);
+#pragma aux FastPaletteOut = \
+    "mov dx,0x3c8" \
+    "xor al,al" \
+    "mov ecx,0x300" \
+    "out dx,al" \
+    "inc edx" \
+    "rep outsb" \
+    parm [esi] \
+    modify [al edx ecx esi];
+
 unsigned char InByte60h(void);
 #pragma aux InByte60h = \
     "in al, 0x60" \

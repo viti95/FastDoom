@@ -34,9 +34,8 @@ void VGA_TestFastSetPalette(void)
         }
 
         // Write test palette using REP STOSB
-        outp(PEL_WRITE_ADR, 0);
-        OutString(PEL_DATA, test_palette, 768);
-
+        FastPaletteOut(test_palette);
+        
         // Read palette from VGA card
         // and compare results
         outp(PEL_READ_ADR, 0);
@@ -92,8 +91,7 @@ void I_SetPalette(int numpalette)
     }
     else
     {
-        outp(PEL_WRITE_ADR, 0);
-        OutString(PEL_DATA, ((unsigned char *)processedpalette) + pos, 768);
+        FastPaletteOut(((unsigned char *)processedpalette) + pos);
     }
 }
 
