@@ -259,10 +259,6 @@ void MV_ServiceVoc(
     if (!MV_BufferEmpty[MV_MixPage])
     {
         ClearBuffer_DW(MV_MixBuffer[MV_MixPage], MV_Silence, MV_BufferSize >> 2);
-        if ((MV_SoundCard == UltraSound) && (MV_Channels == 2))
-        {
-            ClearBuffer_DW(MV_MixBuffer[MV_MixPage] + MV_RightChannelOffset, MV_Silence, MV_BufferSize >> 2);
-        }
         MV_BufferEmpty[MV_MixPage] = TRUE;
     }
 
@@ -600,10 +596,6 @@ static void MV_SetVoiceMixMode(
         test |= T_MONO;
     }
 
-    if (MV_SoundCard == UltraSound){
-        test |= T_ULTRASOUND;
-    }
-
     switch (test)
     {
     case T_8BITS | T_MONO:
@@ -612,9 +604,6 @@ static void MV_SetVoiceMixMode(
     case T_8BITS:
         voice->mix = MV_Mix8BitStereo;
         break;
-    default:
-        // Ultrasound
-        voice->mix = MV_Mix8BitUltrasound;
     }
 
     RestoreInterrupts(flags);
@@ -680,10 +669,6 @@ int MV_SetMixMode(
 
     switch (MV_SoundCard)
     {
-    case UltraSound:
-        MV_MixMode = mode;
-        break;
-
     case SoundBlaster:
     case Awe32:
         MV_MixMode = BLASTER_SetMixMode(mode);
@@ -747,14 +732,6 @@ int MV_SetMixMode(
 
     MV_RightChannelOffset = MV_SampleSize / 2;
 
-    if ((MV_SoundCard == UltraSound) && (MV_Channels == 2))
-    {
-        MV_SampleSize /= 2;
-        MV_BufferSize /= 2;
-        MV_RightChannelOffset = MV_BufferSize * MV_NumberOfBuffers;
-        MV_BufferLength /= 2;
-    }
-
     return (MV_Ok);
 }
 
@@ -798,28 +775,6 @@ int MV_StartPlayback(
 
         MV_MixRate = BLASTER_SampleRate;
         MV_DMAChannel = BLASTER_DMAChannel;
-        break;
-
-    case UltraSound:
-
-        status = GUSWAVE_StartDemandFeedPlayback(MV_ServiceGus, MV_Bits, MV_RequestedMixRate, (MV_Channels == 1) ? 0 : 24);
-        if (status < GUSWAVE_Ok)
-        {
-            return (MV_Error);
-        }
-
-        if (MV_Channels == 2)
-        {
-            status = GUSWAVE_StartDemandFeedPlayback(MV_ServiceRightGus, MV_Bits, MV_RequestedMixRate, 8);
-            if (status < GUSWAVE_Ok)
-            {
-                GUSWAVE_KillAllVoices();
-                return (MV_Error);
-            }
-        }
-
-        MV_MixRate = MV_RequestedMixRate;
-        MV_DMAChannel = -1;
         break;
 
     case ProAudioSpectrum:
@@ -943,10 +898,6 @@ void MV_StopPlayback(
     case SoundBlaster:
     case Awe32:
         BLASTER_StopPlayback();
-        break;
-
-    case UltraSound:
-        GUSWAVE_KillAllVoices();
         break;
 
     case ProAudioSpectrum:
@@ -1256,10 +1207,6 @@ int MV_Init(
     // Initialize the sound card
     switch (soundcard)
     {
-    case UltraSound:
-        status = GUSWAVE_Init();
-        break;
-
     case SoundBlaster:
     case Awe32:
         status = BLASTER_Init();
@@ -1396,10 +1343,6 @@ int MV_Shutdown(
     // Shutdown the sound card
     switch (MV_SoundCard)
     {
-    case UltraSound:
-        GUSWAVE_Shutdown();
-        break;
-
     case SoundBlaster:
     case Awe32:
         BLASTER_Shutdown();
