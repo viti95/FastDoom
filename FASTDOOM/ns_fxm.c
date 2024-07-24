@@ -295,7 +295,6 @@ int FX_Init(
     case SoundScape:
     case SoundSource:
     case Tandy3Voice:
-    case UltraSound:
     case PC1bit:
     case PCPWM:
     case CMS:
@@ -305,6 +304,14 @@ int FX_Init(
     case OPL3LPT:
     case SoundBlasterDirect:
         devicestatus = MV_Init(SoundCard, FX_MixRate, numvoices, numchannels, samplebits);
+        if (devicestatus != MV_Ok && !ignoreSoundChecks)
+        {
+            status = FX_Error;
+        }
+        break;
+
+    case UltraSound:
+        devicestatus = GUSWAVE_Init();
         if (devicestatus != MV_Ok && !ignoreSoundChecks)
         {
             status = FX_Error;
@@ -350,7 +357,6 @@ int FX_Shutdown(
     case SoundScape:
     case SoundSource:
     case Tandy3Voice:
-    case UltraSound:
     case PC1bit:
     case PCPWM:
     case CMS:
@@ -364,6 +370,11 @@ int FX_Shutdown(
         {
             status = FX_Error;
         }
+        break;
+    
+    case UltraSound:
+        GUSWAVE_Shutdown();
+        status = MV_Ok;
         break;
 
     default:
