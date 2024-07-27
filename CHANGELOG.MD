@@ -1,12 +1,12 @@
 # CHANGELOG
 
-## 0.9.9f (?? ??? ????)
+## 0.9.9f (27 Jul 2024)
 * Dreamblaster S2P support (MIDI through LPT)
 * New rendering options, now it's possible to draw walls and sprites untextured (single color)
 * Update display options menu, scroll it's available so it's possible to add as many options as wanted
 * Optimize flat sky rendering
-* Two new command line options "-freeram" and "-limitram". First one limits the amount of ram available for zone memory (kb), and second limits the ammount of memory free after allocating zone memory (also in kb). Reverted default free memory to 128kb (fixes issues on some setups)
-* Added file size verification for supported IWADs
+* Two new command line options "-freeram" and "-limitram". First one limits the amount of ram available for zone memory (kb), and second limits the ammount of memory free after allocating zone memory (also in kb). Reverted default free memory to 128kb (fixes issues on some setups) @jsmolina
+* Added file size verification for supported IWADs (in order to reduce unsupported IWAD version issues)
 
 ## 0.9.9e (18 Jun 2024)
 * Fixed diminished lightning issues on high resolution VESA modes
