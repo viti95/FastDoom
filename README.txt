@@ -45,20 +45,23 @@
              Plantronics Colorplus and Sigma Color 400 cards are supported
  Controls:   Keyboard (mouse recommended)
 
- Supported WADS
- --------------
+ Supported IWADs
+ ---------------
 
- The supported wads are the following:
-    * DOOM.WAD -> DOOM Registered (3 episodes)
-    * DOOM1.WAD -> DOOM Shareware (1 episode)
-    * DOOMU.WAD -> Ultimate DOOM (4 episodes)
-    * DOOM2.WAD -> DOOM II
-    * PLUTONIA.WAD -> Final DOOM The Plutonia Experiment
-    * TNT.WAD -> Final DOOM TNT Evilution 
-    * FREEDM1.WAD -> FreeDoom Phase 1 (experimental)
-    * FREEDM2.WAD -> FreeDoom Phase 2 (experimental)
+ FastDoom guarantees support for the following IWADs, provided the correct 
+ file names and specified versions are used:
 
- All of them must be the 1.9 version to work fine.
+  DOOM Registered (3 episodes) -> DOOM.WAD (v1.9, 11159840 bytes)
+  DOOM Shareware (1 episode) -> DOOM1.WAD (v1.9, 4196020 bytes)
+  Ultimate DOOM (4 episodes) -> DOOMU.WAD (v1.9, 12408292 bytes)
+  DOOM II -> DOOM2.WAD (v1.9, 14604584 bytes)
+  Final DOOM The Plutonia Experiment -> PLUTONIA.WAD (v1.9, 17420824 bytes)
+  Final DOOM TNT Evilution -> TNT.WAD (v1.9, 18195736 bytes)
+  FreeDoom Phase 1 -> FREEDM1.WAD (experimental support)
+  FreeDoom Phase 2 -> FREEDM2.WAD (experimental support)
+
+ Any other version used may cause issues and not function correctly. 
+ Remember to rename the IWADs according to your needs.
 
  Supported hardware
  ------------------

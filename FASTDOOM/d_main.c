@@ -925,6 +925,13 @@ void D_AddFile(char *file)
     wadfiles[numwadfiles] = newfile;
 }
 
+#define DOOM1WADSIZE 4196020
+#define DOOMWADSIZE 11159840
+#define ULTIMATEDOOMWADSIZE 12408292
+#define DOOM2WADSIZE 14604584
+#define PLUTONIAWADSIZE 17420824
+#define TNTWADSIZE 18195736
+
 void LoadIWAD(int selection)
 {
     boolean loadError = false;
@@ -938,7 +945,7 @@ void LoadIWAD(int selection)
             gamemode = shareware;
             gamemission = doom;
             strcpy(iwadfile, "doom1.wad");
-            D_CheckFileSize(iwadfile, 4196020);
+            D_CheckFileSize(iwadfile, DOOM1WADSIZE);
             D_AddFile("doom1.wad");
             return;
         }
@@ -954,7 +961,7 @@ void LoadIWAD(int selection)
             gamemode = registered;
             gamemission = doom;
             strcpy(iwadfile, "doom.wad");
-            D_CheckFileSize(iwadfile, 11159840);
+            D_CheckFileSize(iwadfile, DOOMWADSIZE);
             D_AddFile("doom.wad");
             return;
         }
@@ -970,7 +977,7 @@ void LoadIWAD(int selection)
             gamemode = retail;
             gamemission = doom;
             strcpy(iwadfile, "doomu.wad");
-            D_CheckFileSize(iwadfile, 12408292);
+            D_CheckFileSize(iwadfile, ULTIMATEDOOMWADSIZE);
             D_AddFile("doomu.wad");
             return;
         }
@@ -986,7 +993,7 @@ void LoadIWAD(int selection)
             gamemode = commercial;
             gamemission = doom2;
             strcpy(iwadfile, "doom2.wad");
-            D_CheckFileSize(iwadfile, 14604584);
+            D_CheckFileSize(iwadfile, DOOM2WADSIZE);
             D_AddFile("doom2.wad");
             return;
         }
@@ -1002,7 +1009,7 @@ void LoadIWAD(int selection)
             gamemode = commercial;
             gamemission = pack_plut;
             strcpy(iwadfile, "plutonia.wad");
-            D_CheckFileSize(iwadfile, 17420824);
+            D_CheckFileSize(iwadfile, PLUTONIAWADSIZE);
             D_AddFile("plutonia.wad");
             return;
         }
@@ -1018,7 +1025,7 @@ void LoadIWAD(int selection)
             gamemode = commercial;
             gamemission = pack_tnt;
             strcpy(iwadfile, "tnt.wad");
-            D_CheckFileSize(iwadfile, 18195736);
+            D_CheckFileSize(iwadfile, TNTWADSIZE);
             D_AddFile("tnt.wad");
             return;
         }
