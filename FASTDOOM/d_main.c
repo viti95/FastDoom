@@ -876,6 +876,38 @@ void D_RedrawTitle(void)
     D_SetCursorPosition(column, row);
 }
 
+void D_CheckFileSize(char *filename, long checksize)
+{
+    FILE *file = fopen(filename, "rb"); 
+    long size = -1;
+
+    if (file != NULL) {
+        fseek(file, 0, SEEK_END); 
+        size = ftell(file);     
+        fclose(file);             
+    } else {
+        I_Error("File %s could not be opened\n", filename);
+    }
+
+    if (checksize != size)
+    {
+        int selection;
+        printf("\nIt seems you're using an unsupported version of %s\n", filename);
+        printf("Expected file size: %ld, detected file size: %ld\n", checksize, size);
+        printf("This may cause issues!!!\n");
+        printf("Do you want to continue (Y/N)? ");
+        fflush(stdout);
+        selection = getch();
+        printf("%c\n", selection);
+        fflush(stdout);
+
+        if (selection == 110 || selection == 27) 
+        {
+            I_Error("Exiting...");
+        }
+    }
+}
+
 //
 // D_AddFile
 //
@@ -893,6 +925,13 @@ void D_AddFile(char *file)
     wadfiles[numwadfiles] = newfile;
 }
 
+#define DOOM1WADSIZE 4196020
+#define DOOMWADSIZE 11159840
+#define ULTIMATEDOOMWADSIZE 12408292
+#define DOOM2WADSIZE 14604584
+#define PLUTONIAWADSIZE 17420824
+#define TNTWADSIZE 18195736
+
 void LoadIWAD(int selection)
 {
     boolean loadError = false;
@@ -906,6 +945,7 @@ void LoadIWAD(int selection)
             gamemode = shareware;
             gamemission = doom;
             strcpy(iwadfile, "doom1.wad");
+            D_CheckFileSize(iwadfile, DOOM1WADSIZE);
             D_AddFile("doom1.wad");
             return;
         }
@@ -921,6 +961,7 @@ void LoadIWAD(int selection)
             gamemode = registered;
             gamemission = doom;
             strcpy(iwadfile, "doom.wad");
+            D_CheckFileSize(iwadfile, DOOMWADSIZE);
             D_AddFile("doom.wad");
             return;
         }
@@ -936,6 +977,7 @@ void LoadIWAD(int selection)
             gamemode = retail;
             gamemission = doom;
             strcpy(iwadfile, "doomu.wad");
+            D_CheckFileSize(iwadfile, ULTIMATEDOOMWADSIZE);
             D_AddFile("doomu.wad");
             return;
         }
@@ -951,6 +993,7 @@ void LoadIWAD(int selection)
             gamemode = commercial;
             gamemission = doom2;
             strcpy(iwadfile, "doom2.wad");
+            D_CheckFileSize(iwadfile, DOOM2WADSIZE);
             D_AddFile("doom2.wad");
             return;
         }
@@ -966,6 +1009,7 @@ void LoadIWAD(int selection)
             gamemode = commercial;
             gamemission = pack_plut;
             strcpy(iwadfile, "plutonia.wad");
+            D_CheckFileSize(iwadfile, PLUTONIAWADSIZE);
             D_AddFile("plutonia.wad");
             return;
         }
@@ -981,6 +1025,7 @@ void LoadIWAD(int selection)
             gamemode = commercial;
             gamemission = pack_tnt;
             strcpy(iwadfile, "tnt.wad");
+            D_CheckFileSize(iwadfile, TNTWADSIZE);
             D_AddFile("tnt.wad");
             return;
         }
@@ -1169,6 +1214,13 @@ void IdentifyVersion(void)
         printf("\nPlease enter the selection: ");
         fflush(stdout);
         selection = getch();
+        printf("%c\n", selection);
+        fflush(stdout);
+    }
+
+    if (selection == 27)
+    {
+        I_Error("Exiting...");
     }
 
     LoadIWAD(selection);
