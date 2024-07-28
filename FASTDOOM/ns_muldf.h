@@ -164,6 +164,5 @@ void ClearBuffer_DW(void *ptr, unsigned data, int length);
 
 void MV_Mix8BitMono(unsigned long position, unsigned long rate, unsigned char *start, unsigned long length);
 void MV_Mix8BitStereo(unsigned long position, unsigned long rate, unsigned char *start, unsigned long length);
-void MV_Mix8BitUltrasound(unsigned long position, unsigned long rate, unsigned char *start, unsigned long length);
 
 #endif
