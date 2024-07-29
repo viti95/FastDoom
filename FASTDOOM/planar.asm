@@ -62,17 +62,18 @@ BEGIN_CODE_SECTION
 ; ==================
 CODE_SYM_DEF R_DrawColumnPotato
 	push		edi
-  push		ebx
-	push		ecx
-	push		edx
-	push		esi
-	push		ebp
+	push		ebx
+  push		ebp
 
   mov  ebp,[_dc_yh]
   mov  eax,[_dc_yl]
   mov  edi,[_ylookup+ebp*4]
   sub  ebp,eax         ; ebp = pixel count
   js   short .done
+
+	push		esi
+	push		ecx
+	push		edx
 
   add  edi,[_destview]
   add  edi,[_dc_x]
@@ -94,9 +95,6 @@ CODE_SYM_DEF R_DrawColumnPotato
 
 .done:
 	pop		ebp
-	pop		esi
-	pop		edx
-	pop		ecx
 	pop		ebx
   pop		edi
   ret
@@ -106,18 +104,19 @@ CODE_SYM_DEF R_DrawColumnPotato
 ; R_DrawColumnLow
 ; ===============
 CODE_SYM_DEF R_DrawColumnLow
-  push		edi
-  push		ebx
-	push		ecx
-	push		edx
-	push		esi
-	push		ebp
+	push		edi
+	push		ebx
+  push		ebp
 
   mov  ebp,[_dc_yh]
   mov  ebx,[_dc_yl]
   mov  edi,[_ylookup+ebp*4]
   sub  ebp,ebx         ; ebp = pixel count
   js   short .done
+
+	push		esi
+	push		ecx
+	push		edx
 
   ; set plane
   mov  ecx,[_dc_x]
@@ -150,9 +149,6 @@ CODE_SYM_DEF R_DrawColumnLow
 
 .done:
 	pop		ebp
-	pop		esi
-	pop		edx
-	pop		ecx
 	pop		ebx
   pop		edi
   ret
@@ -161,16 +157,17 @@ CODE_SYM_DEF R_DrawColumnLow
 CODE_SYM_DEF R_DrawColumn
 	push		edi
 	push		ebx
-	push		ecx
-	push		edx
-	push		esi
-	push		ebp
+  push		ebp
 
   mov  ebp,[_dc_yh]
   mov  ebx,[_dc_yl]
   mov  edi,[_ylookup+ebp*4]
   sub  ebp,ebx         ; ebp = pixel count
   js   short done
+
+	push		esi
+	push		ecx
+	push		edx
 
   ; set plane
   mov  ecx,[_dc_x]
@@ -204,9 +201,6 @@ CODE_SYM_DEF R_DrawColumn
 
 done:
 	pop		ebp
-	pop		esi
-	pop		edx
-	pop		ecx
 	pop		ebx
   pop		edi
   ret
@@ -229,17 +223,17 @@ done:
 %endrep
 
 vscale1:
-	pop	ebp
-  mov al,[esi+ebx]
-  pop	esi
+  pop edx
+  mov al,[esi+ebx] 
+  pop ecx
   mov al,[eax]
-  pop	edx
+  pop esi
   mov [edi],al
 
 vscale0:
-	pop	ecx
-	pop	ebx
-  pop	edi
+  pop ebp
+  pop ebx
+  pop edi
   ret
 
 %endif
