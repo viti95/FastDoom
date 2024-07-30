@@ -47,6 +47,7 @@ SC_MAPMASK  equ 2
 
 OP_RET      equ 0xC3
 OP_MOVAL    equ 0x8A
+OP_MOVALPLANE    equ 0xB0
 OP_MOVDEST  equ 0x88
 
 extern _dc_colormap

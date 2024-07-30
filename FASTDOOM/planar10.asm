@@ -24,27 +24,6 @@ BITS 32
 extern _destview
 
 ;============================================================================
-; unwound vertical scaling code
-;
-; eax   light table pointer, 0 lowbyte overwritten
-; ebx   all 0, low byte overwritten
-; ecx   fractional step value
-; edx   fractional scale value
-; esi   start of source pixels
-; edi   bottom pixel in screenbuffer to blit into
-;
-; ebx should be set to 0 0 0 dh to feed the pipeline
-;
-; The graphics wrap vertically at 128 pixels
-;============================================================================
-
-BEGIN_DATA_SECTION
-
-align 4
-
-BEGIN_CODE_SECTION
-
-;============================================================================
 ; unwound horizontal texture mapping code
 ;
 ; eax   lighttable
@@ -58,7 +37,7 @@ BEGIN_CODE_SECTION
 ; ebp should by preset from ebx / ecx before calling
 ;============================================================================
 
-CONTINUE_DATA_SECTION
+BEGIN_DATA_SECTION
 
 %macro MAPDEFINE 1
   dd hmap%1
@@ -76,7 +55,7 @@ mapcalls:
 callpoint:   dd 0
 returnpoint: dd 0
 
-CONTINUE_CODE_SECTION
+BEGIN_CODE_SECTION
 
 ; ==========
 ; R_DrawSpan
@@ -86,7 +65,6 @@ CODE_SYM_DEF R_DrawSpan
 
   mov     eax,[_ds_x1]
   mov     ebx,[_ds_x2]
-  mov     ecx, eax
   mov     eax,[mapcalls+eax*4]
   mov     [callpoint],eax       ; spot to jump into unwound
   
@@ -96,14 +74,10 @@ CODE_SYM_DEF R_DrawSpan
   mov     edi,[_ds_y]
   mov     [eax], byte OP_RET
 
-  and     ecx, 3
-  mov     eax, 1
-  mov     esi,[_ds_source]
-  shl     al, cl
-  mov     dx, 0x3C5
-  mov     ecx,[_ds_frac]        ; build composite position
-  out     dx, al
+  mov     edx, SC_INDEX+1
 
+  mov     esi,[_ds_source]
+  mov     ecx,[_ds_frac]        ; build composite position
   mov     ebp,[_ds_step]        ; build composite step
   mov     edi,[_ylookup+edi*4]
   mov     eax,[_ds_colormap]
@@ -119,11 +93,10 @@ CODE_SYM_DEF R_DrawSpan
 
   mov     ebx,[returnpoint]
 
-  mov     [ebx],byte OP_MOVAL         ; remove the ret patched in
+  mov     [ebx],byte OP_MOVALPLANE         ; remove the ret patched in
 
   popad
   ret
-; R_DrawSpanPotato ends
 
 %macro MAPLABEL 1
   hmap%1
@@ -134,9 +107,9 @@ CODE_SYM_DEF R_DrawSpan
 %rep SCREENWIDTH/4
   %assign PLANE 0
   %rep 4
+      MAPLABEL LINE:
       mov al, 1 << PLANE
       out dx, al
-    MAPLABEL LINE:
       %assign LINE LINE+1
       %if LINE = 320
         mov   al,[esi+ebx]           ; get source pixel
