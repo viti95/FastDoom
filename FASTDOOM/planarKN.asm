@@ -56,6 +56,17 @@ scalecalls:
 
 BEGIN_CODE_SECTION
 
+CODE_SYM_DEF R_PatchCenteryPlanarKN
+  push ebx
+  mov   ebx,[_centery]
+  mov   eax,patchCentery1+1
+  mov   [eax],ebx
+  mov   eax,patchCentery2+1
+  mov   [eax],ebx
+  mov   eax,patchCentery3+1
+  mov   [eax],ebx
+  pop ebx
+  ret
 
 pdone:
 	pop		ebp
@@ -88,7 +99,8 @@ CODE_SYM_DEF R_DrawColumnPotatoFastLEA
 
   mov   ecx,[_dc_iscale]
 
-  sub   eax,[_centery]
+patchCentery1:
+  sub   eax,0x12345678
   imul  ecx
 
   mov   esi,[_dc_source]
@@ -167,7 +179,8 @@ CODE_SYM_DEF R_DrawColumnLowFastLEA
 
   mov   ecx,[_dc_iscale]
 
-  sub   eax,[_centery]
+patchCentery2:
+  sub   eax,0x12345678
   imul  ecx
 
   mov   esi,[_dc_source]
@@ -244,7 +257,8 @@ CODE_SYM_DEF R_DrawColumnFastLEA
 
   mov   ecx,[_dc_iscale]
 
-  sub   eax,[_centery]
+patchCentery3:
+  sub   eax,0x12345678
   imul  ecx
 
   mov   esi,[_dc_source]

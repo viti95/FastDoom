@@ -151,5 +151,6 @@ void R_Init(void);
 void R_SetViewSize(int blocks, int detail);
 
 void R_PatchCenteryPlanar(void);
+void R_PatchCenteryPlanarKN(void);
 
 #endif

@@ -67,6 +67,7 @@ CODE_SYM_DEF R_PatchCenteryPlanar
   mov   eax,patchCentery3+1
   mov   [eax],ebx
   pop ebx
+  ret
 
 ; ==================
 ; R_DrawColumnPotato
