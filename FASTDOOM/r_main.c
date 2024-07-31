@@ -1380,7 +1380,6 @@ void R_ExecuteSetViewSize(void)
             {
             case INTEL_386SX:
             case INTEL_386DX:
-            case UMC_GREEN_486:
             case CYRIX_386DLC:
             case CYRIX_486:
                 spanfunc = R_DrawSpan386SX;
@@ -1498,7 +1497,6 @@ void R_ExecuteSetViewSize(void)
             {
             case INTEL_386SX:
             case INTEL_386DX:
-            case UMC_GREEN_486:
             case CYRIX_386DLC:
             case CYRIX_486:
                 spanfunc = R_DrawSpanLow386SX;
@@ -1616,7 +1614,6 @@ void R_ExecuteSetViewSize(void)
             {
             case INTEL_386SX:
             case INTEL_386DX:
-            case UMC_GREEN_486:
             case CYRIX_386DLC:
             case CYRIX_486:
                 spanfunc = R_DrawSpanPotato386SX;
@@ -1738,7 +1735,6 @@ void R_ExecuteSetViewSize(void)
             {
             case INTEL_386SX:
             case INTEL_386DX:
-            case UMC_GREEN_486:
             case CYRIX_386DLC:
             case CYRIX_486:
                 spanfunc = R_DrawSpanBackbuffer386SX;
@@ -1855,7 +1851,6 @@ void R_ExecuteSetViewSize(void)
             {
             case INTEL_386SX:
             case INTEL_386DX:
-            case UMC_GREEN_486:
             case CYRIX_386DLC:
             case CYRIX_486:
                 spanfunc = R_DrawSpanLowBackbuffer386SX;
@@ -1952,7 +1947,6 @@ void R_ExecuteSetViewSize(void)
             {
             case INTEL_386SX:
             case INTEL_386DX:
-            case UMC_GREEN_486:
             case CYRIX_386DLC:
             case CYRIX_486:
                 spanfunc = R_DrawSpanPotatoBackbuffer386SX;
@@ -2046,7 +2040,6 @@ void R_ExecuteSetViewSize(void)
             {
             case INTEL_386SX:
             case INTEL_386DX:
-            case UMC_GREEN_486:
             case CYRIX_386DLC:
             case CYRIX_486:
                 spanfunc = R_DrawSpanVBE2_386SX;
@@ -2133,7 +2126,6 @@ void R_ExecuteSetViewSize(void)
             {
             case INTEL_386SX:
             case INTEL_386DX:
-            case UMC_GREEN_486:
             case CYRIX_386DLC:
             case CYRIX_486:
                 spanfunc = R_DrawSpanLowVBE2_386SX;
@@ -2220,7 +2212,6 @@ void R_ExecuteSetViewSize(void)
             {
             case INTEL_386SX:
             case INTEL_386DX:
-            case UMC_GREEN_486:
             case CYRIX_386DLC:
             case CYRIX_486:
                 spanfunc = R_DrawSpanPotatoVBE2_386SX;
