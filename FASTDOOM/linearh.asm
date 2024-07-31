@@ -172,6 +172,14 @@ returnpoint: dd 0
 
 CONTINUE_CODE_SECTION
 
+CODE_SYM_DEF R_PatchColumnofsHigh
+  push  ebx
+  mov   ebx,[_columnofs]
+  mov   eax,patchColumnofs+2
+  mov   [eax],ebx
+  pop   ebx
+  ret
+
 ; ====================
 ; R_DrawSpanBackbuffer
 ; ====================
@@ -197,7 +205,9 @@ CODE_SYM_DEF R_DrawSpanBackbuffer
 
   mov     edi,[_ylookup+edi*4]
   mov     eax,[_ds_colormap]
-  add     edi,[_columnofs]
+
+patchColumnofs:
+  add     edi,0x12345678
 
   ; feed the pipeline and jump in
 

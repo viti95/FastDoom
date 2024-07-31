@@ -176,6 +176,14 @@ returnpoint: dd 0
 
 CONTINUE_CODE_SECTION
 
+CODE_SYM_DEF R_PatchColumnofsPotato
+  push  ebx
+  mov   ebx,[_columnofs]
+  mov   eax,patchColumnofs+2
+  mov   [eax],ebx
+  pop   ebx
+  ret
+
 ; ==========================
 ; R_DrawSpanPotatoBackbuffer
 ; ==========================
@@ -207,7 +215,10 @@ CODE_SYM_DEF R_DrawSpanPotatoBackbuffer
   shld    ebx,ecx,22  ; shift y units in
   mov     eax,[_ds_colormap]
   shld    ebx,ecx,6   ; shift x units in
-  add     edi,[_columnofs]
+
+patchColumnofs:
+  add     edi,0x12345678
+
   and     ebx,0x0FFF  ; mask off slop bits
   add     ecx,ebp
   xor     edx,edx
