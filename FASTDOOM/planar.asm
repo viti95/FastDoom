@@ -58,6 +58,7 @@ scalecalls:
 BEGIN_CODE_SECTION
 
 CODE_SYM_DEF R_PatchCenteryPlanar
+  push ebx
   mov   ebx,[_centery]
   mov   eax,patchCentery1+1
   mov   [eax],ebx
@@ -65,6 +66,7 @@ CODE_SYM_DEF R_PatchCenteryPlanar
   mov   [eax],ebx
   mov   eax,patchCentery3+1
   mov   [eax],ebx
+  pop ebx
 
 ; ==================
 ; R_DrawColumnPotato
