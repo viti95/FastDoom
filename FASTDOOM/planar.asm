@@ -221,29 +221,32 @@ CODE_SYM_DEF R_DrawColumnPlane
 	push		ebp
 
   mov  ebp,[_dc_yh]
-  mov  eax,[_dc_yl]
+  mov  ebx,[_dc_yl]
   mov  edi,[_ylookup+ebp*4]
-  sub  ebp,eax         ; ebp = pixel count
+  sub  ebp,ebx         ; ebp = pixel count
   js   short .done
 
   ; set plane
-  mov  esi,[_dc_x]
+  mov  ecx,[_dc_x]
   add  edi,[_destview]
+  mov  esi, ecx
   
   shr esi,2
+  mov eax, ebx
   add edi,esi
 
   mov   ecx,[_dc_iscale]
 
   sub   eax,[_centery]
   imul  ecx
-  mov   ebx,[_dc_texturemid]
+  mov   edx,[_dc_texturemid]
   shl   ecx,9 ; 7 significant bits, 25 frac
-  add   ebx,eax
+  add   edx,eax
   mov   esi,[_dc_source]
-  shl   ebx,9 ; 7 significant bits, 25 frac
+  shl   edx,9 ; 7 significant bits, 25 frac
   mov   eax,[_dc_colormap]
 
+  mov  ebx,edx
   shr  ebx,25 ; get address of first location
   jmp  [scalecalls+4+ebp*4]
 
