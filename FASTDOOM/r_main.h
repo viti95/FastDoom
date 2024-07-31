@@ -77,7 +77,7 @@ extern lighttable_t *fixedcolormap;
 #define NUMCOLORMAPS 32
 
 // Blocky/low detail mode.
-//B remove this?
+// B remove this?
 //  0 = high, 1 = low
 extern int detailshift;
 
@@ -108,8 +108,8 @@ extern void (*drawSky)(visplane_t *pl);
 //
 // Utility functions.
 byte R_PointOnSegSide(fixed_t x,
-                     fixed_t y,
-                     seg_t *line);
+                      fixed_t y,
+                      seg_t *line);
 
 angle_t
 R_PointToAngle(fixed_t x,
@@ -160,6 +160,8 @@ void R_PatchCenteryLinearPotato(void);
 void R_PatchCenteryLinearHighKN(void);
 void R_PatchCenteryLinearLowKN(void);
 
-
+void R_PatchCenteryVBE2High(void);
+void R_PatchCenteryVBE2Low(void);
+void R_PatchCenteryVBE2Potato(void);
 
 #endif

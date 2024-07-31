@@ -864,6 +864,12 @@ void R_PatchCode(void)
     R_PatchCenteryLinearHighKN();
     R_PatchCenteryLinearLowKN();
 #endif
+
+#if defined(MODE_VBE2_DIRECT)
+    R_PatchCenteryVBE2High();
+    R_PatchCenteryVBE2Low();
+    R_PatchCenteryVBE2Potato();
+#endif
 }
 
 //

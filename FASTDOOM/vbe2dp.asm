@@ -51,6 +51,14 @@ BEGIN_CODE_SECTION
 ;
 ;============================================================================
 
+CODE_SYM_DEF R_PatchCenteryVBE2Potato
+  push  ebx
+  mov   ebx,[_centery]
+  mov   eax,patchCentery+1
+  mov   [eax],ebx
+  pop   ebx
+  ret
+
 CODE_SYM_DEF R_DrawColumnPotatoVBE2
 	push		edi
 	push		esi
@@ -63,13 +71,15 @@ CODE_SYM_DEF R_DrawColumnPotatoVBE2
   mov  eax,[_dc_yl]
   MulScreenWidthStart edi, ebp
   sub  ebp,eax ; ebp = pixel count
-  js   near .done
+  js   near donep
 
   mov  ebx,[_dc_x]
   MulScreenWidthEnd edi
   mov  ecx,[_dc_iscale]
   lea  edi,[edi+ebx*4]
-  sub  eax,[_centery]
+
+patchCentery:
+  sub  eax,0x12345678
   add  edi,[_destview]
 
   imul  ecx
@@ -82,7 +92,7 @@ CODE_SYM_DEF R_DrawColumnPotatoVBE2
 
   jmp  [scalecalls+4+ebp*4]
 
-.done:
+donep:
 	pop		ecx
 	pop		ebx
   pop	  ebp

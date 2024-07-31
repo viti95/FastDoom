@@ -51,6 +51,14 @@ BEGIN_CODE_SECTION
 ;
 ;============================================================================
 
+CODE_SYM_DEF R_PatchCenteryVBE2High
+  push  ebx
+  mov   ebx,[_centery]
+  mov   eax,patchCentery+1
+  mov   [eax],ebx
+  pop   ebx
+  ret
+
 CODE_SYM_DEF R_DrawColumnVBE2
 	push		edi
   push		ebx
@@ -63,7 +71,7 @@ CODE_SYM_DEF R_DrawColumnVBE2
   mov  eax,[_dc_yl]
   MulScreenWidthStart edi, ebp
   sub  ebp,eax ; ebp = pixel count
-  js   near .done
+  js   near doneh
 
   mov  ebx,[_dc_x]
   MulScreenWidthEnd edi
@@ -71,7 +79,8 @@ CODE_SYM_DEF R_DrawColumnVBE2
   add  edi,ebx
   add  edi,[_destview]
 
-  sub   eax,[_centery]
+patchCentery:
+  sub   eax,0x12345678
   imul  ecx
   mov   edx,[_dc_texturemid]
   shl   ecx,9 ; 7 significant bits, 25 frac
@@ -84,7 +93,7 @@ CODE_SYM_DEF R_DrawColumnVBE2
   shr  ebx,25 ; get address of first location
   jmp  [scalecalls+4+ebp*4]
 
-.done:
+doneh:
 	pop		ebp
 	pop		esi
 	pop		edx

@@ -51,6 +51,14 @@ BEGIN_CODE_SECTION
 ;
 ;============================================================================
 
+CODE_SYM_DEF R_PatchCenteryVBE2Low
+  push  ebx
+  mov   ebx,[_centery]
+  mov   eax,patchCentery+1
+  mov   [eax],ebx
+  pop   ebx
+  ret
+
 CODE_SYM_DEF R_DrawColumnLowVBE2
 	push		edi
 	push		esi
@@ -63,13 +71,15 @@ CODE_SYM_DEF R_DrawColumnLowVBE2
   mov  eax,[_dc_yl]
   MulScreenWidthStart edi, ebp
   sub  ebp,eax ; ebp = pixel count
-  js   near .done
+  js   near donel
 
   MulScreenWidthEnd edi
   mov  ebx,[_dc_x]
   mov  ecx,[_dc_iscale]
   lea  edi,[edi+ebx*2]
-  sub  eax,[_centery]
+
+patchCentery:
+  sub  eax,0x12345678
   add  edi,[_destview]
 
   imul  ecx
@@ -82,7 +92,7 @@ CODE_SYM_DEF R_DrawColumnLowVBE2
 
   jmp  [scalecalls+4+ebp*4]
 
-.done:
+donel:
 	pop		ecx
 	pop		ebx
   pop	  ebp
