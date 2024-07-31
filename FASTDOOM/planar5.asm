@@ -23,7 +23,6 @@ BITS 32
 %include "defs.inc"
 
 extern _destview
-extern _centery
 
 ;============================================================================
 ; unwound vertical scaling code

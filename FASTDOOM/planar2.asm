@@ -23,7 +23,6 @@ BITS 32
 %include "defs.inc"
 
 extern _destview
-extern _centery
 
 BEGIN_DATA_SECTION
 lutx2:      db 1,3,7,15

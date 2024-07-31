@@ -21,8 +21,6 @@ BITS 32
 %ifdef USE_BACKBUFFER
 %include "defs.inc"
 
-extern _centery
-
 ;============================================================================
 ; unwound vertical scaling code
 ;
