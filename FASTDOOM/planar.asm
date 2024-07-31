@@ -227,9 +227,8 @@ CODE_SYM_DEF R_DrawColumnPlane
   js   short .done
 
   ; set plane
-  mov  ecx,[_dc_x]
+  mov  esi,[_dc_x]
   add  edi,[_destview]
-  mov  esi, ecx
   
   shr esi,2
   mov eax, ebx
