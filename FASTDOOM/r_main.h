@@ -153,4 +153,13 @@ void R_SetViewSize(int blocks, int detail);
 void R_PatchCenteryPlanar(void);
 void R_PatchCenteryPlanarKN(void);
 
+void R_PatchCenteryLinearHigh(void);
+void R_PatchCenteryLinearLow(void);
+void R_PatchCenteryLinearPotato(void);
+
+void R_PatchCenteryLinearHighKN(void);
+void R_PatchCenteryLinearLowKN(void);
+
+
+
 #endif

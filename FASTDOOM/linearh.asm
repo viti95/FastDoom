@@ -55,6 +55,14 @@ scalecalls:
 
 BEGIN_CODE_SECTION
 
+CODE_SYM_DEF R_PatchCenteryLinearHigh
+  push  ebx
+  mov   ebx,[_centery]
+  mov   eax,patchCentery+1
+  mov   [eax],ebx
+  pop   ebx
+  ret
+
 ; ======================
 ; R_DrawColumnBackbuffer
 ; ======================
@@ -70,13 +78,14 @@ CODE_SYM_DEF R_DrawColumnBackbuffer
   mov  eax,[_dc_yl]
   mov  edi,[_ylookup+ebp*4]
   sub  ebp,eax         ; ebp = pixel count
-  js   short .done
+  js   short doneh
 
   mov  ebx,[_dc_x]
   mov  ecx,[_dc_iscale]
   add  edi,[_columnofs+ebx*4]
 
-  sub   eax,[_centery]
+patchCentery:
+  sub   eax,0x12345678
   imul  ecx
   mov   edx,[_dc_texturemid]
   shl   ecx,9 ; 7 significant bits, 25 frac
@@ -89,7 +98,7 @@ CODE_SYM_DEF R_DrawColumnBackbuffer
   shr  ebx,25 ; get address of first location
   jmp  [scalecalls+4+ebp*4]
 
-.done:
+doneh:
 	pop		ebp
 	pop		esi
 	pop		edx

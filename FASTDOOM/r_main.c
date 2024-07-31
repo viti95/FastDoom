@@ -851,10 +851,19 @@ void R_SetViewSize(int blocks, int detail)
 
 void R_PatchCode(void)
 {
-    #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF)
     R_PatchCenteryPlanar();
     R_PatchCenteryPlanarKN();
-    #endif
+#endif
+
+#if defined(USE_BACKBUFFER)
+    R_PatchCenteryLinearHigh();
+    R_PatchCenteryLinearLow();
+    R_PatchCenteryLinearPotato();
+
+    R_PatchCenteryLinearHighKN();
+    R_PatchCenteryLinearLowKN();
+#endif
 }
 
 //
@@ -1956,7 +1965,7 @@ void R_ExecuteSetViewSize(void)
         case VISPLANES_FLATTER:
             clearPlanes = R_ClearPlanesFlat;
             drawPlanes = R_DrawPlanesFlatterPotatoBackbuffer;
-            spanfunc = spanfunc = R_DrawColumnPotatoBackbufferFlat;;
+            spanfunc = spanfunc = R_DrawColumnPotatoBackbufferFlat;
             break;
         }
 
@@ -1969,7 +1978,7 @@ void R_ExecuteSetViewSize(void)
         {
             drawSky = R_DrawSky;
             skyfunc = R_DrawColumnPotatoBackbuffer;
-        }          
+        }
 
         switch (invisibleRender)
         {

@@ -57,6 +57,14 @@ scalecalls:
 
 BEGIN_CODE_SECTION
 
+CODE_SYM_DEF R_PatchCenteryLinearLowKN
+  push  ebx
+  mov   ebx,[_centery]
+  mov   eax,patchCentery+1
+  mov   [eax],ebx
+  pop   ebx
+  ret
+
 ; =========================
 ; R_DrawColumnLowBackbuffer
 ; =========================
@@ -72,7 +80,7 @@ CODE_SYM_DEF R_DrawColumnLowBackbufferFastLEA
   mov  eax,[_dc_yl]
   mov  edi,[_ylookup+ebp*4]
   sub  ebp,eax         ; ebp = pixel count
-  js   short .done
+  js   short donel
 
   mov  ebx,[_dc_x]
   mov  esi,[scalecalls+4+ebp*4]
@@ -80,7 +88,8 @@ CODE_SYM_DEF R_DrawColumnLowBackbufferFastLEA
   mov [jumpaddress],esi
   add  edi,[_columnofs+ebx*4]
 
-  sub   eax,[_centery]
+patchCentery:
+  sub   eax,0x12345678
   imul  ecx
 
   mov   esi,[_dc_source]
@@ -119,7 +128,7 @@ CODE_SYM_DEF R_DrawColumnLowBackbufferFastLEA
   jmp  [jumpaddress]
 ; R_DrawColumn ends
 
-.done:
+donel:
 	pop		ebx
 	pop		esi
 	pop		edx
