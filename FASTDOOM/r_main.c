@@ -849,6 +849,11 @@ void R_SetViewSize(int blocks, int detail)
     }
 }
 
+void R_PatchCode(void)
+{
+    R_PatchCenteryPlanar();
+}
+
 //
 // R_ExecuteSetViewSize
 //
@@ -2331,6 +2336,9 @@ void R_ExecuteSetViewSize(void)
             scalelight[i][j] = colormaps + level * 256;
         }
     }
+
+    R_PatchCode();
+
     // I put this here so I could see which functions were having rendering
     // problems. Leaving it here for demonstration purposes.
 #if (DEBUG_ENABLED == 1)

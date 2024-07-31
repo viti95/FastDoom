@@ -57,6 +57,15 @@ scalecalls:
 
 BEGIN_CODE_SECTION
 
+CODE_SYM_DEF R_PatchCenteryPlanar
+  mov   ebx,[_centery]
+  mov   eax,patchCentery1+1
+  mov   [eax],ebx
+  mov   eax,patchCentery2+1
+  mov   [eax],ebx
+  mov   eax,patchCentery3+1
+  mov   [eax],ebx
+
 ; ==================
 ; R_DrawColumnPotato
 ; ==================
@@ -72,14 +81,15 @@ CODE_SYM_DEF R_DrawColumnPotato
   mov  eax,[_dc_yl]
   mov  edi,[_ylookup+ebp*4]
   sub  ebp,eax         ; ebp = pixel count
-  js   short .done
+  js   short donep
 
   add  edi,[_destview]
   add  edi,[_dc_x]
 
   mov   ecx,[_dc_iscale]
 
-  sub   eax,[_centery]
+patchCentery1:
+  sub   eax,0x12345678
   imul  ecx
   mov   edx,[_dc_texturemid]
   shl   ecx,9 ; 7 significant bits, 25 frac
@@ -92,7 +102,7 @@ CODE_SYM_DEF R_DrawColumnPotato
   shld  ebx,edx,7
   jmp  [scalecalls+4+ebp*4]
 
-.done:
+donep:
 	pop		ebp
 	pop		esi
 	pop		edx
@@ -117,7 +127,7 @@ CODE_SYM_DEF R_DrawColumnLow
   mov  ebx,[_dc_yl]
   mov  edi,[_ylookup+ebp*4]
   sub  ebp,ebx         ; ebp = pixel count
-  js   short .done
+  js   short donel
 
   ; set plane
   mov  ecx,[_dc_x]
@@ -135,7 +145,8 @@ CODE_SYM_DEF R_DrawColumnLow
 
   mov   ecx,[_dc_iscale]
 
-  sub   eax,[_centery]
+patchCentery2:
+  sub   eax,0x12345678
   imul  ecx
   mov   edx,[_dc_texturemid]
   shl   ecx,9 ; 7 significant bits, 25 frac
@@ -148,7 +159,7 @@ CODE_SYM_DEF R_DrawColumnLow
   shld  ebx,edx,7
   jmp  [scalecalls+4+ebp*4]
 
-.done:
+donel:
 	pop		ebp
 	pop		esi
 	pop		edx
@@ -170,7 +181,7 @@ CODE_SYM_DEF R_DrawColumn
   mov  ebx,[_dc_yl]
   mov  edi,[_ylookup+ebp*4]
   sub  ebp,ebx         ; ebp = pixel count
-  js   short done
+  js   short doneh
 
   ; set plane
   mov  ecx,[_dc_x]
@@ -189,7 +200,8 @@ CODE_SYM_DEF R_DrawColumn
 
   mov   ecx,[_dc_iscale]
 
-  sub   eax,[_centery]
+patchCentery3:
+  sub   eax,0x12345678
   imul  ecx
   mov   edx,[_dc_texturemid]
   shl   ecx,9 ; 7 significant bits, 25 frac
@@ -202,7 +214,7 @@ CODE_SYM_DEF R_DrawColumn
   shr  ebx,25 ; get address of first location
   jmp  [scalecalls+4+ebp*4]
 
-done:
+doneh:
 	pop		ebp
 	pop		esi
 	pop		edx
