@@ -221,9 +221,9 @@ CODE_SYM_DEF R_DrawColumnPlane
 	push		ebp
 
   mov  ebp,[_dc_yh]
-  mov  ebx,[_dc_yl]
+  mov  eax,[_dc_yl]
   mov  edi,[_ylookup+ebp*4]
-  sub  ebp,ebx         ; ebp = pixel count
+  sub  ebp,eax         ; ebp = pixel count
   js   short .done
 
   ; set plane
@@ -231,7 +231,6 @@ CODE_SYM_DEF R_DrawColumnPlane
   add  edi,[_destview]
   
   shr esi,2
-  mov eax, ebx
   add edi,esi
 
   mov   ecx,[_dc_iscale]
