@@ -2836,19 +2836,6 @@ void R_DrawSpanFlatText8025(void)
 }
 #endif
 
-void R_PatchDrawCode(void)
-{
-#if defined(USE_BACKBUFFER)
-    R_PatchColumnofsHigh();
-    R_PatchColumnofsLow();
-    R_PatchColumnofsPotato();
-
-    R_PatchColumnofsHigh386SX();
-    R_PatchColumnofsLow386SX();
-    R_PatchColumnofsPotato386SX();
-#endif
-}
-
 //
 // R_InitBuffer
 // Creats lookup tables that avoid
@@ -2908,8 +2895,6 @@ void R_InitBuffer(int width, int height)
     for (i = 0; i < height; i++)
         ylookup[i] = Mul80(i);
 #endif
-
-    R_PatchDrawCode();
 }
 
 //

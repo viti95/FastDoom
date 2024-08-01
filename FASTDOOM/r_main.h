@@ -153,12 +153,16 @@ void R_SetViewSize(int blocks, int detail);
 void R_PatchCenteryPlanar(void);
 void R_PatchCenteryPlanarKN(void);
 
-void R_PatchCenteryLinearHigh(void);
-void R_PatchCenteryLinearLow(void);
-void R_PatchCenteryLinearPotato(void);
+void R_PatchLinearHigh(void);
+void R_PatchLinearLow(void);
+void R_PatchLinearPotato(void);
 
 void R_PatchCenteryLinearHighKN(void);
 void R_PatchCenteryLinearLowKN(void);
+
+void R_PatchColumnofsHigh386SX(void);
+void R_PatchColumnofsLow386SX(void);
+void R_PatchColumnofsPotato386SX(void);
 
 void R_PatchCenteryVBE2High(void);
 void R_PatchCenteryVBE2Low(void);

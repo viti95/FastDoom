@@ -55,11 +55,17 @@ scalecalls:
 
 BEGIN_CODE_SECTION
 
-CODE_SYM_DEF R_PatchCenteryLinearHigh
+CODE_SYM_DEF R_PatchLinearHigh
   push  ebx
+  
   mov   ebx,[_centery]
   mov   eax,patchCentery+1
   mov   [eax],ebx
+
+  mov   ebx,[_columnofs]
+  mov   eax,patchColumnofs+2
+  mov   [eax],ebx
+
   pop   ebx
   ret
 
@@ -171,14 +177,6 @@ callpoint:   dd 0
 returnpoint: dd 0
 
 CONTINUE_CODE_SECTION
-
-CODE_SYM_DEF R_PatchColumnofsHigh
-  push  ebx
-  mov   ebx,[_columnofs]
-  mov   eax,patchColumnofs+2
-  mov   [eax],ebx
-  pop   ebx
-  ret
 
 ; ====================
 ; R_DrawSpanBackbuffer

@@ -857,12 +857,16 @@ void R_PatchCode(void)
 #endif
 
 #if defined(USE_BACKBUFFER)
-    R_PatchCenteryLinearHigh();
-    R_PatchCenteryLinearLow();
-    R_PatchCenteryLinearPotato();
+    R_PatchLinearHigh();
+    R_PatchLinearLow();
+    R_PatchLinearPotato();
 
     R_PatchCenteryLinearHighKN();
     R_PatchCenteryLinearLowKN();
+
+    R_PatchColumnofsHigh386SX();
+    R_PatchColumnofsLow386SX();
+    R_PatchColumnofsPotato386SX();
 #endif
 
 #if defined(MODE_VBE2_DIRECT)

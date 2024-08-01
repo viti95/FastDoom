@@ -247,10 +247,4 @@ void R_FillBackScreen(void);
 // If the view size is not full screen, draws a border around it.
 void R_DrawViewBorder(void);
 
-void R_PatchColumnofsHigh(void);
-void R_PatchColumnofsLow(void);
-void R_PatchColumnofsPotato(void);
-void R_PatchColumnofsHigh386SX(void);
-void R_PatchColumnofsLow386SX(void);
-void R_PatchColumnofsPotato386SX(void);
 #endif
