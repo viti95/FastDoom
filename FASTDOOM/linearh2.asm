@@ -59,6 +59,14 @@ scalecalls:
 
 BEGIN_CODE_SECTION
 
+CODE_SYM_DEF R_PatchFuzzColumnLinearHigh
+  push ebx
+  mov   ebx,[_viewheightminusone]
+  mov   eax,patchViewHeight+1
+  mov   [eax],ebx
+  pop ebx
+  ret
+
 ; ======================
 ; R_DrawColumnBackbuffer
 ; ======================
@@ -70,7 +78,9 @@ CODE_SYM_DEF R_DrawFuzzColumnBackbuffer
 	push		ebp
 
   mov  ebp,[_dc_yh]
-  mov  eax,[_viewheightminusone]
+
+patchViewHeight:
+  mov  eax,0x12345678
   
   xor  eax,ebp
   sub  eax,1

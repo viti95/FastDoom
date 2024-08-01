@@ -869,12 +869,20 @@ void R_PatchCode(void)
     R_PatchColumnofsHigh386SX();
     R_PatchColumnofsLow386SX();
     R_PatchColumnofsPotato386SX();
+
+    R_PatchFuzzColumnLinearHigh();
+    R_PatchFuzzColumnLinearLow();
+    R_PatchFuzzColumnLinearPotato();
 #endif
 
 #if defined(MODE_VBE2_DIRECT)
     R_PatchCenteryVBE2High();
     R_PatchCenteryVBE2Low();
     R_PatchCenteryVBE2Potato();
+
+    R_PatchFuzzColumnHighVBE2();
+    R_PatchFuzzColumnLowVBE2();
+    R_PatchFuzzColumnPotatoVBE2();
 #endif
 }
 

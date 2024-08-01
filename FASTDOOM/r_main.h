@@ -169,4 +169,12 @@ void R_PatchCenteryVBE2Low(void);
 void R_PatchCenteryVBE2Potato(void);
 
 void R_PatchFuzzColumn(void);
+
+void R_PatchFuzzColumnLinearHigh(void);
+void R_PatchFuzzColumnLinearLow(void);
+void R_PatchFuzzColumnLinearPotato(void);
+
+void R_PatchFuzzColumnHighVBE2(void);
+void R_PatchFuzzColumnLowVBE2(void);
+void R_PatchFuzzColumnPotatoVBE2(void);
 #endif

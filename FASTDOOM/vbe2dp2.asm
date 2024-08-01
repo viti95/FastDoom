@@ -58,6 +58,14 @@ BEGIN_CODE_SECTION
 ;
 ;============================================================================
 
+CODE_SYM_DEF R_PatchFuzzColumnPotatoVBE2
+  push ebx
+  mov   ebx,[_viewheightminusone]
+  mov   eax,patchViewHeight+1
+  mov   [eax],ebx
+  pop ebx
+  ret
+
 CODE_SYM_DEF R_DrawFuzzColumnPotatoVBE2
 	push		edi
 	push		ebx
@@ -67,7 +75,9 @@ CODE_SYM_DEF R_DrawFuzzColumnPotatoVBE2
 	push		ebp
 
   mov  ebp,[_dc_yh]
-  mov  eax,[_viewheightminusone]
+
+patchViewHeight:
+  mov  eax,0x12345678
   
   xor  eax,ebp
   sub  eax,1
