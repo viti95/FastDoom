@@ -60,6 +60,18 @@ scalecalls:
 
 BEGIN_CODE_SECTION
 
+CODE_SYM_DEF R_PatchFuzzColumn
+  push ebx
+  mov   ebx,[_viewheightminusone]
+  mov   eax,patchViewHeight1+1
+  mov   [eax],ebx
+  mov   eax,patchViewHeight2+1
+  mov   [eax],ebx
+  mov   eax,patchViewHeight3+1
+  mov   [eax],ebx
+  pop ebx
+  ret
+
 ; ==================
 ; R_DrawColumnPotato
 ; ==================
@@ -72,7 +84,9 @@ CODE_SYM_DEF R_DrawFuzzColumnPotato
 	push		ebp
 
   mov  ebp,[_dc_yh]
-  mov  eax,[_viewheightminusone]
+
+patchViewHeight1:
+  mov  eax,0x12345678
   
   xor  eax,ebp
   sub  eax,1
@@ -119,7 +133,9 @@ CODE_SYM_DEF R_DrawFuzzColumnLow
 	push		ebp
 
   mov  ebp,[_dc_yh]
-  mov  eax,[_viewheightminusone]
+
+patchViewHeight2:
+  mov  eax,0x12345678
   
   xor  eax,ebp
   sub  eax,1
@@ -181,7 +197,9 @@ CODE_SYM_DEF R_DrawFuzzColumn
 	push		ebp
 
   mov  ebp,[_dc_yh]
-  mov  eax,[_viewheightminusone]
+
+patchViewHeight3:
+  mov  eax,0x12345678
   
   xor  eax,ebp
   sub  eax,1

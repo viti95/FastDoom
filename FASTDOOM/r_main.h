@@ -168,4 +168,5 @@ void R_PatchCenteryVBE2High(void);
 void R_PatchCenteryVBE2Low(void);
 void R_PatchCenteryVBE2Potato(void);
 
+void R_PatchFuzzColumn(void);
 #endif

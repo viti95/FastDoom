@@ -854,6 +854,8 @@ void R_PatchCode(void)
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF)
     R_PatchCenteryPlanar();
     R_PatchCenteryPlanarKN();
+
+    R_PatchFuzzColumn();
 #endif
 
 #if defined(USE_BACKBUFFER)
