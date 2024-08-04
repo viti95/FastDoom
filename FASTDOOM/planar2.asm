@@ -322,8 +322,7 @@ CODE_SYM_DEF R_DrawSpanLow
   mov   [edi],dl
 .ldoneplane:
   mov   ecx,[curplane]
-  inc   ecx
-  and   ecx,1
+  xor   ecx,1
   jnz   short .lskip
   inc   dword [dest]
 .lskip:
