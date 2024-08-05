@@ -254,7 +254,7 @@ CODE_SYM_DEF R_DrawColumnSkyFullFastLEA
   out  dx,al
 
   shr esi,2
-  mov eax, ebx
+  mov eax,ebx
   add edi,esi
 
 patchCentery4:
@@ -270,9 +270,7 @@ patchCentery4:
   jne .odd
 
 .even:
-  mov   ebx,[_dc_texturemid]
-
-  add   ebx,eax
+  lea   ebx,[eax+0x640000] ;dc_texturemid
   shl   ebx,9 ; 7 significant bits, 25 frac
 
   mov  eax,[_dc_colormap]
@@ -283,8 +281,7 @@ patchCentery4:
   jmp  [scalecalls+4+ebp*4]
 
 .odd:
-  mov   edx,[_dc_texturemid]
-  add   edx,eax
+  lea   edx,[eax+0x640000] ;dc_texturemid
   shl   edx,9 ; 7 significant bits, 25 frac
 
   mov  eax,[_dc_colormap]
