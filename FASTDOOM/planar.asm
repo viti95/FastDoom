@@ -200,18 +200,16 @@ CODE_SYM_DEF R_DrawColumnSkyFull
   out  dx,al
 
   shr esi,2
-  mov eax, ebx
+  mov eax,ebx
   add edi,esi
-
 patchCentery4:
   sub   eax,0x12345678
   
-  mov   ecx,0x02000000
+  mov   ecx,0x02000000 ;dc_iscale
   shl   eax,16
   
-  mov   edx,[_dc_texturemid]
+  lea   edx,[eax+0x640000] ;dc_texturemid
 
-  add   edx,eax
   mov   esi,[_dc_source]
   shl   edx,9 ; 7 significant bits, 25 frac
   mov   eax,[_dc_colormap]
