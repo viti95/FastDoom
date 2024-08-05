@@ -68,6 +68,9 @@ void R_DrawColumn(void);
 void R_DrawColumnLowFastLEA(void);
 void R_DrawColumnLow(void);
 
+void R_DrawColumnSkyFull(void);
+void R_DrawColumnSkyFullFastLEA(void);
+
 // The Spectre/Invisibility effect.
 void R_DrawFuzzColumn(void);
 void R_DrawFuzzColumnSaturn(void);

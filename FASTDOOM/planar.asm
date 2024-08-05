@@ -66,6 +66,8 @@ CODE_SYM_DEF R_PatchCenteryPlanar
   mov   [eax],ebx
   mov   eax,patchCentery3+1
   mov   [eax],ebx
+  mov   eax,patchCentery4+1
+  mov   [eax],ebx
   pop ebx
   ret
 
@@ -171,6 +173,62 @@ donel:
   pop		edi
   ret
 ; R_DrawColumnLow ends
+
+CODE_SYM_DEF R_DrawColumnSkyFull
+  push		edi
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		ebp
+
+  mov  ebp,[_dc_yh]
+  mov  ebx,[_dc_yl]
+  mov  edi,[_ylookup+ebp*4]
+  sub  ebp,ebx         ; ebp = pixel count
+  js   short donehs
+
+  ; set plane
+  mov  ecx,[_dc_x]
+  add  edi,[_destview]
+  mov  esi, ecx
+  
+  and  cl,3
+  mov  dx,SC_INDEX+1
+  mov  al,1
+  shl  al,cl
+  out  dx,al
+
+  shr esi,2
+  mov eax, ebx
+  add edi,esi
+
+patchCentery4:
+  sub   eax,0x12345678
+  
+  mov   ecx,0x02000000
+  shl   eax,16
+  
+  mov   edx,[_dc_texturemid]
+
+  add   edx,eax
+  mov   esi,[_dc_source]
+  shl   edx,9 ; 7 significant bits, 25 frac
+  mov   eax,[_dc_colormap]
+
+  mov  ebx,edx
+  shr  ebx,25 ; get address of first location
+  jmp  [scalecalls+4+ebp*4]
+
+donehs:
+	pop		ebp
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+  pop		edi
+  ret
+; R_DrawColumn ends
 
 CODE_SYM_DEF R_DrawColumn
 	push		edi
