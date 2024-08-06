@@ -2296,7 +2296,6 @@ void R_ExecuteSetViewSize(void)
 #endif
 
     pspriteiscale = FRACUNIT * 320 / viewwidth;
-    pspriteiscaleneg = -pspriteiscale;
 #endif
 
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)

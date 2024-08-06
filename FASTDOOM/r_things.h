@@ -34,7 +34,6 @@ extern fixed_t sprtopscreen;
 
 extern fixed_t pspritescale;
 extern fixed_t pspriteiscale;
-extern fixed_t pspriteiscaleneg;
 extern fixed_t pspriteiscaleshifted;
 extern fixed_t pspriteiscaleshifted_sky;
 extern fixed_t pspritescaleds;
