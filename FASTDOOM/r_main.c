@@ -1429,11 +1429,10 @@ void R_ExecuteSetViewSize(void)
             case UMC_GREEN_486:
             case CYRIX_5X86:
             case AMD_K5:
-                skyfunc = R_DrawColumnFastLEA;
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnSkyFullFastLEA : R_DrawColumnFastLEA; 
                 break;
             default:
-                skyfunc = R_DrawColumn;
-                break;
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnSkyFull : R_DrawColumn;
             }
         }
 
@@ -1546,10 +1545,10 @@ void R_ExecuteSetViewSize(void)
             case UMC_GREEN_486:
             case CYRIX_5X86:
             case AMD_K5:
-                skyfunc = R_DrawColumnLowFastLEA;
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnLowSkyFullFastLEA : R_DrawColumnLowFastLEA;
                 break;
             default:
-                skyfunc = R_DrawColumnLow;
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnLowSkyFull : R_DrawColumnLow;
                 break;
             }
         }
@@ -1663,10 +1662,10 @@ void R_ExecuteSetViewSize(void)
             case UMC_GREEN_486:
             case CYRIX_5X86:
             case AMD_K5:
-                skyfunc = R_DrawColumnPotatoFastLEA;
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnPotatoSkyFullFastLEA : R_DrawColumnPotatoFastLEA;
                 break;
             default:
-                skyfunc = R_DrawColumnPotato;
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnPotatoSkyFull : R_DrawColumnPotato;
                 break;
             }
         }
