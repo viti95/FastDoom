@@ -1500,6 +1500,22 @@ void G_SaveCSVResult(unsigned int gametics, unsigned int realtics, unsigned int 
 
         fprintf(logFile, CSV_COLUMN);
 
+        // Player sprite
+        switch (pspriteRender)
+        {
+        case PSPRITE_NORMAL:
+            fprintf(logFile, "normal");
+            break;
+        case PSPRITE_FLAT:
+            fprintf(logFile, "flat");
+            break;
+        case PSPRITE_FLATTER:
+            fprintf(logFile, "flatter");
+            break;
+        }
+
+        fprintf(logFile, CSV_COLUMN);
+
         // Sky
         if (flatSky)
             fprintf(logFile, "flat");
