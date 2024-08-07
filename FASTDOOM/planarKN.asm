@@ -67,6 +67,8 @@ CODE_SYM_DEF R_PatchCenteryPlanarKN
   mov   [eax],ebx
   mov   eax,patchCentery4+1
   mov   [eax],ebx
+  mov   eax,patchCentery5+1
+  mov   [eax],ebx
   pop ebx
   ret
 
@@ -147,6 +149,72 @@ ldone:
 	pop		ebx
   pop		edi
   ret
+
+; ===============
+; R_DrawColumnLow
+; ===============
+CODE_SYM_DEF R_DrawColumnLowSkyFullFastLEA
+  push		edi
+  push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		ebp
+
+  mov  ebp,[_dc_yh]
+  mov  ebx,[_dc_yl]
+  mov  edi,[_ylookup+ebp*4]
+  sub  ebp,ebx         ; ebp = pixel count
+  js   near ldone
+
+  ; set plane
+  mov  ecx,[_dc_x]
+  add  edi,[_destview]
+  mov  esi, ecx
+  
+  and  ecx,1
+  shr esi,1
+  lea  eax,[ecx+ecx*8+3]
+  mov  dx,SC_INDEX+1
+  out  dx,al
+
+  mov eax, ebx
+  add edi,esi
+
+patchCentery5:
+  sub   eax,0x12345678
+
+  mov   ecx,0x02000000
+  shl   eax,16
+
+  mov   esi,[_dc_source]
+
+  ; EVEN/ODD ?
+  test ebp,1
+  jne .odd
+
+.even:
+  lea   ebx,[eax+0x640000] ;dc_texturemid
+  shl   ebx,9 ; 7 significant bits, 25 frac
+
+  mov  eax,[_dc_colormap]
+
+  lea  edx,[ebx+ecx]
+  shr  ebx, 25
+
+  jmp  [scalecalls+4+ebp*4]
+
+.odd:
+  lea   edx,[eax+0x640000] ;dc_texturemid
+  shl   edx,9 ; 7 significant bits, 25 frac
+
+  mov  eax,[_dc_colormap]
+
+  lea  ebx,[edx+ecx]
+  shr  edx,25
+  
+  jmp  [scalecalls+4+ebp*4]
+; R_DrawColumnLow ends
 
 ; ===============
 ; R_DrawColumnLow
