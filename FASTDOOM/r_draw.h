@@ -65,8 +65,10 @@ void R_DrawColumnPotatoVBE2Flat(void);
 
 void R_DrawColumnFastLEA(void);
 void R_DrawColumn(void);
+void R_DrawColumnDirect(void);
 void R_DrawColumnLowFastLEA(void);
 void R_DrawColumnLow(void);
+void R_DrawColumnLowDirect(void);
 
 void R_DrawColumnSkyFull(void);
 void R_DrawColumnSkyFullFastLEA(void);
@@ -98,6 +100,7 @@ void R_DrawFuzzColumnTransPotato(void);
 
 void R_DrawColumnPotatoFastLEA(void);
 void R_DrawColumnPotato(void);
+void R_DrawColumnPotatoDirect(void);
 
 void R_DrawColumnText8050(void);
 void R_DrawColumnText8050Flat(void);
