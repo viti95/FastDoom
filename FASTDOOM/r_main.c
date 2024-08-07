@@ -1025,7 +1025,18 @@ void R_ExecuteSetViewSize(void)
         break;
     }
 
-    drawPlayerSprite = R_DrawVisSpriteDirect;
+    switch (pspriteRender)
+    {
+    case PSPRITE_NORMAL:
+        drawPlayerSprite = R_DrawVisSpriteDirect;
+        break;
+    case PSPRITE_FLAT:
+        drawPlayerSprite = R_DrawVisSpriteFlat;
+        break;
+    case PSPRITE_FLATTER:
+        drawPlayerSprite = R_DrawVisSpriteFlatter;
+        break;
+    }
 
 #if defined(MODE_T4050)
 
@@ -1366,8 +1377,6 @@ void R_ExecuteSetViewSize(void)
             colfunc = R_DrawColumnFlat;
             break;
         }
-
-        pspritefunc = basepspritefunc = R_DrawColumnDirect;
         
         switch (spriteRender)
         {
@@ -1387,6 +1396,17 @@ void R_ExecuteSetViewSize(void)
         case SPRITE_FLAT:
         case SPRITE_FLATTER:
             spritefunc = basespritefunc = R_DrawColumnFlat;
+            break;
+        }
+
+        switch (pspriteRender)
+        {
+        case PSPRITE_NORMAL:
+            pspritefunc = basepspritefunc = R_DrawColumnDirect;
+            break;
+        case PSPRITE_FLAT:
+        case PSPRITE_FLATTER:
+            pspritefunc = basepspritefunc = R_DrawColumnFlat;
             break;
         }
 
@@ -1485,8 +1505,6 @@ void R_ExecuteSetViewSize(void)
             break;
         }
 
-        pspritefunc = basepspritefunc = R_DrawColumnLowDirect;
-
         switch (spriteRender)
         {
         case SPRITE_NORMAL:
@@ -1505,6 +1523,17 @@ void R_ExecuteSetViewSize(void)
         case SPRITE_FLAT:
         case SPRITE_FLATTER:
             spritefunc = basespritefunc = R_DrawColumnFlatLow;
+            break;
+        }
+
+        switch (pspriteRender)
+        {
+        case PSPRITE_NORMAL:
+            pspritefunc = basepspritefunc = R_DrawColumnLowDirect;
+            break;
+        case PSPRITE_FLAT:
+        case PSPRITE_FLATTER:
+            pspritefunc = basepspritefunc = R_DrawColumnFlatLow;
             break;
         }
 
@@ -1604,8 +1633,6 @@ void R_ExecuteSetViewSize(void)
             break;
         }
 
-        pspritefunc = basepspritefunc = R_DrawColumnPotatoDirect;
-
         switch (spriteRender)
         {
         case SPRITE_NORMAL:
@@ -1624,6 +1651,17 @@ void R_ExecuteSetViewSize(void)
         case SPRITE_FLAT:
         case SPRITE_FLATTER:
             spritefunc = basespritefunc = R_DrawColumnFlatPotato;
+            break;
+        }
+
+        switch (pspriteRender)
+        {
+        case PSPRITE_NORMAL:
+            pspritefunc = basepspritefunc = R_DrawColumnPotatoDirect;
+            break;
+        case PSPRITE_FLAT:
+        case PSPRITE_FLATTER:
+            pspritefunc = basepspritefunc = R_DrawColumnFlatPotato;
             break;
         }
 
