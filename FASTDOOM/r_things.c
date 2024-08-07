@@ -779,7 +779,7 @@ void R_DrawVisPSpriteFlat(vissprite_t *vis)
 #elif defined(MODE_MDA)
             R_DrawSpriteTextMDA();
 #else
-            spritefunc();
+            pspritefunc();
 #endif
 
             column = (column_t *)((byte *)column + column->length + 4);
