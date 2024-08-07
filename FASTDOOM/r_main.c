@@ -1408,7 +1408,17 @@ void R_ExecuteSetViewSize(void)
             }
             else
             {
-                pspritefunc = basepspritefunc = R_DrawColumn;
+                switch (selectedCPU)
+                {
+                case UMC_GREEN_486:
+                case CYRIX_5X86:
+                case AMD_K5:
+                    pspritefunc = basepspritefunc = R_DrawColumnFastLEA;
+                    break;
+                default:
+                    pspritefunc = basepspritefunc = R_DrawColumn;
+                    break;
+                }
             }
             break;
         case PSPRITE_FLAT:
@@ -1542,7 +1552,17 @@ void R_ExecuteSetViewSize(void)
             }
             else
             {
-                pspritefunc = basepspritefunc = R_DrawColumnLow;
+                switch (selectedCPU)
+                {
+                case UMC_GREEN_486:
+                case CYRIX_5X86:
+                case AMD_K5:
+                    pspritefunc = basepspritefunc = R_DrawColumnLowFastLEA;
+                    break;
+                default:
+                    pspritefunc = basepspritefunc = R_DrawColumnLow;
+                    break;
+                }
             }
             break;
         case PSPRITE_FLAT:
@@ -1677,7 +1697,17 @@ void R_ExecuteSetViewSize(void)
             }
             else
             {
-                pspritefunc = basepspritefunc = R_DrawColumnPotato;
+                switch (selectedCPU)
+                {
+                case UMC_GREEN_486:
+                case CYRIX_5X86:
+                case AMD_K5:
+                    pspritefunc = basepspritefunc = R_DrawColumnPotatoFastLEA;
+                    break;
+                default:
+                    pspritefunc = basepspritefunc = R_DrawColumnPotato;
+                    break;
+                }
             }
             break;
         case PSPRITE_FLAT:
