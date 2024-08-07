@@ -1028,13 +1028,13 @@ void R_ExecuteSetViewSize(void)
     switch (pspriteRender)
     {
     case PSPRITE_NORMAL:
-        drawPlayerSprite = R_DrawVisSpriteDirect;
+        drawPlayerSprite = R_DrawVisPSprite;
         break;
     case PSPRITE_FLAT:
-        drawPlayerSprite = R_DrawVisSpriteFlat;
+        drawPlayerSprite = R_DrawVisPSpriteFlat;
         break;
     case PSPRITE_FLATTER:
-        drawPlayerSprite = R_DrawVisSpriteFlatter;
+        drawPlayerSprite = R_DrawVisPSpriteFlatter;
         break;
     }
 
