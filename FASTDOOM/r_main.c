@@ -1662,10 +1662,10 @@ void R_ExecuteSetViewSize(void)
             case UMC_GREEN_486:
             case CYRIX_5X86:
             case AMD_K5:
-                skyfunc = R_DrawColumnPotatoFastLEA;
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnPotatoSkyFullFastLEA : R_DrawColumnPotatoFastLEA;
                 break;
             default:
-                skyfunc = R_DrawColumnPotato;
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnPotatoSkyFull : R_DrawColumnPotato;
                 break;
             }
         }

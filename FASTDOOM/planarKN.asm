@@ -69,8 +69,69 @@ CODE_SYM_DEF R_PatchCenteryPlanarKN
   mov   [eax],ebx
   mov   eax,patchCentery5+1
   mov   [eax],ebx
+  mov   eax,patchCentery6+1
+  mov   [eax],ebx
   pop ebx
   ret
+
+; ==================
+; R_DrawColumnPotato
+; ==================
+CODE_SYM_DEF R_DrawColumnPotatoSkyFullFastLEA
+	push		edi
+  push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		ebp
+
+  mov  ebp,[_dc_yh]
+  mov  eax,[_dc_yl]
+  mov  edi,[_ylookup+ebp*4]
+  sub  ebp,eax         ; ebp = pixel count
+  js   near pdone
+
+  add  edi,[_destview]
+  add  edi,[_dc_x]
+
+patchCentery6:
+  sub   eax,0x12345678
+
+  mov   ecx,0x02000000
+  shl   eax,16
+
+  mov   esi,[_dc_source]
+
+  shl   ecx,9 ; 7 significant bits, 25 frac
+
+  ; EVEN/ODD ?
+  test ebp,1
+  jne .odd
+
+.even:
+
+  lea  ebx,[ebx+ecx]
+  shl  ebx,9 ; 7 significant bits, 25 frac
+
+  mov  eax,[_dc_colormap]
+
+  lea  edx,[ebx+ecx]
+  shr  ebx, 25
+
+  jmp  [scalecalls+4+ebp*4]
+
+.odd:
+
+  lea  edx,[ebx+ecx]
+  shl  edx,9 ; 7 significant bits, 25 frac
+
+  mov  eax,[_dc_colormap]
+
+  lea  ebx,[edx+ecx]
+  shr  edx,25
+
+  jmp  [scalecalls+4+ebp*4]
+; R_DrawColumnPotato ends
 
 pdone:
 	pop		ebp

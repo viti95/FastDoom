@@ -70,8 +70,56 @@ CODE_SYM_DEF R_PatchCenteryPlanar
   mov   [eax],ebx
   mov   eax,patchCentery5+1
   mov   [eax],ebx
+  mov   eax,patchCentery6+1
+  mov   [eax],ebx
   pop ebx
   ret
+
+; ==================
+; R_DrawColumnPotato
+; ==================
+CODE_SYM_DEF R_DrawColumnPotatoSkyFull
+	push		edi
+  push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		ebp
+
+  mov  ebp,[_dc_yh]
+  mov  eax,[_dc_yl]
+  mov  edi,[_ylookup+ebp*4]
+  sub  ebp,eax         ; ebp = pixel count
+  js   short doneps
+
+  add  edi,[_destview]
+  add  edi,[_dc_x]
+
+patchCentery6:
+  sub   eax,0x12345678
+
+  mov   ecx,0x02000000 ;dc_iscale
+  shl   eax,16
+
+  lea   edx,[eax+0x640000] ;dc_texturemid
+
+  mov   esi,[_dc_source]
+  shl   edx,9 ; 7 significant bits, 25 frac
+  mov   eax,[_dc_colormap]
+
+  xor   ebx,ebx
+  shld  ebx,edx,7
+  jmp  [scalecalls+4+ebp*4]
+
+doneps:
+	pop		ebp
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+  pop		edi
+  ret
+; R_DrawColumnPotato ends
 
 ; ==================
 ; R_DrawColumnPotato
