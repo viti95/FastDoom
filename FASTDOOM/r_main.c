@@ -99,11 +99,13 @@ lighttable_t *zlight[LIGHTLEVELS][MAXLIGHTZ];
 int extralight;
 
 void (*colfunc)(void);
-void (*basecolfunc)(void);
+void (*basespritefunc)(void);
 void (*fuzzcolfunc)(void);
 void (*spanfunc)(void);
 void (*skyfunc)(void);
 void (*spritefunc)(void);
+void (*pspritefunc)(void);
+void (*basepspritefunc)(void);
 
 byte R_PointOnSegSide(fixed_t x,
                       fixed_t y,
@@ -1023,6 +1025,8 @@ void R_ExecuteSetViewSize(void)
         break;
     }
 
+    drawPlayerSprite = R_DrawVisSpriteDirect;
+
 #if defined(MODE_T4050)
 
     switch (wallRender)
@@ -1039,11 +1043,11 @@ void R_ExecuteSetViewSize(void)
     switch (spriteRender)
     {
     case SPRITE_NORMAL:
-        spritefunc = basecolfunc = R_DrawColumnText4050;
+        spritefunc = basespritefunc = R_DrawColumnText4050;
         break;
     case SPRITE_FLAT:
     case SPRITE_FLATTER:
-        spritefunc = basecolfunc = R_DrawColumnText4050Flat;
+        spritefunc = basespritefunc = R_DrawColumnText4050Flat;
         break;
     }
 
@@ -1114,11 +1118,11 @@ void R_ExecuteSetViewSize(void)
     switch (spriteRender)
     {
     case SPRITE_NORMAL:
-        spritefunc = basecolfunc = R_DrawColumnText4025;
+        spritefunc = basespritefunc = R_DrawColumnText4025;
         break;
     case SPRITE_FLAT:
     case SPRITE_FLATTER:
-        spritefunc = basecolfunc = R_DrawColumnText4025Flat;
+        spritefunc = basespritefunc = R_DrawColumnText4025Flat;
         break;
     }
 
@@ -1188,11 +1192,11 @@ void R_ExecuteSetViewSize(void)
     switch (spriteRender)
     {
     case SPRITE_NORMAL:
-        spritefunc = basecolfunc = R_DrawColumnText8025;
+        spritefunc = basespritefunc = R_DrawColumnText8025;
         break;
     case SPRITE_FLAT:
     case SPRITE_FLATTER:
-        spritefunc = basecolfunc = R_DrawColumnText8025Flat;
+        spritefunc = basespritefunc = R_DrawColumnText8025Flat;
         break;
     }
 
@@ -1252,7 +1256,7 @@ void R_ExecuteSetViewSize(void)
     drawPlanes = R_DrawPlanesFlatterTextMDA;
     mapPlane = R_MapPlaneFlat;
     clearPlanes = R_ClearPlanesFlat;
-    colfunc = spritefunc = basecolfunc = R_DrawLineColumnTextMDA;
+    colfunc = spritefunc = basespritefunc = R_DrawLineColumnTextMDA;
 
     spanfunc = R_DrawSpanTextMDA;
 
@@ -1277,11 +1281,11 @@ void R_ExecuteSetViewSize(void)
     switch (spriteRender)
     {
     case SPRITE_NORMAL:
-        spritefunc = basecolfunc = R_DrawColumnText8050;
+        spritefunc = basespritefunc = R_DrawColumnText8050;
         break;
     case SPRITE_FLAT:
     case SPRITE_FLATTER:
-        spritefunc = basecolfunc = R_DrawColumnText8050Flat;
+        spritefunc = basespritefunc = R_DrawColumnText8050Flat;
         break;
     }
 
@@ -1363,6 +1367,8 @@ void R_ExecuteSetViewSize(void)
             break;
         }
 
+        pspritefunc = basepspritefunc = R_DrawColumnDirect;
+        
         switch (spriteRender)
         {
         case SPRITE_NORMAL:
@@ -1371,16 +1377,16 @@ void R_ExecuteSetViewSize(void)
             case UMC_GREEN_486:
             case CYRIX_5X86:
             case AMD_K5:
-                spritefunc = basecolfunc = R_DrawColumnFastLEA;
+                spritefunc = basespritefunc = R_DrawColumnFastLEA;
                 break;
             default:
-                spritefunc = basecolfunc = R_DrawColumn;
+                spritefunc = basespritefunc = R_DrawColumn;
                 break;
             }
             break;
         case SPRITE_FLAT:
         case SPRITE_FLATTER:
-            spritefunc = basecolfunc = R_DrawColumnFlat;
+            spritefunc = basespritefunc = R_DrawColumnFlat;
             break;
         }
 
@@ -1479,6 +1485,8 @@ void R_ExecuteSetViewSize(void)
             break;
         }
 
+        pspritefunc = basepspritefunc = R_DrawColumnLowDirect;
+
         switch (spriteRender)
         {
         case SPRITE_NORMAL:
@@ -1487,16 +1495,16 @@ void R_ExecuteSetViewSize(void)
             case UMC_GREEN_486:
             case CYRIX_5X86:
             case AMD_K5:
-                spritefunc = basecolfunc = R_DrawColumnLowFastLEA;
+                spritefunc = basespritefunc = R_DrawColumnLowFastLEA;
                 break;
             default:
-                spritefunc = basecolfunc = R_DrawColumnLow;
+                spritefunc = basespritefunc = R_DrawColumnLow;
                 break;
             }
             break;
         case SPRITE_FLAT:
         case SPRITE_FLATTER:
-            spritefunc = basecolfunc = R_DrawColumnFlatLow;
+            spritefunc = basespritefunc = R_DrawColumnFlatLow;
             break;
         }
 
@@ -1596,6 +1604,8 @@ void R_ExecuteSetViewSize(void)
             break;
         }
 
+        pspritefunc = basepspritefunc = R_DrawColumnPotatoDirect;
+
         switch (spriteRender)
         {
         case SPRITE_NORMAL:
@@ -1604,16 +1614,16 @@ void R_ExecuteSetViewSize(void)
             case UMC_GREEN_486:
             case CYRIX_5X86:
             case AMD_K5:
-                spritefunc = basecolfunc = R_DrawColumnPotatoFastLEA;
+                spritefunc = basespritefunc = R_DrawColumnPotatoFastLEA;
                 break;
             default:
-                spritefunc = basecolfunc = R_DrawColumnPotato;
+                spritefunc = basespritefunc = R_DrawColumnPotato;
                 break;
             }
             break;
         case SPRITE_FLAT:
         case SPRITE_FLATTER:
-            spritefunc = basecolfunc = R_DrawColumnFlatPotato;
+            spritefunc = basespritefunc = R_DrawColumnFlatPotato;
             break;
         }
 
@@ -1725,16 +1735,16 @@ void R_ExecuteSetViewSize(void)
             case UMC_GREEN_486:
             case CYRIX_5X86:
             case AMD_K5:
-                spritefunc = basecolfunc = R_DrawColumnBackbufferFastLEA;
+                spritefunc = basespritefunc = R_DrawColumnBackbufferFastLEA;
                 break;
             default:
-                spritefunc = basecolfunc = R_DrawColumnBackbuffer;
+                spritefunc = basespritefunc = R_DrawColumnBackbuffer;
                 break;
             }
             break;
         case SPRITE_FLAT:
         case SPRITE_FLATTER:
-            spritefunc = basecolfunc = R_DrawColumnBackbufferFlat;
+            spritefunc = basespritefunc = R_DrawColumnBackbufferFlat;
             break;
         }
 
@@ -1841,16 +1851,16 @@ void R_ExecuteSetViewSize(void)
             case UMC_GREEN_486:
             case CYRIX_5X86:
             case AMD_K5:
-                spritefunc = basecolfunc = R_DrawColumnLowBackbufferFastLEA;
+                spritefunc = basespritefunc = R_DrawColumnLowBackbufferFastLEA;
                 break;
             default:
-                spritefunc = basecolfunc = R_DrawColumnLowBackbuffer;
+                spritefunc = basespritefunc = R_DrawColumnLowBackbuffer;
                 break;
             }
             break;
         case SPRITE_FLAT:
         case SPRITE_FLATTER:
-            spritefunc = basecolfunc = R_DrawColumnLowBackbufferFlat;
+            spritefunc = basespritefunc = R_DrawColumnLowBackbufferFlat;
             break;
         }
 
@@ -1942,11 +1952,11 @@ void R_ExecuteSetViewSize(void)
         switch (spriteRender)
         {
         case SPRITE_NORMAL:
-            spritefunc = basecolfunc = R_DrawColumnPotatoBackbuffer;
+            spritefunc = basespritefunc = R_DrawColumnPotatoBackbuffer;
             break;
         case SPRITE_FLAT:
         case SPRITE_FLATTER:
-            spritefunc = basecolfunc = R_DrawColumnPotatoBackbufferFlat;
+            spritefunc = basespritefunc = R_DrawColumnPotatoBackbufferFlat;
             break;
         }
 
@@ -2035,11 +2045,11 @@ void R_ExecuteSetViewSize(void)
         switch (spriteRender)
         {
         case SPRITE_NORMAL:
-            spritefunc = basecolfunc = R_DrawColumnVBE2;
+            spritefunc = basespritefunc = R_DrawColumnVBE2;
             break;
         case SPRITE_FLAT:
         case SPRITE_FLATTER:
-            spritefunc = basecolfunc = R_DrawColumnVBE2Flat;
+            spritefunc = basespritefunc = R_DrawColumnVBE2Flat;
             break;
         }
 
@@ -2121,11 +2131,11 @@ void R_ExecuteSetViewSize(void)
         switch (spriteRender)
         {
         case SPRITE_NORMAL:
-            spritefunc = basecolfunc = R_DrawColumnLowVBE2;
+            spritefunc = basespritefunc = R_DrawColumnLowVBE2;
             break;
         case SPRITE_FLAT:
         case SPRITE_FLATTER:
-            spritefunc = basecolfunc = R_DrawColumnLowVBE2Flat;
+            spritefunc = basespritefunc = R_DrawColumnLowVBE2Flat;
             break;
         }
 
@@ -2207,11 +2217,11 @@ void R_ExecuteSetViewSize(void)
         switch (spriteRender)
         {
         case SPRITE_NORMAL:
-            spritefunc = basecolfunc = R_DrawColumnPotatoVBE2;
+            spritefunc = basespritefunc = R_DrawColumnPotatoVBE2;
             break;
         case SPRITE_FLAT:
         case SPRITE_FLATTER:
-            spritefunc = basecolfunc = R_DrawColumnPotatoVBE2Flat;
+            spritefunc = basespritefunc = R_DrawColumnPotatoVBE2Flat;
             break;
         }
 
@@ -2366,7 +2376,7 @@ void R_ExecuteSetViewSize(void)
     I_Printf("R_InitData: %s", "test");
     I_Printf("Render Functions:\n");
     I_Printf("\tcolfunc: %s\n", I_LookupSymbolName(colfunc));
-    I_Printf("\tbasecolfunc: %s\n", I_LookupSymbolName(basecolfunc));
+    I_Printf("\tbasespritefunc: %s\n", I_LookupSymbolName(basespritefunc));
     I_Printf("\tfuzzcolfunc: %s\n", I_LookupSymbolName(fuzzcolfunc));
     I_Printf("\tspanfunc: %s\n", I_LookupSymbolName(spanfunc));
     I_Printf("\tskyfunc: %s\n", I_LookupSymbolName(skyfunc));

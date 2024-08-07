@@ -1314,6 +1314,8 @@ void (*mapPlane)(int y, int x1);
 void (*clearPlanes)(void);
 void (*drawSky)(visplane_t *pl);
 
+void (*drawPlayerSprite)(vissprite_t *vis);
+
 void R_RenderSegLoop(void)
 {
 	angle_t angle;

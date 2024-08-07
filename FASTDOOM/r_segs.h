@@ -34,5 +34,6 @@ extern void R_RenderMaskedSegRange2Flatter(drawseg_t *ds);
 extern void R_DrawVisSprite(vissprite_t *vis);
 extern void R_DrawVisSpriteFlat(vissprite_t *vis);
 extern void R_DrawVisSpriteFlatter(vissprite_t *vis);
+extern void R_DrawVisSpriteDirect(vissprite_t *vis);
 
 #endif

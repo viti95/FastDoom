@@ -86,18 +86,22 @@ extern int detailshift;
 // Used to select shadow mode etc.
 //
 extern void (*colfunc)(void);
-extern void (*basecolfunc)(void);
+extern void (*basespritefunc)(void);
 extern void (*fuzzcolfunc)(void);
 // No shadow effects on floors.
 extern void (*spanfunc)(void);
 extern void (*skyfunc)(void);
 extern void (*spritefunc)(void);
+extern void (*pspritefunc)(void);
+extern void (*basepspritefunc)(void);
 
 extern void (*renderSegLoop)(void);
 extern void (*renderMaskedSegRange)(drawseg_t *ds, int x1, int x2);
 extern void (*renderMaskedSegRange2)(drawseg_t *ds);
 extern void (*drawVisSprite)(vissprite_t *vis);
 extern void (*mapPlane)(int y, int x1);
+
+extern void (*drawPlayerSprite)(vissprite_t *vis);
 
 extern void (*drawPlanes)(void);
 extern void (*mapPlane)(int y, int x1);
