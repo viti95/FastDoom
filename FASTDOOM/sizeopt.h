@@ -20,7 +20,6 @@
 #define projection 1310720
 #define pspritescale 8192
 #define pspriteiscale 524288
-#define pspriteiscaleneg -524288
 #define pspriteiscaleshifted 524288
 #define pspriteiscaleshifted_sky 524288
 #endif
@@ -44,7 +43,6 @@
 #define projection 1310720
 #define pspritescale 8192
 #define pspriteiscale 524288
-#define pspriteiscaleneg -524288
 #define pspriteiscaleshifted 262144
 #define pspriteiscaleshifted_sky 262144
 #endif
@@ -68,7 +66,6 @@
 #define projection 2621440
 #define pspritescale 16384
 #define pspriteiscale 262144
-#define pspriteiscaleneg -262144
 #define pspriteiscaleshifted 262144
 #define pspriteiscaleshifted_sky 262144
 #endif
@@ -92,7 +89,6 @@
 #define projection 2621440
 #define pspritescale 16384
 #define pspriteiscale 262144
-#define pspriteiscaleneg -262144
 #define pspriteiscaleshifted 262144
 #define pspriteiscaleshifted_sky 262144
 #endif

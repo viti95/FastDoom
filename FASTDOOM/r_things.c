@@ -75,7 +75,6 @@ typedef struct
 #if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA)
 fixed_t pspritescale;
 fixed_t pspriteiscale;
-fixed_t pspriteiscaleneg;
 fixed_t pspriteiscaleshifted;
 fixed_t pspriteiscaleshifted_sky;
 fixed_t pspritescaleds;
@@ -912,7 +911,6 @@ void R_DrawPSprite(pspdef_t *psp)
     spritedef_t *sprdef;
     spriteframe_t *sprframe;
     int lump;
-    byte flip;
     vissprite_t *vis;
     vissprite_t avis;
 
@@ -921,7 +919,6 @@ void R_DrawPSprite(pspdef_t *psp)
     sprframe = &sprdef->spriteframes[psp->state->frame & FF_FRAMEMASK];
 
     lump = sprframe->lump[0];
-    flip = sprframe->flip[0];
 
     // calculate edges of the shape
     tx = psp->sx - 160 * FRACUNIT;
@@ -948,16 +945,8 @@ void R_DrawPSprite(pspdef_t *psp)
     vis->scale = pspritescale;
 #endif
 
-    if (flip)
-    {
-        vis->xiscale = pspriteiscaleneg;
-        vis->startfrac = spritewidth[lump] - 1;
-    }
-    else
-    {
-        vis->xiscale = pspriteiscale;
-        vis->startfrac = 0;
-    }
+    vis->xiscale = pspriteiscale;
+    vis->startfrac = 0;
 
     if (vis->x1 > x1)
         vis->startfrac += vis->xiscale * (vis->x1 - x1);
