@@ -1377,7 +1377,7 @@ void R_ExecuteSetViewSize(void)
             colfunc = R_DrawColumnFlat;
             break;
         }
-        
+
         switch (spriteRender)
         {
         case SPRITE_NORMAL:
@@ -1402,7 +1402,14 @@ void R_ExecuteSetViewSize(void)
         switch (pspriteRender)
         {
         case PSPRITE_NORMAL:
-            pspritefunc = basepspritefunc = R_DrawColumnDirect;
+            if (screenblocks >= 10)
+            {
+                pspritefunc = basepspritefunc = R_DrawColumnDirect;
+            }
+            else
+            {
+                pspritefunc = basepspritefunc = R_DrawColumn;
+            }
             break;
         case PSPRITE_FLAT:
         case PSPRITE_FLATTER:
@@ -1455,7 +1462,7 @@ void R_ExecuteSetViewSize(void)
             case UMC_GREEN_486:
             case CYRIX_5X86:
             case AMD_K5:
-                skyfunc = (screenblocks >= 10) ? R_DrawColumnSkyFullFastLEA : R_DrawColumnFastLEA; 
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnSkyFullFastLEA : R_DrawColumnFastLEA;
                 break;
             default:
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnSkyFull : R_DrawColumn;
@@ -1529,7 +1536,14 @@ void R_ExecuteSetViewSize(void)
         switch (pspriteRender)
         {
         case PSPRITE_NORMAL:
-            pspritefunc = basepspritefunc = R_DrawColumnLowDirect;
+            if (screenblocks >= 10)
+            {
+                pspritefunc = basepspritefunc = R_DrawColumnLowDirect;
+            }
+            else
+            {
+                pspritefunc = basepspritefunc = R_DrawColumnLow;
+            }
             break;
         case PSPRITE_FLAT:
         case PSPRITE_FLATTER:
@@ -1657,7 +1671,14 @@ void R_ExecuteSetViewSize(void)
         switch (pspriteRender)
         {
         case PSPRITE_NORMAL:
-            pspritefunc = basepspritefunc = R_DrawColumnPotatoDirect;
+            if (screenblocks >= 10)
+            {
+                pspritefunc = basepspritefunc = R_DrawColumnPotatoDirect;
+            }
+            else
+            {
+                pspritefunc = basepspritefunc = R_DrawColumnPotato;
+            }
             break;
         case PSPRITE_FLAT:
         case PSPRITE_FLATTER:
