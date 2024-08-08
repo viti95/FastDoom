@@ -217,6 +217,10 @@ void R_DrawFuzzColumnTransVBE2(void);
 void R_DrawFuzzColumnTransLowVBE2(void);
 void R_DrawFuzzColumnTransPotatoVBE2(void);
 
+void R_DrawColumnVBE2Direct(void);
+void R_DrawColumnLowVBE2Direct(void);
+void R_DrawColumnPotatoVBE2Direct(void);
+
 void R_VideoErase(unsigned ofs, int count);
 
 extern int ds_y;

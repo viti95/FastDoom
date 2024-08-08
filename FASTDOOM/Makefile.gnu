@@ -140,6 +140,7 @@ GLOBOBJS = \
  vbe2dh2.obj \
  vbe2dh3.obj \
  vbe2dh4.obj \
+ vbe2dh5.obj \
  vbe2dhSX.obj \
  vbe2dl.obj \
  vbe2dl2.obj \

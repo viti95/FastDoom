@@ -2248,6 +2248,28 @@ void R_ExecuteSetViewSize(void)
             break;
         }
 
+        switch (pspriteRender)
+        {
+        case PSPRITE_NORMAL:
+#if SCREENHEIGHT == 200
+            if (screenblocks >= 10)
+            {
+                pspritefunc = basepspritefunc = R_DrawColumnVBE2Direct;
+            }
+            else
+            {
+                pspritefunc = basepspritefunc = R_DrawColumnVBE2;
+            }
+#else
+            pspritefunc = basepspritefunc = R_DrawColumnVBE2;
+#endif
+            break;
+        case PSPRITE_FLAT:
+        case PSPRITE_FLATTER:
+            pspritefunc = basepspritefunc = R_DrawColumnVBE2Flat;
+            break;
+        }
+
         switch (visplaneRender)
         {
         case VISPLANES_NORMAL:
