@@ -112,40 +112,47 @@ GLOBOBJS = \
  linearh2.obj \
  linearh3.obj \
  linearh4.obj \
+ linearh5.obj \
  lineahKN.obj \
  lineahSX.obj \
  linearl.obj \
  linearl2.obj \
  linearl3.obj \
  linearl4.obj \
+ linearl5.obj \
  linealKN.obj \
  linealSX.obj \
  linearp.obj \
  linearp2.obj \
  linearp3.obj \
  linearp4.obj \
+ linearp5.obj \
  lineapSX.obj \
  planar.obj \
  planar2.obj \
  planar3.obj \
  planar4.obj \
  planar5.obj \
+ planar6.obj \
  planarKN.obj \
  planarSX.obj \
  vbe2dh.obj \
  vbe2dh2.obj \
  vbe2dh3.obj \
  vbe2dh4.obj \
+ vbe2dh5.obj \
  vbe2dhSX.obj \
  vbe2dl.obj \
  vbe2dl2.obj \
  vbe2dl3.obj \
  vbe2dl4.obj \
+ vbe2dl5.obj \
  vbe2dlSX.obj \
  vbe2dp.obj \
  vbe2dp2.obj \
  vbe2dp3.obj \
  vbe2dp4.obj \
+ vbe2dp5.obj \
  vbe2dpSX.obj \
  tables.obj \
  f_finale.obj \

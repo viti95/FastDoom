@@ -388,7 +388,139 @@ void R_DrawVisSprite(vissprite_t *vis)
         frac += vis->xiscale;
     } while (dc_x <= vis->x2);
 
-    spritefunc = basecolfunc;
+    spritefunc = basespritefunc;
+}
+
+void R_DrawVisPSprite(vissprite_t *vis)
+{
+    column_t *column;
+    int texturecolumn;
+    fixed_t frac;
+    patch_t *patch;
+    fixed_t fracstep;
+    fixed_t nextfrac;
+
+    patch = W_CacheLumpNum(vis->patch + firstspritelump, PU_CACHE);
+
+    dc_colormap = vis->colormap;
+
+    if (!dc_colormap)
+    {
+        // NULL colormap = shadow draw
+        if (invisibleRender >= INVISIBLE_SATURN)
+            dc_colormap = colormaps;
+        pspritefunc = fuzzcolfunc;
+    }
+
+#if defined(MODE_T4050)
+    dc_iscale = abs(vis->xiscale) >> 1;
+#endif
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+    dc_iscale = abs(vis->xiscale) >> detailshift;
+#endif
+#if defined(MODE_Y_HALF)
+    dc_iscale = abs(vis->xiscale) >> detailshift;
+    dc_iscale *= 2;
+#endif
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA)
+    dc_iscale = abs(vis->xiscale);
+#endif
+
+    dc_texturemid = vis->texturemid;
+    frac = vis->startfrac;
+    spryscale = vis->scale;
+    sprtopscreen = centeryfrac - FixedMul(dc_texturemid, spryscale);
+
+    dc_x = vis->x1;
+    do
+    {
+        int topscreen;
+        int bottomscreen;
+        fixed_t basetexturemid;
+
+        int yl, yh;
+        short mfc_x, mcc_x;
+
+        basetexturemid = dc_texturemid;
+        mfc_x = mfloorclip[dc_x];
+        mcc_x = mceilingclip[dc_x];
+
+        texturecolumn = frac >> FRACBITS;
+        column = (column_t *)((byte *)patch + patch->columnofs[texturecolumn]);
+
+        for (; column->topdelta != 0xff;)
+        {
+            // calculate unclipped screen coordinates
+            //  for post
+            topscreen = sprtopscreen + spryscale * column->topdelta;
+            bottomscreen = topscreen + spryscale * column->length;
+
+            yh = (bottomscreen - 1) >> FRACBITS;
+
+            if (yh >= mfc_x)
+                yh = mfc_x - 1;
+
+            if (yh >= viewheight)
+            {
+                column = (column_t *)((byte *)column + column->length + 4);
+                continue;
+            }
+
+            yl = (topscreen + FRACUNIT - 1) >> FRACBITS;
+
+            if (yl <= mcc_x)
+                yl = mcc_x + 1;
+
+            if (yl > yh)
+            {
+                column = (column_t *)((byte *)column + column->length + 4);
+                continue;
+            }
+
+            dc_source = (byte *)column + 3;
+            dc_texturemid = basetexturemid - (column->topdelta << FRACBITS);
+            BOUNDS_CHECK(yh, yl);
+            dc_yh = yh;
+            dc_yl = yl;
+
+#if defined(MODE_CGA16) || defined(MODE_CVB)
+            if (detailshift == DETAIL_HIGH)
+            {
+                if ((dc_x & 1) == 0)
+                    pspritefunc();
+            }
+            else
+                pspritefunc();
+#elif defined(MODE_CGA512)
+            switch (detailshift)
+            {
+            case DETAIL_HIGH:
+                if ((dc_x & 3) == 0)
+                    pspritefunc();
+                break;
+            case DETAIL_LOW:
+                if ((dc_x & 1) == 0)
+                    pspritefunc();
+                break;
+            default:
+                pspritefunc();
+                break;
+            }
+#elif defined(MODE_MDA)
+            R_DrawSpriteTextMDA();
+#else
+            pspritefunc();
+#endif
+
+            column = (column_t *)((byte *)column + column->length + 4);
+        }
+
+        dc_texturemid = basetexturemid;
+        dc_x += 1;
+        frac += vis->xiscale;
+    } while (dc_x <= vis->x2);
+
+    pspritefunc = basepspritefunc;
 }
 
 void R_DrawVisSpriteFlat(vissprite_t *vis)
@@ -523,7 +655,142 @@ void R_DrawVisSpriteFlat(vissprite_t *vis)
         frac += vis->xiscale;
     } while (dc_x <= vis->x2);
 
-    spritefunc = basecolfunc;
+    spritefunc = basespritefunc;
+}
+
+void R_DrawVisPSpriteFlat(vissprite_t *vis)
+{
+    column_t *column;
+    int texturecolumn;
+    fixed_t frac;
+    patch_t *patch;
+    fixed_t fracstep;
+    fixed_t nextfrac;
+
+    patch = W_CacheLumpNum(vis->patch + firstspritelump, PU_CACHE);
+
+    dc_colormap = vis->colormap;
+
+    if (!dc_colormap)
+    {
+        // NULL colormap = shadow draw
+        if (invisibleRender >= INVISIBLE_SATURN)
+            dc_colormap = colormaps;
+        pspritefunc = fuzzcolfunc;
+    }
+
+#if defined(MODE_T4050)
+    dc_iscale = abs(vis->xiscale) >> 1;
+#endif
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+    dc_iscale = abs(vis->xiscale) >> detailshift;
+#endif
+#if defined(MODE_Y_HALF)
+    dc_iscale = abs(vis->xiscale) >> detailshift;
+    dc_iscale *= 2;
+#endif
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA)
+    dc_iscale = abs(vis->xiscale);
+#endif
+
+    dc_texturemid = vis->texturemid;
+    frac = vis->startfrac;
+    spryscale = vis->scale;
+    sprtopscreen = centeryfrac - FixedMul(dc_texturemid, spryscale);
+
+    column = (column_t *)((byte *)patch + patch->columnofs[0]);
+    dc_color = dc_colormap[*((byte *)column + 3)];
+
+    dc_x = vis->x1;
+    do
+    {
+        int topscreen;
+        int bottomscreen;
+        fixed_t basetexturemid;
+
+        int yl, yh;
+        short mfc_x, mcc_x;
+
+        basetexturemid = dc_texturemid;
+        mfc_x = mfloorclip[dc_x];
+        mcc_x = mceilingclip[dc_x];
+
+        texturecolumn = frac >> FRACBITS;
+        column = (column_t *)((byte *)patch + patch->columnofs[texturecolumn]);
+
+        for (; column->topdelta != 0xff;)
+        {
+            // calculate unclipped screen coordinates
+            //  for post
+            topscreen = sprtopscreen + spryscale * column->topdelta;
+            bottomscreen = topscreen + spryscale * column->length;
+
+            yh = (bottomscreen - 1) >> FRACBITS;
+
+            if (yh >= mfc_x)
+                yh = mfc_x - 1;
+
+            if (yh >= viewheight)
+            {
+                column = (column_t *)((byte *)column + column->length + 4);
+                continue;
+            }
+
+            yl = (topscreen + FRACUNIT - 1) >> FRACBITS;
+
+            if (yl <= mcc_x)
+                yl = mcc_x + 1;
+
+            if (yl > yh)
+            {
+                column = (column_t *)((byte *)column + column->length + 4);
+                continue;
+            }
+
+            dc_source = (byte *)column + 3;
+            dc_texturemid = basetexturemid - (column->topdelta << FRACBITS);
+            BOUNDS_CHECK(yh, yl);
+            dc_yh = yh;
+            dc_yl = yl;
+
+#if defined(MODE_CGA16) || defined(MODE_CVB)
+            if (detailshift == DETAIL_HIGH)
+            {
+                if ((dc_x & 1) == 0)
+                    pspritefunc();
+            }
+            else
+                spritefunc();
+#elif defined(MODE_CGA512)
+            switch (detailshift)
+            {
+            case DETAIL_HIGH:
+                if ((dc_x & 3) == 0)
+                    pspritefunc();
+                break;
+            case DETAIL_LOW:
+                if ((dc_x & 1) == 0)
+                    pspritefunc();
+                break;
+            default:
+                pspritefunc();
+                break;
+            }
+#elif defined(MODE_MDA)
+            R_DrawSpriteTextMDA();
+#else
+            pspritefunc();
+#endif
+
+            column = (column_t *)((byte *)column + column->length + 4);
+        }
+
+        dc_texturemid = basetexturemid;
+        dc_x += 1;
+        frac += vis->xiscale;
+    } while (dc_x <= vis->x2);
+
+    pspritefunc = basepspritefunc;
 }
 
 void R_DrawVisSpriteFlatter(vissprite_t *vis)
@@ -658,7 +925,142 @@ void R_DrawVisSpriteFlatter(vissprite_t *vis)
         frac += vis->xiscale;
     } while (dc_x <= vis->x2);
 
-    spritefunc = basecolfunc;
+    spritefunc = basespritefunc;
+}
+
+void R_DrawVisPSpriteFlatter(vissprite_t *vis)
+{
+    column_t *column;
+    int texturecolumn;
+    fixed_t frac;
+    patch_t *patch;
+    fixed_t fracstep;
+    fixed_t nextfrac;
+
+    patch = W_CacheLumpNum(vis->patch + firstspritelump, PU_CACHE);
+
+    dc_colormap = vis->colormap;
+
+    if (!dc_colormap)
+    {
+        // NULL colormap = shadow draw
+        if (invisibleRender >= INVISIBLE_SATURN)
+            dc_colormap = colormaps;
+        pspritefunc = fuzzcolfunc;
+    }
+
+#if defined(MODE_T4050)
+    dc_iscale = abs(vis->xiscale) >> 1;
+#endif
+#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+    dc_iscale = abs(vis->xiscale) >> detailshift;
+#endif
+#if defined(MODE_Y_HALF)
+    dc_iscale = abs(vis->xiscale) >> detailshift;
+    dc_iscale *= 2;
+#endif
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA)
+    dc_iscale = abs(vis->xiscale);
+#endif
+
+    dc_texturemid = vis->texturemid;
+    frac = vis->startfrac;
+    spryscale = vis->scale;
+    sprtopscreen = centeryfrac - FixedMul(dc_texturemid, spryscale);
+
+    column = (column_t *)((byte *)patch + patch->columnofs[0]);
+    dc_color = *((byte *)column + 3);
+
+    dc_x = vis->x1;
+    do
+    {
+        int topscreen;
+        int bottomscreen;
+        fixed_t basetexturemid;
+
+        int yl, yh;
+        short mfc_x, mcc_x;
+
+        basetexturemid = dc_texturemid;
+        mfc_x = mfloorclip[dc_x];
+        mcc_x = mceilingclip[dc_x];
+
+        texturecolumn = frac >> FRACBITS;
+        column = (column_t *)((byte *)patch + patch->columnofs[texturecolumn]);
+
+        for (; column->topdelta != 0xff;)
+        {
+            // calculate unclipped screen coordinates
+            //  for post
+            topscreen = sprtopscreen + spryscale * column->topdelta;
+            bottomscreen = topscreen + spryscale * column->length;
+
+            yh = (bottomscreen - 1) >> FRACBITS;
+
+            if (yh >= mfc_x)
+                yh = mfc_x - 1;
+
+            if (yh >= viewheight)
+            {
+                column = (column_t *)((byte *)column + column->length + 4);
+                continue;
+            }
+
+            yl = (topscreen + FRACUNIT - 1) >> FRACBITS;
+
+            if (yl <= mcc_x)
+                yl = mcc_x + 1;
+
+            if (yl > yh)
+            {
+                column = (column_t *)((byte *)column + column->length + 4);
+                continue;
+            }
+
+            dc_source = (byte *)column + 3;
+            dc_texturemid = basetexturemid - (column->topdelta << FRACBITS);
+            BOUNDS_CHECK(yh, yl);
+            dc_yh = yh;
+            dc_yl = yl;
+
+#if defined(MODE_CGA16) || defined(MODE_CVB)
+            if (detailshift == DETAIL_HIGH)
+            {
+                if ((dc_x & 1) == 0)
+                    pspritefunc();
+            }
+            else
+                spritefunc();
+#elif defined(MODE_CGA512)
+            switch (detailshift)
+            {
+            case DETAIL_HIGH:
+                if ((dc_x & 3) == 0)
+                    pspritefunc();
+                break;
+            case DETAIL_LOW:
+                if ((dc_x & 1) == 0)
+                    pspritefunc();
+                break;
+            default:
+                pspritefunc();
+                break;
+            }
+#elif defined(MODE_MDA)
+            R_DrawSpriteTextMDA();
+#else
+            pspritefunc();
+#endif
+
+            column = (column_t *)((byte *)column + column->length + 4);
+        }
+
+        dc_texturemid = basetexturemid;
+        dc_x += 1;
+        frac += vis->xiscale;
+    } while (dc_x <= vis->x2);
+
+    pspritefunc = basepspritefunc;
 }
 
 //
@@ -974,7 +1376,7 @@ void R_DrawPSprite(pspdef_t *psp)
         vis->colormap = spritelights[MAXLIGHTSCALE - 1];
     }
 
-    drawVisSprite(vis);
+    drawPlayerSprite(vis);
 }
 
 //

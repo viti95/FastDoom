@@ -377,6 +377,14 @@ typedef enum
 
 typedef enum
 {
+    PSPRITE_NORMAL,
+    PSPRITE_FLAT,
+    PSPRITE_FLATTER,
+    NUM_PSPRITERENDER
+} pspriterender_t;
+
+typedef enum
+{
     DETAIL_HIGH,
     DETAIL_LOW,
     DETAIL_POTATO,

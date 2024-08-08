@@ -201,6 +201,7 @@ void M_ChangeDetail(int choice);
 void M_ChangeVisplaneDetail(int choice);
 void M_ChangeWallDetail(int choice);
 void M_ChangeSpriteDetail(int choice);
+void M_ChangePSpriteDetail(int choice);
 void M_ChangeCPU(int choice);
 void M_ChangeVsync(int choice);
 void M_ChangeSkyDetail(int choice);
@@ -338,14 +339,15 @@ menu_t NewDef =
 #define visplanes 2
 #define columns 3
 #define sprites 4
-#define sky 5
-#define invisible 6
-#define showfps 7
-#define spriteculling 8
-#define melting 9
-#define bus_speed 10
-#define cpu 11
-#define display_end 12
+#define psprite 5
+#define sky 6
+#define invisible 7
+#define showfps 8
+#define spriteculling 9
+#define melting 10
+#define bus_speed 11
+#define cpu 12
+#define display_end 13
 
 #define endgame 0
 #define messages 1
@@ -386,6 +388,7 @@ menuitem_t DisplayMenu[] =
         {2, "", "", M_ChangeVisplaneDetail},
         {2, "", "", M_ChangeWallDetail},
         {2, "", "", M_ChangeSpriteDetail},
+        {2, "", "", M_ChangePSpriteDetail},
         {2, "", "", M_ChangeSkyDetail},
         {2, "", "", M_ChangeInvisibleDetail},
         {2, "", "", M_ChangeShowFPS},
@@ -1376,6 +1379,12 @@ void M_DrawDisplayItem(int item, int position)
                                                                                                      : "FLATTER");
         break;
 
+    case psprite:
+        M_WriteText(58, y, "PLAYER RENDERING:");
+        M_WriteText(214, y, (pspriteRender == PSPRITE_NORMAL) ? "FULL" : (pspriteRender == PSPRITE_FLAT) ? "FLAT"
+                                                                                                     : "FLATTER");
+        break;
+
     case sky:
         M_WriteText(58, y, "SKY RENDERING:");
         M_WriteText(214, y, flatSky ? "FLAT" : "FULL");
@@ -2167,6 +2176,40 @@ void M_ChangeSpriteDetail(int choice)
         break;
     case SPRITE_FLATTER:
         players.message = "FLATTER SPRITES";
+        break;
+    }
+}
+
+void M_ChangePSpriteDetail(int choice)
+{
+    switch (choice)
+    {
+    case 0:
+        pspriteRender--;
+
+        if (pspriteRender == -1)
+            pspriteRender = PSPRITE_FLATTER;
+        break;
+    case 1:
+        pspriteRender++;
+
+        if (pspriteRender == NUM_PSPRITERENDER)
+            pspriteRender = PSPRITE_NORMAL;
+        break;
+    }
+
+    R_SetViewSize(screenblocks, detailLevel);
+
+    switch (pspriteRender)
+    {
+    case PSPRITE_NORMAL:
+        players.message = "FULL PLAYER SPRITES";
+        break;
+    case PSPRITE_FLAT:
+        players.message = "FLAT PLAYER SPRITES";
+        break;
+    case PSPRITE_FLATTER:
+        players.message = "FLATTER PLAYER SPRITES";
         break;
     }
 }

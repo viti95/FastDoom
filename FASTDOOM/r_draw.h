@@ -65,8 +65,10 @@ void R_DrawColumnPotatoVBE2Flat(void);
 
 void R_DrawColumnFastLEA(void);
 void R_DrawColumn(void);
+void R_DrawColumnDirect(void);
 void R_DrawColumnLowFastLEA(void);
 void R_DrawColumnLow(void);
+void R_DrawColumnLowDirect(void);
 
 void R_DrawColumnSkyFull(void);
 void R_DrawColumnSkyFullFastLEA(void);
@@ -98,6 +100,7 @@ void R_DrawFuzzColumnTransPotato(void);
 
 void R_DrawColumnPotatoFastLEA(void);
 void R_DrawColumnPotato(void);
+void R_DrawColumnPotatoDirect(void);
 
 void R_DrawColumnText8050(void);
 void R_DrawColumnText8050Flat(void);
@@ -179,6 +182,10 @@ void R_DrawFuzzColumnTransBackbuffer(void);
 void R_DrawFuzzColumnTransLowBackbuffer(void);
 void R_DrawFuzzColumnTransPotatoBackbuffer(void);
 
+void R_DrawColumnBackbufferDirect(void);
+void R_DrawColumnLowBackbufferDirect(void);
+void R_DrawColumnPotatoBackbufferDirect(void);
+
 void R_DrawColumnVBE2(void);
 void R_DrawColumnLowVBE2(void);
 void R_DrawColumnPotatoVBE2(void);
@@ -209,6 +216,10 @@ void R_DrawFuzzColumnPotatoVBE2(void);
 void R_DrawFuzzColumnTransVBE2(void);
 void R_DrawFuzzColumnTransLowVBE2(void);
 void R_DrawFuzzColumnTransPotatoVBE2(void);
+
+void R_DrawColumnVBE2Direct(void);
+void R_DrawColumnLowVBE2Direct(void);
+void R_DrawColumnPotatoVBE2Direct(void);
 
 void R_VideoErase(unsigned ofs, int count);
 

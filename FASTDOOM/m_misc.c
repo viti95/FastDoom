@@ -317,6 +317,7 @@ default_t defaults[] =
         {"visplaneRender", &visplaneRender, 0},
         {"wallRender", &wallRender, 0},
         {"spriteRender", &spriteRender, 0},
+        {"pspriteRender", &pspriteRender, 0},
         {"selectedCPU", &selectedCPU, -1 /* Means automatically detect */},
         {"vsync", &waitVsync, 0},
 

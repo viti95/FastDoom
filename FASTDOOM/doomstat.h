@@ -47,6 +47,7 @@ extern int invisibleRender;
 extern int visplaneRender;
 extern int wallRender;
 extern int spriteRender;
+extern int pspriteRender;
 extern int selectedCPU;
 extern int showFPS;
 extern int debugCardPort;

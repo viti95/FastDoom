@@ -35,4 +35,8 @@ extern void R_DrawVisSprite(vissprite_t *vis);
 extern void R_DrawVisSpriteFlat(vissprite_t *vis);
 extern void R_DrawVisSpriteFlatter(vissprite_t *vis);
 
+extern void R_DrawVisPSprite(vissprite_t *vis);
+extern void R_DrawVisPSpriteFlat(vissprite_t *vis);
+extern void R_DrawVisPSpriteFlatter(vissprite_t *vis);
+
 #endif

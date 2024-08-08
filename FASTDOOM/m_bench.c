@@ -88,6 +88,12 @@ void M_SetSpriteDetail(int value)
     R_SetViewSize(screenblocks, detailLevel);
 }
 
+void M_SetPSpriteDetail(int value)
+{
+    pspriteRender = value;
+    R_SetViewSize(screenblocks, detailLevel);
+}
+
 void M_SetVsync(boolean value)
 {
     waitVsync = value;
