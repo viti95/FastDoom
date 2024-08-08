@@ -1062,6 +1062,17 @@ void R_ExecuteSetViewSize(void)
         break;
     }
 
+    switch (pspriteRender)
+    {
+    case SPRITE_NORMAL:
+        pspritefunc = basepspritefunc = R_DrawColumnText4050;
+        break;
+    case SPRITE_FLAT:
+    case SPRITE_FLATTER:
+        pspritefunc = basepspritefunc = R_DrawColumnText4050Flat;
+        break;
+    }
+
     switch (visplaneRender)
     {
     case VISPLANES_NORMAL:
@@ -1134,6 +1145,17 @@ void R_ExecuteSetViewSize(void)
     case SPRITE_FLAT:
     case SPRITE_FLATTER:
         spritefunc = basespritefunc = R_DrawColumnText4025Flat;
+        break;
+    }
+
+    switch (pspriteRender)
+    {
+    case SPRITE_NORMAL:
+        pspritefunc = basepspritefunc = R_DrawColumnText4025;
+        break;
+    case SPRITE_FLAT:
+    case SPRITE_FLATTER:
+        pspritefunc = basepspritefunc = R_DrawColumnText4025Flat;
         break;
     }
 
@@ -1211,6 +1233,17 @@ void R_ExecuteSetViewSize(void)
         break;
     }
 
+    switch (pspriteRender)
+    {
+    case SPRITE_NORMAL:
+        pspritefunc = basepspritefunc = R_DrawColumnText8025;
+        break;
+    case SPRITE_FLAT:
+    case SPRITE_FLATTER:
+        pspritefunc = basepspritefunc = R_DrawColumnText8025Flat;
+        break;
+    }
+
     switch (visplaneRender)
     {
     case VISPLANES_NORMAL:
@@ -1267,7 +1300,7 @@ void R_ExecuteSetViewSize(void)
     drawPlanes = R_DrawPlanesFlatterTextMDA;
     mapPlane = R_MapPlaneFlat;
     clearPlanes = R_ClearPlanesFlat;
-    colfunc = spritefunc = basespritefunc = R_DrawLineColumnTextMDA;
+    colfunc = spritefunc = pspritefunc = basespritefunc = basepspritefunc = R_DrawLineColumnTextMDA;
 
     spanfunc = R_DrawSpanTextMDA;
 
@@ -1297,6 +1330,17 @@ void R_ExecuteSetViewSize(void)
     case SPRITE_FLAT:
     case SPRITE_FLATTER:
         spritefunc = basespritefunc = R_DrawColumnText8050Flat;
+        break;
+    }
+
+    switch (pspriteRender)
+    {
+    case PSPRITE_NORMAL:
+        pspritefunc = basepspritefunc = R_DrawColumnText8050;
+        break;
+    case PSPRITE_FLAT:
+    case PSPRITE_FLATTER:
+        pspritefunc = basepspritefunc = R_DrawColumnText8050Flat;
         break;
     }
 
