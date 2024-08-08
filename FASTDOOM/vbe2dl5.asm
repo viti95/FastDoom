@@ -45,38 +45,38 @@ scalecalls:
 
 BEGIN_CODE_SECTION
 
-CODE_SYM_DEF R_DrawColumnVBE2Direct
+CODE_SYM_DEF R_DrawColumnLowVBE2Direct
 	push		edi
+	push		esi
+	push		edx
+	push		ebp
   push		ebx
 	push		ecx
-	push		edx
-	push		esi
-	push		ebp
 
   mov  ebp,[_dc_yh]
   mov  eax,[_dc_yl]
   MulScreenWidthStart edi, ebp
   sub  ebp,eax ; ebp = pixel count
-  js   near doneh
+  js   near donel
 
   mov  ebx,[_dc_x]
   MulScreenWidthEnd edi
   mov   esi,[_dc_source]
-  add  edi,ebx
+  lea  edi,[edi+ebx*2]
   mov   eax,[_dc_colormap]
   add  edi,[_destview]
 
   jmp  [scalecalls+4+ebp*4]
 
-doneh:
-	pop		ebp
-	pop		esi
-	pop		edx
+donel:
 	pop		ecx
 	pop		ebx
-  pop		edi
+  pop	  ebp
+	pop		edx
+	pop		esi
+	pop		edi
   ret
-; R_DrawColumnVBE2 ends
+; R_DrawColumnLowVBE2 ends
 
 ;============ HIGH DETAIL ============
 
@@ -87,25 +87,27 @@ doneh:
 %assign LINE SCREENHEIGHT
 %rep SCREENHEIGHT-1
   SCALELABEL LINE:
-    mov  al,[esi]                    ; get source pixel
-    mov  al,[eax]                        ; translate the color    
+    mov  al,[esi]                   ; get source pixel
+    mov  bl,[eax]                       ; translate the color
+    mov  bh,bl
     inc  esi
-    mov  [edi-(LINE-1)*SCREENWIDTH],al   ; draw a pixel to the buffer
+    mov  [edi-(LINE-1)*SCREENWIDTH],bx  ; draw a pixel to the buffer
     %assign LINE LINE-1
 %endrep
 
 vscale1:
-  pop	 ebp
-  mov  al,[esi]
-  pop	 esi
-  mov  al,[eax]
-  pop	 edx
-  mov  [edi],al
+  pop	ecx
+  pop	ebx
+  mov al,[esi]
+  pop	ebp
+  mov al,[eax]
+  pop	edx
+  mov ah, al
+  pop	esi
+  mov [edi],ax
 
 vscale0:
-	pop		ecx
-	pop		ebx
-  pop		edi
+	pop		edi
   ret
 
 %endif

@@ -2356,6 +2356,28 @@ void R_ExecuteSetViewSize(void)
             break;
         }
 
+        switch (pspriteRender)
+        {
+        case PSPRITE_NORMAL:
+#if SCREENHEIGHT == 200
+            if (screenblocks >= 10)
+            {
+                pspritefunc = basepspritefunc = R_DrawColumnLowVBE2Direct;
+            }
+            else
+            {
+                pspritefunc = basepspritefunc = R_DrawColumnLowVBE2;
+            }
+#else
+            pspritefunc = basepspritefunc = R_DrawColumnLowVBE2;
+#endif
+            break;
+        case PSPRITE_FLAT:
+        case PSPRITE_FLATTER:
+            pspritefunc = basepspritefunc = R_DrawColumnLowVBE2Flat;
+            break;
+        }
+
         switch (visplaneRender)
         {
         case VISPLANES_NORMAL:
@@ -2439,6 +2461,28 @@ void R_ExecuteSetViewSize(void)
         case SPRITE_FLAT:
         case SPRITE_FLATTER:
             spritefunc = basespritefunc = R_DrawColumnPotatoVBE2Flat;
+            break;
+        }
+
+        switch (pspriteRender)
+        {
+        case PSPRITE_NORMAL:
+#if SCREENHEIGHT == 200
+            if (screenblocks >= 10)
+            {
+                pspritefunc = basepspritefunc = R_DrawColumnPotatoVBE2Direct;
+            }
+            else
+            {
+                pspritefunc = basepspritefunc = R_DrawColumnPotatoVBE2;
+            }
+#else
+            pspritefunc = basepspritefunc = R_DrawColumnPotatoVBE2;
+#endif
+            break;
+        case PSPRITE_FLAT:
+        case PSPRITE_FLATTER:
+            pspritefunc = basepspritefunc = R_DrawColumnPotatoVBE2Flat;
             break;
         }
 
