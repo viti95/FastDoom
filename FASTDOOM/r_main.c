@@ -1837,6 +1837,34 @@ void R_ExecuteSetViewSize(void)
             break;
         }
 
+        switch (pspriteRender)
+        {
+        case PSPRITE_NORMAL:
+            if (screenblocks >= 10)
+            {
+                pspritefunc = basepspritefunc = R_DrawColumnBackbufferDirect;
+            }
+            else
+            {
+                switch (selectedCPU)
+                {
+                case UMC_GREEN_486:
+                case CYRIX_5X86:
+                case AMD_K5:
+                    pspritefunc = basepspritefunc = R_DrawColumnBackbufferFastLEA;
+                    break;
+                default:
+                    pspritefunc = basepspritefunc = R_DrawColumnBackbuffer;
+                    break;
+                }
+            }
+            break;
+        case PSPRITE_FLAT:
+        case PSPRITE_FLATTER:
+            pspritefunc = basepspritefunc = R_DrawColumnBackbufferFlat;
+            break;
+        }
+
         switch (visplaneRender)
         {
         case VISPLANES_NORMAL:
