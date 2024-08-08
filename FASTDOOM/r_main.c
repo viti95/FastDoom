@@ -1840,6 +1840,7 @@ void R_ExecuteSetViewSize(void)
         switch (pspriteRender)
         {
         case PSPRITE_NORMAL:
+#if SCREENHEIGHT == 200
             if (screenblocks >= 10)
             {
                 pspritefunc = basepspritefunc = R_DrawColumnBackbufferDirect;
@@ -1858,6 +1859,19 @@ void R_ExecuteSetViewSize(void)
                     break;
                 }
             }
+#else
+            switch (selectedCPU)
+            {
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K5:
+                pspritefunc = basepspritefunc = R_DrawColumnBackbufferFastLEA;
+                break;
+            default:
+                pspritefunc = basepspritefunc = R_DrawColumnBackbuffer;
+                break;
+            }
+#endif
             break;
         case PSPRITE_FLAT:
         case PSPRITE_FLATTER:
@@ -1984,6 +1998,7 @@ void R_ExecuteSetViewSize(void)
         switch (pspriteRender)
         {
         case PSPRITE_NORMAL:
+#if SCREENHEIGHT == 200
             if (screenblocks >= 10)
             {
                 pspritefunc = basepspritefunc = R_DrawColumnLowBackbufferDirect;
@@ -2002,6 +2017,19 @@ void R_ExecuteSetViewSize(void)
                     break;
                 }
             }
+#else
+            switch (selectedCPU)
+            {
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K5:
+                pspritefunc = basepspritefunc = R_DrawColumnLowBackbufferFastLEA;
+                break;
+            default:
+                pspritefunc = basepspritefunc = R_DrawColumnLowBackbuffer;
+                break;
+            }
+#endif
             break;
         case PSPRITE_FLAT:
         case PSPRITE_FLATTER:
@@ -2108,6 +2136,7 @@ void R_ExecuteSetViewSize(void)
         switch (pspriteRender)
         {
         case PSPRITE_NORMAL:
+#if SCREENHEIGHT == 200
             if (screenblocks >= 10)
             {
                 pspritefunc = basepspritefunc = R_DrawColumnPotatoBackbufferDirect;
@@ -2116,6 +2145,9 @@ void R_ExecuteSetViewSize(void)
             {
                 pspritefunc = basepspritefunc = R_DrawColumnPotatoBackbuffer;
             }
+#else
+            pspritefunc = basepspritefunc = R_DrawColumnPotatoBackbuffer;
+#endif
             break;
         case PSPRITE_FLAT:
         case PSPRITE_FLATTER:
