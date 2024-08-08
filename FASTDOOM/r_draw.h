@@ -183,6 +183,7 @@ void R_DrawFuzzColumnTransLowBackbuffer(void);
 void R_DrawFuzzColumnTransPotatoBackbuffer(void);
 
 void R_DrawColumnBackbufferDirect(void);
+void R_DrawColumnLowBackbufferDirect(void);
 
 void R_DrawColumnVBE2(void);
 void R_DrawColumnLowVBE2(void);
