@@ -2105,6 +2105,24 @@ void R_ExecuteSetViewSize(void)
             break;
         }
 
+        switch (pspriteRender)
+        {
+        case PSPRITE_NORMAL:
+            if (screenblocks >= 10)
+            {
+                pspritefunc = basepspritefunc = R_DrawColumnPotatoBackbufferDirect;
+            }
+            else
+            {
+                pspritefunc = basepspritefunc = R_DrawColumnPotatoBackbuffer;
+            }
+            break;
+        case PSPRITE_FLAT:
+        case PSPRITE_FLATTER:
+            pspritefunc = basepspritefunc = R_DrawColumnPotatoBackbufferFlat;
+            break;
+        }
+
         switch (visplaneRender)
         {
         case VISPLANES_NORMAL:

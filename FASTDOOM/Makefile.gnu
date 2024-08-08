@@ -126,6 +126,7 @@ GLOBOBJS = \
  linearp2.obj \
  linearp3.obj \
  linearp4.obj \
+ linearp5.obj \
  lineapSX.obj \
  planar.obj \
  planar2.obj \
