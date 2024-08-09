@@ -73,6 +73,10 @@ benchmarkFilesTotal = count
 
 FOR position = 1 TO benchmarkFilesTotal
     PRINT "     " + STR$(position) + ") " + benchmarkFiles(position)
+    IF position % 10 = 0 THEN
+        INPUT "Press any key to continue . . .", inputVal
+        CALL cleanScreen
+    END IF
 NEXT
 
 PRINT
@@ -132,7 +136,7 @@ benchmarkExecutablesTotal = count
 
 FOR position = 1 TO benchmarkExecutablesTotal
     PRINT "     " + STR$(position) + ") " + benchmarkExecutables(position)
-    IF position % 20 = 0 THEN
+    IF position % 10 = 0 THEN
         INPUT "Press any key to continue . . .", inputVal
         CALL cleanScreen
     END IF
