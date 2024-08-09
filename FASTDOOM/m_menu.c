@@ -1382,7 +1382,7 @@ void M_DrawDisplayItem(int item, int position)
     case psprite:
         M_WriteText(58, y, "PLAYER RENDERING:");
         M_WriteText(214, y, (pspriteRender == PSPRITE_NORMAL) ? "FULL" : (pspriteRender == PSPRITE_FLAT) ? "FLAT"
-                                                                                                     : "FLATTER");
+                                                                                                         : "FLATTER");
         break;
 
     case sky:
@@ -1519,6 +1519,12 @@ void M_DrawDisplayItem(int item, int position)
                                                                                                           : "FLATTER");
         break;
 
+    case psprite:
+        V_WriteTextDirect(15, y, "PLAYER RENDERING:");
+        V_WriteTextDirect(45, y, (pspriteRender == PSPRITE_NORMAL) ? "FULL" : (pspriteRender == PSPRITE_FLAT) ? "FLAT"
+                                                                                                              : "FLATTER");
+        break;
+
     case sky:
         V_WriteTextDirect(15, y, "SKY RENDERING:");
         V_WriteTextDirect(45, y, flatSky ? "FLAT" : "FULL");
@@ -1653,6 +1659,12 @@ void M_DrawDisplayItem(int item, int position)
                                                                                                           : "FLATTER");
         break;
 
+    case psprite:
+        V_WriteTextDirect(15, y, "PLAYER RENDERING:");
+        V_WriteTextDirect(45, y, (pspriteRender == PSPRITE_NORMAL) ? "FULL" : (pspriteRender == PSPRITE_FLAT) ? "FLAT"
+                                                                                                              : "FLATTER");
+        break;
+
     case sky:
         V_WriteTextDirect(15, y, "SKY RENDERING:");
         V_WriteTextDirect(45, y, flatSky ? "FLAT" : "FULL");
@@ -1785,6 +1797,12 @@ void M_DrawDisplayItem(int item, int position)
         V_WriteTextDirect(6, y, "SPRITE RENDERING:");
         V_WriteTextDirect(27, y, (spriteRender == SPRITE_NORMAL) ? "FULL" : (spriteRender == SPRITE_FLAT) ? "FLAT"
                                                                                                           : "FLATTER");
+        break;
+
+    case psprite:
+        V_WriteTextDirect(6, y, "PLAYER RENDERING:");
+        V_WriteTextDirect(27, y, (pspriteRender == PSPRITE_NORMAL) ? "FULL" : (pspriteRender == PSPRITE_FLAT) ? "FLAT"
+                                                                                                              : "FLATTER");
         break;
 
     case sky:
