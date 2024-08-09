@@ -33,7 +33,7 @@ route = "*.WAD"
 filename = DIR$(route)
 DO WHILE LEN(filename) > 0
 
-    IF INSTR(filename, "MODE") = 0 THEN
+    IF INSTR(filename, "MODE") = 0 AND INSTR(filename, "FONT") = 0 THEN
 	count = count + 1
 	benchmarkWads(count) = filename
     END IF
