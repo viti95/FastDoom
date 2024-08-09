@@ -119,10 +119,23 @@ DO WHILE LEN(filename) > 0
     filename = DIR$
 LOOP
 
+route = "FDM*.EXE"
+
+filename = DIR$(route)
+DO WHILE LEN(filename) > 0
+    count = count + 1
+    benchmarkExecutables(count) = filename
+    filename = DIR$
+LOOP
+
 benchmarkExecutablesTotal = count
 
 FOR position = 1 TO benchmarkExecutablesTotal
     PRINT "     " + STR$(position) + ") " + benchmarkExecutables(position)
+    IF position % 20 = 0 THEN
+        INPUT "Press any key to continue . . .", inputVal
+        CALL cleanScreen
+    END IF
 NEXT
 
 PRINT
