@@ -224,15 +224,24 @@ void M_ChangeValueFile(unsigned int position, char *token)
         if (M_CheckValue(token, "flatter"))
             M_SetSpriteDetail(SPRITE_FLATTER);
         break;
-    // Sky
+    // Player Sprites
     case 5:
+        if (M_CheckValue(token, "default"))
+            M_SetPSpriteDetail(PSPRITE_NORMAL);
+        if (M_CheckValue(token, "flat"))
+            M_SetPSpriteDetail(PSPRITE_FLAT);
+        if (M_CheckValue(token, "flatter"))
+            M_SetPSpriteDetail(PSPRITE_FLATTER);
+        break;
+    // Sky
+    case 6:
         if (M_CheckValue(token, "default"))
             M_SetSkyDetail(false);
         if (M_CheckValue(token, "flat"))
             M_SetSkyDetail(true);
         break;
     // Invisible
-    case 6:
+    case 7:
         if (M_CheckValue(token, "default"))
             M_SetInvisibleDetail(INVISIBLE_NORMAL);
         if (M_CheckValue(token, "saturn"))
@@ -243,29 +252,29 @@ void M_ChangeValueFile(unsigned int position, char *token)
             M_SetInvisibleDetail(INVISIBLE_TRANSLUCENT);
         if (M_CheckValue(token, "flat"))
             M_SetInvisibleDetail(INVISIBLE_FLAT);
-    // Sprites
-    case 7:
+    // Sprite culling
+    case 8:
         if (M_CheckValue(token, "far"))
             M_SetSpriteCulling(false);
         if (M_CheckValue(token, "near"))
             M_SetSpriteCulling(true);
         break;
     // Show FPS
-    case 8:
+    case 9:
         if (M_CheckValue(token, "nofps"))
             M_SetShowFPS(false);
         if (M_CheckValue(token, "fps"))
             M_SetShowFPS(true);
         break;
     // Melting
-    case 9:
+    case 10:
         if (M_CheckValue(token, "nomelt"))
             M_SetNoMelting(true);
         if (M_CheckValue(token, "melt"))
             M_SetNoMelting(false);
         break;
     // CPU
-    case 10:
+    case 11:
         if (M_CheckValue(token, "386sx"))
             M_SetCPU(INTEL_386SX);
         if (M_CheckValue(token, "386dx"))
@@ -286,7 +295,7 @@ void M_ChangeValueFile(unsigned int position, char *token)
             M_SetCPU(UMC_GREEN_486);
         break;
     // Bus Speed
-    case 11:
+    case 12:
         if (M_CheckValue(token, "slow"))
             M_SetBusSpeed(1);
         if (M_CheckValue(token, "fast"))
