@@ -15,7 +15,7 @@ DIM benchmarkWad AS STRING
 DIM benchmarkOptions AS STRING
 
 DIM inputVal AS STRING
-Dim route as String
+DIM route AS STRING
 
 'Flush keyboard
 WHILE INKEY$ <> ""
@@ -73,9 +73,10 @@ benchmarkFilesTotal = count
 
 FOR position = 1 TO benchmarkFilesTotal
     PRINT "     " + STR$(position) + ") " + benchmarkFiles(position)
-    IF position % 10 = 0 THEN
-        INPUT "Press any key to continue . . .", inputVal
-        CALL cleanScreen
+    IF position MOD 10 = 0 THEN
+    PRINT
+	INPUT "     Press any key to continue . . .", inputVal
+	CALL cleanScreen
     END IF
 NEXT
 
@@ -136,9 +137,10 @@ benchmarkExecutablesTotal = count
 
 FOR position = 1 TO benchmarkExecutablesTotal
     PRINT "     " + STR$(position) + ") " + benchmarkExecutables(position)
-    IF position % 10 = 0 THEN
-        INPUT "Press any key to continue . . .", inputVal
-        CALL cleanScreen
+    IF position MOD 10 = 0 THEN
+    PRINT
+	INPUT "     Press any key to continue . . .", inputVal
+	CALL cleanScreen
     END IF
 NEXT
 
@@ -184,5 +186,6 @@ SUB cleanScreen
     PRINT "   #                           FASTDOOM BENCHMARK                           #"
     PRINT "   #                                                                        #"
     PRINT "   ##########################################################################"
-    PRINT  
+    PRINT
 END SUB
+
