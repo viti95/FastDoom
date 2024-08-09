@@ -15,7 +15,7 @@ DIM benchmarkWad AS STRING
 DIM benchmarkOptions AS STRING
 
 DIM inputVal AS STRING
-Dim route as String
+DIM route AS STRING
 
 'Flush keyboard
 WHILE INKEY$ <> ""
@@ -33,7 +33,7 @@ route = "*.WAD"
 filename = DIR$(route)
 DO WHILE LEN(filename) > 0
 
-    IF INSTR(filename, "MODE") = 0 THEN
+    IF INSTR(filename, "MODE") = 0 AND INSTR(filename, "FONT") = 0 THEN
 	count = count + 1
 	benchmarkWads(count) = filename
     END IF
@@ -73,6 +73,11 @@ benchmarkFilesTotal = count
 
 FOR position = 1 TO benchmarkFilesTotal
     PRINT "     " + STR$(position) + ") " + benchmarkFiles(position)
+    IF position MOD 10 = 0 THEN
+    PRINT
+	INPUT "     Press any key to continue . . .", inputVal
+	CALL cleanScreen
+    END IF
 NEXT
 
 PRINT
@@ -119,10 +124,24 @@ DO WHILE LEN(filename) > 0
     filename = DIR$
 LOOP
 
+route = "FDM*.EXE"
+
+filename = DIR$(route)
+DO WHILE LEN(filename) > 0
+    count = count + 1
+    benchmarkExecutables(count) = filename
+    filename = DIR$
+LOOP
+
 benchmarkExecutablesTotal = count
 
 FOR position = 1 TO benchmarkExecutablesTotal
     PRINT "     " + STR$(position) + ") " + benchmarkExecutables(position)
+    IF position MOD 10 = 0 THEN
+    PRINT
+	INPUT "     Press any key to continue . . .", inputVal
+	CALL cleanScreen
+    END IF
 NEXT
 
 PRINT
@@ -167,5 +186,6 @@ SUB cleanScreen
     PRINT "   #                           FASTDOOM BENCHMARK                           #"
     PRINT "   #                                                                        #"
     PRINT "   ##########################################################################"
-    PRINT  
+    PRINT
 END SUB
+
