@@ -1446,6 +1446,7 @@ void R_ExecuteSetViewSize(void)
         switch (pspriteRender)
         {
         case PSPRITE_NORMAL:
+#if SCREENHEIGHT == 200
             if (screenblocks >= 10)
             {
                 pspritefunc = basepspritefunc = R_DrawColumnDirect;
@@ -1464,6 +1465,19 @@ void R_ExecuteSetViewSize(void)
                     break;
                 }
             }
+#else
+            switch (selectedCPU)
+            {
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K5:
+                pspritefunc = basepspritefunc = R_DrawColumnFastLEA;
+                break;
+            default:
+                pspritefunc = basepspritefunc = R_DrawColumn;
+                break;
+            }
+#endif
             break;
         case PSPRITE_FLAT:
         case PSPRITE_FLATTER:
@@ -1590,6 +1604,7 @@ void R_ExecuteSetViewSize(void)
         switch (pspriteRender)
         {
         case PSPRITE_NORMAL:
+#if SCREENHEIGHT == 200
             if (screenblocks >= 10)
             {
                 pspritefunc = basepspritefunc = R_DrawColumnLowDirect;
@@ -1608,6 +1623,19 @@ void R_ExecuteSetViewSize(void)
                     break;
                 }
             }
+#else
+            switch (selectedCPU)
+            {
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K5:
+                pspritefunc = basepspritefunc = R_DrawColumnLowFastLEA;
+                break;
+            default:
+                pspritefunc = basepspritefunc = R_DrawColumnLow;
+                break;
+            }
+#endif
             break;
         case PSPRITE_FLAT:
         case PSPRITE_FLATTER:
@@ -1735,6 +1763,7 @@ void R_ExecuteSetViewSize(void)
         switch (pspriteRender)
         {
         case PSPRITE_NORMAL:
+#if SCREENHEIGHT == 200
             if (screenblocks >= 10)
             {
                 pspritefunc = basepspritefunc = R_DrawColumnPotatoDirect;
@@ -1753,6 +1782,19 @@ void R_ExecuteSetViewSize(void)
                     break;
                 }
             }
+#else
+            switch (selectedCPU)
+            {
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K5:
+                pspritefunc = basepspritefunc = R_DrawColumnPotatoFastLEA;
+                break;
+            default:
+                pspritefunc = basepspritefunc = R_DrawColumnPotato;
+                break;
+            }
+#endif
             break;
         case PSPRITE_FLAT:
         case PSPRITE_FLATTER:
