@@ -72,6 +72,7 @@ void R_DrawColumnLowDirect(void);
 
 void R_DrawColumnSkyFull(void);
 void R_DrawColumnSkyFullFastLEA(void);
+void R_DrawColumnSkyFullDirect(void);
 
 void R_DrawColumnLowSkyFull(void);
 void R_DrawColumnLowSkyFullFastLEA(void);
