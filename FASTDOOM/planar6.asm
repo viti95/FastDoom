@@ -213,29 +213,42 @@ CODE_SYM_DEF R_DrawColumnSkyFullDirect
 	push		esi
 	push		ebp
 
-  mov   ebp,[_dc_yh]
-  mov   ebx,[_dc_yl]
-  mov   edi,[_ylookup+ebp*4]
-  sub   ebp,ebx         ; ebp = pixel count
-  js    short donehs
+  mov  ebp,[_dc_yh]
+  mov  ebx,[_dc_yl]
+  mov  edi,[_ylookup+ebp*4]
+  sub  ebp,ebx         ; ebp = pixel count
+  js   short donehs
 
-  mov   ecx,[_dc_x]
-  add   edi,[_destview]
-  mov   esi, ecx
+  ; set plane
+  mov  ecx,[_dc_x]
+  add  edi,[_destview]
+  mov  esi, ecx
   
-  and   cl,3
-  mov   dx,SC_INDEX+1
-  mov   al,1
-  shl   al,cl
-  out   dx,al
+  and  cl,3
+  mov  dx,SC_INDEX+1
+  mov  al,1
+  shl  al,cl
+  out  dx,al
 
-  shr   esi,2
-  add   edi,esi
+  shr esi,2
+  mov eax, ebx
+  add edi,esi
 
+  mov   ecx,[_dc_iscale]
+
+  sub   eax,[_centery]
+  imul  ecx
+  mov   edx,[_dc_texturemid]
+  shl   ecx,9 ; 7 significant bits, 25 frac
+  add   edx,eax
   mov   esi,[_dc_source]
+  shl   edx,9 ; 7 significant bits, 25 frac
   mov   eax,[_dc_colormap]
-  add   esi,16
 
+  mov  ebx,edx
+  shr  ebx,25 ; get address of first location
+
+  add  esi,ebx
   jmp  [scalecalls+4+ebp*4]
 
 donehs:
