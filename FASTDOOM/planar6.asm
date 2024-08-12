@@ -239,16 +239,15 @@ CODE_SYM_DEF R_DrawColumnSkyFullDirect
   sub   eax,[_centery]
   imul  ecx
   mov   edx,[_dc_texturemid]
-  shl   ecx,9 ; 7 significant bits, 25 frac
+  ;shl   ecx,9 ; 7 significant bits, 25 frac
   add   edx,eax
   mov   esi,[_dc_source]
   shl   edx,9 ; 7 significant bits, 25 frac
   mov   eax,[_dc_colormap]
 
-  mov  ebx,edx
-  shr  ebx,25 ; get address of first location
+  shr  edx,25 ; get address of first location
 
-  add  esi,ebx
+  add  esi,edx
   jmp  [scalecalls+4+ebp*4]
 
 donehs:
