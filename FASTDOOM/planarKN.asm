@@ -65,12 +65,6 @@ CODE_SYM_DEF R_PatchCenteryPlanarKN
   mov   [eax],ebx
   mov   eax,patchCentery3+1
   mov   [eax],ebx
-  mov   eax,patchCentery4+1
-  mov   [eax],ebx
-  mov   eax,patchCentery5+1
-  mov   [eax],ebx
-  mov   eax,patchCentery6+1
-  mov   [eax],ebx
   pop ebx
   ret
 

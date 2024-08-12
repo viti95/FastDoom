@@ -76,9 +76,17 @@ CODE_SYM_DEF R_DrawColumnPotatoSkyFullDirect
 
   mov   ecx,[_dc_iscale]
 
+  sub   eax,[_centery]
+  imul  ecx
+  mov   edx,[_dc_texturemid]
+  ;shl   ecx,9 ; 7 significant bits, 25 frac
+  add   edx,eax
   mov   esi,[_dc_source]
+  shl   edx,9 ; 7 significant bits, 25 frac
   mov   eax,[_dc_colormap]
-  add   esi,16
+
+  shr   edx,25
+  add   esi,edx
 
   jmp  [scalecalls+4+ebp*4]
 
@@ -150,9 +158,21 @@ CODE_SYM_DEF R_DrawColumnLowSkyFullDirect
   add   edi,esi
   out   dx,al
 
+  mov   eax, ebx
+
+  mov   ecx,[_dc_iscale]
+
+  sub   eax,[_centery]
+  imul  ecx
+  mov   edx,[_dc_texturemid]
+  ;shl   ecx,9 ; 7 significant bits, 25 frac
+  add   edx,eax
   mov   esi,[_dc_source]
+  shl   edx,9 ; 7 significant bits, 25 frac
   mov   eax,[_dc_colormap]
-  add   esi,16
+
+  shr  edx,25 ; get address of first location
+  add  esi,edx
 
   jmp  [scalecalls+4+ebp*4]
 
@@ -246,8 +266,8 @@ CODE_SYM_DEF R_DrawColumnSkyFullDirect
   mov   eax,[_dc_colormap]
 
   shr  edx,25 ; get address of first location
-
   add  esi,edx
+
   jmp  [scalecalls+4+ebp*4]
 
 donehs:
