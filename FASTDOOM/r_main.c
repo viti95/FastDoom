@@ -1530,10 +1530,10 @@ void R_ExecuteSetViewSize(void)
             case UMC_GREEN_486:
             case CYRIX_5X86:
             case AMD_K5:
-                skyfunc = (screenblocks >= 10) ? R_DrawColumnSkyFullDirect : R_DrawColumnFastLEA;
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnSkyFullFastLEA : R_DrawColumnFastLEA;
                 break;
             default:
-                skyfunc = (screenblocks >= 10) ? R_DrawColumnSkyFullDirect : R_DrawColumn;
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnSkyFull : R_DrawColumn;
             }
         }
 

@@ -171,48 +171,6 @@ doneh:
   pop		edi
   ret
 
-CODE_SYM_DEF R_DrawColumnSkyFullDirect
-	push		edi
-	push		ebx
-	push		ecx
-	push		edx
-	push		esi
-	push		ebp
-
-  mov   ebp,[_dc_yh]
-  mov   ebx,[_dc_yl]
-  mov   edi,[_ylookup+ebp*4]
-  sub   ebp,ebx         ; ebp = pixel count
-  js    short donehs
-
-  mov   ecx,[_dc_x]
-  add   edi,[_destview]
-  mov   esi, ecx
-  
-  and   cl,3
-  mov   dx,SC_INDEX+1
-  mov   al,1
-  shl   al,cl
-  out   dx,al
-
-  shr   esi,2
-  add   edi,esi
-
-  mov   esi,[_dc_source]
-  add   esi,16
-  mov   eax,[_dc_colormap]
-
-  jmp  [scalecalls+4+ebp*4]
-
-donehs:
-	pop		ebp
-	pop		esi
-	pop		edx
-	pop		ecx
-	pop		ebx
-  pop		edi
-  ret
-
 %macro SCALELABEL 1
   vscale%1
 %endmacro
