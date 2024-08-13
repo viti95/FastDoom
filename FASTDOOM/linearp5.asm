@@ -55,9 +55,40 @@ scalecalls:
 
 BEGIN_CODE_SECTION
 
-; ============================
-; R_DrawColumnPotatoBackbuffer
-; ============================
+CODE_SYM_DEF R_DrawColumnPotatoBackbufferSkyFullDirect
+	push		edi
+	push		esi
+	push		edx
+	push		ebp
+  push		ebx
+	push		ecx
+
+  mov  ebp,[_dc_yh]
+  mov  eax,[_dc_yl]
+  mov  edi,[_ylookup+ebp*4]
+  sub  ebp,eax         ; ebp = pixel count
+  js   short doneps
+
+  sub  eax,[_centery]
+  add  eax,0x64
+  mov  esi,[_dc_source]
+  and  eax,0x7FFFFF
+  mov  ebx,[_dc_x]
+  add  esi,eax
+  add  edi,[_columnofs+ebx*4]
+  mov  eax,[_dc_colormap]
+
+  jmp  [scalecalls+4+ebp*4]
+
+doneps:
+	pop		ecx
+	pop		ebx
+  pop	  ebp
+	pop		edx
+	pop		esi
+	pop		edi
+  ret
+
 CODE_SYM_DEF R_DrawColumnPotatoBackbufferDirect
 	push		edi
 	push		esi
@@ -87,7 +118,6 @@ donep:
 	pop		esi
 	pop		edi
   ret
-; R_DrawColumnPotatoBackbuffer ends
 
 %macro SCALELABEL 1
   vscale%1
