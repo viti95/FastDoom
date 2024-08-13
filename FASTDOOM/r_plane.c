@@ -1271,17 +1271,7 @@ void R_DrawSky(visplane_t *pl)
         lump = texturecolumnlump[tex][col];
         ofs = texturecolumnofs[tex][col];
 
-        if (lump > 0)
-        {
-            dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
-        }
-        else
-        {
-            if (!texturecomposite[tex])
-                R_GenerateComposite(tex);
-
-            dc_source = texturecomposite[tex] + ofs;
-        }
+        dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
 
         skyfunc();
     }
