@@ -55,9 +55,40 @@ scalecalls:
 
 BEGIN_CODE_SECTION
 
-; ======================
-; R_DrawColumnBackbuffer
-; ======================
+CODE_SYM_DEF R_DrawColumnBackbufferSkyFullDirect
+	push		edi
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		ebp
+
+  mov  ebp,[_dc_yh]
+  mov  eax,[_dc_yl]
+  mov  edi,[_ylookup+ebp*4]
+  sub  ebp,eax         ; ebp = pixel count
+  js   short donehs
+
+  sub  eax,[_centery]
+  add  eax,0x64
+  mov  esi,[_dc_source]
+  and  eax,0x7FFFFF
+  mov  ebx,[_dc_x]
+  add  esi,eax
+  add  edi,[_columnofs+ebx*4]
+  mov  eax,[_dc_colormap]
+
+  jmp  [scalecalls+4+ebp*4]
+
+donehs:
+	pop		ebp
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+  pop		edi
+  ret
+
 CODE_SYM_DEF R_DrawColumnBackbufferDirect
 	push		edi
 	push		ebx

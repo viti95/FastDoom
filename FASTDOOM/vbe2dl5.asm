@@ -45,6 +45,43 @@ scalecalls:
 
 BEGIN_CODE_SECTION
 
+CODE_SYM_DEF R_DrawColumnLowVBE2SkyFullDirect
+	push		edi
+	push		esi
+	push		edx
+	push		ebp
+  push		ebx
+	push		ecx
+
+  mov  ebp,[_dc_yh]
+  mov  eax,[_dc_yl]
+  MulScreenWidthStart edi, ebp
+  sub  ebp,eax ; ebp = pixel count
+  js   near donels
+
+  mov  ebx,[_dc_x]
+  MulScreenWidthEnd edi
+  lea  edi,[edi+ebx*2]
+  add  edi,[_destview]
+
+  sub  eax,[_centery]
+  add  eax,0x64
+  mov  esi,[_dc_source]
+  and  eax,0x7FFFFF
+  add  esi,eax
+  mov  eax,[_dc_colormap]
+
+  jmp  [scalecalls+4+ebp*4]
+
+donels:
+	pop		ecx
+	pop		ebx
+  pop	  ebp
+	pop		edx
+	pop		esi
+	pop		edi
+  ret
+
 CODE_SYM_DEF R_DrawColumnLowVBE2Direct
 	push		edi
 	push		esi
