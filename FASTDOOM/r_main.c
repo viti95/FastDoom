@@ -1530,10 +1530,18 @@ void R_ExecuteSetViewSize(void)
             case UMC_GREEN_486:
             case CYRIX_5X86:
             case AMD_K5:
+#if SCREENHEIGHT == 200
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnSkyFullDirect : R_DrawColumnFastLEA;
+#else
+                skyfunc = R_DrawColumnFastLEA;
+#endif
                 break;
             default:
+#if SCREENHEIGHT == 200
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnSkyFullDirect : R_DrawColumn;
+#else
+                skyfunc = R_DrawColumn;
+#endif
             }
         }
 
@@ -1688,10 +1696,18 @@ void R_ExecuteSetViewSize(void)
             case UMC_GREEN_486:
             case CYRIX_5X86:
             case AMD_K5:
+#if SCREENHEIGHT == 200
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnLowSkyFullDirect : R_DrawColumnLowFastLEA;
+#else
+                skyfunc = R_DrawColumnLowFastLEA;
+#endif
                 break;
             default:
+#if SCREENHEIGHT == 200
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnLowSkyFullDirect : R_DrawColumnLow;
+#else
+                skyfunc = R_DrawColumnLow;
+#endif
                 break;
             }
         }
@@ -1847,10 +1863,18 @@ void R_ExecuteSetViewSize(void)
             case UMC_GREEN_486:
             case CYRIX_5X86:
             case AMD_K5:
+#if SCREENHEIGHT == 200
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnPotatoSkyFullDirect : R_DrawColumnPotatoFastLEA;
+#else
+                skyfunc = R_DrawColumnPotatoFastLEA;
+#endif
                 break;
             default:
+#if SCREENHEIGHT == 200
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnPotatoSkyFullDirect : R_DrawColumnPotato;
+#else
+                skyfunc = R_DrawColumnPotato;
+#endif
                 break;
             }
         }
@@ -2010,10 +2034,18 @@ void R_ExecuteSetViewSize(void)
             case UMC_GREEN_486:
             case CYRIX_5X86:
             case AMD_K5:
+#if SCREENHEIGHT == 200
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnBackbufferSkyFullDirect : R_DrawColumnBackbufferFastLEA;
+#else
+                skyfunc = R_DrawColumnBackbufferFastLEA;
+#endif
                 break;
             default:
+#if SCREENHEIGHT == 200
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnBackbufferSkyFullDirect : R_DrawColumnBackbuffer;
+#else
+                skyfunc = R_DrawColumnBackbuffer;
+#endif
                 break;
             }
         }
@@ -2168,10 +2200,18 @@ void R_ExecuteSetViewSize(void)
             case UMC_GREEN_486:
             case CYRIX_5X86:
             case AMD_K5:
+#if SCREENHEIGHT == 200
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnLowBackbufferSkyFullDirect : R_DrawColumnLowBackbufferFastLEA;
+#else
+                skyfunc = R_DrawColumnLowBackbufferFastLEA;
+#endif
                 break;
             default:
+#if SCREENHEIGHT == 200
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnLowBackbufferSkyFullDirect : R_DrawColumnLowBackbuffer;
+#else
+                skyfunc = R_DrawColumnLowBackbuffer;
+#endif
                 break;
             }
         }
@@ -2281,7 +2321,11 @@ void R_ExecuteSetViewSize(void)
         else
         {
             drawSky = R_DrawSky;
+#if SCREENHEIGHT == 200
             skyfunc = (screenblocks >= 10) ? R_DrawColumnPotatoBackbufferSkyFullDirect : R_DrawColumnPotatoBackbuffer;
+#else
+            skyfunc = R_DrawColumnPotatoBackbuffer;
+#endif
         }
 
         switch (invisibleRender)
@@ -2396,7 +2440,11 @@ void R_ExecuteSetViewSize(void)
         else
         {
             drawSky = R_DrawSky;
+#if SCREENHEIGHT == 200
             skyfunc = (screenblocks >= 10) ? R_DrawColumnVBE2SkyFullDirect : R_DrawColumnVBE2;
+#else
+            skyfunc = R_DrawColumnVBE2;
+#endif
         }
 
         switch (invisibleRender)
@@ -2504,7 +2552,11 @@ void R_ExecuteSetViewSize(void)
         else
         {
             drawSky = R_DrawSky;
+#if SCREENHEIGHT == 200
             skyfunc = (screenblocks >= 10) ? R_DrawColumnLowVBE2SkyFullDirect : R_DrawColumnLowVBE2;
+#else
+            skyfunc = R_DrawColumnLowVBE2;
+#endif
         }
 
         switch (invisibleRender)
@@ -2612,7 +2664,11 @@ void R_ExecuteSetViewSize(void)
         else
         {
             drawSky = R_DrawSky;
+#if SCREENHEIGHT == 200
             skyfunc = (screenblocks >= 10) ? R_DrawColumnPotatoVBE2SkyFullDirect : R_DrawColumnPotatoVBE2;
+#else
+            skyfunc = R_DrawColumnPotatoVBE2;
+#endif
         }
 
         switch (invisibleRender)
