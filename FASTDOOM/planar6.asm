@@ -74,10 +74,8 @@ CODE_SYM_DEF R_DrawColumnPotatoSkyFullDirect
   add  edi,[_destview]
   add  edi,[_dc_x]
 
-  mov   ecx,[_dc_iscale]
-
   sub   eax,[_centery]
-  imul  ecx
+  shl   eax,16
 
   add   eax,0x640000
 
@@ -160,11 +158,9 @@ CODE_SYM_DEF R_DrawColumnLowSkyFullDirect
 
   mov   eax, ebx
 
-  mov   ecx,[_dc_iscale]
-
   sub   eax,[_centery]
-  imul  ecx
-  
+  shl   eax,16
+
   add   eax,0x640000
 
   mov   esi,[_dc_source]
@@ -255,11 +251,9 @@ CODE_SYM_DEF R_DrawColumnSkyFullDirect
   mov   eax,ebx
   add   edi,esi
 
-  mov   ecx,[_dc_iscale]
+  sub   eax,[_centery]  
+  shl   eax,16
 
-  sub   eax,[_centery]
-  imul  ecx
-  
   add   eax,0x640000
   
   mov   esi,[_dc_source]
