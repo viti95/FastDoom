@@ -80,7 +80,6 @@ CODE_SYM_DEF R_DrawColumnPotatoSkyFullDirect
 
   mov   esi,[_dc_source]
   
-  and  eax,0x7FFFFF
   add  esi,eax
 
   mov   eax,[_dc_colormap]
@@ -162,7 +161,6 @@ CODE_SYM_DEF R_DrawColumnLowSkyFullDirect
 
   mov   esi,[_dc_source]
   
-  and  eax,0x7FFFFF
   add  esi,eax
 
   mov   eax,[_dc_colormap]
@@ -253,7 +251,6 @@ CODE_SYM_DEF R_DrawColumnSkyFullDirect
   
   mov   esi,[_dc_source]
   
-  and  eax,0x7FFFFF
   add  esi,eax
 
   mov   eax,[_dc_colormap]

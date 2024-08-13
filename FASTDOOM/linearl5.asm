@@ -72,7 +72,6 @@ CODE_SYM_DEF R_DrawColumnLowBackbufferSkyFullDirect
   sub  eax,[_centery]
   add  eax,0x64
   mov  esi,[_dc_source]
-  and  eax,0x7FFFFF
   mov  ebx,[_dc_x]
   add  esi,eax
   add  edi,[_columnofs+ebx*4]

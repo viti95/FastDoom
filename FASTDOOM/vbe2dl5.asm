@@ -67,7 +67,6 @@ CODE_SYM_DEF R_DrawColumnLowVBE2SkyFullDirect
   sub  eax,[_centery]
   add  eax,0x64
   mov  esi,[_dc_source]
-  and  eax,0x7FFFFF
   add  esi,eax
   mov  eax,[_dc_colormap]
 
