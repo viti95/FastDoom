@@ -2612,7 +2612,7 @@ void R_ExecuteSetViewSize(void)
         else
         {
             drawSky = R_DrawSky;
-            skyfunc = R_DrawColumnPotatoVBE2;
+            skyfunc = (screenblocks >= 10) ? R_DrawColumnPotatoVBE2SkyFullDirect : R_DrawColumnPotatoVBE2;
         }
 
         switch (invisibleRender)

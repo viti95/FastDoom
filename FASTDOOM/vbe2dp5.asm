@@ -45,6 +45,43 @@ scalecalls:
 
 BEGIN_CODE_SECTION
 
+CODE_SYM_DEF R_DrawColumnPotatoVBE2SkyFullDirect
+	push		edi
+	push		esi
+	push		edx
+	push		ebp
+  push		ebx
+	push		ecx
+
+  mov  ebp,[_dc_yh]
+  mov  eax,[_dc_yl]
+  MulScreenWidthStart edi, ebp
+  sub  ebp,eax ; ebp = pixel count
+  js   near doneps
+
+  mov  ebx,[_dc_x]
+  MulScreenWidthEnd edi
+  lea  edi,[edi+ebx*4]
+  add  edi,[_destview]
+
+  sub  eax,[_centery]
+  add  eax,0x64
+  mov  esi,[_dc_source]
+  and  eax,0x7FFFFF
+  add  esi,eax
+  mov  eax,[_dc_colormap]
+
+  jmp  [scalecalls+4+ebp*4]
+
+doneps:
+	pop		ecx
+	pop		ebx
+  pop	  ebp
+	pop		edx
+	pop		esi
+	pop		edi
+  ret
+
 CODE_SYM_DEF R_DrawColumnPotatoVBE2Direct
 	push		edi
 	push		esi
@@ -76,7 +113,6 @@ donep:
 	pop		esi
 	pop		edi
   ret
-; R_DrawColumnPotatoVBE2 ends
 
 ;============ HIGH DETAIL ============
 
