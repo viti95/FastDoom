@@ -2168,10 +2168,10 @@ void R_ExecuteSetViewSize(void)
             case UMC_GREEN_486:
             case CYRIX_5X86:
             case AMD_K5:
-                skyfunc = R_DrawColumnLowBackbufferFastLEA;
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnLowBackbufferSkyFullDirect : R_DrawColumnLowBackbufferFastLEA;
                 break;
             default:
-                skyfunc = R_DrawColumnLowBackbuffer;
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnLowBackbufferSkyFullDirect : R_DrawColumnLowBackbuffer;
                 break;
             }
         }
