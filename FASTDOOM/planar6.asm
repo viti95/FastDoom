@@ -69,18 +69,17 @@ CODE_SYM_DEF R_DrawColumnPotatoSkyFullDirect
   mov  eax,[_dc_yl]
   mov  edi,[_ylookup+ebp*4]
   sub  ebp,eax         ; ebp = pixel count
-  js   short doneps
+  js   near doneps
 
   add  edi,[_destview]
-  add  edi,[_dc_x]
-
+  
   sub   eax,[_centery]
 
-  add   eax,0x64
-
   mov   esi,[_dc_source]
+
+  add  edi,[_dc_x]
   
-  add  esi,eax
+  lea  esi,[esi+eax+0x64]
 
   mov   eax,[_dc_colormap]
 
@@ -139,7 +138,7 @@ CODE_SYM_DEF R_DrawColumnLowSkyFullDirect
   mov  ebx,[_dc_yl]
   mov  edi,[_ylookup+ebp*4]
   sub  ebp,ebx         ; ebp = pixel count
-  js   short donels
+  js   near donels
 
   ; set plane
   mov  ecx,[_dc_x]
@@ -157,11 +156,9 @@ CODE_SYM_DEF R_DrawColumnLowSkyFullDirect
 
   sub   eax,[_centery]
 
-  add   eax,0x64
-
   mov   esi,[_dc_source]
   
-  add  esi,eax
+  lea  esi,[esi+eax+0x64]
 
   mov   eax,[_dc_colormap]
 
@@ -228,7 +225,7 @@ CODE_SYM_DEF R_DrawColumnSkyFullDirect
   mov  ebx,[_dc_yl]
   mov  edi,[_ylookup+ebp*4]
   sub  ebp,ebx         ; ebp = pixel count
-  js   short donehs
+  js   near donehs
 
   ; set plane
   mov  ecx,[_dc_x]
@@ -247,11 +244,9 @@ CODE_SYM_DEF R_DrawColumnSkyFullDirect
 
   sub   eax,[_centery]
 
-  add   eax,0x64
-  
   mov   esi,[_dc_source]
   
-  add  esi,eax
+  lea  esi,[esi+eax+0x64]
 
   mov   eax,[_dc_colormap]
 

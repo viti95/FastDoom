@@ -67,13 +67,12 @@ CODE_SYM_DEF R_DrawColumnLowBackbufferSkyFullDirect
   mov  eax,[_dc_yl]
   mov  edi,[_ylookup+ebp*4]
   sub  ebp,eax         ; ebp = pixel count
-  js   short donels
+  js   near donels
 
   sub  eax,[_centery]
-  add  eax,0x64
   mov  esi,[_dc_source]
   mov  ebx,[_dc_x]
-  add  esi,eax
+  lea  esi,[esi+eax+0x64]
   add  edi,[_columnofs+ebx*4]
   mov  eax,[_dc_colormap]
 

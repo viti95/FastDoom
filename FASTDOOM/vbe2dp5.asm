@@ -61,13 +61,12 @@ CODE_SYM_DEF R_DrawColumnPotatoVBE2SkyFullDirect
 
   mov  ebx,[_dc_x]
   MulScreenWidthEnd edi
-  lea  edi,[edi+ebx*4]
-  add  edi,[_destview]
-
   sub  eax,[_centery]
-  add  eax,0x64
+  lea  edi,[edi+ebx*4]
+
   mov  esi,[_dc_source]
-  add  esi,eax
+  add  edi,[_destview]
+  lea  esi,[esi+eax+0x64]
   mov  eax,[_dc_colormap]
 
   jmp  [scalecalls+4+ebp*4]

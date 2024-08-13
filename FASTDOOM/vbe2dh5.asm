@@ -62,14 +62,12 @@ CODE_SYM_DEF R_DrawColumnVBE2SkyFullDirect
 
   mov  ebx,[_dc_x]
   MulScreenWidthEnd edi
-
-  add  edi,ebx
-  add  edi,[_destview]
-
   sub  eax,[_centery]
-  add  eax,0x64
+  add  edi,ebx
+
   mov  esi,[_dc_source]
-  add  esi,eax
+  add  edi,[_destview]
+  lea  esi,[esi+eax+0x64]
   mov  eax,[_dc_colormap]
 
   jmp  [scalecalls+4+ebp*4]
