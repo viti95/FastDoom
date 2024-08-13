@@ -75,13 +75,11 @@ CODE_SYM_DEF R_DrawColumnPotatoSkyFullDirect
   add  edi,[_dc_x]
 
   sub   eax,[_centery]
-  shl   eax,16
 
-  add   eax,0x640000
+  add   eax,0x64
 
   mov   esi,[_dc_source]
   
-  shr  eax,16 ; 7 significant bits, 25 frac
   and  eax,0x7FFFFF
   add  esi,eax
 
@@ -159,13 +157,11 @@ CODE_SYM_DEF R_DrawColumnLowSkyFullDirect
   mov   eax, ebx
 
   sub   eax,[_centery]
-  shl   eax,16
 
-  add   eax,0x640000
+  add   eax,0x64
 
   mov   esi,[_dc_source]
   
-  shr  eax,16 ; 7 significant bits, 25 frac
   and  eax,0x7FFFFF
   add  esi,eax
 
@@ -251,14 +247,12 @@ CODE_SYM_DEF R_DrawColumnSkyFullDirect
   mov   eax,ebx
   add   edi,esi
 
-  sub   eax,[_centery]  
-  shl   eax,16
+  sub   eax,[_centery]
 
-  add   eax,0x640000
+  add   eax,0x64
   
   mov   esi,[_dc_source]
   
-  shr  eax,16 ; 7 significant bits, 25 frac
   and  eax,0x7FFFFF
   add  esi,eax
 
