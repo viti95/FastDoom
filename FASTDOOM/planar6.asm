@@ -78,18 +78,18 @@ CODE_SYM_DEF R_DrawColumnPotatoSkyFullDirect
 
   sub   eax,[_centery]
   imul  ecx
-  mov   edx,[_dc_texturemid]
-  ;shl   ecx,9 ; 7 significant bits, 25 frac
-  add   edx,eax
+
+  add   eax,0x640000
+
   mov   esi,[_dc_source]
-  shl   edx,9 ; 7 significant bits, 25 frac
+  
+  shr  eax,16 ; 7 significant bits, 25 frac
+  and  eax,0x7FFFFF
+  add  esi,eax
+
   mov   eax,[_dc_colormap]
 
-  shr   edx,25
-  add   esi,edx
-
   jmp  [scalecalls+4+ebp*4]
-
 doneps:
 	pop		ebp
 	pop		esi
@@ -164,15 +164,16 @@ CODE_SYM_DEF R_DrawColumnLowSkyFullDirect
 
   sub   eax,[_centery]
   imul  ecx
-  mov   edx,[_dc_texturemid]
-  ;shl   ecx,9 ; 7 significant bits, 25 frac
-  add   edx,eax
-  mov   esi,[_dc_source]
-  shl   edx,9 ; 7 significant bits, 25 frac
-  mov   eax,[_dc_colormap]
+  
+  add   eax,0x640000
 
-  shr  edx,25 ; get address of first location
-  add  esi,edx
+  mov   esi,[_dc_source]
+  
+  shr  eax,16 ; 7 significant bits, 25 frac
+  and  eax,0x7FFFFF
+  add  esi,eax
+
+  mov   eax,[_dc_colormap]
 
   jmp  [scalecalls+4+ebp*4]
 
@@ -250,23 +251,24 @@ CODE_SYM_DEF R_DrawColumnSkyFullDirect
   shl  al,cl
   out  dx,al
 
-  shr esi,2
-  mov eax, ebx
-  add edi,esi
+  shr   esi,2
+  mov   eax,ebx
+  add   edi,esi
 
   mov   ecx,[_dc_iscale]
 
   sub   eax,[_centery]
   imul  ecx
-  mov   edx,[_dc_texturemid]
-  ;shl   ecx,9 ; 7 significant bits, 25 frac
-  add   edx,eax
+  
+  add   eax,0x640000
+  
   mov   esi,[_dc_source]
-  shl   edx,9 ; 7 significant bits, 25 frac
-  mov   eax,[_dc_colormap]
+  
+  shr  eax,16 ; 7 significant bits, 25 frac
+  and  eax,0x7FFFFF
+  add  esi,eax
 
-  shr  edx,25 ; get address of first location
-  add  esi,edx
+  mov   eax,[_dc_colormap]
 
   jmp  [scalecalls+4+ebp*4]
 
