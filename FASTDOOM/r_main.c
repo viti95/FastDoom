@@ -2504,7 +2504,7 @@ void R_ExecuteSetViewSize(void)
         else
         {
             drawSky = R_DrawSky;
-            skyfunc = R_DrawColumnLowVBE2;
+            skyfunc = (screenblocks >= 10) ? R_DrawColumnLowVBE2SkyFullDirect : R_DrawColumnLowVBE2;
         }
 
         switch (invisibleRender)
