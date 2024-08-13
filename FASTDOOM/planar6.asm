@@ -57,6 +57,44 @@ scalecalls:
 
 BEGIN_CODE_SECTION
 
+CODE_SYM_DEF R_DrawColumnPotatoSkyFullDirect
+	push		edi
+  push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		ebp
+
+  mov  ebp,[_dc_yh]
+  mov  eax,[_dc_yl]
+  mov  edi,[_ylookup+ebp*4]
+  sub  ebp,eax         ; ebp = pixel count
+  js   short doneps
+
+  add  edi,[_destview]
+  add  edi,[_dc_x]
+
+  sub   eax,[_centery]
+
+  add   eax,0x64
+
+  mov   esi,[_dc_source]
+  
+  and  eax,0x7FFFFF
+  add  esi,eax
+
+  mov   eax,[_dc_colormap]
+
+  jmp  [scalecalls+4+ebp*4]
+doneps:
+	pop		ebp
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+  pop		edi
+  ret
+
 CODE_SYM_DEF R_DrawColumnPotatoDirect
 	push		edi
   push		ebx
@@ -82,6 +120,56 @@ CODE_SYM_DEF R_DrawColumnPotatoDirect
   jmp  [scalecalls+4+ebp*4]
 
 donep:
+	pop		ebp
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+  pop		edi
+  ret
+
+CODE_SYM_DEF R_DrawColumnLowSkyFullDirect
+  push		edi
+  push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		ebp
+
+  mov  ebp,[_dc_yh]
+  mov  ebx,[_dc_yl]
+  mov  edi,[_ylookup+ebp*4]
+  sub  ebp,ebx         ; ebp = pixel count
+  js   short donels
+
+  ; set plane
+  mov  ecx,[_dc_x]
+  add  edi,[_destview]
+  mov  esi, ecx
+  
+  and   ecx,1
+  shr   esi,1
+  lea   eax,[ecx+ecx*8+3]
+  mov   dx,SC_INDEX+1
+  add   edi,esi
+  out   dx,al
+
+  mov   eax, ebx
+
+  sub   eax,[_centery]
+
+  add   eax,0x64
+
+  mov   esi,[_dc_source]
+  
+  and  eax,0x7FFFFF
+  add  esi,eax
+
+  mov   eax,[_dc_colormap]
+
+  jmp  [scalecalls+4+ebp*4]
+
+donels:
 	pop		ebp
 	pop		esi
 	pop		edx
@@ -122,6 +210,57 @@ CODE_SYM_DEF R_DrawColumnLowDirect
   jmp  [scalecalls+4+ebp*4]
 
 donel:
+	pop		ebp
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+  pop		edi
+  ret
+
+CODE_SYM_DEF R_DrawColumnSkyFullDirect
+	push		edi
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		ebp
+
+  mov  ebp,[_dc_yh]
+  mov  ebx,[_dc_yl]
+  mov  edi,[_ylookup+ebp*4]
+  sub  ebp,ebx         ; ebp = pixel count
+  js   short donehs
+
+  ; set plane
+  mov  ecx,[_dc_x]
+  add  edi,[_destview]
+  mov  esi, ecx
+  
+  and  cl,3
+  mov  dx,SC_INDEX+1
+  mov  al,1
+  shl  al,cl
+  out  dx,al
+
+  shr   esi,2
+  mov   eax,ebx
+  add   edi,esi
+
+  sub   eax,[_centery]
+
+  add   eax,0x64
+  
+  mov   esi,[_dc_source]
+  
+  and  eax,0x7FFFFF
+  add  esi,eax
+
+  mov   eax,[_dc_colormap]
+
+  jmp  [scalecalls+4+ebp*4]
+
+donehs:
 	pop		ebp
 	pop		esi
 	pop		edx
