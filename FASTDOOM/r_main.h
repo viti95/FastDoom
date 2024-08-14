@@ -165,6 +165,10 @@ void R_PatchLinearPotato(void);
 void R_PatchCenteryLinearHighKN(void);
 void R_PatchCenteryLinearLowKN(void);
 
+void R_PatchCenteryLinearDirect(void);
+void R_PatchCenteryLinearLowDirect(void);
+void R_PatchCenteryLinearPotatoDirect(void);
+
 void R_PatchColumnofsHigh386SX(void);
 void R_PatchColumnofsLow386SX(void);
 void R_PatchColumnofsPotato386SX(void);

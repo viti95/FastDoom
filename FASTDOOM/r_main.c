@@ -868,6 +868,10 @@ void R_PatchCode(void)
     R_PatchCenteryLinearHighKN();
     R_PatchCenteryLinearLowKN();
 
+    R_PatchCenteryLinearDirect();
+    R_PatchCenteryLinearLowDirect();
+    R_PatchCenteryLinearPotatoDirect();
+
     R_PatchColumnofsHigh386SX();
     R_PatchColumnofsLow386SX();
     R_PatchColumnofsPotato386SX();

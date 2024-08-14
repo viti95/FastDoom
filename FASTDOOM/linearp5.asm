@@ -55,6 +55,14 @@ scalecalls:
 
 BEGIN_CODE_SECTION
 
+CODE_SYM_DEF R_PatchCenteryLinearPotatoDirect
+  push ebx
+  mov  ebx,[_centery]
+  mov  eax,patchCentery+1
+  mov  [eax],ebx
+  pop  ebx
+  ret
+
 CODE_SYM_DEF R_DrawColumnPotatoBackbufferSkyFullDirect
 	push		edi
 	push		esi
@@ -69,7 +77,8 @@ CODE_SYM_DEF R_DrawColumnPotatoBackbufferSkyFullDirect
   sub  ebp,eax         ; ebp = pixel count
   js   near doneps
 
-  sub  eax,[_centery]
+patchCentery:
+  sub  eax,0x12345678
   mov  esi,[_dc_source]
   mov  ebx,[_dc_x]
   lea  esi,[esi+eax+0x64]
