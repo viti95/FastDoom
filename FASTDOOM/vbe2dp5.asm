@@ -45,6 +45,14 @@ scalecalls:
 
 BEGIN_CODE_SECTION
 
+CODE_SYM_DEF R_PatchCenteryVBE2PotatoDirect
+  push ebx
+  mov  ebx,[_centery]
+  mov  eax,patchCentery+1
+  mov  [eax],ebx
+  pop  ebx
+  ret
+
 CODE_SYM_DEF R_DrawColumnPotatoVBE2SkyFullDirect
 	push		edi
 	push		esi
@@ -61,7 +69,9 @@ CODE_SYM_DEF R_DrawColumnPotatoVBE2SkyFullDirect
 
   mov  ebx,[_dc_x]
   MulScreenWidthEnd edi
-  sub  eax,[_centery]
+
+patchCentery:
+  sub  eax,0x12345678
   lea  edi,[edi+ebx*4]
 
   mov  esi,[_dc_source]

@@ -886,6 +886,10 @@ void R_PatchCode(void)
     R_PatchCenteryVBE2Low();
     R_PatchCenteryVBE2Potato();
 
+    R_PatchCenteryVBE2Direct();
+    R_PatchCenteryVBE2LowDirect();
+    R_PatchCenteryVBE2PotatoDirect();
+
     R_PatchFuzzColumnHighVBE2();
     R_PatchFuzzColumnLowVBE2();
     R_PatchFuzzColumnPotatoVBE2();
