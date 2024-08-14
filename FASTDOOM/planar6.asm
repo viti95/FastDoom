@@ -57,6 +57,18 @@ scalecalls:
 
 BEGIN_CODE_SECTION
 
+CODE_SYM_DEF R_PatchCenteryPlanarDirect
+  push ebx
+  mov  ebx,[_centery]
+  mov  eax,patchCentery1+1
+  mov  [eax],ebx
+  mov  eax,patchCentery2+1
+  mov  [eax],ebx
+  mov  eax,patchCentery3+1
+  mov  [eax],ebx
+  pop  ebx
+  ret
+
 CODE_SYM_DEF R_DrawColumnPotatoSkyFullDirect
 	push		edi
   push		ebx
@@ -72,8 +84,9 @@ CODE_SYM_DEF R_DrawColumnPotatoSkyFullDirect
   js   near doneps
 
   add  edi,[_destview]
-  
-  sub   eax,[_centery]
+
+patchCentery1:
+  sub   eax,0x12345678
 
   mov   esi,[_dc_source]
 
@@ -154,7 +167,8 @@ CODE_SYM_DEF R_DrawColumnLowSkyFullDirect
 
   mov   eax, ebx
 
-  sub   eax,[_centery]
+patchCentery2:
+  sub   eax,0x12345678
 
   mov   esi,[_dc_source]
   
@@ -242,7 +256,8 @@ CODE_SYM_DEF R_DrawColumnSkyFullDirect
   mov   eax,ebx
   add   edi,esi
 
-  sub   eax,[_centery]
+patchCentery3:
+  sub   eax,0x12345678
 
   mov   esi,[_dc_source]
   
