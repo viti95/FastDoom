@@ -94,7 +94,7 @@ boolean respawnparm; // checkparm of -respawn
 boolean fastparm;    // checkparm of -fast
 
 unsigned int limitram; // checkparm of -limitram
-unsigned int freeram; // checkparm of -freeram
+unsigned int freeram;  // checkparm of -freeram
 
 boolean flatSky;
 int invisibleRender;
@@ -565,12 +565,12 @@ void D_DoomLoop(void)
 
         switch (snd_MusicDevice) // check music track (looping)
         {
-            case snd_CD:
-                S_CheckCD();
-                break;
-            case snd_WAV:
-                S_CheckWAV();
-                break;
+        case snd_CD:
+            S_CheckCD();
+            break;
+        case snd_WAV:
+            S_CheckWAV();
+            break;
         }
 
         // Update display, next frame, with current state.
@@ -608,12 +608,12 @@ void D_DoomLoopBenchmark(void)
 
         switch (snd_MusicDevice) // check music track (looping)
         {
-            case snd_CD:
-                S_CheckCD();
-                break;
-            case snd_WAV:
-                S_CheckWAV();
-                break;
+        case snd_CD:
+            S_CheckCD();
+            break;
+        case snd_WAV:
+            S_CheckWAV();
+            break;
         }
 
         // Update display, next frame, with current state.
@@ -880,14 +880,17 @@ void D_RedrawTitle(void)
 
 void D_CheckFileSize(char *filename, long checksize)
 {
-    FILE *file = fopen(filename, "rb"); 
+    FILE *file = fopen(filename, "rb");
     long size = -1;
 
-    if (file != NULL) {
-        fseek(file, 0, SEEK_END); 
-        size = ftell(file);     
-        fclose(file);             
-    } else {
+    if (file != NULL)
+    {
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        fclose(file);
+    }
+    else
+    {
         I_Error("File %s could not be opened\n", filename);
     }
 
@@ -903,7 +906,7 @@ void D_CheckFileSize(char *filename, long checksize)
         printf("%c\n", selection);
         fflush(stdout);
 
-        if (selection == 110 || selection == 27) 
+        if (selection == 110 || selection == 27)
         {
             I_Error("Exiting...");
         }
@@ -1262,17 +1265,20 @@ unsigned char SelectIBMCGA(void)
 
 char demofile[13];
 
-int D_FileGetFirstInteger(const char* filename) {
+int D_FileGetFirstInteger(const char *filename)
+{
     char buffer[1024];
     int firstInteger = -1;
 
-    FILE* file = fopen(filename, "r");
+    FILE *file = fopen(filename, "r");
 
     if (file == NULL)
         return -1;
 
-    if (fgets(buffer, sizeof(buffer), file) != NULL) {
-        if (sscanf(buffer, "%u", &firstInteger) != 1) {
+    if (fgets(buffer, sizeof(buffer), file) != NULL)
+    {
+        if (sscanf(buffer, "%u", &firstInteger) != 1)
+        {
             firstInteger = -1;
         }
     }
@@ -1281,14 +1287,17 @@ int D_FileGetFirstInteger(const char* filename) {
     return firstInteger;
 }
 
-void D_GetListBenchFiles(void) {
+void D_GetListBenchFiles(void)
+{
     struct find_t ffblk;
     char search[20];
     unsigned int count = 0;
 
     // Get count
-    if (_dos_findfirst("BENCH\\*.BNC", _A_ARCH, &ffblk) == 0) {
-        do {
+    if (_dos_findfirst("BENCH\\*.BNC", _A_ARCH, &ffblk) == 0)
+    {
+        do
+        {
             count++;
         } while (_dos_findnext(&ffblk) == 0);
     }
@@ -1300,9 +1309,12 @@ void D_GetListBenchFiles(void) {
     count = 0;
 
     // Read files
-    if (_dos_findfirst("BENCH\\*.BNC", _A_ARCH, &ffblk) == 0) {
-        do {
-            if (!(ffblk.attrib & _A_SUBDIR)) {
+    if (_dos_findfirst("BENCH\\*.BNC", _A_ARCH, &ffblk) == 0)
+    {
+        do
+        {
+            if (!(ffblk.attrib & _A_SUBDIR))
+            {
                 strcpy(search, "BENCH\\");
                 strcat(search, ffblk.name);
                 benchmark_files[count] = Z_MallocUnowned(20 * sizeof(char), PU_STATIC);
@@ -1326,7 +1338,8 @@ void D_DoomMain(void)
     p = M_CheckParm("-limitram");
     if (p)
     {
-        if (p < myargc - 1) {
+        if (p < myargc - 1)
+        {
             limitram = atoi(myargv[p + 1]);
         }
     }
@@ -1334,7 +1347,8 @@ void D_DoomMain(void)
     p = M_CheckParm("-freeram");
     if (p)
     {
-        if (p < myargc - 1) {
+        if (p < myargc - 1)
+        {
             freeram = atoi(myargv[p + 1]);
         }
     }
@@ -1344,8 +1358,18 @@ void D_DoomMain(void)
     p = M_CheckParm("-iwad");
     if (p)
     {
+        char *src = myargv[p + 1];
+        char *dest = iwadfile;
+
         memset(iwadfile, 0, sizeof(iwadfile));
-        sprintf(iwadfile, "%s", myargv[p + 1]);
+        
+        while (*src != '\0')
+        {
+            *dest = tolower((unsigned char)*src);
+            src++;
+            dest++;
+        }
+        *dest = '\0';
     }
 
     IdentifyVersion();
@@ -1432,7 +1456,7 @@ void D_DoomMain(void)
 
     p = M_CheckParm("-benchmark");
 
-    if(p)
+    if (p)
     {
         benchmark = true;
         benchmark_commandline = true;
@@ -1441,13 +1465,13 @@ void D_DoomMain(void)
         sprintf(demofile, "%s", myargv[p + 2]);
         D_AddFile(demofile);
 
-        if(!strcmp(myargv[p + 1], "file"))
+        if (!strcmp(myargv[p + 1], "file"))
         {
             benchmark_total = D_FileGetFirstInteger(myargv[p + 3]);
             benchmark_type = 1;
             sprintf(benchmark_file, "%s", myargv[p + 3]);
         }
-        if(!strcmp(myargv[p + 1], "single"))
+        if (!strcmp(myargv[p + 1], "single"))
             benchmark_type = 0;
     }
 
@@ -1718,7 +1742,7 @@ void D_DoomMain(void)
         D_StartTitle();
         M_BenchmarkRunDemo();
 
-        if(benchmark_advanced)
+        if (benchmark_advanced)
             D_DoomLoopBenchmark();
         else
             D_DoomLoop();
