@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.9.9g (xx yyy zzzz)
+* Optimized rendering of non-scaled graphics (skybox and player sprite, only on 320x200 modes and screensize >= 10)
+* Added player sprite rendering display option (player weapon)
+* Fix issue #203. Now savegames are different for each IWAD
+* Fix issue on command line parameter "-iwad"
+
 ## 0.9.9f (27 Jul 2024)
 * Dreamblaster S2P support (MIDI through LPT)
 * New rendering options, now it's possible to draw walls and sprites untextured (single color)
