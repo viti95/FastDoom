@@ -542,7 +542,7 @@ void M_ReadSaveStrings(void)
 
     for (i = 0; i < load_end; i++)
     {
-        sprintf(name, SAVEGAMENAME "%d.dsg", i);
+        sprintf(name, savegamename, i);
 
         handle = open(name, O_RDONLY | 0, 0666);
         if (handle == -1)
@@ -655,7 +655,7 @@ void M_LoadSelect(int choice)
 {
     char name[256];
 
-    sprintf(name, SAVEGAMENAME "%d.dsg", choice);
+    sprintf(name, savegamename, choice);
     G_LoadGame(name);
     menuactive = 0;
 }

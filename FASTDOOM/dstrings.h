@@ -22,7 +22,16 @@
 #include "d_englsh.h"
 
 // Misc. other strings.
-#define SAVEGAMENAME "fdoomsv"
+//#define SAVEGAMENAME "fdoomsv%d.dsg"
+
+#define SAVEGAMENAME_DOOM1 "doom1sv%d.dsg"
+#define SAVEGAMENAME_DOOM "doomsv%d.dsg"
+#define SAVEGAMENAME_DOOMU "doomusv%d.dsg"
+#define SAVEGAMENAME_DOOM2 "doom2sv%d.dsg"
+#define SAVEGAMENAME_TNT "tntsv%d.dsg"
+#define SAVEGAMENAME_PLUT "plutsv%d.dsg"
+#define SAVEGAMENAME_FREEDOOM1 "fd1sv%d.dsg"
+#define SAVEGAMENAME_FREEDOOM2 "fd2sv%d.dsg"
 
 // QuitDOOM messages
 #define NUM_QUITMESSAGES 8

@@ -191,6 +191,7 @@ gamemission_t gamemission = doom;
 char basedefault[13] = "fdoom.cfg"; // default file
 char sbkfile[13] = "SYNTHGS.SBK";
 char iwadfile[13];
+char savegamename[14];
 
 void D_CheckNetGame(void);
 void D_ProcessEvents(void);
@@ -946,6 +947,7 @@ void LoadIWAD(int selection)
             gamemode = shareware;
             gamemission = doom;
             strcpy(iwadfile, "doom1.wad");
+            strcpy(savegamename, SAVEGAMENAME_DOOM1);
             D_CheckFileSize(iwadfile, DOOM1WADSIZE);
             D_AddFile("doom1.wad");
             return;
@@ -962,6 +964,7 @@ void LoadIWAD(int selection)
             gamemode = registered;
             gamemission = doom;
             strcpy(iwadfile, "doom.wad");
+            strcpy(savegamename, SAVEGAMENAME_DOOM);
             D_CheckFileSize(iwadfile, DOOMWADSIZE);
             D_AddFile("doom.wad");
             return;
@@ -978,6 +981,7 @@ void LoadIWAD(int selection)
             gamemode = retail;
             gamemission = doom;
             strcpy(iwadfile, "doomu.wad");
+            strcpy(savegamename, SAVEGAMENAME_DOOMU);
             D_CheckFileSize(iwadfile, ULTIMATEDOOMWADSIZE);
             D_AddFile("doomu.wad");
             return;
@@ -994,6 +998,7 @@ void LoadIWAD(int selection)
             gamemode = commercial;
             gamemission = doom2;
             strcpy(iwadfile, "doom2.wad");
+            strcpy(savegamename, SAVEGAMENAME_DOOM2);
             D_CheckFileSize(iwadfile, DOOM2WADSIZE);
             D_AddFile("doom2.wad");
             return;
@@ -1010,6 +1015,7 @@ void LoadIWAD(int selection)
             gamemode = commercial;
             gamemission = pack_plut;
             strcpy(iwadfile, "plutonia.wad");
+            strcpy(savegamename, SAVEGAMENAME_PLUT);
             D_CheckFileSize(iwadfile, PLUTONIAWADSIZE);
             D_AddFile("plutonia.wad");
             return;
@@ -1026,6 +1032,7 @@ void LoadIWAD(int selection)
             gamemode = commercial;
             gamemission = pack_tnt;
             strcpy(iwadfile, "tnt.wad");
+            strcpy(savegamename, SAVEGAMENAME_TNT);
             D_CheckFileSize(iwadfile, TNTWADSIZE);
             D_AddFile("tnt.wad");
             return;
@@ -1042,6 +1049,7 @@ void LoadIWAD(int selection)
             gamemode = retail;
             gamemission = doom;
             strcpy(iwadfile, "freedm1.wad");
+            strcpy(savegamename, SAVEGAMENAME_FREEDOOM1);
             D_AddFile("freedm1.wad");
             return;
         }
@@ -1057,6 +1065,7 @@ void LoadIWAD(int selection)
             gamemode = commercial;
             gamemission = doom2;
             strcpy(iwadfile, "freedm2.wad");
+            strcpy(savegamename, SAVEGAMENAME_FREEDOOM2);
             D_AddFile("freedm2.wad");
             return;
         }
@@ -1718,7 +1727,7 @@ void D_DoomMain(void)
     p = M_CheckParm("-loadgame");
     if (p && p < myargc - 1)
     {
-        sprintf(demofile, SAVEGAMENAME "%c.dsg", myargv[p + 1][0]);
+        sprintf(demofile, savegamename, myargv[p + 1][0]);
         G_LoadGame(demofile);
     }
 
