@@ -994,7 +994,7 @@ void G_DoSaveGame(void)
 
     int requiredmemsize;
 
-    sprintf(name, SAVEGAMENAME "%d.dsg", savegameslot);
+    sprintf(name, savegamename, savegameslot);
     description = savedescription;
 
     requiredmemsize = G_CalculateSaveGameSize();

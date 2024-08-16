@@ -245,6 +245,7 @@ extern char basedefault[13];
 extern char sbkfile[13];
 extern char iwadfile[13];
 extern char demofile[13];
+extern char savegamename[14];
 
 // wipegamestate can be set to -1
 //  to force a wipe on the next draw
