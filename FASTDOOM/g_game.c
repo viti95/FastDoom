@@ -65,6 +65,8 @@
 
 #include "options.h"
 
+#include "i_file.h"
+
 #define SAVESTRINGSIZE 24
 #define DEMOMARKER 0x80
 
@@ -1156,6 +1158,31 @@ void G_InitNew(skill_t skill,
     gameepisode = episode;
     gamemap = map;
     gameskill = skill;
+
+    // Load map names (and next one)
+    if (gamemode == commercial)
+	{
+		if (gamemission == pack_plut)
+		{
+            I_ReadTextLineFile("LEVELS\\PLUTONIA.TXT", gamemap - 1, currentlevelname, 40);
+            I_ReadTextLineFile("LEVELS\\PLUTONIA.TXT", gamemap, nextlevelname, 40);
+		}
+		else if (gamemission == pack_tnt)
+		{
+            I_ReadTextLineFile("LEVELS\\TNT.TXT", gamemap - 1, currentlevelname, 40);
+            I_ReadTextLineFile("LEVELS\\TNT.TXT", gamemap, nextlevelname, 40);
+		}
+		else
+		{
+            I_ReadTextLineFile("LEVELS\\DOOM2.TXT", gamemap - 1, currentlevelname, 40);
+            I_ReadTextLineFile("LEVELS\\DOOM2.TXT", gamemap, nextlevelname, 40);
+		}
+	}
+	else
+	{
+        I_ReadTextLineFile("LEVELS\\DOOM.TXT", (gameepisode - 1) * 9 + gamemap - 1, currentlevelname, 40);
+        I_ReadTextLineFile("LEVELS\\DOOM.TXT", (gameepisode - 1) * 9 + gamemap, nextlevelname, 40);
+	}
 
     viewactive = 1;
 

@@ -122,6 +122,9 @@ extern boolean bfgedition;
 extern gamemode_t gamemode;
 extern gamemission_t gamemission;
 
+extern char currentlevelname[40];
+extern char nextlevelname[40];
+
 // Nightmare mode flag, single player.
 extern boolean respawnmonsters;
 
@@ -282,10 +285,5 @@ extern ticcmd_t localcmds[BACKUPTICS];
 extern int maketic;
 
 extern int autorun;
-
-extern char *mapnames[];
-extern char *mapnames2[];
-extern char *mapnamesp[];
-extern char *mapnamest[];
 
 #endif

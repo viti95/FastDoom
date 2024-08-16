@@ -188,6 +188,9 @@ boolean bfgedition;
 gamemode_t gamemode = indetermined;
 gamemission_t gamemission = doom;
 
+char currentlevelname[40];
+char nextlevelname[40];
+
 char basedefault[13] = "fdoom.cfg"; // default file
 char sbkfile[13] = "SYNTHGS.SBK";
 char iwadfile[13];

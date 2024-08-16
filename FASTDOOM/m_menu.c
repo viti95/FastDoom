@@ -212,7 +212,6 @@ void M_ChangeMelting(int choice);
 void M_ChangeBusSpeed(int choice);
 void M_ChangeMono();
 void M_SizeDisplay(int choice);
-void M_StartGame(int choice);
 void M_Sound(int choice);
 void M_Display(int choice);
 void M_BenchmarkDemo1(int choice);
