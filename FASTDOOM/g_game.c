@@ -66,6 +66,7 @@
 #include "options.h"
 
 #include "i_file.h"
+#include "i_debug.h"
 
 #define SAVESTRINGSIZE 24
 #define DEMOMARKER 0x80
@@ -1081,11 +1082,29 @@ void G_DoNewGame(void)
 // The sky texture to be used instead of the F_SKY1 dummy.
 extern short skytexture;
 
+char levelsfile[21] = "LEVELS\\";
+
+#define levelfilepos 7
+
+void G_GetLevelsFileName(void)
+{
+    int length = strlen(iwadfile);
+    int position = levelfilepos;
+
+    memcpy((char *)(levelsfile+levelfilepos), iwadfile, 13);
+
+    levelsfile[length-3+levelfilepos] = 'T';
+    levelsfile[length-2+levelfilepos] = 'X';
+    levelsfile[length-1+levelfilepos] = 'T';
+}
+
+
 void G_InitNew(skill_t skill,
                int episode,
                int map)
 {
     int i;
+    int currentmapnum;
 
     if (paused)
     {
@@ -1159,30 +1178,17 @@ void G_InitNew(skill_t skill,
     gamemap = map;
     gameskill = skill;
 
-    // Load map names (and next one)
     if (gamemode == commercial)
-	{
-		if (gamemission == pack_plut)
-		{
-            I_ReadTextLineFile("LEVELS\\PLUTONIA.TXT", gamemap - 1, currentlevelname, 40);
-            I_ReadTextLineFile("LEVELS\\PLUTONIA.TXT", gamemap, nextlevelname, 40);
-		}
-		else if (gamemission == pack_tnt)
-		{
-            I_ReadTextLineFile("LEVELS\\TNT.TXT", gamemap - 1, currentlevelname, 40);
-            I_ReadTextLineFile("LEVELS\\TNT.TXT", gamemap, nextlevelname, 40);
-		}
-		else
-		{
-            I_ReadTextLineFile("LEVELS\\DOOM2.TXT", gamemap - 1, currentlevelname, 40);
-            I_ReadTextLineFile("LEVELS\\DOOM2.TXT", gamemap, nextlevelname, 40);
-		}
-	}
-	else
-	{
-        I_ReadTextLineFile("LEVELS\\DOOM.TXT", (gameepisode - 1) * 9 + gamemap - 1, currentlevelname, 40);
-        I_ReadTextLineFile("LEVELS\\DOOM.TXT", (gameepisode - 1) * 9 + gamemap, nextlevelname, 40);
-	}
+    {
+        currentmapnum = gamemap - 1;
+    }else{
+        currentmapnum = (gameepisode - 1) * 9 + gamemap - 1;
+    }
+
+    G_GetLevelsFileName();
+
+    I_ReadTextLineFile(levelsfile, currentmapnum, currentlevelname, 40);
+    I_ReadTextLineFile(levelsfile, currentmapnum + 1, nextlevelname, 40);
 
     viewactive = 1;
 
