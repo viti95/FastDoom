@@ -37,7 +37,7 @@
 
 #include "options.h"
 
-#include "i_text.h"
+#include "i_file.h"
 
 #if defined(TEXT_MODE)
 #include "i_text.h"
