@@ -37,6 +37,8 @@
 
 #include "options.h"
 
+#include "i_text.h"
+
 #if defined(TEXT_MODE)
 #include "i_text.h"
 #endif
@@ -59,47 +61,15 @@ byte F_CastResponder(void);
 void F_CastDrawer(void);
 void F_CastDrawerText(void);
 
-int F_GetFileSize(char *filename)
-{
-	int result;
-	FILE *fp;
-
-	fp = fopen(filename, "r");
-
-	if (fp == NULL)
-		return -1;
-
-	fseek(fp, 0L, SEEK_END);
-	result = ftell(fp);
-	fclose(fp);
-
-	return result;
-}
-
-int F_ReadTextFile(char *dest, char *filename, int size)
-{
-	FILE *fp;
-
-	fp = fopen(filename, "r");
-	if (fp == NULL)
-		return -1;
-
-	fread(dest, 1, size, fp);
-	fclose(fp);
-	dest[size] = '\0';
-
-	return 0;
-}
-
 void F_LoadFinaleText(char *filename)
 {
 	int size;
 
-	size = F_GetFileSize(filename);
+	size = I_GetFileSize(filename);
 
 	finaletext = (char *)Z_MallocUnowned(size + 1, PU_CACHE);
 	SetBytes(finaletext, '\0', size + 1);
-	F_ReadTextFile(finaletext, filename, size);
+	I_ReadTextFile(finaletext, filename, size);
 }
 
 //
