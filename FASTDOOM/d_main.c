@@ -541,6 +541,8 @@ void D_DoomLoop(void)
 
     while (1)
     {
+        frame_ticcount = ticcount;
+
         // process one or more tics
         if (singletics)
         {
@@ -589,6 +591,7 @@ void D_DoomLoopBenchmark(void)
 
     while (1)
     {
+        frame_ticcount = ticcount;
         start_time = mscount;
 
         // process one or more tics
