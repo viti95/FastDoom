@@ -1,0 +1,32 @@
+level 1: congo
+level 2: well of souls
+level 3: aztec
+level 4: caged
+level 5: ghost town
+level 6: baron's lair
+level 7: caughtyard
+level 8: realm
+level 9: abattoire
+level 10: onslaught
+level 11: hunted
+level 12: speed
+level 13: the crypt
+level 14: genesis
+level 15: the twilight
+level 16: the omen
+level 17: compound
+level 18: neurosphere
+level 19: nme
+level 20: the death domain
+level 21: slayer
+level 22: impossible mission
+level 23: tombstone
+level 24: the final frontier
+level 25: the temple of darkness
+level 26: bunker
+level 27: anti-christ
+level 28: the sewers
+level 29: odyssey of noises
+level 30: the gateway of hell
+level 31: cyberden
+level 32: go 2 it

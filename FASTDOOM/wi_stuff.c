@@ -367,47 +367,16 @@ void WI_drawLF(void)
 {
 	int y = WI_TITLEY;
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA)
-	char *titlecurrent;
-	char *titlenext;
-#endif
-
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA)
-	if (gamemode == commercial)
-	{
-		if (gamemission == pack_plut)
-		{
-			titlecurrent = mapnamesp[gamemap - 1];
-			titlenext = mapnamesp[gamemap];
-		}
-		else if (gamemission == pack_tnt)
-		{
-			titlecurrent = mapnamest[gamemap - 1];
-			titlenext = mapnamest[gamemap];
-		}
-		else
-		{
-			titlecurrent = mapnames2[gamemap - 1];
-			titlenext = mapnames2[gamemap];
-		}
-	}
-	else
-	{
-		titlecurrent = mapnames[(gameepisode - 1) * 9 + gamemap - 1];
-		titlenext = mapnames[(gameepisode - 1) * 9 + gamemap];
-	}
-#endif
-
 	// draw <LevelName>
 
 #if defined(MODE_T4025) || defined(MODE_T4050)
-	V_WriteTextDirect((320 - lnames[wbs->last]->width) / 16, y / 8, titlecurrent);
+	V_WriteTextDirect((320 - lnames[wbs->last]->width) / 16, y / 8, currentlevelname);
 #endif
 #if defined(MODE_T8025) || defined(MODE_MDA)
-	V_WriteTextDirect((320 - lnames[wbs->last]->width) / 8, y / 8, titlecurrent);
+	V_WriteTextDirect((320 - lnames[wbs->last]->width) / 8, y / 8, currentlevelname);
 #endif
 #if defined(MODE_T8050) || defined(MODE_T8043)
-	V_WriteTextDirect((320 - lnames[wbs->last]->width) / 8, y / 4, titlecurrent);
+	V_WriteTextDirect((320 - lnames[wbs->last]->width) / 8, y / 4, currentlevelname);
 #endif
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
   	V_DrawPatchModeCentered((320 - lnames[wbs->last]->width) / 2, y, lnames[wbs->last]);
@@ -439,36 +408,6 @@ void WI_drawLF(void)
 void WI_drawEL(void)
 {
 	int y = WI_TITLEY;
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA)
-	char *titlecurrent;
-	char *titlenext;
-#endif
-
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA)
-	if (gamemode == commercial)
-	{
-		if (gamemission == pack_plut)
-		{
-			titlecurrent = mapnamesp[gamemap - 1];
-			titlenext = mapnamesp[gamemap];
-		}
-		else if (gamemission == pack_tnt)
-		{
-			titlecurrent = mapnamest[gamemap - 1];
-			titlenext = mapnamest[gamemap];
-		}
-		else
-		{
-			titlecurrent = mapnames2[gamemap - 1];
-			titlenext = mapnames2[gamemap];
-		}
-	}
-	else
-	{
-		titlecurrent = mapnames[(gameepisode - 1) * 9 + gamemap - 1];
-		titlenext = mapnames[(gameepisode - 1) * 9 + gamemap];
-	}
-#endif
 
 // draw "Entering"
 #if defined(MODE_T4025) || defined(MODE_T4050)
@@ -491,13 +430,13 @@ void WI_drawEL(void)
 	y += (5 * lnames[wbs->next]->height) / 4;
 
 #if defined(MODE_T4025) || defined(MODE_T4050)
-	V_WriteTextDirect((320 - lnames[wbs->next]->width) / 16, y / 8, titlenext);
+	V_WriteTextDirect((320 - lnames[wbs->next]->width) / 16, y / 8, nextlevelname);
 #endif
 #if defined(MODE_T8025) || defined(MODE_MDA)
-	V_WriteTextDirect((320 - lnames[wbs->next]->width) / 8, y / 8, titlenext);
+	V_WriteTextDirect((320 - lnames[wbs->next]->width) / 8, y / 8, nextlevelname);
 #endif
 #if defined(MODE_T8050) || defined(MODE_T8043)
-	V_WriteTextDirect((320 - lnames[wbs->next]->width) / 8, y / 4, titlenext);
+	V_WriteTextDirect((320 - lnames[wbs->next]->width) / 8, y / 4, nextlevelname);
 #endif
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
   	V_DrawPatchModeCentered((320 - lnames[wbs->next]->width) / 2, y, lnames[wbs->next]);

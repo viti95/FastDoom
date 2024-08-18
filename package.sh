@@ -15,6 +15,7 @@ cp synthgs.sbk PKG/
 cp BENCH.BAT PKG/
 cp -r INTER PKG/INTER
 cp -r BENCH PKG/BENCH
+cp -R LEVELS PKG/LEVELS
 cp EXE/* PKG
 
 versionstring=$(grep "#define FDOOMVERSION" FASTDOOM/version.h)

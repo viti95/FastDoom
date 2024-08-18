@@ -1,0 +1,32 @@
+level 1: entryway
+level 2: underhalls
+level 3: the gantlet
+level 4: the focus
+level 5: the waste tunnels
+level 6: the crusher
+level 7: dead simple
+level 8: tricks and traps
+level 9: the pit
+level 10: refueling base
+level 11: 'o' of destruction!
+level 12: the factory
+level 13: downtown
+level 14: the inmost dens
+level 15: industrial zone
+level 16: suburbs
+level 17: tenements
+level 18: the courtyard
+level 19: the citadel
+level 20: gotcha!
+level 21: nirvana
+level 22: the catacombs
+level 23: barrels o' fun
+level 24: the chasm
+level 25: bloodfalls
+level 26: the abandoned mines
+level 27: monster condo
+level 28: the spirit world
+level 29: the living end
+level 30: icon of sin
+level 31: wolfenstein
+level 32: grosse

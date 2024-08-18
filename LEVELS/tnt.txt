@@ -1,0 +1,32 @@
+level 1: system control
+level 2: human bbq
+level 3: power control
+level 4: wormhole
+level 5: hanger
+level 6: open season
+level 7: prison
+level 8: metal
+level 9: stronghold
+level 10: redemption
+level 11: storage facility
+level 12: crater
+level 13: nukage processing
+level 14: steel works
+level 15: dead zone
+level 16: deepest reaches
+level 17: processing area
+level 18: mill
+level 19: shipping/respawning
+level 20: central processing
+level 21: administration center
+level 22: habitat
+level 23: lunar mining project
+level 24: quarry
+level 25: baron's den
+level 26: ballistyx
+level 27: mount pain
+level 28: heck
+level 29: river styx
+level 30: last call
+level 31: pharaoh
+level 32: caribbean

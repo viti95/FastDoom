@@ -1,0 +1,36 @@
+E1M1: Outer Prison
+E1M2: Communications Center
+E1M3: Waste Disposal
+E1M4: Supply Depot
+E1M5: Armory
+E1M6: Training Facility
+E1M7: Xenobiotic Materials Lab
+E1M8: Outpost Quarry
+E1M9: Nutrient Recycling
+E2M1: Elemental Gate
+E2M2: Shifter
+E2M3: Reclaimed Facilities
+E2M4: Flooded Installation
+E2M5: Underground Hub
+E2M6: Hidden Sector
+E2M7: Control Complex
+E2M8: Containment Cell
+E2M9: Fortress 31
+E3M1: Land of the Lost
+E3M2: Geothermal Tunnels
+E3M3: Sacrificial Bastion
+E3M4: Oblation Temple
+E3M5: Infernal Hallows
+E3M6: Igneous Intrusion
+E3M7: No Regrets
+E3M8: Ancient Lair
+E3M9: Acquainted With Grief
+E4M1: Maintenance Area
+E4M2: Research Complex
+E4M3: Central Computing
+E4M4: Hydroponic Facility
+E4M5: Engineering Station
+E4M6: Command Center
+E4M7: Waste Treatment
+E4M8: Launch Bay
+E4M9: Operations

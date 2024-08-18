@@ -1,0 +1,32 @@
+MAP01: Hydroelectric Plant
+MAP02: Filtration Tunnels
+MAP03: Crude Processing Center
+MAP04: Containment Bay
+MAP05: Sludge Burrow
+MAP06: Janus Terminal
+MAP07: Logic Gate
+MAP08: Astronomy Complex
+MAP09: Datacenter
+MAP10: Deadly Outlands
+MAP11: Dimensional Rift Observatory
+MAP12: Railroads
+MAP13: Station Earth
+MAP14: Nuclear Zone
+MAP15: Hostile Takeover
+MAP16: Urban Jungle
+MAP17: City Capitol
+MAP18: Aquatics Lab
+MAP19: Sewage Control
+MAP20: Blood Ember Fortress
+MAP21: Under Realm
+MAP22: Remanasu
+MAP23: Underground Facility
+MAP24: Abandoned Teleporter Lab
+MAP25: Persistence of Memory
+MAP26: Dark Depths
+MAP27: Palace of Red
+MAP28: Grim Redoubt
+MAP29: Melting Point
+MAP30: Jaws of Defeat
+MAP31: Be Quiet
+MAP32: Not Sure

@@ -108,6 +108,7 @@ GLOBOBJS = \
  i_main.obj \
  i_ibm.obj \
  i_sound.obj \
+ i_file.obj \
  linearh.obj \
  linearh2.obj \
  linearh3.obj \

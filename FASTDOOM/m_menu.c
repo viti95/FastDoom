@@ -212,7 +212,6 @@ void M_ChangeMelting(int choice);
 void M_ChangeBusSpeed(int choice);
 void M_ChangeMono();
 void M_SizeDisplay(int choice);
-void M_StartGame(int choice);
 void M_Sound(int choice);
 void M_Display(int choice);
 void M_BenchmarkDemo1(int choice);
@@ -2334,13 +2333,7 @@ void M_WriteText(int x, int y, char *string)
 //
 // M_Responder
 //
-const char gammamsg[5][26] =
-    {
-        GAMMALVL0,
-        GAMMALVL1,
-        GAMMALVL2,
-        GAMMALVL3,
-        GAMMALVL4};
+char gammamsg[25];
 
 byte M_Responder(void)
 {
@@ -2489,10 +2482,18 @@ byte M_Responder(void)
             M_QuitDOOM(0);
             return 1;
         case KEY_F11: // gamma toggle
+
+            memset(gammamsg, 0, sizeof(gammamsg));
+
             usegamma++;
-            if (usegamma > 4)
+            if (usegamma > 4){
                 usegamma = 0;
-            players.message = (char *)gammamsg[usegamma];
+                sprintf(gammamsg, "Gamma correction OFF");
+            }else{
+                sprintf(gammamsg, "Gamma correction level %d", usegamma);
+            }
+
+            players.message = (char *)gammamsg;
             I_ProcessPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
             I_SetPalette(0);
             return 1;
