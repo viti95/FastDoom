@@ -41,6 +41,7 @@
 #include "doomstat.h"
 #include "ns_inter.h"
 #include "ns_cd.h"
+#include "i_debug.h"
 
 #include "am_map.h"
 
@@ -49,7 +50,6 @@
 #include "options.h"
 
 #include "math.h"
-
 
 #if defined(MODE_CGA_AFH)
 #include "i_cgaafh.h"
@@ -566,28 +566,48 @@ void I_UpdateNoBlit(void)
 
 extern int screenblocks;
 
+#define fps_storage_size 8
+unsigned int stored_fps[fps_storage_size];
+unsigned int fps_array_pos = 0;
+
 void I_CalculateFPS(void)
 {
-    static unsigned int fps_counter, fps_starttime, fps_nextcalculation;
+    static unsigned int fps_counter, fps_starttime, fps_nextcalculation, average_fps, smoothness;
     unsigned int opt1, opt2;
+    unsigned int current_fps;
+    unsigned int total;
+    unsigned int i;
 
     if (fps_counter == 0)
-    {
         fps_starttime = ticcount;
-    }
 
     fps_counter++;
 
-    // store a value and/or draw when data is ok:
-    if (fps_counter > (TICRATE * 2) && fps_nextcalculation < ticcount)
+    opt2 = ticcount - fps_starttime;
+
+    if (opt2 != 0)
     {
-        // in case of a very fast system, this will limit the sampling
-        // minus 1!, exactly 35 FPS when measeraring for a longer time.
         opt1 = 35 * 10 * (fps_counter - 1);
-        opt2 = ticcount - fps_starttime;
-        fps = opt1 / opt2;
-        fps_nextcalculation = ticcount + 12;
-        fps_counter = 0; // flush old data
+        current_fps = opt1 / opt2;
+
+        if (current_fps > 350)
+            current_fps = 350;
+
+        fps_counter = 0;
+
+        stored_fps[fps_array_pos] = current_fps;
+
+        total = 0;
+        for (i = 0; i < fps_storage_size; i++)
+        {
+            total += stored_fps[i];
+        }
+
+        fps = total / fps_storage_size;
+
+        fps_array_pos++;
+        if (fps_array_pos == fps_storage_size)
+            fps_array_pos = 0;
     }
 }
 
@@ -1105,18 +1125,24 @@ byte *I_ZoneBase(int *size)
 
     printf("\nAvailable DPMI memory: %d Kb\n", heap >> 10);
 
-    if (limitram && limitram <= heap) {
+    if (limitram && limitram <= heap)
+    {
         heap = limitram * 1024;
-    } else if (freeram && (heap - freeram) > 0) {
+    }
+    else if (freeram && (heap - freeram) > 0)
+    {
         heap -= freeram * 1024; // leave N free ram
-    } else {
+    }
+    else
+    {
         heap -= 0x20000; // Leave 128Kb free by default
     }
 
     do
     {
         ptr = malloc(heap);
-        if (!ptr) heap -= 0x4000; // try again with 16Kb less
+        if (!ptr)
+            heap -= 0x4000; // try again with 16Kb less
     } while (!ptr);
 
     printf("Zone memory: %d Kb\n", heap >> 10);
@@ -1145,7 +1171,6 @@ void *I_DosMemAlloc(unsigned long size)
 
     return ((void *)((Regs.x.eax & 0xFFFF) << 4));
 }
-
 
 //
 // I_AllocLow
