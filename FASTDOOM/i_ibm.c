@@ -569,6 +569,7 @@ extern int screenblocks;
 #define fps_storage_size 16
 unsigned int stored_fps[fps_storage_size];
 unsigned int fps_array_pos = 0;
+unsigned int frame_ticcount;
 
 void I_CalculateFPS(void)
 {
@@ -579,11 +580,11 @@ void I_CalculateFPS(void)
     unsigned int i;
 
     if (fps_counter == 0)
-        fps_starttime = ticcount;
+        fps_starttime = frame_ticcount;
 
     fps_counter++;
 
-    opt2 = ticcount - fps_starttime;
+    opt2 = frame_ticcount - fps_starttime;
 
     if (opt2 != 0)
     {
