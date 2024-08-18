@@ -566,7 +566,7 @@ void I_UpdateNoBlit(void)
 
 extern int screenblocks;
 
-#define fps_storage_size 8
+#define fps_storage_size 16
 unsigned int stored_fps[fps_storage_size];
 unsigned int fps_array_pos = 0;
 
@@ -589,9 +589,6 @@ void I_CalculateFPS(void)
     {
         opt1 = 35 * 10 * (fps_counter - 1);
         current_fps = opt1 / opt2;
-
-        if (current_fps > 350)
-            current_fps = 350;
 
         fps_counter = 0;
 
