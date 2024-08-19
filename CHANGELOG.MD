@@ -5,6 +5,9 @@
 * Added player sprite rendering display option (player weapon)
 * Fix issue #203. Now savegames are different for each IWAD
 * Fix issue on command line parameter "-iwad"
+* Faster update rate for the onscreen FPS counter (thanks for the idea @tigrouind)
+* Reduced memory usage
+* Fixed map names for FreeDoom (now map names are stored in the folder "LEVELS")
 
 ## 0.9.9f (27 Jul 2024)
 * Dreamblaster S2P support (MIDI through LPT)
