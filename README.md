@@ -51,19 +51,34 @@ https://user-images.githubusercontent.com/8323882/147228550-bf93cc50-3c92-4a7a-b
 
 ## Build instructions (FastDOOM)
 
-1) Install Open Watcom C version 2.0
-2) Install NASM
-3) Install DOS/32A
-4) Add Watcom's bin folder (binnt on Windows, binw on DOS) to the PATH.
-5) Run makeall.bat
+Requirements: Linux or WSL2 on Windows.
+
+1. Install OpenWatcom v2, NASM, GNU Make and DOSBox-X
+2. Execute `source env.sh`
+3. Build:
+    - Single executable: `build.sh <executable> <parameters>` Where: "executable" is the executable name (fdoom.exe, fdoomega.exe, ...) and "parameters" can be one of these:
+        * "-clean": cleans all generated OBJs, 
+        * "-stub": adds the DOS/32 stub, 
+        * "-debug": generates debugging exectable, needs dbgcfg.h file to be adjusted to your needs
+    - All the executables + automatic DOS/32 stubs: `buildall.sh`
+    - Generate a full release package (ZIP): `package.sh`
+
+Example to build a fresh FastDoom executable ready to test on real hardware:
+
+```
+./source env.sh
+./build.sh fdoom.exe -clean -stub
+```
 
 ## Build instructions (FDSETUP)
 
-1) Install Borland C++ 4.52 (Windows 3.1, Windows 9x)
-2) Install Laughing Dog Screen Maker 1.14 (MS-DOS)
-3) Run .\FDSETUP\SCREENS\MAKE.BAT (MS-DOS)
-4) Open setup.ide project in Borland C++ IDE
-5) Build the project
+Requirements: Windows 3.1 or Windows 9x
+
+1. Install Borland C++ 4.52
+2. Install Laughing Dog Screen Maker 1.14
+3. Run .\FDSETUP\SCREENS\MAKE.BAT (MS-DOS)
+4. Open setup.ide project in Borland C++ IDE
+5. Build the project
 
 ## Contributors
 
