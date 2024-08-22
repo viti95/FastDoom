@@ -63,7 +63,7 @@ Requirements: Linux or WSL2 on Windows.
     - All the executables + automatic DOS/32 stubs: `buildall.sh`
     - Generate a full release package (ZIP): `package.sh`
 
-Example to build a fresh FastDoom executable ready to test on real hardware:
+Example to build a fresh FastDoom executable ready to use on real hardware:
 
 ```
 ./source env.sh
