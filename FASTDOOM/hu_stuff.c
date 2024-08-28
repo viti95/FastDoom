@@ -150,7 +150,7 @@ void HU_DrawScreenFPS(void)
 
 void HU_DrawDebugCard2DigitsFPS(void)
 {
-    unsigned int outfps = fps / 10;
+    unsigned int outfps = fps;
     unsigned int outval = 0;
     unsigned int counter = 0;
 
@@ -169,7 +169,7 @@ void HU_DrawDebugCard2DigitsFPS(void)
 
 void HU_DrawDebugCard4DigitsFPS(void)
 {
-    unsigned int outfps = fps / 10;
+    unsigned int outfps = fps;
     unsigned int outval = 0;
     unsigned int counter = 0;
     int port = debugCardPort;
