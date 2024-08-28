@@ -22,5 +22,3 @@ extern int updatestate;
 extern void I_TimerISR(task *task);
 extern void I_TimerMS(task *task);
 extern void *I_DosMemAlloc(unsigned long size);
-
-extern unsigned int frame_ticcount;
