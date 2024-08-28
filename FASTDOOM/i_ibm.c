@@ -603,9 +603,9 @@ void I_CalculateFPS(void)
     fps_size++;
 
     #ifdef HIGH_PRECISION_FPS
-    fps = fps_sum == 0 ? 0 : (TIMER_RATE * 10 * fps_size) / fps_sum;
+    fps = fps_sum == 0 ? 0 : (TIMER_RATE * fps_size) / fps_sum;
     #else
-    fps = 10 * fps_size;
+    fps = fps_size;
     #endif
 }
 
