@@ -4,7 +4,6 @@
 #include "options.h"
 
 extern unsigned int ticcount_hr;
-extern unsigned int frame_ticcount;
 extern unsigned int ticcount;
 extern unsigned int fps;
 
@@ -27,4 +26,3 @@ extern void *I_DosMemAlloc(unsigned long size);
 void I_StartupTimer(void);
 void I_ShutdownTimer(void);
 void I_SetHrTimerEnabled(boolean enabled);
-

@@ -5,7 +5,7 @@
 * Added player sprite rendering display option (player weapon)
 * Fix issue #203. Now savegames are different for each IWAD
 * Fix issue on command line parameter "-iwad"
-* Faster update rate for the onscreen FPS counter (thanks for the idea @tigrouind)
+* Faster update rate for the onscreen FPS counter (@tigrouind)
 * Reduced memory usage
 * Fixed map names for FreeDoom (now map names are stored in the folder "LEVELS")
 

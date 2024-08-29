@@ -547,8 +547,6 @@ void D_DoomLoop(void)
 
     while (1)
     {
-        frame_ticcount = ticcount;
-
         // process one or more tics
         if (singletics)
         {
@@ -610,8 +608,7 @@ void D_DoomLoopBenchmark(void)
                             // TODO rdtsc for later CPUs?
     while (1)
     {
-        frame_ticcount = ticcount;
-        start_time = ticcount;
+        start_time = mscount;
 
         if (uncappedFPS)
         {

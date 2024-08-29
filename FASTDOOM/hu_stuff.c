@@ -102,7 +102,7 @@ void HU_Start(void)
 
     // [JN] Create the FPS widget
     HUlib_initTextLine(&w_fps,
-                       SCREENWIDTH - 48, HU_MSGY,
+                       SCREENWIDTH - 24, HU_MSGY,
                        hu_font,
                        HU_FONTSTART);
 
@@ -118,15 +118,15 @@ void HU_Start(void)
 
 void HU_DrawScreenFPS(void)
 {
-    static char str[16];
+    static char str[4];
     char *f;
-    int fpswhole, fpsfrac, tmp;
-    fpswhole = Div10(fps);
-    fpsfrac = fps - Mul10(fpswhole);
+    int fpswhole, tmp;
+    fpswhole = fps;
+
     f = str + sizeof(str) - 1;
+
     *f-- = '\0';          // NULL terminate
-    *f-- = '0' + fpsfrac; // Decimal digit
-    *f = '.';             // dot
+
     // Manual simple unsigned itoa for the whole part
     while (1)
     {
@@ -136,6 +136,7 @@ void HU_DrawScreenFPS(void)
             break;
         fpswhole = tmp;
     }
+
     HUlib_clearTextLine(&w_fps);
     while (*f)
     {
@@ -149,7 +150,7 @@ void HU_DrawScreenFPS(void)
 
 void HU_DrawDebugCard2DigitsFPS(void)
 {
-    unsigned int outfps = fps / 10;
+    unsigned int outfps = fps;
     unsigned int outval = 0;
     unsigned int counter = 0;
 
@@ -168,7 +169,7 @@ void HU_DrawDebugCard2DigitsFPS(void)
 
 void HU_DrawDebugCard4DigitsFPS(void)
 {
-    unsigned int outfps = fps / 10;
+    unsigned int outfps = fps;
     unsigned int outval = 0;
     unsigned int counter = 0;
     int port = debugCardPort;
