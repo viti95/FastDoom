@@ -68,7 +68,6 @@
 #include "i_file.h"
 #include "i_debug.h"
 
-#include "i_log.h"
 #include "i_debug.h"
 
 #define SAVEGAMESIZE 0x2c000

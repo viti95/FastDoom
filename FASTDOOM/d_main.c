@@ -608,7 +608,7 @@ void D_DoomLoopBenchmark(void)
                             // TODO rdtsc for later CPUs?
     while (1)
     {
-        start_time = mscount;
+        start_time = ticcount;
 
         if (uncappedFPS)
         {
