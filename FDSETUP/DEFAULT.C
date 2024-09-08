@@ -73,7 +73,7 @@ default_t defaults[] =
 		{"debugCardPort", &debugCardPort, 0x80},
 		{"debugCardReverse", &debugCardReverse, 0},
 		{"busSpeed", &busSpeed, 0},
-    {"uncappedFPS", &uncappedFPS, 0},
+    	{"uncappedFPS", &uncappedFPS, 0},
 		{"flatsky", &flatSky, 0},
 		{"near", &nearSprites, 0},
 		{"nomelt", &noMelt, 0},

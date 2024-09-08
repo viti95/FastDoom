@@ -110,6 +110,7 @@ boolean nearSprites;
 boolean monoSound;
 boolean noMelt;
 boolean uncappedFPS;
+boolean highResTimer;
 
 boolean reverseStereo;
 
@@ -550,7 +551,7 @@ void D_DoomLoop(void)
         // process one or more tics
         if (singletics)
         {
-            if (uncappedFPS) {
+            if (highResTimer) {
                // This allows us to benchmark the impact of the interpolation
                // logic on the render code
                D_SetupInterpolation();
@@ -592,7 +593,7 @@ void D_DoomLoop(void)
         // frame updates since they may be interpolated. However,
         // with singletics we don't invoke TryRunTics and so we
         // need to update the display here.
-        if (!uncappedFPS || singletics) {
+        if (!highResTimer || singletics) {
           D_Display();
         }
     }
@@ -610,7 +611,7 @@ void D_DoomLoopBenchmark(void)
     {
         start_time = ticcount;
 
-        if (uncappedFPS)
+        if (highResTimer)
         {
             D_SetupInterpolation();
             interpolation_weight = 0x10000;

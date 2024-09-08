@@ -490,6 +490,15 @@ void G_Ticker(void)
         case ga_nothing:
             break;
         }
+
+        if (uncappedFPS)
+        {
+            highResTimer = gamestate == GS_LEVEL;
+        } else {
+            highResTimer = false;
+        }
+
+        I_SetHrTimerEnabled(highResTimer);  
     }
 
     // get commands, check consistancy,

@@ -891,7 +891,15 @@ void I_ShutdownTimer(void)
   TS_Shutdown();
 }
 
+int currentTimer = -1;
+
 void I_SetHrTimerEnabled(int enabled) {
+
+  if (currentTimer == enabled)
+    return;
+
+  currentTimer = enabled;
+
   if (tsm_task) {
       TS_Terminate(tsm_task);
   }
@@ -904,10 +912,11 @@ void I_SetHrTimerEnabled(int enabled) {
     tsm_task = TS_ScheduleTask(I_TimerISR, 35, 1, NULL);
   }
   TS_Dispatch();
+  
 }
 
 void I_StartupTimer(void) {
-  I_SetHrTimerEnabled(uncappedFPS);
+  I_SetHrTimerEnabled(false);
 }
 
 

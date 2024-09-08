@@ -2165,7 +2165,16 @@ void I_SetHrTimerEnabled(int enabled);
 void M_ChangeUncappedFPS(int choice)
 {
     uncappedFPS = !uncappedFPS;
-    I_SetHrTimerEnabled(uncappedFPS);
+
+    if (uncappedFPS) 
+    {
+        highResTimer = gamestate == GS_LEVEL;
+    } else {
+        highResTimer = false;
+    }
+
+    I_SetHrTimerEnabled(highResTimer);
+
     players.message = uncappedFPS ? "UNCAPPED FPS" : "CAPPED FPS";
 }
 

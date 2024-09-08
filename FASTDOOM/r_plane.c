@@ -295,7 +295,7 @@ visplane_t *R_FindPlane(fixed_t height, fixed_t prevheight, int picnum, int ligh
         return check;
 
     lastvisplane++;
-    if (uncappedFPS) {
+    if (highResTimer) {
       check->height = FixedInterpolate(prevheight, height, interpolation_weight);
     } else {
       check->height = height;

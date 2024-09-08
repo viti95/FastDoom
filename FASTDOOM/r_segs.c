@@ -2293,7 +2293,7 @@ void R_StoreWallRange(int start,
 	fixed_t backsector_floorheight;
 	fixed_t backsector_ceilingheight;
 
-	if (uncappedFPS) {
+	if (highResTimer) {
 		frontsector_floorheight = FixedInterpolate(frontsector->prevfloorheight, frontsector->floorheight, interpolation_weight);
 		frontsector_ceilingheight = FixedInterpolate(frontsector->prevceilingheight, frontsector->ceilingheight, interpolation_weight);
 		backsector_floorheight = FixedInterpolate(backsector->prevfloorheight, backsector->floorheight, interpolation_weight);

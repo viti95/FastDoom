@@ -2874,7 +2874,7 @@ void R_SetupFrame(void)
 {
     int i;
 
-    if (uncappedFPS)
+    if (highResTimer)
     {
       viewx = FixedInterpolate(players_mo->prevx, players_mo->x, interpolation_weight);
       viewy = FixedInterpolate(players_mo->prevy, players_mo->y, interpolation_weight);

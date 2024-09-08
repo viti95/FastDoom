@@ -286,7 +286,7 @@ void TryRunTicsUncapped(void)
 
 void TryRunTics(void)
 {
-	if (uncappedFPS && !singletics) {
+	if (highResTimer && !singletics) {
 		TryRunTicsUncapped();
 	} else {
 		TryRunTicsCapped();
