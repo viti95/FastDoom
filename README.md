@@ -6,6 +6,7 @@ Doom port for DOS, based on PCDoom by @nukeykt. The goal of this port is to make
 * Added FPS ingame viewer
 * Added FPS calculation after timedemo runs
 * Added option to render visplanes (ceiling and floors) without textures
+* Added option to render walls without textures
 * Added option to render Spectres and invisible objects like real transparent objects (harder to see, a little faster to render)
 * Added option to render sky as a flat fixed color
 * Added option to render Spectre and invisible objects like the Sega Saturn port did
@@ -25,7 +26,7 @@ Doom port for DOS, based on PCDoom by @nukeykt. The goal of this port is to make
 * Lot's of optimizations to make the game run faster / smoother
 * Removed low memory limit (may cause crashes with low RAM)
 * New detail level: Potato. It renders the full scene with a quarter width resolution (max 80x200). Much faster rendering, specially on 386 cpu's and slow 8-bit VGA ISA cards.
-* New option to allow more than 8Mb of memory allocation. Enabled with "-ram"
+* Better use of system RAM (full memory allocation)
 * Removed network gaming support
 * Removed joystick support
 * Removed Y mouse movement (move forward/backwards)
@@ -33,9 +34,10 @@ Doom port for DOS, based on PCDoom by @nukeykt. The goal of this port is to make
 * Added mono sound support
 * Replaced DOS/4GW with DOS/32A providing a good speedup!
 * New setup program
-* New video modes (Mode 13h, MDA, CGA, EGA, Hercules, Text modes, VESA 2.0, Plantronics Colorplus, Sigma Color 400)
+* New video modes (Mode 13h, MDA, CGA, EGA, Hercules, Text modes, VESA 2.0, Plantronics Colorplus, Sigma Color 400, Hercules InColor)
 * Advanced benchmark support
 * Uncapped FPS mode support (frame interpolation, more than 35 fps)
+* HiRes VESA video modes support
 
 ## DEMO
 
