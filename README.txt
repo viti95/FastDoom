@@ -11,7 +11,7 @@
 
  Version
  -------
- 0.9.9g
+ 1.0.0
 
  About
  -----
@@ -221,6 +221,8 @@
  -pentium => Use Intel Pentium codepath
  -limitram 32768 => Limit maximum memory to 32MB
  -freeram 128 => Leaves 128 KB free
+ -uncapped => Enable uncapped FPS mode (>35 fps)
+ -capped => Disable uncapped FPS mode (max 35 fps)
  
  Limitations / Known bugs
  ------------------------
