@@ -157,7 +157,15 @@ void M_SetBusSpeed(boolean value)
 void M_SetUncapped(boolean value)
 {
     uncappedFPS = value;
-    I_SetHrTimerEnabled(uncappedFPS);
+    
+    if (uncappedFPS)
+    {
+        highResTimer = gamestate == GS_LEVEL;
+    } else {
+        highResTimer = false;
+    }
+
+    I_SetHrTimerEnabled(highResTimer);
 }
 
 void M_SetSizeDisplay(int value)
@@ -274,15 +282,21 @@ void M_ChangeValueFile(unsigned int position, char *token)
         if (M_CheckValue(token, "fps"))
             M_SetShowFPS(true);
         break;
-    // Melting
+    // Uncapped FPS
     case 10:
+        if (M_CheckValue(token, "capped"))
+            M_SetUncapped(false);
+        if (M_CheckValue(token, "uncapped"))
+            M_SetUncapped(true);
+    // Melting
+    case 11:
         if (M_CheckValue(token, "nomelt"))
             M_SetNoMelting(true);
         if (M_CheckValue(token, "melt"))
             M_SetNoMelting(false);
         break;
     // CPU
-    case 11:
+    case 12:
         if (M_CheckValue(token, "386sx"))
             M_SetCPU(INTEL_386SX);
         if (M_CheckValue(token, "386dx"))
@@ -303,7 +317,7 @@ void M_ChangeValueFile(unsigned int position, char *token)
             M_SetCPU(UMC_GREEN_486);
         break;
     // Bus Speed
-    case 12:
+    case 13:
         if (M_CheckValue(token, "slow"))
             M_SetBusSpeed(1);
         if (M_CheckValue(token, "fast"))

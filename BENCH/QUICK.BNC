@@ -1,4 +1,4 @@
 3
-high,7,default,default,default,default,default,default,far,nofps,nomelt,i486,fast
-low,7,default,default,default,default,default,default,far,nofps,nomelt,i486,fast
-potato,7,default,default,default,default,default,default,far,nofps,nomelt,i486,fast
+high,7,default,default,default,default,default,default,far,nofps,capped,nomelt,i486,fast
+low,7,default,default,default,default,default,default,far,nofps,capped,nomelt,i486,fast
+potato,7,default,default,default,default,default,default,far,nofps,capped,nomelt,i486,fast
