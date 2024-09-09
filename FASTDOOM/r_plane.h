@@ -56,7 +56,7 @@ void R_DrawSkyFlat(visplane_t *pl);
 void R_DrawSkyFlatPlanar(visplane_t *pl);
 void R_DrawSkyFlatPlanarLow(visplane_t *pl);
 
-visplane_t * R_FindPlane(fixed_t height, int picnum, int lightlevel);
+visplane_t * R_FindPlane(fixed_t height, fixed_t prevheight, int picnum, int lightlevel);
 visplane_t * R_CheckPlane(visplane_t *pl, int start, int stop);
 
 #endif

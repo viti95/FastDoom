@@ -65,4 +65,7 @@ enum CGA_MODEL
 };
 #endif
 
+// Called before G_Ticker when uncappedFPS is set to copy animation state
+// so that we can interpolate between tics
+void D_SetupInterpolation(void);
 #endif

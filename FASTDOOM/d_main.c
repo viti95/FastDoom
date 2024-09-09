@@ -109,6 +109,8 @@ boolean debugCardReverse;
 boolean nearSprites;
 boolean monoSound;
 boolean noMelt;
+boolean uncappedFPS;
+boolean highResTimer;
 
 boolean reverseStereo;
 
@@ -248,6 +250,10 @@ gamestate_t wipegamestate = GS_DEMOSCREEN;
 extern byte setsizeneeded;
 extern int showMessages;
 
+
+// Returns whether a frame was drawn. This is used to determine whether to
+// generate a gametic in interpolation mode because we can't deliver
+// a frame in time before we need to generate the next gametic
 void D_Display(void)
 {
     static byte viewactivestate = 0;
@@ -261,6 +267,7 @@ void D_Display(void)
     boolean done;
     boolean wipe;
     boolean redrawsbar;
+
 
     // change the view size if needed
     if (setsizeneeded)
@@ -544,6 +551,12 @@ void D_DoomLoop(void)
         // process one or more tics
         if (singletics)
         {
+            if (highResTimer) {
+               // This allows us to benchmark the impact of the interpolation
+               // logic on the render code
+               D_SetupInterpolation();
+               interpolation_weight = 0x10000;
+            }
             I_StartTic();
             D_ProcessEvents();
             G_BuildTiccmd(&localcmds[maketic & (BACKUPTICS - 1)]);
@@ -575,9 +588,14 @@ void D_DoomLoop(void)
             S_CheckWAV();
             break;
         }
-
         // Update display, next frame, with current state.
-        D_Display();
+        // If we are in uncapped mode, TryRunTics handles all
+        // frame updates since they may be interpolated. However,
+        // with singletics we don't invoke TryRunTics and so we
+        // need to update the display here.
+        if (!highResTimer || singletics) {
+          D_Display();
+        }
     }
 }
 
@@ -586,11 +604,18 @@ void D_DoomLoopBenchmark(void)
     unsigned int start_time, end_time;
 
     I_InitGraphics();
-
+    I_SetHrTimerEnabled(1); // Enable the 560Hz timer for doing frametime
+                            // recording
+                            // TODO rdtsc for later CPUs?
     while (1)
     {
-        start_time = mscount;
+        start_time = ticcount;
 
+        if (highResTimer)
+        {
+            D_SetupInterpolation();
+            interpolation_weight = 0x10000;
+        }
         // process one or more tics
         I_StartTic();
         D_ProcessEvents();
@@ -622,7 +647,10 @@ void D_DoomLoopBenchmark(void)
         // Update display, next frame, with current state.
         D_Display();
 
-        end_time = mscount - start_time;
+        end_time = ticcount_hr - start_time;
+        // Scale the endtime due to the 560Hz timer
+        // (1000 / 560) == (25 / 14)
+        end_time = (end_time * 25) / 14;
 
         frametime[frametime_position] = end_time;
         frametime_position++;
@@ -1365,7 +1393,7 @@ void D_DoomMain(void)
         char *dest = iwadfile;
 
         memset(iwadfile, 0, sizeof(iwadfile));
-        
+
         while (*src != '\0')
         {
             *dest = tolower((unsigned char)*src);
@@ -1656,6 +1684,7 @@ void D_DoomMain(void)
     M_CheckParmOptional("-nomelt", &noMelt);
     M_CheckParmOptional("-slowbus", &busSpeed);
     M_CheckParmOptional("-vsync", &waitVsync);
+    M_CheckParmOptional("-uncapped", &uncappedFPS);
     M_CheckParmDisable("-defSpan", &visplaneRender);
     M_CheckParmDisable("-defWall", &wallRender);
     M_CheckParmDisable("-defSprite", &spriteRender);
@@ -1667,6 +1696,7 @@ void D_DoomMain(void)
     M_CheckParmDisable("-melt", &noMelt);
     M_CheckParmDisable("-fastbus", &busSpeed);
     M_CheckParmDisable("-novsync", &waitVsync);
+    M_CheckParmDisable("-capped", &uncappedFPS);
     M_CheckParmDisable("-nofps", &showFPS);
 
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA)
@@ -1767,4 +1797,29 @@ void D_DoomMain(void)
     }
 
     D_DoomLoop(); // never returns
+}
+
+
+void D_SetupInterpolation(void)
+{
+    int i;
+    //I_Printf("D_SetupInterpolation: Setting up interpolation.\n");
+    for (i = 0; i < numsectors; i++)
+    {
+      mobj_t *thing;
+      sector_t *sector = &sectors[i];
+      sector->prevfloorheight = sector->floorheight;
+      sector->prevceilingheight = sector->ceilingheight;
+      // For each thing in the sector
+      for (thing = sector->thinglist; thing; thing = thing->snext)
+      {
+        thing->prevx = thing->x;
+        thing->prevy = thing->y;
+        thing->prevz = thing->z;
+        // With interpolation, this is only used for player view. There is
+        // no smooth animation for rotation of sprites.
+        thing->prevangle = thing->angle;
+      }
+    }
+    players.prevviewz = players.viewz;
 }

@@ -55,6 +55,8 @@
 
 #include "options.h"
 
+#include "i_ibm.h"
+
 #if defined(MODE_13H)
 #include "i_vga13h.h"
 #endif
@@ -150,6 +152,12 @@ void M_SetBusSpeed(boolean value)
 #if defined(MODE_13H)
     I_UpdateFinishFunc();
 #endif
+}
+
+void M_SetUncapped(boolean value)
+{
+    uncappedFPS = value;
+    I_SetHrTimerEnabled(uncappedFPS);
 }
 
 void M_SetSizeDisplay(int value)

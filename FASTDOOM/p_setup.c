@@ -37,6 +37,7 @@
 #include "s_sound.h"
 
 #include "doomstat.h"
+#include "i_debug.h"
 
 void P_SpawnMapThing(mapthing_t *mthing);
 
@@ -219,7 +220,9 @@ void P_LoadSectors(int lump)
     for (i = 0; i < numsectors; i++, ss++, ms++)
     {
         ss->floorheight = ms->floorheight << FRACBITS;
+        ss->prevfloorheight = ss->floorheight;
         ss->ceilingheight = ms->ceilingheight << FRACBITS;
+        ss->prevceilingheight = ss->ceilingheight;
         ss->floorpic = R_FlatNumForName(ms->floorpic);
         ss->ceilingpic = R_FlatNumForName(ms->ceilingpic);
         ss->lightlevel = ms->lightlevel;
@@ -578,6 +581,7 @@ void P_SetupLevel(int episode,
     // Initial height of PointOfView
     // will be set by player think.
     players.viewz = 1;
+    players.prevviewz = 1;
 
     // Make sure all sounds are stopped before Z_FreeTags.
     S_Start();

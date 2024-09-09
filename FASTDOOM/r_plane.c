@@ -273,7 +273,7 @@ short skytexture;
 //
 // R_FindPlane
 //
-visplane_t *R_FindPlane(fixed_t height, int picnum, int lightlevel)
+visplane_t *R_FindPlane(fixed_t height, fixed_t prevheight, int picnum, int lightlevel)
 {
     visplane_t *check;
 
@@ -295,8 +295,11 @@ visplane_t *R_FindPlane(fixed_t height, int picnum, int lightlevel)
         return check;
 
     lastvisplane++;
-
-    check->height = height;
+    if (highResTimer) {
+      check->height = FixedInterpolate(prevheight, height, interpolation_weight);
+    } else {
+      check->height = height;
+    }
     check->picnum = picnum;
     check->lightlevel = lightlevel;
     check->minx = SCREENWIDTH;

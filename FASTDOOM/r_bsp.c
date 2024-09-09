@@ -456,10 +456,10 @@ void R_Subsector(int num)
     frontsector = sub->sector;
 
     if (frontsector->floorheight < viewz)
-        floorplane = R_FindPlane(frontsector->floorheight, frontsector->floorpic, frontsector->lightlevel);
+        floorplane = R_FindPlane(frontsector->floorheight, frontsector->prevfloorheight, frontsector->floorpic, frontsector->lightlevel);
 
     if (frontsector->ceilingheight > viewz || frontsector->ceilingpic == skyflatnum)
-        ceilingplane = R_FindPlane(frontsector->ceilingheight, frontsector->ceilingpic, frontsector->lightlevel);
+        ceilingplane = R_FindPlane(frontsector->ceilingheight, frontsector->prevceilingheight, frontsector->ceilingpic, frontsector->lightlevel);
 
     R_AddSprites(frontsector);
 

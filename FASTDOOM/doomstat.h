@@ -98,6 +98,8 @@ extern boolean disableDemo;
 
 extern boolean busSpeed;
 extern boolean waitVsync;
+extern boolean uncappedFPS;
+extern boolean highResTimer;
 
 // Set if homebrew PWAD stuff has been added.
 extern boolean modifiedgame;

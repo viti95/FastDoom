@@ -76,6 +76,11 @@ fixed_t viewsin;
 // 0 = high, 1 = low, 2 = potato
 int detailshift;
 
+
+
+fixed_t interpolation_weight = 0x10000;
+unsigned frametime_hrticks = 17;
+
 // The viewangletox[viewangle + FINEANGLES/4] lookup
 // maps the visible view angles to screen X coordinates,
 // flattening the arc to a flat projection plane.
@@ -2869,16 +2874,25 @@ void R_SetupFrame(void)
 {
     int i;
 
-    viewx = (players_mo)->x;
+    if (highResTimer)
+    {
+      viewx = FixedInterpolate(players_mo->prevx, players_mo->x, interpolation_weight);
+      viewy = FixedInterpolate(players_mo->prevy, players_mo->y, interpolation_weight);
+      viewangle = (players_mo)->prevangle + ((((signed)(players_mo)->angle - (signed)(players_mo)->prevangle) * ((signed)(interpolation_weight>>12)) / 16));
+      viewz = FixedInterpolate(players.prevviewz, players.viewz, interpolation_weight);
+    } else {
+      // No interpolation
+      viewx = (players_mo)->x;
+      viewy = (players_mo)->y;
+      viewangle = (players_mo)->angle;
+      viewz = players.viewz;
+    }
     viewxs = viewx >> FRACBITS;
-    viewy = (players_mo)->y;
     viewyneg = -viewy;
     viewys = viewy >> FRACBITS;
-    viewangle = (players_mo)->angle;
     viewangle90 = viewangle + ANG90;
     extralight = players.extralight;
 
-    viewz = players.viewz;
 
     viewsin = finesine[viewangle >> ANGLETOFINESHIFT];
     viewcos = finecosine[viewangle >> ANGLETOFINESHIFT];

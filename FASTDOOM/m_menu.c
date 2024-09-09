@@ -210,6 +210,7 @@ void M_ChangeShowFPS(int choice);
 void M_ChangeSpriteCulling(int choice);
 void M_ChangeMelting(int choice);
 void M_ChangeBusSpeed(int choice);
+void M_ChangeUncappedFPS(int choice);
 void M_ChangeMono();
 void M_SizeDisplay(int choice);
 void M_Sound(int choice);
@@ -346,7 +347,8 @@ menu_t NewDef =
 #define melting 10
 #define bus_speed 11
 #define cpu 12
-#define display_end 13
+#define uncapped_fps 13
+#define display_end 14
 
 #define endgame 0
 #define messages 1
@@ -394,7 +396,8 @@ menuitem_t DisplayMenu[] =
         {2, "", "", M_ChangeSpriteCulling},
         {2, "", "", M_ChangeMelting},
         {2, "", "", M_ChangeBusSpeed},
-        {2, "", "", M_ChangeCPU}};
+        {2, "", "", M_ChangeCPU},
+        {2, "", "", M_ChangeUncappedFPS}};
 
 menu_t DisplayDef =
     {
@@ -1481,6 +1484,10 @@ void M_DrawDisplayItem(int item, int position)
             break;
         }
         break;
+    case uncapped_fps:
+        M_WriteText(58, y, "UNCAPPED FPS:");
+        M_WriteText(214, y, uncappedFPS ? "ON" : "OFF");
+        break;
     }
 }
 #endif
@@ -1637,6 +1644,10 @@ void M_DrawDisplayItem(int item, int position)
             V_WriteTextDirect(M_X2, y, "INTEL PENTIUM");
             break;
         }
+        break;
+    case uncapped_fps:
+        V_WriteTextDirect(M_X1, y, "UNCAPPED FPS:");
+        V_WriteTextDirect(M_X1, y, uncappedFPS ? "ON" : "OFF");
         break;
     }
 }
@@ -2147,6 +2158,24 @@ void M_ChangeBusSpeed(int choice)
 #endif
 
     players.message = busSpeed ? "SLOW BUS" : "FAST BUS";
+}
+
+void I_SetHrTimerEnabled(int enabled);
+
+void M_ChangeUncappedFPS(int choice)
+{
+    uncappedFPS = !uncappedFPS;
+
+    if (uncappedFPS) 
+    {
+        highResTimer = gamestate == GS_LEVEL;
+    } else {
+        highResTimer = false;
+    }
+
+    I_SetHrTimerEnabled(highResTimer);
+
+    players.message = uncappedFPS ? "UNCAPPED FPS" : "CAPPED FPS";
 }
 
 void M_ChangeMono()

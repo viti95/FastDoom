@@ -91,6 +91,10 @@ typedef struct
 {
     fixed_t floorheight;
     fixed_t ceilingheight;
+    // Used for interpolation since there are lots of animations (doors, lifts, etc.)
+    // which use these fields.
+    fixed_t prevfloorheight;
+    fixed_t prevceilingheight;
     short floorpic;
     short ceilingpic;
     short lightlevel;
@@ -121,6 +125,7 @@ typedef struct
     short linecount;
     struct line_s **lines; // [linecount] size
 
+    byte _pad[36]; // padding to align to 128 bytes
 } sector_t;
 
 //

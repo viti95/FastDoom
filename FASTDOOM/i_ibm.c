@@ -248,8 +248,8 @@ extern int usemouse;
 
 byte mousepresent;
 
+unsigned int ticcount_hr;
 unsigned int ticcount;
-unsigned int mscount;
 unsigned int fps;
 
 // REGS stuff used for int calls
@@ -274,6 +274,7 @@ int kbdtail, kbdhead;
 void DPMIInt(int i);
 void I_StartupSound(void);
 void I_ShutdownSound(void);
+void I_StartupTimer(void);
 void I_ShutdownTimer(void);
 
 //
@@ -861,15 +862,64 @@ void I_StartTic(void)
 //
 // I_TimerISR
 //
-void I_TimerISR(task *task)
+void I_TimerHrISR(task *task)
 {
-    ticcount++;
+    // 560 HZ
+    ticcount_hr++;
+    // 35 HZ
+    ticcount = ticcount_hr >> 4;
 }
 
-void I_TimerMS(task *task)
+
+void I_TimerISR(task *task)
 {
-    mscount++;
+  ticcount++;
 }
+
+//
+// I_StartupTimer
+//
+
+task *tsm_task = NULL;
+
+void I_ShutdownTimer(void)
+{
+  if (tsm_task) {
+      TS_Terminate(tsm_task);
+  }
+  tsm_task = NULL;
+  TS_Shutdown();
+}
+
+int currentTimer = -1;
+
+void I_SetHrTimerEnabled(int enabled) {
+
+  if (currentTimer == enabled)
+    return;
+
+  currentTimer = enabled;
+
+  if (tsm_task) {
+      TS_Terminate(tsm_task);
+  }
+  if (enabled) {
+    // Move the ticcount for consistency
+    ticcount_hr = ticcount << 4;
+    tsm_task = TS_ScheduleTask(I_TimerHrISR, 560, 1, NULL);
+  }
+  else {
+    tsm_task = TS_ScheduleTask(I_TimerISR, 35, 1, NULL);
+  }
+  TS_Dispatch();
+  
+}
+
+void I_StartupTimer(void) {
+  I_SetHrTimerEnabled(false);
+}
+
+
 
 //
 // Keyboard
@@ -1027,6 +1077,8 @@ void I_Init(void)
     I_StartupMouse();
     printf("I_StartupKeyboard\n");
     I_StartupKeyboard();
+    printf("I_StartupTimer\n");
+    I_StartupTimer();
     printf("I_StartupSound\n");
     I_StartupSound();
 
