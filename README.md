@@ -35,6 +35,7 @@ Doom port for DOS, based on PCDoom by @nukeykt. The goal of this port is to make
 * New setup program
 * New video modes (Mode 13h, MDA, CGA, EGA, Hercules, Text modes, VESA 2.0, Plantronics Colorplus, Sigma Color 400)
 * Advanced benchmark support
+* Uncapped FPS mode support (frame interpolation, more than 35 fps)
 
 ## DEMO
 
