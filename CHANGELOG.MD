@@ -10,6 +10,7 @@
 * Fixed map names for FreeDoom (now map names are stored in the folder "LEVELS")
 * New uncapped framerate mode, for fast 486/Pentium machines (@dougvj)
 * Fixed VSync code (@dougvj)
+* Fixed FDBENCH.EXE utility
 
 ## 0.9.9f (27 Jul 2024)
 * Dreamblaster S2P support (MIDI through LPT)
