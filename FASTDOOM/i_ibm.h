@@ -6,6 +6,7 @@
 extern unsigned int ticcount_hr;
 extern unsigned int ticcount;
 extern unsigned int fps;
+extern boolean uncappedFPS;
 
 extern unsigned short *currentscreen;
 

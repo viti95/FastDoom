@@ -567,8 +567,7 @@ void I_UpdateNoBlit(void)
 
 extern int screenblocks;
 
-//#define HIGH_PRECISION_FPS
-#define TIMER_RATE 35
+//#define SUB_FRAME_FPS
 #define MAX_FPS 256 //must be power of 2
 
 unsigned int fps_time[MAX_FPS];
@@ -576,19 +575,30 @@ unsigned int fps_head = 0;
 unsigned int fps_tail = 0;
 unsigned int fps_size = 0;
 
-#ifdef HIGH_PRECISION_FPS
+#ifdef SUB_FRAME_FPS
 unsigned int fps_sum = 0;
 #endif
 
 void I_CalculateFPS(void)
 {
-    unsigned time = ticcount;
+    unsigned int time, timer_rate;
+    
+    if (uncappedFPS)
+    {
+        time = ticcount_hr;
+        timer_rate = 560;
+    }
+    else
+    {
+        time = ticcount;
+        timer_rate = 35;
+    }
 
     //dequeue old items (older than 1 sec)
-    while ((fps_size > 0 && ((time - fps_time[fps_head]) >= TIMER_RATE))
+    while ((fps_size > 0 && ((time - fps_time[fps_head]) >= timer_rate))
         || (fps_size >= MAX_FPS))
     {
-        #ifdef HIGH_PRECISION_FPS
+        #ifdef SUB_FRAME_FPS
         fps_sum -= fps_time[fps_head] - fps_time[(fps_head + MAX_FPS - 1) % MAX_FPS];
         #endif
         fps_head = (fps_head + 1) % MAX_FPS;
@@ -596,15 +606,15 @@ void I_CalculateFPS(void)
     }
 
     //enqueue new item
-    #ifdef HIGH_PRECISION_FPS
+    #ifdef SUB_FRAME_FPS
     fps_sum += time - fps_time[(fps_tail + MAX_FPS - 1) % MAX_FPS];
     #endif
     fps_time[fps_tail] = time;
     fps_tail = (fps_tail + 1) % MAX_FPS;
     fps_size++;
 
-    #ifdef HIGH_PRECISION_FPS
-    fps = fps_sum == 0 ? 0 : (TIMER_RATE * fps_size) / fps_sum;
+    #ifdef SUB_FRAME_FPS
+    fps = fps_sum == 0 ? 0 : (timer_rate * fps_size) / fps_sum;
     #else
     fps = fps_size;
     #endif
