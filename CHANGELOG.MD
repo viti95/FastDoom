@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 1.0.0 (xx yyy zzzz)
+## 1.0.0 (11 Sep 2024)
 * Optimized rendering of non-scaled graphics (skybox and player sprite, only on 320x200 modes and screensize >= 10)
 * Added player sprite rendering display option (player weapon)
 * Fix issue #203. Now savegames are different for each IWAD
