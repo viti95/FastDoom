@@ -29,6 +29,7 @@
 #include "z_zone.h"
 
 #include "std_func.h"
+#include "i_debug.h"
 
 #include <conio.h>
 
@@ -2280,10 +2281,29 @@ void R_RenderSegLoopFlatter(void)
 void R_StoreWallRange(int start,
 					  int stop)
 {
+
 	fixed_t hyp;
 	angle_t distangle, offsetangle;
 	fixed_t vtop;
 	int lightnum;
+
+
+	fixed_t frontsector_floorheight;
+	fixed_t frontsector_ceilingheight;
+	fixed_t backsector_floorheight;
+	fixed_t backsector_ceilingheight;
+
+	if (highResTimer) {
+		frontsector_floorheight = FixedInterpolate(frontsector->prevfloorheight, frontsector->floorheight, interpolation_weight);
+		frontsector_ceilingheight = FixedInterpolate(frontsector->prevceilingheight, frontsector->ceilingheight, interpolation_weight);
+		backsector_floorheight = FixedInterpolate(backsector->prevfloorheight, backsector->floorheight, interpolation_weight);
+		backsector_ceilingheight = FixedInterpolate(backsector->prevceilingheight, backsector->ceilingheight, interpolation_weight);
+	} else {
+		frontsector_floorheight = frontsector->floorheight;
+		frontsector_ceilingheight = frontsector->ceilingheight;
+		backsector_floorheight = backsector->floorheight;
+		backsector_ceilingheight = backsector->ceilingheight;
+	}
 
 	// don't overflow and crash
 	if (ds_p == &drawsegs[MAXDRAWSEGS])
@@ -2325,8 +2345,8 @@ void R_StoreWallRange(int start,
 
 	// calculate texture boundaries
 	//  and decide if floor / ceiling marks are needed
-	worldtop = frontsector->ceilingheight - viewz;
-	worldbottom = frontsector->floorheight - viewz;
+	worldtop = frontsector_ceilingheight - viewz;
+	worldbottom = frontsector_floorheight - viewz;
 
 	midtexture = toptexture = bottomtexture = maskedtexture = 0;
 	ds_p->maskedtexturecol = NULL;
@@ -2339,7 +2359,7 @@ void R_StoreWallRange(int start,
 		markfloor = markceiling = 1;
 		if (linedef->dontPegBottom)
 		{
-			vtop = frontsector->floorheight +
+			vtop = frontsector_floorheight +
 				   textureheight[sidedef->midtexture];
 			// bottom of texture at bottom
 			rw_midtexturemid = vtop - viewz;
@@ -2363,44 +2383,44 @@ void R_StoreWallRange(int start,
 		ds_p->sprtopclip = ds_p->sprbottomclip = NULL;
 		ds_p->silhouette = SIL_NONE;
 
-		if (frontsector->floorheight > backsector->floorheight)
+		if (frontsector_floorheight > backsector_floorheight)
 		{
 			ds_p->silhouette = SIL_BOTTOM;
-			ds_p->bsilheight = frontsector->floorheight;
+			ds_p->bsilheight = frontsector_floorheight;
 		}
-		else if (backsector->floorheight > viewz)
+		else if (backsector_floorheight > viewz)
 		{
 			ds_p->silhouette = SIL_BOTTOM;
 			ds_p->bsilheight = MAXINT;
 		}
 
-		if (frontsector->ceilingheight < backsector->ceilingheight)
+		if (frontsector_ceilingheight < backsector_ceilingheight)
 		{
 			ds_p->silhouette |= SIL_TOP;
-			ds_p->tsilheight = frontsector->ceilingheight;
+			ds_p->tsilheight = frontsector_ceilingheight;
 		}
-		else if (backsector->ceilingheight < viewz)
+		else if (backsector_ceilingheight < viewz)
 		{
 			ds_p->silhouette |= SIL_TOP;
 			ds_p->tsilheight = MININT;
 		}
 
-		if (backsector->ceilingheight <= frontsector->floorheight)
+		if (backsector_ceilingheight <= frontsector_floorheight)
 		{
 			ds_p->sprbottomclip = negonearray;
 			ds_p->bsilheight = MAXINT;
 			ds_p->silhouette |= SIL_BOTTOM;
 		}
 
-		if (backsector->floorheight >= frontsector->ceilingheight)
+		if (backsector_floorheight >= frontsector_ceilingheight)
 		{
 			ds_p->sprtopclip = screenheightarray;
 			ds_p->tsilheight = MININT;
 			ds_p->silhouette |= SIL_TOP;
 		}
 
-		worldhigh = backsector->ceilingheight - viewz;
-		worldlow = backsector->floorheight - viewz;
+		worldhigh = backsector_ceilingheight - viewz;
+		worldlow = backsector_floorheight - viewz;
 
 		// hack to allow height changes in outdoor areas
 		if (frontsector->ceilingpic == skyflatnum && backsector->ceilingpic == skyflatnum)
@@ -2411,7 +2431,7 @@ void R_StoreWallRange(int start,
 		markfloor = worldlow != worldbottom || backsector->floorpic != frontsector->floorpic || backsector->lightlevel != frontsector->lightlevel;
 		markceiling = worldhigh != worldtop || backsector->ceilingpic != frontsector->ceilingpic || backsector->lightlevel != frontsector->lightlevel;
 
-		if (backsector->ceilingheight <= frontsector->floorheight || backsector->floorheight >= frontsector->ceilingheight)
+		if (backsector_ceilingheight <= frontsector_floorheight || backsector_floorheight >= frontsector_ceilingheight)
 		{
 			// closed door
 			markceiling = markfloor = 1;
@@ -2428,7 +2448,7 @@ void R_StoreWallRange(int start,
 			}
 			else
 			{
-				vtop = backsector->ceilingheight + textureheight[sidedef->toptexture];
+				vtop = backsector_ceilingheight + textureheight[sidedef->toptexture];
 
 				// bottom of texture
 				rw_toptexturemid = vtop - viewz;
@@ -2506,13 +2526,13 @@ void R_StoreWallRange(int start,
 	//  of the view plane, it is definitely invisible
 	//  and doesn't need to be marked.
 
-	if (frontsector->floorheight >= viewz)
+	if (frontsector_floorheight >= viewz)
 	{
 		// above view plane
 		markfloor = 0;
 	}
 
-	if (frontsector->ceilingheight <= viewz && frontsector->ceilingpic != skyflatnum)
+	if (frontsector_ceilingheight <= viewz && frontsector->ceilingpic != skyflatnum)
 	{
 		// below view plane
 		markceiling = 0;

@@ -524,7 +524,6 @@ byte P_TryMove(mobj_t *thing, fixed_t x, fixed_t y)
     thing->ceilingz = tmceilingz;
     thing->x = x;
     thing->y = y;
-
     P_SetThingPositionSubsector(thing, newsubsec);
 
     // if any special lines were hit, do the effect

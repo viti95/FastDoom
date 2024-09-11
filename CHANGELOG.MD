@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 0.9.9g (xx yyy zzzz)
+## 1.0.0 (xx yyy zzzz)
 * Optimized rendering of non-scaled graphics (skybox and player sprite, only on 320x200 modes and screensize >= 10)
 * Added player sprite rendering display option (player weapon)
 * Fix issue #203. Now savegames are different for each IWAD
@@ -8,6 +8,9 @@
 * Faster update rate for the onscreen FPS counter (@tigrouind)
 * Reduced memory usage
 * Fixed map names for FreeDoom (now map names are stored in the folder "LEVELS")
+* New uncapped framerate mode, for fast 486/Pentium machines (@dougvj)
+* Fixed VSync code (@dougvj)
+* Fixed FDBENCH.EXE utility
 
 ## 0.9.9f (27 Jul 2024)
 * Dreamblaster S2P support (MIDI through LPT)

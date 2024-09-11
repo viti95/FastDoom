@@ -20,6 +20,7 @@
 #include "options.h"
 #include "doomdef.h"
 
+#include "i_debug.h"
 #include "i_system.h"
 #include "p_local.h"
 
@@ -309,9 +310,11 @@ byte P_CheckSight(mobj_t *t1, mobj_t *t2)
     // First check for trivial rejection.
 
     // Determine subsector entries in REJECT table.
-    pnum = Div84((int)t1->subsector->sector - (int)sectors);
+    // NOTE if the size of sector_t changes, this must be changed.
+    ASSERT(sizeof(sector_t) == 128);
+    pnum = Div128((int)t1->subsector->sector - (int)sectors);
     pnum *= numsectors;
-    pnum += Div84((int)t2->subsector->sector - (int)sectors);
+    pnum += Div128((int)t2->subsector->sector - (int)sectors);
     bytenum = pnum >> 3;
     bitnum = 1 << (pnum & 7);
 

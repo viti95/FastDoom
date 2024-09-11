@@ -35,6 +35,8 @@
 
 #include <conio.h>
 
+#include "i_debug.h"
+
 #include "sizeopt.h"
 
 #define SC_INDEX 0x3C4
@@ -1097,9 +1099,24 @@ void R_ProjectSprite(mobj_t *thing)
     angle_t ang;
     fixed_t iscale;
 
+    fixed_t x;
+    fixed_t y;
+    fixed_t z;
+
+    if (highResTimer) {
+      // Interpolate the position of the thing
+      x = FixedInterpolate(thing->prevx, thing->x, interpolation_weight);
+      y = FixedInterpolate(thing->prevy, thing->y, interpolation_weight);
+      z = FixedInterpolate(thing->prevz, thing->z, interpolation_weight);
+    } else {
+      x = thing->x;
+      y = thing->y;
+      z = thing->z;
+    }
+
     // transform the origin point
-    tr_x = thing->x - viewx;
-    tr_y = thing->y - viewy;
+    tr_x = x - viewx;
+    tr_y = y - viewy;
 
     if (nearSprites && !(thing->flags & MF_SHOOTABLE) && (abs(tr_x) > 40000000 || abs(tr_y) > 40000000))
         return;
@@ -1162,10 +1179,10 @@ void R_ProjectSprite(mobj_t *thing)
     // killough 4/9/98: clip things which are out of view due to height
     // viti95 6/6/20: optimize by removing divisions and using multiplications instead. Also discard first than calculate other things.
 
-    if (FixedMul(thing->z - viewz, xscale) > viewheightshift)
+    if (FixedMul(z - viewz, xscale) > viewheightshift)
         return;
 
-    gzt = thing->z + spritetopoffset[lump];
+    gzt = z + spritetopoffset[lump];
 
     if (viewheightopt < FixedMul(viewz - gzt, xscale))
         return;
@@ -1207,9 +1224,9 @@ void R_ProjectSprite(mobj_t *thing)
     vis->scale = xscale;
 #endif
 
-    vis->gx = thing->x;
-    vis->gy = thing->y;
-    vis->gz = thing->z;
+    vis->gx = x;
+    vis->gy = y;
+    vis->gz = z;
     vis->gzt = gzt; // killough 3/27/98
     vis->texturemid = gzt - viewz;
     vis->x1 = x1 < 0 ? 0 : x1;

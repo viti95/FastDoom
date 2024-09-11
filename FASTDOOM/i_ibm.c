@@ -248,8 +248,8 @@ extern int usemouse;
 
 byte mousepresent;
 
+unsigned int ticcount_hr;
 unsigned int ticcount;
-unsigned int mscount;
 unsigned int fps;
 
 // REGS stuff used for int calls
@@ -274,6 +274,7 @@ int kbdtail, kbdhead;
 void DPMIInt(int i);
 void I_StartupSound(void);
 void I_ShutdownSound(void);
+void I_StartupTimer(void);
 void I_ShutdownTimer(void);
 
 //
@@ -566,8 +567,7 @@ void I_UpdateNoBlit(void)
 
 extern int screenblocks;
 
-//#define HIGH_PRECISION_FPS
-#define TIMER_RATE 35
+//#define SUB_FRAME_FPS
 #define MAX_FPS 256 //must be power of 2
 
 unsigned int fps_time[MAX_FPS];
@@ -575,19 +575,30 @@ unsigned int fps_head = 0;
 unsigned int fps_tail = 0;
 unsigned int fps_size = 0;
 
-#ifdef HIGH_PRECISION_FPS
+#ifdef SUB_FRAME_FPS
 unsigned int fps_sum = 0;
 #endif
 
 void I_CalculateFPS(void)
 {
-    unsigned time = ticcount;
+    unsigned int time, timer_rate;
+    
+    if (uncappedFPS)
+    {
+        time = ticcount_hr;
+        timer_rate = 560;
+    }
+    else
+    {
+        time = ticcount;
+        timer_rate = 35;
+    }
 
     //dequeue old items (older than 1 sec)
-    while ((fps_size > 0 && ((time - fps_time[fps_head]) >= TIMER_RATE))
+    while ((fps_size > 0 && ((time - fps_time[fps_head]) >= timer_rate))
         || (fps_size >= MAX_FPS))
     {
-        #ifdef HIGH_PRECISION_FPS
+        #ifdef SUB_FRAME_FPS
         fps_sum -= fps_time[fps_head] - fps_time[(fps_head + MAX_FPS - 1) % MAX_FPS];
         #endif
         fps_head = (fps_head + 1) % MAX_FPS;
@@ -595,15 +606,15 @@ void I_CalculateFPS(void)
     }
 
     //enqueue new item
-    #ifdef HIGH_PRECISION_FPS
+    #ifdef SUB_FRAME_FPS
     fps_sum += time - fps_time[(fps_tail + MAX_FPS - 1) % MAX_FPS];
     #endif
     fps_time[fps_tail] = time;
     fps_tail = (fps_tail + 1) % MAX_FPS;
     fps_size++;
 
-    #ifdef HIGH_PRECISION_FPS
-    fps = fps_sum == 0 ? 0 : (TIMER_RATE * fps_size) / fps_sum;
+    #ifdef SUB_FRAME_FPS
+    fps = fps_sum == 0 ? 0 : (timer_rate * fps_size) / fps_sum;
     #else
     fps = fps_size;
     #endif
@@ -861,15 +872,64 @@ void I_StartTic(void)
 //
 // I_TimerISR
 //
-void I_TimerISR(task *task)
+void I_TimerHrISR(task *task)
 {
-    ticcount++;
+    // 560 HZ
+    ticcount_hr++;
+    // 35 HZ
+    ticcount = ticcount_hr >> 4;
 }
 
-void I_TimerMS(task *task)
+
+void I_TimerISR(task *task)
 {
-    mscount++;
+  ticcount++;
 }
+
+//
+// I_StartupTimer
+//
+
+task *tsm_task = NULL;
+
+void I_ShutdownTimer(void)
+{
+  if (tsm_task) {
+      TS_Terminate(tsm_task);
+  }
+  tsm_task = NULL;
+  TS_Shutdown();
+}
+
+int currentTimer = -1;
+
+void I_SetHrTimerEnabled(int enabled) {
+
+  if (currentTimer == enabled)
+    return;
+
+  currentTimer = enabled;
+
+  if (tsm_task) {
+      TS_Terminate(tsm_task);
+  }
+  if (enabled) {
+    // Move the ticcount for consistency
+    ticcount_hr = ticcount << 4;
+    tsm_task = TS_ScheduleTask(I_TimerHrISR, 560, 1, NULL);
+  }
+  else {
+    tsm_task = TS_ScheduleTask(I_TimerISR, 35, 1, NULL);
+  }
+  TS_Dispatch();
+  
+}
+
+void I_StartupTimer(void) {
+  I_SetHrTimerEnabled(false);
+}
+
+
 
 //
 // Keyboard
@@ -1027,6 +1087,8 @@ void I_Init(void)
     I_StartupMouse();
     printf("I_StartupKeyboard\n");
     I_StartupKeyboard();
+    printf("I_StartupTimer\n");
+    I_StartupTimer();
     printf("I_StartupSound\n");
     I_StartupSound();
 

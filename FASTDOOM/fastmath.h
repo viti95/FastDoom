@@ -27,16 +27,22 @@ typedef int fixed_t;
 
 #define FRACBITS 16
 #define FRACUNIT (1 << FRACBITS)
-  
+
 #define PI_F 3.14159265f
 #define FIXED_TO_FLOAT(inp)       ((float)inp) / (1 << FRACBITS)
 #define FLOAT_TO_FIXED(inp)       (fixed_t)(inp * (1 << FRACBITS))
 #define ANGLE_TO_FLOAT(x)       (x * ((float)(PI_F / 4096.0f)))
 
+
 fixed_t FixedMul(fixed_t a, fixed_t b);
 #pragma aux FixedMul = \
     "imul ebx",        \
     "shrd eax,edx,16" parm[eax][ebx] value[eax] modify exact[eax edx]
+
+inline fixed_t FixedInterpolate(fixed_t a, fixed_t b, fixed_t frac)
+{
+    return a + FixedMul(b - a, frac);
+}
 
 fixed_t FixedMulECX(fixed_t a, fixed_t b);
 #pragma aux FixedMulECX = \
@@ -358,6 +364,10 @@ int Div84(int value);
     "sar edx, 4", \
     "shr ecx, 31", \
     "add edx, ecx" parm[ecx] value[edx] modify exact[eax ecx edx]
+
+int Div128(int value);
+#pragma aux Div128 = \
+    "shr eax, 7" parm[eax] value[eax] modify exact[eax]
 
 void CopyBytes(void *src, void *dest, int num_bytes);
 #pragma aux CopyBytes = \

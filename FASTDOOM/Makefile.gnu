@@ -218,14 +218,15 @@ fdoom.exe : $(GLOBOBJS)
 DELCMD=rm -f
 
 clean:
-	$(DELCMD) *.exe
-	$(DELCMD) *.map
-	$(DELCMD) *.err
-	$(DELCMD) *.obj
-	$(DELCMD) *.sym
-	$(DELCMD) *.EXE
-	$(DELCMD) *.MAP
-	$(DELCMD) *.ERR
-	$(DELCMD) *.OBJ
-	$(DELCMD) *.SYM
+	pwd
+	-$(DELCMD) *.exe
+	-$(DELCMD) *.map
+	-$(DELCMD) *.err
+	-$(DELCMD) *.obj
+	-$(DELCMD) *.sym
+	-$(DELCMD) *.EXE
+	-$(DELCMD) *.MAP
+	-$(DELCMD) *.ERR
+	-$(DELCMD) *.OBJ
+	-$(DELCMD) *.SYM
 
