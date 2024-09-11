@@ -42,7 +42,8 @@
              possible to see random crashes due to low RAM)
  Video card: Any ISA 8-bit Hercules, CGA, EGA or VGA video card. For cool
              graphics a fast VGA video card is recommended. Also MDA,
-             Plantronics Colorplus and Sigma Color 400 cards are supported
+             Plantronics Colorplus, Sigma Color 400 and Hercules InColor 
+             cards are supported
  Controls:   Keyboard (mouse recommended)
 
  Supported IWADs
@@ -76,7 +77,7 @@
  Music cards: Sound Blaster (OPL2 and OPL3), Adlib, MIDI, Gravis Ultrasound
               Sound Blaster AWE32, OPL2LPT, OPL3LPT, AudioCD (MSCDEX),
               PCM music (through sound card), Ensoniq Soundscape
-              Serial MIDI
+              Serial MIDI, Dreamblaster S2P
 
  Executables
  -----------
@@ -129,8 +130,8 @@
  * FDM768D.EXE  => FastDoom VESA 1024x768 direct rendering mode
  * FDM800R.EXE  => FastDoom VESA 1280x800 backbuffered mode
  * FDM800D.EXE  => FastDoom VESA 1280x800 direct rendering mode
- * FDM1024R.EXE  => FastDoom VESA 1280x1024 backbuffered mode
- * FDM1024D.EXE  => FastDoom VESA 1280x1024 direct rendering mode
+ * FDM1024R.EXE => FastDoom VESA 1280x1024 backbuffered mode
+ * FDM1024D.EXE => FastDoom VESA 1280x1024 direct rendering mode
  * FDSETUP.EXE  => Utility to setup controls and sound cards
  * FDBENCH.EXE  => Utility to make benchmarks easier to execute
  * BENCH.BAT    => Scripted benchmark, instructions are included in the script
@@ -228,11 +229,19 @@
  ------------------------
  * Gravis UltraSound cards require IRQ to be 7 or less, otherwise those
    cards won't work. This is a limitation of the Apogee Sound System.
- * Some executables will show snow issues on IBM CGA cards even if "-snow"
-   parameter is used. This is due to technical limitations.
+ * Some executables will show snow issues on IBM CGA cards even if '-snow'
+   command line parameter is used. This is due to technical limitations.
  * Showing FPS on a debug card can show weird values if a Sound Blaster
    card is used, and can cause sound issues. This is due to port 0x80 
    being also used for DMA transfers.
+ * No sound with SBEMU: FastDoom requires VCPI to be disabled before
+   running the game. Run 'jemmex.exe novcpi' before launching FastDoom.
+ * Older VGA cards may exhibit snow issues during palette changes. 
+   These cards need to wait for VSYNC before changing the palette. 
+   Use the '-fixDAC' command line option to fix this.
+ * Some newer VGA cards may display a distorted image in 80x50 text 
+   mode. This is caused by a different video page size on newer cards
+   compared to older ones. Use the '-pagefix' option to fix this.
 
  PCM music format
  ----------------
@@ -398,6 +407,7 @@
  Doug Johnson
  efliks
  crazii
+ tigrouind
 
  And pretty sure more people I don't remember right now, 
  if you're not in the list contact me :)
