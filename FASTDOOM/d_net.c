@@ -54,7 +54,6 @@ void NetUpdate(void)
 {
 	int nowtime;
 	int newtics;
-	int i;
 	int delta;
 	// check time
 	nowtime = ticcount;
@@ -63,6 +62,9 @@ void NetUpdate(void)
 		newtics = 1;
 	}
 	gametime = nowtime;
+
+	//I_Printf("maketics: %d, gametic: %d, newtics: %d\n", maketic, gametic, newtics);
+
 	if (newtics <= 0) {
 		return;
 	}
@@ -73,19 +75,13 @@ void NetUpdate(void)
 	//I_Printf("maketics: %d, gametic: %d, newtics: %d, delta: %d\n", maketic, gametic, newtics, delta);
 
 	// build new ticcmds for console player
-	for (i = 0; i < newtics; i++)
-	{
-		I_StartTic();
-		D_ProcessEvents();
-		if (maketic - gametic >= BACKUPTICS / 2 - 1)
-			break; // can't hold any more
+	I_StartTic();
+	D_ProcessEvents();
+	if (maketic - gametic >= BACKUPTICS / 2 - 1)
+		return; // can't hold any more
 
-		G_BuildTiccmd(&localcmds[maketic & (BACKUPTICS-1)]);
-		maketic++;
-	}
-
-	if (singletics)
-		return; // singletic update is syncronous
+	G_BuildTiccmd(&localcmds[maketic & (BACKUPTICS-1)]);
+	maketic++;
 }
 
 //
