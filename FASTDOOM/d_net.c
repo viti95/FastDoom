@@ -38,7 +38,6 @@
 ticcmd_t localcmds[BACKUPTICS];
 
 int maketic;
-int skiptics;
 
 void D_ProcessEvents(void);
 void G_BuildTiccmd(ticcmd_t *cmd);
@@ -72,17 +71,6 @@ void NetUpdate(void)
 		maketic = gametic;
 	}
 	//I_Printf("maketics: %d, gametic: %d, newtics: %d, delta: %d\n", maketic, gametic, newtics, delta);
-
-	if (skiptics <= newtics)
-	{
-		newtics -= skiptics;
-		skiptics = 0;
-	}
-	else
-	{
-		skiptics -= newtics;
-		newtics = 0;
-	}
 
 	// build new ticcmds for console player
 	for (i = 0; i < newtics; i++)
