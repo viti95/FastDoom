@@ -1,6 +1,6 @@
 // Comment this out to indicate debugging is configured!
 // Uncomment after reviewing the options. TODO - .gitignore?
- #define DEBUG_UNCONFIGURED
+#define DEBUG_UNCONFIGURED
 
 // Enables bounds checking for screen coordinates.
 // This will die and show a backtrace if the coordinates are out of bounds.
@@ -14,10 +14,13 @@
 // Set the option 'bochs debug port e9 = true' in dosbox.conf to enable
 // This doesn't correspond to any real hardware but it could, so we disable
 // it by default.
-#define BOCHS_DEBUG_ENABLED 1
+#define BOCHS_DEBUG_ENABLED 0
 
 // Enables the MDA debug output for a real or emulated MDA card
 #define DEBUG_MDA_ENABLED 0
+
+// Enables the file debug
+#define DEBUG_FILE_ENABLED 1
 
 // Enables the serial debug output and sets the parameters
 // These are the default values for serial port 1
