@@ -59,17 +59,23 @@ void NetUpdate(void)
 	// check time
 	nowtime = ticcount;
 	newtics = nowtime - gametime;
-	if (newtics > 1) {
-		newtics = 1;
-	}
 	gametime = nowtime;
+
 	if (newtics <= 0) {
 		return;
 	}
-	delta = maketic - gametic;
-	if (delta < 0) {
-		maketic = gametic;
-	}
+
+	if (uncappedFPS) {
+		if (newtics > 1) {
+			newtics = 1;
+		}
+	
+		delta = maketic - gametic;
+		if (delta < 0) {
+			maketic = gametic;
+		}
+	} 
+	
 	//I_Printf("maketics: %d, gametic: %d, newtics: %d, delta: %d\n", maketic, gametic, newtics, delta);
 
 	// build new ticcmds for console player
@@ -83,9 +89,6 @@ void NetUpdate(void)
 		G_BuildTiccmd(&localcmds[maketic & (BACKUPTICS-1)]);
 		maketic++;
 	}
-
-	if (singletics)
-		return; // singletic update is syncronous
 }
 
 //
