@@ -58,16 +58,12 @@ void NetUpdate(void)
 	// check time
 	nowtime = ticcount;
 	newtics = nowtime - gametime;
-	if (newtics > 1) {
-		newtics = 1;
-	}
 	gametime = nowtime;
-
-	//I_Printf("maketics: %d, gametic: %d, newtics: %d\n", maketic, gametic, newtics);
 
 	if (newtics <= 0) {
 		return;
 	}
+
 	delta = maketic - gametic;
 	if (delta < 0) {
 		maketic = gametic;
