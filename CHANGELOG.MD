@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 1.0.1 (13 Sep 2024)
+* Fixed frameskipping in 35 fps mode not working properly
+
 ## 1.0.0 (11 Sep 2024)
 * Optimized rendering of non-scaled graphics (skybox and player sprite, only on 320x200 modes and screensize >= 10)
 * Added player sprite rendering display option (player weapon)
