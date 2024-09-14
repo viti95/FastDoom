@@ -596,7 +596,7 @@ void I_CalculateFPS(void)
 
     //dequeue old items (older than 1 sec)
     while ((fps_size > 0 && ((time - fps_time[fps_head]) >= timer_rate))
-        || (fps_size >= MAX_FPS))
+        || (fps_size >= MAX_FPS-1))
     {
         #ifdef SUB_FRAME_FPS
         fps_sum -= fps_time[fps_head] - fps_time[(fps_head + MAX_FPS - 1) % MAX_FPS];
