@@ -30,9 +30,6 @@ struct sfxinfo_struct
     // up to 6-character name
     char *name;
 
-    // Sfx singularity (only one at a time)
-    int singularity;
-
     // Sfx priority
     int priority;
 
