@@ -456,7 +456,6 @@ void S_CheckWAV(void)
 void S_ChangeMusicMIDI(int musicnum, int looping)
 {
     musicinfo_t *music;
-    char namebuf[9];
 
     if (snd_MusicDevice == snd_none)
         return;
@@ -473,13 +472,6 @@ void S_ChangeMusicMIDI(int musicnum, int looping)
 
     // shutdown old music
     S_StopMusicMIDI();
-
-    // get lumpnum if neccessary
-    if (!music->lumpnum)
-    {
-        sprintf(namebuf, "D_%s", music->name);
-        music->lumpnum = W_GetNumForName(namebuf);
-    }
 
     // load & register it
     music->data = (void *)W_CacheLumpNum(music->lumpnum, PU_MUSIC);
@@ -830,6 +822,7 @@ void S_UpdateSounds(void)
 void S_Init(int sfxVolume, int musicVolume)
 {
     int i;
+    char namebuf[9];
 
     S_SetSfxVolume(sfxVolume);
     S_SetMusicVolume(musicVolume);
@@ -852,6 +845,14 @@ void S_Init(int sfxVolume, int musicVolume)
         // Get all sound lumpnums
         sfxinfo_t *sfx = &S_sfx[i];
         sfx->lumpnum = I_GetSfxLumpNum(sfx);
+    }
+
+    for (i = 1; i < NUMMUSIC; i++)
+    {
+        // Get all music lumpnums
+        musicinfo_t *music = &S_music[i];
+        sprintf(namebuf, "D_%s", music->name);
+        music->lumpnum = W_GetNumForName(namebuf);
     }
 }
 
