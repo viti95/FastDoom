@@ -764,10 +764,6 @@ void S_StartSound(mobj_t *origin, byte sfx_id)
     //  each time the sound is needed?
     //
 
-    // get lumpnum if necessary
-    if (sfx->lumpnum < 0)
-        sfx->lumpnum = I_GetSfxLumpNum(sfx);
-
     // cache data if necessary
     if (!sfx->data)
     {
@@ -852,7 +848,11 @@ void S_Init(int sfxVolume, int musicVolume)
 
     // Note that sounds have not been cached (yet).
     for (i = 1; i < NUMSFX; i++)
-        S_sfx[i].lumpnum = -1;
+    {
+        // Get all sound lumpnums
+        sfxinfo_t *sfx = &S_sfx[i];
+        sfx->lumpnum = I_GetSfxLumpNum(sfx);
+    }
 }
 
 //
