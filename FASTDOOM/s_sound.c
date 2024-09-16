@@ -914,12 +914,12 @@ void S_ClearSounds(void)
     if (snd_SfxDevice == snd_none)
         return;
 
-    // Clean up unused data.
+    // Mark used sounds as cached
     for (i = 1; i < NUMSFX; i++)
     {
         if (S_sfx[i].data != 0)
         {
-            Z_Free(S_sfx[i].data);
+            Z_ChangeTag(S_sfx[i].data, PU_CACHE);
             S_sfx[i].data = 0;
         }
     }
