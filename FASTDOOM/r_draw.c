@@ -2941,7 +2941,7 @@ void R_FillBackScreen(void)
 
     if (!background_buffer)
     {
-        background_buffer = Z_MallocUnowned(SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), PU_STATIC, 0);
+        background_buffer = Z_MallocUnowned(SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), PU_STATIC);
     }
 #endif
 
@@ -2953,7 +2953,7 @@ void R_FillBackScreen(void)
     src = W_CacheLumpName(name, PU_CACHE);
 
 #if defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT)
-    screen1 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC, 0);
+    screen1 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
     dest = screen1;
 #define TARGET_SURFACE screen1
 #endif

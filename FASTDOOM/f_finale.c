@@ -67,7 +67,7 @@ void F_LoadFinaleText(char *filename)
 
 	size = I_GetFileSize(filename);
 
-	finaletext = (char *)Z_MallocUnowned(size + 1, PU_CACHE, 0);
+	finaletext = (char *)Z_MallocUnowned(size + 1, PU_CACHE);
 	SetBytes(finaletext, '\0', size + 1);
 	I_ReadTextFile(finaletext, filename, size);
 }

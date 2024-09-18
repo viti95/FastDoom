@@ -213,7 +213,7 @@ static void LoadSBK(void)
     
     /* setup SoundFont preset objects */
     fseek(fp, spSound.preset_seek, SEEK_SET);
-    pPresets[0] = (char*) Z_MallocUnowned((unsigned) spSound.preset_read_size, PU_STATIC, 0);
+    pPresets[0] = (char*) Z_MallocUnowned((unsigned) spSound.preset_read_size, PU_STATIC);
     fread(pPresets[0], 1, (unsigned) spSound.preset_read_size, fp);
     spSound.presets = pPresets[0];
     if (awe32SetPresets(&spSound)) {

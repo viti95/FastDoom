@@ -7,7 +7,7 @@ int USRHOOKS_GetMem(
     void **ptr,
     unsigned long size)
 {
-   *ptr = Z_MallocUnowned(size, PU_STATIC, 0);
+   *ptr = Z_MallocUnowned(size, PU_STATIC);
 
    return (USRHOOKS_Ok);
 }

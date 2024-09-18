@@ -111,7 +111,7 @@ int MUS_RegisterSong(void *data)
         fseek(mid, 0, SEEK_END);
         midlen = ftell(mid);
         rewind(mid);
-        mid_data = Z_MallocUnowned(midlen, PU_STATIC, 0);
+        mid_data = Z_MallocUnowned(midlen, PU_STATIC);
         if (!mid_data)
         {
             fclose(mid);
@@ -240,7 +240,7 @@ void AL_SetCard(void *data)
     unsigned char *tmb;
     int i;
     cdata = (unsigned char *)data;
-    tmb = Z_MallocUnowned(13 * 256, PU_STATIC, 0);
+    tmb = Z_MallocUnowned(13 * 256, PU_STATIC);
     if (!tmb)
     {
         return;

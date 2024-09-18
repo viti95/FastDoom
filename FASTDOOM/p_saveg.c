@@ -262,7 +262,7 @@ void P_UnArchiveThinkers(void)
 
 		case tc_mobj:
 			PADSAVEP();
-			mobj = Z_MallocUnowned(sizeof(*mobj), PU_LEVEL, 0);
+			mobj = Z_MallocUnowned(sizeof(*mobj), PU_LEVEL);
 			CopyBytes(save_p, mobj, sizeof(*mobj));
 			//memcpy(mobj, save_p, sizeof(*mobj));
 			save_p += sizeof(*mobj);
@@ -464,7 +464,7 @@ void P_UnArchiveSpecials(void)
 
 		case tc_ceiling:
 			PADSAVEP();
-			ceiling = Z_MallocUnowned(sizeof(*ceiling), PU_LEVEL, 0);
+			ceiling = Z_MallocUnowned(sizeof(*ceiling), PU_LEVEL);
 			CopyBytes(save_p, ceiling, sizeof(*ceiling));
 			//memcpy(ceiling, save_p, sizeof(*ceiling));
 			save_p += sizeof(*ceiling);
@@ -484,7 +484,7 @@ void P_UnArchiveSpecials(void)
 
 		case tc_door:
 			PADSAVEP();
-			door = Z_MallocUnowned(sizeof(*door), PU_LEVEL, 0);
+			door = Z_MallocUnowned(sizeof(*door), PU_LEVEL);
 			CopyBytes(save_p, door, sizeof(*door));
 			//memcpy(door, save_p, sizeof(*door));
 			save_p += sizeof(*door);
@@ -501,7 +501,7 @@ void P_UnArchiveSpecials(void)
 
 		case tc_floor:
 			PADSAVEP();
-			floor = Z_MallocUnowned(sizeof(*floor), PU_LEVEL, 0);
+			floor = Z_MallocUnowned(sizeof(*floor), PU_LEVEL);
 			CopyBytes(save_p, floor, sizeof(*floor));
 			//memcpy(floor, save_p, sizeof(*floor));
 			save_p += sizeof(*floor);
@@ -518,7 +518,7 @@ void P_UnArchiveSpecials(void)
 
 		case tc_plat:
 			PADSAVEP();
-			plat = Z_MallocUnowned(sizeof(*plat), PU_LEVEL, 0);
+			plat = Z_MallocUnowned(sizeof(*plat), PU_LEVEL);
 			CopyBytes(save_p, plat, sizeof(*plat));
 			//memcpy(plat, save_p, sizeof(*plat));
 			save_p += sizeof(*plat);
@@ -538,7 +538,7 @@ void P_UnArchiveSpecials(void)
 
 		case tc_flash:
 			PADSAVEP();
-			flash = Z_MallocUnowned(sizeof(*flash), PU_LEVEL, 0);
+			flash = Z_MallocUnowned(sizeof(*flash), PU_LEVEL);
 			CopyBytes(save_p, flash, sizeof(*flash));
 			//memcpy(flash, save_p, sizeof(*flash));
 			save_p += sizeof(*flash);
@@ -554,7 +554,7 @@ void P_UnArchiveSpecials(void)
 
 		case tc_strobe:
 			PADSAVEP();
-			strobe = Z_MallocUnowned(sizeof(*strobe), PU_LEVEL, 0);
+			strobe = Z_MallocUnowned(sizeof(*strobe), PU_LEVEL);
 			CopyBytes(save_p, strobe, sizeof(*strobe));
 			//memcpy(strobe, save_p, sizeof(*strobe));
 			save_p += sizeof(*strobe);
@@ -570,7 +570,7 @@ void P_UnArchiveSpecials(void)
 
 		case tc_glow:
 			PADSAVEP();
-			glow = Z_MallocUnowned(sizeof(*glow), PU_LEVEL, 0);
+			glow = Z_MallocUnowned(sizeof(*glow), PU_LEVEL);
 			CopyBytes(save_p, glow, sizeof(*glow));
 			//memcpy(glow, save_p, sizeof(*glow));
 			save_p += sizeof(*glow);

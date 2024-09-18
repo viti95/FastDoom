@@ -238,7 +238,7 @@ int EV_DoFloor(line_t *line,
 
 		// new floor thinker
 		rtn = 1;
-		floor = Z_MallocUnowned(sizeof(*floor), PU_LEVSPEC, 0);
+		floor = Z_MallocUnowned(sizeof(*floor), PU_LEVSPEC);
 
 		thinkercap.prev->next = &floor->thinker;
 		floor->thinker.next = &thinkercap;
@@ -432,7 +432,7 @@ int EV_BuildStairs(line_t *line,
 
 		// new floor thinker
 		rtn = 1;
-		floor = Z_MallocUnowned(sizeof(*floor), PU_LEVSPEC, 0);
+		floor = Z_MallocUnowned(sizeof(*floor), PU_LEVSPEC);
 
 		thinkercap.prev->next = &floor->thinker;
 		floor->thinker.next = &thinkercap;
@@ -490,7 +490,7 @@ int EV_BuildStairs(line_t *line,
 
 				sec = tsec;
 				secnum = newsecnum;
-				floor = Z_MallocUnowned(sizeof(*floor), PU_LEVSPEC, 0);
+				floor = Z_MallocUnowned(sizeof(*floor), PU_LEVSPEC);
 
 				thinkercap.prev->next = &floor->thinker;
 				floor->thinker.next = &thinkercap;

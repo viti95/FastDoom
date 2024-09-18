@@ -428,8 +428,8 @@ void AM_Start(void)
 	if (HERCmap)
 	{
 		// Init buffers
-		automapbuffer1 = (byte *)Z_MallocUnowned(32768, PU_STATIC, 0);
-		automapbuffer2 = (byte *)Z_MallocUnowned(32768, PU_STATIC, 0);
+		automapbuffer1 = (byte *)Z_MallocUnowned(32768, PU_STATIC);
+		automapbuffer2 = (byte *)Z_MallocUnowned(32768, PU_STATIC);
 		SetDWords(automapbuffer1, 0, 8192);
 		SetDWords(automapbuffer2, 0, 8192);
 		automapbuffer = automapbuffer1;

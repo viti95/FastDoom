@@ -57,7 +57,7 @@ void wipe_shittyColMajorXform(short *array)
 {
     pixelcoord_t y;
     short *ptrarray = array;
-    short *dest = (short *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC, 0);
+    short *dest = (short *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
     for (y = 0; y < SCREENHEIGHT; y++, dest -= ((SCREENHEIGHT * 8) * (SCREENWIDTH/16)) - 1)
     {
         pixelcoord_t x;
@@ -110,7 +110,7 @@ void wipe_initMelt()
 
     // setup initial column positions
     // (y<0 => not ready to scroll yet)
-    y = (int *)Z_MallocUnowned(SCREENWIDTH * sizeof(int), PU_STATIC, 0);
+    y = (int *)Z_MallocUnowned(SCREENWIDTH * sizeof(int), PU_STATIC);
     y[0] = -(M_Random_And15);
     for (i = 1; i < SCREENWIDTH; i++)
     {
@@ -320,7 +320,7 @@ void wipe_ReadScreen(byte *scr)
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void wipe_StartScreen()
 {
-    screen2 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC, 0);
+    screen2 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
     wipe_ReadScreen(screen2);
 }
 #endif
@@ -328,7 +328,7 @@ void wipe_StartScreen()
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 void wipe_EndScreen()
 {
-    screen3 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC, 0);
+    screen3 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
     wipe_ReadScreen(screen3);
 }
 #endif
