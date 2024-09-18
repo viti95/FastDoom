@@ -879,7 +879,7 @@ void S_Start(void)
         mnum = mus_runnin + gamemap - 1;
     else
     {
-        int spmus[] =
+        byte spmus[] =
             {
                 // Song - Who? - Where?
 
