@@ -39,8 +39,12 @@
 #include "ns_task.h"
 #include "doomdef.h"
 #include "doomstat.h"
+
+#ifndef MAC
 #include "ns_inter.h"
 #include "ns_cd.h"
+#endif
+
 #include "i_debug.h"
 
 #include "am_map.h"
