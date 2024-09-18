@@ -32,6 +32,10 @@
 
 #define HASHTABLESIZE 4096
 
+#ifdef MAC
+#define O_BINARY 0
+#endif
+
 //
 // GLOBALS
 //

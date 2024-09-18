@@ -65,13 +65,6 @@ typedef enum
 #define SCREENHEIGHT 200
 #endif // !defined(SCREENWIDTH) || !defined(SCREENHEIGHT)
 
-#if !defined(REFRESHRATE)
-// 0 means do not override the refresh rate
-// (use the default for the screen mode)
-// Only VESA modes are affected by this setting
-#define REFRESHRATE 0
-#endif // !defined(REFRESH)
-
 #if SCREENWIDTH == 320 && SCREENHEIGHT == 100
 #define MulScreenWidth(x) Mul320(x)
 #define MulScreenWidthHalf(x) Mul160(x)

@@ -21,7 +21,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#ifndef MAC
 #include <conio.h>
+#endif
 #include "options.h"
 #include "doomdef.h"
 #include "doomstat.h"

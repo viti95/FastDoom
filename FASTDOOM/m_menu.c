@@ -2160,7 +2160,7 @@ void M_ChangeBusSpeed(int choice)
     players.message = busSpeed ? "SLOW BUS" : "FAST BUS";
 }
 
-void I_SetHrTimerEnabled(int enabled);
+void I_SetHrTimerEnabled(boolean enabled);
 
 void M_ChangeUncappedFPS(int choice)
 {

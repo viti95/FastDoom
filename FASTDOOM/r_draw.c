@@ -18,7 +18,10 @@
 //	 e.g. inline assembly, different algorithms.
 //
 
+#ifndef MAC
 #include <conio.h>
+#endif
+
 #include "doomdef.h"
 #include "options.h"
 #include "i_system.h"

@@ -903,7 +903,7 @@ void I_ShutdownTimer(void)
 
 int currentTimer = -1;
 
-void I_SetHrTimerEnabled(int enabled) {
+void I_SetHrTimerEnabled(boolean enabled) {
 
   if (currentTimer == enabled)
     return;

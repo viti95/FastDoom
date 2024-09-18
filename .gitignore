@@ -28,3 +28,6 @@ ULTRASND/*
 
 #Disassembly
 DISASM
+
+#MAC Build folder
+MacBuild/*

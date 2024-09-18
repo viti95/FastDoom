@@ -31,7 +31,9 @@
 #include "std_func.h"
 #include "i_debug.h"
 
+#ifndef MAC
 #include <conio.h>
+#endif
 
 #include "sizeopt.h"
 

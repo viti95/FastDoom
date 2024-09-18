@@ -22,10 +22,16 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+
+#ifndef MAC
 #include <conio.h>
-#include "i_debug.h"
 #include <dos.h>
 #include <io.h>
+#include "i_vesa.h"
+#endif
+
+#include "i_debug.h"
+
 #include "version.h"
 #include "doomdef.h"
 #include "doomstat.h"
@@ -61,8 +67,6 @@
 #include "r_main.h"
 
 #include "d_main.h"
-
-#include "i_vesa.h"
 
 #include "sizeopt.h"
 
@@ -805,6 +809,7 @@ void D_StartTitle(void)
 //
 int D_GetCursorColumn(void)
 {
+#ifndef MAC
     union REGS regs;
 
     regs.h.ah = 3;
@@ -812,6 +817,9 @@ int D_GetCursorColumn(void)
     int386(0x10, &regs, &regs);
 
     return regs.h.dl;
+#else
+    return 0;
+#endif
 }
 
 //
@@ -819,6 +827,7 @@ int D_GetCursorColumn(void)
 //
 int D_GetCursorRow(void)
 {
+#ifndef MAC
     union REGS regs;
 
     regs.h.ah = 3;
@@ -826,6 +835,9 @@ int D_GetCursorRow(void)
     int386(0x10, &regs, &regs);
 
     return regs.h.dh;
+#else
+    return 0;
+#endif
 }
 
 //
@@ -833,6 +845,7 @@ int D_GetCursorRow(void)
 //
 void D_SetCursorPosition(int column, int row)
 {
+#ifndef MAC
     union REGS regs;
 
     regs.h.dh = row;
@@ -840,6 +853,7 @@ void D_SetCursorPosition(int column, int row)
     regs.h.ah = 2;
     regs.h.bh = 0;
     int386(0x10, &regs, &regs);
+#endif
 }
 
 //      print title for every printed line
@@ -850,6 +864,7 @@ char title[128];
 //
 void D_DrawTitle(int fc)
 {
+#ifndef MAC
     union REGS regs;
     byte color;
     int column;
@@ -882,6 +897,7 @@ void D_DrawTitle(int fc)
         // Set position
         D_SetCursorPosition(column, row);
     }
+#endif
 }
 
 //
@@ -967,6 +983,10 @@ void D_AddFile(char *file)
 #define DOOM2WADSIZE 14604584
 #define PLUTONIAWADSIZE 17420824
 #define TNTWADSIZE 18195736
+
+#ifdef MAC
+#define R_OK 0
+#endif
 
 void LoadIWAD(int selection)
 {
@@ -1318,8 +1338,14 @@ int D_FileGetFirstInteger(const char *filename)
     return firstInteger;
 }
 
+#ifdef MAC
+#define _A_SUBDIR 0
+#define _A_ARCH 0
+#endif
+
 void D_GetListBenchFiles(void)
 {
+#ifndef MAC
     struct find_t ffblk;
     char search[20];
     unsigned int count = 0;
@@ -1354,6 +1380,7 @@ void D_GetListBenchFiles(void)
             }
         } while (_dos_findnext(&ffblk) == 0);
     }
+#endif
 }
 
 //
@@ -1362,7 +1389,10 @@ void D_GetListBenchFiles(void)
 void D_DoomMain(void)
 {
     int p;
+
+#ifndef MAC
     union REGS regs;
+#endif
 
     printf("\nFastDoom version " FDOOMVERSION "\n\n");
 
@@ -1568,8 +1598,11 @@ void D_DoomMain(void)
         break;
     }
 
+#ifndef MAC
     regs.w.ax = 3;
     int386(0x10, &regs, &regs);
+#endif
+
     if (complevel >= COMPLEVEL_ULTIMATE_DOOM)
         D_DrawTitle(8);
     else

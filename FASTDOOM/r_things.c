@@ -33,7 +33,9 @@
 
 #include "std_func.h"
 
+#ifndef MAC
 #include <conio.h>
+#endif
 
 #include "i_debug.h"
 

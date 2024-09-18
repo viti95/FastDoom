@@ -18,7 +18,10 @@
 //	Functions to blit a block to the screen.
 //
 
+#ifndef MAC
 #include <conio.h>
+#endif
+
 #include "i_system.h"
 #include "r_local.h"
 #include "options.h"

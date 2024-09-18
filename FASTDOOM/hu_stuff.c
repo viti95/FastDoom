@@ -16,7 +16,10 @@
 //
 
 #include <stdio.h>
+
+#ifndef MAC
 #include <conio.h>
+#endif
 
 #include "std_func.h"
 

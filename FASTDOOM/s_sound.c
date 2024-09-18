@@ -39,9 +39,11 @@
 
 #include "std_func.h"
 
+#ifndef MAC
 #include "ns_cd.h"
 #include "ns_multi.h"
 #include "ns_muldf.h"
+#endif
 
 // Current music/sfx card - index useless
 //  w/o a reference LUT in a sound module.

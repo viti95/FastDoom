@@ -32,7 +32,9 @@
 
 #include "f_wipe.h"
 
+#ifndef MAC
 #include <conio.h>
+#endif
 
 #include "options.h"
 
