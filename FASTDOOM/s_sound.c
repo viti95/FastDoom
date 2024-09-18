@@ -924,3 +924,40 @@ void S_ClearSounds(void)
         }
     }
 }
+
+void S_ClearUnusedSounds(void)
+{
+    unsigned short i,j;
+
+    if (snd_SfxDevice == snd_none)
+        return;
+
+    // Mark used sounds as cached
+    for (i = 1; i < NUMSFX; i++)
+    {
+        unsigned char soundUnused = 1;
+
+        // check if sound is loaded
+        if (S_sfx[i].data == 0)
+            continue;
+
+        // check if sound is in use
+        for (j = 0; j < numChannels; j++)
+        {
+            sfxinfo_t *channelSound = channels[j].sfxinfo;
+
+            if (channelSound != 0 && channelSound == &S_sfx[i])
+            {
+                soundUnused = 0;
+                break;
+            }
+        }
+
+        // mark data as cached and unload sound
+        if (soundUnused)
+        {
+            Z_ChangeTag(S_sfx[i].data, PU_CACHE);
+            S_sfx[i].data = 0;
+        }
+    }
+}
