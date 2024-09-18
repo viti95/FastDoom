@@ -170,7 +170,7 @@ int M_ReadFile(char const *name,
     handle = open(name, O_RDONLY | O_BINARY, 0666);
     fstat(handle, &fileinfo);
     length = fileinfo.st_size;
-    buf = Z_MallocUnowned(length, PU_STATIC);
+    buf = Z_MallocUnowned(length, PU_STATIC, 0);
     count = read(handle, buf, length);
     close(handle);
 
@@ -418,7 +418,7 @@ void M_LoadDefaults(void)
                     // get a string default
                     isstring = 1;
                     len = strlen(strparm);
-                    newstring = (char *)Z_MallocUnowned(len, PU_STATIC);
+                    newstring = (char *)Z_MallocUnowned(len, PU_STATIC, 0);
                     strparm[len - 1] = 0;
                     strcpy(newstring, strparm + 1);
                 }

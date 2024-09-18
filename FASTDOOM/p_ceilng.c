@@ -175,7 +175,7 @@ int EV_DoCeiling(line_t *line,
 
 		// new door thinker
 		rtn = 1;
-		ceiling = Z_MallocUnowned(sizeof(*ceiling), PU_LEVSPEC);
+		ceiling = Z_MallocUnowned(sizeof(*ceiling), PU_LEVSPEC, 0);
 
 		thinkercap.prev->next = &ceiling->thinker;
 		ceiling->thinker.next = &thinkercap;

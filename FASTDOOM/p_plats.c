@@ -148,7 +148,7 @@ int EV_DoPlat(line_t *line,
 
 		// Find lowest & highest floors around sector
 		rtn = 1;
-		plat = Z_MallocUnowned(sizeof(*plat), PU_LEVSPEC);
+		plat = Z_MallocUnowned(sizeof(*plat), PU_LEVSPEC, 0);
 
 		thinkercap.prev->next = &plat->thinker;
     	plat->thinker.next = &thinkercap;

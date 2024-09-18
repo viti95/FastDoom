@@ -955,7 +955,7 @@ void D_AddFile(char *file)
     for (numwadfiles = 0; wadfiles[numwadfiles]; numwadfiles++)
         ;
 
-    newfile = Z_MallocUnowned(strlen(file) + 1, PU_STATIC);
+    newfile = Z_MallocUnowned(strlen(file) + 1, PU_STATIC, 0);
     strcpy(newfile, file);
 
     wadfiles[numwadfiles] = newfile;
@@ -1335,7 +1335,7 @@ void D_GetListBenchFiles(void)
 
     // Reserve memory for pointers
     benchmark_files_num = count;
-    benchmark_files = Z_MallocUnowned(count * sizeof(char *), PU_STATIC);
+    benchmark_files = Z_MallocUnowned(count * sizeof(char *), PU_STATIC, 0);
 
     count = 0;
 
@@ -1348,7 +1348,7 @@ void D_GetListBenchFiles(void)
             {
                 strcpy(search, "BENCH\\");
                 strcat(search, ffblk.name);
-                benchmark_files[count] = Z_MallocUnowned(20 * sizeof(char), PU_STATIC);
+                benchmark_files[count] = Z_MallocUnowned(20 * sizeof(char), PU_STATIC, 0);
                 strcpy(benchmark_files[count], search);
                 count++;
             }

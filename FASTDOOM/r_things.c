@@ -212,7 +212,7 @@ void R_InitSpriteDefs(char const **namelist)
 
         // allocate space for the frames present and copy sprtemp to it
         sprites[i].numframes = maxframe;
-        sprites[i].spriteframes = Z_MallocUnowned(maxframe * sizeof(spriteframe_t), PU_STATIC);
+        sprites[i].spriteframes = Z_MallocUnowned(maxframe * sizeof(spriteframe_t), PU_STATIC, 0);
         CopyBytes(sprtemp, sprites[i].spriteframes, maxframe * sizeof(spriteframe_t));
         // memcpy(sprites[i].spriteframes, sprtemp, maxframe * sizeof(spriteframe_t));
     }
@@ -1192,7 +1192,7 @@ void R_ProjectSprite(mobj_t *thing)
         if (num_vissprite_alloc == 0)
         {
             num_vissprite_alloc = INITIAL_SPRITES; // Initial num sprites -> 128
-            vissprites = Z_MallocUnowned(num_vissprite_alloc * sizeof(*vissprites), PU_STATIC);
+            vissprites = Z_MallocUnowned(num_vissprite_alloc * sizeof(*vissprites), PU_STATIC, 0);
         }
         else
         {
@@ -1203,7 +1203,7 @@ void R_ProjectSprite(mobj_t *thing)
             num_vissprite_alloc_old = num_vissprite_alloc;
 
             num_vissprite_alloc = num_vissprite_alloc * 2;
-            vissprites = Z_MallocUnowned(num_vissprite_alloc * sizeof(*vissprites), PU_STATIC);
+            vissprites = Z_MallocUnowned(num_vissprite_alloc * sizeof(*vissprites), PU_STATIC, 0);
             CopyBytes(vissprites_old, vissprites, num_vissprite_alloc_old * sizeof(*vissprites));
             // memcpy(vissprites, vissprites_old, num_vissprite_alloc_old * sizeof(*vissprites));
             Z_Free(vissprites_old);
@@ -1488,7 +1488,7 @@ void R_SortVisSprites(void)
             if (num_vissprite_ptrs > 0)
                 Z_Free(vissprite_ptrs);
             num_vissprite_ptrs = num_vissprite_alloc * 2;
-            vissprite_ptrs = Z_MallocUnowned(num_vissprite_ptrs * sizeof *vissprite_ptrs, PU_STATIC);
+            vissprite_ptrs = Z_MallocUnowned(num_vissprite_ptrs * sizeof *vissprite_ptrs, PU_STATIC, 0);
         }
 
         while (--i >= 0)

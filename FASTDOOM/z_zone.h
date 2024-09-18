@@ -39,8 +39,10 @@
 #define PU_CACHE 101
 
 void Z_Init(void);
-void *Z_Malloc(int size, byte tag, void *ptr);
-void *Z_MallocUnowned(int size, byte tag);
+void *Z_Malloc(int size, byte tag, void *ptr, byte emergency);
+void *Z_MallocUnowned(int size, byte tag, byte emergency);
+void *Z_MallocEmergency(int size, byte tag, void *user);
+void *Z_MallocEmergencyUnowned(int size, byte tag);
 void *Z_ReallocUnowned(void *ptr, int n, byte tag);
 void Z_Free(void *ptr);
 void Z_FreeTags(byte lowtag, byte hightag);

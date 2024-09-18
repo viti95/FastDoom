@@ -1277,7 +1277,7 @@ void WI_loadData(void)
 #endif
 
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-	screen1 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC);
+	screen1 = (byte *)Z_MallocUnowned(SCREENWIDTH * SCREENHEIGHT, PU_STATIC, 0);
 
 	// background
 	bg = W_CacheLumpName(name, PU_CACHE);
@@ -1290,7 +1290,7 @@ void WI_loadData(void)
 
 	if (gamemode == commercial)
 	{
-		lnames = (patch_t **)Z_MallocUnowned(sizeof(patch_t *) * NUMCMAPS, PU_STATIC);
+		lnames = (patch_t **)Z_MallocUnowned(sizeof(patch_t *) * NUMCMAPS, PU_STATIC, 0);
 		for (i = 0; i < NUMCMAPS; i++)
 		{
 			sprintf(name, "CWILV%2.2d", i);
@@ -1299,7 +1299,7 @@ void WI_loadData(void)
 	}
 	else
 	{
-		lnames = (patch_t **)Z_MallocUnowned(sizeof(patch_t *) * NUMMAPS, PU_STATIC);
+		lnames = (patch_t **)Z_MallocUnowned(sizeof(patch_t *) * NUMMAPS, PU_STATIC, 0);
 		for (i = 0; i < NUMMAPS; i++)
 		{
 			sprintf(name, "WILV%d%d", wbs->epsd, i);

@@ -1018,7 +1018,7 @@ void G_DoSaveGame(void)
 
     requiredmemsize = G_CalculateSaveGameSize();
 
-    savebuffer = (byte *)Z_MallocUnowned(requiredmemsize, PU_STATIC);
+    savebuffer = (byte *)Z_MallocUnowned(requiredmemsize, PU_STATIC, 0);
 
     save_p = savebuffer;
 
@@ -1289,7 +1289,7 @@ void G_RecordDemo(char *name)
     i = M_CheckParm("-maxdemo");
     if (i && i < myargc - 1)
         maxsize = atoi(myargv[i + 1]) * 1024;
-    demobuffer = Z_MallocUnowned(maxsize, PU_STATIC);
+    demobuffer = Z_MallocUnowned(maxsize, PU_STATIC, 0);
     demoend = demobuffer + maxsize;
 
     demorecording = 1;

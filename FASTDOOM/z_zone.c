@@ -21,6 +21,7 @@
 #include "z_zone.h"
 #include "i_system.h"
 #include "doomdef.h"
+#include "s_sound.h"
 
 //
 // ZONE MEMORY ALLOCATION
@@ -132,7 +133,7 @@ void Z_Free(void *ptr)
 //
 #define MINFRAGMENT sizeof(memblock_t)
 
-void *Z_Malloc(int size, byte tag, void *user)
+void *Z_Malloc(int size, byte tag, void *user, byte emergency)
 {
     int extra;
     memblock_t *start;
@@ -170,7 +171,10 @@ void *Z_Malloc(int size, byte tag, void *user)
         if (rover->next == start)
         {
             // scanned all the way around the list
-            I_Error("Z_Malloc: failed on allocation of %i bytes", size);
+            if (emergency == 1)
+                I_Error("Z_Malloc: failed on allocation of %i bytes", size);
+            else
+                return Z_MallocEmergency(size, tag, user);
         }
         if (rover->user)
         {
@@ -226,7 +230,7 @@ void *Z_Malloc(int size, byte tag, void *user)
     return (void *)((byte *)base + sizeof(memblock_t));
 }
 
-void *Z_MallocUnowned(int size, byte tag)
+void *Z_MallocUnowned(int size, byte tag, byte emergency)
 {
     int extra;
     memblock_t *start;
@@ -264,7 +268,10 @@ void *Z_MallocUnowned(int size, byte tag)
         if (rover->next == start)
         {
             // scanned all the way around the list
-            I_Error("Z_Malloc: failed on allocation of %i bytes", size);
+            if (emergency == 1)
+                I_Error("Z_Malloc: failed on allocation of %i bytes", size);
+            else
+                return Z_MallocEmergencyUnowned(size, tag);
         }
         if (rover->user)
         {
@@ -320,7 +327,7 @@ void *Z_MallocUnowned(int size, byte tag)
 
 void *Z_ReallocUnowned(void *ptr, int n, byte tag)
 {
-    void *p = Z_MallocUnowned(n, tag);
+    void *p = Z_MallocUnowned(n, tag, 0);
     if (ptr)
     {
         memblock_t *block = (memblock_t *)((byte *)ptr - MINFRAGMENT);
@@ -328,6 +335,19 @@ void *Z_ReallocUnowned(void *ptr, int n, byte tag)
         Z_Free(ptr);
     }
     return p;
+}
+
+// Cleanup as memory as possible and try to malloc again
+void *Z_MallocEmergency(int size, byte tag, void *user)
+{
+    S_ClearSounds();
+    return Z_Malloc(size, tag, user, 1);
+}
+
+void *Z_MallocEmergencyUnowned(int size, byte tag)
+{
+    S_ClearSounds();
+    return Z_MallocUnowned(size, tag, 1);
 }
 
 //

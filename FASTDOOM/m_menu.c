@@ -1121,7 +1121,7 @@ void M_BenchmarkRunDemo(void)
         benchmark_total_tics = G_GetDemoTicks(demofile) + 10;
 
         // Alloc memory for frametimes
-        frametime = (unsigned int *)Z_MallocUnowned(benchmark_total_tics * sizeof(unsigned int), PU_STATIC);
+        frametime = (unsigned int *)Z_MallocUnowned(benchmark_total_tics * sizeof(unsigned int), PU_STATIC, 0);
 
         for (i = 0; i < benchmark_total_tics; i++)
         {

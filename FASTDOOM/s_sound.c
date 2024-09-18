@@ -366,7 +366,7 @@ unsigned char *LoadFile(char *filename, int *length)
     size = ftell(in);
     fseek(in, 0, SEEK_SET);
 
-    ptr = (unsigned char *)Z_MallocUnowned(size, PU_STATIC);
+    ptr = (unsigned char *)Z_MallocUnowned(size, PU_STATIC, 0);
     if (ptr == NULL)
         I_Error("Out of memory, cannot load music file %s", filename);
 
@@ -830,7 +830,7 @@ void S_Init(int sfxVolume, int musicVolume)
     // Allocating the internal channels for mixing
     // (the maximum numer of sounds rendered
     // simultaneously) within zone memory.
-    channels = (channel_t *)Z_MallocUnowned(numChannels * sizeof(channel_t), PU_STATIC);
+    channels = (channel_t *)Z_MallocUnowned(numChannels * sizeof(channel_t), PU_STATIC, 0);
 
     // Free all channels for use
     for (i = 0; i < numChannels; i++)

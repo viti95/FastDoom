@@ -1312,7 +1312,7 @@ void AL_RegisterTimbreBank(
 {
    int i;
 
-   ADLIB_TimbreBank = Z_MallocUnowned(sizeof(TIMBRE) * 256, PU_STATIC);
+   ADLIB_TimbreBank = Z_MallocUnowned(sizeof(TIMBRE) * 256, PU_STATIC, 0);
 
    for (i = 0; i < 256; i++)
    {

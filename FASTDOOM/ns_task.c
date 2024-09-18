@@ -299,7 +299,7 @@ static unsigned long allocateTimerStack(
     unsigned short size)
 
 {
-    return (unsigned long)Z_MallocUnowned(size, PU_STATIC);
+    return (unsigned long)Z_MallocUnowned(size, PU_STATIC, 0);
 }
 
 /*---------------------------------------------------------------------
