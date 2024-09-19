@@ -89,5 +89,6 @@ void S_SetMusicVolume(int volume);
 void S_SetSfxVolume(int volume);
 
 void S_ClearSounds(void);
+void S_ClearUnusedSounds(void);
 
 #endif

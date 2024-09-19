@@ -21,6 +21,7 @@
 #include "z_zone.h"
 #include "i_system.h"
 #include "doomdef.h"
+#include "s_sound.h"
 
 //
 // ZONE MEMORY ALLOCATION
@@ -132,6 +133,8 @@ void Z_Free(void *ptr)
 //
 #define MINFRAGMENT sizeof(memblock_t)
 
+byte emergency = 0;
+
 void *Z_Malloc(int size, byte tag, void *user)
 {
     int extra;
@@ -170,7 +173,10 @@ void *Z_Malloc(int size, byte tag, void *user)
         if (rover->next == start)
         {
             // scanned all the way around the list
-            I_Error("Z_Malloc: failed on allocation of %i bytes", size);
+            if (emergency == 1)
+                I_Error("Z_Malloc: failed on allocation of %i bytes", size);
+            else
+                return Z_MallocEmergency(size, tag, user);
         }
         if (rover->user)
         {
@@ -222,6 +228,7 @@ void *Z_Malloc(int size, byte tag, void *user)
 
     // next allocation will start looking here
     mainzone->rover = base->next;
+    emergency = 0;
 
     return (void *)((byte *)base + sizeof(memblock_t));
 }
@@ -264,7 +271,10 @@ void *Z_MallocUnowned(int size, byte tag)
         if (rover->next == start)
         {
             // scanned all the way around the list
-            I_Error("Z_Malloc: failed on allocation of %i bytes", size);
+            if (emergency == 1)
+                I_Error("Z_Malloc: failed on allocation of %i bytes", size);
+            else
+                return Z_MallocEmergencyUnowned(size, tag);
         }
         if (rover->user)
         {
@@ -315,6 +325,7 @@ void *Z_MallocUnowned(int size, byte tag)
     // next allocation will start looking here
     mainzone->rover = base->next;
 
+    emergency = 0;
     return (void *)((byte *)base + sizeof(memblock_t));
 }
 
@@ -328,6 +339,21 @@ void *Z_ReallocUnowned(void *ptr, int n, byte tag)
         Z_Free(ptr);
     }
     return p;
+}
+
+// Cleanup as memory as possible and try to malloc again
+void *Z_MallocEmergency(int size, byte tag, void *user)
+{
+    emergency = 1;
+    S_ClearUnusedSounds();
+    return Z_Malloc(size, tag, user);
+}
+
+void *Z_MallocEmergencyUnowned(int size, byte tag)
+{
+    emergency = 1;
+    S_ClearUnusedSounds();
+    return Z_MallocUnowned(size, tag);
 }
 
 //
