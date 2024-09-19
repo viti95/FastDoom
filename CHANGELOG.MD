@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.0.2 (19 Sep 2024)
+* Better sound caching
+* Improved management of low memory scenarios
+
 ## 1.0.1 (13 Sep 2024)
 * Fixed frameskipping in 35 fps mode not working properly
 
