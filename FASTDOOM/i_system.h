@@ -97,35 +97,18 @@ void I_FinishUpdateDirect(void);
 #endif
 void I_CalculateFPS(void);
 
+#ifndef MAC
+
 // Wait for vertical retrace or pause a bit.
 void I_WaitSingleVBL(void);
-#pragma aux I_WaitSingleVBL = \
-    "mov dx, 0x3DA", \
-    "l1: in al, dx", \
-    "and al, 0x08", \
-    "jnz l1", \
-    "l2: in al, dx", \
-    "and al, 0x08", \
-    "jz l2" modify [al dx]
 
 // Wait for CGA to be available
 void I_WaitCGA(void);
-#pragma aux I_WaitCGA = \
-    "mov dx, 0x3DA", \
-    "wdn: in al, dx", \
-    "test al, 0x01", \
-    "jz wdn", modify [al dx]
 
 void I_DisableCGABlink(void);
-#pragma aux I_DisableCGABlink = \   
-    "mov dx, 0x3D8", \
-    "mov al, 0x9", \   
-    "out dx, al" modify [al dx]
 
 void I_DisableMDABlink(void);
-#pragma aux I_DisableMDABlink = \   
-    "mov dx, 0x3B8", \
-    "mov al, 0x9", \   
-    "out dx, al" modify [al dx]
+
+#endif
 
 #endif

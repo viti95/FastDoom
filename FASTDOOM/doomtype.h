@@ -23,11 +23,17 @@
 #ifndef __BYTEBOOL__
 #define __BYTEBOOL__
 
+#ifdef MAC
+typedef int boolean;
+#define true 1
+#define false 0
+#else
 typedef enum
 {
     false,
     true
 } boolean;
+#endif
 
 typedef unsigned char byte;
 #endif

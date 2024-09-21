@@ -34,8 +34,6 @@
 // VIDEO
 //
 
-#define CENTERY (SCREENHEIGHT / 2)
-
 // Screen 0 is the screen updated by I_Update screen.
 // Screen 1 is an extra buffer.
 

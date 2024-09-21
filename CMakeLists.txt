@@ -67,4 +67,4 @@ add_application(FASTDOOM
 target_link_libraries(FASTDOOM "-lm")
 
 # save 200KB of code by removing unused stuff
-set_target_properties(FASTDOOM PROPERTIES COMPILE_OPTIONS "-DMAC;-mcpu=68000;-O3;-fgcse-sm" LINK_FLAGS "-Wl,-gc-sections")
+set_target_properties(FASTDOOM PROPERTIES COMPILE_OPTIONS "-DSCREENWIDTH=320;-DSCREENHEIGHT=240;-DMAC;-mcpu=68000;-O3;-fgcse-sm" LINK_FLAGS "-Wl,-gc-sections")

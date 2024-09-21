@@ -34,43 +34,40 @@
 #include <stdarg.h>
 #include <stdint.h>
 
-#include "compiler.h"
-
 #include "d_main.h"
 #include "i_system.h"
-#include "m_random.h"
 #include "r_defs.h"
 #include "v_video.h"
 #include "w_wad.h"
 
-#include "globdata.h"
-
-
 #define PLANEWIDTH			 64
 #define SCREENHEIGHT_MAC	342
 
+typedef uint16_t segment_t;
+
+#define PARAGRAPH_SIZE 16
 
 extern const int16_t CENTERY;
 
-static uint8_t _s_viewwindow[VIEWWINDOWWIDTH * VIEWWINDOWHEIGHT];
-static uint8_t *_s_statusbar;
+static uint8_t _s_viewwindow[SCREENWIDTH * SCREENHEIGHT];
+//static uint8_t *_s_statusbar;
 static uint8_t *videomemory_view;
 static uint8_t *videomemory_statusbar;
 
 
 void I_InitGraphics(void)
 {
-	videomemory_view      = qd.screenBits.baseAddr + ((PLANEWIDTH - VIEWWINDOWWIDTH)     / 2) + (((SCREENHEIGHT_MAC - SCREENHEIGHT * 2) / 2) * PLANEWIDTH);
-	videomemory_statusbar = qd.screenBits.baseAddr + ((PLANEWIDTH - SCREENWIDTH * 2 / 8) / 2) + (((SCREENHEIGHT_MAC - SCREENHEIGHT * 2) / 2) * PLANEWIDTH) + VIEWWINDOWHEIGHT * 2 * PLANEWIDTH;
+	videomemory_view      = qd.screenBits.baseAddr + ((PLANEWIDTH - SCREENWIDTH)     / 2) + (((SCREENHEIGHT_MAC - SCREENHEIGHT * 2) / 2) * PLANEWIDTH);
+	videomemory_statusbar = qd.screenBits.baseAddr + ((PLANEWIDTH - SCREENWIDTH * 2 / 8) / 2) + (((SCREENHEIGHT_MAC - SCREENHEIGHT * 2) / 2) * PLANEWIDTH) + SCREENHEIGHT * 2 * PLANEWIDTH;
 
-	_s_statusbar = Z_MallocStatic(SCREENWIDTH * ST_HEIGHT);
+	//_s_statusbar = Z_MallocStatic(SCREENWIDTH * ST_HEIGHT);
 }
 
 
-void I_SetPalette(int8_t pal)
+/*void I_SetPalette(int8_t pal)
 {
 
-}
+}*/
 
 
 #define B2 (0 << 0)
@@ -300,7 +297,7 @@ static const uint8_t VGA_TO_BW_LUT_3b[256] =
 
 static boolean refreshStatusBar;
 
-void I_FinishUpdate(void)
+/*void I_FinishUpdate(void)
 {
 	// view window
 	uint8_t *src = &_s_viewwindow[0];
@@ -337,10 +334,10 @@ void I_FinishUpdate(void)
 			dst += PLANEWIDTH * 2 - (SCREENWIDTH * 2 / 8);
 		}
 	}
-}
+}*/
 
 
-void R_InitColormaps(void)
+/*void R_InitColormaps(void)
 {
 	int16_t num     = W_GetNumForName("COLORMAP");
 	fullcolormap    = W_GetLumpByNum(num); // Never freed
@@ -351,13 +348,13 @@ void R_InitColormaps(void)
 		uint8_t b = *ptr;
 		*ptr++ = ~b;
 	}
-}
+}*/
 
 
-#define COLEXTRABITS (8 - 1)
-#define COLBITS (8 + 1)
+//#define COLEXTRABITS (8 - 1)
+//#define COLBITS (8 + 1)
 
-void R_DrawColumn(const draw_column_vars_t *dcvars)
+/*void R_DrawColumn(const draw_column_vars_t *dcvars)
 {
 	const int16_t count = (dcvars->yh - dcvars->yl) + 1;
 
@@ -417,10 +414,10 @@ void R_DrawColumn(const draw_column_vars_t *dcvars)
 		case  2: *dest = nearcolormap[source[frac>>COLBITS]]; dest += VIEWWINDOWWIDTH; frac += fracstep;
 		case  1: *dest = nearcolormap[source[frac>>COLBITS]];
 	}
-}
+}*/
 
 
-void R_DrawColumnFlat(int16_t texture, const draw_column_vars_t *dcvars)
+/*void R_DrawColumnFlat(int16_t texture, const draw_column_vars_t *dcvars)
 {
 	int16_t count = (dcvars->yh - dcvars->yl) + 1;
 
@@ -440,10 +437,10 @@ void R_DrawColumnFlat(int16_t texture, const draw_column_vars_t *dcvars)
 		dest += VIEWWINDOWWIDTH;
 		color = colort - color;
 	}
-}
+}*/
 
 
-#define FUZZOFF (VIEWWINDOWWIDTH)
+/*#define FUZZOFF (VIEWWINDOWWIDTH)
 #define FUZZTABLE 50
 
 static const int8_t fuzzoffset[FUZZTABLE] =
@@ -455,10 +452,10 @@ static const int8_t fuzzoffset[FUZZTABLE] =
 	FUZZOFF,-FUZZOFF,FUZZOFF,FUZZOFF,-FUZZOFF,-FUZZOFF,FUZZOFF,
 	FUZZOFF,-FUZZOFF,-FUZZOFF,-FUZZOFF,-FUZZOFF,FUZZOFF,FUZZOFF,
 	FUZZOFF,FUZZOFF,-FUZZOFF,FUZZOFF,FUZZOFF,-FUZZOFF,FUZZOFF
-};
+};*/
 
 
-void R_DrawFuzzColumn(const draw_column_vars_t *dcvars)
+/*void R_DrawFuzzColumn(const draw_column_vars_t *dcvars)
 {
 	int16_t dc_yl = dcvars->yl;
 	int16_t dc_yh = dcvars->yh;
@@ -493,10 +490,10 @@ void R_DrawFuzzColumn(const draw_column_vars_t *dcvars)
 			fuzzpos = 0;
 
 	} while(--count);
-}
+}*/
 
 
-void V_DrawRaw(int16_t num, uint16_t offset)
+/*void V_DrawRaw(int16_t num, uint16_t offset)
 {
 	refreshStatusBar = true;
 
@@ -510,7 +507,7 @@ void V_DrawRaw(int16_t num, uint16_t offset)
 	}
 	else
 		W_ReadLumpByNum(num, &_s_statusbar[offset - (SCREENHEIGHT - ST_HEIGHT) * SCREENWIDTH]);
-}
+}*/
 
 
 void ST_Drawer(void)
@@ -520,7 +517,7 @@ void ST_Drawer(void)
 }
 
 
-void V_DrawPatchNotScaled(int16_t x, int16_t y, const patch_t __far* patch)
+/*void V_DrawPatchNotScaled(int16_t x, int16_t y, const patch_t patch)
 {
 	y -= patch->topoffset;
 	x -= patch->leftoffset;
@@ -550,10 +547,10 @@ void V_DrawPatchNotScaled(int16_t x, int16_t y, const patch_t __far* patch)
 			column = (const column_t*)((const byte*)column + column->length + 4);
 		}
 	}
-}
+}*/
 
 
-segment_t I_ZoneBase(uint32_t *size)
+/*segment_t I_ZoneBase(uint32_t *size)
 {
 	uint32_t paragraphs = 550 * 1024L / PARAGRAPH_SIZE;
 	uint8_t *ptr = malloc(paragraphs * PARAGRAPH_SIZE);
@@ -574,7 +571,7 @@ segment_t I_ZoneBase(uint32_t *size)
 
 	*size = paragraphs * PARAGRAPH_SIZE;
 	return D_FP_SEG(ptr);
-}
+}*/
 
 
 segment_t I_ZoneAdditional(uint32_t *size)
