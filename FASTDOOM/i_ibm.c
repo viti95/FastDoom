@@ -18,8 +18,12 @@
 //
 
 #include <string.h>
+
+#ifndef MAC
 #include <dos.h>
 #include <conio.h>
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -257,8 +261,10 @@ unsigned int ticcount;
 unsigned int fps;
 
 // REGS stuff used for int calls
+#ifndef MAC
 union REGS regs;
 struct SREGS segregs;
+#endif
 
 #define KBDQUESIZE 32
 byte keyboardque[KBDQUESIZE];
@@ -779,8 +785,10 @@ void I_ShutdownGraphics(void)
         I_FinishHerculesHalfMode();
 #endif
 
+#ifndef MAC
     regs.w.ax = 3;
     int386(0x10, &regs, &regs); // back to text mode
+#endif
 }
 
 //
@@ -939,12 +947,17 @@ void I_StartupTimer(void) {
 // Keyboard
 //
 
+#ifndef MAC
 void(__interrupt __far *oldkeyboardisr)() = NULL;
+#else
+void(*oldkeyboardisr)() = NULL;
+#endif
 
 //
 // I_KeyboardISR
 //
 
+#ifndef MAC
 void __interrupt I_KeyboardISR(void)
 {
     // Get the scan code
@@ -956,14 +969,22 @@ void __interrupt I_KeyboardISR(void)
 
     OutByte20h(0x20);
 }
+#else
+void I_KeyboardISR(void)
+{
+    
+}
+#endif
 
 //
 // I_StartupKeyboard
 //
 void I_StartupKeyboard(void)
 {
+#ifndef MAC
     oldkeyboardisr = _dos_getvect(KEYBOARDINT);
     _dos_setvect(0x8000 | KEYBOARDINT, I_KeyboardISR);
+#endif
 }
 
 void I_ShutdownKeyboard(void)
@@ -979,9 +1000,13 @@ void I_ShutdownKeyboard(void)
 
 int I_ResetMouse(void)
 {
+#ifndef MAC
     regs.w.ax = 0; // reset
     int386(0x33, &regs, &regs);
     return regs.w.ax;
+#else
+    return 0;
+#endif
 }
 
 //
@@ -1156,11 +1181,15 @@ void I_Quit(void)
 #else
     CopyDWords(scr, (void *)0xb8000, (80 * 25 * 2) / 4);
 #endif
+
+#ifndef MAC
     regs.w.ax = 0x0200;
     regs.h.bh = 0;
     regs.h.dl = 0;
     regs.h.dh = 23;
     int386(0x10, (union REGS *)&regs, &regs); // Set text pos
+#endif
+
     printf("\n");
 
     if (snd_MusicDevice == snd_CD)
@@ -1174,6 +1203,7 @@ void I_Quit(void)
 //
 byte *I_ZoneBase(int *size)
 {
+#ifndef MAC
     int meminfo[32];
     int heap;
     byte *ptr;
@@ -1213,10 +1243,14 @@ byte *I_ZoneBase(int *size)
 
     *size = heap;
     return ptr;
+#else
+    return 0;
+#endif
 }
 
 void *I_DosMemAlloc(unsigned long size)
 {
+#ifndef MAC
     union REGS Regs;
 
     // DPMI allocate DOS memory
@@ -1234,6 +1268,9 @@ void *I_DosMemAlloc(unsigned long size)
     }
 
     return ((void *)((Regs.x.eax & 0xFFFF) << 4));
+#else
+    return 0;
+#endif
 }
 
 //
@@ -1241,6 +1278,7 @@ void *I_DosMemAlloc(unsigned long size)
 //
 byte *I_AllocLow(int length)
 {
+#ifndef MAC
     byte *mem;
 
     // DPMI call 100h allocates DOS memory
@@ -1255,6 +1293,9 @@ byte *I_AllocLow(int length)
 
     memset(mem, 0, length);
     return mem;
+#else
+    return 0;
+#endif
 }
 
 //
@@ -1262,6 +1303,7 @@ byte *I_AllocLow(int length)
 //
 void DPMIInt(int i)
 {
+#ifndef MAC
     dpmiregs.ss = realstackseg;
     dpmiregs.sp = REALSTACKSIZE - 4;
 
@@ -1272,14 +1314,19 @@ void DPMIInt(int i)
     regs.x.edi = (unsigned)&dpmiregs;
     segregs.es = segregs.ds;
     int386x(DPMI_INT, &regs, &regs, &segregs);
+#endif
 }
 
 int I_GetCPUModel(void)
 {
+#ifndef MAC
     int result;
     union REGS r;
     r.x.eax = 0x0400; // DPMI get version
     int386(0x31, &r, &r);
     result = (r.x.ecx & 0xff) * 100 + 86; // Returns: 386,486,586,686
     return result;
+#else
+    return 0;
+#endif
 }

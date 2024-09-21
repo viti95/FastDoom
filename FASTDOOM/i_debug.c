@@ -1,9 +1,13 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#ifndef MAC
 #include <dos.h>
-#include <stdarg.h>
 #include <conio.h>
+#endif
+
+#include <stdarg.h>
 #include "doomtype.h"
 #include "fastmath.h"
 #include "options.h"

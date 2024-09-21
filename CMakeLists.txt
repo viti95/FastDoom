@@ -60,7 +60,6 @@ add_application(FASTDOOM
     FASTDOOM/hu_stuff.c
     FASTDOOM/i_debug.c
     FASTDOOM/i_file.c
-    FASTDOOM/i_herc.c
     FASTDOOM/i_ibm.c
     FASTDOOM/i_main.c
     FASTDOOM/i_mac.c

@@ -1226,9 +1226,9 @@ void F_BunnyScroll(void)
 	if (finalecount < 1180)
 	{
 #if defined(MODE_Y_HALF)
-		V_DrawPatchModeCentered((ORIGINAL_SCREENWIDTH - 13 * 8) / 2, (ORIGINAL_SCREENHEIGHT - 8 * 8) / 4, W_CacheLumpName("END0", PU_CACHE), 0);
+		V_DrawPatchModeCentered((ORIGINAL_SCREENWIDTH - 13 * 8) / 2, (ORIGINAL_SCREENHEIGHT - 8 * 8) / 4, W_CacheLumpName("END0", PU_CACHE));
 #else
-		V_DrawPatchModeCentered((ORIGINAL_SCREENWIDTH - 13 * 8) / 2, (ORIGINAL_SCREENHEIGHT - 8 * 8) / 2, W_CacheLumpName("END0", PU_CACHE), 0);
+		V_DrawPatchModeCentered((ORIGINAL_SCREENWIDTH - 13 * 8) / 2, (ORIGINAL_SCREENHEIGHT - 8 * 8) / 2, W_CacheLumpName("END0", PU_CACHE));
 #endif
     	laststage = 0;
 		return;
@@ -1286,15 +1286,15 @@ void F_Drawer(void)
 		case 1:
 			if (gamemode == shareware)
 			{
-        		V_DrawPatchModeCentered(0, 0, W_CacheLumpName("HELP2", PU_CACHE), 0);
+        		V_DrawPatchModeCentered(0, 0, W_CacheLumpName("HELP2", PU_CACHE));
 			}
 			else
 			{
-        		V_DrawPatchModeCentered(0, 0, W_CacheLumpName("CREDIT", PU_CACHE), 0);
+        		V_DrawPatchModeCentered(0, 0, W_CacheLumpName("CREDIT", PU_CACHE));
 			}
 			break;
 		case 2:
-      		V_DrawPatchModeCentered(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE), 0);
+      		V_DrawPatchModeCentered(0, 0, W_CacheLumpName("VICTORY2", PU_CACHE));
 			break;
 		case 3:
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
@@ -1305,7 +1305,7 @@ void F_Drawer(void)
 #endif
 			break;
 		case 4:
-      		V_DrawPatchModeCentered(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE), 0);
+      		V_DrawPatchModeCentered(0, 0, W_CacheLumpName("ENDPIC", PU_CACHE));
 			break;
 		}
 	}
