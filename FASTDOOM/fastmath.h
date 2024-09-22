@@ -33,6 +33,7 @@ typedef int fixed_t;
 #define FLOAT_TO_FIXED(inp)       (fixed_t)(inp * (1 << FRACBITS))
 #define ANGLE_TO_FLOAT(x)       (x * ((float)(PI_F / 4096.0f)))
 
+#ifndef MAC
 
 fixed_t FixedMul(fixed_t a, fixed_t b);
 #pragma aux FixedMul = \
@@ -454,5 +455,327 @@ void OutByte61h(unsigned char al);
 #pragma aux OutByte61h = \
     "out 0x61, al" \
     parm[al] nomemory;
+
+#else
+
+#include <limits.h>
+
+fixed_t FixedMul(fixed_t a, fixed_t b)
+{
+	return ((long long) a * (long long) b) >> FRACBITS;
+}
+
+
+inline fixed_t FixedInterpolate(fixed_t a, fixed_t b, fixed_t frac)
+{
+    return a + FixedMul(b - a, frac);
+}
+
+fixed_t FixedMulECX(fixed_t a, fixed_t b)
+{
+    return FixedMul(a, b);
+}
+
+fixed_t FixedMulEDX(fixed_t a, fixed_t b)
+{
+    return FixedMul(a, b);
+}
+
+fixed_t FixedMulEDXHalf(fixed_t a, fixed_t b)
+{
+    return FixedMul(a, b) / 2;
+}
+
+fixed_t FixedMulSquare(fixed_t a)
+{
+    return FixedMul(a, a);
+}
+
+fixed_t FixedMulHStep(fixed_t a, fixed_t b)
+{
+    // TODO: FIX THIS
+    return FixedMul(a,b);
+}
+
+fixed_t FixedMulLStep(fixed_t a, fixed_t b)
+{
+    // TODO: FIX THIS
+    return FixedMul(a,b);
+}
+
+fixed_t FixedDiv(fixed_t a, fixed_t b)
+{
+    if ( (abs(a)>>14) >= abs(b))
+	    return (a^b)<0 ? INT_MIN : INT_MAX;
+        
+    return FixedDiv2(a,b);
+}
+
+fixed_t FixedDiv2(fixed_t a, fixed_t b)
+{
+    long long c;
+    c = ((long long)a<<16) / ((long long)b);
+    return (fixed_t) c;
+}
+
+fixed_t FixedDivDBITS(fixed_t a, fixed_t b)
+{
+    // TODO: FIX
+    return FixedDiv(a, b);
+}
+
+fixed_t FixedDiv65536(fixed_t b)
+{
+    // TODO: Fix ?
+    return FixedDiv(65536, b);
+}
+
+unsigned char ROLAND1(int value)
+{
+    // TODO: FIX
+    return 1;
+}
+
+int Mul20(int value)
+{
+    return value * 20;
+}
+
+int Mul40(int value)
+{
+    return value * 40;
+}
+
+int Mul80(int value)
+{
+    return value * 80;
+}
+
+int Mul320(int value)
+{
+    return value * 320;
+}
+
+int Mul640(int value)
+{
+    return value * 640;
+}
+
+int Mul1280(int value)
+{
+    return value * 1280;
+}
+
+int Mul64(int value)
+{
+    return value * 64;
+}
+
+int Mul128(int value)
+{
+    return value * 128;
+}
+
+int Mul256(int value)
+{
+    return value * 256;
+}
+
+int Mul512(int value)
+{
+    return value * 512;
+}
+
+int Mul1024(int value)
+{
+    return value * 1024;
+}
+
+int Mul10(int value)
+{
+    return value * 10;
+}
+
+unsigned short USMul10(unsigned short value)
+{
+    return value * 10;
+}
+
+int Mul100(int value)
+{
+    return value * 100;
+}
+
+int Mul200(int value)
+{
+    return value * 200;
+}
+
+int Mul400(int value)
+{
+    return value * 400;
+}
+
+int Mul800(int value)
+{
+    return value * 800;
+}
+
+unsigned short USMul100(unsigned short value)
+{
+    return value * 100;
+}
+
+int Mul1000(int value)
+{
+    return value * 1000;
+}
+
+unsigned short USMul1000(unsigned short value)
+{
+    return value * 1000;
+}
+
+int Mul819200(int value)
+{
+    return value * 819200;
+}
+
+int Mul35(int value)
+{
+    return value * 35;
+}
+
+int Mul768(int value)
+{
+    return value * 768;
+}
+
+int Mul160(int value)
+{
+    return value * 160;
+}
+
+int Mul409(int value)
+{
+    return value * 409;
+}
+
+int Mul70(int value)
+{
+    return value * 70;
+}
+
+int Mul47000(int value)
+{
+    return value * 47000;
+}
+
+int Div1000(int value)
+{
+    return value / 1000;
+}
+
+int Div10(int value)
+{
+    return value / 10;
+}
+
+int Div3(int value)
+{
+    return value / 3;
+}
+
+int Div63(int value)
+{
+    return value / 63;
+}
+
+int Div101(int value)
+{
+    return value / 101;
+}
+
+int Div35(int value)
+{
+    return value / 35;
+}
+
+int DivSKULLSPEED(int value)
+{
+    return value / (20 * FRACUNIT);
+}
+
+int Div100(int value)
+{
+    return value / 100;
+}
+
+int Mul25(int value)
+{
+    return value * 25;
+}
+
+int Mul75(int value)
+{
+    return value * 75;
+}
+
+int Div255(int value)
+{
+    return value / 255;
+}
+
+unsigned long Div51200(unsigned long value)
+{
+    return value / 51200;
+}
+
+int Div70(int value)
+{
+    return value / 70;
+}
+
+int Div84(int value)
+{
+    return value / 84;
+}
+
+int Div128(int value)
+{
+    return value / 128;
+}
+
+void CopyBytes(void *src, void *dest, int num_bytes)
+{
+    memcpy(dest, src, num_bytes);
+}
+
+void CopyWords(void *src, void *dest, int num_words)
+{
+    memcpy(dest, src, num_words * 2);
+}
+
+void CopyDWords(void *src, void *dest, int num_dwords)
+{
+    memcpy(dest, src, num_dwords * 4);
+}
+
+void SetBytes(void *dest, unsigned char value, int num_bytes)
+{
+    memset(dest, value, num_bytes);
+}
+
+void SetWords(void *dest, short value, int num_words)
+{
+    memset(dest, value, num_words * 2);   
+}
+
+void SetDWords(void *dest, int value, int num_dwords)
+{
+    memset(dest, value, num_dwords * 4);
+}
+
+#endif
 
 #endif // __DOOMMATH__

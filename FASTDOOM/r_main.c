@@ -903,6 +903,438 @@ void R_PatchCode(void)
 #endif
 }
 
+#ifdef MAC
+void R_ExecuteSetViewSize(void)
+{
+  fixed_t cosadj;
+    fixed_t dy;
+    int i;
+    int j;
+    int level;
+    int startmap;
+
+    setsizeneeded = 0;
+    selectedCPU = 0;
+
+    if (setblocks >= 11)
+    {
+        scaledviewwidth = SCREENWIDTH;
+        viewheight = SCREENHEIGHT;
+        viewheightminusone = SCREENHEIGHT - 1;
+        viewheightshift = SCREENHEIGHT << FRACBITS;
+        viewheightopt = (SCREENHEIGHT << FRACBITS) - SCREENHEIGHT;
+        viewheight32 = SCREENHEIGHT << 16 | SCREENHEIGHT;
+        automapheight = SCREENHEIGHT;
+    }
+    else
+    {
+        // Since (SCREENWDITH / 10) may have a remainder, check 10 explcitly
+        if (setblocks == 10)
+        {
+            scaledviewwidth = SCREENWIDTH;
+        }
+        else
+        {
+            scaledviewwidth = setblocks * (SCREENWIDTH / 10);
+            // Stay multiple of 4
+            scaledviewwidth &= ~0x3;
+        }
+
+        if (setblocks == 10)
+            viewheight = SCREENHEIGHT - SBARHEIGHT;
+        else
+            viewheight = ((setblocks * (SCREENHEIGHT - SBARHEIGHT)) / 10) & ~7;
+
+        viewheightminusone = viewheight - 1;
+        viewheightshift = viewheight << FRACBITS;
+        viewheightopt = (viewheight << FRACBITS) - viewheight;
+        viewheight32 = viewheight << 16 | viewheight;
+        automapheight = SCREENHEIGHT - SBARHEIGHT;
+    }
+
+    if (forcePotatoDetail || forceLowDetail || forceHighDetail)
+    {
+        if (forceHighDetail)
+            detailshift = DETAIL_HIGH;
+        else if (forceLowDetail)
+            detailshift = DETAIL_LOW;
+        else
+            detailshift = DETAIL_POTATO;
+    }
+    else
+        detailshift = setdetail;
+
+    viewwidth = scaledviewwidth >> detailshift;
+    viewwidthhalf = viewwidth / 2;
+
+    viewwidthlimit = viewwidth - 1;
+    centery = viewheight / 2;
+    centerx = viewwidth / 2;
+    centerxfrac = centerx << FRACBITS;
+    centeryfrac = centery << FRACBITS;
+    centeryfracshifted = centeryfrac >> 4;
+    projection = centerxfrac;
+
+    switch (wallRender)
+    {
+    case WALL_NORMAL:
+        renderSegLoop = R_RenderSegLoop;
+        renderMaskedSegRange = R_RenderMaskedSegRange;
+        renderMaskedSegRange2 = R_RenderMaskedSegRange2;
+        break;
+    case WALL_FLAT:
+        renderSegLoop = R_RenderSegLoopFlat;
+        renderMaskedSegRange = R_RenderMaskedSegRangeFlat;
+        renderMaskedSegRange2 = R_RenderMaskedSegRange2Flat;
+        break;
+    case WALL_FLATTER:
+        renderSegLoop = R_RenderSegLoopFlatter;
+        renderMaskedSegRange = R_RenderMaskedSegRangeFlatter;
+        renderMaskedSegRange2 = R_RenderMaskedSegRange2Flatter;
+        break;
+    }
+
+    switch (spriteRender)
+    {
+    case SPRITE_NORMAL:
+        drawVisSprite = R_DrawVisSprite;
+        break;
+    case SPRITE_FLAT:
+        drawVisSprite = R_DrawVisSpriteFlat;
+        break;
+    case SPRITE_FLATTER:
+        drawVisSprite = R_DrawVisSpriteFlatter;
+        break;
+    }
+
+    switch (pspriteRender)
+    {
+    case PSPRITE_NORMAL:
+        drawPlayerSprite = R_DrawVisPSprite;
+        break;
+    case PSPRITE_FLAT:
+        drawPlayerSprite = R_DrawVisPSpriteFlat;
+        break;
+    case PSPRITE_FLATTER:
+        drawPlayerSprite = R_DrawVisPSpriteFlatter;
+        break;
+    }
+
+    switch (detailshift)
+    {
+    case DETAIL_HIGH:
+        switch (wallRender)
+        {
+        case WALL_NORMAL:
+            colfunc = R_DrawColumnBackbuffer;
+            break;
+        case WALL_FLAT:
+        case WALL_FLATTER:
+            colfunc = R_DrawColumnBackbufferFlat;
+            break;
+        }
+
+        switch (spriteRender)
+        {
+        case SPRITE_NORMAL:
+            spritefunc = basespritefunc = R_DrawColumnBackbuffer;
+            break;
+        case SPRITE_FLAT:
+        case SPRITE_FLATTER:
+            spritefunc = basespritefunc = R_DrawColumnBackbufferFlat;
+            break;
+        }
+
+        switch (pspriteRender)
+        {
+        case PSPRITE_NORMAL:
+            pspritefunc = basepspritefunc = R_DrawColumnBackbuffer;
+            break;
+        case PSPRITE_FLAT:
+        case PSPRITE_FLATTER:
+            pspritefunc = basepspritefunc = R_DrawColumnBackbufferFlat;
+            break;
+        }
+
+        switch (visplaneRender)
+        {
+        case VISPLANES_NORMAL:
+            drawPlanes = R_DrawPlanes;
+            mapPlane = R_MapPlane;
+            clearPlanes = R_ClearPlanes;
+            spanfunc = R_DrawSpanBackbuffer;
+            break;
+        case VISPLANES_FLAT:
+            drawPlanes = R_DrawPlanes;
+            mapPlane = R_MapPlaneFlat;
+            clearPlanes = R_ClearPlanesFlat;
+            spanfunc = R_DrawSpanFlatBackbuffer;
+            break;
+        case VISPLANES_FLATTER:
+            clearPlanes = R_ClearPlanesFlat;
+            drawPlanes = R_DrawPlanesFlatterBackbuffer;
+            spanfunc = R_DrawColumnBackbufferFlat;
+            break;
+        }
+
+        if (flatSky)
+        {
+            drawSky = R_DrawSkyFlat;
+            skyfunc = R_DrawColumnBackbufferFlat;
+        }
+        else
+        {
+            drawSky = R_DrawSky;
+            skyfunc = R_DrawColumnBackbuffer;
+        }
+
+        switch (invisibleRender)
+        {
+        case INVISIBLE_NORMAL:
+            fuzzcolfunc = R_DrawFuzzColumnBackbuffer;
+            break;
+        case INVISIBLE_FLAT:
+            fuzzcolfunc = R_DrawFuzzColumnFlatBackbuffer;
+            break;
+        case INVISIBLE_FLAT_SATURN:
+            fuzzcolfunc = R_DrawFuzzColumnFlatSaturnBackbuffer;
+            break;
+        case INVISIBLE_SATURN:
+            fuzzcolfunc = R_DrawFuzzColumnSaturnBackbuffer;
+            break;
+        case INVISIBLE_TRANSLUCENT:
+            fuzzcolfunc = R_DrawFuzzColumnTransBackbuffer;
+            break;
+        }
+
+        break;
+    case DETAIL_LOW:
+        switch (wallRender)
+        {
+        case WALL_NORMAL:
+            colfunc = R_DrawColumnLowBackbuffer;
+            break;
+        case WALL_FLAT:
+        case WALL_FLATTER:
+            colfunc = R_DrawColumnLowBackbufferFlat;
+            break;
+        }
+
+        switch (spriteRender)
+        {
+        case SPRITE_NORMAL:
+            spritefunc = basespritefunc = R_DrawColumnLowBackbuffer;
+            break;
+        case SPRITE_FLAT:
+        case SPRITE_FLATTER:
+            spritefunc = basespritefunc = R_DrawColumnLowBackbufferFlat;
+            break;
+        }
+
+        switch (pspriteRender)
+        {
+        case PSPRITE_NORMAL:
+            pspritefunc = basepspritefunc = R_DrawColumnLowBackbuffer;
+            break;
+        case PSPRITE_FLAT:
+        case PSPRITE_FLATTER:
+            pspritefunc = basepspritefunc = R_DrawColumnLowBackbufferFlat;
+            break;
+        }
+
+        switch (visplaneRender)
+        {
+        case VISPLANES_NORMAL:
+            drawPlanes = R_DrawPlanes;
+            mapPlane = R_MapPlane;
+            clearPlanes = R_ClearPlanes;
+            spanfunc = R_DrawSpanLowBackbuffer;
+            break;
+        case VISPLANES_FLAT:
+            drawPlanes = R_DrawPlanes;
+            mapPlane = R_MapPlaneFlat;
+            clearPlanes = R_ClearPlanesFlat;
+            spanfunc = R_DrawSpanFlatLowBackbuffer;
+            break;
+        case VISPLANES_FLATTER:
+            clearPlanes = R_ClearPlanesFlat;
+            drawPlanes = R_DrawPlanesFlatterLowBackbuffer;
+            spanfunc = R_DrawColumnLowBackbufferFlat;
+            break;
+        }
+
+        if (flatSky)
+        {
+            drawSky = R_DrawSkyFlat;
+            skyfunc = R_DrawColumnLowBackbufferFlat;
+        }
+        else
+        {
+            drawSky = R_DrawSky;
+            skyfunc = R_DrawColumnLowBackbuffer;
+        }
+
+        switch (invisibleRender)
+        {
+        case INVISIBLE_NORMAL:
+            fuzzcolfunc = R_DrawFuzzColumnLowBackbuffer;
+            break;
+        case INVISIBLE_FLAT:
+            fuzzcolfunc = R_DrawFuzzColumnFlatLowBackbuffer;
+            break;
+        case INVISIBLE_FLAT_SATURN:
+            fuzzcolfunc = R_DrawFuzzColumnFlatSaturnLowBackbuffer;
+            break;
+        case INVISIBLE_SATURN:
+            fuzzcolfunc = R_DrawFuzzColumnSaturnLowBackbuffer;
+            break;
+        case INVISIBLE_TRANSLUCENT:
+            fuzzcolfunc = R_DrawFuzzColumnTransLowBackbuffer;
+            break;
+        }
+
+        break;
+    case DETAIL_POTATO:
+        switch (wallRender)
+        {
+        case WALL_NORMAL:
+            colfunc = R_DrawColumnPotatoBackbuffer;
+            break;
+        case WALL_FLAT:
+        case WALL_FLATTER:
+            colfunc = R_DrawColumnPotatoBackbufferFlat;
+            break;
+        }
+
+        switch (spriteRender)
+        {
+        case SPRITE_NORMAL:
+            spritefunc = basespritefunc = R_DrawColumnPotatoBackbuffer;
+            break;
+        case SPRITE_FLAT:
+        case SPRITE_FLATTER:
+            spritefunc = basespritefunc = R_DrawColumnPotatoBackbufferFlat;
+            break;
+        }
+
+        switch (pspriteRender)
+        {
+        case PSPRITE_NORMAL:
+            pspritefunc = basepspritefunc = R_DrawColumnPotatoBackbuffer;
+            break;
+        case PSPRITE_FLAT:
+        case PSPRITE_FLATTER:
+            pspritefunc = basepspritefunc = R_DrawColumnPotatoBackbufferFlat;
+            break;
+        }
+
+        switch (visplaneRender)
+        {
+        case VISPLANES_NORMAL:
+            drawPlanes = R_DrawPlanes;
+            mapPlane = R_MapPlane;
+            clearPlanes = R_ClearPlanes;
+            spanfunc = R_DrawSpanPotatoBackbuffer;
+            break;
+        case VISPLANES_FLAT:
+            drawPlanes = R_DrawPlanes;
+            mapPlane = R_MapPlaneFlat;
+            clearPlanes = R_ClearPlanesFlat;
+            spanfunc = R_DrawSpanFlatPotatoBackbuffer;
+            break;
+        case VISPLANES_FLATTER:
+            clearPlanes = R_ClearPlanesFlat;
+            drawPlanes = R_DrawPlanesFlatterPotatoBackbuffer;
+            spanfunc = spanfunc = R_DrawColumnPotatoBackbufferFlat;
+            break;
+        }
+
+        if (flatSky)
+        {
+            drawSky = R_DrawSkyFlat;
+            skyfunc = R_DrawColumnPotatoBackbufferFlat;
+        }
+        else
+        {
+            drawSky = R_DrawSky;
+            skyfunc = R_DrawColumnPotatoBackbuffer;
+        }
+
+        switch (invisibleRender)
+        {
+        case INVISIBLE_NORMAL:
+            fuzzcolfunc = R_DrawFuzzColumnPotatoBackbuffer;
+            break;
+        case INVISIBLE_FLAT:
+            fuzzcolfunc = R_DrawFuzzColumnFlatPotatoBackbuffer;
+            break;
+        case INVISIBLE_FLAT_SATURN:
+            fuzzcolfunc = R_DrawFuzzColumnFlatSaturnPotatoBackbuffer;
+            break;
+        case INVISIBLE_SATURN:
+            fuzzcolfunc = R_DrawFuzzColumnSaturnPotatoBackbuffer;
+            break;
+        case INVISIBLE_TRANSLUCENT:
+            fuzzcolfunc = R_DrawFuzzColumnTransPotatoBackbuffer;
+            break;
+        }
+
+        break;
+    }
+
+    R_InitBuffer(scaledviewwidth, viewheight);
+
+    R_InitTextureMapping();
+
+    // psprite scales
+    pspritescale = FRACUNIT * viewwidth / 320;
+    pspritescaleds = pspritescale << detailshift;
+
+    pspriteiscale = FRACUNIT * 320 / viewwidth;
+
+    pspriteiscaleshifted = pspriteiscale >> detailshift;
+    pspriteiscaleshifted_sky = (pspriteiscaleshifted * SKY_SCALE) / 100;
+
+    // thing clipping
+    SetWords(screenheightarray, viewheight, viewwidth);
+
+    // planes
+    for (i = 0; i < viewheight; i++)
+    {
+        dy = ((i - viewheight / 2) << FRACBITS) + FRACUNIT / 2;
+        dy = abs(dy);
+
+        yslope[i] = FixedDiv((viewwidth << detailshift) / 2 * FRACUNIT, dy);
+    }
+
+    for (i = 0; i < viewwidth; i++)
+    {
+        cosadj = abs(finecosine[xtoviewangle[i] >> ANGLETOFINESHIFT]);
+        distscale[i] = (4 >= cosadj) ? (65536 ^ cosadj >> 31) ^ MAXINT : FixedDiv65536(cosadj);
+    }
+
+    // Calculate the light levels to use
+    //  for each level / scale combination.
+    for (i = 0; i < LIGHTLEVELS; i++)
+    {
+        startmap = ((LIGHTLEVELS - 1 - i) * 2) * NUMCOLORMAPS / LIGHTLEVELS;
+        for (j = 0; j < MAXLIGHTSCALE; j++)
+        {
+            level = startmap - MulScreenWidth(j) / (viewwidth << detailshift) / DISTMAP;
+
+            if (level < 0)
+                level = 0;
+            else if (level > NUMCOLORMAPS - 1)
+                level = NUMCOLORMAPS - 1;
+
+            scalelight[i][j] = colormaps + level * 256;
+        }
+    }
+
+}
+
+#else
+
 //
 // R_ExecuteSetViewSize
 //
@@ -2801,6 +3233,8 @@ void R_ExecuteSetViewSize(void)
     I_Printf("\tbasepspritefunc: %s\n", I_LookupSymbolName(basepspritefunc));
 #endif
 }
+
+#endif
 
 //
 // R_Init
