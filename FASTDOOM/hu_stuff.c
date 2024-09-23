@@ -153,6 +153,7 @@ void HU_DrawScreenFPS(void)
 
 void HU_DrawDebugCard2DigitsFPS(void)
 {
+#ifndef MAC
     unsigned int outfps = fps;
     unsigned int outval = 0;
     unsigned int counter = 0;
@@ -168,10 +169,12 @@ void HU_DrawDebugCard2DigitsFPS(void)
     }
 
     outp(debugCardPort, outval & 255);
+#endif
 }
 
 void HU_DrawDebugCard4DigitsFPS(void)
 {
+#ifndef MAC
     unsigned int outfps = fps;
     unsigned int outval = 0;
     unsigned int counter = 0;
@@ -205,6 +208,7 @@ void HU_DrawDebugCard4DigitsFPS(void)
         inp(port);
         outp(port, (outval >> 8) & 255);
     }
+#endif
 }
 
 void HU_Drawer(void)

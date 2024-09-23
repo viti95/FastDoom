@@ -1152,8 +1152,10 @@ void I_Error(char *error, ...)
     va_end(argptr);
     printf("\n");
 
+#ifndef MAC
     if (snd_MusicDevice == snd_CD)
         CD_Exit();
+#endif
 
     exit(1);
 }
@@ -1192,8 +1194,10 @@ void I_Quit(void)
 
     printf("\n");
 
+#ifndef MAC
     if (snd_MusicDevice == snd_CD)
         CD_Exit();
+#endif
 
     exit(0);
 }

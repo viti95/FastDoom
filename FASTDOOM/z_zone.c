@@ -345,14 +345,18 @@ void *Z_ReallocUnowned(void *ptr, int n, byte tag)
 void *Z_MallocEmergency(int size, byte tag, void *user)
 {
     emergency = 1;
+#ifndef MAC
     S_ClearUnusedSounds();
+#endif
     return Z_Malloc(size, tag, user);
 }
 
 void *Z_MallocEmergencyUnowned(int size, byte tag)
 {
     emergency = 1;
+#ifndef MAC
     S_ClearUnusedSounds();
+#endif
     return Z_MallocUnowned(size, tag);
 }
 
