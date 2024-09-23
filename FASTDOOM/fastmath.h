@@ -536,215 +536,48 @@ unsigned char ROLAND1(int value)
     return 1;
 }
 
-int Mul20(int value)
-{
-    return value * 20;
-}
-
-int Mul40(int value)
-{
-    return value * 40;
-}
-
-int Mul80(int value)
-{
-    return value * 80;
-}
-
-int Mul320(int value)
-{
-    return value * 320;
-}
-
-int Mul640(int value)
-{
-    return value * 640;
-}
-
-int Mul1280(int value)
-{
-    return value * 1280;
-}
-
-int Mul64(int value)
-{
-    return value * 64;
-}
-
-int Mul128(int value)
-{
-    return value * 128;
-}
-
-int Mul256(int value)
-{
-    return value * 256;
-}
-
-int Mul512(int value)
-{
-    return value * 512;
-}
-
-int Mul1024(int value)
-{
-    return value * 1024;
-}
-
-int Mul10(int value)
-{
-    return value * 10;
-}
-
-unsigned short USMul10(unsigned short value)
-{
-    return value * 10;
-}
-
-int Mul100(int value)
-{
-    return value * 100;
-}
-
-int Mul200(int value)
-{
-    return value * 200;
-}
-
-int Mul400(int value)
-{
-    return value * 400;
-}
-
-int Mul800(int value)
-{
-    return value * 800;
-}
-
-unsigned short USMul100(unsigned short value)
-{
-    return value * 100;
-}
-
-int Mul1000(int value)
-{
-    return value * 1000;
-}
-
-unsigned short USMul1000(unsigned short value)
-{
-    return value * 1000;
-}
-
-int Mul819200(int value)
-{
-    return value * 819200;
-}
-
-int Mul35(int value)
-{
-    return value * 35;
-}
-
-int Mul768(int value)
-{
-    return value * 768;
-}
-
-int Mul160(int value)
-{
-    return value * 160;
-}
-
-int Mul409(int value)
-{
-    return value * 409;
-}
-
-int Mul70(int value)
-{
-    return value * 70;
-}
-
-int Mul47000(int value)
-{
-    return value * 47000;
-}
-
-int Div1000(int value)
-{
-    return value / 1000;
-}
-
-int Div10(int value)
-{
-    return value / 10;
-}
-
-int Div3(int value)
-{
-    return value / 3;
-}
-
-int Div63(int value)
-{
-    return value / 63;
-}
-
-int Div101(int value)
-{
-    return value / 101;
-}
-
-int Div35(int value)
-{
-    return value / 35;
-}
-
-int DivSKULLSPEED(int value)
-{
-    return value / (20 * FRACUNIT);
-}
-
-int Div100(int value)
-{
-    return value / 100;
-}
-
-int Mul25(int value)
-{
-    return value * 25;
-}
-
-int Mul75(int value)
-{
-    return value * 75;
-}
-
-int Div255(int value)
-{
-    return value / 255;
-}
-
-unsigned long Div51200(unsigned long value)
-{
-    return value / 51200;
-}
-
-int Div70(int value)
-{
-    return value / 70;
-}
-
-int Div84(int value)
-{
-    return value / 84;
-}
-
-int Div128(int value)
-{
-    return value / 128;
-}
+#define Mul20(value) ((value) * 20)
+#define Mul40(value) ((value) * 40)
+#define Mul80(value) ((value) * 80)
+#define Mul320(value) ((value) * 320)
+#define Mul640(value) ((value) * 640)
+#define Mul1280(value) ((value) * 1280)
+#define Mul64(value) ((value) * 64)
+#define Mul128(value) ((value) * 128)
+#define Mul256(value) ((value) * 256)
+#define Mul512(value) ((value) * 512)
+#define Mul1024(value) ((value) * 1024)
+#define Mul10(value) ((value) * 10)
+#define USMul10(value) ((value) * 10)
+#define Mul100(value) ((value) * 100)
+#define Mul200(value) ((value) * 200)
+#define Mul400(value) ((value) * 400)
+#define Mul800(value) ((value) * 800)
+#define USMul100(value) ((value) * 100)
+#define Mul1000(value) ((value) * 1000)
+#define USMul1000(value) ((value) * 1000)
+#define Mul819200(value) ((value) * 819200)
+#define Mul35(value) ((value) * 35)
+#define Mul768(value) ((value) * 768)
+#define Mul160(value) ((value) * 160)
+#define Mul409(value) ((value) * 409)
+#define Mul70(value) ((value) * 70)
+#define Mul47000(value) ((value) * 47000)
+#define Div1000(value) ((value) / 1000)
+#define Div10(value) ((value) / 10)
+#define Div3(value) ((value) / 3)
+#define Div63(value) ((value) / 63)
+#define Div101(value) ((value) / 101)
+#define Div35(value) ((value) / 35)
+#define DivSKULLSPEED(value) ((value) / (20 * FRACUNIT))
+#define Div100(value) ((value) / 100)
+#define Mul25(value) ((value) * 25)
+#define Mul75(value) ((value) * 75)
+#define Div255(value) ((value) / 255)
+#define Div51200(value) ((value) / 51200)
+#define Div70(value) ((value) / 70)
+#define Div84(value) ((value) / 84)
+#define Div128(value) ((value) / 128)
 
 void CopyBytes(void *src, void *dest, int num_bytes)
 {
