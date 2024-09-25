@@ -5,6 +5,7 @@
 # make
 
 add_application(FASTDOOM
+    FASTDOOM/fastmath.c
     FASTDOOM/i_random.c
     FASTDOOM/i_soundmac.c
     FASTDOOM/info.c

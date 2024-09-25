@@ -460,81 +460,23 @@ void OutByte61h(unsigned char al);
 
 #include <limits.h>
 
-fixed_t FixedMul(fixed_t a, fixed_t b)
-{
-	return ((long long) a * (long long) b) >> FRACBITS;
-}
+fixed_t FixedMul(fixed_t a, fixed_t b);
+fixed_t FixedInterpolate(fixed_t a, fixed_t b, fixed_t frac);
 
+#define FixedMulECX(a, b) (FixedMul((a), (b)))
+#define FixedMulEDX(a, b) (FixedMul((a), (b)))
+#define FixedMulEDXHalf(a, b) (FixedMul((a), (b)) / 2)
+#define FixedMulSquare(a) (FixedMul((a), (a)))
 
-inline fixed_t FixedInterpolate(fixed_t a, fixed_t b, fixed_t frac)
-{
-    return a + FixedMul(b - a, frac);
-}
+fixed_t FixedMulHStep(fixed_t a, fixed_t b);
+fixed_t FixedMulLStep(fixed_t a, fixed_t b);
+fixed_t FixedDiv(fixed_t a, fixed_t b);
+fixed_t FixedDiv2(fixed_t a, fixed_t b);
+fixed_t FixedDivDBITS(fixed_t a, fixed_t b);
 
-fixed_t FixedMulECX(fixed_t a, fixed_t b)
-{
-    return FixedMul(a, b);
-}
+#define FixedDiv65536(b) (FixedDiv(65536, (b)))
 
-fixed_t FixedMulEDX(fixed_t a, fixed_t b)
-{
-    return FixedMul(a, b);
-}
-
-fixed_t FixedMulEDXHalf(fixed_t a, fixed_t b)
-{
-    return FixedMul(a, b) / 2;
-}
-
-fixed_t FixedMulSquare(fixed_t a)
-{
-    return FixedMul(a, a);
-}
-
-fixed_t FixedMulHStep(fixed_t a, fixed_t b)
-{
-    // TODO: FIX THIS
-    return FixedMul(a,b);
-}
-
-fixed_t FixedMulLStep(fixed_t a, fixed_t b)
-{
-    // TODO: FIX THIS
-    return FixedMul(a,b);
-}
-
-fixed_t FixedDiv(fixed_t a, fixed_t b)
-{
-    if ( (abs(a)>>14) >= abs(b))
-	    return (a^b)<0 ? INT_MIN : INT_MAX;
-        
-    return FixedDiv2(a,b);
-}
-
-fixed_t FixedDiv2(fixed_t a, fixed_t b)
-{
-    long long c;
-    c = ((long long)a<<16) / ((long long)b);
-    return (fixed_t) c;
-}
-
-fixed_t FixedDivDBITS(fixed_t a, fixed_t b)
-{
-    // TODO: FIX
-    return FixedDiv(a, b);
-}
-
-fixed_t FixedDiv65536(fixed_t b)
-{
-    // TODO: Fix ?
-    return FixedDiv(65536, b);
-}
-
-unsigned char ROLAND1(int value)
-{
-    // TODO: FIX
-    return 1;
-}
+unsigned char ROLAND1(int value);
 
 #define Mul20(value) ((value) * 20)
 #define Mul40(value) ((value) * 40)
@@ -579,35 +521,12 @@ unsigned char ROLAND1(int value)
 #define Div84(value) ((value) / 84)
 #define Div128(value) ((value) / 128)
 
-void CopyBytes(void *src, void *dest, int num_bytes)
-{
-    memcpy(dest, src, num_bytes);
-}
-
-void CopyWords(void *src, void *dest, int num_words)
-{
-    memcpy(dest, src, num_words * 2);
-}
-
-void CopyDWords(void *src, void *dest, int num_dwords)
-{
-    memcpy(dest, src, num_dwords * 4);
-}
-
-void SetBytes(void *dest, unsigned char value, int num_bytes)
-{
-    memset(dest, value, num_bytes);
-}
-
-void SetWords(void *dest, short value, int num_words)
-{
-    memset(dest, value, num_words * 2);   
-}
-
-void SetDWords(void *dest, int value, int num_dwords)
-{
-    memset(dest, value, num_dwords * 4);
-}
+void CopyBytes(void *src, void *dest, int num_bytes);
+void CopyWords(void *src, void *dest, int num_words);
+void CopyDWords(void *src, void *dest, int num_dwords);
+void SetBytes(void *dest, unsigned char value, int num_bytes);
+void SetWords(void *dest, short value, int num_words);
+void SetDWords(void *dest, int value, int num_dwords);
 
 #endif
 
