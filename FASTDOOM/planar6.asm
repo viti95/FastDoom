@@ -260,10 +260,12 @@ patchCentery3:
   sub   eax,0x12345678
 
   mov   esi,[_dc_source]
-  
+
   lea  esi,[esi+eax+0x64]
 
   mov   eax,[_dc_colormap]
+
+  add  esi,ebp
 
   jmp  [scalecalls+4+ebp*4]
 
@@ -306,6 +308,8 @@ CODE_SYM_DEF R_DrawColumnDirect
   mov   esi,[_dc_source]
   mov   eax,[_dc_colormap]
 
+  add  esi,ebp
+
   jmp  [scalecalls+4+ebp*4]
 
 doneh:
@@ -324,9 +328,8 @@ doneh:
 %assign LINE SCREENHEIGHT
 %rep SCREENHEIGHT-1
   SCALELABEL LINE:
-    mov  al,[esi]                   ; get source pixel
+    mov  al,[esi-LINE]                   ; get source pixel
     mov  al,[eax]                       ; translate the color
-    inc  esi
     mov  [edi-(LINE-1)*80],al           ; draw a pixel to the buffer
     %assign LINE LINE-1
 %endrep
