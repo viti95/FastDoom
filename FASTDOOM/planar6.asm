@@ -261,7 +261,7 @@ patchCentery3:
 
   mov   esi,[_dc_source]
 
-  lea  esi,[esi+eax+0x64-SCREENHEIGHT]
+  lea  esi,[esi+eax+0x64-(SCREENHEIGHT/2)]
 
   mov   eax,[_dc_colormap]
 
@@ -308,7 +308,7 @@ CODE_SYM_DEF R_DrawColumnDirect
   mov   esi,[_dc_source]
   mov   eax,[_dc_colormap]
 
-  lea  esi,[esi+ebp-SCREENHEIGHT]
+  lea  esi,[esi+ebp-(SCREENHEIGHT/2)]
 
   jmp  [scalecalls+4+ebp*4]
 
@@ -326,7 +326,7 @@ doneh:
 %endmacro
 
 %assign LINE SCREENHEIGHT
-%assign POSITION 0
+%assign POSITION -(SCREENHEIGHT / 2)
 %rep SCREENHEIGHT-1
   SCALELABEL LINE:
     mov  al,[esi+POSITION]                   ; get source pixel
