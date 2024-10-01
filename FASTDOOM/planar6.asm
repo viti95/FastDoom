@@ -92,9 +92,11 @@ patchCentery1:
 
   add  edi,[_dc_x]
   
-  lea  esi,[esi+eax+0x64]
+  lea  esi,[esi+eax+0x64-(SCREENHEIGHT/2)]
 
   mov   eax,[_dc_colormap]
+
+  add  esi,ebp
 
   jmp  [scalecalls+4+ebp*4]
 doneps:
@@ -127,6 +129,8 @@ CODE_SYM_DEF R_DrawColumnPotatoDirect
 
   mov   esi,[_dc_source]
   mov   eax,[_dc_colormap]
+
+  lea  esi,[esi+ebp-(SCREENHEIGHT/2)]
 
   jmp  [scalecalls+4+ebp*4]
 
@@ -172,9 +176,11 @@ patchCentery2:
 
   mov   esi,[_dc_source]
   
-  lea  esi,[esi+eax+0x64]
+  lea  esi,[esi+eax+0x64-(SCREENHEIGHT/2)]
 
   mov   eax,[_dc_colormap]
+
+  add  esi,ebp
 
   jmp  [scalecalls+4+ebp*4]
 
@@ -215,6 +221,8 @@ CODE_SYM_DEF R_DrawColumnLowDirect
 
   mov   esi,[_dc_source]
   mov   eax,[_dc_colormap]
+
+  lea  esi,[esi+ebp-(SCREENHEIGHT/2)]
 
   jmp  [scalecalls+4+ebp*4]
 
