@@ -267,13 +267,11 @@ CODE_SYM_DEF R_DrawColumnSkyFullDirect
 patchCentery3:
   sub   eax,0x12345678
 
-  mov   esi,[_dc_source]
-
-  lea  esi,[esi+eax+0x64-(SCREENHEIGHT/2)]
+  lea  esi,[ebp+eax+0x64-(SCREENHEIGHT/2)]
 
   mov   eax,[_dc_colormap]
 
-  add  esi,ebp
+  add  esi,[_dc_source]
 
   jmp  [scalecalls+4+ebp*4]
 

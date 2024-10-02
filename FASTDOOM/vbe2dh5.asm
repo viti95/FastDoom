@@ -74,14 +74,13 @@ patchCentery:
   sub  eax,0x12345678
   add  edi,ebx
 
-  mov  esi,[_dc_source]
   add  edi,[_destview]
   
-  lea  esi,[esi+eax+0x64-(SCREENHEIGHT/2)]
+  lea  esi,[ebp+eax+0x64-(SCREENHEIGHT/2)]
   
   mov  eax,[_dc_colormap]
   
-  add  esi,ebp
+  add  esi,[_dc_source]
 
   jmp  [scalecalls+4+ebp*4]
 
