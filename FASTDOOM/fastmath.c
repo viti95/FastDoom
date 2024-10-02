@@ -60,5 +60,35 @@ unsigned char ROLAND1(int value)
     return 1;
 }
 
+void CopyBytes(void *src, void *dest, int num_bytes)
+{
+    memcpy(dest, src, num_bytes);
+}
+
+void CopyWords(void *src, void *dest, int num_words)
+{
+    memcpy(dest, src, num_words * 2);
+}
+
+void CopyDWords(void *src, void *dest, int num_dwords)
+{
+    memcpy(dest, src, num_dwords * 4);
+}
+
+void SetBytes(void *dest, unsigned char value, int num_bytes)
+{
+    memset(dest, value, num_bytes);
+}
+
+void SetWords(void *dest, short value, int num_words)
+{
+    memset(dest, value, num_words * 2);   
+}
+
+void SetDWords(void *dest, int value, int num_dwords)
+{
+    memset(dest, value, num_dwords * 4);
+}
+
 #endif
 
