@@ -76,8 +76,12 @@ patchCentery:
 
   mov  esi,[_dc_source]
   add  edi,[_destview]
-  lea  esi,[esi+eax+0x64]
+
+  lea  esi,[esi+eax+0x64-(SCREENHEIGHT/2)]
+
   mov  eax,[_dc_colormap]
+
+  add  esi,ebp
 
   jmp  [scalecalls+4+ebp*4]
 
@@ -111,6 +115,8 @@ CODE_SYM_DEF R_DrawColumnPotatoVBE2Direct
   mov   eax,[_dc_colormap]
   add  edi,[_destview]
 
+  lea  esi,[esi+ebp-(SCREENHEIGHT/2)]
+
   jmp  [scalecalls+4+ebp*4]
 
 donep:
@@ -129,21 +135,22 @@ donep:
 %endmacro
 
 %assign LINE SCREENHEIGHT
+%assign POSITION -(SCREENHEIGHT / 2)
 %rep SCREENHEIGHT-1
   SCALELABEL LINE:
-    mov  al,[esi]                   ; get source pixel
+    mov  al,[esi+POSITION]              ; get source pixel
     mov  bl,[eax]                       ; translate the color
     mov  bh,bl
-    inc  esi
     mov  [edi-(LINE-1)*SCREENWIDTH],bx  ; draw a pixel to the buffer
     mov  [edi-(LINE-1)*SCREENWIDTH + 2],bx  ; draw a pixel to the buffer
     %assign LINE LINE-1
+    %assign POSITION POSITION+1
 %endrep
 
 vscale1:
   pop	ecx
   pop	ebx
-  mov al,[esi]
+  mov al,[esi+POSITION]
   pop	ebp
   mov al,[eax]
   pop	edx
