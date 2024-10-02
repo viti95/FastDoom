@@ -1459,7 +1459,7 @@ void R_ExecuteSetViewSize(void)
         switch (pspriteRender)
         {
         case PSPRITE_NORMAL:
-#if SCREENHEIGHT == 200
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
             if (screenblocks >= 10)
             {
                 pspritefunc = basepspritefunc = R_DrawColumnDirect;
@@ -1543,14 +1543,14 @@ void R_ExecuteSetViewSize(void)
             case UMC_GREEN_486:
             case CYRIX_5X86:
             case AMD_K5:
-#if SCREENHEIGHT == 200
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnSkyFullDirect : R_DrawColumnFastLEA;
 #else
                 skyfunc = R_DrawColumnFastLEA;
 #endif
                 break;
             default:
-#if SCREENHEIGHT == 200
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnSkyFullDirect : R_DrawColumn;
 #else
                 skyfunc = R_DrawColumn;
@@ -1625,7 +1625,7 @@ void R_ExecuteSetViewSize(void)
         switch (pspriteRender)
         {
         case PSPRITE_NORMAL:
-#if SCREENHEIGHT == 200
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
             if (screenblocks >= 10)
             {
                 pspritefunc = basepspritefunc = R_DrawColumnLowDirect;
@@ -1709,14 +1709,14 @@ void R_ExecuteSetViewSize(void)
             case UMC_GREEN_486:
             case CYRIX_5X86:
             case AMD_K5:
-#if SCREENHEIGHT == 200
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnLowSkyFullDirect : R_DrawColumnLowFastLEA;
 #else
                 skyfunc = R_DrawColumnLowFastLEA;
 #endif
                 break;
             default:
-#if SCREENHEIGHT == 200
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnLowSkyFullDirect : R_DrawColumnLow;
 #else
                 skyfunc = R_DrawColumnLow;
@@ -1792,7 +1792,7 @@ void R_ExecuteSetViewSize(void)
         switch (pspriteRender)
         {
         case PSPRITE_NORMAL:
-#if SCREENHEIGHT == 200
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
             if (screenblocks >= 10)
             {
                 pspritefunc = basepspritefunc = R_DrawColumnPotatoDirect;
@@ -1876,14 +1876,14 @@ void R_ExecuteSetViewSize(void)
             case UMC_GREEN_486:
             case CYRIX_5X86:
             case AMD_K5:
-#if SCREENHEIGHT == 200
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnPotatoSkyFullDirect : R_DrawColumnPotatoFastLEA;
 #else
                 skyfunc = R_DrawColumnPotatoFastLEA;
 #endif
                 break;
             default:
-#if SCREENHEIGHT == 200
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnPotatoSkyFullDirect : R_DrawColumnPotato;
 #else
                 skyfunc = R_DrawColumnPotato;
@@ -1963,7 +1963,7 @@ void R_ExecuteSetViewSize(void)
         switch (pspriteRender)
         {
         case PSPRITE_NORMAL:
-#if SCREENHEIGHT == 200
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
             if (screenblocks >= 10)
             {
                 pspritefunc = basepspritefunc = R_DrawColumnBackbufferDirect;
@@ -2047,14 +2047,14 @@ void R_ExecuteSetViewSize(void)
             case UMC_GREEN_486:
             case CYRIX_5X86:
             case AMD_K5:
-#if SCREENHEIGHT == 200
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnBackbufferSkyFullDirect : R_DrawColumnBackbufferFastLEA;
 #else
                 skyfunc = R_DrawColumnBackbufferFastLEA;
 #endif
                 break;
             default:
-#if SCREENHEIGHT == 200
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnBackbufferSkyFullDirect : R_DrawColumnBackbuffer;
 #else
                 skyfunc = R_DrawColumnBackbuffer;
@@ -2129,7 +2129,7 @@ void R_ExecuteSetViewSize(void)
         switch (pspriteRender)
         {
         case PSPRITE_NORMAL:
-#if SCREENHEIGHT == 200
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
             if (screenblocks >= 10)
             {
                 pspritefunc = basepspritefunc = R_DrawColumnLowBackbufferDirect;
@@ -2213,14 +2213,14 @@ void R_ExecuteSetViewSize(void)
             case UMC_GREEN_486:
             case CYRIX_5X86:
             case AMD_K5:
-#if SCREENHEIGHT == 200
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnLowBackbufferSkyFullDirect : R_DrawColumnLowBackbufferFastLEA;
 #else
                 skyfunc = R_DrawColumnLowBackbufferFastLEA;
 #endif
                 break;
             default:
-#if SCREENHEIGHT == 200
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnLowBackbufferSkyFullDirect : R_DrawColumnLowBackbuffer;
 #else
                 skyfunc = R_DrawColumnLowBackbuffer;
@@ -2275,7 +2275,7 @@ void R_ExecuteSetViewSize(void)
         switch (pspriteRender)
         {
         case PSPRITE_NORMAL:
-#if SCREENHEIGHT == 200
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
             if (screenblocks >= 10)
             {
                 pspritefunc = basepspritefunc = R_DrawColumnPotatoBackbufferDirect;
@@ -2334,7 +2334,7 @@ void R_ExecuteSetViewSize(void)
         else
         {
             drawSky = R_DrawSky;
-#if SCREENHEIGHT == 200
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
             skyfunc = (screenblocks >= 10) ? R_DrawColumnPotatoBackbufferSkyFullDirect : R_DrawColumnPotatoBackbuffer;
 #else
             skyfunc = R_DrawColumnPotatoBackbuffer;
@@ -2394,7 +2394,7 @@ void R_ExecuteSetViewSize(void)
         switch (pspriteRender)
         {
         case PSPRITE_NORMAL:
-#if SCREENHEIGHT == 200
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
             if (screenblocks >= 10)
             {
                 pspritefunc = basepspritefunc = R_DrawColumnVBE2Direct;
@@ -2453,7 +2453,7 @@ void R_ExecuteSetViewSize(void)
         else
         {
             drawSky = R_DrawSky;
-#if SCREENHEIGHT == 200
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
             skyfunc = (screenblocks >= 10) ? R_DrawColumnVBE2SkyFullDirect : R_DrawColumnVBE2;
 #else
             skyfunc = R_DrawColumnVBE2;
@@ -2506,7 +2506,7 @@ void R_ExecuteSetViewSize(void)
         switch (pspriteRender)
         {
         case PSPRITE_NORMAL:
-#if SCREENHEIGHT == 200
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
             if (screenblocks >= 10)
             {
                 pspritefunc = basepspritefunc = R_DrawColumnLowVBE2Direct;
@@ -2565,7 +2565,7 @@ void R_ExecuteSetViewSize(void)
         else
         {
             drawSky = R_DrawSky;
-#if SCREENHEIGHT == 200
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
             skyfunc = (screenblocks >= 10) ? R_DrawColumnLowVBE2SkyFullDirect : R_DrawColumnLowVBE2;
 #else
             skyfunc = R_DrawColumnLowVBE2;
@@ -2618,7 +2618,7 @@ void R_ExecuteSetViewSize(void)
         switch (pspriteRender)
         {
         case PSPRITE_NORMAL:
-#if SCREENHEIGHT == 200
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
             if (screenblocks >= 10)
             {
                 pspritefunc = basepspritefunc = R_DrawColumnPotatoVBE2Direct;
@@ -2677,7 +2677,7 @@ void R_ExecuteSetViewSize(void)
         else
         {
             drawSky = R_DrawSky;
-#if SCREENHEIGHT == 200
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
             skyfunc = (screenblocks >= 10) ? R_DrawColumnPotatoVBE2SkyFullDirect : R_DrawColumnPotatoVBE2;
 #else
             skyfunc = R_DrawColumnPotatoVBE2;
