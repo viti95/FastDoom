@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 1.0.3 (?? ??? ????)
+* Optimized rendering of sky and player sprite in 320x200 and 320x240 modes
+
 ## 1.0.2 (19 Sep 2024)
 * Better sound caching
 * Improved management of low memory scenarios
