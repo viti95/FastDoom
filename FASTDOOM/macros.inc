@@ -75,6 +75,10 @@ CPU 486
 %define USE_BACKBUFFER
 %endif
 
+%ifdef MODE_EGA640
+%define USE_BACKBUFFER
+%endif
+
 %ifdef MODE_CGA_AFH
 %define USE_BACKBUFFER
 %endif

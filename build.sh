@@ -56,6 +56,9 @@ elif [ "$target" = "fdoomcga.exe" ]; then
 elif [ "$target" = "fdoomega.exe" ]; then
   buildopts="-dMODE_EGA"
 
+elif [ "$target" = "fdoomehr.exe" ]; then
+  buildopts="-dMODE_EGA640"
+
 elif [ "$target" = "fdoombwc.exe" ]; then
   buildopts="-dMODE_CGA_BW"
 

@@ -96,6 +96,10 @@
 #include "i_ega320.h"
 #endif
 
+#if defined(MODE_EGA640)
+#include "i_ega640.h"
+#endif
+
 #if defined(MODE_VBE2)
 #include "i_vga.h"
 #endif
@@ -727,6 +731,10 @@ void I_InitGraphics(void)
 
 #if defined(MODE_EGA)
     EGA_InitGraphics();
+#endif
+
+#if defined(MODE_EGA640)
+    EGA_640_InitGraphics();
 #endif
 
 #if defined(MODE_CVB)
