@@ -64,25 +64,25 @@ void I_ProcessPalette(byte *palette)
 
         l = (r * 300) / 1000 + (g * 600) / 1000 + (b * 100) / 1000;
 
-        r2 = r + (333 * (l + r)) / 1000;
+        r2 = r + (200 * (l + r)) / 1000;
         if (r2 > 255) r2 = 255;
 
-        g2 = g + (333 * (l + g)) / 1000;
+        g2 = g + (200 * (l + g)) / 1000;
         if (g2 > 255) g2 = 255;
 
-        b2 = b + (333 * (l + b)) / 1000;
+        b2 = b + (200 * (l + b)) / 1000;
         if (b2 > 255) b2 = 255;
 
         color = GetClosestColor(colors, 16, r2, g2, b2);
         color = color << 4;
 
-        r2 = r - (333 * (l - r)) / 1000;
+        r2 = r - (200 * (l - r)) / 1000;
         if (r2 < 0) r2 = 0;
 
-        g2 = g - (333 * (l - g)) / 1000;
+        g2 = g - (200 * (l - g)) / 1000;
         if (g2 < 0) g2 = 0;
 
-        b2 = b - (333 * (l - b)) / 1000;
+        b2 = b - (200 * (l - b)) / 1000;
         if (b2 < 0) b2 = 0;
 
         color |= GetClosestColor(colors, 16, r2, g2, b2);
