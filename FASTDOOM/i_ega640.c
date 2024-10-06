@@ -37,10 +37,15 @@ const byte colors[48] = {
 byte lutcolors[14 * 256];
 byte *ptrlutcolors;
 
-byte vrambufferR[16000];
-byte vrambufferG[16000];
-byte vrambufferB[16000];
-byte vrambufferI[16000];
+byte vrambufferR1[16000];
+byte vrambufferG1[16000];
+byte vrambufferB1[16000];
+byte vrambufferI1[16000];
+
+byte vrambufferR2[16000];
+byte vrambufferG2[16000];
+byte vrambufferB2[16000];
+byte vrambufferI2[16000];
 
 byte page = 0;
 
@@ -100,6 +105,26 @@ void I_FinishUpdate(void)
 {
     unsigned short i;
     byte *backbufferptr;
+
+    byte *vrambufferR;
+    byte *vrambufferG;
+    byte *vrambufferB;
+    byte *vrambufferI;
+
+    if (destscreen == 0xA0000)
+    {
+        vrambufferR = vrambufferR1;
+        vrambufferG = vrambufferG1;
+        vrambufferB = vrambufferB1;
+        vrambufferI = vrambufferI1;
+    }
+    else
+    {
+        vrambufferR = vrambufferR2;
+        vrambufferG = vrambufferG2;
+        vrambufferB = vrambufferB2;
+        vrambufferI = vrambufferI2;
+    }
 
     // Red
     outp(0x3C5, 1 << (3 & 0x03));
@@ -224,6 +249,15 @@ void I_FinishUpdate(void)
             vrambufferI[i] = tmpColor;
         }
     }
+
+    // Change video page
+    outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
+
+    // Next plane
+    if (destscreen == 0xA4000)
+        destscreen = 0xA0000;
+    else
+        destscreen += 0x4000;
 }
 
 void EGA_640_InitGraphics(void)
@@ -233,11 +267,16 @@ void EGA_640_InitGraphics(void)
     regs.w.ax = 0x0E;
     int386(0x10, (union REGS *)&regs, &regs);
     outp(0x3C4, 0x2);
-    pcscreen = destscreen = (byte *)0xA0000;
+    pcscreen = destscreen = (byte *)0xA4000;
 
-    SetDWords(vrambufferR, 0, 4096);
-    SetDWords(vrambufferG, 0, 4096);
-    SetDWords(vrambufferB, 0, 4096);
-    SetDWords(vrambufferI, 0, 4096);
+    SetDWords(vrambufferR1, 0, 4000);
+    SetDWords(vrambufferG1, 0, 4000);
+    SetDWords(vrambufferB1, 0, 4000);
+    SetDWords(vrambufferI1, 0, 4000);
+
+    SetDWords(vrambufferR2, 0, 4000);
+    SetDWords(vrambufferG2, 0, 4000);
+    SetDWords(vrambufferB2, 0, 4000);
+    SetDWords(vrambufferI2, 0, 4000);
 }
 #endif
