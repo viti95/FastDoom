@@ -47,8 +47,6 @@ byte vrambufferG2[16000];
 byte vrambufferB2[16000];
 byte vrambufferI2[16000];
 
-byte page = 0;
-
 void I_ProcessPalette(byte *palette)
 {
     int i;

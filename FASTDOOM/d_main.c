@@ -1415,8 +1415,12 @@ void D_DoomMain(void)
             complevel = atoi(myargv[p + 1]);
     }
 
-#if defined(MODE_SIGMA) || defined(MODE_PCP) || defined(MODE_CGA16) || defined(MODE_EGA) || defined(MODE_EGA640) || defined(MODE_CGA_AFH) || defined(MODE_INCOLOR)
+#if defined(MODE_SIGMA) || defined(MODE_PCP) || defined(MODE_CGA16) || defined(MODE_EGA) || defined(MODE_CGA_AFH) || defined(MODE_INCOLOR)
     D_AddFile("mode16.wad");
+#endif
+
+#if defined(MODE_EGA640)
+    D_AddFile("mode16d.wad");
 #endif
 
 #if defined(MODE_CVB)
