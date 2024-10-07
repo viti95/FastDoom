@@ -57,7 +57,7 @@ https://user-images.githubusercontent.com/8323882/147228550-bf93cc50-3c92-4a7a-b
 Requirements: Linux or WSL2 on Windows.
 
 1. Install OpenWatcom v2, NASM, GNU Make and DOSBox-X
-2. Execute `source env.sh`
+2. Execute `source fdenv.sh`
 3. Build:
     - Single executable: `build.sh <executable> <parameters>` Where: "executable" is the executable name (fdoom.exe, fdoomega.exe, ...) and "parameters" can be one of these:
         * "-clean": cleans all generated OBJs, 
@@ -69,7 +69,7 @@ Requirements: Linux or WSL2 on Windows.
 Example to build a fresh FastDoom executable ready to use on real hardware:
 
 ```
-./source env.sh
+./source fdenv.sh
 ./build.sh fdoom.exe -clean -stub
 ```
 

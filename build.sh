@@ -6,7 +6,7 @@ set -e
 if [[ $(which wmake) ]]; then
   echo "wmake found"
 else
-  echo "wmake not found, is it installed and did you source env.sh?"
+  echo "wmake not found, is it installed and did you source fdenv.sh?"
   exit 1
 fi
 
