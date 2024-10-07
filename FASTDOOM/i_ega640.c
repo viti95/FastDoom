@@ -56,6 +56,7 @@ void I_ProcessPalette(byte *palette)
     for (i = 0; i < 14 * 256; i++, palette += 3)
     {
         unsigned char color;
+        unsigned char finalcolor = 0;
         int r, g, b;
         int r2, g2, b2;
 
@@ -77,7 +78,11 @@ void I_ProcessPalette(byte *palette)
         if (b2 > 255) b2 = 255;
 
         color = GetClosestColor(colors, 16, r2, g2, b2);
-        color = color << 4;
+
+        finalcolor |= (color & 0x08) << 4;
+        finalcolor |= (color & 0x04) << 3;
+        finalcolor |= (color & 0x02) << 2;
+        finalcolor |= (color & 0x01) << 1;
 
         r2 = r - (200 * (l - r)) / 1000;
         if (r2 < 0) r2 = 0;
@@ -88,9 +93,14 @@ void I_ProcessPalette(byte *palette)
         b2 = b - (200 * (l - b)) / 1000;
         if (b2 < 0) b2 = 0;
 
-        color |= GetClosestColor(colors, 16, r2, g2, b2);
+        color = GetClosestColor(colors, 16, r2, g2, b2);
 
-        lutcolors[i] = color;
+        finalcolor |= (color & 0x08) << 3;
+        finalcolor |= (color & 0x04) << 2;
+        finalcolor |= (color & 0x02) << 1;
+        finalcolor |= (color & 0x01);
+
+        lutcolors[i] = finalcolor;
     }
 }
 
@@ -133,20 +143,16 @@ void I_FinishUpdate(void)
         unsigned char tmpColor;
 
         color = ptrlutcolors[*(backbufferptr)];
-        tmpColor = (color & 0x80);
-        tmpColor |= (color & 0x08) << 3;
+        tmpColor = (color & 0xC0);
 
         color = ptrlutcolors[*(backbufferptr + 1)];
-        tmpColor |= (color & 0x80) >> 2;
-        tmpColor |= (color & 0x08) << 1;
+        tmpColor |= (color & 0xC0) >> 2;
 
         color = ptrlutcolors[*(backbufferptr + 2)];
-        tmpColor |= (color & 0x80) >> 4;
-        tmpColor |= (color & 0x08) >> 1;
+        tmpColor |= (color & 0xC0) >> 4;
 
         color = ptrlutcolors[*(backbufferptr + 3)];
-        tmpColor |= (color & 0x80) >> 6;
-        tmpColor |= (color & 0x08) >> 3;
+        tmpColor |= (color & 0xC0) >> 6;
 
         if (tmpColor != vrambufferR[i])
         {
@@ -164,20 +170,16 @@ void I_FinishUpdate(void)
         unsigned char tmpColor;
 
         color = ptrlutcolors[*(backbufferptr)];
-        tmpColor = (color & 0x40) << 1;
-        tmpColor |= (color & 0x04) << 4;
+        tmpColor = (color & 0x30) << 2;
 
         color = ptrlutcolors[*(backbufferptr + 1)];
-        tmpColor |= (color & 0x40) >> 1;
-        tmpColor |= (color & 0x04) << 2;
+        tmpColor |= (color & 0x30);
 
         color = ptrlutcolors[*(backbufferptr + 2)];
-        tmpColor |= (color & 0x40) >> 3;
-        tmpColor |= (color & 0x04);
+        tmpColor |= (color & 0x30) >> 2;
 
         color = ptrlutcolors[*(backbufferptr + 3)];
-        tmpColor |= (color & 0x40) >> 5;
-        tmpColor |= (color & 0x04) >> 2;
+        tmpColor |= (color & 0x30) >> 4;
 
         if (tmpColor != vrambufferG[i])
         {
@@ -195,20 +197,16 @@ void I_FinishUpdate(void)
         unsigned char tmpColor;
 
         color = ptrlutcolors[*(backbufferptr)];
-        tmpColor = (color & 0x20) << 2;
-        tmpColor |= (color & 0x02) << 5;
+        tmpColor = (color & 0x0C) << 4;
 
         color = ptrlutcolors[*(backbufferptr + 1)];
-        tmpColor |= (color & 0x20);
-        tmpColor |= (color & 0x02) << 3;
+        tmpColor |= (color & 0x0C) << 2;
 
         color = ptrlutcolors[*(backbufferptr + 2)];
-        tmpColor |= (color & 0x20) >> 2;
-        tmpColor |= (color & 0x02) << 1;
+        tmpColor |= (color & 0x0C);
 
         color = ptrlutcolors[*(backbufferptr + 3)];
-        tmpColor |= (color & 0x20) >> 4;
-        tmpColor |= (color & 0x02) >> 1;
+        tmpColor |= (color & 0x0C) >> 2;
 
         if (tmpColor != vrambufferB[i])
         {
@@ -226,20 +224,16 @@ void I_FinishUpdate(void)
         unsigned char tmpColor;
 
         color = ptrlutcolors[*(backbufferptr)];
-        tmpColor = (color & 0x10) << 3;
-        tmpColor |= (color & 0x01) << 6;
+        tmpColor = (color & 0x03) << 6;
 
         color = ptrlutcolors[*(backbufferptr + 1)];
-        tmpColor |= (color & 0x10) << 1;
-        tmpColor |= (color & 0x01) << 4;
+        tmpColor |= (color & 0x03) << 4;
 
         color = ptrlutcolors[*(backbufferptr + 2)];
-        tmpColor |= (color & 0x10) >> 1;
-        tmpColor |= (color & 0x01) << 2;
+        tmpColor |= (color & 0x03) << 2;
 
         color = ptrlutcolors[*(backbufferptr + 3)];
-        tmpColor |= (color & 0x10) >> 3;
-        tmpColor |= (color & 0x01);
+        tmpColor |= (color & 0x03);
 
         if (tmpColor != vrambufferI[i])
         {
