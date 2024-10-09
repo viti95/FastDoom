@@ -25,7 +25,32 @@ colors = [
     (0xFF,0x55,0xFF),  #13
     (0xFF,0xFF,0x55),  #14
     (0xFF,0xFF,0xFF)]  #15
+
+def srgb_to_lineal(color_srgb):
+    def convert(c):
+        return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
+    return tuple(convert(c / 255.0) for c in color_srgb)
+
+def lineal_to_srgb(color_lineal):
+    def convert(c):
+        return 255.0 * (12.92 * c if c <= 0.0031308 else 1.055 * (c ** (1.0 / 2.4)) - 0.055)
+    return tuple(int(round(convert(c))) for c in color_lineal)
+
+def blend_colors(color1, color2, porcentaje=0.5):
+    # Convertir los colores a espacio lineal
+    color1_lineal = srgb_to_lineal(color1)
+    color2_lineal = srgb_to_lineal(color2)
     
+    # Interpolar entre los dos colores en espacio lineal
+    color_mezclado_lineal = (
+        color1_lineal[0] * (1 - porcentaje) + color2_lineal[0] * porcentaje,
+        color1_lineal[1] * (1 - porcentaje) + color2_lineal[1] * porcentaje,
+        color1_lineal[2] * (1 - porcentaje) + color2_lineal[2] * porcentaje
+    )
+    
+    # Convertir de vuelta a sRGB
+    return lineal_to_srgb(color_mezclado_lineal)
+
 def compare_images_mse(img1, img2):
     errors = np.asarray(ImageChops.difference(img1, img2)) / 255
     return math.sqrt(np.mean(np.square(errors)))
@@ -40,6 +65,8 @@ def is_set(x, n):
     return int.from_bytes(x, "big") & 1 << n != 0
 
 def create_image_dithered(color_0, color_1):
+
+    #mixedcolor = blend_colors(color_0, color_1, 0.5)
 
     mixedcolor = (
         (color_0[0] + color_1[0]) // 2,
@@ -105,7 +132,7 @@ for colormapentry in range(14 * 256):
         if best_ratio == 0.0:
             break
 
-    print(outfile_str, count, best_ratio, best_color_0, best_color_1)
+    print(count, best_ratio, best_color_0, best_color_1)
             
     finalcolor = 0
 
@@ -125,4 +152,4 @@ for colormapentry in range(14 * 256):
 
 output_file.close()
 
-print("END!!")
+print(outfile_str)
