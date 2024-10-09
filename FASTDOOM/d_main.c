@@ -1419,10 +1419,6 @@ void D_DoomMain(void)
     D_AddFile("mode16.wad");
 #endif
 
-#if defined(MODE_EGA640)
-    D_AddFile("mode16d.wad");
-#endif
-
 #if defined(MODE_CVB)
     D_AddFile("modecvbs.wad");
 #endif
