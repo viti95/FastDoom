@@ -61,9 +61,6 @@ def create_image_original(color):
     im.putpixel((1,0), color)
     return im
 
-def is_set(x, n):
-    return int.from_bytes(x, "big") & 1 << n != 0
-
 def create_image_dithered(color_0, color_1):
 
     #mixedcolor = blend_colors(color_0, color_1, 0.5)
