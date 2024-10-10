@@ -56,6 +56,11 @@ void I_SetPalette(int numpalette)
     ptrlutcolors = lutcolors + numpalette * 256;
 }
 
+byte bufferR[16000];
+byte bufferG[16000];
+byte bufferB[16000];
+byte bufferI[16000];
+
 void I_FinishUpdate(void)
 {
     unsigned short i;
@@ -81,111 +86,68 @@ void I_FinishUpdate(void)
         vrambufferI = vrambufferI2;
     }
 
+    for (i = 0, backbufferptr = backbuffer; i < SCREENWIDTH * SCREENHEIGHT / 4; i++, backbufferptr += 4)
+    {
+        unsigned char color0 = ptrlutcolors[*(backbufferptr)];
+        unsigned char color1 = ptrlutcolors[*(backbufferptr + 1)];
+        unsigned char color2 = ptrlutcolors[*(backbufferptr + 2)];
+        unsigned char color3 = ptrlutcolors[*(backbufferptr + 3)];
+        
+        bufferR[i] = (color0 & 0xC0) | ((color1 & 0xC0) >> 2) | ((color2 & 0xC0) >> 4) | ((color3 & 0xC0) >> 6);
+        bufferG[i] = ((color0 & 0x30) << 2) | (color1 & 0x30) | ((color2 & 0x30) >> 2) | ((color3 & 0x30) >> 4);
+        bufferB[i] = ((color0 & 0x0C) << 4) | ((color1 & 0x0C) << 2) | ((color2 & 0x0C)) | ((color3 & 0x0C) >> 2);
+        bufferI[i] = ((color0 & 0x03) << 6) | ((color1 & 0x03) << 4) | ((color2 & 0x03) << 2) | ((color3 & 0x03));
+    }
+
     // Red
     outp(0x3C5, 1 << (3 & 0x03));
-
-    for (i = 0, backbufferptr = backbuffer; i < 2 * SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 4)
+    for (i = 0; i < 16000; i++)
     {
-        unsigned char color;
-        unsigned char tmpColor;
+        unsigned char data = bufferR[i];
 
-        color = ptrlutcolors[*(backbufferptr)];
-        tmpColor = (color & 0xC0);
-
-        color = ptrlutcolors[*(backbufferptr + 1)];
-        tmpColor |= (color & 0xC0) >> 2;
-
-        color = ptrlutcolors[*(backbufferptr + 2)];
-        tmpColor |= (color & 0xC0) >> 4;
-
-        color = ptrlutcolors[*(backbufferptr + 3)];
-        tmpColor |= (color & 0xC0) >> 6;
-
-        if (tmpColor != vrambufferR[i])
+        if (data != vrambufferR[i])
         {
-            destscreen[i] = tmpColor;
-            vrambufferR[i] = tmpColor;
+            vrambufferR[i] = data;
+            destscreen[i] = data;
         }
     }
 
     // Green
     outp(0x3C5, 1 << (2 & 0x03));
-
-    for (i = 0, backbufferptr = backbuffer; i < 2 * SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 4)
+    for (i = 0; i < 16000; i++)
     {
-        unsigned char color;
-        unsigned char tmpColor;
+        unsigned char data = bufferG[i];
 
-        color = ptrlutcolors[*(backbufferptr)];
-        tmpColor = (color & 0x30) << 2;
-
-        color = ptrlutcolors[*(backbufferptr + 1)];
-        tmpColor |= (color & 0x30);
-
-        color = ptrlutcolors[*(backbufferptr + 2)];
-        tmpColor |= (color & 0x30) >> 2;
-
-        color = ptrlutcolors[*(backbufferptr + 3)];
-        tmpColor |= (color & 0x30) >> 4;
-
-        if (tmpColor != vrambufferG[i])
+        if (data != vrambufferG[i])
         {
-            destscreen[i] = tmpColor;
-            vrambufferG[i] = tmpColor;
+            vrambufferG[i] = data;
+            destscreen[i] = data;
         }
     }
 
     // Blue
     outp(0x3C5, 1 << (1 & 0x03));
-
-    for (i = 0, backbufferptr = backbuffer; i < 2 * SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 4)
+    for (i = 0; i < 16000; i++)
     {
-        unsigned char color;
-        unsigned char tmpColor;
+        unsigned char data = bufferB[i];
 
-        color = ptrlutcolors[*(backbufferptr)];
-        tmpColor = (color & 0x0C) << 4;
-
-        color = ptrlutcolors[*(backbufferptr + 1)];
-        tmpColor |= (color & 0x0C) << 2;
-
-        color = ptrlutcolors[*(backbufferptr + 2)];
-        tmpColor |= (color & 0x0C);
-
-        color = ptrlutcolors[*(backbufferptr + 3)];
-        tmpColor |= (color & 0x0C) >> 2;
-
-        if (tmpColor != vrambufferB[i])
+        if (data != vrambufferB[i])
         {
-            destscreen[i] = tmpColor;
-            vrambufferB[i] = tmpColor;
+            vrambufferB[i] = data;
+            destscreen[i] = data;
         }
     }
 
     // Intensity
     outp(0x3C5, 1 << (0 & 0x03));
-
-    for (i = 0, backbufferptr = backbuffer; i < 2 * SCREENWIDTH * SCREENHEIGHT / 8; i++, backbufferptr += 4)
+    for (i = 0; i < 16000; i++)
     {
-        unsigned char color;
-        unsigned char tmpColor;
+        unsigned char data = bufferI[i];
 
-        color = ptrlutcolors[*(backbufferptr)];
-        tmpColor = (color & 0x03) << 6;
-
-        color = ptrlutcolors[*(backbufferptr + 1)];
-        tmpColor |= (color & 0x03) << 4;
-
-        color = ptrlutcolors[*(backbufferptr + 2)];
-        tmpColor |= (color & 0x03) << 2;
-
-        color = ptrlutcolors[*(backbufferptr + 3)];
-        tmpColor |= (color & 0x03);
-
-        if (tmpColor != vrambufferI[i])
+        if (data != vrambufferI[i])
         {
-            destscreen[i] = tmpColor;
-            vrambufferI[i] = tmpColor;
+            vrambufferI[i] = data;
+            destscreen[i] = data;
         }
     }
 
