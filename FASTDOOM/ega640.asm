@@ -147,13 +147,29 @@ ProcessPlanes:
 
 	xor esi, esi
 LoopRedPlane:
-	mov al, [_buffer + esi]
+	mov eax, [_buffer + esi]
+	cmp ah, [ebx + esi + 1]
+	je NextBlockRedPlane1
+	mov [ebx + esi + 1], ah
+	mov [edi + esi + 1], ah
+NextBlockRedPlane1:
 	cmp al, [ebx + esi]
-	je NextBlockRedPlane
+	je NextBlockRedPlane2
 	mov [ebx + esi], al
 	mov [edi + esi], al
-NextBlockRedPlane:
-	inc	esi
+NextBlockRedPlane2:
+	shr eax, 16
+	cmp ah, [ebx + esi + 3]
+	je NextBlockRedPlane3
+	mov [ebx + esi + 3], ah
+	mov [edi + esi + 3], ah
+NextBlockRedPlane3:
+	cmp al, [ebx + esi + 2]
+	je NextBlockRedPlane4
+	mov [ebx + esi + 2], al
+	mov [edi + esi + 2], al
+NextBlockRedPlane4:
+	add esi, 4
 	cmp	si,0x3E80
 	jb LoopRedPlane
 
@@ -163,13 +179,29 @@ NextBlockRedPlane:
 
 	xor esi, esi
 LoopGreenPlane:
-	mov al, [_buffer + esi + 16000]
+	mov eax, [_buffer + esi + 16000]
+	cmp ah, [ebx + esi + 1 + 16000]
+	je NextBlockGreenPlane1
+	mov [ebx + esi + 1 + 16000], ah
+	mov [edi + esi + 1], ah
+NextBlockGreenPlane1:
 	cmp al, [ebx + esi + 16000]
-	je NextBlockGreenPlane
+	je NextBlockGreenPlane2
 	mov [ebx + esi + 16000], al
 	mov [edi + esi], al
-NextBlockGreenPlane:
-	inc	esi
+NextBlockGreenPlane2:
+	shr eax, 16
+	cmp ah, [ebx + esi + 3 + 16000]
+	je NextBlockGreenPlane3
+	mov [ebx + esi + 3 + 16000], ah
+	mov [edi + esi + 3], ah
+NextBlockGreenPlane3:
+	cmp al, [ebx + esi + 2 + 16000]
+	je NextBlockGreenPlane4
+	mov [ebx + esi + 2 + 16000], al
+	mov [edi + esi + 2], al
+NextBlockGreenPlane4:
+	add esi, 4
 	cmp	si,0x3E80
 	jb LoopGreenPlane
 
@@ -179,13 +211,29 @@ NextBlockGreenPlane:
 
 	xor esi, esi
 LoopBluePlane:
-	mov al, [_buffer + esi + 32000]
+	mov eax, [_buffer + esi + 32000]
+	cmp ah, [ebx + esi + 1 + 32000]
+	je NextBlockBluePlane1
+	mov [ebx + esi + 1 + 32000], ah
+	mov [edi + esi + 1], ah
+NextBlockBluePlane1:
 	cmp al, [ebx + esi + 32000]
-	je NextBlockBluePlane
+	je NextBlockBluePlane2
 	mov [ebx + esi + 32000], al
 	mov [edi + esi], al
-NextBlockBluePlane:
-	inc	esi
+NextBlockBluePlane2:
+	shr eax, 16
+	cmp ah, [ebx + esi + 3 + 32000]
+	je NextBlockBluePlane3
+	mov [ebx + esi + 3 + 32000], ah
+	mov [edi + esi + 3], ah
+NextBlockBluePlane3:
+	cmp al, [ebx + esi + 2 + 32000]
+	je NextBlockBluePlane4
+	mov [ebx + esi + 2 + 32000], al
+	mov [edi + esi + 2], al
+NextBlockBluePlane4:
+	add esi, 4
 	cmp	si,0x3E80
 	jb LoopBluePlane
 
@@ -195,13 +243,29 @@ NextBlockBluePlane:
 
 	xor esi, esi
 LoopIntensityPlane:
-	mov al, [_buffer + esi + 48000]
+	mov eax, [_buffer + esi + 48000]
+	cmp ah, [ebx + esi + 1 + 48000]
+	je NextBlockIntensityPlane1
+	mov [ebx + esi + 1 + 48000], ah
+	mov [edi + esi + 1], ah
+NextBlockIntensityPlane1:
 	cmp al, [ebx + esi + 48000]
-	je NextBlockIntensityPlane
+	je NextBlockIntensityPlane2
 	mov [ebx + esi + 48000], al
 	mov [edi + esi], al
-NextBlockIntensityPlane:
-	inc	esi
+NextBlockIntensityPlane2:
+	shr eax, 16
+	cmp ah, [ebx + esi + 3 + 48000]
+	je NextBlockIntensityPlane3
+	mov [ebx + esi + 3 + 48000], ah
+	mov [edi + esi + 3], ah
+NextBlockIntensityPlane3:
+	cmp al, [ebx + esi + 2 + 48000]
+	je NextBlockIntensityPlane4
+	mov [ebx + esi + 2 + 48000], al
+	mov [edi + esi + 2], al
+NextBlockIntensityPlane4:
+	add esi, 4
 	cmp	si,0x3E80
 	jb LoopIntensityPlane
 
