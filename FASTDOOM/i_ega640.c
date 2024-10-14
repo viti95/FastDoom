@@ -43,7 +43,7 @@ byte bufferG[16000];
 byte bufferB[16000];
 byte bufferI[16000];
 
-void I_FinishUpdate(void)
+/*void I_FinishUpdate(void)
 {
     unsigned short i;
     byte *backbufferptr;
@@ -141,7 +141,7 @@ void I_FinishUpdate(void)
         destscreen = 0xA0000;
     else
         destscreen += 0x4000;
-}
+}*/
 
 void EGA_640_InitGraphics(void)
 {
