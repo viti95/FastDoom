@@ -21,6 +21,7 @@ byte *ptrlutcolors;
 
 byte vrambuffer1[16000 * 4];
 byte vrambuffer2[16000 * 4];
+byte buffer[16000 * 4];
 
 void I_ProcessPalette(byte *palette)
 {
@@ -31,108 +32,6 @@ void I_SetPalette(int numpalette)
     ptrlutcolors = lutcolors + numpalette * 256;
 }
 
-byte buffer[16000 * 4];
-
-/*void I_FinishUpdate(void)
-{
-    unsigned short i;
-    byte *backbufferptr;
-
-    byte *vrambufferR;
-    byte *vrambufferG;
-    byte *vrambufferB;
-    byte *vrambufferI;
-
-    if (destscreen == 0xA0000)
-    {
-        vrambufferR = vrambufferR1;
-        vrambufferG = vrambufferG1;
-        vrambufferB = vrambufferB1;
-        vrambufferI = vrambufferI1;
-    }
-    else
-    {
-        vrambufferR = vrambufferR2;
-        vrambufferG = vrambufferG2;
-        vrambufferB = vrambufferB2;
-        vrambufferI = vrambufferI2;
-    }
-
-    for (i = 0, backbufferptr = backbuffer; i < SCREENWIDTH * SCREENHEIGHT / 4; i++, backbufferptr += 4)
-    {
-        unsigned char color0 = ptrlutcolors[*(backbufferptr)];
-        unsigned char color1 = ptrlutcolors[*(backbufferptr + 1)];
-        unsigned char color2 = ptrlutcolors[*(backbufferptr + 2)];
-        unsigned char color3 = ptrlutcolors[*(backbufferptr + 3)];
-        
-        bufferR[i] = (color0 & 0xC0) | ((color1 & 0xC0) >> 2) | ((color2 & 0xC0) >> 4) | ((color3 & 0xC0) >> 6);
-        bufferG[i] = ((color0 & 0x30) << 2) | (color1 & 0x30) | ((color2 & 0x30) >> 2) | ((color3 & 0x30) >> 4);
-        bufferB[i] = ((color0 & 0x0C) << 4) | ((color1 & 0x0C) << 2) | ((color2 & 0x0C)) | ((color3 & 0x0C) >> 2);
-        bufferI[i] = ((color0 & 0x03) << 6) | ((color1 & 0x03) << 4) | ((color2 & 0x03) << 2) | ((color3 & 0x03));
-    }
-
-    // Red
-    outp(0x3C5, 1 << (3 & 0x03));
-    for (i = 0; i < 16000; i++)
-    {
-        unsigned char data = bufferR[i];
-
-        if (data != vrambufferR[i])
-        {
-            vrambufferR[i] = data;
-            destscreen[i] = data;
-        }
-    }
-
-    // Green
-    outp(0x3C5, 1 << (2 & 0x03));
-    for (i = 0; i < 16000; i++)
-    {
-        unsigned char data = bufferG[i];
-
-        if (data != vrambufferG[i])
-        {
-            vrambufferG[i] = data;
-            destscreen[i] = data;
-        }
-    }
-
-    // Blue
-    outp(0x3C5, 1 << (1 & 0x03));
-    for (i = 0; i < 16000; i++)
-    {
-        unsigned char data = bufferB[i];
-
-        if (data != vrambufferB[i])
-        {
-            vrambufferB[i] = data;
-            destscreen[i] = data;
-        }
-    }
-
-    // Intensity
-    outp(0x3C5, 1 << (0 & 0x03));
-    for (i = 0; i < 16000; i++)
-    {
-        unsigned char data = bufferI[i];
-
-        if (data != vrambufferI[i])
-        {
-            vrambufferI[i] = data;
-            destscreen[i] = data;
-        }
-    }
-
-    // Change video page
-    outpw(CRTC_INDEX, ((int)destscreen & 0xff00) + 0xc);
-
-    // Next plane
-    if (destscreen == 0xA4000)
-        destscreen = 0xA0000;
-    else
-        destscreen += 0x4000;
-}*/
-
 void EGA_640_InitGraphics(void)
 {
     union REGS regs;
@@ -142,14 +41,7 @@ void EGA_640_InitGraphics(void)
     outp(0x3C4, 0x2);
     pcscreen = destscreen = (byte *)0xA4000;
 
-    SetDWords(vrambufferR1, 0, 4000);
-    SetDWords(vrambufferG1, 0, 4000);
-    SetDWords(vrambufferB1, 0, 4000);
-    SetDWords(vrambufferI1, 0, 4000);
-
-    SetDWords(vrambufferR2, 0, 4000);
-    SetDWords(vrambufferG2, 0, 4000);
-    SetDWords(vrambufferB2, 0, 4000);
-    SetDWords(vrambufferI2, 0, 4000);
+    SetDWords(vrambuffer1, 0, 4000 * 4);
+    SetDWords(vrambuffer2, 0, 4000 * 4);
 }
 #endif
