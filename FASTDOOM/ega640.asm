@@ -143,9 +143,9 @@ ProcessPlanes:
 
 	; Change to red plane
 	mov al,8
+	xor esi, esi
 	out	dx,al
 
-	xor esi, esi
 LoopRedPlane:
 	mov eax, [_buffer + esi]
 	cmp ah, [ebx + esi + 1]
@@ -175,9 +175,9 @@ NextBlockRedPlane4:
 
 	; Change to green plane
 	mov	al,4
+	xor esi, esi
 	out	dx,al
 
-	xor esi, esi
 LoopGreenPlane:
 	mov eax, [_buffer + esi + 16000]
 	cmp ah, [ebx + esi + 1 + 16000]
@@ -207,9 +207,9 @@ NextBlockGreenPlane4:
 
 	; Change to blue plane
 	mov	al,2
+	xor esi, esi
 	out	dx,al
 
-	xor esi, esi
 LoopBluePlane:
 	mov eax, [_buffer + esi + 32000]
 	cmp ah, [ebx + esi + 1 + 32000]
@@ -239,9 +239,9 @@ NextBlockBluePlane4:
 
 	; Change to intensity plane
 	mov	al,1
+	xor esi, esi
 	out	dx,al
 
-	xor esi, esi
 LoopIntensityPlane:
 	mov eax, [_buffer + esi + 48000]
 	cmp ah, [ebx + esi + 1 + 48000]
