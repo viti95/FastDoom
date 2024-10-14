@@ -270,9 +270,8 @@ NextBlockIntensityPlane4:
 	jb LoopIntensityPlane
 
 	mov	eax,edi
-	and	eax,0xFF00
-	mov edx,0x3D4
-	add	eax,0xC
+	mov	al,0xC
+	add edx,0x11
 	out	dx,ax
 	cmp	edi,0xA4000
 	jne	IncreaseDestScreen
