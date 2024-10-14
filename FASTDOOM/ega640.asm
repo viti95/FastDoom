@@ -129,8 +129,7 @@ LoopBackbuffer:
 	cmp si,0x3E80
 	jb LoopBackbuffer
 
-	;mov edi, [_destscreen]
-	mov edi, 0xA0000
+	mov edi, dword [_destscreen]
 
 	; Select vrambuffer 1 or 2
 	cmp edi,0xA0000
@@ -155,7 +154,6 @@ LoopRedPlane:
 	mov [ebx + esi], al
 	mov [edi + esi], al
 NextBlockRedPlane:
-	;mov byte [edi + esi], 0xFF
 	inc	esi
 	cmp	si,0x3E80
 	jb LoopRedPlane
@@ -208,19 +206,19 @@ NextBlockIntensityPlane:
 	cmp	si,0x3E80
 	jb LoopIntensityPlane
 
-;	mov	eax,edi
-;	and	eax,0xFF00
-;	dec edx
-;	add	eax,0xC
-;	out	dx,ax
-;	cmp	edi,0xA0000
-;	je	IncreaseDestScreen
-;	mov	dword [_destscreen],0xA0000
-;	jmp Finish
-;IncreaseDestScreen:
-;	add	dword [_destscreen],0x4000
-;
-;Finish:
+	mov	eax,edi
+	and	eax,0xFF00
+	mov edx,0x3D4
+	add	eax,0xC
+	out	dx,ax
+	cmp	edi,0xA4000
+	jne	IncreaseDestScreen
+	mov	dword [_destscreen],0xA0000
+	jmp Finish
+IncreaseDestScreen:
+	add	dword [_destscreen],0x4000
+
+Finish:
 	pop		ebp
 	pop		edi
 	pop		esi
