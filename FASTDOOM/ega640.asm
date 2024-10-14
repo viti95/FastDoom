@@ -44,7 +44,6 @@ CODE_SYM_DEF I_FinishUpdate
 	mov ebp, _backbuffer						; PTR backbuffer
 	mov edi, [_ptrlutcolors]					; PTR lutcolors
 	xor esi, esi								; Counter
-	mov ecx, _buffer
 
 LoopBackbuffer:
 
@@ -64,64 +63,64 @@ LoopBackbuffer:
 
 	; Backbuffer pixel 2
 	mov al, [ebp + 1]
-	mov bl, [edi + eax]
-
-	shl ebx, 16
+	mov ch, [edi + eax]
 
 	; Backbuffer pixel 3
 	mov al, [ebp + 2]
-	mov bh, [edi + eax]
+	mov bl, [edi + eax]
 
 	; Backbuffer pixel 4
 	mov al, [ebp + 3]
-	mov bl, [edi + eax]
+	mov cl, [edi + eax]
+	
+	shl ebx, 16
+	shl ecx, 16
 
 	; Process red block
 	shld edx, ebx, 2
 	rol ebx,8
+	shld edx, ecx, 2
+	rol ecx,8
 	shld edx, ebx, 2
-	rol ebx,8
-	shld edx, ebx, 2
-	rol ebx,8
-	shld edx, ebx, 2
+	ror ebx,6
+	shld edx, ecx, 2
 
-	mov [ecx + esi], dl
+	mov [_buffer + esi], dl
 
 	; Process green block
-	rol ebx, 10
+	ror ecx,6
 	shld edx, ebx, 2
-	rol ebx, 8
+	rol ebx,8
+	shld edx, ecx, 2
+	rol ecx,8
 	shld edx, ebx, 2
-	rol ebx, 8
-	shld edx, ebx, 2
-	rol ebx, 8
-	shld edx, ebx, 2
+	ror ebx,6
+	shld edx, ecx, 2
 
-	mov [ecx + esi + 16000], dl
+	mov [_buffer + esi + 16000], dl
 
 	; Process blue block
-	rol ebx, 10
+	ror ecx,6
 	shld edx, ebx, 2
-	rol ebx, 8
+	rol ebx,8
+	shld edx, ecx, 2
+	rol ecx,8
 	shld edx, ebx, 2
-	rol ebx, 8
-	shld edx, ebx, 2
-	rol ebx, 8
-	shld edx, ebx, 2
+	ror ebx,6
+	shld edx, ecx, 2
 
-	mov [ecx + esi + 32000], dl
+	mov [_buffer + esi + 32000], dl
 
 	; Process intensity block
-	rol ebx, 10
+	ror ecx,6
 	shld edx, ebx, 2
-	rol ebx, 8
+	rol ebx,8
+	shld edx, ecx, 2
+	rol ecx,8
 	shld edx, ebx, 2
-	rol ebx, 8
-	shld edx, ebx, 2
-	rol ebx, 8
-	shld edx, ebx, 2
+	shld edx, ecx, 2
 
-	mov [ecx + esi + 48000], dl
+	mov [_buffer + esi + 48000], dl
 
 	; Loop
 	add ebp, 4
@@ -148,7 +147,7 @@ ProcessPlanes:
 
 	xor esi, esi
 LoopRedPlane:
-	mov al, [ecx + esi]
+	mov al, [_buffer + esi]
 	cmp al, [ebx + esi]
 	je NextBlockRedPlane
 	mov [ebx + esi], al
@@ -164,7 +163,7 @@ NextBlockRedPlane:
 
 	xor esi, esi
 LoopGreenPlane:
-	mov al, [ecx + esi + 16000]
+	mov al, [_buffer + esi + 16000]
 	cmp al, [ebx + esi + 16000]
 	je NextBlockGreenPlane
 	mov [ebx + esi + 16000], al
@@ -180,7 +179,7 @@ NextBlockGreenPlane:
 
 	xor esi, esi
 LoopBluePlane:
-	mov al, [ecx + esi + 32000]
+	mov al, [_buffer + esi + 32000]
 	cmp al, [ebx + esi + 32000]
 	je NextBlockBluePlane
 	mov [ebx + esi + 32000], al
@@ -196,7 +195,7 @@ NextBlockBluePlane:
 
 	xor esi, esi
 LoopIntensityPlane:
-	mov al, [ecx + esi + 48000]
+	mov al, [_buffer + esi + 48000]
 	cmp al, [ebx + esi + 48000]
 	je NextBlockIntensityPlane
 	mov [ebx + esi + 48000], al
