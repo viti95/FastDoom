@@ -26,22 +26,148 @@ extern _ptrlutcolors
 extern _lutcolors
 extern _destscreen
 
-extern _bufferR
-extern _bufferG
-extern _bufferB
-extern _bufferI
-
-extern _vrambufferR1
-extern _vrambufferG1
-extern _vrambufferB1
-extern _vrambufferI1
-
-extern _vrambufferR2
-extern _vrambufferG2
-extern _vrambufferB2
-extern _vrambufferI2
+extern _buffer
+extern _vrambuffer1
+extern _vrambuffer2
 
 BEGIN_CODE_SECTION
+
+CODE_SYM_DEF I_FinishUpdate
+	push ebx
+	push ecx
+	push edx
+	push esi
+	push edi
+	push ebp
+
+	xor eax,eax
+	mov ebp, _backbuffer						; PTR backbuffer
+	mov edi, [_ptrlutcolors]					; PTR lutcolors
+	xor esi, esi								; Counter
+
+LoopBackbuffer:
+
+	; ---------------------------------
+	; |Pixel 0|Pixel 1|Pixel 2|Pixel 3|
+	; ---------------------------------
+	; 32 bit register, each pixel block has two colors
+	;
+
+	; Backbuffer pixel 1
+	mov al, [ebp]
+	mov bh, [edi + eax]
+
+	; Backbuffer pixel 2
+	mov al, [ebp + 1]
+	mov bl, [edi + eax]
+
+	shl ebx, 16
+
+	; Backbuffer pixel 3
+	mov al, [ebp + 2]
+	mov bh, [edi + eax]
+
+	; Backbuffer pixel 4
+	mov al, [ebp + 3]
+	mov bl, [edi + eax]
+
+	; Process red block
+	shld edx, ebx, 2
+	rol ebx,8
+	shld edx, ebx, 2
+	rol ebx,8
+	shld edx, ebx, 2
+	rol ebx,8
+	shld edx, ebx, 2
+
+	mov [_buffer + esi], dl
+
+	; Process green block
+	rol ebx, 10
+	shld edx, ebx, 2
+	rol ebx, 8
+	shld edx, ebx, 2
+	rol ebx, 8
+	shld edx, ebx, 2
+	rol ebx, 8
+	shld edx, ebx, 2
+
+	mov [_buffer + esi + 16000], dl
+
+	; Process blue block
+	rol ebx, 10
+	shld edx, ebx, 2
+	rol ebx, 8
+	shld edx, ebx, 2
+	rol ebx, 8
+	shld edx, ebx, 2
+	rol ebx, 8
+	shld edx, ebx, 2
+
+	mov [_buffer + esi + 32000], dl
+
+	; Process intensity block
+	rol ebx, 10
+	shld edx, ebx, 2
+	rol ebx, 8
+	shld edx, ebx, 2
+	rol ebx, 8
+	shld edx, ebx, 2
+	rol ebx, 8
+	shld edx, ebx, 2
+
+	mov [_buffer + esi + 48000], dl
+
+	; Loop
+	inc esi
+	cmp si,3e80H
+	jb LoopBackbuffer
+
+	; Select vrambuffer 1 or 2
+	cmp dword [_destscreen],0xA0000
+	jne	SecondVRAMBuffer
+	mov ebx,_vrambuffer1
+	jmp ProcessPlanes
+SecondVRAMBuffer:
+	mov ebx,_vrambuffer2
+
+ProcessPlanes:
+	; Change to red plane
+	mov al,8
+	mov	edx,3c5H
+	out	dx,al
+
+	xor esi, esi
+	mov eax, [_destscreen]
+
+LoopRedPlane:
+	mov cl, [_buffer + esi]
+	cmp cl, [ebx + esi]
+	je NextBlockRedPlane
+	mov [ebx + esi], cl
+	mov [eax + esi], cl
+NextBlockRedPlane:
+	inc	esi
+	cmp	si,0x3E80
+	jb LoopRedPlane
+
+	; Change to green plane
+	mov		al,4
+	mov		edx,3c5H
+	out		dx,al
+
+	; Change to blue plane
+	mov		al,2
+	mov		edx,3c5H
+	out		dx,al
+
+	; Change to intensity plane
+	mov		al,1
+	mov		edx,3c5H
+	out		dx,al
+
+	ret
+
 
 CODE_SYM_DEF I_FinishUpdate
 	push		ebx
