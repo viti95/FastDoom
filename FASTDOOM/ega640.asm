@@ -57,38 +57,38 @@ LoopBackbuffer:
 	; ---------------------
 	; 8 bit LUT entry
 
-	; Backbuffer pixel 1
+	; Backbuffer pixel 4
 	mov al, [ebp + 4]
 	mov bh, [edi + eax]
 
-	; Backbuffer pixel 2
+	; Backbuffer pixel 5
 	mov al, [ebp + 5]
 	mov ch, [edi + eax]
 
-	; Backbuffer pixel 3
+	; Backbuffer pixel 6
 	mov al, [ebp + 6]
 	mov bl, [edi + eax]
 
-	; Backbuffer pixel 4
+	; Backbuffer pixel 7
 	mov al, [ebp + 7]
 	mov cl, [edi + eax]
 	
 	shl ebx, 16
 	shl ecx, 16
 
-	; Backbuffer pixel 5
+	; Backbuffer pixel 1
 	mov al, [ebp]
 	mov bh, [edi + eax]
 
-	; Backbuffer pixel 6
+	; Backbuffer pixel 2
 	mov al, [ebp + 1]
 	mov ch, [edi + eax]
 
-	; Backbuffer pixel 7
+	; Backbuffer pixel 3
 	mov al, [ebp + 2]
 	mov bl, [edi + eax]
 
-	; Backbuffer pixel 8
+	; Backbuffer pixel 4
 	mov al, [ebp + 3]
 	mov cl, [edi + eax]
 
@@ -106,12 +106,12 @@ LoopBackbuffer:
 	shld edx, ecx, 2
 	rol ecx,8
 	shld edx, ebx, 2
+	rol ebx,10
 	shld edx, ecx, 2
 
 	mov [_buffer + esi], dx
 
 	; Process green block
-	rol ebx,10
 	rol ecx,10
 	shld edx, ebx, 2
 	rol ebx,8
@@ -126,12 +126,12 @@ LoopBackbuffer:
 	shld edx, ecx, 2
 	rol ecx,8
 	shld edx, ebx, 2
+	rol ebx,10
 	shld edx, ecx, 2
 
 	mov [_buffer + esi + 16000], dx
 
 	; Process blue block
-	rol ebx,10
 	rol ecx,10
 	shld edx, ebx, 2
 	rol ebx,8
@@ -146,12 +146,12 @@ LoopBackbuffer:
 	shld edx, ecx, 2
 	rol ecx,8
 	shld edx, ebx, 2
+	rol ebx,10
 	shld edx, ecx, 2
 
 	mov [_buffer + esi + 32000], dx
 
 	; Process intensity block
-	rol ebx,10
 	rol ecx,10
 	shld edx, ebx, 2
 	rol ebx,8
