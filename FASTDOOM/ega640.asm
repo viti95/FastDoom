@@ -58,23 +58,39 @@ LoopBackbuffer:
 	; 8 bit LUT entry
 
 	; Backbuffer pixel 1
-	mov al, [ebp]
+	mov al, [ebp + 4]
 	mov bh, [edi + eax]
 
 	; Backbuffer pixel 2
-	mov al, [ebp + 1]
+	mov al, [ebp + 5]
 	mov ch, [edi + eax]
 
 	; Backbuffer pixel 3
-	mov al, [ebp + 2]
+	mov al, [ebp + 6]
 	mov bl, [edi + eax]
 
 	; Backbuffer pixel 4
-	mov al, [ebp + 3]
+	mov al, [ebp + 7]
 	mov cl, [edi + eax]
 	
 	shl ebx, 16
 	shl ecx, 16
+
+	; Backbuffer pixel 5
+	mov al, [ebp]
+	mov bh, [edi + eax]
+
+	; Backbuffer pixel 6
+	mov al, [ebp + 1]
+	mov ch, [edi + eax]
+
+	; Backbuffer pixel 7
+	mov al, [ebp + 2]
+	mov bl, [edi + eax]
+
+	; Backbuffer pixel 8
+	mov al, [ebp + 3]
+	mov cl, [edi + eax]
 
 	; Process red block
 	shld edx, ebx, 2
@@ -82,37 +98,69 @@ LoopBackbuffer:
 	shld edx, ecx, 2
 	rol ecx,8
 	shld edx, ebx, 2
-	ror ebx,6
+	rol ebx,8
+	shld edx, ecx, 2
+	rol ecx,8
+	shld edx, ebx, 2
+	rol ebx,8
+	shld edx, ecx, 2
+	rol ecx,8
+	shld edx, ebx, 2
 	shld edx, ecx, 2
 
-	mov [_buffer + esi], dl
+	mov [_buffer + esi], dx
 
 	; Process green block
-	ror ecx,6
+	rol ebx,10
+	rol ecx,10
 	shld edx, ebx, 2
 	rol ebx,8
 	shld edx, ecx, 2
 	rol ecx,8
 	shld edx, ebx, 2
-	ror ebx,6
+	rol ebx,8
+	shld edx, ecx, 2
+	rol ecx,8
+	shld edx, ebx, 2
+	rol ebx,8
+	shld edx, ecx, 2
+	rol ecx,8
+	shld edx, ebx, 2
 	shld edx, ecx, 2
 
-	mov [_buffer + esi + 16000], dl
+	mov [_buffer + esi + 16000], dx
 
 	; Process blue block
-	ror ecx,6
+	rol ebx,10
+	rol ecx,10
 	shld edx, ebx, 2
 	rol ebx,8
 	shld edx, ecx, 2
 	rol ecx,8
 	shld edx, ebx, 2
-	ror ebx,6
+	rol ebx,8
+	shld edx, ecx, 2
+	rol ecx,8
+	shld edx, ebx, 2
+	rol ebx,8
+	shld edx, ecx, 2
+	rol ecx,8
+	shld edx, ebx, 2
 	shld edx, ecx, 2
 
-	mov [_buffer + esi + 32000], dl
+	mov [_buffer + esi + 32000], dx
 
 	; Process intensity block
-	ror ecx,6
+	rol ebx,10
+	rol ecx,10
+	shld edx, ebx, 2
+	rol ebx,8
+	shld edx, ecx, 2
+	rol ecx,8
+	shld edx, ebx, 2
+	rol ebx,8
+	shld edx, ecx, 2
+	rol ecx,8
 	shld edx, ebx, 2
 	rol ebx,8
 	shld edx, ecx, 2
@@ -120,11 +168,11 @@ LoopBackbuffer:
 	shld edx, ebx, 2
 	shld edx, ecx, 2
 
-	mov [_buffer + esi + 48000], dl
+	mov [_buffer + esi + 48000], dx
 
 	; Loop
-	add ebp, 4
-	inc esi
+	add ebp, 8
+	add esi, 2
 	cmp si,0x3E80
 	jb LoopBackbuffer
 
