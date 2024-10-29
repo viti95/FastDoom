@@ -944,6 +944,41 @@ void D_CheckFileSize(char *filename, long checksize)
     }
 }
 
+void D_CheckFileSize2(char *filename, long checksize1, long checksize2)
+{
+    FILE *file = fopen(filename, "rb");
+    long size = -1;
+
+    if (file != NULL)
+    {
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        fclose(file);
+    }
+    else
+    {
+        I_Error("File %s could not be opened\n", filename);
+    }
+
+    if (checksize1 != size && checksize2 != size)
+    {
+        int selection;
+        printf("\nIt seems you're using an unsupported version of %s\n", filename);
+        printf("Expected file size: %ld or %ld, detected file size: %ld\n", checksize1, checksize2, size);
+        printf("This may cause issues!!!\n");
+        printf("Do you want to continue (Y/N)? ");
+        fflush(stdout);
+        selection = getch();
+        printf("%c\n", selection);
+        fflush(stdout);
+
+        if (selection == 110 || selection == 27)
+        {
+            I_Error("Exiting...");
+        }
+    }
+}
+
 //
 // D_AddFile
 //
@@ -965,8 +1000,10 @@ void D_AddFile(char *file)
 #define DOOMWADSIZE 11159840
 #define ULTIMATEDOOMWADSIZE 12408292
 #define DOOM2WADSIZE 14604584
-#define PLUTONIAWADSIZE 17420824
-#define TNTWADSIZE 18195736
+#define PLUTONIAWADSIZE1 17420824
+#define PLUTONIAWADSIZE2 18240172
+#define TNTWADSIZE1 18195736
+#define TNTWADSIZE2 18654796
 
 void LoadIWAD(int selection)
 {
@@ -1050,7 +1087,7 @@ void LoadIWAD(int selection)
             gamemission = pack_plut;
             strcpy(iwadfile, "plutonia.wad");
             strcpy(savegamename, SAVEGAMENAME_PLUT);
-            D_CheckFileSize(iwadfile, PLUTONIAWADSIZE);
+            D_CheckFileSize2(iwadfile, PLUTONIAWADSIZE1, PLUTONIAWADSIZE2);
             D_AddFile("plutonia.wad");
             return;
         }
@@ -1067,7 +1104,7 @@ void LoadIWAD(int selection)
             gamemission = pack_tnt;
             strcpy(iwadfile, "tnt.wad");
             strcpy(savegamename, SAVEGAMENAME_TNT);
-            D_CheckFileSize(iwadfile, TNTWADSIZE);
+            D_CheckFileSize2(iwadfile, TNTWADSIZE1, TNTWADSIZE2);
             D_AddFile("tnt.wad");
             return;
         }
