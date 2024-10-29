@@ -1,7 +1,10 @@
 # CHANGELOG
 
-## 1.0.3 (?? ??? ????)
+## 1.0.3 (29 Oct 2024)
 * Optimized rendering of sky and player sprite in 320x200 and 320x240 modes
+* Added support for id Anthology versions of TNT and Plutonia
+* Removed -bfg command line (not supported officially)
+* Updated development environment script so it doesn't fail on VoidLinux
 
 ## 1.0.2 (19 Sep 2024)
 * Better sound caching

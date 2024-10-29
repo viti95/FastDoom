@@ -56,8 +56,8 @@
   DOOM Shareware (1 episode) -> DOOM1.WAD (v1.9, 4196020 bytes)
   Ultimate DOOM (4 episodes) -> DOOMU.WAD (v1.9, 12408292 bytes)
   DOOM II -> DOOM2.WAD (v1.9, 14604584 bytes)
-  Final DOOM The Plutonia Experiment -> PLUTONIA.WAD (v1.9, 17420824 bytes)
-  Final DOOM TNT Evilution -> TNT.WAD (v1.9, 18195736 bytes)
+  Final DOOM The Plutonia Experiment -> PLUTONIA.WAD (v1.9, 17420824 or 18240172 bytes)
+  Final DOOM TNT Evilution -> TNT.WAD (v1.9, 18195736 or 18654796 bytes)
   FreeDoom Phase 1 -> FREEDM1.WAD (experimental support)
   FreeDoom Phase 2 -> FREEDM2.WAD (experimental support)
 
