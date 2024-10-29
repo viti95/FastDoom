@@ -186,7 +186,6 @@ byte advancedemo;
 
 boolean modifiedgame;
 
-boolean bfgedition;
 gamemode_t gamemode = indetermined;
 gamemission_t gamemission = doom;
 
@@ -725,14 +724,7 @@ void D_DoAdvanceDemo(void)
             pagetic = 170;
         gamestate = GS_DEMOSCREEN;
 
-        if (bfgedition)
-        {
-            pagename = "DMENUPIC";
-        }
-        else
-        {
-            pagename = "TITLEPIC";
-        }
+        pagename = "TITLEPIC";
 
         if (gamemode == commercial)
             S_ChangeMusic(mus_dm2ttl, false);
@@ -756,14 +748,7 @@ void D_DoAdvanceDemo(void)
         {
             pagetic = 35 * 11;
 
-            if (bfgedition)
-            {
-                pagename = "DMENUPIC";
-            }
-            else
-            {
-                pagename = "TITLEPIC";
-            }
+            pagename = "TITLEPIC";
 
             S_ChangeMusic(mus_dm2ttl, false);
         }
@@ -1544,8 +1529,6 @@ void D_DoomMain(void)
     }
 
     disableDemo = M_CheckParm("-disabledemo");
-
-    bfgedition = M_CheckParm("-bfg");
 
     p = M_CheckParm("-sbk");
     if (p)
