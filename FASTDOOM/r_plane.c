@@ -423,6 +423,8 @@ void R_DrawPlanes(void)
 
         for (x = pl->minx; x <= stop; x++)
         {
+            int count;
+
             t1 = pl->top[x - 1];
             b1 = pl->bottom[x - 1];
             t2 = pl->top[x];
@@ -441,11 +443,33 @@ void R_DrawPlanes(void)
                 b1--;
             }
 
-            while (t2 < t1 && t2 <= b2)
+            //I_Printf("============\n");
+
+            //I_Printf("t2 before: %b\n", t2);
+            //I_Printf("t1: %b\n", t1);
+            //I_Printf("b2: %b\n", b2);
+
+            count = min(t1, b2+1) - t2;
+            //I_Printf("Count: %b\n", count);
+
+            if (count > 0)
+            {
+                SetDWords(spanstart+t2, x, count);
+                t2 += count;
+            }
+            
+
+
+            /*while (t2 < t1 && t2 <= b2)
             {
                 spanstart[t2] = x;
                 t2++;
-            }
+            }*/
+
+            //I_Printf("t2 after: %b\n", t2);
+
+            //I_Printf("============\n");
+
             while (b2 > b1 && b2 >= t2)
             {
                 spanstart[b2] = x;

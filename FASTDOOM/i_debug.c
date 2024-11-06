@@ -148,6 +148,10 @@ void I_Printf(const char *format, ...)
             c = *format++;
             switch (c)
             {
+            case 'b':
+                sprintf(buf, "%u", *((unsigned char *)arg++));
+                I_Puts(buf);
+                break;
             case 'd':
             case 'i':
                 sprintf(buf, "%d", *((int *)arg++));
