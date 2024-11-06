@@ -120,7 +120,6 @@ extern skill_t gameskill;
 extern int gameepisode;
 extern int gamemap;
 
-extern boolean bfgedition;
 extern gamemode_t gamemode;
 extern gamemission_t gamemission;
 

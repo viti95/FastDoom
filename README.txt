@@ -56,8 +56,8 @@
   DOOM Shareware (1 episode) -> DOOM1.WAD (v1.9, 4196020 bytes)
   Ultimate DOOM (4 episodes) -> DOOMU.WAD (v1.9, 12408292 bytes)
   DOOM II -> DOOM2.WAD (v1.9, 14604584 bytes)
-  Final DOOM The Plutonia Experiment -> PLUTONIA.WAD (v1.9, 17420824 bytes)
-  Final DOOM TNT Evilution -> TNT.WAD (v1.9, 18195736 bytes)
+  Final DOOM The Plutonia Experiment -> PLUTONIA.WAD (v1.9, 17420824 or 18240172 bytes)
+  Final DOOM TNT Evilution -> TNT.WAD (v1.9, 18195736 or 18654796 bytes)
   FreeDoom Phase 1 -> FREEDM1.WAD (experimental support)
   FreeDoom Phase 2 -> FREEDM2.WAD (experimental support)
 
@@ -148,7 +148,6 @@
  -pagefix => Fixes text modes (80x50 and 80x100) for newer VGA cards
  -reverseStereo => Reverse audio output (left to right and viceversa)
  -csv => Saves the timedemo result in the file bench.csv
- -bfg => Enables Doom II BFG edition IWAD support
  -size XX => Forces screen scaling
  -file => Loads an external PWAD
  -playdemo XX => Plays a stored demo
