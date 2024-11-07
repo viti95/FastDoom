@@ -391,6 +391,7 @@ void R_DrawPlanes(void)
     int col;
 
     pixelcoord_t t1, b1, t2, b2;
+
     for (pl = visplanes; pl < lastvisplane; pl++)
     {
         if (!pl->modified || pl->minx > pl->maxx)
@@ -443,37 +444,17 @@ void R_DrawPlanes(void)
                 b1--;
             }
 
-            //I_Printf("============\n");
-
-            //I_Printf("t2 before: %b\n", t2);
-            //I_Printf("t1: %b\n", t1);
-            //I_Printf("b2: %b\n", b2);
-
             count = min(t1, b2+1) - t2;
-            //I_Printf("Count: %b\n", count);
-
             if (count > 0)
             {
                 SetDWords(spanstart+t2, x, count);
                 t2 += count;
             }
             
-
-
-            /*while (t2 < t1 && t2 <= b2)
+            count = b2 - max(b1, t2);
+            if (count > 0)
             {
-                spanstart[t2] = x;
-                t2++;
-            }*/
-
-            //I_Printf("t2 after: %b\n", t2);
-
-            //I_Printf("============\n");
-
-            while (b2 > b1 && b2 >= t2)
-            {
-                spanstart[b2] = x;
-                b2--;
+                SetDWords(spanstart+b2-count+1, x, count);
             }
         }
     }
