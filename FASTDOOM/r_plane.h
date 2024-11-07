@@ -33,8 +33,8 @@ extern fixed_t distscale[SCREENWIDTH];
 void R_ClearPlanes(void);
 void R_ClearPlanesFlat(void);
 
-void R_MapPlane(int y, int x1);
-void R_MapPlaneFlat(int y, int x1);
+void R_MapPlane(int y);
+void R_MapPlaneFlat(int y);
 
 void R_DrawPlanes(void);
 void R_DrawPlanesFlatter(void);

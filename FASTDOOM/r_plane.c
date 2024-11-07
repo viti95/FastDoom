@@ -72,7 +72,7 @@ short ceilingclip[SCREENWIDTH];
 // spanstart holds the start of a plane span
 // initialized to 0 at start
 //
-int spanstart[SCREENHEIGHT];
+unsigned short spanstart[SCREENHEIGHT];
 
 //
 // texture mapping
@@ -103,12 +103,13 @@ fixed_t cachedstep[SCREENHEIGHT];
 //
 // BASIC PRIMITIVE
 //
-void R_MapPlane(int y, int x1)
+void R_MapPlane(int y)
 {
     angle_t angle;
     fixed_t distance;
     fixed_t length;
     unsigned index;
+    int x1 = spanstart[y];
 #if defined(MODE_CGA16) || defined(MODE_CGA512) || defined(MODE_CGA_AFH)
     if (y & 1)
         return;
@@ -158,10 +159,11 @@ void R_MapPlane(int y, int x1)
     spanfunc();
 }
 
-void R_MapPlaneFlat(int y, int x1)
+void R_MapPlaneFlat(int y)
 {
     fixed_t distance;
     unsigned index;
+    int x1 = spanstart[y];
 #if defined(MODE_CGA16) || defined(MODE_CGA512) || defined(MODE_CGA_AFH)
     if (y & 1)
         return;
@@ -430,7 +432,7 @@ void R_DrawPlanes(void)
             {
                 if (t1 != PIXELCOORD_MAX)
                 {
-                    mapPlane(t1, spanstart[t1]);
+                    mapPlane(t1);
                 }
                 t1++;
             }
@@ -438,7 +440,7 @@ void R_DrawPlanes(void)
             {
                 if (b1 != PIXELCOORD_MAX)
                 {
-                    mapPlane(b1, spanstart[b1]);
+                    mapPlane(b1);
                 }
                 b1--;
             }
