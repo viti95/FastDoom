@@ -109,8 +109,6 @@ void R_MapPlane(int y, int x1)
     fixed_t distance;
     fixed_t length;
     unsigned index;
-    if (y == PIXELCOORD_MAX)
-        return;
 #if defined(MODE_CGA16) || defined(MODE_CGA512) || defined(MODE_CGA_AFH)
     if (y & 1)
         return;
@@ -164,8 +162,6 @@ void R_MapPlaneFlat(int y, int x1)
 {
     fixed_t distance;
     unsigned index;
-    if (y == PIXELCOORD_MAX)
-        return;
 #if defined(MODE_CGA16) || defined(MODE_CGA512) || defined(MODE_CGA_AFH)
     if (y & 1)
         return;
@@ -432,12 +428,18 @@ void R_DrawPlanes(void)
 
             while (t1 < t2 && t1 <= b1)
             {
-                mapPlane(t1, spanstart[t1]);
+                if (t1 != PIXELCOORD_MAX)
+                {
+                    mapPlane(t1, spanstart[t1]);
+                }
                 t1++;
             }
             while (b1 > b2 && b1 >= t1)
             {
-                mapPlane(b1, spanstart[b1]);
+                if (b1 != PIXELCOORD_MAX)
+                {
+                    mapPlane(b1, spanstart[b1]);
+                }
                 b1--;
             }
 
