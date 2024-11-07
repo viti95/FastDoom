@@ -451,7 +451,7 @@ void R_DrawPlanes(void)
                 t2 += count;
             }
             
-            count = b2 - max(b1, t2);
+            count = b2 - max(b1, t2-1);
             if (count > 0)
             {
                 SetDWords(spanstart+b2-count+1, x, count);
