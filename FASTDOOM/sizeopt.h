@@ -16,6 +16,7 @@
 #define centery 12
 #define centerxfrac 1310720
 #define centeryfrac 786432
+#define centeryfracshifted 49152
 #define projection 1310720
 #define pspritescale 8192
 #define pspriteiscale 524288
@@ -38,6 +39,7 @@
 #define centery 25
 #define centerxfrac 1310720
 #define centeryfrac 1638400
+#define centeryfracshifted 102400
 #define projection 1310720
 #define pspritescale 8192
 #define pspriteiscale 524288
@@ -60,6 +62,7 @@
 #define centery 25
 #define centerxfrac 2621440
 #define centeryfrac 1638400
+#define centeryfracshifted 102400
 #define projection 2621440
 #define pspritescale 16384
 #define pspriteiscale 262144
@@ -82,6 +85,7 @@
 #define centery 21
 #define centerxfrac 2621440
 #define centeryfrac 1376256
+#define centeryfracshifted 86016
 #define projection 2621440
 #define pspritescale 16384
 #define pspriteiscale 262144

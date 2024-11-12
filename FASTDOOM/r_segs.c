@@ -1303,6 +1303,8 @@ void R_RenderMaskedSegRange2Flatter(drawseg_t *ds)
 //  textures.
 // CALLED: CORE LOOPING ROUTINE.
 //
+#define HEIGHTBITS 12
+#define HEIGHTUNIT (1 << HEIGHTBITS)
 
 void (*renderSegLoop)(void);
 void (*renderMaskedSegRange)(drawseg_t *ds, int x1, int x2);
@@ -1346,7 +1348,7 @@ void R_RenderSegLoop(void)
 		fc_rwx = floorclip[rw_x];
 
 		// mark floor / ceiling areas
-		yl = (topfrac + FRACUNIT - 1) >> FRACBITS;
+		yl = (topfrac + HEIGHTUNIT - 1) >> HEIGHTBITS;
 
 		// no space above wall?
 		if (yl < cc_rwx + 1)
@@ -1368,7 +1370,7 @@ void R_RenderSegLoop(void)
 			}
 		}
 
-		yh = bottomfrac >> FRACBITS;
+		yh = bottomfrac >> HEIGHTBITS;
 
 		if (yh >= fc_rwx)
 			yh = fc_rwx - 1;
@@ -1485,7 +1487,7 @@ void R_RenderSegLoop(void)
 			if (toptexture)
 			{
 				// top wall
-				mid = pixhigh >> FRACBITS;
+				mid = pixhigh >> HEIGHTBITS;
 				pixhigh -= pixhighstep;
 
 				if (mid >= fc_rwx)
@@ -1564,7 +1566,7 @@ void R_RenderSegLoop(void)
 			if (bottomtexture)
 			{
 				// bottom wall
-				mid = (pixlow + FRACUNIT - 1) >> FRACBITS;
+				mid = (pixlow + HEIGHTUNIT - 1) >> HEIGHTBITS;
 				pixlow -= pixlowstep;
 
 				// no space above wall?
@@ -1718,7 +1720,7 @@ void R_RenderSegLoopFlat(void)
 		fc_rwx = floorclip[rw_x];
 
 		// mark floor / ceiling areas
-		yl = (topfrac + FRACUNIT - 1) >> FRACBITS;
+		yl = (topfrac + HEIGHTUNIT - 1) >> HEIGHTBITS;
 
 		// no space above wall?
 		if (yl < cc_rwx + 1)
@@ -1740,7 +1742,7 @@ void R_RenderSegLoopFlat(void)
 			}
 		}
 
-		yh = bottomfrac >> FRACBITS;
+		yh = bottomfrac >> HEIGHTBITS;
 
 		if (yh >= fc_rwx)
 			yh = fc_rwx - 1;
@@ -1836,7 +1838,7 @@ void R_RenderSegLoopFlat(void)
 			if (toptexture)
 			{
 				// top wall
-				mid = pixhigh >> FRACBITS;
+				mid = pixhigh >> HEIGHTBITS;
 				pixhigh -= pixhighstep;
 
 				if (mid >= fc_rwx)
@@ -1896,7 +1898,7 @@ void R_RenderSegLoopFlat(void)
 			if (bottomtexture)
 			{
 				// bottom wall
-				mid = (pixlow + FRACUNIT - 1) >> FRACBITS;
+				mid = (pixlow + HEIGHTUNIT - 1) >> HEIGHTBITS;
 				pixlow -= pixlowstep;
 
 				// no space above wall?
@@ -2029,7 +2031,7 @@ void R_RenderSegLoopFlatter(void)
 		fc_rwx = floorclip[rw_x];
 
 		// mark floor / ceiling areas
-		yl = (topfrac + FRACUNIT - 1) >> FRACBITS;
+		yl = (topfrac + HEIGHTUNIT - 1) >> HEIGHTBITS;
 
 		// no space above wall?
 		if (yl < cc_rwx + 1)
@@ -2051,7 +2053,7 @@ void R_RenderSegLoopFlatter(void)
 			}
 		}
 
-		yh = bottomfrac >> FRACBITS;
+		yh = bottomfrac >> HEIGHTBITS;
 
 		if (yh >= fc_rwx)
 			yh = fc_rwx - 1;
@@ -2137,7 +2139,7 @@ void R_RenderSegLoopFlatter(void)
 			if (toptexture)
 			{
 				// top wall
-				mid = pixhigh >> FRACBITS;
+				mid = pixhigh >> HEIGHTBITS;
 				pixhigh -= pixhighstep;
 
 				if (mid >= fc_rwx)
@@ -2197,7 +2199,7 @@ void R_RenderSegLoopFlatter(void)
 			if (bottomtexture)
 			{
 				// bottom wall
-				mid = (pixlow + FRACUNIT - 1) >> FRACBITS;
+				mid = (pixlow + HEIGHTUNIT - 1) >> HEIGHTBITS;
 				pixlow -= pixlowstep;
 
 				// no space above wall?
@@ -2537,23 +2539,29 @@ void R_StoreWallRange(int start,
 	}
 
 	// calculate incremental stepping values for texture edges
+	worldtop >>= 4;
+	worldbottom >>= 4;
+
 	topstep = FixedMul(rw_scalestep, worldtop);
-	topfrac = centeryfrac - FixedMul(worldtop, rw_scale);
+	topfrac = centeryfracshifted - FixedMul(worldtop, rw_scale);
 
 	bottomstep = FixedMul(rw_scalestep, worldbottom);
-	bottomfrac = centeryfrac - FixedMul(worldbottom, rw_scale);
+	bottomfrac = centeryfracshifted - FixedMul(worldbottom, rw_scale);
 
 	if (backsector)
 	{
+		worldhigh >>= 4;
+		worldlow >>= 4;
+
 		if (worldhigh < worldtop)
 		{
-			pixhigh = centeryfrac - FixedMul(worldhigh, rw_scale);
+			pixhigh = centeryfracshifted - FixedMul(worldhigh, rw_scale);
 			pixhighstep = FixedMul(rw_scalestep, worldhigh);
 		}
 
 		if (worldlow > worldbottom)
 		{
-			pixlow = centeryfrac - FixedMul(worldlow, rw_scale);
+			pixlow = centeryfracshifted - FixedMul(worldlow, rw_scale);
 			pixlowstep = FixedMul(rw_scalestep, worldlow);
 		}
 	}

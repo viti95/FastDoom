@@ -56,6 +56,7 @@ int centery;
 
 fixed_t centerxfrac;
 fixed_t centeryfrac;
+fixed_t centeryfracshifted;
 fixed_t projection;
 #endif
 
@@ -1001,6 +1002,7 @@ void R_ExecuteSetViewSize(void)
     centerx = viewwidth / 2;
     centerxfrac = centerx << FRACBITS;
     centeryfrac = centery << FRACBITS;
+    centeryfracshifted = centeryfrac >> 4;
     projection = centerxfrac;
 #endif
 
