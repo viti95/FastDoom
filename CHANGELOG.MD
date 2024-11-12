@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.0.4 (12 Nov 2024)
+* Fixed issue #216, Doom2 MAP06 lift crash (thanks @RedIce25 !!). HEIGHTBITS optimization causes crashes in this map
+* Small optimizations in map / draw planes functions (C)
+
 ## 1.0.3 (29 Oct 2024)
 * Optimized rendering of sky and player sprite in 320x200 and 320x240 modes
 * Added support for id Anthology versions of TNT and Plutonia
