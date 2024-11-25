@@ -1647,7 +1647,7 @@ void M_DrawDisplayItem(int item, int position)
         break;
     case uncapped_fps:
         V_WriteTextDirect(M_X1, y, "UNCAPPED FPS:");
-        V_WriteTextDirect(M_X1, y, uncappedFPS ? "ON" : "OFF");
+        V_WriteTextDirect(M_X2, y, uncappedFPS ? "ON" : "OFF");
         break;
     }
 }
