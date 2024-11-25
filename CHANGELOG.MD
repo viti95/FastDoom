@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 1.0.5 (?? ??? ????)
+* Fixed "Uncapped FPS" menu option in text modes
+
 ## 1.0.4 (12 Nov 2024)
 * Fixed issue #216, Doom2 MAP06 lift crash (thanks @RedIce25 !!). HEIGHTBITS optimization causes crashes in this map
 * Small optimizations in map / draw planes functions (C)
