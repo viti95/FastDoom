@@ -127,6 +127,11 @@ void SBMIDI_PitchBend(int channel, int lsb, int msb)
     SBMIDI_SendMidi(msb);
 }
 
+void SBMIDI_SysEx(unsigned char *ptr, int length)
+{
+
+}
+
 /*---------------------------------------------------------------------
    Function: SBMIDI_Reset
 

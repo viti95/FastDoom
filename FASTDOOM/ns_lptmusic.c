@@ -164,6 +164,11 @@ void LPTMIDI_PitchBend(int channel, int lsb, int msb)
     LPTMIDI_SendMidi(msb);
 }
 
+void LPTMIDI_SysEx(unsigned char *ptr, int length)
+{
+    
+}
+
 int LPTMIDI_Reset()
 {
     // Output "Reset" command via Command port

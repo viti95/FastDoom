@@ -309,6 +309,7 @@ int MUSIC_InitAWE32(
     Funcs->PitchBend = AWE32_PitchBend;
     Funcs->SetVolume = NULL;
     Funcs->GetVolume = NULL;
+    Funcs->SysEx = NULL;
 
     if (BLASTER_CardHasMixer())
     {
@@ -350,6 +351,7 @@ int MUSIC_InitFM(int card, midifuncs *Funcs, int Address)
     Funcs->PitchBend = AL_SetPitchBend;
     Funcs->SetVolume = NULL;
     Funcs->GetVolume = NULL;
+    Funcs->SysEx = NULL;
 
     switch (card)
     {
@@ -433,6 +435,7 @@ int MUSIC_InitMidi(
     Funcs->PitchBend = MPU_PitchBend;
     Funcs->SetVolume = NULL;
     Funcs->GetVolume = NULL;
+    Funcs->SysEx = MPU_SysEx;
 
     MIDI_SetMidiFuncs(Funcs);
 
@@ -458,6 +461,7 @@ int MUSIC_InitSBMIDI(
     Funcs->PitchBend = SBMIDI_PitchBend;
     Funcs->SetVolume = NULL;
     Funcs->GetVolume = NULL;
+    Funcs->SysEx = SBMIDI_SysEx;
 
     MIDI_SetMidiFuncs(Funcs);
 
@@ -483,6 +487,7 @@ int MUSIC_InitRS232MIDI(
     Funcs->PitchBend = RS232_PitchBend;
     Funcs->SetVolume = NULL;
     Funcs->GetVolume = NULL;
+    Funcs->SysEx = RS232_SysEx;
 
     MIDI_SetMidiFuncs(Funcs);
 
@@ -508,6 +513,7 @@ int MUSIC_InitLPTMIDI(
     Funcs->PitchBend = LPTMIDI_PitchBend;
     Funcs->SetVolume = NULL;
     Funcs->GetVolume = NULL;
+    Funcs->SysEx = LPTMIDI_SysEx;
 
     MIDI_SetMidiFuncs(Funcs);
 
@@ -536,6 +542,7 @@ int MUSIC_InitGUS(
     Funcs->PitchBend = GUSMIDI_PitchBend;
     Funcs->SetVolume = GUSMIDI_SetVolume;
     Funcs->GetVolume = GUSMIDI_GetVolume;
+    Funcs->SysEx = NULL;
 
     MIDI_SetMidiFuncs(Funcs);
 
@@ -565,6 +572,7 @@ int MUSIC_InitCMS(
     Funcs->PitchBend = CMS_PitchBend;
     Funcs->SetVolume = NULL;
     Funcs->GetVolume = NULL;
+    Funcs->SysEx = NULL;
 
     MIDI_SetMidiFuncs(Funcs);
 

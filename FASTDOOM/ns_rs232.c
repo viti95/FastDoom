@@ -136,6 +136,11 @@ void RS232_PitchBend(int channel, int lsb, int msb)
     RS232_SendMidi(msb);
 }
 
+void RS232_SysEx(unsigned char *ptr, int length)
+{
+
+}
+
 int RS232_Reset()
 {
     outp(RS232_BaseAddr + 1, 0x00);                      // Disable all interrupts

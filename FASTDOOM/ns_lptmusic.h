@@ -35,5 +35,6 @@ void LPTMIDI_ControlChange(int channel, int number, int value);
 void LPTMIDI_ProgramChange(int channel, int program);
 void LPTMIDI_ChannelAftertouch(int channel, int pressure);
 void LPTMIDI_PitchBend(int channel, int lsb, int msb);
+void LPTMIDI_SysEx(unsigned char *ptr, int length);
 
 #endif

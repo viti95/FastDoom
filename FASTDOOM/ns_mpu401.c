@@ -143,6 +143,11 @@ void MPU_PitchBend(int channel, int lsb, int msb)
     MPU_SendMidi(msb);
 }
 
+void MPU_SysEx(unsigned char *ptr, int length)
+{
+    
+}
+
 /*---------------------------------------------------------------------
    Function: MPU_SendCommand
 

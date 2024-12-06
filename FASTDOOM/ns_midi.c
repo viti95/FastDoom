@@ -216,6 +216,9 @@ static void _MIDI_SysEx(track *Track)
     int length;
 
     length = _MIDI_ReadDelta(Track);
+    if (_MIDI_Funcs->SysEx) {
+        _MIDI_Funcs->SysEx(Track->pos, length);
+    }
     Track->pos += length;
 }
 
@@ -363,11 +366,11 @@ static void _MIDI_ServiceRoutine(task *Task)
                 switch (event)
                 {
                 case MIDI_SYSEX:
+                    _MIDI_SysEx(Track);
+                    break;
                 case MIDI_SYSEX_CONTINUE:
-                    //_MIDI_SysEx(Track);
                     Track->pos += _MIDI_ReadDelta(Track);
                     break;
-
                 case MIDI_META_EVENT:
                     _MIDI_MetaEvent(Track);
                     break;
@@ -907,11 +910,11 @@ static void _MIDI_InitEMIDI(
                 switch (event)
                 {
                 case MIDI_SYSEX:
+                    _MIDI_SysEx(Track);
+                    break;
                 case MIDI_SYSEX_CONTINUE:
-                    //_MIDI_SysEx(Track);
                     Track->pos += _MIDI_ReadDelta(Track);
                     break;
-
                 case MIDI_META_EVENT:
                     _MIDI_MetaEvent(Track);
                     break;

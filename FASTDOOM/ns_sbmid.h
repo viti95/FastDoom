@@ -35,5 +35,6 @@ void SBMIDI_ControlChange(int channel, int number, int value);
 void SBMIDI_ProgramChange(int channel, int program);
 void SBMIDI_ChannelAftertouch(int channel, int pressure);
 void SBMIDI_PitchBend(int channel, int lsb, int msb);
+void SBMIDI_SysEx(unsigned char *ptr, int length);
 
 #endif

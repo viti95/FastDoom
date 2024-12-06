@@ -33,6 +33,7 @@ typedef struct
     void (*PitchBend)(int channel, int lsb, int msb);
     void (*SetVolume)(int volume);
     int (*GetVolume)(void);
+    void (*SysEx)(unsigned char *ptr, int length);
 } midifuncs;
 
 int MIDI_AllNotesOff(void);

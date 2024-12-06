@@ -35,5 +35,6 @@ void MPU_ControlChange(int channel, int number, int value);
 void MPU_ProgramChange(int channel, int program);
 void MPU_ChannelAftertouch(int channel, int pressure);
 void MPU_PitchBend(int channel, int lsb, int msb);
+void MPU_SysEx(unsigned char *ptr, int length);
 
 #endif

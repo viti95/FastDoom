@@ -35,5 +35,6 @@ void RS232_ControlChange(int channel, int number, int value);
 void RS232_ProgramChange(int channel, int program);
 void RS232_ChannelAftertouch(int channel, int pressure);
 void RS232_PitchBend(int channel, int lsb, int msb);
+void RS232_SysEx(unsigned char *ptr, int length);
 
 #endif
