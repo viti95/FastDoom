@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 1.0.5 (?? ??? ????)
+## 1.0.5 (06 Dic 2024)
 * Fixed "Uncapped FPS" menu option in text modes
 
 ## 1.0.4 (12 Nov 2024)
