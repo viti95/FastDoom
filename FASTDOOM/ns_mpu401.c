@@ -145,7 +145,13 @@ void MPU_PitchBend(int channel, int lsb, int msb)
 
 void MPU_SysEx(unsigned char *ptr, int length)
 {
-    
+    int c;
+
+    for (c=0; c<length; c++)
+    {
+        MPU_SendMidi(*(ptr));
+        ptr++;
+    }
 }
 
 /*---------------------------------------------------------------------
