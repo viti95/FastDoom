@@ -265,6 +265,7 @@ void I_StartupSound(void)
 
     // Init MT-32
     if (mt32) {
+        printf("  loading MT-32 SysEx");
         // Load MIDI
         MUS_LoadMT32();
 
@@ -272,11 +273,13 @@ void I_StartupSound(void)
         MUS_ChainSong(0, -1);
         MUS_PlaySong(0, snd_MusicVolume);
         
-        // Release MIDI
+        // Wait until is fully loaded
         while(MUS_SongPlaying())
         {
-            // wait
         }
+
+        // Release MIDI
+        MUS_ReleaseData();
     }
 }
 //

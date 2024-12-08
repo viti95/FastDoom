@@ -161,6 +161,17 @@ int MUS_LoadMT32(void)
     
 }
 
+void MUS_ReleaseData(void)
+{
+    if (!MUSIC_SongPlaying())
+    {
+        if (mid_data)
+        {
+            Z_Free(mid_data);
+        }
+    }
+}
+
 int MUS_SongPlaying()
 {
     return MUSIC_SongPlaying();
