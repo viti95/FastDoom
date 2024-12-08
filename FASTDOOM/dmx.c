@@ -128,7 +128,7 @@ int MUS_RegisterSong(void *data)
     return 0;
 }
 
-char mt32file[13] = "MTGM.MID";
+char mt32file[13] = "MT32GM.MID";
 
 int MUS_LoadMT32(void)
 {
