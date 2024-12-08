@@ -12,6 +12,7 @@ cp FDM*.EXE PKG/
 cp WAD/*.WAD PKG/
 cp README.txt PKG/
 cp synthgs.sbk PKG/
+cp MTGM.MID PKG/
 cp BENCH.BAT PKG/
 cp -r INTER PKG/INTER
 cp -r BENCH PKG/BENCH
