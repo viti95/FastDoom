@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.0.6 (?? ??? ????)
+* MIDI SysEx support (MPU401, LPT MIDI, RS232 MIDI and Sound Blaster MIDI)
+* Roland MT-32 support (via -mt32 command line parameter)
+
 ## 1.0.5 (06 Dic 2024)
 * Fixed "Uncapped FPS" menu option in text modes
 
