@@ -166,7 +166,17 @@ void LPTMIDI_PitchBend(int channel, int lsb, int msb)
 
 void LPTMIDI_SysEx(unsigned char *ptr, int length)
 {
-    
+    int c;
+
+    LPTMIDI_SendMidi(0xF0);
+
+    for (c=0; c<length; c++)
+    {
+        LPTMIDI_SendMidi(*(ptr));
+        ptr++;
+    }
+
+    LPTMIDI_SendMidi(0xF7);
 }
 
 int LPTMIDI_Reset()

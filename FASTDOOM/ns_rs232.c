@@ -138,7 +138,17 @@ void RS232_PitchBend(int channel, int lsb, int msb)
 
 void RS232_SysEx(unsigned char *ptr, int length)
 {
+    int c;
 
+    RS232_SendMidi(0xF0);
+
+    for (c=0; c<length; c++)
+    {
+        RS232_SendMidi(*(ptr));
+        ptr++;
+    }
+
+    RS232_SendMidi(0xF7);
 }
 
 int RS232_Reset()

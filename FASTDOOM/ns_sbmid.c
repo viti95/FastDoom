@@ -129,7 +129,17 @@ void SBMIDI_PitchBend(int channel, int lsb, int msb)
 
 void SBMIDI_SysEx(unsigned char *ptr, int length)
 {
+    int c;
 
+    SBMIDI_SendMidi(0xF0);
+
+    for (c=0; c<length; c++)
+    {
+        SBMIDI_SendMidi(*(ptr));
+        ptr++;
+    }
+
+    SBMIDI_SendMidi(0xF7);
 }
 
 /*---------------------------------------------------------------------
