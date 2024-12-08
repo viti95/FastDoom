@@ -147,11 +147,15 @@ void MPU_SysEx(unsigned char *ptr, int length)
 {
     int c;
 
+    MPU_SendMidi(0xF0);
+
     for (c=0; c<length; c++)
     {
         MPU_SendMidi(*(ptr));
         ptr++;
     }
+
+    MPU_SendMidi(0xF7);
 }
 
 /*---------------------------------------------------------------------
