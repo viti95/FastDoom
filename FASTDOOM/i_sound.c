@@ -262,6 +262,22 @@ void I_StartupSound(void)
     printf("  calling ASS_Init\n");
 
     ASS_Init(SND_TICRATE, snd_MusicDevice, snd_SfxDevice);
+
+    // Init MT-32
+    if (mt32) {
+        // Load MIDI
+        MUS_LoadMT32();
+
+        // Play MIDI
+        MUS_ChainSong(0, -1);
+        MUS_PlaySong(0, snd_MusicVolume);
+        
+        // Release MIDI
+        while(MUS_SongPlaying())
+        {
+            // wait
+        }
+    }
 }
 //
 // I_ShutdownSound

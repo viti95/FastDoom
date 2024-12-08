@@ -127,6 +127,45 @@ int MUS_RegisterSong(void *data)
     mus_data = data;
     return 0;
 }
+
+char mt32file[13] = "MTGM.MID";
+
+int MUS_LoadMT32(void)
+{
+    FILE *mid;
+    unsigned int midlen;
+
+    if (mid_data)
+    {
+        Z_Free(mid_data);
+    }
+        
+    mid = fopen(mt32file, "rb");
+    if (!mid)
+    {
+        return 0;
+    }
+    fseek(mid, 0, SEEK_END);
+    midlen = ftell(mid);
+    rewind(mid);
+    mid_data = Z_MallocUnowned(midlen, PU_STATIC);
+    if (!mid_data)
+    {
+        fclose(mid);
+        return 0;
+    }
+    fread(mid_data, 1, midlen, mid);
+    fclose(mid);
+    mus_data = mid_data;
+    return 0;
+    
+}
+
+int MUS_SongPlaying()
+{
+    return MUSIC_SongPlaying();
+}
+
 int MUS_ChainSong(int handle, int next)
 {
     mus_loop = (next == handle);

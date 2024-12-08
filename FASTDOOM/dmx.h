@@ -24,8 +24,10 @@ void GUS_Shutdown(void);
 
 void TSM_Remove(void);
 int MUS_RegisterSong(void *data);
+int MUS_LoadMT32(void);
 int MUS_ChainSong(int handle, int next);
 void MUS_PlaySong(int handle, int volume);
+int MUS_SongPlaying();
 int SFX_PlayPatch(void *vdata, int sep, int vol);
 void SFX_StopPatch(int handle);
 int SFX_Playing(int handle);

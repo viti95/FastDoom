@@ -242,6 +242,11 @@ int MUSIC_StopSong(
     return (MUSIC_Ok);
 }
 
+int MUSIC_SongPlaying(void)
+{
+   return(MIDI_SongPlaying());
+}
+
 /*---------------------------------------------------------------------
    Function: MUSIC_PlaySong
 

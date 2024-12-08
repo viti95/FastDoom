@@ -108,6 +108,7 @@ int debugCardPort;
 boolean debugCardReverse;
 boolean nearSprites;
 boolean monoSound;
+boolean mt32;
 boolean noMelt;
 boolean uncappedFPS;
 boolean highResTimer;
@@ -1702,6 +1703,7 @@ void D_DoomMain(void)
     M_CheckParmOptional("-mono", &monoSound);
     M_CheckParmOptional("-near", &nearSprites);
     M_CheckParmOptional("-nomelt", &noMelt);
+    M_CheckParmOptional("-mt32", &mt32);
     M_CheckParmOptional("-slowbus", &busSpeed);
     M_CheckParmOptional("-vsync", &waitVsync);
     M_CheckParmOptional("-uncapped", &uncappedFPS);

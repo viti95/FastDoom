@@ -849,6 +849,17 @@ void MIDI_SetTempo(int tempo)
 }
 
 /*---------------------------------------------------------------------
+   Function: MIDI_SongPlaying
+
+   Returns whether a song is playing or not.
+---------------------------------------------------------------------*/
+
+int MIDI_SongPlaying(void)
+{
+   return( _MIDI_SongActive);
+}
+
+/*---------------------------------------------------------------------
    Function: MIDI_InitEMIDI
 
    Sets up the EMIDI
