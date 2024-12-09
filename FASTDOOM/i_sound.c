@@ -283,7 +283,7 @@ void I_StartupSound(void)
         MUS_ReleaseData();
 
         // Send text to MT-32
-        MUS_TextMT32("   FastDOOM " FDOOMVERSION "   ");
+        MUS_TextMT32("## FastDOOM " FDOOMVERSION " ##");
     }
 }
 //
