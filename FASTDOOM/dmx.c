@@ -142,6 +142,24 @@ int MUS_ChecksumRoland(unsigned char* bytes, int length) {
     return (0x80 - checkSum) % 0x80;
 }
 
+unsigned char TextMT32[28] = {0x41,0x10,0x16,0x12,0x20,0x00,0x00,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
+
+void MUS_TextMT32(unsigned char* text) {
+    int i;
+    unsigned char *mt32ptr = TextMT32 + 7;
+
+    for (i=0; i<20; i++)
+    {
+        *(mt32ptr) = *(text);
+        mt32ptr++;
+        text++;
+    }
+
+    *(mt32ptr) = MUS_ChecksumRoland(text, 20);
+
+    // TODO: Send SysEx
+}
+
 char mt32file[13] = "MT32GM.MID";
 
 int MUS_LoadMT32(void)
