@@ -265,7 +265,7 @@ void I_StartupSound(void)
 
     // Init MT-32
     if (mt32) {
-        printf("  loading MT-32 SysEx");
+        printf("  loading MT-32 SysEx\n");
         // Load MIDI
         MUS_LoadMT32();
 
