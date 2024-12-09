@@ -128,34 +128,46 @@ int MUS_RegisterSong(void *data)
     return 0;
 }
 
-int MUS_Checksum(unsigned char* bytes, int length) {
-    int i;
-    int sum = 0;
-    for (i = 0; i < length; ++i) {
-        sum += bytes[i];
+unsigned int MUS_ChecksumRoland(unsigned char *buf, int cnt)
+{
+    unsigned int cksum = 0;
+    /* Add up all the bytes */
+    while (cnt-- > 0)
+    {
+        cksum += *buf++;
     }
-    return sum % 0x80;
+    /* Use only the 7 least significant bits */
+    cksum &= 0x7F;
+    /* The checksum when added with the bytes over
+    ** which it is calculated must result in a zero
+    ** sum (in the least significant 7 bits).
+    ** If the value calculated so far is non-zero
+    ** subtract it from 0x80 to produce the proper
+    ** checksum byte (if the value calculated so far
+    ** is zero then zero is the proper checksum).
+    */
+    if (cksum)
+    {
+        cksum = 0x80 - cksum;
+    }
+    return cksum;
 }
 
-int MUS_ChecksumRoland(unsigned char* bytes, int length) {
-    int checkSum = MUS_Checksum(bytes, length);
-    return (0x80 - checkSum) % 0x80;
-}
+unsigned char TextMT32[28] = {0x41, 0x10, 0x16, 0x12, 0x20, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
-unsigned char TextMT32[28] = {0x41,0x10,0x16,0x12,0x20,0x00,0x00,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
-
-void MUS_TextMT32(unsigned char* text) {
+void MUS_TextMT32(unsigned char *text)
+{
     int i;
     unsigned char *mt32ptr = TextMT32 + 7;
 
-    for (i=0; i<20; i++)
+    for (i = 0; i < 20; i++)
     {
         *(mt32ptr) = *(text);
         mt32ptr++;
         text++;
     }
 
-    *(mt32ptr) = MUS_ChecksumRoland(TextMT32, 27);
+    *(mt32ptr) = MUS_ChecksumRoland(TextMT32 + 4, 23);
 
     MUSIC_SysEx(TextMT32, 28);
 }
@@ -190,7 +202,6 @@ int MUS_LoadMT32(void)
     fclose(mid);
     mus_data = mid_data;
     return 0;
-    
 }
 
 void MUS_ReleaseData(void)
@@ -516,7 +527,7 @@ void ASS_Init(int rate, int mdev, int sdev)
             I_Error("Error setup Sound device: %i", status);
         }
 
-        switch(snd_Rate)
+        switch (snd_Rate)
         {
             case 0:
             sample_rate = 7000;
