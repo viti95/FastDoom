@@ -222,6 +222,13 @@ static void _MIDI_SysEx(track *Track)
     Track->pos += length;
 }
 
+void MIDI_SysEx_Ext(unsigned char *data, int length)
+{
+    if (_MIDI_Funcs->SysEx) {
+        _MIDI_Funcs->SysEx(data, length);
+    }
+}
+
 /*---------------------------------------------------------------------
    Function: _MIDI_MetaEvent
 
@@ -856,7 +863,7 @@ void MIDI_SetTempo(int tempo)
 
 int MIDI_SongPlaying(void)
 {
-   return( _MIDI_SongActive);
+   return _MIDI_SongActive;
 }
 
 /*---------------------------------------------------------------------

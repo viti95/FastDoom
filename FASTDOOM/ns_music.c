@@ -234,17 +234,20 @@ void MUSIC_Pause(
    Stops playback of current song.
 ---------------------------------------------------------------------*/
 
-int MUSIC_StopSong(
-    void)
-
+int MUSIC_StopSong(void)
 {
     MIDI_StopSong();
-    return (MUSIC_Ok);
+    return MUSIC_Ok;
 }
 
 int MUSIC_SongPlaying(void)
 {
-   return(MIDI_SongPlaying());
+   return MIDI_SongPlaying();
+}
+
+void MUSIC_SysEx(unsigned char *data, int lenght)
+{
+    MIDI_SysEx_Ext(data, lenght);
 }
 
 /*---------------------------------------------------------------------

@@ -35,5 +35,6 @@ void MUSIC_Pause(void);
 int MUSIC_SongPlaying(void);
 int MUSIC_StopSong(void);
 int MUSIC_PlaySong(unsigned char *song, int loopflag);
+void MUSIC_SysEx(unsigned char *data, int lenght);
 
 #endif

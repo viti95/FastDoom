@@ -155,9 +155,9 @@ void MUS_TextMT32(unsigned char* text) {
         text++;
     }
 
-    *(mt32ptr) = MUS_ChecksumRoland(text, 20);
+    *(mt32ptr) = MUS_ChecksumRoland(TextMT32, 27);
 
-    // TODO: Send SysEx
+    MUSIC_SysEx(TextMT32, 28);
 }
 
 char mt32file[13] = "MT32GM.MID";
