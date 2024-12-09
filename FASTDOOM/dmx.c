@@ -128,6 +128,20 @@ int MUS_RegisterSong(void *data)
     return 0;
 }
 
+int MUS_Checksum(unsigned char* bytes, int length) {
+    int i;
+    int sum = 0;
+    for (i = 0; i < length; ++i) {
+        sum += bytes[i];
+    }
+    return sum % 0x80;
+}
+
+int MUS_ChecksumRoland(unsigned char* bytes, int length) {
+    int checkSum = MUS_Checksum(bytes, length);
+    return (0x80 - checkSum) % 0x80;
+}
+
 char mt32file[13] = "MT32GM.MID";
 
 int MUS_LoadMT32(void)
