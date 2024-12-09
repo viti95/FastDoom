@@ -280,6 +280,9 @@ void I_StartupSound(void)
 
         // Release MIDI
         MUS_ReleaseData();
+
+        // Send text to MT-32
+        MUS_TextMT32("      FASTDOOM      ");
     }
 }
 //

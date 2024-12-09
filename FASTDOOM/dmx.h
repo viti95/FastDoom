@@ -29,6 +29,7 @@ int MUS_ChainSong(int handle, int next);
 void MUS_PlaySong(int handle, int volume);
 int MUS_SongPlaying(void);
 void MUS_ReleaseData(void);
+void MUS_TextMT32(unsigned char* text);
 int SFX_PlayPatch(void *vdata, int sep, int vol);
 void SFX_StopPatch(int handle);
 int SFX_Playing(int handle);
