@@ -40,6 +40,7 @@
 #include "options.h"
 
 #include "ns_cd.h"
+#include "version.h"
 
 
 //
@@ -282,7 +283,7 @@ void I_StartupSound(void)
         MUS_ReleaseData();
 
         // Send text to MT-32
-        MUS_TextMT32("      FASTDOOM      ");
+        MUS_TextMT32("   FastDOOM " FDOOMVERSION "   ");
     }
 }
 //
