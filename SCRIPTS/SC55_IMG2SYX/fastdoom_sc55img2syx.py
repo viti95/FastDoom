@@ -1,6 +1,22 @@
 from PIL import Image
 import math
 
+def checksum_roland(buf):
+    cksum = 0
+
+    # Add up all the bytes
+    for b in buf:
+        cksum += b
+
+    # Use only the 7 least significant bits
+    cksum &= 0x7F
+
+    # Adjust the checksum to ensure it sums to zero with the data
+    if cksum != 0:
+        cksum = 0x80 - cksum
+
+    return cksum
+
 def convert_image_to_bytes(image_path):
     # Open image
     with Image.open(image_path) as img:
@@ -35,14 +51,23 @@ def convert_image_to_bytes(image_path):
 
         return bytes_output
 
-# Save output file
 image_path = "image.png"
 output_path = "output.bin"
 
 try:
+    initial_byte_data = [0x41, 0x10, 0x45, 0x12, 0x10, 0x01, 0x00]
     byte_data = convert_image_to_bytes(image_path)
+
+    byte_data = initial_byte_data + byte_data
+
+    checksum = checksum_roland(byte_data[4:])
+
+    byte_data.append(checksum)
+
+    # Save output file
     with open(output_path, "wb") as f:
         f.write(bytes(byte_data))
+
     print(f"Conversion complete: {output_path}")
 except Exception as e:
     print(f"Error: {e}")
