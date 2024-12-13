@@ -285,6 +285,12 @@ void I_StartupSound(void)
         // Send text to MT-32
         MUS_TextMT32("## FastDOOM " FDOOMVERSION " ##");
     }
+
+    // Init SC-55
+    if (sc55)
+    {
+        MUS_ImgSC55();
+    }
 }
 //
 // I_ShutdownSound
