@@ -31,6 +31,7 @@ int MUS_SongPlaying(void);
 void MUS_ReleaseData(void);
 void MUS_TextMT32(unsigned char* text);
 void MUS_ImgSC55(void);
+void MUS_TextSC55(unsigned char *text);
 int SFX_PlayPatch(void *vdata, int sep, int vol);
 void SFX_StopPatch(int handle);
 int SFX_Playing(int handle);

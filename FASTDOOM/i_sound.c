@@ -290,6 +290,7 @@ void I_StartupSound(void)
     if (sc55)
     {
         MUS_ImgSC55();
+        MUS_TextSC55(" Version  " FDOOMVERSION " ");
     }
 }
 //
