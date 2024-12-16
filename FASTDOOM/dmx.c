@@ -167,7 +167,7 @@ void MUS_TextSC55(unsigned char *text, int size)
     int i;
     unsigned char *sc55ptr = TextSC55 + 7;
 
-    if (size < 16 || size > 32)
+    if (size < 1 || size > 32)
         return;
 
     // The SC55 supports messages with lenght 16 to 32. It scrolls automatically if more

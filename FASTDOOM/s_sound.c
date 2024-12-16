@@ -624,21 +624,7 @@ void S_ShowMusicTitle(int musicnum)
     if (sc55)
     {
         int length = strlen(titleptr);
-        if (length < 16) 
-        {
-            unsigned char minimumStr[16];
-            int i;
-            for (i = 0; i < length; i++)
-            {
-                minimumStr[i] = titleptr[i];
-            }
-            for (i = length; i < 16; i++)
-            {
-                minimumStr[i] = ' ';
-            }
-            titleptr = minimumStr;
-            length = 16;
-        } else if (length > 32){
+        if (length > 32){
             length = 32;
         }
 
