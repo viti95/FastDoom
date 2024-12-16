@@ -3,6 +3,8 @@
 ## 1.0.6 (?? ??? ????)
 * MIDI SysEx support (MPU401, LPT MIDI, RS232 MIDI and Sound Blaster MIDI)
 * Roland MT-32 support (via -mt32 command line parameter)
+* Roland SC-55 support (via -sc55 command line parameter)
+* Show song titles on MT-32 and SC-55 devices
 
 ## 1.0.5 (06 Dic 2024)
 * Fixed "Uncapped FPS" menu option in text modes
