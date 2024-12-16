@@ -157,161 +157,161 @@ void S_StopMusicMIDI(void)
     }
 }
 
+unsigned char DoomMusicMap[33] = {
+    1,  // mus_None,
+    1,  // mus_e1m1
+    2,  // mus_e1m2
+    3,  // mus_e1m3
+    4,  // mus_e1m4
+    5,  // mus_e1m5
+    6,  // mus_e1m6
+    7,  // mus_e1m7
+    8,  // mus_e1m8
+    9,  // mus_e1m9
+    10, // mus_e2m1
+    11, // mus_e2m2
+    12, // mus_e2m3
+    13, // mus_e2m4
+    7,  // mus_e2m5
+    14, // mus_e2m6
+    15, // mus_e2m7
+    16, // mus_e2m8
+    17, // mus_e2m9
+    17, // mus_e3m1
+    18, // mus_e3m2
+    19, // mus_e3m3
+    8,  // mus_e3m4
+    7,  // mus_e3m5
+    6,  // mus_e3m6
+    15, // mus_e3m7
+    20, // mus_e3m8
+    9,  // mus_e3m9
+    12, // mus_inter
+    21, // mus_intro
+    22, // mus_bunny
+    23, // mus_victor
+    21  // mus_introa
+};
+
+unsigned char Doom2MusicMap[36] = {
+    1,  // mus_None,
+    1,  // mus_runnin - MAP1
+    2,  // mus_stalks - MAP2
+    3,  // mus_countd - MAP3
+    4,  // mus_betwee - MAP4
+    5,  // mus_doom - MAP5
+    6,  // mus_the_da - MAP6
+    7,  // mus_shawn - MAP7
+    8,  // mus_ddtblu - MAP8
+    9,  // mus_in_cit - MAP9
+    10, // mus_dead - MAP10
+    2,  // mus_stlks2 - MAP11
+    6,  // mus_theda2 - MAP12
+    5,  // mus_doom2 - MAP13
+    8,  // mus_ddtbl2 - MAP14
+    1,  // mus_runni2 - MAP15
+    10, // mus_dead2 - MAP16
+    2,  // mus_stlks3 - MAP17
+    11, // mus_romero - MAP18
+    7,  // mus_shawn2 - MAP19
+    12, // mus_messag - MAP20
+    3,  // mus_count2 - MAP21
+    8,  // mus_ddtbl3 - MAP22
+    13, // mus_ampie - MAP23
+    6,  // mus_theda3 - MAP24
+    14, // mus_adrian - MAP25
+    12, // mus_messg2 - MAP26
+    11, // mus_romer2 - MAP27
+    15, // mus_tense - MAP28
+    7,  // mus_shawn3 - MAP29
+    16, // mus_openin - MAP30
+    17, // mus_evil - MAP31
+    18, // mus_ultima - MAP32
+    19, // mus_read_m
+    20, // mus_dm2ttl
+    21  // mus_dm2int
+};
+
+unsigned char TNTMusicMap[36] = {
+    1,  // mus_None,
+    1,  // mus_runnin - MAP1
+    2,  // mus_stalks - MAP2
+    3,  // mus_countd - MAP3
+    4,  // mus_betwee - MAP4
+    5,  // mus_doom - MAP5
+    6,  // mus_the_da - MAP6
+    7,  // mus_shawn - MAP7
+    8,  // mus_ddtblu - MAP8
+    1,  // mus_in_cit - MAP9
+    9,  // mus_dead - MAP10
+    10, // mus_stlks2 - MAP11
+    11, // mus_theda2 - MAP12
+    4,  // mus_doom2 - MAP13
+    12, // mus_ddtbl2 - MAP14
+    2,  // mus_runni2 - MAP15
+    13, // mus_dead2 - MAP16
+    5,  // mus_stlks3 - MAP17
+    9,  // mus_romero - MAP18
+    14, // mus_shawn2 - MAP19
+    15, // mus_messag - MAP20
+    16, // mus_count2 - MAP21
+    17, // mus_ddtbl3 - MAP22
+    18, // mus_ampie - MAP23
+    19, // mus_theda3 - MAP24
+    20, // mus_adrian - MAP25
+    13, // mus_messg2 - MAP26
+    8,  // mus_romer2 - MAP27
+    17, // mus_tense - MAP28
+    4,  // mus_shawn3 - MAP29
+    8,  // mus_openin - MAP30
+    21, // mus_evil - MAP31
+    16, // mus_ultima - MAP32
+    22, // mus_read_m
+    23, // mus_dm2ttl
+    21  // mus_dm2int
+};
+
+unsigned char PlutoniaMusicMap[36] = {
+    1,  // mus_None,
+    1,  // mus_runnin - MAP1
+    2,  // mus_stalks - MAP2
+    3,  // mus_countd - MAP3
+    4,  // mus_betwee - MAP4
+    5,  // mus_doom - MAP5
+    6,  // mus_the_da - MAP6
+    7,  // mus_shawn - MAP7
+    8,  // mus_ddtblu - MAP8
+    9,  // mus_in_cit - MAP9
+    10, // mus_dead - MAP10
+    11, // mus_stlks2 - MAP11
+    12, // mus_theda2 - MAP12
+    13, // mus_doom2 - MAP13
+    14, // mus_ddtbl2 - MAP14
+    15, // mus_runni2 - MAP15
+    16, // mus_dead2 - MAP16
+    17, // mus_stlks3 - MAP17
+    10, // mus_romero - MAP18
+    18, // mus_shawn2 - MAP19
+    19, // mus_messag - MAP20
+    20, // mus_count2 - MAP21
+    21, // mus_ddtbl3 - MAP22
+    22, // mus_ampie - MAP23
+    23, // mus_theda3 - MAP24
+    24, // mus_adrian - MAP25
+    19, // mus_messg2 - MAP26
+    7,  // mus_romer2 - MAP27
+    8,  // mus_tense - MAP28
+    17, // mus_shawn3 - MAP29
+    25, // mus_openin - MAP30
+    6,  // mus_evil - MAP31
+    14, // mus_ultima - MAP32
+    20, // mus_read_m
+    26, // mus_dm2ttl
+    27  // mus_dm2int
+};
+
 unsigned char S_MapMusicCD(int musicnum)
 {
-    unsigned char DoomMusicMap[33] = {
-        1,  // mus_None,
-        1,  // mus_e1m1
-        2,  // mus_e1m2
-        3,  // mus_e1m3
-        4,  // mus_e1m4
-        5,  // mus_e1m5
-        6,  // mus_e1m6
-        7,  // mus_e1m7
-        8,  // mus_e1m8
-        9,  // mus_e1m9
-        10, // mus_e2m1
-        11, // mus_e2m2
-        12, // mus_e2m3
-        13, // mus_e2m4
-        7,  // mus_e2m5
-        14, // mus_e2m6
-        15, // mus_e2m7
-        16, // mus_e2m8
-        17, // mus_e2m9
-        17, // mus_e3m1
-        18, // mus_e3m2
-        19, // mus_e3m3
-        8,  // mus_e3m4
-        7,  // mus_e3m5
-        6,  // mus_e3m6
-        15, // mus_e3m7
-        20, // mus_e3m8
-        9,  // mus_e3m9
-        12, // mus_inter
-        21, // mus_intro
-        22, // mus_bunny
-        23, // mus_victor
-        21  // mus_introa
-    };
-
-    unsigned char Doom2MusicMap[36] = {
-        1,  // mus_None,
-        1,  // mus_runnin - MAP1
-        2,  // mus_stalks - MAP2
-        3,  // mus_countd - MAP3
-        4,  // mus_betwee - MAP4
-        5,  // mus_doom - MAP5
-        6,  // mus_the_da - MAP6
-        7,  // mus_shawn - MAP7
-        8,  // mus_ddtblu - MAP8
-        9,  // mus_in_cit - MAP9
-        10, // mus_dead - MAP10
-        2,  // mus_stlks2 - MAP11
-        6,  // mus_theda2 - MAP12
-        5,  // mus_doom2 - MAP13
-        8,  // mus_ddtbl2 - MAP14
-        1,  // mus_runni2 - MAP15
-        10, // mus_dead2 - MAP16
-        2,  // mus_stlks3 - MAP17
-        11, // mus_romero - MAP18
-        7,  // mus_shawn2 - MAP19
-        12, // mus_messag - MAP20
-        3,  // mus_count2 - MAP21
-        8,  // mus_ddtbl3 - MAP22
-        13, // mus_ampie - MAP23
-        6,  // mus_theda3 - MAP24
-        14, // mus_adrian - MAP25
-        12, // mus_messg2 - MAP26
-        11, // mus_romer2 - MAP27
-        15, // mus_tense - MAP28
-        7,  // mus_shawn3 - MAP29
-        16, // mus_openin - MAP30
-        17, // mus_evil - MAP31
-        18, // mus_ultima - MAP32
-        19, // mus_read_m
-        20, // mus_dm2ttl
-        21  // mus_dm2int
-    };
-
-    unsigned char TNTMusicMap[36] = {
-        1,  // mus_None,
-        1,  // mus_runnin - MAP1
-        2,  // mus_stalks - MAP2
-        3,  // mus_countd - MAP3
-        4,  // mus_betwee - MAP4
-        5,  // mus_doom - MAP5
-        6,  // mus_the_da - MAP6
-        7,  // mus_shawn - MAP7
-        8,  // mus_ddtblu - MAP8
-        1,  // mus_in_cit - MAP9
-        9,  // mus_dead - MAP10
-        10, // mus_stlks2 - MAP11
-        11, // mus_theda2 - MAP12
-        4,  // mus_doom2 - MAP13
-        12, // mus_ddtbl2 - MAP14
-        2,  // mus_runni2 - MAP15
-        13, // mus_dead2 - MAP16
-        5,  // mus_stlks3 - MAP17
-        9,  // mus_romero - MAP18
-        14, // mus_shawn2 - MAP19
-        15, // mus_messag - MAP20
-        16, // mus_count2 - MAP21
-        17, // mus_ddtbl3 - MAP22
-        18, // mus_ampie - MAP23
-        19, // mus_theda3 - MAP24
-        20, // mus_adrian - MAP25
-        13, // mus_messg2 - MAP26
-        8,  // mus_romer2 - MAP27
-        17, // mus_tense - MAP28
-        4,  // mus_shawn3 - MAP29
-        8,  // mus_openin - MAP30
-        21, // mus_evil - MAP31
-        16, // mus_ultima - MAP32
-        22, // mus_read_m
-        23, // mus_dm2ttl
-        21  // mus_dm2int
-    };
-
-    unsigned char PlutoniaMusicMap[36] = {
-        1,  // mus_None,
-        1,  // mus_runnin - MAP1
-        2,  // mus_stalks - MAP2
-        3,  // mus_countd - MAP3
-        4,  // mus_betwee - MAP4
-        5,  // mus_doom - MAP5
-        6,  // mus_the_da - MAP6
-        7,  // mus_shawn - MAP7
-        8,  // mus_ddtblu - MAP8
-        9,  // mus_in_cit - MAP9
-        10, // mus_dead - MAP10
-        11, // mus_stlks2 - MAP11
-        12, // mus_theda2 - MAP12
-        13, // mus_doom2 - MAP13
-        14, // mus_ddtbl2 - MAP14
-        15, // mus_runni2 - MAP15
-        16, // mus_dead2 - MAP16
-        17, // mus_stlks3 - MAP17
-        10, // mus_romero - MAP18
-        18, // mus_shawn2 - MAP19
-        19, // mus_messag - MAP20
-        20, // mus_count2 - MAP21
-        21, // mus_ddtbl3 - MAP22
-        22, // mus_ampie - MAP23
-        23, // mus_theda3 - MAP24
-        24, // mus_adrian - MAP25
-        19, // mus_messg2 - MAP26
-        7,  // mus_romer2 - MAP27
-        8,  // mus_tense - MAP28
-        17, // mus_shawn3 - MAP29
-        25, // mus_openin - MAP30
-        6,  // mus_evil - MAP31
-        14, // mus_ultima - MAP32
-        20, // mus_read_m
-        26, // mus_dm2ttl
-        27  // mus_dm2int
-    };
-
     switch (gamemission)
     {
     case doom:
@@ -474,6 +474,12 @@ void S_ChangeMusicMIDI(int musicnum, int looping)
     S_StopMusicMIDI();
 
     // load & register it
+
+    if (mt32 || sc55)
+    {
+        S_ShowMusicTitle(musicnum);
+    }
+
     music->data = (void *)W_CacheLumpNum(music->lumpnum, PU_MUSIC);
     music->handle = MUS_RegisterSong(music->data);
 
@@ -482,6 +488,74 @@ void S_ChangeMusicMIDI(int musicnum, int looping)
     MUS_PlaySong(music->handle, snd_MusicVolume);
 
     mus_playing = music;
+}
+
+unsigned char *DoomMusicTitles[23] = {
+    "At Doom's Gate",  // mus_e1m1
+    "The Imp's Song",  // mus_e1m2
+    "Dark Halls",  // mus_e1m3
+    "Kitchen Ace (And Taking Names)",  // mus_e1m4
+    "Suspense",  // mus_e1m5
+    "On the Hunt",  // mus_e1m6
+    "Demons on the Prey",  // mus_e1m7
+    "Sign of Evil",  // mus_e1m8
+    "Hiding the Secrets",  // mus_e1m9
+    "I Sawed the Demons", // mus_e2m1
+    "The Demons from Adrian's Pen", // mus_e2m2
+    "Intermission from DOOM", // mus_e2m3
+    "They're Going to Get You", // mus_e2m4
+    "Sinister", // mus_e2m6
+    "Waltz of the Demons", // mus_e2m7
+    "Nobody Told Me About id", // mus_e2m8
+    "untitled", // mus_e2m9
+    "Donna to the Rescue", // mus_e3m2
+    "Deep Into the Code", // mus_e3m3
+    "Facing the Spider", // mus_e3m8
+    "untitled", // mus_intro
+    "Sweet Little Dead Bunny", // mus_bunny
+    "The End of DOOM", // mus_victor
+};
+
+void S_ShowMusicTitle(int musicnum)
+{
+    unsigned char num = S_MapMusicCD(musicnum);
+    unsigned char *titleptr;
+
+    switch (gamemission)
+    {
+    case doom:
+        titleptr = DoomMusicTitles[num];
+    /*case doom2:
+        return Doom2MusicMap[musicnum - mus_introa];
+    case pack_plut:
+        return PlutoniaMusicMap[musicnum - mus_introa];
+    case pack_tnt:
+        return TNTMusicMap[musicnum - mus_introa];*/
+    }
+
+    if (sc55)
+    {
+        int length = strlen(titleptr);
+        if (length < 16) 
+        {
+            unsigned char minimumStr[16];
+            int i;
+            for (i = 0; i < length; i++)
+            {
+                minimumStr[i] = titleptr[i];
+            }
+            for (i = length; i < 16; i++)
+            {
+                minimumStr[i] = ' ';
+            }
+            titleptr = minimumStr;
+            length = 16;
+        } else if (length > 32){
+            length = 32;
+        }
+
+        MUS_TextSC55(titleptr, length);
+    }
 }
 
 void S_ChangeMusic(int musicnum, int looping)
