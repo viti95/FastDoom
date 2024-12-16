@@ -630,6 +630,16 @@ void S_ShowMusicTitle(int musicnum)
 
         MUS_TextSC55(titleptr, length);
     }
+
+    if (mt32)
+    {
+        int length = strlen(titleptr);
+        if (length > 20){
+            length = 20;
+        }
+
+        MUS_TextMT32(titleptr, length);
+    }
 }
 
 void S_ChangeMusic(int musicnum, int looping)
