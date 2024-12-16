@@ -91,4 +91,6 @@ void S_SetSfxVolume(int volume);
 void S_ClearSounds(void);
 void S_ClearUnusedSounds(void);
 
+void S_ShowMusicTitle(int musicnum);
+
 #endif

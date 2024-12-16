@@ -43,6 +43,8 @@
 #include "ns_multi.h"
 #include "ns_muldf.h"
 
+#include "string.h"
+
 // Current music/sfx card - index useless
 //  w/o a reference LUT in a sound module.
 extern int snd_MusicDevice;
@@ -540,6 +542,62 @@ unsigned char *Doom2MusicTitles[21] = {
     "Intermission"  // mus_dm2int
 };
 
+unsigned char *TNTMusicTitles[23] = {
+    "Sadistic",  // mus_runnin - MAP1
+    "Smells Like Burning Corpse",  // mus_stalks - MAP2
+    "Message for the Archvile",  // mus_countd - MAP3
+    "Death's Bells",  // mus_betwee - MAP4
+    "More",  // mus_doom - MAP5
+    "Agony Rhapsody",  // mus_the_da - MAP6
+    "Soldier of Chaos",  // mus_shawn - MAP7
+    "Into the Beast's Belly",  // mus_ddtblu - MAP8
+    "Infinite",  // mus_dead - MAP10
+    "Let's Kill at Will", // mus_stlks2 - MAP11
+    "The Dave D. Taylor Blues", // mus_theda2 - MAP12
+    "Cold Subtleness", // mus_ddtbl2 - MAP14
+    "Blood Jungle", // mus_dead2 - MAP16
+    "Countdown to Death", // mus_shawn2 - MAP19
+    "Horizon", // mus_messag - MAP20
+    "Into Sandy's City", // mus_count2 - MAP21
+    "AimShootKill", // mus_ddtbl3 - MAP22
+    "Bye Bye American Pie", // mus_ampie - MAP23
+    "Between Levels", // mus_theda3 - MAP24
+    "DOOM", // mus_adrian - MAP25
+    "Legion of the Lost", // mus_evil - MAP31
+    "Untitled", // mus_read_m
+    "TNT Title", // mus_dm2ttl
+};
+
+unsigned char *PlutoniaMusicTitles[27] = {
+    "The Imp's Song",  // mus_runnin - MAP1
+    "Dark Halls",  // mus_stalks - MAP2
+    "On the Hunt",  // mus_countd - MAP3
+    "Kitchen Ace (and Taking Names)",  // mus_betwee - MAP4
+    "Hiding the Secrets",  // mus_doom - MAP5
+    "Sign of Evil",  // mus_the_da - MAP6
+    "I Sawed the Demons",  // mus_shawn - MAP7
+    "The Demons from Adrian's Pen",  // mus_ddtblu - MAP8
+    "Deep into the Code",  // mus_in_cit - MAP9
+    "Demons on the Prey", // mus_dead - MAP10
+    "Sweet Little Dead Bunny", // mus_stlks2 - MAP11
+    "Facing the Spider", // mus_theda2 - MAP12
+    "Donna to the Rescue", // mus_doom2 - MAP13
+    "Nobody Told Me About id", // mus_ddtbl2 - MAP14
+    "Waltz of the Demons", // mus_runni2 - MAP15
+    "Untitled", // mus_dead2 - MAP16
+    "At Doom's Gate", // mus_stlks3 - MAP17
+    "Suspense", // mus_shawn2 - MAP19
+    "Message for the Archvile", // mus_messag - MAP20
+    "Read Me While Listening to This", // mus_count2 - MAP21
+    "The Dave D. Taylor Blues", // mus_ddtbl3 - MAP22
+    "Bye Bye American Pie", // mus_ampie - MAP23
+    "In the Dark", // mus_theda3 - MAP24
+    "Adrian's Asleep", // mus_adrian - MAP25
+    "The End of DOOM", // mus_openin - MAP30
+    "Title", // mus_dm2ttl
+    "Intermission"  // mus_dm2int
+};
+
 void S_ShowMusicTitle(int musicnum)
 {
     unsigned char num = S_MapMusicCD(musicnum) - 1;
@@ -553,10 +611,14 @@ void S_ShowMusicTitle(int musicnum)
     case doom2:
         titleptr = Doom2MusicTitles[num];
         break;
-    /*case pack_plut:
-        return PlutoniaMusicMap[musicnum - mus_introa];
+    case pack_plut:
+        titleptr = PlutoniaMusicTitles[num];
+        break;
     case pack_tnt:
-        return TNTMusicMap[musicnum - mus_introa];*/
+        titleptr = TNTMusicTitles[num];
+        break;
+    default:
+        return;
     }
 
     if (sc55)
