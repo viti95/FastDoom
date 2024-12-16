@@ -42,13 +42,12 @@
 #include "ns_cd.h"
 #include "version.h"
 
-
 //
 // Sound header & data
 //
-int snd_Mport; // midi variables
-int snd_Sport; // sound port
-int snd_Rate; // sound rate
+int snd_Mport;   // midi variables
+int snd_Sport;   // sound port
+int snd_Rate;    // sound rate
 int snd_PCMRate; // sound PCM rate
 
 int snd_MusicVolume; // maximum volume for music
@@ -68,13 +67,13 @@ int I_GetSfxLumpNum(sfxinfo_t *sfx)
     if (snd_SfxDevice > snd_PC)
     {
         char namebuf[9] = "DS";
-        strcpy(namebuf+2, sfx->name);
+        strcpy(namebuf + 2, sfx->name);
         return W_GetNumForName(namebuf);
     }
     else
     {
         char namebuf[9] = "DP";
-        strcpy(namebuf+2, sfx->name);
+        strcpy(namebuf + 2, sfx->name);
         return W_GetNumForName(namebuf);
     }
 }
@@ -185,12 +184,12 @@ void I_sndArbitrateCards(void)
         }
     }
 
-    if(rs232midi)
+    if (rs232midi)
     {
         SetMUSPort(snd_Mport);
     }
 
-    if(lptmidi)
+    if (lptmidi)
     {
         SetMUSPort(snd_Mport);
     }
@@ -234,7 +233,7 @@ void I_sndArbitrateCards(void)
 
     if (audiocd)
     {
-        if(!CD_Init())
+        if (!CD_Init())
         {
             // Error on AudioCD init
             I_Error("Cannot play AudioCD music");
@@ -265,7 +264,8 @@ void I_StartupSound(void)
     ASS_Init(SND_TICRATE, snd_MusicDevice, snd_SfxDevice);
 
     // Init MT-32
-    if (mt32) {
+    if (mt32)
+    {
         printf("  loading MT-32 SysEx\n");
         // Load MIDI
         MUS_LoadMT32();
@@ -273,9 +273,9 @@ void I_StartupSound(void)
         // Play MIDI
         MUS_ChainSong(0, -1);
         MUS_PlaySong(0, snd_MusicVolume);
-        
+
         // Wait until is fully loaded
-        while(MUS_SongPlaying())
+        while (MUS_SongPlaying())
         {
         }
 

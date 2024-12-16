@@ -507,27 +507,53 @@ unsigned char *DoomMusicTitles[23] = {
     "Sinister", // mus_e2m6
     "Waltz of the Demons", // mus_e2m7
     "Nobody Told Me About id", // mus_e2m8
-    "untitled", // mus_e2m9
+    "Untitled", // mus_e2m9
     "Donna to the Rescue", // mus_e3m2
     "Deep Into the Code", // mus_e3m3
     "Facing the Spider", // mus_e3m8
-    "untitled", // mus_intro
+    "Introduction", // mus_intro
     "Sweet Little Dead Bunny", // mus_bunny
     "The End of DOOM", // mus_victor
 };
 
+unsigned char *Doom2MusicTitles[21] = {
+    "Running from Evil",  // mus_runnin - MAP1
+    "The Healer Stalks",  // mus_stalks - MAP2
+    "Countdown to Death",  // mus_countd - MAP3
+    "Between Levels",  // mus_betwee - MAP4
+    "DOOM",  // mus_doom - MAP5
+    "In the Dark",  // mus_the_da - MAP6
+    "Shawn's Got the Shotgun",  // mus_shawn - MAP7
+    "The Dave D. Taylor Blues",  // mus_ddtblu - MAP8
+    "Into Sandy's City",  // mus_in_cit - MAP9
+    "The Demon's Dead", // mus_dead - MAP10
+    "Waiting for Romero to Play", // mus_romero - MAP18
+    "Message for the Archvile", // mus_messag - MAP20
+    "Bye Bye American Pie", // mus_ampie - MAP23
+    "Adrian's Asleep", // mus_adrian - MAP25
+    "Getting Too Tense", // mus_tense - MAP28
+    "Opening to Hell", // mus_openin - MAP30
+    "Evil Incarnate", // mus_evil - MAP31
+    "The Ultimate Challenge/Conquest", // mus_ultima - MAP32
+    "Read Me While Listening to This", // mus_read_m
+    "Title", // mus_dm2ttl
+    "Intermission"  // mus_dm2int
+};
+
 void S_ShowMusicTitle(int musicnum)
 {
-    unsigned char num = S_MapMusicCD(musicnum);
+    unsigned char num = S_MapMusicCD(musicnum) - 1;
     unsigned char *titleptr;
 
     switch (gamemission)
     {
     case doom:
         titleptr = DoomMusicTitles[num];
-    /*case doom2:
-        return Doom2MusicMap[musicnum - mus_introa];
-    case pack_plut:
+        break;
+    case doom2:
+        titleptr = Doom2MusicTitles[num];
+        break;
+    /*case pack_plut:
         return PlutoniaMusicMap[musicnum - mus_introa];
     case pack_tnt:
         return TNTMusicMap[musicnum - mus_introa];*/
