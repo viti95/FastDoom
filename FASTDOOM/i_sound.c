@@ -267,6 +267,8 @@ void I_StartupSound(void)
     if (mt32)
     {
         printf("  loading MT-32 SysEx\n");
+        MUS_TextMT32("Loading MT32 patches", 20);
+
         // Load MIDI
         MUS_LoadMT32();
 
@@ -283,14 +285,16 @@ void I_StartupSound(void)
         MUS_ReleaseData();
 
         // Send text to MT-32
-        MUS_TextMT32("## FastDOOM " FDOOMVERSION " ##");
+        MUS_TextMT32("## FastDOOM " FDOOMVERSION " ##", 20);
+
+        delay(3000);
     }
 
     // Init SC-55
     if (sc55)
     {
         MUS_ImgSC55();
-        MUS_TextSC55(" Version  " FDOOMVERSION " ", 16);
+        MUS_TextSC55("Version  " FDOOMVERSION, 14);
 
         delay(3000);
     }

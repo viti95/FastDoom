@@ -186,22 +186,45 @@ void MUS_TextSC55(unsigned char *text, int size)
 
 unsigned char TextMT32[] = {0x41, 0x10, 0x16, 0x12, 0x20, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
-void MUS_TextMT32(unsigned char *text)
+void MUS_TextMT32(unsigned char *text, int size)
 {
     int i;
     unsigned char *mt32ptr = TextMT32 + 7;
+    
+    if (size < 1)
+        return;
+
+    if (size > 20)
+    {
+        size = 20;
+    }
+    else if (size < 20) 
+    {
+        unsigned char minimumStr[20];
+        int i;
+        for (i = 0; i < size; i++)
+        {
+            minimumStr[i] = text[i];
+        }
+        for (i = size; i < 20; i++)
+        {
+            minimumStr[i] = ' ';
+        }
+        text = minimumStr;
+        size = 20;
+    }
 
     // The MT32 only supports text messages with 20 characters
-    for (i = 0; i < 20; i++)
+    for (i = 0; i < size; i++)
     {
         *(mt32ptr) = *(text);
         mt32ptr++;
         text++;
     }
 
-    *(mt32ptr) = MUS_ChecksumRoland(TextMT32 + 4, 23);
+    *(mt32ptr) = MUS_ChecksumRoland(TextMT32 + 4, size + 3);
 
-    MUSIC_SysEx(TextMT32, 28);
+    MUSIC_SysEx(TextMT32, size + 8);
 }
 
 char mt32file[13] = "MT32GM.MID";

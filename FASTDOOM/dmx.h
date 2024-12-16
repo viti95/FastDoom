@@ -29,7 +29,7 @@ int MUS_ChainSong(int handle, int next);
 void MUS_PlaySong(int handle, int volume);
 int MUS_SongPlaying(void);
 void MUS_ReleaseData(void);
-void MUS_TextMT32(unsigned char* text);
+void MUS_TextMT32(unsigned char* text, int size);
 void MUS_ImgSC55(void);
 void MUS_TextSC55(unsigned char *text, int size);
 int SFX_PlayPatch(void *vdata, int sep, int vol);
