@@ -298,6 +298,12 @@ void I_StartupSound(void)
 
         delay(3000);
     }
+
+    // Init MU80
+    if (mu80)
+    {
+        MUS_TextMU80("    FastDOOM          " FDOOMVERSION "     ", 32);
+    }
 }
 //
 // I_ShutdownSound

@@ -184,6 +184,47 @@ void MUS_TextSC55(unsigned char *text, int size)
     MUSIC_SysEx(TextSC55, size+8);
 }
 
+unsigned char TextMU80[] = {0x43, 0x10, 0x4C, 0x06, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+
+void MUS_TextMU80(unsigned char *text, int size)
+{
+    int i;
+    unsigned char *mu80ptr = TextMU80 + 6;
+
+    if (size < 1)
+        return;
+
+    if (size > 32) 
+    {
+        size = 32;
+    }
+    else
+    {
+        unsigned char minimumStr[32];
+        int i;
+        for (i = 0; i < size; i++)
+        {
+            minimumStr[i] = text[i];
+        }
+        for (i = size; i < 32; i++)
+        {
+            minimumStr[i] = ' ';
+        }
+        text = minimumStr;
+        size = 32;
+    }
+
+    // The MU80 only supports text messages with 32 characters
+    for (i = 0; i < size; i++)
+    {
+        *(mu80ptr) = *(text);
+        mu80ptr++;
+        text++;
+    }
+
+    MUSIC_SysEx(TextMU80, size + 6);
+}
+
 unsigned char TextMT32[] = {0x41, 0x10, 0x16, 0x12, 0x20, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
 void MUS_TextMT32(unsigned char *text, int size)

@@ -56,6 +56,7 @@ extern boolean nearSprites;
 extern boolean monoSound;
 extern boolean mt32;
 extern boolean sc55;
+extern boolean mu80;
 extern boolean noMelt;
 
 extern boolean reverseStereo;

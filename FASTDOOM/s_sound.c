@@ -477,7 +477,7 @@ void S_ChangeMusicMIDI(int musicnum, int looping)
 
     // load & register it
 
-    if (mt32 || sc55)
+    if (mt32 || sc55 || mu80)
     {
         S_ShowMusicTitle(musicnum);
     }
@@ -639,6 +639,16 @@ void S_ShowMusicTitle(int musicnum)
         }
 
         MUS_TextMT32(titleptr, length);
+    }
+
+    if (mu80)
+    {
+        int length = strlen(titleptr);
+        if (length > 32){
+            length = 32;
+        }
+
+        MUS_TextMU80(titleptr, length);
     }
 }
 
