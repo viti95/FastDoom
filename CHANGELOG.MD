@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 1.0.6 (?? ??? ????)
+## 1.0.6 (17 Dic 2024)
 * MIDI SysEx support (MPU401, LPT MIDI, RS232 MIDI and Sound Blaster MIDI)
 * Roland MT-32 support (via -mt32 command line parameter)
 * Roland SC-55 support (via -sc55 command line parameter)
