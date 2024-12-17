@@ -302,6 +302,7 @@ void I_StartupSound(void)
     // Init MU80
     if (mu80)
     {
+        MUS_YamahaXG();
         MUS_TextMU80("    FastDOOM          " FDOOMVERSION "     ", 32);
     }
 }
