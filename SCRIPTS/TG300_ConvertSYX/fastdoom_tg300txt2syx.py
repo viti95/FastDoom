@@ -17,7 +17,7 @@ def checksum_roland(buf):
 
     return cksum
 
-text = " Version  1.0.7 "
+text = "    FastDoom     Version  1.0.7 "
 output_path = "output.bin"
 
 try:
