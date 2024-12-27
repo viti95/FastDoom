@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 1.0.7 (?? ??? ????)
+* Yamaha MU series support (via -mu80 command line parameter)
+
 ## 1.0.6 (17 Dic 2024)
 * MIDI SysEx support (MPU401, LPT MIDI, RS232 MIDI and Sound Blaster MIDI)
 * Roland MT-32 support (via -mt32 command line parameter)
