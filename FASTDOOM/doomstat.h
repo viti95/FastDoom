@@ -54,9 +54,6 @@ extern int debugCardPort;
 extern boolean debugCardReverse;
 extern boolean nearSprites;
 extern boolean monoSound;
-extern boolean mt32;
-extern boolean sc55;
-extern boolean mu80;
 extern boolean noMelt;
 
 extern boolean reverseStereo;
@@ -156,9 +153,11 @@ extern boolean deathmatch;
 //  in: /usr/include/linux/soundcard.h
 extern int snd_MusicDevice;
 extern int snd_SfxDevice;
+extern int snd_MidiDevice;
 // Config file? Same disclaimer as above.
 extern int snd_DesiredMusicDevice;
 extern int snd_DesiredSfxDevice;
+extern int snd_DesiredMidiDevice;
 
 // -------------------------
 // Status flags for refresh.

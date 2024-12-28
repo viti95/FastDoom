@@ -49,9 +49,11 @@
 //  w/o a reference LUT in a sound module.
 extern int snd_MusicDevice;
 extern int snd_SfxDevice;
+extern int snd_MidiDevice;
 // Config file? Same disclaimer as above.
 extern int snd_DesiredMusicDevice;
 extern int snd_DesiredSfxDevice;
+extern int snd_DesiredMidiDevice;
 
 int cdlooping = 0;
 int cdmusicnum = 0;
@@ -477,7 +479,7 @@ void S_ChangeMusicMIDI(int musicnum, int looping)
 
     // load & register it
 
-    if (mt32 || sc55 || mu80)
+    if (snd_MidiDevice > midi_default)
     {
         S_ShowMusicTitle(musicnum);
     }
@@ -621,7 +623,7 @@ void S_ShowMusicTitle(int musicnum)
         return;
     }
 
-    if (sc55)
+    if (snd_MidiDevice == midi_sc55)
     {
         int length = strlen(titleptr);
         if (length > 32){
@@ -631,7 +633,7 @@ void S_ShowMusicTitle(int musicnum)
         MUS_TextSC55(titleptr, length);
     }
 
-    if (mt32)
+    if (snd_MidiDevice == midi_mt32)
     {
         int length = strlen(titleptr);
         if (length > 20){
@@ -641,7 +643,7 @@ void S_ShowMusicTitle(int musicnum)
         MUS_TextMT32(titleptr, length);
     }
 
-    if (mu80)
+    if (snd_MidiDevice == midi_mu80)
     {
         int length = strlen(titleptr);
         if (length > 32){
