@@ -51,6 +51,15 @@ typedef enum
 
 typedef enum
 {
+	MIDI_DEFAULT,
+	MIDI_MT32,
+	MIDI_SC55,
+	MIDI_MU80,
+	MIDI_LAST
+} MIDIDEVICE;
+
+typedef enum
+{
 	C_KEY,
 	C_MOUSE,
 	C_LAST
@@ -70,6 +79,7 @@ typedef struct
 	CONTROL control;
 	DMXCARD m;
 	DMXCARD d;
+	MIDIDEVICE md;
 	short numdig;
 } DMXINFO;
 
