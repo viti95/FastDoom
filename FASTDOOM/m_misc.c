@@ -328,6 +328,7 @@ default_t defaults[] =
 
         {"snd_channels", &numChannels, 3},
         {"snd_musicdevice", &snd_DesiredMusicDevice, 0},
+        {"snd_mididevice", &snd_DesiredMidiDevice, 0},
         {"snd_sfxdevice", &snd_DesiredSfxDevice, 0},
         {"snd_mport", &snd_Mport, 0x330},
         {"snd_sport", &snd_Sport, 0x378},

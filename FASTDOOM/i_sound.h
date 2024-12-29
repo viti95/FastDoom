@@ -50,6 +50,15 @@ typedef enum
     NUM_SCARDS
 } cardenum_t;
 
+typedef enum
+{
+    midi_default,
+    midi_mt32,
+    midi_sc55,
+    midi_mu80,
+    NUM_MIDI_DEVICES
+} midienum_t;
+
 extern int snd_Rate;
 extern int snd_PCMRate;
 

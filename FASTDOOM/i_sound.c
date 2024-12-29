@@ -55,8 +55,10 @@ int snd_SfxVolume;   // maximum volume for sound
 
 int snd_SfxDevice;   // current sfx card # (index to dmxCodes)
 int snd_MusicDevice; // current music card # (index to dmxCodes)
+int snd_MidiDevice;  // current midi device
 int snd_DesiredSfxDevice;
 int snd_DesiredMusicDevice;
+int snd_DesiredMidiDevice;
 
 //
 // Retrieve the raw data lump index
@@ -90,6 +92,7 @@ void I_sndArbitrateCards(void)
     snd_SfxVolume = 127;
     snd_SfxDevice = snd_DesiredSfxDevice;
     snd_MusicDevice = snd_DesiredMusicDevice;
+    snd_MidiDevice = snd_DesiredMidiDevice;
 
     //
     // check command-line parameters- overrides config file
@@ -264,10 +267,10 @@ void I_StartupSound(void)
     ASS_Init(SND_TICRATE, snd_MusicDevice, snd_SfxDevice);
 
     // Init MT-32
-    if (mt32)
+    if (snd_MidiDevice == midi_mt32)
     {
         printf("  loading MT-32 SysEx\n");
-        MUS_TextMT32("Loading MT32 patches", 20);
+        MUS_TextMT32("Loading GM patches  ", 20);
 
         // Load MIDI
         MUS_LoadMT32();
@@ -291,7 +294,7 @@ void I_StartupSound(void)
     }
 
     // Init SC-55
-    if (sc55)
+    if (snd_MidiDevice == midi_sc55)
     {
         MUS_ImgSC55();
         MUS_TextSC55("Version  " FDOOMVERSION, 14);
@@ -300,7 +303,7 @@ void I_StartupSound(void)
     }
 
     // Init MU80
-    if (mu80)
+    if (snd_MidiDevice == midi_mu80)
     {
         MUS_YamahaXG();
         MUS_TextMU80("    FastDOOM          " FDOOMVERSION "     ", 32);

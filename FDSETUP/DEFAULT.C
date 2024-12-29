@@ -91,6 +91,7 @@ default_t defaults[] =
 		{"snd_channels", (int *)&newc.numdig, 3},
 		{"snd_musicdevice", (int *)&newc.m.card, 0},
 		{"snd_sfxdevice", (int *)&newc.d.card, 0},
+		{"snd_mididevice", (int *)&newc.md, 0},
 		{"snd_mport", (int *)&newc.m.midiport, 0x330},
 		{"snd_sport", (int *)&newc.d.soundport, 0x378},
 
@@ -115,14 +116,6 @@ void M_SaveDefaults(void)
 {
 	int i;
 	FILE *f;
-
-	/*if (newc.m.soundport == -1)
-	{
-		if (newc.d.soundport == -1)
-			newc.m.soundport = 0x378;
-		else
-			newc.m.soundport = newc.d.soundport;
-	}*/
 
 	if (newc.control != C_KEY)
 	{
@@ -197,8 +190,6 @@ int M_LoadDefaults(void)
 	}
 
 	fclose(f);
-
-	//newc.d.soundport = newc.m.soundport;
 
 	if (usemouse)
 		newc.control = C_MOUSE;

@@ -44,6 +44,20 @@ menu_t midiportmenu =
 		MIDI_MAX,
 		0x7f};
 
+item_t midideviceitems[] =
+	{
+		{MIDI_DEFAULT, 26, 5, 28, -1, -1},
+		{MIDI_MT32, 26, 6, 28, -1, -1},
+		{MIDI_SC55, 26, 7, 28, -1, -1},
+		{MIDI_MU80, 26, 8, 28, -1, -1}};
+
+menu_t mididevicemenu =
+	{
+		&midideviceitems[0],
+		MIDI_DEFAULT,
+		MIDI_LAST,
+		0x7f};
+
 int ChooseMidiPort(DMXCARD *card)
 {
 	short field;
@@ -168,6 +182,81 @@ int ChooseMidiPort(DMXCARD *card)
 
 			case MIDI_360:
 				card->midiport = 0x360;
+				goto func_exit;
+
+			default:
+				break;
+			}
+			break;
+		}
+	}
+
+func_exit:
+
+	RestoreScreen();
+	return (rval);
+}
+
+int ChooseMidiDevice(short *device)
+{
+	short field;
+	short key;
+	int rval = 0;
+
+	SaveScreen();
+	DrawPup(&mididev);
+
+	// DEFAULT FIELD ========================================
+
+	switch (*(device))
+	{
+	default:
+	case MIDI_DEFAULT:
+		field = MIDI_DEFAULT;
+		break;
+
+	case MIDI_MT32:
+		field = MIDI_MT32;
+		break;
+
+	case MIDI_SC55:
+		field = MIDI_SC55;
+		break;
+
+	case MIDI_MU80:
+		field = MIDI_MU80;
+		break;
+	}
+
+	while (1)
+	{
+		SetupMenu(&mididevicemenu);
+		field = GetMenuInput();
+		key = menukey;
+		switch (key)
+		{
+		case KEY_ESC:
+			rval = -1;
+			goto func_exit;
+
+		case KEY_ENTER:
+		case KEY_F10:
+			switch (field)
+			{
+			case MIDI_DEFAULT:
+				*(device) = MIDI_DEFAULT;
+				goto func_exit;
+
+			case MIDI_MT32:
+				*(device) = MIDI_MT32;
+				goto func_exit;
+
+			case MIDI_SC55:
+				*(device) = MIDI_SC55;
+				goto func_exit;
+
+			case MIDI_MU80:
+				*(device) = MIDI_MU80;
 				goto func_exit;
 
 			default:
@@ -837,8 +926,15 @@ int SetupMusic(void)
 
 	case M_OPL2LPT:
 	case M_OPL3LPT:
+		if (ChooseLPTPortMusic(&newc.m) == -1)
+			return (-1);
+		savemusic = TRUE;
+		break;
+	
 	case M_LPTMIDI:
 		if (ChooseLPTPortMusic(&newc.m) == -1)
+			return (-1);
+		if (ChooseMidiDevice(&newc.md) == -1)
 			return (-1);
 		savemusic = TRUE;
 		break;
@@ -857,7 +953,12 @@ int SetupMusic(void)
 	case M_ENSONIQ:
 	case M_SBAWE32:
 	case M_SB:
+		savemusic = TRUE;
+		break;
+
 	case M_SBMIDI:
+		if (ChooseMidiDevice(&newc.md) == -1)
+			return (-1);
 		savemusic = TRUE;
 		break;
 
@@ -870,11 +971,15 @@ int SetupMusic(void)
 	case M_GMIDI:
 		if (ChooseMidiPort(&newc.m) == -1)
 			return (-1);
+		if (ChooseMidiDevice(&newc.md) == -1)
+			return (-1);
 		savemusic = TRUE;
 		break;
 
 	case M_RS232MIDI:
 		if (ChooseCOMPort(&newc.m) == -1)
+			return (-1);
+		if (ChooseMidiDevice(&newc.md) == -1)
 			return (-1);
 		savemusic = TRUE;
 		break;

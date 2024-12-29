@@ -223,8 +223,6 @@
  -freeram 128 => Leaves 128 KB free
  -uncapped => Enable uncapped FPS mode (>35 fps)
  -capped => Disable uncapped FPS mode (max 35 fps)
- -mt32 => Enable Roland MT-32 GM patch loading + support
- -sc55 => Enable Roland SC-55 support
  
  Limitations / Known bugs
  ------------------------
