@@ -79,7 +79,7 @@ typedef struct
 	CONTROL control;
 	DMXCARD m;
 	DMXCARD d;
-	MIDIDEVICE md;
+	short md;
 	short numdig;
 } DMXINFO;
 
