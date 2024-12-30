@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 1.0.7 (?? ??? ????)
+## 1.0.7 (31 Dic 2024)
 * Yamaha MU80 support
 * Removed the -mt32 and -sc55 command line parameters, MIDI device selection is now handled via FDSETUP
 
