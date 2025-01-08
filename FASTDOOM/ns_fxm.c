@@ -270,7 +270,6 @@ int FX_Init(
     int SoundCard,
     int numvoices,
     int numchannels,
-    int samplebits,
     unsigned int mixrate)
 
 {
@@ -304,7 +303,7 @@ int FX_Init(
     case OPL2LPT:
     case OPL3LPT:
     case SoundBlasterDirect:
-        devicestatus = MV_Init(SoundCard, FX_MixRate, numvoices, numchannels, samplebits);
+        devicestatus = MV_Init(SoundCard, FX_MixRate, numvoices, numchannels);
         if (devicestatus != MV_Ok && !ignoreSoundChecks)
         {
             status = FX_Error;

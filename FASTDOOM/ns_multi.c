@@ -661,10 +661,7 @@ void MV_SetVoiceVolume(
    Prepares Multivoc to play stereo of mono digitized sounds.
 ---------------------------------------------------------------------*/
 
-int MV_SetMixMode(
-    int numchannels,
-    int samplebits)
-
+int MV_SetMixMode(int numchannels)
 {
     int mode;
 
@@ -672,10 +669,6 @@ int MV_SetMixMode(
     if (numchannels == 2)
     {
         mode |= STEREO;
-    }
-    if (samplebits == 16)
-    {
-        mode |= SIXTEEN_BIT;
     }
 
     switch (MV_SoundCard)
@@ -722,24 +715,11 @@ int MV_SetMixMode(
     }
 
     MV_Bits = 8;
-    if (MV_MixMode & SIXTEEN_BIT)
-    {
-        MV_Bits = 16;
-    }
 
     MV_BuffShift = 7 + MV_Channels;
     MV_SampleSize = sizeof(MONO8) * MV_Channels;
 
-    if (MV_Bits == 8)
-    {
-        MV_Silence = SILENCE_8BIT;
-    }
-    else
-    {
-        MV_Silence = SILENCE_16BIT;
-        MV_BuffShift += 1;
-        MV_SampleSize *= 2;
-    }
+    MV_Silence = SILENCE_8BIT;
 
     MV_BufferSize = MixBufferSize * MV_SampleSize;
     MV_NumberOfBuffers = TotalBufferSize / MV_BufferSize;
@@ -1207,9 +1187,7 @@ int MV_Init(
     int soundcard,
     int MixRate,
     int Voices,
-    int numchannels,
-    int samplebits)
-
+    int numchannels)
 {
     char *ptr;
     int status;
@@ -1334,7 +1312,7 @@ int MV_Init(
     MV_RequestedMixRate = MixRate;
 
     // Set Mixer to play stereo digitized sound
-    MV_SetMixMode(numchannels, samplebits);
+    MV_SetMixMode(numchannels);
 
     // Make sure we don't cross a physical page
     if (((unsigned long)ptr & 0xffff) + TotalBufferSize > 0x10000)

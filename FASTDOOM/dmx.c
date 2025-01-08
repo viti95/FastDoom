@@ -664,7 +664,7 @@ void ASS_Init(int rate, int mdev, int sdev)
         if (mdev = snd_WAV)
             finalNumChannels += 1; // Extra sound channel for PCM music
 
-        status = FX_Init(sound_device, finalNumChannels, 2, 8, sample_rate);
+        status = FX_Init(sound_device, finalNumChannels, 2, sample_rate);
 
         if (status != FX_Ok)
         {

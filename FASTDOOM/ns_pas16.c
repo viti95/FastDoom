@@ -492,9 +492,7 @@ void PAS_SetSampleBufferCount(
    hertz.
 ---------------------------------------------------------------------*/
 
-void PAS_SetPlaybackRate(
-    unsigned rate)
-
+void PAS_SetPlaybackRate(unsigned rate)
 {
    if (rate < PAS_MinSamplingRate)
    {
@@ -539,18 +537,9 @@ unsigned PAS_GetPlaybackRate(
    Sets the sound card to play samples in mono or stereo.
 ---------------------------------------------------------------------*/
 
-int PAS_SetMixMode(
-    int mode)
-
+int PAS_SetMixMode(int mode)
 {
    mode &= PAS_MaxMixMode;
-
-   // Check board revision.  Revision # 0 can't play 16-bit data.
-   if ((PAS_State->intrctlr & 0xe0) == 0)
-   {
-      // Force the mode to 8-bit data.
-      mode &= ~SIXTEEN_BIT;
-   }
 
    PAS_MixMode = mode;
 
@@ -966,16 +955,7 @@ int PAS_GetCardInfo(
    }
 
    *MaxChannels = 2;
-
-   // Check board revision.  Revision # 0 can't play 16-bit data.
-   if ((PAS_State->intrctlr & 0xe0) == 0)
-   {
-      *MaxSampleBits = 8;
-   }
-   else
-   {
-      *MaxSampleBits = 16;
-   }
+   *MaxSampleBits = 8;
 
    return (PAS_Ok);
 }
