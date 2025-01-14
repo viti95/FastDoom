@@ -34,6 +34,8 @@ void MUS_ImgSC55(void);
 void MUS_TextSC55(unsigned char *text, int size);
 void MUS_YamahaXG(void);
 void MUS_TextMU80(unsigned char *text, int size);
+void MUS_ImgTG300(void);
+void MUS_TextTG300(unsigned char *text, int size);
 int SFX_PlayPatch(void *vdata, int sep, int vol);
 void SFX_StopPatch(int handle);
 int SFX_Playing(int handle);

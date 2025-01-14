@@ -49,7 +49,8 @@ item_t midideviceitems[] =
 		{MIDI_DEFAULT, 26, 5, 28, -1, -1},
 		{MIDI_MT32, 26, 6, 28, -1, -1},
 		{MIDI_SC55, 26, 7, 28, -1, -1},
-		{MIDI_MU80, 26, 8, 28, -1, -1}};
+		{MIDI_MU80, 26, 8, 28, -1, -1},
+		{MIDI_TG300, 26, 9, 28, -1, -1}};
 
 menu_t mididevicemenu =
 	{
@@ -226,6 +227,10 @@ int ChooseMidiDevice(short *device)
 	case MIDI_MU80:
 		field = MIDI_MU80;
 		break;
+	
+	case MIDI_TG300:
+		field = MIDI_TG300;
+		break;
 	}
 
 	while (1)
@@ -257,6 +262,10 @@ int ChooseMidiDevice(short *device)
 
 			case MIDI_MU80:
 				*(device) = MIDI_MU80;
+				goto func_exit;
+
+			case MIDI_TG300:
+				*(device) = MIDI_TG300;
 				goto func_exit;
 
 			default:

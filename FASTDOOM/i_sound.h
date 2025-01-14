@@ -56,6 +56,7 @@ typedef enum
     midi_mt32,
     midi_sc55,
     midi_mu80,
+    midi_tg300,
     NUM_MIDI_DEVICES
 } midienum_t;
 

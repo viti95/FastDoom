@@ -604,6 +604,7 @@ void S_ShowMusicTitle(int musicnum)
 {
     unsigned char num = S_MapMusicCD(musicnum) - 1;
     unsigned char *titleptr;
+    int length;
 
     switch (gamemission)
     {
@@ -623,35 +624,44 @@ void S_ShowMusicTitle(int musicnum)
         return;
     }
 
-    if (snd_MidiDevice == midi_sc55)
+    switch(snd_MidiDevice)
     {
-        int length = strlen(titleptr);
+    case midi_sc55:
+        length = strlen(titleptr);
         if (length > 32){
             length = 32;
         }
 
-        MUS_TextSC55(titleptr, length);
-    }
-
-    if (snd_MidiDevice == midi_mt32)
-    {
-        int length = strlen(titleptr);
+        MUS_TextSC55(titleptr, length);        
+        break;
+    case midi_mt32:
+        length = strlen(titleptr);
         if (length > 20){
             length = 20;
         }
 
         MUS_TextMT32(titleptr, length);
-    }
-
-    if (snd_MidiDevice == midi_mu80)
-    {
-        int length = strlen(titleptr);
+        break;
+    case midi_mu80:
+        length = strlen(titleptr);
         if (length > 32){
             length = 32;
         }
 
         MUS_TextMU80(titleptr, length);
+        break;
+    case midi_tg300:
+        length = strlen(titleptr);
+        if (length > 32){
+            length = 32;
+        }
+
+        MUS_TextTG300(titleptr, length);
+        break;
+    default:
+        return;
     }
+
 }
 
 void S_ChangeMusic(int musicnum, int looping)

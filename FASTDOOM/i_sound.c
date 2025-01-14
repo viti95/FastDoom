@@ -266,47 +266,47 @@ void I_StartupSound(void)
 
     ASS_Init(SND_TICRATE, snd_MusicDevice, snd_SfxDevice);
 
-    // Init MT-32
-    if (snd_MidiDevice == midi_mt32)
+    switch(snd_MidiDevice)
     {
-        printf("  loading MT-32 SysEx\n");
-        MUS_TextMT32("Loading GM patches  ", 20);
+        case midi_mt32:
+            printf("  loading MT-32 SysEx\n");
+            MUS_TextMT32("Loading GM patches  ", 20);
 
-        // Load MIDI
-        MUS_LoadMT32();
+            // Load MIDI
+            MUS_LoadMT32();
 
-        // Play MIDI
-        MUS_ChainSong(0, -1);
-        MUS_PlaySong(0, snd_MusicVolume);
+            // Play MIDI
+            MUS_ChainSong(0, -1);
+            MUS_PlaySong(0, snd_MusicVolume);
 
-        // Wait until is fully loaded
-        while (MUS_SongPlaying())
-        {
-        }
+            // Wait until is fully loaded
+            while (MUS_SongPlaying())
+            {
+            }
 
-        // Release MIDI
-        MUS_ReleaseData();
+            // Release MIDI
+            MUS_ReleaseData();
 
-        // Send text to MT-32
-        MUS_TextMT32("## FastDOOM " FDOOMVERSION " ##", 20);
+            // Send text to MT-32
+            MUS_TextMT32("## FastDOOM " FDOOMVERSION " ##", 20);
 
-        delay(3000);
-    }
-
-    // Init SC-55
-    if (snd_MidiDevice == midi_sc55)
-    {
-        MUS_ImgSC55();
-        MUS_TextSC55("Version  " FDOOMVERSION, 14);
-
-        delay(3000);
-    }
-
-    // Init MU80
-    if (snd_MidiDevice == midi_mu80)
-    {
-        MUS_YamahaXG();
-        MUS_TextMU80("    FastDOOM          " FDOOMVERSION "     ", 32);
+            delay(3000);
+            break;
+        case midi_sc55:
+            MUS_ImgSC55();
+            MUS_TextSC55("Version  " FDOOMVERSION, 14);
+            delay(3000);
+            break;
+        case midi_mu80:
+            MUS_YamahaXG();
+            MUS_TextMU80("    FastDOOM          " FDOOMVERSION "     ", 32);
+            break;
+        case midi_tg300:
+            MUS_ImgTG300();
+            delay(3000);
+            break;
+        default:
+            return;
     }
 }
 //
