@@ -33,7 +33,7 @@ enum MV_Errors
 int MV_VoicePlaying(int handle);
 int MV_KillAllVoices(void);
 int MV_Kill(int handle);
-int MV_SetMixMode(int numchannels, int samplebits);
+int MV_SetMixMode(int numchannels);
 int MV_StartPlayback(void);
 void MV_StopPlayback(void);
 int MV_PlayRaw(unsigned char *ptr, unsigned long length,
@@ -43,8 +43,7 @@ void MV_CreateVolumeTable(int index, int volume, int MaxVolume);
 void MV_SetVolume(int volume);
 void MV_SetReverseStereo(int setting);
 void MV_ReverseStereo(void);
-int MV_Init(int soundcard, int MixRate, int Voices, int numchannels,
-            int samplebits);
+int MV_Init(int soundcard, int MixRate, int Voices, int numchannels);
 int MV_Shutdown(void);
 
 #endif

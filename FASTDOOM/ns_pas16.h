@@ -17,7 +17,7 @@ enum PAS_ERRORS
     PAS_OutOfMemory
 };
 
-#define PAS_MaxMixMode STEREO_16BIT
+#define PAS_MaxMixMode STEREO_8BIT
 #define PAS_DefaultSampleRate 11000
 #define PAS_DefaultMixMode MONO_8BIT
 #define PAS_MaxIrq 15

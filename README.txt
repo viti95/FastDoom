@@ -11,7 +11,7 @@
 
  Version
  -------
- 1.0.7
+ 1.0.8
 
  About
  -----
@@ -77,7 +77,8 @@
  Music cards: Sound Blaster (OPL2 and OPL3), Adlib, MIDI, Gravis Ultrasound
               Sound Blaster AWE32, OPL2LPT, OPL3LPT, AudioCD (MSCDEX),
               PCM music (through sound card), Ensoniq Soundscape
-              Serial MIDI, DreamBlaster S2P, Roland MT-32
+              Serial MIDI, DreamBlaster S2P, Roland MT-32,
+              Roland SC-55, Yamaha MU80
 
  Executables
  -----------
