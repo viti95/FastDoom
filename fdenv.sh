@@ -27,7 +27,6 @@ else
         export PATH=$WATCOM/binl:$PATH
     fi
 
-    export PATH=$WATCOM/arml64:$PATH
     export EDPATH=$WATCOM/eddat
     export WIPFC=$WATCOM/wipfc
     export INCLUDE=$WATCOM/h
