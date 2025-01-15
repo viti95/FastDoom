@@ -14,7 +14,16 @@ if [[ -z "$final_dir" ]]; then
     echo "Watcom install not found."
 else
     export WATCOM=$final_dir
-    export PATH=$WATCOM/binl:$PATH
+
+    arch=$(uname -m)
+
+    if [ "$arch" == "aarch64" ]; then
+        export PATH=$WATCOM/arml64:$PATH
+    else
+        export PATH=$WATCOM/binl:$PATH
+    fi
+
+    export PATH=$WATCOM/arml64:$PATH
     export EDPATH=$WATCOM/eddat
     export WIPFC=$WATCOM/wipfc
     export INCLUDE=$WATCOM/h
