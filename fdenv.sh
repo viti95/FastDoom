@@ -17,10 +17,10 @@ else
 
     arch=$(uname -m)
 
-    if [ "$arch" == "aarch64" ]; then
+    if [[ "$arch" == "aarch64" ]]; then
         echo "ARM64 architecture"
         export PATH=$WATCOM/arml64:$PATH
-    elif [ "$arch" == "x86_64" ]; then
+    elif [[ "$arch" == "x86_64" ]]; then
         echo "X86_64 architecture"
         export PATH=$WATCOM/binl64:$PATH
     else
