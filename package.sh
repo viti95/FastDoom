@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 ./buildall.sh
 
 rm -rf PKG
@@ -31,7 +33,8 @@ if [[ -x "$(command -v 7z)" ]]; then
 elif [[ -x "$(command -v 7zz)" ]]; then
     7zz a -r -mx9 ../FastDoom_$version.zip .
 else
-    echo 7-Zip not found :[ >&2
+    echo 7-Zip not found >&2
+    exit 1
 fi
 
 cd ..
