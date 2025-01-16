@@ -78,7 +78,7 @@
               Sound Blaster AWE32, OPL2LPT, OPL3LPT, AudioCD (MSCDEX),
               PCM music (through sound card), Ensoniq Soundscape
               Serial MIDI, DreamBlaster S2P, Roland MT-32,
-              Roland SC-55, Yamaha MU80
+              Roland SC-55, Yamaha MU80, Yamaha TG300
 
  Executables
  -----------

@@ -1,6 +1,7 @@
 # CHANGELOG
 
 ## 1.0.9 (?? ??? ????)
+* Yamaha TG300 support (thanks @discatte !!)
 * Updated fdenv.sh script, it's now possible to build FastDoom on ARM64 CPUs. Tested on my trusty old Raspberry Pi 3B. Also a bit faster builds on x86_64 CPUs.
 
 ## 1.0.8 (11 Jan 2025)
