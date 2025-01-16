@@ -25,7 +25,15 @@ version=$(echo "$versionstring" | awk -F'"' '{print $2}')
 rm FastDoom_$version.zip
 
 cd PKG
-7z a -r -mx9 ../FastDoom_$version.zip .
+
+if [[ -x "$(command -v 7z)" ]]; then
+    7z a -r -mx9 ../FastDoom_$version.zip .
+elif [[ -x "$(command -v 7zz)" ]]; then
+    7zz a -r -mx9 ../FastDoom_$version.zip .
+else
+    echo 7-Zip not found :[ >&2
+fi
+
 cd ..
 
 rm -rf PKG
