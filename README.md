@@ -25,6 +25,8 @@ Doom port for DOS, based on PCDoom by @nukeykt. The goal of this port is to make
 * Hercules automap support
 * Native Roland MT-32 support (GM + display)
 * Roland SC-55 support (display)
+* Yamaha TG300 support (display)
+* Yamaha MU80 support (display)
 * Lot's of optimizations to make the game run faster / smoother
 * Removed low memory limit (may cause crashes with low RAM)
 * New detail level: Potato. It renders the full scene with a quarter width resolution (max 80x200). Much faster rendering, specially on 386 cpu's and slow 8-bit VGA ISA cards.
