@@ -24,7 +24,7 @@ cp EXE/* PKG
 versionstring=$(grep "#define FDOOMVERSION" FASTDOOM/version.h)
 version=$(echo "$versionstring" | awk -F'"' '{print $2}')
 
-rm FastDoom_$version.zip
+rm -f FastDoom_$version.zip
 
 cd PKG
 
