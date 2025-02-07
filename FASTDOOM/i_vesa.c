@@ -10,6 +10,7 @@
 #include "doomstat.h"
 #include "i_system.h"
 #include "v_video.h"
+//#include "i_debug.h"
 
 /*-----------------05-14-97 05:19pm-----------------
  *
@@ -311,7 +312,7 @@ int vesamode = -1;
 unsigned long vesamemory = -1;
 char *vesavideoptr;
 
-int VBE2_FindVideoMode(unsigned short screenwidth, unsigned short screenheight, char bitsperpixel)
+int VBE2_FindVideoMode(unsigned short screenwidth, unsigned short screenheight, char bitsperpixel, int isLinear)
 {
   int mode;
 
@@ -321,11 +322,18 @@ int VBE2_FindVideoMode(unsigned short screenwidth, unsigned short screenheight, 
     VBE_Mode_Information(vbeinfo.VideoModePtr[mode], &vbemode);
     if (vbemode.XResolution == screenwidth && vbemode.YResolution == screenheight && vbemode.BitsPerPixel == bitsperpixel)
     {
-      vesamode = mode;
-      vesavideomode = vbeinfo.VideoModePtr[mode];
-      vesalinear = VBE_IsModeLinear(vesavideomode);
-      vesabitsperpixel = bitsperpixel;
-      return 1;
+      unsigned short localvesavideomode = vbeinfo.VideoModePtr[mode];
+      int isVesaLinear = VBE_IsModeLinear(localvesavideomode);
+
+      if (isVesaLinear == isLinear)
+      {
+        vesamode = mode;
+        vesavideomode = localvesavideomode;
+        vesalinear = isVesaLinear;
+        vesabitsperpixel = bitsperpixel;
+        return 1;
+      }
+      
     }
   }
 
@@ -337,6 +345,7 @@ void VBE2_InitGraphics(void)
 
   char bitsperpixel[] = {8, 16, 15, 24, 32}; // Modes to test
   int i;
+  int linearModeFound = 0;
 
   VBE_Init();
 
@@ -345,13 +354,34 @@ void VBE2_InitGraphics(void)
   vesamemory = ((unsigned long)vbeinfo.TotalMemory) * 64;
   // Get VBE modes
 
+  // Test for linear VBE compatible modes
   for (i=0; i<5; i++) // Test each bit depth
   {
-    if(VBE2_FindVideoMode(SCREENWIDTH, SCREENHEIGHT, bitsperpixel[i]))
+    if(VBE2_FindVideoMode(SCREENWIDTH, SCREENHEIGHT, bitsperpixel[i], 1))
     {
+      linearModeFound = 1;
       break;
     }
   }
+
+  if (!linearModeFound)
+  {
+    // Test for non-linear vesa modes
+    for (i=0; i<5; i++) // Test each bit depth
+    {
+      if(VBE2_FindVideoMode(SCREENWIDTH, SCREENHEIGHT, bitsperpixel[i], 0))
+      {
+        break;
+      }
+    }
+  }
+
+  /*I_Printf("VESA mode: %d\n", vesamode);
+  I_Printf("VESA video mode: %d\n", vesavideomode);
+  I_Printf("VESA isLinear: %d\n", vesalinear);
+  I_Printf("VESA width: %d\n", SCREENWIDTH);
+  I_Printf("VESA height: %d\n", SCREENHEIGHT);
+  I_Printf("VESA bits per pixel: %d\n", vesabitsperpixel);*/
 
   // If a VESA compatible mode is found, use it!
   if (vesavideomode != 0xFFFF)
