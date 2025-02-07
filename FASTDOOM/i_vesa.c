@@ -319,10 +319,11 @@ int VBE2_FindVideoMode(unsigned short screenwidth, unsigned short screenheight, 
   // Find a suitable video mode
   for (mode = 0; vbeinfo.VideoModePtr[mode] != 0xFFFF; mode++)
   {
-    VBE_Mode_Information(vbeinfo.VideoModePtr[mode], &vbemode);
+    unsigned short localvesavideomode = vbeinfo.VideoModePtr[mode];
+
+    VBE_Mode_Information(localvesavideomode, &vbemode);
     if (vbemode.XResolution == screenwidth && vbemode.YResolution == screenheight && vbemode.BitsPerPixel == bitsperpixel)
     {
-      unsigned short localvesavideomode = vbeinfo.VideoModePtr[mode];
       int isVesaLinear = VBE_IsModeLinear(localvesavideomode);
 
       if (isVesaLinear == isLinear)
