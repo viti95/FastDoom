@@ -453,7 +453,7 @@ void VBE2_InitGraphics(void)
   }
   else
   {
-    I_Error("Compatible VESA 2.0 video mode not found! (%ix%i 8bpp required)", SCREENWIDTH, SCREENHEIGHT);
+    I_Error("Compatible VESA 2.0 video mode not found! (%ix%i required)", SCREENWIDTH, SCREENHEIGHT);
   }
 }
 
