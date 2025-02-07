@@ -335,7 +335,7 @@ int VBE2_FindVideoMode(unsigned short screenwidth, unsigned short screenheight, 
 void VBE2_InitGraphics(void)
 {
 
-  char bitsperpixel[] = {8, 16, 15, 24}; // Modes to test
+  char bitsperpixel[] = {8, 16, 15, 24, 32}; // Modes to test
   int i;
 
   VBE_Init();
@@ -345,7 +345,7 @@ void VBE2_InitGraphics(void)
   vesamemory = ((unsigned long)vbeinfo.TotalMemory) * 64;
   // Get VBE modes
 
-  for (i=0; i<4; i++) // Test each bit depth
+  for (i=0; i<5; i++) // Test each bit depth
   {
     if(VBE2_FindVideoMode(SCREENWIDTH, SCREENHEIGHT, bitsperpixel[i]))
     {
