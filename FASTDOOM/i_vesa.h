@@ -271,6 +271,7 @@ void VBE_SetDACWidth(char bits);
   */
 
 void VBE2_InitGraphics(void);
+int VBE2_FindVideoMode(unsigned short screenwidth, unsigned short screenheight, char bitsperpixel);
 void I_FinishUpdate(void);
 
 #endif
