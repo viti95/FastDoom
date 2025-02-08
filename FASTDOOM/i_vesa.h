@@ -273,5 +273,16 @@ void VBE_SetDACWidth(char bits);
 void VBE2_InitGraphics(void);
 int VBE2_FindVideoMode(unsigned short screenwidth, unsigned short screenheight, char bitsperpixel, int isLinear);
 void I_FinishUpdate(void);
+void I_FinishUpdate8bppBanked(void);
+void I_FinishUpdate8bppLinear(void);
+void I_FinishUpdate16bppBanked(void);
+void I_FinishUpdate16bppLinear(void);
+void I_FinishUpdate15bppBanked(void);
+void I_FinishUpdate15bppLinear(void);
+void I_FinishUpdate24bppBanked(void);
+void I_FinishUpdate24bppLinear(void);
+void I_FinishUpdate32bppBanked(void);
+void I_FinishUpdate32bppLinear(void);
+extern void (*finishfunc)(void);
 
 #endif

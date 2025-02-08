@@ -40,6 +40,8 @@
 #define VBE2SIGNATURE "VBE2"
 #define VBE3SIGNATURE "VBE3"
 
+void (*finishfunc)(void);
+
 /*-----------------07-26-97 11:04am-----------------
  * Realmode Callback Structure!
  * --------------------------------------------------*/
@@ -419,6 +421,49 @@ void VBE2_InitGraphics(void)
     // Force 6 bits resolution per color
     VBE_SetDACWidth(6);
 
+#if defined(MODE_VBE2)
+    // Set finish function
+    if (pcscreen == (void *)0xA0000){
+      // Banked
+      switch(vesabitsperpixel){
+        case 8:
+        finishfunc = I_FinishUpdate8bppBanked;
+        break;
+        case 15:
+        finishfunc = I_FinishUpdate15bppBanked;
+        break;
+        case 16:
+        finishfunc = I_FinishUpdate16bppBanked;
+        break;
+        case 24:
+        finishfunc = I_FinishUpdate24bppBanked;
+        break;
+        case 32:
+        finishfunc = I_FinishUpdate32bppBanked;
+        break;
+      }
+
+    }else{
+      // Linear
+      switch(vesabitsperpixel){
+        case 8:
+        finishfunc = I_FinishUpdate8bppLinear;
+        break;
+        case 15:
+        finishfunc = I_FinishUpdate15bppLinear;
+        break;
+        case 16:
+        finishfunc = I_FinishUpdate16bppLinear;
+        break;
+        case 24:
+        finishfunc = I_FinishUpdate24bppLinear;
+        break;
+        case 32:
+        finishfunc = I_FinishUpdate32bppLinear;
+        break;
+      }
+    }
+#endif
     
 #if defined(MODE_VBE2_DIRECT)
     // Check banked video modes that don't fit on the 64 Kb window
@@ -461,11 +506,9 @@ void VBE2_InitGraphics(void)
 #define LAST_BANK_SIZE ((SCREENHEIGHT * SCREENWIDTH) - (NUM_BANKS * 64 * 1024))
 
 #if defined(MODE_VBE2)
-void I_FinishUpdate(void)
+
+void I_FinishUpdate8bppBanked(void)
 {
-  if (pcscreen == (void *)0xA0000)
-  {
-    // Banked
     int i = 0;
 
     for (i = 0; i < NUM_BANKS; i++)
@@ -478,48 +521,91 @@ void I_FinishUpdate(void)
     VBE_SetBank(NUM_BANKS);
     CopyDWords(backbuffer + (NUM_BANKS * 64 * 1024), (void *)0xA0000, LAST_BANK_SIZE / 4);
 #endif
-  }
-  else
-  {
-    // Linear
+}
 
-    if (updatestate & I_FULLSCRN)
+void I_FinishUpdate8bppLinear(void)
+{
+  if (updatestate & I_FULLSCRN)
+  {
+    CopyDWords(backbuffer, pcscreen, SCREENHEIGHT * SCREENWIDTH / 4);
+    updatestate = I_NOUPDATE; // clear out all draw types
+  }
+  if (updatestate & I_FULLVIEW)
+  {
+    if (updatestate & I_MESSAGES && screenblocks > 7)
     {
-      CopyDWords(backbuffer, pcscreen, SCREENHEIGHT * SCREENWIDTH / 4);
-      updatestate = I_NOUPDATE; // clear out all draw types
-    }
-    if (updatestate & I_FULLVIEW)
-    {
-      if (updatestate & I_MESSAGES && screenblocks > 7)
+      int i;
+      for (i = 0; i < endscreen; i += SCREENWIDTH)
       {
-        int i;
-        for (i = 0; i < endscreen; i += SCREENWIDTH)
-        {
-          CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
-        }
-        updatestate &= ~(I_FULLVIEW | I_MESSAGES);
+        CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
       }
-      else
+      updatestate &= ~(I_FULLVIEW | I_MESSAGES);
+    }
+    else
+    {
+      int i;
+      for (i = startscreen; i < endscreen; i += SCREENWIDTH)
       {
-        int i;
-        for (i = startscreen; i < endscreen; i += SCREENWIDTH)
-        {
-          CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
-        }
-        updatestate &= ~I_FULLVIEW;
+        CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
       }
-    }
-    if (updatestate & I_STATBAR)
-    {
-      CopyDWords(backbuffer + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), pcscreen + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), SCREENWIDTH * SBARHEIGHT / 4);
-      updatestate &= ~I_STATBAR;
-    }
-    if (updatestate & I_MESSAGES)
-    {
-      CopyDWords(backbuffer, pcscreen, (SCREENWIDTH * 28) / 4);
-      updatestate &= ~I_MESSAGES;
+      updatestate &= ~I_FULLVIEW;
     }
   }
+  if (updatestate & I_STATBAR)
+  {
+    CopyDWords(backbuffer + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), pcscreen + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), SCREENWIDTH * SBARHEIGHT / 4);
+    updatestate &= ~I_STATBAR;
+  }
+  if (updatestate & I_MESSAGES)
+  {
+    CopyDWords(backbuffer, pcscreen, (SCREENWIDTH * 28) / 4);
+    updatestate &= ~I_MESSAGES;
+  }
+}
+
+void I_FinishUpdate16bppBanked(void)
+{
+  
+}
+
+void I_FinishUpdate16bppLinear(void)
+{
+  
+}
+
+void I_FinishUpdate15bppBanked(void)
+{
+  
+}
+
+void I_FinishUpdate15bppLinear(void)
+{
+  
+}
+
+void I_FinishUpdate24bppBanked(void)
+{
+  
+}
+
+void I_FinishUpdate24bppLinear(void)
+{
+  
+}
+
+void I_FinishUpdate32bppBanked(void)
+{
+  
+}
+
+void I_FinishUpdate32bppLinear(void)
+{
+  
+}
+
+void I_FinishUpdate(void)
+{
+  finishfunc();
 }
 #endif
 
