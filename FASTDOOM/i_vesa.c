@@ -477,8 +477,11 @@ void VBE2_InitGraphics(void)
       }
     }
 #endif
-    
+
 #if defined(MODE_VBE2_DIRECT)
+
+    processedpalette = Z_MallocUnowned(14 * 768, PU_STATIC);
+
     // Check banked video modes that don't fit on the 64 Kb window
     if (pcscreen == (void *)0xA0000)
     {
@@ -519,6 +522,10 @@ void VBE2_InitGraphics(void)
 #define LAST_BANK_SIZE ((SCREENHEIGHT * SCREENWIDTH) - (NUM_BANKS * 64 * 1024))
 
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
+
+#define I_ProcessPalette8bpp I_ProcessPalette
+#define I_SetPalette8bpp I_SetPalette
+
 void I_ProcessPalette8bpp(byte *palette)
 {
   int i;
