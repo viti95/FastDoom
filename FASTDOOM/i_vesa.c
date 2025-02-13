@@ -11,6 +11,7 @@
 #include "i_system.h"
 #include "v_video.h"
 #include "z_zone.h"
+#include "math.h"
 //#include "i_debug.h"
 
 /*-----------------05-14-97 05:19pm-----------------
@@ -45,6 +46,7 @@ void (*finishfunc)(void);
 void (*processpalette)(byte *palette);
 void (*setpalette)(int numpalette);
 byte *processedpalette;
+byte *ptrprocessedpalette;
 
 #define PEL_WRITE_ADR 0x3c8
 #define PEL_DATA 0x3c9
@@ -441,15 +443,27 @@ void VBE2_InitGraphics(void)
         break;
         case 15:
         finishfunc = I_FinishUpdate15bppBanked;
+        processpalette = I_ProcessPalette15bpp;
+        setpalette = I_SetPalette15bpp;
+        processedpalette = Z_MallocUnowned(14 * 256 * 2, PU_STATIC);
         break;
         case 16:
         finishfunc = I_FinishUpdate16bppBanked;
+        processpalette = I_ProcessPalette16bpp;
+        setpalette = I_SetPalette16bpp;
+        processedpalette = Z_MallocUnowned(14 * 256 * 2, PU_STATIC);
         break;
         case 24:
         finishfunc = I_FinishUpdate24bppBanked;
+        processpalette = I_ProcessPalette24bpp;
+        setpalette = I_SetPalette24bpp;
+        processedpalette = Z_MallocUnowned(14 * 256 * 3, PU_STATIC);
         break;
         case 32:
         finishfunc = I_FinishUpdate32bppBanked;
+        processpalette = I_ProcessPalette32bpp;
+        setpalette = I_SetPalette32bpp;
+        processedpalette = Z_MallocUnowned(14 * 256 * 4, PU_STATIC);
         break;
       }
 
@@ -464,15 +478,27 @@ void VBE2_InitGraphics(void)
         break;
         case 15:
         finishfunc = I_FinishUpdate15bppLinear;
+        processpalette = I_ProcessPalette15bpp;
+        setpalette = I_SetPalette15bpp;
+        processedpalette = Z_MallocUnowned(14 * 256 * 2, PU_STATIC);
         break;
         case 16:
         finishfunc = I_FinishUpdate16bppLinear;
+        processpalette = I_ProcessPalette16bpp;
+        setpalette = I_SetPalette16bpp;
+        processedpalette = Z_MallocUnowned(14 * 256 * 2, PU_STATIC);
         break;
         case 24:
         finishfunc = I_FinishUpdate24bppLinear;
+        processpalette = I_ProcessPalette24bpp;
+        setpalette = I_SetPalette24bpp;
+        processedpalette = Z_MallocUnowned(14 * 256 * 3, PU_STATIC);
         break;
         case 32:
         finishfunc = I_FinishUpdate32bppLinear;
+        processpalette = I_ProcessPalette32bpp;
+        setpalette = I_SetPalette32bpp;
+        processedpalette = Z_MallocUnowned(14 * 256 * 4, PU_STATIC);
         break;
       }
     }
@@ -570,6 +596,64 @@ void I_SetPalette8bpp(int numpalette)
     FastPaletteOut(((unsigned char *)processedpalette) + pos);
   }
 }
+
+void I_ProcessPalette15bpp(byte *palette)
+{
+  int i, j;
+
+  byte *ptr = gammatable[usegamma];
+
+  for (i = 0; i < 14 * 256 * 2; i += 2, palette += 3)
+  {
+    byte r,g,b;
+    unsigned short color;
+    
+    r = ptr[*palette] >> 3;
+    g = ptr[*palette + 1] >> 3;
+    b = ptr[*palette + 2] >> 3;
+
+    color = (r << 10) | (g << 5) | b;
+
+    processedpalette[i] = BYTE0_USHORT(color);
+    processedpalette[i + 1] = BYTE1_USHORT(color);
+  }
+}
+
+void I_SetPalette15bpp(int numpalette)
+{
+  ptrprocessedpalette = processedpalette + (numpalette * 256 * 2);
+}
+
+void I_ProcessPalette16bpp(byte *palette)
+{
+
+}
+
+void I_SetPalette16bpp(int numpalette)
+{
+
+}
+
+void I_ProcessPalette24bpp(byte *palette)
+{
+
+}
+
+void I_SetPalette24bpp(int numpalette)
+{
+
+}
+
+void I_ProcessPalette32bpp(byte *palette)
+{
+
+}
+
+void I_SetPalette32bpp(int numpalette)
+{
+
+}
+
 #endif
 
 #if defined(MODE_VBE2)

@@ -288,6 +288,14 @@ void I_ProcessPalette(byte *palette);
 void I_SetPalette(int numpalette);
 void I_ProcessPalette8bpp(byte *palette);
 void I_SetPalette8bpp(int numpalette);
+void I_ProcessPalette15bpp(byte *palette);
+void I_SetPalette15bpp(int numpalette);
+void I_ProcessPalette16bpp(byte *palette);
+void I_SetPalette16bpp(int numpalette);
+void I_ProcessPalette24bpp(byte *palette);
+void I_SetPalette24bpp(int numpalette);
+void I_ProcessPalette32bpp(byte *palette);
+void I_SetPalette32bpp(int numpalette);
 
 extern void (*finishfunc)(void);
 extern void (*processpalette)(byte *palette);
