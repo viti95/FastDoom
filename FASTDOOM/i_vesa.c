@@ -523,8 +523,10 @@ void VBE2_InitGraphics(void)
 
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 
+#if defined(MODE_VBE2_DIRECT)
 #define I_ProcessPalette8bpp I_ProcessPalette
 #define I_SetPalette8bpp I_SetPalette
+#endif
 
 void I_ProcessPalette8bpp(byte *palette)
 {
