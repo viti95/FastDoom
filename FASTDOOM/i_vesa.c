@@ -10,6 +10,7 @@
 #include "doomstat.h"
 #include "i_system.h"
 #include "v_video.h"
+#include "z_zone.h"
 //#include "i_debug.h"
 
 /*-----------------05-14-97 05:19pm-----------------
@@ -41,6 +42,12 @@
 #define VBE3SIGNATURE "VBE3"
 
 void (*finishfunc)(void);
+void (*processpalette)(byte *palette);
+void (*setpalette)(int numpalette);
+byte *processedpalette;
+
+#define PEL_WRITE_ADR 0x3c8
+#define PEL_DATA 0x3c9
 
 /*-----------------07-26-97 11:04am-----------------
  * Realmode Callback Structure!
@@ -428,6 +435,9 @@ void VBE2_InitGraphics(void)
       switch(vesabitsperpixel){
         case 8:
         finishfunc = I_FinishUpdate8bppBanked;
+        processpalette = I_ProcessPalette8bpp;
+        setpalette = I_SetPalette8bpp;
+        processedpalette = Z_MallocUnowned(14 * 768, PU_STATIC);
         break;
         case 15:
         finishfunc = I_FinishUpdate15bppBanked;
@@ -448,6 +458,9 @@ void VBE2_InitGraphics(void)
       switch(vesabitsperpixel){
         case 8:
         finishfunc = I_FinishUpdate8bppLinear;
+        processpalette = I_ProcessPalette8bpp;
+        setpalette = I_SetPalette8bpp;
+        processedpalette = Z_MallocUnowned(14 * 768, PU_STATIC);
         break;
         case 15:
         finishfunc = I_FinishUpdate15bppLinear;
@@ -505,7 +518,62 @@ void VBE2_InitGraphics(void)
 #define NUM_BANKS ((SCREENHEIGHT * SCREENWIDTH) / (64 * 1024))
 #define LAST_BANK_SIZE ((SCREENHEIGHT * SCREENWIDTH) - (NUM_BANKS * 64 * 1024))
 
+#if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
+void I_ProcessPalette8bpp(byte *palette)
+{
+  int i;
+
+  byte *ptr = gammatable[usegamma];
+
+  for (i = 0; i < 14 * 768; i += 4, palette += 4)
+  {
+    processedpalette[i] = ptr[*palette];
+    processedpalette[i + 1] = ptr[*(palette + 1)];
+    processedpalette[i + 2] = ptr[*(palette + 2)];
+    processedpalette[i + 3] = ptr[*(palette + 3)];
+  }
+}
+
+void I_SetPalette8bpp(int numpalette)
+{
+  int pos = Mul768(numpalette);
+
+  if (VGADACfix)
+  {
+    int i;
+    byte *ptrprocessedpalette = processedpalette + pos;
+
+    I_WaitSingleVBL();
+
+    outp(PEL_WRITE_ADR, 0);
+
+    for (i = 0; i < 768; i += 4)
+    {
+      outp(PEL_DATA, *(ptrprocessedpalette));
+      outp(PEL_DATA, *(ptrprocessedpalette + 1));
+      outp(PEL_DATA, *(ptrprocessedpalette + 2));
+      outp(PEL_DATA, *(ptrprocessedpalette + 3));
+      ptrprocessedpalette += 4;
+    }
+  }
+  else
+  {
+    FastPaletteOut(((unsigned char *)processedpalette) + pos);
+  }
+}
+#endif
+
 #if defined(MODE_VBE2)
+
+void I_ProcessPalette(byte *palette)
+{
+  processpalette(palette);
+}
+
+void I_SetPalette(int numpalette)
+{
+  setpalette(numpalette);
+}
 
 void I_FinishUpdate8bppBanked(void)
 {

@@ -1,4 +1,5 @@
 #ifndef _VESAVBE_H
+#include "doomtype.h"
 #define _VESAVBE_H
 
 #pragma pack(1)
@@ -283,6 +284,13 @@ void I_FinishUpdate24bppBanked(void);
 void I_FinishUpdate24bppLinear(void);
 void I_FinishUpdate32bppBanked(void);
 void I_FinishUpdate32bppLinear(void);
+void I_ProcessPalette(byte *palette);
+void I_SetPalette(int numpalette);
+void I_ProcessPalette8bpp(byte *palette);
+void I_SetPalette8bpp(int numpalette);
+
 extern void (*finishfunc)(void);
+extern void (*processpalette)(byte *palette);
+extern void (*setpalette)(int numpalette);
 
 #endif
