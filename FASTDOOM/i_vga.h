@@ -28,6 +28,5 @@
 #define UNDERLINE 0x14
 #define MODE_CONTROL 0x17
 
-void VGA_TestFastSetPalette(void);
 void I_ProcessPalette(byte *palette);
 void I_SetPalette(int numpalette);

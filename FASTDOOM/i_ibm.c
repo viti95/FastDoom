@@ -61,6 +61,7 @@
 
 #if defined(MODE_13H)
 #include "i_vga.h"
+#include "i_vgapal.h"
 #include "i_vga13h.h"
 #endif
 
@@ -98,25 +99,30 @@
 
 #if defined(MODE_VBE2)
 #include "i_vga.h"
+#include "i_vgapal.h"
 #endif
 
 #if defined(MODE_Y)
 #include "i_vgay.h"
 #include "i_vga.h"
+#include "i_vgapal.h"
 #endif
 
 #if defined(MODE_Y_HALF)
 #include "i_vgayh.h"
 #include "i_vga.h"
+#include "i_vgapal.h"
 #endif
 
 #if defined(MODE_X)
 #include "i_vgax.h"
 #include "i_vga.h"
+#include "i_vgapal.h"
 #endif
 
 #if defined(MODE_VBE2_DIRECT)
 #include "i_vga.h"
+#include "i_vgapal.h"
 #endif
 
 #if defined(MODE_CGA512)
