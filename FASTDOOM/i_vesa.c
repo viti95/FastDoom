@@ -367,7 +367,7 @@ void VBE2_InitGraphics(void)
   // Get VBE modes
 
   // Test for linear VBE compatible modes
-  for (i=0; i<5; i++) // Test each bit depth
+  for (i=2; i<5; i++) // Test each bit depth
   {
     if(VBE2_FindVideoMode(SCREENWIDTH, SCREENHEIGHT, bitsperpixel[i], 1))
     {
@@ -379,7 +379,7 @@ void VBE2_InitGraphics(void)
   if (!linearModeFound)
   {
     // Test for non-linear vesa modes
-    for (i=0; i<5; i++) // Test each bit depth
+    for (i=2; i<5; i++) // Test each bit depth
     {
       if(VBE2_FindVideoMode(SCREENWIDTH, SCREENHEIGHT, bitsperpixel[i], 0))
       {
@@ -605,12 +605,16 @@ void I_ProcessPalette15bpp(byte *palette)
 
   for (i = 0; i < 14 * 256 * 2; i += 2, palette += 3)
   {
-    byte r,g,b;
-    unsigned short color;
+    unsigned short r,g,b;
+    unsigned short color = 0;
     
-    r = ptr[*palette] >> 3;
-    g = ptr[*palette + 1] >> 3;
-    b = ptr[*palette + 2] >> 3;
+    r = ptr[*palette];
+    g = ptr[*palette + 1];
+    b = ptr[*palette + 2];
+
+    r >>= 3;
+    g >>= 3;
+    b >>= 3;
 
     color = (r << 10) | (g << 5) | b;
 
@@ -724,22 +728,31 @@ void I_FinishUpdate8bppLinear(void)
   }
 }
 
+void I_FinishUpdate15bppBanked(void)
+{
+
+}
+
+void I_FinishUpdate15bppLinear(void)
+{
+  int i;
+  int vramposition = 0;
+
+  for (i = 0; i < SCREENWIDTH * SCREENHEIGHT; i++, vramposition += 2)
+  {
+    unsigned color = backbuffer[i];
+
+    pcscreen[vramposition] = ptrprocessedpalette[color*2];
+    pcscreen[vramposition + 1] = ptrprocessedpalette[color*2+1];
+  }
+}
+
 void I_FinishUpdate16bppBanked(void)
 {
   
 }
 
 void I_FinishUpdate16bppLinear(void)
-{
-  
-}
-
-void I_FinishUpdate15bppBanked(void)
-{
-  
-}
-
-void I_FinishUpdate15bppLinear(void)
 {
   
 }
