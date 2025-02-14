@@ -608,18 +608,15 @@ void I_ProcessPalette15bpp(byte *palette)
     unsigned short r,g,b;
     unsigned short color = 0;
     
-    r = ptr[*palette];
-    g = ptr[*palette + 1];
-    b = ptr[*palette + 2];
+    r = ptr[*palette] >> 1;
+    g = ptr[*(palette + 1)] >> 1;
+    b = ptr[*(palette + 2)] >> 1;
 
-    r >>= 3;
-    g >>= 3;
-    b >>= 3;
-
+    //RGB555
     color = (r << 10) | (g << 5) | b;
 
-    processedpalette[i] = BYTE0_USHORT(color);
-    processedpalette[i + 1] = BYTE1_USHORT(color);
+    processedpalette[i] = color & 0xFF;
+    processedpalette[i + 1] = color >> 8;
   }
 }
 
@@ -740,10 +737,10 @@ void I_FinishUpdate15bppLinear(void)
 
   for (i = 0; i < SCREENWIDTH * SCREENHEIGHT; i++, vramposition += 2)
   {
-    unsigned color = backbuffer[i];
+    unsigned short ptrLUT = backbuffer[i] * 2;
 
-    pcscreen[vramposition] = ptrprocessedpalette[color*2];
-    pcscreen[vramposition + 1] = ptrprocessedpalette[color*2+1];
+    pcscreen[vramposition] = ptrprocessedpalette[ptrLUT];
+    pcscreen[vramposition+1] = ptrprocessedpalette[ptrLUT+1];
   }
 }
 
