@@ -367,7 +367,7 @@ void VBE2_InitGraphics(void)
   // Get VBE modes
 
   // Test for linear VBE compatible modes
-  for (i=4; i<5; i++) // Test each bit depth
+  for (i=0; i<5; i++) // Test each bit depth
   {
     if(VBE2_FindVideoMode(SCREENWIDTH, SCREENHEIGHT, bitsperpixel[i], 1))
     {
@@ -379,7 +379,7 @@ void VBE2_InitGraphics(void)
   if (!linearModeFound)
   {
     // Test for non-linear vesa modes
-    for (i=4; i<5; i++) // Test each bit depth
+    for (i=0; i<5; i++) // Test each bit depth
     {
       if(VBE2_FindVideoMode(SCREENWIDTH, SCREENHEIGHT, bitsperpixel[i], 0))
       {
