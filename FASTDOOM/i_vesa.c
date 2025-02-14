@@ -550,6 +550,12 @@ void VBE2_InitGraphics(void)
 #define NUM_BANKS_15BPP_16BPP ((SCREENHEIGHT * SCREENWIDTH * 2) / (64 * 1024))
 #define LAST_BANK_SIZE_15BPP_16BPP ((SCREENHEIGHT * SCREENWIDTH * 2) - (NUM_BANKS_15BPP_16BPP * 64 * 1024))
 
+#define NUM_BANKS_24BPP ((SCREENHEIGHT * SCREENWIDTH * 3) / (64 * 1024))
+#define LAST_BANK_SIZE_24BPP ((SCREENHEIGHT * SCREENWIDTH * 3) - (NUM_BANKS_24BPP * 64 * 1024))
+
+#define NUM_BANKS_32BPP ((SCREENHEIGHT * SCREENWIDTH * 4) / (64 * 1024))
+#define LAST_BANK_SIZE_32BPP ((SCREENHEIGHT * SCREENWIDTH * 4) - (NUM_BANKS_32BPP * 64 * 1024))
+
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 
 #if defined(MODE_VBE2_DIRECT)
@@ -827,7 +833,36 @@ void I_FinishUpdate15bpp16bppLinear(void)
 
 void I_FinishUpdate24bppBanked(void)
 {
-  
+  int i, j;
+
+  for (i = 0; i < NUM_BANKS_24BPP; i++)
+  {
+    VBE_SetBank(i);
+
+    for (j = 0; j < 64 * 1024 / 3; j++)
+    {
+      unsigned short ptrLUT = backbuffer[(64 * 1024 / 3) * i + j] * 3;
+
+      pcscreen[j*3] = ptrprocessedpalette[ptrLUT];
+      pcscreen[j*3 + 1] = ptrprocessedpalette[ptrLUT+1];
+      pcscreen[j*3 + 2] = ptrprocessedpalette[ptrLUT+2];
+    }
+  }
+
+#if LAST_BANK_SIZE_24BPP > 0
+
+  VBE_SetBank(NUM_BANKS_24BPP);
+
+  for (j = 0; j < LAST_BANK_SIZE_24BPP / 3; j++)
+  {
+    unsigned short ptrLUT = backbuffer[(NUM_BANKS_24BPP * 64 * 1024 / 3) + j] * 3;
+
+    pcscreen[j*3] = ptrprocessedpalette[ptrLUT];
+    pcscreen[j*3 + 1] = ptrprocessedpalette[ptrLUT+1];
+    pcscreen[j*3 + 1] = ptrprocessedpalette[ptrLUT+2];
+  }
+
+#endif
 }
 
 void I_FinishUpdate24bppLinear(void)
@@ -847,7 +882,38 @@ void I_FinishUpdate24bppLinear(void)
 
 void I_FinishUpdate32bppBanked(void)
 {
-  
+  int i, j;
+
+  for (i = 0; i < NUM_BANKS_32BPP; i++)
+  {
+    VBE_SetBank(i);
+
+    for (j = 0; j < 64 * 1024 / 4; j++)
+    {
+      unsigned short ptrLUT = backbuffer[16 * 1024 * i + j] * 4;
+
+      pcscreen[j*4] = ptrprocessedpalette[ptrLUT];
+      pcscreen[j*4 + 1] = ptrprocessedpalette[ptrLUT+1];
+      pcscreen[j*4 + 2] = ptrprocessedpalette[ptrLUT+2];
+      pcscreen[j*4 + 3] = ptrprocessedpalette[ptrLUT+3];
+    }
+  }
+
+#if LAST_BANK_SIZE_32BPP > 0
+
+  VBE_SetBank(NUM_BANKS_32BPP);
+
+  for (j = 0; j < LAST_BANK_SIZE_32BPP / 4; j++)
+  {
+    unsigned short ptrLUT = backbuffer[NUM_BANKS_32BPP * 16 * 1024 + j] * 4;
+
+    pcscreen[j*4] = ptrprocessedpalette[ptrLUT];
+    pcscreen[j*4 + 1] = ptrprocessedpalette[ptrLUT+1];
+    pcscreen[j*4 + 2] = ptrprocessedpalette[ptrLUT+2];
+    pcscreen[j*4 + 3] = ptrprocessedpalette[ptrLUT+3];
+  }
+
+#endif
 }
 
 void I_FinishUpdate32bppLinear(void)
