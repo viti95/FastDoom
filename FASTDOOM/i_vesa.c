@@ -442,13 +442,13 @@ void VBE2_InitGraphics(void)
         processedpalette = Z_MallocUnowned(14 * 768, PU_STATIC);
         break;
         case 15:
-        finishfunc = I_FinishUpdate15bppBanked;
+        finishfunc = I_FinishUpdate15bpp16bppBanked;
         processpalette = I_ProcessPalette15bpp;
         setpalette = I_SetPalette15bpp;
         processedpalette = Z_MallocUnowned(14 * 256 * 2, PU_STATIC);
         break;
         case 16:
-        finishfunc = I_FinishUpdate16bppBanked;
+        finishfunc = I_FinishUpdate15bpp16bppBanked;
         processpalette = I_ProcessPalette16bpp;
         setpalette = I_SetPalette16bpp;
         processedpalette = Z_MallocUnowned(14 * 256 * 2, PU_STATIC);
@@ -477,13 +477,13 @@ void VBE2_InitGraphics(void)
         processedpalette = Z_MallocUnowned(14 * 768, PU_STATIC);
         break;
         case 15:
-        finishfunc = I_FinishUpdate15bppLinear;
+        finishfunc = I_FinishUpdate15bpp16bppLinear;
         processpalette = I_ProcessPalette15bpp;
         setpalette = I_SetPalette15bpp;
         processedpalette = Z_MallocUnowned(14 * 256 * 2, PU_STATIC);
         break;
         case 16:
-        finishfunc = I_FinishUpdate16bppLinear;
+        finishfunc = I_FinishUpdate15bpp16bppLinear;
         processpalette = I_ProcessPalette16bpp;
         setpalette = I_SetPalette16bpp;
         processedpalette = Z_MallocUnowned(14 * 256 * 2, PU_STATIC);
@@ -779,7 +779,7 @@ void I_FinishUpdate8bppLinear(void)
   }
 }
 
-void I_FinishUpdate15bppBanked(void)
+void I_FinishUpdate15bpp16bppBanked(void)
 {
   int i, j;
 
@@ -801,36 +801,17 @@ void I_FinishUpdate15bppBanked(void)
   VBE_SetBank(NUM_BANKS_15BPP_16BPP);
 
   for (j = 0; j < LAST_BANK_SIZE_15BPP_16BPP / 2; j++)
-{
+  {
     unsigned short ptrLUT = backbuffer[NUM_BANKS_15BPP_16BPP * 32 * 1024 + j] * 2;
 
     pcscreen[j*2] = ptrprocessedpalette[ptrLUT];
     pcscreen[j*2 + 1] = ptrprocessedpalette[ptrLUT+1];
   }
 
-  #endif
+#endif
 }
 
-void I_FinishUpdate15bppLinear(void)
-{
-  int i;
-  int vramposition = 0;
-
-  for (i = 0; i < SCREENWIDTH * SCREENHEIGHT; i++, vramposition += 2)
-  {
-    unsigned short ptrLUT = backbuffer[i] * 2;
-
-    pcscreen[vramposition] = ptrprocessedpalette[ptrLUT];
-    pcscreen[vramposition+1] = ptrprocessedpalette[ptrLUT+1];
-  }
-}
-
-void I_FinishUpdate16bppBanked(void)
-{
-
-}
-
-void I_FinishUpdate16bppLinear(void)
+void I_FinishUpdate15bpp16bppLinear(void)
 {
   int i;
   int vramposition = 0;
