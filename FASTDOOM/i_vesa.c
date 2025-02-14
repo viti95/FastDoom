@@ -367,7 +367,7 @@ void VBE2_InitGraphics(void)
   // Get VBE modes
 
   // Test for linear VBE compatible modes
-  for (i=3; i<5; i++) // Test each bit depth
+  for (i=4; i<5; i++) // Test each bit depth
   {
     if(VBE2_FindVideoMode(SCREENWIDTH, SCREENHEIGHT, bitsperpixel[i], 1))
     {
@@ -379,7 +379,7 @@ void VBE2_InitGraphics(void)
   if (!linearModeFound)
   {
     // Test for non-linear vesa modes
-    for (i=3; i<5; i++) // Test each bit depth
+    for (i=4; i<5; i++) // Test each bit depth
     {
       if(VBE2_FindVideoMode(SCREENWIDTH, SCREENHEIGHT, bitsperpixel[i], 0))
       {
@@ -681,12 +681,29 @@ void I_SetPalette24bpp(int numpalette)
 
 void I_ProcessPalette32bpp(byte *palette)
 {
+  int i, j;
 
+  byte *ptr = gammatable[usegamma];
+
+  for (i = 0; i < 14 * 256 * 4; i += 4, palette += 3)
+  {
+    unsigned int r,g,b;
+    
+    r = ptr[*palette] << 2;
+    g = ptr[*(palette + 1)] << 2;
+    b = ptr[*(palette + 2)] << 2;
+
+    //ARGB888
+    processedpalette[i] = b;
+    processedpalette[i + 1] = g;
+    processedpalette[i + 2] = r;
+    processedpalette[i + 3] = 0; 
+  }
 }
 
 void I_SetPalette32bpp(int numpalette)
 {
-
+  ptrprocessedpalette = processedpalette + (numpalette * 256 * 4);
 }
 
 #endif
@@ -824,7 +841,18 @@ void I_FinishUpdate32bppBanked(void)
 
 void I_FinishUpdate32bppLinear(void)
 {
-  
+  int i;
+  int vramposition = 0;
+
+  for (i = 0; i < SCREENWIDTH * SCREENHEIGHT; i++, vramposition += 4)
+  {
+    unsigned short ptrLUT = backbuffer[i] * 4;
+
+    pcscreen[vramposition] = ptrprocessedpalette[ptrLUT];
+    pcscreen[vramposition+1] = ptrprocessedpalette[ptrLUT+1];
+    pcscreen[vramposition+2] = ptrprocessedpalette[ptrLUT+2];
+    pcscreen[vramposition+3] = ptrprocessedpalette[ptrLUT+3];
+  }
 }
 
 void I_FinishUpdate(void)
