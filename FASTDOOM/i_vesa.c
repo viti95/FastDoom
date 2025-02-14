@@ -544,8 +544,8 @@ void VBE2_InitGraphics(void)
   }
 }
 
-#define NUM_BANKS ((SCREENHEIGHT * SCREENWIDTH) / (64 * 1024))
-#define LAST_BANK_SIZE ((SCREENHEIGHT * SCREENWIDTH) - (NUM_BANKS * 64 * 1024))
+#define NUM_BANKS_8BPP ((SCREENHEIGHT * SCREENWIDTH) / (64 * 1024))
+#define LAST_BANK_SIZE_8BPP ((SCREENHEIGHT * SCREENWIDTH) - (NUM_BANKS_8BPP * 64 * 1024))
 
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 
@@ -724,15 +724,15 @@ void I_FinishUpdate8bppBanked(void)
 {
     int i = 0;
 
-    for (i = 0; i < NUM_BANKS; i++)
+    for (i = 0; i < NUM_BANKS_8BPP; i++)
     {
       VBE_SetBank(i);
       CopyDWords(backbuffer + ((64 * 1024) * i), (void *)0xA0000, 64 * 1024 / 4);
     }
 
-#if LAST_BANK_SIZE > 0
-    VBE_SetBank(NUM_BANKS);
-    CopyDWords(backbuffer + (NUM_BANKS * 64 * 1024), (void *)0xA0000, LAST_BANK_SIZE / 4);
+#if LAST_BANK_SIZE_8BPP > 0
+    VBE_SetBank(NUM_BANKS_8BPP);
+    CopyDWords(backbuffer + (NUM_BANKS_8BPP * 64 * 1024), (void *)0xA0000, LAST_BANK_SIZE_8BPP / 4);
 #endif
 }
 
