@@ -404,17 +404,6 @@ void VBE2_InitGraphics(void)
   // If a VESA compatible mode is found, use it!
   if (vesavideomode != 0xFFFF)
   {
-    if (REFRESHRATE != 0)
-    {
-      if (vbeinfo.vbeVersion.hi >= 3)
-      {
-        I_Error("VBE 3.0 available, but custom refresh rates not supported yet!");
-      }
-      else
-      {
-        I_Error("VBE 3.0 required for custom refresh rates! Current version: %i.%i", vbeinfo.vbeVersion.hi, vbeinfo.vbeVersion.lo);
-      }
-    }
 #if defined(MODE_VBE2_DIRECT)
     // Check for available offscreen memory for tripple buffering + border on fourth vram buffer
     if (vesamemory < SCREENWIDTH * SCREENHEIGHT * 4 / 1024)
