@@ -100,6 +100,7 @@ void I_sndArbitrateCards(void)
     if (M_CheckParm("-nosound"))
     {
         snd_MusicDevice = snd_SfxDevice = snd_none;
+        return;
     }
     if (M_CheckParm("-nosfx"))
     {

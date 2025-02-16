@@ -15,42 +15,9 @@
 
 #include "doomstat.h"
 
-#if defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT)
+#if defined(MODE_13H) || defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF)
 
 byte processedpalette[14 * 768];
-
-// Test VGA REP OUTSB capability
-void VGA_TestFastSetPalette(void)
-{
-    if (!VGADACfix)
-    {
-        byte test_palette[768];
-        unsigned short x;
-
-        // Initialize test palette
-        for (x = 0; x < 768; x++)
-        {
-            test_palette[x] = x & 63;
-        }
-
-        // Write test palette using REP STOSB
-        FastPaletteOut(test_palette);
-        
-        // Read palette from VGA card
-        // and compare results
-        outp(PEL_READ_ADR, 0);
-        for (x = 0; x < 768; x++)
-        {
-            byte read_data = inp(PEL_DATA);
-
-            if (read_data != test_palette[x])
-            {
-                VGADACfix = true;
-                return;
-            }
-        }
-    }
-}
 
 void I_ProcessPalette(byte *palette)
 {

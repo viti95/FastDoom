@@ -10,6 +10,9 @@
 #include "doomstat.h"
 #include "i_system.h"
 #include "v_video.h"
+#include "z_zone.h"
+#include "math.h"
+// #include "i_debug.h"
 
 /*-----------------05-14-97 05:19pm-----------------
  *
@@ -38,6 +41,15 @@
 
 #define VBE2SIGNATURE "VBE2"
 #define VBE3SIGNATURE "VBE3"
+
+void (*finishfunc)(void);
+void (*processpalette)(byte *palette);
+void (*setpalette)(int numpalette);
+byte *processedpalette;
+byte *ptrprocessedpalette;
+
+#define PEL_WRITE_ADR 0x3c8
+#define PEL_DATA 0x3c9
 
 /*-----------------07-26-97 11:04am-----------------
  * Realmode Callback Structure!
@@ -128,7 +140,7 @@ void DPMI_UNMAP_PHYSICAL(void *p)
   int386x(0x31, &regs, &regs, &sregs);
 }
 
-#define MEMORY_LIMIT (128*64*1024)
+#define MEMORY_LIMIT (128 * 64 * 1024)
 
 void *DPMI_MAP_PHYSICAL(void *p, unsigned long size)
 {
@@ -305,13 +317,46 @@ void VBE_Done(void)
 static struct VBE_VbeInfoBlock vbeinfo;
 static struct VBE_ModeInfoBlock vbemode;
 unsigned short vesavideomode = 0xFFFF;
+unsigned char vesabitsperpixel = -1;
 int vesalinear = -1;
+int vesamode = -1;
 unsigned long vesamemory = -1;
 char *vesavideoptr;
 
-void VBE2_InitGraphics(void)
+int VBE2_FindVideoMode(unsigned short screenwidth, unsigned short screenheight, char bitsperpixel, int isLinear)
 {
   int mode;
+
+  // Find a suitable video mode
+  for (mode = 0; vbeinfo.VideoModePtr[mode] != 0xFFFF; mode++)
+  {
+    unsigned short localvesavideomode = vbeinfo.VideoModePtr[mode];
+
+    VBE_Mode_Information(localvesavideomode, &vbemode);
+    if (vbemode.XResolution == screenwidth && vbemode.YResolution == screenheight && vbemode.BitsPerPixel == bitsperpixel)
+    {
+      int isVesaLinear = VBE_IsModeLinear(localvesavideomode);
+
+      if (isVesaLinear == isLinear)
+      {
+        vesamode = mode;
+        vesavideomode = localvesavideomode;
+        vesalinear = isVesaLinear;
+        vesabitsperpixel = bitsperpixel;
+        return 1;
+      }
+    }
+  }
+
+  return 0;
+}
+
+void VBE2_InitGraphics(void)
+{
+
+  char bitsperpixel[] = {8, 16, 15, 24, 32}; // Modes to test
+  int i;
+  int linearModeFound = 0;
 
   VBE_Init();
 
@@ -319,30 +364,46 @@ void VBE2_InitGraphics(void)
   VBE_Controller_Information(&vbeinfo);
   vesamemory = ((unsigned long)vbeinfo.TotalMemory) * 64;
   // Get VBE modes
-  for (mode = 0; vbeinfo.VideoModePtr[mode] != 0xffff; mode++)
+
+  // Test for linear VBE compatible modes
+  for (i = 0; i < 5; i++) // Test each bit depth
   {
-    VBE_Mode_Information(vbeinfo.VideoModePtr[mode], &vbemode);
-    if (vbemode.XResolution == SCREENWIDTH && vbemode.YResolution == SCREENHEIGHT && vbemode.BitsPerPixel == 8)
+    if (VBE2_FindVideoMode(SCREENWIDTH, SCREENHEIGHT, bitsperpixel[i], 1))
     {
-      vesavideomode = vbeinfo.VideoModePtr[mode];
-      vesalinear = VBE_IsModeLinear(vesavideomode);
+      linearModeFound = 1;
+      break;
     }
   }
+
+  if (!linearModeFound)
+  {
+    // Test for non-linear vesa modes
+    for (i = 0; i < 5; i++) // Test each bit depth
+    {
+      if (VBE2_FindVideoMode(SCREENWIDTH, SCREENHEIGHT, bitsperpixel[i], 0))
+      {
+        break;
+      }
+    }
+  }
+
+  /*I_Printf("VESA mode: %d\n", vesamode);
+  I_Printf("VESA video mode: %d\n", vesavideomode);
+  I_Printf("VESA isLinear: %d\n", vesalinear);
+  I_Printf("VESA width: %d\n", SCREENWIDTH);
+  I_Printf("VESA height: %d\n", SCREENHEIGHT);
+  I_Printf("VESA bits per pixel: %d\n", vesabitsperpixel);*/
+
+#if defined(MODE_VBE2_DIRECT)
+  if (vesabitsperpixel > 8)
+  {
+    I_Error("FastDoom VBE 2.0 direct modes only support 8 bits per pixels");
+  }
+#endif
 
   // If a VESA compatible mode is found, use it!
   if (vesavideomode != 0xFFFF)
   {
-    if (REFRESHRATE != 0)
-    {
-      if (vbeinfo.vbeVersion.hi >= 3)
-      {
-        I_Error("VBE 3.0 available, but custom refresh rates not supported yet!");
-      }
-      else
-      {
-        I_Error("VBE 3.0 required for custom refresh rates! Current version: %i.%i", vbeinfo.vbeVersion.hi, vbeinfo.vbeVersion.lo);
-      }
-    }
 #if defined(MODE_VBE2_DIRECT)
     // Check for available offscreen memory for tripple buffering + border on fourth vram buffer
     if (vesamemory < SCREENWIDTH * SCREENHEIGHT * 4 / 1024)
@@ -364,8 +425,88 @@ void VBE2_InitGraphics(void)
     // Force 6 bits resolution per color
     VBE_SetDACWidth(6);
 
-    
+#if defined(MODE_VBE2)
+    // Set finish function
+    if (pcscreen == (void *)0xA0000)
+    {
+      // Banked
+      switch (vesabitsperpixel)
+      {
+      case 8:
+        finishfunc = I_FinishUpdate8bppBanked;
+        processpalette = I_ProcessPalette8bpp;
+        setpalette = I_SetPalette8bpp;
+        processedpalette = Z_MallocUnowned(14 * 768, PU_STATIC);
+        break;
+      case 15:
+        finishfunc = I_FinishUpdate15bpp16bppBanked;
+        processpalette = I_ProcessPalette15bpp;
+        setpalette = I_SetPalette15bpp;
+        processedpalette = Z_MallocUnowned(14 * 256 * 2, PU_STATIC);
+        break;
+      case 16:
+        finishfunc = I_FinishUpdate15bpp16bppBanked;
+        processpalette = I_ProcessPalette16bpp;
+        setpalette = I_SetPalette16bpp;
+        processedpalette = Z_MallocUnowned(14 * 256 * 2, PU_STATIC);
+        break;
+      case 24:
+        finishfunc = I_FinishUpdate24bppBanked;
+        processpalette = I_ProcessPalette24bpp;
+        setpalette = I_SetPalette24bpp;
+        processedpalette = Z_MallocUnowned(14 * 256 * 3, PU_STATIC);
+        break;
+      case 32:
+        finishfunc = I_FinishUpdate32bppBanked;
+        processpalette = I_ProcessPalette32bpp;
+        setpalette = I_SetPalette32bpp;
+        processedpalette = Z_MallocUnowned(14 * 256 * 4, PU_STATIC);
+        break;
+      }
+    }
+    else
+    {
+      // Linear
+      switch (vesabitsperpixel)
+      {
+      case 8:
+        finishfunc = I_FinishUpdate8bppLinear;
+        processpalette = I_ProcessPalette8bpp;
+        setpalette = I_SetPalette8bpp;
+        processedpalette = Z_MallocUnowned(14 * 768, PU_STATIC);
+        break;
+      case 15:
+        finishfunc = I_FinishUpdate15bpp16bppLinear;
+        processpalette = I_ProcessPalette15bpp;
+        setpalette = I_SetPalette15bpp;
+        processedpalette = Z_MallocUnowned(14 * 256 * 2, PU_STATIC);
+        break;
+      case 16:
+        finishfunc = I_FinishUpdate15bpp16bppLinear;
+        processpalette = I_ProcessPalette16bpp;
+        setpalette = I_SetPalette16bpp;
+        processedpalette = Z_MallocUnowned(14 * 256 * 2, PU_STATIC);
+        break;
+      case 24:
+        finishfunc = I_FinishUpdate24bppLinear;
+        processpalette = I_ProcessPalette24bpp;
+        setpalette = I_SetPalette24bpp;
+        processedpalette = Z_MallocUnowned(14 * 256 * 3, PU_STATIC);
+        break;
+      case 32:
+        finishfunc = I_FinishUpdate32bppLinear;
+        processpalette = I_ProcessPalette32bpp;
+        setpalette = I_SetPalette32bpp;
+        processedpalette = Z_MallocUnowned(14 * 256 * 4, PU_STATIC);
+        break;
+      }
+    }
+#endif
+
 #if defined(MODE_VBE2_DIRECT)
+
+    processedpalette = Z_MallocUnowned(14 * 768, PU_STATIC);
+
     // Check banked video modes that don't fit on the 64 Kb window
     if (pcscreen == (void *)0xA0000)
     {
@@ -387,84 +528,428 @@ void VBE2_InitGraphics(void)
       SetDWords((void *)0xA0000, 0, 65536 / 4);
       VBE_SetBank(2);
       SetDWords((void *)0xA0000, 0, 65536 / 4);
-
-    }else{
+    }
+    else
+    {
       // LFB
       VBE_SetDisplayStart_Y(0);
       SetDWords(pcscreen, 0, SCREENWIDTH * SCREENHEIGHT * 3 / 4);
     }
-    
+
 #endif
   }
   else
   {
-    I_Error("Compatible VESA 2.0 video mode not found! (%ix%i 8bpp required)", SCREENWIDTH, SCREENHEIGHT);
+    I_Error("Compatible VESA 2.0 video mode not found! (%ix%i required)", SCREENWIDTH, SCREENHEIGHT);
   }
 }
 
-#define NUM_BANKS ((SCREENHEIGHT * SCREENWIDTH) / (64 * 1024))
-#define LAST_BANK_SIZE ((SCREENHEIGHT * SCREENWIDTH) - (NUM_BANKS * 64 * 1024))
+#define NUM_BANKS_8BPP ((SCREENHEIGHT * SCREENWIDTH) / (64 * 1024))
+#define LAST_BANK_SIZE_8BPP ((SCREENHEIGHT * SCREENWIDTH) - (NUM_BANKS_8BPP * 64 * 1024))
 
-#if defined(MODE_VBE2)
-void I_FinishUpdate(void)
-{
-  if (pcscreen == (void *)0xA0000)
-  {
-    // Banked
-    int i = 0;
+#define NUM_BANKS_15BPP_16BPP ((SCREENHEIGHT * SCREENWIDTH * 2) / (64 * 1024))
+#define LAST_BANK_SIZE_15BPP_16BPP ((SCREENHEIGHT * SCREENWIDTH * 2) - (NUM_BANKS_15BPP_16BPP * 64 * 1024))
 
-    for (i = 0; i < NUM_BANKS; i++)
-    {
-      VBE_SetBank(i);
-      CopyDWords(backbuffer + ((64 * 1024) * i), (void *)0xA0000, 64 * 1024 / 4);
-    }
+#define NUM_BANKS_24BPP ((SCREENHEIGHT * SCREENWIDTH * 3) / (64 * 1024))
+#define LAST_BANK_SIZE_24BPP ((SCREENHEIGHT * SCREENWIDTH * 3) - (NUM_BANKS_24BPP * 64 * 1024))
 
-#if LAST_BANK_SIZE > 0
-    VBE_SetBank(NUM_BANKS);
-    CopyDWords(backbuffer + (NUM_BANKS * 64 * 1024), (void *)0xA0000, LAST_BANK_SIZE / 4);
+#define NUM_BANKS_32BPP ((SCREENHEIGHT * SCREENWIDTH * 4) / (64 * 1024))
+#define LAST_BANK_SIZE_32BPP ((SCREENHEIGHT * SCREENWIDTH * 4) - (NUM_BANKS_32BPP * 64 * 1024))
+
+#if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
+
+#if defined(MODE_VBE2_DIRECT)
+#define I_ProcessPalette8bpp I_ProcessPalette
+#define I_SetPalette8bpp I_SetPalette
 #endif
+
+void I_ProcessPalette8bpp(byte *palette)
+{
+  int i;
+
+  byte *ptr = gammatable[usegamma];
+
+  for (i = 0; i < 14 * 768; i += 4, palette += 4)
+  {
+    processedpalette[i] = ptr[*palette];
+    processedpalette[i + 1] = ptr[*(palette + 1)];
+    processedpalette[i + 2] = ptr[*(palette + 2)];
+    processedpalette[i + 3] = ptr[*(palette + 3)];
+  }
+}
+
+void I_SetPalette8bpp(int numpalette)
+{
+  int pos = Mul768(numpalette);
+
+  if (VGADACfix)
+  {
+    int i;
+    byte *ptrprocessedpalette = processedpalette + pos;
+
+    I_WaitSingleVBL();
+
+    outp(PEL_WRITE_ADR, 0);
+
+    for (i = 0; i < 768; i += 4)
+    {
+      outp(PEL_DATA, *(ptrprocessedpalette));
+      outp(PEL_DATA, *(ptrprocessedpalette + 1));
+      outp(PEL_DATA, *(ptrprocessedpalette + 2));
+      outp(PEL_DATA, *(ptrprocessedpalette + 3));
+      ptrprocessedpalette += 4;
+    }
   }
   else
   {
-    // Linear
+    FastPaletteOut(((unsigned char *)processedpalette) + pos);
+  }
+}
 
-    if (updatestate & I_FULLSCRN)
+void I_ProcessPalette15bpp(byte *palette)
+{
+  int i, j;
+
+  byte *ptr = gammatable[usegamma];
+
+  for (i = 0; i < 14 * 256 * 2; i += 2, palette += 3)
+  {
+    unsigned short r, g, b;
+    unsigned short color = 0;
+
+    r = ptr[*palette] >> 1;
+    g = ptr[*(palette + 1)] >> 1;
+    b = ptr[*(palette + 2)] >> 1;
+
+    // RGB555
+    color = (r << 10) | (g << 5) | b;
+
+    processedpalette[i] = color & 0xFF;
+    processedpalette[i + 1] = color >> 8;
+  }
+}
+
+void I_SetPalette15bpp(int numpalette)
+{
+  ptrprocessedpalette = processedpalette + (numpalette * 256 * 2);
+}
+
+void I_ProcessPalette16bpp(byte *palette)
+{
+  int i, j;
+
+  byte *ptr = gammatable[usegamma];
+
+  for (i = 0; i < 14 * 256 * 2; i += 2, palette += 3)
+  {
+    unsigned short r, g, b;
+    unsigned short color = 0;
+
+    r = ptr[*palette] >> 1;
+    g = ptr[*(palette + 1)];
+    b = ptr[*(palette + 2)] >> 1;
+
+    // RGB565
+    color = (r << 11) | (g << 5) | b;
+
+    processedpalette[i] = color & 0xFF;
+    processedpalette[i + 1] = color >> 8;
+  }
+}
+
+void I_SetPalette16bpp(int numpalette)
+{
+  ptrprocessedpalette = processedpalette + (numpalette * 256 * 2);
+}
+
+void I_ProcessPalette24bpp(byte *palette)
+{
+  int i, j;
+
+  byte *ptr = gammatable[usegamma];
+
+  for (i = 0; i < 14 * 256 * 3; i += 3, palette += 3)
+  {
+    unsigned int r, g, b;
+
+    r = ptr[*palette] << 2;
+    g = ptr[*(palette + 1)] << 2;
+    b = ptr[*(palette + 2)] << 2;
+
+    // RGB888
+    processedpalette[i] = b;
+    processedpalette[i + 1] = g;
+    processedpalette[i + 2] = r;
+  }
+}
+
+void I_SetPalette24bpp(int numpalette)
+{
+  ptrprocessedpalette = processedpalette + (numpalette * 256 * 3);
+}
+
+void I_ProcessPalette32bpp(byte *palette)
+{
+  int i, j;
+
+  byte *ptr = gammatable[usegamma];
+
+  for (i = 0; i < 14 * 256 * 4; i += 4, palette += 3)
+  {
+    unsigned int r, g, b;
+
+    r = ptr[*palette] << 2;
+    g = ptr[*(palette + 1)] << 2;
+    b = ptr[*(palette + 2)] << 2;
+
+    // ARGB888
+    processedpalette[i] = b;
+    processedpalette[i + 1] = g;
+    processedpalette[i + 2] = r;
+    processedpalette[i + 3] = 0;
+  }
+}
+
+void I_SetPalette32bpp(int numpalette)
+{
+  ptrprocessedpalette = processedpalette + (numpalette * 256 * 4);
+}
+
+#endif
+
+#if defined(MODE_VBE2)
+
+void I_ProcessPalette(byte *palette)
+{
+  processpalette(palette);
+}
+
+void I_SetPalette(int numpalette)
+{
+  setpalette(numpalette);
+}
+
+void I_FinishUpdate8bppBanked(void)
+{
+  int i = 0;
+
+  for (i = 0; i < NUM_BANKS_8BPP; i++)
+  {
+    VBE_SetBank(i);
+    CopyDWords(backbuffer + ((64 * 1024) * i), (void *)0xA0000, 64 * 1024 / 4);
+  }
+
+#if LAST_BANK_SIZE_8BPP > 0
+  VBE_SetBank(NUM_BANKS_8BPP);
+  CopyDWords(backbuffer + (NUM_BANKS_8BPP * 64 * 1024), (void *)0xA0000, LAST_BANK_SIZE_8BPP / 4);
+#endif
+}
+
+void I_FinishUpdate8bppLinear(void)
+{
+  if (updatestate & I_FULLSCRN)
+  {
+    CopyDWords(backbuffer, pcscreen, SCREENHEIGHT * SCREENWIDTH / 4);
+    updatestate = I_NOUPDATE; // clear out all draw types
+  }
+  if (updatestate & I_FULLVIEW)
+  {
+    if (updatestate & I_MESSAGES && screenblocks > 7)
     {
-      CopyDWords(backbuffer, pcscreen, SCREENHEIGHT * SCREENWIDTH / 4);
-      updatestate = I_NOUPDATE; // clear out all draw types
-    }
-    if (updatestate & I_FULLVIEW)
-    {
-      if (updatestate & I_MESSAGES && screenblocks > 7)
+      int i;
+      for (i = 0; i < endscreen; i += SCREENWIDTH)
       {
-        int i;
-        for (i = 0; i < endscreen; i += SCREENWIDTH)
-        {
-          CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
-        }
-        updatestate &= ~(I_FULLVIEW | I_MESSAGES);
+        CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
       }
-      else
+      updatestate &= ~(I_FULLVIEW | I_MESSAGES);
+    }
+    else
+    {
+      int i;
+      for (i = startscreen; i < endscreen; i += SCREENWIDTH)
       {
-        int i;
-        for (i = startscreen; i < endscreen; i += SCREENWIDTH)
-        {
-          CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
-        }
-        updatestate &= ~I_FULLVIEW;
+        CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
       }
-    }
-    if (updatestate & I_STATBAR)
-    {
-      CopyDWords(backbuffer + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), pcscreen + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), SCREENWIDTH * SBARHEIGHT / 4);
-      updatestate &= ~I_STATBAR;
-    }
-    if (updatestate & I_MESSAGES)
-    {
-      CopyDWords(backbuffer, pcscreen, (SCREENWIDTH * 28) / 4);
-      updatestate &= ~I_MESSAGES;
+      updatestate &= ~I_FULLVIEW;
     }
   }
+  if (updatestate & I_STATBAR)
+  {
+    CopyDWords(backbuffer + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), pcscreen + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), SCREENWIDTH * SBARHEIGHT / 4);
+    updatestate &= ~I_STATBAR;
+  }
+  if (updatestate & I_MESSAGES)
+  {
+    CopyDWords(backbuffer, pcscreen, (SCREENWIDTH * 28) / 4);
+    updatestate &= ~I_MESSAGES;
+  }
+}
+
+void I_FinishUpdate15bpp16bppBanked(void)
+{
+  int i, j;
+
+  for (i = 0; i < NUM_BANKS_15BPP_16BPP; i++)
+  {
+    VBE_SetBank(i);
+
+    for (j = 0; j < 64 * 1024 / 2; j++)
+    {
+      unsigned short ptrLUT = backbuffer[32 * 1024 * i + j] * 2;
+
+      pcscreen[j * 2] = ptrprocessedpalette[ptrLUT];
+      pcscreen[j * 2 + 1] = ptrprocessedpalette[ptrLUT + 1];
+    }
+  }
+
+#if LAST_BANK_SIZE_15BPP_16BPP > 0
+
+  VBE_SetBank(NUM_BANKS_15BPP_16BPP);
+
+  for (j = 0; j < LAST_BANK_SIZE_15BPP_16BPP / 2; j++)
+  {
+    unsigned short ptrLUT = backbuffer[NUM_BANKS_15BPP_16BPP * 32 * 1024 + j] * 2;
+
+    pcscreen[j * 2] = ptrprocessedpalette[ptrLUT];
+    pcscreen[j * 2 + 1] = ptrprocessedpalette[ptrLUT + 1];
+  }
+
+#endif
+}
+
+void I_FinishUpdate15bpp16bppLinear(void)
+{
+  int i;
+  int vramposition = 0;
+
+  for (i = 0; i < SCREENWIDTH * SCREENHEIGHT; i++, vramposition += 2)
+  {
+    unsigned short ptrLUT = backbuffer[i] * 2;
+
+    pcscreen[vramposition] = ptrprocessedpalette[ptrLUT];
+    pcscreen[vramposition + 1] = ptrprocessedpalette[ptrLUT + 1];
+  }
+}
+
+void I_FinishUpdate24bppBanked(void)
+{
+  int i;
+  int ptrPCscreen = 0;
+  int numBank = 0;
+
+  VBE_SetBank(numBank);
+
+  for (i = 0; i < SCREENWIDTH * SCREENHEIGHT; i++)
+  {
+    unsigned short ptrLUT = backbuffer[i] * 3;
+
+    if (ptrPCscreen + 3 < 64 * 1024)
+    {
+      pcscreen[ptrPCscreen] = ptrprocessedpalette[ptrLUT];
+      pcscreen[ptrPCscreen + 1] = ptrprocessedpalette[ptrLUT + 1];
+      pcscreen[ptrPCscreen + 2] = ptrprocessedpalette[ptrLUT + 2];
+      ptrPCscreen += 3;
+    }
+    else
+    {
+      int count = (64 * 1024) - ptrPCscreen;
+      int countLUT = 3;
+
+      while (count > 0)
+      {
+        pcscreen[ptrPCscreen] = ptrprocessedpalette[ptrLUT];
+        ptrPCscreen++;
+        ptrLUT++;
+        countLUT--;
+        count--;
+      }
+
+      numBank++;
+      VBE_SetBank(numBank);
+
+      ptrPCscreen = 0;
+
+      while (countLUT > 0)
+      {
+        pcscreen[ptrPCscreen] = ptrprocessedpalette[ptrLUT];
+        ptrPCscreen++;
+        ptrLUT++;
+        countLUT--;
+      }
+    }
+  }
+}
+
+void I_FinishUpdate24bppLinear(void)
+{
+  int i;
+  int vramposition = 0;
+
+  for (i = 0; i < SCREENWIDTH * SCREENHEIGHT; i++, vramposition += 3)
+  {
+    unsigned short ptrLUT = backbuffer[i] * 3;
+
+    pcscreen[vramposition] = ptrprocessedpalette[ptrLUT];
+    pcscreen[vramposition + 1] = ptrprocessedpalette[ptrLUT + 1];
+    pcscreen[vramposition + 2] = ptrprocessedpalette[ptrLUT + 2];
+  }
+}
+
+void I_FinishUpdate32bppBanked(void)
+{
+  int i, j;
+
+  for (i = 0; i < NUM_BANKS_32BPP; i++)
+  {
+    VBE_SetBank(i);
+
+    for (j = 0; j < 64 * 1024 / 4; j++)
+    {
+      unsigned short ptrLUT = backbuffer[16 * 1024 * i + j] * 4;
+
+      pcscreen[j * 4] = ptrprocessedpalette[ptrLUT];
+      pcscreen[j * 4 + 1] = ptrprocessedpalette[ptrLUT + 1];
+      pcscreen[j * 4 + 2] = ptrprocessedpalette[ptrLUT + 2];
+      pcscreen[j * 4 + 3] = ptrprocessedpalette[ptrLUT + 3];
+    }
+  }
+
+#if LAST_BANK_SIZE_32BPP > 0
+
+  VBE_SetBank(NUM_BANKS_32BPP);
+
+  for (j = 0; j < LAST_BANK_SIZE_32BPP / 4; j++)
+  {
+    unsigned short ptrLUT = backbuffer[NUM_BANKS_32BPP * 16 * 1024 + j] * 4;
+
+    pcscreen[j * 4] = ptrprocessedpalette[ptrLUT];
+    pcscreen[j * 4 + 1] = ptrprocessedpalette[ptrLUT + 1];
+    pcscreen[j * 4 + 2] = ptrprocessedpalette[ptrLUT + 2];
+    pcscreen[j * 4 + 3] = ptrprocessedpalette[ptrLUT + 3];
+  }
+
+#endif
+}
+
+void I_FinishUpdate32bppLinear(void)
+{
+  int i;
+  int vramposition = 0;
+
+  for (i = 0; i < SCREENWIDTH * SCREENHEIGHT; i++, vramposition += 4)
+  {
+    unsigned short ptrLUT = backbuffer[i] * 4;
+
+    pcscreen[vramposition] = ptrprocessedpalette[ptrLUT];
+    pcscreen[vramposition + 1] = ptrprocessedpalette[ptrLUT + 1];
+    pcscreen[vramposition + 2] = ptrprocessedpalette[ptrLUT + 2];
+    pcscreen[vramposition + 3] = ptrprocessedpalette[ptrLUT + 3];
+  }
+}
+
+void I_FinishUpdate(void)
+{
+  finishfunc();
 }
 #endif
 
@@ -478,20 +963,20 @@ void I_FinishUpdate(void)
   {
     // This only works on 320x200 resolution (64000kb per screen)
 
-    switch(bank)
+    switch (bank)
     {
-        case 2:
-          bank = 0;
-          VBE_SetDisplayStart(256, 204);
-          break;
-        case 0:
-          bank++;
-          VBE_SetDisplayStart(192, 409);
-          break;
-        case 1:
-          bank++;
-          VBE_SetDisplayStart(0, 0);
-          break;
+    case 2:
+      bank = 0;
+      VBE_SetDisplayStart(256, 204);
+      break;
+    case 0:
+      bank++;
+      VBE_SetDisplayStart(192, 409);
+      break;
+    case 1:
+      bank++;
+      VBE_SetDisplayStart(0, 0);
+      break;
     }
 
     VBE_SetBank(bank);

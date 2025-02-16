@@ -1,4 +1,5 @@
 #ifndef _VESAVBE_H
+#include "doomtype.h"
 #define _VESAVBE_H
 
 #pragma pack(1)
@@ -271,6 +272,31 @@ void VBE_SetDACWidth(char bits);
   */
 
 void VBE2_InitGraphics(void);
+int VBE2_FindVideoMode(unsigned short screenwidth, unsigned short screenheight, char bitsperpixel, int isLinear);
 void I_FinishUpdate(void);
+void I_FinishUpdate8bppBanked(void);
+void I_FinishUpdate8bppLinear(void);
+void I_FinishUpdate15bpp16bppBanked(void);
+void I_FinishUpdate15bpp16bppLinear(void);
+void I_FinishUpdate24bppBanked(void);
+void I_FinishUpdate24bppLinear(void);
+void I_FinishUpdate32bppBanked(void);
+void I_FinishUpdate32bppLinear(void);
+void I_ProcessPalette(byte *palette);
+void I_SetPalette(int numpalette);
+void I_ProcessPalette8bpp(byte *palette);
+void I_SetPalette8bpp(int numpalette);
+void I_ProcessPalette15bpp(byte *palette);
+void I_SetPalette15bpp(int numpalette);
+void I_ProcessPalette16bpp(byte *palette);
+void I_SetPalette16bpp(int numpalette);
+void I_ProcessPalette24bpp(byte *palette);
+void I_SetPalette24bpp(int numpalette);
+void I_ProcessPalette32bpp(byte *palette);
+void I_SetPalette32bpp(int numpalette);
+
+extern void (*finishfunc)(void);
+extern void (*processpalette)(byte *palette);
+extern void (*setpalette)(int numpalette);
 
 #endif

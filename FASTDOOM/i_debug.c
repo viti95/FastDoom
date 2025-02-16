@@ -221,7 +221,7 @@ static void CleanupSymbols(debugsymbol_t *symbols, int num_symbols) {
 }
 
 #define MAX_MODULES 350
-#define MAX_SYMBOLS 3000
+#define MAX_SYMBOLS 3500
 
 void SortSymbols(debugsymbol_t *symbols, int num_symbols) {
     if (num_symbols <= 1) {
