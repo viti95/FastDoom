@@ -12,7 +12,7 @@
 #include "v_video.h"
 #include "z_zone.h"
 #include "math.h"
-//#include "i_debug.h"
+// #include "i_debug.h"
 
 /*-----------------05-14-97 05:19pm-----------------
  *
@@ -366,9 +366,9 @@ void VBE2_InitGraphics(void)
   // Get VBE modes
 
   // Test for linear VBE compatible modes
-  for (i=0; i<5; i++) // Test each bit depth
+  for (i = 0; i < 5; i++) // Test each bit depth
   {
-    if(VBE2_FindVideoMode(SCREENWIDTH, SCREENHEIGHT, bitsperpixel[i], 1))
+    if (VBE2_FindVideoMode(SCREENWIDTH, SCREENHEIGHT, bitsperpixel[i], 1))
     {
       linearModeFound = 1;
       break;
@@ -378,7 +378,7 @@ void VBE2_InitGraphics(void)
   if (!linearModeFound)
   {
     // Test for non-linear vesa modes
-    for (i=0; i<5; i++) // Test each bit depth
+    for (i = 0; i < 5; i++) // Test each bit depth
     {
       if (VBE2_FindVideoMode(SCREENWIDTH, SCREENHEIGHT, bitsperpixel[i], 0))
       {
@@ -436,31 +436,31 @@ void VBE2_InitGraphics(void)
       // Banked
       switch (vesabitsperpixel)
       {
-        case 8:
+      case 8:
         finishfunc = I_FinishUpdate8bppBanked;
         processpalette = I_ProcessPalette8bpp;
         setpalette = I_SetPalette8bpp;
         processedpalette = Z_MallocUnowned(14 * 768, PU_STATIC);
         break;
-        case 15:
+      case 15:
         finishfunc = I_FinishUpdate15bpp16bppBanked;
         processpalette = I_ProcessPalette15bpp;
         setpalette = I_SetPalette15bpp;
         processedpalette = Z_MallocUnowned(14 * 256 * 2, PU_STATIC);
         break;
-        case 16:
+      case 16:
         finishfunc = I_FinishUpdate15bpp16bppBanked;
         processpalette = I_ProcessPalette16bpp;
         setpalette = I_SetPalette16bpp;
         processedpalette = Z_MallocUnowned(14 * 256 * 2, PU_STATIC);
         break;
-        case 24:
+      case 24:
         finishfunc = I_FinishUpdate24bppBanked;
         processpalette = I_ProcessPalette24bpp;
         setpalette = I_SetPalette24bpp;
         processedpalette = Z_MallocUnowned(14 * 256 * 3, PU_STATIC);
         break;
-        case 32:
+      case 32:
         finishfunc = I_FinishUpdate32bppBanked;
         processpalette = I_ProcessPalette32bpp;
         setpalette = I_SetPalette32bpp;
@@ -473,31 +473,31 @@ void VBE2_InitGraphics(void)
       // Linear
       switch (vesabitsperpixel)
       {
-        case 8:
+      case 8:
         finishfunc = I_FinishUpdate8bppLinear;
         processpalette = I_ProcessPalette8bpp;
         setpalette = I_SetPalette8bpp;
         processedpalette = Z_MallocUnowned(14 * 768, PU_STATIC);
         break;
-        case 15:
+      case 15:
         finishfunc = I_FinishUpdate15bpp16bppLinear;
         processpalette = I_ProcessPalette15bpp;
         setpalette = I_SetPalette15bpp;
         processedpalette = Z_MallocUnowned(14 * 256 * 2, PU_STATIC);
         break;
-        case 16:
+      case 16:
         finishfunc = I_FinishUpdate15bpp16bppLinear;
         processpalette = I_ProcessPalette16bpp;
         setpalette = I_SetPalette16bpp;
         processedpalette = Z_MallocUnowned(14 * 256 * 2, PU_STATIC);
         break;
-        case 24:
+      case 24:
         finishfunc = I_FinishUpdate24bppLinear;
         processpalette = I_ProcessPalette24bpp;
         setpalette = I_SetPalette24bpp;
         processedpalette = Z_MallocUnowned(14 * 256 * 3, PU_STATIC);
         break;
-        case 32:
+      case 32:
         finishfunc = I_FinishUpdate32bppLinear;
         processpalette = I_ProcessPalette32bpp;
         setpalette = I_SetPalette32bpp;
@@ -539,7 +539,7 @@ void VBE2_InitGraphics(void)
       VBE_SetDisplayStart_Y(0);
       SetDWords(pcscreen, 0, SCREENWIDTH * SCREENHEIGHT * 3 / 4);
     }
-    
+
 #endif
   }
   else
@@ -621,7 +621,7 @@ void I_ProcessPalette15bpp(byte *palette)
   {
     unsigned short r, g, b;
     unsigned short color = 0;
-    
+
     r = ptr[*palette] >> 1;
     g = ptr[*(palette + 1)] >> 1;
     b = ptr[*(palette + 2)] >> 1;
@@ -649,7 +649,7 @@ void I_ProcessPalette16bpp(byte *palette)
   {
     unsigned short r, g, b;
     unsigned short color = 0;
-    
+
     r = ptr[*palette] >> 1;
     g = ptr[*(palette + 1)];
     b = ptr[*(palette + 2)] >> 1;
@@ -676,7 +676,7 @@ void I_ProcessPalette24bpp(byte *palette)
   for (i = 0; i < 14 * 256 * 3; i += 3, palette += 3)
   {
     unsigned int r, g, b;
-    
+
     r = ptr[*palette] << 2;
     g = ptr[*(palette + 1)] << 2;
     b = ptr[*(palette + 2)] << 2;
@@ -684,7 +684,7 @@ void I_ProcessPalette24bpp(byte *palette)
     // RGB888
     processedpalette[i] = b;
     processedpalette[i + 1] = g;
-    processedpalette[i + 2] = r; 
+    processedpalette[i + 2] = r;
   }
 }
 
@@ -702,7 +702,7 @@ void I_ProcessPalette32bpp(byte *palette)
   for (i = 0; i < 14 * 256 * 4; i += 4, palette += 3)
   {
     unsigned int r, g, b;
-    
+
     r = ptr[*palette] << 2;
     g = ptr[*(palette + 1)] << 2;
     b = ptr[*(palette + 2)] << 2;
@@ -711,7 +711,7 @@ void I_ProcessPalette32bpp(byte *palette)
     processedpalette[i] = b;
     processedpalette[i + 1] = g;
     processedpalette[i + 2] = r;
-    processedpalette[i + 3] = 0; 
+    processedpalette[i + 3] = 0;
   }
 }
 
@@ -736,17 +736,17 @@ void I_SetPalette(int numpalette)
 
 void I_FinishUpdate8bppBanked(void)
 {
-    int i = 0;
+  int i = 0;
 
-    for (i = 0; i < NUM_BANKS_8BPP; i++)
-    {
-      VBE_SetBank(i);
-      CopyDWords(backbuffer + ((64 * 1024) * i), (void *)0xA0000, 64 * 1024 / 4);
-    }
+  for (i = 0; i < NUM_BANKS_8BPP; i++)
+  {
+    VBE_SetBank(i);
+    CopyDWords(backbuffer + ((64 * 1024) * i), (void *)0xA0000, 64 * 1024 / 4);
+  }
 
 #if LAST_BANK_SIZE_8BPP > 0
-    VBE_SetBank(NUM_BANKS_8BPP);
-    CopyDWords(backbuffer + (NUM_BANKS_8BPP * 64 * 1024), (void *)0xA0000, LAST_BANK_SIZE_8BPP / 4);
+  VBE_SetBank(NUM_BANKS_8BPP);
+  CopyDWords(backbuffer + (NUM_BANKS_8BPP * 64 * 1024), (void *)0xA0000, LAST_BANK_SIZE_8BPP / 4);
 #endif
 }
 
@@ -845,7 +845,7 @@ void I_FinishUpdate24bppBanked(void)
   VBE_SetBank(numBank);
 
   for (i = 0; i < SCREENWIDTH * SCREENHEIGHT; i++)
-    {
+  {
     unsigned short ptrLUT = backbuffer[i] * 3;
 
     if (ptrPCscreen + 3 < 64 * 1024)
@@ -854,7 +854,9 @@ void I_FinishUpdate24bppBanked(void)
       pcscreen[ptrPCscreen + 1] = ptrprocessedpalette[ptrLUT + 1];
       pcscreen[ptrPCscreen + 2] = ptrprocessedpalette[ptrLUT + 2];
       ptrPCscreen += 3;
-    } else {
+    }
+    else
+    {
       int count = (64 * 1024) - ptrPCscreen;
       int countLUT = 3;
 
@@ -872,7 +874,7 @@ void I_FinishUpdate24bppBanked(void)
 
       ptrPCscreen = 0;
 
-      while(countLUT > 0)
+      while (countLUT > 0)
       {
         pcscreen[ptrPCscreen] = ptrprocessedpalette[ptrLUT];
         ptrPCscreen++;
@@ -880,7 +882,6 @@ void I_FinishUpdate24bppBanked(void)
         countLUT--;
       }
     }
-
   }
 }
 
@@ -969,18 +970,18 @@ void I_FinishUpdate(void)
 
     switch (bank)
     {
-        case 2:
-          bank = 0;
-          VBE_SetDisplayStart(256, 204);
-          break;
-        case 0:
-          bank++;
-          VBE_SetDisplayStart(192, 409);
-          break;
-        case 1:
-          bank++;
-          VBE_SetDisplayStart(0, 0);
-          break;
+    case 2:
+      bank = 0;
+      VBE_SetDisplayStart(256, 204);
+      break;
+    case 0:
+      bank++;
+      VBE_SetDisplayStart(192, 409);
+      break;
+    case 1:
+      bank++;
+      VBE_SetDisplayStart(0, 0);
+      break;
     }
 
     VBE_SetBank(bank);
