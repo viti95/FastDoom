@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.1.0 (?? ??? ????)
+* Add hicolor/truecolor support for VBE2 backbuffered modes (15-bit, 16-bit, 24-bit and 32-bit)
+* Better initialization for VESA modes (use linear modes whenever possible)
+
 ## 1.0.9 (18 Jan 2025)
 * Yamaha TG300 support (thanks @discatte !!)
 * Updated fdenv.sh script, it's now possible to build FastDoom on ARM64 CPUs. Tested on my trusty old Raspberry Pi 3B. Also a bit faster builds on x86_64 CPUs.
