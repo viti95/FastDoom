@@ -934,16 +934,14 @@ void I_FinishUpdate32bppBanked(void)
 void I_FinishUpdate32bppLinear(void)
 {
   int i;
-  int vramposition = 0;
 
-  for (i = 0; i < SCREENWIDTH * SCREENHEIGHT; i++, vramposition += 4)
+  unsigned int *ptrPalette = (unsigned int *) ptrprocessedpalette;
+  unsigned int *ptrVRAM = (unsigned int *) pcscreen;
+
+  for (i = 0; i < SCREENWIDTH * SCREENHEIGHT; i++)
   {
-    unsigned short ptrLUT = backbuffer[i] * 4;
-
-    pcscreen[vramposition] = ptrprocessedpalette[ptrLUT];
-    pcscreen[vramposition + 1] = ptrprocessedpalette[ptrLUT + 1];
-    pcscreen[vramposition + 2] = ptrprocessedpalette[ptrLUT + 2];
-    pcscreen[vramposition + 3] = ptrprocessedpalette[ptrLUT + 3];
+    unsigned char ptrLUT = backbuffer[i];
+    ptrVRAM[i] = ptrPalette[ptrLUT];
   }
 }
 
