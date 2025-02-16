@@ -394,6 +394,13 @@ void VBE2_InitGraphics(void)
   I_Printf("VESA height: %d\n", SCREENHEIGHT);
   I_Printf("VESA bits per pixel: %d\n", vesabitsperpixel);*/
 
+#if defined(MODE_VBE2_DIRECT)
+  if (vesabitsperpixel > 8)
+  {
+    I_Error("FastDoom VBE 2.0 direct modes only support 8 bits per pixels");
+  }
+#endif
+
   // If a VESA compatible mode is found, use it!
   if (vesavideomode != 0xFFFF)
   {
@@ -556,7 +563,6 @@ void VBE2_InitGraphics(void)
 
 #define NUM_BANKS_24BPP ((SCREENHEIGHT * SCREENWIDTH * 3) / (64 * 1024))
 #define LAST_BANK_SIZE_24BPP ((SCREENHEIGHT * SCREENWIDTH * 3) - (NUM_BANKS_24BPP * 64 * 1024))
-#define UNEVEN_BANKS_24BPP ((64 * 1024) % 3)
 
 #define NUM_BANKS_32BPP ((SCREENHEIGHT * SCREENWIDTH * 4) / (64 * 1024))
 #define LAST_BANK_SIZE_32BPP ((SCREENHEIGHT * SCREENWIDTH * 4) - (NUM_BANKS_32BPP * 64 * 1024))
