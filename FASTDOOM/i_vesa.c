@@ -140,7 +140,7 @@ void DPMI_UNMAP_PHYSICAL(void *p)
   int386x(0x31, &regs, &regs, &sregs);
 }
 
-#define MEMORY_LIMIT (128*64*1024)
+#define MEMORY_LIMIT (128 * 64 * 1024)
 
 void *DPMI_MAP_PHYSICAL(void *p, unsigned long size)
 {
@@ -345,7 +345,6 @@ int VBE2_FindVideoMode(unsigned short screenwidth, unsigned short screenheight, 
         vesabitsperpixel = bitsperpixel;
         return 1;
       }
-      
     }
   }
 
@@ -381,7 +380,7 @@ void VBE2_InitGraphics(void)
     // Test for non-linear vesa modes
     for (i=0; i<5; i++) // Test each bit depth
     {
-      if(VBE2_FindVideoMode(SCREENWIDTH, SCREENHEIGHT, bitsperpixel[i], 0))
+      if (VBE2_FindVideoMode(SCREENWIDTH, SCREENHEIGHT, bitsperpixel[i], 0))
       {
         break;
       }
@@ -432,9 +431,11 @@ void VBE2_InitGraphics(void)
 
 #if defined(MODE_VBE2)
     // Set finish function
-    if (pcscreen == (void *)0xA0000){
+    if (pcscreen == (void *)0xA0000)
+    {
       // Banked
-      switch(vesabitsperpixel){
+      switch (vesabitsperpixel)
+      {
         case 8:
         finishfunc = I_FinishUpdate8bppBanked;
         processpalette = I_ProcessPalette8bpp;
@@ -466,10 +467,12 @@ void VBE2_InitGraphics(void)
         processedpalette = Z_MallocUnowned(14 * 256 * 4, PU_STATIC);
         break;
       }
-
-    }else{
+    }
+    else
+    {
       // Linear
-      switch(vesabitsperpixel){
+      switch (vesabitsperpixel)
+      {
         case 8:
         finishfunc = I_FinishUpdate8bppLinear;
         processpalette = I_ProcessPalette8bpp;
@@ -529,8 +532,9 @@ void VBE2_InitGraphics(void)
       SetDWords((void *)0xA0000, 0, 65536 / 4);
       VBE_SetBank(2);
       SetDWords((void *)0xA0000, 0, 65536 / 4);
-
-    }else{
+    }
+    else
+    {
       // LFB
       VBE_SetDisplayStart_Y(0);
       SetDWords(pcscreen, 0, SCREENWIDTH * SCREENHEIGHT * 3 / 4);
@@ -552,6 +556,7 @@ void VBE2_InitGraphics(void)
 
 #define NUM_BANKS_24BPP ((SCREENHEIGHT * SCREENWIDTH * 3) / (64 * 1024))
 #define LAST_BANK_SIZE_24BPP ((SCREENHEIGHT * SCREENWIDTH * 3) - (NUM_BANKS_24BPP * 64 * 1024))
+#define UNEVEN_BANKS_24BPP ((64 * 1024) % 3)
 
 #define NUM_BANKS_32BPP ((SCREENHEIGHT * SCREENWIDTH * 4) / (64 * 1024))
 #define LAST_BANK_SIZE_32BPP ((SCREENHEIGHT * SCREENWIDTH * 4) - (NUM_BANKS_32BPP * 64 * 1024))
@@ -614,14 +619,14 @@ void I_ProcessPalette15bpp(byte *palette)
 
   for (i = 0; i < 14 * 256 * 2; i += 2, palette += 3)
   {
-    unsigned short r,g,b;
+    unsigned short r, g, b;
     unsigned short color = 0;
     
     r = ptr[*palette] >> 1;
     g = ptr[*(palette + 1)] >> 1;
     b = ptr[*(palette + 2)] >> 1;
 
-    //RGB555
+    // RGB555
     color = (r << 10) | (g << 5) | b;
 
     processedpalette[i] = color & 0xFF;
@@ -642,14 +647,14 @@ void I_ProcessPalette16bpp(byte *palette)
 
   for (i = 0; i < 14 * 256 * 2; i += 2, palette += 3)
   {
-    unsigned short r,g,b;
+    unsigned short r, g, b;
     unsigned short color = 0;
     
     r = ptr[*palette] >> 1;
     g = ptr[*(palette + 1)];
     b = ptr[*(palette + 2)] >> 1;
 
-    //RGB565
+    // RGB565
     color = (r << 11) | (g << 5) | b;
 
     processedpalette[i] = color & 0xFF;
@@ -670,13 +675,13 @@ void I_ProcessPalette24bpp(byte *palette)
 
   for (i = 0; i < 14 * 256 * 3; i += 3, palette += 3)
   {
-    unsigned int r,g,b;
+    unsigned int r, g, b;
     
     r = ptr[*palette] << 2;
     g = ptr[*(palette + 1)] << 2;
     b = ptr[*(palette + 2)] << 2;
 
-    //RGB888
+    // RGB888
     processedpalette[i] = b;
     processedpalette[i + 1] = g;
     processedpalette[i + 2] = r; 
@@ -696,13 +701,13 @@ void I_ProcessPalette32bpp(byte *palette)
 
   for (i = 0; i < 14 * 256 * 4; i += 4, palette += 3)
   {
-    unsigned int r,g,b;
+    unsigned int r, g, b;
     
     r = ptr[*palette] << 2;
     g = ptr[*(palette + 1)] << 2;
     b = ptr[*(palette + 2)] << 2;
 
-    //ARGB888
+    // ARGB888
     processedpalette[i] = b;
     processedpalette[i + 1] = g;
     processedpalette[i + 2] = r;
@@ -797,8 +802,8 @@ void I_FinishUpdate15bpp16bppBanked(void)
     {
       unsigned short ptrLUT = backbuffer[32 * 1024 * i + j] * 2;
 
-      pcscreen[j*2] = ptrprocessedpalette[ptrLUT];
-      pcscreen[j*2 + 1] = ptrprocessedpalette[ptrLUT+1];
+      pcscreen[j * 2] = ptrprocessedpalette[ptrLUT];
+      pcscreen[j * 2 + 1] = ptrprocessedpalette[ptrLUT + 1];
     }
   }
 
@@ -810,8 +815,8 @@ void I_FinishUpdate15bpp16bppBanked(void)
   {
     unsigned short ptrLUT = backbuffer[NUM_BANKS_15BPP_16BPP * 32 * 1024 + j] * 2;
 
-    pcscreen[j*2] = ptrprocessedpalette[ptrLUT];
-    pcscreen[j*2 + 1] = ptrprocessedpalette[ptrLUT+1];
+    pcscreen[j * 2] = ptrprocessedpalette[ptrLUT];
+    pcscreen[j * 2 + 1] = ptrprocessedpalette[ptrLUT + 1];
   }
 
 #endif
@@ -827,42 +832,56 @@ void I_FinishUpdate15bpp16bppLinear(void)
     unsigned short ptrLUT = backbuffer[i] * 2;
 
     pcscreen[vramposition] = ptrprocessedpalette[ptrLUT];
-    pcscreen[vramposition+1] = ptrprocessedpalette[ptrLUT+1];
+    pcscreen[vramposition + 1] = ptrprocessedpalette[ptrLUT + 1];
   }
 }
 
 void I_FinishUpdate24bppBanked(void)
 {
-  int i, j;
+  int i;
+  int ptrPCscreen = 0;
+  int numBank = 0;
 
-  for (i = 0; i < NUM_BANKS_24BPP; i++)
-  {
-    VBE_SetBank(i);
+  VBE_SetBank(numBank);
 
-    for (j = 0; j < 64 * 1024 / 3; j++)
+  for (i = 0; i < SCREENWIDTH * SCREENHEIGHT; i++)
     {
-      unsigned short ptrLUT = backbuffer[(64 * 1024 / 3) * i + j] * 3;
+    unsigned short ptrLUT = backbuffer[i] * 3;
 
-      pcscreen[j*3] = ptrprocessedpalette[ptrLUT];
-      pcscreen[j*3 + 1] = ptrprocessedpalette[ptrLUT+1];
-      pcscreen[j*3 + 2] = ptrprocessedpalette[ptrLUT+2];
+    if (ptrPCscreen + 3 < 64 * 1024)
+    {
+      pcscreen[ptrPCscreen] = ptrprocessedpalette[ptrLUT];
+      pcscreen[ptrPCscreen + 1] = ptrprocessedpalette[ptrLUT + 1];
+      pcscreen[ptrPCscreen + 2] = ptrprocessedpalette[ptrLUT + 2];
+      ptrPCscreen += 3;
+    } else {
+      int count = (64 * 1024) - ptrPCscreen;
+      int countLUT = 3;
+
+      while (count > 0)
+      {
+        pcscreen[ptrPCscreen] = ptrprocessedpalette[ptrLUT];
+        ptrPCscreen++;
+        ptrLUT++;
+        countLUT--;
+        count--;
+      }
+
+      numBank++;
+      VBE_SetBank(numBank);
+
+      ptrPCscreen = 0;
+
+      while(countLUT > 0)
+      {
+        pcscreen[ptrPCscreen] = ptrprocessedpalette[ptrLUT];
+        ptrPCscreen++;
+        ptrLUT++;
+        countLUT--;
+      }
     }
+
   }
-
-#if LAST_BANK_SIZE_24BPP > 0
-
-  VBE_SetBank(NUM_BANKS_24BPP);
-
-  for (j = 0; j < LAST_BANK_SIZE_24BPP / 3; j++)
-  {
-    unsigned short ptrLUT = backbuffer[(NUM_BANKS_24BPP * 64 * 1024 / 3) + j] * 3;
-
-    pcscreen[j*3] = ptrprocessedpalette[ptrLUT];
-    pcscreen[j*3 + 1] = ptrprocessedpalette[ptrLUT+1];
-    pcscreen[j*3 + 1] = ptrprocessedpalette[ptrLUT+2];
-  }
-
-#endif
 }
 
 void I_FinishUpdate24bppLinear(void)
@@ -875,8 +894,8 @@ void I_FinishUpdate24bppLinear(void)
     unsigned short ptrLUT = backbuffer[i] * 3;
 
     pcscreen[vramposition] = ptrprocessedpalette[ptrLUT];
-    pcscreen[vramposition+1] = ptrprocessedpalette[ptrLUT+1];
-    pcscreen[vramposition+2] = ptrprocessedpalette[ptrLUT+2];
+    pcscreen[vramposition + 1] = ptrprocessedpalette[ptrLUT + 1];
+    pcscreen[vramposition + 2] = ptrprocessedpalette[ptrLUT + 2];
   }
 }
 
@@ -892,10 +911,10 @@ void I_FinishUpdate32bppBanked(void)
     {
       unsigned short ptrLUT = backbuffer[16 * 1024 * i + j] * 4;
 
-      pcscreen[j*4] = ptrprocessedpalette[ptrLUT];
-      pcscreen[j*4 + 1] = ptrprocessedpalette[ptrLUT+1];
-      pcscreen[j*4 + 2] = ptrprocessedpalette[ptrLUT+2];
-      pcscreen[j*4 + 3] = ptrprocessedpalette[ptrLUT+3];
+      pcscreen[j * 4] = ptrprocessedpalette[ptrLUT];
+      pcscreen[j * 4 + 1] = ptrprocessedpalette[ptrLUT + 1];
+      pcscreen[j * 4 + 2] = ptrprocessedpalette[ptrLUT + 2];
+      pcscreen[j * 4 + 3] = ptrprocessedpalette[ptrLUT + 3];
     }
   }
 
@@ -907,10 +926,10 @@ void I_FinishUpdate32bppBanked(void)
   {
     unsigned short ptrLUT = backbuffer[NUM_BANKS_32BPP * 16 * 1024 + j] * 4;
 
-    pcscreen[j*4] = ptrprocessedpalette[ptrLUT];
-    pcscreen[j*4 + 1] = ptrprocessedpalette[ptrLUT+1];
-    pcscreen[j*4 + 2] = ptrprocessedpalette[ptrLUT+2];
-    pcscreen[j*4 + 3] = ptrprocessedpalette[ptrLUT+3];
+    pcscreen[j * 4] = ptrprocessedpalette[ptrLUT];
+    pcscreen[j * 4 + 1] = ptrprocessedpalette[ptrLUT + 1];
+    pcscreen[j * 4 + 2] = ptrprocessedpalette[ptrLUT + 2];
+    pcscreen[j * 4 + 3] = ptrprocessedpalette[ptrLUT + 3];
   }
 
 #endif
@@ -926,9 +945,9 @@ void I_FinishUpdate32bppLinear(void)
     unsigned short ptrLUT = backbuffer[i] * 4;
 
     pcscreen[vramposition] = ptrprocessedpalette[ptrLUT];
-    pcscreen[vramposition+1] = ptrprocessedpalette[ptrLUT+1];
-    pcscreen[vramposition+2] = ptrprocessedpalette[ptrLUT+2];
-    pcscreen[vramposition+3] = ptrprocessedpalette[ptrLUT+3];
+    pcscreen[vramposition + 1] = ptrprocessedpalette[ptrLUT + 1];
+    pcscreen[vramposition + 2] = ptrprocessedpalette[ptrLUT + 2];
+    pcscreen[vramposition + 3] = ptrprocessedpalette[ptrLUT + 3];
   }
 }
 
@@ -948,7 +967,7 @@ void I_FinishUpdate(void)
   {
     // This only works on 320x200 resolution (64000kb per screen)
 
-    switch(bank)
+    switch (bank)
     {
         case 2:
           bank = 0;
