@@ -335,7 +335,15 @@ int VBE2_FindVideoMode(unsigned short screenwidth, unsigned short screenheight, 
     VBE_Mode_Information(localvesavideomode, &vbemode);
     if (vbemode.XResolution == screenwidth && vbemode.YResolution == screenheight && vbemode.BitsPerPixel == bitsperpixel)
     {
-      int isVesaLinear = VBE_IsModeLinear(localvesavideomode);
+      int isVesaLinear;
+
+      if ((bitsperpixel == 16) && (vbemode.GreenMaskSize == 5))
+      {
+        // Fix for AMD Radeon (GCN?) cards
+        continue;
+      }
+
+      isVesaLinear = VBE_IsModeLinear(localvesavideomode);
 
       if (isVesaLinear == isLinear)
       {
