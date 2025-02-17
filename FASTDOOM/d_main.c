@@ -135,6 +135,10 @@ unsigned char CGAmodel;
 boolean snowfix;
 #endif
 
+#if defined(MODE_VBE2)
+int forceVesaBitsPerPixel = 0;
+#endif
+
 #ifdef SUPPORTS_HERCULES_AUTOMAP
 boolean HERCmap;
 #endif
@@ -1485,6 +1489,17 @@ void D_DoomMain(void)
 
 #if defined(MODE_CGA16) || defined(MODE_CGA_AFH)
     snowfix = M_CheckParm("-snow");
+#endif
+
+#if defined(MODE_VBE2)
+    if (M_CheckParm("-15bpp"))
+        forceVesaBitsPerPixel = 15;
+    else if (M_CheckParm("-16bpp"))
+        forceVesaBitsPerPixel = 16;
+    else if (M_CheckParm("-24bpp"))
+        forceVesaBitsPerPixel = 24;
+    else if (M_CheckParm("-32bpp"))
+        forceVesaBitsPerPixel = 32;
 #endif
 
 #ifdef SUPPORTS_HERCULES_AUTOMAP

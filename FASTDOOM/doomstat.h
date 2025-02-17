@@ -79,6 +79,10 @@ extern unsigned char CGAmodel;
 extern boolean snowfix;
 #endif
 
+#if defined(MODE_VBE2)
+extern int forceVesaBitsPerPixel;
+#endif
+
 #ifdef SUPPORTS_HERCULES_AUTOMAP
 extern boolean HERCmap;
 #endif
