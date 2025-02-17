@@ -640,9 +640,9 @@ void I_ProcessPalette15bpp(byte *palette)
     unsigned short r, g, b;
     unsigned short color = 0;
 
-    r = ptr[*palette] >> 1;
-    g = ptr[*(palette + 1)] >> 1;
-    b = ptr[*(palette + 2)] >> 1;
+    r = (ptr[*palette] >> 1) & 0x1F;
+    g = (ptr[*(palette + 1)] >> 1) & 0x1F;
+    b = (ptr[*(palette + 2)] >> 1) & 0x1F;
 
     // RGB555
     color = (r << 10) | (g << 5) | b;
@@ -668,9 +668,9 @@ void I_ProcessPalette16bpp(byte *palette)
     unsigned short r, g, b;
     unsigned short color = 0;
 
-    r = ptr[*palette] >> 1;
-    g = ptr[*(palette + 1)];
-    b = ptr[*(palette + 2)] >> 1;
+    r = (ptr[*palette] >> 1) & 0x1F;
+    g = (ptr[*(palette + 1)]) & 0x3F;
+    b = (ptr[*(palette + 2)] >> 1) & 0x1F;
 
     // RGB565
     color = (r << 11) | (g << 5) | b;
