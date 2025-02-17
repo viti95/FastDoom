@@ -899,18 +899,18 @@ void I_FinishUpdate32bppBanked(void)
 {
   int i, j;
 
+  unsigned int *ptrPalette = (unsigned int *) ptrprocessedpalette;
+  unsigned int *ptrVRAM = (unsigned int *) pcscreen;
+
   for (i = 0; i < NUM_BANKS_32BPP; i++)
   {
     VBE_SetBank(i);
 
     for (j = 0; j < 64 * 1024 / 4; j++)
     {
-      unsigned short ptrLUT = backbuffer[16 * 1024 * i + j] * 4;
+      unsigned char ptrLUT = backbuffer[16 * 1024 * i + j];
 
-      pcscreen[j * 4] = ptrprocessedpalette[ptrLUT];
-      pcscreen[j * 4 + 1] = ptrprocessedpalette[ptrLUT + 1];
-      pcscreen[j * 4 + 2] = ptrprocessedpalette[ptrLUT + 2];
-      pcscreen[j * 4 + 3] = ptrprocessedpalette[ptrLUT + 3];
+      ptrVRAM[j] = ptrPalette[ptrLUT];
     }
   }
 
@@ -920,12 +920,9 @@ void I_FinishUpdate32bppBanked(void)
 
   for (j = 0; j < LAST_BANK_SIZE_32BPP / 4; j++)
   {
-    unsigned short ptrLUT = backbuffer[NUM_BANKS_32BPP * 16 * 1024 + j] * 4;
+    unsigned char ptrLUT = backbuffer[NUM_BANKS_32BPP * 16 * 1024 + j];
 
-    pcscreen[j * 4] = ptrprocessedpalette[ptrLUT];
-    pcscreen[j * 4 + 1] = ptrprocessedpalette[ptrLUT + 1];
-    pcscreen[j * 4 + 2] = ptrprocessedpalette[ptrLUT + 2];
-    pcscreen[j * 4 + 3] = ptrprocessedpalette[ptrLUT + 3];
+    ptrVRAM[j] = ptrPalette[ptrLUT];
   }
 
 #endif
