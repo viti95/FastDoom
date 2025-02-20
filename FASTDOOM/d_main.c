@@ -62,8 +62,6 @@
 
 #include "d_main.h"
 
-#include "i_vesa.h"
-
 #include "sizeopt.h"
 
 #include "options.h"
@@ -74,6 +72,10 @@
 
 #if defined(MODE_HERC)
 #include "i_vga13h.h"
+#endif
+
+#if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
+#include "i_vesa.h"
 #endif
 
 //
@@ -482,7 +484,7 @@ void D_Display(void)
             I_WaitSingleVBL();
 #endif
 
-#if defined(MODE_13H)
+#if defined(MODE_13H) || defined(MODE_VBE2)
         finishfunc();
 #else
         I_FinishUpdate(); // page flip or blit buffer
@@ -523,7 +525,7 @@ void D_Display(void)
             I_WaitSingleVBL();
 #endif
 
-#if defined(MODE_13H)
+#if defined(MODE_13H) || defined(MODE_VBE2)
         finishfunc();
 #else
         I_FinishUpdate(); // page flip or blit buffer

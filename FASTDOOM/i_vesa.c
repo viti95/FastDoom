@@ -974,10 +974,6 @@ void I_FinishUpdate32bppLinear(void)
   }
 }
 
-void I_FinishUpdate(void)
-{
-  finishfunc();
-}
 #endif
 
 #if defined(MODE_VBE2_DIRECT)
