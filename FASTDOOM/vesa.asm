@@ -31,22 +31,23 @@ CODE_SYM_DEF I_FinishUpdate15bpp16bppLinear
 	push	ebx
 	push	ecx
 	push	edx
+	push	edi
 
 	mov		ebx,[_ptrprocessedpalette]
-	mov		edx,[_pcscreen]
+	mov		edi,[_pcscreen]
 	xor		eax,eax
-	lea		eax,[eax]
+	xor		ecx,ecx
 
 L$62:
 	mov		cl,_backbuffer[eax]
-	movzx	ecx,cl
-	add		edx,0x00000002
-	mov		cx,[ebx+ecx*2]
+	add		edi,0x00000002
+	mov		dx,[ebx+ecx*2]
 	inc		eax
-	mov		-0x2[edx],cx
+	mov		-0x2[edi],dx
 	cmp		eax,0x0000fa00
 	jl		L$62
 
+	pop		edi
 	pop		edx
 	pop		ecx
 	pop		ebx
