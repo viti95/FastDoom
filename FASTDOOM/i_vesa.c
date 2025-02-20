@@ -849,7 +849,7 @@ void I_FinishUpdate15bpp16bppBanked(void)
 #endif
 }
 
-void I_FinishUpdate15bpp16bppLinear(void)
+/*void I_FinishUpdate15bpp16bppLinear(void)
 {
   int i;
 
@@ -861,7 +861,7 @@ void I_FinishUpdate15bpp16bppLinear(void)
     unsigned char ptrLUT = backbuffer[i];
     ptrVRAM[i] = ptrPalette[ptrLUT];
   }
-}
+}*/
 
 void I_FinishUpdate24bppBanked(void)
 {

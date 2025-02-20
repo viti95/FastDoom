@@ -78,6 +78,7 @@ file cgabw.obj
 file i_ega320.obj
 file ega320.obj
 file i_vesa.obj
+file vesa.obj
 file i_cga512.obj
 file cga512.obj
 file i_text.obj

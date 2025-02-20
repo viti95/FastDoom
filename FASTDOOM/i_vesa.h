@@ -277,7 +277,7 @@ void I_FinishUpdate(void);
 void I_FinishUpdate8bppBanked(void);
 void I_FinishUpdate8bppLinear(void);
 void I_FinishUpdate15bpp16bppBanked(void);
-void I_FinishUpdate15bpp16bppLinear(void);
+extern void I_FinishUpdate15bpp16bppLinear(void);
 void I_FinishUpdate24bppBanked(void);
 void I_FinishUpdate24bppLinear(void);
 void I_FinishUpdate32bppBanked(void);
