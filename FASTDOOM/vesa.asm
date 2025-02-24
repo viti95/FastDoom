@@ -62,14 +62,17 @@ loop1516linear:
 	mov		cl,al
 	
 	mov		dx,[esi+ebx*2]
-	shl		edx,16
-	mov		dx,[esi+ecx*2]
 
 	add		edi,8
 
+	shl		edx,16
+
+	mov		dx,[esi+ecx*2]
+
+	cmp		ebp,0xFA00
+
 	mov		[edi-4],edx
 
-	cmp		ebp,0x0000fa00
 	jl		loop1516linear
 
 	pop		ebp
