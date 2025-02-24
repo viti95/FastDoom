@@ -42,17 +42,17 @@ CODE_SYM_DEF I_FinishUpdate15bpp16bppLinear
 	xor		eax,eax
 	xor		ebx,ebx
 
-L$62:
-	mov		cl,_backbuffer[ebp]
+loop1516linear:
 	mov 	al,_backbuffer[ebp+1]
-	add		edi,0x00000004
+	mov		cl,_backbuffer[ebp]
+	mov		dx,[esi+eax*2]
+	shl		edx,16
 	mov		dx,[esi+ecx*2]
-	mov		bx,[esi+eax*2]
+	mov		[edi],edx
+	add		edi,4
 	add		ebp,2
-	mov		-0x4[edi],dx
-	mov		-0x2[edi],bx
 	cmp		ebp,0x0000fa00
-	jl		L$62
+	jl		loop1516linear
 
 	pop		ebp
 	pop		esi
