@@ -108,8 +108,7 @@ loop24linear:
 	mov		bl, _backbuffer[eax]
 	lea		ecx,[ebx+ebx*2] ; fast multiply by 3
 
-	mov		dl, [edi+ecx]
-	mov		dh, [edi+ecx+1]
+	mov		dx, [edi+ecx]
 
 	mov		[ebp],dx
 
