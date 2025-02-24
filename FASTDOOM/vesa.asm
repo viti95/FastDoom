@@ -98,27 +98,31 @@ CODE_SYM_DEF I_FinishUpdate24bppLinear
 
 	mov		edi,[_ptrprocessedpalette]
 	mov		ebp,[_pcscreen]
-	xor		esi,esi
+	xor		eax,eax ; position of screen
+	xor		ebx,ebx
 	xor		ecx,ecx
-	mov		eax,eax
+	xor		edx,edx
 
 loop24linear:
-	movzx		ax,_backbuffer[ecx]
-	imul		eax,0x00000003
-	movzx		edx,ax
-	lea		eax,[edi+edx]
-	mov		edx,ebp
-	mov		bl,[eax]
-	mov		[edx+esi],bl
-	mov		bl,0x1[eax]
-	mov		0x1[edx+esi],bl
-	add		esi,0x00000003
-	mov		al,0x2[eax]
-	inc		ecx
-	mov		-0x1[edx+esi],al
-	cmp		ecx,0xFA00
+
+	mov		bl, _backbuffer[eax]
+	lea		ecx,[ebx+ebx*2] ; fast multiply by 3
+
+	mov		dl, [edi+ecx]
+	mov		dh, [edi+ecx+1]
+
+	mov		[ebp],dx
+
+	mov		dl,	[edi+ecx+2]
+
+	mov		[ebp+2],dl
+
+	inc		eax
+	add		ebp,3
+
+	cmp		eax,SCREENWIDTH*SCREENHEIGHT
 	jl		loop24linear
-	
+
 	pop		ebp
 	pop		edi
 	pop		esi
