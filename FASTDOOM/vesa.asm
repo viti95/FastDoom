@@ -102,7 +102,7 @@ CODE_SYM_DEF I_FinishUpdate24bppLinear
 	xor		ecx,ecx
 	mov		eax,eax
 
-L$68:
+loop24linear:
 	movzx		ax,_backbuffer[ecx]
 	imul		eax,0x00000003
 	movzx		edx,ax
@@ -116,8 +116,8 @@ L$68:
 	mov		al,0x2[eax]
 	inc		ecx
 	mov		-0x1[edx+esi],al
-	cmp		ecx,0x0000fa00
-	jl		L$68
+	cmp		ecx,0xFA00
+	jl		loop24linear
 	
 	pop		ebp
 	pop		edi
