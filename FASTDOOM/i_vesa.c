@@ -912,7 +912,7 @@ void I_FinishUpdate24bppBanked(void)
   }
 }
 
-void I_FinishUpdate24bppLinear(void)
+/*void I_FinishUpdate24bppLinear(void)
 {
   int i;
   int vramposition = 0;
@@ -925,7 +925,7 @@ void I_FinishUpdate24bppLinear(void)
     pcscreen[vramposition + 1] = ptrprocessedpalette[ptrLUT + 1];
     pcscreen[vramposition + 2] = ptrprocessedpalette[ptrLUT + 2];
   }
-}
+}*/
 
 void I_FinishUpdate32bppBanked(void)
 {

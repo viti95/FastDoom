@@ -1495,7 +1495,9 @@ void D_DoomMain(void)
 #endif
 
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
-    if (M_CheckParm("-15bpp"))
+    if (M_CheckParm("-8bpp"))
+        forceVesaBitsPerPixel = 8;
+    else if (M_CheckParm("-15bpp"))
         forceVesaBitsPerPixel = 15;
     else if (M_CheckParm("-16bpp"))
         forceVesaBitsPerPixel = 16;

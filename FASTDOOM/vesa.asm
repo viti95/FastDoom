@@ -88,6 +88,45 @@ loop1516linear:
 	pop		ebx
 	ret
 
+CODE_SYM_DEF I_FinishUpdate24bppLinear
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		edi
+	push		ebp
+
+	mov		edi,[_ptrprocessedpalette]
+	mov		ebp,[_pcscreen]
+	xor		esi,esi
+	xor		ecx,ecx
+	mov		eax,eax
+
+L$68:
+	movzx		ax,_backbuffer[ecx]
+	imul		eax,0x00000003
+	movzx		edx,ax
+	lea		eax,[edi+edx]
+	mov		edx,ebp
+	mov		bl,[eax]
+	mov		[edx+esi],bl
+	mov		bl,0x1[eax]
+	mov		0x1[edx+esi],bl
+	add		esi,0x00000003
+	mov		al,0x2[eax]
+	inc		ecx
+	mov		-0x1[edx+esi],al
+	cmp		ecx,0x0000fa00
+	jl		L$68
+	
+	pop		ebp
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+	ret
+
 CODE_SYM_DEF I_FinishUpdate32bppLinear
 	push	ebx
 	push	ecx
