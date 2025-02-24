@@ -43,14 +43,32 @@ CODE_SYM_DEF I_FinishUpdate15bpp16bppLinear
 	xor		ebx,ebx
 
 loop1516linear:
-	mov 	al,_backbuffer[ebp+1]
-	mov		cl,_backbuffer[ebp]
-	mov		dx,[esi+eax*2]
+	mov		eax,_backbuffer[ebp]
+	
+	mov		bl,ah
+	mov		cl,al
+	
+	mov		dx,[esi+ebx*2]
 	shl		edx,16
 	mov		dx,[esi+ecx*2]
+
+	add		ebp,4
+
 	mov		[edi],edx
-	add		edi,4
-	add		ebp,2
+
+	shr		eax,16
+
+	mov		bl,ah
+	mov		cl,al
+	
+	mov		dx,[esi+ebx*2]
+	shl		edx,16
+	mov		dx,[esi+ecx*2]
+
+	add		edi,8
+
+	mov		[edi-4],edx
+
 	cmp		ebp,0x0000fa00
 	jl		loop1516linear
 
