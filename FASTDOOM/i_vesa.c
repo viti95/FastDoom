@@ -960,7 +960,7 @@ void I_FinishUpdate32bppBanked(void)
 #endif
 }
 
-void I_FinishUpdate32bppLinear(void)
+/*void I_FinishUpdate32bppLinear(void)
 {
   int i;
 
@@ -972,7 +972,7 @@ void I_FinishUpdate32bppLinear(void)
     unsigned char ptrLUT = backbuffer[i];
     ptrVRAM[i] = ptrPalette[ptrLUT];
   }
-}
+}*/
 
 #endif
 

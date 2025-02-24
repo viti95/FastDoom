@@ -69,11 +69,41 @@ loop1516linear:
 
 	mov		dx,[esi+ecx*2]
 
-	cmp		ebp,0xFA00
+	cmp		ebp,SCREENWIDTH*SCREENHEIGHT
 
 	mov		[edi-4],edx
 
 	jl		loop1516linear
+
+	pop		ebp
+	pop		esi
+	pop		edi
+	pop		edx
+	pop		ecx
+	pop		ebx
+	ret
+
+CODE_SYM_DEF I_FinishUpdate32bppLinear
+	push	ebx
+	push	ecx
+	push	edx
+	push	edi
+	push	esi
+	push	ebp
+
+	mov		ebx,[_ptrprocessedpalette]
+	mov		edx,[_pcscreen]
+	xor		eax,eax
+
+loop32linear:
+	mov		cl,_backbuffer[eax]
+	movzx	ecx,cl
+	add		edx,0x00000004
+	mov		ecx,[ebx+ecx*4]
+	inc		eax
+	mov		-0x4[edx],ecx
+	cmp		eax,SCREENWIDTH*SCREENHEIGHT
+	jl		loop32linear
 
 	pop		ebp
 	pop		esi
