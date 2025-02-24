@@ -105,13 +105,13 @@ CODE_SYM_DEF I_FinishUpdate32bppLinear
 loop32linear:
 	mov		cl,_backbuffer[eax]
 	mov		bl,_backbuffer[eax+1]
+	add		eax,2
 	mov		ebp,[esi+ecx*4]
 	mov		edx,[esi+ebx*4]
-	add		eax,2
-	mov		[edi],ebp
-	mov		[edi+4],edx
 	add		edi,8
 	cmp		eax,SCREENWIDTH*SCREENHEIGHT
+	mov		[edi],ebp
+	mov		[edi+4],edx
 	jl		loop32linear
 
 	pop		ebp
