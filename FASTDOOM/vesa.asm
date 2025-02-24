@@ -106,20 +106,21 @@ CODE_SYM_DEF I_FinishUpdate24bppLinear
 loop24linear:
 
 	mov		bl, _backbuffer[eax]
+	
+	inc		eax
+	
 	lea		ecx,[ebx+ebx*2] ; fast multiply by 3
 
-	mov		dx, [edi+ecx]
-
-	mov		[ebp],dx
-
-	mov		dl,	[edi+ecx+2]
-
-	mov		[ebp+2],dl
-
-	inc		eax
 	add		ebp,3
 
+	mov		bl, [edi+ecx]
+	mov		dx,	[edi+ecx+1]
+
 	cmp		eax,SCREENWIDTH*SCREENHEIGHT
+
+	mov		[ebp-3],bl
+	mov		[ebp-2],dx
+
 	jl		loop24linear
 
 	pop		ebp
