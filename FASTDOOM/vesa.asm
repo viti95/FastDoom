@@ -21,6 +21,11 @@ BITS 32
 
 %ifdef MODE_VBE2
 
+%ifndef SCREENWIDTH
+%define SCREENWIDTH   320
+%define SCREENHEIGHT  200
+%endif
+
 extern _backbuffer
 extern _ptrprocessedpalette
 extern _pcscreen
@@ -91,17 +96,21 @@ CODE_SYM_DEF I_FinishUpdate32bppLinear
 	push	esi
 	push	ebp
 
-	mov		ebx,[_ptrprocessedpalette]
-	mov		edx,[_pcscreen]
+	mov		esi,[_ptrprocessedpalette]
+	mov		edi,[_pcscreen]
 	xor		eax,eax
+	xor		ecx,ecx
+	xor		ebx,ebx
 
 loop32linear:
 	mov		cl,_backbuffer[eax]
-	movzx	ecx,cl
-	add		edx,0x00000004
-	mov		ecx,[ebx+ecx*4]
-	inc		eax
-	mov		-0x4[edx],ecx
+	mov		bl,_backbuffer[eax+1]
+	mov		ebp,[esi+ecx*4]
+	mov		edx,[esi+ebx*4]
+	add		eax,2
+	mov		[edi],ebp
+	mov		[edi+4],edx
+	add		edi,8
 	cmp		eax,SCREENWIDTH*SCREENHEIGHT
 	jl		loop32linear
 
