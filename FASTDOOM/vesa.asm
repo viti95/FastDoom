@@ -109,16 +109,14 @@ loop24linear:
 	
 	inc		eax
 	
-	lea		ecx,[ebx+ebx*2] ; fast multiply by 3
-
 	add		ebp,3
 
-	mov		bl, [edi+ecx]
-	mov		dx,	[edi+ecx+1]
+	mov		cl, [edi+ebx*4]
+	mov		dx,	[edi+ebx*4+1]
 
 	cmp		eax,SCREENWIDTH*SCREENHEIGHT
 
-	mov		[ebp-3],bl
+	mov		[ebp-3],cl
 	mov		[ebp-2],dx
 
 	jl		loop24linear
