@@ -134,7 +134,7 @@ loop24linear:
 
 	shl		edx,16
 
-	mov		dx, [edi+ecx*+1]
+	mov		dx, [edi+ecx*4+1]
 
 	mov		[ebp+8], edx
 
