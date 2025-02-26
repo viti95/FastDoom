@@ -118,31 +118,36 @@ loop24linear:
 	
 	mov		cl, bl
 	
-	mov		dx, [edi+ecx*4]	 	; BLUE+GREEN 1st pixel
-	shl		edx,16
-	mov		dl, [edi+ecx*4+2] 	; RED 1st pixel
+	add		eax,4
+
+	mov		edx, [edi+ecx*4]	 	; BLUE+GREEN+RED 1st pixel
 	
 	mov		cl, bh
+
+	rol		edx,16
 
 	mov		dh, [edi+ecx*4]		; BLUE 2nd pixel
 	rol		edx,16
-	
+
+	shr		ebx,16
+
 	mov		[ebp], edx			; Move 1st 32-bit data to VRAM
 
 	mov		dx, [edi+ecx*4+1]	; GREEN+RED 2nd pixel
-	shl		edx,16
 	
-	shr		ebx,16
-	mov		cl,bl
+	mov		cl,bh
+	and		ebx,0xFF
 
-	mov		dx, [edi+ecx*4]		; BLUE+GREEN 3rd pixel
+	shl		edx,16
+
+	mov		dx, [edi+ebx*4]		; BLUE+GREEN 3rd pixel
 	rol		edx,16
 
-	mov		[ebp+4], edx		; Move 2nd 32-bit data to VRAM
+	add		ebp,12
 
-	mov		dl, [edi+ecx*4+2]	; RED 3rd pixel
+	mov		[ebp-8], edx		; Move 2nd 32-bit data to VRAM
 
-	mov		cl, bh
+	mov		dl, [edi+ebx*4+2]	; RED 3rd pixel
 
 	mov		dh, [edi+ecx*4]		; BLUE 4rd pixel
 	shl		edx,16
@@ -150,13 +155,10 @@ loop24linear:
 	mov		dx, [edi+ecx*4+1]	; GREEN+RED 4rd pixel
 	rol		edx,16
 	
-	mov		[ebp+8], edx		; Move 3rd 32-bit data to VRAM
-
-	add		ebp,12
-	add		eax,4
-
 patchEndBackbuffer24bpp:
 	cmp		eax,0x12345678
+
+	mov		[ebp-4], edx		; Move 3rd 32-bit data to VRAM
 
 	jl		loop24linear
 
