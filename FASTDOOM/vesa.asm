@@ -168,6 +168,15 @@ patchEndBackbuffer24bpp:
 	pop		ebx
 	ret
 
+CODE_SYM_DEF I_PatchFinishUpdate32bppLinear
+	push 	ebx
+	mov   	ebx,_backbuffer
+	add		ebx,SCREENWIDTH*SCREENHEIGHT
+	mov   	eax,patchEndBackbuffer32bpp+1
+	mov   	[eax],ebx
+	pop 	ebx
+	ret
+
 CODE_SYM_DEF I_FinishUpdate32bppLinear
 	push	ebx
 	push	ecx
@@ -178,13 +187,13 @@ CODE_SYM_DEF I_FinishUpdate32bppLinear
 
 	mov		esi,[_ptrprocessedpalette]
 	mov		edi,[_pcscreen]
-	xor		eax,eax
+	mov		eax,_backbuffer
 	xor		ecx,ecx
 	xor		ebx,ebx
 	xor		edx,edx
 
 loop32linear:
-	mov		ebx,_backbuffer[eax]
+	mov		ebx, [eax]
 	
 	mov		cl,bl
 	mov		dl,bh
@@ -205,7 +214,8 @@ loop32linear:
 	mov		ebp,[esi+ebx*4]
 	mov		ebx,[esi+ecx*4]
 
-	cmp		eax,SCREENWIDTH*SCREENHEIGHT
+patchEndBackbuffer32bpp
+	cmp		eax,0x12345678
 
 	mov		[edi-8],ebp
 	mov		[edi-4],ebx
