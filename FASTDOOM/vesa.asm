@@ -147,13 +147,11 @@ loop24linear:
 
 	mov		[ebp-8], edx		; Move 2nd 32-bit data to VRAM
 
+	mov		edx, [edi+ecx*4]	; BLUE+GREEN+RED 4rd pixel
+
+	shl		edx,8
+
 	mov		dl, [edi+ebx*4+2]	; RED 3rd pixel
-
-	mov		dh, [edi+ecx*4]		; BLUE 4rd pixel
-	shl		edx,16
-
-	mov		dx, [edi+ecx*4+1]	; GREEN+RED 4rd pixel
-	rol		edx,16
 	
 patchEndBackbuffer24bpp:
 	cmp		eax,0x12345678
