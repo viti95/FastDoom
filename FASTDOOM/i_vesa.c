@@ -511,12 +511,14 @@ void VBE2_InitGraphics(void)
         processpalette = I_ProcessPalette15bpp;
         setpalette = I_SetPalette15bpp;
         processedpalette = Z_MallocUnowned(14 * 256 * 2, PU_STATIC);
+        I_PatchFinishUpdate15bpp16bppLinear();
         break;
       case 16:
         finishfunc = I_FinishUpdate15bpp16bppLinear;
         processpalette = I_ProcessPalette16bpp;
         setpalette = I_SetPalette16bpp;
         processedpalette = Z_MallocUnowned(14 * 256 * 2, PU_STATIC);
+        I_PatchFinishUpdate15bpp16bppLinear();
         break;
       case 24:
         finishfunc = I_FinishUpdate24bppLinear;

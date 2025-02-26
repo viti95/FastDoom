@@ -295,6 +295,7 @@ void I_SetPalette24bpp(int numpalette);
 void I_ProcessPalette32bpp(byte *palette);
 void I_SetPalette32bpp(int numpalette);
 
+void I_PatchFinishUpdate15bpp16bppLinear(void);
 void I_PatchFinishUpdate24bppLinear(void);
 void I_PatchFinishUpdate32bppLinear(void);
 

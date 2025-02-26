@@ -32,6 +32,15 @@ extern _pcscreen
 
 BEGIN_CODE_SECTION
 
+CODE_SYM_DEF I_PatchFinishUpdate15bpp16bppLinear
+	push 	ebx
+	mov   	ebx,_backbuffer
+	add		ebx,SCREENWIDTH*SCREENHEIGHT
+	mov   	eax,patchEndBackbuffer15bpp16bpp+2
+	mov   	[eax],ebx
+	pop 	ebx
+	ret
+
 CODE_SYM_DEF I_FinishUpdate15bpp16bppLinear
 	push	ebx
 	push	ecx
@@ -42,13 +51,13 @@ CODE_SYM_DEF I_FinishUpdate15bpp16bppLinear
 
 	mov		esi,[_ptrprocessedpalette]
 	mov		edi,[_pcscreen]
-	xor		ebp,ebp
+	mov		ebp,_backbuffer
 	xor		ecx,ecx
 	xor		eax,eax
 	xor		ebx,ebx
 
 loop1516linear:
-	mov		eax,_backbuffer[ebp]
+	mov		eax, [ebp]
 	
 	mov		bl,ah
 	mov		cl,al
@@ -74,7 +83,8 @@ loop1516linear:
 
 	mov		dx,[esi+ecx*2]
 
-	cmp		ebp,SCREENWIDTH*SCREENHEIGHT
+patchEndBackbuffer15bpp16bpp:
+	cmp		ebp,0x12345678
 
 	mov		[edi-4],edx
 
