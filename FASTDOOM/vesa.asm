@@ -147,7 +147,7 @@ loop24linear:
 
 	mov		[ebp-8], edx		; Move 2nd 32-bit data to VRAM
 
-	mov		edx, [edi+ecx*4]	; BLUE+GREEN+RED 4rd pixel
+	mov		edx, [edi+ecx*4]	; BLUE+GREEN+RED 4th pixel
 
 	shl		edx,8
 
