@@ -850,20 +850,6 @@ void I_FinishUpdate15bpp16bppBanked(void)
 #endif
 }
 
-/*void I_FinishUpdate15bpp16bppLinear(void)
-{
-  int i;
-
-  unsigned short *ptrPalette = (unsigned short *) ptrprocessedpalette;
-  unsigned short *ptrVRAM = (unsigned short *) pcscreen;
-
-  for (i = 0; i < SCREENWIDTH * SCREENHEIGHT; i++)
-  {
-    unsigned char ptrLUT = backbuffer[i];
-    ptrVRAM[i] = ptrPalette[ptrLUT];
-  }
-}*/
-
 void I_FinishUpdate24bppBanked(void)
 {
   int i;
@@ -913,21 +899,6 @@ void I_FinishUpdate24bppBanked(void)
   }
 }
 
-/*void I_FinishUpdate24bppLinear(void)
-{
-  int i;
-  int vramposition = 0;
-
-  for (i = 0; i < SCREENWIDTH * SCREENHEIGHT; i++, vramposition += 3)
-  {
-    unsigned short ptrLUT = backbuffer[i] * 3;
-
-    pcscreen[vramposition] = ptrprocessedpalette[ptrLUT];
-    pcscreen[vramposition + 1] = ptrprocessedpalette[ptrLUT + 1];
-    pcscreen[vramposition + 2] = ptrprocessedpalette[ptrLUT + 2];
-  }
-}*/
-
 void I_FinishUpdate32bppBanked(void)
 {
   int i, j;
@@ -960,20 +931,6 @@ void I_FinishUpdate32bppBanked(void)
 
 #endif
 }
-
-/*void I_FinishUpdate32bppLinear(void)
-{
-  int i;
-
-  unsigned int *ptrPalette = (unsigned int *) ptrprocessedpalette;
-  unsigned int *ptrVRAM = (unsigned int *) pcscreen;
-
-  for (i = 0; i < SCREENWIDTH * SCREENHEIGHT; i++)
-  {
-    unsigned char ptrLUT = backbuffer[i];
-    ptrVRAM[i] = ptrPalette[ptrLUT];
-  }
-}*/
 
 #endif
 
