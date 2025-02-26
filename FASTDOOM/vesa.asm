@@ -181,17 +181,35 @@ CODE_SYM_DEF I_FinishUpdate32bppLinear
 	xor		eax,eax
 	xor		ecx,ecx
 	xor		ebx,ebx
+	xor		edx,edx
 
 loop32linear:
-	mov		cl,_backbuffer[eax]
-	mov		bl,_backbuffer[eax+1]
-	add		eax,2
+	mov		ebx,_backbuffer[eax]
+	
+	mov		cl,bl
+	mov		dl,bh
+	
+	add		eax,4
+
 	mov		ebp,[esi+ecx*4]
-	mov		edx,[esi+ebx*4]
-	add		edi,8
-	cmp		eax,SCREENWIDTH*SCREENHEIGHT
+	shr		ebx,16
 	mov		[edi],ebp
-	mov		[edi+4],edx
+
+	mov		ebp,[esi+edx*4]
+	mov		cl,bh
+
+	and		ebx,0xFF
+	mov		[edi+4],ebp
+	add		edi,16
+
+	mov		ebp,[esi+ebx*4]
+	mov		ebx,[esi+ecx*4]
+
+	cmp		eax,SCREENWIDTH*SCREENHEIGHT
+
+	mov		[edi-8],ebp
+	mov		[edi-4],ebx
+	
 	jl		loop32linear
 
 	pop		ebp
