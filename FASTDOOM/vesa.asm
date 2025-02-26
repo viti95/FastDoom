@@ -105,19 +105,42 @@ CODE_SYM_DEF I_FinishUpdate24bppLinear
 
 loop24linear:
 
-	mov		bl, _backbuffer[eax]
+	mov		ebx, _backbuffer[eax]
 	
-	inc		eax
+	mov		cl, bl
+	mov		dx, [edi+ecx*4]
+	shl		edx, 16
+	mov		dh, [edi+ecx*4+2]
+
+	mov		cl, bh
+	mov		dl, [edi+ecx*4]
 	
-	add		ebp,3
+	mov		[ebp], edx
 
-	mov		cl, [edi+ebx*4]
-	mov		dx,	[edi+ebx*4+1]
+	mov		dx, [edi+ecx*4+1]
 
+	shr		ebx,16
+	shl		edx,16
+
+	mov		cl, bl
+	mov		dx, [edi+ecx*4]
+
+	mov		[ebp+4], edx
+
+	mov		dh, [edi+ecx*4+2]
+
+	mov		cl, bh
+	mov		dl, [edi+ecx*4]
+
+	shl		edx,16
+
+	mov		dx, [edi+ecx*+1]
+
+	mov		[ebp+8], edx
+
+	add		ebp,12
+	add		eax,4
 	cmp		eax,SCREENWIDTH*SCREENHEIGHT
-
-	mov		[ebp-3],cl
-	mov		[ebp-2],dx
 
 	jl		loop24linear
 
