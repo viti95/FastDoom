@@ -88,6 +88,15 @@ loop1516linear:
 	pop		ebx
 	ret
 
+CODE_SYM_DEF I_PatchFinishUpdate24bppLinear
+	push 	ebx
+	mov   	ebx,_backbuffer
+	add		ebx,SCREENWIDTH*SCREENHEIGHT
+	mov   	eax,patchEndBackbuffer24bpp+1
+	mov   	[eax],ebx
+	pop 	ebx
+	ret
+
 CODE_SYM_DEF I_FinishUpdate24bppLinear
 	push		ebx
 	push		ecx
@@ -98,19 +107,17 @@ CODE_SYM_DEF I_FinishUpdate24bppLinear
 
 	mov		edi,[_ptrprocessedpalette]
 	mov		ebp,[_pcscreen]
-	xor		eax,eax ; position of screen
+	mov		eax,_backbuffer
 	xor		ebx,ebx
 	xor		ecx,ecx
 	xor		edx,edx
 
 loop24linear:
 
-	mov		ebx, _backbuffer[eax]
+	mov		ebx, [eax]
 	
 	mov		cl, bl
-
-	add		eax,4
-
+	
 	mov		dx, [edi+ecx*4]	 	; BLUE+GREEN 1st pixel
 	shl		edx,16
 	mov		dl, [edi+ecx*4+2] 	; RED 1st pixel
@@ -119,27 +126,23 @@ loop24linear:
 
 	mov		dh, [edi+ecx*4]		; BLUE 2nd pixel
 	rol		edx,16
-
-	add		ebp,12
 	
 	mov		[ebp], edx			; Move 1st 32-bit data to VRAM
 
-	shr		ebx,16
-
 	mov		dx, [edi+ecx*4+1]	; GREEN+RED 2nd pixel
-	
-	mov		cl,bh
-
-	and		ebx,0x000000FF
-
 	shl		edx,16
+	
+	shr		ebx,16
+	mov		cl,bl
 
-	mov		dx, [edi+ebx*4]		; BLUE+GREEN 3rd pixel
+	mov		dx, [edi+ecx*4]		; BLUE+GREEN 3rd pixel
 	rol		edx,16
 
-	mov		[ebp-8], edx		; Move 2nd 32-bit data to VRAM
+	mov		[ebp+4], edx		; Move 2nd 32-bit data to VRAM
 
-	mov		dl, [edi+ebx*4+2]	; RED 3rd pixel
+	mov		dl, [edi+ecx*4+2]	; RED 3rd pixel
+
+	mov		cl, bh
 
 	mov		dh, [edi+ecx*4]		; BLUE 4rd pixel
 	shl		edx,16
@@ -147,9 +150,13 @@ loop24linear:
 	mov		dx, [edi+ecx*4+1]	; GREEN+RED 4rd pixel
 	rol		edx,16
 	
-	cmp		eax,SCREENWIDTH*SCREENHEIGHT
+	mov		[ebp+8], edx		; Move 3rd 32-bit data to VRAM
 
-	mov		[ebp-4], edx		; Move 3rd 32-bit data to VRAM
+	add		ebp,12
+	add		eax,4
+
+patchEndBackbuffer24bpp:
+	cmp		eax,0x12345678
 
 	jl		loop24linear
 
