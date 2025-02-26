@@ -70,7 +70,7 @@
  
  CPU: Any x86 processor that supports 32 bit i386 instruction set
  Video cards: MDA, Hercules, CGA, EGA, VGA, Plantronics ColorPlus
-              Sigma Color 400, Hercules InColor
+              Sigma Color 400, Hercules InColor, SVGA (VBE)
  Sound cards: Sound Blaster, PC Speaker, Disney Sound Source,
               Gravis Ultrasound, Pro Audio Spectrum, COVOX LPT DAC,
               Creative Music System, Tandy 3-voice, OPL2LPT,
@@ -225,7 +225,20 @@
  -freeram 128 => Leaves 128 KB free
  -uncapped => Enable uncapped FPS mode (>35 fps)
  -capped => Disable uncapped FPS mode (max 35 fps)
- 
+ -8bpp => (Only VBE2 modes) force the use of video modes with
+          8 bits per pixel
+ -15bpp => (Only VBE2 modes) force the use of video modes with
+           15 bits per pixel
+ -16bpp => (Only VBE2 modes) force the use of video modes with
+           16 bits per pixel
+ -24bpp => (Only VBE2 modes) force the use of video modes with
+           24 bits per pixel
+ -32bpp => (Only VBE2 modes) force the use of video modes with
+           32 bits per pixel
+ -noLFB => (Only VBE2 modes) disables Linear FrameBuffer video
+           modes. Slower, use only if there are compatibility
+           issues
+
  Limitations / Known bugs
  ------------------------
  * Gravis UltraSound cards require IRQ to be 7 or less, otherwise those
@@ -243,6 +256,8 @@
  * Some newer VGA cards may display a distorted image in 80x50 text 
    mode. This is caused by a different video page size on newer cards
    compared to older ones. Use the '-pagefix' option to fix this.
+ * VBE2 Direct modes (fdm***d.exe and fdoomvbd.exe) do not support 15-bit,
+   16-bit, 24-bit, or 32-bit video modes.
 
  PCM music format
  ----------------
