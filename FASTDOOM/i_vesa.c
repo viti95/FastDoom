@@ -508,7 +508,12 @@ void VBE2_InitGraphics(void)
       switch (vesabitsperpixel)
       {
       case 8:
-        finishfunc = I_FinishUpdate8bppLinear;
+        if (vesascanlinefix) {
+          finishfunc = I_FinishUpdate8bppLinearFix;
+        } else {
+          finishfunc = I_FinishUpdate8bppLinear;
+        }
+
         processpalette = I_ProcessPalette8bpp;
         setpalette = I_SetPalette8bpp;
         processedpalette = Z_MallocUnowned(14 * 768, PU_STATIC);
@@ -810,6 +815,23 @@ void I_FinishUpdate8bppBanked(void)
 #endif
 }
 
+void I_FinishUpdate8bppLinearFix(void)
+{
+  int i,j;
+
+  unsigned char *ptrVRAM = (unsigned char *) pcscreen;
+
+  for (i = 0; i < SCREENHEIGHT; i++)
+  {
+    for (j = 0; j < SCREENWIDTH; j++, ptrVRAM++)
+    {
+      *(ptrVRAM) = backbuffer[i*SCREENWIDTH + j];
+    }
+
+    ptrVRAM+=vesascanlinefix;
+  }
+}
+
 void I_FinishUpdate8bppLinear(void)
 {
   if (updatestate & I_FULLSCRN)
@@ -893,7 +915,7 @@ void I_FinishUpdate15bpp16bppLinearFix(void)
   for (i = 0; i < SCREENHEIGHT; i++)
   {
     for (j = 0; j < SCREENWIDTH; j++, ptrVRAM++)
-  {
+    {
       unsigned char ptrLUT = backbuffer[i*SCREENWIDTH + j];
       *(ptrVRAM) = ptrPalette[ptrLUT];
     }
@@ -1014,7 +1036,7 @@ void I_FinishUpdate32bppLinearFix(void)
   for (i = 0; i < SCREENHEIGHT; i++)
   {
     for (j = 0; j < SCREENWIDTH; j++, ptrVRAM++)
-  {
+    {
       unsigned char ptrLUT = backbuffer[i*SCREENWIDTH+j];
       *(ptrVRAM) = ptrPalette[ptrLUT];
     }
