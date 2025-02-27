@@ -322,6 +322,7 @@ int vesalinear = -1;
 int vesamode = -1;
 unsigned long vesamemory = -1;
 char *vesavideoptr;
+int vesalinearfix = 0;
 
 int VBE2_FindVideoMode(unsigned short screenwidth, unsigned short screenheight, char bitsperpixel, int isLinear)
 {
@@ -351,6 +352,12 @@ int VBE2_FindVideoMode(unsigned short screenwidth, unsigned short screenheight, 
         vesavideomode = localvesavideomode;
         vesalinear = isVesaLinear;
         vesabitsperpixel = bitsperpixel;
+
+        if (vbemode.BytesPerScanline != SCREENWIDTH*bitsperpixel)
+        {
+          vesalinearfix = vbemode.BytesPerScanline - SCREENWIDTH*(bitsperpixel/8);
+        }
+
         return 1;
       }
     }
@@ -507,32 +514,55 @@ void VBE2_InitGraphics(void)
         processedpalette = Z_MallocUnowned(14 * 768, PU_STATIC);
         break;
       case 15:
-        finishfunc = I_FinishUpdate15bpp16bppLinear;
+        if (vesalinearfix) {
+          finishfunc = I_FinishUpdate15bpp16bppLinearFix;
+        } else {
+          finishfunc = I_FinishUpdate15bpp16bppLinear;
+          I_PatchFinishUpdate15bpp16bppLinear();
+        }
+        
         processpalette = I_ProcessPalette15bpp;
         setpalette = I_SetPalette15bpp;
         processedpalette = Z_MallocUnowned(14 * 256 * 2, PU_STATIC);
-        I_PatchFinishUpdate15bpp16bppLinear();
         break;
       case 16:
-        finishfunc = I_FinishUpdate15bpp16bppLinear;
+        if (vesalinearfix) {
+          finishfunc = I_FinishUpdate15bpp16bppLinearFix;
+        } else {
+          finishfunc = I_FinishUpdate15bpp16bppLinear;
+          I_PatchFinishUpdate15bpp16bppLinear();
+        }
+        
         processpalette = I_ProcessPalette16bpp;
         setpalette = I_SetPalette16bpp;
         processedpalette = Z_MallocUnowned(14 * 256 * 2, PU_STATIC);
-        I_PatchFinishUpdate15bpp16bppLinear();
+        
         break;
       case 24:
-        finishfunc = I_FinishUpdate24bppLinear;
+        if (vesalinearfix) {
+          finishfunc = I_FinishUpdate24bppLinearFix;
+        } else {
+          finishfunc = I_FinishUpdate24bppLinear;
+          I_PatchFinishUpdate24bppLinear();
+        }
+        
         processpalette = I_ProcessPalette32bpp;
         setpalette = I_SetPalette32bpp;
         processedpalette = Z_MallocUnowned(14 * 256 * 4, PU_STATIC);
-        I_PatchFinishUpdate24bppLinear();
+
         break;
       case 32:
-        finishfunc = I_FinishUpdate32bppLinear;
+        if (vesalinearfix) {
+          finishfunc = I_FinishUpdate32bppLinearFix;
+        } else {
+          finishfunc = I_FinishUpdate32bppLinear;
+          I_PatchFinishUpdate32bppLinear();
+        }
+        
         processpalette = I_ProcessPalette32bpp;
         setpalette = I_SetPalette32bpp;
         processedpalette = Z_MallocUnowned(14 * 256 * 4, PU_STATIC);
-        I_PatchFinishUpdate32bppLinear();
+        
         break;
       }
     }
@@ -853,6 +883,20 @@ void I_FinishUpdate15bpp16bppBanked(void)
 #endif
 }
 
+void I_FinishUpdate15bpp16bppLinearFix(void)
+{
+  int i;
+
+  unsigned short *ptrPalette = (unsigned short *) ptrprocessedpalette;
+  unsigned short *ptrVRAM = (unsigned short *) pcscreen;
+
+  for (i = 0; i < SCREENWIDTH * SCREENHEIGHT; i++)
+  {
+    unsigned char ptrLUT = backbuffer[i];
+    ptrVRAM[i] = ptrPalette[ptrLUT];
+  }
+}
+
 void I_FinishUpdate24bppBanked(void)
 {
   int i;
@@ -902,6 +946,21 @@ void I_FinishUpdate24bppBanked(void)
   }
 }
 
+void I_FinishUpdate24bppLinearFix(void)
+{
+  int i;
+  int vramposition = 0;
+
+  for (i = 0; i < SCREENWIDTH * SCREENHEIGHT; i++, vramposition += 3)
+  {
+    unsigned short ptrLUT = backbuffer[i] * 4;
+
+    pcscreen[vramposition] = ptrprocessedpalette[ptrLUT];
+    pcscreen[vramposition + 1] = ptrprocessedpalette[ptrLUT + 1];
+    pcscreen[vramposition + 2] = ptrprocessedpalette[ptrLUT + 2];
+  }
+}
+
 void I_FinishUpdate32bppBanked(void)
 {
   int i, j;
@@ -933,6 +992,20 @@ void I_FinishUpdate32bppBanked(void)
   }
 
 #endif
+}
+
+void I_FinishUpdate32bppLinearFix(void)
+{
+  int i;
+
+  unsigned int *ptrPalette = (unsigned int *) ptrprocessedpalette;
+  unsigned int *ptrVRAM = (unsigned int *) pcscreen;
+
+  for (i = 0; i < SCREENWIDTH * SCREENHEIGHT; i++)
+  {
+    unsigned char ptrLUT = backbuffer[i];
+    ptrVRAM[i] = ptrPalette[ptrLUT];
+  }
 }
 
 #endif
