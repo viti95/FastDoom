@@ -821,11 +821,11 @@ void I_FinishUpdate8bppLinearFix(void)
 
   unsigned char *ptrVRAM = (unsigned char *) pcscreen;
 
-  for (i = 0; i < SCREENHEIGHT; i++)
+  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
   {
     for (j = 0; j < SCREENWIDTH; j++, ptrVRAM++)
     {
-      *(ptrVRAM) = backbuffer[i*SCREENWIDTH + j];
+      *(ptrVRAM) = backbuffer[i + j];
     }
 
     ptrVRAM+=vesascanlinefix;
