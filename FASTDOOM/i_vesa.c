@@ -322,7 +322,7 @@ int vesalinear = -1;
 int vesamode = -1;
 unsigned long vesamemory = -1;
 char *vesavideoptr;
-int vesalinearfix = 0;
+int vesascanlinefix = 0;
 
 int VBE2_FindVideoMode(unsigned short screenwidth, unsigned short screenheight, char bitsperpixel, int isLinear)
 {
@@ -355,7 +355,7 @@ int VBE2_FindVideoMode(unsigned short screenwidth, unsigned short screenheight, 
 
         if (vbemode.BytesPerScanline != SCREENWIDTH*bitsperpixel)
         {
-          vesalinearfix = vbemode.BytesPerScanline - SCREENWIDTH*(bitsperpixel/8);
+          vesascanlinefix = vbemode.BytesPerScanline - SCREENWIDTH*(bitsperpixel/8);
         }
 
         return 1;
@@ -514,7 +514,7 @@ void VBE2_InitGraphics(void)
         processedpalette = Z_MallocUnowned(14 * 768, PU_STATIC);
         break;
       case 15:
-        if (vesalinearfix) {
+        if (vesascanlinefix) {
           finishfunc = I_FinishUpdate15bpp16bppLinearFix;
         } else {
           finishfunc = I_FinishUpdate15bpp16bppLinear;
@@ -526,7 +526,7 @@ void VBE2_InitGraphics(void)
         processedpalette = Z_MallocUnowned(14 * 256 * 2, PU_STATIC);
         break;
       case 16:
-        if (vesalinearfix) {
+        if (vesascanlinefix) {
           finishfunc = I_FinishUpdate15bpp16bppLinearFix;
         } else {
           finishfunc = I_FinishUpdate15bpp16bppLinear;
@@ -539,7 +539,7 @@ void VBE2_InitGraphics(void)
         
         break;
       case 24:
-        if (vesalinearfix) {
+        if (vesascanlinefix) {
           finishfunc = I_FinishUpdate24bppLinearFix;
         } else {
           finishfunc = I_FinishUpdate24bppLinear;
@@ -552,7 +552,7 @@ void VBE2_InitGraphics(void)
 
         break;
       case 32:
-        if (vesalinearfix) {
+        if (vesascanlinefix) {
           finishfunc = I_FinishUpdate32bppLinearFix;
         } else {
           finishfunc = I_FinishUpdate32bppLinear;
@@ -948,16 +948,21 @@ void I_FinishUpdate24bppBanked(void)
 
 void I_FinishUpdate24bppLinearFix(void)
 {
-  int i;
+  int i,j;
   int vramposition = 0;
 
-  for (i = 0; i < SCREENWIDTH * SCREENHEIGHT; i++, vramposition += 3)
+  for (i = 0; i < SCREENHEIGHT; i++)
   {
-    unsigned short ptrLUT = backbuffer[i] * 4;
+    for (j = 0; j < SCREENWIDTH; j++, vramposition+=3)
+    {
+      unsigned short ptrLUT = backbuffer[i*SCREENWIDTH+j] * 4;
 
-    pcscreen[vramposition] = ptrprocessedpalette[ptrLUT];
-    pcscreen[vramposition + 1] = ptrprocessedpalette[ptrLUT + 1];
-    pcscreen[vramposition + 2] = ptrprocessedpalette[ptrLUT + 2];
+      pcscreen[vramposition] = ptrprocessedpalette[ptrLUT];
+      pcscreen[vramposition + 1] = ptrprocessedpalette[ptrLUT + 1];
+      pcscreen[vramposition + 2] = ptrprocessedpalette[ptrLUT + 2];
+    }
+
+    vramposition += vesascanlinefix;
   }
 }
 
