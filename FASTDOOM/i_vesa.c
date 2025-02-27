@@ -513,35 +513,35 @@ void VBE2_InitGraphics(void)
       switch (vesabitsperpixel)
       {
       case 8:
-        //if (vesascanlinefix) {
+        if (vesascanlinefix) {
           finishfunc = I_FinishUpdate8bppLinearFix;
-        //} else {
-        //  finishfunc = I_FinishUpdate8bppLinear;
-        //}
+        } else {
+          finishfunc = I_FinishUpdate8bppLinear;
+        }
 
         processpalette = I_ProcessPalette8bpp;
         setpalette = I_SetPalette8bpp;
         processedpalette = Z_MallocUnowned(14 * 768, PU_STATIC);
         break;
       case 15:
-        //if (vesascanlinefix) {
+        if (vesascanlinefix) {
           finishfunc = I_FinishUpdate15bpp16bppLinearFix;
-        //} else {
-        //  finishfunc = I_FinishUpdate15bpp16bppLinear;
-        //  I_PatchFinishUpdate15bpp16bppLinear();
-        //}
+        } else {
+          finishfunc = I_FinishUpdate15bpp16bppLinear;
+          I_PatchFinishUpdate15bpp16bppLinear();
+        }
         
         processpalette = I_ProcessPalette15bpp;
         setpalette = I_SetPalette15bpp;
         processedpalette = Z_MallocUnowned(14 * 256 * 2, PU_STATIC);
         break;
       case 16:
-        //if (vesascanlinefix) {
+        if (vesascanlinefix) {
           finishfunc = I_FinishUpdate15bpp16bppLinearFix;
-        //} else {
-        //  finishfunc = I_FinishUpdate15bpp16bppLinear;
-        //  I_PatchFinishUpdate15bpp16bppLinear();
-        //}
+        } else {
+          finishfunc = I_FinishUpdate15bpp16bppLinear;
+          I_PatchFinishUpdate15bpp16bppLinear();
+        }
         
         processpalette = I_ProcessPalette16bpp;
         setpalette = I_SetPalette16bpp;
@@ -549,12 +549,12 @@ void VBE2_InitGraphics(void)
         
         break;
       case 24:
-        //if (vesascanlinefix) {
+        if (vesascanlinefix) {
           finishfunc = I_FinishUpdate24bppLinearFix;
-        //} else {
-        //  finishfunc = I_FinishUpdate24bppLinear;
-        //  I_PatchFinishUpdate24bppLinear();
-        //}
+        } else {
+          finishfunc = I_FinishUpdate24bppLinear;
+          I_PatchFinishUpdate24bppLinear();
+        }
         
         processpalette = I_ProcessPalette32bpp;
         setpalette = I_SetPalette32bpp;
@@ -562,12 +562,12 @@ void VBE2_InitGraphics(void)
 
         break;
       case 32:
-        //if (vesascanlinefix) {
+        if (vesascanlinefix) {
           finishfunc = I_FinishUpdate32bppLinearFix;
-        //} else {
-        //  finishfunc = I_FinishUpdate32bppLinear;
-        //  I_PatchFinishUpdate32bppLinear();
-        //}
+        } else {
+          finishfunc = I_FinishUpdate32bppLinear;
+          I_PatchFinishUpdate32bppLinear();
+        }
         
         processpalette = I_ProcessPalette32bpp;
         setpalette = I_SetPalette32bpp;
