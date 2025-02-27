@@ -1006,15 +1006,20 @@ void I_FinishUpdate32bppBanked(void)
 
 void I_FinishUpdate32bppLinearFix(void)
 {
-  int i;
+  int i,j;
 
   unsigned int *ptrPalette = (unsigned int *) ptrprocessedpalette;
   unsigned int *ptrVRAM = (unsigned int *) pcscreen;
 
-  for (i = 0; i < SCREENWIDTH * SCREENHEIGHT; i++)
+  for (i = 0; i < SCREENHEIGHT; i++)
   {
-    unsigned char ptrLUT = backbuffer[i];
-    ptrVRAM[i] = ptrPalette[ptrLUT];
+    for (j = 0; j < SCREENWIDTH; j++, ptrVRAM++)
+  {
+      unsigned char ptrLUT = backbuffer[i*SCREENWIDTH+j];
+      *(ptrVRAM) = ptrPalette[ptrLUT];
+    }
+
+    ptrVRAM += (vesascanlinefix/4);
   }
 }
 
