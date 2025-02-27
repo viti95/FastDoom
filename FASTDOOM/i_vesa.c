@@ -885,15 +885,20 @@ void I_FinishUpdate15bpp16bppBanked(void)
 
 void I_FinishUpdate15bpp16bppLinearFix(void)
 {
-  int i;
+  int i,j;
 
   unsigned short *ptrPalette = (unsigned short *) ptrprocessedpalette;
   unsigned short *ptrVRAM = (unsigned short *) pcscreen;
 
-  for (i = 0; i < SCREENWIDTH * SCREENHEIGHT; i++)
+  for (i = 0; i < SCREENHEIGHT; i++)
   {
-    unsigned char ptrLUT = backbuffer[i];
-    ptrVRAM[i] = ptrPalette[ptrLUT];
+    for (j = 0; j < SCREENWIDTH; j++, ptrVRAM++)
+  {
+      unsigned char ptrLUT = backbuffer[i*SCREENWIDTH + j];
+      *(ptrVRAM) = ptrPalette[ptrLUT];
+    }
+
+    ptrVRAM+=(vesascanlinefix) / 2;
   }
 }
 
