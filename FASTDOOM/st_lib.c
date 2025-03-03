@@ -37,10 +37,6 @@
 // in AM_map.c
 extern byte automapactive;
 
-void STlib_init(void)
-{
-}
-
 // ?
 void STlib_initNum(st_number_t *n,
                    int x,

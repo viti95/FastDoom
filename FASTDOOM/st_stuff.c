@@ -1428,7 +1428,6 @@ void ST_initData(void)
 	for (i = 0; i < 3; i++)
 		keyboxes[i] = -1;
 
-	STlib_init();
 }
 
 #if defined(MODE_Y_HALF)
