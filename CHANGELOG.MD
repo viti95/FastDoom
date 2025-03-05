@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 1.1.1 (?? ??? ????)
+* Fix VESA linear modes that are not 100% linear
+
 ## 1.1.0 (26 Feb 2025)
 * Add hicolor/truecolor support for VBE2 backbuffered modes (15-bit, 16-bit, 24-bit and 32-bit)
 * ASM optimized routines for linear VBE2 backbuffered modes (hicolor and truecolor)
