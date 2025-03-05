@@ -276,12 +276,16 @@ int VBE2_FindVideoMode(unsigned short screenwidth, unsigned short screenheight, 
 void I_FinishUpdate(void);
 void I_FinishUpdate8bppBanked(void);
 void I_FinishUpdate8bppLinear(void);
+void I_FinishUpdate8bppLinearFix(void);
 void I_FinishUpdate15bpp16bppBanked(void);
-extern void I_FinishUpdate15bpp16bppLinear(void);
+void I_FinishUpdate15bpp16bppLinear(void);
+void I_FinishUpdate15bpp16bppLinearFix(void);
 void I_FinishUpdate24bppBanked(void);
 void I_FinishUpdate24bppLinear(void);
+void I_FinishUpdate24bppLinearFix(void);
 void I_FinishUpdate32bppBanked(void);
 void I_FinishUpdate32bppLinear(void);
+void I_FinishUpdate32bppLinearFix(void);
 void I_ProcessPalette(byte *palette);
 void I_SetPalette(int numpalette);
 void I_ProcessPalette8bpp(byte *palette);
