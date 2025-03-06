@@ -35,5 +35,6 @@ void R_ClearClipSegs(void);
 void R_ClearDrawSegs(void);
 
 void R_RenderBSPNode(int bspnum);
+void R_UpdateBSPNode(int bspnum);
 
 #endif

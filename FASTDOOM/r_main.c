@@ -2960,3 +2960,20 @@ void R_RenderPlayerView(void)
     // Check for new console commands.
     NetUpdate();
 }
+
+void R_UpdateAutomap(void)
+{
+    R_SetupFrame();
+
+    // Clear buffers.
+    R_ClearClipSegs();
+    R_ClearDrawSegs();
+    clearPlanes();
+    R_ClearSprites();
+
+    NetUpdate();
+
+    R_UpdateBSPNode(firstnode);
+
+    NetUpdate();
+}

@@ -152,6 +152,7 @@ void R_ExecuteSetViewSize(void);
 
 // Called by G_Drawer.
 void R_RenderPlayerView(void);
+void R_UpdateAutomap(void);
 
 // Called by startup code.
 void R_Init(void);

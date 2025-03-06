@@ -2224,6 +2224,9 @@ void M_SizeDisplay(int choice)
         break;
     }
 
+    if (screenSize < 7)
+        transparentmap = 0;
+
     R_SetViewSize(screenblocks, detailLevel);
 }
 

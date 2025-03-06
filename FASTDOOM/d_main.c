@@ -311,7 +311,14 @@ void D_Display(void)
         {
             // [crispy] update automap while playing
             if (automapRT)
-                R_RenderPlayerView();
+#ifdef SUPPORTS_HERCULES_AUTOMAP
+                if (transparentmap || HERCmap)
+#else
+                if (transparentmap)
+#endif
+                    R_RenderPlayerView();
+                else
+                    R_UpdateAutomap();
                 
             AM_Drawer();
 #if defined(USE_BACKBUFFER)

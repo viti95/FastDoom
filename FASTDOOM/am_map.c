@@ -564,10 +564,8 @@ byte AM_Responder(void)
 			players.message = grid ? AMSTR_GRIDON : AMSTR_GRIDOFF;
 			break;
 		case AM_TRANSPARENTMAP:
-			if (automapRT) 
+			if (automapRT && (screenSize >= 7)) 
 			{
-				if (screenSize < 7)
-					break;
 				transparentmap = !transparentmap;
 				players.message = transparentmap ? AMSTR_TRANSON : AMSTR_TRANSOFF;
 			} else {
