@@ -58,6 +58,8 @@
 
 #include "version.h"
 
+#include "am_map.h"
+
 #if defined(MODE_13H)
 #include "i_vga13h.h"
 #endif
@@ -2145,6 +2147,9 @@ void M_ChangeShowFPS(int choice)
 void M_ChangeAutomapRT(int choice)
 {
     automapRT = !automapRT;
+
+    if (!automapRT)
+        transparentmap = 0;
 
     players.message = automapRT ? "AUTOMAP REALTIME UPDATE ON" : "AUTOMAP REALTIME UPDATE OFF";
 }
