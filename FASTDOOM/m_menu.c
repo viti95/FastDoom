@@ -2148,8 +2148,10 @@ void M_ChangeAutomapRT(int choice)
 {
     automapRT = !automapRT;
 
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     if (!automapRT)
         transparentmap = 0;
+#endif
 
     players.message = automapRT ? "AUTOMAP REALTIME UPDATE ON" : "AUTOMAP REALTIME UPDATE OFF";
 }
@@ -2224,8 +2226,10 @@ void M_SizeDisplay(int choice)
         break;
     }
 
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     if (screenSize < 7)
         transparentmap = 0;
+#endif
 
     R_SetViewSize(screenblocks, detailLevel);
 }
