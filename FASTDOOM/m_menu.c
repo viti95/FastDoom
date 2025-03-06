@@ -207,6 +207,7 @@ void M_ChangeVsync(int choice);
 void M_ChangeSkyDetail(int choice);
 void M_ChangeInvisibleDetail(int choice);
 void M_ChangeShowFPS(int choice);
+void M_ChangeAutomapRT(int choice);
 void M_ChangeSpriteCulling(int choice);
 void M_ChangeMelting(int choice);
 void M_ChangeBusSpeed(int choice);
@@ -343,12 +344,13 @@ menu_t NewDef =
 #define sky 6
 #define invisible 7
 #define showfps 8
-#define spriteculling 9
-#define melting 10
-#define bus_speed 11
-#define cpu 12
-#define uncapped_fps 13
-#define display_end 14
+#define automaprt 9
+#define spriteculling 10
+#define melting 11
+#define bus_speed 12
+#define cpu 13
+#define uncapped_fps 14
+#define display_end 15
 
 #define endgame 0
 #define messages 1
@@ -393,6 +395,7 @@ menuitem_t DisplayMenu[] =
         {2, "", "", M_ChangeSkyDetail},
         {2, "", "", M_ChangeInvisibleDetail},
         {2, "", "", M_ChangeShowFPS},
+        {2, "", "", M_ChangeAutomapRT},
         {2, "", "", M_ChangeSpriteCulling},
         {2, "", "", M_ChangeMelting},
         {2, "", "", M_ChangeBusSpeed},
@@ -1436,6 +1439,10 @@ void M_DrawDisplayItem(int item, int position)
             break;
         }
         break;
+    case automaprt:
+        M_WriteText(58, y, "AUTOMAP UPDATE:");
+        M_WriteText(214, y, automapRT ? "ON" : "OFF");
+        break;
     case spriteculling:
         M_WriteText(58, y, "SPRITE CULLING:");
         M_WriteText(214, y, nearSprites ? "ON" : "OFF");
@@ -2133,6 +2140,13 @@ void M_ChangeShowFPS(int choice)
         players.message = "ON SCREEN + DEBUG CARD (4 DIGITS) FPS";
         break;
     }
+}
+
+void M_ChangeAutomapRT(int choice)
+{
+    automapRT = !automapRT;
+
+    players.message = automapRT ? "AUTOMAP REALTIME UPDATE ON" : "AUTOMAP REALTIME UPDATE OFF";
 }
 
 void M_ChangeSpriteCulling(int choice)

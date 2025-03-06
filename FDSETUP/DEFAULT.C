@@ -27,6 +27,7 @@ int screenblocks = 10;
 int usegamma = 0;
 
 int showFPS = 0;
+int automapRT = 0;
 int debugCardPort = 0x80;
 int debugCardReverse = 0;
 int busSpeed = 0;
@@ -70,6 +71,7 @@ default_t defaults[] =
 		{"detaillevel", &detailLevel, 0},
 
 		{"showfps", &showFPS, 0},
+		{"automapRT", &automapRT, 0},
 		{"debugCardPort", &debugCardPort, 0x80},
 		{"debugCardReverse", &debugCardReverse, 0},
 		{"busSpeed", &busSpeed, 0},

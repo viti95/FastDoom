@@ -307,6 +307,7 @@ default_t defaults[] =
         {"screenblocks", &screenblocks, 9},
         {"detaillevel", &detailLevel, 0},
         {"showfps", &showFPS, 0},
+        {"automapRT", &automapRT, 0},
         {"debugCardPort", &debugCardPort, 0x80},
         {"debugCardReverse", &debugCardReverse, 0},
         {"busSpeed", &busSpeed, 0},

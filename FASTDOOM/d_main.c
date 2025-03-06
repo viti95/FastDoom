@@ -106,6 +106,7 @@ int spriteRender;
 int pspriteRender;
 int selectedCPU;
 int showFPS;
+int automapRT;
 int debugCardPort;
 boolean debugCardReverse;
 boolean nearSprites;
@@ -309,7 +310,9 @@ void D_Display(void)
         if (automapactive)
         {
             // [crispy] update automap while playing
-            R_RenderPlayerView();
+            if (automapRT)
+                R_RenderPlayerView();
+                
             AM_Drawer();
 #if defined(USE_BACKBUFFER)
             updatestate |= I_FULLVIEW;

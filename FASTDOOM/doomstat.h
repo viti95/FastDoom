@@ -50,6 +50,7 @@ extern int spriteRender;
 extern int pspriteRender;
 extern int selectedCPU;
 extern int showFPS;
+extern int automapRT;
 extern int debugCardPort;
 extern boolean debugCardReverse;
 extern boolean nearSprites;
