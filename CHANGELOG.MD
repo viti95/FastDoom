@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 1.1.1 (?? ??? ????)
+## 1.1.1 (07 Mar 2025)
 * Fixed VESA linear modes that are not 100% linear (scanlines with empty voids at the end)
 * Added a new menu option to enable or disable realtime automap updates (issue #229)
 * Improved the speed of realtime automap updates (issue #229)
