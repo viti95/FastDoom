@@ -1,9 +1,9 @@
 # CHANGELOG
 
 ## 1.1.1 (?? ??? ????)
-* Fixed VESA linear modes that are not 100% linear (partial empty scanlines)
-* Added a new menu option to enable or disable realtime automap updates
-* Improved the speed of realtime automap updates
+* Fixed VESA linear modes that are not 100% linear (scanlines with empty voids at the end)
+* Added a new menu option to enable or disable realtime automap updates (issue #229)
+* Improved the speed of realtime automap updates (issue #229)
 
 ## 1.1.0 (26 Feb 2025)
 * Add hicolor/truecolor support for VBE2 backbuffered modes (15-bit, 16-bit, 24-bit and 32-bit)
