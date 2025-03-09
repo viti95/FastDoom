@@ -149,7 +149,7 @@ char endstring[160];
 typedef struct
 {
     // 0 = no cursor here, 1 = ok, 2 = arrows ok
-    short status;
+    char status;
 
     char name[10];
     char text[22];
@@ -162,7 +162,7 @@ typedef struct
 
 typedef struct menu_s
 {
-    short numitems;          // # of menu items
+    char numitems;          // # of menu items
     struct menu_s *prevMenu; // previous menu
     menuitem_t *menuitems;   // menu items
     void (*routine)();       // draw routine
