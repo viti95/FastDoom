@@ -16,9 +16,10 @@ cp README.txt PKG/
 cp synthgs.sbk PKG/
 cp MT32GM.MID PKG/
 cp BENCH.BAT PKG/
-cp -r INTER PKG/INTER
-cp -r BENCH PKG/BENCH
+cp -R INTER PKG/INTER
+cp -R BENCH PKG/BENCH
 cp -R LEVELS PKG/LEVELS
+cp -R TEXT PKG/TEXT
 cp EXE/* PKG
 
 versionstring=$(grep "#define FDOOMVERSION" FASTDOOM/version.h)
