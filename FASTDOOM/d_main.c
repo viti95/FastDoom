@@ -205,7 +205,6 @@ char sbkfile[13] = "SYNTHGS.SBK";
 char iwadfile[13];
 char savegamename[14];
 
-void D_CheckNetGame(void);
 void D_ProcessEvents(void);
 void G_BuildTiccmd(ticcmd_t *cmd);
 void D_DoAdvanceDemo(void);
@@ -1776,10 +1775,6 @@ void D_DoomMain(void)
     printf("I_Init: Setting up machine state.\n");
     D_RedrawTitle();
     I_Init();
-
-    printf("D_CheckNetGame: Checking network game status.\n");
-    D_RedrawTitle();
-    D_CheckNetGame();
 
     printf("S_Init: Setting up sound.\n");
     D_RedrawTitle();

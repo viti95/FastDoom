@@ -37,7 +37,7 @@
 
 ticcmd_t localcmds[BACKUPTICS];
 
-int maketic;
+int maketic = 0;
 
 void D_ProcessEvents(void);
 void G_BuildTiccmd(ticcmd_t *cmd);
@@ -90,16 +90,6 @@ void NetUpdate(void)
 		maketic++;
 	}
 }
-
-//
-// D_CheckNetGame
-// Works out player numbers among the net participants
-//
-void D_CheckNetGame(void)
-{
-	maketic = 0;
-}
-
 
 extern byte advancedemo;
 
