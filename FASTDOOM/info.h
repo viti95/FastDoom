@@ -1145,7 +1145,7 @@ typedef struct
 {
     byte sprite;
     unsigned short frame;
-    long tics;
+    short tics;
     actionf_t action;
     unsigned short nextstate;
 } state_t;
