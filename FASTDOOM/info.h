@@ -1299,7 +1299,7 @@ typedef struct
 {
     short doomednum;
     unsigned short spawnstate;
-    int spawnhealth;
+    unsigned short spawnhealth;
     unsigned short seestate;
     byte seesound;
     int reactiontime;
