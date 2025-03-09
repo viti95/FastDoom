@@ -1297,7 +1297,7 @@ typedef enum
 
 typedef struct
 {
-    int doomednum;
+    short doomednum;
     unsigned short spawnstate;
     int spawnhealth;
     unsigned short seestate;
