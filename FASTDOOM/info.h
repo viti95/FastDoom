@@ -1144,7 +1144,7 @@ typedef enum
 typedef struct
 {
     byte sprite;
-    long frame;
+    unsigned short frame;
     long tics;
     actionf_t action;
     unsigned short nextstate;
