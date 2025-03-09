@@ -61,17 +61,6 @@ byte F_CastResponder(void);
 void F_CastDrawer(void);
 void F_CastDrawerText(void);
 
-void F_LoadFinaleText(char *filename)
-{
-	int size;
-
-	size = I_GetFileSize(filename);
-
-	finaletext = (char *)Z_MallocUnowned(size + 1, PU_CACHE);
-	SetBytes(finaletext, '\0', size + 1);
-	I_ReadTextFile(finaletext, filename, size);
-}
-
 //
 // F_StartFinale
 //
@@ -94,27 +83,27 @@ void F_StartFinale(void)
 			{
 			case 6:
 				finaleflat = "SLIME16";
-				F_LoadFinaleText("INTER\\P1.TXT");
+				finaletext = I_LoadText("INTER\\P1.TXT");
 				break;
 			case 11:
 				finaleflat = "RROCK14";
-				F_LoadFinaleText("INTER\\P2.TXT");
+				finaletext = I_LoadText("INTER\\P2.TXT");
 				break;
 			case 20:
 				finaleflat = "RROCK07";
-				F_LoadFinaleText("INTER\\P3.TXT");
+				finaletext = I_LoadText("INTER\\P3.TXT");
 				break;
 			case 30:
 				finaleflat = "RROCK17";
-				F_LoadFinaleText("INTER\\P4.TXT");
+				finaletext = I_LoadText("INTER\\P4.TXT");
 				break;
 			case 15:
 				finaleflat = "RROCK13";
-				F_LoadFinaleText("INTER\\P5.TXT");
+				finaletext = I_LoadText("INTER\\P5.TXT");
 				break;
 			case 31:
 				finaleflat = "RROCK19";
-				F_LoadFinaleText("INTER\\P6.TXT");
+				finaletext = I_LoadText("INTER\\P6.TXT");
 				break;
 			}
 		}
@@ -124,27 +113,27 @@ void F_StartFinale(void)
 			{
 			case 6:
 				finaleflat = "SLIME16";
-				F_LoadFinaleText("INTER\\T1.TXT");
+				finaletext = I_LoadText("INTER\\T1.TXT");
 				break;
 			case 11:
 				finaleflat = "RROCK14";
-				F_LoadFinaleText("INTER\\T2.TXT");
+				finaletext = I_LoadText("INTER\\T2.TXT");
 				break;
 			case 20:
 				finaleflat = "RROCK07";
-				F_LoadFinaleText("INTER\\T3.TXT");
+				finaletext = I_LoadText("INTER\\T3.TXT");
 				break;
 			case 30:
 				finaleflat = "RROCK17";
-				F_LoadFinaleText("INTER\\T4.TXT");
+				finaletext = I_LoadText("INTER\\T4.TXT");
 				break;
 			case 15:
 				finaleflat = "RROCK13";
-				F_LoadFinaleText("INTER\\T5.TXT");
+				finaletext = I_LoadText("INTER\\T5.TXT");
 				break;
 			case 31:
 				finaleflat = "RROCK19";
-				F_LoadFinaleText("INTER\\T6.TXT");
+				finaletext = I_LoadText("INTER\\T6.TXT");
 				break;
 			}
 		}
@@ -155,27 +144,27 @@ void F_StartFinale(void)
 			{
 			case 6:
 				finaleflat = "SLIME16";
-				F_LoadFinaleText("INTER\\C1.TXT");
+				finaletext = I_LoadText("INTER\\C1.TXT");
 				break;
 			case 11:
 				finaleflat = "RROCK14";
-				F_LoadFinaleText("INTER\\C2.TXT");
+				finaletext = I_LoadText("INTER\\C2.TXT");
 				break;
 			case 20:
 				finaleflat = "RROCK07";
-				F_LoadFinaleText("INTER\\C3.TXT");
+				finaletext = I_LoadText("INTER\\C3.TXT");
 				break;
 			case 30:
 				finaleflat = "RROCK17";
-				F_LoadFinaleText("INTER\\C4.TXT");
+				finaletext = I_LoadText("INTER\\C4.TXT");
 				break;
 			case 15:
 				finaleflat = "RROCK13";
-				F_LoadFinaleText("INTER\\C5.TXT");
+				finaletext = I_LoadText("INTER\\C5.TXT");
 				break;
 			case 31:
 				finaleflat = "RROCK19";
-				F_LoadFinaleText("INTER\\C6.TXT");
+				finaletext = I_LoadText("INTER\\C6.TXT");
 				break;
 			default:
 				// Ouch.
@@ -191,19 +180,19 @@ void F_StartFinale(void)
 		{
 		case 1:
 			finaleflat = "FLOOR4_8";
-			F_LoadFinaleText("INTER\\E1.TXT");
+			finaletext = I_LoadText("INTER\\E1.TXT");
 			break;
 		case 2:
 			finaleflat = "SFLR6_1";
-			F_LoadFinaleText("INTER\\E2.TXT");
+			finaletext = I_LoadText("INTER\\E2.TXT");
 			break;
 		case 3:
 			finaleflat = "MFLR8_4";
-			F_LoadFinaleText("INTER\\E3.TXT");
+			finaletext = I_LoadText("INTER\\E3.TXT");
 			break;
 		case 4:
 			finaleflat = "MFLR8_3";
-			F_LoadFinaleText("INTER\\E4.TXT");
+			finaletext = I_LoadText("INTER\\E4.TXT");
 			break;
 		}
 		finalemusic = mus_victor;

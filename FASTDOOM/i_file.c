@@ -26,6 +26,7 @@
 #include "doomstat.h"
 #include "options.h"
 #include "i_debug.h"
+#include "z_zone.h"
 
 int I_GetFileSize(char *filename)
 {
@@ -57,6 +58,24 @@ int I_ReadTextFile(char *dest, char *filename, int size)
     dest[size] = '\0';
 
     return 0;
+}
+
+char *I_LoadText(char *filename)
+{
+	int size;
+    char *ptr;
+
+	size = I_GetFileSize(filename);
+
+    if (size == -1)
+        return NULL;
+
+	ptr = Z_MallocUnowned(size + 1, PU_CACHE);
+
+	SetBytes(ptr, '\0', size + 1);
+	I_ReadTextFile(ptr, filename, size);
+
+    return ptr;
 }
 
 int I_ReadTextLineFile(char *filename, int line_number, char *buffer, int max_length)
