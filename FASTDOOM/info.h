@@ -1302,10 +1302,10 @@ typedef struct
     unsigned short spawnhealth;
     unsigned short seestate;
     byte seesound;
-    int reactiontime;
+    byte reactiontime;
     byte attacksound;
     unsigned short painstate;
-    int painchance;
+    unsigned short painchance;
     byte painsound;
     unsigned short meleestate;
     unsigned short missilestate;
