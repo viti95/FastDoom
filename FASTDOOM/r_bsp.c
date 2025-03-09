@@ -183,7 +183,6 @@ void R_UpdateClipSolidWallSegment(int first,
             //  so insert a new clippost.
             // R_StoreWallRange(first, last);
             curline->linedef->flags |= ML_MAPPED;
-            ds_p++;
             next = newend;
             newend++;
 
@@ -200,7 +199,6 @@ void R_UpdateClipSolidWallSegment(int first,
         // There is a fragment above *start.
         // R_StoreWallRange(first, start->first - 1);
         curline->linedef->flags |= ML_MAPPED;
-        ds_p++;
         // Now adjust the clip size.
         start->first = first;
     }
@@ -215,7 +213,6 @@ void R_UpdateClipSolidWallSegment(int first,
         // There is a fragment between two posts.
         // R_StoreWallRange(next->last + 1, (next + 1)->first - 1);
         curline->linedef->flags |= ML_MAPPED;
-        ds_p++;
         next++;
 
         if (last <= next->last)
@@ -230,7 +227,6 @@ void R_UpdateClipSolidWallSegment(int first,
     // There is a fragment after *next.
     // R_StoreWallRange(next->last + 1, last);
     curline->linedef->flags |= ML_MAPPED;
-    ds_p++;
     // Adjust the clip size.
     start->last = last;
 
@@ -319,14 +315,12 @@ void R_UpdateClipPassWallSegment(int first,
             // Post is entirely visible (above start).
             // R_StoreWallRange(first, last);
             curline->linedef->flags |= ML_MAPPED;
-            ds_p++;
             return;
         }
 
         // There is a fragment above *start.
         // R_StoreWallRange(first, start->first - 1);
         curline->linedef->flags |= ML_MAPPED;
-        ds_p++;
     }
 
     // Bottom contained in start?
@@ -338,7 +332,6 @@ void R_UpdateClipPassWallSegment(int first,
         // There is a fragment between two posts.
         // R_StoreWallRange(start->last + 1, (start + 1)->first - 1);
         curline->linedef->flags |= ML_MAPPED;
-        ds_p++;
         start++;
 
         if (last <= start->last)
@@ -348,7 +341,6 @@ void R_UpdateClipPassWallSegment(int first,
     // There is a fragment after *next.
     // R_StoreWallRange(start->last + 1, last);
     curline->linedef->flags |= ML_MAPPED;
-    ds_p++;
 }
 
 //
@@ -485,7 +477,6 @@ void R_UpdateAddLine(seg_t *line)
         return;
 
     // Global angle needed by segcalc.
-    rw_angle1 = angle1;
     angle1 -= viewangle;
     angle2 -= viewangle;
 
