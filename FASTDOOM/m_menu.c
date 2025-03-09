@@ -60,6 +60,8 @@
 
 #include "am_map.h"
 
+#include "i_file.h"
+
 #if defined(MODE_13H)
 #include "i_vga13h.h"
 #endif
@@ -2388,6 +2390,7 @@ void M_WriteText(int x, int y, char *string)
 //
 // M_Responder
 //
+char *fdoomhelp;
 char gammamsg[25];
 
 byte M_Responder(void)
@@ -2484,7 +2487,8 @@ byte M_Responder(void)
             return 1;
 
         case KEY_F1: // FastDoom key
-            M_StartMessage(FASTDOOMHELP, NULL, 0);
+            fdoomhelp = I_LoadText("TEXT\\ABOUT.TXT");
+            M_StartMessage(fdoomhelp, NULL, 0);
             S_StartSound(NULL, sfx_oof);
             return 1;
 
