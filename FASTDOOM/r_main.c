@@ -2967,9 +2967,6 @@ void R_UpdateAutomap(void)
 
     // Clear buffers.
     R_ClearClipSegs();
-    R_ClearDrawSegs();
-    clearPlanes();
-    R_ClearSprites();
 
     NetUpdate();
 
