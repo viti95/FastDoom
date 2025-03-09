@@ -302,7 +302,7 @@ static void ReadMapFile(debugmodule_t **modules, int *num_modules, debugsymbol_t
     _symbols = malloc(sizeof(debugsymbol_t) * MAX_SYMBOLS);
     if (modules == NULL || symbols == NULL) {
         I_Printf("Failed to allocate memory for backtrace, symtable not "
-                 "available.\n");
+                 "available\n");
         goto fail;
     }
     // Read line by line
@@ -331,7 +331,7 @@ static void ReadMapFile(debugmodule_t **modules, int *num_modules, debugsymbol_t
             // Strip \n
             if (!module_name) {
                 I_Printf("Failed to allocate memory for backtrace, symtable "
-                         "not available.\n");
+                         "not available\n");
                 goto fail;
                 return;
             }
@@ -341,7 +341,7 @@ static void ReadMapFile(debugmodule_t **modules, int *num_modules, debugsymbol_t
             _num_modules++;
             if (_num_modules > MAX_MODULES) {
                 I_Printf("Too many modules, symtable incomplete, boost "
-                         "MAX_MODULES.\n");
+                         "MAX_MODULES\n");
                 goto cleanup;
             }
         } else if (strncmp(line, "0001:", 4) == 0 || strncmp(line, "0002:", 4) == 0) {
@@ -353,7 +353,7 @@ static void ReadMapFile(debugmodule_t **modules, int *num_modules, debugsymbol_t
             debugsymbol_t *current_symbol = &_symbols[_num_symbols];
             if (!name) {
                 I_Printf("Failed to allocate memory for backtrace, symtable "
-                         "not available.\n");
+                         "not available\n");
                 goto fail;
             }
             name[strlen(name) - 1] = '\0';
@@ -362,7 +362,7 @@ static void ReadMapFile(debugmodule_t **modules, int *num_modules, debugsymbol_t
             current_symbol->module = current_module;
             if (_num_symbols > MAX_SYMBOLS) {
                 I_Printf("Too many symbols, symtable incomplete, boost "
-                         "MAX_SYMBOLS.\n");
+                         "MAX_SYMBOLS\n");
                 goto cleanup;
             }
             _num_symbols++;
