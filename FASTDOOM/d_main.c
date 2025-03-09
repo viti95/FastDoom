@@ -1630,10 +1630,10 @@ void D_DoomMain(void)
     printf("\nFastDoom version " FDOOMVERSION "\n");
     printf("CPU class detected: %d\n", I_GetCPUModel());
 #if DEBUG_ENABLED == 1
-    printf("I_DebugInit: Debugging enabled, loading symbols and initializing channels...\n");
+    printf("Debugging enabled, loading symbols and initializing channels\n");
     I_DebugInit();
 #endif
-    printf("P_Init: Checking cmd-line parameters...\n");
+    printf("Checking cmd-line parameters\n");
 
     p = M_CheckParm("-file");
     if (p)
@@ -1654,7 +1654,7 @@ void D_DoomMain(void)
     {
         sprintf(demofile, "%s.lmp", myargv[p + 1]);
         D_AddFile(demofile);
-        printf("Playing demo %s.lmp.\n", myargv[p + 1]);
+        printf("Playing demo %s.lmp\n", myargv[p + 1]);
     }
 
     // get skill / episode / map from parms
@@ -1691,7 +1691,7 @@ void D_DoomMain(void)
         autostart = 1;
     }
 
-    printf("M_LoadDefaults: Load system defaults.\n");
+    printf("Load system defaults\n");
     M_LoadDefaults(); // load before initing other systems
 
     if ((p = M_CheckParm("-size")))
@@ -1758,41 +1758,41 @@ void D_DoomMain(void)
     // Get benchmark files
     D_GetListBenchFiles();
 
-    printf("W_Init: Init WADfiles.\n");
+    printf("Init WADfiles\n");
     W_InitMultipleFiles(wadfiles);
 
-    printf("M_Init: Init miscellaneous info.\n");
+    printf("Init miscellaneous info\n");
     D_RedrawTitle();
     M_Init();
 
-    printf("R_Init: Init DOOM refresh daemon - ");
+    printf("Init DOOM refresh daemon - ");
     D_RedrawTitle();
     R_Init();
 
-    printf("\nP_Init: Init Playloop state.\n");
+    printf("\nInit Playloop state\n");
     D_RedrawTitle();
     P_Init();
 
-    printf("I_Init: Setting up machine state.\n");
+    printf("Setting up machine state\n");
     D_RedrawTitle();
     I_Init();
 
-    printf("D_CheckNetGame: Checking network game status.\n");
+    printf("Checking network game status\n");
     D_RedrawTitle();
     D_CheckNetGame();
 
-    printf("S_Init: Setting up sound.\n");
+    printf("Setting up sound\n");
     D_RedrawTitle();
     S_Init(sfxVolume * 8, musicVolume * 17);
 
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-    printf("HU_Init: Setting up heads up display.\n");
+    printf("Setting up heads up display\n");
     D_RedrawTitle();
     HU_Init();
 #endif
 
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-    printf("ST_Init: Init status bar.\n");
+    printf("Init status bar\n");
     D_RedrawTitle();
     ST_Init();
 #endif

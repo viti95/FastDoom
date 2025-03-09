@@ -136,7 +136,7 @@ void I_sndArbitrateCards(void)
     {
         if (ENS_Detect())
         {
-            printf("ENSONIQ isn't responding.\n");
+            printf("ENSONIQ isn't responding\n");
         }
     }
     if (gus)
@@ -180,7 +180,7 @@ void I_sndArbitrateCards(void)
     {
         if (MPU_Detect(&snd_Mport))
         {
-            printf("MPU-401 isn't reponding @ p=0x%x.\n", snd_Mport);
+            printf("MPU-401 isn't reponding @ p=0x%x\n", snd_Mport);
         }
         else
         {
