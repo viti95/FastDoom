@@ -98,7 +98,6 @@
 #define AM_ENDKEY KEY_TAB
 #define AM_GOBIGKEY '0'
 #define AM_FOLLOWKEY 'f'
-#define AM_GRIDKEY 'g'
 #define AM_MARKKEY 'm'
 #define AM_CLEARMARKKEY 'c'
 #define AM_TRANSPARENTMAP 't'
@@ -558,10 +557,6 @@ byte AM_Responder(void)
 			followplayer = !followplayer;
 			f_oldloc.x = MAXINT;
 			players.message = followplayer ? AMSTR_FOLLOWON : AMSTR_FOLLOWOFF;
-			break;
-		case AM_GRIDKEY:
-			grid = !grid;
-			players.message = grid ? AMSTR_GRIDON : AMSTR_GRIDOFF;
 			break;
 		case AM_TRANSPARENTMAP:
 			if (automapRT && (screenSize >= 7)) 
@@ -1029,48 +1024,6 @@ void AM_drawMline(mline_t *ml,
 }
 
 //
-// Draws flat (floor/ceiling tile) aligned grid lines.
-//
-void AM_drawGrid(int color)
-{
-	fixed_t x, y;
-	fixed_t start, end;
-	mline_t ml;
-
-	// Figure out start of vertical gridlines
-	start = m_x;
-	if ((start - bmaporgx) % (MAPBLOCKUNITS << FRACBITS))
-		start -= ((start - bmaporgx) % (MAPBLOCKUNITS << FRACBITS));
-	end = m_x + m_w;
-
-	// draw vertical gridlines
-	ml.a.y = m_y;
-	ml.b.y = m_y + m_h;
-	for (x = start; x < end; x += (MAPBLOCKUNITS << FRACBITS))
-	{
-		ml.a.x = x;
-		ml.b.x = x;
-		AM_drawMline(&ml, color);
-	}
-
-	// Figure out start of horizontal gridlines
-	start = m_y;
-	if ((start - bmaporgy) % (MAPBLOCKUNITS << FRACBITS))
-		start -= ((start - bmaporgy) % (MAPBLOCKUNITS << FRACBITS));
-	end = m_y + m_h;
-
-	// draw horizontal gridlines
-	ml.a.x = m_x;
-	ml.b.x = m_x + m_w;
-	for (y = start; y < end; y += (MAPBLOCKUNITS << FRACBITS))
-	{
-		ml.a.y = y;
-		ml.b.y = y;
-		AM_drawMline(&ml, color);
-	}
-}
-
-//
 // Determines visible lines, draws them.
 // This is LineDef based, not LineSeg based.
 //
@@ -1286,8 +1239,6 @@ void AM_Drawer(void)
 #endif
 #endif
 
-	if (grid)
-		AM_drawGrid(GRIDCOLORS);
 	AM_drawWalls();
 	AM_drawPlayers();
 	if (cheating == 2)
