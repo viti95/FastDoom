@@ -48,8 +48,6 @@
 #define MSGON "Messages ON"
 #define ENDGAME "are you sure you want to end the game?\n\n" PRESSYN
 
-#define DOSY "(press y to quit to dos.)"
-
 #define DETAILHI "High detail"
 #define DETAILLO "Low detail"
 #define DETAILPO "Potato detail"

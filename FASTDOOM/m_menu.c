@@ -1765,22 +1765,18 @@ void M_QuitResponse(int ch)
     I_Quit();
 }
 
-char msg[80];
-
 void M_QuitDOOM(int choice)
 {
     // We pick index 0 which is language sensitive,
     //  or one at random, between 1 and maximum number.
     if (gamemode == commercial)
     {
-        I_ReadTextLineFile("TEXT\\ENDMSG2.TXT", (gametic >> 2) % NUM_QUITMESSAGES, msg, 80, 1);
+        I_ReadTextLineFile("TEXT\\ENDMSG2.TXT", (gametic >> 2) % NUM_QUITMESSAGES, endstring, 110, 1);
     }
     else
     {
-        I_ReadTextLineFile("TEXT\\ENDMSG.TXT", (gametic >> 2) % NUM_QUITMESSAGES, msg, 80, 1);
+        I_ReadTextLineFile("TEXT\\ENDMSG.TXT", (gametic >> 2) % NUM_QUITMESSAGES, endstring, 110, 1);
     }
-
-    sprintf(endstring, "%s\n\n" DOSY, msg);
 
     M_StartMessage(endstring, M_QuitResponse, 1);
 }
