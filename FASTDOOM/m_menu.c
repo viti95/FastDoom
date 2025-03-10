@@ -2527,10 +2527,9 @@ byte M_Responder(void)
             usegamma++;
             if (usegamma > 4){
                 usegamma = 0;
-                sprintf(gammamsg, "Gamma correction OFF");
-            }else{
-                sprintf(gammamsg, "Gamma correction level %d", usegamma);
             }
+
+            sprintf(gammamsg, "Gamma correction %d", usegamma);
 
             players.message = (char *)gammamsg;
             I_ProcessPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
