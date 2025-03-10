@@ -119,7 +119,7 @@ byte menuactive;
 
 char savegamestrings[10][SAVESTRINGSIZE];
 
-char endstring[160];
+char endstring[110];
 
 //
 // MENU TYPEDEFS
