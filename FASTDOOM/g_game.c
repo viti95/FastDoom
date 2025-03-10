@@ -1203,8 +1203,8 @@ void G_InitNew(skill_t skill,
 
     G_GetLevelsFileName();
 
-    I_ReadTextLineFile(levelsfile, currentmapnum, currentlevelname, 40);
-    I_ReadTextLineFile(levelsfile, currentmapnum + 1, nextlevelname, 40);
+    I_ReadTextLineFile(levelsfile, currentmapnum, currentlevelname, 40, 0);
+    I_ReadTextLineFile(levelsfile, currentmapnum + 1, nextlevelname, 40, 0);
 
     viewactive = 1;
 

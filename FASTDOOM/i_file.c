@@ -78,7 +78,23 @@ char *I_LoadText(char *filename)
     return ptr;
 }
 
-int I_ReadTextLineFile(char *filename, int line_number, char *buffer, int max_length)
+void I_ReplaceEscapedNewlines(char *str) {
+    char *read_ptr = str;
+    char *write_ptr = str;
+
+    while (*read_ptr) {
+        if (read_ptr[0] == '\\' && read_ptr[1] == 'n')
+        {
+            *write_ptr++ = '\n';
+            read_ptr += 2;
+        } else {
+            *write_ptr++ = *read_ptr++;
+        }
+    }
+    *write_ptr = '\0';
+}
+
+int I_ReadTextLineFile(char *filename, int line_number, char *buffer, int max_length, char extended_mode)
 {
     FILE *f;
 
@@ -112,6 +128,9 @@ int I_ReadTextLineFile(char *filename, int line_number, char *buffer, int max_le
     buffer[i] = '\0';
 
     fclose(f);
+
+    if (extended_mode)
+        I_ReplaceEscapedNewlines(buffer);
 
     return 1;
 }

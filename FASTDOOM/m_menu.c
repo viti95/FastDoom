@@ -105,30 +105,6 @@ void (*messageRoutine)(int response);
 
 #define SAVESTRINGSIZE 24
 
-char endmsg[NUM_QUITMESSAGES][80] =
-    {
-        // DOOM1
-        QUITMSG,
-        "please don't leave, there's more\ndemons to toast!",
-        "let's beat it -- this is turning\ninto a bloodbath!",
-        "i wouldn't leave if i were you.\ndos is much worse.",
-        "you're trying to say you like dos\nbetter than me, right?",
-        "don't leave yet -- there's a\ndemon around that corner!",
-        "ya know, next time you come in here\ni'm gonna toast ya.",
-        "go ahead and leave. see if i care."};
-
-char endmsg2[NUM_QUITMESSAGES][80] =
-    {
-        // DOOM2
-        QUITMSG,
-        "you want to quit?\nthen, thou hast lost an eighth!",
-        "don't go now, there's a \ndimensional shambler waiting\nat the dos prompt!",
-        "get outta here and go back\nto your boring programs.",
-        "if i were your boss, i'd \n deathmatch ya in a minute!",
-        "look, bud. you leave now\nand you forfeit your body count!",
-        "just leave. when you come\nback, i'll be waiting with a bat.",
-        "you're lucky i don't smack\nyou for thinking about leaving."};
-
 // we are going to be entering a savegame string
 int saveStringEnter;
 int saveSlot;      // which slot to save in
@@ -1789,18 +1765,22 @@ void M_QuitResponse(int ch)
     I_Quit();
 }
 
+char msg[80];
+
 void M_QuitDOOM(int choice)
 {
     // We pick index 0 which is language sensitive,
     //  or one at random, between 1 and maximum number.
     if (gamemode == commercial)
     {
-        sprintf(endstring, "%s\n\n" DOSY, endmsg2[(gametic >> 2) % NUM_QUITMESSAGES]);
+        I_ReadTextLineFile("TEXT\\ENDMSG2.TXT", (gametic >> 2) % NUM_QUITMESSAGES, msg, 80, 1);
     }
     else
     {
-        sprintf(endstring, "%s\n\n" DOSY, endmsg[(gametic >> 2) % NUM_QUITMESSAGES]);
+        I_ReadTextLineFile("TEXT\\ENDMSG.TXT", (gametic >> 2) % NUM_QUITMESSAGES, msg, 80, 1);
     }
+
+    sprintf(endstring, "%s\n\n" DOSY, msg);
 
     M_StartMessage(endstring, M_QuitResponse, 1);
 }

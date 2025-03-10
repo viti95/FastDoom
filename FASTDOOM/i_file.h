@@ -22,7 +22,7 @@
 
 int I_GetFileSize(char *filename);
 int I_ReadTextFile(char *dest, char *filename, int size);
-int I_ReadTextLineFile(char *filename, int line_number, char *buffer, int max_length);
+int I_ReadTextLineFile(char *filename, int line_number, char *buffer, int max_length, char extended_mode);
 char * I_LoadText(char *filename);
 
 #endif
