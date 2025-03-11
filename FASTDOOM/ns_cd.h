@@ -55,11 +55,9 @@ extern unsigned long TrackLength[MAX_TRACKS];
 //                      CDROM Prototypes
 // ------------------------------------------------------------------------
 void CD_SetVolume(unsigned char vol);
-short CD_GetUPC(void);
 void CD_GetAudioInfo(void);
 void CD_GetAudioStatus(void);
 void CD_SetTrack(short Tracknum);
-void CD_TrackLength(short Tracknum, unsigned char *min, unsigned char *sec, unsigned char *frame);
 unsigned long CD_GetTrackLength(short Tracknum);
 void CD_Status(void);
 void CD_PlayAudio(unsigned long Begin, unsigned long Length);
@@ -67,8 +65,6 @@ void CD_StopAudio(void);
 void CD_ResumeAudio(void);
 void CD_CMD(unsigned char mode);
 void CD_Getpos(void);
-short CD_Installed(void);
-short CD_DonePlay(void);
 short CD_Mediach(void);
 void CD_Lock(unsigned char Doormode);
 int CD_Init(void);

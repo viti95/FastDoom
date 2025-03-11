@@ -284,27 +284,6 @@ unsigned long CD_GetTrackLength(short Tracknum)
     return (Finish);
 }
 
-void CD_TrackLength(short Tracknum, unsigned char *min, unsigned char *sec, unsigned char *frame)
-{
-    unsigned long Value;
-
-    Value = CD_GetTrackLength(Tracknum);
-    Value += 150;
-    *frame = Value % 75;
-    Value -= *frame;
-    Value /= 75;
-    *sec = Value % 60;
-    Value -= *sec;
-    Value /= 60;
-    *min = Value;
-}
-
-short CD_DonePlay(void)
-{
-    CD_CMD(CLOSE_TRAY);
-    return ((CD_Cdrom_data.Error & BUSY) == 0);
-}
-
 void CD_SetTrack(short Tracknum)
 {
     typedef struct Tray_request
@@ -663,55 +642,6 @@ void CD_SetVolume(unsigned char vol)
     CD_DeviceRequest();
 
     CD_Cdrom_data.Error = Tray_request_Pointers->Status;
-}
-
-short CD_GetUPC(void)
-{
-    typedef struct Tray_request
-    {
-        unsigned char Length;
-        unsigned char Subunit;
-        unsigned char Comcode;
-        unsigned short Status;
-        unsigned char Unused[8];
-        unsigned char Media;
-        unsigned long Address;
-        unsigned short Bytes;
-        unsigned short Sector;
-        unsigned long VolID;
-    } Tray_request;
-    typedef struct UPC_data
-    {
-        unsigned char Mode;
-        unsigned char Adr;
-        unsigned char UPC[17];
-        unsigned char Zero;
-        unsigned char Aframe;
-    } UPC_data;
-
-    static struct Tray_request *Tray_request_Pointers;
-    static struct UPC_data *UPC_data_Pointers;
-
-    Tray_request_Pointers = (struct Tray_request *)(CD_Device_req.segment * 16);
-    UPC_data_Pointers = (struct UPC_data *)(CD_Device_extra.segment * 16);
-
-    memset(Tray_request_Pointers, 0, sizeof(struct Tray_request));
-    memset(UPC_data_Pointers, 0, sizeof(struct UPC_data));
-
-    Tray_request_Pointers->Length = sizeof(struct Tray_request);
-    Tray_request_Pointers->Comcode = 3;
-    Tray_request_Pointers->Address = CD_Device_extra.segment << 16;
-    Tray_request_Pointers->Bytes = 11;
-    UPC_data_Pointers->Mode = 0x0E;
-    UPC_data_Pointers->Adr = 0x02;
-
-    CD_DeviceRequest();
-
-    CD_Cdrom_data.Error = Tray_request_Pointers->Status;
-    if (UPC_data_Pointers->Adr == 0)
-        memset(&UPC_data_Pointers->UPC, 0, 7);
-    memcpy(&CD_Cdrom_data.UPC[0], &UPC_data_Pointers->UPC[0], 7);
-    return 1;
 }
 
 void CD_Getpos(void)
