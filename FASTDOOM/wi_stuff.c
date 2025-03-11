@@ -103,10 +103,10 @@ typedef struct
 	animenum_t type;
 
 	// period in tics between animations
-	int period;
+	char period;
 
 	// number of animation frames
-	int nanims;
+	char nanims;
 
 	// location of animation
 	point_t loc;
@@ -114,7 +114,7 @@ typedef struct
 	// ALWAYS: n/a,
 	// RANDOM: period deviation (<256),
 	// LEVEL: level
-	int data1;
+	char data1;
 
 	// actual graphics for frames of animations
 	patch_t *p[3];
@@ -125,7 +125,7 @@ typedef struct
 	int nexttic;
 
 	// next frame number to animate
-	int ctr;
+	char ctr;
 
 } anim_t;
 
