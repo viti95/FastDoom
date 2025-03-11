@@ -89,8 +89,8 @@ typedef enum
 
 typedef struct
 {
-	int x;
-	int y;
+	short x;
+	short y;
 
 } point_t;
 
@@ -116,11 +116,6 @@ typedef struct
 	// LEVEL: level
 	int data1;
 
-	// ALWAYS: n/a,
-	// RANDOM: random base period,
-	// LEVEL: n/a
-	int data2;
-
 	// actual graphics for frames of animations
 	patch_t *p[3];
 
@@ -129,14 +124,8 @@ typedef struct
 	// next value of bcnt (used in conjunction with period)
 	int nexttic;
 
-	// last drawn animation frame
-	int lastdrawn;
-
 	// next frame number to animate
 	int ctr;
-
-	// used by RANDOM and LEVEL when animating
-	int state;
 
 } anim_t;
 
