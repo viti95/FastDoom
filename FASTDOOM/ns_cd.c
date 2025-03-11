@@ -399,37 +399,6 @@ void CD_Status(void)
     CD_Cdrom_data.Status = CD_data_Pointers->Status;
 }
 
-void CD_Seek(unsigned long Location)
-{
-    unsigned char min, sec, frame;
-    typedef struct Play_request
-    {
-        unsigned char Length;
-        unsigned char Subunit;
-        unsigned char Comcode;
-        unsigned short Status;
-        unsigned char Unused[8];
-        unsigned char Addressmode;
-        unsigned long Transfer;
-        unsigned short Sector;
-        unsigned long Seekpos;
-    } Play_request;
-
-    static struct Play_request *Play_request_Pointers;
-
-    Play_request_Pointers = (struct Play_request *)(CD_Device_req.segment * 16);
-
-    memset(Play_request_Pointers, 0, sizeof(struct Play_request));
-
-    Play_request_Pointers->Length = sizeof(struct Play_request);
-    Play_request_Pointers->Comcode = 131;
-    Play_request_Pointers->Seekpos = Location;
-
-    CD_DeviceRequest();
-
-    CD_Cdrom_data.Error = Play_request_Pointers->Status;
-}
-
 void CD_StopAudio(void)
 {
     typedef struct Stop_request
@@ -650,40 +619,6 @@ short CD_Mediach(void)
 
     CD_Cdrom_data.Error = Tray_request_Pointers->Status;
     return (CD_Data_Pointers->Media);
-}
-
-void CD_GetVolume(void)
-{
-    typedef struct Tray_request
-    {
-        unsigned char Length;
-        unsigned char Subunit;
-        unsigned char Comcode;
-        unsigned short Status;
-        unsigned char Unused[8];
-        unsigned char Media;
-        unsigned long Address;
-        unsigned short Bytes;
-        unsigned short Sector;
-        unsigned long VolID;
-    } Tray_request;
-
-    static struct Tray_request *Tray_request_Pointers;
-    static struct CD_Volumeinfo *CD_Volume_Pointers;
-
-    Tray_request_Pointers = (struct Tray_request *)(CD_Device_req.segment * 16);
-    CD_Volume_Pointers = (struct CD_Volumeinfo *)(CD_Device_extra.segment * 16);
-
-    memset(Tray_request_Pointers, 0, sizeof(struct Tray_request));
-    Tray_request_Pointers->Length = sizeof(struct Tray_request);
-    Tray_request_Pointers->Comcode = 3;
-    Tray_request_Pointers->Address = CD_Device_extra.segment << 16;
-    Tray_request_Pointers->Bytes = 9;
-    CD_Volume_Pointers->Mode = 0x04;
-
-    CD_DeviceRequest();
-    memcpy(&CD_Volumeinfo, CD_Volume_Pointers, sizeof(struct CD_Volumeinfo));
-    CD_Cdrom_data.Error = Tray_request_Pointers->Status;
 }
 
 void CD_SetVolume(unsigned char vol)
