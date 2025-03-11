@@ -64,7 +64,6 @@ void CD_PlayAudio(unsigned long Begin, unsigned long Length);
 void CD_StopAudio(void);
 void CD_ResumeAudio(void);
 void CD_CMD(unsigned char mode);
-void CD_Getpos(void);
 short CD_Mediach(void);
 void CD_Lock(unsigned char Doormode);
 int CD_Init(void);

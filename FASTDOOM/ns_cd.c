@@ -644,41 +644,6 @@ void CD_SetVolume(unsigned char vol)
     CD_Cdrom_data.Error = Tray_request_Pointers->Status;
 }
 
-void CD_Getpos(void)
-{
-    typedef struct Tray_request
-    {
-        unsigned char Length;
-        unsigned char Subunit;
-        unsigned char Comcode;
-        unsigned short Status;
-        unsigned char Unused[8];
-        unsigned char Media;
-        unsigned long Address;
-        unsigned short Bytes;
-        unsigned short Sector;
-        unsigned long VolID;
-    } Tray_request;
-
-    static struct Tray_request *Tray_request_Pointers;
-    static struct CD_Playinfo *CD_Playinfo_Pointers;
-
-    Tray_request_Pointers = (struct Tray_request *)(CD_Device_req.segment * 16);
-    CD_Playinfo_Pointers = (struct CD_Playinfo *)(CD_Device_extra.segment * 16);
-
-    memset(Tray_request_Pointers, 0, sizeof(struct Tray_request));
-    memset(CD_Playinfo_Pointers, 0, sizeof(struct CD_Playinfo));
-
-    Tray_request_Pointers->Length = sizeof(struct Tray_request);
-    Tray_request_Pointers->Comcode = 3;
-    Tray_request_Pointers->Address = CD_Device_extra.segment << 16;
-    Tray_request_Pointers->Bytes = 6;
-    CD_Playinfo_Pointers->Control = 12;
-    CD_DeviceRequest();
-
-    CD_Cdrom_data.Error = Tray_request_Pointers->Status;
-}
-
 void CD_Exit(void)
 {
     CD_StopAudio();
