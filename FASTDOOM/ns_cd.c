@@ -305,51 +305,6 @@ short CD_DonePlay(void)
     return ((CD_Cdrom_data.Error & BUSY) == 0);
 }
 
-unsigned long CD_HeadPosition(void)
-{
-    typedef struct Tray_request
-    {
-        unsigned char Length;
-        unsigned char Subunit;
-        unsigned char Comcode;
-        unsigned short Status;
-        unsigned char Unused[8];
-        unsigned char Media;
-        unsigned long Address;
-        unsigned short Bytes;
-        unsigned short Sector;
-        unsigned long VolID;
-        unsigned char Unused2[4];
-    } Tray_request;
-    typedef struct Head_data
-    {
-        unsigned char Mode;
-        unsigned char Adr_mode;
-        unsigned long Address;
-    } Head_data;
-
-    static struct Tray_request *Tray_request_Pointers;
-    static struct Head_data *Head_data_Pointers;
-
-    Tray_request_Pointers = (struct Tray_request *)(CD_Device_req.segment * 16);
-    Head_data_Pointers = (struct Head_data *)(CD_Device_extra.segment * 16);
-
-    memset(Tray_request_Pointers, 0, sizeof(struct Tray_request));
-    memset(Head_data_Pointers, 0, sizeof(struct Head_data));
-
-    Tray_request_Pointers->Length = sizeof(struct Tray_request);
-    Tray_request_Pointers->Comcode = 3;
-    Tray_request_Pointers->Address = CD_Device_extra.segment << 16;
-    Tray_request_Pointers->Bytes = 6;
-    Head_data_Pointers->Mode = 0x01;
-    Head_data_Pointers->Adr_mode = 0x00;
-
-    CD_DeviceRequest();
-
-    CD_Cdrom_data.Error = Tray_request_Pointers->Status;
-    return (Head_data_Pointers->Address);
-}
-
 void CD_SetTrack(short Tracknum)
 {
     typedef struct Tray_request

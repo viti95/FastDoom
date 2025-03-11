@@ -54,7 +54,6 @@ extern unsigned long TrackLength[MAX_TRACKS];
 // ------------------------------------------------------------------------
 //                      CDROM Prototypes
 // ------------------------------------------------------------------------
-unsigned long CD_HeadPosition(void);
 void CD_GetVolume(void);
 void CD_SetVolume(unsigned char vol);
 short CD_GetUPC(void);
