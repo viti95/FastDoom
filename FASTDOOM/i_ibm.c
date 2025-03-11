@@ -1087,15 +1087,15 @@ void I_StartupDPMI(void)
 //
 void I_Init(void)
 {
-    printf("I_StartupDPMI\n");
+    printf("Startup DPMI\n");
     I_StartupDPMI();
-    printf("I_StartupMouse\n");
+    printf("Startup Mouse\n");
     I_StartupMouse();
-    printf("I_StartupKeyboard\n");
+    printf("Startup Keyboard\n");
     I_StartupKeyboard();
-    printf("I_StartupTimer\n");
+    printf("Startup Timer\n");
     I_StartupTimer();
-    printf("I_StartupSound\n");
+    printf("Startup Sound\n");
     I_StartupSound();
 
 #if defined(MODE_13H)
