@@ -844,7 +844,7 @@ void D_SetCursorPosition(int column, int row)
 }
 
 //      print title for every printed line
-char title[128];
+char title[80];
 
 //
 // D_DrawTitle
@@ -857,6 +857,8 @@ void D_DrawTitle(int fc)
     int row;
     int i;
 
+    int length;
+
     // Calculate text color
     color = (7 << 4) | fc;
 
@@ -866,11 +868,18 @@ void D_DrawTitle(int fc)
     // Get row position
     row = D_GetCursorRow();
 
-    for (i = 0; i < strlen(title); i++)
+    length = strlen(title);
+
+    for (i = 0; i < 80; i++)
     {
         // Set character
         regs.h.ah = 9;
-        regs.h.al = title[i];
+
+        if (i > length)
+            regs.h.al = ' ';
+        else
+            regs.h.al = title[i];
+
         regs.w.cx = 1;
         regs.h.bl = color;
         regs.h.bh = 0;
@@ -883,6 +892,7 @@ void D_DrawTitle(int fc)
         // Set position
         D_SetCursorPosition(column, row);
     }
+
 }
 
 //
@@ -1573,23 +1583,17 @@ void D_DoomMain(void)
     case retail:
         sprintf(title,
                 "                         "
-                "The Ultimate DOOM Startup v%i.%i"
-                "                        ",
-                VERSION / 100, VERSION % 100);
+                "The Ultimate DOOM Startup v1.9");
         break;
     case shareware:
         sprintf(title,
                 "                            "
-                "DOOM Shareware Startup v%i.%i"
-                "                           ",
-                VERSION / 100, VERSION % 100);
+                "DOOM Shareware Startup v1.9");
         break;
     case registered:
         sprintf(title,
                 "                          "
-                "DOOM System Startup v%i.%i"
-                "                          ",
-                VERSION / 100, VERSION % 100);
+                "DOOM System Startup v1.9");
         break;
     case commercial:
         switch (gamemission)
@@ -1597,23 +1601,17 @@ void D_DoomMain(void)
         case doom2:
             sprintf(title,
                     "                         "
-                    "DOOM 2: Hell on Earth v%i.%i"
-                    "                           ",
-                    VERSION / 100, VERSION % 100);
+                    "DOOM 2: Hell on Earth v1.9");
             break;
         case pack_plut:
             sprintf(title,
                     "                   "
-                    "DOOM 2: Plutonia Experiment v%i.%i"
-                    "                           ",
-                    VERSION / 100, VERSION % 100);
+                    "DOOM 2: Plutonia Experiment v1.9");
             break;
         case pack_tnt:
             sprintf(title,
                     "                     "
-                    "DOOM 2: TNT - Evilution v%i.%i"
-                    "                           ",
-                    VERSION / 100, VERSION % 100);
+                    "DOOM 2: TNT - Evilution v1.9");
             break;
         }
         break;
