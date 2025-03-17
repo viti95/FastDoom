@@ -1,8 +1,8 @@
-are you sure you want to\nquit this great game?
-you want to quit?\nthen, thou hast lost an eighth!",
-don't go now, there's a \ndimensional shambler waiting\nat the dos prompt!
-get outta here and go back\nto your boring programs
-if i were your boss, i'd \n deathmatch ya in a minute!
-look, bud. you leave now\nand you forfeit your body count!
-just leave. when you come\nback, i'll be waiting with a bat.
-you're lucky i don't smack\nyou for thinking about leaving.
+are you sure you want to\nquit this great game?\n\n(press y to quit)
+you want to quit?\nthen, thou hast lost an eighth!",\n\n(press y to quit)
+don't go now, there's a \ndimensional shambler waiting\nat the dos prompt!\n\n(press y to quit)
+get outta here and go back\nto your boring programs\n\n(press y to quit)
+if i were your boss, i'd \n deathmatch ya in a minute!\n\n(press y to quit)
+look, bud. you leave now\nand you forfeit your body count!\n\n(press y to quit)
+just leave. when you come\nback, i'll be waiting with a bat.\n\n(press y to quit)
+you're lucky i don't smack\nyou for thinking about leaving.\n\n(press y to quit)
