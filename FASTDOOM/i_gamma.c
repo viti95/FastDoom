@@ -107,7 +107,8 @@ void I_SetGamma(int usegamma) {
 
         x_mul_power >>= FRACBITS;
 
-        // Clamp to byte range
+        if (x_mul_power > 63) x_mul_power = 63;
+
         gammatable[i] = x_mul_power;
     }
 }
