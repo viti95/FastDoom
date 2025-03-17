@@ -28,44 +28,95 @@
 #include "i_debug.h"
 #include "z_zone.h"
 
+#define LN_MAX_ITER 20
+#define EXP_MAX_ITER 20
 #define FIXED_POINT_SHIFT 16
 #define FIXED_POINT_ONE (1 << FIXED_POINT_SHIFT)
-#define TABLE_SIZE 256
+#define LN2 45426 // ln(2) in 16.16 format
 
 // Converts integer to fixed-point 16.16
 #define TO_FIXED(x) ((x) << FIXED_POINT_SHIFT)
 
+#define BASE (16)
+
 unsigned char gammatable[256];
 
-// Raises a fixed-point number to an integer power
-int FixedPow(int base, int exp) {
-    int result = FIXED_POINT_ONE;
-    while (exp > 0) {
-        if (exp & 1) {
-            result = FixedMul(result, base);
+// Natural logarithm approximation
+int fixed_ln(int x) {
+    int result = 0;
+    int term;
+    int i;
+    
+    if (x <= 0) return result; // Logarithm not defined for non-positive numbers
+    
+    while (x > FIXED_POINT_ONE) {
+        result += LN2;
+        x = FixedDiv(x, 2 << FIXED_POINT_SHIFT);
+    }
+    while (x < FIXED_POINT_ONE) {
+        result -= LN2;
+        x = FixedMul(x, 2 << FIXED_POINT_SHIFT);
+    }
+    x -= FIXED_POINT_ONE;
+    term = x;
+    for (i = 1; i <= LN_MAX_ITER; i++) {
+        if (i % 2 == 1) {
+            result += FixedDiv(term, TO_FIXED(i));
+        } else {
+            result -= FixedDiv(term, TO_FIXED(i));
         }
-        base = FixedMul(base, base);
-        exp >>= 1;
+        term = FixedMul(term, x);
     }
     return result;
 }
 
+// Exponential function approximation
+int fixed_exp(int x) {
+    int result = FIXED_POINT_ONE;
+    int term = FIXED_POINT_ONE;
+    int i;
+
+    for (i = 1; i <= EXP_MAX_ITER; i++) {
+        term = FixedMul(term, FixedDiv(x, TO_FIXED(i)));
+        result += term;
+        if (term == 0) break; // Early stopping for small terms
+    }
+    return result;
+}
+
+// Power function: x^y
+int FixedPow(int x, int y) {
+    int log_x;
+    int y_log_x;
+
+    if (x <= 0) return 0; // Undefined for non-positive bases
+    
+    log_x = fixed_ln(x); // Compute ln(x)
+    y_log_x = FixedMul(y, log_x); // Multiply by y
+    
+    return fixed_exp(y_log_x); // Return exp(y * ln(x))
+}
+
 void I_SetGamma(fixed_t gamma) {
     int i = 0;
+
+    int inv_gamma = FixedDiv(TO_FIXED(1), gamma);
     
-    for (i = 0; i < TABLE_SIZE; i++) {
+    for (i = 0; i < 256; i++) {
+
+        //BITRSHIFT(ROUND(255 * POWER(H2 / 255;1/gamma); 0); 2)
+
         int x_fixed = TO_FIXED(i);
 
-        // Normalize x to range [0, 1]
-        int x_norm = FixedMul(x_fixed, TO_FIXED(1) / (TABLE_SIZE - 1));
+        int x_divided = FixedDiv(x_fixed, TO_FIXED(255));
 
-        // Apply gamma correction: x^gamma
-        int corrected = FixedPow(x_norm, gamma);
+        int x_power = FixedPow(x_divided, inv_gamma);
 
-        // Scale back to 0-255 range
-        int scaled = (corrected * 63) >> FIXED_POINT_SHIFT;
+        int x_mul_power = FixedMul(TO_FIXED(63), x_power);
+
+        x_mul_power >>= 16;
 
         // Clamp to byte range
-        gammatable[i] = (unsigned char)(scaled < 0 ? 0 : (scaled > 63 ? 63 : scaled));
+        gammatable[i] = x_mul_power;
     }
 }

@@ -2526,7 +2526,7 @@ byte M_Responder(void)
                 usegamma = 0;
             }
 
-            I_SetGamma(1);
+            I_SetGamma(1 << 16);
 
             sprintf(gammamsg, "Gamma correction %d", usegamma);
 

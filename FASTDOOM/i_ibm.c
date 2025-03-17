@@ -755,7 +755,7 @@ void I_InitGraphics(void)
     VGA_TestFastSetPalette();
 #endif
 
-    I_SetGamma(1);
+    I_SetGamma(1 << 16);
     I_ProcessPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
     I_SetPalette(0);
 }
