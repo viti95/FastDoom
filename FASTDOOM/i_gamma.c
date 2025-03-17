@@ -17,25 +17,16 @@
 //  System interface for sound.
 //
 
-#include <string.h>
 #include <stdio.h>
 
-#include "std_func.h"
-#include "i_system.h"
-#include "dstrings.h"
 #include "doomstat.h"
 #include "options.h"
 #include "i_debug.h"
-#include "z_zone.h"
+#include "fastmath.h"
 
 #define LN_MAX_ITER 20
 #define EXP_MAX_ITER 20
-#define FIXED_POINT_SHIFT 16
-#define FIXED_POINT_ONE (1 << FIXED_POINT_SHIFT)
 #define LN2 45426 // ln(2) in 16.16 format
-
-// Converts integer to fixed-point 16.16
-#define TO_FIXED(x) ((x) << FIXED_POINT_SHIFT)
 
 unsigned char gammatable[256];
 
@@ -47,15 +38,15 @@ int FixedLn(int x) {
     
     if (x <= 0) return result; // Logarithm not defined for non-positive numbers
     
-    while (x > FIXED_POINT_ONE) {
+    while (x > FRACUNIT) {
         result += LN2;
-        x = FixedDiv(x, 2 << FIXED_POINT_SHIFT);
+        x = FixedDiv(x, 2 << FRACBITS);
     }
-    while (x < FIXED_POINT_ONE) {
+    while (x < FRACUNIT) {
         result -= LN2;
-        x = FixedMul(x, 2 << FIXED_POINT_SHIFT);
+        x = FixedMul(x, 2 << FRACBITS);
     }
-    x -= FIXED_POINT_ONE;
+    x -= FRACUNIT;
     term = x;
     for (i = 1; i <= LN_MAX_ITER; i++) {
         if (i % 2 == 1) {
@@ -70,8 +61,8 @@ int FixedLn(int x) {
 
 // Exponential function approximation
 int FixedExp(int x) {
-    int result = FIXED_POINT_ONE;
-    int term = FIXED_POINT_ONE;
+    int result = FRACUNIT;
+    int term = FRACUNIT;
     int i;
 
     for (i = 1; i <= EXP_MAX_ITER; i++) {
@@ -114,7 +105,7 @@ void I_SetGamma(int usegamma) {
 
         int x_mul_power = FixedMul(TO_FIXED(63), x_power);
 
-        x_mul_power >>= FIXED_POINT_SHIFT;
+        x_mul_power >>= FRACBITS;
 
         // Clamp to byte range
         gammatable[i] = x_mul_power;
