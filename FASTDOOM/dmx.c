@@ -649,7 +649,7 @@ void ASS_Init(int rate, int mdev, int sdev)
 
             if (status != FX_Ok)
             {
-                I_Error("Error setup Music device: %i", status);
+                I_Error("Error setup music device: %i", status);
             }
         }
 
@@ -657,7 +657,7 @@ void ASS_Init(int rate, int mdev, int sdev)
 
         if (status != MUSIC_Ok)
         {
-            I_Error("Error initializing Music device: %i", status);
+            I_Error("Error initializing music device: %i", status);
         }
 
         if (status == MUSIC_Ok)
@@ -700,7 +700,7 @@ void ASS_Init(int rate, int mdev, int sdev)
 
         if (status != FX_Ok)
         {
-            I_Error("Error setup Sound device: %i", status);
+            I_Error("Error setup sound device: %i", status);
         }
 
         switch (snd_Rate)
@@ -741,7 +741,7 @@ void ASS_Init(int rate, int mdev, int sdev)
 
         if (status != FX_Ok)
         {
-            I_Error("Error initializing Sound device: %i", status);
+            I_Error("Error initializing sound device: %i", status);
         }
 
         FX_SetVolume(255);
