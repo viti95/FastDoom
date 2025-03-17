@@ -31,27 +31,35 @@
 unsigned char gammatable[256];
 
 // Natural logarithm approximation
-int FixedLn(int x) {
+int FixedLn(int x)
+{
     int result = 0;
     int term;
     int i;
-    
-    if (x <= 0) return result; // Logarithm not defined for non-positive numbers
-    
-    while (x > FRACUNIT) {
+
+    if (x <= 0)
+        return result; // Logarithm not defined for non-positive numbers
+
+    while (x > FRACUNIT)
+    {
         result += LN2;
         x = FixedDiv(x, 2 << FRACBITS);
     }
-    while (x < FRACUNIT) {
+    while (x < FRACUNIT)
+    {
         result -= LN2;
         x = FixedMul(x, 2 << FRACBITS);
     }
     x -= FRACUNIT;
     term = x;
-    for (i = 1; i <= LN_MAX_ITER; i++) {
-        if (i % 2 == 1) {
+    for (i = 1; i <= LN_MAX_ITER; i++)
+    {
+        if (i % 2 == 1)
+        {
             result += FixedDiv(term, TO_FIXED(i));
-        } else {
+        }
+        else
+        {
             result -= FixedDiv(term, TO_FIXED(i));
         }
         term = FixedMul(term, x);
@@ -60,43 +68,50 @@ int FixedLn(int x) {
 }
 
 // Exponential function approximation
-int FixedExp(int x) {
+int FixedExp(int x)
+{
     int result = FRACUNIT;
     int term = FRACUNIT;
     int i;
 
-    for (i = 1; i <= EXP_MAX_ITER; i++) {
+    for (i = 1; i <= EXP_MAX_ITER; i++)
+    {
         term = FixedMul(term, FixedDiv(x, TO_FIXED(i)));
         result += term;
-        if (term == 0) break; // Early stopping for small terms
+        if (term == 0)
+            break; // Early stopping for small terms
     }
     return result;
 }
 
 // Power function: x^y
-int FixedPow(int x, int y) {
+int FixedPow(int x, int y)
+{
     int log_x;
     int y_log_x;
 
-    if (x <= 0) return 0; // Undefined for non-positive bases
-    
-    log_x = FixedLn(x); // Compute ln(x)
+    if (x <= 0)
+        return 0; // Undefined for non-positive bases
+
+    log_x = FixedLn(x);           // Compute ln(x)
     y_log_x = FixedMul(y, log_x); // Multiply by y
-    
+
     return FixedExp(y_log_x); // Return exp(y * ln(x))
 }
 
-fixed_t levels[5] = { 65536, 75366, 88474, 106168, 131072 };
+fixed_t levels[5] = {65536, 75366, 88474, 106168, 131072};
 
-void I_SetGamma(int usegamma) {
+void I_SetGamma(int usegamma)
+{
 
     int i = 0;
 
     fixed_t gamma = levels[usegamma];
 
     int inv_gamma = FixedDiv(TO_FIXED(1), gamma);
-    
-    for (i = 0; i < 256; i++) {
+
+    for (i = 0; i < 256; i++)
+    {
 
         int x_fixed = TO_FIXED(i);
 
@@ -108,8 +123,14 @@ void I_SetGamma(int usegamma) {
 
         x_mul_power >>= FRACBITS;
 
-        if (x_mul_power > 63) x_mul_power = 63;
-        if (x_mul_power < 0) x_mul_power = 0;
+        if (x_mul_power > 63)
+        {
+            x_mul_power = 63;
+        }
+        else if (x_mul_power < 0)
+        {
+            x_mul_power = 0;
+        }
 
         gammatable[i] = x_mul_power;
     }
