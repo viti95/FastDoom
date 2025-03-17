@@ -1698,11 +1698,6 @@ void M_ChangeMessages(int choice)
 {
     showMessages = 1 - showMessages;
 
-    if (!showMessages)
-        players.message = MSGOFF;
-    else
-        players.message = MSGON;
-
     message_dontfuckwithme = 1;
 }
 
@@ -1829,19 +1824,6 @@ void M_ChangeDetail(int choice)
     }
 
     R_SetViewSize(screenblocks, detailLevel);
-
-    switch (detailLevel)
-    {
-    case DETAIL_HIGH:
-        players.message = DETAILHI;
-        break;
-    case DETAIL_LOW:
-        players.message = DETAILLO;
-        break;
-    case DETAIL_POTATO:
-        players.message = DETAILPO;
-        break;
-    }
 }
 
 void M_ChangeVisplaneDetail(int choice)
@@ -1863,19 +1845,6 @@ void M_ChangeVisplaneDetail(int choice)
     }
 
     R_SetViewSize(screenblocks, detailLevel);
-
-    switch (visplaneRender)
-    {
-    case VISPLANES_NORMAL:
-        players.message = "FULL VISPLANES";
-        break;
-    case VISPLANES_FLAT:
-        players.message = "FLAT VISPLANES";
-        break;
-    case VISPLANES_FLATTER:
-        players.message = "FLATTER VISPLANES";
-        break;
-    }
 }
 
 void M_ChangeWallDetail(int choice)
@@ -1897,19 +1866,6 @@ void M_ChangeWallDetail(int choice)
     }
 
     R_SetViewSize(screenblocks, detailLevel);
-
-    switch (wallRender)
-    {
-    case WALL_NORMAL:
-        players.message = "FULL WALLS";
-        break;
-    case WALL_FLAT:
-        players.message = "FLAT WALLS";
-        break;
-    case WALL_FLATTER:
-        players.message = "FLATTER WALLS";
-        break;
-    }
 }
 
 void M_ChangeSpriteDetail(int choice)
@@ -1931,19 +1887,6 @@ void M_ChangeSpriteDetail(int choice)
     }
 
     R_SetViewSize(screenblocks, detailLevel);
-
-    switch (spriteRender)
-    {
-    case SPRITE_NORMAL:
-        players.message = "FULL SPRITES";
-        break;
-    case SPRITE_FLAT:
-        players.message = "FLAT SPRITES";
-        break;
-    case SPRITE_FLATTER:
-        players.message = "FLATTER SPRITES";
-        break;
-    }
 }
 
 void M_ChangePSpriteDetail(int choice)
@@ -1965,19 +1908,6 @@ void M_ChangePSpriteDetail(int choice)
     }
 
     R_SetViewSize(screenblocks, detailLevel);
-
-    switch (pspriteRender)
-    {
-    case PSPRITE_NORMAL:
-        players.message = "FULL PLAYER SPRITES";
-        break;
-    case PSPRITE_FLAT:
-        players.message = "FLAT PLAYER SPRITES";
-        break;
-    case PSPRITE_FLATTER:
-        players.message = "FLATTER PLAYER SPRITES";
-        break;
-    }
 }
 
 #define MIN_GAMMA (-8)
@@ -2013,8 +1943,6 @@ void M_ChangeGamma(int choice)
 void M_ChangeVsync(int choice)
 {
     waitVsync = !waitVsync;
-
-    players.message = waitVsync ? "VSYNC ENABLED" : "VSYNC DISABLED";
 }
 
 void M_ChangeSkyDetail(int choice)
@@ -2022,8 +1950,6 @@ void M_ChangeSkyDetail(int choice)
     flatSky = !flatSky;
 
     R_SetViewSize(screenblocks, detailLevel);
-
-    players.message = flatSky ? "FLAT COLOR SKY" : "FULL SKY";
 }
 
 void M_ChangeCPU(int choice)
@@ -2049,37 +1975,6 @@ void M_ChangeCPU(int choice)
 #if defined(MODE_13H)
     I_UpdateFinishFunc();
 #endif
-
-    switch (selectedCPU)
-    {
-    case INTEL_386SX:
-        players.message = "INTEL 386SX";
-        break;
-    case INTEL_386DX:
-        players.message = "INTEL 386DX";
-        break;
-    case INTEL_486:
-        players.message = "INTEL 486";
-        break;
-    case CYRIX_386DLC:
-        players.message = "CYRIX 386DLC";
-        break;
-    case CYRIX_486:
-        players.message = "CYRIX 486";
-        break;
-    case UMC_GREEN_486:
-        players.message = "UMC GREEN 486";
-        break;
-    case CYRIX_5X86:
-        players.message = "CYRIX 5X86";
-        break;
-    case AMD_K5:
-        players.message = "AMD K5";
-        break;
-    case INTEL_PENTIUM:
-        players.message = "INTEL PENTIUM";
-        break;
-    }
 }
 
 void M_ChangeInvisibleDetail(int choice)
@@ -2105,25 +2000,6 @@ void M_ChangeInvisibleDetail(int choice)
         R_CleanupTintMap();
 
     R_SetViewSize(screenblocks, detailLevel);
-
-    switch (invisibleRender)
-    {
-    case INVISIBLE_NORMAL:
-        players.message = "FULL INVISIBILITY";
-        break;
-    case INVISIBLE_FLAT:
-        players.message = "FLAT INVISIBILITY";
-        break;
-    case INVISIBLE_FLAT_SATURN:
-        players.message = "FLAT SEGA SATURN INVISIBILITY";
-        break;
-    case INVISIBLE_SATURN:
-        players.message = "SEGA SATURN INVISIBILITY";
-        break;
-    case INVISIBLE_TRANSLUCENT:
-        players.message = "TRANSLUCENT INVISIBILITY";
-        break;
-    }
 }
 
 void M_ChangeShowFPS(int choice)
@@ -2142,28 +2018,6 @@ void M_ChangeShowFPS(int choice)
         if (showFPS == NUM_FPS)
             showFPS = NO_FPS;
     }
-
-    switch (showFPS)
-    {
-    case NO_FPS:
-        players.message = "NO FPS";
-        break;
-    case SCREEN_FPS:
-        players.message = "ON SCREEN FPS";
-        break;
-    case DEBUG_CARD_2D_FPS:
-        players.message = "DEBUG CARD (2 DIGITS) FPS";
-        break;
-    case DEBUG_CARD_4D_FPS:
-        players.message = "DEBUG CARD (4 DIGITS) FPS";
-        break;
-    case SCREEN_DC2D_FPS:
-        players.message = "ON SCREEN + DEBUG CARD (2 DIGITS) FPS";
-        break;
-    case SCREEN_DC4D_FPS:
-        players.message = "ON SCREEN + DEBUG CARD (4 DIGITS) FPS";
-        break;
-    }
 }
 
 void M_ChangeAutomapRT(int choice)
@@ -2174,22 +2028,16 @@ void M_ChangeAutomapRT(int choice)
     if (!automapRT)
         transparentmap = 0;
 #endif
-
-    players.message = automapRT ? "AUTOMAP REALTIME UPDATE ON" : "AUTOMAP REALTIME UPDATE OFF";
 }
 
 void M_ChangeSpriteCulling(int choice)
 {
     nearSprites = !nearSprites;
-
-    players.message = nearSprites ? "SPRITE CULLING ON" : "SPRITE CULLING OFF";
 }
 
 void M_ChangeMelting(int choice)
 {
     noMelt = !noMelt;
-
-    players.message = noMelt ? "MELTING SCREEN LOAD EFFECT OFF" : "MELTING SCREEN LOAD EFFECT ON";
 }
 
 void M_ChangeBusSpeed(int choice)
@@ -2199,8 +2047,6 @@ void M_ChangeBusSpeed(int choice)
 #if defined(MODE_13H)
     I_UpdateFinishFunc();
 #endif
-
-    players.message = busSpeed ? "SLOW BUS" : "FAST BUS";
 }
 
 void I_SetHrTimerEnabled(int enabled);
@@ -2217,15 +2063,11 @@ void M_ChangeUncappedFPS(int choice)
     }
 
     I_SetHrTimerEnabled(highResTimer);
-
-    players.message = uncappedFPS ? "UNCAPPED FPS" : "CAPPED FPS";
 }
 
 void M_ChangeMono()
 {
     monoSound = !monoSound;
-
-    players.message = monoSound ? "MONO SOUND" : "STEREO SOUND";
 }
 
 void M_SizeDisplay(int choice)
@@ -2532,6 +2374,20 @@ byte M_Responder(void)
 
         case KEY_F5: // Detail toggle
             M_ChangeDetail(1);
+
+            switch (detailLevel)
+            {
+            case DETAIL_HIGH:
+                players.message = DETAILHI;
+                break;
+            case DETAIL_LOW:
+                players.message = DETAILLO;
+                break;
+            case DETAIL_POTATO:
+                players.message = DETAILPO;
+                break;
+            }
+
             S_StartSound(NULL, sfx_swtchn);
             return 1;
 
@@ -2547,6 +2403,12 @@ byte M_Responder(void)
 
         case KEY_F8: // Toggle messages
             M_ChangeMessages(0);
+
+            if (!showMessages)
+                players.message = MSGOFF;
+            else
+                players.message = MSGON;
+
             S_StartSound(NULL, sfx_swtchn);
             return 1;
 
