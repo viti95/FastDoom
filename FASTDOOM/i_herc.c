@@ -23,7 +23,7 @@ void I_ProcessPalette(byte *palette)
 {
     int i;
 
-    byte *ptr = gammatable[usegamma];
+    byte *ptr = gammatable;
 
     for (i = 0; i < 14 * 256; i++, palette += 3)
     {

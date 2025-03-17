@@ -12,6 +12,7 @@
 #include "math.h"
 #include "i_system.h"
 #include "doomstat.h"
+#include "i_gamma.h"
 
 #include "i_cgaafh.h"
 
@@ -46,7 +47,7 @@ const byte colors[48] = {
 void I_ProcessPalette(byte *palette)
 {
     int i, j;
-    byte *ptr = gammatable[usegamma];
+    byte *ptr = gammatable;
 
     ptrlut16colors = (byte *)(((int)lut16colors + 255) & ~0xff);
 

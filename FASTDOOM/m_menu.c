@@ -61,6 +61,7 @@
 #include "am_map.h"
 
 #include "i_file.h"
+#include "i_gamma.h"
 
 #if defined(MODE_13H)
 #include "i_vga13h.h"
@@ -2524,6 +2525,8 @@ byte M_Responder(void)
             if (usegamma > 4){
                 usegamma = 0;
             }
+
+            I_SetGamma(1);
 
             sprintf(gammamsg, "Gamma correction %d", usegamma);
 

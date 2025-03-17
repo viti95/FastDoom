@@ -13,6 +13,7 @@
 #include "math.h"
 #include "i_system.h"
 #include "d_main.h"
+#include "i_gamma.h"
 
 #if defined(MODE_CGA512)
 
@@ -33,7 +34,7 @@ void I_ProcessPalette(byte *palette)
     int i, j;
     unsigned char *ptrLUT55;
     unsigned char *ptrLUT13;
-    byte *ptr = gammatable[usegamma];
+    byte *ptr = gammatable;
 
     if (CGAmodel == CGA_OLD)
     {

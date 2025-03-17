@@ -13,6 +13,7 @@
 #include "i_system.h"
 #include "doomstat.h"
 #include "m_menu.h"
+#include "i_gamma.h"
 
 #if defined(TEXT_MODE)
 
@@ -132,7 +133,7 @@ void TEXT_80x25_Double_InitGraphics(void)
 void I_ProcessPalette(byte *palette)
 {
     int i, j;
-    byte *ptr = gammatable[usegamma];
+    byte *ptr = gammatable;
 
     for (i = 0; i < 14 * 256; i++, palette+=3)
     {

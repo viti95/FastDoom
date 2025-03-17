@@ -12,6 +12,7 @@
 #include "v_video.h"
 #include "z_zone.h"
 #include "math.h"
+#include "i_gamma.h"
 // #include "i_debug.h"
 
 /*-----------------05-14-97 05:19pm-----------------
@@ -642,7 +643,7 @@ void I_ProcessPalette8bpp(byte *palette)
 {
   int i;
 
-  byte *ptr = gammatable[usegamma];
+  byte *ptr = gammatable;
 
   for (i = 0; i < 14 * 768; i += 4, palette += 4)
   {
@@ -685,7 +686,7 @@ void I_ProcessPalette15bpp(byte *palette)
 {
   int i, j;
 
-  byte *ptr = gammatable[usegamma];
+  byte *ptr = gammatable;
 
   for (i = 0; i < 14 * 256 * 2; i += 2, palette += 3)
   {
@@ -713,7 +714,7 @@ void I_ProcessPalette16bpp(byte *palette)
 {
   int i, j;
 
-  byte *ptr = gammatable[usegamma];
+  byte *ptr = gammatable;
 
   for (i = 0; i < 14 * 256 * 2; i += 2, palette += 3)
   {
@@ -741,7 +742,7 @@ void I_ProcessPalette24bpp(byte *palette)
 {
   int i, j;
 
-  byte *ptr = gammatable[usegamma];
+  byte *ptr = gammatable;
 
   for (i = 0; i < 14 * 256 * 3; i += 3, palette += 3)
   {
@@ -767,7 +768,7 @@ void I_ProcessPalette32bpp(byte *palette)
 {
   int i, j;
 
-  byte *ptr = gammatable[usegamma];
+  byte *ptr = gammatable;
 
   for (i = 0; i < 14 * 256 * 4; i += 4, palette += 3)
   {

@@ -13,6 +13,7 @@
 #include "math.h"
 #include "i_system.h"
 #include "i_incolor.h"
+#include "i_gamma.h"
 
 #if defined(MODE_INCOLOR)
 
@@ -116,7 +117,7 @@ unsigned char *ptrlut16colors = lut16colors;
 void I_ProcessPalette(byte *palette)
 {
     int i, j;
-    byte *ptr = gammatable[usegamma];
+    byte *ptr = gammatable;
 
     for (i = 0; i < 14 * 256; i++, palette += 3)
     {

@@ -12,6 +12,7 @@
 #include "math.h"
 #include "i_system.h"
 #include "i_vga.h"
+#include "i_gamma.h"
 
 #include "doomstat.h"
 
@@ -23,7 +24,7 @@ void I_ProcessPalette(byte *palette)
 {
     int i;
 
-    byte *ptr = gammatable[usegamma];
+    byte *ptr = gammatable;
 
     for (i = 0; i < 14 * 768; i += 4, palette += 4)
     {

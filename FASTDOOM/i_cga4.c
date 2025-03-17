@@ -12,6 +12,7 @@
 #include "tables.h"
 #include "math.h"
 #include "i_system.h"
+#include "i_gamma.h"
 
 #if defined(MODE_CGA)
 
@@ -27,7 +28,7 @@ const byte colors[12] = {
 void I_ProcessPalette(byte *palette)
 {
     int i, j;
-    byte *ptr = gammatable[usegamma];
+    byte *ptr = gammatable;
 
     ptrlut4colors = (byte *)(((int)lut4colors + 255) & ~0xff);
 

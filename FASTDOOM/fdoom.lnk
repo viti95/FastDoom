@@ -89,6 +89,7 @@ file i_vgax.obj
 file math.obj
 file i_sound.obj
 file i_file.obj
+file i_gamma.obj
 file tables.obj
 file f_finale.obj
 file d_main.obj
