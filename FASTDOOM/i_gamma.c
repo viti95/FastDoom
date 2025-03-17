@@ -37,12 +37,10 @@
 // Converts integer to fixed-point 16.16
 #define TO_FIXED(x) ((x) << FIXED_POINT_SHIFT)
 
-#define BASE (16)
-
 unsigned char gammatable[256];
 
 // Natural logarithm approximation
-int fixed_ln(int x) {
+int FixedLn(int x) {
     int result = 0;
     int term;
     int i;
@@ -71,7 +69,7 @@ int fixed_ln(int x) {
 }
 
 // Exponential function approximation
-int fixed_exp(int x) {
+int FixedExp(int x) {
     int result = FIXED_POINT_ONE;
     int term = FIXED_POINT_ONE;
     int i;
@@ -91,10 +89,10 @@ int FixedPow(int x, int y) {
 
     if (x <= 0) return 0; // Undefined for non-positive bases
     
-    log_x = fixed_ln(x); // Compute ln(x)
+    log_x = FixedLn(x); // Compute ln(x)
     y_log_x = FixedMul(y, log_x); // Multiply by y
     
-    return fixed_exp(y_log_x); // Return exp(y * ln(x))
+    return FixedExp(y_log_x); // Return exp(y * ln(x))
 }
 
 fixed_t levels[5] = { 65536, 75366, 88474, 106168, 131072 };
@@ -116,7 +114,7 @@ void I_SetGamma(int usegamma) {
 
         int x_mul_power = FixedMul(TO_FIXED(63), x_power);
 
-        x_mul_power >>= 16;
+        x_mul_power >>= FIXED_POINT_SHIFT;
 
         // Clamp to byte range
         gammatable[i] = x_mul_power;
