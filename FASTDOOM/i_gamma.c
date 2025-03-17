@@ -99,15 +99,12 @@ int FixedPow(int x, int y)
     return FixedExp(y_log_x); // Return exp(y * ln(x))
 }
 
-fixed_t levels[5] = {65536, 75366, 88474, 106168, 131072};
-
 void I_SetGamma(int usegamma)
 {
-
     int i = 0;
 
-    fixed_t gamma = levels[usegamma];
-
+    fixed_t gamma = FRACUNIT + FixedMul(TO_FIXED(usegamma),(FRACUNIT / 16));
+    
     int inv_gamma = FixedDiv(TO_FIXED(1), gamma);
 
     for (i = 0; i < 256; i++)

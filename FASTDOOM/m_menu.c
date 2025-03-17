@@ -184,6 +184,7 @@ void M_ChangeWallDetail(int choice);
 void M_ChangeSpriteDetail(int choice);
 void M_ChangePSpriteDetail(int choice);
 void M_ChangeCPU(int choice);
+void M_ChangeGamma(int choice);
 void M_ChangeVsync(int choice);
 void M_ChangeSkyDetail(int choice);
 void M_ChangeInvisibleDetail(int choice);
@@ -316,22 +317,23 @@ menu_t NewDef =
 //
 // OPTIONS MENU
 //
-#define vsync 0
-#define detail 1
-#define visplanes 2
-#define columns 3
-#define sprites 4
-#define psprite 5
-#define sky 6
-#define invisible 7
-#define showfps 8
-#define automaprt 9
-#define spriteculling 10
-#define melting 11
-#define bus_speed 12
-#define cpu 13
-#define uncapped_fps 14
-#define display_end 15
+#define gamma 0
+#define vsync 1
+#define detail 2
+#define visplanes 3
+#define columns 4
+#define sprites 5
+#define psprite 6
+#define sky 7
+#define invisible 8
+#define showfps 9
+#define automaprt 10
+#define spriteculling 11
+#define melting 12
+#define bus_speed 13
+#define cpu 14
+#define uncapped_fps 15
+#define display_end 16
 
 #define endgame 0
 #define messages 1
@@ -367,6 +369,7 @@ menu_t OptionsDef =
 
 menuitem_t DisplayMenu[] =
     {
+        {2, "", "", M_ChangeGamma},
         {2, "", "", M_ChangeVsync},
         {2, "", "", M_ChangeDetail},
         {2, "", "", M_ChangeVisplaneDetail},
@@ -1291,6 +1294,7 @@ void M_Episode(int choice)
 // M_Options
 //
 const char msgNames[2][9] = {"M_MSGOFF", "M_MSGON"};
+char gammamsg[7];
 
 void M_DrawOptions(void)
 {
@@ -1339,6 +1343,10 @@ void M_DrawDisplayItem(int item, int position)
 
     switch (item)
     {
+    case gamma:
+        M_WriteText(58, y, "GAMMA LEVEL:");
+        M_WriteText(214, y, gammamsg);
+        break;
     case vsync:
         M_WriteText(58, y, "VSYNC:");
         M_WriteText(214, y, waitVsync ? "ON" : "OFF");
@@ -1504,6 +1512,10 @@ void M_DrawDisplayItem(int item, int position)
 
     switch (item)
     {
+    case gamma:
+        V_WriteTextDirect(M_X1, y, "GAMMA LEVEL:");
+        V_WriteTextDirect(M_X2, y, gammamsg);
+        break;
     case vsync:
         V_WriteTextDirect(M_X1, y, "VSYNC:");
         V_WriteTextDirect(M_X2, y, waitVsync ? "ON" : "OFF");
@@ -1967,6 +1979,36 @@ void M_ChangePSpriteDetail(int choice)
     }
 }
 
+#define MIN_GAMMA (-8)
+#define MAX_GAMMA (24)
+
+void M_ChangeGamma(int choice)
+{
+    fixed_t gammaval;
+
+    switch (choice)
+    {
+    case 0:
+        if (usegamma > MIN_GAMMA)
+            usegamma--;
+        break;
+    case 1:
+        if (usegamma < MAX_GAMMA)
+            usegamma++;
+        break;
+    }
+
+    memset(gammamsg, 0, sizeof(gammamsg));
+
+    gammaval = FRACUNIT + FixedMul(TO_FIXED(usegamma),(FRACUNIT / 16));
+    sprintf(gammamsg, "%i.%04i", gammaval >> FRACBITS, ((gammaval & 65535) * 10000) >> FRACBITS);
+
+    I_SetGamma(usegamma);
+    I_ProcessPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
+    I_SetPalette(0);
+
+}
+
 void M_ChangeVsync(int choice)
 {
     waitVsync = !waitVsync;
@@ -2368,7 +2410,6 @@ void M_WriteText(int x, int y, char *string)
 // M_Responder
 //
 char *fdoomhelp;
-char gammamsg[25];
 
 byte M_Responder(void)
 {
@@ -2517,22 +2558,12 @@ byte M_Responder(void)
             S_StartSound(NULL, sfx_swtchn);
             M_QuitDOOM(0);
             return 1;
-        case KEY_F11: // gamma toggle
+        case KEY_F11: // Change gamma
+            if (usegamma == MAX_GAMMA - 1)
+                usegamma = -1;
 
-            memset(gammamsg, 0, sizeof(gammamsg));
+            M_ChangeGamma(1);
 
-            usegamma++;
-            if (usegamma > 4){
-                usegamma = 0;
-            }
-
-            I_SetGamma(usegamma);
-
-            sprintf(gammamsg, "Gamma correction %d", usegamma);
-
-            players.message = (char *)gammamsg;
-            I_ProcessPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
-            I_SetPalette(0);
             return 1;
         case KEY_F12: // Autorun
             autorun = !autorun;
@@ -2894,6 +2925,8 @@ void M_Ticker(void)
 //
 void M_Init(void)
 {
+    fixed_t gammaval = FRACUNIT + FixedMul(TO_FIXED(usegamma),(FRACUNIT / 16));
+
     currentMenu = &MainDef;
     menuactive = 0;
     itemOn = currentMenu->lastOn;
@@ -2904,4 +2937,6 @@ void M_Init(void)
     messageString = NULL;
     messageLastMenuActive = menuactive;
     quickSaveSlot = -1;
+
+    sprintf(gammamsg, "%i.%04i", gammaval >> FRACBITS, ((gammaval & 65535) * 10000) >> FRACBITS);
 }
