@@ -25,10 +25,6 @@
 // Global parameters/defines.
 //
 // DOOM version
-enum
-{
-    VERSION = 109
-};
 
 #define COMPLEVEL_DOOM              2
 #define COMPLEVEL_ULTIMATE_DOOM     3

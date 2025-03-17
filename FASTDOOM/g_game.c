@@ -73,6 +73,7 @@
 #define SAVEGAMESIZE 0x2c000
 #define SAVESTRINGSIZE 24
 #define DEMOMARKER 0x80
+#define VERSION 109
 
 void G_CheckDemoStatus(void);
 void G_ReadDemoTiccmd(ticcmd_t *cmd);

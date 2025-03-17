@@ -858,6 +858,8 @@ void D_DrawTitle(int fc)
     int i;
 
     int length;
+    int initial;
+    int title_counter = 0;
 
     // Calculate text color
     color = (7 << 4) | fc;
@@ -870,15 +872,22 @@ void D_DrawTitle(int fc)
 
     length = strlen(title);
 
+    initial = (80 - length) / 2;
+
     for (i = 0; i < 80; i++)
     {
         // Set character
         regs.h.ah = 9;
 
-        if (i > length)
+        if (i < initial || i > initial + length)
+        {
             regs.h.al = ' ';
+        }
         else
-            regs.h.al = title[i];
+        {
+            regs.h.al = title[title_counter];
+            title_counter++;
+        }
 
         regs.w.cx = 1;
         regs.h.bl = color;
@@ -1581,37 +1590,25 @@ void D_DoomMain(void)
     switch (gamemode)
     {
     case retail:
-        sprintf(title,
-                "                         "
-                "The Ultimate DOOM Startup v1.9");
+        sprintf(title, "The Ultimate DOOM");
         break;
     case shareware:
-        sprintf(title,
-                "                            "
-                "DOOM Shareware Startup v1.9");
+        sprintf(title, "DOOM Shareware");
         break;
     case registered:
-        sprintf(title,
-                "                          "
-                "DOOM System Startup v1.9");
+        sprintf(title, "DOOM");
         break;
     case commercial:
         switch (gamemission)
         {
         case doom2:
-            sprintf(title,
-                    "                         "
-                    "DOOM 2: Hell on Earth v1.9");
+            sprintf(title, "DOOM 2: Hell on Earth");
             break;
         case pack_plut:
-            sprintf(title,
-                    "                   "
-                    "DOOM 2: Plutonia Experiment v1.9");
+            sprintf(title, "DOOM 2: Plutonia Experiment");
             break;
         case pack_tnt:
-            sprintf(title,
-                    "                     "
-                    "DOOM 2: TNT - Evilution v1.9");
+            sprintf(title, "DOOM 2: TNT - Evilution");
             break;
         }
         break;
