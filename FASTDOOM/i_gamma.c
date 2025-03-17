@@ -96,8 +96,8 @@ int FixedPow(int x, int y) {
     
     return fixed_exp(y_log_x); // Return exp(y * ln(x))
 }
-fixed_t levels[5] = { 1 << 16, 2 << 16, 3 << 16, 4 << 16, 5 << 16 };
 
+fixed_t levels[5] = { 65536, 75366, 88474, 106168, 131072 };
 
 void I_SetGamma(int usegamma) {
     int i = 0;
