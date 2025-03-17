@@ -24,8 +24,8 @@
 #include "i_debug.h"
 #include "fastmath.h"
 
-#define LN_MAX_ITER 20
-#define EXP_MAX_ITER 20
+#define LN_MAX_ITER 15
+#define EXP_MAX_ITER 15
 #define LN2 45426 // ln(2) in 16.16 format
 
 unsigned char gammatable[256];
