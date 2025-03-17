@@ -51,6 +51,8 @@
 
 #include "math.h"
 
+#include "i_gamma.h"
+
 #if defined(MODE_CGA_AFH)
 #include "i_cgaafh.h"
 #endif
@@ -755,7 +757,7 @@ void I_InitGraphics(void)
     VGA_TestFastSetPalette();
 #endif
 
-    I_SetGamma(1 << 16);
+    I_SetGamma(usegamma);
     I_ProcessPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
     I_SetPalette(0);
 }

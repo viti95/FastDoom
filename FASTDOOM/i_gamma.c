@@ -96,15 +96,17 @@ int FixedPow(int x, int y) {
     
     return fixed_exp(y_log_x); // Return exp(y * ln(x))
 }
+fixed_t levels[5] = { 1 << 16, 2 << 16, 3 << 16, 4 << 16, 5 << 16 };
 
-void I_SetGamma(fixed_t gamma) {
+
+void I_SetGamma(int usegamma) {
     int i = 0;
+
+    fixed_t gamma = levels[usegamma];
 
     int inv_gamma = FixedDiv(TO_FIXED(1), gamma);
     
     for (i = 0; i < 256; i++) {
-
-        //BITRSHIFT(ROUND(255 * POWER(H2 / 255;1/gamma); 0); 2)
 
         int x_fixed = TO_FIXED(i);
 

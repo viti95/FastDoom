@@ -22,7 +22,7 @@
 
 #include "fastmath.h"
 
-void I_SetGamma(fixed_t gamma);
+void I_SetGamma(int usegamma);
 
 extern unsigned char gammatable[256];
 
