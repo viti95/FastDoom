@@ -89,6 +89,7 @@ int FixedPow(int x, int y) {
 fixed_t levels[5] = { 65536, 75366, 88474, 106168, 131072 };
 
 void I_SetGamma(int usegamma) {
+
     int i = 0;
 
     fixed_t gamma = levels[usegamma];
@@ -108,6 +109,7 @@ void I_SetGamma(int usegamma) {
         x_mul_power >>= FRACBITS;
 
         if (x_mul_power > 63) x_mul_power = 63;
+        if (x_mul_power < 0) x_mul_power = 0;
 
         gammatable[i] = x_mul_power;
     }
