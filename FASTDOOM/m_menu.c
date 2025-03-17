@@ -1295,6 +1295,7 @@ void M_Episode(int choice)
 //
 const char msgNames[2][9] = {"M_MSGOFF", "M_MSGON"};
 char gammamsg[7];
+char playergammamsg[13];
 
 void M_DrawOptions(void)
 {
@@ -2559,10 +2560,15 @@ byte M_Responder(void)
             M_QuitDOOM(0);
             return 1;
         case KEY_F11: // Change gamma
-            if (usegamma == MAX_GAMMA - 1)
+            if (usegamma == MAX_GAMMA)
                 usegamma = -1;
 
             M_ChangeGamma(1);
+
+            memset(playergammamsg, 0, sizeof(playergammamsg));
+            sprintf(playergammamsg, "GAMMA %s", gammamsg);
+
+            players.message = playergammamsg;
 
             return 1;
         case KEY_F12: // Autorun
