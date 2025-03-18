@@ -13,6 +13,7 @@
 #include "math.h"
 #include "i_system.h"
 #include "i_herc.h"
+#include "i_gamma.h"
 
 #if defined(MODE_HERC)
 
