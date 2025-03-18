@@ -288,7 +288,7 @@ void P_UnArchiveThinkers(void)
 			break;
 
 		default:
-			I_Error("Unknown tclass %i in savegame", tclass);
+			I_Error(22, tclass);
 		}
 	}
 }
@@ -585,7 +585,7 @@ void P_UnArchiveSpecials(void)
 			break;
 
 		default:
-			I_Error("Unknown tclass %i in savegame", tclass);
+			I_Error(22, tclass);
 		}
 	}
 }

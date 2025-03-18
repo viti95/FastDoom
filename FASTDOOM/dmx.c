@@ -642,14 +642,14 @@ void ASS_Init(int rate, int mdev, int sdev)
 
             if (status != FX_Ok)
             {
-                I_Error("Error getting BLASTER settings: %i", status);
+                I_Error(12, status);
             }
 
             status = FX_SetupSoundBlaster(dmx_blaster);
 
             if (status != FX_Ok)
             {
-                I_Error("Error setup music device: %i", status);
+                I_Error(13, status);
             }
         }
 
@@ -657,7 +657,7 @@ void ASS_Init(int rate, int mdev, int sdev)
 
         if (status != MUSIC_Ok)
         {
-            I_Error("Error initializing music device: %i", status);
+            I_Error(14, status);
         }
 
         if (status == MUSIC_Ok)
@@ -700,7 +700,7 @@ void ASS_Init(int rate, int mdev, int sdev)
 
         if (status != FX_Ok)
         {
-            I_Error("Error setup sound device: %i", status);
+            I_Error(15, status);
         }
 
         switch (snd_Rate)
@@ -741,7 +741,7 @@ void ASS_Init(int rate, int mdev, int sdev)
 
         if (status != FX_Ok)
         {
-            I_Error("Error initializing sound device: %i", status);
+            I_Error(16, status);
         }
 
         FX_SetVolume(255);

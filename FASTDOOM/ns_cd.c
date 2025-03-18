@@ -669,7 +669,7 @@ int CD_Init(void)
         I_Printf("CD_CdromInstalled failed\n");
         #endif
 
-        I_ErrorFile(7);
+        I_Error(7);
         return 0;
     }
     else
@@ -692,7 +692,7 @@ int CD_Init(void)
             I_Printf("CD_Init: NO AudioCD tracks available\n");
             #endif
 
-            I_ErrorFile(8);
+            I_Error(8);
             return 0;
         }
 

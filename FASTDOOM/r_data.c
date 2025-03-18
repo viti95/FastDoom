@@ -670,11 +670,11 @@ void R_WriteTintMapFile(void) {
     FILE *file = fopen(tintmapcachefile, "wb");
 
     if (file == NULL) {
-        I_Error("Error creating file %s", tintmapcachefile);
+        I_Error(23, tintmapcachefile);
     }
 
     if (fwrite(tintmap, 256 * 256, 1, file) != 1) {
-        I_Error("Error writing to file %s", tintmapcachefile);
+        I_Error(24, tintmapcachefile);
     }
 
     fclose(file);

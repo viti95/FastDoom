@@ -364,7 +364,7 @@ unsigned char *LoadFile(char *filename, int *length)
     unsigned char *ptr;
 
     if ((in = fopen(filename, "rb")) == NULL)
-        I_Error("File %s not found", filename);
+        I_Error(25, filename);
 
     fseek(in, 0, SEEK_END);
     size = ftell(in);
@@ -373,7 +373,7 @@ unsigned char *LoadFile(char *filename, int *length)
     ptr = (unsigned char *)Z_MallocUnowned(size, PU_STATIC);
 
     if (fread(ptr, size, 1, in) != 1)
-        I_Error("Error loading music file %s", filename);
+        I_Error(26, filename);
 
     fclose(in);
 

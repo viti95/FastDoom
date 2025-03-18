@@ -942,7 +942,7 @@ void D_CheckFileSize(char *filename, long checksize)
     }
     else
     {
-        I_Error("File %s could not be opened\n", filename);
+        I_Error(11, filename);
     }
 
     if (checksize != size)
@@ -959,7 +959,7 @@ void D_CheckFileSize(char *filename, long checksize)
 
         if (selection == 110 || selection == 27)
         {
-            I_ErrorFile(0);
+            I_Error(0);
         }
     }
 }
@@ -977,7 +977,7 @@ void D_CheckFileSize2(char *filename, long checksize1, long checksize2)
     }
     else
     {
-        I_Error("File %s could not be opened\n", filename);
+        I_Error(11, filename);
     }
 
     if (checksize1 != size && checksize2 != size)
@@ -994,7 +994,7 @@ void D_CheckFileSize2(char *filename, long checksize1, long checksize2)
 
         if (selection == 110 || selection == 27)
         {
-            I_ErrorFile(0);
+            I_Error(0);
         }
     }
 }
@@ -1171,13 +1171,13 @@ void LoadIWAD(int selection)
     }
 
     if (loadError)
-        I_ErrorFile(1);
+        I_Error(1);
 }
 
 void LoadExternalIWAD(void)
 {
     if (access(iwadfile, R_OK))
-        I_ErrorFile(1);
+        I_Error(1);
 
     if (!strcmp(iwadfile, "doom1.wad"))
     {
@@ -1321,7 +1321,7 @@ void IdentifyVersion(void)
 
     if (selection == 27)
     {
-        I_ErrorFile(0);
+        I_Error(0);
     }
 
     LoadIWAD(selection);
@@ -1346,7 +1346,7 @@ unsigned char SelectIBMCGA(void)
     case 50:
         return CGA_NEW;
     default:
-        I_ErrorFile(5);
+        I_Error(5);
     }
 }
 #endif

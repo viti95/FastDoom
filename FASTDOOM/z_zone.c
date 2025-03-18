@@ -174,7 +174,7 @@ void *Z_Malloc(int size, byte tag, void *user)
         {
             // scanned all the way around the list
             if (emergency == 1)
-                I_Error("Failed on allocation of %i bytes", size);
+                I_Error(27, size);
             else
                 return Z_MallocEmergency(size, tag, user);
         }
@@ -272,7 +272,7 @@ void *Z_MallocUnowned(int size, byte tag)
         {
             // scanned all the way around the list
             if (emergency == 1)
-                I_Error("Failed on allocation of %i bytes", size);
+                I_Error(27, size);
             else
                 return Z_MallocEmergencyUnowned(size, tag);
         }

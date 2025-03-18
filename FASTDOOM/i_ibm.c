@@ -1123,13 +1123,17 @@ void I_Shutdown(void)
 //
 // I_Error
 //
-void I_Error(char *error, ...)
+char errormsg[80];
+
+void I_Error(int line, ...)
 {
     va_list argptr;
 
+    I_ReadTextLineFile("TEXT\\ERRORS.TXT", line, errormsg, sizeof(errormsg), 0);
+
     I_Shutdown();
-    va_start(argptr, error);
-    vprintf(error, argptr);
+    va_start(argptr, line);
+    vprintf(errormsg, argptr);
     va_end(argptr);
     printf("\n");
 
@@ -1137,14 +1141,6 @@ void I_Error(char *error, ...)
         CD_Exit();
 
     exit(1);
-}
-
-char errormsg[80];
-
-void I_ErrorFile(int line)
-{
-    I_ReadTextLineFile("TEXT\\ERRORS.TXT", line, errormsg, sizeof(errormsg), 0);
-    I_Error(errormsg);
 }
 
 //

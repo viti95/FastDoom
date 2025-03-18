@@ -441,7 +441,7 @@ void VBE2_InitGraphics(void)
 #if defined(MODE_VBE2_DIRECT)
   if (vesabitsperpixel > 8)
   {
-    I_ErrorFile(10);
+    I_Error(10);
   }
 #endif
 
@@ -452,7 +452,7 @@ void VBE2_InitGraphics(void)
     // Check for available offscreen memory for tripple buffering + border on fourth vram buffer
     if (vesamemory < SCREENWIDTH * SCREENHEIGHT * 4 / 1024)
     {
-      I_Error("Not enough VRAM for triple buffering! (%i KB required, have %lu KB)", SCREENWIDTH * SCREENHEIGHT * 4 / 1024, vesamemory);
+      I_Error(19, SCREENWIDTH * SCREENHEIGHT * 4 / 1024, vesamemory);
     }
 #endif
     VBE_SetMode(vesavideomode, vesalinear, 1);
@@ -588,7 +588,7 @@ void VBE2_InitGraphics(void)
     {
       if (SCREENWIDTH * SCREENHEIGHT > 65536)
       {
-        I_Error("Image doesn't fit in the 64Kb window (%i KB required)", SCREENWIDTH * SCREENHEIGHT / 1024);
+        I_Error(20, SCREENWIDTH * SCREENHEIGHT / 1024);
       }
     }
 
@@ -616,7 +616,7 @@ void VBE2_InitGraphics(void)
   }
   else
   {
-    I_Error("Compatible VESA 2.0 video mode not found! (%ix%i required)", SCREENWIDTH, SCREENHEIGHT);
+    I_Error(21, SCREENWIDTH, SCREENHEIGHT);
   }
 }
 

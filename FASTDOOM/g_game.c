@@ -866,7 +866,7 @@ void G_DoLoadGame(void)
     P_UnArchiveSpecials();
 
     if (*save_p != 0x1d)
-        I_ErrorFile(2);
+        I_Error(2);
 
     // done
     Z_Free(savebuffer);
@@ -1052,7 +1052,7 @@ void G_DoSaveGame(void)
     length = save_p - savebuffer;
 
     if (length > requiredmemsize)
-        I_ErrorFile(3);
+        I_Error(3);
 
     M_WriteFile(name, savebuffer, length);
     gameaction = ga_nothing;
@@ -1378,7 +1378,7 @@ void G_DoPlayDemo(void)
     demobuffer = demo_p = W_CacheLumpName(defdemoname, PU_STATIC);
     if (*demo_p++ != VERSION)
     {
-        I_ErrorFile(4);
+        I_Error(4);
     }
 
     skill = *demo_p++;
@@ -1774,7 +1774,7 @@ void G_CheckDemoStatus(void)
         }
         else
         {
-            I_Error("Timed %u gametics in %u realtics. FPS: %u.%.3u", gametics, realtics, resultfps / 1000, resultfps % 1000);
+            I_Error(17, gametics, realtics, resultfps / 1000, resultfps % 1000);
         }
     }
 
@@ -1797,7 +1797,7 @@ void G_CheckDemoStatus(void)
         M_WriteFile(demoname, demobuffer, demo_p - demobuffer);
         Z_Free(demobuffer);
         demorecording = 0;
-        I_Error("Demo %s recorded", demoname);
+        I_Error(18, demoname);
     }
 
     return;
