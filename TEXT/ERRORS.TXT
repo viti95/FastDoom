@@ -1,2 +1,11 @@
 Exiting...
 The selected IWAD was not found
+Bad savegame
+Savegame buffer overrun
+Demo is from a different game version!
+Wrong selection
+Cannot play AudioCD music
+MSCDEX was not found
+No Audio-CD tracks available
+Results saved on file BENCH.CSV
+FastDoom VBE 2.0 direct modes only support 8 bits per pixels

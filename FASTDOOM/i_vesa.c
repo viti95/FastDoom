@@ -441,7 +441,7 @@ void VBE2_InitGraphics(void)
 #if defined(MODE_VBE2_DIRECT)
   if (vesabitsperpixel > 8)
   {
-    I_Error("FastDoom VBE 2.0 direct modes only support 8 bits per pixels");
+    I_ErrorFile(10);
   }
 #endif
 

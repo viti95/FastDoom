@@ -240,7 +240,7 @@ void I_sndArbitrateCards(void)
         if (!CD_Init())
         {
             // Error on AudioCD init
-            I_Error("Cannot play AudioCD music");
+            I_ErrorFile(6);
         }
 
         CD_SetVolume(255);

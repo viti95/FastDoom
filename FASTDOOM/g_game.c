@@ -866,7 +866,7 @@ void G_DoLoadGame(void)
     P_UnArchiveSpecials();
 
     if (*save_p != 0x1d)
-        I_Error("Bad savegame");
+        I_ErrorFile(2);
 
     // done
     Z_Free(savebuffer);
@@ -1052,7 +1052,7 @@ void G_DoSaveGame(void)
     length = save_p - savebuffer;
 
     if (length > requiredmemsize)
-        I_Error("Savegame buffer overrun");
+        I_ErrorFile(3);
 
     M_WriteFile(name, savebuffer, length);
     gameaction = ga_nothing;
@@ -1378,7 +1378,7 @@ void G_DoPlayDemo(void)
     demobuffer = demo_p = W_CacheLumpName(defdemoname, PU_STATIC);
     if (*demo_p++ != VERSION)
     {
-        I_Error("Demo is from a different game version!");
+        I_ErrorFile(4);
     }
 
     skill = *demo_p++;

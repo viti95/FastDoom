@@ -1346,7 +1346,7 @@ unsigned char SelectIBMCGA(void)
     case 50:
         return CGA_NEW;
     default:
-        I_Error("Wrong selection");
+        I_ErrorFile(5);
     }
 }
 #endif
