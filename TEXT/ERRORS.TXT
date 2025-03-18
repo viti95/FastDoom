@@ -26,4 +26,3 @@ Error writing to file %s
 File %s not found
 Error loading music file %s
 Failed on allocation of %i bytes
-Results saved on file BENCH.CSV
