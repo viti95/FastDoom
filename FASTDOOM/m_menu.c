@@ -1598,6 +1598,10 @@ void M_DrawDisplayItem(int item, int position)
             break;
         }
         break;
+    case automaprt:
+        V_WriteTextDirect(M_X1, y, "AUTOMAP UPDATE:");
+        V_WriteTextDirect(M_X2, y, automapRT ? "ON" : "OFF");
+        break;
     case spriteculling:
         V_WriteTextDirect(M_X1, y, "SPRITE CULLING:");
         V_WriteTextDirect(M_X2, y, nearSprites ? "ON" : "OFF");
