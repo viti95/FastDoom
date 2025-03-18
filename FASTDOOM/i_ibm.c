@@ -52,6 +52,7 @@
 #include "math.h"
 
 #include "i_gamma.h"
+#include "i_file.h"
 
 #if defined(MODE_CGA_AFH)
 #include "i_cgaafh.h"
@@ -1136,6 +1137,14 @@ void I_Error(char *error, ...)
         CD_Exit();
 
     exit(1);
+}
+
+char errormsg[80];
+
+void I_ErrorFile(int line)
+{
+    I_ReadTextLineFile("TEXT\\ERRORS.TXT", line, errormsg, sizeof(errormsg), 0);
+    I_Error(errormsg);
 }
 
 //

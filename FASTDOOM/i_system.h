@@ -53,6 +53,7 @@ byte *I_AllocLow(int length);
 int I_GetCPUModel(void);
 
 void I_Error(char *error, ...);
+void I_ErrorFile(int line);
 
 //
 //  MUSIC I/O

@@ -959,7 +959,7 @@ void D_CheckFileSize(char *filename, long checksize)
 
         if (selection == 110 || selection == 27)
         {
-            I_Error("Exiting...");
+            I_ErrorFile(0);
         }
     }
 }
@@ -994,7 +994,7 @@ void D_CheckFileSize2(char *filename, long checksize1, long checksize2)
 
         if (selection == 110 || selection == 27)
         {
-            I_Error("Exiting...");
+            I_ErrorFile(0);
         }
     }
 }
@@ -1171,13 +1171,13 @@ void LoadIWAD(int selection)
     }
 
     if (loadError)
-        I_Error("The selected IWAD was not found");
+        I_ErrorFile(1);
 }
 
 void LoadExternalIWAD(void)
 {
     if (access(iwadfile, R_OK))
-        I_Error("The selected IWAD was not found");
+        I_ErrorFile(1);
 
     if (!strcmp(iwadfile, "doom1.wad"))
     {
@@ -1321,7 +1321,7 @@ void IdentifyVersion(void)
 
     if (selection == 27)
     {
-        I_Error("Exiting...");
+        I_ErrorFile(0);
     }
 
     LoadIWAD(selection);
