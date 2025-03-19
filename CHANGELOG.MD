@@ -6,6 +6,7 @@
 * Smaller executables (~15Kb)
 * Fix missing entry on display menu for text modes
 * Fix enabled cursor in the MDA modes
+* Fix CGA color palette (low intensity, red-green-brown) for CGA compatible cards on some systems (wrong BIOS Int 10/AH=0Bh/BH=00h)
 
 ## 1.1.1 (07 Mar 2025)
 * Fixed VESA linear modes that are not 100% linear (scanlines with empty voids at the end)
