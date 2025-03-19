@@ -58,12 +58,7 @@ void CGA_InitGraphics(void)
     if (!CGApalette1)
     {
         // Set palette and intensity (CGA)
-        regs.w.ax = 0x0B00;
-        regs.w.bx = 0x0100;
-        int386(0x10, (union REGS *)&regs, &regs);
-        regs.w.ax = 0x0B00;
-        regs.w.bx = 0x0000;
-        int386(0x10, (union REGS *)&regs, &regs);
+        outp(0x3D9, 0);
 
         // Fix EGA/VGA wrong colors
         regs.w.ax = 0x1000;
