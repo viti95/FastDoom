@@ -23,7 +23,7 @@ void MDA_InitGraphics(void)
 {
     union REGS regs;
 
-    // Set 80x25 color mode
+    // Set 80x25 monochrome mode
     regs.h.ah = 0x00;
     regs.h.al = 0x07;
     int386(0x10, &regs, &regs);
