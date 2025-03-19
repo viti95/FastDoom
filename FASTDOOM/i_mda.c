@@ -28,6 +28,11 @@ void MDA_InitGraphics(void)
     regs.h.al = 0x07;
     int386(0x10, &regs, &regs);
 
+    // Disable cursor
+    regs.h.ah = 0x01;
+    regs.h.ch = 0x3F;
+    int386(0x10, &regs, &regs);
+
     // Disable MDA blink
     I_DisableMDABlink();
 }
