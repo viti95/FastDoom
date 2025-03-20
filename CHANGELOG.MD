@@ -1,9 +1,9 @@
 # CHANGELOG
 
-## 1.1.2 (?? ??? ????)
-* A bit faster realtime automap updates (issue #229)
+## 1.1.2 (20 Mar 2025)
 * Gamma level is now selectable in 0.0625 steps from 0.5 to 2.5
 * Smaller executables (~15Kb)
+* A bit faster realtime automap updates (issue #229)
 * Fix missing entry on display menu for text modes
 * Fix enabled cursor in the MDA modes
 * Fix CGA color palette (low intensity, red-green-brown) for CGA compatible cards on some systems (wrong BIOS Int 10/AH=0Bh/BH=00h)
