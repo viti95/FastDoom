@@ -20,6 +20,7 @@ cp -R INTER PKG/INTER
 cp -R BENCH PKG/BENCH
 cp -R LEVELS PKG/LEVELS
 cp -R TEXT PKG/TEXT
+cp -R DATA PKG/DATA
 cp EXE/* PKG
 
 versionstring=$(grep "#define FDOOMVERSION" FASTDOOM/version.h)

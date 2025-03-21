@@ -19,6 +19,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <fcntl.h>
 
 #include "std_func.h"
 #include "i_system.h"
@@ -62,32 +63,36 @@ int I_ReadTextFile(char *dest, char *filename, int size)
 
 char *I_LoadText(char *filename)
 {
-	int size;
+    int size;
     char *ptr;
 
-	size = I_GetFileSize(filename);
+    size = I_GetFileSize(filename);
 
     if (size == -1)
         return NULL;
 
-	ptr = Z_MallocUnowned(size + 1, PU_CACHE);
+    ptr = Z_MallocUnowned(size + 1, PU_CACHE);
 
-	SetBytes(ptr, '\0', size + 1);
-	I_ReadTextFile(ptr, filename, size);
+    SetBytes(ptr, '\0', size + 1);
+    I_ReadTextFile(ptr, filename, size);
 
     return ptr;
 }
 
-void I_ReplaceEscapedNewlines(char *str) {
+void I_ReplaceEscapedNewlines(char *str)
+{
     char *read_ptr = str;
     char *write_ptr = str;
 
-    while (*read_ptr) {
+    while (*read_ptr)
+    {
         if (read_ptr[0] == '\\' && read_ptr[1] == 'n')
         {
             *write_ptr++ = '\n';
             read_ptr += 2;
-        } else {
+        }
+        else
+        {
             *write_ptr++ = *read_ptr++;
         }
     }
@@ -107,7 +112,7 @@ int I_ReadTextLineFile(char *filename, int line_number, char *buffer, int max_le
     {
         return -1;
     }
-        
+
     while (line < line_number && (c = fgetc(f)) != EOF)
     {
         if (c == '\n')
@@ -119,7 +124,7 @@ int I_ReadTextLineFile(char *filename, int line_number, char *buffer, int max_le
         fclose(f);
         return -1;
     }
-        
+
     while (i < max_length - 1 && (c = fgetc(f)) != EOF && c != '\n')
     {
         buffer[i++] = (char)c;
@@ -133,4 +138,21 @@ int I_ReadTextLineFile(char *filename, int line_number, char *buffer, int max_le
         I_ReplaceEscapedNewlines(buffer);
 
     return 1;
+}
+
+unsigned char *I_ReadBinaryStatic(char *file, int size)
+{
+    int c;
+    int handle;
+    unsigned char *ptr;
+
+    ptr = Z_MallocUnowned(size, PU_STATIC);
+
+    handle = open(file, O_RDONLY | O_BINARY);
+
+    c = read(handle, ptr, size);
+
+    close(handle);
+
+    return ptr;
 }
