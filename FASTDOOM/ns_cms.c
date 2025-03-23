@@ -16,6 +16,8 @@
 #include "options.h"
 #include "doomstat.h"
 
+#include "i_file.h"
+
 //#define CMS_DEBUG
 
 #ifdef CMS_DEBUG
@@ -92,24 +94,7 @@ static unsigned short pitchtable[256] = {                    /* pitch wheel */
          36254U,36286U,36319U,36352U,36385U,36417U,36450U,36483U,  /*  112 */
          36516U,36549U,36582U,36615U,36648U,36681U,36715U,36748U}; /*  120 */
 
-unsigned char	CMSFreqMap[128] = {
-		0  ,  3,  7, 11, 15, 19, 23, 27,
-		31 , 34, 38, 41, 45, 48, 51, 55,
-		58 , 61, 64, 66, 69, 72, 75, 77,
-		80 , 83, 86, 88, 91, 94, 96, 99,
-		102,104,107,109,112,114,116,119,
-		121,123,125,128,130,132,134,136,
-		138,141,143,145,147,149,151,153,
-		155,157,159,161,162,164,166,168,
-		170,172,174,175,177,179,181,182,
-		184,186,188,189,191,193,194,196,
-		197,199,200,202,203,205,206,208,
-		209,210,212,213,214,216,217,218,
-		219,221,222,223,225,226,227,228,
-		229,231,232,233,234,235,236,237,
-		239,240,241,242,243,244,245,246,
-		247,249,250,251,252,253,254,255
-	};
+unsigned char *CMSFreqMap;
 
 // The 12 note-within-an-octave values for the SAA1099, starting at B
 static unsigned char noteAdr[] = {5, 32, 60, 85, 110, 132, 153, 173, 192, 210, 227, 243};
@@ -384,6 +369,8 @@ int CMS_MIDI_Init(int port)
 #ifdef CMS_DEBUG_X
     I_Printf("CMS_MIDI_Init port= %i (CMS_Port = %i)\r\n",port,CMS_Port);
 #endif
+
+    CMSFreqMap = I_ReadBinaryStatic("DATA\\CMSFM.BIN", 128);
 
     CMS_Reset();
     // prepare MIDI synth
