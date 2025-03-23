@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "ns_cd.h"
 #include "i_system.h"
+#include "z_zone.h"
 
 //#define CD_LOG
 
@@ -53,8 +54,8 @@ static struct DPMI_PTR CD_Device_extra = {0, 0};
 static union REGS regs;
 static struct SREGS sregs;
 
-unsigned long TrackBeginPosition[MAX_TRACKS];
-unsigned long TrackLength[MAX_TRACKS];
+unsigned long *TrackBeginPosition;
+unsigned long *TrackLength;
 
 static void PrepareRegisters(void)
 {
@@ -675,6 +676,7 @@ int CD_Init(void)
     else
     {
         int i;
+        unsigned int num_tracks;
 
         #ifdef CD_LOG
         I_Printf("CD_CdromInstalled OK\n");
@@ -696,7 +698,12 @@ int CD_Init(void)
             return 0;
         }
 
-        for (i = 0; i < MAX_TRACKS; i++)
+        num_tracks = ((unsigned int)CD_Cdrom_data.High_audio) + 1;
+
+        TrackBeginPosition = Z_MallocUnowned(num_tracks * sizeof(unsigned long), PU_STATIC);
+        TrackLength = Z_MallocUnowned(num_tracks * sizeof(unsigned long), PU_STATIC);
+
+        for (i = 0; i < num_tracks; i++)
         {
             TrackBeginPosition[i] = 0;
             TrackLength[i] = 0;
