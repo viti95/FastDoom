@@ -100,16 +100,7 @@ unsigned char *CMSFreqMap;
 static unsigned char noteAdr[] = {5, 32, 60, 85, 110, 132, 153, 173, 192, 210, 227, 243};
 
 // Volume
-static unsigned char atten[128] = {
-                 0,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,
-                 3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,
-                 5,5,5,5,5,5,5,5,6,6,6,6,6,6,6,6,
-                 7,7,7,7,7,7,7,7,8,8,8,8,8,8,8,8,
-                 9,9,9,9,9,9,9,9,10,10,10,10,10,10,10,10,
-                 11,11,11,11,11,11,11,11,12,12,12,12,12,12,12,12,
-                 13,13,13,13,13,13,13,13,14,14,14,14,14,14,14,14,
-        	 15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,
-        };
+unsigned char *atten;
 
 // Logic channel - first chip/second chip
 static unsigned char ChanReg[12] =  {000,001,002,003,004,005,000,001,002,003,004,005};
@@ -371,6 +362,7 @@ int CMS_MIDI_Init(int port)
 #endif
 
     CMSFreqMap = I_ReadBinaryStatic("DATA\\CMSFM.BIN", 128);
+    atten = I_ReadBinaryStatic("DATA\\CMSATT.BIN", 128);
 
     CMS_Reset();
     // prepare MIDI synth
