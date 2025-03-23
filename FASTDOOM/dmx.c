@@ -160,7 +160,7 @@ unsigned char *LogoSC55;
 void MUS_ImgSC55(void)
 {
     LogoSC55 = I_ReadBinaryStatic("DATA\\SC55.BIN", 72);
-    MUSIC_SysEx(LogoSC55, sizeof(LogoSC55));
+    MUSIC_SysEx(LogoSC55, 72);
     Z_Free(LogoSC55);
 }
 
@@ -168,8 +168,8 @@ unsigned char *LogoTG300;
 
 void MUS_ImgTG300(void)
 {
-    LogoTG300 = I_ReadBinaryStatic("DATA\\TG300.BIN", 72);
-    MUSIC_SysEx(LogoTG300, sizeof(LogoTG300));
+    LogoTG300 = I_ReadBinaryStatic("DATA\\TG300.BIN", 55);
+    MUSIC_SysEx(LogoTG300, 55);
     Z_Free(LogoTG300);
 }
 
