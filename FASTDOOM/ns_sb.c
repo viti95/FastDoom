@@ -13,7 +13,7 @@
 #include "options.h"
 #include "fastmath.h"
 
-const char BLASTER_Interrupts[BLASTER_MaxIrq + 1] =
+const unsigned char BLASTER_Interrupts[BLASTER_MaxIrq + 1] =
     {
         INVALID, INVALID, 0xa, 0xb,
         INVALID, 0xd, INVALID, 0xf,
