@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.1.3 (?? ??? ????)
+* Smaller executables
+* Fixed EV_BuildStairs function (thanks @decino)
+
 ## 1.1.2 (20 Mar 2025)
 * Gamma level is now selectable in 0.0625 steps from 0.5 to 2.5
 * Smaller executables (~15Kb)

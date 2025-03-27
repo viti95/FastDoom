@@ -1,4 +1,4 @@
-fastdoom 1.1.2 by ViTi95
+fastdoom 1.1.3 by ViTi95
 
 thanks to all contributors:
 
