@@ -14,14 +14,14 @@
 #include "options.h"
 #include "fastmath.h"
 
-const int SOUNDSCAPE_Interrupts[SOUNDSCAPE_MaxIrq + 1] =
+const unsigned char SOUNDSCAPE_Interrupts[SOUNDSCAPE_MaxIrq + 1] =
     {
         INVALID, INVALID, 0xa, INVALID,
         INVALID, 0xd, INVALID, 0xf,
         INVALID, INVALID, 0x72, INVALID,
         INVALID, INVALID, INVALID, INVALID};
 
-const int SOUNDSCAPE_SampleSize[SOUNDSCAPE_MaxMixMode + 1] =
+const char SOUNDSCAPE_SampleSize[SOUNDSCAPE_MaxMixMode + 1] =
     {
         MONO_8BIT_SAMPLE_SIZE, STEREO_8BIT_SAMPLE_SIZE,
         MONO_16BIT_SAMPLE_SIZE, STEREO_16BIT_SAMPLE_SIZE};

@@ -13,7 +13,7 @@
 #include "options.h"
 #include "z_zone.h"
 
-static const int GUSWAVE_PanTable[32] =
+static const char GUSWAVE_PanTable[32] =
     {
         8, 9, 10, 11, 11, 12, 13, 14,
         15, 14, 13, 12, 11, 10, 9, 8,

@@ -398,6 +398,8 @@ int EV_DoFloor(line_t *line,
 	return rtn;
 }
 
+#define STAIRS_UNINITIALIZED_CRUSH_FIELD_VALUE 10
+
 //
 // BUILD A STAIRCASE!
 //
@@ -458,6 +460,9 @@ int EV_BuildStairs(line_t *line,
 		height = sec->floorheight + stairsize;
 		floor->floordestheight = height;
 
+		floor->type = lowerFloor;
+		floor->crush = STAIRS_UNINITIALIZED_CRUSH_FIELD_VALUE;
+
 		texture = sec->floorpic;
 
 		// Find next sector to raise
@@ -503,6 +508,10 @@ int EV_BuildStairs(line_t *line,
 				floor->sector = sec;
 				floor->speed = speed;
 				floor->floordestheight = height;
+
+				floor->type = lowerFloor;
+				floor->crush = STAIRS_UNINITIALIZED_CRUSH_FIELD_VALUE;
+
 				ok = 1;
 				break;
 			}

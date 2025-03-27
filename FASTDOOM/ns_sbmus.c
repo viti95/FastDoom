@@ -90,7 +90,7 @@ static unsigned NotePitch[FINETUNE_MAX + 1][12] =
 // Slot numbers as a function of the voice and the operator.
 // ( melodic only)
 
-static int slotVoice[NUM_VOICES][2] =
+static char slotVoice[NUM_VOICES][2] =
     {
         {0, 3},   // voice 0
         {1, 4},   // 1
@@ -104,7 +104,7 @@ static int slotVoice[NUM_VOICES][2] =
 };
 
 static int VoiceLevel[NumChipSlots][2];
-static int VoiceKsl[NumChipSlots][2];
+static unsigned char VoiceKsl[NumChipSlots][2];
 
 // This table gives the offset of each slot within the chip.
 // offset = fn( slot)
@@ -114,11 +114,6 @@ static char offsetSlot[NumChipSlots] =
         0, 1, 2, 3, 4, 5,
         8, 9, 10, 11, 12, 13,
         16, 17, 18, 19, 20, 21};
-
-static int VoiceReserved[NUM_VOICES * 2] =
-    {
-        FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
-        FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE};
 
 static VOICE Voice[NUM_VOICES * 2];
 static VOICELIST Voice_Pool;
@@ -721,17 +716,14 @@ static void AL_ResetVoices(
    }
    for (index = 0; index < numvoices; index++)
    {
-      if (VoiceReserved[index] == FALSE)
-      {
-         Voice[index].num = index;
-         Voice[index].key = 0;
-         Voice[index].velocity = 0;
-         Voice[index].channel = -1;
-         Voice[index].timbre = -1;
-         Voice[index].port = (index < NUM_VOICES) ? 0 : 1;
-         Voice[index].status = NOTE_OFF;
-         LL_AddToTail(VOICE, &Voice_Pool, &Voice[index]);
-      }
+      Voice[index].num = index;
+      Voice[index].key = 0;
+      Voice[index].velocity = 0;
+      Voice[index].channel = -1;
+      Voice[index].timbre = -1;
+      Voice[index].port = (index < NUM_VOICES) ? 0 : 1;
+      Voice[index].status = NOTE_OFF;
+      LL_AddToTail(VOICE, &Voice_Pool, &Voice[index]);
    }
 
    for (index = 0; index < NUM_CHANNELS; index++)
@@ -797,27 +789,24 @@ void AL_FlushCard(
 
    for (i = 0; i < NUM_VOICES; i++)
    {
-      if (VoiceReserved[i] == FALSE)
-      {
-         slot1 = offsetSlot[slotVoice[i][0]];
-         slot2 = offsetSlot[slotVoice[i][1]];
+      slot1 = offsetSlot[slotVoice[i][0]];
+      slot2 = offsetSlot[slotVoice[i][1]];
 
-         AL_SendOutputToPort(port, 0xA0 + i, 0);
-         AL_SendOutputToPort(port, 0xB0 + i, 0);
+      AL_SendOutputToPort(port, 0xA0 + i, 0);
+      AL_SendOutputToPort(port, 0xB0 + i, 0);
 
-         AL_SendOutputToPort(port, 0xE0 + slot1, 0);
-         AL_SendOutputToPort(port, 0xE0 + slot2, 0);
+      AL_SendOutputToPort(port, 0xE0 + slot1, 0);
+      AL_SendOutputToPort(port, 0xE0 + slot2, 0);
 
-         // Set the envelope to be fast and quiet
-         AL_SendOutputToPort(port, 0x60 + slot1, 0xff);
-         AL_SendOutputToPort(port, 0x60 + slot2, 0xff);
-         AL_SendOutputToPort(port, 0x80 + slot1, 0xff);
-         AL_SendOutputToPort(port, 0x80 + slot2, 0xff);
+      // Set the envelope to be fast and quiet
+      AL_SendOutputToPort(port, 0x60 + slot1, 0xff);
+      AL_SendOutputToPort(port, 0x60 + slot2, 0xff);
+      AL_SendOutputToPort(port, 0x80 + slot1, 0xff);
+      AL_SendOutputToPort(port, 0x80 + slot2, 0xff);
 
-         // Maximum attenuation
-         AL_SendOutputToPort(port, 0x40 + slot1, 0xff);
-         AL_SendOutputToPort(port, 0x40 + slot2, 0xff);
-      }
+      // Maximum attenuation
+      AL_SendOutputToPort(port, 0x40 + slot1, 0xff);
+      AL_SendOutputToPort(port, 0x40 + slot2, 0xff);
    }
 }
 

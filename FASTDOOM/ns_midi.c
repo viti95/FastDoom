@@ -17,7 +17,7 @@
 
 extern int MUSIC_SoundDevice;
 
-static const int _MIDI_CommandLengths[NUM_MIDI_CHANNELS] =
+static const char _MIDI_CommandLengths[NUM_MIDI_CHANNELS] =
     {
         0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 1, 1, 2, 0};
 

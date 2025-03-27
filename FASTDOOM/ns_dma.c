@@ -14,14 +14,14 @@
 
 typedef struct
 {
-    int Valid;
-    int Width;
-    int Mask;
-    int Mode;
-    int Clear;
-    int Page;
-    int Address;
-    int Length;
+    char Valid;
+    char Width;
+    unsigned char Mask;
+    unsigned char Mode;
+    unsigned char Clear;
+    unsigned char Page;
+    unsigned char Address;
+    unsigned char Length;
 } DMA_PORT;
 
 DMA_PORT DMA_PortInfo[DMA_MaxChannel + 1] =

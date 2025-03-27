@@ -13,14 +13,14 @@
 #include "options.h"
 #include "fastmath.h"
 
-const int BLASTER_Interrupts[BLASTER_MaxIrq + 1] =
+const unsigned char BLASTER_Interrupts[BLASTER_MaxIrq + 1] =
     {
         INVALID, INVALID, 0xa, 0xb,
         INVALID, 0xd, INVALID, 0xf,
         INVALID, INVALID, 0x72, 0x73,
         0x74, INVALID, INVALID, 0x77};
 
-const int BLASTER_SampleSize[BLASTER_MaxMixMode + 1] =
+const char BLASTER_SampleSize[BLASTER_MaxMixMode + 1] =
     {
         MONO_8BIT_SAMPLE_SIZE, STEREO_8BIT_SAMPLE_SIZE,
         MONO_16BIT_SAMPLE_SIZE, STEREO_16BIT_SAMPLE_SIZE};
