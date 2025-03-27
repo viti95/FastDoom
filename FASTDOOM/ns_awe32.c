@@ -31,7 +31,7 @@ static LONG lBankSizes[MAXBANKS] =
     {
         0};
 
-static char Packet[PACKETSIZE]     = {0};
+static char Packet[PACKETSIZE];
 
 unsigned SetES(void);
 #pragma aux SetES = \
@@ -196,6 +196,8 @@ static void LoadSBK(void)
     awe32DefineBankSizes(&spSound);
 
     /* request to load */
+    SetDWords(Packet, 0, PACKETSIZE / 4);
+
     spSound.data = Packet;
     fread(Packet, 1, PACKETSIZE, fp);
     if (awe32SFontLoadRequest(&spSound)) {
