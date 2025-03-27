@@ -104,7 +104,7 @@ static char slotVoice[NUM_VOICES][2] =
 };
 
 static int VoiceLevel[NumChipSlots][2];
-static int VoiceKsl[NumChipSlots][2];
+static unsigned char VoiceKsl[NumChipSlots][2];
 
 // This table gives the offset of each slot within the chip.
 // offset = fn( slot)
