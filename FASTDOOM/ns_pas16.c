@@ -12,7 +12,7 @@
 #include "options.h"
 #include "fastmath.h"
 
-static const int PAS_Interrupts[PAS_MaxIrq + 1] =
+static const char PAS_Interrupts[PAS_MaxIrq + 1] =
     {
         INVALID, INVALID, 0xa, 0xb,
         INVALID, 0xd, INVALID, 0xf,
