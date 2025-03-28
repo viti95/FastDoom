@@ -417,25 +417,47 @@ typedef struct
 	byte type;
 } castinfo_t;
 
-castinfo_t castorder[] = {
-	{CC_ZOMBIE, MT_POSSESSED},
-	{CC_SHOTGUN, MT_SHOTGUY},
-	{CC_HEAVY, MT_CHAINGUY},
-	{CC_IMP, MT_TROOP},
-	{CC_DEMON, MT_SERGEANT},
-	{CC_LOST, MT_SKULL},
-	{CC_CACO, MT_HEAD},
-	{CC_HELL, MT_KNIGHT},
-	{CC_BARON, MT_BRUISER},
-	{CC_ARACH, MT_BABY},
-	{CC_PAIN, MT_PAIN},
-	{CC_REVEN, MT_UNDEAD},
-	{CC_MANCU, MT_FATSO},
-	{CC_ARCH, MT_VILE},
-	{CC_SPIDER, MT_SPIDER},
-	{CC_CYBER, MT_CYBORG},
-	{CC_HERO, MT_PLAYER},
-	{NULL, 0}};
+char *castordernames[] = {
+	CC_ZOMBIE,
+	CC_SHOTGUN,
+	CC_HEAVY,
+	CC_IMP,
+	CC_DEMON,
+	CC_LOST,
+	CC_CACO,
+	CC_HELL,
+	CC_BARON,
+	CC_ARACH,
+	CC_PAIN,
+	CC_REVEN,
+	CC_MANCU,
+	CC_ARCH,
+	CC_SPIDER,
+	CC_CYBER,
+	CC_HERO,
+	NULL
+};
+
+byte castordertype[] = {
+	MT_POSSESSED,
+	MT_SHOTGUY,
+	MT_CHAINGUY,
+	MT_TROOP,
+	MT_SERGEANT,
+	MT_SKULL,
+	MT_HEAD,
+	MT_KNIGHT,
+	MT_BRUISER,
+	MT_BABY,
+	MT_PAIN,
+	MT_UNDEAD,
+	MT_FATSO,
+	MT_VILE,
+	MT_SPIDER,
+	MT_CYBORG,
+	MT_PLAYER,
+	0
+};
 
 int castnum;
 int casttics;
@@ -454,7 +476,7 @@ void F_StartCast(void)
 {
 	wipegamestate = -1; // force a screen wipe
 	castnum = 0;
-	caststate = &states[mobjinfo[castorder[castnum].type].seestate];
+	caststate = &states[mobjinfo[castordertype[castnum]].seestate];
 	casttics = caststate->tics;
 	castdeath = 0;
 	finalestage = 2;
@@ -480,11 +502,11 @@ void F_CastTicker(void)
 		// switch from deathstate to next monster
 		castnum++;
 		castdeath = 0;
-		if (castorder[castnum].name == NULL)
+		if (castordernames[castnum] == NULL)
 			castnum = 0;
-		if (mobjinfo[castorder[castnum].type].seesound)
-			S_StartSound(NULL, mobjinfo[castorder[castnum].type].seesound);
-		caststate = &states[mobjinfo[castorder[castnum].type].seestate];
+		if (mobjinfo[castordertype[castnum]].seesound)
+			S_StartSound(NULL, mobjinfo[castordertype[castnum]].seesound);
+		caststate = &states[mobjinfo[castordertype[castnum]].seestate];
 		castframes = 0;
 	}
 	else
@@ -573,29 +595,29 @@ void F_CastTicker(void)
 		// go into attack frame
 		castattacking = 1;
 		if (castonmelee)
-			caststate = &states[mobjinfo[castorder[castnum].type].meleestate];
+			caststate = &states[mobjinfo[castordertype[castnum]].meleestate];
 		else
-			caststate = &states[mobjinfo[castorder[castnum].type].missilestate];
+			caststate = &states[mobjinfo[castordertype[castnum]].missilestate];
 		castonmelee ^= 1;
 		if (caststate == &states[S_NULL])
 		{
 			if (castonmelee)
 				caststate =
-					&states[mobjinfo[castorder[castnum].type].meleestate];
+					&states[mobjinfo[castordertype[castnum]].meleestate];
 			else
 				caststate =
-					&states[mobjinfo[castorder[castnum].type].missilestate];
+					&states[mobjinfo[castordertype[castnum]].missilestate];
 		}
 	}
 
 	if (castattacking)
 	{
-		if (castframes == 24 || caststate == &states[mobjinfo[castorder[castnum].type].seestate])
+		if (castframes == 24 || caststate == &states[mobjinfo[castordertype[castnum]].seestate])
 		{
 		stopattack:
 			castattacking = 0;
 			castframes = 0;
-			caststate = &states[mobjinfo[castorder[castnum].type].seestate];
+			caststate = &states[mobjinfo[castordertype[castnum]].seestate];
 		}
 	}
 
@@ -618,12 +640,12 @@ byte F_CastResponder(void)
 
 	// go into death frame
 	castdeath = 1;
-	caststate = &states[mobjinfo[castorder[castnum].type].deathstate];
+	caststate = &states[mobjinfo[castordertype[castnum]].deathstate];
 	casttics = caststate->tics;
 	castframes = 0;
 	castattacking = 0;
-	if (mobjinfo[castorder[castnum].type].deathsound)
-		S_StartSound(NULL, mobjinfo[castorder[castnum].type].deathsound);
+	if (mobjinfo[castordertype[castnum]].deathsound)
+		S_StartSound(NULL, mobjinfo[castordertype[castnum]].deathsound);
 
 	return 1;
 }
@@ -699,7 +721,7 @@ void F_CastDrawer(void)
 	// erase the entire screen to a background
   	V_DrawPatchModeCentered(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
 
-	F_CastPrint(castorder[castnum].name);
+	F_CastPrint(castordernames[castnum]);
 
 	// draw the current frame in the middle of the screen
 	sprdef = &sprites[caststate->sprite];
@@ -758,16 +780,16 @@ void F_CastDrawerText(void)
 #endif
 
 #if defined(MODE_T4025) || defined(MODE_T4050)
-	V_WriteTextDirect(40 - strlen(castorder[castnum].name) / 2, 12, castorder[castnum].name);
+	V_WriteTextDirect(40 - strlen(castordernames[castnum]) / 2, 12, castordernames[castnum]);
 #endif
 #if defined(MODE_T8025) || defined(MODE_MDA)
-	V_WriteTextDirect(40 - strlen(castorder[castnum].name) / 2, 23, castorder[castnum].name);
+	V_WriteTextDirect(40 - strlen(castordernames[castnum]) / 2, 23, castordernames[castnum]);
 #endif
 #if defined(MODE_T8043)
-	V_WriteTextDirect(40 - strlen(castorder[castnum].name) / 2, 41, castorder[castnum].name);
+	V_WriteTextDirect(40 - strlen(castordernames[castnum]) / 2, 41, castordernames[castnum]);
 #endif
 #if defined(MODE_T8050)
-	V_WriteTextDirect(40 - strlen(castorder[castnum].name) / 2, 48, castorder[castnum].name);
+	V_WriteTextDirect(40 - strlen(castordernames[castnum]) / 2, 48, castordernames[castnum]);
 #endif
 
 	// draw the current frame in the middle of the screen
