@@ -10,6 +10,7 @@
 #include "options.h"
 #include "doomstat.h"
 #include "z_zone.h"
+#include "i_system.h"
 
 /*  DSP defines  */
 #define MPU_ACK_OK 0xfe
@@ -166,7 +167,7 @@ static void LoadSBK(void)
 
     fp = fopen(sbkfile, "rb");
     if (!fp) {
-	        printf("AWE32 ERROR:  Cannot open %s\n", sbkfile);
+            I_Error(29, sbkfile);
 
     					/* use embeded preset objects */
     		spSound.bank_no = 0;     /* load as Bank 0 */
@@ -202,8 +203,7 @@ static void LoadSBK(void)
     fread(Packet, 1, PACKETSIZE, fp);
     if (awe32SFontLoadRequest(&spSound)) {
         fclose(fp);
-        printf("AWE32 ERROR:  Cannot load SoundFont file %s\n", sbkfile);
-        return ;
+        I_Error(29, sbkfile);
     }
     
     /* stream samples */
@@ -220,8 +220,7 @@ static void LoadSBK(void)
     spSound.presets = pPresets[0];
     if (awe32SetPresets(&spSound)) {
         fclose(fp);
-        printf("AWE32 ERROR:  Invalid SoundFont file %s\n", sbkfile);
-        return ;
+        I_Error(30, sbkfile);
     }
     fclose(fp);
     

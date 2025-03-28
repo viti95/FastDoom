@@ -26,3 +26,6 @@ Error writing to file %s
 File %s not found
 Error loading music file %s
 Failed on allocation of %i bytes
+AWE32 error: Cannot open %s
+AWE32 error: Cannot load SoundFont file %s
+AWE32 error: Invalid SoundFont file %s
