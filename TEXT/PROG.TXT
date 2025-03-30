@@ -33,3 +33,5 @@ Expected file size: %ld, detected file size: %ld\n
 Expected file size: %ld or %ld, detected file size: %ld\n
 This may cause issues!!!\n
 Do you want to continue (Y/N)? 
+Sound Blaster DSP %01X.%02X\n
+ADDR: %03X, IRQ: %u, DMA LOW: %u, DMA HIGH: %u\n

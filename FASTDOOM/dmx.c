@@ -670,8 +670,8 @@ void ASS_Init(int rate, int mdev, int sdev)
         case Awe32:
         case SoundBlasterDirect:
             status = FX_SetupSoundBlaster(dmx_blaster);
-            printf("Sound Blaster DSP %01X.%02X\n", BLASTER_Version >> 8, BLASTER_Version && 7);
-            printf("ADDR: %03X, IRQ: %u, DMA LOW: %u, DMA HIGH: %u\n", BLASTER_Config.Address, BLASTER_Config.Interrupt, BLASTER_Config.Dma8, BLASTER_Config.Dma16);
+            printf(I_LoadTextProgram(35), BLASTER_Version >> 8, BLASTER_Version && 7);
+            printf(I_LoadTextProgram(36), BLASTER_Config.Address, BLASTER_Config.Interrupt, BLASTER_Config.Dma8, BLASTER_Config.Dma16);
             break;
         case SoundSource:
         case LPTDAC:
