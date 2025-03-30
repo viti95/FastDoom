@@ -1253,67 +1253,67 @@ void IdentifyVersion(void)
         return;
     }
 
-    printf("\nPlease select the IWAD you want to play:\n\n");
+    printf(I_LoadTextProgram(9));
 
     if (!access("doom1.wad", R_OK))
     {
-        printf("     1. DOOM Shareware                 (doom1.wad)\n");
+        printf(I_LoadTextProgram(1));
         selection = 49;
         num_wads++;
     }
 
     if (!access("doom.wad", R_OK))
     {
-        printf("     2. DOOM                           (doom.wad)\n");
+        printf(I_LoadTextProgram(2));
         selection = 50;
         num_wads++;
     }
 
     if (!access("doomu.wad", R_OK))
     {
-        printf("     3. The Ultimate DOOM              (doomu.wad)\n");
+        printf(I_LoadTextProgram(3));
         selection = 51;
         num_wads++;
     }
 
     if (!access("doom2.wad", R_OK))
     {
-        printf("     4. DOOM II                        (doom2.wad)\n");
+        printf(I_LoadTextProgram(4));
         selection = 52;
         num_wads++;
     }
 
     if (!access("plutonia.wad", R_OK))
     {
-        printf("     5. DOOM II: Plutonia Experiment   (plutonia.wad)\n");
+        printf(I_LoadTextProgram(5));
         selection = 53;
         num_wads++;
     }
 
     if (!access("tnt.wad", R_OK))
     {
-        printf("     6. DOOM II: TNT - Evilution       (tnt.wad)\n");
+        printf(I_LoadTextProgram(6));
         selection = 54;
         num_wads++;
     }
 
     if (!access("freedm1.wad", R_OK))
     {
-        printf("     7. FreeDoom Phase 1               (experimental, freedm1.wad)\n");
+        printf(I_LoadTextProgram(7));
         selection = 55;
         num_wads++;
     }
 
     if (!access("freedm2.wad", R_OK))
     {
-        printf("     8. FreeDoom Phase 2               (experimental, freedm2.wad)\n");
+        printf(I_LoadTextProgram(8));
         selection = 56;
         num_wads++;
     }
 
     if (num_wads > 1)
     {
-        printf("\nPlease enter the selection: ");
+        printf(I_LoadTextProgram(10));
         fflush(stdout);
         selection = getch();
         printf("%c\n", selection);

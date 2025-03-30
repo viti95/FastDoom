@@ -140,14 +140,14 @@ int I_ReadTextLineFile(char *filename, int line_number, char *buffer, int max_le
     return 1;
 }
 
-
-char programtext[256];
+#define MAX_TEXT_SIZE_PROGRAM 160
+char programtext[MAX_TEXT_SIZE_PROGRAM];
 
 char *I_LoadTextProgram(int number)
 {
-    SetDWords(programtext, 0, 256 / 4);
+    SetDWords(programtext, 0, MAX_TEXT_SIZE_PROGRAM / 4);
 
-    I_ReadTextLineFile("TEXT\\PROG.TXT", number, programtext, 256, true);
+    I_ReadTextLineFile("TEXT\\PROG.TXT", number, programtext, MAX_TEXT_SIZE_PROGRAM, true);
 
     return programtext;
 }

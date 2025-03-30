@@ -68,8 +68,6 @@
 #include "i_file.h"
 #include "i_debug.h"
 
-#include "i_debug.h"
-
 #define SAVEGAMESIZE 0x2c000
 #define SAVESTRINGSIZE 24
 #define DEMOMARKER 0x80
@@ -1435,7 +1433,7 @@ void G_CreateCSV(void)
     if (fptr == NULL) // if file does not exist, create it
     {
         fptr = fopen(CSV_FILE, "w+");
-        fprintf(fptr, "executable" CSV_COLUMN "arch" CSV_COLUMN "detail" CSV_COLUMN "size" CSV_COLUMN "visplanes" CSV_COLUMN "walls" CSV_COLUMN "sprites" CSV_COLUMN "sky" CSV_COLUMN "objects" CSV_COLUMN "transparent_columns" CSV_COLUMN "iwad" CSV_COLUMN "demo" CSV_COLUMN "gametics" CSV_COLUMN "realtics" CSV_COLUMN "fps" CSV_COLUMN "onepercentlow" CSV_COLUMN "dotonepercentlow\n");
+        fprintf(fptr, I_LoadTextProgram(11));
         fclose(fptr);
     }
     fclose(fptr);
