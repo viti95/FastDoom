@@ -65,6 +65,7 @@
 #include "sizeopt.h"
 
 #include "options.h"
+#include "i_file.h"
 
 #if defined(MODE_13H)
 #include "i_vga13h.h"
@@ -1421,7 +1422,7 @@ void D_DoomMain(void)
     int p;
     union REGS regs;
 
-    printf("\nFastDoom version " FDOOMVERSION "\n\n");
+    printf(I_LoadTextProgram(0));
 
     p = M_CheckParm("-limitram");
     if (p)
@@ -1621,7 +1622,7 @@ void D_DoomMain(void)
     else
         D_DrawTitle(4);
 
-    printf("\nFastDoom version " FDOOMVERSION "\n");
+    printf(I_LoadTextProgram(0));
     printf("CPU class detected: %d\n", I_GetCPUModel());
 #if DEBUG_ENABLED == 1
     printf("Debugging enabled, loading symbols and initializing channels\n");

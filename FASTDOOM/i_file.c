@@ -140,6 +140,18 @@ int I_ReadTextLineFile(char *filename, int line_number, char *buffer, int max_le
     return 1;
 }
 
+
+char programtext[256];
+
+char *I_LoadTextProgram(int number)
+{
+    SetDWords(programtext, 0, 256 / 4);
+
+    I_ReadTextLineFile("TEXT\\PROG.TXT", number, programtext, 256, true);
+
+    return programtext;
+}
+
 unsigned char *I_ReadBinaryStatic(char *file, int size)
 {
     int c;
