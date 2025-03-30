@@ -28,3 +28,8 @@ Setting up machine state\n
 Setting up sound\n
 Setting up heads up display\n
 Init status bar\n
+\nIt seems you're using an unsupported version of %s\n
+Expected file size: %ld, detected file size: %ld\n
+Expected file size: %ld or %ld, detected file size: %ld\n
+This may cause issues!!!\n
+Do you want to continue (Y/N)? 

@@ -949,10 +949,10 @@ void D_CheckFileSize(char *filename, long checksize)
     if (checksize != size)
     {
         int selection;
-        printf("\nIt seems you're using an unsupported version of %s\n", filename);
-        printf("Expected file size: %ld, detected file size: %ld\n", checksize, size);
-        printf("This may cause issues!!!\n");
-        printf("Do you want to continue (Y/N)? ");
+        printf(I_LoadTextProgram(30), filename);
+        printf(I_LoadTextProgram(31), checksize, size);
+        printf(I_LoadTextProgram(33));
+        printf(I_LoadTextProgram(34));
         fflush(stdout);
         selection = getch();
         printf("%c\n", selection);
@@ -984,10 +984,10 @@ void D_CheckFileSize2(char *filename, long checksize1, long checksize2)
     if (checksize1 != size && checksize2 != size)
     {
         int selection;
-        printf("\nIt seems you're using an unsupported version of %s\n", filename);
-        printf("Expected file size: %ld or %ld, detected file size: %ld\n", checksize1, checksize2, size);
-        printf("This may cause issues!!!\n");
-        printf("Do you want to continue (Y/N)? ");
+        printf(I_LoadTextProgram(30), filename);
+        printf(I_LoadTextProgram(32), checksize1, checksize2, size);
+        printf(I_LoadTextProgram(33));
+        printf(I_LoadTextProgram(34));
         fflush(stdout);
         selection = getch();
         printf("%c\n", selection);
