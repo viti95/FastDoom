@@ -1591,25 +1591,25 @@ void D_DoomMain(void)
     switch (gamemode)
     {
     case retail:
-        sprintf(title, "The Ultimate DOOM");
+        sprintf(title, I_LoadTextProgram(12));
         break;
     case shareware:
-        sprintf(title, "DOOM Shareware");
+        sprintf(title, I_LoadTextProgram(13));
         break;
     case registered:
-        sprintf(title, "DOOM");
+        sprintf(title, I_LoadTextProgram(14));
         break;
     case commercial:
         switch (gamemission)
         {
         case doom2:
-            sprintf(title, "DOOM 2: Hell on Earth");
+            sprintf(title, I_LoadTextProgram(15));
             break;
         case pack_plut:
-            sprintf(title, "DOOM 2: Plutonia Experiment");
+            sprintf(title, I_LoadTextProgram(16));
             break;
         case pack_tnt:
-            sprintf(title, "DOOM 2: TNT - Evilution");
+            sprintf(title, I_LoadTextProgram(17));
             break;
         }
         break;
@@ -1623,12 +1623,12 @@ void D_DoomMain(void)
         D_DrawTitle(4);
 
     printf(I_LoadTextProgram(0));
-    printf("CPU class detected: %d\n", I_GetCPUModel());
+    printf(I_LoadTextProgram(18), I_GetCPUModel());
 #if DEBUG_ENABLED == 1
-    printf("Debugging enabled, loading symbols and initializing channels\n");
+    printf(I_LoadTextProgram(19));
     I_DebugInit();
 #endif
-    printf("Checking cmd-line parameters\n");
+    printf(I_LoadTextProgram(20));
 
     p = M_CheckParm("-file");
     if (p)
@@ -1686,7 +1686,7 @@ void D_DoomMain(void)
         autostart = 1;
     }
 
-    printf("Load system defaults\n");
+    printf(I_LoadTextProgram(21));
     M_LoadDefaults(); // load before initing other systems
 
     if ((p = M_CheckParm("-size")))
@@ -1753,37 +1753,37 @@ void D_DoomMain(void)
     // Get benchmark files
     D_GetListBenchFiles();
 
-    printf("Init WADfiles\n");
+    printf(I_LoadTextProgram(22));
     W_InitMultipleFiles(wadfiles);
 
-    printf("Init miscellaneous info\n");
+    printf(I_LoadTextProgram(23));
     D_RedrawTitle();
     M_Init();
 
-    printf("Init DOOM refresh daemon - ");
+    printf(I_LoadTextProgram(24));
     D_RedrawTitle();
     R_Init();
 
-    printf("\nInit Playloop state\n");
+    printf(I_LoadTextProgram(25));
     D_RedrawTitle();
     P_Init();
 
-    printf("Setting up machine state\n");
+    printf(I_LoadTextProgram(26));
     D_RedrawTitle();
     I_Init();
 
-    printf("Setting up sound\n");
+    printf(I_LoadTextProgram(27));
     D_RedrawTitle();
     S_Init(sfxVolume * 8, musicVolume * 17);
 
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-    printf("Setting up heads up display\n");
+    printf(I_LoadTextProgram(28));
     D_RedrawTitle();
     HU_Init();
 #endif
 
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-    printf("Init status bar\n");
+    printf(I_LoadTextProgram(29));
     D_RedrawTitle();
     ST_Init();
 #endif

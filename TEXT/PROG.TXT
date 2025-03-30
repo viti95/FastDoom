@@ -10,3 +10,21 @@
 \nPlease select the IWAD you want to play:\n\n
 \nPlease enter the selection: 
 executable,arch,detail,size,visplanes,walls,sprites,sky,objects,transparent_columns,iwad,demo,gametics,realtics,fps,onepercentlow,dotonepercentlow\n
+The Ultimate DOOM
+DOOM Shareware
+DOOM
+DOOM 2: Hell on Earth
+DOOM 2: Plutonia Experiment
+DOOM 2: TNT - Evilution
+CPU class detected: %d\n
+Debugging enabled, loading symbols and initializing channels\n
+Checking cmd-line parameters\n
+Load system defaults\n
+Init WADfiles\n
+Init miscellaneous info\n
+Init DOOM refresh daemon - 
+\nInit Playloop state\n
+Setting up machine state\n
+Setting up sound\n
+Setting up heads up display\n
+Init status bar\n
