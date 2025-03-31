@@ -1280,12 +1280,6 @@ void M_ChooseSkill(int choice)
 
 void M_Episode(int choice)
 {
-    if (gamemode == shareware && choice)
-    {
-        M_StartMessage(SWSTRING, NULL, 0);
-        return;
-    }
-
     epi = choice;
     M_SetupNextMenu(&NewDef);
 }
@@ -2464,7 +2458,14 @@ byte M_Responder(void)
     case KEY_DOWNARROW:
         do
         {
-            if ((gamemode == shareware || gamemode == registered) && currentMenu == &EpiDef)
+            if ((gamemode == shareware) && currentMenu == &EpiDef)
+            {
+                if (itemOn + 1 > currentMenu->numitems - 4)
+                    itemOn = 0;
+                else
+                    itemOn++;
+            }
+            else if ((gamemode == registered) && currentMenu == &EpiDef)
             {
                 if (itemOn + 1 > currentMenu->numitems - 2)
                     itemOn = 0;
@@ -2486,7 +2487,14 @@ byte M_Responder(void)
     case KEY_UPARROW:
         do
         {
-            if ((gamemode == shareware || gamemode == registered) && currentMenu == &EpiDef)
+            if ((gamemode == shareware) && currentMenu == &EpiDef)
+            {
+                if (!itemOn)
+                    itemOn = currentMenu->numitems - 4;
+                else
+                    itemOn--;
+            }
+            else if ((gamemode == registered) && currentMenu == &EpiDef)
             {
                 if (!itemOn)
                     itemOn = currentMenu->numitems - 2;
@@ -2689,9 +2697,16 @@ void M_Drawer(void)
     y = currentMenu->y;
     max = currentMenu->numitems;
 
-    if ((gamemode == shareware || gamemode == registered) && currentMenu == &EpiDef)
+    if (currentMenu == &EpiDef)
     {
-        max -= 1;
+        if (gamemode == shareware)
+        {
+            max -= 3;
+        }
+        else if (gamemode == registered)
+        {
+            max -= 1;
+        }
     }
 
     for (i = 0; i < max; i++)
