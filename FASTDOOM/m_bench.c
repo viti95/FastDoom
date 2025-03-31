@@ -66,60 +66,6 @@ extern int screenblocks;
 extern int screenblocks;
 extern int screenSize;
 
-void M_SetCPU(int value)
-{
-    selectedCPU = value;
-    R_ExecuteSetViewSize();
-    R_SetViewSize(screenblocks, detailLevel);
-
-#if defined(MODE_13H)
-    I_UpdateFinishFunc();
-#endif
-}
-
-void M_SetInvisibleDetail(int value)
-{
-    invisibleRender = value;
-
-    if (invisibleRender == INVISIBLE_TRANSLUCENT)
-        R_InitTintMap();
-    else
-        R_CleanupTintMap();
-
-    R_SetViewSize(screenblocks, detailLevel);
-}
-
-void M_SetBusSpeed(boolean value)
-{
-    busSpeed = value;
-
-#if defined(MODE_13H)
-    I_UpdateFinishFunc();
-#endif
-}
-
-void M_SetUncapped(boolean value)
-{
-    uncappedFPS = value;
-    
-    if (uncappedFPS)
-    {
-        highResTimer = gamestate == GS_LEVEL;
-    } else {
-        highResTimer = false;
-    }
-
-    I_SetHrTimerEnabled(highResTimer);
-}
-
-void M_SetSizeDisplay(int value)
-{
-    screenSize = value;
-    screenblocks = value + 3;
-
-    R_SetViewSize(screenblocks, detailLevel);
-}
-
 #define FILE_SEPARATOR ",\n"
 
 int M_CheckValue(char *check, char *compare)
@@ -130,13 +76,10 @@ int M_CheckValue(char *check, char *compare)
     return 0;
 }
 
-int M_GetNumericValue(char *value)
-{
-    return strtoul(value, NULL, 0);
-}
-
 void M_ChangeValueFile(unsigned int position, char *token)
 {
+    int value;
+
     switch (position)
     {
     // Detail
@@ -152,7 +95,12 @@ void M_ChangeValueFile(unsigned int position, char *token)
         break;
     // Size
     case 1:
-        M_SetSizeDisplay(M_GetNumericValue(token));
+        value = strtoul(token, NULL, 0);
+
+        screenSize = value;
+        screenblocks = value + 3;
+
+        R_SetViewSize(screenblocks, detailLevel);
         break;
     // Visplanes
     case 2:
@@ -210,15 +158,22 @@ void M_ChangeValueFile(unsigned int position, char *token)
     // Invisible
     case 7:
         if (M_CheckValue(token, "default"))
-            M_SetInvisibleDetail(INVISIBLE_NORMAL);
+            invisibleRender = INVISIBLE_NORMAL;
         if (M_CheckValue(token, "saturn"))
-            M_SetInvisibleDetail(INVISIBLE_SATURN);
+            invisibleRender = INVISIBLE_SATURN;
         if (M_CheckValue(token, "flatsaturn"))
-            M_SetInvisibleDetail(INVISIBLE_FLAT_SATURN);
+            invisibleRender = INVISIBLE_FLAT_SATURN;
         if (M_CheckValue(token, "translucent"))
-            M_SetInvisibleDetail(INVISIBLE_TRANSLUCENT);
+            invisibleRender = INVISIBLE_TRANSLUCENT;
         if (M_CheckValue(token, "flat"))
-            M_SetInvisibleDetail(INVISIBLE_FLAT);
+            invisibleRender = INVISIBLE_FLAT;
+
+        if (invisibleRender == INVISIBLE_TRANSLUCENT)
+            R_InitTintMap();
+        else
+            R_CleanupTintMap();
+
+        R_SetViewSize(screenblocks, detailLevel);
     // Sprite culling
     case 8:
         if (M_CheckValue(token, "far"))
@@ -236,9 +191,20 @@ void M_ChangeValueFile(unsigned int position, char *token)
     // Uncapped FPS
     case 10:
         if (M_CheckValue(token, "capped"))
-            M_SetUncapped(false);
+            uncappedFPS = false;
         if (M_CheckValue(token, "uncapped"))
-            M_SetUncapped(true);
+            uncappedFPS = true;
+
+        if (uncappedFPS)
+        {
+            highResTimer = gamestate == GS_LEVEL;
+        }
+        else
+        {
+            highResTimer = false;
+        }
+
+        I_SetHrTimerEnabled(highResTimer);
     // Melting
     case 11:
         if (M_CheckValue(token, "nomelt"))
@@ -249,30 +215,42 @@ void M_ChangeValueFile(unsigned int position, char *token)
     // CPU
     case 12:
         if (M_CheckValue(token, "386sx"))
-            M_SetCPU(INTEL_386SX);
+            selectedCPU = INTEL_386SX;
         if (M_CheckValue(token, "386dx"))
-            M_SetCPU(INTEL_386DX);
+            selectedCPU = INTEL_386DX;
         if (M_CheckValue(token, "i486"))
-            M_SetCPU(INTEL_486);
+            selectedCPU = INTEL_486;
         if (M_CheckValue(token, "pentium"))
-            M_SetCPU(INTEL_PENTIUM);
+            selectedCPU = INTEL_PENTIUM;
         if (M_CheckValue(token, "k5"))
-            M_SetCPU(AMD_K5);
+            selectedCPU = AMD_K5;
         if (M_CheckValue(token, "cy386"))
-            M_SetCPU(CYRIX_386DLC);
+            selectedCPU = CYRIX_386DLC;
         if (M_CheckValue(token, "cy486"))
-            M_SetCPU(CYRIX_486);
+            selectedCPU = CYRIX_486;
         if (M_CheckValue(token, "cy5x86"))
-            M_SetCPU(CYRIX_5X86);
+            selectedCPU = CYRIX_5X86;
         if (M_CheckValue(token, "umc486"))
-            M_SetCPU(UMC_GREEN_486);
+            selectedCPU = UMC_GREEN_486;
+
+        R_ExecuteSetViewSize();
+        R_SetViewSize(screenblocks, detailLevel);
+
+#if defined(MODE_13H)
+        I_UpdateFinishFunc();
+#endif
         break;
     // Bus Speed
     case 13:
         if (M_CheckValue(token, "slow"))
-            M_SetBusSpeed(1);
+            busSpeed = 1;
         if (M_CheckValue(token, "fast"))
-            M_SetBusSpeed(0);
+            busSpeed = 0;
+
+#if defined(MODE_13H)
+        I_UpdateFinishFunc();
+#endif
+        break;
     }
 }
 
