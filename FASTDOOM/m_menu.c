@@ -1280,12 +1280,6 @@ void M_ChooseSkill(int choice)
 
 void M_Episode(int choice)
 {
-    if (gamemode == shareware && choice)
-    {
-        M_StartMessage(SWSTRING, NULL, 0);
-        return;
-    }
-
     epi = choice;
     M_SetupNextMenu(&NewDef);
 }
@@ -2464,21 +2458,11 @@ byte M_Responder(void)
     case KEY_DOWNARROW:
         do
         {
-            if ((gamemode == shareware || gamemode == registered) && currentMenu == &EpiDef)
-            {
-                if (itemOn + 1 > currentMenu->numitems - 2)
-                    itemOn = 0;
-                else
-                    itemOn++;
-            }
+            if (itemOn + 1 > currentMenu->numitems - 1)
+                itemOn = 0;
             else
-            {
-                if (itemOn + 1 > currentMenu->numitems - 1)
-                    itemOn = 0;
-                else
-                    itemOn++;
-            }
-
+                itemOn++;
+            
             S_StartSound(NULL, sfx_pstop);
         } while (currentMenu->menuitems[itemOn].status == -1);
         return 1;
@@ -2486,21 +2470,11 @@ byte M_Responder(void)
     case KEY_UPARROW:
         do
         {
-            if ((gamemode == shareware || gamemode == registered) && currentMenu == &EpiDef)
-            {
-                if (!itemOn)
-                    itemOn = currentMenu->numitems - 2;
-                else
-                    itemOn--;
-            }
+            if (!itemOn)
+                itemOn = currentMenu->numitems - 1;
             else
-            {
-                if (!itemOn)
-                    itemOn = currentMenu->numitems - 1;
-                else
-                    itemOn--;
-            }
-
+                itemOn--;
+            
             S_StartSound(NULL, sfx_pstop);
         } while (currentMenu->menuitems[itemOn].status == -1);
         return 1;
@@ -2627,7 +2601,6 @@ void M_Drawer(void)
     static short x;
     static short y;
     short i;
-    short max;
     char string[40];
     int start;
 
@@ -2687,14 +2660,7 @@ void M_Drawer(void)
     // DRAW MENU
     x = currentMenu->x;
     y = currentMenu->y;
-    max = currentMenu->numitems;
-
-    if ((gamemode == shareware || gamemode == registered) && currentMenu == &EpiDef)
-    {
-        max -= 1;
-    }
-
-    for (i = 0; i < max; i++)
+    for (i = 0; i < currentMenu->numitems; i++)
     {
         if (currentMenu->menuitems[i].name[0])
         {
@@ -2809,6 +2775,16 @@ void M_Init(void)
     messageString = NULL;
     messageLastMenuActive = menuactive;
     quickSaveSlot = -1;
+
+    // Modify menus for episode selection on shareware/registered DOOM
+    if (gamemode == shareware)
+    {
+        EpiDef.numitems -= 3;
+    }
+    else if (gamemode == registered)
+    {
+        EpiDef.numitems -= 1;
+    }
 
     sprintf(gammamsg, "%i.%04i", gammaval >> FRACBITS, ((gammaval & 65535) * 10000) >> FRACBITS);
 }

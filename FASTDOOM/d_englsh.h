@@ -40,10 +40,6 @@
     "are you sure? this skill level\n" \
     "isn't even remotely fair.\n\n" PRESSYN
 
-#define SWSTRING                                 \
-    "this is the shareware version of doom.\n\n" \
-    "you need to order the entire trilogy.\n\n" PRESSKEY
-
 #define MSGOFF "Messages OFF"
 #define MSGON "Messages ON"
 #define ENDGAME "are you sure you want to end the game?\n\n" PRESSYN
