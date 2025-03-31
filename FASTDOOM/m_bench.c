@@ -96,11 +96,6 @@ void M_SetPSpriteDetail(int value)
     R_SetViewSize(screenblocks, detailLevel);
 }
 
-void M_SetVsync(boolean value)
-{
-    waitVsync = value;
-}
-
 void M_SetSkyDetail(boolean value)
 {
     flatSky = value;
@@ -128,21 +123,6 @@ void M_SetInvisibleDetail(int value)
         R_CleanupTintMap();
 
     R_SetViewSize(screenblocks, detailLevel);
-}
-
-void M_SetShowFPS(int value)
-{
-    showFPS = value;
-}
-
-void M_SetSpriteCulling(boolean value)
-{
-    nearSprites = value;
-}
-
-void M_SetNoMelting(boolean value)
-{
-    noMelt = value;
 }
 
 void M_SetBusSpeed(boolean value)
@@ -174,11 +154,6 @@ void M_SetSizeDisplay(int value)
     screenblocks = value + 3;
 
     R_SetViewSize(screenblocks, detailLevel);
-}
-
-void M_SetCSV(boolean value)
-{
-    csv = value;
 }
 
 #define FILE_SEPARATOR ",\n"
@@ -271,16 +246,16 @@ void M_ChangeValueFile(unsigned int position, char *token)
     // Sprite culling
     case 8:
         if (M_CheckValue(token, "far"))
-            M_SetSpriteCulling(false);
+            nearSprites = false;
         if (M_CheckValue(token, "near"))
-            M_SetSpriteCulling(true);
+            nearSprites = true;
         break;
     // Show FPS
     case 9:
         if (M_CheckValue(token, "nofps"))
-            M_SetShowFPS(false);
+            showFPS = false;
         if (M_CheckValue(token, "fps"))
-            M_SetShowFPS(true);
+            showFPS = true;
         break;
     // Uncapped FPS
     case 10:
@@ -291,9 +266,9 @@ void M_ChangeValueFile(unsigned int position, char *token)
     // Melting
     case 11:
         if (M_CheckValue(token, "nomelt"))
-            M_SetNoMelting(true);
+            noMelt = true;
         if (M_CheckValue(token, "melt"))
-            M_SetNoMelting(false);
+            noMelt = false;
         break;
     // CPU
     case 12:
