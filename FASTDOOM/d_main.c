@@ -853,7 +853,7 @@ void D_DrawTitle(int fc)
 {
     union REGS regs;
     byte color;
-    int column;
+    int column = 0;
     int row;
     int i;
 
@@ -863,12 +863,6 @@ void D_DrawTitle(int fc)
 
     // Calculate text color
     color = (7 << 4) | fc;
-
-    // Get column position
-    column = D_GetCursorColumn();
-
-    // Get row position
-    row = D_GetCursorRow();
 
     length = strlen(title);
 
@@ -899,34 +893,9 @@ void D_DrawTitle(int fc)
             column = 0;
 
         // Set position
-        D_SetCursorPosition(column, row);
+        D_SetCursorPosition(column, 0);
     }
 
-}
-
-//
-// D_RedrawTitle
-//
-void D_RedrawTitle(void)
-{
-    int column;
-    int row;
-
-    // Get current cursor pos
-    column = D_GetCursorColumn();
-    row = D_GetCursorRow();
-
-    // Set cursor pos to zero
-    D_SetCursorPosition(0, 0);
-
-    // Draw title
-    if (complevel >= COMPLEVEL_ULTIMATE_DOOM)
-        D_DrawTitle(8);
-    else
-        D_DrawTitle(4);
-
-    // Restore old cursor pos
-    D_SetCursorPosition(column, row);
 }
 
 void D_CheckFileSize(char *filename, long checksize)
@@ -1756,34 +1725,27 @@ void D_DoomMain(void)
     W_InitMultipleFiles(wadfiles);
 
     printf("Init miscellaneous info\n");
-    D_RedrawTitle();
     M_Init();
 
     printf("Init DOOM refresh daemon - ");
-    D_RedrawTitle();
     R_Init();
 
     printf("\nInit Playloop state\n");
-    D_RedrawTitle();
     P_Init();
 
     printf("Setting up machine state\n");
-    D_RedrawTitle();
     I_Init();
 
     printf("Setting up sound\n");
-    D_RedrawTitle();
     S_Init(sfxVolume * 8, musicVolume * 17);
 
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     printf("Setting up heads up display\n");
-    D_RedrawTitle();
     HU_Init();
 #endif
 
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     printf("Init status bar\n");
-    D_RedrawTitle();
     ST_Init();
 #endif
 
