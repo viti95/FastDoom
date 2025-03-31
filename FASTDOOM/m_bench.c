@@ -66,42 +66,6 @@ extern int screenblocks;
 extern int screenblocks;
 extern int screenSize;
 
-void M_SetDetail(int value)
-{
-    detailLevel = value;
-    R_SetViewSize(screenblocks, detailLevel);
-}
-
-void M_SetVisplaneDetail(int value)
-{
-    visplaneRender = value;
-    R_SetViewSize(screenblocks, detailLevel);
-}
-
-void M_SetWallDetail(int value)
-{
-    wallRender = value;
-    R_SetViewSize(screenblocks, detailLevel);
-}
-
-void M_SetSpriteDetail(int value)
-{
-    spriteRender = value;
-    R_SetViewSize(screenblocks, detailLevel);
-}
-
-void M_SetPSpriteDetail(int value)
-{
-    pspriteRender = value;
-    R_SetViewSize(screenblocks, detailLevel);
-}
-
-void M_SetSkyDetail(boolean value)
-{
-    flatSky = value;
-    R_SetViewSize(screenblocks, detailLevel);
-}
-
 void M_SetCPU(int value)
 {
     selectedCPU = value;
@@ -178,11 +142,13 @@ void M_ChangeValueFile(unsigned int position, char *token)
     // Detail
     case 0:
         if (M_CheckValue(token, "high"))
-            M_SetDetail(DETAIL_HIGH);
+            detailLevel = DETAIL_HIGH;
         if (M_CheckValue(token, "low"))
-            M_SetDetail(DETAIL_LOW);
+            detailLevel = DETAIL_LOW;
         if (M_CheckValue(token, "potato"))
-            M_SetDetail(DETAIL_POTATO);
+            detailLevel = DETAIL_POTATO;
+
+        R_SetViewSize(screenblocks, detailLevel);
         break;
     // Size
     case 1:
@@ -191,45 +157,55 @@ void M_ChangeValueFile(unsigned int position, char *token)
     // Visplanes
     case 2:
         if (M_CheckValue(token, "default"))
-            M_SetVisplaneDetail(VISPLANES_NORMAL);
+            visplaneRender = VISPLANES_NORMAL;
         if (M_CheckValue(token, "flat"))
-            M_SetVisplaneDetail(VISPLANES_FLAT);
+            visplaneRender = VISPLANES_FLAT;
         if (M_CheckValue(token, "flatter"))
-            M_SetVisplaneDetail(VISPLANES_FLATTER);
+            visplaneRender = VISPLANES_FLATTER;
+
+        R_SetViewSize(screenblocks, detailLevel);
         break;
     // Walls
     case 3:
         if (M_CheckValue(token, "default"))
-            M_SetWallDetail(WALL_NORMAL);
+            wallRender = WALL_NORMAL;
         if (M_CheckValue(token, "flat"))
-            M_SetWallDetail(WALL_FLAT);
+            wallRender = WALL_FLAT;
         if (M_CheckValue(token, "flatter"))
-            M_SetWallDetail(WALL_FLATTER);
+            wallRender = WALL_FLATTER;
+
+        R_SetViewSize(screenblocks, detailLevel);
         break;
     // Sprites
     case 4:
         if (M_CheckValue(token, "default"))
-            M_SetSpriteDetail(SPRITE_NORMAL);
+            spriteRender = SPRITE_NORMAL;
         if (M_CheckValue(token, "flat"))
-            M_SetSpriteDetail(SPRITE_FLAT);
+            spriteRender = SPRITE_FLAT;
         if (M_CheckValue(token, "flatter"))
-            M_SetSpriteDetail(SPRITE_FLATTER);
+            spriteRender = SPRITE_FLATTER;
+
+        R_SetViewSize(screenblocks, detailLevel);
         break;
     // Player Sprites
     case 5:
         if (M_CheckValue(token, "default"))
-            M_SetPSpriteDetail(PSPRITE_NORMAL);
+            pspriteRender = PSPRITE_NORMAL;
         if (M_CheckValue(token, "flat"))
-            M_SetPSpriteDetail(PSPRITE_FLAT);
+            pspriteRender = PSPRITE_FLAT;
         if (M_CheckValue(token, "flatter"))
-            M_SetPSpriteDetail(PSPRITE_FLATTER);
+            pspriteRender = PSPRITE_FLATTER;
+
+        R_SetViewSize(screenblocks, detailLevel);
         break;
     // Sky
     case 6:
         if (M_CheckValue(token, "default"))
-            M_SetSkyDetail(false);
+            flatSky = false;
         if (M_CheckValue(token, "flat"))
-            M_SetSkyDetail(true);
+            flatSky = true;
+
+        R_SetViewSize(screenblocks, detailLevel);
         break;
     // Invisible
     case 7:
