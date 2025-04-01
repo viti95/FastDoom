@@ -295,13 +295,8 @@ int M_ProcessBenchmarkFile(const char *filename, int lineNumber)
     return 1;
 }
 
-void M_UpdateSettingsFile(void)
-{
-    M_ProcessBenchmarkFile(benchmark_file, benchmark_number);
-}
-
 void M_UpdateSettings(void)
 {
     if (benchmark_type > 0)
-        M_UpdateSettingsFile();
+        M_ProcessBenchmarkFile(benchmark_file, benchmark_number);
 }
