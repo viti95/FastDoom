@@ -1,7 +1,7 @@
 # CHANGELOG
 
 ## 1.1.3 (?? ??? ????)
-* Smaller executables (~10Kb)
+* Smaller executables (~16Kb)
 * Fixed EV_BuildStairs function (thanks @decino)
 
 ## 1.1.2 (20 Mar 2025)
