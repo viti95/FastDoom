@@ -760,17 +760,19 @@ void F_CastDrawerText(void)
 	V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
 #endif
 
+	I_ReadTextLineFile("TEXT\\CAST.TXT", castnum, castname, 25, 0);
+
 #if defined(MODE_T4025) || defined(MODE_T4050)
-	V_WriteTextDirect(40 - strlen(castordernames[castnum]) / 2, 12, castordernames[castnum]);
+	V_WriteTextDirect(40 - strlen(castname) / 2, 12, castname);
 #endif
 #if defined(MODE_T8025) || defined(MODE_MDA)
-	V_WriteTextDirect(40 - strlen(castordernames[castnum]) / 2, 23, castordernames[castnum]);
+	V_WriteTextDirect(40 - strlen(castname) / 2, 23, castname);
 #endif
 #if defined(MODE_T8043)
-	V_WriteTextDirect(40 - strlen(castordernames[castnum]) / 2, 41, castordernames[castnum]);
+	V_WriteTextDirect(40 - strlen(castname) / 2, 41, castname);
 #endif
 #if defined(MODE_T8050)
-	V_WriteTextDirect(40 - strlen(castordernames[castnum]) / 2, 48, castordernames[castnum]);
+	V_WriteTextDirect(40 - strlen(castname) / 2, 48, castname);
 #endif
 
 	// draw the current frame in the middle of the screen
