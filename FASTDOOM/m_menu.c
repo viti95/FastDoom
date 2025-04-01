@@ -777,7 +777,7 @@ void M_SaveGame(int choice)
 {
     if (!usergame)
     {
-        M_StartMessage(SAVEDEAD, NULL, 0);
+        M_StartMessage(I_LoadTextProgram(39), NULL, 0);
         return;
     }
 
@@ -821,7 +821,7 @@ void M_QuickSave(void)
         quickSaveSlot = -2; // means to pick a slot now
         return;
     }
-    sprintf(tempstring, QSPROMPT, savegamestrings[quickSaveSlot]);
+    sprintf(tempstring, I_LoadTextProgram(40), savegamestrings[quickSaveSlot]);
     M_StartMessage(tempstring, M_QuickSaveResponse, 1);
 }
 
@@ -841,10 +841,10 @@ void M_QuickLoad(void)
 {
     if (quickSaveSlot < 0)
     {
-        M_StartMessage(QSAVESPOT, NULL, 0);
+        M_StartMessage(I_LoadTextProgram(38), NULL, 0);
         return;
     }
-    sprintf(tempstring, QLPROMPT, savegamestrings[quickSaveSlot]);
+    sprintf(tempstring, I_LoadTextProgram(41), savegamestrings[quickSaveSlot]);
     M_StartMessage(tempstring, M_QuickLoadResponse, 1);
 }
 
@@ -1270,7 +1270,7 @@ void M_ChooseSkill(int choice)
 {
     if (choice == nightmare)
     {
-        M_StartMessage(NIGHTMARE, M_VerifyNightmare, 1);
+        M_StartMessage(I_LoadTextProgram(37), M_VerifyNightmare, 1);
         return;
     }
 
@@ -1720,7 +1720,7 @@ void M_EndGame(int choice)
         return;
     }
 
-    M_StartMessage(ENDGAME, M_EndGameResponse, 1);
+    M_StartMessage(I_LoadTextProgram(42), M_EndGameResponse, 1);
 }
 
 //

@@ -31,18 +31,9 @@
 //
 #define PRESSKEY "press a key."
 #define PRESSYN "press y or n."
-#define QSAVESPOT "you haven't picked a quicksave slot yet!\n\n" PRESSKEY
-#define SAVEDEAD "you can't save if you aren't playing!\n\n" PRESSKEY
-#define QSPROMPT "quicksave over your game named\n\n'%s'?\n\n" PRESSYN
-#define QLPROMPT "do you want to quickload the game named\n\n'%s'?\n\n" PRESSYN
-
-#define NIGHTMARE                      \
-    "are you sure? this skill level\n" \
-    "isn't even remotely fair.\n\n" PRESSYN
 
 #define MSGOFF "Messages OFF"
 #define MSGON "Messages ON"
-#define ENDGAME "are you sure you want to end the game?\n\n" PRESSYN
 
 #define DETAILHI "High detail"
 #define DETAILLO "Low detail"
