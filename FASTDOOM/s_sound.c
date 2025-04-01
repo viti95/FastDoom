@@ -44,6 +44,7 @@
 #include "ns_muldf.h"
 
 #include "string.h"
+#include "i_file.h"
 
 // Current music/sfx card - index useless
 //  w/o a reference LUT in a sound module.
@@ -492,131 +493,26 @@ void S_ChangeMusicMIDI(int musicnum, int looping)
     mus_playing = music;
 }
 
-unsigned char *DoomMusicTitles[23] = {
-    "At Doom's Gate",  // mus_e1m1
-    "The Imp's Song",  // mus_e1m2
-    "Dark Halls",  // mus_e1m3
-    "Kitchen Ace (And Taking Names)",  // mus_e1m4
-    "Suspense",  // mus_e1m5
-    "On the Hunt",  // mus_e1m6
-    "Demons on the Prey",  // mus_e1m7
-    "Sign of Evil",  // mus_e1m8
-    "Hiding the Secrets",  // mus_e1m9
-    "I Sawed the Demons", // mus_e2m1
-    "The Demons from Adrian's Pen", // mus_e2m2
-    "Intermission from DOOM", // mus_e2m3
-    "They're Going to Get You", // mus_e2m4
-    "Sinister", // mus_e2m6
-    "Waltz of the Demons", // mus_e2m7
-    "Nobody Told Me About id", // mus_e2m8
-    "Untitled", // mus_e2m9
-    "Donna to the Rescue", // mus_e3m2
-    "Deep Into the Code", // mus_e3m3
-    "Facing the Spider", // mus_e3m8
-    "Introduction", // mus_intro
-    "Sweet Little Dead Bunny", // mus_bunny
-    "The End of DOOM", // mus_victor
-};
-
-unsigned char *Doom2MusicTitles[21] = {
-    "Running from Evil",  // mus_runnin - MAP1
-    "The Healer Stalks",  // mus_stalks - MAP2
-    "Countdown to Death",  // mus_countd - MAP3
-    "Between Levels",  // mus_betwee - MAP4
-    "DOOM",  // mus_doom - MAP5
-    "In the Dark",  // mus_the_da - MAP6
-    "Shawn's Got the Shotgun",  // mus_shawn - MAP7
-    "The Dave D. Taylor Blues",  // mus_ddtblu - MAP8
-    "Into Sandy's City",  // mus_in_cit - MAP9
-    "The Demon's Dead", // mus_dead - MAP10
-    "Waiting for Romero to Play", // mus_romero - MAP18
-    "Message for the Archvile", // mus_messag - MAP20
-    "Bye Bye American Pie", // mus_ampie - MAP23
-    "Adrian's Asleep", // mus_adrian - MAP25
-    "Getting Too Tense", // mus_tense - MAP28
-    "Opening to Hell", // mus_openin - MAP30
-    "Evil Incarnate", // mus_evil - MAP31
-    "The Ultimate Challenge/Conquest", // mus_ultima - MAP32
-    "Read Me While Listening to This", // mus_read_m
-    "Title", // mus_dm2ttl
-    "Intermission"  // mus_dm2int
-};
-
-unsigned char *TNTMusicTitles[23] = {
-    "Sadistic",  // mus_runnin - MAP1
-    "Smells Like Burning Corpse",  // mus_stalks - MAP2
-    "Message for the Archvile",  // mus_countd - MAP3
-    "Death's Bells",  // mus_betwee - MAP4
-    "More",  // mus_doom - MAP5
-    "Agony Rhapsody",  // mus_the_da - MAP6
-    "Soldier of Chaos",  // mus_shawn - MAP7
-    "Into the Beast's Belly",  // mus_ddtblu - MAP8
-    "Infinite",  // mus_dead - MAP10
-    "Let's Kill at Will", // mus_stlks2 - MAP11
-    "The Dave D. Taylor Blues", // mus_theda2 - MAP12
-    "Cold Subtleness", // mus_ddtbl2 - MAP14
-    "Blood Jungle", // mus_dead2 - MAP16
-    "Countdown to Death", // mus_shawn2 - MAP19
-    "Horizon", // mus_messag - MAP20
-    "Into Sandy's City", // mus_count2 - MAP21
-    "AimShootKill", // mus_ddtbl3 - MAP22
-    "Bye Bye American Pie", // mus_ampie - MAP23
-    "Between Levels", // mus_theda3 - MAP24
-    "DOOM", // mus_adrian - MAP25
-    "Legion of the Lost", // mus_evil - MAP31
-    "Untitled", // mus_read_m
-    "TNT Title", // mus_dm2ttl
-};
-
-unsigned char *PlutoniaMusicTitles[27] = {
-    "The Imp's Song",  // mus_runnin - MAP1
-    "Dark Halls",  // mus_stalks - MAP2
-    "On the Hunt",  // mus_countd - MAP3
-    "Kitchen Ace (and Taking Names)",  // mus_betwee - MAP4
-    "Hiding the Secrets",  // mus_doom - MAP5
-    "Sign of Evil",  // mus_the_da - MAP6
-    "I Sawed the Demons",  // mus_shawn - MAP7
-    "The Demons from Adrian's Pen",  // mus_ddtblu - MAP8
-    "Deep into the Code",  // mus_in_cit - MAP9
-    "Demons on the Prey", // mus_dead - MAP10
-    "Sweet Little Dead Bunny", // mus_stlks2 - MAP11
-    "Facing the Spider", // mus_theda2 - MAP12
-    "Donna to the Rescue", // mus_doom2 - MAP13
-    "Nobody Told Me About id", // mus_ddtbl2 - MAP14
-    "Waltz of the Demons", // mus_runni2 - MAP15
-    "Untitled", // mus_dead2 - MAP16
-    "At Doom's Gate", // mus_stlks3 - MAP17
-    "Suspense", // mus_shawn2 - MAP19
-    "Message for the Archvile", // mus_messag - MAP20
-    "Read Me While Listening to This", // mus_count2 - MAP21
-    "The Dave D. Taylor Blues", // mus_ddtbl3 - MAP22
-    "Bye Bye American Pie", // mus_ampie - MAP23
-    "In the Dark", // mus_theda3 - MAP24
-    "Adrian's Asleep", // mus_adrian - MAP25
-    "The End of DOOM", // mus_openin - MAP30
-    "Title", // mus_dm2ttl
-    "Intermission"  // mus_dm2int
-};
+unsigned char musictext[40];
 
 void S_ShowMusicTitle(int musicnum)
 {
     unsigned char num = S_MapMusicCD(musicnum) - 1;
-    unsigned char *titleptr;
     int length;
 
     switch (gamemission)
     {
     case doom:
-        titleptr = DoomMusicTitles[num];
+        I_ReadTextLineFile("TEXT\\DOOMMUS.TXT", num, musictext, 40, 0);
         break;
     case doom2:
-        titleptr = Doom2MusicTitles[num];
+        I_ReadTextLineFile("TEXT\\DOOM2MUS.TXT", num, musictext, 40, 0);
         break;
     case pack_plut:
-        titleptr = PlutoniaMusicTitles[num];
+        I_ReadTextLineFile("TEXT\\PLUTMUS.TXT", num, musictext, 40, 0);
         break;
     case pack_tnt:
-        titleptr = TNTMusicTitles[num];
+        I_ReadTextLineFile("TEXT\\TNTMUS.TXT", num, musictext, 40, 0);
         break;
     default:
         return;
@@ -625,36 +521,36 @@ void S_ShowMusicTitle(int musicnum)
     switch(snd_MidiDevice)
     {
     case midi_sc55:
-        length = strlen(titleptr);
+        length = strlen(musictext);
         if (length > 32){
             length = 32;
         }
 
-        MUS_TextSC55(titleptr, length);        
+        MUS_TextSC55(musictext, length);        
         break;
     case midi_mt32:
-        length = strlen(titleptr);
+        length = strlen(musictext);
         if (length > 20){
             length = 20;
         }
 
-        MUS_TextMT32(titleptr, length);
+        MUS_TextMT32(musictext, length);
         break;
     case midi_mu80:
-        length = strlen(titleptr);
+        length = strlen(musictext);
         if (length > 32){
             length = 32;
         }
 
-        MUS_TextMU80(titleptr, length);
+        MUS_TextMU80(musictext, length);
         break;
     case midi_tg300:
-        length = strlen(titleptr);
+        length = strlen(musictext);
         if (length > 32){
             length = 32;
         }
 
-        MUS_TextTG300(titleptr, length);
+        MUS_TextTG300(musictext, length);
         break;
     default:
         return;
