@@ -35,3 +35,9 @@ This may cause issues!!!\n
 Do you want to continue (Y/N)? 
 Sound Blaster DSP %01X.%02X\n
 ADDR: %03X, IRQ: %u, DMA LOW: %u, DMA HIGH: %u\n
+are you sure? this skill level\nisn't even remotely fair.\n\npress y or n.
+you haven't picked a quicksave slot yet!\n\npress a key.
+you can't save if you aren't playing!\n\npress a key.
+quicksave over your game named\n\n'%s'?\n\npress y or n.
+do you want to quickload the game named\n\n'%s'?\n\npress y or n.
+are you sure you want to end the game?\n\npress y or n.
