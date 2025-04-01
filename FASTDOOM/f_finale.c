@@ -417,26 +417,7 @@ typedef struct
 	byte type;
 } castinfo_t;
 
-char *castordernames[] = {
-	CC_ZOMBIE,
-	CC_SHOTGUN,
-	CC_HEAVY,
-	CC_IMP,
-	CC_DEMON,
-	CC_LOST,
-	CC_CACO,
-	CC_HELL,
-	CC_BARON,
-	CC_ARACH,
-	CC_PAIN,
-	CC_REVEN,
-	CC_MANCU,
-	CC_ARCH,
-	CC_SPIDER,
-	CC_CYBER,
-	CC_HERO,
-	NULL
-};
+char castname[25];
 
 byte castordertype[] = {
 	MT_POSSESSED,
@@ -455,8 +436,7 @@ byte castordertype[] = {
 	MT_VILE,
 	MT_SPIDER,
 	MT_CYBORG,
-	MT_PLAYER,
-	0
+	MT_PLAYER
 };
 
 int castnum;
@@ -500,9 +480,9 @@ void F_CastTicker(void)
 	if (caststate->tics == -1 || caststate->nextstate == S_NULL)
 	{
 		// switch from deathstate to next monster
-		castnum++;
 		castdeath = 0;
-		if (castordernames[castnum] == NULL)
+		castnum++;
+		if (castnum == 17)
 			castnum = 0;
 		if (mobjinfo[castordertype[castnum]].seesound)
 			S_StartSound(NULL, mobjinfo[castordertype[castnum]].seesound);
@@ -721,7 +701,8 @@ void F_CastDrawer(void)
 	// erase the entire screen to a background
   	V_DrawPatchModeCentered(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
 
-	F_CastPrint(castordernames[castnum]);
+	I_ReadTextLineFile("TEXT\\CAST.TXT", castnum, castname, 25, 0);
+	F_CastPrint(castname);
 
 	// draw the current frame in the middle of the screen
 	sprdef = &sprites[caststate->sprite];
