@@ -1157,7 +1157,7 @@ void WI_drawStats(void)
 #endif
 	WI_drawTime(160 - SP_TIMEX, SP_TIMEY, cnt_time);
 
-	if (wbs->epsd < 3)
+	if (wbs->epsd < 4)
 	{
 #if defined(MODE_T4025) || defined(MODE_T4050)
 		V_WriteTextDirect((160 + SP_TIMEX) / 8, SP_TIMEY / 8, "PAR:");
