@@ -626,9 +626,8 @@ void G_PlayerReborn()
 void P_SpawnPlayer(mapthing_t *mthing);
 
 // DOOM Par Times
-short pars[5][10] =
+short pars[4][10] =
     {
-        {0},
         {0, 30, 75,120, 90,165,180,180, 30,165},
         {0, 90, 90, 90,120, 90,360,240, 30,170},
         {0, 90, 45, 90,150, 90, 90,165, 30,135},
@@ -751,7 +750,7 @@ void G_DoCompleted(void)
     if (gamemode == commercial)
         wminfo.partime = Mul35(cpars[gamemap - 1]);
     else
-        wminfo.partime = Mul35(pars[gameepisode][gamemap]);
+        wminfo.partime = Mul35(pars[gameepisode - 1][gamemap]);
 
     wminfo.plyr.in = true;
     wminfo.plyr.skills = players.killcount;
