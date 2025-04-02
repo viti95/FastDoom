@@ -368,7 +368,7 @@ void WI_drawLF(void)
 	V_WriteTextDirect((320 - lnames[wbs->last]->width) / 8, y / 4, currentlevelname);
 #endif
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
-  	V_DrawPatchModeCentered((320 - lnames[wbs->last]->width) / 2, y, lnames[wbs->last]);
+	V_DrawPatchModeCentered((320 - lnames[wbs->last]->width) / 2, y, lnames[wbs->last]);
 #endif
 #if defined(MODE_Y_HALF)
 	V_DrawPatchModeCentered((320 - lnames[wbs->last]->width) / 2, y / 2, lnames[wbs->last]);
@@ -386,10 +386,10 @@ void WI_drawLF(void)
 	V_WriteTextDirect((320 - finished->width) / 8, y / 4, "FINISHED");
 #endif
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
-  	V_DrawPatchModeCentered((320 - finished->width) / 2, y, finished);
+	V_DrawPatchModeCentered((320 - finished->width) / 2, y, finished);
 #endif
 #if defined(MODE_Y_HALF)
-  	V_DrawPatchModeCentered((320 - finished->width) / 2, y / 2, finished);
+	V_DrawPatchModeCentered((320 - finished->width) / 2, y / 2, finished);
 #endif
 }
 
@@ -409,10 +409,10 @@ void WI_drawEL(void)
 	V_WriteTextDirect((320 - entering->width) / 8, y / 4, "ENTERING");
 #endif
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
-  	V_DrawPatchModeCentered((320 - entering->width) / 2, y, entering);
+	V_DrawPatchModeCentered((320 - entering->width) / 2, y, entering);
 #endif
 #if defined(MODE_Y_HALF)
-  	V_DrawPatchModeCentered((320 - entering->width) / 2, y / 2, entering);
+	V_DrawPatchModeCentered((320 - entering->width) / 2, y / 2, entering);
 #endif
 
 	// draw level
@@ -428,10 +428,10 @@ void WI_drawEL(void)
 	V_WriteTextDirect((320 - lnames[wbs->next]->width) / 8, y / 4, nextlevelname);
 #endif
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
-  	V_DrawPatchModeCentered((320 - lnames[wbs->next]->width) / 2, y, lnames[wbs->next]);
+	V_DrawPatchModeCentered((320 - lnames[wbs->next]->width) / 2, y, lnames[wbs->next]);
 #endif
 #if defined(MODE_Y_HALF)
-  	V_DrawPatchModeCentered((320 - lnames[wbs->next]->width) / 2, y / 2, lnames[wbs->next]);
+	V_DrawPatchModeCentered((320 - lnames[wbs->next]->width) / 2, y / 2, lnames[wbs->next]);
 #endif
 }
 
@@ -591,10 +591,10 @@ void WI_drawAnimatedBack(void)
 		if (a->ctr >= 0)
 		{
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
-      V_DrawPatchModeCentered(a->loc.x, a->loc.y, a->p[a->ctr]);
+			V_DrawPatchModeCentered(a->loc.x, a->loc.y, a->p[a->ctr]);
 #endif
 #if defined(MODE_Y_HALF)
-      V_DrawPatchModeCentered(a->loc.x, a->loc.y / 2, a->p[a->ctr]);
+			V_DrawPatchModeCentered(a->loc.x, a->loc.y / 2, a->p[a->ctr]);
 #endif
 		}
 	}
@@ -724,11 +724,11 @@ void WI_drawPercent(int x, int y, int p)
 	V_WriteTextDirect(x / 2, y / 4 - 1, strnum);
 #endif
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
-  	V_DrawPatchModeCentered(x, y, percent);
+	V_DrawPatchModeCentered(x, y, percent);
 	WI_drawNum(x, y, p);
 #endif
 #if defined(MODE_Y_HALF)
-  	V_DrawPatchModeCentered(x, y / 2, percent);
+	V_DrawPatchModeCentered(x, y / 2, percent);
 	WI_drawNum(x, y, p);
 #endif
 }
@@ -1157,25 +1157,22 @@ void WI_drawStats(void)
 #endif
 	WI_drawTime(160 - SP_TIMEX, SP_TIMEY, cnt_time);
 
-	if (wbs->epsd < 4)
-	{
 #if defined(MODE_T4025) || defined(MODE_T4050)
-		V_WriteTextDirect((160 + SP_TIMEX) / 8, SP_TIMEY / 8, "PAR:");
+	V_WriteTextDirect((160 + SP_TIMEX) / 8, SP_TIMEY / 8, "PAR:");
 #endif
 #if defined(MODE_T8025) || defined(MODE_MDA)
-		V_WriteTextDirect((160 + SP_TIMEX) / 4, SP_TIMEY / 8, "PAR:");
+	V_WriteTextDirect((160 + SP_TIMEX) / 4, SP_TIMEY / 8, "PAR:");
 #endif
 #if defined(MODE_T8050) || defined(MODE_T8043)
-		V_WriteTextDirect((160 + SP_TIMEX) / 4, SP_TIMEY / 4, "PAR:");
+	V_WriteTextDirect((160 + SP_TIMEX) / 4, SP_TIMEY / 4, "PAR:");
 #endif
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT) || defined(USE_BACKBUFFER)
-   		V_DrawPatchModeCentered(160 + SP_TIMEX, SP_TIMEY, par);
+	V_DrawPatchModeCentered(160 + SP_TIMEX, SP_TIMEY, par);
 #endif
 #if defined(MODE_Y_HALF)
-   		V_DrawPatchModeCentered(160 + SP_TIMEX, SP_TIMEY / 2, par);
+	V_DrawPatchModeCentered(160 + SP_TIMEX, SP_TIMEY / 2, par);
 #endif
-		WI_drawTime(320 - SP_TIMEX, SP_TIMEY, cnt_par);
-	}
+	WI_drawTime(320 - SP_TIMEX, SP_TIMEY, cnt_par);
 }
 
 void WI_checkForAccelerate(void)
@@ -1271,8 +1268,8 @@ void WI_loadData(void)
 	// background
 	bg = W_CacheLumpName(name, PU_CACHE);
 #if CENTERING_OFFSET_X != 0 || CENTERING_OFFSET_Y != 0
-  // Fill screen with black
-  SetDWords(screen1, 0, SCREENWIDTH * SCREENHEIGHT / 4);
+	// Fill screen with black
+	SetDWords(screen1, 0, SCREENWIDTH * SCREENHEIGHT / 4);
 #endif
 	V_DrawPatch(CENTERING_OFFSET_X, CENTERING_OFFSET_Y, screen1, bg);
 #endif
