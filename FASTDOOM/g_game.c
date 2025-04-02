@@ -626,20 +626,20 @@ void G_PlayerReborn()
 void P_SpawnPlayer(mapthing_t *mthing);
 
 // DOOM Par Times
-short pars[4][9] =
+unsigned char pars[4][9] =
     {
-        { 30, 75,120, 90,165,180,180, 30,165},
-        { 90, 90, 90,120, 90,360,240, 30,170},
-        { 90, 45, 90,150, 90, 90,165, 30,135},
-        {165,255,135,150,180,390,135,360,180}};
+        { 30/5, 75/5,120/5, 90/5,165/5,180/5,180/5, 30/5,165/5},
+        { 90/5, 90/5, 90/5,120/5, 90/5,360/5,240/5, 30/5,170/5},
+        { 90/5, 45/5, 90/5,150/5, 90/5, 90/5,165/5, 30/5,135/5},
+        {165/5,255/5,135/5,150/5,180/5,390/5,135/5,360/5,180/5}};
 
 // DOOM II Par Times
-short cpars[32] =
+unsigned char cpars[32] =
     {
-         30, 90,120,120, 90,150,120,120,270, 90, //  1-10
-        210,150,150,150,210,150,420,150,210,150, // 11-20
-        240,150,180,150,150,300,330,420,300,180, // 21-30
-        120, 30                                  // 31-32
+         30/5, 90/5,120/5,120/5, 90/5,150/5,120/5,120/5,270/5, 90/5, //  1-10
+        210/5,150/5,150/5,150/5,210/5,150/5,420/5,150/5,210/5,150/5, // 11-20
+        240/5,150/5,180/5,150/5,150/5,300/5,330/5,420/5,300/5,180/5, // 21-30
+        120/5, 30/5                                                  // 31-32
 };
 
 //
@@ -748,9 +748,9 @@ void G_DoCompleted(void)
     wminfo.maxitems = totalitems;
     wminfo.maxsecret = totalsecret;
     if (gamemode == commercial)
-        wminfo.partime = Mul35(cpars[gamemap - 1]);
+        wminfo.partime = Mul175(cpars[gamemap - 1]);
     else
-        wminfo.partime = Mul35(pars[gameepisode - 1][gamemap - 1]);
+        wminfo.partime = Mul175(pars[gameepisode - 1][gamemap - 1]);
 
     wminfo.plyr.in = true;
     wminfo.plyr.skills = players.killcount;
