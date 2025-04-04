@@ -73,7 +73,7 @@ typedef struct
 typedef volatile struct voicestatus
 {
     VoiceNode *Voice;
-    int playing;
+    unsigned char playing;
 } voicestatus;
 
 #endif
