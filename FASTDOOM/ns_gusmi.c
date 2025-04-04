@@ -9,6 +9,7 @@
 #include "ns_gf1.h"
 #include "ns_gusmi.h"
 #include "options.h"
+#include "z_zone.h"
 
 #define TRUE (1 == 1)
 #define FALSE (!TRUE)
@@ -27,11 +28,14 @@
 #define UNUSED_PATCH -1
 
 static struct patch Patch[NUM_PATCHES];
-static unsigned char *PatchWaves[NUM_PATCHES];
+//static unsigned char *PatchWaves[NUM_PATCHES];
+unsigned char **PatchWaves;
 
 static int PatchMap[NUM_PATCHES][MAX_MEM_CONFIG + 1];
 static char ProgramName[NUM_PATCHES][BIGGEST_NAME];
-static char PatchLoaded[NUM_PATCHES];
+
+//static char PatchLoaded[NUM_PATCHES];
+char *PatchLoaded;
 
 static char ConfigDirectory[80] = {'\0'};
 
@@ -390,6 +394,9 @@ int GUSMIDI_Init(
       GUSMIDI_Shutdown();
    }
 
+   PatchWaves = Z_MallocUnowned(NUM_PATCHES * sizeof(unsigned char *), PU_STATIC);
+   PatchLoaded = Z_MallocUnowned(NUM_PATCHES, PU_STATIC);
+
    ret = GUS_Init();
    if (ret != GUS_Ok)
    {
@@ -460,4 +467,6 @@ void GUSMIDI_Shutdown(
    GUSMIDI_ReleasePatches();
    GUS_Shutdown();
    GUSMIDI_Installed = FALSE;
+   Z_Free(PatchLoaded);
+   Z_Free(PatchWaves);
 }
