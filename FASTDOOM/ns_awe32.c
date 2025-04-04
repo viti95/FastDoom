@@ -20,7 +20,10 @@
 static int wSBCBaseAddx; /* Sound Blaster base address */
 static int wEMUBaseAddx; /* EMU8000 subsystem base address */
 
-static unsigned short NoteFlags[128];
+#define TOTALNOTEFLAGS 128
+
+//static unsigned short NoteFlags[128];
+unsigned short *NoteFlags;
 
 static SOUND_PACKET spSound =
     {
@@ -32,7 +35,8 @@ static LONG lBankSizes[MAXBANKS] =
     {
         0};
 
-static char Packet[PACKETSIZE];
+//static char Packet[PACKETSIZE];
+char *Packet;
 
 unsigned SetES(void);
 #pragma aux SetES = \
@@ -164,6 +168,7 @@ static void LoadSBK(void)
 {
     int i;
     FILE* fp;
+    Packet = Z_MallocUnowned(PACKETSIZE, PU_STATIC);
 
     fp = fopen(sbkfile, "rb");
     if (!fp) {
@@ -232,8 +237,9 @@ static void LoadSBK(void)
     else
         lBankSizes[0] = 0;          /* no sample in SBK file */
 
-    return ;
+    Z_Free(Packet);
 
+    return;
 }
 
 int AWE32_Init(void)
@@ -301,8 +307,9 @@ int AWE32_Init(void)
     awe32InitMIDI();
     awe32InitNRPN();
 
-    memset(NoteFlags, 0, sizeof(NoteFlags));
-
+    NoteFlags = Z_MallocUnowned(TOTALNOTEFLAGS * 2, PU_STATIC);
+    SetDWords(NoteFlags, 0, (TOTALNOTEFLAGS * 2) / 4);
+    
     return (AWE32_Ok);
 }
 
@@ -318,4 +325,6 @@ void AWE32_Shutdown(
         if (pPresets[i]) Z_Free(pPresets[i]);
 
     awe32Terminate();
+
+    Z_Free(NoteFlags);
 }
