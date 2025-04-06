@@ -20,8 +20,6 @@
 #include "ns_dpmi.h"
 #endif
 
-#include "ns_usrho.h"
-
 typedef struct
 {
     task *start;
@@ -104,7 +102,7 @@ static void TS_FreeTaskList(void)
     while (node != TaskList)
     {
         next = node->next;
-        USRHOOKS_FreeMem(node);
+        Z_Free(node);
         node = next;
     }
 
@@ -409,16 +407,14 @@ task *TS_ScheduleTask(
     task *ptr;
     int status;
 
-    ptr = NULL;
-
-    USRHOOKS_GetMem((void **)&ptr, sizeof(task));
+    ptr = Z_MallocUnowned(sizeof(task), PU_STATIC);
 
     if (!TS_Installed)
     {
         status = TS_Startup();
         if (status != TASK_Ok)
         {
-            USRHOOKS_FreeMem(ptr);
+            Z_Free(ptr);
             return (NULL);
         }
     }
@@ -475,7 +471,7 @@ int TS_Terminate(
             LL_RemoveNode(NodeToRemove, next, prev);
             NodeToRemove->next = NULL;
             NodeToRemove->prev = NULL;
-            USRHOOKS_FreeMem(NodeToRemove);
+            Z_Free(NodeToRemove);
 
             TS_SetTimerToMaxTaskRate();
 

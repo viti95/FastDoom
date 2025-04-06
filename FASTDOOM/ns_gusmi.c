@@ -4,11 +4,11 @@
 #include <fcntl.h>
 #include <string.h>
 #include <stdlib.h>
-#include "ns_usrho.h"
 #include "ns_inter.h"
 #include "ns_gf1.h"
 #include "ns_gusmi.h"
 #include "options.h"
+#include "z_zone.h"
 
 #define TRUE (1 == 1)
 #define FALSE (!TRUE)
@@ -149,7 +149,7 @@ int GUSMIDI_UnloadPatch(
       gf1_unload_patch(&Patch[prog]);
       if (PatchWaves[prog] != NULL)
       {
-         USRHOOKS_FreeMem(PatchWaves[prog]);
+         Z_Free(PatchWaves[prog]);
          PatchWaves[prog] = NULL;
       }
 
@@ -201,13 +201,13 @@ int GUSMIDI_LoadPatch(
       return (GUS_Error);
    }
 
-   USRHOOKS_GetMem((void **)&wave_buff, 1024); // 1024 bytes
+   wave_buff = Z_MallocUnowned(1024, PU_STATIC);
 
    ret = gf1_load_patch(text, &patchi, &Patch[prog], &GUS_HoldBuffer, DMABUFFSIZE, (unsigned char *)wave_buff, PATCH_LOAD_8_BIT);
 
    if (ret != OK)
    {
-      USRHOOKS_FreeMem(wave_buff);
+      Z_Free(wave_buff);
       return (GUS_Error);
    }
 
