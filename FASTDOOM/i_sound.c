@@ -41,6 +41,7 @@
 
 #include "ns_cd.h"
 #include "version.h"
+#include "i_file.h"
 
 //
 // Sound header & data
@@ -180,7 +181,7 @@ void I_sndArbitrateCards(void)
     {
         if (MPU_Detect(&snd_Mport))
         {
-            printf("MPU-401 isn't reponding @ p=0x%x\n", snd_Mport);
+            printf(I_LoadTextProgram(45), snd_Mport);
         }
         else
         {
@@ -263,14 +264,14 @@ void I_StartupSound(void)
     //
     // inits ASS sound library
     //
-    printf("  calling ASS_Init\n");
+    printf(I_LoadTextProgram(43));
 
     ASS_Init(SND_TICRATE, snd_MusicDevice, snd_SfxDevice);
 
     switch(snd_MidiDevice)
     {
         case midi_mt32:
-            printf("  loading MT-32 SysEx\n");
+            printf(I_LoadTextProgram(44));
             MUS_TextMT32("Loading GM patches  ", 20);
 
             // Load MIDI

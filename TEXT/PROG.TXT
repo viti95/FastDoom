@@ -41,3 +41,6 @@ you can't save if you aren't playing!\n\npress a key.
 quicksave over your game named\n\n'%s'?\n\npress y or n.
 do you want to quickload the game named\n\n'%s'?\n\npress y or n.
 are you sure you want to end the game?\n\npress y or n.
+Apogee Sound System init\n
+Loading MT-32 SysEx\n
+MPU-401 isn't reponding @ p=0x%x\n
