@@ -8,12 +8,12 @@
 #include "ns_std.h"
 #include "ns_task.h"
 #include "ns_llm.h"
-#include "ns_usrho.h"
 #include "ns_music.h"
 #include "ns_midi.h"
 #include "ns_midif.h"
 #include "options.h"
 #include "fastmath.h"
+#include "z_zone.h"
 
 extern int MUSIC_SoundDevice;
 
@@ -709,7 +709,7 @@ void MIDI_StopSong(
         MIDI_Reset();
         _MIDI_ResetTracks();
 
-        USRHOOKS_FreeMem(_MIDI_TrackPtr);
+        Z_Free(_MIDI_TrackPtr);
 
         _MIDI_TrackPtr = NULL;
         _MIDI_NumTracks = 0;
@@ -783,7 +783,7 @@ int MIDI_PlaySong(
     }
 
     _MIDI_TrackMemSize = _MIDI_NumTracks * sizeof(track);
-    USRHOOKS_GetMem((void **)&_MIDI_TrackPtr, _MIDI_TrackMemSize);
+    _MIDI_TrackPtr = Z_MallocUnowned(_MIDI_TrackMemSize, PU_STATIC);
 
     CurrentTrack = _MIDI_TrackPtr;
     numtracks = _MIDI_NumTracks;
@@ -791,7 +791,7 @@ int MIDI_PlaySong(
     {
         if (*(unsigned long *)ptr != MIDI_TRACK_SIGNATURE)
         {
-            USRHOOKS_FreeMem(_MIDI_TrackPtr);
+            Z_Free(_MIDI_TrackPtr);
 
             _MIDI_TrackPtr = NULL;
             _MIDI_TrackMemSize = 0;

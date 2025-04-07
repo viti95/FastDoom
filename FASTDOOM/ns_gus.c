@@ -3,7 +3,6 @@
 #include <fcntl.h>
 #include <string.h>
 #include <stdlib.h>
-#include "ns_usrho.h"
 #include "ns_inter.h"
 #include "ns_gf1.h"
 #include "ns_gusmi.h"

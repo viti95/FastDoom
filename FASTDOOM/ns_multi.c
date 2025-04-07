@@ -4,7 +4,6 @@
 #include <time.h>
 #include <conio.h>
 #include "ns_dpmi.h"
-#include "ns_usrho.h"
 #include "ns_inter.h"
 #include "ns_dma.h"
 #include "ns_ll.h"
@@ -27,6 +26,7 @@
 #include "fastmath.h"
 #include "ns_fxm.h"
 #include "dmx.h"
+#include "z_zone.h"
 
 #define RoundFixed(fixedval, bits)             \
     (                                          \
@@ -1200,7 +1200,7 @@ int MV_Init(
     }
 
     MV_TotalMemory = Voices * sizeof(VoiceNode) + sizeof(HARSH_CLIP_TABLE_8);
-    USRHOOKS_GetMem((void **)&ptr, MV_TotalMemory);
+    ptr = Z_MallocUnowned(MV_TotalMemory, PU_STATIC);
 
     MV_Voices = (VoiceNode *)ptr;
     MV_HarshClipTable = ptr + (MV_TotalMemory - sizeof(HARSH_CLIP_TABLE_8));
@@ -1222,7 +1222,7 @@ int MV_Init(
 
     if (status)
     {
-        USRHOOKS_FreeMem(MV_Voices);
+        Z_Free(MV_Voices);
         MV_Voices = NULL;
         MV_TotalMemory = 0;
 
@@ -1296,7 +1296,7 @@ int MV_Init(
 
     if (status != MV_Ok)
     {
-        USRHOOKS_FreeMem(MV_Voices);
+        Z_Free(MV_Voices);
         MV_Voices = NULL;
         MV_TotalMemory = 0;
 
@@ -1423,7 +1423,7 @@ int MV_Shutdown(
     RestoreInterrupts(flags);
 
     // Free any voices we allocated
-    USRHOOKS_FreeMem(MV_Voices);
+    Z_Free(MV_Voices);
     MV_Voices = NULL;
     MV_TotalMemory = 0;
 

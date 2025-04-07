@@ -89,7 +89,6 @@ GLOBOBJS = \
  ns_scape.obj \
  ns_awe32.obj \
  ns_dsney.obj \
- ns_usrho.obj \
  ns_gusmi.obj \
  ns_gusau.obj \
  ns_gus.obj \
