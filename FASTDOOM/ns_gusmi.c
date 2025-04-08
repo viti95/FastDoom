@@ -9,6 +9,7 @@
 #include "ns_gusmi.h"
 #include "options.h"
 #include "z_zone.h"
+#include "fastmath.h"
 
 #define TRUE (1 == 1)
 #define FALSE (!TRUE)
@@ -36,7 +37,7 @@ static char ProgramName[NUM_PATCHES][BIGGEST_NAME];
 //static char PatchLoaded[NUM_PATCHES];
 char *PatchLoaded;
 
-static char ConfigDirectory[80] = {'\0'};
+static char ConfigDirectory[80];
 
 // The name of the configuration directory
 static char InstrumentDirectory[80];
@@ -393,6 +394,7 @@ int GUSMIDI_Init(
       GUSMIDI_Shutdown();
    }
 
+   SetDWords(ConfigDirectory, 0, 80/4);
    PatchWaves = Z_MallocUnowned(NUM_PATCHES * sizeof(unsigned char *), PU_STATIC);
    PatchLoaded = Z_MallocUnowned(NUM_PATCHES, PU_STATIC);
 
