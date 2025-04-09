@@ -30,18 +30,6 @@ typedef struct
 
 TIMBRE *ADLIB_TimbreBank;
 
-static unsigned OctavePitch[MAX_OCTAVE + 1] =
-    {
-        OCTAVE_0,
-        OCTAVE_1,
-        OCTAVE_2,
-        OCTAVE_3,
-        OCTAVE_4,
-        OCTAVE_5,
-        OCTAVE_6,
-        OCTAVE_7,
-};
-
 static unsigned NoteMod12[MAX_NOTE + 1];
 static unsigned NoteDiv12[MAX_NOTE + 1];
 
@@ -558,10 +546,11 @@ static void AL_SetVoicePitch(
    int patch;
    int detune;
    int ScaleNote;
-   int Octave;
    int pitch;
    int port;
    int voc;
+
+   int octavepitchval;
 
    port = Voice[voice].port;
    voc = (voice >= NUM_VOICES) ? voice - NUM_VOICES : voice;
@@ -591,9 +580,9 @@ static void AL_SetVoicePitch(
    detune = Channel[channel].KeyDetune;
 
    ScaleNote = NoteMod12[note];
-   Octave = NoteDiv12[note];
+   octavepitchval = NoteDiv12[note];
 
-   pitch = OctavePitch[Octave] | NotePitch[detune][ScaleNote];
+   pitch = octavepitchval | NotePitch[detune][ScaleNote];
 
    Voice[voice].pitchleft = pitch;
 
@@ -621,11 +610,11 @@ static void AL_SetVoicePitch(
          {
             note++;
             ScaleNote = NoteMod12[note];
-            Octave = NoteDiv12[note];
+            octavepitchval = NoteDiv12[note];
          }
       }
 
-      pitch = OctavePitch[Octave] | NotePitch[detune][ScaleNote];
+      pitch = octavepitchval | NotePitch[detune][ScaleNote];
 
       Voice[voice].pitchright = pitch;
 
@@ -760,7 +749,7 @@ static void AL_CalcPitchInfo(
    for (note = 0; note <= MAX_NOTE; note++)
    {
       NoteMod12[note] = note % 12;
-      NoteDiv12[note] = note / 12;
+      NoteDiv12[note] = (note / 12) * 1024;
    }
 
    //   for( finetune = 1; finetune <= FINETUNE_MAX; finetune++ )
