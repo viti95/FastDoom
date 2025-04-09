@@ -30,8 +30,8 @@ typedef struct
 
 TIMBRE *ADLIB_TimbreBank;
 
-static unsigned NoteMod12[MAX_NOTE + 1];
-static unsigned NoteDiv12[MAX_NOTE + 1];
+static unsigned *NoteMod12;
+static unsigned *NoteDiv12;
 
 // Pitch table
 
@@ -1270,6 +1270,9 @@ int AL_Init(int soundcard, int Address)
       }
       break;
    }
+
+   NoteMod12 = Z_MallocUnowned((MAX_NOTE + 1) * sizeof(unsigned), PU_STATIC);
+   NoteDiv12 = Z_MallocUnowned((MAX_NOTE + 1) * sizeof(unsigned), PU_STATIC);
 
    AL_CalcPitchInfo();
    AL_Reset();
