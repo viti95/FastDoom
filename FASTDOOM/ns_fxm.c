@@ -12,7 +12,6 @@
 #include "ns_lpt.h"
 #include "ns_sbdm.h"
 #include "ns_llm.h"
-#include "ns_user.h"
 #include "ns_fxm.h"
 #include "ns_adbfx.h"
 #include "ns_tandy.h"

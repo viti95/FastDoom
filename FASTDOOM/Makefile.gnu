@@ -77,7 +77,6 @@ GLOBOBJS = \
  ns_llm.obj \
  ns_dma.obj \
  ns_irq.obj \
- ns_user.obj \
  ns_mpu401.obj \
  ns_sb.obj \
  ns_sbmus.obj \

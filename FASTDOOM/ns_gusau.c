@@ -4,7 +4,6 @@
 #include <string.h>
 #include "ns_inter.h"
 #include "ns_llm.h"
-#include "ns_user.h"
 #include "ns_multi.h"
 #include "ns_gusdf.h"
 #include "ns_gf1.h"

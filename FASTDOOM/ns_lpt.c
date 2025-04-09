@@ -4,7 +4,6 @@
 #include "ns_dpmi.h"
 #include "ns_task.h"
 #include "ns_cards.h"
-#include "ns_user.h"
 #include "ns_lpt.h"
 #include "ns_muldf.h"
 #include "ns_fxm.h"

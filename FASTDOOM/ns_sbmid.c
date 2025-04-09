@@ -2,7 +2,6 @@
 #include <dos.h>
 #include <stdlib.h>
 #include "ns_dpmi.h"
-#include "ns_user.h"
 #include "ns_sbmid.h"
 #include "ns_sb.h"
 #include "ns_sbdef.h"

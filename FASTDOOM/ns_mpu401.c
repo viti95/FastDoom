@@ -2,7 +2,6 @@
 #include <dos.h>
 #include <stdlib.h>
 #include "ns_dpmi.h"
-#include "ns_user.h"
 #include "ns_mpu401.h"
 #include "options.h"
 
@@ -21,8 +20,6 @@
 
 int MPU_BaseAddr = MPU_DefaultAddress;
 
-//unsigned MPU_Delay = 500;
-//unsigned MPU_Delay = 5000;
 unsigned MPU_Delay = 0x5000;
 
 /*---------------------------------------------------------------------
@@ -268,12 +265,6 @@ int MPU_Init(int addr)
     int status;
     int count;
     char *ptr;
-
-    ptr = USER_GetText("MPUDELAY");
-    if (ptr != NULL)
-    {
-        MPU_Delay = (unsigned)atol(ptr);
-    }
 
     MPU_BaseAddr = addr;
 

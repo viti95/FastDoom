@@ -16,7 +16,6 @@
 #include "ns_cms.h"
 #include "ns_scape.h"
 #include "ns_llm.h"
-#include "ns_user.h"
 #include "options.h"
 #include "doomstat.h"
 
