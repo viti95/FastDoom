@@ -1,10 +1,11 @@
 # CHANGELOG
 
-## 1.1.3 (?? ??? ????)
+## 1.1.3 (10 Apr 2025)
 * Smaller executables (~16Kb)
 * Fixed EV_BuildStairs function (thanks @decino)
 * Added PAR times for Episode 4 (Ultimate Doom)
 * Disable show PAR times for Plutonia and TNT (they were using wrong Doom II par times)
+* More available zone memory
 
 ## 1.1.2 (20 Mar 2025)
 * Gamma level is now selectable in 0.0625 steps from 0.5 to 2.5
