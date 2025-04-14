@@ -416,8 +416,6 @@ typedef struct
 	byte type;
 } castinfo_t;
 
-char castname[25];
-
 byte castordertype[] = {
 	MT_POSSESSED,
 	MT_SHOTGUY,
@@ -700,8 +698,8 @@ void F_CastDrawer(void)
 	// erase the entire screen to a background
   	V_DrawPatchModeCentered(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
 
-	I_ReadTextLineFile("TEXT\\CAST.TXT", castnum, castname, 25, 0);
-	F_CastPrint(castname);
+	I_LoadTextProgram(castnum + 179);
+	F_CastPrint(programtext);
 
 	// draw the current frame in the middle of the screen
 	sprdef = &sprites[caststate->sprite];
@@ -759,19 +757,19 @@ void F_CastDrawerText(void)
 	V_DrawPatchDirectText8050(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
 #endif
 
-	I_ReadTextLineFile("TEXT\\CAST.TXT", castnum, castname, 25, 0);
+	I_LoadTextProgram(castnum + 179);
 
 #if defined(MODE_T4025) || defined(MODE_T4050)
-	V_WriteTextDirect(40 - strlen(castname) / 2, 12, castname);
+	V_WriteTextDirect(40 - strlen(programtext) / 2, 12, programtext);
 #endif
 #if defined(MODE_T8025) || defined(MODE_MDA)
-	V_WriteTextDirect(40 - strlen(castname) / 2, 23, castname);
+	V_WriteTextDirect(40 - strlen(programtext) / 2, 23, programtext);
 #endif
 #if defined(MODE_T8043)
-	V_WriteTextDirect(40 - strlen(castname) / 2, 41, castname);
+	V_WriteTextDirect(40 - strlen(programtext) / 2, 41, programtext);
 #endif
 #if defined(MODE_T8050)
-	V_WriteTextDirect(40 - strlen(castname) / 2, 48, castname);
+	V_WriteTextDirect(40 - strlen(programtext) / 2, 48, programtext);
 #endif
 
 	// draw the current frame in the middle of the screen
