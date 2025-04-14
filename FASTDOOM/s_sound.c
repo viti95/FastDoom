@@ -493,10 +493,14 @@ void S_ChangeMusicMIDI(int musicnum, int looping)
     mus_playing = music;
 }
 
+unsigned char *musictitle;
+
 void S_ShowMusicTitle(int musicnum)
 {
     int num = S_MapMusicCD(musicnum) - 1;
     int length;
+
+    musictitle = Z_MallocUnowned(25, PU_STATIC);
 
     switch (gamemission)
     {
@@ -513,46 +517,51 @@ void S_ShowMusicTitle(int musicnum)
         I_LoadTextProgram(156 + num);
         break;
     default:
+        Z_Free(musictitle);
         return;
     }
+
+    strcpy(musictitle, programtext);
 
     switch(snd_MidiDevice)
     {
     case midi_sc55:
-        length = strlen(programtext);
+        length = strlen(musictitle);
         if (length > 32){
             length = 32;
         }
 
-        MUS_TextSC55(programtext, length);        
+        MUS_TextSC55(musictitle, length);        
         break;
     case midi_mt32:
-        length = strlen(programtext);
+        length = strlen(musictitle);
         if (length > 20){
             length = 20;
         }
 
-        MUS_TextMT32(programtext, length);
+        MUS_TextMT32(musictitle, length);
         break;
     case midi_mu80:
-        length = strlen(programtext);
+        length = strlen(musictitle);
         if (length > 32){
             length = 32;
         }
 
-        MUS_TextMU80(programtext, length);
+        MUS_TextMU80(musictitle, length);
         break;
     case midi_tg300:
-        length = strlen(programtext);
+        length = strlen(musictitle);
         if (length > 32){
             length = 32;
         }
 
-        MUS_TextTG300(programtext, length);
+        MUS_TextTG300(musictitle, length);
         break;
     default:
-        return;
+        break;
     }
+
+    Z_Free(musictitle);
 
 }
 

@@ -52,6 +52,7 @@ int finalecount;
 #define TEXTSPEED 3
 #define TEXTWAIT 250
 
+unsigned char *finaletext;
 char *finaleflat;
 
 void F_StartCast(void);
@@ -83,26 +84,38 @@ void F_StartFinale(void)
 			case 6:
 				finaleflat = "SLIME16";
 				I_LoadTextProgram(57);
+				finaletext = Z_MallocUnowned(strlen(programtext), PU_CACHE);
+				strcpy(finaletext, programtext);
 				break;
 			case 11:
 				finaleflat = "RROCK14";
 				I_LoadTextProgram(58);
+				finaletext = Z_MallocUnowned(strlen(programtext), PU_CACHE);
+				strcpy(finaletext, programtext);
 				break;
 			case 20:
 				finaleflat = "RROCK07";
 				I_LoadTextProgram(59);
+				finaletext = Z_MallocUnowned(strlen(programtext), PU_CACHE);
+				strcpy(finaletext, programtext);
 				break;
 			case 30:
 				finaleflat = "RROCK17";
 				I_LoadTextProgram(60);
+				finaletext = Z_MallocUnowned(strlen(programtext), PU_CACHE);
+				strcpy(finaletext, programtext);
 				break;
 			case 15:
 				finaleflat = "RROCK13";
 				I_LoadTextProgram(61);
+				finaletext = Z_MallocUnowned(strlen(programtext), PU_CACHE);
+				strcpy(finaletext, programtext);
 				break;
 			case 31:
 				finaleflat = "RROCK19";
 				I_LoadTextProgram(62);
+				finaletext = Z_MallocUnowned(strlen(programtext), PU_CACHE);
+				strcpy(finaletext, programtext);
 				break;
 			}
 		}
@@ -113,26 +126,38 @@ void F_StartFinale(void)
 			case 6:
 				finaleflat = "SLIME16";
 				I_LoadTextProgram(63);
+				finaletext = Z_MallocUnowned(strlen(programtext), PU_CACHE);
+				strcpy(finaletext, programtext);
 				break;
 			case 11:
 				finaleflat = "RROCK14";
 				I_LoadTextProgram(64);
+				finaletext = Z_MallocUnowned(strlen(programtext), PU_CACHE);
+				strcpy(finaletext, programtext);
 				break;
 			case 20:
 				finaleflat = "RROCK07";
 				I_LoadTextProgram(65);
+				finaletext = Z_MallocUnowned(strlen(programtext), PU_CACHE);
+				strcpy(finaletext, programtext);
 				break;
 			case 30:
 				finaleflat = "RROCK17";
 				I_LoadTextProgram(66);
+				finaletext = Z_MallocUnowned(strlen(programtext), PU_CACHE);
+				strcpy(finaletext, programtext);
 				break;
 			case 15:
 				finaleflat = "RROCK13";
 				I_LoadTextProgram(67);
+				finaletext = Z_MallocUnowned(strlen(programtext), PU_CACHE);
+				strcpy(finaletext, programtext);
 				break;
 			case 31:
 				finaleflat = "RROCK19";
 				I_LoadTextProgram(68);
+				finaletext = Z_MallocUnowned(strlen(programtext), PU_CACHE);
+				strcpy(finaletext, programtext);
 				break;
 			}
 		}
@@ -144,26 +169,38 @@ void F_StartFinale(void)
 			case 6:
 				finaleflat = "SLIME16";
 				I_LoadTextProgram(51);
+				finaletext = Z_MallocUnowned(strlen(programtext), PU_CACHE);
+				strcpy(finaletext, programtext);
 				break;
 			case 11:
 				finaleflat = "RROCK14";
 				I_LoadTextProgram(52);
+				finaletext = Z_MallocUnowned(strlen(programtext), PU_CACHE);
+				strcpy(finaletext, programtext);
 				break;
 			case 20:
 				finaleflat = "RROCK07";
 				I_LoadTextProgram(53);
+				finaletext = Z_MallocUnowned(strlen(programtext), PU_CACHE);
+				strcpy(finaletext, programtext);
 				break;
 			case 30:
 				finaleflat = "RROCK17";
 				I_LoadTextProgram(54);
+				finaletext = Z_MallocUnowned(strlen(programtext), PU_CACHE);
+				strcpy(finaletext, programtext);
 				break;
 			case 15:
 				finaleflat = "RROCK13";
 				I_LoadTextProgram(55);
+				finaletext = Z_MallocUnowned(strlen(programtext), PU_CACHE);
+				strcpy(finaletext, programtext);
 				break;
 			case 31:
 				finaleflat = "RROCK19";
 				I_LoadTextProgram(56);
+				finaletext = Z_MallocUnowned(strlen(programtext), PU_CACHE);
+				strcpy(finaletext, programtext);
 				break;
 			default:
 				// Ouch.
@@ -180,18 +217,26 @@ void F_StartFinale(void)
 		case 1:
 			finaleflat = "FLOOR4_8";
 			I_LoadTextProgram(47);
+			finaletext = Z_MallocUnowned(strlen(programtext), PU_CACHE);
+			strcpy(finaletext, programtext);
 			break;
 		case 2:
 			finaleflat = "SFLR6_1";
 			I_LoadTextProgram(48);
+			finaletext = Z_MallocUnowned(strlen(programtext), PU_CACHE);
+			strcpy(finaletext, programtext);
 			break;
 		case 3:
 			finaleflat = "MFLR8_4";
 			I_LoadTextProgram(49);
+			finaletext = Z_MallocUnowned(strlen(programtext), PU_CACHE);
+			strcpy(finaletext, programtext);
 			break;
 		case 4:
 			finaleflat = "MFLR8_3";
 			I_LoadTextProgram(50);
+			finaletext = Z_MallocUnowned(strlen(programtext), PU_CACHE);
+			strcpy(finaletext, programtext);
 			break;
 		}
 		finalemusic = mus_victor;
@@ -241,7 +286,7 @@ void F_Ticker(void)
 	if (gamemode == commercial)
 		return;
 
-	if (!finalestage && ((finalecount > strlen(programtext) * TEXTSPEED + TEXTWAIT) || ((finalecount > 35) && players.cmd.buttons)))
+	if (!finalestage && ((finalecount > strlen(finaletext) * TEXTSPEED + TEXTWAIT) || ((finalecount > 35) && players.cmd.buttons)))
 	{
 		finalecount = 0;
 		finalestage = 1;
@@ -303,7 +348,7 @@ void F_TextWrite(void)
 	// draw some of the text onto the screen
 	cx = 10;
 	cy = 10;
-	ch = programtext;
+	ch = finaletext;
 
 	count = (finalecount - 10) / 3;
 	if (count < 0)
@@ -373,7 +418,7 @@ void F_TextWriteText(void)
 	// draw some of the text onto the screen
 	cx = 1;
 	cy = 1;
-	ch = programtext;
+	ch = finaletext;
 
 	count = (finalecount - 10) / 3;
 	if (count < 0)
