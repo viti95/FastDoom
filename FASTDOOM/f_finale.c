@@ -713,6 +713,8 @@ void F_CastPrint(char *text)
 }
 #endif
 
+unsigned char *castname;
+
 //
 // F_CastDrawer
 //
@@ -729,7 +731,9 @@ void F_CastDrawer(void)
   	V_DrawPatchModeCentered(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
 
 	I_LoadTextProgram(castnum + 179);
-	F_CastPrint(programtext);
+	castname = Z_MallocUnowned(strlen(programtext), PU_CACHE);
+	strcpy(castname, programtext);
+	F_CastPrint(castname);
 
 	// draw the current frame in the middle of the screen
 	sprdef = &sprites[caststate->sprite];
@@ -788,18 +792,20 @@ void F_CastDrawerText(void)
 #endif
 
 	I_LoadTextProgram(castnum + 179);
+	castname = Z_MallocUnowned(strlen(programtext), PU_CACHE);
+	strcpy(castname, programtext);
 
 #if defined(MODE_T4025) || defined(MODE_T4050)
-	V_WriteTextDirect(40 - strlen(programtext) / 2, 12, programtext);
+	V_WriteTextDirect(40 - strlen(castname) / 2, 12, castname);
 #endif
 #if defined(MODE_T8025) || defined(MODE_MDA)
-	V_WriteTextDirect(40 - strlen(programtext) / 2, 23, programtext);
+	V_WriteTextDirect(40 - strlen(castname) / 2, 23, castname);
 #endif
 #if defined(MODE_T8043)
-	V_WriteTextDirect(40 - strlen(programtext) / 2, 41, programtext);
+	V_WriteTextDirect(40 - strlen(castname) / 2, 41, castname);
 #endif
 #if defined(MODE_T8050)
-	V_WriteTextDirect(40 - strlen(programtext) / 2, 48, programtext);
+	V_WriteTextDirect(40 - strlen(castname) / 2, 48, castname);
 #endif
 
 	// draw the current frame in the middle of the screen

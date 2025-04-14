@@ -1772,6 +1772,8 @@ void M_QuitResponse(int ch)
     I_Quit();
 }
 
+unsigned char *endmsg;
+
 void M_QuitDOOM(int choice)
 {
     // We pick index 0 which is language sensitive,
@@ -1785,7 +1787,10 @@ void M_QuitDOOM(int choice)
         I_LoadTextProgram(69 + ((gametic >> 2) % NUM_QUITMESSAGES));
     }
 
-    M_StartMessage(programtext, M_QuitResponse, 1);
+    endmsg = Z_MallocUnowned(strlen(programtext), PU_CACHE);
+    strcpy(endmsg, programtext);
+
+    M_StartMessage(endmsg, M_QuitResponse, 1);
 }
 
 void M_ChangeSensitivity(int choice)
