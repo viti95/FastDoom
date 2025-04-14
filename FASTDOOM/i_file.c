@@ -28,6 +28,7 @@
 #include "options.h"
 #include "i_debug.h"
 #include "z_zone.h"
+#include "i_file.h"
 
 void I_ReplaceEscapedNewlines(char *str)
 {
@@ -90,7 +91,6 @@ int I_ReadTextLineFile(char *filename, int line_number, char *buffer, int max_le
     return 1;
 }
 
-#define MAX_TEXT_SIZE_PROGRAM 640
 char programtext[MAX_TEXT_SIZE_PROGRAM];
 int lastText = -1;
 

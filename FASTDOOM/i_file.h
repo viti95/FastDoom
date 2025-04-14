@@ -20,6 +20,10 @@
 #ifndef __I_FILE__
 #define __I_FILE__
 
+#define MAX_TEXT_SIZE_PROGRAM 640
+
+extern char programtext[MAX_TEXT_SIZE_PROGRAM];
+
 int I_GetFileSize(char *filename);
 int I_ReadTextFile(char *dest, char *filename, int size);
 int I_ReadTextLineFile(char *filename, int line_number, char *buffer, int max_length, char extended_mode);

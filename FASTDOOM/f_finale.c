@@ -52,7 +52,6 @@ int finalecount;
 #define TEXTSPEED 3
 #define TEXTWAIT 250
 
-char finaletext[640];
 char *finaleflat;
 
 void F_StartCast(void);
@@ -83,27 +82,27 @@ void F_StartFinale(void)
 			{
 			case 6:
 				finaleflat = "SLIME16";
-				I_ReadTextLineFile("TEXT\\INTER.TXT", 10, finaletext, sizeof(finaletext), 1);
+				I_LoadTextProgram(57);
 				break;
 			case 11:
 				finaleflat = "RROCK14";
-				I_ReadTextLineFile("TEXT\\INTER.TXT", 11, finaletext, sizeof(finaletext), 1);
+				I_LoadTextProgram(58);
 				break;
 			case 20:
 				finaleflat = "RROCK07";
-				I_ReadTextLineFile("TEXT\\INTER.TXT", 12, finaletext, sizeof(finaletext), 1);
+				I_LoadTextProgram(59);
 				break;
 			case 30:
 				finaleflat = "RROCK17";
-				I_ReadTextLineFile("TEXT\\INTER.TXT", 13, finaletext, sizeof(finaletext), 1);
+				I_LoadTextProgram(60);
 				break;
 			case 15:
 				finaleflat = "RROCK13";
-				I_ReadTextLineFile("TEXT\\INTER.TXT", 14, finaletext, sizeof(finaletext), 1);
+				I_LoadTextProgram(61);
 				break;
 			case 31:
 				finaleflat = "RROCK19";
-				I_ReadTextLineFile("TEXT\\INTER.TXT", 15, finaletext, sizeof(finaletext), 1);
+				I_LoadTextProgram(62);
 				break;
 			}
 		}
@@ -113,27 +112,27 @@ void F_StartFinale(void)
 			{
 			case 6:
 				finaleflat = "SLIME16";
-				I_ReadTextLineFile("TEXT\\INTER.TXT", 16, finaletext, sizeof(finaletext), 1);
+				I_LoadTextProgram(63);
 				break;
 			case 11:
 				finaleflat = "RROCK14";
-				I_ReadTextLineFile("TEXT\\INTER.TXT", 17, finaletext, sizeof(finaletext), 1);
+				I_LoadTextProgram(64);
 				break;
 			case 20:
 				finaleflat = "RROCK07";
-				I_ReadTextLineFile("TEXT\\INTER.TXT", 18, finaletext, sizeof(finaletext), 1);
+				I_LoadTextProgram(65);
 				break;
 			case 30:
 				finaleflat = "RROCK17";
-				I_ReadTextLineFile("TEXT\\INTER.TXT", 19, finaletext, sizeof(finaletext), 1);
+				I_LoadTextProgram(66);
 				break;
 			case 15:
 				finaleflat = "RROCK13";
-				I_ReadTextLineFile("TEXT\\INTER.TXT", 20, finaletext, sizeof(finaletext), 1);
+				I_LoadTextProgram(67);
 				break;
 			case 31:
 				finaleflat = "RROCK19";
-				I_ReadTextLineFile("TEXT\\INTER.TXT", 21, finaletext, sizeof(finaletext), 1);
+				I_LoadTextProgram(68);
 				break;
 			}
 		}
@@ -144,27 +143,27 @@ void F_StartFinale(void)
 			{
 			case 6:
 				finaleflat = "SLIME16";
-				I_ReadTextLineFile("TEXT\\INTER.TXT", 4, finaletext, sizeof(finaletext), 1);
+				I_LoadTextProgram(51);
 				break;
 			case 11:
 				finaleflat = "RROCK14";
-				I_ReadTextLineFile("TEXT\\INTER.TXT", 5, finaletext, sizeof(finaletext), 1);
+				I_LoadTextProgram(52);
 				break;
 			case 20:
 				finaleflat = "RROCK07";
-				I_ReadTextLineFile("TEXT\\INTER.TXT", 6, finaletext, sizeof(finaletext), 1);
+				I_LoadTextProgram(53);
 				break;
 			case 30:
 				finaleflat = "RROCK17";
-				I_ReadTextLineFile("TEXT\\INTER.TXT", 7, finaletext, sizeof(finaletext), 1);
+				I_LoadTextProgram(54);
 				break;
 			case 15:
 				finaleflat = "RROCK13";
-				I_ReadTextLineFile("TEXT\\INTER.TXT", 8, finaletext, sizeof(finaletext), 1);
+				I_LoadTextProgram(55);
 				break;
 			case 31:
 				finaleflat = "RROCK19";
-				I_ReadTextLineFile("TEXT\\INTER.TXT", 9, finaletext, sizeof(finaletext), 1);
+				I_LoadTextProgram(56);
 				break;
 			default:
 				// Ouch.
@@ -180,19 +179,19 @@ void F_StartFinale(void)
 		{
 		case 1:
 			finaleflat = "FLOOR4_8";
-			I_ReadTextLineFile("TEXT\\INTER.TXT", 0, finaletext, sizeof(finaletext), 1);
+			I_LoadTextProgram(47);
 			break;
 		case 2:
 			finaleflat = "SFLR6_1";
-			I_ReadTextLineFile("TEXT\\INTER.TXT", 1, finaletext, sizeof(finaletext), 1);
+			I_LoadTextProgram(48);
 			break;
 		case 3:
 			finaleflat = "MFLR8_4";
-			I_ReadTextLineFile("TEXT\\INTER.TXT", 2, finaletext, sizeof(finaletext), 1);
+			I_LoadTextProgram(49);
 			break;
 		case 4:
 			finaleflat = "MFLR8_3";
-			I_ReadTextLineFile("TEXT\\INTER.TXT", 3, finaletext, sizeof(finaletext), 1);
+			I_LoadTextProgram(50);
 			break;
 		}
 		finalemusic = mus_victor;
@@ -242,7 +241,7 @@ void F_Ticker(void)
 	if (gamemode == commercial)
 		return;
 
-	if (!finalestage && ((finalecount > strlen(finaletext) * TEXTSPEED + TEXTWAIT) || ((finalecount > 35) && players.cmd.buttons)))
+	if (!finalestage && ((finalecount > strlen(programtext) * TEXTSPEED + TEXTWAIT) || ((finalecount > 35) && players.cmd.buttons)))
 	{
 		finalecount = 0;
 		finalestage = 1;
@@ -304,7 +303,7 @@ void F_TextWrite(void)
 	// draw some of the text onto the screen
 	cx = 10;
 	cy = 10;
-	ch = finaletext;
+	ch = programtext;
 
 	count = (finalecount - 10) / 3;
 	if (count < 0)
@@ -374,7 +373,7 @@ void F_TextWriteText(void)
 	// draw some of the text onto the screen
 	cx = 1;
 	cy = 1;
-	ch = finaletext;
+	ch = programtext;
 
 	count = (finalecount - 10) / 3;
 	if (count < 0)
