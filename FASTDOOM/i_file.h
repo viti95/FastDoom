@@ -24,10 +24,7 @@
 
 extern char programtext[MAX_TEXT_SIZE_PROGRAM];
 
-int I_GetFileSize(char *filename);
-int I_ReadTextFile(char *dest, char *filename, int size);
 int I_ReadTextLineFile(char *filename, int line_number, char *buffer, int max_length, char extended_mode);
-char * I_LoadText(char *filename);
 unsigned char *I_ReadBinaryStatic(char *file, int size);
 char *I_LoadTextProgram(int number);
 
