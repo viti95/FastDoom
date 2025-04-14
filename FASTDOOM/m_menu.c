@@ -1778,14 +1778,14 @@ void M_QuitDOOM(int choice)
     //  or one at random, between 1 and maximum number.
     if (gamemode == commercial)
     {
-        I_ReadTextLineFile("TEXT\\ENDMSG2.TXT", (gametic >> 2) % NUM_QUITMESSAGES, endstring, 110, 1);
+        I_LoadTextProgram(69 + 8 + ((gametic >> 2) % NUM_QUITMESSAGES));
     }
     else
     {
-        I_ReadTextLineFile("TEXT\\ENDMSG.TXT", (gametic >> 2) % NUM_QUITMESSAGES, endstring, 110, 1);
+        I_LoadTextProgram(69 + ((gametic >> 2) % NUM_QUITMESSAGES));
     }
 
-    M_StartMessage(endstring, M_QuitResponse, 1);
+    M_StartMessage(programtext, M_QuitResponse, 1);
 }
 
 void M_ChangeSensitivity(int choice)
