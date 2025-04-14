@@ -52,7 +52,7 @@ int finalecount;
 #define TEXTSPEED 3
 #define TEXTWAIT 250
 
-char *finaletext;
+char finaletext[640];
 char *finaleflat;
 
 void F_StartCast(void);
@@ -83,27 +83,27 @@ void F_StartFinale(void)
 			{
 			case 6:
 				finaleflat = "SLIME16";
-				finaletext = I_LoadText("TEXT\\P1.TXT");
+				I_ReadTextLineFile("TEXT\\INTER.TXT", 10, finaletext, sizeof(finaletext), 1);
 				break;
 			case 11:
 				finaleflat = "RROCK14";
-				finaletext = I_LoadText("TEXT\\P2.TXT");
+				I_ReadTextLineFile("TEXT\\INTER.TXT", 11, finaletext, sizeof(finaletext), 1);
 				break;
 			case 20:
 				finaleflat = "RROCK07";
-				finaletext = I_LoadText("TEXT\\P3.TXT");
+				I_ReadTextLineFile("TEXT\\INTER.TXT", 12, finaletext, sizeof(finaletext), 1);
 				break;
 			case 30:
 				finaleflat = "RROCK17";
-				finaletext = I_LoadText("TEXT\\P4.TXT");
+				I_ReadTextLineFile("TEXT\\INTER.TXT", 13, finaletext, sizeof(finaletext), 1);
 				break;
 			case 15:
 				finaleflat = "RROCK13";
-				finaletext = I_LoadText("TEXT\\P5.TXT");
+				I_ReadTextLineFile("TEXT\\INTER.TXT", 14, finaletext, sizeof(finaletext), 1);
 				break;
 			case 31:
 				finaleflat = "RROCK19";
-				finaletext = I_LoadText("TEXT\\P6.TXT");
+				I_ReadTextLineFile("TEXT\\INTER.TXT", 15, finaletext, sizeof(finaletext), 1);
 				break;
 			}
 		}
@@ -113,27 +113,27 @@ void F_StartFinale(void)
 			{
 			case 6:
 				finaleflat = "SLIME16";
-				finaletext = I_LoadText("TEXT\\T1.TXT");
+				I_ReadTextLineFile("TEXT\\INTER.TXT", 16, finaletext, sizeof(finaletext), 1);
 				break;
 			case 11:
 				finaleflat = "RROCK14";
-				finaletext = I_LoadText("TEXT\\T2.TXT");
+				I_ReadTextLineFile("TEXT\\INTER.TXT", 17, finaletext, sizeof(finaletext), 1);
 				break;
 			case 20:
 				finaleflat = "RROCK07";
-				finaletext = I_LoadText("TEXT\\T3.TXT");
+				I_ReadTextLineFile("TEXT\\INTER.TXT", 18, finaletext, sizeof(finaletext), 1);
 				break;
 			case 30:
 				finaleflat = "RROCK17";
-				finaletext = I_LoadText("TEXT\\T4.TXT");
+				I_ReadTextLineFile("TEXT\\INTER.TXT", 19, finaletext, sizeof(finaletext), 1);
 				break;
 			case 15:
 				finaleflat = "RROCK13";
-				finaletext = I_LoadText("TEXT\\T5.TXT");
+				I_ReadTextLineFile("TEXT\\INTER.TXT", 20, finaletext, sizeof(finaletext), 1);
 				break;
 			case 31:
 				finaleflat = "RROCK19";
-				finaletext = I_LoadText("TEXT\\T6.TXT");
+				I_ReadTextLineFile("TEXT\\INTER.TXT", 21, finaletext, sizeof(finaletext), 1);
 				break;
 			}
 		}
@@ -144,27 +144,27 @@ void F_StartFinale(void)
 			{
 			case 6:
 				finaleflat = "SLIME16";
-				finaletext = I_LoadText("TEXT\\C1.TXT");
+				I_ReadTextLineFile("TEXT\\INTER.TXT", 4, finaletext, sizeof(finaletext), 1);
 				break;
 			case 11:
 				finaleflat = "RROCK14";
-				finaletext = I_LoadText("TEXT\\C2.TXT");
+				I_ReadTextLineFile("TEXT\\INTER.TXT", 5, finaletext, sizeof(finaletext), 1);
 				break;
 			case 20:
 				finaleflat = "RROCK07";
-				finaletext = I_LoadText("TEXT\\C3.TXT");
+				I_ReadTextLineFile("TEXT\\INTER.TXT", 6, finaletext, sizeof(finaletext), 1);
 				break;
 			case 30:
 				finaleflat = "RROCK17";
-				finaletext = I_LoadText("TEXT\\C4.TXT");
+				I_ReadTextLineFile("TEXT\\INTER.TXT", 7, finaletext, sizeof(finaletext), 1);
 				break;
 			case 15:
 				finaleflat = "RROCK13";
-				finaletext = I_LoadText("TEXT\\C5.TXT");
+				I_ReadTextLineFile("TEXT\\INTER.TXT", 8, finaletext, sizeof(finaletext), 1);
 				break;
 			case 31:
 				finaleflat = "RROCK19";
-				finaletext = I_LoadText("TEXT\\C6.TXT");
+				I_ReadTextLineFile("TEXT\\INTER.TXT", 9, finaletext, sizeof(finaletext), 1);
 				break;
 			default:
 				// Ouch.
@@ -180,19 +180,19 @@ void F_StartFinale(void)
 		{
 		case 1:
 			finaleflat = "FLOOR4_8";
-			finaletext = I_LoadText("TEXT\\E1.TXT");
+			I_ReadTextLineFile("TEXT\\INTER.TXT", 0, finaletext, sizeof(finaletext), 1);
 			break;
 		case 2:
 			finaleflat = "SFLR6_1";
-			finaletext = I_LoadText("TEXT\\E2.TXT");
+			I_ReadTextLineFile("TEXT\\INTER.TXT", 1, finaletext, sizeof(finaletext), 1);
 			break;
 		case 3:
 			finaleflat = "MFLR8_4";
-			finaletext = I_LoadText("TEXT\\E3.TXT");
+			I_ReadTextLineFile("TEXT\\INTER.TXT", 2, finaletext, sizeof(finaletext), 1);
 			break;
 		case 4:
 			finaleflat = "MFLR8_3";
-			finaletext = I_LoadText("TEXT\\E4.TXT");
+			I_ReadTextLineFile("TEXT\\INTER.TXT", 3, finaletext, sizeof(finaletext), 1);
 			break;
 		}
 		finalemusic = mus_victor;
