@@ -29,56 +29,6 @@
 #include "i_debug.h"
 #include "z_zone.h"
 
-int I_GetFileSize(char *filename)
-{
-    int result;
-    FILE *fp;
-
-    fp = fopen(filename, "r");
-
-    if (fp == NULL)
-        return -1;
-
-    fseek(fp, 0L, SEEK_END);
-    result = ftell(fp);
-    fclose(fp);
-
-    return result;
-}
-
-int I_ReadTextFile(char *dest, char *filename, int size)
-{
-    FILE *fp;
-
-    fp = fopen(filename, "r");
-    if (fp == NULL)
-        return -1;
-
-    fread(dest, 1, size, fp);
-    fclose(fp);
-    dest[size] = '\0';
-
-    return 0;
-}
-
-char *I_LoadText(char *filename)
-{
-    int size;
-    char *ptr;
-
-    size = I_GetFileSize(filename);
-
-    if (size == -1)
-        return NULL;
-
-    ptr = Z_MallocUnowned(size + 1, PU_CACHE);
-
-    SetBytes(ptr, '\0', size + 1);
-    I_ReadTextFile(ptr, filename, size);
-
-    return ptr;
-}
-
 void I_ReplaceEscapedNewlines(char *str)
 {
     char *read_ptr = str;
@@ -140,7 +90,7 @@ int I_ReadTextLineFile(char *filename, int line_number, char *buffer, int max_le
     return 1;
 }
 
-#define MAX_TEXT_SIZE_PROGRAM 160
+#define MAX_TEXT_SIZE_PROGRAM 640
 char programtext[MAX_TEXT_SIZE_PROGRAM];
 int lastText = -1;
 

@@ -44,3 +44,4 @@ are you sure you want to end the game?\n\npress y or n.
 Apogee Sound System init\n
 Loading MT-32 SysEx\n
 MPU-401 isn't reponding @ p=0x%x\n
+fastdoom 1.1.3 by ViTi95\n\nthanks to all contributors:\n\nJNechaevsky    RamonUnch    PickledDog\njsmolina    deat322    FrenkelS    rasz_pl\nAXDOOMER    FavoritoHJS    Tronix286\nDeathEgg    CarlosTex    noop0x90\nFreddoUK    maximilien-noal    appiah4\nghderty    Redneckerz    tigrouind\nSpitFire-666    Optimus6128    viciious\nShogun38    cher-nov    neuralnetworkz\nEthaniel-404    zokum-no    DiSCATTe\nDoug Johnson    crazii     Mikolaj Feliks\nbnied    javiergutierrezchamorro\nand to the DoomWorld / Vogons communities\n\nrip and tear, Bonepie

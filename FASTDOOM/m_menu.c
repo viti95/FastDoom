@@ -2250,7 +2250,6 @@ void M_WriteText(int x, int y, char *string)
 //
 // M_Responder
 //
-char *fdoomhelp;
 
 byte M_Responder(void)
 {
@@ -2346,8 +2345,7 @@ byte M_Responder(void)
             return 1;
 
         case KEY_F1: // FastDoom key
-            fdoomhelp = I_LoadText("TEXT\\ABOUT.TXT");
-            M_StartMessage(fdoomhelp, NULL, 0);
+            M_StartMessage(I_LoadTextProgram(46), NULL, 0);
             S_StartSound(NULL, sfx_oof);
             return 1;
 
