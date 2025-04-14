@@ -1123,17 +1123,16 @@ void I_Shutdown(void)
 //
 // I_Error
 //
-char errormsg[80];
 
 void I_Error(int line, ...)
 {
     va_list argptr;
 
-    I_ReadTextLineFile("TEXT\\ERRORS.TXT", line, errormsg, sizeof(errormsg), 0);
+    I_LoadTextProgram(line + 196);
 
     I_Shutdown();
     va_start(argptr, line);
-    vprintf(errormsg, argptr);
+    vprintf(programtext, argptr);
     va_end(argptr);
     printf("\n");
 

@@ -194,3 +194,34 @@ ARCH-VILE
 THE SPIDER MASTERMIND
 THE CYBERDEMON
 OUR HERO
+Exiting...
+The selected IWAD was not found
+Bad savegame
+Savegame buffer overrun
+Demo is from a different game version!
+Wrong selection
+Cannot play AudioCD music
+MSCDEX was not found
+No Audio-CD tracks available
+Results saved on file BENCH.CSV
+FastDoom VBE 2.0 direct modes only support 8 bits per pixels
+File %s could not be opened
+Error getting BLASTER settings: %i
+Error setup music device: %i
+Error initializing music device: %i
+Error setup sound device: %i
+Error initializing sound device: %i
+Timed %u gametics in %u realtics. FPS: %u.%.3u
+Demo %s recorded
+Not enough VRAM for triple buffering! (%i KB required, have %lu KB)
+Image doesn't fit in the 64Kb window (%i KB required)
+Compatible VESA 2.0 video mode not found! (%ix%i required)
+Unknown tclass %i in savegame
+Error creating file %s
+Error writing to file %s
+File %s not found
+Error loading music file %s
+Failed on allocation of %i bytes
+AWE32 error: Cannot open %s
+AWE32 error: Cannot load SoundFont file %s
+AWE32 error: Invalid SoundFont file %s
