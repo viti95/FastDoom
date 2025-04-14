@@ -493,26 +493,24 @@ void S_ChangeMusicMIDI(int musicnum, int looping)
     mus_playing = music;
 }
 
-unsigned char musictext[40];
-
 void S_ShowMusicTitle(int musicnum)
 {
-    unsigned char num = S_MapMusicCD(musicnum) - 1;
+    int num = S_MapMusicCD(musicnum) - 1;
     int length;
 
     switch (gamemission)
     {
     case doom:
-        I_ReadTextLineFile("TEXT\\DOOMMUS.TXT", num, musictext, 40, 0);
+        I_LoadTextProgram(85 + num);
         break;
     case doom2:
-        I_ReadTextLineFile("TEXT\\DOOM2MUS.TXT", num, musictext, 40, 0);
+        I_LoadTextProgram(108 + num);
         break;
     case pack_plut:
-        I_ReadTextLineFile("TEXT\\PLUTMUS.TXT", num, musictext, 40, 0);
+        I_LoadTextProgram(129 + num);
         break;
     case pack_tnt:
-        I_ReadTextLineFile("TEXT\\TNTMUS.TXT", num, musictext, 40, 0);
+        I_LoadTextProgram(156 + num);
         break;
     default:
         return;
@@ -521,36 +519,36 @@ void S_ShowMusicTitle(int musicnum)
     switch(snd_MidiDevice)
     {
     case midi_sc55:
-        length = strlen(musictext);
+        length = strlen(programtext);
         if (length > 32){
             length = 32;
         }
 
-        MUS_TextSC55(musictext, length);        
+        MUS_TextSC55(programtext, length);        
         break;
     case midi_mt32:
-        length = strlen(musictext);
+        length = strlen(programtext);
         if (length > 20){
             length = 20;
         }
 
-        MUS_TextMT32(musictext, length);
+        MUS_TextMT32(programtext, length);
         break;
     case midi_mu80:
-        length = strlen(musictext);
+        length = strlen(programtext);
         if (length > 32){
             length = 32;
         }
 
-        MUS_TextMU80(musictext, length);
+        MUS_TextMU80(programtext, length);
         break;
     case midi_tg300:
-        length = strlen(musictext);
+        length = strlen(programtext);
         if (length > 32){
             length = 32;
         }
 
-        MUS_TextTG300(musictext, length);
+        MUS_TextTG300(programtext, length);
         break;
     default:
         return;
