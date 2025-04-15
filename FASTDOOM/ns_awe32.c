@@ -22,7 +22,6 @@ static int wEMUBaseAddx; /* EMU8000 subsystem base address */
 
 #define TOTALNOTEFLAGS 128
 
-//static unsigned short NoteFlags[128];
 unsigned short *NoteFlags;
 
 static SOUND_PACKET spSound =
@@ -31,11 +30,8 @@ static SOUND_PACKET spSound =
 
 static char* pPresets[MAXBANKS]    = {0};
 
-static LONG lBankSizes[MAXBANKS] =
-    {
-        0};
+static LONG lBankSizes[MAXBANKS];
 
-//static char Packet[PACKETSIZE];
 char *Packet;
 
 unsigned SetES(void);
@@ -249,6 +245,8 @@ int AWE32_Init(void)
 
     wSBCBaseAddx = 0x220;
     wEMUBaseAddx = 0x620;
+
+    SetDWords(lBankSizes, 0, sizeof(lBankSizes) / 4);
 
     status = BLASTER_GetCardSettings(&Blaster);
     if (status != BLASTER_Ok)
