@@ -129,7 +129,7 @@ typedef struct
 
 } anim_t;
 
-static point_t lnodes[NUMEPISODES][NUMMAPS] =
+static const point_t lnodes[NUMEPISODES][NUMMAPS] =
 	{
 		// Episode 0 World Map
 		{

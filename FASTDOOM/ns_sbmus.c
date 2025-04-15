@@ -34,11 +34,6 @@ static unsigned *NoteDiv12;
 
 // Pitch table
 
-//static unsigned NotePitch[ FINETUNE_MAX + 1 ][ 12 ] =
-//   {
-//      { C, C_SHARP, D, D_SHARP, E, F, F_SHARP, G, G_SHARP, A, A_SHARP, B },
-//   };
-
 static unsigned NotePitch[FINETUNE_MAX + 1][12] =
     {
         {0x157, 0x16b, 0x181, 0x198, 0x1b0, 0x1ca, 0x1e5, 0x202, 0x220, 0x241, 0x263, 0x287},
@@ -742,23 +737,12 @@ static void AL_CalcPitchInfo(
 
 {
    int note;
-   //   int    finetune;
-   //   double detune;
 
    for (note = 0; note <= MAX_NOTE; note++)
    {
       NoteMod12[note] = note % 12;
       NoteDiv12[note] = (note / 12) * 1024;
    }
-
-   //   for( finetune = 1; finetune <= FINETUNE_MAX; finetune++ )
-   //      {
-   //      detune = pow( 2, ( double )finetune / ( 12.0 * FINETUNE_RANGE ) );
-   //      for( note = 0; note < 12; note++ )
-   //         {
-   //         NotePitch[ finetune ][ note ] = ( ( double )NotePitch[ 0 ][ note ] * detune );
-   //         }
-   //      }
 }
 
 /*---------------------------------------------------------------------

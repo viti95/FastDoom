@@ -446,7 +446,7 @@ typedef struct
 	byte type;
 } castinfo_t;
 
-byte castordertype[] = {
+const byte castordertype[] = {
 	MT_POSSESSED,
 	MT_SHOTGUY,
 	MT_CHAINGUY,

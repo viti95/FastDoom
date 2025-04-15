@@ -50,17 +50,14 @@ unsigned short *freqtable;
 unsigned short *pitchtable;
 unsigned char *CMSFreqMap;
 
-// The 12 note-within-an-octave values for the SAA1099, starting at B
-static unsigned char noteAdr[] = {5, 32, 60, 85, 110, 132, 153, 173, 192, 210, 227, 243};
-
 // Volume
 unsigned char *atten;
 
 // Logic channel - first chip/second chip
-static unsigned char ChanReg[12] =  {000,001,002,003,004,005,000,001,002,003,004,005};
+static const unsigned char ChanReg[12] =  {000,001,002,003,004,005,000,001,002,003,004,005};
 
 // Set octave command
-static unsigned char OctavReg[12] = {0x10,0x10,0x11,0x11,0x12,0x12,0x10,0x10,0x11,0x11,0x12,0x12};
+static const unsigned char OctavReg[12] = {0x10,0x10,0x11,0x11,0x12,0x12,0x10,0x10,0x11,0x11,0x12,0x12};
 
 unsigned char CmsOctaveStore[12];
 

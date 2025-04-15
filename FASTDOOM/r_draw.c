@@ -2125,7 +2125,7 @@ void R_DrawSpanText8050(void)
 #define FUZZOFF (SCREENWIDTH)
 #endif
 
-int fuzzoffsetinverse[FUZZTABLE] =
+const int fuzzoffsetinverse[FUZZTABLE] =
     {
         FUZZOFF, -FUZZOFF, FUZZOFF, FUZZOFF, -FUZZOFF, FUZZOFF, FUZZOFF,
         FUZZOFF, FUZZOFF, -FUZZOFF, -FUZZOFF, -FUZZOFF, -FUZZOFF, FUZZOFF,
