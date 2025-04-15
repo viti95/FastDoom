@@ -170,7 +170,6 @@ void R_InitSpriteDefs(char const **namelist)
     // Just compare 4 characters as ints
     for (i = 0; i < NUMSPRITES; i++)
     {
-        char const *spritename = namelist[i];
         SetBytes(sprtemp, -1, sizeof(sprtemp));
 
         maxframe = -1;
