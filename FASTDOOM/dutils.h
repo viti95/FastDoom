@@ -21,7 +21,7 @@
 
 typedef struct
 {
-    unsigned char *sequence;
+    const unsigned char *sequence;
     unsigned char *p;
 
 } cheatseq_t;

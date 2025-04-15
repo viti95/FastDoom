@@ -157,7 +157,7 @@ typedef struct
 //   starting from the middle.
 //
 #define R ((8 * PLAYERRADIUS) / 7)
-mline_t player_arrow[] = {
+const mline_t player_arrow[] = {
 	{{-R + R / 8, 0}, {R, 0}},	  // -----
 	{{R, 0}, {R - R / 2, R / 4}}, // ----->
 	{{R, 0}, {R - R / 2, -R / 4}},
@@ -169,7 +169,7 @@ mline_t player_arrow[] = {
 #define NUMPLYRLINES (sizeof(player_arrow) / sizeof(mline_t))
 
 #define R (FRACUNIT)
-mline_t thintriangle_guy[] = {
+const mline_t thintriangle_guy[] = {
 	{{-.5 * R, -.7 * R}, {R, 0}},
 	{{R, 0}, {-.5 * R, .7 * R}},
 	{{-.5 * R, .7 * R}, {-.5 * R, -.7 * R}}};

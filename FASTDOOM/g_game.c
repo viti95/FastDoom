@@ -626,7 +626,7 @@ void G_PlayerReborn()
 void P_SpawnPlayer(mapthing_t *mthing);
 
 // DOOM Par Times
-unsigned char pars[4][9] =
+const unsigned char pars[4][9] =
     {
         { 30/5, 75/5,120/5, 90/5,165/5,180/5,180/5, 30/5,165/5},
         { 90/5, 90/5, 90/5,120/5, 90/5,360/5,240/5, 30/5,170/5},
@@ -634,7 +634,7 @@ unsigned char pars[4][9] =
         {165/5,255/5,135/5,150/5,180/5,390/5,135/5,360/5,180/5}};
 
 // DOOM II Par Times
-unsigned char cpars[32] =
+const unsigned char cpars[32] =
     {
          30/5, 90/5,120/5,120/5, 90/5,150/5,120/5,120/5,270/5, 90/5, //  1-10
         210/5,150/5,150/5,150/5,210/5,150/5,420/5,150/5,210/5,150/5, // 11-20
