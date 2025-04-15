@@ -262,41 +262,41 @@ static int st_randomnumber;
 // Massive bunches of cheat shit
 //  to keep it from being easy to figure them out.
 // Yeah, right...
-unsigned char cheat_mus_seq[] =
+const unsigned char cheat_mus_seq[] =
 	{
 		'i', 'd', 'm', 'u', 's', 1, 0, 0, 0xff};
 
-unsigned char cheat_choppers_seq[] =
+const unsigned char cheat_choppers_seq[] =
 	{
 		'i', 'd', 'c', 'h', 'o', 'p', 'p', 'e', 'r', 's', 0xff // idchoppers
 };
 
-unsigned char cheat_god_seq[] =
+const unsigned char cheat_god_seq[] =
 	{
 		'i', 'd', 'd', 'q', 'd', 0xff // iddqd
 };
 
-unsigned char cheat_ammo_seq[] =
+const unsigned char cheat_ammo_seq[] =
 	{
 		'i', 'd', 'k', 'f', 'a', 0xff // idkfa
 };
 
-unsigned char cheat_ammonokey_seq[] =
+const unsigned char cheat_ammonokey_seq[] =
 	{
 		'i', 'd', 'f', 'a', 0xff // idfa
 };
 
-unsigned char cheat_commercial_noclip_seq[] =
+const unsigned char cheat_commercial_noclip_seq[] =
 	{
 		'i', 'd', 'c', 'l', 'i', 'p', 0xff // idclip
 };
 
-unsigned char cheat_powerup_seq[] =
+const unsigned char cheat_powerup_seq[] =
 	{
 		'i', 'd', 'b', 'e', 'h', 'o', 'l', 'd', 1, 0, 0xff // behold
 };
 
-unsigned char cheat_clev_seq[] =
+const unsigned char cheat_clev_seq[] =
 	{
 		'i', 'd', 'c', 'l', 'e', 'v', 1, 0, 0, 0xff // idclev
 };
