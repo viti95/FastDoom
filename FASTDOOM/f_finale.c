@@ -419,7 +419,7 @@ typedef struct
 
 char castname[25];
 
-byte castordertype[] = {
+const byte castordertype[] = {
 	MT_POSSESSED,
 	MT_SHOTGUY,
 	MT_CHAINGUY,

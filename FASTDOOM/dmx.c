@@ -342,7 +342,7 @@ void MUS_TextMT32(unsigned char *text, int size)
     MUSIC_SysEx(TextMT32, size + 8);
 }
 
-char mt32file[13] = "MT32GM.MID";
+const char mt32file[13] = "MT32GM.MID";
 
 int MUS_LoadMT32(void)
 {
