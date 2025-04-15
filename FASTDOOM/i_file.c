@@ -50,6 +50,35 @@ void I_ReplaceEscapedNewlines(char *str)
     *write_ptr = '\0';
 }
 
+#define TOTAL_LINES 227
+unsigned int linePosition[TOTAL_LINES];
+
+void I_GetProgFilePositionCache() {
+
+    unsigned int index = 0;
+    int c;
+    unsigned int position = 0;
+
+    FILE* f = fopen("TEXT\\PROG.TXT", "rb");
+
+    if (f == NULL) {
+        return;
+    }
+
+    while ((c = fgetc(f)) != EOF) {
+        if (c == '\n') {
+            if (index < TOTAL_LINES) {
+                linePosition[index++] = position;
+            } else {
+                break;
+            }
+        }
+        position++;
+    }
+
+    fclose(f);
+}
+
 int I_ReadTextLineFile(char *filename, int line_number, char *buffer, int max_length, char extended_mode)
 {
     FILE *f;
