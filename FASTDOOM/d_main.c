@@ -1391,6 +1391,8 @@ void D_DoomMain(void)
     int p;
     union REGS regs;
 
+    I_GetProgFilePositionCache();
+
     printf(I_LoadTextProgram(0));
 
     p = M_CheckParm("-limitram");

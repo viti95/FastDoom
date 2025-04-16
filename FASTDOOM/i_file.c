@@ -53,23 +53,32 @@ void I_ReplaceEscapedNewlines(char *str)
 #define TOTAL_LINES 227
 unsigned int linePosition[TOTAL_LINES];
 
-void I_GetProgFilePositionCache() {
+void I_GetProgFilePositionCache()
+{
 
-    unsigned int index = 0;
+    unsigned int index = 1;
     int c;
     unsigned int position = 0;
 
-    FILE* f = fopen("TEXT\\PROG.TXT", "rb");
+    FILE *f = fopen("TEXT\\PROG.TXT", "rb");
 
-    if (f == NULL) {
+    if (f == NULL)
+    {
         return;
     }
 
-    while ((c = fgetc(f)) != EOF) {
-        if (c == '\n') {
-            if (index < TOTAL_LINES) {
-                linePosition[index++] = position;
-            } else {
+    linePosition[0] = 0;
+
+    while ((c = fgetc(f)) != EOF)
+    {
+        if (c == '\n')
+        {
+            if (index < TOTAL_LINES)
+            {
+                linePosition[index++] = position + 1;
+            }
+            else
+            {
                 break;
             }
         }
@@ -77,6 +86,37 @@ void I_GetProgFilePositionCache() {
     }
 
     fclose(f);
+}
+
+int I_ReadTextLineFileCache(char *filename, int line_number, char *buffer, int max_length, char extended_mode)
+{
+    FILE *f;
+
+    int line = 0;
+    int i = 0;
+    int c;
+
+    f = fopen(filename, "r");
+    if (f == NULL)
+    {
+        return -1;
+    }
+
+    fseek(f, linePosition[line_number], SEEK_SET);
+
+    while (i < max_length - 1 && (c = fgetc(f)) != EOF && c != '\n')
+    {
+        buffer[i++] = (char)c;
+    }
+
+    buffer[i] = '\0';
+
+    fclose(f);
+
+    if (extended_mode)
+        I_ReplaceEscapedNewlines(buffer);
+
+    return 1;
 }
 
 int I_ReadTextLineFile(char *filename, int line_number, char *buffer, int max_length, char extended_mode)
@@ -130,7 +170,7 @@ char *I_LoadTextProgram(int number)
 
     SetDWords(programtext, 0, MAX_TEXT_SIZE_PROGRAM / 4);
 
-    I_ReadTextLineFile("TEXT\\PROG.TXT", number, programtext, MAX_TEXT_SIZE_PROGRAM, true);
+    I_ReadTextLineFileCache("TEXT\\PROG.TXT", number, programtext, MAX_TEXT_SIZE_PROGRAM, true);
 
     lastText = number;
 
