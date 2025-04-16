@@ -168,8 +168,6 @@ char *I_LoadTextProgram(int number)
     if (lastText == number)
         return programtext;
 
-    SetDWords(programtext, 0, MAX_TEXT_SIZE_PROGRAM / 4);
-
     I_ReadTextLineFileCache("TEXT\\PROG.TXT", number, programtext, MAX_TEXT_SIZE_PROGRAM, true);
 
     lastText = number;
