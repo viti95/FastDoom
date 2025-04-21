@@ -149,7 +149,6 @@ static void MV_SetVoiceMixMode(VoiceNode *voice);
 void MV_SetVoicePitch(VoiceNode *voice, unsigned long rate);
 void MV_SetVoiceVolume(VoiceNode *voice, int vol, int left, int right);
 static void MV_CalcVolume(int MaxLevel);
-static void MV_CalcPanTable(void);
 
 void ClearBuffer_DW(void *ptr, unsigned data, int length);
 

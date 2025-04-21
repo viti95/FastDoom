@@ -38,8 +38,6 @@
 
 static signed short MV_VolumeTable[MV_MaxVolume + 1][256];
 
-static Pan MV_PanTable[MV_NumPanPositions][MV_MaxVolume + 1];
-
 static int MV_Installed = FALSE;
 static int MV_SoundCard = SoundBlaster;
 static int MV_TotalVolume = MV_MaxTotalVolume;
@@ -1097,46 +1095,6 @@ void MV_CalcVolume(
 }
 
 /*---------------------------------------------------------------------
-   Function: MV_CalcPanTable
-
-   Create the table used to determine the stereo volume level of
-   a sound located at a specific angle and distance from the listener.
----------------------------------------------------------------------*/
-
-void MV_CalcPanTable(
-    void)
-
-{
-    int level;
-    int angle;
-    int distance;
-    int HalfAngle;
-    int ramp;
-
-    HalfAngle = (MV_NumPanPositions / 2);
-
-    for (distance = 0; distance <= MV_MaxVolume; distance++)
-    {
-        level = (255 * (MV_MaxVolume - distance)) / MV_MaxVolume;
-        for (angle = 0; angle <= HalfAngle / 2; angle++)
-        {
-            ramp = level - ((level * angle) /
-                            (MV_NumPanPositions / 4));
-
-            MV_PanTable[angle][distance].left = ramp;
-            MV_PanTable[HalfAngle - angle][distance].left = ramp;
-            MV_PanTable[HalfAngle + angle][distance].left = level;
-            MV_PanTable[MV_MaxPanPosition - angle][distance].left = level;
-
-            MV_PanTable[angle][distance].right = level;
-            MV_PanTable[HalfAngle - angle][distance].right = level;
-            MV_PanTable[HalfAngle + angle][distance].right = ramp;
-            MV_PanTable[MV_MaxPanPosition - angle][distance].right = ramp;
-        }
-    }
-}
-
-/*---------------------------------------------------------------------
    Function: MV_SetVolume
 
    Sets the volume of digitized sound playback.
@@ -1326,9 +1284,6 @@ int MV_Init(
         MV_MixBuffer[buffer] = ptr;
         ptr += MV_BufferSize;
     }
-
-    // Calculate pan table
-    MV_CalcPanTable();
 
     MV_SetVolume(MV_MaxTotalVolume);
 
