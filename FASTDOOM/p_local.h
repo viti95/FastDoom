@@ -85,9 +85,6 @@ void P_PlayerThink(void);
 // Time interval for item respawning.
 #define ITEMQUESIZE 128
 
-extern int iquehead;
-extern int iquetail;
-
 mobj_t * P_SpawnMobj(fixed_t x, fixed_t y, fixed_t z, byte type);
 
 void P_RemoveMobj(mobj_t *th);
