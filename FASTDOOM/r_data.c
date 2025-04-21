@@ -603,13 +603,6 @@ void R_InitColormaps(void)
 
 byte *tintmap = NULL;
 
-enum
-{
-    r,
-    g,
-    b
-} rgb_t;
-
 // [crispy] copied over from i_video.c
 int V_GetPaletteIndex(byte *palette, int r, int g, int b)
 {
@@ -691,6 +684,10 @@ void R_GetTintMapCacheFileName(void)
     tintmapcachefile[length-1] = 'F';
 }
 
+#define R_VAL 0
+#define G_VAL 1
+#define B_VAL 2
+
 void R_LoadOrCreateTintMapFile(void)
 {
     int fileread;
@@ -724,10 +721,10 @@ void R_LoadOrCreateTintMapFile(void)
                 bg = playpal + 3 * i;
                 fg = playpal + 3 * j;
 
-                blend[r] = Div100(Mul25(fg[r]) + Mul75(bg[r]));
-                blend[g] = Div100(Mul25(fg[g]) + Mul75(bg[g]));
-                blend[b] = Div100(Mul25(fg[b]) + Mul75(bg[b]));
-                *tp++ = V_GetPaletteIndex(playpal, blend[r], blend[g], blend[b]);
+                blend[R_VAL] = Div100(Mul25(fg[R_VAL]) + Mul75(bg[R_VAL]));
+                blend[G_VAL] = Div100(Mul25(fg[G_VAL]) + Mul75(bg[G_VAL]));
+                blend[B_VAL] = Div100(Mul25(fg[B_VAL]) + Mul75(bg[B_VAL]));
+                *tp++ = V_GetPaletteIndex(playpal, blend[R_VAL], blend[G_VAL], blend[B_VAL]);
             }
         }
 
