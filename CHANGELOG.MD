@@ -4,6 +4,7 @@
 * Slightly smaller executables  
 * Unified all text files into a single one (this reduces wasted disk space on volumes with large cluster sizes)
 * Faster reading of literal strings from external text files
+* More available zone memory
 
 ## 1.1.3 (10 Apr 2025)
 * Smaller executables (~16Kb)
