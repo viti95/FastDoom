@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 1.1.4 (?? ??? ????)
+## 1.1.4 (02 May 2025)
 * Slightly smaller executables  
 * Unified all text files into a single one (this reduces wasted disk space on volumes with large cluster sizes)
 * Faster reading of literal strings from external text files
