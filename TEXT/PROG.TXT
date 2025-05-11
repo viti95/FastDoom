@@ -1,4 +1,4 @@
-\nFastDoom version 1.1.4\n
+\nFastDoom version 1.1.5\n
      1. DOOM Shareware                 (doom1.wad)\n
      2. DOOM                           (doom.wad)\n
      3. The Ultimate DOOM              (doomu.wad)\n
@@ -44,7 +44,7 @@ are you sure you want to end the game?\n\npress y or n.
 Apogee Sound System init\n
 Loading MT-32 SysEx\n
 MPU-401 isn't reponding @ p=0x%x\n
-fastdoom 1.1.4 by ViTi95\n\nthanks to all contributors:\n\nJNechaevsky    RamonUnch    PickledDog\njsmolina    deat322    FrenkelS    rasz_pl\nAXDOOMER    FavoritoHJS    Tronix286\nDeathEgg    CarlosTex    noop0x90\nFreddoUK    maximilien-noal    appiah4\nghderty    Redneckerz    tigrouind\nSpitFire-666    Optimus6128    viciious\nShogun38    cher-nov    neuralnetworkz\nEthaniel-404    zokum-no    DiSCATTe\nDoug Johnson    crazii     Mikolaj Feliks\nbnied    javiergutierrezchamorro\nand to the DoomWorld / Vogons communities\n\nrip and tear, Bonepie
+fastdoom 1.1.5 by ViTi95\n\nthanks to all contributors:\n\nJNechaevsky    RamonUnch    PickledDog\njsmolina    deat322    FrenkelS    rasz_pl\nAXDOOMER    FavoritoHJS    Tronix286\nDeathEgg    CarlosTex    noop0x90\nFreddoUK    maximilien-noal    appiah4\nghderty    Redneckerz    tigrouind\nSpitFire-666    Optimus6128    viciious\nShogun38    cher-nov    neuralnetworkz\nEthaniel-404    zokum-no    DiSCATTe\nDoug Johnson    crazii     Mikolaj Feliks\nbnied    javiergutierrezchamorro\nand to the DoomWorld / Vogons communities\n\nrip and tear, Bonepie
 Once you beat the big badasses and\nclean out the moon base you're supposed\nto win, aren't you? Aren't you? Where's\nyour fat reward and ticket home? What\nthe hell is this? It's not supposed to\nend this way!\n\nIt stinks like rotten meat, but looks\nlike the lost Deimos base. Looks like\nyou're stuck on The Shores of Hell.\nThe only way out is through.\n\nTo continue the DOOM experience, play\nThe Shores of Hell and its amazing\nsequel, Inferno!
 You've done it! The hideous cyber-\ndemon lord that ruled the lost Deimos\nmoon base has been slain and you\nare triumphant! But ... where are\nyou? You clamber to the edge of the\nmoon and look down to see the awful\ntruth.\n\nDeimos floats above Hell itself!\nYou've never heard of anyone escaping\nfrom Hell, but you'll make the bastards\nsorry they ever heard of you! Quickly,\nyou rappel down to  the surface of\nHell.\n\nNow, it's on to the final chapter of\nDOOM! -- Inferno.
 The loathsome spiderdemon that\nmasterminded the invasion of the moon\nbases and caused so much death has had\nits ass kicked for all time.\n\nA hidden doorway opens and you enter.\nYou've proven too tough for Hell to\ncontain, and now Hell at last plays\nfair -- for you emerge from the door\nto see the green fields of Earth!\nHome at last.\n\nYou wonder what's been happening on\nEarth while you were battling evil\nunleashed. It's good that no Hell-\nspawn could have come through that\ndoor with you ...

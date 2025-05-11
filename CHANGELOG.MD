@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 1.1.5 (?? ??? ????)
+* VESA support for 1600x1200 resolution
+
 ## 1.1.4 (02 May 2025)
 * Slightly smaller executables  
 * Unified all text files into a single one (this reduces wasted disk space on volumes with large cluster sizes)
