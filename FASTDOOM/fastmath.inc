@@ -15,6 +15,15 @@
     shl %1, 7
 %endmacro
 
+%macro Mul1600Start 2
+    lea %1, [%2+%2*4]
+    lea %1, [%1+%1*4]
+%endmacro
+
+%macro Mul1600End 1
+    shl %1, 6
+%endmacro
+
 %macro Mul1280Start 2
     lea %1, [%2+%2*4]
 %endmacro
