@@ -122,6 +122,12 @@ int Mul640(int value);
     "lea eax, [eax+eax*4]", \
     "shl eax, 7" parm[eax] value[eax] modify exact[eax]
 
+int Mul1600(int value);
+#pragma aux Mul1600 = \
+    "lea eax, [eax+eax*4]", \
+    "lea eax, [eax+eax*4]", \
+    "shl eax, 6" parm[eax] value[eax] modify exact[eax]
+
 int Mul1280(int value);
 #pragma aux Mul1280 = \
     "lea eax, [eax+eax*4]", \
