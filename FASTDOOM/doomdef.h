@@ -143,7 +143,7 @@ typedef enum
 #define MulScreenWidthHalf(x) Mul800(x)
 #define MulScreenWidthQuarter(x) Mul400(x)
 #define MulScreenWidthEighth(x) Mul200(x)
-#define ASPECTRATIO5x4
+#define ASPECTRATIO4x3
 #define PIXEL_SCALING 4
 
 #else
