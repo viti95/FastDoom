@@ -1,0 +1,11 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  builder:
+    build: .
+    volumes:
+      - .:/app           # Monta el proyecto local
+      - ./dist:/app/dist # Carpeta compartida para resultados
+    working_dir: /app
+    command: /bin/bash -c -e "touch FDOOM1.MAP && touch FDOOMVBR.EXE && source env.sh && ./package.sh && cp FastDoom_*.zip /app/dist"
