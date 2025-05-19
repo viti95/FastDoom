@@ -267,6 +267,12 @@ for param in "$@"; do
     fi
 done
 
+if [ ! -f fdoom.exe ]; then
+  echo "Error: fdoom.exe not found. Build failed."
+  exit 1
+fi
+
+
 if [ "$dostub" = "true" ]; then
   ./stub.sh $target
 fi
