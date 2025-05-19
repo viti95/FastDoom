@@ -3,7 +3,7 @@ FROM --platform=$BUILDPLATFORM debian:bookworm AS builder
 
 ARG TARGETARCH
 RUN apt-get update && apt-get install -y \
-    git clang make cmake dosbox \
+    git clang make g++ cmake dosbox \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /build
@@ -26,7 +26,7 @@ FROM debian:bookworm-slim
 COPY --from=builder /build/open-watcom-v2/rel /opt/watcom
 
 ENV WATCOM=/opt/watcom \
-    PATH="$PATH:/opt/watcom/arml64:/opt/watcom/binl" \
+    PATH="$PATH:/opt/watcom/arml64:/opt/watcom/binl:/opt/watcom/binl64" \
     EDDAT=/opt/watcom/eddat \
     INCLUDE=/opt/watcom/h
 
