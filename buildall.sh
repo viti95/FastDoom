@@ -9,7 +9,7 @@ build() {
   ./build.sh $1 -clean
 }
 
-rm FDOOM*.EXE FDOOM*.MAP|| true
+rm -f FDOOM*.EXE FDOOM*.MAP|| true
 for target in $build_list;
 do
   build $target

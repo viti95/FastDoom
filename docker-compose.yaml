@@ -8,4 +8,4 @@ services:
       - .:/app           # Monta el proyecto local
       - ./dist:/app/dist # Carpeta compartida para resultados
     working_dir: /app
-    command: /bin/bash -c -e "touch FDOOM1.MAP && touch FDOOMVBR.EXE && source fdenv.sh && ./package.sh && cp FastDoom_*.zip /app/dist"
+    command: /bin/bash -c -e "source fdenv.sh && ./package.sh && cp FastDoom_*.zip /app/dist"
