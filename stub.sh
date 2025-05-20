@@ -44,7 +44,16 @@ echo "Flatpak DOSBox-X not found"
 
 if type dosbox &>/dev/null; then
   echo "Using native DOSBox (classic)"
-  SDL_VIDEODRIVER=dummy dosbox  -exit -c "config -set cycles=max" -c "mount J ." -c "J:" -c "SET DOS32A=J:\DOS32A" -c "SET PATH=%PATH%;J:\DOS32A\BINW" -c "$parameter" &>/dev/null
+  # NOTE: dosbox does not support the advanced for included in stub.bat
+  echo "@echo off" > stubdbox.bat 
+  for f in FDOOM*.EXE FDM*.EXE; do
+      [ -e "$f" ] || continue
+      echo "sb /R $f >> stub.log" >> stubdbox.bat
+      echo "ss $f dos32a.d32 >> stub.log" >> stubdbox.bat
+  done
+  echo "exit" >> stubdbox.bat
+  cat stubdbox.bat 
+  SDL_VIDEODRIVER=dummy dosbox  -exit -c "config -set cycles=max" -c "mount J ." -c "J:" -c "SET DOS32A=J:\DOS32A" -c "SET PATH=%PATH%;J:\DOS32A\BINW" -c "stubdbox.bat" &>/dev/null
   kill -TERM $tail_pid
   rm STUB.LOG
   echo "Done"
