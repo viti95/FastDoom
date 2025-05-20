@@ -42,4 +42,13 @@ fi
 
 echo "Flatpak DOSBox-X not found"
 
+if type dosbox &>/dev/null; then
+  echo "Using native DOSBox (classic)"
+  SDL_VIDEODRIVER=dummy dosbox  -exit -c "config -set cycles=max" -c "mount J ." -c "J:" -c "SET DOS32A=J:\DOS32A" -c "SET PATH=%PATH%;J:\DOS32A\BINW" -c "$parameter" &>/dev/null
+  kill -TERM $tail_pid
+  rm STUB.LOG
+  echo "Done"
+  exit
+fi
+
 echo "No suitable DOSBox-X installation found. Abort"

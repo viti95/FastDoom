@@ -30,12 +30,9 @@ ENV WATCOM=/opt/watcom \
     EDDAT=/opt/watcom/eddat \
     INCLUDE=/opt/watcom/h
 
-RUN apt-get update && apt-get install -y nasm flatpak 
-RUN flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+RUN apt-get update && apt-get install -y nasm 7zip dosbox
 
-RUN flatpak install flathub com.dosbox_x.DOSBox-X -y
 # Verificación de instalación
-RUN apt-get install -y 7zip
 RUN find . -name wcl386
 RUN wcl386 -h > /dev/null && echo "Compilador verificado"
 RUN rm -rf /var/lib/apt/lists/*
