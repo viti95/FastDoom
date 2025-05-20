@@ -54,6 +54,7 @@ if type dosbox &>/dev/null; then
   echo "exit" >> stubdbox.bat
   cat stubdbox.bat 
   SDL_VIDEODRIVER=dummy dosbox  -exit -c "config -set cycles=max" -c "mount J ." -c "J:" -c "SET DOS32A=J:\DOS32A" -c "SET PATH=%PATH%;J:\DOS32A\BINW" -c "stubdbox.bat" &>/dev/null
+  rm -f stubdbox.bat
   kill -TERM $tail_pid
   rm STUB.LOG
   echo "Done"
