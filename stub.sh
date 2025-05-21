@@ -46,13 +46,18 @@ if type dosbox &>/dev/null; then
   echo "Using native DOSBox (classic)"
   # NOTE: dosbox does not support the advanced for included in stub.bat
   echo "@echo off" > stubdbox.bat 
-  for f in FDOOM*.EXE FDM*.EXE; do
-      [ -e "$f" ] || continue
-      echo "sb /R $f >> stub.log" >> stubdbox.bat
-      echo "ss $f dos32a.d32 >> stub.log" >> stubdbox.bat
-  done
+  if [ -z "$executable" ] 
+  then
+    for f in FDOOM*.EXE FDM*.EXE; do
+        [ -e "$f" ] || continue
+        echo "sb /R $f >> stub.log" >> stubdbox.bat
+        echo "ss $f dos32a.d32 >> stub.log" >> stubdbox.bat
+    done
+  else
+    echo "sb /R $executable >> stub.log" >> stubdbox.bat
+    echo "ss $executable dos32a.d32 >> stub.log" >> stubdbox.bat
+  fi
   echo "exit" >> stubdbox.bat
-  #cat stubdbox.bat 
   SDL_VIDEODRIVER=dummy dosbox  -exit -c "config -set cycles=max" -c "mount J ." -c "J:" -c "SET DOS32A=J:\DOS32A" -c "SET PATH=%PATH%;J:\DOS32A\BINW" -c "stubdbox.bat" &>/dev/null
   rm -f stubdbox.bat
   kill -TERM $tail_pid
@@ -67,13 +72,18 @@ if type dosemu &>/dev/null; then
   echo "Using native DOSEMU2"
   # NOTE: dosemu2 does not support the advanced for included in stub.bat
   echo "@echo off" > stubdbox.bat 
-  for f in FDOOM*.EXE FDM*.EXE; do
-      [ -e "$f" ] || continue
-      echo "sb /R $f >> stub.log" >> stubdbox.bat
-      echo "ss $f dos32a.d32 >> stub.log" >> stubdbox.bat
-  done
-  #cat stubdbox.bat 
-  dosemu -K . -n -t -E confDOS.bat > file 2>&1
+  if [ -z "$executable" ] 
+  then
+    for f in FDOOM*.EXE FDM*.EXE; do
+        [ -e "$f" ] || continue
+        echo "sb /R $f >> stub.log" >> stubdbox.bat
+        echo "ss $f dos32a.d32 >> stub.log" >> stubdbox.bat
+    done
+  else
+    echo "sb /R $executable >> stub.log" >> stubdbox.bat
+    echo "ss $executable dos32a.d32 >> stub.log" >> stubdbox.bat
+  fi
+  dosemu -K . -n -t -E confDOS.bat &> /dev/null
   # NOTE: dosemu2 doesn't create files in uppercase
   for file in *.exe; do mv -- "$file" "${file^^}"; done
   rm -f stubdbox.bat
