@@ -18,6 +18,39 @@ echo -n > STUB.LOG
 tail -F STUB.LOG &
 tail_pid=$!
 
+echo "Trying native DOSEMU2..."
+
+if type dosemu &>/dev/null; then
+
+  # Check for DOSEMU2 and not DOSEMU
+  testdosemu=$(dosemu --version 2> /dev/null | head -n 1)
+
+  if [[ "$testdosemu" == dosemu2* ]]; then
+    echo "Using native DOSEMU2"
+      # NOTE: dosemu2 does not support the advanced for included in stub.bat
+    echo "@echo off" > stubdbox.bat 
+    if [ -z "$executable" ] 
+    then
+      for f in FDOOM*.EXE FDM*.EXE; do
+          [ -e "$f" ] || continue
+          echo "sb /R $f >> stub.log" >> stubdbox.bat
+          echo "ss $f dos32a.d32 >> stub.log" >> stubdbox.bat
+      done
+    else
+      echo "sb /R $executable >> stub.log" >> stubdbox.bat
+      echo "ss $executable dos32a.d32 >> stub.log" >> stubdbox.bat
+    fi
+    dosemu -K . -n -t -E confDOS.bat &> /dev/null
+    # NOTE: dosemu2 doesn't create files in uppercase
+    for file in *.exe; do mv -- "$file" "${file^^}"; done
+    rm -f stubdbox.bat
+    kill -TERM $tail_pid
+    rm -f STUB.LOG
+    echo "Done"
+    exit
+  fi
+fi
+
 echo "Trying native DOSBox-X..."
 
 if type dosbox-x &>/dev/null; then
@@ -64,39 +97,6 @@ if type dosbox &>/dev/null; then
   rm -f STUB.LOG
   echo "Done"
   exit
-fi
-
-echo "Trying native DOSEMU2..."
-
-if type dosemu &>/dev/null; then
-
-  # Check for DOSEMU2 and not DOSEMU
-  testdosemu=$(dosemu --version 2> /dev/null | head -n 1)
-
-  if [[ "$testdosemu" == dosemu2* ]]; then
-    echo "Using native DOSEMU2"
-      # NOTE: dosemu2 does not support the advanced for included in stub.bat
-    echo "@echo off" > stubdbox.bat 
-    if [ -z "$executable" ] 
-    then
-      for f in FDOOM*.EXE FDM*.EXE; do
-          [ -e "$f" ] || continue
-          echo "sb /R $f >> stub.log" >> stubdbox.bat
-          echo "ss $f dos32a.d32 >> stub.log" >> stubdbox.bat
-      done
-    else
-      echo "sb /R $executable >> stub.log" >> stubdbox.bat
-      echo "ss $executable dos32a.d32 >> stub.log" >> stubdbox.bat
-    fi
-    dosemu -K . -n -t -E confDOS.bat &> /dev/null
-    # NOTE: dosemu2 doesn't create files in uppercase
-    for file in *.exe; do mv -- "$file" "${file^^}"; done
-    rm -f stubdbox.bat
-    kill -TERM $tail_pid
-    rm -f STUB.LOG
-    echo "Done"
-    exit
-  fi
 fi
 
 echo "No suitable DOS emulator found. Abort"
