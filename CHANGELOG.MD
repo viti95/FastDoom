@@ -3,7 +3,7 @@
 ## 1.1.5 (?? ??? ????)
 * Added VESA support for 1600x1200 resolution  
 * Added Docker build support (@jsmolina)  
-* Added support for building the project with DOSBox as an alternative to DOSBox-X (@jsmolina)
+* Added support for building the project with DOSBox or dosemu2 as an alternative to DOSBox-X (@jsmolina)
 * Fixed the build script; it now verifies that executables are correctly built (@danielboston38)
 
 ## 1.1.4 (02 May 2025)
