@@ -91,7 +91,7 @@ void V_DrawPatchDirectText4025(int x, int y, patch_t *patch);
 #define V_DrawPatchMode V_DrawPatchDirectText4025
 #endif
 
-#if defined(MODE_T8025)
+#if defined(MODE_T8025) || defined(MODE_COLOR_MDA)
 void V_DrawPatchDirectText8025(int x, int y, patch_t *patch);
 #define V_DrawPatchMode V_DrawPatchDirectText8025
 #endif

@@ -40,7 +40,7 @@ extern byte *ylookup[SCREENHEIGHT];
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF)
 extern byte *ylookup[SCREENHEIGHT];
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_VBE2_DIRECT) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_VBE2_DIRECT) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
 extern byte **ylookup;
 #endif
 

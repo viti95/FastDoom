@@ -84,7 +84,7 @@ void HUlib_drawTextLine(hu_textline_t *l)
         x++;
     }
 #endif
-#if defined(MODE_T8025) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
     x = l->x / 4;
     for (i = 0; i < l->len; i++)
     {

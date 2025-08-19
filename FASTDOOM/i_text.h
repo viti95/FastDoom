@@ -8,6 +8,7 @@ extern byte *ptrlut16colors;
 void TEXT_40x25_InitGraphics(void);
 void TEXT_80x25_InitGraphics(void);
 void TEXT_80x25_Double_InitGraphics(void);
+void MDA_Color_InitGraphics(void);
 void I_ProcessPalette(byte *palette);
 void I_SetPalette(int numpalette);
 void I_FinishUpdate(void);

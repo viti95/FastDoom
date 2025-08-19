@@ -9,7 +9,7 @@
 #define USE_BACKBUFFER
 #endif
 
-#if defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T8025) || defined(MODE_T8043) || defined(MODE_T8050)
+#if defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_T8025) || defined(MODE_T8043) || defined(MODE_T8050) || defined(MODE_COLOR_MDA)
 #define TEXT_MODE
 #endif
 

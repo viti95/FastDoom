@@ -920,7 +920,7 @@ void ST_DrawerText4025()
 }
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
 void ST_DrawerText8025()
 {
 	if (w_health.n.on)

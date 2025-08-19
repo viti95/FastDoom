@@ -966,7 +966,7 @@ void R_DrawPlanesFlatterTextMDA(void)
 }
 #endif
 
-#if defined(MODE_T8025)
+#if defined(MODE_T8025) || defined(MODE_COLOR_MDA)
 void R_DrawPlanesFlatterText8025(void)
 {
     visplane_t *pl;

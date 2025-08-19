@@ -329,7 +329,7 @@ void D_Display(void)
         }
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
         ST_doPaletteStuff();
 #endif
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
@@ -445,7 +445,7 @@ void D_Display(void)
         V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 2, "PAUSE");
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
         V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 4, "PAUSE");
 #endif
 
@@ -468,13 +468,13 @@ void D_Display(void)
     }
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
     if (screenblocks <= 11 && gamestate == GS_LEVEL)
     {
 #if defined(MODE_T4025) || defined(MODE_T4050)
         ST_DrawerText4025();
 #endif
-#if defined(MODE_T8025) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
         ST_DrawerText8025();
 #endif
 #if defined(MODE_T8043)
@@ -1454,7 +1454,7 @@ void D_DoomMain(void)
     D_AddFile("modecvbs.wad");
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_COLOR_MDA)
     D_AddFile("modetxt.wad");
 #endif
 
@@ -1721,7 +1721,7 @@ void D_DoomMain(void)
     M_CheckParmDisable("-capped", &uncappedFPS);
     M_CheckParmDisable("-nofps", &showFPS);
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
     noMelt = 1;
 #endif
 

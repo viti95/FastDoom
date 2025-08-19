@@ -698,6 +698,10 @@ void I_InitGraphics(void)
     MDA_InitGraphics();
 #endif
 
+#if defined(MODE_COLOR_MDA)
+    MDA_Color_InitGraphics();
+#endif
+
 #if defined(MODE_Y)
     VGA_Y_InitGraphics();
 #endif

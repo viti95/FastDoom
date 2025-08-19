@@ -47,7 +47,7 @@
 #define pspriteiscaleshifted_sky 262144
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
 #define scaledviewwidth 80
 #define viewwidth 80
 #define viewwidthhalf 40

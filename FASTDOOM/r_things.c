@@ -74,7 +74,7 @@ typedef struct
 // There was a lot of stuff grabbed wrong, so I changed it...
 //
 
-#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA)
+#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA) && !defined(MODE_COLOR_MDA)
 fixed_t pspritescale;
 fixed_t pspriteiscale;
 fixed_t pspriteiscaleshifted;
@@ -308,7 +308,7 @@ void R_DrawVisSprite(vissprite_t *vis)
     dc_iscale = abs(vis->xiscale) >> detailshift;
     dc_iscale *= 2;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
     dc_iscale = abs(vis->xiscale);
 #endif
 
@@ -440,7 +440,7 @@ void R_DrawVisPSprite(vissprite_t *vis)
     dc_iscale = abs(vis->xiscale) >> detailshift;
     dc_iscale *= 2;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
     dc_iscale = abs(vis->xiscale);
 #endif
 
@@ -572,7 +572,7 @@ void R_DrawVisSpriteFlat(vissprite_t *vis)
     dc_iscale = abs(vis->xiscale) >> detailshift;
     dc_iscale *= 2;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
     dc_iscale = abs(vis->xiscale);
 #endif
 
@@ -707,7 +707,7 @@ void R_DrawVisPSpriteFlat(vissprite_t *vis)
     dc_iscale = abs(vis->xiscale) >> detailshift;
     dc_iscale *= 2;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
     dc_iscale = abs(vis->xiscale);
 #endif
 
@@ -842,7 +842,7 @@ void R_DrawVisSpriteFlatter(vissprite_t *vis)
     dc_iscale = abs(vis->xiscale) >> detailshift;
     dc_iscale *= 2;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
     dc_iscale = abs(vis->xiscale);
 #endif
 
@@ -977,7 +977,7 @@ void R_DrawVisPSpriteFlatter(vissprite_t *vis)
     dc_iscale = abs(vis->xiscale) >> detailshift;
     dc_iscale *= 2;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
     dc_iscale = abs(vis->xiscale);
 #endif
 
@@ -1236,7 +1236,7 @@ void R_ProjectSprite(mobj_t *thing)
 #if defined(MODE_Y_HALF)
     vis->scale = (xscale << detailshift) / 2;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
     vis->scale = xscale;
 #endif
 
@@ -1291,7 +1291,7 @@ void R_ProjectSprite(mobj_t *thing)
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
         index = xscale >> (LIGHTSCALESHIFT - detailshift);
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
         index = xscale >> LIGHTSCALESHIFT;
 #endif
 
@@ -1376,7 +1376,7 @@ void R_DrawPSprite(pspdef_t *psp)
 #if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT) || defined(MODE_Y_HALF)
     vis->scale = pspritescaleds;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
     vis->scale = pspritescale;
 #endif
 

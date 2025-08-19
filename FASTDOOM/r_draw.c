@@ -51,7 +51,7 @@
 //  and the total size == width*height*depth/8.,
 //
 
-#if !defined(MODE_T8050) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_T8043) && !defined(MODE_MDA)
+#if !defined(MODE_T8050) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_T8043) && !defined(MODE_MDA) && !defined(MODE_COLOR_MDA)
 int viewwidth;
 int viewheight;
 int viewheightminusone;
@@ -79,7 +79,7 @@ byte *ylookup[SCREENHEIGHT];
 byte *ylookup[SCREENHEIGHT];
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_VBE2_DIRECT) || defined(MODE_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_VBE2_DIRECT) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
 byte **ylookup;
 #endif
 
@@ -1380,7 +1380,7 @@ void R_DrawEmptyColumnTextMDA(void)
 }
 #endif
 
-#if defined(MODE_T8025)
+#if defined(MODE_T8025) || defined(MODE_COLOR_MDA)
 void R_DrawColumnText8025(void)
 {
     fixed_t frac;
@@ -1511,7 +1511,7 @@ void R_DrawColumnText8025Flat(void)
 }
 #endif
 
-#if defined(MODE_T8025)
+#if defined(MODE_T8025) || defined(MODE_COLOR_MDA)
 void R_DrawSpanText8025(void)
 {
     int spot;
@@ -1556,6 +1556,10 @@ void R_DrawSpanText8025(void)
         position += step;
     } while (dest <= countp);
 }
+#endif
+
+#if defined(MODE_COLOR_MDA)
+
 #endif
 
 #if defined(MODE_T8050) || defined(MODE_T8043)
@@ -1663,7 +1667,7 @@ void R_DrawSkyTextMDA(void)
 }
 #endif
 
-#if defined(MODE_T8025)
+#if defined(MODE_T8025) || defined(MODE_COLOR_MDA)
 void R_DrawSkyFlatText8025(void)
 {
     int count;
@@ -1717,8 +1721,11 @@ void R_DrawSkyFlatText8025(void)
 }
 #endif
 
-#if defined(MODE_T8025)
+#if defined(MODE_COLOR_MDA)
 
+#endif
+
+#if defined(MODE_T8025) || defined(MODE_COLOR_MDA)
 void R_DrawFuzzColumnFlatSaturnText8025(void)
 {
     int count;
@@ -1913,6 +1920,10 @@ void R_DrawFuzzColumnTransText8025(void)
 }
 #endif
 
+#if defined(MODE_COLOR_MDA)
+
+#endif
+
 #if defined(MODE_T8050) || defined(MODE_T8043)
 
 void R_DrawFuzzColumnFlatSaturnText8050(void)
@@ -2009,7 +2020,7 @@ void R_DrawFuzzColumnTransText8050(void)
 }
 #endif
 
-#if defined(MODE_T8025)
+#if defined(MODE_T8025) || defined(MODE_COLOR_MDA)
 void R_DrawFuzzColumnFlatText8025(void)
 {
     register int count;
@@ -2054,6 +2065,10 @@ void R_DrawFuzzColumnFlatText8025(void)
         }
     } while (count--);
 }
+#endif
+
+#if defined(MODE_COLOR_MDA)
+
 #endif
 
 #if defined(MODE_T8050) || defined(MODE_T8043)
@@ -2117,7 +2132,7 @@ void R_DrawSpanText8050(void)
 //
 #define FUZZTABLE 50
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
 #define FUZZOFF (SCREENWIDTH / 4)
 #endif
 
@@ -2245,7 +2260,7 @@ void R_DrawFuzzColumnText4025(void)
 }
 #endif
 
-#if defined(MODE_T8025)
+#if defined(MODE_T8025) || defined(MODE_COLOR_MDA)
 void R_DrawFuzzColumnText8025(void)
 {
     register int count;
@@ -2316,6 +2331,10 @@ void R_DrawFuzzColumnText8025(void)
 
     } while (count--);
 }
+#endif
+
+#if defined(MODE_COLOR_MDA)
+
 #endif
 
 #if defined(MODE_T8050) || defined(MODE_T8043)
@@ -2803,7 +2822,7 @@ void R_DrawSpanTextMDA(void)
 }
 #endif
 
-#if defined(MODE_T8025)
+#if defined(MODE_T8025) || defined(MODE_COLOR_MDA)
 void R_DrawSpanFlatText8025(void)
 {
     int countp;
@@ -2834,6 +2853,10 @@ void R_DrawSpanFlatText8025(void)
         *dest++ = vmem | color;
     } while (dest <= countp);
 }
+#endif
+
+#if defined(MODE_COLOR_MDA)
+
 #endif
 
 //

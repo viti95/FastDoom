@@ -38,7 +38,12 @@ const byte colors[48] = {
 byte lut16colors[14 * 256];
 byte *ptrlut16colors;
 
+#if defined(MODE_COLOR_MDA)
+unsigned short backbuffer[80 * 25];
+unsigned short *textdestscreen = backbuffer;
+#else
 unsigned short *textdestscreen = (unsigned short *)0xB8000;
+#endif
 byte textpage = 0;
 
 void TEXT_40x25_InitGraphics(void)
@@ -100,6 +105,25 @@ void TEXT_80x25_InitGraphics(void)
         int386(0x10, &regs, &regs);
     }
 }
+
+void MDA_Color_InitGraphics(void)
+{
+    union REGS regs;
+
+    // Set 80x25 monochrome mode
+    regs.h.ah = 0x00;
+    regs.h.al = 0x07;
+    int386(0x10, &regs, &regs);
+
+    // Disable cursor
+    regs.h.ah = 0x01;
+    regs.h.ch = 0x3F;
+    int386(0x10, &regs, &regs);
+
+    // Disable MDA blink
+    I_DisableMDABlink();
+}
+
 
 void TEXT_80x25_Double_InitGraphics(void)
 {
@@ -208,6 +232,15 @@ void I_FinishUpdate(void)
         textpage++;
         textdestscreen += 2048;
     }
+}
+
+#endif
+
+#if defined(MODE_COLOR_MDA)
+
+void I_FinishUpdate(void)
+{
+    CopyDWords(backbuffer, 0xB0000, 1000);
 }
 
 #endif
