@@ -113,6 +113,8 @@
  * FDOOMC16.EXE => FastDoom CGA 160x100 and 16 colors
  * FDOOMMDA.EXE => FastDoom MDA 80x25 text mode. Internal resolution 80x50.
                    Very quick'n'dirty, only Neo can play this mode properly.
+ * FDOOMCDA.EXE => FastDoom MDA Color 80x25 text mode (virtual resolution of
+                   80x50). Works only on revision 0 and modded cards
  * FDOOMCAH.EXE => FastDoom CGA ANSI from Hell (320x100, 16 colors)
  * FDOOM512.EXE => FastDoom CGA "512 color" composite mode (80x100)
  * FDOOM400.EXE => FastDoom Sigma Color 400 (320x200, 16 colors)
