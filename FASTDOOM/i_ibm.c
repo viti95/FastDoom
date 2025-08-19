@@ -1191,7 +1191,7 @@ void I_Quit(void)
     M_SaveDefaults();
     scr = (byte *)W_CacheLumpName("ENDOOM", PU_CACHE);
     I_Shutdown();
-#if defined(MODE_HERC) || defined(MODE_MDA) || defined(MODE_INCOLOR)
+#if defined(MODE_HERC) || defined(MODE_MDA) || defined(MODE_INCOLOR) || defined(MODE_COLOR_MDA)
     CopyDWords(scr, (void *)0xb0000, (80 * 25 * 2) / 4);
 #else
     CopyDWords(scr, (void *)0xb8000, (80 * 25 * 2) / 4);

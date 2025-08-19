@@ -491,7 +491,7 @@ void D_Display(void)
     // normal update
     if (!wipe)
     {
-#if !defined(MODE_HERC) && !defined(MODE_MDA) && !defined(MODE_INCOLOR)
+#if !defined(MODE_HERC) && !defined(MODE_MDA) && !defined(MODE_INCOLOR) && !defined(MODE_COLOR_MDA)
         if (waitVsync)
             I_WaitSingleVBL();
 #endif
@@ -532,7 +532,7 @@ void D_Display(void)
         updatestate = I_FULLSCRN;
 #endif
 
-#if !defined(MODE_HERC) && !defined(MODE_MDA) && !defined(MODE_INCOLOR)
+#if !defined(MODE_HERC) && !defined(MODE_MDA) && !defined(MODE_INCOLOR) && !defined(MODE_COLOR_MDA)
         if (waitVsync)
             I_WaitSingleVBL();
 #endif
