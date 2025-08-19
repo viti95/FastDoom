@@ -123,6 +123,8 @@ boolean forceLowDetail;
 boolean forcePotatoDetail;
 int forceScreenSize;
 
+boolean xtCompat;
+
 #if defined(TEXT_MODE)
 boolean CGAcard;
 #endif
@@ -1526,6 +1528,8 @@ void D_DoomMain(void)
     reverseStereo = M_CheckParm("-reverseStereo");
 
     csv = M_CheckParm("-csv");
+
+    xtCompat = M_CheckParm("-xt");
 
     benchmark_advanced = M_CheckParm("-advanced");
 

@@ -963,13 +963,40 @@ void __interrupt I_KeyboardISR(void)
     OutByte20h(0x20);
 }
 
+void __interrupt I_KeyboardISR_XT(void)
+{
+    byte temp;
+
+    // Get the scan code
+
+    keyboardque[kbdhead & (KBDQUESIZE - 1)] = InByte60h();
+    kbdhead++;
+
+    // Tell the XT keyboard controller to clear the key
+
+    temp = InByte61h();
+    OutByte61h(temp | 0x80);
+    OutByte61h(temp);
+
+    // acknowledge the interrupt
+
+    OutByte20h(0x20);
+}
+
 //
 // I_StartupKeyboard
 //
 void I_StartupKeyboard(void)
 {
     oldkeyboardisr = _dos_getvect(KEYBOARDINT);
-    _dos_setvect(0x8000 | KEYBOARDINT, I_KeyboardISR);
+
+    if (xtCompat) 
+    {
+        _dos_setvect(0x8000 | KEYBOARDINT, I_KeyboardISR_XT);
+    } else {
+        _dos_setvect(0x8000 | KEYBOARDINT, I_KeyboardISR);
+    }
+    
 }
 
 void I_ShutdownKeyboard(void)

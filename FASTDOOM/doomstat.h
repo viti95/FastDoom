@@ -99,6 +99,8 @@ extern boolean videoPageFix;
 
 extern boolean ignoreSoundChecks;
 
+extern boolean xtCompat;
+
 extern boolean csv;
 extern boolean disableDemo;
 
