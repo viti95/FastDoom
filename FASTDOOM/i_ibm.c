@@ -953,6 +953,18 @@ void(__interrupt __far *oldkeyboardisr)() = NULL;
 
 void __interrupt I_KeyboardISR(void)
 {
+    // Get the scan code
+
+    keyboardque[kbdhead & (KBDQUESIZE - 1)] = InByte60h();
+    kbdhead++;
+
+    // acknowledge the interrupt
+
+    OutByte20h(0x20);
+}
+
+void __interrupt I_KeyboardISR_XT(void)
+{
     byte temp;
 
     // Get the scan code
@@ -977,7 +989,14 @@ void __interrupt I_KeyboardISR(void)
 void I_StartupKeyboard(void)
 {
     oldkeyboardisr = _dos_getvect(KEYBOARDINT);
-    _dos_setvect(0x8000 | KEYBOARDINT, I_KeyboardISR);
+
+    if (xtCompat) 
+    {
+        _dos_setvect(0x8000 | KEYBOARDINT, I_KeyboardISR_XT);
+    } else {
+        _dos_setvect(0x8000 | KEYBOARDINT, I_KeyboardISR);
+    }
+    
 }
 
 void I_ShutdownKeyboard(void)
