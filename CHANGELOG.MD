@@ -5,6 +5,7 @@
 * Added Docker build support (@jsmolina)  
 * Added support for building the project with DOSBox or dosemu2 as an alternative to DOSBox-X (@jsmolina)
 * Fixed the build script; it now verifies that executables are correctly built (@danielboston38)
+* Added XT keyboard support, via command line parameter "-xt" (@FrenkelS)
 
 ## 1.1.4 (02 May 2025)
 * Slightly smaller executables  
