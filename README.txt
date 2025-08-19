@@ -238,6 +238,7 @@
  -noLFB => (Only VBE2 modes) disables Linear FrameBuffer video
            modes. Slower, use only if there are compatibility
            issues
+ -xt => Enable XT keyboard support
 
  Limitations / Known bugs
  ------------------------
