@@ -136,6 +136,8 @@
  * FDM800D.EXE  => FastDoom VESA 1280x800 direct rendering mode
  * FDM1024R.EXE => FastDoom VESA 1280x1024 backbuffered mode
  * FDM1024D.EXE => FastDoom VESA 1280x1024 direct rendering mode
+ * FDM1200R.EXE => FastDoom VESA 1600x1200 backbuffered mode
+ * FDM1200D.EXE => FastDoom VESA 1600x1200 direct rendering mode
  * FDSETUP.EXE  => Utility to setup controls and sound cards
  * FDBENCH.EXE  => Utility to make benchmarks easier to execute
  * BENCH.BAT    => Scripted benchmark, instructions are included in the script
