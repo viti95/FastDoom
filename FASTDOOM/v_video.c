@@ -41,8 +41,8 @@ byte screen0[SCREENWIDTH * SCREENHEIGHT];
 
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
 byte screen4[SCREENWIDTH * SBARHEIGHT];
-#if PIXEL_SCALING!=1 && PIXEL_SCALING!=2 && PIXEL_SCALING!=3 && PIXEL_SCALING!=4
-#error "PIXEL_SCALING must be 1, 2, 3 or 4"
+#if PIXEL_SCALING != 1 && PIXEL_SCALING != 2 && PIXEL_SCALING != 3 && PIXEL_SCALING != 4 && PIXEL_SCALING != 5
+#error "PIXEL_SCALING must be 1, 2, 3, 4 or 5"
 #endif
 
 #endif
@@ -96,27 +96,34 @@ void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int de
     byte *src;
     byte *dest;
     // The buffers are pixel doubled in hi-res mode
-#if PIXEL_SCALING==2
+#if PIXEL_SCALING == 2
     srcx *= 2;
     srcy *= 2;
     destx *= 2;
     desty *= 2;
     width *= 2;
     height *= 2;
-#elif PIXEL_SCALING==3
+#elif PIXEL_SCALING == 3
     srcx *= 3;
     srcy *= 3;
     destx *= 3;
     desty *= 3;
     width *= 3;
     height *= 3;
-#elif PIXEL_SCALING==4
+#elif PIXEL_SCALING == 4
     srcx *= 4;
     srcy *= 4;
     destx *= 4;
     desty *= 4;
     width *= 4;
     height *= 4;
+#elif PIXEL_SCALING == 5
+    srcx *= 5;
+    srcy *= 5;
+    destx *= 5;
+    desty *= 5;
+    width *= 5;
+    height *= 5;
 #endif
     BOUNDS_CHECK(srcx, srcy);
     BOUNDS_CHECK(srcx + width - 1, srcy + height - 1);
@@ -129,7 +136,6 @@ void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int de
 
     src = srcscrn + MulScreenWidth(srcy) + srcx;
     dest = destscrn + MulScreenWidth(desty) + destx;
-
 
     if (width & 1)
     {
@@ -155,7 +161,6 @@ void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int de
     }
 }
 
-
 //
 // V_DrawPatch
 // Masks a column based masked pic to the screen.
@@ -180,7 +185,7 @@ void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
     desttop = scrn + MulScreenWidth(y * PIXEL_SCALING) + x * PIXEL_SCALING;
 
     w = patch->width;
-    for (; col < w; x++, col++, desttop+=PIXEL_SCALING)
+    for (; col < w; x++, col++, desttop += PIXEL_SCALING)
     {
         column = (column_t *)((byte *)patch + patch->columnofs[col]);
 
@@ -191,7 +196,7 @@ void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
             register byte *dest = desttop + MulScreenWidth(column->topdelta * PIXEL_SCALING);
             register int count = column->length;
             register byte s0, s1;
-#if PIXEL_SCALING==1
+#if PIXEL_SCALING == 1
             if ((count -= 4) >= 0)
                 do
                 {
@@ -213,199 +218,233 @@ void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
                     *dest = *source++;
                     dest += SCREENWIDTH;
                 } while (--count);
-#elif PIXEL_SCALING==2
-              if ((count -= 4) >= 0)
-                  do {
-                      s0 = source[0];
-                      s1 = source[1];
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest[SCREENWIDTH] = s0;
-                      dest[SCREENWIDTH + 1] = s0;
-                      dest[2 * SCREENWIDTH] = s1;
-                      dest[2 * SCREENWIDTH + 1] = s1;
-                      dest[3 * SCREENWIDTH] = s1;
-                      dest[3 * SCREENWIDTH + 1] = s1;
-                      s0 = source[2];
-                      s1 = source[3];
-                      dest[4 * SCREENWIDTH] = s0;
-                      dest[4 * SCREENWIDTH + 1] = s0;
-                      dest[5 * SCREENWIDTH] = s0;
-                      dest[5 * SCREENWIDTH + 1] = s0;
-                      dest[6 * SCREENWIDTH] = s1;
-                      dest[6 * SCREENWIDTH + 1] = s1;
-                      dest[7 * SCREENWIDTH] = s1;
-                      dest[7 * SCREENWIDTH + 1] = s1;
-                      dest += 8 * SCREENWIDTH;
-                      source += 4;
-                  } while ((count -= 4) >= 0);
-              if (count += 4)
-                  do
-                  {
-                      byte s0 = *source++;
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest[SCREENWIDTH] = s0;
-                      dest[SCREENWIDTH + 1] = s0;
-                      dest += 2 * SCREENWIDTH;
-                  } while (--count);
-#elif PIXEL_SCALING==3
-              if ((count -= 4) >= 0)
-                  do {
-                      s0 = source[0];
-                      s1 = source[1];
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest[2] = s0;
-                      dest[SCREENWIDTH] = s0;
-                      dest[SCREENWIDTH + 1] = s0;
-                      dest[SCREENWIDTH + 2] = s0;
-                      dest[2 * SCREENWIDTH] = s0;
-                      dest[2 * SCREENWIDTH + 1] = s0;
-                      dest[2 * SCREENWIDTH + 2] = s0;
-                      dest[3 * SCREENWIDTH] = s1;
-                      dest[3 * SCREENWIDTH + 1] = s1;
-                      dest[3 * SCREENWIDTH + 2] = s1;
-                      dest[4 * SCREENWIDTH] = s1;
-                      dest[4 * SCREENWIDTH + 1] = s1;
-                      dest[4 * SCREENWIDTH + 2] = s1;
-                      dest[5 * SCREENWIDTH] = s1;
-                      dest[5 * SCREENWIDTH + 1] = s1;
-                      dest[5 * SCREENWIDTH + 2] = s1;
-                      s0 = source[2];
-                      s1 = source[3];
-                      dest[6 * SCREENWIDTH] = s0;
-                      dest[6 * SCREENWIDTH + 1] = s0;
-                      dest[6 * SCREENWIDTH + 2] = s0;
-                      dest[7 * SCREENWIDTH] = s0;
-                      dest[7 * SCREENWIDTH + 1] = s0;
-                      dest[7 * SCREENWIDTH + 2] = s0;
-                      dest[8 * SCREENWIDTH] = s0;
-                      dest[8 * SCREENWIDTH + 1] = s0;
-                      dest[8 * SCREENWIDTH + 2] = s0;
-                      dest[9 * SCREENWIDTH] = s1;
-                      dest[9 * SCREENWIDTH + 1] = s1;
-                      dest[9 * SCREENWIDTH + 2] = s1;
-                      dest[10 * SCREENWIDTH] = s1;
-                      dest[10 * SCREENWIDTH + 1] = s1;
-                      dest[10 * SCREENWIDTH + 2] = s1;
-                      dest[11 * SCREENWIDTH] = s1;
-                      dest[11 * SCREENWIDTH + 1] = s1;
-                      dest[11 * SCREENWIDTH + 2] = s1;
-                      dest += 12 * SCREENWIDTH;
-                      source += 4;
-                  } while ((count -= 4) >= 0);
-              if (count += 4)
-                  do
-                  {
-                      byte s0 = *source++;
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest[2] = s0;
-                      dest[SCREENWIDTH] = s0;
-                      dest[SCREENWIDTH + 1] = s0;
-                      dest[SCREENWIDTH + 2] = s0;
-                      dest[2 * SCREENWIDTH] = s0;
-                      dest[2 * SCREENWIDTH + 1] = s0;
-                      dest[2 * SCREENWIDTH + 2] = s0;
-                      dest += 3 * SCREENWIDTH;
-                  } while (--count);
-#elif PIXEL_SCALING==4
-              if ((count -= 4) >= 0)
-                  do {
-                      s0 = source[0];
-                      s1 = source[1];
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest[2] = s0;
-                      dest[3] = s0;
-                      dest[SCREENWIDTH] = s0;
-                      dest[SCREENWIDTH + 1] = s0;
-                      dest[SCREENWIDTH + 2] = s0;
-                      dest[SCREENWIDTH + 3] = s0;
-                      dest[2 * SCREENWIDTH] = s0;
-                      dest[2 * SCREENWIDTH + 1] = s0;
-                      dest[2 * SCREENWIDTH + 2] = s0;
-                      dest[2 * SCREENWIDTH + 3] = s0;
-                      dest[3 * SCREENWIDTH] = s0;
-                      dest[3 * SCREENWIDTH + 1] = s0;
-                      dest[3 * SCREENWIDTH + 2] = s0;
-                      dest[3 * SCREENWIDTH + 3] = s0;
-                      dest[4 * SCREENWIDTH] = s1;
-                      dest[4 * SCREENWIDTH + 1] = s1;
-                      dest[4 * SCREENWIDTH + 2] = s1;
-                      dest[4 * SCREENWIDTH + 3] = s1;
-                      dest[5 * SCREENWIDTH] = s1;
-                      dest[5 * SCREENWIDTH + 1] = s1;
-                      dest[5 * SCREENWIDTH + 2] = s1;
-                      dest[5 * SCREENWIDTH + 3] = s1;
-                      dest[6 * SCREENWIDTH] = s1;
-                      dest[6 * SCREENWIDTH + 1] = s1;
-                      dest[6 * SCREENWIDTH + 2] = s1;
-                      dest[6 * SCREENWIDTH + 3] = s1;
-                      dest[7 * SCREENWIDTH] = s1;
-                      dest[7 * SCREENWIDTH + 1] = s1;
-                      dest[7 * SCREENWIDTH + 2] = s1;
-                      dest[7 * SCREENWIDTH + 3] = s1;
-                      s0 = source[2];
-                      s1 = source[3];
-                      dest[8 * SCREENWIDTH] = s0;
-                      dest[8 * SCREENWIDTH + 1] = s0;
-                      dest[8 * SCREENWIDTH + 2] = s0;
-                      dest[8 * SCREENWIDTH + 3] = s0;
-                      dest[9 * SCREENWIDTH] = s0;
-                      dest[9 * SCREENWIDTH + 1] = s0;
-                      dest[9 * SCREENWIDTH + 2] = s0;
-                      dest[9 * SCREENWIDTH + 3] = s0;
-                      dest[10 * SCREENWIDTH] = s0;
-                      dest[10 * SCREENWIDTH + 1] = s0;
-                      dest[10 * SCREENWIDTH + 2] = s0;
-                      dest[10 * SCREENWIDTH + 3] = s0;
-                      dest[11 * SCREENWIDTH] = s0;
-                      dest[11 * SCREENWIDTH + 1] = s0;
-                      dest[11 * SCREENWIDTH + 2] = s0;
-                      dest[11 * SCREENWIDTH + 3] = s0;
-                      dest[12 * SCREENWIDTH] = s1;
-                      dest[12 * SCREENWIDTH + 1] = s1;
-                      dest[12 * SCREENWIDTH + 2] = s1;
-                      dest[12 * SCREENWIDTH + 3] = s1;
-                      dest[13 * SCREENWIDTH] = s1;
-                      dest[13 * SCREENWIDTH + 1] = s1;
-                      dest[13 * SCREENWIDTH + 2] = s1;
-                      dest[13 * SCREENWIDTH + 3] = s1;
-                      dest[14 * SCREENWIDTH] = s1;
-                      dest[14 * SCREENWIDTH + 1] = s1;
-                      dest[14 * SCREENWIDTH + 2] = s1;
-                      dest[14 * SCREENWIDTH + 3] = s1;
-                      dest[15 * SCREENWIDTH] = s1;
-                      dest[15 * SCREENWIDTH + 1] = s1;
-                      dest[15 * SCREENWIDTH + 2] = s1;
-                      dest[15 * SCREENWIDTH + 3] = s1;
-                      dest += 16 * SCREENWIDTH;
-                      source += 4;
-                  } while ((count -= 4) >= 0);
-              if (count += 4)
-                  do
-                  {
-                      byte s0 = *source++;
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest[2] = s0;
-                      dest[3] = s0;
-                      dest[SCREENWIDTH] = s0;
-                      dest[SCREENWIDTH + 1] = s0;
-                      dest[SCREENWIDTH + 2] = s0;
-                      dest[SCREENWIDTH + 3] = s0;
-                      dest[2 * SCREENWIDTH] = s0;
-                      dest[2 * SCREENWIDTH + 1] = s0;
-                      dest[2 * SCREENWIDTH + 2] = s0;
-                      dest[2 * SCREENWIDTH + 3] = s0;
-                      dest[3 * SCREENWIDTH] = s0;
-                      dest[3 * SCREENWIDTH + 1] = s0;
-                      dest[3 * SCREENWIDTH + 2] = s0;
-                      dest[3 * SCREENWIDTH + 3] = s0;
-                      dest += 4 * SCREENWIDTH;
-                  } while (--count);
+#elif PIXEL_SCALING == 2
+            if ((count -= 4) >= 0)
+                do
+                {
+                    s0 = source[0];
+                    s1 = source[1];
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest[SCREENWIDTH] = s0;
+                    dest[SCREENWIDTH + 1] = s0;
+                    dest[2 * SCREENWIDTH] = s1;
+                    dest[2 * SCREENWIDTH + 1] = s1;
+                    dest[3 * SCREENWIDTH] = s1;
+                    dest[3 * SCREENWIDTH + 1] = s1;
+                    s0 = source[2];
+                    s1 = source[3];
+                    dest[4 * SCREENWIDTH] = s0;
+                    dest[4 * SCREENWIDTH + 1] = s0;
+                    dest[5 * SCREENWIDTH] = s0;
+                    dest[5 * SCREENWIDTH + 1] = s0;
+                    dest[6 * SCREENWIDTH] = s1;
+                    dest[6 * SCREENWIDTH + 1] = s1;
+                    dest[7 * SCREENWIDTH] = s1;
+                    dest[7 * SCREENWIDTH + 1] = s1;
+                    dest += 8 * SCREENWIDTH;
+                    source += 4;
+                } while ((count -= 4) >= 0);
+            if (count += 4)
+                do
+                {
+                    byte s0 = *source++;
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest[SCREENWIDTH] = s0;
+                    dest[SCREENWIDTH + 1] = s0;
+                    dest += 2 * SCREENWIDTH;
+                } while (--count);
+#elif PIXEL_SCALING == 3
+            if ((count -= 4) >= 0)
+                do
+                {
+                    s0 = source[0];
+                    s1 = source[1];
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest[2] = s0;
+                    dest[SCREENWIDTH] = s0;
+                    dest[SCREENWIDTH + 1] = s0;
+                    dest[SCREENWIDTH + 2] = s0;
+                    dest[2 * SCREENWIDTH] = s0;
+                    dest[2 * SCREENWIDTH + 1] = s0;
+                    dest[2 * SCREENWIDTH + 2] = s0;
+                    dest[3 * SCREENWIDTH] = s1;
+                    dest[3 * SCREENWIDTH + 1] = s1;
+                    dest[3 * SCREENWIDTH + 2] = s1;
+                    dest[4 * SCREENWIDTH] = s1;
+                    dest[4 * SCREENWIDTH + 1] = s1;
+                    dest[4 * SCREENWIDTH + 2] = s1;
+                    dest[5 * SCREENWIDTH] = s1;
+                    dest[5 * SCREENWIDTH + 1] = s1;
+                    dest[5 * SCREENWIDTH + 2] = s1;
+                    s0 = source[2];
+                    s1 = source[3];
+                    dest[6 * SCREENWIDTH] = s0;
+                    dest[6 * SCREENWIDTH + 1] = s0;
+                    dest[6 * SCREENWIDTH + 2] = s0;
+                    dest[7 * SCREENWIDTH] = s0;
+                    dest[7 * SCREENWIDTH + 1] = s0;
+                    dest[7 * SCREENWIDTH + 2] = s0;
+                    dest[8 * SCREENWIDTH] = s0;
+                    dest[8 * SCREENWIDTH + 1] = s0;
+                    dest[8 * SCREENWIDTH + 2] = s0;
+                    dest[9 * SCREENWIDTH] = s1;
+                    dest[9 * SCREENWIDTH + 1] = s1;
+                    dest[9 * SCREENWIDTH + 2] = s1;
+                    dest[10 * SCREENWIDTH] = s1;
+                    dest[10 * SCREENWIDTH + 1] = s1;
+                    dest[10 * SCREENWIDTH + 2] = s1;
+                    dest[11 * SCREENWIDTH] = s1;
+                    dest[11 * SCREENWIDTH + 1] = s1;
+                    dest[11 * SCREENWIDTH + 2] = s1;
+                    dest += 12 * SCREENWIDTH;
+                    source += 4;
+                } while ((count -= 4) >= 0);
+            if (count += 4)
+                do
+                {
+                    byte s0 = *source++;
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest[2] = s0;
+                    dest[SCREENWIDTH] = s0;
+                    dest[SCREENWIDTH + 1] = s0;
+                    dest[SCREENWIDTH + 2] = s0;
+                    dest[2 * SCREENWIDTH] = s0;
+                    dest[2 * SCREENWIDTH + 1] = s0;
+                    dest[2 * SCREENWIDTH + 2] = s0;
+                    dest += 3 * SCREENWIDTH;
+                } while (--count);
+#elif PIXEL_SCALING == 4
+            if ((count -= 4) >= 0)
+                do
+                {
+                    s0 = source[0];
+                    s1 = source[1];
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest[2] = s0;
+                    dest[3] = s0;
+                    dest[SCREENWIDTH] = s0;
+                    dest[SCREENWIDTH + 1] = s0;
+                    dest[SCREENWIDTH + 2] = s0;
+                    dest[SCREENWIDTH + 3] = s0;
+                    dest[2 * SCREENWIDTH] = s0;
+                    dest[2 * SCREENWIDTH + 1] = s0;
+                    dest[2 * SCREENWIDTH + 2] = s0;
+                    dest[2 * SCREENWIDTH + 3] = s0;
+                    dest[3 * SCREENWIDTH] = s0;
+                    dest[3 * SCREENWIDTH + 1] = s0;
+                    dest[3 * SCREENWIDTH + 2] = s0;
+                    dest[3 * SCREENWIDTH + 3] = s0;
+                    dest[4 * SCREENWIDTH] = s1;
+                    dest[4 * SCREENWIDTH + 1] = s1;
+                    dest[4 * SCREENWIDTH + 2] = s1;
+                    dest[4 * SCREENWIDTH + 3] = s1;
+                    dest[5 * SCREENWIDTH] = s1;
+                    dest[5 * SCREENWIDTH + 1] = s1;
+                    dest[5 * SCREENWIDTH + 2] = s1;
+                    dest[5 * SCREENWIDTH + 3] = s1;
+                    dest[6 * SCREENWIDTH] = s1;
+                    dest[6 * SCREENWIDTH + 1] = s1;
+                    dest[6 * SCREENWIDTH + 2] = s1;
+                    dest[6 * SCREENWIDTH + 3] = s1;
+                    dest[7 * SCREENWIDTH] = s1;
+                    dest[7 * SCREENWIDTH + 1] = s1;
+                    dest[7 * SCREENWIDTH + 2] = s1;
+                    dest[7 * SCREENWIDTH + 3] = s1;
+                    s0 = source[2];
+                    s1 = source[3];
+                    dest[8 * SCREENWIDTH] = s0;
+                    dest[8 * SCREENWIDTH + 1] = s0;
+                    dest[8 * SCREENWIDTH + 2] = s0;
+                    dest[8 * SCREENWIDTH + 3] = s0;
+                    dest[9 * SCREENWIDTH] = s0;
+                    dest[9 * SCREENWIDTH + 1] = s0;
+                    dest[9 * SCREENWIDTH + 2] = s0;
+                    dest[9 * SCREENWIDTH + 3] = s0;
+                    dest[10 * SCREENWIDTH] = s0;
+                    dest[10 * SCREENWIDTH + 1] = s0;
+                    dest[10 * SCREENWIDTH + 2] = s0;
+                    dest[10 * SCREENWIDTH + 3] = s0;
+                    dest[11 * SCREENWIDTH] = s0;
+                    dest[11 * SCREENWIDTH + 1] = s0;
+                    dest[11 * SCREENWIDTH + 2] = s0;
+                    dest[11 * SCREENWIDTH + 3] = s0;
+                    dest[12 * SCREENWIDTH] = s1;
+                    dest[12 * SCREENWIDTH + 1] = s1;
+                    dest[12 * SCREENWIDTH + 2] = s1;
+                    dest[12 * SCREENWIDTH + 3] = s1;
+                    dest[13 * SCREENWIDTH] = s1;
+                    dest[13 * SCREENWIDTH + 1] = s1;
+                    dest[13 * SCREENWIDTH + 2] = s1;
+                    dest[13 * SCREENWIDTH + 3] = s1;
+                    dest[14 * SCREENWIDTH] = s1;
+                    dest[14 * SCREENWIDTH + 1] = s1;
+                    dest[14 * SCREENWIDTH + 2] = s1;
+                    dest[14 * SCREENWIDTH + 3] = s1;
+                    dest[15 * SCREENWIDTH] = s1;
+                    dest[15 * SCREENWIDTH + 1] = s1;
+                    dest[15 * SCREENWIDTH + 2] = s1;
+                    dest[15 * SCREENWIDTH + 3] = s1;
+                    dest += 16 * SCREENWIDTH;
+                    source += 4;
+                } while ((count -= 4) >= 0);
+            if (count += 4)
+                do
+                {
+                    byte s0 = *source++;
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest[2] = s0;
+                    dest[3] = s0;
+                    dest[SCREENWIDTH] = s0;
+                    dest[SCREENWIDTH + 1] = s0;
+                    dest[SCREENWIDTH + 2] = s0;
+                    dest[SCREENWIDTH + 3] = s0;
+                    dest[2 * SCREENWIDTH] = s0;
+                    dest[2 * SCREENWIDTH + 1] = s0;
+                    dest[2 * SCREENWIDTH + 2] = s0;
+                    dest[2 * SCREENWIDTH + 3] = s0;
+                    dest[3 * SCREENWIDTH] = s0;
+                    dest[3 * SCREENWIDTH + 1] = s0;
+                    dest[3 * SCREENWIDTH + 2] = s0;
+                    dest[3 * SCREENWIDTH + 3] = s0;
+                    dest += 4 * SCREENWIDTH;
+                } while (--count);
+#elif PIXEL_SCALING == 5
+            do
+            {
+                byte s0 = *source++;
+                dest[0] = s0;
+                dest[1] = s0;
+                dest[2] = s0;
+                dest[3] = s0;
+                dest[4] = s0;
+                dest[SCREENWIDTH] = s0;
+                dest[SCREENWIDTH + 1] = s0;
+                dest[SCREENWIDTH + 2] = s0;
+                dest[SCREENWIDTH + 3] = s0;
+                dest[SCREENWIDTH + 4] = s0;
+                dest[2 * SCREENWIDTH] = s0;
+                dest[2 * SCREENWIDTH + 1] = s0;
+                dest[2 * SCREENWIDTH + 2] = s0;
+                dest[2 * SCREENWIDTH + 3] = s0;
+                dest[2 * SCREENWIDTH + 4] = s0;
+                dest[3 * SCREENWIDTH] = s0;
+                dest[3 * SCREENWIDTH + 1] = s0;
+                dest[3 * SCREENWIDTH + 2] = s0;
+                dest[3 * SCREENWIDTH + 3] = s0;
+                dest[3 * SCREENWIDTH + 4] = s0;
+                dest[4 * SCREENWIDTH] = s0;
+                dest[4 * SCREENWIDTH + 1] = s0;
+                dest[4 * SCREENWIDTH + 2] = s0;
+                dest[4 * SCREENWIDTH + 3] = s0;
+                dest[4 * SCREENWIDTH + 4] = s0;
+                dest += 5 * SCREENWIDTH;
+            } while (--count);
 #endif
             column = (column_t *)(source + 1);
         }
@@ -413,7 +452,7 @@ void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
 }
 #endif
 
-#if PIXEL_SCALING!=1
+#if PIXEL_SCALING != 1
 void V_DrawPatchNativeRes(int x, int y, byte *scrn, patch_t *patch)
 {
 
@@ -489,7 +528,7 @@ void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
     desttop = scrn + MulScreenWidth(y * PIXEL_SCALING) + x * PIXEL_SCALING;
 
     w = patch->width;
-    for (; col < w; x++, col++, desttop+=PIXEL_SCALING)
+    for (; col < w; x++, col++, desttop += PIXEL_SCALING)
     {
         column = (column_t *)((byte *)patch + patch->columnofs[col]);
 
@@ -514,7 +553,8 @@ void V_DrawPatch(int x, int y, byte *scrn, patch_t *patch)
             if (count += 4)
                 do
                 {
-                    if (count % 2 == 0){
+                    if (count % 2 == 0)
+                    {
                         *dest = *source;
                         dest += SCREENWIDTH;
                     }
@@ -549,7 +589,7 @@ void V_DrawPatchScreen0(int x, int y, patch_t *patch)
 
     w = patch->width;
 
-    for (; col < w; x++, col++, desttop+=PIXEL_SCALING)
+    for (; col < w; x++, col++, desttop += PIXEL_SCALING)
     {
         column = (column_t *)((byte *)patch + patch->columnofs[col]);
 
@@ -574,7 +614,8 @@ void V_DrawPatchScreen0(int x, int y, patch_t *patch)
             if (count += 4)
                 do
                 {
-                    if (count % 2 == 0){
+                    if (count % 2 == 0)
+                    {
                         *dest = *source;
                         dest += SCREENWIDTH;
                     }
@@ -605,11 +646,11 @@ void V_DrawPatchScreen0(int x, int y, patch_t *patch)
     SCALED_BOUNDS_CHECK(x, y);
     V_MarkRect(x * PIXEL_SCALING, y * PIXEL_SCALING, patch->width * PIXEL_SCALING, patch->height * PIXEL_SCALING);
 
-     desttop = screen0 + MulScreenWidth(y * PIXEL_SCALING) + x * PIXEL_SCALING;
+    desttop = screen0 + MulScreenWidth(y * PIXEL_SCALING) + x * PIXEL_SCALING;
 
     w = patch->width;
 
-    for (; col < w; x++, col++, desttop+=PIXEL_SCALING)
+    for (; col < w; x++, col++, desttop += PIXEL_SCALING)
     {
         column = (column_t *)((byte *)patch + patch->columnofs[col]);
 
@@ -620,7 +661,7 @@ void V_DrawPatchScreen0(int x, int y, patch_t *patch)
             register byte *dest = desttop + MulScreenWidth(column->topdelta * PIXEL_SCALING);
             register int count = column->length;
             register byte s0, s1;
-#if PIXEL_SCALING==1
+#if PIXEL_SCALING == 1
             if ((count -= 4) >= 0)
                 do
                 {
@@ -642,239 +683,277 @@ void V_DrawPatchScreen0(int x, int y, patch_t *patch)
                     *dest = *source++;
                     dest += SCREENWIDTH;
                 } while (--count);
-#elif PIXEL_SCALING==2
-              if ((count -= 4) >= 0)
-                  do {
-                      s0 = source[0];
-                      s1 = source[1];
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest += SCREENWIDTH;
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest += SCREENWIDTH;
-                      dest[0] = s1;
-                      dest[1] = s1;
-                      dest += SCREENWIDTH;
-                      dest[0] = s1;
-                      dest[1] = s1;
-                      dest += SCREENWIDTH;
-                      s0 = source[2];
-                      s1 = source[3];
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest += SCREENWIDTH;
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest += SCREENWIDTH;
-                      dest[0] = s1;
-                      dest[1] = s1;
-                      dest += SCREENWIDTH;
-                      dest[0] = s1;
-                      dest[1] = s1;
-                      dest += SCREENWIDTH;
-                      source += 4;
-                  } while ((count -= 4) >= 0);
-              if (count += 4)
-                  do
-                  {
-                      s0 = *source;
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest += SCREENWIDTH;
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest += SCREENWIDTH;
-                      source++;
-                  } while (--count);
-#elif PIXEL_SCALING==3
-              if ((count -= 4) >= 0)
-                  do {
-                      s0 = source[0];
-                      s1 = source[1];
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest[2] = s0;
-                      dest += SCREENWIDTH;
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest[2] = s0;
-                      dest += SCREENWIDTH;
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest[2] = s0;
-                      dest += SCREENWIDTH;
-                      dest[0] = s1;
-                      dest[1] = s1;
-                      dest[2] = s1;
-                      dest += SCREENWIDTH;
-                      dest[0] = s1;
-                      dest[1] = s1;
-                      dest[2] = s1;
-                      dest += SCREENWIDTH;
-                      dest[0] = s1;
-                      dest[1] = s1;
-                      dest[2] = s1;
-                      dest += SCREENWIDTH;
-                      s0 = source[2];
-                      s1 = source[3];
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest[2] = s0;
-                      dest += SCREENWIDTH;
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest[2] = s0;
-                      dest += SCREENWIDTH;
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest[2] = s0;
-                      dest += SCREENWIDTH;
-                      dest[0] = s1;
-                      dest[1] = s1;
-                      dest[2] = s1;
-                      dest += SCREENWIDTH;
-                      dest[0] = s1;
-                      dest[1] = s1;
-                      dest[2] = s1;
-                      dest += SCREENWIDTH;
-                      dest[0] = s1;
-                      dest[1] = s1;
-                      dest[2] = s1;
-                      dest += SCREENWIDTH;
-                      source += 4;
-                  } while ((count -= 4) >= 0);
-              if (count += 4)
-                  do
-                  {
-                      byte s0 = *source++;
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest[2] = s0;
-                      dest += SCREENWIDTH;
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest[2] = s0;
-                      dest += SCREENWIDTH;
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest[2] = s0;
-                      dest += SCREENWIDTH;
-                  } while (--count);
-#elif PIXEL_SCALING==4
-              if ((count -= 4) >= 0)
-                  do {
-                      s0 = source[0];
-                      s1 = source[1];
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest[2] = s0;
-                      dest[3] = s0;
-                      dest += SCREENWIDTH;
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest[2] = s0;
-                      dest[3] = s0;
-                      dest += SCREENWIDTH;
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest[2] = s0;
-                      dest[3] = s0;
-                      dest += SCREENWIDTH;
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest[2] = s0;
-                      dest[3] = s0;
-                      dest += SCREENWIDTH;
-                      dest[0] = s1;
-                      dest[1] = s1;
-                      dest[2] = s1;
-                      dest[3] = s1;
-                      dest += SCREENWIDTH;
-                      dest[0] = s1;
-                      dest[1] = s1;
-                      dest[2] = s1;
-                      dest[3] = s1;
-                      dest += SCREENWIDTH;
-                      dest[0] = s1;
-                      dest[1] = s1;
-                      dest[2] = s1;
-                      dest[3] = s1;
-                      dest += SCREENWIDTH;
-                      dest[0] = s1;
-                      dest[1] = s1;
-                      dest[2] = s1;
-                      dest[3] = s1;
-                      dest += SCREENWIDTH;
-                      s0 = source[2];
-                      s1 = source[3];
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest[2] = s0;
-                      dest[3] = s0;
-                      dest += SCREENWIDTH;
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest[2] = s0;
-                      dest[3] = s0;
-                      dest += SCREENWIDTH;
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest[2] = s0;
-                      dest[3] = s0;
-                      dest += SCREENWIDTH;
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest[2] = s0;
-                      dest[3] = s0;
-                      dest += SCREENWIDTH;
-                      dest[0] = s1;
-                      dest[1] = s1;
-                      dest[2] = s1;
-                      dest[3] = s1;
-                      dest += SCREENWIDTH;
-                      dest[0] = s1;
-                      dest[1] = s1;
-                      dest[2] = s1;
-                      dest[3] = s1;
-                      dest += SCREENWIDTH;
-                      dest[0] = s1;
-                      dest[1] = s1;
-                      dest[2] = s1;
-                      dest[3] = s1;
-                      dest += SCREENWIDTH;
-                      dest[0] = s1;
-                      dest[1] = s1;
-                      dest[2] = s1;
-                      dest[3] = s1;
-                      dest += SCREENWIDTH;
-                      source += 4;
-                  } while ((count -= 4) >= 0);
-              if (count += 4)
-                  do
-                  {
-                      byte s0 = *source++;
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest[2] = s0;
-                      dest[3] = s0;
-                      dest += SCREENWIDTH;
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest[2] = s0;
-                      dest[3] = s0;
-                      dest += SCREENWIDTH;
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest[2] = s0;
-                      dest[3] = s0;
-                      dest += SCREENWIDTH;
-                      dest[0] = s0;
-                      dest[1] = s0;
-                      dest[2] = s0;
-                      dest[3] = s0;
-                      dest += SCREENWIDTH;
-                  } while (--count);
+#elif PIXEL_SCALING == 2
+            if ((count -= 4) >= 0)
+                do
+                {
+                    s0 = source[0];
+                    s1 = source[1];
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest += SCREENWIDTH;
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest += SCREENWIDTH;
+                    dest[0] = s1;
+                    dest[1] = s1;
+                    dest += SCREENWIDTH;
+                    dest[0] = s1;
+                    dest[1] = s1;
+                    dest += SCREENWIDTH;
+                    s0 = source[2];
+                    s1 = source[3];
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest += SCREENWIDTH;
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest += SCREENWIDTH;
+                    dest[0] = s1;
+                    dest[1] = s1;
+                    dest += SCREENWIDTH;
+                    dest[0] = s1;
+                    dest[1] = s1;
+                    dest += SCREENWIDTH;
+                    source += 4;
+                } while ((count -= 4) >= 0);
+            if (count += 4)
+                do
+                {
+                    s0 = *source;
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest += SCREENWIDTH;
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest += SCREENWIDTH;
+                    source++;
+                } while (--count);
+#elif PIXEL_SCALING == 3
+            if ((count -= 4) >= 0)
+                do
+                {
+                    s0 = source[0];
+                    s1 = source[1];
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest[2] = s0;
+                    dest += SCREENWIDTH;
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest[2] = s0;
+                    dest += SCREENWIDTH;
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest[2] = s0;
+                    dest += SCREENWIDTH;
+                    dest[0] = s1;
+                    dest[1] = s1;
+                    dest[2] = s1;
+                    dest += SCREENWIDTH;
+                    dest[0] = s1;
+                    dest[1] = s1;
+                    dest[2] = s1;
+                    dest += SCREENWIDTH;
+                    dest[0] = s1;
+                    dest[1] = s1;
+                    dest[2] = s1;
+                    dest += SCREENWIDTH;
+                    s0 = source[2];
+                    s1 = source[3];
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest[2] = s0;
+                    dest += SCREENWIDTH;
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest[2] = s0;
+                    dest += SCREENWIDTH;
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest[2] = s0;
+                    dest += SCREENWIDTH;
+                    dest[0] = s1;
+                    dest[1] = s1;
+                    dest[2] = s1;
+                    dest += SCREENWIDTH;
+                    dest[0] = s1;
+                    dest[1] = s1;
+                    dest[2] = s1;
+                    dest += SCREENWIDTH;
+                    dest[0] = s1;
+                    dest[1] = s1;
+                    dest[2] = s1;
+                    dest += SCREENWIDTH;
+                    source += 4;
+                } while ((count -= 4) >= 0);
+            if (count += 4)
+                do
+                {
+                    byte s0 = *source++;
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest[2] = s0;
+                    dest += SCREENWIDTH;
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest[2] = s0;
+                    dest += SCREENWIDTH;
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest[2] = s0;
+                    dest += SCREENWIDTH;
+                } while (--count);
+#elif PIXEL_SCALING == 4
+            if ((count -= 4) >= 0)
+                do
+                {
+                    s0 = source[0];
+                    s1 = source[1];
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest[2] = s0;
+                    dest[3] = s0;
+                    dest += SCREENWIDTH;
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest[2] = s0;
+                    dest[3] = s0;
+                    dest += SCREENWIDTH;
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest[2] = s0;
+                    dest[3] = s0;
+                    dest += SCREENWIDTH;
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest[2] = s0;
+                    dest[3] = s0;
+                    dest += SCREENWIDTH;
+                    dest[0] = s1;
+                    dest[1] = s1;
+                    dest[2] = s1;
+                    dest[3] = s1;
+                    dest += SCREENWIDTH;
+                    dest[0] = s1;
+                    dest[1] = s1;
+                    dest[2] = s1;
+                    dest[3] = s1;
+                    dest += SCREENWIDTH;
+                    dest[0] = s1;
+                    dest[1] = s1;
+                    dest[2] = s1;
+                    dest[3] = s1;
+                    dest += SCREENWIDTH;
+                    dest[0] = s1;
+                    dest[1] = s1;
+                    dest[2] = s1;
+                    dest[3] = s1;
+                    dest += SCREENWIDTH;
+                    s0 = source[2];
+                    s1 = source[3];
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest[2] = s0;
+                    dest[3] = s0;
+                    dest += SCREENWIDTH;
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest[2] = s0;
+                    dest[3] = s0;
+                    dest += SCREENWIDTH;
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest[2] = s0;
+                    dest[3] = s0;
+                    dest += SCREENWIDTH;
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest[2] = s0;
+                    dest[3] = s0;
+                    dest += SCREENWIDTH;
+                    dest[0] = s1;
+                    dest[1] = s1;
+                    dest[2] = s1;
+                    dest[3] = s1;
+                    dest += SCREENWIDTH;
+                    dest[0] = s1;
+                    dest[1] = s1;
+                    dest[2] = s1;
+                    dest[3] = s1;
+                    dest += SCREENWIDTH;
+                    dest[0] = s1;
+                    dest[1] = s1;
+                    dest[2] = s1;
+                    dest[3] = s1;
+                    dest += SCREENWIDTH;
+                    dest[0] = s1;
+                    dest[1] = s1;
+                    dest[2] = s1;
+                    dest[3] = s1;
+                    dest += SCREENWIDTH;
+                    source += 4;
+                } while ((count -= 4) >= 0);
+            if (count += 4)
+                do
+                {
+                    byte s0 = *source++;
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest[2] = s0;
+                    dest[3] = s0;
+                    dest += SCREENWIDTH;
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest[2] = s0;
+                    dest[3] = s0;
+                    dest += SCREENWIDTH;
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest[2] = s0;
+                    dest[3] = s0;
+                    dest += SCREENWIDTH;
+                    dest[0] = s0;
+                    dest[1] = s0;
+                    dest[2] = s0;
+                    dest[3] = s0;
+                    dest += SCREENWIDTH;
+                } while (--count);
+#elif PIXEL_SCALING == 5
+            do
+            {
+                byte s0 = *source++;
+                dest[0] = s0;
+                dest[1] = s0;
+                dest[2] = s0;
+                dest[3] = s0;
+                dest[4] = s0;
+                dest += SCREENWIDTH;
+                dest[0] = s0;
+                dest[1] = s0;
+                dest[2] = s0;
+                dest[3] = s0;
+                dest[4] = s0;
+                dest += SCREENWIDTH;
+                dest[0] = s0;
+                dest[1] = s0;
+                dest[2] = s0;
+                dest[3] = s0;
+                dest[4] = s0;
+                dest += SCREENWIDTH;
+                dest[0] = s0;
+                dest[1] = s0;
+                dest[2] = s0;
+                dest[3] = s0;
+                dest[4] = s0;
+                dest += SCREENWIDTH;
+                dest[0] = s0;
+                dest[1] = s0;
+                dest[2] = s0;
+                dest[3] = s0;
+                dest[4] = s0;
+                dest += SCREENWIDTH;
+            } while (--count);
 #endif
             column = (column_t *)(source + 1);
         }
@@ -909,7 +988,7 @@ void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
 
     w = patch->width;
 
-    for (; col < w; x++, col++, desttop+=PIXEL_SCALING)
+    for (; col < w; x++, col++, desttop += PIXEL_SCALING)
     {
         column = (column_t *)((byte *)patch + patch->columnofs[w - 1 - col]);
 
@@ -920,13 +999,13 @@ void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
             dest = desttop + MulScreenWidth(column->topdelta * PIXEL_SCALING);
             count = column->length;
 
-#if PIXEL_SCALING==1
+#if PIXEL_SCALING == 1
             while (count--)
             {
                 *dest = *source++;
                 dest += SCREENWIDTH;
             }
-#elif PIXEL_SCALING==2
+#elif PIXEL_SCALING == 2
             while (count--)
             {
                 register byte s = *source++;
@@ -937,7 +1016,7 @@ void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
                 dest[1] = s;
                 dest += SCREENWIDTH;
             }
-#elif PIXEL_SCALING==3
+#elif PIXEL_SCALING == 3
             while (count--)
             {
                 register byte s = *source++;
@@ -953,8 +1032,8 @@ void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
                 dest[1] = s;
                 dest[2] = s;
                 dest += SCREENWIDTH;
-            }        
-#elif PIXEL_SCALING==4
+            }
+#elif PIXEL_SCALING == 4
             while (count--)
             {
                 register byte s = *source++;
@@ -978,7 +1057,42 @@ void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
                 dest[2] = s;
                 dest[3] = s;
                 dest += SCREENWIDTH;
-            }                         
+            }
+#elif PIXEL_SCALING == 5
+            while (count--)
+            {
+                register byte s = *source++;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
+                dest[3] = s;
+                dest[4] = s;
+                dest += SCREENWIDTH;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
+                dest[3] = s;
+                dest[4] = s;
+                dest += SCREENWIDTH;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
+                dest[3] = s;
+                dest[4] = s;
+                dest += SCREENWIDTH;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
+                dest[3] = s;
+                dest[4] = s;
+                dest += SCREENWIDTH;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
+                dest[3] = s;
+                dest[4] = s;
+                dest += SCREENWIDTH;
+            }
 #endif
             column = (column_t *)((byte *)column + column->length + 4);
         }
@@ -1008,7 +1122,7 @@ void V_DrawPatchFlippedScreen0(int x, int y, patch_t *patch)
 
     w = patch->width;
 
-    for (; col < w; x++, col++, desttop+=PIXEL_SCALING)
+    for (; col < w; x++, col++, desttop += PIXEL_SCALING)
     {
         column = (column_t *)((byte *)patch + patch->columnofs[w - 1 - col]);
 
@@ -1143,7 +1257,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
     col = 0;
     desttop = destscreen + MulScreenWidth(y * PIXEL_SCALING) + x * PIXEL_SCALING;
     w = patch->width;
-    for (; col < w; x++, col++, desttop+=PIXEL_SCALING)
+    for (; col < w; x++, col++, desttop += PIXEL_SCALING)
     {
         column = (column_t *)((byte *)patch + patch->columnofs[col]);
         // Step through the posts in a column
@@ -1152,13 +1266,13 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
             source = (byte *)column + 3;
             dest = desttop + MulScreenWidth(column->topdelta * PIXEL_SCALING);
             count = column->length;
-#if PIXEL_SCALING==1
+#if PIXEL_SCALING == 1
             while (count--)
             {
                 *dest = *source++;
                 dest += SCREENWIDTH;
             }
-#elif PIXEL_SCALING==2
+#elif PIXEL_SCALING == 2
             while (count--)
             {
                 register byte s = *source++;
@@ -1169,7 +1283,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
                 dest[1] = s;
                 dest += SCREENWIDTH;
             }
-#elif PIXEL_SCALING==3
+#elif PIXEL_SCALING == 3
             while (count--)
             {
                 register byte s = *source++;
@@ -1186,7 +1300,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
                 dest[2] = s;
                 dest += SCREENWIDTH;
             }
-#elif PIXEL_SCALING==4
+#elif PIXEL_SCALING == 4
             while (count--)
             {
                 register byte s = *source++;
@@ -1209,6 +1323,41 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
                 dest[1] = s;
                 dest[2] = s;
                 dest[3] = s;
+                dest += SCREENWIDTH;
+            }
+#elif PIXEL_SCALING == 5
+            while (count--)
+            {
+                register byte s = *source++;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
+                dest[3] = s;
+                dest[4] = s;
+                dest += SCREENWIDTH;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
+                dest[3] = s;
+                dest[4] = s;
+                dest += SCREENWIDTH;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
+                dest[3] = s;
+                dest[4] = s;
+                dest += SCREENWIDTH;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
+                dest[3] = s;
+                dest[4] = s;
+                dest += SCREENWIDTH;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
+                dest[3] = s;
+                dest[4] = s;
                 dest += SCREENWIDTH;
             }
 #endif
@@ -1356,11 +1505,11 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
     col = 0;
     desttop = backbuffer + MulScreenWidth(y * PIXEL_SCALING) + x * PIXEL_SCALING;
     w = patch->width;
-    for (; col < w; x++, col++, desttop+=PIXEL_SCALING)
+    for (; col < w; x++, col++, desttop += PIXEL_SCALING)
     {
 #if defined(MODE_CGA16) || defined(MODE_CVBS)
-    if ((int)desttop & 1)
-        continue;
+        if ((int)desttop & 1)
+            continue;
 #endif
 
 #if defined(MODE_CGA512)
@@ -1384,13 +1533,13 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
             source = (byte *)column + 3;
             dest = desttop + MulScreenWidth(column->topdelta * PIXEL_SCALING);
             count = column->length;
-#if PIXEL_SCALING==1
+#if PIXEL_SCALING == 1
             while (count--)
             {
                 *dest = *source++;
                 dest += SCREENWIDTH;
             }
-#elif PIXEL_SCALING==2
+#elif PIXEL_SCALING == 2
             while (count--)
             {
                 register byte s = *source++;
@@ -1400,7 +1549,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
                 dest[SCREENWIDTH + 1] = s;
                 dest += 2 * SCREENWIDTH;
             }
-#elif PIXEL_SCALING==3
+#elif PIXEL_SCALING == 3
             while (count--)
             {
                 register byte s = *source++;
@@ -1415,7 +1564,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
                 dest[2 * SCREENWIDTH + 2] = s;
                 dest += 3 * SCREENWIDTH;
             }
-#elif PIXEL_SCALING==4
+#elif PIXEL_SCALING == 4
             while (count--)
             {
                 register byte s = *source++;
@@ -1436,6 +1585,37 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
                 dest[3 * SCREENWIDTH + 2] = s;
                 dest[3 * SCREENWIDTH + 3] = s;
                 dest += 4 * SCREENWIDTH;
+            }
+#elif PIXEL_SCALING == 5
+            while (count--)
+            {
+                register byte s = *source++;
+                dest[0] = s;
+                dest[1] = s;
+                dest[2] = s;
+                dest[3] = s;
+                dest[4] = s;
+                dest[SCREENWIDTH] = s;
+                dest[SCREENWIDTH + 1] = s;
+                dest[SCREENWIDTH + 2] = s;
+                dest[SCREENWIDTH + 3] = s;
+                dest[SCREENWIDTH + 4] = s;
+                dest[2 * SCREENWIDTH] = s;
+                dest[2 * SCREENWIDTH + 1] = s;
+                dest[2 * SCREENWIDTH + 2] = s;
+                dest[2 * SCREENWIDTH + 3] = s;
+                dest[2 * SCREENWIDTH + 4] = s;
+                dest[3 * SCREENWIDTH] = s;
+                dest[3 * SCREENWIDTH + 1] = s;
+                dest[3 * SCREENWIDTH + 2] = s;
+                dest[3 * SCREENWIDTH + 3] = s;
+                dest[3 * SCREENWIDTH + 4] = s;
+                dest[4 * SCREENWIDTH] = s;
+                dest[4 * SCREENWIDTH + 1] = s;
+                dest[4 * SCREENWIDTH + 2] = s;
+                dest[4 * SCREENWIDTH + 3] = s;
+                dest[4 * SCREENWIDTH + 4] = s;
+                dest += 5 * SCREENWIDTH;
             }
 #endif
             column = (column_t *)((byte *)column + column->length + 4);

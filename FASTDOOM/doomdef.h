@@ -144,7 +144,7 @@ typedef enum
 #define MulScreenWidthQuarter(x) Mul400(x)
 #define MulScreenWidthEighth(x) Mul200(x)
 #define ASPECTRATIO4x3
-#define PIXEL_SCALING 4
+#define PIXEL_SCALING 5
 
 #else
 #error "Defined Screen Resolution is not supported"

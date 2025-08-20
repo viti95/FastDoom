@@ -906,6 +906,35 @@ void F_DrawPatchCol(int x, patch_t *patch, int col)
 			*(dest + 3*SCREENWIDTH + 3) = s0;
 			source++;
 			dest += 4 * SCREENWIDTH;
+#elif PIXEL_SCALING == 5
+			byte s0 = *source;
+			*dest = s0;
+			*(dest + 1) = s0;
+			*(dest + 2) = s0;
+			*(dest + 3) = s0;
+			*(dest + 4) = s0;
+			*(dest + SCREENWIDTH) = s0;
+			*(dest + SCREENWIDTH + 1) = s0;
+			*(dest + SCREENWIDTH + 2) = s0;
+			*(dest + SCREENWIDTH + 3) = s0;
+			*(dest + SCREENWIDTH + 4) = s0;
+			*(dest + 2*SCREENWIDTH) = s0;
+			*(dest + 2*SCREENWIDTH + 1) = s0;
+			*(dest + 2*SCREENWIDTH + 2) = s0;
+			*(dest + 2*SCREENWIDTH + 3) = s0;
+			*(dest + 2*SCREENWIDTH + 4) = s0;
+			*(dest + 3*SCREENWIDTH) = s0;
+			*(dest + 3*SCREENWIDTH + 1) = s0;
+			*(dest + 3*SCREENWIDTH + 2) = s0;
+			*(dest + 3*SCREENWIDTH + 3) = s0;
+			*(dest + 3*SCREENWIDTH + 4) = s0;
+			*(dest + 4*SCREENWIDTH) = s0;
+			*(dest + 4*SCREENWIDTH + 1) = s0;
+			*(dest + 4*SCREENWIDTH + 2) = s0;
+			*(dest + 4*SCREENWIDTH + 3) = s0;
+			*(dest + 4*SCREENWIDTH + 4) = s0;
+			source++;
+			dest += 5 * SCREENWIDTH;
 #endif
 		}
 		column = (column_t *)((byte *)column + column->length + 4);
