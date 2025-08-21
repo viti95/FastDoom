@@ -847,17 +847,17 @@ void F_DrawPatchCol(int x, patch_t *patch, int col)
 	column = (column_t *)((byte *)patch + patch->columnofs[col]);
 
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-	desttop = screen0 + ((CENTERING_OFFSET_X + x) * PIXEL_SCALING) + MulScreenWidth(CENTERING_OFFSET_Y * PIXEL_SCALING);
+	desttop = screen0 + ((CENTERING_OFFSET_X + x) * PIXEL_SCALING_H) + MulScreenWidth(CENTERING_OFFSET_Y * PIXEL_SCALING_V);
 #endif
 #if defined(USE_BACKBUFFER)
-	desttop = backbuffer + ((CENTERING_OFFSET_X + x) * PIXEL_SCALING) + MulScreenWidth(CENTERING_OFFSET_Y * PIXEL_SCALING);
+	desttop = backbuffer + ((CENTERING_OFFSET_X + x) * PIXEL_SCALING_H) + MulScreenWidth(CENTERING_OFFSET_Y * PIXEL_SCALING_V);
 #endif
 
 	// step through the posts in a column
 	while (column->topdelta != 0xff)
 	{
 		source = (byte *)column + 3;
-		dest = desttop + MulScreenWidth(column->topdelta * PIXEL_SCALING);
+		dest = desttop + MulScreenWidth(column->topdelta * PIXEL_SCALING_V);
 		count = column->length;
 
 		while (count--)
@@ -933,8 +933,13 @@ void F_DrawPatchCol(int x, patch_t *patch, int col)
 			*(dest + 4*SCREENWIDTH + 2) = s0;
 			*(dest + 4*SCREENWIDTH + 3) = s0;
 			*(dest + 4*SCREENWIDTH + 4) = s0;
+			*(dest + 5*SCREENWIDTH) = s0;
+			*(dest + 5*SCREENWIDTH + 1) = s0;
+			*(dest + 5*SCREENWIDTH + 2) = s0;
+			*(dest + 5*SCREENWIDTH + 3) = s0;
+			*(dest + 5*SCREENWIDTH + 4) = s0;
 			source++;
-			dest += 5 * SCREENWIDTH;
+			dest += 6 * SCREENWIDTH;
 #endif
 		}
 		column = (column_t *)((byte *)column + column->length + 4);

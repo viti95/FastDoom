@@ -67,6 +67,8 @@ typedef enum
 #define MulScreenWidthQuarter(x) Mul80(x)
 #define MulScreenWidthEighth(x) Mul40(x)
 #define PIXEL_SCALING 1
+#define PIXEL_SCALING_V 1
+#define PIXEL_SCALING_H 1
 #define ASPECTRATIO16x10
 
 #elif SCREENWIDTH == 320 && (SCREENHEIGHT == 200 || SCREENHEIGHT == 240)
@@ -75,6 +77,8 @@ typedef enum
 #define MulScreenWidthQuarter(x) Mul80(x)
 #define MulScreenWidthEighth(x) Mul40(x)
 #define PIXEL_SCALING 1
+#define PIXEL_SCALING_V 1
+#define PIXEL_SCALING_H 1
 #if SCREENHEIGHT == 200
 #define ASPECTRATIO16x10
 #elif SCREENHEIGHT == 240
@@ -88,7 +92,8 @@ typedef enum
 #define MulScreenWidthEighth(x) Mul50(x)
 #define ASPECTRATIO4x3
 #define PIXEL_SCALING 1
-
+#define PIXEL_SCALING_V 1
+#define PIXEL_SCALING_H 1
 
 #elif SCREENWIDTH == 512 && SCREENHEIGHT == 384
 #define MulScreenWidth(x) Mul512(x)
@@ -97,6 +102,8 @@ typedef enum
 #define MulScreenWidthEighth(x) Mul64(x)
 #define ASPECTRATIO4x3
 #define PIXEL_SCALING 1
+#define PIXEL_SCALING_V 1
+#define PIXEL_SCALING_H 1
 
 #elif SCREENWIDTH == 640 && (SCREENHEIGHT == 400 || SCREENHEIGHT == 480)
 #define MulScreenWidth(x) Mul640(x)
@@ -104,6 +111,8 @@ typedef enum
 #define MulScreenWidthQuarter(x) Mul160(x)
 #define MulScreenWidthEighth(x) Mul80(x)
 #define PIXEL_SCALING 2
+#define PIXEL_SCALING_V 2
+#define PIXEL_SCALING_H 2
 #if SCREENHEIGHT == 400
 #define ASPECTRATIO16x10
 #elif SCREENHEIGHT == 480
@@ -117,6 +126,8 @@ typedef enum
 #define MulScreenWidthEighth(x) Mul100(x)
 #define ASPECTRATIO4x3
 #define PIXEL_SCALING 2
+#define PIXEL_SCALING_V 2
+#define PIXEL_SCALING_H 2
 
 #elif SCREENWIDTH == 1024 && SCREENHEIGHT == 768
 #define MulScreenWidth(x) Mul1024(x)
@@ -125,6 +136,8 @@ typedef enum
 #define MulScreenWidthEighth(x) Mul128(x)
 #define ASPECTRATIO4x3
 #define PIXEL_SCALING 3
+#define PIXEL_SCALING_V 3
+#define PIXEL_SCALING_H 3
 
 #elif SCREENWIDTH == 1280 && (SCREENHEIGHT == 800 || SCREENHEIGHT == 1024)
 #define MulScreenWidth(x) Mul1280(x)
@@ -132,6 +145,8 @@ typedef enum
 #define MulScreenWidthQuarter(x) Mul320(x)
 #define MulScreenWidthEighth(x) Mul160(x)
 #define PIXEL_SCALING 4
+#define PIXEL_SCALING_V 4
+#define PIXEL_SCALING_H 4
 #if SCREENHEIGHT == 800
 #define ASPECTRATIO16x10
 #elif SCREENHEIGHT == 1024
@@ -145,6 +160,8 @@ typedef enum
 #define MulScreenWidthEighth(x) Mul200(x)
 #define ASPECTRATIO4x3
 #define PIXEL_SCALING 5
+#define PIXEL_SCALING_V 6
+#define PIXEL_SCALING_H 5
 
 #else
 #error "Defined Screen Resolution is not supported"
@@ -152,18 +169,18 @@ typedef enum
 
 #define ORIGINAL_SCREENWIDTH 320
 #define ORIGINAL_SCREENHEIGHT 200
-#define SCALED_SCREENWIDTH (SCREENWIDTH / PIXEL_SCALING)
-#define SCALED_SCREENHEIGHT (SCREENHEIGHT / PIXEL_SCALING)
+#define SCALED_SCREENWIDTH (SCREENWIDTH / PIXEL_SCALING_H)
+#define SCALED_SCREENHEIGHT (SCREENHEIGHT / PIXEL_SCALING_V)
 
 #if defined(MODE_Y_HALF)
     #define SBARHEIGHT (32 / 2)
 #else
-    #define SBARHEIGHT (32 * PIXEL_SCALING)
+    #define SBARHEIGHT (32 * PIXEL_SCALING_V)
 #endif
 
-#define SBARWIDTH (320 * PIXEL_SCALING)
-#define SCALED_SBARHEIGHT (SBARHEIGHT / PIXEL_SCALING)
-#define SCALED_SBARWIDTH (SBARWIDTH / PIXEL_SCALING)
+#define SBARWIDTH (320 * PIXEL_SCALING_H)
+#define SCALED_SBARHEIGHT (SBARHEIGHT / PIXEL_SCALING_V)
+#define SCALED_SBARWIDTH (SBARWIDTH / PIXEL_SCALING_H)
 
 // For screen resolution that don't scale perfectly, we need a centering
 // offset to make sure the menu/ui/etc. is centered on the screen.
