@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 1.1.6 (?? ??? ????)
+* Fixed aspect ratio for VESA 1600x1200 mode (2D items)
+
 ## 1.1.5 (19 Aug 2025)
 * Added VESA support for 1600x1200 resolution
 * Added Docker build support (@jsmolina)  
