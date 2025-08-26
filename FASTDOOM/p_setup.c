@@ -379,6 +379,16 @@ void P_LoadLineDefs(int lump)
                 ld->slopetype = ST_NEGATIVE;
         }
 
+        if (ld->dx && ld->dy) {
+            ld->optimization = OPT_BOTH;
+        }else if (ld->dx) {
+            ld->optimization = OPT_ONLY_DX;
+        }else if (ld->dy) {
+            ld->optimization = OPT_ONLY_DY;
+        }else {
+            ld->optimization = OPT_NONE;
+        }
+
         if (v1->x < v2->x)
         {
             ld->bbox[BOXLEFT] = v1->x;

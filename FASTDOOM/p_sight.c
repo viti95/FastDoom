@@ -29,6 +29,8 @@
 
 #include "std_func.h"
 
+#include "i_debug.h"
+
 //
 // P_CheckSight
 //
@@ -63,10 +65,6 @@ byte P_CrossSubsector(int num)
     fixed_t slope;
 
     fixed_t opt;
-
-    fixed_t numIV;
-    fixed_t denIV;
-
     fixed_t left, right;
 
     sub = &subsectors[num];
@@ -77,6 +75,9 @@ byte P_CrossSubsector(int num)
 
     for (; count; seg++, count--)
     {
+        fixed_t numIV;
+        fixed_t denIV = 0;
+
         line = seg->linedef;
 
         // allready checked other side?
@@ -175,8 +176,21 @@ byte P_CrossSubsector(int num)
             return 0; // stop
 
         // P_InterceptVector2
-        numIV = FixedMulEDX((v1->x - strace.x) >> 8, line->dy) + FixedMulEDX((strace.y - v1->y) >> 8, line->dx);
-
+        switch(line->optimization) {
+            case OPT_BOTH:
+                numIV = FixedMulEDX((v1->x - strace.x) >> 8, line->dy) + FixedMulEDX((strace.y - v1->y) >> 8, line->dx);
+            break;
+            case OPT_ONLY_DX:
+                numIV = FixedMulEDX((strace.y - v1->y) >> 8, line->dx);
+            break;
+            case OPT_ONLY_DY:
+                numIV = FixedMulEDX((v1->x - strace.x) >> 8, line->dy);
+            break;
+            default:
+                numIV = 0;
+            break;
+        }
+        
         if (numIV == 0)
         {
             frac = 0;
@@ -184,8 +198,14 @@ byte P_CrossSubsector(int num)
         }
         else
         {
-            denIV = FixedMulEDX(line->dy >> 8, strace.dx) - FixedMulEDX(line->dx >> 8, strace.dy);
+            if (line->dy != 0) {
+                denIV += FixedMulEDX(line->dy >> 8, strace.dx);
+            }
 
+            if (line->dx != 0) {
+                denIV -= FixedMulEDX(line->dx >> 8, strace.dy);
+            }
+            
             if (denIV == 0)
             {
                 frac = 0;

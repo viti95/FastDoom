@@ -163,6 +163,14 @@ typedef enum
 
 } slopetype_t;
 
+typedef enum
+{
+    OPT_ONLY_DX,
+    OPT_ONLY_DY,
+    OPT_BOTH,
+    OPT_NONE
+} optimization_t;
+
 typedef struct line_s
 {
     // Vertices, from v1 to v2.
@@ -197,6 +205,7 @@ typedef struct line_s
 
     // To aid move clipping.
     byte slopetype;
+    byte optimization;
 
     // Front and back sector.
     // Note: redundant? Can be retrieved from SideDefs.
