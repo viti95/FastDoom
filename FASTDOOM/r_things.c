@@ -1530,7 +1530,7 @@ void R_DrawSprite(vissprite_t *spr)
     int r2;
     fixed_t scale;
     fixed_t lowscale;
-
+    
     if (spr->x1 > spr->x2)
         return;
 
@@ -1545,6 +1545,8 @@ void R_DrawSprite(vissprite_t *spr)
     //  is the clip seg.
     for (ds = ds_p - 1; ds >= drawsegs; ds--)
     {
+        byte silhouette;
+
         // determine if the drawseg obscures the sprite
         if (ds->x1 > spr->x2 || ds->x2 < spr->x1 || (!ds->silhouette && !ds->maskedtexturecol))
         {
@@ -1575,18 +1577,40 @@ void R_DrawSprite(vissprite_t *spr)
             continue;
         }
 
+        //
         // clip this piece of the sprite
-        if (ds->silhouette & SIL_BOTTOM && spr->gz < ds->bsilheight) // bottom sil
-            for (x = r1; x <= r2; x++)
-            {
-                if (clipbot[x] == viewheight)
-                    clipbot[x] = ds->sprbottomclip[x];
-            }
+        //
 
-        if (ds->silhouette & SIL_TOP && spr->gzt > ds->tsilheight) // top sil
-            for (x = r1; x <= r2; x++)
-                if (cliptop[x] == -1)
-                    cliptop[x] = ds->sprtopclip[x];
+		silhouette = ds->silhouette;
+	
+        if (spr->gz >= ds->bsilheight)
+			silhouette &= ~SIL_BOTTOM;
+
+		if (spr->gzt <= ds->tsilheight)
+			silhouette &= ~SIL_TOP;
+
+		if (silhouette == SIL_BOTTOM)
+		{	// bottom sil
+			for (x=r1 ; x<=r2 ; x++)
+				if (clipbot[x] == viewheight)
+					clipbot[x] = ds->sprbottomclip[x];
+		}
+		else if (silhouette == SIL_TOP)
+		{	// top sil
+			for (x=r1 ; x<=r2 ; x++)
+				if (cliptop[x] == -1)
+					cliptop[x] = ds->sprtopclip[x];
+		}
+		else if (silhouette == SIL_BOTH)
+		{	// both
+			for (x=r1 ; x<=r2 ; x++)
+			{
+				if (clipbot[x] == viewheight)
+					clipbot[x] = ds->sprbottomclip[x];
+				if (cliptop[x] == -1)
+					cliptop[x] = ds->sprtopclip[x];
+			}
+		}
     }
 
     // all clipping has been performed, so draw the sprite
