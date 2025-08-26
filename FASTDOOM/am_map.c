@@ -123,9 +123,6 @@
 #define CXMTOF(x) (MTOF((x)-m_x))
 #define CYMTOF(y) ((automapheight - MTOF((y)-m_y)))
 
-// the following is crap
-#define LINE_NEVERSEE ML_DONTDRAW
-
 typedef struct
 {
 	int x, y;
@@ -1040,7 +1037,7 @@ void AM_drawWalls(void)
 		l.b.y = lines[i].v2->y;
 		if (cheating || (lines[i].flags & ML_MAPPED))
 		{
-			if ((lines[i].flags & LINE_NEVERSEE) && !cheating)
+			if ((lines[i].flags & ML_DONTDRAW) && !cheating)
 				continue;
 			if (!lines[i].backsector)
 			{
@@ -1075,7 +1072,7 @@ void AM_drawWalls(void)
 		}
 		else if (players.powers[pw_allmap])
 		{
-			if (!(lines[i].flags & LINE_NEVERSEE))
+			if (!(lines[i].flags & ML_DONTDRAW))
 				AM_drawMline(&l, GRAYS + 3);
 		}
 	}
