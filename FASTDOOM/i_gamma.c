@@ -107,10 +107,12 @@ void I_SetGamma(int usegamma)
     
     int inv_gamma = FixedDiv(TO_FIXED(1), gamma);
 
+    int fix_dark_colors = (usegamma > 0) ? usegamma : 0;
+
     for (i = 0; i < 256; i++)
     {
 
-        int x_fixed = TO_FIXED(i);
+        int x_fixed = TO_FIXED(i + fix_dark_colors);
 
         int x_divided = FixedDiv(x_fixed, TO_FIXED(255));
 
