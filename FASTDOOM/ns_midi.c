@@ -534,17 +534,11 @@ static void _MIDI_SetChannelVolume(
 
     _MIDI_ChannelVolume[channel] = volume;
 
-    // For user volume
-    volume *= 256;
-
     if (_MIDI_Funcs->SetVolume == NULL)
     {
         volume *= _MIDI_TotalVolume;
         volume = Div255(volume);
     }
-
-    // For user volume
-    volume >>= 8;
 
     _MIDI_Funcs->ControlChange(channel, MIDI_VOLUME, volume);
 }
