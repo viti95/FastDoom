@@ -141,7 +141,6 @@ int MUSIC_Shutdown(
 
     case SoundBlaster:
         AL_Shutdown();
-        BLASTER_RestoreMidiVolume();
         break;
 
     case GenMidi:
@@ -163,7 +162,6 @@ int MUSIC_Shutdown(
 
     case Awe32:
         AWE32_Shutdown();
-        BLASTER_RestoreMidiVolume();
         break;
 
     case ProAudioSpectrum:
@@ -318,13 +316,6 @@ int MUSIC_InitAWE32(
     Funcs->GetVolume = NULL;
     Funcs->SysEx = NULL;
 
-    if (BLASTER_CardHasMixer())
-    {
-        BLASTER_SaveMidiVolume();
-        Funcs->SetVolume = BLASTER_SetMidiVolume;
-        Funcs->GetVolume = BLASTER_GetMidiVolume;
-    }
-
     status = MUSIC_Ok;
     MIDI_SetMidiFuncs(Funcs);
 
@@ -363,19 +354,6 @@ int MUSIC_InitFM(int card, midifuncs *Funcs, int Address)
     switch (card)
     {
     case SoundBlaster:
-        if (BLASTER_CardHasMixer())
-        {
-            BLASTER_SaveMidiVolume();
-            Funcs->SetVolume = BLASTER_SetMidiVolume;
-            Funcs->GetVolume = BLASTER_GetMidiVolume;
-        }
-        else
-        {
-            Funcs->SetVolume = NULL;
-            Funcs->GetVolume = NULL;
-        }
-        break;
-
     case Adlib:
     case OPL2LPT:
     case OPL3LPT:

@@ -94,7 +94,6 @@ int BLASTER_ReadMixer(int reg);
 int BLASTER_SetVoiceVolume(int volume);
 int BLASTER_GetMidiVolume(void);
 void BLASTER_SetMidiVolume(int volume);
-int BLASTER_CardHasMixer(void);
 void BLASTER_SaveVoiceVolume(void);
 void BLASTER_RestoreVoiceVolume(void);
 void BLASTER_SaveMidiVolume(void);

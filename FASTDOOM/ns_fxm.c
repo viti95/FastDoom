@@ -385,18 +385,6 @@ void FX_SetVolume(int volume)
 
     switch (FX_SoundDevice)
     {
-    case SoundBlaster:
-    case Awe32:
-        if (BLASTER_CardHasMixer())
-        {
-            BLASTER_SetVoiceVolume(volume);
-        }
-        else
-        {
-            MV_SetVolume(volume);
-        }
-        break;
-
     case ProAudioSpectrum:
     case SoundMan16:
         status = PAS_SetPCMVolume(volume);
@@ -427,6 +415,8 @@ void FX_SetVolume(int volume)
     case LPTDAC:
     case SoundBlasterDirect:
     case CMS:
+    case SoundBlaster:
+    case Awe32:
         MV_SetVolume(volume);
         break;
     }

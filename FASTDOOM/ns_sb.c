@@ -57,11 +57,6 @@ static int BLASTER_IntController1Mask;
 static int BLASTER_IntController2Mask;
 
 static int BLASTER_MixerAddress = UNDEFINED;
-static int BLASTER_MixerType = 0;
-static int BLASTER_OriginalMidiVolumeLeft = 255;
-static int BLASTER_OriginalMidiVolumeRight = 255;
-static int BLASTER_OriginalVoiceVolumeLeft = 255;
-static int BLASTER_OriginalVoiceVolumeRight = 255;
 
 static int BLASTER_WaveBlasterState = 0x0F;
 
@@ -371,36 +366,28 @@ int BLASTER_GetDSPVersion(
 
     if (version >= DSP_Version4xx)
     {
-        BLASTER_Card.HasMixer = YES;
         BLASTER_Card.MaxMixMode = STEREO_16BIT;
         BLASTER_Card.MinSamplingRate = 5000;
         BLASTER_Card.MaxSamplingRate = 44100;
-        BLASTER_MixerType = SB16;
     }
     else if (version >= DSP_Version3xx)
     {
-        BLASTER_Card.HasMixer = YES;
         BLASTER_Card.MaxMixMode = STEREO_8BIT;
         BLASTER_Card.MinSamplingRate = 4000;
         BLASTER_Card.MaxSamplingRate = 44100;
-        BLASTER_MixerType = SBPro;
     }
     else if (version >= DSP_Version2xx)
     {
-        BLASTER_Card.HasMixer = NO;
         BLASTER_Card.MaxMixMode = MONO_8BIT;
         BLASTER_Card.MinSamplingRate = 4000;
         BLASTER_Card.MaxSamplingRate = 23000;
-        BLASTER_MixerType = 0;
     }
     else
     {
         // DSP_Version1xx
-        BLASTER_Card.HasMixer = NO;
         BLASTER_Card.MaxMixMode = MONO_8BIT;
         BLASTER_Card.MinSamplingRate = 4000;
         BLASTER_Card.MaxSamplingRate = 23000;
-        BLASTER_MixerType = 0;
     }
 
     return (version);
@@ -937,232 +924,6 @@ int BLASTER_ReadMixer(
 }
 
 /*---------------------------------------------------------------------
-   Function: BLASTER_SetVoiceVolume
-
-   Sets the volume of the digitized sound channel on the Sound
-   Blaster's mixer chip.
----------------------------------------------------------------------*/
-
-int BLASTER_SetVoiceVolume(
-    int volume)
-
-{
-    int data;
-    int status;
-
-    volume = min(255, volume);
-    volume = max(0, volume);
-
-    status = BLASTER_Ok;
-    switch (BLASTER_MixerType)
-    {
-    case SBPro:
-    case SBPro2:
-        data = (volume & 0xf0) + (volume >> 4);
-        BLASTER_WriteMixer(MIXER_SBProVoice, data);
-        break;
-
-    case SB16:
-        BLASTER_WriteMixer(MIXER_SB16VoiceLeft, volume & 0xf8);
-        BLASTER_WriteMixer(MIXER_SB16VoiceRight, volume & 0xf8);
-        break;
-
-    default:
-        status = BLASTER_Error;
-    }
-
-    return (status);
-}
-
-/*---------------------------------------------------------------------
-   Function: BLASTER_GetMidiVolume
-
-   Reads the average volume of the Midi sound channel from the
-   Sound Blaster's mixer chip.
----------------------------------------------------------------------*/
-
-int BLASTER_GetMidiVolume(
-    void)
-
-{
-    int volume;
-    int left;
-    int right;
-
-    switch (BLASTER_MixerType)
-    {
-    case SBPro:
-    case SBPro2:
-        left = BLASTER_ReadMixer(MIXER_SBProMidi);
-        right = (left & 0x0f) << 4;
-        left &= 0xf0;
-        volume = (left + right) / 2;
-        break;
-
-    case SB16:
-        left = BLASTER_ReadMixer(MIXER_SB16MidiLeft);
-        right = BLASTER_ReadMixer(MIXER_SB16MidiRight);
-        volume = (left + right) / 2;
-        break;
-
-    default:
-        volume = BLASTER_Error;
-    }
-
-    return (volume);
-}
-
-/*---------------------------------------------------------------------
-   Function: BLASTER_SetMidiVolume
-
-   Sets the volume of the Midi sound channel on the Sound
-   Blaster's mixer chip.
----------------------------------------------------------------------*/
-
-void BLASTER_SetMidiVolume(int volume)
-{
-    int data;
-
-    volume = min(255, volume);
-    volume = max(0, volume);
-
-    switch (BLASTER_MixerType)
-    {
-    case SBPro:
-    case SBPro2:
-        data = (volume & 0xf0) + (volume >> 4);
-        BLASTER_WriteMixer(MIXER_SBProMidi, data);
-        break;
-
-    case SB16:
-        BLASTER_WriteMixer(MIXER_SB16MidiLeft, volume & 0xf8);
-        BLASTER_WriteMixer(MIXER_SB16MidiRight, volume & 0xf8);
-        break;
-    }
-}
-
-/*---------------------------------------------------------------------
-   Function: BLASTER_CardHasMixer
-
-   Checks if the selected Sound Blaster card has a mixer.
----------------------------------------------------------------------*/
-
-int BLASTER_CardHasMixer(
-    void)
-
-{
-    return (BLASTER_Card.HasMixer);
-}
-
-/*---------------------------------------------------------------------
-   Function: BLASTER_SaveVoiceVolume
-
-   Saves the user's voice mixer settings.
----------------------------------------------------------------------*/
-
-void BLASTER_SaveVoiceVolume(
-    void)
-
-{
-    switch (BLASTER_MixerType)
-    {
-    case SBPro:
-    case SBPro2:
-        BLASTER_OriginalVoiceVolumeLeft =
-            BLASTER_ReadMixer(MIXER_SBProVoice);
-        break;
-
-    case SB16:
-        BLASTER_OriginalVoiceVolumeLeft =
-            BLASTER_ReadMixer(MIXER_SB16VoiceLeft);
-        BLASTER_OriginalVoiceVolumeRight =
-            BLASTER_ReadMixer(MIXER_SB16VoiceRight);
-        break;
-    }
-}
-
-/*---------------------------------------------------------------------
-   Function: BLASTER_RestoreVoiceVolume
-
-   Restores the user's voice mixer settings.
----------------------------------------------------------------------*/
-
-void BLASTER_RestoreVoiceVolume(
-    void)
-
-{
-    switch (BLASTER_MixerType)
-    {
-    case SBPro:
-    case SBPro2:
-        BLASTER_WriteMixer(MIXER_SBProVoice,
-                           BLASTER_OriginalVoiceVolumeLeft);
-        break;
-
-    case SB16:
-        BLASTER_WriteMixer(MIXER_SB16VoiceLeft,
-                           BLASTER_OriginalVoiceVolumeLeft);
-        BLASTER_WriteMixer(MIXER_SB16VoiceRight,
-                           BLASTER_OriginalVoiceVolumeRight);
-        break;
-    }
-}
-
-/*---------------------------------------------------------------------
-   Function: BLASTER_SaveMidiVolume
-
-   Saves the user's FM mixer settings.
----------------------------------------------------------------------*/
-
-void BLASTER_SaveMidiVolume(
-    void)
-
-{
-    switch (BLASTER_MixerType)
-    {
-    case SBPro:
-    case SBPro2:
-        BLASTER_OriginalMidiVolumeLeft =
-            BLASTER_ReadMixer(MIXER_SBProMidi);
-        break;
-
-    case SB16:
-        BLASTER_OriginalMidiVolumeLeft =
-            BLASTER_ReadMixer(MIXER_SB16MidiLeft);
-        BLASTER_OriginalMidiVolumeRight =
-            BLASTER_ReadMixer(MIXER_SB16MidiRight);
-        break;
-    }
-}
-
-/*---------------------------------------------------------------------
-   Function: BLASTER_RestoreMidiVolume
-
-   Restores the user's FM mixer settings.
----------------------------------------------------------------------*/
-
-void BLASTER_RestoreMidiVolume(
-    void)
-
-{
-    switch (BLASTER_MixerType)
-    {
-    case SBPro:
-    case SBPro2:
-        BLASTER_WriteMixer(MIXER_SBProMidi,
-                           BLASTER_OriginalMidiVolumeLeft);
-        break;
-
-    case SB16:
-        BLASTER_WriteMixer(MIXER_SB16MidiLeft,
-                           BLASTER_OriginalMidiVolumeLeft);
-        BLASTER_WriteMixer(MIXER_SB16MidiRight,
-                           BLASTER_OriginalMidiVolumeRight);
-        break;
-    }
-}
-
-/*---------------------------------------------------------------------
    Function: BLASTER_GetEnv
 
    Retrieves the BLASTER environment settings and returns them to
@@ -1263,7 +1024,6 @@ int BLASTER_SetCardSettings(
     BLASTER_Config.Midi = Config.Midi;
     BLASTER_Config.Emu = Config.Emu;
     BLASTER_MixerAddress = Config.Address;
-    BLASTER_MixerType = Config.Type;
 
     if (BLASTER_Config.Emu == UNDEFINED)
     {
@@ -1407,7 +1167,7 @@ void BLASTER_SetupWaveBlaster(
 
 {
 
-    if (BLASTER_MixerType == SB16)
+    if (BLASTER_Config.Type == SB16)
     {
         // Disable MPU401 interrupts.  If they are not disabled,
         // the SB16 will not produce sound or music.
@@ -1426,7 +1186,7 @@ void BLASTER_ShutdownWaveBlaster(
     void)
 
 {
-    if (BLASTER_MixerType == SB16)
+    if (BLASTER_Config.Type == SB16)
     {
         // Restore the state of MPU401 interrupts.  If they are not disabled,
         // the SB16 will not produce sound or music.
@@ -1466,8 +1226,6 @@ int BLASTER_Init(
     status = BLASTER_ResetDSP();
     if (status == BLASTER_Ok)
     {
-        BLASTER_SaveVoiceVolume();
-
         BLASTER_SoundPlaying = FALSE;
 
         BLASTER_CallBack = NULL;
@@ -1558,8 +1316,6 @@ void BLASTER_Shutdown(
 
     // Halt the DMA transfer
     BLASTER_StopPlayback();
-
-    BLASTER_RestoreVoiceVolume();
 
     // Reset the DSP
     BLASTER_ResetDSP();
