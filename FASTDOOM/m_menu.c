@@ -74,6 +74,7 @@ extern byte message_dontfuckwithme;
 // defaulted values
 //
 int mouseSensitivity; // has default
+int mouseSensitivityPlus5;
 
 // Show messages has default, 0 = off, 1 = on
 int showMessages;
@@ -1796,12 +1797,18 @@ void M_ChangeSensitivity(int choice)
     switch (choice)
     {
     case 0:
-        if (mouseSensitivity)
+        if (mouseSensitivity) {
             mouseSensitivity--;
+            mouseSensitivityPlus5 = mouseSensitivity + 5;
+        }
+            
         break;
     case 1:
-        if (mouseSensitivity < 9)
+        if (mouseSensitivity < 9) {
             mouseSensitivity++;
+            mouseSensitivityPlus5 = mouseSensitivity + 5;
+        }
+            
         break;
     }
 }

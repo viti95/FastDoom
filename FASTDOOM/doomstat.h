@@ -266,6 +266,7 @@ extern char savegamename[14];
 extern gamestate_t wipegamestate;
 
 extern int mouseSensitivity;
+extern int mouseSensitivityPlus5;
 //?
 // debug flag to cancel adaptiveness
 extern boolean singletics;
