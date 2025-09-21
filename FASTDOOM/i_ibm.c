@@ -280,7 +280,7 @@ int kbdtail, kbdhead;
 
 #define SC_RSHIFT 0x36
 #define SC_LSHIFT 0x2a
-void DPMIInt(int i);
+void DPMIIntMouse();
 void I_StartupSound(void);
 void I_ShutdownSound(void);
 void I_StartupTimer(void);
@@ -1074,11 +1074,11 @@ void I_ReadMouse(void)
 
     SetBytes(&dpmiregs, 0, sizeof(dpmiregs));
     dpmiregs.eax = 3; // read buttons / position
-    DPMIInt(0x33);
+    DPMIIntMouse();
     ev.data1 = dpmiregs.ebx;
 
     dpmiregs.eax = 11; // read counters
-    DPMIInt(0x33);
+    DPMIIntMouse();
     ev.data2 = (short)dpmiregs.ecx;
 
     D_PostEvent(&ev);
@@ -1300,14 +1300,14 @@ byte *I_AllocLow(int length)
 //
 // DPMIInt
 //
-void DPMIInt(int i)
+void DPMIIntMouse()
 {
     dpmiregs.ss = realstackseg;
     dpmiregs.sp = REALSTACKSIZE - 4;
 
     segread(&segregs);
     regs.w.ax = 0x300;
-    regs.w.bx = i;
+    regs.w.bx = 0x33;
     regs.w.cx = 0;
     regs.x.edi = (unsigned)&dpmiregs;
     segregs.es = segregs.ds;
