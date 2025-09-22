@@ -74,7 +74,8 @@ extern byte message_dontfuckwithme;
 // defaulted values
 //
 int mouseSensitivity; // has default
-int mouseSensitivityPlus5;
+fixed_t mouseSensitivityFP;
+fixed_t sensitivityTable[10] = { 32768, 39322, 45875, 52429, 58982, 65536, 72090, 78643, 85197, 91750 }; // 0.5 ... 1.4
 
 // Show messages has default, 0 = off, 1 = on
 int showMessages;
@@ -1799,14 +1800,14 @@ void M_ChangeSensitivity(int choice)
     case 0:
         if (mouseSensitivity) {
             mouseSensitivity--;
-            mouseSensitivityPlus5 = mouseSensitivity + 5;
+            mouseSensitivityFP = sensitivityTable[mouseSensitivity];
         }
             
         break;
     case 1:
         if (mouseSensitivity < 9) {
             mouseSensitivity++;
-            mouseSensitivityPlus5 = mouseSensitivity + 5;
+            mouseSensitivityFP = sensitivityTable[mouseSensitivity];
         }
             
         break;
