@@ -28,11 +28,18 @@ typedef int fixed_t;
 #define FRACBITS 16
 #define FRACUNIT (1 << FRACBITS)
 #define TO_FIXED(x) ((x) << FRACBITS)
+#define FIXED_TO_INTEGER(x) ((x) >> FRACBITS)
 
 fixed_t FixedMul(fixed_t a, fixed_t b);
 #pragma aux FixedMul = \
     "imul ebx",        \
     "shrd eax,edx,16" parm[eax][ebx] value[eax] modify exact[eax edx]
+
+int FixedMulShortToInt(fixed_t a, fixed_t b);
+#pragma aux FixedMulShortToInt = \
+    "shl eax, 16",     \
+    "imul ebx",        \
+    "and edx, 0xFFFF" parm[eax][ebx] value[edx] modify exact[eax edx]
 
 inline fixed_t FixedInterpolate(fixed_t a, fixed_t b, fixed_t frac)
 {

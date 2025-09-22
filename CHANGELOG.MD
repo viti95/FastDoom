@@ -4,6 +4,7 @@
 * Fixed aspect ratio for VESA 1600x1200 mode (2D items)
 * Fixed very dark colors on high gamma levels
 * Optimized sprite clipping by Rav (vogons)
+* Optimized mouse code
 
 ## 1.1.5 (19 Aug 2025)
 * Added VESA support for 1600x1200 resolution
