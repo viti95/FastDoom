@@ -209,7 +209,8 @@ extern int viewheightopt;
 extern int viewheight32;
 
 extern int mouseSensitivity;
-extern int mouseSensitivityPlus5;
+extern fixed_t mouseSensitivityFP;
+extern fixed_t sensitivityTable[10];
 extern int showMessages;
 
 extern int detailLevel;
@@ -455,5 +456,5 @@ void M_LoadDefaults(void)
     }
 
     // Mouse sensitivity
-    mouseSensitivityPlus5 = mouseSensitivity + 5;
+    mouseSensitivityFP = sensitivityTable[mouseSensitivity];
 }

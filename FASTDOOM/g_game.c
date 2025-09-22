@@ -427,7 +427,7 @@ void G_Responder(void)
         mousebuttons[0] = current_ev->data1 & 1;
         mousebuttons[1] = current_ev->data1 & 2;
         mousebuttons[2] = current_ev->data1 & 4;
-        mousex = Div10(current_ev->data2 * mouseSensitivityPlus5);
+        mousex = FixedMulShortToInt(current_ev->data2, mouseSensitivityFP);
         return; // eat events
     }
 
