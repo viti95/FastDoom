@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 1.1.6 (?? ??? ????)
+## 1.1.6 (27 Sep 2025)
 * Fixed aspect ratio for VESA 1600x1200 mode (2D items)
 * Fixed very dark colors on high gamma levels
 * Optimized sprite clipping by Rav (vogons)
