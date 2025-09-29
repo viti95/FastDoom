@@ -216,7 +216,6 @@ patchColumnofs:
 
   and     ebx,0x0FFF  ; mask off slop bits
   add     ecx,ebp
-  xor     edx,edx
   call    [callpoint]
 
   mov     ebx,[returnpoint]

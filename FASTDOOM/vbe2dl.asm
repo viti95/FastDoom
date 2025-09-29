@@ -191,7 +191,6 @@ CODE_SYM_DEF R_DrawSpanLowVBE2
   MulScreenWidthEnd edi
   add  edi,[_destview]
   shld  ebx,ecx,6       ; shift x units in
-  xor   edx,edx
   and   ebx,0x0FFF      ; mask off slop bits
   add   ecx,ebp
   
