@@ -125,9 +125,9 @@ patchColumnofs:
       %assign LINE LINE+1
       %if LINE = SCREENWIDTH/2
         mov   al,[esi+ebx]           ; get source pixel
-        mov   dl,[eax]               ; translate color
-        mov   dh,dl
-        mov   [edi+PLANE+PCOL*2],dx  ; write pixel
+        mov   al,[eax]               ; translate color
+        mov   ah,al
+        mov   [edi+PLANE+PCOL*2],ax  ; write pixel
       %else
         mov   al,[esi+ebx]           ; get source pixel
         shld  ebx,ecx,22             ; shift y units in
