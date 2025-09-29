@@ -244,7 +244,7 @@ patchColumnofs:
   %assign PLANE 0
     MAPLABEL LINE:
       %assign LINE LINE+1
-      %if LINE = 80
+      %if LINE = SCREENWIDTH/4
         mov   al,[esi+ebx]           ; get source pixel
         mov   dl,[eax]               ; translate color
         mov   dh,dl

@@ -660,7 +660,7 @@ CODE_SYM_DEF R_DrawSpanPotato
   %assign PLANE 0
     MAPLABEL LINE:
       %assign LINE LINE+1
-      %if LINE = 80
+      %if LINE = SCREENWIDTH/4
         mov   al,[esi+ebx]           ; get source pixel
         mov   al,[eax]               ; translate color
         mov   [edi+PLANE+PCOL],al  ; write pixel
