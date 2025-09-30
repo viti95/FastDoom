@@ -211,12 +211,11 @@ patchColumnofs:
 
   mov   ebx,ecx
   mov   edx,ecx
-  shr   ebx,10
+  shr   ebx,4
   shr   edx,26
-  shl   ebx,6
+  and   ebx,0xFC0
   add   ecx,ebp
   or    ebx,edx
-  and   ebx,0x0FFF
 
   call    [callpoint]
 
@@ -258,14 +257,13 @@ patchColumnofs:
         mov   al,[esi+ebx]
         mov   ebx,ecx
         mov   edx,ecx
-        shr   ebx,10
+        shr   ebx,4
         mov   al,[eax]
         shr   edx,26
         mov   [edi+PLANE+PCOL],al
-        shl   ebx,6
+        and   ebx,0xFC0
         add   ecx,ebp
         or    ebx,edx
-        and   ebx,0x0FFF
       %endif
       %assign PLANE PLANE+1
 %assign PCOL PCOL+1
