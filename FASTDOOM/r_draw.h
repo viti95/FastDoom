@@ -160,7 +160,7 @@ void R_DrawColumnPotatoBackbufferFastLEA(void);
 void R_DrawSpanBackbuffer(void);
 void R_DrawSpanLowBackbuffer(void);
 void R_DrawSpanPotatoBackbuffer(void);
-void R_DrawSpanBackbuffer386SX(void);
+void R_DrawSpanBackbufferPentium(void);
 void R_DrawSpanLowBackbuffer386SX(void);
 void R_DrawSpanPotatoBackbuffer386SX(void);
 void R_DrawFuzzColumnBackbuffer(void);
