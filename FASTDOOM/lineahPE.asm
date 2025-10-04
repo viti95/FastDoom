@@ -51,10 +51,11 @@ mapcalls:
   %endrep
 
 callpoint:   dd 0
+returnpoint: dd 0
 
 BEGIN_CODE_SECTION
 
-CODE_SYM_DEF R_PatchColumnofsHigh386SX
+CODE_SYM_DEF R_PatchColumnofsHighPentium
   push  ebx
   mov   ebx,[_columnofs]
   mov   eax,patchColumnofs+2
@@ -65,7 +66,7 @@ CODE_SYM_DEF R_PatchColumnofsHigh386SX
 ; ====================
 ; R_DrawSpanBackbuffer
 ; ====================
-CODE_SYM_DEF R_DrawSpanBackbuffer386SX
+CODE_SYM_DEF R_DrawSpanBackbufferPentium
 	push		ebx
 	push		ecx
 	push		edx
@@ -78,10 +79,10 @@ CODE_SYM_DEF R_DrawSpanBackbuffer386SX
   mov     eax,[mapcalls+eax*4]
   mov     ecx,[_ds_frac]        ; build composite position
   mov     [callpoint],eax       ; spot to jump into unwound
-  mov     edx,[_ds_step]        ; build composite step
+  mov     ebp,[_ds_step]        ; build composite step
   mov     eax,[mapcalls+4+ebx*4]
   mov     esi,[_ds_source]
-  mov     cr2,eax     ; spot to patch a ret at
+  mov     [returnpoint],eax     ; spot to patch a ret at
   mov     edi,[_ds_y]
   mov     [eax], byte OP_RET
 
@@ -93,14 +94,17 @@ patchColumnofs:
 
   ; feed the pipeline and jump in
 
-  shld    ebx,ecx,22  ; shift y units in
-  mov     ebp,0x0FFF  ; used to mask off slop high bits from position
-  shld    ebx,ecx,6   ; shift x units in
-  and     ebx,ebp     ; mask off slop bits
-  add     ecx,edx
+  mov   ebx,ecx
+  mov   edx,ecx
+  shr   ebx,4
+  shr   edx,26
+  and   ebx,0xFC0
+  add   ecx,ebp
+  or    ebx,edx
+
   call    [callpoint]
 
-  mov     ebx,cr2
+  mov     ebx,[returnpoint]
 	pop		ebp
   mov     [ebx],byte OP_MOVAL         ; remove the ret patched in
 
@@ -127,19 +131,22 @@ patchColumnofs:
         mov   al,[eax]               ; translate color
         mov   [edi+PLANE+PCOL],al  ; write pixel
       %else
-        mov   al,[esi+ebx]           ; get source pixel
-        shld  ebx,ecx,22             ; shift y units in
-        mov   al,[eax]               ; translate color
-        shld  ebx,ecx,6              ; shift x units in
-        mov   [edi+PLANE+PCOL],al  ; write pixel
-        and   ebx,ebp                ; mask off slop bits
-        add   ecx,edx                ; position += step
+        mov   al,[esi+ebx]
+        mov   ebx,ecx
+        mov   edx,ecx
+        shr   ebx,4
+        mov   al,[eax]
+        shr   edx,26
+        mov   [edi+PLANE+PCOL],al
+        and   ebx,0xFC0
+        add   ecx,ebp
+        or    ebx,edx
       %endif
       %assign PLANE PLANE+1
 %assign PCOL PCOL+1
 %endrep
 
-MAPLABEL LINE: 
+MAPLABEL LINE:
   ret
 
 %endif

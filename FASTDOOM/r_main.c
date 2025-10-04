@@ -877,7 +877,7 @@ void R_PatchCode(void)
     R_PatchCenteryLinearLowDirect();
     R_PatchCenteryLinearPotatoDirect();
 
-    R_PatchColumnofsHigh386SX();
+    R_PatchColumnofsHighPentium();
     R_PatchColumnofsLow386SX();
     R_PatchColumnofsPotato386SX();
 
@@ -2010,11 +2010,8 @@ void R_ExecuteSetViewSize(void)
             clearPlanes = R_ClearPlanes;
             switch (selectedCPU)
             {
-            case INTEL_386SX:
-            case INTEL_386DX:
-            case CYRIX_386DLC:
-            case CYRIX_486:
-                spanfunc = R_DrawSpanBackbuffer386SX;
+            case INTEL_PENTIUM:
+                spanfunc = R_DrawSpanBackbufferPentium;
                 break;
             default:
                 spanfunc = R_DrawSpanBackbuffer;

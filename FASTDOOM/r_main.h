@@ -175,7 +175,7 @@ void R_PatchCenteryLinearDirect(void);
 void R_PatchCenteryLinearLowDirect(void);
 void R_PatchCenteryLinearPotatoDirect(void);
 
-void R_PatchColumnofsHigh386SX(void);
+void R_PatchColumnofsHighPentium(void);
 void R_PatchColumnofsLow386SX(void);
 void R_PatchColumnofsPotato386SX(void);
 
