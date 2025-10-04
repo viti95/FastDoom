@@ -246,14 +246,6 @@ patchColumnofs:
         mov   al,[eax]               ; translate color
         mov   [edi+PLANE+PCOL],al  ; write pixel
       %else
-        ;mov   al,[esi+ebx]           ; get source pixel
-        ;shld  ebx,ecx,22         ebx    ; shift y units in
-        ;mov   al,[eax]               ; translate color
-        ;shld  ebx,ecx,6              ; shift x units in
-        ;mov   [edi+PLANE+PCOL],al  ; write pixel
-        ;and   ebx,ebp                ; mask off slop bits
-        ;add   ecx,edx                ; position += step
-
         mov   al,[esi+ebx]
         mov   ebx,ecx
         mov   edx,ecx
