@@ -50,21 +50,26 @@ CODE_SYM_DEF R_DrawSpanPotatoVBE2Pentium
   mov  eax,[mapcalls+eax*4]
   mov  ecx,[_ds_frac]        ; build composite position
   mov  [callpoint],eax ; spot to jump into unwound
-  mov	 ebp,[_ds_step]
   mov  eax,[mapcalls+4+ebx*4]
   mov	 esi,[_ds_source]
   mov  [returnpoint],eax ; spot to patch a ret at
   mov  [eax], byte OP_RET
 
-  mov  edx,[_ds_y]
+  mov  ebp,[_ds_y]
   mov  eax,[_ds_colormap]
-  MulScreenWidthStart edi,edx
-  shld  ebx,ecx,22      ; shift y units in
+  MulScreenWidthStart edi,ebp
   MulScreenWidthEnd edi
   add  edi,[_destview]
-  shld  ebx,ecx,6       ; shift x units in
-  and     ebx,0x0FFF  ; mask off slop bits
-  add     ecx,ebp
+
+  mov	 ebp,[_ds_step]
+
+  mov   ebx,ecx
+  mov   edx,ecx
+  shr   ebx,4
+  shr   edx,26
+  and   ebx,0xFC0
+  add   ecx,ebp
+  or    ebx,edx
 
   ; feed the pipeline and jump in
   call  [callpoint]
@@ -101,14 +106,19 @@ CODE_SYM_DEF R_DrawSpanPotatoVBE2Pentium
         mov   [edi+PLANE+PCOL*4+2],ax  ; write pixel
       %else
         mov   al,[esi+ebx]           ; get source pixel
-        shld  ebx,ecx,22             ; shift y units in
         mov   dl,[eax]               ; translate color
-        shld  ebx,ecx,6              ; shift x units in
         mov   dh,dl
         mov   [edi+PLANE+PCOL*4],dx  ; write pixel        
         mov   [edi+PLANE+PCOL*4+2],dx  ; write pixel
-        and   ebx,0x0FFF             ; mask off slop bits
-        add   ecx,ebp                ; position += step
+
+        mov   ebx,ecx
+        mov   edx,ecx
+        shr   ebx,4
+        shr   edx,26
+        and   ebx,0xFC0
+        add   ecx,ebp
+        or    ebx,edx
+
       %endif
       %assign PLANE PLANE+1
 %assign PCOL PCOL+1
