@@ -177,7 +177,7 @@ void R_PatchCenteryLinearPotatoDirect(void);
 
 void R_PatchColumnofsHighPentium(void);
 void R_PatchColumnofsLowPentium(void);
-void R_PatchColumnofsPotato386SX(void);
+void R_PatchColumnofsPotatoPentium(void);
 
 void R_PatchCenteryVBE2High(void);
 void R_PatchCenteryVBE2Low(void);
