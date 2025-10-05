@@ -58,13 +58,12 @@ CODE_SYM_DEF R_DrawSpanVBE2Pentium
   mov  ebp,[_ds_y]
   mov  eax,[_ds_colormap]
   MulScreenWidthStart edi, ebp
+  mov   ebx,ecx
   MulScreenWidthEnd edi
   add  edi,[_destview]
-
+  mov   edx,ecx
   mov	 ebp,[_ds_step]
 
-  mov   ebx,ecx
-  mov   edx,ecx
   shr   ebx,4
   shr   edx,26
   and   ebx,0xFC0
@@ -103,17 +102,16 @@ CODE_SYM_DEF R_DrawSpanVBE2Pentium
         mov   al,[eax]               ; translate color
         mov   [edi+PLANE+PCOL],al  ; write pixel
       %else
-        mov   al,[esi+ebx]           ; get source pixel
-        mov   al,[eax]               ; translate color
-        mov   [edi+PLANE+PCOL],al  ; write pixel
-
+        mov   al,[esi+ebx]
         mov   ebx,ecx
         mov   edx,ecx
         shr   ebx,4
+        mov   al,[eax]
         shr   edx,26
         and   ebx,0xFC0
-        add   ecx,ebp
+        mov   [edi+PLANE+PCOL],al
         or    ebx,edx
+        add   ecx,ebp
       %endif
       %assign PLANE PLANE+1
 %assign PCOL PCOL+1
