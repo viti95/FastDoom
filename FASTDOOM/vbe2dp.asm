@@ -238,7 +238,9 @@ CODE_SYM_DEF R_DrawSpanPotatoVBE2
         mov   [edi+PLANE+PCOL*4],dx  ; write pixel
         mov   [edi+PLANE+PCOL*4+2],dx  ; write pixel
         and   ebx,0x0FFF             ; mask off slop bits
+        %if LINE < (SCREENWIDTH/4)-1
         add   ecx,ebp                ; position += step
+        %endif
       %endif
       %assign PLANE PLANE+1
 %assign PCOL PCOL+1

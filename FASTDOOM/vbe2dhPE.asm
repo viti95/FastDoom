@@ -26,6 +26,7 @@ mapcalls:
   %endrep
 
 callpoint:   dd 0
+returnpoint: dd 0
 
 BEGIN_CODE_SECTION
 
@@ -36,7 +37,7 @@ BEGIN_CODE_SECTION
 ; Horizontal texture mapping
 ;
 ;============================================================================
-CODE_SYM_DEF R_DrawSpanVBE2_386SX
+CODE_SYM_DEF R_DrawSpanVBE2Pentium
 	push		ebx
 	push		ecx
 	push		edx
@@ -49,27 +50,30 @@ CODE_SYM_DEF R_DrawSpanVBE2_386SX
   mov  eax,[mapcalls+eax*4]
   mov  ecx,[_ds_frac]        ; build composite position
   mov  [callpoint],eax ; spot to jump into unwound
-  mov	 edx,[_ds_step]
   mov  eax,[mapcalls+4+ebx*4]
   mov	 esi,[_ds_source]
-  mov  cr2,eax ; spot to patch a ret at
+  mov  [returnpoint],eax ; spot to patch a ret at
   mov  [eax], byte OP_RET
 
   mov  ebp,[_ds_y]
   mov  eax,[_ds_colormap]
   MulScreenWidthStart edi, ebp
-  shld  ebx,ecx,22      ; shift y units in
+  mov   ebx,ecx
   MulScreenWidthEnd edi
-  mov   ebp,0x0FFF  ; used to mask off slop high bits from position
   add  edi,[_destview]
-  shld  ebx,ecx,6       ; shift x units in
-  and   ebx,ebp         ; mask off slop bits
-  add   ecx,edx
+  mov   edx,ecx
+  mov	 ebp,[_ds_step]
+
+  shr   ebx,4
+  shr   edx,26
+  and   ebx,0xFC0
+  add   ecx,ebp
+  or    ebx,edx
   
   ; feed the pipeline and jump in
   call  [callpoint]
 
-  mov  ebx,cr2
+  mov  ebx,[returnpoint]
   pop		ebp
   mov  [ebx],byte OP_MOVAL ; remove the ret patched in
 
@@ -89,26 +93,29 @@ CODE_SYM_DEF R_DrawSpanVBE2_386SX
 
 %assign LINE 0
 %assign PCOL 0
-%rep SCREENWIDTH/4
+%rep SCREENWIDTH
   %assign PLANE 0
-  %rep 4
     MAPLABEL LINE:
       %assign LINE LINE+1
-      %if LINE = SCREENWIDTH/4
+      %if LINE = SCREENWIDTH
         mov   al,[esi+ebx]           ; get source pixel
         mov   al,[eax]               ; translate color
-        mov   [edi+PLANE+PCOL*4],al  ; write pixel
+        mov   [edi+PLANE+PCOL],al  ; write pixel
       %else
-        mov   al,[esi+ebx]           ; get source pixel
-        shld  ebx,ecx,22             ; shift y units in
-        mov   al,[eax]               ; translate color
-        shld  ebx,ecx,6              ; shift x units in
-        mov   [edi+PLANE+PCOL*4],al  ; write pixel
-        and   ebx,ebp                ; mask off slop bits
-        add   ecx,edx                ; position += step
+        mov   al,[esi+ebx]
+        mov   ebx,ecx
+        mov   edx,ecx
+        shr   ebx,4
+        mov   al,[eax]
+        shr   edx,26
+        and   ebx,0xFC0
+        mov   [edi+PLANE+PCOL],al
+        or    ebx,edx
+        %if LINE < SCREENWIDTH-1
+        add   ecx,ebp
+        %endif
       %endif
       %assign PLANE PLANE+1
-  %endrep
 %assign PCOL PCOL+1
 %endrep
 
