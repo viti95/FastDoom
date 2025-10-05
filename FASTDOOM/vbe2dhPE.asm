@@ -50,7 +50,6 @@ CODE_SYM_DEF R_DrawSpanVBE2Pentium
   mov  eax,[mapcalls+eax*4]
   mov  ecx,[_ds_frac]        ; build composite position
   mov  [callpoint],eax ; spot to jump into unwound
-  mov	 edx,[_ds_step]
   mov  eax,[mapcalls+4+ebx*4]
   mov	 esi,[_ds_source]
   mov  [returnpoint],eax ; spot to patch a ret at
@@ -59,13 +58,18 @@ CODE_SYM_DEF R_DrawSpanVBE2Pentium
   mov  ebp,[_ds_y]
   mov  eax,[_ds_colormap]
   MulScreenWidthStart edi, ebp
-  shld  ebx,ecx,22      ; shift y units in
   MulScreenWidthEnd edi
-  mov   ebp,0x0FFF  ; used to mask off slop high bits from position
   add  edi,[_destview]
-  shld  ebx,ecx,6       ; shift x units in
-  and   ebx,ebp         ; mask off slop bits
-  add   ecx,edx
+
+  mov	 ebp,[_ds_step]
+
+  mov   ebx,ecx
+  mov   edx,ecx
+  shr   ebx,4
+  shr   edx,26
+  and   ebx,0xFC0
+  add   ecx,ebp
+  or    ebx,edx
   
   ; feed the pipeline and jump in
   call  [callpoint]
@@ -100,12 +104,16 @@ CODE_SYM_DEF R_DrawSpanVBE2Pentium
         mov   [edi+PLANE+PCOL],al  ; write pixel
       %else
         mov   al,[esi+ebx]           ; get source pixel
-        shld  ebx,ecx,22             ; shift y units in
         mov   al,[eax]               ; translate color
-        shld  ebx,ecx,6              ; shift x units in
         mov   [edi+PLANE+PCOL],al  ; write pixel
-        and   ebx,ebp                ; mask off slop bits
-        add   ecx,edx                ; position += step
+
+        mov   ebx,ecx
+        mov   edx,ecx
+        shr   ebx,4
+        shr   edx,26
+        and   ebx,0xFC0
+        add   ecx,ebp
+        or    ebx,edx
       %endif
       %assign PLANE PLANE+1
 %assign PCOL PCOL+1
