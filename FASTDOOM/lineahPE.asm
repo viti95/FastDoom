@@ -137,10 +137,10 @@ patchColumnofs:
         shr   ebx,4
         mov   al,[eax]
         shr   edx,26
-        mov   [edi+PLANE+PCOL],al
         and   ebx,0xFC0
-        add   ecx,ebp
+        mov   [edi+PLANE+PCOL],al
         or    ebx,edx
+        add   ecx,ebp
       %endif
       %assign PLANE PLANE+1
 %assign PCOL PCOL+1
