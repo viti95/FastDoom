@@ -90,26 +90,24 @@ CODE_SYM_DEF R_DrawSpanVBE2Pentium
 
 %assign LINE 0
 %assign PCOL 0
-%rep SCREENWIDTH/4
+%rep SCREENWIDTH
   %assign PLANE 0
-  %rep 4
     MAPLABEL LINE:
       %assign LINE LINE+1
-      %if LINE = SCREENWIDTH/4
+      %if LINE = SCREENWIDTH
         mov   al,[esi+ebx]           ; get source pixel
         mov   al,[eax]               ; translate color
-        mov   [edi+PLANE+PCOL*4],al  ; write pixel
+        mov   [edi+PLANE+PCOL],al  ; write pixel
       %else
         mov   al,[esi+ebx]           ; get source pixel
         shld  ebx,ecx,22             ; shift y units in
         mov   al,[eax]               ; translate color
         shld  ebx,ecx,6              ; shift x units in
-        mov   [edi+PLANE+PCOL*4],al  ; write pixel
+        mov   [edi+PLANE+PCOL],al  ; write pixel
         and   ebx,ebp                ; mask off slop bits
         add   ecx,edx                ; position += step
       %endif
       %assign PLANE PLANE+1
-  %endrep
 %assign PCOL PCOL+1
 %endrep
 
