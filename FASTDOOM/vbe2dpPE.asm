@@ -116,7 +116,9 @@ CODE_SYM_DEF R_DrawSpanPotatoVBE2Pentium
         mov   edx,ecx
         shr   edx,26
         or    ebx,edx
+        %if LINE < (SCREENWIDTH/4)-1
         add   ecx,ebp
+        %endif
       %endif
       %assign PLANE PLANE+1
 %assign PCOL PCOL+1

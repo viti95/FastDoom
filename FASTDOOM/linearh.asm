@@ -249,7 +249,9 @@ patchColumnofs:
         shld  ebx,ecx,6              ; shift x units in
         mov   [edi+PLANE+PCOL],al  ; write pixel
         and   ebx,ebp                ; mask off slop bits
+        %if LINE < SCREENWIDTH-1
         add   ecx,edx                ; position += step
+        %endif
       %endif
       %assign PLANE PLANE+1
 %assign PCOL PCOL+1

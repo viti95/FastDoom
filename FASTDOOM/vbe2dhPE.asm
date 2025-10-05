@@ -111,7 +111,9 @@ CODE_SYM_DEF R_DrawSpanVBE2Pentium
         and   ebx,0xFC0
         mov   [edi+PLANE+PCOL],al
         or    ebx,edx
+        %if LINE < SCREENWIDTH-1
         add   ecx,ebp
+        %endif
       %endif
       %assign PLANE PLANE+1
 %assign PCOL PCOL+1

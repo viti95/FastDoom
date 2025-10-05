@@ -234,7 +234,9 @@ CODE_SYM_DEF R_DrawSpanLowVBE2
         mov   dh,dl
         mov   [edi+PLANE+PCOL*2],dx  ; write pixel
         and   ebx,0x0FFF             ; mask off slop bits
+        %if LINE < (SCREENWIDTH/2)-1
         add   ecx,ebp                ; position += step
+        %endif
       %endif
       %assign PLANE PLANE+1
 %assign PCOL PCOL+1
