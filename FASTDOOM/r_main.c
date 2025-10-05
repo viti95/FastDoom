@@ -2521,7 +2521,7 @@ void R_ExecuteSetViewSize(void)
             clearPlanes = R_ClearPlanes;
             switch (selectedCPU)
             {
-            case INTEL_PENTIUM
+            case INTEL_PENTIUM:
                 spanfunc = R_DrawSpanLowVBE2Pentium;
                 break;
             default:

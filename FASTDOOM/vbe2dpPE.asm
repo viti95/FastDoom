@@ -25,7 +25,8 @@ mapcalls:
     %assign LINE LINE+1
   %endrep
 
-callpoint:   dd 
+callpoint:   dd 0
+returnpoint: dd 0
 
 BEGIN_CODE_SECTION
 
@@ -52,7 +53,7 @@ CODE_SYM_DEF R_DrawSpanPotatoVBE2Pentium
   mov	 ebp,[_ds_step]
   mov  eax,[mapcalls+4+ebx*4]
   mov	 esi,[_ds_source]
-  mov  cr2,eax ; spot to patch a ret at
+  mov  [returnpoint],eax ; spot to patch a ret at
   mov  [eax], byte OP_RET
 
   mov  edx,[_ds_y]
@@ -68,7 +69,7 @@ CODE_SYM_DEF R_DrawSpanPotatoVBE2Pentium
   ; feed the pipeline and jump in
   call  [callpoint]
 
-  mov  ebx,cr2
+  mov  ebx,[returnpoint]
   pop		ebp
   mov  [ebx],byte OP_MOVAL ; remove the ret patched in
 
