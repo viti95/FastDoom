@@ -36,7 +36,7 @@ BEGIN_CODE_SECTION
 ; Horizontal texture mapping
 ;
 ;============================================================================
-CODE_SYM_DEF R_DrawSpanLowVBE2_386SX
+CODE_SYM_DEF R_DrawSpanLowVBE2Pentium
   push		ebx
 	push		ecx
 	push		edx

@@ -36,7 +36,7 @@ BEGIN_CODE_SECTION
 ; Horizontal texture mapping
 ;
 ;============================================================================
-CODE_SYM_DEF R_DrawSpanPotatoVBE2_386SX
+CODE_SYM_DEF R_DrawSpanPotatoVBE2Pentium
   push		ebx
 	push		ecx
 	push		edx

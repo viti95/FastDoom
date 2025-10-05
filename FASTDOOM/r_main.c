@@ -2412,11 +2412,8 @@ void R_ExecuteSetViewSize(void)
             clearPlanes = R_ClearPlanes;
             switch (selectedCPU)
             {
-            case INTEL_386SX:
-            case INTEL_386DX:
-            case CYRIX_386DLC:
-            case CYRIX_486:
-                spanfunc = R_DrawSpanVBE2_386SX;
+            case INTEL_PENTIUM:
+                spanfunc = R_DrawSpanVBE2Pentium;
                 break;
             default:
                 spanfunc = R_DrawSpanVBE2;
@@ -2524,11 +2521,8 @@ void R_ExecuteSetViewSize(void)
             clearPlanes = R_ClearPlanes;
             switch (selectedCPU)
             {
-            case INTEL_386SX:
-            case INTEL_386DX:
-            case CYRIX_386DLC:
-            case CYRIX_486:
-                spanfunc = R_DrawSpanLowVBE2_386SX;
+            case INTEL_PENTIUM
+                spanfunc = R_DrawSpanLowVBE2Pentium;
                 break;
             default:
                 spanfunc = R_DrawSpanLowVBE2;
@@ -2636,11 +2630,8 @@ void R_ExecuteSetViewSize(void)
             clearPlanes = R_ClearPlanes;
             switch (selectedCPU)
             {
-            case INTEL_386SX:
-            case INTEL_386DX:
-            case CYRIX_386DLC:
-            case CYRIX_486:
-                spanfunc = R_DrawSpanPotatoVBE2_386SX;
+            case INTEL_PENTIUM:
+                spanfunc = R_DrawSpanPotatoVBE2Pentium;
                 break;
             default:
                 spanfunc = R_DrawSpanPotatoVBE2;
