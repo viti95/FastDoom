@@ -87,10 +87,8 @@ CODE_SYM_DEF R_DrawSpanLowBackbufferPentium
   mov     [eax], byte OP_RET
 
   mov     edi,[_ylookup+edi*4]
-
   mov     eax,[_ds_colormap]
-
-
+  
 patchColumnofs:
   add     edi,0x12345678
 
@@ -142,9 +140,9 @@ patchColumnofs:
         and   ebx,0xFC0
         mov   [edi+PLANE+PCOL*2],dx
         mov   edx,ecx
-        add   ecx,ebp
         shr   edx,26
         or    ebx,edx
+        add   ecx,ebp
       %endif
       %assign PLANE PLANE+1
 %assign PCOL PCOL+1

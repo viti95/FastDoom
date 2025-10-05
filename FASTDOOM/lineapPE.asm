@@ -87,7 +87,6 @@ CODE_SYM_DEF R_DrawSpanPotatoBackbufferPentium
   mov     [eax], byte OP_RET
 
   mov     edi,[_ylookup+edi*4]
-
   mov     eax,[_ds_colormap]
 
 patchColumnofs:
@@ -143,9 +142,9 @@ patchColumnofs:
         mov   [edi+PLANE+PCOL*4],dx
         mov   [edi+PLANE+PCOL*4+2],dx
         mov   edx,ecx
-        add   ecx,ebp
         shr   edx,26
         or    ebx,edx
+        add   ecx,ebp
       %endif
       %assign PLANE PLANE+1
 %assign PCOL PCOL+1

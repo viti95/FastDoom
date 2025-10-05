@@ -58,13 +58,13 @@ CODE_SYM_DEF R_DrawSpanPotatoVBE2Pentium
   mov  ebp,[_ds_y]
   mov  eax,[_ds_colormap]
   MulScreenWidthStart edi,ebp
+  mov   ebx,ecx
   MulScreenWidthEnd edi
+  mov   edx,ecx
   add  edi,[_destview]
 
   mov	 ebp,[_ds_step]
 
-  mov   ebx,ecx
-  mov   edx,ecx
   shr   ebx,4
   shr   edx,26
   and   ebx,0xFC0
@@ -106,19 +106,17 @@ CODE_SYM_DEF R_DrawSpanPotatoVBE2Pentium
         mov   [edi+PLANE+PCOL*4+2],ax  ; write pixel
       %else
         mov   al,[esi+ebx]           ; get source pixel
+        mov   ebx,ecx
         mov   dl,[eax]               ; translate color
+        shr   ebx,4
         mov   dh,dl
+        and   ebx,0xFC0
         mov   [edi+PLANE+PCOL*4],dx  ; write pixel        
         mov   [edi+PLANE+PCOL*4+2],dx  ; write pixel
-
-        mov   ebx,ecx
         mov   edx,ecx
-        shr   ebx,4
         shr   edx,26
-        and   ebx,0xFC0
-        add   ecx,ebp
         or    ebx,edx
-
+        add   ecx,ebp
       %endif
       %assign PLANE PLANE+1
 %assign PCOL PCOL+1
