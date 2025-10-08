@@ -118,15 +118,27 @@ doneh:
   vscale%1
 %endmacro
 
+%macro JMPPOSDEFINE 1
+  jmppos%1
+%endmacro
+
+%macro JMPTEST 1
+  je jmppos%1
+%endmacro
+
 %assign LINE SCREENHEIGHT
 %rep SCREENHEIGHT-1
   SCALELABEL LINE:
-    add  edx,ecx                        ; calculate next location
-    mov  al,[esi+ebx]                   ; get source pixel
-    mov  ebx,edx
-    mov  al,[eax]                       ; translate the color
-    shr  ebx,25
-    mov  [edi-(LINE-1)*SCREENWIDTH],al  ; draw a pixel to the buffer
+      cmp ebp,ebx
+      JMPTEST LINE
+      mov al,[esi+ebx]
+      mov ebp,ebx
+      mov al,[eax]
+      JMPPOSDEFINE LINE:
+      add edx,ecx
+      mov [edi-(LINE-1)*SCREENWIDTH],al
+      mov ebx,edx
+      shr ebx,25
     %assign LINE LINE-1
 %endrep
 
