@@ -122,9 +122,10 @@ doneh:
 %rep SCREENHEIGHT-1
   SCALELABEL LINE:
     add  edx,ecx                        ; calculate next location
-    mov  al,[esi+ebx]                   ; get source pixel
+    movzx ebp,byte [esi+ebx]                   ; get source pixel
+    and  eax,0xFFFFFF00
     mov  ebx,edx
-    mov  al,[eax]                       ; translate the color
+    mov  al,[ebp+eax]                       ; translate the color
     shr  ebx,25
     mov  [edi-(LINE-1)*SCREENWIDTH],al  ; draw a pixel to the buffer
     %assign LINE LINE-1
