@@ -101,8 +101,7 @@ fixed_t FixedDiv65536(fixed_t b);
 
 unsigned char ROLAND1(int value);
 #pragma aux ROLAND1 = \
-    "rol eax, 1", \
-    "and eax, 1" parm[eax] value[al] modify exact[eax]
+    "shr eax, 31", parm[eax] value[al] modify exact[eax]
 
 int Mul20(int value);
 #pragma aux Mul20 = \
