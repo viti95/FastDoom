@@ -1462,6 +1462,9 @@ void G_SaveCSVResult(unsigned int gametics, unsigned int realtics, unsigned int 
         case INTEL_PENTIUM:
             fprintf(logFile, "pentium");
             break;
+        case INTEL_PENTIUM_MMX:
+            fprintf(logFile, "pentiummmx");
+            break;
         case CYRIX_386DLC:
             fprintf(logFile, "cyrix386");
             break;
@@ -1471,12 +1474,20 @@ void G_SaveCSVResult(unsigned int gametics, unsigned int realtics, unsigned int 
         case CYRIX_5X86:
             fprintf(logFile, "cyrix5x86");
             break;
+        case CYRIX_6X86:
+            fprintf(logFile, "cyrix6x86");
+            break;
         case UMC_GREEN_486:
             fprintf(logFile, "umc486");
             break;
         case AMD_K5:
             fprintf(logFile, "k5");
             break;
+        case AMD_K6:
+            fprintf(logFile, "k6");
+            break;
+        case IDT_WINCHIP:
+            fprintf(logFile, "winchip");
         }
 
         fprintf(logFile, CSV_COLUMN);

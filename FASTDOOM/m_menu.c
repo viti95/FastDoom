@@ -1471,7 +1471,19 @@ void M_DrawDisplayItem(int item, int position)
             M_WriteText(214, y, "AMD K5");
             break;
         case INTEL_PENTIUM:
-            M_WriteText(214, y, "INTEL PENTIUM");
+            M_WriteText(214, y, "PENTIUM");
+            break;
+        case INTEL_PENTIUM_MMX:
+            M_WriteText(214, y, "PENTIUM MMX");
+            break;
+        case CYRIX_6X86:
+            M_WriteText(214, y, "CYRIX 6X86");
+            break;
+        case AMD_K6:
+            M_WriteText(214, y, "AMD K6");
+            break;
+        case IDT_WINCHIP:
+            M_WriteText(214, y, "IDT WINCHIP");
             break;
         }
         break;
@@ -1641,6 +1653,18 @@ void M_DrawDisplayItem(int item, int position)
             break;
         case INTEL_PENTIUM:
             V_WriteTextDirect(M_X2, y, "INTEL PENTIUM");
+            break;
+        case INTEL_PENTIUM_MMX:
+            V_WriteTextDirect(M_X2, y, "PENTIUM MMX");
+            break;
+        case CYRIX_6X86:
+            V_WriteTextDirect(M_X2, y, "CYRIX 6X86");
+            break;
+        case AMD_K6:
+            V_WriteTextDirect(M_X2, y, "AMD K6");
+            break;
+        case IDT_WINCHIP:
+            V_WriteTextDirect(M_X2, y, "IDT WINCHIP");
             break;
         }
         break;

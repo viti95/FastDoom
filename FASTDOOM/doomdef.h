@@ -417,6 +417,10 @@ typedef enum
     CYRIX_5X86,
     AMD_K5,
     INTEL_PENTIUM,
+    INTEL_PENTIUM_MMX,
+    CYRIX_6X86,
+    AMD_K6,
+    IDT_WINCHIP,
     NUM_CPU
 } cpu_t;
 

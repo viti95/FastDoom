@@ -2011,6 +2011,9 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case INTEL_PENTIUM:
+            case INTEL_PENTIUM_MMX:
+            case IDT_WINCHIP:
+            case CYRIX_6X86:
                 spanfunc = R_DrawSpanBackbufferPentium;
                 break;
             default:
@@ -2174,6 +2177,9 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case INTEL_PENTIUM:
+            case INTEL_PENTIUM_MMX:
+            case IDT_WINCHIP:
+            case CYRIX_6X86:
                 spanfunc = R_DrawSpanLowBackbufferPentium;
                 break;
             default:
@@ -2297,6 +2303,9 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case INTEL_PENTIUM:
+            case INTEL_PENTIUM_MMX:
+            case IDT_WINCHIP:
+            case CYRIX_6X86:
                 spanfunc = R_DrawSpanPotatoBackbufferPentium;
                 break;
             default:
@@ -2413,6 +2422,9 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case INTEL_PENTIUM:
+            case INTEL_PENTIUM_MMX:
+            case IDT_WINCHIP:
+            case CYRIX_6X86:
                 spanfunc = R_DrawSpanVBE2Pentium;
                 break;
             default:
@@ -2522,6 +2534,9 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case INTEL_PENTIUM:
+            case INTEL_PENTIUM_MMX:
+            case IDT_WINCHIP:
+            case CYRIX_6X86:
                 spanfunc = R_DrawSpanLowVBE2Pentium;
                 break;
             default:
@@ -2631,6 +2646,9 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case INTEL_PENTIUM:
+            case INTEL_PENTIUM_MMX:
+            case IDT_WINCHIP:
+            case CYRIX_6X86:
                 spanfunc = R_DrawSpanPotatoVBE2Pentium;
                 break;
             default:

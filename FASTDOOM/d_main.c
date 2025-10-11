@@ -1696,8 +1696,12 @@ void D_DoomMain(void)
     M_CheckParmOptionalValue("-386dx", &selectedCPU, INTEL_386DX);
     M_CheckParmOptionalValue("-386sx", &selectedCPU, INTEL_386SX);
     M_CheckParmOptionalValue("-cy5x86", &selectedCPU, CYRIX_5X86);
+    M_CheckParmOptionalValue("-cy6x86", &selectedCPU, CYRIX_6X86);
     M_CheckParmOptionalValue("-k5", &selectedCPU, AMD_K5);
+    M_CheckParmOptionalValue("-k6", &selectedCPU, AMD_K6);
     M_CheckParmOptionalValue("-pentium", &selectedCPU, INTEL_PENTIUM);
+    M_CheckParmOptionalValue("-pentiumMMX", &selectedCPU, INTEL_PENTIUM_MMX);
+    M_CheckParmOptionalValue("-winchip", &selectedCPU, IDT_WINCHIP);
     M_CheckParmOptionalValue("-fps", &showFPS, SCREEN_FPS);
     M_CheckParmOptionalValue("-debugCard2", &showFPS, DEBUG_CARD_2D_FPS);
     M_CheckParmOptionalValue("-debugCard4", &showFPS, DEBUG_CARD_4D_FPS);
