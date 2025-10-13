@@ -1,10 +1,11 @@
 # CHANGELOG
 
 ## 1.1.7 (?? ??? ????)
-* Fixed span rendering in backbuffered modes (potato detail and resolutions above 320x200)
-* Optimized span rendering for Pentium CPUs in backbuffered and VBE2 direct modes
-* Removed 386SX-optimized code for backbuffered and VBE2 direct modes (those modes are too demanding for the slow 386SX)
+* Fixed span rendering in backbuffered modes (potato detail and resolutions above 320×200)
+* Optimized span rendering for Pentium, Pentium MMX, IDT WinChip, and Cyrix 6x86 CPUs in backbuffered and VBE2 direct modes
+* Removed 386SX-optimized code for backbuffered and VBE2 direct modes (these modes are too demanding for the slow 386SX, and the performance difference was minimal)
 * Minor optimizations in span rendering code for backbuffered and VBE2 direct modes
+* Small optimizations in BSP rendering code, especially for K6 and other CPUs that perform poorly with the ROL/ROR instructions
 
 ## 1.1.6 (27 Sep 2025)
 * Fixed aspect ratio for VESA 1600x1200 mode (2D items)
