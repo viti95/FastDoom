@@ -105,11 +105,11 @@ CODE_SYM_DEF R_DrawSpanLowVBE2Pentium
         mov   [edi+PLANE+PCOL*2],ax  ; write pixel
       %else
         mov   al,[esi+ebx]           ; get source pixel
-        mov   ebx,ecx
+        mov   bh,ch
         mov   dl,[eax]               ; translate color
         shr   ebx,4
         mov   dh,dl
-        and   ebx,0xFC0
+        and   bx,0xFC0
         mov   [edi+PLANE+PCOL*2],dx  ; write pixel
         mov   edx,ecx       
         shr   edx,26
