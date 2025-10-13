@@ -132,12 +132,12 @@ patchColumnofs:
         mov   [edi+PLANE+PCOL],al  ; write pixel
       %else
         mov   al,[esi+ebx]
-        mov   ebx,ecx
+        mov   bh,ch
         mov   edx,ecx
         shr   ebx,4
         mov   al,[eax]
         shr   edx,26
-        and   ebx,0xFC0
+        and   bx,0xFC0
         mov   [edi+PLANE+PCOL],al
         or    ebx,edx
         %if LINE < SCREENWIDTH-1
