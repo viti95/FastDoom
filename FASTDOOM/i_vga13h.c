@@ -40,10 +40,14 @@ void I_UpdateFinishFunc(void)
             return;
         }
 
-        if (selectedCPU >= INTEL_486)
-            finishfunc = I_FinishUpdateDifferential486;
-        else
-            finishfunc = I_FinishUpdateDifferential386;
+        switch(selectedCPU) {
+            case INTEL_486:
+                finishfunc = I_FinishUpdateDifferential486;
+                break;
+            default:
+                finishfunc = I_FinishUpdateDifferential386;
+                break;
+        }
     }
     else
     {
