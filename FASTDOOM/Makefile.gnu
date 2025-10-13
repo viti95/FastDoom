@@ -205,7 +205,8 @@ GLOBOBJS = \
  f_wipe.obj \
  info.obj \
  dmx.obj \
- mus2mid.obj
+ mus2mid.obj \
+ mmx.obj
 
 fdoom.exe : $(GLOBOBJS)
 	wlink @fdoom.lnk

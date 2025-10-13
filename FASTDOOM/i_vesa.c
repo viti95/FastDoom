@@ -13,6 +13,7 @@
 #include "z_zone.h"
 #include "math.h"
 #include "i_gamma.h"
+#include "mmx.h"
 // #include "i_debug.h"
 
 /*-----------------05-14-97 05:19pm-----------------
@@ -842,7 +843,7 @@ void I_FinishUpdate8bppLinear(void)
 {
   if (updatestate & I_FULLSCRN)
   {
-    CopyDWords(backbuffer, pcscreen, SCREENHEIGHT * SCREENWIDTH / 4);
+    CopyQWordsMMX(backbuffer, pcscreen, SCREENHEIGHT * SCREENWIDTH / 8);
     updatestate = I_NOUPDATE; // clear out all draw types
   }
   if (updatestate & I_FULLVIEW)
@@ -852,7 +853,7 @@ void I_FinishUpdate8bppLinear(void)
       int i;
       for (i = 0; i < endscreen; i += SCREENWIDTH)
       {
-        CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
+        CopyQWordsMMX(backbuffer + i, pcscreen + i, SCREENWIDTH / 8);
       }
       updatestate &= ~(I_FULLVIEW | I_MESSAGES);
     }
@@ -861,19 +862,19 @@ void I_FinishUpdate8bppLinear(void)
       int i;
       for (i = startscreen; i < endscreen; i += SCREENWIDTH)
       {
-        CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
+        CopyQWordsMMX(backbuffer + i, pcscreen + i, SCREENWIDTH / 8);
       }
       updatestate &= ~I_FULLVIEW;
     }
   }
   if (updatestate & I_STATBAR)
   {
-    CopyDWords(backbuffer + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), pcscreen + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), SCREENWIDTH * SBARHEIGHT / 4);
+    CopyQWordsMMX(backbuffer + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), pcscreen + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), SCREENWIDTH * SBARHEIGHT / 8);
     updatestate &= ~I_STATBAR;
   }
   if (updatestate & I_MESSAGES)
   {
-    CopyDWords(backbuffer, pcscreen, (SCREENWIDTH * 28) / 4);
+    CopyQWordsMMX(backbuffer, pcscreen, (SCREENWIDTH * 28) / 8);
     updatestate &= ~I_MESSAGES;
   }
 }

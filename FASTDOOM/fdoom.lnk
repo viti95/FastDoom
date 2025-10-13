@@ -184,3 +184,4 @@ file vbe2dp3.obj
 file vbe2dp4.obj
 file vbe2dp5.obj
 file vbe2dpPE.obj
+file mmx.obj
