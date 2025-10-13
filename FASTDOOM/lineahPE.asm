@@ -132,7 +132,7 @@ patchColumnofs:
         mov   [edi+PLANE+PCOL],al  ; write pixel
       %else
         mov   al,[esi+ebx]
-        mov   bx,cx
+        mov   bh,ch
         mov   edx,ecx
         shr   ebx,4
         mov   al,[eax]
