@@ -1,7 +1,7 @@
 ;
 ; Copyright (C) 1993-1996 Id Software, Inc.
 ; Copyright (C) 1993-2008 Raven Software
-; Copyright (C) 2016-2017 Alexey Khokholov (Nuke.YKT)
+; Copyright (C) 2025 Victor Nieto (viti95)
 ;
 ; This program is free software; you can redistribute it and/or
 ; modify it under the terms of the GNU General Public License
@@ -13,8 +13,7 @@
 ; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ; GNU General Public License for more details.
 ;
-; DESCRIPTION: Assembly texture mapping routines for planar VGA mode
-;
+; DESCRIPTION: Assembly MMX routines
 
 BITS 32
 
@@ -25,11 +24,11 @@ BEGIN_CODE_SECTION
 CODE_SYM_DEF CopyQWordsMMX
 
 .copy_loop:
-        movq    mm0, [eax]
-        add     eax, 8
-		movq    [edx], mm0
-        add     edx, 8
-        dec     ebx
-        jnz     .copy_loop
+    movq    mm0, [eax]
+    add     eax, 8
+    movq    [edx], mm0
+    add     edx, 8
+    dec     ebx
+    jnz     .copy_loop
 
 ret
