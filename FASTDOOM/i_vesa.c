@@ -13,7 +13,7 @@
 #include "z_zone.h"
 #include "math.h"
 #include "i_gamma.h"
-#include "mmx.h"
+#include "fpummx.h"
 // #include "i_debug.h"
 
 /*-----------------05-14-97 05:19pm-----------------
@@ -519,6 +519,9 @@ void VBE2_InitGraphics(void)
           finishfunc = I_FinishUpdate8bppLinearFix;
         } else {
           switch(selectedCPU) {
+            case INTEL_PENTIUM:
+              finishfunc = I_FinishUpdate8bppLinearFPU;
+              break;
             case INTEL_PENTIUM_MMX:
               finishfunc = I_FinishUpdate8bppLinearMMX;
               break;
@@ -922,6 +925,46 @@ void I_FinishUpdate8bppLinearMMX(void)
   if (updatestate & I_MESSAGES)
   {
     CopyQWordsMMX(backbuffer, pcscreen, (SCREENWIDTH * 28) / 8);
+    updatestate &= ~I_MESSAGES;
+  }
+}
+
+void I_FinishUpdate8bppLinearFPU(void)
+{
+  if (updatestate & I_FULLSCRN)
+  {
+    CopyQWordsFPU(backbuffer, pcscreen, SCREENHEIGHT * SCREENWIDTH / 8);
+    updatestate = I_NOUPDATE; // clear out all draw types
+  }
+  if (updatestate & I_FULLVIEW)
+  {
+    if (updatestate & I_MESSAGES && screenblocks > 7)
+    {
+      int i;
+      for (i = 0; i < endscreen; i += SCREENWIDTH)
+      {
+        CopyQWordsFPU(backbuffer + i, pcscreen + i, SCREENWIDTH / 8);
+      }
+      updatestate &= ~(I_FULLVIEW | I_MESSAGES);
+    }
+    else
+    {
+      int i;
+      for (i = startscreen; i < endscreen; i += SCREENWIDTH)
+      {
+        CopyQWordsFPU(backbuffer + i, pcscreen + i, SCREENWIDTH / 8);
+      }
+      updatestate &= ~I_FULLVIEW;
+    }
+  }
+  if (updatestate & I_STATBAR)
+  {
+    CopyQWordsFPU(backbuffer + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), pcscreen + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), SCREENWIDTH * SBARHEIGHT / 8);
+    updatestate &= ~I_STATBAR;
+  }
+  if (updatestate & I_MESSAGES)
+  {
+    CopyQWordsFPU(backbuffer, pcscreen, (SCREENWIDTH * 28) / 8);
     updatestate &= ~I_MESSAGES;
   }
 }

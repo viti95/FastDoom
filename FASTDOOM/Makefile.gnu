@@ -206,7 +206,7 @@ GLOBOBJS = \
  info.obj \
  dmx.obj \
  mus2mid.obj \
- mmx.obj
+ fpummx.obj
 
 fdoom.exe : $(GLOBOBJS)
 	wlink @fdoom.lnk

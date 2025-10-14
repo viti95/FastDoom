@@ -277,6 +277,7 @@ void I_FinishUpdate(void);
 void I_FinishUpdate8bppBanked(void);
 void I_FinishUpdate8bppLinear(void);
 void I_FinishUpdate8bppLinearMMX(void);
+void I_FinishUpdate8bppLinearFPU(void);
 void I_FinishUpdate8bppLinearFix(void);
 void I_FinishUpdate15bpp16bppBanked(void);
 void I_FinishUpdate15bpp16bppLinear(void);

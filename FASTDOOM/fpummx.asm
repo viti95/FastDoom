@@ -13,7 +13,7 @@
 ; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ; GNU General Public License for more details.
 ;
-; DESCRIPTION: Assembly MMX routines
+; DESCRIPTION: Assembly FPU/MMX routines
 
 BITS 32
 
@@ -23,12 +23,24 @@ BEGIN_CODE_SECTION
 
 CODE_SYM_DEF CopyQWordsMMX
 
-.copy_loop:
+.copy_loop_mmx:
     movq    mm0, [eax]
     add     eax, 8
     movq    [edx], mm0
     add     edx, 8
     dec     ebx
-    jnz     .copy_loop
+    jnz     .copy_loop_mmx
+
+ret
+
+CODE_SYM_DEF CopyQWordsFPU
+
+.copy_loop_fpu:
+    fild    qword [eax]
+    add     eax, 8
+    fistp   qword [edx]
+    add     edx, 8
+    dec     ebx
+    jnz     .copy_loop_fpu
 
 ret
