@@ -7,6 +7,7 @@
 * Minor optimizations in span rendering code for backbuffered and VBE2 direct modes
 * Small optimizations in BSP rendering code, especially for K6 and other CPUs that perform poorly with the ROL/ROR instructions
 * Changed NASM generated object files from OBJ to COFF format, allowing larger ASM files to be built (some develop builds failed at 1600×1200 resolutions).
+* Optimized backbuffer-to-VRAM copies for the Pentium MMX (first use of MMX code)
 
 ## 1.1.6 (27 Sep 2025)
 * Fixed aspect ratio for VESA 1600x1200 mode (2D items)
