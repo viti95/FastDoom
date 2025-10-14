@@ -1993,14 +1993,14 @@ void M_ChangeCPU(int choice)
         selectedCPU--;
 
         if (selectedCPU == -1)
-            selectedCPU = INTEL_PENTIUM;
+            selectedCPU = NUM_CPU - 1;
         break;
     case 1:
 
         selectedCPU++;
 
         if (selectedCPU == NUM_CPU)
-            selectedCPU = INTEL_386SX;
+            selectedCPU = AUTO_CPU + 1;
         break;
     }
 

@@ -921,17 +921,17 @@ void R_ExecuteSetViewSize(void)
         switch (I_GetCPUModel())
         {
         case 386:
-            selectedCPU = INTEL_386SX;
+            selectedCPU = INTEL_386DX;
             break;
         case 486:
+        case 586:
             selectedCPU = INTEL_486;
             break;
-        case 586:
         case 686:
             selectedCPU = INTEL_PENTIUM;
             break;
         default:
-            selectedCPU = INTEL_386SX;
+            selectedCPU = INTEL_486;
             break;
         }
     }

@@ -222,16 +222,24 @@ void M_ChangeValueFile(unsigned int position, char *token)
             selectedCPU = INTEL_486;
         if (M_CheckValue(token, "pentium"))
             selectedCPU = INTEL_PENTIUM;
+        if (M_CheckValue(token, "pentiumMMX"))
+            selectedCPU = INTEL_PENTIUM_MMX;
         if (M_CheckValue(token, "k5"))
             selectedCPU = AMD_K5;
+        if (M_CheckValue(token, "k6"))
+            selectedCPU = AMD_K6;
         if (M_CheckValue(token, "cy386"))
             selectedCPU = CYRIX_386DLC;
         if (M_CheckValue(token, "cy486"))
             selectedCPU = CYRIX_486;
         if (M_CheckValue(token, "cy5x86"))
             selectedCPU = CYRIX_5X86;
+        if (M_CheckValue(token, "cy6x86"))
+            selectedCPU = CYRIX_6X86;
         if (M_CheckValue(token, "umc486"))
             selectedCPU = UMC_GREEN_486;
+        if (M_CheckValue(token, "winchip"))
+            selectedCPU = IDT_WINCHIP;
 
         R_ExecuteSetViewSize();
         R_SetViewSize(screenblocks, detailLevel);
