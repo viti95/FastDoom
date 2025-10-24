@@ -1929,7 +1929,7 @@ void R_ExecuteSetViewSize(void)
                 colfunc = R_DrawColumnBackbufferFastLEA;
                 break;
             default:
-                colfunc = R_DrawColumnBackbuffer;
+                colfunc = R_DrawColumnBackbufferRoll;
                 break;
             }
             break;

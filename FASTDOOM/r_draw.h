@@ -224,6 +224,8 @@ void R_DrawColumnVBE2Direct(void);
 void R_DrawColumnLowVBE2Direct(void);
 void R_DrawColumnPotatoVBE2Direct(void);
 
+void R_DrawColumnBackbufferRoll(void);
+
 void R_VideoErase(unsigned ofs, int count);
 
 extern int ds_y;

@@ -61,6 +61,8 @@ CODE_SYM_DEF R_PatchLinearHigh
   mov   ebx,[_centery]
   mov   eax,patchCentery+1
   mov   [eax],ebx
+  mov   eax,patchCenteryRoll+1
+  mov   [eax],ebx
 
   mov   ebx,[_columnofs]
   mov   eax,patchColumnofs+2
@@ -259,5 +261,57 @@ patchColumnofs:
 
 MAPLABEL LINE:
   ret
+
+CODE_SYM_DEF R_DrawColumnBackbufferRoll
+  push		edi
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		ebp
+
+  mov  ebp,[_dc_yh]
+  mov  eax,[_dc_yl]
+  mov  edi,[_ylookup+eax*4]
+  sub  ebp,eax         ; ebp = pixel count
+  js   donehr
+
+  mov  ebx,[_dc_x]
+  mov  ecx,[_dc_iscale]
+  add  edi,[_columnofs+ebx*4]
+
+patchCenteryRoll:
+  sub   eax,0x12345678
+  imul  ecx
+  mov   edx,[_dc_texturemid]
+  shl   ecx,9 ; 7 significant bits, 25 frac
+  add   edx,eax
+  mov   esi,[_dc_source]
+  shl   edx,9 ; 7 significant bits, 25 frac
+  mov   eax,[_dc_colormap]
+
+  mov  ebx,edx
+  shr  ebx,25 ; get address of first location
+
+LoopRoll:
+  add  edx,ecx                        ; calculate next location
+  mov  al,[esi+ebx]                   ; get source pixel
+  mov  ebx,edx
+  mov  al,[eax]                       ; translate the color
+  shr  ebx,25
+  mov  [edi],al  ; draw a pixel to the buffer
+  add  edi, SCREENWIDTH
+  dec  ebp
+  jns  LoopRoll
+
+donehr:
+	pop		ebp
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+  pop		edi
+  ret
+
 
 %endif
