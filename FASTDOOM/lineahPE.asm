@@ -134,13 +134,11 @@ patchColumnofs:
         mov   al,[esi+edx]
         mov   bh,ch
         mov   edx,ecx
-        ;shr   ebx,10
-        shr   ebx,4
+        shr   ebx,10
         mov   al,[eax]
-        and   bl, 0xC0
+        shl   ebx,6
+        mov   [edi+PLANE+PCOL],al        
         shr   edx,26
-        mov   [edi+PLANE+PCOL],al
-        ;shl   ebx,6
         or    edx,ebx
         %if LINE < SCREENWIDTH-1
         add   ecx,ebp
