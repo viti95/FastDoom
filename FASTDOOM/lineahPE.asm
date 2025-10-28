@@ -129,7 +129,7 @@ patchColumnofs:
     MAPLABEL LINE:
       %assign LINE LINE+1
       %if LINE = SCREENWIDTH
-        mov   al,[esi+ebx]           ; get source pixel
+        mov   al,[esi+edx]           ; get source pixel
         mov   al,[eax]               ; translate color
         mov   [edi+PLANE+PCOL],al  ; write pixel
       %else
@@ -139,10 +139,10 @@ patchColumnofs:
         ;shr   ebx,10
         shr   ebx,4
         mov   al,[eax]
+        and   bl, 0xC0
         shr   edx,26
         mov   [edi+PLANE+PCOL],al
         ;shl   ebx,6
-        and   bl, 0xC0
         or    edx,ebx
         %if LINE < SCREENWIDTH-1
         add   ecx,ebp
