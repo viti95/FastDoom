@@ -100,7 +100,9 @@ patchColumnofs:
   shr   edx,26
   and   ebx,0xFC0
   add   ecx,ebp
-  or    ebx,edx
+  or    edx,ebx
+
+  xor   ebx,ebx
 
   call    [callpoint]
 
@@ -131,15 +133,17 @@ patchColumnofs:
         mov   al,[eax]               ; translate color
         mov   [edi+PLANE+PCOL],al  ; write pixel
       %else
-        mov   al,[esi+ebx]
-        mov   ebx,ecx
+        mov   al,[esi+edx]
+        mov   bx,cx
         mov   edx,ecx
+        ;shr   ebx,10
         shr   ebx,4
         mov   al,[eax]
         shr   edx,26
-        and   ebx,0xFC0
         mov   [edi+PLANE+PCOL],al
-        or    ebx,edx
+        ;shl   ebx,6
+        and   bl, 0xC0
+        or    edx,ebx
         %if LINE < SCREENWIDTH-1
         add   ecx,ebp
         %endif
