@@ -134,7 +134,7 @@ patchColumnofs:
         mov   [edi+PLANE+PCOL],al  ; write pixel
       %else
         mov   al,[esi+edx]
-        mov   bx,cx
+        mov   bh,ch
         mov   edx,ecx
         ;shr   ebx,10
         shr   ebx,4
