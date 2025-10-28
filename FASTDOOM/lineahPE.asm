@@ -102,8 +102,6 @@ patchColumnofs:
   add   ecx,ebp
   or    edx,ebx
 
-  xor   ebx,ebx
-
   call    [callpoint]
 
   mov     ebx,[returnpoint]
