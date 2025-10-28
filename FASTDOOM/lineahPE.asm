@@ -100,7 +100,7 @@ patchColumnofs:
   shr   edx,26
   and   ebx,0xFC0
   add   ecx,ebp
-  or    ebx,edx
+  or    edx,ebx
 
   call    [callpoint]
 
@@ -127,19 +127,19 @@ patchColumnofs:
     MAPLABEL LINE:
       %assign LINE LINE+1
       %if LINE = SCREENWIDTH
-        mov   al,[esi+ebx]           ; get source pixel
+        mov   al,[esi+edx]           ; get source pixel
         mov   al,[eax]               ; translate color
         mov   [edi+PLANE+PCOL],al  ; write pixel
       %else
-        mov   al,[esi+ebx]
-        mov   ebx,ecx
+        mov   al,[esi+edx]
+        mov   bh,ch
         mov   edx,ecx
-        shr   ebx,4
+        shr   ebx,10
         mov   al,[eax]
+        shl   ebx,6
+        mov   [edi+PLANE+PCOL],al        
         shr   edx,26
-        and   ebx,0xFC0
-        mov   [edi+PLANE+PCOL],al
-        or    ebx,edx
+        or    edx,ebx
         %if LINE < SCREENWIDTH-1
         add   ecx,ebp
         %endif
