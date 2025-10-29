@@ -69,7 +69,7 @@ CODE_SYM_DEF R_DrawSpanPotatoVBE2Pentium
   shr   edx,26
   and   ebx,0xFC0
   add   ecx,ebp
-  or    ebx,edx
+  or    edx,ebx
 
   ; feed the pipeline and jump in
   call  [callpoint]
@@ -99,23 +99,23 @@ CODE_SYM_DEF R_DrawSpanPotatoVBE2Pentium
     MAPLABEL LINE:
       %assign LINE LINE+1
       %if LINE = SCREENWIDTH/4
-        mov   al,[esi+ebx]           ; get source pixel
+        mov   al,[esi+edx]           ; get source pixel
         mov   al,[eax]               ; translate color
         mov   ah,al
         mov   [edi+PLANE+PCOL*4],ax  ; write pixel
         mov   [edi+PLANE+PCOL*4+2],ax  ; write pixel
       %else
-        mov   al,[esi+ebx]           ; get source pixel
-        mov   ebx,ecx
+        mov   al,[esi+edx]           ; get source pixel
+        mov   bh,ch
         mov   dl,[eax]               ; translate color
-        shr   ebx,4
+        shr   ebx,10
         mov   dh,dl
-        and   ebx,0xFC0
+        shl   ebx,6
         mov   [edi+PLANE+PCOL*4],dx  ; write pixel        
         mov   [edi+PLANE+PCOL*4+2],dx  ; write pixel
         mov   edx,ecx
         shr   edx,26
-        or    ebx,edx
+        or    edx,ebx
         %if LINE < (SCREENWIDTH/4)-1
         add   ecx,ebp
         %endif
