@@ -522,6 +522,7 @@ void VBE2_InitGraphics(void)
             case INTEL_PENTIUM:
               finishfunc = I_FinishUpdate8bppLinearFPU;
               break;
+            case RISE_MP6:
             case INTEL_PENTIUM_MMX:
               finishfunc = I_FinishUpdate8bppLinearMMX;
               break;

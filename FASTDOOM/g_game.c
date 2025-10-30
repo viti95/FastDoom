@@ -1486,8 +1486,12 @@ void G_SaveCSVResult(unsigned int gametics, unsigned int realtics, unsigned int 
         case AMD_K6:
             fprintf(logFile, "k6");
             break;
+        case RISE_MP6:
+            fprintf(logFile, "mp6");
+            break;
         case IDT_WINCHIP:
             fprintf(logFile, "winchip");
+            break;
         }
 
         fprintf(logFile, CSV_COLUMN);

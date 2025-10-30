@@ -1485,6 +1485,9 @@ void M_DrawDisplayItem(int item, int position)
         case IDT_WINCHIP:
             M_WriteText(214, y, "IDT WINCHIP");
             break;
+        case RISE_MP6:
+            M_WriteText(214, y, "RISE MP6");
+            break;
         }
         break;
     case uncapped_fps:
@@ -1665,6 +1668,9 @@ void M_DrawDisplayItem(int item, int position)
             break;
         case IDT_WINCHIP:
             V_WriteTextDirect(M_X2, y, "IDT WINCHIP");
+            break;
+        case RISE_MP6:
+            V_WriteTextDirect(M_X2, y, "RISE MP6");
             break;
         }
         break;

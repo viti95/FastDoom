@@ -240,6 +240,8 @@ void M_ChangeValueFile(unsigned int position, char *token)
             selectedCPU = UMC_GREEN_486;
         if (M_CheckValue(token, "winchip"))
             selectedCPU = IDT_WINCHIP;
+        if (M_CheckValue(token, "mp6"))
+            selectedCPU = RISE_MP6;
 
         R_ExecuteSetViewSize();
         R_SetViewSize(screenblocks, detailLevel);

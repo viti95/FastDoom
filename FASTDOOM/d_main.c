@@ -1701,6 +1701,7 @@ void D_DoomMain(void)
     M_CheckParmOptionalValue("-k6", &selectedCPU, AMD_K6);
     M_CheckParmOptionalValue("-pentium", &selectedCPU, INTEL_PENTIUM);
     M_CheckParmOptionalValue("-pentiumMMX", &selectedCPU, INTEL_PENTIUM_MMX);
+    M_CheckParmOptionalValue("-mp6", &selectedCPU, RISE_MP6);
     M_CheckParmOptionalValue("-winchip", &selectedCPU, IDT_WINCHIP);
     M_CheckParmOptionalValue("-fps", &showFPS, SCREEN_FPS);
     M_CheckParmOptionalValue("-debugCard2", &showFPS, DEBUG_CARD_2D_FPS);

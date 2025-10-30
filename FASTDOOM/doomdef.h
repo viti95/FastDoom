@@ -421,6 +421,7 @@ typedef enum
     CYRIX_6X86,
     AMD_K6,
     IDT_WINCHIP,
+    RISE_MP6,
     NUM_CPU
 } cpu_t;
 
