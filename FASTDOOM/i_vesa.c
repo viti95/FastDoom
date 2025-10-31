@@ -519,6 +519,7 @@ void VBE2_InitGraphics(void)
           finishfunc = I_FinishUpdate8bppLinearFix;
         } else {
           switch(selectedCPU) {
+            case CYRIX_6X86:
             case INTEL_PENTIUM:
               finishfunc = I_FinishUpdate8bppLinearFPU;
               break;

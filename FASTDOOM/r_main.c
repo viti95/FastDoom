@@ -1421,6 +1421,7 @@ void R_ExecuteSetViewSize(void)
             {
             case UMC_GREEN_486:
             case CYRIX_5X86:
+            case CYRIX_6X86:
             case AMD_K5:
             case RISE_MP6:
                 colfunc = R_DrawColumnFastLEA;
@@ -1443,6 +1444,7 @@ void R_ExecuteSetViewSize(void)
             {
             case UMC_GREEN_486:
             case CYRIX_5X86:
+            case CYRIX_6X86:
             case AMD_K5:
             case RISE_MP6:
                 spritefunc = basespritefunc = R_DrawColumnFastLEA;
@@ -1472,6 +1474,7 @@ void R_ExecuteSetViewSize(void)
                 {
                 case UMC_GREEN_486:
                 case CYRIX_5X86:
+                case CYRIX_6X86:
                 case AMD_K5:
                 case RISE_MP6:
                     pspritefunc = basepspritefunc = R_DrawColumnFastLEA;
@@ -1486,6 +1489,7 @@ void R_ExecuteSetViewSize(void)
             {
             case UMC_GREEN_486:
             case CYRIX_5X86:
+            case CYRIX_6X86:
             case AMD_K5:
             case RISE_MP6:
                 pspritefunc = basepspritefunc = R_DrawColumnFastLEA;
@@ -1546,6 +1550,7 @@ void R_ExecuteSetViewSize(void)
             {
             case UMC_GREEN_486:
             case CYRIX_5X86:
+            case CYRIX_6X86:
             case AMD_K5:
             case RISE_MP6:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
@@ -1592,6 +1597,7 @@ void R_ExecuteSetViewSize(void)
             {
             case UMC_GREEN_486:
             case CYRIX_5X86:
+            case CYRIX_6X86:
             case AMD_K5:
             case RISE_MP6:
                 colfunc = R_DrawColumnLowFastLEA;
@@ -1614,6 +1620,7 @@ void R_ExecuteSetViewSize(void)
             {
             case UMC_GREEN_486:
             case CYRIX_5X86:
+            case CYRIX_6X86:
             case AMD_K5:
             case RISE_MP6:
                 spritefunc = basespritefunc = R_DrawColumnLowFastLEA;
@@ -1643,6 +1650,7 @@ void R_ExecuteSetViewSize(void)
                 {
                 case UMC_GREEN_486:
                 case CYRIX_5X86:
+                case CYRIX_6X86:
                 case AMD_K5:
                 case RISE_MP6:
                     pspritefunc = basepspritefunc = R_DrawColumnLowFastLEA;
@@ -1657,6 +1665,7 @@ void R_ExecuteSetViewSize(void)
             {
             case UMC_GREEN_486:
             case CYRIX_5X86:
+            case CYRIX_6X86:
             case AMD_K5:
             case RISE_MP6:
                 pspritefunc = basepspritefunc = R_DrawColumnLowFastLEA;
@@ -1717,6 +1726,7 @@ void R_ExecuteSetViewSize(void)
             {
             case UMC_GREEN_486:
             case CYRIX_5X86:
+            case CYRIX_6X86:
             case AMD_K5:
             case RISE_MP6:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
@@ -1764,6 +1774,7 @@ void R_ExecuteSetViewSize(void)
             {
             case UMC_GREEN_486:
             case CYRIX_5X86:
+            case CYRIX_6X86:
             case AMD_K5:
             case RISE_MP6:
                 colfunc = R_DrawColumnPotatoFastLEA;
@@ -1786,6 +1797,7 @@ void R_ExecuteSetViewSize(void)
             {
             case UMC_GREEN_486:
             case CYRIX_5X86:
+            case CYRIX_6X86:
             case AMD_K5:
             case RISE_MP6:
                 spritefunc = basespritefunc = R_DrawColumnPotatoFastLEA;
@@ -1815,6 +1827,7 @@ void R_ExecuteSetViewSize(void)
                 {
                 case UMC_GREEN_486:
                 case CYRIX_5X86:
+                case CYRIX_6X86:
                 case AMD_K5:
                 case RISE_MP6:
                     pspritefunc = basepspritefunc = R_DrawColumnPotatoFastLEA;
@@ -1829,6 +1842,7 @@ void R_ExecuteSetViewSize(void)
             {
             case UMC_GREEN_486:
             case CYRIX_5X86:
+            case CYRIX_6X86:
             case AMD_K5:
             case RISE_MP6:
                 pspritefunc = basepspritefunc = R_DrawColumnPotatoFastLEA;
@@ -1889,6 +1903,7 @@ void R_ExecuteSetViewSize(void)
             {
             case UMC_GREEN_486:
             case CYRIX_5X86:
+            case CYRIX_6X86:
             case AMD_K5:
             case RISE_MP6:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
@@ -1940,6 +1955,7 @@ void R_ExecuteSetViewSize(void)
             {
             case UMC_GREEN_486:
             case CYRIX_5X86:
+            case CYRIX_6X86:
             case AMD_K5:
             case RISE_MP6:
                 colfunc = R_DrawColumnBackbufferFastLEA;
@@ -1962,6 +1978,7 @@ void R_ExecuteSetViewSize(void)
             {
             case UMC_GREEN_486:
             case CYRIX_5X86:
+            case CYRIX_6X86:
             case AMD_K5:
             case RISE_MP6:
                 spritefunc = basespritefunc = R_DrawColumnBackbufferFastLEA;
@@ -1991,6 +2008,7 @@ void R_ExecuteSetViewSize(void)
                 {
                 case UMC_GREEN_486:
                 case CYRIX_5X86:
+                case CYRIX_6X86:
                 case AMD_K5:
                 case RISE_MP6:
                     pspritefunc = basepspritefunc = R_DrawColumnBackbufferFastLEA;
@@ -2005,6 +2023,7 @@ void R_ExecuteSetViewSize(void)
             {
             case UMC_GREEN_486:
             case CYRIX_5X86:
+            case CYRIX_6X86:
             case AMD_K5:
             case RISE_MP6:
                 pspritefunc = basepspritefunc = R_DrawColumnBackbufferFastLEA;
@@ -2066,6 +2085,7 @@ void R_ExecuteSetViewSize(void)
             {
             case UMC_GREEN_486:
             case CYRIX_5X86:
+            case CYRIX_6X86:
             case AMD_K5:
             case RISE_MP6:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
@@ -2112,6 +2132,7 @@ void R_ExecuteSetViewSize(void)
             {
             case UMC_GREEN_486:
             case CYRIX_5X86:
+            case CYRIX_6X86:
             case AMD_K5:
             case RISE_MP6:
                 colfunc = R_DrawColumnLowBackbufferFastLEA;
@@ -2134,6 +2155,7 @@ void R_ExecuteSetViewSize(void)
             {
             case UMC_GREEN_486:
             case CYRIX_5X86:
+            case CYRIX_6X86:
             case AMD_K5:
             case RISE_MP6:
                 spritefunc = basespritefunc = R_DrawColumnLowBackbufferFastLEA;
@@ -2163,6 +2185,7 @@ void R_ExecuteSetViewSize(void)
                 {
                 case UMC_GREEN_486:
                 case CYRIX_5X86:
+                case CYRIX_6X86:
                 case AMD_K5:
                 case RISE_MP6:
                     pspritefunc = basepspritefunc = R_DrawColumnLowBackbufferFastLEA;
@@ -2177,6 +2200,7 @@ void R_ExecuteSetViewSize(void)
             {
             case UMC_GREEN_486:
             case CYRIX_5X86:
+            case CYRIX_6X86:
             case AMD_K5:
             case RISE_MP6:
                 pspritefunc = basepspritefunc = R_DrawColumnLowBackbufferFastLEA;
@@ -2238,6 +2262,7 @@ void R_ExecuteSetViewSize(void)
             {
             case UMC_GREEN_486:
             case CYRIX_5X86:
+            case CYRIX_6X86:
             case AMD_K5:
             case RISE_MP6:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
