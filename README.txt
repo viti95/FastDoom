@@ -223,8 +223,13 @@
  -386dx => Use Intel 386DX codepath
  -386sx => Use Intel 386SX codepath
  -cy5x86 => Use Cyrix 5x86 codepath
+ -cy6x86 => Use Cyrix 6x86 codepath
  -k5 => Use AMD K5 codepath
+ -k6 => Use AMD K6 codepath
+ -mp6 => Use Rise mP6 codepath
+ -winchip => Use IDT Winchip codepath
  -pentium => Use Intel Pentium codepath
+ -pentiumMMX => Use Intel Pentium MMX codepath
  -limitram 32768 => Limit maximum memory to 32MB
  -freeram 128 => Leaves 128 KB free
  -uncapped => Enable uncapped FPS mode (>35 fps)
@@ -263,6 +268,11 @@
    compared to older ones. Use the '-pagefix' option to fix this.
  * VBE2 Direct modes (fdm***d.exe and fdoomvbd.exe) do not support 15-bit,
    16-bit, 24-bit, or 32-bit video modes.
+ * Some backbuffered high resolution modes suffer from very slow 
+   performance on AMD K6 and Cyrix 6x86 CPUs when close to walls.
+   This is due to the way the Doom engine renders the scene — wall 
+   rendering is not cache friendly. It’s better to use VBE2 Direct modes
+   on these CPUs for more consistent performance.
 
  PCM music format
  ----------------
