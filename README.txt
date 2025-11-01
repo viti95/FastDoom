@@ -270,7 +270,7 @@
    16-bit, 24-bit, or 32-bit video modes.
  * Some backbuffered high resolution modes suffer from very slow 
    performance on AMD K6 and Cyrix 6x86 CPUs when close to walls.
-   This is due to the way the Doom engine renders the scene — wall 
+   This is due to the way the Doom engine renders the scene, wall 
    rendering is not cache friendly. It’s better to use VBE2 Direct modes
    on these CPUs for more consistent performance.
 
