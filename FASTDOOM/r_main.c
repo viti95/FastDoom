@@ -1950,7 +1950,7 @@ void R_ExecuteSetViewSize(void)
                 spritefunc = basespritefunc = R_DrawColumnBackbufferFastLEA;
                 break;
             default:
-                spritefunc = basespritefunc = R_DrawColumnBackbuffer;
+                spritefunc = basespritefunc = R_DrawColumnBackbufferRoll;
                 break;
             }
             break;
@@ -1978,7 +1978,7 @@ void R_ExecuteSetViewSize(void)
                     pspritefunc = basepspritefunc = R_DrawColumnBackbufferFastLEA;
                     break;
                 default:
-                    pspritefunc = basepspritefunc = R_DrawColumnBackbuffer;
+                    pspritefunc = basepspritefunc = R_DrawColumnBackbufferRoll;
                     break;
                 }
             }
@@ -1991,7 +1991,7 @@ void R_ExecuteSetViewSize(void)
                 pspritefunc = basepspritefunc = R_DrawColumnBackbufferFastLEA;
                 break;
             default:
-                pspritefunc = basepspritefunc = R_DrawColumnBackbuffer;
+                pspritefunc = basepspritefunc = R_DrawColumnBackbufferRoll;
                 break;
             }
 #endif
@@ -2058,7 +2058,7 @@ void R_ExecuteSetViewSize(void)
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnBackbufferSkyFullDirect : R_DrawColumnBackbuffer;
 #else
-                skyfunc = R_DrawColumnBackbuffer;
+                skyfunc = R_DrawColumnBackbufferRoll;
 #endif
                 break;
             }
