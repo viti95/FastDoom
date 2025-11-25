@@ -373,9 +373,8 @@ donehr:
 
 SinglePixel:
 
-  mov  ebx,edx
-  shr  ebx,25 ; get address of first location
-  mov  al,[esi+ebx]                   ; get source pixel
+  shr  edx,25 ; get address of first location
+  mov  al,[esi+edx]                   ; get source pixel
   mov  al,[eax]                       ; translate the color
   mov  [edi],al  ; draw a pixel to the buffer
 
