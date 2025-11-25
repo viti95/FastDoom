@@ -349,13 +349,13 @@ LoopMMX:
 
   mov  cl,[edx]
 
-  mov  [edi], al
+  mov  [edi+SCREENWIDTH], al
 
   mov  cl,[ecx]
 
   paddd      mm3, mm4
 
-  mov  [edi+SCREENWIDTH], cl
+  mov  [edi], cl
 
   add  edi, 2*SCREENWIDTH
 
