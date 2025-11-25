@@ -310,20 +310,20 @@ Even:
   
   pxor       mm4, mm4
 
-  ;movd       mm0, eax
   movd       mm1, esi
-  ;movd       mm2, edi
   movd       mm3, edx
   movd       mm4, ecx
 
   mov        ecx, eax
 
-  ;punpckldq  mm0, mm0
-  punpckldq  mm1, mm1
-  ;punpckldq  mm2, mm2
-  punpckldq  mm3, mm3
-
   paddd      mm3, mm4
+
+  psllq      mm3, 32
+
+  movd       mm3, edx
+
+  punpckldq  mm1, mm1
+  punpckldq  mm3, mm3
 
   punpckldq  mm4, mm4
 
@@ -349,13 +349,13 @@ LoopMMX:
 
   mov  cl,[edx]
 
-  mov  [edi+SCREENWIDTH], al
+  mov  [edi], al
 
   mov  cl,[ecx]
 
   paddd      mm3, mm4
 
-  mov  [edi], cl
+  mov  [edi+SCREENWIDTH], cl
 
   add  edi, 2*SCREENWIDTH
 
