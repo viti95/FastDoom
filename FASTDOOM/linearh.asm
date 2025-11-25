@@ -290,19 +290,77 @@ patchCenteryRoll:
   shl   edx,9 ; 7 significant bits, 25 frac
   mov   eax,[_dc_colormap]
 
+  cmp   ebp, 1
+  je    SinglePixel
+
+  test  ebp,1
+  jne   Even
+
   mov  ebx,edx
   shr  ebx,25 ; get address of first location
-
-LoopRoll:
-  add  edx,ecx                        ; calculate next location
+  add  edx,ecx
   mov  al,[esi+ebx]                   ; get source pixel
-  mov  ebx,edx
   mov  al,[eax]                       ; translate the color
-  shr  ebx,25
   mov  [edi],al  ; draw a pixel to the buffer
-  add  edi, SCREENWIDTH
+
   dec  ebp
-  jns  LoopRoll
+
+  ; MMX 2 pixels render
+Even:
+  
+  pxor       mm4, mm4
+
+  ;movd       mm0, eax
+  movd       mm1, esi
+  ;movd       mm2, edi
+  movd       mm3, edx
+  movd       mm4, ecx
+
+  mov        ecx, eax
+
+  ;punpckldq  mm0, mm0
+  punpckldq  mm1, mm1
+  ;punpckldq  mm2, mm2
+  punpckldq  mm3, mm3
+
+  paddd      mm3, mm4
+
+  punpckldq  mm4, mm4
+
+  paddd      mm4, mm4
+
+LoopMMX:
+
+  movq       mm5, mm3
+
+  psrld      mm5, 25
+
+  paddd      mm5, mm1
+
+  movd       ebx, mm5
+
+  psrlq      mm5,32
+
+  mov  al,[ebx]
+
+  movd       edx, mm5
+
+  mov  al,[eax]
+
+  mov  cl,[edx]
+
+  mov  [edi], al
+
+  mov  cl,[ecx]
+
+  paddd      mm3, mm4
+
+  mov  [edi+SCREENWIDTH], cl
+
+  add  edi, 2*SCREENWIDTH
+
+  sub  ebp, 2
+  jns  LoopMMX
 
 donehr:
 	pop		ebp
@@ -312,6 +370,16 @@ donehr:
 	pop		ebx
   pop		edi
   ret
+
+SinglePixel:
+
+  mov  ebx,edx
+  shr  ebx,25 ; get address of first location
+  mov  al,[esi+ebx]                   ; get source pixel
+  mov  al,[eax]                       ; translate the color
+  mov  [edi],al  ; draw a pixel to the buffer
+
+  jmp  donehr
 
 
 %endif
