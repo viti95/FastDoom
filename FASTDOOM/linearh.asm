@@ -308,28 +308,24 @@ patchCenteryRoll:
   
   ; MMX 2 pixels render
 Even:
-  
-  pxor       mm4, mm4
 
-  movd       mm1, esi
   movd       mm3, edx
+  
   movd       mm4, ecx
 
   mov        ecx, eax
 
   paddd      mm3, mm4
 
+  punpckldq  mm4, mm4
+
   psllq      mm3, 32
 
   movd       mm2, edx
 
-  por        mm3, mm2
-
-  punpckldq  mm1, mm1
-
-  punpckldq  mm4, mm4
-
   paddd      mm4, mm4
+
+  por        mm3, mm2
 
 LoopMMX:
 
@@ -337,19 +333,17 @@ LoopMMX:
 
   psrld      mm5, 25
 
-  paddd      mm5, mm1
-
   movd       ebx, mm5
 
   psrlq      mm5,32
 
-  mov  al,[ebx]
+  mov  al,[ebx+esi]
 
   movd       edx, mm5
 
   mov  al,[eax]
 
-  mov  cl,[edx]
+  mov  cl,[edx+esi]
 
   mov  [edi], al
 
