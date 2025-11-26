@@ -321,10 +321,11 @@ Even:
 
   psllq      mm3, 32
 
-  movd       mm3, edx
+  movd       mm2, edx
+
+  por        mm3, mm2
 
   punpckldq  mm1, mm1
-  punpckldq  mm3, mm3
 
   punpckldq  mm4, mm4
 
