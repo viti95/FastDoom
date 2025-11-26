@@ -290,7 +290,7 @@ patchCenteryRoll:
   shl   edx,9 ; 7 significant bits, 25 frac
   mov   eax,[_dc_colormap]
 
-  cmp   ebp, 1
+  cmp   ebp, 0
   je    SinglePixel
 
   test  ebp,1
@@ -303,6 +303,7 @@ patchCenteryRoll:
   mov  al,[eax]                       ; translate the color
   mov  [edi],al  ; draw a pixel to the buffer
 
+  add  edi, SCREENWIDTH
   dec  ebp
 
   ; MMX 2 pixels render
