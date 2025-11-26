@@ -294,7 +294,7 @@ patchCenteryRoll:
   je    SinglePixel
 
   test  ebp,1
-  jz   Even
+  jnz   Even
 
   mov  ebx,edx
   shr  ebx,25 ; get address of first location
