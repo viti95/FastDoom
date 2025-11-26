@@ -375,11 +375,16 @@ donehr:
 SinglePixel:
 
   shr  edx,25 ; get address of first location
+  pop		ebp
   mov  al,[esi+edx]                   ; get source pixel
+  pop		esi
+  pop		edx
   mov  al,[eax]                       ; translate the color
+  pop		ecx
+	pop		ebx
   mov  [edi],al  ; draw a pixel to the buffer
-
-  jmp  donehr
+  pop		edi
+  ret
 
 
 %endif
