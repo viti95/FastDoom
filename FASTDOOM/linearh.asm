@@ -298,14 +298,14 @@ patchCenteryRoll:
 
   mov  ebx,edx
   shr  ebx,25 ; get address of first location
-  add  edx,ecx
   mov  al,[esi+ebx]                   ; get source pixel
+  add  edx,ecx
   mov  al,[eax]                       ; translate the color
+  dec  ebp
   mov  [edi],al  ; draw a pixel to the buffer
 
   add  edi, SCREENWIDTH
-  dec  ebp
-
+  
   ; MMX 2 pixels render
 Even:
   
