@@ -309,8 +309,6 @@ patchCenteryRoll:
   ; MMX 2 pixels render
 Even:
   
-  pxor       mm4, mm4
-
   movd       mm1, esi
   movd       mm3, edx
   movd       mm4, ecx
