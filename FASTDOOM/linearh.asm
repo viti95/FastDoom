@@ -262,6 +262,7 @@ patchColumnofs:
 MAPLABEL LINE:
   ret
 
+; The MMX column renderer is faster on Pentium MMX and Rise mP6 cpus
 CODE_SYM_DEF R_DrawColumnBackbufferRoll
   push		edi
 	push		ebx
