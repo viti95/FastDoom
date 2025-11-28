@@ -1976,6 +1976,9 @@ void R_ExecuteSetViewSize(void)
             case RISE_MP6:
                 colfunc = R_DrawColumnBackbufferFastLEA;
                 break;
+            case INTEL_PENTIUM_MMX:
+                colfunc = R_DrawColumnBackbufferMMX;
+                break;
             default:
                 colfunc = R_DrawColumnBackbuffer;
                 break;
@@ -1999,6 +2002,9 @@ void R_ExecuteSetViewSize(void)
             case AMD_K6:
             case RISE_MP6:
                 spritefunc = basespritefunc = R_DrawColumnBackbufferFastLEA;
+                break;
+            case INTEL_PENTIUM_MMX:
+                spritefunc = basespritefunc = R_DrawColumnBackbufferMMX;
                 break;
             default:
                 spritefunc = basespritefunc = R_DrawColumnBackbuffer;
@@ -2031,6 +2037,9 @@ void R_ExecuteSetViewSize(void)
                 case RISE_MP6:
                     pspritefunc = basepspritefunc = R_DrawColumnBackbufferFastLEA;
                     break;
+                case INTEL_PENTIUM_MMX:
+                    pspritefunc = basepspritefunc = R_DrawColumnBackbufferMMX;
+                    break;
                 default:
                     pspritefunc = basepspritefunc = R_DrawColumnBackbuffer;
                     break;
@@ -2046,6 +2055,9 @@ void R_ExecuteSetViewSize(void)
             case AMD_K6:
             case RISE_MP6:
                 pspritefunc = basepspritefunc = R_DrawColumnBackbufferFastLEA;
+                break;
+            case INTEL_PENTIUM_MMX:
+                pspritefunc = basepspritefunc = R_DrawColumnBackbufferMMX;
                 break;
             default:
                 pspritefunc = basepspritefunc = R_DrawColumnBackbuffer;
@@ -2111,6 +2123,13 @@ void R_ExecuteSetViewSize(void)
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnBackbufferSkyFullDirect : R_DrawColumnBackbufferFastLEA;
 #else
                 skyfunc = R_DrawColumnBackbufferFastLEA;
+#endif
+                break;
+            case INTEL_PENTIUM_MMX:
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnBackbufferSkyFullDirect : R_DrawColumnBackbufferMMX;
+#else
+                skyfunc = R_DrawColumnBackbufferMMX;
 #endif
                 break;
             default:

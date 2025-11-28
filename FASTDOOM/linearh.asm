@@ -61,6 +61,8 @@ CODE_SYM_DEF R_PatchLinearHigh
   mov   ebx,[_centery]
   mov   eax,patchCentery+1
   mov   [eax],ebx
+  mov   eax,patchCenteryMMX+1
+  mov   [eax],ebx
 
   mov   ebx,[_columnofs]
   mov   eax,patchColumnofs+2
@@ -258,6 +260,125 @@ patchColumnofs:
 %endrep
 
 MAPLABEL LINE:
+  ret
+
+CODE_SYM_DEF R_DrawColumnBackbufferMMX
+  push		edi
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		ebp
+
+  mov  ebp,[_dc_yh]
+  mov  eax,[_dc_yl]
+  mov  edi,[_ylookup+eax*4]
+  sub  ebp,eax         ; ebp = pixel count
+  js   donehm
+
+  mov  ebx,[_dc_x]
+  mov  ecx,[_dc_iscale]
+  add  edi,[_columnofs+ebx*4]
+
+patchCenteryMMX:
+  sub   eax,0x12345678
+  imul  ecx
+  mov   edx,[_dc_texturemid]
+  shl   ecx,9 ; 7 significant bits, 25 frac
+  add   edx,eax
+  mov   esi,[_dc_source]
+  shl   edx,9 ; 7 significant bits, 25 frac
+  mov   eax,[_dc_colormap]
+
+  cmp   ebp, 0
+  je    SinglePixel
+
+  test  ebp,1
+  jnz   Even
+
+  mov  ebx,edx
+  shr  ebx,25 ; get address of first location
+  mov  al,[esi+ebx]                   ; get source pixel
+  add  edx,ecx
+  mov  al,[eax]                       ; translate the color
+  dec  ebp
+  mov  [edi],al  ; draw a pixel to the buffer
+
+  add  edi, SCREENWIDTH
+  
+  ; MMX 2 pixels render
+Even:
+
+  movd       mm3, edx
+  
+  movd       mm4, ecx
+
+  mov        ecx, eax
+
+  paddd      mm3, mm4
+
+  punpckldq  mm4, mm4
+
+  psllq      mm3, 32
+
+  movd       mm2, edx
+
+  paddd      mm4, mm4
+
+  por        mm3, mm2
+
+LoopMMX:
+
+  movq       mm5, mm3
+
+  psrld      mm5, 25
+
+  movd       ebx, mm5
+
+  psrlq      mm5,32
+
+  mov  al,[ebx+esi]
+
+  movd       edx, mm5
+
+  mov  al,[eax]
+
+  mov  cl,[edx+esi]
+
+  mov  [edi], al
+
+  mov  cl,[ecx]
+
+  paddd      mm3, mm4
+
+  mov  [edi+SCREENWIDTH], cl
+
+  add  edi, 2*SCREENWIDTH
+
+  sub  ebp, 2
+  jns  LoopMMX
+
+donehm:
+	pop		ebp
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+  pop		edi
+  ret
+
+SinglePixel:
+
+  shr  edx,25 ; get address of first location
+  pop		ebp
+  mov  al,[esi+edx]                   ; get source pixel
+  pop		esi
+  pop		edx
+  mov  al,[eax]                       ; translate the color
+  pop		ecx
+	pop		ebx
+  mov  [edi],al  ; draw a pixel to the buffer
+  pop		edi
   ret
 
 %endif
