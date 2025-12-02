@@ -466,14 +466,14 @@ LoopSpanMMX:
   movd  ecx, mm2
 
   mov  al,[esi+ecx]                   ; get source pixel
-  mov  dh,[eax]
+  mov  dl,[eax]
 
   psrlq mm2,32
 
   movd  ecx, mm2
 
   mov  bl,[esi+ecx]                   ; get source pixel
-  mov  dl,[ebx]
+  mov  dh,[ebx]
 
   mov  [edi],dx
 
