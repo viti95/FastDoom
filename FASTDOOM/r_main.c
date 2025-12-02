@@ -2080,10 +2080,12 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case INTEL_PENTIUM:
-            case INTEL_PENTIUM_MMX:
             case IDT_WINCHIP:
             case CYRIX_6X86:
                 spanfunc = R_DrawSpanBackbufferPentium;
+                break;
+            case INTEL_PENTIUM_MMX:
+                spanfunc = R_DrawSpanBackbufferMMX;
                 break;
             default:
                 spanfunc = R_DrawSpanBackbuffer;

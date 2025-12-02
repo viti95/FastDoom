@@ -71,6 +71,7 @@ void R_DrawColumnLow(void);
 void R_DrawColumnLowDirect(void);
 
 void R_DrawColumnBackbufferMMX(void);
+void R_DrawSpanBackbufferMMX(void);
 
 void R_DrawColumnSkyFullDirect(void);
 void R_DrawColumnLowSkyFullDirect(void);

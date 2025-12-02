@@ -67,6 +67,8 @@ CODE_SYM_DEF R_PatchLinearHigh
   mov   ebx,[_columnofs]
   mov   eax,patchColumnofs+2
   mov   [eax],ebx
+  mov   eax,patchColumnofsMMX+2
+  mov   [eax],ebx
 
   pop   ebx
   ret
@@ -379,6 +381,123 @@ SinglePixel:
 	pop		ebx
   mov  [edi],al  ; draw a pixel to the buffer
   pop		edi
+  ret
+
+CODE_SYM_DEF R_DrawSpanBackbufferMMX
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		edi
+	push		ebp
+
+  mov     eax,[_ds_x1]
+  mov     ebp,[_ds_x2]
+  mov     ecx,[_ds_frac]        ; build composite position
+  mov     edx,[_ds_step]        ; build composite step
+  mov     esi,[_ds_source]
+  mov     edi,[_ds_y]
+
+  sub     ebp, eax              ; EBP tiene el numero de pixels
+
+  mov     edi,[_ylookup+edi*4]
+  
+
+patchColumnofsMMX:
+  add     edi,0x12345678
+
+  add     edi,eax
+
+  mov     eax,[_ds_colormap]
+
+  ; feed the pipeline and jump in
+
+  shld    ebx,ecx,22  ; shift y units in
+  ;mov     ebp,0x0FFF  ; used to mask off slop high bits from position
+  shld    ebx,ecx,6   ; shift x units in
+  and     ebx,0x0FFF     ; mask off slop bits
+  add     ecx,edx
+
+  cmp   ebp, 0
+  je    SinglePixelSpan
+
+  test  ebp,1
+  jnz   EvenSpan
+
+  mov  al,[esi+ebx]                   ; get source pixel
+  mov  al,[eax]
+  mov  [edi],al
+
+  dec   ebp
+  inc   edi
+
+  mov   ebx, eax
+
+  ; MMX 2 pixels render
+EvenSpan:
+
+  movd  mm0, ecx
+  movd  mm1, edx
+  paddd mm0,mm1
+  psllq mm0, 32
+  movd  mm5, ecx
+  por   mm0, mm5
+  mov   ecx, 0x003F003F
+  movd  mm4, ecx
+  punpckldq mm1, mm1
+  punpckldq mm4, mm4
+  paddd mm1,mm1
+
+  
+LoopSpanMMX:
+
+  movq  mm2, mm0
+  psrlw mm2, 10
+  movq  mm3, mm2
+  psrld mm3, 10
+  pand  mm2, mm4
+  por   mm2, mm3
+
+  paddd mm0, mm1
+
+  movd  ecx, mm2
+
+  mov  al,[esi+ecx]                   ; get source pixel
+  mov  dh,[eax]
+
+  psllq mm2,32
+  movd  ecx, mm2
+
+  mov  bl,[esi+ecx]                   ; get source pixel
+  mov  dl,[ebx]
+
+  mov  [edi],dx
+
+  add  edi, 2
+
+  sub  ebp, 2
+  jns  LoopSpanMMX
+
+	pop		ebp
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+  ret
+; R_DrawSpanBackbuffer ends
+
+SinglePixelSpan:
+
+  mov  al,[esi+ebx]                   ; get source pixel
+  pop		ebp
+  mov  al,[eax]
+  mov  [edi],al	
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
   ret
 
 %endif
