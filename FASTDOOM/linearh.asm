@@ -67,7 +67,7 @@ CODE_SYM_DEF R_PatchLinearHigh
   mov   ebx,[_columnofs]
   mov   eax,patchColumnofs+2
   mov   [eax],ebx
-  mov   eax,patchColumnofsMMX+2
+  mov   eax,patchColumnofsMMX+3
   mov   [eax],ebx
 
   pop   ebx
@@ -404,9 +404,7 @@ CODE_SYM_DEF R_DrawSpanBackbufferMMX
   
 
 patchColumnofsMMX:
-  add     edi,0x12345678
-
-  add     edi,eax
+  lea     edi,[edi+eax+0x12345678]
 
   mov     eax,[_ds_colormap]
 
