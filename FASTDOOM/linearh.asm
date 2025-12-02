@@ -394,7 +394,6 @@ CODE_SYM_DEF R_DrawSpanBackbufferMMX
   mov     eax,[_ds_x1]
   mov     ebp,[_ds_x2]
   mov     ecx,[_ds_frac]        ; build composite position
-  mov     edx,[_ds_step]        ; build composite step
   mov     esi,[_ds_source]
   mov     edi,[_ds_y]
 
@@ -402,19 +401,18 @@ CODE_SYM_DEF R_DrawSpanBackbufferMMX
 
   mov     edi,[_ylookup+edi*4]
   
-
+  mov   edx,ecx
+  mov   ebx,ecx
+  shr   edx,4
+  shr   ebx,26
+  and   edx,0xFC0
 patchColumnofsMMX:
   lea     edi,[edi+eax+0x12345678]
+  or    ebx,edx
 
-  mov     eax,[_ds_colormap]
-
-  ; feed the pipeline and jump in
-
-  shld    ebx,ecx,22  ; shift y units in
-  ;mov     ebp,0x0FFF  ; used to mask off slop high bits from position
-  shld    ebx,ecx,6   ; shift x units in
-  and     ebx,0x0FFF     ; mask off slop bits
-  add     ecx,edx
+  mov   edx,[_ds_step]        ; build composite step
+  mov   eax,[_ds_colormap]
+  add   ecx,edx
 
   cmp   ebp, 0
   je    SinglePixelSpan
