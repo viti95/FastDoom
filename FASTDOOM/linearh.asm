@@ -423,10 +423,10 @@ patchColumnofsMMX:
   jnz   EvenSpan
 
   mov  al,[esi+ebx]                   ; get source pixel
+  dec   ebp
   mov  al,[eax]
   mov  [edi],al
 
-  dec   ebp
   inc   edi
 
   ; MMX 2 pixels render
@@ -436,41 +436,34 @@ EvenSpan:
 
   movd  mm0, ecx
   movd  mm1, edx
-  paddd mm0, mm1
-  psllq mm0, 32
   movd  mm5, ecx
-  por   mm0, mm5
+  paddd mm0, mm1
   mov   edx, 0x00000FC0
+  psllq mm0, 32
   movd  mm6, edx
+  por   mm0, mm5
   punpckldq mm1, mm1
   punpckldq mm4, mm4
   punpckldq mm6, mm6
   paddd mm1,mm1
 
-  
 LoopSpanMMX:
 
   movq  mm2, mm0
-
   psrlw mm2, 10
   movq  mm3, mm2
+  psrld mm2, 16
   psllw mm3, 6
   pand  mm3, mm6
-  psrld mm2, 16
   por   mm2, mm3
 
-  paddd mm0, mm1
-
   movd  ecx, mm2
-
-  mov  al,[esi+ecx]                   ; get source pixel
-  mov  dl,[eax]
-
   psrlq mm2,32
-
+  mov  al,[esi+ecx]                   ; get source pixel
   movd  ecx, mm2
-
+  paddd mm0, mm1
   mov  bl,[esi+ecx]                   ; get source pixel
+  mov  dl,[eax]
   mov  dh,[ebx]
 
   mov  [edi],dx
