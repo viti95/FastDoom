@@ -431,10 +431,10 @@ patchColumnofsMMX:
   dec   ebp
   inc   edi
 
-  mov   ebx, eax
-
   ; MMX 2 pixels render
 EvenSpan:
+
+  mov   ebx, eax
 
   movd  mm0, ecx
   movd  mm1, edx
