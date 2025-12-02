@@ -447,11 +447,10 @@ EvenSpan:
 
 LoopSpanMMX:
 
+  movq  mm3, mm0
   movq  mm2, mm0
-  psrlw mm2, 10
-  movq  mm3, mm2
-  psrld mm2, 16
-  psllw mm3, 6
+  psrld mm3, 4
+  psrld mm2, 26
   pand  mm3, mm6
   por   mm2, mm3
 
