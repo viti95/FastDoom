@@ -441,28 +441,32 @@ EvenSpan:
   movd  mm6, edx
   por   mm0, mm5
   punpckldq mm1, mm1
-  punpckldq mm4, mm4
-  punpckldq mm6, mm6
-  paddd mm1,mm1
-
-LoopSpanMMX:
-
   movq  mm3, mm0
   movq  mm2, mm0
+  punpckldq mm4, mm4
   psrld mm3, 4
+  punpckldq mm6, mm6
   psrld mm2, 26
+  paddd mm1,mm1
   pand  mm3, mm6
   por   mm2, mm3
+
+LoopSpanMMX:
 
   movq [scratchpad], mm2
   paddd mm0, mm1
   mov  ecx,[scratchpad]
+  movq  mm3, mm0
   mov  al,[esi+ecx]                   ; get source pixel
+  movq  mm2, mm0
   mov  ecx,[scratchpad+4]
+  psrld mm3, 4
   mov  bl,[esi+ecx]                   ; get source pixel
+  psrld mm2, 26
   mov  dl,[eax]
+  pand  mm3, mm6
   mov  dh,[ebx]
-
+  por   mm2, mm3
   mov  [edi],dx
 
   add  edi, 2
