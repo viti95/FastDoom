@@ -412,7 +412,6 @@ patchColumnofsMMX:
 
   mov   edx,[_ds_step]        ; build composite step
   mov   eax,[_ds_colormap]
-  ;add   ecx,edx
 
   cmp   ebp, 0
   je    SinglePixelSpan
