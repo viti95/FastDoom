@@ -67,6 +67,8 @@ CODE_SYM_DEF R_PatchLinearHigh
   mov   ebx,[_columnofs]
   mov   eax,patchColumnofs+2
   mov   [eax],ebx
+  mov   eax,patchColumnofsMMX+3
+  mov   [eax],ebx
 
   pop   ebx
   ret
@@ -379,6 +381,115 @@ SinglePixel:
 	pop		ebx
   mov  [edi],al  ; draw a pixel to the buffer
   pop		edi
+  ret
+
+CODE_SYM_DEF R_DrawSpanBackbufferMMX
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		edi
+	push		ebp
+
+  mov     eax,[_ds_x1]
+  mov     ebp,[_ds_x2]
+  mov     ecx,[_ds_frac]        ; build composite position
+  mov     esi,[_ds_source]
+  mov     edi,[_ds_y]
+
+  sub     ebp, eax              ; EBP tiene el numero de pixels
+
+  mov     edi,[_ylookup+edi*4]
+  
+  mov   edx,ecx
+  mov   ebx,ecx
+  shr   edx,4
+  shr   ebx,26
+  and   edx,0xFC0
+patchColumnofsMMX:
+  lea     edi,[edi+eax+0x12345678]
+  or    ebx,edx
+
+  mov   edx,[_ds_step]        ; build composite step
+  mov   eax,[_ds_colormap]
+  add   ecx,edx
+
+  cmp   ebp, 0
+  je    SinglePixelSpan
+
+  test  ebp,1
+  jnz   EvenSpan
+
+  mov  al,[esi+ebx]                   ; get source pixel
+  dec   ebp
+  mov  al,[eax]
+  mov  [edi],al
+
+  inc   edi
+
+  ; MMX 2 pixels render
+EvenSpan:
+
+  mov   ebx, eax
+
+  movd  mm0, ecx
+  movd  mm1, edx
+  movd  mm5, ecx
+  paddd mm0, mm1
+  mov   edx, 0x00000FC0
+  psllq mm0, 32
+  movd  mm6, edx
+  por   mm0, mm5
+  punpckldq mm1, mm1
+  punpckldq mm4, mm4
+  punpckldq mm6, mm6
+  paddd mm1,mm1
+
+LoopSpanMMX:
+
+  movq  mm3, mm0
+  movq  mm2, mm0
+  psrld mm3, 4
+  psrld mm2, 26
+  pand  mm3, mm6
+  por   mm2, mm3
+
+  movd  ecx, mm2
+  psrlq mm2,32
+  mov  al,[esi+ecx]                   ; get source pixel
+  movd  ecx, mm2
+  paddd mm0, mm1
+  mov  bl,[esi+ecx]                   ; get source pixel
+  mov  dl,[eax]
+  mov  dh,[ebx]
+
+  mov  [edi],dx
+
+  add  edi, 2
+
+  sub  ebp, 2
+  jns  LoopSpanMMX
+
+	pop		ebp
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+  ret
+; R_DrawSpanBackbuffer ends
+
+SinglePixelSpan:
+
+  mov  al,[esi+ebx]                   ; get source pixel
+  pop		ebp
+  mov  al,[eax]
+  mov  [edi],al	
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
   ret
 
 %endif
