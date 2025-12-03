@@ -179,6 +179,7 @@ mapcalls:
 
 callpoint:   dd 0
 returnpoint: dd 0
+scratchpad:  dq 0
 
 CONTINUE_CODE_SECTION
 
@@ -453,11 +454,11 @@ LoopSpanMMX:
   pand  mm3, mm6
   por   mm2, mm3
 
-  movd  ecx, mm2
-  psrlq mm2,32
-  mov  al,[esi+ecx]                   ; get source pixel
-  movd  ecx, mm2
+  movq [scratchpad], mm2
   paddd mm0, mm1
+  mov  ecx,[scratchpad]
+  mov  al,[esi+ecx]                   ; get source pixel
+  mov  ecx,[scratchpad+4]
   mov  bl,[esi+ecx]                   ; get source pixel
   mov  dl,[eax]
   mov  dh,[ebx]
