@@ -2519,10 +2519,12 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case INTEL_PENTIUM:
-            case INTEL_PENTIUM_MMX:
             case IDT_WINCHIP:
             case CYRIX_6X86:
                 spanfunc = R_DrawSpanVBE2Pentium;
+                break;
+            case INTEL_PENTIUM_MMX:
+                spanfunc = R_DrawSpanVBE2MMX;
                 break;
             default:
                 spanfunc = R_DrawSpanVBE2;
