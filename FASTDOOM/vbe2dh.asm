@@ -268,7 +268,6 @@ CODE_SYM_DEF R_DrawSpanVBE2MMX
   add  edi,eax
   shld  ebx,ecx,6       ; shift x units in
   and   ebx,0x0FFF         ; mask off slop bits
-  add   ecx,edx
 
   mov   eax,[_ds_colormap]
 
