@@ -343,8 +343,8 @@ SinglePixelSpan:
   mov  al,[esi+ebx]                   ; get source pixel
   pop   ebp
   mov  al,[eax]
-	pop		edi
   mov  [edi],al	
+  pop		edi
 	pop		esi
 	pop		edx
 	pop		ecx
