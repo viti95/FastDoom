@@ -2497,6 +2497,7 @@ void R_ExecuteSetViewSize(void)
         case WALL_NORMAL:
             switch (selectedCPU)
             {
+            case RISE_MP6:
             case INTEL_PENTIUM_MMX:
                 colfunc = R_DrawColumnVBE2MMX;
                 break;
@@ -2516,6 +2517,7 @@ void R_ExecuteSetViewSize(void)
         case SPRITE_NORMAL:
             switch (selectedCPU)
             {
+            case RISE_MP6:
             case INTEL_PENTIUM_MMX:
                 spritefunc = basespritefunc = R_DrawColumnVBE2MMX;
                 break;
@@ -2542,6 +2544,7 @@ void R_ExecuteSetViewSize(void)
             {
                 switch (selectedCPU)
                 {
+                case RISE_MP6:
                 case INTEL_PENTIUM_MMX:
                     pspritefunc = basepspritefunc = R_DrawColumnVBE2MMX;
                     break;
@@ -2553,6 +2556,7 @@ void R_ExecuteSetViewSize(void)
 #else
             switch (selectedCPU)
             {
+            case RISE_MP6:
             case INTEL_PENTIUM_MMX:
                 pspritefunc = basepspritefunc = R_DrawColumnVBE2MMX;
                 break;
