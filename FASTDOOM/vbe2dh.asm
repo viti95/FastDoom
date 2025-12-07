@@ -300,29 +300,33 @@ Even:
 
   paddd      mm3, mm4
 
-  punpckldq  mm4, mm4
+  movd       mm2, edx
 
   psllq      mm3, 32
 
-  movd       mm2, edx
-
-  paddd      mm4, mm4
+  punpckldq  mm4, mm4  
 
   por        mm3, mm2
 
-LoopMMX:
+  paddd      mm4, mm4
 
   movq       mm5, mm3
 
   psrld      mm5, 25
 
+LoopMMX:
+
   movd       ebx, mm5
+
+  paddd      mm3, mm4
 
   psrlq      mm5,32
 
   mov  al,[ebx+esi]
 
   movd       edx, mm5
+
+  movq       mm5, mm3
 
   mov  al,[eax]
 
@@ -332,7 +336,7 @@ LoopMMX:
 
   mov  cl,[ecx]
 
-  paddd      mm3, mm4
+  psrld      mm5, 25
 
   mov  [edi+SCREENWIDTH], cl
 
