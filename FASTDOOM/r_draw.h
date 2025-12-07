@@ -192,12 +192,10 @@ void R_DrawColumnBackbufferDirect(void);
 void R_DrawColumnLowBackbufferDirect(void);
 void R_DrawColumnPotatoBackbufferDirect(void);
 
+void R_DrawColumnVBE2MMX(void);
 void R_DrawColumnVBE2(void);
 void R_DrawColumnLowVBE2(void);
 void R_DrawColumnPotatoVBE2(void);
-void R_DrawColumnVBE2FastLEA(void);
-void R_DrawColumnLowVBE2FastLEA(void);
-void R_DrawColumnPotatoVBE2FastLEA(void);
 void R_DrawSpanVBE2MMX(void);
 void R_DrawSpanVBE2(void);
 void R_DrawSpanLowVBE2(void);

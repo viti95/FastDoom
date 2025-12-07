@@ -76,8 +76,6 @@ fixed_t viewsin;
 // 0 = high, 1 = low, 2 = potato
 int detailshift;
 
-
-
 fixed_t interpolation_weight = 0x10000;
 unsigned frametime_hrticks = 17;
 
@@ -2497,7 +2495,15 @@ void R_ExecuteSetViewSize(void)
         switch (wallRender)
         {
         case WALL_NORMAL:
-            colfunc = R_DrawColumnVBE2;
+            switch (selectedCPU)
+            {
+            case INTEL_PENTIUM_MMX:
+                colfunc = R_DrawColumnVBE2MMX;
+                break;
+            default:
+                colfunc = R_DrawColumnVBE2;
+                break;
+            }
             break;
         case WALL_FLAT:
         case WALL_FLATTER:
@@ -3008,23 +3014,24 @@ void R_SetupFrame(void)
 
     if (highResTimer)
     {
-      viewx = FixedInterpolate(players_mo->prevx, players_mo->x, interpolation_weight);
-      viewy = FixedInterpolate(players_mo->prevy, players_mo->y, interpolation_weight);
-      viewangle = (players_mo)->prevangle + ((((signed)(players_mo)->angle - (signed)(players_mo)->prevangle) * ((signed)(interpolation_weight>>12)) / 16));
-      viewz = FixedInterpolate(players.prevviewz, players.viewz, interpolation_weight);
-    } else {
-      // No interpolation
-      viewx = (players_mo)->x;
-      viewy = (players_mo)->y;
-      viewangle = (players_mo)->angle;
-      viewz = players.viewz;
+        viewx = FixedInterpolate(players_mo->prevx, players_mo->x, interpolation_weight);
+        viewy = FixedInterpolate(players_mo->prevy, players_mo->y, interpolation_weight);
+        viewangle = (players_mo)->prevangle + ((((signed)(players_mo)->angle - (signed)(players_mo)->prevangle) * ((signed)(interpolation_weight >> 12)) / 16));
+        viewz = FixedInterpolate(players.prevviewz, players.viewz, interpolation_weight);
+    }
+    else
+    {
+        // No interpolation
+        viewx = (players_mo)->x;
+        viewy = (players_mo)->y;
+        viewangle = (players_mo)->angle;
+        viewz = players.viewz;
     }
     viewxs = viewx >> FRACBITS;
     viewyneg = -viewy;
     viewys = viewy >> FRACBITS;
     viewangle90 = viewangle + ANG90;
     extralight = players.extralight;
-
 
     viewsin = finesine[viewangle >> ANGLETOFINESHIFT];
     viewcos = finecosine[viewangle >> ANGLETOFINESHIFT];
