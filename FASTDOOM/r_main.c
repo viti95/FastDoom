@@ -2514,7 +2514,15 @@ void R_ExecuteSetViewSize(void)
         switch (spriteRender)
         {
         case SPRITE_NORMAL:
-            spritefunc = basespritefunc = R_DrawColumnVBE2;
+            switch (selectedCPU)
+            {
+            case INTEL_PENTIUM_MMX:
+                spritefunc = basespritefunc = R_DrawColumnVBE2MMX;
+                break;
+            default:
+                spritefunc = basespritefunc = R_DrawColumnVBE2;
+                break;
+            }
             break;
         case SPRITE_FLAT:
         case SPRITE_FLATTER:
@@ -2532,10 +2540,26 @@ void R_ExecuteSetViewSize(void)
             }
             else
             {
-                pspritefunc = basepspritefunc = R_DrawColumnVBE2;
+                switch (selectedCPU)
+                {
+                case INTEL_PENTIUM_MMX:
+                    pspritefunc = basepspritefunc = R_DrawColumnVBE2MMX;
+                    break;
+                default:
+                    pspritefunc = basepspritefunc = R_DrawColumnVBE2;
+                    break;
+                }
             }
 #else
-            pspritefunc = basepspritefunc = R_DrawColumnVBE2;
+            switch (selectedCPU)
+            {
+            case INTEL_PENTIUM_MMX:
+                pspritefunc = basepspritefunc = R_DrawColumnVBE2MMX;
+                break;
+            default:
+                pspritefunc = basepspritefunc = R_DrawColumnVBE2;
+                break;
+            }
 #endif
             break;
         case PSPRITE_FLAT:
@@ -2589,11 +2613,25 @@ void R_ExecuteSetViewSize(void)
         else
         {
             drawSky = R_DrawSky;
+
+            switch (selectedCPU)
+            {
+            case RISE_MP6:
+            case INTEL_PENTIUM_MMX:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
-            skyfunc = (screenblocks >= 10) ? R_DrawColumnVBE2SkyFullDirect : R_DrawColumnVBE2;
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnVBE2SkyFullDirect : R_DrawColumnVBE2MMX;
 #else
-            skyfunc = R_DrawColumnVBE2;
+                skyfunc = R_DrawColumnVBE2MMX;
 #endif
+                break;
+            default:
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnVBE2SkyFullDirect : R_DrawColumnVBE2;
+#else
+                skyfunc = R_DrawColumnVBE2;
+#endif
+                break;
+            }
         }
 
         switch (invisibleRender)
