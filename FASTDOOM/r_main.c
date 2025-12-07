@@ -2523,6 +2523,7 @@ void R_ExecuteSetViewSize(void)
             case CYRIX_6X86:
                 spanfunc = R_DrawSpanVBE2Pentium;
                 break;
+            case RISE_MP6:
             case INTEL_PENTIUM_MMX:
                 spanfunc = R_DrawSpanVBE2MMX;
                 break;

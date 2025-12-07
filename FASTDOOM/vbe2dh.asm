@@ -251,7 +251,6 @@ CODE_SYM_DEF R_DrawSpanVBE2MMX
 	push		ebp
 
   mov  ecx,[_ds_frac]        ; build composite position
-  mov	 edx,[_ds_step]
   mov	 esi,[_ds_source]
 
   mov  ebp,[_ds_y]
@@ -262,13 +261,17 @@ CODE_SYM_DEF R_DrawSpanVBE2MMX
   mov  ebp,[_ds_x2]
   sub  ebp,eax           ; num pixels
 
-  shld  ebx,ecx,22      ; shift y units in
+  mov   edx,ecx
   MulScreenWidthEnd edi
+  mov   ebx,ecx
   add  edi,[_destview]
+  shr   edx,4
+  shr   ebx,26
+  and   edx,0xFC0
   add  edi,eax
-  shld  ebx,ecx,6       ; shift x units in
-  and   ebx,0x0FFF         ; mask off slop bits
+  or    ebx,edx
 
+  mov	  edx,[_ds_step]
   mov   eax,[_ds_colormap]
 
   cmp   ebp, 0
