@@ -419,6 +419,7 @@ typedef enum
     INTEL_PENTIUM,
     INTEL_PENTIUM_MMX,
     CYRIX_6X86,
+    CYRIX_6X86MX,
     AMD_K6,
     IDT_WINCHIP,
     RISE_MP6,

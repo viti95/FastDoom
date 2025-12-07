@@ -236,6 +236,8 @@ void M_ChangeValueFile(unsigned int position, char *token)
             selectedCPU = CYRIX_5X86;
         if (M_CheckValue(token, "cy6x86"))
             selectedCPU = CYRIX_6X86;
+        if (M_CheckValue(token, "cy6x86mx"))
+            selectedCPU = CYRIX_6X86MX;
         if (M_CheckValue(token, "umc486"))
             selectedCPU = UMC_GREEN_486;
         if (M_CheckValue(token, "winchip"))
