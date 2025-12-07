@@ -2555,6 +2555,7 @@ void R_ExecuteSetViewSize(void)
             case CYRIX_6X86MX:
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
+            case AMD_K6:
                 spanfunc = R_DrawSpanVBE2MMX;
                 break;
             default:
