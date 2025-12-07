@@ -241,4 +241,117 @@ CODE_SYM_DEF R_DrawSpanVBE2
 MAPLABEL LINE:
   ret
 
+
+CODE_SYM_DEF R_DrawSpanVBE2MMX
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		edi
+	push		ebp
+
+  mov  ecx,[_ds_frac]        ; build composite position
+  mov	 esi,[_ds_source]
+
+  mov  ebp,[_ds_y]
+
+  MulScreenWidthStart edi, ebp
+
+  mov  eax,[_ds_x1]
+  mov  ebp,[_ds_x2]
+  sub  ebp,eax           ; num pixels
+
+  mov   edx,ecx
+  MulScreenWidthEnd edi
+  mov   ebx,ecx
+  add  edi,[_destview]
+  shr   edx,4
+  shr   ebx,26
+  and   edx,0xFC0
+  add  edi,eax
+  or    ebx,edx
+
+  mov	  edx,[_ds_step]
+  mov   eax,[_ds_colormap]
+
+  cmp   ebp, 0
+  je    SinglePixelSpan
+
+  test  ebp,1
+  jnz   EvenSpan
+
+  mov  al,[esi+ebx]                   ; get source pixel
+  dec   ebp
+  mov  al,[eax]
+  mov  [edi],al
+
+  inc   edi
+
+  ; MMX 2 pixels render
+EvenSpan:
+
+  mov   ebx, eax
+
+  movd  mm0, ecx
+  movd  mm1, edx
+  movd  mm5, ecx
+  paddd mm0, mm1
+  mov   edx, 0x00000FC0
+  psllq mm0, 32
+  movd  mm6, edx
+  por   mm0, mm5
+  punpckldq mm1, mm1
+  movq  mm3, mm0
+  movq  mm2, mm0
+  punpckldq mm4, mm4
+  psrld mm3, 4
+  psrld mm2, 26
+  punpckldq mm6, mm6
+  pand  mm3, mm6
+  por   mm2, mm3
+  paddd mm1,mm1
+
+LoopSpanMMX:
+
+  movd  ecx, mm2
+  psrlq mm2,32
+  mov  al,[esi+ecx]                   ; get source pixel
+  movd  ecx, mm2
+  paddd mm0, mm1
+  mov  bl,[esi+ecx]                   ; get source pixel
+  movq  mm3, mm0
+  movq  mm2, mm0
+  mov  dl,[eax]
+  psrld mm3, 4
+  psrld mm2, 26
+  mov  dh,[ebx]
+  pand  mm3, mm6
+  mov  [edi],dx
+  por   mm2, mm3
+  add  edi, 2
+
+  sub  ebp, 2
+  jns  LoopSpanMMX
+
+  pop   ebp
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+  ret
+
+SinglePixelSpan:
+
+  mov  al,[esi+ebx]                   ; get source pixel
+  pop   ebp
+  mov  al,[eax]
+  mov  [edi],al	
+  pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+  ret
+
 %endif

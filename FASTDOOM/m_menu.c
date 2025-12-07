@@ -1479,6 +1479,9 @@ void M_DrawDisplayItem(int item, int position)
         case CYRIX_6X86:
             M_WriteText(214, y, "CYRIX 6X86");
             break;
+        case CYRIX_6X86MX:
+            M_WriteText(214, y, "CYRIX 6X86MX");
+            break;
         case AMD_K6:
             M_WriteText(214, y, "AMD K6");
             break;
@@ -1662,6 +1665,9 @@ void M_DrawDisplayItem(int item, int position)
             break;
         case CYRIX_6X86:
             V_WriteTextDirect(M_X2, y, "CYRIX 6X86");
+            break;
+        case CYRIX_6X86MX:
+            V_WriteTextDirect(M_X2, y, "CYRIX 6X86MX");
             break;
         case AMD_K6:
             V_WriteTextDirect(M_X2, y, "AMD K6");

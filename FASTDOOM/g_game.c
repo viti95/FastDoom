@@ -1477,6 +1477,9 @@ void G_SaveCSVResult(unsigned int gametics, unsigned int realtics, unsigned int 
         case CYRIX_6X86:
             fprintf(logFile, "cyrix6x86");
             break;
+        case CYRIX_6X86MX:
+            fprintf(logFile, "cyrix6x86mx");
+            break;
         case UMC_GREEN_486:
             fprintf(logFile, "umc486");
             break;
