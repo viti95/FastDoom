@@ -635,20 +635,20 @@ void I_CalculateFPS(void)
 // CPU detection routines
 //
 
-boolean hasCPUID = false;
-boolean hasFPU = false;
-boolean hasMMX = false;
+unsigned int hasCPUID = 0;
+unsigned int hasFPU = 0;
+unsigned int hasMMX = 0;
 
 void I_GetCPU(void)
 {
     unsigned int flags = GetCPUFlags();
 
     if (flags && CPU_FLAG_CPUID) {
-        hasCPUID = true;
+        hasCPUID = 1;
     }
 
     if (hasCPUID) {
-        
+        GetCPUFeatures();
     }
 }
 

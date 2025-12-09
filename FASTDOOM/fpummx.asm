@@ -19,6 +19,10 @@ BITS 32
 
 %include "macros.inc"
 
+extern _hasCPUID
+extern _hasFPU
+extern _hasMMX
+
 BEGIN_CODE_SECTION
 
 CODE_SYM_DEF CopyQWordsMMX
@@ -43,4 +47,16 @@ CODE_SYM_DEF CopyQWordsFPU
     dec     ebx
     jnz     .copy_loop_fpu
 
+ret
+
+CODE_SYM_DEF GetCPUFeatures
+    pushad
+    mov eax,0x1
+    cpuid
+    mov ebx,edx
+    and ebx,0x000001
+    mov [_hasFPU],ebx
+    and edx,0x800000
+    mov [_hasMMX],edx
+    popad
 ret
