@@ -19,6 +19,10 @@ BITS 32
 
 %include "macros.inc"
 
+extern _hasCPUID
+extern _hasFPU
+extern _hasMMX
+
 BEGIN_CODE_SECTION
 
 CODE_SYM_DEF CopyQWordsMMX
@@ -43,4 +47,31 @@ CODE_SYM_DEF CopyQWordsFPU
     dec     ebx
     jnz     .copy_loop_fpu
 
+ret
+
+CODE_SYM_DEF GetCPUID
+    pushfd                  ;push the flags onto the stack
+    pop eax                 ;pop them back out, into EAX
+    mov ebx, eax            ;keep original
+    xor eax, 00200000h      ;turn bit 21 on.
+    push eax                ;put altered EAX on stack
+    popfd                   ;pop stack into flags
+    pushfd                  ;push flags back onto stack
+    pop eax                 ;put them back into EAX
+    cmp eax, ebx
+    jz nocpuid
+    mov [_hasCPUID],1
+nocpuid:
+    ret
+
+CODE_SYM_DEF GetCPUFeatures
+    pushad
+    mov eax,0x1
+    cpuid
+    mov ebx,edx
+    and edx,0x800000
+    and ebx,0x000001
+    mov [_hasMMX],edx
+    mov [_hasFPU],ebx
+    popad
 ret

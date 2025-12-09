@@ -8,6 +8,10 @@ extern unsigned int ticcount;
 extern unsigned int fps;
 extern boolean uncappedFPS;
 
+extern unsigned int hasCPUID;
+extern unsigned int hasFPU;
+extern unsigned int hasMMX;
+
 extern unsigned short *currentscreen;
 
 #if defined(USE_BACKBUFFER)
@@ -27,3 +31,4 @@ extern void *I_DosMemAlloc(unsigned long size);
 void I_StartupTimer(void);
 void I_ShutdownTimer(void);
 void I_SetHrTimerEnabled(boolean enabled);
+void I_GetCPU(void);

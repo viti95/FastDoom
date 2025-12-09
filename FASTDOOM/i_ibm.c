@@ -42,7 +42,7 @@
 #include "ns_inter.h"
 #include "ns_cd.h"
 #include "i_debug.h"
-
+#include "fpummx.h"
 #include "am_map.h"
 
 #include "std_func.h"
@@ -149,6 +149,8 @@
 //
 
 #define DPMI_INT 0x31
+
+#define CPU_FLAG_CPUID (1<<0)
 
 //
 // Code
@@ -627,6 +629,22 @@ void I_CalculateFPS(void)
     #else
     fps = fps_size;
     #endif
+}
+
+// 
+// CPU detection routines
+//
+
+unsigned int hasCPUID = 0;
+unsigned int hasFPU = 0;
+unsigned int hasMMX = 0;
+
+void I_GetCPU(void)
+{
+    GetCPUID();
+
+    if(hasCPUID)
+        GetCPUFeatures();
 }
 
 //
@@ -1159,7 +1177,7 @@ void I_Error(int line, ...)
 {
     va_list argptr;
 
-    I_LoadTextProgram(line + 196);
+    I_LoadTextProgram(line + 198);
 
     I_Shutdown();
     va_start(argptr, line);
