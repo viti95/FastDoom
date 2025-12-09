@@ -60,8 +60,7 @@ CODE_SYM_DEF GetCPUID
     pop eax                 ;put them back into EAX
     cmp eax, ebx
     jz nocpuid
-    mov eax,1
-    mov [_hasCPUID],eax
+    mov [_hasCPUID],1
 nocpuid:
     ret
 
