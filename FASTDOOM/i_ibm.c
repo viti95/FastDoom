@@ -641,15 +641,10 @@ unsigned int hasMMX = 0;
 
 void I_GetCPU(void)
 {
-    unsigned int flags = GetCPUFlags();
+    GetCPUID();
 
-    if (flags && CPU_FLAG_CPUID) {
-        hasCPUID = 1;
-    }
-
-    if (hasCPUID) {
+    if(hasCPUID)
         GetCPUFeatures();
-    }
 }
 
 //

@@ -49,6 +49,22 @@ CODE_SYM_DEF CopyQWordsFPU
 
 ret
 
+CODE_SYM_DEF GetCPUID
+    pushfd                  ;push the flags onto the stack
+    pop eax                 ;pop them back out, into EAX
+    mov ebx, eax            ;keep original
+    xor eax, 00200000h      ;turn bit 21 on.
+    push eax                ;put altered EAX on stack
+    popfd                   ;pop stack into flags
+    pushfd                  ;push flags back onto stack
+    pop eax                 ;put them back into EAX
+    cmp eax, ebx
+    jz nocpuid
+    mov eax,1
+    mov [_hasCPUID],eax
+nocpuid:
+    ret
+
 CODE_SYM_DEF GetCPUFeatures
     pushad
     mov eax,0x1
