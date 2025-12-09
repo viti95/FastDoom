@@ -42,7 +42,7 @@
 #include "ns_inter.h"
 #include "ns_cd.h"
 #include "i_debug.h"
-
+#include "fpummx.h"
 #include "am_map.h"
 
 #include "std_func.h"

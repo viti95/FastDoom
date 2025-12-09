@@ -1393,6 +1393,8 @@ void D_DoomMain(void)
     int p;
     union REGS regs;
 
+    I_GetCPU();
+
     I_GetProgFilePositionCache();
 
     printf(I_LoadTextProgram(0));
@@ -1599,6 +1601,10 @@ void D_DoomMain(void)
 
     printf(I_LoadTextProgram(0));
     printf(I_LoadTextProgram(18), I_GetCPUModel());
+    if (hasFPU)
+        printf("FPU available\n");
+    if (hasMMX)
+        printf("MMX available\n");
 #if DEBUG_ENABLED == 1
     printf(I_LoadTextProgram(19));
     I_DebugInit();

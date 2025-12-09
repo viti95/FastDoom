@@ -31,3 +31,4 @@ extern void *I_DosMemAlloc(unsigned long size);
 void I_StartupTimer(void);
 void I_ShutdownTimer(void);
 void I_SetHrTimerEnabled(boolean enabled);
+void I_GetCPU(void);

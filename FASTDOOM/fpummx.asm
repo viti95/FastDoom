@@ -54,9 +54,9 @@ CODE_SYM_DEF GetCPUFeatures
     mov eax,0x1
     cpuid
     mov ebx,edx
-    and ebx,0x000001
-    mov [_hasFPU],ebx
     and edx,0x800000
+    and ebx,0x000001
     mov [_hasMMX],edx
+    mov [_hasFPU],ebx
     popad
 ret
