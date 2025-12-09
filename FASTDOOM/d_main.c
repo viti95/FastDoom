@@ -1703,6 +1703,7 @@ void D_DoomMain(void)
     M_CheckParmOptionalValue("-386sx", &selectedCPU, INTEL_386SX);
     M_CheckParmOptionalValue("-cy5x86", &selectedCPU, CYRIX_5X86);
     M_CheckParmOptionalValue("-cy6x86", &selectedCPU, CYRIX_6X86);
+    M_CheckParmOptionalValue("-cy6x86mx", &selectedCPU, CYRIX_6X86MX);
     M_CheckParmOptionalValue("-k5", &selectedCPU, AMD_K5);
     M_CheckParmOptionalValue("-k6", &selectedCPU, AMD_K6);
     M_CheckParmOptionalValue("-pentium", &selectedCPU, INTEL_PENTIUM);
