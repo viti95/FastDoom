@@ -1177,7 +1177,7 @@ void I_Error(int line, ...)
 {
     va_list argptr;
 
-    I_LoadTextProgram(line + 196);
+    I_LoadTextProgram(line + 198);
 
     I_Shutdown();
     va_start(argptr, line);

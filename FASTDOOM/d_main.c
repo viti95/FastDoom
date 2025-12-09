@@ -1602,9 +1602,9 @@ void D_DoomMain(void)
     printf(I_LoadTextProgram(0));
     printf(I_LoadTextProgram(18), I_GetCPUModel());
     if (hasFPU)
-        printf("FPU available\n");
+        printf(I_LoadTextProgram(196));
     if (hasMMX)
-        printf("MMX available\n");
+        printf(I_LoadTextProgram(197));
 #if DEBUG_ENABLED == 1
     printf(I_LoadTextProgram(19));
     I_DebugInit();

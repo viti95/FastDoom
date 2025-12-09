@@ -194,6 +194,8 @@ ARCH-VILE
 THE SPIDER MASTERMIND
 THE CYBERDEMON
 OUR HERO
+    FPU available\n
+    MMX available\n
 Exiting...
 The selected IWAD was not found
 Bad savegame
