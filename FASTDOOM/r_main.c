@@ -1982,11 +1982,11 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case CYRIX_6X86:
+            case CYRIX_6X86MX:
                 colfunc = R_DrawColumnBackbufferRoll;
                 break;
             case UMC_GREEN_486:
             case CYRIX_5X86:
-            case CYRIX_6X86MX:
             case AMD_K5:
             case AMD_K6:
                 colfunc = R_DrawColumnBackbufferFastLEA;
@@ -2012,11 +2012,11 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case CYRIX_6X86:
+            case CYRIX_6X86MX:
                 spritefunc = basespritefunc = R_DrawColumnBackbufferRoll;
                 break;
             case UMC_GREEN_486:
             case CYRIX_5X86:
-            case CYRIX_6X86MX:
             case AMD_K5:
             case AMD_K6:
                 spritefunc = basespritefunc = R_DrawColumnBackbufferFastLEA;
@@ -2049,11 +2049,11 @@ void R_ExecuteSetViewSize(void)
                 switch (selectedCPU)
                 {
                 case CYRIX_6X86:
+                case CYRIX_6X86MX:
                     pspritefunc = basepspritefunc = R_DrawColumnBackbufferRoll;
                     break;
                 case UMC_GREEN_486:
                 case CYRIX_5X86:
-                case CYRIX_6X86MX:
                 case AMD_K5:
                 case AMD_K6:
                     pspritefunc = basepspritefunc = R_DrawColumnBackbufferFastLEA;
@@ -2071,11 +2071,11 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case CYRIX_6X86:
+            case CYRIX_6X86MX:
                 pspritefunc = basepspritefunc = R_DrawColumnBackbufferRoll;
                 break;
             case UMC_GREEN_486:
             case CYRIX_5X86:
-            case CYRIX_6X86MX:
             case AMD_K5:
             case AMD_K6:
                 pspritefunc = basepspritefunc = R_DrawColumnBackbufferFastLEA;
@@ -2143,6 +2143,7 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case CYRIX_6X86:
+            case CYRIX_6X86MX:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnBackbufferSkyFullDirect : R_DrawColumnBackbufferRoll;
 #else
@@ -2151,7 +2152,6 @@ void R_ExecuteSetViewSize(void)
                 break;
             case UMC_GREEN_486:
             case CYRIX_5X86:
-            case CYRIX_6X86MX:
             case AMD_K5:
             case AMD_K6:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
