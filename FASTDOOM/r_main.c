@@ -1981,9 +1981,11 @@ void R_ExecuteSetViewSize(void)
         case WALL_NORMAL:
             switch (selectedCPU)
             {
+            case CYRIX_6X86:
+                colfunc = R_DrawColumnBackbufferRoll;
+                break;
             case UMC_GREEN_486:
             case CYRIX_5X86:
-            case CYRIX_6X86:
             case CYRIX_6X86MX:
             case AMD_K5:
             case AMD_K6:
@@ -2009,9 +2011,11 @@ void R_ExecuteSetViewSize(void)
         case SPRITE_NORMAL:
             switch (selectedCPU)
             {
+            case CYRIX_6X86:
+                spritefunc = basespritefunc = R_DrawColumnBackbufferRoll;
+                break;
             case UMC_GREEN_486:
             case CYRIX_5X86:
-            case CYRIX_6X86:
             case CYRIX_6X86MX:
             case AMD_K5:
             case AMD_K6:
@@ -2044,9 +2048,11 @@ void R_ExecuteSetViewSize(void)
             {
                 switch (selectedCPU)
                 {
+                case CYRIX_6X86:
+                    pspritefunc = basepspritefunc = R_DrawColumnBackbufferRoll;
+                    break;
                 case UMC_GREEN_486:
                 case CYRIX_5X86:
-                case CYRIX_6X86:
                 case CYRIX_6X86MX:
                 case AMD_K5:
                 case AMD_K6:
@@ -2064,9 +2070,11 @@ void R_ExecuteSetViewSize(void)
 #else
             switch (selectedCPU)
             {
+            case CYRIX_6X86:
+                pspritefunc = basepspritefunc = R_DrawColumnBackbufferRoll;
+                break;
             case UMC_GREEN_486:
             case CYRIX_5X86:
-            case CYRIX_6X86:
             case CYRIX_6X86MX:
             case AMD_K5:
             case AMD_K6:
@@ -2134,9 +2142,15 @@ void R_ExecuteSetViewSize(void)
             drawSky = R_DrawSky;
             switch (selectedCPU)
             {
+            case CYRIX_6X86:
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnBackbufferSkyFullDirect : R_DrawColumnBackbufferRoll;
+#else
+                skyfunc = R_DrawColumnBackbufferRoll;
+#endif
+                break;
             case UMC_GREEN_486:
             case CYRIX_5X86:
-            case CYRIX_6X86:
             case CYRIX_6X86MX:
             case AMD_K5:
             case AMD_K6:

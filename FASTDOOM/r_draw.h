@@ -70,6 +70,8 @@ void R_DrawColumnLowFastLEA(void);
 void R_DrawColumnLow(void);
 void R_DrawColumnLowDirect(void);
 
+void R_DrawColumnBackbufferRoll(void);
+
 void R_DrawColumnBackbufferMMX(void);
 void R_DrawSpanBackbufferMMX(void);
 
