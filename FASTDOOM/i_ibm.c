@@ -150,6 +150,8 @@
 
 #define DPMI_INT 0x31
 
+#define CPU_FLAG_CPUID (1<<0)
+
 //
 // Code
 //
@@ -627,6 +629,27 @@ void I_CalculateFPS(void)
     #else
     fps = fps_size;
     #endif
+}
+
+// 
+// CPU detection routines
+//
+
+boolean hasCPUID = false;
+boolean hasFPU = false;
+boolean hasMMX = false;
+
+void I_GetCPU(void)
+{
+    unsigned int flags = GetCPUFlags();
+
+    if (flags && CPU_FLAG_CPUID) {
+        hasCPUID = true;
+    }
+
+    if (hasCPUID) {
+        
+    }
 }
 
 //

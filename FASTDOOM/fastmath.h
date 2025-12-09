@@ -30,6 +30,12 @@ typedef int fixed_t;
 #define TO_FIXED(x) ((x) << FRACBITS)
 #define FIXED_TO_INTEGER(x) ((x) >> FRACBITS)
 
+unsigned int GetCPUFlags(void);
+#pragma aux GetCPUFlags = \
+    "pushfd"              \
+    "pop    eax"          \
+    value [eax];
+
 fixed_t FixedMul(fixed_t a, fixed_t b);
 #pragma aux FixedMul = \
     "imul ebx",        \
