@@ -2511,6 +2511,10 @@ void R_ExecuteSetViewSize(void)
         case WALL_NORMAL:
             switch (selectedCPU)
             {
+            case CYRIX_6X86:
+            case CYRIX_6X86MX:
+                colfunc = R_DrawColumnVBE2Roll;
+                break;
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
                 colfunc = R_DrawColumnVBE2MMX;
@@ -2531,6 +2535,10 @@ void R_ExecuteSetViewSize(void)
         case SPRITE_NORMAL:
             switch (selectedCPU)
             {
+            case CYRIX_6X86:
+            case CYRIX_6X86MX:
+                spritefunc = basespritefunc = R_DrawColumnVBE2Roll;
+                break;
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
                 spritefunc = basespritefunc = R_DrawColumnVBE2MMX;
@@ -2558,6 +2566,10 @@ void R_ExecuteSetViewSize(void)
             {
                 switch (selectedCPU)
                 {
+                case CYRIX_6X86:
+                case CYRIX_6X86MX:
+                    pspritefunc = basepspritefunc = R_DrawColumnVBE2Roll;
+                    break;
                 case RISE_MP6:
                 case INTEL_PENTIUM_MMX:
                     pspritefunc = basepspritefunc = R_DrawColumnVBE2MMX;
@@ -2570,6 +2582,10 @@ void R_ExecuteSetViewSize(void)
 #else
             switch (selectedCPU)
             {
+            case CYRIX_6X86:
+            case CYRIX_6X86MX:
+                pspritefunc = basepspritefunc = R_DrawColumnVBE2Roll;
+                break;
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
                 pspritefunc = basepspritefunc = R_DrawColumnVBE2MMX;
@@ -2595,7 +2611,6 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case INTEL_PENTIUM:
-            case CYRIX_6X86:
                 spanfunc = R_DrawSpanVBE2Pentium;
                 break;
             case IDT_WINCHIP:
@@ -2634,6 +2649,14 @@ void R_ExecuteSetViewSize(void)
 
             switch (selectedCPU)
             {
+            case CYRIX_6X86:
+            case CYRIX_6X86MX:
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnVBE2SkyFullDirect : R_DrawColumnVBE2Roll;
+#else
+                skyfunc = R_DrawColumnVBE2Roll;
+#endif
+                break;
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
