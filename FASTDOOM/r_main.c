@@ -1981,6 +1981,7 @@ void R_ExecuteSetViewSize(void)
         case WALL_NORMAL:
             switch (selectedCPU)
             {
+            case INTEL_PENTIUM:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
                 colfunc = R_DrawColumnBackbufferRoll;
@@ -2011,6 +2012,7 @@ void R_ExecuteSetViewSize(void)
         case SPRITE_NORMAL:
             switch (selectedCPU)
             {
+            case INTEL_PENTIUM:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
                 spritefunc = basespritefunc = R_DrawColumnBackbufferRoll;
@@ -2048,6 +2050,7 @@ void R_ExecuteSetViewSize(void)
             {
                 switch (selectedCPU)
                 {
+                case INTEL_PENTIUM:
                 case CYRIX_6X86:
                 case CYRIX_6X86MX:
                     pspritefunc = basepspritefunc = R_DrawColumnBackbufferRoll;
@@ -2070,6 +2073,7 @@ void R_ExecuteSetViewSize(void)
 #else
             switch (selectedCPU)
             {
+            case INTEL_PENTIUM:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
                 pspritefunc = basepspritefunc = R_DrawColumnBackbufferRoll;
@@ -2142,6 +2146,7 @@ void R_ExecuteSetViewSize(void)
             drawSky = R_DrawSky;
             switch (selectedCPU)
             {
+            case INTEL_PENTIUM:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
@@ -2511,6 +2516,7 @@ void R_ExecuteSetViewSize(void)
         case WALL_NORMAL:
             switch (selectedCPU)
             {
+            case INTEL_PENTIUM:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
                 colfunc = R_DrawColumnVBE2Roll;
@@ -2535,6 +2541,7 @@ void R_ExecuteSetViewSize(void)
         case SPRITE_NORMAL:
             switch (selectedCPU)
             {
+            case INTEL_PENTIUM:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
                 spritefunc = basespritefunc = R_DrawColumnVBE2Roll;
@@ -2566,6 +2573,7 @@ void R_ExecuteSetViewSize(void)
             {
                 switch (selectedCPU)
                 {
+                case INTEL_PENTIUM:
                 case CYRIX_6X86:
                 case CYRIX_6X86MX:
                     pspritefunc = basepspritefunc = R_DrawColumnVBE2Roll;
@@ -2582,6 +2590,7 @@ void R_ExecuteSetViewSize(void)
 #else
             switch (selectedCPU)
             {
+            case INTEL_PENTIUM:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
                 pspritefunc = basepspritefunc = R_DrawColumnVBE2Roll;
@@ -2649,6 +2658,7 @@ void R_ExecuteSetViewSize(void)
 
             switch (selectedCPU)
             {
+            case INTEL_PENTIUM:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
