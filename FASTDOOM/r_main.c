@@ -1981,6 +1981,7 @@ void R_ExecuteSetViewSize(void)
         case WALL_NORMAL:
             switch (selectedCPU)
             {
+            case AMD_K5:
             case INTEL_PENTIUM:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
@@ -1988,7 +1989,6 @@ void R_ExecuteSetViewSize(void)
                 break;
             case UMC_GREEN_486:
             case CYRIX_5X86:
-            case AMD_K5:
             case AMD_K6:
                 colfunc = R_DrawColumnBackbufferFastLEA;
                 break;
@@ -2012,6 +2012,7 @@ void R_ExecuteSetViewSize(void)
         case SPRITE_NORMAL:
             switch (selectedCPU)
             {
+            case AMD_K5:
             case INTEL_PENTIUM:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
@@ -2019,7 +2020,6 @@ void R_ExecuteSetViewSize(void)
                 break;
             case UMC_GREEN_486:
             case CYRIX_5X86:
-            case AMD_K5:
             case AMD_K6:
                 spritefunc = basespritefunc = R_DrawColumnBackbufferFastLEA;
                 break;
@@ -2050,6 +2050,7 @@ void R_ExecuteSetViewSize(void)
             {
                 switch (selectedCPU)
                 {
+                case AMD_K5:
                 case INTEL_PENTIUM:
                 case CYRIX_6X86:
                 case CYRIX_6X86MX:
@@ -2057,7 +2058,6 @@ void R_ExecuteSetViewSize(void)
                     break;
                 case UMC_GREEN_486:
                 case CYRIX_5X86:
-                case AMD_K5:
                 case AMD_K6:
                     pspritefunc = basepspritefunc = R_DrawColumnBackbufferFastLEA;
                     break;
@@ -2073,6 +2073,7 @@ void R_ExecuteSetViewSize(void)
 #else
             switch (selectedCPU)
             {
+            case AMD_K5:
             case INTEL_PENTIUM:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
@@ -2080,7 +2081,6 @@ void R_ExecuteSetViewSize(void)
                 break;
             case UMC_GREEN_486:
             case CYRIX_5X86:
-            case AMD_K5:
             case AMD_K6:
                 pspritefunc = basepspritefunc = R_DrawColumnBackbufferFastLEA;
                 break;
@@ -2146,6 +2146,7 @@ void R_ExecuteSetViewSize(void)
             drawSky = R_DrawSky;
             switch (selectedCPU)
             {
+            case AMD_K5:
             case INTEL_PENTIUM:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
@@ -2157,7 +2158,6 @@ void R_ExecuteSetViewSize(void)
                 break;
             case UMC_GREEN_486:
             case CYRIX_5X86:
-            case AMD_K5:
             case AMD_K6:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnBackbufferSkyFullDirect : R_DrawColumnBackbufferFastLEA;
@@ -2516,6 +2516,7 @@ void R_ExecuteSetViewSize(void)
         case WALL_NORMAL:
             switch (selectedCPU)
             {
+            case AMD_K5:
             case INTEL_PENTIUM:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
@@ -2541,6 +2542,7 @@ void R_ExecuteSetViewSize(void)
         case SPRITE_NORMAL:
             switch (selectedCPU)
             {
+            case AMD_K5:
             case INTEL_PENTIUM:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
@@ -2573,6 +2575,7 @@ void R_ExecuteSetViewSize(void)
             {
                 switch (selectedCPU)
                 {
+                case AMD_K5:
                 case INTEL_PENTIUM:
                 case CYRIX_6X86:
                 case CYRIX_6X86MX:
@@ -2590,6 +2593,7 @@ void R_ExecuteSetViewSize(void)
 #else
             switch (selectedCPU)
             {
+            case AMD_K5:
             case INTEL_PENTIUM:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
@@ -2658,6 +2662,7 @@ void R_ExecuteSetViewSize(void)
 
             switch (selectedCPU)
             {
+            case AMD_K5:
             case INTEL_PENTIUM:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
