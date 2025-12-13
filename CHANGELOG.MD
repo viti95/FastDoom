@@ -9,6 +9,8 @@
 * Changed NASM generated object files from OBJ to COFF format, allowing larger ASM files to be built (some develop builds failed at 1600×1200 resolutions).
 * Optimized backbuffer-to-VRAM copies for the Intel Pentium MMX (first use of MMX code)
 * Optimized backbuffer-to-VRAM copies for the Intel Pentium (first use of FPU code)
+* Automatic detection of CPU capabilities (FPU, MMX, etc.)
+* Optimized column rendering functions for 6th generation CPUs that benefit from code fitting in the L1 cache
 
 ## 1.1.6 (27 Sep 2025)
 * Fixed aspect ratio for VESA 1600x1200 mode (2D items)
