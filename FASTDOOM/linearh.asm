@@ -71,6 +71,8 @@ CODE_SYM_DEF R_PatchLinearHigh
   mov   [eax],ebx
   mov   eax,patchColumnofsMMX+3
   mov   [eax],ebx
+  mov   eax,patchColumnofsRoll+3
+  mov   [eax],ebx
 
   pop   ebx
   ret
@@ -315,6 +317,53 @@ donehr:
 	pop		ecx
 	pop		ebx
   pop		edi
+  ret
+
+CODE_SYM_DEF R_DrawSpanBackbufferRoll
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		edi
+	push		ebp
+
+  mov     eax,[_ds_x1]
+  mov     ebp,[_ds_x2]
+  mov     ecx,[_ds_frac]        ; build composite position
+  mov     esi,[_ds_source]
+  mov     edi,[_ds_y]
+
+  sub     ebp, eax              ; EBP tiene el numero de pixels
+
+  mov     edi,[_ylookup+edi*4]
+  
+  shld  ebx,ecx,22
+patchColumnofsRoll:
+  lea   edi,[edi+eax+0x12345678]
+  shld  ebx,ecx,6
+  mov   eax,[_ds_colormap]
+  and   ebx,0xFFF
+  mov   edx,[_ds_step]        ; build composite step
+  add   ecx,edx                ; position += step
+  
+LoopSpanRoll:
+  mov   al,[esi+ebx]           ; get source pixel
+  shld  ebx,ecx,22             ; shift y units in
+  mov   al,[eax]               ; translate color
+  shld  ebx,ecx,6              ; shift x units in
+  mov   [edi],al               ; write pixel
+  and   ebx,0xFFF              ; mask off slop bits
+  add   ecx,edx                ; position += step
+  inc   edi
+  dec   ebp
+  jns   LoopSpanRoll
+
+  pop		ebp
+	pop		edi
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
   ret
 
 CODE_SYM_DEF R_DrawColumnBackbufferMMX
