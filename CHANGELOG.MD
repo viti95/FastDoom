@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 1.1.7 (?? ??? ????)
+## 1.2.0 (?? ??? ????)
 * Fixed span rendering in backbuffered modes (potato detail and resolutions above 320×200)
 * Optimized span rendering for Intel Pentium, Intel Pentium MMX, IDT WinChip, and Cyrix 6x86 CPUs in backbuffered and VBE2 direct modes
 * Removed 386SX-optimized code for backbuffered and VBE2 direct modes (these modes are too demanding for the slow 386SX, and the performance difference was minimal)
