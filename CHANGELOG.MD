@@ -10,7 +10,7 @@
 * Optimized backbuffer-to-VRAM copies for the Intel Pentium MMX (first use of MMX code)
 * Optimized backbuffer-to-VRAM copies for the Intel Pentium (first use of FPU code)
 * Automatic detection of CPU capabilities (FPU, MMX, etc.)
-* Optimized column rendering functions for 6th generation CPUs that benefit from code fitting in the L1 cache
+* Optimized span and column rendering functions for 6th generation CPUs that benefit from code fitting in the L1 cache
 
 ## 1.1.6 (27 Sep 2025)
 * Fixed aspect ratio for VESA 1600x1200 mode (2D items)
