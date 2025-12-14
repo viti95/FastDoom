@@ -2108,6 +2108,9 @@ void R_ExecuteSetViewSize(void)
             clearPlanes = R_ClearPlanes;
             switch (selectedCPU)
             {
+            case AMD_K5:
+                spanfunc = R_DrawSpanBackbufferRoll;
+                break;
             case INTEL_PENTIUM:
             case IDT_WINCHIP:
             case CYRIX_6X86:
@@ -2623,6 +2626,9 @@ void R_ExecuteSetViewSize(void)
             clearPlanes = R_ClearPlanes;
             switch (selectedCPU)
             {
+            case AMD_K5:
+                spanfunc = R_DrawSpanVBE2Roll;
+                break;
             case INTEL_PENTIUM:
                 spanfunc = R_DrawSpanVBE2Pentium;
                 break;
