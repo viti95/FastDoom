@@ -298,6 +298,56 @@ donehr:
   pop		edi
   ret
 
+CODE_SYM_DEF R_DrawSpanVBE2Roll
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		edi
+	push		ebp
+
+  mov  ecx,[_ds_frac]        ; build composite position
+  mov	 esi,[_ds_source]
+
+  mov  ebp,[_ds_y]
+
+  MulScreenWidthStart edi, ebp
+
+  mov  eax,[_ds_x1]
+  mov  ebp,[_ds_x2]
+  sub  ebp,eax           ; num pixels
+
+  MulScreenWidthEnd edi
+  shld    ebx,ecx,22
+  add  edi,[_destview]
+  shld    ebx,ecx,6
+  add  edi,eax
+  and  ebx,0xFFF
+
+  mov	  edx,[_ds_step]
+  mov   eax,[_ds_colormap]
+  add   ecx,edx                ; position += step
+
+LoopSpanRoll:
+  mov   al,[esi+ebx]           ; get source pixel
+  shld  ebx,ecx,22             ; shift y units in
+  mov   al,[eax]               ; translate color
+  shld  ebx,ecx,6              ; shift x units in
+  mov   [edi],al  ; write pixel
+  and   ebx,0xFFF              ; mask off slop bits
+  add   ecx,edx                ; position += step
+  inc   edi
+  dec   ebp
+  jns   LoopSpanRoll
+
+	pop		ebp
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+  pop		edi
+  ret
+
 CODE_SYM_DEF R_DrawColumnVBE2MMX
   push		edi
 	push		ebx
