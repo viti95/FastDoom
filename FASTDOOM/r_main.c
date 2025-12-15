@@ -1982,7 +1982,6 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case AMD_K5:
-            case INTEL_PENTIUM_P5_P54C:
             case INTEL_PENTIUM_P54CS:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
@@ -2014,7 +2013,6 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case AMD_K5:
-            case INTEL_PENTIUM_P5_P54C:
             case INTEL_PENTIUM_P54CS:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
@@ -2053,8 +2051,7 @@ void R_ExecuteSetViewSize(void)
                 switch (selectedCPU)
                 {
                 case AMD_K5:
-            case INTEL_PENTIUM_P5_P54C:
-            case INTEL_PENTIUM_P54CS:
+                case INTEL_PENTIUM_P54CS:
                 case CYRIX_6X86:
                 case CYRIX_6X86MX:
                     pspritefunc = basepspritefunc = R_DrawColumnBackbufferRoll;
@@ -2077,7 +2074,6 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case AMD_K5:
-            case INTEL_PENTIUM_P5_P54C:
             case INTEL_PENTIUM_P54CS:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
@@ -2155,7 +2151,6 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case AMD_K5:
-            case INTEL_PENTIUM_P5_P54C:
             case INTEL_PENTIUM_P54CS:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
@@ -2528,7 +2523,6 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case AMD_K5:
-            case INTEL_PENTIUM_P5_P54C:
             case INTEL_PENTIUM_P54CS:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
@@ -2555,7 +2549,6 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case AMD_K5:
-            case INTEL_PENTIUM_P5_P54C:
             case INTEL_PENTIUM_P54CS:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
@@ -2589,7 +2582,6 @@ void R_ExecuteSetViewSize(void)
                 switch (selectedCPU)
                 {
                 case AMD_K5:
-                case INTEL_PENTIUM_P5_P54C:
                 case INTEL_PENTIUM_P54CS:
                 case CYRIX_6X86:
                 case CYRIX_6X86MX:
@@ -2608,7 +2600,6 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case AMD_K5:
-            case INTEL_PENTIUM_P5_P54C:
             case INTEL_PENTIUM_P54CS:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
@@ -2683,7 +2674,6 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case AMD_K5:
-            case INTEL_PENTIUM_P5_P54C:
             case INTEL_PENTIUM_P54CS:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
