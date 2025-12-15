@@ -3,9 +3,9 @@
 ## 1.2.0 (?? ??? ????)
 * Fixed span rendering in backbuffered modes (potato detail and resolutions above 320×200)
 * Minor optimizations to span rendering in backbuffered and VBE2 direct modes
-* Added new span rendering routines for CPUs with slow SHLD performance
-* Added new column and span rendering routines optimized for CPUs that benefit from small code that fits in the L1 cache
-* Added new column and span rendering routines optimized for CPUs with MMX support
+* Added new span rendering routines for CPUs with slow SHLD performance (high detail)
+* Added new column and span rendering routines optimized for CPUs that benefit from small code that fits in the L1 cache (high detail)
+* Added new column and span rendering routines optimized for CPUs with MMX support (high detail)
 * Optimized code paths for Intel Pentium, Pentium MMX, AMD K5, AMD K6, IDT WinChip, Rise MP6, Cyrix 6x86, and Cyrix 6x86MX CPUs in backbuffered and VBE2 direct modes
 * Removed 386SX optimizations for backbuffered and VBE2 direct modes, as these modes are too demanding and the performance gains were negligible
 * Minor BSP rendering optimizations, especially for AMD K6 and other CPUs that perform poorly with ROL/ROR instructions
