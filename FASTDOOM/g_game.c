@@ -1459,8 +1459,11 @@ void G_SaveCSVResult(unsigned int gametics, unsigned int realtics, unsigned int 
         case INTEL_486:
             fprintf(logFile, "intel486");
             break;
-        case INTEL_PENTIUM:
+        case INTEL_PENTIUM_P5_P54C:
             fprintf(logFile, "pentium");
+            break;
+        case INTEL_PENTIUM_P54CS:
+            fprintf(logFile, "pentiump54cs");
             break;
         case INTEL_PENTIUM_MMX:
             fprintf(logFile, "pentiummmx");

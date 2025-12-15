@@ -926,7 +926,7 @@ void R_ExecuteSetViewSize(void)
             selectedCPU = INTEL_486;
             break;
         case 686:
-            selectedCPU = INTEL_PENTIUM;
+            selectedCPU = INTEL_PENTIUM_P5_P54C;
             break;
         default:
             selectedCPU = INTEL_486;
@@ -1982,7 +1982,8 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case AMD_K5:
-            case INTEL_PENTIUM:
+            case INTEL_PENTIUM_P5_P54C:
+            case INTEL_PENTIUM_P54CS:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
                 colfunc = R_DrawColumnBackbufferRoll;
@@ -2013,7 +2014,8 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case AMD_K5:
-            case INTEL_PENTIUM:
+            case INTEL_PENTIUM_P5_P54C:
+            case INTEL_PENTIUM_P54CS:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
                 spritefunc = basespritefunc = R_DrawColumnBackbufferRoll;
@@ -2051,7 +2053,8 @@ void R_ExecuteSetViewSize(void)
                 switch (selectedCPU)
                 {
                 case AMD_K5:
-                case INTEL_PENTIUM:
+            case INTEL_PENTIUM_P5_P54C:
+            case INTEL_PENTIUM_P54CS:
                 case CYRIX_6X86:
                 case CYRIX_6X86MX:
                     pspritefunc = basepspritefunc = R_DrawColumnBackbufferRoll;
@@ -2074,7 +2077,8 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case AMD_K5:
-            case INTEL_PENTIUM:
+            case INTEL_PENTIUM_P5_P54C:
+            case INTEL_PENTIUM_P54CS:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
                 pspritefunc = basepspritefunc = R_DrawColumnBackbufferRoll;
@@ -2110,9 +2114,10 @@ void R_ExecuteSetViewSize(void)
             {
             case CYRIX_6X86:
             case AMD_K5:
+            case INTEL_PENTIUM_P54CS:
                 spanfunc = R_DrawSpanBackbufferRoll;
                 break;
-            case INTEL_PENTIUM:
+            case INTEL_PENTIUM_P5_P54C:
             case IDT_WINCHIP:
             case CYRIX_6X86MX:
                 spanfunc = R_DrawSpanBackbufferPentium;
@@ -2150,7 +2155,8 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case AMD_K5:
-            case INTEL_PENTIUM:
+            case INTEL_PENTIUM_P5_P54C:
+            case INTEL_PENTIUM_P54CS:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
@@ -2315,7 +2321,8 @@ void R_ExecuteSetViewSize(void)
             clearPlanes = R_ClearPlanes;
             switch (selectedCPU)
             {
-            case INTEL_PENTIUM:
+            case INTEL_PENTIUM_P5_P54C:
+            case INTEL_PENTIUM_P54CS:
             case INTEL_PENTIUM_MMX:
             case IDT_WINCHIP:
             case CYRIX_6X86:
@@ -2446,7 +2453,8 @@ void R_ExecuteSetViewSize(void)
             clearPlanes = R_ClearPlanes;
             switch (selectedCPU)
             {
-            case INTEL_PENTIUM:
+            case INTEL_PENTIUM_P5_P54C:
+            case INTEL_PENTIUM_P54CS:
             case INTEL_PENTIUM_MMX:
             case IDT_WINCHIP:
             case CYRIX_6X86:
@@ -2520,7 +2528,8 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case AMD_K5:
-            case INTEL_PENTIUM:
+            case INTEL_PENTIUM_P5_P54C:
+            case INTEL_PENTIUM_P54CS:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
                 colfunc = R_DrawColumnVBE2Roll;
@@ -2546,7 +2555,8 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case AMD_K5:
-            case INTEL_PENTIUM:
+            case INTEL_PENTIUM_P5_P54C:
+            case INTEL_PENTIUM_P54CS:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
                 spritefunc = basespritefunc = R_DrawColumnVBE2Roll;
@@ -2579,7 +2589,8 @@ void R_ExecuteSetViewSize(void)
                 switch (selectedCPU)
                 {
                 case AMD_K5:
-                case INTEL_PENTIUM:
+                case INTEL_PENTIUM_P5_P54C:
+                case INTEL_PENTIUM_P54CS:
                 case CYRIX_6X86:
                 case CYRIX_6X86MX:
                     pspritefunc = basepspritefunc = R_DrawColumnVBE2Roll;
@@ -2597,7 +2608,8 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case AMD_K5:
-            case INTEL_PENTIUM:
+            case INTEL_PENTIUM_P5_P54C:
+            case INTEL_PENTIUM_P54CS:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
                 pspritefunc = basepspritefunc = R_DrawColumnVBE2Roll;
@@ -2626,11 +2638,12 @@ void R_ExecuteSetViewSize(void)
             clearPlanes = R_ClearPlanes;
             switch (selectedCPU)
             {
+            case INTEL_PENTIUM_P54CS:
             case CYRIX_6X86:
             case AMD_K5:
                 spanfunc = R_DrawSpanVBE2Roll;
                 break;
-            case INTEL_PENTIUM:
+            case INTEL_PENTIUM_P5_P54C:
                 spanfunc = R_DrawSpanVBE2Pentium;
                 break;
             case IDT_WINCHIP:
@@ -2670,7 +2683,8 @@ void R_ExecuteSetViewSize(void)
             switch (selectedCPU)
             {
             case AMD_K5:
-            case INTEL_PENTIUM:
+            case INTEL_PENTIUM_P5_P54C:
+            case INTEL_PENTIUM_P54CS:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
@@ -2770,7 +2784,8 @@ void R_ExecuteSetViewSize(void)
             clearPlanes = R_ClearPlanes;
             switch (selectedCPU)
             {
-            case INTEL_PENTIUM:
+            case INTEL_PENTIUM_P5_P54C:
+            case INTEL_PENTIUM_P54CS:
             case INTEL_PENTIUM_MMX:
             case IDT_WINCHIP:
             case CYRIX_6X86:
@@ -2883,7 +2898,8 @@ void R_ExecuteSetViewSize(void)
             clearPlanes = R_ClearPlanes;
             switch (selectedCPU)
             {
-            case INTEL_PENTIUM:
+            case INTEL_PENTIUM_P5_P54C:
+            case INTEL_PENTIUM_P54CS:
             case INTEL_PENTIUM_MMX:
             case IDT_WINCHIP:
             case CYRIX_6X86:

@@ -1706,7 +1706,8 @@ void D_DoomMain(void)
     M_CheckParmOptionalValue("-cy6x86mx", &selectedCPU, CYRIX_6X86MX);
     M_CheckParmOptionalValue("-k5", &selectedCPU, AMD_K5);
     M_CheckParmOptionalValue("-k6", &selectedCPU, AMD_K6);
-    M_CheckParmOptionalValue("-pentium", &selectedCPU, INTEL_PENTIUM);
+    M_CheckParmOptionalValue("-pentium", &selectedCPU, INTEL_PENTIUM_P5_P54C);
+    M_CheckParmOptionalValue("-pentiumP54CS", &selectedCPU, INTEL_PENTIUM_P54CS);
     M_CheckParmOptionalValue("-pentiumMMX", &selectedCPU, INTEL_PENTIUM_MMX);
     M_CheckParmOptionalValue("-mp6", &selectedCPU, RISE_MP6);
     M_CheckParmOptionalValue("-winchip", &selectedCPU, IDT_WINCHIP);

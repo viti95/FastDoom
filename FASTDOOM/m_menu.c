@@ -1470,8 +1470,11 @@ void M_DrawDisplayItem(int item, int position)
         case AMD_K5:
             M_WriteText(214, y, "AMD K5");
             break;
-        case INTEL_PENTIUM:
-            M_WriteText(214, y, "PENTIUM");
+        case INTEL_PENTIUM_P5_P54C:
+            M_WriteText(214, y, "PENTIUM P5/4C");
+            break;
+        case INTEL_PENTIUM_P54CS:
+            M_WriteText(214, y, "PENTIUM P54CS");
             break;
         case INTEL_PENTIUM_MMX:
             M_WriteText(214, y, "PENTIUM MMX");
@@ -1657,8 +1660,11 @@ void M_DrawDisplayItem(int item, int position)
         case AMD_K5:
             V_WriteTextDirect(M_X2, y, "AMD K5");
             break;
-        case INTEL_PENTIUM:
-            V_WriteTextDirect(M_X2, y, "INTEL PENTIUM");
+        case INTEL_PENTIUM_P5_P54C:
+            V_WriteTextDirect(M_X2, y, "INTEL PENTIUM P5/4C");
+            break;
+        case INTEL_PENTIUM_P54CS:
+            V_WriteTextDirect(M_X2, y, "INTEL PENTIUM P54CS");
             break;
         case INTEL_PENTIUM_MMX:
             V_WriteTextDirect(M_X2, y, "PENTIUM MMX");
