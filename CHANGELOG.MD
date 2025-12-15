@@ -2,15 +2,17 @@
 
 ## 1.2.0 (?? ??? ????)
 * Fixed span rendering in backbuffered modes (potato detail and resolutions above 320×200)
-* Optimized span rendering for Intel Pentium, Intel Pentium MMX, IDT WinChip, and Cyrix 6x86 CPUs in backbuffered and VBE2 direct modes
-* Removed 386SX-optimized code for backbuffered and VBE2 direct modes (these modes are too demanding for the slow 386SX, and the performance difference was minimal)
-* Minor optimizations in span rendering code for backbuffered and VBE2 direct modes
-* Small optimizations in BSP rendering code, especially for K6 and other CPUs that perform poorly with the ROL/ROR instructions
-* Changed NASM generated object files from OBJ to COFF format, allowing larger ASM files to be built (some develop builds failed at 1600×1200 resolutions).
-* Optimized backbuffer-to-VRAM copies for the Intel Pentium MMX (first use of MMX code)
-* Optimized backbuffer-to-VRAM copies for the Intel Pentium (first use of FPU code)
-* Automatic detection of CPU capabilities (FPU, MMX, etc.)
-* Optimized span and column rendering functions for 6th generation CPUs that benefit from code fitting in the L1 cache
+* Minor optimizations to span rendering in backbuffered and VBE2 direct modes
+* Added new span rendering routines for CPUs with slow SHLD performance
+* Added new column and span rendering routines optimized for CPUs that benefit from small code that fits in the L1 cache
+* Added new column and span rendering routines optimized for CPUs with MMX support
+* Optimized code paths for Intel Pentium, Pentium MMX, AMD K5, AMD K6, IDT WinChip, Rise MP6, Cyrix 6x86, and Cyrix 6x86MX CPUs in backbuffered and VBE2 direct modes
+* Removed 386SX optimizations for backbuffered and VBE2 direct modes, as these modes are too demanding and the performance gains were negligible
+* Minor BSP rendering optimizations, especially for AMD K6 and other CPUs that perform poorly with ROL/ROR instructions
+* Switched NASM output from OBJ to COFF format, enabling larger ASM files to be built (some development builds failed at 1600×1200 resolutions)
+* Optimized backbuffer-to-VRAM copy functions using MMX instructions
+* Optimized backbuffer-to-VRAM copy functions using FPU instructions
+* Added automatic CPU capability detection (FPU, MMX, etc.)
 
 ## 1.1.6 (27 Sep 2025)
 * Fixed aspect ratio for VESA 1600x1200 mode (2D items)
