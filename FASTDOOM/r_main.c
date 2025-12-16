@@ -2120,6 +2120,7 @@ void R_ExecuteSetViewSize(void)
                 break;
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
+            case AMD_K6:
                 spanfunc = R_DrawSpanBackbufferMMX;
                 break;
             default:
