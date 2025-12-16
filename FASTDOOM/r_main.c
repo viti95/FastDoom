@@ -2952,6 +2952,46 @@ void R_ExecuteSetViewSize(void)
     }
 #endif
 
+    // Avoid crashes due to missing instruction sets
+    if (!hasMMX) {
+
+#if defined(USE_BACKBUFFER)
+        // Backbuffer
+        if (colfunc == R_DrawColumnBackbufferMMX)
+            colfunc = R_DrawColumnBackbuffer;
+        
+        if (spritefunc == R_DrawColumnBackbufferMMX)
+            spritefunc = basespritefunc = R_DrawColumnBackbuffer;
+
+        if (pspritefunc == R_DrawColumnBackbufferMMX)
+            pspritefunc = basepspritefunc = R_DrawColumnBackbuffer;
+
+        if (skyfunc == R_DrawColumnBackbufferMMX)
+            skyfunc = R_DrawColumnBackbuffer;
+
+        if (spanfunc == R_DrawSpanBackbufferMMX)
+            spanfunc = R_DrawSpanBackbuffer;
+#endif
+
+#if defined(MODE_VBE2_DIRECT)
+        // VBE2
+        if (colfunc == R_DrawColumnVBE2MMX)
+            colfunc = R_DrawColumnVBE2;
+        
+        if (spritefunc == R_DrawColumnVBE2MMX)
+            spritefunc = basespritefunc = R_DrawColumnVBE2;
+
+        if (pspritefunc == R_DrawColumnVBE2MMX)
+            pspritefunc = basepspritefunc = R_DrawColumnVBE2;
+
+        if (skyfunc == R_DrawColumnVBE2MMX)
+            skyfunc = R_DrawColumnVBE2;
+
+        if (spanfunc == R_DrawSpanVBE2MMX)
+            spanfunc = R_DrawSpanVBE2;
+#endif
+    }
+
     R_InitBuffer(scaledviewwidth, viewheight);
 
     R_InitTextureMapping();

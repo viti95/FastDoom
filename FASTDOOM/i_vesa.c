@@ -535,6 +535,12 @@ void VBE2_InitGraphics(void)
           }
         }
 
+        if (!hasFPU && finishfunc == I_FinishUpdate8bppLinearFPU)
+          finishfunc = I_FinishUpdate8bppLinear;
+
+        if (!hasMMX && finishfunc == I_FinishUpdate8bppLinearMMX)
+          finishfunc = I_FinishUpdate8bppLinear;
+
         processpalette = I_ProcessPalette8bpp;
         setpalette = I_SetPalette8bpp;
         processedpalette = Z_MallocUnowned(14 * 768, PU_STATIC);
