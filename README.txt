@@ -224,11 +224,13 @@
  -386sx => Use Intel 386SX codepath
  -cy5x86 => Use Cyrix 5x86 codepath
  -cy6x86 => Use Cyrix 6x86 codepath
+ -cy6x86mx => Use Cyrix 6x86 codepath
  -k5 => Use AMD K5 codepath
  -k6 => Use AMD K6 codepath
  -mp6 => Use Rise mP6 codepath
  -winchip => Use IDT Winchip codepath
- -pentium => Use Intel Pentium codepath
+ -pentium => Use Intel Pentium P5 and P54C codepath
+ -pentiumP54CS => Use Intel Pentium P54CS codepath
  -pentiumMMX => Use Intel Pentium MMX codepath
  -limitram 32768 => Limit maximum memory to 32MB
  -freeram 128 => Leaves 128 KB free
