@@ -529,15 +529,15 @@ EvenSpan:
   paddd mm0, mm1
   mov   edx, 0x00000FC0
   psllq mm0, 32
-  movd  mm6, edx
+  movd  mm4, edx
   por   mm0, mm2
   punpckldq mm1, mm1
   movq  mm3, mm0
   movq  mm2, mm0
   psrld mm3, 4
   psrld mm2, 26
-  punpckldq mm6, mm6
-  pand  mm3, mm6
+  punpckldq mm4, mm4
+  pand  mm3, mm4
   por   mm2, mm3
   paddd mm1,mm1
 
@@ -555,7 +555,7 @@ LoopSpanMMX:
   psrld mm3, 4
   psrld mm2, 26
   mov  dh,[ebx]
-  pand  mm3, mm6
+  pand  mm3, mm4
   mov  [edi],dx
   por   mm2, mm3
   add  edi, 2
