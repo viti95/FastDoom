@@ -1479,6 +1479,9 @@ void M_DrawDisplayItem(int item, int position)
         case INTEL_PENTIUM_MMX:
             M_WriteText(214, y, "PENTIUM MMX");
             break;
+        case INTEL_PENTIUM_II:
+            M_WriteText(214, y, "PENTIUM II");
+            break;
         case CYRIX_6X86:
             M_WriteText(214, y, "CYRIX 6X86");
             break;
@@ -1668,6 +1671,9 @@ void M_DrawDisplayItem(int item, int position)
             break;
         case INTEL_PENTIUM_MMX:
             V_WriteTextDirect(M_X2, y, "PENTIUM MMX");
+            break;
+        case INTEL_PENTIUM_II:
+            V_WriteTextDirect(M_X2, y, "PENTIUM II");
             break;
         case CYRIX_6X86:
             V_WriteTextDirect(M_X2, y, "CYRIX 6X86");

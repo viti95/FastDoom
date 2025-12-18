@@ -226,6 +226,8 @@ void M_ChangeValueFile(unsigned int position, char *token)
             selectedCPU = INTEL_PENTIUM_P54CS;
         if (M_CheckValue(token, "pentiumMMX"))
             selectedCPU = INTEL_PENTIUM_MMX;
+        if (M_CheckValue(token, "pentiumII"))
+            selectedCPU = INTEL_PENTIUM_II;
         if (M_CheckValue(token, "k5"))
             selectedCPU = AMD_K5;
         if (M_CheckValue(token, "k6"))

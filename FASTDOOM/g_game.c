@@ -1468,6 +1468,9 @@ void G_SaveCSVResult(unsigned int gametics, unsigned int realtics, unsigned int 
         case INTEL_PENTIUM_MMX:
             fprintf(logFile, "pentiummmx");
             break;
+        case INTEL_PENTIUM_II:
+            fprintf(logFile, "pentiumii");
+            break;
         case CYRIX_386DLC:
             fprintf(logFile, "cyrix386");
             break;

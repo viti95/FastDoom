@@ -1994,6 +1994,7 @@ void R_ExecuteSetViewSize(void)
                 break;
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
                 colfunc = R_DrawColumnBackbufferMMX;
                 break;
             default:
@@ -2025,6 +2026,7 @@ void R_ExecuteSetViewSize(void)
                 break;
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
                 spritefunc = basespritefunc = R_DrawColumnBackbufferMMX;
                 break;
             default:
@@ -2063,6 +2065,7 @@ void R_ExecuteSetViewSize(void)
                     break;
                 case RISE_MP6:
                 case INTEL_PENTIUM_MMX:
+                case INTEL_PENTIUM_II:
                     pspritefunc = basepspritefunc = R_DrawColumnBackbufferMMX;
                     break;
                 default:
@@ -2086,6 +2089,7 @@ void R_ExecuteSetViewSize(void)
                 break;
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
                 pspritefunc = basepspritefunc = R_DrawColumnBackbufferMMX;
                 break;
             default:
@@ -2120,6 +2124,7 @@ void R_ExecuteSetViewSize(void)
                 break;
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
             case AMD_K6:
                 spanfunc = R_DrawSpanBackbufferMMX;
                 break;
@@ -2172,6 +2177,7 @@ void R_ExecuteSetViewSize(void)
                 break;
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnBackbufferSkyFullDirect : R_DrawColumnBackbufferMMX;
 #else
@@ -2320,6 +2326,7 @@ void R_ExecuteSetViewSize(void)
             case INTEL_PENTIUM_P5_P54C:
             case INTEL_PENTIUM_P54CS:
             case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
             case IDT_WINCHIP:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
@@ -2452,6 +2459,7 @@ void R_ExecuteSetViewSize(void)
             case INTEL_PENTIUM_P5_P54C:
             case INTEL_PENTIUM_P54CS:
             case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
             case IDT_WINCHIP:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
@@ -2531,6 +2539,7 @@ void R_ExecuteSetViewSize(void)
                 break;
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
                 colfunc = R_DrawColumnVBE2MMX;
                 break;
             default:
@@ -2557,6 +2566,7 @@ void R_ExecuteSetViewSize(void)
                 break;
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
                 spritefunc = basespritefunc = R_DrawColumnVBE2MMX;
                 break;
             default:
@@ -2590,6 +2600,7 @@ void R_ExecuteSetViewSize(void)
                     break;
                 case RISE_MP6:
                 case INTEL_PENTIUM_MMX:
+                case INTEL_PENTIUM_II:
                     pspritefunc = basepspritefunc = R_DrawColumnVBE2MMX;
                     break;
                 default:
@@ -2608,6 +2619,7 @@ void R_ExecuteSetViewSize(void)
                 break;
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
                 pspritefunc = basepspritefunc = R_DrawColumnVBE2MMX;
                 break;
             default:
@@ -2642,6 +2654,7 @@ void R_ExecuteSetViewSize(void)
             case CYRIX_6X86MX:
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
             case AMD_K6:
                 spanfunc = R_DrawSpanVBE2MMX;
                 break;
@@ -2686,6 +2699,7 @@ void R_ExecuteSetViewSize(void)
                 break;
             case RISE_MP6:
             case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnVBE2SkyFullDirect : R_DrawColumnVBE2MMX;
 #else
@@ -2778,6 +2792,7 @@ void R_ExecuteSetViewSize(void)
             case INTEL_PENTIUM_P5_P54C:
             case INTEL_PENTIUM_P54CS:
             case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
             case IDT_WINCHIP:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
@@ -2892,6 +2907,7 @@ void R_ExecuteSetViewSize(void)
             case INTEL_PENTIUM_P5_P54C:
             case INTEL_PENTIUM_P54CS:
             case INTEL_PENTIUM_MMX:
+            case INTEL_PENTIUM_II:
             case IDT_WINCHIP:
             case CYRIX_6X86:
             case CYRIX_6X86MX:
