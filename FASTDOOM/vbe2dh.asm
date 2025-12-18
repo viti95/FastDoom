@@ -525,12 +525,12 @@ EvenSpan:
 
   movd  mm0, ecx
   movd  mm1, edx
-  movd  mm5, ecx
+  movd  mm2, ecx
   paddd mm0, mm1
   mov   edx, 0x00000FC0
   psllq mm0, 32
   movd  mm6, edx
-  por   mm0, mm5
+  por   mm0, mm2
   punpckldq mm1, mm1
   movq  mm3, mm0
   movq  mm2, mm0
