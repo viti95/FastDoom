@@ -534,7 +534,6 @@ EvenSpan:
   punpckldq mm1, mm1
   movq  mm3, mm0
   movq  mm2, mm0
-  punpckldq mm4, mm4
   psrld mm3, 4
   psrld mm2, 26
   punpckldq mm6, mm6
