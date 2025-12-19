@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 1.2.0 (?? ??? ????)
+## 1.2.0 (19 Dec 2025)
 * Fixed span rendering in backbuffered modes (potato detail and resolutions above 320×200)
 * Minor optimizations to span rendering in backbuffered and VBE2 direct modes
 * Added new span rendering routines for CPUs with slow SHLD performance (high detail)
