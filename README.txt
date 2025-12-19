@@ -232,6 +232,7 @@
  -pentium => Use Intel Pentium P5 and P54C codepath
  -pentiumP54CS => Use Intel Pentium P54CS codepath
  -pentiumMMX => Use Intel Pentium MMX codepath
+ -pentiumII => Use Intel Pentium II codepath
  -limitram 32768 => Limit maximum memory to 32MB
  -freeram 128 => Leaves 128 KB free
  -uncapped => Enable uncapped FPS mode (>35 fps)
