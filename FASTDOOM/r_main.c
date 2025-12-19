@@ -922,11 +922,13 @@ void R_ExecuteSetViewSize(void)
             selectedCPU = INTEL_386DX;
             break;
         case 486:
-        case 586:
             selectedCPU = INTEL_486;
             break;
-        case 686:
+        case 586:
             selectedCPU = INTEL_PENTIUM_P5_P54C;
+            break;
+        case 686:
+            selectedCPU = INTEL_PENTIUM_II;
             break;
         default:
             selectedCPU = INTEL_486;
