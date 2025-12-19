@@ -40,7 +40,7 @@ if type dosemu &>/dev/null; then
       echo "sb /R $executable >> stub.log" >> stubdbox.bat
       echo "ss $executable dos32a.d32 >> stub.log" >> stubdbox.bat
     fi
-    dosemu -K . -n -t -E confDOS.bat &> /dev/null
+    dosemu -K . -n -E confDOS.bat &> /dev/null
     # NOTE: dosemu2 doesn't create files in uppercase
     for file in *.exe; do mv -- "$file" "${file^^}"; done
     rm -f stubdbox.bat
