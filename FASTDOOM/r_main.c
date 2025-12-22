@@ -2199,7 +2199,18 @@ void R_ExecuteSetViewSize(void)
         switch (invisibleRender)
         {
         case INVISIBLE_NORMAL:
-            fuzzcolfunc = R_DrawFuzzColumnBackbuffer;
+            switch(selectedCPU) {
+                case AMD_K5:
+                case INTEL_PENTIUM_P54CS:
+                case CYRIX_6X86:
+                case CYRIX_6X86MX:
+                    fuzzcolfunc = R_DrawFuzzColumnBackbufferRoll;
+                    break;
+                default:
+                    fuzzcolfunc = R_DrawFuzzColumnBackbuffer;
+                    break;
+            }
+            
             break;
         case INVISIBLE_FLAT:
             fuzzcolfunc = R_DrawFuzzColumnFlatBackbuffer;

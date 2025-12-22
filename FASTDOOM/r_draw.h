@@ -170,6 +170,7 @@ void R_DrawSpanBackbufferPentium(void);
 void R_DrawSpanLowBackbufferPentium(void);
 void R_DrawSpanPotatoBackbufferPentium(void);
 void R_DrawFuzzColumnBackbuffer(void);
+void R_DrawFuzzColumnBackbufferRoll(void);
 void R_DrawFuzzColumnLowBackbuffer(void);
 void R_DrawFuzzColumnPotatoBackbuffer(void);
 void R_DrawFuzzColumnFlatBackbuffer(void);
