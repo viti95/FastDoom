@@ -157,6 +157,7 @@ CODE_SYM_DEF R_DrawFuzzColumnBackbufferRoll
 	push		ecx
 	push		edx
 	push		ebp
+  push    esi
 
   mov  esi,[_dc_yh]
 
@@ -200,6 +201,7 @@ next:
   mov [_fuzzposinverse],ecx
 
 doner:
+  pop   esi
 	pop		ebp
 	pop		edx
 	pop		ecx

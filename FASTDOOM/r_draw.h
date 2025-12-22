@@ -222,6 +222,7 @@ void R_DrawFuzzColumnFlatSaturnVBE2(void);
 void R_DrawFuzzColumnFlatSaturnLowVBE2(void);
 void R_DrawFuzzColumnFlatSaturnPotatoVBE2(void);
 void R_DrawFuzzColumnVBE2(void);
+void R_DrawFuzzColumnVBE2Roll(void);
 void R_DrawFuzzColumnLowVBE2(void);
 void R_DrawFuzzColumnPotatoVBE2(void);
 void R_DrawFuzzColumnTransVBE2(void);

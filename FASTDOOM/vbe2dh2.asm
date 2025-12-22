@@ -59,6 +59,8 @@ CODE_SYM_DEF R_PatchFuzzColumnHighVBE2
   mov   ebx,[_viewheightminusone]
   mov   eax,patchViewHeight+1
   mov   [eax],ebx
+  mov   eax,patchViewHeightRoll+1
+  mov   [eax],ebx
   pop ebx
   ret
 
@@ -85,13 +87,11 @@ patchViewHeight:
 
   MulScreenWidthStart edi, ebp
   sub  ebp,eax ; ebp = pixel count
-  js   near .done
+  js   near done
 
   MulScreenWidthEnd edi
   add  edi,[_dc_x]
   add  edi,[_destview]
-
-  xor eax,eax
 
   mov eax,[_colormaps]
   mov	ecx,[_fuzzposinverse]
@@ -101,7 +101,7 @@ patchViewHeight:
 
   jmp  [scalecalls+4+ebp*4]
 
-.done:
+done:
 	pop		ebp
 	pop		edx
 	pop		ecx
@@ -148,3 +148,61 @@ vscale0:
   ret
 
 %endif
+
+CODE_SYM_DEF R_DrawFuzzColumnVBE2Roll
+	push		edi
+  push    esi
+	push		ebx
+	push		ecx
+	push		edx
+	push		ebp
+
+  mov  esi,[_dc_yh]
+
+patchViewHeightRoll:
+  mov  eax,0x12345678
+  
+  xor  eax,esi
+  sub  eax,1
+  sbb  esi,0
+
+  mov  eax,[_dc_yl]
+
+  cmp  eax,1
+  adc  eax,0
+
+  MulScreenWidthStart edi, eax
+  sub  esi,eax ; ebp = pixel count
+  js   near doner
+
+  MulScreenWidthEnd edi
+  mov eax,[_colormaps]
+  add  edi,[_dc_x]
+  mov	ecx,[_fuzzposinverse]
+  add  edi,[_destview]
+  add eax,0x600
+  mov edx,_fuzzoffsetinverse
+
+LoopRoll:
+  mov		ebp,[edx+ecx*4]
+	mov   al,[ebp+edi]
+  dec   ecx
+	mov		al,[eax]
+  jne   next
+  mov   ecx,49
+next:
+  mov		[edi],al
+  add  edi, SCREENWIDTH
+  dec esi
+  jns LoopRoll
+
+  mov [_fuzzposinverse],ecx
+
+doner:
+	pop		ebp
+	pop		edx
+	pop		ecx
+	pop		ebx
+  pop   esi
+  pop		edi
+  ret
