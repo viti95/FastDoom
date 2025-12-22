@@ -397,41 +397,41 @@ patchCenteryMMX:
   ; MMX 2 pixels render
 Even:
 
-  movd       mm3, edx
+  movd       mm0, edx
   
-  movd       mm4, ecx
+  movd       mm1, ecx
 
   mov        ecx, eax
 
-  paddd      mm3, mm4
+  paddd      mm0, mm1
 
   movd       mm2, edx
 
-  psllq      mm3, 32
+  psllq      mm0, 32
 
-  punpckldq  mm4, mm4  
+  punpckldq  mm1, mm1  
 
-  por        mm3, mm2
+  por        mm0, mm2
 
-  paddd      mm4, mm4
+  paddd      mm1, mm1
 
-  movq       mm5, mm3
+  movq       mm3, mm0
 
-  psrld      mm5, 25
+  psrld      mm3, 25
 
 LoopMMX:
 
-  movd       ebx, mm5
+  movd       ebx, mm3
 
-  paddd      mm3, mm4
+  paddd      mm0, mm1
 
-  psrlq      mm5,32
+  psrlq      mm3,32
 
   mov  al,[ebx+esi]
 
-  movd       edx, mm5
+  movd       edx, mm3
 
-  movq       mm5, mm3
+  movq       mm3, mm0
 
   mov  al,[eax]
 
@@ -441,7 +441,7 @@ LoopMMX:
 
   mov  cl,[ecx]
 
-  psrld      mm5, 25
+  psrld      mm3, 25
 
   mov  [edi+SCREENWIDTH], cl
 
