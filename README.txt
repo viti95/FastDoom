@@ -276,6 +276,9 @@
    This is due to the way the Doom engine renders the scene, wall 
    rendering is not cache friendly. It’s better to use VBE2 Direct modes
    on these CPUs for more consistent performance.
+ * Incorrect CPU feature detection on some Cyrix CPUs, as these CPUs do 
+   not enable the CPUID instruction by default. Use an external tool to 
+   enable this instruction before running FastDoom.
 
  PCM music format
  ----------------
