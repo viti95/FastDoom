@@ -63,6 +63,47 @@ CODE_SYM_DEF R_PatchCenteryLinearDirect
   pop  ebx
   ret
 
+CODE_SYM_DEF R_DrawColumnBackbufferDirect2xRoll
+  push		edi
+	push		ebx
+	push		ecx
+	push		edx
+	push		esi
+	push		ebp
+
+  mov  ebp,[_dc_yh]
+  mov  eax,[_dc_yl]
+  mov  edi,[_ylookup+eax*4]
+  sub  ebp,eax         ; ebp = pixel count
+  js   donehr
+
+  mov  ebx,[_dc_x]
+  add  edi,[_columnofs+ebx*4]
+
+  mov   esi,[_dc_source]
+  mov   eax,[_dc_colormap]
+  sub edi, 2*SCREENWIDTH
+  shr ebp,1
+
+LoopRoll:
+  mov  al,[esi]               ; get source pixel
+  add  edi, 2*SCREENWIDTH
+  inc  esi
+  mov  al,[eax]               ; translate the color
+  dec  ebp
+  mov  [edi],al               ; draw a pixel to the buffer
+  mov  [edi+SCREENWIDTH],al
+  jns  LoopRoll
+
+donehr:
+	pop		ebp
+	pop		esi
+	pop		edx
+	pop		ecx
+	pop		ebx
+  pop		edi
+  ret
+
 CODE_SYM_DEF R_DrawColumnBackbufferSkyFullDirect
 	push		edi
 	push		ebx

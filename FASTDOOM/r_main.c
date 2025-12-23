@@ -2075,6 +2075,36 @@ void R_ExecuteSetViewSize(void)
                     break;
                 }
             }
+#elif SCREENHEIGHT == 400 || SCREENHEIGHT == 480
+            if (screenblocks >= 10)
+            {
+                pspritefunc = basepspritefunc = R_DrawColumnBackbufferDirect2xRoll;
+            }
+            else
+            {
+                switch (selectedCPU)
+                {
+                case AMD_K5:
+                case INTEL_PENTIUM_P54CS:
+                case CYRIX_6X86:
+                case CYRIX_6X86MX:
+                    pspritefunc = basepspritefunc = R_DrawColumnBackbufferRoll;
+                    break;
+                case UMC_GREEN_486:
+                case CYRIX_5X86:
+                case AMD_K6:
+                    pspritefunc = basepspritefunc = R_DrawColumnBackbufferFastLEA;
+                    break;
+                case RISE_MP6:
+                case INTEL_PENTIUM_MMX:
+                case INTEL_PENTIUM_II:
+                    pspritefunc = basepspritefunc = R_DrawColumnBackbufferMMX;
+                    break;
+                default:
+                    pspritefunc = basepspritefunc = R_DrawColumnBackbuffer;
+                    break;
+                }
+            }
 #else
             switch (selectedCPU)
             {
