@@ -83,6 +83,14 @@ CODE_SYM_DEF R_DrawColumnBackbufferDirect2xRoll
   mov   esi,[_dc_source]
   mov   eax,[_dc_colormap]
   sub edi, 2*SCREENWIDTH
+
+  test  ebp,1
+  jnz   Even
+
+  sub edi, SCREENWIDTH
+
+Even:
+
   shr ebp,1
 
 LoopRoll:
