@@ -39,6 +39,8 @@
 
 #include "sizeopt.h"
 
+#include "m_menu.h"
+
 #define SC_INDEX 0x3C4
 
 #define MINZ (FRACUNIT * 4)
@@ -526,6 +528,13 @@ void R_DrawVisPSprite(vissprite_t *vis)
             }
 #elif defined(MODE_MDA)
             R_DrawSpriteTextMDA();
+#elif SCREENHEIGHT == 400 || SCREENHEIGHT == 480
+            if (screenblocks >= 10) {
+                if ((dc_x & 1) == 0)
+                    pspritefunc();
+            } else {
+                pspritefunc();
+            }
 #else
             pspritefunc();
 #endif

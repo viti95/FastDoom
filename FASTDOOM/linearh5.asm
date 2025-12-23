@@ -96,11 +96,12 @@ Even:
 LoopRoll:
   mov  al,[esi]               ; get source pixel
   add  edi, 2*SCREENWIDTH
+  mov  bl,[eax]               ; translate the color
   inc  esi
-  mov  al,[eax]               ; translate the color
+  mov  bh, bl
   dec  ebp
-  mov  [edi],al               ; draw a pixel to the buffer
-  mov  [edi+SCREENWIDTH],al
+  mov  [edi],bx               ; draw a pixel to the buffer
+  mov  [edi+SCREENWIDTH],bx
   jns  LoopRoll
 
 donehr:
