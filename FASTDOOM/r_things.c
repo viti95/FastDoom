@@ -529,7 +529,7 @@ void R_DrawVisPSprite(vissprite_t *vis)
 #elif defined(MODE_MDA)
             R_DrawSpriteTextMDA();
 #elif SCREENHEIGHT == 400 || SCREENHEIGHT == 480
-            if (screenblocks >= 10) {
+            if (screenblocks >= 10 && detailshift == DETAIL_HIGH) {
                 if ((dc_x & 1) == 0)
                     pspritefunc();
             } else {
