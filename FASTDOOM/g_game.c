@@ -814,6 +814,7 @@ char savename[256];
 
 void G_LoadGame(char *name)
 {
+    singletics = false;
     strcpy(savename, name);
     gameaction = ga_loadgame;
 }
@@ -1087,6 +1088,7 @@ void G_DeferedInitNew(skill_t skill,
 
 void G_DoNewGame(void)
 {
+    singletics = false;
     demoplayback = 0;
     respawnparm = false;
     fastparm = false;
