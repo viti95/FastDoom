@@ -170,6 +170,8 @@ char savedescription[32];
 
 int autorun;
 
+char levelsfile[21] = "LEVELS\\";
+
 //
 // G_BuildTiccmd
 // Builds a ticcmd from all of the available inputs
@@ -332,6 +334,19 @@ extern gamestate_t wipegamestate;
 
 void G_DoLoadLevel(void)
 {
+    int currentmapnum;
+
+    if (gamemode == commercial)
+    {
+        currentmapnum = gamemap - 1;
+    }else{
+        currentmapnum = (gameepisode - 1) * 9 + gamemap - 1;
+    }
+
+    I_ReadTextLineFile(levelsfile, currentmapnum, currentlevelname, 40, 0);
+    I_ReadTextLineFile(levelsfile, currentmapnum + 1, nextlevelname, 40, 0);
+
+
     // Reset interpolation state to values that will force no interpolation
     // on the first tick
     interpolation_weight = 0x10000;
@@ -1099,8 +1114,6 @@ void G_DoNewGame(void)
 // The sky texture to be used instead of the F_SKY1 dummy.
 extern short skytexture;
 
-char levelsfile[21] = "LEVELS\\";
-
 #define levelfilepos 7
 
 void G_GetLevelsFileName(void)
@@ -1121,7 +1134,6 @@ void G_InitNew(skill_t skill,
                int map)
 {
     int i;
-    int currentmapnum;
 
     if (paused)
     {
@@ -1194,18 +1206,6 @@ void G_InitNew(skill_t skill,
     gameepisode = episode;
     gamemap = map;
     gameskill = skill;
-
-    if (gamemode == commercial)
-    {
-        currentmapnum = gamemap - 1;
-    }else{
-        currentmapnum = (gameepisode - 1) * 9 + gamemap - 1;
-    }
-
-    G_GetLevelsFileName();
-
-    I_ReadTextLineFile(levelsfile, currentmapnum, currentlevelname, 40, 0);
-    I_ReadTextLineFile(levelsfile, currentmapnum + 1, nextlevelname, 40, 0);
 
     viewactive = 1;
 

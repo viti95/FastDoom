@@ -62,4 +62,6 @@ void G_Responder(void);
 
 unsigned int G_GetDemoTicks(char *demofile);
 
+void G_GetLevelsFileName(void);
+
 #endif

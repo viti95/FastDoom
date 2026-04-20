@@ -1438,6 +1438,8 @@ void D_DoomMain(void)
 
     IdentifyVersion();
 
+    G_GetLevelsFileName();
+
 #if defined(MODE_CGA512)
     CGAmodel = SelectIBMCGA();
 #endif

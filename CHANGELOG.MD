@@ -1,6 +1,7 @@
 # CHANGELOG
 
 ## 1.2.1 (?? ??? ????)
+* Fixed automap level name not updating after completing a level (thanks y2k_se)
 * Fixed game running too fast when starting new games or loading saves while running a benchmark (issue #267)
 
 ## 1.2.0 (19 Dec 2025)
