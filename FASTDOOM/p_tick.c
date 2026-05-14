@@ -80,8 +80,6 @@ void P_RunThinkers(void)
 
 void P_Ticker(void)
 {
-    int i;
-
     // run the tic, pause if in menu and at least one tic has been run
     if (paused || (menuactive && !demoplayback && players.viewz != 1))
         return;

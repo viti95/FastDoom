@@ -63,7 +63,6 @@
 
 extern int detailLevel;
 extern int screenblocks;
-extern int screenblocks;
 extern int screenSize;
 
 #define FILE_SEPARATOR ",\n"

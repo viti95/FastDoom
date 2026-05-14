@@ -787,7 +787,6 @@ void P_SetupPsprites(void)
 //
 void P_MovePsprites(void)
 {
-    int i;
     pspdef_t *psp;
     state_t *state;
 
