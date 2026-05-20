@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 1.2.2 (?? ??? ????)
+## 1.2.2 (20 May 2026)
 * Fixed use-after-free bug in P_RunThinkers
 
 ## 1.2.1 (10 May 2026)
