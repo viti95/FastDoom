@@ -189,9 +189,7 @@ int ProcessInterpolationAndTics(void) {
            int current_time_in_gametic = new_ts & 0xf;
            int next_time_in_gametic = current_time_in_gametic + frametime_hrticks;
            if (next_time_in_gametic > 16) {
-               gametics_elapsed++;
-               gametime--;
-               maketic--;
+				gametics_elapsed++;
                next_time_in_gametic -= 16;
                last_ts += 16 - current_time_in_gametic;
            }
@@ -227,15 +225,11 @@ int ProcessInterpolationAndTics(void) {
 // and tic rate
 void TryRunTicsUncapped(void)
 {
-	int counts;
-	while(1) {
-		counts = ProcessInterpolationAndTics();
-		NetUpdate();
-		if (counts > 0) {
-			// IF we ran any tics, we need to break to handle sound etc
-			return;
-		}
-	}
+    int processed = ProcessInterpolationAndTics();
+    
+    if (processed == 0 && maketic <= gametic) {
+        NetUpdate();
+    }
 }
 
 void TryRunTics(void)
