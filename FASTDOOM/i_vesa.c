@@ -380,6 +380,16 @@ void VBE2_InitGraphics(void)
   int i;
   int linearModeFound = 0;
 
+  unsigned short vesaWidth = SCREENWIDTH;
+  unsigned short vesaHeight = SCREENHEIGHT;
+
+#if defined(MODE_VBE2)
+  if (vesaScaleOutput) {
+    vesaWidth = vesaScaleOutputWidth;
+    vesaHeight = vesaScaleOutputHeight;
+  }
+#endif
+  
   VBE_Init();
 
   // Get VBE info
@@ -392,7 +402,7 @@ void VBE2_InitGraphics(void)
     // Test for requested linear mode
     if (forceVesaNonLinear == 0)
     {
-      if (VBE2_FindVideoMode(SCREENWIDTH, SCREENHEIGHT, forceVesaBitsPerPixel, 1))
+      if (VBE2_FindVideoMode(vesaWidth, vesaHeight, forceVesaBitsPerPixel, 1))
       {
         linearModeFound = 1;
       }
@@ -401,7 +411,7 @@ void VBE2_InitGraphics(void)
     // If not found, test for requested non-linear modes
     if (!linearModeFound)
     {
-      VBE2_FindVideoMode(SCREENWIDTH, SCREENHEIGHT, forceVesaBitsPerPixel, 0);
+      VBE2_FindVideoMode(vesaWidth, vesaHeight, forceVesaBitsPerPixel, 0);
     }
 
   } else {
@@ -411,7 +421,7 @@ void VBE2_InitGraphics(void)
     {
       for (i = 0; i < 5; i++) // Test each bit depth
       {
-        if (VBE2_FindVideoMode(SCREENWIDTH, SCREENHEIGHT, bitsperpixel[i], 1))
+        if (VBE2_FindVideoMode(vesaWidth, vesaHeight, bitsperpixel[i], 1))
         {
           linearModeFound = 1;
           break;
@@ -424,7 +434,7 @@ void VBE2_InitGraphics(void)
       // Test for non-linear vesa modes
       for (i = 0; i < 5; i++) // Test each bit depth
       {
-        if (VBE2_FindVideoMode(SCREENWIDTH, SCREENHEIGHT, bitsperpixel[i], 0))
+        if (VBE2_FindVideoMode(vesaWidth, vesaHeight, bitsperpixel[i], 0))
         {
           break;
         }
