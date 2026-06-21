@@ -327,7 +327,9 @@ int vesalinear = -1;
 int vesamode = -1;
 unsigned long vesamemory = -1;
 char *vesavideoptr;
-int vesascanlinefix = 0;
+unsigned int vesascanlinefix = 0;
+unsigned int vesaWidth = SCREENWIDTH;
+unsigned int vesaHeight = SCREENHEIGHT;
 
 int VBE2_FindVideoMode(unsigned short screenwidth, unsigned short screenheight, char bitsperpixel, int isLinear)
 {
@@ -358,14 +360,14 @@ int VBE2_FindVideoMode(unsigned short screenwidth, unsigned short screenheight, 
         vesalinear = isVesaLinear;
         vesabitsperpixel = bitsperpixel;
 
-        if (vbemode.BytesPerScanline != SCREENWIDTH*bitsperpixel)
+        if (vbemode.BytesPerScanline != vesaWidth*bitsperpixel)
         {
           int bpp = bitsperpixel;
 
           if (bpp == 15)
             bpp = 16;
 
-          vesascanlinefix = vbemode.BytesPerScanline - SCREENWIDTH*(bpp/8);
+          vesascanlinefix = vbemode.BytesPerScanline - vesaWidth*(bpp/8);
         }
 
         return 1;
@@ -382,9 +384,6 @@ void VBE2_InitGraphics(void)
   char bitsperpixel[] = {8, 16, 15, 24, 32}; // Modes to test
   int i;
   int linearModeFound = 0;
-
-  unsigned short vesaWidth = SCREENWIDTH;
-  unsigned short vesaHeight = SCREENHEIGHT;
 
 #if defined(MODE_VBE2)
   if (vesaScaleOutput && vesaScaleOutputHeight > SCREENHEIGHT && vesaScaleOutputWidth > SCREENWIDTH) {
