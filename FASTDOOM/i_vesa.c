@@ -514,6 +514,9 @@ void VBE2_InitGraphics(void)
               case 4:
                 finishfunc = I_FinishUpdate8bppLinearScale4x;
                 break;
+              case 5:
+                finishfunc = I_FinishUpdate8bppLinearScale5x;
+                break;
             }
 
             processpalette = I_ProcessPalette8bpp;
@@ -984,6 +987,48 @@ void I_FinishUpdate8bppLinearScale4x(void)
     }
 
     ptrVRAM += 4*vesaScanlineSizeQuarter - SCREENWIDTH;
+  }
+}
+
+void I_FinishUpdate8bppLinearScale5x(void)
+{
+  int i,j;
+
+  unsigned char *ptrVRAM = vesaScaleStart;
+
+  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  {
+    for (j = 0; j < SCREENWIDTH; j++, ptrVRAM += 5)
+    {
+      unsigned char data = backbuffer[i + j];
+      *(ptrVRAM) = data;
+      *(ptrVRAM+1) = data;
+      *(ptrVRAM+2) = data;
+      *(ptrVRAM+3) = data;
+      *(ptrVRAM+4) = data;
+      *(ptrVRAM+vesaScanlineSize) = data;
+      *(ptrVRAM+vesaScanlineSize+1) = data;
+      *(ptrVRAM+vesaScanlineSize+2) = data;
+      *(ptrVRAM+vesaScanlineSize+3) = data;
+      *(ptrVRAM+vesaScanlineSize+4) = data;
+      *(ptrVRAM+2*vesaScanlineSize) = data;
+      *(ptrVRAM+2*vesaScanlineSize+1) = data;
+      *(ptrVRAM+2*vesaScanlineSize+2) = data;
+      *(ptrVRAM+2*vesaScanlineSize+3) = data;
+      *(ptrVRAM+2*vesaScanlineSize+4) = data;
+      *(ptrVRAM+3*vesaScanlineSize) = data;
+      *(ptrVRAM+3*vesaScanlineSize+1) = data;
+      *(ptrVRAM+3*vesaScanlineSize+2) = data;
+      *(ptrVRAM+3*vesaScanlineSize+3) = data;
+      *(ptrVRAM+3*vesaScanlineSize+4) = data;
+      *(ptrVRAM+4*vesaScanlineSize) = data;
+      *(ptrVRAM+4*vesaScanlineSize+1) = data;
+      *(ptrVRAM+4*vesaScanlineSize+2) = data;
+      *(ptrVRAM+4*vesaScanlineSize+3) = data;
+      *(ptrVRAM+4*vesaScanlineSize+4) = data;
+    }
+
+    ptrVRAM += 5*vesaScanlineSize - SCREENWIDTH*5;
   }
 }
 

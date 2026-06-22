@@ -291,6 +291,7 @@ void I_FinishUpdate32bppLinearFix(void);
 void I_FinishUpdate8bppLinearScale2x(void);
 void I_FinishUpdate8bppLinearScale3x(void);
 void I_FinishUpdate8bppLinearScale4x(void);
+void I_FinishUpdate8bppLinearScale5x(void);
 void I_ProcessPalette(byte *palette);
 void I_SetPalette(int numpalette);
 void I_ProcessPalette8bpp(byte *palette);
