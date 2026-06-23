@@ -494,7 +494,76 @@ void VBE2_InitGraphics(void)
       vesaScanlineSize = vbemode.BytesPerScanline;
 
       if (pcscreen == (void *)0xA0000) {
-        // Banked
+        // Banked scaled
+
+        switch (vesabitsperpixel)
+        {
+        case 8:
+          vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleMax) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleMax) / 2;
+          switch (vesaScaleMax) {
+            case 1: finishfunc = I_FinishUpdate8bppBankedScale1x; break;
+            case 2: finishfunc = I_FinishUpdate8bppBankedScale2x; break;
+            case 3: finishfunc = I_FinishUpdate8bppBankedScale3x; break;
+            case 4: finishfunc = I_FinishUpdate8bppBankedScale4x; break;
+            case 5: finishfunc = I_FinishUpdate8bppBankedScale5x; break;
+          }
+          processpalette = I_ProcessPalette8bpp;
+          setpalette = I_SetPalette8bpp;
+          processedpalette = Z_MallocUnowned(14 * 768, PU_STATIC);
+          break;
+        case 15:
+          vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleMax) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleMax) / 2 * 2;
+          switch (vesaScaleMax) {
+            case 1: finishfunc = I_FinishUpdate15bppBankedScale1x; break;
+            case 2: finishfunc = I_FinishUpdate15bppBankedScale2x; break;
+            case 3: finishfunc = I_FinishUpdate15bppBankedScale3x; break;
+            case 4: finishfunc = I_FinishUpdate15bppBankedScale4x; break;
+            case 5: finishfunc = I_FinishUpdate15bppBankedScale5x; break;
+          }
+          processpalette = I_ProcessPalette15bpp;
+          setpalette = I_SetPalette15bpp;
+          processedpalette = Z_MallocUnowned(14 * 256 * 2, PU_STATIC);
+          break;
+        case 16:
+          vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleMax) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleMax) / 2 * 2;
+          switch (vesaScaleMax) {
+            case 1: finishfunc = I_FinishUpdate16bppBankedScale1x; break;
+            case 2: finishfunc = I_FinishUpdate16bppBankedScale2x; break;
+            case 3: finishfunc = I_FinishUpdate16bppBankedScale3x; break;
+            case 4: finishfunc = I_FinishUpdate16bppBankedScale4x; break;
+            case 5: finishfunc = I_FinishUpdate16bppBankedScale5x; break;
+          }
+          processpalette = I_ProcessPalette16bpp;
+          setpalette = I_SetPalette16bpp;
+          processedpalette = Z_MallocUnowned(14 * 256 * 2, PU_STATIC);
+          break;
+        case 24:
+          vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleMax) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleMax) / 2 * 3;
+          switch (vesaScaleMax) {
+            case 1: finishfunc = I_FinishUpdate24bppBankedScale1x; break;
+            case 2: finishfunc = I_FinishUpdate24bppBankedScale2x; break;
+            case 3: finishfunc = I_FinishUpdate24bppBankedScale3x; break;
+            case 4: finishfunc = I_FinishUpdate24bppBankedScale4x; break;
+            case 5: finishfunc = I_FinishUpdate24bppBankedScale5x; break;
+          }
+          processpalette = I_ProcessPalette24bpp;
+          setpalette = I_SetPalette24bpp;
+          processedpalette = Z_MallocUnowned(14 * 256 * 3, PU_STATIC);
+          break;
+        case 32:
+          vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleMax) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleMax) / 2 * 4;
+          switch (vesaScaleMax) {
+            case 1: finishfunc = I_FinishUpdate32bppBankedScale1x; break;
+            case 2: finishfunc = I_FinishUpdate32bppBankedScale2x; break;
+            case 3: finishfunc = I_FinishUpdate32bppBankedScale3x; break;
+            case 4: finishfunc = I_FinishUpdate32bppBankedScale4x; break;
+            case 5: finishfunc = I_FinishUpdate32bppBankedScale5x; break;
+          }
+          processpalette = I_ProcessPalette32bpp;
+          setpalette = I_SetPalette32bpp;
+          processedpalette = Z_MallocUnowned(14 * 256 * 4, PU_STATIC);
+          break;
+        }
 
       } else {
         // Linear
@@ -1818,6 +1887,219 @@ void I_FinishUpdate32bppLinearFix(void)
     ptrVRAM += (vesascanlinefix/4);
   }
 }
+
+/* ---- Banked scaled mode functions ---- */
+
+static void BankedWritePixelByte(void *vram, int offset, byte data)
+{
+  *(byte *)(0xA0000 + offset) = data;
+}
+
+static void BankedWritePixelShort(void *vram, int offset, unsigned short data)
+{
+  *(unsigned short *)(0xA0000 + offset) = data;
+}
+
+static void BankedWritePixelInt(void *vram, int offset, unsigned int data)
+{
+  *(unsigned int *)(0xA0000 + offset) = data;
+}
+
+#define BANKED_SCALE_8BPP(N) \
+void I_FinishUpdate8bppBankedScale##N##x(void) \
+{ \
+  int out_x, out_y; \
+  unsigned char *ptrPalette = (unsigned char *) ptrprocessedpalette; \
+  int scaleStartOffset = (int)((unsigned long)vesaScaleStart - (unsigned long)0xA0000); \
+  int rowOffset, bank, offsetInBank; \
+  \
+  for (out_y = 0; out_y < SCREENHEIGHT * N; out_y++) \
+  { \
+    rowOffset = scaleStartOffset + out_y * vesaScanlineSize; \
+    bank = rowOffset / 65536; \
+    offsetInBank = rowOffset % 65536; \
+    VBE_SetBank(bank); \
+    \
+    for (out_x = 0; out_x < SCREENWIDTH * N; out_x++) \
+    { \
+      if (offsetInBank + 1 > 65536) \
+      { \
+        bank++; \
+        offsetInBank = 0; \
+        VBE_SetBank(bank); \
+      } \
+      BankedWritePixelByte(NULL, offsetInBank, backbuffer[(out_y / N) * SCREENWIDTH + (out_x / N)]); \
+      offsetInBank++; \
+    } \
+  } \
+}
+
+BANKED_SCALE_8BPP(1)
+BANKED_SCALE_8BPP(2)
+BANKED_SCALE_8BPP(3)
+BANKED_SCALE_8BPP(4)
+BANKED_SCALE_8BPP(5)
+
+#define BANKED_SCALE_15BPP(N) \
+void I_FinishUpdate15bppBankedScale##N##x(void) \
+{ \
+  int out_x, out_y; \
+  unsigned short *ptrPalette = (unsigned short *) ptrprocessedpalette; \
+  int scaleStartOffset = (int)((unsigned long)vesaScaleStart - (unsigned long)0xA0000); \
+  int rowOffset, bank, offsetInBank; \
+  \
+  for (out_y = 0; out_y < SCREENHEIGHT * N; out_y++) \
+  { \
+    rowOffset = scaleStartOffset + out_y * vesaScanlineSize; \
+    bank = rowOffset / 65536; \
+    offsetInBank = rowOffset % 65536; \
+    VBE_SetBank(bank); \
+    \
+    for (out_x = 0; out_x < SCREENWIDTH * N; out_x++) \
+    { \
+      if (offsetInBank + 2 > 65536) \
+      { \
+        bank++; \
+        offsetInBank = 0; \
+        VBE_SetBank(bank); \
+      } \
+      BankedWritePixelShort(NULL, offsetInBank, ptrPalette[backbuffer[(out_y / N) * SCREENWIDTH + (out_x / N)]]); \
+      offsetInBank += 2; \
+    } \
+  } \
+}
+
+BANKED_SCALE_15BPP(1)
+BANKED_SCALE_15BPP(2)
+BANKED_SCALE_15BPP(3)
+BANKED_SCALE_15BPP(4)
+BANKED_SCALE_15BPP(5)
+
+#define BANKED_SCALE_16BPP(N) \
+void I_FinishUpdate16bppBankedScale##N##x(void) \
+{ \
+  int out_x, out_y; \
+  unsigned short *ptrPalette = (unsigned short *) ptrprocessedpalette; \
+  int scaleStartOffset = (int)((unsigned long)vesaScaleStart - (unsigned long)0xA0000); \
+  int rowOffset, bank, offsetInBank; \
+  \
+  for (out_y = 0; out_y < SCREENHEIGHT * N; out_y++) \
+  { \
+    rowOffset = scaleStartOffset + out_y * vesaScanlineSize; \
+    bank = rowOffset / 65536; \
+    offsetInBank = rowOffset % 65536; \
+    VBE_SetBank(bank); \
+    \
+    for (out_x = 0; out_x < SCREENWIDTH * N; out_x++) \
+    { \
+      if (offsetInBank + 2 > 65536) \
+      { \
+        bank++; \
+        offsetInBank = 0; \
+        VBE_SetBank(bank); \
+      } \
+      BankedWritePixelShort(NULL, offsetInBank, ptrPalette[backbuffer[(out_y / N) * SCREENWIDTH + (out_x / N)]]); \
+      offsetInBank += 2; \
+    } \
+  } \
+}
+
+BANKED_SCALE_16BPP(1)
+BANKED_SCALE_16BPP(2)
+BANKED_SCALE_16BPP(3)
+BANKED_SCALE_16BPP(4)
+BANKED_SCALE_16BPP(5)
+
+#define BANKED_SCALE_24BPP(N) \
+void I_FinishUpdate24bppBankedScale##N##x(void) \
+{ \
+  int out_x, out_y; \
+  unsigned char *ptrPalette = (unsigned char *) ptrprocessedpalette; \
+  int scaleStartOffset = (int)((unsigned long)vesaScaleStart - (unsigned long)0xA0000); \
+  int rowOffset, bank, offsetInBank; \
+  \
+  for (out_y = 0; out_y < SCREENHEIGHT * N; out_y++) \
+  { \
+    rowOffset = scaleStartOffset + out_y * vesaScanlineSize; \
+    bank = rowOffset / 65536; \
+    offsetInBank = rowOffset % 65536; \
+    VBE_SetBank(bank); \
+    \
+    for (out_x = 0; out_x < SCREENWIDTH * N; out_x++) \
+    { \
+      int lutIdx = (out_y / N) * SCREENWIDTH + (out_x / N); \
+      int ptrLUT = lutIdx * 3; \
+      \
+      if (offsetInBank + 3 > 65536) \
+      { \
+        int remaining = 65536 - offsetInBank; \
+        while (offsetInBank < 65536 && remaining > 0) \
+        { \
+          BankedWritePixelByte(NULL, offsetInBank, ptrPalette[ptrLUT]); \
+          offsetInBank++; \
+          ptrLUT++; \
+          remaining--; \
+        } \
+        bank++; \
+        offsetInBank = 0; \
+        VBE_SetBank(bank); \
+        while (offsetInBank < 65536 && ptrLUT < lutIdx * 3 + 3) \
+        { \
+          BankedWritePixelByte(NULL, offsetInBank, ptrPalette[ptrLUT]); \
+          offsetInBank++; \
+          ptrLUT++; \
+        } \
+      } \
+      else \
+      { \
+        BankedWritePixelByte(NULL, offsetInBank, ptrPalette[ptrLUT]); offsetInBank++; \
+        BankedWritePixelByte(NULL, offsetInBank, ptrPalette[ptrLUT + 1]); offsetInBank++; \
+        BankedWritePixelByte(NULL, offsetInBank, ptrPalette[ptrLUT + 2]); offsetInBank++; \
+      } \
+    } \
+  } \
+}
+
+BANKED_SCALE_24BPP(1)
+BANKED_SCALE_24BPP(2)
+BANKED_SCALE_24BPP(3)
+BANKED_SCALE_24BPP(4)
+BANKED_SCALE_24BPP(5)
+
+#define BANKED_SCALE_32BPP(N) \
+void I_FinishUpdate32bppBankedScale##N##x(void) \
+{ \
+  int out_x, out_y; \
+  unsigned int *ptrPalette = (unsigned int *) ptrprocessedpalette; \
+  int scaleStartOffset = (int)((unsigned long)vesaScaleStart - (unsigned long)0xA0000); \
+  int rowOffset, bank, offsetInBank; \
+  \
+  for (out_y = 0; out_y < SCREENHEIGHT * N; out_y++) \
+  { \
+    rowOffset = scaleStartOffset + out_y * vesaScanlineSize; \
+    bank = rowOffset / 65536; \
+    offsetInBank = rowOffset % 65536; \
+    VBE_SetBank(bank); \
+    \
+    for (out_x = 0; out_x < SCREENWIDTH * N; out_x++) \
+    { \
+      if (offsetInBank + 4 > 65536) \
+      { \
+        bank++; \
+        offsetInBank = 0; \
+        VBE_SetBank(bank); \
+      } \
+      BankedWritePixelInt(NULL, offsetInBank, ptrPalette[backbuffer[(out_y / N) * SCREENWIDTH + (out_x / N)]]); \
+      offsetInBank += 4; \
+    } \
+  } \
+}
+
+BANKED_SCALE_32BPP(1)
+BANKED_SCALE_32BPP(2)
+BANKED_SCALE_32BPP(3)
+BANKED_SCALE_32BPP(4)
+BANKED_SCALE_32BPP(5)
 
 #endif
 
