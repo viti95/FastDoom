@@ -1419,8 +1419,8 @@ void I_FinishUpdate32bppLinearScale1x(void)
   {
     for (j = 0; j < SCREENWIDTH; j++, ptrVRAM++)
     {
-      unsigned short ptrLUT = backbuffer[i + j] * 4;
-      *(ptrVRAM) = *(unsigned int *)(ptrPalette + ptrLUT);
+      unsigned char ptrLUT = backbuffer[i + j];
+      *(ptrVRAM) = ptrPalette[ptrLUT];
     }
 
     ptrVRAM += vesaScanlineSize / 4 - SCREENWIDTH;
@@ -1439,15 +1439,15 @@ void I_FinishUpdate32bppLinearScale2x(void)
   {
     for (j = 0; j < SCREENWIDTH; j++, ptrVRAM += 2)
     {
-      unsigned short ptrLUT = backbuffer[i + j] * 4;
-      unsigned int data = *(unsigned int *)(ptrPalette + ptrLUT);
+      unsigned char ptrLUT = backbuffer[i + j];
+      unsigned int data = ptrPalette[ptrLUT];
 
       *(ptrVRAM) = data; *(ptrVRAM+1) = data;
-      *(ptrVRAM+vesaScanlineQuarter) = data; 
+      *(ptrVRAM+vesaScanlineQuarter) = data;
       *(ptrVRAM+vesaScanlineQuarter+1) = data;
     }
 
-    ptrVRAM += vesaScanlineSize / 2 - SCREENWIDTH * 2;
+    ptrVRAM += 2*vesaScanlineQuarter - SCREENWIDTH * 2;
   }
 }
 
@@ -1463,8 +1463,8 @@ void I_FinishUpdate32bppLinearScale3x(void)
   {
     for (j = 0; j < SCREENWIDTH; j++, ptrVRAM += 3)
     {
-      unsigned short ptrLUT = backbuffer[i + j] * 4;
-      unsigned int data = *(unsigned int *)(ptrPalette + ptrLUT);
+      unsigned char ptrLUT = backbuffer[i + j];
+      unsigned int data = ptrPalette[ptrLUT];
 
       *(ptrVRAM) = data; *(ptrVRAM+1) = data; *(ptrVRAM+2) = data;
       *(ptrVRAM+vesaScanlineQuarter) = data; *(ptrVRAM+vesaScanlineQuarter+1) = data; *(ptrVRAM+vesaScanlineQuarter+2) = data;
@@ -1487,8 +1487,8 @@ void I_FinishUpdate32bppLinearScale4x(void)
   {
     for (j = 0; j < SCREENWIDTH; j++, ptrVRAM += 4)
     {
-      unsigned short ptrLUT = backbuffer[i + j] * 4;
-      unsigned int data = *(unsigned int *)(ptrPalette + ptrLUT);
+      unsigned char ptrLUT = backbuffer[i + j];
+      unsigned int data = ptrPalette[ptrLUT];
 
       *(ptrVRAM) = data; *(ptrVRAM+1) = data; *(ptrVRAM+2) = data; *(ptrVRAM+3) = data;
       *(ptrVRAM+vesaScanlineQuarter) = data; *(ptrVRAM+vesaScanlineQuarter+1) = data; *(ptrVRAM+vesaScanlineQuarter+2) = data; *(ptrVRAM+vesaScanlineQuarter+3) = data;
@@ -1512,8 +1512,8 @@ void I_FinishUpdate32bppLinearScale5x(void)
   {
     for (j = 0; j < SCREENWIDTH; j++, ptrVRAM += 5)
     {
-      unsigned short ptrLUT = backbuffer[i + j] * 4;
-      unsigned int data = *(unsigned int *)(ptrPalette + ptrLUT);
+      unsigned char ptrLUT = backbuffer[i + j];
+      unsigned int data = ptrPalette[ptrLUT];
 
       *(ptrVRAM) = data; *(ptrVRAM+1) = data; *(ptrVRAM+2) = data; *(ptrVRAM+3) = data; *(ptrVRAM+4) = data;
       *(ptrVRAM+vesaScanlineQuarter) = data; *(ptrVRAM+vesaScanlineQuarter+1) = data; *(ptrVRAM+vesaScanlineQuarter+2) = data; *(ptrVRAM+vesaScanlineQuarter+3) = data; *(ptrVRAM+vesaScanlineQuarter+4) = data;
