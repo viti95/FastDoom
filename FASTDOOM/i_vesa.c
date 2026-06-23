@@ -505,6 +505,9 @@ void VBE2_InitGraphics(void)
             vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleMax) / 2) * (vesaScanlineSize) + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleMax) / 2;
 
             switch (vesaScaleMax) {
+              case 1:
+                finishfunc = I_FinishUpdate8bppLinearScale1x;
+                break;
               case 2:
                 finishfunc = I_FinishUpdate8bppLinearScale2x;
                 break;
@@ -914,6 +917,23 @@ void I_FinishUpdate8bppLinearFix(void)
     }
 
     ptrVRAM+=vesascanlinefix;
+  }
+}
+
+void I_FinishUpdate8bppLinearScale1x(void)
+{
+  int i,j;
+
+  unsigned char *ptrVRAM = vesaScaleStart;
+
+  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  {
+    for (j = 0; j < SCREENWIDTH; j++, ptrVRAM++)
+    {
+      *(ptrVRAM) = backbuffer[i + j];
+    }
+
+    ptrVRAM += vesaScanlineSize - SCREENWIDTH;
   }
 }
 

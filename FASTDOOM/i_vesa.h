@@ -288,6 +288,7 @@ void I_FinishUpdate24bppLinearFix(void);
 void I_FinishUpdate32bppBanked(void);
 void I_FinishUpdate32bppLinear(void);
 void I_FinishUpdate32bppLinearFix(void);
+void I_FinishUpdate8bppLinearScale1x(void);
 void I_FinishUpdate8bppLinearScale2x(void);
 void I_FinishUpdate8bppLinearScale3x(void);
 void I_FinishUpdate8bppLinearScale4x(void);
