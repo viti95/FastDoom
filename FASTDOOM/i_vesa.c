@@ -843,7 +843,7 @@ void VBE2_InitGraphics(void)
   }
   else
   {
-    I_Error(21, SCREENWIDTH, SCREENHEIGHT);
+    I_Error(21, vesaWidth, vesaHeight);
   }
 }
 
