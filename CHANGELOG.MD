@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 1.3.0 (?? ??? ????)
+* Improved frame interpolation in uncapped framerate modes
+
 ## 1.2.2 (20 May 2026)
 * Fixed use-after-free bug in P_RunThinkers
 
