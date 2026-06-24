@@ -2028,7 +2028,7 @@ void I_FinishUpdate24bppBankedScale##N##x(void) \
     for (out_x = 0; out_x < SCREENWIDTH * N; out_x++) \
     { \
       int lutIdx = (out_y / N) * SCREENWIDTH + (out_x / N); \
-      int ptrLUT = lutIdx * 3; \
+      int ptrLUT = backbuffer[lutIdx] * 3; \
       \
       if (offsetInBank + 3 > 65536) \
       { \
@@ -2043,7 +2043,7 @@ void I_FinishUpdate24bppBankedScale##N##x(void) \
         bank++; \
         offsetInBank = 0; \
         VBE_SetBank(bank); \
-        while (offsetInBank < 65536 && ptrLUT < lutIdx * 3 + 3) \
+        while (offsetInBank < 65536 && ptrLUT < backbuffer[lutIdx] * 3 + 3) \
         { \
           BankedWritePixelByte(NULL, offsetInBank, ptrPalette[ptrLUT]); \
           offsetInBank++; \
