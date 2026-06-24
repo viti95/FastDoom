@@ -1890,17 +1890,17 @@ void I_FinishUpdate32bppLinearFix(void)
 
 /* ---- Banked scaled mode functions ---- */
 
-static void BankedWritePixelByte(void *vram, int offset, byte data)
+inline static void BankedWritePixelByte(int offset, byte data)
 {
   *(byte *)(0xA0000 + offset) = data;
 }
 
-static void BankedWritePixelShort(void *vram, int offset, unsigned short data)
+inline static void BankedWritePixelShort(int offset, unsigned short data)
 {
   *(unsigned short *)(0xA0000 + offset) = data;
 }
 
-static void BankedWritePixelInt(void *vram, int offset, unsigned int data)
+inline static void BankedWritePixelInt(int offset, unsigned int data)
 {
   *(unsigned int *)(0xA0000 + offset) = data;
 }
@@ -1928,7 +1928,7 @@ void I_FinishUpdate8bppBankedScale##N##x(void) \
         offsetInBank = 0; \
         VBE_SetBank(bank); \
       } \
-      BankedWritePixelByte(NULL, offsetInBank, backbuffer[(out_y / N) * SCREENWIDTH + (out_x / N)]); \
+      BankedWritePixelByte(offsetInBank, backbuffer[(out_y / N) * SCREENWIDTH + (out_x / N)]); \
       offsetInBank++; \
     } \
   } \
@@ -1963,7 +1963,7 @@ void I_FinishUpdate15bppBankedScale##N##x(void) \
         offsetInBank = 0; \
         VBE_SetBank(bank); \
       } \
-      BankedWritePixelShort(NULL, offsetInBank, ptrPalette[backbuffer[(out_y / N) * SCREENWIDTH + (out_x / N)]]); \
+      BankedWritePixelShort(offsetInBank, ptrPalette[backbuffer[(out_y / N) * SCREENWIDTH + (out_x / N)]]); \
       offsetInBank += 2; \
     } \
   } \
@@ -1998,7 +1998,7 @@ void I_FinishUpdate16bppBankedScale##N##x(void) \
         offsetInBank = 0; \
         VBE_SetBank(bank); \
       } \
-      BankedWritePixelShort(NULL, offsetInBank, ptrPalette[backbuffer[(out_y / N) * SCREENWIDTH + (out_x / N)]]); \
+      BankedWritePixelShort(offsetInBank, ptrPalette[backbuffer[(out_y / N) * SCREENWIDTH + (out_x / N)]]); \
       offsetInBank += 2; \
     } \
   } \
@@ -2035,7 +2035,7 @@ void I_FinishUpdate24bppBankedScale##N##x(void) \
         int remaining = 65536 - offsetInBank; \
         while (offsetInBank < 65536 && remaining > 0) \
         { \
-          BankedWritePixelByte(NULL, offsetInBank, ptrPalette[ptrLUT]); \
+          BankedWritePixelByte(offsetInBank, ptrPalette[ptrLUT]); \
           offsetInBank++; \
           ptrLUT++; \
           remaining--; \
@@ -2045,16 +2045,16 @@ void I_FinishUpdate24bppBankedScale##N##x(void) \
         VBE_SetBank(bank); \
         while (offsetInBank < 65536 && ptrLUT < backbuffer[lutIdx] * 3 + 3) \
         { \
-          BankedWritePixelByte(NULL, offsetInBank, ptrPalette[ptrLUT]); \
+          BankedWritePixelByte(offsetInBank, ptrPalette[ptrLUT]); \
           offsetInBank++; \
           ptrLUT++; \
         } \
       } \
       else \
       { \
-        BankedWritePixelByte(NULL, offsetInBank, ptrPalette[ptrLUT]); offsetInBank++; \
-        BankedWritePixelByte(NULL, offsetInBank, ptrPalette[ptrLUT + 1]); offsetInBank++; \
-        BankedWritePixelByte(NULL, offsetInBank, ptrPalette[ptrLUT + 2]); offsetInBank++; \
+        BankedWritePixelByte(offsetInBank, ptrPalette[ptrLUT]); offsetInBank++; \
+        BankedWritePixelByte(offsetInBank, ptrPalette[ptrLUT + 1]); offsetInBank++; \
+        BankedWritePixelByte(offsetInBank, ptrPalette[ptrLUT + 2]); offsetInBank++; \
       } \
     } \
   } \
@@ -2089,7 +2089,7 @@ void I_FinishUpdate32bppBankedScale##N##x(void) \
         offsetInBank = 0; \
         VBE_SetBank(bank); \
       } \
-      BankedWritePixelInt(NULL, offsetInBank, ptrPalette[backbuffer[(out_y / N) * SCREENWIDTH + (out_x / N)]]); \
+      BankedWritePixelInt(offsetInBank, ptrPalette[backbuffer[(out_y / N) * SCREENWIDTH + (out_x / N)]]); \
       offsetInBank += 4; \
     } \
   } \
