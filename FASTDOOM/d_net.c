@@ -66,10 +66,6 @@ void NetUpdate(void)
 	}
 
 	if (uncappedFPS) {
-		if (newtics > 1) {
-			newtics = 1;
-		}
-	
 		delta = maketic - gametic;
 		if (delta < 0) {
 			maketic = gametic;
@@ -194,6 +190,10 @@ int ProcessInterpolationAndTics(void) {
                last_ts += 16 - current_time_in_gametic;
            }
            interpolation_weight = (next_time_in_gametic) << 12;
+           // Clamp to 1.0 when behind (multiple tics to run) to avoid assertion failures
+           if (gametics_elapsed > 1 && interpolation_weight > 0x10000) {
+               interpolation_weight = 0x10000;
+           }
            ASSERT(interpolation_weight <= 0x10000 && interpolation_weight >= 0);
        }
 
