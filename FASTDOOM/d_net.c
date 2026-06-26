@@ -212,8 +212,14 @@ int ProcessInterpolationAndTics(void) {
        }
 
        {
-           int last_framets = ticcount_hr;
+           int last_framets;
            int new_framets;
+           // Always read input before displaying for responsive input.
+           // mousex is accumulated (+= in G_Responder) so double-reading
+           // is safe — each I_StartTic() adds new delta without losing old.
+           I_StartTic();
+           D_ProcessEvents();
+           last_framets = ticcount_hr;
            D_Display();
            new_framets = ticcount_hr;
            frametime_hrticks = new_framets - last_framets;
