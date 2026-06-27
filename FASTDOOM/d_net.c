@@ -240,9 +240,17 @@ void TryRunTicsUncapped(void)
 
 void TryRunTics(void)
 {
-	if (highResTimer && !singletics) {
+	if (uncappedFPS && gamestate == GS_LEVEL && !singletics) {
+		if (!highResTimer) {
+			highResTimer = true;
+			I_SetHrTimerEnabled(true);
+		}
 		TryRunTicsUncapped();
 	} else {
+		if (highResTimer) {
+			highResTimer = false;
+			I_SetHrTimerEnabled(false);
+		}
 		TryRunTicsCapped();
 	}
 }
