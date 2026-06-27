@@ -442,7 +442,7 @@ void G_Responder(void)
         mousebuttons[0] = current_ev->data1 & 1;
         mousebuttons[1] = current_ev->data1 & 2;
         mousebuttons[2] = current_ev->data1 & 4;
-        mousex = FixedMulShortToInt(current_ev->data2, mouseSensitivityFP);
+        mousex += FixedMulShortToInt(current_ev->data2, mouseSensitivityFP);
         return; // eat events
     }
 
@@ -505,14 +505,8 @@ void G_Ticker(void)
             break;
         }
 
-        if (uncappedFPS)
-        {
-            highResTimer = gamestate == GS_LEVEL;
-        } else {
-            highResTimer = false;
-        }
-
-        I_SetHrTimerEnabled(highResTimer);  
+        // highResTimer is now set and I_SetHrTimerEnabled() called in TryRunTics()
+        // when uncappedFPS is true and gamestate == GS_LEVEL  
     }
 
     // get commands, check consistancy,

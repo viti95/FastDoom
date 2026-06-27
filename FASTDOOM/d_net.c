@@ -66,10 +66,6 @@ void NetUpdate(void)
 	}
 
 	if (uncappedFPS) {
-		if (newtics > 1) {
-			newtics = 1;
-		}
-	
 		delta = maketic - gametic;
 		if (delta < 0) {
 			maketic = gametic;
@@ -194,6 +190,10 @@ int ProcessInterpolationAndTics(void) {
                last_ts += 16 - current_time_in_gametic;
            }
            interpolation_weight = (next_time_in_gametic) << 12;
+           // Clamp to 1.0 when behind (multiple tics to run) to avoid assertion failures
+           if (gametics_elapsed > 1 && interpolation_weight > 0x10000) {
+               interpolation_weight = 0x10000;
+           }
            ASSERT(interpolation_weight <= 0x10000 && interpolation_weight >= 0);
        }
 
@@ -212,8 +212,14 @@ int ProcessInterpolationAndTics(void) {
        }
 
        {
-           int last_framets = ticcount_hr;
+           int last_framets;
            int new_framets;
+           // Always read input before displaying for responsive input.
+           // mousex is accumulated (+= in G_Responder) so double-reading
+           // is safe — each I_StartTic() adds new delta without losing old.
+           I_StartTic();
+           D_ProcessEvents();
+           last_framets = ticcount_hr;
            D_Display();
            new_framets = ticcount_hr;
            frametime_hrticks = new_framets - last_framets;
@@ -234,9 +240,17 @@ void TryRunTicsUncapped(void)
 
 void TryRunTics(void)
 {
-	if (highResTimer && !singletics) {
+	if (uncappedFPS && gamestate == GS_LEVEL && !singletics) {
+		if (!highResTimer) {
+			highResTimer = true;
+			I_SetHrTimerEnabled(true);
+		}
 		TryRunTicsUncapped();
 	} else {
+		if (highResTimer) {
+			highResTimer = false;
+			I_SetHrTimerEnabled(false);
+		}
 		TryRunTicsCapped();
 	}
 }
