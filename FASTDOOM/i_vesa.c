@@ -1108,34 +1108,36 @@ void I_FinishUpdate8bppLinearScale3x(void)
 {
   int i,j;
 
-  unsigned short *ptrVRAM = vesaScaleStart;
-  unsigned int vesaScanlineSizeHalf = vesaScanlineSize/2;
+  unsigned int *ptrVRAM = vesaScaleStart;
+  unsigned int vesaScanlineSizeQuarter = vesaScanlineSize/4;
 
   for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
   {
-    for (j = 0; j < SCREENWIDTH; j += 2, ptrVRAM += 3)
+    for (j = 0; j < SCREENWIDTH; j += 4, ptrVRAM += 3)
     {
       unsigned char data = backbuffer[i + j];
       unsigned char data2 = backbuffer[i + j + 1];
+      unsigned char data3 = backbuffer[i + j + 2];
+      unsigned char data4 = backbuffer[i + j + 3];
 
-      unsigned short first = data | data << 8;
-      unsigned short second = data | data2 << 8;
-      unsigned short third = data2 | data2 << 8;
+      unsigned int first = data2 << 24 | data << 16 | data << 8 | data;
+      unsigned int second = data3 << 24 | data3 << 16 | data2 << 8 | data2;
+      unsigned int third = data4 << 24 | data4 << 16 | data4 << 8 | data3;
 
       *(ptrVRAM) = first;
       *(ptrVRAM+1) = second;
       *(ptrVRAM+2) = third;
 
-      *(ptrVRAM+vesaScanlineSizeHalf) = first;
-      *(ptrVRAM+vesaScanlineSizeHalf+1) = second;
-      *(ptrVRAM+vesaScanlineSizeHalf+2) = third;
+      *(ptrVRAM+vesaScanlineSizeQuarter) = first;
+      *(ptrVRAM+vesaScanlineSizeQuarter+1) = second;
+      *(ptrVRAM+vesaScanlineSizeQuarter+2) = third;
 
-      *(ptrVRAM+2*vesaScanlineSizeHalf) = first;
-      *(ptrVRAM+2*vesaScanlineSizeHalf+1) = second;
-      *(ptrVRAM+2*vesaScanlineSizeHalf+2) = third;
+      *(ptrVRAM+2*vesaScanlineSizeQuarter) = first;
+      *(ptrVRAM+2*vesaScanlineSizeQuarter+1) = second;
+      *(ptrVRAM+2*vesaScanlineSizeQuarter+2) = third;
     }
 
-    ptrVRAM += 3*vesaScanlineSizeHalf - SCREENWIDTH*3/2;
+    ptrVRAM += 3*vesaScanlineSizeQuarter - SCREENWIDTH*3/4;
   }
 }
 
