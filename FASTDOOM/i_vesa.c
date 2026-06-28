@@ -1070,13 +1070,14 @@ void I_FinishUpdate8bppLinearScale1x(void)
   int i,j;
 
   unsigned int *ptrVRAM = vesaScaleStart;
+  unsigned int *ptrBackbuffer = backbuffer;
   unsigned int vesaScanlineSizeQuarter = vesaScanlineSize / 4;
 
   for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
   {
-    for (j = 0; j < SCREENWIDTH; j+=4, ptrVRAM++)
+    for (j = 0; j < SCREENWIDTH; j+=4, ptrBackbuffer++, ptrVRAM++)
     {
-      *(ptrVRAM) = backbuffer[i + j] | backbuffer[i + j + 1] << 8 | backbuffer[i + j + 2] << 16 | backbuffer[i + j + 3] << 24;
+      *(ptrVRAM) = *(ptrBackbuffer);
     }
 
     ptrVRAM += vesaScanlineSizeQuarter - SCREENWIDTH/4;
