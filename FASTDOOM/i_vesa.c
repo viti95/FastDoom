@@ -1174,41 +1174,52 @@ void I_FinishUpdate8bppLinearScale5x(void)
 {
   int i,j;
 
-  unsigned char *ptrVRAM = vesaScaleStart;
+  unsigned int *ptrVRAM = vesaScaleStart;
+  unsigned int vesaScanlineSizeQuarter = vesaScanlineSize / 4;
 
   for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
   {
-    for (j = 0; j < SCREENWIDTH; j++, ptrVRAM += 5)
+    for (j = 0; j < SCREENWIDTH; j+=4, ptrVRAM += 5)
     {
-      unsigned char data = backbuffer[i + j];
-      *(ptrVRAM) = data;
-      *(ptrVRAM+1) = data;
-      *(ptrVRAM+2) = data;
-      *(ptrVRAM+3) = data;
-      *(ptrVRAM+4) = data;
-      *(ptrVRAM+vesaScanlineSize) = data;
-      *(ptrVRAM+vesaScanlineSize+1) = data;
-      *(ptrVRAM+vesaScanlineSize+2) = data;
-      *(ptrVRAM+vesaScanlineSize+3) = data;
-      *(ptrVRAM+vesaScanlineSize+4) = data;
-      *(ptrVRAM+2*vesaScanlineSize) = data;
-      *(ptrVRAM+2*vesaScanlineSize+1) = data;
-      *(ptrVRAM+2*vesaScanlineSize+2) = data;
-      *(ptrVRAM+2*vesaScanlineSize+3) = data;
-      *(ptrVRAM+2*vesaScanlineSize+4) = data;
-      *(ptrVRAM+3*vesaScanlineSize) = data;
-      *(ptrVRAM+3*vesaScanlineSize+1) = data;
-      *(ptrVRAM+3*vesaScanlineSize+2) = data;
-      *(ptrVRAM+3*vesaScanlineSize+3) = data;
-      *(ptrVRAM+3*vesaScanlineSize+4) = data;
-      *(ptrVRAM+4*vesaScanlineSize) = data;
-      *(ptrVRAM+4*vesaScanlineSize+1) = data;
-      *(ptrVRAM+4*vesaScanlineSize+2) = data;
-      *(ptrVRAM+4*vesaScanlineSize+3) = data;
-      *(ptrVRAM+4*vesaScanlineSize+4) = data;
+      unsigned char data1 = backbuffer[i + j];
+      unsigned char data2 = backbuffer[i + j + 1];
+      unsigned char data3 = backbuffer[i + j + 2];
+      unsigned char data4 = backbuffer[i + j + 3];
+
+      unsigned int first = data1 << 24 | data1 << 16 | data1 << 8 | data1;
+      unsigned int second = data2 << 24 | data2 << 16 | data2 << 8 | data1;
+      unsigned int third = data3 << 24 | data3 << 16 | data2 << 8 | data2;
+      unsigned int fourth = data4 << 24 | data3 << 16 | data3 << 8 | data3;
+      unsigned int fifth = data4 << 24 | data4 << 16 | data4 << 8 | data4;
+
+      *(ptrVRAM) = first;
+      *(ptrVRAM+1) = second;
+      *(ptrVRAM+2) = third;
+      *(ptrVRAM+3) = fourth;
+      *(ptrVRAM+4) = fifth;
+      *(ptrVRAM+vesaScanlineSize) = first;
+      *(ptrVRAM+vesaScanlineSize+1) = second;
+      *(ptrVRAM+vesaScanlineSize+2) = third;
+      *(ptrVRAM+vesaScanlineSize+3) = fourth;
+      *(ptrVRAM+vesaScanlineSize+4) = fifth;
+      *(ptrVRAM+2*vesaScanlineSize) = first;
+      *(ptrVRAM+2*vesaScanlineSize+1) = second;
+      *(ptrVRAM+2*vesaScanlineSize+2) = third;
+      *(ptrVRAM+2*vesaScanlineSize+3) = fourth;
+      *(ptrVRAM+2*vesaScanlineSize+4) = fifth;
+      *(ptrVRAM+3*vesaScanlineSize) = first;
+      *(ptrVRAM+3*vesaScanlineSize+1) = second;
+      *(ptrVRAM+3*vesaScanlineSize+2) = third;
+      *(ptrVRAM+3*vesaScanlineSize+3) = fourth;
+      *(ptrVRAM+3*vesaScanlineSize+4) = fifth;
+      *(ptrVRAM+4*vesaScanlineSize) = first;
+      *(ptrVRAM+4*vesaScanlineSize+1) = second;
+      *(ptrVRAM+4*vesaScanlineSize+2) = third;
+      *(ptrVRAM+4*vesaScanlineSize+3) = fourth;
+      *(ptrVRAM+4*vesaScanlineSize+4) = fifth;
     }
 
-    ptrVRAM += 5*vesaScanlineSize - SCREENWIDTH*5;
+    ptrVRAM += 5*vesaScanlineSizeQuarter - SCREENWIDTH*5/4;
   }
 }
 
