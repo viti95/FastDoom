@@ -1069,16 +1069,17 @@ void I_FinishUpdate8bppLinearScale1x(void)
 {
   int i,j;
 
-  unsigned char *ptrVRAM = vesaScaleStart;
+  unsigned int *ptrVRAM = vesaScaleStart;
+  unsigned int vesaScanlineSizeQuarter = vesaScanlineSize / 4;
 
   for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
   {
-    for (j = 0; j < SCREENWIDTH; j++, ptrVRAM++)
+    for (j = 0; j < SCREENWIDTH; j+=4, ptrVRAM++)
     {
-      *(ptrVRAM) = backbuffer[i + j];
+      *(ptrVRAM) = backbuffer[i + j] | backbuffer[i + j + 1] << 8 | backbuffer[i + j + 2] << 16 | backbuffer[i + j + 3] << 24;
     }
 
-    ptrVRAM += vesaScanlineSize - SCREENWIDTH;
+    ptrVRAM += vesaScanlineSizeQuarter - SCREENWIDTH/4;
   }
 }
 
