@@ -486,12 +486,13 @@ void VBE2_InitGraphics(void)
 #if defined(MODE_VBE2)
     // Set finish function
 
+    vesaScanlineSize = vbemode.BytesPerScanline;
+
     if (vesaScaleOutput) {
       // Scale backbuffer mode
       int maxScaleWidth = vesaWidth / SCREENWIDTH;
       int maxScaleHeight = vesaHeight / SCREENHEIGHT;
       vesaScaleMax = (maxScaleWidth < maxScaleHeight) ? maxScaleWidth : maxScaleHeight;
-      vesaScanlineSize = vbemode.BytesPerScanline;
 
       if (pcscreen == (void *)0xA0000) {
         // Banked scaled
