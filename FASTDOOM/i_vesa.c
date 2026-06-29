@@ -1228,17 +1228,20 @@ void I_FinishUpdate15bpp16bppLinearScale1x(void)
   int i,j;
 
   unsigned short *ptrPalette = (unsigned short *) ptrprocessedpalette;
-  unsigned short *ptrVRAM = (unsigned short *) vesaScaleStart;
+  unsigned int *ptrVRAM = (unsigned int *) vesaScaleStart;
+  unsigned int vesaScanlineSizeQuarter = vesaScanlineSize / 4;
 
   for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
   {
-    for (j = 0; j < SCREENWIDTH; j++, ptrVRAM++)
+    for (j = 0; j < SCREENWIDTH; j += 2, ptrVRAM++)
     {
-      unsigned char ptrLUT = backbuffer[i + j];
-      *(ptrVRAM) = ptrPalette[ptrLUT];
+      unsigned short data1 = ptrPalette[backbuffer[i + j]];
+      unsigned short data2 = ptrPalette[backbuffer[i + j + 1]];
+
+      *(ptrVRAM) = data1 | (data2 << 16);
     }
 
-    ptrVRAM += vesaScanlineSize / 2 - SCREENWIDTH;
+    ptrVRAM += vesaScanlineSizeQuarter - SCREENWIDTH / 2;
   }
 }
 
