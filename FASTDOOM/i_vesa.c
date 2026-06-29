@@ -1408,32 +1408,37 @@ void I_FinishUpdate24bppLinearScale2x(void)
   int i,j;
 
   unsigned char *ptrPalette = (unsigned char *) ptrprocessedpalette;
-  unsigned char *ptrVRAM = (unsigned char *) vesaScaleStart;
+  unsigned int *ptrVRAM = (unsigned int *) vesaScaleStart;
+  unsigned int vesaScanlineSizeQuarter = vesaScanlineSize / 4;
 
   for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
   {
-    for (j = 0; j < SCREENWIDTH; j++, ptrVRAM += 6)
+    for (j = 0; j < SCREENWIDTH; j+=2, ptrVRAM += 3)
     {
-      unsigned short ptrLUT = backbuffer[i + j] * 3;
-      unsigned char b = ptrPalette[ptrLUT];
-      unsigned char g = ptrPalette[ptrLUT + 1];
-      unsigned char r = ptrPalette[ptrLUT + 2];
+      unsigned short ptrLUT1 = backbuffer[i + j] * 3;
+      unsigned short ptrLUT2 = backbuffer[i + j + 1] * 3;
 
-      *(ptrVRAM) = b;
-      *(ptrVRAM+1) = g;
-      *(ptrVRAM+2) = r;
-      *(ptrVRAM+3) = b;
-      *(ptrVRAM+4) = g;
-      *(ptrVRAM+5) = r;
-      *(ptrVRAM+vesaScanlineSize) = b;
-      *(ptrVRAM+vesaScanlineSize+1) = g;
-      *(ptrVRAM+vesaScanlineSize+2) = r;
-      *(ptrVRAM+vesaScanlineSize+3) = b;
-      *(ptrVRAM+vesaScanlineSize+4) = g;
-      *(ptrVRAM+vesaScanlineSize+5) = r;
+      unsigned char b1 = ptrPalette[ptrLUT1];
+      unsigned char g1 = ptrPalette[ptrLUT1 + 1];
+      unsigned char r1 = ptrPalette[ptrLUT1 + 2];
+
+      unsigned char b2 = ptrPalette[ptrLUT2];
+      unsigned char g2 = ptrPalette[ptrLUT2 + 1];
+      unsigned char r2 = ptrPalette[ptrLUT2 + 2];
+
+      unsigned int packet1 = b1 | g1 << 8 | r1 << 16 | b1 << 24; 
+      unsigned int packet2 = g1 | r1 << 8 | b2 << 16 | g2 << 24;
+      unsigned int packet3 = r2 | b2 << 8 | g2 << 16 | r2 << 24;
+
+      *(ptrVRAM) = packet1;
+      *(ptrVRAM+1) = packet2;
+      *(ptrVRAM+2) = packet3;
+      *(ptrVRAM+vesaScanlineSizeQuarter) = packet1;
+      *(ptrVRAM+vesaScanlineSizeQuarter+1) = packet2;
+      *(ptrVRAM+vesaScanlineSizeQuarter+2) = packet3;
     }
 
-    ptrVRAM += 2*vesaScanlineSize - SCREENWIDTH * 6;
+    ptrVRAM += 2*vesaScanlineSizeQuarter - SCREENWIDTH * 3 / 2;
   }
 }
 
