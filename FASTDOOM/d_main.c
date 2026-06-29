@@ -144,6 +144,9 @@ boolean snowfix;
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 int forceVesaBitsPerPixel = 0;
 int forceVesaNonLinear = 0;
+boolean vesaScaleOutput = 0;
+unsigned short vesaScaleOutputWidth;
+unsigned short vesaScaleOutputHeight;
 #endif
 
 #ifdef SUPPORTS_HERCULES_AUTOMAP
@@ -1513,6 +1516,14 @@ void D_DoomMain(void)
         forceVesaBitsPerPixel = 32;
 
     forceVesaNonLinear = M_CheckParm("-noLFB");
+
+    if ((p = M_CheckParm("-scale")))
+    {
+        vesaScaleOutput = 1;
+        vesaScaleOutputWidth = atoi(myargv[p + 1]);
+        vesaScaleOutputHeight = atoi(myargv[p + 2]);
+    }
+
 #endif
 
 #ifdef SUPPORTS_HERCULES_AUTOMAP

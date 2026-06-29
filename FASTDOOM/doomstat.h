@@ -83,6 +83,9 @@ extern boolean snowfix;
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
 extern int forceVesaBitsPerPixel;
 extern int forceVesaNonLinear;
+extern boolean vesaScaleOutput;
+extern unsigned short vesaScaleOutputWidth;
+extern unsigned short vesaScaleOutputHeight;
 #endif
 
 #ifdef SUPPORTS_HERCULES_AUTOMAP
