@@ -1552,95 +1552,122 @@ void I_FinishUpdate24bppLinearScale5x(void)
   int i,j;
 
   unsigned char *ptrPalette = (unsigned char *) ptrprocessedpalette;
-  unsigned char *ptrVRAM = (unsigned char *) vesaScaleStart;
+  unsigned short *ptrVRAM = (unsigned short *) vesaScaleStart;
+  unsigned int vesaScanlineSizeHalf = vesaScanlineSize / 2;
 
   for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
   {
-    for (j = 0; j < SCREENWIDTH; j++, ptrVRAM += 15)
+    for (j = 0; j < SCREENWIDTH; j+=2, ptrVRAM += 15)
     {
-      unsigned short ptrLUT = backbuffer[i + j] * 3;
-      unsigned char b = ptrPalette[ptrLUT];
-      unsigned char g = ptrPalette[ptrLUT + 1];
-      unsigned char r = ptrPalette[ptrLUT + 2];
+      unsigned short ptrLUT1 = backbuffer[i + j] * 3;
+      unsigned short ptrLUT2 = backbuffer[i + j + 1] * 3;
+      
+      unsigned char b1 = ptrPalette[ptrLUT1];
+      unsigned char g1 = ptrPalette[ptrLUT1 + 1];
+      unsigned char r1 = ptrPalette[ptrLUT1 + 2];
 
-      *(ptrVRAM) = b;
-      *(ptrVRAM+1) = g;
-      *(ptrVRAM+2) = r;
-      *(ptrVRAM+3) = b;
-      *(ptrVRAM+4) = g;
-      *(ptrVRAM+5) = r;
-      *(ptrVRAM+6) = b;
-      *(ptrVRAM+7) = g;
-      *(ptrVRAM+8) = r;
-      *(ptrVRAM+9) = b;
-      *(ptrVRAM+10) = g;
-      *(ptrVRAM+11) = r;
-      *(ptrVRAM+12) = b;
-      *(ptrVRAM+13) = g;
-      *(ptrVRAM+14) = r;
-      *(ptrVRAM+vesaScanlineSize) = b;
-      *(ptrVRAM+vesaScanlineSize+1) = g;
-      *(ptrVRAM+vesaScanlineSize+2) = r;
-      *(ptrVRAM+vesaScanlineSize+3) = b;
-      *(ptrVRAM+vesaScanlineSize+4) = g;
-      *(ptrVRAM+vesaScanlineSize+5) = r;
-      *(ptrVRAM+vesaScanlineSize+6) = b;
-      *(ptrVRAM+vesaScanlineSize+7) = g;
-      *(ptrVRAM+vesaScanlineSize+8) = r;
-      *(ptrVRAM+vesaScanlineSize+9) = b;
-      *(ptrVRAM+vesaScanlineSize+10) = g;
-      *(ptrVRAM+vesaScanlineSize+11) = r;
-      *(ptrVRAM+vesaScanlineSize+12) = b;
-      *(ptrVRAM+vesaScanlineSize+13) = g;
-      *(ptrVRAM+vesaScanlineSize+14) = r;
-      *(ptrVRAM+2*vesaScanlineSize) = b;
-      *(ptrVRAM+2*vesaScanlineSize+1) = g;
-      *(ptrVRAM+2*vesaScanlineSize+2) = r;
-      *(ptrVRAM+2*vesaScanlineSize+3) = b;
-      *(ptrVRAM+2*vesaScanlineSize+4) = g;
-      *(ptrVRAM+2*vesaScanlineSize+5) = r;
-      *(ptrVRAM+2*vesaScanlineSize+6) = b;
-      *(ptrVRAM+2*vesaScanlineSize+7) = g;
-      *(ptrVRAM+2*vesaScanlineSize+8) = r;
-      *(ptrVRAM+2*vesaScanlineSize+9) = b;
-      *(ptrVRAM+2*vesaScanlineSize+10) = g;
-      *(ptrVRAM+2*vesaScanlineSize+11) = r;
-      *(ptrVRAM+2*vesaScanlineSize+12) = b;
-      *(ptrVRAM+2*vesaScanlineSize+13) = g;
-      *(ptrVRAM+2*vesaScanlineSize+14) = r;
-      *(ptrVRAM+3*vesaScanlineSize) = b;
-      *(ptrVRAM+3*vesaScanlineSize+1) = g;
-      *(ptrVRAM+3*vesaScanlineSize+2) = r;
-      *(ptrVRAM+3*vesaScanlineSize+3) = b;
-      *(ptrVRAM+3*vesaScanlineSize+4) = g;
-      *(ptrVRAM+3*vesaScanlineSize+5) = r;
-      *(ptrVRAM+3*vesaScanlineSize+6) = b;
-      *(ptrVRAM+3*vesaScanlineSize+7) = g;
-      *(ptrVRAM+3*vesaScanlineSize+8) = r;
-      *(ptrVRAM+3*vesaScanlineSize+9) = b;
-      *(ptrVRAM+3*vesaScanlineSize+10) = g;
-      *(ptrVRAM+3*vesaScanlineSize+11) = r;
-      *(ptrVRAM+3*vesaScanlineSize+12) = b;
-      *(ptrVRAM+3*vesaScanlineSize+13) = g;
-      *(ptrVRAM+3*vesaScanlineSize+14) = r;
-      *(ptrVRAM+4*vesaScanlineSize) = b;
-      *(ptrVRAM+4*vesaScanlineSize+1) = g;
-      *(ptrVRAM+4*vesaScanlineSize+2) = r;
-      *(ptrVRAM+4*vesaScanlineSize+3) = b;
-      *(ptrVRAM+4*vesaScanlineSize+4) = g;
-      *(ptrVRAM+4*vesaScanlineSize+5) = r;
-      *(ptrVRAM+4*vesaScanlineSize+6) = b;
-      *(ptrVRAM+4*vesaScanlineSize+7) = g;
-      *(ptrVRAM+4*vesaScanlineSize+8) = r;
-      *(ptrVRAM+4*vesaScanlineSize+9) = b;
-      *(ptrVRAM+4*vesaScanlineSize+10) = g;
-      *(ptrVRAM+4*vesaScanlineSize+11) = r;
-      *(ptrVRAM+4*vesaScanlineSize+12) = b;
-      *(ptrVRAM+4*vesaScanlineSize+13) = g;
-      *(ptrVRAM+4*vesaScanlineSize+14) = r;
+      unsigned char b2 = ptrPalette[ptrLUT2];
+      unsigned char g2 = ptrPalette[ptrLUT2 + 1];
+      unsigned char r2 = ptrPalette[ptrLUT2 + 2];
+
+      unsigned short packet1 = b1 | g1 << 8;
+      unsigned short packet2 = r1 | b1 << 8;
+      unsigned short packet3 = g1 | r1 << 8;
+      //unsigned short packet4 = b1 | g1 << 8;
+      //unsigned short packet5 = r1 | b1 << 8;
+      //unsigned short packet6 = g1 | r1 << 8;
+      //unsigned short packet7 = b1 | g1 << 8;
+      unsigned short packet8 = r1 | b2 << 8;
+      unsigned short packet9 = g2 | r2 << 8;
+      unsigned short packet10 = b2 | g2 << 8;
+      unsigned short packet11 = r2 | b2 << 8;
+      //unsigned short packet12 = g2 | r2 << 8;
+      //unsigned short packet13 = b2 | g2 << 8;
+      //unsigned short packet14 = r2 | b2 << 8;
+      //unsigned short packet15 = g2 | r2 << 8;
+      
+      *(ptrVRAM) = packet1;
+      *(ptrVRAM+1) = packet2;
+      *(ptrVRAM+2) = packet3;
+      *(ptrVRAM+3) = packet1;
+      *(ptrVRAM+4) = packet2;
+      *(ptrVRAM+5) = packet3;
+      *(ptrVRAM+6) = packet1;
+      *(ptrVRAM+7) = packet8;
+      *(ptrVRAM+8) = packet9;
+      *(ptrVRAM+9) = packet10;
+      *(ptrVRAM+10) = packet11;
+      *(ptrVRAM+11) = packet9;
+      *(ptrVRAM+12) = packet10;
+      *(ptrVRAM+13) = packet11;
+      *(ptrVRAM+14) = packet9;
+
+      *(ptrVRAM+vesaScanlineSizeHalf) = packet1;
+      *(ptrVRAM+vesaScanlineSizeHalf+1) = packet2;
+      *(ptrVRAM+vesaScanlineSizeHalf+2) = packet3;
+      *(ptrVRAM+vesaScanlineSizeHalf+3) = packet1;
+      *(ptrVRAM+vesaScanlineSizeHalf+4) = packet2;
+      *(ptrVRAM+vesaScanlineSizeHalf+5) = packet3;
+      *(ptrVRAM+vesaScanlineSizeHalf+6) = packet1;
+      *(ptrVRAM+vesaScanlineSizeHalf+7) = packet8;
+      *(ptrVRAM+vesaScanlineSizeHalf+8) = packet9;
+      *(ptrVRAM+vesaScanlineSizeHalf+9) = packet10;
+      *(ptrVRAM+vesaScanlineSizeHalf+10) = packet11;
+      *(ptrVRAM+vesaScanlineSizeHalf+11) = packet9;
+      *(ptrVRAM+vesaScanlineSizeHalf+12) = packet10;
+      *(ptrVRAM+vesaScanlineSizeHalf+13) = packet11;
+      *(ptrVRAM+vesaScanlineSizeHalf+14) = packet9;
+
+      *(ptrVRAM+2*vesaScanlineSizeHalf) = packet1;
+      *(ptrVRAM+2*vesaScanlineSizeHalf+1) = packet2;
+      *(ptrVRAM+2*vesaScanlineSizeHalf+2) = packet3;
+      *(ptrVRAM+2*vesaScanlineSizeHalf+3) = packet1;
+      *(ptrVRAM+2*vesaScanlineSizeHalf+4) = packet2;
+      *(ptrVRAM+2*vesaScanlineSizeHalf+5) = packet3;
+      *(ptrVRAM+2*vesaScanlineSizeHalf+6) = packet1;
+      *(ptrVRAM+2*vesaScanlineSizeHalf+7) = packet8;
+      *(ptrVRAM+2*vesaScanlineSizeHalf+8) = packet9;
+      *(ptrVRAM+2*vesaScanlineSizeHalf+9) = packet10;
+      *(ptrVRAM+2*vesaScanlineSizeHalf+10) = packet11;
+      *(ptrVRAM+2*vesaScanlineSizeHalf+11) = packet9;
+      *(ptrVRAM+2*vesaScanlineSizeHalf+12) = packet10;
+      *(ptrVRAM+2*vesaScanlineSizeHalf+13) = packet11;
+      *(ptrVRAM+2*vesaScanlineSizeHalf+14) = packet9;
+
+      *(ptrVRAM+3*vesaScanlineSizeHalf) = packet1;
+      *(ptrVRAM+3*vesaScanlineSizeHalf+1) = packet2;
+      *(ptrVRAM+3*vesaScanlineSizeHalf+2) = packet3;
+      *(ptrVRAM+3*vesaScanlineSizeHalf+3) = packet1;
+      *(ptrVRAM+3*vesaScanlineSizeHalf+4) = packet2;
+      *(ptrVRAM+3*vesaScanlineSizeHalf+5) = packet3;
+      *(ptrVRAM+3*vesaScanlineSizeHalf+6) = packet1;
+      *(ptrVRAM+3*vesaScanlineSizeHalf+7) = packet8;
+      *(ptrVRAM+3*vesaScanlineSizeHalf+8) = packet9;
+      *(ptrVRAM+3*vesaScanlineSizeHalf+9) = packet10;
+      *(ptrVRAM+3*vesaScanlineSizeHalf+10) = packet11;
+      *(ptrVRAM+3*vesaScanlineSizeHalf+11) = packet9;
+      *(ptrVRAM+3*vesaScanlineSizeHalf+12) = packet10;
+      *(ptrVRAM+3*vesaScanlineSizeHalf+13) = packet11;
+      *(ptrVRAM+3*vesaScanlineSizeHalf+14) = packet9;
+
+      *(ptrVRAM+4*vesaScanlineSizeHalf) = packet1;
+      *(ptrVRAM+4*vesaScanlineSizeHalf+1) = packet2;
+      *(ptrVRAM+4*vesaScanlineSizeHalf+2) = packet3;
+      *(ptrVRAM+4*vesaScanlineSizeHalf+3) = packet1;
+      *(ptrVRAM+4*vesaScanlineSizeHalf+4) = packet2;
+      *(ptrVRAM+4*vesaScanlineSizeHalf+5) = packet3;
+      *(ptrVRAM+4*vesaScanlineSizeHalf+6) = packet1;
+      *(ptrVRAM+4*vesaScanlineSizeHalf+7) = packet8;
+      *(ptrVRAM+4*vesaScanlineSizeHalf+8) = packet9;
+      *(ptrVRAM+4*vesaScanlineSizeHalf+9) = packet10;
+      *(ptrVRAM+4*vesaScanlineSizeHalf+10) = packet11;
+      *(ptrVRAM+4*vesaScanlineSizeHalf+11) = packet9;
+      *(ptrVRAM+4*vesaScanlineSizeHalf+12) = packet10;
+      *(ptrVRAM+4*vesaScanlineSizeHalf+13) = packet11;
+      *(ptrVRAM+4*vesaScanlineSizeHalf+14) = packet9;
     }
 
-    ptrVRAM += 5*vesaScanlineSize - SCREENWIDTH * 15;
+    ptrVRAM += 5*vesaScanlineSizeHalf - SCREENWIDTH * 15 / 2;
   }
 }
 
