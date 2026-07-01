@@ -250,6 +250,11 @@
  -noLFB => (Only VBE2 modes) disables Linear FrameBuffer video
            modes. Slower, use only if there are compatibility
            issues
+ -scale <width> <height> => (Only VBE2 backbuffered modes) Forces a 
+                            custom VESA resolution and applies integer 
+                            scaling to the backbuffer to fit the 
+                            specified dimensions, ensuring a pixel-perfect 
+                            image with black borders.
  -xt => Enable XT keyboard support
 
  Limitations / Known bugs

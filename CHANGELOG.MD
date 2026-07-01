@@ -1,9 +1,9 @@
 # CHANGELOG
 
-## 1.3.0 (?? ??? ????)
-* Improved frame interpolation in uncapped framerate modes
-* Fixed frame skipping in uncapped framerate modes (when framerate goes bellow 35 fps)
-* Integer scaling support in backbuffered VESA video modes (up to 5x support). Now any VESA resolution can be used in FastDoom!
+## 1.3.0 (01 Jul 2026)
+* Improved frame interpolation in uncapped framerate modes for smoother rendering #237 #251
+* Fixed frame skipping in uncapped framerate modes when FPS drops below 35 #237 #251
+* Added integer scaling support (up to 5×) for backbuffered VESA modes, enabling any VESA resolution in FastDoom
 
 ## 1.2.2 (20 May 2026)
 * Fixed use-after-free bug in P_RunThinkers
