@@ -47,5 +47,6 @@ int MIDI_PlaySong(unsigned char *song, int loopflag);
 void MIDI_SetTempo(int tempo);
 int MIDI_SongPlaying(void);
 void MIDI_SysEx_Ext(unsigned char *data, int lenght);
+midifuncs *MIDI_GetMidiFuncs(void);
 
 #endif

@@ -205,7 +205,7 @@ GLOBOBJS = \
  f_wipe.obj \
  info.obj \
  dmx.obj \
- mus2mid.obj \
+ ns_mus.obj \
  fpummx.obj
 
 fdoom.exe : $(GLOBOBJS)

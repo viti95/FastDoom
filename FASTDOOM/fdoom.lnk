@@ -137,7 +137,7 @@ file dutils.obj
 file f_wipe.obj
 file info.obj
 file dmx.obj
-file mus2mid.obj
+file ns_mus.obj
 file linearh.obj
 file linearh2.obj
 file linearh3.obj

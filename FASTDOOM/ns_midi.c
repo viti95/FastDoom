@@ -683,6 +683,17 @@ void MIDI_SetMidiFuncs(
 }
 
 /*---------------------------------------------------------------------
+   Function: MIDI_GetMidiFuncs
+
+   Returns the current midifuncs table (for use by other music modules).
+---------------------------------------------------------------------*/
+
+midifuncs *MIDI_GetMidiFuncs(void)
+{
+    return _MIDI_Funcs;
+}
+
+/*---------------------------------------------------------------------
    Function: MIDI_StopSong
 
    Stops playback of the currently playing song.

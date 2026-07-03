@@ -23,7 +23,7 @@
 #include "ns_music.h"
 #include "ns_task.h"
 #include "ns_multi.h"
-#include "mus2mid.h"
+#include "ns_mus.h"
 #include "ns_pcfx.h"
 #include "doomstat.h"
 #include "ns_scape.h"
@@ -64,68 +64,30 @@ char *mid_data = NULL;
 int mus_loop = 0;
 int dmx_mus_port = 0;
 int dmx_snd_port = 0;
+int dmx_song_is_mus = 0;
 
 int MUS_RegisterSong(void *data)
 {
-    FILE *mus;
-    FILE *mid;
-    unsigned int midlen;
-    unsigned short len;
-    mus_data = NULL;
-    len = ((unsigned short *)data)[2] + ((unsigned short *)data)[3];
     if (mid_data)
     {
         Z_Free(mid_data);
+        mid_data = NULL;
     }
+    mus_data = NULL;
+    dmx_song_is_mus = 0;
+
     if (memcmp(data, "MThd", 4))
     {
-        mus = fopen("temp.mus", "wb");
-        if (!mus)
+        /* MUS format - use native MUS player */
+        if (MUS_InitPlayer(data) == 0)
         {
+            mus_data = data;
+            dmx_song_is_mus = 1;
             return 0;
         }
-        fwrite(data, 1, len, mus);
-        fclose(mus);
-        mus = fopen("temp.mus", "rb");
-        if (!mus)
-        {
-            return 0;
-        }
-        mid = fopen("temp.mid", "wb");
-        if (!mid)
-        {
-            fclose(mus);
-            return 0;
-        }
-        if (mus2mid(mus, mid))
-        {
-            fclose(mid);
-            fclose(mus);
-            return 0;
-        }
-        fclose(mid);
-        fclose(mus);
-        mid = fopen("temp.mid", "rb");
-        if (!mid)
-        {
-            return 0;
-        }
-        fseek(mid, 0, SEEK_END);
-        midlen = ftell(mid);
-        rewind(mid);
-        mid_data = Z_MallocUnowned(midlen, PU_STATIC);
-        if (!mid_data)
-        {
-            fclose(mid);
-            return 0;
-        }
-        fread(mid_data, 1, midlen, mid);
-        fclose(mid);
-        mus_data = mid_data;
-        remove("temp.mid");
-        remove("temp.mus");
-        return 0;
+        return 1;
     }
+    /* Standard MIDI format */
     mus_data = data;
     return 0;
 }
@@ -376,17 +338,22 @@ int MUS_LoadMT32(void)
 
 void MUS_ReleaseData(void)
 {
-    if (!MUSIC_SongPlaying())
+    if (!dmx_song_is_mus && !MUSIC_SongPlaying())
     {
         if (mid_data)
         {
             Z_Free(mid_data);
+            mid_data = NULL;
         }
     }
 }
 
 int MUS_SongPlaying()
 {
+    if (dmx_song_is_mus)
+    {
+        return MUS_IsPlaying();
+    }
     return MUSIC_SongPlaying();
 }
 
@@ -396,14 +363,30 @@ int MUS_ChainSong(int handle, int next)
     return 0;
 }
 
+void MUS_SetLoop(int loopflag)
+{
+    mus_loop = loopflag;
+}
+
 void MUS_PlaySong(int handle, int volume)
 {
-    long status;
     if (mus_data == NULL)
     {
         return;
     }
-    MUSIC_PlaySong((unsigned char *)mus_data, mus_loop);
+
+    if (dmx_song_is_mus)
+    {
+        /* Native MUS playback */
+        MUS_PlayerSetLoop(mus_loop);
+        MUS_Play();
+    }
+    else
+    {
+        /* Standard MIDI playback */
+        MUSIC_PlaySong((unsigned char *)mus_data, mus_loop);
+    }
+
     MUSIC_SetVolume(volume);
 }
 
@@ -741,6 +724,7 @@ void ASS_Init(int rate, int mdev, int sdev)
 
 void ASS_DeInit(void)
 {
+    MUS_Stop();
     MUSIC_Shutdown();
     FX_Shutdown();
     PCFX_Shutdown();
@@ -748,6 +732,7 @@ void ASS_DeInit(void)
     if (mid_data)
     {
         Z_Free(mid_data);
+        mid_data = NULL;
     }
 }
 
