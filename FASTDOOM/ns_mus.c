@@ -26,8 +26,10 @@
 #define TRUE (1 == 1)
 #define FALSE (!TRUE)
 
-// MUS runs at a fixed 70-tick-per-second clock
-#define MUS_TICK_RATE 70
+// MUS format clock is 70 Hz, but vanilla DOOM's mus2mid converter
+// outputs MIDI with 70 ticks/beat at 120 BPM = 140 ticks/second.
+// To match the original playback speed, we run at 140 Hz.
+#define MUS_TICK_RATE 140
 
 #define MUS_NUM_CHANNELS 16
 #define MUS_PERCUSSION_CHAN 15
