@@ -62,7 +62,11 @@ int cdmusicnum = 0;
 int wavhandle = -1;
 int wavmusicnum = 0;
 int wavlooping = 0;
-unsigned char *wavfileptr = NULL;
+
+// Streaming PCM music state
+static FILE *wavfile = NULL;
+static unsigned char wavstreambuf[65536]; // 64 KB stream buffer
+static unsigned long wavstreampos = 0;
 
 typedef struct
 {
@@ -122,7 +126,7 @@ void S_SetMusicVolumeWAV(int volume)
     if (voice == NULL)
         return;
     
-    MV_SetVoiceVolume(voice, volume, volume, volume);    
+    MV_SetVoiceVolume(voice, volume, volume, volume);
 }
 
 void S_SetMusicVolumeMIDI(int volume)
@@ -383,9 +387,79 @@ unsigned char *LoadFile(char *filename, int *length)
     return (ptr);
 }
 
+// Demand-feed callback: reads next chunk of PCM data from the HDD.
+// Called by MV_GetNextDemandFeedBlock whenever the mixer needs more data.
+static void WAV_StreamRead(char **ptr, unsigned long *length)
+{
+    unsigned long toread;
+    size_t n;
+
+    if (wavfile == NULL)
+    {
+        *ptr = NULL;
+        *length = 0;
+        return;
+    }
+
+    // Loop: seek back to start if we've reached EOF
+    if (feof(wavfile))
+    {
+        fseek(wavfile, 0, SEEK_SET);
+        wavstreampos = 0;
+    }
+
+    toread = sizeof(wavstreambuf);
+    n = fread(wavstreambuf, 1, toread, wavfile);
+
+    if (n == 0)
+    {
+        *ptr = NULL;
+        *length = 0;
+        return;
+    }
+
+    wavstreampos += n;
+    *ptr = (char *)wavstreambuf;
+    *length = (unsigned long)n;
+}
+
+// Close the streaming WAV file and reset state.
+static void S_ShutdownWAV(void)
+{
+    if (wavfile != NULL)
+    {
+        fclose(wavfile);
+        wavfile = NULL;
+    }
+    wavstreampos = 0;
+    wavhandle = -1;
+}
+
+// Stops the music for all device types.
+void S_StopMusic(void)
+{
+    switch (snd_MusicDevice)
+    {
+    case snd_CD:
+        CD_StopAudio();
+        mus_paused = 0;
+        return;
+    case snd_WAV:
+        MV_Kill(wavhandle);
+        S_ShutdownWAV();
+        wavmusicnum = 0;
+        wavlooping = 0;
+        mus_paused = 0;
+        return;
+    default:
+        S_StopMusicMIDI();
+        mus_paused = 0;
+        return;
+    }
+}
+
 void S_ChangeMusicWAV(int musicnum, int looping)
 {
-    int length;
     unsigned int sample_rate;
     int volume;
 
@@ -396,12 +470,16 @@ void S_ChangeMusicWAV(int musicnum, int looping)
 
     if (wavmusicnum == musicnum && voicePlaying)
         return;
-    
+
     if (voicePlaying)
         MV_Kill(wavhandle);
 
-    if (wavfileptr != NULL)
-        Z_Free(wavfileptr);
+    // Close any previously open streaming file
+    if (wavfile != NULL)
+    {
+        fclose(wavfile);
+        wavfile = NULL;
+    }
 
     memset(filename, 0, sizeof(filename));
     memset(subfolder, 0, sizeof(subfolder));
@@ -426,7 +504,14 @@ void S_ChangeMusicWAV(int musicnum, int looping)
 
     sprintf(filename, "MUSIC/%s/mus_%u.raw", subfolder, S_MapMusicCD(musicnum));
 
-    wavfileptr = LoadFile(filename, &length);
+    // Open file for streaming (not loading into RAM)
+    wavfile = fopen(filename, "rb");
+    if (wavfile == NULL)
+        return;
+
+    fseek(wavfile, 0, SEEK_SET);
+    wavstreampos = 0;
+
     wavmusicnum = musicnum;
 
     switch(snd_PCMRate)
@@ -444,15 +529,21 @@ void S_ChangeMusicWAV(int musicnum, int looping)
 
     volume = snd_MusicVolume;
 
-    wavhandle = MV_PlayRaw(wavfileptr, length, sample_rate, volume, volume, volume, 0);
+    // Stream from HDD via demand-feed callback instead of loading into RAM
+    wavhandle = MV_PlayDemandFeed(WAV_StreamRead, sample_rate, volume, volume, volume, 0);
 }
 
 void S_CheckWAV(void)
 {
     if (wavlooping && !mus_paused)
     {
+        // Song finished (demand feed returned NoMoreData) — restart it
         if (!MV_VoicePlaying(wavhandle))
+        {
+            fseek(wavfile, 0, SEEK_SET);
+            wavstreampos = 0;
             S_ChangeMusicWAV(wavmusicnum, wavlooping);
+        }
     }
 }
 

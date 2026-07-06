@@ -1022,6 +1022,48 @@ int MV_PlayRaw(
 }
 
 /*---------------------------------------------------------------------
+   Function: MV_PlayDemandFeed
+
+   Begin playback of sound data supplied by a demand-feed callback
+   with the given sound levels and priority.
+---------------------------------------------------------------------*/
+
+int MV_PlayDemandFeed(
+    void (*feed)(char **ptr, unsigned long *length),
+    unsigned long rate,
+    int vol,
+    int left,
+    int right,
+    int priority)
+
+{
+    VoiceNode *voice;
+
+    voice = MV_AllocVoice(priority);
+    if (voice == NULL)
+    {
+        return (MV_Error);
+    }
+
+    voice->bits = 8;
+    voice->GetSound = MV_GetNextDemandFeedBlock;
+    voice->Playing = TRUE;
+    voice->position = 0;
+    voice->BlockLength = 0;
+    voice->length = 0;
+    voice->next = NULL;
+    voice->prev = NULL;
+    voice->priority = priority;
+    voice->DemandFeed = feed;
+
+    MV_SetVoicePitch(voice, rate);
+    MV_SetVoiceVolume(voice, vol, left, right);
+    MV_PlayVoice(voice);
+
+    return (voice->handle);
+}
+
+/*---------------------------------------------------------------------
    Function: MV_CreateVolumeTable
 
    Create the table used to convert sound data to a specific volume
