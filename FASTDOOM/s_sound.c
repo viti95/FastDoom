@@ -65,8 +65,23 @@ int wavlooping = 0;
 
 // Streaming PCM music state
 static FILE *wavfile = NULL;
-static unsigned char wavstreambuf[65536]; // 64 KB stream buffer
-static unsigned long wavstreampos = 0;
+
+// Ring buffer for ISR-safe streaming.
+// WAV_StreamRead (called from ISR/mixer callback) only reads from this buffer.
+// WAV_StreamPreload (called from game loop) fills it via fread.
+//
+// Both wav_prod and wav_cons are monotonic absolute byte counts (never wrap).
+// Buffer index = absolute_pos % WAV_BUF_SIZE.
+//
+// The mixer holds a pointer into the buffer for the entire 32KB block duration.
+// The preload MUST NOT write to any buffer position the mixer is reading from.
+// The mixer reads block [wav_cons - CHUNK, wav_cons) in absolute terms.
+// In buffer terms this may wrap. Preload checks for overlap before writing.
+#define WAV_BUF_SIZE 262144    // 256 KB
+#define WAV_CHUNK_SIZE 32768   // 32 KB per block
+static unsigned char wav_buf[WAV_BUF_SIZE];
+static long wav_prod = 0; // Total bytes written to buffer (producer)
+static long wav_cons = 0; // Total bytes served to mixer (consumer)
 
 typedef struct
 {
@@ -387,40 +402,138 @@ unsigned char *LoadFile(char *filename, int *length)
     return (ptr);
 }
 
-// Demand-feed callback: reads next chunk of PCM data from the HDD.
-// Called by MV_GetNextDemandFeedBlock whenever the mixer needs more data.
-static void WAV_StreamRead(char **ptr, unsigned long *length)
+// Preload more PCM data into the ring buffer.
+// MUST be called from the main game loop (NOT from ISR context).
+// Uses fread/fseek which invoke DOS interrupts — safe only outside ISR.
+//
+// CRITICAL: the mixer holds a pointer into wav_buf for the entire 32KB block.
+// The preload must NOT write to any buffer position inside the mixer's
+// current read block [wav_cons - CHUNK, wav_cons) — even when that block
+// wraps around the buffer boundary. Otherwise the mixer reads new data
+// as if it were the old data = "skipped" or "interchanged" blocks.
+static void WAV_StreamPreload(void)
 {
-    unsigned long toread;
+    long write_pos, danger_start, danger_end;
+    long can_write, toread;
     size_t n;
 
     if (wavfile == NULL)
-    {
-        *ptr = NULL;
-        *length = 0;
         return;
-    }
 
-    // Loop: seek back to start if we've reached EOF
-    if (feof(wavfile))
+    write_pos = wav_prod % WAV_BUF_SIZE;
+
+    // Danger zone = mixer's current read block in buffer coordinates.
+    // Mixer reads absolute range [wav_cons - CHUNK, wav_cons).
+    if (wav_cons >= WAV_CHUNK_SIZE)
     {
-        fseek(wavfile, 0, SEEK_SET);
-        wavstreampos = 0;
+        danger_start = (wav_cons - WAV_CHUNK_SIZE) % WAV_BUF_SIZE;
+        danger_end = wav_cons % WAV_BUF_SIZE;
+    }
+    else
+    {
+        // First chunk not yet fully served — no danger zone
+        danger_start = 0;
+        danger_end = 0;
     }
 
-    toread = sizeof(wavstreambuf);
-    n = fread(wavstreambuf, 1, toread, wavfile);
+    // Compute how many bytes we can write from write_pos
+    // without hitting the danger zone or wrapping past the buffer end.
+    can_write = WAV_BUF_SIZE - write_pos; // max until end of buffer
+
+    if (wav_cons >= WAV_CHUNK_SIZE)
+    {
+        if (danger_start < danger_end)
+        {
+            // Danger zone does NOT wrap: [danger_start, danger_end)
+            if (write_pos < danger_start)
+            {
+                // Write is before danger zone — can write up to its start
+                can_write = (can_write < danger_start - write_pos)
+                            ? can_write : (danger_start - write_pos);
+            }
+            else if (write_pos < danger_end)
+            {
+                // Write position is inside the danger zone — don't write
+                can_write = 0;
+            }
+            // write_pos >= danger_end: after danger zone, can write to end of buf
+        }
+        else
+        {
+            // Danger zone wraps: [danger_start, BUF) U [0, danger_end)
+            // Safe zone is the middle: [danger_end, danger_start)
+            if (write_pos >= danger_end && write_pos < danger_start)
+            {
+                can_write = (can_write < danger_start - write_pos)
+                            ? can_write : (danger_start - write_pos);
+            }
+            else
+            {
+                // write_pos is inside the wrapped danger zone
+                can_write = 0;
+            }
+        }
+    }
+
+    // Need at least 4KB of contiguous space to bother reading
+    if (can_write < 4096L)
+        return;
+
+    toread = can_write;
+    if (toread > 65536L)
+        toread = 65536L;
+
+    n = fread(&wav_buf[write_pos], 1, (size_t)toread, wavfile);
 
     if (n == 0)
     {
+        if (feof(wavfile) && wavlooping)
+        {
+            fseek(wavfile, 0, SEEK_SET);
+            n = fread(&wav_buf[write_pos], 1, (size_t)toread, wavfile);
+        }
+    }
+
+    wav_prod += n;
+}
+
+// ISR-safe demand-feed callback: serves PCM data from the pre-loaded ring buffer.
+// NO file I/O — fread/fseek would trigger DOS interrupts (INT 21h → INT 6)
+// which are illegal to call from an ISR context (causes "Illegal Unhandled Interrupt Called 6").
+//
+// The mixer holds the returned pointer for the entire block duration (MV_Mix).
+// We must ensure the chunk does NOT cross the buffer boundary — the mixer reads
+// contiguous memory. If the chunk wrapped, the mixer would read past the buffer end.
+static void WAV_StreamRead(char **ptr, unsigned long *length)
+{
+    long available, chunk, buf_pos;
+
+    // How many bytes are in the buffer and ready to be consumed
+    available = wav_prod - wav_cons;
+
+    if (available <= 0)
+    {
         *ptr = NULL;
         *length = 0;
         return;
     }
 
-    wavstreampos += n;
-    *ptr = (char *)wavstreambuf;
-    *length = (unsigned long)n;
+    // Serve a chunk (up to 32KB to match MV_GetNextDemandFeedBlock's 0x8000 limit)
+    chunk = available;
+    if (chunk > WAV_CHUNK_SIZE)
+        chunk = WAV_CHUNK_SIZE;
+
+    buf_pos = wav_cons % WAV_BUF_SIZE;
+
+    // CRITICAL: chunk must not cross the buffer boundary.
+    // The mixer reads contiguous memory from ptr. If ptr + chunk > buf_end,
+    // the mixer reads past the buffer into garbage memory.
+    if (buf_pos + chunk > WAV_BUF_SIZE)
+        chunk = WAV_BUF_SIZE - buf_pos;
+
+    *ptr = (char *)&wav_buf[buf_pos];
+    *length = (unsigned long)chunk;
+    wav_cons += chunk;
 }
 
 // Close the streaming WAV file and reset state.
@@ -431,7 +544,8 @@ static void S_ShutdownWAV(void)
         fclose(wavfile);
         wavfile = NULL;
     }
-    wavstreampos = 0;
+    wav_prod = 0;
+    wav_cons = 0;
     wavhandle = -1;
 }
 
@@ -509,8 +623,9 @@ void S_ChangeMusicWAV(int musicnum, int looping)
     if (wavfile == NULL)
         return;
 
-    fseek(wavfile, 0, SEEK_SET);
-    wavstreampos = 0;
+    // Reset ring buffer state for new track
+    wav_prod = 0;
+    wav_cons = 0;
 
     wavmusicnum = musicnum;
 
@@ -529,6 +644,13 @@ void S_ChangeMusicWAV(int musicnum, int looping)
 
     volume = snd_MusicVolume;
 
+    // Preload the ring buffer with data BEFORE starting playback.
+    // The mixer calls WAV_StreamRead immediately on startup, so the
+    // buffer must already contain data, or the first block(s) are skipped.
+    WAV_StreamPreload();
+    WAV_StreamPreload();
+    WAV_StreamPreload();
+
     // Stream from HDD via demand-feed callback instead of loading into RAM
     wavhandle = MV_PlayDemandFeed(WAV_StreamRead, sample_rate, volume, volume, volume, 0);
 }
@@ -537,11 +659,16 @@ void S_CheckWAV(void)
 {
     if (wavlooping && !mus_paused)
     {
+        // Preload more PCM data from HDD into the ring buffer.
+        // This runs in the main game loop where DOS file I/O is safe.
+        WAV_StreamPreload();
+
         // Song finished (demand feed returned NoMoreData) — restart it
-        if (!MV_VoicePlaying(wavhandle))
+        if (!MV_VoicePlaying(wavhandle) && wavfile != NULL)
         {
             fseek(wavfile, 0, SEEK_SET);
-            wavstreampos = 0;
+            wav_prod = 0;
+            wav_cons = 0;
             S_ChangeMusicWAV(wavmusicnum, wavlooping);
         }
     }
