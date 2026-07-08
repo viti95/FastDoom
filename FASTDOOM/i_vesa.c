@@ -2499,87 +2499,53 @@ void I_FinishUpdate15bpp16bppLinearScale5x6(void)
 
   for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
   {
-    for (j = 0; j < SCREENWIDTH; j+=4, ptrVRAM += 10)
+    for (j = 0; j < SCREENWIDTH; j+=2, ptrVRAM += 5)
     {
-      unsigned int data1, data2, data3, data4;
-      unsigned int packet1, packet2, packet3, packet4, packet5;
+      unsigned int data1, data2;
+      unsigned int packet1, packet2, packet3;
 
       data1 = ptrPalette[backbuffer[i + j]];
       data2 = ptrPalette[backbuffer[i + j + 1]];
-      data3 = ptrPalette[backbuffer[i + j + 2]];
-      data4 = ptrPalette[backbuffer[i + j + 3]];
 
       packet1 = data1 | data1 << 16;
       packet2 = data1 | data2 << 16;
-      packet3 = data2 | data3 << 16;
-      packet4 = data3 | data4 << 16;
-      packet5 = data4 | data4 << 16;
+      packet3 = data2 | data2 << 16;
 
       *(ptrVRAM) = packet1;
       *(ptrVRAM+1) = packet1;
       *(ptrVRAM+2) = packet2;
       *(ptrVRAM+3) = packet3;
       *(ptrVRAM+4) = packet3;
-      *(ptrVRAM+5) = packet4;
-      *(ptrVRAM+6) = packet4;
-      *(ptrVRAM+7) = packet5;
-      *(ptrVRAM+8) = packet5;
-      *(ptrVRAM+9) = packet5;
 
       *(ptrVRAM+vesaScanlineQuarter) = packet1;
       *(ptrVRAM+vesaScanlineQuarter+1) = packet1;
       *(ptrVRAM+vesaScanlineQuarter+2) = packet2;
       *(ptrVRAM+vesaScanlineQuarter+3) = packet3;
       *(ptrVRAM+vesaScanlineQuarter+4) = packet3;
-      *(ptrVRAM+vesaScanlineQuarter+5) = packet4;
-      *(ptrVRAM+vesaScanlineQuarter+6) = packet4;
-      *(ptrVRAM+vesaScanlineQuarter+7) = packet5;
-      *(ptrVRAM+vesaScanlineQuarter+8) = packet5;
-      *(ptrVRAM+vesaScanlineQuarter+9) = packet5;
 
       *(ptrVRAM+2*vesaScanlineQuarter) = packet1;
       *(ptrVRAM+2*vesaScanlineQuarter+1) = packet1;
       *(ptrVRAM+2*vesaScanlineQuarter+2) = packet2;
       *(ptrVRAM+2*vesaScanlineQuarter+3) = packet3;
       *(ptrVRAM+2*vesaScanlineQuarter+4) = packet3;
-      *(ptrVRAM+2*vesaScanlineQuarter+5) = packet4;
-      *(ptrVRAM+2*vesaScanlineQuarter+6) = packet4;
-      *(ptrVRAM+2*vesaScanlineQuarter+7) = packet5;
-      *(ptrVRAM+2*vesaScanlineQuarter+8) = packet5;
-      *(ptrVRAM+2*vesaScanlineQuarter+9) = packet5;
 
       *(ptrVRAM+3*vesaScanlineQuarter) = packet1;
       *(ptrVRAM+3*vesaScanlineQuarter+1) = packet1;
       *(ptrVRAM+3*vesaScanlineQuarter+2) = packet2;
       *(ptrVRAM+3*vesaScanlineQuarter+3) = packet3;
       *(ptrVRAM+3*vesaScanlineQuarter+4) = packet3;
-      *(ptrVRAM+3*vesaScanlineQuarter+5) = packet4;
-      *(ptrVRAM+3*vesaScanlineQuarter+6) = packet4;
-      *(ptrVRAM+3*vesaScanlineQuarter+7) = packet5;
-      *(ptrVRAM+3*vesaScanlineQuarter+8) = packet5;
-      *(ptrVRAM+3*vesaScanlineQuarter+9) = packet5;
 
       *(ptrVRAM+4*vesaScanlineQuarter) = packet1;
       *(ptrVRAM+4*vesaScanlineQuarter+1) = packet1;
       *(ptrVRAM+4*vesaScanlineQuarter+2) = packet2;
       *(ptrVRAM+4*vesaScanlineQuarter+3) = packet3;
       *(ptrVRAM+4*vesaScanlineQuarter+4) = packet3;
-      *(ptrVRAM+4*vesaScanlineQuarter+5) = packet4;
-      *(ptrVRAM+4*vesaScanlineQuarter+6) = packet4;
-      *(ptrVRAM+4*vesaScanlineQuarter+7) = packet5;
-      *(ptrVRAM+4*vesaScanlineQuarter+8) = packet5;
-      *(ptrVRAM+4*vesaScanlineQuarter+9) = packet5;
 
       *(ptrVRAM+5*vesaScanlineQuarter) = packet1;
       *(ptrVRAM+5*vesaScanlineQuarter+1) = packet1;
       *(ptrVRAM+5*vesaScanlineQuarter+2) = packet2;
       *(ptrVRAM+5*vesaScanlineQuarter+3) = packet3;
       *(ptrVRAM+5*vesaScanlineQuarter+4) = packet3;
-      *(ptrVRAM+5*vesaScanlineQuarter+5) = packet4;
-      *(ptrVRAM+5*vesaScanlineQuarter+6) = packet4;
-      *(ptrVRAM+5*vesaScanlineQuarter+7) = packet5;
-      *(ptrVRAM+5*vesaScanlineQuarter+8) = packet5;
-      *(ptrVRAM+5*vesaScanlineQuarter+9) = packet5;
     }
 
     ptrVRAM += 6*vesaScanlineQuarter - SCREENWIDTH*5/2;
