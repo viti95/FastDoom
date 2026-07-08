@@ -501,7 +501,7 @@ void VBE2_InitGraphics(void)
       // 5x6 asymmetric scaling: 320x200 -> 1600x1200
       if (SCREENWIDTH == 320 && SCREENHEIGHT == 200 &&
           vesaWidth == 1600 && vesaHeight == 1200) {
-        vesaScaleMax = 6;
+        vesaScaleMax = 99;
         vesaScaleX = 5;
         vesaScaleY = 6;
       }
@@ -519,11 +519,7 @@ void VBE2_InitGraphics(void)
             case 3: finishfunc = I_FinishUpdate8bppBankedScale3x; break;
             case 4: finishfunc = I_FinishUpdate8bppBankedScale4x; break;
             case 5: finishfunc = I_FinishUpdate8bppBankedScale5x; break;
-            case 6:
-#if SCREENWIDTH == 320 && SCREENHEIGHT == 200
-              finishfunc = I_FinishUpdate8bppBankedScale5x6;
-#endif
-              break;
+            case 99: finishfunc = I_FinishUpdate8bppBankedScale5x6; break;
           }
           processpalette = I_ProcessPalette8bpp;
           setpalette = I_SetPalette8bpp;
@@ -537,11 +533,7 @@ void VBE2_InitGraphics(void)
             case 3: finishfunc = I_FinishUpdate15bppBankedScale3x; break;
             case 4: finishfunc = I_FinishUpdate15bppBankedScale4x; break;
             case 5: finishfunc = I_FinishUpdate15bppBankedScale5x; break;
-            case 6:
-#if SCREENWIDTH == 320 && SCREENHEIGHT == 200
-              finishfunc = I_FinishUpdate15bppBankedScale5x6;
-#endif
-              break;
+            case 99: finishfunc = I_FinishUpdate15bppBankedScale5x6; break;
           }
           processpalette = I_ProcessPalette15bpp;
           setpalette = I_SetPalette15bpp;
@@ -555,11 +547,7 @@ void VBE2_InitGraphics(void)
             case 3: finishfunc = I_FinishUpdate16bppBankedScale3x; break;
             case 4: finishfunc = I_FinishUpdate16bppBankedScale4x; break;
             case 5: finishfunc = I_FinishUpdate16bppBankedScale5x; break;
-            case 6:
-#if SCREENWIDTH == 320 && SCREENHEIGHT == 200
-              finishfunc = I_FinishUpdate16bppBankedScale5x6;
-#endif
-              break;
+            case 99: finishfunc = I_FinishUpdate16bppBankedScale5x6; break;
           }
           processpalette = I_ProcessPalette16bpp;
           setpalette = I_SetPalette16bpp;
@@ -573,11 +561,7 @@ void VBE2_InitGraphics(void)
             case 3: finishfunc = I_FinishUpdate24bppBankedScale3x; break;
             case 4: finishfunc = I_FinishUpdate24bppBankedScale4x; break;
             case 5: finishfunc = I_FinishUpdate24bppBankedScale5x; break;
-            case 6:
-#if SCREENWIDTH == 320 && SCREENHEIGHT == 200
-              finishfunc = I_FinishUpdate24bppBankedScale5x6;
-#endif
-              break;
+            case 99: finishfunc = I_FinishUpdate24bppBankedScale5x6; break;
           }
           processpalette = I_ProcessPalette24bpp;
           setpalette = I_SetPalette24bpp;
@@ -591,11 +575,7 @@ void VBE2_InitGraphics(void)
             case 3: finishfunc = I_FinishUpdate32bppBankedScale3x; break;
             case 4: finishfunc = I_FinishUpdate32bppBankedScale4x; break;
             case 5: finishfunc = I_FinishUpdate32bppBankedScale5x; break;
-            case 6:
-#if SCREENWIDTH == 320 && SCREENHEIGHT == 200
-              finishfunc = I_FinishUpdate32bppBankedScale5x6;
-#endif
-              break;
+            case 99: finishfunc = I_FinishUpdate32bppBankedScale5x6; break;
           }
           processpalette = I_ProcessPalette32bpp;
           setpalette = I_SetPalette32bpp;
@@ -611,26 +591,12 @@ void VBE2_InitGraphics(void)
           case 8:
             vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleY) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleX) / 2;
             switch (vesaScaleMax) {
-              case 1:
-                finishfunc = I_FinishUpdate8bppLinearScale1x;
-                break;
-              case 2:
-                finishfunc = I_FinishUpdate8bppLinearScale2x;
-                break;
-              case 3:
-                finishfunc = I_FinishUpdate8bppLinearScale3x;
-                break;
-              case 4:
-                finishfunc = I_FinishUpdate8bppLinearScale4x;
-                break;
-              case 5:
-                finishfunc = I_FinishUpdate8bppLinearScale5x;
-                break;
-              case 6:
-#if SCREENWIDTH == 320 && SCREENHEIGHT == 200
-                finishfunc = I_FinishUpdate8bppLinearScale5x6;
-#endif
-                break;
+              case 1: finishfunc = I_FinishUpdate8bppLinearScale1x; break;
+              case 2: finishfunc = I_FinishUpdate8bppLinearScale2x; break;
+              case 3: finishfunc = I_FinishUpdate8bppLinearScale3x; break;
+              case 4: finishfunc = I_FinishUpdate8bppLinearScale4x; break;
+              case 5: finishfunc = I_FinishUpdate8bppLinearScale5x; break;
+              case 99: finishfunc = I_FinishUpdate8bppLinearScale5x6; break;
             }
 
             processpalette = I_ProcessPalette8bpp;
@@ -641,26 +607,12 @@ void VBE2_InitGraphics(void)
           case 16:
             vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleY) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleX) / 2 * 2;
             switch (vesaScaleMax) {
-              case 1:
-                finishfunc = I_FinishUpdate15bpp16bppLinearScale1x;
-                break;
-              case 2:
-                finishfunc = I_FinishUpdate15bpp16bppLinearScale2x;
-                break;
-              case 3:
-                finishfunc = I_FinishUpdate15bpp16bppLinearScale3x;
-                break;
-              case 4:
-                finishfunc = I_FinishUpdate15bpp16bppLinearScale4x;
-                break;
-              case 5:
-                finishfunc = I_FinishUpdate15bpp16bppLinearScale5x;
-                break;
-              case 6:
-#if SCREENWIDTH == 320 && SCREENHEIGHT == 200
-                finishfunc = I_FinishUpdate15bpp16bppLinearScale5x6;
-#endif
-                break;
+              case 1: finishfunc = I_FinishUpdate15bpp16bppLinearScale1x; break;
+              case 2: finishfunc = I_FinishUpdate15bpp16bppLinearScale2x; break;
+              case 3: finishfunc = I_FinishUpdate15bpp16bppLinearScale3x; break;
+              case 4: finishfunc = I_FinishUpdate15bpp16bppLinearScale4x; break;
+              case 5: finishfunc = I_FinishUpdate15bpp16bppLinearScale5x; break;
+              case 99: finishfunc = I_FinishUpdate15bpp16bppLinearScale5x6; break;
             }
 
             processpalette = (vesabitsperpixel == 15) ? I_ProcessPalette15bpp : I_ProcessPalette16bpp;
@@ -670,26 +622,12 @@ void VBE2_InitGraphics(void)
           case 24:
             vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleY) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleX) / 2 * 3;
             switch (vesaScaleMax) {
-              case 1:
-                finishfunc = I_FinishUpdate24bppLinearScale1x;
-                break;
-              case 2:
-                finishfunc = I_FinishUpdate24bppLinearScale2x;
-                break;
-              case 3:
-                finishfunc = I_FinishUpdate24bppLinearScale3x;
-                break;
-              case 4:
-                finishfunc = I_FinishUpdate24bppLinearScale4x;
-                break;
-              case 5:
-                finishfunc = I_FinishUpdate24bppLinearScale5x;
-                break;
-              case 6:
-#if SCREENWIDTH == 320 && SCREENHEIGHT == 200
-                finishfunc = I_FinishUpdate24bppLinearScale5x6;
-#endif
-                break;
+              case 1: finishfunc = I_FinishUpdate24bppLinearScale1x; break;
+              case 2: finishfunc = I_FinishUpdate24bppLinearScale2x; break;
+              case 3: finishfunc = I_FinishUpdate24bppLinearScale3x; break;
+              case 4: finishfunc = I_FinishUpdate24bppLinearScale4x; break;
+              case 5: finishfunc = I_FinishUpdate24bppLinearScale5x; break;
+              case 99: finishfunc = I_FinishUpdate24bppLinearScale5x6; break;
             }
 
             processpalette = I_ProcessPalette24bpp;
@@ -699,26 +637,12 @@ void VBE2_InitGraphics(void)
           case 32:
             vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleY) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleX) / 2 * 4;
             switch (vesaScaleMax) {
-              case 1:
-                finishfunc = I_FinishUpdate32bppLinearScale1x;
-                break;
-              case 2:
-                finishfunc = I_FinishUpdate32bppLinearScale2x;
-                break;
-              case 3:
-                finishfunc = I_FinishUpdate32bppLinearScale3x;
-                break;
-              case 4:
-                finishfunc = I_FinishUpdate32bppLinearScale4x;
-                break;
-              case 5:
-                finishfunc = I_FinishUpdate32bppLinearScale5x;
-                break;
-              case 6:
-#if SCREENWIDTH == 320 && SCREENHEIGHT == 200
-                finishfunc = I_FinishUpdate32bppLinearScale5x6;
-#endif
-                break;
+              case 1: finishfunc = I_FinishUpdate32bppLinearScale1x; break;
+              case 2: finishfunc = I_FinishUpdate32bppLinearScale2x; break;
+              case 3: finishfunc = I_FinishUpdate32bppLinearScale3x; break;
+              case 4: finishfunc = I_FinishUpdate32bppLinearScale4x; break;
+              case 5: finishfunc = I_FinishUpdate32bppLinearScale5x; break;
+              case 99: finishfunc = I_FinishUpdate32bppLinearScale5x6; break;
             }
 
             processpalette = I_ProcessPalette32bpp;
