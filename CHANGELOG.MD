@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 1.4.0
+* Added 5×6 integer scaling for 320×200 VESA backbuffer modes, optimized for 1600×1200 (4:3) displays while preserving the original aspect ratio.
+
 ## 1.3.0 (01 Jul 2026)
 * Improved frame interpolation in uncapped framerate modes for smoother rendering #237 #251
 * Fixed frame skipping in uncapped framerate modes when FPS drops below 35 #237 #251

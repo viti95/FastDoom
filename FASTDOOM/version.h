@@ -1,1 +1,1 @@
-#define FDOOMVERSION "1.3.0"
+#define FDOOMVERSION "1.4.0"
