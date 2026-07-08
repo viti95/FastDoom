@@ -2766,7 +2766,7 @@ void I_FinishUpdate24bppBankedScale5x6(void)
         bank++;
         offsetInBank = 0;
         VBE_SetBank(bank);
-        while (ptrLUT < lutIdx * 3 + 3)
+        while (offsetInBank < 65536 && ptrLUT < backbuffer[lutIdx] * 3 + 3)
         {
           BankedWritePixelByte(offsetInBank, ptrPalette[ptrLUT]);
           offsetInBank++;
