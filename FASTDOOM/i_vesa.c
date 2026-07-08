@@ -54,6 +54,8 @@ byte *ptrprocessedpalette;
 #define PEL_DATA 0x3c9
 
 unsigned char vesaScaleMax;
+unsigned char vesaScaleX;
+unsigned char vesaScaleY;
 unsigned char* vesaScaleStart;
 unsigned int vesaScanlineSize;
 
@@ -379,6 +381,17 @@ int VBE2_FindVideoMode(unsigned short screenwidth, unsigned short screenheight, 
   return 0;
 }
 
+/* Forward declarations for 5x6 asymmetric scaling functions */
+void I_FinishUpdate8bppLinearScale5x6(void);
+void I_FinishUpdate15bpp16bppLinearScale5x6(void);
+void I_FinishUpdate24bppLinearScale5x6(void);
+void I_FinishUpdate32bppLinearScale5x6(void);
+void I_FinishUpdate8bppBankedScale5x6(void);
+void I_FinishUpdate15bppBankedScale5x6(void);
+void I_FinishUpdate16bppBankedScale5x6(void);
+void I_FinishUpdate24bppBankedScale5x6(void);
+void I_FinishUpdate32bppBankedScale5x6(void);
+
 void VBE2_InitGraphics(void)
 {
 
@@ -493,6 +506,16 @@ void VBE2_InitGraphics(void)
       int maxScaleWidth = vesaWidth / SCREENWIDTH;
       int maxScaleHeight = vesaHeight / SCREENHEIGHT;
       vesaScaleMax = (maxScaleWidth < maxScaleHeight) ? maxScaleWidth : maxScaleHeight;
+      vesaScaleX = maxScaleWidth;
+      vesaScaleY = maxScaleHeight;
+
+      // 5x6 asymmetric scaling: 320x200 -> 1600x1200
+      if (SCREENWIDTH == 320 && SCREENHEIGHT == 200 &&
+          vesaWidth == 1600 && vesaHeight == 1200) {
+        vesaScaleMax = 6;
+        vesaScaleX = 5;
+        vesaScaleY = 6;
+      }
 
       if (pcscreen == (void *)0xA0000) {
         // Banked scaled
@@ -500,65 +523,111 @@ void VBE2_InitGraphics(void)
         switch (vesabitsperpixel)
         {
         case 8:
-          vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleMax) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleMax) / 2;
+          if (vesaScaleX != vesaScaleY) {
+            // Non-uniform scaling: use separate X/Y factors for offset
+            vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleY) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleX) / 2;
+          } else {
+            vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleMax) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleMax) / 2;
+          }
           switch (vesaScaleMax) {
             case 1: finishfunc = I_FinishUpdate8bppBankedScale1x; break;
             case 2: finishfunc = I_FinishUpdate8bppBankedScale2x; break;
             case 3: finishfunc = I_FinishUpdate8bppBankedScale3x; break;
             case 4: finishfunc = I_FinishUpdate8bppBankedScale4x; break;
             case 5: finishfunc = I_FinishUpdate8bppBankedScale5x; break;
+            case 6:
+#if SCREENWIDTH == 320 && SCREENHEIGHT == 200
+              finishfunc = I_FinishUpdate8bppBankedScale5x6;
+#endif
+              break;
           }
           processpalette = I_ProcessPalette8bpp;
           setpalette = I_SetPalette8bpp;
           processedpalette = Z_MallocUnowned(14 * 768, PU_STATIC);
           break;
         case 15:
-          vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleMax) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleMax) / 2 * 2;
+          if (vesaScaleX != vesaScaleY) {
+            vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleY) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleX) / 2 * 2;
+          } else {
+            vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleMax) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleMax) / 2 * 2;
+          }
           switch (vesaScaleMax) {
             case 1: finishfunc = I_FinishUpdate15bppBankedScale1x; break;
             case 2: finishfunc = I_FinishUpdate15bppBankedScale2x; break;
             case 3: finishfunc = I_FinishUpdate15bppBankedScale3x; break;
             case 4: finishfunc = I_FinishUpdate15bppBankedScale4x; break;
             case 5: finishfunc = I_FinishUpdate15bppBankedScale5x; break;
+            case 6:
+#if SCREENWIDTH == 320 && SCREENHEIGHT == 200
+              finishfunc = I_FinishUpdate15bppBankedScale5x6;
+#endif
+              break;
           }
           processpalette = I_ProcessPalette15bpp;
           setpalette = I_SetPalette15bpp;
           processedpalette = Z_MallocUnowned(14 * 256 * 2, PU_STATIC);
           break;
         case 16:
-          vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleMax) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleMax) / 2 * 2;
+          if (vesaScaleX != vesaScaleY) {
+            vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleY) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleX) / 2 * 2;
+          } else {
+            vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleMax) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleMax) / 2 * 2;
+          }
           switch (vesaScaleMax) {
             case 1: finishfunc = I_FinishUpdate16bppBankedScale1x; break;
             case 2: finishfunc = I_FinishUpdate16bppBankedScale2x; break;
             case 3: finishfunc = I_FinishUpdate16bppBankedScale3x; break;
             case 4: finishfunc = I_FinishUpdate16bppBankedScale4x; break;
             case 5: finishfunc = I_FinishUpdate16bppBankedScale5x; break;
+            case 6:
+#if SCREENWIDTH == 320 && SCREENHEIGHT == 200
+              finishfunc = I_FinishUpdate16bppBankedScale5x6;
+#endif
+              break;
           }
           processpalette = I_ProcessPalette16bpp;
           setpalette = I_SetPalette16bpp;
           processedpalette = Z_MallocUnowned(14 * 256 * 2, PU_STATIC);
           break;
         case 24:
-          vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleMax) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleMax) / 2 * 3;
+          if (vesaScaleX != vesaScaleY) {
+            vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleY) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleX) / 2 * 3;
+          } else {
+            vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleMax) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleMax) / 2 * 3;
+          }
           switch (vesaScaleMax) {
             case 1: finishfunc = I_FinishUpdate24bppBankedScale1x; break;
             case 2: finishfunc = I_FinishUpdate24bppBankedScale2x; break;
             case 3: finishfunc = I_FinishUpdate24bppBankedScale3x; break;
             case 4: finishfunc = I_FinishUpdate24bppBankedScale4x; break;
             case 5: finishfunc = I_FinishUpdate24bppBankedScale5x; break;
+            case 6:
+#if SCREENWIDTH == 320 && SCREENHEIGHT == 200
+              finishfunc = I_FinishUpdate24bppBankedScale5x6;
+#endif
+              break;
           }
           processpalette = I_ProcessPalette24bpp;
           setpalette = I_SetPalette24bpp;
           processedpalette = Z_MallocUnowned(14 * 256 * 3, PU_STATIC);
           break;
         case 32:
-          vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleMax) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleMax) / 2 * 4;
+          if (vesaScaleX != vesaScaleY) {
+            vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleY) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleX) / 2 * 4;
+          } else {
+            vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleMax) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleMax) / 2 * 4;
+          }
           switch (vesaScaleMax) {
             case 1: finishfunc = I_FinishUpdate32bppBankedScale1x; break;
             case 2: finishfunc = I_FinishUpdate32bppBankedScale2x; break;
             case 3: finishfunc = I_FinishUpdate32bppBankedScale3x; break;
             case 4: finishfunc = I_FinishUpdate32bppBankedScale4x; break;
             case 5: finishfunc = I_FinishUpdate32bppBankedScale5x; break;
+            case 6:
+#if SCREENWIDTH == 320 && SCREENHEIGHT == 200
+              finishfunc = I_FinishUpdate32bppBankedScale5x6;
+#endif
+              break;
           }
           processpalette = I_ProcessPalette32bpp;
           setpalette = I_SetPalette32bpp;
@@ -572,7 +641,11 @@ void VBE2_InitGraphics(void)
         switch (vesabitsperpixel)
         {
           case 8:
-            vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleMax) / 2) * (vesaScanlineSize) + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleMax) / 2;
+            if (vesaScaleX != vesaScaleY) {
+              vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleY) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleX) / 2;
+            } else {
+              vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleMax) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleMax) / 2;
+            }
 
             switch (vesaScaleMax) {
               case 1:
@@ -590,6 +663,11 @@ void VBE2_InitGraphics(void)
               case 5:
                 finishfunc = I_FinishUpdate8bppLinearScale5x;
                 break;
+              case 6:
+#if SCREENWIDTH == 320 && SCREENHEIGHT == 200
+                finishfunc = I_FinishUpdate8bppLinearScale5x6;
+#endif
+                break;
             }
 
             processpalette = I_ProcessPalette8bpp;
@@ -598,7 +676,11 @@ void VBE2_InitGraphics(void)
             break;
           case 15:
           case 16:
-            vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleMax) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleMax) / 2 * 2;
+            if (vesaScaleX != vesaScaleY) {
+              vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleY) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleX) / 2 * 2;
+            } else {
+              vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleMax) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleMax) / 2 * 2;
+            }
 
             switch (vesaScaleMax) {
               case 1:
@@ -616,6 +698,11 @@ void VBE2_InitGraphics(void)
               case 5:
                 finishfunc = I_FinishUpdate15bpp16bppLinearScale5x;
                 break;
+              case 6:
+#if SCREENWIDTH == 320 && SCREENHEIGHT == 200
+                finishfunc = I_FinishUpdate15bpp16bppLinearScale5x6;
+#endif
+                break;
             }
 
             processpalette = (vesabitsperpixel == 15) ? I_ProcessPalette15bpp : I_ProcessPalette16bpp;
@@ -623,7 +710,11 @@ void VBE2_InitGraphics(void)
             processedpalette = Z_MallocUnowned(14 * 256 * 2, PU_STATIC);
             break;
           case 24:
-            vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleMax) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleMax) / 2 * 3;
+            if (vesaScaleX != vesaScaleY) {
+              vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleY) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleX) / 2 * 3;
+            } else {
+              vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleMax) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleMax) / 2 * 3;
+            }
 
             switch (vesaScaleMax) {
               case 1:
@@ -641,6 +732,11 @@ void VBE2_InitGraphics(void)
               case 5:
                 finishfunc = I_FinishUpdate24bppLinearScale5x;
                 break;
+              case 6:
+#if SCREENWIDTH == 320 && SCREENHEIGHT == 200
+                finishfunc = I_FinishUpdate24bppLinearScale5x6;
+#endif
+                break;
             }
 
             processpalette = I_ProcessPalette24bpp;
@@ -648,7 +744,11 @@ void VBE2_InitGraphics(void)
             processedpalette = Z_MallocUnowned(14 * 256 * 3, PU_STATIC);
             break;
           case 32:
-            vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleMax) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleMax) / 2 * 4;
+            if (vesaScaleX != vesaScaleY) {
+              vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleY) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleX) / 2 * 4;
+            } else {
+              vesaScaleStart = pcscreen + ((vesaHeight - SCREENHEIGHT * vesaScaleMax) / 2) * vesaScanlineSize + (vesaScaleOutputWidth - SCREENWIDTH * vesaScaleMax) / 2 * 4;
+            }
 
             switch (vesaScaleMax) {
               case 1:
@@ -665,6 +765,11 @@ void VBE2_InitGraphics(void)
                 break;
               case 5:
                 finishfunc = I_FinishUpdate32bppLinearScale5x;
+                break;
+              case 6:
+#if SCREENWIDTH == 320 && SCREENHEIGHT == 200
+                finishfunc = I_FinishUpdate32bppLinearScale5x6;
+#endif
                 break;
             }
 
@@ -2334,6 +2439,485 @@ BANKED_SCALE_32BPP(2)
 BANKED_SCALE_32BPP(3)
 BANKED_SCALE_32BPP(4)
 BANKED_SCALE_32BPP(5)
+
+/* ---- 5x6 asymmetric scaling functions (320x200 -> 1600x1200) ---- */
+
+void I_FinishUpdate8bppLinearScale5x6(void)
+{
+  int i,j;
+
+  unsigned int *ptrVRAM = vesaScaleStart;
+  unsigned int vesaScanlineSizeQuarter = vesaScanlineSize / 4;
+
+  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  {
+    for (j = 0; j < SCREENWIDTH; j+=4, ptrVRAM += 5)
+    {
+      unsigned char data1 = backbuffer[i + j];
+      unsigned char data2 = backbuffer[i + j + 1];
+      unsigned char data3 = backbuffer[i + j + 2];
+      unsigned char data4 = backbuffer[i + j + 3];
+
+      unsigned int first = data1 << 24 | data1 << 16 | data1 << 8 | data1;
+      unsigned int second = data2 << 24 | data2 << 16 | data2 << 8 | data1;
+      unsigned int third = data3 << 24 | data3 << 16 | data2 << 8 | data2;
+      unsigned int fourth = data4 << 24 | data3 << 16 | data3 << 8 | data3;
+      unsigned int fifth = data4 << 24 | data4 << 16 | data4 << 8 | data4;
+
+      *(ptrVRAM) = first;
+      *(ptrVRAM+1) = second;
+      *(ptrVRAM+2) = third;
+      *(ptrVRAM+3) = fourth;
+      *(ptrVRAM+4) = fifth;
+      *(ptrVRAM+vesaScanlineSizeQuarter) = first;
+      *(ptrVRAM+vesaScanlineSizeQuarter+1) = second;
+      *(ptrVRAM+vesaScanlineSizeQuarter+2) = third;
+      *(ptrVRAM+vesaScanlineSizeQuarter+3) = fourth;
+      *(ptrVRAM+vesaScanlineSizeQuarter+4) = fifth;
+      *(ptrVRAM+2*vesaScanlineSizeQuarter) = first;
+      *(ptrVRAM+2*vesaScanlineSizeQuarter+1) = second;
+      *(ptrVRAM+2*vesaScanlineSizeQuarter+2) = third;
+      *(ptrVRAM+2*vesaScanlineSizeQuarter+3) = fourth;
+      *(ptrVRAM+2*vesaScanlineSizeQuarter+4) = fifth;
+      *(ptrVRAM+3*vesaScanlineSizeQuarter) = first;
+      *(ptrVRAM+3*vesaScanlineSizeQuarter+1) = second;
+      *(ptrVRAM+3*vesaScanlineSizeQuarter+2) = third;
+      *(ptrVRAM+3*vesaScanlineSizeQuarter+3) = fourth;
+      *(ptrVRAM+3*vesaScanlineSizeQuarter+4) = fifth;
+      *(ptrVRAM+4*vesaScanlineSizeQuarter) = first;
+      *(ptrVRAM+4*vesaScanlineSizeQuarter+1) = second;
+      *(ptrVRAM+4*vesaScanlineSizeQuarter+2) = third;
+      *(ptrVRAM+4*vesaScanlineSizeQuarter+3) = fourth;
+      *(ptrVRAM+4*vesaScanlineSizeQuarter+4) = fifth;
+      *(ptrVRAM+5*vesaScanlineSizeQuarter) = first;
+      *(ptrVRAM+5*vesaScanlineSizeQuarter+1) = second;
+      *(ptrVRAM+5*vesaScanlineSizeQuarter+2) = third;
+      *(ptrVRAM+5*vesaScanlineSizeQuarter+3) = fourth;
+      *(ptrVRAM+5*vesaScanlineSizeQuarter+4) = fifth;
+    }
+
+    ptrVRAM += 6*vesaScanlineSizeQuarter - SCREENWIDTH*5/4;
+  }
+}
+
+void I_FinishUpdate15bpp16bppLinearScale5x6(void)
+{
+  int i,j;
+
+  unsigned short *ptrPalette = (unsigned short *) ptrprocessedpalette;
+  unsigned int *ptrVRAM = (unsigned int *) vesaScaleStart;
+  unsigned int vesaScanlineQuarter = vesaScanlineSize / 4;
+
+  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  {
+    for (j = 0; j < SCREENWIDTH; j+=4, ptrVRAM += 10)
+    {
+      unsigned int data1, data2, data3, data4;
+      unsigned int packet1, packet2, packet3, packet4, packet5;
+
+      data1 = ptrPalette[backbuffer[i + j]];
+      data2 = ptrPalette[backbuffer[i + j + 1]];
+      data3 = ptrPalette[backbuffer[i + j + 2]];
+      data4 = ptrPalette[backbuffer[i + j + 3]];
+
+      packet1 = data1 | data1 << 16;
+      packet2 = data1 | data2 << 16;
+      packet3 = data2 | data3 << 16;
+      packet4 = data3 | data4 << 16;
+      packet5 = data4 | data4 << 16;
+
+      *(ptrVRAM) = packet1;
+      *(ptrVRAM+1) = packet1;
+      *(ptrVRAM+2) = packet2;
+      *(ptrVRAM+3) = packet3;
+      *(ptrVRAM+4) = packet3;
+      *(ptrVRAM+5) = packet4;
+      *(ptrVRAM+6) = packet4;
+      *(ptrVRAM+7) = packet5;
+      *(ptrVRAM+8) = packet5;
+      *(ptrVRAM+9) = packet5;
+
+      *(ptrVRAM+vesaScanlineQuarter) = packet1;
+      *(ptrVRAM+vesaScanlineQuarter+1) = packet1;
+      *(ptrVRAM+vesaScanlineQuarter+2) = packet2;
+      *(ptrVRAM+vesaScanlineQuarter+3) = packet3;
+      *(ptrVRAM+vesaScanlineQuarter+4) = packet3;
+      *(ptrVRAM+vesaScanlineQuarter+5) = packet4;
+      *(ptrVRAM+vesaScanlineQuarter+6) = packet4;
+      *(ptrVRAM+vesaScanlineQuarter+7) = packet5;
+      *(ptrVRAM+vesaScanlineQuarter+8) = packet5;
+      *(ptrVRAM+vesaScanlineQuarter+9) = packet5;
+
+      *(ptrVRAM+2*vesaScanlineQuarter) = packet1;
+      *(ptrVRAM+2*vesaScanlineQuarter+1) = packet1;
+      *(ptrVRAM+2*vesaScanlineQuarter+2) = packet2;
+      *(ptrVRAM+2*vesaScanlineQuarter+3) = packet3;
+      *(ptrVRAM+2*vesaScanlineQuarter+4) = packet3;
+      *(ptrVRAM+2*vesaScanlineQuarter+5) = packet4;
+      *(ptrVRAM+2*vesaScanlineQuarter+6) = packet4;
+      *(ptrVRAM+2*vesaScanlineQuarter+7) = packet5;
+      *(ptrVRAM+2*vesaScanlineQuarter+8) = packet5;
+      *(ptrVRAM+2*vesaScanlineQuarter+9) = packet5;
+
+      *(ptrVRAM+3*vesaScanlineQuarter) = packet1;
+      *(ptrVRAM+3*vesaScanlineQuarter+1) = packet1;
+      *(ptrVRAM+3*vesaScanlineQuarter+2) = packet2;
+      *(ptrVRAM+3*vesaScanlineQuarter+3) = packet3;
+      *(ptrVRAM+3*vesaScanlineQuarter+4) = packet3;
+      *(ptrVRAM+3*vesaScanlineQuarter+5) = packet4;
+      *(ptrVRAM+3*vesaScanlineQuarter+6) = packet4;
+      *(ptrVRAM+3*vesaScanlineQuarter+7) = packet5;
+      *(ptrVRAM+3*vesaScanlineQuarter+8) = packet5;
+      *(ptrVRAM+3*vesaScanlineQuarter+9) = packet5;
+
+      *(ptrVRAM+4*vesaScanlineQuarter) = packet1;
+      *(ptrVRAM+4*vesaScanlineQuarter+1) = packet1;
+      *(ptrVRAM+4*vesaScanlineQuarter+2) = packet2;
+      *(ptrVRAM+4*vesaScanlineQuarter+3) = packet3;
+      *(ptrVRAM+4*vesaScanlineQuarter+4) = packet3;
+      *(ptrVRAM+4*vesaScanlineQuarter+5) = packet4;
+      *(ptrVRAM+4*vesaScanlineQuarter+6) = packet4;
+      *(ptrVRAM+4*vesaScanlineQuarter+7) = packet5;
+      *(ptrVRAM+4*vesaScanlineQuarter+8) = packet5;
+      *(ptrVRAM+4*vesaScanlineQuarter+9) = packet5;
+
+      *(ptrVRAM+5*vesaScanlineQuarter) = packet1;
+      *(ptrVRAM+5*vesaScanlineQuarter+1) = packet1;
+      *(ptrVRAM+5*vesaScanlineQuarter+2) = packet2;
+      *(ptrVRAM+5*vesaScanlineQuarter+3) = packet3;
+      *(ptrVRAM+5*vesaScanlineQuarter+4) = packet3;
+      *(ptrVRAM+5*vesaScanlineQuarter+5) = packet4;
+      *(ptrVRAM+5*vesaScanlineQuarter+6) = packet4;
+      *(ptrVRAM+5*vesaScanlineQuarter+7) = packet5;
+      *(ptrVRAM+5*vesaScanlineQuarter+8) = packet5;
+      *(ptrVRAM+5*vesaScanlineQuarter+9) = packet5;
+    }
+
+    ptrVRAM += 6*vesaScanlineQuarter - SCREENWIDTH*5/2;
+  }
+}
+
+void I_FinishUpdate24bppLinearScale5x6(void)
+{
+  int i,j;
+  int row;
+
+  unsigned char *ptrPalette = (unsigned char *) ptrprocessedpalette;
+  unsigned short *ptrVRAM = (unsigned short *) vesaScaleStart;
+  unsigned int vesaScanlineSizeHalf = vesaScanlineSize / 2;
+
+  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  {
+    for (j = 0; j < SCREENWIDTH; j+=2, ptrVRAM += 30)
+    {
+      unsigned short ptrLUT1 = backbuffer[i + j] * 3;
+      unsigned short ptrLUT2 = backbuffer[i + j + 1] * 3;
+      unsigned char b1, g1, r1, b2, g2, r2;
+      unsigned short packet1, packet2, packet3, packet4, packet5, packet6, packet7, packet8;
+      int offset;
+
+      b1 = ptrPalette[ptrLUT1];
+      g1 = ptrPalette[ptrLUT1 + 1];
+      r1 = ptrPalette[ptrLUT1 + 2];
+
+      b2 = ptrPalette[ptrLUT2];
+      g2 = ptrPalette[ptrLUT2 + 1];
+      r2 = ptrPalette[ptrLUT2 + 2];
+
+      packet1 = b1 | g1 << 8;
+      packet2 = r1 | b1 << 8;
+      packet3 = g1 | r1 << 8;
+      packet4 = r1 | b2 << 8;
+      packet5 = g2 | r2 << 8;
+      packet6 = b2 | g2 << 8;
+      packet7 = r2 | b2 << 8;
+      packet8 = g2 | r2 << 8;
+
+      *(ptrVRAM) = packet1;
+      *(ptrVRAM+1) = packet2;
+      *(ptrVRAM+2) = packet3;
+      *(ptrVRAM+3) = packet1;
+      *(ptrVRAM+4) = packet2;
+      *(ptrVRAM+5) = packet3;
+      *(ptrVRAM+6) = packet1;
+      *(ptrVRAM+7) = packet2;
+      *(ptrVRAM+8) = packet3;
+      *(ptrVRAM+9) = packet4;
+      *(ptrVRAM+10) = packet5;
+      *(ptrVRAM+11) = packet6;
+      *(ptrVRAM+12) = packet7;
+      *(ptrVRAM+13) = packet5;
+      *(ptrVRAM+14) = packet6;
+      *(ptrVRAM+15) = packet7;
+      *(ptrVRAM+16) = packet8;
+      *(ptrVRAM+17) = packet5;
+      *(ptrVRAM+18) = packet6;
+      *(ptrVRAM+19) = packet7;
+      *(ptrVRAM+20) = packet8;
+      *(ptrVRAM+21) = packet5;
+      *(ptrVRAM+22) = packet6;
+      *(ptrVRAM+23) = packet7;
+      *(ptrVRAM+24) = packet8;
+      *(ptrVRAM+25) = packet5;
+      *(ptrVRAM+26) = packet6;
+      *(ptrVRAM+27) = packet7;
+      *(ptrVRAM+28) = packet8;
+      *(ptrVRAM+29) = packet5;
+
+      for (row = 1; row < 6; row++)
+      {
+        offset = row * vesaScanlineSizeHalf;
+        *(ptrVRAM+offset) = packet1;
+        *(ptrVRAM+offset+1) = packet2;
+        *(ptrVRAM+offset+2) = packet3;
+        *(ptrVRAM+offset+3) = packet1;
+        *(ptrVRAM+offset+4) = packet2;
+        *(ptrVRAM+offset+5) = packet3;
+        *(ptrVRAM+offset+6) = packet1;
+        *(ptrVRAM+offset+7) = packet2;
+        *(ptrVRAM+offset+8) = packet3;
+        *(ptrVRAM+offset+9) = packet4;
+        *(ptrVRAM+offset+10) = packet5;
+        *(ptrVRAM+offset+11) = packet6;
+        *(ptrVRAM+offset+12) = packet7;
+        *(ptrVRAM+offset+13) = packet5;
+        *(ptrVRAM+offset+14) = packet6;
+        *(ptrVRAM+offset+15) = packet7;
+        *(ptrVRAM+offset+16) = packet8;
+        *(ptrVRAM+offset+17) = packet5;
+        *(ptrVRAM+offset+18) = packet6;
+        *(ptrVRAM+offset+19) = packet7;
+        *(ptrVRAM+offset+20) = packet8;
+        *(ptrVRAM+offset+21) = packet5;
+        *(ptrVRAM+offset+22) = packet6;
+        *(ptrVRAM+offset+23) = packet7;
+        *(ptrVRAM+offset+24) = packet8;
+        *(ptrVRAM+offset+25) = packet5;
+        *(ptrVRAM+offset+26) = packet6;
+        *(ptrVRAM+offset+27) = packet7;
+        *(ptrVRAM+offset+28) = packet8;
+        *(ptrVRAM+offset+29) = packet5;
+      }
+    }
+
+    ptrVRAM += 6*vesaScanlineSizeHalf - SCREENWIDTH*15;
+  }
+}
+
+void I_FinishUpdate32bppLinearScale5x6(void)
+{
+  int i,j;
+
+  unsigned int *ptrPalette = (unsigned int *) ptrprocessedpalette;
+  unsigned int *ptrVRAM = (unsigned int *) vesaScaleStart;
+  unsigned int vesaScanlineQuarter = vesaScanlineSize / 4;
+
+  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  {
+    for (j = 0; j < SCREENWIDTH; j++, ptrVRAM += 5)
+    {
+      unsigned int data = ptrPalette[backbuffer[i + j]];
+
+      *(ptrVRAM) = data;
+      *(ptrVRAM+1) = data;
+      *(ptrVRAM+2) = data;
+      *(ptrVRAM+3) = data;
+      *(ptrVRAM+4) = data;
+
+      *(ptrVRAM+vesaScanlineQuarter) = data;
+      *(ptrVRAM+vesaScanlineQuarter+1) = data;
+      *(ptrVRAM+vesaScanlineQuarter+2) = data;
+      *(ptrVRAM+vesaScanlineQuarter+3) = data;
+      *(ptrVRAM+vesaScanlineQuarter+4) = data;
+
+      *(ptrVRAM+2*vesaScanlineQuarter) = data;
+      *(ptrVRAM+2*vesaScanlineQuarter+1) = data;
+      *(ptrVRAM+2*vesaScanlineQuarter+2) = data;
+      *(ptrVRAM+2*vesaScanlineQuarter+3) = data;
+      *(ptrVRAM+2*vesaScanlineQuarter+4) = data;
+
+      *(ptrVRAM+3*vesaScanlineQuarter) = data;
+      *(ptrVRAM+3*vesaScanlineQuarter+1) = data;
+      *(ptrVRAM+3*vesaScanlineQuarter+2) = data;
+      *(ptrVRAM+3*vesaScanlineQuarter+3) = data;
+      *(ptrVRAM+3*vesaScanlineQuarter+4) = data;
+
+      *(ptrVRAM+4*vesaScanlineQuarter) = data;
+      *(ptrVRAM+4*vesaScanlineQuarter+1) = data;
+      *(ptrVRAM+4*vesaScanlineQuarter+2) = data;
+      *(ptrVRAM+4*vesaScanlineQuarter+3) = data;
+      *(ptrVRAM+4*vesaScanlineQuarter+4) = data;
+
+      *(ptrVRAM+5*vesaScanlineQuarter) = data;
+      *(ptrVRAM+5*vesaScanlineQuarter+1) = data;
+      *(ptrVRAM+5*vesaScanlineQuarter+2) = data;
+      *(ptrVRAM+5*vesaScanlineQuarter+3) = data;
+      *(ptrVRAM+5*vesaScanlineQuarter+4) = data;
+    }
+
+    ptrVRAM += 6*vesaScanlineQuarter - SCREENWIDTH * 5;
+  }
+}
+
+void I_FinishUpdate8bppBankedScale5x6(void)
+{
+  int out_x, out_y;
+  int scaleStartOffset = (int)((unsigned long)vesaScaleStart - (unsigned long)0xA0000);
+  int rowOffset, bank, offsetInBank;
+
+  for (out_y = 0; out_y < SCREENHEIGHT * 6; out_y++)
+  {
+    rowOffset = scaleStartOffset + out_y * vesaScanlineSize;
+    bank = rowOffset / 65536;
+    offsetInBank = rowOffset % 65536;
+    VBE_SetBank(bank);
+
+    for (out_x = 0; out_x < SCREENWIDTH * 5; out_x++)
+    {
+      if (offsetInBank + 1 > 65536)
+      {
+        bank++;
+        offsetInBank = 0;
+        VBE_SetBank(bank);
+      }
+      BankedWritePixelByte(offsetInBank, backbuffer[(out_y / 6) * SCREENWIDTH + (out_x / 5)]);
+      offsetInBank++;
+    }
+  }
+}
+
+void I_FinishUpdate15bppBankedScale5x6(void)
+{
+  int out_x, out_y;
+  unsigned short *ptrPalette = (unsigned short *) ptrprocessedpalette;
+  int scaleStartOffset = (int)((unsigned long)vesaScaleStart - (unsigned long)0xA0000);
+  int rowOffset, bank, offsetInBank;
+
+  for (out_y = 0; out_y < SCREENHEIGHT * 6; out_y++)
+  {
+    rowOffset = scaleStartOffset + out_y * vesaScanlineSize;
+    bank = rowOffset / 65536;
+    offsetInBank = rowOffset % 65536;
+    VBE_SetBank(bank);
+
+    for (out_x = 0; out_x < SCREENWIDTH * 5; out_x++)
+    {
+      if (offsetInBank + 2 > 65536)
+      {
+        bank++;
+        offsetInBank = 0;
+        VBE_SetBank(bank);
+      }
+      BankedWritePixelShort(offsetInBank, ptrPalette[backbuffer[(out_y / 6) * SCREENWIDTH + (out_x / 5)]]);
+      offsetInBank += 2;
+    }
+  }
+}
+
+void I_FinishUpdate16bppBankedScale5x6(void)
+{
+  int out_x, out_y;
+  unsigned short *ptrPalette = (unsigned short *) ptrprocessedpalette;
+  int scaleStartOffset = (int)((unsigned long)vesaScaleStart - (unsigned long)0xA0000);
+  int rowOffset, bank, offsetInBank;
+
+  for (out_y = 0; out_y < SCREENHEIGHT * 6; out_y++)
+  {
+    rowOffset = scaleStartOffset + out_y * vesaScanlineSize;
+    bank = rowOffset / 65536;
+    offsetInBank = rowOffset % 65536;
+    VBE_SetBank(bank);
+
+    for (out_x = 0; out_x < SCREENWIDTH * 5; out_x++)
+    {
+      if (offsetInBank + 2 > 65536)
+      {
+        bank++;
+        offsetInBank = 0;
+        VBE_SetBank(bank);
+      }
+      BankedWritePixelShort(offsetInBank, ptrPalette[backbuffer[(out_y / 6) * SCREENWIDTH + (out_x / 5)]]);
+      offsetInBank += 2;
+    }
+  }
+}
+
+void I_FinishUpdate24bppBankedScale5x6(void)
+{
+  int out_x, out_y;
+  unsigned char *ptrPalette = (unsigned char *) ptrprocessedpalette;
+  int scaleStartOffset = (int)((unsigned long)vesaScaleStart - (unsigned long)0xA0000);
+  int rowOffset, bank, offsetInBank;
+
+  for (out_y = 0; out_y < SCREENHEIGHT * 6; out_y++)
+  {
+    rowOffset = scaleStartOffset + out_y * vesaScanlineSize;
+    bank = rowOffset / 65536;
+    offsetInBank = rowOffset % 65536;
+    VBE_SetBank(bank);
+
+    for (out_x = 0; out_x < SCREENWIDTH * 5; out_x++)
+    {
+      int lutIdx = (out_y / 6) * SCREENWIDTH + (out_x / 5);
+      int ptrLUT = backbuffer[lutIdx] * 3;
+
+      if (offsetInBank + 3 > 65536)
+      {
+        int remaining = 65536 - offsetInBank;
+        while (offsetInBank < 65536 && remaining > 0)
+        {
+          BankedWritePixelByte(offsetInBank, ptrPalette[ptrLUT]);
+          offsetInBank++;
+          ptrLUT++;
+          remaining--;
+        }
+        bank++;
+        offsetInBank = 0;
+        VBE_SetBank(bank);
+        while (ptrLUT < lutIdx * 3 + 3)
+        {
+          BankedWritePixelByte(offsetInBank, ptrPalette[ptrLUT]);
+          offsetInBank++;
+          ptrLUT++;
+        }
+      }
+      else
+      {
+        BankedWritePixelByte(offsetInBank, ptrPalette[ptrLUT]); offsetInBank++;
+        BankedWritePixelByte(offsetInBank, ptrPalette[ptrLUT + 1]); offsetInBank++;
+        BankedWritePixelByte(offsetInBank, ptrPalette[ptrLUT + 2]); offsetInBank++;
+      }
+    }
+  }
+}
+
+void I_FinishUpdate32bppBankedScale5x6(void)
+{
+  int out_x, out_y;
+  unsigned int *ptrPalette = (unsigned int *) ptrprocessedpalette;
+  int scaleStartOffset = (int)((unsigned long)vesaScaleStart - (unsigned long)0xA0000);
+  int rowOffset, bank, offsetInBank;
+
+  for (out_y = 0; out_y < SCREENHEIGHT * 6; out_y++)
+  {
+    rowOffset = scaleStartOffset + out_y * vesaScanlineSize;
+    bank = rowOffset / 65536;
+    offsetInBank = rowOffset % 65536;
+    VBE_SetBank(bank);
+
+    for (out_x = 0; out_x < SCREENWIDTH * 5; out_x++)
+    {
+      if (offsetInBank + 4 > 65536)
+      {
+        bank++;
+        offsetInBank = 0;
+        VBE_SetBank(bank);
+      }
+      BankedWritePixelInt(offsetInBank, ptrPalette[backbuffer[(out_y / 6) * SCREENWIDTH + (out_x / 5)]]);
+      offsetInBank += 4;
+    }
+  }
+}
 
 #endif
 
