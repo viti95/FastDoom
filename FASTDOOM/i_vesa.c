@@ -381,17 +381,6 @@ int VBE2_FindVideoMode(unsigned short screenwidth, unsigned short screenheight, 
   return 0;
 }
 
-/* Forward declarations for 5x6 asymmetric scaling functions */
-void I_FinishUpdate8bppLinearScale5x6(void);
-void I_FinishUpdate15bpp16bppLinearScale5x6(void);
-void I_FinishUpdate24bppLinearScale5x6(void);
-void I_FinishUpdate32bppLinearScale5x6(void);
-void I_FinishUpdate8bppBankedScale5x6(void);
-void I_FinishUpdate15bppBankedScale5x6(void);
-void I_FinishUpdate16bppBankedScale5x6(void);
-void I_FinishUpdate24bppBankedScale5x6(void);
-void I_FinishUpdate32bppBankedScale5x6(void);
-
 void VBE2_InitGraphics(void)
 {
 

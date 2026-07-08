@@ -334,6 +334,16 @@ void I_FinishUpdate32bppBankedScale2x(void);
 void I_FinishUpdate32bppBankedScale3x(void);
 void I_FinishUpdate32bppBankedScale4x(void);
 void I_FinishUpdate32bppBankedScale5x(void);
+/* 5x6 asymmetric scaling (320x200 -> 1600x1200) */
+void I_FinishUpdate8bppLinearScale5x6(void);
+void I_FinishUpdate15bpp16bppLinearScale5x6(void);
+void I_FinishUpdate24bppLinearScale5x6(void);
+void I_FinishUpdate32bppLinearScale5x6(void);
+void I_FinishUpdate8bppBankedScale5x6(void);
+void I_FinishUpdate15bppBankedScale5x6(void);
+void I_FinishUpdate16bppBankedScale5x6(void);
+void I_FinishUpdate24bppBankedScale5x6(void);
+void I_FinishUpdate32bppBankedScale5x6(void);
 void I_ProcessPalette(byte *palette);
 void I_SetPalette(int numpalette);
 void I_ProcessPalette8bpp(byte *palette);
