@@ -383,6 +383,10 @@ static void MUS_ServiceRoutine(task *Task)
 static void MUS_AllNotesOff(void)
 {
     int i;
+    if (!MUS_Funcs)
+    {
+        return;
+    }
     for (i = 0; i < MUS_NUM_CHANNELS; i++)
     {
         if (MUS_ChannelMap[i] >= 0)
@@ -498,6 +502,9 @@ void MUS_Stop(void)
         TS_Terminate(MUS_PlayRoutine);
         MUS_PlayRoutine = NULL;
     }
+
+    /* Release any held notes before resetting state */
+    MUS_AllNotesOff();
 
     MUS_SongActive = FALSE;
     MUS_SongLoaded = FALSE;
