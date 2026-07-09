@@ -234,7 +234,8 @@ static int MUS_ProcessEventBlock(void)
                 {
                     key &= 0x7F;
                     velocity = *MUS_ScorePos++;
-                    MUS_ChannelVelocity[mus_channel] = velocity;
+                    /* Mask to 7-bit (matches vanilla mus2mid: channelvelocities[channel] &= 0x7F) */
+                    MUS_ChannelVelocity[mus_channel] = velocity & 0x7F;
                 }
                 else
                 {
@@ -248,17 +249,11 @@ static int MUS_ProcessEventBlock(void)
         case MUS_PITCH_WHEEL >> 4:
             {
                 byte raw = *MUS_ScorePos++;
-                /* MUS pitch is 0-127, MIDI is 0-16383 centered at 8192.
-                   Map: raw -> (raw - 64) * 128  gives range -8192..8191 */
-                short wheel = (short)((raw - 64) * 128);
+                /* MUS pitch wheel: 0-127, map to MIDI 14-bit bend as raw*64
+                   (matches vanilla DOOM's mus2mid converter) */
+                short wheel = (short)(raw * 64);
                 byte lsb = wheel & 0x7F;
                 byte msb = (wheel >> 7) & 0x7F;
-                /* Fix sign for 7-bit values */
-                if (lsb & 0x80)
-                {
-                    lsb &= 0x7F;
-                    msb++;
-                }
                 MUS_Funcs->PitchBend(channel, lsb, msb);
                 break;
             }
