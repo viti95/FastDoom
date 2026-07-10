@@ -12,8 +12,10 @@
 #include "doomtype.h"
 
 // Initialize the MUS player with raw MUS data.
+// data: pointer to MUS lump data
+// length: total size of the MUS lump (in bytes)
 // Returns 0 on success, non-zero on failure.
-int MUS_InitPlayer(void *data);
+int MUS_InitPlayer(void *data, unsigned int length);
 
 // Start/continue playback of the loaded MUS song.
 void MUS_Play(void);

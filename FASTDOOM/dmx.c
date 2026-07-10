@@ -66,7 +66,7 @@ int dmx_mus_port = 0;
 int dmx_snd_port = 0;
 int dmx_song_is_mus = 0;
 
-int MUS_RegisterSong(void *data)
+int MUS_RegisterSong(void *data, unsigned int length)
 {
     if (mid_data)
     {
@@ -79,7 +79,7 @@ int MUS_RegisterSong(void *data)
     if (memcmp(data, "MThd", 4))
     {
         /* MUS format - use native MUS player */
-        if (MUS_InitPlayer(data) == 0)
+        if (MUS_InitPlayer(data, length) == 0)
         {
             mus_data = data;
             dmx_song_is_mus = 1;

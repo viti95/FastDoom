@@ -166,15 +166,22 @@ static int MUS_GetMIDIChannel(int mus_channel)
 //
 // Helper: read a variable-length delta time from the score.
 // Returns the number of ticks.
+// Includes a safety limit to avoid infinite loops on corrupt data.
 //
 
 static unsigned long MUS_ReadDeltaTime(void)
 {
     unsigned long timedelay = 0;
     byte c;
+    byte *end = MUS_ScoreStart + MUS_ScoreLength;
 
-    for (;;)
+    for (;;)  
     {
+        if (MUS_ScorePos >= end)
+        {
+            /* Safety: prevent infinite loop on corrupt/short data */
+            return 0;
+        }
         c = *MUS_ScorePos++;
         timedelay = timedelay * 128 + (c & 0x7F);
         if ((c & 0x80) == 0)
@@ -402,11 +409,12 @@ static void MUS_AllNotesOff(void)
 // Public API
 //
 
-int MUS_InitPlayer(void *data)
+int MUS_InitPlayer(void *data, unsigned int length)
 {
     musheader_t header;
+    unsigned int score_byte_length;
 
-    if (data == NULL)
+    if (data == NULL || length < sizeof(musheader_t))
     {
         return -1;
     }
@@ -427,14 +435,23 @@ int MUS_InitPlayer(void *data)
         return -1;
     }
 
-    /* Score data starts at header.scorestart bytes from start of data */
+    /* Validate scorestart is within the lump */
+    if (header.scorestart < 0 || (unsigned int)header.scorestart >= length)
+    {
+        return -1;
+    }
+
+    /* Score data starts at header.scorestart bytes from start of data.
+       The MUS header's scorelength field is in TICKS (70 Hz clock), NOT bytes.
+       To get the actual byte length of the score section, we use:
+       lump_size - scorestart offset */
     MUS_ScoreData = (byte *)data;
     MUS_ScoreStart = MUS_ScoreData + header.scorestart;
-    MUS_ScoreLength = header.scorelength;
+    score_byte_length = length - (unsigned int)header.scorestart;
+    MUS_ScoreLength = score_byte_length;
 
-    /* Validate score boundaries */
-    if (MUS_ScoreStart + MUS_ScoreLength > MUS_ScoreData +
-        (header.scorestart + header.scorelength))
+    /* Validate we have some score data */
+    if (MUS_ScoreLength == 0)
     {
         return -1;
     }

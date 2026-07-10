@@ -484,7 +484,7 @@ void S_ChangeMusicMIDI(int musicnum, int looping)
     }
 
     music->data = (void *)W_CacheLumpNum(music->lumpnum, PU_MUSIC);
-    music->handle = MUS_RegisterSong(music->data);
+    music->handle = MUS_RegisterSong(music->data, W_LumpLength(music->lumpnum));
 
     // play it
     MUS_ChainSong(music->handle, looping ? music->handle : -1);

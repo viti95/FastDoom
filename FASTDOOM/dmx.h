@@ -23,7 +23,7 @@ int GUS_Init(void);
 void GUS_Shutdown(void);
 
 void TSM_Remove(void);
-int MUS_RegisterSong(void *data);
+int MUS_RegisterSong(void *data, unsigned int length);
 int MUS_LoadMT32(void);
 int MUS_ChainSong(int handle, int next);
 void MUS_PlaySong(int handle, int volume);
