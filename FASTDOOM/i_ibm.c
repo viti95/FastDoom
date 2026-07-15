@@ -1162,6 +1162,9 @@ void I_Init(void)
 //
 void I_Shutdown(void)
 {
+#if defined(MODE_MDA)
+    MDA_ShutdownTerminal();
+#endif
     I_ShutdownGraphics();
     I_ShutdownSound();
     I_ShutdownTimer();

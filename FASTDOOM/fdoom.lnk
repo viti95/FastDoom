@@ -81,6 +81,7 @@ file i_cga512.obj
 file cga512.obj
 file i_text.obj
 file i_mda.obj
+file i_term.obj
 file i_vgay.obj
 file i_vgayh.obj
 file i_vgax.obj

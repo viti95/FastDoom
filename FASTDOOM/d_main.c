@@ -49,6 +49,10 @@
 #include "i_sound.h"
 #include "i_ibm.h"
 
+#if defined(MODE_MDA)
+#include "i_mda.h"
+#endif
+
 #include "g_game.h"
 
 #include "hu_stuff.h"
@@ -1536,6 +1540,27 @@ void D_DoomMain(void)
 
 #if defined(TEXT_MODE)
     videoPageFix = M_CheckParm("-pagefix");
+#endif
+
+#if defined(MODE_MDA)
+    if ((p = M_CheckParm("-term")))
+    {
+        term_enabled = true;
+        term_port = 0x3F8; // default COM1
+        term_baud = 38400; // default 38400 baud
+
+        // Optional: port override (-term 0x2F8)
+        if (p < myargc - 1 && myargv[p + 1][0] != '-')
+        {
+            term_port = (int)strtol(myargv[p + 1], NULL, 16);
+            p++;
+        }
+        // Optional: baud rate override (-term 0x3F8 9600)
+        if (p < myargc - 1 && myargv[p + 1][0] != '-')
+        {
+            term_baud = atoi(myargv[p + 1]);
+        }
+    }
 #endif
 
     ignoreSoundChecks = M_CheckParm("-forceSound");
