@@ -1,9 +1,9 @@
 //
-// Serial Terminal Output for MDA Mode
+// Serial Terminal Output for MDA Mode (VT100-compatible)
 //
 // Provides text output over a serial port (COM1-COM4).
-// Buffers writes and flushes them to the UART to avoid
-// slowing down the main game loop with busy-wait I/O.
+// Compatible with DEC VT100 and VT100-emulation terminals.
+// Only VT100-standard escapes are used: ED, CH, CUP.
 //
 
 #include <stdio.h>
@@ -17,7 +17,6 @@
 #include "ns_inter.h"
 
 /* Serial port registers */
-#define UART_RBR  0x00   /* Receive Buffer Register (read) */
 #define UART_THR  0x00   /* Transmit Holding Register (write) */
 #define UART_IER  0x01   /* Interrupt Enable Register */
 #define UART_IIR  0x02   /* Interrupt Identification Register (read) */
@@ -25,14 +24,9 @@
 #define UART_LCR  0x03   /* Line Control Register */
 #define UART_MCR  0x04   /* Modem Control Register */
 #define UART_LSR  0x05   /* Line Status Register */
-#define UART_MSR  0x06   /* Modem Status Register */
 
-/* LSR bits */
-#define LSR_DR    0x01   /* Data Ready */
 #define LSR_THRE  0x20   /* Transmit Holding Register Empty */
-#define LSR_TEMT  0x40   /* Transmit Empty */
 
-/* MCR bits */
 #define MCR_DTR   0x01   /* Data Terminal Ready */
 #define MCR_RTS   0x02   /* Request To Send */
 #define MCR_OUT2  0x08   /* Out2 */
@@ -48,10 +42,85 @@ static char   term_buf[TERM_BUF_SIZE];
 static int    term_buf_len    = 0;
 
 /*
+ * CP437 -> ASCII translation table for VT100.
+ * VT100 uses US ASCII (0x20-0x7E) and does not have a CP437
+ * character set.  Box-drawing, block, and special CP437 chars
+ * are mapped to the closest readable ASCII equivalent.
+ *
+ * Indices 0x20-0x7E are identity (standard ASCII).
+ * All values are single-byte ASCII (0x00-0x7F).
+ */
+static const byte cp437_to_ascii[256] =
+{
+    /* 0x00 - 0x1F : control -> space (32) */
+    0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,
+    0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,
+    0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,
+    0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,
+
+    /* 0x20 - 0x3F : standard ASCII (32) */
+    0x20,0x21,0x22,0x23,0x24,0x25,0x26,0x27,
+    0x28,0x29,0x2a,0x2b,0x2c,0x2d,0x2e,0x2f,
+    0x30,0x31,0x32,0x33,0x34,0x35,0x36,0x37,
+    0x38,0x39,0x3a,0x3b,0x3c,0x3d,0x3e,0x3f,
+
+    /* 0x40 - 0x5F : standard ASCII (32) */
+    0x40,0x41,0x42,0x43,0x44,0x45,0x46,0x47,
+    0x48,0x49,0x4a,0x4b,0x4c,0x4d,0x4e,0x4f,
+    0x50,0x51,0x52,0x53,0x54,0x55,0x56,0x57,
+    0x58,0x59,0x5a,0x5b,0x5c,0x5d,0x5e,0x5f,
+
+    /* 0x60 - 0x7F : standard ASCII (32) */
+    0x60,0x61,0x62,0x63,0x64,0x65,0x66,0x67,
+    0x68,0x69,0x6a,0x6b,0x6c,0x6d,0x6e,0x6f,
+    0x70,0x71,0x72,0x73,0x74,0x75,0x76,0x77,
+    0x78,0x79,0x7a,0x7b,0x7c,0x7d,0x7e,0x7f,
+
+    /* 0x80 - 0x9F : extended Latin -> ASCII (32) */
+    0x43,0x75,0x65,0x65,0x61,0x61,0x65,0x63,
+    0x65,0x65,0x65,0x69,0x69,0x6f,0x75,0x75,
+    0x6f,0x6f,0x75,0x6f,0x6e,0x4f,0x5a,0x7a,
+    0x41,0x41,0x41,0x43,0x41,0x41,0x41,0x53,
+
+    /* 0xA0 - 0xAF : misc -> ASCII (16) */
+    0x54,0x74,0x22,0x53,0x73,0x53,0x61,0x54,
+    0x74,0x7a,0x5a,0x52,0x72,0x49,0x69,0x50,
+
+    /* 0xB0 - 0xBF : misc -> ASCII (16) */
+    0x70,0x48,0x55,0x75,0x3e,0x49,0x69,0x53,
+    0x73,0x6f,0x6f,0x4f,0x4f,0x4c,0x6c,0x3c,
+
+    /* 0xC0 - 0xCF : box-drawing (single) -> ASCII (16) */
+    0x2b,0x2d,0x7c,0x2b,0x2b,0x2d,0x2b,0x7c,
+    0x7c,0x2b,0x2d,0x7c,0x2d,0x2b,0x7c,0x2b,
+
+    /* 0xD0 - 0xDF : box-drawing (double/triple/quad) -> ASCII (16) */
+    0x2b,0x2d,0x7c,0x2b,0x2b,0x2d,0x2b,0x7c,
+    0x7c,0x2b,0x2d,0x7c,0x2d,0x2b,0x7c,0x2b,
+
+    /* 0xE0 - 0xEF : block elements -> ASCII (16) */
+    0x6f,0x6f,0x6f,0x23,0x23,0x23,0x4f,0x4f,
+    0x4f,0x6f,0x6f,0x6f,0x6f,0x6f,0x6f,0x6f,
+
+    /* 0xF0 - 0xFF : symbols / arrows -> ASCII (16) */
+    0x5e,0x76,0x3c,0x3e,0x21,0x3f,0x5e,0x23,
+    0x7b,0x7d,0x7e,0x7e,0x7e,0x7e,0x7e,0x20,
+};
+
+/*
+ * TERM_TranslateChar
+ * Map a CP437 character code to the nearest VT100-safe ASCII
+ * character.  Characters < 0x20 become space.
+ */
+static byte TERM_TranslateChar(byte c)
+{
+    return cp437_to_ascii[c];
+}
+
+/*
  * TERM_WaitTransmit
- * Busy-wait until the THR is empty, then return.
- * Uses a timeout counter to avoid an infinite loop if the
- * serial port is misconfigured.
+ * Busy-wait until the THR is empty.  Timeout prevents hard
+ * lock-up if the port is mis-configured.
  */
 static void TERM_WaitTransmit(void)
 {
@@ -66,7 +135,7 @@ static void TERM_WaitTransmit(void)
 
 /*
  * TERM_WriteByte
- * Actually write a byte to the UART hardware.
+ * Write one byte directly to the UART THR register.
  */
 static void TERM_WriteByte(byte c)
 {
@@ -76,7 +145,7 @@ static void TERM_WriteByte(byte c)
 
 /*
  * TERM_WriteBuf
- * Drain the output buffer to the serial port.
+ * Drain the software output buffer to the hardware.
  */
 static void TERM_WriteBuf(void)
 {
@@ -90,7 +159,7 @@ static void TERM_WriteBuf(void)
 
 /*
  * TERM_BaudToDivisor
- * Convert baud rate to UART divisor (clock = 115200).
+ * Standard 1.8432 MHz crystal:  divisor = 115200 / baud
  */
 static int TERM_BaudToDivisor(int baud)
 {
@@ -99,7 +168,7 @@ static int TERM_BaudToDivisor(int baud)
 
 /*
  * TERM_FormatInt
- * Append a decimal integer to the output buffer.
+ * Convert signed integer to decimal string in the output buffer.
  */
 static void TERM_FormatInt(int val)
 {
@@ -125,14 +194,12 @@ static void TERM_FormatInt(int val)
     }
 
     while (i > 0)
-    {
         TERM_SendByte(tmp[--i]);
-    }
 }
 
 /*
  * TERM_FormatUnsigned
- * Append an unsigned decimal integer to the output buffer.
+ * Convert unsigned integer to decimal string in the output buffer.
  */
 static void TERM_FormatUnsigned(unsigned int val)
 {
@@ -152,15 +219,12 @@ static void TERM_FormatUnsigned(unsigned int val)
     }
 
     while (i > 0)
-    {
         TERM_SendByte(tmp[--i]);
-    }
 }
 
 /*
  * TERM_ParseFormat
- * Handle format string output (simplified printf).
- * Supports: %s, %d, %u, %c, %x, %%
+ * Minimal printf:  %s, %d, %u, %c, %x, %%
  */
 static void TERM_ParseFormat(char *fmt, va_list args)
 {
@@ -207,16 +271,13 @@ static void TERM_ParseFormat(char *fmt, va_list args)
                 TERM_SendByte('0');
                 TERM_SendByte('x');
                 for (shift = 28; shift >= 0; shift -= 4)
-                {
                     TERM_SendByte(hexchars[(val >> shift) & 0x0F]);
-                }
                 break;
             }
             case '%':
                 TERM_SendByte('%');
                 break;
             case '\0':
-                /* Trailing % */
                 TERM_SendByte('%');
                 return;
             default:
@@ -226,9 +287,7 @@ static void TERM_ParseFormat(char *fmt, va_list args)
             }
         }
         else
-        {
             TERM_SendByte((byte)*fmt);
-        }
         fmt++;
     }
 }
@@ -239,59 +298,54 @@ static void TERM_ParseFormat(char *fmt, va_list args)
 
 /*
  * TERM_Init
- * Initialise the serial port for terminal output.
+ * Configure the UART for 8N1 output at the requested baud rate.
  *
- * port  - I/O base address (0x3F8, 0x2F8, 0x3E8, 0x2E8)
- * baud  - Baud rate (9600, 19200, 38400, 57600, 115200)
+ * port  - 0x3F8 (COM1), 0x2F8 (COM2), 0x3E8 (COM3), 0x2E8 (COM4)
+ * baud  - 9600, 19200, 38400, 57600, 115200
  *
- * Returns 0 on success, -1 if port is invalid.
+ * Returns 0 on success, -1 on invalid port.
  */
 int TERM_Init(int port, int baud)
 {
     unsigned flags;
     int divisor;
 
-    /* Validate port */
     if (port != 0x3F8 && port != 0x2F8 &&
         port != 0x3E8 && port != 0x2E8)
-    {
         return -1;
-    }
 
-    /* Validate baud rate */
     if (baud <= 0)
         baud = TERM_DEFAULT_BAUD;
 
-    term_port = port;
-    term_baud = baud;
-    divisor = TERM_BaudToDivisor(baud);
+    term_port  = port;
+    term_baud  = baud;
+    divisor    = TERM_BaudToDivisor(baud);
 
-    /* Disable interrupts */
     flags = DisableInterrupts();
 
-    /* DLAB = 0, disable interrupts, 8 bits */
-    outp(port + UART_LCR, 0x80);     /* DLAB = 1 */
-    outp(port + UART_IER, 0x00);     /* No interrupts */
+    /* Disable interrupts, set DLAB = 1 */
+    outp(port + UART_IER, 0x00);
+    outp(port + UART_LCR, 0x80);
 
-    /* Set baud rate divisor */
-    outp(port + UART_THR, divisor & 0xFF);       /* Divisor Latch LSB */
-    outp(port + UART_IER, (divisor >> 8) & 0xFF); /* Divisor Latch MSB */
+    /* Write divisor (LSB then MSB) */
+    outp(port + UART_THR, divisor & 0xFF);
+    outp(port + UART_IER, (divisor >> 8) & 0xFF);
 
-    /* 8 data bits, no parity, 1 stop bit, DLAB = 0 */
+    /* 8 data bits, no parity, 1 stop, DLAB = 0 */
     outp(port + UART_LCR, 0x03);
 
-    /* Clear FIFO (if available) */
-    outp(port + UART_FCR, 0xC7);  /* Enable & clear FIFOs */
+    /* Enable FIFO, clear both */
+    outp(port + UART_FCR, 0xC7);
 
-    /* Enable DTR and RTS */
+    /* DTR + RTS + OUT2 */
     outp(port + UART_MCR, MCR_DTR | MCR_RTS | MCR_OUT2);
 
-    /* Flush any pending data */
+    /* Flush receive buffer */
     outp(port + UART_IIR, 0x00);
 
     RestoreInterrupts(flags);
 
-    term_active = 1;
+    term_active  = 1;
     term_buf_len = 0;
 
     return 0;
@@ -299,8 +353,7 @@ int TERM_Init(int port, int baud)
 
 /*
  * TERM_SendByte
- * Queue a byte for transmission. If the buffer overflows,
- * flush immediately.
+ * Queue one raw byte.  Flushes on overflow.
  */
 void TERM_SendByte(byte c)
 {
@@ -311,14 +364,12 @@ void TERM_SendByte(byte c)
     term_buf_len++;
 
     if (term_buf_len >= TERM_BUF_SIZE)
-    {
         TERM_Flush();
-    }
 }
 
 /*
  * TERM_SendString
- * Send a null-terminated string to the terminal buffer.
+ * Queue a null-terminated string (raw, no translation).
  */
 void TERM_SendString(char *s)
 {
@@ -327,6 +378,35 @@ void TERM_SendString(char *s)
         TERM_SendByte((byte)*s);
         s++;
     }
+}
+
+/*
+ * TERM_SendChar
+ * Translate a single CP437 character to VT100-safe ASCII
+ * and queue it.  Control characters become space.
+ */
+void TERM_SendChar(byte c)
+{
+    byte translated;
+
+    if (!term_active)
+        return;
+
+    /* Fast-path: standard ASCII printable range */
+    if (c >= 0x20 && c <= 0x7E)
+    {
+        TERM_SendByte(c);
+        return;
+    }
+
+    /* Translate CP437 extended char to ASCII */
+    translated = TERM_TranslateChar(c);
+
+    /* Guarantee printable ASCII */
+    if (translated < 0x20)
+        translated = ' ';
+
+    TERM_SendByte(translated);
 }
 
 /*
@@ -347,8 +427,8 @@ void TERM_Printf(char *fmt, ...)
 
 /*
  * TERM_Flush
- * Drain the output buffer to the serial port.
- * Called from I_FinishUpdate() to avoid blocking the game loop.
+ * Drain the software buffer to the UART.  Called from
+ * I_FinishUpdate() so serial I/O never blocks the game loop.
  */
 void TERM_Flush(void)
 {
@@ -360,7 +440,8 @@ void TERM_Flush(void)
 
 /*
  * TERM_Clear
- * Send ANSI clear-screen escape sequence.
+ * Send VT100 ED (Erase Display) + CH (Cursor Home).
+ * \x1B[2J  \x1B[H   -- standard on VT100.
  */
 void TERM_Clear(void)
 {
@@ -378,102 +459,50 @@ void TERM_Clear(void)
 
 /*
  * TERM_SetCursor
- * Move cursor to position (x, y) using ANSI escape.
- * x and y are 1-based for ANSI compatibility.
+ * VT100 CUP (Cursor Position): \x1B[y;xH
+ *
+ * x, y are 0-based; VT100 expects 1-based.
+ * y is clamped to TERM_ROWS-1 (23), x to TERM_COLS-1 (79).
  */
 void TERM_SetCursor(int x, int y)
 {
-    char numbuf[32];
-    int i;
-
     if (!term_active)
         return;
 
-    /* CSI y;x H */
+    /* Clamp to VT100 display bounds */
+    if (x < 0)    x = 0;
+    if (x >= 80)  x = 79;
+    if (y < 0)    y = 0;
+    if (y >= 24)  y = 23;
+
+    /* \x1B[y;xH  (row;col, 1-based) */
     TERM_SendByte(TERM_ESC);
     TERM_SendByte('[');
-
-    /* Encode row (y) - use 1-based */
-    {
-        int val = y + 1;
-        i = 0;
-        if (val == 0)
-        {
-            numbuf[i++] = '0';
-        }
-        else
-        {
-            char rev[12];
-            int rlen = 0;
-            while (val > 0)
-            {
-                rev[rlen++] = (val % 10) + '0';
-                val /= 10;
-            }
-            while (rlen > 0)
-            {
-                numbuf[i++] = rev[--rlen];
-            }
-        }
-        while (i > 0)
-        {
-            TERM_SendByte((byte)numbuf[--i]);
-        }
-    }
-
+    TERM_FormatUnsigned((unsigned)(y + 1));
     TERM_SendByte(';');
-
-    /* Encode column (x) - use 1-based */
-    {
-        int val = x + 1;
-        i = 0;
-        if (val == 0)
-        {
-            numbuf[i++] = '0';
-        }
-        else
-        {
-            char rev[12];
-            int rlen = 0;
-            while (val > 0)
-            {
-                rev[rlen++] = (val % 10) + '0';
-                val /= 10;
-            }
-            while (rlen > 0)
-            {
-                numbuf[i++] = rev[--rlen];
-            }
-        }
-        while (i > 0)
-        {
-            TERM_SendByte((byte)numbuf[--i]);
-        }
-    }
-
+    TERM_FormatUnsigned((unsigned)(x + 1));
     TERM_SendByte('H');
 }
 
 /*
  * TERM_Shutdown
- * Disable the serial port and clean up.
+ * Reset the UART and clear internal state.
  */
 void TERM_Shutdown(void)
 {
     if (!term_active)
         return;
 
-    /* Disable DTR, RTS, and interrupts */
     outp(term_port + UART_MCR, 0x00);
     outp(term_port + UART_IER, 0x00);
 
-    term_active = 0;
+    term_active  = 0;
     term_buf_len = 0;
 }
 
 /*
  * TERM_IsActive
- * Returns non-zero if the terminal is initialised and active.
+ * Returns non-zero if the terminal is initialised.
  */
 int TERM_IsActive(void)
 {

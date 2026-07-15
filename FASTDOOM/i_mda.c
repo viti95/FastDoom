@@ -34,49 +34,49 @@ void TERM_UpdateFromBuffer(void)
     int x, y;
     unsigned int idx;
     unsigned short cell;
-    char ch;
+    byte ch;
 
     if (!term_enabled || !TERM_IsActive())
         return;
 
-    // On first frame, send full screen
+    /* On first frame, send full screen to VT100 (80x24).
+       MDA has 25 rows but VT100 only shows 24, so we
+       skip row 24 (index 24) to prevent unwanted scrolling.
+       Use \r\n line endings for full-screen transfer. */
     if (term_first_frame)
     {
         TERM_Clear();
         term_first_frame = false;
 
-        for (y = 0; y < 25; y++)
+        for (y = 0; y < TERM_ROWS; y++)
         {
             for (x = 0; x < 80; x++)
             {
                 idx = (unsigned int)y * 80u + (unsigned int)x;
                 cell = backbuffer[idx];
-                ch = (char)(cell & 0xFF);
+                ch = (byte)(cell & 0xFF);
 
-                if (ch >= 0x20 && ch <= 0x7E)
-                {
-                    TERM_SendByte((byte)ch);
-                }
-                else if (ch == '\r' || ch == '\n')
-                {
-                    TERM_SendByte((byte)ch);
-                }
-                else
-                {
-                    TERM_SendByte(' ');
-                }
+                /* Translate CP437 char to VT100-safe ASCII */
+                TERM_SendChar(ch);
+
+                /* Strip MDA blink/intensity bits for VT100.
+                   MDA attribute bits: 0-3=colour, 4=intensity,
+                   5-6=reserved, 7=blink.  VT100 has no SGR
+                   support for these, so ignore all attributes. */
+                (void)(cell >> 8);
 
                 term_prev[idx] = cell;
             }
             TERM_SendByte('\r');
             TERM_SendByte('\n');
         }
-        TERM_SetCursor(0, 24);
+        TERM_SetCursor(0, TERM_ROWS - 1);
         return;
     }
 
-    // Incremental update: walk the buffer and emit changed cells
-    for (y = 0; y < 25; y++)
+    /* Incremental update: walk the buffer and emit changed cells.
+       Only update rows 0-23 (VT100 display); skip row 24. */
+    for (y = 0; y < TERM_ROWS; y++)
     {
         for (x = 0; x < 80; x++)
         {
@@ -85,19 +85,13 @@ void TERM_UpdateFromBuffer(void)
 
             if (cell != term_prev[idx])
             {
-                // Move cursor to the changed cell
+                /* Move cursor to the changed cell (VT100 CUP) */
                 TERM_SetCursor(x, y);
 
-                ch = (char)(cell & 0xFF);
+                ch = (byte)(cell & 0xFF);
 
-                if (ch >= 0x20 && ch <= 0x7E)
-                {
-                    TERM_SendByte((byte)ch);
-                }
-                else
-                {
-                    TERM_SendByte(' ');
-                }
+                /* Translate CP437 char to VT100-safe ASCII */
+                TERM_SendChar(ch);
 
                 term_prev[idx] = cell;
             }

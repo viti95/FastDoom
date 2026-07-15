@@ -1,9 +1,8 @@
 //
-// Serial Terminal Output for MDA Mode
+// Serial Terminal Output for MDA Mode (VT100-compatible)
 //
-// Provides a text-only terminal output over COM1 serial port.
-// Used alongside the MDA text display to pipe game text to an
-// external terminal (e.g. for accessibility, headless operation).
+// Provides text output over a serial port (COM1-COM4).
+// Compatible with DEC VT100 and VT100-emulation terminals.
 //
 
 #ifndef __I_TERM__
@@ -13,20 +12,17 @@
 
 #define TERM_DEFAULT_BAUD    38400
 #define TERM_DEFAULT_PORT    0x3F8   /* COM1 */
-#define TERM_MAX_PORT        0x2F8   /* COM4 */
 #define TERM_BUF_SIZE        1024
 
-/* ANSI-compatible cursor / display escape sequences */
+/* VT100 display size (VT100 is 80x24, not 80x25) */
+#define TERM_ROWS            24
+#define TERM_COLS            80
+
+/* VT100 escape sequences */
 #define TERM_ESC             0x1B
-#define TERM_CSI             "\x1B["
-#define TERM_CLEAR_LINE      "\x1B[2K\r"
-#define TERM_HOME            "\x1B[H"
-#define TERM_CLEAR_SCREEN    "\x1B[2J\x1B[H"
-#define TERM_CUR_UP(n)       "\x1B[" #n "A"
-#define TERM_CUR_DOWN(n)     "\x1B[" #n "B"
-#define TERM_CUR_RIGHT(n)    "\x1B[" #n "C"
-#define TERM_CUR_LEFT(n)     "\x1B[" #n "D"
-#define TERM_CUR_POS(x, y)   "\x1B[" #y ";" #x "H"
+#define TERM_CLEAR_SCREEN    "\x1B[2J"   /* ED - Erase Display        */
+#define TERM_HOME            "\x1B[H"    /* CH - Cursor Home (1,1)    */
+#define TERM_USASCII         "\x1B(B"    /* SCS - Select US ASCII     */
 
 /* Initialise the serial port. Returns 0 on success, -1 on failure. */
 int  TERM_Init(int port, int baud);
@@ -43,11 +39,14 @@ void TERM_Printf(char *fmt, ...);
 /* Flush any buffered output to the serial port. */
 void TERM_Flush(void);
 
-/* Clear the terminal screen (ANSI escape). */
+/* Clear the terminal screen and home cursor. */
 void TERM_Clear(void);
 
-/* Move cursor to column x, row y (0-based). */
+/* Move cursor to column x, row y (0-based, clamped to TERM_ROWS-1). */
 void TERM_SetCursor(int x, int y);
+
+/* Translate a CP437 character to VT100-safe ASCII and send it. */
+void TERM_SendChar(byte c);
 
 /* Shutdown the serial port. */
 void TERM_Shutdown(void);
