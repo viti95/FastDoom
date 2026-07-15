@@ -29,20 +29,43 @@ int     term_baud;
 static unsigned short term_prev[80 * 25];
 static boolean        term_first_frame;
 
+/* Tracked cursor position on the VT100 (0-based).  -1 = unknown. */
+static int term_cursor_row;
+static int term_cursor_col;
+
+/*
+ * TERM_UpdateFromBuffer
+ *
+ * Optimised incremental screen mirror for VT100.  Strategy:
+ *   1. Build a dirty-row bitmap (skip unchanged rows entirely).
+ *   2. Within each dirty row, merge consecutive changed cells
+ *      into a single CUP + run of N characters (run-length).
+ *   3. Between non-consecutive runs on the SAME row, use CUF
+ *      (\x1B[nC) instead of CUP to save 2-4 bytes per jump.
+ *   4. Track the virtual cursor position so CUF is safe.
+ *
+ * Byte budget comparison per changed cell:
+ *   Before: CUP (6-7 bytes) + char = 7-8 bytes
+ *   After  (consecutive run): CUP / 1st only + 1 byte per char
+ *   After  (same-row CUF):    3-4 bytes + char = 4-5 bytes
+ */
 void TERM_UpdateFromBuffer(void)
 {
-    int x, y;
+    int x, y, rx;
+    int run_start;
+    int dirty_rows;
     unsigned int idx;
-    unsigned short cell;
-    byte ch;
+    byte rx_ch;
+    static boolean row_dirty[TERM_ROWS];
 
     if (!term_enabled || !TERM_IsActive())
         return;
 
-    /* On first frame, send full screen to VT100 (80x24).
-       MDA has 25 rows but VT100 only shows 24, so we
-       skip row 24 (index 24) to prevent unwanted scrolling.
-       Use \r\n line endings for full-screen transfer. */
+    /* ---- Full-screen transfer (first frame only) ----
+     * VT100 has 24 rows. Sending \r\n on row 24 would scroll
+     * the display and lose line 1.  So we send \r\n only after
+     * rows 0-22, then stream row 23 as the final line.
+     * Cursor ends at (row=23, col=79) after 80 chars. */
     if (term_first_frame)
     {
         TERM_Clear();
@@ -53,50 +76,155 @@ void TERM_UpdateFromBuffer(void)
             for (x = 0; x < 80; x++)
             {
                 idx = (unsigned int)y * 80u + (unsigned int)x;
-                cell = backbuffer[idx];
-                ch = (byte)(cell & 0xFF);
-
-                /* Translate CP437 char to VT100-safe ASCII */
-                TERM_SendChar(ch);
-
-                /* Strip MDA blink/intensity bits for VT100.
-                   MDA attribute bits: 0-3=colour, 4=intensity,
-                   5-6=reserved, 7=blink.  VT100 has no SGR
-                   support for these, so ignore all attributes. */
-                (void)(cell >> 8);
-
-                term_prev[idx] = cell;
+                TERM_SendChar((byte)backbuffer[idx]);
+                term_prev[idx] = backbuffer[idx];
             }
-            TERM_SendByte('\r');
-            TERM_SendByte('\n');
+
+            /* Only \r\n for rows 0..22.
+             * Row 23 (the last VT100 row) does NOT get \r\n
+             * to avoid scrolling the display and losing line 1. */
+            if (y < TERM_ROWS - 1)
+            {
+                TERM_SendByte('\r');
+                TERM_SendByte('\n');
+            }
         }
-        TERM_SetCursor(0, TERM_ROWS - 1);
+
+        /* Cursor position after full-screen is uncertain
+         * (terminal may auto-wrap past column 80).
+         * Mark unknown so the first incremental run uses CUP
+         * to reposition correctly. */
+        term_cursor_row = TERM_ROWS - 1;
+        term_cursor_col = -1;
         return;
     }
 
-    /* Incremental update: walk the buffer and emit changed cells.
-       Only update rows 0-23 (VT100 display); skip row 24. */
+    /* ---- Phase 1: build dirty-row bitmap ---- */
+    dirty_rows = 0;
     for (y = 0; y < TERM_ROWS; y++)
     {
+        row_dirty[y] = false;
         for (x = 0; x < 80; x++)
         {
             idx = (unsigned int)y * 80u + (unsigned int)x;
-            cell = backbuffer[idx];
-
-            if (cell != term_prev[idx])
+            if (backbuffer[idx] != term_prev[idx])
             {
-                /* Move cursor to the changed cell (VT100 CUP) */
-                TERM_SetCursor(x, y);
-
-                ch = (byte)(cell & 0xFF);
-
-                /* Translate CP437 char to VT100-safe ASCII */
-                TERM_SendChar(ch);
-
-                term_prev[idx] = cell;
+                row_dirty[y] = true;
+                dirty_rows++;
+                break;
             }
         }
     }
+
+    if (dirty_rows == 0)
+        return;       /* nothing changed -- zero bytes sent */
+
+    /* ---- Phase 2: emit changed runs ---- */
+    for (y = 0; y < TERM_ROWS; y++)
+    {
+        if (!row_dirty[y])
+            continue;
+
+        x = 0;
+        while (x < 80)
+        {
+            idx = (unsigned int)y * 80u + (unsigned int)x;
+
+            /* Skip unchanged cells */
+            if (backbuffer[idx] == term_prev[idx])
+            {
+                x++;
+                continue;
+            }
+
+            /* Found start of a changed run */
+            run_start = x;
+
+            /* Extend run through consecutive changed cells */
+            while (x < 80)
+            {
+                idx = (unsigned int)y * 80u + (unsigned int)x;
+                if (backbuffer[idx] == term_prev[idx])
+                    break;
+                x++;
+            }
+            /* run covers columns [run_start .. x-1] */
+
+            /* Position cursor to start of run.
+             * Prefer CUF if already on the same row. */
+            if (term_cursor_row == y && term_cursor_col == run_start)
+            {
+                /* Cursor already positioned -- zero bytes! */
+            }
+            else if (term_cursor_row == y && term_cursor_col >= 0)
+            {
+                int gap = run_start - term_cursor_col;
+                if (gap > 0 && gap < 80)
+                {
+                    /* CUF (Cursor Forward): \x1B[nC (3-4 bytes) */
+                    TERM_SendByte(TERM_ESC);
+                    TERM_SendByte('[');
+                    TERM_FormatUnsigned(gap);
+                    TERM_SendByte('C');
+                    term_cursor_col = run_start;
+                }
+                else
+                {
+                    TERM_SetCursor(run_start, y);
+                    term_cursor_row = y;
+                    term_cursor_col = run_start;
+                }
+            }
+            else
+            {
+                TERM_SetCursor(run_start, y);
+                term_cursor_row = y;
+                term_cursor_col = run_start;
+            }
+
+            /* Stream character data for the entire run */
+            for (rx = run_start; rx < x; rx++)
+            {
+                idx = (unsigned int)y * 80u + (unsigned int)rx;
+                rx_ch = (byte)backbuffer[idx];
+                TERM_SendChar(rx_ch);
+                term_prev[idx] = backbuffer[idx];
+            }
+
+            /* Cursor is now at column x (0-based), same row. */
+            term_cursor_col = x;
+        }
+    }
+}
+
+/*
+ * TERM_FormatUnsigned (local helper for CUF gap encoding).
+ * Same logic as in i_term.c but inlined here to avoid
+ * cross-module dependency on a static function.
+ */
+static void TERM_FormatUnsigned(unsigned int val)
+{
+    if (val == 0)
+    {
+        TERM_SendByte('0');
+        return;
+    }
+    if (val < 10)
+    {
+        TERM_SendByte((byte)(val + '0'));
+        return;
+    }
+    if (val < 100)
+    {
+        TERM_SendByte((byte)(val / 10 + '0'));
+        TERM_SendByte((byte)(val % 10 + '0'));
+        return;
+    }
+    /* val < 1000 */
+    TERM_SendByte((byte)(val / 100 + '0'));
+    val %= 100;
+    TERM_SendByte((byte)(val / 10 + '0'));
+    TERM_SendByte((byte)(val % 10 + '0'));
 }
 
 void MDA_InitGraphics(void)
