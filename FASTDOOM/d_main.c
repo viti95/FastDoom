@@ -51,6 +51,7 @@
 
 #if defined(MODE_MDA)
 #include "i_mda.h"
+#include "i_term.h"
 #endif
 
 #include "g_game.h"

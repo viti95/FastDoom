@@ -51,7 +51,23 @@ void TERM_SendChar(byte c);
 /* Shutdown the serial port. */
 void TERM_Shutdown(void);
 
+/* Set the 80x25 text backbuffer to mirror.
+   Called by the video mode driver (e.g. MDA_InitGraphics). */
+void TERM_SetBackbuffer(const unsigned short *buf);
+
+/* Update the VT100 display from the registered backbuffer.
+   Only changed cells are transmitted (incremental diff). */
+void TERM_UpdateFromBuffer(const unsigned short *buf);
+
 /* Returns non-zero if the terminal is active. */
 int  TERM_IsActive(void);
+
+/* ------------------------------------------------------------------
+   Global flags set by d_main.c from -term command line.
+   Read by MDA_InitGraphics() to decide whether to call TERM_Init().
+   ------------------------------------------------------------------ */
+extern boolean term_enabled;
+extern int     term_port;
+extern int     term_baud;
 
 #endif /* __I_TERM__ */
