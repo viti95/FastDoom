@@ -67,6 +67,8 @@
 #include "options.h"
 #include "i_file.h"
 
+boolean preload = false; /* preload all WAD lumps into RAM (-preload) */
+
 #if defined(MODE_13H)
 #include "i_vga13h.h"
 #endif
@@ -1747,6 +1749,7 @@ void D_DoomMain(void)
     M_CheckParmDisable("-novsync", &waitVsync);
     M_CheckParmDisable("-capped", &uncappedFPS);
     M_CheckParmDisable("-nofps", &showFPS);
+    M_CheckParmOptional("-preload", &preload);
 
 #if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
     noMelt = 1;
@@ -1757,6 +1760,12 @@ void D_DoomMain(void)
 
     printf(I_LoadTextProgram(22));
     W_InitMultipleFiles(wadfiles);
+
+    // Preload WAD lumps if requested
+    if (preload) {
+        W_PreloadAllLumps();
+        printf("\t\tpreloaded all %d WAD lumps into cache\n", numlumps);
+    }
 
     printf(I_LoadTextProgram(23));
     M_Init();

@@ -18,6 +18,8 @@
 
 #include "std_func.h"
 #include <string.h>
+#include "d_main.h"
+
 #include <strings.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -199,6 +201,29 @@ void W_InitMultipleFiles(char **filenames)
     memset(lumpcache, 0, size);
 
     W_GenerateHashTable();
+}
+
+/*
+ * W_PreloadAllLumps
+ * Pre-read all WAD lumps into memory. Useful on systems with
+ *  plenty of RAM to avoid disk I/O during gameplay.
+ */
+void W_PreloadAllLumps(void)
+{
+    int i;
+    byte *ptr;
+
+    for (i = 0; i < numlumps; i++)
+    {
+        ptr = lumpcache[i];
+        if (!ptr)
+        {
+            // read the lump in
+            ptr = Z_MallocUnowned(W_LumpLength(i), PU_CACHE);
+            lumpcache[i] = ptr;
+            W_ReadLump(i, ptr);
+        }
+    }
 }
 
 // Hash function used for lump names.
