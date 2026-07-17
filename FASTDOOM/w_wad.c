@@ -211,22 +211,48 @@ void W_InitMultipleFiles(char **filenames)
 void W_PreloadAllLumps(void)
 {
     int i;
+    int totalSize = 0;
+    int bytesLoaded = 0;
     byte *ptr;
+    int count = 0;
+    int loaded = 0;
+    int percentage;
+
+    /* First pass: calculate total size of lumps to preload */
+    for (i = 0; i < numlumps; i++)
+    {
+        if (lumpcache[i] == NULL)
+            totalSize += W_LumpLength(i);
+    }
+
+    if (totalSize == 0)
+        return;
+
+    /* Load lumps with progress indicator */
+    printf("\tPreloading WAD: ");
+    fflush(stdout);
 
     for (i = 0; i < numlumps; i++)
     {
         ptr = lumpcache[i];
         if (!ptr)
         {
-            // read the lump in
+            /* read the lump in */
             ptr = Z_MallocUnowned(W_LumpLength(i), PU_CACHE);
             lumpcache[i] = ptr;
             W_ReadLump(i, ptr);
+            bytesLoaded += W_LumpLength(i);
+            loaded++;
         }
-    }
-}
 
-// Hash function used for lump names.
+        /* Update progress */
+        percentage = (bytesLoaded * 100) / totalSize;
+        printf("\r\tPreloading WAD: %3d%%", percentage);
+        fflush(stdout);
+    }
+    printf("\n\t\tpreloaded all %d lumps into cache\n", loaded);
+    fflush(stdout);
+}
 unsigned int W_LumpNameHash(char *s)
 {
     unsigned hash;
