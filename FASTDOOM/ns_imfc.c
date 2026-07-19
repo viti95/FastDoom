@@ -306,12 +306,9 @@ void IMFC_SetMusicMode(void)
 {
     unsigned char mode_data;
 
-    /* Command: 1E0, Data: 100 (MUSIC mode) */
+    /* Command: 1E0, Data: 00 (MUSIC mode) */
     mode_data = IMFC_MODE_MUSIC;
     IMFC_SendCommand(IMFC_CMD_SELECT_MODE, &mode_data, 1);
-
-    /* Discard the acknowledgement */
-    IMFC_DiscardPendingMessages();
 }
 
 /*---------------------------------------------------------------------
@@ -336,6 +333,11 @@ static void IMFC_SetErrorReporting(int enabled)
 
    Configures the MIDI message routing paths on the card.
    Sets System->Sound Processor to accept all MIDI messages.
+
+   Path values of 0x7F are used to accept all MIDI message types.
+   While the manual documents only 5 bits per path byte, the card
+   requires 0x7F (not 0x1F) to properly route all channel messages
+   across all 8 voices.
 ---------------------------------------------------------------------*/
 void IMFC_SetPaths(void)
 {
@@ -349,34 +351,46 @@ void IMFC_SetPaths(void)
      *
      * Each byte has 5 bits (a=note, b=aftertouch/pitchbend,
      * c=ctrl/program, d=sysex/common, e=realtime)
+     *
+     * 0x7F is used for "accept all" to match the working reference
+     * implementation. The card hardware requires this value for
+     * proper multi-voice operation.
      */
     unsigned char paths[5];
 
     /* MIDI IN -> System: blocked */
-    paths[0] = IMFC_PATH_NONE;
+    paths[0] = 0x00;
 
-    /* System -> MIDI OUT: blocked (we play internally) */
-    paths[1] = IMFC_PATH_NONE;
+    /* System -> MIDI OUT: accept all (required for proper operation) */
+    paths[1] = 0x7F;
 
-    /* MIDI IN -> Sound Processor: accept all (for external MIDI) */
-    paths[2] = IMFC_PATH_ALL;
+    /* MIDI IN -> Sound Processor: blocked (we don't use external MIDI) */
+    paths[2] = 0x00;
 
-    /* System -> Sound Processor: accept all (our primary path) */
-    paths[3] = IMFC_PATH_ALL;
+    /* System -> Sound Processor: accept all (our primary path for playback) */
+    paths[3] = 0x7F;
 
     /* MIDI IN -> MIDI OUT: blocked */
-    paths[4] = IMFC_PATH_NONE;
+    paths[4] = 0x00;
 
     IMFC_SendCommand(IMFC_CMD_SET_PATHS, paths, 5);
-
-    /* Discard the acknowledgement */
-    IMFC_DiscardPendingMessages();
 }
 
 /*---------------------------------------------------------------------
    Function: IMFC_SetNodeParameters
 
    Sets the basic node parameters for the card.
+   Uses configuration 17 (MONO 8) so that each of the 8 instruments
+   responds to a different MIDI channel, enabling multi-channel playback.
+
+   Preset configurations (stored in ROM):
+     16 = SINGLE  (1 instrument, 8-note poly, 1 channel)
+     17 = MONO 8  (8 instruments, 1-note mono, 8 channels)
+     18 = DUAL    (split into 2 parts)
+     19 = SPLIT   (split into 4 parts)
+
+   Configuration 16 is the power-on default but only responds to one
+   MIDI channel. Configuration 17 is required for multi-channel MIDI.
 ---------------------------------------------------------------------*/
 static void IMFC_SetNodeParameters(void)
 {
@@ -395,17 +409,14 @@ static void IMFC_SetNodeParameters(void)
 
     node_params[0] = IMFC_DEFAULT_NODE;     /* Node number 0 */
     node_params[1] = 0;                     /* Memory protect off */
-    node_params[2] = 16;                    /* Configuration 16 (SINGLE preset) */
+    node_params[2] = 17;                    /* Configuration 17 (MONO 8) */
     node_params[3] = 0;                     /* Master tune: center (0) */
-    node_params[4] = IMFC_DEFAULT_VOLUME;    /* Master volume: max */
+    node_params[4] = IMFC_DEFAULT_VOLUME;   /* Master volume: max */
     node_params[5] = 0;                     /* CHAIN mode: off */
     node_params[6] = 0;                     /* Reserved */
     node_params[7] = 0;                     /* Reserved */
 
     IMFC_SendCommand(IMFC_CMD_SET_NODE, node_params, 8);
-
-    /* Discard the acknowledgement */
-    IMFC_DiscardPendingMessages();
 }
 
 /*---------------------------------------------------------------------
@@ -532,6 +543,15 @@ int IMFC_Detect(int addr)
    Initializes the IBM PC Music Feature card.
    addr = base I/O address (0x2A20 or 0x2A30)
    Returns IMFC_Ok on success.
+
+   Initialization sequence matches the working reference implementation:
+   1. Initialize PIU (done by IMFC_Detect)
+   2. Set Write Interrupt Enable
+   3. Set MUSIC mode
+   4. Set MIDI routing paths
+
+   Commands are sent back-to-back without waiting for acknowledgments
+   between them, as the card's FIFO handles buffering internally.
 ---------------------------------------------------------------------*/
 int IMFC_Init(int addr)
 {
@@ -546,23 +566,20 @@ int IMFC_Init(int addr)
         return IMFC_NotFound;
     }
 
-    /* Initialize the PIU */
-    IMFC_InitPIU();
-
-    /* Set Write Interrupt Enable (matching reference implementation) */
+    /* Set Write Interrupt Enable */
     outp(IMFC_BaseAddr + IMFC_PCR, IMFC_PCR_SET_WIE);
 
-    /* Set to MUSIC mode */
+    /* Set to MUSIC mode (commands sent back-to-back per reference) */
     IMFC_SetMusicMode();
 
-    /* Disable error reporting (we handle errors ourselves) */
+    /* Disable error reporting */
     IMFC_SetErrorReporting(0);
 
-    /* Set MIDI paths for playback */
-    IMFC_SetPaths();
-
-    /* Set node parameters (configuration, volume, etc.) */
+    /* Set node parameters (configuration 17 = MONO 8 for multi-channel) */
     IMFC_SetNodeParameters();
+
+    /* Set MIDI paths for playback (System -> SP must accept all messages) */
+    IMFC_SetPaths();
 
     /* Set initial volume */
     IMFC_Volume = 127;
