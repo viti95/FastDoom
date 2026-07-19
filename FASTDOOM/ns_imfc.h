@@ -39,8 +39,8 @@
  */
 #define IMFC_PIU2_TXRDY      0x01  /* Transmitter Ready (bit 0) */
 #define IMFC_PIU2_WIE        0x04  /* Write Interrupt Enable (bit 2) */
-#define IMFC_PIU2_RXRDY      0x10  /* Receiver Ready (bit 4) */
-#define IMFC_PIU2_RIE        0x20  /* Read Interrupt Enable (bit 3) */
+#define IMFC_PIU2_RXRDY      0x08  /* Receiver Ready (bit 3) */
+#define IMFC_PIU2_RIE        0x10  /* Read Interrupt Enable (bit 4) */
 #define IMFC_PIU2_EXRS       0x80  /* Expansion bit (bit 8 of received data, bit 7) */
 
 /*

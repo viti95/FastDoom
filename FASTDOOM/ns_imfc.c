@@ -112,8 +112,6 @@ int IMFC_WaitForRxReady(void)
 ---------------------------------------------------------------------*/
 void IMFC_SendByte(int data, int bit8)
 {
-    unsigned flags;
-    int tcr_value;
     int port_tcr;
     int port_piu1;
 
@@ -123,33 +121,21 @@ void IMFC_SendByte(int data, int bit8)
     port_tcr = IMFC_BaseAddr + IMFC_TCR;
     port_piu1 = IMFC_BaseAddr + IMFC_PIU1;
 
-    flags = DisableInterrupts();
-
     /*
-     * Set or clear the EXT8 bit in TCR before writing data.
-     * We preserve other TCR bits by reading-modify-write.
+     * Write TCR directly: 0 for data (bit 8 = 0),
+     * TCR_EXT8 for command (bit 8 = 1).
      */
-    tcr_value = inp(port_tcr);
-
     if (bit8)
     {
-        tcr_value |= IMFC_TCR_EXT8;
+        outp(port_tcr, IMFC_TCR_EXT8);
     }
     else
     {
-        tcr_value &= ~IMFC_TCR_EXT8;
+        outp(port_tcr, 0);
     }
-
-    outp(port_tcr, tcr_value);
 
     /* Write the 8-bit data to PIU1 (this clears TxRDY) */
     outp(port_piu1, data & 0xFF);
-
-    /* Clear EXT8 after write (restore TCR) */
-    tcr_value &= ~IMFC_TCR_EXT8;
-    outp(port_tcr, tcr_value);
-
-    RestoreInterrupts(flags);
 }
 
 /*---------------------------------------------------------------------
@@ -500,54 +486,44 @@ void IMFC_SetMasterVolume(int volume)
 /*---------------------------------------------------------------------
    Function: IMFC_Detect
 
-   Attempts to detect an IBM PC Music Feature card at the given address.
+   Attempts to detect an IBM PC Music Feature card at the given address
+   using a hardware-level test: write known values to the card and
+   verify they are stored correctly.
    Returns IMFC_Ok if detected, IMFC_NotFound otherwise.
 ---------------------------------------------------------------------*/
 int IMFC_Detect(int addr)
 {
-    unsigned char response[8];
-    int status;
-    int i;
+    /* Initialize PIU */
+    outp(addr + IMFC_PCR, IMFC_PCR_INIT);
 
-    /* Initialize PIU first */
-    IMFC_BaseAddr = addr;
-    IMFC_InitPIU();
+    /* Set the IMFC to COMMAND mode (bit 8 = 1) */
+    outp(addr + IMFC_TCR, IMFC_TCR_EXT8);
 
-    /*
-     * Try to detect the card by sending a node parameter status request.
-     * A valid card will respond with its current parameters.
-     *
-     * We request node status (1D3) which returns 8 bytes of data.
-     */
-    IMFC_BaseAddr = addr;
-    status = IMFC_SendStatusRequest(IMFC_REQ_NODE_STATUS, response, 8);
+    /* Write 0xFF to PIU1 and verify it "sticks" */
+    outp(addr + IMFC_PIU1, 0xFF);
 
-    if (status == IMFC_Ok)
+    /* Read PIU0 to allow the write to settle (acts as clock edge) */
+    inp(addr + IMFC_PIU0);
+
+    /* Check if the value stuck */
+    if (inp(addr + IMFC_PIU1) != 0xFF)
     {
-        /*
-         * Basic validation: configuration number should be 0-19,
-         * master output level should be 0-127, etc.
-         */
-        if (response[2] <= 19 && response[4] <= 127)
-        {
-            return IMFC_Ok;
-        }
+        return IMFC_NotFound;
     }
 
-    /* Also try a simpler detection: check card mode */
-    IMFC_InitPIU();
-    status = IMFC_SendStatusRequest(IMFC_REQ_CARD_MODE, response, 1);
+    /* Write 0x00 to PIU1 and verify it "sticks" */
+    outp(addr + IMFC_PIU1, 0);
 
-    if (status == IMFC_Ok)
+    /* Read PIU0 to allow the write to settle */
+    inp(addr + IMFC_PIU0);
+
+    /* Check if the value stuck */
+    if (inp(addr + IMFC_PIU1) != 0)
     {
-        /* Card mode should be 0 (MUSIC) or 1 (THRU) */
-        if (response[0] <= 1)
-        {
-            return IMFC_Ok;
-        }
+        return IMFC_NotFound;
     }
 
-    return IMFC_NotFound;
+    return IMFC_Ok;
 }
 
 /*---------------------------------------------------------------------
@@ -559,29 +535,22 @@ int IMFC_Detect(int addr)
 ---------------------------------------------------------------------*/
 int IMFC_Init(int addr)
 {
-    int status;
     int detected;
 
     IMFC_BaseAddr = addr;
 
-    /* Initialize the PIU */
-    IMFC_InitPIU();
-
-    /* Detect the card */
+    /* Detect the card (this also initializes PIU) */
     detected = IMFC_Detect(addr);
     if (detected != IMFC_Ok && !ignoreSoundChecks)
     {
         return IMFC_NotFound;
     }
 
-    /* Small delay after detection */
-    {
-        unsigned i;
-        for (i = 0; i < 500; i++)
-        {
-            /* brief delay */
-        }
-    }
+    /* Initialize the PIU */
+    IMFC_InitPIU();
+
+    /* Set Write Interrupt Enable (matching reference implementation) */
+    outp(IMFC_BaseAddr + IMFC_PCR, IMFC_PCR_SET_WIE);
 
     /* Set to MUSIC mode */
     IMFC_SetMusicMode();
