@@ -639,8 +639,12 @@ int WSS_BeginBufferedPlayback(char *BufferStart, int BufferSize, int NumDivision
     /* Set DMA channel */
     WSS_DMAChannel = WSS_Config.Dma;
 
-    /* Calculate half-buffer transfer length for double buffering */
-    WSS_TransferLength = BufferSize / WSS_NUM_BUFFERS;
+    /*
+     * WSS_TRANSFERLENGTH tracks bytes per IRQ for the IRQ handler.
+     * The WSS PLAYBACK count determines when the WSS IRQ fires.
+     * It must match the mixer division size so each IRQ refills one page.
+     */
+    WSS_TransferLength = BufferSize / NumDivisions;
     dma_transfer_length = WSS_TransferLength;
 
 #if WSS_DEBUG
