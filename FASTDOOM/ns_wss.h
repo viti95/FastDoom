@@ -7,11 +7,8 @@
 
 #include "ns_wssdef.h"
 
-/* Sample packet sizes */
 #define WSS_MONO_8BIT_SAMPLE_SIZE 1
 #define WSS_STEREO_8BIT_SAMPLE_SIZE (2 * WSS_MONO_8BIT_SAMPLE_SIZE)
-
-#define WSS_NumBuffers 2
 
 enum WSS_ERRORS
 {
