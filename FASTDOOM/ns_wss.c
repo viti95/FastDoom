@@ -34,7 +34,7 @@ static void WSS_DebugOpen(void)
 {
     if (WSS_DebugFile == NULL)
     {
-        WSS_DebugFile = fopen(WSS_DEBUG_FILE, "w");
+        WSS_DebugFile = fopen(WSS_DEBUG_FILE, "a");
     }
 }
 
@@ -42,8 +42,17 @@ static void WSS_DebugClose(void)
 {
     if (WSS_DebugFile != NULL)
     {
+        fprintf(WSS_DebugFile, "WSS: File closed\n");
         fclose(WSS_DebugFile);
         WSS_DebugFile = NULL;
+    }
+}
+
+static void WSS_DebugFlush(void)
+{
+    if (WSS_DebugFile != NULL)
+    {
+        fflush(WSS_DebugFile);
     }
 }
 
@@ -85,6 +94,8 @@ static int WSS_OriginalPCMLeftVolume = 127;
 static int WSS_OriginalPCMRightVolume = 127;
 
 void (*WSS_CallBack)(void);
+
+static volatile unsigned long WSS_IRQCount = 0;
 
 static char *WSS_DMABuffer;
 static char *WSS_DMABufferEnd;
@@ -299,11 +310,21 @@ void __interrupt __far WSS_ServiceInterrupt(void)
     /* Switch to our stack */
     SetStack(StackSelector, StackPointer);
 
-    /* Clear WSS interrupt status register */
+    /* Check if this is actually our interrupt */
     {
         unsigned char status = inp(WSS_Config.Address + WSS_STATUS_REG_OFFSET);
+        if (!(status & 0x01))
+        {
+            /* Not our IRQ — chain to old handler */
+            SetStack(oldStackSelector, oldStackPointer);
+            _chain_intr(WSS_OldInt);
+            return;
+        }
+        /* Clear WSS interrupt status */
         outp(WSS_Config.Address + WSS_STATUS_REG_OFFSET, 0x00);
     }
+
+    WSS_IRQCount++;
 
     /* Track current DMA buffer position */
     WSS_CurrentDMABuffer += WSS_TransferLength;
@@ -545,7 +566,12 @@ void WSS_StopPlayback(void)
     }
 
 #if WSS_DEBUG
-    WSS_LOG("StopPlayback called\n");
+    {
+        unsigned char wss_status = inp(WSS_Config.Address + WSS_STATUS_REG_OFFSET);
+        unsigned char dma_status = inp(0x08);
+        WSS_LOG("StopPlayback called (IRQCount=%lu, WSS status=0x%02x, DMA status=0x%02x)\n",
+                WSS_IRQCount, wss_status, dma_status);
+    }
 #endif
 
     WSS_SoundPlaying = FALSE;
@@ -680,52 +706,37 @@ int WSS_BeginBufferedPlayback(char *BufferStart, int BufferSize, int NumDivision
         }
 
 #if WSS_DEBUG
-        WSS_LOG("Setting FORMAT reg=0x%02x\n", format_reg);
+        WSS_LOG("Setting FORMAT reg=0x%02x (with MCE)\n", format_reg);
 #endif
 
-        outp(WSS_Config.Address + WSS_INDEX_REG_OFFSET, WSS_FORMAT_REG | WSS_MCE_BIT);
-        status = WSS_Wait();
+        /* Write FORMAT with MCE in index byte (as per AD1848 datasheet) */
+        status = WSS_WriteIndirect(WSS_FORMAT_REG | WSS_MCE_BIT, format_reg);
         if (status != WSS_Ok)
         {
 #if WSS_DEBUG
-            WSS_LOG("Wait failed before writing FORMAT reg\n");
+            WSS_LOG("Failed to write FORMAT reg (status=%d)\n", status);
 #endif
             return status;
         }
-        outp(WSS_Config.Address + WSS_IDATA_REG_OFFSET, format_reg);
-        status = WSS_Wait();
-        if (status != WSS_Ok)
-        {
-#if WSS_DEBUG
-            WSS_LOG("Wait failed after writing FORMAT reg\n");
-#endif
-            return status;
-        }
+
+        /* Exit MCE state by writing 0x00 to index register */
+        outp(WSS_Config.Address + WSS_INDEX_REG_OFFSET, 0x00);
     }
 
-    /* Enable playback with auto-calibration */
+    /* Enable playback with auto-calibration (NO MCE — standard CONFIG reg) */
     {
         unsigned char config_val = WSS_PEN_BIT | WSS_ACAL_BIT;
 
 #if WSS_DEBUG
-        WSS_LOG("Enabling playback with ACAL (config=0x%02x)\n", config_val);
+        WSS_LOG("Enabling playback with ACAL (config=0x%02x, no MCE)\n", config_val);
 #endif
 
-        outp(WSS_Config.Address + WSS_INDEX_REG_OFFSET, WSS_CONFIG_REG | WSS_MCE_BIT);
-        status = WSS_Wait();
+        /* CONFIG register uses standard index (no MCE) */
+        status = WSS_WriteIndirect(WSS_CONFIG_REG, config_val);
         if (status != WSS_Ok)
         {
 #if WSS_DEBUG
-            WSS_LOG("Wait failed before writing CONFIG reg\n");
-#endif
-            return status;
-        }
-        outp(WSS_Config.Address + WSS_IDATA_REG_OFFSET, config_val);
-        status = WSS_Wait();
-        if (status != WSS_Ok)
-        {
-#if WSS_DEBUG
-            WSS_LOG("Wait failed after writing CONFIG reg\n");
+            WSS_LOG("Failed to write CONFIG reg (status=%d)\n", status);
 #endif
             return status;
         }
@@ -769,7 +780,11 @@ int WSS_BeginBufferedPlayback(char *BufferStart, int BufferSize, int NumDivision
         return WSS_DmaError;
     }
 #if WSS_DEBUG
-    WSS_LOG("DMA_SetupTransfer OK\n");
+    {
+        unsigned char dma_status = inp(0x08);
+        WSS_LOG("DMA_SetupTransfer OK, DMA status=0x%02x (ch%d active=%d)\n",
+                dma_status, WSS_DMAChannel, !(dma_status & (1 << WSS_DMAChannel)));
+    }
 #endif
 
     /* Save DMA buffer info */
@@ -782,9 +797,17 @@ int WSS_BeginBufferedPlayback(char *BufferStart, int BufferSize, int NumDivision
     WSS_EnableInterrupt();
 
     WSS_SoundPlaying = TRUE;
+    WSS_IRQCount = 0;
 
 #if WSS_DEBUG
-    WSS_LOG("BeginBufferedPlayback SUCCESS\n");
+    {
+        unsigned char wss_status = inp(WSS_Config.Address + WSS_STATUS_REG_OFFSET);
+        unsigned char config_val;
+        WSS_ReadIndirect(WSS_CONFIG_REG, &config_val);
+        WSS_LOG("BeginBufferedPlayback SUCCESS (WSS status=0x%02x, CONFIG=0x%02x)\n",
+                wss_status, config_val);
+    }
+    WSS_DebugFlush();
 #endif
 
     return WSS_Ok;
@@ -863,6 +886,9 @@ int WSS_Init(void)
 
     if (WSS_Installed)
     {
+#if WSS_DEBUG
+        WSS_LOG("Already installed, reinitializing\n");
+#endif
         WSS_Shutdown();
     }
 
@@ -976,12 +1002,14 @@ int WSS_Init(void)
 
     /* Set default volume */
     WSS_PCMVolume = 255;
+    WSS_IRQCount = 0;
 
     WSS_Installed = TRUE;
 
 #if WSS_DEBUG
     WSS_LOG("Init SUCCESS\n");
     WSS_LOG("=================================================\n");
+    WSS_DebugFlush();
 #endif
 
     return WSS_Ok;
@@ -1000,7 +1028,7 @@ void WSS_Shutdown(void)
 
 #if WSS_DEBUG
     WSS_LOG("Shutting down\n");
-    WSS_DebugClose();
+    WSS_DebugFlush();
 #endif
 
     /* Stop playback if active */
