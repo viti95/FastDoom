@@ -102,6 +102,7 @@ GLOBOBJS = &
  ns_sbdm.obj &
  ns_adbfx.obj &
  ns_tandy.obj &
+ ns_wss.obj &
  ns_cd.obj &
  i_debug.obj &
  i_random.obj &

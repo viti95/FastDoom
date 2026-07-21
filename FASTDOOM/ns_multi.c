@@ -22,6 +22,7 @@
 #include "ns_sbdm.h"
 #include "ns_adbfx.h"
 #include "ns_tandy.h"
+#include "ns_wss.h"
 #include "options.h"
 #include "fastmath.h"
 #include "ns_fxm.h"
@@ -689,6 +690,10 @@ int MV_SetMixMode(int numchannels)
         MV_MixMode = SOUNDSCAPE_SetMixMode(mode);
         break;
 
+    case WSS:
+        MV_MixMode = WSS_SetMixMode(mode);
+        break;
+
     case SoundSource:
     case Tandy3Voice:
     case PC1bit:
@@ -829,6 +834,20 @@ int MV_StartPlayback(
         MV_DMAChannel = SOUNDSCAPE_DMAChannel;
         break;
 
+    case WSS:
+        status = WSS_BeginBufferedPlayback(MV_MixBuffer[0],
+                                           TotalBufferSize, MV_NumberOfBuffers,
+                                           MV_RequestedMixRate, MV_MixMode, MV_ServiceVoc);
+
+        if (status != WSS_Ok)
+        {
+            return (MV_Error);
+        }
+
+        MV_MixRate = WSS_GetPlaybackRate();
+        MV_DMAChannel = WSS_DMAChannel;
+        break;
+
     case SoundSource:
         SS_BeginBufferedPlayback(MV_MixBuffer[0],
                                  TotalBufferSize, MV_NumberOfBuffers,
@@ -934,6 +953,10 @@ void MV_StopPlayback(
 
     case SoundScape:
         SOUNDSCAPE_StopPlayback();
+        break;
+
+    case WSS:
+        WSS_StopPlayback();
         break;
 
     case SoundSource:
@@ -1216,6 +1239,10 @@ int MV_Init(
         status = SOUNDSCAPE_Init();
         break;
 
+    case WSS:
+        status = WSS_Init();
+        break;
+
     case SoundSource:
         status = SS_Init(soundcard, -1);
         break;
@@ -1345,6 +1372,10 @@ int MV_Shutdown(
 
     case SoundScape:
         SOUNDSCAPE_Shutdown();
+        break;
+
+    case WSS:
+        WSS_Shutdown();
         break;
 
     case SoundSource:
