@@ -1764,7 +1764,6 @@ void D_DoomMain(void)
     // Preload WAD lumps if requested
     if (preload) {
         W_PreloadAllLumps();
-        printf("\t\tpreloaded all %d WAD lumps into cache\n", numlumps);
     }
 
     printf(I_LoadTextProgram(23));
