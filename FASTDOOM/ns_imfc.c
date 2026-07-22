@@ -27,6 +27,47 @@
 #include "ns_imfc.h"
 #include "options.h"
 
+typedef struct {
+    unsigned char bank;  // Banco ROM de la tarjeta (2, 3, 4, 5 o 6)
+    unsigned char voice; // Índice de la voz dentro del banco (0 a 47)
+} GM_To_IBM_Map;
+
+// Tabla de mapeo para los 128 instrumentos General MIDI (índices 0 - 127)
+static const GM_To_IBM_Map gm_to_ibm_table[128] = {
+    /* 0-7: Pianos */
+    {5, 0},  {2, 1},  {2, 2},  {2, 3},  {2, 4},  {5, 3},  {2, 13}, {2, 14},
+    /* 8-15: Percusión Cromática */
+    {3, 11}, {3, 13}, {3, 12}, {2, 16}, {2, 17}, {4, 11}, {3, 14}, {5, 12},
+    /* 16-23: Órganos */
+    {2, 8},  {2, 9},  {4, 3},  {5, 6},  {2, 11}, {2, 12}, {3, 24}, {5, 9},
+    /* 24-31: Guitarras */
+    {4, 19}, {4, 20}, {4, 21}, {4, 22}, {4, 23}, {4, 24}, {4, 24}, {4, 20},
+    /* 32-39: Bajos */
+    {2, 36}, {2, 40}, {2, 41}, {4, 28}, {4, 27}, {6, 28}, {3, 36}, {3, 37},
+    /* 40-47: Cuerdas solistas / Orquesta */
+    {4, 41}, {4, 42}, {4, 43}, {3, 34}, {5, 34}, {3, 35}, {3, 10}, {3, 15},
+    /* 48-55: Ensamble */
+    {2, 32}, {2, 33}, {5, 36}, {5, 37}, {5, 40}, {5, 38}, {5, 39}, {5, 41},
+    /* 56-63: Metales (Brass) */
+    {2, 26}, {2, 27}, {2, 28}, {3, 28}, {2, 25}, {5, 30}, {5, 31}, {5, 32},
+    /* 64-71: Caña (Reed) */
+    {5, 24}, {5, 25}, {5, 26}, {5, 27}, {2, 22}, {4, 32}, {2, 24}, {2, 23},
+    /* 72-79: Viento madera (Pipe) */
+    {3, 20}, {2, 21}, {3, 23}, {3, 22}, {5, 20}, {5, 21}, {5, 19}, {5, 20},
+    /* 80-87: Sintetizador Lead */
+    {2, 42}, {2, 43}, {3, 40}, {3, 41}, {3, 42}, {5, 38}, {4, 44}, {4, 45},
+    /* 88-95: Sintetizador Pad */
+    {3, 45}, {2, 35}, {2, 44}, {5, 40}, {3, 46}, {6, 44}, {6, 43}, {6, 45},
+    /* 96-103: Sintetizador FX */
+    {6, 42}, {6, 43}, {6, 44}, {3, 46}, {5, 44}, {6, 46}, {6, 47}, {5, 45},
+    /* 104-111: Étnicos */
+    {4, 16}, {4, 17}, {4, 15}, {4, 14}, {5, 13}, {5, 23}, {4, 41}, {5, 21},
+    /* 112-119: Percusivos */
+    {4, 12}, {5, 15}, {3, 16}, {5, 16}, {5, 17}, {3, 19}, {5, 18}, {2, 19},
+    /* 120-127: Efectos de sonido */
+    {3, 47}, {3, 47}, {3, 47}, {5, 47}, {5, 46}, {2, 20}, {3, 47}, {3, 47}
+};
+
 /*
  * Base I/O address for the card (set by IMFC_Init)
  */
@@ -752,6 +793,48 @@ void IMFC_SysEx(unsigned char *ptr, int length)
 
     /* SysEx end */
     IMFC_SendMidi(IMFC_MIDI_SYSEX_END);
+}
+
+/**
+ * Establece un instrumento General MIDI en un canal determinado para IBM PCMF.
+ * 
+ * @param channel Canal MIDI (0 a 15).
+ * @param gm_program Programa General MIDI (0 a 127 o 1 a 128 según tu parser).
+ */
+void IMFC_SetGMProgram(int channel, int gm_program)
+{
+    unsigned char target_bank;
+    unsigned char target_voice;
+    unsigned char sysex_bank_change[5];
+
+    // Normalizar si tu software lee GM de 1 a 128
+    // gm_program = gm_program - 1;
+
+    // Asegurar límites dentro del rango estándar MIDI
+    if (gm_program < 0 || gm_program > 127) return;
+
+    // Obtener configuración mapeada de la tabla
+    target_bank  = gm_to_ibm_table[gm_program].bank;
+    target_voice = gm_to_ibm_table[gm_program].voice;
+
+    /* 1. Construir trama SysEx para cambiar el banco del canal:
+       - 0x43: ID Fabricante Yamaha
+       - 0x10 | channel: Sub-estatus del canal MIDI (0x10 a 0x1F)
+       - 0x15: Grupo de parámetros de instrumento
+       - 0x04: Dirección del parámetro (Voice Bank Number)
+       - target_bank: Banco destino (0x02 - 0x06)
+    */
+    sysex_bank_change[0] = 0x43;
+    sysex_bank_change[1] = 0x10 | (channel & 0x0F);
+    sysex_bank_change[2] = 0x15;
+    sysex_bank_change[3] = 0x04;
+    sysex_bank_change[4] = target_bank;
+
+    // Transmitir SysEx de selección de banco (incluye SysEx Start/End automáticamente)
+    IMFC_SysEx(sysex_bank_change, 5);
+
+    /* 2. Seleccionar la voz específica dentro del banco asignado */
+    IMFC_ProgramChange(channel, target_voice);
 }
 
 /*---------------------------------------------------------------------

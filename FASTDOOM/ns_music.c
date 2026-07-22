@@ -616,7 +616,7 @@ int MUSIC_InitIMFC(
     Funcs->NoteOn = IMFC_NoteOn;
     Funcs->PolyAftertouch = IMFC_PolyAftertouch;
     Funcs->ControlChange = IMFC_ControlChange;
-    Funcs->ProgramChange = IMFC_ProgramChange;
+    Funcs->ProgramChange = IMFC_SetGMProgram;
     Funcs->ChannelAftertouch = IMFC_ChannelAftertouch;
     Funcs->PitchBend = IMFC_PitchBend;
     Funcs->SetVolume = IMFC_SetVolume;

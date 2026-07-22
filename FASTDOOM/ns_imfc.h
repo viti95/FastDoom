@@ -261,6 +261,7 @@ void IMFC_NoteOn(int channel, int key, int velocity);
 void IMFC_PolyAftertouch(int channel, int key, int pressure);
 void IMFC_ControlChange(int channel, int number, int value);
 void IMFC_ProgramChange(int channel, int program);
+void IMFC_SetGMProgram(int channel, int gm_program);
 void IMFC_ChannelAftertouch(int channel, int pressure);
 void IMFC_PitchBend(int channel, int lsb, int msb);
 void IMFC_SysEx(unsigned char *ptr, int length);
