@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 1.4.0
+## 1.4.0 (?? ??? ????)
 * Added 5×6 integer scaling for 320×200 VESA backbuffer modes, optimized for 1600×1200 (4:3) displays while preserving the original aspect ratio.
 * IBM Music Feature card support
 * Windows Sound System (WSS) support
