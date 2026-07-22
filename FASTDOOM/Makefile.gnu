@@ -98,6 +98,7 @@ GLOBOBJS = \
  ns_speak.obj \
  ns_pwm.obj \
  ns_cms.obj \
+ ns_imfc.obj \
  ns_lpt.obj \
  ns_sbdm.obj \
  ns_adbfx.obj \

@@ -605,6 +605,8 @@ int ASS_GetSoundCardCode(int sndDevice)
         return LPTMIDI;
     case snd_WSS:
         return WSS;
+    case snd_IMFC:
+        return IMFC;
     default:
         return -1;
     }
