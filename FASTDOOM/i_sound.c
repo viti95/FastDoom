@@ -36,6 +36,7 @@
 #include "ns_task.h"
 #include "ns_music.h"
 #include "ns_cms.h"
+#include "ns_imfc.h"
 
 #include "options.h"
 
@@ -87,7 +88,7 @@ int I_GetSfxLumpNum(sfxinfo_t *sfx)
 
 void I_sndArbitrateCards(void)
 {
-    byte gus, adlib, adlibfx, sb, midi, ensoniq, lpt, cmsfx, cmsmus, oplxlptmus, oplxlptsnd, audiocd, rs232midi, lptmidi;
+    byte gus, adlib, adlibfx, sb, midi, ensoniq, lpt, cmsfx, cmsmus, oplxlptmus, oplxlptsnd, audiocd, rs232midi, lptmidi, imfc;
     int dmxlump;
 
     snd_SfxVolume = 127;
@@ -129,6 +130,7 @@ void I_sndArbitrateCards(void)
     adlibfx = snd_SfxDevice == snd_Adlib;
     rs232midi = snd_MusicDevice == snd_RS232MIDI;
     lptmidi = snd_MusicDevice == snd_LPTMIDI;
+    imfc = snd_MusicDevice == snd_IMFC;
 
     //
     // initialize whatever i've got
@@ -195,6 +197,11 @@ void I_sndArbitrateCards(void)
     }
 
     if (lptmidi)
+    {
+        SetMUSPort(snd_Mport);
+    }
+
+    if (imfc)
     {
         SetMUSPort(snd_Mport);
     }
