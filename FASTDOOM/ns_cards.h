@@ -30,6 +30,7 @@ typedef enum
    LPTMIDI,
    WSS,
    IMFC,
+   AdLibGold,
    NumSoundCards
 } soundcardnames;
 

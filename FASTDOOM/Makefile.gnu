@@ -105,6 +105,7 @@ GLOBOBJS = \
  ns_tandy.obj \
  ns_cd.obj \
  ns_wss.obj \
+ ns_gold.obj \
  i_debug.obj \
  i_random.obj \
  i_main.obj \

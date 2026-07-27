@@ -23,6 +23,7 @@
 #include "ns_adbfx.h"
 #include "ns_tandy.h"
 #include "ns_wss.h"
+#include "ns_gold.h"
 #include "options.h"
 #include "fastmath.h"
 #include "ns_fxm.h"
@@ -694,6 +695,10 @@ int MV_SetMixMode(int numchannels)
         MV_MixMode = WSS_SetMixMode(mode);
         break;
 
+    case AdLibGold:
+        MV_MixMode = GOLD_SetMixMode(mode);
+        break;
+
     case SoundSource:
     case Tandy3Voice:
     case PC1bit:
@@ -848,6 +853,20 @@ int MV_StartPlayback(
         MV_DMAChannel = WSS_DMAChannel;
         break;
 
+    case AdLibGold:
+        status = GOLD_BeginBufferedPlayback(MV_MixBuffer[0],
+                                           TotalBufferSize, MV_NumberOfBuffers,
+                                           MV_RequestedMixRate, MV_MixMode, MV_ServiceVoc);
+
+        if (status != GOLD_Ok)
+        {
+            return (MV_Error);
+        }
+
+        MV_MixRate = GOLD_GetPlaybackRate();
+        MV_DMAChannel = GOLD_DMAChannel;
+        break;
+
     case SoundSource:
         SS_BeginBufferedPlayback(MV_MixBuffer[0],
                                  TotalBufferSize, MV_NumberOfBuffers,
@@ -957,6 +976,10 @@ void MV_StopPlayback(
 
     case WSS:
         WSS_StopPlayback();
+        break;
+
+    case AdLibGold:
+        GOLD_StopPlayback();
         break;
 
     case SoundSource:
@@ -1243,6 +1266,10 @@ int MV_Init(
         status = WSS_Init();
         break;
 
+    case AdLibGold:
+        status = GOLD_Init();
+        break;
+
     case SoundSource:
         status = SS_Init(soundcard, -1);
         break;
@@ -1376,6 +1403,10 @@ int MV_Shutdown(
 
     case WSS:
         WSS_Shutdown();
+        break;
+
+    case AdLibGold:
+        GOLD_Shutdown();
         break;
 
     case SoundSource:
