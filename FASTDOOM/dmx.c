@@ -607,6 +607,8 @@ int ASS_GetSoundCardCode(int sndDevice)
         return WSS;
     case snd_IMFC:
         return IMFC;
+    case snd_AdlibGold:
+        return AdLibGold;
     default:
         return -1;
     }
