@@ -135,6 +135,21 @@
 #define GOLD_MMA_STATUS_FIFO_BIT    (1 << 0)  /* FIFO0 (ch0) interrupt    */
 
 /*
+ * Register 0x0D: MIDI and interrupt control.
+ * D7: IEN (interrupt enable) - 1=enable unmasked interrupts
+ * D6: F1M (FIFO1 mask)        - 0=unmasked
+ * D5: F0M (FIFO0 mask)        - 0=unmasked
+ * D4: TIM (timer interrupt mask)
+ * D3: T2M (timer 2 mask)
+ * D2: T1M (timer 1 mask)
+ * D1: T0M (timer 0 mask)
+ * D0: MID (MIDI interrupt mask)
+ */
+#define GOLD_MMA_IEN_BIT            (1 << 7)  /* Interrupt enable         */
+#define GOLD_MMA_F0M_BIT            (1 << 5)  /* FIFO0 interrupt mask     */
+#define GOLD_MMA_F1M_BIT            (1 << 6)  /* FIFO1 interrupt mask     */
+
+/*
  * Register 0x08: Timer Control
  * D7: SBY (standby mode, must be 0 for normal operation)
  * D6: T2M (timer 2 interrupt mask)
