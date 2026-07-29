@@ -1,392 +1,637 @@
-//
-// AdLib Gold 1000/2000 digital audio driver for FastDoom
-// Uses the YMZ263 (MMA) chip for PCM playback via DMA
-//
-// Based on:
-//   - AdLib Gold Developer Toolkit (section 7.3: Digital I/O)
-//   - AIL2 DIGPAK driver reference implementation
-//   - FastDoom ns_wss.c as structural template
-//
-// Uses GOLD environment variable for configuration:
-//   SET GOLD=<I/O hex>,<IRQ dec>,<DMA dec>
-//   Example: SET GOLD=388,5,1
-//
+
+/*
+ * AdLib Gold 1000/2000 Digital Audio Driver for FastDoom
+ *
+ * Implements DMA-based PCM playback via the YMZ263 (MMA) sampling
+ * channels on the AdLib Gold sound card.
+ *
+ * Based on the AIL2 DMASOUND.ASM driver by John Miles (Miles Design, Inc.)
+ * and the FastDoom Sound Blaster driver architecture.
+ */
 
 #include <dos.h>
-#include <conio.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "std_func.h"
 #include "ns_dpmi.h"
 #include "ns_dma.h"
-#include "ns_inter.h"
 #include "ns_irq.h"
 #include "ns_gold.h"
+#include "ns_golddef.h"
 #include "ns_muldf.h"
 #include "options.h"
-
-#define INVALID -1
+#include "fastmath.h"
 
 /*
- * Interrupt vector mapping for IRQ lines.
- * IRQ 0-7  -> vectors 0x08-0x0F
- * IRQ 8-15 -> vectors 0x70-0x77
+ * Explicit prototypes for I/O port functions.
+ * These are provided by <dos.h> but some OpenWatcom versions
+ * need explicit declarations for the int16 variants.
  */
-static const unsigned char GOLD_Interrupts[GOLD_MaxIrq + 1] =
-    {
-        INVALID, INVALID, 0xa, 0xb,
-        INVALID, 0xd, INVALID, 0xf,
-        INVALID, INVALID, 0x72, 0x73,
-        0x74, INVALID, INVALID, 0x77
-    };
+unsigned char inp(unsigned short port);
+void outp(unsigned short port, unsigned char value);
 
+#define GOLD_VALID    (1 == 1)
+#define GOLD_INVALID  (!GOLD_VALID)
+
+/* IRQ vector mapping for IRQs 0-15 */
+const unsigned char GOLD_Interrupts[GOLD_MaxIrq + 1] =
+{
+    GOLD_INVALID, GOLD_INVALID, 0x0a, 0x0b,
+    GOLD_INVALID, 0x0d, GOLD_INVALID, 0x0f,
+    GOLD_INVALID, GOLD_INVALID, 0x72, 0x73,
+    0x74, GOLD_INVALID, GOLD_INVALID, 0x77
+};
+
+/* Sample size in bytes per sample for each mix mode */
+const char GOLD_SampleSizeTable[GOLD_STEREO_8BIT + 1] =
+{
+    GOLD_MONO_8BIT_SAMPLE_SIZE,
+    GOLD_STEREO_8BIT_SAMPLE_SIZE
+};
+
+/*
+ * Logging - all driver operations logged to gold.log for debugging.
+ */
+static FILE *GOLD_LogFile = NULL;
+
+static void GOLD_WriteLog(const char *msg)
+{
+    if (GOLD_LogFile == NULL)
+    {
+        GOLD_LogFile = fopen("gold.log", "a");
+    }
+    if (GOLD_LogFile != NULL)
+    {
+        fputs(msg, GOLD_LogFile);
+        fflush(GOLD_LogFile);
+    }
+}
+
+/*
+ * Global state
+ */
 static void(__interrupt __far *GOLD_OldInt)(void);
 
 GOLD_CONFIG GOLD_Config =
-    {
-        GOLD_DEFAULT_BASE, GOLD_DEFAULT_IRQ, GOLD_DEFAULT_DMA
-    };
+{
+    GOLD_DEFAULT_BASE,
+    GOLD_DEFAULT_IRQ,
+    GOLD_DEFAULT_DMA
+};
 
 static int GOLD_Installed = FALSE;
-static int GOLD_TransferLength = 0;
-static int GOLD_SamplePacketSize = GOLD_MONO_8BIT_SAMPLE_SIZE;
+
+int GOLD_DMAChannel;
 unsigned GOLD_SampleRate = GOLD_DefaultSampleRate;
 
-volatile int GOLD_SoundPlaying;
-int GOLD_DMAChannel;
+static char *GOLD_DMABuffer;
+static char *GOLD_DMABufferEnd;
+static char *GOLD_CurrentDMABuffer;
+static int GOLD_TotalDMABufferSize;
 
+static int GOLD_TransferLength = 0;
+static int GOLD_MainVolume = 255;
+
+static volatile int GOLD_SoundPlaying = FALSE;
+
+void (*GOLD_CallBack)(void);
+
+static unsigned short GOLD_Interrupt;
+
+/*
+ * Shadow of PRC (playback/recording control) register values
+ * so we can toggle GO bit without disturbing other settings.
+ */
+static unsigned char GOLD_PRC0_Shadow;
+static unsigned char GOLD_PRC1_Shadow;
+
+/* Saved control register 0x13 value for restore on shutdown */
+static unsigned char GOLD_CTR13_Save;
+
+/*
+ * DMA and interrupt controller state
+ */
 static int GOLD_IntController1Mask;
 static int GOLD_IntController2Mask;
 
-static int GOLD_MMAVolume = 0xFF;
-static int GOLD_InterruptVector;
+/*
+ * IRQ handler stack (allocated in conventional memory via DPMI)
+ */
+#define GOLD_STACK_SIZE 2048
 
-#define kStackSize 2048
+static unsigned short GOLD_StackSelector = 0;
+static unsigned long GOLD_StackPointer;
 
-static unsigned short StackSelector = 0;
-static unsigned long StackPointer;
+/*
+ * External stack switch functions (declared for pragma aux)
+ */
+extern void GOLD_GetStack(unsigned short *selptr, unsigned long *stackptr);
+extern void GOLD_SetStack(unsigned short selector, unsigned long stackptr);
 
-static unsigned short oldStackSelector;
-static unsigned long oldStackPointer;
-
-extern void GetStack(unsigned short *selptr, unsigned long *stackptr);
-extern void SetStack(unsigned short selector, unsigned long stackptr);
-
-#pragma aux GetStack = \
+#pragma aux GOLD_GetStack = \
     "mov  [edi],esp"   \
     "mov  ax,ss"       \
     "mov  [esi],ax" parm[esi][edi] modify[eax esi edi];
 
-#pragma aux SetStack = \
+#pragma aux GOLD_SetStack = \
     "mov  ss,ax"       \
     "mov  esp,edx" parm[ax][edx] modify[eax edx];
 
 /*
- * Sample rate to FREQ[1:0] encoding for the YMZ263.
- * FREQ=0 -> 44.1 kHz, FREQ=1 -> 22.05 kHz,
- * FREQ=2 -> 11.025 kHz, FREQ=3 -> 7.35 kHz
+ * I/O port addresses (computed during init)
  */
-typedef struct
-{
-    unsigned sample_rate;
-    unsigned char freq_code;
-} GOLD_SAMPLE_RATE_MAP;
-
-static const GOLD_SAMPLE_RATE_MAP GOLD_SampleRateMap[] =
-    {
-        { 44100, 0 },
-        { 22050, 1 },
-        { 11025, 2 },
-        {  7350, 3 }
-    };
-
-/* FIFO interrupt level encodings for YMZ263 register 0x0C. */
-/* Interrupt fires when remaining FIFO bytes hit the threshold. */
-static const unsigned char GOLD_FIFO_INT_LEVELS[] =
-    {
-        0x00, /* 112 bytes */
-        0x01, /*  96 bytes */
-        0x02, /*  80 bytes */
-        0x03, /*  64 bytes  */
-        0x04, /*  48 bytes  */
-        0x05, /*  32 bytes  */
-        0x06, /*  16 bytes  */
-        /* 0x07 is prohibited */
-    };
+static unsigned short GOLD_CTAddr;
+static unsigned short GOLD_CTData;
+static unsigned short GOLD_MMA0Addr;
+static unsigned short GOLD_MMA0Data;
+static unsigned short GOLD_MMA1Addr;
+static unsigned short GOLD_MMA1Data;
 
 /*
- * 470ns delay between MMA register accesses.
- * Two short jumps provide ~470ns on a 20 MHz 386.
+ * Hardware PCM sample rates supported by YMZ263
  */
-static void GOLD_MMA_Delay(void)
+static const unsigned int GOLD_PCM_Rates[4] =
 {
-    _asm nop
-    _asm nop
-}
+    44100, 22050, 11025, 7350
+};
 
-/* ------------------------------------------------------------------ */
-/*  Control chip access (YMZ294 / custom VLSI)                        */
-/* ------------------------------------------------------------------ */
+/*---------------------------------------------------------------------
+   Function: GOLD_CTWait
 
-/* Enter control chip mode: write 0xFF to FM bank 1 address port. */
-static void GOLD_CtrlEnter(void)
+   Wait for the control chip to become ready.  Bit 6 (RB) and bit 5 (SB)
+   must both be clear before we can communicate.
+---------------------------------------------------------------------*/
+static void GOLD_CTWait(void)
 {
-    outp(GOLD_Config.Address + GOLD_CT_ADDR_OFFSET, 0xFF);
-    GOLD_MMA_Delay();
-}
+    unsigned int count;
 
-/* Exit control chip mode: write 0xFE to FM bank 1 address port. */
-static void GOLD_CtrlExit(void)
-{
-    outp(GOLD_Config.Address + GOLD_CT_ADDR_OFFSET, 0xFE);
-    GOLD_MMA_Delay();
-}
-
-/* Poll status register until both RB and SB bits clear. */
-static int GOLD_CtrlWait(void)
-{
-    unsigned timeout = 100000;
-
+    count = 0x10000;
     do
     {
-        unsigned char status = inp(GOLD_Config.Address + GOLD_CT_ADDR_OFFSET);
+        unsigned char status;
 
-        if (!(status & (GOLD_CT_RB_BIT | GOLD_CT_SB_BIT)))
+        status = inp(GOLD_CTAddr);
+        if ((status & 0xC0) == 0)
         {
-            return GOLD_Ok;
+            break;
         }
-
-        timeout--;
+        count--;
     }
-    while (timeout != 0);
-
-    return GOLD_CardNotReady;
+    while (count > 0);
 }
 
-/* Write a control chip register. */
-static int GOLD_CtrlWrite(unsigned char addr, unsigned char data)
-{
-    int status;
+/*---------------------------------------------------------------------
+   Function: GOLD_EnableCtrl
 
-    status = GOLD_CtrlWait();
-    if (status != GOLD_Ok)
+   Enable access to the control chip by writing 0xFF to the CT address
+   port.  This is the "unlock" sequence from the AIL2 driver.
+---------------------------------------------------------------------*/
+static void GOLD_EnableCtrl(void)
+{
+    outp(GOLD_CTAddr, 0xFF);
+}
+
+/*---------------------------------------------------------------------
+   Function: GOLD_DisableCtrl
+
+   Disable control chip access by writing 0xFE to the CT address port.
+   Must wait for ready first.
+---------------------------------------------------------------------*/
+static void GOLD_DisableCtrl(void)
+{
+    GOLD_CTWait();
+    outp(GOLD_CTAddr, 0xFE);
+}
+
+/*---------------------------------------------------------------------
+   Function: GOLD_ReadCtrlReg
+
+   Read a byte from the specified control chip register.
+   Waits for ready, writes register number, waits, reads data.
+---------------------------------------------------------------------*/
+static unsigned char GOLD_ReadCtrlReg(unsigned char reg)
+{
+    unsigned char val;
+
+    GOLD_CTWait();
+    outp(GOLD_CTAddr, reg);
+    GOLD_CTWait();
+    val = inp(GOLD_CTData);
+
+    return val;
+}
+
+/*---------------------------------------------------------------------
+   Function: GOLD_WriteCtrlReg
+
+   Write a byte to the specified control chip register.
+   Waits for ready, writes register number, waits, writes data.
+---------------------------------------------------------------------*/
+static void GOLD_WriteCtrlReg(unsigned char reg, unsigned char val)
+{
+    GOLD_CTWait();
+    outp(GOLD_CTAddr, reg);
+    GOLD_CTWait();
+    outp(GOLD_CTData, val);
+}
+
+/*---------------------------------------------------------------------
+   Function: GOLD_MMADelay
+
+   Wait at least 470 nsec. between MMA register accesses.
+   The YMZ263 datasheet requires a minimum inter-byte delay.
+---------------------------------------------------------------------*/
+static void GOLD_MMADelay(void)
+{
+    volatile unsigned int i;
+
+    for (i = 0; i < 50; i++)
     {
-        return status;
+        /* busy-wait */
     }
-
-    outp(GOLD_Config.Address + GOLD_CT_ADDR_OFFSET, addr);
-    GOLD_MMA_Delay();
-    outp(GOLD_Config.Address + GOLD_CT_DATA_OFFSET, data);
-
-    /* After writing registers 4-8, need ~450us delay; 9-16 need ~5us.
-     * Polling SB bit handles this automatically. */
-    return GOLD_CtrlWait();
 }
 
-/* Read a control chip register. */
-static int GOLD_CtrlRead(unsigned char addr, unsigned char *data)
+/*---------------------------------------------------------------------
+   Function: GOLD_WriteMMAReg
+
+   Write a byte to the specified MMA channel register.
+   Channel 0 or 1, register number, and value are passed in.
+---------------------------------------------------------------------*/
+static void GOLD_WriteMMAReg(unsigned char channel, unsigned char reg,
+                              unsigned char val)
 {
-    if (data == NULL)
-    {
-        return GOLD_InvalidParameter;
-    }
-
-    outp(GOLD_Config.Address + GOLD_CT_ADDR_OFFSET, addr);
-    GOLD_MMA_Delay();
-    *data = inp(GOLD_Config.Address + GOLD_CT_DATA_OFFSET);
-
-    return GOLD_Ok;
-}
-
-/* ------------------------------------------------------------------ */
-/*  MMA (YMZ263) chip access                                          */
-/* ------------------------------------------------------------------ */
-
-/*
- * Accessing a MMA register is a two-step process:
- * 1) Write register index to the register select port (38C for ch0, 38E for ch1)
- * 2) Read/write data at the channel port (38D for ch0, 38F for ch1)
- *
- * A 470ns delay is required between accesses.
- */
-
-/* Read MMA status register (same as channel 0 register select port). */
-static unsigned char GOLD_MMAReadStatus(void)
-{
-    return inp(GOLD_Config.Address + GOLD_MMA0_ADDR_OFFSET);
-}
-
-/* Write a MMA register on the specified channel. */
-static void GOLD_MMAWrite(unsigned char channel, unsigned char reg, unsigned char data)
-{
-    unsigned base;
+    unsigned short addrPort;
+    unsigned short dataPort;
 
     if (channel == 0)
     {
-        base = GOLD_Config.Address + GOLD_MMA0_ADDR_OFFSET;
+        addrPort = GOLD_MMA0Addr;
+        dataPort = GOLD_MMA0Data;
     }
     else
     {
-        base = GOLD_Config.Address + GOLD_MMA1_ADDR_OFFSET;
+        addrPort = GOLD_MMA1Addr;
+        dataPort = GOLD_MMA1Data;
     }
 
-    outp(base, reg);
-    GOLD_MMA_Delay();
-    outp(base + 1, data);
-    GOLD_MMA_Delay();
+    outp(addrPort, reg);
+    GOLD_MMADelay();
+    outp(dataPort, val);
+    GOLD_MMADelay();
 }
 
-/* Read a MMA register on the specified channel. */
-static unsigned char GOLD_MMARead(unsigned char channel, unsigned char reg)
+/*---------------------------------------------------------------------
+   Function: GOLD_ReadMMAStatus
+
+   Read the status register from the specified MMA channel.
+   The status is read from the address port (same port used for
+   register selection).
+---------------------------------------------------------------------*/
+static unsigned char GOLD_ReadMMAStatus(unsigned char channel)
 {
-    unsigned base;
-    unsigned char data;
+    unsigned short addrPort;
+    unsigned char status;
 
     if (channel == 0)
     {
-        base = GOLD_Config.Address + GOLD_MMA0_ADDR_OFFSET;
+        addrPort = GOLD_MMA0Addr;
     }
     else
     {
-        base = GOLD_Config.Address + GOLD_MMA1_ADDR_OFFSET;
+        addrPort = GOLD_MMA1Addr;
     }
 
-    outp(base, reg);
-    GOLD_MMA_Delay();
-    data = inp(base + 1);
-    GOLD_MMA_Delay();
-
-    return data;
+    status = inp(addrPort);
+    return status;
 }
 
-/* Write PCM data into the MMA FIFO on the specified channel. */
-static void GOLD_MMAPutData(unsigned char channel, unsigned char data)
-{
-    unsigned base;
+/*---------------------------------------------------------------------
+   Function: GOLD_FindClosestRate
 
-    if (channel == 0)
+   Find the index of the closest hardware-supported sample rate.
+   The YMZ263 supports four fixed clock-derived rates:
+   44100, 22050, 11025, and 7350 Hz.
+---------------------------------------------------------------------*/
+static unsigned int GOLD_FindClosestRate(unsigned int rate)
+{
+    unsigned int i;
+    unsigned int bestIdx;
+    long bestDelta;
+    long delta;
+
+    bestIdx = 0;
+
+    if (rate > GOLD_PCM_Rates[0])
     {
-        base = GOLD_Config.Address + GOLD_MMA0_ADDR_OFFSET;
+        bestDelta = (long)rate - (long)GOLD_PCM_Rates[0];
     }
     else
     {
-        base = GOLD_Config.Address + GOLD_MMA1_ADDR_OFFSET;
+        bestDelta = (long)GOLD_PCM_Rates[0] - (long)rate;
     }
 
-    /* Ensure register 0x0B (PCM DATA) is selected, then write. */
-    outp(base, GOLD_MMA_PCM_DATA);
-    GOLD_MMA_Delay();
-    outp(base + 1, data);
-    GOLD_MMA_Delay();
-}
-
-/* Read PCM data from the MMA FIFO on the specified channel. */
-static unsigned char GOLD_MMAGetData(unsigned char channel)
-{
-    unsigned base;
-    unsigned char data;
-
-    if (channel == 0)
+    for (i = 1; i < 4; i++)
     {
-        base = GOLD_Config.Address + GOLD_MMA0_ADDR_OFFSET;
-    }
-    else
-    {
-        base = GOLD_Config.Address + GOLD_MMA1_ADDR_OFFSET;
-    }
-
-    outp(base, GOLD_MMA_PCM_DATA);
-    GOLD_MMA_Delay();
-    data = inp(base + 1);
-    GOLD_MMA_Delay();
-
-    return data;
-}
-
-/*
- * Reset a MMA channel. This clears the FIFO buffers and resets FIFO flags.
- * Sequence: write 0x80 (RST) to register 0x09, then write desired config.
- */
-static void GOLD_MMAResetChannel(unsigned char channel)
-{
-    unsigned char reg_val;
-
-    /* First stop any playback/recording on this channel */
-    GOLD_MMAWrite(channel, GOLD_MMA_PLAY_REC_CTL, 0x00);
-
-    /* Write RST bit to reset the channel */
-    GOLD_MMAWrite(channel, GOLD_MMA_PLAY_REC_CTL, GOLD_MMA_RST_BIT);
-
-    /* Wait a brief moment for the reset to complete */
-    {
-        unsigned i;
-        for (i = 0; i < 100; i++)
+        if (rate > GOLD_PCM_Rates[i])
         {
-            GOLD_MMA_Delay();
-        }
-    }
-
-    /* Clear RST bit - write 0 to finish reset sequence */
-    GOLD_MMAWrite(channel, GOLD_MMA_PLAY_REC_CTL, 0x00);
-    GOLD_MMA_Delay();
-}
-
-/* Find the best matching sample rate configuration. */
-static const GOLD_SAMPLE_RATE_MAP *GOLD_GetSampleRateConfig(unsigned sample_rate)
-{
-    int i;
-    int num_rates = sizeof(GOLD_SampleRateMap) / sizeof(GOLD_SAMPLE_RATE_MAP);
-    unsigned best_diff = 0xFFFFFFFF;
-    int best_idx = 0;
-
-    for (i = 0; i < num_rates; i++)
-    {
-        unsigned diff;
-
-        if (GOLD_SampleRateMap[i].sample_rate >= sample_rate)
-        {
-            diff = GOLD_SampleRateMap[i].sample_rate - sample_rate;
+            delta = (long)rate - (long)GOLD_PCM_Rates[i];
         }
         else
         {
-            diff = sample_rate - GOLD_SampleRateMap[i].sample_rate;
+            delta = (long)GOLD_PCM_Rates[i] - (long)rate;
         }
 
-        if (diff < best_diff)
+        if (delta < bestDelta)
         {
-            best_diff = diff;
-            best_idx = i;
+            bestDelta = delta;
+            bestIdx = i;
         }
     }
 
-    return &GOLD_SampleRateMap[best_idx];
+    return bestIdx;
 }
 
-/* Convert IRQ number to INT SEL encoding for control chip. */
-static int GOLD_IrqToIntSel(unsigned irq)
+/*---------------------------------------------------------------------
+   Function: GOLD_SetPlaybackRate
+
+   Sets the rate at which the digitized sound will be played.
+   The YMZ263 has four fixed sample rate clock dividers, so the
+   actual rate may differ from the requested rate.
+---------------------------------------------------------------------*/
+void GOLD_SetPlaybackRate(unsigned rate)
 {
-    switch (irq)
+    unsigned int rateIdx;
+    unsigned char prc0;
+    unsigned char prc1;
+    unsigned char fmt0;
+    unsigned char fmt1;
+
+    rateIdx = GOLD_FindClosestRate(rate);
+
+    if (rateIdx > 3)
     {
-        case 3:  return 0;
-        case 4:  return 1;
-        case 5:  return 2;
-        case 7:  return 3;
-        case 10: return 4;
-        case 11: return 5;
-        case 12: return 6;
-        case 15: return 7;
-        default: return -1;
+        rateIdx = 3;
     }
+
+    /*
+     * PRC (playback/recording control) register 0x09:
+     *   D7: RST  - Reset (0 for normal operation)
+     *   D6: R    - Right channel output enable
+     *   D5: L    - Left channel output enable
+     *   D4-3: FREQ[1:0] - Sample rate select
+     *   D2: PCM  - 1 = PCM mode
+     *   D1: PR   - 1 = playback mode
+     *   D0: GO   - Start/stop (0 = stopped)
+     */
+    prc0 = (unsigned char)(
+        GOLD_MMA_R_BIT |
+        GOLD_MMA_L_BIT |
+        ((rateIdx & 3) << GOLD_MMA_FREQ_SHIFT) |
+        GOLD_MMA_PCM_BIT |
+        GOLD_MMA_PR_BIT
+    );
+
+    prc1 = prc0;
+
+    /*
+     * Format control register 0x0C:
+     *   D7: ILV   - Interleave (0 for mono)
+     *   D6-5: DATA FORMAT[1:0] - 0 = 8-bit MSB format
+     *   D4-1: FIFO INT[3:0]    - Interrupt level (5 = 32 bytes remain)
+     *   D0: ENB   - DMA enable
+     */
+    fmt0 = (unsigned char)(
+        ((5 << GOLD_MMA_FIFO_INT_SHIFT) & 0x1E) |
+        GOLD_MMA_DMA_ENB_BIT
+    );
+    fmt1 = fmt0;
+
+    /* Reset FIFOs first */
+    GOLD_WriteMMAReg(0, GOLD_MMA_PLAY_REC_CTL, GOLD_MMA_RST_BIT);
+    GOLD_WriteMMAReg(1, GOLD_MMA_PLAY_REC_CTL, GOLD_MMA_RST_BIT);
+
+    /*
+     * Write 4 dummy bytes to each channel's FIFO for proper
+     * DMA initialization (from AIL2 driver).
+     */
+    outp(GOLD_MMA0Addr, GOLD_MMA_PCM_DATA);
+    GOLD_MMADelay();
+    outp(GOLD_MMA0Data, 0);
+    GOLD_MMADelay();
+    outp(GOLD_MMA0Addr, GOLD_MMA_PCM_DATA);
+    GOLD_MMADelay();
+    outp(GOLD_MMA0Data, 0);
+    GOLD_MMADelay();
+    outp(GOLD_MMA0Addr, GOLD_MMA_PCM_DATA);
+    GOLD_MMADelay();
+    outp(GOLD_MMA0Data, 0);
+    GOLD_MMADelay();
+    outp(GOLD_MMA0Addr, GOLD_MMA_PCM_DATA);
+    GOLD_MMADelay();
+    outp(GOLD_MMA0Data, 0);
+    GOLD_MMADelay();
+
+    outp(GOLD_MMA1Addr, GOLD_MMA_PCM_DATA);
+    GOLD_MMADelay();
+    outp(GOLD_MMA1Data, 0);
+    GOLD_MMADelay();
+    outp(GOLD_MMA1Addr, GOLD_MMA_PCM_DATA);
+    GOLD_MMADelay();
+    outp(GOLD_MMA1Data, 0);
+    GOLD_MMADelay();
+    outp(GOLD_MMA1Addr, GOLD_MMA_PCM_DATA);
+    GOLD_MMADelay();
+    outp(GOLD_MMA1Data, 0);
+    GOLD_MMADelay();
+    outp(GOLD_MMA1Addr, GOLD_MMA_PCM_DATA);
+    GOLD_MMADelay();
+    outp(GOLD_MMA1Data, 0);
+    GOLD_MMADelay();
+
+    /* Set format control on both channels */
+    GOLD_WriteMMAReg(0, GOLD_MMA_FMT_CTL, fmt0);
+    GOLD_WriteMMAReg(1, GOLD_MMA_FMT_CTL, fmt1);
+
+    /* Save PRC shadows with GO=0 (set in StartPlayback) */
+    GOLD_PRC0_Shadow = prc0;
+    GOLD_PRC1_Shadow = prc1;
+
+    GOLD_WriteMMAReg(0, GOLD_MMA_PLAY_REC_CTL, prc0);
+    GOLD_WriteMMAReg(1, GOLD_MMA_PLAY_REC_CTL, prc1);
+
+    /* Update the actual sample rate */
+    GOLD_SampleRate = GOLD_PCM_Rates[rateIdx];
+
+    GOLD_WriteLog("GOLD_SetPlaybackRate: rate configured\n");
 }
 
-/* ------------------------------------------------------------------ */
-/*  IRQ handling                                                      */
-/* ------------------------------------------------------------------ */
+/*---------------------------------------------------------------------
+   Function: GOLD_GetPlaybackRate
 
-static void GOLD_EnableInterrupt(void)
+   Returns the current playback sample rate.
+---------------------------------------------------------------------*/
+unsigned GOLD_GetPlaybackRate(void)
 {
-    int irq = GOLD_Config.Interrupt;
+    return GOLD_SampleRate;
+}
+
+/*---------------------------------------------------------------------
+   Function: GOLD_SetMixMode
+
+   Sets the sound card to play samples in the specified mode.
+   The AdLib Gold supports mono 8-bit PCM and stereo 8-bit.
+   Returns GOLD_Ok on success.
+---------------------------------------------------------------------*/
+int GOLD_SetMixMode(int mode)
+{
+    unsigned char fmt0;
+    unsigned char fmt1;
+
+    if (mode > GOLD_MaxMixMode)
+    {
+        mode = GOLD_MaxMixMode;
+    }
+
+    /* Recompute format control based on mix mode */
+    fmt0 = (unsigned char)(
+        ((5 << GOLD_MMA_FIFO_INT_SHIFT) & 0x1E) |
+        GOLD_MMA_DMA_ENB_BIT
+    );
+
+    if (mode & GOLD_STEREO)
+    {
+        fmt0 |= GOLD_MMA_ILV_BIT;
+    }
+
+    fmt1 = fmt0;
+
+    /* Only reconfigure if not playing */
+    if (!GOLD_SoundPlaying)
+    {
+        GOLD_WriteMMAReg(0, GOLD_MMA_FMT_CTL, fmt0);
+        GOLD_WriteMMAReg(1, GOLD_MMA_FMT_CTL, fmt1);
+    }
+
+    GOLD_WriteLog("GOLD_SetMixMode: mode set\n");
+    return GOLD_Ok;
+}
+
+/*---------------------------------------------------------------------
+   Function: GOLD_SetPCMVolume
+
+   Sets the volume of the PCM playback output (0-255).
+   Written directly to both MMA channels via register 0x0A.
+---------------------------------------------------------------------*/
+int GOLD_SetPCMVolume(int volume)
+{
+    unsigned char vol;
+
+    if (volume < 0)
+    {
+        volume = 0;
+    }
+    if (volume > 255)
+    {
+        volume = 255;
+    }
+
+    vol = (unsigned char)volume;
+    GOLD_MainVolume = volume;
+
+    /* Write volume to both MMA channels */
+    GOLD_WriteMMAReg(0, GOLD_MMA_VOLUME, vol);
+    GOLD_WriteMMAReg(1, GOLD_MMA_VOLUME, vol);
+
+    GOLD_WriteLog("GOLD_SetPCMVolume: volume set\n");
+    return GOLD_Ok;
+}
+
+/*---------------------------------------------------------------------
+   Function: GOLD_StartPlayback
+
+   Start DMA playback by setting the GO bit on both MMA channels.
+---------------------------------------------------------------------*/
+static void GOLD_StartPlayback(void)
+{
+    unsigned char prc0;
+    unsigned char prc1;
+
+    prc0 = GOLD_PRC0_Shadow | GOLD_MMA_GO_BIT;
+    prc1 = GOLD_PRC1_Shadow | GOLD_MMA_GO_BIT;
+
+    GOLD_WriteMMAReg(0, GOLD_MMA_PLAY_REC_CTL, prc0);
+    GOLD_WriteMMAReg(1, GOLD_MMA_PLAY_REC_CTL, prc1);
+
+    GOLD_SoundPlaying = TRUE;
+
+    GOLD_WriteLog("GOLD_StartPlayback: playback started\n");
+}
+
+/*---------------------------------------------------------------------
+   Function: GOLD_StopPlayback
+
+   Stops DMA playback by clearing the GO bit, disabling interrupts,
+   and ending the DMA transfer.
+---------------------------------------------------------------------*/
+void GOLD_StopPlayback(void)
+{
+    unsigned char prc0;
+    unsigned char prc1;
+
+    GOLD_WriteLog("GOLD_StopPlayback: stopping playback\n");
+
+    /* Disable interrupts first */
+    {
+        int irq;
+        int mask;
+
+        irq = GOLD_Config.Interrupt;
+        if (irq < 8)
+        {
+            mask = inp(0x21) & ~(1 << irq);
+            mask |= GOLD_IntController1Mask & (1 << irq);
+            outp(0x21, mask);
+        }
+        else
+        {
+            mask = inp(0x21) & ~(1 << 2);
+            mask |= GOLD_IntController1Mask & (1 << 2);
+            outp(0x21, mask);
+
+            mask = inp(0xA1) & ~(1 << (irq - 8));
+            mask |= GOLD_IntController2Mask & (1 << (irq - 8));
+            outp(0xA1, mask);
+        }
+    }
+
+    /* Clear GO bit on both channels */
+    prc0 = GOLD_PRC0_Shadow & (unsigned char)(~GOLD_MMA_GO_BIT);
+    prc1 = GOLD_PRC1_Shadow & (unsigned char)(~GOLD_MMA_GO_BIT);
+
+    GOLD_WriteMMAReg(0, GOLD_MMA_PLAY_REC_CTL, prc0);
+    GOLD_WriteMMAReg(1, GOLD_MMA_PLAY_REC_CTL, prc1);
+
+    /* End DMA transfer */
+    DMA_EndTransfer(GOLD_DMAChannel);
+
+    GOLD_SoundPlaying = FALSE;
+    GOLD_DMABuffer = NULL;
+
+    GOLD_WriteLog("GOLD_StopPlayback: playback stopped\n");
+}
+
+/*---------------------------------------------------------------------
+   Function: GOLD_EnableInterrupt
+
+   Enables the Gold card interrupt on the PIC.
+---------------------------------------------------------------------*/
+void GOLD_EnableInterrupt(void)
+{
+    int irq;
     int mask;
+
+    irq = GOLD_Config.Interrupt;
 
     if (irq < 8)
     {
@@ -401,12 +646,21 @@ static void GOLD_EnableInterrupt(void)
         mask = inp(0x21) & ~(1 << 2);
         outp(0x21, mask);
     }
+
+    GOLD_WriteLog("GOLD_EnableInterrupt: IRQ enabled\n");
 }
 
-static void GOLD_DisableInterrupt(void)
+/*---------------------------------------------------------------------
+   Function: GOLD_DisableInterrupt
+
+   Disables the Gold card interrupt on the PIC.
+---------------------------------------------------------------------*/
+void GOLD_DisableInterrupt(void)
 {
-    int irq = GOLD_Config.Interrupt;
+    int irq;
     int mask;
+
+    irq = GOLD_Config.Interrupt;
 
     if (irq < 8)
     {
@@ -424,571 +678,632 @@ static void GOLD_DisableInterrupt(void)
         mask |= GOLD_IntController2Mask & (1 << (irq - 8));
         outp(0xA1, mask);
     }
+
+    GOLD_WriteLog("GOLD_DisableInterrupt: IRQ disabled\n");
 }
 
-void(*GOLD_CallBack)(void);
+/*---------------------------------------------------------------------
+   Function: GOLD_SetupDMABuffer
 
-static char *GOLD_DMABuffer;
-static char *GOLD_DMABufferEnd;
-static char *GOLD_CurrentDMABuffer;
-static int GOLD_TotalDMABufferSize;
+   Programs the DMAC for sound transfer using auto-init read mode.
+---------------------------------------------------------------------*/
+static int GOLD_SetupDMABuffer(char *BufferPtr, int BufferSize)
+{
+    int DmaStatus;
 
-/*
- * Interrupt service routine for the Gold card.
- *
- * The YMZ263 has a 128-byte FIFO per channel. In DMA mode, the FIFO
- * triggers an interrupt when the remaining bytes drop below the threshold
- * set by FIFO_INT in register 0x0C. The ISR refills the DMA transfer
- * by advancing the current buffer pointer.
- */
+    if (GOLD_DMAChannel == GOLD_INVALID)
+    {
+        return GOLD_Error;
+    }
+
+    DmaStatus = DMA_SetupTransfer(GOLD_DMAChannel, BufferPtr, BufferSize,
+                                   DMA_AutoInitRead);
+    if (DmaStatus == DMA_Error)
+    {
+        GOLD_WriteLog("GOLD_SetupDMABuffer: DMA setup failed\n");
+        return GOLD_Error;
+    }
+
+    GOLD_DMABuffer = BufferPtr;
+    GOLD_CurrentDMABuffer = BufferPtr;
+    GOLD_TotalDMABufferSize = BufferSize;
+    GOLD_DMABufferEnd = BufferPtr + BufferSize;
+
+    GOLD_WriteLog("GOLD_SetupDMABuffer: DMA configured\n");
+    return GOLD_Ok;
+}
+
+/*---------------------------------------------------------------------
+   Function: GOLD_GetCurrentPos
+
+   Returns the offset within the current sound being played.
+---------------------------------------------------------------------*/
+int GOLD_GetCurrentPos(void)
+{
+    char *CurrentAddr;
+    long offset;
+
+    if (!GOLD_SoundPlaying)
+    {
+        return GOLD_Error;
+    }
+
+    CurrentAddr = DMA_GetCurrentPos(GOLD_DMAChannel);
+
+    offset = (long)((unsigned long)CurrentAddr -
+                    (unsigned long)GOLD_CurrentDMABuffer);
+
+    /* Handle wraparound */
+    if (offset < 0)
+    {
+        offset += GOLD_TotalDMABufferSize;
+    }
+    if (offset >= GOLD_TotalDMABufferSize)
+    {
+        offset -= GOLD_TotalDMABufferSize;
+    }
+
+    return (int)offset;
+}
+
+/*---------------------------------------------------------------------
+   Function: GOLD_BeginBufferedPlayback
+
+   Begins multibuffered playback of digitized sound.
+---------------------------------------------------------------------*/
+int GOLD_BeginBufferedPlayback(char *BufferStart, int BufferSize,
+                                int NumDivisions, unsigned SampleRate,
+                                int MixMode, void (*CallBackFunc)(void))
+{
+    int DmaStatus;
+
+    GOLD_WriteLog("GOLD_BeginBufferedPlayback: starting\n");
+
+    /* Stop any ongoing playback */
+    GOLD_StopPlayback();
+
+    /* Set mix mode */
+    GOLD_SetMixMode(MixMode);
+
+    /* Setup DMA buffer */
+    DmaStatus = GOLD_SetupDMABuffer(BufferStart, BufferSize);
+    if (DmaStatus == GOLD_Error)
+    {
+        return GOLD_Error;
+    }
+
+    /* Set the sample rate (configures MMA registers) */
+    GOLD_SetPlaybackRate(SampleRate);
+
+    /* Store the callback */
+    GOLD_CallBack = CallBackFunc;
+
+    /* Set initial volume */
+    GOLD_SetPCMVolume(GOLD_MainVolume);
+
+    /* Enable interrupts on PIC */
+    GOLD_EnableInterrupt();
+
+    /* Calculate transfer length per division */
+    if (NumDivisions > 0)
+    {
+        GOLD_TransferLength = BufferSize / NumDivisions;
+    }
+    else
+    {
+        GOLD_TransferLength = BufferSize;
+    }
+
+    /* Start playback on the Gold card */
+    GOLD_StartPlayback();
+
+    GOLD_WriteLog("GOLD_BeginBufferedPlayback: playback running\n");
+    return GOLD_Ok;
+}
+
+/*---------------------------------------------------------------------
+   Function: GOLD_GetCardInfo
+
+   Returns the maximum sample bits and channels supported.
+---------------------------------------------------------------------*/
+int GOLD_GetCardInfo(int *MaxSampleBits, int *MaxChannels)
+{
+    *MaxSampleBits = 8;
+    *MaxChannels = 2;
+
+    return GOLD_Ok;
+}
+
+/*---------------------------------------------------------------------
+   Function: GOLD_ServiceInterrupt
+
+   ISR for the Gold card DMA/FIFO interrupt.
+
+   The DMA controller is in auto-init mode, so it wraps automatically.
+   We acknowledge the interrupt, advance the software pointer, call
+   the mixer callback, and send EOI to the PIC.
+---------------------------------------------------------------------*/
 void __interrupt __far GOLD_ServiceInterrupt(void)
 {
     unsigned char status;
 
-    GetStack(&oldStackSelector, &oldStackPointer);
-    SetStack(StackSelector, StackPointer);
+    /* Acknowledge interrupt by reading control chip status register */
+    status = inp(GOLD_CTAddr);
 
-    /* Read MMA status to check for FIFO interrupt */
-    status = GOLD_MMAReadStatus();
-
-    /* Check if this is a FIFO interrupt from channel 0 (FIFO bit).
-     * FIFO (bit 1) corresponds to channel 0. */
-    if (!(status & GOLD_MMA_STATUS_FIFO_BIT))
+    /* Check if this was a sampling interrupt from the Gold card */
+    if (!(status & GOLD_CT_SMP_BIT))
     {
-        /* Not our interrupt - chain to the old handler */
-        SetStack(oldStackSelector, oldStackPointer);
+        /* Not our interrupt */
         _chain_intr(GOLD_OldInt);
         return;
     }
 
-    /*
-     * In DMA auto-init mode, the DMA controller automatically restarts
-     * transfers. We just need to update our tracking pointer.
-     */
+    /* Advance the software buffer pointer */
     GOLD_CurrentDMABuffer += GOLD_TransferLength;
+
     if (GOLD_CurrentDMABuffer >= GOLD_DMABufferEnd)
     {
         GOLD_CurrentDMABuffer = GOLD_DMABuffer;
     }
 
-    /* Call the mixing callback to prepare next buffer section */
+    /* Call the mixer callback */
     if (GOLD_CallBack != NULL)
     {
         MV_ServiceVoc();
     }
 
-    SetStack(oldStackSelector, oldStackPointer);
-
-    /* Send EOI to PIC(s) */
+    /* Send EOI to the PIC */
     if (GOLD_Config.Interrupt > 7)
     {
-        outp(0xA0, 0x20);
+        outp(0xA0, 0x20);  /* Slave PIC EOI */
     }
-    outp(0x20, 0x20);
+    outp(0x20, 0x20);  /* Master PIC EOI */
 }
 
-/* ------------------------------------------------------------------ */
-/*  Public API                                                        */
-/* ------------------------------------------------------------------ */
+/*---------------------------------------------------------------------
+   Function: GOLD_ResetMMA
 
+   Resets the MMA sampling channels.
+---------------------------------------------------------------------*/
+static void GOLD_ResetMMA(void)
+{
+    /* Reset FIFOs on both channels */
+    GOLD_WriteMMAReg(0, GOLD_MMA_PLAY_REC_CTL, GOLD_MMA_RST_BIT);
+    GOLD_WriteMMAReg(1, GOLD_MMA_PLAY_REC_CTL, GOLD_MMA_RST_BIT);
+
+    /* Clear reset by writing normal PRC with GO=0 */
+    GOLD_PRC0_Shadow = (unsigned char)(
+        GOLD_MMA_R_BIT |
+        GOLD_MMA_L_BIT |
+        GOLD_MMA_PCM_BIT |
+        GOLD_MMA_PR_BIT
+    );
+    GOLD_PRC1_Shadow = GOLD_PRC0_Shadow;
+
+    GOLD_WriteMMAReg(0, GOLD_MMA_PLAY_REC_CTL, GOLD_PRC0_Shadow);
+    GOLD_WriteMMAReg(1, GOLD_MMA_PLAY_REC_CTL, GOLD_PRC1_Shadow);
+
+    GOLD_WriteLog("GOLD_ResetMMA: MMA channels reset\n");
+}
+
+/*---------------------------------------------------------------------
+   Function: GOLD_DetectDevice
+
+   Detect the AdLib Gold card at the configured base I/O address.
+   Uses the control chip register echo test.
+---------------------------------------------------------------------*/
+static int GOLD_DetectDevice(void)
+{
+    unsigned char volL, volR;
+    unsigned char volL_tweak, volR_tweak;
+
+    GOLD_WriteLog("GOLD_DetectDevice: attempting detection\n");
+
+    /* Set up port addresses */
+    GOLD_CTAddr = (unsigned short)(GOLD_Config.Address + GOLD_CT_ADDR_OFFSET);
+    GOLD_CTData = (unsigned short)(GOLD_Config.Address + GOLD_CT_DATA_OFFSET);
+    GOLD_MMA0Addr = (unsigned short)(GOLD_Config.Address + GOLD_MMA0_ADDR_OFFSET);
+    GOLD_MMA0Data = (unsigned short)(GOLD_Config.Address + GOLD_MMA0_DATA_OFFSET);
+    GOLD_MMA1Addr = (unsigned short)(GOLD_Config.Address + GOLD_MMA1_ADDR_OFFSET);
+    GOLD_MMA1Data = (unsigned short)(GOLD_Config.Address + GOLD_MMA1_DATA_OFFSET);
+
+    /* Enable control chip access */
+    GOLD_EnableCtrl();
+
+    /* Read current FM volume registers */
+    volL = GOLD_ReadCtrlReg(0x09);
+    volR = GOLD_ReadCtrlReg(0x0A);
+
+    /* Tweak bits for verification */
+    volL_tweak = volL ^ 0x05;
+    volR_tweak = volR ^ 0x0A;
+
+    /* Write tweaked values back */
+    GOLD_WriteCtrlReg(0x09, volL_tweak);
+    GOLD_WriteCtrlReg(0x0A, volR_tweak);
+
+    /* Read back and verify */
+    if (GOLD_ReadCtrlReg(0x09) != volL_tweak)
+    {
+        GOLD_DisableCtrl();
+        GOLD_WriteLog("GOLD_DetectDevice: FAILED (reg 0x09 mismatch)\n");
+        return FALSE;
+    }
+
+    if (GOLD_ReadCtrlReg(0x0A) != volR_tweak)
+    {
+        GOLD_DisableCtrl();
+        GOLD_WriteLog("GOLD_DetectDevice: FAILED (reg 0x0A mismatch)\n");
+        return FALSE;
+    }
+
+    /* Control chip verified - restore original values */
+    GOLD_WriteCtrlReg(0x09, volL);
+    GOLD_WriteCtrlReg(0x0A, volR);
+
+    /* Disable control chip access */
+    GOLD_DisableCtrl();
+
+    GOLD_WriteLog("GOLD_DetectDevice: card detected successfully\n");
+    return TRUE;
+}
+
+/*---------------------------------------------------------------------
+   Function: GOLD_GetEnv
+
+   Retrieves the GOLD environment settings.
+   Format: GOLD=Axxxx Ii Dd
+---------------------------------------------------------------------*/
 int GOLD_GetEnv(GOLD_CONFIG *Config)
 {
-    char *gold_env;
-    int parsed;
-    unsigned int base;
-    unsigned int irq;
-    unsigned int dma;
+    char *GoldEnv;
+    char param;
 
-    gold_env = getenv("GOLD");
-    if (gold_env == NULL)
+    Config->Address = GOLD_DEFAULT_BASE;
+    Config->Interrupt = GOLD_DEFAULT_IRQ;
+    Config->Dma = GOLD_DEFAULT_DMA;
+
+    GoldEnv = getenv("GOLD");
+    if (GoldEnv == NULL)
     {
-        return GOLD_EnvNotFound;
+        GOLD_WriteLog("GOLD_GetEnv: no GOLD env var, using defaults\n");
+        return GOLD_Ok;
     }
 
-    parsed = sscanf(gold_env, "%x,%u,%u", &base, &irq, &dma);
-    if (parsed != 3)
+    while (*GoldEnv != 0)
     {
-        return GOLD_EnvNotFound;
+        if (*GoldEnv == ' ')
+        {
+            GoldEnv++;
+            continue;
+        }
+
+        param = toupper(*GoldEnv);
+        GoldEnv++;
+
+        if (!isxdigit(*GoldEnv))
+        {
+            continue;
+        }
+
+        switch (param)
+        {
+        case 'A':
+            sscanf(GoldEnv, "%x", &Config->Address);
+            break;
+        case 'I':
+            sscanf(GoldEnv, "%d", &Config->Interrupt);
+            break;
+        case 'D':
+            sscanf(GoldEnv, "%d", &Config->Dma);
+            break;
+        }
+
+        while (isxdigit(*GoldEnv))
+        {
+            GoldEnv++;
+        }
     }
 
-    if (Config != NULL)
-    {
-        Config->Address = base;
-        Config->Interrupt = irq;
-        Config->Dma = dma;
-    }
-
+    GOLD_WriteLog("GOLD_GetEnv: parsed GOLD environment\n");
     return GOLD_Ok;
 }
 
+/*---------------------------------------------------------------------
+   Function: GOLD_SetCardSettings
+
+   Sets up the Gold card's parameters.
+---------------------------------------------------------------------*/
 int GOLD_SetCardSettings(GOLD_CONFIG Config)
 {
-    if (Config.Address == 0 || Config.Interrupt == 0 ||
-        Config.Interrupt > 15 || Config.Dma > 3)
+    if (GOLD_Installed)
     {
-        return GOLD_InvalidParameter;
+        GOLD_Shutdown();
     }
 
     GOLD_Config.Address = Config.Address;
     GOLD_Config.Interrupt = Config.Interrupt;
     GOLD_Config.Dma = Config.Dma;
 
+    GOLD_WriteLog("GOLD_SetCardSettings: settings updated\n");
     return GOLD_Ok;
 }
 
+/*---------------------------------------------------------------------
+   Function: GOLD_GetCardSettings
+
+   Returns the current Gold card parameters.
+---------------------------------------------------------------------*/
 int GOLD_GetCardSettings(GOLD_CONFIG *Config)
 {
-    if (Config == NULL)
+    if (GOLD_Config.Address == 0)
     {
-        return GOLD_InvalidParameter;
+        return GOLD_Warning;
     }
 
-    *Config = GOLD_Config;
-    return GOLD_Ok;
-}
-
-void GOLD_SetPlaybackRate(unsigned rate)
-{
-    if (rate < GOLD_MinSamplingRate)
-    {
-        rate = GOLD_MinSamplingRate;
-    }
-    if (rate > GOLD_MaxSamplingRate)
-    {
-        rate = GOLD_MaxSamplingRate;
-    }
-
-    GOLD_SampleRate = rate;
-}
-
-unsigned GOLD_GetPlaybackRate(void)
-{
-    return GOLD_SampleRate;
-}
-
-int GOLD_SetMixMode(int mode)
-{
-    /* The YMZ263 uses interleaved stereo (ILV mode).
-     * We support mono and interleaved stereo in 8-bit format. */
-    if (mode > GOLD_MONO_8BIT)
-    {
-        mode = GOLD_MONO_8BIT;
-    }
-
-    if (mode & GOLD_STEREO)
-    {
-        GOLD_SamplePacketSize = GOLD_STEREO_8BIT_SAMPLE_SIZE;
-    }
-    else
-    {
-        GOLD_SamplePacketSize = GOLD_MONO_8BIT_SAMPLE_SIZE;
-    }
+    Config->Address = GOLD_Config.Address;
+    Config->Interrupt = GOLD_Config.Interrupt;
+    Config->Dma = GOLD_Config.Dma;
 
     return GOLD_Ok;
 }
 
-/*
- * Set the MMA output volume for the playback channel(s).
- * Register 0x0A: 0 = minimum volume, 0xFF = maximum volume.
- */
-int GOLD_SetPCMVolume(int volume)
+/*---------------------------------------------------------------------
+   Function: GOLD_AllocateIRQStack
+
+   Allocate conventional memory for the IRQ handler stack via DPMI.
+---------------------------------------------------------------------*/
+static unsigned short GOLD_AllocateIRQStack(unsigned short size)
 {
-    if (volume < 0)
+    union REGS regs;
+
+    memset(&regs, 0, sizeof(regs));
+    regs.w.ax = 0x0100;  /* DPMI allocate DOS memory */
+    regs.w.bx = (size + 15) / 16;
+
+    int386(0x31, &regs, &regs);
+    if (!regs.w.cflag)
     {
-        volume = 0;
-    }
-    if (volume > 255)
-    {
-        volume = 255;
+        return regs.w.dx;  /* Selector in DX */
     }
 
-    GOLD_MMAVolume = volume;
-
-    /* Map volume to MMA range (0=silent, 255=max). */
-    GOLD_MMAWrite(0, GOLD_MMA_VOLUME, (unsigned char)volume);
-    GOLD_MMAWrite(1, GOLD_MMA_VOLUME, (unsigned char)volume);
-
-    return GOLD_Ok;
+    return 0;
 }
 
-int GOLD_GetCardInfo(int *MaxSampleBits, int *MaxChannels)
+/*---------------------------------------------------------------------
+   Function: GOLD_DeallocateIRQStack
+
+   Free conventional memory allocated via DPMI.
+---------------------------------------------------------------------*/
+static void GOLD_DeallocateIRQStack(unsigned short selector)
 {
-    if (MaxSampleBits != NULL)
+    union REGS regs;
+
+    if (selector != 0)
     {
-        *MaxSampleBits = 8;
+        memset(&regs, 0, sizeof(regs));
+        regs.w.ax = 0x0101;
+        regs.w.dx = selector;
+        int386(0x31, &regs, &regs);
     }
-    if (MaxChannels != NULL)
-    {
-        *MaxChannels = 2;
-    }
-    return GOLD_Ok;
 }
 
-void GOLD_StopPlayback(void)
-{
-    if (!GOLD_Installed)
-    {
-        return;
-    }
+/*---------------------------------------------------------------------
+   Function: GOLD_Init
 
-    GOLD_SoundPlaying = FALSE;
-
-    /* Stop playback on channel 0 by clearing GO bit. */
-    GOLD_MMAWrite(0, GOLD_MMA_PLAY_REC_CTL,
-        GOLD_MMA_R_BIT | GOLD_MMA_PR_BIT | GOLD_MMA_PCM_BIT);
-
-    /* Disable DMA mode on channel 0. */
-    GOLD_MMAWrite(0, GOLD_MMA_FMT_CTL, GOLD_MMA_FIFO_INT_64);
-
-    /* Reset the channel to clear FIFO. */
-    GOLD_MMAResetChannel(0);
-
-    DMA_EndTransfer(GOLD_DMAChannel);
-    GOLD_DisableInterrupt();
-}
-
-/*
- * Begin buffered digital audio playback using DMA.
- *
- * Uses MMA channel 0 with DMA auto-init mode. The YMZ263 FIFO
- * is set to trigger interrupts at the specified FIFO_INT level.
- * Data format is 8-bit (most significant byte of 12-bit sample).
- */
-int GOLD_BeginBufferedPlayback(char *BufferStart, int BufferSize, int NumDivisions,
-                               unsigned SampleRate, int MixMode,
-                               void(*CallBackFunc)(void))
-{
-    const GOLD_SAMPLE_RATE_MAP *rate_cfg;
-    int status;
-    int dma_channel;
-    int int_sel;
-    unsigned char play_rec_ctl;
-    unsigned char fmt_ctl;
-
-    rate_cfg = GOLD_GetSampleRateConfig(SampleRate);
-    if (rate_cfg == NULL)
-    {
-        rate_cfg = &GOLD_SampleRateMap[2]; /* Default to 11.025 kHz */
-        SampleRate = 11025;
-    }
-
-    GOLD_SampleRate = SampleRate;
-    GOLD_CallBack = CallBackFunc;
-
-    if (MixMode & GOLD_STEREO)
-    {
-        GOLD_SamplePacketSize = GOLD_STEREO_8BIT_SAMPLE_SIZE;
-    }
-    else
-    {
-        GOLD_SamplePacketSize = GOLD_MONO_8BIT_SAMPLE_SIZE;
-    }
-
-    GOLD_DMAChannel = GOLD_Config.Dma;
-    dma_channel = GOLD_Config.Dma;
-
-    /* Calculate transfer length per division (FIFO interrupt boundary).
-     * The YMZ263 FIFO is 128 bytes. We want interrupts at 64-byte
-     * remaining threshold, meaning DMA should transfer 64 bytes at a
-     * time for optimal performance. However, to match FastDoom's
-     * buffer division scheme, we use the NumDivisions parameter. */
-    GOLD_TransferLength = BufferSize / NumDivisions;
-
-    /*
-     * Step 1: Reset the MMA channel 0.
-     */
-    GOLD_MMAResetChannel(0);
-
-    /*
-     * Step 2: Configure control chip - set IRQ and DMA.
-     */
-    GOLD_CtrlEnter();
-
-    int_sel = GOLD_IrqToIntSel(GOLD_Config.Interrupt);
-    if (int_sel < 0)
-    {
-        GOLD_CtrlExit();
-        return GOLD_InvalidIrq;
-    }
-
-    /* Register 0x13: Audio IRQ/DMA Select - Channel 0
-     * D7: DENO (DMA enable), D6-D4: DMA SEL 0,
-     * D3: AEN (Audio enable), D2-D0: INT SEL A */
-    status = GOLD_CtrlWrite(0x13,
-        GOLD_CT_DENO_BIT |
-        ((dma_channel & 0x07) << GOLD_CT_DMA_SEL_SHIFT) |
-        GOLD_CT_AEN_BIT |
-        (int_sel & 0x07));
-    if (status != GOLD_Ok)
-    {
-        GOLD_CtrlExit();
-        return status;
-    }
-
-    /* Register 0x14: DMA Select - Channel 1 (leave disabled). */
-    status = GOLD_CtrlWrite(0x14, 0x00);
-    if (status != GOLD_Ok)
-    {
-        GOLD_CtrlExit();
-        return status;
-    }
-
-    GOLD_CtrlExit();
-
-    /*
-     * Step 3: Set MMA channel 0 volume.
-     */
-    GOLD_MMAWrite(0, GOLD_MMA_VOLUME, (unsigned char)GOLD_MMAVolume);
-    GOLD_MMAWrite(1, GOLD_MMA_VOLUME, (unsigned char)GOLD_MMAVolume);
-
-    /*
-     * Step 4: Configure playback/recording control (register 0x09).
-     *
-     * Bits: RST | R | L | FREQ[1:0] | PCM | PR | GO
-     *
-     * - R=1, L=1: enable both left and right output
-     * - FREQ: sample rate select
-     * - PCM=1: PCM mode (uncompressed)
-     * - PR=1: playback mode
-     * - GO=0 initially (start after FIFO is filled)
-     */
-    play_rec_ctl = GOLD_MMA_R_BIT | GOLD_MMA_L_BIT |
-        (rate_cfg->freq_code & 0x03) << GOLD_MMA_FREQ_SHIFT |
-        GOLD_MMA_PCM_BIT | GOLD_MMA_PR_BIT;
-
-    GOLD_MMAWrite(0, GOLD_MMA_PLAY_REC_CTL, play_rec_ctl);
-
-    /*
-     * Step 5: Configure format and DMA control (register 0x0C).
-     *
-     * Bits: ILV | DATA_FMT[1:0] | FIFO_INT[3:0] | MSK | ENB
-     *
-     * - ILV=0: no interleaving (channel 0 only)
-     * - DATA_FMT=0: 8-bit format (8 MSBs of 12-bit sample)
-     * - FIFO_INT: set to 64-byte threshold (value 3)
-     * - MSK=0: enable FIFO interrupt
-     * - ENB=1: enable DMA mode
-     */
-    fmt_ctl = GOLD_MMA_DATA_FMT_8BIT |
-        GOLD_MMA_FIFO_INT_64 |
-        GOLD_MMA_DMA_ENB_BIT;
-
-    GOLD_MMAWrite(0, GOLD_MMA_FMT_CTL, fmt_ctl);
-
-    /*
-     * Step 6: Set up DMA channel for auto-init read (memory to device).
-     * DMA transfers data from system memory to the MMA FIFO.
-     * The YMZ263 uses DMA request line DRQ0 for channel 0.
-     */
-    status = DMA_SetupTransfer(dma_channel, BufferStart, BufferSize,
-                               DMA_AutoInitRead);
-    if (status != DMA_Ok)
-    {
-        return GOLD_DmaError;
-    }
-
-    /*
-     * Step 7: Fill the FIFO before starting playback.
-     * The MMA FIFO should never be empty when GO is set.
-     * We pre-fill it with enough data.
-     */
-    {
-        unsigned int fill_count = 128; /* Fill to near the top of the 128-byte FIFO */
-        unsigned int i;
-        unsigned char *fill_ptr = (unsigned char *)BufferStart;
-
-        for (i = 0; i < fill_count && i < (unsigned int)BufferSize; i++)
-        {
-            GOLD_MMAPutData(0, fill_ptr[i]);
-        }
-    }
-
-    /*
-     * Step 8: Start playback by setting the GO bit.
-     */
-    GOLD_MMAWrite(0, GOLD_MMA_PLAY_REC_CTL, play_rec_ctl | GOLD_MMA_GO_BIT);
-
-    /*
-     * Step 9: Enable the IRQ line.
-     */
-    GOLD_EnableInterrupt();
-
-    /* Save buffer tracking state. */
-    GOLD_DMABuffer = BufferStart;
-    GOLD_DMABufferEnd = BufferStart + BufferSize;
-    GOLD_CurrentDMABuffer = BufferStart;
-    GOLD_TotalDMABufferSize = BufferSize;
-
-    GOLD_SoundPlaying = TRUE;
-
-    return GOLD_Ok;
-}
-
-/* ------------------------------------------------------------------ */
-/*  Detection                                                         */
-/* ------------------------------------------------------------------ */
-
-static int GOLD_Detect(void)
-{
-    unsigned char id_byte;
-    int status;
-
-    /* Enter control chip mode. */
-    GOLD_CtrlEnter();
-
-    /* Read register 0 to get model ID.
-     * Lower 2 bits are MODEL ID: 0=Gold 2000, 1=Gold 1000, 2=Gold 2000MC */
-    status = GOLD_CtrlRead(0x00, &id_byte);
-    if (status != GOLD_Ok)
-    {
-        GOLD_CtrlExit();
-        return GOLD_Error;
-    }
-
-    GOLD_CtrlExit();
-
-    /* Check if lower 2 bits are a valid model ID (0, 1, or 2). */
-    if ((id_byte & 0x03) > 2)
-    {
-        return GOLD_Error;
-    }
-
-    return GOLD_Ok;
-}
-
-/* ------------------------------------------------------------------ */
-/*  Initialization / Shutdown                                         */
-/* ------------------------------------------------------------------ */
-
+   Initializes the Gold card and prepares the driver for playback.
+---------------------------------------------------------------------*/
 int GOLD_Init(void)
 {
-    GOLD_CONFIG config;
     int status;
+    int irq;
+
+    GOLD_WriteLog("GOLD_Init: initializing AdLib Gold driver\n");
 
     if (GOLD_Installed)
     {
         GOLD_Shutdown();
     }
 
-    /* Try to get configuration from environment variable. */
-    status = GOLD_GetEnv(&config);
-    if (status == GOLD_Ok)
+    if (GOLD_Config.Address == 0)
     {
-        GOLD_Config.Address = config.Address;
-        GOLD_Config.Interrupt = config.Interrupt;
-        GOLD_Config.Dma = config.Dma;
-    }
-    else
-    {
-        /* Fall back to defaults. */
-        GOLD_Config.Address = GOLD_DEFAULT_BASE;
-        GOLD_Config.Interrupt = GOLD_DEFAULT_IRQ;
-        GOLD_Config.Dma = GOLD_DEFAULT_DMA;
-    }
-
-    /* Clamp DMA channel (Gold 1000 supports only DMA 1-3). */
-    if (GOLD_Config.Dma > 3)
-    {
-        GOLD_Config.Dma = GOLD_DEFAULT_DMA;
-    }
-
-    /* Map IRQ to interrupt vector. */
-    if (GOLD_Config.Interrupt < 8)
-    {
-        GOLD_InterruptVector = 0x08 + GOLD_Config.Interrupt;
-    }
-    else
-    {
-        GOLD_InterruptVector = 0x70 + (GOLD_Config.Interrupt - 8);
-    }
-
-    /* Verify card presence. */
-    status = GOLD_Detect();
-    if (status != GOLD_Ok)
-    {
+        GOLD_WriteLog("GOLD_Init: ERROR - no base address configured\n");
         return GOLD_Error;
     }
 
-    /* Save current PIC masks for restoration later. */
-    if (GOLD_Config.Interrupt < 8)
+    /* Save the interrupt controller masks */
+    GOLD_IntController1Mask = inp(0x21);
+    GOLD_IntController2Mask = inp(0xA1);
+
+    /* Detect the card */
+    if (!GOLD_DetectDevice())
     {
-        GOLD_IntController1Mask = inp(0x21);
+        GOLD_WriteLog("GOLD_Init: ERROR - card not detected\n");
+        return GOLD_Error;
+    }
+
+    /* Verify DMA channel */
+    if (GOLD_Config.Dma != GOLD_INVALID)
+    {
+        status = DMA_VerifyChannel(GOLD_Config.Dma);
+        if (status == DMA_Error)
+        {
+            GOLD_WriteLog("GOLD_Init: ERROR - DMA channel invalid\n");
+            return GOLD_Error;
+        }
+    }
+
+    /* Use DMA channel from config (or auto-detected from control chip) */
+    GOLD_DMAChannel = GOLD_Config.Dma;
+
+    /*
+     * If DMA was not set in config, try to read it from the control
+     * chip register 0x13 (DMA SEL 0 bits).
+     */
+    if (GOLD_DMAChannel == GOLD_INVALID || GOLD_DMAChannel == GOLD_DEFAULT_DMA)
+    {
+        unsigned char ctr13;
+
+        GOLD_EnableCtrl();
+        ctr13 = GOLD_ReadCtrlReg(GOLD_CT_REG_AUDIO_IRQ_DMA0);
+        GOLD_DisableCtrl();
+
+        /* Extract DMA channel from bits 6-4 */
+        GOLD_DMAChannel = (ctr13 >> GOLD_CT_DMA_SEL_SHIFT) & 0x07;
+
+        /* Also extract IRQ from bits 2-0 */
+        {
+            unsigned char irqIdx;
+            const unsigned char selected_IRQ[] =
+            { 3, 4, 5, 7, 10, 11, 12, 15 };
+
+            irqIdx = ctr13 & GOLD_CT_INT_SEL_MASK;
+            if (irqIdx < 8)
+            {
+                GOLD_Config.Interrupt = selected_IRQ[irqIdx];
+            }
+        }
+
+        GOLD_WriteLog("GOLD_Init: auto-detected DMA and IRQ from control chip\n");
+    }
+
+    /* Verify IRQ is valid */
+    irq = GOLD_Config.Interrupt;
+    if (!VALID_IRQ(irq))
+    {
+        GOLD_WriteLog("GOLD_Init: ERROR - invalid IRQ\n");
+        return GOLD_Error;
+    }
+
+    GOLD_Interrupt = GOLD_Interrupts[irq];
+    if (GOLD_Interrupt == GOLD_INVALID)
+    {
+        GOLD_WriteLog("GOLD_Init: ERROR - no interrupt vector for IRQ\n");
+        return GOLD_Error;
+    }
+
+    /* Allocate IRQ handler stack in conventional memory */
+    GOLD_StackSelector = GOLD_AllocateIRQStack(GOLD_STACK_SIZE);
+    if (GOLD_StackSelector == 0)
+    {
+        GOLD_WriteLog("GOLD_Init: ERROR - could not allocate IRQ stack\n");
+        return GOLD_Error;
+    }
+
+    /* Leave room at top of stack */
+    GOLD_StackPointer = GOLD_STACK_SIZE - sizeof(long);
+
+    /* Save old interrupt handler and install ours */
+    GOLD_OldInt = _dos_getvect(GOLD_Interrupt);
+    if (irq < 8)
+    {
+        _dos_setvect(GOLD_Interrupt, GOLD_ServiceInterrupt);
     }
     else
     {
-        GOLD_IntController1Mask = inp(0x21);
-        GOLD_IntController2Mask = inp(0xA1);
-    }
-
-    /* Save old interrupt vector and install ours. */
-    GOLD_OldInt = _dos_getvect(GOLD_InterruptVector);
-    _dos_setvect(GOLD_InterruptVector, GOLD_ServiceInterrupt);
-
-    /* Allocate DPMI stack for interrupt handler. */
-    {
-        union REGS regs;
-        memset(&regs, 0, sizeof(regs));
-        regs.w.ax = 0x100;
-        regs.w.bx = (kStackSize + 15) / 16;
-        int386(0x31, &regs, &regs);
-        if (regs.w.cflag)
+        status = IRQ_SetVector(GOLD_Interrupt, GOLD_ServiceInterrupt);
+        if (status != IRQ_Ok)
         {
-            _dos_setvect(GOLD_InterruptVector, GOLD_OldInt);
-            return GOLD_DPMI_Error;
+            GOLD_DeallocateIRQStack(GOLD_StackSelector);
+            GOLD_StackSelector = 0;
+            GOLD_WriteLog("GOLD_Init: ERROR - IRQ_SetVector failed\n");
+            return GOLD_Error;
         }
-        StackSelector = regs.w.dx;
-        StackPointer = kStackSize - sizeof(long);
     }
 
-    /* Default volume. */
-    GOLD_MMAVolume = 0xFF;
+    /* Initialize state */
+    GOLD_SoundPlaying = FALSE;
+    GOLD_CallBack = NULL;
+    GOLD_DMABuffer = NULL;
+    GOLD_MainVolume = 255;
+
+    /* Configure control chip: set mix/filter to playback mode */
+    GOLD_EnableCtrl();
+    {
+        unsigned char mixSel;
+        unsigned char ctr13;
+
+        /* Set mix select register 0x11 to playback mode */
+        mixSel = GOLD_ReadCtrlReg(GOLD_CT_REG_MIX_SELECT);
+        mixSel &= 0xFC;  /* Clear bits 0-1 for playback filters */
+        GOLD_WriteCtrlReg(GOLD_CT_REG_MIX_SELECT, mixSel);
+
+        /* Read current IRQ/DMA register for saving */
+        ctr13 = GOLD_ReadCtrlReg(GOLD_CT_REG_AUDIO_IRQ_DMA0);
+        GOLD_CTR13_Save = ctr13;
+
+        /* Enable DMA and audio interrupt for channel 0 */
+        ctr13 |= GOLD_CT_DENO_BIT | GOLD_CT_AEN_BIT;
+        /* Set DMA channel in register */
+        ctr13 &= ~(0x70);  /* Clear DMA SEL bits */
+        ctr13 |= ((GOLD_DMAChannel & 0x07) << GOLD_CT_DMA_SEL_SHIFT);
+        GOLD_WriteCtrlReg(GOLD_CT_REG_AUDIO_IRQ_DMA0, ctr13);
+    }
+    GOLD_DisableCtrl();
+
+    /* Reset MMA channels */
+    GOLD_ResetMMA();
+
+    /* Set default sample rate and volume */
+    GOLD_SetPlaybackRate(GOLD_DefaultSampleRate);
+    GOLD_SetPCMVolume(GOLD_MainVolume);
 
     GOLD_Installed = TRUE;
 
+    GOLD_WriteLog("GOLD_Init: initialization complete\n");
     return GOLD_Ok;
 }
 
+/*---------------------------------------------------------------------
+   Function: GOLD_Shutdown
+
+   Ends playback and restores system resources.
+---------------------------------------------------------------------*/
 void GOLD_Shutdown(void)
 {
+    int irq;
+
+    GOLD_WriteLog("GOLD_Shutdown: shutting down AdLib Gold driver\n");
+
     if (!GOLD_Installed)
     {
         return;
     }
 
-    if (GOLD_SoundPlaying)
+    /* Stop playback */
+    GOLD_StopPlayback();
+
+    /* Reset MMA */
+    GOLD_ResetMMA();
+
+    /* Restore control chip settings */
+    GOLD_EnableCtrl();
+    GOLD_WriteCtrlReg(GOLD_CT_REG_AUDIO_IRQ_DMA0, GOLD_CTR13_Save);
+    GOLD_DisableCtrl();
+
+    /* Restore the original interrupt vector */
+    irq = GOLD_Config.Interrupt;
+    if (irq >= 8)
     {
-        GOLD_StopPlayback();
+        IRQ_RestoreVector(GOLD_Interrupt);
     }
+    _dos_setvect(GOLD_Interrupt, GOLD_OldInt);
 
-    /* Restore PIC masks. */
-    {
-        int irq = GOLD_Config.Interrupt;
-        if (irq < 8)
-        {
-            outp(0x21, GOLD_IntController1Mask);
-        }
-        else
-        {
-            outp(0xA1, GOLD_IntController2Mask);
-            outp(0x21, GOLD_IntController1Mask);
-        }
-    }
+    /* Free IRQ stack */
+    GOLD_DeallocateIRQStack(GOLD_StackSelector);
+    GOLD_StackSelector = 0;
 
-    /* Restore old interrupt vector. */
-    _dos_setvect(GOLD_InterruptVector, GOLD_OldInt);
-
-    /* Free DPMI stack. */
-    if (StackSelector != 0)
-    {
-        union REGS regs;
-        memset(&regs, 0, sizeof(regs));
-        regs.w.ax = 0x101;
-        regs.w.dx = StackSelector;
-        int386(0x31, &regs, &regs);
-        StackPointer = 0;
-        StackSelector = 0;
-    }
-
-    GOLD_Installed = FALSE;
     GOLD_SoundPlaying = FALSE;
+    GOLD_DMABuffer = NULL;
+    GOLD_CallBack = NULL;
+    GOLD_Installed = FALSE;
+
+    /* Close log file */
+    if (GOLD_LogFile != NULL)
+    {
+        fclose(GOLD_LogFile);
+        GOLD_LogFile = NULL;
+    }
+
+    GOLD_WriteLog("GOLD_Shutdown: shutdown complete\n");
 }
