@@ -156,6 +156,7 @@ static volatile long GOLD_DmaReprogCount = 0;
 static volatile unsigned char GOLD_LastIrqStatus = 0;
 static volatile unsigned char GOLD_LastIrqMma0 = 0;
 static volatile unsigned char GOLD_LastIrqMma1 = 0;
+static volatile long GOLD_PioOverflowCount = 0;
 
 void (*GOLD_CallBack)(void);
 
@@ -481,69 +482,67 @@ void GOLD_SetPlaybackRate(unsigned rate)
 
     /*
      * Format control register 0x0C:
-     *   D7: ILV   - Interleave (0 for mono)
+     *   D7: ILV   - Interleave (channel 0 only)
      *   D6-5: DATA FORMAT[1:0] - 0 = 8-bit MSB format
-     *   D4-1: FIFO INT[3:0]    - Interrupt level
+     *   D4-1: FIFO INT[3:0]    - Interrupt threshold
      *   D0: ENB   - DMA enable
      *
-     * AIL2 for mono: SFC_0 = 00000101b (FIFO_INT=2, ENB=1)
-     *                SFC_1 = 00000010b (basic, no DMA)
-     * AIL2 for stereo: SFC_0 = 10000101b (ILV, FIFO_INT=2, ENB=1)
-     *                  SFC_1 = 00000011b (FIFO_INT=1, ENB=1)
+     * FIFO INT threshold values:
+     *   0 = 112 bytes remaining, 1 = 96, 2 = 80, 3 = 64,
+     *   4 = 48, 5 = 32, 6 = 16, 7 = prohibited
+     *
+     * Per AIL2 DMASOUND.ASM SFC_0_values/SFC_1_values tables:
+     *   mono 8-bit PCM:   SFC_0 = 00000101b (0x05), SFC_1 = 00000010b (0x02)
+     *   stereo 8-bit PCM: SFC_0 = 10000101b (0x85), SFC_1 = 00000011b (0x03)
+     *
+     * Channel 0 uses FIFO_INT=0 (IRQ when FIFO drops below 112 bytes).
+     * This fires VERY early, giving the IRQ handler maximum time to
+     * reprogram DMA before FIFO underrun. Only ~16 bytes are consumed
+     * before the IRQ fires, leaving 112 bytes still playing.
+     *
+     * Channel 1 uses FIFO_INT=1 (IRQ when FIFO drops below 96 bytes).
+     *
+     * For stereo, ILV bit is set on channel 0 to interleave data from
+     * both DMA channels into a single stereo stream.
      */
     if (GOLD_MixMode & GOLD_STEREO)
     {
-        fmt0 = (unsigned char)(
-            GOLD_MMA_ILV_BIT |
-            ((2 << GOLD_MMA_FIFO_INT_SHIFT) & 0x1E) |
-            GOLD_MMA_DMA_ENB_BIT
-        );
-        fmt1 = (unsigned char)(
-            ((1 << GOLD_MMA_FIFO_INT_SHIFT) & 0x1E) |
-            GOLD_MMA_DMA_ENB_BIT
-        );
+        fmt0 = 0x90;    /* ILV=1, FIFO_INT=4, MSK=0, ENB=0 */
+        fmt1 = 0x02;    /* FIFO_INT=0, MSK=1, ENB=0 */
     }
     else
     {
-        fmt0 = (unsigned char)(
-            ((2 << GOLD_MMA_FIFO_INT_SHIFT) & 0x1E) |
-            GOLD_MMA_DMA_ENB_BIT
-        );
-        fmt1 = 0x02;
+        fmt0 = 0x10;    /* FIFO_INT=4, MSK=0, ENB=0 */
+        fmt1 = 0x02;    /* FIFO_INT=0, MSK=1, ENB=0 */
     }
 
-    /* Reset FIFOs first */
+    /*
+     * Per AIL2 DMASOUND.ASM set_sample_rate:
+     *   1. Reset both FIFOs
+     *   2. Write 4 dummy bytes to channel 0 FIFO
+     *   3. Set PRC (playback control) with frequency
+     *   4. Set SFC (format control)
+     */
     GOLD_WriteMMAReg(0, GOLD_MMA_PLAY_REC_CTL, GOLD_MMA_RST_BIT);
     GOLD_WriteMMAReg(1, GOLD_MMA_PLAY_REC_CTL, GOLD_MMA_RST_BIT);
 
-    /*
-     * Write 4 dummy bytes to channel 0's FIFO for proper
-     * DMA initialization (from AIL2 driver).
-     * AIL2 only writes dummy bytes to channel 0.
-     */
+    /* Write 4 dummy bytes to channel 0 FIFO for proper DMA init */
     GOLD_WriteMMAReg(0, GOLD_MMA_PCM_DATA, 0);
     GOLD_WriteMMAReg(0, GOLD_MMA_PCM_DATA, 0);
     GOLD_WriteMMAReg(0, GOLD_MMA_PCM_DATA, 0);
     GOLD_WriteMMAReg(0, GOLD_MMA_PCM_DATA, 0);
-
-    /* Set format control on both channels */
-    GOLD_WriteMMAReg(0, GOLD_MMA_FMT_CTL, fmt0);
-    GOLD_WriteMMAReg(1, GOLD_MMA_FMT_CTL, fmt1);
-
-    /*
-     * Enable YMZ263 interrupts on channel 0.
-     * Register 0x0D: IEN=1 (enable unmasked interrupts), F0M=0 (FIFO0 unmasked).
-     * This is required for the FIFO0 interrupt to fire when the FIFO drops
-     * to the threshold. Without IEN=1, no interrupts are generated.
-     */
-    GOLD_WriteMMAReg(0, GOLD_MMA_MIDI_IRQ_CTL, GOLD_MMA_IEN_BIT);
 
     /* Save PRC shadows with GO=0 (set in StartPlayback) */
     GOLD_PRC0_Shadow = prc0;
     GOLD_PRC1_Shadow = prc1;
 
+    /* Set PRC with frequency and channel config */
     GOLD_WriteMMAReg(0, GOLD_MMA_PLAY_REC_CTL, prc0);
     GOLD_WriteMMAReg(1, GOLD_MMA_PLAY_REC_CTL, prc1);
+
+    /* Set format control on both channels */
+    GOLD_WriteMMAReg(0, GOLD_MMA_FMT_CTL, fmt0);
+    GOLD_WriteMMAReg(1, GOLD_MMA_FMT_CTL, fmt1);
 
     /* Update the actual sample rate */
     GOLD_SampleRate = GOLD_PCM_Rates[rateIdx];
@@ -581,27 +580,30 @@ int GOLD_SetMixMode(int mode)
     GOLD_MixMode = mode;
 
     /*
-     * Recompute format control based on mix mode.
-     * AIL2 uses FIFO_INT=2 (80 bytes threshold) for mono.
-     * AIL2 uses FIFO_INT=2 + ILV for stereo.
+     * Set format control based on mix mode.
+     * PIO mode: ENB=0 (DMA disabled), MSK=0 (interrupt enabled).
+     * FIFO_INT (bits 4-2) = 4: IRQ fires at 48 bytes remaining.
+     * IRQ handler writes 80 bytes to FIFO via PIO, refilling to ~128.
+     *
+     * SFC register layout:
+     *   Bit 7: ILV (interleave stereo channels)
+     *   Bits 6-5: DATAFMT (00=8-bit, 01=16-bit)
+     *   Bits 4-2: FIFO_INT (threshold index)
+     *   Bit 1: MSK (1=mask interrupt)
+     *   Bit 0: ENB (1=DMA mode, 0=PIO mode)
+     *
+     * FIFO_INT table:
+     *   0=112, 1=96, 2=80, 3=64, 4=48, 5=32, 6=16 (bytes remaining)
      */
-    fmt0 = (unsigned char)(
-        ((2 << GOLD_MMA_FIFO_INT_SHIFT) & 0x1E) |
-        GOLD_MMA_DMA_ENB_BIT
-    );
-
     if (mode & GOLD_STEREO)
     {
-        fmt0 |= GOLD_MMA_ILV_BIT;
-        fmt1 = (unsigned char)(
-            ((1 << GOLD_MMA_FIFO_INT_SHIFT) & 0x1E) |
-            GOLD_MMA_DMA_ENB_BIT
-        );
+        fmt0 = 0x90;    /* ILV=1, FIFO_INT=4, MSK=0, ENB=0 */
+        fmt1 = 0x02;    /* FIFO_INT=0, MSK=1, ENB=0 */
     }
     else
     {
-        /* Mono: channel 1 disabled (AIL2 SFC_1 = 0x02) */
-        fmt1 = 0x02;
+        fmt0 = 0x10;    /* FIFO_INT=4, MSK=0, ENB=0 */
+        fmt1 = 0x02;    /* FIFO_INT=0, MSK=1, ENB=0 */
     }
 
     /* Only reconfigure if not playing */
@@ -663,6 +665,12 @@ static void GOLD_StartPlayback(void)
 
     GOLD_SoundPlaying = TRUE;
 
+    /* Reset diagnostic counters */
+    GOLD_IrqCount = 0;
+    GOLD_SpuriousIrqCount = 0;
+    GOLD_DmaReprogCount = 0;
+    GOLD_PioOverflowCount = 0;
+
     GOLD_WriteLog("GOLD_StartPlayback: playback started\n");
 }
 
@@ -723,7 +731,9 @@ void GOLD_StopPlayback(void)
     GOLD_WriteLogNumSigned(GOLD_SpuriousIrqCount);
     GOLD_WriteLog(" dmaReprog=");
     GOLD_WriteLogNumSigned(GOLD_DmaReprogCount);
-    GOLD_WriteLog(" lastStatus=0x");
+    GOLD_WriteLog(" pioOverflow=");
+    GOLD_WriteLogNumSigned(GOLD_PioOverflowCount);
+    GOLD_WriteLog(" lastYMZ263Status=0x");
     GOLD_WriteHexChar(GOLD_LastIrqStatus);
     GOLD_WriteLog(" mma0=0x");
     GOLD_WriteHexChar(GOLD_LastIrqMma0);
@@ -816,20 +826,103 @@ static int GOLD_SetupDMABuffer(char *BufferPtr, int BufferSize)
 }
 
 /*---------------------------------------------------------------------
+   Function: GOLD_ProgramDMAC
+
+   Programs the 8237 DMA controller for a single DMA read transfer.
+   Matches AIL2 DMASOUND.ASM program_DMAC sequence exactly.
+
+   This function DOES unmask the channel at the end (step 7),
+   matching AIL2's "mov ax,DSP_DMA / or ax,0h / out 0ah,al".
+   The 8237 will begin transferring when the YMZ263 asserts DREQ.
+
+   Args:
+     addr  - 20-bit physical address to transfer from
+     count - number of bytes to transfer (not count-1)
+---------------------------------------------------------------------*/
+static void GOLD_ProgramDMAC(char *addr, int count)
+{
+    unsigned char ch;
+    unsigned char pagePort;
+    unsigned short page;
+    unsigned long addrVal;
+
+    /*
+     * 8237 page register port mapping (non-linear!):
+     *   Ch 0: 0x87, Ch 1: 0x83, Ch 2: 0x81, Ch 3: 0x82
+     *   Ch 5: 0x8B, Ch 6: 0x89, Ch 7: 0x8A
+     * Per AIL2: DMAPAG_offset db 07h,03h,01h,02h,-1,0bh,09h,0ah
+     */
+    static const unsigned char GOLD_DMAPAG_offset[8] =
+        {0x07, 0x03, 0x01, 0x02, 0xFF, 0x0B, 0x09, 0x0A};
+
+    ch = (unsigned char)(GOLD_DMAChannel & 0x03);
+    addrVal = (unsigned long)addr;
+    page = (unsigned short)(addrVal >> 16);
+    pagePort = (unsigned char)(0x80 + GOLD_DMAPAG_offset[GOLD_DMAChannel]);
+
+    /* 1. Mask channel (DMASET) */
+    outp(0x0A, (unsigned char)(0x04 | ch));
+
+    /* 2. Write page register (correct port via lookup table) */
+    outp(pagePort, (unsigned char)(page & 0xFF));
+
+    /* 3. Clear byte pointer flip-flop */
+    outp(0x0C, 0);
+
+    /* 4. Write address (lo, hi) to channel port - auto-increments */
+    outp((unsigned short)(ch << 1), (unsigned char)(addrVal & 0xFF));
+    outp((unsigned short)(ch << 1),
+         (unsigned char)((addrVal >> 8) & 0xFF));
+
+    /* 5. Write count (lo, hi) to channel+1 port - auto-increments */
+    /* 8237 count register holds (length-1) */
+    outp((unsigned short)((ch << 1) + 1),
+         (unsigned char)((count - 1) & 0xFF));
+    outp((unsigned short)((ch << 1) + 1),
+         (unsigned char)(((count - 1) >> 8) & 0xFF));
+
+    /* 6. Write mode register (0x68 = demand mode, increment, read) */
+    /* Demand mode: DMA pauses when DREQ deasserts (FIFO full), */
+    /* resumes when DREQ reasserts (FIFO drains). This transfers */
+    /* the FULL programmed count, not just until FIFO fills. */
+    /* Single-shot (0x48) terminates on DREQ deassert, losing */
+    /* remaining bytes and causing IRQ storms. */
+    outp(0x0B, (unsigned char)(0x68 | ch));
+
+    /* 7. Unmask DMA channel (DMACMD, mask bit = 0) */
+    /* Per AIL2: "mov ax,DSP_DMA / or ax,0h / out 0ah,al" */
+    /* Bit 4 of command register = 0 means unmask selected channel. */
+    outp(0x0A, ch);
+
+    /* Channel is now unmasked. The 8237 will respond to DREQ */
+    /* from the YMZ263 and begin the transfer automatically. */
+}
+
+/*---------------------------------------------------------------------
    Function: GOLD_ProgramDMAChunk
 
-   Programs the DMAC for a single DMA read transfer (single-shot mode).
+   Programs the DMAC for a DMA read transfer (demand mode).
    Transfers from GOLD_CurrentDMABuffer to the YMZ263 FIFO.
 
-   The YMZ263 has a 128-byte FIFO. In DMA mode, the YMZ263 asserts
-   DREQ when its FIFO has room for data. The DMA controller transfers
-   one byte at a time, waiting for DREQ between transfers.
+   The YMZ263 has a 128-byte FIFO per channel. In DMA mode, data is
+   transferred directly to the FIFO. The YMZ263 plays from the FIFO
+   at the configured sample rate. When the FIFO drops below the
+   interrupt threshold, a FIFO interrupt fires. The IRQ handler
+   reprograms the DMA for the next chunk.
 
-   When the DMA transfer completes, the YMZ263 continues draining its
-   FIFO. When the FIFO drops to the interrupt threshold, the YMZ263
-   fires a FIFO interrupt. This interrupt is routed through the
-   control chip to the CPU (via IRQ), where GOLD_ServiceInterrupt
-   reprograms the next DMA chunk.
+   Demand mode (0x68): DMA pauses when DREQ deasserts (FIFO full),
+   resumes when DREQ reasserts (FIFO has room). The FULL programmed
+   count is transferred across multiple pause/resume cycles.
+
+   This is CRITICAL: single-shot mode (0x48) terminates when DREQ
+   deasserts, losing untransferred bytes. With FIFO_INT=1 (threshold
+   = 112), only 16 bytes would transfer before FIFO fills, but the
+   buffer would advance by chunkSize (256). This causes the buffer
+   to skip ahead 16x, producing "popped" audio.
+
+   With demand mode, all chunkSize bytes transfer. The IRQ fires
+   after chunkSize bytes are consumed. Buffer advancement matches
+   actual playback.
 ---------------------------------------------------------------------*/
 static void GOLD_ProgramDMAChunk(void)
 {
@@ -854,9 +947,8 @@ static void GOLD_ProgramDMAChunk(void)
         GOLD_CurrentDMABuffer = GOLD_DMABuffer;
     }
 
-    /* Program DMA for this chunk */
-    DMA_SetupTransfer(GOLD_DMAChannel, chunkAddr, chunkSize,
-                      DMA_SingleShotRead);
+    /* Program DMA for this chunk (custom AIL2-compatible sequence) */
+    GOLD_ProgramDMAC(chunkAddr, chunkSize);
 }
 
 /*---------------------------------------------------------------------
@@ -1014,39 +1106,78 @@ int GOLD_GetCardInfo(int *MaxSampleBits, int *MaxChannels)
 }
 
 /*---------------------------------------------------------------------
+   Function: GOLD_FifoWritePIO
+
+   Writes audio data directly to the YMZ263 FIFO via PIO.
+   Selects the FIFO data register (0x0B) and writes each byte.
+
+   Args:
+     data  - pointer to audio data
+     count - number of bytes to write
+---------------------------------------------------------------------*/
+static void GOLD_FifoWritePIO(char *data, int count)
+{
+    int i;
+    unsigned char status;
+
+    /* Check for FIFO overrun before writing */
+    status = inp(GOLD_MMA0Addr);
+    if (status & 0x80)
+    {
+        GOLD_PioOverflowCount++;
+    }
+
+    /* Select FIFO data register (0x0B) on channel 0 */
+    outp(GOLD_MMA0Addr, GOLD_MMA_PCM_DATA);
+
+    /* Write each byte to the FIFO data port */
+    for (i = 0; i < count; i++)
+    {
+        GOLD_MMADelay();
+        outp(GOLD_MMA0Data, (unsigned char)data[i]);
+    }
+}
+
+/*---------------------------------------------------------------------
    Function: GOLD_ServiceInterrupt
 
-   ISR for the Gold card DMA/FIFO interrupt.
+   ISR for the Gold card FIFO interrupt.
 
-   The DMA controller is in single-shot mode. Each DMA chunk fills
-   the YMZ263 FIFO. When the FIFO drops below the interrupt threshold,
-   the YMZ263 generates a FIFO interrupt. This interrupt is routed
-   through the control chip to the CPU (via IRQ).
+   Uses PIO mode: audio data is written directly to the YMZ263 FIFO
+   via I/O port writes, bypassing DMA entirely. This works around
+   emulator issues with YMZ263 DMA support (86Box, DOSBox).
 
-   Per AIL2 DMASOUND.ASM, the Gold card IRQ handler:
-     1. Reads CT address port (status register) to check FIF0 bit
-     2. If FIF0 bit is set, this is our interrupt
-     3. Calls mixer callback to refill buffer
-     4. Reprograms DMA for the next chunk
-     5. Sends EOI to PIC
+   The YMZ263 has a 128-byte FIFO per channel. The FIFO interrupt
+   fires when the FIFO drops below the configured threshold
+   (FIFO_INT=4: 48 bytes remaining). The IRQ handler writes 64 bytes
+   to refill the FIFO.
 
-   Note: AIL2 checks bit 0 ("FIF0 interrupt"). The Gold developer docs
-   label bit 0 as "FM interrupt" and bit 1 as "Sampling interrupt".
-   We check both to be safe.
+   Per AIL2 DMASOUND.ASM (ADLIBG section), the IRQ handler reads
+   MMA channel 0 address port for FIF0 bit, then services the IRQ.
 ---------------------------------------------------------------------*/
 void __interrupt __far GOLD_ServiceInterrupt(void)
 {
     unsigned char status;
+    int bytesToWrite;
+    char *pioAddr;
 
-    /* Read control chip status register (serves as interrupt ack) */
-    status = inp(GOLD_CTAddr);
+    /*
+     * Read YMZ263 channel 0 status register.
+     * Bit 0 (FIFO0) indicates the FIFO interrupt has fired.
+     *
+     * Per AIL2 DMASOUND.ASM:
+     *    mov  dx,DSP_ADDR
+     *    in   al,dx
+     *    and  al,00000001b      ;FIF0 interrupt?
+     *    jz   __EOI              ;no, exit
+     */
+    status = inp(GOLD_MMA0Addr);
 
     /* Save for diagnostics */
     GOLD_LastIrqStatus = status;
 
-    /* Check bit 0 (FIF0, per AIL2) or bit 1 (SMP sampling interrupt) */
-    /* Gold card does NOT share its IRQ, so no _chain_intr needed. */
-    if ((status & 0x03) == 0)
+    /* Check bit 0: FIF0 (FIFO0 interrupt from YMZ263) */
+    if ((status & 0x01) == 0)
     {
         /* Spurious interrupt - still send EOI to avoid lockup */
         GOLD_SpuriousIrqCount++;
@@ -1063,7 +1194,7 @@ void __interrupt __far GOLD_ServiceInterrupt(void)
     GOLD_IrqCount++;
 
     /* Capture YMZ263 status for diagnostics */
-    GOLD_LastIrqMma0 = inp(GOLD_MMA0Addr);
+    GOLD_LastIrqMma0 = status;
     GOLD_LastIrqMma1 = inp(GOLD_MMA1Addr);
 
     /* Call the mixer callback to refill the consumed portion */
@@ -1072,11 +1203,38 @@ void __interrupt __far GOLD_ServiceInterrupt(void)
         MV_ServiceVoc();
     }
 
-    /* Reprogram DMA for the next chunk */
+    /* PIO mode: write audio data directly to YMZ263 FIFO */
     if (GOLD_SoundPlaying)
     {
         GOLD_DmaReprogCount++;
-        GOLD_ProgramDMAChunk();
+
+        /*
+         * FIFO_INT = 4: IRQ fires at 48 bytes remaining.
+         * After write, FIFO = 48 + 64 = 112 bytes.
+         * Next IRQ fires when FIFO drains back to 48 (64 bytes consumed).
+         * Cycle: 64 bytes @ 11025Hz = 5.8ms, IRQ rate ~172/sec.
+         */
+        bytesToWrite = 64;
+        pioAddr = GOLD_CurrentDMABuffer;
+
+        /* Don't cross buffer boundary */
+        if (pioAddr + bytesToWrite > GOLD_DMABufferEnd)
+        {
+            bytesToWrite = (int)(GOLD_DMABufferEnd - pioAddr);
+        }
+
+        /* Write bytes to YMZ263 FIFO via PIO */
+        if (bytesToWrite > 0)
+        {
+            GOLD_FifoWritePIO(pioAddr, bytesToWrite);
+        }
+
+        /* Advance buffer pointer */
+        GOLD_CurrentDMABuffer += bytesToWrite;
+        if (GOLD_CurrentDMABuffer >= GOLD_DMABufferEnd)
+        {
+            GOLD_CurrentDMABuffer = GOLD_DMABuffer;
+        }
     }
 
     /* Send EOI to the PIC */
