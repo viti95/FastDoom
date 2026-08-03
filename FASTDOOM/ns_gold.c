@@ -1,12 +1,23 @@
-
 /*
  * AdLib Gold 1000/2000 Digital Audio Driver for FastDoom
  *
- * Implements DMA-based PCM playback via the YMZ263 (MMA) sampling
- * channels on the AdLib Gold sound card.
+ * Implements PIO-based PCM playback via the YMZ263 (MMA) sampling
+ * channels on the AdLib Gold sound card. No DMA is used.
+ *
+ * Audio data is written directly to the YMZ263 FIFO via PIO in the
+ * IRQ handler, triggered by the FIFO threshold interrupt.
  *
  * Based on the AIL2 DMASOUND.ASM driver by John Miles (Miles Design, Inc.)
- * and the FastDoom Sound Blaster driver architecture.
+ * and the AdLib Gold Developer Toolkit (YMZ263 programming guide).
+ *
+ * PIO mode operation:
+ *   - YMZ263 has a 128-byte FIFO per channel
+ *   - FIFO_INT threshold set to 80 bytes (FIFO_INT=2)
+ *   - IRQ fires when FIFO drops to 80 bytes (48 bytes of audio remaining)
+ *   - IRQ handler writes 48 bytes to refill FIFO back to 128
+ *   - At 11025 Hz mono: ~4.3ms between IRQs, ~230 IRQs/sec
+ *   - Dynamic FIFO threshold: temporarily raised to 16 bytes during
+ *     PIO writes to prevent false trigger interrupts (per datasheet tip)
  */
 
 #include <dos.h>
@@ -14,8 +25,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "std_func.h"
-#include "ns_dpmi.h"
-#include "ns_dma.h"
 #include "ns_irq.h"
 #include "ns_gold.h"
 #include "ns_golddef.h"
@@ -137,26 +146,33 @@ GOLD_CONFIG GOLD_Config =
 
 static int GOLD_Installed = FALSE;
 
-int GOLD_DMAChannel;
+/*
+ * DMA channel is set to -1 (invalid) since we use PIO mode only.
+ * ns_multi.c reads this to decide whether to use DMA-based position
+ * tracking. Value of -1 tells it to skip DMA position queries.
+ */
+int GOLD_DMAChannel = -1;
+
 unsigned GOLD_SampleRate = GOLD_DefaultSampleRate;
 
-static char *GOLD_DMABuffer;
-static char *GOLD_DMABufferEnd;
-static char *GOLD_CurrentDMABuffer;
-static int GOLD_TotalDMABufferSize;
+/* PIO audio buffer pointers (used for IRQ-driven PIO writes) */
+static char *GOLD_AudioBuffer;
+static char *GOLD_AudioBufferEnd;
+static char *GOLD_CurrentAudioPtr;
 
+static int GOLD_TotalBufferSize;
 static int GOLD_TransferLength = 0;
+
 static int GOLD_MainVolume = 255;
 static int GOLD_MixMode = GOLD_DefaultMixMode;
 
 static volatile int GOLD_SoundPlaying = FALSE;
 static volatile long GOLD_IrqCount = 0;
 static volatile long GOLD_SpuriousIrqCount = 0;
-static volatile long GOLD_DmaReprogCount = 0;
+static volatile long GOLD_PioBytesWritten = 0;
 static volatile unsigned char GOLD_LastIrqStatus = 0;
 static volatile unsigned char GOLD_LastIrqMma0 = 0;
 static volatile unsigned char GOLD_LastIrqMma1 = 0;
-static volatile long GOLD_PioOverflowCount = 0;
 
 void (*GOLD_CallBack)(void);
 
@@ -169,37 +185,24 @@ static unsigned short GOLD_Interrupt;
 static unsigned char GOLD_PRC0_Shadow;
 static unsigned char GOLD_PRC1_Shadow;
 
+/* Saved format control register for FIFO threshold adjustment */
+static unsigned char GOLD_SFC0_Normal;
+static unsigned char GOLD_SFC0_HighThreshold;
+
 /* Saved control register 0x13 value for restore on shutdown */
 static unsigned char GOLD_CTR13_Save;
 
 /*
- * DMA and interrupt controller state
+ * Interrupt controller state
  */
 static int GOLD_IntController1Mask;
 static int GOLD_IntController2Mask;
 
 /*
- * IRQ handler stack (allocated in conventional memory via DPMI)
+ * NOTE: DPMI stack switching removed.
+ * In protected mode, the IRQ handler runs on a valid DPMI-managed stack.
+ * Manually switching SS/ESP via inline asm causes GPFs.
  */
-#define GOLD_STACK_SIZE 2048
-
-static unsigned short GOLD_StackSelector = 0;
-static unsigned long GOLD_StackPointer;
-
-/*
- * External stack switch functions (declared for pragma aux)
- */
-extern void GOLD_GetStack(unsigned short *selptr, unsigned long *stackptr);
-extern void GOLD_SetStack(unsigned short selector, unsigned long stackptr);
-
-#pragma aux GOLD_GetStack = \
-    "mov  [edi],esp"   \
-    "mov  ax,ss"       \
-    "mov  [esi],ax" parm[esi][edi] modify[eax esi edi];
-
-#pragma aux GOLD_SetStack = \
-    "mov  ss,ax"       \
-    "mov  esp,edx" parm[ax][edx] modify[eax edx];
 
 /*
  * I/O port addresses (computed during init)
@@ -218,6 +221,18 @@ static const unsigned int GOLD_PCM_Rates[4] =
 {
     44100, 22050, 11025, 7350
 };
+
+/*
+ * FIFO threshold constants for dynamic adjustment.
+ * Normal: FIFO_INT=2 -> IRQ at 80 bytes remaining (48 bytes of audio)
+ * High:   FIFO_INT=6 -> IRQ at 16 bytes remaining (used during PIO write
+ *         to prevent false trigger interrupts per datasheet programming tip)
+ *
+ * SFC register: bit 7=ILV, bits 6-5=DATAFMT, bits 4-1=FIFO_INT, bit 0=ENB
+ * FIFO_INT values: 0=112, 1=96, 2=80, 3=64, 4=48, 5=32, 6=16 (bytes remaining)
+ */
+#define GOLD_SFC_FIFO_INT_NORMAL  2   /* IRQ fires at 80 bytes remaining */
+#define GOLD_SFC_FIFO_INT_HIGH    6   /* IRQ fires at 16 bytes (PIO safe) */
 
 /*---------------------------------------------------------------------
    Function: GOLD_CTWait
@@ -302,7 +317,7 @@ static void GOLD_WriteCtrlReg(unsigned char reg, unsigned char val)
 /*---------------------------------------------------------------------
    Function: GOLD_MMADelay
 
-   Wait at least 470 nsec. between MMA register accesses.
+   Wait at least 470 nsec between MMA register accesses.
    The YMZ263 datasheet requires a minimum inter-byte delay.
 ---------------------------------------------------------------------*/
 static void GOLD_MMADelay(void)
@@ -485,36 +500,40 @@ void GOLD_SetPlaybackRate(unsigned rate)
      *   D7: ILV   - Interleave (channel 0 only)
      *   D6-5: DATA FORMAT[1:0] - 0 = 8-bit MSB format
      *   D4-1: FIFO INT[3:0]    - Interrupt threshold
-     *   D0: ENB   - DMA enable
+     *   D0: ENB   - DMA enable (0 = PIO mode)
      *
-     * FIFO INT threshold values:
+     * FIFO_INT threshold values:
      *   0 = 112 bytes remaining, 1 = 96, 2 = 80, 3 = 64,
-     *   4 = 48, 5 = 32, 6 = 16, 7 = prohibited
+     *   4 = 48, 5 = 32, 6 = 16
      *
-     * Per AIL2 DMASOUND.ASM SFC_0_values/SFC_1_values tables:
+     * Per AIL2 DMASOUND.ASM:
      *   mono 8-bit PCM:   SFC_0 = 00000101b (0x05), SFC_1 = 00000010b (0x02)
      *   stereo 8-bit PCM: SFC_0 = 10000101b (0x85), SFC_1 = 00000011b (0x03)
      *
-     * Channel 0 uses FIFO_INT=0 (IRQ when FIFO drops below 112 bytes).
-     * This fires VERY early, giving the IRQ handler maximum time to
-     * reprogram DMA before FIFO underrun. Only ~16 bytes are consumed
-     * before the IRQ fires, leaving 112 bytes still playing.
+     * We use PIO mode (ENB=0) with FIFO_INT=2 (80 bytes threshold).
+     * IRQ fires when FIFO drops to 80 bytes, leaving 48 bytes of audio.
+     * IRQ handler writes 48 bytes to refill back to 128.
      *
-     * Channel 1 uses FIFO_INT=1 (IRQ when FIFO drops below 96 bytes).
-     *
-     * For stereo, ILV bit is set on channel 0 to interleave data from
-     * both DMA channels into a single stereo stream.
+     * Channel 1: MSK=1 (mask interrupt), not used for mono playback.
      */
     if (GOLD_MixMode & GOLD_STEREO)
     {
-        fmt0 = 0x90;    /* ILV=1, FIFO_INT=4, MSK=0, ENB=0 */
-        fmt1 = 0x02;    /* FIFO_INT=0, MSK=1, ENB=0 */
+        fmt0 = (unsigned char)(GOLD_MMA_ILV_BIT |
+                               ((GOLD_SFC_FIFO_INT_NORMAL << 1) & 0x1E));
+        fmt1 = 0x02;    /* MSK=1, interrupt masked for ch1 */
     }
     else
     {
-        fmt0 = 0x10;    /* FIFO_INT=4, MSK=0, ENB=0 */
-        fmt1 = 0x02;    /* FIFO_INT=0, MSK=1, ENB=0 */
+        fmt0 = (unsigned char)((GOLD_SFC_FIFO_INT_NORMAL << 1) & 0x1E);
+        fmt1 = 0x02;    /* MSK=1, interrupt masked for ch1 */
     }
+
+    /* Save SFC shadows for dynamic threshold adjustment */
+    GOLD_SFC0_Normal = fmt0;
+    GOLD_SFC0_HighThreshold = (unsigned char)(
+        (fmt0 & ~0x1E) |  /* Clear FIFO_INT bits */
+        ((GOLD_SFC_FIFO_INT_HIGH << 1) & 0x1E)  /* Set high threshold */
+    );
 
     /*
      * Per AIL2 DMASOUND.ASM set_sample_rate:
@@ -526,7 +545,7 @@ void GOLD_SetPlaybackRate(unsigned rate)
     GOLD_WriteMMAReg(0, GOLD_MMA_PLAY_REC_CTL, GOLD_MMA_RST_BIT);
     GOLD_WriteMMAReg(1, GOLD_MMA_PLAY_REC_CTL, GOLD_MMA_RST_BIT);
 
-    /* Write 4 dummy bytes to channel 0 FIFO for proper DMA init */
+    /* Write 4 dummy bytes to channel 0 FIFO for proper init */
     GOLD_WriteMMAReg(0, GOLD_MMA_PCM_DATA, 0);
     GOLD_WriteMMAReg(0, GOLD_MMA_PCM_DATA, 0);
     GOLD_WriteMMAReg(0, GOLD_MMA_PCM_DATA, 0);
@@ -540,7 +559,7 @@ void GOLD_SetPlaybackRate(unsigned rate)
     GOLD_WriteMMAReg(0, GOLD_MMA_PLAY_REC_CTL, prc0);
     GOLD_WriteMMAReg(1, GOLD_MMA_PLAY_REC_CTL, prc1);
 
-    /* Set format control on both channels */
+    /* Set format control on both channels (PIO mode, ENB=0) */
     GOLD_WriteMMAReg(0, GOLD_MMA_FMT_CTL, fmt0);
     GOLD_WriteMMAReg(1, GOLD_MMA_FMT_CTL, fmt1);
 
@@ -582,13 +601,13 @@ int GOLD_SetMixMode(int mode)
     /*
      * Set format control based on mix mode.
      * PIO mode: ENB=0 (DMA disabled), MSK=0 (interrupt enabled).
-     * FIFO_INT (bits 4-2) = 4: IRQ fires at 48 bytes remaining.
-     * IRQ handler writes 80 bytes to FIFO via PIO, refilling to ~128.
+     * FIFO_INT = 2: IRQ fires at 80 bytes remaining (48 bytes of audio).
+     * IRQ handler writes 48 bytes to FIFO via PIO.
      *
      * SFC register layout:
      *   Bit 7: ILV (interleave stereo channels)
      *   Bits 6-5: DATAFMT (00=8-bit, 01=16-bit)
-     *   Bits 4-2: FIFO_INT (threshold index)
+     *   Bits 4-1: FIFO_INT (threshold index)
      *   Bit 1: MSK (1=mask interrupt)
      *   Bit 0: ENB (1=DMA mode, 0=PIO mode)
      *
@@ -597,14 +616,22 @@ int GOLD_SetMixMode(int mode)
      */
     if (mode & GOLD_STEREO)
     {
-        fmt0 = 0x90;    /* ILV=1, FIFO_INT=4, MSK=0, ENB=0 */
-        fmt1 = 0x02;    /* FIFO_INT=0, MSK=1, ENB=0 */
+        fmt0 = (unsigned char)(GOLD_MMA_ILV_BIT |
+                               ((GOLD_SFC_FIFO_INT_NORMAL << 1) & 0x1E));
+        fmt1 = 0x02;
     }
     else
     {
-        fmt0 = 0x10;    /* FIFO_INT=4, MSK=0, ENB=0 */
-        fmt1 = 0x02;    /* FIFO_INT=0, MSK=1, ENB=0 */
+        fmt0 = (unsigned char)((GOLD_SFC_FIFO_INT_NORMAL << 1) & 0x1E);
+        fmt1 = 0x02;
     }
+
+    /* Save SFC shadows for dynamic threshold adjustment */
+    GOLD_SFC0_Normal = fmt0;
+    GOLD_SFC0_HighThreshold = (unsigned char)(
+        (fmt0 & ~0x1E) |
+        ((GOLD_SFC_FIFO_INT_HIGH << 1) & 0x1E)
+    );
 
     /* Only reconfigure if not playing */
     if (!GOLD_SoundPlaying)
@@ -648,28 +675,82 @@ int GOLD_SetPCMVolume(int volume)
 }
 
 /*---------------------------------------------------------------------
+   Function: GOLD_FifoPreFill
+
+   Fill the YMZ263 FIFO with audio data before starting playback.
+   Per datasheet: "The FIFO buffers should be filled to a level exceeding
+   the FIFO interrupt level before the GO bit is set."
+   With FIFO_INT=2 (80 byte threshold), we need >80 bytes in the FIFO.
+
+   NOTE: GOLD_SetPlaybackRate already writes 4 dummy bytes to the FIFO
+   during initialization. Since the FIFO is 128 bytes, we only write
+   124 more bytes here to avoid overflowing the FIFO.
+---------------------------------------------------------------------*/
+static void GOLD_FifoPreFill(void)
+{
+    int bytesToWrite;
+    char *pioAddr;
+    int i;
+
+    /* 128-byte FIFO minus 4 dummy bytes from SetPlaybackRate = 124 */
+    bytesToWrite = GOLD_MMA_FIFO_SIZE - 4;
+    pioAddr = GOLD_CurrentAudioPtr;
+
+    /* Don't cross buffer boundary */
+    if (pioAddr + bytesToWrite > GOLD_AudioBufferEnd)
+    {
+        bytesToWrite = (int)(GOLD_AudioBufferEnd - pioAddr);
+    }
+
+    if (bytesToWrite > 0)
+    {
+        /* Select FIFO data register (0x0B) on channel 0 */
+        outp(GOLD_MMA0Addr, GOLD_MMA_PCM_DATA);
+
+        /* Write each byte to the FIFO data port */
+        for (i = 0; i < bytesToWrite; i++)
+        {
+            GOLD_MMADelay();
+            outp(GOLD_MMA0Data, (unsigned char)pioAddr[i]);
+        }
+
+        /* Advance buffer pointer */
+        GOLD_CurrentAudioPtr += bytesToWrite;
+        if (GOLD_CurrentAudioPtr >= GOLD_AudioBufferEnd)
+        {
+            GOLD_CurrentAudioPtr = GOLD_AudioBuffer;
+        }
+    }
+
+    GOLD_WriteLog("GOLD_FifoPreFill: filled ");
+    GOLD_WriteLogNum(bytesToWrite);
+    GOLD_WriteLog(" bytes\n");
+}
+
+/*---------------------------------------------------------------------
    Function: GOLD_StartPlayback
 
-   Start DMA playback by setting the GO bit on both MMA channels.
+   Start PIO playback by setting the GO bit on the MMA channel.
+   FIFO must be pre-filled before this is called.
 ---------------------------------------------------------------------*/
 static void GOLD_StartPlayback(void)
 {
     unsigned char prc0;
-    unsigned char prc1;
 
+    /* Set GO on channel 0. Per datasheet, in stereo interleaved mode,
+     * channel 0 controls both P/R, FREQ and GO bits for both channels.
+     * In mono mode, only channel 0 is used.
+     * Per AIL2 DMASOUND.ASM continue_DMA: only writes GO to ch0.
+     */
     prc0 = GOLD_PRC0_Shadow | GOLD_MMA_GO_BIT;
-    prc1 = GOLD_PRC1_Shadow | GOLD_MMA_GO_BIT;
-
     GOLD_WriteMMAReg(0, GOLD_MMA_PLAY_REC_CTL, prc0);
-    GOLD_WriteMMAReg(1, GOLD_MMA_PLAY_REC_CTL, prc1);
 
     GOLD_SoundPlaying = TRUE;
 
     /* Reset diagnostic counters */
     GOLD_IrqCount = 0;
     GOLD_SpuriousIrqCount = 0;
-    GOLD_DmaReprogCount = 0;
-    GOLD_PioOverflowCount = 0;
+    GOLD_PioBytesWritten = 0;
 
     GOLD_WriteLog("GOLD_StartPlayback: playback started\n");
 }
@@ -677,13 +758,11 @@ static void GOLD_StartPlayback(void)
 /*---------------------------------------------------------------------
    Function: GOLD_StopPlayback
 
-   Stops DMA playback by clearing the GO bit, disabling interrupts,
-   and ending the DMA transfer.
+   Stops playback by clearing the GO bit and disabling interrupts.
 ---------------------------------------------------------------------*/
 void GOLD_StopPlayback(void)
 {
     unsigned char prc0;
-    unsigned char prc1;
 
     GOLD_WriteLog("GOLD_StopPlayback: stopping playback\n");
 
@@ -711,28 +790,20 @@ void GOLD_StopPlayback(void)
         }
     }
 
-    /* Clear GO bit on both channels */
+    /* Clear GO bit on channel 0 (controls both channels) */
     prc0 = GOLD_PRC0_Shadow & (unsigned char)(~GOLD_MMA_GO_BIT);
-    prc1 = GOLD_PRC1_Shadow & (unsigned char)(~GOLD_MMA_GO_BIT);
-
     GOLD_WriteMMAReg(0, GOLD_MMA_PLAY_REC_CTL, prc0);
-    GOLD_WriteMMAReg(1, GOLD_MMA_PLAY_REC_CTL, prc1);
-
-    /* End DMA transfer */
-    DMA_EndTransfer(GOLD_DMAChannel);
 
     GOLD_SoundPlaying = FALSE;
-    GOLD_DMABuffer = NULL;
+    GOLD_AudioBuffer = NULL;
 
     GOLD_WriteLog("GOLD_StopPlayback: playback stopped\n");
     GOLD_WriteLog("GOLD_StopPlayback: validIRQs=");
     GOLD_WriteLogNumSigned(GOLD_IrqCount);
     GOLD_WriteLog(" spuriousIRQs=");
     GOLD_WriteLogNumSigned(GOLD_SpuriousIrqCount);
-    GOLD_WriteLog(" dmaReprog=");
-    GOLD_WriteLogNumSigned(GOLD_DmaReprogCount);
-    GOLD_WriteLog(" pioOverflow=");
-    GOLD_WriteLogNumSigned(GOLD_PioOverflowCount);
+    GOLD_WriteLog(" pioBytes=");
+    GOLD_WriteLogNumSigned(GOLD_PioBytesWritten);
     GOLD_WriteLog(" lastYMZ263Status=0x");
     GOLD_WriteHexChar(GOLD_LastIrqStatus);
     GOLD_WriteLog(" mma0=0x");
@@ -803,340 +874,7 @@ void GOLD_DisableInterrupt(void)
     GOLD_WriteLog("GOLD_DisableInterrupt: IRQ disabled\n");
 }
 
-/*---------------------------------------------------------------------
-   Function: GOLD_SetupDMABuffer
 
-   Stores the DMA buffer parameters.
-   Actual DMA programming is done per-chunk in GOLD_ProgramDMAChunk.
----------------------------------------------------------------------*/
-static int GOLD_SetupDMABuffer(char *BufferPtr, int BufferSize)
-{
-    if (GOLD_DMAChannel == GOLD_INVALID)
-    {
-        return GOLD_Error;
-    }
-
-    GOLD_DMABuffer = BufferPtr;
-    GOLD_CurrentDMABuffer = BufferPtr;
-    GOLD_TotalDMABufferSize = BufferSize;
-    GOLD_DMABufferEnd = BufferPtr + BufferSize;
-
-    GOLD_WriteLog("GOLD_SetupDMABuffer: DMA configured\n");
-    return GOLD_Ok;
-}
-
-/*---------------------------------------------------------------------
-   Function: GOLD_ProgramDMAC
-
-   Programs the 8237 DMA controller for a single DMA read transfer.
-   Matches AIL2 DMASOUND.ASM program_DMAC sequence exactly.
-
-   This function DOES unmask the channel at the end (step 7),
-   matching AIL2's "mov ax,DSP_DMA / or ax,0h / out 0ah,al".
-   The 8237 will begin transferring when the YMZ263 asserts DREQ.
-
-   Args:
-     addr  - 20-bit physical address to transfer from
-     count - number of bytes to transfer (not count-1)
----------------------------------------------------------------------*/
-static void GOLD_ProgramDMAC(char *addr, int count)
-{
-    unsigned char ch;
-    unsigned char pagePort;
-    unsigned short page;
-    unsigned long addrVal;
-
-    /*
-     * 8237 page register port mapping (non-linear!):
-     *   Ch 0: 0x87, Ch 1: 0x83, Ch 2: 0x81, Ch 3: 0x82
-     *   Ch 5: 0x8B, Ch 6: 0x89, Ch 7: 0x8A
-     * Per AIL2: DMAPAG_offset db 07h,03h,01h,02h,-1,0bh,09h,0ah
-     */
-    static const unsigned char GOLD_DMAPAG_offset[8] =
-        {0x07, 0x03, 0x01, 0x02, 0xFF, 0x0B, 0x09, 0x0A};
-
-    ch = (unsigned char)(GOLD_DMAChannel & 0x03);
-    addrVal = (unsigned long)addr;
-    page = (unsigned short)(addrVal >> 16);
-    pagePort = (unsigned char)(0x80 + GOLD_DMAPAG_offset[GOLD_DMAChannel]);
-
-    /* 1. Mask channel (DMASET) */
-    outp(0x0A, (unsigned char)(0x04 | ch));
-
-    /* 2. Write page register (correct port via lookup table) */
-    outp(pagePort, (unsigned char)(page & 0xFF));
-
-    /* 3. Clear byte pointer flip-flop */
-    outp(0x0C, 0);
-
-    /* 4. Write address (lo, hi) to channel port - auto-increments */
-    outp((unsigned short)(ch << 1), (unsigned char)(addrVal & 0xFF));
-    outp((unsigned short)(ch << 1),
-         (unsigned char)((addrVal >> 8) & 0xFF));
-
-    /* 5. Write count (lo, hi) to channel+1 port - auto-increments */
-    /* 8237 count register holds (length-1) */
-    outp((unsigned short)((ch << 1) + 1),
-         (unsigned char)((count - 1) & 0xFF));
-    outp((unsigned short)((ch << 1) + 1),
-         (unsigned char)(((count - 1) >> 8) & 0xFF));
-
-    /* 6. Write mode register (0x68 = demand mode, increment, read) */
-    /* Demand mode: DMA pauses when DREQ deasserts (FIFO full), */
-    /* resumes when DREQ reasserts (FIFO drains). This transfers */
-    /* the FULL programmed count, not just until FIFO fills. */
-    /* Single-shot (0x48) terminates on DREQ deassert, losing */
-    /* remaining bytes and causing IRQ storms. */
-    outp(0x0B, (unsigned char)(0x68 | ch));
-
-    /* 7. Unmask DMA channel (DMACMD, mask bit = 0) */
-    /* Per AIL2: "mov ax,DSP_DMA / or ax,0h / out 0ah,al" */
-    /* Bit 4 of command register = 0 means unmask selected channel. */
-    outp(0x0A, ch);
-
-    /* Channel is now unmasked. The 8237 will respond to DREQ */
-    /* from the YMZ263 and begin the transfer automatically. */
-}
-
-/*---------------------------------------------------------------------
-   Function: GOLD_ProgramDMAChunk
-
-   Programs the DMAC for a DMA read transfer (demand mode).
-   Transfers from GOLD_CurrentDMABuffer to the YMZ263 FIFO.
-
-   The YMZ263 has a 128-byte FIFO per channel. In DMA mode, data is
-   transferred directly to the FIFO. The YMZ263 plays from the FIFO
-   at the configured sample rate. When the FIFO drops below the
-   interrupt threshold, a FIFO interrupt fires. The IRQ handler
-   reprograms the DMA for the next chunk.
-
-   Demand mode (0x68): DMA pauses when DREQ deasserts (FIFO full),
-   resumes when DREQ reasserts (FIFO has room). The FULL programmed
-   count is transferred across multiple pause/resume cycles.
-
-   This is CRITICAL: single-shot mode (0x48) terminates when DREQ
-   deasserts, losing untransferred bytes. With FIFO_INT=1 (threshold
-   = 112), only 16 bytes would transfer before FIFO fills, but the
-   buffer would advance by chunkSize (256). This causes the buffer
-   to skip ahead 16x, producing "popped" audio.
-
-   With demand mode, all chunkSize bytes transfer. The IRQ fires
-   after chunkSize bytes are consumed. Buffer advancement matches
-   actual playback.
----------------------------------------------------------------------*/
-static void GOLD_ProgramDMAChunk(void)
-{
-    int chunkSize;
-    char *chunkAddr;
-
-    /* Calculate chunk size - don't cross buffer boundary */
-    chunkAddr = GOLD_CurrentDMABuffer;
-    if (chunkAddr + GOLD_TransferLength > GOLD_DMABufferEnd)
-    {
-        chunkSize = (int)(GOLD_DMABufferEnd - chunkAddr);
-    }
-    else
-    {
-        chunkSize = GOLD_TransferLength;
-    }
-
-    /* Advance buffer pointer for next time */
-    GOLD_CurrentDMABuffer += chunkSize;
-    if (GOLD_CurrentDMABuffer >= GOLD_DMABufferEnd)
-    {
-        GOLD_CurrentDMABuffer = GOLD_DMABuffer;
-    }
-
-    /* Program DMA for this chunk (custom AIL2-compatible sequence) */
-    GOLD_ProgramDMAC(chunkAddr, chunkSize);
-}
-
-/*---------------------------------------------------------------------
-   Function: GOLD_GetCurrentPos
-
-   Returns the offset within the current sound being played.
----------------------------------------------------------------------*/
-int GOLD_GetCurrentPos(void)
-{
-    char *CurrentAddr;
-    long offset;
-
-    if (!GOLD_SoundPlaying)
-    {
-        return GOLD_Error;
-    }
-
-    CurrentAddr = DMA_GetCurrentPos(GOLD_DMAChannel);
-
-    offset = (long)((unsigned long)CurrentAddr -
-                    (unsigned long)GOLD_CurrentDMABuffer);
-
-    /* Handle wraparound */
-    if (offset < 0)
-    {
-        offset += GOLD_TotalDMABufferSize;
-    }
-    if (offset >= GOLD_TotalDMABufferSize)
-    {
-        offset -= GOLD_TotalDMABufferSize;
-    }
-
-    return (int)offset;
-}
-
-/*---------------------------------------------------------------------
-   Function: GOLD_BeginBufferedPlayback
-
-   Begins multibuffered playback of digitized sound.
----------------------------------------------------------------------*/
-int GOLD_BeginBufferedPlayback(char *BufferStart, int BufferSize,
-                                int NumDivisions, unsigned SampleRate,
-                                int MixMode, void (*CallBackFunc)(void))
-{
-    int DmaStatus;
-
-    GOLD_WriteLog("GOLD_BeginBufferedPlayback: starting\n");
-
-    /* Stop any ongoing playback (logs counters from previous session) */
-    GOLD_StopPlayback();
-
-    /* Reset counters for new session */
-    GOLD_IrqCount = 0;
-    GOLD_SpuriousIrqCount = 0;
-    GOLD_DmaReprogCount = 0;
-    GOLD_LastIrqMma0 = 0;
-    GOLD_LastIrqMma1 = 0;
-
-    /* Set mix mode */
-    GOLD_SetMixMode(MixMode);
-
-    /* Setup DMA buffer */
-    DmaStatus = GOLD_SetupDMABuffer(BufferStart, BufferSize);
-    if (DmaStatus == GOLD_Error)
-    {
-        return GOLD_Error;
-    }
-
-    /* Set the sample rate (configures MMA registers) */
-    GOLD_SetPlaybackRate(SampleRate);
-
-    /* Store the callback */
-    GOLD_CallBack = CallBackFunc;
-
-    /* Set initial volume */
-    GOLD_SetPCMVolume(GOLD_MainVolume);
-
-    /* Enable interrupts on PIC */
-    GOLD_EnableInterrupt();
-
-    /* Calculate transfer length per division */
-    if (NumDivisions > 0)
-    {
-        GOLD_TransferLength = BufferSize / NumDivisions;
-    }
-    else
-    {
-        GOLD_TransferLength = BufferSize;
-    }
-
-    /* Log diagnostic state */
-    {
-        unsigned char pic1;
-        unsigned char ctStatus;
-        unsigned char mma0Status;
-        unsigned char mma1Status;
-
-        pic1 = inp(0x21);
-        ctStatus = inp(GOLD_CTAddr);
-        mma0Status = inp(GOLD_MMA0Addr);
-        mma1Status = inp(GOLD_MMA1Addr);
-        GOLD_WriteLog("GOLD_BeginBufferedPlayback: PIC1=0x");
-        GOLD_WriteHexChar(pic1);
-        GOLD_WriteLog(" CT=0x");
-        GOLD_WriteHexChar(ctStatus);
-        GOLD_WriteLog(" MMA0=0x");
-        GOLD_WriteHexChar(mma0Status);
-        GOLD_WriteLog(" MMA1=0x");
-        GOLD_WriteHexChar(mma1Status);
-        GOLD_WriteLog(" divLen=");
-        GOLD_WriteLogNum(GOLD_TransferLength);
-        GOLD_WriteLog(" bufSz=");
-        GOLD_WriteLogNum(BufferSize);
-        GOLD_WriteLog("\n");
-    }
-
-    /* Program the first DMA chunk (single-shot mode, not auto-init) */
-    /* This fills the YMZ263 FIFO. When FIFO drops to threshold, IRQ fires. */
-    GOLD_ProgramDMAChunk();
-
-    /* Start playback on the Gold card */
-    GOLD_StartPlayback();
-
-    /* Post-startup diagnostic: check YMZ263 status after a brief delay */
-    {
-        unsigned int waitCount;
-        unsigned char mma0Status;
-
-        waitCount = 0x10000;
-        while (waitCount > 0)
-        {
-            waitCount--;
-        }
-        mma0Status = inp(GOLD_MMA0Addr);
-        GOLD_WriteLog("GOLD_BeginBufferedPlayback: postStart MMA0=0x");
-        GOLD_WriteHexChar(mma0Status);
-        GOLD_WriteLog("\n");
-    }
-
-    GOLD_WriteLog("GOLD_BeginBufferedPlayback: playback running\n");
-    return GOLD_Ok;
-}
-
-/*---------------------------------------------------------------------
-   Function: GOLD_GetCardInfo
-
-   Returns the maximum sample bits and channels supported.
----------------------------------------------------------------------*/
-int GOLD_GetCardInfo(int *MaxSampleBits, int *MaxChannels)
-{
-    *MaxSampleBits = 8;
-    *MaxChannels = 2;
-
-    return GOLD_Ok;
-}
-
-/*---------------------------------------------------------------------
-   Function: GOLD_FifoWritePIO
-
-   Writes audio data directly to the YMZ263 FIFO via PIO.
-   Selects the FIFO data register (0x0B) and writes each byte.
-
-   Args:
-     data  - pointer to audio data
-     count - number of bytes to write
----------------------------------------------------------------------*/
-static void GOLD_FifoWritePIO(char *data, int count)
-{
-    int i;
-    unsigned char status;
-
-    /* Check for FIFO overrun before writing */
-    status = inp(GOLD_MMA0Addr);
-    if (status & 0x80)
-    {
-        GOLD_PioOverflowCount++;
-    }
-
-    /* Select FIFO data register (0x0B) on channel 0 */
-    outp(GOLD_MMA0Addr, GOLD_MMA_PCM_DATA);
-
-    /* Write each byte to the FIFO data port */
-    for (i = 0; i < count; i++)
-    {
-        GOLD_MMADelay();
-        outp(GOLD_MMA0Data, (unsigned char)data[i]);
-    }
-}
 
 /*---------------------------------------------------------------------
    Function: GOLD_ServiceInterrupt
@@ -1144,13 +882,17 @@ static void GOLD_FifoWritePIO(char *data, int count)
    ISR for the Gold card FIFO interrupt.
 
    Uses PIO mode: audio data is written directly to the YMZ263 FIFO
-   via I/O port writes, bypassing DMA entirely. This works around
-   emulator issues with YMZ263 DMA support (86Box, DOSBox).
+   via I/O port writes. No DMA is used.
 
    The YMZ263 has a 128-byte FIFO per channel. The FIFO interrupt
    fires when the FIFO drops below the configured threshold
-   (FIFO_INT=4: 48 bytes remaining). The IRQ handler writes 64 bytes
-   to refill the FIFO.
+   (FIFO_INT=2: 80 bytes remaining = 48 bytes of audio). The IRQ
+   handler writes 48 bytes to refill the FIFO.
+
+   Dynamic FIFO threshold adjustment (per datasheet programming tip):
+   - On entry: raise FIFO threshold to 16 bytes (FIFO_INT=6) to prevent
+     false trigger interrupts while PIO writes are in progress
+   - On exit: restore normal FIFO threshold of 80 bytes (FIFO_INT=2)
 
    Per AIL2 DMASOUND.ASM (ADLIBG section), the IRQ handler reads
    MMA channel 0 address port for FIF0 bit, then services the IRQ.
@@ -1160,6 +902,7 @@ void __interrupt __far GOLD_ServiceInterrupt(void)
     unsigned char status;
     int bytesToWrite;
     char *pioAddr;
+    int i;
 
     /*
      * Read YMZ263 channel 0 status register.
@@ -1176,7 +919,7 @@ void __interrupt __far GOLD_ServiceInterrupt(void)
     /* Save for diagnostics */
     GOLD_LastIrqStatus = status;
 
-    /* Check bit 0: FIF0 (FIFO0 interrupt from YMZ263) */
+    /* Check bit 0: FIFO0 (FIFO0 interrupt from YMZ263) */
     if ((status & 0x01) == 0)
     {
         /* Spurious interrupt - still send EOI to avoid lockup */
@@ -1197,45 +940,80 @@ void __interrupt __far GOLD_ServiceInterrupt(void)
     GOLD_LastIrqMma0 = status;
     GOLD_LastIrqMma1 = inp(GOLD_MMA1Addr);
 
+    /*
+     * Dynamic FIFO threshold adjustment (per datasheet tip):
+     * Raise threshold to 16 bytes (FIFO_INT=6) to prevent false
+     * triggers while we are writing to the FIFO simultaneously
+     * with playback consuming from it.
+     */
+    GOLD_WriteMMAReg(0, GOLD_MMA_FMT_CTL, GOLD_SFC0_HighThreshold);
+
     /* Call the mixer callback to refill the consumed portion */
     if (GOLD_CallBack != NULL)
     {
         MV_ServiceVoc();
     }
 
-    /* PIO mode: write audio data directly to YMZ263 FIFO */
+    /*
+     * PIO mode: write audio data directly to YMZ263 FIFO.
+     *
+     * FIFO_INT = 2: IRQ fires at 80 bytes remaining.
+     * We write 48 bytes to bring FIFO back to 128.
+     * Next IRQ fires when FIFO drains back to 80.
+     * Cycle: 48 bytes @ 11025Hz = 4.3ms, IRQ rate ~231/sec.
+     *
+     * Inline the FIFO write here for speed - avoid function call
+     * overhead in the IRQ handler.
+     */
     if (GOLD_SoundPlaying)
     {
-        GOLD_DmaReprogCount++;
-
-        /*
-         * FIFO_INT = 4: IRQ fires at 48 bytes remaining.
-         * After write, FIFO = 48 + 64 = 112 bytes.
-         * Next IRQ fires when FIFO drains back to 48 (64 bytes consumed).
-         * Cycle: 64 bytes @ 11025Hz = 5.8ms, IRQ rate ~172/sec.
-         */
-        bytesToWrite = 64;
-        pioAddr = GOLD_CurrentDMABuffer;
+        bytesToWrite = 48;
+        pioAddr = GOLD_CurrentAudioPtr;
 
         /* Don't cross buffer boundary */
-        if (pioAddr + bytesToWrite > GOLD_DMABufferEnd)
+        if (pioAddr + bytesToWrite > GOLD_AudioBufferEnd)
         {
-            bytesToWrite = (int)(GOLD_DMABufferEnd - pioAddr);
+            bytesToWrite = (int)(GOLD_AudioBufferEnd - pioAddr);
         }
 
-        /* Write bytes to YMZ263 FIFO via PIO */
+        /* Write bytes directly to YMZ263 FIFO via PIO */
         if (bytesToWrite > 0)
         {
-            GOLD_FifoWritePIO(pioAddr, bytesToWrite);
-        }
+            /* Check for FIFO overrun */
+            status = inp(GOLD_MMA0Addr);
+            if (status & 0x80)
+            {
+                /* FIFO overrun - reset and restart playback */
+                GOLD_WriteMMAReg(0, GOLD_MMA_PLAY_REC_CTL, GOLD_MMA_RST_BIT);
+                GOLD_WriteMMAReg(0, GOLD_MMA_PLAY_REC_CTL, GOLD_PRC0_Shadow | GOLD_MMA_GO_BIT);
+            }
 
-        /* Advance buffer pointer */
-        GOLD_CurrentDMABuffer += bytesToWrite;
-        if (GOLD_CurrentDMABuffer >= GOLD_DMABufferEnd)
-        {
-            GOLD_CurrentDMABuffer = GOLD_DMABuffer;
+            /* Select FIFO data register (0x0B) on channel 0 */
+            outp(GOLD_MMA0Addr, GOLD_MMA_PCM_DATA);
+
+            /* Write each byte to the FIFO data port */
+            for (i = 0; i < bytesToWrite; i++)
+            {
+                GOLD_MMADelay();
+                outp(GOLD_MMA0Data, (unsigned char)pioAddr[i]);
+            }
+
+            GOLD_PioBytesWritten += bytesToWrite;
+
+            /* Advance buffer pointer */
+            GOLD_CurrentAudioPtr += bytesToWrite;
+            if (GOLD_CurrentAudioPtr >= GOLD_AudioBufferEnd)
+            {
+                GOLD_CurrentAudioPtr = GOLD_AudioBuffer;
+            }
         }
     }
+
+    /*
+     * Restore normal FIFO threshold (80 bytes).
+     * Next interrupt will fire when FIFO drops back to 80.
+     */
+    GOLD_WriteMMAReg(0, GOLD_MMA_FMT_CTL, GOLD_SFC0_Normal);
 
     /* Send EOI to the PIC */
     if (GOLD_Config.Interrupt > 7)
@@ -1263,7 +1041,7 @@ static void GOLD_ResetMMA(void)
         GOLD_MMA_PCM_BIT |
         GOLD_MMA_PR_BIT
     );
-    GOLD_PRC1_Shadow = GOLD_PRC0_Shadow;
+    GOLD_PRC1_Shadow = 0;  /* Channel 1 disabled in mono mode */
 
     GOLD_WriteMMAReg(0, GOLD_MMA_PLAY_REC_CTL, GOLD_PRC0_Shadow);
     GOLD_WriteMMAReg(1, GOLD_MMA_PLAY_REC_CTL, GOLD_PRC1_Shadow);
@@ -1434,56 +1212,16 @@ int GOLD_GetCardSettings(GOLD_CONFIG *Config)
 }
 
 /*---------------------------------------------------------------------
-   Function: GOLD_AllocateIRQStack
-
-   Allocate conventional memory for the IRQ handler stack via DPMI.
----------------------------------------------------------------------*/
-static unsigned short GOLD_AllocateIRQStack(unsigned short size)
-{
-    union REGS regs;
-
-    memset(&regs, 0, sizeof(regs));
-    regs.w.ax = 0x0100;  /* DPMI allocate DOS memory */
-    regs.w.bx = (size + 15) / 16;
-
-    int386(0x31, &regs, &regs);
-    if (!regs.w.cflag)
-    {
-        return regs.w.dx;  /* Selector in DX */
-    }
-
-    return 0;
-}
-
-/*---------------------------------------------------------------------
-   Function: GOLD_DeallocateIRQStack
-
-   Free conventional memory allocated via DPMI.
----------------------------------------------------------------------*/
-static void GOLD_DeallocateIRQStack(unsigned short selector)
-{
-    union REGS regs;
-
-    if (selector != 0)
-    {
-        memset(&regs, 0, sizeof(regs));
-        regs.w.ax = 0x0101;
-        regs.w.dx = selector;
-        int386(0x31, &regs, &regs);
-    }
-}
-
-/*---------------------------------------------------------------------
    Function: GOLD_Init
 
    Initializes the Gold card and prepares the driver for playback.
+   Uses PIO mode only (no DMA).
 ---------------------------------------------------------------------*/
 int GOLD_Init(void)
 {
-    int status;
     int irq;
 
-    GOLD_WriteLog("GOLD_Init: initializing AdLib Gold driver\n");
+    GOLD_WriteLog("GOLD_Init: initializing AdLib Gold driver (PIO mode)\n");
 
     if (GOLD_Installed)
     {
@@ -1507,54 +1245,37 @@ int GOLD_Init(void)
         return GOLD_Error;
     }
 
-    /* Verify DMA channel */
-    if (GOLD_Config.Dma != GOLD_INVALID)
-    {
-        status = DMA_VerifyChannel(GOLD_Config.Dma);
-        if (status == DMA_Error)
-        {
-            GOLD_WriteLog("GOLD_Init: ERROR - DMA channel invalid\n");
-            return GOLD_Error;
-        }
-    }
-
-    /* Use DMA channel from config (or auto-detected from control chip) */
-    GOLD_DMAChannel = GOLD_Config.Dma;
+    /*
+     * PIO mode: no DMA channel needed.
+     * Set to -1 so ns_multi.c knows not to use DMA position tracking.
+     */
+    GOLD_DMAChannel = -1;
 
     /*
-     * If DMA was not set in config, try to read it from the control
-     * chip register 0x13 (DMA SEL 0 bits).
+     * Read IRQ from control chip register 0x13 if not configured.
      */
-    if (GOLD_DMAChannel == GOLD_INVALID || GOLD_DMAChannel == GOLD_DEFAULT_DMA)
+    if (GOLD_Config.Interrupt == GOLD_DEFAULT_IRQ ||
+        GOLD_Config.Interrupt == 0)
     {
         unsigned char ctr13;
+        unsigned char irqIdx;
+        const unsigned char selected_IRQ[] =
+        { 3, 4, 5, 7, 10, 11, 12, 15 };
 
         GOLD_EnableCtrl();
         ctr13 = GOLD_ReadCtrlReg(GOLD_CT_REG_AUDIO_IRQ_DMA0);
         GOLD_DisableCtrl();
 
-        /* Extract DMA channel from bits 6-4 */
-        GOLD_DMAChannel = (ctr13 >> GOLD_CT_DMA_SEL_SHIFT) & 0x07;
-
-        /* Also extract IRQ from bits 2-0 */
+        irqIdx = ctr13 & GOLD_CT_INT_SEL_MASK;
+        if (irqIdx < 8)
         {
-            unsigned char irqIdx;
-            const unsigned char selected_IRQ[] =
-            { 3, 4, 5, 7, 10, 11, 12, 15 };
-
-            irqIdx = ctr13 & GOLD_CT_INT_SEL_MASK;
-            if (irqIdx < 8)
-            {
-                GOLD_Config.Interrupt = selected_IRQ[irqIdx];
-            }
+            GOLD_Config.Interrupt = selected_IRQ[irqIdx];
         }
 
-        GOLD_WriteLog("GOLD_Init: auto-detected DMA and IRQ from control chip\n");
+        GOLD_WriteLog("GOLD_Init: auto-detected IRQ from control chip\n");
         GOLD_WriteLog("GOLD_Init:   ctr13=0x");
         GOLD_WriteHexChar((ctr13 >> 4) & 0x0F);
         GOLD_WriteHexChar(ctr13 & 0x0F);
-        GOLD_WriteLog(" DMA=");
-        GOLD_WriteHexChar(GOLD_DMAChannel);
         GOLD_WriteLog(" IRQ=");
         GOLD_WriteHexChar(GOLD_Config.Interrupt);
         GOLD_WriteLog("\n");
@@ -1575,17 +1296,6 @@ int GOLD_Init(void)
         return GOLD_Error;
     }
 
-    /* Allocate IRQ handler stack in conventional memory */
-    GOLD_StackSelector = GOLD_AllocateIRQStack(GOLD_STACK_SIZE);
-    if (GOLD_StackSelector == 0)
-    {
-        GOLD_WriteLog("GOLD_Init: ERROR - could not allocate IRQ stack\n");
-        return GOLD_Error;
-    }
-
-    /* Leave room at top of stack */
-    GOLD_StackPointer = GOLD_STACK_SIZE - sizeof(long);
-
     /* Save old interrupt handler and install ours */
     GOLD_OldInt = _dos_getvect(GOLD_Interrupt);
     if (irq < 8)
@@ -1594,11 +1304,10 @@ int GOLD_Init(void)
     }
     else
     {
+        int status;
         status = IRQ_SetVector(GOLD_Interrupt, GOLD_ServiceInterrupt);
         if (status != IRQ_Ok)
         {
-            GOLD_DeallocateIRQStack(GOLD_StackSelector);
-            GOLD_StackSelector = 0;
             GOLD_WriteLog("GOLD_Init: ERROR - IRQ_SetVector failed\n");
             return GOLD_Error;
         }
@@ -1609,36 +1318,20 @@ int GOLD_Init(void)
     GOLD_WriteLog(" vector=0x");
     GOLD_WriteHexChar((GOLD_Interrupt >> 4) & 0x0F);
     GOLD_WriteHexChar(GOLD_Interrupt & 0x0F);
-    GOLD_WriteLog(" DMA=");
-    GOLD_WriteHexChar(GOLD_DMAChannel);
     GOLD_WriteLog("\n");
-
-    /* Verify: read back the installed vector */
-    {
-        void(__interrupt __far *verifyVect)(void);
-        verifyVect = _dos_getvect(GOLD_Interrupt);
-        GOLD_WriteLog("GOLD_Init:   oldVec=0x");
-        GOLD_WriteHexChar((unsigned char)(FP_SEG(GOLD_OldInt) >> 4));
-        GOLD_WriteHexChar((unsigned char)(FP_SEG(GOLD_OldInt) & 0x0F));
-        GOLD_WriteLog(":");
-        GOLD_WriteHexChar((unsigned char)(FP_OFF(GOLD_OldInt) >> 8));
-        GOLD_WriteHexChar((unsigned char)(FP_OFF(GOLD_OldInt) & 0x0F));
-        GOLD_WriteLog(" newVec=0x");
-        GOLD_WriteHexChar((unsigned char)(FP_SEG(verifyVect) >> 4));
-        GOLD_WriteHexChar((unsigned char)(FP_SEG(verifyVect) & 0x0F));
-        GOLD_WriteLog(":");
-        GOLD_WriteHexChar((unsigned char)(FP_OFF(verifyVect) >> 8));
-        GOLD_WriteHexChar((unsigned char)(FP_OFF(verifyVect) & 0x0F));
-        GOLD_WriteLog("\n");
-    }
 
     /* Initialize state */
     GOLD_SoundPlaying = FALSE;
     GOLD_CallBack = NULL;
-    GOLD_DMABuffer = NULL;
+    GOLD_AudioBuffer = NULL;
     GOLD_MainVolume = 255;
 
-    /* Configure control chip: set mix/filter to playback mode */
+    /*
+     * Configure control chip:
+     * - Set mix/filter to playback mode
+     * - Enable audio interrupt (AEN bit)
+     * - DISABLE DMA (clear DENO bit) - we use PIO mode
+     */
     GOLD_EnableCtrl();
     {
         unsigned char mixSel;
@@ -1653,11 +1346,10 @@ int GOLD_Init(void)
         ctr13 = GOLD_ReadCtrlReg(GOLD_CT_REG_AUDIO_IRQ_DMA0);
         GOLD_CTR13_Save = ctr13;
 
-        /* Enable DMA and audio interrupt for channel 0 */
-        ctr13 |= GOLD_CT_DENO_BIT | GOLD_CT_AEN_BIT;
-        /* Set DMA channel in register */
-        ctr13 &= ~(0x70);  /* Clear DMA SEL bits */
-        ctr13 |= ((GOLD_DMAChannel & 0x07) << GOLD_CT_DMA_SEL_SHIFT);
+        /* Enable audio interrupt, DISABLE DMA for PIO mode */
+        ctr13 |= GOLD_CT_AEN_BIT;      /* Enable audio interrupt */
+        ctr13 &= ~GOLD_CT_DENO_BIT;    /* Disable DMA (PIO mode) */
+
         GOLD_WriteCtrlReg(GOLD_CT_REG_AUDIO_IRQ_DMA0, ctr13);
 
         /* Verify: read back the register */
@@ -1684,7 +1376,7 @@ int GOLD_Init(void)
 
     GOLD_Installed = TRUE;
 
-    GOLD_WriteLog("GOLD_Init: initialization complete\n");
+    GOLD_WriteLog("GOLD_Init: initialization complete (PIO mode)\n");
     return GOLD_Ok;
 }
 
@@ -1723,12 +1415,8 @@ void GOLD_Shutdown(void)
     }
     _dos_setvect(GOLD_Interrupt, GOLD_OldInt);
 
-    /* Free IRQ stack */
-    GOLD_DeallocateIRQStack(GOLD_StackSelector);
-    GOLD_StackSelector = 0;
-
     GOLD_SoundPlaying = FALSE;
-    GOLD_DMABuffer = NULL;
+    GOLD_AudioBuffer = NULL;
     GOLD_CallBack = NULL;
     GOLD_Installed = FALSE;
 
@@ -1740,4 +1428,130 @@ void GOLD_Shutdown(void)
     }
 
     GOLD_WriteLog("GOLD_Shutdown: shutdown complete\n");
+}
+
+/*---------------------------------------------------------------------
+   Function: GOLD_BeginBufferedPlayback
+
+   Begins buffered PIO playback of digitized sound.
+
+   Audio data is transferred from the buffer to the YMZ263 FIFO via PIO
+   in the IRQ handler. No DMA is used.
+
+   The buffer is a circular buffer that the mixer callback refills.
+   The IRQ handler writes from GOLD_CurrentAudioPtr to the FIFO.
+---------------------------------------------------------------------*/
+int GOLD_BeginBufferedPlayback(char *BufferStart, int BufferSize,
+                                int NumDivisions, unsigned SampleRate,
+                                int MixMode, void (*CallBackFunc)(void))
+{
+    GOLD_WriteLog("GOLD_BeginBufferedPlayback: starting (PIO mode)\n");
+
+    /* Stop any ongoing playback (logs counters from previous session) */
+    GOLD_StopPlayback();
+
+    /* Reset counters for new session */
+    GOLD_IrqCount = 0;
+    GOLD_SpuriousIrqCount = 0;
+    GOLD_PioBytesWritten = 0;
+    GOLD_LastIrqMma0 = 0;
+    GOLD_LastIrqMma1 = 0;
+
+    /* Set mix mode */
+    GOLD_SetMixMode(MixMode);
+
+    /* Setup audio buffer pointers for PIO writes */
+    GOLD_AudioBuffer = BufferStart;
+    GOLD_CurrentAudioPtr = BufferStart;
+    GOLD_TotalBufferSize = BufferSize;
+    GOLD_AudioBufferEnd = BufferStart + BufferSize;
+
+    /* Set the sample rate (configures MMA registers) */
+    GOLD_SetPlaybackRate(SampleRate);
+
+    /* Store the callback */
+    GOLD_CallBack = CallBackFunc;
+
+    /* Set initial volume */
+    GOLD_SetPCMVolume(GOLD_MainVolume);
+
+    /* Enable interrupts on PIC */
+    GOLD_EnableInterrupt();
+
+    /* Calculate transfer length per division (for logging) */
+    if (NumDivisions > 0)
+    {
+        GOLD_TransferLength = BufferSize / NumDivisions;
+    }
+    else
+    {
+        GOLD_TransferLength = BufferSize;
+    }
+
+    /* Log diagnostic state */
+    {
+        unsigned char pic1;
+        unsigned char ctStatus;
+        unsigned char mma0Status;
+        unsigned char mma1Status;
+
+        pic1 = inp(0x21);
+        ctStatus = inp(GOLD_CTAddr);
+        mma0Status = inp(GOLD_MMA0Addr);
+        mma1Status = inp(GOLD_MMA1Addr);
+        GOLD_WriteLog("GOLD_BeginBufferedPlayback: PIC1=0x");
+        GOLD_WriteHexChar(pic1);
+        GOLD_WriteLog(" CT=0x");
+        GOLD_WriteHexChar(ctStatus);
+        GOLD_WriteLog(" MMA0=0x");
+        GOLD_WriteHexChar(mma0Status);
+        GOLD_WriteLog(" MMA1=0x");
+        GOLD_WriteHexChar(mma1Status);
+        GOLD_WriteLog(" bufSz=");
+        GOLD_WriteLogNum(BufferSize);
+        GOLD_WriteLog("\n");
+    }
+
+    /*
+     * Pre-fill the YMZ263 FIFO before starting playback.
+     * Per datasheet: "The FIFO buffers should never be left to empty
+     * themselves during playback (that is when GO bit is set)."
+     * We fill the FIFO with audio data via PIO, then set GO.
+     */
+    GOLD_FifoPreFill();
+
+    /* Start playback on the Gold card (sets GO bit) */
+    GOLD_StartPlayback();
+
+    /* Post-startup diagnostic: check YMZ263 status after a brief delay */
+    {
+        unsigned int waitCount;
+        unsigned char mma0Status;
+
+        waitCount = 0x10000;
+        while (waitCount > 0)
+        {
+            waitCount--;
+        }
+        mma0Status = inp(GOLD_MMA0Addr);
+        GOLD_WriteLog("GOLD_BeginBufferedPlayback: postStart MMA0=0x");
+        GOLD_WriteHexChar(mma0Status);
+        GOLD_WriteLog("\n");
+    }
+
+    GOLD_WriteLog("GOLD_BeginBufferedPlayback: playback running (PIO)\n");
+    return GOLD_Ok;
+}
+
+/*---------------------------------------------------------------------
+   Function: GOLD_GetCardInfo
+
+   Returns the maximum sample bits and channels supported.
+---------------------------------------------------------------------*/
+int GOLD_GetCardInfo(int *MaxSampleBits, int *MaxChannels)
+{
+    *MaxSampleBits = 8;
+    *MaxChannels = 2;
+
+    return GOLD_Ok;
 }
