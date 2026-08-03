@@ -264,9 +264,9 @@
  * The YMZ263 supports 12-bit samples but we use 8-bit MSB format
  * for simplicity and compatibility with the FastDoom mixer.
  */
-#define GOLD_MaxMixMode             GOLD_MONO_8BIT
+#define GOLD_MaxMixMode             GOLD_STEREO_8BIT
 #define GOLD_DefaultSampleRate      11025
-#define GOLD_DefaultMixMode         GOLD_MONO_8BIT
+#define GOLD_DefaultMixMode         GOLD_STEREO_8BIT
 #define GOLD_MaxIrq                 15
 
 /*

@@ -566,7 +566,13 @@ void GOLD_SetPlaybackRate(unsigned rate)
     /* Update the actual sample rate */
     GOLD_SampleRate = GOLD_PCM_Rates[rateIdx];
 
-    GOLD_WriteLog("GOLD_SetPlaybackRate: rate configured\n");
+    GOLD_WriteLog("GOLD_SetPlaybackRate: requested=");
+    GOLD_WriteLogNum((int)rate);
+    GOLD_WriteLog(" actual=");
+    GOLD_WriteLogNum((int)GOLD_SampleRate);
+    GOLD_WriteLog(" freqIdx=");
+    GOLD_WriteLogNum(rateIdx);
+    GOLD_WriteLog("\n");
 }
 
 /*---------------------------------------------------------------------
@@ -640,7 +646,16 @@ int GOLD_SetMixMode(int mode)
         GOLD_WriteMMAReg(1, GOLD_MMA_FMT_CTL, fmt1);
     }
 
-    GOLD_WriteLog("GOLD_SetMixMode: mode set\n");
+    GOLD_WriteLog("GOLD_SetMixMode: mode=");
+    GOLD_WriteLogNum(mode);
+    if (mode & GOLD_STEREO)
+    {
+        GOLD_WriteLog(" (stereo 8-bit)\n");
+    }
+    else
+    {
+        GOLD_WriteLog(" (mono 8-bit)\n");
+    }
     return GOLD_Ok;
 }
 
@@ -804,6 +819,8 @@ void GOLD_StopPlayback(void)
     GOLD_WriteLogNumSigned(GOLD_SpuriousIrqCount);
     GOLD_WriteLog(" pioBytes=");
     GOLD_WriteLogNumSigned(GOLD_PioBytesWritten);
+    GOLD_WriteLog(" rate=");
+    GOLD_WriteLogNum((int)GOLD_SampleRate);
     GOLD_WriteLog(" lastYMZ263Status=0x");
     GOLD_WriteHexChar(GOLD_LastIrqStatus);
     GOLD_WriteLog(" mma0=0x");
@@ -1509,6 +1526,8 @@ int GOLD_BeginBufferedPlayback(char *BufferStart, int BufferSize,
         GOLD_WriteHexChar(mma1Status);
         GOLD_WriteLog(" bufSz=");
         GOLD_WriteLogNum(BufferSize);
+        GOLD_WriteLog(" rate=");
+        GOLD_WriteLogNum((int)GOLD_SampleRate);
         GOLD_WriteLog("\n");
     }
 
