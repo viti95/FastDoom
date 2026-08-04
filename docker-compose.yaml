@@ -9,3 +9,23 @@ services:
       - ./dist:/app/dist # Carpeta compartida para resultados
     working_dir: /app
     command: /bin/bash -c -e "source fdenv.sh && ./package.sh && cp FastDoom_*.zip /app/dist"
+
+  fdsetup:
+    build: .
+    profiles: [fdsetup]
+    volumes:
+      - .:/app
+      - ./dist:/app/dist
+    working_dir: /app/FDSETUP
+    command: >
+      /bin/bash -c "
+        if [ ! -f SETUP.CSM ]; then
+          echo 'Generating SETUP.CSM via DOSBox...' &&
+          xvfb-run -a dosbox -c 'mount c /app/FDSETUP/SCREENS' -c 'c:' -c 'make.bat' -c 'exit' -noautoexec &&
+          cp SCREENS/SETUP.CSM .
+        else
+          echo 'SETUP.CSM already present, skipping DOSBox step'
+        fi &&
+        wmake -f makefile &&
+        cp fdsetup.exe /app/dist/FDSETUP.EXE
+      "

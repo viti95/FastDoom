@@ -1,0 +1,174 @@
+
+
+
+
+
+
+                                Laughing Dog Screen Maker
+                                -------------------------
+
+                               U P D A T E    H I S T O R Y
+                              ------------------------------
+
+                                   Release Version 1.14
+                                  ----------------------
+
+                               Last Updated: September 1992
+                               ---------------------------
+
+               This file contains  descriptions of the updates made to the
+               Laughing Dog Screen Maker program since the first release in
+               March 1992.
+
+              --------------------------------------------------------------
+                                         LDOG.EXE
+              --------------------------------------------------------------
+          V1.01:
+               --Internal release only.
+
+          V1.02:
+          20APR92 -- Fixed a bug in the PostScript output which caused the
+               alternate PrCh function to fail. For consistency, all file and
+               path names are now forcedto uppercase.
+
+               --Fixed a bug introduced in V1.01 which prevented the PostScript
+               option from working correctly.
+
+          V1.10:
+          25JUL92 -- Fixed a problem with the Set Last Screen Row dialog box
+               that would sometimes cause the row number to increment more than
+               one row at a time when using the mouse.
+
+               --Initialize screen to White on Black ($0F) upon start-up.
+
+               --Added ASCII Text output to the Generate Code/Export Menu. (See
+               READ.ME file for more info on using this feature)
+
+               --Added the ability to automatically insert WildCat! and PCBoard
+               @variables into a screen using <cntl>-V hot key.(See READ.ME file
+               for more info on using this feature)
+
+               --Limited the length of screen rows exported as PCBoard or
+               WildCat! BBS files to 79 chars. This change was necessary to
+               avoid screens displaying a blank line between each row from
+               within WildCat! and PCBoard on screens having a background color
+
+
+
+          -- Laughing Dog Screen Maker HISTORY.DOC     Page 1 of 3 --
+
+
+
+
+
+               other than black. The last row on the screen (row 79) is now
+               truncated.
+
+               --Changed the colors used in the help screens.  People suffering
+               from certain kinds of color blindness were having trouble seeing
+               the green on black text, so the colors were changed to solve this
+               problem.  If it is still difficult to see, please let me know and
+               I will keep on adjusting until everyone can read the help
+               screens. (Unfortunately, the colors are hard-coded into the help
+               file, and cannot be user configured at this time).
+
+          V1.11:
+          14AUG92 -- Removed the invalid WildCat! BBS @variables @NODESTAT###@
+               and @NODEUSER###@ from the WildCat! @Variable Menu.
+
+          V1.12:
+          02SEP92 -- Although still not "officially" supported, EGA and VGA
+               extended screen modes (modes with more than the standard 25
+               screen rows, like 35-line mode, 50-line mode, etc.) work better
+               now.  Fixed the problem of the mouse cursor occasionally not
+               being able to move beyond the 25th row.  Fixed the problem of
+               getting multiple copies of a window, copied block, or BBS
+               @variables showing up on the screen when using the Make a Window,
+               Paste From File, or Insert BBS Variable features while UNDO was
+               active. NOTE: In order for LDOG to work with these extended
+               screen modes, the display must be in the mode prior to running
+               LDOG.EXE, if you start LDOG in one mode then shell out to DOS and
+               put the display in another mode, the screen will change, but LDOG
+               will behave as though the original mode is still in effect, not a
+               pretty sight...
+
+          V1.13:
+          Internal release only
+
+          V1.14:
+          25SEP92 -- Fixed a bug which caused the check mark to appear on the
+               wrong line of the Generate Code Menu when toggling the "AS
+               Monochrome" choice on and off.
+
+               --Fixed a bug which sometimes caused the program not to return to
+               the default drive and directory upon quitting if the program was
+               executed through the DOS search path from another location on the
+               hard drive.
+
+               --When Copy to File is selected from the Block Menu, the default
+               file name in the Save File dialog box now defaults to the last
+               block file name saved or pasted.
+
+
+
+
+
+          -- Laughing Dog Screen Maker HISTORY.DOC     Page 2 of 3 --
+
+
+
+
+
+               --Fixed a bug in the Color Pascal and Monochrome Assembly code
+               generated which prevented it from running correctly on some XT
+               computers with BIOS dates earlier than 1/10/86.
+
+               --Added early binding to some functions in the PostScript code
+               generated which could speed PostScript printing somewhat.
+
+               --Added the "/#copies 1 def" variable definition to the
+               PostScript code, which allows you to more efficiently print
+               multiple copies of screens by changing the "1" to the number of
+               copies you wish to print.
+
+              --------------------------------------------------------------
+                                       LDOGSHOW.EXE
+              --------------------------------------------------------------
+          V1.01:
+          20APR92 -- Fixed the Copyright notice in the helpscreen
+
+          V1.02:
+          21JUL92 -- Program has not changed since V1.01, it was just recompiled
+               with a different compiler.
+
+          V1.03:
+          03SEP92 -- Fixed the bug which prevented a single file with a filename
+               beginning with a numeric character from being displayed.
+
+
+              --------------------------------------------------------------
+                                       LDOGRAB.EXE
+              --------------------------------------------------------------
+          V1.02:
+          21JUL92 -- Fixed a problem which caused unexpected results if a screen
+               being captured contained the characters with the values 0 or 255
+               (which would have shown up as spaces on the application screen).
+               These character values are now replaced with a normal space
+               character (32 decimal/20 hex).
+
+          --------------------------------------------------------------
+                                       BLK2EPS.EXE
+          --------------------------------------------------------------
+
+          13APR92 -- Fixed a bug which caused the alternate PrCh function to
+               fail. For consistency, all file and path names are now forced to
+               uppercase.
+
+
+
+
+
+
+
+
+          -- Laughing Dog Screen Maker HISTORY.DOC     Page 3 of 3 --

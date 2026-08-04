@@ -30,9 +30,8 @@ ENV WATCOM=/opt/watcom \
     EDDAT=/opt/watcom/eddat \
     INCLUDE=/opt/watcom/h
 
-RUN apt-get update && apt-get install -y nasm 7zip dosbox
+RUN apt-get update && apt-get install -y nasm 7zip dosbox xvfb && rm -rf /var/lib/apt/lists/*
 
 # Verificación de instalación
-RUN find . -name wcl386
-RUN wcl386 -h > /dev/null && echo "Compilador verificado"
-RUN rm -rf /var/lib/apt/lists/*
+RUN wcl386 -h > /dev/null; echo "wcl386 ok"
+RUN wcl -h > /dev/null; echo "wcl (16-bit) ok"

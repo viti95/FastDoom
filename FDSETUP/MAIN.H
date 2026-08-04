@@ -1,6 +1,7 @@
 //
 // MAIN.H
 //
+#include "borland_shim.h"
 #include "setup.h"
 #include "menu.h"
 #include "keys.h"

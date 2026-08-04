@@ -1,0 +1,38 @@
+file: PACKING.LST
+-------------------------------------------------------------------------
+File Name       Description of File
+-------------------------------------------------------------------------
+PACKING.LST     This list.
+
+READ.ME         Important last-minute information.
+
+SITELICE.DOC    Site license information and agreement.
+
+LDOG.EXE        The Laughing Dog Screen Maker program.
+
+LDOG.HLP        The Laughing Dog Screen Maker on-line help file.
+
+LDOGRAB.EXE     The Laughing Dog screen capture utility.
+
+LDOGSHOW.EXE    The Laughing Dog presentation (slide show) utility.
+
+BLK2EPS.EXE     The Laughing Dog block to EPS file conversion utility.
+
+COLORS.DOG      An example Laughing Dog screen file containing all of the 
+                possible screen colors.  Good for demonstrating PostScript 
+                gray scale rendering.
+
+ALLCHARS.DOG    An example Laughing Dog Screen file containing the entire 
+                ASCII character set.  Good for testing printer compatibility.
+
+HISTORY.DOC     This file contains a history of additions and bug fixes made
+                to the program since it's initial release in March '92.
+
+TEST.BAT
+BDEMO.DOG
+CHOICE1.DOG
+CHOICE2.DOG
+CHOICE3.DOG     These 5 files are the demonstration files that go along with 
+                the discussion about using the Laughing Dog COM programs 
+                to enhance batch files in chapter 7.
+
