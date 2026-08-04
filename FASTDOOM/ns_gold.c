@@ -893,12 +893,11 @@ static int GOLD_DetectDevice(void)
    Function: GOLD_GetEnv
 
    Retrieves the GOLD environment settings.
-   Format: GOLD=Axxxx Ii Dd
+   Format: GOLD=388 (hex base address)
 ---------------------------------------------------------------------*/
 int GOLD_GetEnv(GOLD_CONFIG *Config)
 {
     char *GoldEnv;
-    char param;
 
     Config->Address = GOLD_DEFAULT_BASE;
     Config->Interrupt = GOLD_DEFAULT_IRQ;
@@ -911,42 +910,19 @@ int GOLD_GetEnv(GOLD_CONFIG *Config)
         return GOLD_Ok;
     }
 
-    while (*GoldEnv != 0)
+    /*
+     * Parse the hex base address (simple format: "388").
+     * If the first char is a digit, parse it as hex.
+     */
+    if (isdigit(*GoldEnv))
     {
-        if (*GoldEnv == ' ')
-        {
-            GoldEnv++;
-            continue;
-        }
-
-        param = toupper(*GoldEnv);
-        GoldEnv++;
-
-        if (!isxdigit(*GoldEnv))
-        {
-            continue;
-        }
-
-        switch (param)
-        {
-        case 'A':
-            sscanf(GoldEnv, "%x", &Config->Address);
-            break;
-        case 'I':
-            sscanf(GoldEnv, "%d", &Config->Interrupt);
-            break;
-        case 'D':
-            sscanf(GoldEnv, "%d", &Config->Dma);
-            break;
-        }
-
-        while (isxdigit(*GoldEnv))
-        {
-            GoldEnv++;
-        }
+        sscanf(GoldEnv, "%x", &Config->Address);
     }
 
-    GOLD_WriteLog("GOLD_GetEnv: parsed GOLD environment\n");
+    GOLD_WriteLog("GOLD_GetEnv: parsed GOLD env: addr=0x");
+    GOLD_WriteHexChar((Config->Address >> 4) & 0x0F);
+    GOLD_WriteHexChar(Config->Address & 0x0F);
+    GOLD_WriteLog("\n");
     return GOLD_Ok;
 }
 
