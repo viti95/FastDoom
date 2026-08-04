@@ -33,5 +33,5 @@ ENV WATCOM=/opt/watcom \
 RUN apt-get update && apt-get install -y nasm 7zip dosbox xvfb && rm -rf /var/lib/apt/lists/*
 
 # Verificación de instalación
-RUN wcl386 -h > /dev/null; echo "wcl386 ok"
-RUN wcl -h > /dev/null; echo "wcl (16-bit) ok"
+RUN wcl386 -h > /dev/null 2>&1 && echo "wcl386 ok"
+RUN wcl -h > /dev/null 2>&1 && echo "wcl (16-bit) ok"
