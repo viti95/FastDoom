@@ -30,7 +30,7 @@ ENV WATCOM=/opt/watcom \
     EDDAT=/opt/watcom/eddat \
     INCLUDE=/opt/watcom/h
 
-RUN apt-get update && apt-get install -y nasm 7zip dosbox xvfb && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y nasm 7zip python3 && rm -rf /var/lib/apt/lists/*
 
 # Verificación de instalación
 RUN wcl386 -h > /dev/null 2>&1 && echo "wcl386 ok"

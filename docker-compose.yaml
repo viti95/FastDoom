@@ -4,6 +4,7 @@ version: '3.8'
 services:
   builder:
     build: .
+    profiles: [builder]
     volumes:
       - .:/app           # Monta el proyecto local
       - ./dist:/app/dist # Carpeta compartida para resultados
@@ -19,13 +20,7 @@ services:
     working_dir: /app/FDSETUP
     command: >
       /bin/bash -c "
-        if [ ! -f SETUP.CSM ]; then
-          echo 'Generating SETUP.CSM via DOSBox...' &&
-          xvfb-run -a dosbox -c 'mount c /app/FDSETUP/SCREENS' -c 'c:' -c 'make.bat' -c 'exit' -noautoexec &&
-          cp SCREENS/SETUP.CSM .
-        else
-          echo 'SETUP.CSM already present, skipping DOSBox step'
-        fi &&
+        python3 gen_pup_data.py &&
         wmake -f makefile &&
         cp fdsetup.exe /app/dist/FDSETUP.EXE
       "
