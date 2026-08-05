@@ -4,7 +4,6 @@
 #include <process.h>
 #include <io.h>
 #include <dos.h>
-#include <mem.h>
 #include <conio.h>
 #include <bios.h>
 #include <string.h>

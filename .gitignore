@@ -1,4 +1,5 @@
 #FASTDOOM
+.DS_Store
 *.err
 *.exe
 *.map
