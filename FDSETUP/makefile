@@ -22,5 +22,4 @@ fdsetup.exe: $(OBJS)
 	wcl -ml -zq -fe=fdsetup.exe $(OBJS)
 
 clean: .SYMBOLIC
-	del *.obj
-	del fdsetup.exe
+	rm -f *.obj fdsetup.exe
