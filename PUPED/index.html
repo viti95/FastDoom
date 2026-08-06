@@ -696,7 +696,7 @@ function buildPalettes() {
   bgEl.innerHTML = '';
 
   for (let i = 0; i < 16; i++) {
-    const textColor = (i === 0 || i === 7 || i === 14 || i === 15) ? '#000' : '#fff';
+    const textColor = (i > 7) ? '#000' : '#fff';
 
     const swFg = document.createElement('div');
     swFg.className = 'color-swatch';
