@@ -157,43 +157,43 @@
   }
 
   .panel {
-    padding: 10px;
+    padding: 6px 10px;
     border-bottom: 1px solid var(--border);
   }
   .panel-title {
-    font-size: 11px;
+    font-size: 10px;
     text-transform: uppercase;
     color: var(--accent2);
-    margin-bottom: 8px;
+    margin-bottom: 4px;
     letter-spacing: 1px;
   }
   .panel-row {
     display: flex;
     align-items: center;
-    gap: 6px;
-    margin-bottom: 4px;
+    gap: 4px;
+    margin-bottom: 2px;
   }
   .panel-row label {
-    font-size: 11px;
+    font-size: 10px;
     color: var(--text-dim);
-    min-width: 50px;
+    min-width: 40px;
   }
   .panel-row input[type="number"], .panel-row input[type="text"] {
-    width: 60px;
+    width: 52px;
     background: var(--bg);
     border: 1px solid var(--border);
     color: var(--text);
-    padding: 2px 4px;
+    padding: 1px 3px;
     font-family: var(--mono-font);
-    font-size: 12px;
+    font-size: 11px;
     border-radius: 2px;
   }
 
   /* ── Color picker ── */
   .color-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 3px;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 2px;
   }
   .color-swatch {
     width: 100%;
@@ -202,7 +202,7 @@
     cursor: pointer;
     border-radius: 2px;
     font-family: var(--mono-font);
-    font-size: 10px;
+    font-size: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -213,17 +213,17 @@
 
   /* ── Palette labels ── */
   .palette-label {
-    font-size: 10px;
+    font-size: 9px;
     color: var(--text-dim);
-    margin-top: 6px;
-    margin-bottom: 2px;
+    margin-top: 3px;
+    margin-bottom: 1px;
   }
 
   /* ── Special chars panel ── */
   .special-grid {
     display: grid;
     grid-template-columns: repeat(16, 1fr);
-    gap: 2px;
+    gap: 1px;
   }
   .special-cell {
     width: 100%;
@@ -232,11 +232,12 @@
     align-items: center;
     justify-content: center;
     font-family: var(--mono-font);
-    font-size: 13px;
+    font-size: 11px;
     background: var(--bg);
     border: 1px solid var(--surface2);
     cursor: pointer;
     border-radius: 2px;
+    line-height: 1;
   }
   .special-cell:hover { border-color: var(--accent2); background: var(--surface2); }
 
@@ -356,12 +357,12 @@
     color: var(--text-dim);
     border: 1px solid var(--border);
     border-bottom: none;
-    padding: 4px 12px;
+    padding: 2px 6px;
     font-family: var(--mono-font);
-    font-size: 11px;
+    font-size: 9px;
     cursor: pointer;
     border-radius: 3px 3px 0 0;
-    margin-right: 2px;
+    margin-right: 1px;
   }
   .tab-btn.active { background: var(--bg); color: var(--text); }
 
@@ -439,24 +440,24 @@
     <!-- Color pickers -->
     <div class="panel">
       <div class="panel-title">🎨 Colors</div>
-      <div class="palette-label">Foreground (click):</div>
+      <div class="palette-label">Foreground:</div>
       <div class="color-grid" id="fg-palette"></div>
-      <div class="palette-label" style="margin-top:10px;">Background (click):</div>
+      <div class="palette-label" style="margin-top:4px;">Background:</div>
       <div class="color-grid" id="bg-palette"></div>
-      <div class="panel-row" style="margin-top:8px;">
-        <label style="min-width:70px;">Attr byte:</label>
+      <div class="panel-row" style="margin-top:4px;">
+        <label style="min-width:50px;">Attr:</label>
         <span id="attr-hex" style="color:var(--accent2);font-weight:bold;">0x1F</span>
       </div>
       <div class="panel-row">
-        <label style="min-width:70px;">VGA attr:</label>
-        <span id="attr-desc" style="color:var(--text-dim);font-size:10px;"></span>
+        <label style="min-width:50px;">VGA attr:</label>
+        <span id="attr-desc" style="color:var(--text-dim);font-size:9px;"></span>
       </div>
     </div>
 
     <!-- Special characters -->
-    <div class="panel" style="flex:1; overflow-y:auto;">
+    <div class="panel">
       <div class="panel-title">🔲 Special Characters (CP437)</div>
-      <div class="tab-bar" style="margin-bottom:6px;">
+      <div class="tab-bar" style="margin-bottom:3px;">
         <button class="tab-btn active" data-tab="box">Box</button>
         <button class="tab-btn" data-tab="block">Block</button>
         <button class="tab-btn" data-tab="arrows">Arrows</button>
@@ -476,7 +477,7 @@
       <div class="panel-row">
         <label>Char:</label>
         <span id="info-char" style="color:var(--accent2);">-</span>
-        <label style="min-width:20px;">Hex:</label>
+        <label>Hex:</label>
         <span id="info-hex" style="color:var(--text-dim);">0x00</span>
       </div>
       <div class="panel-row">
