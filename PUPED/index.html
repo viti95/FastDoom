@@ -74,6 +74,14 @@
     min-width: 0;
   }
 
+  /* ── Zoom levels ── */
+  #grid-wrapper[data-zoom="0.5"]  { --cell-w: 6px;  --cell-h: 10px;  --font-size: 7px; }
+  #grid-wrapper[data-zoom="0.75"] { --cell-w: 8px;  --cell-h: 13px;  --font-size: 10px; }
+  #grid-wrapper[data-zoom="1"]    { --cell-w: 10px; --cell-h: 16px;  --font-size: 12px; }
+  #grid-wrapper[data-zoom="1.5"]  { --cell-w: 14px; --cell-h: 22px;  --font-size: 16px; }
+  #grid-wrapper[data-zoom="2"]    { --cell-w: 19px; --cell-h: 30px;  --font-size: 21px; }
+  #grid-wrapper[data-zoom="3"]    { --cell-w: 28px; --cell-h: 45px;  --font-size: 31px; }
+
   /* ── Grid scroll area ── */
   #grid-scroll {
     flex: 1;
@@ -87,15 +95,15 @@
   /* ── Coordinate header ── */
   #grid-wrapper {
     display: inline-grid;
-    grid-template-columns: 30px repeat(80, 1fr);
-    grid-template-rows: 20px repeat(25, 1fr);
+    grid-template-columns: 30px repeat(80, var(--cell-w, 10px));
+    grid-template-rows: 20px repeat(25, var(--cell-h, 16px));
   }
 
   #col-header {
     grid-column: 2 / -1;
     grid-row: 1;
     display: grid;
-    grid-template-columns: repeat(80, 1fr);
+    grid-template-columns: repeat(80, var(--cell-w, 10px));
   }
   #col-header span {
     text-align: center;
@@ -108,28 +116,29 @@
     grid-column: 2 / -1;
     grid-row: 2 / -1;
     display: grid;
-    grid-template-columns: repeat(80, 1fr);
-    grid-template-rows: repeat(25, 1fr);
+    grid-template-columns: repeat(80, var(--cell-w, 10px));
+    grid-template-rows: repeat(25, var(--cell-h, 16px));
   }
 
   .cell {
-    width: 9px;
-    height: 15px;
+    width: var(--cell-w, 10px);
+    height: var(--cell-h, 16px);
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: var(--mono-font);
-    font-size: 12px;
+    font-size: var(--font-size, 12px);
     cursor: cell;
     user-select: none;
-    border: 1px solid transparent;
     line-height: 1;
     overflow: hidden;
+    position: relative;
   }
-  .cell:hover { border-color: rgba(255,255,255,0.3); }
+  .cell:hover {
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.4);
+  }
   .cell.selected {
-    outline: 2px solid #fff;
-    outline-offset: -2px;
+    box-shadow: inset 0 0 0 2px #fff;
     z-index: 10;
   }
 
@@ -394,6 +403,13 @@
   <div class="sep"></div>
   <button id="btn-preview">👁 Preview</button>
   <button id="btn-hex">🔧 Hex</button>
+  <div class="sep"></div>
+  <div class="mode-group" title="Zoom">
+    <button id="zoom-out" title="Zoom out (Ctrl+-)">➖</button>
+    <button id="zoom-reset" title="Reset zoom (Ctrl+0)">⊞</button>
+    <button id="zoom-in" title="Zoom in (Ctrl+=)">➕</button>
+  </div>
+  <span id="zoom-label" style="font-size:11px;color:var(--accent2);min-width:36px;text-align:center;">100%</span>
   <span id="undo-info" style="margin-left:auto;font-size:10px;color:var(--text-dim);"></span>
 </div>
 
@@ -492,6 +508,7 @@
   </span>
   <span id="status-mode">Mode: Text</span>
   <span id="status-size"></span>
+  <span id="status-zoom"></span>
 </div>
 
 <!-- ═══ PREVIEW OVERLAY ═══ -->
@@ -835,6 +852,52 @@ function updateStatusBar() {
   document.getElementById('status-size').textContent = `Est. size: ${bytes} bytes`;
 }
 
+// ── Zoom ──
+const ZOOM_LEVELS = ['0.5', '0.75', '1', '1.5', '2', '3'];
+const ZOOM_LABELS = ['50%', '75%', '100%', '150%', '200%', '300%'];
+let zoomIndex = 2; // start at 100%
+
+function applyZoom() {
+  document.getElementById('grid-wrapper').dataset.zoom = ZOOM_LEVELS[zoomIndex];
+  document.getElementById('zoom-label').textContent = ZOOM_LABELS[zoomIndex];
+}
+
+function zoomIn() {
+  if (zoomIndex < ZOOM_LEVELS.length - 1) {
+    zoomIndex++;
+    applyZoom();
+  }
+}
+
+function zoomOut() {
+  if (zoomIndex > 0) {
+    zoomIndex--;
+    applyZoom();
+  }
+}
+
+function zoomReset() {
+  zoomIndex = 2;
+  applyZoom();
+}
+
+document.getElementById('zoom-in').addEventListener('click', zoomIn);
+document.getElementById('zoom-out').addEventListener('click', zoomOut);
+document.getElementById('zoom-reset').addEventListener('click', zoomReset);
+
+// Mouse wheel zoom on grid
+let wheelZoomTimer = null;
+document.getElementById('grid-scroll').addEventListener('wheel', (e) => {
+  if (e.ctrlKey) {
+    e.preventDefault();
+    clearTimeout(wheelZoomTimer);
+    wheelZoomTimer = setTimeout(() => {
+      if (e.deltaY < 0) zoomIn();
+      else zoomOut();
+    }, 50);
+  }
+}, { passive: false });
+
 // ── Mouse handling ──
 function getCellFromEvent(e) {
   return { x: parseInt(e.target.dataset.x), y: parseInt(e.target.dataset.y) };
@@ -953,6 +1016,9 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'z') { undo(); e.preventDefault(); return; }
     if (e.key === 'y') { redo(); e.preventDefault(); return; }
     if (e.key === 's') { exportPUP(); e.preventDefault(); return; }
+    if (e.key === '=' || e.key === '+') { zoomIn(); e.preventDefault(); return; }
+    if (e.key === '-') { zoomOut(); e.preventDefault(); return; }
+    if (e.key === '0') { zoomReset(); e.preventDefault(); return; }
     return;
   }
 
@@ -1403,6 +1469,7 @@ buildSpecialChars();
 updateAttrDisplay();
 renderGrid();
 highlightSelected();
+applyZoom();
 
 console.log('PUPED - FDSetup PUP Screen Editor initialized');
 console.log('Import .PUP files via the toolbar or drag-and-drop');
