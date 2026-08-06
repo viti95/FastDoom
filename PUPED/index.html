@@ -204,6 +204,7 @@
   }
 
   /* ── Color picker ── */
+  #info-char { transition: none; }
   .color-grid {
     display: grid;
     grid-template-columns: repeat(8, 1fr);
@@ -252,14 +253,11 @@
     cursor: pointer;
     border-radius: 2px;
     line-height: 1;
-    transition: transform 0.15s ease, z-index 0s 0.15s;
+    transition: border-color 0.15s ease, background 0.15s ease;
   }
   .special-cell:hover {
     border-color: var(--accent2);
     background: var(--surface2);
-    transform: scale(5);
-    z-index: 999;
-    transition: transform 0.15s ease, z-index 0s 0s;
   }
 
   /* ── Status bar ── */
@@ -379,6 +377,28 @@
     z-index: 5;
   }
 
+  /* ── Floating char zoom overlay ── */
+  #char-zoom-overlay {
+    position: fixed;
+    pointer-events: none;
+    z-index: 10000;
+    font-family: var(--mono-font);
+    font-size: 60px;
+    font-weight: bold;
+    background: var(--surface);
+    border: 2px solid var(--accent2);
+    border-radius: 4px;
+    padding: 6px 12px;
+    line-height: 1;
+    opacity: 0;
+    transition: opacity 0.12s ease;
+    transform: translate(-50%, -120%);
+    white-space: nowrap;
+  }
+  #char-zoom-overlay.visible {
+    opacity: 1;
+  }
+
   /* ── Cell Info char zoom ── */
   #info-char {
     font-size: 22px;
@@ -394,12 +414,13 @@
     cursor: default;
     transition: transform 0.15s ease;
   }
-  #info-char:hover {
-    transform: scale(4);
-  }
+
 </style>
 </head>
 <body>
+
+<!-- ═══ CHAR ZOOM OVERLAY ═══ -->
+<div id="char-zoom-overlay"></div>
 
 <!-- ═══ TOOLBAR ═══ -->
 <div id="toolbar">
@@ -803,6 +824,21 @@ function buildSpecialChars() {
     d.textContent = oemChar(i);
     d.title = `0x${i.toString(16).toUpperCase().padStart(2, '0')}`;
     d.addEventListener('click', () => applySpecialChar(i));
+    d.addEventListener('mouseenter', (e) => {
+      const ov = document.getElementById('char-zoom-overlay');
+      ov.textContent = oemChar(i);
+      ov.title = `0x${i.toString(16).toUpperCase().padStart(2, '0')}`;
+      const { fg, bg } = vgaAttrToCSS(currentAttr);
+      ov.style.color = fg;
+      ov.style.background = bg;
+      ov.style.borderColor = fg;
+      ov.style.left = e.clientX + 'px';
+      ov.style.top = (e.clientY - 4) + 'px';
+      ov.classList.add('visible');
+    });
+    d.addEventListener('mouseleave', () => {
+      document.getElementById('char-zoom-overlay').classList.remove('visible');
+    });
     el.appendChild(d);
   }
 }
@@ -860,6 +896,26 @@ function updateCellInfo(x, y) {
   document.getElementById('info-attr').textContent = `0x${data.attr.toString(16).toUpperCase().padStart(2, '0')} (${attrDescription(data.attr)})`;
   document.getElementById('info-pos').textContent = `${x}, ${y}`;
 }
+
+// ── Info-char hover zoom (bound once, reads live selected cell data) ──
+(function() {
+  const charEl = document.getElementById('info-char');
+  const ov = document.getElementById('char-zoom-overlay');
+  charEl.addEventListener('mouseenter', (e) => {
+    const data = grid[selectedCell.y][selectedCell.x];
+    ov.textContent = oemChar(data.ch);
+    const { fg, bg } = vgaAttrToCSS(data.attr);
+    ov.style.color = fg;
+    ov.style.background = bg;
+    ov.style.borderColor = fg;
+    ov.style.left = e.clientX + 'px';
+    ov.style.top = (e.clientY - 4) + 'px';
+    ov.classList.add('visible');
+  });
+  charEl.addEventListener('mouseleave', () => {
+    ov.classList.remove('visible');
+  });
+})();
 
 function updateStatusBar() {
   const { x, y } = selectedCell;
@@ -1451,6 +1507,14 @@ document.body.addEventListener('drop', (e) => {
 });
 
 // ── Fullscreen ──
+document.addEventListener('mousemove', (e) => {
+  const ov = document.getElementById('char-zoom-overlay');
+  if (ov.classList.contains('visible')) {
+    ov.style.left = e.clientX + 'px';
+    ov.style.top = (e.clientY - 4) + 'px';
+  }
+});
+
 document.getElementById('btn-fullscreen').addEventListener('click', toggleFullscreen);
 document.addEventListener('fullscreenchange', () => {
   document.getElementById('btn-fullscreen').textContent = document.fullscreenElement ? '⛶ Exit' : '⛶ Fullscreen';
