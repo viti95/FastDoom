@@ -350,22 +350,6 @@
   .mode-group button:last-child { border-radius: 0 3px 3px 0; }
   .mode-group button.active { background: var(--accent); border-color: var(--accent); }
 
-  /* ── Tab system ── */
-  .tab-bar { display: flex; gap: 0; }
-  .tab-btn {
-    background: var(--surface2);
-    color: var(--text-dim);
-    border: 1px solid var(--border);
-    border-bottom: none;
-    padding: 2px 6px;
-    font-family: var(--mono-font);
-    font-size: 9px;
-    cursor: pointer;
-    border-radius: 3px 3px 0 0;
-    margin-right: 1px;
-  }
-  .tab-btn.active { background: var(--bg); color: var(--text); }
-
   /* ── Window position indicator ── */
   .win-indicator {
     position: absolute;
@@ -457,18 +441,7 @@
     <!-- Special characters -->
     <div class="panel">
       <div class="panel-title">🔲 Special Characters (CP437)</div>
-      <div class="tab-bar" style="margin-bottom:3px;">
-        <button class="tab-btn active" data-tab="box">Box</button>
-        <button class="tab-btn" data-tab="block">Block</button>
-        <button class="tab-btn" data-tab="arrows">Arrows</button>
-        <button class="tab-btn" data-tab="line">Lines</button>
-        <button class="tab-btn" data-tab="math">Math</button>
-      </div>
-      <div id="tab-box" class="tab-content special-grid"></div>
-      <div id="tab-block" class="tab-content special-grid" style="display:none;"></div>
-      <div id="tab-arrows" class="tab-content special-grid" style="display:none;"></div>
-      <div id="tab-line" class="tab-content special-grid" style="display:none;"></div>
-      <div id="tab-math" class="tab-content special-grid" style="display:none;"></div>
+      <div id="special-chars" class="special-grid"></div>
     </div>
 
     <!-- Cell info -->
@@ -783,31 +756,21 @@ function updateAttrDisplay() {
 }
 
 function buildSpecialChars() {
-  // Box drawing characters
-  const boxChars = [
-    0xda, 0xbf, 0xc0, 0xd9,  // ┌ ┐ └ ┘
-    0xc4, 0xb3,              // ─ │
-    0xc5, 0xc3, 0xc6, 0xb6,  // ┼ ├ ┤ ╢
-    0xc7, 0xb5,              // ╟ ╡
-    0xba, 0xbb, 0xbc, 0xbd,  // ║ ┝ ┥ ┝
-    0xc8, 0xc9, 0xca, 0xcb,  // ╚ ╔ ╩ ╦
-    0xcc, 0xcd, 0xce, 0xcf,  // ╠ ╴ ╬ ╧
-    0xd0, 0xd1, 0xd2, 0xd3,  // ╨ ╤ ╥ ┙
+  const chars = [
+    0x08, 0x09, 0x0a, 0x0f,   // ◘ ◙ ◙ ◼
+    0x10, 0x11, 0x12, 0x13, 0x14, 0x15,   // ► ◄ ↕ ‼ ¶ §
+    0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,   // ↨ ↑ ↓ → ← ∟ ↔ ▲ ▼
+    0xb0, 0xb1, 0xb2,         // ░ ▒ ▓
+    0xb3, 0xb4, 0xb5, 0xb6, 0xb7, 0xb8, 0xb9, 0xba, 0xbb, 0xbc, 0xbd,   // │ ╴ ╡ ╢ ╖ ╕ ╗ ║ ┝ ┥ ┝
+    0xbf, 0xc0, 0xc1, 0xc2, 0xc3, 0xc4, 0xc5, 0xc6, 0xc7, 0xc8, 0xc9, 0xca, 0xcb,   // ┐ └ ├ ┬ ┤ ─ ┼ ├ ┤ ╚ ╔ ╩ ╦
+    0xcc, 0xcd, 0xce, 0xcf, 0xd0, 0xd1, 0xd2, 0xd3, 0xd4, 0xd5, 0xd7, 0xd8,   // ╠ ╴ ╬ ╧ ╨ ╤ ╥ ┙ ╘ ╒ ╖ ╙
+    0xd9, 0xda,               // ┘ ┌
+    0xdb, 0xdc, 0xdd, 0xde, 0xdf,   // █ ▄ ▌ ▐ ▀
+    0xe0, 0xe1, 0xe2, 0xe3, 0xe4, 0xe5, 0xe6, 0xe7, 0xe8, 0xe9, 0xea, 0xeb, 0xec, 0xed, 0xee,   // α ß γ π Σ σ µ τ φ θ ω ε δ ∞ φ ε
+    0xef, 0xf0, 0xf1, 0xf2, 0xf3, 0xf6, 0xf7, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd,   // ∩ ≡ ± ≥ ≤ ÷ ≈ ∙ · √ ⁿ ²
   ];
-  const blockChars = [0xb0, 0xb1, 0xb2, 0xd7, 0xf2, 0xFF, 0xee, 0xef, 0xf0, 0xf1, 0xe4, 0xe7, 0xe8, 0xe9, 0xec, 0xed];
-  const arrowChars = [0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f, 0x7c, 0x5e, 0x5f, 0x5b, 0x5d, 0x3e, 0x3c, 0x7e];
-  const lineChars = [0x2d, 0x3d, 0x7e, 0x5f, 0xb3, 0xc4, 0xba, 0xda, 0xd8, 0xc5, 0xc3, 0xc6, 0xc7, 0xd3, 0xd4, 0xd5];
-  const mathChars = [0xe4, 0xe7, 0xe8, 0xe9, 0xec, 0xed, 0xee, 0xef, 0xf0, 0xf1, 0xea, 0xeb, 0xd8, 0xdb, 0xdc, 0xdd, 0xde, 0xdf, 0xe0, 0xe1, 0xe2, 0xe3, 0xe5, 0xe6, 0xd9, 0xf2];
 
-  buildSpecialTab('tab-box', boxChars);
-  buildSpecialTab('tab-block', blockChars);
-  buildSpecialTab('tab-arrows', arrowChars);
-  buildSpecialTab('tab-line', lineChars);
-  buildSpecialTab('tab-math', mathChars);
-}
-
-function buildSpecialTab(id, chars) {
-  const el = document.getElementById(id);
+  const el = document.getElementById('special-chars');
   el.innerHTML = '';
   for (const c of chars) {
     const d = document.createElement('div');
@@ -1154,16 +1117,6 @@ function switchMode(mode) {
 
 document.querySelectorAll('.mode-group button').forEach(btn => {
   btn.addEventListener('click', () => switchMode(btn.id.replace('mode-', '')));
-});
-
-// ── Tabs ──
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
-    btn.classList.add('active');
-    document.getElementById('tab-' + btn.dataset.tab).style.display = 'grid';
-  });
 });
 
 // ── Window properties ──
