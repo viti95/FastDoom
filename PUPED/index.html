@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PUPED - FDSetup PUP Screen Editor</title>
+<style>
+  :root {
+    --bg: #1a1a2e;
+    --surface: #16213e;
+    --surface2: #0f3460;
+    --border: #533483;
+    --text: #e0e0e0;
+    --text-dim: #8888aa;
+    --accent: #e94560;
+    --accent2: #00d2ff;
+    --mono-font: "Courier Prime", "Lucida Console", "Consolas", monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono-font);
+    font-size: 13px;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Top toolbar ── */
+  #toolbar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    min-height: 42px;
+  }
+  #toolbar button, #toolbar label {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    font-family: var(--mono-font);
+    font-size: 12px;
+    cursor: pointer;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  #toolbar button:hover, #toolbar label:hover { background: var(--border); }
+  #toolbar button.active { background: var(--accent); border-color: var(--accent); }
+  .sep { width: 1px; height: 24px; background: var(--border); margin: 0 4px; }
+
+  #file-input { display: none; }
+
+  /* ── Main layout ── */
+  #main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ── Editor panel ── */
+  #editor-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  /* ── Grid scroll area ── */
+  #grid-scroll {
+    flex: 1;
+    overflow: auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 10px;
+  }
+
+  /* ── Coordinate header ── */
+  #grid-wrapper {
+    display: inline-grid;
+    grid-template-columns: 30px repeat(80, 1fr);
+    grid-template-rows: 20px repeat(25, 1fr);
+  }
+
+  #col-header {
+    grid-column: 2 / -1;
+    grid-row: 1;
+    display: grid;
+    grid-template-columns: repeat(80, 1fr);
+  }
+  #col-header span {
+    text-align: center;
+    font-size: 9px;
+    color: var(--text-dim);
+    line-height: 20px;
+  }
+
+  #grid {
+    grid-column: 2 / -1;
+    grid-row: 2 / -1;
+    display: grid;
+    grid-template-columns: repeat(80, 1fr);
+    grid-template-rows: repeat(25, 1fr);
+  }
+
+  .cell {
+    width: 9px;
+    height: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono-font);
+    font-size: 12px;
+    cursor: cell;
+    user-select: none;
+    border: 1px solid transparent;
+    line-height: 1;
+    overflow: hidden;
+  }
+  .cell:hover { border-color: rgba(255,255,255,0.3); }
+  .cell.selected {
+    outline: 2px solid #fff;
+    outline-offset: -2px;
+    z-index: 10;
+  }
+
+  .row-num {
+    grid-row: calc(var(r) + 2);
+    grid-column: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    color: var(--text-dim);
+    width: 30px;
+  }
+
+  /* ── Right sidebar ── */
+  #sidebar {
+    width: 260px;
+    min-width: 260px;
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .panel {
+    padding: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .panel-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+  .panel-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  .panel-row label {
+    font-size: 11px;
+    color: var(--text-dim);
+    min-width: 50px;
+  }
+  .panel-row input[type="number"], .panel-row input[type="text"] {
+    width: 60px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 2px 4px;
+    font-family: var(--mono-font);
+    font-size: 12px;
+    border-radius: 2px;
+  }
+
+  /* ── Color picker ── */
+  .color-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3px;
+  }
+  .color-swatch {
+    width: 100%;
+    aspect-ratio: 1;
+    border: 2px solid transparent;
+    cursor: pointer;
+    border-radius: 2px;
+    font-family: var(--mono-font);
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .color-swatch:hover { border-color: #fff; }
+  .color-swatch.active-fg { border-color: #f0f; box-shadow: 0 0 4px #f0f; }
+  .color-swatch.active-bg { border-color: #0f0; box-shadow: 0 0 4px #0f0; }
+
+  /* ── Palette labels ── */
+  .palette-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    margin-top: 6px;
+    margin-bottom: 2px;
+  }
+
+  /* ── Special chars panel ── */
+  .special-grid {
+    display: grid;
+    grid-template-columns: repeat(16, 1fr);
+    gap: 2px;
+  }
+  .special-cell {
+    width: 100%;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono-font);
+    font-size: 13px;
+    background: var(--bg);
+    border: 1px solid var(--surface2);
+    cursor: pointer;
+    border-radius: 2px;
+  }
+  .special-cell:hover { border-color: var(--accent2); background: var(--surface2); }
+
+  /* ── Status bar ── */
+  #statusbar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 4px 10px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--text-dim);
+    min-height: 26px;
+  }
+  #statusbar .pos { color: var(--accent2); }
+  #statusbar .attr-display {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  #statusbar .attr-swatch {
+    width: 12px;
+    height: 12px;
+    border: 1px solid #555;
+    border-radius: 2px;
+    font-size: 9px;
+    text-align: center;
+    line-height: 12px;
+  }
+
+  /* ── Preview modal ── */
+  #preview-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+  }
+  #preview-overlay.visible { display: flex; }
+  #preview-box {
+    background: #000;
+    padding: 8px;
+    border: 2px solid #333;
+    border-radius: 4px;
+  }
+  #preview-grid {
+    display: grid;
+    font-family: var(--mono-font);
+    font-size: 14px;
+    line-height: 1.2;
+  }
+  #preview-close {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 8px 24px;
+    cursor: pointer;
+    font-family: var(--mono-font);
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  #preview-close:hover { filter: brightness(1.2); }
+
+  /* ── Hex dump ── */
+  #hex-panel {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.9);
+    z-index: 999;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 20px;
+  }
+  #hex-panel.visible { display: flex; }
+  #hex-output {
+    background: #000;
+    color: #0f0;
+    padding: 16px;
+    font-family: var(--mono-font);
+    font-size: 11px;
+    max-height: 70vh;
+    max-width: 90vw;
+    overflow: auto;
+    white-space: pre;
+    border: 1px solid #333;
+    border-radius: 4px;
+  }
+  #hex-close {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 6px 20px;
+    cursor: pointer;
+    font-family: var(--mono-font);
+    border-radius: 3px;
+  }
+
+  /* ── Mode buttons ── */
+  .mode-group { display: flex; gap: 2px; }
+  .mode-group button { border-radius: 0; }
+  .mode-group button:first-child { border-radius: 3px 0 0 3px; }
+  .mode-group button:last-child { border-radius: 0 3px 3px 0; }
+  .mode-group button.active { background: var(--accent); border-color: var(--accent); }
+
+  /* ── Tab system ── */
+  .tab-bar { display: flex; gap: 0; }
+  .tab-btn {
+    background: var(--surface2);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    padding: 4px 12px;
+    font-family: var(--mono-font);
+    font-size: 11px;
+    cursor: pointer;
+    border-radius: 3px 3px 0 0;
+    margin-right: 2px;
+  }
+  .tab-btn.active { background: var(--bg); color: var(--text); }
+
+  /* ── Window position indicator ── */
+  .win-indicator {
+    position: absolute;
+    pointer-events: none;
+    border: 1px dashed rgba(0,210,255,0.4);
+    z-index: 5;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ TOOLBAR ═══ -->
+<div id="toolbar">
+  <label for="file-input">📂 Import .PUP</label>
+  <input type="file" id="file-input" accept=".pup">
+  <button id="btn-export">💾 Export .PUP</button>
+  <div class="sep"></div>
+  <button id="btn-new">📄 New</button>
+  <button id="btn-undo">↩ Undo</button>
+  <button id="btn-redo">↪ Redo</button>
+  <div class="sep"></div>
+  <div class="mode-group">
+    <button id="mode-text" class="active" title="Type text characters">✏️ Text</button>
+    <button id="mode-fill" title="Fill cells with current color">🎨 Fill</button>
+    <button id="mode-rect" title="Draw rectangles">⬜ Rect</button>
+    <button id="mode-erase" title="Clear cells">🧹 Erase</button>
+  </div>
+  <div class="sep"></div>
+  <button id="btn-preview">👁 Preview</button>
+  <button id="btn-hex">🔧 Hex</button>
+  <span id="undo-info" style="margin-left:auto;font-size:10px;color:var(--text-dim);"></span>
+</div>
+
+<!-- ═══ MAIN ═══ -->
+<div id="main">
+  <div id="editor-panel">
+    <div id="grid-scroll">
+      <div id="grid-wrapper">
+        <div id="col-header"></div>
+        <div id="grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SIDEBAR ═══ -->
+  <div id="sidebar">
+    <!-- Window properties -->
+    <div class="panel">
+      <div class="panel-title">📐 Window (pup_t)</div>
+      <div class="panel-row">
+        <label>X:</label>
+        <input type="number" id="win-x" min="0" max="79" value="0">
+        <label>Y:</label>
+        <input type="number" id="win-y" min="0" max="24" value="0">
+      </div>
+      <div class="panel-row">
+        <label>Width:</label>
+        <input type="number" id="win-w" min="1" max="80" value="80">
+        <label>Height:</label>
+        <input type="number" id="win-h" min="1" max="25" value="25">
+      </div>
+    </div>
+
+    <!-- Color pickers -->
+    <div class="panel">
+      <div class="panel-title">🎨 Colors</div>
+      <div class="palette-label">Foreground (click):</div>
+      <div class="color-grid" id="fg-palette"></div>
+      <div class="palette-label" style="margin-top:10px;">Background (click):</div>
+      <div class="color-grid" id="bg-palette"></div>
+      <div class="panel-row" style="margin-top:8px;">
+        <label style="min-width:70px;">Attr byte:</label>
+        <span id="attr-hex" style="color:var(--accent2);font-weight:bold;">0x1F</span>
+      </div>
+      <div class="panel-row">
+        <label style="min-width:70px;">VGA attr:</label>
+        <span id="attr-desc" style="color:var(--text-dim);font-size:10px;"></span>
+      </div>
+    </div>
+
+    <!-- Special characters -->
+    <div class="panel" style="flex:1; overflow-y:auto;">
+      <div class="panel-title">🔲 Special Characters (CP437)</div>
+      <div class="tab-bar" style="margin-bottom:6px;">
+        <button class="tab-btn active" data-tab="box">Box</button>
+        <button class="tab-btn" data-tab="block">Block</button>
+        <button class="tab-btn" data-tab="arrows">Arrows</button>
+        <button class="tab-btn" data-tab="line">Lines</button>
+        <button class="tab-btn" data-tab="math">Math</button>
+      </div>
+      <div id="tab-box" class="tab-content special-grid"></div>
+      <div id="tab-block" class="tab-content special-grid" style="display:none;"></div>
+      <div id="tab-arrows" class="tab-content special-grid" style="display:none;"></div>
+      <div id="tab-line" class="tab-content special-grid" style="display:none;"></div>
+      <div id="tab-math" class="tab-content special-grid" style="display:none;"></div>
+    </div>
+
+    <!-- Cell info -->
+    <div class="panel">
+      <div class="panel-title">📋 Cell Info</div>
+      <div class="panel-row">
+        <label>Char:</label>
+        <span id="info-char" style="color:var(--accent2);">-</span>
+        <label style="min-width:20px;">Hex:</label>
+        <span id="info-hex" style="color:var(--text-dim);">0x00</span>
+      </div>
+      <div class="panel-row">
+        <label>Attr:</label>
+        <span id="info-attr" style="color:var(--text-dim);">0x00</span>
+      </div>
+      <div class="panel-row">
+        <label>Pos:</label>
+        <span id="info-pos" style="color:var(--text-dim);">0,0</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ STATUS BAR ═══ -->
+<div id="statusbar">
+  <span class="pos" id="status-pos">X:0 Y:0</span>
+  <span class="attr-display">
+    <span>Color:</span>
+    <span class="attr-swatch" id="status-swatch">A</span>
+    <span id="status-attr">0x1F</span>
+  </span>
+  <span id="status-mode">Mode: Text</span>
+  <span id="status-size"></span>
+</div>
+
+<!-- ═══ PREVIEW OVERLAY ═══ -->
+<div id="preview-overlay">
+  <div id="preview-box">
+    <div id="preview-grid"></div>
+  </div>
+  <button id="preview-close">Close Preview (Esc)</button>
+</div>
+
+<!-- ═══ HEX PANEL ═══ -->
+<div id="hex-panel">
+  <div id="hex-output"></div>
+  <button id="hex-close">Close</button>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// PUPED - FDSetup PUP Screen Editor
+// Compatible with FDSetup pup_t format (setup.h)
+// ═══════════════════════════════════════════════════════════
+
+// ── VGA 16-color palette ──
+const VGA_COLORS = [
+  [0x00, 0x00, 0x00],  // 0  Black
+  [0x00, 0x00, 0xAA],  // 1  Blue
+  [0x00, 0xAA, 0x00],  // 2  Green
+  [0x00, 0xAA, 0xAA],  // 3  Aqua
+  [0xAA, 0x00, 0x00],  // 4  Red
+  [0xAA, 0x00, 0xAA],  // 5  Magenta
+  [0xAA, 0x77, 0x00],  // 6  Brown/Ochre
+  [0xAA, 0xAA, 0xAA],  // 7  Light Gray
+  [0x55, 0x55, 0x55],  // 8  Dark Gray
+  [0x55, 0x55, 0xFF],  // 9  Light Blue
+  [0x55, 0xFF, 0x55],  // 10 Light Green
+  [0x55, 0xFF, 0xFF],  // 11 Light Aqua
+  [0xFF, 0x55, 0x55],  // 12 Light Red
+  [0xFF, 0x55, 0xFF],  // 13 Light Magenta
+  [0xFF, 0xFF, 0x55],  // 14 Yellow
+  [0xFF, 0xFF, 0xFF],  // 15 White
+];
+
+const COLOR_NAMES = [
+  'Black','Blue','Green','Aqua','Red','Magenta','Brown','Light Gray',
+  'Dark Gray','Light Blue','Light Green','Light Aqua','Light Red','Light Magenta','Yellow','White'
+];
+
+function vgaColorToCSS(idx) {
+  const c = VGA_COLORS[idx & 0xF];
+  return `rgb(${c[0]},${c[1]},${c[2]})`;
+}
+
+function vgaAttrToCSS(attr) {
+  let fg = attr & 0x0F;
+  let bg = (attr >> 4) & 0x0F;
+  if (bg >= 8) fg |= 0x8; // intensity bit
+  return { fg: vgaColorToCSS(fg & 0xF), bg: vgaColorToCSS(bg & 0xF) };
+}
+
+function attrDescription(attr) {
+  let fg = attr & 0x0F;
+  let bg = (attr >> 4) & 0x0F;
+  return `${COLOR_NAMES[fg & 0xF]} on ${COLOR_NAMES[bg]}`;
+}
+
+// ── OEM US code page 437 mapping ──
+const OEM_CHARS = {
+  0xb0: '\u2591', 0xb1: '\u2592', 0xb2: '\u2593',
+  0xb3: '\u2502', 0xb4: '\u2524', 0xb5: '\u2561', 0xb6: '\u2562',
+  0xb7: '\u2556', 0xb8: '\u2557', 0xb9: '\u255A', 0xba: '\u2551',
+  0xbb: '\u255D', 0xbc: '\u255A', 0xbd: '\u255C', 0xbe: '\u2554',
+  0xbf: '\u255E',
+  0xc0: '\u255F', 0xc1: '\u255A', 0xc2: '\u2553', 0xc3: '\u256B',
+  0xc4: '\u2500', 0xc5: '\u252C', 0xc6: '\u251C', 0xc7: '\u253C',
+  0xc8: '\u2566', 0xc9: '\u2567', 0xca: '\u255A', 0xcb: '\u2568',
+  0xcc: '\u255D', 0xcd: '\u2559', 0xce: '\u2558', 0xcf: '\u2552',
+  0xd0: '\u2553', 0xd1: '\u256A', 0xd2: '\u2569',
+  0xd3: '\u2510', 0xd4: '\u2514', 0xd5: '\u2518', 0xd6: '\u250C',
+  0xd7: '\u2580',
+  0xd8: '\u03B1', 0xd9: '\u00DF', 0xda: '\u0393', 0xdb: '\u03C0',
+  0xdc: '\u03A3', 0xdd: '\u03C3', 0xde: '\u03BC', 0xdf: '\u03C4',
+  0xe0: '\u03A6', 0xe1: '\u0398', 0xe2: '\u03A9', 0xe3: '\u03B4',
+  0xe4: '\u221E', 0xe5: '\u03C6', 0xe6: '\u03B5', 0xe7: '\u2229',
+  0xe8: '\u2261', 0xe9: '\u00B1', 0xea: '\u2265', 0xeb: '\u2264',
+  0xec: '\u2310', 0xed: '\u00AC', 0xee: '\u00B7', 0xef: '\u221A',
+  0xf0: '\u207F', 0xf1: '\u00B2', 0xf2: '\u25A0',
+};
+
+function oemChar(byte) {
+  if (byte >= 0x20 && byte <= 0x7E) return String.fromCharCode(byte);
+  if (OEM_CHARS[byte]) return OEM_CHARS[byte];
+  if (byte === 0xFF) return '\u2588';
+  if (byte === 0x00) return '\u00A0';
+  return String.fromCharCode(byte);
+}
+
+// ── State ──
+const ROWS = 25, COLS = 80;
+let grid = [];
+let windowX = 0, windowY = 0, windowW = 80, windowH = 25;
+let currentFg = 0x0F, currentBg = 0x01;
+let currentAttr = (currentBg << 4) | (currentFg & 0x0F);
+let currentMode = 'text';
+let selectedCell = { x: 0, y: 0 };
+let isDragging = false;
+let dragStart = null;
+let undoStack = [];
+let redoStack = [];
+const PUP_MAGIC = 0x03EA;
+
+function makeAttr(fg, bg) { return (bg << 4) | (fg & 0x0F); }
+
+function initGrid() {
+  grid = [];
+  for (let y = 0; y < ROWS; y++) {
+    grid[y] = [];
+    for (let x = 0; x < COLS; x++) {
+      grid[y][x] = { ch: 0x20, attr: makeAttr(0x0F, 0x01) };
+    }
+  }
+}
+
+// ── Undo/Redo ──
+function saveState() {
+  undoStack.push(grid.map(row => row.map(c => ({ ...c }))));
+  if (undoStack.length > 50) undoStack.shift();
+  redoStack = [];
+  updateUndoInfo();
+}
+
+function undo() {
+  if (!undoStack.length) return;
+  redoStack.push(grid.map(row => row.map(c => ({ ...c }))));
+  grid = undoStack.pop();
+  renderGrid();
+  updateUndoInfo();
+}
+
+function redo() {
+  if (!redoStack.length) return;
+  undoStack.push(grid.map(row => row.map(c => ({ ...c }))));
+  grid = redoStack.pop();
+  renderGrid();
+  updateUndoInfo();
+}
+
+function updateUndoInfo() {
+  document.getElementById('undo-info').textContent = `↩${undoStack.length} ↪${redoStack.length}`;
+}
+
+// ── Build UI ──
+function buildGrid() {
+  const gridEl = document.getElementById('grid');
+  const colHeader = document.getElementById('col-header');
+  const wrapper = document.getElementById('grid-wrapper');
+
+  colHeader.innerHTML = '';
+  for (let x = 0; x < COLS; x++) {
+    const s = document.createElement('span');
+    s.textContent = x % 10 === 0 ? x : '';
+    colHeader.appendChild(s);
+  }
+
+  wrapper.querySelectorAll('.row-num').forEach(e => e.remove());
+  for (let y = 0; y < ROWS; y++) {
+    const rn = document.createElement('div');
+    rn.className = 'row-num';
+    rn.style.setProperty('r', y);
+    rn.textContent = y;
+    wrapper.appendChild(rn);
+  }
+
+  gridEl.innerHTML = '';
+  for (let y = 0; y < ROWS; y++) {
+    for (let x = 0; x < COLS; x++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.dataset.x = x;
+      cell.dataset.y = y;
+      cell.addEventListener('mousedown', onCellMouseDown);
+      cell.addEventListener('mouseenter', onCellMouseEnter);
+      cell.addEventListener('contextmenu', e => e.preventDefault());
+      gridEl.appendChild(cell);
+    }
+  }
+}
+
+function buildPalettes() {
+  const fgEl = document.getElementById('fg-palette');
+  const bgEl = document.getElementById('bg-palette');
+  fgEl.innerHTML = '';
+  bgEl.innerHTML = '';
+
+  for (let i = 0; i < 16; i++) {
+    const textColor = (i === 0 || i === 7 || i === 14 || i === 15) ? '#000' : '#fff';
+
+    const swFg = document.createElement('div');
+    swFg.className = 'color-swatch';
+    swFg.style.background = vgaColorToCSS(i);
+    swFg.style.color = textColor;
+    swFg.textContent = i;
+    swFg.title = `${i} ${COLOR_NAMES[i]}`;
+    swFg.addEventListener('click', () => {
+      currentFg = i;
+      currentAttr = makeAttr(currentFg, currentBg);
+      updateAttrDisplay();
+      updatePalettes();
+    });
+    fgEl.appendChild(swFg);
+
+    const swBg = document.createElement('div');
+    swBg.className = 'color-swatch';
+    swBg.style.background = vgaColorToCSS(i);
+    swBg.style.color = textColor;
+    swBg.textContent = i;
+    swBg.title = `${i} ${COLOR_NAMES[i]}`;
+    swBg.addEventListener('click', () => {
+      currentBg = i;
+      currentAttr = makeAttr(currentFg, currentBg);
+      updateAttrDisplay();
+      updatePalettes();
+    });
+    bgEl.appendChild(swBg);
+  }
+  updatePalettes();
+}
+
+function updatePalettes() {
+  document.querySelectorAll('#fg-palette .color-swatch').forEach((s, i) => {
+    s.className = 'color-swatch' + (i === currentFg ? ' active-fg' : '');
+  });
+  document.querySelectorAll('#bg-palette .color-swatch').forEach((s, i) => {
+    s.className = 'color-swatch' + (i === currentBg ? ' active-bg' : '');
+  });
+}
+
+function updateAttrDisplay() {
+  const { fg, bg } = vgaAttrToCSS(currentAttr);
+  const hexStr = `0x${currentAttr.toString(16).toUpperCase().padStart(2, '0')}`;
+  document.getElementById('attr-hex').textContent = hexStr;
+  document.getElementById('attr-desc').textContent = attrDescription(currentAttr);
+  const sw = document.getElementById('status-swatch');
+  sw.style.background = bg;
+  sw.style.color = fg;
+  document.getElementById('status-attr').textContent = hexStr;
+}
+
+function buildSpecialChars() {
+  // Box drawing characters
+  const boxChars = [
+    0xda, 0xbf, 0xc0, 0xd9,  // ┌ ┐ └ ┘
+    0xc4, 0xb3,              // ─ │
+    0xc5, 0xc3, 0xc6, 0xb6,  // ┬ ├ ┤ ├
+    0xc7, 0xb5,              // ┼ ╡
+    0xba, 0xbb, 0xbc, 0xbd,  // ║ ┐ ┘ └
+    0xc8, 0xc9, 0xca, 0xcb,  // ╞ ╟ ╚ ╨
+    0xcc, 0xcd, 0xce, 0xcf,  // ┐ ┙ ┘ ┌
+    0xd0, 0xd1, 0xd2, 0xd3,  // ╓ ╫ ┐ ┐
+  ];
+  const blockChars = [0xb0, 0xb1, 0xb2, 0xd7, 0xf2, 0xFF, 0xee, 0xef, 0xf0, 0xf1, 0xe4, 0xe7, 0xe8, 0xe9, 0xec, 0xed];
+  const arrowChars = [0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f, 0x7c, 0x5e, 0x5f, 0x5b, 0x5d, 0x3e, 0x3c, 0x7e];
+  const lineChars = [0x2d, 0x3d, 0x7e, 0x5f, 0xb3, 0xc4, 0xba, 0xda, 0xd8, 0xc5, 0xc3, 0xc6, 0xc7, 0xd3, 0xd4, 0xd5];
+  const mathChars = [0xe4, 0xe7, 0xe8, 0xe9, 0xec, 0xed, 0xee, 0xef, 0xf0, 0xf1, 0xea, 0xeb, 0xd8, 0xdb, 0xdc, 0xdd, 0xde, 0xdf, 0xe0, 0xe1, 0xe2, 0xe3, 0xe5, 0xe6, 0xd9, 0xf2];
+
+  buildSpecialTab('tab-box', boxChars);
+  buildSpecialTab('tab-block', blockChars);
+  buildSpecialTab('tab-arrows', arrowChars);
+  buildSpecialTab('tab-line', lineChars);
+  buildSpecialTab('tab-math', mathChars);
+}
+
+function buildSpecialTab(id, chars) {
+  const el = document.getElementById(id);
+  el.innerHTML = '';
+  for (const c of chars) {
+    const d = document.createElement('div');
+    d.className = 'special-cell';
+    d.textContent = oemChar(c);
+    d.title = `0x${c.toString(16).toUpperCase().padStart(2, '0')}`;
+    d.addEventListener('click', () => applySpecialChar(c));
+    el.appendChild(d);
+  }
+}
+
+function applySpecialChar(charCode) {
+  const { x, y } = selectedCell;
+  saveState();
+  grid[y][x].ch = charCode;
+  grid[y][x].attr = currentAttr;
+  renderCell(x, y);
+  updateCellInfo(x, y);
+}
+
+// ── Render ──
+function renderGrid() {
+  for (let y = 0; y < ROWS; y++) {
+    for (let x = 0; x < COLS; x++) {
+      renderCell(x, y);
+    }
+  }
+  highlightSelected();
+}
+
+function renderCell(x, y) {
+  const idx = y * COLS + x;
+  const cell = document.getElementById('grid').children[idx];
+  const data = grid[y][x];
+  const { fg, bg } = vgaAttrToCSS(data.attr);
+  cell.style.color = fg;
+  cell.style.backgroundColor = bg;
+  cell.textContent = oemChar(data.ch);
+}
+
+function highlightSelected() {
+  document.querySelectorAll('.cell.selected').forEach(c => c.classList.remove('selected'));
+  const { x, y } = selectedCell;
+  const idx = y * COLS + x;
+  document.getElementById('grid').children[idx].classList.add('selected');
+  updateCellInfo(x, y);
+  updateStatusBar();
+
+  // Auto-scroll to selected cell
+  const cellEl = document.getElementById('grid').children[idx];
+  cellEl.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+}
+
+function updateCellInfo(x, y) {
+  const data = grid[y][x];
+  document.getElementById('info-char').textContent = oemChar(data.ch);
+  document.getElementById('info-hex').textContent = `0x${data.ch.toString(16).toUpperCase().padStart(2, '0')}`;
+  document.getElementById('info-attr').textContent = `0x${data.attr.toString(16).toUpperCase().padStart(2, '0')} (${attrDescription(data.attr)})`;
+  document.getElementById('info-pos').textContent = `${x}, ${y}`;
+}
+
+function updateStatusBar() {
+  const { x, y } = selectedCell;
+  document.getElementById('status-pos').textContent = `X:${x} Y:${y}`;
+  const modeNames = { text: 'Text', fill: 'Fill', rect: 'Rect', erase: 'Erase' };
+  document.getElementById('status-mode').textContent = `Mode: ${modeNames[currentMode]}`;
+  const bytes = estimateSize();
+  document.getElementById('status-size').textContent = `Est. size: ${bytes} bytes`;
+}
+
+// ── Mouse handling ──
+function getCellFromEvent(e) {
+  return { x: parseInt(e.target.dataset.x), y: parseInt(e.target.dataset.y) };
+}
+
+function onCellMouseDown(e) {
+  e.preventDefault();
+  const pos = getCellFromEvent(e);
+  selectedCell = pos;
+  isDragging = true;
+  dragStart = { ...pos };
+
+  if (currentMode === 'fill' || currentMode === 'erase') {
+    saveState();
+    applyAction(pos.x, pos.y);
+  } else if (currentMode === 'text') {
+    // Just select
+  }
+
+  highlightSelected();
+}
+
+function onCellMouseEnter(e) {
+  if (!isDragging) return;
+  const pos = getCellFromEvent(e);
+  selectedCell = pos;
+
+  if (currentMode === 'fill' || currentMode === 'erase') {
+    fillRect(dragStart.x, dragStart.y, pos.x, pos.y);
+  }
+
+  highlightSelected();
+}
+
+document.addEventListener('mouseup', () => {
+  if (isDragging && currentMode === 'rect' && dragStart) {
+    saveState();
+    drawRect(dragStart.x, dragStart.y, selectedCell.x, selectedCell.y);
+  }
+  isDragging = false;
+  dragStart = null;
+});
+
+function fillRect(x1, y1, x2, y2) {
+  const minX = Math.min(x1, x2), maxX = Math.max(x1, x2);
+  const minY = Math.min(y1, y2), maxY = Math.max(y1, y2);
+  for (let y = minY; y <= maxY; y++) {
+    for (let x = minX; x <= maxX; x++) {
+      applyAction(x, y);
+      renderCell(x, y);
+    }
+  }
+}
+
+function applyAction(x, y) {
+  if (currentMode === 'erase') {
+    grid[y][x].ch = 0x20;
+    grid[y][x].attr = makeAttr(0x0F, 0x01);
+  } else {
+    grid[y][x].ch = 0x20;
+    grid[y][x].attr = currentAttr;
+  }
+  renderCell(x, y);
+}
+
+// ── Box drawing rectangle ──
+function drawRect(x1, y1, x2, y2) {
+  const minX = Math.min(x1, x2), maxX = Math.max(x1, x2);
+  const minY = Math.min(y1, y2), maxY = Math.max(y1, y2);
+  if (minX === maxX && minY === maxY) return;
+
+  setChar(minX, minY, 0xda);   // ┌
+  setChar(maxX, minY, 0xbf);   // ┐
+  setChar(minX, maxY, 0xc0);   // └
+  setChar(maxX, maxY, 0xd9);   // ┘
+
+  for (let x = minX + 1; x < maxX; x++) {
+    setChar(x, minY, 0xc4);    // ─
+    setChar(x, maxY, 0xc4);    // ─
+  }
+  for (let y = minY + 1; y < maxY; y++) {
+    setChar(minX, y, 0xb3);    // │
+    setChar(maxX, y, 0xb3);    // │
+  }
+
+  // Fill interior with current color
+  for (let y = minY + 1; y < maxY; y++) {
+    for (let x = minX + 1; x < maxX; x++) {
+      grid[y][x].ch = 0x20;
+      grid[y][x].attr = currentAttr;
+      renderCell(x, y);
+    }
+  }
+}
+
+function setChar(x, y, charCode) {
+  grid[y][x].ch = charCode;
+  grid[y][x].attr = currentAttr;
+  renderCell(x, y);
+}
+
+// ── Keyboard handling ──
+document.addEventListener('keydown', (e) => {
+  let { x, y } = selectedCell;
+
+  // Escape closes overlays
+  if (e.key === 'Escape') {
+    document.getElementById('preview-overlay').classList.remove('visible');
+    document.getElementById('hex-panel').classList.remove('visible');
+    e.preventDefault();
+    return;
+  }
+
+  // Ctrl shortcuts
+  if (e.ctrlKey || e.metaKey) {
+    if (e.key === 'z') { undo(); e.preventDefault(); return; }
+    if (e.key === 'y') { redo(); e.preventDefault(); return; }
+    if (e.key === 's') { exportPUP(); e.preventDefault(); return; }
+    return;
+  }
+
+  // Navigation
+  if (e.key === 'ArrowLeft' && x > 0) { x--; e.preventDefault(); }
+  else if (e.key === 'ArrowRight' && x < COLS - 1) { x++; e.preventDefault(); }
+  else if (e.key === 'ArrowUp' && y > 0) { y--; e.preventDefault(); }
+  else if (e.key === 'ArrowDown' && y < ROWS - 1) { y++; e.preventDefault(); }
+  else if (e.key === 'Home') { x = 0; e.preventDefault(); }
+  else if (e.key === 'End') { x = COLS - 1; e.preventDefault(); }
+  else if (e.key === 'PageUp' && y > 0) { y = Math.max(0, y - 5); e.preventDefault(); }
+  else if (e.key === 'PageDown' && y < ROWS - 1) { y = Math.min(ROWS - 1, y + 5); e.preventDefault(); }
+  else if (e.key === 'F5') { x = windowX; y = windowY; e.preventDefault(); }
+
+  if (x !== selectedCell.x || y !== selectedCell.y) {
+    selectedCell = { x, y };
+    highlightSelected();
+    return;
+  }
+
+  // Text input
+  if (currentMode === 'text' && e.key.length === 1) {
+    saveState();
+    grid[y][x].ch = e.key.charCodeAt(0);
+    grid[y][x].attr = currentAttr;
+    renderCell(x, y);
+    updateCellInfo(x, y);
+    // Auto-advance
+    if (x < COLS - 1) {
+      selectedCell.x++;
+      highlightSelected();
+    } else if (y < ROWS - 1) {
+      selectedCell = { x: 0, y: y + 1 };
+      highlightSelected();
+    }
+    e.preventDefault();
+  }
+
+  // Backspace
+  if (e.key === 'Backspace') {
+    saveState();
+    grid[y][x].ch = 0x20;
+    renderCell(x, y);
+    updateCellInfo(x, y);
+    e.preventDefault();
+  }
+
+  // Delete
+  if (e.key === 'Delete') {
+    saveState();
+    grid[y][x].ch = 0x20;
+    grid[y][x].attr = makeAttr(0x0F, 0x01);
+    renderCell(x, y);
+    updateCellInfo(x, y);
+    e.preventDefault();
+  }
+
+  // Tab
+  if (e.key === 'Tab') {
+    saveState();
+    for (let i = 0; i < 4; i++) {
+      if (x + i < COLS) {
+        grid[y][x + i].ch = 0x20;
+        grid[y][x + i].attr = currentAttr;
+        renderCell(x + i, y);
+      }
+    }
+    selectedCell.x = Math.min(COLS - 1, x + 4);
+    highlightSelected();
+    e.preventDefault();
+  }
+
+  // Mode shortcuts
+  if (e.key === '1') switchMode('text');
+  if (e.key === '2') switchMode('fill');
+  if (e.key === '3') switchMode('rect');
+  if (e.key === '4') switchMode('erase');
+});
+
+function switchMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-group button').forEach(b => {
+    b.classList.toggle('active', b.id === `mode-${mode}`);
+  });
+  updateStatusBar();
+}
+
+document.querySelectorAll('.mode-group button').forEach(btn => {
+  btn.addEventListener('click', () => switchMode(btn.id.replace('mode-', '')));
+});
+
+// ── Tabs ──
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).style.display = 'grid';
+  });
+});
+
+// ── Window properties ──
+['win-x', 'win-y', 'win-w', 'win-h'].forEach(id => {
+  document.getElementById(id).addEventListener('change', () => {
+    windowX = clamp(parseInt(document.getElementById('win-x').value) || 0, 0, 79);
+    windowY = clamp(parseInt(document.getElementById('win-y').value) || 0, 0, 24);
+    windowW = clamp(parseInt(document.getElementById('win-w').value) || 80, 1, 80 - windowX);
+    windowH = clamp(parseInt(document.getElementById('win-h').value) || 25, 1, 25 - windowY);
+    updateStatusBar();
+  });
+});
+
+function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+// ═══════════════════════════════════════════════════════════
+// PUP FILE FORMAT
+// ═══════════════════════════════════════════════════════════
+// Header (pup_t) - 10 bytes:
+//   pup_id   : 2 bytes (short LE) = 0x03EA
+//   width    : 1 byte (char)
+//   height   : 1 byte (char)
+//   x        : 1 byte (char)
+//   y        : 1 byte (char)
+//   mystery1 : 2 bytes (short LE) = 0x0000
+//   mystery2 : 2 bytes (short LE) = 0x0000
+//
+// Drawing data (variable length):
+//   0x00 ch attr         -> draw single char (also starts "stringdraw" mode)
+//   0x00 (in stringdraw) -> ends stringdraw mode
+//   0xFF ch attr count   -> repeat char count times (count = 16-bit LE)
+//   0x01-0xFE ch attr    -> draw char (opcode IS the char)
+//
+// "stringdraw" optimization:
+//   First 0x00: enters stringdraw mode, reads ch+attr
+//   Subsequent 0x00: exits stringdraw mode
+//   While in stringdraw: each byte is a char using last attr
+// ═══════════════════════════════════════════════════════════
+
+function estimateSize() {
+  let bytes = 10; // header
+  const cells = windowW * windowH;
+  bytes += cells * 2; // rough: each cell ~2 bytes
+  return bytes;
+}
+
+function encodePUP() {
+  const bytes = [];
+
+  // ── Header (pup_t) ──
+  bytes.push(PUP_MAGIC & 0xFF, (PUP_MAGIC >> 8) & 0xFF);
+  bytes.push(windowW & 0xFF);
+  bytes.push(windowH & 0xFF);
+  bytes.push(windowX & 0xFF);
+  bytes.push(windowY & 0xFF);
+  bytes.push(0, 0, 0, 0); // mystery fields
+
+  // ── Collect window cells in raster order ──
+  const cells = [];
+  for (let y = windowY; y < windowY + windowH; y++) {
+    for (let x = windowX; x < windowX + windowW; x++) {
+      cells.push({ ch: grid[y][x].ch, attr: grid[y][x].attr });
+    }
+  }
+
+  // ── Encode with run-length + stringdraw optimization ──
+  let i = 0;
+  while (i < cells.length) {
+    // Look for runs of identical char+attr
+    let runEnd = i + 1;
+    while (runEnd < cells.length && cells[runEnd].ch === cells[i].ch && cells[runEnd].attr === cells[i].attr) {
+      runEnd++;
+    }
+    const runLen = runEnd - i;
+    const ch = cells[i].ch;
+    const attr = cells[i].attr;
+
+    if (runLen >= 3) {
+      // Use 0xFF repeat opcode (always safe, optimal for runs)
+      bytes.push(0xFF);
+      bytes.push(ch & 0xFF);
+      bytes.push(attr & 0xFF);
+      bytes.push((runLen >> 8) & 0xFF, runLen & 0xFF);
+    } else if (ch >= 0x01 && ch <= 0xFE) {
+      // Use direct opcode (char IS the opcode byte)
+      for (let j = 0; j < runLen; j++) {
+        bytes.push(ch & 0xFF);
+        bytes.push(attr & 0xFF);
+      }
+    } else {
+      // ch is 0x00 or 0xFF - use 0x00 opcode
+      for (let j = 0; j < runLen; j++) {
+        bytes.push(0x00);
+        bytes.push(ch & 0xFF);
+        bytes.push(attr & 0xFF);
+      }
+    }
+
+    i = runEnd;
+  }
+
+  return new Uint8Array(bytes);
+}
+
+function decodePUP(data) {
+  if (data.length < 10) return false;
+
+  // Parse header
+  windowW = data[2];
+  windowH = data[3];
+  windowX = data[4];
+  windowY = data[5];
+
+  document.getElementById('win-x').value = windowX;
+  document.getElementById('win-y').value = windowY;
+  document.getElementById('win-w').value = windowW;
+  document.getElementById('win-h').value = windowH;
+
+  // Clear grid
+  for (let y = 0; y < ROWS; y++)
+    for (let x = 0; x < COLS; x++)
+      grid[y][x] = { ch: 0x20, attr: makeAttr(0x0F, 0x01) };
+
+  // Parse drawing data with state machine
+  let pos = 10;
+  let cx = windowX, cy = windowY;
+  let remainingW = windowW;
+  let remainingH = windowH;
+  let cellsDrawn = 0;
+  const totalCells = windowW * windowH;
+  let stringdraw = false;
+  let lastAttr = 0;
+
+  while (pos < data.length && cellsDrawn < totalCells) {
+    const opcode = data[pos++];
+
+    if (opcode === 0x00) {
+      if (stringdraw) {
+        // Exit stringdraw mode
+        stringdraw = false;
+        continue;
+      }
+      // Enter stringdraw mode
+      stringdraw = true;
+      const ch = data[pos++];
+      const attr = data[pos++];
+      lastAttr = attr;
+      placeCell(ch, attr);
+    } else if (opcode === 0xFF) {
+      // Repeat opcode (always reads full params)
+      const ch = data[pos++];
+      const attr = data[pos++];
+      const count = (data[pos++] << 8) | data[pos++];
+      for (let n = 0; n < count && cellsDrawn < totalCells; n++) {
+        placeCell(ch, attr);
+      }
+    } else {
+      // Direct char opcode
+      if (stringdraw) {
+        // In stringdraw mode: opcode IS char, use last attr
+        placeCell(opcode, lastAttr);
+      } else {
+        // Normal mode: opcode IS char, read attr
+        const attr = data[pos++];
+        lastAttr = attr;
+        placeCell(opcode, attr);
+      }
+    }
+  }
+
+  renderGrid();
+  return true;
+
+  function placeCell(ch, attr) {
+    if (cellsDrawn >= totalCells) return;
+    if (cx >= 0 && cx < COLS && cy >= 0 && cy < ROWS) {
+      grid[cy][cx].ch = ch;
+      grid[cy][cx].attr = attr;
+    }
+    cellsDrawn++;
+    cx++;
+    remainingW--;
+    if (remainingW === 0 && remainingH > 0) {
+      cx = windowX;
+      cy++;
+      remainingW = windowW;
+      remainingH--;
+    }
+  }
+}
+
+// ── Import ──
+document.getElementById('file-input').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const data = new Uint8Array(ev.target.result);
+    if (decodePUP(data)) {
+      // Show loaded info
+      console.log(`Loaded: ${file.name} (${data.length} bytes)`);
+    } else {
+      alert('Error: Could not parse PUP file. File too small.');
+    }
+  };
+  reader.readAsArrayBuffer(file);
+  e.target.value = '';
+});
+
+// ── Export ──
+function exportPUP() {
+  const data = encodePUP();
+  const blob = new Blob([data], { type: 'application/octet-stream' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'screen.PUP';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+document.getElementById('btn-export').addEventListener('click', exportPUP);
+
+// ── New ──
+document.getElementById('btn-new').addEventListener('click', () => {
+  if (confirm('Create new screen? Unsaved changes will be lost.')) {
+    initGrid();
+    windowX = 0; windowY = 0; windowW = 80; windowH = 25;
+    document.getElementById('win-x').value = 0;
+    document.getElementById('win-y').value = 0;
+    document.getElementById('win-w').value = 80;
+    document.getElementById('win-h').value = 25;
+    undoStack = [];
+    redoStack = [];
+    renderGrid();
+    updateUndoInfo();
+  }
+});
+
+// ── Undo/Redo buttons ──
+document.getElementById('btn-undo').addEventListener('click', undo);
+document.getElementById('btn-redo').addEventListener('click', redo);
+
+// ── Preview ──
+document.getElementById('btn-preview').addEventListener('click', showPreview);
+document.getElementById('preview-close').addEventListener('click', () => {
+  document.getElementById('preview-overlay').classList.remove('visible');
+});
+
+function showPreview() {
+  const overlay = document.getElementById('preview-overlay');
+  const previewGrid = document.getElementById('preview-grid');
+  previewGrid.style.gridTemplateColumns = `repeat(${windowW}, 1fr)`;
+  previewGrid.innerHTML = '';
+
+  for (let y = windowY; y < windowY + windowH; y++) {
+    for (let x = windowX; x < windowX + windowW; x++) {
+      const d = grid[y][x];
+      const { fg, bg } = vgaAttrToCSS(d.attr);
+      const span = document.createElement('span');
+      span.textContent = oemChar(d.ch);
+      span.style.color = fg;
+      span.style.backgroundColor = bg;
+      span.style.display = 'inline-block';
+      previewGrid.appendChild(span);
+    }
+  }
+
+  overlay.classList.add('visible');
+}
+
+// ── Hex dump ──
+document.getElementById('btn-hex').addEventListener('click', showHex);
+document.getElementById('hex-close').addEventListener('click', () => {
+  document.getElementById('hex-panel').classList.remove('visible');
+});
+
+function showHex() {
+  const data = encodePUP();
+  const hexPanel = document.getElementById('hex-panel');
+  const hexOutput = document.getElementById('hex-output');
+
+  let output = `PUP File Hex Dump (${data.length} bytes)\n`;
+  output += `${'═'.repeat(60)}\n\n`;
+  output += `Header (pup_t):\n`;
+  output += `  pup_id   = 0x${data[0].toString(16).padStart(2,'0')}${data[1].toString(16).padStart(2,'0')} (LE) = ${data[1] * 256 + data[0]}\n`;
+  output += `  width    = ${data[2]}\n`;
+  output += `  height   = ${data[3]}\n`;
+  output += `  x        = ${data[4]}\n`;
+  output += `  y        = ${data[5]}\n`;
+  output += `  mystery1 = 0x${data[6].toString(16).padStart(2,'0')}${data[7].toString(16).padStart(2,'0')}\n`;
+  output += `  mystery2 = 0x${data[8].toString(16).padStart(2,'0')}${data[9].toString(16).padStart(2,'0')}\n\n`;
+  output += `${'─'.repeat(60)}\n`;
+  output += `Drawing data (offset 0x0A):\n\n`;
+
+  for (let i = 0; i < data.length; i += 16) {
+    const offset = i.toString(16).padStart(4, '0');
+    let hex = '', ascii = '';
+    for (let j = 0; j < 16; j++) {
+      if (i + j < data.length) {
+        hex += data[i + j].toString(16).padStart(2, '0') + ' ';
+        const c = data[i + j];
+        ascii += (c >= 0x20 && c <= 0x7E) ? String.fromCharCode(c) : '.';
+      } else {
+        hex += '   ';
+        ascii += ' ';
+      }
+    }
+    output += `${offset}  ${hex}  ${ascii}\n`;
+  }
+
+  output += `\n${'─'.repeat(60)}\n`;
+  output += `C array (for pup_data.c):\n\n`;
+  output += `char far screen[] = {`;
+  for (let i = 0; i < data.length; i++) {
+    output += `0x${data[i].toString(16).padStart(2, '0')}`;
+    if (i < data.length - 1) output += ', ';
+    if ((i + 1) % 12 === 0 && i < data.length - 1) output += '\n';
+  }
+  output += '};\n';
+
+  hexOutput.textContent = output;
+  hexPanel.classList.add('visible');
+}
+
+// ── Drag & drop ──
+document.body.addEventListener('dragover', e => e.preventDefault());
+document.body.addEventListener('drop', (e) => {
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  if (!file) return;
+  if (!file.name.match(/\.pup$/i)) {
+    alert('Please drop a .PUP file');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const data = new Uint8Array(ev.target.result);
+    decodePUP(data);
+  };
+  reader.readAsArrayBuffer(file);
+});
+
+// ── Initialize ──
+initGrid();
+buildGrid();
+buildPalettes();
+buildSpecialChars();
+updateAttrDisplay();
+renderGrid();
+highlightSelected();
+
+console.log('PUPED - FDSetup PUP Screen Editor initialized');
+console.log('Import .PUP files via the toolbar or drag-and-drop');
+</script>
+</body>
+</html>
