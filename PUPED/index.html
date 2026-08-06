@@ -74,14 +74,6 @@
     min-width: 0;
   }
 
-  /* ── Zoom levels ── */
-  #grid-wrapper[data-zoom="0.5"]  { --cell-w: 6px;  --cell-h: 10px;  --font-size: 7px; }
-  #grid-wrapper[data-zoom="0.75"] { --cell-w: 8px;  --cell-h: 13px;  --font-size: 10px; }
-  #grid-wrapper[data-zoom="1"]    { --cell-w: 10px; --cell-h: 16px;  --font-size: 12px; }
-  #grid-wrapper[data-zoom="1.5"]  { --cell-w: 14px; --cell-h: 22px;  --font-size: 16px; }
-  #grid-wrapper[data-zoom="2"]    { --cell-w: 19px; --cell-h: 30px;  --font-size: 21px; }
-  #grid-wrapper[data-zoom="3"]    { --cell-w: 28px; --cell-h: 45px;  --font-size: 31px; }
-
   /* ── Grid scroll area ── */
   #grid-scroll {
     flex: 1;
@@ -95,15 +87,15 @@
   /* ── Coordinate header ── */
   #grid-wrapper {
     display: inline-grid;
-    grid-template-columns: 30px repeat(80, var(--cell-w, 10px));
-    grid-template-rows: 20px repeat(25, var(--cell-h, 16px));
+    grid-template-columns: 30px repeat(80, 10px);
+    grid-template-rows: 20px repeat(25, 16px);
   }
 
   #col-header {
     grid-column: 2 / -1;
     grid-row: 1;
     display: grid;
-    grid-template-columns: repeat(80, var(--cell-w, 10px));
+    grid-template-columns: repeat(80, 10px);
   }
   #col-header span {
     text-align: center;
@@ -116,18 +108,18 @@
     grid-column: 2 / -1;
     grid-row: 2 / -1;
     display: grid;
-    grid-template-columns: repeat(80, var(--cell-w, 10px));
-    grid-template-rows: repeat(25, var(--cell-h, 16px));
+    grid-template-columns: repeat(80, 10px);
+    grid-template-rows: repeat(25, 16px);
   }
 
   .cell {
-    width: var(--cell-w, 10px);
-    height: var(--cell-h, 16px);
+    width: 10px;
+    height: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: var(--mono-font);
-    font-size: var(--font-size, 12px);
+    font-size: 12px;
     cursor: cell;
     user-select: none;
     line-height: 1;
@@ -405,11 +397,12 @@
   <button id="btn-hex">🔧 Hex</button>
   <div class="sep"></div>
   <div class="mode-group" title="Zoom">
-    <button id="zoom-out" title="Zoom out (Ctrl+-)">➖</button>
+    <button id="zoom-out" title="Zoom out (Ctrl+- or -)">➖</button>
     <button id="zoom-reset" title="Reset zoom (Ctrl+0)">⊞</button>
-    <button id="zoom-in" title="Zoom in (Ctrl+=)">➕</button>
+    <button id="zoom-in" title="Zoom in (Ctrl+= or +)">➕</button>
   </div>
-  <span id="zoom-label" style="font-size:11px;color:var(--accent2);min-width:36px;text-align:center;">100%</span>
+  <input type="number" id="zoom-input" min="10" max="999" value="100" step="5" title="Exact zoom %" style="width:52px;background:var(--bg);border:1px solid var(--border);color:var(--accent2);padding:2px 4px;font-family:var(--mono-font);font-size:12px;border-radius:2px;text-align:center;">
+  <span style="font-size:11px;color:var(--text-dim);">%</span>
   <span id="undo-info" style="margin-left:auto;font-size:10px;color:var(--text-dim);"></span>
 </div>
 
@@ -853,47 +846,67 @@ function updateStatusBar() {
 }
 
 // ── Zoom ──
-const ZOOM_LEVELS = ['0.5', '0.75', '1', '1.5', '2', '3'];
-const ZOOM_LABELS = ['50%', '75%', '100%', '150%', '200%', '300%'];
-let zoomIndex = 2; // start at 100%
+let zoomPct = 100;
+const ZOOM_MIN = 10;
+const ZOOM_MAX = 500;
+const ZOOM_STEP_FINE = 5;   // button/mousewheel: 5% steps
+const ZOOM_STEP_COARSE = 10; // +/- buttons: 10% steps
 
 function applyZoom() {
-  document.getElementById('grid-wrapper').dataset.zoom = ZOOM_LEVELS[zoomIndex];
-  document.getElementById('zoom-label').textContent = ZOOM_LABELS[zoomIndex];
+  const scale = zoomPct / 100;
+  const wrapper = document.getElementById('grid-wrapper');
+  wrapper.style.transform = `scale(${scale})`;
+  wrapper.style.transformOrigin = 'top left';
+  // Update input
+  document.getElementById('zoom-input').value = zoomPct;
+}
+
+function setZoom(pct) {
+  zoomPct = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, Math.round(pct)));
+  applyZoom();
 }
 
 function zoomIn() {
-  if (zoomIndex < ZOOM_LEVELS.length - 1) {
-    zoomIndex++;
-    applyZoom();
-  }
+  setZoom(zoomPct + ZOOM_STEP_COARSE);
 }
 
 function zoomOut() {
-  if (zoomIndex > 0) {
-    zoomIndex--;
-    applyZoom();
-  }
+  setZoom(zoomPct - ZOOM_STEP_COARSE);
 }
 
 function zoomReset() {
-  zoomIndex = 2;
-  applyZoom();
+  setZoom(100);
 }
 
 document.getElementById('zoom-in').addEventListener('click', zoomIn);
 document.getElementById('zoom-out').addEventListener('click', zoomOut);
 document.getElementById('zoom-reset').addEventListener('click', zoomReset);
 
-// Mouse wheel zoom on grid
+// Number input for exact zoom
+const zoomInput = document.getElementById('zoom-input');
+zoomInput.addEventListener('change', () => {
+  let v = parseInt(zoomInput.value);
+  if (isNaN(v)) v = 100;
+  setZoom(v);
+});
+zoomInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    let v = parseInt(zoomInput.value);
+    if (isNaN(v)) v = 100;
+    setZoom(v);
+    zoomInput.blur();
+  }
+});
+
+// Mouse wheel zoom on grid (fine-grained: 5% steps)
 let wheelZoomTimer = null;
 document.getElementById('grid-scroll').addEventListener('wheel', (e) => {
   if (e.ctrlKey) {
     e.preventDefault();
     clearTimeout(wheelZoomTimer);
     wheelZoomTimer = setTimeout(() => {
-      if (e.deltaY < 0) zoomIn();
-      else zoomOut();
+      if (e.deltaY < 0) setZoom(zoomPct + ZOOM_STEP_FINE);
+      else setZoom(zoomPct - ZOOM_STEP_FINE);
     }, 50);
   }
 }, { passive: false });
