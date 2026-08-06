@@ -1396,13 +1396,9 @@ function showHex() {
 
   output += `\n${'─'.repeat(60)}\n`;
   output += `C array (for pup_data.c):\n\n`;
-  output += `char far screen[] = {`;
-  for (let i = 0; i < data.length; i++) {
-    output += `0x${data[i].toString(16).padStart(2, '0')}`;
-    if (i < data.length - 1) output += ', ';
-    if ((i + 1) % 12 === 0 && i < data.length - 1) output += '\n';
-  }
-  output += '};\n';
+  // Match gen_pup_data.py format: single-line char far array with trailing newline
+  const hexBytes = Array.from(data, b => `0x${b.toString(16).padStart(2, '0')}`).join(', ');
+  output += `char far ${currentFilename}[] = {${hexBytes}};\n`;
 
   hexOutput.textContent = output;
   hexPanel.classList.add('visible');
