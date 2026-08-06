@@ -40,8 +40,8 @@ typedef enum
 extern pup_t far askpres, far cmodem, far consel, far control,
 	far cwarp, far gusirqer, far idcard, far idjoysel, far idkeysel, far idmain2,
 	far idmousel, far irqerr, far macros, far mcard, far midiport, far modemchs,
-	far modsave, far mousentr, far mouspres, far netplay, far netplay2,
-	far netsave, far netserr, far numdig, far quitwin,
+	far modsave, far mousentr, far mouspres,
+	far numdig, far quitwin,
 	far sbdma, far sbirq, far sbport, far lptport, far cmsport, far show,
 	far freqpcm, far freqall, far comport, far mididev,
 	far title;
