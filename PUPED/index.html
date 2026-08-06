@@ -252,8 +252,15 @@
     cursor: pointer;
     border-radius: 2px;
     line-height: 1;
+    transition: transform 0.15s ease, z-index 0s 0.15s;
   }
-  .special-cell:hover { border-color: var(--accent2); background: var(--surface2); }
+  .special-cell:hover {
+    border-color: var(--accent2);
+    background: var(--surface2);
+    transform: scale(5);
+    z-index: 999;
+    transition: transform 0.15s ease, z-index 0s 0s;
+  }
 
   /* ── Status bar ── */
   #statusbar {
@@ -371,6 +378,25 @@
     border: 1px dashed rgba(0,210,255,0.4);
     z-index: 5;
   }
+
+  /* ── Cell Info char zoom ── */
+  #info-char {
+    font-size: 22px;
+    font-weight: bold;
+    min-width: 28px;
+    text-align: center;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 0 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: default;
+    transition: transform 0.15s ease;
+  }
+  #info-char:hover {
+    transform: scale(4);
+  }
 </style>
 </head>
 <body>
@@ -462,7 +488,7 @@
       <div class="panel-title">📋 Cell Info</div>
       <div class="panel-row" style="align-items:center;">
         <label>Char:</label>
-        <span id="info-char" style="font-size:22px;font-weight:bold;min-width:28px;text-align:center;border:1px solid var(--border);border-radius:2px;padding:0 4px;">-</span>
+        <span id="info-char">-</span>
         <label>Hex:</label>
         <span id="info-hex" style="color:var(--text-dim);">0x00</span>
       </div>
@@ -628,6 +654,7 @@ let isDragging = false;
 let dragStart = null;
 let undoStack = [];
 let redoStack = [];
+let currentFilename = 'screen';
 const PUP_MAGIC = 0x03EA;
 
 function makeAttr(fg, bg) { return (bg << 4) | (fg & 0x0F); }
@@ -1282,8 +1309,7 @@ document.getElementById('file-input').addEventListener('change', (e) => {
   reader.onload = (ev) => {
     const data = new Uint8Array(ev.target.result);
     if (decodePUP(data)) {
-      // Show loaded info
-      console.log(`Loaded: ${file.name} (${data.length} bytes)`);
+      currentFilename = file.name.replace(/\.pup$/i, '').toLowerCase();
     } else {
       alert('Error: Could not parse PUP file. File too small.');
     }
@@ -1317,6 +1343,7 @@ document.getElementById('btn-new').addEventListener('click', () => {
     document.getElementById('win-h').value = 25;
     undoStack = [];
     redoStack = [];
+    currentFilename = 'screen';
     renderGrid();
     updateUndoInfo();
   }
@@ -1417,6 +1444,7 @@ document.body.addEventListener('drop', (e) => {
   const reader = new FileReader();
   reader.onload = (ev) => {
     const data = new Uint8Array(ev.target.result);
+    currentFilename = file.name.replace(/\.pup$/i, '').toLowerCase();
     decodePUP(data);
   };
   reader.readAsArrayBuffer(file);
