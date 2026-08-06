@@ -45,16 +45,20 @@
     background: var(--surface2);
     color: var(--text);
     border: 1px solid var(--border);
-    padding: 4px 10px;
+    padding: 0 10px;
     font-family: var(--mono-font);
     font-size: 12px;
     cursor: pointer;
     border-radius: 3px;
     white-space: nowrap;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    line-height: 28px;
   }
   #toolbar button:hover, #toolbar label:hover { background: var(--border); }
   #toolbar button.active { background: var(--accent); border-color: var(--accent); }
-  .sep { width: 1px; height: 24px; background: var(--border); margin: 0 4px; }
+  .sep { width: 1px; height: 28px; background: var(--border); margin: 0 4px; }
 
   #file-input { display: none; }
 
@@ -84,11 +88,21 @@
     padding: 10px;
   }
 
+  /* ── Zoom transform container ── */
+  #grid-zoom {
+    /* width/height set by applyZoom() to match scaled dimensions */
+    width: 830px;
+    height: 420px;
+    flex-shrink: 0;
+  }
+
   /* ── Coordinate header ── */
   #grid-wrapper {
-    display: inline-grid;
+    display: grid;
     grid-template-columns: 30px repeat(80, 10px);
     grid-template-rows: 20px repeat(25, 16px);
+    width: 830px;
+    height: 420px;
   }
 
   #col-header {
@@ -380,13 +394,14 @@
   <div class="sep"></div>
   <button id="btn-preview">👁 Preview</button>
   <button id="btn-hex">🔧 Hex</button>
+  <button id="btn-fullscreen" title="Toggle fullscreen (F11)">⛶ Fullscreen</button>
   <div class="sep"></div>
   <div class="mode-group" title="Zoom">
-    <button id="zoom-out" title="Zoom out (Ctrl+- or -)">➖</button>
-    <button id="zoom-reset" title="Reset zoom (Ctrl+0)">⊞</button>
-    <button id="zoom-in" title="Zoom in (Ctrl+= or +)">➕</button>
+    <button id="zoom-out" title="Zoom out">➖</button>
+    <button id="zoom-reset" title="Reset zoom">⊞</button>
+    <button id="zoom-in" title="Zoom in">➕</button>
   </div>
-  <input type="number" id="zoom-input" min="10" max="999" value="100" step="5" title="Exact zoom %" style="width:52px;background:var(--bg);border:1px solid var(--border);color:var(--accent2);padding:2px 4px;font-family:var(--mono-font);font-size:12px;border-radius:2px;text-align:center;">
+  <input type="number" id="zoom-input" min="10" max="999" value="100" step="5" title="Exact zoom %" style="width:52px;height:28px;background:var(--bg);border:1px solid var(--border);color:var(--accent2);padding:0 4px;font-family:var(--mono-font);font-size:12px;border-radius:2px;text-align:center;line-height:28px;">
   <span style="font-size:11px;color:var(--text-dim);">%</span>
   <span id="undo-info" style="margin-left:auto;font-size:10px;color:var(--text-dim);"></span>
 </div>
@@ -395,9 +410,11 @@
 <div id="main">
   <div id="editor-panel">
     <div id="grid-scroll">
-      <div id="grid-wrapper">
-        <div id="col-header"></div>
-        <div id="grid"></div>
+      <div id="grid-zoom">
+        <div id="grid-wrapper">
+          <div id="col-header"></div>
+          <div id="grid"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -445,7 +462,7 @@
       <div class="panel-title">📋 Cell Info</div>
       <div class="panel-row" style="align-items:center;">
         <label>Char:</label>
-        <span id="info-char" style="color:var(--accent2);font-size:22px;font-weight:bold;min-width:28px;text-align:center;">-</span>
+        <span id="info-char" style="font-size:22px;font-weight:bold;min-width:28px;text-align:center;border:1px solid var(--border);border-radius:2px;padding:0 4px;">-</span>
         <label>Hex:</label>
         <span id="info-hex" style="color:var(--text-dim);">0x00</span>
       </div>
@@ -743,7 +760,6 @@ function updateAttrDisplay() {
   const { fg, bg } = vgaAttrToCSS(currentAttr);
   const hexStr = `0x${currentAttr.toString(16).toUpperCase().padStart(2, '0')}`;
   document.getElementById('attr-hex').textContent = hexStr;
-  document.getElementById('attr-desc').textContent = attrDescription(currentAttr);
   const sw = document.getElementById('status-swatch');
   sw.style.background = bg;
   sw.style.color = fg;
@@ -808,7 +824,11 @@ function highlightSelected() {
 
 function updateCellInfo(x, y) {
   const data = grid[y][x];
-  document.getElementById('info-char').textContent = oemChar(data.ch);
+  const charEl = document.getElementById('info-char');
+  charEl.textContent = oemChar(data.ch);
+  const { fg, bg } = vgaAttrToCSS(data.attr);
+  charEl.style.color = fg;
+  charEl.style.backgroundColor = bg;
   document.getElementById('info-hex').textContent = `0x${data.ch.toString(16).toUpperCase().padStart(2, '0')}`;
   document.getElementById('info-attr').textContent = `0x${data.attr.toString(16).toUpperCase().padStart(2, '0')} (${attrDescription(data.attr)})`;
   document.getElementById('info-pos').textContent = `${x}, ${y}`;
@@ -839,8 +859,12 @@ function updatePickStatus() {
 function applyZoom() {
   const scale = zoomPct / 100;
   const wrapper = document.getElementById('grid-wrapper');
+  const zoomContainer = document.getElementById('grid-zoom');
   wrapper.style.transform = `scale(${scale})`;
   wrapper.style.transformOrigin = 'top left';
+  // Set zoom container size so scroll area sees the full scaled grid
+  zoomContainer.style.width = `${Math.round(830 * scale)}px`;
+  zoomContainer.style.height = `${Math.round(420 * scale)}px`;
   // Update input
   document.getElementById('zoom-input').value = zoomPct;
 }
@@ -996,9 +1020,9 @@ function setChar(x, y, charCode) {
   renderCell(x, y);
 }
 
-// ── Keyboard handling ──
+// ── Keyboard handling (typing + delete only) ──
 document.addEventListener('keydown', (e) => {
-  let { x, y } = selectedCell;
+  const { x, y } = selectedCell;
 
   // Escape closes overlays
   if (e.key === 'Escape') {
@@ -1008,36 +1032,8 @@ document.addEventListener('keydown', (e) => {
     return;
   }
 
-  // Ctrl shortcuts
-  if (e.ctrlKey || e.metaKey) {
-    if (e.key === 'z') { undo(); e.preventDefault(); return; }
-    if (e.key === 'y') { redo(); e.preventDefault(); return; }
-    if (e.key === 's') { exportPUP(); e.preventDefault(); return; }
-    if (e.key === '=' || e.key === '+') { zoomIn(); e.preventDefault(); return; }
-    if (e.key === '-') { zoomOut(); e.preventDefault(); return; }
-    if (e.key === '0') { zoomReset(); e.preventDefault(); return; }
-    return;
-  }
-
-  // Navigation
-  if (e.key === 'ArrowLeft' && x > 0) { x--; e.preventDefault(); }
-  else if (e.key === 'ArrowRight' && x < COLS - 1) { x++; e.preventDefault(); }
-  else if (e.key === 'ArrowUp' && y > 0) { y--; e.preventDefault(); }
-  else if (e.key === 'ArrowDown' && y < ROWS - 1) { y++; e.preventDefault(); }
-  else if (e.key === 'Home') { x = 0; e.preventDefault(); }
-  else if (e.key === 'End') { x = COLS - 1; e.preventDefault(); }
-  else if (e.key === 'PageUp' && y > 0) { y = Math.max(0, y - 5); e.preventDefault(); }
-  else if (e.key === 'PageDown' && y < ROWS - 1) { y = Math.min(ROWS - 1, y + 5); e.preventDefault(); }
-  else if (e.key === 'F5') { x = windowX; y = windowY; e.preventDefault(); }
-
-  if (x !== selectedCell.x || y !== selectedCell.y) {
-    selectedCell = { x, y };
-    highlightSelected();
-    return;
-  }
-
   // Text input
-  if (currentMode === 'text' && e.key.length === 1) {
+  if (e.key.length === 1) {
     saveState();
     grid[y][x].ch = e.key.charCodeAt(0);
     grid[y][x].attr = currentAttr;
@@ -1052,6 +1048,7 @@ document.addEventListener('keydown', (e) => {
       highlightSelected();
     }
     e.preventDefault();
+    return;
   }
 
   // Backspace
@@ -1061,6 +1058,7 @@ document.addEventListener('keydown', (e) => {
     renderCell(x, y);
     updateCellInfo(x, y);
     e.preventDefault();
+    return;
   }
 
   // Delete
@@ -1071,28 +1069,8 @@ document.addEventListener('keydown', (e) => {
     renderCell(x, y);
     updateCellInfo(x, y);
     e.preventDefault();
+    return;
   }
-
-  // Tab
-  if (e.key === 'Tab') {
-    saveState();
-    for (let i = 0; i < 4; i++) {
-      if (x + i < COLS) {
-        grid[y][x + i].ch = 0x20;
-        grid[y][x + i].attr = currentAttr;
-        renderCell(x + i, y);
-      }
-    }
-    selectedCell.x = Math.min(COLS - 1, x + 4);
-    highlightSelected();
-    e.preventDefault();
-  }
-
-  // Mode shortcuts
-  if (e.key === '1') switchMode('text');
-  if (e.key === '2') switchMode('fill');
-  if (e.key === '3') switchMode('rect');
-  if (e.key === '4') switchMode('erase');
 });
 
 function switchMode(mode) {
@@ -1447,6 +1425,20 @@ document.body.addEventListener('drop', (e) => {
   };
   reader.readAsArrayBuffer(file);
 });
+
+// ── Fullscreen ──
+document.getElementById('btn-fullscreen').addEventListener('click', toggleFullscreen);
+document.addEventListener('fullscreenchange', () => {
+  document.getElementById('btn-fullscreen').textContent = document.fullscreenElement ? '⛶ Exit' : '⛶ Fullscreen';
+});
+
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  } else {
+    document.exitFullscreen();
+  }
+}
 
 // ── Initialize ──
 initGrid();
