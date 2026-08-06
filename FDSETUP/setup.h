@@ -37,7 +37,7 @@ typedef enum
 } pup_e;
 
 // ALL THE WINDOWS
-extern pup_t far askpres, far cmodem, far consel, far control, far cserial,
+extern pup_t far askpres, far cmodem, far consel, far control,
 	far cwarp, far gusirqer, far idcard, far idjoysel, far idkeysel, far idmain2,
 	far idmousel, far irqerr, far macros, far mcard, far midiport, far modemchs,
 	far modsave, far mousentr, far mouspres, far netplay, far netplay2,
