@@ -432,24 +432,20 @@
         <label style="min-width:50px;">Attr:</label>
         <span id="attr-hex" style="color:var(--accent2);font-weight:bold;">0x1F</span>
       </div>
-      <div class="panel-row">
-        <label style="min-width:50px;">VGA attr:</label>
-        <span id="attr-desc" style="color:var(--text-dim);font-size:9px;"></span>
-      </div>
     </div>
 
-    <!-- Special characters -->
+    <!-- Characters -->
     <div class="panel">
-      <div class="panel-title">🔲 Special Characters (CP437)</div>
+      <div class="panel-title">🔤 Characters (CP437)</div>
       <div id="special-chars" class="special-grid"></div>
     </div>
 
     <!-- Cell info -->
     <div class="panel">
       <div class="panel-title">📋 Cell Info</div>
-      <div class="panel-row">
+      <div class="panel-row" style="align-items:center;">
         <label>Char:</label>
-        <span id="info-char" style="color:var(--accent2);">-</span>
+        <span id="info-char" style="color:var(--accent2);font-size:22px;font-weight:bold;min-width:28px;text-align:center;">-</span>
         <label>Hex:</label>
         <span id="info-hex" style="color:var(--text-dim);">0x00</span>
       </div>
@@ -599,7 +595,6 @@ const OEM_CHARS = {
 };
 
 function oemChar(byte) {
-  if (byte >= 0x20 && byte <= 0x7E) return String.fromCharCode(byte);
   if (OEM_CHARS[byte] !== undefined) return OEM_CHARS[byte];
   return String.fromCharCode(byte);
 }
@@ -756,28 +751,15 @@ function updateAttrDisplay() {
 }
 
 function buildSpecialChars() {
-  const chars = [
-    0x08, 0x09, 0x0a, 0x0f,   // ◘ ◙ ◙ ◼
-    0x10, 0x11, 0x12, 0x13, 0x14, 0x15,   // ► ◄ ↕ ‼ ¶ §
-    0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,   // ↨ ↑ ↓ → ← ∟ ↔ ▲ ▼
-    0xb0, 0xb1, 0xb2,         // ░ ▒ ▓
-    0xb3, 0xb4, 0xb5, 0xb6, 0xb7, 0xb8, 0xb9, 0xba, 0xbb, 0xbc, 0xbd,   // │ ╴ ╡ ╢ ╖ ╕ ╗ ║ ┝ ┥ ┝
-    0xbf, 0xc0, 0xc1, 0xc2, 0xc3, 0xc4, 0xc5, 0xc6, 0xc7, 0xc8, 0xc9, 0xca, 0xcb,   // ┐ └ ├ ┬ ┤ ─ ┼ ├ ┤ ╚ ╔ ╩ ╦
-    0xcc, 0xcd, 0xce, 0xcf, 0xd0, 0xd1, 0xd2, 0xd3, 0xd4, 0xd5, 0xd7, 0xd8,   // ╠ ╴ ╬ ╧ ╨ ╤ ╥ ┙ ╘ ╒ ╖ ╙
-    0xd9, 0xda,               // ┘ ┌
-    0xdb, 0xdc, 0xdd, 0xde, 0xdf,   // █ ▄ ▌ ▐ ▀
-    0xe0, 0xe1, 0xe2, 0xe3, 0xe4, 0xe5, 0xe6, 0xe7, 0xe8, 0xe9, 0xea, 0xeb, 0xec, 0xed, 0xee,   // α ß γ π Σ σ µ τ φ θ ω ε δ ∞ φ ε
-    0xef, 0xf0, 0xf1, 0xf2, 0xf3, 0xf6, 0xf7, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd,   // ∩ ≡ ± ≥ ≤ ÷ ≈ ∙ · √ ⁿ ²
-  ];
-
+  // All 256 CP437 characters
   const el = document.getElementById('special-chars');
   el.innerHTML = '';
-  for (const c of chars) {
+  for (let i = 0; i < 256; i++) {
     const d = document.createElement('div');
     d.className = 'special-cell';
-    d.textContent = oemChar(c);
-    d.title = `0x${c.toString(16).toUpperCase().padStart(2, '0')}`;
-    d.addEventListener('click', () => applySpecialChar(c));
+    d.textContent = oemChar(i);
+    d.title = `0x${i.toString(16).toUpperCase().padStart(2, '0')}`;
+    d.addEventListener('click', () => applySpecialChar(i));
     el.appendChild(d);
   }
 }
@@ -835,8 +817,7 @@ function updateCellInfo(x, y) {
 function updateStatusBar() {
   const { x, y } = selectedCell;
   document.getElementById('status-pos').textContent = `X:${x} Y:${y}`;
-  const modeNames = { text: 'Text', fill: 'Fill', rect: 'Rect', erase: 'Erase' };
-  document.getElementById('status-mode').textContent = `Mode: ${modeNames[currentMode]}`;
+  updatePickStatus();
   const bytes = estimateSize();
   document.getElementById('status-size').textContent = `Est. size: ${bytes} bytes`;
 }
@@ -847,6 +828,13 @@ const ZOOM_MIN = 10;
 const ZOOM_MAX = 500;
 const ZOOM_STEP_FINE = 5;   // button/mousewheel: 5% steps
 const ZOOM_STEP_COARSE = 10; // +/- buttons: 10% steps
+
+// ── Mode status indicator ──
+const MODE_NAMES = { text: 'Text', fill: 'Fill', rect: 'Rect', erase: 'Erase' };
+
+function updatePickStatus() {
+  document.getElementById('status-mode').textContent = `Mode: ${MODE_NAMES[currentMode]}`;
+}
 
 function applyZoom() {
   const scale = zoomPct / 100;
