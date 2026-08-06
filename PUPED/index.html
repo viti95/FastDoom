@@ -675,7 +675,7 @@ let isDragging = false;
 let dragStart = null;
 let undoStack = [];
 let redoStack = [];
-let currentFilename = 'screen';
+let currentFilename = 'new';
 const PUP_MAGIC = 0x03EA;
 
 function makeAttr(fg, bg) { return (bg << 4) | (fg & 0x0F); }
@@ -1381,7 +1381,7 @@ function exportPUP() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'screen.PUP';
+  a.download = `${currentFilename}.PUP`;
   a.click();
   URL.revokeObjectURL(url);
 }
@@ -1399,7 +1399,7 @@ document.getElementById('btn-new').addEventListener('click', () => {
     document.getElementById('win-h').value = 25;
     undoStack = [];
     redoStack = [];
-    currentFilename = 'screen';
+    currentFilename = 'new';
     renderGrid();
     updateUndoInfo();
   }
