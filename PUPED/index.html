@@ -441,6 +441,7 @@
   <label for="file-input">📂 Import .PUP</label>
   <input type="file" id="file-input" accept=".pup">
   <button id="btn-export">💾 Export .PUP</button>
+  <button id="btn-copy-c">📋 Copy C</button>
   <div class="sep"></div>
   <button id="btn-new">📄 New</button>
   <button id="btn-undo">↩ Undo</button>
@@ -1604,6 +1605,32 @@ function exportPUP() {
 
 document.getElementById('btn-export').addEventListener('click', exportPUP);
 
+// ── Copy C export ──
+document.getElementById('btn-copy-c').addEventListener('click', () => {
+  const cCode = getCExport();
+  navigator.clipboard.writeText(cCode).then(() => {
+    const btn = document.getElementById('btn-copy-c');
+    const orig = btn.textContent;
+    btn.textContent = '✅ Copied!';
+    btn.classList.add('active');
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('active'); }, 1500);
+  }).catch(() => {
+    // Fallback for older browsers / non-HTTPS
+    const ta = document.createElement('textarea');
+    ta.value = getCExport();
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    const btn = document.getElementById('btn-copy-c');
+    const orig = btn.textContent;
+    btn.textContent = '✅ Copied!';
+    btn.classList.add('active');
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('active'); }, 1500);
+  });
+});
+
 // ── New ──
 document.getElementById('btn-new').addEventListener('click', () => {
   if (confirm('Create new screen? Unsaved changes will be lost.')) {
@@ -1653,6 +1680,13 @@ function showPreview() {
   overlay.classList.add('visible');
 }
 
+// ── C export string ──
+function getCExport() {
+  const data = encodePUP();
+  const hexBytes = Array.from(data, b => `0x${b.toString(16).padStart(2, '0')}`).join(', ');
+  return `char far ${currentFilename}[] = {${hexBytes}};`;
+}
+
 // ── Hex dump ──
 document.getElementById('btn-hex').addEventListener('click', showHex);
 document.getElementById('hex-close').addEventListener('click', () => {
@@ -1695,9 +1729,7 @@ function showHex() {
 
   output += `\n${'─'.repeat(60)}\n`;
   output += `C array (for pup_data.c):\n\n`;
-  // Match gen_pup_data.py format: single-line char far array with trailing newline
-  const hexBytes = Array.from(data, b => `0x${b.toString(16).padStart(2, '0')}`).join(', ');
-  output += `char far ${currentFilename}[] = {${hexBytes}};\n`;
+  output += getCExport() + '\n';
 
   hexOutput.textContent = output;
   hexPanel.classList.add('visible');
