@@ -13,7 +13,6 @@
 
 int usemouse;
 
-extern net_t netinfo;
 extern DMXINFO newc;
 extern CONTS curk;
 

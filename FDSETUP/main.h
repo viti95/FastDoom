@@ -89,24 +89,6 @@ typedef struct
 
 typedef struct
 {
-	int numberOfPlayers;
-	int skillLevel;
-	int deathMatch;
-	unsigned networkSocket;
-	int episode;
-} net_t;
-
-typedef struct
-{
-	int skillLevel;
-	int deathMatch;
-	int episode;
-	int comtype; // 0 = connected,1 = answer,2 = call
-	char phonenum[16];
-} serial_t;
-
-typedef struct
-{
 	int up;
 	int down;
 	int left;
