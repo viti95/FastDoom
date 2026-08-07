@@ -1234,37 +1234,60 @@ function encodePUP() {
   // ── Encode with run-length + stringdraw optimization ──
   let i = 0;
   while (i < cells.length) {
-    // Look for runs of identical char+attr
-    let runEnd = i + 1;
-    while (runEnd < cells.length && cells[runEnd].ch === cells[i].ch && cells[runEnd].attr === cells[i].attr) {
-      runEnd++;
-    }
-    const runLen = runEnd - i;
     const ch = cells[i].ch;
     const attr = cells[i].attr;
 
-    if (runLen >= 3) {
-      // Use 0xFF repeat opcode (always safe, optimal for runs)
-      bytes.push(0xFF);
-      bytes.push(ch & 0xFF);
-      bytes.push(attr & 0xFF);
-      bytes.push((runLen >> 8) & 0xFF, runLen & 0xFF);
-    } else if (ch >= 0x01 && ch <= 0xFE) {
-      // Use direct opcode (char IS the opcode byte)
-      for (let j = 0; j < runLen; j++) {
-        bytes.push(ch & 0xFF);
-        bytes.push(attr & 0xFF);
+    // 1. Check for identical (ch+attr) runs → 0xFF repeat
+    let identEnd = i + 1;
+    while (identEnd < cells.length && cells[identEnd].ch === ch && cells[identEnd].attr === attr) {
+      identEnd++;
+    }
+    const identLen = identEnd - i;
+
+    if (identLen >= 3) {
+      bytes.push(0xFF, ch & 0xFF, attr & 0xFF, (identLen >> 8) & 0xFF, identLen & 0xFF);
+      i = identEnd;
+      continue;
+    }
+
+    // 2. Check for same-attr run → stringdraw
+    //    Stop before any 3+ identical sub-run (so those use 0xFF repeat instead)
+    if (ch >= 0x01 && ch <= 0xFE) {
+      let sdEnd = i + 1;
+      while (sdEnd < cells.length) {
+        const nc = cells[sdEnd].ch;
+        const na = cells[sdEnd].attr;
+        if (na !== attr || nc < 0x01 || nc > 0xFE) break;
+        // Check if this position starts a 3+ identical sub-run
+        let subEnd = sdEnd + 1;
+        while (subEnd < cells.length && cells[subEnd].ch === nc && cells[subEnd].attr === na) {
+          subEnd++;
+        }
+        if (subEnd - sdEnd >= 3) break;
+        sdEnd++;
       }
-    } else {
-      // ch is 0x00 or 0xFF - use 0x00 opcode
-      for (let j = 0; j < runLen; j++) {
+      const sdLen = sdEnd - i;
+
+      if (sdLen >= 3) {
+        // stringdraw: 0x00 enter + ch + attr + (N-1) chars + 0x00 exit
+        bytes.push(0x00, ch & 0xFF, attr & 0xFF);
+        for (let k = i + 1; k < sdEnd; k++) {
+          bytes.push(cells[k].ch & 0xFF);
+        }
         bytes.push(0x00);
-        bytes.push(ch & 0xFF);
-        bytes.push(attr & 0xFF);
+        i = sdEnd;
+        continue;
       }
     }
 
-    i = runEnd;
+    // 3. Direct opcode (single cell)
+    if (ch >= 0x01 && ch <= 0xFE) {
+      bytes.push(ch & 0xFF, attr & 0xFF);
+    } else {
+      // ch is 0x00 or 0xFF — use 0x00 opcode to disambiguate
+      bytes.push(0x00, ch & 0xFF, attr & 0xFF);
+    }
+    i++;
   }
 
   return new Uint8Array(bytes);
