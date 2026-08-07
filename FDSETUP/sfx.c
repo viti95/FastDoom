@@ -20,6 +20,7 @@ enum
 	DCARD_ADLIB,
 	DCARD_PCPWM,
 	DCARD_CMS,
+	DCARD_WSS,
 	DCARD_NONE,
 	DCARD_MAX
 };
@@ -41,7 +42,8 @@ item_t idcarditems[] =
 		{DCARD_ADLIB, 27, 16, 25, -1, -1},
 		{DCARD_PCPWM, 27, 17, 25, -1, -1},
 		{DCARD_CMS, 27, 18, 25, -1, -1},
-		{DCARD_NONE, 27, 19, 25, -1, -1}
+		{DCARD_WSS, 27, 19, 25, -1, -1},
+		{DCARD_NONE, 27, 20, 25, -1, -1}
 	};
 
 menu_t idcardmenu =
@@ -103,6 +105,10 @@ int ChooseFxCard(void)
 	
 	case M_CMS:
 		field = DCARD_CMS;
+		break;
+
+	case M_WSS:
+		field = DCARD_WSS;
 		break;
 
 	case M_COVOX:
@@ -196,6 +202,12 @@ int ChooseFxCard(void)
 
 			case DCARD_CMS:
 				newc.d.card = M_CMS;
+				newc.d.soundport = -1;
+				newc.d.midiport = -1;
+				goto func_exit;
+
+			case DCARD_WSS:
+				newc.d.card = M_WSS;
 				newc.d.soundport = -1;
 				newc.d.midiport = -1;
 				goto func_exit;

@@ -130,24 +130,6 @@ typedef enum
 
 extern int usemouse;
 
-typedef struct
-{
-	char name[64];
-	char init[64];
-	char hangup[64];
-	char baud[8];
-} modem_t;
-
-#define MAXMODEMS 200
-
-typedef struct
-{
-	char name[32];
-	char number[16];
-} phonelist_t;
-
-#define MAXPHNLIST 40
-
 extern char keydesc[256][10];
 extern int mousepresent;
 extern DMXINFO lastc;
@@ -159,15 +141,6 @@ extern CONTS curk;
 //
 // Network macros
 //
-
-extern net_t netinfo;
-extern net_t info; // in case ESC is pressed
-
-extern serial_t modeminfo;
-extern serial_t minfo; // in case ESC is pressed
-
-extern serial_t serialinfo;
-extern serial_t sinfo; // in case ESC is pressed
 
 void ErrorWindow(pup_t far *pup);
 void StartUp(void);

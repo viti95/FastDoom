@@ -69,15 +69,6 @@ char controls[C_LAST][20] = {
 
 CONTS curk;
 
-net_t netinfo;
-net_t info; // in case ESC is pressed
-
-serial_t modeminfo;
-serial_t minfo; // in case ESC is pressed
-
-serial_t serialinfo;
-serial_t sinfo; // in case ESC is pressed
-
 DMXINFO lastc;
 DMXINFO newc;
 
@@ -101,11 +92,11 @@ enum
 
 item_t mainitems[] =
 	{
-		{MAIN_CMUSIC, 21, 12, 39, -1, -1},
-		{MAIN_CSFX, 21, 13, 39, -1, -1},
-		{MAIN_TYPE, 21, 14, 39, -1, -1},
-		{MAIN_CONFIG, 21, 15, 39, -1, -1},
-		{MAIN_SAVE, 21, 16, 39, -1, -1},
+		{MAIN_CMUSIC, 23, 12, 35, -1, -1},
+		{MAIN_CSFX, 23, 13, 35, -1, -1},
+		{MAIN_TYPE, 23, 14, 35, -1, -1},
+		{MAIN_CONFIG, 23, 15, 35, -1, -1},
+		{MAIN_SAVE, 23, 16, 35, -1, -1},
 };
 
 menu_t mainmenu =
@@ -164,38 +155,6 @@ void MakeKeyLookup(void)
 	strcpy(keydesc[SC_DOWN], "DOWN");
 	strcpy(keydesc[SC_LEFT], "LEFT");
 	strcpy(keydesc[SC_RIGHT], "RIGHT");
-}
-
-//
-// Set funky blue color
-//
-void SetColor(void)
-{
-	return; // DON'T DO ANYTHING UNTIL I CAN SET IT BACK!
-#if 0
-_asm
-	{
-		push  ax
-		push  dx
-
-		mov   dx, 0x3C8
-		mov   ax, 1
-		out   dx, al
-		inc   dx
-
-		mov   ax, 1
-		out   dx, al
-
-		mov   ax, 5
-		out   dx, al
-
-		mov   ax, 16
-		out   dx, al
-
-		pop   dx
-		pop   ax
-	}
-#endif
 }
 
 //
@@ -296,8 +255,6 @@ void StartUp(void)
 
 	r.x.ax = 2;
 	int86(0x33, &r, &r);
-
-	SetColor();
 
 	memset(&newc, 0, sizeof(DMXINFO));
 	memset(&lastc, 0, sizeof(DMXINFO));
