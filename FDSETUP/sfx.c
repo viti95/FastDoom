@@ -50,9 +50,7 @@ menu_t idcardmenu =
 	{
 		&idcarditems[0],
 		DCARD_NONE,
-		DCARD_MAX,
-		0x7f
-	};
+		DCARD_MAX};
 
 int ChooseFxCard(void)
 {
@@ -279,8 +277,7 @@ menu_t lptportmenu =
 	{
 		&lptportitems[0],
 		LPT_PORT_378,
-		LPT_PORT_MAX,
-		0x7f};
+		LPT_PORT_MAX};
 
 int ChooseLPTPort(DMXCARD *card) // RETURN: 0 = OK, -1 == ABORT
 {
@@ -374,8 +371,7 @@ menu_t cmsportmenu =
 	{
 		&cmsportitems[0],
 		CMS_PORT_220,
-		CMS_PORT_MAX,
-		0x7f};
+		CMS_PORT_MAX};
 
 int ChooseCMSPort(DMXCARD *card) // RETURN: 0 = OK, -1 == ABORT
 {
@@ -496,98 +492,7 @@ menu_t sbdmamenu =
 	{
 		&sbdmaitems[0],
 		SB_DMA_5,
-		SB_DMA_MAX,
-		0x7f};
-
-/*int ChooseSbDma(DMXCARD *card)
-{
-	short key;
-	short field;
-	int rval = 0;
-
-	switch (card->dma)
-	{
-	case 0:
-		field = SB_DMA_0;
-		break;
-
-	default:
-	case 1:
-		field = SB_DMA_1;
-		break;
-
-	case 3:
-		field = SB_DMA_3;
-		break;
-
-	case 5:
-		field = SB_DMA_5;
-		break;
-
-	case 6:
-		field = SB_DMA_6;
-		break;
-
-	case 7:
-		field = SB_DMA_7;
-		break;
-	}
-
-	SaveScreen();
-	DrawPup(&sbdma);
-	sbdmamenu.startitem = field;
-
-	while (1)
-	{
-		SetupMenu(&sbdmamenu);
-		field = GetMenuInput();
-		key = menukey;
-		switch (key)
-		{
-		case KEY_ESC:
-			rval = -1;
-			goto func_exit;
-
-		case KEY_ENTER:
-		case KEY_F10:
-			switch (field)
-			{
-			case SB_DMA_0:
-				card->dma = 0;
-				goto func_exit;
-
-			case SB_DMA_1:
-				card->dma = 1;
-				goto func_exit;
-
-			case SB_DMA_3:
-				card->dma = 3;
-				goto func_exit;
-
-			case SB_DMA_5:
-				card->dma = 5;
-				goto func_exit;
-
-			case SB_DMA_6:
-				card->dma = 6;
-				goto func_exit;
-
-			case SB_DMA_7:
-				card->dma = 7;
-				goto func_exit;
-
-			default:
-				break;
-			}
-			break;
-		}
-	}
-
-func_exit:
-
-	RestoreScreen();
-	return (rval);
-}*/
+		SB_DMA_MAX};
 
 //
 // Choose SB IRQ channel
@@ -609,77 +514,7 @@ menu_t sbirqmenu =
 	{
 		&sbirqitems[0],
 		SB_IRQ_5,
-		SB_IRQ_MAX,
-		0x7f};
-
-/*int ChooseSbIrq(DMXCARD *card)
-{
-	short field;
-	short key;
-	int rval = 0;
-
-	if (card->irq > 8)
-		ErrorWindow(&irqerr);
-
-	switch (card->irq)
-	{
-	case 2:
-		field = SB_IRQ_2;
-		break;
-
-	default:
-	case 5:
-		field = SB_IRQ_5;
-		break;
-
-	case 7:
-		field = SB_IRQ_7;
-		break;
-	}
-
-	SaveScreen();
-	DrawPup(&sbirq);
-	sbirqmenu.startitem = field;
-
-	while (1)
-	{
-		SetupMenu(&sbirqmenu);
-		field = GetMenuInput();
-		key = menukey;
-		switch (key)
-		{
-		case KEY_ESC:
-			rval = -1;
-			goto func_exit;
-
-		case KEY_ENTER:
-		case KEY_F10:
-			switch (field)
-			{
-			case SB_IRQ_2:
-				card->irq = 2;
-				goto func_exit;
-
-			case SB_IRQ_5:
-				card->irq = 5;
-				goto func_exit;
-
-			case SB_IRQ_7:
-				card->irq = 7;
-				goto func_exit;
-
-			default:
-				break;
-			}
-			break;
-		}
-	}
-
-func_exit:
-
-	RestoreScreen();
-	return (rval);
-}*/
+		SB_IRQ_MAX};
 
 //
 //	Choose # of simultaneous digital channels
@@ -711,8 +546,7 @@ menu_t numdigmenu =
 	{
 		&numdigitems[0],
 		DIG_4,
-		DIG_MAX,
-		0x7f};
+		DIG_MAX};
 
 int ChooseNumDig(void)
 {
@@ -856,8 +690,7 @@ menu_t freqmenu =
 	{
 		&freqitems[0],
 		FREQ_11025,
-		FREQ_MAX,
-		0x7f};
+		FREQ_MAX};
 
 int ChooseFreq(void)
 {

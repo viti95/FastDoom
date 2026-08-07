@@ -109,8 +109,7 @@ menu_t idkeyselmenu =
 	{
 		&idkeyselitems[0],
 		FORWARD,
-		MAXKEYS,
-		0x7f};
+		MAXKEYS};
 
 void IDConfigKeyboard(void)
 {
@@ -318,8 +317,7 @@ menu_t idjoyselmenu =
 	{
 		&idjoyselitems[0],
 		J_FIRE,
-		J_MAX,
-		0x7f};
+		J_MAX};
 
 //
 // Configure mouse buttons
@@ -340,8 +338,7 @@ menu_t idmouselmenu =
 	{
 		&idmouselitems[0],
 		M_FIRE,
-		M_MAX,
-		0x7f};
+		M_MAX};
 
 //
 //	Get mouse button
@@ -531,8 +528,7 @@ menu_t conselmenu =
 	{
 		&conselitems[0],
 		CFG_KEY,
-		CFG_MAX,
-		0x7f};
+		CFG_MAX};
 
 void ConfigControl(void)
 {

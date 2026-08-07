@@ -49,7 +49,6 @@ extern pup_t far askpres, far consel, far control,
 #define MAXLAYERS 5 // max amount of screens to save
 void SaveScreen(void);
 void RestoreScreen(void);
-void DrawRadios(radiogroup_t *rg);
 
 void DrawPup(pup_t far *pup);
 extern unsigned char mono;

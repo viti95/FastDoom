@@ -56,13 +56,6 @@ char cards[M_LAST][20] = {
 	"IBM Music Feature"
 	};
 
-char mididevices[MIDI_LAST][20] = {
-	"Default",
-	"Roland MT-32",
-	"Roland SC-55",
-	"Yamaha MU80",
-	};
-
 char controls[C_LAST][20] = {
 	S_CON1,
 	S_CON2};
@@ -72,11 +65,8 @@ CONTS curk;
 DMXINFO lastc;
 DMXINFO newc;
 
-void *swindow;
 BOOL savemusic = FALSE;
 BOOL savefx = FALSE;
-
-#define KEYBOARDINT 0x9
 
 int mousepresent = 0;
 
@@ -103,8 +93,7 @@ menu_t mainmenu =
 	{
 		&mainitems[0],
 		MAIN_CMUSIC,
-		MAIN_MAX,
-		0x7f};
+		MAIN_MAX};
 
 //
 //	Draw a PUP and get a keypress
@@ -201,8 +190,7 @@ menu_t quitwinmenu =
 	{
 		&quitwinitems[0],
 		SAVEYES,
-		SAVEMAX,
-		0x7f};
+		SAVEMAX};
 
 int QuitAndSave(void)
 {

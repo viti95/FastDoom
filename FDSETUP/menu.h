@@ -22,12 +22,10 @@ typedef struct
 	item_t *items; // * to items
 	int startitem; // item to start on
 	int maxitems;  // # of items in menu
-	char invert;   // attribute for inversion
 } menu_t;
 
 void SetupMenu(menu_t *menu);
 int GetMenuInput(void);
-void SetMark(item_t *item, int value);
 void Sound(int freq, int dly);
 
 extern short menukey;

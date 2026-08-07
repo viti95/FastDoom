@@ -27,33 +27,6 @@ void Error(char *string)
 	exit(1);
 }
 
-void DrawRadios(radiogroup_t *rg)
-{
-	int i;
-	int value;
-	radio_t *r;
-	char far *screen;
-	byte color;
-
-	value = *(rg->master);
-	color = (rg->bgcolor << 4) + rg->fgcolor;
-	r = rg->radios;
-	for (i = 0; i < rg->amount; i++)
-	{
-		if (mono)
-			screen = MK_FP(0xb000, (r->y * 160) + (r->x * 2));
-		else
-			screen = MK_FP(0xb800, (r->y * 160) + (r->x * 2));
-		
-		*(screen + 1) = color;
-		if (value == r->value)
-			*screen = 7;
-		else
-			*screen = ' ';
-		r++;
-	}
-}
-
 //
 // Save screens
 //

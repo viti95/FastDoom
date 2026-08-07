@@ -41,8 +41,7 @@ menu_t midiportmenu =
 	{
 		&midiportitems[0],
 		MIDI_330,
-		MIDI_MAX,
-		0x7f};
+		MIDI_MAX};
 
 item_t midideviceitems[] =
 	{
@@ -56,8 +55,7 @@ menu_t mididevicemenu =
 	{
 		&midideviceitems[0],
 		MIDI_DEFAULT,
-		MIDI_LAST,
-		0x7f};
+		MIDI_LAST};
 
 int ChooseMidiPort(DMXCARD *card)
 {
@@ -301,8 +299,7 @@ menu_t comportmenu =
 	{
 		&comportitems[0],
 		COM1,
-		COM_MAX,
-		0x7f};
+		COM_MAX};
 
 int ChooseCOMPort(DMXCARD *card)
 {
@@ -428,8 +425,7 @@ menu_t mcardmenu =
 	{
 		&mcarditems[0],
 		MCARD_NONE,
-		MCARD_MAX,
-		0x7f};
+		MCARD_MAX};
 
 int ChooseMusicCard(void) // RETURN: 0 = OK, -1 == ABORT
 {
@@ -648,8 +644,7 @@ menu_t lptportmenum =
 	{
 		&lptportitemsm[0],
 		LPT_PORT_378,
-		LPT_PORT_MAX,
-		0x7f};
+		LPT_PORT_MAX};
 
 int ChooseLPTPortMusic(DMXCARD *card) // RETURN: 0 = OK, -1 == ABORT
 {
@@ -743,8 +738,7 @@ menu_t cmsportmenum =
 	{
 		&cmsportitemsm[0],
 		CMS_PORT_220,
-		CMS_PORT_MAX,
-		0x7f};
+		CMS_PORT_MAX};
 
 int ChooseCMSPortMusic(DMXCARD *card) // RETURN: 0 = OK, -1 == ABORT
 {
@@ -857,8 +851,7 @@ menu_t pcmfreqmenum =
 	{
 		&pcmfreqitemsm[0],
 		PCM_FREQ_11025,
-		PCM_FREQ_MAX,
-		0x7f};
+		PCM_FREQ_MAX};
 
 int ChoosePCMFreqMusic(DMXCARD *card) // RETURN: 0 = OK, -1 == ABORT
 {

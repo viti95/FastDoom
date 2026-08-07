@@ -17,8 +17,7 @@ menu_t controlmenu =
 	{
 		&controlitems[0],
 		CON_MOUSE,
-		CON_MAX,
-		0x7f};
+		CON_MAX};
 
 int ChooseController(void)
 {

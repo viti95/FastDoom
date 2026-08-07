@@ -8,7 +8,6 @@
 item_t *current;
 menu_t *currentmenu;
 int curitem;	  // current item #
-char inv_attrib;  // inversion attribute
 char buffer[160]; // save the entire screen line!
 short menukey;	  // globally set after GetMenuInput()
 
@@ -20,22 +19,6 @@ void Sound(int freq, int dly)
 	sound(freq);
 	delay(dly);
 	nosound();
-}
-
-//
-//	Draw a dot if "value" is > 0 at item->x - 3
-//
-void SetMark(item_t *item, int value)
-{
-	char far *screen;
-
-	if (mono)
-		screen = MK_FP(0xb000, item->y * 160 + (item->x - 3) * 2);
-	else
-		screen = MK_FP(0xb800, item->y * 160 + (item->x - 3) * 2);
-	*screen = ' ';
-	if (value)
-		*screen = 7;
 }
 
 //
@@ -87,8 +70,6 @@ void SetupMenu(menu_t *menu)
 	current = menu->items;
 	current += menu->startitem;
 	curitem = menu->startitem;
-
-	inv_attrib = menu->invert;
 	Invert(current);
 }
 
