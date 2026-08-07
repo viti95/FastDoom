@@ -369,6 +369,20 @@
   .mode-group button:last-child { border-radius: 0 3px 3px 0; }
   .mode-group button.active { background: var(--accent); border-color: var(--accent); }
 
+  /* ── Move rect highlight ── */
+  .cell.move-selecting {
+    box-shadow: inset 0 0 0 1px var(--accent2);
+    z-index: 6;
+  }
+  .cell.move-selected {
+    box-shadow: inset 0 0 0 2px var(--accent);
+    z-index: 7;
+  }
+  .cell.move-moving {
+    box-shadow: inset 0 0 0 2px #ff0;
+    z-index: 6;
+  }
+
   /* ── Window position indicator ── */
   .win-indicator {
     position: absolute;
@@ -437,6 +451,7 @@
     <button id="mode-fill" title="Fill cells with current color">🎨 Fill</button>
     <button id="mode-rect" title="Draw rectangles">⬜ Rect</button>
     <button id="mode-erase" title="Clear cells">🧹 Erase</button>
+    <button id="mode-move" title="Move a rectangle">✋ Move</button>
   </div>
   <div class="sep"></div>
   <button id="btn-preview">👁 Preview</button>
@@ -672,6 +687,11 @@ let currentAttr = (currentBg << 4) | (currentFg & 0x0F);
 let currentMode = 'text';
 let selectedCell = { x: 0, y: 0 };
 let isDragging = false;
+let moveRectSelected = false;
+let moveOrigBounds = null, moveOrigCells = []; // original rect data
+let movePreviewBounds = null, movePreviewCells = []; // live preview during drag
+let moveDragStart = null;
+let movePhase = 'idle'; // 'idle' | 'selecting' | 'moving'
 let dragStart = null;
 let undoStack = [];
 let redoStack = [];
@@ -933,7 +953,7 @@ const ZOOM_STEP_FINE = 5;   // button/mousewheel: 5% steps
 const ZOOM_STEP_COARSE = 10; // +/- buttons: 10% steps
 
 // ── Mode status indicator ──
-const MODE_NAMES = { text: 'Text', fill: 'Fill', rect: 'Rect', erase: 'Erase' };
+const MODE_NAMES = { text: 'Text', fill: 'Fill', rect: 'Rect', erase: 'Erase', move: 'Move' };
 
 function updatePickStatus() {
   document.getElementById('status-mode').textContent = `Mode: ${MODE_NAMES[currentMode]}`;
@@ -1017,6 +1037,21 @@ function onCellMouseDown(e) {
   if (currentMode === 'fill' || currentMode === 'erase') {
     saveState();
     applyAction(pos.x, pos.y);
+  } else if (currentMode === 'move') {
+    if (moveRectSelected) {
+      // Phase 2: start moving the selected region
+      movePhase = 'moving';
+      moveDragStart = { ...pos };
+      movePreviewBounds = { ...moveOrigBounds };
+      movePreviewCells = moveOrigCells.slice();
+      highlightMoveRect();
+    } else {
+      // Phase 1: start selecting a region
+      movePhase = 'selecting';
+      unhighlightMoveRect();
+      moveDragStart = { ...pos };
+      highlightMoveRect();
+    }
   } else if (currentMode === 'text') {
     // Just select
   }
@@ -1031,6 +1066,22 @@ function onCellMouseEnter(e) {
 
   if (currentMode === 'fill' || currentMode === 'erase') {
     fillRect(dragStart.x, dragStart.y, pos.x, pos.y);
+  } else if (currentMode === 'move') {
+    unhighlightMoveRect();
+    if (movePhase === 'selecting') {
+      // Show selection preview
+      movePreviewBounds = {
+        x1: Math.min(moveDragStart.x, pos.x),
+        y1: Math.min(moveDragStart.y, pos.y),
+        x2: Math.max(moveDragStart.x, pos.x),
+        y2: Math.max(moveDragStart.y, pos.y),
+      };
+    } else if (movePhase === 'moving') {
+      // Show move preview
+      movePreviewBounds = shiftRectBounds(moveOrigBounds, pos.x - moveDragStart.x, pos.y - moveDragStart.y);
+    }
+    movePreviewCells = getRectCells(movePreviewBounds);
+    highlightMoveRect();
   }
 
   highlightSelected();
@@ -1040,6 +1091,38 @@ document.addEventListener('mouseup', () => {
   if (isDragging && currentMode === 'rect' && dragStart) {
     saveState();
     drawRect(dragStart.x, dragStart.y, selectedCell.x, selectedCell.y);
+  }
+  if (isDragging && currentMode === 'move' && moveDragStart) {
+    if (movePhase === 'selecting') {
+      // Confirm selection
+      const bounds = movePreviewBounds;
+      if (bounds && bounds.x1 <= bounds.x2 && bounds.y1 <= bounds.y2) {
+        moveOrigBounds = bounds;
+        moveOrigCells = getRectCells(bounds);
+        moveRectSelected = true;
+        movePhase = 'idle';
+        // Keep highlight on selected region
+        movePreviewBounds = { ...bounds };
+        movePreviewCells = moveOrigCells.slice();
+        highlightMoveRect();
+        return; // Don't clear state
+      }
+    } else if (movePhase === 'moving') {
+      const dx = selectedCell.x - moveDragStart.x;
+      const dy = selectedCell.y - moveDragStart.y;
+      if (dx !== 0 || dy !== 0) {
+        saveState();
+        moveRect(moveOrigBounds, moveOrigCells, dx, dy);
+      }
+    }
+    moveRectSelected = false;
+    moveOrigBounds = null;
+    moveOrigCells = [];
+    movePreviewBounds = null;
+    movePreviewCells = [];
+    moveDragStart = null;
+    movePhase = 'idle';
+    unhighlightMoveRect();
   }
   isDragging = false;
   dragStart = null;
@@ -1103,17 +1186,127 @@ function setChar(x, y, charCode) {
   renderCell(x, y);
 }
 
+function getRectCells(bounds) {
+  const cells = [];
+  const { x1, y1, x2, y2 } = bounds;
+  for (let y = y1; y <= y2; y++) {
+    for (let x = x1; x <= x2; x++) {
+      cells.push({ x, y });
+    }
+  }
+  return cells;
+}
+
+function shiftRectBounds(bounds, dx, dy) {
+  return {
+    x1: clamp(bounds.x1 + dx, 0, COLS - 1),
+    y1: clamp(bounds.y1 + dy, 0, ROWS - 1),
+    x2: clamp(bounds.x2 + dx, 0, COLS - 1),
+    y2: clamp(bounds.y2 + dy, 0, ROWS - 1)
+  };
+}
+
+function moveRect(bounds, cells, dx, dy) {
+  if (dx === 0 && dy === 0) return;
+  const newBounds = shiftRectBounds(bounds, dx, dy);
+  const offX = newBounds.x1 - bounds.x1;
+  const offY = newBounds.y1 - bounds.y1;
+
+  // Save cell data before clearing
+  const saved = new Map();
+  for (const { x, y } of cells) {
+    saved.set(`${x},${y}`, { ch: grid[y][x].ch, attr: grid[y][x].attr });
+    // Clear old
+    grid[y][x].ch = 0x20;
+    grid[y][x].attr = makeAttr(0x0F, 0x01);
+  }
+
+  // Place at new position from saved data
+  for (const { x, y } of cells) {
+    const nx = x + offX, ny = y + offY;
+    if (nx >= 0 && nx < COLS && ny >= 0 && ny < ROWS) {
+      const old = saved.get(`${x},${y}`);
+      grid[ny][nx].ch = old.ch;
+      grid[ny][nx].attr = old.attr;
+    }
+  }
+
+  // Render changed cells
+  for (const { x, y } of cells) {
+    renderCell(x, y);
+  }
+  for (let y = newBounds.y1; y <= newBounds.y2; y++) {
+    for (let x = newBounds.x1; x <= newBounds.x2; x++) {
+      renderCell(x, y);
+    }
+  }
+}
+
+function highlightMoveRect() {
+  const cls = movePhase === 'selecting' ? 'move-selecting' : movePhase === 'moving' ? 'move-moving' : 'move-selected';
+  for (const { x, y } of movePreviewCells) {
+    const idx = y * COLS + x;
+    document.getElementById('grid').children[idx].classList.add(cls);
+  }
+}
+
+function unhighlightMoveRect() {
+  document.querySelectorAll('.cell.move-selecting, .cell.move-selected, .cell.move-moving').forEach(c => {
+    c.classList.remove('move-selecting', 'move-selected', 'move-moving');
+  });
+}
+
 // ── Keyboard handling (typing + delete only) ──
 document.addEventListener('keydown', (e) => {
   const { x, y } = selectedCell;
 
-  // Escape closes overlays
+  // Escape closes overlays / exits move mode
   if (e.key === 'Escape') {
-    document.getElementById('preview-overlay').classList.remove('visible');
-    document.getElementById('hex-panel').classList.remove('visible');
-    e.preventDefault();
+    const po = document.getElementById('preview-overlay');
+    const hp = document.getElementById('hex-panel');
+    if (po.classList.contains('visible') || hp.classList.contains('visible')) {
+      po.classList.remove('visible');
+      hp.classList.remove('visible');
+      e.preventDefault();
+      return;
+    }
+    if (currentMode === 'move') {
+      currentMode = 'text';
+      moveRectSelected = false;
+      movePhase = 'idle';
+      unhighlightMoveRect();
+      document.querySelectorAll('.mode-group button').forEach(b => {
+        b.classList.toggle('active', b.id === 'mode-text');
+      });
+      updateStatusBar();
+      e.preventDefault();
+      return;
+    }
     return;
   }
+
+  // Arrow key nudging in move mode
+  if (currentMode === 'move' && moveRectSelected) {
+    const step = e.shiftKey ? 10 : 1;
+    let dx = 0, dy = 0;
+    if (e.key === 'ArrowLeft')  dx = -step;
+    else if (e.key === 'ArrowRight') dx = step;
+    else if (e.key === 'ArrowUp')    dy = -step;
+    else if (e.key === 'ArrowDown')  dy = step;
+    if (dx || dy) {
+      e.preventDefault();
+      saveState();
+      moveRect(moveOrigBounds, moveOrigCells, dx, dy);
+      // Update tracked bounds/cells to the new position
+      moveOrigBounds = shiftRectBounds(moveOrigBounds, dx, dy);
+      moveOrigCells = getRectCells(moveOrigBounds);
+      movePreviewBounds = { ...moveOrigBounds };
+      movePreviewCells = moveOrigCells.slice();
+      highlightMoveRect();
+    }
+    return;
+  }
+  if (currentMode === 'move') return;
 
   // Text input
   if (e.key.length === 1) {
