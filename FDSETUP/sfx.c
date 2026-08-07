@@ -466,57 +466,6 @@ func_exit:
 }
 
 //
-// Choose SB DMA channel
-//
-enum
-{
-	SB_DMA_0,
-	SB_DMA_1,
-	SB_DMA_3,
-	SB_DMA_5,
-	SB_DMA_6,
-	SB_DMA_7,
-	SB_DMA_MAX
-};
-
-item_t sbdmaitems[] =
-	{
-		{SB_DMA_0, 35, 9, 7, -1, -1},
-		{SB_DMA_1, 35, 10, 7, -1, -1},
-		{SB_DMA_3, 35, 11, 7, -1, -1},
-		{SB_DMA_5, 35, 12, 7, -1, -1},
-		{SB_DMA_6, 35, 13, 7, -1, -1},
-		{SB_DMA_7, 35, 14, 7, -1, -1}};
-
-menu_t sbdmamenu =
-	{
-		&sbdmaitems[0],
-		SB_DMA_5,
-		SB_DMA_MAX};
-
-//
-// Choose SB IRQ channel
-//
-
-enum
-{
-	SB_IRQ_2,
-	SB_IRQ_5,
-	SB_IRQ_7,
-	SB_IRQ_MAX
-};
-item_t sbirqitems[] =
-	{
-		{SB_IRQ_2, 35, 11, 7, -1, -1},
-		{SB_IRQ_5, 35, 12, 7, -1, -1},
-		{SB_IRQ_7, 35, 13, 7, -1, -1}};
-menu_t sbirqmenu =
-	{
-		&sbirqitems[0],
-		SB_IRQ_5,
-		SB_IRQ_MAX};
-
-//
 //	Choose # of simultaneous digital channels
 //
 

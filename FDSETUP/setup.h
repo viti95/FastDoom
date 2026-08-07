@@ -4,22 +4,6 @@ typedef unsigned char byte;
 
 typedef struct
 {
-	int x;	   // xcoord of radio
-	int y;	   // ycoord of radio
-	int value; // value to match
-} radio_t;
-
-typedef struct
-{
-	radio_t *radios; // start of radio buttons
-	int amount;		 // # of radio buttons
-	int *master;	 // master value that radios must match
-	int fgcolor;	 // text color
-	int bgcolor;	 // background color
-} radiogroup_t;
-
-typedef struct
-{
 	short pup_id;
 	char width;
 	char height;
@@ -42,7 +26,7 @@ extern pup_t far askpres, far consel, far control,
 	far idmousel, far irqerr, far mcard, far midiport,
 	far mousentr, far mouspres,
 	far numdig, far quitwin,
-	far sbdma, far sbirq, far sbport, far lptport, far cmsport, far show,
+	far lptport, far cmsport, far show,
 	far freqpcm, far freqall, far comport, far mididev,
 	far title;
 
