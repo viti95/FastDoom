@@ -51,7 +51,9 @@ char cards[M_LAST][20] = {
 	"PCM",
 	"Sound Blaster MIDI",
 	"Serial MIDI",
-	"LPT MIDI"
+	"LPT MIDI",
+	"Windows Sound Sys",
+	"IBM Music Feature"
 	};
 
 char mididevices[MIDI_LAST][20] = {

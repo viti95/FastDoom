@@ -47,6 +47,8 @@ typedef enum
 	M_SBMIDI,
 	M_RS232MIDI,
 	M_LPTMIDI,
+	M_WSS,
+	M_IMFC,
 	M_LAST
 } SCARD;
 

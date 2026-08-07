@@ -399,27 +399,29 @@ enum
 	MCARD_SBMIDI,
 	MCARD_RS232MIDI,
 	MCARD_LPTMIDI,
+	MCARD_IMFC,
 	MCARD_NONE,
 	MCARD_MAX
 };
 
 item_t mcarditems[] =
 	{
-		{MCARD_GMIDI, 26, 5, 28, -1, -1},
-		{MCARD_ENSONIQ, 26, 6, 28, -1, -1},
-		{MCARD_SBAWE32, 26, 7, 28, -1, -1},
-		{MCARD_GUS, 26, 8, 28, -1, -1},
-		{MCARD_PAS, 26, 9, 28, -1, -1},
-		{MCARD_SB, 26, 10, 28, -1, -1},
-		{MCARD_ADLIB, 26, 11, 28, -1, -1},
-		{MCARD_OPL2LPT, 26, 12, 28, -1, -1},
-		{MCARD_OPL3LPT, 26, 13, 28, -1, -1},
-		{MCARD_CMS, 26, 14, 28, -1, -1},
-		{MCARD_CD, 26, 15, 28, -1, -1},
-		{MCARD_WAV, 26, 16, 28, -1, -1},
-		{MCARD_SBMIDI, 26, 17, 28, -1, -1},
-		{MCARD_RS232MIDI, 26, 18, 28, -1, -1},
-		{MCARD_LPTMIDI, 26, 19, 28, -1, -1},
+		{MCARD_GMIDI, 26, 4, 28, -1, -1},
+		{MCARD_ENSONIQ, 26, 5, 28, -1, -1},
+		{MCARD_SBAWE32, 26, 6, 28, -1, -1},
+		{MCARD_GUS, 26, 7, 28, -1, -1},
+		{MCARD_PAS, 26, 8, 28, -1, -1},
+		{MCARD_SB, 26, 9, 28, -1, -1},
+		{MCARD_ADLIB, 26, 10, 28, -1, -1},
+		{MCARD_OPL2LPT, 26, 11, 28, -1, -1},
+		{MCARD_OPL3LPT, 26, 12, 28, -1, -1},
+		{MCARD_CMS, 26, 13, 28, -1, -1},
+		{MCARD_CD, 26, 14, 28, -1, -1},
+		{MCARD_WAV, 26, 15, 28, -1, -1},
+		{MCARD_SBMIDI, 26, 16, 28, -1, -1},
+		{MCARD_RS232MIDI, 26, 17, 28, -1, -1},
+		{MCARD_LPTMIDI, 26, 18, 28, -1, -1},
+		{MCARD_IMFC, 26, 19, 28, -1, -1},
 		{MCARD_NONE, 26, 20, 28, -1, -1}};
 
 menu_t mcardmenu =
@@ -500,6 +502,10 @@ int ChooseMusicCard(void) // RETURN: 0 = OK, -1 == ABORT
 
 	case M_GMIDI:
 		field = MCARD_GMIDI;
+		break;
+
+	case M_IMFC:
+		field = MCARD_IMFC;
 		break;
 	}
 
@@ -597,6 +603,11 @@ int ChooseMusicCard(void) // RETURN: 0 = OK, -1 == ABORT
 			
 			case MCARD_LPTMIDI:
 				newc.m.card = M_LPTMIDI;
+				newc.m.soundport = -1;
+				goto func_exit;
+			
+			case MCARD_IMFC:
+				newc.m.card = M_IMFC;
 				newc.m.soundport = -1;
 				goto func_exit;
 
