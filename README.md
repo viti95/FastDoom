@@ -73,19 +73,28 @@ Requirements: Linux or WSL2 on Windows.
 Example to build a fresh FastDoom executable ready to use on real hardware:
 
 ```
-./source fdenv.sh
+source fdenv.sh
 ./build.sh fdoom.exe -clean -stub
 ```
 
 ## Build instructions (FDSETUP)
 
-Requirements: Windows 3.1 or Windows 9x
+Requirements: Linux or WSL2 on Windows.
 
-1. Install Borland C++ 4.52
-2. Install Laughing Dog Screen Maker 1.14
-3. Run .\FDSETUP\SCREENS\MAKE.BAT (MS-DOS)
-4. Open setup.ide project in Borland C++ IDE
-5. Build the project
+1. Install OpenWatcom v2
+2. Execute `source fdenv.sh`
+3. Build:
+    - Clean the project `wmake clean`
+    - Generate the executable `wmake fdsetup.exe`
+
+Example to build a fresh FastDoom Setup executable ready to use on real hardware:
+
+```
+source fdenv.sh
+cd FDSETUP
+wmake clean
+wmake fdsetup.exe
+```
 
 ## Contributors
 
