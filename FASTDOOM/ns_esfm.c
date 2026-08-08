@@ -15,9 +15,8 @@
    reference MIDI driver, reimplemented here in the FastDOOM idiom.
 ---------------------------------------------------------------------*/
 
-#include <conio.h>
 #include <dos.h>
-#include "ns_cards.h"
+#include "stdio.h"
 #include "ns_esfm.h"
 #include "esfmbank_data.h"
 
@@ -94,6 +93,12 @@ static voiceStruct voice_table[NUM_ESFM_VOICES];
 static unsigned short gwTimer;
 static int voice1, voice2;
 
+static void ESFM_delay(int count)
+{
+    for (; count > 0; count--)
+        inp(0xE1);
+}
+
 /*---------------------------------------------------------------------
    Function: ESFM_fmwrite
 
@@ -106,15 +111,11 @@ static void ESFM_fmwrite(unsigned index, unsigned char data)
     int delay;
 
     outp(ESFM_PORT + 2, index & 0xff);
+    ESFM_delay(2);
     outp(ESFM_PORT + 3, index >> 8);
-
-    for (delay = 6; delay > 0; delay--)
-        inp(ESFM_PORT);
-
+    ESFM_delay(2);
     outp(ESFM_PORT + 1, data);
-
-    for (delay = 27; delay > 0; delay--)
-        inp(ESFM_PORT);
+    ESFM_delay(2);
 }
 
 /*---------------------------------------------------------------------
@@ -802,31 +803,41 @@ void ESFM_ControlChange(int channel, int number, int value)
 
 int ESFM_DetectFM(void)
 {
-    int status1, status2, i;
+    int ii;
+    outp(ESFM_PORT + 2, 0x05);
+    ESFM_delay(128);
+    outp(ESFM_PORT + 3, 0x05);
+    ESFM_delay(1024);
+    ii = inp(ESFM_PORT + 1);
 
-    outp(ESFM_PORT, 4);
-    outp(ESFM_PORT + 1, 0x60); /* reset T1 & T2 */
-    outp(ESFM_PORT, 4);
-    outp(ESFM_PORT + 1, 0x80); /* reset IRQ */
+    if ((ii & ~1) == 0x80)
+    {
+        outp(ESFM_PORT, 0);
+        return 1;
+    }
 
-    status1 = inp(ESFM_PORT);
+    outp(ESFM_PORT + 2, 0x05);
+    ESFM_delay(128);
+    outp(ESFM_PORT + 3, 0x01);
+    ESFM_delay(1024);
+    outp(ESFM_PORT + 2, 0x05);
+    ESFM_delay(128);
+    outp(ESFM_PORT + 3, 0x80);
+    ESFM_delay(1024);
 
-    outp(ESFM_PORT, 2);
-    outp(ESFM_PORT + 1, 0xff); /* set timer 1 */
-    outp(ESFM_PORT, 4);
-    outp(ESFM_PORT + 1, 0x21); /* start timer 1 */
+    outp(ESFM_PORT + 2, 0x05);
+    ESFM_delay(128);
+    outp(ESFM_PORT + 3, 0x05);
+    ESFM_delay(1024);
+    ii = inp(ESFM_PORT + 1);
 
-    for (i = 100; i > 0; i--)
-        inp(ESFM_PORT);
+    if (ii == 0x80)
+    {
+        outp(ESFM_PORT, 0);
+        return 1;
+    }
 
-    status2 = inp(ESFM_PORT);
-
-    outp(ESFM_PORT, 4);
-    outp(ESFM_PORT + 1, 0x60);
-    outp(ESFM_PORT, 4);
-    outp(ESFM_PORT + 1, 0x80);
-
-    return (((status1 & 0xe0) == 0x00) && ((status2 & 0xe0) == 0xc0));
+    return 0;
 }
 
 /*---------------------------------------------------------------------
@@ -851,13 +862,13 @@ int ESFM_Init(int Address)
 
     ESFM_PORT = Address ? Address : 0x388;
 
-    /* Enter native mode: set bit 7 of OPL3 register 0x105.  In OPL3 mode
-       base+2 addresses the high register bank and base+3 is its data
-       port, so this writes reg 0x105 = 0x80 (see ESFM_specs.md). */
+    /* Enter native mode: set bit 7 of OPL3 register 0x105.
+       In OPL3 mode base+2 is the high-bank address port, base+3 is its
+       data port.  Spec requires a delay between address and data writes. */
     outp(ESFM_PORT + 2, 0x05);
-    outp(ESFM_PORT + 3, 0x80);
-    for (delay = 25; delay > 0; delay--)
-        inp(ESFM_PORT);
+    ESFM_delay(2);
+    outp(ESFM_PORT + 3, 0x81);
+    ESFM_delay(2);
 
     fmreset();
 

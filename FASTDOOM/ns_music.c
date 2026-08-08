@@ -655,7 +655,6 @@ int MUSIC_InitESFM(
             return (MUSIC_Error);
         }
     }
-
     ESFM_Init(Address);
 
     Funcs->NoteOff = ESFM_NoteOff;
