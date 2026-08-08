@@ -397,6 +397,7 @@ enum
 	MCARD_RS232MIDI,
 	MCARD_LPTMIDI,
 	MCARD_IMFC,
+	MCARD_ESFM,
 	MCARD_NONE,
 	MCARD_MAX
 };
@@ -419,7 +420,8 @@ item_t mcarditems[] =
 		{MCARD_RS232MIDI, 26, 17, 28, -1, -1},
 		{MCARD_LPTMIDI, 26, 18, 28, -1, -1},
 		{MCARD_IMFC, 26, 19, 28, -1, -1},
-		{MCARD_NONE, 26, 20, 28, -1, -1}};
+		{MCARD_ESFM, 26, 20, 28, -1, -1},
+		{MCARD_NONE, 26, 21, 28, -1, -1}};
 
 menu_t mcardmenu =
 	{
@@ -502,6 +504,10 @@ int ChooseMusicCard(void) // RETURN: 0 = OK, -1 == ABORT
 
 	case M_IMFC:
 		field = MCARD_IMFC;
+		break;
+	
+	case M_ESFM:
+		field = MCARD_ESFM;
 		break;
 	}
 
@@ -605,6 +611,11 @@ int ChooseMusicCard(void) // RETURN: 0 = OK, -1 == ABORT
 			case MCARD_IMFC:
 				newc.m.card = M_IMFC;
 				newc.m.soundport = -1;
+				goto func_exit;
+
+			case MCARD_ESFM:
+				newc.m.card = M_ESFM;
+				newc.m.midiport = 0x388;
 				goto func_exit;
 
 			case MCARD_NONE:

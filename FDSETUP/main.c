@@ -12,7 +12,6 @@
 
 #include "main.h"
 #include "default.h"
-#include "scguess.h"
 
 char keydesc[256][10];
 unsigned char ASCIINames[] = // Unshifted ASCII for scan codes
@@ -53,7 +52,8 @@ char cards[M_LAST][20] = {
 	"Serial MIDI",
 	"LPT MIDI",
 	"Windows Sound Sys",
-	"IBM Music Feature"
+	"IBM Music Feature",
+	"ESS ESFM"
 	};
 
 char controls[C_LAST][20] = {
@@ -276,22 +276,6 @@ void StartUp(void)
 
 	if (!M_LoadDefaults())
 	{
-		//
-		// Auto-detect ONLY first time through
-		//
-		if (SmellsLikeGUS(&addr, &irq, &dma))
-		{
-			newc.m.card = M_GUS;
-			newc.m.soundport = addr;
-			newc.m.midiport = -1;
-		}
-		else if (SmellsLikeSB(&addr, &irq, &dma, &midi))
-		{
-			newc.m.card = M_SB;
-			newc.m.soundport = addr;
-			newc.m.midiport = midi;
-		}
-
 		ChooseController();
 		SetupMusic();
 		SetupFX();

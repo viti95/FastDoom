@@ -49,6 +49,7 @@ typedef enum
 	M_LPTMIDI,
 	M_WSS,
 	M_IMFC,
+	M_ESFM,
 	M_LAST
 } SCARD;
 
