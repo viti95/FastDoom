@@ -17,6 +17,7 @@
 #include "ns_scape.h"
 #include "ns_llm.h"
 #include "ns_imfc.h"
+#include "ns_esfm.h"
 #include "options.h"
 #include "doomstat.h"
 
@@ -37,6 +38,7 @@ int MUSIC_InitSBMIDI(midifuncs *Funcs,int Address);
 int MUSIC_InitRS232MIDI(midifuncs *Funcs,int Address);
 int MUSIC_InitLPTMIDI(midifuncs *Funcs,int Address);
 int MUSIC_InitIMFC(midifuncs *Funcs, int Address);
+int MUSIC_InitESFM(midifuncs *Funcs, int Address);
 
 /*---------------------------------------------------------------------
    Function: MUSIC_Init
@@ -99,6 +101,10 @@ int MUSIC_Init(int SoundCard, int Address)
 
     case IMFC:
         status = MUSIC_InitIMFC(&MUSIC_MidiFunctions, Address);
+        break;
+
+    case ESFM:
+        status = MUSIC_InitESFM(&MUSIC_MidiFunctions, Address);
         break;
 
     case AudioCD:
@@ -187,6 +193,10 @@ int MUSIC_Shutdown(
 
     case IMFC:
         IMFC_Shutdown();
+        break;
+
+    case ESFM:
+        ESFM_Shutdown();
         break;
     }
 
@@ -290,6 +300,7 @@ int MUSIC_PlaySong(
     case UltraSound:
     case CMS:
     case IMFC:
+    case ESFM:
         MIDI_StopSong();
         status = MIDI_PlaySong(song, loopflag);
         if (status != MIDI_Ok)
@@ -622,6 +633,41 @@ int MUSIC_InitIMFC(
     Funcs->SetVolume = IMFC_SetVolume;
     Funcs->GetVolume = IMFC_GetVolume;
     Funcs->SysEx = IMFC_SysEx;
+
+    MIDI_SetMidiFuncs(Funcs);
+
+    return (status);
+}
+
+int MUSIC_InitESFM(
+    midifuncs *Funcs,
+    int Address)
+
+{
+    int status;
+
+    status = MUSIC_Ok;
+
+    if (!ignoreSoundChecks)
+    {
+        if (!ESFM_DetectFM())
+        {
+            return (MUSIC_Error);
+        }
+    }
+
+    ESFM_Init(Address);
+
+    Funcs->NoteOff = ESFM_NoteOff;
+    Funcs->NoteOn = ESFM_NoteOn;
+    Funcs->PolyAftertouch = NULL;
+    Funcs->ControlChange = ESFM_ControlChange;
+    Funcs->ProgramChange = ESFM_ProgramChange;
+    Funcs->ChannelAftertouch = NULL;
+    Funcs->PitchBend = ESFM_SetPitchBend;
+    Funcs->SetVolume = NULL;
+    Funcs->GetVolume = NULL;
+    Funcs->SysEx = NULL;
 
     MIDI_SetMidiFuncs(Funcs);
 

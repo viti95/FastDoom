@@ -49,6 +49,7 @@ typedef enum
     snd_LPTMIDI,
     snd_WSS,
     snd_IMFC,
+    snd_ESFM,
     NUM_SCARDS
 } cardenum_t;
 
