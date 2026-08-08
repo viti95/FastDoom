@@ -11,7 +11,6 @@ OBJS = &
  menu.obj &
  music.obj &
  pup_data.obj &
- scguess.obj &
  setup.obj &
  sfx.obj
 
