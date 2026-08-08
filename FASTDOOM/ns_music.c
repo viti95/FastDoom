@@ -655,7 +655,6 @@ int MUSIC_InitESFM(
             return (MUSIC_Error);
         }
     }
-
     ESFM_Init(Address);
 
     Funcs->NoteOff = ESFM_NoteOff;
@@ -665,7 +664,7 @@ int MUSIC_InitESFM(
     Funcs->ProgramChange = ESFM_ProgramChange;
     Funcs->ChannelAftertouch = NULL;
     Funcs->PitchBend = ESFM_SetPitchBend;
-    Funcs->SetVolume = NULL;
+    Funcs->SetVolume = ESFM_SetVolume;
     Funcs->GetVolume = NULL;
     Funcs->SysEx = NULL;
 
