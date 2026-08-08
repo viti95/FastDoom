@@ -26,6 +26,7 @@ void ESFM_SetPitchBend(int channel, int lsb, int msb);
 
 // Installs a raw ESS patch-table blob (offset table + patches). If never
 // called, the built-in ESFM_DefaultBank is used.
+void ESFM_SetVolume(int volume);
 void ESFM_RegisterBank(const unsigned char *bank);
 
 #endif

@@ -671,7 +671,7 @@ static void fmreset(void)
         gbChanBendRange[i] = 0x02;
         hold_table[i] = 0x00;
         gbChanExpr[i] = 0x7F;
-        gbChanVolume[i] = 0x64;
+        gbChanVolume[i] = 0x7F;
         gbChanAtten[i] = 0x04;
         pan_mask[i] = 0x30;
     }
@@ -684,6 +684,16 @@ static void fmreset(void)
     }
 
     gwTimer = 0;
+}
+
+void ESFM_SetVolume(int volume)
+{
+    int i;
+    /* Scale 0-255 MIDI master volume to 0-127 per-channel volume. */
+    unsigned char vol = (unsigned char)((volume * 127) / 255);
+    for (i = 0; i < NUM_MIDI_CHANNELS; i++)
+        gbChanVolume[i] = vol;
+    NATV_CalcNewVolume(0xFF);
 }
 
 /*---------------------------------------------------------------------
