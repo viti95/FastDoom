@@ -312,10 +312,17 @@ int CMS_MIDI_Init(int port)
     I_Printf("CMS_MIDI_Init port= %i (CMS_Port = %i)\r\n",port,CMS_Port);
 #endif
 
-    CMSFreqMap = I_ReadBinaryStatic("DATA\\CMSFM.BIN", 128);
-    atten = I_ReadBinaryStatic("DATA\\CMSATT.BIN", 128);
-    freqtable = (unsigned short *)I_ReadBinaryStatic("DATA\\CMSFREQ.BIN", 256);
-    pitchtable = (unsigned short *)I_ReadBinaryStatic("DATA\\CMSPITCH.BIN", 512);
+    if (CMSFreqMap == NULL)
+        CMSFreqMap = I_ReadBinaryStatic("DATA\\CMSFM.BIN", 128);
+
+    if (atten == NULL)
+        atten = I_ReadBinaryStatic("DATA\\CMSATT.BIN", 128);
+
+    if (freqtable == NULL)
+        freqtable = (unsigned short *)I_ReadBinaryStatic("DATA\\CMSFREQ.BIN", 256);
+
+    if (pitchtable == NULL)
+        pitchtable = (unsigned short *)I_ReadBinaryStatic("DATA\\CMSPITCH.BIN", 512);
 
     CMS_Reset();
     // prepare MIDI synth

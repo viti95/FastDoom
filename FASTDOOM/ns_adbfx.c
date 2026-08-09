@@ -175,7 +175,8 @@ int ADBFX_Init(int soundcard, int address)
         ADBFX_Shutdown();
     }
 
-    AdlibLUTdb = I_ReadBinaryStatic("DATA\\ADLIBFX.BIN", 256);
+    if (AdlibLUTdb == NULL)
+        AdlibLUTdb = I_ReadBinaryStatic("DATA\\ADLIBFX.BIN", 256);
 
     if (address <= 0)
         address = ADLIB_PORT;
