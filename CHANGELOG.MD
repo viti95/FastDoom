@@ -4,6 +4,7 @@
 * Added 5×6 integer scaling for 320×200 VESA backbuffer modes, optimized for 1600×1200 (4:3) displays while preserving the original aspect ratio.
 * IBM Music Feature card support
 * Windows Sound System (WSS) support
+* ESS ESFM native mode support
 * New command line that preloads the IWAD into RAM
 * FDSetup has been upgraded to version 2.0 and can now be built using 100% open source tools. We have removed the dependencies on Laughing Dog for screen creation and Borland 4.x for compilation. Additionally, we developed PUPED, a new web based tool for easily creating PUP screens directly in your browser. Huge thanks to @jsmolina for porting the project to OpenWatcom, which helped us reduce the executable size by 17% in the process
 
