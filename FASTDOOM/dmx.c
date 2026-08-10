@@ -670,7 +670,8 @@ void ASS_Init(int rate, int mdev, int sdev)
         {
         case PC:
             // Load divisors
-            divisors = (unsigned short *)I_ReadBinaryStatic("DATA\\PCSPK.BIN", 256);
+            if (divisors == NULL)
+                divisors = (unsigned short *)I_ReadBinaryStatic("DATA\\PCSPK.BIN", 256);
             status = PCFX_Init();
             PCFX_SetTotalVolume(255);
             return;
