@@ -18,7 +18,7 @@
 #include <dos.h>
 #include "stdio.h"
 #include "ns_esfm.h"
-#include "esfmbank_data.h"
+#include "i_file.h"
 
 #define TRUE (1 == 1)
 #define FALSE (!TRUE)
@@ -27,6 +27,8 @@
 #define ESFM_OPS 4
 #define NUM_MIDI_CHANNELS 16
 #define VOICE_NONE 255
+
+#define ESFM_BANK_SIZE 8288
 
 typedef struct
 {
@@ -43,7 +45,7 @@ typedef struct
 
 int ESFM_PORT = 0x388;
 
-static const unsigned char *gBankMem = ESFM_DefaultBank;
+static const unsigned char *gBankMem;
 
 /* Linear velocity -> logarithmic attenuation (.75 dB steps). */
 static const unsigned char gbVelocityAtten[32] = {
@@ -851,15 +853,6 @@ int ESFM_DetectFM(void)
 }
 
 /*---------------------------------------------------------------------
-   Function: ESFM_RegisterBank
----------------------------------------------------------------------*/
-
-void ESFM_RegisterBank(const unsigned char *bank)
-{
-    gBankMem = bank ? bank : ESFM_DefaultBank;
-}
-
-/*---------------------------------------------------------------------
    Function: ESFM_Init
 
    Enables native ESFM mode and silences the chip.  Address is the SB/FM
@@ -871,6 +864,10 @@ int ESFM_Init(int Address)
     int delay;
 
     ESFM_PORT = Address ? Address : 0x388;
+
+    // Load Bank
+    if (gBankMem == NULL)
+        gBankMem = I_ReadBinaryStatic("DATA\\ESFMBANK.BIN", ESFM_BANK_SIZE);
 
     /* Enter native mode: set bit 7 of OPL3 register 0x105.
        In OPL3 mode base+2 is the high-bank address port, base+3 is its
