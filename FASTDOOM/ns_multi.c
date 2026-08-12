@@ -23,6 +23,7 @@
 #include "ns_adbfx.h"
 #include "ns_tandy.h"
 #include "ns_wss.h"
+#include "ns_gold.h"
 #include "options.h"
 #include "fastmath.h"
 #include "ns_fxm.h"
@@ -693,6 +694,10 @@ int MV_SetMixMode(int numchannels)
     case WSS:
         MV_MixMode = WSS_SetMixMode(mode);
         break;
+    
+    case GOLD:
+        MV_MixMode = GOLD_SetMixMode(mode);
+        break;
 
     case SoundSource:
     case Tandy3Voice:
@@ -848,6 +853,20 @@ int MV_StartPlayback(
         MV_DMAChannel = WSS_DMAChannel;
         break;
 
+    case GOLD:
+        status = GOLD_BeginBufferedPlayback(MV_MixBuffer[0],
+                                           TotalBufferSize, MV_NumberOfBuffers,
+                                           MV_RequestedMixRate, MV_MixMode, MV_ServiceVoc);
+
+        if (status != GOLD_Ok)
+        {
+            return (MV_Error);
+        }
+
+        MV_MixRate = GOLD_GetPlaybackRate();
+        MV_DMAChannel = GOLD_DMAChannel;
+        break;
+
     case SoundSource:
         SS_BeginBufferedPlayback(MV_MixBuffer[0],
                                  TotalBufferSize, MV_NumberOfBuffers,
@@ -984,6 +1003,9 @@ void MV_StopPlayback(
         break;
     case Tandy3Voice:
         TANDY_StopPlayback();
+        break;
+    case GOLD:
+        GOLD_StopPlayback();
         break;
     }
 
@@ -1277,6 +1299,10 @@ int MV_Init(
         status = TANDY_Init(soundcard);
         break;
 
+    case GOLD:
+        status = GOLD_Init();
+        break;
+
     }
 
     if (status != MV_Ok)
@@ -1403,6 +1429,9 @@ int MV_Shutdown(
         break;
     case Tandy3Voice:
         TANDY_Shutdown();
+        break;
+    case GOLD:
+        GOLD_Shutdown();
         break;
     }
 

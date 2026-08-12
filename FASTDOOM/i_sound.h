@@ -50,6 +50,7 @@ typedef enum
     snd_WSS,
     snd_IMFC,
     snd_ESFM,
+    snd_GOLD,
     NUM_SCARDS
 } cardenum_t;
 
