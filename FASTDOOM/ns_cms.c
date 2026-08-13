@@ -224,8 +224,7 @@ int CMS_Init(int soundcard, int port)
 
     CMS_BufferStart = NULL;
 
-    if (port != -1)
-        CMS_Port = port;
+    CMS_Port = port;
 
     CMS_Installed = 1;
 
