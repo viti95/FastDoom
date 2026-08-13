@@ -1212,83 +1212,19 @@ int MV_Init(
 
     MV_SetReverseStereo(FALSE);
 
-    // Initialize the sound card
-    switch (soundcard)
+    // Check for SB Pro reverse stereo
+    if ((soundcard == SoundBlaster) || (soundcard == Awe32))
     {
-    case UltraSound:
-        status = GUSWAVE_Init();
-        break;
-
-    case SoundBlaster:
-    case Awe32:
-        status = BLASTER_Init();
-
         if ((BLASTER_Config.Type == SBPro) ||
             (BLASTER_Config.Type == SBPro2))
         {
             MV_SetReverseStereo(TRUE);
         }
-        break;
-
-    case ProAudioSpectrum:
-    case SoundMan16:
-        status = PAS_Init();
-        break;
-
-    case SoundScape:
-        status = SOUNDSCAPE_Init();
-        break;
-
-    case WSS:
-        status = WSS_Init();
-        break;
-
-    case SoundSource:
-        status = SS_Init(soundcard, -1);
-        break;
-    
-    case PC1bit:
-        status = PCSpeaker_Init(soundcard);
-        break;
-    
-    case PCPWM:
-        status = PCSpeaker_PWM_Init(soundcard);
-        break;
-    
-    case CMS:
-        status = CMS_Init(soundcard, -1);
-        break;
-
-    case LPTDAC:
-        status = LPT_Init(soundcard, -1);
-        break;
-    
-    case SoundBlasterDirect:
-        status = SBDM_Init(soundcard);
-        break;
-
-    case Adlib:
-    case OPL2LPT:
-    case OPL3LPT:
-        status = ADBFX_Init(soundcard, dmx_snd_port);
-        break;
-
-    case Tandy3Voice:
-        status = TANDY_Init(soundcard);
-        break;
-
     }
 
-    if (status != MV_Ok)
-    {
-        Z_Free(MV_Voices);
-        MV_Voices = NULL;
-        MV_TotalMemory = 0;
-
-        DPMI_FreeDOSMemory(MV_BufferDescriptor);
-
-        return (MV_Error);
-    }
+    // Note: The sound card is already initialized by FX_SetupCard()
+    // or FX_SetupSoundBlaster() before FX_Init()/MV_Init() is called.
+    // Do NOT re-initialize here to avoid shutdown+reinit cycle.
 
     MV_SoundCard = soundcard;
     MV_Installed = TRUE;
