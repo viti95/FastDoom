@@ -268,8 +268,7 @@ int SS_Init(int soundcard, int port)
 
 
     if (!SS_DetectSoundSource()){
-        if (port != -1)
-            SS_Port = port;
+        SS_Port = port;
     }
 
     status = SS_Ok;
