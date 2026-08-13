@@ -106,7 +106,7 @@ This project exists thanks to all the people who contribute.
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=viti95/FastDoom&type=Date)](https://star-history.com/#viti95/FastDoom&Date)
+[![Star History Chart](https://star-history.dera.page/svg?repos=viti95/FastDoom&type=Date)](https://star-history.dera.page/#viti95/FastDoom&Date)
 
 
 ## Contributing
