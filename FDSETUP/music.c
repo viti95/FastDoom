@@ -1061,6 +1061,7 @@ int SetupMusic(void)
 	case M_ENSONIQ:
 	case M_SBAWE32:
 	case M_SB:
+	case M_ESFM:
 		savemusic = TRUE;
 		break;
 
