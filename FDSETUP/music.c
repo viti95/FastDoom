@@ -727,6 +727,84 @@ func_exit:
 
 enum
 {
+	IMFC_PORT_2A20,
+	IMFC_PORT_2A30,
+	IMFC_PORT_MAX
+};
+
+item_t imfcportitemsm[] =
+{
+	{IMFC_PORT_2A20, 32, 9, 13, -1, -1},
+	{IMFC_PORT_2A30, 32, 10, 13, -1, -1}};
+
+menu_t imfcportmenum =
+{
+	&imfcportitemsm[0],
+	IMFC_PORT_2A20,
+	IMFC_PORT_MAX};
+
+int ChooseIMFCPortMusic(DMXCARD *card) // RETURN: 0 = OK, -1 == ABORT
+{
+	short field;
+	short key;
+	int rval = 0;
+
+	SaveScreen();
+	DrawPup(&imfcport);
+
+	// DEFAULT FIELD ========================================
+
+	switch (card->midiport)
+	{
+	default:
+	case 0x2A20:
+		field = IMFC_PORT_2A20;
+		break;
+
+	case 0x2A30:
+		field = IMFC_PORT_2A30;
+		break;
+	}
+
+	imfcportmenum.startitem = field;
+	while (1)
+	{
+		SetupMenu(&imfcportmenum);
+		field = GetMenuInput();
+		key = menukey;
+		switch (key)
+		{
+		case KEY_ESC:
+			rval = -1;
+			goto func_exit;
+
+		case KEY_ENTER:
+		case KEY_F10:
+			switch (field)
+			{
+			case IMFC_PORT_2A20:
+				card->midiport = 0x2A20;
+				goto func_exit;
+
+			case IMFC_PORT_2A30:
+				card->midiport = 0x2A30;
+				goto func_exit;
+
+			default:
+				break;
+			}
+			break;
+		}
+	}
+
+func_exit:
+
+	RestoreScreen();
+	return (rval);
+}
+
+enum
+{
 	CMS_PORT_210,
 	CMS_PORT_220,
 	CMS_PORT_230,
@@ -959,6 +1037,12 @@ int SetupMusic(void)
 		if (ChooseLPTPortMusic(&newc.m) == -1)
 			return (-1);
 		if (ChooseMidiDevice(&newc.md) == -1)
+			return (-1);
+		savemusic = TRUE;
+		break;
+
+	case M_IMFC:
+		if (ChooseIMFCPortMusic(&newc.m) == -1)
 			return (-1);
 		savemusic = TRUE;
 		break;

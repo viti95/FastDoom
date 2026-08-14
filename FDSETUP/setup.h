@@ -28,7 +28,7 @@ extern pup_t far askpres, far consel, far control,
 	far numdig, far quitwin,
 	far lptport, far cmsport, far show,
 	far freqpcm, far freqall, far comport, far mididev,
-	far title;
+	far title, far imfcport;
 
 #define MAXLAYERS 5 // max amount of screens to save
 void SaveScreen(void);
