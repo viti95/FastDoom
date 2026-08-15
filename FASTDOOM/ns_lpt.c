@@ -138,8 +138,7 @@ int LPT_Init(int soundcard, int port)
 
     LPT_BufferStart = NULL;
 
-    if (port != -1)
-        LPT_Port = port;
+    LPT_Port = port;
 
     LPT_Installed = 1;
 

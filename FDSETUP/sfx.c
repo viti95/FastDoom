@@ -811,6 +811,7 @@ int SetupFX(void)
 	case M_SB:
 	case M_TANDY3VOICE:
 	case M_ENSONIQ:
+	case M_WSS:
 		ChooseFreq();
 		ChooseNumDig();
 		savefx = TRUE;

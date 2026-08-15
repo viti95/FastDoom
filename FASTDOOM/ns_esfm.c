@@ -16,6 +16,7 @@
 ---------------------------------------------------------------------*/
 
 #include <dos.h>
+#include <conio.h>
 #include "stdio.h"
 #include "ns_esfm.h"
 #include "i_file.h"
