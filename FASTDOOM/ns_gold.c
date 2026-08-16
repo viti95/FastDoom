@@ -54,7 +54,9 @@
 
 /*---------------------------------------------------------------------
    PCM engine rate table.  The rate register selects one of these
-   rates; in stereo mode each channel runs at half the sample rate.
+   rates.  In stereo mode the interleaved L R L R DMA stream is
+   consumed at this rate (each channel clocking at the rate), so
+   the rate register is programmed with the sample rate directly.
 ---------------------------------------------------------------------*/
 
 static const unsigned int GOLD_PCMRates[4] = {44100, 22050, 11025, 7350};
@@ -732,11 +734,9 @@ void GOLD_SetPlaybackRate(
 
     testrate = (int)rate;
 
-    // In stereo mode each channel runs at half the sample rate.
-    if (GOLD_MixMode & GOLD_STEREO)
-    {
-        testrate >>= 1;
-    }
+    // The stereo pair rate equals the channel rate (the interleaved
+    // L R L R stream is consumed one byte per channel per sample
+    // tick), so no adjustment is needed for stereo.
 
     // Find the nearest supported rate.
     GOLD_FreqIndex = 0;
