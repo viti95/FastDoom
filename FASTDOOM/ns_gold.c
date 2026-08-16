@@ -508,6 +508,37 @@ static void GOLD_HaltTransfer(void)
 }
 
 /*---------------------------------------------------------------------
+   Function: GOLD_FlipChunk
+
+   Flips the high bit of each sample byte in a chunk of the mix
+   buffer.  The Gold plays 8-bit unsigned samples (128 = silence).
+
+   Some emulators scale the 8-bit sample into a 16-bit value with
+   an overflow:  sample * 256 wraps to negative for samples >= 128,
+   so silence (128) becomes full negative swing and positive peaks
+   fold near zero, producing a badly distorted (rectified) waveform.
+   Flipping the high bit before the DMA reads the chunk turns that
+   broken scaling into an exact linear one:  the wrapped value
+   becomes (sample - 128) * 256 for every sample.  Each chunk is
+   flipped exactly once, immediately before it is programmed for
+   DMA (the mixer always rewrites the chunk with fresh samples
+   before it is played again).
+---------------------------------------------------------------------*/
+
+static void GOLD_FlipChunk(
+    char *buffer,
+    int count)
+
+{
+    int index;
+
+    for (index = 0; index < count; index++)
+    {
+        buffer[index] ^= 0x80;
+    }
+}
+
+/*---------------------------------------------------------------------
    Function: GOLD_GetDMACount
 
    Returns the remaining word count of the programmed DMA channel.
@@ -657,6 +688,10 @@ void __interrupt __far GOLD_ServiceInterrupt(
         {
             GOLD_CurrentDMABuffer = GOLD_DMABuffer;
         }
+
+        // Flip the new chunk's samples before the DMA reads them
+        // (see GOLD_FlipChunk).
+        GOLD_FlipChunk(GOLD_CurrentDMABuffer, GOLD_TransferLength);
 
         DMA_SetupTransfer(GOLD_DMAChannel, GOLD_CurrentDMABuffer,
                           GOLD_TransferLength, DMA_SingleShotRead);
@@ -887,6 +922,8 @@ int GOLD_BeginBufferedPlayback(
 #endif
 
     // Program the first chunk.
+    GOLD_FlipChunk(GOLD_CurrentDMABuffer, GOLD_TransferLength);
+
     status = DMA_SetupTransfer(GOLD_DMAChannel, GOLD_CurrentDMABuffer,
                                GOLD_TransferLength, DMA_SingleShotRead);
     if (status == DMA_Error)
