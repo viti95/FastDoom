@@ -29,11 +29,11 @@
 #define GOLD_CTRL_AUDIO_SELECT 11
 #define GOLD_CTRL_IRQ_DMA_SELECT 13
 
-// Control chip "busy" flag (CTRL_ADDRESS, bit 6)
+/* Control chip "busy" flag (CTRL_ADDRESS, bit 6) */
 #define GOLD_CTRL_BUSY 0x40
 
-// Bits set in the IRQ/DMA select register to enable the engine
-// (DEN0 = bit 3, AEN = bit 7; AIL2 enables with 0x88)
+/* Bits set in the IRQ/DMA select register to enable the engine */
+/* (DEN0 = bit 3, AEN = bit 7; AIL2 enables with 0x88) */
 #define GOLD_CTRL_DMA_ENABLE 0x08
 #define GOLD_CTRL_ENGINE_ENABLE 0x80
 
@@ -46,10 +46,10 @@
 #define GOLD_PCM_FIFO_INIT 11
 #define GOLD_PCM_FORMAT 12
 
-// PCM engine status bit: FIFO 0 empty (end of transfer) interrupt
+/* PCM engine status bit: FIFO 0 empty (end of transfer) interrupt */
 #define GOLD_PCM_FIFO0_INT 0x01
 
-// GO bit of the rate/mode register
+/* GO bit of the rate/mode register */
 #define GOLD_PCM_GO 0x01
 
 /*---------------------------------------------------------------------
@@ -67,13 +67,13 @@ static const unsigned char GOLD_FreqBits[4] = {0x00, 0x08, 0x10, 0x18};
    mono and stereo formats.
 ---------------------------------------------------------------------*/
 
-// mono 8-bit
+/* mono 8-bit */
 #define GOLD_PRC_MONO_CH0 0x66
 #define GOLD_PRC_MONO_CH1 0x00
 #define GOLD_SFC_MONO_CH0 0x05
 #define GOLD_SFC_MONO_CH1 0x02
 
-// stereo 8-bit
+/* stereo 8-bit */
 #define GOLD_PRC_STEREO_CH0 0x46
 #define GOLD_PRC_STEREO_CH1 0x26
 #define GOLD_SFC_STEREO_CH0 0x85
@@ -135,7 +135,7 @@ static int GOLD_TransferLength = 0;
 static int GOLD_MixMode = GOLD_MONO_8BIT;
 static int GOLD_FreqIndex;
 
-// Shadow of the channel 0 rate/mode register (without the GO bit).
+/* Shadow of the channel 0 rate/mode register (without the GO bit). */
 static unsigned char GOLD_PrcShadow;
 
 static int GOLD_IntController1Mask;
@@ -146,9 +146,9 @@ static int GOLD_SoundPlaying;
 
 static void (*GOLD_CallBack)(void);
 
-// Set in the interrupt handler; used to verify that the card is
-// generating end-of-data interrupts (I_Printf may not be called
-// from an ISR, so it is reported from the main context).
+/* Set in the interrupt handler; used to verify that the card is */
+/* generating end-of-data interrupts (I_Printf may not be called */
+/* from an ISR, so it is reported from the main context). */
 static volatile int GOLD_FirstIrq;
 
 #if (DEBUG_ENABLED == 1)
@@ -367,14 +367,14 @@ static int GOLD_FindCard(void)
     }
 #endif
 
-    // Tweak a few bits and write them back...
+    /* Tweak a few bits and write them back... */
     left ^= 0x05;
     right ^= 0x0A;
 
     GOLD_WriteControlReg(GOLD_CTRL_LEFT_VOLUME, left);
     GOLD_WriteControlReg(GOLD_CTRL_RIGHT_VOLUME, right);
 
-    // ...and see if the changes took effect.
+    /* ...and see if the changes took effect. */
     testleft = GOLD_ReadControlReg(GOLD_CTRL_LEFT_VOLUME);
     testright = GOLD_ReadControlReg(GOLD_CTRL_RIGHT_VOLUME);
 
@@ -398,7 +398,7 @@ static int GOLD_FindCard(void)
         return (GOLD_Error);
     }
 
-    // Control chip found: restore the original values.
+    /* Control chip found: restore the original values. */
     left ^= 0x05;
     right ^= 0x0A;
 
@@ -452,11 +452,11 @@ static void GOLD_SetPCMFormat(void)
 
     freq = GOLD_FreqBits[GOLD_FreqIndex];
 
-    // Reset both FIFOs.
+    /* Reset both FIFOs. */
     GOLD_WritePCMReg(0, GOLD_PCM_RATE, 0x80);
     GOLD_WritePCMReg(1, GOLD_PCM_RATE, 0x80);
 
-    // Write 4 dummy bytes to allow proper FIFO DMA initialization.
+    /* Write 4 dummy bytes to allow proper FIFO DMA initialization. */
     GOLD_WritePCMReg(0, GOLD_PCM_FIFO_INIT, 0);
     GOLD_WritePCMReg(0, GOLD_PCM_FIFO_INIT, 0);
     GOLD_WritePCMReg(0, GOLD_PCM_FIFO_INIT, 0);
@@ -488,7 +488,11 @@ static void GOLD_SetPCMFormat(void)
 /*---------------------------------------------------------------------
    Function: GOLD_StartTransfer
 
-   Sets the GO bit to start the PCM engine.
+   Sets the GO bit to start the PCM engine.  Called only when
+   playback begins; the GO bit then stays set for the whole
+   playback run (the interrupt handler must not rewrite the
+   rate/mode register, see GOLD_ServiceInterrupt) and is cleared by
+   GOLD_HaltTransfer.
 ---------------------------------------------------------------------*/
 
 static void GOLD_StartTransfer(void)
@@ -539,30 +543,23 @@ static void GOLD_FlipChunk(
 }
 
 /*---------------------------------------------------------------------
-   Function: GOLD_GetDMACount
+   Function: GOLD_DMAComplete
 
-   Returns the remaining word count of the programmed DMA channel.
+   Returns TRUE when the 8237 terminal-count flag of the Gold's
+   channel is set, i.e. the programmed transfer has completed.  The
+   flag is set at end of transfer (single shot mode) and is cleared
+   by the mode register write of the next DMA_SetupTransfer.
+
+   The 8237 status register is used instead of the channel's count
+   register: the count read back from a self-masked channel is
+   implementation dependent (0, 0xFFFF or the originally loaded
+   count), so it cannot be relied on to detect end of transfer,
+   whereas the TC flag is unambiguous.
 ---------------------------------------------------------------------*/
 
-static int GOLD_GetDMACount(void)
+static int GOLD_DMAComplete(void)
 {
-    int port;
-    int count;
-
-    if (GOLD_DMAChannel < 4)
-    {
-        port = GOLD_DMAChannel << 1;
-    }
-    else
-    {
-        port = 0x0C + ((GOLD_DMAChannel - 4) << 2);
-    }
-
-    // Reading the port twice returns the low, then the high byte.
-    count = inp(port);
-    count |= (inp(port) << 8);
-
-    return (count);
+    return ((inp(0x08) & (1 << GOLD_DMAChannel)) != 0);
 }
 
 /*---------------------------------------------------------------------
@@ -578,7 +575,7 @@ void GOLD_EnableInterrupt(
     int Irq;
     int mask;
 
-    // Unmask system interrupt
+    /* Unmask system interrupt */
     Irq = GOLD_Config.Interrupt;
     if (Irq < 8)
     {
@@ -608,7 +605,7 @@ void GOLD_DisableInterrupt(
     int Irq;
     int mask;
 
-    // Restore interrupt mask
+    /* Restore interrupt mask */
     Irq = GOLD_Config.Interrupt;
     if (Irq < 8)
     {
@@ -631,9 +628,16 @@ void GOLD_DisableInterrupt(
 /*---------------------------------------------------------------------
    Function: GOLD_ServiceInterrupt
 
-   Handles the interrupt generated by the Gold when the DMA buffer
-   has been completely consumed.  Programs the next chunk of the mix
-   buffer and calls the user supplied callback function.
+   Handles the Gold's FIFO interrupt.  The interrupt is generated
+   when the channel 0 FIFO reaches the FIFO INT level; in normal
+   operation that happens just after a programmed 8237 transfer has
+   run to completion (the FIFO drains a few samples after the end
+   of transfer), so the handler reprograms the next chunk of the
+   mix buffer and calls the user supplied callback function.  The
+   interrupt is verified against the 8237 terminal-count flag
+   before touching the 8237, because the FIFO can also reach the
+   level while a transfer is still in progress (for example while
+   the FIFO is filling right after GO).
 ---------------------------------------------------------------------*/
 
 void __interrupt __far GOLD_ServiceInterrupt(
@@ -641,45 +645,47 @@ void __interrupt __far GOLD_ServiceInterrupt(
 
 {
     int status;
-    int count;
 
-    // Acknowledge the PCM engine and check if this is a FIFO
-    // interrupt.
+    /* Acknowledge the PCM engine and check if this is a FIFO */
+    /* interrupt. */
     status = inp(GOLD_Config.Address + GOLD_PCM_ADDRESS);
     if ((status & GOLD_PCM_FIFO0_INT) == 0)
     {
-        // Wasn't our interrupt.  Call the old one.
+        /* Wasn't our interrupt.  Call the old one. */
         _chain_intr(GOLD_OldInt);
         return;
     }
 
-    // Spurious interrupts occur on IRQ 7 (shared with the LPT port):
-    // verify that the DMA transfer is truly over.
-    if (GOLD_Config.Interrupt == 7)
-    {
-        count = GOLD_GetDMACount();
-        if ((count != 0) && (count != 0xFFFF))
-        {
-#if (DEBUG_ENABLED == 1)
-            // Count spurious IRQs; reported at stop time.
-            GOLD_SpuriousIrqCount++;
-#endif
-            // Not a real end-of-transfer interrupt.
-            if (GOLD_Config.Interrupt > 7)
-            {
-                OutByteA0h(0x20);
-            }
-            OutByte20h(0x20);
-            return;
-        }
-    }
-
-    // Remember that the card generated an end-of-data interrupt;
-    // verified in GOLD_BeginBufferedPlayback and reported at stop
-    // time (I_Printf may not be called from an ISR).
+    /* Remember that the card generated a FIFO interrupt; verified */
+    /* in GOLD_BeginBufferedPlayback and reported at stop time */
+    /* (I_Printf may not be called from an ISR). */
     GOLD_FirstIrq = TRUE;
 
-    // Keep track of the current buffer and program the next chunk.
+    /* The FIFO can reach the interrupt level while the 8237 */
+    /* transfer is still in progress (for example while the FIFO is */
+    /* filling after GO), and shared IRQ lines (IRQ 7 is shared with */
+    /* the LPT port) can deliver spurious interrupts.  In either */
+    /* case the engine is already being fed from the current */
+    /* transfer: touching the 8237 or the mixer now would abort the */
+    /* transfer and desynchronize the mixer, so just acknowledge and */
+    /* return.  The interrupt generated once the transfer is */
+    /* complete does the real work. */
+    if (!GOLD_DMAComplete())
+    {
+#if (DEBUG_ENABLED == 1)
+        /* Count false FIFO interrupts; reported at stop time. */
+        GOLD_SpuriousIrqCount++;
+#endif
+        if (GOLD_Config.Interrupt > 7)
+        {
+            OutByteA0h(0x20);
+        }
+        OutByte20h(0x20);
+        return;
+    }
+
+    /* The programmed transfer is complete: keep track of the */
+    /* current buffer and program the next chunk. */
     if (GOLD_SoundPlaying)
     {
         GOLD_CurrentDMABuffer += GOLD_TransferLength;
@@ -689,28 +695,31 @@ void __interrupt __far GOLD_ServiceInterrupt(
             GOLD_CurrentDMABuffer = GOLD_DMABuffer;
         }
 
-        // Flip the new chunk's samples before the DMA reads them
-        // (see GOLD_FlipChunk).
+        /* Flip the new chunk's samples before the DMA reads them */
+        /* (see GOLD_FlipChunk). */
         GOLD_FlipChunk(GOLD_CurrentDMABuffer, GOLD_TransferLength);
 
         DMA_SetupTransfer(GOLD_DMAChannel, GOLD_CurrentDMABuffer,
                           GOLD_TransferLength, DMA_SingleShotRead);
 
-        // Re-assert the GO bit so the PCM engine resumes DMA fetching
-        // for the new chunk.  AIL2 does this on every chunk
-        // (hardware_xfer -> MMA_write(0, 9, PRC_0_shadow | GO));
-        // without it the engine stops after the first chunk and the
-        // audio pops out.
-        GOLD_StartTransfer();
+        /* The GO bit is deliberately NOT rewritten here.  It stays */
+        /* set from GOLD_BeginBufferedPlayback until */
+        /* GOLD_HaltTransfer, and the PCM engine keeps running */
+        /* across chunk boundaries: the FIFO still holds enough */
+        /* samples to feed the engine while this handler runs, and */
+        /* unmasking the channel (done by DMA_SetupTransfer) resumes */
+        /* DMA fetching immediately.  Rewriting the rate/mode */
+        /* register on every chunk resets the engine's sample state */
+        /* and produces a small click at every chunk boundary. */
+
+        /* One chunk has just been played, so mix exactly one chunk. */
+        if (GOLD_CallBack != NULL)
+        {
+            MV_ServiceVoc();
+        }
     }
 
-    // Call the caller's callback function
-    if (GOLD_CallBack != NULL)
-    {
-        MV_ServiceVoc();
-    }
-
-    // send EOI to Interrupt Controller
+    /* send EOI to Interrupt Controller */
     if (GOLD_Config.Interrupt > 7)
     {
         OutByteA0h(0x20);
@@ -729,7 +738,7 @@ int GOLD_SetMixMode(
     int mode)
 
 {
-    // The Gold only plays 8-bit samples.
+    /* The Gold only plays 8-bit samples. */
     mode &= GOLD_MaxMixMode;
 
     GOLD_MixMode = mode;
@@ -769,11 +778,11 @@ void GOLD_SetPlaybackRate(
 
     testrate = (int)rate;
 
-    // The stereo pair rate equals the channel rate (the interleaved
-    // L R L R stream is consumed one byte per channel per sample
-    // tick), so no adjustment is needed for stereo.
+    /* The stereo pair rate equals the channel rate (the interleaved */
+    /* L R L R stream is consumed one byte per channel per sample */
+    /* tick), so no adjustment is needed for stereo. */
 
-    // Find the nearest supported rate.
+    /* Find the nearest supported rate. */
     GOLD_FreqIndex = 0;
     bestdelta = testrate - (int)GOLD_PCMRates[0];
     if (bestdelta < 0)
@@ -796,7 +805,7 @@ void GOLD_SetPlaybackRate(
         }
     }
 
-    // Keep track of what the actual rate is.
+    /* Keep track of what the actual rate is. */
     GOLD_SampleRate = GOLD_PCMRates[GOLD_FreqIndex];
 
     GOLD_SetPCMFormat();
@@ -841,16 +850,19 @@ void GOLD_StopPlayback(
         return;
     }
 
-    // Don't allow anymore interrupts
+    /* Make the interrupt handler stop reprogramming the 8237; a */
+    /* late interrupt can still arrive after the mask below and must */
+    /* not program a new transfer. */
+    GOLD_SoundPlaying = FALSE;
+
+    /* Don't allow anymore interrupts */
     GOLD_DisableInterrupt();
 
-    // Stop the PCM engine
+    /* Stop the PCM engine */
     GOLD_HaltTransfer();
 
-    // Disable the DMA channel
+    /* Disable the DMA channel */
     DMA_EndTransfer(GOLD_DMAChannel);
-
-    GOLD_SoundPlaying = FALSE;
 
     GOLD_DMABuffer = NULL;
 
@@ -863,7 +875,7 @@ void GOLD_StopPlayback(
     if (GOLD_SpuriousIrqCount > 0)
     {
         char b1[12];
-        I_Printf("GOLD: %s spurious IRQ 7 ignored\n",
+        I_Printf("GOLD: %s false FIFO interrupts ignored\n",
                  GOLD_LogNumber(b1, GOLD_SpuriousIrqCount, 10));
     }
 
@@ -921,7 +933,7 @@ int GOLD_BeginBufferedPlayback(
     }
 #endif
 
-    // Program the first chunk.
+    /* Program the first chunk. */
     GOLD_FlipChunk(GOLD_CurrentDMABuffer, GOLD_TransferLength);
 
     status = DMA_SetupTransfer(GOLD_DMAChannel, GOLD_CurrentDMABuffer,
@@ -940,17 +952,17 @@ int GOLD_BeginBufferedPlayback(
 
     GOLD_EnableInterrupt();
 
-    // Start the PCM engine.
+    /* Start the PCM engine. */
     GOLD_StartTransfer();
 
     GOLD_SoundPlaying = TRUE;
 
-    // Wait for the first end-of-data interrupt.  The first chunk
-    // takes about 23 ms to play at 11025 Hz; if the IRQ line or
-    // DMA channel is wrong the interrupt never arrives and the
-    // mixer would stall silently, so bail out instead.  PIT
-    // channel 0 (about 18.2 Hz) is used as the clock so the
-    // timeout does not depend on the CPU speed.
+    /* Wait for the first end-of-data interrupt.  The first chunk */
+    /* takes about 23 ms to play at 11025 Hz; if the IRQ line or */
+    /* DMA channel is wrong the interrupt never arrives and the */
+    /* mixer would stall silently, so bail out instead.  PIT */
+    /* channel 0 (about 18.2 Hz) is used as the clock so the */
+    /* timeout does not depend on the CPU speed. */
     {
         int pit;
         int ticks;
@@ -1108,7 +1120,7 @@ int GOLD_Init(
         GOLD_Shutdown();
     }
 
-    // Use the settings provided by the caller, if any.
+    /* Use the settings provided by the caller, if any. */
     if (GOLD_Config.Address == 0)
     {
         status = GOLD_GetEnv(&GOLD_Config);
@@ -1126,11 +1138,11 @@ int GOLD_Init(
     }
 #endif
 
-    // Save the interrupt masks
+    /* Save the interrupt masks */
     GOLD_IntController1Mask = inp(0x21);
     GOLD_IntController2Mask = inp(0xA1);
 
-    // Look for the control chip
+    /* Look for the control chip */
     status = GOLD_FindCard();
     if (status != GOLD_Ok)
     {
@@ -1141,22 +1153,22 @@ int GOLD_Init(
         return (GOLD_Error);
     }
 
-    // Configure the control chip for digital playback
+    /* Configure the control chip for digital playback */
     GOLD_EnableControl();
 
-    // Set the audio filter to playback mode
+    /* Set the audio filter to playback mode */
     GOLD_WriteControlReg(GOLD_CTRL_AUDIO_SELECT,
                          GOLD_ReadControlReg(GOLD_CTRL_AUDIO_SELECT) & 0xFC);
 
-    // Read the IRQ/DMA select register.
+    /* Read the IRQ/DMA select register. */
     irqdma = GOLD_ReadControlReg(GOLD_CTRL_IRQ_DMA_SELECT);
     GOLD_OriginalIrqDmaReg = irqdma;
 
-    // Some Gold cards read the select register back as 0xFF, so the
-    // IRQ line and DMA channel can be supplied via the GOLD
-    // environment variable.  Anything not supplied is taken from the
-    // register when it is readable, otherwise the common default of
-    // IRQ 5, DMA 1 is used.
+    /* Some Gold cards read the select register back as 0xFF, so the */
+    /* IRQ line and DMA channel can be supplied via the GOLD */
+    /* environment variable.  Anything not supplied is taken from the */
+    /* register when it is readable, otherwise the common default of */
+    /* IRQ 5, DMA 1 is used. */
     if (GOLD_Config.Interrupt != GOLD_UNDEFINED)
     {
         irq = GOLD_Config.Interrupt;
@@ -1186,7 +1198,7 @@ int GOLD_Init(
     {
         int reg;
 
-        // Make sure the register value matches the IRQ/DMA in use.
+        /* Make sure the register value matches the IRQ/DMA in use. */
         reg = GOLD_BuildIrqDmaReg(irq, GOLD_DMAChannel);
         if (reg < 0)
         {
@@ -1252,18 +1264,18 @@ int GOLD_Init(
 
     GOLD_Config.Interrupt = irq;
 
-    // Tell the card which DMA channel the PCM engine must use, and
-    // enable the DMA channel and the audio engine.
+    /* Tell the card which DMA channel the PCM engine must use, and */
+    /* enable the DMA channel and the audio engine. */
     GOLD_WriteControlReg(GOLD_CTRL_IRQ_DMA_SELECT,
                          irqdma | GOLD_CTRL_DMA_ENABLE |
                          GOLD_CTRL_ENGINE_ENABLE);
 
     GOLD_DisableControl();
 
-    // Reset the PCM engine
+    /* Reset the PCM engine */
     GOLD_Reset();
 
-    // Set the volume to maximum
+    /* Set the volume to maximum */
     GOLD_WritePCMReg(0, GOLD_PCM_VOLUME, 127);
     GOLD_WritePCMReg(1, GOLD_PCM_VOLUME, 127);
 
@@ -1276,7 +1288,7 @@ int GOLD_Init(
     GOLD_MixMode = GOLD_MONO_8BIT;
     GOLD_SetPlaybackRate(GOLD_DefaultSampleRate);
 
-    // Install our interrupt handler
+    /* Install our interrupt handler */
     vector = 0x08 + irq;
     GOLD_OldInt = _dos_getvect(vector);
     if (irq < 8)
@@ -1333,18 +1345,18 @@ void GOLD_Shutdown(
     I_Printf("GOLD: shutting down\n");
 #endif
 
-    // Halt the DMA transfer
+    /* Halt the DMA transfer */
     GOLD_StopPlayback();
 
-    // Restore the original IRQ/DMA selection
+    /* Restore the original IRQ/DMA selection */
     GOLD_EnableControl();
     GOLD_WriteControlReg(GOLD_CTRL_IRQ_DMA_SELECT, GOLD_OriginalIrqDmaReg);
     GOLD_DisableControl();
 
-    // Reset the PCM engine
+    /* Reset the PCM engine */
     GOLD_Reset();
 
-    // Restore the original interrupt
+    /* Restore the original interrupt */
     irq = GOLD_Config.Interrupt;
     vector = 0x08 + irq;
     if (irq >= 8)
