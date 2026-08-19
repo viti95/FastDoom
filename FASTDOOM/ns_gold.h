@@ -23,11 +23,12 @@
      SET GOLD=388
 ---------------------------------------------------------------------*/
 
+/* The address is user-supplied (GOLD environment variable); the
+   interrupt line is filled in from the card at init time. */
 typedef struct
 {
     unsigned Address;
     unsigned Interrupt;
-    unsigned Dma8;
 } GOLD_CONFIG;
 
 extern GOLD_CONFIG GOLD_Config;

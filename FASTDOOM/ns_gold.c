@@ -158,7 +158,7 @@ static int GOLD_BuildIrqDmaReg(
 
 GOLD_CONFIG GOLD_Config =
     {
-        0, GOLD_UNDEFINED, GOLD_UNDEFINED};
+        0};
 
 int GOLD_DMAChannel = GOLD_UNDEFINED;
 
@@ -1480,7 +1480,7 @@ int GOLD_BeginBufferedPlayback(
     {
 #if (DEBUG_ENABLED == 1)
         I_Printf("GOLD: no mixer clock interrupt, check the card's "
-                 "IRQ/DMA settings (e.g. GOLD=388:5:1)\n");
+                 "IRQ/DMA settings\n");
 #endif
         GOLD_StopPlayback();
         return (GOLD_Error);
@@ -1516,22 +1516,15 @@ int GOLD_GetCardInfo(
 
    Retrieves the GOLD environment settings and returns them to the
    caller.  The variable holds the base address as a hexadecimal
-   number, optionally followed by the IRQ line and the DMA channel
-   in decimal, e.g. "GOLD=388" or "GOLD=388:5:1".  The default
-   address is 0x388.
+   number, e.g. "GOLD=388".  The default address is 0x388.
 ---------------------------------------------------------------------*/
 
 int GOLD_GetEnv(
     GOLD_CONFIG *Config)
 {
     char *Gold;
-    char end;
-    int irq;
-    int dma;
 
     Config->Address = 0x388;
-    Config->Interrupt = GOLD_UNDEFINED;
-    Config->Dma8 = GOLD_UNDEFINED;
 
     Gold = getenv("GOLD");
     if (Gold == NULL)
@@ -1563,14 +1556,8 @@ int GOLD_GetEnv(
 #if (DEBUG_ENABLED == 1)
     {
         char b1[12];
-        char b2[12];
-        char b3[12];
-        I_Printf("GOLD: from GOLD environment variable: address 0x%s, IRQ %s, DMA %s\n",
-                 GOLD_LogNumber(b1, (int)Config->Address, 16),
-                 (Config->Interrupt != GOLD_UNDEFINED) ?
-                     GOLD_LogNumber(b2, Config->Interrupt, 10) : "-",
-                 (Config->Dma8 != GOLD_UNDEFINED) ?
-                     GOLD_LogNumber(b3, Config->Dma8, 10) : "-");
+        I_Printf("GOLD: from GOLD environment variable: address 0x%s\n",
+                 GOLD_LogNumber(b1, (int)Config->Address, 16));
     }
 #endif
 
@@ -1592,8 +1579,6 @@ int GOLD_SetCardSettings(
     }
 
     GOLD_Config.Address = Config.Address;
-    GOLD_Config.Interrupt = Config.Interrupt;
-    GOLD_Config.Dma8 = Config.Dma8;
 
     return (GOLD_Ok);
 }
@@ -1646,7 +1631,7 @@ int GOLD_Init(
     {
 #if (DEBUG_ENABLED == 1)
         I_Printf("GOLD: no Ad Lib Gold found at this address, "
-                 "try the GOLD environment variable (e.g. GOLD=220:5:1)\n");
+                 "try the GOLD environment variable (e.g. GOLD=220)\n");
 #endif
         return (GOLD_Error);
     }
@@ -1662,55 +1647,20 @@ int GOLD_Init(
     irqdma = GOLD_ReadControlReg(GOLD_CTRL_IRQ_DMA_SELECT);
     GOLD_OriginalIrqDmaReg = irqdma;
 
-    /* Some Gold cards read the select register back as 0xFF, so the */
-    /* IRQ line and DMA channel can be supplied via the GOLD */
-    /* environment variable.  Anything not supplied is taken from the */
-    /* register when it is readable, otherwise the common default of */
-    /* IRQ 5, DMA 1 is used. */
-    if (GOLD_Config.Interrupt != GOLD_UNDEFINED)
-    {
-        irq = GOLD_Config.Interrupt;
-    }
-    else if (irqdma != 0xFF)
+    /* The IRQ line and DMA channel are taken from the select */
+    /* register when it is readable; some Gold cards read it back */
+    /* as 0xFF, in which case the common default of IRQ 5, DMA 1 */
+    /* is used. */
+    if (irqdma != 0xFF)
     {
         irq = GOLD_IrqTable[irqdma & 7];
-    }
-    else
-    {
-        irq = 5;
-    }
-
-    if (GOLD_Config.Dma8 != GOLD_UNDEFINED)
-    {
-        GOLD_DMAChannel = GOLD_Config.Dma8;
-    }
-    else if (irqdma != 0xFF)
-    {
         GOLD_DMAChannel = (irqdma >> 4) & 7;
     }
     else
     {
+        irq = 5;
         GOLD_DMAChannel = 1;
-    }
-
-    {
-        int reg;
-
-        /* Make sure the register value matches the IRQ/DMA in use. */
-        reg = GOLD_BuildIrqDmaReg(irq, GOLD_DMAChannel);
-        if (reg < 0)
-        {
-#if (DEBUG_ENABLED == 1)
-            {
-                char b1[12];
-                I_Printf("GOLD: IRQ %s is not selectable on the Gold\n",
-                         GOLD_LogNumber(b1, irq, 10));
-            }
-#endif
-            return (GOLD_Error);
-        }
-
-        irqdma = reg;
+        irqdma = GOLD_BuildIrqDmaReg(irq, GOLD_DMAChannel);
     }
 
 #if (DEBUG_ENABLED == 1)
@@ -1718,27 +1668,22 @@ int GOLD_Init(
         char b1[12];
         char b2[12];
         char b3[12];
-        const char *source;
 
-        if ((GOLD_Config.Interrupt != GOLD_UNDEFINED) ||
-            (GOLD_Config.Dma8 != GOLD_UNDEFINED))
+        if (GOLD_OriginalIrqDmaReg == 0xFF)
         {
-            source = " (GOLD env)";
-        }
-        else if (GOLD_OriginalIrqDmaReg == 0xFF)
-        {
-            source = " (default, register reads 0xff; set GOLD=388:5:1)";
+            I_Printf("GOLD: IRQ/DMA select register reads 0xff: "
+                     "using default IRQ %s, DMA %s\n",
+                     GOLD_LogNumber(b2, irq, 10),
+                     GOLD_LogNumber(b3, GOLD_DMAChannel, 10));
         }
         else
         {
-            source = " (card register)";
+            I_Printf("GOLD: IRQ/DMA select register 0x%s: "
+                     "using IRQ %s, DMA %s (card register)\n",
+                     GOLD_LogNumber(b1, GOLD_OriginalIrqDmaReg, 16),
+                     GOLD_LogNumber(b2, irq, 10),
+                     GOLD_LogNumber(b3, GOLD_DMAChannel, 10));
         }
-
-        I_Printf("GOLD: IRQ/DMA select register 0x%s: using IRQ %s, DMA %s%s\n",
-                 GOLD_LogNumber(b1, GOLD_OriginalIrqDmaReg, 16),
-                 GOLD_LogNumber(b2, irq, 10),
-                 GOLD_LogNumber(b3, GOLD_DMAChannel, 10),
-                 source);
     }
 #endif
 
