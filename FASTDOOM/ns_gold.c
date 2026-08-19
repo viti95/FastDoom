@@ -46,11 +46,35 @@
 #define GOLD_PCM_FIFO_INIT 11
 #define GOLD_PCM_FORMAT 12
 
-/* PCM engine status bit: FIFO 0 empty (end of transfer) interrupt */
+/*
+   PCM engine status register bits.  FIF0/FIF1 latch when the channel
+   FIFO drops to the FIFO INT level and are cleared by reading the
+   status port.  The hardware FIFO interrupts are masked in the SFC
+   registers (see GOLD_SFC_*_MSK) because the DMA request level of
+   the card keeps the FIFO pinned around the FIFO INT level, so an
+   unmasked FIFO interrupt would fire on nearly every sample tick.
+*/
 #define GOLD_PCM_FIFO0_INT 0x01
+#define GOLD_PCM_FIFO1_INT 0x02
+#define GOLD_PCM_TIMER0_INT 0x10
 
 /* GO bit of the rate/mode register */
 #define GOLD_PCM_GO 0x01
+
+/*---------------------------------------------------------------------
+   MMA timer 0 registers and control bits.  Timer 0 is used as the
+   mixer clock: it ticks once per mix chunk period (see
+   GOLD_StartTimer).  Its clock is the MMA base tick, 12 x 44100 Hz
+   (1.88964 usec), and it auto-reloads its latch at every tick.
+---------------------------------------------------------------------*/
+
+#define GOLD_PCM_TIMER0_LO 2
+#define GOLD_PCM_TIMER0_HI 3
+#define GOLD_PCM_TIMER_CTRL 8
+
+/* Bits of the timer control register (08H) */
+#define GOLD_TIMER_BASE_START 0x08 /* STB: start the base tick clock */
+#define GOLD_TIMER0_START 0x01     /* ST0: load the latch, start timer 0 */
 
 /*---------------------------------------------------------------------
    PCM engine rate table.  The rate register selects one of these
@@ -67,16 +91,26 @@ static const unsigned char GOLD_FreqBits[4] = {0x00, 0x08, 0x10, 0x18};
    mono and stereo formats.
 ---------------------------------------------------------------------*/
 
+/*
+   SFC0 of the channel that drives the DMA (channel 0) carries the
+   MSK bit (bit 1) set: the hardware FIFO interrupt is masked.  The
+   mixer is clocked by MMA timer 0 instead, and an unmasked FIFO
+   interrupt would fire on nearly every sample tick because the card
+   serves the DMA requests in a way that keeps the FIFO pinned around
+   the FIFO INT level.
+*/
+#define GOLD_SFC_MSK 0x02
+
 /* mono 8-bit */
 #define GOLD_PRC_MONO_CH0 0x66
 #define GOLD_PRC_MONO_CH1 0x00
-#define GOLD_SFC_MONO_CH0 0x05
+#define GOLD_SFC_MONO_CH0 (0x05 | GOLD_SFC_MSK)
 #define GOLD_SFC_MONO_CH1 0x02
 
 /* stereo 8-bit */
 #define GOLD_PRC_STEREO_CH0 0x46
 #define GOLD_PRC_STEREO_CH1 0x26
-#define GOLD_SFC_STEREO_CH0 0x85
+#define GOLD_SFC_STEREO_CH0 (0x85 | GOLD_SFC_MSK)
 #define GOLD_SFC_STEREO_CH1 0x03
 
 /*---------------------------------------------------------------------
@@ -128,10 +162,14 @@ unsigned GOLD_SampleRate = GOLD_DefaultSampleRate;
 static void(__interrupt __far *GOLD_OldInt)(void);
 
 static char *GOLD_DMABuffer;
-static char *GOLD_DMABufferEnd;
-static char *GOLD_CurrentDMABuffer;
 
 static int GOLD_TransferLength = 0;
+static int GOLD_NumDivisions = 0;
+
+/* The mix page (counted from the start of the DMA buffer) that the
+   8237 was last seen on; the interrupt handler mixes one page per
+   page the 8237 has advanced past it. */
+static int GOLD_LastMixPage;
 static int GOLD_MixMode = GOLD_MONO_8BIT;
 static int GOLD_FreqIndex;
 
@@ -156,6 +194,26 @@ static volatile int GOLD_FirstIrq;
 static volatile int GOLD_SpuriousIrqCount;
 
 #endif
+
+/*
+   Mixer clock self-test diagnostics.  GOLD_TimerSelfTest runs the
+   card's MMA timer 0 for two short runs and checks that it delivers
+   interrupts; the interrupt handler contributes the counts and the
+   OR of the status flags it observed.  Reported from the main
+   context (I_Printf may not be called from an ISR).
+*/
+static volatile int GOLD_DiagStatusOr;
+static volatile int GOLD_DiagIrqCount;
+static volatile int GOLD_DiagTimerIrqCount;
+
+/*
+   Fallback mixer clock: PIT channel 2 on IRQ 2, used when the
+   card's MMA timer 0 does not deliver interrupts on this card.
+*/
+static int GOLD_UsingPit;
+static void(__interrupt __far *GOLD_PitOldInt)(void);
+static long GOLD_PitDivisor;
+static int GOLD_Port61;
 
 /*---------------------------------------------------------------------
    Function: GOLD_LogNumber
@@ -543,29 +601,356 @@ static void GOLD_FlipChunk(
 }
 
 /*---------------------------------------------------------------------
-   Function: GOLD_DMAComplete
+   Function: GOLD_ClearChunk
 
-   Returns TRUE when the 8237 terminal-count flag of the Gold's
-   channel is set, i.e. the programmed transfer has completed.  The
-   flag is set at end of transfer (single shot mode) and is cleared
-   by the mode register write of the next DMA_SetupTransfer.
-
-   The 8237 status register is used instead of the channel's count
-   register: the count read back from a self-masked channel is
-   implementation dependent (0, 0xFFFF or the originally loaded
-   count), so it cannot be relied on to detect end of transfer,
-   whereas the TC flag is unambiguous.
+   Fills a chunk of the mix buffer with silence (0x80, the game's
+   8-bit silence value, see SILENCE_8BIT).  GOLD_DoMix calls this on
+   the page it is about to mix so the high-bit flip is always applied
+   to a clean game format base.  Without it an empty page keeps the
+   bytes its last flip left behind, and the repeated flip alternates
+   the page between silence and full swing, a click on every other
+   page while no sound is playing.
 ---------------------------------------------------------------------*/
 
-static int GOLD_DMAComplete(void)
+static void GOLD_ClearChunk(
+    char *buffer,
+    int count)
+
 {
-    return ((inp(0x08) & (1 << GOLD_DMAChannel)) != 0);
+    int index;
+
+    for (index = 0; index < count; index++)
+    {
+        buffer[index] = 0x80;
+    }
+}
+
+/*---------------------------------------------------------------------
+   Function: GOLD_StartTimer
+
+   Starts MMA timer 0 with a period of one mix chunk.  The timer
+   clock is the MMA base tick (12 x 44100 Hz, 1.88964 usec), so the
+   chunk period in base ticks is
+
+       chunk bytes * 529200 / DMA bytes per second,
+
+   which is an exact integer for every supported rate.  The tick
+   therefore stays phase locked to the 8237 page boundaries (no
+   drift) and fires once per page, a full page ahead of the DMA.
+---------------------------------------------------------------------*/
+
+static void GOLD_StartTimer(void)
+{
+    long ticks;
+    int bps;
+
+    bps = (int)GOLD_SampleRate * ((GOLD_MixMode & GOLD_STEREO) ? 2 : 1);
+    ticks = (long)GOLD_TransferLength * 529200L / (long)bps;
+
+    GOLD_WritePCMReg(0, GOLD_PCM_TIMER0_LO, (int)(ticks & 0xFF));
+    GOLD_WritePCMReg(0, GOLD_PCM_TIMER0_HI, (int)((ticks >> 8) & 0xFF));
+
+    /* Load the latch and start timer 0 (interrupt unmasked). */
+    GOLD_WritePCMReg(0, GOLD_PCM_TIMER_CTRL,
+                     GOLD_TIMER_BASE_START | GOLD_TIMER0_START);
+}
+
+/*---------------------------------------------------------------------
+   Function: GOLD_StopTimer
+
+   Stops MMA timer 0 (and the base tick clock).
+---------------------------------------------------------------------*/
+
+static void GOLD_StopTimer(void)
+{
+    GOLD_WritePCMReg(0, GOLD_PCM_TIMER_CTRL, 0x00);
+}
+
+static void GOLD_DoMix(void);
+
+/*---------------------------------------------------------------------
+   Function: GOLD_PitInterrupt
+
+   Mixer clock interrupt from PIT channel 2 (IRQ 2), the fallback
+   clock used when the card's MMA timer 0 does not deliver
+   interrupts (see GOLD_StartPitClock).
+---------------------------------------------------------------------*/
+
+void __interrupt __far GOLD_PitInterrupt(
+    void)
+
+{
+    if (GOLD_SoundPlaying)
+    {
+        GOLD_FirstIrq = TRUE;
+        GOLD_DoMix();
+    }
+
+    /* Send EOI, then let the previous IRQ 2 handler run (the PC
+       speaker driver, if one is installed). */
+    OutByte20h(0x20);
+    _chain_intr(GOLD_PitOldInt);
+}
+
+/*---------------------------------------------------------------------
+   Function: GOLD_StartPitClock
+
+   Starts PIT channel 2 (IRQ 2) as the mixer clock.  The rate
+   generator is set to one tick per mix chunk period.  The tick is
+   not exact (the PIT clock is 1.193182 MHz, not the card's
+   44100 x 12 clock), but the drift is less than one page in about
+   ten minutes and the position based catch-up in GOLD_DoMix absorbs
+   the residual drift.
+---------------------------------------------------------------------*/
+
+static void GOLD_StartPitClock(void)
+{
+    long divisor;
+    int bps;
+    int mask;
+
+    bps = (int)GOLD_SampleRate * ((GOLD_MixMode & GOLD_STEREO) ? 2 : 1);
+    divisor = (1193182L * (long)GOLD_TransferLength + (long)bps / 2) /
+              (long)bps;
+    if (divisor > 65535)
+    {
+        divisor = 65535;
+    }
+    GOLD_PitDivisor = divisor;
+
+    /* Save and replace the old IRQ 2 handler. */
+    GOLD_PitOldInt = _dos_getvect(0x0A);
+    _dos_setvect(0x0A, GOLD_PitInterrupt);
+
+    /* Save port 0x61 and make sure the PIT channel 2 clock is gated
+       in (bit 0) while the speaker is disconnected (bit 1), so the
+       rate generator runs but no tone is heard.  If the clock gate
+       (bit 0) is off, channel 2 never counts and no interrupt is
+       produced. */
+    GOLD_Port61 = inp(0x61);
+    outp(0x61, (GOLD_Port61 & ~0x03) | 0x01);
+
+    /* PIT channel 2: mode 2 (rate generator), 16-bit binary count.
+       0xF4 = channel 2, both bytes, mode 2, binary.  (0xE4 would
+       load only the low byte and truncate the divisor.) */
+    outp(0x43, 0xF4);
+    outp(0x42, (int)(divisor & 0xFF));
+    outp(0x42, (int)((divisor >> 8) & 0xFF));
+
+    /* Unmask IRQ 2. */
+    mask = inp(0x21) & ~0x04;
+    outp(0x21, mask);
+
+    GOLD_UsingPit = TRUE;
+
+#if (DEBUG_ENABLED == 1)
+    {
+        char b1[12];
+        I_Printf("GOLD: PIT channel 2 mixer clock started, divisor %s\n",
+                 GOLD_LogNumber(b1, (int)GOLD_PitDivisor, 10));
+    }
+#endif
+}
+
+/*---------------------------------------------------------------------
+   Function: GOLD_StopPitClock
+
+   Stops the PIT channel 2 mixer clock and restores the system
+   (speaker muted, IRQ 2 masked, previous handler restored).
+---------------------------------------------------------------------*/
+
+static void GOLD_StopPitClock(void)
+{
+    int mask;
+
+    /* Stop channel 2 (mode 3, count 0) and restore port 0x61.
+       0xF6 = channel 2, both bytes, mode 3, binary.  (A latch
+       command such as 0xB6 does not stop the counter.) */
+    outp(0x43, 0xF6);
+    outp(0x42, 0);
+    outp(0x42, 0);
+    outp(0x61, GOLD_Port61);
+
+    /* Mask IRQ 2 again (restore the original mask bit). */
+    mask = inp(0x21) & ~0x04;
+    mask |= GOLD_IntController1Mask & 0x04;
+    outp(0x21, mask);
+
+    /* Restore the old IRQ 2 handler. */
+    _dos_setvect(0x0A, GOLD_PitOldInt);
+
+    GOLD_UsingPit = FALSE;
+}
+
+/*---------------------------------------------------------------------
+   Function: GOLD_WaitPitTicks
+
+   Spins until PIT channel 0 has completed `ticks` output cycles, or
+   until `stopflag` becomes nonzero, whichever comes first.
+
+   A channel 0 output cycle is detected by latching its count and
+   noticing it reload (the latched value jumps back up to the top of
+   its count).  This is a CPU-speed independent delay: at the
+   standard 18.2 Hz channel 0 rate one cycle is about 55 ms.
+
+   (The previous version read the free-running count of channel 0,
+   which changes every 838 ns, so the "wait" actually returned after
+   a few tens of microseconds - far too short to observe a mixer
+   clock interrupt whose first tick comes about 23 ms later.)
+---------------------------------------------------------------------*/
+
+static void GOLD_WaitPitTicks(
+    int ticks,
+    volatile int *stopflag)
+
+{
+    int prev;
+    int cur;
+    int count;
+
+    outp(0x43, 0xB0);
+    prev = inp(0x40);
+    prev |= inp(0x40) << 8;
+
+    count = 0;
+    while (count < ticks)
+    {
+        if ((stopflag != NULL) && (*stopflag != 0))
+        {
+            break;
+        }
+
+        outp(0x43, 0xB0);
+        cur = inp(0x40);
+        cur |= inp(0x40) << 8;
+
+        if (cur > prev)
+        {
+            count++;
+        }
+
+        prev = cur;
+    }
+}
+
+/*---------------------------------------------------------------------
+   Function: GOLD_TimerSelfTest
+
+   Verifies that the card's MMA timer 0 can deliver the mixer clock
+   interrupt on this card, and that its high latch byte loads.  The
+   timer is run twice (periods of 1000 and 2000 base ticks) for four
+   channel 0 output cycles each, and the interrupt handler counts the
+   interrupts of each run.  If the high byte loads, doubling the
+   period halves the interrupt rate, so the first count is about
+   twice the second; if the high byte does not load, both periods
+   collapse to their low bytes (232 and 208) and the two counts are
+   about equal.
+
+   Returns GOLD_Ok if the timer fired a few times and its high byte
+   loads (first count about twice the second), GOLD_Error otherwise;
+   the caller then uses PIT channel 2 as the mixer clock.
+---------------------------------------------------------------------*/
+
+static int GOLD_TimerSelfTest(void)
+{
+    int n1;
+    int n2;
+    int t;
+
+    /* Measurement 1: timer 0 with a period of 1000 base ticks, run
+       for four channel 0 output cycles.  The interrupt handler
+       counts the timer interrupts it receives. */
+    GOLD_DiagStatusOr = 0;
+    GOLD_DiagIrqCount = 0;
+    GOLD_DiagTimerIrqCount = 0;
+    GOLD_FirstIrq = FALSE;
+
+    GOLD_WritePCMReg(0, GOLD_PCM_TIMER0_LO, 1000 & 0xFF);
+    GOLD_WritePCMReg(0, GOLD_PCM_TIMER0_HI, 1000 >> 8);
+    GOLD_WritePCMReg(0, GOLD_PCM_TIMER_CTRL,
+                     GOLD_TIMER_BASE_START | GOLD_TIMER0_START);
+
+    GOLD_EnableInterrupt();
+    for (t = 0; t < 4; t++)
+    {
+        /* The interrupt handler counts the timer interrupts and ORs
+           the status flags it sees into GOLD_DiagStatusOr.  The main
+           context must not read the status here: the read clears the
+           latched flags and could race with the handler (clearing a
+           flag the handler has not read yet). */
+        GOLD_WaitPitTicks(1, NULL);
+    }
+    n1 = GOLD_DiagTimerIrqCount;
+    GOLD_DisableInterrupt();
+    GOLD_StopTimer();
+    (void)inp(GOLD_Config.Address + GOLD_PCM_ADDRESS); /* clear stale flags */
+
+    /* Measurement 2: the same, but with a period of 2000 base ticks.
+       If the high latch byte loads, doubling the period halves the
+       interrupt rate, so n1 is about 2 x n2.  If the high byte does
+       not load, both periods collapse to their low bytes (232 and
+       208) and n1 is about 0.9 x n2. */
+    GOLD_DiagIrqCount = 0;
+    GOLD_DiagTimerIrqCount = 0;
+
+    GOLD_WritePCMReg(0, GOLD_PCM_TIMER0_LO, 2000 & 0xFF);
+    GOLD_WritePCMReg(0, GOLD_PCM_TIMER0_HI, 2000 >> 8);
+    GOLD_WritePCMReg(0, GOLD_PCM_TIMER_CTRL,
+                     GOLD_TIMER_BASE_START | GOLD_TIMER0_START);
+
+    GOLD_EnableInterrupt();
+    for (t = 0; t < 4; t++)
+    {
+        GOLD_WaitPitTicks(1, NULL);
+    }
+    n2 = GOLD_DiagTimerIrqCount;
+    GOLD_DisableInterrupt();
+    GOLD_StopTimer();
+
+#if (DEBUG_ENABLED == 1)
+    {
+        char b1[12];
+        char b2[12];
+        char b3[12];
+        I_Printf("GOLD: timer self-test: 1000 ticks -> %s IRQs, 2000 ticks -> %s IRQs, status OR=0x%s\n",
+                 GOLD_LogNumber(b1, n1, 10),
+                 GOLD_LogNumber(b2, n2, 10),
+                 GOLD_LogNumber(b3, GOLD_DiagStatusOr, 16));
+    }
+#endif
+
+    /* The timer works if it fired a few times (n1 >= 3) and the
+       high latch byte loads (n1 about 2 x n2, i.e. 3*n2 <= 2*n1
+       <= 5*n2).  A dead timer gives n1 = 0; a broken high byte
+       gives n1 about 0.9 x n2 (fails the lower bound). */
+    if (n1 >= 3 && (3 * n2 <= 2 * n1) && (2 * n1 <= 5 * n2))
+    {
+        return (GOLD_Ok);
+    }
+
+    return (GOLD_Error);
+}
+
+/*---------------------------------------------------------------------
+   Function: GOLD_WaitFirstIrq
+
+   Waits for the first mixer clock interrupt (GOLD_FirstIrq, set in
+   the interrupt handler).  PIT channel 0 (about 18.2 Hz) is used as
+   the clock so the timeout (about 550 ms) does not depend on the
+   CPU speed.  Returns GOLD_FirstIrq.
+---------------------------------------------------------------------*/
+
+static int GOLD_WaitFirstIrq(void)
+{
+    GOLD_WaitPitTicks(10, &GOLD_FirstIrq);
+
+    return (GOLD_FirstIrq);
 }
 
 /*---------------------------------------------------------------------
    Function: GOLD_EnableInterrupt
 
-   Enables the triggering of the Gold's end-of-data interrupt.
+   Enables the triggering of the Gold's interrupt (MMA timer 0).
 ---------------------------------------------------------------------*/
 
 void GOLD_EnableInterrupt(
@@ -626,18 +1011,95 @@ void GOLD_DisableInterrupt(
 }
 
 /*---------------------------------------------------------------------
+   Function: GOLD_DoMix
+
+   Mixes in as many pages of the mix buffer as the 8237 has advanced
+   since the last mix, and flips the page that was just mixed.
+
+   Called from the mixer clock interrupt (the card's MMA timer 0, or
+   PIT channel 2 as a fallback, see GOLD_StartPitClock).  The 8237
+   is not reprogrammed at all: it runs a single auto-initializing
+   transfer over the whole mix buffer for the entire playback run.
+   Instead the 8237's live address is read and the number of pages
+   it has advanced past the last mix is determined.  MV_ServiceVoc()
+   derives its target page from the 8237's current position itself
+   (the page after the 8237's current one), so one call per advanced
+   page keeps the voices in step with the DMA.  In steady state
+   exactly one page has advanced per tick; more than one only happens
+   after the CPU was stalled, in which case the catch-up
+   re-synchronizes the voices with the DMA.
+---------------------------------------------------------------------*/
+
+static void GOLD_DoMix(void)
+{
+    int page;
+    int delta;
+    int index;
+    char *pos;
+
+    /* Page of the mix buffer the 8237 is currently reading. */
+    pos = DMA_GetCurrentPos(GOLD_DMAChannel);
+    page = (int)((unsigned long)(pos - GOLD_DMABuffer) /
+                 (unsigned long)GOLD_TransferLength);
+    page %= GOLD_NumDivisions;
+
+    /* How many pages the 8237 has advanced past the last mix. */
+    delta = page - GOLD_LastMixPage;
+    if (delta < 0)
+    {
+        delta += GOLD_NumDivisions;
+    }
+
+    if (delta > 0)
+    {
+        GOLD_LastMixPage = page;
+
+        /* Mix one page per advanced page.  Every call mixes the */
+        /* page after the 8237's current one and advances the */
+        /* voices by one page, so the voices end up exactly in */
+        /* step with the DMA.  Each page is cleared to silence */
+        /* first and flipped to Gold format after, so the flip is */
+        /* always applied to a clean base (see GOLD_ClearChunk). */
+        for (index = 0; index < delta; index++)
+        {
+            int mixpage = (page + 1 + index) % GOLD_NumDivisions;
+            char *mixbuf = GOLD_DMABuffer +
+                           (unsigned long)mixpage * (unsigned long)GOLD_TransferLength;
+
+            GOLD_ClearChunk(mixbuf, GOLD_TransferLength);
+
+            if (GOLD_CallBack != NULL)
+            {
+                MV_ServiceVoc();
+            }
+
+            /* Flip the page to Gold format, before the 8237 reaches */
+            /* it (one page period later, see GOLD_FlipChunk). */
+            GOLD_FlipChunk(mixbuf, GOLD_TransferLength);
+        }
+    }
+    else
+    {
+#if (DEBUG_ENABLED == 1)
+        /* A mixer clock interrupt without any page advance (false */
+        /* trigger or spurious): count it, reported at stop time. */
+        GOLD_SpuriousIrqCount++;
+#endif
+    }
+}
+
+/*---------------------------------------------------------------------
    Function: GOLD_ServiceInterrupt
 
-   Handles the Gold's FIFO interrupt.  The interrupt is generated
-   when the channel 0 FIFO reaches the FIFO INT level; in normal
-   operation that happens just after a programmed 8237 transfer has
-   run to completion (the FIFO drains a few samples after the end
-   of transfer), so the handler reprograms the next chunk of the
-   mix buffer and calls the user supplied callback function.  The
-   interrupt is verified against the 8237 terminal-count flag
-   before touching the 8237, because the FIFO can also reach the
-   level while a transfer is still in progress (for example while
-   the FIFO is filling right after GO).
+   Handles the card's interrupt line.  While playback is running the
+   line is driven by the mixer clock, which is the card's MMA timer 0
+   when the self-test (GOLD_TimerSelfTest) proved that it delivers
+   interrupts, and PIT channel 2 otherwise.  The hardware FIFO
+   interrupts are masked (see GOLD_SFC_*), so a flag in the PCM
+   status register means a mixer clock tick.
+
+   If no Gold flag is set, the interrupt belongs to someone else on
+   a shared IRQ line and the previous handler is called.
 ---------------------------------------------------------------------*/
 
 void __interrupt __far GOLD_ServiceInterrupt(
@@ -646,80 +1108,39 @@ void __interrupt __far GOLD_ServiceInterrupt(
 {
     int status;
 
-    /* Acknowledge the PCM engine and check if this is a FIFO */
-    /* interrupt. */
+    /* Read the PCM engine status; the read also clears the latched */
+    /* interrupt flags. */
     status = inp(GOLD_Config.Address + GOLD_PCM_ADDRESS);
-    if ((status & GOLD_PCM_FIFO0_INT) == 0)
+
+    /* Collect diagnostic status bits (reported from the main */
+    /* context). */
+    GOLD_DiagStatusOr |= status;
+
+    if ((status & (GOLD_PCM_TIMER0_INT | GOLD_PCM_FIFO0_INT |
+                   GOLD_PCM_FIFO1_INT)) == 0)
     {
-        /* Wasn't our interrupt.  Call the old one. */
+        /* No Gold flag is set: the interrupt belongs to someone */
+        /* else on a shared IRQ line.  Call the old handler. */
         _chain_intr(GOLD_OldInt);
         return;
     }
 
-    /* Remember that the card generated a FIFO interrupt; verified */
-    /* in GOLD_BeginBufferedPlayback and reported at stop time */
+    /* Remember that the card generated an interrupt; verified in */
+    /* GOLD_BeginBufferedPlayback and reported at stop time */
     /* (I_Printf may not be called from an ISR). */
     GOLD_FirstIrq = TRUE;
-
-    /* The FIFO can reach the interrupt level while the 8237 */
-    /* transfer is still in progress (for example while the FIFO is */
-    /* filling after GO), and shared IRQ lines (IRQ 7 is shared with */
-    /* the LPT port) can deliver spurious interrupts.  In either */
-    /* case the engine is already being fed from the current */
-    /* transfer: touching the 8237 or the mixer now would abort the */
-    /* transfer and desynchronize the mixer, so just acknowledge and */
-    /* return.  The interrupt generated once the transfer is */
-    /* complete does the real work. */
-    if (!GOLD_DMAComplete())
+    GOLD_DiagIrqCount++;
+    if (status & GOLD_PCM_TIMER0_INT)
     {
-#if (DEBUG_ENABLED == 1)
-        /* Count false FIFO interrupts; reported at stop time. */
-        GOLD_SpuriousIrqCount++;
-#endif
-        if (GOLD_Config.Interrupt > 7)
-        {
-            OutByteA0h(0x20);
-        }
-        OutByte20h(0x20);
-        return;
+        GOLD_DiagTimerIrqCount++;
     }
 
-    /* The programmed transfer is complete: keep track of the */
-    /* current buffer and program the next chunk. */
     if (GOLD_SoundPlaying)
     {
-        GOLD_CurrentDMABuffer += GOLD_TransferLength;
-
-        if (GOLD_CurrentDMABuffer >= GOLD_DMABufferEnd)
-        {
-            GOLD_CurrentDMABuffer = GOLD_DMABuffer;
-        }
-
-        /* Flip the new chunk's samples before the DMA reads them */
-        /* (see GOLD_FlipChunk). */
-        GOLD_FlipChunk(GOLD_CurrentDMABuffer, GOLD_TransferLength);
-
-        DMA_SetupTransfer(GOLD_DMAChannel, GOLD_CurrentDMABuffer,
-                          GOLD_TransferLength, DMA_SingleShotRead);
-
-        /* The GO bit is deliberately NOT rewritten here.  It stays */
-        /* set from GOLD_BeginBufferedPlayback until */
-        /* GOLD_HaltTransfer, and the PCM engine keeps running */
-        /* across chunk boundaries: the FIFO still holds enough */
-        /* samples to feed the engine while this handler runs, and */
-        /* unmasking the channel (done by DMA_SetupTransfer) resumes */
-        /* DMA fetching immediately.  Rewriting the rate/mode */
-        /* register on every chunk resets the engine's sample state */
-        /* and produces a small click at every chunk boundary. */
-
-        /* One chunk has just been played, so mix exactly one chunk. */
-        if (GOLD_CallBack != NULL)
-        {
-            MV_ServiceVoc();
-        }
+        GOLD_DoMix();
     }
 
-    /* send EOI to Interrupt Controller */
+    /* Send EOI to the interrupt controller. */
     if (GOLD_Config.Interrupt > 7)
     {
         OutByteA0h(0x20);
@@ -845,21 +1266,32 @@ void GOLD_StopPlayback(
     void)
 
 {
+    int usingpit;
+
     if (!GOLD_Installed)
     {
         return;
     }
 
-    /* Make the interrupt handler stop reprogramming the 8237; a */
-    /* late interrupt can still arrive after the mask below and must */
-    /* not program a new transfer. */
+    /* Make the interrupt handler stop mixing; a late interrupt can */
+    /* still arrive after the mask below. */
     GOLD_SoundPlaying = FALSE;
 
     /* Don't allow anymore interrupts */
     GOLD_DisableInterrupt();
 
-    /* Stop the PCM engine */
+    /* Stop the PIT channel 2 mixer clock, if it is in use */
+    usingpit = GOLD_UsingPit;
+    if (GOLD_UsingPit)
+    {
+        GOLD_StopPitClock();
+    }
+
+    /* Stop the PCM engine (clears the GO bit) */
     GOLD_HaltTransfer();
+
+    /* Stop the MMA timer */
+    GOLD_StopTimer();
 
     /* Disable the DMA channel */
     DMA_EndTransfer(GOLD_DMAChannel);
@@ -869,13 +1301,22 @@ void GOLD_StopPlayback(
 #if (DEBUG_ENABLED == 1)
     if (GOLD_FirstIrq)
     {
-        I_Printf("GOLD: end-of-data interrupt received, IRQ working\n");
+        I_Printf("GOLD: mixer clock interrupt received, IRQ working\n");
+    }
+
+    if (usingpit)
+    {
+        I_Printf("GOLD: mixer clock: PIT channel 2 (card timer 0 unusable)\n");
+    }
+    else
+    {
+        I_Printf("GOLD: mixer clock: card MMA timer 0\n");
     }
 
     if (GOLD_SpuriousIrqCount > 0)
     {
         char b1[12];
-        I_Printf("GOLD: %s false FIFO interrupts ignored\n",
+        I_Printf("GOLD: %s false mixer interrupts ignored\n",
                  GOLD_LogNumber(b1, GOLD_SpuriousIrqCount, 10));
     }
 
@@ -888,10 +1329,14 @@ void GOLD_StopPlayback(
 
    Begins multibuffered playback of digitized sound on the Gold.
 
-   The Gold's PCM engine generates the DMA requests, so the 8237 is
-   programmed for one chunk (buffer division) at a time in single
-   transfer mode; the end-of-data interrupt fires when a chunk is
-   consumed and the handler programs the next one.
+   The Gold's PCM engine generates the DMA requests.  The 8237 is
+   programmed once, for a single auto-initializing transfer over
+   the entire mix buffer, and then loops on its own for the whole
+   playback run: the FIFO never runs dry and the 8237 is never
+   reprogrammed (reprogramming it on every chunk masked the channel
+   and changed its end-of-transfer state, which showed up as a
+   periodic pop).  MMA timer 0 ticks once per chunk period and its
+   interrupt (GOLD_ServiceInterrupt) drives the mixer.
 ---------------------------------------------------------------------*/
 
 int GOLD_BeginBufferedPlayback(
@@ -904,6 +1349,7 @@ int GOLD_BeginBufferedPlayback(
 
 {
     int status;
+    int usecardtimer;
 
     GOLD_SetMixMode(MixMode);
 
@@ -912,10 +1358,9 @@ int GOLD_BeginBufferedPlayback(
     GOLD_CallBack = CallBackFunc;
 
     GOLD_DMABuffer = BufferStart;
-    GOLD_CurrentDMABuffer = BufferStart;
-    GOLD_DMABufferEnd = BufferStart + BufferSize;
-
     GOLD_TransferLength = BufferSize / NumDivisions;
+    GOLD_NumDivisions = NumDivisions;
+    GOLD_LastMixPage = 0;
 
 #if (DEBUG_ENABLED == 1)
     {
@@ -924,7 +1369,7 @@ int GOLD_BeginBufferedPlayback(
         char b3[12];
         char b4[12];
         char b5[12];
-        I_Printf("GOLD: starting playback: %s bytes in %s chunks of %s bytes, IRQ %s, DMA %s\n",
+        I_Printf("GOLD: starting playback: %s bytes in %s chunks of %s bytes, IRQ %s, DMA %s (auto-init)\n",
                  GOLD_LogNumber(b1, BufferSize, 10),
                  GOLD_LogNumber(b2, NumDivisions, 10),
                  GOLD_LogNumber(b3, GOLD_TransferLength, 10),
@@ -933,11 +1378,44 @@ int GOLD_BeginBufferedPlayback(
     }
 #endif
 
-    /* Program the first chunk. */
-    GOLD_FlipChunk(GOLD_CurrentDMABuffer, GOLD_TransferLength);
+    /* Pre-flip the whole buffer (the game cleared it to zero, which
+       is full negative swing on the Gold; flipped, it is silence).
+       The pages are then re-mixed (and re-flipped) by the interrupt
+       handler as the mixer advances, one page ahead of the DMA.
+       Pre-flipping everything keeps the first couple of pages
+       (played before the first mix lands) silent instead of a loud
+       tone. */
+    GOLD_FlipChunk(GOLD_DMABuffer, BufferSize);
 
-    status = DMA_SetupTransfer(GOLD_DMAChannel, GOLD_CurrentDMABuffer,
-                               GOLD_TransferLength, DMA_SingleShotRead);
+    /* If a previous run left the PIT clock running, stop it first;
+       the self-test below re-decides the mixer clock. */
+    if (GOLD_UsingPit)
+    {
+        GOLD_StopPitClock();
+    }
+
+    /* Verify that the card's MMA timer 0 can deliver the mixer
+       clock interrupt on this card.  On cards where it cannot, PIT
+       channel 2 is used as the mixer clock instead. */
+    usecardtimer = (GOLD_TimerSelfTest() == GOLD_Ok);
+
+#if (DEBUG_ENABLED == 1)
+    if (usecardtimer)
+    {
+        I_Printf("GOLD: mixer clock: card MMA timer 0\n");
+    }
+    else
+    {
+        I_Printf("GOLD: mixer clock: PIT channel 2 (card timer 0 unusable)\n");
+    }
+#endif
+
+    /* One auto-initializing transfer over the whole buffer.  At
+       every end of transfer the 8237 reloads the start address and
+       the full count and keeps going, so the DMA never stops and
+       never has to be reprogrammed. */
+    status = DMA_SetupTransfer(GOLD_DMAChannel, GOLD_DMABuffer,
+                               BufferSize, DMA_AutoInitRead);
     if (status == DMA_Error)
     {
 #if (DEBUG_ENABLED == 1)
@@ -950,42 +1428,55 @@ int GOLD_BeginBufferedPlayback(
         return (GOLD_Error);
     }
 
-    GOLD_EnableInterrupt();
+    /* Start the mixer clock (one tick per chunk period): the
+       card's timer, or PIT channel 2 as the fallback. */
+    if (usecardtimer)
+    {
+        GOLD_StartTimer();
+        GOLD_EnableInterrupt();
+    }
+    else
+    {
+        GOLD_StartPitClock();
+    }
 
-    /* Start the PCM engine. */
+    /* Start the PCM engine.  The GO bit stays set until
+       GOLD_StopPlayback; the engine keeps running over the whole
+       loop, fed by the auto-initializing transfer. */
     GOLD_StartTransfer();
 
     GOLD_SoundPlaying = TRUE;
 
-    /* Wait for the first end-of-data interrupt.  The first chunk */
-    /* takes about 23 ms to play at 11025 Hz; if the IRQ line or */
-    /* DMA channel is wrong the interrupt never arrives and the */
-    /* mixer would stall silently, so bail out instead.  PIT */
-    /* channel 0 (about 18.2 Hz) is used as the clock so the */
-    /* timeout does not depend on the CPU speed. */
+    /* Wait for the first mixer clock interrupt.  It comes after one
+       chunk period (about 23 ms at 11025 Hz stereo); if the clock
+       never interrupts the mixer would stall silently, so bail out
+       instead. */
+    GOLD_FirstIrq = FALSE;
+    if (!GOLD_WaitFirstIrq() && usecardtimer && !GOLD_UsingPit)
     {
-        int pit;
-        int ticks;
+        /* The self-test passed but no interrupt arrived at the real
+           period: the card's timer is still unusable; try the PIT. */
+        GOLD_StopTimer();
+        GOLD_DisableInterrupt();
+        GOLD_StartPitClock();
 
-        pit = inp(0x40);
-        ticks = 0;
-        while ((!GOLD_FirstIrq) && (ticks < 10))
-        {
-            if (inp(0x40) != pit)
-            {
-                pit = inp(0x40);
-                ticks++;
-            }
-        }
-
-        /*if (!GOLD_FirstIrq)
-        {
 #if (DEBUG_ENABLED == 1)
-            I_Printf("GOLD: no end-of-data interrupt, check the card's "
-                     "IRQ/DMA settings (e.g. GOLD=388:5:1)\n");
+        I_Printf("GOLD: no timer interrupt at the real period, "
+                 "falling back to PIT channel 2\n");
 #endif
-            return (GOLD_Error);
-        }*/
+
+        GOLD_FirstIrq = FALSE;
+        GOLD_WaitFirstIrq();
+    }
+
+    if (!GOLD_FirstIrq)
+    {
+#if (DEBUG_ENABLED == 1)
+        I_Printf("GOLD: no mixer clock interrupt, check the card's "
+                 "IRQ/DMA settings (e.g. GOLD=388:5:1)\n");
+#endif
+        GOLD_StopPlayback();
+        return (GOLD_Error);
     }
 
 #if (DEBUG_ENABLED == 1)
@@ -1274,6 +1765,9 @@ int GOLD_Init(
 
     /* Reset the PCM engine */
     GOLD_Reset();
+
+    /* Make sure the MMA timer is stopped */
+    GOLD_StopTimer();
 
     /* Set the volume to maximum */
     GOLD_WritePCMReg(0, GOLD_PCM_VOLUME, 127);

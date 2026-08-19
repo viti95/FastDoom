@@ -43,7 +43,7 @@ enum GOLD_ERRORS
     GOLD_Ok = 0
 };
 
-// Only 8-bit samples are supported, mono or stereo.
+/* Only 8-bit samples are supported, mono or stereo. */
 #define GOLD_MONO_8BIT 0
 #define GOLD_STEREO 1
 #define GOLD_STEREO_8BIT (GOLD_STEREO)
