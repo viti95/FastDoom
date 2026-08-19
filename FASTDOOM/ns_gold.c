@@ -107,9 +107,16 @@ static const unsigned char GOLD_FreqBits[4] = {0x00, 0x08, 0x10, 0x18};
 #define GOLD_SFC_MONO_CH0 (0x05 | GOLD_SFC_MSK)
 #define GOLD_SFC_MONO_CH1 0x02
 
-/* stereo 8-bit */
-#define GOLD_PRC_STEREO_CH0 0x46
-#define GOLD_PRC_STEREO_CH1 0x26
+/* stereo 8-bit.
+   In interleave mode the Gold consumes the DMA stream channel 0,
+   channel 1, channel 0, channel 1, ... and the game's mix buffer
+   holds the left sample first (L R L R ..., see MV_Mix8BitStereo).
+   Channel 0 therefore receives the left samples and must be routed
+   to the left output (L bit, D5, set); channel 1 receives the right
+   samples and must be routed to the right output (R bit, D6, set).
+   Routing them the other way plays the two channels reversed. */
+#define GOLD_PRC_STEREO_CH0 0x26
+#define GOLD_PRC_STEREO_CH1 0x46
 #define GOLD_SFC_STEREO_CH0 (0x85 | GOLD_SFC_MSK)
 #define GOLD_SFC_STEREO_CH1 0x03
 
