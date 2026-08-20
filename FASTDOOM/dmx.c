@@ -611,6 +611,8 @@ int ASS_GetSoundCardCode(int sndDevice)
         return IMFC;
     case snd_ESFM:
         return ESFM;
+    case snd_GOLD:
+        return GOLD;
     default:
         return -1;
     }

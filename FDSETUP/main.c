@@ -53,7 +53,8 @@ char cards[M_LAST][20] = {
 	"LPT MIDI",
 	"Windows Sound Sys",
 	"IBM Music Feature",
-	"ESS ESFM"
+	"ESS ESFM",
+	"Adlib Gold"
 	};
 
 char controls[C_LAST][20] = {

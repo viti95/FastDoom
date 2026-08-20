@@ -3092,7 +3092,7 @@ void R_ExecuteSetViewSize(void)
 
     // I put this here so I could see which functions were having rendering
     // problems. Leaving it here for demonstration purposes.
-#if (DEBUG_ENABLED == 1)
+/*#if (DEBUG_ENABLED == 1)
     I_Printf("Render Functions:\n");
     I_Printf("\tcolfunc: %s\n", I_LookupSymbolName(colfunc));
     I_Printf("\tbasespritefunc: %s\n", I_LookupSymbolName(basespritefunc));
@@ -3101,7 +3101,7 @@ void R_ExecuteSetViewSize(void)
     I_Printf("\tskyfunc: %s\n", I_LookupSymbolName(skyfunc));
     I_Printf("\tpspritefunc: %s\n", I_LookupSymbolName(pspritefunc));
     I_Printf("\tbasepspritefunc: %s\n", I_LookupSymbolName(basepspritefunc));
-#endif
+#endif*/
 }
 
 //

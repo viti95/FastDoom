@@ -31,6 +31,7 @@ typedef enum
    WSS,
    IMFC,
    ESFM,
+   GOLD,
    NumSoundCards
 } soundcardnames;
 

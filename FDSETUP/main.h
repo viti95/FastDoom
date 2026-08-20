@@ -50,6 +50,7 @@ typedef enum
 	M_WSS,
 	M_IMFC,
 	M_ESFM,
+	M_GOLD,
 	M_LAST
 } SCARD;
 

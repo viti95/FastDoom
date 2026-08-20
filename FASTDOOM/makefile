@@ -105,6 +105,7 @@ GLOBOBJS = &
  ns_wss.obj &
  ns_esfm.obj &
  ns_imfc.obj &
+ ns_gold.obj &
  fpummx.obj &
  ns_cd.obj &
  i_debug.obj &

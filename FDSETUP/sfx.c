@@ -21,6 +21,7 @@ enum
 	DCARD_PCPWM,
 	DCARD_CMS,
 	DCARD_WSS,
+	DCARD_GOLD,
 	DCARD_NONE,
 	DCARD_MAX
 };
@@ -43,7 +44,8 @@ item_t idcarditems[] =
 		{DCARD_PCPWM, 27, 17, 25, -1, -1},
 		{DCARD_CMS, 27, 18, 25, -1, -1},
 		{DCARD_WSS, 27, 19, 25, -1, -1},
-		{DCARD_NONE, 27, 20, 25, -1, -1}
+		{DCARD_GOLD, 27, 20, 25, -1, -1},
+		{DCARD_NONE, 27, 21, 25, -1, -1}
 	};
 
 menu_t idcardmenu =
@@ -107,6 +109,10 @@ int ChooseFxCard(void)
 
 	case M_WSS:
 		field = DCARD_WSS;
+		break;
+
+	case M_GOLD:
+		field = DCARD_GOLD;
 		break;
 
 	case M_COVOX:
@@ -206,6 +212,12 @@ int ChooseFxCard(void)
 
 			case DCARD_WSS:
 				newc.d.card = M_WSS;
+				newc.d.soundport = -1;
+				newc.d.midiport = -1;
+				goto func_exit;
+			
+			case DCARD_GOLD:
+				newc.d.card = M_GOLD;
 				newc.d.soundport = -1;
 				newc.d.midiport = -1;
 				goto func_exit;
@@ -812,6 +824,7 @@ int SetupFX(void)
 	case M_TANDY3VOICE:
 	case M_ENSONIQ:
 	case M_WSS:
+	case M_GOLD:
 		ChooseFreq();
 		ChooseNumDig();
 		savefx = TRUE;
