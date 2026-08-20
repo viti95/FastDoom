@@ -1,10 +1,11 @@
 #include "doomtype.h"
 
-#if defined(MODE_MDA)
+#if defined(MODE_VT100)
 
-void MDA_InitGraphics(void);
+void VT100_InitGraphics(void);
 void I_ProcessPalette(byte *palette);
 void I_SetPalette(int numpalette);
 void I_FinishUpdate(void);
+void VT100_ShutdownTerminal(void);
 
 #endif

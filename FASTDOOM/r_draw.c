@@ -51,7 +51,7 @@
 //  and the total size == width*height*depth/8.,
 //
 
-#if !defined(MODE_T8050) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_T8043) && !defined(MODE_MDA) && !defined(MODE_COLOR_MDA)
+#if !defined(MODE_T8050) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_T8043) && !defined(MODE_MDA) && !defined(MODE_VT100) && !defined(MODE_COLOR_MDA)
 int viewwidth;
 int viewheight;
 int viewheightminusone;
@@ -79,7 +79,7 @@ byte *ylookup[SCREENHEIGHT];
 byte *ylookup[SCREENHEIGHT];
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_VBE2_DIRECT) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_VBE2_DIRECT) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
 byte **ylookup;
 #endif
 
@@ -1235,7 +1235,7 @@ void R_DrawFuzzColumnTransText4025(void)
 }
 #endif
 
-#if defined(MODE_MDA)
+#if defined(MODE_MDA) || defined(MODE_VT100)
 void R_DrawLineColumnTextMDA(void)
 {
     int count;
@@ -1620,7 +1620,7 @@ void R_DrawSkyFlatText8050(void)
 }
 #endif
 
-#if defined(MODE_MDA)
+#if defined(MODE_MDA) || defined(MODE_VT100)
 void R_DrawSkyTextMDA(void)
 {
     int count;
@@ -2132,7 +2132,7 @@ void R_DrawSpanText8050(void)
 //
 #define FUZZTABLE 50
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
 #define FUZZOFF (SCREENWIDTH / 4)
 #endif
 
@@ -2816,7 +2816,7 @@ void R_DrawSpanFlatText4025(void)
 }
 #endif
 
-#if defined(MODE_MDA)
+#if defined(MODE_MDA) || defined(MODE_VT100)
 void R_DrawSpanTextMDA(void)
 {
 }

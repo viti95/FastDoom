@@ -556,7 +556,7 @@ void M_DrawLoad(void)
 #if defined(MODE_T4025) || defined(MODE_T4050)
     V_WriteTextDirect(9, 3, "LOAD GAME");
 #endif
-#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
     V_WriteTextDirect(18, 3, "LOAD GAME");
 #endif
 #if defined(MODE_T8050) || defined(MODE_T8043)
@@ -575,7 +575,7 @@ void M_DrawLoad(void)
         V_WriteCharDirect(LoadDef.x / 8 + 24, (LoadDef.y + LINEHEIGHT * i) / 8, '|');
         M_DrawSaveLoadBorderText(LoadDef.x / 8, (LoadDef.y + LINEHEIGHT * i) / 8);
 #endif
-#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
         M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 8 - 2);
         V_WriteCharDirect(LoadDef.x / 4 - 1, (LoadDef.y + LINEHEIGHT * i) / 8, '|');
         V_WriteTextDirect(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 8, savegamestrings[i]);
@@ -620,7 +620,7 @@ void M_DrawSaveLoadBorder(int x, int y)
 }
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
 void M_DrawSaveLoadBorderText(int x, int y)
 {
     int i;
@@ -677,7 +677,7 @@ void M_DrawSave(void)
 #if defined(MODE_T4025) || defined(MODE_T4050)
     V_WriteTextDirect(9, 3, "SAVE GAME");
 #endif
-#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
     V_WriteTextDirect(18, 3, "SAVE GAME");
 #endif
 #if defined(MODE_T8050) || defined(MODE_T8043)
@@ -696,7 +696,7 @@ void M_DrawSave(void)
         V_WriteCharDirect(LoadDef.x / 8 + 24, (LoadDef.y + LINEHEIGHT * i) / 8, '|');
         M_DrawSaveLoadBorderText(LoadDef.x / 8, (LoadDef.y + LINEHEIGHT * i) / 8);
 #endif
-#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
         M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 8 - 2);
         V_WriteCharDirect(LoadDef.x / 4 - 1, (LoadDef.y + LINEHEIGHT * i) / 8, '|');
         V_WriteTextDirect(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 8, savegamestrings[i]);
@@ -725,7 +725,7 @@ void M_DrawSave(void)
 #if defined(MODE_T4025) || defined(MODE_T4050)
         V_WriteTextDirect((LoadDef.x / 8) + strlen(savegamestrings[saveSlot]), (LoadDef.y + LINEHEIGHT * saveSlot) / 8, "_");
 #endif
-#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
         V_WriteTextDirect((LoadDef.x / 4) + strlen(savegamestrings[saveSlot]), (LoadDef.y + LINEHEIGHT * saveSlot) / 8, "_");
 #endif
 #if defined(MODE_T8050) || defined(MODE_T8043)
@@ -862,7 +862,7 @@ void M_DrawSound(void)
     V_WriteTextDirect(10, 16, "Mono Sound:");
     V_WriteTextDirect(20, 16, monoSound ? "ON" : "OFF");
 #endif
-#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
     V_WriteTextDirect(30, 4, "SOUND VOLUME");
 
     M_DrawThermoText(SoundDef.x / 4, (SoundDef.y + LINEHEIGHT * (sfx_vol + 1)) / 8, 16, sfxVolume);
@@ -919,7 +919,7 @@ void M_DrawBenchmark(void)
     V_WriteTextDirect(10, 16, "DEMO3");
     V_WriteTextDirect(10, 18, "DEMO4");
 #endif
-#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
     V_WriteTextDirect(20, 6, "===========================");
     V_WriteTextDirect(20, 7, "=     BENCHMARK  MENU     =");
     V_WriteTextDirect(20, 8, "===========================");
@@ -1012,7 +1012,7 @@ void M_DrawBenchmarkResult(void)
     V_WriteTextDirect(12, 12, "FPS:");
     V_WriteTextDirect(17, 12, strFPS);
 #endif
-#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
     V_WriteTextDirect(20, 6, "RESULT");
     V_WriteTextDirect(15, 8, "Gametics:");
     V_WriteTextDirect(25, 8, strGametics);
@@ -1051,7 +1051,7 @@ void M_DrawBenchmarkCSV(void)
 #if defined(MODE_T4025) || defined(MODE_T4050)
     V_WriteTextDirect(6, 8, CSV_MESSAGE);
 #endif
-#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
     V_WriteTextDirect(15, 8, CSV_MESSAGE);
 #endif
 #if defined(MODE_T8050) || defined(MODE_T8043)
@@ -1194,7 +1194,7 @@ void M_DrawMainMenu(void)
 #if defined(MODE_T4025) || defined(MODE_T4050)
     V_WriteTextDirect(11, 5, "DOOM");
 #endif
-#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
     V_WriteTextDirect(23, 5, "DOOM");
 #endif
 #if defined(MODE_T8050) || defined(MODE_T8043)
@@ -1214,7 +1214,7 @@ void M_DrawNewGame(void)
     V_WriteTextDirect(12, 2, "NEW GAME");
     V_WriteTextDirect(6, 4, "Choose skill level:");
 #endif
-#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
     V_WriteTextDirect(24, 2, "NEW GAME");
     V_WriteTextDirect(13, 4, "Choose skill level:");
 #endif
@@ -1246,7 +1246,7 @@ void M_DrawEpisode(void)
 #if defined(MODE_T4025) || defined(MODE_T4050)
     V_WriteTextDirect(13, 4, "WHICH EPISODE?");
 #endif
-#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
     V_WriteTextDirect(27, 4, "WHICH EPISODE?");
 #endif
 #if defined(MODE_T8050) || defined(MODE_T8043)
@@ -1300,7 +1300,7 @@ void M_DrawOptions(void)
     M_DrawThermoText(OptionsDef.x / 8, (OptionsDef.y + LINEHEIGHT * (scrnsize + 1)) / 8, 10, screenSize);
     V_WriteTextDirect(7, 19, "Benchmark");
 #endif
-#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
     V_WriteTextDirect(30, 1, "OPTIONS");
     V_WriteTextDirect((OptionsDef.x + 120) / 6, (OptionsDef.y + LINEHEIGHT * messages) / 8, showMessages == 0 ? "OFF" : "ON");
     M_DrawThermoText(OptionsDef.x / 4, (OptionsDef.y + LINEHEIGHT * (mousesens + 1)) / 8, 10, mouseSensitivity);
@@ -1507,7 +1507,7 @@ void M_DrawDisplayItem(int item, int position)
 }
 #endif
 
-#if defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_COLOR_MDA)
 void M_DrawDisplayItem(int item, int position)
 {
 
@@ -1517,7 +1517,7 @@ void M_DrawDisplayItem(int item, int position)
     int y = 2 + position * 4;
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
 #define M_X1 15
 #define M_X2 45
     int y = 1 + position * 2;
@@ -1810,7 +1810,7 @@ void M_QuitResponse(int ch)
     else
         S_StartSound(NULL, quitsounds[(gametic >> 2) & 7]);
 
-#if !defined(MODE_HERC) && !defined(MODE_MDA) && !defined(MODE_INCOLOR) && !defined(MODE_COLOR_MDA)
+#if !defined(MODE_HERC) && !defined(MODE_MDA) && !defined(MODE_VT100) && !defined(MODE_INCOLOR) && !defined(MODE_COLOR_MDA)
     do
     {
         I_WaitSingleVBL();
@@ -2177,7 +2177,7 @@ void M_DrawThermo(int x, int y, int thermWidth, int thermDot)
 }
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
 void M_DrawThermoText(int x, int y, int thermWidth, int thermDot)
 {
     int xx;
@@ -2227,7 +2227,7 @@ int M_StringWidth(char *string)
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
             w += hu_font[c]->width;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
             w += 8;
 #endif
         }
@@ -2246,7 +2246,7 @@ int M_StringHeight(char *string)
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     int height = hu_font[0]->height;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
     int height = 8;
 #endif
 
@@ -2688,7 +2688,7 @@ void M_Drawer(void)
 #if defined(MODE_T4025) || defined(MODE_T4050)
             V_WriteTextDirect(x / 8, y / 8, string);
 #endif
-#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
             V_WriteTextDirect(x / 4, y / 8, string);
 #endif
 #if defined(MODE_T8050) || defined(MODE_T8043)
@@ -2701,7 +2701,7 @@ void M_Drawer(void)
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
             y += hu_font[0]->height;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
             y += 8;
 #endif
         }
@@ -2724,7 +2724,7 @@ void M_Drawer(void)
 #if defined(MODE_T4025) || defined(MODE_T4050)
             V_WriteTextDirect(x / 8, y / 8, currentMenu->menuitems[i].text);
 #endif
-#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
             V_WriteTextDirect(x / 4, y / 8, currentMenu->menuitems[i].text);
 #endif
 #if defined(MODE_T8050) || defined(MODE_T8043)
@@ -2764,7 +2764,7 @@ void M_Drawer(void)
         else
             V_WriteCharDirect(currentMenu->x / 8 - 3, currentMenu->y / 8 + (MAX_ITEMS_DRAWN / 2) * 2, whichSkull + 1);
 #endif
-#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
         if (itemOn - (MAX_ITEMS_DRAWN / 2) < 0)
             V_WriteCharDirect(currentMenu->x / 4 - 3, currentMenu->y / 8 + itemOn * 2, whichSkull + 1);
         else if (itemOn + (MAX_ITEMS_DRAWN / 2) > display_end)
@@ -2788,7 +2788,7 @@ void M_Drawer(void)
 #if defined(MODE_T4025) || defined(MODE_T4050)
         V_WriteCharDirect(currentMenu->x / 8 - 3, currentMenu->y / 8 + itemOn * 2, whichSkull + 1);
 #endif
-#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
         V_WriteCharDirect(currentMenu->x / 4 - 3, currentMenu->y / 8 + itemOn * 2, whichSkull + 1);
 #endif
 #if defined(MODE_T8050) || defined(MODE_T8043)

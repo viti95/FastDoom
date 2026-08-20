@@ -144,6 +144,10 @@
 #include "i_mda.h"
 #endif
 
+#if defined(MODE_VT100)
+#include "i_vt100.h"
+#endif
+
 //
 // Macros
 //
@@ -716,6 +720,10 @@ void I_InitGraphics(void)
     MDA_InitGraphics();
 #endif
 
+#if defined(MODE_VT100)
+    VT100_InitGraphics();
+#endif
+
 #if defined(MODE_COLOR_MDA)
     MDA_Color_InitGraphics();
 #endif
@@ -807,8 +815,10 @@ void I_ShutdownGraphics(void)
         I_FinishHerculesHalfMode();
 #endif
 
+#if !defined(MODE_VT100)
     regs.w.ax = 3;
     int386(0x10, &regs, &regs); // back to text mode
+#endif
 }
 
 //
@@ -1162,6 +1172,9 @@ void I_Init(void)
 //
 void I_Shutdown(void)
 {
+#if defined(MODE_VT100)
+    VT100_ShutdownTerminal();
+#endif
     I_ShutdownGraphics();
     I_ShutdownSound();
     I_ShutdownTimer();
@@ -1207,8 +1220,11 @@ void I_Quit(void)
     }
 
     M_SaveDefaults();
+#if !defined(MODE_VT100)
     scr = (byte *)W_CacheLumpName("ENDOOM", PU_CACHE);
+#endif
     I_Shutdown();
+#if !defined(MODE_VT100)
 #if defined(MODE_HERC) || defined(MODE_MDA) || defined(MODE_INCOLOR) || defined(MODE_COLOR_MDA)
     CopyDWords(scr, (void *)0xb0000, (80 * 25 * 2) / 4);
 #else
@@ -1219,6 +1235,7 @@ void I_Quit(void)
     regs.h.dl = 0;
     regs.h.dh = 23;
     int386(0x10, (union REGS *)&regs, &regs); // Set text pos
+#endif
     printf("\n");
 
     if (snd_MusicDevice == snd_CD)
