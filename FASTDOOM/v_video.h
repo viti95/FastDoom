@@ -53,7 +53,7 @@ extern byte screen4[SCREENWIDTH * SBARHEIGHT];
 extern byte backbuffer[SCREENWIDTH * SCREENHEIGHT];
 #endif
 
-#if defined(MODE_MDA) || defined(MODE_VT100)
+#if defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
 extern unsigned short backbuffer[80 * 25];
 #endif
 
