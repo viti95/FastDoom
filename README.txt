@@ -74,12 +74,14 @@
  Sound cards: Sound Blaster, PC Speaker, Disney Sound Source,
               Gravis Ultrasound, Pro Audio Spectrum, COVOX LPT DAC,
               Creative Music System, Tandy 3-voice, OPL2LPT,
-              OPL3LPT, Ensoniq Soundscape, Adlib
+              OPL3LPT, Ensoniq Soundscape, Adlib, Adlib Gold,
+              Windows Sound System
  Music cards: Sound Blaster (OPL2 and OPL3), Adlib, MIDI, Gravis Ultrasound
               Sound Blaster AWE32, OPL2LPT, OPL3LPT, AudioCD (MSCDEX),
               PCM music (through sound card), Ensoniq Soundscape
               Serial MIDI, DreamBlaster S2P, Roland MT-32,
-              Roland SC-55, Yamaha MU80, Yamaha TG300
+              Roland SC-55, Yamaha MU80, Yamaha TG300,
+              IBM PC Music Feature
 
  Executables
  -----------
