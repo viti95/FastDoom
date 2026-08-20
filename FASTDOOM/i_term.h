@@ -1,9 +1,9 @@
-//
-// Serial Terminal Output for MDA Mode (VT100-compatible)
-//
-// Provides text output over a serial port (COM1-COM4).
-// Compatible with DEC VT100 and VT100-emulation terminals.
-//
+/*
+ * Serial Terminal Output for VT100 Mode.
+ *
+ * Provides text output over a serial port (COM1-COM4).
+ * Compatible with DEC VT100 and VT100-emulation terminals.
+ */
 
 #ifndef __I_TERM__
 #define __I_TERM__
@@ -52,7 +52,7 @@ void TERM_SendChar(byte c);
 void TERM_Shutdown(void);
 
 /* Set the 80x25 text backbuffer to mirror.
-   Called by the video mode driver (e.g. MDA_InitGraphics). */
+   Called by the video mode driver (VT100_InitGraphics). */
 void TERM_SetBackbuffer(const unsigned short *buf);
 
 /* Update the VT100 display from the registered backbuffer.
@@ -63,8 +63,8 @@ void TERM_UpdateFromBuffer(const unsigned short *buf);
 int  TERM_IsActive(void);
 
 /* ------------------------------------------------------------------
-   Global flags set by d_main.c from -term command line.
-   Read by MDA_InitGraphics() to decide whether to call TERM_Init().
+   Global flags set by d_main.c from the -term command line.
+   Read by VT100_InitGraphics() / TERM_UpdateFromBuffer().
    ------------------------------------------------------------------ */
 extern boolean term_enabled;
 extern int     term_port;

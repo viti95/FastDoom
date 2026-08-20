@@ -51,6 +51,10 @@
 
 #if defined(MODE_MDA)
 #include "i_mda.h"
+#endif
+
+#if defined(MODE_VT100)
+#include "i_vt100.h"
 #include "i_term.h"
 #endif
 
@@ -339,7 +343,7 @@ void D_Display(void)
         }
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
         ST_doPaletteStuff();
 #endif
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
@@ -455,7 +459,7 @@ void D_Display(void)
         V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 2, "PAUSE");
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
         V_WriteTextDirect(viewwidth / 2 - 2, viewheight / 4, "PAUSE");
 #endif
 
@@ -478,13 +482,13 @@ void D_Display(void)
     }
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
     if (screenblocks <= 11 && gamestate == GS_LEVEL)
     {
 #if defined(MODE_T4025) || defined(MODE_T4050)
         ST_DrawerText4025();
 #endif
-#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
         ST_DrawerText8025();
 #endif
 #if defined(MODE_T8043)
@@ -501,7 +505,7 @@ void D_Display(void)
     // normal update
     if (!wipe)
     {
-#if !defined(MODE_HERC) && !defined(MODE_MDA) && !defined(MODE_INCOLOR) && !defined(MODE_COLOR_MDA)
+#if !defined(MODE_HERC) && !defined(MODE_MDA) && !defined(MODE_VT100) && !defined(MODE_INCOLOR) && !defined(MODE_COLOR_MDA)
         if (waitVsync)
             I_WaitSingleVBL();
 #endif
@@ -542,7 +546,7 @@ void D_Display(void)
         updatestate = I_FULLSCRN;
 #endif
 
-#if !defined(MODE_HERC) && !defined(MODE_MDA) && !defined(MODE_INCOLOR) && !defined(MODE_COLOR_MDA)
+#if !defined(MODE_HERC) && !defined(MODE_MDA) && !defined(MODE_VT100) && !defined(MODE_INCOLOR) && !defined(MODE_COLOR_MDA)
         if (waitVsync)
             I_WaitSingleVBL();
 #endif
@@ -1472,7 +1476,7 @@ void D_DoomMain(void)
     D_AddFile("modetxt.wad");
 #endif
 
-#if defined(MODE_MDA)
+#if defined(MODE_MDA) || defined(MODE_VT100)
     D_AddFile("modemda.wad");
 #endif
 
@@ -1545,13 +1549,15 @@ void D_DoomMain(void)
     videoPageFix = M_CheckParm("-pagefix");
 #endif
 
-#if defined(MODE_MDA)
+#if defined(MODE_VT100)
+    // The serial terminal is always active in this mode.
+    // -term [port] [baud] can override port (default COM1) and baud (default 38400).
+    term_enabled = true;
+    term_port = 0x3F8;
+    term_baud = 38400;
+
     if ((p = M_CheckParm("-term")))
     {
-        term_enabled = true;
-        term_port = 0x3F8; // default COM1
-        term_baud = 38400; // default 38400 baud
-
         // Optional: port override (-term 0x2F8)
         if (p < myargc - 1 && myargv[p + 1][0] != '-')
         {
@@ -1777,7 +1783,7 @@ void D_DoomMain(void)
     M_CheckParmDisable("-nofps", &showFPS);
     M_CheckParmOptional("-preload", &preload);
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
     noMelt = 1;
 #endif
 

@@ -50,7 +50,7 @@ int validcount = 1;
 lighttable_t *fixedcolormap;
 extern lighttable_t **walllights;
 
-#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA) && !defined(MODE_COLOR_MDA)
+#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA) && !defined(MODE_VT100) && !defined(MODE_COLOR_MDA)
 int centerx;
 int centery;
 
@@ -704,7 +704,7 @@ fixed_t R_ScaleFromGlobalAngle(int position)
 #if defined(MODE_Y_HALF)
     num = FixedMulEDXHalf(projection, sineb) << detailshift;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
     num = FixedMulEDX(projection, sineb);
 #endif
     den = FixedMulEDX(rw_distance, sinea);
@@ -935,7 +935,7 @@ void R_ExecuteSetViewSize(void)
             break;
         }
     }
-#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA) && !defined(MODE_COLOR_MDA)
+#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA) && !defined(MODE_VT100) && !defined(MODE_COLOR_MDA)
     if (setblocks >= 11)
     {
         scaledviewwidth = SCREENWIDTH;
@@ -996,7 +996,7 @@ void R_ExecuteSetViewSize(void)
     viewwidthhalf = viewwidth / 2;
 #endif
 
-#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA) && !defined(MODE_COLOR_MDA)
+#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA) && !defined(MODE_VT100) && !defined(MODE_COLOR_MDA)
     viewwidthlimit = viewwidth - 1;
     centery = viewheight / 2;
     centerx = viewwidth / 2;
@@ -1308,7 +1308,7 @@ void R_ExecuteSetViewSize(void)
     }
 
 #endif
-#if defined(MODE_MDA)
+#if defined(MODE_MDA) || defined(MODE_VT100)
 
     drawPlanes = R_DrawPlanesFlatterTextMDA;
     mapPlane = R_MapPlaneFlat;
@@ -3016,7 +3016,7 @@ void R_ExecuteSetViewSize(void)
     R_InitTextureMapping();
 
     // psprite scales
-#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA) && !defined(MODE_COLOR_MDA)
+#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA) && !defined(MODE_VT100) && !defined(MODE_COLOR_MDA)
     pspritescale = FRACUNIT * viewwidth / 320;
 #if defined(MODE_Y_HALF)
     pspritescaleds = (pspritescale << detailshift) / 2;
@@ -3052,7 +3052,7 @@ void R_ExecuteSetViewSize(void)
         yslope[i] = FixedDiv((viewwidth << detailshift) / 4 * FRACUNIT, dy);
 #endif
 
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
         yslope[i] = FixedDiv((viewwidth) / 2 * FRACUNIT, dy);
 #endif
     }
@@ -3076,7 +3076,7 @@ void R_ExecuteSetViewSize(void)
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
             level = startmap - MulScreenWidth(j) / (viewwidth << detailshift) / DISTMAP;
 #endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA) || defined(MODE_COLOR_MDA)
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
             level = startmap - MulScreenWidth(j) / (viewwidth) / DISTMAP;
 #endif
             if (level < 0)

@@ -13,7 +13,6 @@
 #include "i_system.h"
 #include "doomstat.h"
 #include "m_menu.h"
-#include "i_term.h"
 
 #if defined(MODE_MDA)
 
@@ -36,22 +35,6 @@ void MDA_InitGraphics(void)
 
     // Disable MDA blink
     I_DisableMDABlink();
-
-    // Initialise serial terminal output if requested
-    if (term_enabled)
-    {
-        TERM_SetBackbuffer(backbuffer);
-        if (TERM_Init(term_port, term_baud) == 0)
-        {
-            printf("Serial terminal: active (port 0x%03X, %d baud)\n",
-                   term_port, term_baud);
-        }
-        else
-        {
-            printf("Serial terminal: failed to initialise\n");
-            term_enabled = false;
-        }
-    }
 }
 
 void I_ProcessPalette(byte *palette)
@@ -67,22 +50,6 @@ void I_SetPalette(int numpalette)
 void I_FinishUpdate(void)
 {
     CopyDWords(backbuffer, 0xB0000, 1000);
-
-    // Mirror text output to serial terminal
-    if (term_enabled)
-    {
-        TERM_UpdateFromBuffer(backbuffer);
-        TERM_Flush();
-    }
-}
-
-void MDA_ShutdownTerminal(void)
-{
-    if (term_enabled)
-    {
-        TERM_Shutdown();
-        term_enabled = false;
-    }
 }
 
 #endif

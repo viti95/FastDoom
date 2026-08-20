@@ -53,7 +53,7 @@ extern byte screen4[SCREENWIDTH * SBARHEIGHT];
 extern byte backbuffer[SCREENWIDTH * SCREENHEIGHT];
 #endif
 
-#if defined(MODE_MDA)
+#if defined(MODE_MDA) || defined(MODE_VT100)
 extern unsigned short backbuffer[80 * 25];
 #endif
 
@@ -106,7 +106,7 @@ void V_DrawPatchDirectText8050(int x, int y, patch_t *patch);
 #define V_DrawPatchMode V_DrawPatchDirectText8050
 #endif
 
-#if defined(MODE_MDA)
+#if defined(MODE_MDA) || defined(MODE_VT100)
 void V_DrawPatchDirectTextMDA(int x, int y, patch_t *patch);
 #define V_DrawPatchMode V_DrawPatchDirectTextMDA
 #endif

@@ -1,10 +1,10 @@
-//
-// Serial Terminal Output for MDA Mode (VT100-compatible)
-//
-// Provides text output over a serial port (COM1-COM4).
-// Compatible with DEC VT100 and VT100-emulation terminals.
-// Only VT100-standard escapes are used: ED, CH, CUP.
-//
+/*
+ * Serial Terminal Output for VT100 Mode.
+ *
+ * Provides text output over a serial port (COM1-COM4).
+ * Compatible with DEC VT100 and VT100-emulation terminals.
+ * Only VT100-standard escapes are used: ED, CH, CUP.
+ */
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -526,7 +526,7 @@ int TERM_IsActive(void)
 /*
  * TERM_SetBackbuffer
  * Provide a pointer to the 80x25 text backbuffer to mirror.
- * Called by the video mode driver (e.g. MDA_InitGraphics).
+ * Called by the video mode driver (VT100_InitGraphics).
  */
 void TERM_SetBackbuffer(const unsigned short *buf)
 {

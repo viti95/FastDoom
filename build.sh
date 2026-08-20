@@ -176,6 +176,9 @@ elif [ "$target" = "fdoommda.exe" ]; then
 elif [ "$target" = "fdoomcda.exe" ]; then
   buildopts="-dMODE_COLOR_MDA"
 
+elif [ "$target" = "fdmvt100.exe" ]; then
+  buildopts="-dMODE_VT100"
+
 elif [ "$target" = "clean" ]; then
   cd FASTDOOM
   wmake clean

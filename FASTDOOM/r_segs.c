@@ -271,7 +271,7 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 					colfunc();
 					break;
 				}
-#elif defined(MODE_MDA)
+#elif defined(MODE_MDA) || defined(MODE_VT100)
 				if (dc_x == x1 || dc_x == x2)
 					R_DrawLineColumnTextMDA();
 				else
@@ -490,7 +490,7 @@ void R_RenderMaskedSegRangeFlat(drawseg_t *ds,
 					colfunc();
 					break;
 				}
-#elif defined(MODE_MDA)
+#elif defined(MODE_MDA) || defined(MODE_VT100)
 				if (dc_x == x1 || dc_x == x2)
 					R_DrawLineColumnTextMDA();
 				else
@@ -674,7 +674,7 @@ void R_RenderMaskedSegRangeFlatter(drawseg_t *ds,
 					colfunc();
 					break;
 				}
-#elif defined(MODE_MDA)
+#elif defined(MODE_MDA) || defined(MODE_VT100)
 				if (dc_x == x1 || dc_x == x2)
 					R_DrawLineColumnTextMDA();
 				else
@@ -874,7 +874,7 @@ void R_RenderMaskedSegRange2(drawseg_t *ds)
 					colfunc();
 					break;
 				}
-#elif defined(MODE_MDA)
+#elif defined(MODE_MDA) || defined(MODE_VT100)
 				if (dc_x == ds->x1 || dc_x == ds->x2)
 					R_DrawLineColumnTextMDA();
 				else
@@ -1092,7 +1092,7 @@ void R_RenderMaskedSegRange2Flat(drawseg_t *ds)
 					colfunc();
 					break;
 				}
-#elif defined(MODE_MDA)
+#elif defined(MODE_MDA) || defined(MODE_VT100)
 				if (dc_x == ds->x1 || dc_x == ds->x2)
 					R_DrawLineColumnTextMDA();
 				else
@@ -1274,7 +1274,7 @@ void R_RenderMaskedSegRange2Flatter(drawseg_t *ds)
 					colfunc();
 					break;
 				}
-#elif defined(MODE_MDA)
+#elif defined(MODE_MDA) || defined(MODE_VT100)
 				if (dc_x == ds->x1 || dc_x == ds->x2)
 					R_DrawLineColumnTextMDA();
 				else
@@ -1336,7 +1336,7 @@ void R_RenderSegLoop(void)
 	int cc_rwx;
 	int fc_rwx;
 
-#if defined(MODE_MDA)
+#if defined(MODE_MDA) || defined(MODE_VT100)
 	int first = rw_x;
 #endif
 
@@ -1468,7 +1468,7 @@ void R_RenderSegLoop(void)
 					colfunc();
 					break;
 				}
-#elif defined(MODE_MDA)
+#elif defined(MODE_MDA) || defined(MODE_VT100)
 				if (first == rw_x || rw_x == rw_stopx - 1)
 					R_DrawLineColumnTextMDA();
 				else
@@ -1544,7 +1544,7 @@ void R_RenderSegLoop(void)
 						colfunc();
 						break;
 					}
-#elif defined(MODE_MDA)
+#elif defined(MODE_MDA) || defined(MODE_VT100)
 					if (first == rw_x || rw_x == rw_stopx - 1)
 						R_DrawLineColumnTextMDA();
 					else
@@ -1624,7 +1624,7 @@ void R_RenderSegLoop(void)
 						colfunc();
 						break;
 					}
-#elif defined(MODE_MDA)
+#elif defined(MODE_MDA) || defined(MODE_VT100)
 					if (first == rw_x || rw_x == rw_stopx - 1)
 						R_DrawLineColumnTextMDA();
 					else
@@ -1682,7 +1682,7 @@ void R_RenderSegLoopFlat(void)
 	byte *firstPixel;
 	byte color;
 
-#if defined(MODE_MDA)
+#if defined(MODE_MDA) || defined(MODE_VT100)
 	int first = rw_x;
 #endif
 
@@ -1819,7 +1819,7 @@ void R_RenderSegLoopFlat(void)
 					colfunc();
 					break;
 				}
-#elif defined(MODE_MDA)
+#elif defined(MODE_MDA) || defined(MODE_VT100)
 				if (first == rw_x || rw_x == rw_stopx - 1)
 					R_DrawLineColumnTextMDA();
 				else
@@ -1876,7 +1876,7 @@ void R_RenderSegLoopFlat(void)
 						colfunc();
 						break;
 					}
-#elif defined(MODE_MDA)
+#elif defined(MODE_MDA) || defined(MODE_VT100)
 					if (first == rw_x || rw_x == rw_stopx - 1)
 						R_DrawLineColumnTextMDA();
 					else
@@ -1937,7 +1937,7 @@ void R_RenderSegLoopFlat(void)
 						colfunc();
 						break;
 					}
-#elif defined(MODE_MDA)
+#elif defined(MODE_MDA) || defined(MODE_VT100)
 					if (first == rw_x || rw_x == rw_stopx - 1)
 						R_DrawLineColumnTextMDA();
 					else
@@ -1994,7 +1994,7 @@ void R_RenderSegLoopFlatter(void)
 
 	byte *firstPixel;
 
-#if defined(MODE_MDA)
+#if defined(MODE_MDA) || defined(MODE_VT100)
 	int first = rw_x;
 #endif
 
@@ -2120,7 +2120,7 @@ void R_RenderSegLoopFlatter(void)
 					colfunc();
 					break;
 				}
-#elif defined(MODE_MDA)
+#elif defined(MODE_MDA) || defined(MODE_VT100)
 				if (first == rw_x || rw_x == rw_stopx - 1)
 					R_DrawLineColumnTextMDA();
 				else
@@ -2177,7 +2177,7 @@ void R_RenderSegLoopFlatter(void)
 						colfunc();
 						break;
 					}
-#elif defined(MODE_MDA)
+#elif defined(MODE_MDA) || defined(MODE_VT100)
 					if (first == rw_x || rw_x == rw_stopx - 1)
 						R_DrawLineColumnTextMDA();
 					else
@@ -2238,7 +2238,7 @@ void R_RenderSegLoopFlatter(void)
 						colfunc();
 						break;
 					}
-#elif defined(MODE_MDA)
+#elif defined(MODE_MDA) || defined(MODE_VT100)
 					if (first == rw_x || rw_x == rw_stopx - 1)
 						R_DrawLineColumnTextMDA();
 					else

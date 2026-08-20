@@ -45,7 +45,7 @@
 
 #include "m_menu.h"
 
-#if !defined(TEXT_MODE) && !defined(MODE_MDA)
+#if !defined(TEXT_MODE) && !defined(MODE_MDA) && !defined(MODE_VT100)
 
 // For use if I do walls with outsides/insides
 #define REDS (256 - 5 * 16)
