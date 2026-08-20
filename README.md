@@ -27,6 +27,9 @@ Doom port for DOS, based on PCDoom by @nukeykt. The goal of this port is to make
 * Roland SC-55 support (display)
 * Yamaha TG300 support (display)
 * Yamaha MU80 support (display)
+* IBM PC Music Feature card support
+* ESS ESFM support
+* Limited Adlib Gold support
 * Lot's of optimizations to make the game run faster / smoother
 * Removed low memory limit (may cause crashes with low RAM)
 * New detail level: Potato. It renders the full scene with a quarter width resolution (max 80x200). Much faster rendering, specially on 386 cpu's and slow 8-bit VGA ISA cards.
@@ -73,19 +76,28 @@ Requirements: Linux or WSL2 on Windows.
 Example to build a fresh FastDoom executable ready to use on real hardware:
 
 ```
-./source fdenv.sh
+source fdenv.sh
 ./build.sh fdoom.exe -clean -stub
 ```
 
 ## Build instructions (FDSETUP)
 
-Requirements: Windows 3.1 or Windows 9x
+Requirements: Linux or WSL2 on Windows.
 
-1. Install Borland C++ 4.52
-2. Install Laughing Dog Screen Maker 1.14
-3. Run .\FDSETUP\SCREENS\MAKE.BAT (MS-DOS)
-4. Open setup.ide project in Borland C++ IDE
-5. Build the project
+1. Install OpenWatcom v2
+2. Execute `source fdenv.sh`
+3. Build:
+    - Clean the project `wmake clean`
+    - Generate the executable `wmake fdsetup.exe`
+
+Example to build a fresh FastDoom Setup executable ready to use on real hardware:
+
+```
+source fdenv.sh
+cd FDSETUP
+wmake clean
+wmake fdsetup.exe
+```
 
 ## Contributors
 
@@ -94,11 +106,6 @@ This project exists thanks to all the people who contribute.
 <a href="https://github.com/viti95/FastDoom/graphs/contributors">
 <img src="https://contrib.rocks/image?repo=viti95/fastdoom" />
 </a>
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=viti95/FastDoom&type=Date)](https://star-history.com/#viti95/FastDoom&Date)
-
 
 ## Contributing
 

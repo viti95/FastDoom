@@ -22,6 +22,8 @@
 #include "ns_sbdm.h"
 #include "ns_adbfx.h"
 #include "ns_tandy.h"
+#include "ns_wss.h"
+#include "ns_gold.h"
 #include "options.h"
 #include "fastmath.h"
 #include "ns_fxm.h"
@@ -689,6 +691,14 @@ int MV_SetMixMode(int numchannels)
         MV_MixMode = SOUNDSCAPE_SetMixMode(mode);
         break;
 
+    case WSS:
+        MV_MixMode = WSS_SetMixMode(mode);
+        break;
+    
+    case GOLD:
+        MV_MixMode = GOLD_SetMixMode(mode);
+        break;
+
     case SoundSource:
     case Tandy3Voice:
     case PC1bit:
@@ -829,6 +839,34 @@ int MV_StartPlayback(
         MV_DMAChannel = SOUNDSCAPE_DMAChannel;
         break;
 
+    case WSS:
+        status = WSS_BeginBufferedPlayback(MV_MixBuffer[0],
+                                           TotalBufferSize, MV_NumberOfBuffers,
+                                           MV_RequestedMixRate, MV_MixMode, MV_ServiceVoc);
+
+        if (status != WSS_Ok)
+        {
+            return (MV_Error);
+        }
+
+        MV_MixRate = WSS_GetPlaybackRate();
+        MV_DMAChannel = WSS_DMAChannel;
+        break;
+
+    case GOLD:
+        status = GOLD_BeginBufferedPlayback(MV_MixBuffer[0],
+                                           TotalBufferSize, MV_NumberOfBuffers,
+                                           MV_RequestedMixRate, MV_MixMode, MV_ServiceVoc);
+
+        if (status != GOLD_Ok)
+        {
+            return (MV_Error);
+        }
+
+        MV_MixRate = GOLD_GetPlaybackRate();
+        MV_DMAChannel = GOLD_DMAChannel;
+        break;
+
     case SoundSource:
         SS_BeginBufferedPlayback(MV_MixBuffer[0],
                                  TotalBufferSize, MV_NumberOfBuffers,
@@ -936,6 +974,10 @@ void MV_StopPlayback(
         SOUNDSCAPE_StopPlayback();
         break;
 
+    case WSS:
+        WSS_StopPlayback();
+        break;
+
     case SoundSource:
         SS_StopPlayback();
         break;
@@ -961,6 +1003,9 @@ void MV_StopPlayback(
         break;
     case Tandy3Voice:
         TANDY_StopPlayback();
+        break;
+    case GOLD:
+        GOLD_StopPlayback();
         break;
     }
 
@@ -1189,79 +1234,19 @@ int MV_Init(
 
     MV_SetReverseStereo(FALSE);
 
-    // Initialize the sound card
-    switch (soundcard)
+    // Check for SB Pro reverse stereo
+    if ((soundcard == SoundBlaster) || (soundcard == Awe32))
     {
-    case UltraSound:
-        status = GUSWAVE_Init();
-        break;
-
-    case SoundBlaster:
-    case Awe32:
-        status = BLASTER_Init();
-
         if ((BLASTER_Config.Type == SBPro) ||
             (BLASTER_Config.Type == SBPro2))
         {
             MV_SetReverseStereo(TRUE);
         }
-        break;
-
-    case ProAudioSpectrum:
-    case SoundMan16:
-        status = PAS_Init();
-        break;
-
-    case SoundScape:
-        status = SOUNDSCAPE_Init();
-        break;
-
-    case SoundSource:
-        status = SS_Init(soundcard, -1);
-        break;
-    
-    case PC1bit:
-        status = PCSpeaker_Init(soundcard);
-        break;
-    
-    case PCPWM:
-        status = PCSpeaker_PWM_Init(soundcard);
-        break;
-    
-    case CMS:
-        status = CMS_Init(soundcard, -1);
-        break;
-
-    case LPTDAC:
-        status = LPT_Init(soundcard, -1);
-        break;
-    
-    case SoundBlasterDirect:
-        status = SBDM_Init(soundcard);
-        break;
-
-    case Adlib:
-    case OPL2LPT:
-    case OPL3LPT:
-        status = ADBFX_Init(soundcard, dmx_snd_port);
-        break;
-
-    case Tandy3Voice:
-        status = TANDY_Init(soundcard);
-        break;
-
     }
 
-    if (status != MV_Ok)
-    {
-        Z_Free(MV_Voices);
-        MV_Voices = NULL;
-        MV_TotalMemory = 0;
-
-        DPMI_FreeDOSMemory(MV_BufferDescriptor);
-
-        return (MV_Error);
-    }
+    // Note: The sound card is already initialized by FX_SetupCard()
+    // or FX_SetupSoundBlaster() before FX_Init()/MV_Init() is called.
+    // Do NOT re-initialize here to avoid shutdown+reinit cycle.
 
     MV_SoundCard = soundcard;
     MV_Installed = TRUE;
@@ -1347,6 +1332,10 @@ int MV_Shutdown(
         SOUNDSCAPE_Shutdown();
         break;
 
+    case WSS:
+        WSS_Shutdown();
+        break;
+
     case SoundSource:
         SS_Shutdown();
         break;
@@ -1372,6 +1361,9 @@ int MV_Shutdown(
         break;
     case Tandy3Voice:
         TANDY_Shutdown();
+        break;
+    case GOLD:
+        GOLD_Shutdown();
         break;
     }
 

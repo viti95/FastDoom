@@ -16,6 +16,8 @@
 #include "ns_cms.h"
 #include "ns_scape.h"
 #include "ns_llm.h"
+#include "ns_imfc.h"
+#include "ns_esfm.h"
 #include "options.h"
 #include "doomstat.h"
 
@@ -35,6 +37,8 @@ int MUSIC_InitCMS(midifuncs *Funcs, int Address);
 int MUSIC_InitSBMIDI(midifuncs *Funcs,int Address);
 int MUSIC_InitRS232MIDI(midifuncs *Funcs,int Address);
 int MUSIC_InitLPTMIDI(midifuncs *Funcs,int Address);
+int MUSIC_InitIMFC(midifuncs *Funcs, int Address);
+int MUSIC_InitESFM(midifuncs *Funcs, int Address);
 
 /*---------------------------------------------------------------------
    Function: MUSIC_Init
@@ -93,6 +97,14 @@ int MUSIC_Init(int SoundCard, int Address)
 
     case CMS:
         status = MUSIC_InitCMS(&MUSIC_MidiFunctions, Address);
+        break;
+
+    case IMFC:
+        status = MUSIC_InitIMFC(&MUSIC_MidiFunctions, Address);
+        break;
+
+    case ESFM:
+        status = MUSIC_InitESFM(&MUSIC_MidiFunctions, Address);
         break;
 
     case AudioCD:
@@ -177,6 +189,15 @@ int MUSIC_Shutdown(
         break;
     case CMS:
 	CMS_MIDI_Shutdown();
+        break;
+
+    case IMFC:
+        IMFC_Shutdown();
+        break;
+
+    case ESFM:
+        ESFM_Shutdown();
+        break;
     }
 
     return (status);
@@ -278,6 +299,8 @@ int MUSIC_PlaySong(
     case Awe32:
     case UltraSound:
     case CMS:
+    case IMFC:
+    case ESFM:
         MIDI_StopSong();
         status = MIDI_PlaySong(song, loopflag);
         if (status != MIDI_Ok)
@@ -578,6 +601,70 @@ int MUSIC_InitCMS(
     Funcs->ChannelAftertouch = NULL;
     Funcs->PitchBend = CMS_PitchBend;
     Funcs->SetVolume = NULL;
+    Funcs->GetVolume = NULL;
+    Funcs->SysEx = NULL;
+
+    MIDI_SetMidiFuncs(Funcs);
+
+    return (status);
+}
+
+int MUSIC_InitIMFC(
+    midifuncs *Funcs,
+    int Address)
+
+{
+    int status;
+
+    status = MUSIC_Ok;
+
+    if (IMFC_Init(Address) != IMFC_Ok)
+    {
+        return (MUSIC_Error);
+    }
+
+    Funcs->NoteOff = IMFC_NoteOff;
+    Funcs->NoteOn = IMFC_NoteOn;
+    Funcs->PolyAftertouch = IMFC_PolyAftertouch;
+    Funcs->ControlChange = IMFC_ControlChange;
+    Funcs->ProgramChange = IMFC_SetGMProgram;
+    Funcs->ChannelAftertouch = IMFC_ChannelAftertouch;
+    Funcs->PitchBend = IMFC_PitchBend;
+    Funcs->SetVolume = IMFC_SetVolume;
+    Funcs->GetVolume = IMFC_GetVolume;
+    Funcs->SysEx = IMFC_SysEx;
+
+    MIDI_SetMidiFuncs(Funcs);
+
+    return (status);
+}
+
+int MUSIC_InitESFM(
+    midifuncs *Funcs,
+    int Address)
+
+{
+    int status;
+
+    status = MUSIC_Ok;
+
+    if (!ignoreSoundChecks)
+    {
+        if (!ESFM_DetectFM())
+        {
+            return (MUSIC_Error);
+        }
+    }
+    ESFM_Init(Address);
+
+    Funcs->NoteOff = ESFM_NoteOff;
+    Funcs->NoteOn = ESFM_NoteOn;
+    Funcs->PolyAftertouch = NULL;
+    Funcs->ControlChange = ESFM_ControlChange;
+    Funcs->ProgramChange = ESFM_ProgramChange;
+    Funcs->ChannelAftertouch = NULL;
+    Funcs->PitchBend = ESFM_SetPitchBend;
+    Funcs->SetVolume = ESFM_SetVolume;
     Funcs->GetVolume = NULL;
     Funcs->SysEx = NULL;
 

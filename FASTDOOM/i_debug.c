@@ -105,10 +105,13 @@ void I_Putchar(byte c)
 #if (DEBUG_SERIAL_ENABLED == 1)
     {
       int status;
-      // Yuck, busy wait. Install an interrupt with DPMI?
-      do {
-        status = inp(DEBUG_SERIAL_BASE_IO + 5);
-      } while ((status & 0x20) == 0);
+      // VT100: \n must become \r\n so the cursor returns to column 0
+      if (c == '\n')
+      {
+        do { status = inp(DEBUG_SERIAL_BASE_IO + 5); } while ((status & 0x20) == 0);
+        outp(DEBUG_SERIAL_BASE_IO, '\r');
+      }
+      do { status = inp(DEBUG_SERIAL_BASE_IO + 5); } while ((status & 0x20) == 0);
       outp(DEBUG_SERIAL_BASE_IO, c);
     }
 #endif
@@ -145,26 +148,34 @@ void I_Printf(const char *format, ...)
         {
             char *p;
             fixed_t value;
+            char spec[16];   /* buffer to hold full "%.04x" etc. */
+            int si = 0;
+
+            spec[si++] = '%';
             c = *format++;
+
+            /*
+             * Collect the full specifier: flags, width, precision,
+             * length modifier, and final conversion letter.
+             */
+            while (c != '\0' && c != 'd' && c != 'i' && c != 'u' &&
+                   c != 'x' && c != 'X' && c != 'f' && c != 's' &&
+                   c != 'c' && c != 'p' && c != 'n' && c != '%')
+            {
+                spec[si++] = c;
+                c = *format++;
+            }
+            spec[si++] = c;
+            spec[si] = '\0';
+
             switch (c)
             {
             case 'd':
             case 'i':
-                sprintf(buf, "%d", *((int *)arg++));
-                I_Puts(buf);
-                break;
             case 'u':
-                sprintf(buf, "%u", *((int *)arg++));
-                I_Puts(buf);
-                break;
             case 'x':
-                sprintf(buf, "%x", *((int *)arg++));
-                I_Puts(buf);
-                break;
+            case 'X':
             case 'f':
-                sprintf(buf, "%f", *((int *)arg++));
-                I_Puts(buf);
-                break;
             case 'p':
                 value = *((fixed_t *)arg++);
                 sprintf(buf, "%i.%04i", value >> FRACBITS, ((value & 65535) * 10000) >> FRACBITS);
@@ -179,8 +190,11 @@ void I_Printf(const char *format, ...)
             case 'c':
                 I_Putchar(*((byte *)arg++));
                 break;
+            case '%':
+                I_Putchar('%');
+                break;
             default:
-                I_Putchar(*((int *)arg++));
+                I_Putchar(c);
                 break;
             }
         }
@@ -436,12 +450,17 @@ const char *I_LookupSymbolName(void* addr) {
 
 void I_DebugInit(void) {
 #if (DEBUG_SERIAL_ENABLED == 1)
-    outp(DEBUG_SERIAL_BASE_IO + 1, 0x00); // Disable all interrupts
-    outp(DEBUG_SERIAL_BASE_IO + 3, 0x80); // Enable the baud rate divisor
-    outp(DEBUG_SERIAL_BASE_IO + 0, 115200 / DEBUG_SERIAL_BAUD); // Set the baud rate
-    outp(DEBUG_SERIAL_BASE_IO + 1, 0x00); // Hi byte
-    outp(DEBUG_SERIAL_BASE_IO + 3, 0x03); // 8 bits, no parity, one stop bit
-    I_Printf("Serial debug port initialized\n");
+    {
+      // Initialise the serial port for 115200-8-N-1
+      int status;
+      outp(DEBUG_SERIAL_BASE_IO + 1, 0x00); // Disable all interrupts
+      outp(DEBUG_SERIAL_BASE_IO + 3, 0x80); // Enable the baud rate divisor
+      outp(DEBUG_SERIAL_BASE_IO + 0, 115200 / DEBUG_SERIAL_BAUD); // Low byte of divisor
+      outp(DEBUG_SERIAL_BASE_IO + 1, 0x00); // Hi byte of divisor
+      outp(DEBUG_SERIAL_BASE_IO + 3, 0x03); // 8 bits, no parity, one stop bit
+
+      I_Printf("Serial debug port initialized\n");
+    }
 #endif
 #if (DEBUG_FILE_ENABLED == 1)
     f_log = fopen("fdoom.log", "a");

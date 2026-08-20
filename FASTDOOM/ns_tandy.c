@@ -163,7 +163,8 @@ int TANDY_Init(int soundcard)
         TANDY_Shutdown();
     }
 
-    TandyLUTdb = I_ReadBinaryStatic("DATA\\TANDY.BIN", 256);
+    if(TandyLUTdb == NULL)
+        TandyLUTdb = I_ReadBinaryStatic("DATA\\TANDY.BIN", 256);
 
     TANDY_StartStreaming();
 

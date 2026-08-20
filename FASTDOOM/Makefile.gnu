@@ -99,11 +99,15 @@ GLOBOBJS = \
  ns_speak.obj \
  ns_pwm.obj \
  ns_cms.obj \
+ ns_imfc.obj \
  ns_lpt.obj \
  ns_sbdm.obj \
  ns_adbfx.obj \
  ns_tandy.obj \
  ns_cd.obj \
+ ns_wss.obj \
+ ns_esfm.obj \
+ ns_gold.obj \
  i_debug.obj \
  i_random.obj \
  i_main.obj \

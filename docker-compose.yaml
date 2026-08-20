@@ -4,8 +4,23 @@ version: '3.8'
 services:
   builder:
     build: .
+    profiles: [builder]
     volumes:
       - .:/app           # Monta el proyecto local
       - ./dist:/app/dist # Carpeta compartida para resultados
     working_dir: /app
     command: /bin/bash -c -e "source fdenv.sh && ./package.sh && cp FastDoom_*.zip /app/dist"
+
+  fdsetup:
+    build: .
+    profiles: [fdsetup]
+    volumes:
+      - .:/app
+      - ./dist:/app/dist
+    working_dir: /app/FDSETUP
+    command: >
+      /bin/bash -c "
+        python3 gen_pup_data.py &&
+        wmake -f makefile &&
+        cp fdsetup.exe /app/dist/FDSETUP.EXE
+      "

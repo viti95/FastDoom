@@ -43,6 +43,8 @@ extern unsigned int *frametime;
 extern unsigned int limitram;
 extern unsigned int freeram;
 
+/* Command line options */
+extern boolean preload;
 
 // Called by IO functions when input is detected.
 void D_PostEvent(event_t *ev);

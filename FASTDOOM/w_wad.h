@@ -58,6 +58,9 @@ extern int numlumps;
 
 void W_InitMultipleFiles(char **filenames);
 
+/* Preload all lumps into cache (for systems with plenty of RAM). */
+void W_PreloadAllLumps(void);
+
 short W_GetNumForName(char *name);
 
 #define W_LumpLength(lump) lumpinfo[lump].size

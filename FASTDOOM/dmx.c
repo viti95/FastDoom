@@ -159,7 +159,8 @@ unsigned char *LogoSC55;
 
 void MUS_ImgSC55(void)
 {
-    LogoSC55 = I_ReadBinaryStatic("DATA\\SC55.BIN", 72);
+    if (LogoSC55 == NULL)
+        LogoSC55 = I_ReadBinaryStatic("DATA\\SC55.BIN", 72);
     MUSIC_SysEx(LogoSC55, 72);
     Z_Free(LogoSC55);
 }
@@ -168,7 +169,8 @@ unsigned char *LogoTG300;
 
 void MUS_ImgTG300(void)
 {
-    LogoTG300 = I_ReadBinaryStatic("DATA\\TG300.BIN", 55);
+    if (LogoTG300 == NULL)
+        LogoTG300 = I_ReadBinaryStatic("DATA\\TG300.BIN", 55);
     MUSIC_SysEx(LogoTG300, 55);
     Z_Free(LogoTG300);
 }
@@ -603,6 +605,14 @@ int ASS_GetSoundCardCode(int sndDevice)
         return RS232MIDI;
     case snd_LPTMIDI:
         return LPTMIDI;
+    case snd_WSS:
+        return WSS;
+    case snd_IMFC:
+        return IMFC;
+    case snd_ESFM:
+        return ESFM;
+    case snd_GOLD:
+        return GOLD;
     default:
         return -1;
     }
@@ -662,7 +672,8 @@ void ASS_Init(int rate, int mdev, int sdev)
         {
         case PC:
             // Load divisors
-            divisors = (unsigned short *)I_ReadBinaryStatic("DATA\\PCSPK.BIN", 256);
+            if (divisors == NULL)
+                divisors = (unsigned short *)I_ReadBinaryStatic("DATA\\PCSPK.BIN", 256);
             status = PCFX_Init();
             PCFX_SetTotalVolume(255);
             return;

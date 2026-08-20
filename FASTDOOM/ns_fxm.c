@@ -14,7 +14,9 @@
 #include "ns_llm.h"
 #include "ns_fxm.h"
 #include "ns_adbfx.h"
+#include "ns_wss.h"
 #include "ns_tandy.h"
+#include "ns_gold.h"
 #include "options.h"
 #include "doomstat.h"
 
@@ -190,6 +192,30 @@ int FX_SetupCard(int SoundCard, fx_device *device, int port)
         device->MaxSampleBits = 8;
         device->MaxChannels = 1;
         break;
+    case WSS:
+        DeviceStatus = WSS_Init();
+        if (DeviceStatus != WSS_Ok && !ignoreSoundChecks)
+        {
+            status = FX_Error;
+            break;
+        }
+        device->MaxVoices = 9;
+        device->MaxSampleBits = 8;
+        device->MaxChannels = 2;
+        WSS_GetCardInfo(&device->MaxSampleBits, &device->MaxChannels);
+        break;
+    case GOLD:
+        DeviceStatus = GOLD_Init();
+        if (DeviceStatus != GOLD_Ok && !ignoreSoundChecks)
+        {
+            status = FX_Error;
+            break;
+        }
+        device->MaxVoices = 9;
+        device->MaxSampleBits = 8;
+        device->MaxChannels = 2;
+        GOLD_GetCardInfo(&device->MaxSampleBits, &device->MaxChannels);
+        break;
     default:
         status = FX_Error;
     }
@@ -302,6 +328,8 @@ int FX_Init(
     case OPL2LPT:
     case OPL3LPT:
     case SoundBlasterDirect:
+    case WSS:
+    case GOLD:
         devicestatus = MV_Init(SoundCard, FX_MixRate, numvoices, numchannels);
         if (devicestatus != MV_Ok && !ignoreSoundChecks)
         {
@@ -357,6 +385,8 @@ int FX_Shutdown(
     case OPL2LPT:
     case OPL3LPT:
     case SoundBlasterDirect:
+    case WSS:
+    case GOLD:
         status = MV_Shutdown();
         if (status != MV_Ok)
         {
@@ -427,6 +457,8 @@ void FX_SetVolume(int volume)
     case LPTDAC:
     case SoundBlasterDirect:
     case CMS:
+    case WSS:
+    case GOLD:
         MV_SetVolume(volume);
         break;
     }

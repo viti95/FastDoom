@@ -50,7 +50,7 @@ void I_ReplaceEscapedNewlines(char *str)
     *write_ptr = '\0';
 }
 
-#define TOTAL_LINES 227
+#define TOTAL_LINES 229
 unsigned int linePosition[TOTAL_LINES];
 
 void I_GetProgFilePositionCache()

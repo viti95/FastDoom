@@ -1,0 +1,19 @@
+# FDSETUP.EXE linker directive file
+
+option map
+option stack=8192
+option eliminate
+libpath %WATCOM%/lib286
+libpath %WATCOM%/lib286/dos
+format dos
+name fdsetup
+
+file config.obj
+file control.obj
+file default.obj
+file main.obj
+file menu.obj
+file music.obj
+file pup_data.obj
+file setup.obj
+file sfx.obj

@@ -28,6 +28,10 @@ typedef enum
    SBMIDI,
    RS232MIDI,
    LPTMIDI,
+   WSS,
+   IMFC,
+   ESFM,
+   GOLD,
    NumSoundCards
 } soundcardnames;
 
