@@ -114,11 +114,11 @@ void W_AddFile(char *filename)
 
     if ((handle = open(filename, O_RDONLY | O_BINARY)) == -1)
     {
-        printf("\tcouldn't open %s\n", filename);
+        printf("    Couldn't open %s\n", filename);
         return;
     }
 
-    printf("\tadding %s\n", filename);
+    printf("    Adding %s\n", filename);
     startlump = numlumps;
 
     if (strcmpi(filename + strlen(filename) - 3, "wad"))
@@ -217,6 +217,7 @@ void W_PreloadAllLumps(void)
     int count = 0;
     int loaded = 0;
     int percentage;
+    int previousPercentage = -1;
 
     /* First pass: calculate total size of lumps to preload */
     for (i = 0; i < numlumps; i++)
@@ -229,9 +230,6 @@ void W_PreloadAllLumps(void)
         return;
 
     /* Load lumps with progress indicator */
-    printf("\tPreloading WAD: ");
-    fflush(stdout);
-
     for (i = 0; i < numlumps; i++)
     {
         ptr = lumpcache[i];
@@ -246,11 +244,15 @@ void W_PreloadAllLumps(void)
         }
 
         /* Update progress */
-        percentage = (bytesLoaded * 100) / totalSize;
-        printf("\r\tPreloading WAD: %3d%%", percentage);
-        fflush(stdout);
+        percentage = Mul100(bytesLoaded) / totalSize;
+        
+        if (percentage != previousPercentage) {
+            printf("\r    Preloading WAD: %3d%%", percentage);
+            fflush(stdout);
+            previousPercentage = percentage;
+        }
     }
-    printf("\n\t\tpreloaded all %d lumps into cache\n", loaded);
+    printf("\n");
     fflush(stdout);
 }
 unsigned int W_LumpNameHash(char *s)
