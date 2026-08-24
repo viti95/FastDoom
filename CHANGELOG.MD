@@ -2,6 +2,10 @@
 
 ## 1.4.0 (?? ??? ????)
 * Fixed "Loading IWAD from sub-directory causes major errors" #279
+* New command line parameter -gamemode to select the game mode ("shareware", "registered", "commercial" or "retail")
+* New command line parameter -gamemission to select the game mission ("doom", "doom2", "tnt" or "plutonia")
+* Command line parameter -complevel now validates its value (only 2, 3 or 4 are valid)
+* Unknown IWADs loaded with -iwad command line parameter are now rejected unless -complevel, -gamemode and -gamemission are all specified
 * Added 5×6 integer scaling for 320×200 VESA backbuffer modes, optimized for 1600×1200 (4:3) displays while preserving the original aspect ratio.
 * IBM Music Feature card support
 * Windows Sound System (WSS) support
