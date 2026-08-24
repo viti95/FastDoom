@@ -675,13 +675,13 @@ void R_WriteTintMapFile(void) {
 
 void R_GetTintMapCacheFileName(void)
 {
-    int length = strlen(iwadfile);
+    int length = strlen(iwadname);
 
-    memcpy(tintmapcachefile, iwadfile, 13);
+    memcpy(tintmapcachefile, iwadname, length + 1);
 
-    tintmapcachefile[length-3] = 'T';
-    tintmapcachefile[length-2] = 'C';
-    tintmapcachefile[length-1] = 'F';
+    tintmapcachefile[length - 3] = 'T';
+    tintmapcachefile[length - 2] = 'C';
+    tintmapcachefile[length - 1] = 'F';
 }
 
 #define R_VAL 0
