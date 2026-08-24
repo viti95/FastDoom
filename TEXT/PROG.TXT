@@ -227,3 +227,7 @@ Failed on allocation of %i bytes
 AWE32 error: Cannot open %s
 AWE32 error: Cannot load SoundFont file %s
 AWE32 error: Invalid SoundFont file %s
+Invalid -gamemode parameter
+Invalid -gamemission parameter
+Invalid -complevel parameter
+Unknown IWAD %s. Please select complevel, gamemode and gamemission.

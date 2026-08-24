@@ -20,6 +20,7 @@
 //
 
 #include <string.h>
+#include <strings.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <conio.h>
@@ -212,7 +213,7 @@ byte advancedemo;
 boolean modifiedgame;
 
 gamemode_t gamemode = indetermined;
-gamemission_t gamemission = doom;
+gamemission_t gamemission = none;
 
 char currentlevelname[40];
 char nextlevelname[40];
@@ -1083,12 +1084,44 @@ void LoadExternalIWAD(void)
         }
     }
 
-    // Unknown IWAD. Load as Doom 2.
-    complevel = COMPLEVEL_DOOM;
-    gamemode = commercial;
-    gamemission = doom2;
-    D_AddFile(iwadfile);
-    return;
+    // Unknown IWAD
+    if (M_CheckParm("-complevel") && M_CheckParm("-gamemode") &&
+        M_CheckParm("-gamemission"))
+    {
+        D_AddFile(iwadfile);
+        return;
+    }
+
+    I_Error(34, iwadfile);
+}
+
+static const char *gamemodenames[] =
+{
+    "shareware", "registered", "commercial", "retail"
+};
+
+static const char *gamemissionnames[] =
+{
+    "doom", "doom2", "tnt", "plutonia"
+};
+
+static int ParseEnumValue(const char *value, const char **names, int count)
+{
+    int i;
+    long number;
+    char *end;
+
+    number = strtol(value, &end, 10);
+    if (end != value && *end == '\0' && number >= 0 && number < count)
+        return (int)number;
+
+    for (i = 0; i < count; i++)
+    {
+        if (!strcasecmp(value, names[i]))
+            return i;
+    }
+
+    return -1;
 }
 
 //
@@ -1308,8 +1341,52 @@ void D_DoomMain(void)
 
     if ((p = M_CheckParm("-complevel")))
     {
-        if (p < myargc - 1)
-            complevel = atoi(myargv[p + 1]);
+        int v;
+
+        if (p >= myargc - 1)
+            I_Error(33);
+
+        v = atoi(myargv[p + 1]);
+        if (v != COMPLEVEL_DOOM &&
+            v != COMPLEVEL_ULTIMATE_DOOM &&
+            v != COMPLEVEL_FINAL_DOOM)
+            I_Error(33);
+
+        complevel = (unsigned char)v;
+    }
+
+    // Overrides for the game mode / mission detected from the IWAD.
+    // Useful for custom IWADs that are not in the built-in table.
+    // Both accept a number (see gamemode_t / gamemission_t in doomdef.h)
+    // or a name: -gamemode registered -gamemission doom2
+    if ((p = M_CheckParm("-gamemode")))
+    {
+        int v;
+
+        if (p >= myargc - 1)
+            I_Error(31);
+
+        v = ParseEnumValue(myargv[p + 1], gamemodenames,
+                           sizeof(gamemodenames) / sizeof(gamemodenames[0]));
+        if (v < 0)
+            I_Error(31);
+
+        gamemode = (gamemode_t)v;
+    }
+
+    if ((p = M_CheckParm("-gamemission")))
+    {
+        int v;
+
+        if (p >= myargc - 1)
+            I_Error(32);
+
+        v = ParseEnumValue(myargv[p + 1], gamemissionnames,
+                           sizeof(gamemissionnames) / sizeof(gamemissionnames[0]));
+        if (v < 0)
+            I_Error(32);
+
+        gamemission = (gamemission_t)v;
     }
 
 #if defined(MODE_SIGMA) || defined(MODE_PCP) || defined(MODE_CGA16) || defined(MODE_EGA) || defined(MODE_CGA_AFH) || defined(MODE_INCOLOR)
