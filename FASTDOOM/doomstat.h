@@ -260,7 +260,8 @@ extern int maxammo[NUMAMMO];
 // File handling stuff.
 extern char basedefault[13];
 extern char sbkfile[13];
-extern char iwadfile[13];
+extern char *iwadfile;
+extern char iwadname[13];
 extern char demofile[13];
 extern char savegamename[14];
 

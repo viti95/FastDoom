@@ -1112,14 +1112,14 @@ extern short skytexture;
 
 void G_GetLevelsFileName(void)
 {
-    int length = strlen(iwadfile);
-    int position = levelfilepos;
 
-    memcpy((char *)(levelsfile+levelfilepos), iwadfile, 13);
+    int length = strlen(iwadname);
 
-    levelsfile[length-3+levelfilepos] = 'T';
-    levelsfile[length-2+levelfilepos] = 'X';
-    levelsfile[length-1+levelfilepos] = 'T';
+    memcpy(levelsfile + levelfilepos, iwadname, length + 1);
+
+    levelsfile[levelfilepos + length - 3] = 'T';
+    levelsfile[levelfilepos + length - 2] = 'X';
+    levelsfile[levelfilepos + length - 1] = 'T';
 }
 
 

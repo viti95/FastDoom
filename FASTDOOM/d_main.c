@@ -219,7 +219,8 @@ char nextlevelname[40];
 
 char basedefault[13] = "fdoom.cfg"; // default file
 char sbkfile[13] = "SYNTHGS.SBK";
-char iwadfile[13];
+char *iwadfile;
+char iwadname[13];
 char savegamename[14];
 
 void D_ProcessEvents(void);
@@ -1011,206 +1012,75 @@ void D_AddFile(char *file)
 #define TNTWADSIZE1 18195736
 #define TNTWADSIZE2 18654796
 
+typedef struct
+{
+    char *name;
+    unsigned char complevel;
+    gamemode_t gamemode;
+    gamemission_t gamemission;
+    char *savegamename;
+    long size1, size2;
+} iwadinfo_t;
+
+#define NUMIWADS 8
+
+static const iwadinfo_t iwads[NUMIWADS] =
+{
+    { "doom1.wad",    COMPLEVEL_DOOM,          shareware,  doom,      SAVEGAMENAME_DOOM1,     DOOM1WADSIZE,        0 },
+    { "doom.wad",     COMPLEVEL_DOOM,          registered, doom,      SAVEGAMENAME_DOOM,      DOOMWADSIZE,         0 },
+    { "doomu.wad",    COMPLEVEL_ULTIMATE_DOOM, retail,     doom,      SAVEGAMENAME_DOOMU,     ULTIMATEDOOMWADSIZE,   0 },
+    { "doom2.wad",    COMPLEVEL_DOOM,          commercial, doom2,     SAVEGAMENAME_DOOM2,     DOOM2WADSIZE,        0 },
+    { "plutonia.wad", COMPLEVEL_FINAL_DOOM,    commercial, pack_plut, SAVEGAMENAME_PLUT,      PLUTONIAWADSIZE1,    PLUTONIAWADSIZE2 },
+    { "tnt.wad",      COMPLEVEL_FINAL_DOOM,    commercial, pack_tnt,  SAVEGAMENAME_TNT,       TNTWADSIZE1,         TNTWADSIZE2 },
+    { "freedm1.wad",  COMPLEVEL_ULTIMATE_DOOM, retail,     doom,      SAVEGAMENAME_FREEDOOM1,  0,                  0 },
+    { "freedm2.wad",  COMPLEVEL_DOOM,          commercial, doom2,     SAVEGAMENAME_FREEDOOM2,  0,                  0 }
+};
+
+// Selection menu values start at 49 and match the table order.
 void LoadIWAD(int selection)
 {
-    boolean loadError = false;
+    int i = selection - 49;
 
-    switch (selection)
+    if (i < 0 || i >= NUMIWADS)
+        I_Error(1);
+
+    if (iwadfile == NULL)
+        iwadfile = iwads[i].name;
+
+    if (access(iwadfile, R_OK))
+        I_Error(1);
+
+    complevel = iwads[i].complevel;
+    gamemode = iwads[i].gamemode;
+    gamemission = iwads[i].gamemission;
+    strcpy(iwadname, iwads[i].name);
+    strcpy(savegamename, iwads[i].savegamename);
+
+    if (iwads[i].size1)
     {
-    case 49:
-        if (!access("doom1.wad", R_OK))
-        {
-            complevel = COMPLEVEL_DOOM;
-            gamemode = shareware;
-            gamemission = doom;
-            strcpy(iwadfile, "doom1.wad");
-            strcpy(savegamename, SAVEGAMENAME_DOOM1);
-            D_CheckFileSize(iwadfile, DOOM1WADSIZE);
-            D_AddFile("doom1.wad");
-            return;
-        }
+        if (iwads[i].size2)
+            D_CheckFileSize2(iwadfile, iwads[i].size1, iwads[i].size2);
         else
-        {
-            loadError = true;
-        }
-        break;
-    case 50:
-        if (!access("doom.wad", R_OK))
-        {
-            complevel = COMPLEVEL_DOOM;
-            gamemode = registered;
-            gamemission = doom;
-            strcpy(iwadfile, "doom.wad");
-            strcpy(savegamename, SAVEGAMENAME_DOOM);
-            D_CheckFileSize(iwadfile, DOOMWADSIZE);
-            D_AddFile("doom.wad");
-            return;
-        }
-        else
-        {
-            loadError = true;
-        }
-        break;
-    case 51:
-        if (!access("doomu.wad", R_OK))
-        {
-            complevel = COMPLEVEL_ULTIMATE_DOOM;
-            gamemode = retail;
-            gamemission = doom;
-            strcpy(iwadfile, "doomu.wad");
-            strcpy(savegamename, SAVEGAMENAME_DOOMU);
-            D_CheckFileSize(iwadfile, ULTIMATEDOOMWADSIZE);
-            D_AddFile("doomu.wad");
-            return;
-        }
-        else
-        {
-            loadError = true;
-        }
-        break;
-    case 52:
-        if (!access("doom2.wad", R_OK))
-        {
-            complevel = COMPLEVEL_DOOM;
-            gamemode = commercial;
-            gamemission = doom2;
-            strcpy(iwadfile, "doom2.wad");
-            strcpy(savegamename, SAVEGAMENAME_DOOM2);
-            D_CheckFileSize(iwadfile, DOOM2WADSIZE);
-            D_AddFile("doom2.wad");
-            return;
-        }
-        else
-        {
-            loadError = true;
-        }
-        break;
-    case 53:
-        if (!access("plutonia.wad", R_OK))
-        {
-            complevel = COMPLEVEL_FINAL_DOOM;
-            gamemode = commercial;
-            gamemission = pack_plut;
-            strcpy(iwadfile, "plutonia.wad");
-            strcpy(savegamename, SAVEGAMENAME_PLUT);
-            D_CheckFileSize2(iwadfile, PLUTONIAWADSIZE1, PLUTONIAWADSIZE2);
-            D_AddFile("plutonia.wad");
-            return;
-        }
-        else
-        {
-            loadError = true;
-        }
-        break;
-    case 54:
-        if (!access("tnt.wad", R_OK))
-        {
-            complevel = COMPLEVEL_FINAL_DOOM;
-            gamemode = commercial;
-            gamemission = pack_tnt;
-            strcpy(iwadfile, "tnt.wad");
-            strcpy(savegamename, SAVEGAMENAME_TNT);
-            D_CheckFileSize2(iwadfile, TNTWADSIZE1, TNTWADSIZE2);
-            D_AddFile("tnt.wad");
-            return;
-        }
-        else
-        {
-            loadError = true;
-        }
-        break;
-    case 55:
-        if (!access("freedm1.wad", R_OK))
-        {
-            complevel = COMPLEVEL_ULTIMATE_DOOM;
-            gamemode = retail;
-            gamemission = doom;
-            strcpy(iwadfile, "freedm1.wad");
-            strcpy(savegamename, SAVEGAMENAME_FREEDOOM1);
-            D_AddFile("freedm1.wad");
-            return;
-        }
-        else
-        {
-            loadError = true;
-        }
-        break;
-    case 56:
-        if (!access("freedm2.wad", R_OK))
-        {
-            complevel = COMPLEVEL_DOOM;
-            gamemode = commercial;
-            gamemission = doom2;
-            strcpy(iwadfile, "freedm2.wad");
-            strcpy(savegamename, SAVEGAMENAME_FREEDOOM2);
-            D_AddFile("freedm2.wad");
-            return;
-        }
-        else
-        {
-            loadError = true;
-        }
-        break;
-    default:
-        loadError = true;
-        break;
+            D_CheckFileSize(iwadfile, iwads[i].size1);
     }
 
-    if (loadError)
-        I_Error(1);
+    D_AddFile(iwadfile);
 }
 
 void LoadExternalIWAD(void)
 {
+    int i;
+
     if (access(iwadfile, R_OK))
         I_Error(1);
 
-    if (!strcmp(iwadfile, "doom1.wad"))
+    for (i = 0; i < NUMIWADS; i++)
     {
-        LoadIWAD(49);
-        return;
-    }
-
-    if (!strcmp(iwadfile, "doom.wad"))
-    {
-        LoadIWAD(50);
-        return;
-    }
-
-    if (!strcmp(iwadfile, "doomu.wad"))
-    {
-        LoadIWAD(51);
-        return;
-    }
-
-    if (!strcmp(iwadfile, "doom2.wad"))
-    {
-        LoadIWAD(52);
-        return;
-    }
-
-    if (!strcmp(iwadfile, "plutonia.wad"))
-    {
-        LoadIWAD(53);
-        return;
-    }
-
-    if (!strcmp(iwadfile, "tnt.wad"))
-    {
-        LoadIWAD(54);
-        return;
-    }
-
-    if (!strcmp(iwadfile, "freedm1.wad"))
-    {
-        LoadIWAD(55);
-        return;
-    }
-
-    if (!strcmp(iwadfile, "freedm2.wad"))
-    {
-        LoadIWAD(56);
-        return;
+        if (!strcmp(iwadname, iwads[i].name))
+        {
+            LoadIWAD(49 + i);
+            return;
+        }
     }
 
     // Unknown IWAD. Load as Doom 2.
@@ -1229,10 +1099,11 @@ void LoadExternalIWAD(void)
 //
 void IdentifyVersion(void)
 {
+    int i;
     int selection = -1;
     int num_wads = 0;
 
-    if (iwadfile[0] != 0)
+    if (iwadfile != NULL)
     {
         LoadExternalIWAD();
         return;
@@ -1240,60 +1111,14 @@ void IdentifyVersion(void)
 
     printf(I_LoadTextProgram(9));
 
-    if (!access("doom1.wad", R_OK))
+    for (i = 0; i < NUMIWADS; i++)
     {
-        printf(I_LoadTextProgram(1));
-        selection = 49;
-        num_wads++;
-    }
-
-    if (!access("doom.wad", R_OK))
-    {
-        printf(I_LoadTextProgram(2));
-        selection = 50;
-        num_wads++;
-    }
-
-    if (!access("doomu.wad", R_OK))
-    {
-        printf(I_LoadTextProgram(3));
-        selection = 51;
-        num_wads++;
-    }
-
-    if (!access("doom2.wad", R_OK))
-    {
-        printf(I_LoadTextProgram(4));
-        selection = 52;
-        num_wads++;
-    }
-
-    if (!access("plutonia.wad", R_OK))
-    {
-        printf(I_LoadTextProgram(5));
-        selection = 53;
-        num_wads++;
-    }
-
-    if (!access("tnt.wad", R_OK))
-    {
-        printf(I_LoadTextProgram(6));
-        selection = 54;
-        num_wads++;
-    }
-
-    if (!access("freedm1.wad", R_OK))
-    {
-        printf(I_LoadTextProgram(7));
-        selection = 55;
-        num_wads++;
-    }
-
-    if (!access("freedm2.wad", R_OK))
-    {
-        printf(I_LoadTextProgram(8));
-        selection = 56;
-        num_wads++;
+        if (!access(iwads[i].name, R_OK))
+        {
+            printf(I_LoadTextProgram(1 + i));
+            selection = 49 + i;
+            num_wads++;
+        }
     }
 
     if (num_wads > 1)
@@ -1436,18 +1261,41 @@ void D_DoomMain(void)
     p = M_CheckParm("-iwad");
     if (p)
     {
-        char *src = myargv[p + 1];
-        char *dest = iwadfile;
-
-        memset(iwadfile, 0, sizeof(iwadfile));
-
-        while (*src != '\0')
+        if (p < myargc - 1)
         {
-            *dest = tolower((unsigned char)*src);
-            src++;
-            dest++;
+            char *src = myargv[p + 1];
+            char *dest;
+            char *basename;
+            int length;
+
+            iwadfile = Z_Malloc(strlen(src) + 1, PU_STATIC, NULL);
+            dest = iwadfile;
+            basename = iwadfile;
+
+            while (*src != '\0')
+            {
+                if (*src == '\\' || *src == '/')
+                    basename = dest + 1;
+                *dest++ = tolower((unsigned char)*src);
+                src++;
+            }
+            *dest = '\0';
+
+            // Extract the plain file name (already lowercased), used for
+            // version detection and the derived level names and tint map
+            // cache files.
+            length = 0;
+            while (*basename != '\0' && length < (int)sizeof(iwadname) - 1)
+                iwadname[length++] = *basename++;
+            iwadname[length] = '\0';
+
+            if (iwadname[0] == '\0')
+                I_Error(1);
         }
-        *dest = '\0';
+        else
+        {
+            I_Error(1);
+        }
     }
 
     IdentifyVersion();
