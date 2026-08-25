@@ -195,6 +195,8 @@ extern int key_fire;
 extern int key_use;
 extern int key_strafe;
 extern int key_speed;
+extern int key_weaponprev;
+extern int key_weaponnext;
 
 extern int mousebfire;
 extern int mousebstrafe;
@@ -300,6 +302,8 @@ default_t defaults[] =
         {"key_use", &key_use, SC_SPACE, 1},
         {"key_strafe", &key_strafe, SC_RALT, 1},
         {"key_speed", &key_speed, SC_RSHIFT, 1},
+        {"key_weaponprev", &key_weaponprev, SC_KEY_Z, 1},
+        {"key_weaponnext", &key_weaponnext, SC_KEY_X, 1},
 
         {"use_mouse", &usemouse, 1},
         {"mouseb_fire", &mousebfire, 0},

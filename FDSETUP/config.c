@@ -89,6 +89,8 @@ enum
 	STRAFE,
 	STRAFE_LEFT,
 	STRAFE_RIGHT,
+	WEAPON_PREV,
+	WEAPON_NEXT,
 	MAXKEYS
 };
 item_t idkeyselitems[] =
@@ -104,6 +106,9 @@ item_t idkeyselitems[] =
 		{STRAFE, 47, 15, 8, -1, -1},
 		{STRAFE_LEFT, 47, 16, 8, -1, -1},
 		{STRAFE_RIGHT, 47, 17, 8, -1, -1},
+
+		{WEAPON_PREV, 47, 18, 8, -1, -1},
+		{WEAPON_NEXT, 47, 19, 8, -1, -1},
 };
 menu_t idkeyselmenu =
 	{
@@ -155,6 +160,12 @@ void IDConfigKeyboard(void)
 	Clear(&idkeyselitems[STRAFE_RIGHT]);
 	Pos(&idkeyselitems[STRAFE_RIGHT]);
 	cprintf("%s", keydesc[turk.key4]);
+	Clear(&idkeyselitems[WEAPON_PREV]);
+	Pos(&idkeyselitems[WEAPON_PREV]);
+	cprintf("%s", keydesc[turk.key5]);
+	Clear(&idkeyselitems[WEAPON_NEXT]);
+	Pos(&idkeyselitems[WEAPON_NEXT]);
+	cprintf("%s", keydesc[turk.key6]);
 
 	gotoxy(1, 25);
 
@@ -284,6 +295,28 @@ void IDConfigKeyboard(void)
 					cprintf("%s", keydesc[turk.key4]);
 				}
 				break;
+
+			case WEAPON_PREV:
+				rval = GetScanCode();
+				if (rval)
+				{
+					turk.key5 = rval;
+					Clear(&idkeyselitems[WEAPON_PREV]);
+					Pos(&idkeyselitems[WEAPON_PREV]);
+					cprintf("%s", keydesc[turk.key5]);
+				}
+				break;
+
+			case WEAPON_NEXT:
+				rval = GetScanCode();
+				if (rval)
+				{
+					turk.key6 = rval;
+					Clear(&idkeyselitems[WEAPON_NEXT]);
+					Pos(&idkeyselitems[WEAPON_NEXT]);
+					cprintf("%s", keydesc[turk.key6]);
+				}
+				break;
 			}
 			gotoxy(1, 25);
 			break;
@@ -295,29 +328,6 @@ func_exit:
 	RestoreScreen();
 	return;
 }
-
-//
-//	Configure joystick buttons
-//
-enum
-{
-	J_FIRE,
-	J_FORWARD,
-	J_USE,
-	J_STRAFE,
-	J_MAX
-};
-item_t idjoyselitems[] =
-	{
-		{J_FIRE, 42, 10, 9, -1, -1},
-		{J_FORWARD, 42, 11, 9, -1, -1},
-		{J_USE, 42, 12, 9, -1, -1},
-		{J_STRAFE, 42, 13, 9, -1, -1}};
-menu_t idjoyselmenu =
-	{
-		&idjoyselitems[0],
-		J_FIRE,
-		J_MAX};
 
 //
 // Configure mouse buttons

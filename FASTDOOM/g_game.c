@@ -136,6 +136,9 @@ int key_use;
 int key_strafe;
 int key_speed;
 
+int key_weaponprev;
+int key_weaponnext;
+
 int mousebfire;
 int mousebstrafe;
 int mousebforward;
@@ -171,6 +174,86 @@ char savedescription[32];
 int autorun;
 
 char levelsfile[21] = "LEVELS\\";
+
+// the order in which the weapons are cycled through
+static const int weaponcycle[NUMWEAPONS] =
+{
+    wp_fist,
+    wp_chainsaw,
+    wp_pistol,
+    wp_shotgun,
+    wp_supershotgun,
+    wp_chaingun,
+    wp_missile,
+    wp_plasma,
+    wp_bfg
+};
+
+static const int weaponpos[NUMWEAPONS] =
+{
+    0, 2, 3, 5, 6, 7, 8, 1, 4
+};
+
+static int G_CycleWeapon(boolean forward)
+{
+    int i;
+    int start;
+    int pos;
+    int step;
+    int weapon;
+    byte saw;
+    byte nocomm;
+    byte share;
+
+    if (players.pendingweapon != wp_nochange)
+    {
+        start = players.pendingweapon;
+    }
+    else
+    {
+        start = players.readyweapon;
+    }
+    pos = weaponpos[start];
+
+    saw = players.weaponowned[wp_chainsaw];
+    nocomm = gamemode != commercial;
+    share = gamemode == shareware;
+
+    step = forward ? 1 : -1;
+
+    for (i = 0; i < NUMWEAPONS; i++)
+    {
+        // wrap around with branches instead of a modulo
+        pos += step;
+        if (pos < 0)
+        {
+            pos += NUMWEAPONS;
+        }
+        else if (pos == NUMWEAPONS)
+        {
+            pos = 0;
+        }
+
+        weapon = weaponcycle[pos];
+
+        if (players.weaponowned[weapon]
+            && (weapon != wp_supershotgun || !nocomm)
+            && ((weapon != wp_plasma && weapon != wp_bfg) || !share))
+        {
+            if (weapon == wp_fist && saw)
+            {
+                weapon = wp_chainsaw;
+            }
+
+            if (weapon != start)
+            {
+                return weapon;
+            }
+        }
+    }
+
+    return -1;
+}
 
 //
 // G_BuildTiccmd
@@ -312,6 +395,38 @@ void G_BuildTiccmd(ticcmd_t *cmd)
             cmd->buttons |= i << BT_WEAPONSHIFT;
             break;
         }
+
+    {
+        static byte keynextstate;
+        static byte keyprevstate;
+        byte knext;
+        byte kprev;
+        int nextweapon;
+
+        knext = gamekeydown[key_weaponnext];
+        kprev = gamekeydown[key_weaponprev];
+
+        if (knext && !keynextstate)
+        {
+            nextweapon = G_CycleWeapon(true);
+        }
+        else if (kprev && !keyprevstate)
+        {
+            nextweapon = G_CycleWeapon(false);
+        }
+        else
+        {
+            nextweapon = -1;
+        }
+
+        if (nextweapon != -1 && nextweapon != players.readyweapon)
+        {
+            players.pendingweapon = nextweapon;
+        }
+
+        keynextstate = knext;
+        keyprevstate = kprev;
+    }
 
     // special buttons
     if (sendpause)
