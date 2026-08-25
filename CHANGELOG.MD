@@ -15,6 +15,7 @@
 * New command line that preloads the IWAD into RAM (-preload)
 * New executable: fdmvt100.exe (VT100 terminal output support via serial port, display only)
 * FDSetup has been upgraded to version 2.0 and can now be built using 100% open source tools. We have removed the dependencies on Laughing Dog for screen creation and Borland 4.x for compilation. Additionally, we developed PUPED, a new web based tool for easily creating PUP screens directly in your browser. Huge thanks to @jsmolina for porting the project to OpenWatcom, which helped us reduce the executable size by 17% in the process
+* Added next/previous weapon keys
 
 ## 1.3.0 (01 Jul 2026)
 * Improved frame interpolation in uncapped framerate modes for smoother rendering #237 #251
