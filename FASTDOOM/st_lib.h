@@ -135,7 +135,6 @@ void STlib_updateNum_Direct(st_number_t *n);
 void STlib_initPercent(st_percent_t *p, int x, int y, patch_t **pl, int *num, byte *on, patch_t *percent);
 
 void STlib_updatePercent(st_percent_t *per, int refresh);
-void STlib_updatePercent_Direct(st_percent_t *per);
 
 // Multiple Icon widget routines
 void STlib_initMultIcon(st_multicon_t *mi, int x, int y, patch_t **il, int *inum, byte *on);
@@ -149,7 +148,6 @@ void STlib_updateMultIcon_Direct(st_multicon_t *mi);
 void STlib_initBinIcon(st_binicon_t *b, int x, int y, patch_t *i, byte *on);
 
 void STlib_updateBinIcon(st_binicon_t *bi, byte refresh);
-void STlib_updateBinIcon_Direct(st_binicon_t *bi);
 
 void STlib_drawNumText(st_number_t *n, int x, int y);
 

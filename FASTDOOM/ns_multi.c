@@ -313,45 +313,6 @@ void MV_ServiceRightGus(char **ptr, unsigned long *length)
 }
 
 /*---------------------------------------------------------------------
-   Function: MV_GetNextDemandFeedBlock
-
-   Controls playback of demand fed data.
----------------------------------------------------------------------*/
-
-playbackstatus MV_GetNextDemandFeedBlock(
-    VoiceNode *voice)
-
-{
-    if (voice->BlockLength > 0)
-    {
-        voice->position -= voice->length;
-        voice->sound += voice->length >> 16;
-        voice->length = min(voice->BlockLength, 0x8000);
-        voice->BlockLength -= voice->length;
-        voice->length <<= 16;
-
-        return (KeepPlaying);
-    }
-
-    if (voice->DemandFeed == NULL)
-    {
-        return (NoMoreData);
-    }
-
-    voice->position = 0;
-    (voice->DemandFeed)(&voice->sound, &voice->BlockLength);
-    voice->length = min(voice->BlockLength, 0x8000);
-    voice->BlockLength -= voice->length;
-    voice->length <<= 16;
-
-    if ((voice->length > 0) && (voice->sound != NULL))
-    {
-        return (KeepPlaying);
-    }
-    return (NoMoreData);
-}
-
-/*---------------------------------------------------------------------
    Function: MV_GetNextRawBlock
 
    Controls playback of demand fed data.

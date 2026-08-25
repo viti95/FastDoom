@@ -59,11 +59,6 @@ void I_Scroll(void)
     }
 }
 
-void I_SetCursor(int x, int y) {
-    Curx = x;
-    Cury = y;
-}
-
 #endif
 
 void I_Putchar(byte c)
@@ -274,17 +269,6 @@ void SortSymbols(debugsymbol_t *symbols, int num_symbols) {
         symbols[left] = tmp;
         SortSymbols(symbols, left);
         SortSymbols(symbols + left + 1, num_symbols - left - 1);
-    }
-}
-
-
-void DumpSymbolTable(debugsymbol_t *symbols, int num_symbols) {
-    int i;
-    if (symbols == NULL) {
-        return;
-    }
-    for (i = 0; i < num_symbols; i++) {
-        I_Printf("0x%x: %s\n", symbols[i].addr, symbols[i].name);
     }
 }
 

@@ -24,14 +24,6 @@
 
 #define INVALID -1
 
-static const unsigned char WSS_Interrupts[WSS_MaxIrq + 1] =
-    {
-        INVALID, INVALID, 0xa, 0xb,
-        INVALID, 0xd, INVALID, 0xf,
-        INVALID, INVALID, 0x72, 0x73,
-        0x74, INVALID, INVALID, 0x77
-    };
-
 static void(__interrupt __far *WSS_OldInt)(void);
 
 WSS_CONFIG WSS_Config =
@@ -270,46 +262,6 @@ int WSS_GetEnv(WSS_CONFIG *Config)
     }
 
     return WSS_Ok;
-}
-
-int WSS_SetCardSettings(WSS_CONFIG Config)
-{
-    if (Config.Address == 0 || Config.Interrupt == 0 || Config.Interrupt > 15 ||
-        Config.Dma > 3)
-    {
-        return WSS_InvalidParameter;
-    }
-
-    WSS_Config.Address = Config.Address;
-    WSS_Config.Interrupt = Config.Interrupt;
-    WSS_Config.Dma = Config.Dma;
-
-    return WSS_Ok;
-}
-
-int WSS_GetCardSettings(WSS_CONFIG *Config)
-{
-    if (Config == NULL)
-    {
-        return WSS_InvalidParameter;
-    }
-
-    *Config = WSS_Config;
-    return WSS_Ok;
-}
-
-void WSS_SetPlaybackRate(unsigned rate)
-{
-    if (rate < WSS_MinSamplingRate)
-    {
-        rate = WSS_MinSamplingRate;
-    }
-    if (rate > WSS_MaxSamplingRate)
-    {
-        rate = WSS_MaxSamplingRate;
-    }
-
-    WSS_SampleRate = rate;
 }
 
 unsigned WSS_GetPlaybackRate(void)

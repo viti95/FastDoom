@@ -821,34 +821,6 @@ void D_StartTitle(void)
 }
 
 //
-// D_GetCursorColumn
-//
-int D_GetCursorColumn(void)
-{
-    union REGS regs;
-
-    regs.h.ah = 3;
-    regs.h.bh = 0;
-    int386(0x10, &regs, &regs);
-
-    return regs.h.dl;
-}
-
-//
-// D_GetCursorRow
-//
-int D_GetCursorRow(void)
-{
-    union REGS regs;
-
-    regs.h.ah = 3;
-    regs.h.bh = 0;
-    int386(0x10, &regs, &regs);
-
-    return regs.h.dh;
-}
-
-//
 // D_SetCursorPosition
 //
 void D_SetCursorPosition(int column, int row)

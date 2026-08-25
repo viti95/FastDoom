@@ -136,7 +136,6 @@ static void MV_PlayVoice(VoiceNode *voice);
 static void MV_StopVoice(VoiceNode *voice);
 void MV_ServiceVoc(void);
 
-static playbackstatus MV_GetNextDemandFeedBlock(VoiceNode *voice);
 static playbackstatus MV_GetNextRawBlock(VoiceNode *voice);
 
 VoiceNode *MV_GetVoice(int handle);

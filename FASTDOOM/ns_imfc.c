@@ -234,50 +234,6 @@ static void IMFC_SendCommand(int command, unsigned char *data, int count)
 }
 
 /*---------------------------------------------------------------------
-   Function: IMFC_SendStatusRequest
-
-   Sends a status request and reads the response.
-   request = the request byte (e.g., 0x1D0 for card mode)
-   response = buffer to store response data
-   responsetype = expected number of response bytes (not counting status)
-   Returns IMFC_Ok on success.
----------------------------------------------------------------------*/
-static int IMFC_SendStatusRequest(int request, unsigned char *response, int responsecount)
-{
-    int i;
-    int data;
-    int bit8;
-    int status_byte;
-
-    /* Send the request */
-    IMFC_SendByte(request, 1);
-
-    /* Read status byte (echo of request) */
-    data = IMFC_ReadByte(&bit8);
-    if (data < 0)
-    {
-        return IMFC_Timeout;
-    }
-    status_byte = data;
-
-    /* Read response data bytes */
-    for (i = 0; i < responsecount; i++)
-    {
-        data = IMFC_ReadByte(&bit8);
-        if (data < 0)
-        {
-            return IMFC_Timeout;
-        }
-        if (response != NULL)
-        {
-            response[i] = (unsigned char)data;
-        }
-    }
-
-    return IMFC_Ok;
-}
-
-/*---------------------------------------------------------------------
    Function: IMFC_DiscardPendingMessages
 
    Discards any pending messages from the card (acknowledgements,

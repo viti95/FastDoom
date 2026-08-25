@@ -214,12 +214,6 @@ void STlib_updatePercent(st_percent_t *per, int refresh)
 
     STlib_updateNum(&per->n, refresh);
 }
-
-void STlib_updatePercent_Direct(st_percent_t *per)
-{
-    V_DrawPatchDirect(per->n.x, per->n.y, per->p);
-    STlib_updateNum_Direct(&per->n);
-}
 #endif
 
 void STlib_initMultIcon(st_multicon_t *i,
@@ -310,10 +304,5 @@ void STlib_updateBinIcon(st_binicon_t *bi, byte refresh)
         updatestate |= I_STATBAR;
 #endif
     }
-}
-
-void STlib_updateBinIcon_Direct(st_binicon_t *bi)
-{
-    V_DrawPatchDirect(bi->x, bi->y, bi->p);
 }
 #endif

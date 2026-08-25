@@ -932,8 +932,6 @@ void WI_drawNoState(void)
 #endif
 }
 
-static int ng_state;
-
 static int sp_state;
 
 void WI_initStats(void)

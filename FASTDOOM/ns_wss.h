@@ -40,10 +40,7 @@ extern int WSS_DMAChannel;
 extern unsigned WSS_SampleRate;
 
 int WSS_GetEnv(WSS_CONFIG *Config);
-int WSS_SetCardSettings(WSS_CONFIG Config);
-int WSS_GetCardSettings(WSS_CONFIG *Config);
 
-void WSS_SetPlaybackRate(unsigned rate);
 unsigned WSS_GetPlaybackRate(void);
 
 int WSS_SetMixMode(int mode);

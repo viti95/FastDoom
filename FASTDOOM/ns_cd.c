@@ -471,47 +471,6 @@ void CD_PlayAudio(unsigned long Begin, unsigned long Length)
     CD_Cdrom_data.Error = Play_request_Pointers->Status;
 }
 
-void CD_CMD(unsigned char Mode)
-{
-    typedef struct Tray_request
-    {
-        unsigned char Length;
-        unsigned char Subunit;
-        unsigned char Comcode;
-        unsigned short Status;
-        unsigned char Unused[8];
-        unsigned char Media;
-        unsigned long Address;
-        unsigned short Bytes;
-        unsigned short Sector;
-        unsigned long VolID;
-        unsigned char Unused2[4];
-    } Tray_request;
-    typedef struct CD_Mode
-    {
-        unsigned char Mode;
-    } CD_Mode;
-
-    static struct Tray_request *Tray_request_Pointers;
-    static struct CD_Mode *CD_Mode_Pointers;
-
-    Tray_request_Pointers = (struct Tray_request *)(CD_Device_req.segment * 16);
-    CD_Mode_Pointers = (struct CD_Mode *)(CD_Device_extra.segment * 16);
-
-    memset(Tray_request_Pointers, 0, sizeof(struct Tray_request));
-    memset(CD_Mode_Pointers, 0, sizeof(struct CD_Mode));
-
-    CD_Mode_Pointers->Mode = Mode;
-    Tray_request_Pointers->Length = sizeof(struct Tray_request);
-    Tray_request_Pointers->Comcode = 12;
-    Tray_request_Pointers->Address = CD_Device_extra.segment << 16;
-    Tray_request_Pointers->Bytes = 1;
-
-    CD_DeviceRequest();
-
-    CD_Cdrom_data.Error = Tray_request_Pointers->Status;
-}
-
 void CD_Lock(unsigned char Doormode)
 {
     typedef struct Tray_request
