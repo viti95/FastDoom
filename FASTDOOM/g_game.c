@@ -189,45 +189,66 @@ static const int weaponcycle[NUMWEAPONS] =
     wp_bfg
 };
 
+static const int weaponpos[NUMWEAPONS] =
+{
+    0, 2, 3, 5, 6, 7, 8, 1, 4
+};
+
 static int G_CycleWeapon(boolean forward)
 {
     int i;
     int start;
     int pos;
+    int step;
     int weapon;
+    byte saw;
+    byte nocomm;
+    byte share;
 
-    start = players.pendingweapon != wp_nochange ? players.pendingweapon
-                                                 : players.readyweapon;
-
-    for (pos = 0; pos < NUMWEAPONS; pos++)
+    if (players.pendingweapon != wp_nochange)
     {
-        if (weaponcycle[pos] == start)
-            break;
+        start = players.pendingweapon;
     }
-
-    for (i = 1; i < NUMWEAPONS; i++)
+    else
     {
-        int next = forward ? (pos + i) % NUMWEAPONS
-                           : (pos - i + NUMWEAPONS) % NUMWEAPONS;
+        start = players.readyweapon;
+    }
+    pos = weaponpos[start];
 
-        weapon = weaponcycle[next];
+    saw = players.weaponowned[wp_chainsaw];
+    nocomm = gamemode != commercial;
+    share = gamemode == shareware;
 
-        if (weapon == wp_supershotgun && gamemode != commercial)
+    step = forward ? 1 : -1;
+
+    for (i = 0; i < NUMWEAPONS; i++)
+    {
+        // wrap around with branches instead of a modulo
+        pos += step;
+        if (pos < 0)
         {
-            continue;
+            pos += NUMWEAPONS;
         }
-        if ((weapon == wp_plasma || weapon == wp_bfg) && gamemode == shareware)
+        else if (pos == NUMWEAPONS)
         {
-            continue;
-        }
-        if (weapon == wp_fist && players.weaponowned[wp_chainsaw])
-        {
-            weapon = wp_chainsaw;
+            pos = 0;
         }
 
-        if (weapon != start && players.weaponowned[weapon])
+        weapon = weaponcycle[pos];
+
+        if (players.weaponowned[weapon]
+            && (weapon != wp_supershotgun || !nocomm)
+            && ((weapon != wp_plasma && weapon != wp_bfg) || !share))
         {
-            return weapon;
+            if (weapon == wp_fist && saw)
+            {
+                weapon = wp_chainsaw;
+            }
+
+            if (weapon != start)
+            {
+                return weapon;
+            }
         }
     }
 
@@ -378,26 +399,33 @@ void G_BuildTiccmd(ticcmd_t *cmd)
     {
         static byte keynextstate;
         static byte keyprevstate;
-        int nextweapon = -1;
+        byte knext;
+        byte kprev;
+        int nextweapon;
 
-        if (gamekeydown[key_weaponnext] && !keynextstate)
+        knext = gamekeydown[key_weaponnext];
+        kprev = gamekeydown[key_weaponprev];
+
+        if (knext && !keynextstate)
         {
             nextweapon = G_CycleWeapon(true);
         }
-        else if (gamekeydown[key_weaponprev] && !keyprevstate)
+        else if (kprev && !keyprevstate)
         {
             nextweapon = G_CycleWeapon(false);
         }
+        else
+        {
+            nextweapon = -1;
+        }
 
-        if (nextweapon != -1 && nextweapon != players.readyweapon
-            && players.weaponowned[nextweapon]
-            && ((nextweapon != wp_plasma && nextweapon != wp_bfg) || gamemode != shareware))
+        if (nextweapon != -1 && nextweapon != players.readyweapon)
         {
             players.pendingweapon = nextweapon;
         }
 
-        keynextstate = gamekeydown[key_weaponnext];
-        keyprevstate = gamekeydown[key_weaponprev];
+        keynextstate = knext;
+        keyprevstate = kprev;
     }
 
     // special buttons
