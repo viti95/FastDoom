@@ -252,11 +252,12 @@ void HU_Drawer(void)
         {
             sprintf(secrettext, "%02d/%02d", players.secretcount, totalsecret);
             lastSecretNumber = players.secretcount;
+
+            HUlib_clearTextLine(&w_secret);
+            for (i = 0; secrettext[i]; i++)
+                HUlib_addCharToTextLine(&w_secret, secrettext[i]);
         }
 
-        HUlib_clearTextLine(&w_secret);
-        for (i = 0; secrettext[i]; i++)
-            HUlib_addCharToTextLine(&w_secret, secrettext[i]);
         HUlib_drawTextLine(&w_secret);
     }
 #endif
