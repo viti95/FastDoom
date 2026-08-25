@@ -1,6 +1,7 @@
 # CHANGELOG
 
 ## 1.4.0 (?? ??? ????)
+* Added secrets completed counter to the automap #276
 * Fixed "Loading IWAD from sub-directory causes major errors" #279
 * New command line parameter -gamemode to select the game mode ("shareware", "registered", "commercial" or "retail")
 * New command line parameter -gamemission to select the game mission ("doom", "doom2", "tnt" or "plutonia")
