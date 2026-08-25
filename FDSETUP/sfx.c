@@ -794,7 +794,6 @@ int SetupFX(void)
 	case M_RS232MIDI:
 	case M_LPTMIDI:
 	case M_GMIDI:
-		savefx = FALSE;
 		break;
 
 	case M_DISNEYSS:
@@ -802,7 +801,6 @@ int SetupFX(void)
 			return (-1);
 		newc.d.rate = 0; // 7KHz
 		ChooseNumDig();
-		savefx = TRUE;
 		break;
 
 	case M_COVOX:
@@ -812,7 +810,6 @@ int SetupFX(void)
 			return (-1);
 		ChooseFreq();
 		ChooseNumDig();
-		savefx = TRUE;
 		break;
 
 	case M_PC1BIT:
@@ -827,13 +824,11 @@ int SetupFX(void)
 	case M_GOLD:
 		ChooseFreq();
 		ChooseNumDig();
-		savefx = TRUE;
 		break;
 
 	case M_PCPWM:
 		newc.d.rate = 4; // 16KHz
 		ChooseNumDig();
-		savefx = TRUE;
 		break;
 	
 	case M_CMS:
@@ -841,7 +836,6 @@ int SetupFX(void)
 			return (-1);
 		ChooseFreq();
 		ChooseNumDig();
-		savefx = TRUE;
 		break;
 		
 	}

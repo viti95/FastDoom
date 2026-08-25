@@ -66,9 +66,6 @@ CONTS curk;
 DMXINFO lastc;
 DMXINFO newc;
 
-BOOL savemusic = FALSE;
-BOOL savefx = FALSE;
-
 int mousepresent = 0;
 
 enum
@@ -229,10 +226,6 @@ int QuitAndSave(void)
 //
 void StartUp(void)
 {
-	int addr;
-	int irq;
-	int dma;
-	int midi;
 	union REGS r;
 
 	r.x.ax = 0;
@@ -249,7 +242,6 @@ void StartUp(void)
 	memset(&lastc, 0, sizeof(DMXINFO));
 
 	MakeKeyLookup();
-	midi = addr = irq = dma = 0; // WILL BE INITED LATER
 
 	curk.up = SC_UP;
 	curk.down = SC_DOWN;

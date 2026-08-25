@@ -1023,14 +1023,12 @@ int SetupMusic(void)
 	switch (newc.m.card)
 	{
 	default:
-		savemusic = FALSE;
 		break;
 
 	case M_OPL2LPT:
 	case M_OPL3LPT:
 		if (ChooseLPTPortMusic(&newc.m) == -1)
 			return (-1);
-		savemusic = TRUE;
 		break;
 	
 	case M_LPTMIDI:
@@ -1038,19 +1036,16 @@ int SetupMusic(void)
 			return (-1);
 		if (ChooseMidiDevice(&newc.md) == -1)
 			return (-1);
-		savemusic = TRUE;
 		break;
 
 	case M_IMFC:
 		if (ChooseIMFCPortMusic(&newc.m) == -1)
 			return (-1);
-		savemusic = TRUE;
 		break;
 
 	case M_CMS:
 		if (ChooseCMSPortMusic(&newc.m) == -1)
 			return (-1);
-		savemusic = TRUE;
 		break;
 
 	case M_NONE:
@@ -1062,19 +1057,16 @@ int SetupMusic(void)
 	case M_SBAWE32:
 	case M_SB:
 	case M_ESFM:
-		savemusic = TRUE;
 		break;
 
 	case M_SBMIDI:
 		if (ChooseMidiDevice(&newc.md) == -1)
 			return (-1);
-		savemusic = TRUE;
 		break;
 
 	case M_WAV:
 		if (ChoosePCMFreqMusic(&newc.m) == -1)
 			return (-1);
-		savemusic = TRUE;
 		break;
 
 	case M_GMIDI:
@@ -1082,7 +1074,6 @@ int SetupMusic(void)
 			return (-1);
 		if (ChooseMidiDevice(&newc.md) == -1)
 			return (-1);
-		savemusic = TRUE;
 		break;
 
 	case M_RS232MIDI:
@@ -1090,7 +1081,6 @@ int SetupMusic(void)
 			return (-1);
 		if (ChooseMidiDevice(&newc.md) == -1)
 			return (-1);
-		savemusic = TRUE;
 		break;
 	}
 	return 0;

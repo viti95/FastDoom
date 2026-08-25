@@ -8,13 +8,10 @@
 
 #define EXENAME "FDOOM.EXE"
 #define DEFAULTNAME "FDOOM.CFG"
-#define DEFAULTPATH "C:\\DOOMDATA"
 #define SAVENAME "FDOOMSV%d.DSG"
 
 #define S_CON1 "Keyboard only"
 #define S_CON2 "Keyboard + Mouse"
-
-#define MAXARGS 12
 
 typedef enum
 {
@@ -120,8 +117,6 @@ extern char keydesc[256][10];
 extern int mousepresent;
 extern DMXINFO lastc;
 extern DMXINFO newc;
-extern BOOL savemusic;
-extern BOOL savefx;
 extern CONTS curk;
 
 //
