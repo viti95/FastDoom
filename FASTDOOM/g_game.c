@@ -175,30 +175,51 @@ int autorun;
 
 char levelsfile[21] = "LEVELS\\";
 
+// the order in which the weapons are cycled through
+static const int weaponcycle[NUMWEAPONS] =
+{
+    wp_fist,
+    wp_chainsaw,
+    wp_pistol,
+    wp_shotgun,
+    wp_supershotgun,
+    wp_chaingun,
+    wp_missile,
+    wp_plasma,
+    wp_bfg
+};
+
 static int G_CycleWeapon(boolean forward)
 {
     int i;
     int start;
+    int pos;
     int weapon;
 
     start = players.pendingweapon != wp_nochange ? players.pendingweapon
                                                  : players.readyweapon;
 
-    if (start == wp_supershotgun)
+    for (pos = 0; pos < NUMWEAPONS; pos++)
     {
-        start = wp_shotgun;
+        if (weaponcycle[pos] == start)
+            break;
     }
 
-    for (i = 1; i < NUMWEAPONS - 1; i++)
+    for (i = 1; i < NUMWEAPONS; i++)
     {
-        weapon = forward ? (start + i) % (NUMWEAPONS - 1)
-                         : (start - i + NUMWEAPONS - 1) % (NUMWEAPONS - 1);
+        int next = forward ? (pos + i) % NUMWEAPONS
+                           : (pos - i + NUMWEAPONS) % NUMWEAPONS;
 
-        // p_user.c upgrades a fist request to the chainsaw
-        //  when the player owns one, so resolve it here too.
-        //  without this, the cycle would dead-end on the
-        //  chainsaw: wrapping to the fist would be rewritten
-        //  back to the chainsaw and rejected.
+        weapon = weaponcycle[next];
+
+        if (weapon == wp_supershotgun && gamemode != commercial)
+        {
+            continue;
+        }
+        if ((weapon == wp_plasma || weapon == wp_bfg) && gamemode == shareware)
+        {
+            continue;
+        }
         if (weapon == wp_fist && players.weaponowned[wp_chainsaw])
         {
             weapon = wp_chainsaw;
@@ -359,22 +380,20 @@ void G_BuildTiccmd(ticcmd_t *cmd)
         static byte keyprevstate;
         int nextweapon = -1;
 
-        if (!(cmd->buttons & BT_CHANGE))
+        if (gamekeydown[key_weaponnext] && !keynextstate)
         {
-            if (gamekeydown[key_weaponnext] && !keynextstate)
-            {
-                nextweapon = G_CycleWeapon(true);
-            }
-            else if (gamekeydown[key_weaponprev] && !keyprevstate)
-            {
-                nextweapon = G_CycleWeapon(false);
-            }
+            nextweapon = G_CycleWeapon(true);
+        }
+        else if (gamekeydown[key_weaponprev] && !keyprevstate)
+        {
+            nextweapon = G_CycleWeapon(false);
         }
 
-        if (nextweapon != -1)
+        if (nextweapon != -1 && nextweapon != players.readyweapon
+            && players.weaponowned[nextweapon]
+            && ((nextweapon != wp_plasma && nextweapon != wp_bfg) || gamemode != shareware))
         {
-            cmd->buttons |= BT_CHANGE;
-            cmd->buttons |= nextweapon << BT_WEAPONSHIFT;
+            players.pendingweapon = nextweapon;
         }
 
         keynextstate = gamekeydown[key_weaponnext];
