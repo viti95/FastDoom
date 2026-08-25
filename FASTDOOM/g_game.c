@@ -136,6 +136,9 @@ int key_use;
 int key_strafe;
 int key_speed;
 
+int key_weaponprev;
+int key_weaponnext;
+
 int mousebfire;
 int mousebstrafe;
 int mousebforward;
@@ -171,6 +174,44 @@ char savedescription[32];
 int autorun;
 
 char levelsfile[21] = "LEVELS\\";
+
+static int G_CycleWeapon(boolean forward)
+{
+    int i;
+    int start;
+    int weapon;
+
+    start = players.pendingweapon != wp_nochange ? players.pendingweapon
+                                                 : players.readyweapon;
+
+    if (start == wp_supershotgun)
+    {
+        start = wp_shotgun;
+    }
+
+    for (i = 1; i < NUMWEAPONS - 1; i++)
+    {
+        weapon = forward ? (start + i) % (NUMWEAPONS - 1)
+                         : (start - i + NUMWEAPONS - 1) % (NUMWEAPONS - 1);
+
+        // p_user.c upgrades a fist request to the chainsaw
+        //  when the player owns one, so resolve it here too.
+        //  without this, the cycle would dead-end on the
+        //  chainsaw: wrapping to the fist would be rewritten
+        //  back to the chainsaw and rejected.
+        if (weapon == wp_fist && players.weaponowned[wp_chainsaw])
+        {
+            weapon = wp_chainsaw;
+        }
+
+        if (weapon != start && players.weaponowned[weapon])
+        {
+            return weapon;
+        }
+    }
+
+    return -1;
+}
 
 //
 // G_BuildTiccmd
@@ -312,6 +353,33 @@ void G_BuildTiccmd(ticcmd_t *cmd)
             cmd->buttons |= i << BT_WEAPONSHIFT;
             break;
         }
+
+    {
+        static byte keynextstate;
+        static byte keyprevstate;
+        int nextweapon = -1;
+
+        if (!(cmd->buttons & BT_CHANGE))
+        {
+            if (gamekeydown[key_weaponnext] && !keynextstate)
+            {
+                nextweapon = G_CycleWeapon(true);
+            }
+            else if (gamekeydown[key_weaponprev] && !keyprevstate)
+            {
+                nextweapon = G_CycleWeapon(false);
+            }
+        }
+
+        if (nextweapon != -1)
+        {
+            cmd->buttons |= BT_CHANGE;
+            cmd->buttons |= nextweapon << BT_WEAPONSHIFT;
+        }
+
+        keynextstate = gamekeydown[key_weaponnext];
+        keyprevstate = gamekeydown[key_weaponprev];
+    }
 
     // special buttons
     if (sendpause)
