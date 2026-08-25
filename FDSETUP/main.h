@@ -115,7 +115,6 @@ extern int usemouse;
 
 extern char keydesc[256][10];
 extern int mousepresent;
-extern DMXINFO lastc;
 extern DMXINFO newc;
 extern CONTS curk;
 

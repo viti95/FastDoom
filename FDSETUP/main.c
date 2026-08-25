@@ -63,7 +63,6 @@ char controls[C_LAST][20] = {
 
 CONTS curk;
 
-DMXINFO lastc;
 DMXINFO newc;
 
 int mousepresent = 0;
@@ -239,7 +238,6 @@ void StartUp(void)
 	int86(0x33, &r, &r);
 
 	memset(&newc, 0, sizeof(DMXINFO));
-	memset(&lastc, 0, sizeof(DMXINFO));
 
 	MakeKeyLookup();
 
@@ -273,20 +271,10 @@ void StartUp(void)
 		SetupMusic();
 		SetupFX();
 
-		lastc.control = newc.control;
-		lastc.numdig = newc.numdig;
-		lastc.m = newc.m;
-		lastc.d = newc.d;
-		lastc.md = newc.md;
 		mainmenu.startitem = MAIN_SAVE;
 	}
 	else
 	{
-		lastc.control = newc.control;
-		lastc.numdig = newc.numdig;
-		lastc.m = newc.m;
-		lastc.d = newc.d;
-		lastc.md = newc.md;
 		mainmenu.startitem = MAIN_CMUSIC;
 	}
 
