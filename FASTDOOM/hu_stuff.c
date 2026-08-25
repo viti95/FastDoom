@@ -46,6 +46,9 @@
 #define HU_TITLEY (SCALED_SCREENHEIGHT - SCALED_SBARHEIGHT - hu_font[0]->height)
 #define HU_TITLEY_FULL (HU_TITLEY + SCALED_SBARHEIGHT)
 
+#define HU_SECRETX (SCALED_SCREENWIDTH - 40)
+#define HU_SECRETY HU_TITLEY
+
 #define HU_INPUTTOGGLE 't'
 #define HU_INPUTX HU_MSGX
 #define HU_INPUTY (HU_MSGY + HU_MSGHEIGHT * (hu_font[0]->height + 1))
@@ -54,6 +57,7 @@
 
 patch_t *hu_font[HU_FONTSIZE];
 static hu_textline_t w_title;
+static hu_textline_t w_secret;
 static hu_textline_t w_fps;
 
 static byte message_on;
@@ -114,6 +118,11 @@ void HU_Start(void)
 
     while (*s)
         HUlib_addCharToTextLine(&w_title, *(s++));
+
+    HUlib_initTextLine(&w_secret,
+                       HU_SECRETX, HU_SECRETY,
+                       hu_font,
+                       HU_FONTSTART);
 }
 
 void HU_DrawScreenFPS(void)
@@ -204,8 +213,13 @@ void HU_DrawDebugCard4DigitsFPS(void)
     }
 }
 
+int lastSecretNumber = -1;
+char secrettext[5];
+
 void HU_Drawer(void)
 {
+    int i;
+    
     HUlib_drawSText(&w_message);
 
     switch (showFPS)
@@ -231,7 +245,20 @@ void HU_Drawer(void)
 
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     if (automapactive)
+    {
         HUlib_drawTextLine(&w_title);
+
+        if (lastSecretNumber != players.secretcount)
+        {
+            sprintf(secrettext, "%02d/%02d", players.secretcount, totalsecret);
+            lastSecretNumber = players.secretcount;
+        }
+
+        HUlib_clearTextLine(&w_secret);
+        for (i = 0; secrettext[i]; i++)
+            HUlib_addCharToTextLine(&w_secret, secrettext[i]);
+        HUlib_drawTextLine(&w_secret);
+    }
 #endif
 }
 
@@ -240,6 +267,7 @@ void HU_Erase(void)
 
     HUlib_eraseSText(&w_message);
     HUlib_eraseTextLine(&w_title);
+    HUlib_eraseTextLine(&w_secret);
     HUlib_eraseTextLine(&w_fps);
 }
 
