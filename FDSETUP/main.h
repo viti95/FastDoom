@@ -101,6 +101,8 @@ typedef struct
 	int key2; // ID = SPEED ON    CYGNUS = MEGA BOMB HOT KEY
 	int key3; // ID = STRAFE LEFT
 	int key4; // ID = STRAFE RIGHT
+	int key5; // ID = WEAPON PREV
+	int key6; // ID = WEAPON NEXT
 	int mouse[3];
 } CONTS;
 

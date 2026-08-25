@@ -59,6 +59,8 @@ default_t defaults[] =
 		{"key_use", &curk.use, SC_SPACE},
 		{"key_strafe", &curk.key1, SC_ALT},
 		{"key_speed", &curk.key2, SC_RIGHT_SHIFT},
+		{"key_weaponprev", &curk.key5, SC_Z},
+		{"key_weaponnext", &curk.key6, SC_X},
 
 		{"use_mouse", &usemouse, 1},
 		{"mouseb_fire", &curk.mouse[ID_FIRE], ID_FIRE},
