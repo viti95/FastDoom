@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "ns_cd.h"
+#include "ns_dpmi.h"
 #include "i_system.h"
 #include "z_zone.h"
 
@@ -10,12 +11,6 @@
 #endif
 
 #pragma pack(1);
-
-struct DPMI_PTR
-{
-    unsigned short int segment;
-    unsigned short int selector;
-};
 
 struct CD_Cdrom_data CD_Cdrom_data;
 struct CD_Volumeinfo CD_Volumeinfo;
@@ -71,24 +66,6 @@ static void RMIRQ2F()
     regs.h.bl = 0x02F;
     sregs.es = FP_SEG(&RMI);
     regs.x.edi = FP_OFF(&RMI);
-    int386x(0x31, &regs, &regs, &sregs);
-}
-
-void DPMI_AllocDOSMem(short int paras, struct DPMI_PTR *p)
-{
-    PrepareRegisters();
-    regs.w.ax = 0x0100;
-    regs.w.bx = paras;
-    int386x(0x31, &regs, &regs, &sregs);
-    p->segment = regs.w.ax;
-    p->selector = regs.w.dx;
-}
-
-void DPMI_FreeDOSMem(struct DPMI_PTR *p)
-{
-    memset(&sregs, 0, sizeof(sregs));
-    regs.w.ax = 0x0101;
-    regs.w.dx = p->selector;
     int386x(0x31, &regs, &regs, &sregs);
 }
 

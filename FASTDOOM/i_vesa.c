@@ -1,4 +1,5 @@
 #include "i_vesa.h"
+#include "ns_dpmi.h"
 #include <stdio.h>
 #include <malloc.h>
 #include <conio.h>
@@ -115,26 +116,6 @@ static void RMIRQ10()
   regs.h.bl = 0x10;
   sregs.es = FP_SEG(&RMI);
   regs.x.edi = FP_OFF(&RMI);
-  int386x(0x31, &regs, &regs, &sregs);
-}
-
-void DPMI_AllocDOSMem(short int paras, struct DPMI_PTR *p)
-{
-  /* DPMI call 100h allocates DOS memory */
-  PrepareRegisters();
-  regs.w.ax = 0x0100;
-  regs.w.bx = paras;
-  int386x(0x31, &regs, &regs, &sregs);
-  p->segment = regs.w.ax;
-  p->selector = regs.w.dx;
-}
-
-void DPMI_FreeDOSMem(struct DPMI_PTR *p)
-{
-  /* DPMI call 101h free DOS memory */
-  memset(&sregs, 0, sizeof(sregs));
-  regs.w.ax = 0x0101;
-  regs.w.dx = p->selector;
   int386x(0x31, &regs, &regs, &sregs);
 }
 

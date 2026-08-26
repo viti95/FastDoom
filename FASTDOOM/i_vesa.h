@@ -89,12 +89,6 @@ struct bcd16
   unsigned char hi;
 };
 
-struct DPMI_PTR
-{
-  unsigned short int segment;
-  unsigned short int selector;
-};
-
 struct VBE_VbeInfoBlock
 {
   char vbeSignature[4];
@@ -173,24 +167,6 @@ void VBE_Done(void);
 // ------------------------------------------------------------------------
 //                          DPMI Support Functions..
 // ------------------------------------------------------------------------
-
-void DPMI_AllocDOSMem(short int paras, struct DPMI_PTR *p);
-
-/*
-  *
-  * Allocate paras numbers of memory-paragraphs (16 bytes)
-  * in realmode memory and store the segment/selector in
-  * structure p
-  *
-  */
-
-void DPMI_FreeDOSMem(struct DPMI_PTR *p);
-
-/*
-  *
-  * Free a allocated ralmode memory block
-  *
-  */
 
 void *DPMI_MAP_PHYSICAL(void *p, unsigned long size);
 void DPMI_UNMAP_PHYSICAL(void *p);

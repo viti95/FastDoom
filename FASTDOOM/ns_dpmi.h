@@ -29,7 +29,15 @@ typedef struct
    unsigned short SS;
 } dpmi_regs;
 
+struct DPMI_PTR
+{
+   unsigned short int segment;
+   unsigned short int selector;
+};
+
 int DPMI_CallRealModeFunction(dpmi_regs *callregs);
+void DPMI_AllocDOSMem(short int paras, struct DPMI_PTR *p);
+void DPMI_FreeDOSMem(struct DPMI_PTR *p);
 int DPMI_GetDOSMemory(void **ptr, int *descriptor, unsigned length);
 int DPMI_FreeDOSMemory(int descriptor);
 int DPMI_LockMemory(void *address, unsigned length);

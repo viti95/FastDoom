@@ -67,9 +67,3 @@ int CD_Init(void);
 void CD_DeInit(void);
 void CD_Exit(void);
 
-// ------------------------------------------------------------------------
-//                          DPMI Support Functions..
-// ------------------------------------------------------------------------
-void DPMI_AllocDOSMem(short int paras, struct DPMI_PTR *p);
-void DPMI_FreeDOSMem(struct DPMI_PTR *p);
-// ------------------------------------------------------------------------
