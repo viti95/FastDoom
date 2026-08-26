@@ -64,10 +64,19 @@ void F_CastDrawerText(void);
 //
 // F_StartFinale
 //
+// Mission finale flats and scrolling text programs for the
+// mission end maps (6, 11, 20, 30, 15, 31). The text program
+// number is the mission base (51 doom2, 57 plutonia, 63 tnt)
+// plus the map index in these tables.
+static char *const finaleflats[] = { "SLIME16", "RROCK14", "RROCK07", "RROCK17", "RROCK13", "RROCK19" };
+static const int finalemaps[] = { 6, 11, 20, 30, 15, 31 };
+
 void F_StartFinale(void)
 {
 	int finalemusic;
 	int moveText = 0;
+	int base;
+	int i;
 
 	gameaction = ga_nothing;
 	gamestate = GS_FINALE;
@@ -78,115 +87,16 @@ void F_StartFinale(void)
 
 	if (gamemode == commercial)
 	{
-		if (gamemission == pack_plut)
+		// First text program number for each mission.
+		base = gamemission == pack_plut ? 57 : gamemission == pack_tnt ? 63 : 51;
+
+		for (i = 0; i < 6; i++)
 		{
-			switch (gamemap)
+			if (gamemap == finalemaps[i])
 			{
-			case 6:
-				finaleflat = "SLIME16";
-				I_LoadTextProgram(57);
+				finaleflat = finaleflats[i];
+				I_LoadTextProgram(base + i);
 				moveText = 1;
-				break;
-			case 11:
-				finaleflat = "RROCK14";
-				I_LoadTextProgram(58);
-				moveText = 1;
-				break;
-			case 20:
-				finaleflat = "RROCK07";
-				I_LoadTextProgram(59);
-				moveText = 1;
-				break;
-			case 30:
-				finaleflat = "RROCK17";
-				I_LoadTextProgram(60);
-				moveText = 1;
-				break;
-			case 15:
-				finaleflat = "RROCK13";
-				I_LoadTextProgram(61);
-				moveText = 1;
-				break;
-			case 31:
-				finaleflat = "RROCK19";
-				I_LoadTextProgram(62);
-				moveText = 1;
-				break;
-			}
-		}
-		else if (gamemission == pack_tnt)
-		{
-			switch (gamemap)
-			{
-			case 6:
-				finaleflat = "SLIME16";
-				I_LoadTextProgram(63);
-				moveText = 1;
-				break;
-			case 11:
-				finaleflat = "RROCK14";
-				I_LoadTextProgram(64);
-				moveText = 1;
-				break;
-			case 20:
-				finaleflat = "RROCK07";
-				I_LoadTextProgram(65);
-				moveText = 1;
-				break;
-			case 30:
-				finaleflat = "RROCK17";
-				I_LoadTextProgram(66);
-				moveText = 1;
-				break;
-			case 15:
-				finaleflat = "RROCK13";
-				I_LoadTextProgram(67);
-				moveText = 1;
-				break;
-			case 31:
-				finaleflat = "RROCK19";
-				I_LoadTextProgram(68);
-				moveText = 1;
-				break;
-			}
-		}
-		else
-		{
-			// DOOM II and missions packs with E1, M34
-			switch (gamemap)
-			{
-			case 6:
-				finaleflat = "SLIME16";
-				I_LoadTextProgram(51);
-				moveText = 1;
-				break;
-			case 11:
-				finaleflat = "RROCK14";
-				I_LoadTextProgram(52);
-				moveText = 1;
-				break;
-			case 20:
-				finaleflat = "RROCK07";
-				I_LoadTextProgram(53);
-				moveText = 1;
-				break;
-			case 30:
-				finaleflat = "RROCK17";
-				I_LoadTextProgram(54);
-				moveText = 1;
-				break;
-			case 15:
-				finaleflat = "RROCK13";
-				I_LoadTextProgram(55);
-				moveText = 1;
-				break;
-			case 31:
-				finaleflat = "RROCK19";
-				I_LoadTextProgram(56);
-				moveText = 1;
-				break;
-			default:
-				// Ouch.
 				break;
 			}
 		}
