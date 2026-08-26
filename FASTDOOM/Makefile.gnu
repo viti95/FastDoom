@@ -221,7 +221,7 @@ fdoom.exe : $(GLOBOBJS)
 	wcc386 $(CCOPTS) $^ -fo=$@
 
 %.obj : %.asm
-	nasm -g $(NASMOPTS) -Oxv -f coff $^ -o $@
+	nasm $(NASMOPTS) -Oxv -f coff $^ -o $@
 
 DELCMD=rm -f
 
