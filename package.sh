@@ -11,6 +11,8 @@ mkdir PKG
 cp *.TCF PKG/
 cp FDOOM*.EXE PKG/
 cp FDM*.EXE PKG/
+cp FDSETUP.EXE PKG/
+cp FDBENCH.EXE PKG/
 cp WAD/*.WAD PKG/
 cp README.txt PKG/
 cp synthgs.sbk PKG/
@@ -20,7 +22,6 @@ cp -R BENCH PKG/BENCH
 cp -R LEVELS PKG/LEVELS
 cp -R TEXT PKG/TEXT
 cp -R DATA PKG/DATA
-cp EXE/* PKG
 
 versionstring=$(grep "#define FDOOMVERSION" FASTDOOM/version.h)
 version=$(echo "$versionstring" | awk -F'"' '{print $2}')

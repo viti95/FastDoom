@@ -41,6 +41,11 @@ fi
 target=$1
 shift 1
 
+# Project directory and internal executable name for this target.
+# Defaults to the main FASTDOOM project.
+builddir=FASTDOOM
+builtin=fdoom.exe
+
 if [ "$target" = "fdoom.exe" ]; then
   buildopts="-dMODE_Y"
 
@@ -179,6 +184,16 @@ elif [ "$target" = "fdoomcda.exe" ]; then
 elif [ "$target" = "fdmvt100.exe" ]; then
   buildopts="-dMODE_VT100"
 
+elif [ "$target" = "fdsetup.exe" ]; then
+  builddir=FDSETUP
+  builtin=fdsetup.exe
+  buildopts=""
+
+elif [ "$target" = "fdbench.exe" ]; then
+  builddir=FDBENCH
+  builtin=fdbench.exe
+  buildopts=""
+
 elif [ "$target" = "clean" ]; then
   cd FASTDOOM
   wmake clean
@@ -200,7 +215,7 @@ for param in "$@"; do
 done
 
 if [ "$doclean" = "true" ]; then
-  cd FASTDOOM
+  cd "$builddir"
   wmake clean
   cd ..
 fi
@@ -220,15 +235,23 @@ if [ "$dodebug" = "true" ]; then
 fi
 
 make_gnu() {
-  make -j $(nproc) -f Makefile.gnu fdoom.exe EXTERNOPT="$buildopts $@" NASMOPT="$nasmbuildopts" WCCOPTS="$wccbuildopts"
+  if [ "$builddir" = "FASTDOOM" ]; then
+    make -j $(nproc) -f Makefile.gnu fdoom.exe EXTERNOPT="$buildopts $@" NASMOPT="$nasmbuildopts" WCCOPTS="$wccbuildopts"
+  else
+    make -j $(nproc) -f Makefile.gnu "$builtin"
+  fi
 }
 
 make_watcom() {
-  wmake fdoom.exe EXTERNOPT="$buildopts $@" NASMOPT="$nasmbuildopts" WCCOPTS="$wccbuildopts"
+  if [ "$builddir" = "FASTDOOM" ]; then
+    wmake fdoom.exe EXTERNOPT="$buildopts $@" NASMOPT="$nasmbuildopts" WCCOPTS="$wccbuildopts"
+  else
+    wmake "$builtin"
+  fi
 }
 
 
-cd FASTDOOM
+cd "$builddir"
 set +e
 if [ "$USE_GNU_MAKE" -eq 1 ]; then
   make_gnu
@@ -250,7 +273,7 @@ else
     exit 1
   fi
 fi
-yes | cp -rf fdoom.exe "../${target^^}"
+yes | cp -rf "$builtin" "../${target^^}"
 
 # Copy corresponding .map file if it exists and debug enabled
 if [ "$dodebug" = "true" ]; then
