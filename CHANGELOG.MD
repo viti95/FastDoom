@@ -11,7 +11,7 @@
 * IBM Music Feature card support
 * Windows Sound System (WSS) support
 * ESS ESFM native mode support
-* Limited Adlib Gold digital sound support
+* Adlib Gold digital sound support (The TSR bundled with the original drivers is no longer required; set the GOLD environment variable to the card's I/O port address.)
 * New command line that preloads the IWAD into RAM (-preload)
 * New executable: fdmvt100.exe (VT100 terminal output support via serial port, display only)
 * FDSetup has been upgraded to version 2.0 and can now be built using 100% open source tools. We have removed the dependencies on Laughing Dog for screen creation and Borland 4.x for compilation. Additionally, we developed PUPED, a new web based tool for easily creating PUP screens directly in your browser. Huge thanks to @jsmolina for porting the project to OpenWatcom, which helped us reduce the executable size by 20% in the process
