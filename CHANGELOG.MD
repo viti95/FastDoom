@@ -1,21 +1,23 @@
 # CHANGELOG
 
 ## 1.4.0 (?? ??? ????)
-* Added secrets completed counter to the automap #276
-* Fixed "Loading IWAD from sub-directory causes major errors" #279
 * New command line parameter -gamemode to select the game mode ("shareware", "registered", "commercial" or "retail")
 * New command line parameter -gamemission to select the game mission ("doom", "doom2", "tnt" or "plutonia")
 * Command line parameter -complevel now validates its value (only 2, 3 or 4 are valid)
 * Unknown IWADs loaded with -iwad command line parameter are now rejected unless -complevel, -gamemode and -gamemission are all specified
+* New command line that preloads the IWAD into RAM (-preload)
+* Added secrets completed counter to the automap #276
+* Added next/previous weapon keys #263
 * Added 5×6 integer scaling for 320×200 VESA backbuffer modes, optimized for 1600×1200 (4:3) displays while preserving the original aspect ratio.
+* New executable: fdmvt100.exe (VT100 terminal output support via serial port, display only)
 * IBM Music Feature card support
 * Windows Sound System (WSS) support
 * ESS ESFM native mode support
 * Adlib Gold digital sound support (The TSR bundled with the original drivers is no longer required; set the GOLD environment variable to the card's I/O port address.)
-* New command line that preloads the IWAD into RAM (-preload)
-* New executable: fdmvt100.exe (VT100 terminal output support via serial port, display only)
+* Fixed "Loading IWAD from sub-directory causes major errors" #279
 * FDSetup has been upgraded to version 2.0 and can now be built using 100% open source tools. We have removed the dependencies on Laughing Dog for screen creation and Borland 4.x for compilation. Additionally, we developed PUPED, a new web based tool for easily creating PUP screens directly in your browser. Huge thanks to @jsmolina for porting the project to OpenWatcom, which helped us reduce the executable size by 20% in the process
-* Added next/previous weapon keys #263
+* FDBENCH has been converted from a Basic program to C
+* Now all projects (FASTDOOM, FDSETUP and FDBENCH) can be built using build.sh script
 
 ## 1.3.0 (01 Jul 2026)
 * Improved frame interpolation in uncapped framerate modes for smoother rendering #237 #251
