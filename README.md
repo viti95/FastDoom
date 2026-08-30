@@ -59,19 +59,25 @@ https://user-images.githubusercontent.com/8323882/147228550-bf93cc50-3c92-4a7a-b
 
 [Full video here](https://www.youtube.com/watch?v=qizwu6dozvc)
 
-## Build instructions (FastDOOM)
+## Build instructions
 
 Requirements: Linux or WSL2 on Windows.
 
-1. Install OpenWatcom v2, NASM, GNU Make and DOSBox-X
+1. Install the toolchain:
+    - OpenWatcom v2
+    - NASM
+    - GNU Make (recommended, significantly speeds up builds)
+    - A DOS emulator for adding the DOS/32 stub: DOSEMU2 (preferred), DOSBox-X or classic DOSBox
+    - 7-Zip (only for `package.sh`)
 2. Execute `source fdenv.sh`
 3. Build:
-    - Single executable: `build.sh <executable> <parameters>` Where: "executable" is the executable name (fdoom.exe, fdoomega.exe, ...) and "parameters" can be one of these:
-        * "-clean": cleans all generated OBJs, 
-        * "-stub": adds the DOS/32 stub, 
-        * "-debug": generates debugging exectable, needs dbgcfg.h file to be adjusted to your needs
-    - All the executables + automatic DOS/32 stubs: `buildall.sh`
-    - Generate a full release package (ZIP): `package.sh`
+    - Single executable: `./build.sh <executable> [parameters]` where "executable" is any of the supported targets (fdoom.exe, fdoomega.exe, fdoomt50.exe, fdm1024r.exe, fdsetup.exe, fdbench.exe, ...) and "parameters" can be any combination of:
+        * `-clean`: cleans all generated OBJs before building
+        * `-stub`: adds the DOS/32 stub (requires a DOS emulator)
+        * `-debug`: generates a debug executable with symbols, traceable stack frames and a .map file; adjust `dbgcfg.h` to your needs
+        * `clean`: as the target name, cleans the FASTDOOM project only
+    - All the executables + automatic DOS/32 stubs: `./buildall.sh`
+    - Generate a full release package (ZIP): `./package.sh`
 
 Example to build a fresh FastDoom executable ready to use on real hardware:
 
@@ -80,23 +86,12 @@ source fdenv.sh
 ./build.sh fdoom.exe -clean -stub
 ```
 
-## Build instructions (FDSETUP)
-
-Requirements: Linux or WSL2 on Windows.
-
-1. Install OpenWatcom v2
-2. Execute `source fdenv.sh`
-3. Build:
-    - Clean the project `wmake clean`
-    - Generate the executable `wmake fdsetup.exe`
-
-Example to build a fresh FastDoom Setup executable ready to use on real hardware:
+Example to build FDSETUP and FDBENCH:
 
 ```
 source fdenv.sh
-cd FDSETUP
-wmake clean
-wmake fdsetup.exe
+./build.sh fdsetup.exe -clean
+./build.sh fdbench.exe -clean
 ```
 
 ## Contributors
