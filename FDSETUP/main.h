@@ -75,6 +75,8 @@ typedef struct
 	short soundport;
 	short rate;
 	short pcmrate;
+	short goldirq;  // Ad Lib Gold IRQ line (3, 4, 5 or 7)
+	short golddma;  // Ad Lib Gold DMA channel (1 or 3)
 } DMXCARD;
 
 typedef struct

@@ -17,18 +17,28 @@
      base+5  PCM engine data, channel 0
      base+7  PCM engine data, channel 1
 
-   The IRQ line and DMA channel are selected on the card itself and
-   are read back from the control chip.  The base address can be
-   overridden with the GOLD environment variable (hex), e.g.:
+   The IRQ line and DMA channel are user settings (the snd_gold_irq
+   and snd_gold_dma entries of the configuration file, applied with
+   GOLD_SetCardSettings before GOLD_Init); they are not read back
+   from the card.  The selectable IRQ lines are 3, 4, 5 and 7, and
+   the selectable DMA channels are 1 and 3 (channel 2 is not offered
+   because it is used by the floppy drive on most PCs).  Both must be
+   set (0
+   means "not set"); if either one is missing or invalid, card
+   initialization fails.
+
+   The base address can be overridden with the GOLD environment
+   variable (hex), e.g.:
      SET GOLD=388
 ---------------------------------------------------------------------*/
 
-/* The address is user-supplied (GOLD environment variable); the
-   interrupt line is filled in from the card at init time. */
+/* The address is user-supplied (GOLD environment variable, default
+   0x388); the interrupt line and DMA channel are user settings. */
 typedef struct
 {
     unsigned Address;
     unsigned Interrupt;
+    unsigned DMAChannel;
 } GOLD_CONFIG;
 
 extern GOLD_CONFIG GOLD_Config;

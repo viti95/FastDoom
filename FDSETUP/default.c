@@ -99,6 +99,8 @@ default_t defaults[] =
 
 		{"snd_rate", (int *)&newc.d.rate, 2},
 		{"snd_pcmrate", (int *)&newc.m.pcmrate, 1},
+		{"snd_gold_irq", (int *)&newc.d.goldirq, 5},
+		{"snd_gold_dma", (int *)&newc.d.golddma, 1},
 
 		{"usegamma", &usegamma, 0},
 };
