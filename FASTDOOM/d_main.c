@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <conio.h>
+#include <ctype.h>
 #include "i_debug.h"
 #include <dos.h>
 #include <io.h>

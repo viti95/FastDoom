@@ -20,6 +20,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <fcntl.h>
+#include <io.h>
 
 #include "std_func.h"
 #include "i_system.h"

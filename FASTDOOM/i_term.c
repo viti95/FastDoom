@@ -10,6 +10,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <dos.h>
+#include <conio.h>
 
 #include "i_term.h"
 #include "i_system.h"
