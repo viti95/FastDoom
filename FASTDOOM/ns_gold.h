@@ -21,7 +21,9 @@
    and snd_gold_dma entries of the configuration file, applied with
    GOLD_SetCardSettings before GOLD_Init); they are not read back
    from the card.  The selectable IRQ lines are 3, 4, 5 and 7, and
-   the selectable DMA channels are 1, 2 and 3.  Both must be set (0
+   the selectable DMA channels are 1 and 3 (channel 2 is not offered
+   because it is used by the floppy drive on most PCs).  Both must be
+   set (0
    means "not set"); if either one is missing or invalid, card
    initialization fails.
 

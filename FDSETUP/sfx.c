@@ -586,12 +586,12 @@ func_exit:
 //	Choose the Ad Lib Gold DMA channel
 //
 // The screen is SCREENS/GOLDDMA.PUP; the menu items are at
-// x=32, rows 9 to 11 (DMA 1, 2, 3).
+// x=32, rows 9 and 10 (DMA 1 and 3; DMA 2 is not offered because
+// it is used by the floppy drive on most PCs).
 //
 enum
 {
 	GOLD_DMA_1,
-	GOLD_DMA_2,
 	GOLD_DMA_3,
 	GOLD_DMA_MAX
 };
@@ -599,8 +599,7 @@ enum
 item_t golddmaitems[] =
 	{
 		{GOLD_DMA_1, 32, 9, 13, -1, -1},
-		{GOLD_DMA_2, 32, 10, 13, -1, -1},
-		{GOLD_DMA_3, 32, 11, 13, -1, -1}};
+		{GOLD_DMA_3, 32, 10, 13, -1, -1}};
 
 menu_t golddmamenu =
 	{
@@ -624,10 +623,6 @@ int ChooseGoldDMA(DMXCARD *card) // RETURN: 0 = OK, -1 == ABORT
 	default:
 	case 1:
 		field = GOLD_DMA_1;
-		break;
-
-	case 2:
-		field = GOLD_DMA_2;
 		break;
 
 	case 3:
@@ -654,10 +649,6 @@ int ChooseGoldDMA(DMXCARD *card) // RETURN: 0 = OK, -1 == ABORT
 			{
 			case GOLD_DMA_1:
 				card->golddma = 1;
-				goto func_exit;
-
-			case GOLD_DMA_2:
-				card->golddma = 2;
 				goto func_exit;
 
 			case GOLD_DMA_3:

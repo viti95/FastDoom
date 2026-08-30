@@ -144,14 +144,15 @@ static int GOLD_ValidIrq(
    Function: GOLD_ValidDma
 
    Returns TRUE if the DMA channel is one of the channels the user
-   may select for the Gold (1, 2 or 3).
+   may select for the Gold (1 or 3; channel 2 is avoided because it
+   is used by the floppy drive on most PCs).
 ---------------------------------------------------------------------*/
 
 static int GOLD_ValidDma(
     int dma)
 
 {
-    return (dma == 1 || dma == 2 || dma == 3);
+    return (dma == 1 || dma == 3);
 }
 
 /*---------------------------------------------------------------------
@@ -1701,7 +1702,7 @@ int GOLD_Init(
         {
             char b1[12];
             char b2[12];
-            I_Printf("GOLD: IRQ %s and DMA %s are not valid (IRQ must be 3, 4, 5 or 7, DMA 1, 2 or 3)\n",
+            I_Printf("GOLD: IRQ %s and DMA %s are not valid (IRQ must be 3, 4, 5 or 7, DMA 1 or 3)\n",
                      GOLD_LogNumber(b1, irq, 10),
                      GOLD_LogNumber(b2, GOLD_DMAChannel, 10));
         }
