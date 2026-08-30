@@ -494,10 +494,10 @@ enum
 
 item_t goldirqitems[] =
 	{
-		{GOLD_IRQ_3, 32, 9, 13, -1, -1},
-		{GOLD_IRQ_4, 32, 10, 13, -1, -1},
-		{GOLD_IRQ_5, 32, 11, 13, -1, -1},
-		{GOLD_IRQ_7, 32, 12, 13, -1, -1}};
+		{GOLD_IRQ_3, 32, 11, 13, -1, -1},
+		{GOLD_IRQ_4, 32, 12, 13, -1, -1},
+		{GOLD_IRQ_5, 32, 13, 13, -1, -1},
+		{GOLD_IRQ_7, 32, 14, 13, -1, -1}};
 
 menu_t goldirqmenu =
 	{
