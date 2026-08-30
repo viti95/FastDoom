@@ -51,6 +51,8 @@ int snd_Mport;   // midi variables
 int snd_Sport;   // sound port
 int snd_Rate;    // sound rate
 int snd_PCMRate; // sound PCM rate
+int snd_GoldIrq; // Ad Lib Gold IRQ line (3, 4, 5 or 7; 0 = not set)
+int snd_GoldDma; // Ad Lib Gold DMA channel (1, 2 or 3; 0 = not set)
 
 int snd_MusicVolume; // maximum volume for music
 int snd_SfxVolume;   // maximum volume for sound

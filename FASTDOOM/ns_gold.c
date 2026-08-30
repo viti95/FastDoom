@@ -127,6 +127,34 @@ static const unsigned char GOLD_FreqBits[4] = {0x00, 0x08, 0x10, 0x18};
 static const int GOLD_IrqTable[8] = {3, 4, 5, 7, 10, 11, 12, 15};
 
 /*---------------------------------------------------------------------
+   Function: GOLD_ValidIrq
+
+   Returns TRUE if the IRQ line is one of the lines the user may
+   select for the Gold (3, 4, 5 or 7).
+---------------------------------------------------------------------*/
+
+static int GOLD_ValidIrq(
+    int irq)
+
+{
+    return (irq == 3 || irq == 4 || irq == 5 || irq == 7);
+}
+
+/*---------------------------------------------------------------------
+   Function: GOLD_ValidDma
+
+   Returns TRUE if the DMA channel is one of the channels the user
+   may select for the Gold (1, 2 or 3).
+---------------------------------------------------------------------*/
+
+static int GOLD_ValidDma(
+    int dma)
+
+{
+    return (dma == 1 || dma == 2 || dma == 3);
+}
+
+/*---------------------------------------------------------------------
    Function: GOLD_BuildIrqDmaReg
 
    Builds the control chip IRQ/DMA select register value from an IRQ
@@ -1578,7 +1606,18 @@ int GOLD_SetCardSettings(
         GOLD_Shutdown();
     }
 
+    /* The IRQ line and DMA channel are user settings; reject lines
+       and channels the Gold cannot be set to. */
+    if (!GOLD_ValidIrq((int)Config.Interrupt) ||
+        !GOLD_ValidDma((int)Config.DMAChannel))
+    {
+        return (GOLD_Error);
+    }
+
     GOLD_Config.Address = Config.Address;
+    GOLD_Config.Interrupt = Config.Interrupt;
+    GOLD_Config.DMAChannel = Config.DMAChannel;
+    GOLD_DMAChannel = (int)Config.DMAChannel;
 
     return (GOLD_Ok);
 }
@@ -1643,54 +1682,44 @@ int GOLD_Init(
     GOLD_WriteControlReg(GOLD_CTRL_AUDIO_SELECT,
                          GOLD_ReadControlReg(GOLD_CTRL_AUDIO_SELECT) & 0xFC);
 
-    /* Read the IRQ/DMA select register. */
-    irqdma = GOLD_ReadControlReg(GOLD_CTRL_IRQ_DMA_SELECT);
-    GOLD_OriginalIrqDmaReg = irqdma;
+    /* Save the card's IRQ/DMA select register so it can be restored
+       at shutdown.  It is not used for detection: the IRQ line and
+       DMA channel are user settings (the snd_gold_irq and
+       snd_gold_dma entries of the configuration file, see
+       FX_SetupGold). */
+    GOLD_OriginalIrqDmaReg = GOLD_ReadControlReg(GOLD_CTRL_IRQ_DMA_SELECT);
 
-    /* The IRQ line and DMA channel are taken from the select */
-    /* register when it is readable; some Gold cards read it back */
-    /* as 0xFF, in which case the common default of IRQ 5, DMA 1 */
-    /* is used. */
-    if (irqdma != 0xFF)
+    /* The IRQ line and DMA channel are user settings; both must be
+       set (0 means "not set") to lines/channels the Gold can be
+       configured to, otherwise initialization is aborted. */
+    irq = (int)GOLD_Config.Interrupt;
+    GOLD_DMAChannel = (int)GOLD_Config.DMAChannel;
+
+    if (!GOLD_ValidIrq(irq) || !GOLD_ValidDma(GOLD_DMAChannel))
     {
-        irq = GOLD_IrqTable[irqdma & 7];
-        GOLD_DMAChannel = (irqdma >> 4) & 7;
+#if (DEBUG_ENABLED == 1)
+        {
+            char b1[12];
+            char b2[12];
+            I_Printf("GOLD: IRQ %s and DMA %s are not valid (IRQ must be 3, 4, 5 or 7, DMA 1, 2 or 3)\n",
+                     GOLD_LogNumber(b1, irq, 10),
+                     GOLD_LogNumber(b2, GOLD_DMAChannel, 10));
+        }
+#endif
+        return (GOLD_Error);
     }
-    else
-    {
-        irq = 5;
-        GOLD_DMAChannel = 1;
-        irqdma = GOLD_BuildIrqDmaReg(irq, GOLD_DMAChannel);
-    }
+
+    irqdma = GOLD_BuildIrqDmaReg(irq, GOLD_DMAChannel);
 
 #if (DEBUG_ENABLED == 1)
     {
         char b1[12];
         char b2[12];
-        char b3[12];
-
-        if (GOLD_OriginalIrqDmaReg == 0xFF)
-        {
-            I_Printf("GOLD: IRQ/DMA select register reads 0xff: "
-                     "using default IRQ %s, DMA %s\n",
-                     GOLD_LogNumber(b2, irq, 10),
-                     GOLD_LogNumber(b3, GOLD_DMAChannel, 10));
-        }
-        else
-        {
-            I_Printf("GOLD: IRQ/DMA select register 0x%s: "
-                     "using IRQ %s, DMA %s (card register)\n",
-                     GOLD_LogNumber(b1, GOLD_OriginalIrqDmaReg, 16),
-                     GOLD_LogNumber(b2, irq, 10),
-                     GOLD_LogNumber(b3, GOLD_DMAChannel, 10));
-        }
+        I_Printf("GOLD: using configured IRQ %s, DMA %s\n",
+                 GOLD_LogNumber(b1, irq, 10),
+                 GOLD_LogNumber(b2, GOLD_DMAChannel, 10));
     }
 #endif
-
-    if (!VALID_IRQ(irq))
-    {
-        return (GOLD_Error);
-    }
 
     status = DMA_VerifyChannel(GOLD_DMAChannel);
     if (status == DMA_Error)

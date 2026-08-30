@@ -66,5 +66,7 @@ typedef enum
 
 extern int snd_Rate;
 extern int snd_PCMRate;
+extern int snd_GoldIrq;
+extern int snd_GoldDma;
 
 #endif

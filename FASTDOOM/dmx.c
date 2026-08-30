@@ -692,6 +692,13 @@ void ASS_Init(int rate, int mdev, int sdev)
         case OPL3LPT:
             status = FX_SetupCard(sound_device, &fx_device, dmx_snd_port);
             break;
+        case GOLD:
+            status = FX_SetupGold(snd_GoldIrq, snd_GoldDma);
+            if (status == FX_Ok)
+            {
+                status = FX_SetupCard(sound_device, &fx_device, -1);
+            }
+            break;
         default:
             status = FX_SetupCard(sound_device, &fx_device, -1);
             break;

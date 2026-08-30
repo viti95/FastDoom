@@ -478,6 +478,206 @@ func_exit:
 }
 
 //
+//	Choose the Ad Lib Gold IRQ line
+//
+// The screen is SCREENS/GOLDIRQ.PUP; the menu items are at
+// x=32, rows 9 to 12 (IRQ 3, 4, 5, 7).
+//
+enum
+{
+	GOLD_IRQ_3,
+	GOLD_IRQ_4,
+	GOLD_IRQ_5,
+	GOLD_IRQ_7,
+	GOLD_IRQ_MAX
+};
+
+item_t goldirqitems[] =
+	{
+		{GOLD_IRQ_3, 32, 9, 13, -1, -1},
+		{GOLD_IRQ_4, 32, 10, 13, -1, -1},
+		{GOLD_IRQ_5, 32, 11, 13, -1, -1},
+		{GOLD_IRQ_7, 32, 12, 13, -1, -1}};
+
+menu_t goldirqmenu =
+	{
+		&goldirqitems[0],
+		GOLD_IRQ_5,
+		GOLD_IRQ_MAX};
+
+int ChooseGoldIRQ(DMXCARD *card) // RETURN: 0 = OK, -1 == ABORT
+{
+	short field;
+	short key;
+	int rval = 0;
+
+	SaveScreen();
+	DrawPup(&goldirq);
+
+	// DEFAULT FIELD ========================================
+
+	switch (card->goldirq)
+	{
+	default:
+	case 3:
+		field = GOLD_IRQ_3;
+		break;
+
+	case 4:
+		field = GOLD_IRQ_4;
+		break;
+
+	case 5:
+		field = GOLD_IRQ_5;
+		break;
+
+	case 7:
+		field = GOLD_IRQ_7;
+		break;
+	}
+
+	goldirqmenu.startitem = field;
+
+	while (1)
+	{
+		SetupMenu(&goldirqmenu);
+		field = GetMenuInput();
+		key = menukey;
+		switch (key)
+		{
+		case KEY_ESC:
+			rval = -1;
+			goto func_exit;
+
+		case KEY_ENTER:
+		case KEY_F10:
+			switch (field)
+			{
+			case GOLD_IRQ_3:
+				card->goldirq = 3;
+				goto func_exit;
+
+			case GOLD_IRQ_4:
+				card->goldirq = 4;
+				goto func_exit;
+
+			case GOLD_IRQ_5:
+				card->goldirq = 5;
+				goto func_exit;
+
+			case GOLD_IRQ_7:
+				card->goldirq = 7;
+				goto func_exit;
+
+			default:
+				break;
+			}
+			break;
+		}
+	}
+
+func_exit:
+
+	RestoreScreen();
+	return (rval);
+}
+
+//
+//	Choose the Ad Lib Gold DMA channel
+//
+// The screen is SCREENS/GOLDDMA.PUP; the menu items are at
+// x=32, rows 9 to 11 (DMA 1, 2, 3).
+//
+enum
+{
+	GOLD_DMA_1,
+	GOLD_DMA_2,
+	GOLD_DMA_3,
+	GOLD_DMA_MAX
+};
+
+item_t golddmaitems[] =
+	{
+		{GOLD_DMA_1, 32, 9, 13, -1, -1},
+		{GOLD_DMA_2, 32, 10, 13, -1, -1},
+		{GOLD_DMA_3, 32, 11, 13, -1, -1}};
+
+menu_t golddmamenu =
+	{
+		&golddmaitems[0],
+		GOLD_DMA_1,
+		GOLD_DMA_MAX};
+
+int ChooseGoldDMA(DMXCARD *card) // RETURN: 0 = OK, -1 == ABORT
+{
+	short field;
+	short key;
+	int rval = 0;
+
+	SaveScreen();
+	DrawPup(&golddma);
+
+	// DEFAULT FIELD ========================================
+
+	switch (card->golddma)
+	{
+	default:
+	case 1:
+		field = GOLD_DMA_1;
+		break;
+
+	case 2:
+		field = GOLD_DMA_2;
+		break;
+
+	case 3:
+		field = GOLD_DMA_3;
+		break;
+	}
+
+	golddmamenu.startitem = field;
+
+	while (1)
+	{
+		SetupMenu(&golddmamenu);
+		field = GetMenuInput();
+		key = menukey;
+		switch (key)
+		{
+		case KEY_ESC:
+			rval = -1;
+			goto func_exit;
+
+		case KEY_ENTER:
+		case KEY_F10:
+			switch (field)
+			{
+			case GOLD_DMA_1:
+				card->golddma = 1;
+				goto func_exit;
+
+			case GOLD_DMA_2:
+				card->golddma = 2;
+				goto func_exit;
+
+			case GOLD_DMA_3:
+				card->golddma = 3;
+				goto func_exit;
+
+			default:
+				break;
+			}
+			break;
+		}
+	}
+
+func_exit:
+
+	RestoreScreen();
+	return (rval);
+}
+
+//
 //	Choose # of simultaneous digital channels
 //
 
@@ -821,7 +1021,15 @@ int SetupFX(void)
 	case M_TANDY3VOICE:
 	case M_ENSONIQ:
 	case M_WSS:
+		ChooseFreq();
+		ChooseNumDig();
+		break;
+
 	case M_GOLD:
+		if (ChooseGoldIRQ(&newc.d) == -1)
+			return (-1);
+		if (ChooseGoldDMA(&newc.d) == -1)
+			return (-1);
 		ChooseFreq();
 		ChooseNumDig();
 		break;

@@ -228,6 +228,8 @@ extern int snd_Mport;
 extern int snd_Sport;
 extern int snd_Rate;
 extern int snd_PCMRate;
+extern int snd_GoldIrq;
+extern int snd_GoldDma;
 
 typedef struct
 {
@@ -341,6 +343,10 @@ default_t defaults[] =
         {"snd_sport", &snd_Sport, 0x378},
         {"snd_rate", &snd_Rate, 2},
         {"snd_pcmrate", &snd_PCMRate, 1},
+        /* 0 means "not set": the Gold will not be initialized unless
+           both the IRQ line and the DMA channel are given. */
+        {"snd_gold_irq", &snd_GoldIrq, 0},
+        {"snd_gold_dma", &snd_GoldDma, 0},
 
         {"usegamma", &usegamma, 0}
 };

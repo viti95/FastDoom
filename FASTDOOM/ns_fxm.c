@@ -286,6 +286,34 @@ int FX_SetupSoundBlaster(fx_blaster_config blaster)
 }
 
 /*---------------------------------------------------------------------
+   Function: FX_SetupGold
+
+   Handles manual setup of the Ad Lib Gold IRQ line and DMA
+   channel.  The base address is still taken from the GOLD
+   environment variable (or the default 0x388).
+---------------------------------------------------------------------*/
+
+int FX_SetupGold(
+    int irq,
+    int dma)
+{
+    GOLD_CONFIG Config;
+
+    FX_SoundDevice = GOLD;
+
+    Config.Address = 0;
+    Config.Interrupt = irq;
+    Config.DMAChannel = dma;
+
+    if (GOLD_SetCardSettings(Config) != GOLD_Ok)
+    {
+        return (FX_Error);
+    }
+
+    return (FX_Ok);
+}
+
+/*---------------------------------------------------------------------
    Function: FX_Init
 
    Selects which sound device to use.
