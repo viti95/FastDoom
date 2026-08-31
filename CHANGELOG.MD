@@ -1,6 +1,8 @@
 # CHANGELOG
 
 ## 1.4.0 (?? ??? ????)
+* Mouse buttons can now be bound to different actions: each of the 3 buttons can be set to Fire, Move Forward, Move Backward, Strafe, Use, Speed, Previous Weapon, Next Weapon or None #236
+* Fixed mouse X axis sign bug (left mouse strafe now work properly)
 * New command line parameter -gamemode to select the game mode ("shareware", "registered", "commercial" or "retail")
 * New command line parameter -gamemission to select the game mission ("doom", "doom2", "tnt" or "plutonia")
 * Command line parameter -complevel now validates its value (only 2, 3 or 4 are valid)
