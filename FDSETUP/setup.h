@@ -23,8 +23,8 @@ typedef enum
 // ALL THE WINDOWS
 extern pup_t far askpres, far consel, far control,
 	far idcard, far idkeysel, far idmain2,
-	far idmousel, far mcard, far midiport,
-	far mousentr, far mouspres,
+	far idmousel, far mouseact, far mcard, far midiport,
+	far mouspres,
 	far numdig, far quitwin,
 	far lptport, far cmsport, far show,
 	far freqpcm, far freqall, far comport, far mididev,

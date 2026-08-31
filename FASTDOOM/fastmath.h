@@ -38,8 +38,7 @@ fixed_t FixedMul(fixed_t a, fixed_t b);
 int FixedMulShortToInt(fixed_t a, fixed_t b);
 #pragma aux FixedMulShortToInt = \
     "shl eax, 16",     \
-    "imul ebx",        \
-    "and edx, 0xFFFF" parm[eax][ebx] value[edx] modify exact[eax edx]
+    "imul ebx" parm[eax][ebx] value[edx] modify exact[eax edx]
 
 inline fixed_t FixedInterpolate(fixed_t a, fixed_t b, fixed_t frac)
 {

@@ -2916,7 +2916,7 @@ void R_InitBuffer(int width, int height)
 #endif
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF)
     for (i = 0; i < height; i++)
-        ylookup[i] = Mul80(i);
+        ylookup[i] = (byte *)Mul80(i);
 #endif
 }
 

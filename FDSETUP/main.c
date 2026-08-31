@@ -251,9 +251,9 @@ void StartUp(void)
 	curk.key2 = SC_RIGHT_SHIFT;
 	curk.key3 = SC_COMMA;
 	curk.key4 = SC_PERIOD;
-	curk.mouse[0] = 0;
-	curk.mouse[1] = 1;
-	curk.mouse[2] = 2;
+	curk.mouse[0] = MOUSE_ACT_FIRE;
+	curk.mouse[1] = MOUSE_ACT_STRAFE;
+	curk.mouse[2] = MOUSE_ACT_FORWARD;
 
 	newc.m.card = M_NONE;
 	newc.m.soundport = -1;
