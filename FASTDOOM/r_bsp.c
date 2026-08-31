@@ -566,7 +566,7 @@ const int checkcoord[9][4] = {
 
 byte R_CheckBBox(fixed_t *bspcoord)
 {
-    int *boxptr;
+    const int *boxptr;
 
     angle_t angle1;
     angle_t angle2;
@@ -672,7 +672,7 @@ byte R_CheckBBox(fixed_t *bspcoord)
 //
 void R_Subsector(int num)
 {
-    int count;
+    seg_t *count;
     seg_t *line;
     subsector_t *sub;
 
@@ -699,7 +699,7 @@ void R_Subsector(int num)
 
 void R_UpdateSubsector(int num)
 {
-    int count;
+    seg_t *count;
     seg_t *line;
     subsector_t *sub;
 

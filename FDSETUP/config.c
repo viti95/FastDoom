@@ -329,62 +329,85 @@ func_exit:
 	return;
 }
 
-//
-// Configure mouse buttons
-//
+/*
+ * Configure mouse buttons
+ */
 enum
 {
-	M_FIRE,
-	M_FORWARD,
-	M_STRAFE,
+	M_BUTTON1,
+	M_BUTTON2,
+	M_BUTTON3,
 	M_MAX
 };
 item_t idmouselitems[] =
 	{
-		{M_FIRE, 44, 9, 13, -1, -1},
-		{M_FORWARD, 44, 10, 13, -1, -1},
-		{M_STRAFE, 44, 11, 13, -1, -1}};
+		{M_BUTTON1, 38, 9, 13, -1, -1},
+		{M_BUTTON2, 38, 10, 13, -1, -1},
+		{M_BUTTON3, 38, 11, 13, -1, -1}};
 menu_t idmouselmenu =
 	{
 		&idmouselitems[0],
-		M_FIRE,
+		M_BUTTON1,
 		M_MAX};
 
-//
-//	Get mouse button
-//
-int GetMouseButton(void)
+/* Action selection menu (item id and index = action value) */
+item_t mouseactitems[] =
+	{
+		{MOUSE_ACT_NONE, 32, 7, 20, -1, -1},
+		{MOUSE_ACT_FIRE, 32, 8, 20, -1, -1},
+		{MOUSE_ACT_FORWARD, 32, 9, 20, -1, -1},
+		{MOUSE_ACT_BACK, 32, 10, 20, -1, -1},
+		{MOUSE_ACT_STRAFE, 32, 11, 20, -1, -1},
+		{MOUSE_ACT_USE, 32, 12, 20, -1, -1},
+		{MOUSE_ACT_SPEED, 32, 13, 20, -1, -1},
+		{MOUSE_ACT_WEAPONPREV, 32, 14, 20, -1, -1},
+		{MOUSE_ACT_WEAPONNEXT, 32, 15, 20, -1, -1}};
+menu_t mouseactmenu =
+	{
+		&mouseactitems[0],
+		0,
+		MOUSE_ACT_MAX};
+
+static char *mouseactnames[MOUSE_ACT_MAX] =
+	{
+		"None",
+		"Fire Weapon",
+		"Move Forward",
+		"Move Backward",
+		"Strafe On",
+		"Use",
+		"Speed On",
+		"Previous Weapon",
+		"Next Weapon"
+	};
+
+/*
+ * Get mouse action
+ */
+int GetMouseAction(int startitem)
 {
-	int rval = -1;
-	union REGS r;
+	short key;
+	int field;
+
+	if (startitem < 0 || startitem >= MOUSE_ACT_MAX)
+		startitem = 0;
+
+	mouseactmenu.startitem = startitem;
 
 	SaveScreen();
-	DrawPup(&mousentr);
+	DrawPup(&mouseact);
 
-	while (1)
-	{
-		r.x.ax = 3;
-		int86(0x33, &r, &r);
+	field = GetMenuInput();
+	key = menukey;
 
-		if (r.x.bx & 1)
-			rval = 0;
-		else if (r.x.bx & 2)
-			rval = 1;
-		else if (r.x.bx & 4)
-			rval = 2;
-
-		if (rval != -1)
-			break;
-
-		if ((_bios_keybrd(_KEYBRD_READY) >> 8) == SC_ESC)
-			break;
-	}
+	if (key == KEY_ESC)
+		field = -1;
 
 	RestoreScreen();
 	while (kbhit())
 		getch();
 
-	return (rval);
+	return (field);
 }
 
 void IDConfigMouse(void)
@@ -393,38 +416,20 @@ void IDConfigMouse(void)
 	short field;
 	int rval;
 	CONTS turk;
-	char mousebuts[3][20] = {
-		"LEFT BUTTON",
-		"RIGHT BUTTON",
-		"MID BUTTON"};
-	int fire;
-	int frwd;
-	int strf;
 
 	SaveScreen();
 	DrawPup(&idmousel);
 	turk = curk;
 
-	fire = turk.mouse[ID_FIRE];
-	frwd = turk.mouse[ID_FORWARD];
-	strf = turk.mouse[ID_STRAFE];
-
 	textbackground(1);
 	textcolor(15);
-	Clear(&idmouselitems[M_FIRE]);
-	Pos(&idmouselitems[M_FIRE]);
-	if (fire >= 0)
-		cprintf("%s", mousebuts[fire]);
-
-	Clear(&idmouselitems[M_FORWARD]);
-	Pos(&idmouselitems[M_FORWARD]);
-	if (frwd >= 0)
-		cprintf("%s", mousebuts[frwd]);
-
-	Clear(&idmouselitems[M_STRAFE]);
-	Pos(&idmouselitems[M_STRAFE]);
-	if (strf >= 0)
-		cprintf("%s", mousebuts[strf]);
+	for (field = M_BUTTON1; field < M_MAX; field++)
+	{
+		Clear(&idmouselitems[field]);
+		Pos(&idmouselitems[field]);
+		if (turk.mouse[field] >= 0 && turk.mouse[field] < MOUSE_ACT_MAX)
+			cprintf("%s", mouseactnames[turk.mouse[field]]);
+	}
 	gotoxy(1, 25);
 
 	while (1)
@@ -442,72 +447,16 @@ void IDConfigMouse(void)
 			goto func_exit;
 
 		case KEY_ENTER:
-			switch (field)
+			if (field >= M_BUTTON1 && field < M_MAX)
 			{
-			case M_FIRE:
-				rval = GetMouseButton();
+				rval = GetMouseAction(turk.mouse[field]);
 				if (rval != -1)
 				{
-					turk.mouse[ID_FIRE] = rval;
-					Clear(&idmouselitems[M_FIRE]);
-					Pos(&idmouselitems[M_FIRE]);
-					cprintf("%s", mousebuts[rval]);
-					if (turk.mouse[ID_STRAFE] == rval)
-					{
-						turk.mouse[ID_STRAFE] = -1;
-						Clear(&idmouselitems[M_STRAFE]);
-					}
-					if (turk.mouse[ID_FORWARD] == rval)
-					{
-						turk.mouse[ID_FORWARD] = -1;
-						Clear(&idmouselitems[M_FORWARD]);
-					}
+					turk.mouse[field] = rval;
+					Clear(&idmouselitems[field]);
+					Pos(&idmouselitems[field]);
+					cprintf("%s", mouseactnames[rval]);
 				}
-				break;
-
-			case M_FORWARD:
-				rval = GetMouseButton();
-				if (rval != -1)
-				{
-					turk.mouse[ID_FORWARD] = rval;
-					Clear(&idmouselitems[M_FORWARD]);
-					Pos(&idmouselitems[M_FORWARD]);
-					cprintf("%s", mousebuts[rval]);
-
-					if (turk.mouse[ID_STRAFE] == rval)
-					{
-						turk.mouse[ID_STRAFE] = -1;
-						Clear(&idmouselitems[M_STRAFE]);
-					}
-					if (turk.mouse[ID_FIRE] == rval)
-					{
-						turk.mouse[ID_FIRE] = -1;
-						Clear(&idmouselitems[M_FIRE]);
-					}
-				}
-				break;
-
-			case M_STRAFE:
-				rval = GetMouseButton();
-				if (rval != -1)
-				{
-					turk.mouse[ID_STRAFE] = rval;
-					Clear(&idmouselitems[M_STRAFE]);
-					Pos(&idmouselitems[M_STRAFE]);
-					cprintf("%s", mousebuts[rval]);
-
-					if (turk.mouse[ID_FORWARD] == rval)
-					{
-						turk.mouse[ID_FORWARD] = -1;
-						Clear(&idmouselitems[M_FORWARD]);
-					}
-					if (turk.mouse[ID_FIRE] == rval)
-					{
-						turk.mouse[ID_FIRE] = -1;
-						Clear(&idmouselitems[M_FIRE]);
-					}
-				}
-				break;
 			}
 			gotoxy(1, 25);
 			break;

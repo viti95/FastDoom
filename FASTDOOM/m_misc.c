@@ -47,6 +47,8 @@
 #include "m_misc.h"
 #include "m_menu.h"
 
+#include "g_game.h"
+
 #include "options.h"
 
 int myargc;
@@ -198,9 +200,7 @@ extern int key_speed;
 extern int key_weaponprev;
 extern int key_weaponnext;
 
-extern int mousebfire;
-extern int mousebstrafe;
-extern int mousebforward;
+extern int mouseactions[3];
 extern int viewwidth;
 extern int viewwidthhalf;
 extern int viewwidthlimit;
@@ -308,9 +308,9 @@ default_t defaults[] =
         {"key_weaponnext", &key_weaponnext, SC_KEY_X, 1},
 
         {"use_mouse", &usemouse, 1},
-        {"mouseb_fire", &mousebfire, 0},
-        {"mouseb_strafe", &mousebstrafe, 1},
-        {"mouseb_forward", &mousebforward, 2},
+        {"mouseb_1", &mouseactions[0], MOUSE_ACT_FIRE},
+        {"mouseb_2", &mouseactions[1], MOUSE_ACT_STRAFE},
+        {"mouseb_3", &mouseactions[2], MOUSE_ACT_FORWARD},
 
         {"screenblocks", &screenblocks, 9},
         {"detaillevel", &detailLevel, 0},

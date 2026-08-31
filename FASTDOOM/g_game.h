@@ -22,6 +22,20 @@
 #include "doomdef.h"
 #include "d_event.h"
 
+/*
+ * Mouse button actions: one action is bound to each mouse button.
+ * These values must match the ones used by FDSETUP.
+ */
+#define MOUSE_ACT_NONE 0
+#define MOUSE_ACT_FIRE 1
+#define MOUSE_ACT_FORWARD 2
+#define MOUSE_ACT_BACK 3
+#define MOUSE_ACT_STRAFE 4
+#define MOUSE_ACT_USE 5
+#define MOUSE_ACT_SPEED 6
+#define MOUSE_ACT_WEAPONPREV 7
+#define MOUSE_ACT_WEAPONNEXT 8
+
 //
 // GAME
 //

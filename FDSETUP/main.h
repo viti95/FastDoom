@@ -102,16 +102,26 @@ typedef struct
 	int key4; // ID = STRAFE RIGHT
 	int key5; // ID = WEAPON PREV
 	int key6; // ID = WEAPON NEXT
-	int mouse[3];
+	int mouse[3]; /* action bound to each mouse button */
 } CONTS;
 
+/*
+ * Mouse button actions: one action is bound to each mouse button.
+ * These values must match the ones used by FASTDOOM (g_game.h).
+ */
 typedef enum
 {
-	ID_FIRE,	// def button 1
-	ID_STRAFE,	// def button 3
-	ID_FORWARD, // def button 2
-	ID_USE		// def button 4 joystick only
-} IDCONTS;
+	MOUSE_ACT_NONE = 0,
+	MOUSE_ACT_FIRE = 1,
+	MOUSE_ACT_FORWARD = 2,
+	MOUSE_ACT_BACK = 3,
+	MOUSE_ACT_STRAFE = 4,
+	MOUSE_ACT_USE = 5,
+	MOUSE_ACT_SPEED = 6,
+	MOUSE_ACT_WEAPONPREV = 7,
+	MOUSE_ACT_WEAPONNEXT = 8,
+	MOUSE_ACT_MAX
+} MOUSEACT;
 
 extern int usemouse;
 

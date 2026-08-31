@@ -63,9 +63,9 @@ default_t defaults[] =
 		{"key_weaponnext", &curk.key6, SC_X},
 
 		{"use_mouse", &usemouse, 1},
-		{"mouseb_fire", &curk.mouse[ID_FIRE], ID_FIRE},
-		{"mouseb_strafe", &curk.mouse[ID_STRAFE], ID_STRAFE},
-		{"mouseb_forward", &curk.mouse[ID_FORWARD], ID_FORWARD},
+		{"mouseb_1", &curk.mouse[0], MOUSE_ACT_FIRE},
+		{"mouseb_2", &curk.mouse[1], MOUSE_ACT_STRAFE},
+		{"mouseb_3", &curk.mouse[2], MOUSE_ACT_FORWARD},
 
 		{"screenblocks", &screenblocks, 9},
 		{"detaillevel", &detailLevel, 0},

@@ -139,9 +139,8 @@ int key_speed;
 int key_weaponprev;
 int key_weaponnext;
 
-int mousebfire;
-int mousebstrafe;
-int mousebforward;
+/* action bound to each mouse button */
+int mouseactions[3];
 
 #define MAXPLMOVE (0x32 << 11)
 
@@ -157,6 +156,8 @@ fixed_t angleturn[3] = {640 << 16, 1280 << 16, 320 << 16}; // + slow turn
 
 byte gamekeydown[NUMKEYS];
 int turnheld; // for accelerative turning
+
+#define NUMMOUSEBUTTONS 3
 
 byte mousearray[5];
 byte *mousebuttons = &mousearray[1]; // allow [-1]
@@ -273,12 +274,45 @@ void G_BuildTiccmd(ticcmd_t *cmd)
 
     SetBytes(cmd, 0, sizeof(ticcmd_t));
 
-    strafe = gamekeydown[key_strafe] || mousebuttons[mousebstrafe];
+    strafe = gamekeydown[key_strafe];
+    bstrafe = 0;
     speed = !autorun ^ !gamekeydown[key_speed];
 
     forward = 0;
 
-    if (gamekeydown[key_up] || mousebuttons[mousebforward])
+    /* mouse buttons can trigger actions */
+    for (i = 0; i < NUMMOUSEBUTTONS; i++)
+    {
+        if (mousebuttons[i])
+        {
+            switch (mouseactions[i])
+            {
+            case MOUSE_ACT_FIRE:
+                cmd->buttons |= BT_ATTACK;
+                break;
+            case MOUSE_ACT_FORWARD:
+                forward += forwardmove[speed];
+                break;
+            case MOUSE_ACT_BACK:
+                forward -= forwardmove[speed];
+                break;
+            case MOUSE_ACT_STRAFE:
+                strafe = 1;
+                bstrafe = 1;
+                break;
+            case MOUSE_ACT_USE:
+                cmd->buttons |= BT_USE;
+                break;
+            case MOUSE_ACT_SPEED:
+                speed = 1;
+                break;
+            default:
+                break;
+            }
+        }
+    }
+
+    if (gamekeydown[key_up])
     {
         forward += forwardmove[speed];
     }
@@ -339,7 +373,6 @@ void G_BuildTiccmd(ticcmd_t *cmd)
         side -= sidemove[speed];
 
     // strafe double click
-    bstrafe = mousebuttons[mousebstrafe];
     if (bstrafe != dclickstate2 && dclicktime2 > 1)
     {
         dclickstate2 = bstrafe;
@@ -379,7 +412,7 @@ void G_BuildTiccmd(ticcmd_t *cmd)
 
     // buttons
 
-    if (gamekeydown[key_fire] || mousebuttons[mousebfire])
+    if (gamekeydown[key_fire])
         cmd->buttons |= BT_ATTACK;
 
     if (gamekeydown[key_use])
@@ -399,18 +432,47 @@ void G_BuildTiccmd(ticcmd_t *cmd)
     {
         static byte keynextstate;
         static byte keyprevstate;
+        static byte prevmousestate[NUMMOUSEBUTTONS];
         byte knext;
         byte kprev;
+        byte mnext;
+        byte mprev;
         int nextweapon;
 
         knext = gamekeydown[key_weaponnext];
         kprev = gamekeydown[key_weaponprev];
+        mnext = 0;
+        mprev = 0;
+
+        /* mouse weapon switching is edge triggered */
+        for (i = 0; i < NUMMOUSEBUTTONS; i++)
+        {
+            if (mousebuttons[i])
+            {
+                if (!prevmousestate[i])
+                {
+                    if (mouseactions[i] == MOUSE_ACT_WEAPONNEXT)
+                        mnext = 1;
+                    else if (mouseactions[i] == MOUSE_ACT_WEAPONPREV)
+                        mprev = 1;
+                }
+            }
+            prevmousestate[i] = mousebuttons[i];
+        }
 
         if (knext && !keynextstate)
         {
             nextweapon = G_CycleWeapon(true);
         }
         else if (kprev && !keyprevstate)
+        {
+            nextweapon = G_CycleWeapon(false);
+        }
+        else if (mnext)
+        {
+            nextweapon = G_CycleWeapon(true);
+        }
+        else if (mprev)
         {
             nextweapon = G_CycleWeapon(false);
         }

@@ -367,7 +367,8 @@ void I_UpdateBoxTransparent(int x, int y, int w, int h)
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF)
 void I_UpdateBox(int x, int y, int w, int h)
 {
-    int i, j, k, count;
+    int i, j, count;
+    byte *k;
     int sp_x1, sp_x2;
     int poffset;
     int offset;
@@ -443,13 +444,14 @@ void I_UpdateBox(int x, int y, int w, int h)
 
 void I_UpdateBoxTransparent(int x, int y, int w, int h)
 {
-    int i, j, k, count;
+    int i, j, count;
     int sp_x1, sp_x2;
     int poffset;
     int offset;
     int pstep;
     int step;
     byte *dest, *source;
+    byte *k;
 
     sp_x1 = x / 8;
     sp_x2 = (x + w) / 8;
