@@ -353,15 +353,15 @@ menu_t idmouselmenu =
 /* Action selection menu (item id and index = action value) */
 item_t mouseactitems[] =
 	{
-		{MOUSE_ACT_NONE, 32, 7, 20, -1, -1},
-		{MOUSE_ACT_FIRE, 32, 8, 20, -1, -1},
-		{MOUSE_ACT_FORWARD, 32, 9, 20, -1, -1},
-		{MOUSE_ACT_BACK, 32, 10, 20, -1, -1},
-		{MOUSE_ACT_STRAFE, 32, 11, 20, -1, -1},
-		{MOUSE_ACT_USE, 32, 12, 20, -1, -1},
-		{MOUSE_ACT_SPEED, 32, 13, 20, -1, -1},
-		{MOUSE_ACT_WEAPONPREV, 32, 14, 20, -1, -1},
-		{MOUSE_ACT_WEAPONNEXT, 32, 15, 20, -1, -1}};
+		{MOUSE_ACT_NONE, 26, 9, 20, -1, -1},
+		{MOUSE_ACT_FIRE, 26, 10, 20, -1, -1},
+		{MOUSE_ACT_FORWARD, 26, 11, 20, -1, -1},
+		{MOUSE_ACT_BACK, 26, 12, 20, -1, -1},
+		{MOUSE_ACT_STRAFE, 26, 13, 20, -1, -1},
+		{MOUSE_ACT_USE, 26, 14, 20, -1, -1},
+		{MOUSE_ACT_SPEED, 26, 15, 20, -1, -1},
+		{MOUSE_ACT_WEAPONPREV, 26, 16, 20, -1, -1},
+		{MOUSE_ACT_WEAPONNEXT, 26, 17, 20, -1, -1}};
 menu_t mouseactmenu =
 	{
 		&mouseactitems[0],
@@ -396,6 +396,8 @@ int GetMouseAction(int startitem)
 
 	SaveScreen();
 	DrawPup(&mouseact);
+
+	SetupMenu(&mouseactmenu);
 
 	field = GetMenuInput();
 	key = menukey;
