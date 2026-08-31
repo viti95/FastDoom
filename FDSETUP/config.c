@@ -341,9 +341,9 @@ enum
 };
 item_t idmouselitems[] =
 	{
-		{M_BUTTON1, 38, 9, 13, -1, -1},
-		{M_BUTTON2, 38, 10, 13, -1, -1},
-		{M_BUTTON3, 38, 11, 13, -1, -1}};
+		{M_BUTTON1, 38, 9, 15, -1, -1},
+		{M_BUTTON2, 38, 10, 15, -1, -1},
+		{M_BUTTON3, 38, 11, 15, -1, -1}};
 menu_t idmouselmenu =
 	{
 		&idmouselitems[0],
