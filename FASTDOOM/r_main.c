@@ -682,45 +682,39 @@ fixed_t R_PointToDist(fixed_t x, fixed_t y)
 fixed_t R_ScaleFromGlobalAngle(int position)
 {
     fixed_t scale;
+    int anglea;
     int angleb;
     int sinea;
     int sineb;
     fixed_t num;
     int den;
 
-    // both sines are allways positive
-    sinea = sinextoviewangle90[position];
+    anglea = ANG90 + (position - viewangle);
+    angleb = ANG90 + (position - rw_normalangle);
 
-    angleb = xtoviewangle90[position] + viewangle - rw_normalangle;
-    angleb >>= ANGLETOFINESHIFT;
+    sinea = finesine[anglea >> ANGLETOFINESHIFT];
+    sineb = finesine[angleb >> ANGLETOFINESHIFT];
 
-    sineb = finesine[angleb];
 #if defined(MODE_T4050)
     num = FixedMulEDX(projection, sineb) << 1;
 #endif
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+
+#if defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     num = FixedMulEDX(projection, sineb) << detailshift;
 #endif
-#if defined(MODE_Y_HALF)
-    num = FixedMulEDXHalf(projection, sineb) << detailshift;
-#endif
-#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T4025) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
+
+#if defined(MODE_T8025) || defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_MDA)
     num = FixedMulEDX(projection, sineb);
 #endif
+
     den = FixedMulEDX(rw_distance, sinea);
 
-    if (den > num >> 16)
-    {
-        scale = FixedDiv(num, den);
+    scale = FixedDiv3(&num, &den);
 
-        // SCALE BETWEEN 256 AND 64 * FRACUNIT ???
-        if (scale > 64 * FRACUNIT)
-            scale = 64 * FRACUNIT;
-        else if (scale < 256)
-            scale = 256;
-    }
-    else
+    if (scale > 64 * FRACUNIT)
         scale = 64 * FRACUNIT;
+    else if (scale < 256)
+        scale = 256;
 
     return scale;
 }
