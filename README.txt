@@ -140,6 +140,10 @@
  * FDM1024D.EXE => FastDoom VESA 1280x1024 direct rendering mode
  * FDM1200R.EXE => FastDoom VESA 1600x1200 backbuffered mode
  * FDM1200D.EXE => FastDoom VESA 1600x1200 direct rendering mode
+ * FDMVT100.EXE => FastDoom VT100 terminal output mode (serial port,
+                   display only)
+ * FDSTART.EXE  => Text mode launcher, pick any FastDoom executable,
+                   FDSETUP or FDBENCH from an on-screen menu
  * FDSETUP.EXE  => Utility to setup controls and sound cards
  * FDBENCH.EXE  => Utility to make benchmarks easier to execute
  * BENCH.BAT    => Scripted benchmark, instructions are included in the script
@@ -210,7 +214,12 @@
                  2 - Doom 1.9 (Also Doom II)
                  3 - Ultimate Doom
                  4 - Final Doom
+ -gamemode X => Select the game mode ("shareware", "registered",
+                "commercial" or "retail")
+ -gamemission X => Select the game mission ("doom", "doom2", "tnt"
+                   or "plutonia")
  -iwad X => Load an IWAD file
+ -preload => Preload the IWAD into RAM
  -sbk X => Load a SBK soundfont for AWE32/AWE64 soundcards
  -benchmark file XX YY => Run multiple XX demo benchmarks, using
                           configuration benchmark YY
