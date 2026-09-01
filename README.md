@@ -29,7 +29,8 @@ Doom port for DOS, based on PCDoom by @nukeykt. The goal of this port is to make
 * Yamaha MU80 support (display)
 * IBM PC Music Feature card support
 * ESS ESFM support
-* Limited Adlib Gold support
+* Adlib Gold digital sound support
+* Windows Sound System (WSS) support
 * Lot's of optimizations to make the game run faster / smoother
 * Removed low memory limit (may cause crashes with low RAM)
 * New detail level: Potato. It renders the full scene with a quarter width resolution (max 80x200). Much faster rendering, specially on 386 cpu's and slow 8-bit VGA ISA cards.
@@ -40,11 +41,15 @@ Doom port for DOS, based on PCDoom by @nukeykt. The goal of this port is to make
 * Added autorun support (F12 key)
 * Added mono sound support
 * Replaced DOS/4GW with DOS/32A providing a good speedup!
-* New setup program
+* New setup program (FDSetup 2.0, fully open source toolchain)
 * New video modes (Mode 13h, MDA, CGA, EGA, Hercules, Text modes, VESA 2.0, Plantronics Colorplus, Sigma Color 400, Hercules InColor)
+* HiRes VESA video modes support (up to 1600x1200)
 * Advanced benchmark support
 * Uncapped FPS mode support (frame interpolation, more than 35 fps)
-* HiRes VESA video modes support
+* Next/previous weapon keys
+* Mouse buttons can be bound to different actions (Fire, Move Forward/Backward, Strafe, Use, Speed, Previous/Next Weapon or None)
+* Secrets completed counter on the automap
+* VT100 terminal output support
 
 ## DEMO
 
