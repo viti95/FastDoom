@@ -240,6 +240,7 @@ static int group_menu(const group_t *g)
         char header[64];
 
         clear_screen();
+        printf("\n"); /* Keep the top row empty. */
         sprintf(header, "FastDoom launcher (%s)", g->title);
         print_header(header);
         for (i = 0; i < g->count; i++) {
@@ -254,7 +255,7 @@ static int group_menu(const group_t *g)
                 printf(" %2d. %12s - %s (missing)\n", i + 1, g->items[i].exe, g->items[i].desc);
             }
         }
-        print_bottom_row(4 + g->count,
+        print_bottom_row(5 + g->count,
                          "  Up/Down to move, Enter/Right to run, Esc/Left to go back, Q to quit.");
         c = getch();
         if (c == -1 || c == 0x1B) {
@@ -358,6 +359,7 @@ static void main_menu(void)
 
     for (;;) {
         clear_screen();
+        printf("\n"); /* Keep the top row empty. */
         print_header("FastDoom launcher");
         for (i = 0; i < MM_QUIT; i++) {
             if (i == sel) {
@@ -378,7 +380,7 @@ static void main_menu(void)
         } else {
             printf("     Q. Quit\n\n");
         }
-        print_bottom_row(4 + MM_QUIT + 2,
+        print_bottom_row(5 + MM_QUIT + 2,
                          "  Up/Down to move, Enter/Right to choose, Esc/Left/Q to quit.");
         c = getch();
         if (c == -1 || c == 0x1B) {
@@ -430,6 +432,6 @@ int main(void)
 {
     main_menu();
     clear_screen();
-    printf("RIP AND TEAR\n");
+    printf("\n RIP AND TEAR\n");
     return 0;
 }
