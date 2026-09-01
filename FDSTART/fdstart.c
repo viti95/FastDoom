@@ -210,7 +210,7 @@ static void print_header(const char *text)
 }
 
 /* Bottom row (zero based) where the key description line is shown. */
-#define BOTTOM_ROW 24
+#define BOTTOM_ROW 23
 
 /*
  * Prints the key description line fixed to the bottom of the
