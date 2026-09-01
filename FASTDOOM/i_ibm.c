@@ -651,6 +651,9 @@ void I_GetCPU(void)
 
     if(hasCPUID)
         GetCPUFeatures();
+
+    if (hasFPU)
+        SetFPUST4();
 }
 
 //

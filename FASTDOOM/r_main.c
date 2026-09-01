@@ -689,11 +689,13 @@ fixed_t R_ScaleFromGlobalAngle(int position)
     fixed_t num;
     int den;
 
-    anglea = ANG90 + (position - viewangle);
-    angleb = ANG90 + (position - rw_normalangle);
+    // both sines are allways positive
+    sinea = sinextoviewangle90[position];
 
-    sinea = finesine[anglea >> ANGLETOFINESHIFT];
-    sineb = finesine[angleb >> ANGLETOFINESHIFT];
+    angleb = xtoviewangle90[position] + viewangle - rw_normalangle;
+    angleb >>= ANGLETOFINESHIFT;
+
+    sineb = finesine[angleb];
 
 #if defined(MODE_T4050)
     num = FixedMulEDX(projection, sineb) << 1;

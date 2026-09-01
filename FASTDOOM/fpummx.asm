@@ -64,6 +64,14 @@ CODE_SYM_DEF GetCPUID
 nocpuid:
     ret
 
+CODE_SYM_DEF SetFPUST4
+    fild     dword [FPU_ST4_VALUE]  ; st(0) = 65536
+    fldz                            ; st(1) = 65536
+    fldz                            ; st(2) = 65536
+    fldz                            ; st(3) = 65536
+    fldz                            ; st(4) = 65536
+ret
+
 CODE_SYM_DEF GetCPUFeatures
     pushad
     mov eax,0x1
@@ -75,3 +83,8 @@ CODE_SYM_DEF GetCPUFeatures
     mov [_hasFPU],ebx
     popad
 ret
+
+BEGIN_DATA_SECTION
+
+FPU_ST4_VALUE:
+    dd 65536
