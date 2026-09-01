@@ -194,6 +194,11 @@ elif [ "$target" = "fdbench.exe" ]; then
   builtin=fdbench.exe
   buildopts=""
 
+elif [ "$target" = "fdstart.exe" ]; then
+  builddir=FDSTART
+  builtin=fdstart.exe
+  buildopts=""
+
 elif [ "$target" = "clean" ]; then
   cd FASTDOOM
   wmake clean
