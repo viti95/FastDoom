@@ -464,6 +464,6 @@ int main(void)
 {
     main_menu();
     clear_screen();
-    printf("\n RIP AND TEAR\n");
+    printf("\n RIP AND TEAR\n\n");
     return 0;
 }
