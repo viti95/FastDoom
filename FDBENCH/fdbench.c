@@ -69,12 +69,41 @@ static void cleanScreen(void)
     printf("\n");
 }
 
-/* Reads a line from the keyboard (equivalent of the BASIC INPUT statement). */
+/*
+ * Checks the keyboard buffer for a pending 'Q'/'q' keypress and exits
+ * the program if one is found (call between interactive steps, where
+ * the program is not waiting for line input).
+ */
+static void checkQuit(void)
+{
+    int ch;
+
+    while (kbhit())
+    {
+        ch = getch();
+        if (ch == 'q' || ch == 'Q')
+        {
+            printf("\n     Quitting.\n");
+            exit(0);
+        }
+    }
+}
+
+/*
+ * Reads a line from the keyboard (equivalent of the BASIC INPUT statement).
+ * If the user types just "Q" (or "q"), the program exits.
+ */
 static void readLine(char *buf, int maxlen)
 {
     if (fgets(buf, maxlen, stdin) == (char *)NULL)
         buf[0] = '\0';
     buf[strcspn(buf, "\r\n")] = '\0';
+
+    if ((buf[0] == 'q' || buf[0] == 'Q') && buf[1] == '\0')
+    {
+        printf("\n     Quitting.\n");
+        exit(0);
+    }
 }
 
 /* Reads a numeric option selection and validates it. */
@@ -152,9 +181,10 @@ int main(void)
         (void)getch();
 
     cleanScreen();
+    checkQuit();
 
     /* ---- Choose an IWAD ---- */
-    printf("     Choose an IWAD\n");
+    printf("     Choose an IWAD (type Q to quit)\n");
 
     wadTotal = findFiles("*.WAD", 1, benchmarkWads);
     printMenu(benchmarkWads, wadTotal, 0);
@@ -163,9 +193,10 @@ int main(void)
         return 1;
 
     cleanScreen();
+    checkQuit();
 
     /* ---- Choose a benchmark file ---- */
-    printf("     Choose a benchmark\n");
+    printf("     Choose a benchmark (type Q to quit)\n");
 
     filesTotal = findFiles("BENCH\\*.BNC", 0, benchmarkFiles);
     printMenu(benchmarkFiles, filesTotal, 10);
@@ -174,9 +205,10 @@ int main(void)
         return 1;
 
     cleanScreen();
+    checkQuit();
 
     /* ---- Choose a demo file ---- */
-    printf("     Choose a demo file (or type any demo you want)\n");
+    printf("     Choose a demo file (or type any demo you want, Q to quit)\n");
     printf("\n");
     printf("      1) DEMO1\n");
     printf("      2) DEMO2\n");
@@ -201,9 +233,10 @@ int main(void)
     }
 
     cleanScreen();
+    checkQuit();
 
     /* ---- Choose a FastDoom executable ---- */
-    printf("     Choose a FastDoom executable\n");
+    printf("     Choose a FastDoom executable (type Q to quit)\n");
 
     executablesTotal = findFiles("FDOOM*.EXE", 0, benchmarkExecutables);
     {
@@ -223,9 +256,10 @@ int main(void)
         return 1;
 
     cleanScreen();
+    checkQuit();
 
     /* ---- Choose additional options ---- */
-    printf("     Choose additional options\n");
+    printf("     Choose additional options (type Q to quit)\n");
     printf("\n");
     printf("      A) Advanced benchmark (frametimes)\n");
     printf("\n");
