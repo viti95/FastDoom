@@ -209,6 +209,23 @@ static void print_header(const char *text)
     (void)printf("\n\n");
 }
 
+/* Bottom row (zero based) where the key description line is shown. */
+#define BOTTOM_ROW 24
+
+/*
+ * Prints the key description line fixed to the bottom of the
+ * screen. Row is the row the cursor is currently at (zero based).
+ */
+static void print_bottom_row(int row, const char *text)
+{
+    int i;
+
+    for (i = row; i < BOTTOM_ROW; i++) {
+        (void)printf("\n");
+    }
+    (void)printf("%s\n", text);
+}
+
 /*
  * Shows the list of the group's items with a cursor. Returns the
  * index of the selected item, or -1 if the user went back.
@@ -237,7 +254,8 @@ static int group_menu(const group_t *g)
                 printf(" %2d. %12s - %s (missing)\n", i + 1, g->items[i].exe, g->items[i].desc);
             }
         }
-        printf("\n  Up/Down to move, Enter/Right to run, Esc/Left to go back, Q to quit.\n");
+        print_bottom_row(4 + g->count,
+                         "  Up/Down to move, Enter/Right to run, Esc/Left to go back, Q to quit.");
         c = getch();
         if (c == -1 || c == 0x1B) {
             return -1;
@@ -360,7 +378,8 @@ static void main_menu(void)
         } else {
             printf("     Q. Quit\n\n");
         }
-        printf("  Up/Down to move, Enter/Right to choose, Esc/Left/Q to quit.\n");
+        print_bottom_row(4 + MM_QUIT + 2,
+                         "  Up/Down to move, Enter/Right to choose, Esc/Left/Q to quit.");
         c = getch();
         if (c == -1 || c == 0x1B) {
             break;
