@@ -19,6 +19,7 @@
 * Fixed "Loading IWAD from sub-directory causes major errors" #279
 * FDSetup has been upgraded to version 2.0 and can now be built using 100% open source tools. We have removed the dependencies on Laughing Dog for screen creation and Borland 4.x for compilation. Additionally, we developed PUPED, a new web based tool for easily creating PUP screens directly in your browser. Huge thanks to @jsmolina for porting the project to OpenWatcom, which helped us reduce the executable size by 20% in the process
 * FDBENCH has been converted from a Basic program to C
+* New FDSTART text mode launcher: pick any FastDoom executable, FDSETUP or FDBENCH from an on-screen menu (based on the #78 idea)
 * Now all projects (FASTDOOM, FDSETUP and FDBENCH) can be built using build.sh script
 
 ## 1.3.0 (01 Jul 2026)
