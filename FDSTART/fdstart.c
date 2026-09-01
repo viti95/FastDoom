@@ -114,12 +114,6 @@ static const item_t other_items[] = {
     { "Sigma Color 400 320x200 16 colors",       "FDOOM400.EXE" }
 };
 
-/* Utilities */
-static const item_t util_items[] = {
-    { "Setup controls and sound cards",  "FDSETUP.EXE" },
-    { "Benchmark utility",               "FDBENCH.EXE" }
-};
-
 static const group_t groups[] = {
     { "Text mode / MDA",      text_items,  (int)sizeof(text_items) / sizeof(text_items[0]) },
     { "Hercules",             herc_items,  (int)sizeof(herc_items) / sizeof(herc_items[0]) },
@@ -128,8 +122,7 @@ static const group_t groups[] = {
     { "VGA",                  vga_items,   (int)sizeof(vga_items) / sizeof(vga_items[0]) },
     { "VESA VBE 2.0, backbuffered", vesa_r_items, (int)sizeof(vesa_r_items) / sizeof(vesa_r_items[0]) },
     { "VESA VBE 2.0, direct rendering", vesa_d_items, (int)sizeof(vesa_d_items) / sizeof(vesa_d_items[0]) },
-    { "Specials",             other_items, (int)sizeof(other_items) / sizeof(other_items[0]) },
-    { "Utilities",            util_items,  (int)sizeof(util_items) / sizeof(util_items[0]) }
+    { "Specials",             other_items, (int)sizeof(other_items) / sizeof(other_items[0]) }
 };
 
 #define NGROUPS ((int)sizeof(groups) / sizeof(groups[0]))
@@ -282,6 +275,24 @@ static int group_menu(const group_t *g)
 }
 
 /*
+ * Runs an executable: if it exists, clears the screen and runs it,
+ * then quits the launcher when it exits. Never returns in that case.
+ */
+static void run_exe(const char *exe)
+{
+    if (!file_exists(exe)) {
+        message("Executable not found.");
+    } else {
+        /* Clear the screen so the launched program
+           starts on a clean one, then run it. When
+           it exits, quit the launcher too. */
+        clear_screen();
+        (void)system(exe);
+        exit(0);
+    }
+}
+
+/*
  * Enters the given group, launches the chosen program and loops
  * until the user goes back. Never returns if a program was run.
  */
@@ -290,19 +301,31 @@ static void run_group(int g)
     int sel = group_menu(&groups[g]);
 
     if (sel >= 0) {
-        const char *exe = groups[g].items[sel].exe;
-
-        if (!file_exists(exe)) {
-            message("Executable not found.");
-        } else {
-            /* Clear the screen so the launched program
-               starts on a clean one, then run it. When
-               it exits, quit the launcher too. */
-            clear_screen();
-            (void)system(exe);
-            exit(0);
-        }
+        run_exe(groups[g].items[sel].exe);
     }
+}
+
+/* Main menu entry indexes after the groups. */
+#define MM_SETUP  NGROUPS
+#define MM_BENCH  (NGROUPS + 1)
+#define MM_QUIT   (NGROUPS + 2)
+
+/*
+ * Executes the given main menu entry. Returns 1 if the launcher
+ * should quit, 0 otherwise.
+ */
+static int choose_entry(int i)
+{
+    if (i < NGROUPS) {
+        run_group(i);
+    } else if (i == MM_SETUP) {
+        run_exe("FDSETUP.EXE");
+    } else if (i == MM_BENCH) {
+        run_exe("FDBENCH.EXE");
+    } else {
+        return 1;
+    }
+    return 0;
 }
 
 /*
@@ -318,15 +341,21 @@ static void main_menu(void)
     for (;;) {
         clear_screen();
         print_header("FastDoom launcher");
-        for (i = 0; i < NGROUPS; i++) {
+        for (i = 0; i < MM_QUIT; i++) {
             if (i == sel) {
                 printf(" >");
             } else {
                 printf("  ");
             }
-            printf(" %d. %s\n", i + 1, groups[i].title);
+            if (i < NGROUPS) {
+                printf(" %d. %s\n", i + 1, groups[i].title);
+            } else if (i == MM_SETUP) {
+                printf(" S. FDSETUP (Setup controls and sound cards)\n");
+            } else {
+                printf(" B. FDBENCH (Benchmark utility)\n");
+            }
         }
-        if (sel == NGROUPS) {
+        if (sel == MM_QUIT) {
             printf(" > Q. Quit\n\n");
         } else {
             printf("   Q. Quit\n\n");
@@ -339,15 +368,13 @@ static void main_menu(void)
         if (c == 0) {
             c = getch();
             if (c == KEY_UP) {
-                sel = (sel > 0) ? sel - 1 : NGROUPS;
+                sel = (sel > 0) ? sel - 1 : MM_QUIT;
             } else if (c == KEY_DOWN) {
-                sel = (sel < NGROUPS) ? sel + 1 : 0;
+                sel = (sel < MM_QUIT) ? sel + 1 : 0;
             } else if (c == KEY_LEFT) {
                 break;
             } else if (c == KEY_RIGHT) {
-                if (sel < NGROUPS) {
-                    run_group(sel);
-                } else {
+                if (choose_entry(sel)) {
                     break;
                 }
             }
@@ -357,10 +384,14 @@ static void main_menu(void)
         if (c == 'Q') {
             break;
         }
+        if (c == 'S') {
+            run_exe("FDSETUP.EXE");
+        }
+        if (c == 'B') {
+            run_exe("FDBENCH.EXE");
+        }
         if (c == '\r') {
-            if (sel < NGROUPS) {
-                run_group(sel);
-            } else {
+            if (choose_entry(sel)) {
                 break;
             }
         }
