@@ -39,15 +39,15 @@ typedef struct {
 
 /* VGA */
 static const item_t vga_items[] = {
-    { "Mode Y, 320x200, 256 colors (default)", "FDOOM.EXE" },
-    { "Mode X, 320x240, 256 colors",           "FDOOMX.EXE" },
-    { "Mode Y half height, 320x100",           "FDOOMH.EXE" },
-    { "Mode 13h, 320x200, 256 colors",         "FDOOM13H.EXE" }
+    { "Mode Y 320x200 256 colors (default)", "FDOOM.EXE" },
+    { "Mode X 320x240 256 colors",           "FDOOMX.EXE" },
+    { "Mode Y half height 320x100 256 colors",           "FDOOMH.EXE" },
+    { "Mode 13h 320x200 256 colors",         "FDOOM13H.EXE" }
 };
 
 /* VESA / VBE 2.0, backbuffered (real mode) */
 static const item_t vesa_r_items[] = {
-    { "VBE 2.0, real mode (most compatible)",  "FDOOMVBR.EXE" },
+    { "VESA 320x200 backbuffered",             "FDOOMVBR.EXE" },
     { "VESA 320x240 backbuffered",             "FDM240R.EXE" },
     { "VESA 400x300 backbuffered",             "FDM300R.EXE" },
     { "VESA 512x384 backbuffered",             "FDM384R.EXE" },
@@ -62,7 +62,7 @@ static const item_t vesa_r_items[] = {
 
 /* VESA / VBE 2.0, direct rendering (LFB) */
 static const item_t vesa_d_items[] = {
-    { "VBE 2.0 LFB, direct rendering",         "FDOOMVBD.EXE" },
+    { "VESA 320x200 direct rendering",         "FDOOMVBD.EXE" },
     { "VESA 320x240 direct rendering",         "FDM240D.EXE" },
     { "VESA 400x300 direct rendering",         "FDM300D.EXE" },
     { "VESA 512x384 direct rendering",         "FDM384D.EXE" },
@@ -83,41 +83,41 @@ static const item_t ega_items[] = {
 /* Hercules */
 static const item_t herc_items[] = {
     { "Hercules 640x400 monochrome",           "FDOOMHGC.EXE" },
-    { "Hercules InColor 320x200, 16 colors",   "FDOOMINC.EXE" }
+    { "Hercules InColor 320x200 16 colors",   "FDOOMINC.EXE" }
 };
 
 /* CGA */
 static const item_t cga_items[] = {
-    { "CGA 320x200, 4 colors",                 "FDOOMCGA.EXE" },
+    { "CGA 320x200 4 colors",                 "FDOOMCGA.EXE" },
     { "CGA 640x200 monochrome",                "FDOOMBWC.EXE" },
-    { "CGA 160x100, 16 colors",                "FDOOMC16.EXE" },
-    { "CGA composite 160x200, 16 colors",      "FDOOMCVB.EXE" },
-    { "CGA 512 color composite, 80x100",       "FDOOM512.EXE" },
-    { "CGA ANSI from Hell 320x100, 16 colors", "FDOOMCAH.EXE" }
+    { "CGA 160x100 16 colors",                "FDOOMC16.EXE" },
+    { "CGA composite 160x200 16 colors",      "FDOOMCVB.EXE" },
+    { "CGA 512 color composite 80x100",       "FDOOM512.EXE" },
+    { "CGA ANSI from Hell 320x100 16 colors", "FDOOMCAH.EXE" }
 };
 
 /* Text mode / MDA */
 static const item_t text_items[] = {
-    { "MDA 80x25 text, 80x50 internal",        "FDOOMMDA.EXE" },
-    { "MDA Color 80x25 text (rev 0 cards)",    "FDOOMCDA.EXE" },
-    { "40x25 text, 16 colors",                 "FDOOMT1.EXE" },
-    { "40x25 text, 16 colors (40x50 virtual)", "FDOOMT12.EXE" },
-    { "80x25 text, 16 colors (80x50 virtual)", "FDOOMT25.EXE" },
-    { "80x43 text, 16 colors (EGA cards)",     "FDOOMT43.EXE" },
-    { "80x50 text, 16 colors",                 "FDOOMT50.EXE" },
-    { "VT100 serial terminal, 80x25",          "FDMVT100.EXE" }
+    { "MDA 80x25 text",                        "FDOOMMDA.EXE" },
+    { "MDA 80x25 color text (rev 0 cards)",    "FDOOMCDA.EXE" },
+    { "40x25 text 16 colors",                 "FDOOMT1.EXE" },
+    { "40x25 text 16 colors (40x50 virtual)", "FDOOMT12.EXE" },
+    { "80x25 text 16 colors (80x50 virtual)", "FDOOMT25.EXE" },
+    { "80x43 text 16 colors (EGA cards)",     "FDOOMT43.EXE" },
+    { "80x50 text 16 colors",                 "FDOOMT50.EXE" },
+    { "VT100 serial terminal 80x24",          "FDMVT100.EXE" }
 };
 
 /* Specials */
 static const item_t other_items[] = {
-    { "Plantronics ColorPlus 320x200, 16 colors", "FDOOMPCP.EXE" },
-    { "Sigma Color 400 320x200, 16 colors",       "FDOOM400.EXE" }
+    { "Plantronics ColorPlus 320x200 16 colors", "FDOOMPCP.EXE" },
+    { "Sigma Color 400 320x200 16 colors",       "FDOOM400.EXE" }
 };
 
 /* Utilities */
 static const item_t util_items[] = {
     { "Setup controls and sound cards",  "FDSETUP.EXE" },
-    { "Benchmark launcher",              "FDBENCH.EXE" }
+    { "Benchmark utility",              "FDBENCH.EXE" }
 };
 
 static const group_t groups[] = {
@@ -126,8 +126,8 @@ static const group_t groups[] = {
     { "CGA",                  cga_items,   (int)sizeof(cga_items) / sizeof(cga_items[0]) },
     { "EGA",                  ega_items,   (int)sizeof(ega_items) / sizeof(ega_items[0]) },
     { "VGA",                  vga_items,   (int)sizeof(vga_items) / sizeof(vga_items[0]) },
-    { "VESA (VBE 2.0, backbuffered)", vesa_r_items, (int)sizeof(vesa_r_items) / sizeof(vesa_r_items[0]) },
-    { "VESA (VBE 2.0, direct rendering)", vesa_d_items, (int)sizeof(vesa_d_items) / sizeof(vesa_d_items[0]) },
+    { "VESA VBE 2.0, backbuffered", vesa_r_items, (int)sizeof(vesa_r_items) / sizeof(vesa_r_items[0]) },
+    { "VESA VBE 2.0, direct rendering", vesa_d_items, (int)sizeof(vesa_d_items) / sizeof(vesa_d_items[0]) },
     { "Specials",             other_items, (int)sizeof(other_items) / sizeof(other_items[0]) },
     { "Utilities",            util_items,  (int)sizeof(util_items) / sizeof(util_items[0]) }
 };
@@ -189,8 +189,7 @@ static void message(const char *text)
     (void)getch();
 }
 
-/* Scan codes of the arrow keys (extended keys, 0xE0 or 0xE1
-   prefix). */
+/* Scan codes of the arrow keys */
 #define KEY_UP    72
 #define KEY_DOWN  80
 #define KEY_LEFT  75
@@ -208,8 +207,9 @@ static int group_menu(const group_t *g)
 
     for (;;) {
         clear_screen();
-        printf("  FastDoom launcher - %s\n", g->title);
         printf("  -------------------------------\n");
+        printf("  - FastDoom launcher (%s) -\n", g->title);
+        printf("  -------------------------------\n\n");
         for (i = 0; i < g->count; i++) {
             if (i == sel) {
                 printf(" >");
@@ -227,9 +227,7 @@ static int group_menu(const group_t *g)
         if (c == -1 || c == 0x1B) {
             return -1;
         }
-        if (c == 0 || c == 0xE0 || c == 0xE1) {
-            /* Extended key (0xE0 or 0xE1 prefix): the second byte
-             * is the scan code. */
+        if (c == 0) {
             c = getch();
             if (c == KEY_UP) {
                 sel = (sel > 0) ? sel - 1 : g->count - 1;
@@ -297,8 +295,9 @@ static void main_menu(void)
 
     for (;;) {
         clear_screen();
-        printf("  FastDoom text mode launcher\n");
-        printf("  -------------------------------\n");
+        printf("  ---------------------\n");
+        printf("  - FastDoom launcher -\n");
+        printf("  ---------------------\n\n");
         for (i = 0; i < NGROUPS; i++) {
             if (i == sel) {
                 printf(" >");
@@ -317,9 +316,7 @@ static void main_menu(void)
         if (c == -1 || c == 0x1B) {
             break;
         }
-        if (c == 0 || c == 0xE0 || c == 0xE1) {
-            /* Extended key (0xE0 or 0xE1 prefix): the second byte
-             * is the scan code. */
+        if (c == 0) {
             c = getch();
             if (c == KEY_UP) {
                 sel = (sel > 0) ? sel - 1 : NGROUPS;
@@ -363,6 +360,6 @@ int main(void)
 {
     main_menu();
     clear_screen();
-    printf("  Goodbye.\n");
+    printf("RIP AND TEAR\n");
     return 0;
 }
