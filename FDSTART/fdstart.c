@@ -39,57 +39,57 @@ typedef struct {
 
 /* VGA */
 static const item_t vga_items[] = {
-    { "Mode Y 320x200 256 colors (default)", "FDOOM.EXE" },
-    { "Mode X 320x240 256 colors",           "FDOOMX.EXE" },
-    { "Mode Y half height 320x100 256 colors",           "FDOOMH.EXE" },
-    { "Mode 13h 320x200 256 colors",         "FDOOM13H.EXE" }
+    { "Mode Y 320x200 256 colors (default)",   "FDOOM.EXE" },
+    { "Mode X 320x240 256 colors",             "FDOOMX.EXE" },
+    { "Mode Y half height 320x100 256 colors", "FDOOMH.EXE" },
+    { "Mode 13h 320x200 256 colors",           "FDOOM13H.EXE" }
 };
 
 /* VESA / VBE 2.0, backbuffered (real mode) */
 static const item_t vesa_r_items[] = {
-    { "VESA 320x200 backbuffered",             "FDOOMVBR.EXE" },
-    { "VESA 320x240 backbuffered",             "FDM240R.EXE" },
-    { "VESA 400x300 backbuffered",             "FDM300R.EXE" },
-    { "VESA 512x384 backbuffered",             "FDM384R.EXE" },
-    { "VESA 640x400 backbuffered",             "FDM400R.EXE" },
-    { "VESA 640x480 backbuffered",             "FDM480R.EXE" },
-    { "VESA 800x600 backbuffered",             "FDM600R.EXE" },
-    { "VESA 1024x768 backbuffered",            "FDM768R.EXE" },
-    { "VESA 1280x800 backbuffered",            "FDM800R.EXE" },
-    { "VESA 1280x1024 backbuffered",           "FDM1024R.EXE" },
-    { "VESA 1600x1200 backbuffered",           "FDM1200R.EXE" }
+    { "VESA 320x200 backbuffered",            "FDOOMVBR.EXE" },
+    { "VESA 320x240 backbuffered",            "FDM240R.EXE" },
+    { "VESA 400x300 backbuffered",            "FDM300R.EXE" },
+    { "VESA 512x384 backbuffered",            "FDM384R.EXE" },
+    { "VESA 640x400 backbuffered",            "FDM400R.EXE" },
+    { "VESA 640x480 backbuffered",            "FDM480R.EXE" },
+    { "VESA 800x600 backbuffered",            "FDM600R.EXE" },
+    { "VESA 1024x768 backbuffered",           "FDM768R.EXE" },
+    { "VESA 1280x800 backbuffered",           "FDM800R.EXE" },
+    { "VESA 1280x1024 backbuffered",          "FDM1024R.EXE" },
+    { "VESA 1600x1200 backbuffered",          "FDM1200R.EXE" }
 };
 
 /* VESA / VBE 2.0, direct rendering (LFB) */
 static const item_t vesa_d_items[] = {
-    { "VESA 320x200 direct rendering",         "FDOOMVBD.EXE" },
-    { "VESA 320x240 direct rendering",         "FDM240D.EXE" },
-    { "VESA 400x300 direct rendering",         "FDM300D.EXE" },
-    { "VESA 512x384 direct rendering",         "FDM384D.EXE" },
-    { "VESA 640x400 direct rendering",         "FDM400D.EXE" },
-    { "VESA 640x480 direct rendering",         "FDM480D.EXE" },
-    { "VESA 800x600 direct rendering",         "FDM600D.EXE" },
-    { "VESA 1024x768 direct rendering",        "FDM768D.EXE" },
-    { "VESA 1280x800 direct rendering",        "FDM800D.EXE" },
-    { "VESA 1280x1024 direct rendering",       "FDM1024D.EXE" },
-    { "VESA 1600x1200 direct rendering",       "FDM1200D.EXE" }
+    { "VESA 320x200 direct rendering",        "FDOOMVBD.EXE" },
+    { "VESA 320x240 direct rendering",        "FDM240D.EXE" },
+    { "VESA 400x300 direct rendering",        "FDM300D.EXE" },
+    { "VESA 512x384 direct rendering",        "FDM384D.EXE" },
+    { "VESA 640x400 direct rendering",        "FDM400D.EXE" },
+    { "VESA 640x480 direct rendering",        "FDM480D.EXE" },
+    { "VESA 800x600 direct rendering",        "FDM600D.EXE" },
+    { "VESA 1024x768 direct rendering",       "FDM768D.EXE" },
+    { "VESA 1280x800 direct rendering",       "FDM800D.EXE" },
+    { "VESA 1280x1024 direct rendering",      "FDM1024D.EXE" },
+    { "VESA 1600x1200 direct rendering",      "FDM1200D.EXE" }
 };
 
 /* EGA */
 static const item_t ega_items[] = {
-    { "EGA 320x200, 16 colors",                "FDOOMEGA.EXE" }
+    { "EGA 320x200 16 colors",                "FDOOMEGA.EXE" }
 };
 
 /* Hercules */
 static const item_t herc_items[] = {
-    { "Hercules 640x400 monochrome",           "FDOOMHGC.EXE" },
+    { "Hercules 640x400 monochrome",          "FDOOMHGC.EXE" },
     { "Hercules InColor 320x200 16 colors",   "FDOOMINC.EXE" }
 };
 
 /* CGA */
 static const item_t cga_items[] = {
     { "CGA 320x200 4 colors",                 "FDOOMCGA.EXE" },
-    { "CGA 640x200 monochrome",                "FDOOMBWC.EXE" },
+    { "CGA 640x200 monochrome",               "FDOOMBWC.EXE" },
     { "CGA 160x100 16 colors",                "FDOOMC16.EXE" },
     { "CGA composite 160x200 16 colors",      "FDOOMCVB.EXE" },
     { "CGA 512 color composite 80x100",       "FDOOM512.EXE" },
@@ -98,14 +98,14 @@ static const item_t cga_items[] = {
 
 /* Text mode / MDA */
 static const item_t text_items[] = {
-    { "MDA 80x25 text",                        "FDOOMMDA.EXE" },
-    { "MDA 80x25 color text (rev 0 cards)",    "FDOOMCDA.EXE" },
-    { "40x25 text 16 colors",                 "FDOOMT1.EXE" },
-    { "40x25 text 16 colors (40x50 virtual)", "FDOOMT12.EXE" },
-    { "80x25 text 16 colors (80x50 virtual)", "FDOOMT25.EXE" },
-    { "80x43 text 16 colors (EGA cards)",     "FDOOMT43.EXE" },
-    { "80x50 text 16 colors",                 "FDOOMT50.EXE" },
-    { "VT100 serial terminal 80x24",          "FDMVT100.EXE" }
+    { "MDA 80x25 text monochrome",              "FDOOMMDA.EXE" },
+    { "MDA 80x25 text color (IBM rev 0 cards)", "FDOOMCDA.EXE" },
+    { "40x25 text 16 colors",                   "FDOOMT1.EXE" },
+    { "40x25 text 16 colors (40x50 virtual)",   "FDOOMT12.EXE" },
+    { "80x25 text 16 colors (80x50 virtual)",   "FDOOMT25.EXE" },
+    { "80x43 text 16 colors (EGA cards)",       "FDOOMT43.EXE" },
+    { "80x50 text 16 colors",                   "FDOOMT50.EXE" },
+    { "VT100 serial terminal 80x24",            "FDMVT100.EXE" }
 };
 
 /* Specials */
@@ -117,7 +117,7 @@ static const item_t other_items[] = {
 /* Utilities */
 static const item_t util_items[] = {
     { "Setup controls and sound cards",  "FDSETUP.EXE" },
-    { "Benchmark utility",              "FDBENCH.EXE" }
+    { "Benchmark utility",               "FDBENCH.EXE" }
 };
 
 static const group_t groups[] = {
@@ -196,6 +196,27 @@ static void message(const char *text)
 #define KEY_RIGHT 77
 
 /*
+ * Prints the menu header box around the given text. The number of
+ * dashes is computed from the text length, so the box always fits
+ * the title exactly ("- " + text + " -").
+ */
+static void print_header(const char *text)
+{
+    int i;
+    int width = (int)strlen(text) + 4;
+
+    (void)printf("  ");
+    for (i = 0; i < width; i++) {
+        (void)putchar('-');
+    }
+    (void)printf("\n  - %s -\n  ", text);
+    for (i = 0; i < width; i++) {
+        (void)putchar('-');
+    }
+    (void)printf("\n\n");
+}
+
+/*
  * Shows the list of the group's items with a cursor. Returns the
  * index of the selected item, or -1 if the user went back.
  */
@@ -206,10 +227,11 @@ static int group_menu(const group_t *g)
     int sel = 0;
 
     for (;;) {
+        char header[64];
+
         clear_screen();
-        printf("  -------------------------------\n");
-        printf("  - FastDoom launcher (%s) -\n", g->title);
-        printf("  -------------------------------\n\n");
+        sprintf(header, "FastDoom launcher (%s)", g->title);
+        print_header(header);
         for (i = 0; i < g->count; i++) {
             if (i == sel) {
                 printf(" >");
@@ -295,9 +317,7 @@ static void main_menu(void)
 
     for (;;) {
         clear_screen();
-        printf("  ---------------------\n");
-        printf("  - FastDoom launcher -\n");
-        printf("  ---------------------\n\n");
+        print_header("FastDoom launcher");
         for (i = 0; i < NGROUPS; i++) {
             if (i == sel) {
                 printf(" >");
