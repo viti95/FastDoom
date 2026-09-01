@@ -141,8 +141,6 @@ static int file_exists(const char *name)
     return 1;
 }
 
-
-
 /*
  * Clears the screen and moves the cursor to the top left corner,
  * using BIOS video services (INT 10h). Works on MDA/Hercules and
@@ -189,24 +187,74 @@ static void message(const char *text)
 #define KEY_RIGHT 77
 
 /*
+ * Prints n dash characters.
+ */
+static void print_dashes(int n)
+{
+    int i;
+
+    for (i = 0; i < n; i++) {
+        (void)putchar('-');
+    }
+}
+
+/*
  * Prints the menu header box around the given text. The number of
  * dashes is computed from the text length, so the box always fits
  * the title exactly ("- " + text + " -").
  */
 static void print_header(const char *text)
 {
-    int i;
     int width = (int)strlen(text) + 4;
 
     (void)printf("  ");
-    for (i = 0; i < width; i++) {
-        (void)putchar('-');
-    }
+    print_dashes(width);
     (void)printf("\n  - %s -\n  ", text);
-    for (i = 0; i < width; i++) {
-        (void)putchar('-');
-    }
+    print_dashes(width);
     (void)printf("\n\n");
+}
+
+/* Row where the first menu entry is printed (zero based): the empty
+   top row, the 3 header rows and a blank row. */
+#define MENU_FIRST_ROW 5
+
+/*
+ * Clears the screen, leaves the top row empty and prints the menu
+ * header box.
+ */
+static void draw_menu_top(const char *title)
+{
+    clear_screen();
+    (void)printf("\n");
+    print_header(title);
+}
+
+/*
+ * Moves the cursor by dir (-1 or 1) entries in a list of count
+ * entries, wrapping around at both ends.
+ */
+static int move_sel(int sel, int dir, int count)
+{
+    sel += dir;
+    if (sel < 0) {
+        sel = count - 1;
+    } else if (sel >= count) {
+        sel = 0;
+    }
+    return sel;
+}
+
+/*
+ * Converts a digit character to a one based menu index (0 means 10).
+ * Returns -1 if the character is not a digit.
+ */
+static int digit_index(int c)
+{
+    if (!isdigit(c)) {
+        return -1;
+    }
+    c -= '0';
+    return (c == 0) ? 10 : c;
 }
 
 /* Bottom row (zero based) where the key description line is shown. */
@@ -232,41 +280,37 @@ static void print_bottom_row(int row, const char *text)
  */
 static int group_menu(const group_t *g)
 {
+    char header[64];
     int i;
     int c;
     int sel = 0;
 
-    for (;;) {
-        char header[64];
+    sprintf(header, "FastDoom launcher (%s)", g->title);
 
-        clear_screen();
-        printf("\n"); /* Keep the top row empty. */
-        sprintf(header, "FastDoom launcher (%s)", g->title);
-        print_header(header);
+    for (;;) {
+        draw_menu_top(header);
         for (i = 0; i < g->count; i++) {
-            if (i == sel) {
-                printf(" ->");
-            } else {
-                printf("   ");
+            printf("%s", i == sel ? " ->" : "   ");
+            printf(" %2d. %12s - %s", i + 1, g->items[i].exe, g->items[i].desc);
+            if (!file_exists(g->items[i].exe)) {
+                printf(" (missing)");
             }
-            if (file_exists(g->items[i].exe)) {
-                printf(" %2d. %12s - %s\n", i + 1, g->items[i].exe, g->items[i].desc);
-            } else {
-                printf(" %2d. %12s - %s (missing)\n", i + 1, g->items[i].exe, g->items[i].desc);
-            }
+            printf("\n");
         }
-        print_bottom_row(5 + g->count,
+        print_bottom_row(MENU_FIRST_ROW + g->count,
                          "  Up/Down to move, Enter/Right to run, Esc/Left to go back, Q to quit.");
         c = getch();
         if (c == -1 || c == 0x1B) {
             return -1;
         }
-        if (c == 0) {
+        if (c == 0 || c == 0xE0 || c == 0xE1) {
+            /* Extended key (0, 0xE0 or 0xE1 prefix): the second
+               byte is the scan code. */
             c = getch();
             if (c == KEY_UP) {
-                sel = (sel > 0) ? sel - 1 : g->count - 1;
+                sel = move_sel(sel, -1, g->count);
             } else if (c == KEY_DOWN) {
-                sel = (sel < g->count - 1) ? sel + 1 : 0;
+                sel = move_sel(sel, 1, g->count);
             } else if (c == KEY_LEFT) {
                 return -1;
             } else if (c == KEY_RIGHT) {
@@ -281,14 +325,9 @@ static int group_menu(const group_t *g)
         if (c == '\r') {
             return sel;
         }
-        if (isdigit(c)) {
-            i = c - '0';
-            if (i == 0) {
-                i = 10;
-            }
-            if (i >= 1 && i <= g->count) {
-                return i - 1;
-            }
+        i = digit_index(c);
+        if (i >= 1 && i <= g->count) {
+            return i - 1;
         }
     }
 }
@@ -358,15 +397,9 @@ static void main_menu(void)
     int sel = 0;
 
     for (;;) {
-        clear_screen();
-        printf("\n"); /* Keep the top row empty. */
-        print_header("FastDoom launcher");
+        draw_menu_top("FastDoom launcher");
         for (i = 0; i < MM_QUIT; i++) {
-            if (i == sel) {
-                printf(" ->");
-            } else {
-                printf("   ");
-            }
+            printf("%s", i == sel ? " ->" : "   ");
             if (i < NGROUPS) {
                 printf(" %2d. %s\n", i + 1, groups[i].title);
             } else if (i == MM_SETUP) {
@@ -380,18 +413,20 @@ static void main_menu(void)
         } else {
             printf("     Q. Quit\n\n");
         }
-        print_bottom_row(5 + MM_QUIT + 2,
+        print_bottom_row(MENU_FIRST_ROW + MM_QUIT + 2,
                          "  Up/Down to move, Enter/Right to choose, Esc/Left/Q to quit.");
         c = getch();
         if (c == -1 || c == 0x1B) {
             break;
         }
-        if (c == 0) {
+        if (c == 0 || c == 0xE0 || c == 0xE1) {
+            /* Extended key (0, 0xE0 or 0xE1 prefix): the second
+               byte is the scan code. */
             c = getch();
             if (c == KEY_UP) {
-                sel = (sel > 0) ? sel - 1 : MM_QUIT;
+                sel = move_sel(sel, -1, MM_QUIT);
             } else if (c == KEY_DOWN) {
-                sel = (sel < MM_QUIT) ? sel + 1 : 0;
+                sel = move_sel(sel, 1, MM_QUIT);
             } else if (c == KEY_LEFT) {
                 break;
             } else if (c == KEY_RIGHT) {
@@ -416,13 +451,10 @@ static void main_menu(void)
                 break;
             }
         }
-        if (isdigit(c)) {
-            i = c - '0';
-            if (i == 0) {
-                i = 10;
-            }
-            if (i >= 1 && i <= NGROUPS) {
-                run_group(i - 1);
+        i = digit_index(c);
+        if (i >= 1 && i <= NGROUPS) {
+            if (choose_entry(i - 1)) {
+                break;
             }
         }
     }
