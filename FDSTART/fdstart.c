@@ -189,34 +189,65 @@ static void message(const char *text)
     (void)getch();
 }
 
+/* Scan codes of the arrow keys (extended keys, 0xE0 or 0xE1
+   prefix). */
+#define KEY_UP    72
+#define KEY_DOWN  80
+#define KEY_LEFT  75
+#define KEY_RIGHT 77
+
 /*
- * Shows a numbered list of the group's items. Returns the index
- * of the selected item, or -1 if the user went back.
+ * Shows the list of the group's items with a cursor. Returns the
+ * index of the selected item, or -1 if the user went back.
  */
 static int group_menu(const group_t *g)
 {
     int i;
     int c;
+    int sel = 0;
 
     for (;;) {
         clear_screen();
         printf("  FastDoom launcher - %s\n", g->title);
         printf("  -------------------------------\n");
         for (i = 0; i < g->count; i++) {
-            if (file_exists(g->items[i].exe)) {
-                printf("  %d. %-20s %s\n", i + 1, g->items[i].exe, g->items[i].desc);
+            if (i == sel) {
+                printf(" >");
             } else {
-                printf("  %d. %-20s %s (missing)\n", i + 1, g->items[i].exe, g->items[i].desc);
+                printf("  ");
+            }
+            if (file_exists(g->items[i].exe)) {
+                printf(" %d. %-20s %s\n", i + 1, g->items[i].exe, g->items[i].desc);
+            } else {
+                printf(" %d. %-20s %s (missing)\n", i + 1, g->items[i].exe, g->items[i].desc);
             }
         }
-        printf("\n  Enter number to run, Esc to go back, Q to quit.\n");
+        printf("\n  Up/Down to move, Enter/Right to run, Esc/Left to go back, Q to quit.\n");
         c = getch();
         if (c == -1 || c == 0x1B) {
             return -1;
         }
+        if (c == 0 || c == 0xE0 || c == 0xE1) {
+            /* Extended key (0xE0 or 0xE1 prefix): the second byte
+             * is the scan code. */
+            c = getch();
+            if (c == KEY_UP) {
+                sel = (sel > 0) ? sel - 1 : g->count - 1;
+            } else if (c == KEY_DOWN) {
+                sel = (sel < g->count - 1) ? sel + 1 : 0;
+            } else if (c == KEY_LEFT) {
+                return -1;
+            } else if (c == KEY_RIGHT) {
+                return sel;
+            }
+            continue;
+        }
         c = toupper(c);
         if (c == 'Q') {
             exit(0);
+        }
+        if (c == '\r') {
+            return sel;
         }
         if (isdigit(c)) {
             i = c - '0';
@@ -231,30 +262,90 @@ static int group_menu(const group_t *g)
 }
 
 /*
- * Main menu: lists the groups, enters the selected one, launches
- * the chosen program and loops until the user quits.
+ * Enters the given group, launches the chosen program and loops
+ * until the user goes back. Never returns if a program was run.
+ */
+static void run_group(int g)
+{
+    int sel = group_menu(&groups[g]);
+
+    if (sel >= 0) {
+        const char *exe = groups[g].items[sel].exe;
+
+        if (!file_exists(exe)) {
+            message("Executable not found.");
+        } else {
+            /* Clear the screen so the launched program
+               starts on a clean one, then run it. When
+               it exits, quit the launcher too. */
+            clear_screen();
+            (void)system(exe);
+            exit(0);
+        }
+    }
+}
+
+/*
+ * Main menu: lists the groups with a cursor, enters the selected
+ * one, and loops until the user quits.
  */
 static void main_menu(void)
 {
     int i;
     int c;
+    int sel = 0;
 
     for (;;) {
         clear_screen();
         printf("  FastDoom text mode launcher\n");
         printf("  -------------------------------\n");
         for (i = 0; i < NGROUPS; i++) {
-            printf("  %d. %s\n", i + 1, groups[i].title);
+            if (i == sel) {
+                printf(" >");
+            } else {
+                printf("  ");
+            }
+            printf(" %d. %s\n", i + 1, groups[i].title);
         }
-        printf("  Q. Quit\n\n");
-        printf("  Enter number to choose, Q to quit.\n");
+        if (sel == NGROUPS) {
+            printf(" > Q. Quit\n\n");
+        } else {
+            printf("   Q. Quit\n\n");
+        }
+        printf("  Up/Down to move, Enter/Right to choose, Esc/Left/Q to quit.\n");
         c = getch();
         if (c == -1 || c == 0x1B) {
             break;
         }
+        if (c == 0 || c == 0xE0 || c == 0xE1) {
+            /* Extended key (0xE0 or 0xE1 prefix): the second byte
+             * is the scan code. */
+            c = getch();
+            if (c == KEY_UP) {
+                sel = (sel > 0) ? sel - 1 : NGROUPS;
+            } else if (c == KEY_DOWN) {
+                sel = (sel < NGROUPS) ? sel + 1 : 0;
+            } else if (c == KEY_LEFT) {
+                break;
+            } else if (c == KEY_RIGHT) {
+                if (sel < NGROUPS) {
+                    run_group(sel);
+                } else {
+                    break;
+                }
+            }
+            continue;
+        }
         c = toupper(c);
         if (c == 'Q') {
             break;
+        }
+        if (c == '\r') {
+            if (sel < NGROUPS) {
+                run_group(sel);
+            } else {
+                break;
+            }
         }
         if (isdigit(c)) {
             i = c - '0';
@@ -262,22 +353,7 @@ static void main_menu(void)
                 i = 10;
             }
             if (i >= 1 && i <= NGROUPS) {
-                int sel = group_menu(&groups[i - 1]);
-
-                if (sel >= 0) {
-                    const char *exe = groups[i - 1].items[sel].exe;
-
-                    if (!file_exists(exe)) {
-                        message("Executable not found.");
-                    } else {
-                        /* Clear the screen so the launched program
-                           starts on a clean one, then run it. When
-                           it exits, quit the launcher too. */
-                        clear_screen();
-                        (void)system(exe);
-                        exit(0);
-                    }
-                }
+                run_group(i - 1);
             }
         }
     }
