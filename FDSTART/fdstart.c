@@ -92,7 +92,7 @@ static const item_t cga_items[] = {
     { "CGA 640x200 monochrome",               "FDOOMBWC.EXE" },
     { "CGA 160x100 16 colors",                "FDOOMC16.EXE" },
     { "CGA composite 160x200 16 colors",      "FDOOMCVB.EXE" },
-    { "CGA 512 color composite 80x100",       "FDOOM512.EXE" },
+    { "CGA composite 80x100 512 colors",       "FDOOM512.EXE" },
     { "CGA ANSI from Hell 320x100 16 colors", "FDOOMCAH.EXE" }
 };
 
@@ -227,14 +227,14 @@ static int group_menu(const group_t *g)
         print_header(header);
         for (i = 0; i < g->count; i++) {
             if (i == sel) {
-                printf(" >");
+                printf(" ->");
             } else {
-                printf("  ");
+                printf("   ");
             }
             if (file_exists(g->items[i].exe)) {
-                printf(" %d. %-20s %s\n", i + 1, g->items[i].exe, g->items[i].desc);
+                printf(" %2d. %12s - %s\n", i + 1, g->items[i].exe, g->items[i].desc);
             } else {
-                printf(" %d. %-20s %s (missing)\n", i + 1, g->items[i].exe, g->items[i].desc);
+                printf(" %2d. %12s - %s (missing)\n", i + 1, g->items[i].exe, g->items[i].desc);
             }
         }
         printf("\n  Up/Down to move, Enter/Right to run, Esc/Left to go back, Q to quit.\n");
@@ -343,22 +343,22 @@ static void main_menu(void)
         print_header("FastDoom launcher");
         for (i = 0; i < MM_QUIT; i++) {
             if (i == sel) {
-                printf(" >");
+                printf(" ->");
             } else {
-                printf("  ");
+                printf("   ");
             }
             if (i < NGROUPS) {
-                printf(" %d. %s\n", i + 1, groups[i].title);
+                printf(" %2d. %s\n", i + 1, groups[i].title);
             } else if (i == MM_SETUP) {
-                printf(" S. FDSETUP (Setup controls and sound cards)\n");
+                printf("  S. FDSETUP (Setup controls and sound cards)\n");
             } else {
-                printf(" B. FDBENCH (Benchmark utility)\n");
+                printf("  B. FDBENCH (Benchmark utility)\n");
             }
         }
         if (sel == MM_QUIT) {
-            printf(" > Q. Quit\n\n");
+            printf(" ->  Q. Quit\n\n");
         } else {
-            printf("   Q. Quit\n\n");
+            printf("     Q. Quit\n\n");
         }
         printf("  Up/Down to move, Enter/Right to choose, Esc/Left/Q to quit.\n");
         c = getch();
