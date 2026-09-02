@@ -68,23 +68,37 @@ const opt_t opts[NUMOPTS] = {
     { "-forceSound",    "Skip sound hardware checks" }
 };
 
-/* File where the selected options are stored. */
+/*
+ * The config file: the first line is "EXE=<executable>", the saved
+ * launch target (optional); the remaining lines are option names
+ * (one per line) passed to the game executables.
+ */
 #define OPTS_FILE "FDSTART.CFG"
 
-/* The enabled options (one byte per entry of opts). */
+/* The prefix of the launch target line. */
+#define EXE_KEY "EXE="
+
+/* Max length of the saved executable name. */
+#define LAUNCH_MAX 64
+
+/* The enabled options (one byte per entry of opts) and the saved
+   launch target. */
 static char opt_enabled[NUMOPTS];
+static char launch_exe[LAUNCH_MAX];
 
 /*
- * Loads the selected options from the config file. Lines that
- * match an option name enable it, everything else is ignored.
+ * Loads the config file into opt_enabled and launch_exe. Lines
+ * that match an option name enable it, the "EXE=" line sets the
+ * launch target, everything else is ignored.
  */
 void load_options(void)
 {
     FILE *f;
-    char line[40];
+    char line[80];
     int i;
 
     memset(opt_enabled, 0, NUMOPTS);
+    launch_exe[0] = '\0';
     f = fopen(OPTS_FILE, "r");
     if (f == NULL) {
         return;
@@ -96,9 +110,20 @@ void load_options(void)
                (line[len - 1] == '\n' || line[len - 1] == '\r')) {
             line[--len] = '\0';
         }
-        for (i = 0; i < NUMOPTS; i++) {
-            if (strcmp(line, opts[i].arg) == 0) {
-                opt_enabled[i] = 1;
+        if (strncmp(line, EXE_KEY, strlen(EXE_KEY)) == 0) {
+            char *name = line + strlen(EXE_KEY);
+
+            len = (int)strlen(name);
+            if (len >= LAUNCH_MAX) {
+                len = LAUNCH_MAX - 1;
+            }
+            memcpy(launch_exe, name, (size_t)len);
+            launch_exe[len] = '\0';
+        } else {
+            for (i = 0; i < NUMOPTS; i++) {
+                if (strcmp(line, opts[i].arg) == 0) {
+                    opt_enabled[i] = 1;
+                }
             }
         }
     }
@@ -106,7 +131,8 @@ void load_options(void)
 }
 
 /*
- * Saves the selected options to the config file, one per line.
+ * Saves the config file: the launch target line (if any) followed
+ * by the enabled options, one per line.
  */
 void save_options(void)
 {
@@ -117,12 +143,53 @@ void save_options(void)
     if (f == NULL) {
         return;
     }
+    if (launch_exe[0] != '\0') {
+        fprintf(f, "%s%s\n", EXE_KEY, launch_exe);
+    }
     for (i = 0; i < NUMOPTS; i++) {
         if (opt_enabled[i]) {
             fprintf(f, "%s\n", opts[i].arg);
         }
     }
     fclose(f);
+}
+
+/*
+ * Saves the name of an executable as the launch target, rewriting
+ * the config file (the current options are kept).
+ */
+void save_launch_exe(const char *exe)
+{
+    int len = (int)strlen(exe);
+
+    load_options();
+    if (len >= LAUNCH_MAX) {
+        len = LAUNCH_MAX - 1;
+    }
+    memcpy(launch_exe, exe, (size_t)len);
+    launch_exe[len] = '\0';
+    save_options();
+}
+
+/*
+ * Loads the saved executable name into exe (size bytes). Returns
+ * 1 on success, 0 if there is no saved executable.
+ */
+int load_launch_exe(char *exe, int size)
+{
+    int len;
+
+    load_options();
+    len = (int)strlen(launch_exe);
+    if (len == 0) {
+        return 0;
+    }
+    if (len >= size) {
+        len = size - 1;
+    }
+    memcpy(exe, launch_exe, (size_t)len);
+    exe[len] = '\0';
+    return 1;
 }
 
 /*

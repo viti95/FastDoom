@@ -98,6 +98,11 @@ void run_exe(const char *exe)
     if (!file_exists(exe)) {
         message("Executable not found.");
     } else {
+        /* Remember the game executables as the launch target
+           (FDSETUP and FDBENCH are not saved). */
+        if (is_game_exe(exe)) {
+            save_launch_exe(exe);
+        }
         /* Clear the screen so the launched program
            starts on a clean one, then run it. When
            it exits, quit the launcher too. */
@@ -131,7 +136,8 @@ int run_group(int g)
 #define MM_BENCH   (NGROUPS + 1)
 #define MM_README  (NGROUPS + 2)
 #define MM_OPTIONS (NGROUPS + 3)
-#define MM_QUIT    (NGROUPS + 4)
+#define MM_LAUNCH  (NGROUPS + 4)
+#define MM_QUIT    (NGROUPS + 5)
 
 /* One shot message shown in the main menu after a subscreen
    returns (for example, after the options were saved). */
@@ -149,6 +155,22 @@ static int enter_options(void)
         flash_msg = "  Options saved to FDSTART.CFG.";
     }
     return (r == OM_QUIT);
+}
+
+/*
+ * Launches the last saved executable (see run_exe()).
+ */
+static void launch_saved_exe(void)
+{
+    char exe[64];
+
+    if (!load_launch_exe(exe, (int)sizeof(exe))) {
+        message("No executable saved. Run one from a group first.");
+    } else if (!file_exists(exe)) {
+        message("Saved executable not found.");
+    } else {
+        run_exe(exe);
+    }
 }
 
 /*
@@ -171,6 +193,8 @@ static int choose_entry(int i)
         }
     } else if (i == MM_OPTIONS) {
         return enter_options();
+    } else if (i == MM_LAUNCH) {
+        launch_saved_exe();
     } else {
         return 1;
     }
@@ -204,8 +228,10 @@ void main_menu(void)
                     printf("  B. FDBENCH (Benchmark utility)\n");
                 } else if (i == MM_README) {
                     printf("  R. Readme\n");
-                } else {
+                } else if (i == MM_OPTIONS) {
                     printf("  O. Options (command line parameters)\n");
+                } else {
+                    printf("  L. Launch (last saved executable)\n");
                 }
             }
             if (sel == MM_QUIT) {
@@ -250,6 +276,10 @@ void main_menu(void)
         c = toupper(c);
         if (c == 'Q') {
             break;
+        }
+        if (c == 'L') {
+            launch_saved_exe();
+            last_sel = -1;
         }
         if (c == 'S') {
             run_exe("FDSETUP.EXE");

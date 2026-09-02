@@ -25,6 +25,8 @@ extern const opt_t opts[NUMOPTS];
 
 void load_options(void);
 void save_options(void);
+void save_launch_exe(const char *exe);
+int load_launch_exe(char *exe, int size);
 int is_game_exe(const char *exe);
 void build_command(const char *exe, char *cmd);
 
