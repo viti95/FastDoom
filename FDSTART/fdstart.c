@@ -278,9 +278,15 @@ static void print_bottom_row(int row, const char *text)
     (void)printf("%s\n", text);
 }
 
+/* group_menu() return values: -1 to go back, -2 to quit, >= 0 the
+   selected item. */
+#define GMENU_BACK  (-1)
+#define GMENU_QUIT  (-2)
+
 /*
  * Shows the list of the group's items with a cursor. Returns the
- * index of the selected item, or -1 if the user went back.
+ * index of the selected item, GMENU_BACK if the user went back or
+ * GMENU_QUIT if the user pressed Q.
  */
 static int group_menu(const group_t *g)
 {
@@ -311,7 +317,7 @@ static int group_menu(const group_t *g)
         }
         c = getch();
         if (c == -1 || c == 0x1B) {
-            return -1;
+            return GMENU_BACK;
         }
         if (c == 0 || c == 0xE0 || c == 0xE1) {
             /* Extended key (0, 0xE0 or 0xE1 prefix): the second
@@ -322,7 +328,7 @@ static int group_menu(const group_t *g)
             } else if (c == KEY_DOWN) {
                 sel = move_sel(sel, 1, g->count);
             } else if (c == KEY_LEFT) {
-                return -1;
+                return GMENU_BACK;
             } else if (c == KEY_RIGHT) {
                 return sel;
             }
@@ -330,7 +336,7 @@ static int group_menu(const group_t *g)
         }
         c = toupper(c);
         if (c == 'Q') {
-            exit(0);
+            return GMENU_QUIT;
         }
         if (c == '\r') {
             return sel;
@@ -363,14 +369,19 @@ static void run_exe(const char *exe)
 /*
  * Enters the given group, launches the chosen program and loops
  * until the user goes back. Never returns if a program was run.
+ * Returns 1 if the launcher should quit, 0 otherwise.
  */
-static void run_group(int g)
+static int run_group(int g)
 {
     int sel = group_menu(&groups[g]);
 
+    if (sel == GMENU_QUIT) {
+        return 1;
+    }
     if (sel >= 0) {
         run_exe(groups[g].items[sel].exe);
     }
+    return 0;
 }
 
 /*
@@ -512,7 +523,9 @@ static int show_readme(void)
 static int choose_entry(int i)
 {
     if (i < NGROUPS) {
-        run_group(i);
+        if (run_group(i)) {
+            return 1;
+        }
     } else if (i == MM_SETUP) {
         run_exe("FDSETUP.EXE");
     } else if (i == MM_BENCH) {
