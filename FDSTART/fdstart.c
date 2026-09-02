@@ -553,7 +553,7 @@ static void main_menu(void)
                 } else if (i == MM_BENCH) {
                     printf("  B. FDBENCH (Benchmark utility)\n");
                 } else {
-                    printf("  R. Readme (read README.TXT)\n");
+                    printf("  R. Readme\n");
                 }
             }
             if (sel == MM_QUIT) {
