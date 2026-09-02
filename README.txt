@@ -473,3 +473,9 @@
  it ASAP!
 
  https://github.com/viti95/FastDoom/issues
+
+ License
+ -------
+
+ FastDoom is released under the terms of the GPLv2 license
+ 

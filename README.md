@@ -110,3 +110,7 @@ This project exists thanks to all the people who contribute.
 ## Contributing
 
 Feel free to add issues or pull requests here on GitHub. I cannot guarantee that I will accept your changes, but feel free to fork the repo and make changes as you see fit. Thanks!
+
+## License
+
+FastDoom is released under the terms of the [GPLv2 license](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html#SEC1).
