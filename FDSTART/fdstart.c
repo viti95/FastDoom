@@ -288,21 +288,27 @@ static int group_menu(const group_t *g)
     int i;
     int c;
     int sel = 0;
+    int last_sel = -1;
 
     sprintf(header, "FastDoom launcher (%s)", g->title);
 
     for (;;) {
-        draw_menu_top(header);
-        for (i = 0; i < g->count; i++) {
-            printf("%s", i == sel ? " ->" : "   ");
-            printf(" %2d. %12s - %s", i + 1, g->items[i].exe, g->items[i].desc);
-            if (!file_exists(g->items[i].exe)) {
-                printf(" (missing)");
+        /* Redraw only when the selection changed, so keys that
+           do nothing don't flicker the screen. */
+        if (sel != last_sel) {
+            last_sel = sel;
+            draw_menu_top(header);
+            for (i = 0; i < g->count; i++) {
+                printf("%s", i == sel ? " ->" : "   ");
+                printf(" %2d. %12s - %s", i + 1, g->items[i].exe, g->items[i].desc);
+                if (!file_exists(g->items[i].exe)) {
+                    printf(" (missing)");
+                }
+                printf("\n");
             }
-            printf("\n");
+            print_bottom_row(MENU_FIRST_ROW + g->count,
+                             "  Up/Down to move, Enter/Right to run, Esc/Left to go back, Q to quit.");
         }
-        print_bottom_row(MENU_FIRST_ROW + g->count,
-                         "  Up/Down to move, Enter/Right to run, Esc/Left to go back, Q to quit.");
         c = getch();
         if (c == -1 || c == 0x1B) {
             return -1;
@@ -392,6 +398,7 @@ static int show_readme(void)
     FILE *f;
     int nlines = 0;
     int top = 0;
+    int last_top = -1;
     int i;
     int c;
 
@@ -417,12 +424,17 @@ static int show_readme(void)
     fclose(f);
 
     for (;;) {
-        clear_screen();
-        for (i = top; i < nlines && (i - top) < README_TEXT_ROWS; i++) {
-            (void)printf("%s\n", lines[i]);
+        /* Redraw only when the page changed, so keys that do
+           nothing don't flicker the screen. */
+        if (top != last_top) {
+            last_top = top;
+            clear_screen();
+            for (i = top; i < nlines && (i - top) < README_TEXT_ROWS; i++) {
+                (void)printf("%s\n", lines[i]);
+            }
+            print_bottom_row(i - top,
+                             "  PgUp/PgDn or arrows to scroll, Home/End to jump, Esc to go back, Q to quit.");
         }
-        print_bottom_row(i - top,
-                         "  PgUp/PgDn or arrows to scroll, Home/End to jump, Esc to go back, Q to quit.");
         c = getch();
         if (c == -1 || c == 0x1B) {
             return 0;
@@ -524,28 +536,34 @@ static void main_menu(void)
     int i;
     int c;
     int sel = 0;
+    int last_sel = -1;
 
     for (;;) {
-        draw_menu_top("FastDoom launcher");
-        for (i = 0; i < MM_QUIT; i++) {
-            printf("%s", i == sel ? " ->" : "   ");
-            if (i < NGROUPS) {
-                printf(" %2d. %s\n", i + 1, groups[i].title);
-            } else if (i == MM_SETUP) {
-                printf("  S. FDSETUP (Setup controls and sound cards)\n");
-            } else if (i == MM_BENCH) {
-                printf("  B. FDBENCH (Benchmark utility)\n");
-            } else {
-                printf("  R. Readme (read README.TXT)\n");
+        /* Redraw only when the selection changed, so keys that
+           do nothing don't flicker the screen. */
+        if (sel != last_sel) {
+            last_sel = sel;
+            draw_menu_top("FastDoom launcher");
+            for (i = 0; i < MM_QUIT; i++) {
+                printf("%s", i == sel ? " ->" : "   ");
+                if (i < NGROUPS) {
+                    printf(" %2d. %s\n", i + 1, groups[i].title);
+                } else if (i == MM_SETUP) {
+                    printf("  S. FDSETUP (Setup controls and sound cards)\n");
+                } else if (i == MM_BENCH) {
+                    printf("  B. FDBENCH (Benchmark utility)\n");
+                } else {
+                    printf("  R. Readme (read README.TXT)\n");
+                }
             }
+            if (sel == MM_QUIT) {
+                printf(" ->  Q. Quit\n\n");
+            } else {
+                printf("     Q. Quit\n\n");
+            }
+            print_bottom_row(MENU_FIRST_ROW + MM_QUIT + 2,
+                             "  Up/Down to move, Enter/Right to choose, Esc/Left/Q to quit.");
         }
-        if (sel == MM_QUIT) {
-            printf(" ->  Q. Quit\n\n");
-        } else {
-            printf("     Q. Quit\n\n");
-        }
-        print_bottom_row(MENU_FIRST_ROW + MM_QUIT + 2,
-                         "  Up/Down to move, Enter/Right to choose, Esc/Left/Q to quit.");
         c = getch();
         if (c == -1 || c == 0x1B) {
             break;
@@ -564,6 +582,7 @@ static void main_menu(void)
                 if (choose_entry(sel)) {
                     break;
                 }
+                last_sel = -1; /* Subscreen was shown: force a redraw */
             }
             continue;
         }
@@ -573,25 +592,30 @@ static void main_menu(void)
         }
         if (c == 'S') {
             run_exe("FDSETUP.EXE");
+            last_sel = -1;
         }
         if (c == 'B') {
             run_exe("FDBENCH.EXE");
+            last_sel = -1;
         }
         if (c == 'R') {
             if (show_readme()) {
                 break;
             }
+            last_sel = -1;
         }
         if (c == '\r') {
             if (choose_entry(sel)) {
                 break;
             }
+            last_sel = -1;
         }
         i = digit_index(c);
         if (i >= 1 && i <= NGROUPS) {
             if (choose_entry(i - 1)) {
                 break;
             }
+            last_sel = -1;
         }
     }
 }
