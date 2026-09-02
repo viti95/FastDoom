@@ -133,6 +133,24 @@ int run_group(int g)
 #define MM_OPTIONS (NGROUPS + 3)
 #define MM_QUIT    (NGROUPS + 4)
 
+/* One shot message shown in the main menu after a subscreen
+   returns (for example, after the options were saved). */
+static const char *flash_msg = NULL;
+
+/*
+ * Enters the options menu, setting the flash message if the user
+ * saved with S. Returns 1 if the launcher should quit, 0 otherwise.
+ */
+static int enter_options(void)
+{
+    int r = options_menu();
+
+    if (r == OM_SAVED) {
+        flash_msg = "  Options saved to FDSTART.CFG.";
+    }
+    return (r == OM_QUIT);
+}
+
 /*
  * Executes the given main menu entry. Returns 1 if the launcher
  * should quit, 0 otherwise.
@@ -152,9 +170,7 @@ static int choose_entry(int i)
             return 1;
         }
     } else if (i == MM_OPTIONS) {
-        if (options_menu()) {
-            return 1;
-        }
+        return enter_options();
     } else {
         return 1;
     }
@@ -197,8 +213,17 @@ void main_menu(void)
             } else {
                 printf("     Q. Quit\n\n");
             }
-            print_bottom_row(MENU_FIRST_ROW + MM_QUIT + 2,
-                             "  Up/Down to move, Enter/Right to choose, Esc/Left/Q to quit.");
+            if (flash_msg != NULL) {
+                /* One shot message line just below the last entry,
+                   shown without waiting for a key. */
+                printf("%s\n", flash_msg);
+                flash_msg = NULL;
+                print_bottom_row(MENU_FIRST_ROW + MM_QUIT + 3,
+                                 "  Up/Down to move, Enter/Right to choose, Esc/Left/Q to quit.");
+            } else {
+                print_bottom_row(MENU_FIRST_ROW + MM_QUIT + 2,
+                                 "  Up/Down to move, Enter/Right to choose, Esc/Left/Q to quit.");
+            }
         }
         c = getch();
         if (c == -1 || c == 0x1B) {
@@ -241,7 +266,7 @@ void main_menu(void)
             last_sel = -1;
         }
         if (c == 'O') {
-            if (options_menu()) {
+            if (enter_options()) {
                 break;
             }
             last_sel = -1;

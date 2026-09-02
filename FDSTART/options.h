@@ -27,6 +27,12 @@ void load_options(void);
 void save_options(void);
 int is_game_exe(const char *exe);
 void build_command(const char *exe, char *cmd);
+
+/* options_menu() return values */
+#define OM_BACK   0 /* went back (Esc/Left) */
+#define OM_QUIT   1 /* quit the launcher (Q) */
+#define OM_SAVED  2 /* saved with S and closed */
+
 int options_menu(void);
 
 #endif /* OPTIONS_H */

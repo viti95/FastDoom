@@ -161,11 +161,13 @@ void build_command(const char *exe, char *cmd)
 /*
  * Options menu: toggles the command line parameters that are
  * passed to the game executables. The selection is stored in
- * FDSTART.CFG on exit (and with S at any time).
+ * FDSTART.CFG on exit; S saves and closes the menu.
  *
- * Returns 1 if the launcher should quit, 0 to go back.
+ * Returns OM_BACK, OM_QUIT or OM_SAVED.
  */
-#define OPTS_ROWS 22
+/* Rows of options that fit between the header box and the footer:
+   MENU_FIRST_ROW .. 21, row 22 is blank and row 23 the footer. */
+#define OPTS_ROWS 17
 
 int options_menu(void)
 {
@@ -180,20 +182,20 @@ int options_menu(void)
     for (;;) {
         if (dirty) {
             dirty = 0;
-            clear_screen();
+            draw_menu_top("FastDoom launcher (Options)");
             for (i = top; i < NUMOPTS && (i - top) < OPTS_ROWS; i++) {
                 printf("%s", i == sel ? " ->" : "   ");
                 printf(" %s %-15s %s\n",
                        opt_enabled[i] ? "[X]" : "[ ]",
                        opts[i].arg, opts[i].desc);
             }
-            print_bottom_row(i - top,
-                             "  Enter/Space toggle, S save, PgUp/PgDn scroll, Esc back, Q quit.");
+            print_bottom_row(MENU_FIRST_ROW + (i - top),
+                             "  Enter/Space toggle, S save, PgUp/PgDn scroll, Esc/Left back, Q quit.");
         }
         c = getch();
         if (c == -1 || c == 0x1B) {
             save_options();
-            return 0;
+            return OM_BACK;
         }
         if (c == 0 || c == 0xE0 || c == 0xE1) {
             /* Extended key (0, 0xE0 or 0xE1 prefix): the second
@@ -218,6 +220,9 @@ int options_menu(void)
                         dirty = 1;
                     }
                     break;
+                case KEY_LEFT:
+                    save_options();
+                    return OM_BACK;
                 case KEY_PGUP:
                     top -= OPTS_ROWS;
                     if (top < 0) {
@@ -259,12 +264,11 @@ int options_menu(void)
         c = toupper(c);
         if (c == 'Q') {
             save_options();
-            return 1;
+            return OM_QUIT;
         }
         if (c == 'S') {
             save_options();
-            message("Options saved to FDSTART.CFG.");
-            dirty = 1;
+            return OM_SAVED;
         }
         if (c == ' ' || c == '\r') {
             opt_enabled[sel] = !opt_enabled[sel];
