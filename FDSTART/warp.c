@@ -6,7 +6,8 @@
  *
  * The IWADs offered are the ones FastDoom knows about (the same
  * list as the iwads[] table in d_main.c); the file is looked up in
- * the current directory.
+ * the current directory. Optionally the user can also pick a PWAD
+ * (-file) from the WADS sub-directory.
  *
  * The level lists are read from the LEVELS\<iwad>.txt files that
  * ship with FastDoom (the same ones the game reads for the level
@@ -20,6 +21,8 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdarg.h>
+#include <dos.h>
+#include <errno.h>
 #include <conio.h>
 
 #include "warp.h"
@@ -61,6 +64,43 @@ static const wiwad_t wiwads[NIWADS] = {
     { "freedm1.wad",  "Freedoom: Phase 1",                    "LEVELS\\freedm1.txt" },
     { "freedm2.wad",  "Freedoom: Phase 2",                    "LEVELS\\freedm2.txt" }
 };
+
+/* Where the PWAD files are looked up. */
+#define WAD_DIR "WADS\\"
+
+/* The PWAD list (static, so the buffers live in BSS). */
+#define MAX_PWADS     255
+#define PWAD_NAME_LEN 32
+
+static int npwads;
+static char pwad_names[MAX_PWADS][PWAD_NAME_LEN];
+static char pwad_line_buf[MAX_PWADS + 1][PWAD_NAME_LEN + 8];
+static char *pwad_lines[MAX_PWADS + 1];
+
+/*
+ * Scans the WADS directory for PWADs (*.WAD, files only) and
+ * stores their names. Returns the number of PWADs found, 0 if the
+ * directory does not exist or is empty.
+ */
+static int scan_pwads(void)
+{
+    struct find_t data;
+    unsigned handle;
+    int n = 0;
+
+    errno = 0;
+    handle = _dos_findfirst(WAD_DIR "*.WAD", 0, &data);
+    while (!errno) {
+        if (!(data.attrib & _A_SUBDIR) && n < MAX_PWADS) {
+            strncpy(pwad_names[n], data.name, PWAD_NAME_LEN - 1);
+            pwad_names[n][PWAD_NAME_LEN - 1] = '\0';
+            n++;
+        }
+        errno = 0;
+        _dos_findnext(&data);
+    }
+    return n;
+}
 
 /* The skill choices, as in the game skill menu (1..5). */
 #define NSKILLS 5
@@ -351,8 +391,10 @@ int warp_menu(void)
     char iwad_path[32];
     int niwads;
     int iwad;
+    int pwad = -1; /* Index into pwad_names, or -1 for no PWAD */
     int lvl;
     int skill;
+    int i;
     int run = 0;
 
     for (;;) {
@@ -375,6 +417,29 @@ int warp_menu(void)
             continue;
         }
         strcpy(iwad_path, wiwads[iwad].name);
+        pwad = -1;
+        npwads = scan_pwads();
+        if (npwads > 0) {
+            pwad_lines[0] = pwad_line_buf[0];
+            strcpy(pwad_line_buf[0], "No PWAD");
+            for (i = 0; i < npwads; i++) {
+                pwad_lines[i + 1] = pwad_line_buf[i + 1];
+                strcpy(pwad_line_buf[i + 1], pwad_names[i]);
+            }
+            pwad = pick_list("FastDoom launcher (Single level, PWAD)",
+                             pwad_lines, npwads + 1);
+            if (pwad == PICK_QUIT) {
+                return 1;
+            }
+            if (pwad == PICK_BACK) {
+                continue; /* Back to the IWAD selection */
+            }
+            if (pwad > 0) {
+                pwad = pwad - 1;
+            } else {
+                pwad = -1;
+            }
+        }
         nlevels = load_levels(wiwads[iwad].levels);
         if (nlevels <= 0) {
             message("Level list not found.");
@@ -418,6 +483,9 @@ int warp_menu(void)
     }
     build_command(exe, cmd);
     append_cmd(cmd, " -iwad %s", iwad_path);
+    if (pwad >= 0) {
+        append_cmd(cmd, " -file %s%s", WAD_DIR, pwad_names[pwad]);
+    }
     if (level_commercial) {
         /* Commercial IWADs: -warp takes the map number only. */
         append_cmd(cmd, " -warp %d", level_map[lvl]);
