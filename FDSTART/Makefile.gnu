@@ -3,12 +3,18 @@
 CC     = wcl
 CCOPTS = -ml -ei -j -zq -zp1 -s -ot -c
 
-fdstart.obj: fdstart.c
-	$(CC) $(CCOPTS) -fo=fdstart.obj fdstart.c
+OBJS   = fdstart.obj screen.obj util.obj groups.obj \
+         menu.obj options.obj readme.obj warp.obj
 
-fdstart.exe: fdstart.obj
-	$(CC) -ml -zq -fe=fdstart.exe fdstart.obj
+HDRS   = screen.h util.h keys.h groups.h menu.h options.h readme.h \
+         warp.h texts.h
+
+%.obj: %.c $(HDRS)
+	$(CC) $(CCOPTS) -fo=$@ $<
+
+fdstart.exe: $(OBJS)
+	$(CC) -ml -zq -fe=fdstart.exe $(OBJS)
 
 .PHONY: clean
 clean:
-	rm -f fdstart.obj fdstart.exe
+	rm -f $(OBJS) fdstart.exe

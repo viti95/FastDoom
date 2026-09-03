@@ -3,11 +3,14 @@
 CC     = wcl
 CCOPTS = -ml -ei -j -zq -zp1 -s -ot -c
 
+OBJS   = fdstart.obj screen.obj util.obj groups.obj \
+         menu.obj options.obj readme.obj warp.obj
+
 .c.obj:
 	$(CC) $(CCOPTS) -fo=$[*.obj $[*.c
 
-fdstart.exe: fdstart.obj
-	wcl -ml -zq -fe=fdstart.exe fdstart.obj
+fdstart.exe: $(OBJS)
+	wcl -ml -zq -fe=fdstart.exe $(OBJS)
 
 clean: .SYMBOLIC
 	rm -f *.obj fdstart.exe
