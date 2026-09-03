@@ -7,7 +7,7 @@ OBJS   = fdstart.obj screen.obj util.obj groups.obj \
          menu.obj options.obj readme.obj warp.obj
 
 HDRS   = screen.h util.h keys.h groups.h menu.h options.h readme.h \
-         warp.h
+         warp.h texts.h
 
 %.obj: %.c $(HDRS)
 	$(CC) $(CCOPTS) -fo=$@ $<

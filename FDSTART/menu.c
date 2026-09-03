@@ -15,6 +15,7 @@
 #include "options.h"
 #include "readme.h"
 #include "warp.h"
+#include "texts.h"
 #include "keys.h"
 
 /* group_menu() return values: -1 to go back, -2 to quit, >= 0 the
@@ -35,7 +36,7 @@ int group_menu(const group_t *g)
     int sel = 0;
     int last_sel = -1;
 
-    sprintf(header, "FastDoom launcher (%s)", g->title);
+    sprintf(header, TEXT_LAUNCHER " (%s)", g->title);
 
     for (;;) {
         /* Redraw only when the selection changed, so keys that
@@ -223,7 +224,7 @@ void main_menu(void)
            do nothing don't flicker the screen. */
         if (sel != last_sel) {
             last_sel = sel;
-            draw_menu_top("FastDoom launcher");
+            draw_menu_top(TEXT_TITLE_MAIN);
             for (i = 0; i < MM_QUIT; i++) {
                 printf("%s", i == sel ? " ->" : "   ");
                 if (i < NGROUPS) {

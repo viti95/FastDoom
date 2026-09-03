@@ -27,6 +27,7 @@
 
 #include "warp.h"
 #include "menu.h"
+#include "texts.h"
 #include "screen.h"
 #include "util.h"
 #include "options.h"
@@ -430,7 +431,7 @@ int warp_menu(void)
             message("No IWAD found. Put a .WAD file in the FastDoom directory.");
             return 0;
         }
-        iwad = pick_list("FastDoom launcher (Single level, IWAD)",
+        iwad = pick_list(TEXT_TITLE_SINGLE_IWAD,
                          iwad_lines, niwads);
         if (iwad == PICK_QUIT) {
             return 1;
@@ -453,7 +454,7 @@ int warp_menu(void)
                 pwad_lines[i + 1] = pwad_line_buf[i + 1];
                 strcpy(pwad_line_buf[i + 1], pwad_names[i]);
             }
-            pwad = pick_list("FastDoom launcher (Single level, PWAD)",
+            pwad = pick_list(TEXT_TITLE_SINGLE_PWAD,
                              pwad_lines, npwads + 1);
             if (pwad == PICK_QUIT) {
                 return 1;
@@ -474,7 +475,7 @@ int warp_menu(void)
         }
         for (;;) {
             build_level_lines();
-            lvl = pick_list("FastDoom launcher (Single level, level)",
+            lvl = pick_list(TEXT_TITLE_SINGLE_LEVEL,
                             level_lines, nlevels);
             if (lvl == PICK_QUIT) {
                 return 1;
@@ -482,7 +483,7 @@ int warp_menu(void)
             if (lvl == PICK_BACK) {
                 break; /* Back to the IWAD selection */
             }
-            skill = pick_list("FastDoom launcher (Single level, skill)",
+            skill = pick_list(TEXT_TITLE_SINGLE_SKILL,
                               skill_lines, NSKILLS);
             if (skill == PICK_QUIT) {
                 return 1;

@@ -12,6 +12,7 @@
 #include <conio.h>
 
 #include "options.h"
+#include "texts.h"
 #include "screen.h"
 #include "keys.h"
 
@@ -271,7 +272,7 @@ int options_menu(void)
     for (;;) {
         if (dirty) {
             dirty = 0;
-            draw_menu_top("FastDoom launcher (Options)");
+            draw_menu_top(TEXT_TITLE_OPTIONS);
             for (i = top; i < NUMOPTS && (i - top) < OPTS_ROWS; i++) {
                 printf("%s", i == sel ? " ->" : "   ");
                 printf(" %s %-15s %s\n",
