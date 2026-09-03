@@ -29,6 +29,7 @@ void save_launch_exe(const char *exe);
 int load_launch_exe(char *exe, int size);
 int is_game_exe(const char *exe);
 void build_command(const char *exe, char *cmd);
+int command_length(const char *exe);
 
 /* options_menu() return values */
 #define OM_BACK   0 /* went back (Esc/Left) */

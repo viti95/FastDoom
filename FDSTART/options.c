@@ -226,6 +226,28 @@ void build_command(const char *exe, char *cmd)
 }
 
 /*
+ * Returns the length of the command line build_command() would
+ * produce for exe with the enabled options, without applying the
+ * MAX_CMD_LEN limit, so the caller can check that it fits.
+ */
+int command_length(const char *exe)
+{
+    int i;
+    int len = (int)strlen(exe);
+
+    if (!is_game_exe(exe)) {
+        return len;
+    }
+    load_options();
+    for (i = 0; i < NUMOPTS; i++) {
+        if (opt_enabled[i]) {
+            len += 1 + (int)strlen(opts[i].arg);
+        }
+    }
+    return len;
+}
+
+/*
  * Options menu: toggles the command line parameters that are
  * passed to the game executables. The selection is stored in
  * FDSTART.CFG on exit; S saves and closes the menu.

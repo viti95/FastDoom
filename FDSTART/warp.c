@@ -359,8 +359,9 @@ static int pick_list(const char *title, char *lines[], int n)
 }
 
 /*
- * Appends a formatted string to the command line, only if the
- * result stays within MAX_CMD_LEN (DOS command lines are short).
+ * Appends a formatted string to the command line. The caller must
+ * make sure the result stays within MAX_CMD_LEN (DOS command lines
+ * are short); see launcher_cmd_len().
  */
 static void append_cmd(char *cmd, const char *fmt, ...)
 {
@@ -370,9 +371,35 @@ static void append_cmd(char *cmd, const char *fmt, ...)
     va_start(ap, fmt);
     (void)vsprintf(part, fmt, ap);
     va_end(ap);
-    if (strlen(cmd) + strlen(part) + 1 <= MAX_CMD_LEN) {
-        strcat(cmd, part);
+    strcat(cmd, part);
+}
+
+/*
+ * Returns the total length of the command line the launcher would
+ * build: the executable with the enabled options (without the
+ * MAX_CMD_LEN limit, as in command_length()) plus the -iwad, -file
+ * (if any), -warp and -skill arguments.
+ */
+static int launcher_cmd_len(const char *exe, const char *iwad, int pwad,
+                            int lvl, int skill)
+{
+    char num[16];
+    int len = command_length(exe);
+
+    len += 7 + (int)strlen(iwad); /* " -iwad " */
+    if (pwad >= 0) {
+        len += 7 + (int)strlen(WAD_DIR) + (int)strlen(pwad_names[pwad]);
     }
+    if (level_commercial) {
+        /* Commercial IWADs: -warp takes the map number only. */
+        sprintf(num, "%d", level_map[lvl]);
+    } else {
+        /* The others: -warp takes the episode and the map. */
+        sprintf(num, "%d %d", level_ep[lvl], level_map[lvl]);
+    }
+    len += 7 + (int)strlen(num); /* " -warp " */
+    len += 8 + 1; /* " -skill " and a one digit value */
+    return len;
 }
 
 /*
@@ -480,6 +507,18 @@ int warp_menu(void)
     }
     if (is_game_exe(exe)) {
         save_launch_exe(exe);
+    }
+    if (launcher_cmd_len(exe, iwad_path, pwad, lvl, skill) > MAX_CMD_LEN) {
+        /* The command line would not fit: abort instead of dropping
+           arguments the game needs to run the level the user picked. */
+        char msg[128];
+        sprintf(msg,
+                "Command line too long (%d of %d characters used). "
+                "Disable some options.",
+                launcher_cmd_len(exe, iwad_path, pwad, lvl, skill),
+                MAX_CMD_LEN);
+        message(msg);
+        return 0;
     }
     build_command(exe, cmd);
     append_cmd(cmd, " -iwad %s", iwad_path);
