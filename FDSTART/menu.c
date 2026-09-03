@@ -252,10 +252,10 @@ void main_menu(void)
                 printf("%s\n", flash_msg);
                 flash_msg = NULL;
                 print_bottom_row(MENU_FIRST_ROW + MM_QUIT + 3,
-                                 "  Up/Down to move, Enter/Right to choose, Esc/Left/Q to quit.");
+                                 "  Up/Down to move, Enter/Right to choose, Esc/Q to quit.");
             } else {
                 print_bottom_row(MENU_FIRST_ROW + MM_QUIT + 2,
-                                 "  Up/Down to move, Enter/Right to choose, Esc/Left/Q to quit.");
+                                 "  Up/Down to move, Enter/Right to choose, Esc/Q to quit.");
             }
         }
         c = getch();
@@ -270,8 +270,6 @@ void main_menu(void)
                 sel = move_sel(sel, -1, MM_QUIT + 1);
             } else if (c == KEY_DOWN) {
                 sel = move_sel(sel, 1, MM_QUIT + 1);
-            } else if (c == KEY_LEFT) {
-                break;
             } else if (c == KEY_RIGHT) {
                 if (choose_entry(sel)) {
                     break;
