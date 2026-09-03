@@ -47,7 +47,6 @@ void clear_screen(void)
 void message(const char *text)
 {
     printf("\n  %s", text);
-    printf("\n\n  Press any key to continue...");
     (void)getch();
 }
 

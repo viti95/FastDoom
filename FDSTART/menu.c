@@ -22,6 +22,13 @@
 #define GMENU_BACK  (-1)
 #define GMENU_QUIT  (-2)
 
+/* One shot message shown in the main menu after a subscreen
+   returns (for example, after the options were saved). flash_buf
+   holds messages built with sprintf (like the default executable
+   name). */
+static char flash_buf[80];
+static const char *flash_msg = NULL;
+
 /*
  * Shows the list of the group's items with a cursor. Returns the
  * index of the selected item, GMENU_BACK if the user went back or
@@ -52,7 +59,7 @@ int group_menu(const group_t *g)
                 printf("\n");
             }
             print_bottom_row(MENU_FIRST_ROW + g->count,
-                             "  Up/Down to move, Enter/Right to run, Esc/Left to go back, Q to quit.");
+                             "  Up/Down move, Enter/Right run, D set default, Esc/Left back, Q quit.");
         }
         c = getch();
         if (c == -1 || c == 0x1B) {
@@ -76,6 +83,17 @@ int group_menu(const group_t *g)
         c = toupper(c);
         if (c == 'Q') {
             return GMENU_QUIT;
+        }
+        if (c == 'D') {
+            /* Set the highlighted executable as the default
+               launch target (the "Launch" main menu entry),
+               then go back to the main menu, showing the
+               confirmation there without waiting for a key. */
+            save_launch_exe(g->items[sel].exe);
+            sprintf(flash_buf, "  Default executable set to %s.",
+                    g->items[sel].exe);
+            flash_msg = flash_buf;
+            return GMENU_BACK;
         }
         if (c == '\r') {
             return sel;
@@ -139,10 +157,6 @@ int run_group(int g)
 #define MM_WARP    (NGROUPS + 4)
 #define MM_LAUNCH  (NGROUPS + 5)
 #define MM_QUIT    (NGROUPS + 6)
-
-/* One shot message shown in the main menu after a subscreen
-   returns (for example, after the options were saved). */
-static const char *flash_msg = NULL;
 
 /*
  * Enters the options menu, setting the flash message if the user
