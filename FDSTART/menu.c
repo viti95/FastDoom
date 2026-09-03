@@ -5,7 +5,6 @@
  */
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <ctype.h>
 #include <conio.h>
 
@@ -90,8 +89,8 @@ int group_menu(const group_t *g)
 
 /*
  * Runs an executable: if it exists, clears the screen and runs it
- * with the saved options, then quits the launcher when it exits.
- * Never returns in that case.
+ * with the saved options. When the program exits, returns to the
+ * main menu.
  */
 void run_exe(const char *exe)
 {
@@ -107,17 +106,16 @@ void run_exe(const char *exe)
         }
         /* Clear the screen so the launched program
            starts on a clean one, then run it. When
-           it exits, quit the launcher too. */
+           it exits, go back to the main menu. */
         build_command(exe, cmd);
         clear_screen();
         (void)system(cmd);
-        exit(0);
     }
 }
 
 /*
- * Enters the given group, launches the chosen program and loops
- * until the user goes back. Never returns if a program was run.
+ * Enters the given group and launches the chosen program. When the
+ * program exits, returns to the main menu.
  * Returns 1 if the launcher should quit, 0 otherwise.
  */
 int run_group(int g)

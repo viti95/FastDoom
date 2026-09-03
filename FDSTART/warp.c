@@ -407,7 +407,7 @@ static int launcher_cmd_len(const char *exe, const char *iwad, int pwad,
  * The single level launcher: pick the IWAD, the level and the
  * skill, then run the saved executable (or FDOOM.EXE if none is
  * saved) with -iwad, -warp and -skill, plus the saved command
- * line options. Never returns once the game is run.
+ * line options. When the game exits, goes back to the main menu.
  *
  * Returns 1 if the launcher should quit, 0 to go back to the main
  * menu.
@@ -536,5 +536,5 @@ int warp_menu(void)
     append_cmd(cmd, " -skill %d", skill + 1);
     clear_screen();
     (void)system(cmd);
-    exit(0);
+    return 0;
 }
