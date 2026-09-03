@@ -1,10 +1,10 @@
-\nFastDoom version 1.4.0\n
+\nFastDoom version 1.4.0 - %s\n
      1. DOOM Shareware                         (doom1.wad)\n
      2. DOOM                                   (doom.wad)\n
      3. The Ultimate DOOM                      (doomu.wad)\n
      4. DOOM II                                (doom2.wad)\n
      5. Final Doom - The Plutonia Experiment   (plutonia.wad)\n
-     6. Final Doom - TNT:Evilution             (tnt.wad)\n
+     6. Final Doom - TNT: Evilution            (tnt.wad)\n
      7. FreeDoom: Phase 1                      (freedm1.wad, EXPERIMENTAL)\n
      8. FreeDoom: Phase 2                      (freedm2.wad, EXPERIMENTAL)\n
 \nPlease select the IWAD you want to play:\n\n

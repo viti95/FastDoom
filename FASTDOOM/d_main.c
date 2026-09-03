@@ -1242,7 +1242,7 @@ void D_DoomMain(void)
 
     I_GetProgFilePositionCache();
 
-    printf(I_LoadTextProgram(0));
+    printf(I_LoadTextProgram(0), FD_MODE_NAME);
 
     p = M_CheckParm("-limitram");
     if (p)
@@ -1544,7 +1544,7 @@ void D_DoomMain(void)
     else
         D_DrawTitle(4);
 
-    printf(I_LoadTextProgram(0));
+    printf(I_LoadTextProgram(0), FD_MODE_NAME);
     printf(I_LoadTextProgram(18), I_GetCPUModel());
     if (hasFPU)
         printf(I_LoadTextProgram(196));
