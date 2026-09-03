@@ -6,7 +6,7 @@
  *
  * The IWADs offered are the ones FastDoom knows about (the same
  * list as the iwads[] table in d_main.c); the file is looked up in
- * the IWAD sub-directory first, then in the current directory.
+ * the current directory.
  *
  * The level lists are read from the LEVELS\<iwad>.txt files that
  * ship with FastDoom (the same ones the game reads for the level
@@ -45,24 +45,22 @@
  */
 typedef struct {
     const char *name;
+    const char *display;
     const char *levels;
 } wiwad_t;
 
 #define NIWADS 8
 
 static const wiwad_t wiwads[NIWADS] = {
-    { "doom1.wad",    "LEVELS\\doom1.txt" },
-    { "doom.wad",     "LEVELS\\doom.txt" },
-    { "doomu.wad",    "LEVELS\\doomu.txt" },
-    { "doom2.wad",    "LEVELS\\doom2.txt" },
-    { "plutonia.wad", "LEVELS\\plutonia.txt" },
-    { "tnt.wad",      "LEVELS\\tnt.txt" },
-    { "freedm1.wad",  "LEVELS\\freedm1.txt" },
-    { "freedm2.wad",  "LEVELS\\freedm2.txt" }
+    { "doom1.wad",    "DOOM Shareware",                       "LEVELS\\doom1.txt" },
+    { "doom.wad",     "DOOM",                                 "LEVELS\\doom.txt" },
+    { "doomu.wad",    "The Ultimate DOOM",                    "LEVELS\\doomu.txt" },
+    { "doom2.wad",    "DOOM II",                              "LEVELS\\doom2.txt" },
+    { "plutonia.wad", "Final Doom - The Plutonia Experiment", "LEVELS\\plutonia.txt" },
+    { "tnt.wad",      "Final Doom - TNT: Evilution",          "LEVELS\\tnt.txt" },
+    { "freedm1.wad",  "Freedoom: Phase 1",                    "LEVELS\\freedm1.txt" },
+    { "freedm2.wad",  "Freedoom: Phase 2",                    "LEVELS\\freedm2.txt" }
 };
-
-/* Where the IWAD files are looked up, in order. */
-#define IWAD_DIR "IWAD\\"
 
 /* The skill choices, as in the game skill menu (1..5). */
 #define NSKILLS 5
@@ -76,54 +74,23 @@ static char *skill_lines[NSKILLS] = {
 };
 
 /* The IWAD selection lines, rebuilt on every pass. */
-static char iwad_line_buf[NIWADS][32];
+static char iwad_line_buf[NIWADS][64];
 static char *iwad_lines[NIWADS];
 
 /*
- * Returns 1 if the IWAD file exists in the current directory or in
- * the IWAD sub-directory.
+ * Returns 1 if the IWAD file exists in the current directory.
  */
 static int iwad_exists(const char *name)
 {
-    char path[32];
-
-    if (file_exists(name)) {
-        return 1;
-    }
-    strcpy(path, IWAD_DIR);
-    strcat(path, name);
-    return file_exists(path);
-}
-
-/*
- * Finds the IWAD file, copying the name to pass to -iwad (the plain
- * file name if it is in the current directory, or the sub-directory
- * path if it is in IWAD). Returns 1 on success, 0 if not found.
- */
-static int find_iwad(const char *name, char *path)
-{
-    char full[32];
-
-    if (file_exists(name)) {
-        strcpy(path, name);
-        return 1;
-    }
-    strcpy(full, IWAD_DIR);
-    strcat(full, name);
-    if (file_exists(full)) {
-        strcpy(path, full);
-        return 1;
-    }
-    return 0;
+    return file_exists(name);
 }
 
 /* Maps each shown line to its entry in the wiwads table. */
 static int iwad_index[NIWADS];
 
 /*
- * Builds the IWAD selection lines from the IWADs that exist (in
- * the current directory or in the IWAD sub-directory). Returns
- * the number of available IWADs.
+ * Builds the IWAD selection lines from the IWADs that exist in the
+ * current directory. Returns the number of available IWADs.
  */
 static int build_iwad_lines(void)
 {
@@ -135,7 +102,8 @@ static int build_iwad_lines(void)
             continue;
         }
         iwad_lines[n] = iwad_line_buf[n];
-        strcpy(iwad_line_buf[n], wiwads[i].name);
+        sprintf(iwad_line_buf[n], "%s (%s)",
+                wiwads[i].display, wiwads[i].name);
         iwad_index[n] = i;
         n++;
     }
@@ -390,7 +358,7 @@ int warp_menu(void)
     for (;;) {
         niwads = build_iwad_lines();
         if (niwads == 0) {
-            message("No IWAD found. Put a .WAD file in the IWAD directory.");
+            message("No IWAD found. Put a .WAD file in the FastDoom directory.");
             return 0;
         }
         iwad = pick_list("FastDoom launcher (Single level, IWAD)",
@@ -402,10 +370,11 @@ int warp_menu(void)
             return 0;
         }
         iwad = iwad_index[iwad];
-        if (!find_iwad(wiwads[iwad].name, iwad_path)) {
+        if (!iwad_exists(wiwads[iwad].name)) {
             message("IWAD not found.");
             continue;
         }
+        strcpy(iwad_path, wiwads[iwad].name);
         nlevels = load_levels(wiwads[iwad].levels);
         if (nlevels <= 0) {
             message("Level list not found.");
