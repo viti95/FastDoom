@@ -19,6 +19,7 @@
  *   menu.h/.c     the group and main menus, program launching
  *   options.h/.c  command line options, FDSTART.CFG, options menu
  *   readme.h/.c   the README.TXT reader
+ *   warp.h/.c     the single level launcher (-iwad, -warp, -skill)
  *
  * Build as a 16-bit DOS executable with Open Watcom (see makefile).
  */

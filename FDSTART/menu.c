@@ -14,6 +14,7 @@
 #include "util.h"
 #include "options.h"
 #include "readme.h"
+#include "warp.h"
 #include "keys.h"
 
 /* group_menu() return values: -1 to go back, -2 to quit, >= 0 the
@@ -136,8 +137,9 @@ int run_group(int g)
 #define MM_BENCH   (NGROUPS + 1)
 #define MM_README  (NGROUPS + 2)
 #define MM_OPTIONS (NGROUPS + 3)
-#define MM_LAUNCH  (NGROUPS + 4)
-#define MM_QUIT    (NGROUPS + 5)
+#define MM_WARP    (NGROUPS + 4)
+#define MM_LAUNCH  (NGROUPS + 5)
+#define MM_QUIT    (NGROUPS + 6)
 
 /* One shot message shown in the main menu after a subscreen
    returns (for example, after the options were saved). */
@@ -193,6 +195,10 @@ static int choose_entry(int i)
         }
     } else if (i == MM_OPTIONS) {
         return enter_options();
+    } else if (i == MM_WARP) {
+        if (warp_menu()) {
+            return 1;
+        }
     } else if (i == MM_LAUNCH) {
         launch_saved_exe();
     } else {
@@ -230,6 +236,8 @@ void main_menu(void)
                     printf("  R. Readme\n");
                 } else if (i == MM_OPTIONS) {
                     printf("  O. Options (command line parameters)\n");
+                } else if (i == MM_WARP) {
+                    printf("  W. Single level (warp to a level)\n");
                 } else {
                     printf("  L. Launch (last saved executable)\n");
                 }
@@ -297,6 +305,12 @@ void main_menu(void)
         }
         if (c == 'O') {
             if (enter_options()) {
+                break;
+            }
+            last_sel = -1;
+        }
+        if (c == 'W') {
+            if (warp_menu()) {
                 break;
             }
             last_sel = -1;

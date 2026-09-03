@@ -4,9 +4,10 @@ CC     = wcl
 CCOPTS = -ml -ei -j -zq -zp1 -s -ot -c
 
 OBJS   = fdstart.obj screen.obj util.obj groups.obj \
-         menu.obj options.obj readme.obj
+         menu.obj options.obj readme.obj warp.obj
 
-HDRS   = screen.h util.h keys.h groups.h menu.h options.h readme.h
+HDRS   = screen.h util.h keys.h groups.h menu.h options.h readme.h \
+         warp.h
 
 %.obj: %.c $(HDRS)
 	$(CC) $(CCOPTS) -fo=$@ $<
