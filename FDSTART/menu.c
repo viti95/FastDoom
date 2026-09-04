@@ -252,6 +252,14 @@ void main_menu(void)
         /* Redraw only when the selection changed, so keys that
            do nothing don't flicker the screen. */
         if (sel != last_sel) {
+            /* The default executable shown in the Launch entry:
+               the one stored in FDSTART.CFG, or FDOOM.EXE if none
+               is selected. */
+            char launch_exe[64];
+
+            if (!load_launch_exe(launch_exe, (int)sizeof(launch_exe))) {
+                strcpy(launch_exe, "FDOOM.EXE");
+            }
             last_sel = sel;
             draw_menu_top(TEXT_TITLE_MAIN);
             for (i = 0; i < MM_QUIT; i++) {
@@ -269,7 +277,7 @@ void main_menu(void)
                 } else if (i == MM_WARP) {
                     printf("  W. Single level (warp to a level)\n");
                 } else {
-                    printf("  L. Launch\n");
+                    printf("  L. Launch (%s)\n", launch_exe);
                 }
             }
             if (sel == MM_QUIT) {
