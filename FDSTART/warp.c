@@ -433,6 +433,10 @@ int warp_menu(void)
     int skill;
     int i;
     int run = 0;
+    int pwad_pick;
+    int lvl_pick;
+    int skill_pick;
+    int to_iwad;
 
     for (;;) {
         niwads = build_iwad_lines();
@@ -454,54 +458,69 @@ int warp_menu(void)
             continue;
         }
         strcpy(iwad_path, wiwads[iwad].name);
-        pwad = -1;
-        npwads = scan_pwads();
-        if (npwads > 0) {
-            pwad_lines[0] = pwad_line_buf[0];
-            strcpy(pwad_line_buf[0], "No PWAD");
-            for (i = 0; i < npwads; i++) {
-                pwad_lines[i + 1] = pwad_line_buf[i + 1];
-                strcpy(pwad_line_buf[i + 1], pwad_names[i]);
-            }
-            pwad = pick_list(TEXT_TITLE_SINGLE_PWAD,
-                             pwad_lines, npwads + 1);
-            if (pwad == PICK_QUIT) {
-                return 1;
-            }
-            if (pwad == PICK_BACK) {
-                continue; /* Back to the IWAD selection */
-            }
-            if (pwad > 0) {
-                pwad = pwad - 1;
-            } else {
-                pwad = -1;
-            }
-        }
-        nlevels = load_levels(wiwads[iwad].levels);
-        if (nlevels <= 0) {
-            message("Level list not found.");
-            continue;
-        }
         for (;;) {
-            build_level_lines();
-            lvl = pick_list(TEXT_TITLE_SINGLE_LEVEL,
-                            level_lines, nlevels);
-            if (lvl == PICK_QUIT) {
-                return 1;
+            /* The PWAD selection is shown only when there are
+               PWADs in the WADS directory. Going back from it (or
+               from the level selection when there are no PWADs)
+               goes to the IWAD selection; going back from the
+               level selection comes back to it. */
+            pwad = -1;
+            npwads = scan_pwads();
+            if (npwads > 0) {
+                pwad_lines[0] = pwad_line_buf[0];
+                strcpy(pwad_line_buf[0], "No PWAD");
+                for (i = 0; i < npwads; i++) {
+                    pwad_lines[i + 1] = pwad_line_buf[i + 1];
+                    strcpy(pwad_line_buf[i + 1], pwad_names[i]);
+                }
+                pwad_pick = pick_list(TEXT_TITLE_SINGLE_PWAD,
+                                      pwad_lines, npwads + 1);
+                if (pwad_pick == PICK_QUIT) {
+                    return 1;
+                }
+                if (pwad_pick == PICK_BACK) {
+                    break; /* Back to the IWAD selection */
+                }
+                pwad = pwad_pick > 0 ? pwad_pick - 1 : -1;
             }
-            if (lvl == PICK_BACK) {
+            nlevels = load_levels(wiwads[iwad].levels);
+            if (nlevels <= 0) {
+                message("Level list not found.");
                 break; /* Back to the IWAD selection */
             }
-            skill = pick_list(TEXT_TITLE_SINGLE_SKILL,
-                              skill_lines, NSKILLS);
-            if (skill == PICK_QUIT) {
-                return 1;
+            to_iwad = 0;
+            for (;;) {
+                build_level_lines();
+                lvl_pick = pick_list(TEXT_TITLE_SINGLE_LEVEL,
+                                     level_lines, nlevels);
+                if (lvl_pick == PICK_QUIT) {
+                    return 1;
+                }
+                if (lvl_pick == PICK_BACK) {
+                    /* Back to the PWAD selection if there are
+                       PWADs, to the IWAD selection otherwise. */
+                    if (npwads > 0) {
+                        break;
+                    }
+                    to_iwad = 1;
+                    break;
+                }
+                skill_pick = pick_list(TEXT_TITLE_SINGLE_SKILL,
+                                       skill_lines, NSKILLS);
+                if (skill_pick == PICK_QUIT) {
+                    return 1;
+                }
+                if (skill_pick == PICK_BACK) {
+                    continue; /* Back to the level selection */
+                }
+                lvl = lvl_pick;
+                skill = skill_pick;
+                run = 1;
+                break;
             }
-            if (skill == PICK_BACK) {
-                continue; /* Back to the level selection */
+            if (run || to_iwad) {
+                break;
             }
-            run = 1;
-            break;
         }
         if (run) {
             break;
