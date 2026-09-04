@@ -6,8 +6,9 @@
  *
  * The IWADs offered are the ones FastDoom knows about (the same
  * list as the iwads[] table in d_main.c); the file is looked up in
- * the current directory. Optionally the user can also pick a PWAD
- * (-file) from the WADS sub-directory.
+ * the current directory. Optionally the user can also pick one or
+ * more PWADs (-file, they can be multiple, separated by a single
+ * space) from the WADS sub-directory.
  *
  * The level lists are read from the LEVELS\<iwad>.txt files that
  * ship with FastDoom (the same ones the game reads for the level
@@ -75,8 +76,13 @@ static const wiwad_t wiwads[NIWADS] = {
 
 static int npwads;
 static char pwad_names[MAX_PWADS][PWAD_NAME_LEN];
-static char pwad_line_buf[MAX_PWADS + 1][PWAD_NAME_LEN + 8];
-static char *pwad_lines[MAX_PWADS + 1];
+static char pwad_line_buf[MAX_PWADS][PWAD_NAME_LEN + 8];
+static char *pwad_lines[MAX_PWADS];
+/* The PWADs selected in the multi-select list (indices into
+   pwad_names) and how many of them. */
+static int pwad_sel[MAX_PWADS];
+static int npwad_sel;
+static int pwad_mark[MAX_PWADS];
 
 /*
  * Scans the WADS directory for PWADs (*.WAD, files only) and
@@ -252,8 +258,14 @@ static void build_level_lines(void)
  * Shows a scrolling list of lines with a cursor. Returns the
  * selected line, PICK_BACK if the user went back or PICK_QUIT if
  * the user pressed Q.
+ *
+ * If marks is not NULL the list is multi-select: each line shows
+ * a [X]/[ ] box, Space toggles the box of the current line and
+ * Enter or Right confirms the whole selection (the marks array is
+ * filled by the caller with 0/1 and updated in place; the
+ * returned line is just the cursor position at the confirmation).
  */
-static int pick_list(const char *title, char *lines[], int n)
+static int pick_list(const char *title, char *lines[], int n, int *marks)
 {
     int top = 0;
     int sel = 0;
@@ -269,10 +281,19 @@ static int pick_list(const char *title, char *lines[], int n)
             draw_menu_top(title);
             for (i = top; i < n && (i - top) < LIST_ROWS; i++) {
                 printf("%s", i == sel ? " ->" : "   ");
-                printf(" %s\n", lines[i]);
+                if (marks != NULL) {
+                    printf(" %s %s\n", marks[i] ? "[X]" : "[ ]", lines[i]);
+                } else {
+                    printf(" %s\n", lines[i]);
+                }
             }
-            print_bottom_row(MENU_FIRST_ROW + (i - top),
-                             "  Up/Down to move, Enter/Right to choose, Esc/Left to go back, Q to quit.");
+            if (marks != NULL) {
+                print_bottom_row(MENU_FIRST_ROW + (i - top),
+                                 "  Up/Down to move, Space to select, Enter/Right to choose, Esc/Left to go back, Q to quit.");
+            } else {
+                print_bottom_row(MENU_FIRST_ROW + (i - top),
+                                 "  Up/Down to move, Enter/Right to choose, Esc/Left to go back, Q to quit.");
+            }
         }
         c = getch();
         if (c == -1 || c == 0x1B) {
@@ -362,6 +383,11 @@ static int pick_list(const char *title, char *lines[], int n)
         if (c == 'Q') {
             return PICK_QUIT;
         }
+        if (marks != NULL && c == ' ') {
+            marks[sel] = !marks[sel];
+            dirty = 1;
+            continue;
+        }
         if (c == '\r') {
             return sel;
         }
@@ -390,15 +416,18 @@ static void append_cmd(char *cmd, const char *fmt, ...)
  * MAX_CMD_LEN limit, as in command_length()) plus the -iwad, -file
  * (if any), -warp and -skill arguments.
  */
-static int launcher_cmd_len(const char *exe, const char *iwad, int pwad,
+static int launcher_cmd_len(const char *exe, const char *iwad,
                             int lvl, int skill)
 {
     char num[16];
     int len = command_length(exe);
+    int i;
 
     len += 7 + (int)strlen(iwad); /* " -iwad " */
-    if (pwad >= 0) {
-        len += 7 + (int)strlen(WAD_DIR) + (int)strlen(pwad_names[pwad]);
+    for (i = 0; i < npwad_sel; i++) {
+        /* " -file " for the first PWAD, " " for the rest. */
+        len += (i == 0 ? 7 : 1) + (int)strlen(WAD_DIR)
+             + (int)strlen(pwad_names[pwad_sel[i]]);
     }
     if (level_commercial) {
         /* Commercial IWADs: -warp takes the map number only. */
@@ -413,10 +442,11 @@ static int launcher_cmd_len(const char *exe, const char *iwad, int pwad,
 }
 
 /*
- * The single level launcher: pick the IWAD, the level and the
- * skill, then run the saved executable (or FDOOM.EXE if none is
- * saved) with -iwad, -warp and -skill, plus the saved command
- * line options. When the game exits, goes back to the main menu.
+ * The single level launcher: pick the IWAD, the PWADs (one or
+ * more), the level and the skill, then run the saved executable
+ * (or FDOOM.EXE if none is saved) with -iwad, -file (if any),
+ * -warp and -skill, plus the saved command line options. When the
+ * game exits, goes back to the main menu.
  *
  * Returns 1 if the launcher should quit, 0 to go back to the main
  * menu.
@@ -428,7 +458,6 @@ int warp_menu(void)
     char iwad_path[32];
     int niwads;
     int iwad;
-    int pwad = -1; /* Index into pwad_names, or -1 for no PWAD */
     int lvl;
     int skill;
     int i;
@@ -445,7 +474,7 @@ int warp_menu(void)
             return 0;
         }
         iwad = pick_list(TEXT_TITLE_SINGLE_IWAD,
-                         iwad_lines, niwads);
+                         iwad_lines, niwads, NULL);
         if (iwad == PICK_QUIT) {
             return 1;
         }
@@ -460,28 +489,33 @@ int warp_menu(void)
         strcpy(iwad_path, wiwads[iwad].name);
         for (;;) {
             /* The PWAD selection is shown only when there are
-               PWADs in the WADS directory. Going back from it (or
-               from the level selection when there are no PWADs)
-               goes to the IWAD selection; going back from the
-               level selection comes back to it. */
-            pwad = -1;
+               PWADs in the WADS directory; several can be picked
+               at once (-file takes them all, separated by a
+               single space) or none. Going back from it (or from
+               the level selection when there are no PWADs) goes
+               to the IWAD selection; going back from the level
+               selection comes back to it. */
+            npwad_sel = 0;
             npwads = scan_pwads();
             if (npwads > 0) {
-                pwad_lines[0] = pwad_line_buf[0];
-                strcpy(pwad_line_buf[0], "No PWAD");
                 for (i = 0; i < npwads; i++) {
-                    pwad_lines[i + 1] = pwad_line_buf[i + 1];
-                    strcpy(pwad_line_buf[i + 1], pwad_names[i]);
+                    pwad_lines[i] = pwad_line_buf[i];
+                    strcpy(pwad_line_buf[i], pwad_names[i]);
+                    pwad_mark[i] = 0;
                 }
                 pwad_pick = pick_list(TEXT_TITLE_SINGLE_PWAD,
-                                      pwad_lines, npwads + 1);
+                                      pwad_lines, npwads, pwad_mark);
                 if (pwad_pick == PICK_QUIT) {
                     return 1;
                 }
                 if (pwad_pick == PICK_BACK) {
                     break; /* Back to the IWAD selection */
                 }
-                pwad = pwad_pick > 0 ? pwad_pick - 1 : -1;
+                for (i = 0; i < npwads; i++) {
+                    if (pwad_mark[i]) {
+                        pwad_sel[npwad_sel++] = i;
+                    }
+                }
             }
             nlevels = load_levels(wiwads[iwad].levels);
             if (nlevels <= 0) {
@@ -492,7 +526,7 @@ int warp_menu(void)
             for (;;) {
                 build_level_lines();
                 lvl_pick = pick_list(TEXT_TITLE_SINGLE_LEVEL,
-                                     level_lines, nlevels);
+                                     level_lines, nlevels, NULL);
                 if (lvl_pick == PICK_QUIT) {
                     return 1;
                 }
@@ -506,7 +540,7 @@ int warp_menu(void)
                     break;
                 }
                 skill_pick = pick_list(TEXT_TITLE_SINGLE_SKILL,
-                                       skill_lines, NSKILLS);
+                                       skill_lines, NSKILLS, NULL);
                 if (skill_pick == PICK_QUIT) {
                     return 1;
                 }
@@ -537,22 +571,29 @@ int warp_menu(void)
     if (is_game_exe(exe)) {
         save_launch_exe(exe);
     }
-    if (launcher_cmd_len(exe, iwad_path, pwad, lvl, skill) > MAX_CMD_LEN) {
+    if (launcher_cmd_len(exe, iwad_path, lvl, skill) > MAX_CMD_LEN) {
         /* The command line would not fit: abort instead of dropping
            arguments the game needs to run the level the user picked. */
         char msg[128];
         sprintf(msg,
                 "Command line too long (%d of %d characters used). "
                 "Disable some options.",
-                launcher_cmd_len(exe, iwad_path, pwad, lvl, skill),
+                launcher_cmd_len(exe, iwad_path, lvl, skill),
                 MAX_CMD_LEN);
         message(msg);
         return 0;
     }
     build_command(exe, cmd);
     append_cmd(cmd, " -iwad %s", iwad_path);
-    if (pwad >= 0) {
-        append_cmd(cmd, " -file %s%s", WAD_DIR, pwad_names[pwad]);
+    for (i = 0; i < npwad_sel; i++) {
+        /* -file takes several WADs separated by a single space. */
+        if (i == 0) {
+            append_cmd(cmd, " -file %s%s", WAD_DIR,
+                       pwad_names[pwad_sel[i]]);
+        } else {
+            append_cmd(cmd, " %s%s", WAD_DIR,
+                       pwad_names[pwad_sel[i]]);
+        }
     }
     if (level_commercial) {
         /* Commercial IWADs: -warp takes the map number only. */
