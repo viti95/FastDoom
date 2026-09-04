@@ -170,7 +170,9 @@ int main(void)
     int wadTotal;
     int filesTotal;
     int executablesTotal;
-    int position;
+    int wadPosition;
+    int filesPosition;
+    int executablePosition;
     int c;
 
     /* Flush keyboard */
@@ -185,8 +187,8 @@ int main(void)
 
     wadTotal = findFiles("*.WAD", 1, benchmarkWads);
     printMenu(benchmarkWads, wadTotal, 0);
-    position = readOption("     Please enter option: ", wadTotal);
-    if (position == 0)
+    wadPosition = readOption("     Please enter option: ", wadTotal);
+    if (wadPosition == 0)
         return 1;
 
     cleanScreen();
@@ -197,8 +199,8 @@ int main(void)
 
     filesTotal = findFiles("BENCH\\*.BNC", 0, benchmarkFiles);
     printMenu(benchmarkFiles, filesTotal, 10);
-    position = readOption("     Please enter option: ", filesTotal);
-    if (position == 0)
+    filesPosition = readOption("     Please enter option: ", filesTotal);
+    if (filesPosition == 0)
         return 1;
 
     cleanScreen();
@@ -248,8 +250,8 @@ int main(void)
     }
 
     printMenu(benchmarkExecutables, executablesTotal, 10);
-    position = readOption("     Please enter option: ", executablesTotal);
-    if (position == 0)
+    executablePosition = readOption("     Please enter option: ", executablesTotal);
+    if (executablePosition == 0)
         return 1;
 
     cleanScreen();
@@ -272,19 +274,19 @@ int main(void)
     if (benchmarkOptions[0])
         sprintf(arguments,
                 "-iwad %s -benchmark file %s BENCH\\%s %s",
-                benchmarkWads[position - 1],
+                benchmarkWads[wadPosition - 1],
                 benchmarkDemo,
-                benchmarkFiles[position - 1],
+                benchmarkFiles[filesPosition - 1],
                 benchmarkOptions);
     else
         sprintf(arguments,
                 "-iwad %s -benchmark file %s BENCH\\%s",
-                benchmarkWads[position - 1],
+                benchmarkWads[wadPosition - 1],
                 benchmarkDemo,
-                benchmarkFiles[position - 1]);
+                benchmarkFiles[filesPosition - 1]);
 
     /* Lowercase the whole line, like LCASE$ in the BASIC original */
-    strcpy(text, benchmarkExecutables[position - 1]);
+    strcpy(text, benchmarkExecutables[executablePosition - 1]);
     strcat(text, " ");
     strcat(text, arguments);
     toLower(text);
