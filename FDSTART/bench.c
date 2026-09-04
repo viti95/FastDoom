@@ -33,9 +33,12 @@
 #include "keys.h"
 
 /* The IWADs, benchmark files and executables (static, so the
-   buffers live in BSS). */
-#define MAX_ITEMS  255
-#define NAME_LEN   32
+   buffers live in BSS). 8.3 file names fit in NAME_LEN, and 128
+   entries are plenty for the WADs, the .BNC files and the
+   executables; the tables are kept small, the large model BSS is
+   limited to 64k. */
+#define MAX_ITEMS  128
+#define NAME_LEN   16
 
 static int nwads;
 static char wad_names[MAX_ITEMS][NAME_LEN];
