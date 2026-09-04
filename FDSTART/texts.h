@@ -29,4 +29,11 @@
 #define TEXT_TITLE_SINGLE_LEVEL  TEXT_LAUNCHER " (Single level, level)"
 #define TEXT_TITLE_SINGLE_SKILL  TEXT_LAUNCHER " (Single level, skill)"
 
+/* Benchmark launcher menu titles. */
+#define TEXT_TITLE_BENCH_IWAD    TEXT_LAUNCHER " (Benchmark, IWAD)"
+#define TEXT_TITLE_BENCH_FILE    TEXT_LAUNCHER " (Benchmark, benchmark file)"
+#define TEXT_TITLE_BENCH_DEMO    TEXT_LAUNCHER " (Benchmark, demo)"
+#define TEXT_TITLE_BENCH_EXE     TEXT_LAUNCHER " (Benchmark, executable)"
+#define TEXT_TITLE_BENCH_MODE    TEXT_LAUNCHER " (Benchmark, mode)"
+
 #endif /* TEXTS_H */

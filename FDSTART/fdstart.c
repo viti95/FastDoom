@@ -3,7 +3,7 @@
  *
  * C89 port. Lets the user pick any FastDoom executable, grouped by
  * video card type (VGA, VESA/VBE 2.0, EGA, Hercules, CGA, text/MDA,
- * other cards), or run FDSETUP and FDBENCH.
+ * other cards), or run FDSETUP or the benchmark launcher.
  *
  * Pure text mode: only stdio, conio and BIOS video services are
  * used, no direct video memory access, so it works on
@@ -20,6 +20,7 @@
  *   options.h/.c  command line options, FDSTART.CFG, options menu
  *   readme.h/.c   the README.TXT reader
  *   warp.h/.c     the single level launcher (-iwad, -warp, -skill)
+ *   bench.h/.c    the benchmark launcher (-benchmark file)
  *
  * Build as a 16-bit DOS executable with Open Watcom (see makefile).
  */

@@ -18,9 +18,15 @@
 * Adlib Gold digital sound support (The TSR bundled with the original drivers is no longer required; set the GOLD environment variable to the card's I/O port address.)
 * Fixed "Loading IWAD from sub-directory causes major errors" #279
 * FDSetup has been upgraded to version 2.0 and can now be built using 100% open source tools. We have removed the dependencies on Laughing Dog for screen creation and Borland 4.x for compilation. Additionally, we developed PUPED, a new web based tool for easily creating PUP screens directly in your browser. Huge thanks to @jsmolina for porting the project to OpenWatcom, which helped us reduce the executable size by 20% in the process
-* FDBENCH has been converted from a Basic program to C
-* New FDSTART text mode launcher: pick any FastDoom executable, FDSETUP or FDBENCH from an on-screen menu (based on the #78 idea)
-* Now all projects (FASTDOOM, FDSETUP and FDBENCH) can be built using build.sh script
+* New FDSTART text mode launcher (based on the #78 idea): 
+    * Pick any FastDoom executable or FDSETUP from an on-screen menu
+    * Run benchmarks (the old FDBENCH utility, converted from Basic to C, has been integrated into it)
+    * Launch a single levels directly
+    * Load PWADs on top of the selected IWAD
+    * Shows executable descriptions
+    * Built-in readme reader
+    * The options menu now offers all the game command line parameters, including the ones that take a value (-limitram, -scale, -complevel, -gamemode, -gamemission, -config, -size, -sbk, -episode, -record, -playdemo, -timedemo, -maxdemo, -benchmark, -loadgame), asked with an on-screen prompt
+* Now all projects (FASTDOOM, FDSETUP and FDSTART) can be built using build.sh script
 
 ## 1.3.0 (01 Jul 2026)
 * Improved frame interpolation in uncapped framerate modes for smoother rendering #237 #251
