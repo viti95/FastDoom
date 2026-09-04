@@ -313,6 +313,9 @@ static int pick_list(const char *title, char *lines[], int n)
                     if (sel < top) {
                         sel = top;
                     }
+                    if (sel >= top + LIST_ROWS) {
+                        sel = top + LIST_ROWS - 1;
+                    }
                     dirty = 1;
                     break;
                 case KEY_PGDN:
@@ -323,6 +326,9 @@ static int pick_list(const char *title, char *lines[], int n)
                     if (top < 0) {
                         top = 0;
                     }
+                    if (sel < top) {
+                        sel = top;
+                    }
                     if (sel >= top + LIST_ROWS) {
                         sel = top + LIST_ROWS - 1;
                     }
@@ -330,6 +336,9 @@ static int pick_list(const char *title, char *lines[], int n)
                     break;
                 case KEY_HOME:
                     top = 0;
+                    if (sel >= LIST_ROWS) {
+                        sel = LIST_ROWS - 1;
+                    }
                     dirty = 1;
                     break;
                 case KEY_END:
