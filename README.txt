@@ -142,11 +142,9 @@
  * FDM1200D.EXE => FastDoom VESA 1600x1200 direct rendering mode
  * FDMVT100.EXE => FastDoom VT100 terminal output mode (serial port,
                    display only)
- * FDSTART.EXE  => Text mode launcher, pick any FastDoom executable,
-                   FDSETUP or FDBENCH from an on-screen menu
+ * FDSTART.EXE  => Text mode launcher, pick any FastDoom executable
+                   or FDSETUP from an on-screen menu, run benchmarks
  * FDSETUP.EXE  => Utility to setup controls and sound cards
- * FDBENCH.EXE  => Utility to make benchmarks easier to execute
- * BENCH.BAT    => Scripted benchmark, instructions are included in the script
 
  Command line parameters
  -----------------------

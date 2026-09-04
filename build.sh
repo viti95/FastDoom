@@ -189,11 +189,6 @@ elif [ "$target" = "fdsetup.exe" ]; then
   builtin=fdsetup.exe
   buildopts=""
 
-elif [ "$target" = "fdbench.exe" ]; then
-  builddir=FDBENCH
-  builtin=fdbench.exe
-  buildopts=""
-
 elif [ "$target" = "fdstart.exe" ]; then
   builddir=FDSTART
   builtin=fdstart.exe

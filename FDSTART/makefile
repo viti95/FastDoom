@@ -4,7 +4,7 @@ CC     = wcl
 CCOPTS = -ml -ei -j -zq -zp1 -s -ot -c
 
 OBJS   = fdstart.obj screen.obj util.obj groups.obj \
-         menu.obj options.obj readme.obj warp.obj
+         menu.obj options.obj readme.obj warp.obj bench.obj
 
 .c.obj:
 	$(CC) $(CCOPTS) -fo=$[*.obj $[*.c

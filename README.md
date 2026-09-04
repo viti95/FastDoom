@@ -76,7 +76,7 @@ Requirements: Linux or WSL2 on Windows.
     - 7-Zip (only for `package.sh`)
 2. Execute `source fdenv.sh`
 3. Build:
-    - Single executable: `./build.sh <executable> [parameters]` where "executable" is any of the supported targets (fdoom.exe, fdoomega.exe, fdoomt50.exe, fdm1024r.exe, fdsetup.exe, fdbench.exe, ...) and "parameters" can be any combination of:
+    - Single executable: `./build.sh <executable> [parameters]` where "executable" is any of the supported targets (fdoom.exe, fdoomega.exe, fdoomt50.exe, fdm1024r.exe, fdsetup.exe, fdstart.exe, ...) and "parameters" can be any combination of:
         * `-clean`: cleans all generated OBJs before building
         * `-stub`: adds the DOS/32 stub (requires a DOS emulator)
         * `-debug`: generates a debug executable with symbols, traceable stack frames and a .map file; adjust `dbgcfg.h` to your needs
@@ -91,12 +91,12 @@ source fdenv.sh
 ./build.sh fdoom.exe -clean -stub
 ```
 
-Example to build FDSETUP and FDBENCH:
+Example to build FDSETUP and FDSTART:
 
 ```
 source fdenv.sh
 ./build.sh fdsetup.exe -clean
-./build.sh fdbench.exe -clean
+./build.sh fdstart.exe -clean
 ```
 
 ## Contributors

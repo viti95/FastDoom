@@ -35,29 +35,12 @@
 #include "options.h"
 #include "keys.h"
 
-/* pick_list() return values: -1 to go back, -2 to quit, >= 0 the
-   selected line. */
-#define PICK_BACK  (-1)
-#define PICK_QUIT  (-2)
-
-/* Rows that fit between the header box and the footer (same layout
-   as the options menu). */
-#define LIST_ROWS 17
-
 /*
  * The IWADs: the file name (passed to -iwad if found) and the
  * level list file in the LEVELS directory. The order matches the
  * iwads[] table in d_main.c.
  */
-typedef struct {
-    const char *name;
-    const char *display;
-    const char *levels;
-} wiwad_t;
-
-#define NIWADS 8
-
-static const wiwad_t wiwads[NIWADS] = {
+const wiwad_t wiwads[NIWADS] = {
     { "doom1.wad",    "DOOM Shareware",                       "LEVELS\\doom1.txt" },
     { "doom.wad",     "DOOM",                                 "LEVELS\\doom.txt" },
     { "doomu.wad",    "The Ultimate DOOM",                    "LEVELS\\doomu.txt" },
@@ -254,150 +237,6 @@ static void build_level_lines(void)
         } else {
             sprintf(level_line_buf[i + 1], "E%dM%d  %s",
                     level_ep[i], level_map[i], level_name[i]);
-        }
-    }
-}
-
-/*
- * Shows a scrolling list of lines with a cursor. Returns the
- * selected line, PICK_BACK if the user went back or PICK_QUIT if
- * the user pressed Q.
- *
- * If marks is not NULL the list is multi-select: each line shows
- * a [X]/[ ] box, Space toggles the box of the current line and
- * Enter or Right confirms the whole selection (the marks array is
- * filled by the caller with 0/1 and updated in place; the
- * returned line is just the cursor position at the confirmation).
- */
-static int pick_list(const char *title, char *lines[], int n, int *marks)
-{
-    int top = 0;
-    int sel = 0;
-    int dirty = 1;
-    int i;
-    int c;
-
-    for (;;) {
-        /* Redraw only when the selection or the page changed, so
-           keys that do nothing don't flicker the screen. */
-        if (dirty) {
-            dirty = 0;
-            draw_menu_top(title);
-            for (i = top; i < n && (i - top) < LIST_ROWS; i++) {
-                printf("%s", i == sel ? " ->" : "   ");
-                if (marks != NULL) {
-                    printf(" %s %s\n", marks[i] ? "[X]" : "[ ]", lines[i]);
-                } else {
-                    printf(" %s\n", lines[i]);
-                }
-            }
-            if (marks != NULL) {
-                print_bottom_row(MENU_FIRST_ROW + (i - top),
-                                 "  " ARROW_UP "/" ARROW_DOWN " to move, Space to select, "
-                                 "Enter/" ARROW_RIGHT " to choose, Esc/"
-                                 ARROW_LEFT " to go back, Q to quit.");
-            } else {
-                print_bottom_row(MENU_FIRST_ROW + (i - top),
-                                 "  " ARROW_UP "/" ARROW_DOWN " to move, "
-                                 "Enter/" ARROW_RIGHT " to choose, Esc/"
-                                 ARROW_LEFT " to go back, Q to quit.");
-            }
-        }
-        c = getch();
-        if (c == -1 || c == 0x1B) {
-            return PICK_BACK;
-        }
-        if (c == 0 || c == 0xE0 || c == 0xE1) {
-            /* Extended key (0, 0xE0 or 0xE1 prefix): the second
-               byte is the scan code. */
-            c = getch();
-            switch (c) {
-                case KEY_UP:
-                    if (sel > 0) {
-                        sel--;
-                        if (sel < top) {
-                            top = sel;
-                        }
-                        dirty = 1;
-                    }
-                    break;
-                case KEY_DOWN:
-                    if (sel < n - 1) {
-                        sel++;
-                        if (sel >= top + LIST_ROWS) {
-                            top = sel - LIST_ROWS + 1;
-                        }
-                        dirty = 1;
-                    }
-                    break;
-                case KEY_LEFT:
-                    return PICK_BACK;
-                case KEY_RIGHT:
-                    return sel;
-                case KEY_PGUP:
-                    top -= LIST_ROWS;
-                    if (top < 0) {
-                        top = 0;
-                    }
-                    if (sel < top) {
-                        sel = top;
-                    }
-                    if (sel >= top + LIST_ROWS) {
-                        sel = top + LIST_ROWS - 1;
-                    }
-                    dirty = 1;
-                    break;
-                case KEY_PGDN:
-                    top += LIST_ROWS;
-                    if (top > n - LIST_ROWS) {
-                        top = n - LIST_ROWS;
-                    }
-                    if (top < 0) {
-                        top = 0;
-                    }
-                    if (sel < top) {
-                        sel = top;
-                    }
-                    if (sel >= top + LIST_ROWS) {
-                        sel = top + LIST_ROWS - 1;
-                    }
-                    dirty = 1;
-                    break;
-                case KEY_HOME:
-                    top = 0;
-                    if (sel >= LIST_ROWS) {
-                        sel = LIST_ROWS - 1;
-                    }
-                    dirty = 1;
-                    break;
-                case KEY_END:
-                    top = n - LIST_ROWS;
-                    if (top < 0) {
-                        top = 0;
-                    }
-                    if (sel < top) {
-                        sel = top;
-                    } else if (sel >= top + LIST_ROWS) {
-                        sel = top + LIST_ROWS - 1;
-                    }
-                    dirty = 1;
-                    break;
-                default:
-                    break;
-            }
-            continue;
-        }
-        c = toupper(c);
-        if (c == 'Q') {
-            return PICK_QUIT;
-        }
-        if (marks != NULL && c == ' ') {
-            marks[sel] = !marks[sel];
-            dirty = 1;
-            continue;
-        }
-        if (c == '\r') {
-            return sel;
         }
     }
 }
