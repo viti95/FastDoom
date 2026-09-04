@@ -419,7 +419,7 @@ void main_menu(void)
                 if (i < NGROUPS) {
                     printf(" %2d. %s\n", i + 1, groups[i].title);
                 } else if (i == MM_SETUP) {
-                    printf("  S. Setup (Controls and sound cards)\n");
+                    printf("  S. Setup (controls and sound cards)\n");
                 } else if (i == MM_BENCH) {
                     printf("  B. Benchmark\n");
                 } else if (i == MM_README) {
