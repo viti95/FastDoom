@@ -11,6 +11,14 @@
 /* The program name, used in every menu title. */
 #define TEXT_LAUNCHER "FastDoom launcher"
 
+/* Arrow glyphs for the on screen help lines. In the IBM PC text
+   mode (code page 437) the ASCII control codes 0x18-0x1B are
+   displayed as arrows. */
+#define ARROW_UP    "\x18"
+#define ARROW_DOWN  "\x19"
+#define ARROW_RIGHT "\x1A"
+#define ARROW_LEFT  "\x1B"
+
 /* Menu titles. */
 #define TEXT_TITLE_MAIN    TEXT_LAUNCHER
 #define TEXT_TITLE_OPTIONS TEXT_LAUNCHER " (Options)"

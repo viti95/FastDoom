@@ -60,7 +60,9 @@ int group_menu(const group_t *g)
                 printf("\n");
             }
             print_bottom_row(MENU_FIRST_ROW + g->count,
-                             "  Up/Down move, Enter/Right run, D set default, Esc/Left back, Q quit.");
+                             "  " ARROW_UP "/" ARROW_DOWN " move, Enter/"
+                             ARROW_RIGHT " run, D set default, Esc/"
+                             ARROW_LEFT " back, Q quit.");
         }
         c = getch();
         if (c == -1 || c == 0x1B) {
@@ -267,10 +269,12 @@ void main_menu(void)
                 printf("%s\n", flash_msg);
                 flash_msg = NULL;
                 print_bottom_row(MENU_FIRST_ROW + MM_QUIT + 3,
-                                 "  Up/Down to move, Enter/Right to choose, Esc/Q to quit.");
+                                 "  " ARROW_UP "/" ARROW_DOWN " to move, "
+                                 "Enter/" ARROW_RIGHT " to choose, Esc/Q to quit.");
             } else {
                 print_bottom_row(MENU_FIRST_ROW + MM_QUIT + 2,
-                                 "  Up/Down to move, Enter/Right to choose, Esc/Q to quit.");
+                                 "  " ARROW_UP "/" ARROW_DOWN " to move, "
+                                 "Enter/" ARROW_RIGHT " to choose, Esc/Q to quit.");
             }
         }
         c = getch();

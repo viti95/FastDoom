@@ -289,10 +289,14 @@ static int pick_list(const char *title, char *lines[], int n, int *marks)
             }
             if (marks != NULL) {
                 print_bottom_row(MENU_FIRST_ROW + (i - top),
-                                 "  Up/Down to move, Space to select, Enter/Right to choose, Esc/Left to go back, Q to quit.");
+                                 "  " ARROW_UP "/" ARROW_DOWN " to move, Space to select, "
+                                 "Enter/" ARROW_RIGHT " to choose, Esc/"
+                                 ARROW_LEFT " to go back, Q to quit.");
             } else {
                 print_bottom_row(MENU_FIRST_ROW + (i - top),
-                                 "  Up/Down to move, Enter/Right to choose, Esc/Left to go back, Q to quit.");
+                                 "  " ARROW_UP "/" ARROW_DOWN " to move, "
+                                 "Enter/" ARROW_RIGHT " to choose, Esc/"
+                                 ARROW_LEFT " to go back, Q to quit.");
             }
         }
         c = getch();

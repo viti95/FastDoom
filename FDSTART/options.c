@@ -508,7 +508,8 @@ int options_menu(void)
                 printf("  %s\n", notice);
             }
             print_bottom_row(MENU_FIRST_ROW + (i - top) + (notice != NULL),
-                             "  Enter/Space toggle, S save, PgUp/PgDn scroll, Esc/Left back, Q quit.");
+                             "  Enter/Space toggle, S save, PgUp/PgDn scroll, "
+                             "Esc/" ARROW_LEFT " back, Q quit.");
         }
         c = getch();
         notice = NULL; /* One shot: cleared once the user presses a key */
