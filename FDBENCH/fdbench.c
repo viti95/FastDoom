@@ -33,9 +33,8 @@ static int findFiles(const char *pattern, int skipModeFont, char table[][NAME_LE
     unsigned handle;
     int count = 0;
 
-    errno = 0;
     handle = _dos_findfirst(pattern, 0, &data);
-    while (!errno)
+    while (handle == 0)
     {
         if (!(data.attrib & _A_SUBDIR) && count < MAX_ITEMS)
         {
@@ -48,11 +47,9 @@ static int findFiles(const char *pattern, int skipModeFont, char table[][NAME_LE
                 count++;
             }
         }
-        errno = 0;
-        _dos_findnext(&data);
+        handle = _dos_findnext(&data);
     }
-    if (handle)
-        _dos_findclose(&data);
+    _dos_findclose(&data);
     return count;
 }
 
