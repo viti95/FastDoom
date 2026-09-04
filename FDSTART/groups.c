@@ -9,7 +9,7 @@
 
 /* VGA */
 static const item_t vga_items[] = {
-    { "Mode Y 320x200 256 colors (default)",   "FDOOM.EXE" },
+    { "Mode Y 320x200 256 colors",             "FDOOM.EXE" },
     { "Mode X 320x240 256 colors",             "FDOOMX.EXE" },
     { "Mode Y 320x100 256 colors",             "FDOOMH.EXE" },
     { "Mode 13h 320x200 256 colors",           "FDOOM13H.EXE" }

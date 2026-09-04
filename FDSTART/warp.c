@@ -1,8 +1,9 @@
 /*
  * WARP.C - FastDoom text mode launcher, the single level launcher
  *
- * Lets the user pick the IWAD (-iwad), a single level (-warp) and
- * the skill (-skill), and runs the saved game executable with them.
+ * Lets the user pick the IWAD (-iwad), a level (-warp, optional)
+ * and the skill (-skill), and runs the saved game executable with
+ * them.
  *
  * The IWADs offered are the ones FastDoom knows about (the same
  * list as the iwads[] table in d_main.c); the file is looked up in
@@ -166,8 +167,8 @@ static int level_commercial;
 static int level_ep[MAX_LEVELS];
 static int level_map[MAX_LEVELS];
 static char level_name[MAX_LEVELS][MAX_LEVEL_NAME];
-static char level_line_buf[MAX_LEVELS][MAX_LEVEL_NAME + 8];
-static char *level_lines[MAX_LEVELS];
+static char level_line_buf[MAX_LEVELS + 1][MAX_LEVEL_NAME + 8];
+static char *level_lines[MAX_LEVELS + 1];
 
 /*
  * Loads the level list file. Each line has the form "E1M1: name",
@@ -236,19 +237,23 @@ static int load_levels(const char *file)
 }
 
 /*
- * Builds the level selection lines from the parsed list.
+ * Builds the level selection lines from the parsed list. Line 0 is
+ * the "No level" option: it runs the game without -warp (and
+ * without -skill), with just the IWAD and the PWADs.
  */
 static void build_level_lines(void)
 {
     int i;
 
+    level_lines[0] = level_line_buf[0];
+    strcpy(level_line_buf[0], "No level");
     for (i = 0; i < nlevels; i++) {
-        level_lines[i] = level_line_buf[i];
+        level_lines[i + 1] = level_line_buf[i + 1];
         if (level_commercial) {
-            sprintf(level_line_buf[i], "MAP%02d  %s",
+            sprintf(level_line_buf[i + 1], "MAP%02d  %s",
                     level_map[i], level_name[i]);
         } else {
-            sprintf(level_line_buf[i], "E%dM%d  %s",
+            sprintf(level_line_buf[i + 1], "E%dM%d  %s",
                     level_ep[i], level_map[i], level_name[i]);
         }
     }
@@ -418,7 +423,7 @@ static void append_cmd(char *cmd, const char *fmt, ...)
  * Returns the total length of the command line the launcher would
  * build: the executable with the enabled options (without the
  * MAX_CMD_LEN limit, as in command_length()) plus the -iwad, -file
- * (if any), -warp and -skill arguments.
+ * (if any), -warp and -skill (only when a level was selected).
  */
 static int launcher_cmd_len(const char *exe, const char *iwad,
                             int lvl, int skill)
@@ -433,24 +438,27 @@ static int launcher_cmd_len(const char *exe, const char *iwad,
         len += (i == 0 ? 7 : 1) + (int)strlen(WAD_DIR)
              + (int)strlen(pwad_names[pwad_sel[i]]);
     }
-    if (level_commercial) {
-        /* Commercial IWADs: -warp takes the map number only. */
-        sprintf(num, "%d", level_map[lvl]);
-    } else {
-        /* The others: -warp takes the episode and the map. */
-        sprintf(num, "%d %d", level_ep[lvl], level_map[lvl]);
+    if (lvl >= 0) {
+        if (level_commercial) {
+            /* Commercial IWADs: -warp takes the map number only. */
+            sprintf(num, "%d", level_map[lvl]);
+        } else {
+            /* The others: -warp takes the episode and the map. */
+            sprintf(num, "%d %d", level_ep[lvl], level_map[lvl]);
+        }
+        len += 7 + (int)strlen(num); /* " -warp " */
+        len += 8 + 1; /* " -skill " and a one digit value */
     }
-    len += 7 + (int)strlen(num); /* " -warp " */
-    len += 8 + 1; /* " -skill " and a one digit value */
     return len;
 }
 
 /*
  * The single level launcher: pick the IWAD, the PWADs (one or
- * more), the level and the skill, then run the saved executable
- * (or FDOOM.EXE if none is saved) with -iwad, -file (if any),
- * -warp and -skill, plus the saved command line options. When the
- * game exits, goes back to the main menu.
+ * more), a level (optional) and the skill, then run the saved
+ * executable (or FDOOM.EXE if none is saved) with -iwad, -file
+ * (if any) and, when a level is selected, -warp and -skill, plus
+ * the saved command line options. When the game exits, goes back
+ * to the main menu.
  *
  * Returns 1 if the launcher should quit, 0 to go back to the main
  * menu.
@@ -530,7 +538,7 @@ int warp_menu(void)
             for (;;) {
                 build_level_lines();
                 lvl_pick = pick_list(TEXT_TITLE_SINGLE_LEVEL,
-                                     level_lines, nlevels, NULL);
+                                     level_lines, nlevels + 1, NULL);
                 if (lvl_pick == PICK_QUIT) {
                     return 1;
                 }
@@ -543,6 +551,14 @@ int warp_menu(void)
                     to_iwad = 1;
                     break;
                 }
+                if (lvl_pick == 0) {
+                    /* "No level": run with just the IWAD and the
+                       PWADs, without -warp or -skill. */
+                    lvl = -1;
+                    run = 1;
+                    break;
+                }
+                lvl = lvl_pick - 1;
                 skill_pick = pick_list(TEXT_TITLE_SINGLE_SKILL,
                                        skill_lines, NSKILLS, NULL);
                 if (skill_pick == PICK_QUIT) {
@@ -551,7 +567,6 @@ int warp_menu(void)
                 if (skill_pick == PICK_BACK) {
                     continue; /* Back to the level selection */
                 }
-                lvl = lvl_pick;
                 skill = skill_pick;
                 run = 1;
                 break;
@@ -599,14 +614,16 @@ int warp_menu(void)
                        pwad_names[pwad_sel[i]]);
         }
     }
-    if (level_commercial) {
-        /* Commercial IWADs: -warp takes the map number only. */
-        append_cmd(cmd, " -warp %d", level_map[lvl]);
-    } else {
-        /* The others: -warp takes the episode and the map. */
-        append_cmd(cmd, " -warp %d %d", level_ep[lvl], level_map[lvl]);
+    if (lvl >= 0) {
+        if (level_commercial) {
+            /* Commercial IWADs: -warp takes the map number only. */
+            append_cmd(cmd, " -warp %d", level_map[lvl]);
+        } else {
+            /* The others: -warp takes the episode and the map. */
+            append_cmd(cmd, " -warp %d %d", level_ep[lvl], level_map[lvl]);
+        }
+        append_cmd(cmd, " -skill %d", skill + 1);
     }
-    append_cmd(cmd, " -skill %d", skill + 1);
     clear_screen();
     (void)system(cmd);
     return 0;
