@@ -40,15 +40,7 @@
  * level list file in the LEVELS directory. The order matches the
  * iwads[] table in d_main.c.
  */
-typedef struct {
-    const char *name;
-    const char *display;
-    const char *levels;
-} wiwad_t;
-
-#define NIWADS 8
-
-static const wiwad_t wiwads[NIWADS] = {
+const wiwad_t wiwads[NIWADS] = {
     { "doom1.wad",    "DOOM Shareware",                       "LEVELS\\doom1.txt" },
     { "doom.wad",     "DOOM",                                 "LEVELS\\doom.txt" },
     { "doomu.wad",    "The Ultimate DOOM",                    "LEVELS\\doomu.txt" },

@@ -6,9 +6,9 @@
  * -benchmark file (plus -advanced for the frametimes loop). When
  * the game exits, goes back to the main menu.
  *
- * The IWADs are the .WAD files in the current directory, skipping
- * the video mode WADs (MODE* and FONT*). The benchmark files are
- * the *.BNC files in the BENCH directory (the same ones the old
+ * The IWADs are the ones FastDoom knows about (the same wiwads[]
+ * list as the single level launcher). The benchmark files are the
+ * *.BNC files in the BENCH directory (the same ones the old
  * FDBENCH used). The executables are the ones listed in the
  * launcher groups (groups.c).
  *
@@ -27,29 +27,55 @@
 #include "bench.h"
 #include "menu.h"
 #include "groups.h"
+#include "warp.h"
 #include "texts.h"
 #include "screen.h"
 #include "util.h"
 #include "options.h"
 #include "keys.h"
 
-/* The IWADs, benchmark files and executables (static, so the
-   buffers live in BSS). 8.3 file names fit in NAME_LEN, and 128
-   entries are plenty for the WADs, the .BNC files and the
-   executables; the tables are kept small, the large model BSS is
+/* The benchmark files (static, so the buffers live in BSS). 8.3
+   file names fit in NAME_LEN, and 128 entries are plenty for the
+   .BNC files; the tables are kept small, the large model BSS is
    limited to 64k. */
 #define MAX_ITEMS  128
 #define NAME_LEN   16
-
-static int nwads;
-static char wad_names[MAX_ITEMS][NAME_LEN];
-static char wad_line_buf[MAX_ITEMS][NAME_LEN + 8];
-static char *wad_lines[MAX_ITEMS];
 
 static int nbncs;
 static char bnc_names[MAX_ITEMS][NAME_LEN];
 static char bnc_line_buf[MAX_ITEMS][NAME_LEN + 8];
 static char *bnc_lines[MAX_ITEMS];
+
+/* The IWAD selection lines, rebuilt on every pass: the ones from
+   the wiwads list that exist in the current directory, as in the
+   single level launcher. */
+static int nwads;
+static char wad_line_buf[NIWADS][64];
+static char *wad_lines[NIWADS];
+/* Maps each shown line to its entry in the wiwads table. */
+static int wad_index[NIWADS];
+
+/*
+ * Builds the IWAD selection lines from the IWADs that exist in
+ * the current directory. Returns the number of available IWADs.
+ */
+static int build_wad_lines(void)
+{
+    int n = 0;
+    int i;
+
+    for (i = 0; i < NIWADS; i++) {
+        if (!file_exists(wiwads[i].name)) {
+            continue;
+        }
+        wad_lines[n] = wad_line_buf[n];
+        sprintf(wad_line_buf[n], "%s (%s)",
+                wiwads[i].display, wiwads[i].name);
+        wad_index[n] = i;
+        n++;
+    }
+    return n;
+}
 
 /* The executables, one entry per item in the groups list
  * (groups.c), with the group item description shown after the
@@ -73,28 +99,21 @@ static char *mode_lines[2] = {
 };
 
 /*
- * Finds files matching the pattern and stores their names in the
- * table. If skipModeFont is true, names containing "MODE" or
- * "FONT" are excluded (the video mode WADs, skipped in the IWAD
- * list). Returns the number of files found.
+ * Finds the benchmark files (BENCH\*.BNC) and stores their names
+ * in the table. Returns the number of files found.
  */
-static int find_files(const char *pattern, int skipModeFont,
-                      char names[][NAME_LEN])
+static int find_bench_files(char names[][NAME_LEN])
 {
     struct find_t data;
     unsigned handle;
     int n = 0;
 
-    handle = _dos_findfirst(pattern, 0, &data);
+    handle = _dos_findfirst("BENCH\\*.BNC", 0, &data);
     while (handle == 0) {
         if (!(data.attrib & _A_SUBDIR) && n < MAX_ITEMS) {
-            if (!skipModeFont ||
-                (strstr(data.name, "MODE") == NULL &&
-                 strstr(data.name, "FONT") == NULL)) {
-                strncpy(names[n], data.name, NAME_LEN - 1);
-                names[n][NAME_LEN - 1] = '\0';
-                n++;
-            }
+            strncpy(names[n], data.name, NAME_LEN - 1);
+            names[n][NAME_LEN - 1] = '\0';
+            n++;
         }
         handle = _dos_findnext(&data);
     }
@@ -103,22 +122,16 @@ static int find_files(const char *pattern, int skipModeFont,
 }
 
 /*
- * Scans the IWADs and the benchmark files, and builds the
- * selection lines for them and for the executables (the launcher
- * groups, in the group menu order).
+ * Scans the benchmark files and builds the selection lines for
+ * them and for the executables (the launcher groups, in the group
+ * menu order).
  */
 static void scan_bench_files(void)
 {
     int g;
     int i;
 
-    nwads = find_files("*.WAD", 1, wad_names);
-    for (i = 0; i < nwads; i++) {
-        wad_lines[i] = wad_line_buf[i];
-        strcpy(wad_line_buf[i], wad_names[i]);
-    }
-
-    nbncs = find_files("BENCH\\*.BNC", 0, bnc_names);
+    nbncs = find_bench_files(bnc_names);
     for (i = 0; i < nbncs; i++) {
         bnc_lines[i] = bnc_line_buf[i];
         strcpy(bnc_line_buf[i], bnc_names[i]);
@@ -175,6 +188,7 @@ int bench_menu(void)
     }
 
     for (;;) {
+        nwads = build_wad_lines();
         if (nwads == 0) {
             message("No IWAD found. Put a .WAD file in the FastDoom directory.");
             return 0;
@@ -243,11 +257,11 @@ int bench_menu(void)
        advanced mode was picked). */
     if (advanced) {
         sprintf(cmd, "%s -iwad %s -benchmark file %s BENCH\\%s -advanced",
-                exe_names[exe], wad_names[wad], demo_lines[demo],
+                exe_names[exe], wiwads[wad_index[wad]].name, demo_lines[demo],
                 bnc_names[bnc]);
     } else {
         sprintf(cmd, "%s -iwad %s -benchmark file %s BENCH\\%s",
-                exe_names[exe], wad_names[wad], demo_lines[demo],
+                exe_names[exe], wiwads[wad_index[wad]].name, demo_lines[demo],
                 bnc_names[bnc]);
     }
 
