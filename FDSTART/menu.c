@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <ctype.h>
 #include <conio.h>
 
@@ -38,12 +39,19 @@ static const char *flash_msg = NULL;
 int group_menu(const group_t *g)
 {
     char header[64];
+    char saved[64];
     int i;
     int c;
     int sel = 0;
     int last_sel = -1;
 
     sprintf(header, TEXT_LAUNCHER " (%s)", g->title);
+    /* The default executable: the one stored in FDSTART.CFG, or
+       FDOOM.EXE if none is selected; it is marked with
+       (default) in the list. */
+    if (!load_launch_exe(saved, (int)sizeof(saved))) {
+        strcpy(saved, "FDOOM.EXE");
+    }
 
     for (;;) {
         /* Redraw only when the selection changed, so keys that
@@ -56,6 +64,9 @@ int group_menu(const group_t *g)
                 printf(" %2d. %12s - %s", i + 1, g->items[i].exe, g->items[i].desc);
                 if (!file_exists(g->items[i].exe)) {
                     printf(" (missing)");
+                }
+                if (strcmp(g->items[i].exe, saved) == 0) {
+                    printf(" (default)");
                 }
                 printf("\n");
             }
@@ -182,10 +193,13 @@ static void launch_saved_exe(void)
 {
     char exe[64];
 
+    /* No default executable selected in FDSTART.CFG: FDOOM.EXE is
+       the default one. */
     if (!load_launch_exe(exe, (int)sizeof(exe))) {
-        message("No executable saved. Run one from a group first.");
-    } else if (!file_exists(exe)) {
-        message("Saved executable not found.");
+        strcpy(exe, "FDOOM.EXE");
+    }
+    if (!file_exists(exe)) {
+        message("Executable not found.");
     } else {
         run_exe(exe);
     }
@@ -255,7 +269,7 @@ void main_menu(void)
                 } else if (i == MM_WARP) {
                     printf("  W. Single level (warp to a level)\n");
                 } else {
-                    printf("  L. Launch (last saved executable)\n");
+                    printf("  L. Launch\n");
                 }
             }
             if (sel == MM_QUIT) {
