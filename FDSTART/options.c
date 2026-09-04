@@ -496,14 +496,11 @@ int options_menu(void)
                 printf(" %s %-16s %s",
                        opt_enabled[i] ? "[X]" : "[ ]",
                        opts[i].arg, opts[i].desc);
-                if (opts[i].def_value != NULL) {
-                    /* Value options: show the current value when
-                       enabled, a hint otherwise. */
-                    if (opt_enabled[i] && opt_value[i][0] != '\0') {
-                        printf(" (%s)", opt_value[i]);
-                    } else {
-                        printf(" (value)");
-                    }
+                /* Value options: show the current value when
+                   enabled. */
+                if (opts[i].def_value != NULL && opt_enabled[i] &&
+                    opt_value[i][0] != '\0') {
+                    printf(" (%s)", opt_value[i]);
                 }
                 printf("\n");
             }
