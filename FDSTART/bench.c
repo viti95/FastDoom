@@ -9,8 +9,8 @@
  * The IWADs are the .WAD files in the current directory, skipping
  * the video mode WADs (MODE* and FONT*). The benchmark files are
  * the *.BNC files in the BENCH directory (the same ones the old
- * FDBENCH used). The executables are the FDOOM*.EXE and FDM*.EXE
- * files in the current directory.
+ * FDBENCH used). The executables are the ones listed in the
+ * launcher groups (groups.c).
  *
  * C89 port of the old FDBENCH.EXE (itself a C89 port of the
  * original FDBENCH.BAS); the command line is lowercased before
@@ -26,6 +26,7 @@
 
 #include "bench.h"
 #include "menu.h"
+#include "groups.h"
 #include "texts.h"
 #include "screen.h"
 #include "util.h"
@@ -50,10 +51,15 @@ static char bnc_names[MAX_ITEMS][NAME_LEN];
 static char bnc_line_buf[MAX_ITEMS][NAME_LEN + 8];
 static char *bnc_lines[MAX_ITEMS];
 
+/* The executables, one entry per item in the groups list
+ * (groups.c), with the group item description shown after the
+ * name. */
+#define MAX_EXES 64
+
 static int nexes;
-static char exe_names[MAX_ITEMS][NAME_LEN];
-static char exe_line_buf[MAX_ITEMS][NAME_LEN + 8];
-static char *exe_lines[MAX_ITEMS];
+static const char *exe_names[MAX_EXES];
+static char exe_line_buf[MAX_EXES][64];
+static char *exe_lines[MAX_EXES];
 
 /* The demo names, as in the old FDBENCH. */
 static char *demo_lines[4] = {
@@ -97,11 +103,13 @@ static int find_files(const char *pattern, int skipModeFont,
 }
 
 /*
- * Scans the IWADs, the benchmark files and the executables, and
- * builds the selection lines for each of them.
+ * Scans the IWADs and the benchmark files, and builds the
+ * selection lines for them and for the executables (the launcher
+ * groups, in the group menu order).
  */
 static void scan_bench_files(void)
 {
+    int g;
     int i;
 
     nwads = find_files("*.WAD", 1, wad_names);
@@ -116,15 +124,15 @@ static void scan_bench_files(void)
         strcpy(bnc_line_buf[i], bnc_names[i]);
     }
 
-    nexes = find_files("FDOOM*.EXE", 0, exe_names);
-    i = find_files("FDM*.EXE", 0, exe_names + nexes);
-    if (nexes + i > MAX_ITEMS) {
-        i = MAX_ITEMS - nexes;
-    }
-    nexes += i;
-    for (i = 0; i < nexes; i++) {
-        exe_lines[i] = exe_line_buf[i];
-        strcpy(exe_line_buf[i], exe_names[i]);
+    nexes = 0;
+    for (g = 0; g < NGROUPS; g++) {
+        for (i = 0; i < groups[g].count && nexes < MAX_EXES; i++) {
+            exe_names[nexes] = groups[g].items[i].exe;
+            exe_lines[nexes] = exe_line_buf[nexes];
+            sprintf(exe_line_buf[nexes], "%s - %s",
+                    groups[g].items[i].exe, groups[g].items[i].desc);
+            nexes++;
+        }
     }
 }
 
@@ -163,10 +171,6 @@ int bench_menu(void)
     scan_bench_files();
     if (nbncs == 0) {
         message("No benchmark file found. Put .BNC files in the BENCH directory.");
-        return 0;
-    }
-    if (nexes == 0) {
-        message("No executable found. Put a FastDoom .EXE in the current directory.");
         return 0;
     }
 
@@ -258,6 +262,11 @@ int bench_menu(void)
         sprintf(msg, "Command line too long (%d of %d characters used).",
                 (int)strlen(cmd), MAX_CMD_LEN);
         message(msg);
+        return 0;
+    }
+
+    if (!file_exists(exe_names[exe])) {
+        message("Executable not found.");
         return 0;
     }
 
