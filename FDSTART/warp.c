@@ -96,17 +96,16 @@ static int scan_pwads(void)
     unsigned handle;
     int n = 0;
 
-    errno = 0;
-    handle = _dos_findfirst(WAD_DIR "*.WAD", 0, &data);
-    while (!errno) {
+    handle = _dos_findfirst(WAD_DIR "*.WAD", _A_NORMAL, &data);
+    while (handle == 0) {
         if (!(data.attrib & _A_SUBDIR) && n < MAX_PWADS) {
             strncpy(pwad_names[n], data.name, PWAD_NAME_LEN - 1);
             pwad_names[n][PWAD_NAME_LEN - 1] = '\0';
             n++;
         }
-        errno = 0;
-        _dos_findnext(&data);
+        handle = _dos_findnext(&data);
     }
+    _dos_findclose(&data);
     return n;
 }
 
