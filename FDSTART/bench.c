@@ -203,15 +203,17 @@ static int pick_demo_exe_mode(int *demo, int *exe, int *advanced)
                 break; /* Back to the demo selection */
             }
             *exe = pick;
-            pick = pick_list(TEXT_TITLE_BENCH_MODE, mode_lines, 2, NULL);
-            if (pick == PICK_QUIT) {
-                return 1;
+            for (;;) {
+                pick = pick_list(TEXT_TITLE_BENCH_MODE, mode_lines, 2, NULL);
+                if (pick == PICK_QUIT) {
+                    return 1;
+                }
+                if (pick == PICK_BACK) {
+                    break; /* Back to the executable selection */
+                }
+                *advanced = pick;
+                return 2;
             }
-            if (pick == PICK_BACK) {
-                break; /* Back to the executable selection */
-            }
-            *advanced = pick;
-            return 2;
         }
     }
 }
