@@ -2,12 +2,12 @@
 
 ## 1.4.0 (?? ??? ????)
 * Mouse buttons can now be bound to different actions: each of the 3 buttons can be set to Fire, Move Forward, Move Backward, Strafe, Use, Speed, Previous Weapon, Next Weapon or None #236
-* Fixed mouse X axis sign bug (left mouse strafe now work properly)
+* Fixed mouse X axis sign bug (left mouse strafe now works properly)
 * New command line parameter -gamemode to select the game mode ("shareware", "registered", "commercial" or "retail")
 * New command line parameter -gamemission to select the game mission ("doom", "doom2", "tnt" or "plutonia")
 * Command line parameter -complevel now validates its value (only 2, 3 or 4 are valid)
 * Unknown IWADs loaded with -iwad command line parameter are now rejected unless -complevel, -gamemode and -gamemission are all specified
-* New command line that preloads the IWAD into RAM (-preload)
+* New command line parameter that preloads the IWAD into RAM (-preload)
 * Added secrets completed counter to the automap #276
 * Added next/previous weapon keys #263
 * Added 5×6 integer scaling for 320×200 VESA backbuffer modes, optimized for 1600×1200 (4:3) displays while preserving the original aspect ratio.
@@ -20,13 +20,11 @@
 * FDSetup has been upgraded to version 2.0 and can now be built using 100% open source tools. We have removed the dependencies on Laughing Dog for screen creation and Borland 4.x for compilation. Additionally, we developed PUPED, a new web based tool for easily creating PUP screens directly in your browser. Huge thanks to @jsmolina for porting the project to OpenWatcom, which helped us reduce the executable size by 20% in the process
 * New FDSTART text mode launcher (based on the #78 idea): 
     * Pick any FastDoom executable or FDSETUP from an on-screen menu
-    * Run benchmarks (the old FDBENCH utility, converted from Basic to C, has been integrated into it)
-    * Launch a single levels directly
-    * Load PWADs on top of the selected IWAD
-    * Shows executable descriptions
+    * Run benchmarks directly (FDBENCH is now gone)
+    * Launch a single level (IWAD, PWADs, level and skill selection)
     * Built-in readme reader
-    * The options menu now offers all the game command line parameters, including the ones that take a value (-limitram, -scale, -complevel, -gamemode, -gamemission, -config, -size, -sbk, -episode, -record, -playdemo, -timedemo, -maxdemo, -benchmark, -loadgame), asked with an on-screen prompt
-* Now all projects (FASTDOOM, FDSETUP and FDSTART) can be built using build.sh script
+    * Options menu with all the command line parameters available
+* All projects (FASTDOOM, FDSETUP and FDSTART) can now be built using the build.sh script
 
 ## 1.3.0 (01 Jul 2026)
 * Improved frame interpolation in uncapped framerate modes for smoother rendering #237 #251
