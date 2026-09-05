@@ -54,13 +54,14 @@ const wiwad_t wiwads[NIWADS] = {
 /* Where the PWAD files are looked up. */
 #define WAD_DIR "WADS\\"
 
-/* The PWAD list (static, so the buffers live in BSS). */
-#define MAX_PWADS     255
-#define PWAD_NAME_LEN 32
+/* The PWAD list (static, so the buffers live in BSS). 8.3 file
+   names fit in PWAD_NAME_LEN and 128 PWADs are plenty; the
+   buffers are kept small, the large model BSS is limited to 64k. */
+#define MAX_PWADS     128
+#define PWAD_NAME_LEN 16
 
 static int npwads;
 static char pwad_names[MAX_PWADS][PWAD_NAME_LEN];
-static char pwad_line_buf[MAX_PWADS][PWAD_NAME_LEN + 8];
 static char *pwad_lines[MAX_PWADS];
 /* The PWADs selected in the multi-select list (indices into
    pwad_names) and how many of them. */
@@ -140,9 +141,11 @@ static int build_iwad_lines(void)
     return n;
 }
 
-/* The parsed level list (static, so the buffers live in BSS). */
+/* The parsed level list (static, so the buffers live in BSS). 64
+   levels is plenty (the commercial IWADs have 32) and the longest
+   level name in the LEVELS files fits in MAX_LEVEL_NAME. */
 #define MAX_LEVELS     64
-#define MAX_LEVEL_NAME 40
+#define MAX_LEVEL_NAME 32
 
 static int nlevels;
 static int level_commercial;
@@ -349,8 +352,7 @@ int warp_menu(void)
             npwads = scan_pwads();
             if (npwads > 0) {
                 for (i = 0; i < npwads; i++) {
-                    pwad_lines[i] = pwad_line_buf[i];
-                    strcpy(pwad_line_buf[i], pwad_names[i]);
+                    pwad_lines[i] = pwad_names[i];
                     pwad_mark[i] = 0;
                 }
                 pwad_pick = pick_list(TEXT_TITLE_SINGLE_PWAD,

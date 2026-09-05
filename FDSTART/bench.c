@@ -43,7 +43,6 @@
 
 static int nbncs;
 static char bnc_names[MAX_ITEMS][NAME_LEN];
-static char bnc_line_buf[MAX_ITEMS][NAME_LEN + 8];
 static char *bnc_lines[MAX_ITEMS];
 
 /* The IWAD selection lines, rebuilt on every pass: the ones from
@@ -80,11 +79,13 @@ static int build_wad_lines(void)
 /* The executables, one entry per item in the groups list
  * (groups.c), with the group item description shown after the
  * name. */
-#define MAX_EXES 64
+/* 48 is plenty for the items in the groups list and the longest
+ * "name - description" line fits in 56 characters. */
+#define MAX_EXES 48
 
 static int nexes;
 static const char *exe_names[MAX_EXES];
-static char exe_line_buf[MAX_EXES][64];
+static char exe_line_buf[MAX_EXES][56];
 static char *exe_lines[MAX_EXES];
 
 /* The demo names, as in the old FDBENCH. */
@@ -133,8 +134,7 @@ static void scan_bench_files(void)
 
     nbncs = find_bench_files(bnc_names);
     for (i = 0; i < nbncs; i++) {
-        bnc_lines[i] = bnc_line_buf[i];
-        strcpy(bnc_line_buf[i], bnc_names[i]);
+        bnc_lines[i] = bnc_names[i];
     }
 
     nexes = 0;
