@@ -106,11 +106,11 @@ static char *mode_lines[2] = {
  * (-benchmark file, a .BNC configuration with several demos) or a
  * single benchmark (-benchmark single, one demo, results saved to
  * a CSV file). */
-#define BENCH_MULTI   0
-#define BENCH_SINGLE  1
+#define BENCH_SINGLE  0
+#define BENCH_MULTI   1
 static char *bench_type_lines[2] = {
-    "Multiple benchmarks (-benchmark file)",
-    "Single benchmark (-benchmark single)"
+    "Single benchmark (-benchmark single)",
+    "Multiple benchmarks (-benchmark file)"
 };
 
 /*
