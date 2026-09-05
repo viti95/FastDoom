@@ -427,9 +427,9 @@ void main_menu(void)
                 } else if (i == MM_OPTIONS) {
                     printf("  O. Options (command line parameters)\n");
                 } else if (i == MM_WARP) {
-                    printf("  W. Single level (warp to a level)\n");
+                    printf("  W. Launch single level\n");
                 } else {
-                    printf("  L. Launch (%s)\n", launch_exe);
+                    printf("  L. Launch FastDoom (%s)\n", launch_exe);
                 }
             }
             if (sel == MM_QUIT) {
