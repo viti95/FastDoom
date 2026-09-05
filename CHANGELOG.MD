@@ -18,7 +18,7 @@
 * Adlib Gold digital sound support (The TSR bundled with the original drivers is no longer required; set the GOLD environment variable to the card's I/O port address.)
 * Fixed "Loading IWAD from sub-directory causes major errors" #279
 * FDSetup has been upgraded to version 2.0 and can now be built using 100% open source tools. We have removed the dependencies on Laughing Dog for screen creation and Borland 4.x for compilation. Additionally, we developed PUPED, a new web based tool for easily creating PUP screens directly in your browser. Huge thanks to @jsmolina for porting the project to OpenWatcom, which helped us reduce the executable size by 20% in the process
-* New FDSTART text mode launcher (based on the #78 idea): 
+* New FDSTART text mode launcher (based on the #78 idea, written in C): 
     * Pick any FastDoom executable or FDSETUP from an on-screen menu
     * Run benchmarks directly (FDBENCH is now gone)
     * Launch a single level (IWAD, PWADs, level and skill selection)
