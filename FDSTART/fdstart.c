@@ -20,7 +20,7 @@
  *   options.h/.c  command line options, FDSTART.CFG, options menu
  *   readme.h/.c   the README.TXT reader
  *   warp.h/.c     the single level launcher (-iwad, -warp, -skill)
- *   bench.h/.c    the benchmark launcher (-benchmark file)
+ *   bench.h/.c    the benchmark launcher (-benchmark file/single)
  *
  * Build as a 16-bit DOS executable with Open Watcom (see makefile).
  */

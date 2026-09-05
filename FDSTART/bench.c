@@ -1,10 +1,13 @@
 /*
  * BENCH.C - FastDoom text mode launcher, the benchmark launcher
  *
- * Lets the user pick the IWAD (-iwad), a benchmark file
- * (BENCH\*.BNC), the demo and the executable, and runs it with
- * -benchmark file (plus -advanced for the frametimes loop). When
- * the game exits, goes back to the main menu.
+ * Lets the user pick the benchmark type (multiple benchmarks,
+ * -benchmark file, or a single benchmark, -benchmark single), the
+ * IWAD, the benchmark file (BENCH\*.BNC, only for multiple
+ * benchmarks), the demo and the executable, and runs it with
+ * -benchmark file or -benchmark single (plus -advanced for the
+ * frametimes loop). When the game exits, goes back to the main
+ * menu.
  *
  * The IWADs are the ones FastDoom knows about (the same wiwads[]
  * list as the single level launcher). The benchmark files are the
@@ -99,6 +102,17 @@ static char *mode_lines[2] = {
     "Advanced benchmark (frametimes)"
 };
 
+/* The benchmark type selection lines: multiple benchmarks
+ * (-benchmark file, a .BNC configuration with several demos) or a
+ * single benchmark (-benchmark single, one demo, results saved to
+ * a CSV file). */
+#define BENCH_MULTI   0
+#define BENCH_SINGLE  1
+static char *bench_type_lines[2] = {
+    "Multiple benchmarks (-benchmark file)",
+    "Single benchmark (-benchmark single)"
+};
+
 /*
  * Finds the benchmark files (BENCH\*.BNC) and stores their names
  * in the table. Returns the number of files found.
@@ -161,11 +175,55 @@ static void to_lower(char *s)
 }
 
 /*
- * The benchmark launcher: pick the IWAD, the benchmark file, the
- * demo, the executable and the mode (normal or advanced), then run
- * it with -iwad and -benchmark file (and -advanced, when the
- * advanced mode was picked). When the game exits, goes back to the
- * main menu.
+ * The demo, executable and mode (normal or advanced) selections,
+ * shared by both benchmark types. Returns 1 if the launcher should
+ * quit, 0 to go back to the previous selection screen; when the
+ * three selections are made, stores them in *demo, *exe and
+ * *advanced and returns 2.
+ */
+static int pick_demo_exe_mode(int *demo, int *exe, int *advanced)
+{
+    int pick;
+
+    for (;;) {
+        pick = pick_list(TEXT_TITLE_BENCH_DEMO, demo_lines, 4, NULL);
+        if (pick == PICK_QUIT) {
+            return 1;
+        }
+        if (pick == PICK_BACK) {
+            return 0;
+        }
+        *demo = pick;
+        for (;;) {
+            pick = pick_list(TEXT_TITLE_BENCH_EXE, exe_lines, nexes, NULL);
+            if (pick == PICK_QUIT) {
+                return 1;
+            }
+            if (pick == PICK_BACK) {
+                break; /* Back to the demo selection */
+            }
+            *exe = pick;
+            pick = pick_list(TEXT_TITLE_BENCH_MODE, mode_lines, 2, NULL);
+            if (pick == PICK_QUIT) {
+                return 1;
+            }
+            if (pick == PICK_BACK) {
+                break; /* Back to the executable selection */
+            }
+            *advanced = pick;
+            return 2;
+        }
+    }
+}
+
+/*
+ * The benchmark launcher: pick the benchmark type (multiple
+ * benchmarks, -benchmark file, or a single benchmark,
+ * -benchmark single), the IWAD, the benchmark file (multiple
+ * benchmarks only), the demo, the executable and the mode (normal
+ * or advanced), then run it with -iwad and -benchmark file or
+ * -benchmark single (and -advanced, when the advanced mode was
+ * picked). When the game exits, goes back to the main menu.
  *
  * Returns 1 if the launcher should quit, 0 to go back to the main
  * menu.
@@ -174,6 +232,7 @@ int bench_menu(void)
 {
     char cmd[256];
     int pick;
+    int type = BENCH_MULTI;
     int wad = -1;
     int bnc = -1;
     int demo = -1;
@@ -182,66 +241,65 @@ int bench_menu(void)
     int run = 0;
 
     scan_bench_files();
-    if (nbncs == 0) {
-        message("No benchmark file found. Put .BNC files in the BENCH directory.");
-        return 0;
-    }
 
     for (;;) {
-        nwads = build_wad_lines();
-        if (nwads == 0) {
-            message("No IWAD found. Put a .WAD file in the FastDoom directory.");
-            return 0;
-        }
-        pick = pick_list(TEXT_TITLE_BENCH_IWAD, wad_lines, nwads, NULL);
+        /* The benchmark type: multiple benchmarks (a .BNC
+           configuration with several demos) or a single
+           benchmark (one demo, results saved to a CSV file). */
+        pick = pick_list(TEXT_TITLE_BENCH, bench_type_lines, 2, NULL);
         if (pick == PICK_QUIT) {
             return 1;
         }
         if (pick == PICK_BACK) {
             return 0;
         }
-        wad = pick;
+        type = pick;
+
         for (;;) {
-            pick = pick_list(TEXT_TITLE_BENCH_FILE, bnc_lines, nbncs, NULL);
+            nwads = build_wad_lines();
+            if (nwads == 0) {
+                message("No IWAD found. Put a .WAD file in the FastDoom directory.");
+                return 0;
+            }
+            pick = pick_list(TEXT_TITLE_BENCH_IWAD, wad_lines, nwads, NULL);
             if (pick == PICK_QUIT) {
                 return 1;
             }
             if (pick == PICK_BACK) {
-                break; /* Back to the IWAD selection */
+                break; /* Back to the benchmark type selection */
             }
-            bnc = pick;
+            wad = pick;
             for (;;) {
-                pick = pick_list(TEXT_TITLE_BENCH_DEMO, demo_lines, 4, NULL);
-                if (pick == PICK_QUIT) {
+                if (type == BENCH_MULTI) {
+                    if (nbncs == 0) {
+                        message("No benchmark file found. Put .BNC files in the BENCH directory.");
+                        return 0;
+                    }
+                    pick = pick_list(TEXT_TITLE_BENCH_FILE, bnc_lines, nbncs, NULL);
+                    if (pick == PICK_QUIT) {
+                        return 1;
+                    }
+                    if (pick == PICK_BACK) {
+                        break; /* Back to the IWAD selection */
+                    }
+                    bnc = pick;
+                }
+                pick = pick_demo_exe_mode(&demo, &exe, &advanced);
+                if (pick == 1) {
                     return 1;
                 }
-                if (pick == PICK_BACK) {
-                    break; /* Back to the benchmark file selection */
-                }
-                demo = pick;
-                for (;;) {
-                    pick = pick_list(TEXT_TITLE_BENCH_EXE, exe_lines, nexes, NULL);
-                    if (pick == PICK_QUIT) {
-                        return 1;
+                if (pick == 0) {
+                    /* Went back from the demo selection: to the
+                       benchmark file selection, or to the IWAD
+                       selection when there is no benchmark file
+                       (single benchmark). */
+                    if (type == BENCH_MULTI) {
+                        continue;
                     }
-                    if (pick == PICK_BACK) {
-                        break; /* Back to the demo selection */
-                    }
-                    exe = pick;
-                    pick = pick_list(TEXT_TITLE_BENCH_MODE, mode_lines, 2, NULL);
-                    if (pick == PICK_QUIT) {
-                        return 1;
-                    }
-                    if (pick == PICK_BACK) {
-                        break; /* Back to the executable selection */
-                    }
-                    advanced = pick;
-                    run = 1;
                     break;
                 }
-                if (run) {
-                    break;
-                }
+                run = 1;
+                break;
             }
             if (run) {
                 break;
@@ -253,16 +311,24 @@ int bench_menu(void)
     }
 
     /* Build the command line: the executable with the -iwad and
-       -benchmark file arguments (plus -advanced, when the
-       advanced mode was picked). */
-    if (advanced) {
-        sprintf(cmd, "%s -iwad %s -benchmark file %s BENCH\\%s -advanced",
-                exe_names[exe], wiwads[wad_index[wad]].name, demo_lines[demo],
-                bnc_names[bnc]);
+       -benchmark file or -benchmark single arguments (plus
+       -advanced, when the advanced mode was picked). */
+    if (type == BENCH_MULTI) {
+        if (advanced) {
+            sprintf(cmd, "%s -iwad %s -benchmark file %s BENCH\\%s -advanced",
+                    exe_names[exe], wiwads[wad_index[wad]].name, demo_lines[demo],
+                    bnc_names[bnc]);
+        } else {
+            sprintf(cmd, "%s -iwad %s -benchmark file %s BENCH\\%s",
+                    exe_names[exe], wiwads[wad_index[wad]].name, demo_lines[demo],
+                    bnc_names[bnc]);
+        }
+    } else if (advanced) {
+        sprintf(cmd, "%s -iwad %s -benchmark single %s -advanced",
+                exe_names[exe], wiwads[wad_index[wad]].name, demo_lines[demo]);
     } else {
-        sprintf(cmd, "%s -iwad %s -benchmark file %s BENCH\\%s",
-                exe_names[exe], wiwads[wad_index[wad]].name, demo_lines[demo],
-                bnc_names[bnc]);
+        sprintf(cmd, "%s -iwad %s -benchmark single %s",
+                exe_names[exe], wiwads[wad_index[wad]].name, demo_lines[demo]);
     }
 
     /* Lowercase the whole line, like LCASE$ in the BASIC original */
