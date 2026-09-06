@@ -354,5 +354,11 @@ int bench_menu(void)
 
     clear_screen();
     (void)system(cmd);
+    /* Wait for a key so the user can see the screen the game left
+       behind (like the ENDOOM picture) before the menus are drawn
+       over it. */
+    if (is_game_exe(exe_names[exe])) {
+        wait_key("Press any key to continue...");
+    }
     return 0;
 }

@@ -11,6 +11,7 @@
 
 void clear_screen(void);
 void message(const char *text);
+void wait_key(const char *text);
 void print_header(const char *text);
 void draw_menu_top(const char *title);
 void print_bottom_row(int row, const char *text);

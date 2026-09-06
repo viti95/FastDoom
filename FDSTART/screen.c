@@ -51,6 +51,41 @@ void message(const char *text)
 }
 
 /*
+ * Waits for any key after the game has exited, so the user can see
+ * the screen the game left behind (like the ENDOOM picture) before
+ * the menus are drawn over it. The message is printed on the last
+ * row of the screen (moved there with BIOS video services), so it
+ * does not scroll the rest of the screen.
+ */
+void wait_key(const char *text)
+{
+    union REGS regs;
+    int c;
+
+    /* Move the cursor to the last row (row 24), column 0. */
+    regs.h.ah = 0x02; /* Move cursor */
+    regs.h.bh = 0x00; /* Page 0 */
+    regs.h.dh = 24;   /* Last row */
+    regs.h.dl = 0x00; /* Column 0 */
+    int86(0x10, &regs, &regs);
+
+    printf("  %s", text);
+    fflush(stdout);
+    for (;;) {
+        c = getch();
+        if (c == 0 || c == 0xE0 || c == 0xE1) {
+            /* Extended key (0, 0xE0 or 0xE1 prefix): discard the
+               scan code and wait for another key. */
+            (void)getch();
+            continue;
+        }
+        if (c != -1) {
+            break;
+        }
+    }
+}
+
+/*
  * Prints n dash characters.
  */
 static void print_dashes(int n)

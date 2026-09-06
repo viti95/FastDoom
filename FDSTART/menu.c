@@ -287,11 +287,16 @@ void run_exe(const char *exe)
             save_launch_exe(exe);
         }
         /* Clear the screen so the launched program
-           starts on a clean one, then run it. When
-           it exits, go back to the main menu. */
+           starts on a clean one, then run it. When the game
+           exits, wait for a key so the user can see the screen
+           it left behind (like the ENDOOM picture) before the
+           menus are drawn over it. */
         build_command(exe, cmd);
         clear_screen();
         (void)system(cmd);
+        if (is_game_exe(exe)) {
+            wait_key("Press any key to continue...");
+        }
     }
 }
 
