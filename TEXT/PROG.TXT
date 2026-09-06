@@ -9,7 +9,7 @@
      8. FreeDoom: Phase 2                      (freedm2.wad, EXPERIMENTAL)\n
 \nPlease select the IWAD you want to play:\n\n
 \nPlease enter the selection: 
-executable,arch,detail,size,visplanes,walls,sprites,sky,objects,transparent_columns,iwad,demo,gametics,realtics,fps,onepercentlow,dotonepercentlow\n
+executable,arch,detail,size,visplanes,walls,sprites,psprite,sky,objects,transparent_columns,iwad,demo,gametics,realtics,fps,onepercentlow,dotonepercentlow\n
 The Ultimate DOOM
 DOOM Shareware
 DOOM
