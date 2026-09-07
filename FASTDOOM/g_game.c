@@ -1939,6 +1939,7 @@ void G_CreateFrametime(void)
         // Header row
         SLK_CellStr(fptr, 1, 1, "frame");
         SLK_CellStr(fptr, 1, 2, "milliseconds");
+        SLK_CellStr(fptr, 1, 3, "ms_per_frame");
 
         // E record (end of file)
         fprintf(fptr, "E\n");
@@ -2005,12 +2006,18 @@ void G_SaveFrametimeResult(unsigned int start, unsigned int count)
             line = next ? next + 1 : line + strlen(line);
         }
 
-        // New frametime rows
+        // New frametime rows (frametime holds cumulative times in millis,
+        // 1/1000 sec, so milliseconds per frame is the delta between
+        // consecutive entries divided by 10)
         for (i = start; i < count; i++)
         {
+            unsigned int ms;
+
             row++;
             SLK_CellInt(logFile, row, 1, counter);
             SLK_CellInt(logFile, row, 2, frametime[i]);
+            ms = (i > 0) ? frametime[i] - frametime[i - 1] : frametime[i];
+            SLK_CellInt(logFile, row, 3, ms);
             counter++;
         }
 
@@ -2055,6 +2062,7 @@ void G_CheckDemoStatus(void)
             {
                 unsigned int i, j;
                 unsigned int temp;
+                unsigned int prev;
                 unsigned int onepercentlow_ms = 0;
                 unsigned int onepercentlow_fps = 0;
                 unsigned int onepercentlow_num = 0;
@@ -2070,8 +2078,20 @@ void G_CheckDemoStatus(void)
                 G_CreateFrametime();
                 G_SaveFrametimeResult(fix_start - 1, frametime_position);
 
-                // Sort array (higher values are worse)
-                for (i = 0; i < frametime_position; i++)
+                // Convert cumulative times to per-frame durations (must
+                // happen before the sort below)
+                prev = fix_start ? frametime[fix_start - 1] : 0;
+                for (i = fix_start; i < frametime_position; i++)
+                {
+                    temp = frametime[i];
+                    frametime[i] = temp - prev;
+                    prev = temp;
+                }
+
+                // Sort per-frame durations (higher values are worse),
+                // omitting the first frame (load data) and any frame before
+                // the benchmark
+                for (i = fix_start; i < frametime_position; i++)
                 {
                     for (j = i + 1; j < frametime_position; j++)
                     {
@@ -2084,36 +2104,44 @@ void G_CheckDemoStatus(void)
                     }
                 }
 
-                // Calculate 1% low frametimes
+                // Calculate 1% low frametimes (over the benchmark frames only)
 
-                onepercentlow_num = frametime_position / 100; // 1% Low
+                onepercentlow_num = (frametime_position - fix_start) / 100; // 1% Low
 
                 if (onepercentlow_num == 0)
                     onepercentlow_num++;
 
-                for (i = fix_start; i < onepercentlow_num + fix_start; i++) // Omit first frame (load data)
+                for (i = fix_start; i < onepercentlow_num + fix_start; i++)
                 {
                     onepercentlow_ms += frametime[i];
                 }
 
-                onepercentlow_ms *= 1000;
-                onepercentlow_ms /= onepercentlow_num; // Average ms 1% low
-                onepercentlow_fps = 1000000000u / onepercentlow_ms;
+                onepercentlow_ms *= 1000; // millis -> microseconds
+                onepercentlow_ms /= onepercentlow_num; // Average us 1% low
 
-                // Calculate 0.1% low frametimes
-                dotonepercentlow_num = frametime_position / 1000; // 0.1% Low
+                if (onepercentlow_ms == 0)
+                    onepercentlow_ms = 1; // Avoid division by zero
+
+                onepercentlow_fps = 1000000000u / onepercentlow_ms; // us -> millifps
+
+                // Calculate 0.1% low frametimes (over the benchmark frames only)
+                dotonepercentlow_num = (frametime_position - fix_start) / 1000; // 0.1% Low
 
                 if (dotonepercentlow_num == 0)
                     dotonepercentlow_num++;
 
-                for (i = fix_start; i < dotonepercentlow_num + fix_start; i++) // Omit first frame (load data)
+                for (i = fix_start; i < dotonepercentlow_num + fix_start; i++)
                 {
                     dotonepercentlow_ms += frametime[i];
                 }
 
-                dotonepercentlow_ms *= 1000;
-                dotonepercentlow_ms /= dotonepercentlow_num; // Average ms 0.1% low
-                dotonepercentlow_fps = 1000000000u / dotonepercentlow_ms;
+                dotonepercentlow_ms *= 1000; // millis -> microseconds
+                dotonepercentlow_ms /= dotonepercentlow_num; // Average us 0.1% low
+
+                if (dotonepercentlow_ms == 0)
+                    dotonepercentlow_ms = 1; // Avoid division by zero
+
+                dotonepercentlow_fps = 1000000000u / dotonepercentlow_ms; // us -> millifps
 
                 G_SaveCSVResult(gametics, realtics, resultfps, onepercentlow_fps, dotonepercentlow_fps);
 

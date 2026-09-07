@@ -426,7 +426,7 @@ void main_menu(void)
                 } else if (i == MM_SETUP) {
                     printf("  S. Setup (controls and sound cards)\n");
                 } else if (i == MM_BENCH) {
-                    printf("  B. Benchmark (saves results to BENCH.CSV)\n");
+                    printf("  B. Benchmark\n");
                 } else if (i == MM_README) {
                     printf("  R. Readme\n");
                 } else if (i == MM_OPTIONS) {
