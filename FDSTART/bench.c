@@ -105,7 +105,7 @@ static char *mode_lines[2] = {
 /* The benchmark type selection lines: multiple benchmarks
  * (-benchmark file, a .BNC configuration with several demos) or a
  * single benchmark (-benchmark single, one demo, results saved to
- * a CSV file). */
+ * a SYLK file). */
 #define BENCH_SINGLE  0
 #define BENCH_MULTI   1
 static char *bench_type_lines[2] = {
@@ -247,7 +247,7 @@ int bench_menu(void)
     for (;;) {
         /* The benchmark type: multiple benchmarks (a .BNC
            configuration with several demos) or a single
-           benchmark (one demo, results saved to a CSV file). */
+           benchmark (one demo, results saved to a SYLK file). */
         pick = pick_list(TEXT_TITLE_BENCH, bench_type_lines, 2, NULL);
         if (pick == PICK_QUIT) {
             return 1;

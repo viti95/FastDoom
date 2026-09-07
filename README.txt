@@ -222,7 +222,7 @@
  -benchmark file XX YY => Run multiple XX demo benchmarks, using
                           configuration benchmark YY
  -benchmark single XX => Run XX demo benchmark and save results 
-                         in a CSV file
+                         in a SYLK file
  -advanced => Run frametime analysis on benchmarks. Only works with
               command line parameter "-benchmark"
  -umc486 => Use UMC Green 486 codepath
