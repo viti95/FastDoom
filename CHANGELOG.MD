@@ -25,6 +25,8 @@
     * Built-in readme reader
     * Options menu with all the command line parameters available
 * All projects (FASTDOOM, FDSETUP and FDSTART) can now be built using the build.sh script
+* Benchmark and frametime results are now saved in SYLK format instead of CSV (compatible with LibreOffice and Microsoft Excel, avoids CSV import problems)
+* Fixed advanced benchmark 1% low and 0.1% low FPS calculations
 
 ## 1.3.0 (01 Jul 2026)
 * Improved frame interpolation in uncapped framerate modes for smoother rendering #237 #251
