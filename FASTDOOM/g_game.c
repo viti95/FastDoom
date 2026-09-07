@@ -1595,230 +1595,336 @@ void G_TimeDemo(char *name)
 ===================
 */
 
-#define CSV_COLUMN ","
-#define CSV_DECIMAL "."
-#define CSV_FILE "BENCH.CSV"
+#define SLK_FILE "BENCH.SLK"
+
+//
+// SLK_WriteQuoted: writes a string to the log, quoting any embedded
+// semicolons by doubling them (";;"), as required by the SYLK spec
+//
+static void SLK_WriteQuoted(FILE *logFile, char *text)
+{
+    while (*text)
+    {
+        if (*text == ';')
+            fputc(';', logFile);
+        fputc(*text++, logFile);
+    }
+}
+
+//
+// SLK_CellStr: writes a SYLK C record with a string value (K"<string>")
+//
+static void SLK_CellStr(FILE *logFile, int row, int col, char *text)
+{
+    fprintf(logFile, "C;Y%d;X%d;K\"", row, col);
+    SLK_WriteQuoted(logFile, text);
+    fprintf(logFile, "\"\n");
+}
+
+//
+// SLK_CellNum: writes a SYLK C record with a decimal value (K<decimal>)
+//
+static void SLK_CellNum(FILE *logFile, int row, int col, unsigned int value)
+{
+    fprintf(logFile, "C;Y%d;X%d;K%u.%03u\n", row, col, value / 1000, value % 1000);
+}
+
+//
+// SLK_CellInt: writes a SYLK C record with an integer value (K<integer>)
+//
+static void SLK_CellInt(FILE *logFile, int row, int col, unsigned int value)
+{
+    fprintf(logFile, "C;Y%d;X%d;K%u\n", row, col, value);
+}
 
 void G_CreateCSV(void)
 {
     FILE *fptr;
-    fptr = fopen(CSV_FILE, "r");
+    fptr = fopen(SLK_FILE, "r");
     if (fptr == NULL) // if file does not exist, create it
     {
-        fptr = fopen(CSV_FILE, "w+");
-        fprintf(fptr, I_LoadTextProgram(11));
-        fclose(fptr);
+        fptr = fopen(SLK_FILE, "w+");
+        // ID record (first record)
+        fprintf(fptr, "ID;PFD;N;\n");
+
+        // Header row
+        SLK_CellStr(fptr, 1, 1, "executable");
+        SLK_CellStr(fptr, 1, 2, "arch");
+        SLK_CellStr(fptr, 1, 3, "detail");
+        SLK_CellStr(fptr, 1, 4, "size");
+        SLK_CellStr(fptr, 1, 5, "visplanes");
+        SLK_CellStr(fptr, 1, 6, "walls");
+        SLK_CellStr(fptr, 1, 7, "sprites");
+        SLK_CellStr(fptr, 1, 8, "psprite");
+        SLK_CellStr(fptr, 1, 9, "sky");
+        SLK_CellStr(fptr, 1, 10, "objects");
+        SLK_CellStr(fptr, 1, 11, "transparent_columns");
+        SLK_CellStr(fptr, 1, 12, "iwad");
+        SLK_CellStr(fptr, 1, 13, "demo");
+        SLK_CellStr(fptr, 1, 14, "gametics");
+        SLK_CellStr(fptr, 1, 15, "realtics");
+        SLK_CellStr(fptr, 1, 16, "fps");
+        SLK_CellStr(fptr, 1, 17, "onepercentlow");
+        SLK_CellStr(fptr, 1, 18, "dotonepercentlow");
+
+        // E record (end of file)
+        fprintf(fptr, "E\n");
     }
     fclose(fptr);
 }
 
 void G_SaveCSVResult(unsigned int gametics, unsigned int realtics, unsigned int resultfps, unsigned int onepercentlow, unsigned int dotonepercentlow)
 {
-    FILE *logFile = fopen(CSV_FILE, "a");
+    char field[16];
+    char *buffer;
+    char *line;
+    int row, col;
+    long size;
+    FILE *logFile;
+
+    // Load the existing file (if any) so it can be rewritten with the new
+    // result and a trailing E record (which must be the last record)
+    buffer = 0;
+    logFile = fopen(SLK_FILE, "r");
     if (logFile)
     {
+        fseek(logFile, 0, SEEK_END);
+        size = ftell(logFile);
+        fseek(logFile, 0, SEEK_SET);
+        buffer = malloc(size + 1);
+        if (buffer)
+        {
+            fread(buffer, 1, size, logFile);
+            buffer[size] = 0;
+        }
+        fclose(logFile);
+    }
+
+    logFile = fopen(SLK_FILE, "w+");
+    if (logFile)
+    {
+        // ID record (first record)
+        fprintf(logFile, "ID;PFD;N;\n");
+
+        // Existing cell records, tracking the last row in use
+        row = 0;
+        for (line = buffer; line && *line;)
+        {
+            char *d;
+            char *next = strchr(line, '\n');
+            int r = 0;
+
+            if (next)
+                *next = 0;
+
+            if (line[0] == 'C' && line[1] == ';')
+            {
+                // Parse row number from "C;Y<row>;..."
+                for (d = line + 3; *d >= '0' && *d <= '9'; d++)
+                    r = r * 10 + (*d - '0');
+                if (r > row)
+                    row = r;
+
+                fprintf(logFile, "%s\n", line);
+            }
+
+            line = next ? next + 1 : line + strlen(line);
+        }
+
+        // New result row
+        row++;
+        col = 0;
+
         // Executable
-        fprintf(logFile, "%s" CSV_COLUMN, myargv[0]);
+        SLK_CellStr(logFile, row, ++col, myargv[0]);
 
         // Architecture
         switch (selectedCPU)
         {
         case INTEL_386SX:
-            fprintf(logFile, "386sx");
+            strcpy(field, "386sx");
             break;
         case INTEL_386DX:
-            fprintf(logFile, "386dx");
+            strcpy(field, "386dx");
             break;
         case INTEL_486:
-            fprintf(logFile, "intel486");
+            strcpy(field, "intel486");
             break;
         case INTEL_PENTIUM_P5_P54C:
-            fprintf(logFile, "pentium");
+            strcpy(field, "pentium");
             break;
         case INTEL_PENTIUM_P54CS:
-            fprintf(logFile, "pentiump54cs");
+            strcpy(field, "pentiump54cs");
             break;
         case INTEL_PENTIUM_MMX:
-            fprintf(logFile, "pentiummmx");
+            strcpy(field, "pentiummmx");
             break;
         case INTEL_PENTIUM_II:
-            fprintf(logFile, "pentiumii");
+            strcpy(field, "pentiumii");
             break;
         case CYRIX_386DLC:
-            fprintf(logFile, "cyrix386");
+            strcpy(field, "cyrix386");
             break;
         case CYRIX_486:
-            fprintf(logFile, "cyrix486");
+            strcpy(field, "cyrix486");
             break;
         case CYRIX_5X86:
-            fprintf(logFile, "cyrix5x86");
+            strcpy(field, "cyrix5x86");
             break;
         case CYRIX_6X86:
-            fprintf(logFile, "cyrix6x86");
+            strcpy(field, "cyrix6x86");
             break;
         case CYRIX_6X86MX:
-            fprintf(logFile, "cyrix6x86mx");
+            strcpy(field, "cyrix6x86mx");
             break;
         case UMC_GREEN_486:
-            fprintf(logFile, "umc486");
+            strcpy(field, "umc486");
             break;
         case AMD_K5:
-            fprintf(logFile, "k5");
+            strcpy(field, "k5");
             break;
         case AMD_K6:
-            fprintf(logFile, "k6");
+            strcpy(field, "k6");
             break;
         case RISE_MP6:
-            fprintf(logFile, "mp6");
+            strcpy(field, "mp6");
             break;
         case IDT_WINCHIP:
-            fprintf(logFile, "winchip");
+            strcpy(field, "winchip");
             break;
         }
-
-        fprintf(logFile, CSV_COLUMN);
+        SLK_CellStr(logFile, row, ++col, field);
 
         // Detail
         switch (detailshift)
         {
         case DETAIL_HIGH:
-            fprintf(logFile, "high");
+            strcpy(field, "high");
             break;
         case DETAIL_LOW:
-            fprintf(logFile, "low");
+            strcpy(field, "low");
             break;
         case DETAIL_POTATO:
-            fprintf(logFile, "potato");
+            strcpy(field, "potato");
             break;
         }
-
-        fprintf(logFile, CSV_COLUMN);
+        SLK_CellStr(logFile, row, ++col, field);
 
         // Screen size
-        fprintf(logFile, "%i" CSV_COLUMN, screenblocks);
+        SLK_CellInt(logFile, row, ++col, screenblocks);
 
         // Visplanes
         switch (visplaneRender)
         {
         case VISPLANES_NORMAL:
-            fprintf(logFile, "normal");
+            strcpy(field, "normal");
             break;
         case VISPLANES_FLAT:
-            fprintf(logFile, "flat");
+            strcpy(field, "flat");
             break;
         case VISPLANES_FLATTER:
-            fprintf(logFile, "flatter");
+            strcpy(field, "flatter");
             break;
         }
-
-        fprintf(logFile, CSV_COLUMN);
+        SLK_CellStr(logFile, row, ++col, field);
 
         // Walls
         switch (wallRender)
         {
         case WALL_NORMAL:
-            fprintf(logFile, "normal");
+            strcpy(field, "normal");
             break;
         case WALL_FLAT:
-            fprintf(logFile, "flat");
+            strcpy(field, "flat");
             break;
         case WALL_FLATTER:
-            fprintf(logFile, "flatter");
+            strcpy(field, "flatter");
             break;
         }
-
-        fprintf(logFile, CSV_COLUMN);
+        SLK_CellStr(logFile, row, ++col, field);
 
         // Sprites
         switch (spriteRender)
         {
         case SPRITE_NORMAL:
-            fprintf(logFile, "normal");
+            strcpy(field, "normal");
             break;
         case SPRITE_FLAT:
-            fprintf(logFile, "flat");
+            strcpy(field, "flat");
             break;
         case SPRITE_FLATTER:
-            fprintf(logFile, "flatter");
+            strcpy(field, "flatter");
             break;
         }
-
-        fprintf(logFile, CSV_COLUMN);
+        SLK_CellStr(logFile, row, ++col, field);
 
         // Player sprite
         switch (pspriteRender)
         {
         case PSPRITE_NORMAL:
-            fprintf(logFile, "normal");
+            strcpy(field, "normal");
             break;
         case PSPRITE_FLAT:
-            fprintf(logFile, "flat");
+            strcpy(field, "flat");
             break;
         case PSPRITE_FLATTER:
-            fprintf(logFile, "flatter");
+            strcpy(field, "flatter");
             break;
         }
-
-        fprintf(logFile, CSV_COLUMN);
+        SLK_CellStr(logFile, row, ++col, field);
 
         // Sky
-        if (flatSky)
-            fprintf(logFile, "flat");
-        else
-            fprintf(logFile, "normal");
-
-        fprintf(logFile, CSV_COLUMN);
+        SLK_CellStr(logFile, row, ++col, flatSky ? "flat" : "normal");
 
         // Objects
-        if (nearSprites)
-            fprintf(logFile, "near");
-        else
-            fprintf(logFile, "normal");
-
-        fprintf(logFile, CSV_COLUMN);
+        SLK_CellStr(logFile, row, ++col, nearSprites ? "near" : "normal");
 
         // Transparent objects
         switch (invisibleRender)
         {
         case INVISIBLE_NORMAL:
-            fprintf(logFile, "normal");
+            strcpy(field, "normal");
             break;
         case INVISIBLE_FLAT:
-            fprintf(logFile, "flat");
+            strcpy(field, "flat");
             break;
         case INVISIBLE_FLAT_SATURN:
-            fprintf(logFile, "flatsaturn");
+            strcpy(field, "flatsaturn");
             break;
         case INVISIBLE_SATURN:
-            fprintf(logFile, "saturn");
+            strcpy(field, "saturn");
             break;
         case INVISIBLE_TRANSLUCENT:
-            fprintf(logFile, "translucent");
+            strcpy(field, "translucent");
             break;
         }
-
-        fprintf(logFile, CSV_COLUMN);
+        SLK_CellStr(logFile, row, ++col, field);
 
         // IWAD
-        fprintf(logFile, "%s" CSV_COLUMN, iwadfile);
+        SLK_CellStr(logFile, row, ++col, iwadfile);
 
         // Demo
-        fprintf(logFile, "%s" CSV_COLUMN, demofile);
+        SLK_CellStr(logFile, row, ++col, demofile);
 
-        // Gametics, Realtics, FPS
-        fprintf(logFile, "%i" CSV_COLUMN "%u" CSV_COLUMN "%u" CSV_DECIMAL "%.3u" CSV_COLUMN, gametics, realtics, resultfps / 1000, resultfps % 1000);
+        // Gametics, Realtics
+        SLK_CellInt(logFile, row, ++col, gametics);
+        SLK_CellInt(logFile, row, ++col, realtics);
 
-        // 1% low FPS
-        fprintf(logFile, "%u" CSV_DECIMAL "%.3u" CSV_COLUMN, onepercentlow / 1000, onepercentlow % 1000);
+        // FPS, 1% low FPS, 0.1% low FPS
+        SLK_CellNum(logFile, row, ++col, resultfps);
+        SLK_CellNum(logFile, row, ++col, onepercentlow);
+        SLK_CellNum(logFile, row, ++col, dotonepercentlow);
 
-        // 0.1% low FPS
-        fprintf(logFile, "%u" CSV_DECIMAL "%.3u\n", dotonepercentlow / 1000, dotonepercentlow % 1000);
+        // E record (end of file)
+        fprintf(logFile, "E\n");
 
         fclose(logFile);
     }
+
+    free(buffer);
 }
 
-#define FRAMETIME_FILE "FTIME.CSV"
+#define FRAMETIME_FILE "FTIME.SLK"
 
 void G_CreateFrametime(void)
 {
@@ -1827,29 +1933,94 @@ void G_CreateFrametime(void)
     if (fptr == NULL) // if file does not exist, create it
     {
         fptr = fopen(FRAMETIME_FILE, "w+");
-        fprintf(fptr, "frame" CSV_COLUMN "milliseconds\n");
-        fclose(fptr);
+        // ID record (first record)
+        fprintf(fptr, "ID;PFD;N;\n");
+
+        // Header row
+        SLK_CellStr(fptr, 1, 1, "frame");
+        SLK_CellStr(fptr, 1, 2, "milliseconds");
+
+        // E record (end of file)
+        fprintf(fptr, "E\n");
     }
     fclose(fptr);
 }
 
 void G_SaveFrametimeResult(unsigned int start, unsigned int count)
 {
-    FILE *logFile = fopen(FRAMETIME_FILE, "a");
+    char *buffer;
+    char *line;
+    int row;
+    long size;
+    unsigned int counter = 0;
+    unsigned int i;
+    FILE *logFile;
 
+    // Load the existing file (if any) so it can be rewritten with the new
+    // results and a trailing E record (which must be the last record)
+    buffer = 0;
+    logFile = fopen(FRAMETIME_FILE, "r");
     if (logFile)
     {
-        unsigned int counter = 0;
-        unsigned int i;
+        fseek(logFile, 0, SEEK_END);
+        size = ftell(logFile);
+        fseek(logFile, 0, SEEK_SET);
+        buffer = malloc(size + 1);
+        if (buffer)
+        {
+            fread(buffer, 1, size, logFile);
+            buffer[size] = 0;
+        }
+        fclose(logFile);
+    }
 
+    logFile = fopen(FRAMETIME_FILE, "w+");
+    if (logFile)
+    {
+        // ID record (first record)
+        fprintf(logFile, "ID;PFD;N;\n");
+
+        // Existing cell records, tracking the last row in use
+        row = 0;
+        for (line = buffer; line && *line;)
+        {
+            char *d;
+            char *next = strchr(line, '\n');
+            int r = 0;
+
+            if (next)
+                *next = 0;
+
+            if (line[0] == 'C' && line[1] == ';')
+            {
+                // Parse row number from "C;Y<row>;..."
+                for (d = line + 3; *d >= '0' && *d <= '9'; d++)
+                    r = r * 10 + (*d - '0');
+                if (r > row)
+                    row = r;
+
+                fprintf(logFile, "%s\n", line);
+            }
+
+            line = next ? next + 1 : line + strlen(line);
+        }
+
+        // New frametime rows
         for (i = start; i < count; i++)
         {
-            fprintf(logFile, "%u" CSV_COLUMN "%u\n", counter, frametime[i]);
+            row++;
+            SLK_CellInt(logFile, row, 1, counter);
+            SLK_CellInt(logFile, row, 2, frametime[i]);
             counter++;
         }
 
+        // E record (end of file)
+        fprintf(logFile, "E\n");
+
         fclose(logFile);
     }
+
+    free(buffer);
 }
 
 void G_CheckDemoStatus(void)

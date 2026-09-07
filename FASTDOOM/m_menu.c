@@ -1041,7 +1041,7 @@ void M_DrawBenchmarkResult(void)
 #endif
 }
 
-#define CSV_MESSAGE "Results saved on file BENCH.CSV"
+#define CSV_MESSAGE "Results saved on file BENCH.SLK"
 
 void M_DrawBenchmarkCSV(void)
 {
