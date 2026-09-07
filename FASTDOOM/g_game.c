@@ -1673,9 +1673,28 @@ void G_CreateSLK(void)
     fclose(fptr);
 }
 
+//
+// Names for the export, indexed by the cpu_t / render enums
+//
+static const char *const cpunames[NUM_CPU] =
+{
+    "386sx", "386dx", "intel486", "pentium", "pentiump54cs", "pentiummmx",
+    "pentiumii", "k5", "k6", "cyrix386", "cyrix486", "cyrix5x86",
+    "cyrix6x86", "cyrix6x86mx", "umc486", "winchip", "mp6"
+};
+
+static const char *const detailnames[NUM_DETAIL] = { "high", "low", "potato" };
+
+// Shared by visplanes, walls, sprites and player sprites
+static const char *const rendernames[NUM_VISPLANESRENDER] = { "normal", "flat", "flatter" };
+
+static const char *const invisiblenames[NUM_INVISIBLERENDER] =
+{
+    "normal", "flat", "flatsaturn", "saturn", "translucent"
+};
+
 void G_SaveSLKResult(unsigned int gametics, unsigned int realtics, unsigned int resultfps, unsigned int onepercentlow, unsigned int dotonepercentlow)
 {
-    char field[16];
     char *buffer;
     char *line;
     int row, col;
@@ -1739,139 +1758,28 @@ void G_SaveSLKResult(unsigned int gametics, unsigned int realtics, unsigned int 
         SLK_CellStr(logFile, row, ++col, myargv[0]);
 
         // Architecture
-        switch (selectedCPU)
-        {
-        case INTEL_386SX:
-            strcpy(field, "386sx");
-            break;
-        case INTEL_386DX:
-            strcpy(field, "386dx");
-            break;
-        case INTEL_486:
-            strcpy(field, "intel486");
-            break;
-        case INTEL_PENTIUM_P5_P54C:
-            strcpy(field, "pentium");
-            break;
-        case INTEL_PENTIUM_P54CS:
-            strcpy(field, "pentiump54cs");
-            break;
-        case INTEL_PENTIUM_MMX:
-            strcpy(field, "pentiummmx");
-            break;
-        case INTEL_PENTIUM_II:
-            strcpy(field, "pentiumii");
-            break;
-        case CYRIX_386DLC:
-            strcpy(field, "cyrix386");
-            break;
-        case CYRIX_486:
-            strcpy(field, "cyrix486");
-            break;
-        case CYRIX_5X86:
-            strcpy(field, "cyrix5x86");
-            break;
-        case CYRIX_6X86:
-            strcpy(field, "cyrix6x86");
-            break;
-        case CYRIX_6X86MX:
-            strcpy(field, "cyrix6x86mx");
-            break;
-        case UMC_GREEN_486:
-            strcpy(field, "umc486");
-            break;
-        case AMD_K5:
-            strcpy(field, "k5");
-            break;
-        case AMD_K6:
-            strcpy(field, "k6");
-            break;
-        case RISE_MP6:
-            strcpy(field, "mp6");
-            break;
-        case IDT_WINCHIP:
-            strcpy(field, "winchip");
-            break;
-        }
-        SLK_CellStr(logFile, row, ++col, field);
+        if (selectedCPU >= 0 && selectedCPU < NUM_CPU)
+            SLK_CellStr(logFile, row, ++col, cpunames[selectedCPU]);
+        else
+            SLK_CellStr(logFile, row, ++col, "");
 
         // Detail
-        switch (detailshift)
-        {
-        case DETAIL_HIGH:
-            strcpy(field, "high");
-            break;
-        case DETAIL_LOW:
-            strcpy(field, "low");
-            break;
-        case DETAIL_POTATO:
-            strcpy(field, "potato");
-            break;
-        }
-        SLK_CellStr(logFile, row, ++col, field);
+        SLK_CellStr(logFile, row, ++col, detailnames[detailshift]);
 
         // Screen size
         SLK_CellInt(logFile, row, ++col, screenblocks);
 
         // Visplanes
-        switch (visplaneRender)
-        {
-        case VISPLANES_NORMAL:
-            strcpy(field, "normal");
-            break;
-        case VISPLANES_FLAT:
-            strcpy(field, "flat");
-            break;
-        case VISPLANES_FLATTER:
-            strcpy(field, "flatter");
-            break;
-        }
-        SLK_CellStr(logFile, row, ++col, field);
+        SLK_CellStr(logFile, row, ++col, rendernames[visplaneRender]);
 
         // Walls
-        switch (wallRender)
-        {
-        case WALL_NORMAL:
-            strcpy(field, "normal");
-            break;
-        case WALL_FLAT:
-            strcpy(field, "flat");
-            break;
-        case WALL_FLATTER:
-            strcpy(field, "flatter");
-            break;
-        }
-        SLK_CellStr(logFile, row, ++col, field);
+        SLK_CellStr(logFile, row, ++col, rendernames[wallRender]);
 
         // Sprites
-        switch (spriteRender)
-        {
-        case SPRITE_NORMAL:
-            strcpy(field, "normal");
-            break;
-        case SPRITE_FLAT:
-            strcpy(field, "flat");
-            break;
-        case SPRITE_FLATTER:
-            strcpy(field, "flatter");
-            break;
-        }
-        SLK_CellStr(logFile, row, ++col, field);
+        SLK_CellStr(logFile, row, ++col, rendernames[spriteRender]);
 
         // Player sprite
-        switch (pspriteRender)
-        {
-        case PSPRITE_NORMAL:
-            strcpy(field, "normal");
-            break;
-        case PSPRITE_FLAT:
-            strcpy(field, "flat");
-            break;
-        case PSPRITE_FLATTER:
-            strcpy(field, "flatter");
-            break;
-        }
-        SLK_CellStr(logFile, row, ++col, field);
+        SLK_CellStr(logFile, row, ++col, rendernames[pspriteRender]);
 
         // Sky
         SLK_CellStr(logFile, row, ++col, flatSky ? "flat" : "normal");
@@ -1880,25 +1788,7 @@ void G_SaveSLKResult(unsigned int gametics, unsigned int realtics, unsigned int 
         SLK_CellStr(logFile, row, ++col, nearSprites ? "near" : "normal");
 
         // Transparent objects
-        switch (invisibleRender)
-        {
-        case INVISIBLE_NORMAL:
-            strcpy(field, "normal");
-            break;
-        case INVISIBLE_FLAT:
-            strcpy(field, "flat");
-            break;
-        case INVISIBLE_FLAT_SATURN:
-            strcpy(field, "flatsaturn");
-            break;
-        case INVISIBLE_SATURN:
-            strcpy(field, "saturn");
-            break;
-        case INVISIBLE_TRANSLUCENT:
-            strcpy(field, "translucent");
-            break;
-        }
-        SLK_CellStr(logFile, row, ++col, field);
+        SLK_CellStr(logFile, row, ++col, invisiblenames[invisibleRender]);
 
         // IWAD
         SLK_CellStr(logFile, row, ++col, iwadfile);
