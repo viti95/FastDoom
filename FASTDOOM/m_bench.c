@@ -67,12 +67,60 @@ extern int screenSize;
 
 #define FILE_SEPARATOR ",\n"
 
-int M_CheckValue(char *check, char *compare)
-{
-    if (strcasecmp(check, compare) == 0)
-        return 1;
+//
+// Benchmark option tables
+//
 
-    return 0;
+static const char *detailNames[] = { "high", "low", "potato" };
+static const int detailValues[] = { DETAIL_HIGH, DETAIL_LOW, DETAIL_POTATO };
+
+static const char *modeNames[] = { "default", "flat", "flatter" };
+static const int visplaneValues[] = { VISPLANES_NORMAL, VISPLANES_FLAT, VISPLANES_FLATTER };
+static const int wallValues[] = { WALL_NORMAL, WALL_FLAT, WALL_FLATTER };
+static const int spriteValues[] = { SPRITE_NORMAL, SPRITE_FLAT, SPRITE_FLATTER };
+static const int pspriteValues[] = { PSPRITE_NORMAL, PSPRITE_FLAT, PSPRITE_FLATTER };
+
+static const char *skyNames[] = { "default", "flat" };
+static const char *invisNames[] = { "default", "saturn", "flatsaturn", "translucent", "flat" };
+static const int invisValues[] = { INVISIBLE_NORMAL, INVISIBLE_SATURN, INVISIBLE_FLAT_SATURN, INVISIBLE_TRANSLUCENT, INVISIBLE_FLAT };
+static const char *nearNames[] = { "far", "near" };
+static const char *fpsNames[] = { "nofps", "fps" };
+static const char *capNames[] = { "capped", "uncapped" };
+static const char *meltNames[] = { "nomelt", "melt" };
+static const char *busNames[] = { "slow", "fast" };
+static const int offOnValues[] = { false, true };
+static const int onOffValues[] = { true, false };
+
+static const char *cpuNames[] = {
+    "386sx", "386dx", "i486", "pentium", "pentiumP54CS", "pentiumMMX",
+    "pentiumII", "k5", "k6", "cy386", "cy486", "cy5x86", "cy6x86",
+    "cy6x86mx", "umc486", "winchip", "mp6"
+};
+static const int cpuValues[] = {
+    INTEL_386SX, INTEL_386DX, INTEL_486, INTEL_PENTIUM_P5_P54C,
+    INTEL_PENTIUM_P54CS, INTEL_PENTIUM_MMX, INTEL_PENTIUM_II,
+    AMD_K5, AMD_K6, CYRIX_386DLC, CYRIX_486, CYRIX_5X86,
+    CYRIX_6X86, CYRIX_6X86MX, UMC_GREEN_486, IDT_WINCHIP, RISE_MP6
+};
+
+//
+// Set var to the value matching token, do nothing if not found.
+// Returns the matched value, or -1 if not found.
+// All benchmark variables are int sized (boolean is an int enum).
+//
+
+static int M_SetValue(void *var, char *token, const char **names, const int *values, int count)
+{
+    int i;
+
+    for (i = 0; i < count; i++)
+        if (strcasecmp(token, names[i]) == 0)
+        {
+            *(int *)var = values[i];
+            return values[i];
+        }
+
+    return -1;
 }
 
 void M_ChangeValueFile(unsigned int position, char *token)
@@ -83,13 +131,7 @@ void M_ChangeValueFile(unsigned int position, char *token)
     {
     // Detail
     case 0:
-        if (M_CheckValue(token, "high"))
-            detailLevel = DETAIL_HIGH;
-        if (M_CheckValue(token, "low"))
-            detailLevel = DETAIL_LOW;
-        if (M_CheckValue(token, "potato"))
-            detailLevel = DETAIL_POTATO;
-
+        M_SetValue(&detailLevel, token, detailNames, detailValues, 3);
         R_SetViewSize(screenblocks, detailLevel);
         break;
     // Size
@@ -103,69 +145,32 @@ void M_ChangeValueFile(unsigned int position, char *token)
         break;
     // Visplanes
     case 2:
-        if (M_CheckValue(token, "default"))
-            visplaneRender = VISPLANES_NORMAL;
-        if (M_CheckValue(token, "flat"))
-            visplaneRender = VISPLANES_FLAT;
-        if (M_CheckValue(token, "flatter"))
-            visplaneRender = VISPLANES_FLATTER;
-
+        M_SetValue(&visplaneRender, token, modeNames, visplaneValues, 3);
         R_SetViewSize(screenblocks, detailLevel);
         break;
     // Walls
     case 3:
-        if (M_CheckValue(token, "default"))
-            wallRender = WALL_NORMAL;
-        if (M_CheckValue(token, "flat"))
-            wallRender = WALL_FLAT;
-        if (M_CheckValue(token, "flatter"))
-            wallRender = WALL_FLATTER;
-
+        M_SetValue(&wallRender, token, modeNames, wallValues, 3);
         R_SetViewSize(screenblocks, detailLevel);
         break;
     // Sprites
     case 4:
-        if (M_CheckValue(token, "default"))
-            spriteRender = SPRITE_NORMAL;
-        if (M_CheckValue(token, "flat"))
-            spriteRender = SPRITE_FLAT;
-        if (M_CheckValue(token, "flatter"))
-            spriteRender = SPRITE_FLATTER;
-
+        M_SetValue(&spriteRender, token, modeNames, spriteValues, 3);
         R_SetViewSize(screenblocks, detailLevel);
         break;
     // Player Sprites
     case 5:
-        if (M_CheckValue(token, "default"))
-            pspriteRender = PSPRITE_NORMAL;
-        if (M_CheckValue(token, "flat"))
-            pspriteRender = PSPRITE_FLAT;
-        if (M_CheckValue(token, "flatter"))
-            pspriteRender = PSPRITE_FLATTER;
-
+        M_SetValue(&pspriteRender, token, modeNames, pspriteValues, 3);
         R_SetViewSize(screenblocks, detailLevel);
         break;
     // Sky
     case 6:
-        if (M_CheckValue(token, "default"))
-            flatSky = false;
-        if (M_CheckValue(token, "flat"))
-            flatSky = true;
-
+        M_SetValue(&flatSky, token, skyNames, offOnValues, 2);
         R_SetViewSize(screenblocks, detailLevel);
         break;
     // Invisible
     case 7:
-        if (M_CheckValue(token, "default"))
-            invisibleRender = INVISIBLE_NORMAL;
-        if (M_CheckValue(token, "saturn"))
-            invisibleRender = INVISIBLE_SATURN;
-        if (M_CheckValue(token, "flatsaturn"))
-            invisibleRender = INVISIBLE_FLAT_SATURN;
-        if (M_CheckValue(token, "translucent"))
-            invisibleRender = INVISIBLE_TRANSLUCENT;
-        if (M_CheckValue(token, "flat"))
-            invisibleRender = INVISIBLE_FLAT;
+        M_SetValue(&invisibleRender, token, invisNames, invisValues, 5);
 
         if (invisibleRender == INVISIBLE_TRANSLUCENT)
             R_InitTintMap();
@@ -173,95 +178,39 @@ void M_ChangeValueFile(unsigned int position, char *token)
             R_CleanupTintMap();
 
         R_SetViewSize(screenblocks, detailLevel);
+        break;
     // Sprite culling
     case 8:
-        if (M_CheckValue(token, "far"))
-            nearSprites = false;
-        if (M_CheckValue(token, "near"))
-            nearSprites = true;
+        M_SetValue(&nearSprites, token, nearNames, offOnValues, 2);
         break;
     // Show FPS
     case 9:
-        if (M_CheckValue(token, "nofps"))
-            showFPS = false;
-        if (M_CheckValue(token, "fps"))
-            showFPS = true;
+        M_SetValue(&showFPS, token, fpsNames, offOnValues, 2);
         break;
     // Uncapped FPS
     case 10:
-        if (M_CheckValue(token, "capped"))
-            uncappedFPS = false;
-        if (M_CheckValue(token, "uncapped"))
-            uncappedFPS = true;
-
-        if (uncappedFPS)
+        if (M_SetValue(&uncappedFPS, token, capNames, offOnValues, 2) != -1)
         {
-            highResTimer = gamestate == GS_LEVEL;
+            highResTimer = uncappedFPS && (gamestate == GS_LEVEL);
+            I_SetHrTimerEnabled(highResTimer);
         }
-        else
-        {
-            highResTimer = false;
-        }
-
-        I_SetHrTimerEnabled(highResTimer);
+        break;
     // Melting
     case 11:
-        if (M_CheckValue(token, "nomelt"))
-            noMelt = true;
-        if (M_CheckValue(token, "melt"))
-            noMelt = false;
+        M_SetValue(&noMelt, token, meltNames, onOffValues, 2);
         break;
     // CPU
     case 12:
-        if (M_CheckValue(token, "386sx"))
-            selectedCPU = INTEL_386SX;
-        if (M_CheckValue(token, "386dx"))
-            selectedCPU = INTEL_386DX;
-        if (M_CheckValue(token, "i486"))
-            selectedCPU = INTEL_486;
-        if (M_CheckValue(token, "pentium"))
-            selectedCPU = INTEL_PENTIUM_P5_P54C;
-        if (M_CheckValue(token, "pentiumP54CS"))
-            selectedCPU = INTEL_PENTIUM_P54CS;
-        if (M_CheckValue(token, "pentiumMMX"))
-            selectedCPU = INTEL_PENTIUM_MMX;
-        if (M_CheckValue(token, "pentiumII"))
-            selectedCPU = INTEL_PENTIUM_II;
-        if (M_CheckValue(token, "k5"))
-            selectedCPU = AMD_K5;
-        if (M_CheckValue(token, "k6"))
-            selectedCPU = AMD_K6;
-        if (M_CheckValue(token, "cy386"))
-            selectedCPU = CYRIX_386DLC;
-        if (M_CheckValue(token, "cy486"))
-            selectedCPU = CYRIX_486;
-        if (M_CheckValue(token, "cy5x86"))
-            selectedCPU = CYRIX_5X86;
-        if (M_CheckValue(token, "cy6x86"))
-            selectedCPU = CYRIX_6X86;
-        if (M_CheckValue(token, "cy6x86mx"))
-            selectedCPU = CYRIX_6X86MX;
-        if (M_CheckValue(token, "umc486"))
-            selectedCPU = UMC_GREEN_486;
-        if (M_CheckValue(token, "winchip"))
-            selectedCPU = IDT_WINCHIP;
-        if (M_CheckValue(token, "mp6"))
-            selectedCPU = RISE_MP6;
-
+        M_SetValue(&selectedCPU, token, cpuNames, cpuValues, 17);
         R_ExecuteSetViewSize();
         R_SetViewSize(screenblocks, detailLevel);
-
 #if defined(MODE_13H)
         I_UpdateFinishFunc();
 #endif
         break;
     // Bus Speed
     case 13:
-        if (M_CheckValue(token, "slow"))
-            busSpeed = 1;
-        if (M_CheckValue(token, "fast"))
-            busSpeed = 0;
-
+        M_SetValue(&busSpeed, token, busNames, onOffValues, 2);
 #if defined(MODE_13H)
         I_UpdateFinishFunc();
 #endif
@@ -273,6 +222,7 @@ void M_ParseBenchmarkLine(char *line)
 {
     unsigned int count = 0;
     char *token = strtok(line, FILE_SEPARATOR);
+
     while (token != NULL)
     {
         M_ChangeValueFile(count, token);
