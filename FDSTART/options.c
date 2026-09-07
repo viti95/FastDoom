@@ -68,7 +68,7 @@ const opt_t opts[NUMOPTS] = {
     { "-uncapped",      "Uncap the framerate" },
     { "-preload",       "Preload all WAD lumps in RAM" },
     { "-xt",            "XT compatibility mode" },
-    { "-csv",           "Write CSV timing output" },
+    { "-export",        "Write SLK timing output" },
     { "-fps",           "Show FPS counter" },
     { "-debugCard2",    "Show 2D card FPS counter" },
     { "-debugCard4",    "Show 4D card FPS counter" },

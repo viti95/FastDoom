@@ -176,7 +176,7 @@ boolean videoPageFix;
 
 boolean ignoreSoundChecks;
 
-boolean csv;
+boolean export;
 boolean disableDemo;
 
 boolean busSpeed;
@@ -1474,7 +1474,7 @@ void D_DoomMain(void)
 
     reverseStereo = M_CheckParm("-reverseStereo");
 
-    csv = M_CheckParm("-csv");
+    export = M_CheckParm("-export");
 
     xtCompat = M_CheckParm("-xt");
 
@@ -1486,7 +1486,7 @@ void D_DoomMain(void)
     {
         benchmark = true;
         benchmark_commandline = true;
-        csv = 1;
+        export = 1;
 
         sprintf(demofile, "%s", myargv[p + 2]);
         D_AddFile(demofile);

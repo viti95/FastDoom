@@ -218,7 +218,7 @@ void M_DrawOptions(void);
 void M_DrawSound(void);
 void M_DrawBenchmark(void);
 void M_DrawBenchmarkResult(void);
-void M_DrawBenchmarkCSV(void);
+void M_DrawBenchmarkExport(void);
 void M_DrawDisplay(void);
 void M_DrawLoad(void);
 void M_DrawSave(void);
@@ -459,12 +459,12 @@ menu_t BenchmarkResultDef =
         60, 64,
         0};
 
-menu_t BenchmarkCSVDef =
+menu_t BenchmarkExportDef =
     {
         1,
         &OptionsDef,
         BenchmarkResultMenu,
-        M_DrawBenchmarkCSV,
+        M_DrawBenchmarkExport,
         60, 64,
         0};
 
@@ -1041,24 +1041,24 @@ void M_DrawBenchmarkResult(void)
 #endif
 }
 
-#define CSV_MESSAGE "Results saved on file BENCH.SLK"
+#define EXPORT_MESSAGE "Results saved on file BENCH.SLK"
 
-void M_DrawBenchmarkCSV(void)
+void M_DrawBenchmarkExport(void)
 {
     if (benchmark_commandline)
         I_Error(9);
 
 #if defined(MODE_T4025) || defined(MODE_T4050)
-    V_WriteTextDirect(6, 8, CSV_MESSAGE);
+    V_WriteTextDirect(6, 8, EXPORT_MESSAGE);
 #endif
 #if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
-    V_WriteTextDirect(15, 8, CSV_MESSAGE);
+    V_WriteTextDirect(15, 8, EXPORT_MESSAGE);
 #endif
 #if defined(MODE_T8050) || defined(MODE_T8043)
-    V_WriteTextDirect(15, 16, CSV_MESSAGE);
+    V_WriteTextDirect(15, 16, EXPORT_MESSAGE);
 #endif
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-    M_WriteText(62, 68, CSV_MESSAGE);
+    M_WriteText(62, 68, EXPORT_MESSAGE);
 #endif
 }
 
@@ -1082,13 +1082,13 @@ void M_ChangeBenchmarkType(int choice)
 
     if (benchmark_type == 0)
     {
-        csv = 0;
+        export = 0;
     }
     else
     {
         sprintf(benchmark_file, benchmark_files[benchmark_type - 1]);
         benchmark_total = D_FileGetFirstInteger(benchmark_file);
-        csv = 1;
+        export = 1;
     }
 }
 
@@ -2426,11 +2426,11 @@ void M_StartControlPanel(void)
 #define BENCHMARK_QUICK_LAST 3
 #define BENCHMARK_NORMAL_LAST 9
 
-void M_ShowBenchmarkCSVMessage(void)
+void M_ShowBenchmarkExportMessage(void)
 {
     M_StartControlPanel();
     itemOn = 0;
-    currentMenu = &BenchmarkCSVDef;
+    currentMenu = &BenchmarkExportDef;
 }
 
 void M_FinishBenchmark(void)
@@ -2440,7 +2440,7 @@ void M_FinishBenchmark(void)
         if (benchmark_commandline)
         {
             benchmark_number = 0;
-            M_ShowBenchmarkCSVMessage();
+            M_ShowBenchmarkExportMessage();
         }
         else
         {
@@ -2456,7 +2456,7 @@ void M_FinishBenchmark(void)
         if (benchmark_number == benchmark_total)
         {
             benchmark_number = 0;
-            M_ShowBenchmarkCSVMessage();
+            M_ShowBenchmarkExportMessage();
         }
         else
         {

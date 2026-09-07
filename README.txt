@@ -157,7 +157,7 @@
  -cga => Fixes text modes for CGA cards
  -pagefix => Fixes text modes (80x50 and 80x100) for newer VGA cards
  -reverseStereo => Reverse audio output (left to right and viceversa)
- -csv => Saves the timedemo result in the file bench.csv
+ -export => Saves the timedemo result in the file BENCH.SLK
  -size XX => Forces screen scaling
  -file => Loads an external PWAD
  -playdemo XX => Plays a stored demo

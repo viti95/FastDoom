@@ -1637,7 +1637,7 @@ static void SLK_CellInt(FILE *logFile, int row, int col, unsigned int value)
     fprintf(logFile, "C;Y%d;X%d;K%u\n", row, col, value);
 }
 
-void G_CreateCSV(void)
+void G_CreateSLK(void)
 {
     FILE *fptr;
     fptr = fopen(SLK_FILE, "r");
@@ -1673,7 +1673,7 @@ void G_CreateCSV(void)
     fclose(fptr);
 }
 
-void G_SaveCSVResult(unsigned int gametics, unsigned int realtics, unsigned int resultfps, unsigned int onepercentlow, unsigned int dotonepercentlow)
+void G_SaveSLKResult(unsigned int gametics, unsigned int realtics, unsigned int resultfps, unsigned int onepercentlow, unsigned int dotonepercentlow)
 {
     char field[16];
     char *buffer;
@@ -2054,9 +2054,9 @@ void G_CheckDemoStatus(void)
             resultfps = (35 * 1000 * (unsigned int)gametic) / (unsigned int)realtics;
         }
 
-        if (csv)
+        if (export)
         {
-            G_CreateCSV();
+            G_CreateSLK();
 
             if (benchmark_advanced)
             {
@@ -2143,7 +2143,7 @@ void G_CheckDemoStatus(void)
 
                 dotonepercentlow_fps = 1000000000u / dotonepercentlow_ms; // us -> millifps
 
-                G_SaveCSVResult(gametics, realtics, resultfps, onepercentlow_fps, dotonepercentlow_fps);
+                G_SaveSLKResult(gametics, realtics, resultfps, onepercentlow_fps, dotonepercentlow_fps);
 
                 // Cleanup frametimes
                 frametime_position = 0;
@@ -2155,7 +2155,7 @@ void G_CheckDemoStatus(void)
             }
             else
             {
-                G_SaveCSVResult(gametics, realtics, resultfps, 0, 0);
+                G_SaveSLKResult(gametics, realtics, resultfps, 0, 0);
             }
         }
 

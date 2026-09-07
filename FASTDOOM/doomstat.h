@@ -104,7 +104,7 @@ extern boolean ignoreSoundChecks;
 
 extern boolean xtCompat;
 
-extern boolean csv;
+extern boolean export;
 extern boolean disableDemo;
 
 extern boolean busSpeed;
