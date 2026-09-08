@@ -272,7 +272,10 @@ void G_BuildTiccmd(ticcmd_t *cmd)
     int forward;
     int side;
 
-    SetBytes(cmd, 0, sizeof(ticcmd_t));
+    cmd->forwardmove=0;
+    cmd->sidemove=0;
+    cmd->angleturn=0;
+    cmd->buttons=0;
 
     strafe = gamekeydown[key_strafe];
     bstrafe = 0;
@@ -644,6 +647,7 @@ void G_Ticker(void)
     int i;
     int buf;
     ticcmd_t *cmd;
+    ticcmd_t *localcmd;
 
     // do player reborns if needed
     if (players.playerstate == PST_REBORN)
@@ -691,9 +695,13 @@ void G_Ticker(void)
     buf = (gametic) & (BACKUPTICS - 1);
 
     cmd = &players.cmd;
+    localcmd = &localcmds[buf];
 
-    CopyBytes(&localcmds[buf], cmd, sizeof(ticcmd_t));
-    // memcpy(cmd, &localcmds[buf], sizeof(ticcmd_t));
+    // plain stores beat rep movsb register setup for a single ticcmd_t
+    cmd->forwardmove = localcmd->forwardmove;
+    cmd->sidemove = localcmd->sidemove;
+    cmd->angleturn = localcmd->angleturn;
+    cmd->buttons = localcmd->buttons;
 
     if (demoplayback)
         G_ReadDemoTiccmd(cmd);
