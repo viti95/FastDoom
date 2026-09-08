@@ -1710,7 +1710,7 @@ void G_SaveSLKResult(unsigned int gametics, unsigned int realtics, unsigned int 
         fseek(logFile, 0, SEEK_END);
         size = ftell(logFile);
         fseek(logFile, 0, SEEK_SET);
-        buffer = malloc(size + 1);
+        buffer = Z_MallocUnowned(size + 1, PU_STATIC);
         if (buffer)
         {
             fread(buffer, 1, size, logFile);
@@ -1811,7 +1811,7 @@ void G_SaveSLKResult(unsigned int gametics, unsigned int realtics, unsigned int 
         fclose(logFile);
     }
 
-    free(buffer);
+    Z_Free(buffer);
 }
 
 #define FRAMETIME_FILE "FTIME.SLK"
@@ -1856,7 +1856,7 @@ void G_SaveFrametimeResult(unsigned int start, unsigned int count)
         fseek(logFile, 0, SEEK_END);
         size = ftell(logFile);
         fseek(logFile, 0, SEEK_SET);
-        buffer = malloc(size + 1);
+        buffer = Z_MallocUnowned(size + 1, PU_STATIC);
         if (buffer)
         {
             fread(buffer, 1, size, logFile);
@@ -1917,7 +1917,7 @@ void G_SaveFrametimeResult(unsigned int start, unsigned int count)
         fclose(logFile);
     }
 
-    free(buffer);
+    Z_Free(buffer);
 }
 
 void G_CheckDemoStatus(void)
