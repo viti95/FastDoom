@@ -275,7 +275,12 @@ void G_BuildTiccmd(ticcmd_t *cmd)
     byte keyl;
     byte mnext;
     byte mprev;
+    byte knext;
+    byte kprev;
+    int nextweapon;
     static byte prevmousestate[NUMMOUSEBUTTONS];
+    static byte keynextstate;
+    static byte keyprevstate;
 
     cmd->angleturn=0;
     cmd->buttons=0;
@@ -466,45 +471,26 @@ void G_BuildTiccmd(ticcmd_t *cmd)
     else if (gamekeydown['8'])
         cmd->buttons |= BT_CHANGE | (7 << BT_WEAPONSHIFT);
 
-    {
-        static byte keynextstate;
-        static byte keyprevstate;
-        byte knext;
-        byte kprev;
-        int nextweapon;
+    // cycle weapons, keyboard edges take priority over mouse edges
+    knext = gamekeydown[key_weaponnext];
+    kprev = gamekeydown[key_weaponprev];
 
-        knext = gamekeydown[key_weaponnext];
-        kprev = gamekeydown[key_weaponprev];
+    if (knext && !keynextstate)
+        nextweapon = G_CycleWeapon(true);
+    else if (kprev && !keyprevstate)
+        nextweapon = G_CycleWeapon(false);
+    else if (mnext)
+        nextweapon = G_CycleWeapon(true);
+    else if (mprev)
+        nextweapon = G_CycleWeapon(false);
+    else
+        nextweapon = -1;
 
-        if (knext && !keynextstate)
-        {
-            nextweapon = G_CycleWeapon(true);
-        }
-        else if (kprev && !keyprevstate)
-        {
-            nextweapon = G_CycleWeapon(false);
-        }
-        else if (mnext)
-        {
-            nextweapon = G_CycleWeapon(true);
-        }
-        else if (mprev)
-        {
-            nextweapon = G_CycleWeapon(false);
-        }
-        else
-        {
-            nextweapon = -1;
-        }
+    if (nextweapon != -1 && nextweapon != players.readyweapon)
+        players.pendingweapon = nextweapon;
 
-        if (nextweapon != -1 && nextweapon != players.readyweapon)
-        {
-            players.pendingweapon = nextweapon;
-        }
-
-        keynextstate = knext;
-        keyprevstate = kprev;
-    }
+    keynextstate = knext;
+    keyprevstate = kprev;
 
     // special buttons
     if (sendpause)
