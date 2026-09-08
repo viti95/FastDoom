@@ -271,6 +271,11 @@ void G_BuildTiccmd(ticcmd_t *cmd)
     int tspeed;
     int forward;
     int side;
+    byte keyr;
+    byte keyl;
+    byte mnext;
+    byte mprev;
+    static byte prevmousestate[NUMMOUSEBUTTONS];
 
     cmd->angleturn=0;
     cmd->buttons=0;
@@ -280,13 +285,22 @@ void G_BuildTiccmd(ticcmd_t *cmd)
     speed = !autorun ^ !gamekeydown[key_speed];
 
     forward = 0;
+    mnext = 0;
+    mprev = 0;
 
-    /* mouse buttons can trigger actions */
+    /* mouse buttons can trigger actions; mouse weapon switching
+       is edge triggered */
     for (i = 0; i < NUMMOUSEBUTTONS; i++)
     {
-        if (mousebuttons[i])
+        byte m;
+        byte action;
+
+        m = mousebuttons[i];
+        action = mouseactions[i];
+
+        if (m)
         {
-            switch (mouseactions[i])
+            switch (action)
             {
             case MOUSE_ACT_FIRE:
                 cmd->buttons |= BT_ATTACK;
@@ -310,7 +324,17 @@ void G_BuildTiccmd(ticcmd_t *cmd)
             default:
                 break;
             }
+
+            if (!prevmousestate[i])
+            {
+                if (action == MOUSE_ACT_WEAPONNEXT)
+                    mnext = 1;
+                else if (action == MOUSE_ACT_WEAPONPREV)
+                    mprev = 1;
+            }
         }
+
+        prevmousestate[i] = m;
     }
 
     if (gamekeydown[key_up])
@@ -329,9 +353,12 @@ void G_BuildTiccmd(ticcmd_t *cmd)
 
     cmd->forwardmove = forward;
 
+    keyr = gamekeydown[key_right];
+    keyl = gamekeydown[key_left];
+
     // use two stage accelerative turning
     // on the keyboard
-    if (gamekeydown[key_right] || gamekeydown[key_left])
+    if (keyr || keyl)
     {
         turnheld += 1;
 
@@ -351,20 +378,20 @@ void G_BuildTiccmd(ticcmd_t *cmd)
     // let movement keys cancel each other out
     if (strafe)
     {
-        if (gamekeydown[key_right])
+        if (keyr)
         {
             side += sidemove[speed];
         }
-        if (gamekeydown[key_left])
+        if (keyl)
         {
             side -= sidemove[speed];
         }
     }
     else
     {
-        if (gamekeydown[key_right])
+        if (keyr)
             cmd->angleturn -= angleturn[tspeed];
-        if (gamekeydown[key_left])
+        if (keyl)
             cmd->angleturn += angleturn[tspeed];
     }
 
@@ -442,33 +469,12 @@ void G_BuildTiccmd(ticcmd_t *cmd)
     {
         static byte keynextstate;
         static byte keyprevstate;
-        static byte prevmousestate[NUMMOUSEBUTTONS];
         byte knext;
         byte kprev;
-        byte mnext;
-        byte mprev;
         int nextweapon;
 
         knext = gamekeydown[key_weaponnext];
         kprev = gamekeydown[key_weaponprev];
-        mnext = 0;
-        mprev = 0;
-
-        /* mouse weapon switching is edge triggered */
-        for (i = 0; i < NUMMOUSEBUTTONS; i++)
-        {
-            if (mousebuttons[i])
-            {
-                if (!prevmousestate[i])
-                {
-                    if (mouseactions[i] == MOUSE_ACT_WEAPONNEXT)
-                        mnext = 1;
-                    else if (mouseactions[i] == MOUSE_ACT_WEAPONPREV)
-                        mprev = 1;
-                }
-            }
-            prevmousestate[i] = mousebuttons[i];
-        }
 
         if (knext && !keynextstate)
         {
