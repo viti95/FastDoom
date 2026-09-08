@@ -475,13 +475,9 @@ void G_BuildTiccmd(ticcmd_t *cmd)
     knext = gamekeydown[key_weaponnext];
     kprev = gamekeydown[key_weaponprev];
 
-    if (knext && !keynextstate)
+    if ((knext && !keynextstate) || mnext)
         nextweapon = G_CycleWeapon(true);
-    else if (kprev && !keyprevstate)
-        nextweapon = G_CycleWeapon(false);
-    else if (mnext)
-        nextweapon = G_CycleWeapon(true);
-    else if (mprev)
+    else if ((kprev && !keyprevstate) || mprev)
         nextweapon = G_CycleWeapon(false);
     else
         nextweapon = -1;
