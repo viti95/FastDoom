@@ -277,7 +277,7 @@ void G_BuildTiccmd(ticcmd_t *cmd)
     byte mprev;
     byte knext;
     byte kprev;
-    int nextweapon;
+    int nextweapon = -1;
     static byte prevmousestate[NUMMOUSEBUTTONS];
     static byte keynextstate;
     static byte keyprevstate;
@@ -479,8 +479,6 @@ void G_BuildTiccmd(ticcmd_t *cmd)
         nextweapon = G_CycleWeapon(true);
     else if ((kprev && !keyprevstate) || mprev)
         nextweapon = G_CycleWeapon(false);
-    else
-        nextweapon = -1;
 
     if (nextweapon != -1 && nextweapon != players.readyweapon)
         players.pendingweapon = nextweapon;
