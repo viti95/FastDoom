@@ -272,8 +272,6 @@ void G_BuildTiccmd(ticcmd_t *cmd)
     int forward;
     int side;
 
-    cmd->forwardmove=0;
-    cmd->sidemove=0;
     cmd->angleturn=0;
     cmd->buttons=0;
 
@@ -329,7 +327,7 @@ void G_BuildTiccmd(ticcmd_t *cmd)
     else if (forward < -MAXPLMOVE)
         forward = -MAXPLMOVE;
 
-    cmd->forwardmove += forward;
+    cmd->forwardmove = forward;
 
     // use two stage accelerative turning
     // on the keyboard
@@ -411,7 +409,7 @@ void G_BuildTiccmd(ticcmd_t *cmd)
     else if (side < -MAXPLMOVE)
         side = -MAXPLMOVE;
 
-    cmd->sidemove += side;
+    cmd->sidemove = side;
 
     // buttons
 
