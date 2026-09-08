@@ -645,9 +645,7 @@ void G_DoReborn(int playernum)
 void G_Ticker(void)
 {
     int i;
-    int buf;
     ticcmd_t *cmd;
-    ticcmd_t *localcmd;
 
     // do player reborns if needed
     if (players.playerstate == PST_REBORN)
@@ -692,19 +690,22 @@ void G_Ticker(void)
 
     // get commands, check consistancy,
     // and build new consistancy check
-    buf = (gametic) & (BACKUPTICS - 1);
-
     cmd = &players.cmd;
-    localcmd = &localcmds[buf];
 
-    // plain stores beat rep movsb register setup for a single ticcmd_t
-    cmd->forwardmove = localcmd->forwardmove;
-    cmd->sidemove = localcmd->sidemove;
-    cmd->angleturn = localcmd->angleturn;
-    cmd->buttons = localcmd->buttons;
-
-    if (demoplayback)
+    if (demoplayback) {
         G_ReadDemoTiccmd(cmd);
+    } else {
+        int buf;
+        ticcmd_t *localcmd;
+
+        buf = (gametic) & (BACKUPTICS - 1);
+        localcmd = &localcmds[buf];
+        cmd->forwardmove = localcmd->forwardmove;
+        cmd->sidemove = localcmd->sidemove;
+        cmd->angleturn = localcmd->angleturn;
+        cmd->buttons = localcmd->buttons;
+    }
+        
     if (demorecording)
         G_WriteDemoTiccmd(cmd);
 
