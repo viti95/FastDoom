@@ -194,12 +194,6 @@ elif [ "$target" = "fdstart.exe" ]; then
   builtin=fdstart.exe
   buildopts=""
 
-elif [ "$target" = "clean" ]; then
-  cd FASTDOOM
-  wmake clean
-  cd ..
-  exit 0
-
 else
   echo "Unknown target executable '$target' specified."
   exit 1

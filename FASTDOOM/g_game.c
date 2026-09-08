@@ -272,7 +272,10 @@ void G_BuildTiccmd(ticcmd_t *cmd)
     int forward;
     int side;
 
-    SetBytes(cmd, 0, sizeof(ticcmd_t));
+    cmd->forwardmove=0;
+    cmd->sidemove=0;
+    cmd->angleturn=0;
+    cmd->buttons=0;
 
     strafe = gamekeydown[key_strafe];
     bstrafe = 0;
@@ -642,7 +645,6 @@ void G_DoReborn(int playernum)
 void G_Ticker(void)
 {
     int i;
-    int buf;
     ticcmd_t *cmd;
 
     // do player reborns if needed
@@ -688,15 +690,22 @@ void G_Ticker(void)
 
     // get commands, check consistancy,
     // and build new consistancy check
-    buf = (gametic) & (BACKUPTICS - 1);
-
     cmd = &players.cmd;
 
-    CopyBytes(&localcmds[buf], cmd, sizeof(ticcmd_t));
-    // memcpy(cmd, &localcmds[buf], sizeof(ticcmd_t));
-
-    if (demoplayback)
+    if (demoplayback) {
         G_ReadDemoTiccmd(cmd);
+    } else {
+        int buf;
+        ticcmd_t *localcmd;
+
+        buf = (gametic) & (BACKUPTICS - 1);
+        localcmd = &localcmds[buf];
+        cmd->forwardmove = localcmd->forwardmove;
+        cmd->sidemove = localcmd->sidemove;
+        cmd->angleturn = localcmd->angleturn;
+        cmd->buttons = localcmd->buttons;
+    }
+        
     if (demorecording)
         G_WriteDemoTiccmd(cmd);
 
