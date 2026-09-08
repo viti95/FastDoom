@@ -422,13 +422,22 @@ void G_BuildTiccmd(ticcmd_t *cmd)
     }
 
     // chainsaw overrides
-    for (i = 0; i < NUMWEAPONS - 1; i++)
-        if (gamekeydown['1' + i])
-        {
-            cmd->buttons |= BT_CHANGE;
-            cmd->buttons |= i << BT_WEAPONSHIFT;
-            break;
-        }
+    if (gamekeydown['1'])
+        cmd->buttons |= BT_CHANGE;
+    else if (gamekeydown['2'])
+        cmd->buttons |= BT_CHANGE | (1 << BT_WEAPONSHIFT);
+    else if (gamekeydown['3'])
+        cmd->buttons |= BT_CHANGE | (2 << BT_WEAPONSHIFT);
+    else if (gamekeydown['4'])
+        cmd->buttons |= BT_CHANGE | (3 << BT_WEAPONSHIFT);
+    else if (gamekeydown['5'])
+        cmd->buttons |= BT_CHANGE | (4 << BT_WEAPONSHIFT);
+    else if (gamekeydown['6'])
+        cmd->buttons |= BT_CHANGE | (5 << BT_WEAPONSHIFT);
+    else if (gamekeydown['7'])
+        cmd->buttons |= BT_CHANGE | (6 << BT_WEAPONSHIFT);
+    else if (gamekeydown['8'])
+        cmd->buttons |= BT_CHANGE | (7 << BT_WEAPONSHIFT);
 
     {
         static byte keynextstate;
