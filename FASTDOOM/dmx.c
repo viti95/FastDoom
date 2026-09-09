@@ -159,20 +159,23 @@ unsigned char *LogoSC55;
 
 void MUS_ImgSC55(void)
 {
-    if (LogoSC55 == NULL)
+    if (LogoSC55 == NULL) {
         LogoSC55 = I_ReadBinaryStatic("DATA\\SC55.BIN", 72);
-    MUSIC_SysEx(LogoSC55, 72);
-    Z_Free(LogoSC55);
+        MUSIC_SysEx(LogoSC55, 72);
+        Z_Free(LogoSC55);
+    }
 }
 
 unsigned char *LogoTG300;
 
 void MUS_ImgTG300(void)
 {
-    if (LogoTG300 == NULL)
+    if (LogoTG300 == NULL) {
         LogoTG300 = I_ReadBinaryStatic("DATA\\TG300.BIN", 55);
-    MUSIC_SysEx(LogoTG300, 55);
-    Z_Free(LogoTG300);
+        MUSIC_SysEx(LogoTG300, 55);
+        Z_Free(LogoTG300);
+    }
+
 }
 
 unsigned char TextSC55[] = {0x41, 0x10, 0x45, 0x12, 0x10, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 
