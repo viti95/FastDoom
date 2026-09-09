@@ -214,7 +214,7 @@ void HU_DrawDebugCard4DigitsFPS(void)
 }
 
 int lastSecretNumber = -1;
-char secrettext[5];
+char secrettext[6];
 
 void HU_Drawer(void)
 {
