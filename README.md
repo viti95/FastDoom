@@ -80,7 +80,6 @@ Requirements: Linux or WSL2 on Windows.
         * `-clean`: cleans all generated OBJs before building
         * `-stub`: adds the DOS/32 stub (requires a DOS emulator)
         * `-debug`: generates a debug executable with symbols, traceable stack frames and a .map file; adjust `dbgcfg.h` to your needs
-        * `clean`: as the target name, cleans the FASTDOOM project only
     - All the executables + automatic DOS/32 stubs: `./buildall.sh`
     - Generate a full release package (ZIP): `./package.sh`
 
