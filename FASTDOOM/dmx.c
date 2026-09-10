@@ -774,5 +774,5 @@ void ASS_DeInit(void)
 
 int ENS_Detect(void)
 {
-    return SOUNDSCAPE_FindCard() != 0;
+    return SOUNDSCAPE_FindCard() == 0;
 }
