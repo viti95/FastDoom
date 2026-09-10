@@ -192,7 +192,7 @@
  -novsync => Disables VSync
  -nofps => Hides fps ingame
  -record => Stores a demo lump containing player actions ingame
- -loadgame => Plays a demo lump
+ -loadgame => Loads a save file (0 to 5)
  -maxdemo => Defines maximum size for a demo lump to record
  -nomouse => Disables mouse control
  -nosound => Disables all sound/music devices
