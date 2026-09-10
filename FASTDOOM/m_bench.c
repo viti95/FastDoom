@@ -173,6 +173,7 @@ void M_ChangeValueFile(unsigned int position, char *token)
             R_CleanupTintMap();
 
         R_SetViewSize(screenblocks, detailLevel);
+        break;
     // Sprite culling
     case 8:
         if (M_CheckValue(token, "far"))
@@ -204,6 +205,7 @@ void M_ChangeValueFile(unsigned int position, char *token)
         }
 
         I_SetHrTimerEnabled(highResTimer);
+        break;
     // Melting
     case 11:
         if (M_CheckValue(token, "nomelt"))
