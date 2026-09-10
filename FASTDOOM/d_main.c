@@ -1760,7 +1760,7 @@ void D_DoomMain(void)
     p = M_CheckParm("-loadgame");
     if (p && p < myargc - 1)
     {
-        sprintf(demofile, savegamename, myargv[p + 1][0]);
+        sprintf(demofile, savegamename, atoi(myargv[p + 1]));
         G_LoadGame(demofile);
     }
 
