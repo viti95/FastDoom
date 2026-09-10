@@ -684,7 +684,7 @@ void ASS_Init(int rate, int mdev, int sdev)
         case Awe32:
         case SoundBlasterDirect:
             status = FX_SetupSoundBlaster(dmx_blaster);
-            printf(I_LoadTextProgram(35), BLASTER_Version >> 8, BLASTER_Version && 7);
+            printf(I_LoadTextProgram(35), BLASTER_Version >> 8, BLASTER_Version & 7);
             printf(I_LoadTextProgram(36), BLASTER_Config.Address, BLASTER_Config.Interrupt, BLASTER_Config.Dma8, BLASTER_Config.Dma16);
             break;
         case SoundSource:
