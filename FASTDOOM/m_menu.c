@@ -471,16 +471,11 @@ menu_t BenchmarkExportDef =
 //
 // LOAD GAME MENU
 //
-#define load1 0
-#define load2 1
-#define load3 2
-#define load4 3
-#define load5 4
-#define load6 5
-#define load_end 6
+#define load_end 7
 
 menuitem_t LoadMenu[] =
     {
+        {1, "", "", M_LoadSelect},
         {1, "", "", M_LoadSelect},
         {1, "", "", M_LoadSelect},
         {1, "", "", M_LoadSelect},
@@ -502,6 +497,7 @@ menu_t LoadDef =
 //
 menuitem_t SaveMenu[] =
     {
+        {1, "", "", M_SaveSelect},
         {1, "", "", M_SaveSelect},
         {1, "", "", M_SaveSelect},
         {1, "", "", M_SaveSelect},
