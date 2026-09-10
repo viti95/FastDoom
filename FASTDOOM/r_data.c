@@ -111,6 +111,10 @@ int firstflat;
 int lastflat;
 int numflats;
 
+// Bright, but not brightest violet; highly unlikely to be common in the real texture
+#define R_FLAT_COLOR_UNKNOWN ((byte)0xfb)
+byte *flatcolors;
+
 int firstspritelump;
 int lastspritelump;
 int numspritelumps;
@@ -543,11 +547,16 @@ void R_InitFlats(void)
     lastflat = W_GetNumForName("F_END") - 1;
     numflats = lastflat - firstflat + 1;
 
+    // Create color table for non-textured rendering
+    flatcolors = Z_MallocUnowned(numflats, PU_STATIC);
     // Create translation table for global animation.
     flattranslation = Z_MallocUnowned((numflats + 1) * 4, PU_STATIC);
 
     for (i = 0; i < numflats; i++)
+    {
+        flatcolors[i] = R_FLAT_COLOR_UNKNOWN;
         flattranslation[i] = i;
+    }
 }
 
 //
@@ -819,6 +828,78 @@ short R_TextureNumForName(char *name)
 }
 
 //
+// FindDominantByte
+// Find the most common color of given texture to use as a flat replacement
+//
+static byte FindDominantByte(byte *buf, int count)
+{
+    // do NOT ever allocate this array on heap;
+    // that will just slow down loading and increase heap fragmentation
+    int freq[256];
+    int i;
+    int f = 0;
+    byte b;
+
+    SetDWords(freq, 0, 256);
+
+    for (i = 0; i < count; i++)
+        freq[buf[i]]++;
+
+    for (i = 0; i < 256; i++)
+    {
+        if (freq[i] > f)
+        {
+             f = freq[i];
+             b = (byte)i;
+        }
+    }
+    return b;
+}
+
+//
+// R_GetFlat
+// Load flat image and calculate its most common color
+//
+
+byte *R_GetFlat(int flatnum)
+{
+    int lumpnum = firstflat + flatnum;
+    byte *ptr = lumpcache[lumpnum];
+    byte color;
+
+    if (ptr)
+        return ptr;
+
+    ptr = W_CacheLumpNum(lumpnum, PU_CACHE);
+
+    if (flatcolors[flatnum] == R_FLAT_COLOR_UNKNOWN)
+    {
+        color = FindDominantByte(ptr, 4096);
+        if (color == R_FLAT_COLOR_UNKNOWN)
+            color += 1; // relatively safe for default palette
+        flatcolors[flatnum] = color;
+    }
+    return ptr;
+}
+
+//
+// R_GetFlatColor
+// Get a cached color for flat rendering
+//
+
+byte R_GetFlatColor(int flatnum)
+{
+    byte flatcolor = flatcolors[flatnum];
+
+    if (flatcolor != R_FLAT_COLOR_UNKNOWN)
+        return flatcolor;
+
+    // Use the color found by R_GetFlat, but discard the now unneeded texture image
+    Z_Free(R_GetFlat(flatnum));
+    return flatcolors[flatnum];
+}
+
+//
 // R_PrecacheLevel
 // Preloads all relevant graphics for the level.
 //
@@ -860,7 +941,10 @@ void R_PrecacheLevel(void)
         {
             lump = firstflat + i;
             flatmemory += lumpinfo[lump].size;
-            W_CacheLumpNum(lump, PU_CACHE);
+            if (visplaneRender == VISPLANES_FLAT || visplaneRender == VISPLANES_FLATTER)
+                R_GetFlatColor(i);
+            else
+                R_GetFlat(i);
         }
     }
 
