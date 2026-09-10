@@ -15,7 +15,7 @@
 * IBM Music Feature card support
 * Windows Sound System (WSS) support
 * ESS ESFM native mode support
-* Adlib Gold digital sound support (The TSR bundled with the original drivers is no longer required; set the GOLD environment variable to the card's I/O port address.)
+* Adlib Gold digital sound support (The TSR bundled with the original drivers isn't required; set the GOLD environment variable to the card's I/O port address)
 * Fixed "Loading IWAD from sub-directory causes major errors" #279
 * FDSetup has been upgraded to version 2.0 and can now be built using 100% open source tools. We have removed the dependencies on Laughing Dog for screen creation and Borland 4.x for compilation. Additionally, we developed PUPED, a new web based tool for easily creating PUP screens directly in your browser. Huge thanks to @jsmolina for porting the project to OpenWatcom, which helped us reduce the executable size by 20% in the process
 * New FDSTART text mode launcher (based on the #78 idea, written in C): 
@@ -25,8 +25,9 @@
     * Built-in readme reader
     * Options menu with all the command line parameters available
 * All projects (FASTDOOM, FDSETUP and FDSTART) can now be built using the build.sh script
+* Added a 7th save slot
+* Various fixes, optimizations and code cleanup
 * Benchmark and frametime results are now saved in SYLK format instead of CSV (compatible with LibreOffice and Microsoft Excel, avoids CSV import problems)
-* Fixed advanced benchmark 1% low and 0.1% low FPS calculations
 
 ## 1.3.0 (01 Jul 2026)
 * Improved frame interpolation in uncapped framerate modes for smoother rendering #237 #251
