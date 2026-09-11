@@ -19,6 +19,8 @@
 #ifndef __R_DRAW__
 #define __R_DRAW__
 
+#define FLATPIXELCOLOR 1850
+
 extern lighttable_t *dc_colormap;
 extern int dc_x;
 extern int dc_yl;
