@@ -894,8 +894,7 @@ byte R_GetFlatColor(int flatnum)
     if (flatcolor != R_FLAT_COLOR_UNKNOWN)
         return flatcolor;
 
-    // Use the color found by R_GetFlat, but discard the now unneeded texture image
-    Z_Free(R_GetFlat(flatnum));
+    R_GetFlat(flatnum);
     return flatcolors[flatnum];
 }
 
@@ -903,8 +902,6 @@ byte R_GetFlatColor(int flatnum)
 // R_PrecacheLevel
 // Preloads all relevant graphics for the level.
 //
-int flatmemory;
-
 void R_PrecacheLevel(void)
 {
     char *flatpresent;
@@ -933,14 +930,11 @@ void R_PrecacheLevel(void)
         flatpresent[sectors[i].ceilingpic] = 1;
     }
 
-    flatmemory = 0;
-
     for (i = 0; i < numflats; i++)
     {
         if (flatpresent[i])
         {
             lump = firstflat + i;
-            flatmemory += lumpinfo[lump].size;
             if (visplaneRender == VISPLANES_FLAT || visplaneRender == VISPLANES_FLATTER)
                 R_GetFlatColor(i);
             else
