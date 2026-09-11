@@ -19,8 +19,6 @@
 #ifndef __R_DRAW__
 #define __R_DRAW__
 
-#define FLATPIXELCOLOR 1850
-
 extern lighttable_t *dc_colormap;
 extern int dc_x;
 extern int dc_yl;
@@ -244,6 +242,9 @@ extern fixed_t ds_step;
 
 // start of a 64*64 tile image
 extern byte *ds_source;
+
+// Most common color of the current flat, for non-textured rendering
+extern byte ds_flatcolor;
 
 // Span blitting for rows, floor/ceiling.
 // No Sepctre effect needed.

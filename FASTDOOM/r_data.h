@@ -37,6 +37,9 @@ void R_PrecacheLevel(void);
 // lookup by name. For animation?
 short R_FlatNumForName(char *name);
 
+byte *R_GetFlat(int flatnum);
+byte R_GetFlatColor(int flatnum);
+
 // Called by P_Ticker for switches and animations,
 // returns the texture number for the texture name.
 short R_TextureNumForName(char *name);

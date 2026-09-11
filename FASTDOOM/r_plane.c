@@ -402,8 +402,16 @@ void R_DrawPlanes(void)
         }
 
         // regular flat
-
-        ds_source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_CACHE);
+        if (visplaneRender == VISPLANES_FLAT)
+        {
+            // Flat mode only needs the precomputed dominant color,
+            // so the texture image itself is not loaded.
+            ds_flatcolor = R_GetFlatColor(flattranslation[pl->picnum]);
+        }
+        else
+        {
+            ds_source = R_GetFlat(flattranslation[pl->picnum]);
+        }
         planeheight = abs(pl->height - viewz);
         light = (pl->lightlevel >> LIGHTSEGSHIFT) + extralight;
 
@@ -469,7 +477,6 @@ void R_DrawPlanesFlatter(void)
 
     byte color;
     int x;
-    byte *source;
 
     for (pl = visplanes; pl < lastvisplane; pl++)
     {
@@ -483,9 +490,8 @@ void R_DrawPlanesFlatter(void)
             continue;
         }
 
-        source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_CACHE);
-
-        dc_color = colormaps[source[FLATPIXELCOLOR]];
+        color = R_GetFlatColor(flattranslation[pl->picnum]);
+        dc_color = colormaps[color];
 
         x = pl->minx;
         outp(SC_INDEX + 1, 1 << (x & 3));
@@ -590,7 +596,6 @@ void R_DrawPlanesFlatterLow(void)
 
     byte color;
     int x;
-    byte *source;
 
     for (pl = visplanes; pl < lastvisplane; pl++)
     {
@@ -604,9 +609,9 @@ void R_DrawPlanesFlatterLow(void)
             continue;
         }
 
-        source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_CACHE);
+        color = R_GetFlatColor(flattranslation[pl->picnum]);
+        dc_color = colormaps[color];
 
-        dc_color = colormaps[source[FLATPIXELCOLOR]];
         // Plane 0
         x = pl->minx;
         outp(SC_INDEX + 1, 3 << ((x & 1) << 1));
@@ -661,7 +666,6 @@ void R_DrawPlanesFlatterPotato(void)
 
     byte color;
     int x;
-    byte *source;
 
     for (pl = visplanes; pl < lastvisplane; pl++)
     {
@@ -675,9 +679,8 @@ void R_DrawPlanesFlatterPotato(void)
             continue;
         }
 
-        source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_CACHE);
-
-        dc_color = colormaps[source[FLATPIXELCOLOR]];
+        color = R_GetFlatColor(flattranslation[pl->picnum]);
+        dc_color = colormaps[color];
 
         for (x = pl->minx; x <= pl->maxx; x++)
         {
@@ -702,7 +705,7 @@ void R_DrawPlanesFlatterText8050(void)
     unsigned short *dest;
     unsigned short color;
     int x;
-    byte *source;
+    byte flatcolor;
 
     for (pl = visplanes; pl < lastvisplane; pl++)
     {
@@ -716,8 +719,8 @@ void R_DrawPlanesFlatterText8050(void)
             continue;
         }
 
-        source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_CACHE);
-        color = colormaps[source[FLATPIXELCOLOR]] << 8 | 219;
+        flatcolor = R_GetFlatColor(flattranslation[pl->picnum]);
+        color = colormaps[flatcolor] << 8 | 219;
 
         for (x = pl->minx; x <= pl->maxx; x++)
         {
@@ -761,7 +764,7 @@ void R_DrawPlanesFlatterText4050(void)
     unsigned short colorblock;
     int x;
     byte odd;
-    byte *source;
+    byte flatcolor;
 
     for (pl = visplanes; pl < lastvisplane; pl++)
     {
@@ -775,9 +778,8 @@ void R_DrawPlanesFlatterText4050(void)
             continue;
         }
 
-        source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_CACHE);
-
-        color = colormaps[source[FLATPIXELCOLOR]];
+        flatcolor = R_GetFlatColor(flattranslation[pl->picnum]);
+        color = colormaps[flatcolor];
         colorblock = color << 8 | 219;
 
         for (x = pl->minx; x <= pl->maxx; x++)
@@ -842,7 +844,7 @@ void R_DrawPlanesFlatterText4025(void)
     unsigned short *dest;
     unsigned short color;
     int x;
-    byte *source;
+    byte flatcolor;
 
     for (pl = visplanes; pl < lastvisplane; pl++)
     {
@@ -856,8 +858,8 @@ void R_DrawPlanesFlatterText4025(void)
             continue;
         }
 
-        source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_CACHE);
-        color = colormaps[source[FLATPIXELCOLOR]] << 8 | 219;
+        flatcolor = R_GetFlatColor(flattranslation[pl->picnum]);
+        color = colormaps[flatcolor] << 8 | 219;
 
         for (x = pl->minx; x <= pl->maxx; x++)
         {
@@ -900,7 +902,7 @@ void R_DrawPlanesFlatterTextMDA(void)
     unsigned short colorblock;
     int x;
     byte odd;
-    byte *source;
+    byte flatcolor;
 
     for (pl = visplanes; pl < lastvisplane; pl++)
     {
@@ -914,9 +916,8 @@ void R_DrawPlanesFlatterTextMDA(void)
             continue;
         }
 
-        source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_CACHE);
-
-        color = colormaps[source[FLATPIXELCOLOR]];
+        flatcolor = R_GetFlatColor(flattranslation[pl->picnum]);
+        color = colormaps[flatcolor];
         colorblock = 0x0F << 8 | color;
 
         for (x = pl->minx; x <= pl->maxx; x++)
@@ -979,7 +980,7 @@ void R_DrawPlanesFlatterText8025(void)
     unsigned short colorblock;
     int x;
     byte odd;
-    byte *source;
+    byte flatcolor;
 
     for (pl = visplanes; pl < lastvisplane; pl++)
     {
@@ -993,9 +994,8 @@ void R_DrawPlanesFlatterText8025(void)
             continue;
         }
 
-        source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_CACHE);
-
-        color = colormaps[source[FLATPIXELCOLOR]];
+        flatcolor = R_GetFlatColor(flattranslation[pl->picnum]);
+        color = colormaps[flatcolor];
         colorblock = color << 8 | 219;
 
         for (x = pl->minx; x <= pl->maxx; x++)
@@ -1058,7 +1058,6 @@ void R_DrawPlanesFlatterBackbuffer(void)
 
     byte color;
     int x;
-    byte *source;
 
     for (pl = visplanes; pl < lastvisplane; pl++)
     {
@@ -1072,9 +1071,8 @@ void R_DrawPlanesFlatterBackbuffer(void)
             continue;
         }
 
-        source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_CACHE);
-
-        dc_color = colormaps[source[FLATPIXELCOLOR]];
+        color = R_GetFlatColor(flattranslation[pl->picnum]);
+        dc_color = colormaps[color];
 
         for (x = pl->minx; x <= pl->maxx; x++)
         {
@@ -1106,7 +1104,6 @@ void R_DrawPlanesFlatterLowBackbuffer(void)
 
     byte color;
     int x;
-    byte *source;
 
     for (pl = visplanes; pl < lastvisplane; pl++)
     {
@@ -1120,9 +1117,8 @@ void R_DrawPlanesFlatterLowBackbuffer(void)
             continue;
         }
 
-        source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_CACHE);
-
-        dc_color = colormaps[source[FLATPIXELCOLOR]];
+        color = R_GetFlatColor(flattranslation[pl->picnum]);
+        dc_color = colormaps[color];
 
         for (x = pl->minx; x <= pl->maxx; x++)
         {
@@ -1149,7 +1145,6 @@ void R_DrawPlanesFlatterPotatoBackbuffer(void)
 
     byte color;
     int x;
-    byte *source;
 
     for (pl = visplanes; pl < lastvisplane; pl++)
     {
@@ -1163,9 +1158,8 @@ void R_DrawPlanesFlatterPotatoBackbuffer(void)
             continue;
         }
 
-        source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_CACHE);
-
-        dc_color = colormaps[source[FLATPIXELCOLOR]];
+        color = R_GetFlatColor(flattranslation[pl->picnum]);
+        dc_color = colormaps[color];
 
         for (x = pl->minx; x <= pl->maxx; x++)
         {
@@ -1190,7 +1184,6 @@ void R_DrawPlanesFlatterVBE2(void)
 
     byte color;
     int x;
-    byte *source;
 
     for (pl = visplanes; pl < lastvisplane; pl++)
     {
@@ -1204,9 +1197,8 @@ void R_DrawPlanesFlatterVBE2(void)
             continue;
         }
 
-        source = W_CacheLumpNum(firstflat + flattranslation[pl->picnum], PU_CACHE);
-
-        dc_color = colormaps[source[FLATPIXELCOLOR]];
+        color = R_GetFlatColor(flattranslation[pl->picnum]);
+        dc_color = colormaps[color];
 
         for (x = pl->minx; x <= pl->maxx; x++)
         {
