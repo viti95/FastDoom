@@ -68,3 +68,4 @@ extern _ds_colormap
 extern _ds_frac
 extern _ds_step
 extern _ds_source
+extern _ds_flatcolor

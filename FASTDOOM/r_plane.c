@@ -402,7 +402,16 @@ void R_DrawPlanes(void)
         }
 
         // regular flat
-        ds_source = R_GetFlat(flattranslation[pl->picnum]);
+        if (visplaneRender == VISPLANES_FLAT)
+        {
+            // Flat mode only needs the precomputed dominant color,
+            // so the texture image itself is not loaded.
+            ds_flatcolor = R_GetFlatColor(flattranslation[pl->picnum]);
+        }
+        else
+        {
+            ds_source = R_GetFlat(flattranslation[pl->picnum]);
+        }
         planeheight = abs(pl->height - viewz);
         light = (pl->lightlevel >> LIGHTSEGSHIFT) + extralight;
 

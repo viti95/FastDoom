@@ -507,7 +507,7 @@ void R_DrawSpanFlatVBE2(void)
     byte *dest;
     int countp;
 
-    lighttable_t color = ds_colormap[ds_source[FLATPIXELCOLOR]];
+    lighttable_t color = ds_colormap[ds_flatcolor];
 
     dest = destview + MulScreenWidth(ds_y) + ds_x1;
 
@@ -533,7 +533,7 @@ void R_DrawSpanFlatLowVBE2(void)
     byte *dest;
     int countp;
 
-    unsigned short color = ds_colormap[ds_source[FLATPIXELCOLOR]];
+    unsigned short color = ds_colormap[ds_flatcolor];
     color |= color << 8;
 
     dest = destview + MulScreenWidth(ds_y) + (ds_x1 << 1);
@@ -560,7 +560,7 @@ void R_DrawSpanFlatPotatoVBE2(void)
     byte *dest;
     int countp;
 
-    unsigned int color = ds_colormap[ds_source[FLATPIXELCOLOR]];
+    unsigned int color = ds_colormap[ds_flatcolor];
     color |= color << 8;
     color |= color << 16;
 
@@ -2751,13 +2751,16 @@ fixed_t ds_step;
 // start of a 64*64 tile image
 byte *ds_source;
 
+// Most common color of the current flat, for non-textured rendering
+byte ds_flatcolor;
+
 #if defined(MODE_T8050) || defined(MODE_T8043)
 void R_DrawSpanFlatText8050(void)
 {
     int countp;
     unsigned short *dest;
 
-    unsigned short color = ds_colormap[ds_source[FLATPIXELCOLOR]] << 8 | 219;
+    unsigned short color = ds_colormap[ds_flatcolor] << 8 | 219;
 
     dest = textdestscreen + Mul80(ds_y) + ds_x1;
 
@@ -2785,7 +2788,7 @@ void R_DrawSpanFlatText4050(void)
 
     odd = ds_y & 1;
     shift = 8 | (odd << 2);
-    color = ds_colormap[ds_source[FLATPIXELCOLOR]];
+    color = ds_colormap[ds_flatcolor];
     color = color << shift | 223;
 
     even = (ds_y + 1) & 1;
@@ -2806,7 +2809,7 @@ void R_DrawSpanFlatText4025(void)
     int countp;
     unsigned short *dest;
 
-    unsigned short color = ds_colormap[ds_source[FLATPIXELCOLOR]] << 8 | 219;
+    unsigned short color = ds_colormap[ds_flatcolor] << 8 | 219;
 
     dest = textdestscreen + Mul40(ds_y) + ds_x1;
 
@@ -2840,7 +2843,7 @@ void R_DrawSpanFlatText8025(void)
 
     odd = ds_y & 1;
     shift = 8 | (odd << 2);
-    color = ds_colormap[ds_source[FLATPIXELCOLOR]];
+    color = ds_colormap[ds_flatcolor];
     color = color << shift | 223;
 
     even = (ds_y + 1) & 1;
@@ -3273,7 +3276,7 @@ void R_DrawSpanFlatBackbuffer(void)
     byte *dest;
     int countp;
 
-    lighttable_t color = ds_colormap[ds_source[FLATPIXELCOLOR]];
+    lighttable_t color = ds_colormap[ds_flatcolor];
 
     dest = ylookup[ds_y] + columnofs[ds_x1];
 
@@ -3299,7 +3302,7 @@ void R_DrawSpanFlatLowBackbuffer(void)
     byte *dest;
     int countp;
 
-    unsigned short color = ds_colormap[ds_source[FLATPIXELCOLOR]];
+    unsigned short color = ds_colormap[ds_flatcolor];
     color |= color << 8;
 
     dest = ylookup[ds_y] + columnofs[ds_x1];
@@ -3326,7 +3329,7 @@ void R_DrawSpanFlatPotatoBackbuffer(void)
     byte *dest;
     int countp;
 
-    unsigned int color = ds_colormap[ds_source[FLATPIXELCOLOR]];
+    unsigned int color = ds_colormap[ds_flatcolor];
     color |= color << 8;
     color |= color << 16;
 
