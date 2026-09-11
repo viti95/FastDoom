@@ -27,6 +27,7 @@
 * All projects (FASTDOOM, FDSETUP and FDSTART) can now be built using the build.sh script
 * Added a 7th save slot
 * Various fixes, optimizations and code cleanup
+* Improved flat visplane colors by calculating a frequency histogram to find the most frequently used color. Also made flat and flatter visplane rendering a bit faster. Thanks @sandro-tishin! (#25 #282)
 * Benchmark and frametime results are now saved in SYLK format instead of CSV (compatible with LibreOffice and Microsoft Excel, avoids CSV import problems)
 
 ## 1.3.0 (01 Jul 2026)
