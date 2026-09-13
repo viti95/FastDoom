@@ -90,6 +90,7 @@ file i_term.obj
 file i_vgay.obj
 file i_vgayh.obj
 file i_vgax.obj
+file i_pgc.obj
 file math.obj
 file i_sound.obj
 file i_file.obj

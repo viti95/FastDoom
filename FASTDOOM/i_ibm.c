@@ -132,6 +132,10 @@
 #include "i_cga512.h"
 #endif
 
+#if defined(MODE_PGC)
+#include "i_pgc.h"
+#endif
+
 #if defined(TEXT_MODE)
 #include "i_text.h"
 #endif
@@ -786,6 +790,10 @@ void I_InitGraphics(void)
     VBE2_InitGraphics();
 #endif
 
+#if defined(MODE_PGC)
+    PGC_InitGraphics();
+#endif
+
 #if defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT)
     VGA_TestFastSetPalette();
 #endif
@@ -810,6 +818,10 @@ void I_ShutdownGraphics(void)
 
 #if defined(MODE_VBE2) || defined(MODE_VBE2_DIRECT)
     VBE_Done();
+#endif
+
+#if defined(MODE_PGC)
+    PGC_ShutdownGraphics();
 #endif
 
 #ifdef SUPPORTS_HERCULES_AUTOMAP

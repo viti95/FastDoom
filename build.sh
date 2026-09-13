@@ -181,6 +181,9 @@ elif [ "$target" = "fdoommda.exe" ]; then
 elif [ "$target" = "fdoomcda.exe" ]; then
   buildopts="-dMODE_COLOR_MDA"
 
+elif [ "$target" = "fdoompgc.exe" ]; then
+  buildopts="-dMODE_PGC -dSCREENWIDTH=640 -dSCREENHEIGHT=480"
+
 elif [ "$target" = "fdmvt100.exe" ]; then
   buildopts="-dMODE_VT100"
 

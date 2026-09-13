@@ -72,6 +72,7 @@ GLOBOBJS = &
  i_vgay.obj &
  i_vgayh.obj &
  i_vgax.obj &
+ i_pgc.obj &
  math.obj &
  ns_dpmi.obj &
  ns_pcfx.obj &

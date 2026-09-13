@@ -80,3 +80,7 @@
 %ifdef MODE_CGA512
 %define USE_BACKBUFFER
 %endif
+
+%ifdef MODE_PGC
+%define USE_BACKBUFFER
+%endif
