@@ -93,7 +93,6 @@ static volatile byte *pgc_base = (volatile byte *)PGC_BASE;
 
 static byte pgc_present = 0;
 static byte pgc_fatal = 0;
-static byte pgc_verified = 0;
 
 // 4 bit quantized palettes, one packed entry per colour (14 palettes).
 // Packed as a 16 bit value: r4 in bits 8-11, g4 in 4-7, b4 in 0-3.
@@ -703,14 +702,6 @@ void I_SetPalette(int numpalette)
     }
 
     PGC_FlushErrors();
-
-    // One time only: read a few entries back to verify that the
-    // card stored the LUT values the way we sent them.
-    if (!pgc_verified)
-    {
-        pgc_verified = 1;
-        PGC_VerifyPalette(numpalette);
-    }
 }
 
 //
@@ -741,8 +732,6 @@ static void PGC_DiagLine(byte *line, int frame, int y, int firstdiff)
 void I_FinishUpdate(void)
 {
     int y;
-    int dirty = 0;
-    int phantoms = 0;
 
     if (!pgc_present || pgc_fatal)
         return;
@@ -755,11 +744,8 @@ void I_FinishUpdate(void)
     for (y = 0; y < SCREENHEIGHT; y++)
     {
         byte *line = backbuffer + (unsigned int)y * SCREENWIDTH;
-        int diffs = 0;
-        int firstdiff = -1;
         int i;
 
-        dirty++;
         pgc_curline = y;
 
         PGC_WriteLine(line, y);
@@ -814,28 +800,9 @@ void I_FinishUpdate(void)
     I_Printf("PGC: frame ");
     PGC_LogInt((int)pgc_frames);
     I_Printf(" done, ");
-    PGC_LogInt(dirty);
-    I_Printf(" line(s)");
-    if (phantoms)
-    {
-        I_Printf(", ");
-        PGC_LogInt(phantoms);
-        I_Printf(" phantom");
-    }
-    I_Printf(", total ");
+    I_Printf("total ");
     PGC_LogInt((long)pgc_bytes_total);
-    I_Printf(" bytes, inwr=");
-    PGC_LogHex8((int)PGC_IN_WR);
-    I_Printf(" inrd=");
-    PGC_LogHex8((int)PGC_IN_RD);
-    I_Printf(" outwr=");
-    PGC_LogHex8((int)PGC_OUT_WR);
-    I_Printf(" outrd=");
-    PGC_LogHex8((int)PGC_OUT_RD);
-    I_Printf(" errwr=");
-    PGC_LogHex8((int)PGC_ERR_WR);
-    I_Printf(" errrd=");
-    PGC_LogHex8((int)PGC_ERR_RD);
+    I_Printf(" bytes");
     I_Printf("\n");
 
     // Keep the PGC output and error rings drained so the card
