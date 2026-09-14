@@ -69,10 +69,6 @@
 
 #define PGC_BASE 0xC6000
 
-// How many times the host may spin waiting for the PGC to consume
-// a byte from the command ring before declaring the card stuck.
-#define PGC_RING_TIMEOUT 1000000
-
 static volatile byte *pgc_base = (volatile byte *)PGC_BASE;
 
 #define PGC_IN_WR (pgc_base[0x300])
@@ -201,7 +197,6 @@ static void PGC_BurstFlush(void)
     int wr;
     int len;
     int i;
-    int wait = 0;
 
     if (pgc_fatal)
         return;
@@ -217,21 +212,7 @@ static void PGC_BurstFlush(void)
     // wrap around onto IN_RD.
     while (((wr + len) & 0xFF) == PGC_IN_RD)
     {
-        if (++wait >= PGC_RING_TIMEOUT)
-        {
-            pgc_fatal = 1;
-            I_Printf("PGC: ring buffer stalled, the card stopped consuming commands\n");
-            I_Printf("PGC: IN_WR=");
-            PGC_LogInt((int)PGC_IN_WR);
-            I_Printf(" IN_RD=");
-            PGC_LogInt((int)PGC_IN_RD);
-            I_Printf(" frame=");
-            PGC_LogInt((int)pgc_frames);
-            I_Printf(" line=");
-            PGC_LogInt(pgc_curline);
-            I_Printf("\n");
-            I_Error(10); // does not return
-        }
+
     }
 
     for (i = 0; i < len; i++)
@@ -336,19 +317,12 @@ static void PGC_FlushOutput(void)
 //
 static void PGC_WaitOutput(void)
 {
-    int wait = 0;
-
     // Make sure all pending command bytes reached the card before
     // waiting for the response to the last one.
     PGC_BurstFlush();
 
     while (PGC_OUT_RD == PGC_OUT_WR)
     {
-        if (++wait >= PGC_RING_TIMEOUT)
-        {
-            I_Printf("PGC: timeout waiting for output data\n");
-            return;
-        }
     }
 }
 
@@ -426,44 +400,23 @@ static void PGC_WriteLine(byte *line, int screenrow)
 
     while (x < SCREENWIDTH)
     {
-        // Three consecutive identical pixels start a copy run.
-        if (x + 2 < SCREENWIDTH &&
-            line[x] == line[x + 1] && line[x + 1] == line[x + 2])
+        // Literal block: header = 0x7F + count, count 1..128.
+        // Stop before the next 3-pixel run starts, like PGCBMP.
+        int count = 1;
+
+        while (count < 128 && x + count < SCREENWIDTH)
         {
-            byte c = line[x];
-            int run = 3;
+            int p = x + count;
 
-            // One copy block covers at most 128 pixels. If the run
-            // continues, the next iteration emits another copy block
-            // (or a literal block, if only 1-2 pixels of the run are
-            // left), exactly like PGCBMP.
-            while (run < 128 && x + run < SCREENWIDTH && line[x + run] == c)
-                run++;
-
-            PGC_WriteByte((byte)(run - 1));
-            PGC_WriteByte(c);
-            x += run;
+            if (p + 2 < SCREENWIDTH &&
+                line[p] == line[p + 1] && line[p + 1] == line[p + 2])
+                break;
+            count++;
         }
-        else
-        {
-            // Literal block: header = 0x7F + count, count 1..128.
-            // Stop before the next 3-pixel run starts, like PGCBMP.
-            int count = 1;
 
-            while (count < 128 && x + count < SCREENWIDTH)
-            {
-                int p = x + count;
-
-                if (p + 2 < SCREENWIDTH &&
-                    line[p] == line[p + 1] && line[p + 1] == line[p + 2])
-                    break;
-                count++;
-            }
-
-            PGC_WriteByte((byte)(0x7F + count));
-            while (count--)
-                PGC_WriteByte(line[x++]);
-        }
+        PGC_WriteByte((byte)(0x7F + count));
+        while (count--)
+            PGC_WriteByte(line[x++]);
     }
 }
 
@@ -494,80 +447,6 @@ static boolean PGC_Detect(void)
     }
     PGC_TEST_BYTE = saved;
     return true;
-}
-
-//
-// PGC_CheckLut
-// Read one palette entry back from the PGC with a LUTRD command and
-// log both the values that were sent and the values that came back.
-// If the card reports different values (or a different channel
-// order), the log will show it.
-//
-static void PGC_CheckLut(int palette, int ink)
-{
-    unsigned short v = pgc_palette[palette * 256 + ink];
-    byte out[16];
-    int n;
-    int i;
-
-    PGC_WriteByte(PGC_CMD_LUTRD);
-    PGC_WriteByte((byte)ink);
-    PGC_WaitOutput();
-    n = PGC_ReadOutput(out, 16);
-
-    I_Printf("PGC: LUT check ink=");
-    PGC_LogInt(ink);
-    I_Printf(" sent r=");
-    PGC_LogInt((int)((v >> 8) & 0x0F));
-    I_Printf(" g=");
-    PGC_LogInt((int)((v >> 4) & 0x0F));
-    I_Printf(" b=");
-    PGC_LogInt((int)(v & 0x0F));
-    I_Printf(" readback=");
-    PGC_LogInt(n);
-    I_Printf(" byte(s):");
-    for (i = 0; i < n; i++)
-    {
-        I_Printf(" ");
-        PGC_LogInt((int)out[i]);
-    }
-    I_Printf("\n");
-}
-
-//
-// PGC_VerifyPalette
-// Pick the palette entries with the strongest red, green and blue
-// components and read them back from the card to verify that the
-// LUT values were actually stored as sent.
-//
-static void PGC_VerifyPalette(int palette)
-{
-    int inkr = 0;
-    int inkg = 0;
-    int inkb = 0;
-    int ink;
-
-    for (ink = 0; ink < 256; ink++)
-    {
-        int v = (int)pgc_palette[palette * 256 + ink];
-        int vr = (int)((pgc_palette[palette * 256 + inkr] >> 8) & 0x0F);
-        int vg = (int)((pgc_palette[palette * 256 + inkg] >> 4) & 0x0F);
-        int vb = (int)(pgc_palette[palette * 256 + inkb] & 0x0F);
-
-        if (((v >> 8) & 0x0F) > vr)
-            inkr = ink;
-        if (((v >> 4) & 0x0F) > vg)
-            inkg = ink;
-        if ((v & 0x0F) > vb)
-            inkb = ink;
-    }
-
-    I_Printf("PGC: verifying palette with LUT readback\n");
-    PGC_CheckLut(palette, inkr);
-    if (inkg != inkr)
-        PGC_CheckLut(palette, inkg);
-    if (inkb != inkr && inkb != inkg)
-        PGC_CheckLut(palette, inkb);
 }
 
 //
@@ -749,46 +628,6 @@ void I_FinishUpdate(void)
         pgc_curline = y;
 
         PGC_WriteLine(line, y);
-        if (pgc_fatal)
-            return;
-    }
-
-    // Dump the first bytes of screen line 16 right after the first
-    // frame: tells us whether that line is part of the picture or
-    // supposed to be black.
-    if (pgc_frames == 1)
-    {
-        byte *l16 = backbuffer + 16u * SCREENWIDTH;
-        int i;
-
-        I_Printf("PGC: line16 first16: ");
-        for (i = 0; i < 16; i++)
-        {
-            PGC_LogInt(l16[i]);
-            I_Printf(" ");
-        }
-        I_Printf("\n");
-    }
-
-    //
-    // Keep alive. On this machine the PGC 8088 (firmware 3.1) dies
-    // after about 3 seconds of idle time in native mode: the last
-    // command it processed stays the last one, it stops answering
-    // the shared RAM and the whole machine hangs on the next bus
-    // access. Re issue the LUT entry for ink 0 every frame: five
-    // idempotent bytes on a code path that proved 100% reliable at
-    // init (512 LUT writes + readback), keeping the 8088 out of its
-    // idle state.
-    //
-    if (pgc_frames >= 2)
-    {
-        unsigned short v = pgc_palette[0];
-
-        PGC_WriteByte(PGC_CMD_LUT);
-        PGC_WriteByte(0);
-        PGC_WriteByte((byte)((v >> 8) & 0x0F));
-        PGC_WriteByte((byte)((v >> 4) & 0x0F));
-        PGC_WriteByte((byte)(v & 0x0F));
         if (pgc_fatal)
             return;
     }
