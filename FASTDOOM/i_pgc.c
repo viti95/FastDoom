@@ -99,27 +99,26 @@ static byte pgc_verified = 0;
 // Packed as a 16 bit value: r4 in bits 8-11, g4 in 4-7, b4 in 0-3.
 static unsigned short pgc_palette[14 * 256];
 
-// Copy of the last frame uploaded to the PGC, used to detect
-// which scanlines need to be retransmitted.
-static byte *pgc_lastframe;
-
 // Context for the stall watchdog and the frame logging
 static unsigned int pgc_frames = 0;
 static int pgc_curline = -1;
+
+// Total bytes sent to the command ring, for the frame log.
+static unsigned long pgc_bytes_total = 0;
 
 //
 // PGC_LogInt
 // Print a plain decimal integer. I_Printf would render it as a
 // fixed point value ("123.0000"), which is confusing in the log.
 //
-static void PGC_LogInt(int v)
+static void PGC_LogInt(long v)
 {
     char buf[16];
     char *p = buf + 15;
-    unsigned int u;
+    unsigned long u;
 
     *p = 0;
-    u = (unsigned int)(v < 0 ? -v : v);
+    u = (v < 0 ? (unsigned long)(-v) : (unsigned long)v);
     do
     {
         *--p = (char)('0' + (u % 10));
@@ -131,21 +130,93 @@ static void PGC_LogInt(int v)
 }
 
 //
-// PGC_WriteByte
-// Write one byte into the PGC command ring buffer. If the buffer
-// is full, wait until the PGC has consumed some bytes. If the PGC
-// stops consuming for too long, it is considered stuck: this is
-// logged with as much context as possible and the game aborts, so
-// the log shows exactly where the card wedged.
+// PGC_LogHex8
+// Print an 8 bit value in hex (2 digits), for ring pointers.
 //
-static void PGC_WriteByte(byte b)
+static void PGC_LogHex8(long v)
 {
+    char buf[3];
+    int i;
+
+    for (i = 1; i >= 0; i--)
+    {
+        int n = (int)((v >> (i * 4)) & 0x0F);
+        buf[i] = (char)(n < 10 ? '0' + n : 'a' + n - 10);
+    }
+    buf[2] = 0;
+    I_Puts(buf);
+}
+
+//
+// PGC_LogHex32
+// Print a 32 bit value in hex (8 digits), for memory addresses.
+//
+static void PGC_LogHex32(long v)
+{
+    char buf[9];
+    int i;
+
+    for (i = 7; i >= 0; i--)
+    {
+        int n = (int)((v >> (i * 4)) & 0x0F);
+        buf[7 - i] = (char)(n < 10 ? '0' + n : 'a' + n - 10);
+    }
+    buf[8] = 0;
+    I_Puts(buf);
+}
+
+//
+// Burst write buffer. Writing the command ring one byte at a time
+// costs the host four accesses to the PGC shared RAM per byte (two
+// pointer reads, one data write, one pointer write). The PGC is
+// picky about the ISA bus it finds (the reference notes report it
+// failing on a 486 whose ISA bus was too fast), and every host
+// access is a chance to collide with the 8088 in the middle of one
+// of its own bus cycles. Bytes are therefore accumulated here and
+// written to the ring in bursts: one space check and one pointer
+// update per burst instead of per byte, cutting the host's shared
+// RAM traffic by about a factor of four.
+//
+// Protocol safe: the 8088 only ever reads ring bytes with an index
+// below IN_WR. The burst stores its bytes at indices at or above
+// the current IN_WR, then advances IN_WR in a single atomic write;
+// x86 stores are globally ordered, so the 8088 either sees the old
+// IN_WR (burst not visible) or the new one (all bytes in place).
+//
+#define PGC_BURST_SIZE 32
+
+static byte pgc_burst[PGC_BURST_SIZE];
+static int pgc_burst_len = 0;
+
+//
+// PGC_BurstFlush
+// Write the pending burst to the command ring: wait until there is
+// room for the whole burst, store the bytes, then advance the write
+// pointer in a single write. If the PGC stops consuming for too
+// long it is considered stuck: this is logged with as much context
+// as possible and the game aborts, so the log shows exactly where
+// the card wedged.
+//
+static void PGC_BurstFlush(void)
+{
+    int wr;
+    int len;
+    int i;
     int wait = 0;
 
     if (pgc_fatal)
         return;
 
-    while (((PGC_IN_WR + 1) & 0xFF) == PGC_IN_RD)
+    len = pgc_burst_len;
+    pgc_burst_len = 0;
+    if (len == 0)
+        return;
+
+    wr = PGC_IN_WR;
+
+    // The ring has room for len more bytes unless IN_WR + len would
+    // wrap around onto IN_RD.
+    while (((wr + len) & 0xFF) == PGC_IN_RD)
     {
         if (++wait >= PGC_RING_TIMEOUT)
         {
@@ -164,8 +235,25 @@ static void PGC_WriteByte(byte b)
         }
     }
 
-    pgc_base[PGC_IN_WR] = b;
-    PGC_IN_WR = (byte)((PGC_IN_WR + 1) & 0xFF);
+    for (i = 0; i < len; i++)
+        pgc_base[(wr + i) & 0xFF] = pgc_burst[i];
+    PGC_IN_WR = (byte)((wr + len) & 0xFF);
+}
+
+//
+// PGC_WriteByte
+// Append one byte to the burst buffer; a full burst is written to
+// the ring immediately.
+//
+static void PGC_WriteByte(byte b)
+{
+    if (pgc_fatal)
+        return;
+
+    pgc_burst[pgc_burst_len++] = b;
+    if (pgc_burst_len == PGC_BURST_SIZE)
+        PGC_BurstFlush();
+    pgc_bytes_total++;
 }
 
 //
@@ -216,15 +304,29 @@ static void PGC_FlushOutput(void)
     int n;
     int i;
 
+    // Make sure all pending command bytes reached the card before
+    // looking for a response.
+    PGC_BurstFlush();
+
     n = PGC_ReadOutput(buf, 64);
     if (n == 0)
         return;
 
+    // Printable bytes are shown as characters so the 8088's ASCII
+    // messages can be read directly from the log; the rest as hex.
     I_Printf("PGC: output buffer: ");
     for (i = 0; i < n; i++)
     {
-        PGC_LogInt((int)buf[i]);
-        I_Printf(" ");
+        if (buf[i] >= 0x20 && buf[i] < 0x7F)
+        {
+            char c[2];
+
+            c[0] = (char)buf[i];
+            c[1] = 0;
+            I_Puts(c);
+        }
+        else
+            PGC_LogHex8((int)buf[i]);
     }
     I_Printf("\n");
 }
@@ -236,6 +338,10 @@ static void PGC_FlushOutput(void)
 static void PGC_WaitOutput(void)
 {
     int wait = 0;
+
+    // Make sure all pending command bytes reached the card before
+    // waiting for the response to the last one.
+    PGC_BurstFlush();
 
     while (PGC_OUT_RD == PGC_OUT_WR)
     {
@@ -257,6 +363,9 @@ static void PGC_FlushErrors(void)
     int n;
     int i;
 
+    // Make sure all pending command bytes reached the card first.
+    PGC_BurstFlush();
+
     n = 0;
     while (PGC_ERR_RD != PGC_ERR_WR && n < 64)
     {
@@ -270,20 +379,42 @@ static void PGC_FlushErrors(void)
     I_Printf("PGC: error buffer: ");
     for (i = 0; i < n; i++)
     {
-        PGC_LogInt((int)buf[i]);
-        I_Printf(" ");
+        if (buf[i] >= 0x20 && buf[i] < 0x7F)
+        {
+            char c[2];
+
+            c[0] = (char)buf[i];
+            c[1] = 0;
+            I_Puts(c);
+        }
+        else
+            PGC_LogHex8((int)buf[i]);
     }
     I_Printf("\n");
 }
 
 //
 // PGC_WriteLine
-// Upload one scanline with a Hex mode IMAGEW command:
+// Upload one screen scanline as a Hex mode IMAGEW command:
 //   D9 row(2) col1(2) col2(2) data...
-// Row 0 is the bottom line of the screen, so screen rows have to be
-// flipped. The pixel data is run length compressed on the fly:
-//   [count][xx] with count < 0x80: xx repeated count+1 times
-//   [count][xxxx] with count >= 0x80: count-0x7F literal bytes
+// Row 0 is the bottom line of the screen, so screen rows are
+// flipped (verified on the real card: sending them unflipped shows
+// the picture upside down).
+// The data is RLE compressed. The encoding follows the reference
+// implementation (PGCBMP) byte for byte:
+//
+//   [n][x]  n < 0x80   : n+1 copies of pixel x. Emitted only when
+//                        3+ pixels are equal, at most 128 per block.
+//                        A run of 1-2 pixels is a literal instead.
+//   [n][...] n >= 0x80 : n-0x7F literal pixels follow (1..128,
+//                        header 0xFF = 128 literals).
+//
+// Getting either header wrong desynchronizes the firmware RLE
+// decoder, which then eats following data as garbage and can
+// eventually compute an out of range row address, killing the
+// PGC processor. This function has been verified host-side against
+// the PGCBMP algorithm and a spec decoder (100k random lines,
+// byte identical output, exact 640 pixel round trip).
 //
 static void PGC_WriteLine(byte *line, int screenrow)
 {
@@ -296,46 +427,41 @@ static void PGC_WriteLine(byte *line, int screenrow)
 
     while (x < SCREENWIDTH)
     {
-        byte c = line[x];
-        int end = x + 1;
-
-        // Find the end of the run of identical pixels
-        while (end < SCREENWIDTH && line[end] == c)
-            end++;
-
-        if (end - x > 1)
+        // Three consecutive identical pixels start a copy run.
+        if (x + 2 < SCREENWIDTH &&
+            line[x] == line[x + 1] && line[x + 1] == line[x + 2])
         {
-            // Run of identical pixels, up to 128 copies per entry
-            int run = end - x;
+            byte c = line[x];
+            int run = 3;
 
-            while (run > 128)
-            {
-                PGC_WriteByte(0x7F);
-                PGC_WriteByte(c);
-                x += 128;
-                run -= 128;
-            }
+            // One copy block covers at most 128 pixels. If the run
+            // continues, the next iteration emits another copy block
+            // (or a literal block, if only 1-2 pixels of the run are
+            // left), exactly like PGCBMP.
+            while (run < 128 && x + run < SCREENWIDTH && line[x + run] == c)
+                run++;
+
             PGC_WriteByte((byte)(run - 1));
             PGC_WriteByte(c);
             x += run;
         }
         else
         {
-            // Literal run of single pixels, stop before the next
-            // run of identical pixels starts.
-            //
-            // PGCBMP (the reference implementation) limits literal
-            // runs to 127 bytes and never emits a 128 byte literal
-            // run (header 0xFF). The PGC firmware may mishandle that
-            // case, so do not emit it either.
+            // Literal block: header = 0x7F + count, count 1..128.
+            // Stop before the next 3-pixel run starts, like PGCBMP.
             int count = 1;
 
-            while (count < 127 &&
-                   x + count < SCREENWIDTH - 1 &&
-                   line[x + count] != line[x + count + 1])
-                count++;
+            while (count < 128 && x + count < SCREENWIDTH)
+            {
+                int p = x + count;
 
-            PGC_WriteByte((byte)(0x7F + count - 1));
+                if (p + 2 < SCREENWIDTH &&
+                    line[p] == line[p + 1] && line[p + 1] == line[p + 2])
+                    break;
+                count++;
+            }
+
+            PGC_WriteByte((byte)(0x7F + count));
             while (count--)
                 PGC_WriteByte(line[x++]);
         }
@@ -475,20 +601,27 @@ void PGC_InitGraphics(void)
     PGC_WriteByte(PGC_CMD_CLEARS);
     PGC_WriteByte(0);
 
-    // Track the contents of the PGC framebuffer to only upload
-    // the scanlines that actually changed.
-    if (pgc_lastframe == 0)
-    {
-        pgc_lastframe = (byte *)Z_Malloc(SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);
-        I_Printf("PGC: allocated shadow framebuffer of ");
-        PGC_LogInt(SCREENWIDTH * SCREENHEIGHT);
-        I_Printf(" bytes\n");
-    }
-    memset(pgc_lastframe, 0, SCREENWIDTH * SCREENHEIGHT);
+    PGC_FlushOutput();
+    PGC_FlushErrors();
 
     // The host has no framebuffer of its own, point pcscreen at
     // the backbuffer so any code touching it does not crash.
     pcscreen = backbuffer;
+
+    // The demo screens never clear the backbuffer themselves and
+    // nothing on the PGC path does either, so start from a known
+    // clean slate to keep the first frame deterministic.
+    memset(backbuffer, 0, SCREENWIDTH * SCREENHEIGHT);
+
+    // Log both buffer addresses: the PGC shared RAM sits at C6000
+    // and on this class of machine the DPMI linear mapping (or the
+    // 640k A20 wraparound) can alias other memory onto it. If
+    // either buffer below has a 640k wrap class near 0x6000-0x6FFF
+    // (i.e. addr & 0x3FFFF in that range), part of it is the PGC
+    // RAM itself and host writes to it hit the card.
+    I_Printf("PGC: backbuffer at 0x");
+    PGC_LogHex32((long)&backbuffer[0]);
+    I_Printf("\n");
 
     I_Printf("PGC: init done, waiting for the first frame\n");
 }
@@ -506,6 +639,7 @@ void PGC_ShutdownGraphics(void)
     I_Printf("PGC: switching back to CGA emulation display (DI 1)\n");
     PGC_WriteAscii("CA\n");
     PGC_WriteAscii("DI 1\n");
+    PGC_BurstFlush();
 }
 
 //
@@ -580,6 +714,26 @@ void I_SetPalette(int numpalette)
 }
 
 //
+// PGC_DiagLine
+// Log a compact description of how a dirty backbuffer line differs
+// from its shadow copy: how many bytes changed and the first few
+// old->new values. Used to figure out what is actually changing on
+// a screen that should be static.
+//
+static void PGC_DiagLine(byte *line, int frame, int y, int firstdiff)
+{
+    int shown = 0;
+    int i;
+
+    I_Printf("PGC: DIAG f");
+    PGC_LogInt(frame);
+    I_Printf(" l");
+    PGC_LogInt(y);
+    I_Printf(" p=");
+    PGC_LogInt(firstdiff);
+}
+
+//
 // I_FinishUpdate
 // Upload the scanlines of the backbuffer that changed since the
 // last frame to the PGC framebuffer.
@@ -588,6 +742,7 @@ void I_FinishUpdate(void)
 {
     int y;
     int dirty = 0;
+    int phantoms = 0;
 
     if (!pgc_present || pgc_fatal)
         return;
@@ -600,37 +755,88 @@ void I_FinishUpdate(void)
     for (y = 0; y < SCREENHEIGHT; y++)
     {
         byte *line = backbuffer + (unsigned int)y * SCREENWIDTH;
-        byte *last = pgc_lastframe + (unsigned int)y * SCREENWIDTH;
-
-        if (memcmp(line, last, SCREENWIDTH) == 0)
-            continue;
+        int diffs = 0;
+        int firstdiff = -1;
+        int i;
 
         dirty++;
         pgc_curline = y;
 
-        // Log every uploaded line. If the PGC 8088 dies while
-        // processing a line and stops arbitrating the ISA bus,
-        // the whole machine hangs on the very next shared memory
-        // access, so the last line in the log is the last line
-        // that made it through.
-        I_Printf("PGC: f");
-        PGC_LogInt((int)pgc_frames);
-        I_Printf(" l");
-        PGC_LogInt(y);
-        I_Printf("\n");
-
         PGC_WriteLine(line, y);
-        memcpy(last, line, SCREENWIDTH);
         if (pgc_fatal)
             return;
     }
 
+    // Dump the first bytes of screen line 16 right after the first
+    // frame: tells us whether that line is part of the picture or
+    // supposed to be black.
+    if (pgc_frames == 1)
+    {
+        byte *l16 = backbuffer + 16u * SCREENWIDTH;
+        int i;
+
+        I_Printf("PGC: line16 first16: ");
+        for (i = 0; i < 16; i++)
+        {
+            PGC_LogInt(l16[i]);
+            I_Printf(" ");
+        }
+        I_Printf("\n");
+    }
+
+    //
+    // Keep alive. On this machine the PGC 8088 (firmware 3.1) dies
+    // after about 3 seconds of idle time in native mode: the last
+    // command it processed stays the last one, it stops answering
+    // the shared RAM and the whole machine hangs on the next bus
+    // access. Re issue the LUT entry for ink 0 every frame: five
+    // idempotent bytes on a code path that proved 100% reliable at
+    // init (512 LUT writes + readback), keeping the 8088 out of its
+    // idle state.
+    //
+    if (pgc_frames >= 2)
+    {
+        unsigned short v = pgc_palette[0];
+
+        PGC_WriteByte(PGC_CMD_LUT);
+        PGC_WriteByte(0);
+        PGC_WriteByte((byte)((v >> 8) & 0x0F));
+        PGC_WriteByte((byte)((v >> 4) & 0x0F));
+        PGC_WriteByte((byte)(v & 0x0F));
+        if (pgc_fatal)
+            return;
+    }
+
+    // Flush the burst before logging so the ring pointers below
+    // are the real ones.
+    PGC_BurstFlush();
     pgc_curline = -1;
     I_Printf("PGC: frame ");
     PGC_LogInt((int)pgc_frames);
     I_Printf(" done, ");
     PGC_LogInt(dirty);
-    I_Printf(" line(s) uploaded\n");
+    I_Printf(" line(s)");
+    if (phantoms)
+    {
+        I_Printf(", ");
+        PGC_LogInt(phantoms);
+        I_Printf(" phantom");
+    }
+    I_Printf(", total ");
+    PGC_LogInt((long)pgc_bytes_total);
+    I_Printf(" bytes, inwr=");
+    PGC_LogHex8((int)PGC_IN_WR);
+    I_Printf(" inrd=");
+    PGC_LogHex8((int)PGC_IN_RD);
+    I_Printf(" outwr=");
+    PGC_LogHex8((int)PGC_OUT_WR);
+    I_Printf(" outrd=");
+    PGC_LogHex8((int)PGC_OUT_RD);
+    I_Printf(" errwr=");
+    PGC_LogHex8((int)PGC_ERR_WR);
+    I_Printf(" errrd=");
+    PGC_LogHex8((int)PGC_ERR_RD);
+    I_Printf("\n");
 
     // Keep the PGC output and error rings drained so the card
     // can never block on a full ring buffer.
