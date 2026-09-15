@@ -161,78 +161,37 @@ static void PGC_LogHex32(long v)
 }
 
 //
-// Burst write buffer. Writing the command ring one byte at a time
-// costs the host four accesses to the PGC shared RAM per byte (two
-// pointer reads, one data write, one pointer write). The PGC is
-// picky about the ISA bus it finds (the reference notes report it
-// failing on a 486 whose ISA bus was too fast), and every host
-// access is a chance to collide with the 8088 in the middle of one
-// of its own bus cycles. Bytes are therefore accumulated here and
-// written to the ring in bursts: one space check and one pointer
-// update per burst instead of per byte, cutting the host's shared
-// RAM traffic by about a factor of four.
+// PGC_WriteByte
+// Write one byte directly into the host to PGC command ring at
+// 0xC6000, using the ring buffer fully: the 256 byte ring can hold
+// up to 255 bytes (it is full when IN_WR is one ahead of IN_RD),
+// so the host is allowed to run up to 255 bytes ahead of the 8088.
+// If the ring is full, wait until the PGC consumes a byte.
 //
 // Protocol safe: the 8088 only ever reads ring bytes with an index
-// below IN_WR. The burst stores its bytes at indices at or above
-// the current IN_WR, then advances IN_WR in a single atomic write;
-// x86 stores are globally ordered, so the 8088 either sees the old
-// IN_WR (burst not visible) or the new one (all bytes in place).
-//
-#define PGC_BURST_SIZE 32
-
-static byte pgc_burst[PGC_BURST_SIZE];
-static int pgc_burst_len = 0;
-
-//
-// PGC_BurstFlush
-// Write the pending burst to the command ring: wait until there is
-// room for the whole burst, store the bytes, then advance the write
-// pointer in a single write. If the PGC stops consuming for too
-// long it is considered stuck: this is logged with as much context
-// as possible and the game aborts, so the log shows exactly where
-// the card wedged.
-//
-static void PGC_BurstFlush(void)
-{
-    int wr;
-    int len;
-    int i;
-
-    if (pgc_fatal)
-        return;
-
-    len = pgc_burst_len;
-    pgc_burst_len = 0;
-    if (len == 0)
-        return;
-
-    wr = PGC_IN_WR;
-
-    // The ring has room for len more bytes unless IN_WR + len would
-    // wrap around onto IN_RD.
-    while (((wr + len) & 0xFF) == PGC_IN_RD)
-    {
-
-    }
-
-    for (i = 0; i < len; i++)
-        pgc_base[(wr + i) & 0xFF] = pgc_burst[i];
-    PGC_IN_WR = (byte)((wr + len) & 0xFF);
-}
-
-//
-// PGC_WriteByte
-// Append one byte to the burst buffer; a full burst is written to
-// the ring immediately.
+// below IN_WR. The byte is stored at the current IN_WR, then IN_WR
+// is advanced in a single atomic write; x86 stores are globally
+// ordered, so the 8088 either sees the old IN_WR (byte not visible)
+// or the new one (byte in place).
 //
 static void PGC_WriteByte(byte b)
 {
+    byte wr;
+    byte rd;
+
     if (pgc_fatal)
         return;
 
-    pgc_burst[pgc_burst_len++] = b;
-    if (pgc_burst_len == PGC_BURST_SIZE)
-        PGC_BurstFlush();
+    wr = PGC_IN_WR;
+    rd = PGC_IN_RD;
+
+    // Wait until there is room: full when IN_WR + 1 wraps onto
+    // IN_RD.
+    while ((byte)(wr + 1) == rd)
+        rd = PGC_IN_RD;
+
+    pgc_base[wr] = b;
+    PGC_IN_WR = (byte)(wr + 1);
     pgc_bytes_total++;
 }
 
@@ -284,10 +243,6 @@ static void PGC_FlushOutput(void)
     int n;
     int i;
 
-    // Make sure all pending command bytes reached the card before
-    // looking for a response.
-    PGC_BurstFlush();
-
     n = PGC_ReadOutput(buf, 64);
     if (n == 0)
         return;
@@ -317,10 +272,6 @@ static void PGC_FlushOutput(void)
 //
 static void PGC_WaitOutput(void)
 {
-    // Make sure all pending command bytes reached the card before
-    // waiting for the response to the last one.
-    PGC_BurstFlush();
-
     while (PGC_OUT_RD == PGC_OUT_WR)
     {
     }
@@ -335,9 +286,6 @@ static void PGC_FlushErrors(void)
     byte buf[64];
     int n;
     int i;
-
-    // Make sure all pending command bytes reached the card first.
-    PGC_BurstFlush();
 
     n = 0;
     while (PGC_ERR_RD != PGC_ERR_WR && n < 64)
@@ -517,7 +465,6 @@ void PGC_ShutdownGraphics(void)
     I_Printf("PGC: switching back to CGA emulation display (DI 1)\n");
     PGC_WriteAscii("CA\n");
     PGC_WriteAscii("DI 1\n");
-    PGC_BurstFlush();
 }
 
 //
@@ -632,9 +579,6 @@ void I_FinishUpdate(void)
             return;
     }
 
-    // Flush the burst before logging so the ring pointers below
-    // are the real ones.
-    PGC_BurstFlush();
     pgc_curline = -1;
     I_Printf("PGC: frame ");
     PGC_LogInt((int)pgc_frames);
