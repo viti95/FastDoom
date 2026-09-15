@@ -28,7 +28,11 @@
 //   messages, full screen), like I_FinishUpdateDifferential386,
 //   and a shadow copy of the backbuffer lets it skip unchanged
 //   lines entirely and upload only the changed segments of the
-//   rest, as partial line IMAGEW commands.
+//   rest, as partial line IMAGEW commands. Each command is pushed
+//   to the ring in bulk (PGC_WriteBuf): the staged command bytes
+//   are written with a single IN_WR advance per chunk of at most
+//   255 bytes, so the slow 0xC6000 page is touched once per byte
+//   instead of four times.
 //
 //   Note on logging: I_Printf from i_debug.c prints every numeric
 //   argument as a fixed point value ("123.0000"), so plain integers
@@ -213,13 +217,53 @@ static void PGC_WriteByte(byte b)
 }
 
 //
-// PGC_WriteWord
-// Write a 16 bit value, least significant byte first.
+// PGC_WriteBuf
+// Write a whole buffer into the host to PGC command ring. Unlike
+// PGC_WriteByte, IN_WR and IN_RD are only read once per chunk and
+// IN_WR is advanced once per chunk, which cuts the number of
+// accesses to the slow 0xC6000 page from 4x to about 1x the byte
+// count.
 //
-static void PGC_WriteWord(unsigned short v)
+// Protocol safe for the same reason as PGC_WriteByte: the 8088
+// only ever reads ring bytes with an index below IN_WR, and x86
+// stores are globally ordered, so the 8088 only sees the advanced
+// IN_WR after every chunk byte is in place. If the chunk crosses
+// the end of the 256 byte ring it is split; the ring being full
+// waits for the PGC to consume bytes, as in PGC_WriteByte.
+//
+static void PGC_WriteBuf(byte *buf, int len)
 {
-    PGC_WriteByte((byte)(v & 0xFF));
-    PGC_WriteByte((byte)(v >> 8));
+    while (len > 0)
+    {
+        int wr = PGC_IN_WR;
+        int rd = PGC_IN_RD;
+        int avail = (rd - wr - 1) & 0xFF;
+        int n;
+        int i;
+
+        if (pgc_fatal)
+            return;
+
+        // avail is 0 when the ring is full (IN_WR one ahead of
+        // IN_RD), 255 when empty. Wait for the PGC to consume.
+        if (avail == 0)
+            continue;
+
+        n = (len < avail) ? len : avail;
+
+        // The chunk may not cross the end of the 0xC6000-0xC60FF
+        // ring buffer; the remainder goes in the next iteration.
+        if (wr + n > 256)
+            n = 256 - wr;
+
+        for (i = 0; i < n; i++)
+            pgc_base[wr + i] = buf[i];
+
+        PGC_IN_WR = (byte)(wr + n);
+        pgc_bytes_total += n;
+        buf += n;
+        len -= n;
+    }
 }
 
 //
@@ -356,15 +400,26 @@ static void PGC_FlushErrors(void)
 // eventually compute an out of range row address, killing the
 // PGC processor.
 //
+// Staging area for one IMAGEW command. Worst case is a full 640
+// pixel line without runs: 5 literal blocks of 128 pixels (645
+// bytes) plus the 7 byte header.
+static byte pgc_rangebuf[704];
+
 static void PGC_WriteRange(byte *line, int screenrow, int col1, int col2)
 {
     int x = col1;
     int end = col2 + 1;
+    int p = 0;
+    int row = SCREENHEIGHT - 1 - screenrow;
 
-    PGC_WriteByte(PGC_CMD_IMAGEW);
-    PGC_WriteWord((unsigned short)(SCREENHEIGHT - 1 - screenrow));
-    PGC_WriteWord((unsigned short)col1);
-    PGC_WriteWord((unsigned short)col2);
+    // Header: D9 row(2) col1(2) col2(2), little endian.
+    pgc_rangebuf[p++] = PGC_CMD_IMAGEW;
+    pgc_rangebuf[p++] = (byte)(row & 0xFF);
+    pgc_rangebuf[p++] = (byte)(row >> 8);
+    pgc_rangebuf[p++] = (byte)(col1 & 0xFF);
+    pgc_rangebuf[p++] = (byte)(col1 >> 8);
+    pgc_rangebuf[p++] = (byte)(col2 & 0xFF);
+    pgc_rangebuf[p++] = (byte)(col2 >> 8);
 
     while (x < end)
     {
@@ -379,8 +434,8 @@ static void PGC_WriteRange(byte *line, int screenrow, int col1, int col2)
                    line[x] == line[x + count])
                 count++;
 
-            PGC_WriteByte((byte)(count - 1));
-            PGC_WriteByte(line[x]);
+            pgc_rangebuf[p++] = (byte)(count - 1);
+            pgc_rangebuf[p++] = line[x];
             x += count;
         }
         else
@@ -391,19 +446,21 @@ static void PGC_WriteRange(byte *line, int screenrow, int col1, int col2)
 
             while (count < 128 && x + count < end)
             {
-                int p = x + count;
+                int q = x + count;
 
-                if (p + 2 < end &&
-                    line[p] == line[p + 1] && line[p + 1] == line[p + 2])
+                if (q + 2 < end &&
+                    line[q] == line[q + 1] && line[q + 1] == line[q + 2])
                     break;
                 count++;
             }
 
-            PGC_WriteByte((byte)(0x7F + count));
+            pgc_rangebuf[p++] = (byte)(0x7F + count);
             while (count--)
-                PGC_WriteByte(line[x++]);
+                pgc_rangebuf[p++] = line[x++];
         }
     }
+
+    PGC_WriteBuf(pgc_rangebuf, p);
 }
 
 //
@@ -730,6 +787,11 @@ void I_FinishUpdate(void)
     }
 
     pgc_curline = -1;
+
+#if (DEBUG_ENABLED == 1)
+    // The frame log is only formatted when a debug output sink is
+    // configured (see i_debug.h); otherwise the string formatting
+    // would cost CPU every frame for output that goes nowhere.
     I_Printf("PGC: frame ");
     PGC_LogInt((int)pgc_frames);
     I_Printf(" done, ");
@@ -737,6 +799,7 @@ void I_FinishUpdate(void)
     PGC_LogInt((long)pgc_bytes_total);
     I_Printf(" bytes");
     I_Printf("\n");
+#endif
 
     // Keep the PGC output and error rings drained so the card
     // can never block on a full ring buffer.
