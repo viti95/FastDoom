@@ -23,10 +23,12 @@
 //   The game is rendered into the main memory backbuffer (see
 //   USE_BACKBUFFER) and the changed scanlines are uploaded to the
 //   PGC with run length compressed IMAGEW commands in
-//   I_FinishUpdate. A shadow copy of the backbuffer lets
-//   I_FinishUpdate skip unchanged lines entirely and upload only
-//   the changed segments of the rest, as partial line IMAGEW
-//   commands.
+//   I_FinishUpdate. I_FinishUpdate only scans the screen areas
+//   the renderer marked dirty in updatestate (view, status bar,
+//   messages, full screen), like I_FinishUpdateDifferential386,
+//   and a shadow copy of the backbuffer lets it skip unchanged
+//   lines entirely and upload only the changed segments of the
+//   rest, as partial line IMAGEW commands.
 //
 //   Note on logging: I_Printf from i_debug.c prints every numeric
 //   argument as a fixed point value ("123.0000"), so plain integers
@@ -656,23 +658,15 @@ static void PGC_DiagLine(byte *line, int frame, int y, int firstdiff)
 }
 
 //
-// I_FinishUpdate
-// Upload the scanlines of the backbuffer that changed since the
-// last frame to the PGC framebuffer.
+// PGC_UploadRegion
+// Differential upload of the backbuffer lines in [first, last)
+// (line numbers) to the PGC.
 //
-void I_FinishUpdate(void)
+static void PGC_UploadRegion(int first, int last)
 {
     int y;
 
-    if (!pgc_present || pgc_fatal)
-        return;
-
-    if (updatestate == I_NOUPDATE)
-        return;
-
-    pgc_frames++;
-
-    for (y = 0; y < SCREENHEIGHT; y++)
+    for (y = first; y < last; y++)
     {
         byte *line = backbuffer + (unsigned int)y * SCREENWIDTH;
 
@@ -681,6 +675,58 @@ void I_FinishUpdate(void)
         PGC_UploadLine(line, pgc_shadow + (unsigned int)y * SCREENWIDTH, y);
         if (pgc_fatal)
             return;
+    }
+}
+
+//
+// I_FinishUpdate
+// Upload the scanlines of the backbuffer that changed since the
+// last frame to the PGC framebuffer. Only the areas the renderer
+// marked dirty in updatestate are scanned, exactly like
+// I_FinishUpdateDifferential386: a flagged area is diffed against
+// the shadow line by line, so flagging costs no card traffic for
+// the pixels that did not actually change.
+//
+void I_FinishUpdate(void)
+{
+    if (!pgc_present || pgc_fatal)
+        return;
+
+    if (updatestate == I_NOUPDATE)
+        return;
+
+    pgc_frames++;
+
+    if (updatestate & I_FULLSCRN)
+    {
+        PGC_UploadRegion(0, SCREENHEIGHT);
+        updatestate = I_NOUPDATE; // clear out all draw types
+    }
+    if (updatestate & I_FULLVIEW)
+    {
+        if (updatestate & I_MESSAGES && screenblocks > 7)
+        {
+            // The view starts at the top of the screen and the
+            // messages overlap it: upload both in one sweep.
+            PGC_UploadRegion(0, endscreen / SCREENWIDTH);
+            updatestate &= ~(I_FULLVIEW | I_MESSAGES);
+        }
+        else
+        {
+            PGC_UploadRegion(startscreen / SCREENWIDTH, endscreen / SCREENWIDTH);
+            updatestate &= ~I_FULLVIEW;
+        }
+    }
+    if (updatestate & I_STATBAR)
+    {
+        PGC_UploadRegion(SCREENHEIGHT - SBARHEIGHT, SCREENHEIGHT);
+        updatestate &= ~I_STATBAR;
+    }
+    if (updatestate & I_MESSAGES)
+    {
+        // 14 message lines times the 2x vertical scaling.
+        PGC_UploadRegion(0, 28);
+        updatestate &= ~I_MESSAGES;
     }
 
     pgc_curline = -1;
