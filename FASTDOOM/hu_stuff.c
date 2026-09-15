@@ -106,7 +106,7 @@ void HU_Start(void)
 
     // [JN] Create the FPS widget
     HUlib_initTextLine(&w_fps,
-                       SCREENWIDTH - 24, HU_MSGY,
+                       SCALED_SCREENWIDTH - 24, HU_MSGY,
                        hu_font,
                        HU_FONTSTART);
 
