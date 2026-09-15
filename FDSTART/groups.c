@@ -81,7 +81,8 @@ static const item_t text_items[] = {
 /* Specials */
 static const item_t other_items[] = {
     { "Plantronics ColorPlus 320x200 16 colors", "FDOOMPCP.EXE" },
-    { "Sigma Color 400 320x200 16 colors",       "FDOOM400.EXE" }
+    { "Sigma Color 400 320x200 16 colors",       "FDOOM400.EXE" },
+    { "IBM PGC 640x480 256 colors",              "FDOOMPGC.EXE" }
 };
 
 const group_t groups[NGROUPS] = {
