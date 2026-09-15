@@ -12,6 +12,7 @@
 #endif
 #endif // DEBUG_ENABLED
 
+void I_Puts(char *str);
 void I_Printf(const char *format, ...);
 void I_Clear();
 void I_DebugInit();
