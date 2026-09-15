@@ -22,7 +22,11 @@
 //
 //   The game is rendered into the main memory backbuffer (see
 //   USE_BACKBUFFER) and the changed scanlines are uploaded to the
-//   PGC with run length compressed IMAGEW commands in I_FinishUpdate.
+//   PGC with run length compressed IMAGEW commands in
+//   I_FinishUpdate. A shadow copy of the backbuffer lets
+//   I_FinishUpdate skip unchanged lines entirely and upload only
+//   the changed segments of the rest, as partial line IMAGEW
+//   commands.
 //
 //   Note on logging: I_Printf from i_debug.c prints every numeric
 //   argument as a fixed point value ("123.0000"), so plain integers
@@ -93,6 +97,17 @@ static byte pgc_fatal = 0;
 // 4 bit quantized palettes, one packed entry per colour (14 palettes).
 // Packed as a 16 bit value: r4 in bits 8-11, g4 in 4-7, b4 in 0-3.
 static unsigned short pgc_palette[14 * 256];
+
+// Shadow copy of the backbuffer: what the PGC framebuffer currently
+// holds. I_FinishUpdate diffs the backbuffer against this and only
+// uploads what changed.
+static byte pgc_shadow[SCREENWIDTH * SCREENHEIGHT];
+
+// Unchanged gap of this many words (pixels / 2) between two changed
+// areas on a line is resent with the surrounding segment instead of
+// ending it: a new IMAGEW costs 7 header bytes plus at least 2 RLE
+// bytes, so retransmitting up to 8 gap pixels is cheaper.
+#define PGC_MERGE_GAP 4
 
 // Context for the stall watchdog and the frame logging
 static unsigned int pgc_frames = 0;
@@ -315,56 +330,143 @@ static void PGC_FlushErrors(void)
 }
 
 //
-// PGC_WriteLine
-// Upload one screen scanline as a Hex mode IMAGEW command:
+// PGC_WriteRange
+// Upload one pixel range of a screen scanline as a Hex mode IMAGEW
+// command:
 //   D9 row(2) col1(2) col2(2) data...
 // Row 0 is the bottom line of the screen, so screen rows are
 // flipped (verified on the real card: sending them unflipped shows
-// the picture upside down).
+// the picture upside down). col1/col2 select a sub range of the
+// line; the card plots exactly those columns.
 // The data is RLE compressed. The encoding follows the reference
 // implementation (PGCBMP) byte for byte:
 //
 //   [n][x]  n < 0x80   : n+1 copies of pixel x. Emitted only when
-//                        3+ pixels are equal, at most 128 per block.
+//                        3+ pixels are equal, at most 128 per block
+//                        (a longer run becomes several blocks).
 //                        A run of 1-2 pixels is a literal instead.
 //   [n][...] n >= 0x80 : n-0x7F literal pixels follow (1..128,
-//                        header 0xFF = 128 literals).
+//                        header 0xFF = 128 literals). A literal
+//                        block stops just before a 3-pixel run.
 //
 // Getting either header wrong desynchronizes the firmware RLE
 // decoder, which then eats following data as garbage and can
 // eventually compute an out of range row address, killing the
-// PGC processor. This function has been verified host-side against
-// the PGCBMP algorithm and a spec decoder (100k random lines,
-// byte identical output, exact 640 pixel round trip).
+// PGC processor.
 //
-static void PGC_WriteLine(byte *line, int screenrow)
+static void PGC_WriteRange(byte *line, int screenrow, int col1, int col2)
 {
-    int x = 0;
+    int x = col1;
+    int end = col2 + 1;
 
     PGC_WriteByte(PGC_CMD_IMAGEW);
     PGC_WriteWord((unsigned short)(SCREENHEIGHT - 1 - screenrow));
-    PGC_WriteWord(0);
-    PGC_WriteWord((unsigned short)(SCREENWIDTH - 1));
+    PGC_WriteWord((unsigned short)col1);
+    PGC_WriteWord((unsigned short)col2);
+
+    while (x < end)
+    {
+        if (x + 2 < end &&
+            line[x] == line[x + 1] && line[x + 1] == line[x + 2])
+        {
+            // Repeat block: n < 0x80, n+1 copies of one pixel,
+            // max 128 per block.
+            int count = 1;
+
+            while (count < 128 && x + count < end &&
+                   line[x] == line[x + count])
+                count++;
+
+            PGC_WriteByte((byte)(count - 1));
+            PGC_WriteByte(line[x]);
+            x += count;
+        }
+        else
+        {
+            // Literal block: header = 0x7F + count, count 1..128.
+            // Stop before the next 3-pixel run starts, like PGCBMP.
+            int count = 1;
+
+            while (count < 128 && x + count < end)
+            {
+                int p = x + count;
+
+                if (p + 2 < end &&
+                    line[p] == line[p + 1] && line[p + 1] == line[p + 2])
+                    break;
+                count++;
+            }
+
+            PGC_WriteByte((byte)(0x7F + count));
+            while (count--)
+                PGC_WriteByte(line[x++]);
+        }
+    }
+}
+
+//
+// PGC_UploadLine
+// Diff one backbuffer line against its shadow copy and upload the
+// changed parts. x always stays word aligned, so the comparison is
+// a 16 bit compare; the PGC side does not care about pixel parity.
+// Changed words are grouped into segments: an unchanged gap of up
+// to PGC_MERGE_GAP words inside a segment is resent with its
+// surroundings, a longer gap splits the segment.
+//
+static void PGC_UploadLine(byte *src, byte *shadow, int screenrow)
+{
+    int x = 0;
 
     while (x < SCREENWIDTH)
     {
-        // Literal block: header = 0x7F + count, count 1..128.
-        // Stop before the next 3-pixel run starts, like PGCBMP.
-        int count = 1;
+        int segstart;
+        int segend;
 
-        while (count < 128 && x + count < SCREENWIDTH)
+        // Skip unchanged pixels.
+        while (x < SCREENWIDTH &&
+               *(unsigned short *)(src + x) == *(unsigned short *)(shadow + x))
+            x += 2;
+        if (x >= SCREENWIDTH)
+            return;
+
+        segstart = x & ~1;
+
+        // Grow the segment over changed words, absorbing small gaps.
+        for (;;)
         {
-            int p = x + count;
+            int gap;
 
-            if (p + 2 < SCREENWIDTH &&
-                line[p] == line[p + 1] && line[p + 1] == line[p + 2])
+            while (x < SCREENWIDTH &&
+                   *(unsigned short *)(src + x) != *(unsigned short *)(shadow + x))
+                x += 2;
+            segend = x;
+            if (x >= SCREENWIDTH)
                 break;
-            count++;
+
+            // Measure the unchanged gap, but only up to the merge
+            // limit: beyond that the segment is closed here and the
+            // outer skip loop walks the rest of the gap.
+            gap = 0;
+            while (gap < PGC_MERGE_GAP &&
+                   x + gap * 2 < SCREENWIDTH &&
+                   *(unsigned short *)(src + x + gap * 2) ==
+                   *(unsigned short *)(shadow + x + gap * 2))
+                gap++;
+            if (gap == PGC_MERGE_GAP)
+                break;
+
+            // A changed word lies within the merge limit: absorb the
+            // gap and keep growing, or the gap ran to the end of the
+            // line and the segment is done.
+            x += gap * 2;
+            if (x >= SCREENWIDTH)
+                break;
         }
 
-        PGC_WriteByte((byte)(0x7F + count));
-        while (count--)
-            PGC_WriteByte(line[x++]);
+        PGC_WriteRange(src, screenrow, segstart, segend - 1);
+        memcpy(shadow + segstart, src + segstart, segend - segstart);
+        if (pgc_fatal)
+            return;
     }
 }
 
@@ -436,8 +538,11 @@ void PGC_InitGraphics(void)
 
     // The demo screens never clear the backbuffer themselves and
     // nothing on the PGC path does either, so start from a known
-    // clean slate to keep the first frame deterministic.
+    // clean slate to keep the first frame deterministic. The shadow
+    // copy must agree with what the card holds (black) from the
+    // start, or the first frame reuploads the whole screen.
     memset(backbuffer, 0, SCREENWIDTH * SCREENHEIGHT);
+    memcpy(pgc_shadow, backbuffer, SCREENWIDTH * SCREENHEIGHT);
 
     // Log both buffer addresses: the PGC shared RAM sits at C6000
     // and on this class of machine the DPMI linear mapping (or the
@@ -570,11 +675,10 @@ void I_FinishUpdate(void)
     for (y = 0; y < SCREENHEIGHT; y++)
     {
         byte *line = backbuffer + (unsigned int)y * SCREENWIDTH;
-        int i;
 
         pgc_curline = y;
 
-        PGC_WriteLine(line, y);
+        PGC_UploadLine(line, pgc_shadow + (unsigned int)y * SCREENWIDTH, y);
         if (pgc_fatal)
             return;
     }
