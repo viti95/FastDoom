@@ -42,7 +42,7 @@ Doom port for DOS, based on PCDoom by @nukeykt. The goal of this port is to make
 * Added mono sound support
 * Replaced DOS/4GW with DOS/32A providing a good speedup!
 * New setup program (FDSetup 2.0, fully open source toolchain)
-* New video modes (Mode 13h, MDA, CGA, EGA, Hercules, Text modes, VESA 2.0, Plantronics Colorplus, Sigma Color 400, Hercules InColor)
+* New video modes (Mode 13h, MDA, CGA, EGA, Hercules, Text modes, VESA 2.0, Plantronics Colorplus, Sigma Color 400, Hercules InColor, IBM Professional Graphics Controller)
 * HiRes VESA video modes support (up to 1600x1200)
 * Advanced benchmark support
 * Uncapped FPS mode support (frame interpolation, more than 35 fps)

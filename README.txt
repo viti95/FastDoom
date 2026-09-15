@@ -70,7 +70,8 @@
  
  CPU: Any x86 processor that supports 32 bit i386 instruction set
  Video cards: MDA, Hercules, CGA, EGA, VGA, Plantronics ColorPlus
-              Sigma Color 400, Hercules InColor, SVGA (VBE)
+              Sigma Color 400, Hercules InColor, SVGA (VBE),
+              IBM PGC
  Sound cards: Sound Blaster, PC Speaker, Disney Sound Source,
               Gravis Ultrasound, Pro Audio Spectrum, COVOX LPT DAC,
               Creative Music System, Tandy 3-voice, OPL2LPT,
@@ -81,7 +82,7 @@
               PCM music (through sound card), Ensoniq Soundscape
               Serial MIDI, DreamBlaster S2P, Roland MT-32,
               Roland SC-55, Yamaha MU80, Yamaha TG300,
-              IBM PC Music Feature
+              IBM PC Music Feature, ESS ESFM
 
  Executables
  -----------
@@ -142,6 +143,7 @@
  * FDM1200D.EXE => FastDoom VESA 1600x1200 direct rendering mode
  * FDMVT100.EXE => FastDoom VT100 terminal output mode (serial port,
                    display only)
+ * FDOOMPGC.EXE => FastDoom IBM PGC 640x480 256 colors
  * FDSTART.EXE  => Text mode launcher, pick any FastDoom executable
                    or FDSETUP from an on-screen menu, run benchmarks
  * FDSETUP.EXE  => Utility to setup controls and sound cards
