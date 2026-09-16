@@ -34,10 +34,6 @@
 //   255 bytes, so the slow 0xC6000 page is touched once per byte
 //   instead of four times.
 //
-//   Note on logging: I_Printf from i_debug.c prints every numeric
-//   argument as a fixed point value ("123.0000"), so plain integers
-//   are logged through PGC_LogInt instead.
-//
 
 #include <string.h>
 #include <dos.h>
@@ -55,7 +51,6 @@
 #include "doomstat.h"
 #include "m_menu.h"
 #include "i_gamma.h"
-#include "i_debug.h"
 #include "z_zone.h"
 #include "i_pgc.h"
 
@@ -115,72 +110,6 @@ static byte pgc_shadow[SCREENWIDTH * SCREENHEIGHT];
 // bytes, so retransmitting up to 8 gap pixels is cheaper.
 #define PGC_MERGE_GAP 4
 
-// Context for the stall watchdog and the frame logging
-static unsigned int pgc_frames = 0;
-static int pgc_curline = -1;
-
-// Total bytes sent to the command ring, for the frame log.
-static unsigned long pgc_bytes_total = 0;
-
-//
-// PGC_LogInt
-// Print a plain decimal integer. I_Printf would render it as a
-// fixed point value ("123.0000"), which is confusing in the log.
-//
-static void PGC_LogInt(long v)
-{
-    char buf[16];
-    char *p = buf + 15;
-    unsigned long u;
-
-    *p = 0;
-    u = (v < 0 ? (unsigned long)(-v) : (unsigned long)v);
-    do
-    {
-        *--p = (char)('0' + (u % 10));
-        u /= 10;
-    } while (u);
-    if (v < 0)
-        *--p = '-';
-    I_Puts(p);
-}
-
-//
-// PGC_LogHex8
-// Print an 8 bit value in hex (2 digits), for ring pointers.
-//
-static void PGC_LogHex8(long v)
-{
-    char buf[3];
-    int i;
-
-    for (i = 1; i >= 0; i--)
-    {
-        int n = (int)((v >> (i * 4)) & 0x0F);
-        buf[i] = (char)(n < 10 ? '0' + n : 'a' + n - 10);
-    }
-    buf[2] = 0;
-    I_Puts(buf);
-}
-
-//
-// PGC_LogHex32
-// Print a 32 bit value in hex (8 digits), for memory addresses.
-//
-static void PGC_LogHex32(long v)
-{
-    char buf[9];
-    int i;
-
-    for (i = 7; i >= 0; i--)
-    {
-        int n = (int)((v >> (i * 4)) & 0x0F);
-        buf[7 - i] = (char)(n < 10 ? '0' + n : 'a' + n - 10);
-    }
-    buf[8] = 0;
-    I_Puts(buf);
-}
-
 //
 // PGC_WriteByte
 // Write one byte directly into the host to PGC command ring at
@@ -213,7 +142,6 @@ static void PGC_WriteByte(byte b)
 
     pgc_base[wr] = b;
     PGC_IN_WR = (byte)(wr + 1);
-    pgc_bytes_total++;
 }
 
 //
@@ -260,7 +188,6 @@ static void PGC_WriteBuf(byte *buf, int len)
             pgc_base[wr + i] = buf[i];
 
         PGC_IN_WR = (byte)(wr + n);
-        pgc_bytes_total += n;
         buf += n;
         len -= n;
     }
@@ -278,53 +205,14 @@ static void PGC_WriteAscii(const char *s)
 }
 
 //
-// PGC_ReadOutput
-// Read up to max pending bytes from the PGC output ring buffer.
-//
-static int PGC_ReadOutput(byte *buf, int max)
-{
-    int n = 0;
-
-    while (PGC_OUT_RD != PGC_OUT_WR && n < max)
-    {
-        buf[n] = pgc_base[0x100 + PGC_OUT_RD];
-        PGC_OUT_RD = (byte)((PGC_OUT_RD + 1) & 0xFF);
-        n++;
-    }
-    return n;
-}
-
-//
 // PGC_FlushOutput
-// Drain the PGC output ring buffer and log whatever it contained.
+// Drain the PGC output ring buffer so the card can never block on
+// a full ring.
 //
 static void PGC_FlushOutput(void)
 {
-    byte buf[64];
-    int n;
-    int i;
-
-    n = PGC_ReadOutput(buf, 64);
-    if (n == 0)
-        return;
-
-    // Printable bytes are shown as characters so the 8088's ASCII
-    // messages can be read directly from the log; the rest as hex.
-    I_Printf("PGC: output buffer: ");
-    for (i = 0; i < n; i++)
-    {
-        if (buf[i] >= 0x20 && buf[i] < 0x7F)
-        {
-            char c[2];
-
-            c[0] = (char)buf[i];
-            c[1] = 0;
-            I_Puts(c);
-        }
-        else
-            PGC_LogHex8((int)buf[i]);
-    }
-    I_Printf("\n");
+    while (PGC_OUT_RD != PGC_OUT_WR)
+        PGC_OUT_RD = (byte)((PGC_OUT_RD + 1) & 0xFF);
 }
 
 //
@@ -340,39 +228,13 @@ static void PGC_WaitOutput(void)
 
 //
 // PGC_FlushErrors
-// Read any pending bytes from the PGC error ring buffer and log them.
+// Drain the PGC error ring buffer so the card can never block on a
+// full ring.
 //
 static void PGC_FlushErrors(void)
 {
-    byte buf[64];
-    int n;
-    int i;
-
-    n = 0;
-    while (PGC_ERR_RD != PGC_ERR_WR && n < 64)
-    {
-        buf[n] = pgc_base[0x200 + PGC_ERR_RD];
+    while (PGC_ERR_RD != PGC_ERR_WR)
         PGC_ERR_RD = (byte)((PGC_ERR_RD + 1) & 0xFF);
-        n++;
-    }
-    if (n == 0)
-        return;
-
-    I_Printf("PGC: error buffer: ");
-    for (i = 0; i < n; i++)
-    {
-        if (buf[i] >= 0x20 && buf[i] < 0x7F)
-        {
-            char c[2];
-
-            c[0] = (char)buf[i];
-            c[1] = 0;
-            I_Puts(c);
-        }
-        else
-            PGC_LogHex8((int)buf[i]);
-    }
-    I_Printf("\n");
 }
 
 //
@@ -539,8 +401,6 @@ static boolean PGC_Detect(void)
 {
     byte saved;
 
-    I_Printf("PGC: presence test at C6000:00\n");
-
     saved = PGC_TEST_BYTE;
     PGC_TEST_BYTE = 0x5A;
     if (PGC_TEST_BYTE != 0x5A)
@@ -564,27 +424,17 @@ static boolean PGC_Detect(void)
 void PGC_InitGraphics(void)
 {
     if (!PGC_Detect())
-    {
-        I_Printf("PGC: no Professional Graphics Controller detected at C6000:00\n");
         I_Error(10);
-    }
+
     pgc_present = 1;
 
-    I_Printf("PGC: detected, firmware version ");
-    PGC_LogInt((int)PGC_FW_VER_HI);
-    I_Printf(".");
-    PGC_LogInt((int)PGC_FW_VER_LO);
-    I_Printf("\n");
-
-    I_Printf("PGC: switching to native 640x480 display (DI 0)\n");
+    // Switch to the native 640x480 display and hex command mode.
     PGC_WriteAscii("DI 0\n");
-
-    I_Printf("PGC: switching to hex command mode (CX)\n");
     PGC_WriteAscii("CX\n");
     PGC_FlushOutput();
     PGC_FlushErrors();
 
-    I_Printf("PGC: clearing framebuffer to black\n");
+    // Clear the framebuffer to black.
     PGC_WriteByte(PGC_CMD_CLEARS);
     PGC_WriteByte(0);
 
@@ -602,18 +452,6 @@ void PGC_InitGraphics(void)
     // start, or the first frame reuploads the whole screen.
     memset(backbuffer, 0, SCREENWIDTH * SCREENHEIGHT);
     memcpy(pgc_shadow, backbuffer, SCREENWIDTH * SCREENHEIGHT);
-
-    // Log both buffer addresses: the PGC shared RAM sits at C6000
-    // and on this class of machine the DPMI linear mapping (or the
-    // 640k A20 wraparound) can alias other memory onto it. If
-    // either buffer below has a 640k wrap class near 0x6000-0x6FFF
-    // (i.e. addr & 0x3FFFF in that range), part of it is the PGC
-    // RAM itself and host writes to it hit the card.
-    I_Printf("PGC: backbuffer at 0x");
-    PGC_LogHex32((long)&backbuffer[0]);
-    I_Printf("\n");
-
-    I_Printf("PGC: init done, waiting for the first frame\n");
 }
 
 //
@@ -626,7 +464,6 @@ void PGC_ShutdownGraphics(void)
     if (!pgc_present || pgc_fatal)
         return;
 
-    I_Printf("PGC: switching back to CGA emulation display (DI 1)\n");
     PGC_WriteAscii("CA\n");
     PGC_WriteAscii("DI 1\n");
 }
@@ -668,16 +505,7 @@ void I_SetPalette(int numpalette)
         return;
 
     if (numpalette < 0 || numpalette > 13)
-    {
-        I_Printf("PGC: invalid palette number ");
-        PGC_LogInt(numpalette);
-        I_Printf("\n");
         return;
-    }
-
-    I_Printf("PGC: loading palette ");
-    PGC_LogInt(numpalette);
-    I_Printf(" into the card (256 LUTs)\n");
 
     pal = &pgc_palette[numpalette * 256];
     for (i = 0; i < 256; i++)
@@ -695,26 +523,6 @@ void I_SetPalette(int numpalette)
 }
 
 //
-// PGC_DiagLine
-// Log a compact description of how a dirty backbuffer line differs
-// from its shadow copy: how many bytes changed and the first few
-// old->new values. Used to figure out what is actually changing on
-// a screen that should be static.
-//
-static void PGC_DiagLine(byte *line, int frame, int y, int firstdiff)
-{
-    int shown = 0;
-    int i;
-
-    I_Printf("PGC: DIAG f");
-    PGC_LogInt(frame);
-    I_Printf(" l");
-    PGC_LogInt(y);
-    I_Printf(" p=");
-    PGC_LogInt(firstdiff);
-}
-
-//
 // PGC_UploadRegion
 // Differential upload of the backbuffer lines in [first, last)
 // (line numbers) to the PGC.
@@ -725,11 +533,8 @@ static void PGC_UploadRegion(int first, int last)
 
     for (y = first; y < last; y++)
     {
-        byte *line = backbuffer + (unsigned int)y * SCREENWIDTH;
-
-        pgc_curline = y;
-
-        PGC_UploadLine(line, pgc_shadow + (unsigned int)y * SCREENWIDTH, y);
+        PGC_UploadLine(backbuffer + (unsigned int)y * SCREENWIDTH,
+                       pgc_shadow + (unsigned int)y * SCREENWIDTH, y);
         if (pgc_fatal)
             return;
     }
@@ -751,8 +556,6 @@ void I_FinishUpdate(void)
 
     if (updatestate == I_NOUPDATE)
         return;
-
-    pgc_frames++;
 
     if (updatestate & I_FULLSCRN)
     {
@@ -785,21 +588,6 @@ void I_FinishUpdate(void)
         PGC_UploadRegion(0, 28);
         updatestate &= ~I_MESSAGES;
     }
-
-    pgc_curline = -1;
-
-#if (DEBUG_ENABLED == 1)
-    // The frame log is only formatted when a debug output sink is
-    // configured (see i_debug.h); otherwise the string formatting
-    // would cost CPU every frame for output that goes nowhere.
-    I_Printf("PGC: frame ");
-    PGC_LogInt((int)pgc_frames);
-    I_Printf(" done, ");
-    I_Printf("total ");
-    PGC_LogInt((long)pgc_bytes_total);
-    I_Printf(" bytes");
-    I_Printf("\n");
-#endif
 
     // Keep the PGC output and error rings drained so the card
     // can never block on a full ring buffer.
