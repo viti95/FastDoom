@@ -36,22 +36,14 @@
 //
 
 #include <string.h>
-#include <dos.h>
-#include <conio.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
 
 #include "doomtype.h"
 #include "i_ibm.h"
 #include "v_video.h"
-#include "tables.h"
-#include "math.h"
 #include "i_system.h"
 #include "doomstat.h"
 #include "m_menu.h"
 #include "i_gamma.h"
-#include "z_zone.h"
 #include "i_pgc.h"
 
 #if defined(MODE_PGC)
@@ -83,17 +75,13 @@ static volatile byte *pgc_base = (volatile byte *)PGC_BASE;
 #define PGC_ERR_WR (pgc_base[0x304])
 #define PGC_ERR_RD (pgc_base[0x305])
 #define PGC_TEST_BYTE (pgc_base[0x3DB])
-#define PGC_FW_VER_HI (pgc_base[0x3F8])
-#define PGC_FW_VER_LO (pgc_base[0x3F9])
 
 // Hex command bytes
 #define PGC_CMD_IMAGEW 0xD9
 #define PGC_CMD_LUT 0xEE
-#define PGC_CMD_LUTRD 0x50
 #define PGC_CMD_CLEARS 0x0F
 
 static byte pgc_present = 0;
-static byte pgc_fatal = 0;
 
 // 4 bit quantized palettes, one packed entry per colour (14 palettes).
 // Packed as a 16 bit value: r4 in bits 8-11, g4 in 4-7, b4 in 0-3.
@@ -128,9 +116,6 @@ static void PGC_WriteByte(byte b)
 {
     byte wr;
     byte rd;
-
-    if (pgc_fatal)
-        return;
 
     wr = PGC_IN_WR;
     rd = PGC_IN_RD;
@@ -168,9 +153,6 @@ static void PGC_WriteBuf(byte *buf, int len)
         int avail = (rd - wr - 1) & 0xFF;
         int n;
         int i;
-
-        if (pgc_fatal)
-            return;
 
         // avail is 0 when the ring is full (IN_WR one ahead of
         // IN_RD), 255 when empty. Wait for the PGC to consume.
@@ -213,17 +195,6 @@ static void PGC_FlushOutput(void)
 {
     while (PGC_OUT_RD != PGC_OUT_WR)
         PGC_OUT_RD = (byte)((PGC_OUT_RD + 1) & 0xFF);
-}
-
-//
-// PGC_WaitOutput
-// Wait until the PGC puts something in the output ring buffer.
-//
-static void PGC_WaitOutput(void)
-{
-    while (PGC_OUT_RD == PGC_OUT_WR)
-    {
-    }
 }
 
 //
@@ -386,8 +357,6 @@ static void PGC_UploadLine(byte *src, byte *shadow, int screenrow)
 
         PGC_WriteRange(src, screenrow, segstart, segend - 1);
         memcpy(shadow + segstart, src + segstart, segend - segstart);
-        if (pgc_fatal)
-            return;
     }
 }
 
@@ -461,7 +430,7 @@ void PGC_InitGraphics(void)
 //
 void PGC_ShutdownGraphics(void)
 {
-    if (!pgc_present || pgc_fatal)
+    if (!pgc_present)
         return;
 
     PGC_WriteAscii("CA\n");
@@ -501,7 +470,7 @@ void I_SetPalette(int numpalette)
     int i;
     unsigned short *pal;
 
-    if (!pgc_present || pgc_fatal)
+    if (!pgc_present)
         return;
 
     if (numpalette < 0 || numpalette > 13)
@@ -515,8 +484,6 @@ void I_SetPalette(int numpalette)
         PGC_WriteByte((byte)((pal[i] >> 8) & 0x0F));
         PGC_WriteByte((byte)((pal[i] >> 4) & 0x0F));
         PGC_WriteByte((byte)(pal[i] & 0x0F));
-        if (pgc_fatal)
-            return;
     }
 
     PGC_FlushErrors();
@@ -535,8 +502,6 @@ static void PGC_UploadRegion(int first, int last)
     {
         PGC_UploadLine(backbuffer + (unsigned int)y * SCREENWIDTH,
                        pgc_shadow + (unsigned int)y * SCREENWIDTH, y);
-        if (pgc_fatal)
-            return;
     }
 }
 
@@ -551,7 +516,7 @@ static void PGC_UploadRegion(int first, int last)
 //
 void I_FinishUpdate(void)
 {
-    if (!pgc_present || pgc_fatal)
+    if (!pgc_present)
         return;
 
     if (updatestate == I_NOUPDATE)
