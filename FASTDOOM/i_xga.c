@@ -145,6 +145,18 @@ extern byte *pcscreen;
 #define XGA_MERGE_GAP		256
 
 //
+// Palette scaling
+//
+// The XGA palette data register is eight bits wide per channel and the
+// card uses the top six bits, so a six bit gamma value (0-63) is
+// expanded to the full eight bit range by replicating its top two bits
+// into the low two. This is effectively what id Software's XGA DOOM
+// does (its gamma table is already eight bit, 0-255). Writing the six
+// bit value raw would cap the brightest color at 63/255 and look very
+// dark.
+#define XGA_PAL8(v)	((byte)((((v) & 0x3F) << 2) | (((v) & 0x3F) >> 4)))
+
+//
 // State
 //
 
@@ -160,7 +172,8 @@ static int xga_cur_page = -1;
 // uploads what changed.
 static byte xga_shadow[SCREENWIDTH * SCREENHEIGHT];
 
-// XGA palettes: 14 palettes, 256 entries of three six bit channels.
+// XGA palettes: 14 palettes, 256 entries of three eight bit channels
+// (six bit gamma values expanded to the full range, see XGA_PAL8).
 static byte xga_palette[14 * 256 * 3];
 
 // Force a full screen upload on the very first frame so any content
@@ -448,9 +461,9 @@ static int XGA_TestAperture(void)
 
 //
 // I_ProcessPalette
-// Takes the whole PLAYPAL lump (14 palettes, 256 entries, RGB). The XGA
-// palette is six bits per channel, so each entry is the gamma table
-// value written directly (no shift, unlike the 8514/A's top six bits).
+// Takes the whole PLAYPAL lump (14 palettes, 256 entries, RGB). Each
+// entry is the six bit gamma table value expanded to the full eight bit
+// range the XGA palette register uses (top six bits of the byte).
 //
 void I_ProcessPalette(byte *palette)
 {
@@ -459,9 +472,9 @@ void I_ProcessPalette(byte *palette)
 
     for (i = 0; i < 14 * 256; i++, palette += 3)
     {
-        xga_palette[i * 3] = (byte)ptr[*(palette)];
-        xga_palette[i * 3 + 1] = (byte)ptr[*(palette + 1)];
-        xga_palette[i * 3 + 2] = (byte)ptr[*(palette + 2)];
+        xga_palette[i * 3] = XGA_PAL8(ptr[*(palette)]);
+        xga_palette[i * 3 + 1] = XGA_PAL8(ptr[*(palette + 1)]);
+        xga_palette[i * 3 + 2] = XGA_PAL8(ptr[*(palette + 2)]);
     }
 }
 
