@@ -65,7 +65,7 @@ int viewwindowx;
 int viewwindowy;
 #endif
 
-#if defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_PGC)
+#if defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_PGC) || defined(MODE_XGA)
 int endscreen;
 int startscreen;
 #endif
@@ -2880,7 +2880,7 @@ void R_InitBuffer(int width, int height)
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     viewwindowx = (SCREENWIDTH - width) >> 1;
 
-#if defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_PGC)
+#if defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_PGC) || defined(MODE_XGA)
     startscreen = MulScreenWidth(viewwindowy) + viewwindowx;
 #endif
 #endif
@@ -2897,7 +2897,7 @@ void R_InitBuffer(int width, int height)
     {
         viewwindowy = 0;
 
-#if defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_PGC)
+#if defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_PGC) || defined(MODE_XGA)
         startscreen = viewwindowx;
         endscreen = MulScreenWidth(viewheight);
 #endif
@@ -2906,7 +2906,7 @@ void R_InitBuffer(int width, int height)
     {
         viewwindowy = (SCREENHEIGHT - SBARHEIGHT - height) >> 1;
 
-#if defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_PGC)
+#if defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_PGC) || defined(MODE_XGA)
         startscreen = MulScreenWidth(viewwindowy) + viewwindowx;
         endscreen = MulScreenWidth(viewwindowy + viewheight);
 #endif

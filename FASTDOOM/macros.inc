@@ -84,3 +84,7 @@
 %ifdef MODE_PGC
 %define USE_BACKBUFFER
 %endif
+
+%ifdef MODE_XGA
+%define USE_BACKBUFFER
+%endif

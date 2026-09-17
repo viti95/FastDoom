@@ -200,7 +200,7 @@ extern int viewwidthlimit;
 extern int automapheight;
 extern int scaledviewwidth;
 
-#if defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_PGC)
+#if defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_PGC) || defined(MODE_XGA)
 extern int endscreen;
 extern int startscreen;
 #endif

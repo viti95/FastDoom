@@ -5,7 +5,7 @@
 #define SUPPORTS_HERCULES_AUTOMAP
 #endif
 
-#if defined(MODE_13H) || defined(MODE_CGA_BW) || defined(MODE_CGA16) || defined(MODE_CGA) || defined(MODE_CVB) || defined(MODE_HERC) || defined(MODE_INCOLOR) || defined(MODE_PCP) || defined(MODE_VBE2) || defined(MODE_EGA) || defined(MODE_CGA_AFH) || defined(MODE_CGA512) || defined(MODE_SIGMA) || defined(MODE_PGC)
+#if defined(MODE_13H) || defined(MODE_CGA_BW) || defined(MODE_CGA16) || defined(MODE_CGA) || defined(MODE_CVB) || defined(MODE_HERC) || defined(MODE_INCOLOR) || defined(MODE_PCP) || defined(MODE_VBE2) || defined(MODE_EGA) || defined(MODE_CGA_AFH) || defined(MODE_CGA512) || defined(MODE_SIGMA) || defined(MODE_PGC) || defined(MODE_XGA)
 #define USE_BACKBUFFER
 #endif
 
@@ -79,6 +79,8 @@
 #define FD_MODE_NAME "Sigma Color 400 320x200 16 colors"
 #elif defined(MODE_PGC)
 #define FD_MODE_NAME "IBM PGC 640x480 256 colors"
+#elif defined(MODE_XGA)
+#define FD_MODE_NAME "IBM XGA 640x480 256 colors"
 #else
 #define FD_MODE_NAME "Unknown"
 #endif

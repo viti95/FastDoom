@@ -973,7 +973,7 @@ void R_ExecuteSetViewSize(void)
     }
 #endif
 
-#if defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_PGC)
+#if defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_PGC) || defined(MODE_XGA)
     endscreen = MulScreenWidth(viewwindowy + viewheight);
 #endif
 
