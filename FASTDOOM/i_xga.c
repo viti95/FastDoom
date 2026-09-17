@@ -29,13 +29,23 @@
  *     control / clock / border registers (50-55, 70) and the palette
  *     (60-66).
  *
- *   In extended graphics mode the card maps a 64K window of its VRAM
- *   into system address space at A0000 (aperture control = 1). The
- *   window is paged by the aperture index register (21x8), 64K pages.
- *   The 640x480x8 framebuffer is 307200 bytes, so it spans pages 0-4.
- *   I_FinishUpdate walks the dirty scanlines, switches the aperture
- *   page as needed and memcpys the changed segments straight through
- *   A0000, differential against a shadow copy like the PGC driver.
+ *   In extended graphics mode the card exposes its VRAM through one of
+ *   two apertures, chosen at init from the POS registers:
+ *
+ *   - The 1MB/4MB linear window (aperture control = 0). The whole VRAM
+ *     is mapped at a fixed base for the whole frame, so the upload is a
+ *     plain memcpy with no page switching. This is the fast path and is
+ *     preferred whenever the POS registers report it is present.
+ *
+ *   - The 64K window (aperture control = 1), mapped at A0000 and paged
+ *     by the aperture index register (21x8) in 64K steps. The
+ *     640x480x8 framebuffer is 307200 bytes, so it spans pages 0-4.
+ *     Used as a fallback when no linear window is available (or the
+ *     linear one proves unreachable at init).
+ *
+ *   I_FinishUpdate walks the dirty scanlines and memcpys the changed
+ *   segments straight through the active aperture, differential against
+ *   a shadow copy like the PGC driver.
  *
  *   The card is found by scanning the MCA POS records (INT 15h C4h)
  *   for the XGA product id (0x8FD8-0x8FDB). The 256 color palette is
@@ -45,9 +55,9 @@
  *
  *   The register sequence for the mode follows the IBM XGA Software
  *   Programmer's Guide (11.1.1) and matches the working driver from
- *   id Software's XGA DOOM, except the 64K A0000 aperture is used for
- *   the upload (instead of id's coprocessor virtual memory aperture)
- *   and the display runs 1:1 at 640x480 (no 2x scaling).
+ *   id Software's XGA DOOM, except a system aperture is used for the
+ *   upload (instead of id's coprocessor virtual memory aperture) and
+ *   the display runs 1:1 at 640x480 (no 2x scaling).
  */
 
 #include <string.h>
@@ -163,6 +173,16 @@ extern byte *pcscreen;
 static int xga_active = 0;
 static int xga_io_base = 0;
 static int xga_instance = 0;
+
+// Base address of the video memory aperture in use: the banked 64K
+// window at A0000, or the 1MB/4MB linear window when the POS registers
+// report one is present (the whole framebuffer is then mapped at once,
+// so the upload needs no aperture index switching and is faster).
+static int xga_aperture_base;
+
+// 1 when the linear 1MB/4MB aperture is active, 0 for the banked 64K
+// window at A0000.
+static int xga_linear_aperture;
 
 // Current 64K aperture page (avoid redundant 21x8 writes).
 static int xga_cur_page = -1;
@@ -302,15 +322,79 @@ static int XGA_Detect(void)
 
         if (pos_id >= XGA_POS_ID_MIN && pos_id <= XGA_POS_ID_MAX)
         {
+            int pos_reg4;
+            int pos_reg5;
+            unsigned int base_1mb;
+            unsigned int base_4mb;
+
             xga_instance = (pos_reg2 >> 1) & 7;
             xga_io_base = 0x2100 + xga_instance * 0x10;
+
+            // Decode the POS registers to find the linear video memory
+            // apertures (sections 7 and 11.2 of the XGA guide). The 1MB
+            // base is POS register 5 bits 0-3 times 1MB, the 4MB base
+            // is POS register 4 times 4MB plus the instance offset.
+            // 86Box computes exactly these values, so picking the
+            // aperture from them keeps us consistent with the emulator's
+            // memory mapping. Prefer the 1MB window over the 4MB one to
+            // mirror the emulator's own priority, and fall back to the
+            // banked 64K window when neither linear aperture is present.
+            pos_reg4 = inp((unsigned short)(pos_base + 4));
+            pos_reg5 = inp((unsigned short)(pos_base + 5));
+            base_1mb = (unsigned int)(pos_reg5 & 0x0F) << 20;
+            base_4mb = ((unsigned int)(pos_reg4 & 0xFE) << 24)
+                       + ((unsigned int)xga_instance << 22);
+
+            // The 4MB aperture is only live when the VE bit (bit 0 of POS
+            // register 4) is set; otherwise the base field is meaningless
+            // and the aperture must not be used (guide section 5.2.5).
+            if ((pos_reg4 & 0x01) == 0)
+                base_4mb = 0;
+
+            I_Puts("XGA: POS reg4=");
+            XGA_LogHex(pos_reg4, 2);
+            I_Puts(" reg5=");
+            XGA_LogHex(pos_reg5, 2);
+            I_Puts(" 1mb=0x");
+            XGA_LogHex(base_1mb, 8);
+            I_Puts(" 4mb=0x");
+            XGA_LogHex(base_4mb, 8);
+            I_Puts("\n");
+
+            if (base_1mb != 0)
+            {
+                xga_aperture_base = (int)base_1mb;
+                xga_linear_aperture = 1;
+            }
+            else if (base_4mb != 0)
+            {
+                xga_aperture_base = (int)base_4mb;
+                xga_linear_aperture = 1;
+            }
+            else
+            {
+                xga_aperture_base = XGA_VRAM_ADDR;
+                xga_linear_aperture = 0;
+            }
+
             I_Printf("XGA: found in MCA slot ");
             XGA_LogInt(slot);
             I_Printf(", instance ");
             XGA_LogInt(xga_instance);
             I_Printf(", I/O base 0x");
             XGA_LogHex(xga_io_base, 4);
-            I_Puts("\n");
+            if (xga_linear_aperture)
+            {
+                I_Puts(", linear aperture at 0x");
+                XGA_LogHex(xga_aperture_base, 8);
+                I_Puts("\n");
+            }
+            else
+            {
+                I_Printf(", 64K aperture at 0x");
+                XGA_LogHex(XGA_VRAM_ADDR, 6);
+                I_Puts("\n");
+            }
             return 1;
         }
     }
@@ -326,10 +410,11 @@ static int XGA_Detect(void)
 //
 // XGA_SetMode
 // Program the card for 640x480x256 extended graphics, 1:1, with the
-// 64K A0000 aperture enabled for the framebuffer upload. The sequence
-// is the 11.1.1 mode table from the IBM XGA Software Programmer's
-// Guide (matching id's XGA DOOM driver), with aperture control set to
-// A0000 and the display control 2 left at 03h (no 2x scaling).
+// chosen video memory aperture enabled for the framebuffer upload (the
+// 1MB/4MB linear window when available, otherwise the banked 64K window
+// at A0000). The sequence is the 11.1.1 mode table from the IBM XGA
+// Software Programmer's Guide (matching id's XGA DOOM driver), with the
+// display control 2 left at 03h (no 2x scaling).
 //
 static void XGA_SetMode(void)
 {
@@ -338,14 +423,24 @@ static void XGA_SetMode(void)
     XGA_WriteDCR(XGA_DCR_INT_STAT, 0xFF);
     XGA_WriteReg(XGA_IDX_PAL_MASK, 0x00);
 
-    // Extended graphics mode, 64K aperture at A0000, page 0, no
-    // coprocessor VM, 8 bit pixels.
+    // Extended graphics mode. Aperture control 0 disables the 64K window
+    // and enables the 1MB/4MB linear window (whole framebuffer mapped at
+    // once, so no aperture index switching on upload); 1 selects the
+    // banked 64K window at A0000. The aperture index must be zero for the
+    // linear window. No coprocessor VM, 8 bit pixels.
     XGA_WriteDCR(XGA_DCR_OPER_MODE, XGA_MODE_EXT_GRAPH);
-    XGA_WriteDCR(XGA_DCR_APER_CTRL, XGA_APER_A0000);
+    XGA_WriteDCR(XGA_DCR_APER_CTRL,
+                 xga_linear_aperture ? XGA_APER_NONE : XGA_APER_A0000);
     XGA_WriteDCR(XGA_DCR_APER_IDX, 0x00);
     XGA_WriteDCR(XGA_DCR_VM_CTRL, 0x00);
     XGA_WriteDCR(XGA_DCR_MEM_ACCESS, XGA_ACCESS_8BIT);
     xga_cur_page = 0;
+
+    I_Puts("XGA: SetMode aper_ctrl=");
+    XGA_LogInt(xga_linear_aperture ? 0 : 1);
+    I_Puts(" base=0x");
+    XGA_LogHex(xga_aperture_base, 8);
+    I_Puts("\n");
 
     // Reset the CRTC (display control 1: prepare for reset, then reset).
     XGA_WriteReg(XGA_IDX_DISPCNTL_1, 0x01);
@@ -407,13 +502,21 @@ static void XGA_SetMode(void)
 
 //
 // XGA_ClearVRAM
-// Fill the whole framebuffer (and the rest of the pages it spans) with
-// pixel 0, paging the 64K window through the aperture index.
+// Fill the whole framebuffer (and the rest of the 64K pages it spans)
+// with pixel 0, paging the banked window through the aperture index.
+// The linear window maps the whole framebuffer at once, so it is a
+// single memset.
 //
 static void XGA_ClearVRAM(void)
 {
-    byte *vram = (byte *)XGA_VRAM_ADDR;
+    byte *vram = (byte *)xga_aperture_base;
     int page;
+
+    if (xga_linear_aperture)
+    {
+        memset(vram, 0, XGA_FB_SIZE);
+        return;
+    }
 
     for (page = 0; page < XGA_NUM_PAGES; page++)
     {
@@ -424,20 +527,32 @@ static void XGA_ClearVRAM(void)
 }
 
 //
-// Sanity check the aperture: write a pattern through the last page and
-// read it back. Catches a card that is not actually routing A0000 to
-// VRAM (e.g. wrong instance or the aperture left disabled).
+// Sanity check the aperture: write a pattern near the end of the
+// framebuffer and read it back. Catches a card that is not actually
+// routing the aperture to VRAM (e.g. wrong instance or the aperture
+// left disabled). For the linear window that location is simply the top
+// of the mapped VRAM; for the banked 64K window the aperture index is
+// switched to the last page the framebuffer spans.
 //
 static int XGA_TestAperture(void)
 {
-    byte *vram = (byte *)XGA_VRAM_ADDR;
-    int last_page = XGA_NUM_PAGES - 1;
-    int offset = (XGA_FB_SIZE - 1) & (XGA_PAGE_SIZE - 1);
+    byte *vram = (byte *)xga_aperture_base;
+    int offset;
     int i;
     byte pattern = 0xA5;
 
-    XGA_WriteDCR(XGA_DCR_APER_IDX, last_page);
-    xga_cur_page = last_page;
+    if (xga_linear_aperture)
+    {
+        offset = XGA_FB_SIZE - 8;
+    }
+    else
+    {
+        int last_page = XGA_NUM_PAGES - 1;
+
+        XGA_WriteDCR(XGA_DCR_APER_IDX, last_page);
+        xga_cur_page = last_page;
+        offset = (XGA_FB_SIZE - 1) & (XGA_PAGE_SIZE - 1);
+    }
 
     for (i = 0; i < 16; i++)
         vram[offset - 8 + i] = (byte)(pattern ^ (i & 1));
@@ -446,12 +561,15 @@ static int XGA_TestAperture(void)
     {
         if (vram[offset - 8 + i] != (byte)(pattern ^ (i & 1)))
         {
-            I_Printf("XGA: aperture readback failed at page ");
-            XGA_LogInt(last_page);
+            I_Printf("XGA: aperture readback failed at offset 0x");
+            XGA_LogHex(offset, 6);
             I_Puts("\n");
             return 0;
         }
     }
+    I_Puts("XGA: aperture test ok at offset 0x");
+    XGA_LogHex(offset, 6);
+    I_Puts("\n");
     return 1;
 }
 
@@ -528,24 +646,30 @@ static void XGA_SetPage(int page)
 
 //
 // XGA_UploadRange
-// Copy one pixel run of a screen scanline (backbuffer to VRAM) through
-// the 64K aperture, switching pages if the run sits in a different one.
+// Copy one pixel run of a screen scanline (backbuffer to VRAM). The
+// linear window maps the whole framebuffer at once, so this is a direct
+// memcpy; the banked 64K window switches the aperture index to the page
+// that holds the run.
 //
 static void XGA_UploadRange(int row, int col1, int col2)
 {
-    byte *vram = (byte *)XGA_VRAM_ADDR;
+    byte *vram = (byte *)xga_aperture_base;
     unsigned int vram_off;
-    int page;
-    unsigned int off_in_page;
     int len;
 
     vram_off = (unsigned int)row * SCREENWIDTH + col1;
-    page = (int)(vram_off >> XGA_PAGE_SHIFT);
-    off_in_page = vram_off & (XGA_PAGE_SIZE - 1);
     len = col2 - col1 + 1;
 
-    XGA_SetPage(page);
-    memcpy(vram + off_in_page, backbuffer + vram_off, len);
+    if (xga_linear_aperture)
+    {
+        memcpy(vram + vram_off, backbuffer + vram_off, len);
+    }
+    else
+    {
+        XGA_SetPage((int)(vram_off >> XGA_PAGE_SHIFT));
+        memcpy(vram + (vram_off & (XGA_PAGE_SIZE - 1)),
+               backbuffer + vram_off, len);
+    }
 }
 
 //
@@ -626,6 +750,56 @@ static void XGA_UploadRegion(int first, int last)
 }
 
 //
+// XGA_VerifyLinearAperture
+// Confirm the linear 1MB/4MB window is really wired to XGA VRAM. A plain
+// read-back is not enough: if the card (or the emulator) has not actually
+// mapped the window, a write lands in ordinary system memory and still
+// reads back fine, which would silently send the framebuffer to the wrong
+// place. So write a marker through the linear window and read that same
+// VRAM location back through the 64K A0000 window, which is known to map
+// VRAM. If the marker does not round-trip, the linear window is not
+// usable and the caller falls back to the 64K window. On success the
+// aperture is left on the linear window again.
+//
+static int XGA_VerifyLinearAperture(void)
+{
+    byte *lin = (byte *)xga_aperture_base;
+    byte *win = (byte *)XGA_VRAM_ADDR;
+    int i;
+    byte marker = 0x5A;
+
+    // The linear window maps VRAM starting at its base, so base + 0x100
+    // is VRAM byte 0x100, which the 64K window reaches at A0000 + 0x100
+    // (aperture index 0, i.e. page 0).
+    for (i = 0; i < 8; i++)
+        lin[0x100 + i] = (byte)(marker ^ i);
+
+    // Read the same VRAM bytes back through the 64K window.
+    XGA_WriteDCR(XGA_DCR_APER_CTRL, XGA_APER_A0000);
+    XGA_WriteDCR(XGA_DCR_APER_IDX, 0);
+    xga_cur_page = 0;
+
+    I_Puts("XGA: verify wrote ");
+    XGA_LogHex(lin[0x100], 2);
+    I_Puts(" readback ");
+    XGA_LogHex(win[0x100], 2);
+
+    for (i = 0; i < 8; i++)
+    {
+        if (win[0x100 + i] != (byte)(marker ^ i))
+        {
+            I_Puts(" (MISMATCH)\n");
+            return 0;
+        }
+    }
+    I_Puts(" (ok)\n");
+
+    // It round-tripped: switch back to the linear window.
+    XGA_WriteDCR(XGA_DCR_APER_CTRL, XGA_APER_NONE);
+    return 1;
+}
+
+//
 // I_InitGraphics
 //
 void XGA_InitGraphics(void)
@@ -635,16 +809,37 @@ void XGA_InitGraphics(void)
         I_Error(10);
     }
 
+    // Program the card for the preferred aperture, then make sure VRAM is
+    // actually reachable through it. The linear 1MB/4MB window is the fast
+    // path but is only usable if the card really exposes it, so verify it
+    // against the 64K window and fall back to the banked 64K window (which
+    // always works) when the linear one is not wired up.
     XGA_SetMode();
+    if (xga_linear_aperture && !XGA_VerifyLinearAperture())
+    {
+        I_Puts("XGA: linear aperture not usable, falling back to 64K window\n");
+        xga_linear_aperture = 0;
+        xga_aperture_base = XGA_VRAM_ADDR;
+        XGA_SetMode();
+    }
 
     if (!XGA_TestAperture())
     {
         I_Error(10);
     }
 
-    I_Printf("XGA: 640x480x256 extended graphics, 64K aperture at 0x");
-    XGA_LogHex(XGA_VRAM_ADDR, 6);
-    I_Puts("\n");
+    if (xga_linear_aperture)
+    {
+        I_Printf("XGA: 640x480x256 extended graphics, linear aperture at 0x");
+        XGA_LogHex(xga_aperture_base, 8);
+        I_Puts("\n");
+    }
+    else
+    {
+        I_Printf("XGA: 640x480x256 extended graphics, 64K aperture at 0x");
+        XGA_LogHex(XGA_VRAM_ADDR, 6);
+        I_Puts("\n");
+    }
 
     // The host has no framebuffer of its own, point pcscreen at the
     // backbuffer so any code touching it does not crash.
@@ -671,9 +866,8 @@ void XGA_ShutdownGraphics(void)
     if (!xga_active)
         return;
 
-    // Release the aperture and blank before dropping out of extended
-    // graphics so the host VGA memory hole is not aliased to VRAM.
-    XGA_WriteDCR(XGA_DCR_APER_CTRL, XGA_APER_NONE);
+    // Silence interrupts and blank the palette before dropping out of
+    // extended graphics so nothing flickers.
     XGA_WriteDCR(XGA_DCR_INT_ENA, 0x00);
     XGA_WriteDCR(XGA_DCR_INT_STAT, 0xFF);
 
@@ -685,7 +879,14 @@ void XGA_ShutdownGraphics(void)
     XGA_WriteReg(XGA_IDX_XTRN_CLK, 0x00);
     XGA_WriteReg(XGA_IDX_VSYNC_END, 0x20);
 
+    // Switch the operating mode back to VGA first, and only then release
+    // the aperture. The aperture control write is what triggers the card
+    // (and the emulator) to re-evaluate its memory mapping, so doing it
+    // with the operating mode already in VGA tears down the
+    // extended-graphics aperture (64K banked or 1MB/4MB linear) and
+    // restores the normal A0000 VGA window.
     XGA_WriteDCR(XGA_DCR_OPER_MODE, XGA_MODE_VGA);
+    XGA_WriteDCR(XGA_DCR_APER_CTRL, XGA_APER_NONE);
 
     xga_active = 0;
 }
@@ -708,7 +909,26 @@ void I_FinishUpdate(void)
 
     if (xga_firstframe)
     {
+        int cchk;
+        byte *vram = (byte *)xga_aperture_base;
+
         XGA_UploadRegion(0, SCREENHEIGHT);
+
+        // Prove the upload actually landed in the VRAM the CRTC is
+        // reading: sample the backbuffer centre and the matching VRAM
+        // byte a moment later. If these differ the linear window is not
+        // the memory the display is scanning out.
+        cchk = (SCREENHEIGHT / 2) * SCREENWIDTH + (SCREENWIDTH / 2);
+        I_Puts("XGA: 1st frame center bb=");
+        XGA_LogHex(backbuffer[cchk], 2);
+        I_Puts(" vram=");
+        XGA_LogHex(vram[cchk], 2);
+        I_Puts(" corner bb=");
+        XGA_LogHex(backbuffer[3], 2);
+        I_Puts(" vram=");
+        XGA_LogHex(vram[3], 2);
+        I_Puts("\n");
+
         xga_firstframe = 0;
         updatestate = I_NOUPDATE;
         return;
