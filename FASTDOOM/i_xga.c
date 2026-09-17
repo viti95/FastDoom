@@ -148,12 +148,6 @@ extern byte *pcscreen;
 #define XGA_POS_ID_MIN		0x8FD8
 #define XGA_POS_ID_MAX		0x8FDB
 
-// Unchanged gap of this many pixels between two changed areas on a
-// line is resent with the surrounding segment instead of ending it:
-// a fresh 64K page switch or a longer run is more expensive than
-// retransmitting up to one chunk of pixels.
-#define XGA_MERGE_GAP		256
-
 //
 // Palette scaling
 //
@@ -186,11 +180,6 @@ static int xga_linear_aperture;
 
 // Current 64K aperture page (avoid redundant 21x8 writes).
 static int xga_cur_page = -1;
-
-// Shadow copy of the backbuffer: what the card framebuffer currently
-// holds. I_FinishUpdate diffs the backbuffer against this and only
-// uploads what changed.
-static byte xga_shadow[SCREENWIDTH * SCREENHEIGHT];
 
 // XGA palettes: 14 palettes, 256 entries of three eight bit channels
 // (six bit gamma values expanded to the full range, see XGA_PAL8).
@@ -648,8 +637,9 @@ static void XGA_SetPage(int page)
 // XGA_UploadRange
 // Copy one pixel run of a screen scanline (backbuffer to VRAM). The
 // linear window maps the whole framebuffer at once, so this is a direct
-// memcpy; the banked 64K window switches the aperture index to the page
-// that holds the run.
+// memcpy; the banked 64K window only ever holds a single 64K page, so a
+// run that crosses a page boundary is split and each chunk is copied
+// with the aperture index pointed at the page it lands in.
 //
 static void XGA_UploadRange(int row, int col1, int col2)
 {
@@ -666,80 +656,36 @@ static void XGA_UploadRange(int row, int col1, int col2)
     }
     else
     {
-        XGA_SetPage((int)(vram_off >> XGA_PAGE_SHIFT));
-        memcpy(vram + (vram_off & (XGA_PAGE_SIZE - 1)),
-               backbuffer + vram_off, len);
+        while (len > 0)
+        {
+            int page_off = (int)(vram_off & (XGA_PAGE_SIZE - 1));
+            int chunk = XGA_PAGE_SIZE - page_off;
+
+            if (chunk > len)
+                chunk = len;
+
+            XGA_SetPage((int)(vram_off >> XGA_PAGE_SHIFT));
+            memcpy(vram + page_off, backbuffer + vram_off, chunk);
+
+            vram_off += (unsigned int)chunk;
+            len -= chunk;
+        }
     }
 }
 
 //
 // XGA_UploadLine
-// Diff one backbuffer line against its shadow copy and upload the
-// changed parts. x always stays word aligned, so the comparison is a
-// 16 bit compare. Changed words are grouped into segments: an unchanged
-// gap of up to XGA_MERGE_GAP pixels inside a segment is resent with its
-// surroundings, a longer gap splits the segment.
+// Copy one whole backbuffer line to VRAM. No shadow comparison: the
+// full line is always uploaded so no pixel is ever left stale.
 //
 static void XGA_UploadLine(int row)
 {
-    byte *src = backbuffer + (unsigned int)row * SCREENWIDTH;
-    byte *shadow = xga_shadow + (unsigned int)row * SCREENWIDTH;
-    int x = 0;
-
-    while (x < SCREENWIDTH)
-    {
-        int segstart;
-        int segend;
-
-        // Skip unchanged pixels.
-        while (x < SCREENWIDTH &&
-               *(unsigned short *)(src + x) == *(unsigned short *)(shadow + x))
-            x += 2;
-        if (x >= SCREENWIDTH)
-            return;
-
-        segstart = x & ~1;
-
-        // Grow the segment over changed words, absorbing small gaps.
-        for (;;)
-        {
-            int gap;
-
-            while (x < SCREENWIDTH &&
-                   *(unsigned short *)(src + x) != *(unsigned short *)(shadow + x))
-                x += 2;
-            segend = x;
-            if (x >= SCREENWIDTH)
-                break;
-
-            // Measure the unchanged gap, but only up to the merge
-            // limit: beyond that the segment is closed here and the
-            // outer skip loop walks the rest of the gap.
-            gap = 0;
-            while (gap < XGA_MERGE_GAP &&
-                   x + gap < SCREENWIDTH &&
-                   src[x + gap] == shadow[x + gap])
-                gap++;
-            if (gap == XGA_MERGE_GAP)
-                break;
-
-            // A changed pixel lies within the merge limit: absorb the
-            // gap and keep growing, or the gap ran to the end of the
-            // line and the segment is done.
-            x += gap;
-            if (x >= SCREENWIDTH)
-                break;
-        }
-
-        XGA_UploadRange(row, segstart, segend - 1);
-        memcpy(shadow + segstart, src + segstart, segend - segstart);
-    }
+    XGA_UploadRange(row, 0, SCREENWIDTH - 1);
 }
 
 //
 // XGA_UploadRegion
-// Differential upload of the backbuffer lines in [first, last) (line
-// numbers).
+// Upload the backbuffer lines in [first, last) (line numbers).
 //
 static void XGA_UploadRegion(int first, int last)
 {
@@ -847,7 +793,6 @@ void XGA_InitGraphics(void)
 
     XGA_ClearVRAM();
     memset(backbuffer, 0, XGA_FB_SIZE);
-    memcpy(xga_shadow, backbuffer, XGA_FB_SIZE);
 
     xga_active = 1;
     xga_firstframe = 1;
