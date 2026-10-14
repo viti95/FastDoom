@@ -1077,11 +1077,11 @@ void R_ExecuteSetViewSize(void)
 
     switch (pspriteRender)
     {
-    case SPRITE_NORMAL:
+    case PSPRITE_NORMAL:
         pspritefunc = basepspritefunc = R_DrawColumnText4050;
         break;
-    case SPRITE_FLAT:
-    case SPRITE_FLATTER:
+    case PSPRITE_FLAT:
+    case PSPRITE_FLATTER:
         pspritefunc = basepspritefunc = R_DrawColumnText4050Flat;
         break;
     }
