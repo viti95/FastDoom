@@ -77,17 +77,7 @@ int M_CheckParm(char *check)
 
 int M_CheckParmOptional(char *check, int *variable)
 {
-    int i;
-
-    for (i = 1; i < myargc; i++)
-    {
-        if (!strcasecmp(check, myargv[i])){
-            *variable = i;
-            return 1;
-        }
-    }
-
-    return 0;
+    return M_CheckParmOptionalValue(check, variable, 1);
 }
 
 int M_CheckParmOptionalValue(char *check, int *variable, int value)
@@ -107,18 +97,7 @@ int M_CheckParmOptionalValue(char *check, int *variable, int value)
 
 int M_CheckParmDisable(char *check, int *variable)
 {
-    int i;
-
-    for (i = 1; i < myargc; i++)
-    {
-        if (!strcasecmp(check, myargv[i])){
-            *variable = 0;
-            return 1;
-        }
-
-    }
-
-    return 0;
+    return M_CheckParmOptionalValue(check, variable, 0);
 }
 
 void M_AddToBox(fixed_t *box, fixed_t x, fixed_t y)
@@ -216,8 +195,6 @@ extern fixed_t sensitivityTable[10];
 extern int showMessages;
 
 extern int detailLevel;
-
-extern int showMessages;
 
 // machine-independent sound params
 int numChannels;
