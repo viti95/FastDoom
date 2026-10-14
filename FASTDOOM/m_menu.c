@@ -1348,75 +1348,31 @@ static char *const cpunames[] = {
 void M_DrawDisplayItem(int item, int position)
 {
     int y = 12 + position * 16;
+    char *label, *value;
 
     switch (item)
     {
-    case gamma:
-        M_WriteText(58, y, "GAMMA LEVEL:");
-        M_WriteText(214, y, gammamsg);
-        break;
-    case vsync:
-        M_WriteText(58, y, "VSYNC:");
-        M_WriteText(214, y, waitVsync ? "ON" : "OFF");
-        break;
-    case detail:
-        M_WriteText(58, y, "DETAIL LEVEL:");
-        M_WriteText(214, y, detaillevelnames[detailLevel]);
-        break;
-    case visplanes:
-        M_WriteText(58, y, "VISPLANE RENDERING:");
-        M_WriteText(214, y, renderdetailnames[visplaneRender]);
-        break;
-    case columns:
-        M_WriteText(58, y, "WALL RENDERING:");
-        M_WriteText(214, y, renderdetailnames[wallRender]);
-        break;
-    case sprites:
-        M_WriteText(58, y, "SPRITE RENDERING:");
-        M_WriteText(214, y, renderdetailnames[spriteRender]);
-        break;
-    case psprite:
-        M_WriteText(58, y, "PLAYER RENDERING:");
-        M_WriteText(214, y, renderdetailnames[pspriteRender]);
-        break;
-
-    case sky:
-        M_WriteText(58, y, "SKY RENDERING:");
-        M_WriteText(214, y, flatSky ? "FLAT" : "FULL");
-        break;
-    case invisible:
-        M_WriteText(58, y, "INVISIBLE RENDERING:");
-        M_WriteText(214, y, invisiblenames[invisibleRender]);
-        break;
-    case showfps:
-        M_WriteText(58, y, "SHOW FPS:");
-        M_WriteText(214, y, fpsnames[showFPS]);
-        break;
-    case automaprt:
-        M_WriteText(58, y, "AUTOMAP UPDATE:");
-        M_WriteText(214, y, automapRT ? "ON" : "OFF");
-        break;
-    case spriteculling:
-        M_WriteText(58, y, "SPRITE CULLING:");
-        M_WriteText(214, y, nearSprites ? "ON" : "OFF");
-        break;
-    case melting:
-        M_WriteText(58, y, "MELTING LOAD EFFECT:");
-        M_WriteText(214, y, noMelt ? "OFF" : "ON");
-        break;
-    case bus_speed:
-        M_WriteText(58, y, "BUS SPEED:");
-        M_WriteText(214, y, busSpeed ? "SLOW" : "FAST");
-        break;
-    case cpu:
-        M_WriteText(58, y, "CPU RENDERER:");
-        M_WriteText(214, y, selectedCPU < 0 ? "AUTODETECT" : cpunames[selectedCPU]);
-        break;
-    case uncapped_fps:
-        M_WriteText(58, y, "UNCAPPED FPS:");
-        M_WriteText(214, y, uncappedFPS ? "ON" : "OFF");
-        break;
+    case gamma: label = "GAMMA LEVEL:"; value = gammamsg; break;
+    case vsync: label = "VSYNC:"; value = waitVsync ? "ON" : "OFF"; break;
+    case detail: label = "DETAIL LEVEL:"; value = detaillevelnames[detailLevel]; break;
+    case visplanes: label = "VISPLANE RENDERING:"; value = renderdetailnames[visplaneRender]; break;
+    case columns: label = "WALL RENDERING:"; value = renderdetailnames[wallRender]; break;
+    case sprites: label = "SPRITE RENDERING:"; value = renderdetailnames[spriteRender]; break;
+    case psprite: label = "PLAYER RENDERING:"; value = renderdetailnames[pspriteRender]; break;
+    case sky: label = "SKY RENDERING:"; value = flatSky ? "FLAT" : "FULL"; break;
+    case invisible: label = "INVISIBLE RENDERING:"; value = invisiblenames[invisibleRender]; break;
+    case showfps: label = "SHOW FPS:"; value = fpsnames[showFPS]; break;
+    case automaprt: label = "AUTOMAP UPDATE:"; value = automapRT ? "ON" : "OFF"; break;
+    case spriteculling: label = "SPRITE CULLING:"; value = nearSprites ? "ON" : "OFF"; break;
+    case melting: label = "MELTING LOAD EFFECT:"; value = noMelt ? "OFF" : "ON"; break;
+    case bus_speed: label = "BUS SPEED:"; value = busSpeed ? "SLOW" : "FAST"; break;
+    case cpu: label = "CPU RENDERER:"; value = selectedCPU < 0 ? "AUTODETECT" : cpunames[selectedCPU]; break;
+    case uncapped_fps: label = "UNCAPPED FPS:"; value = uncappedFPS ? "ON" : "OFF"; break;
+    default: return;
     }
+
+    M_WriteText(58, y, label);
+    M_WriteText(214, y, value);
 }
 #endif
 
@@ -1442,73 +1398,32 @@ void M_DrawDisplayItem(int item, int position)
     int y = 1 + position * 2;
 #endif
 
-    switch (item)
     {
-    case gamma:
-        V_WriteTextDirect(M_X1, y, "GAMMA LEVEL:");
-        V_WriteTextDirect(M_X2, y, gammamsg);
-        break;
-    case vsync:
-        V_WriteTextDirect(M_X1, y, "VSYNC:");
-        V_WriteTextDirect(M_X2, y, waitVsync ? "ON" : "OFF");
-        break;
-    case detail:
-        V_WriteTextDirect(M_X1, y, "DETAIL LEVEL:");
-        V_WriteTextDirect(M_X2, y, detaillevelnames[detailLevel]);
-        break;
-    case visplanes:
-        V_WriteTextDirect(M_X1, y, "VISPLANE RENDERING:");
-        V_WriteTextDirect(M_X2, y, renderdetailnames[visplaneRender]);
-        break;
-    case columns:
-        V_WriteTextDirect(M_X1, y, "WALL RENDERING:");
-        V_WriteTextDirect(M_X2, y, renderdetailnames[wallRender]);
-        break;
-    case sprites:
-        V_WriteTextDirect(M_X1, y, "SPRITE RENDERING:");
-        V_WriteTextDirect(M_X2, y, renderdetailnames[spriteRender]);
-        break;
-    case psprite:
-        V_WriteTextDirect(M_X1, y, "PLAYER RENDERING:");
-        V_WriteTextDirect(M_X2, y, renderdetailnames[pspriteRender]);
-        break;
+        char *label, *value;
 
-    case sky:
-        V_WriteTextDirect(M_X1, y, "SKY RENDERING:");
-        V_WriteTextDirect(M_X2, y, flatSky ? "FLAT" : "FULL");
-        break;
-    case invisible:
-        V_WriteTextDirect(M_X1, y, "INVISIBLE RENDERING:");
-        V_WriteTextDirect(M_X2, y, invisiblenames[invisibleRender]);
-        break;
-    case showfps:
-        V_WriteTextDirect(M_X1, y, "SHOW FPS:");
-        V_WriteTextDirect(M_X2, y, fpsnames[showFPS]);
-        break;
-    case automaprt:
-        V_WriteTextDirect(M_X1, y, "AUTOMAP UPDATE:");
-        V_WriteTextDirect(M_X2, y, automapRT ? "ON" : "OFF");
-        break;
-    case spriteculling:
-        V_WriteTextDirect(M_X1, y, "SPRITE CULLING:");
-        V_WriteTextDirect(M_X2, y, nearSprites ? "ON" : "OFF");
-        break;
-    case melting:
-        V_WriteTextDirect(M_X1, y, "MELTING LOAD EFFECT:");
-        V_WriteTextDirect(M_X2, y, noMelt ? "OFF" : "ON");
-        break;
-    case bus_speed:
-        V_WriteTextDirect(M_X1, y, "BUS SPEED:");
-        V_WriteTextDirect(M_X2, y, busSpeed ? "SLOW" : "FAST");
-        break;
-    case cpu:
-        V_WriteTextDirect(M_X1, y, "CPU RENDERER:");
-        V_WriteTextDirect(M_X2, y, selectedCPU < 0 ? "AUTODETECT" : cpunames[selectedCPU]);
-        break;
-    case uncapped_fps:
-        V_WriteTextDirect(M_X1, y, "UNCAPPED FPS:");
-        V_WriteTextDirect(M_X2, y, uncappedFPS ? "ON" : "OFF");
-        break;
+        switch (item)
+        {
+        case gamma: label = "GAMMA LEVEL:"; value = gammamsg; break;
+        case vsync: label = "VSYNC:"; value = waitVsync ? "ON" : "OFF"; break;
+        case detail: label = "DETAIL LEVEL:"; value = detaillevelnames[detailLevel]; break;
+        case visplanes: label = "VISPLANE RENDERING:"; value = renderdetailnames[visplaneRender]; break;
+        case columns: label = "WALL RENDERING:"; value = renderdetailnames[wallRender]; break;
+        case sprites: label = "SPRITE RENDERING:"; value = renderdetailnames[spriteRender]; break;
+        case psprite: label = "PLAYER RENDERING:"; value = renderdetailnames[pspriteRender]; break;
+        case sky: label = "SKY RENDERING:"; value = flatSky ? "FLAT" : "FULL"; break;
+        case invisible: label = "INVISIBLE RENDERING:"; value = invisiblenames[invisibleRender]; break;
+        case showfps: label = "SHOW FPS:"; value = fpsnames[showFPS]; break;
+        case automaprt: label = "AUTOMAP UPDATE:"; value = automapRT ? "ON" : "OFF"; break;
+        case spriteculling: label = "SPRITE CULLING:"; value = nearSprites ? "ON" : "OFF"; break;
+        case melting: label = "MELTING LOAD EFFECT:"; value = noMelt ? "OFF" : "ON"; break;
+        case bus_speed: label = "BUS SPEED:"; value = busSpeed ? "SLOW" : "FAST"; break;
+        case cpu: label = "CPU RENDERER:"; value = selectedCPU < 0 ? "AUTODETECT" : cpunames[selectedCPU]; break;
+        case uncapped_fps: label = "UNCAPPED FPS:"; value = uncappedFPS ? "ON" : "OFF"; break;
+        default: return;
+        }
+
+        V_WriteTextDirect(M_X1, y, label);
+        V_WriteTextDirect(M_X2, y, value);
     }
 }
 #endif
