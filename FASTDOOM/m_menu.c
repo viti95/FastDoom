@@ -198,10 +198,7 @@ void M_ChangeMono();
 void M_SizeDisplay(int choice);
 void M_Sound(int choice);
 void M_Display(int choice);
-void M_BenchmarkDemo1(int choice);
-void M_BenchmarkDemo2(int choice);
-void M_BenchmarkDemo3(int choice);
-void M_BenchmarkDemo4(int choice);
+void M_BenchmarkDemo(int choice);
 void M_ReturnToOptions(int choice);
 void M_ChangeBenchmarkType(int choice);
 
@@ -432,10 +429,10 @@ menu_t SoundDef =
 menuitem_t BenchmarkMenu[] =
     {
         {2, "", "", M_ChangeBenchmarkType},
-        {1, "", "DEMO1", M_BenchmarkDemo1},
-        {1, "", "DEMO2", M_BenchmarkDemo2},
-        {1, "", "DEMO3", M_BenchmarkDemo3},
-        {1, "", "DEMO4", M_BenchmarkDemo4}};
+        {1, "", "DEMO1", M_BenchmarkDemo},
+        {1, "", "DEMO2", M_BenchmarkDemo},
+        {1, "", "DEMO3", M_BenchmarkDemo},
+        {1, "", "DEMO4", M_BenchmarkDemo}};
 
 menuitem_t BenchmarkResultMenu[] =
     {
@@ -1117,27 +1114,10 @@ void M_BenchmarkRunDemo(void)
     benchmark_starttic = gametic;
 }
 
-void M_BenchmarkDemo1(int choice)
+void M_BenchmarkDemo(int choice)
 {
-    sprintf(demofile, "demo1");
-    M_BenchmarkRunDemo();
-}
-
-void M_BenchmarkDemo2(int choice)
-{
-    sprintf(demofile, "demo2");
-    M_BenchmarkRunDemo();
-}
-
-void M_BenchmarkDemo3(int choice)
-{
-    sprintf(demofile, "demo3");
-    M_BenchmarkRunDemo();
-}
-
-void M_BenchmarkDemo4(int choice)
-{
-    sprintf(demofile, "demo4");
+    strcpy(demofile, "demo");
+    demofile[4] = '0' + choice; // choice is menu item # (1..4)
     M_BenchmarkRunDemo();
 }
 
