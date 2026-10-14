@@ -93,7 +93,6 @@ int I_ReadTextLineFileCache(char *filename, int line_number, char *buffer, int m
 {
     FILE *f;
 
-    int line = 0;
     int i = 0;
     int c;
 
