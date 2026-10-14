@@ -1058,23 +1058,21 @@ void M_DrawBenchmarkExport(void)
 #endif
 }
 
+//
+// Generic circular step helper for menu options.
+// choice 0 = decrement, choice 1 = increment; wraps around [minval..maxval]
+//
+static void M_ChangeStep(int choice, int *var, int minval, int maxval)
+{
+    *var += choice - !choice;
+
+    if (*var < minval || *var > maxval)
+        *var = choice ? minval : maxval;
+}
+
 void M_ChangeBenchmarkType(int choice)
 {
-    switch (choice)
-    {
-    case 0:
-        benchmark_type--;
-
-        if (benchmark_type == -1)
-            benchmark_type = benchmark_files_num;
-        break;
-    case 1:
-        benchmark_type++;
-
-        if (benchmark_type == benchmark_files_num + 1)
-            benchmark_type = 0;
-        break;
-    }
+    M_ChangeStep(choice, (int *)&benchmark_type, 0, benchmark_files_num);
 
     if (benchmark_type == 0)
     {
@@ -1592,106 +1590,31 @@ void M_ChangeSensitivity(int choice)
 
 void M_ChangeDetail(int choice)
 {
-    switch (choice)
-    {
-    case 0:
-        detailLevel--;
-
-        if (detailLevel == -1)
-            detailLevel = DETAIL_POTATO;
-        break;
-    case 1:
-        detailLevel++;
-
-        if (detailLevel == NUM_DETAIL)
-            detailLevel = DETAIL_HIGH;
-        break;
-    }
-
+    M_ChangeStep(choice, &detailLevel, DETAIL_HIGH, NUM_DETAIL - 1);
     R_SetViewSize(screenblocks, detailLevel);
 }
 
 void M_ChangeVisplaneDetail(int choice)
 {
-    switch (choice)
-    {
-    case 0:
-        visplaneRender--;
-
-        if (visplaneRender == -1)
-            visplaneRender = VISPLANES_FLATTER;
-        break;
-    case 1:
-        visplaneRender++;
-
-        if (visplaneRender == NUM_VISPLANESRENDER)
-            visplaneRender = VISPLANES_NORMAL;
-        break;
-    }
-
+    M_ChangeStep(choice, &visplaneRender, VISPLANES_NORMAL, NUM_VISPLANESRENDER - 1);
     R_SetViewSize(screenblocks, detailLevel);
 }
 
 void M_ChangeWallDetail(int choice)
 {
-    switch (choice)
-    {
-    case 0:
-        wallRender--;
-
-        if (wallRender == -1)
-            wallRender = WALL_FLATTER;
-        break;
-    case 1:
-        wallRender++;
-
-        if (wallRender == NUM_WALLRENDER)
-            wallRender = WALL_NORMAL;
-        break;
-    }
-
+    M_ChangeStep(choice, &wallRender, WALL_NORMAL, NUM_WALLRENDER - 1);
     R_SetViewSize(screenblocks, detailLevel);
 }
 
 void M_ChangeSpriteDetail(int choice)
 {
-    switch (choice)
-    {
-    case 0:
-        spriteRender--;
-
-        if (spriteRender == -1)
-            spriteRender = SPRITE_FLATTER;
-        break;
-    case 1:
-        spriteRender++;
-
-        if (spriteRender == NUM_SPRITERENDER)
-            spriteRender = SPRITE_NORMAL;
-        break;
-    }
-
+    M_ChangeStep(choice, &spriteRender, SPRITE_NORMAL, NUM_SPRITERENDER - 1);
     R_SetViewSize(screenblocks, detailLevel);
 }
 
 void M_ChangePSpriteDetail(int choice)
 {
-    switch (choice)
-    {
-    case 0:
-        pspriteRender--;
-
-        if (pspriteRender == -1)
-            pspriteRender = PSPRITE_FLATTER;
-        break;
-    case 1:
-        pspriteRender++;
-
-        if (pspriteRender == NUM_PSPRITERENDER)
-            pspriteRender = PSPRITE_NORMAL;
-        break;
-    }
-
+    M_ChangeStep(choice, &pspriteRender, PSPRITE_NORMAL, NUM_PSPRITERENDER - 1);
     R_SetViewSize(screenblocks, detailLevel);
 }
 
@@ -1739,22 +1662,7 @@ void M_ChangeSkyDetail(int choice)
 
 void M_ChangeCPU(int choice)
 {
-    switch (choice)
-    {
-    case 0:
-        selectedCPU--;
-
-        if (selectedCPU == -1)
-            selectedCPU = NUM_CPU - 1;
-        break;
-    case 1:
-
-        selectedCPU++;
-
-        if (selectedCPU == NUM_CPU)
-            selectedCPU = AUTO_CPU + 1;
-        break;
-    }
+    M_ChangeStep(choice, &selectedCPU, AUTO_CPU + 1, NUM_CPU - 1);
 
     R_ExecuteSetViewSize();
 #if defined(MODE_13H)
@@ -1764,20 +1672,7 @@ void M_ChangeCPU(int choice)
 
 void M_ChangeInvisibleDetail(int choice)
 {
-    switch (choice)
-    {
-    case 0:
-        invisibleRender--;
-
-        if (invisibleRender == -1)
-            invisibleRender = INVISIBLE_TRANSLUCENT;
-        break;
-    case 1:
-        invisibleRender++;
-
-        if (invisibleRender == NUM_INVISIBLERENDER)
-            invisibleRender = INVISIBLE_NORMAL;
-    }
+    M_ChangeStep(choice, &invisibleRender, INVISIBLE_NORMAL, NUM_INVISIBLERENDER - 1);
 
     if (invisibleRender == INVISIBLE_TRANSLUCENT)
         R_InitTintMap();
@@ -1789,20 +1684,7 @@ void M_ChangeInvisibleDetail(int choice)
 
 void M_ChangeShowFPS(int choice)
 {
-    switch (choice)
-    {
-    case 0:
-        showFPS--;
-
-        if (showFPS == -1)
-            showFPS = SCREEN_DC4D_FPS;
-        break;
-    case 1:
-        showFPS++;
-
-        if (showFPS == NUM_FPS)
-            showFPS = NO_FPS;
-    }
+    M_ChangeStep(choice, &showFPS, NO_FPS, NUM_FPS - 1);
 }
 
 void M_ChangeAutomapRT(int choice)
