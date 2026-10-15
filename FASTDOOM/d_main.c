@@ -890,10 +890,11 @@ void D_DrawTitle(int fc)
 
 }
 
-void D_CheckFileSize(char *filename, long checksize)
+void D_CheckFileSize(char *filename, long checksize1, long checksize2)
 {
     FILE *file = fopen(filename, "rb");
     long size = -1;
+    int selection;
 
     if (file != NULL)
     {
@@ -906,57 +907,30 @@ void D_CheckFileSize(char *filename, long checksize)
         I_Error(11, filename);
     }
 
-    if (checksize != size)
+    if (checksize2)
     {
-        int selection;
-        printf(I_LoadTextProgram(30), filename);
-        printf(I_LoadTextProgram(31), checksize, size);
-        printf(I_LoadTextProgram(33));
-        printf(I_LoadTextProgram(34));
-        fflush(stdout);
-        selection = getch();
-        printf("%c\n", selection);
-        fflush(stdout);
-
-        if (selection == 110 || selection == 27)
-        {
-            I_Error(0);
-        }
-    }
-}
-
-void D_CheckFileSize2(char *filename, long checksize1, long checksize2)
-{
-    FILE *file = fopen(filename, "rb");
-    long size = -1;
-
-    if (file != NULL)
-    {
-        fseek(file, 0, SEEK_END);
-        size = ftell(file);
-        fclose(file);
-    }
-    else
-    {
-        I_Error(11, filename);
-    }
-
-    if (checksize1 != size && checksize2 != size)
-    {
-        int selection;
+        if (checksize1 == size || checksize2 == size)
+            return;
         printf(I_LoadTextProgram(30), filename);
         printf(I_LoadTextProgram(32), checksize1, checksize2, size);
-        printf(I_LoadTextProgram(33));
-        printf(I_LoadTextProgram(34));
-        fflush(stdout);
-        selection = getch();
-        printf("%c\n", selection);
-        fflush(stdout);
+    }
+    else
+    {
+        if (checksize1 == size)
+            return;
+        printf(I_LoadTextProgram(30), filename);
+        printf(I_LoadTextProgram(31), checksize1, size);
+    }
+    printf(I_LoadTextProgram(33));
+    printf(I_LoadTextProgram(34));
+    fflush(stdout);
+    selection = getch();
+    printf("%c\n", selection);
+    fflush(stdout);
 
-        if (selection == 110 || selection == 27)
-        {
-            I_Error(0);
-        }
+    if (selection == 110 || selection == 27)
+    {
+        I_Error(0);
     }
 }
 
@@ -1031,12 +1005,7 @@ void LoadIWAD(int selection)
     strcpy(savegamename, iwads[i].savegamename);
 
     if (iwads[i].size1)
-    {
-        if (iwads[i].size2)
-            D_CheckFileSize2(iwadfile, iwads[i].size1, iwads[i].size2);
-        else
-            D_CheckFileSize(iwadfile, iwads[i].size1);
-    }
+        D_CheckFileSize(iwadfile, iwads[i].size1, iwads[i].size2);
 
     D_AddFile(iwadfile);
 }
