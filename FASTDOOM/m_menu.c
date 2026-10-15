@@ -222,6 +222,7 @@ void M_DrawSave(void);
 
 void M_DrawSaveLoadBorder(int x, int y);
 void M_DrawSaveLoadBorderText(int x, int y);
+void M_DrawSaveLoadList(void);
 void M_DrawThermo(int x, int y, int thermWidth, int thermDot);
 void M_DrawThermoText(int x, int y, int thermWidth, int thermDot);
 void M_WriteText(int x, int y, char *string);
@@ -544,8 +545,6 @@ void M_ReadSaveStrings(void)
 //
 void M_DrawLoad(void)
 {
-    int i;
-
 #if defined(MODE_T4025) || defined(MODE_T4050)
     V_WriteTextDirect(9, 3, "LOAD GAME");
 #endif
@@ -558,6 +557,16 @@ void M_DrawLoad(void)
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     V_DrawPatchDirectCentered(72, 28, W_CacheLumpName("M_LOADG", PU_CACHE));
 #endif
+
+    M_DrawSaveLoadList();
+}
+
+//
+// Draw the list of savegame slots (shared by M_DrawLoad / M_DrawSave)
+//
+void M_DrawSaveLoadList(void)
+{
+    int i;
 
     for (i = 0; i < load_end; i++)
     {
@@ -680,38 +689,7 @@ void M_DrawSave(void)
     V_DrawPatchDirectCentered(72, 28, W_CacheLumpName("M_SAVEG", PU_CACHE));
 #endif
 
-    for (i = 0; i < load_end; i++)
-    {
-#if defined(MODE_T4025) || defined(MODE_T4050)
-        M_DrawSaveLoadBorderText(LoadDef.x / 8, (LoadDef.y + LINEHEIGHT * i) / 8 - 2);
-        V_WriteCharDirect(LoadDef.x / 8 - 1, (LoadDef.y + LINEHEIGHT * i) / 8, '|');
-        V_WriteTextDirect(LoadDef.x / 8, (LoadDef.y + LINEHEIGHT * i) / 8, savegamestrings[i]);
-        V_WriteCharDirect(LoadDef.x / 8 + 24, (LoadDef.y + LINEHEIGHT * i) / 8, '|');
-        M_DrawSaveLoadBorderText(LoadDef.x / 8, (LoadDef.y + LINEHEIGHT * i) / 8);
-#endif
-#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
-        M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 8 - 2);
-        V_WriteCharDirect(LoadDef.x / 4 - 1, (LoadDef.y + LINEHEIGHT * i) / 8, '|');
-        V_WriteTextDirect(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 8, savegamestrings[i]);
-        V_WriteCharDirect(LoadDef.x / 4 + 24, (LoadDef.y + LINEHEIGHT * i) / 8, '|');
-        M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 8);
-#endif
-#if defined(MODE_T8050) || defined(MODE_T8043)
-        M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + (LINEHEIGHT)*i) / 4 - 2);
-        V_WriteCharDirect(LoadDef.x / 4 - 1, (LoadDef.y + LINEHEIGHT * i) / 4, '|');
-        V_WriteTextDirect(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 4, savegamestrings[i]);
-        V_WriteCharDirect(LoadDef.x / 4 + 24, (LoadDef.y + LINEHEIGHT * i) / 4, '|');
-        M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 4);
-#endif
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-        M_DrawSaveLoadBorder(LoadDef.x, LoadDef.y + LINEHEIGHT * i);
-        M_WriteText(LoadDef.x, LoadDef.y + LINEHEIGHT * i, savegamestrings[i]);
-#endif
-#if defined(MODE_Y_HALF)
-        M_DrawSaveLoadBorder(LoadDef.x, (LoadDef.y / 2) + 1 + 8 * i);
-        M_WriteText(LoadDef.x, LoadDef.y + 5 + LINEHEIGHT * i, savegamestrings[i]);
-#endif
-    }
+    M_DrawSaveLoadList();
 
     if (saveStringEnter)
     {
