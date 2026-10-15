@@ -1335,67 +1335,6 @@ int BLASTER_GetCardInfo(
 }
 
 /*---------------------------------------------------------------------
-   Function: allocateTimerStack
-
-   Allocate a block of memory from conventional (low) memory and return
-   the selector (which can go directly into a segment register) of the
-   memory block or 0 if an error occured.
----------------------------------------------------------------------*/
-
-static unsigned short allocateTimerStack(
-    unsigned short size)
-
-{
-    union REGS regs;
-
-    // clear all registers
-    memset(&regs, 0, sizeof(regs));
-
-    // DPMI allocate conventional memory
-    regs.w.ax = 0x100;
-
-    // size in paragraphs
-    regs.w.bx = (size + 15) / 16;
-
-    int386(0x31, &regs, &regs);
-    if (!regs.w.cflag)
-    {
-        // DPMI call returns selector in dx
-        // (ax contains real mode segment
-        // which is ignored here)
-
-        return (regs.w.dx);
-    }
-
-    // Couldn't allocate memory.
-    return (NULL);
-}
-
-/*---------------------------------------------------------------------
-   Function: deallocateTimerStack
-
-   Deallocate a block of conventional (low) memory given a selector to
-   it.  Assumes the block was allocated with DPMI function 0x100.
----------------------------------------------------------------------*/
-
-static void deallocateTimerStack(
-    unsigned short selector)
-
-{
-    union REGS regs;
-
-    if (selector != NULL)
-    {
-        // clear all registers
-        memset(&regs, 0, sizeof(regs));
-
-        regs.w.ax = 0x101;
-        regs.w.dx = selector;
-        int386(0x31, &regs, &regs);
-    }
-}
-
-/*---------------------------------------------------------------------
    Function: BLASTER_SetupWaveBlaster
 
    Allows the WaveBlaster to play music while the Sound Blaster 16
@@ -1510,7 +1449,7 @@ int BLASTER_Init(
             return (BLASTER_Error);
         }
 
-        StackSelector = allocateTimerStack(kStackSize);
+        StackSelector = DPMI_AllocTimerStack(kStackSize);
         if (StackSelector == NULL)
         {
             return (BLASTER_Error);
@@ -1529,7 +1468,7 @@ int BLASTER_Init(
             status = IRQ_SetVector(Interrupt, BLASTER_ServiceInterrupt);
             if (status != IRQ_Ok)
             {
-                deallocateTimerStack(StackSelector);
+                DPMI_FreeTimerStack(StackSelector);
                 StackSelector = NULL;
                 return (BLASTER_Error);
             }
@@ -1579,7 +1518,7 @@ void BLASTER_Shutdown(
 
     BLASTER_CallBack = NULL;
 
-    deallocateTimerStack(StackSelector);
+    DPMI_FreeTimerStack(StackSelector);
     StackSelector = NULL;
 
     BLASTER_Installed = FALSE;

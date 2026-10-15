@@ -1157,67 +1157,6 @@ void PAS_RestoreState(
 }
 
 /*---------------------------------------------------------------------
-   Function: allocateTimerStack
-
-   Allocate a block of memory from conventional (low) memory and return
-   the selector (which can go directly into a segment register) of the
-   memory block or 0 if an error occured.
----------------------------------------------------------------------*/
-
-static unsigned short allocateTimerStack(
-    unsigned short size)
-
-{
-   union REGS regs;
-
-   // clear all registers
-   memset(&regs, 0, sizeof(regs));
-
-   // DPMI allocate conventional memory
-   regs.w.ax = 0x100;
-
-   // size in paragraphs
-   regs.w.bx = (size + 15) / 16;
-
-   int386(0x31, &regs, &regs);
-   if (!regs.w.cflag)
-   {
-      // DPMI call returns selector in dx
-      // (ax contains real mode segment
-      // which is ignored here)
-
-      return (regs.w.dx);
-   }
-
-   // Couldn't allocate memory.
-   return (NULL);
-}
-
-/*---------------------------------------------------------------------
-   Function: deallocateTimerStack
-
-   Deallocate a block of conventional (low) memory given a selector to
-   it.  Assumes the block was allocated with DPMI function 0x100.
----------------------------------------------------------------------*/
-
-static void deallocateTimerStack(
-    unsigned short selector)
-
-{
-   union REGS regs;
-
-   if (selector != NULL)
-   {
-      // clear all registers
-      memset(&regs, 0, sizeof(regs));
-
-      regs.w.ax = 0x101;
-      regs.w.dx = selector;
-      int386(0x31, &regs, &regs);
-   }
-}
-
-/*---------------------------------------------------------------------
    Function: PAS_Init
 
    Initializes the sound card and prepares the module to play
@@ -1285,7 +1224,7 @@ int PAS_Init(
 
    PAS_DMABuffer = NULL;
 
-   StackSelector = allocateTimerStack(kStackSize);
+   StackSelector = DPMI_AllocTimerStack(kStackSize);
    if (StackSelector == NULL)
    {
       return (PAS_Error);
@@ -1306,7 +1245,7 @@ int PAS_Init(
       status = IRQ_SetVector(Interrupt, PAS_ServiceInterrupt);
       if (status != IRQ_Ok)
       {
-         deallocateTimerStack(StackSelector);
+         DPMI_FreeTimerStack(StackSelector);
          StackSelector = NULL;
          return (PAS_Error);
       }
@@ -1367,7 +1306,7 @@ void PAS_Shutdown(
       // DEBUG
       //      PAS_RestoreState();
 
-      deallocateTimerStack(StackSelector);
+      DPMI_FreeTimerStack(StackSelector);
       StackSelector = NULL;
 
       PAS_Installed = FALSE;
