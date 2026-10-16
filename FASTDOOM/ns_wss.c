@@ -560,20 +560,13 @@ int WSS_Init(void)
     WSS_OldInt = _dos_getvect(WSS_InterruptVector);
     _dos_setvect(WSS_InterruptVector, WSS_ServiceInterrupt);
 
+    StackSelector = DPMI_AllocTimerStack(kStackSize);
+    if (StackSelector == 0)
     {
-        union REGS regs;
-        memset(&regs, 0, sizeof(regs));
-        regs.w.ax = 0x100;
-        regs.w.bx = (kStackSize + 15) / 16;
-        int386(0x31, &regs, &regs);
-        if (regs.w.cflag)
-        {
-            _dos_setvect(WSS_InterruptVector, WSS_OldInt);
-            return WSS_DPMI_Error;
-        }
-        StackSelector = regs.w.dx;
-        StackPointer = kStackSize - sizeof(long);
+        _dos_setvect(WSS_InterruptVector, WSS_OldInt);
+        return WSS_DPMI_Error;
     }
+    StackPointer = kStackSize - sizeof(long);
 
     WSS_PCMVolume = 255;
 
@@ -614,11 +607,7 @@ void WSS_Shutdown(void)
 
     if (StackSelector != 0)
     {
-        union REGS regs;
-        memset(&regs, 0, sizeof(regs));
-        regs.w.ax = 0x101;
-        regs.w.dx = StackSelector;
-        int386(0x31, &regs, &regs);
+        DPMI_FreeTimerStack(StackSelector);
         StackPointer = 0;
         StackSelector = 0;
     }
