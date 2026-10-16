@@ -598,67 +598,6 @@ int SOUNDSCAPE_GetCardInfo(
 }
 
 /*---------------------------------------------------------------------
-   Function: allocateTimerStack
-
-   Allocate a block of memory from conventional (low) memory and return
-   the selector (which can go directly into a segment register) of the
-   memory block or 0 if an error occured.
----------------------------------------------------------------------*/
-
-static unsigned short allocateTimerStack(
-    unsigned short size)
-
-{
-    union REGS regs;
-
-    // clear all registers
-    memset(&regs, 0, sizeof(regs));
-
-    // DPMI allocate conventional memory
-    regs.w.ax = 0x100;
-
-    // size in paragraphs
-    regs.w.bx = (size + 15) / 16;
-
-    int386(0x31, &regs, &regs);
-    if (!regs.w.cflag)
-    {
-        // DPMI call returns selector in dx
-        // (ax contains real mode segment
-        // which is ignored here)
-
-        return (regs.w.dx);
-    }
-
-    // Couldn't allocate memory.
-    return (NULL);
-}
-
-/*---------------------------------------------------------------------
-   Function: deallocateTimerStack
-
-   Deallocate a block of conventional (low) memory given a selector to
-   it.  Assumes the block was allocated with DPMI function 0x100.
----------------------------------------------------------------------*/
-
-static void deallocateTimerStack(
-    unsigned short selector)
-
-{
-    union REGS regs;
-
-    if (selector != NULL)
-    {
-        // clear all registers
-        memset(&regs, 0, sizeof(regs));
-
-        regs.w.ax = 0x101;
-        regs.w.dx = selector;
-        int386(0x31, &regs, &regs);
-    }
-}
-
-/*---------------------------------------------------------------------
    Function: parse
 
    Parses for the right hand string of an .INI file equate.
@@ -1158,7 +1097,7 @@ int SOUNDSCAPE_Init(
         return (status);
     }
 
-    StackSelector = allocateTimerStack(kStackSize);
+    StackSelector = DPMI_AllocTimerStack(kStackSize);
     if (StackSelector == NULL)
     {
         return (SOUNDSCAPE_Error);
@@ -1250,7 +1189,7 @@ void SOUNDSCAPE_Shutdown(
 
     if (StackSelector != NULL)
     {
-        deallocateTimerStack(StackSelector);
+        DPMI_FreeTimerStack(StackSelector);
         StackSelector = NULL;
     }
 

@@ -38,6 +38,8 @@ struct DPMI_PTR
 int DPMI_CallRealModeFunction(dpmi_regs *callregs);
 void DPMI_AllocDOSMem(short int paras, struct DPMI_PTR *p);
 void DPMI_FreeDOSMem(struct DPMI_PTR *p);
+unsigned short DPMI_AllocTimerStack(unsigned short size);
+void DPMI_FreeTimerStack(unsigned short selector);
 int DPMI_GetDOSMemory(void **ptr, int *descriptor, unsigned length);
 int DPMI_FreeDOSMemory(int descriptor);
 int DPMI_LockMemory(void *address, unsigned length);

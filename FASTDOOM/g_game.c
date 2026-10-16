@@ -84,7 +84,6 @@ void G_DoNewGame(void);
 void G_DoLoadGame(void);
 void G_DoPlayDemo(void);
 void G_DoCompleted(void);
-void G_DoVictory(void);
 void G_DoWorldDone(void);
 void G_DoSaveGame(void);
 

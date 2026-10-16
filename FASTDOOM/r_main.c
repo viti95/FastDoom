@@ -900,158 +900,11 @@ void R_PatchCode(void)
 }
 
 //
-// R_ExecuteSetViewSize
+// T4050 render function selection
 //
-void R_ExecuteSetViewSize(void)
-{
-    fixed_t cosadj;
-    fixed_t dy;
-    int i;
-    int j;
-    int level;
-    int startmap;
-
-    setsizeneeded = 0;
-
-    // TODO Add more granular detection
-    if (selectedCPU == AUTO_CPU)
-    {
-        switch (I_GetCPUModel())
-        {
-        case 386:
-            selectedCPU = INTEL_386DX;
-            break;
-        case 486:
-            selectedCPU = INTEL_486;
-            break;
-        case 586:
-            selectedCPU = INTEL_PENTIUM_P5_P54C;
-            break;
-        case 686:
-            selectedCPU = INTEL_PENTIUM_II;
-            break;
-        default:
-            selectedCPU = INTEL_486;
-            break;
-        }
-    }
-#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA) && !defined(MODE_VT100) && !defined(MODE_COLOR_MDA)
-    if (setblocks >= 11)
-    {
-        scaledviewwidth = SCREENWIDTH;
-        viewheight = SCREENHEIGHT;
-        viewheightminusone = SCREENHEIGHT - 1;
-        viewheightshift = SCREENHEIGHT << FRACBITS;
-        viewheightopt = (SCREENHEIGHT << FRACBITS) - SCREENHEIGHT;
-        viewheight32 = SCREENHEIGHT << 16 | SCREENHEIGHT;
-        automapheight = SCREENHEIGHT;
-    }
-    else
-    {
-        // Since (SCREENWDITH / 10) may have a remainder, check 10 explcitly
-        if (setblocks == 10)
-        {
-            scaledviewwidth = SCREENWIDTH;
-        }
-        else
-        {
-            scaledviewwidth = setblocks * (SCREENWIDTH / 10);
-            // Stay multiple of 4
-            scaledviewwidth &= ~0x3;
-        }
-
-        if (setblocks == 10)
-            viewheight = SCREENHEIGHT - SBARHEIGHT;
-        else
-            viewheight = ((setblocks * (SCREENHEIGHT - SBARHEIGHT)) / 10) & ~7;
-
-        viewheightminusone = viewheight - 1;
-        viewheightshift = viewheight << FRACBITS;
-        viewheightopt = (viewheight << FRACBITS) - viewheight;
-        viewheight32 = viewheight << 16 | viewheight;
-        automapheight = SCREENHEIGHT - SBARHEIGHT;
-    }
-#endif
-
-#if defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_PGC)
-    endscreen = MulScreenWidth(viewwindowy + viewheight);
-#endif
-
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-    if (forcePotatoDetail || forceLowDetail || forceHighDetail)
-    {
-        if (forceHighDetail)
-            detailshift = DETAIL_HIGH;
-        else if (forceLowDetail)
-            detailshift = DETAIL_LOW;
-        else
-            detailshift = DETAIL_POTATO;
-    }
-    else
-        detailshift = setdetail;
-#endif
-
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-    viewwidth = scaledviewwidth >> detailshift;
-    viewwidthhalf = viewwidth / 2;
-#endif
-
-#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA) && !defined(MODE_VT100) && !defined(MODE_COLOR_MDA)
-    viewwidthlimit = viewwidth - 1;
-    centery = viewheight / 2;
-    centerx = viewwidth / 2;
-    centerxfrac = centerx << FRACBITS;
-    centeryfrac = centery << FRACBITS;
-    centeryfracshifted = centeryfrac >> 4;
-    projection = centerxfrac;
-#endif
-
-    switch (wallRender)
-    {
-    case WALL_NORMAL:
-        renderSegLoop = R_RenderSegLoop;
-        renderMaskedSegRange = R_RenderMaskedSegRange;
-        renderMaskedSegRange2 = R_RenderMaskedSegRange2;
-        break;
-    case WALL_FLAT:
-        renderSegLoop = R_RenderSegLoopFlat;
-        renderMaskedSegRange = R_RenderMaskedSegRangeFlat;
-        renderMaskedSegRange2 = R_RenderMaskedSegRange2Flat;
-        break;
-    case WALL_FLATTER:
-        renderSegLoop = R_RenderSegLoopFlatter;
-        renderMaskedSegRange = R_RenderMaskedSegRangeFlatter;
-        renderMaskedSegRange2 = R_RenderMaskedSegRange2Flatter;
-        break;
-    }
-
-    switch (spriteRender)
-    {
-    case SPRITE_NORMAL:
-        drawVisSprite = R_DrawVisSprite;
-        break;
-    case SPRITE_FLAT:
-        drawVisSprite = R_DrawVisSpriteFlat;
-        break;
-    case SPRITE_FLATTER:
-        drawVisSprite = R_DrawVisSpriteFlatter;
-        break;
-    }
-
-    switch (pspriteRender)
-    {
-    case PSPRITE_NORMAL:
-        drawPlayerSprite = R_DrawVisPSprite;
-        break;
-    case PSPRITE_FLAT:
-        drawPlayerSprite = R_DrawVisPSpriteFlat;
-        break;
-    case PSPRITE_FLATTER:
-        drawPlayerSprite = R_DrawVisPSpriteFlatter;
-        break;
-    }
-
 #if defined(MODE_T4050)
+static void R_SetupT4050Funcs(void)
+{
 
     switch (wallRender)
     {
@@ -1077,11 +930,11 @@ void R_ExecuteSetViewSize(void)
 
     switch (pspriteRender)
     {
-    case SPRITE_NORMAL:
+    case PSPRITE_NORMAL:
         pspritefunc = basepspritefunc = R_DrawColumnText4050;
         break;
-    case SPRITE_FLAT:
-    case SPRITE_FLATTER:
+    case PSPRITE_FLAT:
+    case PSPRITE_FLATTER:
         pspritefunc = basepspritefunc = R_DrawColumnText4050Flat;
         break;
     }
@@ -1136,8 +989,15 @@ void R_ExecuteSetViewSize(void)
         break;
     }
 
+}
 #endif
+
+//
+// T4025 render function selection
+//
 #if defined(MODE_T4025)
+static void R_SetupT4025Funcs(void)
+{
 
     switch (wallRender)
     {
@@ -1222,8 +1082,15 @@ void R_ExecuteSetViewSize(void)
         break;
     }
 
+}
 #endif
+
+//
+// T8025 / COLOR_MDA render function selection
+//
 #if defined(MODE_T8025) || defined(MODE_COLOR_MDA)
+static void R_SetupT8025Funcs(void)
+{
     switch (wallRender)
     {
     case WALL_NORMAL:
@@ -1307,8 +1174,15 @@ void R_ExecuteSetViewSize(void)
         break;
     }
 
+}
 #endif
+
+//
+// MDA / VT100 render function selection
+//
 #if defined(MODE_MDA) || defined(MODE_VT100)
+static void R_SetupMDAFuncs(void)
+{
 
     drawPlanes = R_DrawPlanesFlatterTextMDA;
     mapPlane = R_MapPlaneFlat;
@@ -1321,8 +1195,15 @@ void R_ExecuteSetViewSize(void)
     skyfunc = R_DrawSkyTextMDA;
 
     fuzzcolfunc = R_DrawLineColumnTextMDA;
+}
 #endif
+
+//
+// T8050 / T8043 render function selection
+//
 #if defined(MODE_T8050) || defined(MODE_T8043)
+static void R_SetupT8050Funcs(void)
+{
 
     switch (wallRender)
     {
@@ -1407,9 +1288,15 @@ void R_ExecuteSetViewSize(void)
         break;
     }
 
+}
 #endif
 
+//
+// VGA X / Y / Y_HALF render function selection
+//
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF)
+static void R_SetupVGAFuncs(void)
+{
     switch (detailshift)
     {
     case DETAIL_HIGH:
@@ -1973,8 +1860,15 @@ void R_ExecuteSetViewSize(void)
 
         break;
     }
+}
 #endif
+
+//
+// Backbuffer render function selection
+//
 #if defined(USE_BACKBUFFER)
+static void R_SetupBackbufferFuncs(void)
+{
     switch (detailshift)
     {
     case DETAIL_HIGH:
@@ -2521,9 +2415,15 @@ void R_ExecuteSetViewSize(void)
 
         break;
     }
+}
 #endif
 
+//
+// VBE2 direct render function selection
+//
 #if defined(MODE_VBE2_DIRECT)
+static void R_SetupVBE2Funcs(void)
+{
     switch (detailshift)
     {
     case DETAIL_HIGH:
@@ -2969,6 +2869,186 @@ void R_ExecuteSetViewSize(void)
 
         break;
     }
+}
+#endif
+
+//
+// R_ExecuteSetViewSize
+//
+void R_ExecuteSetViewSize(void)
+{
+    fixed_t cosadj;
+    fixed_t dy;
+    int i;
+    int j;
+    int level;
+    int startmap;
+
+    setsizeneeded = 0;
+
+    // TODO Add more granular detection
+    if (selectedCPU == AUTO_CPU)
+    {
+        switch (I_GetCPUModel())
+        {
+        case 386:
+            selectedCPU = INTEL_386DX;
+            break;
+        case 486:
+            selectedCPU = INTEL_486;
+            break;
+        case 586:
+            selectedCPU = INTEL_PENTIUM_P5_P54C;
+            break;
+        case 686:
+            selectedCPU = INTEL_PENTIUM_II;
+            break;
+        default:
+            selectedCPU = INTEL_486;
+            break;
+        }
+    }
+#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA) && !defined(MODE_VT100) && !defined(MODE_COLOR_MDA)
+    if (setblocks >= 11)
+    {
+        scaledviewwidth = SCREENWIDTH;
+        viewheight = SCREENHEIGHT;
+        viewheightminusone = SCREENHEIGHT - 1;
+        viewheightshift = SCREENHEIGHT << FRACBITS;
+        viewheightopt = (SCREENHEIGHT << FRACBITS) - SCREENHEIGHT;
+        viewheight32 = SCREENHEIGHT << 16 | SCREENHEIGHT;
+        automapheight = SCREENHEIGHT;
+    }
+    else
+    {
+        // Since (SCREENWDITH / 10) may have a remainder, check 10 explcitly
+        if (setblocks == 10)
+        {
+            scaledviewwidth = SCREENWIDTH;
+        }
+        else
+        {
+            scaledviewwidth = setblocks * (SCREENWIDTH / 10);
+            // Stay multiple of 4
+            scaledviewwidth &= ~0x3;
+        }
+
+        if (setblocks == 10)
+            viewheight = SCREENHEIGHT - SBARHEIGHT;
+        else
+            viewheight = ((setblocks * (SCREENHEIGHT - SBARHEIGHT)) / 10) & ~7;
+
+        viewheightminusone = viewheight - 1;
+        viewheightshift = viewheight << FRACBITS;
+        viewheightopt = (viewheight << FRACBITS) - viewheight;
+        viewheight32 = viewheight << 16 | viewheight;
+        automapheight = SCREENHEIGHT - SBARHEIGHT;
+    }
+#endif
+
+#if defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_PGC)
+    endscreen = MulScreenWidth(viewwindowy + viewheight);
+#endif
+
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+    if (forcePotatoDetail || forceLowDetail || forceHighDetail)
+    {
+        if (forceHighDetail)
+            detailshift = DETAIL_HIGH;
+        else if (forceLowDetail)
+            detailshift = DETAIL_LOW;
+        else
+            detailshift = DETAIL_POTATO;
+    }
+    else
+        detailshift = setdetail;
+#endif
+
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+    viewwidth = scaledviewwidth >> detailshift;
+    viewwidthhalf = viewwidth / 2;
+#endif
+
+#if !defined(MODE_T8050) && !defined(MODE_T8043) && !defined(MODE_T8025) && !defined(MODE_T4025) && !defined(MODE_T4050) && !defined(MODE_MDA) && !defined(MODE_VT100) && !defined(MODE_COLOR_MDA)
+    viewwidthlimit = viewwidth - 1;
+    centery = viewheight / 2;
+    centerx = viewwidth / 2;
+    centerxfrac = centerx << FRACBITS;
+    centeryfrac = centery << FRACBITS;
+    centeryfracshifted = centeryfrac >> 4;
+    projection = centerxfrac;
+#endif
+
+    switch (wallRender)
+    {
+    case WALL_NORMAL:
+        renderSegLoop = R_RenderSegLoop;
+        renderMaskedSegRange = R_RenderMaskedSegRange;
+        renderMaskedSegRange2 = R_RenderMaskedSegRange2;
+        break;
+    case WALL_FLAT:
+        renderSegLoop = R_RenderSegLoopFlat;
+        renderMaskedSegRange = R_RenderMaskedSegRangeFlat;
+        renderMaskedSegRange2 = R_RenderMaskedSegRange2Flat;
+        break;
+    case WALL_FLATTER:
+        renderSegLoop = R_RenderSegLoopFlatter;
+        renderMaskedSegRange = R_RenderMaskedSegRangeFlatter;
+        renderMaskedSegRange2 = R_RenderMaskedSegRange2Flatter;
+        break;
+    }
+
+    switch (spriteRender)
+    {
+    case SPRITE_NORMAL:
+        drawVisSprite = R_DrawVisSprite;
+        break;
+    case SPRITE_FLAT:
+        drawVisSprite = R_DrawVisSpriteFlat;
+        break;
+    case SPRITE_FLATTER:
+        drawVisSprite = R_DrawVisSpriteFlatter;
+        break;
+    }
+
+    switch (pspriteRender)
+    {
+    case PSPRITE_NORMAL:
+        drawPlayerSprite = R_DrawVisPSprite;
+        break;
+    case PSPRITE_FLAT:
+        drawPlayerSprite = R_DrawVisPSpriteFlat;
+        break;
+    case PSPRITE_FLATTER:
+        drawPlayerSprite = R_DrawVisPSpriteFlatter;
+        break;
+    }
+
+#if defined(MODE_T4050)
+    R_SetupT4050Funcs();
+#endif
+#if defined(MODE_T4025)
+    R_SetupT4025Funcs();
+#endif
+#if defined(MODE_T8025) || defined(MODE_COLOR_MDA)
+    R_SetupT8025Funcs();
+#endif
+#if defined(MODE_MDA) || defined(MODE_VT100)
+    R_SetupMDAFuncs();
+#endif
+#if defined(MODE_T8050) || defined(MODE_T8043)
+    R_SetupT8050Funcs();
+#endif
+
+#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF)
+    R_SetupVGAFuncs();
+#endif
+#if defined(USE_BACKBUFFER)
+    R_SetupBackbufferFuncs();
+#endif
+
+#if defined(MODE_VBE2_DIRECT)
+    R_SetupVBE2Funcs();
 #endif
 
     // Avoid crashes due to missing instruction sets

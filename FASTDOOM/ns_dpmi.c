@@ -58,6 +58,65 @@ void DPMI_FreeDOSMem(struct DPMI_PTR *p)
     int386x(0x31, &Regs, &Regs, &SegRegs);
 }
 
+/*---------------------------------------------------------------------
+   Function: DPMI_AllocTimerStack
+
+   Allocate a block of memory from conventional (low) memory and return
+   the selector (which can go directly into a segment register) of the
+   memory block or 0 if an error occured.
+---------------------------------------------------------------------*/
+unsigned short DPMI_AllocTimerStack(
+    unsigned short size)
+
+{
+    union REGS regs;
+
+    // clear all registers
+    memset(&regs, 0, sizeof(regs));
+
+    // DPMI allocate conventional memory
+    regs.w.ax = 0x100;
+
+    // size in paragraphs
+    regs.w.bx = (size + 15) / 16;
+
+    int386(0x31, &regs, &regs);
+    if (!regs.w.cflag)
+    {
+        // DPMI call returns selector in dx
+        // (ax contains real mode segment
+        // which is ignored here)
+
+        return (regs.w.dx);
+    }
+
+    // Couldn't allocate memory.
+    return (NULL);
+}
+
+/*---------------------------------------------------------------------
+   Function: DPMI_FreeTimerStack
+
+   Deallocate a block of conventional (low) memory given a selector to
+   it.  Assumes the block was allocated with DPMI function 0x100.
+---------------------------------------------------------------------*/
+void DPMI_FreeTimerStack(
+    unsigned short selector)
+
+{
+    union REGS regs;
+
+    if (selector != NULL)
+    {
+        // clear all registers
+        memset(&regs, 0, sizeof(regs));
+
+        regs.w.ax = 0x101;
+        regs.w.dx = selector;
+        int386(0x31, &regs, &regs);
+    }
+}
+
 int DPMI_LockMemory(void *address, unsigned length)
 {
     unsigned linear;

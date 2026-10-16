@@ -94,8 +94,6 @@ static void tdelay(void);
 static void pcm_format(void);
 static int SOUNDSCAPE_SetupDMABuffer(char *BufferPtr, int BufferSize, int mode);
 static int SOUNDSCAPE_BeginPlayback(int length);
-static unsigned short allocateTimerStack(unsigned short size);
-static void deallocateTimerStack(unsigned short selector);
 static int parse(char *val, char *str, FILE *p1);
 static int SOUNDSCAPE_Setup(void);
 

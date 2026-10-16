@@ -198,10 +198,7 @@ void M_ChangeMono();
 void M_SizeDisplay(int choice);
 void M_Sound(int choice);
 void M_Display(int choice);
-void M_BenchmarkDemo1(int choice);
-void M_BenchmarkDemo2(int choice);
-void M_BenchmarkDemo3(int choice);
-void M_BenchmarkDemo4(int choice);
+void M_BenchmarkDemo(int choice);
 void M_ReturnToOptions(int choice);
 void M_ChangeBenchmarkType(int choice);
 
@@ -225,6 +222,7 @@ void M_DrawSave(void);
 
 void M_DrawSaveLoadBorder(int x, int y);
 void M_DrawSaveLoadBorderText(int x, int y);
+void M_DrawSaveLoadList(void);
 void M_DrawThermo(int x, int y, int thermWidth, int thermDot);
 void M_DrawThermoText(int x, int y, int thermWidth, int thermDot);
 void M_WriteText(int x, int y, char *string);
@@ -432,10 +430,10 @@ menu_t SoundDef =
 menuitem_t BenchmarkMenu[] =
     {
         {2, "", "", M_ChangeBenchmarkType},
-        {1, "", "DEMO1", M_BenchmarkDemo1},
-        {1, "", "DEMO2", M_BenchmarkDemo2},
-        {1, "", "DEMO3", M_BenchmarkDemo3},
-        {1, "", "DEMO4", M_BenchmarkDemo4}};
+        {1, "", "DEMO1", M_BenchmarkDemo},
+        {1, "", "DEMO2", M_BenchmarkDemo},
+        {1, "", "DEMO3", M_BenchmarkDemo},
+        {1, "", "DEMO4", M_BenchmarkDemo}};
 
 menuitem_t BenchmarkResultMenu[] =
     {
@@ -547,8 +545,6 @@ void M_ReadSaveStrings(void)
 //
 void M_DrawLoad(void)
 {
-    int i;
-
 #if defined(MODE_T4025) || defined(MODE_T4050)
     V_WriteTextDirect(9, 3, "LOAD GAME");
 #endif
@@ -561,6 +557,16 @@ void M_DrawLoad(void)
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     V_DrawPatchDirectCentered(72, 28, W_CacheLumpName("M_LOADG", PU_CACHE));
 #endif
+
+    M_DrawSaveLoadList();
+}
+
+//
+// Draw the list of savegame slots (shared by M_DrawLoad / M_DrawSave)
+//
+void M_DrawSaveLoadList(void)
+{
+    int i;
 
     for (i = 0; i < load_end; i++)
     {
@@ -683,38 +689,7 @@ void M_DrawSave(void)
     V_DrawPatchDirectCentered(72, 28, W_CacheLumpName("M_SAVEG", PU_CACHE));
 #endif
 
-    for (i = 0; i < load_end; i++)
-    {
-#if defined(MODE_T4025) || defined(MODE_T4050)
-        M_DrawSaveLoadBorderText(LoadDef.x / 8, (LoadDef.y + LINEHEIGHT * i) / 8 - 2);
-        V_WriteCharDirect(LoadDef.x / 8 - 1, (LoadDef.y + LINEHEIGHT * i) / 8, '|');
-        V_WriteTextDirect(LoadDef.x / 8, (LoadDef.y + LINEHEIGHT * i) / 8, savegamestrings[i]);
-        V_WriteCharDirect(LoadDef.x / 8 + 24, (LoadDef.y + LINEHEIGHT * i) / 8, '|');
-        M_DrawSaveLoadBorderText(LoadDef.x / 8, (LoadDef.y + LINEHEIGHT * i) / 8);
-#endif
-#if defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_VT100) || defined(MODE_COLOR_MDA)
-        M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 8 - 2);
-        V_WriteCharDirect(LoadDef.x / 4 - 1, (LoadDef.y + LINEHEIGHT * i) / 8, '|');
-        V_WriteTextDirect(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 8, savegamestrings[i]);
-        V_WriteCharDirect(LoadDef.x / 4 + 24, (LoadDef.y + LINEHEIGHT * i) / 8, '|');
-        M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 8);
-#endif
-#if defined(MODE_T8050) || defined(MODE_T8043)
-        M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + (LINEHEIGHT)*i) / 4 - 2);
-        V_WriteCharDirect(LoadDef.x / 4 - 1, (LoadDef.y + LINEHEIGHT * i) / 4, '|');
-        V_WriteTextDirect(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 4, savegamestrings[i]);
-        V_WriteCharDirect(LoadDef.x / 4 + 24, (LoadDef.y + LINEHEIGHT * i) / 4, '|');
-        M_DrawSaveLoadBorderText(LoadDef.x / 4, (LoadDef.y + LINEHEIGHT * i) / 4);
-#endif
-#if defined(MODE_X) || defined(MODE_Y) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-        M_DrawSaveLoadBorder(LoadDef.x, LoadDef.y + LINEHEIGHT * i);
-        M_WriteText(LoadDef.x, LoadDef.y + LINEHEIGHT * i, savegamestrings[i]);
-#endif
-#if defined(MODE_Y_HALF)
-        M_DrawSaveLoadBorder(LoadDef.x, (LoadDef.y / 2) + 1 + 8 * i);
-        M_WriteText(LoadDef.x, LoadDef.y + 5 + LINEHEIGHT * i, savegamestrings[i]);
-#endif
-    }
+    M_DrawSaveLoadList();
 
     if (saveStringEnter)
     {
@@ -1058,23 +1033,21 @@ void M_DrawBenchmarkExport(void)
 #endif
 }
 
+//
+// Generic circular step helper for menu options.
+// choice 0 = decrement, choice 1 = increment; wraps around [minval..maxval]
+//
+static void M_ChangeStep(int choice, int *var, int minval, int maxval)
+{
+    *var += choice - !choice;
+
+    if (*var < minval || *var > maxval)
+        *var = choice ? minval : maxval;
+}
+
 void M_ChangeBenchmarkType(int choice)
 {
-    switch (choice)
-    {
-    case 0:
-        benchmark_type--;
-
-        if (benchmark_type == -1)
-            benchmark_type = benchmark_files_num;
-        break;
-    case 1:
-        benchmark_type++;
-
-        if (benchmark_type == benchmark_files_num + 1)
-            benchmark_type = 0;
-        break;
-    }
+    M_ChangeStep(choice, (int *)&benchmark_type, 0, benchmark_files_num);
 
     if (benchmark_type == 0)
     {
@@ -1119,27 +1092,10 @@ void M_BenchmarkRunDemo(void)
     benchmark_starttic = gametic;
 }
 
-void M_BenchmarkDemo1(int choice)
+void M_BenchmarkDemo(int choice)
 {
-    sprintf(demofile, "demo1");
-    M_BenchmarkRunDemo();
-}
-
-void M_BenchmarkDemo2(int choice)
-{
-    sprintf(demofile, "demo2");
-    M_BenchmarkRunDemo();
-}
-
-void M_BenchmarkDemo3(int choice)
-{
-    sprintf(demofile, "demo3");
-    M_BenchmarkRunDemo();
-}
-
-void M_BenchmarkDemo4(int choice)
-{
-    sprintf(demofile, "demo4");
+    strcpy(demofile, "demo");
+    demofile[4] = '0' + choice; // choice is menu item # (1..4)
     M_BenchmarkRunDemo();
 }
 
@@ -1348,75 +1304,31 @@ static char *const cpunames[] = {
 void M_DrawDisplayItem(int item, int position)
 {
     int y = 12 + position * 16;
+    char *label, *value;
 
     switch (item)
     {
-    case gamma:
-        M_WriteText(58, y, "GAMMA LEVEL:");
-        M_WriteText(214, y, gammamsg);
-        break;
-    case vsync:
-        M_WriteText(58, y, "VSYNC:");
-        M_WriteText(214, y, waitVsync ? "ON" : "OFF");
-        break;
-    case detail:
-        M_WriteText(58, y, "DETAIL LEVEL:");
-        M_WriteText(214, y, detaillevelnames[detailLevel]);
-        break;
-    case visplanes:
-        M_WriteText(58, y, "VISPLANE RENDERING:");
-        M_WriteText(214, y, renderdetailnames[visplaneRender]);
-        break;
-    case columns:
-        M_WriteText(58, y, "WALL RENDERING:");
-        M_WriteText(214, y, renderdetailnames[wallRender]);
-        break;
-    case sprites:
-        M_WriteText(58, y, "SPRITE RENDERING:");
-        M_WriteText(214, y, renderdetailnames[spriteRender]);
-        break;
-    case psprite:
-        M_WriteText(58, y, "PLAYER RENDERING:");
-        M_WriteText(214, y, renderdetailnames[pspriteRender]);
-        break;
-
-    case sky:
-        M_WriteText(58, y, "SKY RENDERING:");
-        M_WriteText(214, y, flatSky ? "FLAT" : "FULL");
-        break;
-    case invisible:
-        M_WriteText(58, y, "INVISIBLE RENDERING:");
-        M_WriteText(214, y, invisiblenames[invisibleRender]);
-        break;
-    case showfps:
-        M_WriteText(58, y, "SHOW FPS:");
-        M_WriteText(214, y, fpsnames[showFPS]);
-        break;
-    case automaprt:
-        M_WriteText(58, y, "AUTOMAP UPDATE:");
-        M_WriteText(214, y, automapRT ? "ON" : "OFF");
-        break;
-    case spriteculling:
-        M_WriteText(58, y, "SPRITE CULLING:");
-        M_WriteText(214, y, nearSprites ? "ON" : "OFF");
-        break;
-    case melting:
-        M_WriteText(58, y, "MELTING LOAD EFFECT:");
-        M_WriteText(214, y, noMelt ? "OFF" : "ON");
-        break;
-    case bus_speed:
-        M_WriteText(58, y, "BUS SPEED:");
-        M_WriteText(214, y, busSpeed ? "SLOW" : "FAST");
-        break;
-    case cpu:
-        M_WriteText(58, y, "CPU RENDERER:");
-        M_WriteText(214, y, selectedCPU < 0 ? "AUTODETECT" : cpunames[selectedCPU]);
-        break;
-    case uncapped_fps:
-        M_WriteText(58, y, "UNCAPPED FPS:");
-        M_WriteText(214, y, uncappedFPS ? "ON" : "OFF");
-        break;
+    case gamma: label = "GAMMA LEVEL:"; value = gammamsg; break;
+    case vsync: label = "VSYNC:"; value = waitVsync ? "ON" : "OFF"; break;
+    case detail: label = "DETAIL LEVEL:"; value = detaillevelnames[detailLevel]; break;
+    case visplanes: label = "VISPLANE RENDERING:"; value = renderdetailnames[visplaneRender]; break;
+    case columns: label = "WALL RENDERING:"; value = renderdetailnames[wallRender]; break;
+    case sprites: label = "SPRITE RENDERING:"; value = renderdetailnames[spriteRender]; break;
+    case psprite: label = "PLAYER RENDERING:"; value = renderdetailnames[pspriteRender]; break;
+    case sky: label = "SKY RENDERING:"; value = flatSky ? "FLAT" : "FULL"; break;
+    case invisible: label = "INVISIBLE RENDERING:"; value = invisiblenames[invisibleRender]; break;
+    case showfps: label = "SHOW FPS:"; value = fpsnames[showFPS]; break;
+    case automaprt: label = "AUTOMAP UPDATE:"; value = automapRT ? "ON" : "OFF"; break;
+    case spriteculling: label = "SPRITE CULLING:"; value = nearSprites ? "ON" : "OFF"; break;
+    case melting: label = "MELTING LOAD EFFECT:"; value = noMelt ? "OFF" : "ON"; break;
+    case bus_speed: label = "BUS SPEED:"; value = busSpeed ? "SLOW" : "FAST"; break;
+    case cpu: label = "CPU RENDERER:"; value = selectedCPU < 0 ? "AUTODETECT" : cpunames[selectedCPU]; break;
+    case uncapped_fps: label = "UNCAPPED FPS:"; value = uncappedFPS ? "ON" : "OFF"; break;
+    default: return;
     }
+
+    M_WriteText(58, y, label);
+    M_WriteText(214, y, value);
 }
 #endif
 
@@ -1442,73 +1354,32 @@ void M_DrawDisplayItem(int item, int position)
     int y = 1 + position * 2;
 #endif
 
-    switch (item)
     {
-    case gamma:
-        V_WriteTextDirect(M_X1, y, "GAMMA LEVEL:");
-        V_WriteTextDirect(M_X2, y, gammamsg);
-        break;
-    case vsync:
-        V_WriteTextDirect(M_X1, y, "VSYNC:");
-        V_WriteTextDirect(M_X2, y, waitVsync ? "ON" : "OFF");
-        break;
-    case detail:
-        V_WriteTextDirect(M_X1, y, "DETAIL LEVEL:");
-        V_WriteTextDirect(M_X2, y, detaillevelnames[detailLevel]);
-        break;
-    case visplanes:
-        V_WriteTextDirect(M_X1, y, "VISPLANE RENDERING:");
-        V_WriteTextDirect(M_X2, y, renderdetailnames[visplaneRender]);
-        break;
-    case columns:
-        V_WriteTextDirect(M_X1, y, "WALL RENDERING:");
-        V_WriteTextDirect(M_X2, y, renderdetailnames[wallRender]);
-        break;
-    case sprites:
-        V_WriteTextDirect(M_X1, y, "SPRITE RENDERING:");
-        V_WriteTextDirect(M_X2, y, renderdetailnames[spriteRender]);
-        break;
-    case psprite:
-        V_WriteTextDirect(M_X1, y, "PLAYER RENDERING:");
-        V_WriteTextDirect(M_X2, y, renderdetailnames[pspriteRender]);
-        break;
+        char *label, *value;
 
-    case sky:
-        V_WriteTextDirect(M_X1, y, "SKY RENDERING:");
-        V_WriteTextDirect(M_X2, y, flatSky ? "FLAT" : "FULL");
-        break;
-    case invisible:
-        V_WriteTextDirect(M_X1, y, "INVISIBLE RENDERING:");
-        V_WriteTextDirect(M_X2, y, invisiblenames[invisibleRender]);
-        break;
-    case showfps:
-        V_WriteTextDirect(M_X1, y, "SHOW FPS:");
-        V_WriteTextDirect(M_X2, y, fpsnames[showFPS]);
-        break;
-    case automaprt:
-        V_WriteTextDirect(M_X1, y, "AUTOMAP UPDATE:");
-        V_WriteTextDirect(M_X2, y, automapRT ? "ON" : "OFF");
-        break;
-    case spriteculling:
-        V_WriteTextDirect(M_X1, y, "SPRITE CULLING:");
-        V_WriteTextDirect(M_X2, y, nearSprites ? "ON" : "OFF");
-        break;
-    case melting:
-        V_WriteTextDirect(M_X1, y, "MELTING LOAD EFFECT:");
-        V_WriteTextDirect(M_X2, y, noMelt ? "OFF" : "ON");
-        break;
-    case bus_speed:
-        V_WriteTextDirect(M_X1, y, "BUS SPEED:");
-        V_WriteTextDirect(M_X2, y, busSpeed ? "SLOW" : "FAST");
-        break;
-    case cpu:
-        V_WriteTextDirect(M_X1, y, "CPU RENDERER:");
-        V_WriteTextDirect(M_X2, y, selectedCPU < 0 ? "AUTODETECT" : cpunames[selectedCPU]);
-        break;
-    case uncapped_fps:
-        V_WriteTextDirect(M_X1, y, "UNCAPPED FPS:");
-        V_WriteTextDirect(M_X2, y, uncappedFPS ? "ON" : "OFF");
-        break;
+        switch (item)
+        {
+        case gamma: label = "GAMMA LEVEL:"; value = gammamsg; break;
+        case vsync: label = "VSYNC:"; value = waitVsync ? "ON" : "OFF"; break;
+        case detail: label = "DETAIL LEVEL:"; value = detaillevelnames[detailLevel]; break;
+        case visplanes: label = "VISPLANE RENDERING:"; value = renderdetailnames[visplaneRender]; break;
+        case columns: label = "WALL RENDERING:"; value = renderdetailnames[wallRender]; break;
+        case sprites: label = "SPRITE RENDERING:"; value = renderdetailnames[spriteRender]; break;
+        case psprite: label = "PLAYER RENDERING:"; value = renderdetailnames[pspriteRender]; break;
+        case sky: label = "SKY RENDERING:"; value = flatSky ? "FLAT" : "FULL"; break;
+        case invisible: label = "INVISIBLE RENDERING:"; value = invisiblenames[invisibleRender]; break;
+        case showfps: label = "SHOW FPS:"; value = fpsnames[showFPS]; break;
+        case automaprt: label = "AUTOMAP UPDATE:"; value = automapRT ? "ON" : "OFF"; break;
+        case spriteculling: label = "SPRITE CULLING:"; value = nearSprites ? "ON" : "OFF"; break;
+        case melting: label = "MELTING LOAD EFFECT:"; value = noMelt ? "OFF" : "ON"; break;
+        case bus_speed: label = "BUS SPEED:"; value = busSpeed ? "SLOW" : "FAST"; break;
+        case cpu: label = "CPU RENDERER:"; value = selectedCPU < 0 ? "AUTODETECT" : cpunames[selectedCPU]; break;
+        case uncapped_fps: label = "UNCAPPED FPS:"; value = uncappedFPS ? "ON" : "OFF"; break;
+        default: return;
+        }
+
+        V_WriteTextDirect(M_X1, y, label);
+        V_WriteTextDirect(M_X2, y, value);
     }
 }
 #endif
@@ -1677,106 +1548,31 @@ void M_ChangeSensitivity(int choice)
 
 void M_ChangeDetail(int choice)
 {
-    switch (choice)
-    {
-    case 0:
-        detailLevel--;
-
-        if (detailLevel == -1)
-            detailLevel = DETAIL_POTATO;
-        break;
-    case 1:
-        detailLevel++;
-
-        if (detailLevel == NUM_DETAIL)
-            detailLevel = DETAIL_HIGH;
-        break;
-    }
-
+    M_ChangeStep(choice, &detailLevel, DETAIL_HIGH, NUM_DETAIL - 1);
     R_SetViewSize(screenblocks, detailLevel);
 }
 
 void M_ChangeVisplaneDetail(int choice)
 {
-    switch (choice)
-    {
-    case 0:
-        visplaneRender--;
-
-        if (visplaneRender == -1)
-            visplaneRender = VISPLANES_FLATTER;
-        break;
-    case 1:
-        visplaneRender++;
-
-        if (visplaneRender == NUM_VISPLANESRENDER)
-            visplaneRender = VISPLANES_NORMAL;
-        break;
-    }
-
+    M_ChangeStep(choice, &visplaneRender, VISPLANES_NORMAL, NUM_VISPLANESRENDER - 1);
     R_SetViewSize(screenblocks, detailLevel);
 }
 
 void M_ChangeWallDetail(int choice)
 {
-    switch (choice)
-    {
-    case 0:
-        wallRender--;
-
-        if (wallRender == -1)
-            wallRender = WALL_FLATTER;
-        break;
-    case 1:
-        wallRender++;
-
-        if (wallRender == NUM_WALLRENDER)
-            wallRender = WALL_NORMAL;
-        break;
-    }
-
+    M_ChangeStep(choice, &wallRender, WALL_NORMAL, NUM_WALLRENDER - 1);
     R_SetViewSize(screenblocks, detailLevel);
 }
 
 void M_ChangeSpriteDetail(int choice)
 {
-    switch (choice)
-    {
-    case 0:
-        spriteRender--;
-
-        if (spriteRender == -1)
-            spriteRender = SPRITE_FLATTER;
-        break;
-    case 1:
-        spriteRender++;
-
-        if (spriteRender == NUM_SPRITERENDER)
-            spriteRender = SPRITE_NORMAL;
-        break;
-    }
-
+    M_ChangeStep(choice, &spriteRender, SPRITE_NORMAL, NUM_SPRITERENDER - 1);
     R_SetViewSize(screenblocks, detailLevel);
 }
 
 void M_ChangePSpriteDetail(int choice)
 {
-    switch (choice)
-    {
-    case 0:
-        pspriteRender--;
-
-        if (pspriteRender == -1)
-            pspriteRender = PSPRITE_FLATTER;
-        break;
-    case 1:
-        pspriteRender++;
-
-        if (pspriteRender == NUM_PSPRITERENDER)
-            pspriteRender = PSPRITE_NORMAL;
-        break;
-    }
-
+    M_ChangeStep(choice, &pspriteRender, PSPRITE_NORMAL, NUM_PSPRITERENDER - 1);
     R_SetViewSize(screenblocks, detailLevel);
 }
 
@@ -1824,22 +1620,7 @@ void M_ChangeSkyDetail(int choice)
 
 void M_ChangeCPU(int choice)
 {
-    switch (choice)
-    {
-    case 0:
-        selectedCPU--;
-
-        if (selectedCPU == -1)
-            selectedCPU = NUM_CPU - 1;
-        break;
-    case 1:
-
-        selectedCPU++;
-
-        if (selectedCPU == NUM_CPU)
-            selectedCPU = AUTO_CPU + 1;
-        break;
-    }
+    M_ChangeStep(choice, &selectedCPU, AUTO_CPU + 1, NUM_CPU - 1);
 
     R_ExecuteSetViewSize();
 #if defined(MODE_13H)
@@ -1849,20 +1630,7 @@ void M_ChangeCPU(int choice)
 
 void M_ChangeInvisibleDetail(int choice)
 {
-    switch (choice)
-    {
-    case 0:
-        invisibleRender--;
-
-        if (invisibleRender == -1)
-            invisibleRender = INVISIBLE_TRANSLUCENT;
-        break;
-    case 1:
-        invisibleRender++;
-
-        if (invisibleRender == NUM_INVISIBLERENDER)
-            invisibleRender = INVISIBLE_NORMAL;
-    }
+    M_ChangeStep(choice, &invisibleRender, INVISIBLE_NORMAL, NUM_INVISIBLERENDER - 1);
 
     if (invisibleRender == INVISIBLE_TRANSLUCENT)
         R_InitTintMap();
@@ -1874,20 +1642,7 @@ void M_ChangeInvisibleDetail(int choice)
 
 void M_ChangeShowFPS(int choice)
 {
-    switch (choice)
-    {
-    case 0:
-        showFPS--;
-
-        if (showFPS == -1)
-            showFPS = SCREEN_DC4D_FPS;
-        break;
-    case 1:
-        showFPS++;
-
-        if (showFPS == NUM_FPS)
-            showFPS = NO_FPS;
-    }
+    M_ChangeStep(choice, &showFPS, NO_FPS, NUM_FPS - 1);
 }
 
 void M_ChangeAutomapRT(int choice)
