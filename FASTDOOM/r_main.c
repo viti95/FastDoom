@@ -2875,6 +2875,34 @@ static void R_SetupVBE2Funcs(void)
 //
 // R_ExecuteSetViewSize
 //
+typedef struct
+{
+    void (*renderSegLoop)(void);
+    void (*renderMaskedSegRange)(drawseg_t *ds, int x1, int x2);
+    void (*renderMaskedSegRange2)(drawseg_t *ds);
+} wallrenderfuncs_t;
+
+static const wallrenderfuncs_t wallrenderfuncs[3] =
+{
+    { R_RenderSegLoop, R_RenderMaskedSegRange, R_RenderMaskedSegRange2 },
+    { R_RenderSegLoopFlat, R_RenderMaskedSegRangeFlat, R_RenderMaskedSegRange2Flat },
+    { R_RenderSegLoopFlatter, R_RenderMaskedSegRangeFlatter, R_RenderMaskedSegRange2Flatter }
+};
+
+static void (*const spriterenderfuncs[3])(vissprite_t *vis) =
+{
+    R_DrawVisSprite,
+    R_DrawVisSpriteFlat,
+    R_DrawVisSpriteFlatter
+};
+
+static void (*const pspriterenderfuncs[3])(vissprite_t *vis) =
+{
+    R_DrawVisPSprite,
+    R_DrawVisPSpriteFlat,
+    R_DrawVisPSpriteFlatter
+};
+
 void R_ExecuteSetViewSize(void)
 {
     fixed_t cosadj;
@@ -2925,18 +2953,15 @@ void R_ExecuteSetViewSize(void)
         if (setblocks == 10)
         {
             scaledviewwidth = SCREENWIDTH;
+            viewheight = SCREENHEIGHT - SBARHEIGHT;
         }
         else
         {
             scaledviewwidth = setblocks * (SCREENWIDTH / 10);
             // Stay multiple of 4
             scaledviewwidth &= ~0x3;
+            viewheight = (setblocks * (SCREENHEIGHT - SBARHEIGHT) / 10) & ~7;
         }
-
-        if (setblocks == 10)
-            viewheight = SCREENHEIGHT - SBARHEIGHT;
-        else
-            viewheight = ((setblocks * (SCREENHEIGHT - SBARHEIGHT)) / 10) & ~7;
 
         viewheightminusone = viewheight - 1;
         viewheightshift = viewheight << FRACBITS;
@@ -2951,20 +2976,15 @@ void R_ExecuteSetViewSize(void)
 #endif
 
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
-    if (forcePotatoDetail || forceLowDetail || forceHighDetail)
-    {
-        if (forceHighDetail)
-            detailshift = DETAIL_HIGH;
-        else if (forceLowDetail)
-            detailshift = DETAIL_LOW;
-        else
-            detailshift = DETAIL_POTATO;
-    }
+    if (forceHighDetail)
+        detailshift = DETAIL_HIGH;
+    else if (forceLowDetail)
+        detailshift = DETAIL_LOW;
+    else if (forcePotatoDetail)
+        detailshift = DETAIL_POTATO;
     else
         detailshift = setdetail;
-#endif
 
-#if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
     viewwidth = scaledviewwidth >> detailshift;
     viewwidthhalf = viewwidth / 2;
 #endif
@@ -2979,50 +2999,13 @@ void R_ExecuteSetViewSize(void)
     projection = centerxfrac;
 #endif
 
-    switch (wallRender)
-    {
-    case WALL_NORMAL:
-        renderSegLoop = R_RenderSegLoop;
-        renderMaskedSegRange = R_RenderMaskedSegRange;
-        renderMaskedSegRange2 = R_RenderMaskedSegRange2;
-        break;
-    case WALL_FLAT:
-        renderSegLoop = R_RenderSegLoopFlat;
-        renderMaskedSegRange = R_RenderMaskedSegRangeFlat;
-        renderMaskedSegRange2 = R_RenderMaskedSegRange2Flat;
-        break;
-    case WALL_FLATTER:
-        renderSegLoop = R_RenderSegLoopFlatter;
-        renderMaskedSegRange = R_RenderMaskedSegRangeFlatter;
-        renderMaskedSegRange2 = R_RenderMaskedSegRange2Flatter;
-        break;
-    }
+    // wallRender / spriteRender / pspriteRender are always in range 0..2
+    renderSegLoop = wallrenderfuncs[wallRender].renderSegLoop;
+    renderMaskedSegRange = wallrenderfuncs[wallRender].renderMaskedSegRange;
+    renderMaskedSegRange2 = wallrenderfuncs[wallRender].renderMaskedSegRange2;
 
-    switch (spriteRender)
-    {
-    case SPRITE_NORMAL:
-        drawVisSprite = R_DrawVisSprite;
-        break;
-    case SPRITE_FLAT:
-        drawVisSprite = R_DrawVisSpriteFlat;
-        break;
-    case SPRITE_FLATTER:
-        drawVisSprite = R_DrawVisSpriteFlatter;
-        break;
-    }
-
-    switch (pspriteRender)
-    {
-    case PSPRITE_NORMAL:
-        drawPlayerSprite = R_DrawVisPSprite;
-        break;
-    case PSPRITE_FLAT:
-        drawPlayerSprite = R_DrawVisPSpriteFlat;
-        break;
-    case PSPRITE_FLATTER:
-        drawPlayerSprite = R_DrawVisPSpriteFlatter;
-        break;
-    }
+    drawVisSprite = spriterenderfuncs[spriteRender];
+    drawPlayerSprite = pspriterenderfuncs[pspriteRender];
 
 #if defined(MODE_T4050)
     R_SetupT4050Funcs();
