@@ -8,7 +8,12 @@
    MUS-to-MIDI conversion is required.
 
    The score is serviced by a taskman task which is run once per
-   MUS time unit (24 time units per second at a tempo of 120 BPM).
+   MUS time unit.  The time division used by the Doom engine is
+   140 Hz, so one MUS tick lasts 1/140th of a second and the task
+   is scheduled at 140 Hz.  (This is the same division that the
+   original mus2mid converter relied on: it emitted the MUS delay
+   values verbatim as delta times of a 70 ticks/quarter MIDI file
+   played back at 140 BPM, i.e. 140 ticks per second.)
 
    MUS score format:
      "MUS\x1a" header followed by the score.  The score is a
@@ -17,7 +22,8 @@
      of the event descriptor clear.  After the last event of a
      block follows a variable-length (base-128) time value
      giving the number of time units to wait before the next
-     block is played.
+     block is played.  All events of a block are due at the same
+     time.
 
    Event descriptor byte:
      bits 0-3:  channel number
@@ -40,6 +46,11 @@
    Global variables
 ---------------------------------------------------------------------*/
 
+/* MUS time division of the Doom engine: number of MUS ticks per
+   second.  One MUS tick lasts 1/140th of a second. */
+
+#define MUS_TIME_DIVISION 140
+
 /* Mapping table from MUS controller numbers to MIDI controller */
 /* numbers.  Controller 0 (instrument) is handled separately as a */
 /* program change. */
@@ -56,11 +67,11 @@ static const unsigned char MUS_ControllerMap[15] =
     0x5d,   /* 7  decay time */
     40,     /* 8  vibrato rate */
     43,     /* 9  vibrato depth */
-    0x78,   /* 10 release time */
+    0x78,   /* 10 all sounds off */
     0x7b,   /* 11 all notes off */
-    0x7e,   /* 12 reverb */
-    0x7f,   /* 13 tremolo */
-    0x79    /* 14 release */
+    0x7e,   /* 12 local control */
+    0x7f,   /* 13 all controllers off */
+    0x79    /* 14 all notes off (poly) */
 };
 
 static unsigned char *MUS_Ptr = NULL;        /* current read pointer */
@@ -77,6 +88,12 @@ static int MUS_SongLoaded = FALSE;
 static int MUS_Loop = FALSE;
 static int MUS_Tempo = 120;
 
+/* Last velocity used on each channel.  A key press without an
+   explicit velocity byte re-uses the previous velocity of its
+   channel. */
+
+static unsigned char MUS_ChannelVel[NUM_MIDI_CHANNELS];
+
 static task *MUS_Task = NULL;
 static midifuncs *MUS_Funcs = NULL;
 
@@ -85,6 +102,7 @@ static midifuncs *MUS_Funcs = NULL;
 ---------------------------------------------------------------------*/
 
 static void MUS_ServiceRoutine(task *Task);
+static void MUS_PlayEvent(void);
 static int MUS_ReadEvent(void);
 static int MUS_ReadTime(void);
 static void MUS_AllNotesOff(void);
@@ -116,6 +134,10 @@ NMUS_IsMusFile(
 
    Reads a variable-length (base-128) time value from the score.
 
+   The first byte holds the least significant 7 bits, the second
+   byte the next most significant 7 bits, and so on.  The high
+   bit of each byte is set if another byte follows.
+
    Returns the number of time units, or -1 on end of score.
 ---------------------------------------------------------------------*/
 
@@ -124,9 +146,11 @@ MUS_ReadTime(
     void)
 {
     int value;
+    int shift;
     unsigned char b;
 
     value = 0;
+    shift = 0;
 
     for (;;)
     {
@@ -136,7 +160,8 @@ MUS_ReadTime(
         }
 
         b = *MUS_Ptr++;
-        value = (value << 7) + (b & 0x7f);
+        value = value + ((b & 0x7f) << shift);
+        shift += 7;
 
         if ((b & 0x80) == 0)
         {
@@ -148,7 +173,9 @@ MUS_ReadTime(
 /*---------------------------------------------------------------------
    Function: MUS_ReadEvent
 
-   Reads the next event from the score.
+   Reads the next event from the score.  If the event is the last
+   one of its block, the following time value is read into
+   MUS_Delay as well.
 
    Returns TRUE if an event is ready to be played, FALSE if the
    score has ended.
@@ -166,7 +193,6 @@ MUS_ReadEvent(
     }
 
     MUS_Event = *MUS_Ptr++;
-    MUS_Vel = 127;
 
     command = MUS_Event & 0x70;
 
@@ -196,6 +222,12 @@ MUS_ReadEvent(
             }
             MUS_Vel = *MUS_Ptr++;
         }
+        else
+        {
+            /* No velocity byte, keep the last velocity used on
+               this channel */
+            MUS_Vel = MUS_ChannelVel[MUS_Event & 0x0f];
+        }
         break;
 
     case MUS_PITCHWHEEL:
@@ -216,6 +248,7 @@ MUS_ReadEvent(
         MUS_Vel = *MUS_Ptr++;
         break;
 
+    case MUS_ENDOFMEASURE:
     case MUS_SCOREEND:
         MUS_Parameter = 0;
         break;
@@ -236,6 +269,94 @@ MUS_ReadEvent(
     }
 
     return (TRUE);
+}
+
+/*---------------------------------------------------------------------
+   Function: MUS_PlayEvent
+
+   Dispatches the current event to the music device.
+---------------------------------------------------------------------*/
+
+static void
+MUS_PlayEvent(
+    void)
+{
+    int channel;
+    int command;
+    int value;
+
+    channel = MUS_Event & 0x0f;
+    command = MUS_Event & 0x70;
+
+    switch (command)
+    {
+    case MUS_KEYRELEASE:
+        if (MUS_Funcs->NoteOff != NULL)
+        {
+            MUS_Funcs->NoteOff(channel, MUS_Parameter, 0);
+        }
+        break;
+
+    case MUS_KEYPRESS:
+        MUS_ChannelVel[channel] = (unsigned char)(MUS_Vel & 0x7f);
+        if (MUS_Funcs->NoteOn != NULL)
+        {
+            MUS_Funcs->NoteOn(channel, MUS_Parameter, MUS_Vel & 0x7f);
+        }
+        break;
+
+    case MUS_PITCHWHEEL:
+        /* The 8-bit MUS pitch value (128 is the center position) */
+        /* is scaled to the 14-bit MIDI pitch bend range */
+        if (MUS_Funcs->PitchBend != NULL)
+        {
+            int bend;
+
+            bend = MUS_Parameter * 64;
+            MUS_Funcs->PitchBend(channel, bend & 0x7f,
+                                 (bend >> 7) & 0x7f);
+        }
+        break;
+
+    case MUS_SYSTEMEVENT:
+        /* System events are the valueless controllers 10-14 */
+        if (MUS_Parameter >= 10 && MUS_Parameter < 15 &&
+            MUS_Funcs->ControlChange != NULL)
+        {
+            MUS_Funcs->ControlChange(channel,
+                                     MUS_ControllerMap[MUS_Parameter],
+                                     0);
+        }
+        break;
+
+    case MUS_CONTROLLER:
+        if (MUS_Parameter == 0)
+        {
+            /* Instrument change */
+            if (MUS_Funcs->ProgramChange != NULL)
+            {
+                MUS_Funcs->ProgramChange(channel, MUS_Vel & 0x7f);
+            }
+        }
+        else if (MUS_Parameter < 15)
+        {
+            if (MUS_Funcs->ControlChange != NULL)
+            {
+                /* DMX stores 8-bit controller values, clamp the
+                   value to the legal 7-bit MIDI range */
+                value = (MUS_Vel & 0x80) ? 0x7f : (MUS_Vel & 0x7f);
+                MUS_Funcs->ControlChange(channel,
+                                         MUS_ControllerMap[MUS_Parameter],
+                                         value);
+            }
+        }
+        break;
+
+    case MUS_ENDOFMEASURE:
+    case MUS_SCOREEND:
+        /* Nothing to do here */
+        break;
+    }
 }
 
 /*---------------------------------------------------------------------
@@ -280,16 +401,14 @@ MUS_ResetScore(
    Function: MUS_ServiceRoutine
 
    Task that decodes the MUS score and dispatches its events to
-   the music device.  Run once per MUS time unit.
+   the music device.  Run once per MUS time unit (140 times per
+   second).
 ---------------------------------------------------------------------*/
 
 static void
 MUS_ServiceRoutine(
     task *Task)
 {
-    int channel;
-    int command;
-
     if (!MUS_SongActive)
     {
         return;
@@ -301,103 +420,41 @@ MUS_ServiceRoutine(
         return;
     }
 
-    if (!MUS_HaveEvent)
+    /* All the events of a block are due at the same time, play
+       the whole block before waiting for the next one */
+    for (;;)
     {
-        MUS_HaveEvent = MUS_ReadEvent();
-
         if (!MUS_HaveEvent)
         {
-            /* The score has ended */
-            if (MUS_Loop)
-            {
-                MUS_ResetScore();
-                MUS_HaveEvent = MUS_ReadEvent();
-            }
+            MUS_HaveEvent = MUS_ReadEvent();
 
             if (!MUS_HaveEvent)
             {
-                MUS_SongActive = FALSE;
-                return;
+                /* The score has ended */
+                if (MUS_Loop)
+                {
+                    MUS_ResetScore();
+                    MUS_HaveEvent = MUS_ReadEvent();
+                }
+
+                if (!MUS_HaveEvent)
+                {
+                    MUS_SongActive = FALSE;
+                    return;
+                }
             }
+        }
+
+        MUS_PlayEvent();
+
+        MUS_HaveEvent = FALSE;
+
+        if (MUS_Event & 0x80)
+        {
+            /* Last event of the block was played */
+            break;
         }
     }
-
-    channel = MUS_Event & 0x0f;
-    command = MUS_Event & 0x70;
-
-    switch (command)
-    {
-    case MUS_KEYRELEASE:
-        if (MUS_Funcs->NoteOff != NULL)
-        {
-            MUS_Funcs->NoteOff(channel, MUS_Parameter, 0);
-        }
-        break;
-
-    case MUS_KEYPRESS:
-        if (MUS_Funcs->NoteOn != NULL)
-        {
-            MUS_Funcs->NoteOn(channel, MUS_Parameter, MUS_Vel);
-        }
-        break;
-
-    case MUS_PITCHWHEEL:
-        if (MUS_Funcs->PitchBend != NULL)
-        {
-            MUS_Funcs->PitchBend(channel, MUS_Parameter, 0);
-        }
-        break;
-
-    case MUS_SYSTEMEVENT:
-        if (MUS_Funcs->ControlChange != NULL)
-        {
-            switch (MUS_Parameter)
-            {
-            case MUS_ALL_NOTES_OFF:
-                MUS_Funcs->ControlChange(channel, MIDI_ALL_NOTES_OFF, 0);
-                break;
-
-            case MUS_ALL_SOUNDS_OFF:
-            case MUS_LOCAL_CONTROL:
-            case MUS_RESET_CONTROLLERS:
-            case MUS_ALL_POLY_OFF:
-                MUS_Funcs->ControlChange(channel,
-                                         MIDI_RESET_ALL_CONTROLLERS, 0);
-                break;
-
-            default:
-                /* Ignore unknown system events */
-                break;
-            }
-        }
-        break;
-
-    case MUS_CONTROLLER:
-        if (MUS_Parameter == 0)
-        {
-            /* Instrument change */
-            if (MUS_Funcs->ProgramChange != NULL)
-            {
-                MUS_Funcs->ProgramChange(channel, MUS_Vel);
-            }
-        }
-        else if (MUS_Parameter < 15)
-        {
-            if (MUS_Funcs->ControlChange != NULL)
-            {
-                MUS_Funcs->ControlChange(channel,
-                                         MUS_ControllerMap[MUS_Parameter],
-                                         MUS_Vel);
-            }
-        }
-        break;
-
-    case MUS_SCOREEND:
-        /* The score ends, nothing to do here */
-        break;
-    }
-
-    MUS_HaveEvent = FALSE;
 }
 
 /*---------------------------------------------------------------------
@@ -414,6 +471,7 @@ NMUS_PlaySong(
 {
     unsigned int scorelength;
     unsigned int scorestart;
+    int channel;
 
     if (funcs == NULL)
     {
@@ -444,8 +502,16 @@ NMUS_PlaySong(
 
     MUS_Tempo = 120;
 
-    /* MUS has 24 time units per second at a tempo of 120 BPM */
-    MUS_Task = TS_ScheduleTask(MUS_ServiceRoutine, MUS_Tempo / 5, 1, NULL);
+    for (channel = 0; channel < NUM_MIDI_CHANNELS; channel++)
+    {
+        MUS_ChannelVel[channel] = 127;
+    }
+
+    /* The MUS time division of the Doom engine is 140 Hz: one MUS
+       tick lasts 1/140th of a second, so the score is serviced
+       140 times per second. */
+    MUS_Task = TS_ScheduleTask(MUS_ServiceRoutine, MUS_TIME_DIVISION, 1,
+                               NULL);
 
     if (MUS_Task == NULL)
     {
@@ -464,6 +530,11 @@ NMUS_PlaySong(
    Function: NMUS_SetTempo
 
    Sets the tempo of the current MUS module.
+
+   Note that MUS scores have a fixed time division (140 Hz in the
+   Doom engine) and the tempo is baked into the score delay
+   values, so this only updates the stored tempo and does not
+   change the score service rate.
 ---------------------------------------------------------------------*/
 
 void
@@ -476,11 +547,6 @@ NMUS_SetTempo(
     }
 
     MUS_Tempo = tempo;
-
-    if (MUS_Task != NULL)
-    {
-        TS_SetTaskRate(MUS_Task, tempo / 5);
-    }
 }
 
 /*---------------------------------------------------------------------
@@ -513,7 +579,7 @@ NMUS_StopSong(
 /*---------------------------------------------------------------------
    Function: NMUS_PauseSong
 
-   Pauses playback of the current MUS module.
+   Pauses playback of a MUS module.
 ---------------------------------------------------------------------*/
 
 void

@@ -10,6 +10,7 @@
 #define MUS_PITCHWHEEL    0x20
 #define MUS_SYSTEMEVENT   0x30
 #define MUS_CONTROLLER    0x40
+#define MUS_ENDOFMEASURE  0x50
 #define MUS_SCOREEND      0x60
 
 /* MUS system event numbers */
@@ -26,7 +27,9 @@ int NMUS_IsMusFile(unsigned char *data);
 /* Begins playback of a MUS module using the given device functions. */
 int NMUS_PlaySong(unsigned char *song, int loop, midifuncs *funcs);
 
-/* Sets the tempo of the current MUS module (in BPM). */
+/* Sets the tempo of the current MUS module (in BPM).  The MUS
+   time division is fixed (140 Hz in the Doom engine), so this
+   only stores the tempo. */
 void NMUS_SetTempo(int tempo);
 
 /* Stops playback of the current MUS module. */
