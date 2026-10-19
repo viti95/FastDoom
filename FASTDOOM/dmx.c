@@ -23,7 +23,7 @@
 #include "ns_music.h"
 #include "ns_task.h"
 #include "ns_multi.h"
-#include "mus2mid.h"
+#include "ns_mus.h"
 #include "ns_pcfx.h"
 #include "doomstat.h"
 #include "ns_scape.h"
@@ -67,65 +67,16 @@ int dmx_snd_port = 0;
 
 int MUS_RegisterSong(void *data)
 {
-    FILE *mus;
-    FILE *mid;
-    unsigned int midlen;
-    unsigned short len;
     mus_data = NULL;
-    len = ((unsigned short *)data)[2] + ((unsigned short *)data)[3];
+
     if (mid_data)
     {
         Z_Free(mid_data);
+        mid_data = NULL;
     }
-    if (memcmp(data, "MThd", 4))
-    {
-        mus = fopen("temp.mus", "wb");
-        if (!mus)
-        {
-            return 0;
-        }
-        fwrite(data, 1, len, mus);
-        fclose(mus);
-        mus = fopen("temp.mus", "rb");
-        if (!mus)
-        {
-            return 0;
-        }
-        mid = fopen("temp.mid", "wb");
-        if (!mid)
-        {
-            fclose(mus);
-            return 0;
-        }
-        if (mus2mid(mus, mid))
-        {
-            fclose(mid);
-            fclose(mus);
-            return 0;
-        }
-        fclose(mid);
-        fclose(mus);
-        mid = fopen("temp.mid", "rb");
-        if (!mid)
-        {
-            return 0;
-        }
-        fseek(mid, 0, SEEK_END);
-        midlen = ftell(mid);
-        rewind(mid);
-        mid_data = Z_MallocUnowned(midlen, PU_STATIC);
-        if (!mid_data)
-        {
-            fclose(mid);
-            return 0;
-        }
-        fread(mid_data, 1, midlen, mid);
-        fclose(mid);
-        mus_data = mid_data;
-        remove("temp.mid");
-        remove("temp.mus");
-        return 0;
-    }
+
+    // MUS modules are played natively by the Apogee Sound System,
+    // no conversion to MIDI is needed.
     mus_data = data;
     return 0;
 }

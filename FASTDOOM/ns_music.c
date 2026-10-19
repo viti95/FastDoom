@@ -4,6 +4,7 @@
 #include "ns_cards.h"
 #include "ns_music.h"
 #include "ns_midi.h"
+#include "ns_mus.h"
 #include "ns_sbmus.h"
 #include "ns_pas16.h"
 #include "ns_sb.h"
@@ -142,6 +143,7 @@ int MUSIC_Shutdown(
     status = MUSIC_Ok;
 
     MIDI_StopSong();
+    NMUS_StopSong();
 
     switch (MUSIC_SoundDevice)
     {
@@ -233,6 +235,7 @@ void MUSIC_Continue(
 
 {
     MIDI_ContinueSong();
+    NMUS_ContinueSong();
 }
 
 /*---------------------------------------------------------------------
@@ -246,6 +249,7 @@ void MUSIC_Pause(
 
 {
     MIDI_PauseSong();
+    NMUS_PauseSong();
 }
 
 /*---------------------------------------------------------------------
@@ -257,12 +261,13 @@ void MUSIC_Pause(
 int MUSIC_StopSong(void)
 {
     MIDI_StopSong();
+    NMUS_StopSong();
     return MUSIC_Ok;
 }
 
 int MUSIC_SongPlaying(void)
 {
-   return MIDI_SongPlaying();
+   return (MIDI_SongPlaying() || NMUS_SongPlaying());
 }
 
 void MUSIC_SysEx(unsigned char *data, int lenght)
@@ -282,6 +287,19 @@ int MUSIC_PlaySong(
 
 {
     int status;
+
+    // MUS modules are played natively by the MUS module player
+    if (NMUS_IsMusFile(song))
+    {
+        MIDI_StopSong();
+        NMUS_StopSong();
+        status = NMUS_PlaySong(song, loopflag, &MUSIC_MidiFunctions);
+        if (status != MUSIC_Ok)
+        {
+            return (MUSIC_Warning);
+        }
+        return (MUSIC_Ok);
+    }
 
     switch (MUSIC_SoundDevice)
     {
