@@ -29,6 +29,41 @@ int MUSIC_SoundDevice = -1;
 
 static midifuncs MUSIC_MidiFunctions;
 
+/* Which player currently owns the song.  All song control is
+   routed to that player only, so an idle player is never touched.
+   A player that has finished its score naturally is harmless to
+   query or stop: its own state flags make the call a no-op. */
+
+#define MUSIC_PLAYER_NONE   (-1)
+#define MUSIC_PLAYER_MIDI   0
+#define MUSIC_PLAYER_MUS    1
+
+static int MUSIC_ActivePlayer = MUSIC_PLAYER_NONE;
+
+/*---------------------------------------------------------------------
+   Function: MUSIC_StopCurrent
+
+   Stops whichever player owns the current song, if any.
+---------------------------------------------------------------------*/
+
+static void
+MUSIC_StopCurrent(
+    void)
+{
+    switch (MUSIC_ActivePlayer)
+    {
+    case MUSIC_PLAYER_MIDI:
+        MIDI_StopSong();
+        break;
+
+    case MUSIC_PLAYER_MUS:
+        NMUS_StopSong();
+        break;
+    }
+
+    MUSIC_ActivePlayer = MUSIC_PLAYER_NONE;
+}
+
 
 int MUSIC_InitAWE32(midifuncs *Funcs);
 int MUSIC_InitFM(int card, midifuncs *Funcs, int Address);
@@ -142,8 +177,7 @@ int MUSIC_Shutdown(
 
     status = MUSIC_Ok;
 
-    MIDI_StopSong();
-    NMUS_StopSong();
+    MUSIC_StopCurrent();
 
     switch (MUSIC_SoundDevice)
     {
@@ -220,7 +254,22 @@ void MUSIC_SetVolume(
 
     if (MUSIC_SoundDevice != -1)
     {
-        MIDI_SetVolume(volume);
+        switch (MUSIC_ActivePlayer)
+        {
+        case MUSIC_PLAYER_MIDI:
+            /* The SMF player applies the volume in software */
+            MIDI_SetVolume(volume);
+            break;
+
+        case MUSIC_PLAYER_MUS:
+            /* The MUS player has no software volume of its own,
+               so set the device mixer volume directly */
+            if (MUSIC_MidiFunctions.SetVolume != NULL)
+            {
+                MUSIC_MidiFunctions.SetVolume(volume);
+            }
+            break;
+        }
     }
 }
 
@@ -234,8 +283,16 @@ void MUSIC_Continue(
     void)
 
 {
-    MIDI_ContinueSong();
-    NMUS_ContinueSong();
+    switch (MUSIC_ActivePlayer)
+    {
+    case MUSIC_PLAYER_MIDI:
+        MIDI_ContinueSong();
+        break;
+
+    case MUSIC_PLAYER_MUS:
+        NMUS_ContinueSong();
+        break;
+    }
 }
 
 /*---------------------------------------------------------------------
@@ -248,8 +305,16 @@ void MUSIC_Pause(
     void)
 
 {
-    MIDI_PauseSong();
-    NMUS_PauseSong();
+    switch (MUSIC_ActivePlayer)
+    {
+    case MUSIC_PLAYER_MIDI:
+        MIDI_PauseSong();
+        break;
+
+    case MUSIC_PLAYER_MUS:
+        NMUS_PauseSong();
+        break;
+    }
 }
 
 /*---------------------------------------------------------------------
@@ -260,14 +325,22 @@ void MUSIC_Pause(
 
 int MUSIC_StopSong(void)
 {
-    MIDI_StopSong();
-    NMUS_StopSong();
+    MUSIC_StopCurrent();
     return MUSIC_Ok;
 }
 
 int MUSIC_SongPlaying(void)
 {
-   return (MIDI_SongPlaying() || NMUS_SongPlaying());
+    switch (MUSIC_ActivePlayer)
+    {
+    case MUSIC_PLAYER_MIDI:
+        return (MIDI_SongPlaying());
+
+    case MUSIC_PLAYER_MUS:
+        return (NMUS_SongPlaying());
+    }
+
+    return (FALSE);
 }
 
 void MUSIC_SysEx(unsigned char *data, int lenght)
@@ -288,16 +361,24 @@ int MUSIC_PlaySong(
 {
     int status;
 
+    if (song == NULL)
+    {
+        return (MUSIC_Warning);
+    }
+
+    /* Stop whatever is currently playing before starting the new
+       song, whichever player owned it */
+    MUSIC_StopCurrent();
+
     // MUS modules are played natively by the MUS module player
     if (NMUS_IsMusFile(song))
     {
-        MIDI_StopSong();
-        NMUS_StopSong();
         status = NMUS_PlaySong(song, loopflag, &MUSIC_MidiFunctions);
         if (status != MUSIC_Ok)
         {
             return (MUSIC_Warning);
         }
+        MUSIC_ActivePlayer = MUSIC_PLAYER_MUS;
         return (MUSIC_Ok);
     }
 
@@ -319,15 +400,12 @@ int MUSIC_PlaySong(
     case CMS:
     case IMFC:
     case ESFM:
-        /* make sure the native MUS player is not playing over */
-        /* the MIDI song */
-        MIDI_StopSong();
-        NMUS_StopSong();
         status = MIDI_PlaySong(song, loopflag);
         if (status != MIDI_Ok)
         {
             return (MUSIC_Warning);
         }
+        MUSIC_ActivePlayer = MUSIC_PLAYER_MIDI;
         break;
 
     case SoundSource:
