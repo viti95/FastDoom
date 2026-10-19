@@ -437,16 +437,21 @@ MUS_ServiceRoutine(
         return;
     }
 
-    if (MUS_Delay > 0)
-    {
-        MUS_Delay--;
-        return;
-    }
-
     /* All the events of a block are due at the same time, play
-       the whole block before waiting for the next one */
+       the whole block before waiting for the next one.  A block
+       with delay d must be followed by exactly d ticks: the
+       counter is only decremented on ticks where the next block
+       is not due yet, so the next block is played on the tick
+       the counter reaches zero (and a zero-delay block is played
+       on the very same tick). */
     for (;;)
     {
+        if (MUS_Delay > 0)
+        {
+            MUS_Delay--;
+            return;
+        }
+
         if (!MUS_HaveEvent)
         {
             MUS_HaveEvent = MUS_ReadEvent();
@@ -474,8 +479,16 @@ MUS_ServiceRoutine(
 
         if (MUS_Event & 0x80)
         {
-            /* Last event of the block was played */
-            break;
+            /* Last event of the block was played.  If the next
+               block has a non-zero delay, start counting it on
+               this very tick so that exactly d ticks elapse
+               before it is played; if its delay is zero it is
+               due now and the loop plays it on this same tick */
+            if (MUS_Delay > 0)
+            {
+                MUS_Delay--;
+                return;
+            }
         }
     }
 }
