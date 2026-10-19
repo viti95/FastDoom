@@ -15,11 +15,15 @@
 
 /* MUS system event numbers */
 
-#define MUS_ALL_NOTES_OFF     10
-#define MUS_ALL_SOUNDS_OFF    11
-#define MUS_LOCAL_CONTROL     12
-#define MUS_RESET_CONTROLLERS 13
-#define MUS_ALL_POLY_OFF      14
+#define MUS_ALL_SOUNDS_OFF    10
+#define MUS_ALL_NOTES_OFF     11
+#define MUS_MONO_MODE         12
+#define MUS_POLY_MODE         13
+#define MUS_RESET_CONTROLLERS 14
+
+/* MUS event command of the unused (7th) command */
+
+#define MUS_UNUSED            0x70
 
 /* Returns TRUE if the given data is a MUS module. */
 int NMUS_IsMusFile(unsigned char *data);

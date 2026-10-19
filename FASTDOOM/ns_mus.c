@@ -13,7 +13,7 @@
    is scheduled at 140 Hz.  (This is the same division that the
    original mus2mid converter relied on: it emitted the MUS delay
    values verbatim as delta times of a 70 ticks/quarter MIDI file
-   played back at 140 BPM, i.e. 140 ticks per second.)
+   played back at 120 BPM, i.e. 140 ticks per second.)
 
    MUS score format:
      "MUS\x1a" header followed by the score.  The score is a
@@ -23,7 +23,11 @@
      block follows a variable-length (base-128) time value
      giving the number of time units to wait before the next
      block is played.  All events of a block are due at the same
-     time.
+     time.  The time value is stored most significant byte
+     first: each byte holds 7 data bits and its high bit is set
+     if another byte follows, the value being built up as
+     "value = value * 128 + (b & 0x7f)".  For example, the byte
+     pair 82 05 decodes to 2 * 128 + 5 = 261.
 
    Event descriptor byte:
      bits 0-3:  channel number
@@ -57,21 +61,31 @@
 
 static const unsigned char MUS_ControllerMap[15] =
 {
-    0,      /* 0 */
-    20,     /* 1  breath */
-    1,      /* 2  modulation wheel */
-    7,      /* 3  vibrato */
-    10,     /* 4  pitch bend */
-    11,     /* 5  expression */
-    0x5b,   /* 6  modulation time */
-    0x5d,   /* 7  decay time */
-    40,     /* 8  vibrato rate */
-    43,     /* 9  vibrato depth */
+    0,      /* 0  instrument (handled as a program change) */
+    0x20,   /* 1  bank select */
+    0x01,   /* 2  modulation wheel */
+    0x07,   /* 3  volume */
+    0x0a,   /* 4  pan */
+    0x0b,   /* 5  expression */
+    0x5b,   /* 6  reverb depth */
+    0x5d,   /* 7  chorus depth */
+    0x40,   /* 8  sustain pedal */
+    0x43,   /* 9  soft pedal */
     0x78,   /* 10 all sounds off */
     0x7b,   /* 11 all notes off */
-    0x7e,   /* 12 local control */
-    0x7f,   /* 13 all controllers off */
-    0x79    /* 14 all notes off (poly) */
+    0x7e,   /* 12 mono mode */
+    0x7f,   /* 13 poly mode */
+    0x79    /* 14 reset all controllers */
+};
+
+/* Mapping table from MUS channels to MIDI channels.  MUS channel
+   15 carries the percussion and is mapped to the MIDI percussion
+   channel (channel 9, zero based).  All the other channels are
+   mapped 1:1; MUS scores never use MUS channel 9. */
+
+static const unsigned char MUS_ChannelMap[NUM_MIDI_CHANNELS] =
+{
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 9
 };
 
 static unsigned char *MUS_Ptr = NULL;        /* current read pointer */
@@ -134,9 +148,10 @@ NMUS_IsMusFile(
 
    Reads a variable-length (base-128) time value from the score.
 
-   The first byte holds the least significant 7 bits, the second
-   byte the next most significant 7 bits, and so on.  The high
-   bit of each byte is set if another byte follows.
+   The time value is stored most significant byte first: the
+   accumulated value is multiplied by 128 and the 7 low bits of
+   the next byte are added to it.  The high bit of each byte is
+   set if another byte follows.
 
    Returns the number of time units, or -1 on end of score.
 ---------------------------------------------------------------------*/
@@ -146,11 +161,9 @@ MUS_ReadTime(
     void)
 {
     int value;
-    int shift;
     unsigned char b;
 
     value = 0;
-    shift = 0;
 
     for (;;)
     {
@@ -160,8 +173,7 @@ MUS_ReadTime(
         }
 
         b = *MUS_Ptr++;
-        value = value + ((b & 0x7f) << shift);
-        shift += 7;
+        value = value * 128 + (b & 0x7f);
 
         if ((b & 0x80) == 0)
         {
@@ -254,8 +266,14 @@ MUS_ReadEvent(
         break;
 
     default:
-        /* Unknown event command, the score is corrupt */
-        return (FALSE);
+        /* Unused command (7).  DMX still consumes one data byte */
+        /* for it, so skip the byte and keep playing */
+        if (MUS_Ptr >= MUS_ScoreEnd)
+        {
+            return (FALSE);
+        }
+        MUS_Parameter = *MUS_Ptr++;
+        break;
     }
 
     if (MUS_Event & 0x80)
@@ -285,7 +303,7 @@ MUS_PlayEvent(
     int command;
     int value;
 
-    channel = MUS_Event & 0x0f;
+    channel = MUS_ChannelMap[MUS_Event & 0x0f];
     command = MUS_Event & 0x70;
 
     switch (command)
@@ -298,7 +316,11 @@ MUS_PlayEvent(
         break;
 
     case MUS_KEYPRESS:
-        MUS_ChannelVel[channel] = (unsigned char)(MUS_Vel & 0x7f);
+        /* The velocity cache is kept per MUS channel (the score
+           refers to the previous velocity of the raw MUS
+           channel), while the events are emitted on the mapped
+           MIDI channel */
+        MUS_ChannelVel[MUS_Event & 0x0f] = (unsigned char)(MUS_Vel & 0x7f);
         if (MUS_Funcs->NoteOn != NULL)
         {
             MUS_Funcs->NoteOn(channel, MUS_Parameter, MUS_Vel & 0x7f);
@@ -338,7 +360,7 @@ MUS_PlayEvent(
                 MUS_Funcs->ProgramChange(channel, MUS_Vel & 0x7f);
             }
         }
-        else if (MUS_Parameter < 15)
+        else if (MUS_Parameter >= 1 && MUS_Parameter <= 9)
         {
             if (MUS_Funcs->ControlChange != NULL)
             {
@@ -354,6 +376,7 @@ MUS_PlayEvent(
 
     case MUS_ENDOFMEASURE:
     case MUS_SCOREEND:
+    default:
         /* Nothing to do here */
         break;
     }

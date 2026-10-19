@@ -319,7 +319,10 @@ int MUSIC_PlaySong(
     case CMS:
     case IMFC:
     case ESFM:
+        /* make sure the native MUS player is not playing over */
+        /* the MIDI song */
         MIDI_StopSong();
+        NMUS_StopSong();
         status = MIDI_PlaySong(song, loopflag);
         if (status != MIDI_Ok)
         {
