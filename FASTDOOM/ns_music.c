@@ -262,12 +262,10 @@ void MUSIC_SetVolume(
             break;
 
         case MUSIC_PLAYER_MUS:
-            /* The MUS player has no software volume of its own,
-               so set the device mixer volume directly */
-            if (MUSIC_MidiFunctions.SetVolume != NULL)
-            {
-                MUSIC_MidiFunctions.SetVolume(volume);
-            }
+            /* The MUS player routes the volume to the device
+               mixer when there is one, and scales the channel
+               volume controllers in software when there isn't */
+            NMUS_SetVolume(volume);
             break;
         }
     }

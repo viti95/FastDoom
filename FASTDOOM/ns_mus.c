@@ -55,6 +55,11 @@
 
 #define MUS_TIME_DIVISION 140
 
+/* MUS controller number that carries the channel volume (mapped
+   to MIDI controller 7). */
+
+#define MUS_CONTROLLER_VOLUME 3
+
 /* Mapping table from MUS controller numbers to MIDI controller */
 /* numbers.  Controller 0 (instrument) is handled separately as a */
 /* program change. */
@@ -108,6 +113,19 @@ static int MUS_Tempo = 120;
 
 static unsigned char MUS_ChannelVel[NUM_MIDI_CHANNELS];
 
+/* Total volume of the music, 0..MIDI_MaxVolume.  Devices with a
+   hardware mixer of their own get the volume through their
+   SetVolume function; all other devices have the channel volume
+   controller values scaled by this total volume in software, the
+   same way the MIDI file player does it. */
+
+static int MUS_TotalVolume = MIDI_MaxVolume;
+
+/* Last score volume used on each MUS channel.  Used to re-send the
+   (scaled) channel volumes when the total volume changes. */
+
+static unsigned char MUS_ChannelVol[NUM_MIDI_CHANNELS];
+
 static task *MUS_Task = NULL;
 static midifuncs *MUS_Funcs = NULL;
 
@@ -120,6 +138,7 @@ static void MUS_PlayEvent(void);
 static int MUS_ReadEvent(void);
 static int MUS_ReadTime(void);
 static void MUS_AllNotesOff(void);
+static void MUS_SendChannelVolumes(void);
 static void MUS_ResetScore(void);
 
 /*---------------------------------------------------------------------
@@ -366,7 +385,22 @@ MUS_PlayEvent(
             {
                 /* DMX stores 8-bit controller values, clamp the
                    value to the legal 7-bit MIDI range */
-                value = (MUS_Vel & 0x80) ? 0x7f : (MUS_Vel & 0x7f);
+                value = MUS_Vel & 0x7f;
+
+                if (MUS_Parameter == MUS_CONTROLLER_VOLUME)
+                {
+                    /* Keep the score volume per channel so the
+                       channel volumes can be re-sent when the
+                       total volume changes, and scale it by the
+                       total volume on devices without a mixer */
+                    MUS_ChannelVol[MUS_Event & 0x0f] =
+                        (unsigned char)value;
+                    if (MUS_Funcs->SetVolume == NULL)
+                    {
+                        value = (value * MUS_TotalVolume + 127) / 255;
+                    }
+                }
+
                 MUS_Funcs->ControlChange(channel,
                                          MUS_ControllerMap[MUS_Parameter],
                                          value);
@@ -402,6 +436,37 @@ MUS_AllNotesOff(
     for (channel = 0; channel < NUM_MIDI_CHANNELS; channel++)
     {
         MUS_Funcs->ControlChange(channel, MIDI_ALL_NOTES_OFF, 0);
+    }
+}
+
+/*---------------------------------------------------------------------
+   Function: MUS_SendChannelVolumes
+
+   Re-sends the last score volume on every channel, scaled by the
+   total volume on devices without a hardware mixer.
+---------------------------------------------------------------------*/
+
+static void
+MUS_SendChannelVolumes(
+    void)
+{
+    int channel;
+    int volume;
+
+    if (MUS_Funcs == NULL || MUS_Funcs->ControlChange == NULL)
+    {
+        return;
+    }
+
+    for (channel = 0; channel < NUM_MIDI_CHANNELS; channel++)
+    {
+        volume = MUS_ChannelVol[channel];
+        if (MUS_Funcs->SetVolume == NULL)
+        {
+            volume = (volume * MUS_TotalVolume + 127) / 255;
+        }
+        MUS_Funcs->ControlChange(MUS_ChannelMap[channel], MIDI_VOLUME,
+                                 volume);
     }
 }
 
@@ -541,6 +606,7 @@ NMUS_PlaySong(
     for (channel = 0; channel < NUM_MIDI_CHANNELS; channel++)
     {
         MUS_ChannelVel[channel] = 127;
+        MUS_ChannelVol[channel] = 127;
     }
 
     /* The MUS time division of the Doom engine is 140 Hz: one MUS
@@ -583,6 +649,47 @@ NMUS_SetTempo(
     }
 
     MUS_Tempo = tempo;
+}
+
+/*---------------------------------------------------------------------
+   Function: NMUS_SetVolume
+
+   Sets the total volume of the MUS music, 0..MIDI_MaxVolume.
+   Devices with a hardware mixer get the volume through their
+   SetVolume function; all other devices have the channel volume
+   controller values scaled in software and are re-sent on every
+   channel, the same way the MIDI file player does it.
+---------------------------------------------------------------------*/
+
+void
+NMUS_SetVolume(
+    int volume)
+{
+    if (MUS_Funcs == NULL)
+    {
+        return;
+    }
+
+    if (volume > MIDI_MaxVolume)
+    {
+        volume = MIDI_MaxVolume;
+    }
+
+    if (volume < 0)
+    {
+        volume = 0;
+    }
+
+    MUS_TotalVolume = volume;
+
+    if (MUS_Funcs->SetVolume != NULL)
+    {
+        MUS_Funcs->SetVolume(volume);
+    }
+    else
+    {
+        MUS_SendChannelVolumes();
+    }
 }
 
 /*---------------------------------------------------------------------

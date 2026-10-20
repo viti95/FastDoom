@@ -36,6 +36,9 @@ int NMUS_PlaySong(unsigned char *song, int loop, midifuncs *funcs);
    only stores the tempo. */
 void NMUS_SetTempo(int tempo);
 
+/* Sets the total volume of the MUS music (0..MIDI_MaxVolume). */
+void NMUS_SetVolume(int volume);
+
 /* Stops playback of the current MUS module. */
 void NMUS_StopSong(void);
 
