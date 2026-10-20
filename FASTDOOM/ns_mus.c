@@ -142,13 +142,13 @@ static void MUS_SendChannelVolumes(void);
 static void MUS_ResetScore(void);
 
 /*---------------------------------------------------------------------
-   Function: NMUS_IsMusFile
+   Function: MUS_IsMusFile
 
    Returns TRUE if the given data is a MUS module.
 ---------------------------------------------------------------------*/
 
 int
-NMUS_IsMusFile(
+MUS_IsMusFile(
     unsigned char *data)
 {
     if (data == NULL)
@@ -559,13 +559,13 @@ MUS_ServiceRoutine(
 }
 
 /*---------------------------------------------------------------------
-   Function: NMUS_PlaySong
+   Function: MUS_PlaySong
 
    Begins playback of a MUS module.
 ---------------------------------------------------------------------*/
 
 int
-NMUS_PlaySong(
+MUS_PlaySong(
     unsigned char *song,
     int loop,
     midifuncs *funcs)
@@ -579,14 +579,14 @@ NMUS_PlaySong(
         return (MUSIC_Warning);
     }
 
-    if (!NMUS_IsMusFile(song))
+    if (!MUS_IsMusFile(song))
     {
         return (MUSIC_Warning);
     }
 
     if (MUS_SongLoaded)
     {
-        NMUS_StopSong();
+        MUS_StopSong();
     }
 
     MUS_Funcs = funcs;
@@ -629,7 +629,7 @@ NMUS_PlaySong(
 }
 
 /*---------------------------------------------------------------------
-   Function: NMUS_SetTempo
+   Function: MUS_SetTempo
 
    Sets the tempo of the current MUS module.
 
@@ -640,7 +640,7 @@ NMUS_PlaySong(
 ---------------------------------------------------------------------*/
 
 void
-NMUS_SetTempo(
+MUS_SetTempo(
     int tempo)
 {
     if (tempo < 5)
@@ -652,7 +652,7 @@ NMUS_SetTempo(
 }
 
 /*---------------------------------------------------------------------
-   Function: NMUS_SetVolume
+   Function: MUS_SetVolume
 
    Sets the total volume of the MUS music, 0..MIDI_MaxVolume.
    Devices with a hardware mixer get the volume through their
@@ -662,7 +662,7 @@ NMUS_SetTempo(
 ---------------------------------------------------------------------*/
 
 void
-NMUS_SetVolume(
+MUS_SetVolume(
     int volume)
 {
     if (MUS_Funcs == NULL)
@@ -693,13 +693,13 @@ NMUS_SetVolume(
 }
 
 /*---------------------------------------------------------------------
-   Function: NMUS_StopSong
+   Function: MUS_StopSong
 
    Stops playback of the current MUS module.
 ---------------------------------------------------------------------*/
 
 void
-NMUS_StopSong(
+MUS_StopSong(
     void)
 {
     if (MUS_SongLoaded)
@@ -720,13 +720,13 @@ NMUS_StopSong(
 }
 
 /*---------------------------------------------------------------------
-   Function: NMUS_PauseSong
+   Function: MUS_PauseSong
 
    Pauses playback of a MUS module.
 ---------------------------------------------------------------------*/
 
 void
-NMUS_PauseSong(
+MUS_PauseSong(
     void)
 {
     if (MUS_SongLoaded)
@@ -737,13 +737,13 @@ NMUS_PauseSong(
 }
 
 /*---------------------------------------------------------------------
-   Function: NMUS_ContinueSong
+   Function: MUS_ContinueSong
 
    Continues playback of a paused MUS module.
 ---------------------------------------------------------------------*/
 
 void
-NMUS_ContinueSong(
+MUS_ContinueSong(
     void)
 {
     if (MUS_SongLoaded)
@@ -753,13 +753,13 @@ NMUS_ContinueSong(
 }
 
 /*---------------------------------------------------------------------
-   Function: NMUS_SongPlaying
+   Function: MUS_SongPlaying
 
    Returns whether a MUS module is playing.
 ---------------------------------------------------------------------*/
 
 int
-NMUS_SongPlaying(
+MUS_SongPlaying(
     void)
 {
     return (MUS_SongActive);

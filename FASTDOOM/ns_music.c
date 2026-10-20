@@ -57,7 +57,7 @@ MUSIC_StopCurrent(
         break;
 
     case MUSIC_PLAYER_MUS:
-        NMUS_StopSong();
+        MUS_StopSong();
         break;
     }
 
@@ -265,7 +265,7 @@ void MUSIC_SetVolume(
             /* The MUS player routes the volume to the device
                mixer when there is one, and scales the channel
                volume controllers in software when there isn't */
-            NMUS_SetVolume(volume);
+            MUS_SetVolume(volume);
             break;
         }
     }
@@ -288,7 +288,7 @@ void MUSIC_Continue(
         break;
 
     case MUSIC_PLAYER_MUS:
-        NMUS_ContinueSong();
+        MUS_ContinueSong();
         break;
     }
 }
@@ -310,7 +310,7 @@ void MUSIC_Pause(
         break;
 
     case MUSIC_PLAYER_MUS:
-        NMUS_PauseSong();
+        MUS_PauseSong();
         break;
     }
 }
@@ -335,7 +335,7 @@ int MUSIC_SongPlaying(void)
         return (MIDI_SongPlaying());
 
     case MUSIC_PLAYER_MUS:
-        return (NMUS_SongPlaying());
+        return (MUS_SongPlaying());
     }
 
     return (FALSE);
@@ -369,9 +369,9 @@ int MUSIC_PlaySong(
     MUSIC_StopCurrent();
 
     // MUS modules are played natively by the MUS module player
-    if (NMUS_IsMusFile(song))
+    if (MUS_IsMusFile(song))
     {
-        status = NMUS_PlaySong(song, loopflag, &MUSIC_MidiFunctions);
+        status = MUS_PlaySong(song, loopflag, &MUSIC_MidiFunctions);
         if (status != MUSIC_Ok)
         {
             return (MUSIC_Warning);

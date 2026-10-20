@@ -65,7 +65,7 @@ int mus_loop = 0;
 int dmx_mus_port = 0;
 int dmx_snd_port = 0;
 
-int MUS_RegisterSong(void *data)
+int DMX_RegisterSong(void *data)
 {
     mus_data = NULL;
 
@@ -81,7 +81,7 @@ int MUS_RegisterSong(void *data)
     return 0;
 }
 
-unsigned int MUS_ChecksumRoland(unsigned char *buf, int cnt)
+unsigned int DMX_ChecksumRoland(unsigned char *buf, int cnt)
 {
     unsigned int cksum = 0;
     /* Add up all the bytes */
@@ -108,7 +108,7 @@ unsigned int MUS_ChecksumRoland(unsigned char *buf, int cnt)
 
 unsigned char *LogoSC55;
 
-void MUS_ImgSC55(void)
+void DMX_ImgSC55(void)
 {
     if (LogoSC55 == NULL) {
         LogoSC55 = I_ReadBinaryStatic("DATA\\SC55.BIN", 72);
@@ -119,7 +119,7 @@ void MUS_ImgSC55(void)
 
 unsigned char *LogoTG300;
 
-void MUS_ImgTG300(void)
+void DMX_ImgTG300(void)
 {
     if (LogoTG300 == NULL) {
         LogoTG300 = I_ReadBinaryStatic("DATA\\TG300.BIN", 55);
@@ -134,7 +134,7 @@ unsigned char TextSC55[] = {0x41, 0x10, 0x45, 0x12, 0x10, 0x00, 0x00, 0xFF, 0xFF
                             0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 
                             0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
-void MUS_TextSC55(unsigned char *text, int size)
+void DMX_TextSC55(unsigned char *text, int size)
 {
     int i;
     unsigned char *sc55ptr = TextSC55 + 7;
@@ -151,14 +151,14 @@ void MUS_TextSC55(unsigned char *text, int size)
         text++;
     }
 
-    *(sc55ptr) = MUS_ChecksumRoland(TextSC55 + 4, size+3);
+    *(sc55ptr) = DMX_ChecksumRoland(TextSC55 + 4, size+3);
 
     MUSIC_SysEx(TextSC55, size+8);
 }
 
 unsigned char YamahaXG[] = {0x43, 0x10, 0x4C, 0x00, 0x00, 0x7E, 0x00};
 
-void MUS_YamahaXG(void)
+void DMX_YamahaXG(void)
 {
     MUSIC_SysEx(YamahaXG, 7);
 }
@@ -168,7 +168,7 @@ unsigned char TextMU80[] = {0x43, 0x10, 0x4C, 0x06, 0x00, 0x00, 0xFF, 0xFF, 0xFF
                             0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 
                             0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
-void MUS_TextMU80(unsigned char *text, int size)
+void DMX_TextMU80(unsigned char *text, int size)
 {
     int i;
     unsigned char *mu80ptr = TextMU80 + 6;
@@ -212,7 +212,7 @@ unsigned char TextTG300[] = {0x43, 0x10, 0x2B, 0x07, 0x00, 0x00, 0xFF, 0xFF, 0xF
                              0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 
                              0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
-void MUS_TextTG300(unsigned char *text, int size)
+void DMX_TextTG300(unsigned char *text, int size)
 {
     int i;
     unsigned char *tg300ptr = TextTG300 + 6;
@@ -248,7 +248,7 @@ void MUS_TextTG300(unsigned char *text, int size)
         text++;
     }
 
-    *(tg300ptr) = MUS_ChecksumRoland(TextTG300 + 3, size+3);
+    *(tg300ptr) = DMX_ChecksumRoland(TextTG300 + 3, size+3);
 
     MUSIC_SysEx(TextTG300, size + 7);
 }
@@ -257,7 +257,7 @@ unsigned char TextMT32[] = {0x41, 0x10, 0x16, 0x12, 0x20, 0x00, 0x00, 0xFF, 0xFF
                             0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 
                             0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
-void MUS_TextMT32(unsigned char *text, int size)
+void DMX_TextMT32(unsigned char *text, int size)
 {
     int i;
     unsigned char *mt32ptr = TextMT32 + 7;
@@ -293,14 +293,14 @@ void MUS_TextMT32(unsigned char *text, int size)
         text++;
     }
 
-    *(mt32ptr) = MUS_ChecksumRoland(TextMT32 + 4, size + 3);
+    *(mt32ptr) = DMX_ChecksumRoland(TextMT32 + 4, size + 3);
 
     MUSIC_SysEx(TextMT32, size + 8);
 }
 
 const char mt32file[13] = "MT32GM.MID";
 
-int MUS_LoadMT32(void)
+int DMX_LoadMT32(void)
 {
     FILE *mid;
     unsigned int midlen;
@@ -330,7 +330,7 @@ int MUS_LoadMT32(void)
     return 0;
 }
 
-void MUS_ReleaseData(void)
+void DMX_ReleaseData(void)
 {
     if (!MUSIC_SongPlaying())
     {
@@ -341,18 +341,18 @@ void MUS_ReleaseData(void)
     }
 }
 
-int MUS_SongPlaying()
+int DMX_SongPlaying()
 {
     return MUSIC_SongPlaying();
 }
 
-int MUS_ChainSong(int handle, int next)
+int DMX_ChainSong(int handle, int next)
 {
     mus_loop = (next == handle);
     return 0;
 }
 
-void MUS_PlaySong(int handle, int volume)
+void DMX_PlaySong(int handle, int volume)
 {
     long status;
     if (mus_data == NULL)

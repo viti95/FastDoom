@@ -484,11 +484,11 @@ void S_ChangeMusicMIDI(int musicnum, int looping)
     }
 
     music->data = (void *)W_CacheLumpNum(music->lumpnum, PU_MUSIC);
-    music->handle = MUS_RegisterSong(music->data);
+    music->handle = DMX_RegisterSong(music->data);
 
     // play it
-    MUS_ChainSong(music->handle, looping ? music->handle : -1);
-    MUS_PlaySong(music->handle, snd_MusicVolume);
+    DMX_ChainSong(music->handle, looping ? music->handle : -1);
+    DMX_PlaySong(music->handle, snd_MusicVolume);
 
     mus_playing = music;
 }
@@ -531,7 +531,7 @@ void S_ShowMusicTitle(int musicnum)
             length = 32;
         }
 
-        MUS_TextSC55(musictitle, length);        
+        DMX_TextSC55(musictitle, length);        
         break;
     case midi_mt32:
         length = strlen(musictitle);
@@ -539,7 +539,7 @@ void S_ShowMusicTitle(int musicnum)
             length = 20;
         }
 
-        MUS_TextMT32(musictitle, length);
+        DMX_TextMT32(musictitle, length);
         break;
     case midi_mu80:
         length = strlen(musictitle);
@@ -547,7 +547,7 @@ void S_ShowMusicTitle(int musicnum)
             length = 32;
         }
 
-        MUS_TextMU80(musictitle, length);
+        DMX_TextMU80(musictitle, length);
         break;
     case midi_tg300:
         length = strlen(musictitle);
@@ -555,7 +555,7 @@ void S_ShowMusicTitle(int musicnum)
             length = 32;
         }
 
-        MUS_TextTG300(musictitle, length);
+        DMX_TextTG300(musictitle, length);
         break;
     default:
         break;

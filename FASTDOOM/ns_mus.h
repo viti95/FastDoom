@@ -26,29 +26,29 @@
 #define MUS_UNUSED            0x70
 
 /* Returns TRUE if the given data is a MUS module. */
-int NMUS_IsMusFile(unsigned char *data);
+int MUS_IsMusFile(unsigned char *data);
 
 /* Begins playback of a MUS module using the given device functions. */
-int NMUS_PlaySong(unsigned char *song, int loop, midifuncs *funcs);
+int MUS_PlaySong(unsigned char *song, int loop, midifuncs *funcs);
 
 /* Sets the tempo of the current MUS module (in BPM).  The MUS
    time division is fixed (140 Hz in the Doom engine), so this
    only stores the tempo. */
-void NMUS_SetTempo(int tempo);
+void MUS_SetTempo(int tempo);
 
 /* Sets the total volume of the MUS music (0..MIDI_MaxVolume). */
-void NMUS_SetVolume(int volume);
+void MUS_SetVolume(int volume);
 
 /* Stops playback of the current MUS module. */
-void NMUS_StopSong(void);
+void MUS_StopSong(void);
 
 /* Pauses playback of the current MUS module. */
-void NMUS_PauseSong(void);
+void MUS_PauseSong(void);
 
 /* Continues playback of a paused MUS module. */
-void NMUS_ContinueSong(void);
+void MUS_ContinueSong(void);
 
 /* Returns whether a MUS module is playing. */
-int NMUS_SongPlaying(void);
+int MUS_SongPlaying(void);
 
 #endif

@@ -287,39 +287,39 @@ void I_StartupSound(void)
     {
         case midi_mt32:
             printf(I_LoadTextProgram(44));
-            MUS_TextMT32("Loading GM patches  ", 20);
+            DMX_TextMT32("Loading GM patches  ", 20);
 
             // Load MIDI
-            MUS_LoadMT32();
+            DMX_LoadMT32();
 
             // Play MIDI
-            MUS_ChainSong(0, -1);
-            MUS_PlaySong(0, snd_MusicVolume);
+            DMX_ChainSong(0, -1);
+            DMX_PlaySong(0, snd_MusicVolume);
 
             // Wait until is fully loaded
-            while (MUS_SongPlaying())
+            while (DMX_SongPlaying())
             {
             }
 
             // Release MIDI
-            MUS_ReleaseData();
+            DMX_ReleaseData();
 
             // Send text to MT-32
-            MUS_TextMT32("## FastDOOM " FDOOMVERSION " ##", 20);
+            DMX_TextMT32("## FastDOOM " FDOOMVERSION " ##", 20);
 
             delay(3000);
             break;
         case midi_sc55:
-            MUS_ImgSC55();
-            MUS_TextSC55("Version  " FDOOMVERSION, 14);
+            DMX_ImgSC55();
+            DMX_TextSC55("Version  " FDOOMVERSION, 14);
             delay(3000);
             break;
         case midi_mu80:
-            MUS_YamahaXG();
-            MUS_TextMU80("    FastDOOM          " FDOOMVERSION "     ", 32);
+            DMX_YamahaXG();
+            DMX_TextMU80("    FastDOOM          " FDOOMVERSION "     ", 32);
             break;
         case midi_tg300:
-            MUS_ImgTG300();
+            DMX_ImgTG300();
             delay(3000);
             break;
         default:
