@@ -234,6 +234,10 @@ void F_TextWrite(void)
 		CopyDWords(srcptr, dest, (SCREENWIDTH % 64) / 4);
 		dest += (SCREENWIDTH % 64);
 #endif
+	#if defined(USE_BACKBUFFER)
+	// Skip the row padding (BACKBUFFER_POW2_WIDTH).
+	dest += BACKBUFFER_LINEWIDTH - SCREENWIDTH;
+	#endif
 	}
 
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT)
@@ -753,69 +757,72 @@ void F_DrawPatchCol(int x, patch_t *patch, int col)
 	byte *dest;
 	byte *desttop;
 	int count;
+	int linewidth;
 
 	column = (column_t *)((byte *)patch + patch->columnofs[col]);
 
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
-	desttop = screen0 + ((CENTERING_OFFSET_X + x) * PIXEL_SCALING_H) + MulScreenWidth(CENTERING_OFFSET_Y * PIXEL_SCALING_V);
+	linewidth = SCREENWIDTH;
+	desttop = screen0 + ((CENTERING_OFFSET_X + x) * PIXEL_SCALING_H) + MulBackbufferWidth(CENTERING_OFFSET_Y * PIXEL_SCALING_V);
 #endif
 #if defined(USE_BACKBUFFER)
-	desttop = backbuffer + ((CENTERING_OFFSET_X + x) * PIXEL_SCALING_H) + MulScreenWidth(CENTERING_OFFSET_Y * PIXEL_SCALING_V);
+	linewidth = BACKBUFFER_LINEWIDTH;
+	desttop = backbuffer + ((CENTERING_OFFSET_X + x) * PIXEL_SCALING_H) + MulBackbufferWidth(CENTERING_OFFSET_Y * PIXEL_SCALING_V);
 #endif
 
 	// step through the posts in a column
 	while (column->topdelta != 0xff)
 	{
 		source = (byte *)column + 3;
-		dest = desttop + MulScreenWidth(column->topdelta * PIXEL_SCALING_V);
+		dest = desttop + MulBackbufferWidth(column->topdelta * PIXEL_SCALING_V);
 		count = column->length;
 
 		while (count--)
 		{
 #if PIXEL_SCALING==1
 			*dest = *source++;
-			dest += SCREENWIDTH;
+			dest += linewidth;
 #elif PIXEL_SCALING==2
 			byte s0 = *source;
 			*dest = s0;
 			*(dest + 1) = s0;
-			*(dest + SCREENWIDTH) = s0;
-			*(dest + SCREENWIDTH + 1) = s0;
+			*(dest + linewidth) = s0;
+			*(dest + linewidth + 1) = s0;
 			source++;
-			dest += 2 * SCREENWIDTH;
+			dest += 2 * linewidth;
 #elif PIXEL_SCALING==3
 			byte s0 = *source;
 			*dest = s0;
 			*(dest + 1) = s0;
 			*(dest + 2) = s0;
-			*(dest + SCREENWIDTH) = s0;
-			*(dest + SCREENWIDTH + 1) = s0;
-			*(dest + SCREENWIDTH + 2) = s0;
-			*(dest + 2*SCREENWIDTH) = s0;
-			*(dest + 2*SCREENWIDTH + 1) = s0;
-			*(dest + 2*SCREENWIDTH + 2) = s0;
+			*(dest + linewidth) = s0;
+			*(dest + linewidth + 1) = s0;
+			*(dest + linewidth + 2) = s0;
+			*(dest + 2*linewidth) = s0;
+			*(dest + 2*linewidth + 1) = s0;
+			*(dest + 2*linewidth + 2) = s0;
 			source++;
-			dest += 3 * SCREENWIDTH;
+			dest += 3 * linewidth;
 #elif PIXEL_SCALING==4
 			byte s0 = *source;
 			*dest = s0;
 			*(dest + 1) = s0;
 			*(dest + 2) = s0;
 			*(dest + 3) = s0;
-			*(dest + SCREENWIDTH) = s0;
-			*(dest + SCREENWIDTH + 1) = s0;
-			*(dest + SCREENWIDTH + 2) = s0;
-			*(dest + SCREENWIDTH + 3) = s0;
-			*(dest + 2*SCREENWIDTH) = s0;
-			*(dest + 2*SCREENWIDTH + 1) = s0;
-			*(dest + 2*SCREENWIDTH + 2) = s0;
-			*(dest + 2*SCREENWIDTH + 3) = s0;
-			*(dest + 3*SCREENWIDTH) = s0;
-			*(dest + 3*SCREENWIDTH + 1) = s0;
-			*(dest + 3*SCREENWIDTH + 2) = s0;
-			*(dest + 3*SCREENWIDTH + 3) = s0;
+			*(dest + linewidth) = s0;
+			*(dest + linewidth + 1) = s0;
+			*(dest + linewidth + 2) = s0;
+			*(dest + linewidth + 3) = s0;
+			*(dest + 2*linewidth) = s0;
+			*(dest + 2*linewidth + 1) = s0;
+			*(dest + 2*linewidth + 2) = s0;
+			*(dest + 2*linewidth + 3) = s0;
+			*(dest + 3*linewidth) = s0;
+			*(dest + 3*linewidth + 1) = s0;
+			*(dest + 3*linewidth + 2) = s0;
+			*(dest + 3*linewidth + 3) = s0;
 			source++;
-			dest += 4 * SCREENWIDTH;
+			dest += 4 * linewidth;
 #elif PIXEL_SCALING == 5
 			byte s0 = *source;
 			*dest = s0;
@@ -823,33 +830,33 @@ void F_DrawPatchCol(int x, patch_t *patch, int col)
 			*(dest + 2) = s0;
 			*(dest + 3) = s0;
 			*(dest + 4) = s0;
-			*(dest + SCREENWIDTH) = s0;
-			*(dest + SCREENWIDTH + 1) = s0;
-			*(dest + SCREENWIDTH + 2) = s0;
-			*(dest + SCREENWIDTH + 3) = s0;
-			*(dest + SCREENWIDTH + 4) = s0;
-			*(dest + 2*SCREENWIDTH) = s0;
-			*(dest + 2*SCREENWIDTH + 1) = s0;
-			*(dest + 2*SCREENWIDTH + 2) = s0;
-			*(dest + 2*SCREENWIDTH + 3) = s0;
-			*(dest + 2*SCREENWIDTH + 4) = s0;
-			*(dest + 3*SCREENWIDTH) = s0;
-			*(dest + 3*SCREENWIDTH + 1) = s0;
-			*(dest + 3*SCREENWIDTH + 2) = s0;
-			*(dest + 3*SCREENWIDTH + 3) = s0;
-			*(dest + 3*SCREENWIDTH + 4) = s0;
-			*(dest + 4*SCREENWIDTH) = s0;
-			*(dest + 4*SCREENWIDTH + 1) = s0;
-			*(dest + 4*SCREENWIDTH + 2) = s0;
-			*(dest + 4*SCREENWIDTH + 3) = s0;
-			*(dest + 4*SCREENWIDTH + 4) = s0;
-			*(dest + 5*SCREENWIDTH) = s0;
-			*(dest + 5*SCREENWIDTH + 1) = s0;
-			*(dest + 5*SCREENWIDTH + 2) = s0;
-			*(dest + 5*SCREENWIDTH + 3) = s0;
-			*(dest + 5*SCREENWIDTH + 4) = s0;
+			*(dest + linewidth) = s0;
+			*(dest + linewidth + 1) = s0;
+			*(dest + linewidth + 2) = s0;
+			*(dest + linewidth + 3) = s0;
+			*(dest + linewidth + 4) = s0;
+			*(dest + 2*linewidth) = s0;
+			*(dest + 2*linewidth + 1) = s0;
+			*(dest + 2*linewidth + 2) = s0;
+			*(dest + 2*linewidth + 3) = s0;
+			*(dest + 2*linewidth + 4) = s0;
+			*(dest + 3*linewidth) = s0;
+			*(dest + 3*linewidth + 1) = s0;
+			*(dest + 3*linewidth + 2) = s0;
+			*(dest + 3*linewidth + 3) = s0;
+			*(dest + 3*linewidth + 4) = s0;
+			*(dest + 4*linewidth) = s0;
+			*(dest + 4*linewidth + 1) = s0;
+			*(dest + 4*linewidth + 2) = s0;
+			*(dest + 4*linewidth + 3) = s0;
+			*(dest + 4*linewidth + 4) = s0;
+			*(dest + 5*linewidth) = s0;
+			*(dest + 5*linewidth + 1) = s0;
+			*(dest + 5*linewidth + 2) = s0;
+			*(dest + 5*linewidth + 3) = s0;
+			*(dest + 5*linewidth + 4) = s0;
 			source++;
-			dest += 6 * SCREENWIDTH;
+			dest += 6 * linewidth;
 #endif
 		}
 		column = (column_t *)((byte *)column + column->length + 4);

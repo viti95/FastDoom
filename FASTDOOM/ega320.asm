@@ -21,6 +21,32 @@ BITS 32
 
 %ifdef MODE_EGA
 
+// Mirror of the BACKBUFFER_POW2_WIDTH logic in doomdef.h: when the
+// flag is set, pad backbuffer rows to the next power of two so the
+// assembly copyers advance rows by the same stride as the C code.
+// These drivers all use a 320 pixel wide backbuffer (the C default;
+// wider modes expand the pixels in assembly), so the padded stride
+// is 512 bytes.
+%ifndef SCREENWIDTH
+%define SCREENWIDTH 320
+%endif
+%ifndef SCREENHEIGHT
+%define SCREENHEIGHT 200
+%endif
+%ifdef BACKBUFFER_POW2_WIDTH
+%if SCREENWIDTH <= 512
+%define BACKBUFFER_LINEWIDTH 512
+%elif SCREENWIDTH <= 1024
+%define BACKBUFFER_LINEWIDTH 1024
+%elif SCREENWIDTH <= 2048
+%define BACKBUFFER_LINEWIDTH 2048
+%else
+%define BACKBUFFER_LINEWIDTH 4096
+%endif
+%else
+%define BACKBUFFER_LINEWIDTH SCREENWIDTH
+%endif
+
 extern _backbuffer
 extern _ptrlut16colors
 extern _lut16colors
@@ -53,6 +79,14 @@ CODE_SYM_DEF I_FinishUpdate
 	mov		eax,[_ptrlut16colors]
 	mov		di,[_lastlatch]
 	xor		edx,edx
+
+	; The backbuffer rows may be padded to BACKBUFFER_LINEWIDTH
+	; (BACKBUFFER_POW2_WIDTH), so the screen is walked row by row:
+	; SCREENWIDTH/4 quads per row, then skip the row padding.
+	sub		esp,4
+	mov		word [esp],SCREENHEIGHT
+L$row:
+	mov		word [esp+2],SCREENWIDTH/4
 L$2:
 	mov		al,byte [ebp]
 	add		ebx,2
@@ -79,8 +113,12 @@ L$2:
 L$4:
 	mov		[esi],cl
 L$3:
-	cmp		si,0x3E80-1
-	jb		L$2
+	dec		word [esp+2]
+	jne		L$2
+	add		ebp,BACKBUFFER_LINEWIDTH-SCREENWIDTH
+	dec		word [esp]
+	jne		L$row
+	add		esp,4
 	mov		[_lastlatch],di
 	pop		ebp
 	pop		edi

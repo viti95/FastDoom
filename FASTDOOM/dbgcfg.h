@@ -24,7 +24,7 @@
 
 // Enables the serial debug output and sets the parameters
 // These are the default values for serial port 1
-#define DEBUG_SERIAL_ENABLED 0
+#define DEBUG_SERIAL_ENABLED 1
 #define DEBUG_SERIAL_BASE_IO 0x3f8
 #define DEBUG_SERIAL_BAUD 115200
 

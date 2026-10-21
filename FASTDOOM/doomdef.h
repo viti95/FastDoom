@@ -167,6 +167,45 @@ typedef enum
 #error "Defined Screen Resolution is not supported"
 #endif
 
+//
+// Backbuffer line width (row stride in bytes).
+// By default the backbuffer rows are packed at SCREENWIDTH. Defining
+// BACKBUFFER_POW2_WIDTH pads every row up to the next power of two at
+// or above SCREENWIDTH (e.g. 640 -> 1024, 320 -> 512). Row starts then
+// land on power-of-two offsets, which stops scanline rendering from
+// bouncing across cache lines on modern CPUs. Rendering still happens
+// at SCREENWIDTH x SCREENHEIGHT; the extra bytes per row are unused
+// padding and are never displayed.
+//
+#if defined(BACKBUFFER_POW2_WIDTH)
+#if SCREENWIDTH <= 512
+#define BACKBUFFER_LINEWIDTH 512
+#define MulBackbufferWidth(x) Mul512(x)
+#define MulBackbufferWidthHalf(x) Mul256(x)
+#define MulBackbufferWidthQuarter(x) Mul128(x)
+#elif SCREENWIDTH <= 1024
+#define BACKBUFFER_LINEWIDTH 1024
+#define MulBackbufferWidth(x) Mul1024(x)
+#define MulBackbufferWidthHalf(x) Mul512(x)
+#define MulBackbufferWidthQuarter(x) Mul256(x)
+#elif SCREENWIDTH <= 2048
+#define BACKBUFFER_LINEWIDTH 2048
+#define MulBackbufferWidth(x) Mul2048(x)
+#define MulBackbufferWidthHalf(x) Mul1024(x)
+#define MulBackbufferWidthQuarter(x) Mul512(x)
+#else
+#define BACKBUFFER_LINEWIDTH 4096
+#define MulBackbufferWidth(x) ((x) << 12)
+#define MulBackbufferWidthHalf(x) Mul2048(x)
+#define MulBackbufferWidthQuarter(x) Mul1024(x)
+#endif
+#else
+#define BACKBUFFER_LINEWIDTH SCREENWIDTH
+#define MulBackbufferWidth(x) MulScreenWidth(x)
+#define MulBackbufferWidthHalf(x) MulScreenWidthHalf(x)
+#define MulBackbufferWidthQuarter(x) MulScreenWidthQuarter(x)
+#endif
+
 #define ORIGINAL_SCREENWIDTH 320
 #define ORIGINAL_SCREENHEIGHT 200
 #define SCALED_SCREENWIDTH (SCREENWIDTH / PIXEL_SCALING_H)

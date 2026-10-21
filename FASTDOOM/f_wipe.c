@@ -39,6 +39,15 @@
 #define BYTE0_USHORT(value)  (((unsigned char *)&value)[0])
 #define BYTE1_USHORT(value)  (((unsigned char *)&value)[1])
 
+// Row stride of the melt wipe destination in 16 bit words: the
+// packed screens use SCREENWIDTH, the backbuffer may use the wider
+// BACKBUFFER_LINEWIDTH (BACKBUFFER_POW2_WIDTH).
+#if defined(USE_BACKBUFFER)
+#define MELT_STRIDE (BACKBUFFER_LINEWIDTH / 2)
+#else
+#define MELT_STRIDE (SCREENWIDTH / 2)
+#endif
+
 #define GC_INDEX 0x3CE
 #define GC_READMAP 4
 
@@ -100,7 +109,15 @@ void wipe_initMelt()
     CopyDWords(screen2, screen0, (SCREENWIDTH * SCREENHEIGHT) / 4);
     #endif
     #if defined(USE_BACKBUFFER)
-    CopyDWords(screen2, backbuffer, (SCREENWIDTH * SCREENHEIGHT) / 4);
+    {
+        // The backbuffer rows may be wider than the packed screen2
+        // rows (BACKBUFFER_POW2_WIDTH), copy line by line.
+        int y;
+        for (y = 0; y < SCREENHEIGHT; y++)
+            CopyDWords(screen2 + MulScreenWidth(y),
+                       backbuffer + MulBackbufferWidth(y),
+                       SCREENWIDTH / 4);
+    }
     #endif
 
     // makes this wipe faster (in theory)
@@ -161,12 +178,12 @@ byte wipe_doMelt(int ticks)
                 d = &((short *)screen0)[MulScreenWidthHalf(y_val) + i];
                 #endif
                 #if defined(USE_BACKBUFFER)
-                d = &((short *)backbuffer)[MulScreenWidthHalf(y_val) + i];
+                d = &((short *)backbuffer)[MulBackbufferWidthHalf(y_val) + i];
                 #endif
                 for (j = dy; j; j--)
                 {
                     d[idx] = *(s++);
-                    idx += SCREENWIDTH / 2;
+                    idx += MELT_STRIDE;
                 }
                 y_val += dy;
                 s = &((short *)screen2)[i_screen_height];
@@ -174,13 +191,13 @@ byte wipe_doMelt(int ticks)
                 d = &((short *)screen0)[MulScreenWidthHalf(y_val) + i];
                 #endif
                 #if defined(USE_BACKBUFFER)
-                d = &((short *)backbuffer)[MulScreenWidthHalf(y_val) + i];
+                d = &((short *)backbuffer)[MulBackbufferWidthHalf(y_val) + i];
                 #endif
                 idx = 0;
                 for (j = SCREENHEIGHT - y_val; j; j--)
                 {
                     d[idx] = *(s++);
-                    idx += (SCREENWIDTH / 2);
+                    idx += MELT_STRIDE;
                 }
                 y[i] = y_val;
                 done = 0;
@@ -313,7 +330,13 @@ void wipe_ReadScreen(byte *scr)
 #if defined(USE_BACKBUFFER)
 void wipe_ReadScreen(byte *scr)
 {
-    CopyDWords(backbuffer, scr, SCREENWIDTH * SCREENHEIGHT / 4);
+    // The backbuffer rows may be wider than the packed scr rows
+    // (BACKBUFFER_POW2_WIDTH), copy line by line.
+    int y;
+    for (y = 0; y < SCREENHEIGHT; y++)
+        CopyDWords(scr + MulScreenWidth(y),
+                   backbuffer + MulBackbufferWidth(y),
+                   SCREENWIDTH / 4);
 }
 #endif
 

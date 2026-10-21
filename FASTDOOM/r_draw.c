@@ -2915,7 +2915,7 @@ void R_InitBuffer(int width, int height)
 
 #if defined(USE_BACKBUFFER)
     for (i = 0; i < height; i++)
-        ylookup[i] = backbuffer + MulScreenWidth(i + viewwindowy);
+        ylookup[i] = backbuffer + MulBackbufferWidth(i + viewwindowy);
 #endif
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF)
     for (i = 0; i < height; i++)
@@ -3206,7 +3206,13 @@ void R_VideoErase(unsigned ofs, int count)
 #if defined(USE_BACKBUFFER)
 void R_VideoErase(unsigned ofs, int count)
 {
-   // The erase function is called using
+    int firstline;
+    int lastline;
+    int x1;
+    int x2;
+    int y;
+
+    // The erase function is called using
     // LFB copy.
     // This might not be a good idea if memcpy
     //  is not optiomal, e.g. byte by byte on
@@ -3216,18 +3222,36 @@ void R_VideoErase(unsigned ofs, int count)
 
     if (background_buffer)
     {
-        if (count & 1)
-        {
-            *(backbuffer + ofs) = *(background_buffer + ofs);
-            ofs++;
-            count--;
-        }
+        // ofs/count are packed screen offsets (SCREENWIDTH row
+        // stride). The backbuffer rows may be wider than that
+        // (BACKBUFFER_POW2_WIDTH), so the range is walked line by
+        // line and remapped onto the backbuffer stride.
+        firstline = ofs / SCREENWIDTH;
+        lastline = (ofs + count - 1) / SCREENWIDTH;
+        x1 = ofs % SCREENWIDTH;
+        x2 = (ofs + count - 1) % SCREENWIDTH + 1;
 
-        if (count > 0)
+        for (y = firstline; y <= lastline; y++)
         {
-            CopyWords(background_buffer + ofs, backbuffer + ofs, count / 2);
-        }
+            int lx = (y == firstline) ? x1 : 0;
+            int lx2 = (y == lastline) ? x2 : SCREENWIDTH;
+            int n = lx2 - lx;
 
+            if (n & 1)
+            {
+                *(backbuffer + MulBackbufferWidth(y) + lx) =
+                    *(background_buffer + MulScreenWidth(y) + lx);
+                lx++;
+                n--;
+            }
+
+            if (n > 0)
+            {
+                CopyWords(background_buffer + MulScreenWidth(y) + lx,
+                          backbuffer + MulBackbufferWidth(y) + lx,
+                          n / 2);
+            }
+        }
     }
 }
 #endif

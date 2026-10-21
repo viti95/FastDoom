@@ -926,7 +926,7 @@ void AM_drawFline(fline_t *fl, int color)
 #endif
 
 #if defined(USE_BACKBUFFER)
-#define PUTDOT(xx, yy, cc) backbuffer[MulScreenWidth(yy) + (xx)] = (cc)
+#define PUTDOT(xx, yy, cc) backbuffer[MulBackbufferWidth(yy) + (xx)] = (cc)
 #endif
 
 	dx = fl->b.x - fl->a.x;
@@ -1171,6 +1171,22 @@ void AM_drawThings(int colors,
 	}
 }
 
+#if defined(USE_BACKBUFFER)
+//
+// AM_ClearBackbuffer
+// Clears the top automapheight lines of the backbuffer to value.
+// The lines may be padded to BACKBUFFER_LINEWIDTH (BACKBUFFER_POW2_WIDTH),
+// so the buffer is filled line by line instead of as one blob.
+//
+static void AM_ClearBackbuffer(int value)
+{
+    int y;
+
+    for (y = 0; y < automapheight; y++)
+        SetDWords(backbuffer + MulBackbufferWidth(y), value, SCREENWIDTH / 4);
+}
+#endif
+
 void AM_Drawer(void)
 {
 	int i;
@@ -1216,7 +1232,7 @@ void AM_Drawer(void)
 #endif
 #if defined(USE_BACKBUFFER)
 		if (!transparentmap)
-			SetDWords(backbuffer, BACKGROUND, MulScreenWidthQuarter(automapheight)); // Clear automap frame buffer
+			AM_ClearBackbuffer(BACKGROUND); // Clear automap frame buffer
 #endif
 	}
 #else
@@ -1232,7 +1248,7 @@ void AM_Drawer(void)
 #endif
 #if defined(USE_BACKBUFFER)
 	if (!transparentmap)
-		SetDWords(backbuffer, BACKGROUND, MulScreenWidthQuarter(automapheight)); // Clear automap frame buffer
+		AM_ClearBackbuffer(BACKGROUND); // Clear automap frame buffer
 #endif
 #endif
 

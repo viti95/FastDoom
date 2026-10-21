@@ -48,7 +48,7 @@ byte screen4[SCREENWIDTH * SBARHEIGHT];
 #endif
 
 #if defined(USE_BACKBUFFER)
-byte backbuffer[SCREENWIDTH * SCREENHEIGHT];
+byte backbuffer[BACKBUFFER_LINEWIDTH * SCREENHEIGHT];
 #endif
 
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(MODE_VBE2_DIRECT)
@@ -135,7 +135,16 @@ void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int de
 #endif
 
     src = srcscrn + MulScreenWidth(srcy) + srcx;
+#if defined(USE_BACKBUFFER)
+    // The destination is the backbuffer, whose rows are strided at
+    // BACKBUFFER_LINEWIDTH (padded to a power of two when
+    // BACKBUFFER_POW2_WIDTH is set).
+    dest = destscrn + MulBackbufferWidth(desty) + destx;
+#define VCR_DEST_STRIDE BACKBUFFER_LINEWIDTH
+#else
     dest = destscrn + MulScreenWidth(desty) + destx;
+#define VCR_DEST_STRIDE SCREENWIDTH
+#endif
 
     if (width & 1)
     {
@@ -147,7 +156,7 @@ void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int de
 
             CopyWords(src, dest, width / 2);
             src += SCREENWIDTH - 1;
-            dest += SCREENWIDTH - 1;
+            dest += VCR_DEST_STRIDE - 1;
         }
     }
     else
@@ -156,9 +165,11 @@ void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int de
         {
             CopyWords(src, dest, width / 2);
             src += SCREENWIDTH;
-            dest += SCREENWIDTH;
+            dest += VCR_DEST_STRIDE;
         }
     }
+
+#undef VCR_DEST_STRIDE
 }
 
 //
@@ -1526,7 +1537,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
     x -= patch->leftoffset;
 
     col = 0;
-    desttop = backbuffer + MulScreenWidth(y * PIXEL_SCALING_V) + x * PIXEL_SCALING_H;
+    desttop = backbuffer + MulBackbufferWidth(y * PIXEL_SCALING_V) + x * PIXEL_SCALING_H;
     w = patch->width;
     for (; col < w; x++, col++, desttop += PIXEL_SCALING)
     {
@@ -1554,13 +1565,13 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
         while (column->topdelta != 0xff)
         {
             source = (byte *)column + 3;
-            dest = desttop + MulScreenWidth(column->topdelta * PIXEL_SCALING_V);
+            dest = desttop + MulBackbufferWidth(column->topdelta * PIXEL_SCALING_V);
             count = column->length;
 #if PIXEL_SCALING == 1
             while (count--)
             {
                 *dest = *source++;
-                dest += SCREENWIDTH;
+                dest += BACKBUFFER_LINEWIDTH;
             }
 #elif PIXEL_SCALING == 2
             while (count--)
@@ -1568,9 +1579,9 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
                 register byte s = *source++;
                 dest[0] = s;
                 dest[1] = s;
-                dest[SCREENWIDTH] = s;
-                dest[SCREENWIDTH + 1] = s;
-                dest += 2 * SCREENWIDTH;
+                dest[BACKBUFFER_LINEWIDTH] = s;
+                dest[BACKBUFFER_LINEWIDTH + 1] = s;
+                dest += 2 * BACKBUFFER_LINEWIDTH;
             }
 #elif PIXEL_SCALING == 3
             while (count--)
@@ -1579,13 +1590,13 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
                 dest[0] = s;
                 dest[1] = s;
                 dest[2] = s;
-                dest[SCREENWIDTH] = s;
-                dest[SCREENWIDTH + 1] = s;
-                dest[SCREENWIDTH + 2] = s;
-                dest[2 * SCREENWIDTH] = s;
-                dest[2 * SCREENWIDTH + 1] = s;
-                dest[2 * SCREENWIDTH + 2] = s;
-                dest += 3 * SCREENWIDTH;
+                dest[BACKBUFFER_LINEWIDTH] = s;
+                dest[BACKBUFFER_LINEWIDTH + 1] = s;
+                dest[BACKBUFFER_LINEWIDTH + 2] = s;
+                dest[2 * BACKBUFFER_LINEWIDTH] = s;
+                dest[2 * BACKBUFFER_LINEWIDTH + 1] = s;
+                dest[2 * BACKBUFFER_LINEWIDTH + 2] = s;
+                dest += 3 * BACKBUFFER_LINEWIDTH;
             }
 #elif PIXEL_SCALING == 4
             while (count--)
@@ -1595,19 +1606,19 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
                 dest[1] = s;
                 dest[2] = s;
                 dest[3] = s;
-                dest[SCREENWIDTH] = s;
-                dest[SCREENWIDTH + 1] = s;
-                dest[SCREENWIDTH + 2] = s;
-                dest[SCREENWIDTH + 3] = s;
-                dest[2 * SCREENWIDTH] = s;
-                dest[2 * SCREENWIDTH + 1] = s;
-                dest[2 * SCREENWIDTH + 2] = s;
-                dest[2 * SCREENWIDTH + 3] = s;
-                dest[3 * SCREENWIDTH] = s;
-                dest[3 * SCREENWIDTH + 1] = s;
-                dest[3 * SCREENWIDTH + 2] = s;
-                dest[3 * SCREENWIDTH + 3] = s;
-                dest += 4 * SCREENWIDTH;
+                dest[BACKBUFFER_LINEWIDTH] = s;
+                dest[BACKBUFFER_LINEWIDTH + 1] = s;
+                dest[BACKBUFFER_LINEWIDTH + 2] = s;
+                dest[BACKBUFFER_LINEWIDTH + 3] = s;
+                dest[2 * BACKBUFFER_LINEWIDTH] = s;
+                dest[2 * BACKBUFFER_LINEWIDTH + 1] = s;
+                dest[2 * BACKBUFFER_LINEWIDTH + 2] = s;
+                dest[2 * BACKBUFFER_LINEWIDTH + 3] = s;
+                dest[3 * BACKBUFFER_LINEWIDTH] = s;
+                dest[3 * BACKBUFFER_LINEWIDTH + 1] = s;
+                dest[3 * BACKBUFFER_LINEWIDTH + 2] = s;
+                dest[3 * BACKBUFFER_LINEWIDTH + 3] = s;
+                dest += 4 * BACKBUFFER_LINEWIDTH;
             }
 #elif PIXEL_SCALING == 5
             while (count--)
@@ -1618,32 +1629,32 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
                 dest[2] = s;
                 dest[3] = s;
                 dest[4] = s;
-                dest[SCREENWIDTH] = s;
-                dest[SCREENWIDTH + 1] = s;
-                dest[SCREENWIDTH + 2] = s;
-                dest[SCREENWIDTH + 3] = s;
-                dest[SCREENWIDTH + 4] = s;
-                dest[2 * SCREENWIDTH] = s;
-                dest[2 * SCREENWIDTH + 1] = s;
-                dest[2 * SCREENWIDTH + 2] = s;
-                dest[2 * SCREENWIDTH + 3] = s;
-                dest[2 * SCREENWIDTH + 4] = s;
-                dest[3 * SCREENWIDTH] = s;
-                dest[3 * SCREENWIDTH + 1] = s;
-                dest[3 * SCREENWIDTH + 2] = s;
-                dest[3 * SCREENWIDTH + 3] = s;
-                dest[3 * SCREENWIDTH + 4] = s;
-                dest[4 * SCREENWIDTH] = s;
-                dest[4 * SCREENWIDTH + 1] = s;
-                dest[4 * SCREENWIDTH + 2] = s;
-                dest[4 * SCREENWIDTH + 3] = s;
-                dest[4 * SCREENWIDTH + 4] = s;
-                dest[5 * SCREENWIDTH] = s;
-                dest[5 * SCREENWIDTH + 1] = s;
-                dest[5 * SCREENWIDTH + 2] = s;
-                dest[5 * SCREENWIDTH + 3] = s;
-                dest[5 * SCREENWIDTH + 4] = s;
-                dest += 6 * SCREENWIDTH;
+                dest[BACKBUFFER_LINEWIDTH] = s;
+                dest[BACKBUFFER_LINEWIDTH + 1] = s;
+                dest[BACKBUFFER_LINEWIDTH + 2] = s;
+                dest[BACKBUFFER_LINEWIDTH + 3] = s;
+                dest[BACKBUFFER_LINEWIDTH + 4] = s;
+                dest[2 * BACKBUFFER_LINEWIDTH] = s;
+                dest[2 * BACKBUFFER_LINEWIDTH + 1] = s;
+                dest[2 * BACKBUFFER_LINEWIDTH + 2] = s;
+                dest[2 * BACKBUFFER_LINEWIDTH + 3] = s;
+                dest[2 * BACKBUFFER_LINEWIDTH + 4] = s;
+                dest[3 * BACKBUFFER_LINEWIDTH] = s;
+                dest[3 * BACKBUFFER_LINEWIDTH + 1] = s;
+                dest[3 * BACKBUFFER_LINEWIDTH + 2] = s;
+                dest[3 * BACKBUFFER_LINEWIDTH + 3] = s;
+                dest[3 * BACKBUFFER_LINEWIDTH + 4] = s;
+                dest[4 * BACKBUFFER_LINEWIDTH] = s;
+                dest[4 * BACKBUFFER_LINEWIDTH + 1] = s;
+                dest[4 * BACKBUFFER_LINEWIDTH + 2] = s;
+                dest[4 * BACKBUFFER_LINEWIDTH + 3] = s;
+                dest[4 * BACKBUFFER_LINEWIDTH + 4] = s;
+                dest[5 * BACKBUFFER_LINEWIDTH] = s;
+                dest[5 * BACKBUFFER_LINEWIDTH + 1] = s;
+                dest[5 * BACKBUFFER_LINEWIDTH + 2] = s;
+                dest[5 * BACKBUFFER_LINEWIDTH + 3] = s;
+                dest[5 * BACKBUFFER_LINEWIDTH + 4] = s;
+                dest += 6 * BACKBUFFER_LINEWIDTH;
             }
 #endif
             column = (column_t *)((byte *)column + column->length + 4);

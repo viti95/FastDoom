@@ -21,6 +21,29 @@ BITS 32
 
 %ifdef MODE_CGA_AFH
 
+// Mirror of the BACKBUFFER_POW2_WIDTH logic in doomdef.h: when the
+// flag is set, pad backbuffer rows to the next power of two so the
+// assembly copyers advance rows by the same stride as the C code.
+// These drivers all use a 320 pixel wide backbuffer (the C default;
+// wider modes expand the pixels in assembly), so the padded stride
+// is 512 bytes.
+%ifndef SCREENWIDTH
+%define SCREENWIDTH 320
+%endif
+%ifdef BACKBUFFER_POW2_WIDTH
+%if SCREENWIDTH <= 512
+%define BACKBUFFER_LINEWIDTH 512
+%elif SCREENWIDTH <= 1024
+%define BACKBUFFER_LINEWIDTH 1024
+%elif SCREENWIDTH <= 2048
+%define BACKBUFFER_LINEWIDTH 2048
+%else
+%define BACKBUFFER_LINEWIDTH 4096
+%endif
+%else
+%define BACKBUFFER_LINEWIDTH SCREENWIDTH
+%endif
+
 extern _backbuffer
 extern _ptrlut16colors
 extern _lut16colors
@@ -85,7 +108,7 @@ CODE_SYM_DEF CGA_AFH_DrawBackbuffer_Snow
 	dec		ebp
 	jnz		.START
 	mov		bp,80
-	add		edi,320
+	add		edi,BACKBUFFER_LINEWIDTH
 	cmp		si,16000
 	jne		.START
 	pop		edi
@@ -139,7 +162,7 @@ CODE_SYM_DEF CGA_AFH_DrawBackbuffer
 	dec		ebp
 	jnz		.START
 	mov		bp,80
-	add		edi,320
+	add		edi,BACKBUFFER_LINEWIDTH
 	cmp		si,16000
 	jne		.START
 	pop		edi

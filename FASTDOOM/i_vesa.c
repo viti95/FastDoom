@@ -710,7 +710,12 @@ void VBE2_InitGraphics(void)
           processedpalette = Z_MallocUnowned(14 * 768, PU_STATIC);
           break;
         case 15:
-          if (vesascanlinefix) {
+          if (vesascanlinefix
+#if BACKBUFFER_LINEWIDTH != SCREENWIDTH
+              // The assembly copyer assumes packed backbuffer rows.
+              || 1
+#endif
+             ) {
             finishfunc = I_FinishUpdate15bpp16bppLinearFix;
           } else {
             finishfunc = I_FinishUpdate15bpp16bppLinear;
@@ -722,7 +727,12 @@ void VBE2_InitGraphics(void)
           processedpalette = Z_MallocUnowned(14 * 256 * 2, PU_STATIC);
           break;
         case 16:
-          if (vesascanlinefix) {
+          if (vesascanlinefix
+#if BACKBUFFER_LINEWIDTH != SCREENWIDTH
+              // The assembly copyer assumes packed backbuffer rows.
+              || 1
+#endif
+             ) {
             finishfunc = I_FinishUpdate15bpp16bppLinearFix;
           } else {
             finishfunc = I_FinishUpdate15bpp16bppLinear;
@@ -735,7 +745,12 @@ void VBE2_InitGraphics(void)
           
           break;
         case 24:
-          if (vesascanlinefix) {
+          if (vesascanlinefix
+#if BACKBUFFER_LINEWIDTH != SCREENWIDTH
+              // The assembly copyer assumes packed backbuffer rows.
+              || 1
+#endif
+             ) {
             finishfunc = I_FinishUpdate24bppLinearFix;
           } else {
             finishfunc = I_FinishUpdate24bppLinear;
@@ -748,7 +763,12 @@ void VBE2_InitGraphics(void)
 
           break;
         case 32:
-          if (vesascanlinefix) {
+          if (vesascanlinefix
+#if BACKBUFFER_LINEWIDTH != SCREENWIDTH
+              // The assembly copyer assumes packed backbuffer rows.
+              || 1
+#endif
+             ) {
             finishfunc = I_FinishUpdate32bppLinearFix;
           } else {
             finishfunc = I_FinishUpdate32bppLinear;
@@ -993,18 +1013,35 @@ void I_SetPalette(int numpalette)
 
 void I_FinishUpdate8bppBanked(void)
 {
-  int i = 0;
+  int y;
 
-  for (i = 0; i < NUM_BANKS_8BPP; i++)
+  // The backbuffer rows may be wider than the packed VRAM rows
+  // (BACKBUFFER_POW2_WIDTH), so the screen is uploaded line by line
+  // with the bank selected per line. A row may cross the 64 Kb bank
+  // boundary at high resolutions; the copy is then split in two.
+  for (y = 0; y < SCREENHEIGHT; y++)
   {
-    VBE_SetBank(i);
-    CopyDWords(backbuffer + ((64 * 1024) * i), (void *)0xA0000, 64 * 1024 / 4);
-  }
+    int voff = y * SCREENWIDTH;
+    int p = voff % (64 * 1024);
+    int n = SCREENWIDTH;
 
-#if LAST_BANK_SIZE_8BPP > 0
-  VBE_SetBank(NUM_BANKS_8BPP);
-  CopyDWords(backbuffer + (NUM_BANKS_8BPP * 64 * 1024), (void *)0xA0000, LAST_BANK_SIZE_8BPP / 4);
-#endif
+    VBE_SetBank(voff / (64 * 1024));
+    while (n > 0)
+    {
+      int chunk = ((64 * 1024) - p < n) ? (64 * 1024) - p : n;
+
+      CopyDWords(backbuffer + MulBackbufferWidth(y) + (SCREENWIDTH - n),
+                 (void *)(0xA0000 + p),
+                 chunk / 4);
+      p += chunk;
+      n -= chunk;
+      if (n > 0)
+      {
+        VBE_SetBank(voff / (64 * 1024) + 1);
+        p = 0;
+      }
+    }
+  }
 }
 
 void I_FinishUpdate8bppLinearFix(void)
@@ -1013,7 +1050,7 @@ void I_FinishUpdate8bppLinearFix(void)
 
   unsigned char *ptrVRAM = (unsigned char *) pcscreen;
 
-  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  for (i = 0; i < SCREENHEIGHT * BACKBUFFER_LINEWIDTH; i += BACKBUFFER_LINEWIDTH)
   {
     for (j = 0; j < SCREENWIDTH; j++, ptrVRAM++)
     {
@@ -1032,13 +1069,15 @@ void I_FinishUpdate8bppLinearScale1x(void)
   unsigned int *ptrBackbuffer = backbuffer;
   unsigned int vesaScanlineSizeQuarter = vesaScanlineSize / 4;
 
-  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  for (i = 0; i < SCREENHEIGHT * BACKBUFFER_LINEWIDTH; i += BACKBUFFER_LINEWIDTH)
   {
     for (j = 0; j < SCREENWIDTH; j+=4, ptrBackbuffer++, ptrVRAM++)
     {
       *(ptrVRAM) = *(ptrBackbuffer);
     }
 
+    // Skip the row padding (BACKBUFFER_POW2_WIDTH).
+    ptrBackbuffer += (BACKBUFFER_LINEWIDTH - SCREENWIDTH) / 4;
     ptrVRAM += vesaScanlineSizeQuarter - SCREENWIDTH/4;
   }
 }
@@ -1050,7 +1089,7 @@ void I_FinishUpdate8bppLinearScale2x(void)
   unsigned int *ptrVRAM = vesaScaleStart;
   unsigned int vesaScanlineSizeHalf = vesaScanlineSize / 4;
 
-  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  for (i = 0; i < SCREENHEIGHT * BACKBUFFER_LINEWIDTH; i += BACKBUFFER_LINEWIDTH)
   {
     for (j = 0; j < SCREENWIDTH; j+=2, ptrVRAM++)
     {
@@ -1074,7 +1113,7 @@ void I_FinishUpdate8bppLinearScale3x(void)
   unsigned int *ptrVRAM = vesaScaleStart;
   unsigned int vesaScanlineSizeQuarter = vesaScanlineSize/4;
 
-  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  for (i = 0; i < SCREENHEIGHT * BACKBUFFER_LINEWIDTH; i += BACKBUFFER_LINEWIDTH)
   {
     for (j = 0; j < SCREENWIDTH; j += 4, ptrVRAM += 3)
     {
@@ -1111,7 +1150,7 @@ void I_FinishUpdate8bppLinearScale4x(void)
   unsigned int *ptrVRAM = vesaScaleStart;
   unsigned int vesaScanlineSizeQuarter = vesaScanlineSize / 4;
 
-  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  for (i = 0; i < SCREENHEIGHT * BACKBUFFER_LINEWIDTH; i += BACKBUFFER_LINEWIDTH)
   {
     for (j = 0; j < SCREENWIDTH; j++, ptrVRAM++)
     {
@@ -1136,7 +1175,7 @@ void I_FinishUpdate8bppLinearScale5x(void)
   unsigned int *ptrVRAM = vesaScaleStart;
   unsigned int vesaScanlineSizeQuarter = vesaScanlineSize / 4;
 
-  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  for (i = 0; i < SCREENHEIGHT * BACKBUFFER_LINEWIDTH; i += BACKBUFFER_LINEWIDTH)
   {
     for (j = 0; j < SCREENWIDTH; j+=4, ptrVRAM += 5)
     {
@@ -1190,7 +1229,7 @@ void I_FinishUpdate15bpp16bppLinearScale1x(void)
   unsigned int *ptrVRAM = (unsigned int *) vesaScaleStart;
   unsigned int vesaScanlineSizeQuarter = vesaScanlineSize / 4;
 
-  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  for (i = 0; i < SCREENHEIGHT * BACKBUFFER_LINEWIDTH; i += BACKBUFFER_LINEWIDTH)
   {
     for (j = 0; j < SCREENWIDTH; j += 2, ptrVRAM++)
     {
@@ -1212,7 +1251,7 @@ void I_FinishUpdate15bpp16bppLinearScale2x(void)
   unsigned int *ptrVRAM = (unsigned int *) vesaScaleStart;
   unsigned int vesaScanlineQuarter = vesaScanlineSize / 4;
 
-  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  for (i = 0; i < SCREENHEIGHT * BACKBUFFER_LINEWIDTH; i += BACKBUFFER_LINEWIDTH)
   {
     for (j = 0; j < SCREENWIDTH; j++, ptrVRAM++)
     {
@@ -1235,7 +1274,7 @@ void I_FinishUpdate15bpp16bppLinearScale3x(void)
   unsigned int *ptrVRAM = (unsigned int *) vesaScaleStart;
   unsigned int vesaScanlineQuarter = vesaScanlineSize / 4;
 
-  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  for (i = 0; i < SCREENHEIGHT * BACKBUFFER_LINEWIDTH; i += BACKBUFFER_LINEWIDTH)
   {
     for (j = 0; j < SCREENWIDTH; j+=2, ptrVRAM += 3)
     {
@@ -1269,7 +1308,7 @@ void I_FinishUpdate15bpp16bppLinearScale4x(void)
   unsigned int *ptrVRAM = (unsigned int *) vesaScaleStart;
   unsigned int vesaScanlineQuarter = vesaScanlineSize / 4;
 
-  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  for (i = 0; i < SCREENHEIGHT * BACKBUFFER_LINEWIDTH; i += BACKBUFFER_LINEWIDTH)
   {
     for (j = 0; j < SCREENWIDTH; j++, ptrVRAM += 2)
     {
@@ -1299,7 +1338,7 @@ void I_FinishUpdate15bpp16bppLinearScale5x(void)
   unsigned int *ptrVRAM = (unsigned int *) vesaScaleStart;
   unsigned int vesaScanlineQuarter = vesaScanlineSize / 4;
 
-  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  for (i = 0; i < SCREENHEIGHT * BACKBUFFER_LINEWIDTH; i += BACKBUFFER_LINEWIDTH)
   {
     for (j = 0; j < SCREENWIDTH; j+=2, ptrVRAM += 5)
     {
@@ -1348,7 +1387,7 @@ void I_FinishUpdate24bppLinearScale1x(void)
   unsigned char *ptrPalette = (unsigned char *) ptrprocessedpalette;
   unsigned char *ptrVRAM = (unsigned char *) vesaScaleStart;
 
-  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  for (i = 0; i < SCREENHEIGHT * BACKBUFFER_LINEWIDTH; i += BACKBUFFER_LINEWIDTH)
   {
     for (j = 0; j < SCREENWIDTH; j++, ptrVRAM += 3)
     {
@@ -1370,7 +1409,7 @@ void I_FinishUpdate24bppLinearScale2x(void)
   unsigned int *ptrVRAM = (unsigned int *) vesaScaleStart;
   unsigned int vesaScanlineSizeQuarter = vesaScanlineSize / 4;
 
-  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  for (i = 0; i < SCREENHEIGHT * BACKBUFFER_LINEWIDTH; i += BACKBUFFER_LINEWIDTH)
   {
     for (j = 0; j < SCREENWIDTH; j+=2, ptrVRAM += 3)
     {
@@ -1409,7 +1448,7 @@ void I_FinishUpdate24bppLinearScale3x(void)
   unsigned short *ptrVRAM = (unsigned short *) vesaScaleStart;
   unsigned int vesaScanlineSizeHalf = vesaScanlineSize / 2;
 
-  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  for (i = 0; i < SCREENHEIGHT * BACKBUFFER_LINEWIDTH; i += BACKBUFFER_LINEWIDTH)
   {
     for (j = 0; j < SCREENWIDTH; j+=2, ptrVRAM += 9)
     {
@@ -1475,7 +1514,7 @@ void I_FinishUpdate24bppLinearScale4x(void)
   unsigned int *ptrVRAM = (unsigned int *) vesaScaleStart;
   unsigned int vesaScanlineSizeQuarter = vesaScanlineSize / 4;
 
-  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  for (i = 0; i < SCREENHEIGHT * BACKBUFFER_LINEWIDTH; i += BACKBUFFER_LINEWIDTH)
   {
     for (j = 0; j < SCREENWIDTH; j++, ptrVRAM += 3)
     {
@@ -1514,7 +1553,7 @@ void I_FinishUpdate24bppLinearScale5x(void)
   unsigned int *ptrVRAM = (unsigned short *) vesaScaleStart;
   unsigned int vesaScanlineSizeQuad = vesaScanlineSize / 4;
 
-  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  for (i = 0; i < SCREENHEIGHT * BACKBUFFER_LINEWIDTH; i += BACKBUFFER_LINEWIDTH)
   {
     for (j = 0; j < SCREENWIDTH; j+=4, ptrVRAM += 15)
     {
@@ -1647,7 +1686,7 @@ void I_FinishUpdate32bppLinearScale1x(void)
   unsigned int *ptrPalette = (unsigned int *) ptrprocessedpalette;
   unsigned int *ptrVRAM = (unsigned int *) vesaScaleStart;
 
-  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  for (i = 0; i < SCREENHEIGHT * BACKBUFFER_LINEWIDTH; i += BACKBUFFER_LINEWIDTH)
   {
     for (j = 0; j < SCREENWIDTH; j++, ptrVRAM++)
     {
@@ -1667,7 +1706,7 @@ void I_FinishUpdate32bppLinearScale2x(void)
   unsigned int *ptrVRAM = (unsigned int *) vesaScaleStart;
   unsigned int vesaScanlineQuarter = vesaScanlineSize / 4;
 
-  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  for (i = 0; i < SCREENHEIGHT * BACKBUFFER_LINEWIDTH; i += BACKBUFFER_LINEWIDTH)
   {
     for (j = 0; j < SCREENWIDTH; j++, ptrVRAM += 2)
     {
@@ -1692,7 +1731,7 @@ void I_FinishUpdate32bppLinearScale3x(void)
   unsigned int *ptrVRAM = (unsigned int *) vesaScaleStart;
   unsigned int vesaScanlineQuarter = vesaScanlineSize / 4;
 
-  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  for (i = 0; i < SCREENHEIGHT * BACKBUFFER_LINEWIDTH; i += BACKBUFFER_LINEWIDTH)
   {
     for (j = 0; j < SCREENWIDTH; j++, ptrVRAM += 3)
     {
@@ -1722,7 +1761,7 @@ void I_FinishUpdate32bppLinearScale4x(void)
   unsigned int *ptrVRAM = (unsigned int *) vesaScaleStart;
   unsigned int vesaScanlineQuarter = vesaScanlineSize / 4;
 
-  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  for (i = 0; i < SCREENHEIGHT * BACKBUFFER_LINEWIDTH; i += BACKBUFFER_LINEWIDTH)
   {
     for (j = 0; j < SCREENWIDTH; j++, ptrVRAM += 4)
     {
@@ -1759,7 +1798,7 @@ void I_FinishUpdate32bppLinearScale5x(void)
   unsigned int *ptrVRAM = (unsigned int *) vesaScaleStart;
   unsigned int vesaScanlineQuarter = vesaScanlineSize / 4;
 
-  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  for (i = 0; i < SCREENHEIGHT * BACKBUFFER_LINEWIDTH; i += BACKBUFFER_LINEWIDTH)
   {
     for (j = 0; j < SCREENWIDTH; j++, ptrVRAM += 5)
     {
@@ -1799,155 +1838,177 @@ void I_FinishUpdate32bppLinearScale5x(void)
 
 void I_FinishUpdate8bppLinear(void)
 {
+  int y;
+  int firstline, lastline;
+
+  // The backbuffer rows may be wider than the packed VRAM rows
+  // (BACKBUFFER_POW2_WIDTH), so the update is done line by line.
   if (updatestate & I_FULLSCRN)
   {
-    CopyDWords(backbuffer, pcscreen, SCREENHEIGHT * SCREENWIDTH / 4);
+    for (y = 0; y < SCREENHEIGHT; y++)
+      CopyDWords(backbuffer + MulBackbufferWidth(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 4);
     updatestate = I_NOUPDATE; // clear out all draw types
   }
   if (updatestate & I_FULLVIEW)
   {
     if (updatestate & I_MESSAGES && screenblocks > 7)
     {
-      int i;
-      for (i = 0; i < endscreen; i += SCREENWIDTH)
-      {
-        CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
-      }
-      updatestate &= ~(I_FULLVIEW | I_MESSAGES);
+      firstline = 0;
+      lastline = endscreen / SCREENWIDTH;
     }
     else
     {
-      int i;
-      for (i = startscreen; i < endscreen; i += SCREENWIDTH)
-      {
-        CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
-      }
-      updatestate &= ~I_FULLVIEW;
+      firstline = startscreen / SCREENWIDTH;
+      lastline = endscreen / SCREENWIDTH;
     }
+    for (y = firstline; y < lastline; y++)
+      CopyDWords(backbuffer + MulBackbufferWidth(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 4);
+    updatestate &= ~I_FULLVIEW;
+    if (firstline == 0)
+      updatestate &= ~I_MESSAGES;
   }
   if (updatestate & I_STATBAR)
   {
-    CopyDWords(backbuffer + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), pcscreen + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), SCREENWIDTH * SBARHEIGHT / 4);
+    for (y = SCREENHEIGHT - SBARHEIGHT; y < SCREENHEIGHT; y++)
+      CopyDWords(backbuffer + MulBackbufferWidth(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 4);
     updatestate &= ~I_STATBAR;
   }
   if (updatestate & I_MESSAGES)
   {
-    CopyDWords(backbuffer, pcscreen, (SCREENWIDTH * 28) / 4);
+    for (y = 0; y < 28; y++)
+      CopyDWords(backbuffer + MulBackbufferWidth(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 4);
     updatestate &= ~I_MESSAGES;
   }
 }
 
 void I_FinishUpdate8bppLinearMMX(void)
 {
+  int y;
+  int firstline, lastline;
+
+  // The backbuffer rows may be wider than the packed VRAM rows
+  // (BACKBUFFER_POW2_WIDTH), so the update is done line by line.
   if (updatestate & I_FULLSCRN)
   {
-    CopyQWordsMMX(backbuffer, pcscreen, SCREENHEIGHT * SCREENWIDTH / 8);
+    for (y = 0; y < SCREENHEIGHT; y++)
+      CopyQWordsMMX(backbuffer + MulBackbufferWidth(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 8);
     updatestate = I_NOUPDATE; // clear out all draw types
   }
   if (updatestate & I_FULLVIEW)
   {
     if (updatestate & I_MESSAGES && screenblocks > 7)
     {
-      int i;
-      for (i = 0; i < endscreen; i += SCREENWIDTH)
-      {
-        CopyQWordsMMX(backbuffer + i, pcscreen + i, SCREENWIDTH / 8);
-      }
-      updatestate &= ~(I_FULLVIEW | I_MESSAGES);
+      firstline = 0;
+      lastline = endscreen / SCREENWIDTH;
     }
     else
     {
-      int i;
-      for (i = startscreen; i < endscreen; i += SCREENWIDTH)
-      {
-        CopyQWordsMMX(backbuffer + i, pcscreen + i, SCREENWIDTH / 8);
-      }
-      updatestate &= ~I_FULLVIEW;
+      firstline = startscreen / SCREENWIDTH;
+      lastline = endscreen / SCREENWIDTH;
     }
+    for (y = firstline; y < lastline; y++)
+      CopyQWordsMMX(backbuffer + MulBackbufferWidth(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 8);
+    updatestate &= ~I_FULLVIEW;
+    if (firstline == 0)
+      updatestate &= ~I_MESSAGES;
   }
   if (updatestate & I_STATBAR)
   {
-    CopyQWordsMMX(backbuffer + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), pcscreen + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), SCREENWIDTH * SBARHEIGHT / 8);
+    for (y = SCREENHEIGHT - SBARHEIGHT; y < SCREENHEIGHT; y++)
+      CopyQWordsMMX(backbuffer + MulBackbufferWidth(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 8);
     updatestate &= ~I_STATBAR;
   }
   if (updatestate & I_MESSAGES)
   {
-    CopyQWordsMMX(backbuffer, pcscreen, (SCREENWIDTH * 28) / 8);
+    for (y = 0; y < 28; y++)
+      CopyQWordsMMX(backbuffer + MulBackbufferWidth(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 8);
     updatestate &= ~I_MESSAGES;
   }
 }
 
 void I_FinishUpdate8bppLinearFPU(void)
 {
+  int y;
+  int firstline, lastline;
+
+  // The backbuffer rows may be wider than the packed VRAM rows
+  // (BACKBUFFER_POW2_WIDTH), so the update is done line by line.
   if (updatestate & I_FULLSCRN)
   {
-    CopyQWordsFPU(backbuffer, pcscreen, SCREENHEIGHT * SCREENWIDTH / 8);
+    for (y = 0; y < SCREENHEIGHT; y++)
+      CopyQWordsFPU(backbuffer + MulBackbufferWidth(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 8);
     updatestate = I_NOUPDATE; // clear out all draw types
   }
   if (updatestate & I_FULLVIEW)
   {
     if (updatestate & I_MESSAGES && screenblocks > 7)
     {
-      int i;
-      for (i = 0; i < endscreen; i += SCREENWIDTH)
-      {
-        CopyQWordsFPU(backbuffer + i, pcscreen + i, SCREENWIDTH / 8);
-      }
-      updatestate &= ~(I_FULLVIEW | I_MESSAGES);
+      firstline = 0;
+      lastline = endscreen / SCREENWIDTH;
     }
     else
     {
-      int i;
-      for (i = startscreen; i < endscreen; i += SCREENWIDTH)
-      {
-        CopyQWordsFPU(backbuffer + i, pcscreen + i, SCREENWIDTH / 8);
-      }
-      updatestate &= ~I_FULLVIEW;
+      firstline = startscreen / SCREENWIDTH;
+      lastline = endscreen / SCREENWIDTH;
     }
+    for (y = firstline; y < lastline; y++)
+      CopyQWordsFPU(backbuffer + MulBackbufferWidth(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 8);
+    updatestate &= ~I_FULLVIEW;
+    if (firstline == 0)
+      updatestate &= ~I_MESSAGES;
   }
   if (updatestate & I_STATBAR)
   {
-    CopyQWordsFPU(backbuffer + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), pcscreen + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), SCREENWIDTH * SBARHEIGHT / 8);
+    for (y = SCREENHEIGHT - SBARHEIGHT; y < SCREENHEIGHT; y++)
+      CopyQWordsFPU(backbuffer + MulBackbufferWidth(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 8);
     updatestate &= ~I_STATBAR;
   }
   if (updatestate & I_MESSAGES)
   {
-    CopyQWordsFPU(backbuffer, pcscreen, (SCREENWIDTH * 28) / 8);
+    for (y = 0; y < 28; y++)
+      CopyQWordsFPU(backbuffer + MulBackbufferWidth(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 8);
     updatestate &= ~I_MESSAGES;
   }
 }
 
 void I_FinishUpdate15bpp16bppBanked(void)
 {
-  int i, j;
+  int y;
 
   unsigned short *ptrPalette = (unsigned short *) ptrprocessedpalette;
-  unsigned short *ptrVRAM = (unsigned short *) pcscreen;
 
-  for (i = 0; i < NUM_BANKS_15BPP_16BPP; i++)
+  // The backbuffer rows may be wider than the packed VRAM rows
+  // (BACKBUFFER_POW2_WIDTH), so the screen is converted line by line
+  // with the bank selected per line.
+  for (y = 0; y < SCREENHEIGHT; y++)
   {
-    VBE_SetBank(i);
+    int voff = y * SCREENWIDTH * 2;
+    int p = voff % 65536;
+    int j = 0;
 
-    for (j = 0; j < 64 * 1024 / 2; j++)
+    VBE_SetBank(voff / 65536);
+    while (j < SCREENWIDTH)
     {
-      unsigned char ptrLUT = backbuffer[32 * 1024 * i + j];
+      // Split the row if it crosses the 64 Kb bank boundary.
+      int chunk = ((65536 - p) / 2 < SCREENWIDTH - j) ? (65536 - p) / 2 : SCREENWIDTH - j;
+      int k;
+      unsigned short *ptrVRAM = (unsigned short *)((byte *)pcscreen + p);
 
-      ptrVRAM[j] = ptrPalette[ptrLUT];
+      for (k = 0; k < chunk; k++)
+      {
+        unsigned char ptrLUT = backbuffer[MulBackbufferWidth(y) + j + k];
+
+        ptrVRAM[k] = ptrPalette[ptrLUT];
+      }
+      p += chunk * 2;
+      j += chunk;
+      if (j < SCREENWIDTH)
+      {
+        VBE_SetBank(voff / 65536 + 1);
+        p = 0;
+      }
     }
   }
-
-#if LAST_BANK_SIZE_15BPP_16BPP > 0
-
-  VBE_SetBank(NUM_BANKS_15BPP_16BPP);
-
-  for (j = 0; j < LAST_BANK_SIZE_15BPP_16BPP / 2; j++)
-  {
-    unsigned char ptrLUT = backbuffer[NUM_BANKS_15BPP_16BPP * 32 * 1024 + j];
-
-    ptrVRAM[j] = ptrPalette[ptrLUT];
-  }
-
-#endif
 }
 
 void I_FinishUpdate15bpp16bppLinearFix(void)
@@ -1957,7 +2018,7 @@ void I_FinishUpdate15bpp16bppLinearFix(void)
   unsigned short *ptrPalette = (unsigned short *) ptrprocessedpalette;
   unsigned short *ptrVRAM = (unsigned short *) pcscreen;
 
-  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  for (i = 0; i < SCREENHEIGHT * BACKBUFFER_LINEWIDTH; i += BACKBUFFER_LINEWIDTH)
   {
     for (j = 0; j < SCREENWIDTH; j++, ptrVRAM++)
     {
@@ -1971,48 +2032,51 @@ void I_FinishUpdate15bpp16bppLinearFix(void)
 
 void I_FinishUpdate24bppBanked(void)
 {
-  int i;
-  int ptrPCscreen = 0;
-  int numBank = 0;
+  int y;
 
-  VBE_SetBank(numBank);
-
-  for (i = 0; i < SCREENWIDTH * SCREENHEIGHT; i++)
+  // The backbuffer rows may be wider than the packed VRAM rows
+  // (BACKBUFFER_POW2_WIDTH), so the screen is converted line by line
+  // with the bank selected per line.
+  for (y = 0; y < SCREENHEIGHT; y++)
   {
-    unsigned short ptrLUT = backbuffer[i] * 3;
+    int voff = y * SCREENWIDTH * 3;
+    int j;
 
-    if (ptrPCscreen + 3 < 64 * 1024)
+    VBE_SetBank(voff / 65536);
+    for (j = 0; j < SCREENWIDTH; j++)
     {
-      pcscreen[ptrPCscreen] = ptrprocessedpalette[ptrLUT];
-      pcscreen[ptrPCscreen + 1] = ptrprocessedpalette[ptrLUT + 1];
-      pcscreen[ptrPCscreen + 2] = ptrprocessedpalette[ptrLUT + 2];
-      ptrPCscreen += 3;
-    }
-    else
-    {
-      int count = (64 * 1024) - ptrPCscreen;
-      int countLUT = 3;
+      unsigned short ptrLUT = backbuffer[MulBackbufferWidth(y) + j] * 3;
+      int p = voff % 65536 + j * 3;
 
-      while (count > 0)
+      if (p + 2 < 64 * 1024)
       {
-        pcscreen[ptrPCscreen] = ptrprocessedpalette[ptrLUT];
-        ptrPCscreen++;
-        ptrLUT++;
-        countLUT--;
-        count--;
+        pcscreen[p] = ptrprocessedpalette[ptrLUT];
+        pcscreen[p + 1] = ptrprocessedpalette[ptrLUT + 1];
+        pcscreen[p + 2] = ptrprocessedpalette[ptrLUT + 2];
       }
-
-      numBank++;
-      VBE_SetBank(numBank);
-
-      ptrPCscreen = 0;
-
-      while (countLUT > 0)
+      else
       {
-        pcscreen[ptrPCscreen] = ptrprocessedpalette[ptrLUT];
-        ptrPCscreen++;
-        ptrLUT++;
-        countLUT--;
+        // The pixel straddles the end of the 64 Kb bank window.
+        int remaining = 3;
+
+        while (p < 64 * 1024)
+        {
+          pcscreen[p] = ptrprocessedpalette[ptrLUT];
+          p++;
+          ptrLUT++;
+          remaining--;
+        }
+
+        VBE_SetBank(voff / 65536 + 1);
+        p = 0;
+
+        while (remaining > 0)
+        {
+          pcscreen[p] = ptrprocessedpalette[ptrLUT];
+          p++;
+          ptrLUT++;
+          remaining--;
+        }
       }
     }
   }
@@ -2023,11 +2087,11 @@ void I_FinishUpdate24bppLinearFix(void)
   int i,j;
   int vramposition = 0;
 
-  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  for (i = 0; i < SCREENHEIGHT * BACKBUFFER_LINEWIDTH; i += BACKBUFFER_LINEWIDTH)
   {
     for (j = 0; j < SCREENWIDTH; j++, vramposition+=3)
     {
-      unsigned short ptrLUT = backbuffer[i + j] * 4;
+      unsigned short ptrLUT = backbuffer[i + j] * 3;
 
       pcscreen[vramposition] = ptrprocessedpalette[ptrLUT];
       pcscreen[vramposition + 1] = ptrprocessedpalette[ptrLUT + 1];
@@ -2040,35 +2104,42 @@ void I_FinishUpdate24bppLinearFix(void)
 
 void I_FinishUpdate32bppBanked(void)
 {
-  int i, j;
+  int y;
 
   unsigned int *ptrPalette = (unsigned int *) ptrprocessedpalette;
-  unsigned int *ptrVRAM = (unsigned int *) pcscreen;
 
-  for (i = 0; i < NUM_BANKS_32BPP; i++)
+  // The backbuffer rows may be wider than the packed VRAM rows
+  // (BACKBUFFER_POW2_WIDTH), so the screen is converted line by line
+  // with the bank selected per line.
+  for (y = 0; y < SCREENHEIGHT; y++)
   {
-    VBE_SetBank(i);
+    int voff = y * SCREENWIDTH * 4;
+    int p = voff % 65536;
+    int j = 0;
 
-    for (j = 0; j < 64 * 1024 / 4; j++)
+    VBE_SetBank(voff / 65536);
+    while (j < SCREENWIDTH)
     {
-      unsigned char ptrLUT = backbuffer[16 * 1024 * i + j];
+      // Split the row if it crosses the 64 Kb bank boundary.
+      int chunk = ((65536 - p) / 4 < SCREENWIDTH - j) ? (65536 - p) / 4 : SCREENWIDTH - j;
+      int k;
+      unsigned int *ptrVRAM = (unsigned int *)((byte *)pcscreen + p);
 
-      ptrVRAM[j] = ptrPalette[ptrLUT];
+      for (k = 0; k < chunk; k++)
+      {
+        unsigned char ptrLUT = backbuffer[MulBackbufferWidth(y) + j + k];
+
+        ptrVRAM[k] = ptrPalette[ptrLUT];
+      }
+      p += chunk * 4;
+      j += chunk;
+      if (j < SCREENWIDTH)
+      {
+        VBE_SetBank(voff / 65536 + 1);
+        p = 0;
+      }
     }
   }
-
-#if LAST_BANK_SIZE_32BPP > 0
-
-  VBE_SetBank(NUM_BANKS_32BPP);
-
-  for (j = 0; j < LAST_BANK_SIZE_32BPP / 4; j++)
-  {
-    unsigned char ptrLUT = backbuffer[NUM_BANKS_32BPP * 16 * 1024 + j];
-
-    ptrVRAM[j] = ptrPalette[ptrLUT];
-  }
-
-#endif
 }
 
 void I_FinishUpdate32bppLinearFix(void)
@@ -2078,7 +2149,7 @@ void I_FinishUpdate32bppLinearFix(void)
   unsigned int *ptrPalette = (unsigned int *) ptrprocessedpalette;
   unsigned int *ptrVRAM = (unsigned int *) pcscreen;
 
-  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  for (i = 0; i < SCREENHEIGHT * BACKBUFFER_LINEWIDTH; i += BACKBUFFER_LINEWIDTH)
   {
     for (j = 0; j < SCREENWIDTH; j++, ptrVRAM++)
     {
@@ -2130,7 +2201,7 @@ void I_FinishUpdate8bppBankedScale##N##x(void) \
         offsetInBank = 0; \
         VBE_SetBank(bank); \
       } \
-      BankedWritePixelByte(offsetInBank, backbuffer[(out_y / N) * SCREENWIDTH + (out_x / N)]); \
+      BankedWritePixelByte(offsetInBank, backbuffer[(out_y / N) * BACKBUFFER_LINEWIDTH + (out_x / N)]); \
       offsetInBank++; \
     } \
   } \
@@ -2165,7 +2236,7 @@ void I_FinishUpdate15bppBankedScale##N##x(void) \
         offsetInBank = 0; \
         VBE_SetBank(bank); \
       } \
-      BankedWritePixelShort(offsetInBank, ptrPalette[backbuffer[(out_y / N) * SCREENWIDTH + (out_x / N)]]); \
+      BankedWritePixelShort(offsetInBank, ptrPalette[backbuffer[(out_y / N) * BACKBUFFER_LINEWIDTH + (out_x / N)]]); \
       offsetInBank += 2; \
     } \
   } \
@@ -2200,7 +2271,7 @@ void I_FinishUpdate16bppBankedScale##N##x(void) \
         offsetInBank = 0; \
         VBE_SetBank(bank); \
       } \
-      BankedWritePixelShort(offsetInBank, ptrPalette[backbuffer[(out_y / N) * SCREENWIDTH + (out_x / N)]]); \
+      BankedWritePixelShort(offsetInBank, ptrPalette[backbuffer[(out_y / N) * BACKBUFFER_LINEWIDTH + (out_x / N)]]); \
       offsetInBank += 2; \
     } \
   } \
@@ -2229,7 +2300,7 @@ void I_FinishUpdate24bppBankedScale##N##x(void) \
     \
     for (out_x = 0; out_x < SCREENWIDTH * N; out_x++) \
     { \
-      int lutIdx = (out_y / N) * SCREENWIDTH + (out_x / N); \
+      int lutIdx = (out_y / N) * BACKBUFFER_LINEWIDTH + (out_x / N); \
       int ptrLUT = backbuffer[lutIdx] * 3; \
       \
       if (offsetInBank + 3 > 65536) \
@@ -2291,7 +2362,7 @@ void I_FinishUpdate32bppBankedScale##N##x(void) \
         offsetInBank = 0; \
         VBE_SetBank(bank); \
       } \
-      BankedWritePixelInt(offsetInBank, ptrPalette[backbuffer[(out_y / N) * SCREENWIDTH + (out_x / N)]]); \
+      BankedWritePixelInt(offsetInBank, ptrPalette[backbuffer[(out_y / N) * BACKBUFFER_LINEWIDTH + (out_x / N)]]); \
       offsetInBank += 4; \
     } \
   } \
@@ -2312,7 +2383,7 @@ void I_FinishUpdate8bppLinearScale5x6(void)
   unsigned int *ptrVRAM = vesaScaleStart;
   unsigned int vesaScanlineSizeQuarter = vesaScanlineSize / 4;
 
-  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  for (i = 0; i < SCREENHEIGHT * BACKBUFFER_LINEWIDTH; i += BACKBUFFER_LINEWIDTH)
   {
     for (j = 0; j < SCREENWIDTH; j+=4, ptrVRAM += 5)
     {
@@ -2371,7 +2442,7 @@ void I_FinishUpdate15bpp16bppLinearScale5x6(void)
   unsigned int *ptrVRAM = (unsigned int *) vesaScaleStart;
   unsigned int vesaScanlineQuarter = vesaScanlineSize / 4;
 
-  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  for (i = 0; i < SCREENHEIGHT * BACKBUFFER_LINEWIDTH; i += BACKBUFFER_LINEWIDTH)
   {
     for (j = 0; j < SCREENWIDTH; j+=2, ptrVRAM += 5)
     {
@@ -2434,7 +2505,7 @@ void I_FinishUpdate24bppLinearScale5x6(void)
   unsigned int *ptrVRAM = (unsigned short *) vesaScaleStart;
   unsigned int vesaScanlineSizeQuad = vesaScanlineSize / 4;
 
-  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  for (i = 0; i < SCREENHEIGHT * BACKBUFFER_LINEWIDTH; i += BACKBUFFER_LINEWIDTH)
   {
     for (j = 0; j < SCREENWIDTH; j+=4, ptrVRAM += 15)
     {
@@ -2585,7 +2656,7 @@ void I_FinishUpdate32bppLinearScale5x6(void)
   unsigned int *ptrVRAM = (unsigned int *) vesaScaleStart;
   unsigned int vesaScanlineQuarter = vesaScanlineSize / 4;
 
-  for (i = 0; i < SCREENHEIGHT * SCREENWIDTH; i += SCREENWIDTH)
+  for (i = 0; i < SCREENHEIGHT * BACKBUFFER_LINEWIDTH; i += BACKBUFFER_LINEWIDTH)
   {
     for (j = 0; j < SCREENWIDTH; j++, ptrVRAM += 5)
     {
@@ -2653,7 +2724,7 @@ void I_FinishUpdate8bppBankedScale5x6(void)
         offsetInBank = 0;
         VBE_SetBank(bank);
       }
-      BankedWritePixelByte(offsetInBank, backbuffer[(out_y / 6) * SCREENWIDTH + (out_x / 5)]);
+      BankedWritePixelByte(offsetInBank, backbuffer[(out_y / 6) * BACKBUFFER_LINEWIDTH + (out_x / 5)]);
       offsetInBank++;
     }
   }
@@ -2681,7 +2752,7 @@ void I_FinishUpdate15bppBankedScale5x6(void)
         offsetInBank = 0;
         VBE_SetBank(bank);
       }
-      BankedWritePixelShort(offsetInBank, ptrPalette[backbuffer[(out_y / 6) * SCREENWIDTH + (out_x / 5)]]);
+      BankedWritePixelShort(offsetInBank, ptrPalette[backbuffer[(out_y / 6) * BACKBUFFER_LINEWIDTH + (out_x / 5)]]);
       offsetInBank += 2;
     }
   }
@@ -2709,7 +2780,7 @@ void I_FinishUpdate16bppBankedScale5x6(void)
         offsetInBank = 0;
         VBE_SetBank(bank);
       }
-      BankedWritePixelShort(offsetInBank, ptrPalette[backbuffer[(out_y / 6) * SCREENWIDTH + (out_x / 5)]]);
+      BankedWritePixelShort(offsetInBank, ptrPalette[backbuffer[(out_y / 6) * BACKBUFFER_LINEWIDTH + (out_x / 5)]]);
       offsetInBank += 2;
     }
   }
@@ -2731,7 +2802,7 @@ void I_FinishUpdate24bppBankedScale5x6(void)
 
     for (out_x = 0; out_x < SCREENWIDTH * 5; out_x++)
     {
-      int lutIdx = (out_y / 6) * SCREENWIDTH + (out_x / 5);
+      int lutIdx = (out_y / 6) * BACKBUFFER_LINEWIDTH + (out_x / 5);
       int ptrLUT = backbuffer[lutIdx] * 3;
 
       if (offsetInBank + 3 > 65536)
@@ -2786,7 +2857,7 @@ void I_FinishUpdate32bppBankedScale5x6(void)
         offsetInBank = 0;
         VBE_SetBank(bank);
       }
-      BankedWritePixelInt(offsetInBank, ptrPalette[backbuffer[(out_y / 6) * SCREENWIDTH + (out_x / 5)]]);
+      BankedWritePixelInt(offsetInBank, ptrPalette[backbuffer[(out_y / 6) * BACKBUFFER_LINEWIDTH + (out_x / 5)]]);
       offsetInBank += 4;
     }
   }

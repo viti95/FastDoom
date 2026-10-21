@@ -347,7 +347,15 @@ void WI_slamBackground(void)
 	V_MarkRect(0, 0, SCREENWIDTH, SCREENHEIGHT);
 #endif
 #if defined(USE_BACKBUFFER)
-	CopyDWords(screen1, backbuffer, (SCREENWIDTH * SCREENHEIGHT) / 4);
+	{
+		// The backbuffer rows may be wider than the packed screen1
+		// rows (BACKBUFFER_POW2_WIDTH), copy line by line.
+		int y;
+		for (y = 0; y < SCREENHEIGHT; y++)
+			CopyDWords(screen1 + MulScreenWidth(y),
+					   backbuffer + MulBackbufferWidth(y),
+					   SCREENWIDTH / 4);
+	}
 #endif
 }
 

@@ -29,6 +29,14 @@ void I_CleanupVRAMbuffer(void)
 
 void I_UpdateFinishFunc(void)
 {
+    // The assembly differential copiers assume the backbuffer rows
+    // are packed at SCREENWIDTH; with a padded backbuffer
+    // (BACKBUFFER_POW2_WIDTH) fall back to the C line based updater.
+#if BACKBUFFER_LINEWIDTH != SCREENWIDTH
+    finishfunc = I_FinishUpdateDirect;
+    return;
+#endif
+
     if (busSpeed)
     {
         I_CleanupVRAMbuffer();
@@ -137,40 +145,55 @@ void I_FinishUpdateDifferential486(void)
 
 void I_FinishUpdateDirect(void)
 {
+    int y;
+    int firstline;
+    int lastline;
+
+    // The backbuffer rows are strided at BACKBUFFER_LINEWIDTH, which
+    // may be wider than the packed VGA rows (BACKBUFFER_POW2_WIDTH),
+    // so the update is done line by line.
     if (updatestate & I_FULLSCRN)
     {
-        CopyDWords(backbuffer, pcscreen, SCREENHEIGHT * SCREENWIDTH / 4);
+        for (y = 0; y < SCREENHEIGHT; y++)
+            CopyDWords(backbuffer + MulBackbufferWidth(y),
+                       pcscreen + MulScreenWidth(y),
+                       SCREENWIDTH / 4);
         updatestate = I_NOUPDATE; // clear out all draw types
     }
     if (updatestate & I_FULLVIEW)
     {
         if (updatestate & I_MESSAGES && screenblocks > 7)
         {
-            int i;
-            for (i = 0; i < endscreen; i += SCREENWIDTH)
-            {
-                CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
-            }
-            updatestate &= ~(I_FULLVIEW | I_MESSAGES);
+            firstline = 0;
+            lastline = endscreen / SCREENWIDTH;
         }
         else
         {
-            int i;
-            for (i = startscreen; i < endscreen; i += SCREENWIDTH)
-            {
-                CopyDWords(backbuffer + i, pcscreen + i, SCREENWIDTH / 4);
-            }
-            updatestate &= ~I_FULLVIEW;
+            firstline = startscreen / SCREENWIDTH;
+            lastline = endscreen / SCREENWIDTH;
         }
+        for (y = firstline; y < lastline; y++)
+            CopyDWords(backbuffer + MulBackbufferWidth(y),
+                       pcscreen + MulScreenWidth(y),
+                       SCREENWIDTH / 4);
+        updatestate &= ~I_FULLVIEW;
+        if (firstline == 0)
+            updatestate &= ~I_MESSAGES;
     }
     if (updatestate & I_STATBAR)
     {
-        CopyDWords(backbuffer + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), pcscreen + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT), SCREENWIDTH * SBARHEIGHT / 4);
+        for (y = SCREENHEIGHT - SBARHEIGHT; y < SCREENHEIGHT; y++)
+            CopyDWords(backbuffer + MulBackbufferWidth(y),
+                       pcscreen + MulScreenWidth(y),
+                       SCREENWIDTH / 4);
         updatestate &= ~I_STATBAR;
     }
     if (updatestate & I_MESSAGES)
     {
-        CopyDWords(backbuffer, pcscreen, (SCREENWIDTH * 28) / 4);
+        for (y = 0; y < 28; y++)
+            CopyDWords(backbuffer + MulBackbufferWidth(y),
+                       pcscreen + MulScreenWidth(y),
+                       SCREENWIDTH / 4);
         updatestate &= ~I_MESSAGES;
     }
 }

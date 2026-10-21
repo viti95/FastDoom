@@ -35,11 +35,43 @@ fi
 if [ $# -lt 1 ]; then
   echo "Usage: $0 target.exe [buildopts]"
   echo "Check the README for possible targets."
+  echo ""
+  echo "Options:"
+  echo "  -pow2   Pad backbuffer rows to the next power of two width"
+  echo "          (BACKBUFFER_POW2_WIDTH) to improve cache behavior."
+  echo "          Only meaningful for backbuffered targets."
   exit 1
 fi
 
 target=$1
 shift 1
+
+# Separate the control flags (-pow2, -clean, -debug, -stub) from the
+# raw buildopts: only the latter are forwarded to the
+# compiler/assembler, the control flags are handled by this script.
+pow2=false
+forwardargs=""
+for param in "$@"; do
+    case "$param" in
+        -pow2)   pow2=true ;;
+        -clean|-debug|-stub) : ;;
+        *)       forwardargs="$forwardargs $param" ;;
+    esac
+done
+
+if [ "$pow2" = "true" ]; then
+  case "$target" in
+    fdoom13h.exe|fdoombwc.exe|fdoomc16.exe|fdoomcga.exe|fdoomcvb.exe|\
+    fdoomhgc.exe|fdoominc.exe|fdoompcp.exe|fdoomega.exe|fdoomcah.exe|\
+    fdoom512.exe|fdoom400.exe|fdoompgc.exe|fdoomvbr.exe|fdm*r.exe)
+      echo "Enabling power-of-two backbuffer row padding (BACKBUFFER_POW2_WIDTH)"
+      ;;
+    *)
+      echo "Warning: '$target' does not use a backbuffer, -pow2 has no effect."
+      pow2=false
+      ;;
+  esac
+fi
 
 # Project directory and internal executable name for this target.
 # Defaults to the main FASTDOOM project.
@@ -203,6 +235,10 @@ else
 
 fi
 
+if [ "$pow2" = "true" ]; then
+  buildopts="$buildopts -dBACKBUFFER_POW2_WIDTH"
+fi
+
 doclean=false
 for param in "$@"; do
     if [ "$param" = "-clean" ]; then
@@ -233,7 +269,7 @@ fi
 
 make_gnu() {
   if [ "$builddir" = "FASTDOOM" ]; then
-    make -j $(nproc) -f Makefile.gnu fdoom.exe EXTERNOPT="$buildopts $@" NASMOPT="$nasmbuildopts" WCCOPTS="$wccbuildopts"
+    make -j $(nproc) -f Makefile.gnu fdoom.exe EXTERNOPT="$buildopts$forwardargs" NASMOPT="$nasmbuildopts" WCCOPTS="$wccbuildopts"
   else
     make -j $(nproc) -f Makefile.gnu "$builtin"
   fi
@@ -241,7 +277,7 @@ make_gnu() {
 
 make_watcom() {
   if [ "$builddir" = "FASTDOOM" ]; then
-    wmake fdoom.exe EXTERNOPT="$buildopts $@" NASMOPT="$nasmbuildopts" WCCOPTS="$wccbuildopts"
+    wmake fdoom.exe EXTERNOPT="$buildopts$forwardargs" NASMOPT="$nasmbuildopts" WCCOPTS="$wccbuildopts"
   else
     wmake "$builtin"
   fi

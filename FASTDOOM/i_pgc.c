@@ -90,7 +90,7 @@ static unsigned short pgc_palette[14 * 256];
 // Shadow copy of the backbuffer: what the PGC framebuffer currently
 // holds. I_FinishUpdate diffs the backbuffer against this and only
 // uploads what changed.
-static byte pgc_shadow[SCREENWIDTH * SCREENHEIGHT];
+static byte pgc_shadow[BACKBUFFER_LINEWIDTH * SCREENHEIGHT];
 
 // Unchanged gap of this many words (pixels / 2) between two changed
 // areas on a line is resent with the surrounding segment instead of
@@ -419,8 +419,8 @@ void PGC_InitGraphics(void)
     // clean slate to keep the first frame deterministic. The shadow
     // copy must agree with what the card holds (black) from the
     // start, or the first frame reuploads the whole screen.
-    memset(backbuffer, 0, SCREENWIDTH * SCREENHEIGHT);
-    memcpy(pgc_shadow, backbuffer, SCREENWIDTH * SCREENHEIGHT);
+    memset(backbuffer, 0, BACKBUFFER_LINEWIDTH * SCREENHEIGHT);
+    memcpy(pgc_shadow, backbuffer, BACKBUFFER_LINEWIDTH * SCREENHEIGHT);
 }
 
 //
@@ -500,8 +500,8 @@ static void PGC_UploadRegion(int first, int last)
 
     for (y = first; y < last; y++)
     {
-        PGC_UploadLine(backbuffer + (unsigned int)y * SCREENWIDTH,
-                       pgc_shadow + (unsigned int)y * SCREENWIDTH, y);
+        PGC_UploadLine(backbuffer + MulBackbufferWidth(y),
+                       pgc_shadow + MulBackbufferWidth(y), y);
     }
 }
 
