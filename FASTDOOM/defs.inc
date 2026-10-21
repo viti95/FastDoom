@@ -21,6 +21,26 @@ SCREEN        equ 0xA0000
 %define SCREENHEIGHT  200
 %endif
 
+; Backbuffer row stride. When BACKBUFFER_POW2_WIDTH is defined, rows are
+; padded to the next power of two (mirrors the C logic in doomdef.h).
+; The padding bytes are never displayed; only SCREENWIDTH bytes per row
+; are valid.
+%ifndef BACKBUFFER_LINEWIDTH
+%ifdef BACKBUFFER_POW2_WIDTH
+%if SCREENWIDTH <= 512
+%define BACKBUFFER_LINEWIDTH 512
+%elif SCREENWIDTH <= 1024
+%define BACKBUFFER_LINEWIDTH 1024
+%elif SCREENWIDTH <= 2048
+%define BACKBUFFER_LINEWIDTH 2048
+%else
+%define BACKBUFFER_LINEWIDTH 4096
+%endif
+%else
+%define BACKBUFFER_LINEWIDTH SCREENWIDTH
+%endif
+%endif
+
 %include "fastmath.inc"
 
 ; Multiplcation macros are split into two parts because we can apply

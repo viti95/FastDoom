@@ -143,13 +143,13 @@ doneh:
       lea  edx,[ebx+ecx]                  ; 386:2cc, 486:1cc
       mov  al,[eax]                       ; translate the color
       shr  ebx, 25                        ; 386:3cc, 486:2cc
-      mov  [edi-(LINE-1)*SCREENWIDTH],al           ; draw a pixel to the buffer
+      mov  [edi-(LINE-1)*BACKBUFFER_LINEWIDTH],al           ; draw a pixel to the buffer
     %else
       mov  al,[esi+ebx]                   ; get source pixel
       lea  ebx,[edx+ecx]                  ; 386:2cc, 486:1cc
       mov  al,[eax]                       ; translate the color
       shr  edx, 25                        ; 386:3cc, 486:2cc
-      mov  [edi-(LINE-1)*SCREENWIDTH],al           ; draw a pixel to the buffer
+      mov  [edi-(LINE-1)*BACKBUFFER_LINEWIDTH],al           ; draw a pixel to the buffer
     %endif
     %assign LINE LINE-1
 %endrep

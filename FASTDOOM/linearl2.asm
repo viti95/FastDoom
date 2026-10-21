@@ -133,14 +133,14 @@ patchViewHeight:
 %rep SCREENHEIGHT
   SCALELABEL LINE:
   mov		ebp,[edx+ecx*4]
-	mov   al,[ebp+edi-(LINE-1)*SCREENWIDTH]
+	mov   al,[ebp+edi-(LINE-1)*BACKBUFFER_LINEWIDTH]
   dec   ecx
 	mov		bl,[eax]
   JMPTESTFUZZPOSDEFINE LINE
   mov   ecx,esi
   TESTFUZZPOSDEFINE LINE:
   mov   bh,bl
-  mov		[edi-(LINE-1)*SCREENWIDTH],bx
+  mov		[edi-(LINE-1)*BACKBUFFER_LINEWIDTH],bx
   %assign LINE LINE-1
 %endrep
 

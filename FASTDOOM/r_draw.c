@@ -3381,13 +3381,13 @@ void R_DrawFuzzColumnFlatSaturnBackbuffer(void)
 
     if (initialdrawpos)
     {
-        dest += SCREENWIDTH;
+        dest += BACKBUFFER_LINEWIDTH;
     }
 
     do
     {
         *dest = 0;
-        dest += 2 * SCREENWIDTH;
+        dest += 2 * BACKBUFFER_LINEWIDTH;
     } while (count--);
 
     if ((dc_yh - dc_yl) & 1)
@@ -3425,7 +3425,7 @@ void R_DrawFuzzColumnSaturnBackbuffer(void)
 
     if (initialdrawpos)
     {
-        dest += SCREENWIDTH;
+        dest += BACKBUFFER_LINEWIDTH;
         frac += fracstep;
     }
 
@@ -3435,7 +3435,7 @@ void R_DrawFuzzColumnSaturnBackbuffer(void)
     {
         *dest = dc_colormap[dc_source[(frac >> FRACBITS)]];
 
-        dest += 2 * SCREENWIDTH;
+        dest += 2 * BACKBUFFER_LINEWIDTH;
         frac += fracstep;
     } while (count--);
 
@@ -3472,7 +3472,7 @@ void R_DrawFuzzColumnTransBackbuffer(void)
     do
     {
         *dest = tintmap[(*dest << 8) + dc_colormap[dc_source[(frac >> FRACBITS) & 127]]];
-        dest += SCREENWIDTH;
+        dest += BACKBUFFER_LINEWIDTH;
         frac += fracstep;
     } while (count--);
 }
@@ -3494,13 +3494,13 @@ void R_DrawFuzzColumnFlatSaturnLowBackbuffer(void)
 
     if (initialdrawpos)
     {
-        dest += SCREENWIDTH;
+        dest += BACKBUFFER_LINEWIDTH;
     }
 
     do
     {
         *((unsigned short *)dest) = 0;
-        dest += 2 * SCREENWIDTH;
+        dest += 2 * BACKBUFFER_LINEWIDTH;
     } while (count--);
 
     if ((dc_yh - dc_yl) & 1)
@@ -3538,7 +3538,7 @@ void R_DrawFuzzColumnSaturnLowBackbuffer(void)
 
     if (initialdrawpos)
     {
-        dest += SCREENWIDTH;
+        dest += BACKBUFFER_LINEWIDTH;
         frac += fracstep;
     }
 
@@ -3551,7 +3551,7 @@ void R_DrawFuzzColumnSaturnLowBackbuffer(void)
         *(dest) = color;
         *(dest + 1) = color;
 
-        dest += 2 * SCREENWIDTH;
+        dest += 2 * BACKBUFFER_LINEWIDTH;
         frac += fracstep;
     } while (count--);
 
@@ -3598,7 +3598,7 @@ void R_DrawFuzzColumnTransLowBackbuffer(void)
         *(dest) = color;
         *(dest + 1) = color;
 
-        dest += SCREENWIDTH;
+        dest += BACKBUFFER_LINEWIDTH;
         frac += fracstep;
     } while (count--);
 }
@@ -3620,13 +3620,13 @@ void R_DrawFuzzColumnFlatSaturnPotatoBackbuffer(void)
 
     if (initialdrawpos)
     {
-        dest += SCREENWIDTH;
+        dest += BACKBUFFER_LINEWIDTH;
     }
 
     do
     {
         *((unsigned int *)dest) = 0;
-        dest += 2 * SCREENWIDTH;
+        dest += 2 * BACKBUFFER_LINEWIDTH;
     } while (count--);
 
     if ((dc_yh - dc_yl) & 1)
@@ -3664,7 +3664,7 @@ void R_DrawFuzzColumnSaturnPotatoBackbuffer(void)
 
     if (initialdrawpos)
     {
-        dest += SCREENWIDTH;
+        dest += BACKBUFFER_LINEWIDTH;
         frac += fracstep;
     }
 
@@ -3679,7 +3679,7 @@ void R_DrawFuzzColumnSaturnPotatoBackbuffer(void)
         *(dest + 2) = color;
         *(dest + 3) = color;
 
-        dest += 2 * SCREENWIDTH;
+        dest += 2 * BACKBUFFER_LINEWIDTH;
         frac += fracstep;
     } while (count--);
 
@@ -3732,7 +3732,7 @@ void R_DrawFuzzColumnTransPotatoBackbuffer(void)
         *(dest + 2) = color;
         *(dest + 3) = color;
 
-        dest += SCREENWIDTH;
+        dest += BACKBUFFER_LINEWIDTH;
         frac += fracstep;
     } while (count--);
 }

@@ -142,7 +142,7 @@ doneh:
   SCALELABEL LINE:
     mov  al,[esi+POSITION]              ; get source pixel
     mov  al,[eax]                       ; translate the color
-    mov  [edi-(LINE-1)*SCREENWIDTH],al  ; draw a pixel to the buffer
+    mov  [edi-(LINE-1)*BACKBUFFER_LINEWIDTH],al  ; draw a pixel to the buffer
     %assign LINE LINE-1
     %assign POSITION POSITION+1
 %endrep

@@ -134,7 +134,7 @@ doneh:
     mov  ebx,edx
     mov  al,[eax]                       ; translate the color
     shr  ebx,25
-    mov  [edi-(LINE-1)*SCREENWIDTH],al  ; draw a pixel to the buffer
+    mov  [edi-(LINE-1)*BACKBUFFER_LINEWIDTH],al  ; draw a pixel to the buffer
     %assign LINE LINE-1
 %endrep
 
@@ -306,7 +306,7 @@ LoopRoll:
   mov  al,[eax]                       ; translate the color
   shr  ebx,25
   mov  [edi],al  ; draw a pixel to the buffer
-  add  edi, SCREENWIDTH
+  add  edi, BACKBUFFER_LINEWIDTH
   dec  ebp
   jns  LoopRoll
 
@@ -408,7 +408,7 @@ patchCenteryMMX:
   dec  ebp
   mov  [edi],al  ; draw a pixel to the buffer
 
-  add  edi, SCREENWIDTH
+  add  edi, BACKBUFFER_LINEWIDTH
   
   ; MMX 2 pixels render
 Even:
@@ -459,9 +459,9 @@ LoopMMX:
 
   psrld      mm3, 25
 
-  mov  [edi+SCREENWIDTH], cl
+  mov  [edi+BACKBUFFER_LINEWIDTH], cl
 
-  add  edi, 2*SCREENWIDTH
+  add  edi, 2*BACKBUFFER_LINEWIDTH
 
   sub  ebp, 2
   jns  LoopMMX

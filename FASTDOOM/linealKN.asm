@@ -151,14 +151,14 @@ donel:
       mov  bl,[eax]                       ; translate the color
       shr  ebp, 25                        ; 386:3cc, 486:2cc
       mov  bh,bl
-      mov  [edi-(LINE-1)*SCREENWIDTH],bx  ; draw a pixel to the buffer
+      mov  [edi-(LINE-1)*BACKBUFFER_LINEWIDTH],bx  ; draw a pixel to the buffer
     %else
       mov  al,[esi+ebp]                   ; get source pixel
       lea  ebp,[edx+ecx]                  ; 386:2cc, 486:1cc
       mov  bl,[eax]                       ; translate the color
       shr  edx, 25                        ; 386:3cc, 486:2cc
       mov  bh,bl
-      mov  [edi-(LINE-1)*SCREENWIDTH],bx  ; draw a pixel to the buffer
+      mov  [edi-(LINE-1)*BACKBUFFER_LINEWIDTH],bx  ; draw a pixel to the buffer
     %endif
     %assign LINE LINE-1
 %endrep

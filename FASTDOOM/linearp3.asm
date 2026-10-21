@@ -99,25 +99,25 @@ CODE_SYM_DEF R_DrawFuzzColumnFlatPotatoBackbuffer
 %rep SCREENHEIGHT-1
   SCALELABEL LINE:
 
-	mov   al,[edi-(LINE-1)*SCREENWIDTH]
+	mov   al,[edi-(LINE-1)*BACKBUFFER_LINEWIDTH]
 	mov		cl,[eax]
   mov   ch,cl
-  mov		[edi-(LINE-1)*SCREENWIDTH],cx
-  mov		[edi-(LINE-1)*SCREENWIDTH+2],cx
+  mov		[edi-(LINE-1)*BACKBUFFER_LINEWIDTH],cx
+  mov		[edi-(LINE-1)*BACKBUFFER_LINEWIDTH+2],cx
 
   %assign LINE LINE-1
 %endrep
 
 vscale1:
 
-  mov   al,[edi-(LINE-1)*SCREENWIDTH]
+  mov   al,[edi-(LINE-1)*BACKBUFFER_LINEWIDTH]
 	pop	ebp
 	mov		cl,[eax]
   pop	edx
   mov   ch,cl
   pop	ebx
-  mov		[edi-(LINE-1)*SCREENWIDTH],cx
-  mov		[edi-(LINE-1)*SCREENWIDTH+2],cx
+  mov		[edi-(LINE-1)*BACKBUFFER_LINEWIDTH],cx
+  mov		[edi-(LINE-1)*BACKBUFFER_LINEWIDTH+2],cx
 
 vscale0:
 	pop	ecx

@@ -142,8 +142,8 @@ donep:
     mov  al,[esi+POSITION]              ; get source pixel
     mov  bl,[eax]                       ; translate the color
     mov  bh,bl
-    mov  [edi-(LINE-1)*SCREENWIDTH],bx  ; draw a pixel to the buffer
-    mov  [edi-(LINE-1)*SCREENWIDTH + 2],bx  ; draw a pixel to the buffer
+    mov  [edi-(LINE-1)*BACKBUFFER_LINEWIDTH],bx  ; draw a pixel to the buffer
+    mov  [edi-(LINE-1)*BACKBUFFER_LINEWIDTH + 2],bx  ; draw a pixel to the buffer
     %assign LINE LINE-1
     %assign POSITION POSITION+1
 %endrep

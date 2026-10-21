@@ -92,7 +92,7 @@ CODE_SYM_DEF R_DrawColumnPotatoBackbufferFlat
 %assign LINE SCREENHEIGHT
 %rep SCREENHEIGHT-1
   SCALELABEL LINE:
-    mov  [edi-(LINE-1)*SCREENWIDTH],eax  ; draw a pixel to the buffer
+    mov  [edi-(LINE-1)*BACKBUFFER_LINEWIDTH],eax  ; draw a pixel to the buffer
     %assign LINE LINE-1
 %endrep
 
