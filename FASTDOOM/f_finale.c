@@ -133,7 +133,7 @@ void F_StartFinale(void)
 
 	if(moveText)
 	{
-		finaletext = Z_MallocUnowned(strlen(programtext), PU_CACHE);
+		finaletext = Z_MallocUnowned(strlen(programtext) + 1, PU_CACHE);
 		strcpy(finaletext, programtext);
 	}
 
@@ -645,7 +645,7 @@ void F_CastDrawer(void)
   	V_DrawPatchModeCentered(0, 0, W_CacheLumpName("BOSSBACK", PU_CACHE));
 
 	I_LoadTextProgram(castnum + 179);
-	castname = Z_MallocUnowned(strlen(programtext), PU_CACHE);
+	castname = Z_MallocUnowned(strlen(programtext) + 1, PU_CACHE);
 	strcpy(castname, programtext);
 	F_CastPrint(castname);
 
@@ -706,7 +706,7 @@ void F_CastDrawerText(void)
 #endif
 
 	I_LoadTextProgram(castnum + 179);
-	castname = Z_MallocUnowned(strlen(programtext), PU_CACHE);
+	castname = Z_MallocUnowned(strlen(programtext) + 1, PU_CACHE);
 	strcpy(castname, programtext);
 
 #if defined(MODE_T4025) || defined(MODE_T4050)
