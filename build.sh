@@ -61,14 +61,18 @@ done
 
 if [ "$pow2" = "true" ]; then
   case "$target" in
-    fdoom13h.exe|fdoombwc.exe|fdoomc16.exe|fdoomcga.exe|fdoomcvb.exe|\
-    fdoomhgc.exe|fdoominc.exe|fdoompcp.exe|fdoomega.exe|fdoomcah.exe|\
-    fdoom512.exe|fdoom400.exe|fdoompgc.exe|fdoomvbr.exe|fdm*r.exe)
+    fdoom13h.exe|fdoomvbr.exe|fdm*r.exe)
       echo "Enabling power-of-two backbuffer row padding (BACKBUFFER_POW2_WIDTH)"
       ;;
+    fdoombwc.exe|fdoomc16.exe|fdoomcga.exe|fdoomcvb.exe|\
+    fdoomhgc.exe|fdoominc.exe|fdoompcp.exe|fdoomega.exe|fdoomcah.exe|\
+    fdoom512.exe|fdoom400.exe|fdoompgc.exe)
+      echo "Error: '$target' is a backbuffered mode; -pow2 is only supported for the VGA (13h) and VESA indirect (MODE_VBE2) modes." >&2
+      exit 1
+      ;;
     *)
-      echo "Warning: '$target' does not use a backbuffer, -pow2 has no effect."
-      pow2=false
+      echo "Error: '$target' does not use a backbuffer; -pow2 is not supported for this mode." >&2
+      exit 1
       ;;
   esac
 fi

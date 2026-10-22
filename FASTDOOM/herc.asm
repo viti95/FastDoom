@@ -21,8 +21,6 @@ BITS 32
 
 %ifdef MODE_HERC
 
-%include "defs.inc"
-
 extern _backbuffer
 extern _ptrlutcolors
 
@@ -108,7 +106,7 @@ CODE_SYM_DEF I_FinishUpdate
 	add		ebp,4
 	dec		esi
 	ja		.L$13
-	add		ebp,BACKBUFFER_LINEWIDTH
+	add		ebp,320
 	cmp		bx,0x1F40
 	jb		.L$12
 	pop		ebp

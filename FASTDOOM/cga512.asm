@@ -21,8 +21,6 @@ BITS 32
 
 %ifdef MODE_CGA512
 
-%include "defs.inc"
-
 extern _backbuffer
 extern _ptrlut256colors
 
@@ -66,7 +64,7 @@ L$17:
 L$14:
 	dec		bl
 	jne		L$21
-	add		edi,BACKBUFFER_LINEWIDTH
+	add		edi,0x140
 	cmp		si,0x3E80-2
 	jb		L$20
 

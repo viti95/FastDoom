@@ -21,8 +21,6 @@ BITS 32
 
 %ifdef MODE_CVB
 
-%include "defs.inc"
-
 extern _backbuffer
 extern _ptrlut16colors
 extern _lut16colors
@@ -123,7 +121,7 @@ nextIteration:
 	dec		ebp
 	ja		twoScanlines
 
-	add		esi,BACKBUFFER_LINEWIDTH
+	add		esi,320
 
 	cmp		di,0x1F40
 	jb		start

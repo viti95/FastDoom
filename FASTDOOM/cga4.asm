@@ -21,8 +21,6 @@ BITS 32
 
 %ifdef MODE_CGA
 
-%include "defs.inc"
-
 extern _backbuffer
 extern _ptrlut4colors
 extern _lut4colors
@@ -123,7 +121,7 @@ L$5:
 	add		edi,8
 	dec		ebp
 	ja		L$3
-	add		edi,BACKBUFFER_LINEWIDTH
+	add		edi,140H
 	cmp		si,0x1F40
 	jb		L$2
 	pop		ebp

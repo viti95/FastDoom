@@ -21,8 +21,6 @@ BITS 32
 
 %ifdef MODE_CGA16
 
-%include "defs.inc"
-
 extern _backbuffer
 extern _ptrlut16colors
 extern _lut16colors
@@ -99,7 +97,7 @@ CODE_SYM_DEF CGA_16_DrawBackbuffer_Snow
 	dec		ebp
 	jne		.L$11
 	mov		bp,40
-	add		edi,BACKBUFFER_LINEWIDTH
+	add		edi,0x140
 .L$11:
 	cmp		si,0x3E7F
 	jb		.L$9
@@ -153,7 +151,7 @@ CODE_SYM_DEF CGA_16_DrawBackbuffer
 	dec		ebp
 	jne		.L$11
 	mov		bp,40
-	add		edi,BACKBUFFER_LINEWIDTH
+	add		edi,0x140
 .L$11:
 	cmp		si,0x3E7F
 	jb		.L$9

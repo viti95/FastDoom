@@ -21,8 +21,6 @@ BITS 32
 
 %ifdef MODE_PCP
 
-%include "defs.inc"
-
 extern _backbuffer
 extern _ptrlut16colors
 
@@ -98,7 +96,7 @@ L$7:
 	add		esi,4
 	dec		edi
 	ja		L$3
-	add		esi,BACKBUFFER_LINEWIDTH
+	add		esi,140H
 	cmp		bx,0x1F40
 	jb		L$2
 	pop		ebp

@@ -21,8 +21,6 @@ BITS 32
 
 %ifdef MODE_SIGMA
 
-%include "defs.inc"
-
 extern _backbuffer
 extern _ptrlut16colors
 
@@ -161,7 +159,7 @@ patchESP:
   	cmp		esp,0x12345678
 	jne		L$3
 
-	add		esi,BACKBUFFER_LINEWIDTH
+	add		esi,320
 	cmp		di,0x1F40
 	jb		L$2
 

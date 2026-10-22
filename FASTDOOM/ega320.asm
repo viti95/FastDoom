@@ -21,8 +21,6 @@ BITS 32
 
 %ifdef MODE_EGA
 
-%include "defs.inc"
-
 extern _backbuffer
 extern _ptrlut16colors
 extern _lut16colors
@@ -55,14 +53,6 @@ CODE_SYM_DEF I_FinishUpdate
 	mov		eax,[_ptrlut16colors]
 	mov		di,[_lastlatch]
 	xor		edx,edx
-
-	; The backbuffer rows may be padded to BACKBUFFER_LINEWIDTH
-	; (BACKBUFFER_POW2_WIDTH), so the screen is walked row by row:
-	; SCREENWIDTH/4 quads per row, then skip the row padding.
-	sub		esp,4
-	mov		word [esp],SCREENHEIGHT
-L$row:
-	mov		word [esp+2],SCREENWIDTH/4
 L$2:
 	mov		al,byte [ebp]
 	add		ebx,2
@@ -89,12 +79,8 @@ L$2:
 L$4:
 	mov		[esi],cl
 L$3:
-	dec		word [esp+2]
-	jne		L$2
-	add		ebp,BACKBUFFER_LINEWIDTH-SCREENWIDTH
-	dec		word [esp]
-	jne		L$row
-	add		esp,4
+	cmp		si,0x3E80-1
+	jb		L$2
 	mov		[_lastlatch],di
 	pop		ebp
 	pop		edi

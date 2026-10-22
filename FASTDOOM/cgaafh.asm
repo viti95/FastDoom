@@ -21,8 +21,6 @@ BITS 32
 
 %ifdef MODE_CGA_AFH
 
-%include "defs.inc"
-
 extern _backbuffer
 extern _ptrlut16colors
 extern _lut16colors
@@ -87,7 +85,7 @@ CODE_SYM_DEF CGA_AFH_DrawBackbuffer_Snow
 	dec		ebp
 	jnz		.START
 	mov		bp,80
-	add		edi,BACKBUFFER_LINEWIDTH
+	add		edi,320
 	cmp		si,16000
 	jne		.START
 	pop		edi
@@ -141,7 +139,7 @@ CODE_SYM_DEF CGA_AFH_DrawBackbuffer
 	dec		ebp
 	jnz		.START
 	mov		bp,80
-	add		edi,BACKBUFFER_LINEWIDTH
+	add		edi,320
 	cmp		si,16000
 	jne		.START
 	pop		edi
