@@ -1030,7 +1030,7 @@ void I_FinishUpdate8bppBanked(void)
     {
       int chunk = ((64 * 1024) - p < n) ? (64 * 1024) - p : n;
 
-      CopyDWords(backbuffer + MulBackbufferWidth(y) + (SCREENWIDTH - n),
+      CopyDWords(backbuffer + MulScreenRow(y) + (SCREENWIDTH - n),
                  (void *)(0xA0000 + p),
                  chunk / 4);
       p += chunk;
@@ -1846,7 +1846,7 @@ void I_FinishUpdate8bppLinear(void)
   if (updatestate & I_FULLSCRN)
   {
     for (y = 0; y < SCREENHEIGHT; y++)
-      CopyDWords(backbuffer + MulBackbufferWidth(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 4);
+      CopyDWords(backbuffer + MulScreenRow(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 4);
     updatestate = I_NOUPDATE; // clear out all draw types
   }
   if (updatestate & I_FULLVIEW)
@@ -1862,7 +1862,7 @@ void I_FinishUpdate8bppLinear(void)
       lastline = endscreen / SCREENWIDTH;
     }
     for (y = firstline; y < lastline; y++)
-      CopyDWords(backbuffer + MulBackbufferWidth(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 4);
+      CopyDWords(backbuffer + MulScreenRow(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 4);
     updatestate &= ~I_FULLVIEW;
     if (firstline == 0)
       updatestate &= ~I_MESSAGES;
@@ -1870,13 +1870,13 @@ void I_FinishUpdate8bppLinear(void)
   if (updatestate & I_STATBAR)
   {
     for (y = SCREENHEIGHT - SBARHEIGHT; y < SCREENHEIGHT; y++)
-      CopyDWords(backbuffer + MulBackbufferWidth(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 4);
+      CopyDWords(backbuffer + MulScreenRow(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 4);
     updatestate &= ~I_STATBAR;
   }
   if (updatestate & I_MESSAGES)
   {
     for (y = 0; y < 28; y++)
-      CopyDWords(backbuffer + MulBackbufferWidth(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 4);
+      CopyDWords(backbuffer + MulScreenRow(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 4);
     updatestate &= ~I_MESSAGES;
   }
 }
@@ -1891,7 +1891,7 @@ void I_FinishUpdate8bppLinearMMX(void)
   if (updatestate & I_FULLSCRN)
   {
     for (y = 0; y < SCREENHEIGHT; y++)
-      CopyQWordsMMX(backbuffer + MulBackbufferWidth(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 8);
+      CopyQWordsMMX(backbuffer + MulScreenRow(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 8);
     updatestate = I_NOUPDATE; // clear out all draw types
   }
   if (updatestate & I_FULLVIEW)
@@ -1907,7 +1907,7 @@ void I_FinishUpdate8bppLinearMMX(void)
       lastline = endscreen / SCREENWIDTH;
     }
     for (y = firstline; y < lastline; y++)
-      CopyQWordsMMX(backbuffer + MulBackbufferWidth(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 8);
+      CopyQWordsMMX(backbuffer + MulScreenRow(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 8);
     updatestate &= ~I_FULLVIEW;
     if (firstline == 0)
       updatestate &= ~I_MESSAGES;
@@ -1915,13 +1915,13 @@ void I_FinishUpdate8bppLinearMMX(void)
   if (updatestate & I_STATBAR)
   {
     for (y = SCREENHEIGHT - SBARHEIGHT; y < SCREENHEIGHT; y++)
-      CopyQWordsMMX(backbuffer + MulBackbufferWidth(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 8);
+      CopyQWordsMMX(backbuffer + MulScreenRow(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 8);
     updatestate &= ~I_STATBAR;
   }
   if (updatestate & I_MESSAGES)
   {
     for (y = 0; y < 28; y++)
-      CopyQWordsMMX(backbuffer + MulBackbufferWidth(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 8);
+      CopyQWordsMMX(backbuffer + MulScreenRow(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 8);
     updatestate &= ~I_MESSAGES;
   }
 }
@@ -1936,7 +1936,7 @@ void I_FinishUpdate8bppLinearFPU(void)
   if (updatestate & I_FULLSCRN)
   {
     for (y = 0; y < SCREENHEIGHT; y++)
-      CopyQWordsFPU(backbuffer + MulBackbufferWidth(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 8);
+      CopyQWordsFPU(backbuffer + MulScreenRow(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 8);
     updatestate = I_NOUPDATE; // clear out all draw types
   }
   if (updatestate & I_FULLVIEW)
@@ -1952,7 +1952,7 @@ void I_FinishUpdate8bppLinearFPU(void)
       lastline = endscreen / SCREENWIDTH;
     }
     for (y = firstline; y < lastline; y++)
-      CopyQWordsFPU(backbuffer + MulBackbufferWidth(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 8);
+      CopyQWordsFPU(backbuffer + MulScreenRow(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 8);
     updatestate &= ~I_FULLVIEW;
     if (firstline == 0)
       updatestate &= ~I_MESSAGES;
@@ -1960,13 +1960,13 @@ void I_FinishUpdate8bppLinearFPU(void)
   if (updatestate & I_STATBAR)
   {
     for (y = SCREENHEIGHT - SBARHEIGHT; y < SCREENHEIGHT; y++)
-      CopyQWordsFPU(backbuffer + MulBackbufferWidth(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 8);
+      CopyQWordsFPU(backbuffer + MulScreenRow(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 8);
     updatestate &= ~I_STATBAR;
   }
   if (updatestate & I_MESSAGES)
   {
     for (y = 0; y < 28; y++)
-      CopyQWordsFPU(backbuffer + MulBackbufferWidth(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 8);
+      CopyQWordsFPU(backbuffer + MulScreenRow(y), pcscreen + MulScreenWidth(y), SCREENWIDTH / 8);
     updatestate &= ~I_MESSAGES;
   }
 }
@@ -1996,7 +1996,7 @@ void I_FinishUpdate15bpp16bppBanked(void)
 
       for (k = 0; k < chunk; k++)
       {
-        unsigned char ptrLUT = backbuffer[MulBackbufferWidth(y) + j + k];
+        unsigned char ptrLUT = backbuffer[MulScreenRow(y) + j + k];
 
         ptrVRAM[k] = ptrPalette[ptrLUT];
       }
@@ -2045,7 +2045,7 @@ void I_FinishUpdate24bppBanked(void)
     VBE_SetBank(voff / 65536);
     for (j = 0; j < SCREENWIDTH; j++)
     {
-      unsigned short ptrLUT = backbuffer[MulBackbufferWidth(y) + j] * 3;
+      unsigned short ptrLUT = backbuffer[MulScreenRow(y) + j] * 3;
       int p = voff % 65536 + j * 3;
 
       if (p + 2 < 64 * 1024)
@@ -2127,7 +2127,7 @@ void I_FinishUpdate32bppBanked(void)
 
       for (k = 0; k < chunk; k++)
       {
-        unsigned char ptrLUT = backbuffer[MulBackbufferWidth(y) + j + k];
+        unsigned char ptrLUT = backbuffer[MulScreenRow(y) + j + k];
 
         ptrVRAM[k] = ptrPalette[ptrLUT];
       }

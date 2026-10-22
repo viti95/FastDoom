@@ -926,7 +926,7 @@ void AM_drawFline(fline_t *fl, int color)
 #endif
 
 #if defined(USE_BACKBUFFER)
-#define PUTDOT(xx, yy, cc) backbuffer[MulBackbufferWidth(yy) + (xx)] = (cc)
+#define PUTDOT(xx, yy, cc) backbuffer[MulScreenRow(yy) + (xx)] = (cc)
 #endif
 
 	dx = fl->b.x - fl->a.x;
@@ -1183,7 +1183,7 @@ static void AM_ClearBackbuffer(int value)
     int y;
 
     for (y = 0; y < automapheight; y++)
-        SetDWords(backbuffer + MulBackbufferWidth(y), value, SCREENWIDTH / 4);
+        SetDWords(backbuffer + MulScreenRow(y), value, SCREENWIDTH / 4);
 }
 #endif
 

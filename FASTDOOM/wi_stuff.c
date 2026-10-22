@@ -353,7 +353,7 @@ void WI_slamBackground(void)
 		int y;
 		for (y = 0; y < SCREENHEIGHT; y++)
 			CopyDWords(screen1 + MulScreenWidth(y),
-					   backbuffer + MulBackbufferWidth(y),
+					   backbuffer + MulScreenRow(y),
 					   SCREENWIDTH / 4);
 	}
 #endif

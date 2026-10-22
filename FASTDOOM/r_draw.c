@@ -2915,7 +2915,7 @@ void R_InitBuffer(int width, int height)
 
 #if defined(USE_BACKBUFFER)
     for (i = 0; i < height; i++)
-        ylookup[i] = backbuffer + MulBackbufferWidth(i + viewwindowy);
+        ylookup[i] = backbuffer + MulScreenRow(i + viewwindowy);
 #endif
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF)
     for (i = 0; i < height; i++)
@@ -3239,7 +3239,7 @@ void R_VideoErase(unsigned ofs, int count)
 
             if (n & 1)
             {
-                *(backbuffer + MulBackbufferWidth(y) + lx) =
+                *(backbuffer + MulScreenRow(y) + lx) =
                     *(background_buffer + MulScreenWidth(y) + lx);
                 lx++;
                 n--;
@@ -3248,7 +3248,7 @@ void R_VideoErase(unsigned ofs, int count)
             if (n > 0)
             {
                 CopyWords(background_buffer + MulScreenWidth(y) + lx,
-                          backbuffer + MulBackbufferWidth(y) + lx,
+                          backbuffer + MulScreenRow(y) + lx,
                           n / 2);
             }
         }

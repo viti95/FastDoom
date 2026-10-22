@@ -115,7 +115,7 @@ void wipe_initMelt()
         int y;
         for (y = 0; y < SCREENHEIGHT; y++)
             CopyDWords(screen2 + MulScreenWidth(y),
-                       backbuffer + MulBackbufferWidth(y),
+                       backbuffer + MulScreenRow(y),
                        SCREENWIDTH / 4);
     }
     #endif
@@ -178,7 +178,7 @@ byte wipe_doMelt(int ticks)
                 d = &((short *)screen0)[MulScreenWidthHalf(y_val) + i];
                 #endif
                 #if defined(USE_BACKBUFFER)
-                d = &((short *)backbuffer)[MulBackbufferWidthHalf(y_val) + i];
+                d = &((short *)backbuffer)[MulScreenRowHalf(y_val) + i];
                 #endif
                 for (j = dy; j; j--)
                 {
@@ -191,7 +191,7 @@ byte wipe_doMelt(int ticks)
                 d = &((short *)screen0)[MulScreenWidthHalf(y_val) + i];
                 #endif
                 #if defined(USE_BACKBUFFER)
-                d = &((short *)backbuffer)[MulBackbufferWidthHalf(y_val) + i];
+                d = &((short *)backbuffer)[MulScreenRowHalf(y_val) + i];
                 #endif
                 idx = 0;
                 for (j = SCREENHEIGHT - y_val; j; j--)
@@ -335,7 +335,7 @@ void wipe_ReadScreen(byte *scr)
     int y;
     for (y = 0; y < SCREENHEIGHT; y++)
         CopyDWords(scr + MulScreenWidth(y),
-                   backbuffer + MulBackbufferWidth(y),
+                   backbuffer + MulScreenRow(y),
                    SCREENWIDTH / 4);
 }
 #endif

@@ -763,18 +763,18 @@ void F_DrawPatchCol(int x, patch_t *patch, int col)
 
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_VBE2_DIRECT)
 	linewidth = SCREENWIDTH;
-	desttop = screen0 + ((CENTERING_OFFSET_X + x) * PIXEL_SCALING_H) + MulBackbufferWidth(CENTERING_OFFSET_Y * PIXEL_SCALING_V);
+	desttop = screen0 + ((CENTERING_OFFSET_X + x) * PIXEL_SCALING_H) + MulScreenRow(CENTERING_OFFSET_Y * PIXEL_SCALING_V);
 #endif
 #if defined(USE_BACKBUFFER)
 	linewidth = BACKBUFFER_LINEWIDTH;
-	desttop = backbuffer + ((CENTERING_OFFSET_X + x) * PIXEL_SCALING_H) + MulBackbufferWidth(CENTERING_OFFSET_Y * PIXEL_SCALING_V);
+	desttop = backbuffer + ((CENTERING_OFFSET_X + x) * PIXEL_SCALING_H) + MulScreenRow(CENTERING_OFFSET_Y * PIXEL_SCALING_V);
 #endif
 
 	// step through the posts in a column
 	while (column->topdelta != 0xff)
 	{
 		source = (byte *)column + 3;
-		dest = desttop + MulBackbufferWidth(column->topdelta * PIXEL_SCALING_V);
+		dest = desttop + MulScreenRow(column->topdelta * PIXEL_SCALING_V);
 		count = column->length;
 
 		while (count--)

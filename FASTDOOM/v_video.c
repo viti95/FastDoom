@@ -139,7 +139,7 @@ void V_CopyRect(int srcx, int srcy, byte *srcscrn, int width, int height, int de
     // The destination is the backbuffer, whose rows are strided at
     // BACKBUFFER_LINEWIDTH (padded to a power of two when
     // BACKBUFFER_POW2_WIDTH is set).
-    dest = destscrn + MulBackbufferWidth(desty) + destx;
+    dest = destscrn + MulScreenRow(desty) + destx;
 #define VCR_DEST_STRIDE BACKBUFFER_LINEWIDTH
 #else
     dest = destscrn + MulScreenWidth(desty) + destx;
@@ -1537,7 +1537,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
     x -= patch->leftoffset;
 
     col = 0;
-    desttop = backbuffer + MulBackbufferWidth(y * PIXEL_SCALING_V) + x * PIXEL_SCALING_H;
+    desttop = backbuffer + MulScreenRow(y * PIXEL_SCALING_V) + x * PIXEL_SCALING_H;
     w = patch->width;
     for (; col < w; x++, col++, desttop += PIXEL_SCALING)
     {
@@ -1565,7 +1565,7 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
         while (column->topdelta != 0xff)
         {
             source = (byte *)column + 3;
-            dest = desttop + MulBackbufferWidth(column->topdelta * PIXEL_SCALING_V);
+            dest = desttop + MulScreenRow(column->topdelta * PIXEL_SCALING_V);
             count = column->length;
 #if PIXEL_SCALING == 1
             while (count--)

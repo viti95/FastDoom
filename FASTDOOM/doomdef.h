@@ -180,30 +180,25 @@ typedef enum
 #if defined(BACKBUFFER_POW2_WIDTH)
 #if SCREENWIDTH <= 512
 #define BACKBUFFER_LINEWIDTH 512
-#define MulBackbufferWidth(x) Mul512(x)
-#define MulBackbufferWidthHalf(x) Mul256(x)
-#define MulBackbufferWidthQuarter(x) Mul128(x)
+#define MulScreenRow(x) Mul512(x)
+#define MulScreenRowHalf(x) Mul256(x)
 #elif SCREENWIDTH <= 1024
 #define BACKBUFFER_LINEWIDTH 1024
-#define MulBackbufferWidth(x) Mul1024(x)
-#define MulBackbufferWidthHalf(x) Mul512(x)
-#define MulBackbufferWidthQuarter(x) Mul256(x)
+#define MulScreenRow(x) Mul1024(x)
+#define MulScreenRowHalf(x) Mul512(x)
 #elif SCREENWIDTH <= 2048
 #define BACKBUFFER_LINEWIDTH 2048
-#define MulBackbufferWidth(x) Mul2048(x)
-#define MulBackbufferWidthHalf(x) Mul1024(x)
-#define MulBackbufferWidthQuarter(x) Mul512(x)
+#define MulScreenRow(x) Mul2048(x)
+#define MulScreenRowHalf(x) Mul1024(x)
 #else
 #define BACKBUFFER_LINEWIDTH 4096
-#define MulBackbufferWidth(x) Mul4096(x)
-#define MulBackbufferWidthHalf(x) Mul2048(x)
-#define MulBackbufferWidthQuarter(x) Mul1024(x)
+#define MulScreenRow(x) Mul4096(x)
+#define MulScreenRowHalf(x) Mul2048(x)
 #endif
 #else
 #define BACKBUFFER_LINEWIDTH SCREENWIDTH
-#define MulBackbufferWidth(x) MulScreenWidth(x)
-#define MulBackbufferWidthHalf(x) MulScreenWidthHalf(x)
-#define MulBackbufferWidthQuarter(x) MulScreenWidthQuarter(x)
+#define MulScreenRow(x) MulScreenWidth(x)
+#define MulScreenRowHalf(x) MulScreenWidthHalf(x)
 #endif
 
 #define ORIGINAL_SCREENWIDTH 320

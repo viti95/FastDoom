@@ -155,7 +155,7 @@ void I_FinishUpdateDirect(void)
     if (updatestate & I_FULLSCRN)
     {
         for (y = 0; y < SCREENHEIGHT; y++)
-            CopyDWords(backbuffer + MulBackbufferWidth(y),
+            CopyDWords(backbuffer + MulScreenRow(y),
                        pcscreen + MulScreenWidth(y),
                        SCREENWIDTH / 4);
         updatestate = I_NOUPDATE; // clear out all draw types
@@ -173,7 +173,7 @@ void I_FinishUpdateDirect(void)
             lastline = endscreen / SCREENWIDTH;
         }
         for (y = firstline; y < lastline; y++)
-            CopyDWords(backbuffer + MulBackbufferWidth(y),
+            CopyDWords(backbuffer + MulScreenRow(y),
                        pcscreen + MulScreenWidth(y),
                        SCREENWIDTH / 4);
         updatestate &= ~I_FULLVIEW;
@@ -183,7 +183,7 @@ void I_FinishUpdateDirect(void)
     if (updatestate & I_STATBAR)
     {
         for (y = SCREENHEIGHT - SBARHEIGHT; y < SCREENHEIGHT; y++)
-            CopyDWords(backbuffer + MulBackbufferWidth(y),
+            CopyDWords(backbuffer + MulScreenRow(y),
                        pcscreen + MulScreenWidth(y),
                        SCREENWIDTH / 4);
         updatestate &= ~I_STATBAR;
@@ -191,7 +191,7 @@ void I_FinishUpdateDirect(void)
     if (updatestate & I_MESSAGES)
     {
         for (y = 0; y < 28; y++)
-            CopyDWords(backbuffer + MulBackbufferWidth(y),
+            CopyDWords(backbuffer + MulScreenRow(y),
                        pcscreen + MulScreenWidth(y),
                        SCREENWIDTH / 4);
         updatestate &= ~I_MESSAGES;
