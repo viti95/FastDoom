@@ -195,7 +195,7 @@ typedef enum
 #define MulBackbufferWidthQuarter(x) Mul512(x)
 #else
 #define BACKBUFFER_LINEWIDTH 4096
-#define MulBackbufferWidth(x) ((x) << 12)
+#define MulBackbufferWidth(x) Mul4096(x)
 #define MulBackbufferWidthHalf(x) Mul2048(x)
 #define MulBackbufferWidthQuarter(x) Mul1024(x)
 #endif
