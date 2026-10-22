@@ -178,9 +178,6 @@ void I_FinishUpdate(void)
             plane_position++;
             base += 8;
         }
-
-        // Skip the row padding (BACKBUFFER_POW2_WIDTH).
-        base += BACKBUFFER_LINEWIDTH - SCREENWIDTH;
     }
 
     // Copy each bitplane
