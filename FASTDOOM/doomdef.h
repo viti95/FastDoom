@@ -130,10 +130,10 @@ typedef enum
 #define PIXEL_SCALING_H 2
 
 #elif SCREENWIDTH == 1024 && SCREENHEIGHT == 768
-#define MulScreenWidth(x) Mul1024(x)
-#define MulScreenWidthHalf(x) Mul512(x)
-#define MulScreenWidthQuarter(x) Mul256(x)
-#define MulScreenWidthEighth(x) Mul128(x)
+#define MulScreenWidth(x) ((x) << 10)
+#define MulScreenWidthHalf(x) ((x) << 9)
+#define MulScreenWidthQuarter(x) ((x) << 8)
+#define MulScreenWidthEighth(x) ((x) << 7)
 #define ASPECTRATIO4x3
 #define PIXEL_SCALING 3
 #define PIXEL_SCALING_V 3
@@ -180,20 +180,20 @@ typedef enum
 #if defined(BACKBUFFER_POW2_WIDTH)
 #if SCREENWIDTH <= 512
 #define BACKBUFFER_LINEWIDTH 512
-#define MulScreenRow(x) Mul512(x)
-#define MulScreenRowHalf(x) Mul256(x)
+#define MulScreenRow(x) ((x) << 9)
+#define MulScreenRowHalf(x) ((x) << 8)
 #elif SCREENWIDTH <= 1024
 #define BACKBUFFER_LINEWIDTH 1024
-#define MulScreenRow(x) Mul1024(x)
-#define MulScreenRowHalf(x) Mul512(x)
+#define MulScreenRow(x) ((x) << 10)
+#define MulScreenRowHalf(x) ((x) << 9)
 #elif SCREENWIDTH <= 2048
 #define BACKBUFFER_LINEWIDTH 2048
-#define MulScreenRow(x) Mul2048(x)
-#define MulScreenRowHalf(x) Mul1024(x)
+#define MulScreenRow(x) ((x) << 11)
+#define MulScreenRowHalf(x) ((x) << 10)
 #else
 #define BACKBUFFER_LINEWIDTH 4096
-#define MulScreenRow(x) Mul4096(x)
-#define MulScreenRowHalf(x) Mul2048(x)
+#define MulScreenRow(x) ((x) << 12)
+#define MulScreenRowHalf(x) ((x) << 11)
 #endif
 #else
 #define BACKBUFFER_LINEWIDTH SCREENWIDTH
