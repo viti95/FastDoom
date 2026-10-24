@@ -1287,7 +1287,7 @@ void M_DrawOptions(void)
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT) || \
     defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_VT100) || \
     defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_COLOR_MDA)
-static char *const renderdetailnames[] = { "FULL", "FLAT", "FLATTER" };
+static char *const renderdetailnames[] = { "FULL", "FLAT", "FLATTER", "HORIZ" };
 static char *const detaillevelnames[] = { "HIGH", "LOW", "POTATO" };
 static char *const invisiblenames[] = { "FUZZY", "FLAT", "FLAT SATURN", "SATURN", "TRANSLUCENT" };
 static char *const fpsnames[] = { "OFF", "SCREEN", "DEBUG CARD 2N", "DEBUG CARD 4N", "SCREEN + DC2N", "SCREEN + DC4N" };

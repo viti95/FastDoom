@@ -120,6 +120,8 @@ void M_ChangeValueFile(unsigned int position, char *token)
             wallRender = WALL_FLAT;
         if (M_CheckValue(token, "flatter"))
             wallRender = WALL_FLATTER;
+        if (M_CheckValue(token, "horiz"))
+            wallRender = WALL_HORIZ;
 
         R_SetViewSize(screenblocks, detailLevel);
         break;

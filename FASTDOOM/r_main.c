@@ -30,6 +30,7 @@
 #include "m_misc.h"
 
 #include "r_local.h"
+#include "r_drawh.h"
 
 #include "std_func.h"
 
@@ -1902,6 +1903,11 @@ static void R_SetupBackbufferFuncs(void)
         case WALL_FLATTER:
             colfunc = R_DrawColumnBackbufferFlat;
             break;
+#if defined(MODE_13H) || defined(MODE_VBE2) || defined(MODE_PGC)
+        case WALL_HORIZ:
+            colfunc = R_DrawColumnHoriz;
+            break;
+#endif
         }
 
         switch (spriteRender)
@@ -2453,6 +2459,9 @@ static void R_SetupVBE2Funcs(void)
         case WALL_FLATTER:
             colfunc = R_DrawColumnVBE2Flat;
             break;
+        case WALL_HORIZ:
+            colfunc = R_DrawColumnHoriz;
+            break;
         }
 
         switch (spriteRender)
@@ -2882,11 +2891,14 @@ typedef struct
     void (*renderMaskedSegRange2)(drawseg_t *ds);
 } wallrenderfuncs_t;
 
-static const wallrenderfuncs_t wallrenderfuncs[3] =
+static const wallrenderfuncs_t wallrenderfuncs[NUM_WALLRENDER] =
 {
     { R_RenderSegLoop, R_RenderMaskedSegRange, R_RenderMaskedSegRange2 },
     { R_RenderSegLoopFlat, R_RenderMaskedSegRangeFlat, R_RenderMaskedSegRange2Flat },
-    { R_RenderSegLoopFlatter, R_RenderMaskedSegRangeFlatter, R_RenderMaskedSegRange2Flatter }
+    { R_RenderSegLoopFlatter, R_RenderMaskedSegRangeFlatter, R_RenderMaskedSegRange2Flatter },
+    /* WALL_HORIZ: same loops, the column groups are flushed inside
+     * them when wallRender == WALL_HORIZ */
+    { R_RenderSegLoop, R_RenderMaskedSegRange, R_RenderMaskedSegRange2 }
 };
 
 static void (*const spriterenderfuncs[3])(vissprite_t *vis) =
@@ -2999,7 +3011,7 @@ void R_ExecuteSetViewSize(void)
     projection = centerxfrac;
 #endif
 
-    // wallRender / spriteRender / pspriteRender are always in range 0..2
+    // wallRender / spriteRender / pspriteRender are always in range
     renderSegLoop = wallrenderfuncs[wallRender].renderSegLoop;
     renderMaskedSegRange = wallrenderfuncs[wallRender].renderMaskedSegRange;
     renderMaskedSegRange2 = wallrenderfuncs[wallRender].renderMaskedSegRange2;
@@ -3176,6 +3188,8 @@ extern int detailLevel;
 
 void R_Init(void)
 {
+    R_HorizInit();
+
     R_InitData();
     // viewwidth / viewheight / detailLevel are set by the defaults
     printf(".");
@@ -3286,6 +3300,9 @@ void R_SetupFrame(void)
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF)
     destview = destscreen + MulScreenWidthQuarter(viewwindowy) + (viewwindowx >> 2);
 #endif
+
+    /* horizontal column mode: per-frame initialization */
+    R_HorizInitFrame();
 }
 
 //

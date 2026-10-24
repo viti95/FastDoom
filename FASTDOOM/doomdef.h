@@ -378,6 +378,7 @@ typedef enum
     WALL_NORMAL,
     WALL_FLAT,
     WALL_FLATTER,
+    WALL_HORIZ,
     NUM_WALLRENDER
 } wallrender_t;
 

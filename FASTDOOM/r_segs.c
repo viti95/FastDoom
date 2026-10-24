@@ -30,6 +30,7 @@
 
 #include "std_func.h"
 #include "i_debug.h"
+#include "r_drawh.h"
 
 #include <conio.h>
 
@@ -288,8 +289,17 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 			maskedtexturecol[dc_x] = MAXSHORT;
 		}
 		spryscale += rw_scalestep;
+
+		/* horizontal column mode: flush a complete group of four */
+		if (wallRender == WALL_HORIZ && detailshift == DETAIL_HIGH &&
+		    (dc_x & 3) == 3)
+			R_HorizGroupFlush(dc_x - 3);
 		dc_x++;
 	} while (dc_x <= x2);
+
+	/* horizontal column mode: flush the pending tail of the group */
+	if (wallRender == WALL_HORIZ && detailshift == DETAIL_HIGH)
+		R_HorizSegEnd(x2);
 }
 
 void R_RenderMaskedSegRangeFlat(drawseg_t *ds,
@@ -890,9 +900,19 @@ void R_RenderMaskedSegRange2(drawseg_t *ds)
 
 			maskedtexturecol[dc_x] = MAXSHORT;
 		}
+
+		/* horizontal column mode: flush a complete group of four */
+		if (wallRender == WALL_HORIZ && detailshift == DETAIL_HIGH &&
+		    (dc_x & 3) == 3)
+			R_HorizGroupFlush(dc_x - 3);
+
 		spryscale += rw_scalestep;
 		dc_x++;
 	} while (dc_x <= ds->x2);
+
+	/* horizontal column mode: flush the pending tail of the group */
+	if (wallRender == WALL_HORIZ && detailshift == DETAIL_HIGH)
+		R_HorizSegEnd(ds->x2);
 }
 
 void R_RenderMaskedSegRange2Flat(drawseg_t *ds)
@@ -1657,7 +1677,16 @@ void R_RenderSegLoop(void)
 
 		ceilingclip[rw_x] = cc_rwx;
 		floorclip[rw_x] = fc_rwx;
+
+		/* horizontal column mode: flush a complete group of four */
+		if (wallRender == WALL_HORIZ && detailshift == DETAIL_HIGH &&
+		    (rw_x & 3) == 3)
+			R_HorizGroupFlush(rw_x - 3);
 	}
+
+	/* horizontal column mode: flush the pending tail of the group */
+	if (wallRender == WALL_HORIZ && detailshift == DETAIL_HIGH)
+		R_HorizSegEnd(rw_stopx - 1);
 }
 
 void R_RenderSegLoopFlat(void)
