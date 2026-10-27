@@ -19,29 +19,40 @@
 //	(r_columnmethod 1).
 //
 //	Instead of scaling one column and writing it to the framebuffer
-// immediately (walking down the screen with a full pitch stride,
-// which thrashes the cache on linear framebuffers), columns are
-// first scaled ("pre-pass") into a small interleaved temporary
-// buffer, horiztemp, four columns at a time. Each visible span is
-// remembered, then the whole group is flushed to the framebuffer
-// at once ("post-pass"), writing row by row: up to four adjacent
-// screen pixels are written on each screen row, keeping the
-// framebuffer writes sequential.
+//	immediately (walking down the screen with a full pitch stride,
+//	which thrashes the cache on linear framebuffers), columns are
+//	first scaled ("pre-pass") into a small interleaved temporary
+//	buffer, horiztemp, four columns at a time: pixel y of column c
+//	of the current group lives at horiztemp[(y << 2) + c], so a
+//	whole screen row of the group sits in one dword.
+//
+//	While staging, the pre-pass also marks the screen row as
+//	"active for column c" in horizrowmask. The post-pass then only
+//	needs to test one byte per screen row to know which of the four
+//	staged columns touch that row, and walks the framebuffer row by
+//	row: up to four adjacent screen pixels are written per row,
+//	keeping the framebuffer writes sequential.
 //
 //	Sprites use R_DrawVisSpriteHoriz / R_DrawVisPSpriteHoriz, which
-// replace the whole sprite column loop. Walls replace only the
-// colfunc itself (R_StageColumnHoriz), so the normal seg loop and
-// the masked seg ranges both go through the staging, and
-// R_FlushWallHoriz() writes the pending group at each drawing
-// boundary where a later seg could otherwise overwrite columns.
+//	replace the whole sprite column loop. Walls replace only the
+//	colfunc itself (R_StageColumnHoriz), so the normal seg loop and
+//	the masked seg ranges both go through the staging, and
+//	R_FlushWallHoriz() writes the pending group at each drawing
+//	boundary where a later seg could otherwise overwrite columns.
 //
 //	This generic C implementation works on any linear byte-per
-// -pixel destination with a SCREENWIDTH row stride, i.e. all the
+//	-pixel destination with a constant row stride, i.e. all the
 //	backbuffered modes (ylookup/columnofs) and the VBE2 direct
 //	modes (destview). It handles the Low/Potato horizontal pixel
 //	duplication and the CGA composite modes' column decimation.
 //	Fuzz (shadow/translucent) sprites keep using the classic
 //	mode-specific column drawers.
+//
+//	Source texture addressing matches the column drawers in
+//	linearh/linearl/linearp.asm and vbe2d*.asm: the source byte
+//	index is (texturepos >> 16) & 127, i.e. composite columns and
+//	patch posts wrap inside a 128 byte window (the asm computes it
+//	as (frac << 9) >> 25).
 //
 //	An optimized assembly post-pass can replace R_FlushHorizGroup
 //	later without changing anything else.
@@ -67,21 +78,25 @@
 
 #include "std_func.h"
 
-// Maximum post spans recorded per column of a group. Regular Doom
-// sprite posts are long, so a handful of spans is the norm; if a
-// pathological patch exceeds this, the extra posts are dropped.
-#define MAXHSPANS 128
-
 // Interleaved column staging buffer: pixel y of column c of the
 // current group lives at horiztemp[(y << 2) + c]. Four columns per
 // screen row keep the post-pass writes to the framebuffer
 // sequential along each row.
 static byte horiztemp[SCREENHEIGHT * 4];
 
-// Per-column (yl, yh) span lists, in ascending, non-overlapping
-// order (the posts / wall tiers are walked top to bottom).
-static int horizspans[4][MAXHSPANS * 2];
-static int horiznspans[4];
+// Bit c set on row y: column c of the current group has a staged,
+// visible pixel on screen row y. Built by the pre-pass while it
+// scales pixels (one cached byte OR per pixel), consumed and
+// cleared by the post-pass. This replaces per-column span lists:
+// the flush needs a single byte load per screen row instead of
+// chasing span pointers for each column.
+static byte horizrowmask[SCREENHEIGHT];
+
+// Vertical extent of the rows that can have mask bits set for the
+// current group, so the flush skips the blank rows above and below
+// it entirely.
+static int horizymin;
+static int horizymax;
 
 // Base x of the wall group currently staged into horiztemp, or -1
 // when nothing is pending. Walls stage one colfunc() column at a
@@ -101,7 +116,10 @@ static int horizidentityready;
 // (row pointer, viewwindowy baked in) plus columnofs[] (includes
 // viewwindowx and the detailshift pixel doubling). VBE2 direct
 // modes draw straight into the framebuffer at destview, which
-// already includes the viewwindow offset.
+// already includes the viewwindow offset. Both are linear with a
+// constant row stride of MulScreenWidth(1), so the flush walks the
+// destination with an incrementing row pointer instead of
+// re-evaluating ylookup/MulScreenWidth for every row.
 //
 #if defined(USE_BACKBUFFER)
 #define HORIZ_ROW(y) (ylookup[(y)])
@@ -111,15 +129,12 @@ static int horizidentityready;
 #define HORIZ_COFS(x) ((x) << detailshift)
 #endif
 
+#define HORIZ_ROWSTRIDE MulScreenWidth(1)
+
 //
 // Some composite CGA modes only draw a decimated subset of the
 // sprite columns in certain detail levels. Mirror what the classic
 // R_DrawVisSprite does, so both renderers look identical.
-//
-// Source texture addressing matches the column drawers in
-// linearh/linearl/linearp.asm: the source byte index is
-// (texturepos >> 16) & 127, i.e. composite columns and patch
-// posts wrap inside a 128 byte window.
 //
 #if defined(MODE_CGA16) || defined(MODE_CVB)
 #define HORIZ_SKIP_COLUMN(x) ((detailshift == DETAIL_HIGH) && ((x) & 1))
@@ -131,17 +146,160 @@ static int horizidentityready;
 #define HORIZ_SKIP_COLUMN(x) (0)
 #endif
 
-static void R_ClearHorizSpans(void)
+//
+// Start a fresh 4-column group. The row masks of the previous
+// group are guaranteed already cleared by R_FlushHorizGroup.
+//
+static void R_BeginHorizGroup(void)
 {
-    horiznspans[0] = 0;
-    horiznspans[1] = 0;
-    horiznspans[2] = 0;
-    horiznspans[3] = 0;
+    horizymin = SCREENHEIGHT;
+    horizymax = -1;
+}
+
+//
+// Post-pass: map the up-to-four staged columns in horiztemp to the
+// screen at xstart..., writing row by row so that adjacent columns
+// land next to each other in memory. colormap translates the
+// staged texture bytes; NULL means the bytes are already screen
+// colors (wall staging maps with the per-column colormap).
+//
+static void R_FlushHorizGroup(int xstart, int group, byte *colormap)
+{
+    int c;
+    int y;
+    int ymax;
+    int off[4];
+    unsigned m;
+    byte *map;
+    byte *row;
+    byte *tp;
+
+    if (horizymax < horizymin)
+        return;
+
+    if (colormap)
+    {
+        map = colormap;
+    }
+    else
+    {
+        if (!horizidentityready)
+        {
+            int i;
+            for (i = 0; i < 256; i++)
+                horizidentity[i] = i;
+            horizidentityready = 1;
+        }
+        map = horizidentity;
+    }
+
+    for (c = 0; c < group; c++)
+        off[c] = HORIZ_COFS(xstart + c);
+
+    y = horizymin;
+    ymax = horizymax;
+    row = HORIZ_ROW(y);
+
+    if (!detailshift)
+    {
+        for (; y <= ymax; y++)
+        {
+            m = horizrowmask[y];
+
+            if (m)
+            {
+                tp = horiztemp + ((unsigned)y << 2);
+
+                // All four columns active (solid walls spanning
+                // the group): no per-column tests at all. Only
+                // possible when the group is 4 columns wide.
+                if (m == 15)
+                {
+                    row[off[0]] = map[tp[0]];
+                    row[off[1]] = map[tp[1]];
+                    row[off[2]] = map[tp[2]];
+                    row[off[3]] = map[tp[3]];
+                }
+                else
+                {
+                    c = 0;
+                    do
+                    {
+                        if (m & 1)
+                            row[off[c]] = map[tp[c]];
+                        m >>= 1;
+                        c++;
+                    } while (m);
+                }
+
+                horizrowmask[y] = 0;
+            }
+
+            row += HORIZ_ROWSTRIDE;
+        }
+    }
+    else if (detailshift == DETAIL_LOW)
+    {
+        for (; y <= ymax; y++)
+        {
+            m = horizrowmask[y];
+
+            if (m)
+            {
+                tp = horiztemp + ((unsigned)y << 2);
+                c = 0;
+                do
+                {
+                    if (m & 1)
+                    {
+                        unsigned short color = map[tp[c]];
+                        color |= color << 8;
+                        *(unsigned short *)(row + off[c]) = color;
+                    }
+                    m >>= 1;
+                    c++;
+                } while (m);
+
+                horizrowmask[y] = 0;
+            }
+
+            row += HORIZ_ROWSTRIDE;
+        }
+    }
+    else
+    {
+        for (; y <= ymax; y++)
+        {
+            m = horizrowmask[y];
+
+            if (m)
+            {
+                tp = horiztemp + ((unsigned)y << 2);
+                c = 0;
+                do
+                {
+                    if (m & 1)
+                    {
+                        unsigned int color = map[tp[c]];
+                        color |= color << 8;
+                        color |= color << 16;
+                        *(unsigned int *)(row + off[c]) = color;
+                    }
+                    m >>= 1;
+                    c++;
+                } while (m);
+
+                horizrowmask[y] = 0;
+            }
+
+            row += HORIZ_ROWSTRIDE;
+        }
+    }
 }
 
 //
 // Pre-pass: scale one texture column of the sprite into horiztemp
-// (slot c of the current group), recording the visible post spans.
+// (slot c of the current group), marking the touched screen rows.
 // Clipping matches the classic R_DrawVisSprite exactly.
 //
 static void R_DrawColumnHoriz(vissprite_t *vis, patch_t *patch, int x,
@@ -153,7 +311,7 @@ static void R_DrawColumnHoriz(vissprite_t *vis, patch_t *patch, int x,
     int bottomscreen;
     int yl;
     int yh;
-    int spanyl;
+    int count;
     short mfc_x;
     short mcc_x;
     fixed_t basetexturemid;
@@ -161,9 +319,11 @@ static void R_DrawColumnHoriz(vissprite_t *vis, patch_t *patch, int x,
     fixed_t fracstep;
     byte *source;
     byte *dest;
-    int nspans;
+    byte *rmask;
+    unsigned bitmask;
 
-    nspans = 0;
+    bitmask = 1 << c;
+    fracstep = dc_iscale;
     basetexturemid = dc_texturemid;
     mfc_x = mfloorclip[x];
     mcc_x = mceilingclip[x];
@@ -201,165 +361,32 @@ static void R_DrawColumnHoriz(vissprite_t *vis, patch_t *patch, int x,
 
         BOUNDS_CHECK(yh, yl);
 
-        if (nspans < MAXHSPANS)
+        count = yh - yl + 1;
+        source = (byte *)column + 3;
+        texfrac = dc_texturemid - (column->topdelta << FRACBITS) +
+                  (yl - centery) * fracstep;
+
+        dest = horiztemp + ((unsigned)yl << 2) + c;
+        rmask = horizrowmask + yl;
+
+        while (count--)
         {
-            spanyl = yl;
-            source = (byte *)column + 3;
-            fracstep = dc_iscale;
-            texfrac = dc_texturemid - (column->topdelta << FRACBITS) +
-                      (yl - centery) * fracstep;
-
-            dest = &horiztemp[(yl << 2) + c];
-
-            while (yl <= yh)
-            {
-                *dest = source[((unsigned)texfrac >> 16) & 127];
-                texfrac += fracstep;
-                dest += 4;
-                yl++;
-            }
-
-            horizspans[c][(nspans << 1)] = spanyl;
-            horizspans[c][(nspans << 1) + 1] = yh;
-            nspans++;
+            *dest = source[((unsigned)texfrac >> 16) & 127];
+            *rmask |= bitmask;
+            texfrac += fracstep;
+            dest += 4;
+            rmask++;
         }
+
+        if (yl < horizymin)
+            horizymin = yl;
+        if (yh > horizymax)
+            horizymax = yh;
 
         column = (column_t *)((byte *)column + column->length + 4);
     }
 
     dc_texturemid = basetexturemid;
-    horiznspans[c] = nspans;
-}
-
-//
-// Post-pass: map the up-to-four staged columns in horiztemp to the
-// screen at xstart..., writing row by row so that adjacent columns
-// land next to each other in memory. colormap translates the
-// staged texture bytes; NULL means the bytes are already screen
-// colors (wall staging maps with the per-column colormap).
-//
-static void R_FlushHorizGroup(int xstart, int group, byte *colormap)
-{
-    int c;
-    int y;
-    int ymin;
-    int ymax;
-    int ncols;
-    int pos[4];
-    int off[4];
-    byte *map;
-
-    if (!colormap)
-    {
-        if (!horizidentityready)
-        {
-            int i;
-            for (i = 0; i < 256; i++)
-                horizidentity[i] = i;
-            horizidentityready = 1;
-        }
-        map = horizidentity;
-    }
-    else
-        map = colormap;
-
-    ymin = SCREENHEIGHT;
-    ymax = -1;
-    ncols = 0;
-
-    for (c = 0; c < group; c++)
-    {
-        pos[c] = 0;
-        off[c] = HORIZ_COFS(xstart + c);
-
-        if (horiznspans[c])
-        {
-            ncols++;
-            if (horizspans[c][0] < ymin)
-                ymin = horizspans[c][0];
-            if (horizspans[c][(horiznspans[c] << 1) - 1] > ymax)
-                ymax = horizspans[c][(horiznspans[c] << 1) - 1];
-        }
-    }
-
-    if (!ncols)
-        return;
-
-    if (!detailshift)
-    {
-        for (y = ymin; y <= ymax; y++)
-        {
-            byte *row = HORIZ_ROW(y);
-
-            for (c = 0; c < group; c++)
-            {
-                int *spans = horizspans[c];
-                int i = pos[c];
-
-                if (i < horiznspans[c] && y > spans[(i << 1) + 1])
-                {
-                    i++;
-                    pos[c] = i;
-                }
-
-                if (i < horiznspans[c] && y >= spans[i << 1])
-                    row[off[c]] = map[horiztemp[(y << 2) + c]];
-            }
-        }
-    }
-    else if (detailshift == DETAIL_LOW)
-    {
-        for (y = ymin; y <= ymax; y++)
-        {
-            byte *row = HORIZ_ROW(y);
-
-            for (c = 0; c < group; c++)
-            {
-                int *spans = horizspans[c];
-                int i = pos[c];
-
-                if (i < horiznspans[c] && y > spans[(i << 1) + 1])
-                {
-                    i++;
-                    pos[c] = i;
-                }
-
-                if (i < horiznspans[c] && y >= spans[i << 1])
-                {
-                    unsigned short color = map[horiztemp[(y << 2) + c]];
-                    color |= color << 8;
-                    *(unsigned short *)(row + off[c]) = color;
-                }
-            }
-        }
-    }
-    else
-    {
-        for (y = ymin; y <= ymax; y++)
-        {
-            byte *row = HORIZ_ROW(y);
-
-            for (c = 0; c < group; c++)
-            {
-                int *spans = horizspans[c];
-                int i = pos[c];
-
-                if (i < horiznspans[c] && y > spans[(i << 1) + 1])
-                {
-                    i++;
-                    pos[c] = i;
-                }
-
-                if (i < horiznspans[c] && y >= spans[i << 1])
-                {
-                    unsigned int color = map[horiztemp[(y << 2) + c]];
-                    color |= color << 8;
-                    color |= color << 16;
-                    *(unsigned int *)(row + off[c]) = color;
-                }
-            }
-        }
-    }
 }
 
 //
@@ -372,7 +399,9 @@ static void R_DrawVisSpriteHorizCore(vissprite_t *vis,
 {
     patch_t *patch;
     fixed_t frac;
+    fixed_t xiscale;
     int x;
+    int x2;
     int group;
     int c;
 
@@ -392,30 +421,32 @@ static void R_DrawVisSpriteHorizCore(vissprite_t *vis,
     spryscale = vis->scale;
     sprtopscreen = centeryfrac - FixedMul(dc_texturemid, spryscale);
 
+    xiscale = vis->xiscale;
+    x2 = vis->x2;
     x = vis->x1;
 
     // Same do-while shape as the classic drawers: even a sprite with
     // x1 > x2 draws its first column.
     do
     {
-        group = vis->x2 - x + 1;
+        group = x2 - x + 1;
         if (group > 4)
             group = 4;
 
-        R_ClearHorizSpans();
+        R_BeginHorizGroup();
 
         for (c = 0; c < group; c++)
         {
             if (!HORIZ_SKIP_COLUMN(x + c))
                 R_DrawColumnHoriz(vis, patch, x + c, c, frac);
 
-            frac += vis->xiscale;
+            frac += xiscale;
         }
 
         R_FlushHorizGroup(x, group, dc_colormap);
 
         x += group;
-    } while (x <= vis->x2);
+    } while (x <= x2);
 }
 
 void R_DrawVisSpriteHoriz(vissprite_t *vis)
@@ -459,10 +490,12 @@ void R_StageColumnHoriz(void)
     int c;
     int yl;
     int yh;
-    int n;
+    int count;
+    unsigned bitmask;
     byte *dest;
     byte *source;
     byte *colormap;
+    byte *rmask;
     fixed_t frac;
     fixed_t fracstep;
 
@@ -471,10 +504,10 @@ void R_StageColumnHoriz(void)
 
     if (wallgroupx != base)
     {
-        // The previous group (or stale sprite spans) must not leak
-        // into the new group.
+        // The previous group (or a finished sprite group) must not
+        // leak into the new group.
         R_FlushWallHoriz();
-        R_ClearHorizSpans();
+        R_BeginHorizGroup();
         wallgroupx = base;
     }
 
@@ -484,32 +517,33 @@ void R_StageColumnHoriz(void)
     if (yl > yh)
         return;
 
+    count = yh - yl + 1;
     c = x & 3;
-    n = horiznspans[c];
+    bitmask = 1 << c;
 
-    if (n >= MAXHSPANS)
-        return;
-
-    horizspans[c][(n << 1)] = yl;
-    horizspans[c][(n << 1) + 1] = yh;
-    horiznspans[c] = n + 1;
-
-    // [RH] Same texture stepping as the asm column drawers: the
-    // source index wraps inside a 128 byte window (see
-    // R_DrawColumnBackbuffer: (frac << 9) >> 25).
+    // Same texture stepping as the asm column drawers: the source
+    // index wraps inside a 128 byte window.
     colormap = dc_colormap;
     source = dc_source;
     fracstep = dc_iscale;
     frac = dc_texturemid + (yl - centery) * fracstep;
-    dest = &horiztemp[(yl << 2) + c];
 
-    while (yl <= yh)
+    dest = horiztemp + ((unsigned)yl << 2) + c;
+    rmask = horizrowmask + yl;
+
+    while (count--)
     {
         *dest = colormap[source[((unsigned)frac >> 16) & 127]];
+        *rmask |= bitmask;
         frac += fracstep;
         dest += 4;
-        yl++;
+        rmask++;
     }
+
+    if (yl < horizymin)
+        horizymin = yl;
+    if (yh > horizymax)
+        horizymax = yh;
 }
 
 //
@@ -533,7 +567,6 @@ void R_FlushWallHoriz(void)
         R_FlushHorizGroup(wallgroupx, group, NULL);
 
     wallgroupx = -1;
-    R_ClearHorizSpans();
 }
 
 #endif
