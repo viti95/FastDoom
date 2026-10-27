@@ -118,7 +118,7 @@ CODE_SYM_DEF R_DrawColumnLowBackbufferDirect
   add  edi,[_columnofs+ebx*4]
   mov  eax,[_dc_colormap]
 
-  lea  esi,[esi+ebp-(SCREENHEIGHT/2)]
+  lea  esi,[esi+ebp+1-(SCREENHEIGHT/2)]
 
   jmp  [scalecalls+4+ebp*4]
 
