@@ -195,6 +195,7 @@ GLOBOBJS = &
  r_bsp.obj &
  r_data.obj &
  r_draw.obj &
+ r_drawhoriz.obj &
  r_main.obj &
  r_plane.obj &
  r_segs.obj &

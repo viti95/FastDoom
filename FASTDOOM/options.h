@@ -13,6 +13,14 @@
 #define TEXT_MODE
 #endif
 
+// The horizontal (two-pass, cache-friendly) column sprite renderer
+// (r_drawhoriz.c) works on any linear byte-per-pixel destination
+// with a SCREENWIDTH row stride: all backbuffered modes and the
+// VBE2 direct modes.
+#if defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT)
+#define SUPPORTS_HORIZ_RENDER
+#endif
+
 //
 // Human-readable name of the video mode this executable was built with,
 // shown in the startup banner. SCREENWIDTH/SCREENHEIGHT must be defined

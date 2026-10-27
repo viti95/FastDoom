@@ -1602,8 +1602,10 @@ void D_DoomMain(void)
     M_CheckParmOptionalValue("-flatterWall", &wallRender, WALL_FLATTER);
     M_CheckParmOptionalValue("-flatSprite", &spriteRender, SPRITE_FLAT);
     M_CheckParmOptionalValue("-flatterSprites", &spriteRender, SPRITE_FLATTER);
+    M_CheckParmOptionalValue("-horizSprites", &spriteRender, SPRITE_HORIZ);
     M_CheckParmOptionalValue("-flatPSprite", &pspriteRender, PSPRITE_FLAT);
     M_CheckParmOptionalValue("-flatterPSprites", &pspriteRender, PSPRITE_FLATTER);
+    M_CheckParmOptionalValue("-horizPSprites", &pspriteRender, PSPRITE_HORIZ);
     M_CheckParmOptional("-flatsky", &flatSky);
     M_CheckParmOptionalValue("-flatInv", &invisibleRender, INVISIBLE_FLAT);
     M_CheckParmOptionalValue("-flatsaturn", &invisibleRender, INVISIBLE_FLAT_SATURN);

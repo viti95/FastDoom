@@ -1287,7 +1287,7 @@ void M_DrawOptions(void)
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF) || defined(USE_BACKBUFFER) || defined(MODE_VBE2_DIRECT) || \
     defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_VT100) || \
     defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_COLOR_MDA)
-static char *const renderdetailnames[] = { "FULL", "FLAT", "FLATTER" };
+static char *const renderdetailnames[] = { "FULL", "FLAT", "FLATTER", "HORIZ" };
 static char *const detaillevelnames[] = { "HIGH", "LOW", "POTATO" };
 static char *const invisiblenames[] = { "FUZZY", "FLAT", "FLAT SATURN", "SATURN", "TRANSLUCENT" };
 static char *const fpsnames[] = { "OFF", "SCREEN", "DEBUG CARD 2N", "DEBUG CARD 4N", "SCREEN + DC2N", "SCREEN + DC4N" };
@@ -1567,12 +1567,22 @@ void M_ChangeWallDetail(int choice)
 void M_ChangeSpriteDetail(int choice)
 {
     M_ChangeStep(choice, &spriteRender, SPRITE_NORMAL, NUM_SPRITERENDER - 1);
+#if !defined(SUPPORTS_HORIZ_RENDER)
+    // Skip the horizontal renderer where it cannot be supported
+    if (spriteRender == SPRITE_HORIZ)
+        spriteRender = choice ? SPRITE_NORMAL : SPRITE_FLATTER;
+#endif
     R_SetViewSize(screenblocks, detailLevel);
 }
 
 void M_ChangePSpriteDetail(int choice)
 {
     M_ChangeStep(choice, &pspriteRender, PSPRITE_NORMAL, NUM_PSPRITERENDER - 1);
+#if !defined(SUPPORTS_HORIZ_RENDER)
+    // Skip the horizontal renderer where it cannot be supported
+    if (pspriteRender == PSPRITE_HORIZ)
+        pspriteRender = choice ? PSPRITE_NORMAL : PSPRITE_FLATTER;
+#endif
     R_SetViewSize(screenblocks, detailLevel);
 }
 

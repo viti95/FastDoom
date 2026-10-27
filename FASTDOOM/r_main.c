@@ -2889,18 +2889,33 @@ static const wallrenderfuncs_t wallrenderfuncs[3] =
     { R_RenderSegLoopFlatter, R_RenderMaskedSegRangeFlatter, R_RenderMaskedSegRange2Flatter }
 };
 
-static void (*const spriterenderfuncs[3])(vissprite_t *vis) =
+// The horizontal (two-pass) sprite renderer is only available on
+// builds whose framebuffer the generic r_drawhoriz.c can address
+// (backbuffered and VBE2 direct modes). Elsewhere it silently falls
+// back to the classic column drawer, so a config file asking for it
+// never breaks an unsupported build.
+#if defined(SUPPORTS_HORIZ_RENDER)
+#define HORIZSPRITEFUNC R_DrawVisSpriteHoriz
+#define HORIZPSPRITEFUNC R_DrawVisPSpriteHoriz
+#else
+#define HORIZSPRITEFUNC R_DrawVisSprite
+#define HORIZPSPRITEFUNC R_DrawVisPSprite
+#endif
+
+static void (*const spriterenderfuncs[NUM_SPRITERENDER])(vissprite_t *vis) =
 {
     R_DrawVisSprite,
     R_DrawVisSpriteFlat,
-    R_DrawVisSpriteFlatter
+    R_DrawVisSpriteFlatter,
+    HORIZSPRITEFUNC
 };
 
-static void (*const pspriterenderfuncs[3])(vissprite_t *vis) =
+static void (*const pspriterenderfuncs[NUM_PSPRITERENDER])(vissprite_t *vis) =
 {
     R_DrawVisPSprite,
     R_DrawVisPSpriteFlat,
-    R_DrawVisPSpriteFlatter
+    R_DrawVisPSpriteFlatter,
+    HORIZPSPRITEFUNC
 };
 
 void R_ExecuteSetViewSize(void)
@@ -2999,7 +3014,13 @@ void R_ExecuteSetViewSize(void)
     projection = centerxfrac;
 #endif
 
-    // wallRender / spriteRender / pspriteRender are always in range 0..2
+    // wallRender / visplaneRender are always in range 0..2, sprite
+    // renderers 0..3; clamp anyway against hand-edited config files.
+    if (spriteRender < 0 || spriteRender >= NUM_SPRITERENDER)
+        spriteRender = SPRITE_NORMAL;
+    if (pspriteRender < 0 || pspriteRender >= NUM_PSPRITERENDER)
+        pspriteRender = PSPRITE_NORMAL;
+
     renderSegLoop = wallrenderfuncs[wallRender].renderSegLoop;
     renderMaskedSegRange = wallrenderfuncs[wallRender].renderMaskedSegRange;
     renderMaskedSegRange2 = wallrenderfuncs[wallRender].renderMaskedSegRange2;

@@ -1687,7 +1687,8 @@ static const char *const cpunames[NUM_CPU] =
 static const char *const detailnames[NUM_DETAIL] = { "high", "low", "potato" };
 
 // Shared by visplanes, walls, sprites and player sprites
-static const char *const rendernames[NUM_VISPLANESRENDER] = { "normal", "flat", "flatter" };
+// (sprites also have the "horiz" horizontal column renderer)
+static const char *const rendernames[NUM_SPRITERENDER] = { "normal", "flat", "flatter", "horiz" };
 
 static const char *const invisiblenames[NUM_INVISIBLERENDER] =
 {

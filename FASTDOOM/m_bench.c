@@ -131,6 +131,8 @@ void M_ChangeValueFile(unsigned int position, char *token)
             spriteRender = SPRITE_FLAT;
         if (M_CheckValue(token, "flatter"))
             spriteRender = SPRITE_FLATTER;
+        if (M_CheckValue(token, "horiz"))
+            spriteRender = SPRITE_HORIZ;
 
         R_SetViewSize(screenblocks, detailLevel);
         break;
@@ -142,6 +144,8 @@ void M_ChangeValueFile(unsigned int position, char *token)
             pspriteRender = PSPRITE_FLAT;
         if (M_CheckValue(token, "flatter"))
             pspriteRender = PSPRITE_FLATTER;
+        if (M_CheckValue(token, "horiz"))
+            pspriteRender = PSPRITE_HORIZ;
 
         R_SetViewSize(screenblocks, detailLevel);
         break;

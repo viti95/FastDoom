@@ -386,6 +386,7 @@ typedef enum
     SPRITE_NORMAL,
     SPRITE_FLAT,
     SPRITE_FLATTER,
+    SPRITE_HORIZ,
     NUM_SPRITERENDER
 } spriterender_t;
 
@@ -394,6 +395,7 @@ typedef enum
     PSPRITE_NORMAL,
     PSPRITE_FLAT,
     PSPRITE_FLATTER,
+    PSPRITE_HORIZ,
     NUM_PSPRITERENDER
 } pspriterender_t;
 
