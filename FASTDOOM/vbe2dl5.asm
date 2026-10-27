@@ -114,7 +114,7 @@ CODE_SYM_DEF R_DrawColumnLowVBE2Direct
   mov   eax,[_dc_colormap]
   add  edi,[_destview]
   
-  lea  esi,[esi+ebp-(SCREENHEIGHT/2)]
+  lea  esi,[esi+ebp+1-(SCREENHEIGHT/2)]
 
   jmp  [scalecalls+4+ebp*4]
 

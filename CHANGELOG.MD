@@ -30,6 +30,7 @@
 * Various fixes, optimizations and code cleanup
 * Improved flat visplane colors by calculating a frequency histogram to find the most frequently used color. Also made flat and flatter visplane rendering a bit faster. Thanks @sandro-tishin! (#25 #282)
 * Benchmark and frametime results are now saved in SYLK format instead of CSV (compatible with LibreOffice and Microsoft Excel, avoids CSV import problems)
+* Fixed player sprites being rendered one pixel too low in the 1:1 ratio column rendering code. The direct column drawing routines started reading the sprite post one pixel before its first source pixel
 
 ## 1.3.0 (01 Jul 2026)
 * Improved frame interpolation in uncapped framerate modes for smoother rendering #237 #251

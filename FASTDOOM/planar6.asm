@@ -130,7 +130,7 @@ CODE_SYM_DEF R_DrawColumnPotatoDirect
   mov   esi,[_dc_source]
   mov   eax,[_dc_colormap]
 
-  lea  esi,[esi+ebp-(SCREENHEIGHT/2)]
+  lea  esi,[esi+ebp+1-(SCREENHEIGHT/2)]
 
   jmp  [scalecalls+4+ebp*4]
 
@@ -222,7 +222,7 @@ CODE_SYM_DEF R_DrawColumnLowDirect
   mov   esi,[_dc_source]
   mov   eax,[_dc_colormap]
 
-  lea  esi,[esi+ebp-(SCREENHEIGHT/2)]
+  lea  esi,[esi+ebp+1-(SCREENHEIGHT/2)]
 
   jmp  [scalecalls+4+ebp*4]
 
@@ -314,7 +314,7 @@ CODE_SYM_DEF R_DrawColumnDirect
   mov   esi,[_dc_source]
   mov   eax,[_dc_colormap]
 
-  lea  esi,[esi+ebp-(SCREENHEIGHT/2)]
+  lea  esi,[esi+ebp+1-(SCREENHEIGHT/2)]
 
   jmp  [scalecalls+4+ebp*4]
 
