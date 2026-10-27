@@ -1600,6 +1600,7 @@ void D_DoomMain(void)
     M_CheckParmOptionalValue("-flatterSpan", &visplaneRender, VISPLANES_FLATTER);
     M_CheckParmOptionalValue("-flatWall", &wallRender, WALL_FLAT);
     M_CheckParmOptionalValue("-flatterWall", &wallRender, WALL_FLATTER);
+    M_CheckParmOptionalValue("-horizWall", &wallRender, WALL_HORIZ);
     M_CheckParmOptionalValue("-flatSprite", &spriteRender, SPRITE_FLAT);
     M_CheckParmOptionalValue("-flatterSprites", &spriteRender, SPRITE_FLATTER);
     M_CheckParmOptionalValue("-horizSprites", &spriteRender, SPRITE_HORIZ);

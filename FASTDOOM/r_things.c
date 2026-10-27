@@ -38,6 +38,7 @@
 #include "i_debug.h"
 
 #include "sizeopt.h"
+#include "r_drawhoriz.h"
 
 #define SC_INDEX 0x3C4
 
@@ -1572,7 +1573,12 @@ void R_DrawSprite(vissprite_t *spr)
         {
             // masked mid texture?
             if (ds->maskedtexturecol)
+            {
                 renderMaskedSegRange(ds, r1, r2);
+                // Write out staged horizontal wall columns: another
+                // drawseg may draw over the same screen columns.
+                R_FlushWallHoriz();
+            }
             // seg is behind sprite
             continue;
         }
@@ -1638,7 +1644,11 @@ void R_DrawMasked(void)
     // render any remaining masked mid textures
     for (ds = ds_p - 1; ds >= drawsegs; ds--)
         if (ds->maskedtexturecol)
+        {
             renderMaskedSegRange2(ds);
+            // Write out staged horizontal wall columns (see above).
+            R_FlushWallHoriz();
+        }
 
     R_DrawPlayerSprites();
 }

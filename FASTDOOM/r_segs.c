@@ -34,6 +34,7 @@
 #include <conio.h>
 
 #include "sizeopt.h"
+#include "r_drawhoriz.h"
 
 #define SC_INDEX 0x3C4
 
@@ -2574,6 +2575,10 @@ void R_StoreWallRange(int start,
 		floorplane = R_CheckPlane(floorplane, rw_x, rw_stopx - 1);
 
 	renderSegLoop();
+
+	// Horizontal wall rendering stages whole 4-column groups; the
+	// next seg may overwrite their columns, so write them out now.
+	R_FlushWallHoriz();
 
 	// save sprite clipping info
 	if (((ds_p->silhouette & SIL_TOP) || maskedtexture) && !ds_p->sprtopclip)

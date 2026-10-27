@@ -30,6 +30,7 @@
 #include "m_misc.h"
 
 #include "r_local.h"
+#include "r_drawhoriz.h"
 
 #include "std_func.h"
 
@@ -2882,11 +2883,15 @@ typedef struct
     void (*renderMaskedSegRange2)(drawseg_t *ds);
 } wallrenderfuncs_t;
 
-static const wallrenderfuncs_t wallrenderfuncs[3] =
+// WALL_HORIZ uses the normal seg loops: the horizontal rendering
+// is done by staging every colfunc() column into 4-column groups
+// (r_drawhoriz.c), which the seg loops use transparently.
+static const wallrenderfuncs_t wallrenderfuncs[NUM_WALLRENDER] =
 {
     { R_RenderSegLoop, R_RenderMaskedSegRange, R_RenderMaskedSegRange2 },
     { R_RenderSegLoopFlat, R_RenderMaskedSegRangeFlat, R_RenderMaskedSegRange2Flat },
-    { R_RenderSegLoopFlatter, R_RenderMaskedSegRangeFlatter, R_RenderMaskedSegRange2Flatter }
+    { R_RenderSegLoopFlatter, R_RenderMaskedSegRangeFlatter, R_RenderMaskedSegRange2Flatter },
+    { R_RenderSegLoop, R_RenderMaskedSegRange, R_RenderMaskedSegRange2 }
 };
 
 // The horizontal (two-pass) sprite renderer is only available on
@@ -3014,8 +3019,10 @@ void R_ExecuteSetViewSize(void)
     projection = centerxfrac;
 #endif
 
-    // wallRender / visplaneRender are always in range 0..2, sprite
-    // renderers 0..3; clamp anyway against hand-edited config files.
+    // wallRender / spriteRender / pspriteRender are always in
+    // range 0..3; clamp anyway against hand-edited config files.
+    if (wallRender < 0 || wallRender >= NUM_WALLRENDER)
+        wallRender = WALL_NORMAL;
     if (spriteRender < 0 || spriteRender >= NUM_SPRITERENDER)
         spriteRender = SPRITE_NORMAL;
     if (pspriteRender < 0 || pspriteRender >= NUM_PSPRITERENDER)
@@ -3053,6 +3060,14 @@ void R_ExecuteSetViewSize(void)
 
 #if defined(MODE_VBE2_DIRECT)
     R_SetupVBE2Funcs();
+#endif
+
+#if defined(SUPPORTS_HORIZ_RENDER)
+    // The horizontal wall renderer replaces the column drawer with
+    // the 4-column group staging function (r_drawhoriz.c). Applied
+    // after the mode setup so it overrides the classic colfunc.
+    if (wallRender == WALL_HORIZ)
+        colfunc = R_StageColumnHoriz;
 #endif
 
     // Avoid crashes due to missing instruction sets

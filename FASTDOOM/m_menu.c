@@ -1561,6 +1561,11 @@ void M_ChangeVisplaneDetail(int choice)
 void M_ChangeWallDetail(int choice)
 {
     M_ChangeStep(choice, &wallRender, WALL_NORMAL, NUM_WALLRENDER - 1);
+#if !defined(SUPPORTS_HORIZ_RENDER)
+    // Skip the horizontal renderer where it cannot be supported
+    if (wallRender == WALL_HORIZ)
+        wallRender = choice ? WALL_NORMAL : WALL_FLATTER;
+#endif
     R_SetViewSize(screenblocks, detailLevel);
 }
 
