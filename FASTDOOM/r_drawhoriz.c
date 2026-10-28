@@ -83,10 +83,14 @@
 #include "std_func.h"
 
 // Interleaved column staging buffer: pixel y of column c of the
-// current group lives at horiztemp[(y << 2) + c]. Four columns per
+// current group lives at HORIZTEMPB[(y << 2) + c]. Four columns per
 // screen row keep the post-pass writes to the framebuffer
-// sequential along each row.
-static byte horiztemp[SCREENHEIGHT * 4];
+// sequential along each row, and one whole screen row of the group
+// fits in a single dword: the buffer is declared as unsigned so
+// horiztemp32[y] is an aligned 32-bit load of the four staged
+// pixels, used by the wide stores in the post-pass.
+static unsigned horiztemp32[SCREENHEIGHT];
+#define HORIZTEMPB ((byte *)horiztemp32)
 
 // Bit c set on row y: column c of the current group has a staged,
 // visible pixel on screen row y. Built by the pre-pass while it
@@ -173,7 +177,11 @@ static void R_FlushHorizGroup(int xstart, int group, byte *colormap)
     int y;
     int ymax;
     int off[4];
+    int step;
+    int contig;
     unsigned m;
+    unsigned t;
+    unsigned d;
     byte *map;
     byte *row;
     byte *tp;
@@ -200,103 +208,311 @@ static void R_FlushHorizGroup(int xstart, int group, byte *colormap)
     for (c = 0; c < group; c++)
         off[c] = HORIZ_COFS(xstart + c);
 
+    // Can the four staged pixels of a row be written with wide
+    // 32-bit stores? Requires a full 4-column group whose
+    // destination offsets advance by exactly one (duplicated)
+    // pixel per column. Decimated CGA composite groups have gaps
+    // and partial groups never reach four columns; both keep the
+    // per-column loop. Destination alignment is not guaranteed
+    // (viewwindowx is arbitrary), but unaligned dword access is
+    // legal and still cheaper than four stores on every CPU this
+    // renderer targets.
+    contig = 0;
+    if (group == 4)
+    {
+        step = 1 << detailshift;
+        if (off[1] == off[0] + step && off[2] == off[1] + step &&
+            off[3] == off[2] + step)
+            contig = 1;
+    }
+
     y = horizymin;
     ymax = horizymax;
     row = HORIZ_ROW(y);
 
     if (!detailshift)
     {
-        for (; y <= ymax; y++)
+        if (contig)
         {
-            m = horizrowmask[y];
-
-            if (m)
+            // One aligned 32-bit read of the staged row and one
+            // 32-bit write covering all four screen pixels.
+            for (; y <= ymax; y++)
             {
-                tp = horiztemp + ((unsigned)y << 2);
+                m = horizrowmask[y];
 
-                // All four columns active (solid walls spanning
-                // the group): no per-column tests at all. Only
-                // possible when the group is 4 columns wide.
-                if (m == 15)
+                if (m)
                 {
-                    row[off[0]] = map[tp[0]];
-                    row[off[1]] = map[tp[1]];
-                    row[off[2]] = map[tp[2]];
-                    row[off[3]] = map[tp[3]];
-                }
-                else
-                {
-                    c = 0;
-                    do
+                    if (m == 15)
                     {
-                        if (m & 1)
-                            row[off[c]] = map[tp[c]];
-                        m >>= 1;
-                        c++;
-                    } while (m);
+                        t = horiztemp32[y];
+
+                        if (map == horizidentity)
+                        {
+                            // Walls (and sky): staged bytes are
+                            // already screen colors, no lookup.
+                            *(unsigned *)(row + off[0]) = t;
+                        }
+                        else
+                        {
+                            d = map[t & 255];
+                            d |= map[(t >> 8) & 255] << 8;
+                            d |= map[(t >> 16) & 255] << 16;
+                            d |= map[t >> 24] << 24;
+                            *(unsigned *)(row + off[0]) = d;
+                        }
+                    }
+                    else
+                    {
+                        tp = HORIZTEMPB + ((unsigned)y << 2);
+                        c = 0;
+                        do
+                        {
+                            if (m & 1)
+                                row[off[c]] = map[tp[c]];
+                            m >>= 1;
+                            c++;
+                        } while (m);
+                    }
+
+                    horizrowmask[y] = 0;
                 }
 
-                horizrowmask[y] = 0;
+                row += HORIZ_ROWSTRIDE;
             }
+        }
+        else
+        {
+            for (; y <= ymax; y++)
+            {
+                m = horizrowmask[y];
 
-            row += HORIZ_ROWSTRIDE;
+                if (m)
+                {
+                    tp = HORIZTEMPB + ((unsigned)y << 2);
+
+                    if (m == 15)
+                    {
+                        row[off[0]] = map[tp[0]];
+                        row[off[1]] = map[tp[1]];
+                        row[off[2]] = map[tp[2]];
+                        row[off[3]] = map[tp[3]];
+                    }
+                    else
+                    {
+                        c = 0;
+                        do
+                        {
+                            if (m & 1)
+                                row[off[c]] = map[tp[c]];
+                            m >>= 1;
+                            c++;
+                        } while (m);
+                    }
+
+                    horizrowmask[y] = 0;
+                }
+
+                row += HORIZ_ROWSTRIDE;
+            }
         }
     }
     else if (detailshift == DETAIL_LOW)
     {
-        for (; y <= ymax; y++)
+        if (contig)
         {
-            m = horizrowmask[y];
-
-            if (m)
+            // Two 32-bit writes, each holding two horizontally
+            // duplicated pixels.
+            for (; y <= ymax; y++)
             {
-                tp = horiztemp + ((unsigned)y << 2);
-                c = 0;
-                do
+                m = horizrowmask[y];
+
+                if (m)
                 {
-                    if (m & 1)
+                    if (m == 15)
                     {
-                        unsigned short color = map[tp[c]];
-                        color |= color << 8;
-                        *(unsigned short *)(row + off[c]) = color;
+                        unsigned d2;
+
+                        t = horiztemp32[y];
+
+                        d = map[t & 255];
+                        d |= d << 8;
+                        d2 = map[(t >> 8) & 255];
+                        d2 |= d2 << 8;
+                        d |= d2 << 16;
+
+                        d2 = map[(t >> 16) & 255];
+                        d2 |= d2 << 8;
+                        t = map[t >> 24];
+                        t = t | (t << 8);
+                        d2 |= t << 16;
+
+                        *(unsigned *)(row + off[0]) = d;
+                        *(unsigned *)(row + off[0] + 4) = d2;
                     }
-                    m >>= 1;
-                    c++;
-                } while (m);
+                    else
+                    {
+                        tp = HORIZTEMPB + ((unsigned)y << 2);
+                        c = 0;
+                        do
+                        {
+                            if (m & 1)
+                            {
+                                unsigned short color = map[tp[c]];
+                                color |= color << 8;
+                                *(unsigned short *)(row + off[c]) = color;
+                            }
+                            m >>= 1;
+                            c++;
+                        } while (m);
+                    }
 
-                horizrowmask[y] = 0;
+                    horizrowmask[y] = 0;
+                }
+
+                row += HORIZ_ROWSTRIDE;
             }
+        }
+        else
+        {
+            for (; y <= ymax; y++)
+            {
+                m = horizrowmask[y];
 
-            row += HORIZ_ROWSTRIDE;
+                if (m)
+                {
+                    tp = HORIZTEMPB + ((unsigned)y << 2);
+
+                    // All four columns active (solid walls spanning
+                    // the group): no per-column tests at all. Only
+                    // possible when the group is 4 columns wide.
+                    if (m == 15)
+                    {
+                        unsigned short color;
+
+                        color = map[tp[0]];
+                        *(unsigned short *)(row + off[0]) = color | (color << 8);
+                        color = map[tp[1]];
+                        *(unsigned short *)(row + off[1]) = color | (color << 8);
+                        color = map[tp[2]];
+                        *(unsigned short *)(row + off[2]) = color | (color << 8);
+                        color = map[tp[3]];
+                        *(unsigned short *)(row + off[3]) = color | (color << 8);
+                    }
+                    else
+                    {
+                        c = 0;
+                        do
+                        {
+                            if (m & 1)
+                            {
+                                unsigned short color = map[tp[c]];
+                                color |= color << 8;
+                                *(unsigned short *)(row + off[c]) = color;
+                            }
+                            m >>= 1;
+                            c++;
+                        } while (m);
+                    }
+
+                    horizrowmask[y] = 0;
+                }
+
+                row += HORIZ_ROWSTRIDE;
+            }
         }
     }
     else
     {
-        for (; y <= ymax; y++)
+        // Four bytes per pixel: every pixel store is already a
+        // dword; the contiguous fast path just drops the per-column
+        // tests and writes from one staged-dword read.
+        if (contig)
         {
-            m = horizrowmask[y];
-
-            if (m)
+            for (; y <= ymax; y++)
             {
-                tp = horiztemp + ((unsigned)y << 2);
-                c = 0;
-                do
+                m = horizrowmask[y];
+
+                if (m)
                 {
-                    if (m & 1)
+                    if (m == 15)
                     {
-                        unsigned int color = map[tp[c]];
-                        color |= color << 8;
-                        color |= color << 16;
-                        *(unsigned int *)(row + off[c]) = color;
+                        unsigned o;
+
+                        t = horiztemp32[y];
+                        o = off[0];
+
+                        d = map[t & 255];
+                        d |= d << 8;
+                        d |= d << 16;
+                        *(unsigned *)(row + o) = d;
+
+                        d = map[(t >> 8) & 255];
+                        d |= d << 8;
+                        d |= d << 16;
+                        *(unsigned *)(row + o + 4) = d;
+
+                        d = map[(t >> 16) & 255];
+                        d |= d << 8;
+                        d |= d << 16;
+                        *(unsigned *)(row + o + 8) = d;
+
+                        d = map[t >> 24];
+                        d |= d << 8;
+                        d |= d << 16;
+                        *(unsigned *)(row + o + 12) = d;
                     }
-                    m >>= 1;
-                    c++;
-                } while (m);
+                    else
+                    {
+                        tp = HORIZTEMPB + ((unsigned)y << 2);
+                        c = 0;
+                        do
+                        {
+                            if (m & 1)
+                            {
+                                d = map[tp[c]];
+                                d |= d << 8;
+                                d |= d << 16;
+                                *(unsigned *)(row + off[c]) = d;
+                            }
+                            m >>= 1;
+                            c++;
+                        } while (m);
+                    }
 
-                horizrowmask[y] = 0;
+                    horizrowmask[y] = 0;
+                }
+
+                row += HORIZ_ROWSTRIDE;
             }
+        }
+        else
+        {
+            for (; y <= ymax; y++)
+            {
+                m = horizrowmask[y];
 
-            row += HORIZ_ROWSTRIDE;
+                if (m)
+                {
+                    tp = HORIZTEMPB + ((unsigned)y << 2);
+                    c = 0;
+                    do
+                    {
+                        if (m & 1)
+                        {
+                            d = map[tp[c]];
+                            d |= d << 8;
+                            d |= d << 16;
+                            *(unsigned *)(row + off[c]) = d;
+                        }
+                        m >>= 1;
+                        c++;
+                    } while (m);
+
+                    horizrowmask[y] = 0;
+                }
+
+                row += HORIZ_ROWSTRIDE;
+            }
         }
     }
 }
@@ -370,7 +586,7 @@ static void R_DrawColumnHoriz(vissprite_t *vis, patch_t *patch, int x,
         texfrac = dc_texturemid - (column->topdelta << FRACBITS) +
                   (yl - centery) * fracstep;
 
-        dest = horiztemp + ((unsigned)yl << 2) + c;
+        dest = HORIZTEMPB + ((unsigned)yl << 2) + c;
         rmask = horizrowmask + yl;
 
         while (count--)
@@ -537,7 +753,7 @@ void R_StageColumnHoriz(void)
     fracstep = dc_iscale;
     frac = dc_texturemid + (yl - centery) * fracstep;
 
-    dest = horiztemp + ((unsigned)yl << 2) + c;
+    dest = HORIZTEMPB + ((unsigned)yl << 2) + c;
     rmask = horizrowmask + yl;
 
     while (count--)
