@@ -171,17 +171,24 @@ static void R_BeginHorizGroup(void)
 // staged texture bytes; NULL means the bytes are already screen
 // colors (wall staging maps with the per-column colormap).
 //
+// One loop per pixel width (1, 2 or 4 bytes). A row whose mask
+// has all four columns active (m == fastmask) is written with
+// wide 32-bit stores from a single staged-dword load; every other
+// mask goes through the generic do/while, which stops as soon as
+// the shifted mask runs out of bits. fastmask is 0 when the group
+// offsets are not contiguous, and since m is never 0 inside the
+// mask test that simply disables the wide path.
+//
 static void R_FlushHorizGroup(int xstart, int group, byte *colormap)
 {
     int c;
     int y;
     int ymax;
     int off[4];
-    int step;
-    int contig;
     unsigned m;
     unsigned t;
     unsigned d;
+    unsigned fastmask;
     byte *map;
     byte *row;
     byte *tp;
@@ -208,22 +215,22 @@ static void R_FlushHorizGroup(int xstart, int group, byte *colormap)
     for (c = 0; c < group; c++)
         off[c] = HORIZ_COFS(xstart + c);
 
-    // Can the four staged pixels of a row be written with wide
-    // 32-bit stores? Requires a full 4-column group whose
-    // destination offsets advance by exactly one (duplicated)
-    // pixel per column. Decimated CGA composite groups have gaps
-    // and partial groups never reach four columns; both keep the
-    // per-column loop. Destination alignment is not guaranteed
-    // (viewwindowx is arbitrary), but unaligned dword access is
-    // legal and still cheaper than four stores on every CPU this
-    // renderer targets.
-    contig = 0;
+    // Can whole rows be written with wide 32-bit stores? That
+    // needs a full 4-column group whose destination offsets
+    // advance by exactly one (duplicated) pixel per column;
+    // decimated CGA composite groups have gaps and partial
+    // groups never reach four columns. Destination alignment is
+    // not guaranteed (viewwindowx is arbitrary), but unaligned
+    // dword access is legal on every CPU this renderer targets
+    // and still cheaper than several separate stores.
+    fastmask = 0;
     if (group == 4)
     {
-        step = 1 << detailshift;
+        unsigned step = 1 << detailshift;
+
         if (off[1] == off[0] + step && off[2] == off[1] + step &&
             off[3] == off[2] + step)
-            contig = 1;
+            fastmask = 15;
     }
 
     y = horizymin;
@@ -232,266 +239,142 @@ static void R_FlushHorizGroup(int xstart, int group, byte *colormap)
 
     if (!detailshift)
     {
-        if (contig)
+        for (; y <= ymax; y++)
         {
-            // One aligned 32-bit read of the staged row and one
-            // 32-bit write covering all four screen pixels.
-            for (; y <= ymax; y++)
+            m = horizrowmask[y];
+
+            if (m)
             {
-                m = horizrowmask[y];
-
-                if (m)
+                if (m == fastmask)
                 {
-                    if (m == 15)
-                    {
-                        t = horiztemp32[y];
+                    // All four columns active: one aligned
+                    // 32-bit load of the staged row and one
+                    // 32-bit store.
+                    t = horiztemp32[y];
 
-                        if (map == horizidentity)
-                        {
-                            // Walls (and sky): staged bytes are
-                            // already screen colors, no lookup.
-                            *(unsigned *)(row + off[0]) = t;
-                        }
-                        else
-                        {
-                            d = map[t & 255];
-                            d |= map[(t >> 8) & 255] << 8;
-                            d |= map[(t >> 16) & 255] << 16;
-                            d |= map[t >> 24] << 24;
-                            *(unsigned *)(row + off[0]) = d;
-                        }
-                    }
+                    if (map == horizidentity)
+                        // Wall/sky: the staged bytes are
+                        // already screen colors, no lookup.
+                        *(unsigned *)(row + off[0]) = t;
                     else
                     {
-                        tp = HORIZTEMPB + ((unsigned)y << 2);
-                        c = 0;
-                        do
-                        {
-                            if (m & 1)
-                                row[off[c]] = map[tp[c]];
-                            m >>= 1;
-                            c++;
-                        } while (m);
+                        d = map[t & 255];
+                        d |= map[(t >> 8) & 255] << 8;
+                        d |= map[(t >> 16) & 255] << 16;
+                        d |= map[t >> 24] << 24;
+                        *(unsigned *)(row + off[0]) = d;
                     }
-
-                    horizrowmask[y] = 0;
                 }
-
-                row += HORIZ_ROWSTRIDE;
-            }
-        }
-        else
-        {
-            for (; y <= ymax; y++)
-            {
-                m = horizrowmask[y];
-
-                if (m)
+                else
                 {
                     tp = HORIZTEMPB + ((unsigned)y << 2);
-
-                    if (m == 15)
+                    c = 0;
+                    do
                     {
-                        row[off[0]] = map[tp[0]];
-                        row[off[1]] = map[tp[1]];
-                        row[off[2]] = map[tp[2]];
-                        row[off[3]] = map[tp[3]];
-                    }
-                    else
-                    {
-                        c = 0;
-                        do
-                        {
-                            if (m & 1)
-                                row[off[c]] = map[tp[c]];
-                            m >>= 1;
-                            c++;
-                        } while (m);
-                    }
-
-                    horizrowmask[y] = 0;
+                        if (m & 1)
+                            row[off[c]] = map[tp[c]];
+                        m >>= 1;
+                        c++;
+                    } while (m);
                 }
 
-                row += HORIZ_ROWSTRIDE;
+                horizrowmask[y] = 0;
             }
+
+            row += HORIZ_ROWSTRIDE;
         }
     }
     else if (detailshift == DETAIL_LOW)
     {
-        if (contig)
+        for (; y <= ymax; y++)
         {
-            // Two 32-bit writes, each holding two horizontally
-            // duplicated pixels.
-            for (; y <= ymax; y++)
-            {
-                m = horizrowmask[y];
+            m = horizrowmask[y];
 
-                if (m)
+            if (m)
+            {
+                if (m == fastmask)
                 {
-                    if (m == 15)
-                    {
-                        unsigned d2;
+                    // All four columns active: two 32-bit
+                    // stores, each holding two duplicated
+                    // pixels.
+                    unsigned d2;
 
-                        t = horiztemp32[y];
+                    t = horiztemp32[y];
 
-                        d = map[t & 255];
-                        d |= d << 8;
-                        d2 = map[(t >> 8) & 255];
-                        d2 |= d2 << 8;
-                        d |= d2 << 16;
+                    d = map[t & 255];
+                    d |= d << 8;
+                    d2 = map[(t >> 8) & 255];
+                    d2 |= d2 << 8;
+                    d |= d2 << 16;
 
-                        d2 = map[(t >> 16) & 255];
-                        d2 |= d2 << 8;
-                        t = map[t >> 24];
-                        t = t | (t << 8);
-                        d2 |= t << 16;
+                    d2 = map[(t >> 16) & 255];
+                    d2 |= d2 << 8;
+                    t = map[t >> 24];
+                    t |= t << 8;
+                    d2 |= t << 16;
 
-                        *(unsigned *)(row + off[0]) = d;
-                        *(unsigned *)(row + off[0] + 4) = d2;
-                    }
-                    else
-                    {
-                        tp = HORIZTEMPB + ((unsigned)y << 2);
-                        c = 0;
-                        do
-                        {
-                            if (m & 1)
-                            {
-                                unsigned short color = map[tp[c]];
-                                color |= color << 8;
-                                *(unsigned short *)(row + off[c]) = color;
-                            }
-                            m >>= 1;
-                            c++;
-                        } while (m);
-                    }
-
-                    horizrowmask[y] = 0;
+                    *(unsigned *)(row + off[0]) = d;
+                    *(unsigned *)(row + off[0] + 4) = d2;
                 }
-
-                row += HORIZ_ROWSTRIDE;
-            }
-        }
-        else
-        {
-            for (; y <= ymax; y++)
-            {
-                m = horizrowmask[y];
-
-                if (m)
+                else
                 {
                     tp = HORIZTEMPB + ((unsigned)y << 2);
-
-                    // All four columns active (solid walls spanning
-                    // the group): no per-column tests at all. Only
-                    // possible when the group is 4 columns wide.
-                    if (m == 15)
+                    c = 0;
+                    do
                     {
-                        unsigned short color;
-
-                        color = map[tp[0]];
-                        *(unsigned short *)(row + off[0]) = color | (color << 8);
-                        color = map[tp[1]];
-                        *(unsigned short *)(row + off[1]) = color | (color << 8);
-                        color = map[tp[2]];
-                        *(unsigned short *)(row + off[2]) = color | (color << 8);
-                        color = map[tp[3]];
-                        *(unsigned short *)(row + off[3]) = color | (color << 8);
-                    }
-                    else
-                    {
-                        c = 0;
-                        do
+                        if (m & 1)
                         {
-                            if (m & 1)
-                            {
-                                unsigned short color = map[tp[c]];
-                                color |= color << 8;
-                                *(unsigned short *)(row + off[c]) = color;
-                            }
-                            m >>= 1;
-                            c++;
-                        } while (m);
-                    }
-
-                    horizrowmask[y] = 0;
+                            unsigned short color = map[tp[c]];
+                            color |= color << 8;
+                            *(unsigned short *)(row + off[c]) = color;
+                        }
+                        m >>= 1;
+                        c++;
+                    } while (m);
                 }
 
-                row += HORIZ_ROWSTRIDE;
+                horizrowmask[y] = 0;
             }
+
+            row += HORIZ_ROWSTRIDE;
         }
     }
     else
     {
-        // Four bytes per pixel: every pixel store is already a
-        // dword; the contiguous fast path just drops the per-column
-        // tests and writes from one staged-dword read.
-        if (contig)
+        // Four bytes per pixel: the per-pixel stores are already
+        // dwords; the wide path only drops the per-column tests
+        // and writes from a single staged-dword load.
+        for (; y <= ymax; y++)
         {
-            for (; y <= ymax; y++)
-            {
-                m = horizrowmask[y];
+            m = horizrowmask[y];
 
-                if (m)
+            if (m)
+            {
+                if (m == fastmask)
                 {
-                    if (m == 15)
-                    {
-                        unsigned o;
+                    t = horiztemp32[y];
 
-                        t = horiztemp32[y];
-                        o = off[0];
+                    d = map[t & 255];
+                    d |= d << 8;
+                    d |= d << 16;
+                    *(unsigned *)(row + off[0]) = d;
 
-                        d = map[t & 255];
-                        d |= d << 8;
-                        d |= d << 16;
-                        *(unsigned *)(row + o) = d;
+                    d = map[(t >> 8) & 255];
+                    d |= d << 8;
+                    d |= d << 16;
+                    *(unsigned *)(row + off[0] + 4) = d;
 
-                        d = map[(t >> 8) & 255];
-                        d |= d << 8;
-                        d |= d << 16;
-                        *(unsigned *)(row + o + 4) = d;
+                    d = map[(t >> 16) & 255];
+                    d |= d << 8;
+                    d |= d << 16;
+                    *(unsigned *)(row + off[0] + 8) = d;
 
-                        d = map[(t >> 16) & 255];
-                        d |= d << 8;
-                        d |= d << 16;
-                        *(unsigned *)(row + o + 8) = d;
-
-                        d = map[t >> 24];
-                        d |= d << 8;
-                        d |= d << 16;
-                        *(unsigned *)(row + o + 12) = d;
-                    }
-                    else
-                    {
-                        tp = HORIZTEMPB + ((unsigned)y << 2);
-                        c = 0;
-                        do
-                        {
-                            if (m & 1)
-                            {
-                                d = map[tp[c]];
-                                d |= d << 8;
-                                d |= d << 16;
-                                *(unsigned *)(row + off[c]) = d;
-                            }
-                            m >>= 1;
-                            c++;
-                        } while (m);
-                    }
-
-                    horizrowmask[y] = 0;
+                    d = map[t >> 24];
+                    d |= d << 8;
+                    d |= d << 16;
+                    *(unsigned *)(row + off[0] + 12) = d;
                 }
-
-                row += HORIZ_ROWSTRIDE;
-            }
-        }
-        else
-        {
-            for (; y <= ymax; y++)
-            {
-                m = horizrowmask[y];
-
-                if (m)
+                else
                 {
                     tp = HORIZTEMPB + ((unsigned)y << 2);
                     c = 0;
@@ -507,12 +390,12 @@ static void R_FlushHorizGroup(int xstart, int group, byte *colormap)
                         m >>= 1;
                         c++;
                     } while (m);
-
-                    horizrowmask[y] = 0;
                 }
 
-                row += HORIZ_ROWSTRIDE;
+                horizrowmask[y] = 0;
             }
+
+            row += HORIZ_ROWSTRIDE;
         }
     }
 }
