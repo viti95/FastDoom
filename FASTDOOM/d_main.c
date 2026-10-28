@@ -112,7 +112,7 @@ boolean fastparm;    // checkparm of -fast
 unsigned int limitram; // checkparm of -limitram
 unsigned int freeram;  // checkparm of -freeram
 
-boolean flatSky;
+int skyRender;
 int invisibleRender;
 int visplaneRender;
 int wallRender;
@@ -1607,7 +1607,8 @@ void D_DoomMain(void)
     M_CheckParmOptionalValue("-flatPSprite", &pspriteRender, PSPRITE_FLAT);
     M_CheckParmOptionalValue("-flatterPSprites", &pspriteRender, PSPRITE_FLATTER);
     M_CheckParmOptionalValue("-horizPSprites", &pspriteRender, PSPRITE_HORIZ);
-    M_CheckParmOptional("-flatsky", &flatSky);
+    M_CheckParmOptionalValue("-flatsky", &skyRender, SKY_FLAT);
+    M_CheckParmOptionalValue("-horizsky", &skyRender, SKY_HORIZ);
     M_CheckParmOptionalValue("-flatInv", &invisibleRender, INVISIBLE_FLAT);
     M_CheckParmOptionalValue("-flatsaturn", &invisibleRender, INVISIBLE_FLAT_SATURN);
     M_CheckParmOptionalValue("-saturn", &invisibleRender, INVISIBLE_SATURN);
@@ -1642,7 +1643,7 @@ void D_DoomMain(void)
     M_CheckParmDisable("-defWall", &wallRender);
     M_CheckParmDisable("-defSprite", &spriteRender);
     M_CheckParmDisable("-defPSprite", &pspriteRender);
-    M_CheckParmDisable("-defSky", &flatSky);
+    M_CheckParmDisable("-defSky", &skyRender);
     M_CheckParmDisable("-defInv", &invisibleRender);
     M_CheckParmDisable("-far", &nearSprites);
     M_CheckParmDisable("-stereo", &monoSound);

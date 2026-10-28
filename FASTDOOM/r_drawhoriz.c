@@ -39,6 +39,10 @@
 //	the masked seg ranges both go through the staging, and
 //	R_FlushWallHoriz() writes the pending group at each drawing
 //	boundary where a later seg could otherwise overwrite columns.
+//	The textured sky uses the very same column interface through
+//	skyfunc, so R_DrawSky stages its columns the same way (the
+//	full-direct 1:1 sky table and the flat sky keep their classic
+//	drawers).
 //
 //	This generic C implementation works on any linear byte-per
 //	-pixel destination with a constant row stride, i.e. all the
@@ -411,6 +415,11 @@ static void R_DrawVisSpriteHorizCore(vissprite_t *vis,
         fuzzfallback(vis);
         return;
     }
+
+    // Sprite staging shares horiztemp/horizrowmask with the wall
+    // staging, so make sure a pending wall/sky group is on screen
+    // before reusing them. No-op when nothing is pending.
+    R_FlushWallHoriz();
 
     patch = W_CacheLumpNum(vis->patch + firstspritelump, PU_CACHE);
 

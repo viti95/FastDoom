@@ -1784,7 +1784,9 @@ void G_SaveSLKResult(unsigned int gametics, unsigned int realtics, unsigned int 
         SLK_CellStr(logFile, row, ++col, rendernames[pspriteRender]);
 
         // Sky
-        SLK_CellStr(logFile, row, ++col, flatSky ? "flat" : "normal");
+        SLK_CellStr(logFile, row, ++col,
+                    skyRender == SKY_FLAT ? "flat"
+                                          : (skyRender == SKY_HORIZ ? "horiz" : "normal"));
 
         // Objects
         SLK_CellStr(logFile, row, ++col, nearSprites ? "near" : "normal");

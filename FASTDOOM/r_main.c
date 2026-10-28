@@ -960,7 +960,7 @@ static void R_SetupT4050Funcs(void)
         break;
     }
 
-    if (flatSky)
+    if (skyRender == SKY_FLAT)
     {
         drawSky = R_DrawSkyFlat;
         skyfunc = R_DrawSkyFlatText4050;
@@ -1053,7 +1053,7 @@ static void R_SetupT4025Funcs(void)
         break;
     }
 
-    if (flatSky)
+    if (skyRender == SKY_FLAT)
     {
         drawSky = R_DrawSkyFlat;
         skyfunc = R_DrawSkyFlatText4025;
@@ -1145,7 +1145,7 @@ static void R_SetupT8025Funcs(void)
         break;
     }
 
-    if (flatSky)
+    if (skyRender == SKY_FLAT)
     {
         drawSky = R_DrawSkyFlat;
         skyfunc = R_DrawSkyFlatText8025;
@@ -1259,7 +1259,7 @@ static void R_SetupT8050Funcs(void)
         break;
     }
 
-    if (flatSky)
+    if (skyRender == SKY_FLAT)
     {
         drawSky = R_DrawSkyFlat;
         skyfunc = R_DrawSkyFlatText8050;
@@ -1434,7 +1434,7 @@ static void R_SetupVGAFuncs(void)
             break;
         }
 
-        if (flatSky)
+        if (skyRender == SKY_FLAT)
         {
             drawSky = R_DrawSkyFlatPlanar;
             skyfunc = R_DrawColumnPlaneFlat;
@@ -1620,7 +1620,7 @@ static void R_SetupVGAFuncs(void)
             break;
         }
 
-        if (flatSky)
+        if (skyRender == SKY_FLAT)
         {
             drawSky = R_DrawSkyFlatPlanarLow;
             skyfunc = R_DrawColumnPlaneFlatLow;
@@ -1807,7 +1807,7 @@ static void R_SetupVGAFuncs(void)
             break;
         }
 
-        if (flatSky)
+        if (skyRender == SKY_FLAT)
         {
             drawSky = R_DrawSkyFlat;
             skyfunc = R_DrawColumnFlatPotato;
@@ -2043,7 +2043,7 @@ static void R_SetupBackbufferFuncs(void)
             break;
         }
 
-        if (flatSky)
+        if (skyRender == SKY_FLAT)
         {
             drawSky = R_DrawSkyFlat;
             skyfunc = R_DrawColumnBackbufferFlat;
@@ -2247,7 +2247,7 @@ static void R_SetupBackbufferFuncs(void)
             break;
         }
 
-        if (flatSky)
+        if (skyRender == SKY_FLAT)
         {
             drawSky = R_DrawSkyFlat;
             skyfunc = R_DrawColumnLowBackbufferFlat;
@@ -2380,7 +2380,7 @@ static void R_SetupBackbufferFuncs(void)
             break;
         }
 
-        if (flatSky)
+        if (skyRender == SKY_FLAT)
         {
             drawSky = R_DrawSkyFlat;
             skyfunc = R_DrawColumnPotatoBackbufferFlat;
@@ -2579,7 +2579,7 @@ static void R_SetupVBE2Funcs(void)
             break;
         }
 
-        if (flatSky)
+        if (skyRender == SKY_FLAT)
         {
             drawSky = R_DrawSkyFlat;
             skyfunc = R_DrawColumnVBE2Flat;
@@ -2719,7 +2719,7 @@ static void R_SetupVBE2Funcs(void)
             break;
         }
 
-        if (flatSky)
+        if (skyRender == SKY_FLAT)
         {
             drawSky = R_DrawSkyFlat;
             skyfunc = R_DrawColumnLowVBE2Flat;
@@ -2834,7 +2834,7 @@ static void R_SetupVBE2Funcs(void)
             break;
         }
 
-        if (flatSky)
+        if (skyRender == SKY_FLAT)
         {
             drawSky = R_DrawSkyFlat;
             skyfunc = R_DrawColumnPotatoVBE2Flat;
@@ -3027,6 +3027,8 @@ void R_ExecuteSetViewSize(void)
         spriteRender = SPRITE_NORMAL;
     if (pspriteRender < 0 || pspriteRender >= NUM_PSPRITERENDER)
         pspriteRender = PSPRITE_NORMAL;
+    if (skyRender < 0 || skyRender >= NUM_SKYRENDER)
+        skyRender = SKY_FULL;
 
     renderSegLoop = wallrenderfuncs[wallRender].renderSegLoop;
     renderMaskedSegRange = wallrenderfuncs[wallRender].renderMaskedSegRange;
@@ -3068,6 +3070,28 @@ void R_ExecuteSetViewSize(void)
     // after the mode setup so it overrides the classic colfunc.
     if (wallRender == WALL_HORIZ)
         colfunc = R_StageColumnHoriz;
+
+    // Textured sky columns go through skyfunc using the same dc_*
+    // column interface (R_DrawSky sets dc_source to the sky
+    // texture column), so they can be staged too. Selected with
+    // its own option (SKY RENDERING: HORIZ / -horizsky),
+    // independent of the wall renderer. Flat sky is a solid-color
+    // fill and keeps its classic drawer. So does the "full
+    // direct" sky table used at fullscreen in 200/240-high modes:
+    // it blits the sky texture 1:1 instead of scaling it by
+    // dc_iscale (a different mapping than the generic drawers at
+    // non-16:10 aspect ratios), and it is already a straight copy
+    // without any scaling math.
+    if (skyRender == SKY_HORIZ)
+    {
+        int stagesky = 1;
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
+        if (screenblocks >= 10)
+            stagesky = 0;
+#endif
+        if (stagesky)
+            skyfunc = R_StageColumnHoriz;
+    }
 #endif
 
     // Avoid crashes due to missing instruction sets

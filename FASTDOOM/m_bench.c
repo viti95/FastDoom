@@ -154,9 +154,11 @@ void M_ChangeValueFile(unsigned int position, char *token)
     // Sky
     case 6:
         if (M_CheckValue(token, "default"))
-            flatSky = false;
+            skyRender = SKY_FULL;
         if (M_CheckValue(token, "flat"))
-            flatSky = true;
+            skyRender = SKY_FLAT;
+        if (M_CheckValue(token, "horiz"))
+            skyRender = SKY_HORIZ;
 
         R_SetViewSize(screenblocks, detailLevel);
         break;

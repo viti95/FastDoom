@@ -402,6 +402,14 @@ typedef enum
 
 typedef enum
 {
+    SKY_FULL,
+    SKY_FLAT,
+    SKY_HORIZ,
+    NUM_SKYRENDER
+} skyrender_t;
+
+typedef enum
+{
     DETAIL_HIGH,
     DETAIL_LOW,
     DETAIL_POTATO,

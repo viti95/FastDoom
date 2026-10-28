@@ -297,7 +297,7 @@ default_t defaults[] =
         {"debugCardReverse", &debugCardReverse, 0},
         {"busSpeed", &busSpeed, 0},
         {"uncapped", &uncappedFPS, 0},
-        {"flatsky", &flatSky, 0},
+        {"skyRender", &skyRender, 0},
         {"near", &nearSprites, 0},
         {"nomelt", &noMelt, 0},
         {"invisibleRender", &invisibleRender, 0},

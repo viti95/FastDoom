@@ -33,6 +33,7 @@
 #include "r_local.h"
 #include "r_data.h"
 #include "r_draw.h"
+#include "r_drawhoriz.h"
 
 #include "std_func.h"
 
@@ -1274,6 +1275,12 @@ void R_DrawSky(visplane_t *pl)
 
         skyfunc();
     }
+
+    // When the horizontal wall renderer is active, skyfunc stages
+    // the sky columns into 4-column groups. Write out the last
+    // group before any other plane or the sprites are drawn, so a
+    // pending sky group can never mix with other staging.
+    R_FlushWallHoriz();
 }
 
 void R_DrawSkyFlatPlanar(visplane_t *pl)

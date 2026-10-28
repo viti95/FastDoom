@@ -1288,6 +1288,7 @@ void M_DrawOptions(void)
     defined(MODE_T8050) || defined(MODE_T8043) || defined(MODE_T8025) || defined(MODE_MDA) || defined(MODE_VT100) || \
     defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_COLOR_MDA)
 static char *const renderdetailnames[] = { "FULL", "FLAT", "FLATTER", "HORIZ" };
+static char *const skyrendernames[] = { "FULL", "FLAT", "HORIZ" };
 static char *const detaillevelnames[] = { "HIGH", "LOW", "POTATO" };
 static char *const invisiblenames[] = { "FUZZY", "FLAT", "FLAT SATURN", "SATURN", "TRANSLUCENT" };
 static char *const fpsnames[] = { "OFF", "SCREEN", "DEBUG CARD 2N", "DEBUG CARD 4N", "SCREEN + DC2N", "SCREEN + DC4N" };
@@ -1315,7 +1316,7 @@ void M_DrawDisplayItem(int item, int position)
     case columns: label = "WALL RENDERING:"; value = renderdetailnames[wallRender]; break;
     case sprites: label = "SPRITE RENDERING:"; value = renderdetailnames[spriteRender]; break;
     case psprite: label = "PLAYER RENDERING:"; value = renderdetailnames[pspriteRender]; break;
-    case sky: label = "SKY RENDERING:"; value = flatSky ? "FLAT" : "FULL"; break;
+    case sky: label = "SKY RENDERING:"; value = skyrendernames[skyRender]; break;
     case invisible: label = "INVISIBLE RENDERING:"; value = invisiblenames[invisibleRender]; break;
     case showfps: label = "SHOW FPS:"; value = fpsnames[showFPS]; break;
     case automaprt: label = "AUTOMAP UPDATE:"; value = automapRT ? "ON" : "OFF"; break;
@@ -1366,7 +1367,7 @@ void M_DrawDisplayItem(int item, int position)
         case columns: label = "WALL RENDERING:"; value = renderdetailnames[wallRender]; break;
         case sprites: label = "SPRITE RENDERING:"; value = renderdetailnames[spriteRender]; break;
         case psprite: label = "PLAYER RENDERING:"; value = renderdetailnames[pspriteRender]; break;
-        case sky: label = "SKY RENDERING:"; value = flatSky ? "FLAT" : "FULL"; break;
+        case sky: label = "SKY RENDERING:"; value = skyrendernames[skyRender]; break;
         case invisible: label = "INVISIBLE RENDERING:"; value = invisiblenames[invisibleRender]; break;
         case showfps: label = "SHOW FPS:"; value = fpsnames[showFPS]; break;
         case automaprt: label = "AUTOMAP UPDATE:"; value = automapRT ? "ON" : "OFF"; break;
@@ -1628,7 +1629,14 @@ void M_ChangeVsync(int choice)
 
 void M_ChangeSkyDetail(int choice)
 {
-    flatSky = !flatSky;
+    // Cycle (right key forward, left key backward, wrapping):
+    // FULL -> FLAT -> HORIZ -> FULL
+    M_ChangeStep(choice, &skyRender, SKY_FULL, NUM_SKYRENDER - 1);
+#if !defined(SUPPORTS_HORIZ_RENDER)
+    // Skip the horizontal renderer where it cannot be supported
+    if (skyRender == SKY_HORIZ)
+        skyRender = choice ? SKY_FULL : SKY_FLAT;
+#endif
 
     R_SetViewSize(screenblocks, detailLevel);
 }
