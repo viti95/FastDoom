@@ -44,13 +44,14 @@
 //	full-direct 1:1 sky table and the flat sky keep their classic
 //	drawers).
 //
-//	This generic C implementation works on any linear byte-per
-//	-pixel destination with a constant row stride, i.e. all the
-//	backbuffered modes (ylookup/columnofs) and the VBE2 direct
-//	modes (destview). It handles the Low/Potato horizontal pixel
-//	duplication and the CGA composite modes' column decimation.
-//	Fuzz (shadow/translucent) sprites keep using the classic
-//	mode-specific column drawers.
+//	The staging works with any linear byte-per-pixel destination
+//	and a constant row stride, i.e. all the backbuffered modes
+//	(ylookup/columnofs) and the VBE2 direct modes (destview); the
+//	asm post-pass derives the screen addresses from them. The
+//	Low/Potato horizontal pixel duplication is handled by the
+//	post-pass, the CGA composite modes' column decimation by the
+//	sprite pre-pass. Fuzz (shadow/translucent) sprites keep using
+//	the classic mode-specific column drawers.
 //
 //	Source texture addressing matches the column drawers in
 //	linearh/linearl/linearp.asm and vbe2d*.asm: the source byte
@@ -117,31 +118,6 @@ int horizymax;
 // when the renderer switches context (per seg / per masked range).
 static int wallgroupx = -1;
 
-// Walls apply dc_colormap during the pre-pass (lighting can differ
-// between the columns of a group), so their post-pass is a plain
-// copy: they flush with a NULL colormap, which the asm post-pass
-// copies verbatim.
-
-//
-// Screen addressing. Backbuffered modes draw through ylookup[]
-// (row pointer, viewwindowy baked in) plus columnofs[] (includes
-// viewwindowx and the detailshift pixel doubling). VBE2 direct
-// modes draw straight into the framebuffer at destview, which
-// already includes the viewwindow offset. Both are linear with a
-// constant row stride of MulScreenWidth(1), so the flush walks the
-// destination with an incrementing row pointer instead of
-// re-evaluating ylookup/MulScreenWidth for every row.
-//
-#if defined(USE_BACKBUFFER)
-#define HORIZ_ROW(y) (ylookup[(y)])
-#define HORIZ_COFS(x) (columnofs[(x)])
-#else
-#define HORIZ_ROW(y) (destview + MulScreenWidth(y))
-#define HORIZ_COFS(x) ((x) << detailshift)
-#endif
-
-#define HORIZ_ROWSTRIDE MulScreenWidth(1)
-
 //
 // Some composite CGA modes only draw a decimated subset of the
 // sprite columns in certain detail levels. Mirror what the classic
@@ -170,10 +146,11 @@ static void R_BeginHorizGroup(void)
 //
 // Pre-pass: scale one texture column of the sprite into horiztemp
 // (slot c of the current group), marking the touched screen rows.
-// Clipping matches the classic R_DrawVisSprite exactly.
+// Clipping matches the classic R_DrawVisSprite exactly. The post
+// coordinates and stepping come from the dc_*/spr* globals set up
+// by the caller, like the asm colfuncs.
 //
-static void R_DrawColumnHoriz(vissprite_t *vis, patch_t *patch, int x,
-                              int c, fixed_t frac)
+static void R_DrawColumnHoriz(patch_t *patch, int x, int c, fixed_t frac)
 {
     column_t *column;
     int texturecolumn;
@@ -313,7 +290,7 @@ static void R_DrawVisSpriteHorizCore(vissprite_t *vis,
         for (c = 0; c < group; c++)
         {
             if (!HORIZ_SKIP_COLUMN(x + c))
-                R_DrawColumnHoriz(vis, patch, x + c, c, frac);
+                R_DrawColumnHoriz(patch, x + c, c, frac);
 
             frac += xiscale;
         }
