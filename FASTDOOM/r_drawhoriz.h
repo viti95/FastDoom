@@ -39,7 +39,10 @@ extern unsigned horiztemp32[SCREENHEIGHT];
 
 // Bit c set on row y: column c of the group has a staged pixel on
 // that row. Consumed and cleared by the post-pass.
-extern byte horizrowmask[SCREENHEIGHT];
+// Declared as dwords so the pre-pass marks four screen rows of a
+// span with one dword write; it is the same memory the assembly
+// walks byte by byte (the C code uses ((byte *)horizrowmask)[y]).
+extern unsigned horizrowmask[(SCREENHEIGHT + 3) / 4];
 
 // Row range that can carry mask bits for the current group.
 extern int horizymin;
@@ -58,12 +61,15 @@ void R_DrawVisPSpriteHoriz(vissprite_t *vis);
 // Post-pass (flush)
 // ---------------------------------------------------------------------------
 
-// Assembly implementation (linearhz.asm), the only post-pass; the
-// pre-passes call it directly. Watcom register calling convention
-// (EAX = xstart, EDX = group, ECX = colormap). A colormap of NULL
-// means the staged bytes are already screen colors and are copied
-// verbatim (routed internally through an identity table). See
-// linearhz.asm for the full interface spec.
+// Assembly implementation (linearhz.asm) of the post-pass, used for
+// the groups the C fast path of r_drawhoriz.c does not handle (the
+// partial group at the view edge). Watcom register calling
+// convention (EAX = xstart, EDX = group, ECX = colormap). Every
+// staged byte is already translated through dc_colormap by the
+// pre-pass (walls, sky and sprites alike), so NULL is passed: the
+// staged bytes are screen colors and get copied verbatim (routed
+// internally through an identity table). See linearhz.asm for the
+// full interface spec.
 void R_FlushHorizGroupAsm(int xstart, int group, byte *colormap);
 
 // Wall colfunc replacement: stage the dc_* column into the current
