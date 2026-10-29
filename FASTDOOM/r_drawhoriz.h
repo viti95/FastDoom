@@ -48,15 +48,13 @@ extern int horizymax;
 // Post-pass (flush)
 // ---------------------------------------------------------------------------
 
-// Assembly implementation (linearhz.asm), Watcom register calling
-// convention (EAX = xstart, EDX = group, ECX = colormap). A
-// colormap of NULL means the staged bytes are already screen colors
-// and are copied verbatim (routed internally through an identity
-// table). See linearhz.asm for the full interface spec.
+// Assembly implementation (linearhz.asm), the only post-pass; the
+// pre-passes call it directly. Watcom register calling convention
+// (EAX = xstart, EDX = group, ECX = colormap). A colormap of NULL
+// means the staged bytes are already screen colors and are copied
+// verbatim (routed internally through an identity table). See
+// linearhz.asm for the full interface spec.
 void R_FlushHorizGroupAsm(int xstart, int group, byte *colormap);
-
-// Active post-pass, selected at setup time.
-extern void (*horizflushfunc)(int xstart, int group, byte *colormap);
 
 // Wall colfunc replacement: stage the dc_* column into the current
 // four-column group instead of drawing it to the screen directly.

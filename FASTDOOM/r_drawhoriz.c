@@ -58,9 +58,8 @@
 //	patch posts wrap inside a 128 byte window (the asm computes it
 //	as (frac << 9) >> 25).
 //
-//	The post-pass is selected at runtime through horizflushfunc,
-//	currently always R_FlushHorizGroupAsm (linearhz.asm). The
-//	pre-passes stay in C; R_StageColumnHoriz is
+//	The post-pass is the assembly R_FlushHorizGroupAsm
+//	(linearhz.asm). The pre-passes stay in C; R_StageColumnHoriz is
 //	already shaped like the asm colfuncs (no arguments, dc_*
 //	globals) and can be replaced one-for-one by an asm version.
 //
@@ -167,22 +166,6 @@ static void R_BeginHorizGroup(void)
     horizymin = SCREENHEIGHT;
     horizymax = -1;
 }
-
-//
-// Post-pass: R_FlushHorizGroupAsm (linearhz.asm), called through
-// horizflushfunc. It maps the up-to-four staged columns in
-// horiztemp to the screen row by row so that adjacent columns land
-// next to each other in memory. colormap translates the staged
-// texture bytes; NULL means the bytes are already screen colors
-// (wall staging maps with the per-column colormap). See the
-// interface block in linearhz.asm.
-//
-// Active post-pass, selected at setup time (R_ExecuteSetViewSize
-// points it at the assembly version when the horizontal renderer is
-// used).
-//
-void (*horizflushfunc)(int xstart, int group, byte *colormap) =
-    R_FlushHorizGroupAsm;
 
 //
 // Pre-pass: scale one texture column of the sprite into horiztemp
@@ -335,7 +318,7 @@ static void R_DrawVisSpriteHorizCore(vissprite_t *vis,
             frac += xiscale;
         }
 
-        horizflushfunc(x, group, dc_colormap);
+        R_FlushHorizGroupAsm(x, group, dc_colormap);
 
         x += group;
     } while (x <= x2);
@@ -456,7 +439,7 @@ void R_FlushWallHoriz(void)
         group = 4;
 
     if (group > 0)
-        horizflushfunc(wallgroupx, group, NULL);
+        R_FlushHorizGroupAsm(wallgroupx, group, NULL);
 
     wallgroupx = -1;
 }
