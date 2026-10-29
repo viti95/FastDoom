@@ -22,6 +22,7 @@
 #include "options.h"
 #include "doomtype.h"
 #include "doomdef.h"
+#include "r_defs.h" // vissprite_t
 
 #if defined(SUPPORTS_HORIZ_RENDER)
 
@@ -43,6 +44,15 @@ extern byte horizrowmask[SCREENHEIGHT];
 // Row range that can carry mask bits for the current group.
 extern int horizymin;
 extern int horizymax;
+
+// ---------------------------------------------------------------------------
+// Sprite drawers (pre-pass + flush in one call)
+// ---------------------------------------------------------------------------
+
+// Replacements for the classic sprite column drawers, selected
+// through the spriteRender/pspriteRender tables (r_main.c).
+void R_DrawVisSpriteHoriz(vissprite_t *vis);
+void R_DrawVisPSpriteHoriz(vissprite_t *vis);
 
 // ---------------------------------------------------------------------------
 // Post-pass (flush)

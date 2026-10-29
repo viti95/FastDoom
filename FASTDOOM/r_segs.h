@@ -31,14 +31,14 @@ extern void R_RenderMaskedSegRange2(drawseg_t *ds);
 extern void R_RenderMaskedSegRange2Flat(drawseg_t *ds);
 extern void R_RenderMaskedSegRange2Flatter(drawseg_t *ds);
 
+// The HORIZ variants live in r_drawhoriz.h (r_drawhoriz.c).
+
 extern void R_DrawVisSprite(vissprite_t *vis);
 extern void R_DrawVisSpriteFlat(vissprite_t *vis);
 extern void R_DrawVisSpriteFlatter(vissprite_t *vis);
-extern void R_DrawVisSpriteHoriz(vissprite_t *vis);
 
 extern void R_DrawVisPSprite(vissprite_t *vis);
 extern void R_DrawVisPSpriteFlat(vissprite_t *vis);
 extern void R_DrawVisPSpriteFlatter(vissprite_t *vis);
-extern void R_DrawVisPSpriteHoriz(vissprite_t *vis);
 
 #endif
