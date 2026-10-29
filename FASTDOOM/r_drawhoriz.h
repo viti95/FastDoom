@@ -20,11 +20,54 @@
 #define __R_DRAWHORIZ__
 
 #include "options.h"
+#include "doomtype.h"
+#include "doomdef.h"
 
 #if defined(SUPPORTS_HORIZ_RENDER)
 
+// ---------------------------------------------------------------------------
+// Shared staging state (r_drawhoriz.c). Also referenced by the
+// assembly post-pass in linearhz.asm as _horiztemp32, _horizrowmask,
+// _horizymin, _horizymax.
+// ---------------------------------------------------------------------------
+
+// Interleaved staging buffer: pixel y of column c of the current
+// four-column group is at byte ((byte *)horiztemp32)[(y << 2) + c];
+// horiztemp32[y] is the same row as one aligned dword.
+extern unsigned horiztemp32[SCREENHEIGHT];
+
+// Bit c set on row y: column c of the group has a staged pixel on
+// that row. Consumed and cleared by the post-pass.
+extern byte horizrowmask[SCREENHEIGHT];
+
+// Row range that can carry mask bits for the current group.
+extern int horizymin;
+extern int horizymax;
+
+// ---------------------------------------------------------------------------
+// Post-pass (flush)
+// ---------------------------------------------------------------------------
+
+// Portable C reference implementation.
+void R_FlushHorizGroupC(int xstart, int group, byte *colormap);
+
+// Assembly implementation (linearhz.asm). Same arguments and
+// behavior as the C version, Watcom register calling convention
+// (EAX = xstart, EDX = group, ECX = colormap). A colormap of NULL
+// means the staged bytes are already screen colors and must be
+// copied verbatim (the C version routes this case through an
+// internal identity table). Currently a stub that jumps to the C
+// implementation; see linearhz.asm for the full interface spec.
+void R_FlushHorizGroupAsm(int xstart, int group, byte *colormap);
+
+// Active post-pass, selected at setup time (defaults to C).
+extern void (*horizflushfunc)(int xstart, int group, byte *colormap);
+
 // Wall colfunc replacement: stage the dc_* column into the current
 // four-column group instead of drawing it to the screen directly.
+// No arguments, reads only the classic dc_* globals plus viewwidth
+// boundaries via dc_x/dc_yl/dc_yh, so it is a drop-in shape for an
+// asm replacement like the R_DrawColumn* family.
 extern void R_StageColumnHoriz(void);
 
 // Flush any pending wall columns to the screen. Must be called

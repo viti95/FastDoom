@@ -58,8 +58,13 @@
 //	patch posts wrap inside a 128 byte window (the asm computes it
 //	as (frac << 9) >> 25).
 //
-//	An optimized assembly post-pass can replace R_FlushHorizGroup
-//	later without changing anything else.
+//	The post-pass is selected at runtime through horizflushfunc:
+//	R_FlushHorizGroupC (portable C reference, always present) or
+//	R_FlushHorizGroupAsm (linearhz.asm, currently a stub that
+//	jumps to the C version until the optimized implementation is
+//	written). The pre-passes stay in C; R_StageColumnHoriz is
+//	already shaped like the asm colfuncs (no arguments, dc_*
+//	globals) and can be replaced one-for-one by an asm version.
 //
 
 #include <stdlib.h>
@@ -89,7 +94,10 @@
 // fits in a single dword: the buffer is declared as unsigned so
 // horiztemp32[y] is an aligned 32-bit load of the four staged
 // pixels, used by the wide stores in the post-pass.
-static unsigned horiztemp32[SCREENHEIGHT];
+// The staging buffers and the row extent are shared with the
+// assembly post-pass (linearhz.asm), so they are plain globals
+// (_horiztemp32, _horizrowmask, _horizymin, _horizymax there).
+unsigned horiztemp32[SCREENHEIGHT];
 #define HORIZTEMPB ((byte *)horiztemp32)
 
 // Bit c set on row y: column c of the current group has a staged,
@@ -98,13 +106,13 @@ static unsigned horiztemp32[SCREENHEIGHT];
 // cleared by the post-pass. This replaces per-column span lists:
 // the flush needs a single byte load per screen row instead of
 // chasing span pointers for each column.
-static byte horizrowmask[SCREENHEIGHT];
+byte horizrowmask[SCREENHEIGHT];
 
 // Vertical extent of the rows that can have mask bits set for the
 // current group, so the flush skips the blank rows above and below
 // it entirely.
-static int horizymin;
-static int horizymax;
+int horizymin;
+int horizymax;
 
 // Base x of the wall group currently staged into horiztemp, or -1
 // when nothing is pending. Walls stage one colfunc() column at a
@@ -156,7 +164,7 @@ static int horizidentityready;
 
 //
 // Start a fresh 4-column group. The row masks of the previous
-// group are guaranteed already cleared by R_FlushHorizGroup.
+// group are guaranteed already cleared by the flush.
 //
 static void R_BeginHorizGroup(void)
 {
@@ -179,7 +187,14 @@ static void R_BeginHorizGroup(void)
 // offsets are not contiguous, and since m is never 0 inside the
 // mask test that simply disables the wide path.
 //
-static void R_FlushHorizGroup(int xstart, int group, byte *colormap)
+// This is the portable reference implementation. The assembly
+// post-pass in linearhz.asm (R_FlushHorizGroupAsm, selected at
+// runtime through horizflushfunc) must behave identically; it
+// takes the same arguments in the Watcom register convention
+// (EAX = xstart, EDX = group, ECX = colormap, 0 = identity) and
+// reads the same globals. See the interface block in linearhz.asm.
+//
+void R_FlushHorizGroupC(int xstart, int group, byte *colormap)
 {
     int c;
     int y;
@@ -401,6 +416,15 @@ static void R_FlushHorizGroup(int xstart, int group, byte *colormap)
 }
 
 //
+// Active post-pass. Defaults to the C reference; R_ExecuteSetViewSize
+// switches to the assembly version (linearhz.asm). Until
+// R_FlushHorizGroupAsm is implemented it jumps straight to the C
+// code, so the default choice is already safe.
+//
+void (*horizflushfunc)(int xstart, int group, byte *colormap) =
+    R_FlushHorizGroupC;
+
+//
 // Pre-pass: scale one texture column of the sprite into horiztemp
 // (slot c of the current group), marking the touched screen rows.
 // Clipping matches the classic R_DrawVisSprite exactly.
@@ -551,7 +575,7 @@ static void R_DrawVisSpriteHorizCore(vissprite_t *vis,
             frac += xiscale;
         }
 
-        R_FlushHorizGroup(x, group, dc_colormap);
+        horizflushfunc(x, group, dc_colormap);
 
         x += group;
     } while (x <= x2);
@@ -672,7 +696,7 @@ void R_FlushWallHoriz(void)
         group = 4;
 
     if (group > 0)
-        R_FlushHorizGroup(wallgroupx, group, NULL);
+        horizflushfunc(wallgroupx, group, NULL);
 
     wallgroupx = -1;
 }
