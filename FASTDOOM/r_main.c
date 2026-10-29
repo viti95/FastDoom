@@ -3071,9 +3071,7 @@ void R_ExecuteSetViewSize(void)
     if (wallRender == WALL_HORIZ)
         colfunc = R_StageColumnHoriz;
 
-    // Use the assembly post-pass for the staged groups
-    // (linearhz.asm). Point it back at R_FlushHorizGroupC to
-    // A/B against the C reference flush.
+    // Assembly post-pass for the staged groups (linearhz.asm).
     horizflushfunc = R_FlushHorizGroupAsm;
 
     // Textured sky columns go through skyfunc using the same dc_*

@@ -58,11 +58,9 @@
 //	patch posts wrap inside a 128 byte window (the asm computes it
 //	as (frac << 9) >> 25).
 //
-//	The post-pass is selected at runtime through horizflushfunc:
-//	R_FlushHorizGroupC (portable C reference, always present) or
-//	R_FlushHorizGroupAsm (linearhz.asm, currently a stub that
-//	jumps to the C version until the optimized implementation is
-//	written). The pre-passes stay in C; R_StageColumnHoriz is
+//	The post-pass is selected at runtime through horizflushfunc,
+//	currently always R_FlushHorizGroupAsm (linearhz.asm). The
+//	pre-passes stay in C; R_StageColumnHoriz is
 //	already shaped like the asm colfuncs (no arguments, dc_*
 //	globals) and can be replaced one-for-one by an asm version.
 //
@@ -122,10 +120,8 @@ static int wallgroupx = -1;
 
 // Walls apply dc_colormap during the pre-pass (lighting can differ
 // between the columns of a group), so their post-pass is a plain
-// copy. The identity "colormap" lets the flush loop stay shared
-// with the sprites, which map during the post-pass instead.
-static byte horizidentity[256];
-static int horizidentityready;
+// copy: they flush with a NULL colormap, which the asm post-pass
+// copies verbatim.
 
 //
 // Screen addressing. Backbuffered modes draw through ylookup[]
@@ -173,256 +169,20 @@ static void R_BeginHorizGroup(void)
 }
 
 //
-// Post-pass: map the up-to-four staged columns in horiztemp to the
-// screen at xstart..., writing row by row so that adjacent columns
-// land next to each other in memory. colormap translates the
-// staged texture bytes; NULL means the bytes are already screen
-// colors (wall staging maps with the per-column colormap).
+// Post-pass: R_FlushHorizGroupAsm (linearhz.asm), called through
+// horizflushfunc. It maps the up-to-four staged columns in
+// horiztemp to the screen row by row so that adjacent columns land
+// next to each other in memory. colormap translates the staged
+// texture bytes; NULL means the bytes are already screen colors
+// (wall staging maps with the per-column colormap). See the
+// interface block in linearhz.asm.
 //
-// One loop per pixel width (1, 2 or 4 bytes). A row whose mask
-// has all four columns active (m == fastmask) is written with
-// wide 32-bit stores from a single staged-dword load; every other
-// mask goes through the generic do/while, which stops as soon as
-// the shifted mask runs out of bits. fastmask is 0 when the group
-// offsets are not contiguous, and since m is never 0 inside the
-// mask test that simply disables the wide path.
-//
-// This is the portable reference implementation. The assembly
-// post-pass in linearhz.asm (R_FlushHorizGroupAsm, selected at
-// runtime through horizflushfunc) must behave identically; it
-// takes the same arguments in the Watcom register convention
-// (EAX = xstart, EDX = group, ECX = colormap, 0 = identity) and
-// reads the same globals. See the interface block in linearhz.asm.
-//
-void R_FlushHorizGroupC(int xstart, int group, byte *colormap)
-{
-    int c;
-    int y;
-    int ymax;
-    int off[4];
-    unsigned m;
-    unsigned t;
-    unsigned d;
-    unsigned fastmask;
-    byte *map;
-    byte *row;
-    byte *tp;
-
-    if (horizymax < horizymin)
-        return;
-
-    if (colormap)
-    {
-        map = colormap;
-    }
-    else
-    {
-        if (!horizidentityready)
-        {
-            int i;
-            for (i = 0; i < 256; i++)
-                horizidentity[i] = i;
-            horizidentityready = 1;
-        }
-        map = horizidentity;
-    }
-
-    for (c = 0; c < group; c++)
-        off[c] = HORIZ_COFS(xstart + c);
-
-    // Can whole rows be written with wide 32-bit stores? That
-    // needs a full 4-column group whose destination offsets
-    // advance by exactly one (duplicated) pixel per column;
-    // decimated CGA composite groups have gaps and partial
-    // groups never reach four columns. Destination alignment is
-    // not guaranteed (viewwindowx is arbitrary), but unaligned
-    // dword access is legal on every CPU this renderer targets
-    // and still cheaper than several separate stores.
-    fastmask = 0;
-    if (group == 4)
-    {
-        unsigned step = 1 << detailshift;
-
-        if (off[1] == off[0] + step && off[2] == off[1] + step &&
-            off[3] == off[2] + step)
-            fastmask = 15;
-    }
-
-    y = horizymin;
-    ymax = horizymax;
-    row = HORIZ_ROW(y);
-
-    if (!detailshift)
-    {
-        for (; y <= ymax; y++)
-        {
-            m = horizrowmask[y];
-
-            if (m)
-            {
-                if (m == fastmask)
-                {
-                    // All four columns active: one aligned
-                    // 32-bit load of the staged row and one
-                    // 32-bit store.
-                    t = horiztemp32[y];
-
-                    if (map == horizidentity)
-                        // Wall/sky: the staged bytes are
-                        // already screen colors, no lookup.
-                        *(unsigned *)(row + off[0]) = t;
-                    else
-                    {
-                        d = map[t & 255];
-                        d |= map[(t >> 8) & 255] << 8;
-                        d |= map[(t >> 16) & 255] << 16;
-                        d |= map[t >> 24] << 24;
-                        *(unsigned *)(row + off[0]) = d;
-                    }
-                }
-                else
-                {
-                    tp = HORIZTEMPB + ((unsigned)y << 2);
-                    c = 0;
-                    do
-                    {
-                        if (m & 1)
-                            row[off[c]] = map[tp[c]];
-                        m >>= 1;
-                        c++;
-                    } while (m);
-                }
-
-                horizrowmask[y] = 0;
-            }
-
-            row += HORIZ_ROWSTRIDE;
-        }
-    }
-    else if (detailshift == DETAIL_LOW)
-    {
-        for (; y <= ymax; y++)
-        {
-            m = horizrowmask[y];
-
-            if (m)
-            {
-                if (m == fastmask)
-                {
-                    // All four columns active: two 32-bit
-                    // stores, each holding two duplicated
-                    // pixels.
-                    unsigned d2;
-
-                    t = horiztemp32[y];
-
-                    d = map[t & 255];
-                    d |= d << 8;
-                    d2 = map[(t >> 8) & 255];
-                    d2 |= d2 << 8;
-                    d |= d2 << 16;
-
-                    d2 = map[(t >> 16) & 255];
-                    d2 |= d2 << 8;
-                    t = map[t >> 24];
-                    t |= t << 8;
-                    d2 |= t << 16;
-
-                    *(unsigned *)(row + off[0]) = d;
-                    *(unsigned *)(row + off[0] + 4) = d2;
-                }
-                else
-                {
-                    tp = HORIZTEMPB + ((unsigned)y << 2);
-                    c = 0;
-                    do
-                    {
-                        if (m & 1)
-                        {
-                            unsigned short color = map[tp[c]];
-                            color |= color << 8;
-                            *(unsigned short *)(row + off[c]) = color;
-                        }
-                        m >>= 1;
-                        c++;
-                    } while (m);
-                }
-
-                horizrowmask[y] = 0;
-            }
-
-            row += HORIZ_ROWSTRIDE;
-        }
-    }
-    else
-    {
-        // Four bytes per pixel: the per-pixel stores are already
-        // dwords; the wide path only drops the per-column tests
-        // and writes from a single staged-dword load.
-        for (; y <= ymax; y++)
-        {
-            m = horizrowmask[y];
-
-            if (m)
-            {
-                if (m == fastmask)
-                {
-                    t = horiztemp32[y];
-
-                    d = map[t & 255];
-                    d |= d << 8;
-                    d |= d << 16;
-                    *(unsigned *)(row + off[0]) = d;
-
-                    d = map[(t >> 8) & 255];
-                    d |= d << 8;
-                    d |= d << 16;
-                    *(unsigned *)(row + off[0] + 4) = d;
-
-                    d = map[(t >> 16) & 255];
-                    d |= d << 8;
-                    d |= d << 16;
-                    *(unsigned *)(row + off[0] + 8) = d;
-
-                    d = map[t >> 24];
-                    d |= d << 8;
-                    d |= d << 16;
-                    *(unsigned *)(row + off[0] + 12) = d;
-                }
-                else
-                {
-                    tp = HORIZTEMPB + ((unsigned)y << 2);
-                    c = 0;
-                    do
-                    {
-                        if (m & 1)
-                        {
-                            d = map[tp[c]];
-                            d |= d << 8;
-                            d |= d << 16;
-                            *(unsigned *)(row + off[c]) = d;
-                        }
-                        m >>= 1;
-                        c++;
-                    } while (m);
-                }
-
-                horizrowmask[y] = 0;
-            }
-
-            row += HORIZ_ROWSTRIDE;
-        }
-    }
-}
-
-//
-// Active post-pass. Defaults to the C reference; R_ExecuteSetViewSize
-// switches to the assembly version (linearhz.asm). Until
-// R_FlushHorizGroupAsm is implemented it jumps straight to the C
-// code, so the default choice is already safe.
+// Active post-pass, selected at setup time (R_ExecuteSetViewSize
+// points it at the assembly version when the horizontal renderer is
+// used).
 //
 void (*horizflushfunc)(int xstart, int group, byte *colormap) =
-    R_FlushHorizGroupC;
+    R_FlushHorizGroupAsm;
 
 //
 // Pre-pass: scale one texture column of the sprite into horiztemp

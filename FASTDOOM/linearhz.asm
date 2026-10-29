@@ -54,8 +54,7 @@ BITS 32
 ; ==========================
 ;
 ; R_FlushHorizGroupAsm writes the currently staged 4-column group
-; to the screen. Watcom register calling convention, same
-; signature as the C reference R_FlushHorizGroupC:
+; to the screen. Watcom register calling convention:
 ;
 ;   eax = xstart    base screen x of the group (first column)
 ;   edx = group     number of columns in the group (1..4)
@@ -64,8 +63,8 @@ BITS 32
 ;                   staged columns were already translated by the
 ;                   wall pre-pass)
 ;
-; EAX, EBX, ECX, EDX are all scratch in the Watcom convention
-; (the C reference clobbers EBX too), so only ESI, EDI and EBP
+; EAX, EBX, ECX, EDX are all scratch in the Watcom convention,
+; so only ESI, EDI and EBP
 ; must be saved; EBX is pushed anyway, which is free to do. No
 ; other stack use.
 ;
@@ -102,7 +101,7 @@ BITS 32
 ;     row address  = [_destview] + y * SCREENWIDTH
 ;     column x off = x << [_detailshift]
 ;
-;   Per-row behavior (mirrors R_FlushHorizGroupC exactly), one
+;   Per-row behavior, one
 ;   loop per pixel width 1 << [_detailshift]:
 ;
 ;     m = horizrowmask[y]
@@ -432,10 +431,8 @@ BEGIN_CODE_SECTION
 ; eax = xstart, edx = group, ebx = colormap (0 = verbatim copy)
 ;
 ; Watcom 32-bit register convention passes the first integer
-; arguments in EAX, EDX, EBX (verified against the WATCOM
-; disassembly of the C reference: mov edi,eax / mov ebp,edx /
-; test ebx,ebx in the prologue, and the C reference itself
-; clobbers EBX, so it is a scratch register in this ABI).
+; arguments in EAX, EDX, EBX; EBX is a scratch register in this
+; ABI.
 CODE_SYM_DEF R_FlushHorizGroupAsm
 
   ; Park the register arguments in scratch memory first: the
@@ -457,7 +454,7 @@ CODE_SYM_DEF R_FlushHorizGroupAsm
 
   ; ---- colormap selection: NULL routes the lookups through a
   ; private identity table; hz_raw lets the width-1 wide path skip
-  ; them entirely (pure dword copy), like the C reference.
+  ; them entirely (pure dword copy).
   xor   ebx, ebx
   mov   eax, [hz_maparg]
   test  eax, eax
