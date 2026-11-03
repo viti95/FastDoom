@@ -2942,13 +2942,10 @@ typedef struct
     void (*renderMaskedSegRange2)(drawseg_t *ds);
 } wallrenderfuncs_t;
 
-// The renderers of the WALL_*_ROWS modes are the flat ones, the rows
-// are picked inside R_DrawFlatWallTier.
-static const wallrenderfuncs_t wallrenderfuncs[NUM_WALLRENDER] =
+// The WALL_*_ROWS modes use the flat renderers, see WALLRENDER_FUNC.
+static const wallrenderfuncs_t wallrenderfuncs[3] =
 {
     { R_RenderSegLoop, R_RenderMaskedSegRange, R_RenderMaskedSegRange2 },
-    { R_RenderSegLoopFlat, R_RenderMaskedSegRangeFlat, R_RenderMaskedSegRange2Flat },
-    { R_RenderSegLoopFlatter, R_RenderMaskedSegRangeFlatter, R_RenderMaskedSegRange2Flatter },
     { R_RenderSegLoopFlat, R_RenderMaskedSegRangeFlat, R_RenderMaskedSegRange2Flat },
     { R_RenderSegLoopFlatter, R_RenderMaskedSegRangeFlatter, R_RenderMaskedSegRange2Flatter }
 };

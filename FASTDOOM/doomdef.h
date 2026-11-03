@@ -384,9 +384,11 @@ typedef enum
     NUM_WALLRENDER
 } wallrender_t;
 
-// The renderers of the modes that draw the flat walls by rows are the
-// renderers of the matching flat walls.
-#define WALLRENDER_FUNC(r) ((r) % 3)
+// The seg loops of the modes that draw the flat walls row by row are the
+// loops of the matching flat walls, the rows are picked inside
+// R_DrawFlatWallTier: FLAT ROWS uses the flat loop, FLATTER ROWS the
+// flatter one.
+#define WALLRENDER_FUNC(r) ((r) < WALL_FLAT_ROWS ? (r) : ((r) - WALL_FLAT_ROWS + WALL_FLAT))
 
 // How the flat wall renderer of r_flatwall.c paints a wall: column by
 // column, row by row (span), or letting its cost model choose per wall.
