@@ -19,7 +19,7 @@ typedef struct {
 } opt_t;
 
 /* The available options (defined in options.c). */
-#define NUMOPTS 97
+#define NUMOPTS 99
 
 extern const opt_t opts[NUMOPTS];
 

@@ -31,6 +31,7 @@
 #include "p_local.h"
 #include "doomstat.h"
 #include "r_data.h"
+#include "r_flatwall.h"
 
 //
 // Graphics.
@@ -782,6 +783,7 @@ void R_InitData(void)
     printf(".");
     R_InitColormaps();
     printf(".");
+    R_InitFlatWall();
     if (invisibleRender == INVISIBLE_TRANSLUCENT)
         R_InitTintMap();
 }

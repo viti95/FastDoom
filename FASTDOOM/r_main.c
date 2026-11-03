@@ -35,6 +35,8 @@
 
 #include "sizeopt.h"
 
+#include "r_flatwall.h"
+
 #include "m_menu.h"
 
 #include "st_stuff.h"
@@ -906,7 +908,7 @@ void R_PatchCode(void)
 static void R_SetupT4050Funcs(void)
 {
 
-    switch (wallRender)
+    switch (WALLRENDER_FUNC(wallRender))
     {
     case WALL_NORMAL:
         colfunc = R_DrawColumnText4050;
@@ -958,6 +960,9 @@ static void R_SetupT4050Funcs(void)
         drawPlanes = R_DrawPlanesFlatterText4050;
         break;
     }
+    flatwallspanfunc = R_DrawSpanFlatText4050;
+    flatwallmodel = FLATWALL_MODEL_HIGH;
+    flatwallcolscale = 1;
 
     if (flatSky)
     {
@@ -999,7 +1004,7 @@ static void R_SetupT4050Funcs(void)
 static void R_SetupT4025Funcs(void)
 {
 
-    switch (wallRender)
+    switch (WALLRENDER_FUNC(wallRender))
     {
     case WALL_NORMAL:
         colfunc = R_DrawColumnText4025;
@@ -1051,6 +1056,9 @@ static void R_SetupT4025Funcs(void)
         drawPlanes = R_DrawPlanesFlatterText4025;
         break;
     }
+    flatwallspanfunc = R_DrawSpanFlatText4025;
+    flatwallmodel = FLATWALL_MODEL_HIGH;
+    flatwallcolscale = 1;
 
     if (flatSky)
     {
@@ -1091,7 +1099,7 @@ static void R_SetupT4025Funcs(void)
 #if defined(MODE_T8025) || defined(MODE_COLOR_MDA)
 static void R_SetupT8025Funcs(void)
 {
-    switch (wallRender)
+    switch (WALLRENDER_FUNC(wallRender))
     {
     case WALL_NORMAL:
         colfunc = R_DrawColumnText8025;
@@ -1143,6 +1151,9 @@ static void R_SetupT8025Funcs(void)
         drawPlanes = R_DrawPlanesFlatterText8025;
         break;
     }
+    flatwallspanfunc = R_DrawSpanFlatText8025;
+    flatwallmodel = FLATWALL_MODEL_HIGH;
+    flatwallcolscale = 1;
 
     if (flatSky)
     {
@@ -1195,6 +1206,12 @@ static void R_SetupMDAFuncs(void)
     skyfunc = R_DrawSkyTextMDA;
 
     fuzzcolfunc = R_DrawLineColumnTextMDA;
+
+    // the walls of this mode are outlines of the character cells, they
+    // are always drawn by its own column renderer
+    flatwallspanfunc = NULL;
+    flatwallmodel = FLATWALL_MODEL_HIGH;
+    flatwallcolscale = 1;
 }
 #endif
 
@@ -1205,7 +1222,7 @@ static void R_SetupMDAFuncs(void)
 static void R_SetupT8050Funcs(void)
 {
 
-    switch (wallRender)
+    switch (WALLRENDER_FUNC(wallRender))
     {
     case WALL_NORMAL:
         colfunc = R_DrawColumnText8050;
@@ -1257,6 +1274,9 @@ static void R_SetupT8050Funcs(void)
         drawPlanes = R_DrawPlanesFlatterText8050;
         break;
     }
+    flatwallspanfunc = R_DrawSpanFlatText8050;
+    flatwallmodel = FLATWALL_MODEL_HIGH;
+    flatwallcolscale = 1;
 
     if (flatSky)
     {
@@ -1301,7 +1321,7 @@ static void R_SetupVGAFuncs(void)
     {
     case DETAIL_HIGH:
 
-        switch (wallRender)
+        switch (WALLRENDER_FUNC(wallRender))
         {
         case WALL_NORMAL:
             switch (selectedCPU)
@@ -1432,6 +1452,9 @@ static void R_SetupVGAFuncs(void)
             spanfunc = R_DrawColumnPlaneFlat;
             break;
         }
+        flatwallspanfunc = R_DrawSpanFlat;
+        flatwallmodel = FLATWALL_MODEL_HIGH;
+        flatwallcolscale = 1;
 
         if (flatSky)
         {
@@ -1487,7 +1510,7 @@ static void R_SetupVGAFuncs(void)
         break;
     case DETAIL_LOW:
 
-        switch (wallRender)
+        switch (WALLRENDER_FUNC(wallRender))
         {
         case WALL_NORMAL:
             switch (selectedCPU)
@@ -1618,6 +1641,9 @@ static void R_SetupVGAFuncs(void)
             spanfunc = R_DrawColumnPlaneFlatLow;
             break;
         }
+        flatwallspanfunc = R_DrawSpanFlatLow;
+        flatwallmodel = FLATWALL_MODEL_LOW;
+        flatwallcolscale = 1;
 
         if (flatSky)
         {
@@ -1674,7 +1700,7 @@ static void R_SetupVGAFuncs(void)
         break;
     case DETAIL_POTATO:
 
-        switch (wallRender)
+        switch (WALLRENDER_FUNC(wallRender))
         {
         case WALL_NORMAL:
             switch (selectedCPU)
@@ -1805,6 +1831,9 @@ static void R_SetupVGAFuncs(void)
             spanfunc = R_DrawColumnFlatPotato;
             break;
         }
+        flatwallspanfunc = R_DrawSpanFlatPotato;
+        flatwallmodel = FLATWALL_MODEL_POTATO;
+        flatwallcolscale = 1;
 
         if (flatSky)
         {
@@ -1872,7 +1901,7 @@ static void R_SetupBackbufferFuncs(void)
     switch (detailshift)
     {
     case DETAIL_HIGH:
-        switch (wallRender)
+        switch (WALLRENDER_FUNC(wallRender))
         {
         case WALL_NORMAL:
             switch (selectedCPU)
@@ -2041,6 +2070,17 @@ static void R_SetupBackbufferFuncs(void)
             spanfunc = R_DrawColumnBackbufferFlat;
             break;
         }
+        flatwallspanfunc = R_DrawSpanFlatBackbuffer;
+        flatwallmodel = FLATWALL_MODEL_HIGH;
+#if defined(MODE_CGA16) || defined(MODE_CVB)
+        // the screen update of the composite modes only keeps half of
+        // the columns of the screen, so drawing the other ones is waste
+        flatwallcolscale = 2;
+#elif defined(MODE_CGA512)
+        flatwallcolscale = 4;
+#else
+        flatwallcolscale = 1;
+#endif
 
         if (flatSky)
         {
@@ -2111,7 +2151,7 @@ static void R_SetupBackbufferFuncs(void)
 
         break;
     case DETAIL_LOW:
-        switch (wallRender)
+        switch (WALLRENDER_FUNC(wallRender))
         {
         case WALL_NORMAL:
             switch (selectedCPU)
@@ -2245,6 +2285,14 @@ static void R_SetupBackbufferFuncs(void)
             spanfunc = R_DrawColumnLowBackbufferFlat;
             break;
         }
+        flatwallspanfunc = R_DrawSpanFlatLowBackbuffer;
+        flatwallmodel = FLATWALL_MODEL_LOW;
+#if defined(MODE_CGA512)
+        // half of the columns of the screen are updated
+        flatwallcolscale = 2;
+#else
+        flatwallcolscale = 1;
+#endif
 
         if (flatSky)
         {
@@ -2300,7 +2348,7 @@ static void R_SetupBackbufferFuncs(void)
 
         break;
     case DETAIL_POTATO:
-        switch (wallRender)
+        switch (WALLRENDER_FUNC(wallRender))
         {
         case WALL_NORMAL:
             colfunc = R_DrawColumnPotatoBackbuffer;
@@ -2378,6 +2426,9 @@ static void R_SetupBackbufferFuncs(void)
             spanfunc = spanfunc = R_DrawColumnPotatoBackbufferFlat;
             break;
         }
+        flatwallspanfunc = R_DrawSpanFlatPotatoBackbuffer;
+        flatwallmodel = FLATWALL_MODEL_POTATO;
+        flatwallcolscale = 1;
 
         if (flatSky)
         {
@@ -2428,7 +2479,7 @@ static void R_SetupVBE2Funcs(void)
     {
     case DETAIL_HIGH:
 
-        switch (wallRender)
+        switch (WALLRENDER_FUNC(wallRender))
         {
         case WALL_NORMAL:
             switch (selectedCPU)
@@ -2577,6 +2628,9 @@ static void R_SetupVBE2Funcs(void)
             spanfunc = R_DrawColumnVBE2Flat;
             break;
         }
+        flatwallspanfunc = R_DrawSpanFlatVBE2;
+        flatwallmodel = FLATWALL_MODEL_HIGH;
+        flatwallcolscale = 1;
 
         if (flatSky)
         {
@@ -2639,7 +2693,7 @@ static void R_SetupVBE2Funcs(void)
 
         break;
     case DETAIL_LOW:
-        switch (wallRender)
+        switch (WALLRENDER_FUNC(wallRender))
         {
         case WALL_NORMAL:
             colfunc = R_DrawColumnLowVBE2;
@@ -2717,6 +2771,9 @@ static void R_SetupVBE2Funcs(void)
             spanfunc = R_DrawColumnLowVBE2Flat;
             break;
         }
+        flatwallspanfunc = R_DrawSpanFlatLowVBE2;
+        flatwallmodel = FLATWALL_MODEL_LOW;
+        flatwallcolscale = 1;
 
         if (flatSky)
         {
@@ -2754,7 +2811,7 @@ static void R_SetupVBE2Funcs(void)
 
         break;
     case DETAIL_POTATO:
-        switch (wallRender)
+        switch (WALLRENDER_FUNC(wallRender))
         {
         case WALL_NORMAL:
             colfunc = R_DrawColumnPotatoVBE2;
@@ -2832,6 +2889,9 @@ static void R_SetupVBE2Funcs(void)
             spanfunc = R_DrawColumnPotatoVBE2Flat;
             break;
         }
+        flatwallspanfunc = R_DrawSpanFlatPotatoVBE2;
+        flatwallmodel = FLATWALL_MODEL_POTATO;
+        flatwallcolscale = 1;
 
         if (flatSky)
         {
@@ -2882,9 +2942,13 @@ typedef struct
     void (*renderMaskedSegRange2)(drawseg_t *ds);
 } wallrenderfuncs_t;
 
-static const wallrenderfuncs_t wallrenderfuncs[3] =
+// The renderers of the WALL_*_ROWS modes are the flat ones, the rows
+// are picked inside R_DrawFlatWallTier.
+static const wallrenderfuncs_t wallrenderfuncs[NUM_WALLRENDER] =
 {
     { R_RenderSegLoop, R_RenderMaskedSegRange, R_RenderMaskedSegRange2 },
+    { R_RenderSegLoopFlat, R_RenderMaskedSegRangeFlat, R_RenderMaskedSegRange2Flat },
+    { R_RenderSegLoopFlatter, R_RenderMaskedSegRangeFlatter, R_RenderMaskedSegRange2Flatter },
     { R_RenderSegLoopFlat, R_RenderMaskedSegRangeFlat, R_RenderMaskedSegRange2Flat },
     { R_RenderSegLoopFlatter, R_RenderMaskedSegRangeFlatter, R_RenderMaskedSegRange2Flatter }
 };
@@ -2999,10 +3063,18 @@ void R_ExecuteSetViewSize(void)
     projection = centerxfrac;
 #endif
 
-    // wallRender / spriteRender / pspriteRender are always in range 0..2
-    renderSegLoop = wallrenderfuncs[wallRender].renderSegLoop;
-    renderMaskedSegRange = wallrenderfuncs[wallRender].renderMaskedSegRange;
-    renderMaskedSegRange2 = wallrenderfuncs[wallRender].renderMaskedSegRange2;
+    // the modes with the WALL_*_ROWS rendering draw the flat walls row
+    // by row where that is cheaper than the columns
+    if (wallRender == WALL_FLAT_ROWS || wallRender == WALL_FLATTER_ROWS)
+        flatwallmode = FLATWALL_AUTO;
+    else
+        flatwallmode = FLATWALL_COLS;
+
+    // spriteRender / pspriteRender are always in range 0..2, wallRender
+    // also selects the row renderer of the flat walls
+    renderSegLoop = wallrenderfuncs[WALLRENDER_FUNC(wallRender)].renderSegLoop;
+    renderMaskedSegRange = wallrenderfuncs[WALLRENDER_FUNC(wallRender)].renderMaskedSegRange;
+    renderMaskedSegRange2 = wallrenderfuncs[WALLRENDER_FUNC(wallRender)].renderMaskedSegRange2;
 
     drawVisSprite = spriterenderfuncs[spriteRender];
     drawPlayerSprite = pspriterenderfuncs[pspriteRender];

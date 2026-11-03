@@ -378,8 +378,26 @@ typedef enum
     WALL_NORMAL,
     WALL_FLAT,
     WALL_FLATTER,
+    // the flat walls drawn row by row (span) where that is cheaper
+    WALL_FLAT_ROWS,
+    WALL_FLATTER_ROWS,
     NUM_WALLRENDER
 } wallrender_t;
+
+// The renderers of the modes that draw the flat walls by rows are the
+// renderers of the matching flat walls.
+#define WALLRENDER_FUNC(r) ((r) % 3)
+
+// How the flat wall renderer of r_flatwall.c paints a wall: column by
+// column, row by row (span), or letting its cost model choose per wall.
+// The WALL_*_ROWS rendering uses AUTO, the others OFF.
+typedef enum
+{
+    FLATWALL_COLS,
+    FLATWALL_AUTO,
+    FLATWALL_ROWS,
+    NUM_FLATWALLMODES
+} flatwallmode_t;
 
 typedef enum
 {

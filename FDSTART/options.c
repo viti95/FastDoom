@@ -51,6 +51,8 @@ const opt_t opts[NUMOPTS] = {
     { "-flatterSpan",   "Even simpler floor and ceiling rendering" },
     { "-flatWall",      "Simpler wall rendering" },
     { "-flatterWall",   "Even simpler wall rendering" },
+    { "-flatWallRows",  "Wall rendering row by row" },
+    { "-flatterWallRows","Even simpler wall rows rendering" },
     { "-flatSprite",    "Simpler sprite rendering" },
     { "-flatterSprites","Even simpler sprite rendering" },
     { "-flatPSprite",   "Simpler weapon sprite rendering" },

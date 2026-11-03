@@ -35,6 +35,8 @@
 
 #include "sizeopt.h"
 
+#include "r_flatwall.h"
+
 #define SC_INDEX 0x3C4
 
 // OPTIMIZE: closed two sided lines as single sided
@@ -1682,9 +1684,8 @@ void R_RenderSegLoopFlat(void)
 	byte *firstPixel;
 	byte color;
 
-#if defined(MODE_MDA) || defined(MODE_VT100)
-	int first = rw_x;
-#endif
+	int rowx1 = rw_x;
+	int rowx2 = rw_stopx - 1;
 
 	// texturecolumn = 0;				// shut up compiler warning
 
@@ -1787,46 +1788,15 @@ void R_RenderSegLoopFlat(void)
 		{
 			if (yl > yh)
 			{
+				R_FLATWALL_EMPTY(rw_x);
 				cc_rwx = viewheight;
 				fc_rwx = -1;
 			}
 			else
 			{
 				// single sided line
-				dc_yl = yl;
-				dc_yh = yh;
 
-#if defined(MODE_CGA16) || defined(MODE_CVB)
-				if (detailshift == DETAIL_HIGH)
-				{
-					if ((dc_x & 1) == 0)
-						colfunc();
-				}
-				else
-					colfunc();
-#elif defined(MODE_CGA512)
-				switch (detailshift)
-				{
-				case DETAIL_HIGH:
-					if ((dc_x & 3) == 0)
-						colfunc();
-					break;
-				case DETAIL_LOW:
-					if ((dc_x & 1) == 0)
-						colfunc();
-					break;
-				default:
-					colfunc();
-					break;
-				}
-#elif defined(MODE_MDA) || defined(MODE_VT100)
-				if (first == rw_x || rw_x == rw_stopx - 1)
-					R_DrawLineColumnTextMDA();
-				else
-					R_DrawEmptyColumnTextMDA();
-#else
-				colfunc();
-#endif
+				R_FLATWALL_RECORD(rw_x, yl, yh);
 
 				cc_rwx = viewheight;
 				fc_rwx = -1;
@@ -1846,44 +1816,13 @@ void R_RenderSegLoopFlat(void)
 
 				if (mid < yl)
 				{
+					R_FLATWALL_EMPTY(rw_x);
 					cc_rwx = yl - 1;
 				}
 				else
 				{
-					dc_yl = yl;
-					dc_yh = mid;
 
-#if defined(MODE_CGA16) || defined(MODE_CVB)
-					if (detailshift == DETAIL_HIGH)
-					{
-						if ((dc_x & 1) == 0)
-							colfunc();
-					}
-					else
-						colfunc();
-#elif defined(MODE_CGA512)
-					switch (detailshift)
-					{
-					case DETAIL_HIGH:
-						if ((dc_x & 3) == 0)
-							colfunc();
-						break;
-					case DETAIL_LOW:
-						if ((dc_x & 1) == 0)
-							colfunc();
-						break;
-					default:
-						colfunc();
-						break;
-					}
-#elif defined(MODE_MDA) || defined(MODE_VT100)
-					if (first == rw_x || rw_x == rw_stopx - 1)
-						R_DrawLineColumnTextMDA();
-					else
-						R_DrawEmptyColumnTextMDA();
-#else
-					colfunc();
-#endif
+					R_FLATWALL_RECORD(rw_x, yl, mid);
 
 					cc_rwx = mid;
 				}
@@ -1907,44 +1846,13 @@ void R_RenderSegLoopFlat(void)
 
 				if (mid > yh)
 				{
+					R_FLATWALL_EMPTY2(rw_x);
 					fc_rwx = yh + 1;
 				}
 				else
 				{
-					dc_yl = mid;
-					dc_yh = yh;
 
-#if defined(MODE_CGA16) || defined(MODE_CVB)
-					if (detailshift == DETAIL_HIGH)
-					{
-						if ((dc_x & 1) == 0)
-							colfunc();
-					}
-					else
-						colfunc();
-#elif defined(MODE_CGA512)
-					switch (detailshift)
-					{
-					case DETAIL_HIGH:
-						if ((dc_x & 3) == 0)
-							colfunc();
-						break;
-					case DETAIL_LOW:
-						if ((dc_x & 1) == 0)
-							colfunc();
-						break;
-					default:
-						colfunc();
-						break;
-					}
-#elif defined(MODE_MDA) || defined(MODE_VT100)
-					if (first == rw_x || rw_x == rw_stopx - 1)
-						R_DrawLineColumnTextMDA();
-					else
-						R_DrawEmptyColumnTextMDA();
-#else
-					colfunc();
-#endif
+					R_FLATWALL_RECORD2(rw_x, mid, yh);
 
 					fc_rwx = mid;
 				}
@@ -1971,6 +1879,14 @@ void R_RenderSegLoopFlat(void)
 		ceilingclip[rw_x] = cc_rwx;
 		floorclip[rw_x] = fc_rwx;
 	}
+
+	if (midtexture)
+		R_DrawFlatWallTier(rowx1, rowx2, wallrowyl, wallrowyh, wallrowcol);
+	else
+	{
+		R_DrawFlatWallTier(rowx1, rowx2, wallrowyl, wallrowyh, wallrowcol);
+		R_DrawFlatWallTier(rowx1, rowx2, wallrow2yl, wallrow2yh, wallrowcol);
+	}
 }
 
 void R_RenderSegLoopFlatter(void)
@@ -1994,9 +1910,8 @@ void R_RenderSegLoopFlatter(void)
 
 	byte *firstPixel;
 
-#if defined(MODE_MDA) || defined(MODE_VT100)
-	int first = rw_x;
-#endif
+	int rowx1 = rw_x;
+	int rowx2 = rw_stopx - 1;
 
 	// texturecolumn = 0;				// shut up compiler warning
 
@@ -2088,46 +2003,15 @@ void R_RenderSegLoopFlatter(void)
 		{
 			if (yl > yh)
 			{
+				R_FLATWALL_EMPTY(rw_x);
 				cc_rwx = viewheight;
 				fc_rwx = -1;
 			}
 			else
 			{
 				// single sided line
-				dc_yl = yl;
-				dc_yh = yh;
 
-#if defined(MODE_CGA16) || defined(MODE_CVB)
-				if (detailshift == DETAIL_HIGH)
-				{
-					if ((dc_x & 1) == 0)
-						colfunc();
-				}
-				else
-					colfunc();
-#elif defined(MODE_CGA512)
-				switch (detailshift)
-				{
-				case DETAIL_HIGH:
-					if ((dc_x & 3) == 0)
-						colfunc();
-					break;
-				case DETAIL_LOW:
-					if ((dc_x & 1) == 0)
-						colfunc();
-					break;
-				default:
-					colfunc();
-					break;
-				}
-#elif defined(MODE_MDA) || defined(MODE_VT100)
-				if (first == rw_x || rw_x == rw_stopx - 1)
-					R_DrawLineColumnTextMDA();
-				else
-					R_DrawEmptyColumnTextMDA();
-#else
-				colfunc();
-#endif
+				R_FLATWALL_RECORD(rw_x, yl, yh);
 
 				cc_rwx = viewheight;
 				fc_rwx = -1;
@@ -2147,44 +2031,13 @@ void R_RenderSegLoopFlatter(void)
 
 				if (mid < yl)
 				{
+					R_FLATWALL_EMPTY(rw_x);
 					cc_rwx = yl - 1;
 				}
 				else
 				{
-					dc_yl = yl;
-					dc_yh = mid;
 
-#if defined(MODE_CGA16) || defined(MODE_CVB)
-					if (detailshift == DETAIL_HIGH)
-					{
-						if ((dc_x & 1) == 0)
-							colfunc();
-					}
-					else
-						colfunc();
-#elif defined(MODE_CGA512)
-					switch (detailshift)
-					{
-					case DETAIL_HIGH:
-						if ((dc_x & 3) == 0)
-							colfunc();
-						break;
-					case DETAIL_LOW:
-						if ((dc_x & 1) == 0)
-							colfunc();
-						break;
-					default:
-						colfunc();
-						break;
-					}
-#elif defined(MODE_MDA) || defined(MODE_VT100)
-					if (first == rw_x || rw_x == rw_stopx - 1)
-						R_DrawLineColumnTextMDA();
-					else
-						R_DrawEmptyColumnTextMDA();
-#else
-					colfunc();
-#endif
+					R_FLATWALL_RECORD(rw_x, yl, mid);
 
 					cc_rwx = mid;
 				}
@@ -2208,44 +2061,13 @@ void R_RenderSegLoopFlatter(void)
 
 				if (mid > yh)
 				{
+					R_FLATWALL_EMPTY2(rw_x);
 					fc_rwx = yh + 1;
 				}
 				else
 				{
-					dc_yl = mid;
-					dc_yh = yh;
 
-#if defined(MODE_CGA16) || defined(MODE_CVB)
-					if (detailshift == DETAIL_HIGH)
-					{
-						if ((dc_x & 1) == 0)
-							colfunc();
-					}
-					else
-						colfunc();
-#elif defined(MODE_CGA512)
-					switch (detailshift)
-					{
-					case DETAIL_HIGH:
-						if ((dc_x & 3) == 0)
-							colfunc();
-						break;
-					case DETAIL_LOW:
-						if ((dc_x & 1) == 0)
-							colfunc();
-						break;
-					default:
-						colfunc();
-						break;
-					}
-#elif defined(MODE_MDA) || defined(MODE_VT100)
-					if (first == rw_x || rw_x == rw_stopx - 1)
-						R_DrawLineColumnTextMDA();
-					else
-						R_DrawEmptyColumnTextMDA();
-#else
-					colfunc();
-#endif
+					R_FLATWALL_RECORD2(rw_x, mid, yh);
 
 					fc_rwx = mid;
 				}
@@ -2270,6 +2092,14 @@ void R_RenderSegLoopFlatter(void)
 
 		ceilingclip[rw_x] = cc_rwx;
 		floorclip[rw_x] = fc_rwx;
+	}
+
+	if (midtexture)
+		R_DrawFlatWallTier(rowx1, rowx2, wallrowyl, wallrowyh, NULL);
+	else
+	{
+		R_DrawFlatWallTier(rowx1, rowx2, wallrowyl, wallrowyh, NULL);
+		R_DrawFlatWallTier(rowx1, rowx2, wallrow2yl, wallrow2yh, NULL);
 	}
 }
 

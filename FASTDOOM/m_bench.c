@@ -120,6 +120,10 @@ void M_ChangeValueFile(unsigned int position, char *token)
             wallRender = WALL_FLAT;
         if (M_CheckValue(token, "flatter"))
             wallRender = WALL_FLATTER;
+        if (M_CheckValue(token, "flatrows"))
+            wallRender = WALL_FLAT_ROWS;
+        if (M_CheckValue(token, "flatterrows"))
+            wallRender = WALL_FLATTER_ROWS;
 
         R_SetViewSize(screenblocks, detailLevel);
         break;
