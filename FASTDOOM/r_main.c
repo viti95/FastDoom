@@ -3208,6 +3208,11 @@ void R_ExecuteSetViewSize(void)
 
     R_PatchCode();
 
+    // the renderer of the walls of the view, row by row with the flat
+    // span renderer of the mode or column by column, with the render
+    // functions of the mode already set up
+    R_SetupFlatWall();
+
     // I put this here so I could see which functions were having rendering
     // problems. Leaving it here for demonstration purposes.
 /*#if (DEBUG_ENABLED == 1)

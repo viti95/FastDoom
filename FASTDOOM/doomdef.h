@@ -385,14 +385,15 @@ typedef enum
 } wallrender_t;
 
 // The seg loops of the modes that draw the flat walls row by row are the
-// loops of the matching flat walls, the rows are picked inside
-// R_DrawFlatWallTier: FLAT ROWS uses the flat loop, FLATTER ROWS the
-// flatter one.
+// loops of the matching flat walls, R_SetupFlatWall of r_flatwall.c
+// turns the rows on for them: FLAT ROWS uses the flat loop, FLATTER
+// ROWS the flatter one.
 #define WALLRENDER_FUNC(r) ((r) < WALL_FLAT_ROWS ? (r) : ((r) - WALL_FLAT_ROWS + WALL_FLAT))
 
 // How the flat wall renderer of r_flatwall.c paints a wall: column by
-// column, row by row (span), or letting its cost model choose per wall.
-// The WALL_*_ROWS rendering uses AUTO, the others OFF.
+// column (FLATWALL_COLS) or row by row, one span per row
+// (FLATWALL_AUTO, which the WALL_*_ROWS rendering uses, and
+// FLATWALL_ROWS, kept for a renderer choosing the rows per wall).
 typedef enum
 {
     FLATWALL_COLS,

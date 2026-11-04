@@ -1732,6 +1732,13 @@ void R_RenderSegLoopFlat(void)
 	color = *(firstPixel + 3);
 	dc_color = color;
 
+	// the wall of the seg is painted row by row: the sweep of the
+	// rows opens the spans of its rows and paints them as the
+	// columns of the loop are walked. The color of the wall changes
+	// with the light levels the seg crosses, so every column lights
+	// its own color
+	R_FlatWallStart(1);
+
 	for (; rw_x < rw_stopx; rw_x++)
 	{
 		cc_rwx = ceilingclip[rw_x];
@@ -1800,49 +1807,38 @@ void R_RenderSegLoopFlat(void)
 			dc_x = rw_x;
 		}
 
-		// draw the wall tiers
+		// draw the wall tiers: every column of the wall goes to the
+		// sweep of the rows, which paints the spans of the rows
+		// that the column closes. A column of a tier whose top
+		// row is below its bottom row has no wall, and it closes
+		// the rows of the wall it does not reach.
 		if (midtexture)
 		{
-			if (yl > yh)
-			{
-				R_FLATWALL_EMPTY(rw_x);
-				cc_rwx = viewheight;
-				fc_rwx = -1;
-			}
-			else
-			{
-				// single sided line
+			// single sided line, the wall of the whole column
+			R_FlatWallColumn1(rw_x, yl, yh);
 
-				R_FLATWALL_RECORD(rw_x, yl, yh);
-
-				cc_rwx = viewheight;
-				fc_rwx = -1;
-			}
+			cc_rwx = viewheight;
+			fc_rwx = -1;
 		}
 		else
 		{
 			// two sided line
 			if (toptexture)
 			{
-				// top wall
+				// top wall, from the top of the seg down to
+				// the opening: mid < yl leaves no wall
 				mid = pixhigh >> HEIGHTBITS;
 				pixhigh -= pixhighstep;
 
 				if (mid >= fc_rwx)
 					mid = fc_rwx - 1;
 
+				R_FlatWallColumn1(rw_x, yl, mid);
+
 				if (mid < yl)
-				{
-					R_FLATWALL_EMPTY(rw_x);
 					cc_rwx = yl - 1;
-				}
 				else
-				{
-
-					R_FLATWALL_RECORD(rw_x, yl, mid);
-
 					cc_rwx = mid;
-				}
 			}
 			else
 			{
@@ -1853,7 +1849,8 @@ void R_RenderSegLoopFlat(void)
 
 			if (bottomtexture)
 			{
-				// bottom wall
+				// bottom wall, from the opening down to the
+				// bottom of the seg: mid > yh leaves no wall
 				mid = (pixlow + HEIGHTUNIT - 1) >> HEIGHTBITS;
 				pixlow -= pixlowstep;
 
@@ -1861,18 +1858,12 @@ void R_RenderSegLoopFlat(void)
 				if (mid <= cc_rwx)
 					mid = cc_rwx + 1;
 
+				R_FlatWallColumn2(rw_x, mid, yh);
+
 				if (mid > yh)
-				{
-					R_FLATWALL_EMPTY2(rw_x);
 					fc_rwx = yh + 1;
-				}
 				else
-				{
-
-					R_FLATWALL_RECORD2(rw_x, mid, yh);
-
 					fc_rwx = mid;
-				}
 			}
 			else
 			{
@@ -1897,13 +1888,13 @@ void R_RenderSegLoopFlat(void)
 		floorclip[rw_x] = fc_rwx;
 	}
 
-	if (midtexture)
-		R_DrawFlatWallTier(rowx1, rowx2, wallrowyl, wallrowyh, wallrowcol);
-	else
-	{
-		R_DrawFlatWallTier(rowx1, rowx2, wallrowyl, wallrowyh, wallrowcol);
-		R_DrawFlatWallTier(rowx1, rowx2, wallrow2yl, wallrow2yh, wallrowcol);
-	}
+	// the tiers of the wall are closed: the spans of their rows were
+	// painted as the columns were walked, only the spans still open
+	// at the last column of the seg are painted here
+	R_FlatWallFinish1(rowx1, rowx2);
+
+	if (!midtexture)
+		R_FlatWallFinish2(rowx1, rowx2);
 }
 
 void R_RenderSegLoopFlatter(void)
@@ -1956,6 +1947,11 @@ void R_RenderSegLoopFlatter(void)
 	}
 
 	dc_color = *(firstPixel + 3);
+
+	// the wall of the seg is painted row by row, all of it with the
+	// color of the seg left in dc_color: the sweep does not need the
+	// colors of the columns
+	R_FlatWallStart(0);
 
 	for (; rw_x < rw_stopx; rw_x++)
 	{
@@ -2015,49 +2011,38 @@ void R_RenderSegLoopFlatter(void)
 			dc_x = rw_x;
 		}
 
-		// draw the wall tiers
+		// draw the wall tiers: every column of the wall goes to the
+		// sweep of the rows, which paints the spans of the rows
+		// that the column closes. A column of a tier whose top
+		// row is below its bottom row has no wall, and it closes
+		// the rows of the wall it does not reach.
 		if (midtexture)
 		{
-			if (yl > yh)
-			{
-				R_FLATWALL_EMPTY(rw_x);
-				cc_rwx = viewheight;
-				fc_rwx = -1;
-			}
-			else
-			{
-				// single sided line
+			// single sided line, the wall of the whole column
+			R_FlatWallColumn1(rw_x, yl, yh);
 
-				R_FLATWALL_RECORD(rw_x, yl, yh);
-
-				cc_rwx = viewheight;
-				fc_rwx = -1;
-			}
+			cc_rwx = viewheight;
+			fc_rwx = -1;
 		}
 		else
 		{
 			// two sided line
 			if (toptexture)
 			{
-				// top wall
+				// top wall, from the top of the seg down to
+				// the opening: mid < yl leaves no wall
 				mid = pixhigh >> HEIGHTBITS;
 				pixhigh -= pixhighstep;
 
 				if (mid >= fc_rwx)
 					mid = fc_rwx - 1;
 
+				R_FlatWallColumn1(rw_x, yl, mid);
+
 				if (mid < yl)
-				{
-					R_FLATWALL_EMPTY(rw_x);
 					cc_rwx = yl - 1;
-				}
 				else
-				{
-
-					R_FLATWALL_RECORD(rw_x, yl, mid);
-
 					cc_rwx = mid;
-				}
 			}
 			else
 			{
@@ -2068,7 +2053,8 @@ void R_RenderSegLoopFlatter(void)
 
 			if (bottomtexture)
 			{
-				// bottom wall
+				// bottom wall, from the opening down to the
+				// bottom of the seg: mid > yh leaves no wall
 				mid = (pixlow + HEIGHTUNIT - 1) >> HEIGHTBITS;
 				pixlow -= pixlowstep;
 
@@ -2076,18 +2062,12 @@ void R_RenderSegLoopFlatter(void)
 				if (mid <= cc_rwx)
 					mid = cc_rwx + 1;
 
+				R_FlatWallColumn2(rw_x, mid, yh);
+
 				if (mid > yh)
-				{
-					R_FLATWALL_EMPTY2(rw_x);
 					fc_rwx = yh + 1;
-				}
 				else
-				{
-
-					R_FLATWALL_RECORD2(rw_x, mid, yh);
-
 					fc_rwx = mid;
-				}
 			}
 			else
 			{
@@ -2111,13 +2091,13 @@ void R_RenderSegLoopFlatter(void)
 		floorclip[rw_x] = fc_rwx;
 	}
 
-	if (midtexture)
-		R_DrawFlatWallTier(rowx1, rowx2, wallrowyl, wallrowyh, NULL);
-	else
-	{
-		R_DrawFlatWallTier(rowx1, rowx2, wallrowyl, wallrowyh, NULL);
-		R_DrawFlatWallTier(rowx1, rowx2, wallrow2yl, wallrow2yh, NULL);
-	}
+	// the tiers of the wall are closed: the spans of their rows were
+	// painted as the columns were walked, only the spans still open
+	// at the last column of the seg are painted here
+	R_FlatWallFinish1(rowx1, rowx2);
+
+	if (!midtexture)
+		R_FlatWallFinish2(rowx1, rowx2);
 }
 
 //
