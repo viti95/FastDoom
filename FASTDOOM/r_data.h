@@ -50,6 +50,16 @@ extern short **texturecolumnlump;
 extern unsigned short **texturecolumnofs;
 extern byte **texturecomposite;
 
+// Per texture: 0 not looked at yet, 1 the columns of the texture are
+// not single posts of its whole height, 2 they are, see
+// R_TextureIsSolidMasked.
+extern byte *texturemaskedsolid;
+
+// Whether every column of the texture is a single post going from its
+// top to its bottom, so a wall of it has no gaps and is one span per
+// column. Cached, R_InitTextures clears the cache.
+int R_TextureIsSolidMasked(int texnum);
+
 extern byte *tintmap;
 
 #endif

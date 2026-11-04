@@ -382,6 +382,11 @@ void R_RenderMaskedSegRangeFlat(drawseg_t *ds,
 	}
 		
 
+	// the windows of the row modes are painted row by row, the walls
+	// of the textures with gaps in their columns keep the columns
+	if (R_DrawMaskedWallRows(ds, texnum, x1, x2, color, 1))
+		return;
+
 	dc_x = x1;
 	do
 	{
@@ -579,6 +584,10 @@ void R_RenderMaskedSegRangeFlatter(drawseg_t *ds,
 		dc_texturemid = dc_texturemid - viewz;
 	}
 	dc_texturemid += curline->sidedef->rowoffset;
+
+	// see R_RenderMaskedSegRangeFlat
+	if (R_DrawMaskedWallRows(ds, texnum, x1, x2, color, 0))
+		return;
 
 	dc_x = x1;
 	do
@@ -984,6 +993,10 @@ void R_RenderMaskedSegRange2Flat(drawseg_t *ds)
 		dc_color = dc_colormap[color];
 	}
 
+	// see R_RenderMaskedSegRangeFlat
+	if (R_DrawMaskedWallRows(ds, texnum, ds->x1, ds->x2, color, 1))
+		return;
+
 	dc_x = ds->x1;
 	do
 	{
@@ -1180,6 +1193,10 @@ void R_RenderMaskedSegRange2Flatter(drawseg_t *ds)
 		dc_texturemid = dc_texturemid - viewz;
 	}
 	dc_texturemid += curline->sidedef->rowoffset;
+
+	// see R_RenderMaskedSegRangeFlat
+	if (R_DrawMaskedWallRows(ds, texnum, ds->x1, ds->x2, color, 0))
+		return;
 
 	dc_x = ds->x1;
 	do

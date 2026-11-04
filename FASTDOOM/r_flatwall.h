@@ -20,6 +20,7 @@
 #define __R_FLATWALL__
 
 #include "options.h"
+#include "r_defs.h"
 
 //
 // The flat wall modes paint the walls with a single color per column,
@@ -94,6 +95,32 @@ void R_DrawFlatWallColumnsCol(int x1,
 			      const short *yl,
 			      const short *yh,
 			      const byte *col);
+
+//
+// The masked mid walls (the windows, the fences and the like) drawn by
+// the seg loops of the flat walls are a single color per column, as
+// every other wall of the flat modes, so the rows can paint them too.
+//
+// A masked texture is drawn with several posts per column, and the gaps
+// between the posts must stay empty, which the rows of a single span
+// would paint. The rows are exact for the textures whose columns are a
+// single post of the whole height of the texture, and the rest of the
+// textures keep the columns.
+//
+
+// Paints the masked mid wall of a flat seg loop with rows: the
+// drawseg ds, the columns x1 to x2 of it, the mid texture texnum, the
+// color of the texture and lit when its columns are lit one by one.
+// Returns true when the rows painted the wall, so the caller can skip
+// its column loop. The clips (mfloorclip, mceilingclip), the position
+// of the texture (dc_texturemid) and the lighting (walllights) of the
+// caller must be set up, as for its column loop.
+int R_DrawMaskedWallRows(drawseg_t *ds,
+			 int texnum,
+			 int x1,
+			 int x2,
+			 byte color,
+			 int lit);
 
 // Compares the cost of the two ways of painting the tier.
 int R_FlatWallUseRows(int x1, int x2, const short *yl, const short *yh);
