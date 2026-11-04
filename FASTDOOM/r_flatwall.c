@@ -68,8 +68,18 @@ int flatwallcolscale = 1;
 // Text modes use the 16 color attribute lookuptable, which is what the
 // flat wall column renderers of those modes use.
 //
+// The span renderers of the planar modes read the color of the row with
+// a lookup that overwrites the low byte of the pointer of the colormap
+// with the color, which only reads the table right when the table
+// starts at a multiple of 256, as the light tables of the modes are
+// (see I_ProcessPalette of i_cgacvb.c, which aligns the lookuptable of
+// the 16 color modes the same way). The compiler does not align an
+// array to 256, so the array is 255 bytes longer than the table and the
+// table starts at the multiple of 256 inside it.
+//
 static byte *flatwallcolormap;
-static byte flatwallbright[256];
+static byte flatwallbright[256 + 255];
+static byte *flatwallbrightmap;
 
 // non zero while the wall of a segment with the color of every column
 // recorded, see R_FlatWallStart
@@ -115,13 +125,16 @@ void R_InitFlatWall(void)
 {
 	int i;
 
+	// the identity table of the walls, at a multiple of 256
+	flatwallbrightmap = (byte *)(((int)flatwallbright + 255) & ~0xff);
+
 	for (i = 0; i < 256; i++)
-		flatwallbright[i] = i;
+		flatwallbrightmap[i] = i;
 
 #if defined(TEXT_MODE)
 	flatwallcolormap = ptrlut16colors;
 #else
-	flatwallcolormap = flatwallbright;
+	flatwallcolormap = flatwallbrightmap;
 #endif
 
 	flatwallmode = FLATWALL_AUTO;
