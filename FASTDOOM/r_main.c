@@ -961,7 +961,6 @@ static void R_SetupT4050Funcs(void)
         break;
     }
     flatwallspanfunc = R_DrawSpanFlatText4050;
-    flatwallmodel = FLATWALL_MODEL_HIGH;
     flatwallcolscale = 1;
 
     if (flatSky)
@@ -1057,7 +1056,6 @@ static void R_SetupT4025Funcs(void)
         break;
     }
     flatwallspanfunc = R_DrawSpanFlatText4025;
-    flatwallmodel = FLATWALL_MODEL_HIGH;
     flatwallcolscale = 1;
 
     if (flatSky)
@@ -1152,7 +1150,6 @@ static void R_SetupT8025Funcs(void)
         break;
     }
     flatwallspanfunc = R_DrawSpanFlatText8025;
-    flatwallmodel = FLATWALL_MODEL_HIGH;
     flatwallcolscale = 1;
 
     if (flatSky)
@@ -1210,7 +1207,6 @@ static void R_SetupMDAFuncs(void)
     // the walls of this mode are outlines of the character cells, they
     // are always drawn by its own column renderer
     flatwallspanfunc = NULL;
-    flatwallmodel = FLATWALL_MODEL_HIGH;
     flatwallcolscale = 1;
 }
 #endif
@@ -1275,7 +1271,6 @@ static void R_SetupT8050Funcs(void)
         break;
     }
     flatwallspanfunc = R_DrawSpanFlatText8050;
-    flatwallmodel = FLATWALL_MODEL_HIGH;
     flatwallcolscale = 1;
 
     if (flatSky)
@@ -1453,7 +1448,6 @@ static void R_SetupVGAFuncs(void)
             break;
         }
         flatwallspanfunc = R_DrawSpanFlat;
-        flatwallmodel = FLATWALL_MODEL_HIGH;
         flatwallcolscale = 1;
 
         if (flatSky)
@@ -1642,7 +1636,6 @@ static void R_SetupVGAFuncs(void)
             break;
         }
         flatwallspanfunc = R_DrawSpanFlatLow;
-        flatwallmodel = FLATWALL_MODEL_LOW;
         flatwallcolscale = 1;
 
         if (flatSky)
@@ -1832,7 +1825,6 @@ static void R_SetupVGAFuncs(void)
             break;
         }
         flatwallspanfunc = R_DrawSpanFlatPotato;
-        flatwallmodel = FLATWALL_MODEL_POTATO;
         flatwallcolscale = 1;
 
         if (flatSky)
@@ -2071,7 +2063,6 @@ static void R_SetupBackbufferFuncs(void)
             break;
         }
         flatwallspanfunc = R_DrawSpanFlatBackbuffer;
-        flatwallmodel = FLATWALL_MODEL_HIGH;
 #if defined(MODE_CGA16) || defined(MODE_CVB)
         // the screen update of the composite modes only keeps half of
         // the columns of the screen, so drawing the other ones is waste
@@ -2286,7 +2277,6 @@ static void R_SetupBackbufferFuncs(void)
             break;
         }
         flatwallspanfunc = R_DrawSpanFlatLowBackbuffer;
-        flatwallmodel = FLATWALL_MODEL_LOW;
 #if defined(MODE_CGA512)
         // half of the columns of the screen are updated
         flatwallcolscale = 2;
@@ -2427,7 +2417,6 @@ static void R_SetupBackbufferFuncs(void)
             break;
         }
         flatwallspanfunc = R_DrawSpanFlatPotatoBackbuffer;
-        flatwallmodel = FLATWALL_MODEL_POTATO;
         flatwallcolscale = 1;
 
         if (flatSky)
@@ -2629,7 +2618,6 @@ static void R_SetupVBE2Funcs(void)
             break;
         }
         flatwallspanfunc = R_DrawSpanFlatVBE2;
-        flatwallmodel = FLATWALL_MODEL_HIGH;
         flatwallcolscale = 1;
 
         if (flatSky)
@@ -2772,7 +2760,6 @@ static void R_SetupVBE2Funcs(void)
             break;
         }
         flatwallspanfunc = R_DrawSpanFlatLowVBE2;
-        flatwallmodel = FLATWALL_MODEL_LOW;
         flatwallcolscale = 1;
 
         if (flatSky)
@@ -2890,7 +2877,6 @@ static void R_SetupVBE2Funcs(void)
             break;
         }
         flatwallspanfunc = R_DrawSpanFlatPotatoVBE2;
-        flatwallmodel = FLATWALL_MODEL_POTATO;
         flatwallcolscale = 1;
 
         if (flatSky)

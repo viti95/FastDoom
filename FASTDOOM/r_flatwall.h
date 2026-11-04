@@ -35,31 +35,23 @@
 // runs of columns of the same color.
 //
 // Every video mode sets the span renderer of its flat walls, and the
-// cost model of R_FlatWallUseRows decides for every wall which of the
-// two ways is cheaper. A mode without a flat span renderer of its own
-// leaves flatwallspanfunc null, and its walls are always drawn with
-// columns.
+// flat wall modes always paint the rows. A mode without a flat span
+// renderer of its own leaves flatwallspanfunc null, and its walls are
+// always drawn with columns.
 //
 
 // Span renderer used for the wall rows, set up per video mode.
 extern void (*flatwallspanfunc)(void);
 
-// Rendering quality in use, selects the cost model of R_FlatWallUseRows.
-extern int flatwallmodel;
-
 // One of FLATWALL_COLS, FLATWALL_AUTO, FLATWALL_ROWS (doomdef.h): the
-// columns only, the cost model, the rows only. R_ExecuteSetViewSize sets it
-// from the wall rendering mode.
+// columns only or the rows only. R_ExecuteSetViewSize sets it from the
+// wall rendering mode.
 extern int flatwallmode;
 
 // How many columns the column renderer draws: the low resolution modes
 // of the CGA composite cards only update every n-th column, so their
 // columns are n times cheaper than they look.
 extern int flatwallcolscale;
-
-#define FLATWALL_MODEL_HIGH 0
-#define FLATWALL_MODEL_LOW 1
-#define FLATWALL_MODEL_POTATO 2
 
 // Geometry of the tier being recorded, per column. A column with
 // yl > yh is not visible.
@@ -79,8 +71,8 @@ void R_FillFlatWallRows(int x1,
 			const short *yh,
 			const byte *col);
 
-// Paints a tier of a wall with the cheapest way for it, the entry
-// point of the seg loops. col may be null when all the columns have
+// Paints a tier of a wall with rows, the entry point of the seg
+// loops. col may be null when all the columns have
 // the color in dc_color.
 void R_DrawFlatWallTier(int x1,
 			int x2,
@@ -122,7 +114,8 @@ int R_DrawMaskedWallRows(drawseg_t *ds,
 			 byte color,
 			 int lit);
 
-// Compares the cost of the two ways of painting the tier.
+// Returns whether the tier is painted with rows: the flat wall modes
+// are, the columns only mode is not.
 int R_FlatWallUseRows(int x1, int x2, const short *yl, const short *yh);
 
 #define R_FLATWALL_RECORD(x, ylval, yhval) \

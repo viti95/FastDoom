@@ -60,13 +60,9 @@ void (*flatwallspanfunc)(void);
 static byte *flatwallcolormap;
 static byte flatwallbright[256];
 
-// flatwallmodel is set by the video mode setup and selects the cost
-// model of the row renderer, see the table below.
-int flatwallmodel;
-
 // flatwallmode comes from the wall rendering mode of the setup menu,
-// see flatwallmode_t: FLATWALL_COLS only draws columns, FLATWALL_AUTO lets the
-// cost model decide and FLATWALL_ROWS only draws rows.
+// see flatwallmode_t: FLATWALL_COLS only draws columns, FLATWALL_AUTO
+// and FLATWALL_ROWS only draw rows.
 int flatwallmode;
 
 // The column renderers of the low resolution CGA modes are called for
@@ -87,7 +83,6 @@ void R_InitFlatWall(void)
 	flatwallcolormap = flatwallbright;
 #endif
 
-	flatwallmodel = FLATWALL_MODEL_HIGH;
 	flatwallmode = FLATWALL_AUTO;
 }
 
@@ -591,109 +586,18 @@ int R_DrawMaskedWallRows(drawseg_t *ds,
 #endif
 }
 
+// The flat wall modes are one color per column, so the rows can paint
+// a wall of one color with the flat span renderers, row by row. These
+// modes only paint the rows, unless the columns only mode was selected,
+// and a mode without a flat span renderer of its own leaves
+// flatwallspanfunc null and keeps the columns.
 //
-// Cost of the two ways of painting a wall, in eigths of a cycle:
-//
-// columns : width * colsetup + pixels * colpix
-// rows    : height * (rowsetup * 8 + width * rowpix) + scan
-//
-// rowsetup / colsetup are the per row / per column setup costs,
-// rowpix / colpix the cost of a single wall pixel and scan the cost of
-// walking the tier (a fixed number of eigths of a cycle per column and
-// per row).
-//
-// The costs depend on the video mode and on the rendering quality, as
-// the pixel writes are of a different size and the span renderers use
-// string operations.
-//
-static const int flatwallcosts[3][4] = {
-#if defined(MODE_Y) || defined(MODE_X) || defined(MODE_Y_HALF)
-	// planar VGA: the columns write one byte per pixel with a stride
-	// of one plane row, the spans write two bytes at a time
-	{30, 22, 8, 16},
-	{30, 22, 4, 14},
-	{26, 15, 6, 4}
-#elif defined(MODE_VBE2_DIRECT)
-	// VBE2 direct: 32 bit writes, the spans use rep stosl
-	{24, 22, 4, 10},
-	{24, 22, 3, 8},
-	{22, 20, 2, 4}
-#elif defined(TEXT_MODE)
-#if defined(MODE_T4050) || defined(MODE_T8025)
-	// interlaced text modes, the spans have to read the cell first
-	{26, 25, 24, 12},
-	{26, 25, 24, 12},
-	{26, 25, 24, 12}
-#else
-	{24, 22, 8, 12},
-	{24, 22, 8, 12},
-	{24, 22, 8, 12}
-#endif
-#else
-	// linear backbuffer modes
-	{22, 20, 6, 10},
-	{22, 20, 4, 8},
-	{20, 18, 3, 4}
-#endif
-};
-
-// Fixed cost of walking the tier, in eigths of a cycle per column and
-// per row.
-#define FLATWALL_SCAN 24
-
 int R_FlatWallUseRows(int x1, int x2, const short *yl, const short *yh)
 {
-	const int *cost;
-	int x;
-	int ymin;
-	int ymax;
-	int pixels;
-	int columns;
-	int width;
-	int height;
-
-	if (flatwallmode != FLATWALL_AUTO)
-		return flatwallmode == FLATWALL_ROWS && flatwallspanfunc;
-
-	// the modes without a flat span renderer always use columns
+	// a mode without a flat span renderer has only the columns
 	if (!flatwallspanfunc)
 		return 0;
 
-	width = x2 - x1 + 1;
-
-	if (width < 4)
-		return 0;
-
-	ymin = 32767;
-	ymax = -32768;
-	pixels = 0;
-
-	for (x = x1; x <= x2; x++)
-	{
-		if (yl[x] > yh[x])
-			continue;
-
-		if (yl[x] < ymin)
-			ymin = yl[x];
-
-		if (yh[x] > ymax)
-			ymax = yh[x];
-
-		pixels += yh[x] - yl[x] + 1;
-	}
-
-	if (ymax < ymin)
-		return 0;
-
-	height = ymax - ymin + 1;
-
-	cost = flatwallcosts[flatwallmodel];
-
-	// the cheap columns of the modes that skip columns
-	pixels /= flatwallcolscale;
-	columns = width / flatwallcolscale;
-
-	return (height * (8 * cost[0] + width * cost[2])
-	    + FLATWALL_SCAN * (width + height)
-	    < pixels * cost[3] + columns * (8 * cost[1]));
+	// the columns only mode draws the columns, the rest draws the rows
+	return flatwallmode != FLATWALL_COLS;
 }
