@@ -114,10 +114,6 @@ int R_DrawMaskedWallRows(drawseg_t *ds,
 			 byte color,
 			 int lit);
 
-// Returns whether the tier is painted with rows: the flat wall modes
-// are, the columns only mode is not.
-int R_FlatWallUseRows(int x1, int x2, const short *yl, const short *yh);
-
 #define R_FLATWALL_RECORD(x, ylval, yhval) \
 	do { \
 		wallrowyl[(x)] = (ylval); \

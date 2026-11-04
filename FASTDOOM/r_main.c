@@ -3047,7 +3047,7 @@ void R_ExecuteSetViewSize(void)
 #endif
 
     // the modes with the WALL_*_ROWS rendering draw the flat walls row
-    // by row where that is cheaper than the columns
+    // by row
     if (wallRender == WALL_FLAT_ROWS || wallRender == WALL_FLATTER_ROWS)
         flatwallmode = FLATWALL_AUTO;
     else

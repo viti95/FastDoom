@@ -333,7 +333,7 @@ static void R_DrawFlatWallTextMDA(int x1, int x2, const short *yl,
 #endif
 
 //
-// Paints a tier of a wall with the cheapest way for it.
+// Paints a tier of a wall with rows, the entry point of the seg loops.
 //
 void R_DrawFlatWallTier(int x1,
 			int x2,
@@ -344,7 +344,9 @@ void R_DrawFlatWallTier(int x1,
 #if defined(MODE_MDA) || defined(MODE_VT100)
 	R_DrawFlatWallTextMDA(x1, x2, yl, yh);
 #else
-	if (R_FlatWallUseRows(x1, x2, yl, yh))
+	// the flat wall modes draw the rows, the columns only mode (and the
+	// modes without a flat span renderer) draw the columns
+	if (flatwallmode != FLATWALL_COLS && flatwallspanfunc)
 		R_FillFlatWallRows(x1, x2, yl, yh, col);
 	else if (col)
 		R_DrawFlatWallColumnsCol(x1, x2, yl, yh, col);
@@ -584,20 +586,4 @@ int R_DrawMaskedWallRows(drawseg_t *ds,
 
 	return 1;
 #endif
-}
-
-// The flat wall modes are one color per column, so the rows can paint
-// a wall of one color with the flat span renderers, row by row. These
-// modes only paint the rows, unless the columns only mode was selected,
-// and a mode without a flat span renderer of its own leaves
-// flatwallspanfunc null and keeps the columns.
-//
-int R_FlatWallUseRows(int x1, int x2, const short *yl, const short *yh)
-{
-	// a mode without a flat span renderer has only the columns
-	if (!flatwallspanfunc)
-		return 0;
-
-	// the columns only mode draws the columns, the rest draws the rows
-	return flatwallmode != FLATWALL_COLS;
 }
