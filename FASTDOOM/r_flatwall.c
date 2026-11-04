@@ -70,12 +70,13 @@ int flatwallcolscale = 1;
 //
 // The span renderers of the planar modes read the color of the row with
 // a lookup that overwrites the low byte of the pointer of the colormap
-// with the color, which only reads the table right when the table
-// starts at a multiple of 256, as the light tables of the modes are
-// (see I_ProcessPalette of i_cgacvb.c, which aligns the lookuptable of
-// the 16 color modes the same way). The compiler does not align an
-// array to 256, so the array is 255 bytes longer than the table and the
-// table starts at the multiple of 256 inside it.
+// with the color, as the light tables of those modes all start at a
+// multiple of 256. The table of the identity is then only read right
+// when it starts at a multiple of 256 too, which the compiler does not
+// do for an array: the array is then 255 bytes longer than the table,
+// and the table starts at the multiple of 256 inside the array (see
+// I_ProcessPalette of i_cgacvb.c, which aligns the lookuptable of the
+// 16 color modes in the same way).
 //
 static byte *flatwallcolormap;
 static byte flatwallbright[256 + 255];
