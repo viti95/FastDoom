@@ -432,7 +432,9 @@ void R_DrawFlatWallColumnsCol(int x1,
 //
 // scale and topscreen are the position of the texture at the column x,
 // height its height in pixels, topclip and botclip the masked clips of
-// the drawseg and viewheight its height in pixels.
+// the drawseg and viewh the height of its view in pixels. The name of
+// that argument is not viewheight, which sizeopt.h turns into a macro
+// of a constant in the text modes.
 //
 // The span is the whole column of the texture, the first post of the
 // column of the post loop of the seg, which covers the column.
@@ -443,7 +445,7 @@ static void R_RecordMaskedWallColumn(int x,
 				     int height,
 				     const short *topclip,
 				     const short *botclip,
-				     int viewheight)
+				     int viewh)
 {
 	int yl;
 	int yh;
@@ -463,7 +465,7 @@ static void R_RecordMaskedWallColumn(int x,
 
 	// a post ending below the bottom of the view is skipped whole
 	// by the seg, its top is not clipped into the view
-	if (yh >= viewheight)
+	if (yh >= viewh)
 	{
 		R_FLATWALL_EMPTY(x);
 		return;
