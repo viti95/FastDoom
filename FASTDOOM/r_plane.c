@@ -33,6 +33,7 @@
 #include "r_local.h"
 #include "r_data.h"
 #include "r_draw.h"
+#include "r_flatwall.h"
 
 #include "std_func.h"
 
@@ -1282,7 +1283,15 @@ void R_DrawSkyFlatPlanar(visplane_t *pl)
     int x;
     byte *source;
 
-    dc_color = 220;
+    // the sky of the view is painted row by row when the mode can, one
+    // span per row, and not column by column as here
+    if (flatskyrows)
+    {
+        R_DrawSkyFlatRows(pl);
+        return;
+    }
+
+    dc_color = SKYFLATCOLOR;
 
     x = pl->minx;
 
@@ -1391,7 +1400,15 @@ void R_DrawSkyFlatPlanarLow(visplane_t *pl)
     int x;
     byte *source;
 
-    dc_color = 220;
+    // the sky of the view is painted row by row when the mode can, one
+    // span per row, and not column by column as here
+    if (flatskyrows)
+    {
+        R_DrawSkyFlatRows(pl);
+        return;
+    }
+
+    dc_color = SKYFLATCOLOR;
 
     // Plane 0
     x = pl->minx;
@@ -1446,7 +1463,17 @@ void R_DrawSkyFlat(visplane_t *pl)
 {
     int x;
 
-    dc_color = 220;
+    // the sky of the view is painted row by row when the mode can, one
+    // span per row, and not column by column as here. The mode of the
+    // MDA never takes the rows: it has no flat span renderer, and its
+    // sky is drawn by its own renderer.
+    if (flatskyrows)
+    {
+        R_DrawSkyFlatRows(pl);
+        return;
+    }
+
+    dc_color = SKYFLATCOLOR;
 
     for (x = pl->minx; x <= pl->maxx; x++)
     {

@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 //
 // DESCRIPTION:
-//	Row (span) rendering of the flat / flatter wall modes.
+//	Row (span) rendering of the flat modes: the walls and the sky.
 //
 
 #include "doomdef.h"
@@ -57,6 +57,7 @@ void (*flatwallspanfunc)(void);
 
 int flatwallmode;
 int flatwallrows;
+int flatskyrows;
 int flatwallcolscale = 1;
 
 //
@@ -81,6 +82,22 @@ int flatwallcolscale = 1;
 static byte *flatwallcolormap;
 static byte flatwallbright[256 + 255];
 static byte *flatwallbrightmap;
+
+#if defined(TEXT_MODE)
+//
+// The sky of the text modes is drawn with a fixed attribute of the
+// cells, and not with a color of the palette translated by the
+// lookuptable of the palette, which changes with the gamma. The map of
+// the sky of the rows is then the identity, with the attribute of the
+// cells of the sky where the color of the flat sky, so the row renderer
+// of the mode writes that attribute for the sky.
+//
+// It must start at a multiple of 256 as flatwallbrightmap, for the same
+// reason.
+//
+static byte flatwallskyattr[256 + 255];
+static byte *flatwallskyattrmap;
+#endif
 
 // non zero while the wall of a segment with the color of every column
 // recorded, see R_FlatWallStart
@@ -122,6 +139,10 @@ typedef struct
 static flatwallsweep_t flatwallsweep;
 static flatwallsweep_t flatwallsweep2;
 
+// the sweep of the sky, of its own: the sky of a plane is painted on
+// its own, with no seg opening it as the walls
+static flatwallsweep_t flatskysweep;
+
 void R_InitFlatWall(void)
 {
 	int i;
@@ -133,6 +154,12 @@ void R_InitFlatWall(void)
 		flatwallbrightmap[i] = i;
 
 #if defined(TEXT_MODE)
+	// the map of the sky of the rows of the text modes
+	flatwallskyattrmap = (byte *)(((int)flatwallskyattr + 255) & ~0xff);
+	for (i = 0; i < 256; i++)
+		flatwallskyattrmap[i] = i;
+	flatwallskyattrmap[SKYFLATCOLOR] = SKYTEXTATTR;
+
 	flatwallcolormap = ptrlut16colors;
 #else
 	flatwallcolormap = flatwallbrightmap;
@@ -140,16 +167,27 @@ void R_InitFlatWall(void)
 
 	flatwallmode = FLATWALL_AUTO;
 	flatwallrows = 0;
+	flatskyrows = 0;
 }
 
 void R_SetupFlatWall(void)
 {
 	// the walls are painted row by row with the flat span renderer of
 	// the mode, when the mode has one and the walls of the setup menu
-	// are set to the row renderer. The modes of the MDA and of the
-	// VT100 have no flat span renderer: their walls are outlines of
-	// the character cells, drawn by their own column renderer.
+	// are set to the row renderer. The MDA has no flat span renderer,
+	// and the walls of the MDA and of the VT100 are outlines of the
+	// character cells, drawn by their own seg loop: those modes never
+	// take the rows.
 	flatwallrows = flatwallspanfunc && flatwallmode != FLATWALL_COLS;
+}
+
+void R_SetupFlatSky(void)
+{
+	// the sky is painted row by row when it is set to the flat sky with
+	// the row renderer and the mode has a flat span renderer. The mode
+	// of the MDA has none: the sky of it is drawn by its own column
+	// renderer, as its walls.
+	flatskyrows = skyRender == SKY_FLAT_ROWS && flatwallspanfunc;
 }
 
 //
@@ -397,6 +435,53 @@ void R_FlatWallFinish2(int x1, int x2)
 	}
 
 	R_FlatWallDrawColumns(wallrow2yl, wallrow2yh, x1, x2);
+}
+
+//
+// The sky of the flat sky modes is one color, and the sky of every
+// column of the sky plane is a range of rows: the sky of a row is then
+// one span of that color, so the same sweep of the rows of the walls
+// paints the plane, with one span per row of the sky.
+//
+// The column renderers of the sky pay the work of a column per column
+// of the sky of the view: the planar ones set the map mask of the plane
+// of the pixel of the column on every column, and the others walk the
+// rows of one column at a time. The sweep walks every column once to
+// open and to close its rows, and paints one span per row, which is the
+// work of the rows of the plane and no more.
+//
+void R_DrawSkyFlatRows(visplane_t *pl)
+{
+	int x;
+
+	dc_color = SKYFLATCOLOR;
+
+#if defined(TEXT_MODE)
+	// the sky of the text modes keeps its fixed attribute of the
+	// cells: the map of the sky gives it for the color of the flat sky
+	ds_colormap = (lighttable_t *)flatwallskyattrmap;
+#else
+	// the span renderers translate the color of the rows with
+	// ds_colormap, and the color of the sky is a color of the palette
+	// to write as it is: the sky is painted with the identity colormap
+	// of the walls
+	ds_colormap = (lighttable_t *)flatwallcolormap;
+#endif
+
+	flatskysweep.lo = 1;
+	flatskysweep.hi = 0;
+	flatskysweep.color = -1;
+
+	// a column of the plane without sky has top over bottom, which
+	// the sweep takes for a column that is not visible
+	for (x = pl->minx; x <= pl->maxx; x++)
+		R_FlatWallSweepColumnSweep(&flatskysweep, x,
+					   pl->top[x], pl->bottom[x]);
+
+	// the spans of the rows the last column of the plane reaches end
+	// with that column
+	R_FlatWallSweepRows(&flatskysweep, flatskysweep.lo, flatskysweep.hi,
+			    pl->maxx);
 }
 
 //

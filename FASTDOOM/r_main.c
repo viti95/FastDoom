@@ -963,7 +963,7 @@ static void R_SetupT4050Funcs(void)
     flatwallspanfunc = R_DrawSpanFlatText4050;
     flatwallcolscale = 1;
 
-    if (flatSky)
+    if (skyRender != SKY_FULL)
     {
         drawSky = R_DrawSkyFlat;
         skyfunc = R_DrawSkyFlatText4050;
@@ -1058,7 +1058,7 @@ static void R_SetupT4025Funcs(void)
     flatwallspanfunc = R_DrawSpanFlatText4025;
     flatwallcolscale = 1;
 
-    if (flatSky)
+    if (skyRender != SKY_FULL)
     {
         drawSky = R_DrawSkyFlat;
         skyfunc = R_DrawSkyFlatText4025;
@@ -1152,7 +1152,7 @@ static void R_SetupT8025Funcs(void)
     flatwallspanfunc = R_DrawSpanFlatText8025;
     flatwallcolscale = 1;
 
-    if (flatSky)
+    if (skyRender != SKY_FULL)
     {
         drawSky = R_DrawSkyFlat;
         skyfunc = R_DrawSkyFlatText8025;
@@ -1273,7 +1273,7 @@ static void R_SetupT8050Funcs(void)
     flatwallspanfunc = R_DrawSpanFlatText8050;
     flatwallcolscale = 1;
 
-    if (flatSky)
+    if (skyRender != SKY_FULL)
     {
         drawSky = R_DrawSkyFlat;
         skyfunc = R_DrawSkyFlatText8050;
@@ -1450,7 +1450,7 @@ static void R_SetupVGAFuncs(void)
         flatwallspanfunc = R_DrawSpanFlat;
         flatwallcolscale = 1;
 
-        if (flatSky)
+        if (skyRender != SKY_FULL)
         {
             drawSky = R_DrawSkyFlatPlanar;
             skyfunc = R_DrawColumnPlaneFlat;
@@ -1638,7 +1638,7 @@ static void R_SetupVGAFuncs(void)
         flatwallspanfunc = R_DrawSpanFlatLow;
         flatwallcolscale = 1;
 
-        if (flatSky)
+        if (skyRender != SKY_FULL)
         {
             drawSky = R_DrawSkyFlatPlanarLow;
             skyfunc = R_DrawColumnPlaneFlatLow;
@@ -1827,7 +1827,7 @@ static void R_SetupVGAFuncs(void)
         flatwallspanfunc = R_DrawSpanFlatPotato;
         flatwallcolscale = 1;
 
-        if (flatSky)
+        if (skyRender != SKY_FULL)
         {
             drawSky = R_DrawSkyFlat;
             skyfunc = R_DrawColumnFlatPotato;
@@ -2073,7 +2073,7 @@ static void R_SetupBackbufferFuncs(void)
         flatwallcolscale = 1;
 #endif
 
-        if (flatSky)
+        if (skyRender != SKY_FULL)
         {
             drawSky = R_DrawSkyFlat;
             skyfunc = R_DrawColumnBackbufferFlat;
@@ -2284,7 +2284,7 @@ static void R_SetupBackbufferFuncs(void)
         flatwallcolscale = 1;
 #endif
 
-        if (flatSky)
+        if (skyRender != SKY_FULL)
         {
             drawSky = R_DrawSkyFlat;
             skyfunc = R_DrawColumnLowBackbufferFlat;
@@ -2419,7 +2419,7 @@ static void R_SetupBackbufferFuncs(void)
         flatwallspanfunc = R_DrawSpanFlatPotatoBackbuffer;
         flatwallcolscale = 1;
 
-        if (flatSky)
+        if (skyRender != SKY_FULL)
         {
             drawSky = R_DrawSkyFlat;
             skyfunc = R_DrawColumnPotatoBackbufferFlat;
@@ -2620,7 +2620,7 @@ static void R_SetupVBE2Funcs(void)
         flatwallspanfunc = R_DrawSpanFlatVBE2;
         flatwallcolscale = 1;
 
-        if (flatSky)
+        if (skyRender != SKY_FULL)
         {
             drawSky = R_DrawSkyFlat;
             skyfunc = R_DrawColumnVBE2Flat;
@@ -2762,7 +2762,7 @@ static void R_SetupVBE2Funcs(void)
         flatwallspanfunc = R_DrawSpanFlatLowVBE2;
         flatwallcolscale = 1;
 
-        if (flatSky)
+        if (skyRender != SKY_FULL)
         {
             drawSky = R_DrawSkyFlat;
             skyfunc = R_DrawColumnLowVBE2Flat;
@@ -2879,7 +2879,7 @@ static void R_SetupVBE2Funcs(void)
         flatwallspanfunc = R_DrawSpanFlatPotatoVBE2;
         flatwallcolscale = 1;
 
-        if (flatSky)
+        if (skyRender != SKY_FULL)
         {
             drawSky = R_DrawSkyFlat;
             skyfunc = R_DrawColumnPotatoVBE2Flat;
@@ -3208,10 +3208,11 @@ void R_ExecuteSetViewSize(void)
 
     R_PatchCode();
 
-    // the renderer of the walls of the view, row by row with the flat
-    // span renderer of the mode or column by column, with the render
-    // functions of the mode already set up
+    // the renderer of the walls and of the sky of the view, row by row
+    // with the flat span renderer of the mode or column by column, with
+    // the render functions of the mode already set up
     R_SetupFlatWall();
+    R_SetupFlatSky();
 
     // I put this here so I could see which functions were having rendering
     // problems. Leaving it here for demonstration purposes.
