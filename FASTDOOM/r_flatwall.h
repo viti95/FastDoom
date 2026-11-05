@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 //
 // DESCRIPTION:
-//	Row (span) rendering of the flat / flatter wall modes.
+//	Row (span) rendering of the flat modes: the walls and the sky.
 //
 
 #ifndef __R_FLATWALL__
@@ -65,6 +65,11 @@ extern int flatwallmode;
 // from flatwallmode and flatwallspanfunc, once per view.
 extern int flatwallrows;
 
+// Non zero when the flat sky is painted row by row, zero when it is
+// painted column by column. R_ExecuteSetViewSize sets it from the sky
+// rendering mode and flatwallspanfunc, once per view.
+extern int flatskyrows;
+
 // How many columns the column renderer draws: the low resolution modes
 // of the CGA composite cards only update every n-th column, so their
 // columns are n times cheaper than they look.
@@ -76,6 +81,33 @@ void R_InitFlatWall(void);
 // by column. Called by R_ExecuteSetViewSize once the render functions
 // of the video mode are set up.
 void R_SetupFlatWall(void);
+
+//
+// The sky of the flat sky modes is one color, so the sky of every
+// column of the sky plane is a range of rows and the sky of every row
+// is one span of that color: the sky is painted with the same sweep of
+// the rows as the walls, with one span per row of the plane.
+//
+// The sweep is cheaper than the column renderers of the sky, which pay
+// the work of a column per column of the sky of the view: the planar
+// modes set the map mask of the plane of the pixel of the column on
+// every column, and the renderers of the other modes walk the rows of
+// one column at a time. The sweep walks every column once to open and
+// to close its rows, and paints one span per row of the sky.
+//
+
+// Chooses the renderer of the sky of the view, row by row or column by
+// column, the same way as R_SetupFlatWall does with the walls. The mode
+// without a flat span renderer (the MDA) keeps its own column renderer
+// of the sky. Called by R_ExecuteSetViewSize once the render functions
+// of the video mode are set up.
+void R_SetupFlatSky(void);
+
+// Paints the sky plane pl row by row, one span per row, with the flat
+// span renderer of the mode. The flat sky renderers of r_plane.c call
+// it when flatskyrows is set, and their own loops paint the columns
+// when it is not.
+void R_DrawSkyFlatRows(visplane_t *pl);
 
 //
 // The wall of a segment is made of up to two tiers: the single sided

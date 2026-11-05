@@ -402,6 +402,19 @@ typedef enum
     NUM_FLATWALLMODES
 } flatwallmode_t;
 
+// How the sky is drawn: the texture of the sky of Doom, one flat color
+// drawn column by column, and the same flat color drawn row by row,
+// one span per row, where that is cheaper (see R_DrawSkyFlatRows of
+// r_flatwall.c). The modes without a flat span renderer of their own
+// (the MDA and the VT100) draw the columns for both flat modes.
+typedef enum
+{
+    SKY_FULL,
+    SKY_FLAT,
+    SKY_FLAT_ROWS,
+    NUM_SKYRENDER
+} skyrender_t;
+
 typedef enum
 {
     SPRITE_NORMAL,

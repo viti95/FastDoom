@@ -1289,6 +1289,7 @@ void M_DrawOptions(void)
     defined(MODE_T4025) || defined(MODE_T4050) || defined(MODE_COLOR_MDA)
 static char *const renderdetailnames[] = { "FULL", "FLAT", "FLATTER" };
 static char *const wallrendernames[] = { "FULL", "FLAT", "FLATTER", "FLAT ROWS", "FLATTER ROWS" };
+static char *const skynames[] = { "FULL", "FLAT", "FLAT ROWS" };
 static char *const detaillevelnames[] = { "HIGH", "LOW", "POTATO" };
 static char *const invisiblenames[] = { "FUZZY", "FLAT", "FLAT SATURN", "SATURN", "TRANSLUCENT" };
 static char *const fpsnames[] = { "OFF", "SCREEN", "DEBUG CARD 2N", "DEBUG CARD 4N", "SCREEN + DC2N", "SCREEN + DC4N" };
@@ -1316,7 +1317,7 @@ void M_DrawDisplayItem(int item, int position)
     case columns: label = "WALL RENDERING:"; value = wallrendernames[wallRender]; break;
     case sprites: label = "SPRITE RENDERING:"; value = renderdetailnames[spriteRender]; break;
     case psprite: label = "PLAYER RENDERING:"; value = renderdetailnames[pspriteRender]; break;
-    case sky: label = "SKY RENDERING:"; value = flatSky ? "FLAT" : "FULL"; break;
+    case sky: label = "SKY RENDERING:"; value = skynames[skyRender]; break;
     case invisible: label = "INVISIBLE RENDERING:"; value = invisiblenames[invisibleRender]; break;
     case showfps: label = "SHOW FPS:"; value = fpsnames[showFPS]; break;
     case automaprt: label = "AUTOMAP UPDATE:"; value = automapRT ? "ON" : "OFF"; break;
@@ -1367,7 +1368,7 @@ void M_DrawDisplayItem(int item, int position)
         case columns: label = "WALL RENDERING:"; value = wallrendernames[wallRender]; break;
         case sprites: label = "SPRITE RENDERING:"; value = renderdetailnames[spriteRender]; break;
         case psprite: label = "PLAYER RENDERING:"; value = renderdetailnames[pspriteRender]; break;
-        case sky: label = "SKY RENDERING:"; value = flatSky ? "FLAT" : "FULL"; break;
+        case sky: label = "SKY RENDERING:"; value = skynames[skyRender]; break;
         case invisible: label = "INVISIBLE RENDERING:"; value = invisiblenames[invisibleRender]; break;
         case showfps: label = "SHOW FPS:"; value = fpsnames[showFPS]; break;
         case automaprt: label = "AUTOMAP UPDATE:"; value = automapRT ? "ON" : "OFF"; break;
@@ -1614,7 +1615,7 @@ void M_ChangeVsync(int choice)
 
 void M_ChangeSkyDetail(int choice)
 {
-    flatSky = !flatSky;
+    M_ChangeStep(choice, &skyRender, SKY_FULL, NUM_SKYRENDER - 1);
 
     R_SetViewSize(screenblocks, detailLevel);
 }

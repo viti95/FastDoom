@@ -1689,6 +1689,7 @@ static const char *const detailnames[NUM_DETAIL] = { "high", "low", "potato" };
 // Shared by visplanes, walls, sprites and player sprites
 static const char *const rendernames[NUM_VISPLANESRENDER] = { "normal", "flat", "flatter" };
 static const char *const wallrendernames[NUM_WALLRENDER] = { "normal", "flat", "flatter", "flatrows", "flatterrows" };
+static const char *const skyrendernames[NUM_SKYRENDER] = { "normal", "flat", "flatrows" };
 
 static const char *const invisiblenames[NUM_INVISIBLERENDER] =
 {
@@ -1784,7 +1785,7 @@ void G_SaveSLKResult(unsigned int gametics, unsigned int realtics, unsigned int 
         SLK_CellStr(logFile, row, ++col, rendernames[pspriteRender]);
 
         // Sky
-        SLK_CellStr(logFile, row, ++col, flatSky ? "flat" : "normal");
+        SLK_CellStr(logFile, row, ++col, skyrendernames[skyRender]);
 
         // Objects
         SLK_CellStr(logFile, row, ++col, nearSprites ? "near" : "normal");
