@@ -3046,13 +3046,6 @@ void R_ExecuteSetViewSize(void)
     projection = centerxfrac;
 #endif
 
-    // the modes with the WALL_*_ROWS rendering draw the flat walls row
-    // by row
-    if (wallRender == WALL_FLAT_ROWS || wallRender == WALL_FLATTER_ROWS)
-        flatwallmode = FLATWALL_AUTO;
-    else
-        flatwallmode = FLATWALL_COLS;
-
     // spriteRender / pspriteRender are always in range 0..2, wallRender
     // also selects the row renderer of the flat walls
     renderSegLoop = wallrenderfuncs[WALLRENDER_FUNC(wallRender)].renderSegLoop;

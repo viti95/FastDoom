@@ -32,6 +32,19 @@
 #endif
 
 //
+// The modes of the MDA and of the VT100 have no flat span renderer of
+// their own: their walls are outlines of the character cells and their
+// sky is drawn by the column renderer of the mode. R_SetupFlatWall and
+// R_SetupFlatSky leave flatwallrows and flatskyrows zero for them, as
+// flatwallspanfunc is null, so they never paint a row: the rows of this
+// file, and the tables of the identity colormap they need, are then
+// left out of those builds.
+//
+#if defined(MODE_MDA) || defined(MODE_VT100)
+#define NO_FLAT_ROWS
+#endif
+
+//
 // The seg loops of the flat walls hand every column of the wall they
 // walk to the sweep of the rows, which paints the spans of the wall as
 // they finish, without recording the columns of it.
@@ -46,7 +59,9 @@ static short wallrowyl[SCREENWIDTH];
 static short wallrowyh[SCREENWIDTH];
 static short wallrow2yl[SCREENWIDTH];
 static short wallrow2yh[SCREENWIDTH];
+#ifndef NO_FLAT_ROWS
 static byte wallrowcol[SCREENWIDTH];
+#endif
 
 // the columns of the masked mid walls still to draw, of the drawseg
 // being painted, and the lighting of the seg loop that draws it
@@ -55,11 +70,11 @@ extern lighttable_t **walllights;
 
 void (*flatwallspanfunc)(void);
 
-int flatwallmode;
 int flatwallrows;
 int flatskyrows;
 int flatwallcolscale = 1;
 
+#ifndef NO_FLAT_ROWS
 //
 // The span renderers translate the color with ds_colormap, while the
 // flat wall column renderers write dc_color directly (they already
@@ -97,12 +112,17 @@ static byte *flatwallbrightmap;
 //
 static byte flatwallskyattr[256 + 255];
 static byte *flatwallskyattrmap;
-#endif
+#endif // TEXT_MODE
+#endif // NO_FLAT_ROWS
 
 // non zero while the wall of a segment with the color of every column
-// recorded, see R_FlatWallStart
+// recorded, see R_FlatWallStart. Only the column renderer of the modes
+// with a flat span renderer reads the colors of the recorded columns.
+#ifndef NO_FLAT_ROWS
 static int flatwalllit;
+#endif
 
+#ifndef NO_FLAT_ROWS
 //
 // The sweep of the rows of one tier of a wall.
 //
@@ -142,9 +162,11 @@ static flatwallsweep_t flatwallsweep2;
 // the sweep of the sky, of its own: the sky of a plane is painted on
 // its own, with no seg opening it as the walls
 static flatwallsweep_t flatskysweep;
+#endif // NO_FLAT_ROWS
 
 void R_InitFlatWall(void)
 {
+#ifndef NO_FLAT_ROWS
 	int i;
 
 	// the identity table of the walls, at a multiple of 256
@@ -164,8 +186,8 @@ void R_InitFlatWall(void)
 #else
 	flatwallcolormap = flatwallbrightmap;
 #endif
+#endif // NO_FLAT_ROWS
 
-	flatwallmode = FLATWALL_AUTO;
 	flatwallrows = 0;
 	flatskyrows = 0;
 }
@@ -174,11 +196,12 @@ void R_SetupFlatWall(void)
 {
 	// the walls are painted row by row with the flat span renderer of
 	// the mode, when the mode has one and the walls of the setup menu
-	// are set to the row renderer. The MDA has no flat span renderer,
-	// and the walls of the MDA and of the VT100 are outlines of the
-	// character cells, drawn by their own seg loop: those modes never
-	// take the rows.
-	flatwallrows = flatwallspanfunc && flatwallmode != FLATWALL_COLS;
+	// are set to the rendering of the rows. The MDA has no flat span
+	// renderer, and the walls of the MDA and of the VT100 are outlines
+	// of the character cells, drawn by their own seg loop: those modes
+	// never take the rows.
+	flatwallrows = flatwallspanfunc
+		&& (wallRender == WALL_FLAT_ROWS || wallRender == WALL_FLATTER_ROWS);
 }
 
 void R_SetupFlatSky(void)
@@ -190,18 +213,22 @@ void R_SetupFlatSky(void)
 	flatskyrows = skyRender == SKY_FLAT_ROWS && flatwallspanfunc;
 }
 
+#ifndef NO_FLAT_ROWS
 //
 // Paints the span of the row y of the sweep, which ends at the column
-// x2, with the color of the spans open at the last column.
+// x2, with the color of the spans open at the last column. The span
+// renderer of the mode is handed to it, as the spans of the rows must
+// not read it from the memory of the global one by one.
 //
-static void R_FlatWallSweepSpan(flatwallsweep_t *s, int y, int x2)
+static void R_FlatWallSweepSpan(flatwallsweep_t *s, int y, int x2,
+				void (*spanfunc)(void))
 {
 	ds_x1 = s->start[y];
 	ds_x2 = x2;
 	ds_y = y;
 	ds_flatcolor = s->color;
 
-	flatwallspanfunc();
+	spanfunc();
 }
 
 //
@@ -209,20 +236,24 @@ static void R_FlatWallSweepSpan(flatwallsweep_t *s, int y, int x2)
 // all of them ending at the column x2. An empty range (y1 > y2) does
 // nothing.
 //
-static void R_FlatWallSweepRows(flatwallsweep_t *s, int y1, int y2, int x2)
+static void R_FlatWallSweepRows(flatwallsweep_t *s, int y1, int y2, int x2,
+				void (*spanfunc)(void))
 {
 	int y;
 
 	for (y = y1; y <= y2; y++)
-		R_FlatWallSweepSpan(s, y, x2);
+		R_FlatWallSweepSpan(s, y, x2, spanfunc);
 }
 
 //
 // Adds one column of the wall to the sweep: the wall of the column is
-// the rows yl to yh, and a column with yl > yh is not visible.
+// the rows yl to yh, and a column with yl > yh is not visible. The
+// spans that the column closes end at the previous column, and the
+// spans left open by the last column of the wall end with it, which
+// the caller of the sweep of the rows paints.
 //
 static void R_FlatWallSweepColumnSweep(flatwallsweep_t *s, int x, int yl,
-				       int yh)
+				       int yh, void (*spanfunc)(void))
 {
 	int lo = s->lo;
 	int hi = s->hi;
@@ -238,7 +269,7 @@ static void R_FlatWallSweepColumnSweep(flatwallsweep_t *s, int x, int yl,
 		// level: the spans open at the last column are painted
 		// with the color of the columns that opened them, and the
 		// spans of the columns from here take the new color
-		R_FlatWallSweepRows(s, lo, hi, end);
+		R_FlatWallSweepRows(s, lo, hi, end, spanfunc);
 		s->color = dc_color;
 		lo = 1;
 		hi = 0;
@@ -247,7 +278,7 @@ static void R_FlatWallSweepColumnSweep(flatwallsweep_t *s, int x, int yl,
 	if (yl > yh)
 	{
 		// the column is not visible, it closes every span open
-		R_FlatWallSweepRows(s, lo, hi, end);
+		R_FlatWallSweepRows(s, lo, hi, end, spanfunc);
 		s->lo = 1;
 		s->hi = 0;
 		return;
@@ -257,8 +288,10 @@ static void R_FlatWallSweepColumnSweep(flatwallsweep_t *s, int x, int yl,
 	{
 		// the rows above and the rows below the wall of this
 		// column stop being reached, their spans end here
-		R_FlatWallSweepRows(s, lo, yl - 1 < hi ? yl - 1 : hi, end);
-		R_FlatWallSweepRows(s, yh + 1 > lo ? yh + 1 : lo, hi, end);
+		R_FlatWallSweepRows(s, lo, yl - 1 < hi ? yl - 1 : hi, end,
+				    spanfunc);
+		R_FlatWallSweepRows(s, yh + 1 > lo ? yh + 1 : lo, hi, end,
+				    spanfunc);
 	}
 
 	// the rows of this column out of the range of the open rows start
@@ -278,6 +311,7 @@ static void R_FlatWallSweepColumnSweep(flatwallsweep_t *s, int x, int yl,
 	s->lo = yl;
 	s->hi = yh;
 }
+#endif // NO_FLAT_ROWS
 
 //
 // Records one column of a wall for the column renderers.
@@ -287,7 +321,9 @@ static void R_FlatWallRecordColumn(short *yl, short *yh, int x, int ylval,
 {
 	yl[x] = ylval;
 	yh[x] = yhval;
+#ifndef NO_FLAT_ROWS
 	wallrowcol[x] = dc_color;
+#endif // NO_FLAT_ROWS
 }
 
 #if defined(MODE_MDA) || defined(MODE_VT100)
@@ -365,6 +401,12 @@ static void R_FlatWallDrawColumns(const short *yl, const short *yh, int x1,
 
 void R_FlatWallStart(int lit)
 {
+#ifdef NO_FLAT_ROWS
+	// the walls of these modes are the outlines of the character
+	// cells of their own seg loop: their columns are recorded, and
+	// the color of the cells does not change with the columns
+	(void)lit;
+#else
 	flatwalllit = lit;
 
 	if (!flatwallrows)
@@ -387,22 +429,33 @@ void R_FlatWallStart(int lit)
 	// ds_colormap, and the colors of the walls are already lit: the
 	// walls are painted with the identity colormap of the mode
 	ds_colormap = (lighttable_t *)flatwallcolormap;
+#endif // NO_FLAT_ROWS
 }
 
 void R_FlatWallColumn1(int x, int yl, int yh)
 {
+#ifdef NO_FLAT_ROWS
+	R_FlatWallRecordColumn(wallrowyl, wallrowyh, x, yl, yh);
+#else
 	if (flatwallrows)
-		R_FlatWallSweepColumnSweep(&flatwallsweep, x, yl, yh);
+		R_FlatWallSweepColumnSweep(&flatwallsweep, x, yl, yh,
+					   flatwallspanfunc);
 	else
 		R_FlatWallRecordColumn(wallrowyl, wallrowyh, x, yl, yh);
+#endif // NO_FLAT_ROWS
 }
 
 void R_FlatWallColumn2(int x, int yl, int yh)
 {
+#ifdef NO_FLAT_ROWS
+	R_FlatWallRecordColumn(wallrow2yl, wallrow2yh, x, yl, yh);
+#else
 	if (flatwallrows)
-		R_FlatWallSweepColumnSweep(&flatwallsweep2, x, yl, yh);
+		R_FlatWallSweepColumnSweep(&flatwallsweep2, x, yl, yh,
+					   flatwallspanfunc);
 	else
 		R_FlatWallRecordColumn(wallrow2yl, wallrow2yh, x, yl, yh);
+#endif // NO_FLAT_ROWS
 }
 
 //
@@ -411,32 +464,51 @@ void R_FlatWallColumn2(int x, int yl, int yh)
 //
 void R_FlatWallFinish1(int x1, int x2)
 {
+#ifdef NO_FLAT_ROWS
+	R_FlatWallDrawColumns(wallrowyl, wallrowyh, x1, x2);
+#else
 	if (flatwallrows)
 	{
 		R_FlatWallSweepRows(&flatwallsweep, flatwallsweep.lo,
-				    flatwallsweep.hi, x2);
+				    flatwallsweep.hi, x2, flatwallspanfunc);
 		flatwallsweep.lo = 1;
 		flatwallsweep.hi = 0;
 		return;
 	}
 
 	R_FlatWallDrawColumns(wallrowyl, wallrowyh, x1, x2);
+#endif // NO_FLAT_ROWS
 }
 
 void R_FlatWallFinish2(int x1, int x2)
 {
+#ifdef NO_FLAT_ROWS
+	R_FlatWallDrawColumns(wallrow2yl, wallrow2yh, x1, x2);
+#else
 	if (flatwallrows)
 	{
 		R_FlatWallSweepRows(&flatwallsweep2, flatwallsweep2.lo,
-				    flatwallsweep2.hi, x2);
+				    flatwallsweep2.hi, x2, flatwallspanfunc);
 		flatwallsweep2.lo = 1;
 		flatwallsweep2.hi = 0;
 		return;
 	}
 
 	R_FlatWallDrawColumns(wallrow2yl, wallrow2yh, x1, x2);
+#endif // NO_FLAT_ROWS
 }
 
+#ifdef NO_FLAT_ROWS
+//
+// The modes of the MDA and of the VT100 draw the sky of their own, with
+// their column renderer, and R_SetupFlatSky never sets flatskyrows for
+// them, so the renderers of r_plane.c never ask for the rows of it.
+//
+void R_DrawSkyFlatRows(visplane_t *pl)
+{
+	(void)pl;
+}
+#else
 //
 // The sky of the flat sky modes is one color, and the sky of every
 // column of the sky plane is a range of rows: the sky of a row is then
@@ -452,7 +524,20 @@ void R_FlatWallFinish2(int x1, int x2)
 //
 void R_DrawSkyFlatRows(visplane_t *pl)
 {
+	// the sweep of the rows of the sky, and the span renderer of the
+	// mode, kept in variables of the function
+	flatwallsweep_t *s = &flatskysweep;
+
+	void (*spanfunc)(void) = flatwallspanfunc;
+
+	// the last row of the view, the sky of the plane is not drawn
+	// below it
+	int last = viewheight - 1;
+
 	int x;
+
+	int yl;
+	int yh;
 
 	dc_color = SKYFLATCOLOR;
 
@@ -468,21 +553,34 @@ void R_DrawSkyFlatRows(visplane_t *pl)
 	ds_colormap = (lighttable_t *)flatwallcolormap;
 #endif
 
-	flatskysweep.lo = 1;
-	flatskysweep.hi = 0;
-	flatskysweep.color = -1;
+	s->lo = 1;
+	s->hi = 0;
+	s->color = -1;
 
-	// a column of the plane without sky has top over bottom, which
-	// the sweep takes for a column that is not visible
+	// a column of the plane without sky has top over bottom, and the
+	// columns the plane does not reach keep the highest pixel of them,
+	// a marker out of the rows of the view: the sky of such a column
+	// is not visible, as the wall of a column that is not visible, and
+	// it closes the spans that are open
 	for (x = pl->minx; x <= pl->maxx; x++)
-		R_FlatWallSweepColumnSweep(&flatskysweep, x,
-					   pl->top[x], pl->bottom[x]);
+	{
+		yl = pl->top[x];
+		yh = pl->bottom[x];
+
+		if (yh > last)
+			yh = last;
+
+		if (yl > yh)
+			yl = 1, yh = 0;
+
+		R_FlatWallSweepColumnSweep(s, x, yl, yh, spanfunc);
+	}
 
 	// the spans of the rows the last column of the plane reaches end
 	// with that column
-	R_FlatWallSweepRows(&flatskysweep, flatskysweep.lo, flatskysweep.hi,
-			    pl->maxx);
+	R_FlatWallSweepRows(s, s->lo, s->hi, pl->maxx, spanfunc);
 }
+#endif // NO_FLAT_ROWS
 
 //
 // The masked mid walls of the flat modes (the windows, the fences and
@@ -500,6 +598,7 @@ void R_DrawSkyFlatRows(visplane_t *pl)
 // R_TextureIsSolidMasked of r_data.c answers that per texture, and
 // caches the answer, as the posts of a texture never change.
 //
+#ifdef NO_FLAT_ROWS
 int R_DrawMaskedWallRows(drawseg_t *ds,
 			 int texnum,
 			 int x1,
@@ -507,6 +606,32 @@ int R_DrawMaskedWallRows(drawseg_t *ds,
 			 byte color,
 			 int lit)
 {
+	// the walls of these modes keep the columns of the cells of
+	// their seg loops, which the modes of the MDA and of the VT100
+	// draw with the renderer of their own
+	(void)ds;
+	(void)texnum;
+	(void)x1;
+	(void)x2;
+	(void)color;
+	(void)lit;
+
+	return 0;
+}
+#else
+int R_DrawMaskedWallRows(drawseg_t *ds,
+			 int texnum,
+			 int x1,
+			 int x2,
+			 byte color,
+			 int lit)
+{
+	// the sweep of the rows of the wall, and the span renderer of the
+	// mode, kept in variables of the function
+	flatwallsweep_t *s = &flatwallsweep;
+
+	void (*spanfunc)(void) = flatwallspanfunc;
+
 	unsigned index;
 
 	int height;
@@ -555,8 +680,10 @@ int R_DrawMaskedWallRows(drawseg_t *ds,
 				if (index >= MAXLIGHTSCALE)
 					index = MAXLIGHTSCALE - 1;
 
-				dc_colormap = walllights[index];
-				dc_color = dc_colormap[color];
+				// the renderers of the flat walls write the
+				// color themselves: only the color of the
+				// column is needed, not the colormap of it
+				dc_color = walllights[index][color];
 			}
 
 			// the rows of the wall of the column are the
@@ -601,7 +728,7 @@ int R_DrawMaskedWallRows(drawseg_t *ds,
 			maskedtexturecol[x] = MAXSHORT;
 		}
 
-		R_FlatWallColumn1(x, yl, yh);
+		R_FlatWallSweepColumnSweep(s, x, yl, yh, spanfunc);
 
 		scale += ds->scalestep;
 	}
@@ -610,3 +737,4 @@ int R_DrawMaskedWallRows(drawseg_t *ds,
 
 	return 1;
 }
+#endif // NO_FLAT_ROWS

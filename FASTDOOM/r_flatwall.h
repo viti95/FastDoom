@@ -55,14 +55,10 @@
 // Span renderer used for the wall rows, set up per video mode.
 extern void (*flatwallspanfunc)(void);
 
-// One of FLATWALL_COLS, FLATWALL_AUTO, FLATWALL_ROWS (doomdef.h): the
-// columns only or the rows only. R_ExecuteSetViewSize sets it from the
-// wall rendering mode.
-extern int flatwallmode;
-
 // Non zero when the walls of the view are painted row by row, zero
-// when they are painted column by column. R_ExecuteSetViewSize sets it
-// from flatwallmode and flatwallspanfunc, once per view.
+// when they are painted column by column. R_SetupFlatWall sets it from
+// the mode of the walls of the setup menu and the flat span renderer of
+// the video mode, once per view.
 extern int flatwallrows;
 
 // Non zero when the flat sky is painted row by row, zero when it is

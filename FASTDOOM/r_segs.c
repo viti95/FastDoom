@@ -522,9 +522,7 @@ void R_RenderMaskedSegRangeFlatter(drawseg_t *ds,
 							int x1,
 							int x2)
 {
-	unsigned index;
 	column_t *col;
-	int lightnum;
 	int texnum;
 
 	int lump;
@@ -1130,9 +1128,7 @@ void R_RenderMaskedSegRange2Flat(drawseg_t *ds)
 
 void R_RenderMaskedSegRange2Flatter(drawseg_t *ds)
 {
-	unsigned index;
 	column_t *col;
-	int lightnum;
 	int texnum;
 
 	int lump;
@@ -1693,7 +1689,6 @@ void R_RenderSegLoopFlat(void)
 	int lump;
 	int ofs;
 	int tex;
-	int col;
 
 	int cc_rwx;
 	int fc_rwx;
@@ -1703,8 +1698,6 @@ void R_RenderSegLoopFlat(void)
 
 	int rowx1 = rw_x;
 	int rowx2 = rw_stopx - 1;
-
-	// texturecolumn = 0;				// shut up compiler warning
 
 	if (midtexture) {
 		tex = midtexture;
@@ -1786,13 +1779,12 @@ void R_RenderSegLoopFlat(void)
 			}
 		}
 
-		// texturecolumn and lighting are independent of wall tiers
+		// the color of the wall of the column: the renderers of the
+		// flat walls write a color of their own, they do not translate
+		// the pixels of a texture, so only the color of the column is
+		// needed here, not the colormap of it
 		if (segtextured)
 		{
-			// calculate texture offset
-			angle = (rw_centerangle + xtoviewangle[rw_x]) >> ANGLETOFINESHIFT;
-			texturecolumn = rw_offset - FixedMulEDX(finetangent[angle], rw_distance);
-			texturecolumn >>= FRACBITS;
 			// calculate lighting
 			index = rw_scale >> LIGHTSCALESHIFT;
 #if PIXEL_SCALING != 1
@@ -1802,9 +1794,7 @@ void R_RenderSegLoopFlat(void)
 			if (index >= MAXLIGHTSCALE)
 				index = MAXLIGHTSCALE - 1;
 
-			dc_colormap = walllights[index];
-			dc_color = dc_colormap[color];
-			dc_x = rw_x;
+			dc_color = walllights[index][color];
 		}
 
 		// draw the wall tiers: every column of the wall goes to the
@@ -1874,8 +1864,14 @@ void R_RenderSegLoopFlat(void)
 
 			if (maskedtexture)
 			{
-				// save texturecol
-				//  for backdrawing of masked mid texture
+				// save texturecol for backdrawing of the masked mid
+				// texture: the column of the texture of this column,
+				// which only the masked wall needs. The distance of
+				// the seg is the same for all its columns
+				angle = (rw_centerangle + xtoviewangle[rw_x]) >> ANGLETOFINESHIFT;
+				texturecolumn = rw_offset - FixedMulEDX(finetangent[angle], rw_distance);
+				texturecolumn >>= FRACBITS;
+
 				maskedtexturecol[rw_x] = texturecolumn;
 			}
 		}
@@ -1890,17 +1886,19 @@ void R_RenderSegLoopFlat(void)
 
 	// the tiers of the wall are closed: the spans of their rows were
 	// painted as the columns were walked, only the spans still open
-	// at the last column of the seg are painted here
-	R_FlatWallFinish1(rowx1, rowx2);
+	// at the last column of the seg are painted here. A tier without a
+	// wall of its own has nothing to close, and the renderer of the
+	// columns must not draw the columns of the wall of another seg
+	if (midtexture || toptexture)
+		R_FlatWallFinish1(rowx1, rowx2);
 
-	if (!midtexture)
+	if (!midtexture && bottomtexture)
 		R_FlatWallFinish2(rowx1, rowx2);
 }
 
 void R_RenderSegLoopFlatter(void)
 {
 	angle_t angle;
-	unsigned index;
 	int yl;
 	int yh;
 	int mid;
@@ -1911,7 +1909,6 @@ void R_RenderSegLoopFlatter(void)
 	int lump;
 	int ofs;
 	int tex;
-	int col;
 
 	int cc_rwx;
 	int fc_rwx;
@@ -1920,8 +1917,6 @@ void R_RenderSegLoopFlatter(void)
 
 	int rowx1 = rw_x;
 	int rowx2 = rw_stopx - 1;
-
-	// texturecolumn = 0;				// shut up compiler warning
 
 	if (midtexture) {
 		tex = midtexture;
@@ -2000,17 +1995,6 @@ void R_RenderSegLoopFlatter(void)
 			}
 		}
 
-		// texturecolumn and lighting are independent of wall tiers
-		if (segtextured)
-		{
-			// calculate texture offset
-			angle = (rw_centerangle + xtoviewangle[rw_x]) >> ANGLETOFINESHIFT;
-			texturecolumn = rw_offset - FixedMulEDX(finetangent[angle], rw_distance);
-			texturecolumn >>= FRACBITS;
-
-			dc_x = rw_x;
-		}
-
 		// draw the wall tiers: every column of the wall goes to the
 		// sweep of the rows, which paints the spans of the rows
 		// that the column closes. A column of a tier whose top
@@ -2078,8 +2062,14 @@ void R_RenderSegLoopFlatter(void)
 
 			if (maskedtexture)
 			{
-				// save texturecol
-				//  for backdrawing of masked mid texture
+				// save texturecol for backdrawing of the masked mid
+				// texture: the column of the texture of this column,
+				// which only the masked wall needs. The distance of
+				// the seg is the same for all its columns
+				angle = (rw_centerangle + xtoviewangle[rw_x]) >> ANGLETOFINESHIFT;
+				texturecolumn = rw_offset - FixedMulEDX(finetangent[angle], rw_distance);
+				texturecolumn >>= FRACBITS;
+
 				maskedtexturecol[rw_x] = texturecolumn;
 			}
 		}
@@ -2093,10 +2083,13 @@ void R_RenderSegLoopFlatter(void)
 
 	// the tiers of the wall are closed: the spans of their rows were
 	// painted as the columns were walked, only the spans still open
-	// at the last column of the seg are painted here
-	R_FlatWallFinish1(rowx1, rowx2);
+	// at the last column of the seg are painted here. A tier without a
+	// wall of its own has nothing to close, and the renderer of the
+	// columns must not draw the columns of the wall of another seg
+	if (midtexture || toptexture)
+		R_FlatWallFinish1(rowx1, rowx2);
 
-	if (!midtexture)
+	if (!midtexture && bottomtexture)
 		R_FlatWallFinish2(rowx1, rowx2);
 }
 
