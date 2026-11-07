@@ -67,8 +67,9 @@ int flatwallcolscale = 1;
 // applied the light level), so the walls are painted through an
 // identity colormap to get exactly the same pixels.
 //
-// Text modes use the 16 color attribute lookuptable, which is what the
-// flat wall column renderers of those modes use.
+// The text modes take the 16 color attribute lookuptable of the mode,
+// which is what their flat wall column renderers use, and so need no
+// identity map of their own.
 //
 // The span renderers of the planar modes read the color of the row with
 // a lookup that overwrites the low byte of the pointer of the colormap
@@ -80,9 +81,10 @@ int flatwallcolscale = 1;
 // I_ProcessPalette of i_cgacvb.c, which aligns the lookuptable of the
 // 16 color modes in the same way).
 //
-static byte *flatwallcolormap;
+#if !defined(TEXT_MODE)
 static byte flatwallbright[256 + 255];
 static byte *flatwallbrightmap;
+#endif
 
 #if defined(TEXT_MODE)
 //
@@ -93,8 +95,8 @@ static byte *flatwallbrightmap;
 // cells of the sky where the color of the flat sky, so the row renderer
 // of the mode writes that attribute for the sky.
 //
-// It must start at a multiple of 256 as flatwallbrightmap, for the same
-// reason.
+// It must start at a multiple of 256 as the light tables of the modes,
+// for the same reason.
 //
 static byte flatwallskyattr[256 + 255];
 static byte *flatwallskyattrmap;
@@ -137,30 +139,23 @@ typedef struct
 static flatwallsweep_t flatwallsweep;
 static flatwallsweep_t flatwallsweep2;
 
-// the sweep of the sky, of its own: the sky of a plane is painted on
-// its own, with no seg opening it as the walls
-static flatwallsweep_t flatskysweep;
-
 void R_InitFlatWall(void)
 {
 	int i;
 
+#if defined(TEXT_MODE)
+	// the map of the sky of the rows of the text modes, at a multiple
+	// of 256
+	flatwallskyattrmap = (byte *)(((int)flatwallskyattr + 255) & ~0xff);
+	for (i = 0; i < 256; i++)
+		flatwallskyattrmap[i] = i;
+	flatwallskyattrmap[SKYFLATCOLOR] = SKYTEXTATTR;
+#else
 	// the identity table of the walls, at a multiple of 256
 	flatwallbrightmap = (byte *)(((int)flatwallbright + 255) & ~0xff);
 
 	for (i = 0; i < 256; i++)
 		flatwallbrightmap[i] = i;
-
-#if defined(TEXT_MODE)
-	// the map of the sky of the rows of the text modes
-	flatwallskyattrmap = (byte *)(((int)flatwallskyattr + 255) & ~0xff);
-	for (i = 0; i < 256; i++)
-		flatwallskyattrmap[i] = i;
-	flatwallskyattrmap[SKYFLATCOLOR] = SKYTEXTATTR;
-
-	flatwallcolormap = ptrlut16colors;
-#else
-	flatwallcolormap = flatwallbrightmap;
 #endif
 
 	flatwallrows = 0;
@@ -376,15 +371,16 @@ void R_FlatWallStart(void)
 	flatwallsweep2.hi = 0;
 	flatwallsweep2.color = dc_color;
 
-#if defined(TEXT_MODE)
-	// the palette lookuptable can change between the levels
-	flatwallcolormap = ptrlut16colors;
-#endif
-
 	// the span renderers translate the color of the rows with
 	// ds_colormap, and the colors of the walls are already lit: the
-	// walls are painted with the identity colormap of the mode
-	ds_colormap = (lighttable_t *)flatwallcolormap;
+	// walls are painted through a map that gives the color back. The
+	// text modes take the lookuptable of their palette, which can
+	// change between the levels and so is read once per segment
+#if defined(TEXT_MODE)
+	ds_colormap = (lighttable_t *)ptrlut16colors;
+#else
+	ds_colormap = (lighttable_t *)flatwallbrightmap;
+#endif
 }
 
 //
@@ -453,9 +449,11 @@ void R_FlatWallFinish(int x2)
 //
 void R_DrawSkyFlatRows(visplane_t *pl)
 {
-	// the sweep of the rows of the sky, kept in a variable of the
-	// function
-	flatwallsweep_t *s = &flatskysweep;
+	// the sweep of the rows of the walls: the sky is painted by the
+	// renderers of the planes, once the seg loops of the view are
+	// done, so no wall has a span open here, and the sky opens and
+	// closes its own rows below
+	flatwallsweep_t *s = &flatwallsweep;
 
 	// the last row of the view, the sky of the plane is not drawn
 	// below it
@@ -477,7 +475,7 @@ void R_DrawSkyFlatRows(visplane_t *pl)
 	// ds_colormap, and the color of the sky is a color of the palette
 	// to write as it is: the sky is painted with the identity colormap
 	// of the walls
-	ds_colormap = (lighttable_t *)flatwallcolormap;
+	ds_colormap = (lighttable_t *)flatwallbrightmap;
 #endif
 
 	s->lo = 1;
