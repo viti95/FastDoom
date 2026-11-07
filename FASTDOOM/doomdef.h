@@ -378,7 +378,7 @@ typedef enum
     WALL_NORMAL,
     WALL_FLAT,
     WALL_FLATTER,
-    // the flat walls drawn row by row (span) where that is cheaper
+    // the flat walls drawn row by row, one span per row
     WALL_FLAT_ROWS,
     WALL_FLATTER_ROWS,
     NUM_WALLRENDER
@@ -390,23 +390,11 @@ typedef enum
 // ROWS the flatter one.
 #define WALLRENDER_FUNC(r) ((r) < WALL_FLAT_ROWS ? (r) : ((r) - WALL_FLAT_ROWS + WALL_FLAT))
 
-// How the flat wall renderer of r_flatwall.c paints a wall: column by
-// column (FLATWALL_COLS) or row by row, one span per row
-// (FLATWALL_AUTO, which the WALL_*_ROWS rendering uses, and
-// FLATWALL_ROWS, kept for a renderer choosing the rows per wall).
-typedef enum
-{
-    FLATWALL_COLS,
-    FLATWALL_AUTO,
-    FLATWALL_ROWS,
-    NUM_FLATWALLMODES
-} flatwallmode_t;
-
 // How the sky is drawn: the texture of the sky of Doom, one flat color
 // drawn column by column, and the same flat color drawn row by row,
-// one span per row, where that is cheaper (see R_DrawSkyFlatRows of
-// r_flatwall.c). The modes without a flat span renderer of their own
-// (the MDA and the VT100) draw the columns for both flat modes.
+// one span per row (see R_DrawSkyFlatRows of r_flatwall.c). The modes
+// without a flat span renderer of their own (the MDA and the VT100)
+// draw the columns for both flat modes.
 typedef enum
 {
     SKY_FULL,

@@ -1696,8 +1696,10 @@ void R_RenderSegLoopFlat(void)
 	byte *firstPixel;
 	byte color;
 
-	int rowx1 = rw_x;
-	int rowx2 = rw_stopx - 1;
+	// the color of the wall of the columns walked, and of the column
+	// of the moment: the wall keeps it until the light gives another
+	byte wallcolor;
+	byte newcolor;
 
 	if (midtexture) {
 		tex = midtexture;
@@ -1729,8 +1731,11 @@ void R_RenderSegLoopFlat(void)
 	// rows opens the spans of its rows and paints them as the
 	// columns of the loop are walked. The color of the wall changes
 	// with the light levels the seg crosses, so every column lights
-	// its own color
-	R_FlatWallStart(1);
+	// its own color, and the sweep is told when it changes
+	R_FlatWallStart();
+
+	// the wall of the seg takes the color of the seg itself
+	wallcolor = dc_color;
 
 	for (; rw_x < rw_stopx; rw_x++)
 	{
@@ -1794,7 +1799,22 @@ void R_RenderSegLoopFlat(void)
 			if (index >= MAXLIGHTSCALE)
 				index = MAXLIGHTSCALE - 1;
 
-			dc_color = walllights[index][color];
+			newcolor = walllights[index][color];
+
+			// a span never crosses a change of the color of
+			// the wall: the spans the columns before left open
+			// are painted with the color that opened them, and
+			// only then does the wall take the new one. The
+			// compare is here, where the color of the wall is
+			// worked out, and not once per tier inside the
+			// sweep of the rows
+			if (newcolor != wallcolor)
+			{
+				wallcolor = newcolor;
+				dc_color = newcolor;
+
+				R_FlatWallColor(rw_x, newcolor);
+			}
 		}
 
 		// draw the wall tiers: every column of the wall goes to the
@@ -1885,15 +1905,10 @@ void R_RenderSegLoopFlat(void)
 	}
 
 	// the tiers of the wall are closed: the spans of their rows were
-	// painted as the columns were walked, only the spans still open
-	// at the last column of the seg are painted here. A tier without a
-	// wall of its own has nothing to close, and the renderer of the
-	// columns must not draw the columns of the wall of another seg
-	if (midtexture || toptexture)
-		R_FlatWallFinish1(rowx1, rowx2);
-
-	if (!midtexture && bottomtexture)
-		R_FlatWallFinish2(rowx1, rowx2);
+	// painted as the columns were walked, and only the spans still
+	// open at the last column of the seg are painted here. A tier
+	// without a wall of its own has nothing open.
+	R_FlatWallFinish(rw_stopx - 1);
 }
 
 void R_RenderSegLoopFlatter(void)
@@ -1914,9 +1929,6 @@ void R_RenderSegLoopFlatter(void)
 	int fc_rwx;
 
 	byte *firstPixel;
-
-	int rowx1 = rw_x;
-	int rowx2 = rw_stopx - 1;
 
 	if (midtexture) {
 		tex = midtexture;
@@ -1944,9 +1956,9 @@ void R_RenderSegLoopFlatter(void)
 	dc_color = *(firstPixel + 3);
 
 	// the wall of the seg is painted row by row, all of it with the
-	// color of the seg left in dc_color: the sweep does not need the
-	// colors of the columns
-	R_FlatWallStart(0);
+	// color of the seg left in dc_color: the color of the wall does
+	// not change along the seg, so the sweep is never told of one
+	R_FlatWallStart();
 
 	for (; rw_x < rw_stopx; rw_x++)
 	{
@@ -2082,15 +2094,10 @@ void R_RenderSegLoopFlatter(void)
 	}
 
 	// the tiers of the wall are closed: the spans of their rows were
-	// painted as the columns were walked, only the spans still open
-	// at the last column of the seg are painted here. A tier without a
-	// wall of its own has nothing to close, and the renderer of the
-	// columns must not draw the columns of the wall of another seg
-	if (midtexture || toptexture)
-		R_FlatWallFinish1(rowx1, rowx2);
-
-	if (!midtexture && bottomtexture)
-		R_FlatWallFinish2(rowx1, rowx2);
+	// painted as the columns were walked, and only the spans still
+	// open at the last column of the seg are painted here. A tier
+	// without a wall of its own has nothing open.
+	R_FlatWallFinish(rw_stopx - 1);
 }
 
 //

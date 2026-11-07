@@ -24,32 +24,28 @@
 
 //
 // The walls of the flat modes have one color per column, so a row of a
-// wall is a run of pixels of the same color and can be painted with the
-// flat span renderers of the video mode, which write a whole row at a
-// time. Painting rows is cheaper than painting columns for the walls
-// that are wide compared to how tall they are, which is the case for
-// most of the walls of a level once the view is scaled up.
+// wall is a run of pixels of the same color, and the wall is painted
+// with the flat span renderers of the video mode, one span per row.
 //
-// The walls are painted directly with spans, without recording their
-// columns and converting them to spans afterwards: the seg loops walk
-// the columns of the segment as usual and hand every column to the
-// sweep of r_flatwall.c, which opens one span per row at the first
-// column reaching the row and paints it as soon as the columns stop
-// reaching it. A row of a wall is then one span, and the only work
-// added to the column loop is to open and close the rows.
+// The walls are painted directly with spans: the seg loops walk the
+// columns of the segment as usual and hand every column to the sweep of
+// r_flatwall.c, which opens one span per row at the first column
+// reaching the row and paints it as soon as the columns stop reaching
+// it. The only work added to the column loop is to open and to close
+// the rows.
 //
-// A span never crosses a light level: the color of the columns is
-// checked per column, and a color change paints the spans opened with
-// the previous color.
+// A span never crosses a change of the color of the wall, and the seg
+// loop is who works that color out, so it says so with R_FlatWallColor:
+// the spans the columns before left open are painted with the color
+// that opened them, and the rows of the columns from there take the new
+// one.
 //
-// Every video mode sets the span renderer of its flat walls, and the
-// modes of the setup menu that draw the walls row by row use it. A mode
-// without a flat span renderer of its own leaves flatwallspanfunc null
-// (the MDA and the VT100, whose walls are outlines of the character
-// cells) and its walls are drawn column by column, as the seg loops of
-// the walls drawn with the column renderer of the setup menu. Those
-// paths record the columns of the wall and paint them at the end of the
-// segment, which is the only case where the columns are recorded.
+// A mode without a flat span renderer of its own leaves
+// flatwallspanfunc null (the MDA and the VT100, whose walls are
+// outlines of the character cells), and so do the modes of the setup
+// menu that draw the walls column by column: their columns go to the
+// column renderer of the mode as the seg loop walks them, the same
+// moment the rows take them.
 //
 
 // Span renderer used for the wall rows, set up per video mode.
@@ -84,12 +80,11 @@ void R_SetupFlatWall(void);
 // is one span of that color: the sky is painted with the same sweep of
 // the rows as the walls, with one span per row of the plane.
 //
-// The sweep is cheaper than the column renderers of the sky, which pay
-// the work of a column per column of the sky of the view: the planar
-// modes set the map mask of the plane of the pixel of the column on
-// every column, and the renderers of the other modes walk the rows of
-// one column at a time. The sweep walks every column once to open and
-// to close its rows, and paints one span per row of the sky.
+// The column renderers of the sky of the planar modes set the map mask
+// of the plane of the pixel of the column on every column, and the
+// renderers of the other modes walk the rows of one column at a time.
+// The sweep walks every column of the plane once to open and to close
+// its rows, and paints one span per row of the sky.
 //
 
 // Chooses the renderer of the sky of the view, row by row or column by
@@ -115,21 +110,28 @@ void R_DrawSkyFlatRows(visplane_t *pl);
 // it does not reach, which is what makes the spans of the rows end.
 //
 
-// Opens the wall of a segment. lit is zero when the whole wall has the
-// color the caller left in dc_color (the flatter walls) and non zero
-// when the color of the columns changes along the wall (the flat
-// walls, lit per column).
-void R_FlatWallStart(int lit);
+// Opens the wall of a segment. The wall has the color the caller left
+// in dc_color, which the caller of R_FlatWallColor changes when the
+// light along the seg gives the columns another one. A wall whose color
+// does not change, as the flatter walls, never calls it.
+void R_FlatWallStart(void);
 
 // Adds one column, from the row yl to the row yh both included, to the
 // first or to the second tier of the wall of the segment.
 void R_FlatWallColumn1(int x, int yl, int yh);
 void R_FlatWallColumn2(int x, int yl, int yh);
 
-// Paints what is left of the wall of a tier, the columns x1 to x2 of
-// it, and closes the tier.
-void R_FlatWallFinish1(int x1, int x2);
-void R_FlatWallFinish2(int x1, int x2);
+// The color of the wall of the columns from x on is color: the spans the
+// columns before it left open are painted with the color that opened
+// them, and the rows of the columns from there take the new one. Called
+// by the seg loops that light their wall per column, before the first
+// column of the new color.
+void R_FlatWallColor(int x, int color);
+
+// Closes the tiers of the wall of the segment: the spans the last
+// column left open end with it, at the column x2. Both tiers are closed
+// together: a tier without a wall of its own has nothing open.
+void R_FlatWallFinish(int x2);
 
 //
 // The masked mid walls (the windows, the fences and the like) drawn by
