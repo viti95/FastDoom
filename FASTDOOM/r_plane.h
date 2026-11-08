@@ -40,7 +40,6 @@ void R_DrawPlanes(void);
 void R_DrawPlanesFlatter(void);
 void R_DrawPlanesFlatterLow(void);
 void R_DrawPlanesFlatterPotato(void);
-void R_DrawPlanesFlatterText80100(void);
 void R_DrawPlanesFlatterText8050(void);
 void R_DrawPlanesFlatterText8025(void);
 void R_DrawPlanesFlatterText4025(void);
