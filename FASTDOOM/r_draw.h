@@ -259,7 +259,6 @@ void R_DrawSpanFlat(void);
 void R_DrawSpanFlatLow(void);
 void R_DrawSpanFlatPotato(void);
 
-void R_DrawSpanFlatText80100(void);
 void R_DrawSpanFlatText8050(void);
 void R_DrawSpanFlatText8025(void);
 void R_DrawSpanFlatText4025(void);
