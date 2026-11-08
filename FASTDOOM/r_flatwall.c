@@ -33,11 +33,15 @@
 
 //
 // The seg loops of the flat walls hand every column of the wall they
-// walk to r_flatwall.c, which paints it as it comes: with the spans of
-// the rows of the sweep when the walls are painted row by row, with the
-// column renderer of the mode when they are not. A column not painted
-// row by row takes the color the seg loop has for it at that moment,
-// which is the color of the wall of that column.
+// walk to the renderer of the column of the view, which the setup of the
+// view installs once: the sweep of the rows, which paints the spans of
+// the rows that the column closes, when the walls are painted row by
+// row, or the column renderer of the mode when they are not. Both take
+// the column from dc_x, dc_yl and dc_yh, as the renderers of the mode
+// do, so that the seg loop does the same work for every column of its
+// wall in either of them. A column painted by the mode takes the color
+// the seg loop has for it at that moment, which is the color of the
+// wall of that column.
 //
 #if defined(MODE_MDA) || defined(MODE_VT100)
 // the edges of the wall of the seg: of the MDA and of the VT100 the
@@ -56,6 +60,25 @@ extern short *maskedtexturecol;
 extern lighttable_t **walllights;
 
 void (*flatwallspanfunc)(void);
+
+// the renderer of one column of the wall of the seg loops of the flat
+// walls, of the first and of the second tier of it, installed by
+// R_SetupFlatWall with the other renderers of the view
+void (*flatwallcolumn1)(void);
+void (*flatwallcolumn2)(void);
+
+// the renderers of one column of the wall of the seg loops, installed
+// by R_SetupFlatWall: the sweep of the rows of a tier, and the column
+// renderers of the modes of the walls left to the columns
+static void R_FlatWallColumnRows1(void);
+static void R_FlatWallColumnRows2(void);
+static void R_FlatWallColumnCols(void);
+#if !defined(MODE_MDA) && !defined(MODE_VT100)
+static void R_FlatWallColumnColsStride(void);
+#endif
+#if defined(MODE_MDA) || defined(MODE_VT100)
+static void R_FlatWallColumnColsMDA(void);
+#endif
 
 int flatwallrows;
 int flatskyrows;
@@ -160,6 +183,12 @@ void R_InitFlatWall(void)
 
 	flatwallrows = 0;
 	flatskyrows = 0;
+
+	// the columns of the walls go to the column renderer of the mode,
+	// until R_SetupFlatWall chooses between the two ways of painting
+	// them
+	flatwallcolumn1 = R_FlatWallColumnCols;
+	flatwallcolumn2 = R_FlatWallColumnCols;
 }
 
 void R_SetupFlatWall(void)
@@ -168,10 +197,38 @@ void R_SetupFlatWall(void)
 	// the mode, when the mode has one and the walls of the setup menu
 	// are set to the rendering of the rows. The MDA has no flat span
 	// renderer, and the walls of the MDA and of the VT100 are outlines
-	// of the character cells, drawn by their own seg loop: those modes
-	// never take the rows.
+	// of the character cells, drawn by the two renderers of the cells of
+	// the mode: those modes never take the rows.
 	flatwallrows = flatwallspanfunc
 		&& (wallRender == WALL_FLAT_ROWS || wallRender == WALL_FLATTER_ROWS);
+
+	// the renderer of the column of the walls: the sweep of the rows
+	// when they are painted row by row, the column renderer of the mode
+	// when they are not. Chosen once for the view, so that the seg loops
+	// of the walls pay nothing for the renderer they do not use.
+	if (flatwallrows)
+	{
+		flatwallcolumn1 = R_FlatWallColumnRows1;
+		flatwallcolumn2 = R_FlatWallColumnRows2;
+	}
+	else
+	{
+#if defined(MODE_MDA) || defined(MODE_VT100)
+		flatwallcolumn1 = R_FlatWallColumnColsMDA;
+		flatwallcolumn2 = R_FlatWallColumnColsMDA;
+#else
+		if (flatwallcolscale > 1)
+		{
+			flatwallcolumn1 = R_FlatWallColumnColsStride;
+			flatwallcolumn2 = R_FlatWallColumnColsStride;
+		}
+		else
+		{
+			flatwallcolumn1 = R_FlatWallColumnCols;
+			flatwallcolumn2 = R_FlatWallColumnCols;
+		}
+#endif
+	}
 }
 
 void R_SetupFlatSky(void)
@@ -287,6 +344,23 @@ static void R_FlatWallSweepColumn(flatwallsweep_t *s, int x, int yl, int yh)
 }
 
 //
+// The column of the sweep of the rows of the first and of the second
+// tier of the wall of the seg, taking it from dc_x, dc_yl and dc_yh as
+// the column renderers of the modes do. A column with dc_yl over dc_yh
+// has no wall, and it is handed to the sweep, which closes with it the
+// rows of the wall it does not reach.
+//
+static void R_FlatWallColumnRows1(void)
+{
+	R_FlatWallSweepColumn(&flatwallsweep, dc_x, dc_yl, dc_yh);
+}
+
+static void R_FlatWallColumnRows2(void)
+{
+	R_FlatWallSweepColumn(&flatwallsweep2, dc_x, dc_yl, dc_yh);
+}
+
+//
 // The color of the wall of the columns from x on is color: the spans the
 // columns before left open are painted with the color that opened them,
 // and the spans of the columns from here take the new one. Both tiers
@@ -312,41 +386,55 @@ void R_FlatWallColor(int x, int color)
 }
 
 //
-// Paints one column of a wall with the column renderer of the mode, for
-// the walls that are not painted row by row. The seg loop keeps dc_color
-// at the color of the wall of the column of the moment, which is the
-// color painted here, whether the light changed with this column or not.
+// The renderers of one column of the walls that are not painted row by
+// row, installed in flatwallcolumn1 and flatwallcolumn2 by
+// R_SetupFlatWall. The seg loop keeps dc_color at the color of the wall
+// of the column of the moment, which is the color painted here, whether
+// the light changed with this column or not.
 //
-static void R_FlatWallDrawColumn(int x, int yl, int yh)
+// A column with dc_yl over dc_yh is not visible and paints nothing, as
+// the column renderers of the modes of the walls left to the columns do.
+//
+static void R_FlatWallColumnCols(void)
 {
-	if (yl > yh)
+	if (dc_yl > dc_yh)
 		return;
 
-	// the low detail modes of the CGA composite cards update only
-	// every flatwallcolscale-th column of the screen, and leave the
-	// rest of them alone
+	colfunc();
+}
+
 #if !defined(MODE_MDA) && !defined(MODE_VT100)
-	if (flatwallcolscale > 1 && (x & (flatwallcolscale - 1)))
+// the modes of the CGA composite cards update only every
+// flatwallcolscale-th column of the screen and leave the rest of them
+// alone, so the columns between them are not painted
+static void R_FlatWallColumnColsStride(void)
+{
+	if (dc_yl > dc_yh)
 		return;
+
+	if (flatwallcolscale > 1 && (dc_x & (flatwallcolscale - 1)))
+		return;
+
+	colfunc();
+}
 #endif
 
-	dc_x = x;
-	dc_yl = yl;
-	dc_yh = yh;
-
 #if defined(MODE_MDA) || defined(MODE_VT100)
-	// the walls of the MDA and of the VT100 are the outlines of the
-	// character cells: only the first and the last column of the wall
-	// draw the block of it, the inside of it is cleared. Row rendering
-	// does not fit this, as every row of cells would need its edges too.
-	if (x == flatwallfirstx || x == flatwalllastx)
+// the walls of the MDA and of the VT100 are the outlines of the
+// character cells: only the first and the last column of the wall draw
+// the block of it, the inside of it is cleared. Row rendering does not
+// fit this, as every row of cells would need its edges too.
+static void R_FlatWallColumnColsMDA(void)
+{
+	if (dc_yl > dc_yh)
+		return;
+
+	if (dc_x == flatwallfirstx || dc_x == flatwalllastx)
 		R_DrawLineColumnTextMDA();
 	else
 		R_DrawEmptyColumnTextMDA();
-#else
-	colfunc();
-#endif
 }
+#endif
 
 void R_FlatWallStart(void)
 {
@@ -381,34 +469,6 @@ void R_FlatWallStart(void)
 #else
 	ds_colormap = (lighttable_t *)flatwallbrightmap;
 #endif
-}
-
-//
-// Adds one column of the wall of the segment to the first or to the
-// second tier of it. The column goes to the sweep of the rows when the
-// walls are painted row by row, and to the column renderer of the mode
-// when they are not.
-//
-void R_FlatWallColumn1(int x, int yl, int yh)
-{
-	if (flatwallrows)
-	{
-		R_FlatWallSweepColumn(&flatwallsweep, x, yl, yh);
-		return;
-	}
-
-	R_FlatWallDrawColumn(x, yl, yh);
-}
-
-void R_FlatWallColumn2(int x, int yl, int yh)
-{
-	if (flatwallrows)
-	{
-		R_FlatWallSweepColumn(&flatwallsweep2, x, yl, yh);
-		return;
-	}
-
-	R_FlatWallDrawColumn(x, yl, yh);
 }
 
 //

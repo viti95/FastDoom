@@ -47,9 +47,24 @@
 // column renderer of the mode as the seg loop walks them, the same
 // moment the rows take them.
 //
+// R_SetupFlatWall installs the renderer of the column of the walls once
+// per view, so that the seg loops pay one call per column of their wall
+// and nothing for the renderer they do not use.
+//
 
 // Span renderer used for the wall rows, set up per video mode.
 extern void (*flatwallspanfunc)(void);
+
+// The renderer of one column of the wall of the seg loops of the flat
+// walls, of the first and of the second tier of it. R_SetupFlatWall
+// installs the sweep of the rows of the tier when the walls are painted
+// row by row and the column renderer of the mode when they are not.
+// Both take the column from dc_x, dc_yl and dc_yh, as the renderers of
+// the mode do, and a column with dc_yl over dc_yh has no wall: the
+// column renderer paints nothing, and the sweep of the rows closes with
+// it the rows of the wall it does not reach.
+extern void (*flatwallcolumn1)(void);
+extern void (*flatwallcolumn2)(void);
 
 // Non zero when the walls of the view are painted row by row, zero
 // when they are painted column by column. R_SetupFlatWall sets it from
@@ -115,11 +130,6 @@ void R_DrawSkyFlatRows(visplane_t *pl);
 // light along the seg gives the columns another one. A wall whose color
 // does not change, as the flatter walls, never calls it.
 void R_FlatWallStart(void);
-
-// Adds one column, from the row yl to the row yh both included, to the
-// first or to the second tier of the wall of the segment.
-void R_FlatWallColumn1(int x, int yl, int yh);
-void R_FlatWallColumn2(int x, int yl, int yh);
 
 // The color of the wall of the columns from x on is color: the spans the
 // columns before it left open are painted with the color that opened

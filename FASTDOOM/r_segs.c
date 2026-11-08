@@ -1817,15 +1817,20 @@ void R_RenderSegLoopFlat(void)
 			}
 		}
 
-		// draw the wall tiers: every column of the wall goes to the
-		// sweep of the rows, which paints the spans of the rows
-		// that the column closes. A column of a tier whose top
-		// row is below its bottom row has no wall, and it closes
-		// the rows of the wall it does not reach.
+		// draw the wall tiers: the column of each tier goes to
+		// flatwallcolumn, which the view sets up once: the sweep of
+		// the rows, painting the spans of the rows the column
+		// closes, or the column renderer of the mode. A column of a
+		// tier whose top row is below its bottom row has no wall, and
+		// the sweep of the rows closes with it the rows of the wall it
+		// does not reach.
 		if (midtexture)
 		{
 			// single sided line, the wall of the whole column
-			R_FlatWallColumn1(rw_x, yl, yh);
+			dc_x = rw_x;
+			dc_yl = yl;
+			dc_yh = yh;
+			(*flatwallcolumn1)();
 
 			cc_rwx = viewheight;
 			fc_rwx = -1;
@@ -1843,7 +1848,10 @@ void R_RenderSegLoopFlat(void)
 				if (mid >= fc_rwx)
 					mid = fc_rwx - 1;
 
-				R_FlatWallColumn1(rw_x, yl, mid);
+				dc_x = rw_x;
+				dc_yl = yl;
+				dc_yh = mid;
+				(*flatwallcolumn1)();
 
 				if (mid < yl)
 					cc_rwx = yl - 1;
@@ -1868,7 +1876,10 @@ void R_RenderSegLoopFlat(void)
 				if (mid <= cc_rwx)
 					mid = cc_rwx + 1;
 
-				R_FlatWallColumn2(rw_x, mid, yh);
+				dc_x = rw_x;
+				dc_yl = mid;
+				dc_yh = yh;
+				(*flatwallcolumn2)();
 
 				if (mid > yh)
 					fc_rwx = yh + 1;
@@ -2007,15 +2018,20 @@ void R_RenderSegLoopFlatter(void)
 			}
 		}
 
-		// draw the wall tiers: every column of the wall goes to the
-		// sweep of the rows, which paints the spans of the rows
-		// that the column closes. A column of a tier whose top
-		// row is below its bottom row has no wall, and it closes
-		// the rows of the wall it does not reach.
+		// draw the wall tiers: the column of each tier goes to
+		// flatwallcolumn, which the view sets up once: the sweep of
+		// the rows, painting the spans of the rows the column
+		// closes, or the column renderer of the mode. A column of a
+		// tier whose top row is below its bottom row has no wall, and
+		// the sweep of the rows closes with it the rows of the wall it
+		// does not reach.
 		if (midtexture)
 		{
 			// single sided line, the wall of the whole column
-			R_FlatWallColumn1(rw_x, yl, yh);
+			dc_x = rw_x;
+			dc_yl = yl;
+			dc_yh = yh;
+			(*flatwallcolumn1)();
 
 			cc_rwx = viewheight;
 			fc_rwx = -1;
@@ -2033,7 +2049,10 @@ void R_RenderSegLoopFlatter(void)
 				if (mid >= fc_rwx)
 					mid = fc_rwx - 1;
 
-				R_FlatWallColumn1(rw_x, yl, mid);
+				dc_x = rw_x;
+				dc_yl = yl;
+				dc_yh = mid;
+				(*flatwallcolumn1)();
 
 				if (mid < yl)
 					cc_rwx = yl - 1;
@@ -2058,7 +2077,10 @@ void R_RenderSegLoopFlatter(void)
 				if (mid <= cc_rwx)
 					mid = cc_rwx + 1;
 
-				R_FlatWallColumn2(rw_x, mid, yh);
+				dc_x = rw_x;
+				dc_yl = mid;
+				dc_yh = yh;
+				(*flatwallcolumn2)();
 
 				if (mid > yh)
 					fc_rwx = yh + 1;
