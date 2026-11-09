@@ -1283,8 +1283,8 @@ void R_DrawSkyFlatPlanar(visplane_t *pl)
     int x;
     byte *source;
 
-    // the sky of the view is painted row by row when the mode can, one
-    // span per row, and not column by column as here
+    /* the sky of the modes that can is painted row by row, see
+       R_DrawSkyFlatRows */
     if (flatskyrows)
     {
         R_DrawSkyFlatRows(pl);
@@ -1400,8 +1400,8 @@ void R_DrawSkyFlatPlanarLow(visplane_t *pl)
     int x;
     byte *source;
 
-    // the sky of the view is painted row by row when the mode can, one
-    // span per row, and not column by column as here
+    /* the sky of the modes that can is painted row by row, see
+       R_DrawSkyFlatRows */
     if (flatskyrows)
     {
         R_DrawSkyFlatRows(pl);
@@ -1463,10 +1463,8 @@ void R_DrawSkyFlat(visplane_t *pl)
 {
     int x;
 
-    // the sky of the view is painted row by row when the mode can, one
-    // span per row, and not column by column as here. The mode of the
-    // MDA never takes the rows: it has no flat span renderer, and its
-    // sky is drawn by its own renderer.
+    /* the sky of the modes that can is painted row by row: the MDA has no
+       flat span renderer, so its sky is always painted here */
     if (flatskyrows)
     {
         R_DrawSkyFlatRows(pl);

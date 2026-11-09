@@ -382,8 +382,8 @@ void R_RenderMaskedSegRangeFlat(drawseg_t *ds,
 	}
 		
 
-	// the windows of the row modes are painted row by row, the walls
-	// of the textures with gaps in their columns keep the columns
+	/* the windows of the row modes are painted row by row: the textures
+	   with gaps in their columns keep the columns, see R_DrawMaskedWallRows */
 	if (R_DrawMaskedWallRows(ds, texnum, x1, x2, color, 1))
 		return;
 
@@ -583,7 +583,6 @@ void R_RenderMaskedSegRangeFlatter(drawseg_t *ds,
 	}
 	dc_texturemid += curline->sidedef->rowoffset;
 
-	// see R_RenderMaskedSegRangeFlat
 	if (R_DrawMaskedWallRows(ds, texnum, x1, x2, color, 0))
 		return;
 
@@ -991,7 +990,6 @@ void R_RenderMaskedSegRange2Flat(drawseg_t *ds)
 		dc_color = dc_colormap[color];
 	}
 
-	// see R_RenderMaskedSegRangeFlat
 	if (R_DrawMaskedWallRows(ds, texnum, ds->x1, ds->x2, color, 1))
 		return;
 
@@ -1190,7 +1188,6 @@ void R_RenderMaskedSegRange2Flatter(drawseg_t *ds)
 	}
 	dc_texturemid += curline->sidedef->rowoffset;
 
-	// see R_RenderMaskedSegRangeFlat
 	if (R_DrawMaskedWallRows(ds, texnum, ds->x1, ds->x2, color, 0))
 		return;
 
@@ -1696,8 +1693,8 @@ void R_RenderSegLoopFlat(void)
 	byte *firstPixel;
 	byte color;
 
-	// the color of the wall of the columns walked, and of the column
-	// of the moment: the wall keeps it until the light gives another
+	/* the color of the wall of the columns walked and of the column of the
+	   moment: it stays until the light of the seg gives another one */
 	byte wallcolor;
 	byte newcolor;
 
@@ -1727,14 +1724,12 @@ void R_RenderSegLoopFlat(void)
 	color = *(firstPixel + 3);
 	dc_color = color;
 
-	// the wall of the seg is painted row by row: the sweep of the
-	// rows opens the spans of its rows and paints them as the
-	// columns of the loop are walked. The color of the wall changes
-	// with the light levels the seg crosses, so every column lights
-	// its own color, and the sweep is told when it changes
+	/* the wall of the seg is painted row by row as the columns of the loop are
+	   walked: the color of the wall changes with the light of the seg, so the
+	   sweep is told of every change */
 	R_FlatWallStart();
 
-	// the wall of the seg takes the color of the seg itself
+	/* the wall takes the color of the seg itself */
 	wallcolor = dc_color;
 
 	for (; rw_x < rw_stopx; rw_x++)
@@ -1784,10 +1779,8 @@ void R_RenderSegLoopFlat(void)
 			}
 		}
 
-		// the color of the wall of the column: the renderers of the
-		// flat walls write a color of their own, they do not translate
-		// the pixels of a texture, so only the color of the column is
-		// needed here, not the colormap of it
+		/* the renderers of the flat walls write a color of their own, so only
+		   the color is needed here, not the colormap of it */
 		if (segtextured)
 		{
 			// calculate lighting
@@ -1801,13 +1794,9 @@ void R_RenderSegLoopFlat(void)
 
 			newcolor = walllights[index][color];
 
-			// a span never crosses a change of the color of
-			// the wall: the spans the columns before left open
-			// are painted with the color that opened them, and
-			// only then does the wall take the new one. The
-			// compare is here, where the color of the wall is
-			// worked out, and not once per tier inside the
-			// sweep of the rows
+			/* a span never crosses a change of the color of the wall: the spans of the
+			   columns before take the color that opened them. Compared here, where
+			   the color is worked out, and not once per tier inside the sweep */
 			if (newcolor != wallcolor)
 			{
 				wallcolor = newcolor;
@@ -1817,16 +1806,12 @@ void R_RenderSegLoopFlat(void)
 			}
 		}
 
-		// draw the wall tiers: the column of each tier goes to
-		// flatwallcolumn, which the view sets up once: the sweep of
-		// the rows, painting the spans of the rows the column
-		// closes, or the column renderer of the mode. A column of a
-		// tier whose top row is below its bottom row has no wall, and
-		// the sweep of the rows closes with it the rows of the wall it
-		// does not reach.
+		/* draw the wall tiers, every column to flatwallcolumn: a column with its
+		   top row over its bottom row has no wall, and closes the rows of the
+		   wall it does not reach */
 		if (midtexture)
 		{
-			// single sided line, the wall of the whole column
+			/* single sided line, the wall of the whole column */
 			dc_x = rw_x;
 			dc_yl = yl;
 			dc_yh = yh;
@@ -1840,8 +1825,8 @@ void R_RenderSegLoopFlat(void)
 			// two sided line
 			if (toptexture)
 			{
-				// top wall, from the top of the seg down to
-				// the opening: mid < yl leaves no wall
+				/* top wall, from the top of the seg to the opening: mid over yl
+				   leaves no wall */
 				mid = pixhigh >> HEIGHTBITS;
 				pixhigh -= pixhighstep;
 
@@ -1867,8 +1852,8 @@ void R_RenderSegLoopFlat(void)
 
 			if (bottomtexture)
 			{
-				// bottom wall, from the opening down to the
-				// bottom of the seg: mid > yh leaves no wall
+				/* bottom wall, from the opening to the bottom of the seg: mid over
+				   yh leaves no wall */
 				mid = (pixlow + HEIGHTUNIT - 1) >> HEIGHTBITS;
 				pixlow -= pixlowstep;
 
@@ -1895,10 +1880,7 @@ void R_RenderSegLoopFlat(void)
 
 			if (maskedtexture)
 			{
-				// save texturecol for backdrawing of the masked mid
-				// texture: the column of the texture of this column,
-				// which only the masked wall needs. The distance of
-				// the seg is the same for all its columns
+				/* save texturecol for the backdrawing of the masked mid texture */
 				angle = (rw_centerangle + xtoviewangle[rw_x]) >> ANGLETOFINESHIFT;
 				texturecolumn = rw_offset - FixedMulEDX(finetangent[angle], rw_distance);
 				texturecolumn >>= FRACBITS;
@@ -1915,10 +1897,8 @@ void R_RenderSegLoopFlat(void)
 		floorclip[rw_x] = fc_rwx;
 	}
 
-	// the tiers of the wall are closed: the spans of their rows were
-	// painted as the columns were walked, and only the spans still
-	// open at the last column of the seg are painted here. A tier
-	// without a wall of its own has nothing open.
+	/* close the tiers of the wall: only the spans the last column left open
+	   are painted here */
 	R_FlatWallFinish(rw_stopx - 1);
 }
 
@@ -1966,9 +1946,8 @@ void R_RenderSegLoopFlatter(void)
 
 	dc_color = *(firstPixel + 3);
 
-	// the wall of the seg is painted row by row, all of it with the
-	// color of the seg left in dc_color: the color of the wall does
-	// not change along the seg, so the sweep is never told of one
+	/* the wall of the seg is painted row by row with one color: it does not
+	   change along the seg, so the sweep is never told of a change */
 	R_FlatWallStart();
 
 	for (; rw_x < rw_stopx; rw_x++)
@@ -2018,16 +1997,12 @@ void R_RenderSegLoopFlatter(void)
 			}
 		}
 
-		// draw the wall tiers: the column of each tier goes to
-		// flatwallcolumn, which the view sets up once: the sweep of
-		// the rows, painting the spans of the rows the column
-		// closes, or the column renderer of the mode. A column of a
-		// tier whose top row is below its bottom row has no wall, and
-		// the sweep of the rows closes with it the rows of the wall it
-		// does not reach.
+		/* draw the wall tiers, every column to flatwallcolumn: a column with its
+		   top row over its bottom row has no wall, and closes the rows of the
+		   wall it does not reach */
 		if (midtexture)
 		{
-			// single sided line, the wall of the whole column
+			/* single sided line, the wall of the whole column */
 			dc_x = rw_x;
 			dc_yl = yl;
 			dc_yh = yh;
@@ -2041,8 +2016,8 @@ void R_RenderSegLoopFlatter(void)
 			// two sided line
 			if (toptexture)
 			{
-				// top wall, from the top of the seg down to
-				// the opening: mid < yl leaves no wall
+				/* top wall, from the top of the seg to the opening: mid over yl
+				   leaves no wall */
 				mid = pixhigh >> HEIGHTBITS;
 				pixhigh -= pixhighstep;
 
@@ -2068,8 +2043,8 @@ void R_RenderSegLoopFlatter(void)
 
 			if (bottomtexture)
 			{
-				// bottom wall, from the opening down to the
-				// bottom of the seg: mid > yh leaves no wall
+				/* bottom wall, from the opening to the bottom of the seg: mid over
+				   yh leaves no wall */
 				mid = (pixlow + HEIGHTUNIT - 1) >> HEIGHTBITS;
 				pixlow -= pixlowstep;
 
@@ -2096,10 +2071,7 @@ void R_RenderSegLoopFlatter(void)
 
 			if (maskedtexture)
 			{
-				// save texturecol for backdrawing of the masked mid
-				// texture: the column of the texture of this column,
-				// which only the masked wall needs. The distance of
-				// the seg is the same for all its columns
+				/* save texturecol for the backdrawing of the masked mid texture */
 				angle = (rw_centerangle + xtoviewangle[rw_x]) >> ANGLETOFINESHIFT;
 				texturecolumn = rw_offset - FixedMulEDX(finetangent[angle], rw_distance);
 				texturecolumn >>= FRACBITS;
@@ -2115,10 +2087,8 @@ void R_RenderSegLoopFlatter(void)
 		floorclip[rw_x] = fc_rwx;
 	}
 
-	// the tiers of the wall are closed: the spans of their rows were
-	// painted as the columns were walked, and only the spans still
-	// open at the last column of the seg are painted here. A tier
-	// without a wall of its own has nothing open.
+	/* close the tiers of the wall: only the spans the last column left open
+	   are painted here */
 	R_FlatWallFinish(rw_stopx - 1);
 }
 

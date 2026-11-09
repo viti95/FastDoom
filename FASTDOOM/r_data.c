@@ -127,8 +127,7 @@ texture_t **textures_hashtable;
 int *texturewidthmask;
 // needed for texture pegging
 fixed_t *textureheight;
-// is every column of the texture one post of its whole height? see
-// R_TextureIsSolidMasked and r_flatwall.c
+/* cache of R_TextureIsSolidMasked, see r_data.h */
 byte *texturemaskedsolid;
 int *texturecompositesize;
 short **texturecolumnlump;
@@ -459,8 +458,7 @@ void R_InitTextures(void)
     texturewidthmask = Z_MallocUnowned(numtextures * 4, PU_STATIC);
     textureheight = Z_MallocUnowned(numtextures * 4, PU_STATIC);
 
-    // the wall row renderer of r_flatwall.c caches per texture whether
-    // its columns are single posts, nothing checked yet
+    /* nothing of the cache of R_TextureIsSolidMasked checked yet */
     texturemaskedsolid = Z_MallocUnowned(numtextures, PU_STATIC);
     memset(texturemaskedsolid, 0, numtextures);
 
@@ -545,24 +543,17 @@ void R_InitTextures(void)
     Z_Free(patchlookup);
 }
 
-//
-// R_TextureIsSolidMasked
-// Whether every column of the texture is a single post that goes from
-// its top to its bottom, so the wall of the texture is one block of
-// pixels per column, which the row renderer of the flat walls paints
-// (see r_flatwall.c).
-//
-// It has to be one post and not just a block of pixels without gaps:
-// the post loop of a masked wall skips whole the posts ending below
-// the bottom of the view, so the posts of a column of the same block
-// of pixels do not add up to the whole block, the first of them can
-// draw rows that the whole block does not draw.
-//
-// The posts of a texture do not change during the game, so the answer
-// is cached in texturemaskedsolid, which R_InitTextures clears. The
-// columns of the texture are looked at once, the first time it is a
-// masked mid texture of a wall.
-//
+/*
+ * R_TextureIsSolidMasked
+ * Whether every column of the texture is a single post going from its top
+ * to its bottom, so that its wall is one span per column, which the row
+ * renderer of the flat walls paints (see r_flatwall.c).
+ *
+ * It has to be one post and not only a block of pixels without gaps: the
+ * post loop of a masked wall skips whole the posts ending below the bottom
+ * of the view, so the first post of a column can draw rows that the whole
+ * block of pixels of the column does not draw.
+ */
 int R_TextureIsSolidMasked(int texnum)
 {
     int col;
@@ -599,8 +590,8 @@ int R_TextureIsSolidMasked(int texnum)
 
         post = (column_t *)(base + ofs);
 
-        // the column must be one post, starting at its top and ending
-        // at its bottom, with no other post after it
+        /* one post from the top of the column to its bottom, with no
+           other post after it */
         if (post->topdelta != 0
             || post->length != height
             || ((column_t *)((byte *)post + post->length + 4))

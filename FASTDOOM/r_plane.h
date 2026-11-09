@@ -49,13 +49,13 @@ void R_DrawPlanesFlatterBackbuffer(void);
 void R_DrawPlanesFlatterLowBackbuffer(void);
 void R_DrawPlanesFlatterPotatoBackbuffer(void);
 void R_DrawPlanesFlatterVBE2(void);
-// The color of the flat sky, a color of the palette that stands for
-// the texture of the sky.
+/* color of the palette standing for the texture of the sky, used by the
+   modes with a flat sky */
 #define SKYFLATCOLOR 220
 
-// The attribute of the sky cells of the text modes, of the same shade
-// as the sky of the other modes. The text modes do not translate it
-// with the palette: the sky of them is always of that attribute.
+/* attribute of the cells of the sky of the text modes, of the same shade as
+   the sky of the other modes: the text modes do not translate it with the
+   palette, the sky of them is always of this attribute */
 #define SKYTEXTATTR 6
 
 void R_DrawSky(visplane_t *pl);

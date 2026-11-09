@@ -1204,8 +1204,8 @@ static void R_SetupMDAFuncs(void)
 
     fuzzcolfunc = R_DrawLineColumnTextMDA;
 
-    // the walls of this mode are outlines of the character cells, they
-    // are always drawn by its own column renderer
+    /* the walls of this mode are outlines of the character cells, drawn by
+       its own column renderer */
     flatwallspanfunc = NULL;
     flatwallcolscale = 1;
 }
@@ -2064,8 +2064,7 @@ static void R_SetupBackbufferFuncs(void)
         }
         flatwallspanfunc = R_DrawSpanFlatBackbuffer;
 #if defined(MODE_CGA16) || defined(MODE_CVB)
-        // the screen update of the composite modes only keeps half of
-        // the columns of the screen, so drawing the other ones is waste
+        /* the screen update of these modes only keeps half of the columns */
         flatwallcolscale = 2;
 #elif defined(MODE_CGA512)
         flatwallcolscale = 4;
@@ -2278,7 +2277,7 @@ static void R_SetupBackbufferFuncs(void)
         }
         flatwallspanfunc = R_DrawSpanFlatLowBackbuffer;
 #if defined(MODE_CGA512)
-        // half of the columns of the screen are updated
+        /* only half of the columns of the screen are updated */
         flatwallcolscale = 2;
 #else
         flatwallcolscale = 1;
@@ -2928,7 +2927,7 @@ typedef struct
     void (*renderMaskedSegRange2)(drawseg_t *ds);
 } wallrenderfuncs_t;
 
-// The WALL_*_ROWS modes use the flat renderers, see WALLRENDER_FUNC.
+/* the WALL_*_ROWS modes use the flat renderers, see WALLRENDER_FUNC */
 static const wallrenderfuncs_t wallrenderfuncs[3] =
 {
     { R_RenderSegLoop, R_RenderMaskedSegRange, R_RenderMaskedSegRange2 },
@@ -3046,8 +3045,8 @@ void R_ExecuteSetViewSize(void)
     projection = centerxfrac;
 #endif
 
-    // spriteRender / pspriteRender are always in range 0..2, wallRender
-    // also selects the row renderer of the flat walls
+    /* spriteRender / pspriteRender are always in range 0..2, wallRender
+       also selects the rows of the flat walls, see WALLRENDER_FUNC */
     renderSegLoop = wallrenderfuncs[WALLRENDER_FUNC(wallRender)].renderSegLoop;
     renderMaskedSegRange = wallrenderfuncs[WALLRENDER_FUNC(wallRender)].renderMaskedSegRange;
     renderMaskedSegRange2 = wallrenderfuncs[WALLRENDER_FUNC(wallRender)].renderMaskedSegRange2;
@@ -3201,9 +3200,6 @@ void R_ExecuteSetViewSize(void)
 
     R_PatchCode();
 
-    // the renderer of the walls and of the sky of the view, row by row
-    // with the flat span renderer of the mode or column by column, with
-    // the render functions of the mode already set up
     R_SetupFlatWall();
     R_SetupFlatSky();
 
