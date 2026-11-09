@@ -105,6 +105,10 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 	int ofs;
 	int tex;
 	int column;
+	int texwmask;
+	short *texlumps;
+	unsigned short *texofs;
+	byte *texbase;
 
 	// Calculate light table.
 	// Use different light tables
@@ -114,6 +118,16 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 	frontsector = curline->frontsector;
 	backsector = curline->backsector;
 	texnum = texturetranslation[curline->sidedef->midtexture];
+
+	// VITI95: OPTIMIZE: the masked texture of a seg does not change while
+	// its columns are drawn, so its per column lookups are resolved once.
+	// texbase is the address of the last texture column lump that was taken
+	// from the WAD cache, see W_CachedLumpBase().
+	tex = texnum;
+	texwmask = texturewidthmask[tex];
+	texlumps = texturecolumnlump[tex];
+	texofs = texturecolumnofs[tex];
+	texbase = 0;
 
 	lightnum = (frontsector->lightlevel >> LIGHTSEGSHIFT) + extralight;
 
@@ -191,15 +205,13 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 
 			// draw the texture
 
-			tex = texnum;
-			column = maskedtexturecol[dc_x];
-			column &= texturewidthmask[tex];
-			lump = texturecolumnlump[tex][column];
-			ofs = texturecolumnofs[tex][column] - 3;
+			column = maskedtexturecol[dc_x] & texwmask;
+			lump = texlumps[column];
+			ofs = texofs[column] - 3;
 
 			if (lump > 0)
 			{
-				col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
+				col = (column_t *)W_CachedLumpBase(texbase, lump, ofs);
 			}
 			else
 			{
@@ -305,6 +317,10 @@ void R_RenderMaskedSegRangeFlat(drawseg_t *ds,
 	int ofs;
 	int tex;
 	int column;
+	int texwmask;
+	short *texlumps;
+	unsigned short *texofs;
+	byte *texbase;
 
 	byte *firstPixel;
 	byte color;
@@ -317,6 +333,16 @@ void R_RenderMaskedSegRangeFlat(drawseg_t *ds,
 	frontsector = curline->frontsector;
 	backsector = curline->backsector;
 	texnum = texturetranslation[curline->sidedef->midtexture];
+
+	// VITI95: OPTIMIZE: the masked texture of a seg does not change while
+	// its columns are drawn, so its per column lookups are resolved once.
+	// texbase is the address of the last texture column lump that was taken
+	// from the WAD cache, see W_CachedLumpBase().
+	tex = texnum;
+	texwmask = texturewidthmask[tex];
+	texlumps = texturecolumnlump[tex];
+	texofs = texturecolumnofs[tex];
+	texbase = 0;
 
 	lump = texturecolumnlump[texnum][0];
 	ofs = texturecolumnofs[texnum][0] - 3;
@@ -411,15 +437,13 @@ void R_RenderMaskedSegRangeFlat(drawseg_t *ds,
 
 			// draw the texture
 
-			tex = texnum;
-			column = maskedtexturecol[dc_x];
-			column &= texturewidthmask[tex];
-			lump = texturecolumnlump[tex][column];
-			ofs = texturecolumnofs[tex][column] - 3;
+			column = maskedtexturecol[dc_x] & texwmask;
+			lump = texlumps[column];
+			ofs = texofs[column] - 3;
 
 			if (lump > 0)
 			{
-				col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
+				col = (column_t *)W_CachedLumpBase(texbase, lump, ofs);
 			}
 			else
 			{
@@ -524,6 +548,10 @@ void R_RenderMaskedSegRangeFlatter(drawseg_t *ds,
 	int ofs;
 	int tex;
 	int column;
+	int texwmask;
+	short *texlumps;
+	unsigned short *texofs;
+	byte *texbase;
 
 	byte *firstPixel;
 	byte color;
@@ -536,6 +564,16 @@ void R_RenderMaskedSegRangeFlatter(drawseg_t *ds,
 	frontsector = curline->frontsector;
 	backsector = curline->backsector;
 	texnum = texturetranslation[curline->sidedef->midtexture];
+
+	// VITI95: OPTIMIZE: the masked texture of a seg does not change while
+	// its columns are drawn, so its per column lookups are resolved once.
+	// texbase is the address of the last texture column lump that was taken
+	// from the WAD cache, see W_CachedLumpBase().
+	tex = texnum;
+	texwmask = texturewidthmask[tex];
+	texlumps = texturecolumnlump[tex];
+	texofs = texturecolumnofs[tex];
+	texbase = 0;
 
 	lump = texturecolumnlump[texnum][0];
 	ofs = texturecolumnofs[texnum][0] - 3;
@@ -595,15 +633,13 @@ void R_RenderMaskedSegRangeFlatter(drawseg_t *ds,
 
 			// draw the texture
 
-			tex = texnum;
-			column = maskedtexturecol[dc_x];
-			column &= texturewidthmask[tex];
-			lump = texturecolumnlump[tex][column];
-			ofs = texturecolumnofs[tex][column] - 3;
+			column = maskedtexturecol[dc_x] & texwmask;
+			lump = texlumps[column];
+			ofs = texofs[column] - 3;
 
 			if (lump > 0)
 			{
-				col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
+				col = (column_t *)W_CachedLumpBase(texbase, lump, ofs);
 			}
 			else
 			{
@@ -706,6 +742,10 @@ void R_RenderMaskedSegRange2(drawseg_t *ds)
 	int ofs;
 	int tex;
 	int column;
+	int texwmask;
+	short *texlumps;
+	unsigned short *texofs;
+	byte *texbase;
 
 	// Calculate light table.
 	// Use different light tables
@@ -715,6 +755,16 @@ void R_RenderMaskedSegRange2(drawseg_t *ds)
 	frontsector = curline->frontsector;
 	backsector = curline->backsector;
 	texnum = texturetranslation[curline->sidedef->midtexture];
+
+	// VITI95: OPTIMIZE: the masked texture of a seg does not change while
+	// its columns are drawn, so its per column lookups are resolved once.
+	// texbase is the address of the last texture column lump that was taken
+	// from the WAD cache, see W_CachedLumpBase().
+	tex = texnum;
+	texwmask = texturewidthmask[tex];
+	texlumps = texturecolumnlump[tex];
+	texofs = texturecolumnofs[tex];
+	texbase = 0;
 
 	lightnum = (frontsector->lightlevel >> LIGHTSEGSHIFT) + extralight;
 
@@ -794,15 +844,13 @@ void R_RenderMaskedSegRange2(drawseg_t *ds)
 
 			// draw the texture
 
-			tex = texnum;
-			column = maskedtexturecol[dc_x];
-			column &= texturewidthmask[tex];
-			lump = texturecolumnlump[tex][column];
-			ofs = texturecolumnofs[tex][column] - 3;
+			column = maskedtexturecol[dc_x] & texwmask;
+			lump = texlumps[column];
+			ofs = texofs[column] - 3;
 
 			if (lump > 0)
 			{
-				col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
+				col = (column_t *)W_CachedLumpBase(texbase, lump, ofs);
 			}
 			else
 			{
@@ -906,6 +954,10 @@ void R_RenderMaskedSegRange2Flat(drawseg_t *ds)
 	int ofs;
 	int tex;
 	int column;
+	int texwmask;
+	short *texlumps;
+	unsigned short *texofs;
+	byte *texbase;
 
 	byte *firstPixel;
 	byte color;
@@ -918,6 +970,16 @@ void R_RenderMaskedSegRange2Flat(drawseg_t *ds)
 	frontsector = curline->frontsector;
 	backsector = curline->backsector;
 	texnum = texturetranslation[curline->sidedef->midtexture];
+
+	// VITI95: OPTIMIZE: the masked texture of a seg does not change while
+	// its columns are drawn, so its per column lookups are resolved once.
+	// texbase is the address of the last texture column lump that was taken
+	// from the WAD cache, see W_CachedLumpBase().
+	tex = texnum;
+	texwmask = texturewidthmask[tex];
+	texlumps = texturecolumnlump[tex];
+	texofs = texturecolumnofs[tex];
+	texbase = 0;
 
 	lump = texturecolumnlump[texnum][0];
 	ofs = texturecolumnofs[texnum][0] - 3;
@@ -1013,15 +1075,13 @@ void R_RenderMaskedSegRange2Flat(drawseg_t *ds)
 
 			// draw the texture
 
-			tex = texnum;
-			column = maskedtexturecol[dc_x];
-			column &= texturewidthmask[tex];
-			lump = texturecolumnlump[tex][column];
-			ofs = texturecolumnofs[tex][column] - 3;
+			column = maskedtexturecol[dc_x] & texwmask;
+			lump = texlumps[column];
+			ofs = texofs[column] - 3;
 
 			if (lump > 0)
 			{
-				col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
+				col = (column_t *)W_CachedLumpBase(texbase, lump, ofs);
 			}
 			else
 			{
@@ -1124,6 +1184,10 @@ void R_RenderMaskedSegRange2Flatter(drawseg_t *ds)
 	int ofs;
 	int tex;
 	int column;
+	int texwmask;
+	short *texlumps;
+	unsigned short *texofs;
+	byte *texbase;
 
 	byte *firstPixel;
 	byte color;
@@ -1136,6 +1200,16 @@ void R_RenderMaskedSegRange2Flatter(drawseg_t *ds)
 	frontsector = curline->frontsector;
 	backsector = curline->backsector;
 	texnum = texturetranslation[curline->sidedef->midtexture];
+
+	// VITI95: OPTIMIZE: the masked texture of a seg does not change while
+	// its columns are drawn, so its per column lookups are resolved once.
+	// texbase is the address of the last texture column lump that was taken
+	// from the WAD cache, see W_CachedLumpBase().
+	tex = texnum;
+	texwmask = texturewidthmask[tex];
+	texlumps = texturecolumnlump[tex];
+	texofs = texturecolumnofs[tex];
+	texbase = 0;
 
 	lump = texturecolumnlump[texnum][0];
 	ofs = texturecolumnofs[texnum][0] - 3;
@@ -1195,15 +1269,13 @@ void R_RenderMaskedSegRange2Flatter(drawseg_t *ds)
 
 			// draw the texture
 
-			tex = texnum;
-			column = maskedtexturecol[dc_x];
-			column &= texturewidthmask[tex];
-			lump = texturecolumnlump[tex][column];
-			ofs = texturecolumnofs[tex][column] - 3;
+			column = maskedtexturecol[dc_x] & texwmask;
+			lump = texlumps[column];
+			ofs = texofs[column] - 3;
 
 			if (lump > 0)
 			{
-				col = (column_t *)((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
+				col = (column_t *)W_CachedLumpBase(texbase, lump, ofs);
 			}
 			else
 			{
@@ -1336,11 +1408,35 @@ void R_RenderSegLoop(void)
 	int cc_rwx;
 	int fc_rwx;
 
+	int midmask, topmask, botmask;
+	short *midlumps, *toplumps, *botlumps;
+	unsigned short *midofss, *topofss, *botofss;
+	byte *midbase, *topbase, *botbase;
+
 #if defined(MODE_MDA) || defined(MODE_VT100)
 	int first = rw_x;
 #endif
 
 	// texturecolumn = 0;				// shut up compiler warning
+
+	// VITI95: OPTIMIZE: the texture of a wall tier does not change while the
+	// seg is drawn, so its per column lookups are resolved once here. The bases
+	// are the addresses of the last texture column lumps that were taken from
+	// the WAD cache, see W_CachedLumpBase().
+	midmask = texturewidthmask[midtexture];
+	midlumps = texturecolumnlump[midtexture];
+	midofss = texturecolumnofs[midtexture];
+	midbase = 0;
+
+	topmask = texturewidthmask[toptexture];
+	toplumps = texturecolumnlump[toptexture];
+	topofss = texturecolumnofs[toptexture];
+	topbase = 0;
+
+	botmask = texturewidthmask[bottomtexture];
+	botlumps = texturecolumnlump[bottomtexture];
+	botofss = texturecolumnofs[bottomtexture];
+	botbase = 0;
 
 	for (; rw_x < rw_stopx; rw_x++)
 	{
@@ -1428,14 +1524,13 @@ void R_RenderSegLoop(void)
 				dc_texturemid = rw_midtexturemid;
 
 				tex = midtexture;
-				col = texturecolumn;
-				col &= texturewidthmask[tex];
-				lump = texturecolumnlump[tex][col];
-				ofs = texturecolumnofs[tex][col];
+				col = texturecolumn & midmask;
+				lump = midlumps[col];
+				ofs = midofss[col];
 
 				if (lump > 0)
 				{
-					dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
+					dc_source = W_CachedLumpBase(midbase, lump, ofs);
 				}
 				else
 				{
@@ -1504,14 +1599,13 @@ void R_RenderSegLoop(void)
 					dc_texturemid = rw_toptexturemid;
 
 					tex = toptexture;
-					col = texturecolumn;
-					col &= texturewidthmask[tex];
-					lump = texturecolumnlump[tex][col];
-					ofs = texturecolumnofs[tex][col];
+					col = texturecolumn & topmask;
+					lump = toplumps[col];
+					ofs = topofss[col];
 
 					if (lump > 0)
 					{
-						dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
+						dc_source = W_CachedLumpBase(topbase, lump, ofs);
 					}
 					else
 					{
@@ -1584,14 +1678,13 @@ void R_RenderSegLoop(void)
 					dc_texturemid = rw_bottomtexturemid;
 
 					tex = bottomtexture;
-					col = texturecolumn;
-					col &= texturewidthmask[tex];
-					lump = texturecolumnlump[tex][col];
-					ofs = texturecolumnofs[tex][col];
+					col = texturecolumn & botmask;
+					lump = botlumps[col];
+					ofs = botofss[col];
 
 					if (lump > 0)
 					{
-						dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
+						dc_source = W_CachedLumpBase(botbase, lump, ofs);
 					}
 					else
 					{

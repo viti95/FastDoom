@@ -69,6 +69,20 @@ void W_ReadLump(int lump, void *dest);
 
 void *W_CacheLumpNum(int lump, byte tag);
 
+/* VITI95: OPTIMIZE: W_CachedLumpBase()
+ * Gives "(base) + (offset)" for a WAD lump whose address is kept in (base),
+ * reloading the lump into the cache only when (base) is not its current
+ * address.  Z_Malloc() clears the lumpcache[] entry of a purged block, so
+ * comparing the last used address with lumpcache[] detects a purged lump
+ * without entering the cache at all.  Rendering loops use this to fetch the
+ * lump of a texture column once per lump instead of once per column.
+ * (base) must be an lvalue of type byte *, and PU_CACHE must be defined.
+ */
+#define W_CachedLumpBase(base, lump, offset)                                   \
+    ((base) == lumpcache[(lump)]                                                \
+     ? (base) + (offset)                                                        \
+     : ((base) = (byte *)W_CacheLumpNum((lump), PU_CACHE)) + (offset))
+
 #define W_CacheLumpName(name, tag) W_CacheLumpNum(W_GetNumForName((name)), (tag))
 
 void W_GenerateHashTable(void);

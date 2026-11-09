@@ -1224,6 +1224,11 @@ void R_DrawSky(visplane_t *pl)
     int tex;
     int col;
 
+    int texwmask;
+    short *texlumps;
+    unsigned short *texofs;
+    byte *texbase;
+
     int x;
 
     dc_iscale = pspriteiscaleshifted_sky;
@@ -1232,6 +1237,15 @@ void R_DrawSky(visplane_t *pl)
     dc_texturemid = 100 * FRACUNIT;
 
     tex = skytexture;
+
+    // VITI95: OPTIMIZE: the sky texture does not change while the plane is
+    // drawn, so its per column lookups are resolved once. texbase is the
+    // address of the last texture column lump that was taken from the WAD
+    // cache, see W_CachedLumpBase().
+    texwmask = texturewidthmask[tex];
+    texlumps = texturecolumnlump[tex];
+    texofs = texturecolumnofs[tex];
+    texbase = 0;
 
     for (x = pl->minx; x <= pl->maxx; x++)
     {
@@ -1265,12 +1279,11 @@ void R_DrawSky(visplane_t *pl)
 
         angle = (viewangle + xtoviewangle[x]) >> ANGLETOSKYSHIFT;
 
-        col = angle;
-        col &= texturewidthmask[tex];
-        lump = texturecolumnlump[tex][col];
-        ofs = texturecolumnofs[tex][col];
+        col = angle & texwmask;
+        lump = texlumps[col];
+        ofs = texofs[col];
 
-        dc_source = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
+        dc_source = W_CachedLumpBase(texbase, lump, ofs);
 
         skyfunc();
     }

@@ -1530,13 +1530,29 @@ void R_DrawSprite(vissprite_t *spr)
     int r2;
     fixed_t scale;
     fixed_t lowscale;
+
+    // VITI95: OPTIMIZE: the fields of the visible sprite are read for every
+    // drawseg of the frame and for every column of the sprite, so keep them
+    // in locals. Nothing in here writes to the sprite.
+    int sx1, sx2;
+    fixed_t sscale, sgz, sgzt, sgx, sgy;
+    int svheight;
     
-    if (spr->x1 > spr->x2)
+    sx1 = spr->x1;
+    sx2 = spr->x2;
+    sgx = spr->gx;
+    sgy = spr->gy;
+    sgz = spr->gz;
+    sgzt = spr->gzt;
+    sscale = spr->scale;
+    svheight = viewheight;
+
+    if (sx1 > sx2)
         return;
 
-    for (x = spr->x1; x <= spr->x2; x++)
+    for (x = sx1; x <= sx2; x++)
     {
-        clipbot[x] = viewheight;
+        clipbot[x] = svheight;
         cliptop[x] = -1;
     }
 
@@ -1548,14 +1564,14 @@ void R_DrawSprite(vissprite_t *spr)
         byte silhouette;
 
         // determine if the drawseg obscures the sprite
-        if (ds->x1 > spr->x2 || ds->x2 < spr->x1 || (!ds->silhouette && !ds->maskedtexturecol))
+        if (ds->x1 > sx2 || ds->x2 < sx1 || (!ds->silhouette && !ds->maskedtexturecol))
         {
             // does not cover sprite
             continue;
         }
 
-        r1 = ds->x1 < spr->x1 ? spr->x1 : ds->x1;
-        r2 = ds->x2 > spr->x2 ? spr->x2 : ds->x2;
+        r1 = ds->x1 < sx1 ? sx1 : ds->x1;
+        r2 = ds->x2 > sx2 ? sx2 : ds->x2;
 
         if (ds->scale1 > ds->scale2)
         {
@@ -1568,7 +1584,7 @@ void R_DrawSprite(vissprite_t *spr)
             scale = ds->scale2;
         }
 
-        if (scale < spr->scale || (lowscale < spr->scale && !R_PointOnSegSide(spr->gx, spr->gy, ds->curline)))
+        if (scale < sscale || (lowscale < sscale && !R_PointOnSegSide(sgx, sgy, ds->curline)))
         {
             // masked mid texture?
             if (ds->maskedtexturecol)
@@ -1583,16 +1599,16 @@ void R_DrawSprite(vissprite_t *spr)
 
 		silhouette = ds->silhouette;
 	
-        if (spr->gz >= ds->bsilheight)
+        if (sgz >= ds->bsilheight)
 			silhouette &= ~SIL_BOTTOM;
 
-		if (spr->gzt <= ds->tsilheight)
+		if (sgzt <= ds->tsilheight)
 			silhouette &= ~SIL_TOP;
 
 		if (silhouette == SIL_BOTTOM)
 		{	// bottom sil
 			for (x=r1 ; x<=r2 ; x++)
-				if (clipbot[x] == viewheight)
+				if (clipbot[x] == svheight)
 					clipbot[x] = ds->sprbottomclip[x];
 		}
 		else if (silhouette == SIL_TOP)
@@ -1605,7 +1621,7 @@ void R_DrawSprite(vissprite_t *spr)
 		{	// both
 			for (x=r1 ; x<=r2 ; x++)
 			{
-				if (clipbot[x] == viewheight)
+				if (clipbot[x] == svheight)
 					clipbot[x] = ds->sprbottomclip[x];
 				if (cliptop[x] == -1)
 					cliptop[x] = ds->sprtopclip[x];
