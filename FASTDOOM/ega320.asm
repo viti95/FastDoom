@@ -25,12 +25,15 @@ extern _backbuffer
 extern _ptrlut16colors
 extern _lut16colors
 
-BEGIN_DATA_SECTION
+BEGIN_BSS_SECTION
 
 align 4
 
+_vrambuffer: resb 32000
+
+BEGIN_DATA_SECTION
+
 _lastlatch:   dw 0
-_vrambuffer: times 16000 dw 0
 
 BEGIN_CODE_SECTION
 

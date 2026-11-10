@@ -24,10 +24,12 @@ BITS 32
 extern _backbuffer
 extern _ptrlut16colors
 
-BEGIN_DATA_SECTION
+BEGIN_BSS_SECTION
 
-_vrambuffer_p2: times 16384 db 0
-_vrambuffer_p3: times 16384 db 0
+align 4
+
+_vrambuffer_p2: resb 16384
+_vrambuffer_p3: resb 16384
 
 BEGIN_CODE_SECTION
 

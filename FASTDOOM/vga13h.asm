@@ -24,11 +24,11 @@ BITS 32
 extern _backbuffer
 global _vrambuffer
 
-BEGIN_DATA_SECTION
+BEGIN_BSS_SECTION
 
 align 4
 
-_vrambuffer: times 320 * 200 db 0
+_vrambuffer: resb 320 * 200
 
 BEGIN_CODE_SECTION
 

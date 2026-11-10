@@ -24,9 +24,11 @@ BITS 32
 extern _backbuffer
 extern _ptrlut256colors
 
-BEGIN_DATA_SECTION
+BEGIN_BSS_SECTION
 
-_vrambuffer: times 8000 dw 0
+align 4
+
+_vrambuffer: resb 16000
 
 BEGIN_CODE_SECTION
 
@@ -75,6 +77,5 @@ L$14:
 	pop		ecx
 	pop		ebx
 	ret
-
 
 %endif

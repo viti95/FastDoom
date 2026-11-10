@@ -26,9 +26,11 @@ extern _ptrlut16colors
 extern _lut16colors
 global _vrambuffer
 
-BEGIN_DATA_SECTION
+BEGIN_BSS_SECTION
 
-_vrambuffer: times 16000 db 0
+align 4
+
+_vrambuffer: resb 16000
 
 BEGIN_CODE_SECTION
 
