@@ -4,6 +4,7 @@
 %ifdef DJGPP_ASM
   %define BEGIN_CODE_SECTION segment .text public class=CODE USE32
   %define BEGIN_DATA_SECTION segment .data public class=DATA USE32
+  %define BEGIN_BSS_SECTION segment .bss public class=BSS USE32
   %define CONTINUE_CODE_SECTION segment .text
   %define CONTINUE_DATA_SECTION segment .data
   %macro CODE_SYM_DEF 1
@@ -13,6 +14,7 @@
 %else ; Watcom
   %define BEGIN_CODE_SECTION segment _TEXT public align=4 class=CODE USE32
   %define BEGIN_DATA_SECTION segment _DATA public align=4 class=DATA USE32
+  %define BEGIN_BSS_SECTION segment _BSS public align=4 class=BSS USE32 group=DGROUP
   %define CONTINUE_CODE_SECTION segment _TEXT
   %define CONTINUE_DATA_SECTION segment _DATA
   %macro CODE_SYM_DEF 1
