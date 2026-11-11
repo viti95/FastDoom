@@ -146,9 +146,9 @@ vscale1:
   pop	esi
   mov  bh,bl
   pop	edx
-  mov  [edi],ebx
+  mov  [edi],bx
   pop	ecx
-  mov  [edi + 2],ebx
+  mov  [edi+2],bx
   
 vscale0:
 	pop		ebx
