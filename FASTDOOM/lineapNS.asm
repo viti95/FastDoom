@@ -128,12 +128,12 @@ donep:
 %assign LINE SCREENHEIGHT
 %rep SCREENHEIGHT-1
   SCALELABEL LINE:
-    add  edx,ecx                        ; fractional part, CF = overflow
     mov  al,[esi+ebp]                   ; get source pixel
-    adc  ebp,edx                        ; integer part + integer delta + carry
+    add  edx,ecx                        ; fractional part, CF = overflow
     mov  bl,[eax]                       ; translate the color
-    and  ebp,7Fh                        ; keep the 7 bit texture column
+    adc  ebp,edx                        ; integer part + integer delta + carry
     mov  bh,bl
+    and  ebp,7Fh                        ; keep the 7 bit texture column
     mov  [edi-(LINE-1)*SCREENWIDTH],bx ; draw four pixels to the buffer
     mov  [edi-(LINE-1)*SCREENWIDTH+2],bx ; draw four pixels to the buffer
     %assign LINE LINE-1
