@@ -186,10 +186,13 @@ void R_PatchColumnofsPotatoPentium(void);
 
 void R_PatchCenteryVBE2High(void);
 void R_PatchCenteryVBE2HighNS(void);
+void R_PatchCenteryVBE2HighKN(void);
 void R_PatchCenteryVBE2Low(void);
 void R_PatchCenteryVBE2LowNS(void);
+void R_PatchCenteryVBE2LowKN(void);
 void R_PatchCenteryVBE2Potato(void);
 void R_PatchCenteryVBE2PotatoNS(void);
+void R_PatchCenteryVBE2PotatoKN(void);
 
 void R_PatchCenteryVBE2Direct(void);
 void R_PatchCenteryVBE2LowDirect(void);

@@ -180,6 +180,7 @@ file planarSX.obj
 file planarNS.obj
 file vbe2dh.obj
 file vbe2dhNS.obj
+file vbe2dhKN.obj
 file vbe2dh2.obj
 file vbe2dh3.obj
 file vbe2dh4.obj
@@ -187,6 +188,7 @@ file vbe2dh5.obj
 file vbe2dhPE.obj
 file vbe2dl.obj
 file vbe2dlNS.obj
+file vbe2dlKN.obj
 file vbe2dl2.obj
 file vbe2dl3.obj
 file vbe2dl4.obj
@@ -194,6 +196,7 @@ file vbe2dl5.obj
 file vbe2dlPE.obj
 file vbe2dp.obj
 file vbe2dpNS.obj
+file vbe2dpKN.obj
 file vbe2dp2.obj
 file vbe2dp3.obj
 file vbe2dp4.obj

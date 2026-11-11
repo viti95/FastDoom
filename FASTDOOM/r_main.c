@@ -893,10 +893,13 @@ void R_PatchCode(void)
 #if defined(MODE_VBE2_DIRECT)
     R_PatchCenteryVBE2High();
     R_PatchCenteryVBE2HighNS();
+    R_PatchCenteryVBE2HighKN();
     R_PatchCenteryVBE2Low();
     R_PatchCenteryVBE2LowNS();
+    R_PatchCenteryVBE2LowKN();
     R_PatchCenteryVBE2Potato();
     R_PatchCenteryVBE2PotatoNS();
+    R_PatchCenteryVBE2PotatoKN();
 
     R_PatchCenteryVBE2Direct();
     R_PatchCenteryVBE2LowDirect();
@@ -2507,6 +2510,11 @@ static void R_SetupVBE2Funcs(void)
             case INTEL_PENTIUM_II:
                 colfunc = R_DrawColumnVBE2MMX;
                 break;
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K6:
+                colfunc = R_DrawColumnVBE2FastLEA;
+                break;
             default:
                 colfunc = R_DrawColumnVBE2;
                 break;
@@ -2533,6 +2541,11 @@ static void R_SetupVBE2Funcs(void)
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
                 spritefunc = basespritefunc = R_DrawColumnVBE2MMX;
+                break;
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K6:
+                spritefunc = basespritefunc = R_DrawColumnVBE2FastLEA;
                 break;
             default:
                 spritefunc = basespritefunc = R_DrawColumnVBE2;
@@ -2568,6 +2581,11 @@ static void R_SetupVBE2Funcs(void)
                 case INTEL_PENTIUM_II:
                     pspritefunc = basepspritefunc = R_DrawColumnVBE2MMX;
                     break;
+                case UMC_GREEN_486:
+                case CYRIX_5X86:
+                case AMD_K6:
+                    pspritefunc = basepspritefunc = R_DrawColumnVBE2FastLEA;
+                    break;
                 default:
                     pspritefunc = basepspritefunc = R_DrawColumnVBE2;
                     break;
@@ -2586,6 +2604,11 @@ static void R_SetupVBE2Funcs(void)
             case INTEL_PENTIUM_MMX:
             case INTEL_PENTIUM_II:
                 pspritefunc = basepspritefunc = R_DrawColumnVBE2MMX;
+                break;
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K6:
+                pspritefunc = basepspritefunc = R_DrawColumnVBE2FastLEA;
                 break;
             default:
                 pspritefunc = basepspritefunc = R_DrawColumnVBE2;
@@ -2671,6 +2694,15 @@ static void R_SetupVBE2Funcs(void)
                 skyfunc = R_DrawColumnVBE2MMX;
 #endif
                 break;
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K6:
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnVBE2SkyFullDirect : R_DrawColumnVBE2FastLEA;
+#else
+                skyfunc = R_DrawColumnVBE2FastLEA;
+#endif
+                break;
             default:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
                 skyfunc = (screenblocks >= 10) ? R_DrawColumnVBE2SkyFullDirect : R_DrawColumnVBE2;
@@ -2705,7 +2737,21 @@ static void R_SetupVBE2Funcs(void)
         switch (wallRender)
         {
         case WALL_NORMAL:
-            colfunc = R_DrawColumnLowVBE2;
+            switch (selectedCPU)
+            {
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case CYRIX_6X86:
+            case CYRIX_6X86MX:
+            case AMD_K5:
+            case AMD_K6:
+            case RISE_MP6:
+                colfunc = R_DrawColumnLowVBE2FastLEA;
+                break;
+            default:
+                colfunc = R_DrawColumnLowVBE2;
+                break;
+            }
             break;
         case WALL_FLAT:
         case WALL_FLATTER:
@@ -2716,7 +2762,21 @@ static void R_SetupVBE2Funcs(void)
         switch (spriteRender)
         {
         case SPRITE_NORMAL:
-            spritefunc = basespritefunc = R_DrawColumnLowVBE2;
+            switch (selectedCPU)
+            {
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case CYRIX_6X86:
+            case CYRIX_6X86MX:
+            case AMD_K5:
+            case AMD_K6:
+            case RISE_MP6:
+                spritefunc = basespritefunc = R_DrawColumnLowVBE2FastLEA;
+                break;
+            default:
+                spritefunc = basespritefunc = R_DrawColumnLowVBE2;
+                break;
+            }
             break;
         case SPRITE_FLAT:
         case SPRITE_FLATTER:
@@ -2734,10 +2794,38 @@ static void R_SetupVBE2Funcs(void)
             }
             else
             {
-                pspritefunc = basepspritefunc = R_DrawColumnLowVBE2;
+                switch (selectedCPU)
+                {
+                case UMC_GREEN_486:
+                case CYRIX_5X86:
+                case CYRIX_6X86:
+                case CYRIX_6X86MX:
+                case AMD_K5:
+                case AMD_K6:
+                case RISE_MP6:
+                    pspritefunc = basepspritefunc = R_DrawColumnLowVBE2FastLEA;
+                    break;
+                default:
+                    pspritefunc = basepspritefunc = R_DrawColumnLowVBE2;
+                    break;
+                }
             }
 #else
-            pspritefunc = basepspritefunc = R_DrawColumnLowVBE2;
+            switch (selectedCPU)
+            {
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case CYRIX_6X86:
+            case CYRIX_6X86MX:
+            case AMD_K5:
+            case AMD_K6:
+            case RISE_MP6:
+                pspritefunc = basepspritefunc = R_DrawColumnLowVBE2FastLEA;
+                break;
+            default:
+                pspritefunc = basepspritefunc = R_DrawColumnLowVBE2;
+                break;
+            }
 #endif
             break;
         case PSPRITE_FLAT:
@@ -2789,11 +2877,29 @@ static void R_SetupVBE2Funcs(void)
         else
         {
             drawSky = R_DrawSky;
+            switch (selectedCPU)
+            {
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case CYRIX_6X86:
+            case CYRIX_6X86MX:
+            case AMD_K5:
+            case AMD_K6:
+            case RISE_MP6:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
-            skyfunc = (screenblocks >= 10) ? R_DrawColumnLowVBE2SkyFullDirect : R_DrawColumnLowVBE2;
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnLowVBE2SkyFullDirect : R_DrawColumnLowVBE2FastLEA;
 #else
-            skyfunc = R_DrawColumnLowVBE2;
+                skyfunc = R_DrawColumnLowVBE2FastLEA;
 #endif
+                break;
+            default:
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnLowVBE2SkyFullDirect : R_DrawColumnLowVBE2;
+#else
+                skyfunc = R_DrawColumnLowVBE2;
+#endif
+                break;
+            }
         }
 
         switch (invisibleRender)
@@ -2820,7 +2926,17 @@ static void R_SetupVBE2Funcs(void)
         switch (wallRender)
         {
         case WALL_NORMAL:
-            colfunc = R_DrawColumnPotatoVBE2;
+            switch (selectedCPU)
+            {
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K6:
+                colfunc = R_DrawColumnPotatoVBE2FastLEA;
+                break;
+            default:
+                colfunc = R_DrawColumnPotatoVBE2;
+                break;
+            }
             break;
         case WALL_FLAT:
         case WALL_FLATTER:
@@ -2831,7 +2947,17 @@ static void R_SetupVBE2Funcs(void)
         switch (spriteRender)
         {
         case SPRITE_NORMAL:
-            spritefunc = basespritefunc = R_DrawColumnPotatoVBE2;
+            switch (selectedCPU)
+            {
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K6:
+                spritefunc = basespritefunc = R_DrawColumnPotatoVBE2FastLEA;
+                break;
+            default:
+                spritefunc = basespritefunc = R_DrawColumnPotatoVBE2;
+                break;
+            }
             break;
         case SPRITE_FLAT:
         case SPRITE_FLATTER:
@@ -2849,10 +2975,30 @@ static void R_SetupVBE2Funcs(void)
             }
             else
             {
-                pspritefunc = basepspritefunc = R_DrawColumnPotatoVBE2;
+                switch (selectedCPU)
+                {
+                case UMC_GREEN_486:
+                case CYRIX_5X86:
+                case AMD_K6:
+                    pspritefunc = basepspritefunc = R_DrawColumnPotatoVBE2FastLEA;
+                    break;
+                default:
+                    pspritefunc = basepspritefunc = R_DrawColumnPotatoVBE2;
+                    break;
+                }
             }
 #else
-            pspritefunc = basepspritefunc = R_DrawColumnPotatoVBE2;
+            switch (selectedCPU)
+            {
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K6:
+                pspritefunc = basepspritefunc = R_DrawColumnPotatoVBE2FastLEA;
+                break;
+            default:
+                pspritefunc = basepspritefunc = R_DrawColumnPotatoVBE2;
+                break;
+            }
 #endif
             break;
         case PSPRITE_FLAT:
@@ -2904,11 +3050,25 @@ static void R_SetupVBE2Funcs(void)
         else
         {
             drawSky = R_DrawSky;
+            switch (selectedCPU)
+            {
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K6:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
-            skyfunc = (screenblocks >= 10) ? R_DrawColumnPotatoVBE2SkyFullDirect : R_DrawColumnPotatoVBE2;
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnPotatoVBE2SkyFullDirect : R_DrawColumnPotatoVBE2FastLEA;
 #else
-            skyfunc = R_DrawColumnPotatoVBE2;
+                skyfunc = R_DrawColumnPotatoVBE2FastLEA;
 #endif
+                break;
+            default:
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnPotatoVBE2SkyFullDirect : R_DrawColumnPotatoVBE2;
+#else
+                skyfunc = R_DrawColumnPotatoVBE2;
+#endif
+                break;
+            }
         }
 
         switch (invisibleRender)

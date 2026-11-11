@@ -153,6 +153,7 @@ GLOBOBJS = &
  planarSX.obj &
  vbe2dh.obj &
  vbe2dhNS.obj &
+ vbe2dhKN.obj &
  vbe2dh2.obj &
  vbe2dh3.obj &
  vbe2dh4.obj &
@@ -160,6 +161,7 @@ GLOBOBJS = &
  vbe2dhPE.obj &
  vbe2dl.obj &
  vbe2dlNS.obj &
+ vbe2dlKN.obj &
  vbe2dl2.obj &
  vbe2dl3.obj &
  vbe2dl4.obj &
@@ -167,6 +169,7 @@ GLOBOBJS = &
  vbe2dlPE.obj &
  vbe2dp.obj &
  vbe2dpNS.obj &
+ vbe2dpKN.obj &
  vbe2dp2.obj &
  vbe2dp3.obj &
  vbe2dp4.obj &
