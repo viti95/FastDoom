@@ -42,7 +42,7 @@
 extern boolean respawnparm; // checkparm of -respawn
 extern boolean fastparm;    // checkparm of -fast
 
-extern boolean flatSky;
+extern int skyRender;
 extern int invisibleRender;
 extern int visplaneRender;
 extern int wallRender;

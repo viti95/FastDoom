@@ -35,6 +35,8 @@
 
 #include "sizeopt.h"
 
+#include "r_flatwall.h"
+
 #define SC_INDEX 0x3C4
 
 // OPTIMIZE: closed two sided lines as single sided
@@ -406,6 +408,11 @@ void R_RenderMaskedSegRangeFlat(drawseg_t *ds,
 	}
 		
 
+	/* the windows of the row modes are painted row by row: the textures
+	   with gaps in their columns keep the columns, see R_DrawMaskedWallRows */
+	if (R_DrawMaskedWallRows(ds, texnum, x1, x2, color, 1))
+		return;
+
 	dc_x = x1;
 	do
 	{
@@ -539,9 +546,7 @@ void R_RenderMaskedSegRangeFlatter(drawseg_t *ds,
 							int x1,
 							int x2)
 {
-	unsigned index;
 	column_t *col;
-	int lightnum;
 	int texnum;
 
 	int lump;
@@ -615,6 +620,9 @@ void R_RenderMaskedSegRangeFlatter(drawseg_t *ds,
 		dc_texturemid = dc_texturemid - viewz;
 	}
 	dc_texturemid += curline->sidedef->rowoffset;
+
+	if (R_DrawMaskedWallRows(ds, texnum, x1, x2, color, 0))
+		return;
 
 	dc_x = x1;
 	do
@@ -1044,6 +1052,9 @@ void R_RenderMaskedSegRange2Flat(drawseg_t *ds)
 		dc_color = dc_colormap[color];
 	}
 
+	if (R_DrawMaskedWallRows(ds, texnum, ds->x1, ds->x2, color, 1))
+		return;
+
 	dc_x = ds->x1;
 	do
 	{
@@ -1175,9 +1186,7 @@ void R_RenderMaskedSegRange2Flat(drawseg_t *ds)
 
 void R_RenderMaskedSegRange2Flatter(drawseg_t *ds)
 {
-	unsigned index;
 	column_t *col;
-	int lightnum;
 	int texnum;
 
 	int lump;
@@ -1252,6 +1261,9 @@ void R_RenderMaskedSegRange2Flatter(drawseg_t *ds)
 		dc_texturemid = dc_texturemid - viewz;
 	}
 	dc_texturemid += curline->sidedef->rowoffset;
+
+	if (R_DrawMaskedWallRows(ds, texnum, ds->x1, ds->x2, color, 0))
+		return;
 
 	dc_x = ds->x1;
 	do
@@ -1767,7 +1779,6 @@ void R_RenderSegLoopFlat(void)
 	int lump;
 	int ofs;
 	int tex;
-	int col;
 
 	int cc_rwx;
 	int fc_rwx;
@@ -1775,11 +1786,10 @@ void R_RenderSegLoopFlat(void)
 	byte *firstPixel;
 	byte color;
 
-#if defined(MODE_MDA) || defined(MODE_VT100)
-	int first = rw_x;
-#endif
-
-	// texturecolumn = 0;				// shut up compiler warning
+	/* the color of the wall of the columns walked and of the column of the
+	   moment: it stays until the light of the seg gives another one */
+	byte wallcolor;
+	byte newcolor;
 
 	if (midtexture) {
 		tex = midtexture;
@@ -1807,6 +1817,14 @@ void R_RenderSegLoopFlat(void)
 	color = *(firstPixel + 3);
 	dc_color = color;
 
+	/* the wall of the seg is painted row by row as the columns of the loop are
+	   walked: the color of the wall changes with the light of the seg, so the
+	   sweep is told of every change */
+	R_FlatWallStart();
+
+	/* the wall takes the color of the seg itself */
+	wallcolor = dc_color;
+
 	for (; rw_x < rw_stopx; rw_x++)
 	{
 		cc_rwx = ceilingclip[rw_x];
@@ -1854,13 +1872,10 @@ void R_RenderSegLoopFlat(void)
 			}
 		}
 
-		// texturecolumn and lighting are independent of wall tiers
+		/* the renderers of the flat walls write a color of their own, so only
+		   the color is needed here, not the colormap of it */
 		if (segtextured)
 		{
-			// calculate texture offset
-			angle = (rw_centerangle + xtoviewangle[rw_x]) >> ANGLETOFINESHIFT;
-			texturecolumn = rw_offset - FixedMulEDX(finetangent[angle], rw_distance);
-			texturecolumn >>= FRACBITS;
 			// calculate lighting
 			index = rw_scale >> LIGHTSCALESHIFT;
 #if PIXEL_SCALING != 1
@@ -1870,116 +1885,56 @@ void R_RenderSegLoopFlat(void)
 			if (index >= MAXLIGHTSCALE)
 				index = MAXLIGHTSCALE - 1;
 
-			dc_colormap = walllights[index];
-			dc_color = dc_colormap[color];
-			dc_x = rw_x;
+			newcolor = walllights[index][color];
+
+			/* a span never crosses a change of the color of the wall: the spans of the
+			   columns before take the color that opened them. Compared here, where
+			   the color is worked out, and not once per tier inside the sweep */
+			if (newcolor != wallcolor)
+			{
+				wallcolor = newcolor;
+				dc_color = newcolor;
+
+				R_FlatWallColor(rw_x, newcolor);
+			}
 		}
 
-		// draw the wall tiers
+		/* draw the wall tiers, every column to flatwallcolumn: a column with its
+		   top row over its bottom row has no wall, and closes the rows of the
+		   wall it does not reach */
 		if (midtexture)
 		{
-			if (yl > yh)
-			{
-				cc_rwx = viewheight;
-				fc_rwx = -1;
-			}
-			else
-			{
-				// single sided line
-				dc_yl = yl;
-				dc_yh = yh;
+			/* single sided line, the wall of the whole column */
+			dc_x = rw_x;
+			dc_yl = yl;
+			dc_yh = yh;
+			(*flatwallcolumn1)();
 
-#if defined(MODE_CGA16) || defined(MODE_CVB)
-				if (detailshift == DETAIL_HIGH)
-				{
-					if ((dc_x & 1) == 0)
-						colfunc();
-				}
-				else
-					colfunc();
-#elif defined(MODE_CGA512)
-				switch (detailshift)
-				{
-				case DETAIL_HIGH:
-					if ((dc_x & 3) == 0)
-						colfunc();
-					break;
-				case DETAIL_LOW:
-					if ((dc_x & 1) == 0)
-						colfunc();
-					break;
-				default:
-					colfunc();
-					break;
-				}
-#elif defined(MODE_MDA) || defined(MODE_VT100)
-				if (first == rw_x || rw_x == rw_stopx - 1)
-					R_DrawLineColumnTextMDA();
-				else
-					R_DrawEmptyColumnTextMDA();
-#else
-				colfunc();
-#endif
-
-				cc_rwx = viewheight;
-				fc_rwx = -1;
-			}
+			cc_rwx = viewheight;
+			fc_rwx = -1;
 		}
 		else
 		{
 			// two sided line
 			if (toptexture)
 			{
-				// top wall
+				/* top wall, from the top of the seg to the opening: mid over yl
+				   leaves no wall */
 				mid = pixhigh >> HEIGHTBITS;
 				pixhigh -= pixhighstep;
 
 				if (mid >= fc_rwx)
 					mid = fc_rwx - 1;
 
+				dc_x = rw_x;
+				dc_yl = yl;
+				dc_yh = mid;
+				(*flatwallcolumn1)();
+
 				if (mid < yl)
-				{
 					cc_rwx = yl - 1;
-				}
 				else
-				{
-					dc_yl = yl;
-					dc_yh = mid;
-
-#if defined(MODE_CGA16) || defined(MODE_CVB)
-					if (detailshift == DETAIL_HIGH)
-					{
-						if ((dc_x & 1) == 0)
-							colfunc();
-					}
-					else
-						colfunc();
-#elif defined(MODE_CGA512)
-					switch (detailshift)
-					{
-					case DETAIL_HIGH:
-						if ((dc_x & 3) == 0)
-							colfunc();
-						break;
-					case DETAIL_LOW:
-						if ((dc_x & 1) == 0)
-							colfunc();
-						break;
-					default:
-						colfunc();
-						break;
-					}
-#elif defined(MODE_MDA) || defined(MODE_VT100)
-					if (first == rw_x || rw_x == rw_stopx - 1)
-						R_DrawLineColumnTextMDA();
-					else
-						R_DrawEmptyColumnTextMDA();
-#else
-					colfunc();
-#endif
-
 					cc_rwx = mid;
-				}
 			}
 			else
 			{
@@ -1990,7 +1945,8 @@ void R_RenderSegLoopFlat(void)
 
 			if (bottomtexture)
 			{
-				// bottom wall
+				/* bottom wall, from the opening to the bottom of the seg: mid over
+				   yh leaves no wall */
 				mid = (pixlow + HEIGHTUNIT - 1) >> HEIGHTBITS;
 				pixlow -= pixlowstep;
 
@@ -1998,49 +1954,15 @@ void R_RenderSegLoopFlat(void)
 				if (mid <= cc_rwx)
 					mid = cc_rwx + 1;
 
+				dc_x = rw_x;
+				dc_yl = mid;
+				dc_yh = yh;
+				(*flatwallcolumn2)();
+
 				if (mid > yh)
-				{
 					fc_rwx = yh + 1;
-				}
 				else
-				{
-					dc_yl = mid;
-					dc_yh = yh;
-
-#if defined(MODE_CGA16) || defined(MODE_CVB)
-					if (detailshift == DETAIL_HIGH)
-					{
-						if ((dc_x & 1) == 0)
-							colfunc();
-					}
-					else
-						colfunc();
-#elif defined(MODE_CGA512)
-					switch (detailshift)
-					{
-					case DETAIL_HIGH:
-						if ((dc_x & 3) == 0)
-							colfunc();
-						break;
-					case DETAIL_LOW:
-						if ((dc_x & 1) == 0)
-							colfunc();
-						break;
-					default:
-						colfunc();
-						break;
-					}
-#elif defined(MODE_MDA) || defined(MODE_VT100)
-					if (first == rw_x || rw_x == rw_stopx - 1)
-						R_DrawLineColumnTextMDA();
-					else
-						R_DrawEmptyColumnTextMDA();
-#else
-					colfunc();
-#endif
-
 					fc_rwx = mid;
-				}
 			}
 			else
 			{
@@ -2051,8 +1973,11 @@ void R_RenderSegLoopFlat(void)
 
 			if (maskedtexture)
 			{
-				// save texturecol
-				//  for backdrawing of masked mid texture
+				/* save texturecol for the backdrawing of the masked mid texture */
+				angle = (rw_centerangle + xtoviewangle[rw_x]) >> ANGLETOFINESHIFT;
+				texturecolumn = rw_offset - FixedMulEDX(finetangent[angle], rw_distance);
+				texturecolumn >>= FRACBITS;
+
 				maskedtexturecol[rw_x] = texturecolumn;
 			}
 		}
@@ -2064,12 +1989,15 @@ void R_RenderSegLoopFlat(void)
 		ceilingclip[rw_x] = cc_rwx;
 		floorclip[rw_x] = fc_rwx;
 	}
+
+	/* close the tiers of the wall: only the spans the last column left open
+	   are painted here */
+	R_FlatWallFinish(rw_stopx - 1);
 }
 
 void R_RenderSegLoopFlatter(void)
 {
 	angle_t angle;
-	unsigned index;
 	int yl;
 	int yh;
 	int mid;
@@ -2080,18 +2008,11 @@ void R_RenderSegLoopFlatter(void)
 	int lump;
 	int ofs;
 	int tex;
-	int col;
 
 	int cc_rwx;
 	int fc_rwx;
 
 	byte *firstPixel;
-
-#if defined(MODE_MDA) || defined(MODE_VT100)
-	int first = rw_x;
-#endif
-
-	// texturecolumn = 0;				// shut up compiler warning
 
 	if (midtexture) {
 		tex = midtexture;
@@ -2118,6 +2039,10 @@ void R_RenderSegLoopFlatter(void)
 
 	dc_color = *(firstPixel + 3);
 
+	/* the wall of the seg is painted row by row with one color: it does not
+	   change along the seg, so the sweep is never told of a change */
+	R_FlatWallStart();
+
 	for (; rw_x < rw_stopx; rw_x++)
 	{
 		cc_rwx = ceilingclip[rw_x];
@@ -2165,122 +2090,42 @@ void R_RenderSegLoopFlatter(void)
 			}
 		}
 
-		// texturecolumn and lighting are independent of wall tiers
-		if (segtextured)
-		{
-			// calculate texture offset
-			angle = (rw_centerangle + xtoviewangle[rw_x]) >> ANGLETOFINESHIFT;
-			texturecolumn = rw_offset - FixedMulEDX(finetangent[angle], rw_distance);
-			texturecolumn >>= FRACBITS;
-
-			dc_x = rw_x;
-		}
-
-		// draw the wall tiers
+		/* draw the wall tiers, every column to flatwallcolumn: a column with its
+		   top row over its bottom row has no wall, and closes the rows of the
+		   wall it does not reach */
 		if (midtexture)
 		{
-			if (yl > yh)
-			{
-				cc_rwx = viewheight;
-				fc_rwx = -1;
-			}
-			else
-			{
-				// single sided line
-				dc_yl = yl;
-				dc_yh = yh;
+			/* single sided line, the wall of the whole column */
+			dc_x = rw_x;
+			dc_yl = yl;
+			dc_yh = yh;
+			(*flatwallcolumn1)();
 
-#if defined(MODE_CGA16) || defined(MODE_CVB)
-				if (detailshift == DETAIL_HIGH)
-				{
-					if ((dc_x & 1) == 0)
-						colfunc();
-				}
-				else
-					colfunc();
-#elif defined(MODE_CGA512)
-				switch (detailshift)
-				{
-				case DETAIL_HIGH:
-					if ((dc_x & 3) == 0)
-						colfunc();
-					break;
-				case DETAIL_LOW:
-					if ((dc_x & 1) == 0)
-						colfunc();
-					break;
-				default:
-					colfunc();
-					break;
-				}
-#elif defined(MODE_MDA) || defined(MODE_VT100)
-				if (first == rw_x || rw_x == rw_stopx - 1)
-					R_DrawLineColumnTextMDA();
-				else
-					R_DrawEmptyColumnTextMDA();
-#else
-				colfunc();
-#endif
-
-				cc_rwx = viewheight;
-				fc_rwx = -1;
-			}
+			cc_rwx = viewheight;
+			fc_rwx = -1;
 		}
 		else
 		{
 			// two sided line
 			if (toptexture)
 			{
-				// top wall
+				/* top wall, from the top of the seg to the opening: mid over yl
+				   leaves no wall */
 				mid = pixhigh >> HEIGHTBITS;
 				pixhigh -= pixhighstep;
 
 				if (mid >= fc_rwx)
 					mid = fc_rwx - 1;
 
+				dc_x = rw_x;
+				dc_yl = yl;
+				dc_yh = mid;
+				(*flatwallcolumn1)();
+
 				if (mid < yl)
-				{
 					cc_rwx = yl - 1;
-				}
 				else
-				{
-					dc_yl = yl;
-					dc_yh = mid;
-
-#if defined(MODE_CGA16) || defined(MODE_CVB)
-					if (detailshift == DETAIL_HIGH)
-					{
-						if ((dc_x & 1) == 0)
-							colfunc();
-					}
-					else
-						colfunc();
-#elif defined(MODE_CGA512)
-					switch (detailshift)
-					{
-					case DETAIL_HIGH:
-						if ((dc_x & 3) == 0)
-							colfunc();
-						break;
-					case DETAIL_LOW:
-						if ((dc_x & 1) == 0)
-							colfunc();
-						break;
-					default:
-						colfunc();
-						break;
-					}
-#elif defined(MODE_MDA) || defined(MODE_VT100)
-					if (first == rw_x || rw_x == rw_stopx - 1)
-						R_DrawLineColumnTextMDA();
-					else
-						R_DrawEmptyColumnTextMDA();
-#else
-					colfunc();
-#endif
-
 					cc_rwx = mid;
-				}
 			}
 			else
 			{
@@ -2291,7 +2136,8 @@ void R_RenderSegLoopFlatter(void)
 
 			if (bottomtexture)
 			{
-				// bottom wall
+				/* bottom wall, from the opening to the bottom of the seg: mid over
+				   yh leaves no wall */
 				mid = (pixlow + HEIGHTUNIT - 1) >> HEIGHTBITS;
 				pixlow -= pixlowstep;
 
@@ -2299,49 +2145,15 @@ void R_RenderSegLoopFlatter(void)
 				if (mid <= cc_rwx)
 					mid = cc_rwx + 1;
 
+				dc_x = rw_x;
+				dc_yl = mid;
+				dc_yh = yh;
+				(*flatwallcolumn2)();
+
 				if (mid > yh)
-				{
 					fc_rwx = yh + 1;
-				}
 				else
-				{
-					dc_yl = mid;
-					dc_yh = yh;
-
-#if defined(MODE_CGA16) || defined(MODE_CVB)
-					if (detailshift == DETAIL_HIGH)
-					{
-						if ((dc_x & 1) == 0)
-							colfunc();
-					}
-					else
-						colfunc();
-#elif defined(MODE_CGA512)
-					switch (detailshift)
-					{
-					case DETAIL_HIGH:
-						if ((dc_x & 3) == 0)
-							colfunc();
-						break;
-					case DETAIL_LOW:
-						if ((dc_x & 1) == 0)
-							colfunc();
-						break;
-					default:
-						colfunc();
-						break;
-					}
-#elif defined(MODE_MDA) || defined(MODE_VT100)
-					if (first == rw_x || rw_x == rw_stopx - 1)
-						R_DrawLineColumnTextMDA();
-					else
-						R_DrawEmptyColumnTextMDA();
-#else
-					colfunc();
-#endif
-
 					fc_rwx = mid;
-				}
 			}
 			else
 			{
@@ -2352,8 +2164,11 @@ void R_RenderSegLoopFlatter(void)
 
 			if (maskedtexture)
 			{
-				// save texturecol
-				//  for backdrawing of masked mid texture
+				/* save texturecol for the backdrawing of the masked mid texture */
+				angle = (rw_centerangle + xtoviewangle[rw_x]) >> ANGLETOFINESHIFT;
+				texturecolumn = rw_offset - FixedMulEDX(finetangent[angle], rw_distance);
+				texturecolumn >>= FRACBITS;
+
 				maskedtexturecol[rw_x] = texturecolumn;
 			}
 		}
@@ -2364,6 +2179,10 @@ void R_RenderSegLoopFlatter(void)
 		ceilingclip[rw_x] = cc_rwx;
 		floorclip[rw_x] = fc_rwx;
 	}
+
+	/* close the tiers of the wall: only the spans the last column left open
+	   are painted here */
+	R_FlatWallFinish(rw_stopx - 1);
 }
 
 //

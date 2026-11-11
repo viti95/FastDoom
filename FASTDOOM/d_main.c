@@ -112,7 +112,7 @@ boolean fastparm;    // checkparm of -fast
 unsigned int limitram; // checkparm of -limitram
 unsigned int freeram;  // checkparm of -freeram
 
-boolean flatSky;
+int skyRender;
 int invisibleRender;
 int visplaneRender;
 int wallRender;
@@ -1600,11 +1600,14 @@ void D_DoomMain(void)
     M_CheckParmOptionalValue("-flatterSpan", &visplaneRender, VISPLANES_FLATTER);
     M_CheckParmOptionalValue("-flatWall", &wallRender, WALL_FLAT);
     M_CheckParmOptionalValue("-flatterWall", &wallRender, WALL_FLATTER);
+    M_CheckParmOptionalValue("-flatWallRows", &wallRender, WALL_FLAT_ROWS);
+    M_CheckParmOptionalValue("-flatterWallRows", &wallRender, WALL_FLATTER_ROWS);
     M_CheckParmOptionalValue("-flatSprite", &spriteRender, SPRITE_FLAT);
     M_CheckParmOptionalValue("-flatterSprites", &spriteRender, SPRITE_FLATTER);
     M_CheckParmOptionalValue("-flatPSprite", &pspriteRender, PSPRITE_FLAT);
     M_CheckParmOptionalValue("-flatterPSprites", &pspriteRender, PSPRITE_FLATTER);
-    M_CheckParmOptional("-flatsky", &flatSky);
+    M_CheckParmOptionalValue("-flatSky", &skyRender, SKY_FLAT);
+    M_CheckParmOptionalValue("-flatSkyRows", &skyRender, SKY_FLAT_ROWS);
     M_CheckParmOptionalValue("-flatInv", &invisibleRender, INVISIBLE_FLAT);
     M_CheckParmOptionalValue("-flatsaturn", &invisibleRender, INVISIBLE_FLAT_SATURN);
     M_CheckParmOptionalValue("-saturn", &invisibleRender, INVISIBLE_SATURN);
@@ -1639,7 +1642,7 @@ void D_DoomMain(void)
     M_CheckParmDisable("-defWall", &wallRender);
     M_CheckParmDisable("-defSprite", &spriteRender);
     M_CheckParmDisable("-defPSprite", &pspriteRender);
-    M_CheckParmDisable("-defSky", &flatSky);
+    M_CheckParmDisable("-defSky", &skyRender);
     M_CheckParmDisable("-defInv", &invisibleRender);
     M_CheckParmDisable("-far", &nearSprites);
     M_CheckParmDisable("-stereo", &monoSound);

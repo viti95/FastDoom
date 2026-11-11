@@ -31,6 +31,7 @@
 #include "p_local.h"
 #include "doomstat.h"
 #include "r_data.h"
+#include "r_flatwall.h"
 
 //
 // Graphics.
@@ -126,6 +127,8 @@ texture_t **textures_hashtable;
 int *texturewidthmask;
 // needed for texture pegging
 fixed_t *textureheight;
+/* cache of R_TextureIsSolidMasked, see r_data.h */
+byte *texturemaskedsolid;
 int *texturecompositesize;
 short **texturecolumnlump;
 unsigned short **texturecolumnofs;
@@ -455,6 +458,10 @@ void R_InitTextures(void)
     texturewidthmask = Z_MallocUnowned(numtextures * 4, PU_STATIC);
     textureheight = Z_MallocUnowned(numtextures * 4, PU_STATIC);
 
+    /* nothing of the cache of R_TextureIsSolidMasked checked yet */
+    texturemaskedsolid = Z_MallocUnowned(numtextures, PU_STATIC);
+    memset(texturemaskedsolid, 0, numtextures);
+
     totalwidth = 0;
 
     //	Really complex printing shit...
@@ -534,6 +541,69 @@ void R_InitTextures(void)
     GenerateTextureHashTable();
 
     Z_Free(patchlookup);
+}
+
+/*
+ * R_TextureIsSolidMasked
+ * Whether every column of the texture is a single post going from its top
+ * to its bottom, so that its wall is one span per column, which the row
+ * renderer of the flat walls paints (see r_flatwall.c).
+ *
+ * It has to be one post and not only a block of pixels without gaps: the
+ * post loop of a masked wall skips whole the posts ending below the bottom
+ * of the view, so the first post of a column can draw rows that the whole
+ * block of pixels of the column does not draw.
+ */
+int R_TextureIsSolidMasked(int texnum)
+{
+    int col;
+    int width;
+    int height;
+    int lump;
+    int ofs;
+
+    byte *base;
+    column_t *post;
+
+    if (texturemaskedsolid[texnum])
+        return texturemaskedsolid[texnum] == 2;
+
+    width = textures[texnum]->width;
+    height = textureheight[texnum] >> FRACBITS;
+
+    for (col = 0; col < width; col++)
+    {
+        lump = texturecolumnlump[texnum][col];
+        ofs = texturecolumnofs[texnum][col] - 3;
+
+        if (lump > 0)
+        {
+            base = (byte *)W_CacheLumpNum(lump, PU_CACHE);
+        }
+        else
+        {
+            if (!texturecomposite[texnum])
+                R_GenerateComposite(texnum);
+
+            base = texturecomposite[texnum];
+        }
+
+        post = (column_t *)(base + ofs);
+
+        /* one post from the top of the column to its bottom, with no
+           other post after it */
+        if (post->topdelta != 0
+            || post->length != height
+            || ((column_t *)((byte *)post + post->length + 4))
+               ->topdelta != 0xff)
+        {
+            texturemaskedsolid[texnum] = 1;
+            return 0;
+        }
+    }
+
+    texturemaskedsolid[texnum] = 2;
+    return 1;
 }
 
 //
@@ -782,6 +852,7 @@ void R_InitData(void)
     printf(".");
     R_InitColormaps();
     printf(".");
+    R_InitFlatWall();
     if (invisibleRender == INVISIBLE_TRANSLUCENT)
         R_InitTintMap();
 }

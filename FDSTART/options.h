@@ -18,8 +18,9 @@ typedef struct {
     const char *def_value;
 } opt_t;
 
-/* The available options (defined in options.c). */
-#define NUMOPTS 97
+/* The available options (defined in options.c): NUMOPTS is the number of
+   entries of opts[]. */
+#define NUMOPTS 100
 
 extern const opt_t opts[NUMOPTS];
 

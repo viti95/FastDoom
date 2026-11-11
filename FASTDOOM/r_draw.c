@@ -765,7 +765,7 @@ void R_DrawSkyFlatText4050(void)
         if (odd)
         {
             vmem = vmem & 0x0F00;
-            *dest = vmem | 6 << 12 | 223;
+            *dest = vmem | SKYTEXTATTR << 12 | 223;
 
             odd = 0;
             dest += 40;
@@ -773,7 +773,7 @@ void R_DrawSkyFlatText4050(void)
         else
         {
             vmem = vmem & 0xF000;
-            *dest = vmem | 6 << 8 | 223;
+            *dest = vmem | SKYTEXTATTR << 8 | 223;
             return;
         }
 
@@ -785,7 +785,7 @@ void R_DrawSkyFlatText4050(void)
 
     while (countblock)
     {
-        *dest = 6 << 8 | 219;
+        *dest = SKYTEXTATTR << 8 | 219;
         dest += 40;
         countblock--;
     }
@@ -794,7 +794,7 @@ void R_DrawSkyFlatText4050(void)
     {
         vmem = *dest;
         vmem = vmem & 0xF000;
-        *dest = vmem | 6 << 8 | 223;
+        *dest = vmem | SKYTEXTATTR << 8 | 223;
     }
 }
 void R_DrawFuzzColumnFlatText4050(void)
@@ -1113,7 +1113,7 @@ void R_DrawSkyFlatText4025(void)
 
     do
     {
-        *dest = 6 << 8 | 219;
+        *dest = SKYTEXTATTR << 8 | 219;
         dest += 40;
     } while (dest <= count);
 }
@@ -1614,7 +1614,7 @@ void R_DrawSkyFlatText8050(void)
 
     do
     {
-        *dest = 6 << 8 | 219;
+        *dest = SKYTEXTATTR << 8 | 219;
         dest += 80;
     } while (dest <= count);
 }
@@ -1687,7 +1687,7 @@ void R_DrawSkyFlatText8025(void)
         if (odd)
         {
             vmem = vmem & 0x0F00;
-            *dest = vmem | 6 << 12 | 223;
+            *dest = vmem | SKYTEXTATTR << 12 | 223;
 
             odd = 0;
             dest += 80;
@@ -1695,7 +1695,7 @@ void R_DrawSkyFlatText8025(void)
         else
         {
             vmem = vmem & 0xF000;
-            *dest = vmem | 6 << 8 | 223;
+            *dest = vmem | SKYTEXTATTR << 8 | 223;
             return;
         }
 
@@ -1707,7 +1707,7 @@ void R_DrawSkyFlatText8025(void)
 
     while (countblock)
     {
-        *dest = 6 << 8 | 219;
+        *dest = SKYTEXTATTR << 8 | 219;
         dest += 80;
         countblock--;
     }
@@ -1716,7 +1716,7 @@ void R_DrawSkyFlatText8025(void)
     {
         vmem = *dest;
         vmem = vmem & 0xF000;
-        *dest = vmem | 6 << 8 | 223;
+        *dest = vmem | SKYTEXTATTR << 8 | 223;
     }
 }
 #endif

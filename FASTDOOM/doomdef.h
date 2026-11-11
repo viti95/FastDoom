@@ -378,8 +378,25 @@ typedef enum
     WALL_NORMAL,
     WALL_FLAT,
     WALL_FLATTER,
+    /* the flat walls, painted row by row, one span per row */
+    WALL_FLAT_ROWS,
+    WALL_FLATTER_ROWS,
     NUM_WALLRENDER
 } wallrender_t;
+
+/* the walls painted row by row use the seg loops of the matching flat
+   walls, R_SetupFlatWall of r_flatwall.c turning the rows on for them */
+#define WALLRENDER_FUNC(r) ((r) < WALL_FLAT_ROWS ? (r) : ((r) - WALL_FLAT_ROWS + WALL_FLAT))
+
+/* How the sky is drawn: its texture, one flat color drawn column by column,
+   or the same flat color drawn row by row (see R_DrawSkyFlatRows) */
+typedef enum
+{
+    SKY_FULL,
+    SKY_FLAT,
+    SKY_FLAT_ROWS,
+    NUM_SKYRENDER
+} skyrender_t;
 
 typedef enum
 {
