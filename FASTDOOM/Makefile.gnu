@@ -123,6 +123,7 @@ GLOBOBJS = \
  linearh4.obj \
  linearh5.obj \
  lineahKN.obj \
+ lineahNS.obj \
  lineahPE.obj \
  linearl.obj \
  linearl2.obj \
@@ -130,12 +131,15 @@ GLOBOBJS = \
  linearl4.obj \
  linearl5.obj \
  linealKN.obj \
+ linealNS.obj \
  linealPE.obj \
  linearp.obj \
  linearp2.obj \
  linearp3.obj \
  linearp4.obj \
  linearp5.obj \
+ lineapKN.obj \
+ lineapNS.obj \
  lineapPE.obj \
  planar.obj \
  planar2.obj \
@@ -144,20 +148,24 @@ GLOBOBJS = \
  planar5.obj \
  planar6.obj \
  planarKN.obj \
+ planarNS.obj \
  planarSX.obj \
  vbe2dh.obj \
+ vbe2dhNS.obj \
  vbe2dh2.obj \
  vbe2dh3.obj \
  vbe2dh4.obj \
  vbe2dh5.obj \
  vbe2dhPE.obj \
  vbe2dl.obj \
+ vbe2dlNS.obj \
  vbe2dl2.obj \
  vbe2dl3.obj \
  vbe2dl4.obj \
  vbe2dl5.obj \
  vbe2dlPE.obj \
  vbe2dp.obj \
+ vbe2dpNS.obj \
  vbe2dp2.obj \
  vbe2dp3.obj \
  vbe2dp4.obj \

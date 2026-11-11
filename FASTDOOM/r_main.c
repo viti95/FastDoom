@@ -859,6 +859,7 @@ void R_PatchCode(void)
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF)
     R_PatchCenteryPlanar();
     R_PatchCenteryPlanarKN();
+    R_PatchCenteryPlanarNS();
     R_PatchCenteryPlanarDirect();
     R_PatchFuzzColumn();
 #endif
@@ -870,6 +871,11 @@ void R_PatchCode(void)
 
     R_PatchCenteryLinearHighKN();
     R_PatchCenteryLinearLowKN();
+    R_PatchCenteryLinearPotatoKN();
+
+    R_PatchCenteryLinearHighNS();
+    R_PatchCenteryLinearLowNS();
+    R_PatchCenteryLinearPotatoNS();
 
     R_PatchCenteryLinearDirect();
     R_PatchCenteryLinearLowDirect();
@@ -886,8 +892,11 @@ void R_PatchCode(void)
 
 #if defined(MODE_VBE2_DIRECT)
     R_PatchCenteryVBE2High();
+    R_PatchCenteryVBE2HighNS();
     R_PatchCenteryVBE2Low();
+    R_PatchCenteryVBE2LowNS();
     R_PatchCenteryVBE2Potato();
+    R_PatchCenteryVBE2PotatoNS();
 
     R_PatchCenteryVBE2Direct();
     R_PatchCenteryVBE2LowDirect();
@@ -2303,7 +2312,17 @@ static void R_SetupBackbufferFuncs(void)
         switch (wallRender)
         {
         case WALL_NORMAL:
-            colfunc = R_DrawColumnPotatoBackbuffer;
+            switch (selectedCPU)
+            {
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K6:
+                colfunc = R_DrawColumnPotatoBackbufferFastLEA;
+                break;
+            default:
+                colfunc = R_DrawColumnPotatoBackbuffer;
+                break;
+            }
             break;
         case WALL_FLAT:
         case WALL_FLATTER:
@@ -2314,7 +2333,17 @@ static void R_SetupBackbufferFuncs(void)
         switch (spriteRender)
         {
         case SPRITE_NORMAL:
-            spritefunc = basespritefunc = R_DrawColumnPotatoBackbuffer;
+            switch (selectedCPU)
+            {
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K6:
+                spritefunc = basespritefunc = R_DrawColumnPotatoBackbufferFastLEA;
+                break;
+            default:
+                spritefunc = basespritefunc = R_DrawColumnPotatoBackbuffer;
+                break;
+            }
             break;
         case SPRITE_FLAT:
         case SPRITE_FLATTER:
@@ -2332,10 +2361,30 @@ static void R_SetupBackbufferFuncs(void)
             }
             else
             {
-                pspritefunc = basepspritefunc = R_DrawColumnPotatoBackbuffer;
+                switch (selectedCPU)
+                {
+                case UMC_GREEN_486:
+                case CYRIX_5X86:
+                case AMD_K6:
+                    pspritefunc = basepspritefunc = R_DrawColumnPotatoBackbufferFastLEA;
+                    break;
+                default:
+                    pspritefunc = basepspritefunc = R_DrawColumnPotatoBackbuffer;
+                    break;
+                }
             }
 #else
-            pspritefunc = basepspritefunc = R_DrawColumnPotatoBackbuffer;
+            switch (selectedCPU)
+            {
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K6:
+                pspritefunc = basepspritefunc = R_DrawColumnPotatoBackbufferFastLEA;
+                break;
+            default:
+                pspritefunc = basepspritefunc = R_DrawColumnPotatoBackbuffer;
+                break;
+            }
 #endif
             break;
         case PSPRITE_FLAT:
@@ -2387,11 +2436,25 @@ static void R_SetupBackbufferFuncs(void)
         else
         {
             drawSky = R_DrawSky;
+            switch (selectedCPU)
+            {
+            case UMC_GREEN_486:
+            case CYRIX_5X86:
+            case AMD_K6:
 #if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
-            skyfunc = (screenblocks >= 10) ? R_DrawColumnPotatoBackbufferSkyFullDirect : R_DrawColumnPotatoBackbuffer;
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnPotatoBackbufferSkyFullDirect : R_DrawColumnPotatoBackbufferFastLEA;
 #else
-            skyfunc = R_DrawColumnPotatoBackbuffer;
+                skyfunc = R_DrawColumnPotatoBackbufferFastLEA;
 #endif
+                break;
+            default:
+#if SCREENHEIGHT == 200 || SCREENHEIGHT == 240
+                skyfunc = (screenblocks >= 10) ? R_DrawColumnPotatoBackbufferSkyFullDirect : R_DrawColumnPotatoBackbuffer;
+#else
+                skyfunc = R_DrawColumnPotatoBackbuffer;
+#endif
+                break;
+            }
         }
 
         switch (invisibleRender)
