@@ -351,6 +351,7 @@ void R_RenderMaskedSegRangeFlat(drawseg_t *ds,
 
 	if (lump > 0)
 	{
+		R_FLUSH_COLUMNS4();	/* the cache can move the texture the columns kept point to */
 		firstPixel = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
 	}
 	else
@@ -585,6 +586,7 @@ void R_RenderMaskedSegRangeFlatter(drawseg_t *ds,
 
 	if (lump > 0)
 	{
+		R_FLUSH_COLUMNS4();	/* the cache can move the texture the columns kept point to */
 		firstPixel = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
 	}
 	else
@@ -994,6 +996,7 @@ void R_RenderMaskedSegRange2Flat(drawseg_t *ds)
 
 	if (lump > 0)
 	{
+		R_FLUSH_COLUMNS4();	/* the cache can move the texture the columns kept point to */
 		firstPixel = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
 	}
 	else
@@ -1225,6 +1228,7 @@ void R_RenderMaskedSegRange2Flatter(drawseg_t *ds)
 
 	if (lump > 0)
 	{
+		R_FLUSH_COLUMNS4();	/* the cache can move the texture the columns kept point to */
 		firstPixel = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
 	}
 	else
@@ -1804,6 +1808,7 @@ void R_RenderSegLoopFlat(void)
 
 	if (lump > 0)
 	{
+		R_FLUSH_COLUMNS4();	/* the cache can move the texture the columns kept point to */
 		firstPixel = ((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
 	}
 	else
@@ -2027,6 +2032,7 @@ void R_RenderSegLoopFlatter(void)
 
 	if (lump > 0)
 	{
+		R_FLUSH_COLUMNS4();	/* the cache can move the texture the columns kept point to */
 		firstPixel = ((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
 	}
 	else

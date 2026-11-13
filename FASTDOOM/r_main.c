@@ -1926,6 +1926,22 @@ static void R_SetupBackbufferFuncs(void)
             case INTEL_PENTIUM_II:
                 colfunc = R_DrawColumnBackbufferMMX;
                 break;
+            /* Four columns at a time, written with one 32 bit store per row.
+               The join of the four bytes costs shifts and ors, so the renderer
+               pays only where a byte store is a cost of its own: the 386 and
+               the Cyrix 386 and 486 cores, which store a byte per cycle to the
+               memory without a write buffer and have no tuned column renderer
+               of their own, are the ones it is drawn with, the same CPUs which
+               are drawn with R_DrawSpanLow386SX.  The 486 and the later CPUs
+               store a byte per cycle and keep their renderers. */
+#if !defined(NO_WALL4)
+            case INTEL_386SX:
+            case INTEL_386DX:
+            case CYRIX_386DLC:
+            case CYRIX_486:
+                colfunc = R_DrawColumn4;
+                break;
+#endif
             default:
                 colfunc = R_DrawColumnBackbuffer;
                 break;
@@ -2554,6 +2570,19 @@ static void R_SetupVBE2Funcs(void)
             case AMD_K6:
                 colfunc = R_DrawColumnVBE2FastLEA;
                 break;
+            /* Four columns at a time: one 32 bit store per row instead of
+               four byte stores, and one write cycle of the linear framebuffer
+               instead of four, which is a saving of its own even for a CPU
+               which stores a byte per cycle. */
+#if !defined(NO_WALL4)
+            case INTEL_386SX:
+            case INTEL_386DX:
+            case CYRIX_386DLC:
+            case INTEL_486:
+            case CYRIX_486:
+                colfunc = R_DrawColumn4;
+                break;
+#endif
             default:
                 colfunc = R_DrawColumnVBE2;
                 break;
@@ -3559,6 +3588,10 @@ void R_SetupFrame(void)
 #if defined(MODE_X) || defined(MODE_Y) || defined(MODE_Y_HALF)
     destview = destscreen + MulScreenWidthQuarter(viewwindowy) + (viewwindowx >> 2);
 #endif
+
+    // The four columns renderer keeps the alignment of its groups from the
+    // origin of the view, and drops the columns kept of the frame before.
+    R_SETUP_COLUMNS4();
 }
 
 //
@@ -3588,6 +3621,10 @@ void R_RenderPlayerView(void)
     // The head node is the last node output.
     R_RenderBSPNode(firstnode);
 
+    // The walls are all drawn, so the columns kept have to reach the view
+    // before the flats of the planes overwrite them.
+    R_FLUSH_COLUMNS4();
+
     // Check for new console commands.
     NetUpdate();
 
@@ -3597,6 +3634,10 @@ void R_RenderPlayerView(void)
     NetUpdate();
 
     R_DrawMasked();
+
+    // The sprites do not use the four columns renderer, but the columns kept
+    // by the masked walls have to reach the view with the frame.
+    R_FLUSH_COLUMNS4();
 
     // Check for new console commands.
     NetUpdate();

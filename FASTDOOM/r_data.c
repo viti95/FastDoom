@@ -220,6 +220,11 @@ void R_GenerateComposite(int texnum)
     short *collump;
     unsigned short *colofs;
 
+    /* The seg loops can ask for a composite texture between the columns of a
+       group, and allocating the block purges the lumps the columns kept point
+       to, so they have to be drawn first. */
+    R_FLUSH_COLUMNS4();
+
     texture = textures[texnum];
 
     block = Z_Malloc(texturecompositesize[texnum], PU_STATIC, &texturecomposite[texnum]);

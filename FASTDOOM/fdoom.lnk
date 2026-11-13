@@ -124,6 +124,7 @@ file p_saveg.obj
 file p_tick.obj
 file p_user.obj
 file r_bsp.obj
+file r_col4.obj
 file r_data.obj
 file r_draw.obj
 file r_flatwall.obj

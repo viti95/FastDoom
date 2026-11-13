@@ -241,6 +241,8 @@ void R_DrawColumnVBE2Direct(void);
 void R_DrawColumnLowVBE2Direct(void);
 void R_DrawColumnPotatoVBE2Direct(void);
 
+#include "r_col4.h"
+
 void R_VideoErase(unsigned ofs, int count);
 
 extern int ds_y;

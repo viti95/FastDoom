@@ -203,6 +203,7 @@ GLOBOBJS = \
  p_tick.obj \
  p_user.obj \
  r_bsp.obj \
+ r_col4.obj \
  r_data.obj \
  r_draw.obj \
  r_flatwall.obj \
