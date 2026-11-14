@@ -74,10 +74,6 @@
 */
 
 #include <limits.h>
-#if defined(WALL4_VERIFY)
-#include <stdio.h>
-#include <string.h>
-#endif
 
 #include "doomdef.h"
 #include "options.h"
@@ -96,12 +92,9 @@
 #if defined(MODE_VBE2_DIRECT)
 #define COL4_ROW(y) (destview + MulScreenWidth(y))
 #define COL4_COL(x) (x)
-/* the shadow of the view, of the verify build, at the same offsets */
-#define COL4_SHROW(y) (col4shadow + MulScreenWidth(y))
 #else
 #define COL4_ROW(y) (ylookup[(y)])
 #define COL4_COL(x) (columnofs[(x)])
-#define COL4_SHROW(y) (col4shadow + (ylookup[(y)] - destscreen))
 #endif
 
 /* A row of the view is four bytes of a 32 bit store only of its rows are
@@ -171,15 +164,6 @@ typedef char col4screenwidthaligned[(SCREENWIDTH % 4 == 0) ? 1 : -1];
 #define COL4_TEXEL(frac) \
     ((int)(((unsigned int)(frac)) >> COL4_FRACSH))
 
-#if defined(WALL4_VERIFY)
-/* the shadow of the view of the verify build, of the size of the view of the
-   mode with a border of the columns and the rows which the view can reach */
-static byte col4shadow[(SCREENWIDTH + 8) * SCREENHEIGHT + 8];
-static int col4shadowed;
-static int col4reported;
-#endif
-
-
 typedef struct
 {
     byte *source;
@@ -193,9 +177,11 @@ typedef struct
 /* the four columns of the group, slots[0] is the leftmost one */
 static col4slot_t slots[4];
 
-/* dc_x of slots[0] and the number of columns kept in the slots */
+/* dc_x of slots[0] and the number of columns kept in the slots.  The number
+   is published in r_col4.h, so the seg loops of the renderers of the modes
+   test it of their own and pay no call when no column is kept. */
 static int slotx;
-static int nslots;
+int col4pending;
 
 /* a group starting at x is 32 bit aligned when ((x + alignx) & 3) == 0 */
 static int alignx;
@@ -282,10 +268,6 @@ static void name(col4slot_t *col, int x, int from, int to)                   \
 }
 
 COL4_DEFONE(R_DrawColumn4One, COL4_ROW(top))
-
-#if defined(WALL4_VERIFY)
-COL4_DEFONE(R_DrawColumn4OneShadow, COL4_SHROW(top))
-#endif
 
 /*
  * The rows of the top and the bottom edge of a group, where the columns are
@@ -437,65 +419,6 @@ static void R_DrawColumns4MidAll(byte *dest, int y, int rows)
     }
 }
 
-
-#if defined(WALL4_VERIFY)
-
-/*
- * A build of a machine on which the four columns renderer is to be compared
- * with the byte stores: every group of columns which goes to the view is
- * drawn a second time, column by column, into a shadow of the view, and the
- * bytes of the columns kept are compared.  A difference is printed, with the
- * column, its rows and the position of its texture, so the wall type which
- * does not go with the renderer is found on the machine of the player.
- */
-
-/* the view is not all drawn to the shadow, so the shadow is filled once */
-static void R_ShadowView4(void)
-{
-    memset(col4shadow, 0xcd, sizeof(col4shadow));
-    col4shadowed = 1;
-}
-
-static void R_VerifyColumn4(col4slot_t *col, int x)
-{
-    int y;
-
-    R_DrawColumn4OneShadow(col, x, INT_MIN, INT_MAX);
-
-    /* the rows the column was drawn to are the rows of the compare, the
-       bytes beside them of the group are the bytes of other columns */
-    for (y = col->top; y <= col->bottom; y++)
-    {
-        byte *a = COL4_ROW(y) + COL4_COL(x);
-        byte *b = COL4_SHROW(y) + COL4_COL(x);
-
-        if (*a != *b && col4reported < 40)
-        {
-            col4reported++;
-            printf("\nWALL4 x=%d y=%d view %02x byte %02x yl=%d yh=%d"
-                   " iscale=%x mid=%x\n",
-                   x, y, *a, *b, col->top, col->bottom,
-                   (unsigned)col->step, (unsigned)col->mid);
-            fflush(stdout);
-        }
-    }
-}
-
-static void R_VerifyColumns4(int x)
-{
-    int i;
-
-    for (i = 0; i < 4; i++)
-        R_VerifyColumn4(&slots[i], x + i);
-}
-
-/* the four columns kept are compared, the shadow is drawn with them */
-#define COL4_VERIFY(x) R_VerifyColumns4(x)
-
-#else
-#define COL4_VERIFY(x)
-#endif
-
 /*
  * The four columns kept, drawn one at a time, for there is no row of the
  * group in which the four of them are visible.
@@ -507,7 +430,6 @@ static void R_DrawColumns4Alone(int x)
     for (i = 0; i < 4; i++)
         R_DrawColumn4One(&slots[i], x + i, INT_MIN, INT_MAX);
 
-    COL4_VERIFY(x);
 }
 
 /*
@@ -591,7 +513,6 @@ static void R_DrawColumns4(int x)
             R_DrawColumns4MidAll(COL4_ROW(ylo) + COL4_COL(x), ylo,
                                  yhi - ylo + 1);
         }
-        COL4_VERIFY(x);
         return;
     }
 
@@ -614,7 +535,6 @@ static void R_DrawColumns4(int x)
         R_DrawColumns4MidAll(COL4_ROW(ylo) + COL4_COL(x), ylo, yhi - ylo + 1);
     }
 
-    COL4_VERIFY(x);
 }
 
 /*
@@ -623,15 +543,12 @@ static void R_DrawColumns4(int x)
  */
 void R_FlushColumn4(void)
 {
-    while (nslots)
+    while (col4pending)
     {
         /* COL4_SHIFT() moves the columns to the left and their x with them */
         R_DrawColumn4One(&slots[0], slotx, INT_MIN, INT_MAX);
-#if defined(WALL4_VERIFY)
-        R_VerifyColumn4(&slots[0], slotx);
-#endif
         COL4_SHIFT();
-        nslots--;
+        col4pending--;
     }
 }
 
@@ -646,16 +563,16 @@ void R_DrawColumn4(void)
 {
     int x = dc_x;
 
-    if (nslots && x == slotx + nslots)
+    if (col4pending && x == slotx + col4pending)
     {
-        COL4_STORE(slots[nslots]);
+        COL4_STORE(slots[col4pending]);
 
-        if (++nslots == 4)
+        if (++col4pending == 4)
         {
             if (((slotx + alignx) & 3) == 0)
             {
                 R_DrawColumns4(slotx);
-                nslots = 0;
+                col4pending = 0;
             }
             else
             {
@@ -664,25 +581,25 @@ void R_DrawColumn4(void)
                    are left are kept for the group of the next column */
                 R_DrawColumn4One(&slots[0], slotx, INT_MIN, INT_MAX);
                 COL4_SHIFT();
-                nslots = 3;
+                col4pending = 3;
             }
         }
     }
     else
     {
-        if (nslots == 1)
+        if (col4pending == 1)
         {
             /* the end of a seg of a few columns: the column kept goes to
                the view without the loop of the flush */
             R_DrawColumn4One(&slots[0], slotx, INT_MIN, INT_MAX);
-            nslots = 0;
+            col4pending = 0;
         }
         else
             R_FlushColumn4();
 
         COL4_STORE(slots[0]);
         slotx = x;
-        nslots = 1;
+        col4pending = 1;
     }
 }
 
@@ -704,12 +621,7 @@ void R_DrawColumn4(void)
  */
 void (*R_SetupColumn4(void (*fallback)(void)))(void)
 {
-    nslots = 0;
-
-#if defined(WALL4_VERIFY)
-    if (!col4shadowed)
-        R_ShadowView4();
-#endif
+    col4pending = 0;
 
     if (detailshift != DETAIL_HIGH)
         return fallback;

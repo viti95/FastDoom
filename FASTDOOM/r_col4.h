@@ -21,6 +21,11 @@
 #ifndef __R_COL4__
 #define __R_COL4__
 
+/* the macros of the mode of the video of the guard of the renderer, for the
+   header of r_draw.h includes this one before the seg loops of the game have
+   included the mode of the video of their own */
+#include "options.h"
+
 /*
  * R_DrawColumn4 is a column function of the seg loops, so it keeps a few
  * wall columns waiting for the three which complete their group.  Four
@@ -45,6 +50,17 @@
  * rows of the view which a pixel of their size does not reach, which the
  * renderer of a group of four columns can not do with the rows of its edges.
  *
+ * The columns kept are of four slots, of which the first is the leftmost of
+ * them: the column asked for, when it is the next one of the group kept, goes
+ * into the slot after the ones kept, and the group of four is drawn whole and
+ * leaves no column kept.  The seg loops ask for the columns of a seg one
+ * after the other, so the column after a group drawn starts a new group, of
+ * an address aligned to four.  The group of an address which is not aligned
+ * to four gives its leftmost column to the view on its own and keeps the
+ * three of its right, which move to the first of the slots; the columns kept
+ * which go to the view are taken of the slots in their order, of the leftmost
+ * one first.
+ *
  * The columns kept point into the WAD cache, and taking a lump into the
  * cache, as the seg loops do for the column of a texture whose patches are
  * in more than one lump, purges other lumps.  So every loop which takes a
@@ -53,6 +69,13 @@
  * that the lump is not in the cache any more, which is the same test the
  * loop makes for its own column.  The columns kept go to the view before
  * the planes and the masked pass draw over it, for the same reason.
+ *
+ * The macro tests col4pending, the number of columns kept, of its own, so
+ * the seg loops of the renderers of the modes, which keep no columns, pay
+ * the test of one word and no call.  Of the modes without the renderer of
+ * four columns the macro is of nothing, of the shape of a call still, so the
+ * seg loops of them pay nothing at all and an if of a flush of them keeps its
+ * body.
  *
  * The texture position of a row is kept in the format of the assembly
  * renderers of the modes, of 25 fraction bits and of seven significant bits,
@@ -76,12 +99,6 @@
  * top and the bottom of a two sided line, the posts of a masked wall, the
  * walls of a large step and of a large position, and the view placed at every
  * byte of the alignment of a group of four columns.
- *
- * -DWALL4_VERIFY draws every group of columns a second time, column by
- * column, into a shadow of the view and compares the two of them, printing
- * the column, its rows and the position of its texture of a byte which
- * differs, which is how a wall type which does not go with the renderer is
- * found on the machine of the player.
  */
 /* The modes drawn with the renderer are the ones which keep the view a byte
    per pixel and which ask for the column function of every column of the
@@ -95,17 +112,23 @@
 void R_DrawColumn4(void);
 void R_FlushColumn4(void);
 
+/* the number of the columns of the seg loops kept of the view */
+extern int col4pending;
+
 /* the column function of the frame: R_DrawColumn4 of the views drawn four
    columns at a time, the fallback of the others */
 void (*R_SetupColumn4(void (*fallback)(void)))(void);
 
 #define R_CHOOSE_COLUMNS4(fallback) R_SetupColumn4(fallback)
-#define R_FLUSH_COLUMNS4() R_FlushColumn4()
+#define R_FLUSH_COLUMNS4() do { if (col4pending) R_FlushColumn4(); } while (0)
 
 #else
 
 #define R_CHOOSE_COLUMNS4(fallback) (fallback)
-#define R_FLUSH_COLUMNS4()
+/* the macro is of the shape of a call, for a seg loop of a mode of the
+   renderer tests the columns kept before the flush of its own, which leaves
+   the flush of a mode without the renderer as the body of an if of its own */
+#define R_FLUSH_COLUMNS4() ((void)0)
 
 #endif
 
