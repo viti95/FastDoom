@@ -213,6 +213,10 @@ void R_RenderMaskedSegRange(drawseg_t *ds,
 
 			if (lump > 0)
 			{
+				/* entering the cache can purge the lumps which the
+				   columns kept for the four columns renderer point to */
+				if (texbase != lumpcache[lump])
+					R_FLUSH_COLUMNS4();
 				col = (column_t *)W_CachedLumpBase(texbase, lump, ofs);
 			}
 			else
@@ -351,7 +355,9 @@ void R_RenderMaskedSegRangeFlat(drawseg_t *ds,
 
 	if (lump > 0)
 	{
-		R_FLUSH_COLUMNS4();	/* the cache can move the texture the columns kept point to */
+		/* taking the lump into the cache purges other lumps, so the columns
+		   kept for the four columns renderer have to be drawn first */
+		R_FLUSH_COLUMNS4();
 		firstPixel = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
 	}
 	else
@@ -451,6 +457,10 @@ void R_RenderMaskedSegRangeFlat(drawseg_t *ds,
 
 			if (lump > 0)
 			{
+				/* entering the cache can purge the lumps which the
+				   columns kept for the four columns renderer point to */
+				if (texbase != lumpcache[lump])
+					R_FLUSH_COLUMNS4();
 				col = (column_t *)W_CachedLumpBase(texbase, lump, ofs);
 			}
 			else
@@ -586,7 +596,9 @@ void R_RenderMaskedSegRangeFlatter(drawseg_t *ds,
 
 	if (lump > 0)
 	{
-		R_FLUSH_COLUMNS4();	/* the cache can move the texture the columns kept point to */
+		/* taking the lump into the cache purges other lumps, so the columns
+		   kept for the four columns renderer have to be drawn first */
+		R_FLUSH_COLUMNS4();
 		firstPixel = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
 	}
 	else
@@ -649,6 +661,10 @@ void R_RenderMaskedSegRangeFlatter(drawseg_t *ds,
 
 			if (lump > 0)
 			{
+				/* entering the cache can purge the lumps which the
+				   columns kept for the four columns renderer point to */
+				if (texbase != lumpcache[lump])
+					R_FLUSH_COLUMNS4();
 				col = (column_t *)W_CachedLumpBase(texbase, lump, ofs);
 			}
 			else
@@ -860,6 +876,10 @@ void R_RenderMaskedSegRange2(drawseg_t *ds)
 
 			if (lump > 0)
 			{
+				/* entering the cache can purge the lumps which the
+				   columns kept for the four columns renderer point to */
+				if (texbase != lumpcache[lump])
+					R_FLUSH_COLUMNS4();
 				col = (column_t *)W_CachedLumpBase(texbase, lump, ofs);
 			}
 			else
@@ -996,7 +1016,9 @@ void R_RenderMaskedSegRange2Flat(drawseg_t *ds)
 
 	if (lump > 0)
 	{
-		R_FLUSH_COLUMNS4();	/* the cache can move the texture the columns kept point to */
+		/* taking the lump into the cache purges other lumps, so the columns
+		   kept for the four columns renderer have to be drawn first */
+		R_FLUSH_COLUMNS4();
 		firstPixel = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
 	}
 	else
@@ -1095,6 +1117,10 @@ void R_RenderMaskedSegRange2Flat(drawseg_t *ds)
 
 			if (lump > 0)
 			{
+				/* entering the cache can purge the lumps which the
+				   columns kept for the four columns renderer point to */
+				if (texbase != lumpcache[lump])
+					R_FLUSH_COLUMNS4();
 				col = (column_t *)W_CachedLumpBase(texbase, lump, ofs);
 			}
 			else
@@ -1228,7 +1254,9 @@ void R_RenderMaskedSegRange2Flatter(drawseg_t *ds)
 
 	if (lump > 0)
 	{
-		R_FLUSH_COLUMNS4();	/* the cache can move the texture the columns kept point to */
+		/* taking the lump into the cache purges other lumps, so the columns
+		   kept for the four columns renderer have to be drawn first */
+		R_FLUSH_COLUMNS4();
 		firstPixel = (byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs;
 	}
 	else
@@ -1291,6 +1319,10 @@ void R_RenderMaskedSegRange2Flatter(drawseg_t *ds)
 
 			if (lump > 0)
 			{
+				/* entering the cache can purge the lumps which the
+				   columns kept for the four columns renderer point to */
+				if (texbase != lumpcache[lump])
+					R_FLUSH_COLUMNS4();
 				col = (column_t *)W_CachedLumpBase(texbase, lump, ofs);
 			}
 			else
@@ -1546,6 +1578,10 @@ void R_RenderSegLoop(void)
 
 				if (lump > 0)
 				{
+					/* entering the cache can purge the lumps which the
+					   columns kept for the four columns renderer point to */
+					if (midbase != lumpcache[lump])
+						R_FLUSH_COLUMNS4();
 					dc_source = W_CachedLumpBase(midbase, lump, ofs);
 				}
 				else
@@ -1621,6 +1657,10 @@ void R_RenderSegLoop(void)
 
 					if (lump > 0)
 					{
+						/* entering the cache can purge the lumps which the
+						   columns kept for the four columns renderer point to */
+						if (topbase != lumpcache[lump])
+							R_FLUSH_COLUMNS4();
 						dc_source = W_CachedLumpBase(topbase, lump, ofs);
 					}
 					else
@@ -1700,6 +1740,10 @@ void R_RenderSegLoop(void)
 
 					if (lump > 0)
 					{
+						/* entering the cache can purge the lumps which the
+						   columns kept for the four columns renderer point to */
+						if (botbase != lumpcache[lump])
+							R_FLUSH_COLUMNS4();
 						dc_source = W_CachedLumpBase(botbase, lump, ofs);
 					}
 					else
@@ -1808,7 +1852,9 @@ void R_RenderSegLoopFlat(void)
 
 	if (lump > 0)
 	{
-		R_FLUSH_COLUMNS4();	/* the cache can move the texture the columns kept point to */
+		/* taking the lump into the cache purges other lumps, so the columns
+		   kept for the four columns renderer have to be drawn first */
+		R_FLUSH_COLUMNS4();
 		firstPixel = ((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
 	}
 	else
@@ -2032,7 +2078,9 @@ void R_RenderSegLoopFlatter(void)
 
 	if (lump > 0)
 	{
-		R_FLUSH_COLUMNS4();	/* the cache can move the texture the columns kept point to */
+		/* taking the lump into the cache purges other lumps, so the columns
+		   kept for the four columns renderer have to be drawn first */
+		R_FLUSH_COLUMNS4();
 		firstPixel = ((byte *)W_CacheLumpNum(lump, PU_CACHE) + ofs);
 	}
 	else

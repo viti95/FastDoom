@@ -1926,24 +1926,13 @@ static void R_SetupBackbufferFuncs(void)
             case INTEL_PENTIUM_II:
                 colfunc = R_DrawColumnBackbufferMMX;
                 break;
-            /* Four columns at a time, written with one 32 bit store per row.
-               The join of the four bytes costs shifts and ors, so the renderer
-               pays only where a byte store is a cost of its own: the 386 and
-               the Cyrix 386 and 486 cores, which store a byte per cycle to the
-               memory without a write buffer and have no tuned column renderer
-               of their own, are the ones it is drawn with, the same CPUs which
-               are drawn with R_DrawSpanLow386SX.  The 486 and the later CPUs
-               store a byte per cycle and keep their renderers. */
-#if !defined(NO_WALL4)
-            case INTEL_386SX:
-            case INTEL_386DX:
-            case CYRIX_386DLC:
-            case CYRIX_486:
-                colfunc = R_DrawColumn4;
-                break;
-#endif
+            /* The CPUs which have no column renderer of their own are drawn
+               with the four columns renderer of r_col4.c, which writes a row
+               of four columns with one 32 bit store; the mode is left to the
+               renderer of the byte stores when its view is scaled, which
+               R_SetupColumn4() tells. */
             default:
-                colfunc = R_DrawColumnBackbuffer;
+                colfunc = R_CHOOSE_COLUMNS4(R_DrawColumnBackbuffer);
                 break;
             }
             break;
@@ -2570,21 +2559,13 @@ static void R_SetupVBE2Funcs(void)
             case AMD_K6:
                 colfunc = R_DrawColumnVBE2FastLEA;
                 break;
-            /* Four columns at a time: one 32 bit store per row instead of
-               four byte stores, and one write cycle of the linear framebuffer
-               instead of four, which is a saving of its own even for a CPU
-               which stores a byte per cycle. */
-#if !defined(NO_WALL4)
-            case INTEL_386SX:
-            case INTEL_386DX:
-            case CYRIX_386DLC:
-            case INTEL_486:
-            case CYRIX_486:
-                colfunc = R_DrawColumn4;
-                break;
-#endif
+            /* One 32 bit store of a row of four columns instead of four
+               byte stores of the linear framebuffer, for the CPUs which have
+               no column renderer of their own; a scaled view is left to the
+               renderers of the mode, which write two and four bytes at a
+               time, which R_SetupColumn4() tells. */
             default:
-                colfunc = R_DrawColumnVBE2;
+                colfunc = R_CHOOSE_COLUMNS4(R_DrawColumnVBE2);
                 break;
             }
             break;
@@ -3591,7 +3572,6 @@ void R_SetupFrame(void)
 
     // The four columns renderer keeps the alignment of its groups from the
     // origin of the view, and drops the columns kept of the frame before.
-    R_SETUP_COLUMNS4();
 }
 
 //
