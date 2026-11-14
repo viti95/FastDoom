@@ -379,8 +379,8 @@ static void R_DrawColumns4(int x)
         return;
     }
 
-    /* the group of one height, a wall between two floors: every one of its
-       rows shows the four columns, so there is no edge to draw */
+    /* the group of one height, a wall between two floors: every row of it
+       shows the four columns, so there is no edge to draw */
     if (equal)
     {
         /* the columns of a seg are of one light level and one step */
